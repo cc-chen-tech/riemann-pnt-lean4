@@ -22,13 +22,45 @@ def centeredNormalizedWindowSup
     (q d : ℝ) (rho : ℂ) (m : ℝ) : ℝ :=
   sSup (centeredNormalizedWindowValues q d rho m)
 
+/-- The absolute first moment of the normalized PNT error against a
+centered projected Gaussian kernel. -/
+def centeredNormalizedWindowFirstMoment
+    (q d : ℝ) (rho : ℂ) (kernel : ℝ → ℝ → ℝ) (m : ℝ) : ℝ :=
+  ∫ y : ℝ in localizedGaussianLogWindow q d m,
+    |normalizedPsiError rho y| * |kernel m y|
+
+/-- The second moment of the normalized PNT error against the absolute
+centered projected Gaussian kernel. -/
+def centeredNormalizedWindowSecondMoment
+    (q d : ℝ) (rho : ℂ) (kernel : ℝ → ℝ → ℝ) (m : ℝ) : ℝ :=
+  ∫ y : ℝ in localizedGaussianLogWindow q d m,
+    normalizedPsiError rho y ^ 2 * |kernel m y|
+
 /-- Quantitative contour data for a general centered logarithmic window. -/
 structure CenteredLocalizedContourData
     (q d : ℝ) (rho : ℂ) (multiplicity mean : ℝ) where
   radius_nonneg : 0 ≤ d
+  kernel : ℝ → ℝ → ℝ
   signal : ℝ → ℝ
   coefficient : ℝ → ℝ
   remainder : ℝ → ℝ
+  eventually_kernel_measurable :
+    ∀ᶠ m : ℝ in atTop, Measurable (kernel m)
+  eventually_kernel_integrable :
+    ∀ᶠ m : ℝ in atTop, Integrable (kernel m)
+  coefficient_eq_kernel_mass :
+    ∀ m : ℝ, coefficient m = ∫ y : ℝ, |kernel m y|
+  eventually_second_moment_integrable :
+    ∀ᶠ m : ℝ in atTop,
+      IntegrableOn
+        (fun y =>
+          normalizedPsiError rho y ^ 2 * |kernel m y|)
+        (localizedGaussianLogWindow q d m)
+  eventually_first_moment_bound :
+    ∀ᶠ m : ℝ in atTop,
+      signal m ≤
+        centeredNormalizedWindowFirstMoment q d rho kernel m +
+          remainder m
   signal_tendsto :
     Tendsto signal atTop (𝓝 (2 * multiplicity))
   coefficient_tendsto :
@@ -1041,15 +1073,14 @@ private theorem eventually_bddAbove_centeredNormalizedWindowValues
       gcongr
 
 /--
-The two true zeta integrals, paired at the target and at the empty odd
-harmonic, are controlled by the target window supremum with the combined
-kernel mass.  Keeping the kernels combined is what preserves the strict
-improvement over `pi / 2`.
+The paired true-zeta contour is controlled before taking a supremum by the
+absolute first moment of the normalized error against the combined projected
+Gaussian kernel.
 -/
-private theorem eventually_centeredSharpenedProjectedPsiWindow_upper_bound
+private theorem eventually_centeredSharpenedProjectedPsiWindow_firstMoment_bound
     (q d : ℝ) {rho : ℂ} {k : ℕ}
     (hd : 0 < d) (hdq : d < q)
-    (hrhoRe0 : 0 < rho.re) (hrhoRe1 : rho.re < 1)
+    (hrhoRe0 : 0 < rho.re) (_hrhoRe1 : rho.re < 1)
     (_hgamma : 0 < rho.im) :
     ∀ᶠ m : ℝ in atTop,
       -((localizedPsiGaussianAverageAtCenter q (centeredSharpenedTargetFilter q rho) rho m +
@@ -1057,8 +1088,8 @@ private theorem eventually_centeredSharpenedProjectedPsiWindow_upper_bound
             localizedPsiGaussianAverageAtCenter q
               (centeredSharpenedMissingFilter q rho k)
               (missingHarmonicContourCenter rho k) m).re) / Real.pi ≤
-        centeredNormalizedWindowSup q d rho m *
-            centeredSharpenedProjectedPsiCoefficient q rho k m +
+        centeredNormalizedWindowFirstMoment q d rho
+            (centeredSharpenedProjectedPsiKernel q rho k) m +
           projectedPsiTailRemainderAtCenter q d
               (centeredSharpenedTargetFilter q rho) rho m +
           relativeProjectedPsiTailRemainderAtCenter q d
@@ -1074,15 +1105,9 @@ private theorem eventually_centeredSharpenedProjectedPsiWindow_upper_bound
     dsimp [center, missingHarmonicContourCenter]
     exact oddHarmonicPoint_re rho.re rho.im k
   have hcenterRe0 : 0 < center.re := hcenterRe.symm ▸ hrhoRe0
-  have hbddEventual :=
-    eventually_bddAbove_centeredNormalizedWindowValues
-      q d hd hdq (u := rho.re) (v := rho.im) hrhoRe0 hrhoRe1
-  filter_upwards [
-    eventually_ge_atTop (1 : ℝ),
-    hbddEventual] with m hm hbdd
+  filter_upwards [eventually_ge_atTop (1 : ℝ)] with m hm
   have hrhoEq : (rho.re : ℂ) + I * rho.im = rho := by
     apply Complex.ext <;> simp [Complex.mul_re, Complex.mul_im]
-  rw [hrhoEq] at hbdd
   have hmPos : 0 < m := zero_lt_one.trans_le hm
   let kernel : ℝ → ℝ := centeredSharpenedProjectedPsiKernel q rho k m
   let fTarget : ℝ → ℝ := fun y =>
@@ -1129,70 +1154,21 @@ private theorem eventually_centeredSharpenedProjectedPsiWindow_upper_bound
     hfTargetIoi.mono_set fun _ hy => hy.1
   have hfMissingTail : IntegrableOn fMissing tail :=
     hfMissingIoi.mono_set fun _ hy => hy.1
-  have hkernelInt : Integrable kernel := by
-    dsimp [kernel]
-    unfold centeredSharpenedProjectedPsiKernel
-    exact
-      (integrable_centeredProjectedPsiKernel
-        q targetA rho hmPos).add
-        (integrable_centeredRelativeProjectedPsiKernel
-          q missingA rho center c hmPos)
-  have hkernelWindow : IntegrableOn (fun y => |kernel y|) window :=
-    hkernelInt.abs.integrableOn
-  have hsupNonneg :
-      0 ≤ centeredNormalizedWindowSup q d rho m := by
-    have hvalue :
-        |normalizedPsiError rho (q * m)| ∈
-          centeredNormalizedWindowValues q d rho m := by
-      exact ⟨q * m, ⟨by nlinarith [mul_pos hd hmPos],
-        by nlinarith [mul_pos hd hmPos]⟩, rfl⟩
-    exact (abs_nonneg _).trans (le_csSup hbdd hvalue)
   have hinside :
       (∫ y : ℝ in window, f y) ≤
-        centeredNormalizedWindowSup q d rho m *
-          centeredSharpenedProjectedPsiCoefficient q rho k m := by
-    have hmono :
-        (∫ y : ℝ in window, f y) ≤
-          ∫ y : ℝ in window,
-            centeredNormalizedWindowSup q d rho m * |kernel y| := by
-      apply setIntegral_mono_on hfWindow
-        (hkernelWindow.const_mul
-          (centeredNormalizedWindowSup q d rho m))
-        hwindowMeasurable
-      intro y hy
-      have hvalue :
-          |normalizedPsiError rho y| ∈
-            centeredNormalizedWindowValues q d rho m :=
-        ⟨y, hy, rfl⟩
-      have hsup :
-          |normalizedPsiError rho y| ≤
-            centeredNormalizedWindowSup q d rho m :=
-        le_csSup hbdd hvalue
-      dsimp [f]
-      calc
-        normalizedPsiError rho y * kernel y ≤
-            |normalizedPsiError rho y * kernel y| :=
-          le_abs_self _
-        _ = |normalizedPsiError rho y| * |kernel y| := abs_mul _ _
-        _ ≤ centeredNormalizedWindowSup q d rho m * |kernel y| :=
-          mul_le_mul_of_nonneg_right hsup (abs_nonneg _)
-    have hmass :
-        (∫ y : ℝ in window, |kernel y|) ≤
-          ∫ y : ℝ, |kernel y| :=
-      setIntegral_le_integral hkernelInt.abs
-        (Filter.Eventually.of_forall fun y => abs_nonneg (kernel y))
+        centeredNormalizedWindowFirstMoment q d rho
+          (centeredSharpenedProjectedPsiKernel q rho k) m := by
     calc
       (∫ y : ℝ in window, f y) ≤
-          centeredNormalizedWindowSup q d rho m *
-            ∫ y : ℝ in window, |kernel y| := by
-        simpa only [integral_const_mul] using hmono
-      _ ≤ centeredNormalizedWindowSup q d rho m *
-          ∫ y : ℝ, |kernel y| :=
-        mul_le_mul_of_nonneg_left hmass hsupNonneg
-      _ =
-          centeredNormalizedWindowSup q d rho m *
-            centeredSharpenedProjectedPsiCoefficient q rho k m := by
-        rfl
+          ∫ y : ℝ in window, |f y| :=
+        setIntegral_mono_on hfWindow hfWindow.abs hwindowMeasurable
+          (fun y _ => le_abs_self (f y))
+      _ = centeredNormalizedWindowFirstMoment q d rho
+          (centeredSharpenedProjectedPsiKernel q rho k) m := by
+        apply setIntegral_congr_fun hwindowMeasurable
+        intro y _hy
+        dsimp [f, kernel]
+        rw [abs_mul]
   have htail :
       (∫ y : ℝ in tail, f y) ≤
         projectedPsiTailRemainderAtCenter q d targetA rho m +
@@ -1268,8 +1244,8 @@ private theorem eventually_centeredSharpenedProjectedPsiWindow_upper_bound
   rw [hpairEq, ← hdecompose]
   calc
     (∫ y : ℝ in window, f y) + ∫ y : ℝ in tail, f y ≤
-        centeredNormalizedWindowSup q d rho m *
-            centeredSharpenedProjectedPsiCoefficient q rho k m +
+        centeredNormalizedWindowFirstMoment q d rho
+            (centeredSharpenedProjectedPsiKernel q rho k) m +
           (projectedPsiTailRemainderAtCenter q d
               (centeredSharpenedTargetFilter q rho) rho m +
             relativeProjectedPsiTailRemainderAtCenter q d
@@ -1278,6 +1254,156 @@ private theorem eventually_centeredSharpenedProjectedPsiWindow_upper_bound
               (missingHarmonicContourCoefficient rho k) m) :=
       add_le_add hinside htail
     _ = _ := by ring
+
+/--
+Taking the window supremum in the first-moment contour bound recovers the
+original pointwise-localization inequality.
+-/
+private theorem eventually_centeredSharpenedProjectedPsiWindow_upper_bound
+    (q d : ℝ) {rho : ℂ} {k : ℕ}
+    (hd : 0 < d) (hdq : d < q)
+    (hrhoRe0 : 0 < rho.re) (hrhoRe1 : rho.re < 1)
+    (hgamma : 0 < rho.im) :
+    ∀ᶠ m : ℝ in atTop,
+      -((localizedPsiGaussianAverageAtCenter q (centeredSharpenedTargetFilter q rho) rho m +
+          missingHarmonicContourCoefficient rho k *
+            localizedPsiGaussianAverageAtCenter q
+              (centeredSharpenedMissingFilter q rho k)
+              (missingHarmonicContourCenter rho k) m).re) / Real.pi ≤
+        centeredNormalizedWindowSup q d rho m *
+            centeredSharpenedProjectedPsiCoefficient q rho k m +
+          projectedPsiTailRemainderAtCenter q d
+              (centeredSharpenedTargetFilter q rho) rho m +
+          relativeProjectedPsiTailRemainderAtCenter q d
+              (centeredSharpenedMissingFilter q rho k) rho
+              (missingHarmonicContourCenter rho k)
+              (missingHarmonicContourCoefficient rho k) m := by
+  let targetA := centeredSharpenedTargetFilter q rho
+  let center := missingHarmonicContourCenter rho k
+  let missingA := centeredSharpenedMissingFilter q rho k
+  let c := missingHarmonicContourCoefficient rho k
+  have hrho0 : rho ≠ 0 := ne_zero_of_re_pos hrhoRe0
+  have hcenterRe : center.re = rho.re := by
+    dsimp [center, missingHarmonicContourCenter]
+    exact oddHarmonicPoint_re rho.re rho.im k
+  have hcenterRe0 : 0 < center.re := hcenterRe.symm ▸ hrhoRe0
+  have hbddEventual :=
+    eventually_bddAbove_centeredNormalizedWindowValues
+      q d hd hdq (u := rho.re) (v := rho.im) hrhoRe0 hrhoRe1
+  have hrhoEq : (rho.re : ℂ) + I * rho.im = rho := by
+    apply Complex.ext <;> simp [Complex.mul_re, Complex.mul_im]
+  have hfirst :=
+    eventually_centeredSharpenedProjectedPsiWindow_firstMoment_bound
+      q d hd hdq (rho := rho) (k := k) hrhoRe0 hrhoRe1 hgamma
+  filter_upwards [
+    eventually_ge_atTop (1 : ℝ),
+    hbddEventual,
+    hfirst] with m hm hbdd hfirstM
+  rw [hrhoEq] at hbdd
+  have hmPos : 0 < m := zero_lt_one.trans_le hm
+  let kernel : ℝ → ℝ := centeredSharpenedProjectedPsiKernel q rho k m
+  let fTarget : ℝ → ℝ := fun y =>
+    normalizedPsiError rho y * projectedPsiKernelAtCenter q targetA rho m y
+  let fMissing : ℝ → ℝ := fun y =>
+    normalizedPsiError rho y *
+      relativeProjectedPsiKernelAtCenter q missingA rho center c m y
+  let f : ℝ → ℝ := fun y => normalizedPsiError rho y * kernel y
+  let window : Set ℝ := localizedGaussianLogWindow q d m
+  have hwindowMeasurable : MeasurableSet window := measurableSet_Icc
+  have hwindowSubset : window ⊆ Set.Ioi (0 : ℝ) := by
+    intro y hy
+    exact Set.mem_Ioi.mpr (by
+      have hleft : 0 < (q - d) * m :=
+        mul_pos (sub_pos.mpr hdq) hmPos
+      linarith [hy.1])
+  have hfTargetIoi : IntegrableOn fTarget (Set.Ioi 0) := by
+    simpa only [fTarget, targetA] using
+      integrableOn_normalizedPsiError_mul_projectedPsiKernelAtCenter
+        q (centeredSharpenedTargetFilter q rho) hmPos hrhoRe0
+  have hfMissingIoi : IntegrableOn fMissing (Set.Ioi 0) := by
+    simpa only [fMissing, missingA, center, c] using
+      integrableOn_normalizedPsiError_mul_relativeProjectedPsiKernelAtCenter
+        q (missingHarmonicContourCoefficient rho k)
+        (centeredSharpenedMissingFilter q rho k) hmPos hrhoRe0 hcenterRe0
+        hcenterRe
+  have hfIoi : IntegrableOn f (Set.Ioi 0) := by
+    have hadd := hfTargetIoi.add hfMissingIoi
+    apply hadd.congr_fun _ measurableSet_Ioi
+    intro y _hy
+    dsimp [f, fTarget, fMissing, kernel, targetA, missingA, center, c]
+    unfold centeredSharpenedProjectedPsiKernel
+    ring
+  have hfWindow : IntegrableOn f window :=
+    hfIoi.mono_set hwindowSubset
+  have hkernelInt : Integrable kernel := by
+    dsimp [kernel]
+    unfold centeredSharpenedProjectedPsiKernel
+    exact
+      (integrable_centeredProjectedPsiKernel
+        q targetA rho hmPos).add
+        (integrable_centeredRelativeProjectedPsiKernel
+          q missingA rho center c hmPos)
+  have hkernelWindow : IntegrableOn (fun y => |kernel y|) window :=
+    hkernelInt.abs.integrableOn
+  have hsupNonneg :
+      0 ≤ centeredNormalizedWindowSup q d rho m := by
+    have hvalue :
+        |normalizedPsiError rho (q * m)| ∈
+          centeredNormalizedWindowValues q d rho m := by
+      exact ⟨q * m, ⟨by nlinarith [mul_pos hd hmPos],
+        by nlinarith [mul_pos hd hmPos]⟩, rfl⟩
+    exact (abs_nonneg _).trans (le_csSup hbdd hvalue)
+  have hfirstLe :
+      centeredNormalizedWindowFirstMoment q d rho
+          (centeredSharpenedProjectedPsiKernel q rho k) m ≤
+        centeredNormalizedWindowSup q d rho m *
+          centeredSharpenedProjectedPsiCoefficient q rho k m := by
+    have hmono :
+        centeredNormalizedWindowFirstMoment q d rho
+            (centeredSharpenedProjectedPsiKernel q rho k) m ≤
+          ∫ y : ℝ in window,
+            centeredNormalizedWindowSup q d rho m * |kernel y| := by
+      have hsourceInt :
+          IntegrableOn
+            (fun y =>
+              |normalizedPsiError rho y| * |kernel y|)
+            window := by
+        apply hfWindow.abs.congr
+        filter_upwards with y
+        dsimp [f]
+        rw [abs_mul]
+      unfold centeredNormalizedWindowFirstMoment
+      apply setIntegral_mono_on hsourceInt
+        (hkernelWindow.const_mul
+          (centeredNormalizedWindowSup q d rho m))
+        measurableSet_Icc
+      intro y hy
+      have hvalue :
+          |normalizedPsiError rho y| ∈
+            centeredNormalizedWindowValues q d rho m :=
+        ⟨y, hy, rfl⟩
+      exact mul_le_mul_of_nonneg_right
+        (le_csSup hbdd hvalue) (abs_nonneg _)
+    have hmass :
+        (∫ y : ℝ in window, |kernel y|) ≤
+          ∫ y : ℝ, |kernel y| :=
+      setIntegral_le_integral hkernelInt.abs
+        (Filter.Eventually.of_forall fun y => abs_nonneg (kernel y))
+    calc
+      centeredNormalizedWindowFirstMoment q d rho
+          (centeredSharpenedProjectedPsiKernel q rho k) m ≤
+          centeredNormalizedWindowSup q d rho m *
+            ∫ y : ℝ in window, |kernel y| := by
+        simpa only [integral_const_mul] using hmono
+      _ ≤ centeredNormalizedWindowSup q d rho m *
+          ∫ y : ℝ, |kernel y| :=
+        mul_le_mul_of_nonneg_left hmass hsupNonneg
+      _ = centeredNormalizedWindowSup q d rho m *
+          centeredSharpenedProjectedPsiCoefficient q rho k m := by
+        rfl
+  exact hfirstM.trans
+    (by
+      gcongr)
 
 /--
 The final paired true-zeta contour package.  The construction is implemented
@@ -1443,11 +1569,184 @@ noncomputable def sharpenedCenteredLocalizedContourData
       eventually_bddAbove_centeredNormalizedWindowValues
         q d hd hdq (u := rho.re) (v := rho.im)
           hrhoRe0 hrhoRe1
+  have hkernelMeasurable :
+      ∀ᶠ m : ℝ in atTop,
+        Measurable (centeredSharpenedProjectedPsiKernel q rho k m) := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with m hm
+    unfold centeredSharpenedProjectedPsiKernel
+      relativeProjectedPsiKernelAtCenter
+    exact
+      (continuous_projectedPsiKernelAtCenter
+        q targetA rho hm).add
+        ((continuous_projectedPsiKernelAtCenter
+          q (C c * missingA) center hm).const_mul
+            (‖center‖ / ‖rho‖)) |>.measurable
+  have hkernelIntegrable :
+      ∀ᶠ m : ℝ in atTop,
+        Integrable (centeredSharpenedProjectedPsiKernel q rho k m) := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with m hm
+    unfold centeredSharpenedProjectedPsiKernel
+    exact
+      (integrable_centeredProjectedPsiKernel
+        q targetA rho hm).add
+        (integrable_centeredRelativeProjectedPsiKernel
+          q missingA rho center c hm)
+  have herrorMeasurable :
+      Measurable (normalizedPsiError rho) := by
+    have hpsi : Measurable chebyshevPsi := by
+      simpa only [chebyshevPsi_eq_mathlib] using
+        Chebyshev.psi_mono.measurable
+    unfold normalizedPsiError
+    fun_prop
+  have hsecondMomentIntegrable :
+      ∀ᶠ m : ℝ in atTop,
+        IntegrableOn
+          (fun y =>
+            normalizedPsiError rho y ^ 2 *
+              |centeredSharpenedProjectedPsiKernel q rho k m y|)
+          (localizedGaussianLogWindow q d m) := by
+    filter_upwards [
+      eventually_ge_atTop (1 : ℝ),
+      hwindow,
+      hkernelMeasurable,
+      hkernelIntegrable] with m hm hbdd hkMeas hkInt
+    let window : Set ℝ := localizedGaussianLogWindow q d m
+    let kernel : ℝ → ℝ := centeredSharpenedProjectedPsiKernel q rho k m
+    have hmPos : 0 < m := zero_lt_one.trans_le hm
+    have hwindowMeasurable : MeasurableSet window := measurableSet_Icc
+    have hsupNonneg :
+        0 ≤ centeredNormalizedWindowSup q d rho m := by
+      have hvalue :
+          |normalizedPsiError rho (q * m)| ∈
+            centeredNormalizedWindowValues q d rho m := by
+        exact ⟨q * m, ⟨by nlinarith [mul_pos hd hmPos],
+          by nlinarith [mul_pos hd hmPos]⟩, rfl⟩
+      exact (abs_nonneg _).trans (le_csSup hbdd hvalue)
+    have hsourceAES :
+        AEStronglyMeasurable
+          (fun y =>
+            normalizedPsiError rho y ^ 2 * |kernel y|)
+          (volume.restrict window) :=
+      ((herrorMeasurable.pow_const 2).mul hkMeas.norm)
+        |>.aestronglyMeasurable
+    have hmajorInt :
+        Integrable
+          (fun y =>
+            centeredNormalizedWindowSup q d rho m ^ 2 *
+              |kernel y|) :=
+      hkInt.abs.const_mul _
+    refine hmajorInt.integrableOn.mono' hsourceAES ?_
+    filter_upwards [ae_restrict_mem hwindowMeasurable] with y hy
+    have hvalue :
+        |normalizedPsiError rho y| ∈
+          centeredNormalizedWindowValues q d rho m :=
+      ⟨y, hy, rfl⟩
+    have herrorLe :
+        |normalizedPsiError rho y| ≤
+          centeredNormalizedWindowSup q d rho m :=
+      le_csSup hbdd hvalue
+    have hsqLe :
+        normalizedPsiError rho y ^ 2 ≤
+          centeredNormalizedWindowSup q d rho m ^ 2 := by
+      nlinarith [sq_abs (normalizedPsiError rho y),
+        abs_nonneg (normalizedPsiError rho y)]
+    rw [Real.norm_eq_abs,
+      abs_of_nonneg (mul_nonneg (sq_nonneg _) (abs_nonneg _))]
+    exact mul_le_mul_of_nonneg_right hsqLe (abs_nonneg _)
+  have hfirstPsi :=
+    eventually_centeredSharpenedProjectedPsiWindow_firstMoment_bound
+      q d hd hdq (rho := rho) (k := k)
+        hrhoRe0 hrhoRe1 hgamma
+  have hfirstMomentBound :
+      ∀ᶠ m : ℝ in atTop,
+        2 * (zeroPair m).re ≤
+          centeredNormalizedWindowFirstMoment q d rho
+              (centeredSharpenedProjectedPsiKernel q rho k) m +
+            remainder m := by
+    filter_upwards [
+      eventually_ge_atTop (1 : ℝ),
+      eventually_ge_atTop (targetA.natDegree : ℝ),
+      eventually_ge_atTop (missingA.natDegree : ℝ),
+      eventually_ge_atTop q,
+      hfirstPsi] with m hm htargetDegree hmissingDegree hmq hpsiM
+    have hqPos : 0 < q := lt_of_lt_of_le (by norm_num) hq
+    have hqScale : q ≤ 27 * m ^ 2 := by
+      have hm0 : 0 ≤ m := zero_le_one.trans hm
+      nlinarith [mul_nonneg hqPos.le (sub_nonneg.mpr hmq)]
+    have htargetValid : centeredLocalizedContourScaleValid q targetA rho.re m :=
+      ⟨hq, hrhoRe0, hrhoRe1, hm, htargetDegree, hqScale⟩
+    have hmissingValid : centeredLocalizedContourScaleValid q missingA rho.re m :=
+      ⟨hq, hrhoRe0, hrhoRe1, hm, hmissingDegree, hqScale⟩
+    have htargetContour :=
+      selected_localizedPsiGaussianAverageAtCenter_eq q
+        targetA (u := rho.re) (v := rho.im) (m := m) htargetValid
+    have hmissingContour :=
+      selected_localizedPsiGaussianAverageAtCenter_eq q
+        missingA (u := rho.re) (v := center.im) (m := m) hmissingValid
+    let L : ℂ :=
+      localizedPsiGaussianAverageAtCenter q targetA rho m +
+        c * localizedPsiGaussianAverageAtCenter q missingA center m
+    have hcontourIdentity :
+        L = -(2 * Real.pi : ℂ) * zeroPair m + contourPair m := by
+      rw [hrhoEq] at htargetContour
+      rw [hcenterEq] at hmissingContour
+      dsimp [L, zeroPair, contourPair]
+      rw [htargetContour, hmissingContour]
+      ring
+    have hsignalEq :
+        2 * (zeroPair m).re =
+          -(L.re) / Real.pi + (contourPair m).re / Real.pi := by
+      have hscaleRe :
+          (-(2 * Real.pi : ℂ) * zeroPair m).re =
+            -2 * Real.pi * (zeroPair m).re := by
+        norm_num [Complex.mul_re]
+      have hre :
+          L.re =
+            -2 * Real.pi * (zeroPair m).re + (contourPair m).re := by
+        calc
+          L.re =
+              (-(2 * Real.pi : ℂ) * zeroPair m +
+                contourPair m).re :=
+            congrArg Complex.re hcontourIdentity
+          _ = _ := by rw [Complex.add_re, hscaleRe]
+      field_simp [Real.pi_ne_zero]
+      nlinarith [hre]
+    have hcontourLe :
+        (contourPair m).re / Real.pi ≤
+          ‖contourPair m‖ / Real.pi :=
+      (div_le_div_iff_of_pos_right Real.pi_pos).2
+        (Complex.re_le_norm _)
+    have hpsiM' :
+        -(L.re) / Real.pi ≤
+          centeredNormalizedWindowFirstMoment q d rho
+              (centeredSharpenedProjectedPsiKernel q rho k) m +
+            psiTail m := by
+      dsimp [L, psiTail, targetA, missingA, center, c]
+      convert hpsiM using 1 <;> ring
+    rw [hsignalEq]
+    change
+      -L.re / Real.pi + (contourPair m).re / Real.pi ≤
+        centeredNormalizedWindowFirstMoment q d rho
+            (centeredSharpenedProjectedPsiKernel q rho k) m +
+          (psiTail m + ‖contourPair m‖ / Real.pi)
+    calc
+      -L.re / Real.pi + (contourPair m).re / Real.pi ≤
+          (centeredNormalizedWindowFirstMoment q d rho
+              (centeredSharpenedProjectedPsiKernel q rho k) m +
+            psiTail m) + ‖contourPair m‖ / Real.pi :=
+        add_le_add hpsiM' hcontourLe
+      _ = _ := by ring
   refine {
     radius_nonneg := hd.le
+    kernel := centeredSharpenedProjectedPsiKernel q rho k
     signal := fun m => 2 * (zeroPair m).re
     coefficient := centeredSharpenedProjectedPsiCoefficient q rho k
     remainder := remainder
+    eventually_kernel_measurable := hkernelMeasurable
+    eventually_kernel_integrable := hkernelIntegrable
+    coefficient_eq_kernel_mass := fun _ => rfl
+    eventually_second_moment_integrable := hsecondMomentIntegrable
+    eventually_first_moment_bound := hfirstMomentBound
     signal_tendsto := hsignal
     coefficient_tendsto := hcoefficient
     remainder_tendsto := hremainder

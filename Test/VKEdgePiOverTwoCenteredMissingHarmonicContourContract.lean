@@ -6,8 +6,16 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
 
 #check centeredNormalizedWindowValues
 #check centeredNormalizedWindowSup
+#check centeredNormalizedWindowFirstMoment
+#check centeredNormalizedWindowSecondMoment
 #check CenteredLocalizedContourData
 #check CenteredLocalizedContourData.radius_nonneg
+#check CenteredLocalizedContourData.kernel
+#check CenteredLocalizedContourData.eventually_kernel_measurable
+#check CenteredLocalizedContourData.eventually_kernel_integrable
+#check CenteredLocalizedContourData.coefficient_eq_kernel_mass
+#check CenteredLocalizedContourData.eventually_second_moment_integrable
+#check CenteredLocalizedContourData.eventually_first_moment_bound
 #check CenteredLocalizedContourData.signal_tendsto
 #check CenteredLocalizedContourData.coefficient_tendsto
 #check CenteredLocalizedContourData.remainder_tendsto
@@ -27,6 +35,18 @@ example (q d : ℝ) (rho : ℂ) (m : ℝ) :
     centeredNormalizedWindowValues q d rho m =
       (fun y => |normalizedPsiError rho y|) ''
         localizedGaussianLogWindow q d m := by
+  rfl
+
+example (q d : ℝ) (rho : ℂ) (kernel : ℝ → ℝ → ℝ) (m : ℝ) :
+    centeredNormalizedWindowFirstMoment q d rho kernel m =
+      ∫ y : ℝ in localizedGaussianLogWindow q d m,
+        |normalizedPsiError rho y| * |kernel m y| := by
+  rfl
+
+example (q d : ℝ) (rho : ℂ) (kernel : ℝ → ℝ → ℝ) (m : ℝ) :
+    centeredNormalizedWindowSecondMoment q d rho kernel m =
+      ∫ y : ℝ in localizedGaussianLogWindow q d m,
+        normalizedPsiError rho y ^ 2 * |kernel m y| := by
   rfl
 
 example (q d : ℝ) (rho : ℂ) (m : ℝ) :
