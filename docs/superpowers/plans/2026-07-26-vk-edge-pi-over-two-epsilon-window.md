@@ -59,7 +59,7 @@ repository baseline verifier.
   `localizedGaussianLogWindow_epsilonGaussianScale`,
   `exists_psiError_in_powerOnePlusEpsilonWindow_of_normalizedPsiError`.
 
-- [ ] **Step 1: Write the failing contract**
+- [x] **Step 1: Write the failing contract**
 
 The contract checks:
 
@@ -84,7 +84,7 @@ lake env lean Test/VKEdgePiOverTwoEpsilonWindowContract.lean
 
 Expected: failure because the imported production module does not exist.
 
-- [ ] **Step 2: Implement the explicit parameters**
+- [x] **Step 2: Implement the explicit parameters**
 
 Use exactly:
 
@@ -118,7 +118,7 @@ and
 (qε + dε) / (qε - dε) = 1 + ε.
 ```
 
-- [ ] **Step 3: Prove exact window identification**
+- [x] **Step 3: Prove exact window identification**
 
 Define the logarithmic target interval as
 `Set.Icc (Real.log Y) ((1 + ε) * Real.log Y)` and prove:
@@ -133,7 +133,7 @@ theorem localizedGaussianLogWindow_epsilonGaussianScale
       Set.Icc (Real.log Y) ((1 + ε) * Real.log Y)
 ```
 
-- [ ] **Step 4: Prove the standard-psi transfer**
+- [x] **Step 4: Prove the standard-psi transfer**
 
 For `rho ≠ 0`, `ε > 0`, and `Y ≥ 1`, turn a normalized-error witness in the
 logarithmic interval into:
@@ -146,7 +146,7 @@ logarithmic interval into:
 Use `Real.rpow_def_of_pos` for the upper endpoint; do not assume continuity
 of `chebyshevPsi`.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run the contract and axiom audit, scan the new source for forbidden
 placeholders, and commit:
@@ -174,7 +174,7 @@ git commit -m "feat: parameterize epsilon power windows"
   `integral_rightEdgePolynomialGaussian_cpow_atCenter_eq`,
   `integral_localizedGaussianWeightAtCenter_mul_regularizedLogDeriv_rightEdge_eq`.
 
-- [ ] **Step 1: Write a failing contract**
+- [x] **Step 1: Write a failing contract**
 
 Pin the centered weight:
 
@@ -190,18 +190,18 @@ def localizedGaussianWeightAtCenter
 and a centered Chebyshev average whose inverse kernel is evaluated at
 `q * m - Real.log x`.
 
-- [ ] **Step 2: Prove the centered right-edge Gaussian identity**
+- [x] **Step 2: Prove the centered right-edge Gaussian identity**
 
 Repeat the existing right-edge calculation with
 `r = q * m - Real.log x`. The vertical Gaussian theorem already accepts an
 arbitrary `r`; do not duplicate its Fourier proof.
 
-- [ ] **Step 3: Prove integrability and Mellin interchange**
+- [x] **Step 3: Prove integrability and Mellin interchange**
 
 Generalize the existing right-edge integrability proof. Constants may depend
 on fixed `q`; the theorem needs only `0 < m`, `0 < w.re`.
 
-- [ ] **Step 4: Add compatibility lemmas**
+- [x] **Step 4: Add compatibility lemmas**
 
 Prove that specializing `q = 16` recovers the existing weight and average:
 
@@ -213,7 +213,7 @@ localizedPsiGaussianAverageAtCenter 16 A w m =
   localizedPsiGaussianAverage A w m
 ```
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run focused contract/audit and commit:
 
@@ -239,7 +239,7 @@ git commit -m "feat: parameterize localized Gaussian center"
   `localizedContourRemainderAtCenter`,
   and an exact finite-height contour identity.
 
-- [ ] **Step 1: Write the failing contract**
+- [x] **Step 1: Write the failing contract**
 
 Require the exact identity:
 
@@ -252,22 +252,22 @@ localizedPsiGaussianAverageAtCenter q A w m =
 
 under the same boundary-zero hypotheses as the existing center-16 theorem.
 
-- [ ] **Step 2: Define centered residue and edge terms**
+- [x] **Step 2: Define centered residue and edge terms**
 
 Replace only `localizedGaussianWeight` by
 `localizedGaussianWeightAtCenter q`. Keep residues equal to negative analytic
 multiplicity and retain exact cancellation at `s = 0` and `s = 1`.
 
-- [ ] **Step 3: Assemble the rectangle**
+- [x] **Step 3: Assemble the rectangle**
 
 Reuse the general analytic-weight residue theorem and Task 2 right-edge
 identity. Do not reprove the argument principle.
 
-- [ ] **Step 4: Prove center-16 compatibility**
+- [x] **Step 4: Prove center-16 compatibility**
 
 Show each centered object at `q = 16` equals its existing counterpart.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run focused checks and commit:
 
@@ -293,7 +293,7 @@ git commit -m "feat: parameterize localized zeta contour"
   `selectedLocalizedContourRemainderAtCenter`,
   and their limit/decay theorems for every fixed `q ≥ 16`.
 
-- [ ] **Step 1: Write the failing limit contract**
+- [x] **Step 1: Write the failing limit contract**
 
 Require a selected exact identity and:
 
@@ -305,7 +305,7 @@ Tendsto
 
 under `16 ≤ q`, `0 < u`, `u < 1`.
 
-- [ ] **Step 2: Prove the enlarged far-zero radius margin**
+- [x] **Step 2: Prove the enlarged far-zero radius margin**
 
 Define:
 
@@ -322,14 +322,14 @@ a ^ 2 + q * a - centeredPoleRadius q ^ 2 ≤ -8
 Use `centeredPoleRadius q` in the near-zero filter and far-zero split. The
 filter degree may depend on fixed `q`.
 
-- [ ] **Step 3: Generalize edge envelopes**
+- [x] **Step 3: Generalize edge envelopes**
 
 Carry `q` through the right, left, top, and bottom edge bounds under `16 ≤ q`.
 Allow envelope constants to depend on fixed `q`. Preserve the left-edge
 `exp (-15*m)` bound and replace the horizontal/right-edge constant `36` by
 `4 + 2*q`.
 
-- [ ] **Step 4: Keep the good-height scale**
+- [x] **Step 4: Keep the good-height scale**
 
 Use
 `T ∈ Set.Icc (12 * m + |v|) (12 * m + |v| + 1)`.
@@ -337,13 +337,13 @@ Prove that the negative `-m*T^2` term dominates the fixed-`q` linear
 contribution on horizontal edges. Also prove that this height eventually
 exceeds the fixed `centeredPoleRadius q`.
 
-- [ ] **Step 5: Select concrete slices and prove decay**
+- [x] **Step 5: Select concrete slices and prove decay**
 
 Mirror the existing `ConcreteLocalizedContourSlice` construction with `q`
 added as a parameter. The selected definitions extend invalid small scales
 by zero exactly as before.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run focused checks and commit:
 
@@ -370,7 +370,7 @@ git commit -m "feat: control centered localized contour edges"
   `relativeProjectedPsiTailRemainderAtCenter`,
   and their zero limits.
 
-- [ ] **Step 1: Write the failing tail contract**
+- [x] **Step 1: Write the failing tail contract**
 
 The final public theorem must have explicit hypotheses:
 
@@ -388,12 +388,12 @@ Tendsto
   atTop (𝓝 0)
 ```
 
-- [ ] **Step 2: Prove centered logarithmic-coordinate identity**
+- [x] **Step 2: Prove centered logarithmic-coordinate identity**
 
 Generalize the exact change of variables from `x` to `y`, with kernel
 argument `q * m - y`.
 
-- [ ] **Step 3: Prove the pointwise true-tail envelope**
+- [x] **Step 3: Prove the pointwise true-tail envelope**
 
 For `t = q*m-y` and
 `y ∉ localizedGaussianLogWindow q d m`, combine:
@@ -407,13 +407,13 @@ For `t = q*m-y` and
 with `hmargin`. Derive an exponentially decaying integrable Gaussian
 majorant for all sufficiently large `m`.
 
-- [ ] **Step 4: Integrate and prove both tail limits**
+- [x] **Step 4: Integrate and prove both tail limits**
 
 Prove the direct and relative tail remainders tend to zero. The relative
 version must preserve target normalization and may not silently replace
 `target` by `center`.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run focused checks and commit:
 
@@ -438,26 +438,26 @@ git commit -m "feat: control epsilon-window psi tails"
   and a normalized-error witness in every late
   `localizedGaussianLogWindow q d m`.
 
-- [ ] **Step 1: Write the failing data contract**
+- [x] **Step 1: Write the failing data contract**
 
 Define a structure whose `eventually_window_bddAbove` and
 `eventually_upper_bound` fields use
 `localizedGaussianLogWindow q d m`, not the old center-16 window.
 
-- [ ] **Step 2: Generalize the paired coefficient**
+- [x] **Step 2: Generalize the paired coefficient**
 
 Replace every shift `16*m-y` by `q*m-y`. Use uniform-in-center periodic
 Gaussian convergence to prove the coefficient still tends to
 `2 * sharpenedMissingHarmonicDenominator k`.
 
-- [ ] **Step 3: Install target and missing-harmonic contours**
+- [x] **Step 3: Install target and missing-harmonic contours**
 
 Pair the two selected true-zeta contour identities before taking absolute
 values. Preserve analytic multiplicity, use
 `localizedNearZeroFilter center (centeredPoleRadius q)` for both centers,
 and use Task 5 for both true-psi tails.
 
-- [ ] **Step 4: Prove the abstract window witness**
+- [x] **Step 4: Prove the abstract window witness**
 
 Prove:
 
@@ -470,7 +470,7 @@ Prove:
 whenever
 `C < multiplicity / sharpenedMissingHarmonicDenominator k`.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run focused checks and commit:
 
@@ -495,7 +495,7 @@ git commit -m "feat: assemble centered missing-harmonic contour"
   and
   `exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo`.
 
-- [ ] **Step 1: Write the failing final contract**
+- [x] **Step 1: Write the failing final contract**
 
 Pin the fixed-missing-harmonic theorem exactly as specified in the design.
 Pin the Carlson-selected theorem with assumptions:
@@ -509,24 +509,24 @@ hσrho : σ < rho.re
 hrhoRe1 : rho.re < 1
 ```
 
-- [ ] **Step 2: Verify epsilon parameters satisfy analytic hypotheses**
+- [x] **Step 2: Verify epsilon parameters satisfy analytic hypotheses**
 
 Prove `qε > 0`, `dε > 0`, `dε < qε`, and
 `64 < qε`, `16*(qε+dε) ≤ dε^2`. Show
 `epsilonGaussianScale ε Y → ∞`.
 
-- [ ] **Step 3: Compose the fixed-harmonic theorem**
+- [x] **Step 3: Compose the fixed-harmonic theorem**
 
 Apply Task 6 at `(qε,dε)`, pull the eventual statement back along
 `epsilonGaussianScale ε`, use Task 1's exact window identity, and transfer
 to standard `chebyshevPsi`.
 
-- [ ] **Step 4: Compose Carlson selection**
+- [x] **Step 4: Compose Carlson selection**
 
 Use the existing Carlson theorem to choose `k` and the missing odd-harmonic
 center. Do not alter the strict constant or multiplicity factor.
 
-- [ ] **Step 5: Run focused verification**
+- [x] **Step 5: Run focused verification**
 
 Run:
 
@@ -538,7 +538,7 @@ lake env lean Test/VKEdgePiOverTwoEpsilonOscillationAxiomAudit.lean
 
 Scan all seven new source modules for forbidden placeholders.
 
-- [ ] **Step 6: Run full branch verification and commit**
+- [x] **Step 6: Run full branch verification and commit**
 
 Run:
 
