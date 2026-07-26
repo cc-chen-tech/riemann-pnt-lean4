@@ -401,6 +401,36 @@ private theorem integral_rightEdgeMellinProductAtCenter_fst_eq
       rw [integral_rightEdgeGaussianFactorAtCenter_exp_eq
         q A hm w hx]
 
+/-- The centered Chebyshev-error Mellin integrand is integrable on the
+right-edge domain. -/
+theorem integrableOn_localizedPsiGaussianAverageAtCenter_integrand
+    (q : ℝ) (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
+    {w : ℂ} (hw : 0 < w.re) :
+    IntegrableOn
+      (fun x : ℝ =>
+        psiErrorAboveOneComplex x *
+          ((2 * Real.pi : ℂ) *
+            ((x : ℂ) ^ (-(w + 1)) *
+              (w * polynomialGaussianKernel A m
+                  (q * m - Real.log x) +
+                polynomialGaussianKernelDeriv A m
+                  (q * m - Real.log x)))))
+      (Set.Ioi 1) := by
+  have hsections :
+      Integrable
+        (fun x : ℝ =>
+          ∫ t : ℝ, rightEdgeMellinProductAtCenter q A m w (t, x))
+        (volume.restrict (Set.Ioi (1 : ℝ))) :=
+    (integrable_rightEdgeMellinProductAtCenter q A hm hw).integral_prod_right
+  change IntegrableOn
+    (fun x : ℝ =>
+      ∫ t : ℝ, rightEdgeMellinProductAtCenter q A m w (t, x))
+    (Set.Ioi (1 : ℝ)) at hsections
+  refine hsections.congr_fun ?_ measurableSet_Ioi
+  intro x hx
+  exact integral_rightEdgeMellinProductAtCenter_fst_eq
+    q A hm w (zero_lt_one.trans hx)
+
 private theorem integral_rightEdgeGaussianFactorAtCenter_mul_mellin_eq
     (q : ℝ) (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
     {w : ℂ} (hw : 0 < w.re) :
