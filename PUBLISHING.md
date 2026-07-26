@@ -5,10 +5,10 @@ Prime Number Theorem and classical de la Vallee Poussin-form remainders for
 Chebyshev `psi` and prime counting `pi-Li`, Hardy's theorem, the all-height
 Riemann--von Mangoldt formula, Carlson's fixed-`sigma` zero-density estimate,
 local-separation Hilbert/mean-square estimates, Hardy--Littlewood linear lower
-bounds, divergence of a Pintz zero envelope, and a strict-beyond-`pi/2`
-PNT-error oscillation forced by a right-of-critical-line zero. It does not
-prove the Riemann Hypothesis, Selberg's `T log T` result, or provide
-numerically explicit values for the existential remainder constants.
+bounds, divergence of a Pintz zero envelope, and the implication from a
+right-of-critical-line zero to a strict-beyond-`pi/2` PNT-error oscillation.
+It does not prove the Riemann Hypothesis, Selberg's `T log T` result, or
+provide numerically explicit values for the existential remainder constants.
 
 ## Current Verified Baseline
 
@@ -39,8 +39,9 @@ classified, checks the 12-item mathematical target inventory, and validates the
 four chain-gap buckets. The ordinary PNT, de la Vallee Poussin-form `psi` and
 `pi-Li` errors, Hardy's theorem, Riemann--von Mangoldt, Carlson zero density,
 local-separation estimates, Hardy--Littlewood linear lower bounds, the Pintz
-envelope, and strict-beyond-`pi/2` right-of-critical-line-zero oscillation are
-theorem-level. RH, Vinogradov--Korobov, Selberg positive proportion, and any
+envelope, and the implication from a right-of-critical-line zero to
+strict-beyond-`pi/2` oscillation are theorem-level. RH, Vinogradov--Korobov,
+Selberg positive proportion, and any
 unconditional power-saving error below exponent `2/3` remain outside the
 proved boundary.
 
@@ -95,8 +96,8 @@ For public positioning, treat the current repository as:
 classical zero-free region, Strong PNT, Hardy theorem, all-height
 Riemann--von Mangoldt, fixed-sigma Carlson zero density, and local-separation
 Hilbert/mean-square infrastructure, Hardy--Littlewood linear lower bounds,
-Pintz envelope divergence, and strict-beyond-pi/2 PNT oscillation proved in
-Lean 4
+Pintz envelope divergence, and the implication from a right-of-critical-line
+zero to strict-beyond-pi/2 PNT oscillation proved in Lean 4
 ```
 
 not as:

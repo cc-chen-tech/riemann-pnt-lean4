@@ -86,7 +86,7 @@ technology rather than more local Jensen/Borel wrappers.
 | `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Pointwise reformulation of `RH_PrimeCountingLiErrorBound`; RH implies it |
 | `HardyTheorem.lean` | `integral_asymptotic_target` | Quantitative critical-line extensions | Signed-moment asymptotic input |
 | `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Quantitative critical-line extensions | Asymptotics for the first two weighted moments |
-| `HardyTheorem.lean` | `selberg_zero_proportion_target` | Quantitative critical-line extensions | Proportional form of Hardy-type lower bounds |
+| `HardyTheorem/CriticalLineMultiplicity.lean` | `selberg_odd_zero_proportion_target` | Quantitative critical-line extensions | Selberg-scale lower bound for odd-multiplicity critical-line zeros |
 | `HardyTheorem.lean` | `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target` | Quantitative critical-line extensions | Gamma asymptotic used in approximate functional equation setup |
 | `HardyTheorem.lean` | `HardyTheorem.Details.theta_asymptotic_target` | Quantitative critical-line extensions | Riemann–Siegel theta asymptotic setup |
 | `HardyTheorem.lean` | `HardyTheorem.Details.approximate_functional_equation_target` | Quantitative critical-line extensions | Residual error form of the AFE used by Hardy integrals |

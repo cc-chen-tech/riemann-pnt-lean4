@@ -19,7 +19,7 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 16
+`def ... : Prop`, the mathematical target inventory is stable at 12
 declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
@@ -3106,7 +3106,7 @@ themselves prove Pintz's maximal-order theorem.
 
 ### `PrimeNumberTheorem/VKEdgePiOverTwoAbelPhase.lean`
 
-The merged unconditional endpoint
+The merged implication theorem
 
 - `PrimeNumberTheorem.VKEdgePiOverTwo.exists_far_psiError_gt_pi_div_two_of_zeta_zero`
 
@@ -3236,7 +3236,10 @@ As of `2026-07-26`, there are **12** mathematical target declarations:
 
 - `integral_asymptotic_target`
 - `hardy_two_signed_moments_target`
-- `selberg_zero_proportion_target`
+
+### `HardyTheorem/CriticalLineMultiplicity.lean`
+
+- `selberg_odd_zero_proportion_target`
 
 `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and
 `hardy_zeros_abs_unbounded_target` remain reusable propositions but are

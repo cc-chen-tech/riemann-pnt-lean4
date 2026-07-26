@@ -319,8 +319,8 @@ Selberg、最终 VK、Pintz 最大阶以及局部化振荡仍需要新的上游�
 |---|---|---|
 | [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 在已合并的线性下界之上继续建设 Selberg mollifier、bad-set 和 packing 估计 | Selberg `T log T` 下界仍是 `def ... : Prop` |
 | [Draft PR #19](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/19) | Ford 不完整矩、double Holder、residue-mass audit 和近整数计数 | `FordShortSumPrefixBound`、公式 (5.4)、平滑数支持及最终 VK 参数优化仍缺失 |
-| `research/vk-edge-pi-over-two-localized` | 把 `pi/2` 以上振荡推进到充分大的幂窗口 | 尚未合并到 `main`；更短区间和正负双向振荡仍开放 |
-| `research/weil-extremal-kernels-next` | 有限维区间证书、尾部和极值核实验 | 实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
+| 本地分支 `research/vk-edge-pi-over-two-localized`（`d411ab8`） | 把 `pi/2` 以上振荡推进到充分大的幂窗口 | 尚未推送或合并到 `main`；更短区间和正负双向振荡仍开放 |
+| 本地分支 `research/weil-extremal-kernels-next`（`a5aa020`） | 有限维区间证书、尾部和极值核实验 | 尚未推送或合并到 `main`；实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
@@ -380,7 +380,7 @@ Hardy--Littlewood 形式化的 prior art。
 
 - Selberg 正比例：若完成 `N_0(T) >= c T log T`，会显著增强临界线论文；
 - Vinogradov--Korobov：已合并基础设施与最终 zeta 零自由区域应分阶段成文；
-- Pintz/零点迫使振荡：`pi/2` 以上远处振荡已证，最大阶、局部化和统一 envelope 桥仍开放；
+- Pintz/零点迫使振荡：临界线右侧零点迫使 `pi/2` 以上远处振荡的蕴含已证，最大阶、局部化和统一 envelope 桥仍开放；
 - Weil criterion：需要从有限证书过渡到完整函数空间和无限维正性。
 
 ### 创新边界
@@ -435,6 +435,7 @@ lake build \
   Test.HardyLittlewoodOddTheoremContract \
   Test.PintzEnvelopeContract \
   Test.VKEdgePiOverTwoAbelPhaseContract \
+  Test.VKEdgePiOverTwoAbelPhaseAxiomAudit \
   Test.VinogradovKorobovAxiomAudit
 ```
 
