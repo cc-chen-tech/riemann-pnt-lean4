@@ -78,6 +78,20 @@ structure ActualSelectedHeightFiniteStripProfileRefinement
         actualSelectedHeightStripAlphaCeiling
           beta (sigmaRefined i) (tauRefined i)
 
+/-- Every nonempty finite strip profile refines itself. -/
+theorem ActualSelectedHeightFiniteStripProfileRefinement.refl
+    (beta : ℝ) {n : ℕ}
+    (sigma tau : Fin (n + 1) → ℝ) :
+    ActualSelectedHeightFiniteStripProfileRefinement beta
+      sigma tau sigma tau where
+  threshold_le_coarse_bottleneck :=
+    carlsonStripEndpointTargetThreshold_le_bottleneck sigma tau
+  coarse_ceiling_le_refined :=
+    (le_actualSelectedHeightFiniteStripAlphaCeiling_iff
+      sigma tau
+      (actualSelectedHeightFiniteStripAlphaCeiling
+        beta sigma tau)).1 le_rfl
+
 /-- A cross-cardinality refinement decreases the endpoint bottleneck. -/
 theorem ActualSelectedHeightFiniteStripProfileRefinement.bottleneck_mono
     {beta : ℝ} {nRefined nCoarse : ℕ}
@@ -130,6 +144,27 @@ theorem
         beta sigmaRefined tauRefined :=
   min_le_min le_rfl certificate.alphaCeiling_mono
 
+/-- Cross-cardinality finite-strip refinement is transitive. -/
+theorem ActualSelectedHeightFiniteStripProfileRefinement.trans
+    {beta : ℝ} {nFine nMiddle nCoarse : ℕ}
+    {sigmaFine tauFine : Fin (nFine + 1) → ℝ}
+    {sigmaMiddle tauMiddle : Fin (nMiddle + 1) → ℝ}
+    {sigmaCoarse tauCoarse : Fin (nCoarse + 1) → ℝ}
+    (fineMiddle :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigmaFine tauFine sigmaMiddle tauMiddle)
+    (middleCoarse :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigmaMiddle tauMiddle sigmaCoarse tauCoarse) :
+    ActualSelectedHeightFiniteStripProfileRefinement beta
+      sigmaFine tauFine sigmaCoarse tauCoarse where
+  threshold_le_coarse_bottleneck := fun i =>
+    (fineMiddle.threshold_le_coarse_bottleneck i).trans
+      middleCoarse.bottleneck_mono
+  coarse_ceiling_le_refined := fun i =>
+    middleCoarse.alphaCeiling_mono.trans
+      (fineMiddle.coarse_ceiling_le_refined i)
+
 /-- Feasibility of the coarse profile transfers to every certified refined
 profile. -/
 theorem ActualSelectedHeightFiniteStripProfileRefinement.feasible
@@ -166,5 +201,73 @@ theorem ActualSelectedHeightFiniteStripProfileRefinement.robustMargin_mono
   rw [actualSelectedHeightFiniteStripBalancedExponent_robustMargin,
     actualSelectedHeightFiniteStripBalancedExponent_robustMargin]
   linarith [certificate.effectiveAlphaCeiling_mono]
+
+/-- Mutual refinement forces equality of endpoint bottlenecks. -/
+theorem
+    ActualSelectedHeightFiniteStripProfileRefinement.bottleneck_eq_of_mutual
+    {beta : ℝ} {n₁ n₂ : ℕ}
+    {sigma₁ tau₁ : Fin (n₁ + 1) → ℝ}
+    {sigma₂ tau₂ : Fin (n₂ + 1) → ℝ}
+    (h₁₂ :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigma₁ tau₁ sigma₂ tau₂)
+    (h₂₁ :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigma₂ tau₂ sigma₁ tau₁) :
+    actualSelectedHeightFiniteStripBottleneck sigma₁ tau₁ =
+      actualSelectedHeightFiniteStripBottleneck sigma₂ tau₂ :=
+  le_antisymm h₁₂.bottleneck_mono h₂₁.bottleneck_mono
+
+/-- Mutual refinement forces equality of common alpha ceilings. -/
+theorem
+    ActualSelectedHeightFiniteStripProfileRefinement.alphaCeiling_eq_of_mutual
+    {beta : ℝ} {n₁ n₂ : ℕ}
+    {sigma₁ tau₁ : Fin (n₁ + 1) → ℝ}
+    {sigma₂ tau₂ : Fin (n₂ + 1) → ℝ}
+    (h₁₂ :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigma₁ tau₁ sigma₂ tau₂)
+    (h₂₁ :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigma₂ tau₂ sigma₁ tau₁) :
+    actualSelectedHeightFiniteStripAlphaCeiling beta sigma₁ tau₁ =
+      actualSelectedHeightFiniteStripAlphaCeiling beta sigma₂ tau₂ :=
+  le_antisymm h₂₁.alphaCeiling_mono h₁₂.alphaCeiling_mono
+
+/-- Mutual refinement forces equality of capped effective alpha ceilings. -/
+theorem
+    ActualSelectedHeightFiniteStripProfileRefinement.effectiveAlphaCeiling_eq_of_mutual
+    {beta : ℝ} {n₁ n₂ : ℕ}
+    {sigma₁ tau₁ : Fin (n₁ + 1) → ℝ}
+    {sigma₂ tau₂ : Fin (n₂ + 1) → ℝ}
+    (h₁₂ :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigma₁ tau₁ sigma₂ tau₂)
+    (h₂₁ :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigma₂ tau₂ sigma₁ tau₁) :
+    actualSelectedHeightFiniteStripEffectiveAlphaCeiling beta sigma₁ tau₁ =
+      actualSelectedHeightFiniteStripEffectiveAlphaCeiling beta sigma₂ tau₂ :=
+  le_antisymm h₂₁.effectiveAlphaCeiling_mono
+    h₁₂.effectiveAlphaCeiling_mono
+
+/-- Mutual refinement forces equality of optimal balanced robustness
+margins. -/
+theorem
+    ActualSelectedHeightFiniteStripProfileRefinement.robustMargin_eq_of_mutual
+    {beta : ℝ} {n₁ n₂ : ℕ}
+    {sigma₁ tau₁ : Fin (n₁ + 1) → ℝ}
+    {sigma₂ tau₂ : Fin (n₂ + 1) → ℝ}
+    (h₁₂ :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigma₁ tau₁ sigma₂ tau₂)
+    (h₂₁ :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigma₂ tau₂ sigma₁ tau₁) :
+    actualSelectedHeightFiniteStripRobustMargin beta sigma₁ tau₁
+        (actualSelectedHeightFiniteStripBalancedExponent beta sigma₁ tau₁) =
+      actualSelectedHeightFiniteStripRobustMargin beta sigma₂ tau₂
+        (actualSelectedHeightFiniteStripBalancedExponent beta sigma₂ tau₂) :=
+  le_antisymm h₂₁.robustMargin_mono h₁₂.robustMargin_mono
 
 end PrimeNumberTheorem
