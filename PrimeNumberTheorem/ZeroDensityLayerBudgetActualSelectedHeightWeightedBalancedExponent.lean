@@ -94,6 +94,42 @@ theorem actualSelectedHeightStripSlope_pos
   simpa [actualSelectedHeightStripCarlsonSlope, mul_assoc] using
     carlsonClassicalDensitySlope_pos hsigma hsigmaOne
 
+theorem actualSelectedHeightStripBalancedPhysicalMargin_pos
+    {beta sigma tau : ℝ}
+    (hsigma : 1 / 2 < sigma)
+    (hsigmaOne : sigma < 1)
+    (hthreshold : carlsonStripEndpointTargetThreshold sigma tau < beta) :
+    0 <
+      actualSelectedHeightStripBalancedPhysicalMargin beta sigma tau := by
+  let q := actualSelectedHeightStripCarlsonSlope sigma
+  have hq : 0 < q := actualSelectedHeightStripSlope_pos hsigma hsigmaOne
+  have hden : 0 < 1 + q := by linarith
+  have hthreshold' : (tau + q) / (1 + q) < beta := by
+    simpa [carlsonStripEndpointTargetThreshold,
+      actualSelectedHeightStripCarlsonSlope] using hthreshold
+  have hcross := (div_lt_iff₀ hden).1 hthreshold'
+  unfold actualSelectedHeightStripBalancedPhysicalMargin
+  dsimp only
+  apply div_pos
+  · dsimp [q] at hcross ⊢
+    nlinarith
+  · exact hden
+
+theorem actualSelectedHeightStripBalancedPhysicalMargin_lt_beta
+    {beta sigma tau : ℝ}
+    (hsigma : 1 / 2 < sigma)
+    (hsigmaOne : sigma < 1)
+    (htau : 0 ≤ tau) :
+    actualSelectedHeightStripBalancedPhysicalMargin beta sigma tau < beta := by
+  let q := actualSelectedHeightStripCarlsonSlope sigma
+  have hq : 0 < q := actualSelectedHeightStripSlope_pos hsigma hsigmaOne
+  have hden : 0 < 1 + q := by linarith
+  unfold actualSelectedHeightStripBalancedPhysicalMargin
+  dsimp only
+  apply (div_lt_iff₀ hden).2
+  dsimp [q]
+  nlinarith
+
 /-- No contour/strip common margin can exceed their slope-weighted balance. -/
 theorem physicalMargin_le_stripBalancedPhysicalMargin
     {beta sigma tau alpha delta : ℝ}
@@ -147,6 +183,25 @@ theorem le_actualSelectedHeightFiniteStripOptimalPhysicalMargin
   intro value hvalue
   obtain ⟨i, _hi, rfl⟩ := Finset.mem_image.mp hvalue
   exact hdelta i
+
+theorem actualSelectedHeightFiniteStripOptimalPhysicalMargin_pos
+    {beta : ℝ}
+    {n : ℕ}
+    (sigma tau : Fin (n + 1) → ℝ)
+    (hsigma : ∀ i, 1 / 2 < sigma i)
+    (hsigmaOne : ∀ i, sigma i < 1)
+    (hthreshold :
+      ∀ i,
+        carlsonStripEndpointTargetThreshold (sigma i) (tau i) < beta) :
+    0 <
+      actualSelectedHeightFiniteStripOptimalPhysicalMargin beta sigma tau := by
+  classical
+  unfold actualSelectedHeightFiniteStripOptimalPhysicalMargin
+  rw [Finset.lt_min'_iff]
+  intro value hvalue
+  obtain ⟨i, _hi, rfl⟩ := Finset.mem_image.mp hvalue
+  exact actualSelectedHeightStripBalancedPhysicalMargin_pos
+    (hsigma i) (hsigmaOne i) (hthreshold i)
 
 /-- The explicit weighted exponent attains the finite optimal physical
 margin. -/
@@ -227,6 +282,79 @@ theorem
   have hi := hcertificate.strip i
   unfold actualSelectedHeightStripPhysicalMargin at hi
   linarith
+
+/-- Under the actual strip threshold hypotheses, the slope-weighted optimizer
+is a valid polynomial contour exponent and every Carlson strip has strictly
+negative target-normalized exponent. -/
+theorem actualSelectedHeightFiniteStripWeightedBalancedExponent_spec
+    {beta : ℝ}
+    {n : ℕ}
+    (sigma tau : Fin (n + 1) → ℝ)
+    (hbetaOne : beta < 1)
+    (hsigma : ∀ i, 1 / 2 < sigma i)
+    (hsigmaOne : ∀ i, sigma i < 1)
+    (htau : ∀ i, 0 ≤ tau i)
+    (hthreshold :
+      ∀ i,
+        carlsonStripEndpointTargetThreshold (sigma i) (tau i) < beta) :
+    let delta :=
+      actualSelectedHeightFiniteStripOptimalPhysicalMargin beta sigma tau
+    let alpha :=
+      actualSelectedHeightFiniteStripWeightedBalancedExponent beta sigma tau
+    0 < delta ∧
+      0 < alpha ∧
+      alpha < 1 ∧
+      1 - beta < alpha ∧
+      ∀ i,
+        targetAmplitudeStripEndpointExponent beta (tau i)
+            (carlsonClassicalPolynomialDensityExponent alpha (sigma i)) < 0 := by
+  let delta :=
+    actualSelectedHeightFiniteStripOptimalPhysicalMargin beta sigma tau
+  let alpha :=
+    actualSelectedHeightFiniteStripWeightedBalancedExponent beta sigma tau
+  have hdelta : 0 < delta :=
+    actualSelectedHeightFiniteStripOptimalPhysicalMargin_pos
+      sigma tau hsigma hsigmaOne hthreshold
+  let i0 : Fin (n + 1) := ⟨0, Nat.succ_pos n⟩
+  have hdeltale :
+      delta ≤
+        actualSelectedHeightStripBalancedPhysicalMargin
+          beta (sigma i0) (tau i0) :=
+    actualSelectedHeightFiniteStripOptimalPhysicalMargin_le_strip
+      sigma tau i0
+  have hstriplt :
+      actualSelectedHeightStripBalancedPhysicalMargin
+          beta (sigma i0) (tau i0) < beta :=
+    actualSelectedHeightStripBalancedPhysicalMargin_lt_beta
+      (hsigma i0) (hsigmaOne i0) (htau i0)
+  have hdeltalt : delta < beta := hdeltale.trans_lt hstriplt
+  have halpha :
+      alpha = 1 - beta + delta := by
+    rfl
+  refine ⟨hdelta, ?_, ?_, ?_, ?_⟩
+  · change 0 < alpha
+    rw [halpha]
+    linarith
+  · change alpha < 1
+    rw [halpha]
+    linarith
+  · change 1 - beta < alpha
+    rw [halpha]
+    linarith
+  · intro i
+    have hi :=
+      actualSelectedHeightFiniteStripWeightedBalancedExponent_endpointExponent_le
+        (beta := beta) sigma tau hsigma hsigmaOne i
+    change
+      targetAmplitudeStripEndpointExponent beta (tau i)
+          (carlsonClassicalPolynomialDensityExponent alpha (sigma i)) < 0
+    change
+      targetAmplitudeStripEndpointExponent beta (tau i)
+          (carlsonClassicalPolynomialDensityExponent
+            (actualSelectedHeightFiniteStripWeightedBalancedExponent
+              beta sigma tau)
+            (sigma i)) < 0
+    exact hi.trans_lt (neg_neg_of_pos hdelta)
 
 end
 
