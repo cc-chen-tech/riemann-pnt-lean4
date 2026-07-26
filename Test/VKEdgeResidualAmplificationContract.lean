@@ -13,6 +13,9 @@ open PrimeNumberTheorem VKEdgePiOverTwo
 #check integrableOn_normalizedTargetZeroPair_sq_Icc
 #check integrableOn_normalizedPsiResidual_sq_Icc
 #check integral_Icc_normalizedTargetZeroPair_sq_le
+#check one_div_pi_le_sharpenedMissingHarmonicDenominator
+#check one_le_centeredSharpenedProjectedPsiKernelEnvelopeConstant
+#check centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
 
 example
     {m gamma phase a b : ℝ} (hgamma : gamma ≠ 0) :
@@ -37,3 +40,13 @@ example
       2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 * (b - a) +
         2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 / |rho.im| :=
   integral_Icc_normalizedTargetZeroPair_sq_le hab hgamma
+
+example
+    {epsilon : ℝ} {rho : ℂ} {k : ℕ}
+    (hepsilon : 0 < epsilon)
+    (hrho1 : rho ≠ 1)
+    (hzero : riemannZeta rho = 0) :
+    centeredSharpenedSweptOrdinaryL2Constant epsilon rho k <
+      epsilon * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 :=
+  centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
+    hepsilon hrho1 hzero

@@ -203,7 +203,7 @@ git commit -m "feat: define normalized zeta residual"
 - Modify: `PrimeNumberTheorem/VKEdgeResidualAmplification.lean`
 - Modify: `Test/VKEdgeResidualAmplificationContract.lean`
 
-- [ ] Add contract checks for helper inequalities:
+- [x] Add contract checks for helper inequalities:
 
 ```lean
 one_div_pi_le_sharpenedMissingHarmonicDenominator
@@ -222,9 +222,9 @@ theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
       epsilon * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2
 ```
 
-- [ ] Confirm the contract fails.
+- [x] Confirm the contract fails.
 
-- [ ] Prove:
+- [x] Prove:
 
 ```lean
 1 / Real.pi ≤ sharpenedMissingHarmonicDenominator k
@@ -232,7 +232,7 @@ theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
 
 from \((2k+1)^2 \ge 1\), positivity of `Real.pi`, and the denominator definition.
 
-- [ ] Prove:
+- [x] Prove:
 
 ```lean
 1 ≤ centeredSharpenedProjectedPsiKernelEnvelopeConstant q rho k
@@ -240,7 +240,7 @@ from \((2k+1)^2 \ge 1\), positivity of `Real.pi`, and the denominator definition
 
 from nonnegativity of both envelope terms.
 
-- [ ] Establish exact algebra for `epsilon / 2`:
+- [x] Establish exact algebra for `epsilon / 2`:
 
 ```text
 q = 64 * (epsilon + 4)^2 / epsilon^2
@@ -251,7 +251,7 @@ R-1 = epsilon/(epsilon+2)
 
 using `field_simp`, `ring`, and positivity supplied by `hepsilon`.
 
-- [ ] Use:
+- [x] Use:
 
 ```lean
 ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero hrho1 hzero
@@ -267,7 +267,7 @@ c2
   < epsilon * multiplicity^2.
 ```
 
-- [ ] Run the focused contract and commit:
+- [x] Run the focused contract and commit:
 
 ```bash
 lake build Test.VKEdgeResidualAmplificationContract
