@@ -6,3 +6,9 @@ open PrimeNumberTheorem
 #check actualZetaStrip_weightedBalancedHeight_carlsonTargetLayerBudget
 #check
   actualZetaFiniteStripsOutsideCluster_weightedBalancedHeight_layerNormSum_negligible
+
+
+#check
+  actualZetaFiniteStripsOutsideCluster_weightedBalancedHeight_positiveTail_negligible
+#check
+  actualZetaFiniteStripsOutsideCluster_weightedBalancedHeight_fullTail_negligible

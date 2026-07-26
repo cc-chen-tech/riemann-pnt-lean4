@@ -5,3 +5,9 @@ open PrimeNumberTheorem
 #print axioms actualZetaStrip_weightedBalancedHeight_carlsonTargetLayerBudget
 #print axioms
   actualZetaFiniteStripsOutsideCluster_weightedBalancedHeight_layerNormSum_negligible
+
+
+#print axioms
+  actualZetaFiniteStripsOutsideCluster_weightedBalancedHeight_positiveTail_negligible
+#print axioms
+  actualZetaFiniteStripsOutsideCluster_weightedBalancedHeight_fullTail_negligible
