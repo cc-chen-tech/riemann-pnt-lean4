@@ -250,6 +250,212 @@ theorem integral_Icc_normalizedTargetZeroPair_sq_le
       (m := (analyticOrderNatAt riemannZeta rho : ℝ))
       (gamma := rho.im) (phase := rho.arg) hab hgamma
 
+/-- A uniform lower bound for the sharpened missing-harmonic denominator. -/
+theorem one_div_pi_le_sharpenedMissingHarmonicDenominator (k : ℕ) :
+    1 / Real.pi ≤ sharpenedMissingHarmonicDenominator k := by
+  let n : ℝ := ((2 * k + 1 : ℕ) : ℝ)
+  have hn : 1 ≤ n := by
+    dsimp [n]
+    exact_mod_cast (show 1 ≤ 2 * k + 1 by omega)
+  have hnSq : 1 ≤ n ^ 2 := by nlinarith
+  have hpi : 0 < Real.pi := Real.pi_pos
+  have hpiLe : Real.pi ≤ Real.pi * n ^ 2 := by
+    nlinarith
+  have hinv :
+      1 / (Real.pi * n ^ 2) ≤ 1 / Real.pi :=
+    one_div_le_one_div_of_le hpi hpiLe
+  unfold sharpenedMissingHarmonicDenominator
+  dsimp [n] at hinv
+  calc
+    1 / Real.pi = 2 / Real.pi - 1 / Real.pi := by
+      field_simp [Real.pi_ne_zero]
+      norm_num
+    _ ≤
+        2 / Real.pi -
+          1 / (Real.pi * (((2 * k + 1 : ℕ) : ℝ) ^ 2)) :=
+      sub_le_sub_left hinv _
+
+/-- The named projected-kernel envelope includes an additive `1`. -/
+theorem one_le_centeredSharpenedProjectedPsiKernelEnvelopeConstant
+    (q : ℝ) (rho : ℂ) (k : ℕ) :
+    1 ≤ centeredSharpenedProjectedPsiKernelEnvelopeConstant q rho k := by
+  unfold centeredSharpenedProjectedPsiKernelEnvelopeConstant
+  have hsum :
+      0 ≤
+        projectedPsiKernelAtCenterEnvelopeConstant
+            (centeredSharpenedTargetFilter q rho) rho +
+          relativeProjectedPsiKernelAtCenterEnvelopeConstant
+            (centeredSharpenedMissingFilter q rho k) rho
+            (missingHarmonicContourCenter rho k)
+            (missingHarmonicContourCoefficient rho k) :=
+    add_nonneg
+      (projectedPsiKernelAtCenterEnvelopeConstant_nonneg _ _)
+      (relativeProjectedPsiKernelAtCenterEnvelopeConstant_nonneg _ _ _ _)
+  nlinarith [Real.exp_pos 1]
+
+/--
+The current swept ordinary `L²` coefficient is strictly below one half of
+the leading energy coefficient of the target conjugate pair.
+-/
+theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
+    {epsilon : ℝ} {rho : ℂ} {k : ℕ}
+    (hepsilon : 0 < epsilon)
+    (hrho1 : rho ≠ 1)
+    (hzero : riemannZeta rho = 0) :
+    centeredSharpenedSweptOrdinaryL2Constant epsilon rho k <
+      epsilon * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 := by
+  let q : ℝ := epsilonCenterCoefficient (epsilon / 2)
+  let d : ℝ := epsilonRadiusCoefficient (epsilon / 2)
+  let R : ℝ := epsilonSweepRatio epsilon
+  let multiplicity : ℝ := analyticOrderNatAt riemannZeta rho
+  let denominator : ℝ := sharpenedMissingHarmonicDenominator k
+  let C2 : ℝ := multiplicity ^ 2 / denominator
+  let K : ℝ :=
+    centeredSharpenedProjectedPsiKernelEnvelopeConstant q rho k
+  let mass : ℝ := Real.exp 2 * Real.sqrt (2 * R) / q
+  let numerator : ℝ := C2 * (R - 1) / (q - d)
+  have hepsilon2 : 0 < epsilon / 2 := by positivity
+  have hqPos : 0 < q := by
+    dsimp [q]
+    exact (epsilonRadiusCoefficient_pos hepsilon2).trans
+      (epsilonRadiusCoefficient_lt_center hepsilon2)
+  have hdq : d < q := by
+    dsimp [d, q]
+    exact epsilonRadiusCoefficient_lt_center hepsilon2
+  have hgapPos : 0 < q - d := sub_pos.mpr hdq
+  have hRone : 1 < R := by
+    dsimp [R]
+    exact one_lt_epsilonSweepRatio hepsilon
+  have hRPos : 0 < R := zero_lt_one.trans hRone
+  have hmultiplicityPos : 0 < multiplicity := by
+    dsimp [multiplicity]
+    exact_mod_cast
+      ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero
+        hrho1 hzero
+  have hdenominatorPos : 0 < denominator := by
+    dsimp [denominator]
+    exact sharpenedMissingHarmonicDenominator_pos k
+  have hdenominatorLower : 1 / Real.pi ≤ denominator := by
+    dsimp [denominator]
+    exact one_div_pi_le_sharpenedMissingHarmonicDenominator k
+  have hpiDenominator : 1 ≤ Real.pi * denominator := by
+    have hmul :=
+      mul_le_mul_of_nonneg_left hdenominatorLower Real.pi_pos.le
+    field_simp [Real.pi_ne_zero] at hmul
+    exact hmul
+  have hC2Pos : 0 < C2 := by
+    dsimp [C2]
+    exact div_pos (sq_pos_of_pos hmultiplicityPos) hdenominatorPos
+  have hC2Le : C2 ≤ Real.pi * multiplicity ^ 2 := by
+    dsimp [C2]
+    apply (div_le_iff₀ hdenominatorPos).2
+    calc
+      multiplicity ^ 2 ≤
+          multiplicity ^ 2 * (Real.pi * denominator) :=
+        by
+          simpa only [mul_one] using
+            mul_le_mul_of_nonneg_left hpiDenominator
+              (sq_nonneg multiplicity)
+      _ = Real.pi * multiplicity ^ 2 * denominator := by ring
+  have hKOne : 1 ≤ K := by
+    dsimp [K]
+    exact
+      one_le_centeredSharpenedProjectedPsiKernelEnvelopeConstant q rho k
+  have hKPos : 0 < K := zero_lt_one.trans_le hKOne
+  have hsqrtOne : 1 ≤ Real.sqrt (2 * R) := by
+    rw [Real.one_le_sqrt]
+    nlinarith
+  have hproductOne :
+      1 < Real.exp 2 * Real.sqrt (2 * R) := by
+    calc
+      1 < Real.exp 2 := Real.one_lt_exp_iff.mpr (by norm_num)
+      _ ≤ Real.exp 2 * Real.sqrt (2 * R) :=
+        le_mul_of_one_le_right (Real.exp_pos 2).le hsqrtOne
+  have hmassPos : 0 < mass := by
+    dsimp [mass]
+    positivity
+  have honeDivQPos : 0 < 1 / q := one_div_pos.mpr hqPos
+  have hmassLower : 1 / q < mass := by
+    dsimp [mass]
+    exact (div_lt_div_iff_of_pos_right hqPos).2 hproductOne
+  have hKmassLower : 1 / q < K * mass := by
+    exact hmassLower.trans_le
+      (le_mul_of_one_le_left hmassPos.le hKOne)
+  have hKmassPos : 0 < K * mass := mul_pos hKPos hmassPos
+  have hnumeratorPos : 0 < numerator := by
+    dsimp [numerator]
+    exact div_pos (mul_pos hC2Pos (sub_pos.mpr hRone)) hgapPos
+  have hnumeratorLe :
+      numerator ≤
+        (Real.pi * multiplicity ^ 2) * (R - 1) / (q - d) := by
+    dsimp [numerator]
+    gcongr
+    exact sub_nonneg.mpr hRone.le
+  have hqFormula :
+      q = 64 * (epsilon + 4) ^ 2 / epsilon ^ 2 := by
+    dsimp [q, epsilonCenterCoefficient]
+    field_simp [hepsilon.ne']
+    ring
+  have hdFormula :
+      d = 64 * (epsilon + 4) / epsilon := by
+    dsimp [d, epsilonRadiusCoefficient]
+    field_simp [hepsilon.ne']
+    ring
+  have hgapFormula :
+      q - d = 256 * (epsilon + 4) / epsilon ^ 2 := by
+    rw [hqFormula, hdFormula]
+    field_simp [hepsilon.ne']
+    ring
+  have hRFormula :
+      R - 1 = epsilon / (epsilon + 2) := by
+    dsimp [R, epsilonSweepRatio]
+    field_simp [show epsilon + 2 ≠ 0 by linarith]
+    ring
+  have hraw :
+      numerator / (K * mass) <
+        ((Real.pi * multiplicity ^ 2) * (R - 1) / (q - d)) /
+          (1 / q) := by
+    calc
+      numerator / (K * mass) < numerator / (1 / q) :=
+        div_lt_div_of_pos_left hnumeratorPos honeDivQPos hKmassLower
+      _ ≤
+          ((Real.pi * multiplicity ^ 2) * (R - 1) / (q - d)) /
+            (1 / q) :=
+        div_le_div_of_nonneg_right hnumeratorLe honeDivQPos.le
+  have hshape :
+      Real.pi * (epsilon + 4) < 8 * (epsilon + 2) := by
+    have hpiMul :
+        Real.pi * (epsilon + 4) < 4 * (epsilon + 4) :=
+      mul_lt_mul_of_pos_right Real.pi_lt_four (by linarith)
+    linarith
+  have hfinal :
+      Real.pi * multiplicity ^ 2 * epsilon * (epsilon + 4) /
+          (8 * (epsilon + 2)) <
+        epsilon * multiplicity ^ 2 := by
+    apply (div_lt_iff₀ (by positivity : 0 < 8 * (epsilon + 2))).2
+    have hscale :
+        0 < epsilon * multiplicity ^ 2 :=
+      mul_pos hepsilon (sq_pos_of_pos hmultiplicityPos)
+    have := mul_lt_mul_of_pos_left hshape hscale
+    nlinarith
+  unfold centeredSharpenedSweptOrdinaryL2Constant
+  dsimp only
+  change numerator / (K * mass) / 2 <
+    epsilon * multiplicity ^ 2
+  calc
+    numerator / (K * mass) / 2 <
+        (((Real.pi * multiplicity ^ 2) * (R - 1) / (q - d)) /
+          (1 / q)) / 2 :=
+      div_lt_div_of_pos_right hraw (by norm_num)
+    _ =
+        Real.pi * multiplicity ^ 2 * epsilon * (epsilon + 4) /
+          (8 * (epsilon + 2)) := by
+      rw [hgapFormula, hRFormula, hqFormula]
+      field_simp [hepsilon.ne', show epsilon + 2 ≠ 0 by linarith,
+        show epsilon + 4 ≠ 0 by linarith, Real.pi_ne_zero]
+      ring
+    _ < epsilon * multiplicity ^ 2 := hfinal
+
 end
 
 end VKEdgePiOverTwo
