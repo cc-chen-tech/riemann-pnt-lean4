@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoOrdinaryL2
+
+open Complex Filter MeasureTheory Polynomial Set Topology
+
+namespace PrimeNumberTheorem
+namespace VKEdgePiOverTwo
+
+#print axioms polynomialGaussianEnvelopeConstant
+#print axioms exp_scaled_abs_mul_normalizedGaussian_le_exp_one_div_sqrt
+#print axioms projectedPsiKernelAtCenter_abs_le_scaled_exp_abs_mul
+#print axioms centeredSharpenedProjectedPsiKernel_abs_le_inv_sqrt
+#print axioms ordinarySecondMoment_lower_of_weightedSecondMoment
+#print axioms eventually_centeredSharpenedNormalizedPsiError_ordinarySecondMoment_gt
+#print axioms exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt
+
+end VKEdgePiOverTwo
+end PrimeNumberTheorem
