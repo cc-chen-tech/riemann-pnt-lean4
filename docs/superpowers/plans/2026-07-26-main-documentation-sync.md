@@ -22,43 +22,65 @@
 
 **Files:**
 - Modify: `README.md`
+- Modify: `lakefile.lean`
 - Modify: `docs/formal-theorem-inventory.md`
 - Modify: `docs/missing-chains-index.md`
+- Modify: `docs/current-target-status.json`
 - Modify: `PUBLISHING.md`
+- Modify: `scripts/target_inventory.py`
+- Modify: `scripts/update-target-status.py`
 
 **Interfaces:**
 - Consumes: theorem declarations and tests already present on `origin/main`.
 - Produces: a consistent public description of merged Hardy--Littlewood, Pintz envelope, strict `pi/2` oscillation, and VK infrastructure.
 
-- [ ] **Step 1: Promote merged theorem-level results in README**
+- [x] **Step 1: Promote merged theorem-level results in README**
 
 Add Hardy--Littlewood, Pintz envelope, and strict `pi/2` PNT oscillation to the verified-main sections. Describe PR #16--#18 as merged VK infrastructure while retaining `vinogradov_korobov_zero_free_region` as an open target.
 
-- [ ] **Step 2: Remove stale PR and research-branch statuses**
+- [x] **Step 2: Remove stale PR and research-branch statuses**
 
 Remove statements that PR #8, #11, #12, #13, #15, #16, #17, or #18 are still draft, unmerged, or awaiting integration.
 
-- [ ] **Step 3: Correct the formal theorem inventory**
+- [x] **Step 3: Correct the formal theorem inventory**
 
 List the merged top-level Hardy--Littlewood, Pintz, and strict `pi/2` theorems. Move Hardy--Littlewood out of the open-target summary while retaining Selberg and Conrey.
 
-- [ ] **Step 4: Correct the chain-gap and publishing documents**
+- [x] **Step 4: Correct the chain-gap and publishing documents**
 
 Mark the Hardy--Littlewood linear lower bound closed, identify Selberg's logarithmic gain as the next critical-line blocker, and describe Ford's short-sum/tent-kernel bridge as the remaining VK endpoint.
 
-- [ ] **Step 5: Validate documentation consistency**
+- [x] **Step 5: Classify merged VK predicates and regenerate target status**
+
+Classify the normal schedule, solution-membership, moment, and congruence predicates introduced by PR #16--#18 as reusable predicates. Update the critical-line chain summary and regenerate `docs/current-target-status.json`.
 
 Run:
 
 ```bash
-rg -n "proved on research branch|still need.*Hardy|Hardy--Littlewood.*remain|PR #11|Draft PR #8|Draft PR #16" \
+python3 scripts/update-target-status.py
+python3 scripts/list-prop-targets.py
+python3 scripts/check-targets-consistent.py
+python3 scripts/check-chain-gaps.py
+```
+
+Expected: 12 mathematical targets, 5 route interfaces, 46 reusable predicates, and 0 unclassified Prop definitions.
+
+- [x] **Step 6: Validate documentation consistency**
+
+Run:
+
+```bash
+rg -n "proved on research branch|still need.*Hardy|Hardy--Littlewood and Selberg.*remain|Hardy--Littlewood.*awaiting integration|PR #11|Draft PR #8|Draft PR #16" \
   README.md docs/formal-theorem-inventory.md docs/missing-chains-index.md PUBLISHING.md
 git diff --check
 ```
 
 Expected: no stale main-status matches and no whitespace errors.
 
-- [ ] **Step 6: Build focused contracts and audits**
+- [x] **Step 7: Build focused contracts and audits**
+
+Register the merged strict-`pi/2` source module, theorem contract, and axiom
+audit in the default Lean library so the documented Lake target is real.
 
 Run:
 
@@ -74,10 +96,16 @@ lake -Kjobs=1 build \
 
 Expected: exit code 0. Report the focused nature of this build.
 
-- [ ] **Step 7: Commit and publish the documentation branch**
+- [ ] **Step 8: Commit and publish the documentation branch**
 
 ```bash
-git add README.md docs/formal-theorem-inventory.md docs/missing-chains-index.md PUBLISHING.md
+git add README.md PUBLISHING.md \
+  lakefile.lean \
+  docs/formal-theorem-inventory.md \
+  docs/missing-chains-index.md \
+  docs/current-target-status.json \
+  scripts/target_inventory.py \
+  scripts/update-target-status.py
 git commit -m "docs: synchronize verified main theorem status"
 git push -u origin docs/main-status-sync
 ```

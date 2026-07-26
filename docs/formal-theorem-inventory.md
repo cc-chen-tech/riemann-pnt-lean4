@@ -3074,8 +3074,53 @@ approximation, the two dyadic integral bounds, and the final constant-sign
 contradiction.  Consequently Hardy's theorem is proved unconditionally in the
 stronger form that critical-line zeros occur at arbitrarily large positive
 heights.  The signed-moment targets remain as an independent legacy route, and
-the Hardy-Littlewood/Selberg/Conrey targets remain stronger quantitative
-extensions.
+the Selberg/Conrey targets remain stronger quantitative extensions.
+
+### `HardyTheorem/HardyLittlewoodTheorem.lean` and `HardyTheorem/HardyLittlewoodOddTheorem.lean`
+
+The merged unconditional endpoints are:
+
+- `HardyTheorem.hardy_littlewood_lower_bound_target_proved`
+  proves a linear lower bound for distinct critical-line zeta zeros.
+- `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
+  proves the corresponding linear lower bound for critical-line zeros of odd
+  analytic multiplicity, each ordinate counted once.
+
+The proof chain uses fixed short windows, quantitative control of bad starting
+points, local Hardy-`Z` sign changes, and interval packing.  These results do
+not prove Selberg's `T log T` lower bound, positive proportion, or RH.
+
+### `PrimeNumberTheorem/PintzEnvelope.lean`
+
+Core verified declarations include:
+
+- `PrimeNumberTheorem.Pintz.exists_eventually_two_mul_sqrt_le_zeroEnvelope`
+- `PrimeNumberTheorem.Pintz.tendsto_pintzZeroEnvelope_atTop`
+- `PrimeNumberTheorem.Pintz.pintzZeroEnvelope_le_zeroTerm`
+- `PrimeNumberTheorem.Pintz.monotoneOn_pintzZeroEnvelope`
+
+They give a finite-low-zero/high-zero decomposition, a classical
+`sqrt(log x)` lower minorant, monotonicity, and divergence of the zero
+envelope.  They are infrastructure for error oscillation and do not by
+themselves prove Pintz's maximal-order theorem.
+
+### `PrimeNumberTheorem/VKEdgePiOverTwoAbelPhase.lean`
+
+The merged unconditional endpoint
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_far_psiError_gt_pi_div_two_of_zeta_zero`
+
+states that a right-of-critical-line zeta zero `rho`, with positive ordinate
+and analytic multiplicity `m`, forces arbitrarily far PNT-error values larger than
+
+```text
+m * C * x^(Re rho) / |rho|
+```
+
+for a zero-dependent constant `C > pi/2`.  Carlson supplies a missing odd
+harmonic and the Abel-phase argument transfers that gap to `chebyshevPsi`.
+The theorem does not localize `x` to every fixed power interval and does not
+turn the oscillation into a contradiction or a proof of RH.
 
 ### `GammaResidue.lean`
 
@@ -3136,9 +3181,9 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-18`, there are **13** mathematical target declarations:
+As of `2026-07-26`, there are **12** mathematical target declarations:
 
-- `HardyTheorem` namespace: **4**
+- `HardyTheorem` namespace: **3**
 - `HardyTheorem.Details` namespace: **3**
 - `PrimeNumberTheorem` namespace: **4**
 - `KnownResults` namespace: **1**
@@ -3191,12 +3236,15 @@ As of `2026-07-18`, there are **13** mathematical target declarations:
 
 - `integral_asymptotic_target`
 - `hardy_two_signed_moments_target`
-- `hardy_littlewood_lower_bound_target`
 - `selberg_zero_proportion_target`
 
 `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and
 `hardy_zeros_abs_unbounded_target` remain reusable propositions but are
 discharged by named unconditional theorems. They are not unresolved targets.
+Likewise, `hardy_littlewood_lower_bound_target`,
+`hardy_littlewood_multiplicity_lower_bound_target`, and
+`hardy_littlewood_odd_lower_bound_target` remain reusable proposition-valued
+interfaces discharged by the merged Hardy--Littlewood theorem chain.
 
 ### `HardyTheorem.Details`
 
@@ -3468,8 +3516,10 @@ Current status in `HardyTheorem.lean` target list:
 
 - `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and
   `hardy_zeros_abs_unbounded_target` are all proved reusable predicates.
-- `hardy_littlewood_lower_bound_target` is available as a derived output if
-  `selberg_zero_proportion_target` is available.
+- `hardy_littlewood_lower_bound_target` is proved unconditionally by
+  `HardyTheorem.hardy_littlewood_lower_bound_target_proved`; the older
+  derivation from `selberg_zero_proportion_target` remains a reusable
+  implication, not the only route.
 - `zeroCountOnCriticalLine` counts distinct ordinates and does not encode
   analytic multiplicity; future historical proportion claims must define the
   intended multiplicity convention explicitly.
@@ -3694,7 +3744,10 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
 
 1. **Stronger zero-free region.**
    The classical `c / log |t|` region is proved.  The remaining target is the
-   Vinogradov-Korobov region and its exponential-sum input.
+   Vinogradov-Korobov region.  Exponential-sum/zeta blocks, prime-power
+   conditioning, mixed moments, scale selection, and coupled-tail recurrences
+   are merged; the Ford short-sum input, Fourier localization, smooth support,
+   and final parameter optimization remain open.
 2. **Quantitative explicit formula.**
    The multiplicity-aware symmetric principal-value formula and a uniform
    natural-point polynomial-height truncation error are proved.  Their RH
@@ -3706,7 +3759,8 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    summation from `pi-Li` error back to `theta`, `psi`, and RH.  This closes an
    equivalence theorem but does not prove RH or an equivalent error predicate.
 4. **Hardy quantitative extensions.**
-   Hardy's theorem is proved. Hardy-Littlewood, Selberg, and Conrey-style
-   counting results still need multiplicity-aware definitions and new
-   mean-value estimates; the signed-moment and AFE targets remain independent
-   alternative infrastructure.
+   Hardy's theorem and the Hardy--Littlewood linear lower bounds for distinct
+   and odd-multiplicity critical-line zeros are proved. Selberg's `T log T`
+   lower bound and Conrey-style percentage estimates still need stronger
+   mollified mean-value and bad-set estimates; the signed-moment and AFE
+   targets remain independent alternative infrastructure.

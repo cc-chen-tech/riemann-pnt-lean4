@@ -5,9 +5,10 @@
 本项目使用 Lean 4 和 Mathlib，对素数定理、Riemann zeta 函数零点及其定量分布中的
 一组经典解析数论定理进行机械验证。
 
-当前 `main` 分支已经包含经典零自由区域、Strong PNT、Hardy 定理、全高度
-Riemann--von Mangoldt 零点计数公式、固定 `sigma` 的 Carlson 零密度估计，以及
-Carneiro--Littmann 局部分离 Hilbert 不等式。项目没有证明 Riemann 假设。
+当前 `main` 分支已经包含经典零自由区域、Strong PNT、Hardy 与 Hardy--Littlewood
+临界线零点定理、全高度 Riemann--von Mangoldt 零点计数公式、固定 `sigma` 的
+Carlson 零密度估计、Pintz 零点包络，以及临界线右侧零点迫使的严格 `pi/2` 以上
+PNT 误差振荡。项目没有证明 Riemann 假设或 Vinogradov--Korobov 零自由区域。
 
 > **状态边界：** 本页把 `main` 已验证定理、研究分支结果和开放目标分开列出。
 > `def ... : Prop`、条件接口或研究路线不会被计作已经证明的数学定理。
@@ -115,14 +116,19 @@ theorem on infinitely many critical-line zeros, an all-height
 Riemann--von Mangoldt zero-counting formula, Carlson's fixed-`sigma`
 zero-density estimate, and local-separation Hilbert and exponential
 mean-square inequalities obtained from a concrete Carneiro--Littmann extremal
-profile.
+profile. It also proves Hardy--Littlewood linear lower bounds for distinct and
+odd-multiplicity critical-line zeros, divergence of a Pintz zero envelope, and
+a strict-beyond-`pi/2` PNT-error oscillation forced by any
+right-of-critical-line zero.
 
 The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
-audits. Research branches additionally contain a formal Hardy--Littlewood
-linear lower bound and substantial infrastructure toward Selberg,
-Vinogradov--Korobov, Pintz-style oscillation, and Weil-criterion routes; these
-are reported separately from the merged theorem surface.
+audits. The merged tree also contains substantial finite exponential-sum,
+prime-power conditioning, mixed-moment, and coupled-tail infrastructure toward
+Vinogradov--Korobov. Research branches continue with Selberg, localized
+oscillation, Ford's incomplete-moment bridge, and infinite-dimensional
+Weil-criterion routes; these are reported separately from the merged theorem
+surface.
 
 The project does **not** prove the Riemann Hypothesis, the
 Vinogradov--Korobov zero-free region, Selberg's positive-proportion theorem,
@@ -144,10 +150,14 @@ resulting reusable library.
 | Chebyshev `psi` 的经典 Strong PNT 误差 | `PrimeNumberTheorem.exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log` | [源码](PrimeNumberTheorem/ClassicalPNTError.lean) · [显式公式链](docs/explicit-formula-chain.md) |
 | `pi(x) - Li(x)` 的经典误差 | `PrimeNumberTheorem.exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log` | [源码](PrimeNumberTheorem/ClassicalPrimeCountingError.lean) · [数学贡献](docs/mathematical-contributions.md) |
 | Hardy 临界线无穷零点定理 | `HardyTheorem.hardy_theorem_target_proved` | [源码](HardyTheorem/HardyIntegralContradiction.lean) · [证明链](docs/hardy-theorem-chain.md) |
+| Hardy--Littlewood 临界线零点线性下界 | `HardyTheorem.hardy_littlewood_lower_bound_target_proved` | [源码](HardyTheorem/HardyLittlewoodTheorem.lean) · [目标与证明链](docs/target-statements-and-chains.md) |
+| 奇重数临界线零点线性下界 | `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved` | [源码](HardyTheorem/HardyLittlewoodOddTheorem.lean) · [目标与证明链](docs/target-statements-and-chains.md) |
 | 全高度 Riemann--von Mangoldt 公式 | `PrimeNumberTheorem.RiemannVonMangoldt.exists_abs_riemannZeroCount_sub_mainTerm_le_log` | [源码](PrimeNumberTheorem/RiemannVonMangoldt/AllHeightAsymptotic.lean) · [证明链](docs/riemann-von-mangoldt-chain.md) |
 | 固定 `sigma` 的 Carlson 零密度估计 | `PrimeNumberTheorem.CarlsonZeroDensity.carlson_zeroDensity_isBigO` | [源码](PrimeNumberTheorem/CarlsonAsymptotic.lean) · [证明链](docs/carlson-zero-density-chain.md) |
 | 局部分离加权 Hilbert 界 | `PrimeNumberTheorem.DirichletPolynomial.hilbertForm_norm_le_two_pi_localSeparation_carneiroLittmann` | [源码](PrimeNumberTheorem/CarneiroLittmannProfile.lean) · [证明链](docs/local-separation-hilbert-chain.md) |
 | 局部分离指数和均方估计 | `PrimeNumberTheorem.DirichletPolynomial.finiteExponentialSum_meanSquare_le_localSeparation` | [源码](PrimeNumberTheorem/CarneiroLittmannProfile.lean) · [证明链](docs/local-separation-hilbert-chain.md) |
+| Pintz 零点包络趋于无穷 | `PrimeNumberTheorem.Pintz.tendsto_pintzZeroEnvelope_atTop` | [源码](PrimeNumberTheorem/PintzEnvelope.lean) · [定理清单](docs/formal-theorem-inventory.md) |
+| 临界线右侧零点迫使严格超过 `pi/2` 的 PNT 误差振荡 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_far_psiError_gt_pi_div_two_of_zeta_zero` | [源码](PrimeNumberTheorem/VKEdgePiOverTwoAbelPhase.lean) · [prior-art 审计](docs/research/vk-edge-pi-over-two-prior-art.md) |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
@@ -178,14 +188,16 @@ pi(x) - Li(x) = O(x * exp(-c' * sqrt(log x))).
 
 这里的常数由存在量词给出；项目没有宣称得到 `1 / (4.896 log t)` 一类数值显式区域。
 
-### 2. Hardy 定理
+### 2. Hardy 与 Hardy--Littlewood 定理
 
 Hardy 定理说明 zeta 函数在临界线 `Re(s) = 1/2` 上有无穷多个零点。
 
 形式化证明把临界线上的 zeta 转化为实值 Hardy `Z` 函数，对比带符号积分与绝对值积分，
 再用第一 zeta 近似、Gamma 相位和非平稳振荡积分得到矛盾。
 
-该结论比 RH 弱得多：它只保证临界线上有无穷多个零点，不保证所有零点都在那里。
+Hardy--Littlewood 进一步证明临界线上不同零点的数量至少线性增长；仓库还证明了
+奇解析重数零点的相应线性下界。这仍然比 RH 弱得多：全体零点约有 `T log T` 个，
+而线性下界只给出 `T` 级数量，也不排除临界线外的零点。
 
 ### 3. Riemann--von Mangoldt 公式
 
@@ -234,6 +246,34 @@ PrimeNumberTheorem.ExplicitFormulaResidues
 
 等价定理的逻辑形式是 `RH <-> error bound`。它没有证明等价式的任一开放命题为真。
 
+### 7. Pintz 包络与临界线右侧零点迫使振荡
+
+Pintz 零点包络把每个非平凡零点的实部和高度压缩成一个随 `x` 变化的代价函数。
+仓库证明该包络单调并趋于无穷。这是组织零点对素数误差影响的基础，但本身不是
+Pintz 的最终最大阶定理。
+
+仓库还证明一个独立的振荡结论：若存在实部大于 `1/2` 的非平凡零点 `rho`，则
+Chebyshev `psi` 误差在任意远处都会超过
+
+```text
+multiplicity(rho) * C_rho * x^(Re rho) / |rho|,
+```
+
+其中 `C_rho > pi/2`。该定理使用 Carlson 缺失奇谐波和 Abel 相位投影；它不把振荡
+变成矛盾，也不证明 RH。当前 `main` 版本只保证任意远处存在这样的 `x`，不保证
+它落在每个固定幂区间中。
+
+### 8. Vinogradov--Korobov 基础设施
+
+PR #16--#18 已把指数和与 zeta 分块、prime-power 条件化、加权和混合矩、尺度选择及
+coupled-tail recurrence 合并到 `main`。这些是经过 contract 和 axiom audit 的
+theorem-level 基础设施，但最终
+`vinogradov_korobov_zero_free_region` 仍只是开放的 `def ... : Prop`。
+
+下一层关键输入是 Ford 短和估计：不完整矩、tent-kernel Fourier 局部化、平滑数支持
+估计和参数优化。不能从当前已合并的递推框架自动推出 VK 零自由区域或 `3/5` 型 PNT
+误差。
+
 ---
 
 ## 证明架构
@@ -246,23 +286,28 @@ flowchart TD
     D --> E["Strong PNT remainder<br/>proved on main"]
 
     F["Hardy Z function and first approximation"] --> G["Infinitely many critical-line zeros<br/>proved on main"]
-    G --> H["Hardy-Littlewood linear lower bound<br/>proved on research branch"]
+    G --> H["Hardy-Littlewood linear lower bound<br/>proved on main"]
     H --> I["Selberg positive proportion<br/>open target"]
 
     J["Multiplicity-aware zero count"] --> K["Riemann-von Mangoldt<br/>proved on main"]
     J --> L["Mollifier, detector, mean square"]
     L --> M["Carlson zero-density estimate<br/>proved on main"]
 
-    N["Exponential-sum and congruencing infrastructure"] --> O["Vinogradov-Korobov region<br/>open target"]
+    N["Exponential-sum, conditioning, and recurrence infrastructure<br/>proved on main"] --> O["Ford short-sum bridge<br/>open"]
+    O --> P["Vinogradov-Korobov region<br/>open target"]
+
+    Q["Right-of-critical-line zeta zero"] --> R["Carlson missing odd harmonic"]
+    R --> S["PNT oscillation with constant > pi/2<br/>proved on main"]
 ```
 
-三条已经闭合的主链分别回答：
+这些主链分别回答：
 
 - 零点不能太靠近 `Re(s) = 1` 时，素数误差能有多小；
 - 临界线上至少存在多少零点；
 - 全部零点和靠右零点分别有多少。
 
-VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明定理自动推出。
+Selberg、最终 VK、Pintz 最大阶以及局部化振荡仍需要新的上游估计，不能由当前已证明
+定理自动推出。
 
 ---
 
@@ -272,10 +317,10 @@ VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明
 
 | 分支或 PR | 当前进展 | 尚未闭合的边界 |
 |---|---|---|
-| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 已出现 `hardy_littlewood_lower_bound_target_proved` 和奇重数强化版 | 仍需与当前 `main` 集成并完成最新全量审计；Selberg `T log T` 下界仍是目标 |
-| [PR #11: Pintz envelope](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/11) | 零点 envelope、单调性和经典 `sqrt(log x)` 下界 | 尚无到 `psi` 或 `pi-Li` 振荡/最大阶的桥 |
-| 本地分支 `feat/vinogradov-korobov-exponential-sums` | 差分、矩阵、秩分层和同余系统等指数和基础设施；该分支尚未推送到 `origin` | `vinogradov_korobov_zero_free_region` 仍是 `def ... : Prop` |
-| [Draft PR #8](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/8) | 平滑误差、有限零点簇振荡和有限 Weil certificate | 显式公式仍有 uncontrolled remainder，Weil 路线仍缺无限维桥 |
+| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 在已合并的线性下界之上继续建设 Selberg mollifier、bad-set 和 packing 估计 | Selberg `T log T` 下界仍是 `def ... : Prop` |
+| [Draft PR #19](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/19) | Ford 不完整矩、double Holder、residue-mass audit 和近整数计数 | `FordShortSumPrefixBound`、公式 (5.4)、平滑数支持及最终 VK 参数优化仍缺失 |
+| `research/vk-edge-pi-over-two-localized` | 把 `pi/2` 以上振荡推进到充分大的幂窗口 | 尚未合并到 `main`；更短区间和正负双向振荡仍开放 |
+| `research/weil-extremal-kernels-next` | 有限维区间证书、尾部和极值核实验 | 实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
@@ -317,7 +362,7 @@ VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明
 
 这一组核心定理已经位于 `main`，适合面向形式化数学、交互式定理证明和自动推理社区。
 
-### 集成后可整理的论文包
+### 已可整理的第二个论文包
 
 **Hardy 与 Hardy--Littlewood 临界线零点定理的 Lean 4 形式化**
 
@@ -328,13 +373,14 @@ VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明
 - 奇重数临界线零点的线性下界；
 - 短窗口积分、符号变化、测度控制与 packing。
 
-在论文宣称这一成果前，必须先完成 Hardy--Littlewood 分支集成和最新全量 axiom audit。
+这些核心结果已经合并到 `main`。投稿前仍应运行全量构建、定向 axiom audit，并重新核对
+Hardy--Littlewood 形式化的 prior art。
 
 ### 长期独立方向
 
 - Selberg 正比例：若完成 `N_0(T) >= c T log T`，会显著增强临界线论文；
-- Vinogradov--Korobov：指数和基础设施和最终 zeta 零自由区域应单独成文；
-- Pintz/零点迫使振荡：需要把零点 envelope 接入素数误差；
+- Vinogradov--Korobov：已合并基础设施与最终 zeta 零自由区域应分阶段成文；
+- Pintz/零点迫使振荡：`pi/2` 以上远处振荡已证，最大阶、局部化和统一 envelope 桥仍开放；
 - Weil criterion：需要从有限证书过渡到完整函数空间和无限维正性。
 
 ### 创新边界
@@ -384,7 +430,12 @@ lake build \
   Test.HardyFirstApproximationContract \
   Test.RiemannVonMangoldtAllHeightAsymptoticContract \
   Test.CarlsonAsymptoticContract \
-  Test.CarneiroLittmannProfileContract
+  Test.CarneiroLittmannProfileContract \
+  Test.HardyLittlewoodTheoremContract \
+  Test.HardyLittlewoodOddTheoremContract \
+  Test.PintzEnvelopeContract \
+  Test.VKEdgePiOverTwoAbelPhaseContract \
+  Test.VinogradovKorobovAxiomAudit
 ```
 
 ### 发布前检查
