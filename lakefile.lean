@@ -91,6 +91,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.VKEdgePiOverTwoEpsilonOscillation,
     `PrimeNumberTheorem.VKEdgePiOverTwoGaussianL2,
     `PrimeNumberTheorem.VKEdgePiOverTwoOrdinaryL2,
+    `Test.VKEdgePiOverTwoSweptL2Contract,
     `PrimeNumberTheorem.VKEdgePiOverTwoPositiveMeasure,
     `PrimeNumberTheorem.VKEdgePiOverTwoBellotti,
     `PrimeNumberTheorem.VKEdgePiOverTwoConcreteContourAssembly,

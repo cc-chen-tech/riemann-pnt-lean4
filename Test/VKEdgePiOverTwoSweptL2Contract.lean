@@ -1,0 +1,13 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoSweptL2
+
+open Complex Filter MeasureTheory Set
+open PrimeNumberTheorem
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check sweptGaussianEnvelope
+#check exp_scaled_abs_mul_normalizedGaussian_le_sweptEnvelope
+#check integral_sweptGaussianEnvelope_le
+#check ordinarySecondMoment_linear_lower_of_sweptWeightedLower
+#check epsilonSweepRatio
+#check centeredSharpenedSweptOrdinaryL2Constant
+#check exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear
