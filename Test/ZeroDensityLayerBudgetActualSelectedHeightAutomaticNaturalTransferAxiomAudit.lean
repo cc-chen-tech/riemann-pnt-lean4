@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightAutomaticNaturalTransfer
+
+namespace PrimeNumberTheorem
+
+#print axioms
+  selectedUniformGoodHeight_actualNaturalPointRemainder_lowerTransfer
+
+end PrimeNumberTheorem
