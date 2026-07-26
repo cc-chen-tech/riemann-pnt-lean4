@@ -32,9 +32,9 @@ CHAIN_SUMMARY = [
     },
     {
         "name": "Quantitative critical-line extensions",
-        "target": "hardy_littlewood_lower_bound_target",
-        "status": "Hardy's infinite-zero theorem is proved; stronger Hardy-Littlewood, Selberg, and Conrey counts remain open",
-        "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets",
+        "target": "selberg_odd_zero_proportion_target",
+        "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved; Selberg and Conrey counts remain open",
+        "next_step": "obtain the logarithmic gain needed for Selberg's T log T critical-line count, then develop Conrey-style percentage estimates",
     },
 ]
 
@@ -58,6 +58,13 @@ PROVED_REUSABLE_PREDICATES = {
         "HardyTheorem.hardy_zeros_unbounded_target_proved",
     "HardyTheorem.hardy_zeros_abs_unbounded_target":
         "HardyTheorem.hardy_zeros_abs_unbounded_target_proved",
+    "HardyTheorem.hardy_littlewood_lower_bound_target":
+        "HardyTheorem.hardy_littlewood_lower_bound_target_proved",
+    "HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target":
+        "HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target_of_odd "
+        "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
+    "HardyTheorem.hardy_littlewood_odd_lower_bound_target":
+        "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
 }
 
 

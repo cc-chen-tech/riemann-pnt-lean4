@@ -1,0 +1,1453 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovMixedMoment
+import ZeroFreeRegion.VinogradovKorobov.VinogradovFiniteConditioning
+
+namespace ZeroFreeRegion.VinogradovKorobov
+
+noncomputable section
+
+/-- All degree-`d` Vinogradov solution pairs over the complete residue ring
+`ZMod Q`. -/
+noncomputable def vinogradovResidueSolutionPairSet
+    (Q d s : ℕ) [NeZero Q] :
+    Finset ((Fin s → ZMod Q) × (Fin s → ZMod Q)) := by
+  classical
+  exact Finset.univ.filter fun xy ↦
+    IsVinogradovResidueSolution Q d s xy.1 xy.2
+
+theorem mem_vinogradovResidueSolutionPairSet_iff
+    (Q d s : ℕ) [NeZero Q]
+    (xy : (Fin s → ZMod Q) × (Fin s → ZMod Q)) :
+    xy ∈ vinogradovResidueSolutionPairSet Q d s ↔
+      IsVinogradovResidueSolution Q d s xy.1 xy.2 := by
+  classical
+  simp [vinogradovResidueSolutionPairSet]
+
+/-- The one-based complete interval is equivalent to its residue ring. -/
+noncomputable def vinogradovCompleteResidueEquiv
+    (Q : ℕ) [NeZero Q] : Fin Q ≃ ZMod Q :=
+  (ZMod.finEquiv Q).toEquiv.trans (Equiv.addRight 1)
+
+theorem vinogradovCompleteResidueEquiv_apply
+    (Q : ℕ) [NeZero Q] (x : Fin Q) :
+    vinogradovCompleteResidueEquiv Q x = (x.val : ZMod Q) + 1 := by
+  cases Q with
+  | zero => exact (NeZero.ne 0 rfl).elim
+  | succ Q =>
+      change (x + (1 : Fin (Q + 1)) : Fin (Q + 1)) =
+        (⟨x.val % (Q + 1), Nat.mod_lt _ (Nat.succ_pos Q)⟩ :
+          Fin (Q + 1)) + 1
+      congr 1
+      apply Fin.ext
+      simp [Nat.mod_eq_of_lt x.isLt]
+
+/-- The one-based complete interval coordinates and residue coordinates on a
+tuple pair are equivalent. -/
+noncomputable def vinogradovCompleteResiduePairEquiv
+    (Q s : ℕ) [NeZero Q] :
+    ((Fin s → Fin Q) × (Fin s → Fin Q)) ≃
+      ((Fin s → ZMod Q) × (Fin s → ZMod Q)) :=
+  Equiv.prodCongr
+    (Equiv.piCongrRight fun _ ↦
+      vinogradovCompleteResidueEquiv Q)
+    (Equiv.piCongrRight fun _ ↦
+      vinogradovCompleteResidueEquiv Q)
+
+/-- Counting complete residue-ring solutions agrees with the existing
+normalized finite Vinogradov solution count. -/
+theorem card_vinogradovResidueSolutionPairSet
+    (Q d s : ℕ) [NeZero Q] :
+    (vinogradovResidueSolutionPairSet Q d s).card =
+      vinogradovSolutionCountMod Q d s Q := by
+  classical
+  let e := vinogradovCompleteResiduePairEquiv Q s
+  have hcard :
+      (vinogradovSolutionPairSetMod Q d s Q).card =
+        (vinogradovResidueSolutionPairSet Q d s).card := by
+    apply Finset.card_equiv e
+    intro xy
+    rw [mem_vinogradovSolutionPairSetMod_iff,
+      mem_vinogradovResidueSolutionPairSet_iff]
+    have hx : (e xy).1 =
+        (fun i ↦ ((xy.1 i).val : ZMod Q) + 1) := by
+      funext i
+      simpa [e, vinogradovCompleteResiduePairEquiv,
+        vinogradovCompleteResidueEquiv_apply]
+    have hy : (e xy).2 =
+        (fun i ↦ ((xy.2 i).val : ZMod Q) + 1) := by
+      funext i
+      simpa [e, vinogradovCompleteResiduePairEquiv,
+        vinogradovCompleteResidueEquiv_apply]
+    rw [hx, hy]
+    exact isVinogradovSolutionMod_iff_residueSolution Q d s xy.1 xy.2
+  rw [← hcard, card_vinogradovSolutionPairSetMod]
+
+/-- Main tuple pairs whose affine coordinates satisfy the degree-`r`
+Vinogradov system at the residual far scale. -/
+def VinogradovMixedMainFarScalePairMem
+    (p a b k r X gamma : ℕ) (xi : ℤ)
+    (xy : (Fin r → Fin X) × (Fin r → Fin X)) : Prop :=
+  ∃ x' y' : Fin r → ℤ,
+    vinogradovFinTupleInt xy.1 =
+        (fun i ↦ xi + (p : ℤ) ^ a * x' i) ∧
+      vinogradovFinTupleInt xy.2 =
+        (fun i ↦ xi + (p : ℤ) ^ a * y' i) ∧
+      IsVinogradovSolutionIntMod
+        (p ^ vinogradovFarScale k r a b gamma) r r x' y'
+
+/-- The finite main-pair surface left after the mixed system has eliminated
+the free restricted tail. -/
+noncomputable def vinogradovMixedMainFarScalePairSet
+    (p a b k r X gamma : ℕ) (xi : ℤ) :
+    Finset ((Fin r → Fin X) × (Fin r → Fin X)) := by
+  classical
+  exact Finset.univ.filter
+    (VinogradovMixedMainFarScalePairMem p a b k r X gamma xi)
+
+theorem mem_vinogradovMixedMainFarScalePairSet_iff
+    (p a b k r X gamma : ℕ) (xi : ℤ)
+    (xy : (Fin r → Fin X) × (Fin r → Fin X)) :
+    xy ∈ vinogradovMixedMainFarScalePairSet p a b k r X gamma xi ↔
+      VinogradovMixedMainFarScalePairMem p a b k r X gamma xi xy := by
+  classical
+  simp [vinogradovMixedMainFarScalePairSet]
+
+/-- A canonical choice of the integral affine coordinates certified by
+membership in the far-scale main-pair surface. -/
+noncomputable def vinogradovMixedMainAffineCoordinatePair
+    (p a b k r X gamma : ℕ) (xi : ℤ)
+    (xy : (Fin r → Fin X) × (Fin r → Fin X)) :
+    (Fin r → ℤ) × (Fin r → ℤ) := by
+  classical
+  by_cases h : VinogradovMixedMainFarScalePairMem
+      p a b k r X gamma xi xy
+  · exact ⟨Classical.choose h,
+      Classical.choose (Classical.choose_spec h)⟩
+  · exact ⟨0, 0⟩
+
+theorem vinogradovMixedMainAffineCoordinatePair_spec
+    (p a b k r X gamma : ℕ) (xi : ℤ)
+    (xy : (Fin r → Fin X) × (Fin r → Fin X))
+    (h : VinogradovMixedMainFarScalePairMem
+      p a b k r X gamma xi xy) :
+    vinogradovFinTupleInt xy.1 =
+        (fun i ↦ xi + (p : ℤ) ^ a *
+          (vinogradovMixedMainAffineCoordinatePair
+            p a b k r X gamma xi xy).1 i) ∧
+      vinogradovFinTupleInt xy.2 =
+        (fun i ↦ xi + (p : ℤ) ^ a *
+          (vinogradovMixedMainAffineCoordinatePair
+            p a b k r X gamma xi xy).2 i) ∧
+      IsVinogradovSolutionIntMod
+        (p ^ vinogradovFarScale k r a b gamma) r r
+        (vinogradovMixedMainAffineCoordinatePair
+          p a b k r X gamma xi xy).1
+        (vinogradovMixedMainAffineCoordinatePair
+          p a b k r X gamma xi xy).2 := by
+  classical
+  rw [vinogradovMixedMainAffineCoordinatePair]
+  simp only [dif_pos h]
+  exact Classical.choose_spec (Classical.choose_spec h)
+
+/-- Reduce the chosen affine coordinates modulo the residual far scale. -/
+noncomputable def vinogradovMixedMainFarScaleResidueMap
+    (p a b k r X gamma : ℕ) [Fact p.Prime] (xi : ℤ)
+    (xy : (Fin r → Fin X) × (Fin r → Fin X)) :
+    (Fin r → ZMod (p ^ vinogradovFarScale k r a b gamma)) ×
+      (Fin r → ZMod (p ^ vinogradovFarScale k r a b gamma)) :=
+  let c := vinogradovMixedMainAffineCoordinatePair
+    p a b k r X gamma xi xy
+  ⟨fun i ↦ c.1 i, fun i ↦ c.2 i⟩
+
+/-- The residue encoding of a far-scale main pair solves the complete
+degree-`r` Vinogradov system over the residual ring. -/
+theorem vinogradovMixedMainFarScaleResidueMap_mem
+    (p a b k r X gamma : ℕ) [Fact p.Prime] (xi : ℤ)
+    (xy : (Fin r → Fin X) × (Fin r → Fin X))
+    (hxy : xy ∈ vinogradovMixedMainFarScalePairSet
+      p a b k r X gamma xi) :
+    vinogradovMixedMainFarScaleResidueMap p a b k r X gamma xi xy ∈
+      vinogradovResidueSolutionPairSet
+        (p ^ vinogradovFarScale k r a b gamma) r r := by
+  letI : NeZero (p ^ vinogradovFarScale k r a b gamma) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  rw [mem_vinogradovResidueSolutionPairSet_iff]
+  have hmem := (mem_vinogradovMixedMainFarScalePairSet_iff
+    p a b k r X gamma xi xy).mp hxy
+  have hspec := vinogradovMixedMainAffineCoordinatePair_spec
+    p a b k r X gamma xi xy hmem
+  intro j
+  have hcast := (ZMod.intCast_eq_intCast_iff
+    (vinogradovPowerSumInt
+      (vinogradovMixedMainAffineCoordinatePair
+        p a b k r X gamma xi xy).1 j)
+    (vinogradovPowerSumInt
+      (vinogradovMixedMainAffineCoordinatePair
+        p a b k r X gamma xi xy).2 j)
+    (p ^ vinogradovFarScale k r a b gamma)).mpr (hspec.2.2 j)
+  simpa only [vinogradovMixedMainFarScaleResidueMap,
+    vinogradovResiduePowerSum, vinogradovPowerSumInt,
+    Int.cast_sum, Int.cast_pow] using hcast
+
+/-- Affine coordinates are injective modulo `Q` on an interval whose length
+does not exceed the combined scale `p^a Q`. -/
+theorem vinogradovFinTuple_eq_of_affineCoordinates_modEq
+    (p a r X Q : ℕ) (xi : ℤ)
+    (x y : Fin r → Fin X) (u v : Fin r → ℤ)
+    (hx : vinogradovFinTupleInt x =
+      (fun i ↦ xi + (p : ℤ) ^ a * u i))
+    (hy : vinogradovFinTupleInt y =
+      (fun i ↦ xi + (p : ℤ) ^ a * v i))
+    (hmod : ∀ i, Int.ModEq (Q : ℤ) (u i) (v i))
+    (hscale : X ≤ p ^ a * Q) :
+    x = y := by
+  funext i
+  apply Fin.ext
+  have hscaled : Int.ModEq ((p : ℤ) ^ a * (Q : ℤ))
+      ((p : ℤ) ^ a * u i) ((p : ℤ) ^ a * v i) :=
+    (hmod i).mul_left'
+  have hshift := hscaled.add_left xi
+  have hraw : Int.ModEq ((p ^ a * Q : ℕ) : ℤ)
+      (vinogradovFinTupleInt x i) (vinogradovFinTupleInt y i) := by
+    rw [congrFun hx i, congrFun hy i]
+    simpa only [Nat.cast_mul, Nat.cast_pow] using hshift
+  have hval : Int.ModEq ((p ^ a * Q : ℕ) : ℤ)
+      ((x i).val : ℤ) ((y i).val : ℤ) := by
+    have hsub := hraw.add_right (-1)
+    simpa only [vinogradovFinTupleInt, Nat.cast_add, Nat.cast_one,
+      add_neg_cancel_right] using hsub
+  have hnat : Nat.ModEq (p ^ a * Q) (x i).val (y i).val := by
+    rw [Nat.modEq_iff_dvd]
+    exact hval.dvd
+  exact hnat.eq_of_lt_of_lt
+    ((x i).isLt.trans_le hscale) ((y i).isLt.trans_le hscale)
+
+/-- Under the no-wrap scale condition, reducing the affine coordinates is
+injective on the far-scale main-pair surface. -/
+theorem vinogradovMixedMainFarScaleResidueMap_injOn
+    (p a b k r X gamma : ℕ) [Fact p.Prime] (xi : ℤ)
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    Set.InjOn
+      (vinogradovMixedMainFarScaleResidueMap
+        p a b k r X gamma xi)
+      (vinogradovMixedMainFarScalePairSet
+        p a b k r X gamma xi : Set
+          ((Fin r → Fin X) × (Fin r → Fin X))) := by
+  intro xy hxy zw hzw heq
+  have hxmem := (mem_vinogradovMixedMainFarScalePairSet_iff
+    p a b k r X gamma xi xy).mp hxy
+  have hwmem := (mem_vinogradovMixedMainFarScalePairSet_iff
+    p a b k r X gamma xi zw).mp hzw
+  have hxspec := vinogradovMixedMainAffineCoordinatePair_spec
+    p a b k r X gamma xi xy hxmem
+  have hwspec := vinogradovMixedMainAffineCoordinatePair_spec
+    p a b k r X gamma xi zw hwmem
+  apply Prod.ext
+  · apply vinogradovFinTuple_eq_of_affineCoordinates_modEq
+      p a r X (p ^ vinogradovFarScale k r a b gamma) xi
+      xy.1 zw.1
+      (vinogradovMixedMainAffineCoordinatePair
+        p a b k r X gamma xi xy).1
+      (vinogradovMixedMainAffineCoordinatePair
+        p a b k r X gamma xi zw).1
+      hxspec.1 hwspec.1
+    · intro i
+      apply (ZMod.intCast_eq_intCast_iff _ _
+        (p ^ vinogradovFarScale k r a b gamma)).mp
+      have hi := congrFun (congrArg Prod.fst heq) i
+      exact hi
+    · exact hscale
+  · apply vinogradovFinTuple_eq_of_affineCoordinates_modEq
+      p a r X (p ^ vinogradovFarScale k r a b gamma) xi
+      xy.2 zw.2
+      (vinogradovMixedMainAffineCoordinatePair
+        p a b k r X gamma xi xy).2
+      (vinogradovMixedMainAffineCoordinatePair
+        p a b k r X gamma xi zw).2
+      hxspec.2.1 hwspec.2.1
+    · intro i
+      apply (ZMod.intCast_eq_intCast_iff _ _
+        (p ^ vinogradovFarScale k r a b gamma)).mp
+      have hi := congrFun (congrArg Prod.snd heq) i
+      exact hi
+    · exact hscale
+
+/-- The far-scale main-pair count is controlled by the standard complete
+Vinogradov solution count at that residual modulus. -/
+theorem card_vinogradovMixedMainFarScalePairSet_le_solutionCount
+    (p a b k r X gamma : ℕ) [Fact p.Prime] (xi : ℤ)
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    (vinogradovMixedMainFarScalePairSet
+        p a b k r X gamma xi).card ≤
+      vinogradovSolutionCountMod
+        (p ^ vinogradovFarScale k r a b gamma) r r
+          (p ^ vinogradovFarScale k r a b gamma) := by
+  letI : NeZero (p ^ vinogradovFarScale k r a b gamma) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  calc
+    (vinogradovMixedMainFarScalePairSet
+        p a b k r X gamma xi).card ≤
+      (vinogradovResidueSolutionPairSet
+        (p ^ vinogradovFarScale k r a b gamma) r r).card :=
+      Finset.card_le_card_of_injOn
+        (vinogradovMixedMainFarScaleResidueMap
+          p a b k r X gamma xi)
+        (fun _ h ↦ vinogradovMixedMainFarScaleResidueMap_mem
+          p a b k r X gamma xi _ h)
+        (vinogradovMixedMainFarScaleResidueMap_injOn
+          p a b k r X gamma xi hscale)
+    _ = vinogradovSolutionCountMod
+          (p ^ vinogradovFarScale k r a b gamma) r r
+            (p ^ vinogradovFarScale k r a b gamma) :=
+      card_vinogradovResidueSolutionPairSet _ _ _
+
+/-- Every modular mixed conditioned solution consists of a far-scale main
+pair and an otherwise unrestricted tail pair.  This is the set-level first
+step of the efficient-congruencing recurrence. -/
+theorem vinogradovMixedModConditionedSolutionSet_subset_mainFarScale_product
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime]
+    (xi eta omega : ℤ)
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b) (hgammaa : gamma ≤ a)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hcenter : xi - eta = omega * (p : ℤ) ^ gamma)
+    (homega : IsCoprime (p : ℤ) omega) :
+    vinogradovMixedModConditionedSolutionSet
+        p ((k - r + 1) * b) a b k r t X Y xi eta ⊆
+      (vinogradovMixedMainFarScalePairSet p a b k r X gamma xi).product
+        (Finset.univ : Finset ((Fin t → Fin Y) × (Fin t → Fin Y))) := by
+  classical
+  intro z hz
+  apply Finset.mem_product.mpr
+  constructor
+  · rw [mem_vinogradovMixedMainFarScalePairSet_iff]
+    have hmem :=
+      (mem_vinogradovMixedModConditionedSolutionSet_iff
+        p ((k - r + 1) * b) a b k r t X Y xi eta z).mp hz
+    obtain ⟨x', y', hx', hy', hfar⟩ :=
+      hmem.exists_farScale_powerSumCongruences
+        hrk hkp hb hgammaa hbudget htail hcenter homega
+    refine ⟨x', y', hx', hy', ?_⟩
+    intro j
+    have hj := (hfar j).add_right (vinogradovPowerSumInt y' j)
+    simpa only [vinogradovPowerSumDifferenceInt, vinogradovPowerSumInt,
+      sub_add_cancel, zero_add] using hj
+  · simp
+
+/-- The mixed conditioned solution count is bounded by the number of free
+tail pairs times the far-scale main-pair count. -/
+theorem card_vinogradovMixedModConditionedSolutionSet_le_mainFarScale
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime]
+    (xi eta omega : ℤ)
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b) (hgammaa : gamma ≤ a)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hcenter : xi - eta = omega * (p : ℤ) ^ gamma)
+    (homega : IsCoprime (p : ℤ) omega) :
+    (vinogradovMixedModConditionedSolutionSet
+        p ((k - r + 1) * b) a b k r t X Y xi eta).card ≤
+      (vinogradovMixedMainFarScalePairSet
+        p a b k r X gamma xi).card * Y ^ (2 * t) := by
+  calc
+    (vinogradovMixedModConditionedSolutionSet
+        p ((k - r + 1) * b) a b k r t X Y xi eta).card ≤
+      ((vinogradovMixedMainFarScalePairSet p a b k r X gamma xi).product
+        (Finset.univ : Finset ((Fin t → Fin Y) × (Fin t → Fin Y)))).card :=
+      Finset.card_le_card
+        (vinogradovMixedModConditionedSolutionSet_subset_mainFarScale_product
+          p a b k r t X Y gamma xi eta omega hrk hkp hb hgammaa
+            hbudget htail hcenter homega)
+    _ = (vinogradovMixedMainFarScalePairSet
+          p a b k r X gamma xi).card * Y ^ (2 * t) := by
+      change
+        ((vinogradovMixedMainFarScalePairSet p a b k r X gamma xi) ×ˢ
+          (Finset.univ : Finset ((Fin t → Fin Y) × (Fin t → Fin Y)))).card = _
+      rw [Finset.card_product]
+      congr 1
+      simp only [Finset.card_univ, Fintype.card_prod, Fintype.card_fun,
+        Fintype.card_fin]
+      rw [← pow_add]
+      congr 1
+      omega
+
+/-- Without using any congruence information, the mixed conditioned solution
+set is bounded by its ambient space of two main and two tail tuples. -/
+theorem card_vinogradovMixedModConditionedSolutionSet_le_trivial
+    (p B a b k r t X Y : ℕ) (xi eta : ℤ) :
+    (vinogradovMixedModConditionedSolutionSet
+        p B a b k r t X Y xi eta).card ≤
+      X ^ (2 * r) * Y ^ (2 * t) := by
+  classical
+  calc
+    (vinogradovMixedModConditionedSolutionSet
+        p B a b k r t X Y xi eta).card ≤
+        Fintype.card (VinogradovMixedTuplePairs r t X Y) := by
+      simpa using
+        (Finset.card_le_univ
+          (vinogradovMixedModConditionedSolutionSet
+            p B a b k r t X Y xi eta))
+    _ = X ^ (2 * r) * Y ^ (2 * t) := by
+      simp only [Fintype.card_prod, Fintype.card_fun, Fintype.card_fin]
+      rw [← pow_add, ← pow_add]
+      congr 2 <;> omega
+
+/-- The normalized mixed moment inherits the trivial ambient-space bound. -/
+theorem norm_normalizedVinogradovMixedModConditionedMoment_le_trivial
+    (p B a b k r t X Y : ℕ) [NeZero (p ^ B)]
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p B a b k r t X Y xi eta‖ ≤
+      ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+  rw [normalizedVinogradovMixedModConditionedMoment_eq_solutionSetCard]
+  norm_cast
+  exact card_vinogradovMixedModConditionedSolutionSet_le_trivial
+    p B a b k r t X Y xi eta
+
+/-- Combining far-scale elimination with the no-wrap residue encoding bounds
+the mixed solution count by a standard complete Vinogradov solution count. -/
+theorem card_vinogradovMixedModConditionedSolutionSet_le_solutionCount
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime]
+    (xi eta omega : ℤ)
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b) (hgammaa : gamma ≤ a)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hcenter : xi - eta = omega * (p : ℤ) ^ gamma)
+    (homega : IsCoprime (p : ℤ) omega)
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    (vinogradovMixedModConditionedSolutionSet
+        p ((k - r + 1) * b) a b k r t X Y xi eta).card ≤
+      vinogradovSolutionCountMod
+          (p ^ vinogradovFarScale k r a b gamma) r r
+            (p ^ vinogradovFarScale k r a b gamma) *
+        Y ^ (2 * t) := by
+  calc
+    (vinogradovMixedModConditionedSolutionSet
+        p ((k - r + 1) * b) a b k r t X Y xi eta).card ≤
+      (vinogradovMixedMainFarScalePairSet
+        p a b k r X gamma xi).card * Y ^ (2 * t) :=
+      card_vinogradovMixedModConditionedSolutionSet_le_mainFarScale
+        p a b k r t X Y gamma xi eta omega hrk hkp hb hgammaa
+          hbudget htail hcenter homega
+    _ ≤ vinogradovSolutionCountMod
+          (p ^ vinogradovFarScale k r a b gamma) r r
+            (p ^ vinogradovFarScale k r a b gamma) * Y ^ (2 * t) :=
+      Nat.mul_le_mul_right (Y ^ (2 * t))
+        (card_vinogradovMixedMainFarScalePairSet_le_solutionCount
+          p a b k r X gamma xi hscale)
+
+/-- The product-form mixed Fourier moment obeys the same first recurrence:
+the restricted tail contributes only its full `Y^(2t)` cardinality, while
+the main pair has acquired the residual far-scale Vinogradov equations. -/
+theorem norm_normalizedVinogradovMixedModConditionedMoment_le_mainFarScale
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime]
+    (xi eta omega : ℤ)
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b) (hgammaa : gamma ≤ a)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hcenter : xi - eta = omega * (p : ℤ) ^ gamma)
+    (homega : IsCoprime (p : ℤ) omega) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y xi eta‖ ≤
+      (((vinogradovMixedMainFarScalePairSet
+          p a b k r X gamma xi).card * Y ^ (2 * t) : ℕ) : ℝ) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  rw [normalizedVinogradovMixedModConditionedMoment_eq_solutionSetCard]
+  norm_cast
+  exact card_vinogradovMixedModConditionedSolutionSet_le_mainFarScale
+    p a b k r t X Y gamma xi eta omega hrk hkp hb hgammaa
+      hbudget htail hcenter homega
+
+/-- First effective mixed-moment recurrence: after far-scale elimination and
+under the no-wrap condition, the mixed conditioned moment is bounded by the
+standard complete degree-`r` moment at the residual modulus, times the full
+cardinality of the restricted tail pair. -/
+theorem norm_normalizedVinogradovMixedModConditionedMoment_le_farScaleMoment
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime]
+    (xi eta omega : ℤ)
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b) (hgammaa : gamma ≤ a)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hcenter : xi - eta = omega * (p : ℤ) ^ gamma)
+    (homega : IsCoprime (p : ℤ) omega)
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y xi eta‖ ≤
+      ‖normalizedVinogradovMomentMod
+        (p ^ vinogradovFarScale k r a b gamma) r r
+          (p ^ vinogradovFarScale k r a b gamma)‖ *
+        (Y ^ (2 * t) : ℝ) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ vinogradovFarScale k r a b gamma) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  rw [normalizedVinogradovMixedModConditionedMoment_eq_solutionSetCard,
+    normalizedVinogradovMomentMod_eq_solutionCount]
+  norm_cast
+  exact card_vinogradovMixedModConditionedSolutionSet_le_solutionCount
+    p a b k r t X Y gamma xi eta omega hrk hkp hb hgammaa
+      hbudget htail hcenter homega hscale
+
+/-- The explicit one-block prime-power strata bound used to terminate the
+first mixed-moment recurrence. -/
+def vinogradovDiagonalPrimePowerStrataBound (p r n : ℕ) : ℕ :=
+  (p ^ r - p.descFactorial r) * p ^ r * (p ^ (2 * r)) ^ n +
+    (p ^ r - (p ^ r - p.descFactorial r)) *
+      (p ^ r * (p ^ r) ^ n)
+
+/-- The first mixed-moment recurrence terminates unconditionally at the
+existing prime-power rank stratification when the residual exponent is
+written as `n+1`.  This is explicit but is not yet the optimal VMVT bound. -/
+theorem norm_normalizedVinogradovMixedModConditionedMoment_le_primePowerStrata
+    (p a b k r t X Y gamma n : ℕ) [Fact p.Prime]
+    (xi eta omega : ℤ)
+    (hr : 0 < r) (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : gamma ≤ a)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hcenter : xi - eta = omega * (p : ℤ) ^ gamma)
+    (homega : IsCoprime (p : ℤ) omega)
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma)
+    (hfar : vinogradovFarScale k r a b gamma = n + 1) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y xi eta‖ ≤
+      (vinogradovDiagonalPrimePowerStrataBound p r n : ℝ) *
+        (Y ^ (2 * t) : ℝ) := by
+  have hrec :=
+    norm_normalizedVinogradovMixedModConditionedMoment_le_farScaleMoment
+      p a b k r t X Y gamma xi eta omega hrk hkp hb hgammaa
+        hbudget htail hcenter homega hscale
+  have hstrata :=
+    norm_normalizedVinogradovMomentMod_primePowerMultiBlock_le_strata
+      p r 0 1 n hr (hrk.trans_lt hkp)
+  have hstrata' :
+      ‖normalizedVinogradovMomentMod
+        (p ^ (n + 1)) r r (p ^ (n + 1))‖ ≤
+          (vinogradovDiagonalPrimePowerStrataBound p r n : ℝ) := by
+    simpa [vinogradovDiagonalPrimePowerStrataBound] using hstrata
+  calc
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y xi eta‖ ≤
+      ‖normalizedVinogradovMomentMod
+        (p ^ vinogradovFarScale k r a b gamma) r r
+          (p ^ vinogradovFarScale k r a b gamma)‖ *
+        (Y ^ (2 * t) : ℝ) := hrec
+    _ = ‖normalizedVinogradovMomentMod
+          (p ^ (n + 1)) r r (p ^ (n + 1))‖ *
+        (Y ^ (2 * t) : ℝ) := by rw [hfar]
+    _ ≤ (vinogradovDiagonalPrimePowerStrataBound p r n : ℝ) *
+        (Y ^ (2 * t) : ℝ) :=
+      mul_le_mul_of_nonneg_right hstrata' (by positivity)
+
+/-- The one-based integer center represented by a complete residue index. -/
+def vinogradovCenterValue {N : ℕ} (z : Fin N) : ℤ :=
+  ((z.val + 1 : ℕ) : ℤ)
+
+/-- Pairs of residue centers whose difference is a unit at the base prime.
+This is the `gamma = 0` stratum of the mixed recurrence. -/
+noncomputable def vinogradovUnitSeparatedCenterPairSet
+    (p a b : ℕ) : Finset (Fin (p ^ a) × Fin (p ^ b)) := by
+  classical
+  exact Finset.univ.filter fun z ↦
+    IsCoprime (p : ℤ)
+      (vinogradovCenterValue z.1 - vinogradovCenterValue z.2)
+
+theorem mem_vinogradovUnitSeparatedCenterPairSet_iff
+    (p a b : ℕ) (z : Fin (p ^ a) × Fin (p ^ b)) :
+    z ∈ vinogradovUnitSeparatedCenterPairSet p a b ↔
+      IsCoprime (p : ℤ)
+        (vinogradovCenterValue z.1 - vinogradovCenterValue z.2) := by
+  classical
+  simp [vinogradovUnitSeparatedCenterPairSet]
+
+/-- For a prime modulus, two one-based centers have coprime difference
+exactly when their base-prime residues are distinct. -/
+theorem isCoprime_vinogradovCenterDifference_iff_ne
+    (p a b : ℕ) [Fact p.Prime]
+    (x : Fin (p ^ a)) (y : Fin (p ^ b)) :
+    IsCoprime (p : ℤ)
+        (vinogradovCenterValue x - vinogradovCenterValue y) ↔
+      (vinogradovCenterValue x : ZMod p) ≠
+        (vinogradovCenterValue y : ZMod p) := by
+  rw [(Nat.prime_iff_prime_int.mp (Fact.out : p.Prime)).coprime_iff_not_dvd]
+  constructor
+  · intro hcop heq
+    apply hcop
+    have hdvd := (ZMod.intCast_eq_intCast_iff_dvd_sub
+      (vinogradovCenterValue x) (vinogradovCenterValue y) p).mp heq
+    have hneg : vinogradovCenterValue y - vinogradovCenterValue x =
+        -(vinogradovCenterValue x - vinogradovCenterValue y) := by ring
+    rw [hneg, dvd_neg] at hdvd
+    exact hdvd
+  · intro hne hdvd
+    apply hne
+    rw [ZMod.intCast_eq_intCast_iff_dvd_sub]
+    have hneg : vinogradovCenterValue y - vinogradovCenterValue x =
+        -(vinogradovCenterValue x - vinogradovCenterValue y) := by ring
+    rw [hneg, dvd_neg]
+    exact hdvd
+
+/-- Every fixed residue modulo `p` occurs exactly `p^(a-1)` times among the
+one-based centers modulo `p^a`. -/
+theorem card_vinogradovCenterResidue_fiber
+    (p a : ℕ) [Fact p.Prime] (ha : 0 < a) (ξ : ZMod p) :
+    (Finset.univ.filter fun z : Fin (p ^ a) ↦
+      (vinogradovCenterValue z : ZMod p) = ξ).card = p ^ (a - 1) := by
+  letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ a) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  have hle : 1 ≤ a := ha
+  have hdiv : p ∣ p ^ a := by simpa using pow_dvd_pow p hle
+  let cast : ZMod (p ^ a) →+ ZMod p :=
+    (ZMod.castHom hdiv (ZMod p)).toAddMonoidHom
+  have hsurjective : Function.Surjective cast :=
+    ZMod.castHom_surjective hdiv
+  have hfiber (y : ZMod p) :
+      (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = y).card =
+        (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card :=
+    AddMonoidHom.card_fiber_eq_of_mem_range cast
+      (hsurjective y) (hsurjective ξ)
+  have htotal :
+      p ^ a = p *
+        (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card := by
+    calc
+      p ^ a = (Finset.univ : Finset (ZMod (p ^ a))).card := by
+        simp [ZMod.card]
+      _ = ∑ y : ZMod p,
+          (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = y).card :=
+        Finset.card_eq_sum_card_fiberwise (fun _ _ ↦ Finset.mem_univ _)
+      _ = ∑ _y : ZMod p,
+          (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card := by
+        apply Finset.sum_congr rfl
+        intro y hy
+        exact hfiber y
+      _ = p *
+          (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card := by
+        simp [ZMod.card]
+  have hpower : p ^ a = p * p ^ (a - 1) := by
+    calc
+      p ^ a = p ^ 1 * p ^ (a - 1) := by
+        rw [← pow_add, Nat.add_sub_of_le hle]
+      _ = p * p ^ (a - 1) := by simp
+  have hzmod :
+      (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card =
+        p ^ (a - 1) := by
+    apply Nat.eq_of_mul_eq_mul_left (Fact.out : p.Prime).pos
+    exact htotal.symm.trans hpower
+  have hcard :
+      (Finset.univ.filter fun z : Fin (p ^ a) ↦
+        (vinogradovCenterValue z : ZMod p) = ξ).card =
+        (Finset.univ.filter fun z : ZMod (p ^ a) ↦
+          cast z = ξ).card := by
+    apply Finset.card_equiv (vinogradovCompleteResidueEquiv (p ^ a))
+    intro z
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    rw [vinogradovCompleteResidueEquiv_apply]
+    simp only [vinogradovCenterValue]
+    dsimp only [cast]
+    change _ ↔ ZMod.castHom hdiv (ZMod p)
+      ((z.val : ZMod (p ^ a)) + 1) = ξ
+    rw [map_add, map_natCast, map_one]
+    simp
+  rw [hcard]
+  exact hzmod
+
+/-- The center pairs equal modulo `p` have cardinality
+`p^a * p^(b-1)`. -/
+theorem card_vinogradovCenterResidueEqualPairSet
+    (p a b : ℕ) [Fact p.Prime] (hb : 0 < b) :
+    (Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+      (vinogradovCenterValue z.1 : ZMod p) =
+        (vinogradovCenterValue z.2 : ZMod p)).card =
+      p ^ a * p ^ (b - 1) := by
+  classical
+  let S := Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+    (vinogradovCenterValue z.1 : ZMod p) =
+      (vinogradovCenterValue z.2 : ZMod p)
+  have hmaps : ∀ z ∈ S,
+      Prod.fst z ∈ (Finset.univ : Finset (Fin (p ^ a))) :=
+    fun _ _ ↦ Finset.mem_univ _
+  rw [show (Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+      (vinogradovCenterValue z.1 : ZMod p) =
+        (vinogradovCenterValue z.2 : ZMod p)) = S from rfl]
+  rw [Finset.card_eq_sum_card_fiberwise hmaps]
+  calc
+    (∑ x : Fin (p ^ a), {z ∈ S | z.1 = x}.card) =
+        ∑ _x : Fin (p ^ a), p ^ (b - 1) := by
+      apply Finset.sum_congr rfl
+      intro x hx
+      let T := Finset.univ.filter fun y : Fin (p ^ b) ↦
+        (vinogradovCenterValue y : ZMod p) =
+          (vinogradovCenterValue x : ZMod p)
+      have hcard : {z ∈ S | z.1 = x}.card = T.card := by
+        apply Finset.card_bij (fun z _ ↦ z.2)
+        · intro z hz
+          have hzS := (Finset.mem_filter.mp hz).1
+          have hzx := (Finset.mem_filter.mp hz).2
+          have heq := (Finset.mem_filter.mp hzS).2
+          simpa [T, hzx] using heq.symm
+        · intro z₁ hz₁ z₂ hz₂ hsecond
+          apply Prod.ext
+          · exact ((Finset.mem_filter.mp hz₁).2.trans
+              (Finset.mem_filter.mp hz₂).2.symm)
+          · exact hsecond
+        · intro y hy
+          refine ⟨(x, y), ?_, rfl⟩
+          have hyT := (Finset.mem_filter.mp hy).2
+          simp only [Finset.mem_filter]
+          exact ⟨by simpa [S] using hyT.symm, trivial⟩
+      rw [hcard]
+      exact card_vinogradovCenterResidue_fiber p b hb
+        (vinogradovCenterValue x : ZMod p)
+    _ = p ^ a * p ^ (b - 1) := by simp
+
+/-- Exact cardinality of the `gamma = 0` center-pair stratum.  For each
+center modulo `p^a`, precisely the `p^(b-1)` centers with the same residue
+modulo `p` are excluded. -/
+theorem card_vinogradovUnitSeparatedCenterPairSet
+    (p a b : ℕ) [Fact p.Prime] (hb : 0 < b) :
+    (vinogradovUnitSeparatedCenterPairSet p a b).card =
+      p ^ a * (p ^ b - p ^ (b - 1)) := by
+  classical
+  let E := Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+    (vinogradovCenterValue z.1 : ZMod p) =
+      (vinogradovCenterValue z.2 : ZMod p)
+  let U := Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+    (vinogradovCenterValue z.1 : ZMod p) ≠
+      (vinogradovCenterValue z.2 : ZMod p)
+  have hunit : vinogradovUnitSeparatedCenterPairSet p a b = U := by
+    ext z
+    simp only [mem_vinogradovUnitSeparatedCenterPairSet_iff,
+      U, Finset.mem_filter, Finset.mem_univ, true_and]
+    exact isCoprime_vinogradovCenterDifference_iff_ne p a b z.1 z.2
+  have hequal : E.card = p ^ a * p ^ (b - 1) := by
+    exact card_vinogradovCenterResidueEqualPairSet p a b hb
+  have hpartition : E.card + U.card = p ^ a * p ^ b := by
+    calc
+      E.card + U.card =
+          (Finset.univ : Finset (Fin (p ^ a) × Fin (p ^ b))).card := by
+        exact Finset.card_filter_add_card_filter_not
+          (s := Finset.univ)
+          (fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+            (vinogradovCenterValue z.1 : ZMod p) =
+              (vinogradovCenterValue z.2 : ZMod p))
+      _ = p ^ a * p ^ b := by simp
+  rw [hunit]
+  rw [hequal] at hpartition
+  calc
+    U.card = p ^ a * p ^ b - p ^ a * p ^ (b - 1) := by omega
+    _ = p ^ a * (p ^ b - p ^ (b - 1)) := by
+      rw [Nat.mul_sub_left_distrib]
+
+/-- Every fixed residue modulo `p^q` occurs exactly `p^(b-q)` times among
+the one-based centers modulo `p^b`. -/
+theorem card_vinogradovCenterResiduePow_fiber
+    (p q b : ℕ) [Fact p.Prime] (hqb : q ≤ b) (ξ : ZMod (p ^ q)) :
+    (Finset.univ.filter fun z : Fin (p ^ b) ↦
+      (vinogradovCenterValue z : ZMod (p ^ q)) = ξ).card = p ^ (b - q) := by
+  letI : NeZero (p ^ q) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ b) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  have hcard :
+      (Finset.univ.filter fun z : Fin (p ^ b) ↦
+        (vinogradovCenterValue z : ZMod (p ^ q)) = ξ).card =
+        (Finset.univ.filter fun z : ZMod (p ^ b) ↦
+          ZMod.castHom (pow_dvd_pow p hqb) (ZMod (p ^ q)) z = ξ).card := by
+    apply Finset.card_equiv (vinogradovCompleteResidueEquiv (p ^ b))
+    intro z
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    rw [vinogradovCompleteResidueEquiv_apply]
+    simp only [vinogradovCenterValue]
+    rw [map_add, map_natCast, map_one]
+    simp
+  rw [hcard]
+  exact card_zmod_primePower_castHom_fiber p q b
+    (Fact.out : p.Prime).pos hqb ξ
+
+/-- Extracting an exact prime-power divisor is equivalent to asking that
+the remaining quotient be coprime to the prime. -/
+theorem exists_coprime_primePower_quotient_iff
+    (p gamma : ℕ) [Fact p.Prime] (d : ℤ) :
+    (∃ omega : ℤ,
+      d = omega * (p : ℤ) ^ gamma ∧ IsCoprime (p : ℤ) omega) ↔
+      (p : ℤ) ^ gamma ∣ d ∧ ¬(p : ℤ) ^ (gamma + 1) ∣ d := by
+  constructor
+  · rintro ⟨omega, hcenter, homega⟩
+    constructor
+    · exact ⟨omega, by simpa [mul_comm] using hcenter⟩
+    · intro hhigh
+      rcases hhigh with ⟨c, hc⟩
+      have hp0 : (p : ℤ) ^ gamma ≠ 0 :=
+        pow_ne_zero _ (Int.ofNat_ne_zero.mpr (Fact.out : p.Prime).ne_zero)
+      have hcancel : (p : ℤ) ^ gamma * omega =
+          (p : ℤ) ^ gamma * ((p : ℤ) * c) := by
+        calc
+          (p : ℤ) ^ gamma * omega = d := by
+            simpa [mul_comm] using hcenter.symm
+          _ = (p : ℤ) ^ (gamma + 1) * c := hc
+          _ = (p : ℤ) ^ gamma * ((p : ℤ) * c) := by
+            rw [pow_succ]
+            ring
+      have howega : omega = (p : ℤ) * c :=
+        mul_left_cancel₀ hp0 hcancel
+      have hnotdvd :=
+        ((Nat.prime_iff_prime_int.mp
+          (Fact.out : p.Prime)).coprime_iff_not_dvd).mp homega
+      exact hnotdvd ⟨c, howega⟩
+  · rintro ⟨hdiv, hnotHigh⟩
+    rcases hdiv with ⟨omega, hcenter⟩
+    refine ⟨omega, by simpa [mul_comm] using hcenter, ?_⟩
+    apply ((Nat.prime_iff_prime_int.mp
+      (Fact.out : p.Prime)).coprime_iff_not_dvd).mpr
+    intro hpdvd
+    apply hnotHigh
+    rcases hpdvd with ⟨c, hc⟩
+    refine ⟨c, ?_⟩
+    calc
+      d = (p : ℤ) ^ gamma * omega := hcenter
+      _ = (p : ℤ) ^ gamma * ((p : ℤ) * c) := by rw [hc]
+      _ = (p : ℤ) ^ (gamma + 1) * c := by
+        rw [pow_succ]
+        ring
+
+/-- A center difference is divisible by `p^q` exactly when the two centers
+agree modulo `p^q`. -/
+theorem primePower_dvd_vinogradovCenterDifference_iff_cast_eq
+    (p a b q : ℕ) [Fact p.Prime]
+    (x : Fin (p ^ a)) (y : Fin (p ^ b)) :
+    (p : ℤ) ^ q ∣ vinogradovCenterValue x - vinogradovCenterValue y ↔
+      (vinogradovCenterValue x : ZMod (p ^ q)) =
+        (vinogradovCenterValue y : ZMod (p ^ q)) := by
+  constructor
+  · intro hdvd
+    rw [ZMod.intCast_eq_intCast_iff_dvd_sub]
+    have hneg : vinogradovCenterValue y - vinogradovCenterValue x =
+        -(vinogradovCenterValue x - vinogradovCenterValue y) := by ring
+    rw [hneg, dvd_neg]
+    exact_mod_cast hdvd
+  · intro heq
+    have hdvd := (ZMod.intCast_eq_intCast_iff_dvd_sub
+      (vinogradovCenterValue x) (vinogradovCenterValue y) (p ^ q)).mp heq
+    have hneg : vinogradovCenterValue y - vinogradovCenterValue x =
+        -(vinogradovCenterValue x - vinogradovCenterValue y) := by ring
+    rw [hneg, dvd_neg] at hdvd
+    exact_mod_cast hdvd
+
+/-- Pairs of one-based centers equal modulo `p^q` have cardinality
+`p^a * p^(b-q)`. -/
+theorem card_vinogradovCenterResiduePowEqualPairSet
+    (p a b q : ℕ) [Fact p.Prime] (hqb : q ≤ b) :
+    (Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+      (vinogradovCenterValue z.1 : ZMod (p ^ q)) =
+        (vinogradovCenterValue z.2 : ZMod (p ^ q))).card =
+      p ^ a * p ^ (b - q) := by
+  classical
+  let S := Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+    (vinogradovCenterValue z.1 : ZMod (p ^ q)) =
+      (vinogradovCenterValue z.2 : ZMod (p ^ q))
+  have hmaps : ∀ z ∈ S,
+      Prod.fst z ∈ (Finset.univ : Finset (Fin (p ^ a))) :=
+    fun _ _ ↦ Finset.mem_univ _
+  rw [show (Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+      (vinogradovCenterValue z.1 : ZMod (p ^ q)) =
+        (vinogradovCenterValue z.2 : ZMod (p ^ q))) = S from rfl]
+  rw [Finset.card_eq_sum_card_fiberwise hmaps]
+  calc
+    (∑ x : Fin (p ^ a), {z ∈ S | z.1 = x}.card) =
+        ∑ _x : Fin (p ^ a), p ^ (b - q) := by
+      apply Finset.sum_congr rfl
+      intro x hx
+      let T := Finset.univ.filter fun y : Fin (p ^ b) ↦
+        (vinogradovCenterValue y : ZMod (p ^ q)) =
+          (vinogradovCenterValue x : ZMod (p ^ q))
+      have hcard : {z ∈ S | z.1 = x}.card = T.card := by
+        apply Finset.card_bij (fun z _ ↦ z.2)
+        · intro z hz
+          have hzS := (Finset.mem_filter.mp hz).1
+          have hzx := (Finset.mem_filter.mp hz).2
+          have heq := (Finset.mem_filter.mp hzS).2
+          simpa [T, hzx] using heq.symm
+        · intro z₁ hz₁ z₂ hz₂ hsecond
+          apply Prod.ext
+          · exact ((Finset.mem_filter.mp hz₁).2.trans
+              (Finset.mem_filter.mp hz₂).2.symm)
+          · exact hsecond
+        · intro y hy
+          refine ⟨(x, y), ?_, rfl⟩
+          have hyT := (Finset.mem_filter.mp hy).2
+          simp only [Finset.mem_filter]
+          exact ⟨by simpa [S] using hyT.symm, trivial⟩
+      rw [hcard]
+      exact card_vinogradovCenterResiduePow_fiber p q b hqb
+        (vinogradovCenterValue x : ZMod (p ^ q))
+    _ = p ^ a * p ^ (b - q) := by simp
+
+/-- Center pairs whose difference contains exactly `p^gamma` and no further
+factor of `p`. -/
+noncomputable def vinogradovCenterPairExactScaleSet
+    (p a b gamma : ℕ) : Finset (Fin (p ^ a) × Fin (p ^ b)) := by
+  classical
+  exact Finset.univ.filter fun z ↦ ∃ omega : ℤ,
+    vinogradovCenterValue z.1 - vinogradovCenterValue z.2 =
+      omega * (p : ℤ) ^ gamma ∧ IsCoprime (p : ℤ) omega
+
+theorem mem_vinogradovCenterPairExactScaleSet_iff
+    (p a b gamma : ℕ) (z : Fin (p ^ a) × Fin (p ^ b)) :
+    z ∈ vinogradovCenterPairExactScaleSet p a b gamma ↔
+      ∃ omega : ℤ,
+        vinogradovCenterValue z.1 - vinogradovCenterValue z.2 =
+          omega * (p : ℤ) ^ gamma ∧ IsCoprime (p : ℤ) omega := by
+  classical
+  simp [vinogradovCenterPairExactScaleSet]
+
+theorem mem_vinogradovCenterPairExactScaleSet_iff_residues
+    (p a b gamma : ℕ) [Fact p.Prime]
+    (z : Fin (p ^ a) × Fin (p ^ b)) :
+    z ∈ vinogradovCenterPairExactScaleSet p a b gamma ↔
+      (vinogradovCenterValue z.1 : ZMod (p ^ gamma)) =
+          (vinogradovCenterValue z.2 : ZMod (p ^ gamma)) ∧
+        (vinogradovCenterValue z.1 : ZMod (p ^ (gamma + 1))) ≠
+          (vinogradovCenterValue z.2 : ZMod (p ^ (gamma + 1))) := by
+  rw [mem_vinogradovCenterPairExactScaleSet_iff]
+  rw [exists_coprime_primePower_quotient_iff]
+  rw [primePower_dvd_vinogradovCenterDifference_iff_cast_eq]
+  rw [not_congr (primePower_dvd_vinogradovCenterDifference_iff_cast_eq
+    p a b (gamma + 1) z.1 z.2)]
+
+/-- Center pairs congruent modulo `p^gamma`.  These nested sets telescope:
+the difference between levels `gamma` and `gamma + 1` is the exact-scale
+stratum. -/
+noncomputable def vinogradovCenterPairCongruentSet
+    (p a b gamma : ℕ) : Finset (Fin (p ^ a) × Fin (p ^ b)) := by
+  classical
+  exact Finset.univ.filter fun z ↦
+    (vinogradovCenterValue z.1 : ZMod (p ^ gamma)) =
+      (vinogradovCenterValue z.2 : ZMod (p ^ gamma))
+
+theorem mem_vinogradovCenterPairCongruentSet_iff
+    (p a b gamma : ℕ) (z : Fin (p ^ a) × Fin (p ^ b)) :
+    z ∈ vinogradovCenterPairCongruentSet p a b gamma ↔
+      (vinogradovCenterValue z.1 : ZMod (p ^ gamma)) =
+        (vinogradovCenterValue z.2 : ZMod (p ^ gamma)) := by
+  classical
+  simp [vinogradovCenterPairCongruentSet]
+
+/-- Filtering level `gamma` by congruence at the next prime-power level gives
+exactly level `gamma + 1`. -/
+theorem vinogradovCenterPairCongruentSet_filter_next_eq_next
+    (p a b gamma : ℕ) [Fact p.Prime] :
+    (vinogradovCenterPairCongruentSet p a b gamma).filter
+        (fun z ↦
+          (vinogradovCenterValue z.1 : ZMod (p ^ (gamma + 1))) =
+            (vinogradovCenterValue z.2 : ZMod (p ^ (gamma + 1)))) =
+      vinogradovCenterPairCongruentSet p a b (gamma + 1) := by
+  classical
+  ext z
+  simp only [Finset.mem_filter, mem_vinogradovCenterPairCongruentSet_iff]
+  constructor
+  · exact fun h ↦ h.2
+  · intro hhigh
+    refine ⟨?_, hhigh⟩
+    apply (primePower_dvd_vinogradovCenterDifference_iff_cast_eq
+      p a b gamma z.1 z.2).mp
+    exact (pow_dvd_pow (p : ℤ) (Nat.le_succ gamma)).trans
+      ((primePower_dvd_vinogradovCenterDifference_iff_cast_eq
+        p a b (gamma + 1) z.1 z.2).mpr hhigh)
+
+/-- Filtering level `gamma` by failure of congruence at the next level gives
+the exact `gamma` stratum. -/
+theorem vinogradovCenterPairCongruentSet_filter_not_next_eq_exact
+    (p a b gamma : ℕ) [Fact p.Prime] :
+    (vinogradovCenterPairCongruentSet p a b gamma).filter
+        (fun z ↦
+          (vinogradovCenterValue z.1 : ZMod (p ^ (gamma + 1))) ≠
+            (vinogradovCenterValue z.2 : ZMod (p ^ (gamma + 1)))) =
+      vinogradovCenterPairExactScaleSet p a b gamma := by
+  classical
+  ext z
+  rw [mem_vinogradovCenterPairExactScaleSet_iff_residues]
+  simp only [Finset.mem_filter, mem_vinogradovCenterPairCongruentSet_iff]
+
+/-- One congruence level is the disjoint sum of its exact stratum and the
+next congruence level. -/
+theorem sum_vinogradovCenterPairCongruentSet_eq_exact_add_next
+    {M : Type*} [AddCommMonoid M]
+    (p a b gamma : ℕ) [Fact p.Prime]
+    (f : (Fin (p ^ a) × Fin (p ^ b)) → M) :
+    (∑ z ∈ vinogradovCenterPairCongruentSet p a b gamma, f z) =
+      (∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma, f z) +
+        ∑ z ∈ vinogradovCenterPairCongruentSet p a b (gamma + 1), f z := by
+  classical
+  have hpartition := Finset.sum_filter_add_sum_filter_not
+    (vinogradovCenterPairCongruentSet p a b gamma)
+    (fun z ↦
+      (vinogradovCenterValue z.1 : ZMod (p ^ (gamma + 1))) =
+        (vinogradovCenterValue z.2 : ZMod (p ^ (gamma + 1))))
+    f
+  rw [vinogradovCenterPairCongruentSet_filter_next_eq_next,
+    vinogradovCenterPairCongruentSet_filter_not_next_eq_exact] at hpartition
+  simpa only [add_comm] using hpartition.symm
+
+/-- Iterating the adjacent-level split from level zero to level `n` gives a
+finite telescoping decomposition into exact scales plus the terminal
+congruence set at level `n`. -/
+theorem sum_vinogradovCenterPairCongruentSet_zero_eq_exactScales_add
+    {M : Type*} [AddCommMonoid M]
+    (p a b n : ℕ) [Fact p.Prime]
+    (f : (Fin (p ^ a) × Fin (p ^ b)) → M) :
+    (∑ z ∈ vinogradovCenterPairCongruentSet p a b 0, f z) =
+      (∑ gamma ∈ Finset.range n,
+        ∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma, f z) +
+        ∑ z ∈ vinogradovCenterPairCongruentSet p a b n, f z := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      rw [ih, Finset.sum_range_succ,
+        sum_vinogradovCenterPairCongruentSet_eq_exact_add_next
+          p a b n f]
+      ac_rfl
+
+/-- All center pairs decompose into the exact scales `gamma < n` and the
+remaining pairs congruent modulo `p^n`. -/
+theorem sum_univ_centerPairs_eq_exactScales_add_terminal
+    {M : Type*} [AddCommMonoid M]
+    (p a b n : ℕ) [Fact p.Prime]
+    (f : (Fin (p ^ a) × Fin (p ^ b)) → M) :
+    (∑ z : Fin (p ^ a) × Fin (p ^ b), f z) =
+      (∑ gamma ∈ Finset.range n,
+        ∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma, f z) +
+        ∑ z ∈ vinogradovCenterPairCongruentSet p a b n, f z := by
+  have hzero :
+      vinogradovCenterPairCongruentSet p a b 0 =
+        (Finset.univ : Finset (Fin (p ^ a) × Fin (p ^ b))) := by
+    ext z
+    simp only [mem_vinogradovCenterPairCongruentSet_iff,
+      Finset.mem_univ, iff_true]
+    change (vinogradovCenterValue z.1 : ZMod 1) =
+      (vinogradovCenterValue z.2 : ZMod 1)
+    exact Subsingleton.elim _ _
+  simpa only [hzero] using
+    sum_vinogradovCenterPairCongruentSet_zero_eq_exactScales_add
+      p a b n f
+
+/-- Exact cardinality of every nonterminal center-difference scale. -/
+theorem card_vinogradovCenterPairExactScaleSet
+    (p a b gamma : ℕ) [Fact p.Prime] (hgb : gamma + 1 ≤ b) :
+    (vinogradovCenterPairExactScaleSet p a b gamma).card =
+      p ^ a * (p ^ (b - gamma) - p ^ (b - (gamma + 1))) := by
+  classical
+  let low : (Fin (p ^ a) × Fin (p ^ b)) → Prop := fun z ↦
+    (vinogradovCenterValue z.1 : ZMod (p ^ gamma)) =
+      (vinogradovCenterValue z.2 : ZMod (p ^ gamma))
+  let high : (Fin (p ^ a) × Fin (p ^ b)) → Prop := fun z ↦
+    (vinogradovCenterValue z.1 : ZMod (p ^ (gamma + 1))) =
+      (vinogradovCenterValue z.2 : ZMod (p ^ (gamma + 1)))
+  let D := (Finset.univ : Finset (Fin (p ^ a) × Fin (p ^ b))).filter low
+  let H := (Finset.univ : Finset (Fin (p ^ a) × Fin (p ^ b))).filter high
+  have hgamma : gamma ≤ b := le_trans (Nat.le_succ gamma) hgb
+  have hhighLow : ∀ z, high z → low z := by
+    intro z hz
+    apply (primePower_dvd_vinogradovCenterDifference_iff_cast_eq
+      p a b gamma z.1 z.2).mp
+    exact (pow_dvd_pow (p : ℤ) (Nat.le_succ gamma)).trans
+      ((primePower_dvd_vinogradovCenterDifference_iff_cast_eq
+        p a b (gamma + 1) z.1 z.2).mpr hz)
+  have hfilterHigh : D.filter high = H := by
+    ext z
+    simp only [D, H, Finset.mem_filter, Finset.mem_univ, true_and]
+    constructor
+    · exact fun h ↦ h.2
+    · exact fun h ↦ ⟨hhighLow z h, h⟩
+  have hfilterExact : D.filter (fun z ↦ ¬high z) =
+      vinogradovCenterPairExactScaleSet p a b gamma := by
+    ext z
+    rw [mem_vinogradovCenterPairExactScaleSet_iff_residues]
+    simp only [D, Finset.mem_filter, Finset.mem_univ, true_and]
+    rfl
+  have hpartition :
+      H.card + (vinogradovCenterPairExactScaleSet p a b gamma).card = D.card := by
+    simpa only [hfilterHigh, hfilterExact] using
+      (Finset.card_filter_add_card_filter_not (s := D) high)
+  have hlow : D.card = p ^ a * p ^ (b - gamma) := by
+    exact card_vinogradovCenterResiduePowEqualPairSet p a b gamma hgamma
+  have hhigh : H.card = p ^ a * p ^ (b - (gamma + 1)) := by
+    exact card_vinogradovCenterResiduePowEqualPairSet p a b (gamma + 1) hgb
+  rw [hlow, hhigh] at hpartition
+  calc
+    (vinogradovCenterPairExactScaleSet p a b gamma).card =
+        p ^ a * p ^ (b - gamma) - p ^ a * p ^ (b - (gamma + 1)) := by
+      omega
+    _ = p ^ a * (p ^ (b - gamma) - p ^ (b - (gamma + 1))) := by
+      rw [Nat.mul_sub_left_distrib]
+
+/-- The terminal congruence layer has one compatible second center for each
+first center. -/
+theorem card_vinogradovCenterPairCongruentSet_self
+    (p a b : ℕ) [Fact p.Prime] :
+    (vinogradovCenterPairCongruentSet p a b b).card = p ^ a := by
+  simpa [vinogradovCenterPairCongruentSet] using
+    (card_vinogradovCenterResiduePowEqualPairSet p a b b le_rfl)
+
+/-- Sum of mixed conditioned moments over one exact center-difference
+prime-power scale. -/
+noncomputable def normalizedVinogradovExactScaleMixedMomentSum
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime] : ℝ := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact ∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma,
+    ‖normalizedVinogradovMixedModConditionedMoment
+      p ((k - r + 1) * b) a b k r t X Y
+        (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖
+
+/-- The pointwise mixed recurrence aggregates uniformly over any exact
+center-difference scale. -/
+theorem normalizedVinogradovExactScaleMixedMomentSum_le_farScaleMoment
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : gamma ≤ a)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    normalizedVinogradovExactScaleMixedMomentSum
+        p a b k r t X Y gamma ≤
+      (vinogradovCenterPairExactScaleSet p a b gamma).card *
+        (‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b gamma) r r
+            (p ^ vinogradovFarScale k r a b gamma)‖ *
+          (Y ^ (2 * t) : ℝ)) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ vinogradovFarScale k r a b gamma) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  unfold normalizedVinogradovExactScaleMixedMomentSum
+  calc
+    (∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma,
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖) ≤
+      ∑ _z ∈ vinogradovCenterPairExactScaleSet p a b gamma,
+        ‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b gamma) r r
+            (p ^ vinogradovFarScale k r a b gamma)‖ *
+          (Y ^ (2 * t) : ℝ) := by
+      apply Finset.sum_le_sum
+      intro z hz
+      rcases (mem_vinogradovCenterPairExactScaleSet_iff
+        p a b gamma z).mp hz with ⟨omega, hcenter, homega⟩
+      exact norm_normalizedVinogradovMixedModConditionedMoment_le_farScaleMoment
+        p a b k r t X Y gamma
+        (vinogradovCenterValue z.1) (vinogradovCenterValue z.2) omega
+        hrk hkp hb hgammaa hbudget htail hcenter homega hscale
+    _ = (vinogradovCenterPairExactScaleSet p a b gamma).card *
+        (‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b gamma) r r
+            (p ^ vinogradovFarScale k r a b gamma)‖ *
+          (Y ^ (2 * t) : ℝ)) := by
+      simp
+
+/-- Average mixed conditioned moment on one exact prime-power scale. -/
+noncomputable def normalizedVinogradovExactScaleMixedMomentAverage
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime] : ℝ :=
+  normalizedVinogradovExactScaleMixedMomentSum p a b k r t X Y gamma /
+    (vinogradovCenterPairExactScaleSet p a b gamma).card
+
+/-- The exact-scale cardinality cancels after averaging, uniformly for every
+nonterminal scale `gamma + 1 ≤ b`. -/
+theorem normalizedVinogradovExactScaleMixedMomentAverage_le_farScaleMoment
+    (p a b k r t X Y gamma : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : gamma ≤ a) (hgb : gamma + 1 ≤ b)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    normalizedVinogradovExactScaleMixedMomentAverage
+        p a b k r t X Y gamma ≤
+      ‖normalizedVinogradovMomentMod
+        (p ^ vinogradovFarScale k r a b gamma) r r
+          (p ^ vinogradovFarScale k r a b gamma)‖ *
+        (Y ^ (2 * t) : ℝ) := by
+  have hexponent : b - (gamma + 1) < b - gamma := by omega
+  have hpow : p ^ (b - (gamma + 1)) < p ^ (b - gamma) :=
+    Nat.pow_lt_pow_right (Fact.out : p.Prime).one_lt hexponent
+  have hcardNat : 0 < (vinogradovCenterPairExactScaleSet p a b gamma).card := by
+    rw [card_vinogradovCenterPairExactScaleSet p a b gamma hgb]
+    exact Nat.mul_pos (pow_pos (Fact.out : p.Prime).pos a)
+      (Nat.sub_pos_of_lt hpow)
+  have hcardReal :
+      (0 : ℝ) < (vinogradovCenterPairExactScaleSet p a b gamma).card := by
+    exact_mod_cast hcardNat
+  unfold normalizedVinogradovExactScaleMixedMomentAverage
+  apply (div_le_iff₀ hcardReal).2
+  simpa only [mul_comm] using
+    normalizedVinogradovExactScaleMixedMomentSum_le_farScaleMoment
+      p a b k r t X Y gamma hrk hkp hb hgammaa hbudget htail hscale
+
+/-- Sum of mixed conditioned moments over the terminal center layer, where
+the two centers remain congruent modulo the full tail modulus `p^b`. -/
+noncomputable def normalizedVinogradovTerminalMixedMomentSum
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact ∑ z ∈ vinogradovCenterPairCongruentSet p a b b,
+    ‖normalizedVinogradovMixedModConditionedMoment
+      p ((k - r + 1) * b) a b k r t X Y
+        (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖
+
+/-- The terminal layer has exactly `p^a` center pairs and each mixed moment
+is bounded by the cardinality of its full tuple ambient space. -/
+theorem normalizedVinogradovTerminalMixedMomentSum_le_trivial
+    (p a b k r t X Y : ℕ) [Fact p.Prime] :
+    normalizedVinogradovTerminalMixedMomentSum
+        p a b k r t X Y ≤
+      (p ^ a : ℕ) * ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  unfold normalizedVinogradovTerminalMixedMomentSum
+  calc
+    (∑ z ∈ vinogradovCenterPairCongruentSet p a b b,
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖) ≤
+        ∑ _z ∈ vinogradovCenterPairCongruentSet p a b b,
+          ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+      apply Finset.sum_le_sum
+      intro z hz
+      exact norm_normalizedVinogradovMixedModConditionedMoment_le_trivial
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)
+    _ = (p ^ a : ℕ) *
+        ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+      rw [Finset.sum_const, nsmul_eq_mul,
+        card_vinogradovCenterPairCongruentSet_self]
+
+/-- Sum of the normalized mixed-moment norms over every pair of main and tail
+centers.  The center variables themselves are not averaged at this stage. -/
+noncomputable def normalizedVinogradovAllCenterMixedMomentSum
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact ∑ z : Fin (p ^ a) × Fin (p ^ b),
+    ‖normalizedVinogradovMixedModConditionedMoment
+      p ((k - r + 1) * b) a b k r t X Y
+        (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖
+
+/-- The all-center mixed moment decomposes exactly into the `b` nonterminal
+valuation scales and the terminal congruent-center layer. -/
+theorem normalizedVinogradovAllCenterMixedMomentSum_eq_exactScales_add_terminal
+    (p a b k r t X Y : ℕ) [Fact p.Prime] :
+    normalizedVinogradovAllCenterMixedMomentSum p a b k r t X Y =
+      (∑ gamma ∈ Finset.range b,
+        normalizedVinogradovExactScaleMixedMomentSum
+          p a b k r t X Y gamma) +
+        normalizedVinogradovTerminalMixedMomentSum p a b k r t X Y := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  change
+    (∑ z : Fin (p ^ a) × Fin (p ^ b),
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖) =
+      (∑ gamma ∈ Finset.range b,
+        ∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma,
+          ‖normalizedVinogradovMixedModConditionedMoment
+            p ((k - r + 1) * b) a b k r t X Y
+              (vinogradovCenterValue z.1)
+              (vinogradovCenterValue z.2)‖) +
+        ∑ z ∈ vinogradovCenterPairCongruentSet p a b b,
+          ‖normalizedVinogradovMixedModConditionedMoment
+            p ((k - r + 1) * b) a b k r t X Y
+              (vinogradovCenterValue z.1)
+              (vinogradovCenterValue z.2)‖
+  exact sum_univ_centerPairs_eq_exactScales_add_terminal
+    p a b b (fun z ↦
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖)
+
+/-- Global center-scale recurrence.  Every nonterminal valuation layer uses
+its far-scale complete moment, while the terminal layer is retained with the
+honest ambient-space bound. -/
+theorem normalizedVinogradovAllCenterMixedMomentSum_le_exactScales_add_terminal
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : ∀ gamma < b, gamma ≤ a)
+    (hbudget : ∀ gamma < b,
+      gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : ∀ gamma < b,
+      X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    normalizedVinogradovAllCenterMixedMomentSum p a b k r t X Y ≤
+      (∑ gamma ∈ Finset.range b,
+        (vinogradovCenterPairExactScaleSet p a b gamma).card *
+          (‖normalizedVinogradovMomentMod
+            (p ^ vinogradovFarScale k r a b gamma) r r
+              (p ^ vinogradovFarScale k r a b gamma)‖ *
+            (Y ^ (2 * t) : ℝ))) +
+        (p ^ a : ℕ) *
+          ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+  rw [normalizedVinogradovAllCenterMixedMomentSum_eq_exactScales_add_terminal]
+  apply add_le_add
+  · apply Finset.sum_le_sum
+    intro gamma hgamma
+    have hgb : gamma < b := Finset.mem_range.mp hgamma
+    exact normalizedVinogradovExactScaleMixedMomentSum_le_farScaleMoment
+      p a b k r t X Y gamma hrk hkp hb
+        (hgammaa gamma hgb) (hbudget gamma hgb) htail
+        (hscale gamma hgb)
+  · exact normalizedVinogradovTerminalMixedMomentSum_le_trivial
+      p a b k r t X Y
+
+/-- Average of the mixed-moment norms over the `p^a * p^b` center pairs. -/
+noncomputable def normalizedVinogradovAllCenterMixedMomentAverage
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ :=
+  normalizedVinogradovAllCenterMixedMomentSum p a b k r t X Y /
+    ((p ^ a * p ^ b : ℕ) : ℝ)
+
+/-- Averaging the global recurrence exposes the small relative mass of the
+terminal layer through the denominator `p^a * p^b`. -/
+theorem
+    normalizedVinogradovAllCenterMixedMomentAverage_le_exactScales_add_terminal
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : ∀ gamma < b, gamma ≤ a)
+    (hbudget : ∀ gamma < b,
+      gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : ∀ gamma < b,
+      X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    normalizedVinogradovAllCenterMixedMomentAverage
+        p a b k r t X Y ≤
+      ((∑ gamma ∈ Finset.range b,
+          (vinogradovCenterPairExactScaleSet p a b gamma).card *
+            (‖normalizedVinogradovMomentMod
+              (p ^ vinogradovFarScale k r a b gamma) r r
+                (p ^ vinogradovFarScale k r a b gamma)‖ *
+              (Y ^ (2 * t) : ℝ))) +
+          (p ^ a : ℕ) *
+            ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ)) /
+        ((p ^ a * p ^ b : ℕ) : ℝ) := by
+  unfold normalizedVinogradovAllCenterMixedMomentAverage
+  exact div_le_div_of_nonneg_right
+    (normalizedVinogradovAllCenterMixedMomentSum_le_exactScales_add_terminal
+      p a b k r t X Y hrk hkp hb hgammaa hbudget htail hscale)
+    (Nat.cast_nonneg (p ^ a * p ^ b))
+
+/-- Sum of the norms of the mixed conditioned moments over all unit-separated
+center pairs.  This is the first aggregate surface for the recurrence. -/
+noncomputable def normalizedVinogradovUnitSeparatedMixedMomentSum
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact ∑ z ∈ vinogradovUnitSeparatedCenterPairSet p a b,
+    ‖normalizedVinogradovMixedModConditionedMoment
+      p ((k - r + 1) * b) a b k r t X Y
+        (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖
+
+/-- Average mixed conditioned moment over all base-prime-separated center
+pairs. -/
+noncomputable def normalizedVinogradovUnitSeparatedMixedMomentAverage
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ :=
+  normalizedVinogradovUnitSeparatedMixedMomentSum p a b k r t X Y /
+    (vinogradovUnitSeparatedCenterPairSet p a b).card
+
+/-- Aggregating the pointwise `gamma = 0` recurrence costs only the number
+of unit-separated center pairs; the same far-scale moment bounds every
+summand. -/
+theorem normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hbudget : a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b 0) :
+    normalizedVinogradovUnitSeparatedMixedMomentSum
+        p a b k r t X Y ≤
+      (vinogradovUnitSeparatedCenterPairSet p a b).card *
+        (‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b 0) r r
+            (p ^ vinogradovFarScale k r a b 0)‖ *
+          (Y ^ (2 * t) : ℝ)) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ vinogradovFarScale k r a b 0) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  unfold normalizedVinogradovUnitSeparatedMixedMomentSum
+  calc
+    (∑ z ∈ vinogradovUnitSeparatedCenterPairSet p a b,
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖) ≤
+      ∑ _z ∈ vinogradovUnitSeparatedCenterPairSet p a b,
+        ‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b 0) r r
+            (p ^ vinogradovFarScale k r a b 0)‖ *
+          (Y ^ (2 * t) : ℝ) := by
+      apply Finset.sum_le_sum
+      intro z hz
+      have hunit :=
+        (mem_vinogradovUnitSeparatedCenterPairSet_iff p a b z).mp hz
+      simpa only [Nat.zero_mul, zero_add, pow_zero, mul_one] using
+        (norm_normalizedVinogradovMixedModConditionedMoment_le_farScaleMoment
+          p a b k r t X Y 0
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)
+          (vinogradovCenterValue z.1 - vinogradovCenterValue z.2)
+          hrk hkp hb (Nat.zero_le a) (by simpa using hbudget) htail
+          (by simp) hunit hscale)
+    _ = (vinogradovUnitSeparatedCenterPairSet p a b).card *
+        (‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b 0) r r
+            (p ^ vinogradovFarScale k r a b 0)‖ *
+          (Y ^ (2 * t) : ℝ)) := by
+      simp
+
+/-- The aggregate `gamma = 0` recurrence with its center-pair factor written
+explicitly. -/
+theorem normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment_explicit
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hbudget : a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b 0) :
+    normalizedVinogradovUnitSeparatedMixedMomentSum
+        p a b k r t X Y ≤
+      (p ^ a * (p ^ b - p ^ (b - 1)) : ℕ) *
+        (‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b 0) r r
+            (p ^ vinogradovFarScale k r a b 0)‖ *
+          (Y ^ (2 * t) : ℝ)) := by
+  simpa only [card_vinogradovUnitSeparatedCenterPairSet p a b hb] using
+    normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment
+      p a b k r t X Y hrk hkp hb hbudget htail hscale
+
+/-- After averaging over the `gamma = 0` center-pair stratum, its exact
+cardinality factor cancels from the recurrence. -/
+theorem normalizedVinogradovUnitSeparatedMixedMomentAverage_le_farScaleMoment
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hbudget : a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b 0) :
+    normalizedVinogradovUnitSeparatedMixedMomentAverage
+        p a b k r t X Y ≤
+      ‖normalizedVinogradovMomentMod
+        (p ^ vinogradovFarScale k r a b 0) r r
+          (p ^ vinogradovFarScale k r a b 0)‖ *
+        (Y ^ (2 * t) : ℝ) := by
+  have hexponent : b - 1 < b := by omega
+  have hpow : p ^ (b - 1) < p ^ b :=
+    Nat.pow_lt_pow_right (Fact.out : p.Prime).one_lt hexponent
+  have hcardNat : 0 < (vinogradovUnitSeparatedCenterPairSet p a b).card := by
+    rw [card_vinogradovUnitSeparatedCenterPairSet p a b hb]
+    exact Nat.mul_pos (pow_pos (Fact.out : p.Prime).pos a)
+      (Nat.sub_pos_of_lt hpow)
+  have hcardReal :
+      (0 : ℝ) < (vinogradovUnitSeparatedCenterPairSet p a b).card := by
+    exact_mod_cast hcardNat
+  unfold normalizedVinogradovUnitSeparatedMixedMomentAverage
+  apply (div_le_iff₀ hcardReal).2
+  simpa only [mul_comm] using
+    normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment
+      p a b k r t X Y hrk hkp hb hbudget htail hscale
+
+end
+
+end ZeroFreeRegion.VinogradovKorobov

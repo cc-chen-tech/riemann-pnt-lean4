@@ -1,0 +1,11 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovModularSymmetry
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check IsVinogradovSolutionIntMod
+#check IsVinogradovSolutionIntMod.powerSum_modEq
+#check IsVinogradovSolutionIntMod.translate
+#check isVinogradovSolutionIntMod_translate_iff
+
+#print axioms IsVinogradovSolutionIntMod.translate
+#print axioms isVinogradovSolutionIntMod_translate_iff

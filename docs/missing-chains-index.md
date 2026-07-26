@@ -5,9 +5,9 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **13** unresolved mathematical `def ... : Prop` targets,
+At present there are **12** unresolved mathematical `def ... : Prop` targets,
 partitioned into exactly **4** analytic chains.  The recursive scanner also
-tracks 5 route interfaces and 13 reusable Prop predicates so subdirectory
+tracks 5 route interfaces and 46 reusable Prop predicates so subdirectory
 interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region
@@ -54,9 +54,12 @@ classical `c/log |t|` zero-free region, and derives the ordinary PNT through a
 multiplicity-aware moving-height explicit formula, including the de la Vallee
 Poussin-form `psi` and `pi-Li` remainders.  It also proves the classical
 Riemann-von Mangoldt asymptotic for the one-sided multiplicity-weighted zeta
-zero count.  It is not the first PNT
-formalization, does not supply numerically explicit remainder constants, and
-is not a proof of RH.
+zero count, Hardy--Littlewood linear lower bounds for distinct and
+odd-multiplicity critical-line zeros, divergence of a Pintz zero envelope, and
+a strict-beyond-`pi/2` PNT-error oscillation forced by a
+right-of-critical-line zero.
+It is not the first PNT formalization, does not supply numerically explicit
+remainder constants, and is not a proof of RH.
 
 For the zero-free-region route, the classical `c/log |t|` milestone is now
 proved by `classical_zero_free_region_proved`.  The remaining target in this
@@ -67,10 +70,10 @@ technology rather than more local Jensen/Borel wrappers.
 
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
-| Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
+| Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target; the exponential-sum, prime-power, mixed-moment, and tail-recurrence layers are merged | Close the Ford short-sum input, tent-kernel localization, smooth-support estimates, and final parameter optimization | Prove the first unconditional `FordShortSumPrefixBound` instance without weakening the proved classical theorem | 1 |
 | Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
-| Hardy quantitative extensions | `hardy_theorem_target`, both unbounded-height forms, and the odd/distinct/multiplicity count comparison chain are proved | Prove the short-integral mean-value input that forces linearly many Hardy-Z sign changes | Develop the odd-order Hardy-Littlewood and Selberg bounds, then the separately formulated Conrey percentage estimates | 8 (2 count targets, 2 signed-moment targets, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
+| Hardy quantitative extensions | Hardy's theorem and the Hardy--Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved | Obtain the logarithmic gain from `T` to `T log T` in the odd-zero count | Close the Selberg mollified bad-set estimates, then develop separately formulated Conrey percentage estimates | 7 (1 count target, 2 signed-moment targets, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
 ## Target-to-Chain Mapping
 
@@ -83,8 +86,7 @@ technology rather than more local Jensen/Borel wrappers.
 | `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Pointwise reformulation of `RH_PrimeCountingLiErrorBound`; RH implies it |
 | `HardyTheorem.lean` | `integral_asymptotic_target` | Quantitative critical-line extensions | Signed-moment asymptotic input |
 | `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Quantitative critical-line extensions | Asymptotics for the first two weighted moments |
-| `HardyTheorem.lean` | `hardy_littlewood_lower_bound_target` | Quantitative critical-line extensions | Quantitative lower bound on critical-line zeros needed for positive density |
-| `HardyTheorem.lean` | `selberg_zero_proportion_target` | Quantitative critical-line extensions | Proportional form of Hardy-type lower bounds |
+| `HardyTheorem/CriticalLineMultiplicity.lean` | `selberg_odd_zero_proportion_target` | Quantitative critical-line extensions | Selberg-scale lower bound for odd-multiplicity critical-line zeros |
 | `HardyTheorem.lean` | `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target` | Quantitative critical-line extensions | Gamma asymptotic used in approximate functional equation setup |
 | `HardyTheorem.lean` | `HardyTheorem.Details.theta_asymptotic_target` | Quantitative critical-line extensions | Riemann–Siegel theta asymptotic setup |
 | `HardyTheorem.lean` | `HardyTheorem.Details.approximate_functional_equation_target` | Quantitative critical-line extensions | Residual error form of the AFE used by Hardy integrals |
@@ -94,6 +96,10 @@ technology rather than more local Jensen/Borel wrappers.
 
 The following proved declarations are the main entry points for future work:
 
+- `HardyTheorem.hardy_littlewood_lower_bound_target_proved`
+- `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
+- `PrimeNumberTheorem.Pintz.tendsto_pintzZeroEnvelope_atTop`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_far_psiError_gt_pi_div_two_of_zeta_zero`
 - `ZeroFreeRegion.log_deriv_zeta_re_series`
 - `ZeroFreeRegion.log_deriv_zeta_nonneg_combination`
 - `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_real_neg_deriv_div`

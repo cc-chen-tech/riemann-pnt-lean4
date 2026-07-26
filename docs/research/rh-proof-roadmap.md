@@ -135,6 +135,46 @@ High. The local contour and residue route is now sufficient for the PNT
 formula, but the Weil positivity equivalence requires substantially different
 test-function and distributional infrastructure.
 
+#### Weil Extremal-Kernel Certificate Line: Current Status and Next Steps
+
+The finite Weil-matrix workstream is preregistered in
+`docs/research/weil-extremal-kernel-preregistration.md`. Its registered target
+is a rigorous positive-semidefinite certificate for the full cutoff-free
+matrix `Q_full(100, 250)`; the required Gate A calibration is
+`(c, N) = (100, 200)` with the full `401 x 401` matrix.
+
+Current status of the six-link certificate chain:
+
+- Link 4 (exact rational `LDL^T` algebra) and the link-6 artifact plumbing
+  (standard-library checker, canonical JSON, content addressing) are closed
+  by the first milestone.
+- Links 3 and 5 are closed as a generic mechanism by the second milestone:
+  a rational interval reduction plus the exact perturbation theorem that
+  transfers a center certificate to every real matrix in the enclosure.
+- Link 1 (two independent interval assemblies with entrywise overlap) is in
+  progress. The two independent point-value routes (auxiliary `S/CC/XC` and
+  CCM hypergeometric/Lerch) are frozen in
+  `experiments/rh/reference/groskin_2607_02828_v1_small_n_high_precision_crosscheck.json`;
+  their intervalization with Arb outward rounding is designed in
+  `docs/research/weil-interval-assembly-design.md`. The current evidence
+  remains a point-value-level cross-check; Gate A is not closed.
+- The same-route 9000/9512-bit replays of the released upstream script
+  (see `docs/research/weil-gate-a-local-reproduction-2026-07-19.md`) give
+  persistent positive inertia at `(100, 200)` but cannot certify entrywise
+  enclosure narrowing, because the released records retain no entry balls.
+
+Next steps:
+
+1. Implement the two intervalized routes behind the unified artifact pattern
+   `weil-extremal-kernel-interval-assembly/v1`.
+2. Pass the frozen point-value containment test at `(13, 4)` and `(13, 8)`,
+   then climb the small-`N` ladder.
+3. Run both routes at `(100, 200)`, verify entrywise overlap, symmetrize by
+   intersection, and feed the enclosure to the existing rational-reduction
+   and exact-LDL machinery.
+4. Repeat at a precision at least 512 bits higher and verify that every entry
+   enclosure narrows and the certified inertia persists, closing Gate A.
+
 ### Route C: Xi Function and Hadamard Product
 
 Statement:

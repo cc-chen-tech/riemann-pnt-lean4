@@ -1,0 +1,8 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovNormalizedConditionedMoment
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovNormalizedConditionedMoment
+#check vinogradovNormalizedConditionedMoment_le_refinement
+#check vinogradovWeightedNormalizedConditionedMoment
+#check vinogradovWeightedNormalizedConditionedMoment_le_refinement
