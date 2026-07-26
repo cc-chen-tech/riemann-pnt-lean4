@@ -3,5 +3,7 @@ import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightAutomaticNat
 namespace PrimeNumberTheorem
 
 #check selectedUniformGoodHeight_actualNaturalPointRemainder_lowerTransfer
+#check
+  unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
 
 end PrimeNumberTheorem
