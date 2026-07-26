@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.VKEdgeResidualAmplification
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds
+#print axioms intervalIntegral_cosineZeroPair_sq
+#print axioms integral_Icc_normalizedTargetZeroPair_sq_le
+#print axioms centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
+#print axioms integral_Icc_normalizedPsiResidual_sq_lower
+#print axioms integral_Icc_normalizedPsiResidual_sq_lower_epsilonLogWindow

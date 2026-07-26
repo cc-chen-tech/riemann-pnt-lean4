@@ -167,6 +167,7 @@ lean_lib RiemannPNT where
     `Test.WeightedCauchySchwarzAxiomAudit,
     `Test.ResidualSecondMomentContract,
     `Test.VKEdgeResidualAmplificationContract,
+    `Test.VKEdgeResidualAmplificationAxiomAudit,
     `Test.VKEdgePiOverTwoConcreteContourAssemblyContract,
     `Test.VKEdgePiOverTwoConcreteContourAssemblyAxiomAudit,
     `Test.VKEdgePiOverTwoRightTailBoundContract,
