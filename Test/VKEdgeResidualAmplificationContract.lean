@@ -16,6 +16,10 @@ open PrimeNumberTheorem VKEdgePiOverTwo
 #check one_div_pi_le_sharpenedMissingHarmonicDenominator
 #check one_le_centeredSharpenedProjectedPsiKernelEnvelopeConstant
 #check centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
+#check integral_Icc_normalizedPsiResidual_sq_lower
+#check epsilonLogWindowTargetPairCoefficient
+#check integral_Icc_normalizedTargetZeroPair_sq_le_epsilonLogWindow
+#check integral_Icc_normalizedPsiResidual_sq_lower_epsilonLogWindow
 
 example
     {m gamma phase a b : ℝ} (hgamma : gamma ≠ 0) :
@@ -50,3 +54,22 @@ example
       epsilon * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 :=
   centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
     hepsilon hrho1 hzero
+
+example
+    {rho : ℂ} {a b A B : ℝ}
+    (hrhoRe1 : rho.re < 1)
+    (hab : a ≤ b)
+    (hgamma : rho.im ≠ 0)
+    (hA : 0 ≤ A)
+    (hB : 0 ≤ B)
+    (hBA : B < A)
+    (htotal :
+      A * (b - a) ≤
+        ∫ y in Icc a b, normalizedPsiError rho y ^ 2)
+    (hpair :
+      (∫ y in Icc a b, normalizedTargetZeroPair rho y ^ 2) ≤
+        B * (b - a)) :
+    (Real.sqrt A - Real.sqrt B) ^ 2 * (b - a) ≤
+      ∫ y in Icc a b, normalizedPsiResidual rho y ^ 2 :=
+  integral_Icc_normalizedPsiResidual_sq_lower
+    hrhoRe1 hab hgamma hA hB hBA htotal hpair
