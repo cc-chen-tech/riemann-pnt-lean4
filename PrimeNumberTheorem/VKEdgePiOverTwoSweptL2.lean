@@ -526,6 +526,103 @@ theorem ordinarySecondMoment_linear_lower_of_sweptWeightedLower
       filter_upwards with y
       ring
 
+/-- Ratio of the largest and smallest Gaussian scales used inside an
+`epsilon` logarithmic window. -/
+def epsilonSweepRatio (ε : ℝ) : ℝ :=
+  (1 + ε) / (1 + ε / 2)
+
+theorem one_lt_epsilonSweepRatio {ε : ℝ} (hε : 0 < ε) :
+    1 < epsilonSweepRatio ε := by
+  unfold epsilonSweepRatio
+  apply (lt_div_iff₀ (by linarith : 0 < 1 + ε / 2)).2
+  linarith
+
+theorem localizedGaussianLogWindow_subset_epsilonWindow_of_mem_sweep
+    {ε Y m : ℝ} (hε : 0 < ε) (hY : 1 < Y)
+    (hm : m ∈ Set.Icc
+      (epsilonGaussianScale (ε / 2) Y)
+      (epsilonSweepRatio ε *
+        epsilonGaussianScale (ε / 2) Y)) :
+    localizedGaussianLogWindow
+        (epsilonCenterCoefficient (ε / 2))
+        (epsilonRadiusCoefficient (ε / 2)) m ⊆
+      Set.Icc (Real.log Y) ((1 + ε) * Real.log Y) := by
+  intro y hy
+  have hyBounds :
+      (epsilonCenterCoefficient (ε / 2) -
+          epsilonRadiusCoefficient (ε / 2)) * m ≤ y ∧
+        y ≤
+          (epsilonCenterCoefficient (ε / 2) +
+            epsilonRadiusCoefficient (ε / 2)) * m := by
+    simpa only [localizedGaussianLogWindow, Set.mem_Icc] using hy
+  have hε2 : 0 < ε / 2 := by positivity
+  have hgap :
+      0 <
+        epsilonCenterCoefficient (ε / 2) -
+          epsilonRadiusCoefficient (ε / 2) :=
+    sub_pos.mpr (epsilonRadiusCoefficient_lt_center hε2)
+  have hsum :
+      0 <
+        epsilonCenterCoefficient (ε / 2) +
+          epsilonRadiusCoefficient (ε / 2) :=
+    add_pos
+      (epsilonRadiusCoefficient_pos hε2 |>.trans
+        (epsilonRadiusCoefficient_lt_center hε2))
+      (epsilonRadiusCoefficient_pos hε2)
+  have hlog : 0 < Real.log Y := Real.log_pos hY
+  have hlowerScale :
+      (epsilonCenterCoefficient (ε / 2) -
+          epsilonRadiusCoefficient (ε / 2)) *
+        epsilonGaussianScale (ε / 2) Y =
+          Real.log Y := by
+    unfold epsilonGaussianScale
+    field_simp [hgap.ne']
+  have hratio :
+      (epsilonCenterCoefficient (ε / 2) +
+          epsilonRadiusCoefficient (ε / 2)) /
+        (epsilonCenterCoefficient (ε / 2) -
+          epsilonRadiusCoefficient (ε / 2)) =
+        1 + ε / 2 := by
+    unfold epsilonCenterCoefficient epsilonRadiusCoefficient
+    field_simp [hε.ne']
+    ring
+  have hratioSweep :
+      (1 + ε / 2) * epsilonSweepRatio ε = 1 + ε := by
+    unfold epsilonSweepRatio
+    have hden : (1 + ε / 2) ≠ 0 := by linarith
+    field_simp [hden]
+  constructor
+  · calc
+      Real.log Y =
+          (epsilonCenterCoefficient (ε / 2) -
+              epsilonRadiusCoefficient (ε / 2)) *
+            epsilonGaussianScale (ε / 2) Y := hlowerScale.symm
+      _ ≤
+          (epsilonCenterCoefficient (ε / 2) -
+              epsilonRadiusCoefficient (ε / 2)) * m :=
+        mul_le_mul_of_nonneg_left hm.1 hgap.le
+      _ ≤ y := hyBounds.1
+  · calc
+      y ≤
+          (epsilonCenterCoefficient (ε / 2) +
+              epsilonRadiusCoefficient (ε / 2)) * m := hyBounds.2
+      _ ≤
+          (epsilonCenterCoefficient (ε / 2) +
+              epsilonRadiusCoefficient (ε / 2)) *
+            (epsilonSweepRatio ε *
+              epsilonGaussianScale (ε / 2) Y) :=
+        mul_le_mul_of_nonneg_left hm.2 hsum.le
+      _ =
+          ((epsilonCenterCoefficient (ε / 2) +
+              epsilonRadiusCoefficient (ε / 2)) /
+            (epsilonCenterCoefficient (ε / 2) -
+              epsilonRadiusCoefficient (ε / 2))) *
+            epsilonSweepRatio ε * Real.log Y := by
+        rw [epsilonGaussianScale]
+        field_simp [hgap.ne']
+      _ = (1 + ε) * Real.log Y := by
+        rw [hratio, hratioSweep]
+
 end
 
 end VKEdgePiOverTwo
