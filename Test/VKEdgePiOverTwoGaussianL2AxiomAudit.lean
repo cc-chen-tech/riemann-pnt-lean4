@@ -2,4 +2,3 @@ import PrimeNumberTheorem.VKEdgePiOverTwoGaussianL2
 
 #print axioms PrimeNumberTheorem.VKEdgePiOverTwo.CenteredLocalizedContourData.eventually_secondMoment_gt
 #print axioms PrimeNumberTheorem.VKEdgePiOverTwo.eventually_centeredSharpenedNormalizedPsiError_secondMoment_gt
-

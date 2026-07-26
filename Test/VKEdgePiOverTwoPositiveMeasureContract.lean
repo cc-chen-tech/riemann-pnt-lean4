@@ -10,4 +10,3 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
 #check exists_eventually_positive_measure_in_epsilonLogWindow_gt_strictPiOverTwo
 
 end PrimeNumberTheorem.VKEdgePiOverTwo
-

@@ -8,4 +8,3 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
 #check eventually_centeredSharpenedNormalizedPsiError_secondMoment_gt
 
 end PrimeNumberTheorem.VKEdgePiOverTwo
-

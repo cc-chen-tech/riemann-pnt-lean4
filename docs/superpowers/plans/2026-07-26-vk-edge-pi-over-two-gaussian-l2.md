@@ -274,4 +274,3 @@ git diff --check
 
 Document that the endpoint is conditional and gives positive logarithmic
 measure, not a uniform density or sign-separated oscillation.
-

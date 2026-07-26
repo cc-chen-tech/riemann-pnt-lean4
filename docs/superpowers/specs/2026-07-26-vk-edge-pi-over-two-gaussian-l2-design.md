@@ -130,4 +130,3 @@ every sufficiently large `Y`.
 - New source contains no `sorry`, `admit`, or project `axiom`.
 - Run focused module builds, `./scripts/verify-baseline.sh`, and full
   `lake build`.
-
