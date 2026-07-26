@@ -287,6 +287,7 @@ git commit -m "feat: parameterize localized zeta contour"
 - Consumes:
   Task 3 exact contour and the existing `goodHeight` construction.
 - Produces:
+  `centeredPoleRadius`,
   `CenteredConcreteLocalizedContourSlice`,
   `selectedLocalizedZeroResidueSumAtCenter`,
   `selectedLocalizedContourRemainderAtCenter`,
@@ -304,25 +305,43 @@ Tendsto
 
 under `0 < q`, `0 < u`, `u < 1`.
 
-- [ ] **Step 2: Generalize edge envelopes**
+- [ ] **Step 2: Prove the enlarged far-zero radius margin**
+
+Define:
+
+```lean
+def centeredPoleRadius (q : ℝ) : ℝ := q + 5
+```
+
+For `0 < q` and every real-part displacement `a` with `|a| ≤ 1`, prove:
+
+```lean
+a ^ 2 + q * a - centeredPoleRadius q ^ 2 ≤ -8
+```
+
+Use `centeredPoleRadius q` in the near-zero filter and far-zero split. The
+filter degree may depend on fixed `q`.
+
+- [ ] **Step 3: Generalize edge envelopes**
 
 Carry `q` through the right, left, top, and bottom edge bounds. Allow envelope
 constants to depend on fixed `q`.
 
-- [ ] **Step 3: Keep the good-height scale**
+- [ ] **Step 4: Keep the good-height scale**
 
 Use
 `T ∈ Set.Icc (12 * m + |v|) (12 * m + |v| + 1)`.
 Prove that the negative `-m*T^2` term dominates the fixed-`q` linear
-contribution on horizontal edges.
+contribution on horizontal edges. Also prove that this height eventually
+exceeds the fixed `centeredPoleRadius q`.
 
-- [ ] **Step 4: Select concrete slices and prove decay**
+- [ ] **Step 5: Select concrete slices and prove decay**
 
 Mirror the existing `ConcreteLocalizedContourSlice` construction with `q`
 added as a parameter. The selected definitions extend invalid small scales
 by zero exactly as before.
 
-- [ ] **Step 5: Verify and commit**
+- [ ] **Step 6: Verify and commit**
 
 Run focused checks and commit:
 
@@ -432,8 +451,9 @@ Gaussian convergence to prove the coefficient still tends to
 - [ ] **Step 3: Install target and missing-harmonic contours**
 
 Pair the two selected true-zeta contour identities before taking absolute
-values. Preserve analytic multiplicity and use Task 5 for both true-psi
-tails.
+values. Preserve analytic multiplicity, use
+`localizedNearZeroFilter center (centeredPoleRadius q)` for both centers,
+and use Task 5 for both true-psi tails.
 
 - [ ] **Step 4: Prove the abstract window witness**
 

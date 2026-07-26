@@ -93,6 +93,30 @@ The large numerical factor `64` is not intended to be sharp. It makes the
 tail inequalities stable under the polynomial-Gaussian envelope
 `exp(|t| / sqrt m)` and avoids obscuring the theorem with optimized constants.
 
+The larger center also changes the residue envelope.  A zero with real-part
+offset `a` contributes the exponential factor
+
+\[
+\exp(m(a^2-(\Delta\gamma)^2+q a)).
+\]
+
+Since `|a| ≤ 1`, the old fixed pole radius `5` is not sufficient when `q`
+is large.  Use the fixed-for-`ε` annihilation radius
+
+\[
+B(q)=q+5.
+\]
+
+Then `B(q) ≥ 5` and, for `q > 0`,
+
+\[
+a^2+qa-B(q)^2\le -8.
+\]
+
+All zeros inside this larger finite vertical band are removed by the
+polynomial filter.  Its degree and constants may depend on `ε`; they remain
+fixed as the Gaussian scale tends to infinity.
+
 ## Architecture
 
 ### 1. Parametric Window and Transfer
@@ -115,6 +139,9 @@ def epsilonRadiusCoefficient (ε : ℝ) : ℝ :=
 def epsilonGaussianScale (ε Y : ℝ) : ℝ :=
   Real.log Y /
     (epsilonCenterCoefficient ε - epsilonRadiusCoefficient ε)
+
+def centeredPoleRadius (q : ℝ) : ℝ :=
+  q + 5
 ```
 
 Prove the exact logarithmic-window identity and a general transfer theorem
@@ -157,6 +184,10 @@ The center coefficient `q` is fixed while `m` tends to infinity. On the left
 edge, larger positive `q` improves exponential decay. On the horizontal
 edges, the negative Gaussian term in `T^2` dominates every fixed `q`-dependent
 linear term. Every resulting constant may depend on `q`.
+
+The selected height eventually exceeds the fixed radius
+`centeredPoleRadius q`; this is sufficient for the enlarged finite-pole
+filter and does not require changing the linear good-height scale.
 
 ### 4. Radius-parametric Psi Tail
 
@@ -203,6 +234,9 @@ Install the target and missing-harmonic contour pair exactly as in
 
 because the periodic Gaussian convergence is uniform in its center. Thus the
 strict pi-over-two constant is unchanged.
+
+Both target and missing-harmonic filters must use
+`centeredPoleRadius q`, not the old hard-coded radius `5`.
 
 ### 6. Final Theorems
 
