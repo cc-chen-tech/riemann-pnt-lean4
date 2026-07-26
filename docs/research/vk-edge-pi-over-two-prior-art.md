@@ -22,11 +22,77 @@ trinomial extremal problems.
 
 The global absolute-`limsup` zeta application is proved in
 `vk-edge-pi-over-two-abel-transfer.md`, modulo Bellotti's stated theorem. The
-stronger power-interval localization is derived in
-`vk-edge-pi-over-two-localized-transfer.md`, modulo Bellotti's theorem and
-Revesz's standard simultaneous contour lemmas. Both have lower collision risk
-than the abstract Fourier lemma but require a direct specialist prior-art
-check.
+stronger localization to every sufficiently late interval
+`[Y, Y^(1+epsilon)]` is now proved internally in Lean for a fixed right-hand
+zeta zero, using Carlson to select a missing odd harmonic. The Bellotti-uniform
+specialization remains conditional on Bellotti's external location count and
+an elementary VK-scale comparison. These zeta applications have lower
+collision risk than the abstract Fourier lemma but still require a direct
+specialist prior-art check.
+
+### Deep-audit update, 2026-07-26
+
+The current Lean endpoint for a fixed zero is:
+
+```text
+rho = beta+i*gamma, beta>1/2, gamma>0, zeta(rho)=0
+  -> for every epsilon>0 there is a delta_rho>0 such that
+     every sufficiently late [Y,Y^(1+epsilon)] contains x with
+
+     |psi(x)-x|
+       > multiplicity(rho) * (pi/2+delta_rho) * x^beta/|rho|.
+```
+
+The branch also proves a Gaussian-weighted second-moment lower bound and
+positive logarithmic measure of points above the same strict threshold in
+every late epsilon log window. The measure statement is qualitative: it says
+`measure > 0`, not a uniform positive proportion or a computable lower bound.
+
+The Bellotti endpoint replaces `delta_rho` by a constant depending only on a
+distinct-location budget `M`. It does not prove Bellotti's Theorem 1.2 inside
+Lean. Its public theorem exposes the two remaining external hypotheses:
+
+```text
+the VK fixed-dilation scale comparison;
+bellottiZeroLocationCount sigma ((2*M+2)*gamma) <= M.
+```
+
+The focused axiom audits for the fixed-zero, Gaussian `L2`, positive-measure,
+and Bellotti endpoints compile. `#print axioms` for the Bellotti endpoint
+reports only `propext`, `Classical.choice`, and `Quot.sound`; no project axiom
+is used. A source scan found no `sorry` or `admit` in the new endpoint modules.
+
+The historical conclusion is deliberately narrower than the theorem:
+
+* Revesz already explains the `pi/2` obstruction through the full odd-harmonic
+  `sign` spectrum and observes that sublinear zero density excludes that exact
+  infinite configuration. This mechanism is not new.
+* Revesz also constructs finite spectra approaching `pi/2`; hence no gap can
+  be uniform as the number of occupied frequencies grows. Finite-spectrum
+  overshoot itself is not a new observation.
+* Schlage-Puchta already localizes oscillation to `[X,X^(1+epsilon)]`, but the
+  lower bound loses the target-height scale, using `gamma^(1+epsilon)` instead
+  of `|rho|`.
+* The standard Anderson--Stark theorem requires bounded integer-relation
+  independence and, for a singleton target, excludes all bounded positive
+  multiples. It does not directly follow from the absence of one odd
+  multiple.
+
+No checked primary source states the exact four-part combination:
+
+```text
+every [Y,Y^(1+epsilon)]
+  + strict zero-dependent gap above pi/2
+  + exact analytic multiplicity
+  + the x^beta/|rho| scale.
+```
+
+This is credible evidence for a candidate new corollary or theorem, not a
+priority proof. Revesz's 1988 discussion contains most of the conceptual
+mechanism, so the claim has substantial rediscovery risk. The most defensible
+possible novelty is the quantitative missing-one-odd-harmonic certificate and
+its simultaneous assembly with arbitrary epsilon-window localization and the
+exact zeta residue scale.
 
 ## Closest prescribed-coefficient result
 
@@ -258,7 +324,8 @@ There is also a Bellotti-independent candidate in
 `beta_0>1/2`, Carlson's classical estimate gives `N(sigma,T)=o(T)` for a
 fixed `sigma` strictly between `1/2` and `beta_0`. Consequently one odd
 multiple of `gamma_0` is missing, and the localized pole-annihilation
-argument gives a strict gap `delta_(rho_0)>0` in every late `[Y,Y^7]`.
+argument now gives a strict gap `delta_(rho_0)>0` in every sufficiently late
+`[Y,Y^(1+epsilon)]`, for each fixed `epsilon>0`.
 
 Revesz 1988, Section 5, already imposes a sublinear density condition and
 observes that it excludes the linearly dense odd-harmonic obstruction. His
@@ -269,7 +336,7 @@ qualitative sparsity mechanism; it is whether the exact
 ```text
 fixed zeta zero + Carlson o(T)
   -> strict zero-dependent gap above pi/2
-  -> every [Y,Y^7]
+  -> every [Y,Y^(1+epsilon)]
 ```
 
 conclusion has previously been stated or follows verbatim from an older
@@ -290,7 +357,7 @@ None of the checked sources states the exact combination
 
 ```text
 strict zero-dependent gap above pi/2
-  + every [Y,Y^7]
+  + every [Y,Y^(1+epsilon)]
   + arbitrary fixed right-hand zeta zero.
 ```
 
