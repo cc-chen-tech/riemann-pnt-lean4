@@ -233,6 +233,18 @@
       "line": 137
     },
     {
+      "name": "centeredLocalizedContourScaleValid",
+      "qualified_name": "PrimeNumberTheorem.VKEdgePiOverTwo.centeredLocalizedContourScaleValid",
+      "file": "PrimeNumberTheorem/VKEdgePiOverTwoCenteredContourDecay.lean",
+      "line": 845
+    },
+    {
+      "name": "localizedContourScaleValid",
+      "qualified_name": "PrimeNumberTheorem.VKEdgePiOverTwo.localizedContourScaleValid",
+      "file": "PrimeNumberTheorem/VKEdgePiOverTwoConcreteLocalizedData.lean",
+      "line": 81
+    },
+    {
       "name": "PNTForm1",
       "qualified_name": "PrimeNumberTheorem.PNTForm1",
       "file": "PrimeNumberTheorem.lean",
@@ -491,7 +503,7 @@
   "mathematical_target_count": 12,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 46,
+  "reusable_predicate_count": 48,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 63
+  "all_scanned_prop_defs_count": 65
 }

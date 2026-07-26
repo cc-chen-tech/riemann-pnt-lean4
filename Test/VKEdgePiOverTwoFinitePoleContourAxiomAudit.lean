@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoFinitePoleContour
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.localizedGaussianWeight_targetPreservingPoleFilter_eq_zero
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.localizedZeroResidueSum_targetPreservingPoleFilter_eq_multiplicity

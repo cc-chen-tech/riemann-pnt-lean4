@@ -75,6 +75,8 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.explicit_formula_von_mangoldt",
     "PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted",
     "PrimeNumberTheorem.rh_iff_optimal_error",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.localizedContourScaleValid",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.centeredLocalizedContourScaleValid",
     "ZeroFreeRegion.VinogradovKorobov.AProcessScheduleAdmissible",
     "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessScheduleValid",
     "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessLeafValid",

@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoOtherEdgeDecay
+
+open Complex Polynomial
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check localizedLinearHeightCoefficient
+#check localizedOtherEdgeDecayConstant
+#check localizedOtherEdgeUpperBound_le_decayEnvelope
+#check tendsto_localizedOtherEdgeDecayEnvelope

@@ -1,0 +1,18 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoEpsilonWindow
+
+open Set
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check localizedGaussianLogWindow
+#check powerOnePlusEpsilonWindow
+#check epsilonCenterCoefficient
+#check epsilonRadiusCoefficient
+#check epsilonGaussianScale
+#check epsilonRadiusCoefficient_pos
+#check epsilonRadiusCoefficient_lt_center
+#check epsilonRadius_sq_ge_thirtyTwo_mul
+#check localizedGaussianLogWindow_epsilonGaussianScale
+#check exists_psiError_in_powerOnePlusEpsilonWindow_of_normalizedPsiError
+
+end PrimeNumberTheorem.VKEdgePiOverTwo

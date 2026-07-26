@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoLocalized
+
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.gaussianLogWindow_log_div_four
+
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.exists_psiError_in_powerSevenWindow_of_normalizedPsiError
