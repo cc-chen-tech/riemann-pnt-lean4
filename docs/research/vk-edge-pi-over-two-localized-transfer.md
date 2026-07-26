@@ -586,6 +586,79 @@ Since the right side of (34) is at least `m(rho_0)L_(M_A)`, equations
 
 Multiplicity only strengthens the displayed conclusion.
 
+### Lean translation status
+
+The exact counting-convention bridge is now formalized in
+`PrimeNumberTheorem/VKEdgePiOverTwoBellotti.lean`.
+
+The module deliberately separates two counts:
+
+```text
+bellottiZeroLocationCount sigma T
+```
+
+counts distinct zero locations satisfying
+
+```text
+0 < Im rho < T,  sigma < Re rho,
+```
+
+whereas
+
+```text
+ZeroDensity.zeroDensityCount sigma T
+```
+
+counts with analytic multiplicity and uses the closed upper condition
+`Im rho <= T`.  Lean proves only the valid implication
+
+```text
+bellottiZeroLocationCount sigma T
+  <= ZeroDensity.zeroDensityCount sigma T.
+```
+
+It does not assert the converse and therefore does not assume simple zeros.
+The odd-harmonic pigeonhole theorem now consumes the distinct-location count
+directly.  If
+
+```text
+bellottiZeroLocationCount sigma ((2*M+2)*gamma) <= M,
+```
+
+then Lean selects `k <= M` for which the `(2*k+1)`-st odd harmonic is not a
+zero.  Monotonicity of the sharpened denominator gives the uniform constant
+
+```text
+finiteStrictPiOverTwoOscillationConstant M
+  <= strictPiOverTwoOscillationConstant k,
+
+pi/2 < finiteStrictPiOverTwoOscillationConstant M.
+```
+
+The module then proves both:
+
+1. an actual `psi` large value in every sufficiently late
+   `[Y,Y^(1+epsilon)]`;
+2. positive logarithmic measure of such large values in every corresponding
+   log window.
+
+The pointwise Bellotti-edge endpoints expose exactly the two remaining
+external inputs instead of encoding either as an axiom:
+
+```text
+A * g(gamma) < B * g((2*M+2)*gamma),
+
+bellottiZeroLocationCount
+  (1 - B*g((2*M+2)*gamma))
+  ((2*M+2)*gamma) <= M.
+```
+
+The first is the elementary fixed-dilation asymptotic for the VK scale.  The
+second is the location-count consequence of Bellotti's Theorem 1.2.  Thus the
+internal convention translation and the oscillation transfer are closed;
+instantiating the external paper theorem remains an explicit literature
+dependency, not a Lean axiom.
+
 ## 8. Remaining release gates
 
 The two internal audits checked the transform identity, residue sign,

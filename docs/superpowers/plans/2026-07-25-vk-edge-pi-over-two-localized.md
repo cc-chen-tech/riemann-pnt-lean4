@@ -258,15 +258,15 @@ Confirm that the theorem is mathematically conditional and that no field merely 
 - Consumes: `exists_missing_oddHarmonic_with_strict_gap_of_carlson` and the conditional localized assembly.
 - Produces: an unconditional fixed-zero theorem once the Revesz contour estimates are proved internally; separately, a bounded-count theorem parameterized by `M_A`.
 
-- [ ] **Step 1: Connect Carlson to the localized assembly**
+- [x] **Step 1: Connect Carlson to the localized assembly**
 
 Keep the strict gap zero-dependent and preserve the fixed interval exponent `7`.
 
-- [ ] **Step 2: State the bounded-count specialization without importing Bellotti as an axiom**
+- [x] **Step 2: State the bounded-count specialization without importing Bellotti as an axiom**
 
 Assume the exact multiplicity-counted inequality needed to force one of the first `M_A+1` odd harmonics to be absent. Derive the explicit constant `finiteOddHarmonicLowerBound M_A`.
 
-- [ ] **Step 3: Record the remaining external instantiation**
+- [x] **Step 3: Record the remaining external instantiation**
 
 Document the precise translation still needed from Bellotti's zero-count convention to the Lean multiplicity-counted predicate.
 
