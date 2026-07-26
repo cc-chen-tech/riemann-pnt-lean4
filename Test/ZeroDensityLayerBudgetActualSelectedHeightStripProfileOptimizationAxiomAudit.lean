@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightStripProfileOptimization
+
+namespace PrimeNumberTheorem
+
+#print axioms ActualSelectedHeightFiniteStripProfile.Refines.trans
+#print axioms
+  ActualSelectedHeightFiniteStripProfile.Refines.optimalRobustMargin_mono
+#print axioms exists_optimalActualSelectedHeightFiniteStripProfile
+#print axioms optimalActualSelectedHeightFiniteStripProfile_spec
+#print axioms optimalActualSelectedHeightFiniteStripProfile_feasible
+
+end PrimeNumberTheorem
