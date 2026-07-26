@@ -295,6 +295,129 @@ theorem
       hS input sigma tau kappa (fun _ => delta / 2) hfixedSigma hheight
       hheightNonneg hsigma hsigmaOne halpha hkappa hnorm hre hepsilon hmargin hreal
 
+/-- Auditable data showing that the slope-weighted balanced height controls
+the complete actual zeta tail outside a conjugation-invariant main cluster. -/
+structure ActualWeightedBalancedHeightOutsideClusterCertificate
+    (beta : ℝ) (S : Finset ℂ) (n : ℕ)
+    (sigma tau kappa : Fin (n + 1) → ℝ)
+    (input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripWeightedBalancedHeight
+            beta sigma tau x)
+          S (n + 1)) : Type where
+  beta_one : beta < 1
+  sigma_half : ∀ i, 1 / 2 < sigma i
+  sigma_one : ∀ i, sigma i < 1
+  tau_nonneg : ∀ i, 0 ≤ tau i
+  endpoint_threshold :
+    ∀ i,
+      carlsonStripEndpointTargetThreshold (sigma i) (tau i) < beta
+  conjugation_invariant : IsConjugationInvariantCluster S
+  fixed_sigma : ∀ i x, (input x).sigma i = sigma i
+  kappa_pos : ∀ i, 0 < kappa i
+  norm_lower :
+    ∀ i x, ∀ rho ∈ (input x).layer i, kappa i ≤ ‖rho‖
+  re_upper :
+    ∀ i x, ∀ rho ∈ (input x).layer i, rho.re ≤ tau i
+  real_re_lt_beta :
+    ∀ rho ∈ realOrdinateNontrivialZerosOutsideClusterFinset 0 S,
+      rho.re < beta
+
+/-- The weighted balanced-height certificate controls the complete
+outside-cluster tail on the target-zero amplitude scale. -/
+theorem
+    ActualWeightedBalancedHeightOutsideClusterCertificate.fullTail_negligible
+    {beta : ℝ} {S : Finset ℂ} {n : ℕ}
+    {sigma tau kappa : Fin (n + 1) → ℝ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripWeightedBalancedHeight
+            beta sigma tau x)
+          S (n + 1)}
+    (certificate :
+      ActualWeightedBalancedHeightOutsideClusterCertificate
+        beta S n sigma tau kappa input) :
+    TargetAmplitudeNegligible
+      (targetZeroPowerAmplitude beta)
+      (dynamicFullOutsideClusterPNTZeroTailNorm
+        (actualSelectedHeightFiniteStripWeightedBalancedHeight
+          beta sigma tau)
+        S) :=
+  actualZetaFiniteStripsOutsideCluster_weightedBalancedHeight_fullTail_negligible
+    certificate.conjugation_invariant sigma tau kappa
+    certificate.beta_one certificate.sigma_half certificate.sigma_one
+    certificate.tau_nonneg certificate.endpoint_threshold input
+    certificate.fixed_sigma certificate.kappa_pos certificate.norm_lower
+    certificate.re_upper certificate.real_re_lt_beta
+
+/-- Domination by the weighted complete tail converts any signed complement
+into the certificate required by the common oscillation transfer. -/
+theorem
+    ActualWeightedBalancedHeightOutsideClusterCertificate.signedComplementCertificate
+    {beta : ℝ} {S : Finset ℂ} {n : ℕ}
+    {sigma tau kappa : Fin (n + 1) → ℝ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripWeightedBalancedHeight
+            beta sigma tau x)
+          S (n + 1)}
+    (certificate :
+      ActualWeightedBalancedHeightOutsideClusterCertificate
+        beta S n sigma tau kappa input)
+    (complement : ℝ → ℝ)
+    (hdominated :
+      ∀ᶠ x in atTop,
+        |complement x| ≤
+          dynamicFullOutsideClusterPNTZeroTailNorm
+            (actualSelectedHeightFiniteStripWeightedBalancedHeight
+              beta sigma tau)
+            S x) :
+    ClusterExcludedTargetComplementCertificate
+      (targetZeroPowerAmplitude beta) complement
+      (dynamicFullOutsideClusterPNTZeroTailNorm
+        (actualSelectedHeightFiniteStripWeightedBalancedHeight
+          beta sigma tau)
+        S) where
+  amplitude_eventually_pos :=
+    targetZeroPowerAmplitude_eventually_pos beta
+  complement_dominated := hdominated
+  excluded_tail_negligible := certificate.fullTail_negligible
+
+/-- The real part of the actual outside-cluster zeta sum automatically
+supplies the signed weighted complement certificate. -/
+theorem
+    ActualWeightedBalancedHeightOutsideClusterCertificate.actualSignedComplementCertificate
+    {beta : ℝ} {S : Finset ℂ} {n : ℕ}
+    {sigma tau kappa : Fin (n + 1) → ℝ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripWeightedBalancedHeight
+            beta sigma tau x)
+          S (n + 1)}
+    (certificate :
+      ActualWeightedBalancedHeightOutsideClusterCertificate
+        beta S n sigma tau kappa input) :
+    ClusterExcludedTargetComplementCertificate
+      (targetZeroPowerAmplitude beta)
+      (dynamicOutsideClusterPNTComplement
+        (actualSelectedHeightFiniteStripWeightedBalancedHeight
+          beta sigma tau)
+        S)
+      (dynamicFullOutsideClusterPNTZeroTailNorm
+        (actualSelectedHeightFiniteStripWeightedBalancedHeight
+          beta sigma tau)
+        S) := by
+  apply certificate.signedComplementCertificate
+  exact Filter.Eventually.of_forall fun x =>
+    abs_dynamicOutsideClusterPNTComplement_le_tailNorm
+      (actualSelectedHeightFiniteStripWeightedBalancedHeight
+        beta sigma tau)
+      S x
+
 end
 
 end PrimeNumberTheorem
