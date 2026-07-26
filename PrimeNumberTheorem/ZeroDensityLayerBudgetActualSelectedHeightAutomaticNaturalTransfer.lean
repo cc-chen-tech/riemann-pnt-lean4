@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightNaturalRemainderDecay
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightNaturalTransfer
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightFiniteStripCertificateChoice
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightBalancedCertificateChoice
 
 /-!
 # Automatic selected-height natural-point lower transfer
@@ -168,6 +169,70 @@ theorem
     actualSelectedHeightFiniteStripChosenExponent] using
     (unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
       threshold hhalf hlt hbeta hspec.1 hspec.2.1 hspec.2.2.1
+      selection certificate hmain)
+
+/-- Explicit balanced-height version of the threshold-driven bidirectional
+transfer.
+
+The polynomial exponent is the concrete midpoint between `1 - beta` and the
+minimum finite-strip Carlson ceiling (capped by `1`).  Thus the truncation
+height is an explicit function of the target real part and strip endpoints,
+not an opaque feasible choice.
+-/
+theorem
+    unified_parametricPNTUpper_actualBalancedHeightThresholdsNaturalPointLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta : ℝ} {n : ℕ} (sigma tau : Fin (n + 1) → ℝ)
+    (hbeta : 0 < beta) (hbetaOne : beta < 1)
+    (hsigma : ∀ i, 1 / 2 < sigma i)
+    (hsigmaOne : ∀ i, sigma i < 1)
+    (hthreshold :
+      ∀ i,
+        carlsonStripEndpointTargetThreshold (sigma i) (tau i) < beta)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    {S : Finset ℂ}
+    (input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripBalancedHeight
+            beta sigma tau selection x)
+          S (n + 1))
+    (kappa : Fin (n + 1) → ℝ)
+    (hS : IsConjugationInvariantCluster S)
+    (hfixedSigma : ∀ i x, (input x).sigma i = sigma i)
+    (hkappa : ∀ i, 0 < kappa i)
+    (hnorm :
+      ∀ i x, ∀ rho ∈ (input x).layer i, kappa i ≤ ‖rho‖)
+    (hre :
+      ∀ i x, ∀ rho ∈ (input x).layer i, rho.re ≤ tau i)
+    (hreal :
+      ∀ rho ∈
+        realOrdinateNontrivialZerosOutsideClusterFinset 0 S,
+        rho.re < beta)
+    (hmain :
+      HasFarNaturalPointTargetAmplitudeWitness
+        (fun m : ℕ =>
+          dynamicVisibleClusterPNTMain
+            (actualSelectedHeightFiniteStripBalancedHeight
+              beta sigma tau selection)
+            S (m : ℝ))
+        (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  have hspec :=
+    actualSelectedHeightFiniteStripBalancedExponent_spec
+      sigma tau hbeta hbetaOne hsigma hsigmaOne hthreshold
+  let certificate :=
+    actualCarlsonOutsideClusterBalancedGoodHeightFiniteStripCertificate
+      sigma tau hbeta hbetaOne hsigma hsigmaOne hthreshold selection
+      input kappa hS hfixedSigma hkappa hnorm hre hreal
+  simpa [actualSelectedHeightFiniteStripBalancedHeight] using
+    (unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
+      threshold hhalf hlt hbeta hspec.1 hspec.2.1.le hspec.2.2.1
       selection certificate hmain)
 
 end PrimeNumberTheorem

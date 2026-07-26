@@ -8,5 +8,7 @@ namespace PrimeNumberTheorem
   unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
 #print axioms
   unified_parametricPNTUpper_actualSelectedHeightThresholdsNaturalPointLower
+#print axioms
+  unified_parametricPNTUpper_actualBalancedHeightThresholdsNaturalPointLower
 
 end PrimeNumberTheorem
