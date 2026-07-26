@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoGaussianL2
+
+open Complex Filter MeasureTheory Polynomial Set Topology
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check CenteredLocalizedContourData.eventually_secondMoment_gt
+#check eventually_centeredSharpenedNormalizedPsiError_secondMoment_gt
+
+end PrimeNumberTheorem.VKEdgePiOverTwo
+
