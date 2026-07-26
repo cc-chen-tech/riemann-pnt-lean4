@@ -8,3 +8,7 @@ open PrimeNumberTheorem
   ActualWeightedBalancedHeightOutsideClusterCertificate.actualSignedComplementCertificate
 #print axioms
   unified_parametricPNTUpper_actualWeightedBalancedHeightRemainderCertificate
+#print axioms
+  ActualPolynomialExplicitFormulaRemainderCertificate.weightedBalancedHeightCertificate
+#print axioms
+  unified_parametricPNTUpper_actualWeightedBalancedHeightPolynomialRemainderCertificate
