@@ -1,0 +1,9 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovFiniteConditioning
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check norm_finset_sum_pow_le_card_mul_sum_norm_pow
+#check norm_finset_sum_pow_le_fiber_refinement
+#check norm_finset_sum_pow_le_zmod_refinement
+#check card_zmod_primePower_castHom_fiber
+#check norm_finset_sum_pow_le_primePower_fiber_refinement
