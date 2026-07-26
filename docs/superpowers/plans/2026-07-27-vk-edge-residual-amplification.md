@@ -87,7 +87,7 @@ git commit -m "feat: formalize residual second-moment lower bound"
 - Create: `Test/VKEdgeResidualAmplificationContract.lean`
 - Modify: `lakefile.lean`
 
-- [ ] Add contract checks for:
+- [x] Add contract checks for:
 
 ```lean
 PrimeNumberTheorem.VKEdgePiOverTwo.cosineZeroPair
@@ -107,16 +107,16 @@ PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosineZeroPair_sq_le
       2 * m ^ 2 * (b - a) + 2 * m ^ 2 / |gamma|
 ```
 
-- [ ] Add the source and contract targets to `lakefile.lean`, then run the contract and confirm it fails.
+- [x] Add the source and contract targets to `lakefile.lean`, then run the contract and confirm it fails.
 
-- [ ] Define:
+- [x] Define:
 
 ```lean
 def cosineZeroPair (m gamma phase y : ℝ) : ℝ :=
   -2 * m * Real.cos (gamma * y - phase)
 ```
 
-- [ ] Prove the exact interval identity by differentiating:
+- [x] Prove the exact interval identity by differentiating:
 
 ```lean
 fun y =>
@@ -126,16 +126,16 @@ fun y =>
 
 with `intervalIntegral.integral_eq_sub_of_hasDerivAt`.
 
-- [ ] Convert the interval integral to the `Set.Icc` integral with `intervalIntegral.integral_of_le hab`. Bound the sine difference by `2`, preserving the factor `m ^ 2 / |gamma|`.
+- [x] Convert the interval integral to the `Set.Icc` integral with `intervalIntegral.integral_of_le hab`. Bound the sine difference by `2`, preserving the factor `m ^ 2 / |gamma|`.
 
-- [ ] Run:
+- [x] Run:
 
 ```bash
 lake build Test.VKEdgeResidualAmplificationContract
 git diff --check
 ```
 
-- [ ] Commit:
+- [x] Commit:
 
 ```bash
 git add PrimeNumberTheorem/VKEdgeResidualAmplification.lean Test/VKEdgeResidualAmplificationContract.lean lakefile.lean
