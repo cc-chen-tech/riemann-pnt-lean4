@@ -137,6 +137,62 @@ separated large-value windows -> distinct zeta zeros,
 
 and no Carlson contradiction.
 
+## The single-pair obstruction
+
+There is a sharper structural reason why a fixed-proportion large-value
+theorem cannot by itself create new zeros.  If the target zero
+
+```text
+rho = beta + i gamma
+```
+
+has analytic multiplicity `m`, then the target zero and its conjugate
+contribute schematically
+
+```text
+-m * exp (rho * y) / rho
+-m * exp (conj rho * y) / conj rho
+```
+
+to the explicit formula at `x = exp y`.  After normalizing by
+`norm rho * exp (-beta * y)`, this pair is exactly a phase shift of
+
+```text
+-2 * m * cos (gamma * y - arg rho).
+```
+
+Consequently, for every threshold `a` with
+
+```text
+0 < a < 2 * m,
+```
+
+the one-frequency model already has a positive asymptotic large-value
+fraction.  On each complete period that fraction is
+
+```text
+(2 / pi) * arccos (a / (2 * m)).
+```
+
+In particular, a guaranteed amplitude strictly larger than `pi / 2` but
+not larger than `2 * m` is fully compatible with a single conjugate zero
+pair.  Neither the number of late logarithmic windows nor the measure of
+large values in those windows forces any additional frequency or any
+additional zeta zero.
+
+This also identifies the threshold needed by any future amplification
+argument.  It must do at least one of the following:
+
+1. annihilate the known target pair and prove a nontrivial large-value
+   theorem for the residual error;
+2. force a normalized amplitude strictly beyond the full `2 * m`
+   contribution of the target pair;
+3. introduce an independent arithmetic restriction which the
+   one-frequency model cannot satisfy.
+
+The present missing-harmonic theorem supplies a strict improvement over
+`pi / 2`; it does not supply any of these three stronger inputs.
+
 ## Exact routes to a contradiction
 
 Any one of the following would advance beyond the present theorem:
