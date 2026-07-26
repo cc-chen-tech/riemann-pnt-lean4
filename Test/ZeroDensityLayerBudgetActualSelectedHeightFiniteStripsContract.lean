@@ -1,0 +1,24 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightFiniteStrips
+
+open Filter
+
+namespace PrimeNumberTheorem
+
+#check eventually_selectedHeight_nonneg
+#check
+  actualZetaFiniteStripsOutsideCluster_selectedHeight_layerNormSum_negligible
+#check
+  actualZetaFiniteStripsOutsideCluster_selectedHeight_positiveTail_negligible
+#check
+  actualZetaFiniteStripsOutsideCluster_selectedHeight_fullTail_negligible
+#check
+  actualZetaFiniteStripsOutsideCluster_goodHeight_fullTail_negligible
+#check ActualCarlsonOutsideClusterGoodHeightFiniteStripCertificate
+#check
+  ActualCarlsonOutsideClusterGoodHeightFiniteStripCertificate.fullTail_negligible
+#check
+  ActualCarlsonOutsideClusterGoodHeightFiniteStripCertificate.signedComplementCertificate
+#check
+  ActualCarlsonOutsideClusterGoodHeightFiniteStripCertificate.actualSignedComplementCertificate
+
+end PrimeNumberTheorem
