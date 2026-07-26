@@ -3,6 +3,7 @@ import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightNaturalTrans
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightFiniteStripCertificateChoice
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightBalancedCertificateChoice
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightBalancedExponentOptimality
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightStripProfileRefinement
 
 /-!
 # Automatic selected-height natural-point lower transfer
@@ -320,5 +321,99 @@ theorem
     exact
       actualSelectedHeightFiniteStripBalancedExponent_unique_maximizer
         beta sigma tau alpha halpha
+
+/-- Dynamic-profile version of the unified transfer.
+
+A feasible coarse profile and a cross-cardinality refinement certificate
+automatically provide every refined endpoint threshold.  The full
+upper/lower/optimal transfer is then run at the refined profile's explicit
+balanced height.
+-/
+theorem
+    unified_actualBalancedHeight_of_profileRefinement
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta : ℝ} {nRefined nCoarse : ℕ}
+    (sigmaRefined tauRefined : Fin (nRefined + 1) → ℝ)
+    (sigmaCoarse tauCoarse : Fin (nCoarse + 1) → ℝ)
+    (hbeta : 0 < beta) (hbetaOne : beta < 1)
+    (hsigmaRefined : ∀ i, 1 / 2 < sigmaRefined i)
+    (hsigmaRefinedOne : ∀ i, sigmaRefined i < 1)
+    (refinement :
+      ActualSelectedHeightFiniteStripProfileRefinement beta
+        sigmaRefined tauRefined sigmaCoarse tauCoarse)
+    (hcoarse :
+      actualSelectedHeightFiniteStripBottleneck
+        sigmaCoarse tauCoarse < beta)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    {S : Finset ℂ}
+    (input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripBalancedHeight
+            beta sigmaRefined tauRefined selection x)
+          S (nRefined + 1))
+    (kappa : Fin (nRefined + 1) → ℝ)
+    (hS : IsConjugationInvariantCluster S)
+    (hfixedSigma : ∀ i x, (input x).sigma i = sigmaRefined i)
+    (hkappa : ∀ i, 0 < kappa i)
+    (hnorm :
+      ∀ i x, ∀ rho ∈ (input x).layer i, kappa i ≤ ‖rho‖)
+    (hre :
+      ∀ i x, ∀ rho ∈ (input x).layer i, rho.re ≤ tauRefined i)
+    (hreal :
+      ∀ rho ∈
+        realOrdinateNontrivialZerosOutsideClusterFinset 0 S,
+        rho.re < beta)
+    (hmain :
+      HasFarNaturalPointTargetAmplitudeWitness
+        (fun m : ℕ =>
+          dynamicVisibleClusterPNTMain
+            (actualSelectedHeightFiniteStripBalancedHeight
+              beta sigmaRefined tauRefined selection)
+            S (m : ℝ))
+        (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))) :
+    ((∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+        Tendsto
+          (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+          atTop (nhds 0)) ∧
+      HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+        (fun x => targetZeroPowerAmplitude beta x / 2)) ∧
+    0 <
+      actualSelectedHeightFiniteStripRobustMargin
+        beta sigmaRefined tauRefined
+        (actualSelectedHeightFiniteStripBalancedExponent
+          beta sigmaRefined tauRefined) ∧
+    (∀ alpha : ℝ,
+      actualSelectedHeightFiniteStripRobustMargin
+          beta sigmaRefined tauRefined alpha ≤
+        actualSelectedHeightFiniteStripRobustMargin
+          beta sigmaRefined tauRefined
+          (actualSelectedHeightFiniteStripBalancedExponent
+            beta sigmaRefined tauRefined)) ∧
+    (∀ alpha : ℝ,
+      actualSelectedHeightFiniteStripRobustMargin
+          beta sigmaRefined tauRefined
+          (actualSelectedHeightFiniteStripBalancedExponent
+            beta sigmaRefined tauRefined) ≤
+        actualSelectedHeightFiniteStripRobustMargin
+          beta sigmaRefined tauRefined alpha →
+      alpha =
+        actualSelectedHeightFiniteStripBalancedExponent
+          beta sigmaRefined tauRefined) := by
+  have hrefinedBottleneck : 
+      actualSelectedHeightFiniteStripBottleneck
+          sigmaRefined tauRefined < beta :=
+    refinement.feasible hcoarse
+  have hrefinedThreshold :
+      ∀ i,
+        carlsonStripEndpointTargetThreshold
+          (sigmaRefined i) (tauRefined i) < beta :=
+    (actualSelectedHeightFiniteStripBottleneck_lt_iff
+      sigmaRefined tauRefined beta).1 hrefinedBottleneck
+  exact
+    unified_actualBalancedHeight_PNTUpper_naturalPointLower_optimalTruncation
+      threshold hhalf hlt sigmaRefined tauRefined hbeta hbetaOne
+      hsigmaRefined hsigmaRefinedOne hrefinedThreshold selection
+      input kappa hS hfixedSigma hkappa hnorm hre hreal hmain
 
 end PrimeNumberTheorem
