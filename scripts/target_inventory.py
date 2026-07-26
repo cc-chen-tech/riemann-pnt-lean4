@@ -52,6 +52,7 @@ ROUTE_INTERFACES = {
     "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum": "Explicit formula",
     "HardyTheorem.AFE.zeta_critical_afe_target": "Quantitative critical-line extensions",
     "RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target": "Quantitative critical-line extensions",
+    "ZeroFreeRegion.VinogradovKorobov.FordShortSumPrefixBound": "Quantitative zero-free region",
 }
 
 REUSABLE_PREDICATES = {
@@ -75,6 +76,34 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.explicit_formula_von_mangoldt",
     "PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted",
     "PrimeNumberTheorem.rh_iff_optimal_error",
+    "ZeroFreeRegion.VinogradovKorobov.AProcessScheduleAdmissible",
+    "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessScheduleValid",
+    "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessLeafValid",
+    "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessScaleLeafValid",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovPolynomialCongruenceSystem",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionNat",
+    "ZeroFreeRegion.VinogradovKorobov.VinogradovMeanValueEstimate",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionMod",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovMixedAffineCongruenceInt",
+    "ZeroFreeRegion.VinogradovKorobov.VinogradovMixedModConditionedSolutionMem",
+    "ZeroFreeRegion.VinogradovKorobov.VinogradovMixedConditionedSolutionMem",
+    "ZeroFreeRegion.VinogradovKorobov.VinogradovMixedMainResidueMem",
+    "ZeroFreeRegion.VinogradovKorobov.VinogradovMixedMainFarScalePairMem",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovResidualTailSolution",
+    "ZeroFreeRegion.VinogradovKorobov.VinogradovResidualTailNoWrap",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionIntMod",
+    "ZeroFreeRegion.VinogradovKorobov.VinogradovFirstNonsingularBlockDirect",
+    "ZeroFreeRegion.VinogradovKorobov.VinogradovFirstNonsingularBlock",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovResidueSolution",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionInt",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovTranslatedSolutionMod",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovBinomialCoefficientMatrix",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovHomogeneousCongruenceSystem",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovWeightedSolutionMod",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovWeightedSolutionInt",
+    "ZeroFreeRegion.VinogradovKorobov.IsVinogradovMixedAffineEquationInt",
+    "ZeroFreeRegion.VinogradovKorobov.IsIncompleteVinogradovSolutionMod",
+    "ZeroFreeRegion.VinogradovKorobov.IsIncompleteSolutionOnMod",
 }
 
 

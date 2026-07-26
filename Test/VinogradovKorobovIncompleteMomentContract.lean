@@ -20,4 +20,3 @@ example (Q k s X : ℕ) [NeZero Q] :
     normalizedIncompleteVinogradovMomentMod Q 1 k s X =
       normalizedVinogradovMomentMod Q k s X :=
   normalizedIncompleteVinogradovMomentMod_one_eq Q k s X
-

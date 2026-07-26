@@ -4,9 +4,11 @@ This repository is a buildable Lean 4 formalization that proves the ordinary
 Prime Number Theorem and classical de la Vallee Poussin-form remainders for
 Chebyshev `psi` and prime counting `pi-Li`, Hardy's theorem, the all-height
 Riemann--von Mangoldt formula, Carlson's fixed-`sigma` zero-density estimate,
-and local-separation Hilbert/mean-square estimates. It does not prove the
-Riemann Hypothesis or provide numerically explicit values for the existential
-remainder constants.
+local-separation Hilbert/mean-square estimates, Hardy--Littlewood linear lower
+bounds, divergence of a Pintz zero envelope, and the implication from a
+right-of-critical-line zero to a strict-beyond-`pi/2` PNT-error oscillation.
+It does not prove the Riemann Hypothesis, Selberg's `T log T` result, or
+provide numerically explicit values for the existential remainder constants.
 
 ## Current Verified Baseline
 
@@ -14,9 +16,9 @@ remainder constants.
 - Build command: `lake build`
 - Last verified local result: see the current verification log before release
 - Current code-level `sorry` count: 0
-- Remaining mathematical `def ... : Prop` targets: 13
-- Route-interface `def ... : Prop` declarations: 5
-- Reusable Prop predicates: 13
+- Remaining mathematical `def ... : Prop` targets: 12
+- Route-interface `def ... : Prop` declarations: 6
+- Reusable Prop predicates: 48
 - Unclassified Prop declarations: 0
 
 ## Required Gates Before Public Mathematical Claims
@@ -33,12 +35,15 @@ python3 scripts/list-prop-targets.py
 
 The baseline script runs `lake build`, recursively scans project Lean sources
 for real placeholder proof forms, checks that every `def ... : Prop` is
-classified, checks the 13-item mathematical target inventory, and validates the
+classified, checks the 12-item mathematical target inventory, and validates the
 four chain-gap buckets. The ordinary PNT, de la Vallee Poussin-form `psi` and
 `pi-Li` errors, Hardy's theorem, Riemann--von Mangoldt, Carlson zero density,
-and local-separation estimates are theorem-level. RH, Vinogradov--Korobov,
-Selberg positive proportion, and any unconditional power-saving error below
-exponent `2/3` remain outside the proved boundary.
+local-separation estimates, Hardy--Littlewood linear lower bounds, the Pintz
+envelope, and the implication from a right-of-critical-line zero to
+strict-beyond-`pi/2` oscillation are theorem-level. RH, Vinogradov--Korobov,
+Selberg positive proportion, and any
+unconditional power-saving error below exponent `2/3` remain outside the
+proved boundary.
 
 As of the current baseline, no route interface has a body equal to `True`.
 `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is still an explicit
@@ -69,7 +74,10 @@ Verified Lean 4 formalization of classical analytic number theory for the
 Riemann zeta function, including the de la Vallee Poussin zero-free region and
 Strong PNT remainder, Hardy's theorem, the all-height Riemann--von Mangoldt
 formula, Carlson's fixed-sigma zero-density estimate, and reusable
-local-separation Hilbert/mean-square infrastructure.
+local-separation Hilbert/mean-square infrastructure, together with
+Hardy--Littlewood linear critical-line-zero lower bounds, a divergent Pintz
+zero envelope, and right-of-critical-line-zero-forced PNT oscillation beyond
+pi/2.
 ```
 
 Do not claim:
@@ -87,7 +95,9 @@ For public positioning, treat the current repository as:
 ```text
 classical zero-free region, Strong PNT, Hardy theorem, all-height
 Riemann--von Mangoldt, fixed-sigma Carlson zero density, and local-separation
-Hilbert/mean-square infrastructure proved in Lean 4
+Hilbert/mean-square infrastructure, Hardy--Littlewood linear lower bounds,
+Pintz envelope divergence, and the implication from a right-of-critical-line
+zero to strict-beyond-pi/2 PNT oscillation proved in Lean 4
 ```
 
 not as:
@@ -96,15 +106,21 @@ not as:
 proof of RH or a power-saving prime error below exponent `2/3`
 ```
 
-The next stronger zero-free-region blocker is exponential-sum input for the
-Vinogradov-Korobov width. It is not needed for the now-proved ordinary PNT.
+The next stronger zero-free-region blocker is the Ford short-sum layer for the
+Vinogradov-Korobov width. The exponential-sum/zeta blocks, prime-power
+conditioning, mixed moments, coupled-tail recurrences, incomplete-window
+Fourier moments, Ford double Holder bounds, power-sum fiber identities, and
+the scaled near-integer count are merged. The unconditional
+`FordShortSumPrefixBound` input, tent-kernel localization, smooth-support
+estimates, and final parameter optimization remain open. None of these are
+needed for the now-proved ordinary PNT.
 
 ## Unproved Target Statements
 
 | File | Remaining `sorry` count | Main target statements |
 |---|---:|---|
 | `ZeroFreeRegion.lean` | 0 | Classical `c/log |t|` region proved; Vinogradov-Korobov remains a target |
-| `HardyTheorem.lean` | 0 | Hardy's infinite-zero theorem proved; Hardy--Littlewood and Selberg quantitative extensions remain targets on `main` |
+| `HardyTheorem.lean`, `HardyTheorem/CriticalLineMultiplicity.lean` | 0 | Hardy and Hardy--Littlewood linear lower bounds proved; Selberg's `T log T` and Conrey-style percentage estimates remain open |
 | `PrimeNumberTheorem.lean`, `PrimeNumberTheorem/PNTFromDynamicPerron.lean`, `PrimeNumberTheorem/ClassicalPNTError.lean`, and `PrimeNumberTheorem/ClassicalPrimeCountingError.lean` | 0 | Ordinary PNT and the de la Vallee Poussin-form `psi` and `pi-Li` remainders proved; unconditional RH-scale predicates remain open |
 
 ## Release Dependency Issue
