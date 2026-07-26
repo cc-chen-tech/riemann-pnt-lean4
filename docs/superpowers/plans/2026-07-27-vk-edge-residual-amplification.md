@@ -332,7 +332,7 @@ git commit -m "feat: expose conditional zeta residual energy endpoint"
 - Create: `docs/research/vk-edge-residual-amplification-audit.md`
 - Modify: `lakefile.lean`
 
-- [ ] Add `#print axioms` for:
+- [x] Add `#print axioms` for:
 
 ```lean
 MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds
@@ -342,16 +342,16 @@ centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
 integral_Icc_normalizedPsiResidual_sq_lower
 ```
 
-- [ ] Add the audit target to `lakefile.lean`.
+- [x] Add the audit target to `lakefile.lean`.
 
-- [ ] Record in the research audit:
+- [x] Record in the research audit:
   - the target-pair exact energy formula;
   - the current swept constant comparison;
   - why fixed-proportion large values do not imply another zero;
   - the precise new input needed: a total local \(L^2\) coefficient greater than the target-pair budget, or a detector annihilating the target pair while retaining a nonzero arithmetic main term;
   - that no RH or zero-density contradiction has been proved.
 
-- [ ] Run:
+- [x] Run:
 
 ```bash
 lake build Test.ResidualSecondMomentContract
@@ -361,7 +361,7 @@ rg -n "sorry|admit|^[[:space:]]*axiom " MathlibAux/ResidualSecondMoment.lean Pri
 git diff --check
 ```
 
-- [ ] Inspect the axiom output and accept only standard Lean/Mathlib logical axioms.
+- [x] Inspect the axiom output and accept only standard Lean/Mathlib logical axioms.
 
 - [ ] Commit:
 
