@@ -239,6 +239,110 @@ private theorem sweptGaussianEnvelope_le_peak
     _ = _ := by
       simp [div_eq_mul_inv, mul_assoc]
 
+private theorem relativeProjectedPsiKernelAtCenter_abs_le_scaled_swept
+    (q : ℝ) (A : ℂ[X]) {target center c : ℂ}
+    (_htarget : target ≠ 0) (hcenter : center ≠ 0)
+    (m : ℝ) (hm : 1 ≤ m) (y : ℝ) :
+    |relativeProjectedPsiKernelAtCenter
+        q A target center c m y| ≤
+      relativeProjectedPsiKernelAtCenterEnvelopeConstant
+          A target center c *
+        Real.exp |(Real.sqrt m)⁻¹ * (q * m - y)| *
+        normalizedGaussian m (q * m - y) := by
+  have hratio : 0 ≤ ‖center‖ / ‖target‖ :=
+    div_nonneg (norm_nonneg center) (norm_nonneg target)
+  unfold relativeProjectedPsiKernelAtCenter
+    relativeProjectedPsiKernelAtCenterEnvelopeConstant
+  rw [abs_mul, abs_of_nonneg hratio]
+  have hbound :=
+    projectedPsiKernelAtCenter_abs_le_scaled_exp_abs_mul
+      q (C c * A) hcenter m hm y
+  simpa [mul_assoc] using mul_le_mul_of_nonneg_left hbound hratio
+
+/-- The paired sharpened zeta kernel retains the full Gaussian profile
+needed for a bounded-overlap sweep. -/
+theorem centeredSharpenedProjectedPsiKernel_abs_le_scaledEnvelope
+    (q : ℝ) {rho : ℂ} {k : ℕ}
+    (hrho : rho ≠ 0) (hgamma : 0 < rho.im)
+    (m : ℝ) (hm : 1 ≤ m) (y : ℝ) :
+    |centeredSharpenedProjectedPsiKernel q rho k m y| ≤
+      centeredSharpenedProjectedPsiKernelEnvelopeConstant q rho k *
+        (Real.exp |(Real.sqrt m)⁻¹ * (q * m - y)| *
+          normalizedGaussian m (q * m - y)) := by
+  let center : ℂ := missingHarmonicContourCenter rho k
+  have hcenter : center ≠ 0 := by
+    intro hzero
+    have him := congrArg Complex.im hzero
+    dsimp [center] at him
+    rw [missingHarmonicContourCenter, oddHarmonicPoint_im] at him
+    have hk : (0 : ℝ) < ((2 * k + 1 : ℕ) : ℝ) := by positivity
+    nlinarith
+  let targetC : ℝ :=
+    projectedPsiKernelAtCenterEnvelopeConstant
+      (centeredSharpenedTargetFilter q rho) rho
+  let missingC : ℝ :=
+    relativeProjectedPsiKernelAtCenterEnvelopeConstant
+      (centeredSharpenedMissingFilter q rho k) rho center
+      (missingHarmonicContourCoefficient rho k)
+  let envelope : ℝ :=
+    Real.exp |(Real.sqrt m)⁻¹ * (q * m - y)| *
+      normalizedGaussian m (q * m - y)
+  have htarget :
+      |projectedPsiKernelAtCenter q
+          (centeredSharpenedTargetFilter q rho) rho m y| ≤
+        targetC * envelope := by
+    simpa only [targetC, envelope, mul_assoc] using
+      projectedPsiKernelAtCenter_abs_le_scaled_exp_abs_mul
+        q (centeredSharpenedTargetFilter q rho) hrho m hm y
+  have hmissing :
+      |relativeProjectedPsiKernelAtCenter q
+          (centeredSharpenedMissingFilter q rho k) rho center
+          (missingHarmonicContourCoefficient rho k) m y| ≤
+        missingC * envelope := by
+    simpa only [missingC, envelope, mul_assoc] using
+      relativeProjectedPsiKernelAtCenter_abs_le_scaled_swept
+        (c := missingHarmonicContourCoefficient rho k)
+        q (centeredSharpenedMissingFilter q rho k)
+        hrho hcenter m hm y
+  have hbase : 0 ≤ targetC + missingC :=
+    add_nonneg
+      (projectedPsiKernelAtCenterEnvelopeConstant_nonneg _ _)
+      (relativeProjectedPsiKernelAtCenterEnvelopeConstant_nonneg _ _ _ _)
+  have henvelopeNonneg : 0 ≤ envelope := by
+    dsimp [envelope]
+    exact mul_nonneg (Real.exp_pos _).le
+      (normalizedGaussian_pos (zero_lt_one.trans_le hm) _).le
+  unfold centeredSharpenedProjectedPsiKernel
+  calc
+    |projectedPsiKernelAtCenter q
+          (centeredSharpenedTargetFilter q rho) rho m y +
+        relativeProjectedPsiKernelAtCenter q
+          (centeredSharpenedMissingFilter q rho k) rho center
+          (missingHarmonicContourCoefficient rho k) m y| ≤
+        |projectedPsiKernelAtCenter q
+          (centeredSharpenedTargetFilter q rho) rho m y| +
+        |relativeProjectedPsiKernelAtCenter q
+          (centeredSharpenedMissingFilter q rho k) rho center
+          (missingHarmonicContourCoefficient rho k) m y| := by
+      simpa only [Real.norm_eq_abs] using
+        norm_add_le
+          (projectedPsiKernelAtCenter q
+            (centeredSharpenedTargetFilter q rho) rho m y)
+          (relativeProjectedPsiKernelAtCenter q
+            (centeredSharpenedMissingFilter q rho k) rho center
+            (missingHarmonicContourCoefficient rho k) m y)
+    _ ≤ targetC * envelope + missingC * envelope :=
+      add_le_add htarget hmissing
+    _ = (targetC + missingC) * envelope := by ring
+    _ ≤ centeredSharpenedProjectedPsiKernelEnvelopeConstant q rho k *
+          envelope := by
+      apply mul_le_mul_of_nonneg_right _ henvelopeNonneg
+      unfold centeredSharpenedProjectedPsiKernelEnvelopeConstant
+      dsimp [targetC, missingC, center]
+      have hexp : 1 ≤ Real.exp 1 :=
+        (Real.one_lt_exp_iff.mpr zero_lt_one).le
+      nlinarith
+
 /--
 Sweeping a fixed positive weighted second-moment lower bound across a
 nontrivial interval of Gaussian scales forces an ordinary second moment
@@ -622,6 +726,259 @@ theorem localizedGaussianLogWindow_subset_epsilonWindow_of_mem_sweep
         field_simp [hgap.ne']
       _ = (1 + ε) * Real.log Y := by
         rw [hratio, hratioSweep]
+
+private theorem normalizedPsiError_abs_le_exp_growth_swept
+    (rho : ℂ) (y : ℝ) :
+    |normalizedPsiError rho y| ≤
+      ‖rho‖ * (Real.log 4 + 5) *
+        Real.exp ((1 - rho.re) * y) := by
+  have hpsi :
+      chebyshevPsi (Real.exp y) ≤
+        (Real.log 4 + 4) * Real.exp y := by
+    rw [chebyshevPsi_eq_mathlib]
+    exact Chebyshev.psi_le_const_mul_self (Real.exp_pos y).le
+  have hpsiNonneg : 0 ≤ chebyshevPsi (Real.exp y) := by
+    unfold chebyshevPsi
+    exact Finset.sum_nonneg fun n _ => by
+      rw [vonMangoldt_eq_mathlib]
+      exact ArithmeticFunction.vonMangoldt_nonneg
+  have herror :
+      |chebyshevPsi (Real.exp y) - Real.exp y| ≤
+        (Real.log 4 + 5) * Real.exp y := by
+    rw [abs_sub_le_iff]
+    constructor
+    · nlinarith [Real.exp_pos y]
+    · nlinarith [Real.exp_pos y,
+        Real.log_pos (by norm_num : 1 < (4 : ℝ))]
+  unfold normalizedPsiError
+  rw [abs_mul, abs_mul, abs_of_nonneg (norm_nonneg rho),
+    abs_of_pos (Real.exp_pos _)]
+  calc
+    ‖rho‖ * |chebyshevPsi (Real.exp y) - Real.exp y| *
+          Real.exp (-rho.re * y) ≤
+        ‖rho‖ * ((Real.log 4 + 5) * Real.exp y) *
+          Real.exp (-rho.re * y) := by
+      gcongr
+    _ = ‖rho‖ * (Real.log 4 + 5) *
+          Real.exp ((1 - rho.re) * y) := by
+      rw [show
+          ‖rho‖ * ((Real.log 4 + 5) * Real.exp y) *
+                Real.exp (-rho.re * y) =
+              ‖rho‖ * (Real.log 4 + 5) *
+                (Real.exp y * Real.exp (-rho.re * y)) by ring,
+        ← Real.exp_add]
+      congr 1
+      ring_nf
+
+/-- Explicit coefficient in the linear ordinary local second-moment lower
+bound produced by sweeping the sharpened Gaussian contour. -/
+def centeredSharpenedSweptOrdinaryL2Constant
+    (ε : ℝ) (rho : ℂ) (k : ℕ) : ℝ :=
+  let q := epsilonCenterCoefficient (ε / 2)
+  let d := epsilonRadiusCoefficient (ε / 2)
+  let R := epsilonSweepRatio ε
+  let C2 :=
+    (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 /
+      sharpenedMissingHarmonicDenominator k
+  let K :=
+    centeredSharpenedProjectedPsiKernelEnvelopeConstant q rho k
+  ((C2 * (R - 1) / (q - d)) /
+      (K * (Real.exp 2 * Real.sqrt (2 * R) / q))) / 2
+
+/--
+Every sufficiently late epsilon logarithmic window has an explicit ordinary
+second moment proportional to its length, conditional on one off-line zeta
+zero. Carlson supplies the missing odd harmonic automatically.
+-/
+theorem exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear
+    {ε : ℝ} {rho : ℂ} {sigma : ℝ}
+    (hε : 0 < ε)
+    (hgamma : 0 < rho.im)
+    (hzero : riemannZeta rho = 0)
+    (hσ : 1 / 2 < sigma)
+    (hσrho : sigma < rho.re)
+    (hrhoRe1 : rho.re < 1) :
+    ∃ k : ℕ,
+      riemannZeta (missingHarmonicContourCenter rho k) ≠ 0 ∧
+      0 < centeredSharpenedSweptOrdinaryL2Constant ε rho k ∧
+      ∀ᶠ Y : ℝ in Filter.atTop,
+        centeredSharpenedSweptOrdinaryL2Constant ε rho k *
+            Real.log Y <
+          ∫ y in Set.Icc (Real.log Y) ((1 + ε) * Real.log Y),
+            normalizedPsiError rho y ^ 2 := by
+  have hε2 : 0 < ε / 2 := by positivity
+  have hrhoRe0 : 0 < rho.re := by linarith
+  have hrho : rho ≠ 0 := ne_zero_of_re_pos hrhoRe0
+  rcases
+      exists_missing_oddHarmonic_with_strict_gap_of_carlson
+        hrhoRe1 hgamma hσ hσrho with
+    ⟨k, hmissing, _⟩
+  have hmissing' :
+      riemannZeta (missingHarmonicContourCenter rho k) ≠ 0 := by
+    simpa [missingHarmonicContourCenter] using hmissing
+  let q : ℝ := epsilonCenterCoefficient (ε / 2)
+  let d : ℝ := epsilonRadiusCoefficient (ε / 2)
+  let R : ℝ := epsilonSweepRatio ε
+  let multiplicity : ℝ := analyticOrderNatAt riemannZeta rho
+  let denominator : ℝ := sharpenedMissingHarmonicDenominator k
+  let C2 : ℝ := multiplicity ^ 2 / denominator
+  let K : ℝ :=
+    centeredSharpenedProjectedPsiKernelEnvelopeConstant q rho k
+  let mass : ℝ := Real.exp 2 * Real.sqrt (2 * R) / q
+  have hq16 : 16 ≤ q := by
+    dsimp [q]
+    exact epsilonCenterCoefficient_ge_sixteen hε2
+  have hqPos : 0 < q := lt_of_lt_of_le (by norm_num) hq16
+  have hdPos : 0 < d := by
+    dsimp [d]
+    exact epsilonRadiusCoefficient_pos hε2
+  have hdq : d < q := by
+    dsimp [d, q]
+    exact epsilonRadiusCoefficient_lt_center hε2
+  have hmargin : 16 * (q + d) ≤ d ^ 2 := by
+    dsimp [d, q]
+    exact epsilonRadius_sq_ge_sixteen_mul hε2
+  have hRone : 1 < R := by
+    dsimp [R]
+    exact one_lt_epsilonSweepRatio hε
+  have hRPos : 0 < R := zero_lt_one.trans hRone
+  have hdenominatorPos : 0 < denominator := by
+    dsimp [denominator]
+    exact sharpenedMissingHarmonicDenominator_pos k
+  have hmultiplicityPos : 0 < multiplicity := by
+    dsimp [multiplicity]
+    exact_mod_cast
+      ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero
+        (by exact ne_of_apply_ne Complex.re (by simpa using hrhoRe1.ne))
+        hzero
+  have hC2Pos : 0 < C2 := by
+    dsimp [C2]
+    exact div_pos (sq_pos_of_pos hmultiplicityPos) hdenominatorPos
+  have hKPos : 0 < K := by
+    dsimp [K]
+    exact centeredSharpenedProjectedPsiKernelEnvelopeConstant_pos q rho k
+  have hmassPos : 0 < mass := by
+    dsimp [mass]
+    positivity
+  have hconstantPos :
+      0 < centeredSharpenedSweptOrdinaryL2Constant ε rho k := by
+    unfold centeredSharpenedSweptOrdinaryL2Constant
+    dsimp only
+    exact div_pos
+      (div_pos
+        (div_pos
+          (mul_pos hC2Pos (sub_pos.mpr hRone))
+          (sub_pos.mpr hdq))
+        (mul_pos hKPos hmassPos))
+      (by norm_num)
+  let data :=
+    sharpenedCenteredLocalizedContourData
+      q d hq16 hdPos hdq hmargin
+      hrhoRe0 hrhoRe1 hgamma hzero hmissing'
+  have hC2Gap :
+      C2 <
+        2 * multiplicity ^ 2 / denominator := by
+    dsimp [C2]
+    apply (div_lt_div_iff_of_pos_right hdenominatorPos).2
+    nlinarith [sq_pos_of_pos hmultiplicityPos]
+  have hweighted :=
+    eventually_centeredSharpenedNormalizedPsiError_secondMoment_gt
+      hq16 hdPos hdq hmargin
+      hrhoRe0 hrhoRe1 hgamma hzero hmissing' hC2Gap
+  have hall :
+      ∀ᶠ m : ℝ in atTop,
+        C2 <
+            centeredNormalizedWindowSecondMoment q d rho
+              (centeredSharpenedProjectedPsiKernel q rho k) m ∧
+          IntegrableOn
+            (fun y =>
+              normalizedPsiError rho y ^ 2 *
+                |centeredSharpenedProjectedPsiKernel q rho k m y|)
+            (localizedGaussianLogWindow q d m) := by
+    filter_upwards [hweighted, data.eventually_second_moment_integrable] with
+      m hm hInt
+    exact ⟨hm, by simpa [data] using hInt⟩
+  rcases (eventually_atTop.1 hall) with ⟨m0, hm0⟩
+  have hscale :
+      Tendsto (epsilonGaussianScale (ε / 2) ·) atTop atTop :=
+    tendsto_epsilonGaussianScale_atTop hε2
+  have hscaleLarge :
+      ∀ᶠ Y : ℝ in atTop,
+        max 1 m0 ≤ epsilonGaussianScale (ε / 2) Y :=
+    hscale.eventually (eventually_ge_atTop (max 1 m0))
+  refine ⟨k, hmissing', hconstantPos, ?_⟩
+  filter_upwards [hscaleLarge, eventually_gt_atTop (1 : ℝ)] with
+    Y hMlarge hY
+  let M : ℝ := epsilonGaussianScale (ε / 2) Y
+  let B : ℝ :=
+    (‖rho‖ * (Real.log 4 + 5) *
+      Real.exp ((1 - rho.re) * ((1 + ε) * Real.log Y))) ^ 2
+  have hMone : 1 ≤ M := le_trans (le_max_left _ _) hMlarge
+  have hm0M : m0 ≤ M := le_trans (le_max_right _ _) hMlarge
+  have hBNonneg : 0 ≤ B := sq_nonneg _
+  have herrorBound :
+      ∀ y ∈ Set.Icc (Real.log Y) ((1 + ε) * Real.log Y),
+        normalizedPsiError rho y ^ 2 ≤ B := by
+    intro y hy
+    have hcoef : 0 ≤ 1 - rho.re := by linarith
+    have hexp :
+        Real.exp ((1 - rho.re) * y) ≤
+          Real.exp ((1 - rho.re) * ((1 + ε) * Real.log Y)) := by
+      exact Real.exp_le_exp.mpr
+        (mul_le_mul_of_nonneg_left hy.2 hcoef)
+    have habs :=
+      (normalizedPsiError_abs_le_exp_growth_swept rho y).trans
+        (mul_le_mul_of_nonneg_left hexp
+          (mul_nonneg (norm_nonneg rho)
+            (by positivity : 0 ≤ Real.log 4 + 5)))
+    dsimp [B]
+    nlinarith [sq_abs (normalizedPsiError rho y),
+      abs_nonneg (normalizedPsiError rho y)]
+  have htransfer :=
+    ordinarySecondMoment_linear_lower_of_sweptWeightedLower
+      (q := q) (d := d) (M := M) (R := R)
+      (a := Real.log Y) (b := (1 + ε) * Real.log Y)
+      (C2 := C2) (K := K) (B := B) (rho := rho)
+      (kernel := centeredSharpenedProjectedPsiKernel q rho k)
+      hMone hqPos hRone hKPos.le hBNonneg herrorBound
+      (fun m hm =>
+        localizedGaussianLogWindow_subset_epsilonWindow_of_mem_sweep
+          hε hY (by simpa [M, R] using hm))
+      (fun m hm y _hy =>
+        centeredSharpenedProjectedPsiKernel_abs_le_scaledEnvelope
+          q hrho hgamma m (hMone.trans hm.1) y)
+      (fun m hm =>
+        (hm0 m (hm0M.trans hm.1)).2)
+      (fun m hm =>
+        (hm0 m (hm0M.trans hm.1)).1)
+  have hlogPos : 0 < Real.log Y := Real.log_pos hY
+  have hgapPos : 0 < q - d := sub_pos.mpr hdq
+  have hDPos : 0 < K * mass := mul_pos hKPos hmassPos
+  have hraw :
+      (C2 * (R - 1) * M) / (K * mass) ≤
+        ∫ y in Set.Icc (Real.log Y) ((1 + ε) * Real.log Y),
+          normalizedPsiError rho y ^ 2 := by
+    apply (div_le_iff₀ hDPos).2
+    simpa only [mass, mul_comm, mul_left_comm] using htransfer
+  have hMFormula : M = Real.log Y / (q - d) := by
+    rfl
+  have hconstantDef :
+      centeredSharpenedSweptOrdinaryL2Constant ε rho k =
+        ((C2 * (R - 1) / (q - d)) / (K * mass)) / 2 := by
+    rfl
+  have hconstantIdentity :
+      centeredSharpenedSweptOrdinaryL2Constant ε rho k *
+          Real.log Y =
+        ((C2 * (R - 1) * M) / (K * mass)) / 2 := by
+    rw [hconstantDef, hMFormula]
+    field_simp [hgapPos.ne', hDPos.ne']
+  rw [hconstantIdentity]
+  have hrawPos : 0 < (C2 * (R - 1) * M) / (K * mass) := by
+    have hMPos : 0 < M := zero_lt_one.trans_le hMone
+    exact div_pos
+      (mul_pos (mul_pos hC2Pos (sub_pos.mpr hRone)) hMPos)
+      hDPos
+  exact (half_lt_self hrawPos).trans_le hraw
 
 end
 
