@@ -11,6 +11,26 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
 #check localizedGaussianWeightAtCenter_sixteen
 #check localizedPsiGaussianAverageAtCenter_sixteen
 
+example (q : ℝ) (A : ℂ[X]) (w : ℂ) (m : ℝ) (z : ℂ) :
+    localizedGaussianWeightAtCenter q A w m z =
+      A.eval (z - w) *
+        Complex.exp
+          ((m : ℂ) * (z - w) ^ 2 +
+            ((q * m : ℝ) : ℂ) * (z - w)) := by
+  rfl
+
+example (q : ℝ) (A : ℂ[X]) (w : ℂ) (m : ℝ) :
+    localizedPsiGaussianAverageAtCenter q A w m =
+      ∫ x in Set.Ioi (1 : ℝ),
+        psiErrorAboveOneComplex x *
+          ((2 * Real.pi : ℂ) *
+            ((x : ℂ) ^ (-(w + 1)) *
+              (w * polynomialGaussianKernel A m
+                  (q * m - Real.log x) +
+                polynomialGaussianKernelDeriv A m
+                  (q * m - Real.log x)))) := by
+  rfl
+
 example (q : ℝ) (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
     (w : ℂ) {x : ℝ} (hx : 0 < x) :
     (∫ t : ℝ,
