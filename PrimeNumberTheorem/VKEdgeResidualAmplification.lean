@@ -456,6 +456,143 @@ theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
       ring
     _ < epsilon * multiplicity ^ 2 := hfinal
 
+/--
+A total local second-moment coefficient strictly above the target-pair
+budget forces a positive second moment for the residual error.
+-/
+theorem integral_Icc_normalizedPsiResidual_sq_lower
+    {rho : ℂ} {a b A B : ℝ}
+    (hrhoRe1 : rho.re < 1)
+    (hab : a ≤ b)
+    (_hgamma : rho.im ≠ 0)
+    (hA : 0 ≤ A)
+    (hB : 0 ≤ B)
+    (hBA : B < A)
+    (htotal :
+      A * (b - a) ≤
+        ∫ y in Icc a b, normalizedPsiError rho y ^ 2)
+    (hpair :
+      (∫ y in Icc a b, normalizedTargetZeroPair rho y ^ 2) ≤
+        B * (b - a)) :
+    (Real.sqrt A - Real.sqrt B) ^ 2 * (b - a) ≤
+      ∫ y in Icc a b, normalizedPsiResidual rho y ^ 2 := by
+  let μ : Measure ℝ := volume.restrict (Icc a b)
+  have hf : MemLp (normalizedPsiError rho) 2 μ := by
+    apply
+      (memLp_two_iff_integrable_sq
+        ((measurable_normalizedPsiError_residual rho).aestronglyMeasurable
+          (μ := μ))).2
+    simpa [μ] using
+      integrableOn_normalizedPsiError_sq_Icc_residual hrhoRe1 a b
+  have hp : MemLp (normalizedTargetZeroPair rho) 2 μ := by
+    apply
+      (memLp_two_iff_integrable_sq
+        ((measurable_normalizedTargetZeroPair rho).aestronglyMeasurable
+          (μ := μ))).2
+    simpa [μ] using
+      integrableOn_normalizedTargetZeroPair_sq_Icc rho a b
+  have hres :=
+    MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds
+      hf hp (sub_nonneg.mpr hab) hA hB hBA htotal hpair
+  simpa only [μ, normalizedPsiResidual, Pi.sub_apply] using hres
+
+/-- Target-pair energy density on an epsilon logarithmic window, including
+the finite-height endpoint correction. -/
+def epsilonLogWindowTargetPairCoefficient
+    (epsilon : ℝ) (rho : ℂ) (Y : ℝ) : ℝ :=
+  let multiplicity : ℝ := analyticOrderNatAt riemannZeta rho
+  2 * multiplicity ^ 2 +
+    2 * multiplicity ^ 2 /
+      (|rho.im| * epsilon * Real.log Y)
+
+theorem integral_Icc_normalizedTargetZeroPair_sq_le_epsilonLogWindow
+    {epsilon Y : ℝ} {rho : ℂ}
+    (hepsilon : 0 < epsilon)
+    (hY : 1 < Y)
+    (hgamma : rho.im ≠ 0) :
+    (∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
+        normalizedTargetZeroPair rho y ^ 2) ≤
+      epsilonLogWindowTargetPairCoefficient epsilon rho Y *
+        (epsilon * Real.log Y) := by
+  let multiplicity : ℝ := analyticOrderNatAt riemannZeta rho
+  have hlog : 0 < Real.log Y := Real.log_pos hY
+  have hab :
+      Real.log Y ≤ (1 + epsilon) * Real.log Y := by
+    nlinarith
+  have hpair :=
+    integral_Icc_normalizedTargetZeroPair_sq_le
+      (rho := rho) hab hgamma
+  have hlength :
+      (1 + epsilon) * Real.log Y - Real.log Y =
+        epsilon * Real.log Y := by ring
+  have hcoefficient :
+      epsilonLogWindowTargetPairCoefficient epsilon rho Y *
+          (epsilon * Real.log Y) =
+        2 * multiplicity ^ 2 * (epsilon * Real.log Y) +
+          2 * multiplicity ^ 2 / |rho.im| := by
+    unfold epsilonLogWindowTargetPairCoefficient
+    dsimp only [multiplicity]
+    field_simp [abs_ne_zero.mpr hgamma, hepsilon.ne', hlog.ne']
+  rw [hlength] at hpair
+  rw [hcoefficient]
+  exact hpair
+
+/--
+Logarithmic-window residual endpoint with the exact finite-height target-pair
+correction exposed in the threshold coefficient.
+-/
+theorem integral_Icc_normalizedPsiResidual_sq_lower_epsilonLogWindow
+    {epsilon Y A : ℝ} {rho : ℂ}
+    (hrhoRe1 : rho.re < 1)
+    (hepsilon : 0 < epsilon)
+    (hY : 1 < Y)
+    (hgamma : rho.im ≠ 0)
+    (hA : 0 ≤ A)
+    (hBA :
+      epsilonLogWindowTargetPairCoefficient epsilon rho Y < A)
+    (htotal :
+      A * (epsilon * Real.log Y) ≤
+        ∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
+          normalizedPsiError rho y ^ 2) :
+    (Real.sqrt A -
+        Real.sqrt
+          (epsilonLogWindowTargetPairCoefficient epsilon rho Y)) ^ 2 *
+          (epsilon * Real.log Y) ≤
+      ∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
+        normalizedPsiResidual rho y ^ 2 := by
+  let B := epsilonLogWindowTargetPairCoefficient epsilon rho Y
+  have hlog : 0 < Real.log Y := Real.log_pos hY
+  have hab :
+      Real.log Y ≤ (1 + epsilon) * Real.log Y := by
+    nlinarith
+  have hB : 0 ≤ B := by
+    dsimp [B, epsilonLogWindowTargetPairCoefficient]
+    positivity
+  have hpair :
+      (∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
+          normalizedTargetZeroPair rho y ^ 2) ≤
+        B * (((1 + epsilon) * Real.log Y) - Real.log Y) := by
+    have h :=
+      integral_Icc_normalizedTargetZeroPair_sq_le_epsilonLogWindow
+        hepsilon hY hgamma
+    simpa only [B, show
+        (1 + epsilon) * Real.log Y - Real.log Y =
+          epsilon * Real.log Y by ring] using h
+  have htotal' :
+      A * (((1 + epsilon) * Real.log Y) - Real.log Y) ≤
+        ∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
+          normalizedPsiError rho y ^ 2 := by
+    simpa only [show
+        (1 + epsilon) * Real.log Y - Real.log Y =
+          epsilon * Real.log Y by ring] using htotal
+  have hres :=
+    integral_Icc_normalizedPsiResidual_sq_lower
+      hrhoRe1 hab hgamma hA hB (by simpa only [B] using hBA)
+      htotal' hpair
+  simpa only [B, show
+      (1 + epsilon) * Real.log Y - Real.log Y =
+        epsilon * Real.log Y by ring] using hres
+
 end
 
 end VKEdgePiOverTwo

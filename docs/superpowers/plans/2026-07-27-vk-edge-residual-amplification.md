@@ -282,7 +282,7 @@ git commit -m "theorem: certify swept L2 constant below pair energy"
 - Modify: `PrimeNumberTheorem/VKEdgeResidualAmplification.lean`
 - Modify: `Test/VKEdgeResidualAmplificationContract.lean`
 
-- [ ] Add a contract for an interval endpoint whose hypotheses explicitly require a total coefficient larger than the target-pair coefficient:
+- [x] Add a contract for an interval endpoint whose hypotheses explicitly require a total coefficient larger than the target-pair coefficient:
 
 ```lean
 theorem integral_Icc_normalizedPsiResidual_sq_lower
@@ -302,9 +302,9 @@ theorem integral_Icc_normalizedPsiResidual_sq_lower
       ∫ y in Set.Icc a b, normalizedPsiResidual rho y ^ 2
 ```
 
-- [ ] Confirm failure, then prove it by applying `MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds` to `volume.restrict (Icc a b)`.
+- [x] Confirm failure, then prove it by applying `MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds` to `volume.restrict (Icc a b)`.
 
-- [ ] Add a logarithmic-window corollary with a finite-\(\gamma\) correction in the pair coefficient:
+- [x] Add a logarithmic-window corollary with a finite-\(\gamma\) correction in the pair coefficient:
 
 ```lean
 B_Y =
@@ -314,9 +314,9 @@ B_Y =
 
 under `0 < epsilon`, `1 < Y`, and `rho.im ≠ 0`.
 
-- [ ] Do not instantiate the total coefficient with `centeredSharpenedSweptOrdinaryL2Constant`; instead add a theorem or comment referencing the strict comparison from Task 4.
+- [x] Do not instantiate the total coefficient with `centeredSharpenedSweptOrdinaryL2Constant`; instead add a theorem or comment referencing the strict comparison from Task 4.
 
-- [ ] Run the focused contract and commit:
+- [x] Run the focused contract and commit:
 
 ```bash
 lake build Test.VKEdgeResidualAmplificationContract
