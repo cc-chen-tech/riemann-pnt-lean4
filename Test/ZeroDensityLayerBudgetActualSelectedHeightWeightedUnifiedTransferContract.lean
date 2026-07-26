@@ -1,0 +1,13 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightWeightedUnifiedTransfer
+
+open PrimeNumberTheorem
+
+#check ActualWeightedBalancedHeightOutsideClusterCertificate
+#check
+  ActualWeightedBalancedHeightOutsideClusterCertificate.fullTail_negligible
+#check
+  ActualWeightedBalancedHeightOutsideClusterCertificate.signedComplementCertificate
+#check
+  ActualWeightedBalancedHeightOutsideClusterCertificate.actualSignedComplementCertificate
+#check
+  unified_parametricPNTUpper_actualWeightedBalancedHeightRemainderCertificate
