@@ -291,7 +291,7 @@ git commit -m "feat: parameterize localized zeta contour"
   `CenteredConcreteLocalizedContourSlice`,
   `selectedLocalizedZeroResidueSumAtCenter`,
   `selectedLocalizedContourRemainderAtCenter`,
-  and their limit/decay theorems for every fixed `q > 0`.
+  and their limit/decay theorems for every fixed `q ≥ 16`.
 
 - [ ] **Step 1: Write the failing limit contract**
 
@@ -303,7 +303,7 @@ Tendsto
   atTop (𝓝 0)
 ```
 
-under `0 < q`, `0 < u`, `u < 1`.
+under `16 ≤ q`, `0 < u`, `u < 1`.
 
 - [ ] **Step 2: Prove the enlarged far-zero radius margin**
 
@@ -324,8 +324,10 @@ filter degree may depend on fixed `q`.
 
 - [ ] **Step 3: Generalize edge envelopes**
 
-Carry `q` through the right, left, top, and bottom edge bounds. Allow envelope
-constants to depend on fixed `q`.
+Carry `q` through the right, left, top, and bottom edge bounds under `16 ≤ q`.
+Allow envelope constants to depend on fixed `q`. Preserve the left-edge
+`exp (-15*m)` bound and replace the horizontal/right-edge constant `36` by
+`4 + 2*q`.
 
 - [ ] **Step 4: Keep the good-height scale**
 
@@ -510,7 +512,7 @@ hrhoRe1 : rho.re < 1
 - [ ] **Step 2: Verify epsilon parameters satisfy analytic hypotheses**
 
 Prove `qε > 0`, `dε > 0`, `dε < qε`, and
-`16*(qε+dε) ≤ dε^2`. Show
+`64 < qε`, `16*(qε+dε) ≤ dε^2`. Show
 `epsilonGaussianScale ε Y → ∞`.
 
 - [ ] **Step 3: Compose the fixed-harmonic theorem**

@@ -65,6 +65,7 @@ These satisfy
 
 \[
 0<d_\varepsilon<q_\varepsilon,\qquad
+64<q_\varepsilon,
 \frac{q_\varepsilon+d_\varepsilon}
      {q_\varepsilon-d_\varepsilon}
 =1+\varepsilon,
@@ -180,10 +181,11 @@ The selected good height may continue to have the form
 T\in[12m+|v|,12m+|v|+1].
 \]
 
-The center coefficient `q` is fixed while `m` tends to infinity. On the left
-edge, larger positive `q` improves exponential decay. On the horizontal
-edges, the negative Gaussian term in `T^2` dominates every fixed `q`-dependent
-linear term. Every resulting constant may depend on `q`.
+The center coefficient `q` is fixed while `m` tends to infinity.  The
+parametric decay layer assumes `16 ≤ q`.  On the left edge this retains the
+existing `exp(-15m)` saving; on the horizontal edges, the old constant `36`
+is replaced by `4+2q`, and the negative Gaussian term in `T^2` dominates this
+fixed `q`-dependent term. Every resulting constant may depend on `q`.
 
 The selected height eventually exceeds the fixed radius
 `centeredPoleRadius q`; this is sufficient for the enlarged finite-pole
