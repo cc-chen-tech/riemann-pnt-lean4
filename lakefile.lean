@@ -95,6 +95,7 @@ lean_lib RiemannPNT where
     `Test.VKEdgePiOverTwoSweptL2Contract,
     `MathlibAux.ScaledPaleyZygmund,
     `Test.ScaledPaleyZygmundContract,
+    `Test.VKEdgePiOverTwoFixedProportionContract,
     `PrimeNumberTheorem.VKEdgePiOverTwoPositiveMeasure,
     `PrimeNumberTheorem.VKEdgePiOverTwoBellotti,
     `PrimeNumberTheorem.VKEdgePiOverTwoConcreteContourAssembly,
