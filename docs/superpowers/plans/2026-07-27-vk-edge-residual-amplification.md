@@ -26,7 +26,7 @@
 - Create: `Test/ResidualSecondMomentContract.lean`
 - Modify: `lakefile.lean`
 
-- [ ] Add `Test/ResidualSecondMomentContract.lean` with a `#check` for:
+- [x] Add `Test/ResidualSecondMomentContract.lean` with a `#check` for:
 
 ```lean
 MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds
@@ -44,7 +44,7 @@ MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds
       ∫ x, (f x - p x) ^ 2 ∂μ
 ```
 
-- [ ] Add the contract target to `lakefile.lean` and run:
+- [x] Add the contract target to `lakefile.lean` and run:
 
 ```bash
 lake build Test.ResidualSecondMomentContract
@@ -52,9 +52,9 @@ lake build Test.ResidualSecondMomentContract
 
 Expected result: failure because the module and theorem do not exist.
 
-- [ ] Implement `MathlibAux/ResidualSecondMoment.lean` using `MemLp.toLp`, `MemLp.toLp_sub`, the norm triangle inequality, and the identity between the \(L^2\) norm squared and `∫ x, f x ^ 2 ∂μ`.
+- [x] Implement `MathlibAux/ResidualSecondMoment.lean` using `MemLp.toLp`, `MemLp.toLp_sub`, the norm triangle inequality, and the identity between the \(L^2\) norm squared and `∫ x, f x ^ 2 ∂μ`.
 
-- [ ] If Mathlib's `Lp` coercions make the direct scaled theorem brittle, first expose and prove:
+- [x] If Mathlib's `Lp` coercions make the direct scaled theorem brittle, first expose and prove:
 
 ```lean
 theorem sqrt_integral_sq_sub_lower
@@ -66,14 +66,14 @@ theorem sqrt_integral_sq_sub_lower
 
 and derive the scaled theorem by monotonicity of `Real.sqrt`, nonnegativity of square integrals, and squaring nonnegative sides.
 
-- [ ] Run:
+- [x] Run:
 
 ```bash
 lake build Test.ResidualSecondMomentContract
 git diff --check
 ```
 
-- [ ] Commit:
+- [x] Commit:
 
 ```bash
 git add MathlibAux/ResidualSecondMoment.lean Test/ResidualSecondMomentContract.lean lakefile.lean
