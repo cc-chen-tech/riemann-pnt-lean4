@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoCenteredMellin
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.localizedGaussianWeightAtCenter
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.localizedPsiGaussianAverageAtCenter
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.integral_rightEdgePolynomialGaussian_cpow_atCenter_eq
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.integral_localizedGaussianWeightAtCenter_mul_regularizedLogDeriv_rightEdge_eq
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.localizedGaussianWeightAtCenter_sixteen
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.localizedPsiGaussianAverageAtCenter_sixteen
