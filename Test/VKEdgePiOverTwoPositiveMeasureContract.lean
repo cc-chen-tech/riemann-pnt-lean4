@@ -1,0 +1,13 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoPositiveMeasure
+
+open Complex Filter MeasureTheory Polynomial Set Topology
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check CenteredLocalizedContourData.eventually_secondMoment_gt_sq_mul_coefficient
+#check CenteredLocalizedContourData.eventually_positive_measure_error_gt
+#check eventually_positive_measure_normalizedPsiError_gt_strictPiOverTwo
+#check exists_eventually_positive_measure_in_epsilonLogWindow_gt_strictPiOverTwo
+
+end PrimeNumberTheorem.VKEdgePiOverTwo
+
