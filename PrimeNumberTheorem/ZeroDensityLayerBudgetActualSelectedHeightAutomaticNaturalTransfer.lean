@@ -61,4 +61,46 @@ theorem
       hbeta halpha halphaOne hmargin selection)
     hmain
 
+/-- Bidirectional automatic selected-height transfer on the genuine relative
+Chebyshev error.
+
+The upper component is the parametric Pintz--Carlson PNT decay theorem.  The
+lower component uses the same selected height in the finite-strip complement,
+the actual explicit-formula remainder, and the visible cluster.  Thus this is
+one public interface for upper and lower transfer, while the mathematically
+separate anti-cancellation statement remains the explicit hypothesis `hmain`.
+-/
+theorem
+    unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} (hbeta : 0 < beta)
+    (halpha : 0 < alpha) (halphaOne : alpha ≤ 1)
+    (hmargin : 1 - beta < alpha)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (selectedUniformGoodHeight alpha selection x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterGoodHeightFiniteStripCertificate
+        beta alpha S n
+        (selectedUniformGoodHeight alpha selection) input)
+    (hmain :
+      HasFarNaturalPointTargetAmplitudeWitness
+        (fun m : ℕ =>
+          dynamicVisibleClusterPNTMain
+            (selectedUniformGoodHeight alpha selection) S (m : ℝ))
+        (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) :=
+  ⟨exists_fixedRate_parametricTwoStrip_relativeChebyshevPsi0Error_tendsto
+      threshold hhalf hlt,
+    selectedUniformGoodHeight_actualNaturalPointRemainder_lowerTransfer
+      hbeta halpha halphaOne hmargin selection certificate hmain⟩
+
 end PrimeNumberTheorem
