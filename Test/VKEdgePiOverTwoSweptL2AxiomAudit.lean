@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoSweptL2
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms exp_scaled_abs_mul_normalizedGaussian_le_sweptEnvelope
+#print axioms integral_sweptGaussianEnvelope_le
+#print axioms ordinarySecondMoment_linear_lower_of_sweptWeightedLower
+#print axioms exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear
