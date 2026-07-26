@@ -6,6 +6,13 @@ open PrimeNumberTheorem VKEdgePiOverTwo
 #check cosineZeroPair
 #check intervalIntegral_cosineZeroPair_sq
 #check integral_Icc_cosineZeroPair_sq_le
+#check normalizedTargetZeroPair
+#check normalizedPsiResidual
+#check measurable_normalizedTargetZeroPair
+#check measurable_normalizedPsiResidual
+#check integrableOn_normalizedTargetZeroPair_sq_Icc
+#check integrableOn_normalizedPsiResidual_sq_Icc
+#check integral_Icc_normalizedTargetZeroPair_sq_le
 
 example
     {m gamma phase a b : ℝ} (hgamma : gamma ≠ 0) :
@@ -22,3 +29,11 @@ example
     (∫ y in Icc a b, cosineZeroPair m gamma phase y ^ 2) ≤
       2 * m ^ 2 * (b - a) + 2 * m ^ 2 / |gamma| :=
   integral_Icc_cosineZeroPair_sq_le hab hgamma
+
+example
+    {rho : ℂ} {a b : ℝ}
+    (hab : a ≤ b) (hgamma : rho.im ≠ 0) :
+    (∫ y in Icc a b, normalizedTargetZeroPair rho y ^ 2) ≤
+      2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 * (b - a) +
+        2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 / |rho.im| :=
+  integral_Icc_normalizedTargetZeroPair_sq_le hab hgamma

@@ -148,7 +148,7 @@ git commit -m "feat: compute target zero-pair local energy"
 - Modify: `PrimeNumberTheorem/VKEdgeResidualAmplification.lean`
 - Modify: `Test/VKEdgeResidualAmplificationContract.lean`
 
-- [ ] Extend the contract with:
+- [x] Extend the contract with:
 
 ```lean
 PrimeNumberTheorem.VKEdgePiOverTwo.normalizedTargetZeroPair
@@ -171,13 +171,13 @@ def normalizedPsiResidual (rho : ℂ) (y : ℝ) : ℝ :=
   normalizedPsiError rho y - normalizedTargetZeroPair rho y
 ```
 
-- [ ] Confirm the extended contract fails, then implement the definitions.
+- [x] Confirm the extended contract fails, then implement the definitions.
 
-- [ ] Prove measurability from continuity of `Real.cos`, the existing definition of `normalizedPsiError`, and closure under subtraction.
+- [x] Prove measurability from continuity of `Real.cos`, the existing definition of `normalizedPsiError`, and closure under subtraction.
 
-- [ ] Prove interval integrability of both squares on `Icc a b`. Use continuity for the target pair and the existing exponential-growth bound pattern for `normalizedPsiError`; derive residual integrability with `IntegrableOn.sub`.
+- [x] Prove interval integrability of both squares on `Icc a b`. Use continuity for the target pair and the existing exponential-growth bound pattern for `normalizedPsiError`; derive residual integrability with `IntegrableOn.sub`.
 
-- [ ] Add the zeta-specialized target-pair bound:
+- [x] Add the zeta-specialized target-pair bound:
 
 ```lean
 theorem integral_Icc_normalizedTargetZeroPair_sq_le
@@ -188,7 +188,7 @@ theorem integral_Icc_normalizedTargetZeroPair_sq_le
         2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 / |rho.im|
 ```
 
-- [ ] Run the focused contract and commit:
+- [x] Run the focused contract and commit:
 
 ```bash
 lake build Test.VKEdgeResidualAmplificationContract
