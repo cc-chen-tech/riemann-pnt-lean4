@@ -83,4 +83,71 @@ theorem
         beta sigma tau)
       S x
 
+/-- A uniform polynomial-height remainder certificate specializes
+definitionally to the slope-weighted balanced height. -/
+def
+    ActualPolynomialExplicitFormulaRemainderCertificate.weightedBalancedHeightCertificate
+    {beta : ℝ} {n : ℕ} {sigma tau : Fin (n + 1) → ℝ}
+    (certificate :
+      ActualPolynomialExplicitFormulaRemainderCertificate
+        (actualSelectedHeightFiniteStripWeightedBalancedExponent
+          beta sigma tau)) :
+    ActualSelectedHeightExplicitFormulaRemainderCertificate
+      (actualSelectedHeightFiniteStripWeightedBalancedExponent
+        beta sigma tau)
+      (actualSelectedHeightFiniteStripWeightedBalancedHeight
+        beta sigma tau) where
+  constant := certificate.constant
+  constant_nonneg := certificate.constant_nonneg
+  eventually_bound := by
+    simpa [actualSelectedHeightFiniteStripWeightedBalancedHeight] using
+      certificate.eventually_bound
+
+/--
+Weighted unified transfer from the standard uniform polynomial-height
+explicit-formula remainder certificate.
+
+The selected-height specialization and the strict target-amplitude exponent
+margin are both automatic.  The remaining `hmain` input is exactly the
+independent finite-cluster anti-cancellation problem.
+-/
+theorem
+    unified_parametricPNTUpper_actualWeightedBalancedHeightPolynomialRemainderCertificate
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta : ℝ} (hbeta : 0 < beta)
+    {n : ℕ} {S : Finset ℂ}
+    {sigma tau kappa : Fin (n + 1) → ℝ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripWeightedBalancedHeight
+            beta sigma tau x)
+          S (n + 1)}
+    (certificate :
+      ActualWeightedBalancedHeightOutsideClusterCertificate
+        beta S n sigma tau kappa input)
+    (remainderCertificate :
+      ActualPolynomialExplicitFormulaRemainderCertificate
+        (actualSelectedHeightFiniteStripWeightedBalancedExponent
+          beta sigma tau))
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (actualSelectedHeightFiniteStripWeightedBalancedHeight
+            beta sigma tau)
+          S)
+        (targetZeroPowerAmplitude beta)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  exact
+    unified_parametricPNTUpper_actualWeightedBalancedHeightRemainderCertificate
+      threshold hhalf hlt hbeta certificate
+      (remainderCertificate.weightedBalancedHeightCertificate
+        (beta := beta) (sigma := sigma) (tau := tau))
+      hmain
+
 end PrimeNumberTheorem
