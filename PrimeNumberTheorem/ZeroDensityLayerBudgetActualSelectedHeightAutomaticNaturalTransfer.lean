@@ -2,6 +2,7 @@ import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightNaturalRemai
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightNaturalTransfer
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightFiniteStripCertificateChoice
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightBalancedCertificateChoice
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightBalancedExponentOptimality
 
 /-!
 # Automatic selected-height natural-point lower transfer
@@ -234,5 +235,90 @@ theorem
     (unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
       threshold hhalf hlt hbeta hspec.1 hspec.2.1.le hspec.2.2.1
       selection certificate hmain)
+
+/-- One theorem returning the three coordinated outputs of the explicit
+balanced transfer:
+
+* parametric Pintz--Carlson PNT upper decay;
+* conditional target-scale oscillation of the genuine relative PNT error;
+* positive, globally maximal, uniquely maximizing truncation robustness.
+
+The optimality claim is exactly for the two-sided exponent safety margin, not
+for every possible analytic cost functional.
+-/
+theorem
+    unified_actualBalancedHeight_PNTUpper_naturalPointLower_optimalTruncation
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta : ℝ} {n : ℕ} (sigma tau : Fin (n + 1) → ℝ)
+    (hbeta : 0 < beta) (hbetaOne : beta < 1)
+    (hsigma : ∀ i, 1 / 2 < sigma i)
+    (hsigmaOne : ∀ i, sigma i < 1)
+    (hthreshold :
+      ∀ i,
+        carlsonStripEndpointTargetThreshold (sigma i) (tau i) < beta)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    {S : Finset ℂ}
+    (input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripBalancedHeight
+            beta sigma tau selection x)
+          S (n + 1))
+    (kappa : Fin (n + 1) → ℝ)
+    (hS : IsConjugationInvariantCluster S)
+    (hfixedSigma : ∀ i x, (input x).sigma i = sigma i)
+    (hkappa : ∀ i, 0 < kappa i)
+    (hnorm :
+      ∀ i x, ∀ rho ∈ (input x).layer i, kappa i ≤ ‖rho‖)
+    (hre :
+      ∀ i x, ∀ rho ∈ (input x).layer i, rho.re ≤ tau i)
+    (hreal :
+      ∀ rho ∈
+        realOrdinateNontrivialZerosOutsideClusterFinset 0 S,
+        rho.re < beta)
+    (hmain :
+      HasFarNaturalPointTargetAmplitudeWitness
+        (fun m : ℕ =>
+          dynamicVisibleClusterPNTMain
+            (actualSelectedHeightFiniteStripBalancedHeight
+              beta sigma tau selection)
+            S (m : ℝ))
+        (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))) :
+    ((∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+        Tendsto
+          (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+          atTop (nhds 0)) ∧
+      HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+        (fun x => targetZeroPowerAmplitude beta x / 2)) ∧
+    0 <
+      actualSelectedHeightFiniteStripRobustMargin beta sigma tau
+        (actualSelectedHeightFiniteStripBalancedExponent beta sigma tau) ∧
+    (∀ alpha : ℝ,
+      actualSelectedHeightFiniteStripRobustMargin beta sigma tau alpha ≤
+        actualSelectedHeightFiniteStripRobustMargin beta sigma tau
+          (actualSelectedHeightFiniteStripBalancedExponent
+            beta sigma tau)) ∧
+    (∀ alpha : ℝ,
+      actualSelectedHeightFiniteStripRobustMargin beta sigma tau
+          (actualSelectedHeightFiniteStripBalancedExponent beta sigma tau) ≤
+        actualSelectedHeightFiniteStripRobustMargin beta sigma tau alpha →
+      alpha =
+        actualSelectedHeightFiniteStripBalancedExponent beta sigma tau) := by
+  refine
+    ⟨unified_parametricPNTUpper_actualBalancedHeightThresholdsNaturalPointLower
+        threshold hhalf hlt sigma tau hbeta hbetaOne
+        hsigma hsigmaOne hthreshold selection input kappa
+        hS hfixedSigma hkappa hnorm hre hreal hmain,
+      actualSelectedHeightFiniteStripBalancedExponent_robustMargin_pos
+        sigma tau hbeta hsigma hsigmaOne hthreshold,
+      ?_, ?_⟩
+  · intro alpha
+    exact
+      actualSelectedHeightFiniteStripBalancedExponent_maximizes
+        beta sigma tau alpha
+  · intro alpha halpha
+    exact
+      actualSelectedHeightFiniteStripBalancedExponent_unique_maximizer
+        beta sigma tau alpha halpha
 
 end PrimeNumberTheorem
