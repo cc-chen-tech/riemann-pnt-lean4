@@ -1,7 +1,7 @@
 # Unproved Target Statements and Missing Chains
 
 This file is the authoritative classification of `def ... : Prop` statements
-(as of `2026-07-18`) in this Lean checkout.  It separates genuinely unproved
+(as of `2026-07-27`) in this Lean checkout.  It separates genuinely unproved
 mathematical targets from reusable predicates that already have theorem-level
 proofs.
 
@@ -25,20 +25,21 @@ The safe project positioning is:
 
 ```text
 Lean 4 formalization of de la Vallee Poussin 3-4-1/Jensen machinery,
-the classical c/log zero-free region, an ordinary PNT derivation,
-and Hardy's theorem
+the classical c/log zero-free region, an ordinary PNT derivation, Hardy and
+Hardy--Littlewood critical-line-zero theorems, and localized zero-forced
+PNT-error oscillation
 ```
 
 ## Target count
 
-- `HardyTheorem` namespace: 4
+- `HardyTheorem` namespace: 3
 - `HardyTheorem.Details` namespace: 3
 - `PrimeNumberTheorem` namespace: 4
 - `KnownResults` namespace: 1
 - `ZeroFreeRegion` namespace: 0
 - global namespace: 1
 
-Total: **13**.
+Total: **12**.
 
 For the chain accounting:
 
@@ -46,7 +47,7 @@ For the chain accounting:
 - Explicit formula chain: 0 (the principal-value target is proved; the separate
   quantitative truncated-error statement remains a route interface)
 - RH/prime-counting error chain: 4
-- Quantitative critical-line extension chain: 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
+- Quantitative critical-line extension chain: 7 (3 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
   1 in `KnownResults`)
 
 ## Chain 1: Quantitative zero-free region
@@ -328,7 +329,7 @@ the Selberg `T*log T` lower bound remains open.
 ## Complementary computational line: Weil extremal-kernel certificates
 
 This line has no Lean `def ... : Prop` target yet and is not counted in the
-13-target Lean inventory above. It is registered here so the certificate
+12-target Lean inventory above. It is registered here so the certificate
 chain has an entry in the same index as the proved chains; its governing
 documents are `docs/research/weil-extremal-kernel-preregistration.md` and
 `docs/research/weil-interval-assembly-design.md`.

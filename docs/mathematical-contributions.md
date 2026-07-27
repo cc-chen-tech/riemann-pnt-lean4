@@ -27,6 +27,14 @@ ordinary PNT in Lean 4
 In particular, the theorem inventory below proves ordinary PNT but not RH, an
 RH-scale prime-error estimate, or the stronger Vinogradov-Korobov region.
 
+The merged tree also proves that any right-of-critical-line zeta zero with
+positive ordinate forces a multiplicity-sensitive PNT-error oscillation with a
+zero-dependent constant strictly larger than `pi/2` in every sufficiently late
+fixed-epsilon power window `[Y,Y^(1+epsilon)]`.  This is an implication from an
+off-line zero, not a contradiction and not a proof of RH.  Uniform and
+positive-logarithmic-measure refinements in the Bellotti module retain their
+finite distinct-zero-location count as an explicit hypothesis.
+
 ## 1. Real Part of the Logarithmic Derivative Series
 
 **Lean declaration:** `ZeroFreeRegion.log_deriv_zeta_re_series`

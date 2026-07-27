@@ -119,14 +119,15 @@ mean-square inequalities obtained from a concrete Carneiro--Littmann extremal
 profile. It also proves Hardy--Littlewood linear lower bounds for distinct and
 odd-multiplicity critical-line zeros, divergence of a Pintz zero envelope, and
 a strict-beyond-`pi/2` PNT-error oscillation forced by any
-right-of-critical-line zero.
+right-of-critical-line zero, localized in every sufficiently late
+`[Y, Y^(1+epsilon)]` window for each fixed `epsilon > 0`.
 
 The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
 audits. The merged tree also contains substantial finite exponential-sum,
 prime-power conditioning, mixed-moment, and coupled-tail infrastructure toward
-Vinogradov--Korobov. Research branches continue with Selberg, localized
-oscillation, Ford's incomplete-moment bridge, and infinite-dimensional
+Vinogradov--Korobov. Research branches continue with Selberg, stronger local
+oscillation density, Ford's incomplete-moment bridge, and infinite-dimensional
 Weil-criterion routes; these are reported separately from the merged theorem
 surface.
 
@@ -158,6 +159,7 @@ resulting reusable library.
 | 局部分离指数和均方估计 | `PrimeNumberTheorem.DirichletPolynomial.finiteExponentialSum_meanSquare_le_localSeparation` | [源码](PrimeNumberTheorem/CarneiroLittmannProfile.lean) · [证明链](docs/local-separation-hilbert-chain.md) |
 | Pintz 零点包络趋于无穷 | `PrimeNumberTheorem.Pintz.tendsto_pintzZeroEnvelope_atTop` | [源码](PrimeNumberTheorem/PintzEnvelope.lean) · [定理清单](docs/formal-theorem-inventory.md) |
 | 临界线右侧零点迫使严格超过 `pi/2` 的 PNT 误差振荡 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_far_psiError_gt_pi_div_two_of_zeta_zero` | [源码](PrimeNumberTheorem/VKEdgePiOverTwoAbelPhase.lean) · [prior-art 审计](docs/research/vk-edge-pi-over-two-prior-art.md) |
+| 上述振荡在每个充分靠后的 `[Y,Y^(1+epsilon)]` 中出现 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo` | [源码](PrimeNumberTheorem/VKEdgePiOverTwoEpsilonOscillation.lean) · [局部化分析记录](docs/research/vk-edge-pi-over-two-localized-transfer.md) |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
@@ -260,8 +262,12 @@ multiplicity(rho) * C_rho * x^(Re rho) / |rho|,
 ```
 
 其中 `C_rho > pi/2`。该定理使用 Carlson 缺失奇谐波和 Abel 相位投影；它不把振荡
-变成矛盾，也不证明 RH。当前 `main` 版本只保证任意远处存在这样的 `x`，不保证
-它落在每个固定幂区间中。
+变成矛盾，也不证明 RH。
+
+`main` 还把该结论局部化：对每个固定 `epsilon > 0`，每个充分大的 `Y` 都能在
+`[Y,Y^(1+epsilon)]` 中找到满足同类严格下界的 `x`。这里常数允许依赖目标零点，
+并保留其解析重数。仓库另有带 Bellotti 型有限零点位置计数假设的统一常数及
+正对数测度版本；这些版本的计数假设写在 theorem 参数中，不能当成无条件输入。
 
 ### 8. Vinogradov--Korobov 基础设施
 
@@ -298,6 +304,7 @@ flowchart TD
 
     Q["Right-of-critical-line zeta zero"] --> R["Carlson missing odd harmonic"]
     R --> S["PNT oscillation with constant > pi/2<br/>proved on main"]
+    S --> T["Every late [Y,Y^(1+epsilon)] window<br/>proved on main"]
 ```
 
 这些主链分别回答：
@@ -306,8 +313,8 @@ flowchart TD
 - 临界线上至少存在多少零点；
 - 全部零点和靠右零点分别有多少。
 
-Selberg、最终 VK、Pintz 最大阶以及局部化振荡仍需要新的上游估计，不能由当前已证明
-定理自动推出。
+Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsilon` 幂窗口更精细的
+局部分布仍需要新的上游估计，不能由当前已证明定理自动推出。
 
 ---
 
@@ -318,8 +325,8 @@ Selberg、最终 VK、Pintz 最大阶以及局部化振荡仍需要新的上游�
 | 分支或 PR | 当前进展 | 尚未闭合的边界 |
 |---|---|---|
 | [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 在已合并的线性下界之上继续建设 Selberg mollifier、bad-set 和 packing 估计 | Selberg `T log T` 下界仍是 `def ... : Prop` |
-| [Draft PR #19](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/19) | Ford 不完整矩、double Holder、residue-mass audit 和近整数计数 | `FordShortSumPrefixBound`、公式 (5.4)、平滑数支持及最终 VK 参数优化仍缺失 |
-| 本地分支 `research/vk-edge-pi-over-two-localized`（`d411ab8`） | 把 `pi/2` 以上振荡推进到充分大的幂窗口 | 尚未推送或合并到 `main`；更短区间和正负双向振荡仍开放 |
+| [Draft PR #19](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/19) | Ford 不完整矩、double Holder、residue-mass audit 和近整数计数的混合草案 | 与 `main` 冲突，且 `FordShortSumPrefixBound` 仍是条件接口；已要求从最新 `main` 拆成独立可审查 PR |
+| [Draft PR #22--#26](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/22) | 从 ordinary/swept `L2` 到固定比例大值、残差放大和目标对消的堆叠实验 | 已定向构建，但中央 axiom 登记、精确 contract、zeta 显式公式语义和内外区间能量桥尚未补齐，暂不属于 `main` |
 | 本地分支 `research/weil-extremal-kernels-next`（`a5aa020`） | 有限维区间证书、尾部和极值核实验 | 尚未推送或合并到 `main`；实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
@@ -380,7 +387,8 @@ Hardy--Littlewood 形式化的 prior art。
 
 - Selberg 正比例：若完成 `N_0(T) >= c T log T`，会显著增强临界线论文；
 - Vinogradov--Korobov：已合并基础设施与最终 zeta 零自由区域应分阶段成文；
-- Pintz/零点迫使振荡：临界线右侧零点迫使 `pi/2` 以上远处振荡的蕴含已证，最大阶、局部化和统一 envelope 桥仍开放；
+- Pintz/零点迫使振荡：临界线右侧零点迫使 `pi/2` 以上振荡，并在每个充分靠后的固定
+  `epsilon` 幂窗口中出现的蕴含已证；最大阶、正负双向版本和更细密度结论仍开放；
 - Weil criterion：需要从有限证书过渡到完整函数空间和无限维正性。
 
 ### 创新边界
@@ -436,6 +444,10 @@ lake build \
   Test.PintzEnvelopeContract \
   Test.VKEdgePiOverTwoAbelPhaseContract \
   Test.VKEdgePiOverTwoAbelPhaseAxiomAudit \
+  Test.VKEdgePiOverTwoEpsilonOscillationContract \
+  Test.VKEdgePiOverTwoEpsilonOscillationAxiomAudit \
+  Test.VKEdgePiOverTwoBellottiContract \
+  Test.VKEdgePiOverTwoBellottiAxiomAudit \
   Test.VinogradovKorobovAxiomAudit
 ```
 

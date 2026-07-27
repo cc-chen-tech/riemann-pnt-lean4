@@ -6,7 +6,8 @@ Chebyshev `psi` and prime counting `pi-Li`, Hardy's theorem, the all-height
 Riemann--von Mangoldt formula, Carlson's fixed-`sigma` zero-density estimate,
 local-separation Hilbert/mean-square estimates, Hardy--Littlewood linear lower
 bounds, divergence of a Pintz zero envelope, and the implication from a
-right-of-critical-line zero to a strict-beyond-`pi/2` PNT-error oscillation.
+right-of-critical-line zero to a strict-beyond-`pi/2` PNT-error oscillation in
+every sufficiently late `[Y,Y^(1+epsilon)]` window for fixed `epsilon > 0`.
 It does not prove the Riemann Hypothesis, Selberg's `T log T` result, or
 provide numerically explicit values for the existential remainder constants.
 
@@ -18,7 +19,7 @@ provide numerically explicit values for the existential remainder constants.
 - Current code-level `sorry` count: 0
 - Remaining mathematical `def ... : Prop` targets: 12
 - Route-interface `def ... : Prop` declarations: 5
-- Reusable Prop predicates: 46
+- Reusable Prop predicates: 48
 - Unclassified Prop declarations: 0
 
 ## Required Gates Before Public Mathematical Claims
@@ -40,7 +41,8 @@ four chain-gap buckets. The ordinary PNT, de la Vallee Poussin-form `psi` and
 `pi-Li` errors, Hardy's theorem, Riemann--von Mangoldt, Carlson zero density,
 local-separation estimates, Hardy--Littlewood linear lower bounds, the Pintz
 envelope, and the implication from a right-of-critical-line zero to
-strict-beyond-`pi/2` oscillation are theorem-level. RH, Vinogradov--Korobov,
+strict-beyond-`pi/2` oscillation in every late fixed-epsilon power window are
+theorem-level. RH, Vinogradov--Korobov,
 Selberg positive proportion, and any
 unconditional power-saving error below exponent `2/3` remain outside the
 proved boundary.
@@ -77,7 +79,7 @@ formula, Carlson's fixed-sigma zero-density estimate, and reusable
 local-separation Hilbert/mean-square infrastructure, together with
 Hardy--Littlewood linear critical-line-zero lower bounds, a divergent Pintz
 zero envelope, and right-of-critical-line-zero-forced PNT oscillation beyond
-pi/2.
+pi/2 in every sufficiently late fixed-epsilon power window.
 ```
 
 Do not claim:
@@ -97,7 +99,8 @@ classical zero-free region, Strong PNT, Hardy theorem, all-height
 Riemann--von Mangoldt, fixed-sigma Carlson zero density, and local-separation
 Hilbert/mean-square infrastructure, Hardy--Littlewood linear lower bounds,
 Pintz envelope divergence, and the implication from a right-of-critical-line
-zero to strict-beyond-pi/2 PNT oscillation proved in Lean 4
+zero to strict-beyond-pi/2 PNT oscillation in every sufficiently late
+fixed-epsilon power window proved in Lean 4
 ```
 
 not as:

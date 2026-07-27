@@ -11,6 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_psiError_in_powerOnePlusEpsilonWindow_gt_uniformBellottiGap",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_positive_measure_in_epsilonLogWindow_gt_uniformBellottiGap",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_psiError_in_powerOnePlusEpsilonWindow_gt_of_bellottiEdgeCount",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_positive_measure_in_epsilonLogWindow_gt_of_bellottiEdgeCount",
     "PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero",
     "PrimeNumberTheorem.norm_multiplicity_zero_contribution_le_div_height",
     "PrimeNumberTheorem.sum_analyticOrderNatAt_riemannZeta_le_finsum_divisor_closedBall",

@@ -3104,7 +3104,7 @@ They give a finite-low-zero/high-zero decomposition, a classical
 envelope.  They are infrastructure for error oscillation and do not by
 themselves prove Pintz's maximal-order theorem.
 
-### `PrimeNumberTheorem/VKEdgePiOverTwoAbelPhase.lean`
+### `PrimeNumberTheorem/VKEdgePiOverTwoAbelPhase.lean` and localized successors
 
 The merged implication theorem
 
@@ -3119,8 +3119,23 @@ m * C * x^(Re rho) / |rho|
 
 for a zero-dependent constant `C > pi/2`.  Carlson supplies a missing odd
 harmonic and the Abel-phase argument transfers that gap to `chebyshevPsi`.
-The theorem does not localize `x` to every fixed power interval and does not
-turn the oscillation into a contradiction or a proof of RH.
+The later merged endpoint
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo`
+
+strengthens the location statement: for every fixed `epsilon > 0` and every
+right-of-critical-line zeta zero with positive ordinate, it selects a missing
+odd harmonic with constant strictly larger than `pi/2`, and every sufficiently
+late interval `[Y,Y^(1+epsilon)]` contains a corresponding large
+`chebyshevPsi` error value.  The proof is in
+`PrimeNumberTheorem/VKEdgePiOverTwoEpsilonOscillation.lean`.
+
+`PrimeNumberTheorem/VKEdgePiOverTwoBellotti.lean` additionally proves uniform
+fixed-budget and positive-logarithmic-measure variants from an explicit
+Bellotti-style distinct-location count hypothesis.  That count remains a
+theorem parameter in those variants.  None of these implications turns the
+oscillation into a contradiction, proves a signed `Omega_±` statement, or
+proves RH.
 
 ### `GammaResidue.lean`
 

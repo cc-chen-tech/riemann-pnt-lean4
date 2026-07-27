@@ -7,7 +7,7 @@ intentionally recorded as `def ... : Prop` target statements.
 
 At present there are **12** unresolved mathematical `def ... : Prop` targets,
 partitioned into exactly **4** analytic chains.  The recursive scanner also
-tracks 5 route interfaces and 46 reusable Prop predicates so subdirectory
+tracks 5 route interfaces and 48 reusable Prop predicates so subdirectory
 interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region
@@ -56,8 +56,8 @@ Poussin-form `psi` and `pi-Li` remainders.  It also proves the classical
 Riemann-von Mangoldt asymptotic for the one-sided multiplicity-weighted zeta
 zero count, Hardy--Littlewood linear lower bounds for distinct and
 odd-multiplicity critical-line zeros, divergence of a Pintz zero envelope, and
-a strict-beyond-`pi/2` PNT-error oscillation forced by a
-right-of-critical-line zero.
+a strict-beyond-`pi/2` PNT-error oscillation in every sufficiently late
+fixed-epsilon power window forced by a right-of-critical-line zero.
 It is not the first PNT formalization, does not supply numerically explicit
 remainder constants, and is not a proof of RH.
 
