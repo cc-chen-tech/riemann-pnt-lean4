@@ -369,7 +369,7 @@ git commit -m "audit: isolate target-annihilator arithmetic gate"
 **Interfaces:**
 - Audits every public theorem introduced in Tasks 1-4.
 
-- [ ] **Step 1: Add the axiom audit**
+- [x] **Step 1: Add the axiom audit**
 
 Create:
 
@@ -386,7 +386,7 @@ import PrimeNumberTheorem.VKEdgeTargetPairAnnihilator
 
 Add `Test.VKEdgeTargetPairAnnihilatorAxiomAudit` to `lakefile.lean`.
 
-- [ ] **Step 2: Run focused verification**
+- [x] **Step 2: Run focused verification**
 
 Run:
 
@@ -399,7 +399,7 @@ git diff --check
 
 Accept only `propext`, `Classical.choice`, and `Quot.sound`.
 
-- [ ] **Step 3: Run repository verification**
+- [x] **Step 3: Run repository verification**
 
 Run:
 
@@ -408,7 +408,7 @@ Run:
 lake -Kjobs=1 build
 ```
 
-- [ ] **Step 4: Confirm branch scope**
+- [x] **Step 4: Confirm branch scope**
 
 Run:
 
@@ -421,7 +421,7 @@ git diff --name-only ce69836..HEAD
 The diff must contain only this plan/spec, the new source, contract, audit,
 research record, and `lakefile.lean`.
 
-- [ ] **Step 5: Commit final audit state**
+- [x] **Step 5: Commit final audit state**
 
 ```bash
 git add Test/VKEdgeTargetPairAnnihilatorAxiomAudit.lean lakefile.lean docs/superpowers/plans/2026-07-27-vk-edge-target-annihilator.md
