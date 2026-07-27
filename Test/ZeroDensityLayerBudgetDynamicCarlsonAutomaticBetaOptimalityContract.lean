@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicCarlsonAutomaticBetaOptimality
+
+namespace PrimeNumberTheorem
+
+#check dynamicCarlsonAutomaticTargetBetaRobustMargin
+#check dynamicCarlsonAutomaticTargetBeta_eq_midpoint
+#check dynamicCarlsonAutomaticTargetBeta_robustMargin
+#check dynamicCarlsonAutomaticTargetBeta_maximizes_robustMargin
+#check dynamicCarlsonAutomaticTargetBeta_unique_maximizer
+#check dynamicCarlsonAutomaticTargetBeta_robustMargin_pos
+
+end PrimeNumberTheorem
