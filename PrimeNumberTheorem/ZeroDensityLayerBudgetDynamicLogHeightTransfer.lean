@@ -155,4 +155,55 @@ theorem
   tendsto_selectedUniformGoodHeight_dynamicLogHeightMajorant_zero
     halpha selection hmargin
 
+/-- At the actual weighted-balanced selected height, every certified finite
+Carlson strip has a vanishing dynamic logarithmic majorant.  The strict margin
+is extracted automatically from the optimizer specification. -/
+theorem
+    tendsto_actualWeightedBalancedGoodHeight_carlsonStripLogMajorant_zero
+    {beta : ℝ} {n : ℕ}
+    (sigma tau : Fin (n + 1) → ℝ)
+    (hbetaOne : beta < 1)
+    (hsigma : ∀ i, 1 / 2 < sigma i)
+    (hsigmaOne : ∀ i, sigma i < 1)
+    (htau : ∀ i, 0 ≤ tau i)
+    (hthreshold :
+      ∀ i, carlsonStripEndpointTargetThreshold (sigma i) (tau i) < beta)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    (i : Fin (n + 1)) :
+    Tendsto
+      (dynamicLogHeightMajorant
+        (actualSelectedHeightFiniteStripWeightedBalancedGoodHeight
+          beta sigma tau selection)
+        (tau i - beta)
+        (actualSelectedHeightStripCarlsonSlope (sigma i)))
+      atTop (nhds 0) := by
+  let alpha :=
+    actualSelectedHeightFiniteStripWeightedBalancedExponent beta sigma tau
+  have hspec :=
+    actualSelectedHeightFiniteStripWeightedBalancedExponent_spec
+      sigma tau hbetaOne hsigma hsigmaOne htau hthreshold
+  have halpha : 0 < alpha := by
+    simpa [alpha] using hspec.2.1
+  have hraw :=
+    hspec.2.2.2.2 i
+  have hmargin :
+      tau i - beta +
+          actualSelectedHeightStripCarlsonSlope (sigma i) * alpha <
+        0 := by
+    rw [show
+      tau i - beta +
+            actualSelectedHeightStripCarlsonSlope (sigma i) * alpha =
+          targetAmplitudeStripEndpointExponent beta (tau i)
+            (carlsonClassicalPolynomialDensityExponent alpha (sigma i)) by
+        simp [targetAmplitudeStripEndpointExponent,
+          carlsonClassicalPolynomialDensityExponent,
+          carlsonPolynomialHeightDensityExponent,
+          actualSelectedHeightStripCarlsonSlope]
+        ring]
+    simpa [alpha] using hraw
+  simpa [alpha,
+    actualSelectedHeightFiniteStripWeightedBalancedGoodHeight] using
+    tendsto_selectedUniformGoodHeight_carlsonStripLogMajorant_zero
+      halpha selection hmargin
+
 end PrimeNumberTheorem
