@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.LocalPsiL2ZeroCriterion
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms riemannZeta_ne_zero_of_localPsiL2ExponentAtMost
+#print axioms nontrivialZero_re_eq_half_of_localPsiL2ExponentAtMost_of_im_ne_zero
+#print axioms riemannHypothesis_of_localPsiL2ExponentAtMost_of_realAxis
