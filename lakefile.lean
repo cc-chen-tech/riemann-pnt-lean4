@@ -173,6 +173,7 @@ lean_lib RiemannPNT where
     `Test.VKEdgeTargetPairAnnihilatorContract,
     `Test.VKEdgeTargetPairAnnihilatorAxiomAudit,
     `Test.VKEdgeTargetPairAnnihilatorAverageContract,
+    `Test.VKEdgeTargetPairAnnihilatorAverageAxiomAudit,
     `Test.VKEdgePiOverTwoConcreteContourAssemblyContract,
     `Test.VKEdgePiOverTwoConcreteContourAssemblyAxiomAudit,
     `Test.VKEdgePiOverTwoRightTailBoundContract,
