@@ -8,3 +8,6 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check annihilatedNormalizedPsiError
 #check annihilatedNormalizedPsiError_eq_residual
 #check annihilatedNormalizedPsiError_eq_threeScale
+#check sq_symmetricFrequencyAnnihilator_le
+#check integral_sq_symmetricFrequencyAnnihilator_le_of_shifted
+#check integral_annihilatedNormalizedPsiError_sq_le_of_residual_shifts

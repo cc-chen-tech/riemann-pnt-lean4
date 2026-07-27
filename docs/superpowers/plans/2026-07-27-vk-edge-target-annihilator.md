@@ -225,12 +225,12 @@ The final theorem may require explicit integrability hypotheses for the three
 shifted squares if Mathlib's integral monotonicity cannot infer them from
 `hdet`; the contract must record the final honest signature.
 
-- [ ] **Step 1: Add failing contract checks**
+- [x] **Step 1: Add failing contract checks**
 
 Add `#check` lines for the pointwise and integrated inequalities.  Run the
 contract and confirm failure.
 
-- [ ] **Step 2: Prove the pointwise constant `12`**
+- [x] **Step 2: Prove the pointwise constant `12`**
 
 Use:
 
@@ -243,13 +243,13 @@ with `b = -2 * cos(gamma*h) * f y`.  Close the real algebra with `nlinarith`
 after supplying `sq_nonneg` and `Real.neg_one_le_cos` /
 `Real.cos_le_one`.
 
-- [ ] **Step 3: Integrate the pointwise inequality**
+- [x] **Step 3: Integrate the pointwise inequality**
 
 Apply `MeasureTheory.integral_mono_ae_restrict` on `s`, distribute the finite
 sum with `integral_add`, and substitute `hplus`, `hzero`, and `hminus`.
 Keep every integrability premise explicit.
 
-- [ ] **Step 4: Derive the zeta residual gate**
+- [x] **Step 4: Derive the zeta residual gate**
 
 Add:
 
@@ -268,7 +268,7 @@ theorem integral_annihilatedNormalizedPsiError_sq_le_of_residual_shifts
 Prove it by rewriting with `annihilatedNormalizedPsiError_eq_residual` and
 applying the generic theorem.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run:
 
