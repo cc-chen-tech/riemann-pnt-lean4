@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonFiniteAffineAdapter
+
+namespace PrimeNumberTheorem
+
+#print axioms carlsonAffineOptimalMargin_eq
+#print axioms carlsonPhysicalMarginCertificate_iff_finiteAffine
+#print axioms
+  carlsonWeightedBalancedExponent_marginCertificate_via_finiteAffine
+#print axioms
+  carlsonWeightedBalancedExponent_maximizes_via_finiteAffine
+#print axioms
+  carlsonWeightedBalancedExponent_unique_via_finiteAffine
+#print axioms carlsonAffineOptimalMargin_pos
+
+end PrimeNumberTheorem
