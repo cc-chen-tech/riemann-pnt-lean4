@@ -99,6 +99,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.VKEdgePiOverTwoFixedProportion,
     `PrimeNumberTheorem.VKEdgeResidualAmplification,
     `PrimeNumberTheorem.VKEdgeCosineModelAnnihilator,
+    `PrimeNumberTheorem.VKEdgeExplicitFormulaPairBridge,
     `Test.VKEdgePiOverTwoFixedProportionContract,
     `Test.VKEdgePiOverTwoFixedProportionAxiomAudit,
     `PrimeNumberTheorem.VKEdgePiOverTwoPositiveMeasure,

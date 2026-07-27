@@ -3,8 +3,9 @@ import PrimeNumberTheorem.VKEdgeCosineModelAnnihilator
 open Complex MeasureTheory Set
 open PrimeNumberTheorem VKEdgePiOverTwo
 
-#check symmetricFrequencyAnnihilator
-#check annihilatedNormalizedPsiError
+#check (symmetricFrequencyAnnihilator :
+  ℝ → ℝ → (ℝ → ℝ) → ℝ → ℝ)
+#check (annihilatedNormalizedPsiError : ℂ → ℝ → ℝ → ℝ)
 
 #check (symmetricFrequencyAnnihilator_cosinePairModel :
   ∀ h gamma m lambda phase y : ℝ,

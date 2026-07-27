@@ -13,10 +13,10 @@ head.
   target-pair terminology to cosine-model terminology.
 - [x] Rename public symbols to `cosinePairModel`,
   `normalizedCosineModelPair`, and `normalizedPsiModelResidual`.
-- [x] State explicitly that there is no zeta explicit-formula identification
-  theorem in this branch.
+- [x] Keep the detector model-first, then add a separate exact
+  explicit-formula identification module for a genuine conjugate zero pair.
 - [x] Keep the exact three-scale PNT-error identity as an arithmetic identity,
-  without interpreting the formal residual as other zeros plus contour terms.
+  and isolate the explicit-formula interpretation in the companion bridge.
 - [x] Prove explicit inclusion of the three shifted inner-interval points in
   `[a - |h|, b + |h|]`.
 - [x] Prove positive inner detector energy implies a pointwise square lower
@@ -33,7 +33,8 @@ head.
 
 ## Mathematical boundary
 
-The branch proves a model annihilator and an inner-to-outer analytic transfer.
-It does not prove that the model is a genuine zeta-zero contribution, does not
-produce positive detector energy, and does not imply an additional zero,
+The branch proves a model annihilator, an inner-to-outer analytic transfer,
+and an exact identification of the model and residual with the corresponding
+finite-height explicit-formula expressions. It does not bound the residual
+components, produce positive detector energy, or imply an additional zero,
 Carlson contradiction, unconditional PNT oscillation theorem, or RH.

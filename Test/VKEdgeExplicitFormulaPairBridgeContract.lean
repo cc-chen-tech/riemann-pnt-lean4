@@ -3,12 +3,12 @@ import PrimeNumberTheorem.VKEdgeExplicitFormulaPairBridge
 open Complex
 open PrimeNumberTheorem VKEdgePiOverTwo
 
-#check explicitFormulaZeroResidueTerm
-#check explicitFormulaConjugatePairResidue
-#check normalizedExplicitFormulaConjugatePair
-#check finiteNontrivialZeroResidueRemainder
-#check explicitFormulaClosedTerms
-#check normalizedExplicitFormulaResidual
+#check (explicitFormulaZeroResidueTerm : ℝ → ℂ → ℂ)
+#check (explicitFormulaConjugatePairResidue : ℝ → ℂ → ℂ)
+#check (normalizedExplicitFormulaConjugatePair : ℂ → ℝ → ℂ)
+#check (finiteNontrivialZeroResidueRemainder : ℝ → ℝ → ℂ → ℂ)
+#check (explicitFormulaClosedTerms : ℝ → ℂ)
+#check (normalizedExplicitFormulaResidual : ℂ → ℝ → ℝ → ℂ)
 
 #check (normalizedExplicitFormulaConjugatePair_eq_cosineModel :
   ∀ {rho : ℂ},

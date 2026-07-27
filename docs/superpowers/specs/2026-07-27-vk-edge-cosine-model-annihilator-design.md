@@ -10,8 +10,10 @@ Build and audit a symmetric finite-difference detector that:
    lower bound for the formal psi-minus-model residual on an expanded
    interval.
 
-The cosine model uses zeta-derived parameters, but this branch deliberately
-does not identify it with an actual explicit-formula zero term.
+The detector is deliberately developed at the cosine-model level. A separate
+companion module now identifies that model with the actual
+multiplicity-weighted explicit-formula residues of a positive-ordinate
+nontrivial zeta zero and its conjugate.
 
 ## Detector
 
@@ -41,8 +43,10 @@ normalizedPsiModelResidual rho
 
 with the second definition equal to normalized PNT error minus the first.
 The detector therefore acts on the formal residual after annihilating the
-model. This is algebraically exact, but it is not an explicit-formula
-identification.
+model. The companion explicit-formula bridge proves that, under the
+nontrivial-zero and height-cutoff hypotheses, this residual is exactly the
+finite-height residual after deleting the target conjugate pair. No
+quantitative bound for that residual is part of this design.
 
 ## Inner-to-outer endpoint
 
@@ -67,8 +71,11 @@ It is then specialized to `normalizedPsiModelResidual`.
 ## Files
 
 - `PrimeNumberTheorem/VKEdgeCosineModelAnnihilator.lean`
+- `PrimeNumberTheorem/VKEdgeExplicitFormulaPairBridge.lean`
 - `Test/VKEdgeCosineModelAnnihilatorContract.lean`
 - `Test/VKEdgeCosineModelAnnihilatorAxiomAudit.lean`
+- `Test/VKEdgeExplicitFormulaPairBridgeContract.lean`
+- `Test/VKEdgeExplicitFormulaPairBridgeAxiomAudit.lean`
 - `docs/research/vk-edge-cosine-model-annihilator-audit.md`
 - `lakefile.lean`
 - `scripts/check_axiom_allowlist.py`
@@ -84,7 +91,8 @@ It is then specialized to `normalizedPsiModelResidual`.
 
 ## Boundary
 
-Success is a reusable cosine-model detector plus a genuine inner-to-outer
-pointwise transfer. It is not a proof of positive detector energy, an
-explicit-formula decomposition, another zeta zero, a Carlson contradiction,
-an unconditional PNT oscillation theorem, or RH.
+Success is a reusable cosine-model detector, a genuine inner-to-outer
+pointwise transfer, and an exact finite-height explicit-formula
+identification. It is not a quantitative residual bound, a proof of positive
+detector energy, another zeta zero, a Carlson contradiction, an unconditional
+PNT oscillation theorem, or RH.

@@ -3,10 +3,12 @@
 ## Scope
 
 This branch formalizes a symmetric finite-difference detector and applies it
-to the normalized prime-number-theorem error. The frequency and amplitude
-parameters are taken from a complex number `rho`, but the cosine term remains
-a model: this branch does not prove that it is the contribution of a zeta zero
-in an explicit formula.
+to the normalized prime-number-theorem error. The detector is first developed
+for a cosine model. The companion module
+`PrimeNumberTheorem.VKEdgeExplicitFormulaPairBridge` then proves that, when
+`rho` is a positive-ordinate nontrivial zeta zero, this model is exactly the
+normalized multiplicity-weighted residue contribution of `rho` and its
+complex conjugate.
 
 For a real function `F`, step `h`, and frequency `gamma`, define
 
@@ -43,7 +45,7 @@ frequencies.
 
 ## Arithmetic identity and interpretation boundary
 
-The definition
+At the model layer, the definition
 
 ```text
 normalizedPsiModelResidual rho
@@ -57,9 +59,17 @@ annihilatedNormalizedPsiError rho h
   = D_(h,rho.im) (normalizedPsiModelResidual rho).
 ```
 
-This is a definitional model identity, not a zeta explicit-formula
-decomposition. In particular, the right side is not proved to equal the sum
-of other zeta zeros and contour remainders.
+For a positive-ordinate nontrivial zeta zero and a finite height cutoff
+containing it, the explicit-formula bridge proves that this formal residual
+is exactly the normalized finite-height expression consisting of:
+
+1. the `psi - psi0` jump correction;
+2. all finite-height nontrivial-zero residues except `rho` and `conj rho`;
+3. the closed-form explicit-formula terms;
+4. the finite-height explicit-formula approximation error.
+
+This is an exact identity. It is not an estimate for any of those four
+components.
 
 Independently, the detector on the actual normalized PNT error has the exact
 three-scale arithmetic form
@@ -114,13 +124,12 @@ the model alone cannot provide a positive detector-energy lower bound.
 
 ## Remaining mathematical gate
 
-To turn this module into a theorem about actual zeta-zero contributions, one
-still needs a proved explicit-formula identification showing that the chosen
-cosine model is the target conjugate-zero term, with correct phase,
-multiplicity, and normalization, and that the formal residual contains the
-remaining zero and contour terms with controlled errors.
+The exact explicit-formula identification is now proved. What remains is
+quantitative: one must control the other finite zeros, the `psi - psi0`
+correction, the closed-form terms, and the finite-height approximation error
+strongly enough to prove a positive detector-energy lower bound.
 
-This branch does not provide the positive detector-energy premise either.
+This branch does not provide that positive detector-energy premise.
 
 ## Claim boundary
 
@@ -128,6 +137,10 @@ This branch proves:
 
 - exact finite-difference action on a cosine model;
 - exact annihilation of the tuned model frequency;
+- exact identification of the cosine model with the genuine
+  multiplicity-weighted residues of a nontrivial zero and its conjugate;
+- exact identification of the model residual with the corresponding
+  finite-height explicit-formula residual;
 - an exact three-scale identity for the real PNT error;
 - integral detector stability;
 - positive inner detector energy implies a pointwise model-residual lower
@@ -136,7 +149,7 @@ This branch proves:
 
 It does not prove:
 
-- an explicit-formula identification of the model;
+- a quantitative bound for the explicit-formula residual components;
 - positive detector energy for the zeta/PNT signal;
 - another zeta zero or a zero-density contradiction;
 - an unconditional PNT oscillation theorem;
