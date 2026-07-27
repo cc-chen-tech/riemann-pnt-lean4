@@ -363,7 +363,7 @@ git diff --check
 
 - [x] Inspect the axiom output and accept only standard Lean/Mathlib logical axioms.
 
-- [ ] Commit:
+- [x] Commit:
 
 ```bash
 git add Test/VKEdgeResidualAmplificationAxiomAudit.lean docs/research/vk-edge-residual-amplification-audit.md lakefile.lean
@@ -375,19 +375,19 @@ git commit -m "test: audit residual zero-pair amplification gate"
 **Files:**
 - Modify only if verification reveals a defect in files created by this plan.
 
-- [ ] Run the repository baseline:
+- [x] Run the repository baseline:
 
 ```bash
 ./scripts/verify-baseline.sh
 ```
 
-- [ ] Run a serialized complete build:
+- [x] Run a serialized complete build:
 
 ```bash
 lake -Kjobs=1 build
 ```
 
-- [ ] Confirm clean source and branch state:
+- [x] Confirm clean source and branch state:
 
 ```bash
 git diff --check
@@ -395,14 +395,14 @@ git status --short
 git log --oneline --decorate -8
 ```
 
-- [ ] Compare against the PR #24 base:
+- [x] Compare against the PR #24 base:
 
 ```bash
 git diff --stat 6cea1f4..HEAD
 git diff --name-only 6cea1f4..HEAD
 ```
 
-- [ ] Summarize the exact result:
+- [x] Summarize the exact result:
   - completed: exact target-pair energy, generic residual theorem, conditional residual zeta endpoint, and formal obstruction for the existing swept constant;
   - not completed: positive residual energy, additional zeros, Carlson contradiction, or RH.
 
