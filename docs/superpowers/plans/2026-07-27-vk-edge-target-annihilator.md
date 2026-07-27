@@ -428,7 +428,7 @@ git add Test/VKEdgeTargetPairAnnihilatorAxiomAudit.lean lakefile.lean docs/super
 git commit -m "test: audit target-pair annihilator gate"
 ```
 
-- [ ] **Step 6: Push only after every verification succeeds**
+- [x] **Step 6: Push only after every verification succeeds**
 
 ```bash
 git push -u origin research/vk-edge-target-annihilator
