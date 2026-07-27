@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.VKEdgeArithmeticL2Converse
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms normalizedPsiError_secondMoment_le_arithmetic
+#print axioms exists_eventually_logarithmicPsiErrorSecondMoment_gt
+#print axioms logarithmicPsiErrorSecondMoment_not_isLittleO_of_offLineZero
+#print axioms riemannZeta_ne_zero_of_logarithmicPsiErrorSecondMoment_isLittleO
