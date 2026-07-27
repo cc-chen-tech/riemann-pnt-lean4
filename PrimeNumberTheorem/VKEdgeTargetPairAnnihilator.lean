@@ -102,6 +102,98 @@ theorem annihilatedNormalizedPsiError_eq_threeScale
     normalizedPsiError, hplus, hminus]
   ring
 
+/-- The three-point detector is bounded in `L²` by its three input samples. -/
+theorem sq_symmetricFrequencyAnnihilator_le
+    (f : ℝ → ℝ) (h gamma y : ℝ) :
+    symmetricFrequencyAnnihilator h gamma f y ^ 2 ≤
+      12 * (f (y + h) ^ 2 + f y ^ 2 + f (y - h) ^ 2) := by
+  have hcos :
+      Real.cos (gamma * h) ^ 2 ≤ 1 := by
+    have hprod :
+        0 ≤ (1 - Real.cos (gamma * h)) *
+          (1 + Real.cos (gamma * h)) :=
+      mul_nonneg
+        (sub_nonneg.mpr (Real.cos_le_one _))
+        (by linarith [Real.neg_one_le_cos (gamma * h)])
+    nlinarith
+  have hthree :
+      (f (y + h) -
+          2 * Real.cos (gamma * h) * f y +
+          f (y - h)) ^ 2 ≤
+        3 * (f (y + h) ^ 2 +
+          (-2 * Real.cos (gamma * h) * f y) ^ 2 +
+          f (y - h) ^ 2) := by
+    nlinarith [
+      sq_nonneg (f (y + h) - (-2 * Real.cos (gamma * h) * f y)),
+      sq_nonneg (f (y + h) - f (y - h)),
+      sq_nonneg ((-2 * Real.cos (gamma * h) * f y) - f (y - h))]
+  have hmiddle :
+      (-2 * Real.cos (gamma * h) * f y) ^ 2 ≤
+        4 * f y ^ 2 := by
+    nlinarith [sq_nonneg (f y)]
+  unfold symmetricFrequencyAnnihilator
+  nlinarith [sq_nonneg (f (y + h)), sq_nonneg (f y),
+    sq_nonneg (f (y - h))]
+
+/-- Integrating the pointwise detector estimate costs at most a factor `36`
+when each of the three shifted input energies is at most `E`. -/
+theorem integral_sq_symmetricFrequencyAnnihilator_le_of_shifted
+    {f : ℝ → ℝ} {s : Set ℝ} {h gamma E : ℝ}
+    (hplusInt : IntegrableOn (fun y => f (y + h) ^ 2) s)
+    (hzeroInt : IntegrableOn (fun y => f y ^ 2) s)
+    (hminusInt : IntegrableOn (fun y => f (y - h) ^ 2) s)
+    (hdetInt :
+      IntegrableOn
+        (fun y => symmetricFrequencyAnnihilator h gamma f y ^ 2) s)
+    (hplus : ∫ y in s, f (y + h) ^ 2 ≤ E)
+    (hzero : ∫ y in s, f y ^ 2 ≤ E)
+    (hminus : ∫ y in s, f (y - h) ^ 2 ≤ E) :
+    ∫ y in s, symmetricFrequencyAnnihilator h gamma f y ^ 2 ≤ 36 * E := by
+  have hmajorInt :
+      IntegrableOn
+        (fun y => 12 *
+          (f (y + h) ^ 2 + f y ^ 2 + f (y - h) ^ 2)) s :=
+    ((hplusInt.add hzeroInt).add hminusInt).const_mul 12
+  have hmono :
+      (∫ y in s, symmetricFrequencyAnnihilator h gamma f y ^ 2) ≤
+        ∫ y in s, 12 *
+          (f (y + h) ^ 2 + f y ^ 2 + f (y - h) ^ 2) := by
+    apply integral_mono_ae hdetInt hmajorInt
+    exact Filter.Eventually.of_forall fun y =>
+      sq_symmetricFrequencyAnnihilator_le f h gamma y
+  rw [integral_const_mul, integral_add, integral_add] at hmono
+  · nlinarith
+  · exact hplusInt
+  · exact hzeroInt
+  · exact hplusInt.add hzeroInt
+  · exact hminusInt
+
+/-- The same stability estimate for the selected-pair-annihilated normalized
+PNT error, expressed entirely through the residual shifted energies. -/
+theorem integral_annihilatedNormalizedPsiError_sq_le_of_residual_shifts
+    {rho : ℂ} {s : Set ℝ} {h E : ℝ}
+    (hplusInt :
+      IntegrableOn
+        (fun y => normalizedPsiResidual rho (y + h) ^ 2) s)
+    (hzeroInt :
+      IntegrableOn (fun y => normalizedPsiResidual rho y ^ 2) s)
+    (hminusInt :
+      IntegrableOn
+        (fun y => normalizedPsiResidual rho (y - h) ^ 2) s)
+    (hdetInt :
+      IntegrableOn
+        (fun y => annihilatedNormalizedPsiError rho h y ^ 2) s)
+    (hplus :
+      ∫ y in s, normalizedPsiResidual rho (y + h) ^ 2 ≤ E)
+    (hzero :
+      ∫ y in s, normalizedPsiResidual rho y ^ 2 ≤ E)
+    (hminus :
+      ∫ y in s, normalizedPsiResidual rho (y - h) ^ 2 ≤ E) :
+    ∫ y in s, annihilatedNormalizedPsiError rho h y ^ 2 ≤ 36 * E := by
+  simp_rw [annihilatedNormalizedPsiError_eq_residual] at hdetInt ⊢
+  exact integral_sq_symmetricFrequencyAnnihilator_le_of_shifted
+    hplusInt hzeroInt hminusInt hdetInt hplus hzero hminus
+
 end
 
 end VKEdgePiOverTwo
