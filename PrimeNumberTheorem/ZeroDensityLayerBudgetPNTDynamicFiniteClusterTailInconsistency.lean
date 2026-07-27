@@ -171,6 +171,26 @@ theorem not_positiveOutsideClusterBucketFamilyAboveHalf_of_tendsto
   rw [hreflectedRe] at hreflectedRight
   linarith
 
+/-- Every inhabitable cofinal fixed-finite-cluster bucket family must contain
+at least one lower endpoint at or to the left of the critical line.
+
+Thus a profile made exclusively from Carlson strips with `1 / 2 < sigma i`
+cannot cover the full outside-cluster tail.
+-/
+theorem exists_sigma_le_half_of_positiveOutsideClusterBucketFamily
+    {T : ℝ → ℝ}
+    (hT : Tendsto T atTop atTop)
+    (S : Finset ℂ)
+    {n : ℕ}
+    (sigma : Fin n → ℝ)
+    (hfamily : PositiveOutsideClusterBucketFamilyAboveHalf T S sigma) :
+    ∃ i, sigma i ≤ 1 / 2 := by
+  by_contra hnone
+  push Not at hnone
+  exact
+    (not_positiveOutsideClusterBucketFamilyAboveHalf_of_tendsto
+      hT S sigma hnone) hfamily
+
 /-- The actual weighted-balanced selected height cannot support the fixed
 finite-cluster outside-tail bucket input used by the current unified transfer
 theorems. -/
