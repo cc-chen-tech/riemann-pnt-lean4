@@ -206,4 +206,67 @@ theorem
     tendsto_selectedUniformGoodHeight_carlsonStripLogMajorant_zero
       halpha selection hmargin
 
+/-- Weighted finite aggregation of dynamic Carlson strip majorants.  Fixed
+strip constants may encode density, kernel, or multiplicity coefficients. -/
+noncomputable def dynamicFiniteStripLogMajorant
+    {n : ℕ} (height : ℝ → ℝ) (beta : ℝ)
+    (sigma tau coefficient : Fin (n + 1) → ℝ)
+    (x : ℝ) : ℝ :=
+  ∑ i,
+    coefficient i *
+      dynamicLogHeightMajorant height
+        (tau i - beta)
+        (actualSelectedHeightStripCarlsonSlope (sigma i)) x
+
+/-- Every strict strip margin survives finite weighted aggregation along an
+arbitrary height with logarithmic growth exponent `alpha`. -/
+theorem tendsto_dynamicFiniteStripLogMajorant_zero_of_logGrowth
+    {n : ℕ} {height : ℝ → ℝ} {beta alpha : ℝ}
+    (sigma tau coefficient : Fin (n + 1) → ℝ)
+    (hlogGrowth :
+      Tendsto
+        (fun x : ℝ => Real.log (height x) / Real.log x)
+        atTop (nhds alpha))
+    (hmargin :
+      ∀ i,
+        tau i - beta +
+            actualSelectedHeightStripCarlsonSlope (sigma i) * alpha <
+          0) :
+    Tendsto
+      (dynamicFiniteStripLogMajorant
+        height beta sigma tau coefficient)
+      atTop (nhds 0) := by
+  unfold dynamicFiniteStripLogMajorant
+  simpa only [mul_zero, Finset.sum_const_zero] using
+    tendsto_finset_sum Finset.univ fun i _ =>
+      (tendsto_dynamicLogHeightMajorant_zero_of_logGrowth
+        hlogGrowth (hmargin i)).const_mul (coefficient i)
+
+/-- The weighted-balanced optimizer automatically makes the complete finite
+weighted dynamic strip majorant tend to zero at the actual selected good
+height. -/
+theorem
+    tendsto_actualWeightedBalancedGoodHeight_dynamicFiniteStripLogMajorant_zero
+    {beta : ℝ} {n : ℕ}
+    (sigma tau coefficient : Fin (n + 1) → ℝ)
+    (hbetaOne : beta < 1)
+    (hsigma : ∀ i, 1 / 2 < sigma i)
+    (hsigmaOne : ∀ i, sigma i < 1)
+    (htau : ∀ i, 0 ≤ tau i)
+    (hthreshold :
+      ∀ i, carlsonStripEndpointTargetThreshold (sigma i) (tau i) < beta)
+    (selection : UniformNaturalPointGoodHeightSelection) :
+    Tendsto
+      (dynamicFiniteStripLogMajorant
+        (actualSelectedHeightFiniteStripWeightedBalancedGoodHeight
+          beta sigma tau selection)
+        beta sigma tau coefficient)
+      atTop (nhds 0) := by
+  unfold dynamicFiniteStripLogMajorant
+  simpa only [mul_zero, Finset.sum_const_zero] using
+    tendsto_finset_sum Finset.univ fun i _ =>
+      (tendsto_actualWeightedBalancedGoodHeight_carlsonStripLogMajorant_zero
+        sigma tau hbetaOne hsigma hsigmaOne htau hthreshold selection i).const_mul
+          (coefficient i)
+
 end PrimeNumberTheorem
