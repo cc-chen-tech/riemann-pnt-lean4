@@ -1,4 +1,4 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightWeightedBalancedExponentStability
 
 #print axioms PrimeNumberTheorem.exists_bottleneck_nearOptimalExponent_bounds
-
+#print axioms PrimeNumberTheorem.exists_bottleneck_nearOptimalExponent_interval
