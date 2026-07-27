@@ -406,7 +406,7 @@ git diff --name-only 6cea1f4..HEAD
   - completed: exact target-pair energy, generic residual theorem, conditional residual zeta endpoint, and formal obstruction for the existing swept constant;
   - not completed: positive residual energy, additional zeros, Carlson contradiction, or RH.
 
-- [ ] Push only after all verification succeeds:
+- [x] Push only after all verification succeeds:
 
 ```bash
 git push -u origin research/vk-edge-residual-amplification
