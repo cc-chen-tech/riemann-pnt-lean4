@@ -16,6 +16,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
     "Test.VKEdgePiOverTwoFixedProportionAxiomAudit",
     "Test.VKEdgeResidualAmplificationAxiomAudit",
+    "Test.VKEdgeCosineModelAnnihilatorAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero",
@@ -280,6 +281,17 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_normalizedPsiModelResidual_sq_lower",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_normalizedCosineModelPair_sq_le_epsilonLogWindow",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_normalizedPsiModelResidual_sq_lower_epsilonLogWindow",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.symmetricFrequencyAnnihilator_cosinePairModel",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.symmetricFrequencyAnnihilator_cosineModelPair_eq_zero",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.annihilatedNormalizedPsiError_eq_modelResidual",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.annihilatedNormalizedPsiError_eq_threeScale",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.sq_symmetricFrequencyAnnihilator_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_sq_symmetricFrequencyAnnihilator_le_of_shifted",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_annihilatedNormalizedPsiError_sq_le_of_modelResidual_shifts",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_mem_expandedInterval_sq_gt_of_detector_energy_pos",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_mem_expandedInterval_normalizedPsiModelResidual_sq_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.no_positive_lower_bound_on_pure_cosine_model",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.symmetricFrequencyAnnihilator_cosinePairModel_eq_zero_iff",
 }
 
 REPORT_RE = re.compile(
