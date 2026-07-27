@@ -19,6 +19,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeCosineModelAnnihilatorAxiomAudit",
     "Test.VKEdgeExplicitFormulaPairBridgeAxiomAudit",
     "Test.VKEdgeCosineModelAnnihilatorAverageAxiomAudit",
+    "Test.VKEdgeArithmeticL2ConverseAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero",
@@ -304,6 +305,10 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_two_le_normalizedStepMultiplierEnergy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_step_intervalIntegral_annihilatedExponentialPolynomial_pos",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_step_intervalIntegral_annihilatedPositiveEqualRealPartResidual_pos",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPsiError_secondMoment_le_arithmetic",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_logarithmicPsiErrorSecondMoment_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.logarithmicPsiErrorSecondMoment_not_isLittleO_of_offLineZero",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.riemannZeta_ne_zero_of_logarithmicPsiErrorSecondMoment_isLittleO",
 }
 
 REPORT_RE = re.compile(
