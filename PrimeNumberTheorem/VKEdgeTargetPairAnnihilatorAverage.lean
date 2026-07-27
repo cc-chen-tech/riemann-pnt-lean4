@@ -247,6 +247,20 @@ theorem eventually_two_le_normalizedStepMultiplierEnergy
       hmem] with H hH
   exact hH.le
 
+/-- A single sufficiently long step interval separates every frequency in a
+fixed finite collected package. -/
+theorem eventually_two_le_normalizedStepMultiplierEnergy_finset
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (omega : ι → ℝ) {gamma : ℝ}
+    (hgamma : 0 < gamma)
+    (homega : ∀ i ∈ S, 0 < omega i)
+    (hne : ∀ i ∈ S, omega i ≠ gamma) :
+    ∀ᶠ H in atTop, ∀ i ∈ S,
+      2 ≤ normalizedStepMultiplierEnergy gamma (omega i) H := by
+  exact S.eventually_all.mpr fun i hi =>
+    eventually_two_le_normalizedStepMultiplierEnergy
+      hgamma (homega i hi) (hne i hi)
+
 end
 
 end VKEdgePiOverTwo
