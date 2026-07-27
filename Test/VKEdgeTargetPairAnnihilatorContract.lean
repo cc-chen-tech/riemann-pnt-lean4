@@ -5,3 +5,6 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check symmetricFrequencyAnnihilator
 #check symmetricFrequencyAnnihilator_cosineZeroPair
 #check symmetricFrequencyAnnihilator_targetPair_eq_zero
+#check annihilatedNormalizedPsiError
+#check annihilatedNormalizedPsiError_eq_residual
+#check annihilatedNormalizedPsiError_eq_threeScale
