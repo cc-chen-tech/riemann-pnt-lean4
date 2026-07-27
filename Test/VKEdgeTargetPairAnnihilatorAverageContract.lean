@@ -10,6 +10,10 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check tendsto_normalizedStepMultiplierEnergy
 #check eventually_two_le_normalizedStepMultiplierEnergy
 #check eventually_two_le_normalizedStepMultiplierEnergy_finset
+#check annihilatedExponentialPolynomial
+#check stepAveragedDiagonalEnergy
+#check eventually_two_mul_coefficientEnergy_le_stepAveragedDiagonalEnergy
+#check abs_intervalIntegral_annihilatedExponentialPolynomial_sub_diagonal_le
 
 example (gamma h : ℝ) :
     frequencyAnnihilatorMultiplier gamma gamma h = 0 :=

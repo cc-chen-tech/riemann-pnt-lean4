@@ -2,7 +2,7 @@ import PrimeNumberTheorem.VKEdgeTargetPairAnnihilator
 import PrimeNumberTheorem.ZeroForcedOscillation
 
 open Complex Filter MeasureTheory Set Topology
-open scoped Interval
+open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
 namespace VKEdgePiOverTwo
@@ -260,6 +260,69 @@ theorem eventually_two_le_normalizedStepMultiplierEnergy_finset
   exact S.eventually_all.mpr fun i hi =>
     eventually_two_le_normalizedStepMultiplierEnergy
       hgamma (homega i hi) (hne i hi)
+
+/-- The finite exponential polynomial after applying the target-frequency
+annihilator coefficientwise. -/
+def annihilatedExponentialPolynomial
+    {ι : Type*} (S : Finset ι) (c : ι → ℂ)
+    (omega : ι → ℝ) (gamma h y : ℝ) : ℂ :=
+  PrimeNumberTheorem.ZeroForcedOscillation.exponentialPolynomial S
+    (fun i =>
+      (frequencyAnnihilatorMultiplier gamma (omega i) h : ℂ) * c i)
+    omega y
+
+/-- The diagonal spectral energy after normalizing the step average. -/
+def stepAveragedDiagonalEnergy
+    {ι : Type*} (S : Finset ι) (c : ι → ℂ)
+    (omega : ι → ℝ) (gamma H : ℝ) : ℝ :=
+  ∑ i ∈ S, ‖c i‖ ^ 2 *
+    normalizedStepMultiplierEnergy gamma (omega i) H
+
+/-- A finite collected non-target package retains at least twice its
+coefficient energy after sufficiently long step averaging. -/
+theorem eventually_two_mul_coefficientEnergy_le_stepAveragedDiagonalEnergy
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ)
+    {gamma : ℝ}
+    (hgamma : 0 < gamma)
+    (homega : ∀ i ∈ S, 0 < omega i)
+    (hne : ∀ i ∈ S, omega i ≠ gamma) :
+    ∀ᶠ H in atTop,
+      2 * (∑ i ∈ S, ‖c i‖ ^ 2) ≤
+        stepAveragedDiagonalEnergy S c omega gamma H := by
+  filter_upwards [
+    eventually_two_le_normalizedStepMultiplierEnergy_finset
+      S omega hgamma homega hne] with H hH
+  rw [stepAveragedDiagonalEnergy, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro i hi
+  simpa [mul_comm] using
+    mul_le_mul_of_nonneg_left (hH i hi) (sq_nonneg ‖c i‖)
+
+/-- The existing finite-frequency mean-square theorem applies verbatim after
+the coefficientwise annihilator transform. -/
+theorem
+    abs_intervalIntegral_annihilatedExponentialPolynomial_sub_diagonal_le
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ)
+    {gamma h a b : ℝ}
+    (homegaInj : Set.InjOn omega ↑S) :
+    |(∫ y in a..b,
+        ‖annihilatedExponentialPolynomial S c omega gamma h y‖ ^ 2) -
+      (b - a) *
+        ∑ i ∈ S,
+          ‖(frequencyAnnihilatorMultiplier gamma (omega i) h : ℂ) *
+            c i‖ ^ 2| ≤
+      PrimeNumberTheorem.ZeroForcedOscillation.offDiagonalBound S
+        (fun i =>
+          (frequencyAnnihilatorMultiplier gamma (omega i) h : ℂ) * c i)
+        omega := by
+  simpa [annihilatedExponentialPolynomial] using
+    PrimeNumberTheorem.ZeroForcedOscillation.abs_intervalIntegral_sqNorm_exponentialPolynomial_sub_diagonal_le
+      S
+      (fun i =>
+        (frequencyAnnihilatorMultiplier gamma (omega i) h : ℂ) * c i)
+      omega homegaInj
 
 end
 
