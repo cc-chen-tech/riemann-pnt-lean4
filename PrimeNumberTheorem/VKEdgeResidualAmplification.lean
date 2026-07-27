@@ -8,14 +8,18 @@ namespace VKEdgePiOverTwo
 
 noncomputable section
 
-/-- The normalized real contribution of a conjugate zero pair. -/
-def cosineZeroPair (m gamma phase y : ℝ) : ℝ :=
+/--
+A real cosine-pair model with multiplicity, frequency, and phase parameters.
+No theorem in this module identifies it with a term of the zeta explicit
+formula.
+-/
+def cosinePairModel (m gamma phase y : ℝ) : ℝ :=
   -2 * m * Real.cos (gamma * y - phase)
 
-/-- Exact second moment of a conjugate zero pair on an oriented interval. -/
-theorem intervalIntegral_cosineZeroPair_sq
+/-- Exact second moment of the cosine-pair model on an oriented interval. -/
+theorem intervalIntegral_cosinePairModel_sq
     {m gamma phase a b : ℝ} (hgamma : gamma ≠ 0) :
-    (∫ y in a..b, cosineZeroPair m gamma phase y ^ 2) =
+    (∫ y in a..b, cosinePairModel m gamma phase y ^ 2) =
       2 * m ^ 2 * (b - a) +
         m ^ 2 / gamma *
           (Real.sin (2 * gamma * b - 2 * phase) -
@@ -24,7 +28,7 @@ theorem intervalIntegral_cosineZeroPair_sq
     2 * m ^ 2 * y +
       m ^ 2 / gamma * Real.sin (2 * gamma * y - 2 * phase)
   have hderiv (y : ℝ) :
-      HasDerivAt primitive (cosineZeroPair m gamma phase y ^ 2) y := by
+      HasDerivAt primitive (cosinePairModel m gamma phase y ^ 2) y := by
     have hlinear :
         HasDerivAt (fun x : ℝ => 2 * gamma * x - 2 * phase)
           (2 * gamma) y := by
@@ -47,31 +51,31 @@ theorem intervalIntegral_cosineZeroPair_sq
     · rw [show 2 * gamma * y - 2 * phase =
           2 * (gamma * y - phase) by ring,
         Real.cos_two_mul]
-      unfold cosineZeroPair
+      unfold cosinePairModel
       field_simp [hgamma]
       ring
   have hint :
       IntervalIntegrable
-        (fun y => cosineZeroPair m gamma phase y ^ 2)
+        (fun y => cosinePairModel m gamma phase y ^ 2)
         volume a b := by
     apply Continuous.intervalIntegrable
-    unfold cosineZeroPair
+    unfold cosinePairModel
     fun_prop
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt
     (fun y _hy => hderiv y) hint]
   dsimp [primitive]
   ring
 
-/-- The target pair has mean-square density `2m²`, up to an explicit
+/-- The cosine-pair model has mean-square density `2m²`, up to an explicit
 endpoint error. -/
-theorem integral_Icc_cosineZeroPair_sq_le
+theorem integral_Icc_cosinePairModel_sq_le
     {m gamma phase a b : ℝ}
     (hab : a ≤ b) (hgamma : gamma ≠ 0) :
-    (∫ y in Icc a b, cosineZeroPair m gamma phase y ^ 2) ≤
+    (∫ y in Icc a b, cosinePairModel m gamma phase y ^ 2) ≤
       2 * m ^ 2 * (b - a) + 2 * m ^ 2 / |gamma| := by
   rw [integral_Icc_eq_integral_Ioc,
     ← intervalIntegral.integral_of_le hab,
-    intervalIntegral_cosineZeroPair_sq hgamma]
+    intervalIntegral_cosinePairModel_sq hgamma]
   let delta :=
     Real.sin (2 * gamma * b - 2 * phase) -
       Real.sin (2 * gamma * a - 2 * phase)
@@ -104,20 +108,27 @@ theorem integral_Icc_cosineZeroPair_sq_le
   dsimp [delta] at hterm
   linarith
 
-/-- The target zero and its conjugate, in the normalization used for the
-local PNT error. -/
-def normalizedTargetZeroPair (rho : ℂ) (y : ℝ) : ℝ :=
-  cosineZeroPair
+/--
+The cosine-pair model obtained by inserting zeta-derived multiplicity,
+frequency, and phase parameters. This definition is not an explicit-formula
+identification theorem.
+-/
+def normalizedCosineModelPair (rho : ℂ) (y : ℝ) : ℝ :=
+  cosinePairModel
     (analyticOrderNatAt riemannZeta rho : ℝ)
     rho.im rho.arg y
 
-/-- The normalized PNT error after removing the target conjugate pair. -/
-def normalizedPsiResidual (rho : ℂ) (y : ℝ) : ℝ :=
-  normalizedPsiError rho y - normalizedTargetZeroPair rho y
+/--
+The formal difference between the normalized PNT error and the cosine model.
+It is not identified here with the contribution of other zeros or contour
+remainders.
+-/
+def normalizedPsiModelResidual (rho : ℂ) (y : ℝ) : ℝ :=
+  normalizedPsiError rho y - normalizedCosineModelPair rho y
 
-theorem measurable_normalizedTargetZeroPair (rho : ℂ) :
-    Measurable (normalizedTargetZeroPair rho) := by
-  unfold normalizedTargetZeroPair cosineZeroPair
+theorem measurable_normalizedCosineModelPair (rho : ℂ) :
+    Measurable (normalizedCosineModelPair rho) := by
+  unfold normalizedCosineModelPair cosinePairModel
   fun_prop
 
 private theorem measurable_normalizedPsiError_residual (rho : ℂ) :
@@ -128,18 +139,18 @@ private theorem measurable_normalizedPsiError_residual (rho : ℂ) :
   unfold normalizedPsiError
   fun_prop
 
-theorem measurable_normalizedPsiResidual (rho : ℂ) :
-    Measurable (normalizedPsiResidual rho) := by
-  unfold normalizedPsiResidual
+theorem measurable_normalizedPsiModelResidual (rho : ℂ) :
+    Measurable (normalizedPsiModelResidual rho) := by
+  unfold normalizedPsiModelResidual
   exact (measurable_normalizedPsiError_residual rho).sub
-    (measurable_normalizedTargetZeroPair rho)
+    (measurable_normalizedCosineModelPair rho)
 
-theorem integrableOn_normalizedTargetZeroPair_sq_Icc
+theorem integrableOn_normalizedCosineModelPair_sq_Icc
     (rho : ℂ) (a b : ℝ) :
-    IntegrableOn (fun y => normalizedTargetZeroPair rho y ^ 2)
+    IntegrableOn (fun y => normalizedCosineModelPair rho y ^ 2)
       (Icc a b) := by
   apply Continuous.integrableOn_Icc
-  unfold normalizedTargetZeroPair cosineZeroPair
+  unfold normalizedCosineModelPair cosinePairModel
   fun_prop
 
 private theorem normalizedPsiError_abs_le_exp_growth_residual
@@ -217,9 +228,9 @@ private theorem integrableOn_normalizedPsiError_sq_Icc_residual
       abs_of_nonneg (sq_nonneg (normalizedPsiError rho y))]
     exact hsq
 
-theorem integrableOn_normalizedPsiResidual_sq_Icc
+theorem integrableOn_normalizedPsiModelResidual_sq_Icc
     {rho : ℂ} (hrhoRe1 : rho.re < 1) (a b : ℝ) :
-    IntegrableOn (fun y => normalizedPsiResidual rho y ^ 2)
+    IntegrableOn (fun y => normalizedPsiModelResidual rho y ^ 2)
       (Icc a b) := by
   let μ : Measure ℝ := volume.restrict (Icc a b)
   have hf : MemLp (normalizedPsiError rho) 2 μ := by
@@ -229,24 +240,24 @@ theorem integrableOn_normalizedPsiResidual_sq_Icc
           (μ := μ))).2
     simpa [μ] using
       integrableOn_normalizedPsiError_sq_Icc_residual hrhoRe1 a b
-  have hp : MemLp (normalizedTargetZeroPair rho) 2 μ := by
+  have hp : MemLp (normalizedCosineModelPair rho) 2 μ := by
     apply
       (memLp_two_iff_integrable_sq
-        ((measurable_normalizedTargetZeroPair rho).aestronglyMeasurable
+        ((measurable_normalizedCosineModelPair rho).aestronglyMeasurable
           (μ := μ))).2
     simpa [μ] using
-      integrableOn_normalizedTargetZeroPair_sq_Icc rho a b
-  simpa only [normalizedPsiResidual, Pi.sub_apply, μ] using
+      integrableOn_normalizedCosineModelPair_sq_Icc rho a b
+  simpa only [normalizedPsiModelResidual, Pi.sub_apply, μ] using
     (hf.sub hp).integrable_sq
 
-theorem integral_Icc_normalizedTargetZeroPair_sq_le
+theorem integral_Icc_normalizedCosineModelPair_sq_le
     {rho : ℂ} {a b : ℝ}
     (hab : a ≤ b) (hgamma : rho.im ≠ 0) :
-    (∫ y in Icc a b, normalizedTargetZeroPair rho y ^ 2) ≤
+    (∫ y in Icc a b, normalizedCosineModelPair rho y ^ 2) ≤
       2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 * (b - a) +
         2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 / |rho.im| := by
-  simpa only [normalizedTargetZeroPair] using
-    integral_Icc_cosineZeroPair_sq_le
+  simpa only [normalizedCosineModelPair] using
+    integral_Icc_cosinePairModel_sq_le
       (m := (analyticOrderNatAt riemannZeta rho : ℝ))
       (gamma := rho.im) (phase := rho.arg) hab hgamma
 
@@ -295,9 +306,9 @@ theorem one_le_centeredSharpenedProjectedPsiKernelEnvelopeConstant
 
 /--
 The current swept ordinary `L²` coefficient is strictly below one half of
-the leading energy coefficient of the target conjugate pair.
+the leading energy coefficient of the zeta-parameterized cosine model.
 -/
-theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
+theorem centeredSharpenedSweptOrdinaryL2Constant_lt_cosineModelHalfEnergy
     {epsilon : ℝ} {rho : ℂ} {k : ℕ}
     (hepsilon : 0 < epsilon)
     (hrho1 : rho ≠ 1)
@@ -457,10 +468,11 @@ theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
     _ < epsilon * multiplicity ^ 2 := hfinal
 
 /--
-A total local second-moment coefficient strictly above the target-pair
-budget forces a positive second moment for the residual error.
+A total local second-moment coefficient strictly above the cosine-model
+budget forces a positive second moment for the formal psi-minus-model
+residual.
 -/
-theorem integral_Icc_normalizedPsiResidual_sq_lower
+theorem integral_Icc_normalizedPsiModelResidual_sq_lower
     {rho : ℂ} {a b A B : ℝ}
     (hrhoRe1 : rho.re < 1)
     (hab : a ≤ b)
@@ -472,10 +484,10 @@ theorem integral_Icc_normalizedPsiResidual_sq_lower
       A * (b - a) ≤
         ∫ y in Icc a b, normalizedPsiError rho y ^ 2)
     (hpair :
-      (∫ y in Icc a b, normalizedTargetZeroPair rho y ^ 2) ≤
+      (∫ y in Icc a b, normalizedCosineModelPair rho y ^ 2) ≤
         B * (b - a)) :
     (Real.sqrt A - Real.sqrt B) ^ 2 * (b - a) ≤
-      ∫ y in Icc a b, normalizedPsiResidual rho y ^ 2 := by
+      ∫ y in Icc a b, normalizedPsiModelResidual rho y ^ 2 := by
   let μ : Measure ℝ := volume.restrict (Icc a b)
   have hf : MemLp (normalizedPsiError rho) 2 μ := by
     apply
@@ -484,35 +496,35 @@ theorem integral_Icc_normalizedPsiResidual_sq_lower
           (μ := μ))).2
     simpa [μ] using
       integrableOn_normalizedPsiError_sq_Icc_residual hrhoRe1 a b
-  have hp : MemLp (normalizedTargetZeroPair rho) 2 μ := by
+  have hp : MemLp (normalizedCosineModelPair rho) 2 μ := by
     apply
       (memLp_two_iff_integrable_sq
-        ((measurable_normalizedTargetZeroPair rho).aestronglyMeasurable
+        ((measurable_normalizedCosineModelPair rho).aestronglyMeasurable
           (μ := μ))).2
     simpa [μ] using
-      integrableOn_normalizedTargetZeroPair_sq_Icc rho a b
+      integrableOn_normalizedCosineModelPair_sq_Icc rho a b
   have hres :=
     MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds
       hf hp (sub_nonneg.mpr hab) hA hB hBA htotal hpair
-  simpa only [μ, normalizedPsiResidual, Pi.sub_apply] using hres
+  simpa only [μ, normalizedPsiModelResidual, Pi.sub_apply] using hres
 
-/-- Target-pair energy density on an epsilon logarithmic window, including
+/-- Cosine-model energy density on an epsilon logarithmic window, including
 the finite-height endpoint correction. -/
-def epsilonLogWindowTargetPairCoefficient
+def epsilonLogWindowCosineModelCoefficient
     (epsilon : ℝ) (rho : ℂ) (Y : ℝ) : ℝ :=
   let multiplicity : ℝ := analyticOrderNatAt riemannZeta rho
   2 * multiplicity ^ 2 +
     2 * multiplicity ^ 2 /
       (|rho.im| * epsilon * Real.log Y)
 
-theorem integral_Icc_normalizedTargetZeroPair_sq_le_epsilonLogWindow
+theorem integral_Icc_normalizedCosineModelPair_sq_le_epsilonLogWindow
     {epsilon Y : ℝ} {rho : ℂ}
     (hepsilon : 0 < epsilon)
     (hY : 1 < Y)
     (hgamma : rho.im ≠ 0) :
     (∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
-        normalizedTargetZeroPair rho y ^ 2) ≤
-      epsilonLogWindowTargetPairCoefficient epsilon rho Y *
+        normalizedCosineModelPair rho y ^ 2) ≤
+      epsilonLogWindowCosineModelCoefficient epsilon rho Y *
         (epsilon * Real.log Y) := by
   let multiplicity : ℝ := analyticOrderNatAt riemannZeta rho
   have hlog : 0 < Real.log Y := Real.log_pos hY
@@ -520,17 +532,17 @@ theorem integral_Icc_normalizedTargetZeroPair_sq_le_epsilonLogWindow
       Real.log Y ≤ (1 + epsilon) * Real.log Y := by
     nlinarith
   have hpair :=
-    integral_Icc_normalizedTargetZeroPair_sq_le
+    integral_Icc_normalizedCosineModelPair_sq_le
       (rho := rho) hab hgamma
   have hlength :
       (1 + epsilon) * Real.log Y - Real.log Y =
         epsilon * Real.log Y := by ring
   have hcoefficient :
-      epsilonLogWindowTargetPairCoefficient epsilon rho Y *
+      epsilonLogWindowCosineModelCoefficient epsilon rho Y *
           (epsilon * Real.log Y) =
         2 * multiplicity ^ 2 * (epsilon * Real.log Y) +
           2 * multiplicity ^ 2 / |rho.im| := by
-    unfold epsilonLogWindowTargetPairCoefficient
+    unfold epsilonLogWindowCosineModelCoefficient
     dsimp only [multiplicity]
     field_simp [abs_ne_zero.mpr hgamma, hepsilon.ne', hlog.ne']
   rw [hlength] at hpair
@@ -538,10 +550,10 @@ theorem integral_Icc_normalizedTargetZeroPair_sq_le_epsilonLogWindow
   exact hpair
 
 /--
-Logarithmic-window residual endpoint with the exact finite-height target-pair
-correction exposed in the threshold coefficient.
+Logarithmic-window endpoint for the formal psi-minus-model residual, with the
+finite-height cosine-model correction exposed in the threshold coefficient.
 -/
-theorem integral_Icc_normalizedPsiResidual_sq_lower_epsilonLogWindow
+theorem integral_Icc_normalizedPsiModelResidual_sq_lower_epsilonLogWindow
     {epsilon Y A : ℝ} {rho : ℂ}
     (hrhoRe1 : rho.re < 1)
     (hepsilon : 0 < epsilon)
@@ -549,31 +561,31 @@ theorem integral_Icc_normalizedPsiResidual_sq_lower_epsilonLogWindow
     (hgamma : rho.im ≠ 0)
     (hA : 0 ≤ A)
     (hBA :
-      epsilonLogWindowTargetPairCoefficient epsilon rho Y < A)
+      epsilonLogWindowCosineModelCoefficient epsilon rho Y < A)
     (htotal :
       A * (epsilon * Real.log Y) ≤
         ∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
           normalizedPsiError rho y ^ 2) :
     (Real.sqrt A -
         Real.sqrt
-          (epsilonLogWindowTargetPairCoefficient epsilon rho Y)) ^ 2 *
+          (epsilonLogWindowCosineModelCoefficient epsilon rho Y)) ^ 2 *
           (epsilon * Real.log Y) ≤
       ∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
-        normalizedPsiResidual rho y ^ 2 := by
-  let B := epsilonLogWindowTargetPairCoefficient epsilon rho Y
+        normalizedPsiModelResidual rho y ^ 2 := by
+  let B := epsilonLogWindowCosineModelCoefficient epsilon rho Y
   have hlog : 0 < Real.log Y := Real.log_pos hY
   have hab :
       Real.log Y ≤ (1 + epsilon) * Real.log Y := by
     nlinarith
   have hB : 0 ≤ B := by
-    dsimp [B, epsilonLogWindowTargetPairCoefficient]
+    dsimp [B, epsilonLogWindowCosineModelCoefficient]
     positivity
   have hpair :
       (∫ y in Icc (Real.log Y) ((1 + epsilon) * Real.log Y),
-          normalizedTargetZeroPair rho y ^ 2) ≤
+          normalizedCosineModelPair rho y ^ 2) ≤
         B * (((1 + epsilon) * Real.log Y) - Real.log Y) := by
     have h :=
-      integral_Icc_normalizedTargetZeroPair_sq_le_epsilonLogWindow
+      integral_Icc_normalizedCosineModelPair_sq_le_epsilonLogWindow
         hepsilon hY hgamma
     simpa only [B, show
         (1 + epsilon) * Real.log Y - Real.log Y =
@@ -586,7 +598,7 @@ theorem integral_Icc_normalizedPsiResidual_sq_lower_epsilonLogWindow
         (1 + epsilon) * Real.log Y - Real.log Y =
           epsilon * Real.log Y by ring] using htotal
   have hres :=
-    integral_Icc_normalizedPsiResidual_sq_lower
+    integral_Icc_normalizedPsiModelResidual_sq_lower
       hrhoRe1 hab hgamma hA hB (by simpa only [B] using hBA)
       htotal' hpair
   simpa only [B, show

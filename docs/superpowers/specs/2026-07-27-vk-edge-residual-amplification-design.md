@@ -7,18 +7,18 @@ linear ordinary local second-moment lower bound for the normalized prime
 number theorem error.  It does not show that any zero other than the target
 zero is needed to account for that mass.
 
-This branch makes that obstruction quantitative.  It separates the explicit
-contribution of the target zero and its conjugate, computes their local
-second-moment budget, and compares that budget with the existing swept
-Gaussian lower-bound constant.  A later zero-amplification theorem may use
-the resulting interface only after proving positive second-moment mass for
-the residual error.
+This branch makes a model-level obstruction quantitative. It defines a
+cosine pair using multiplicity, height, and argument copied from the selected
+zero, computes the model's local second-moment budget, and compares that
+budget with the existing swept Gaussian lower-bound constant. It does not
+identify the model with a term in the true explicit formula.
 
 This is a gate toward
 
 ```text
 off-line zero
-  -> residual large values after removing the target pair
+  -> a proved explicit-formula identification of the cosine model
+  -> residual large values after subtracting the identified term
   -> an additional right-hand zero contribution
   -> a possible zero-density contradiction.
 ```
@@ -40,20 +40,21 @@ F_rho(y) =
   norm rho * (chebyshevPsi (exp y) - exp y) * exp (-beta * y).
 ```
 
-The target zero and its conjugate contribute the real function
+The branch defines the real cosine model
 
 ```text
 P_rho(y) = -2 * m * cos (gamma * y - arg rho)
 ```
 
-after this normalization.  Define the residual by
+using these parameters. Define the formal model residual by
 
 ```text
 R_rho(y) = F_rho(y) - P_rho(y).
 ```
 
-The sign of `P_rho` is immaterial for its second moment, but the definition
-will follow the sign in the repository's explicit formula.
+The sign of `P_rho` is immaterial for its second moment. No theorem in this
+branch proves that `P_rho` equals the selected pair's true explicit-formula
+contribution, or that `R_rho` consists of other zeros and contour terms.
 
 ## Target-pair energy
 
@@ -81,14 +82,14 @@ On the epsilon logarithmic window
 [log Y, (1+epsilon) * log Y],
 ```
 
-the leading target-pair energy is
+the leading cosine-model energy is
 
 ```text
 2 * epsilon * m^2 * log Y.
 ```
 
 Thus a total-error lower bound with a coefficient no larger than
-`2 * epsilon * m^2` can be explained by the target pair alone.
+`2 * epsilon * m^2` can be explained by the cosine model alone.
 
 ## Existing constant is below the gate
 
@@ -128,7 +129,7 @@ The last inequality uses `(epsilon + 4)/(epsilon + 2) < 2` and `pi < 4`.
 The intended public theorem is:
 
 ```lean
-theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
+theorem centeredSharpenedSweptOrdinaryL2Constant_lt_cosineModelHalfEnergy
     {epsilon : Real} {rho : Complex} {k : Nat}
     (hepsilon : 0 < epsilon)
     (hzero : riemannZeta rho = 0)
@@ -140,7 +141,7 @@ theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
 The exact hypotheses may be reduced if the existing multiplicity-positive
 API only needs `hzero` plus analyticity at `rho`.
 
-This is strictly below one half of the target pair's leading energy
+This is strictly below one half of the cosine model's leading energy
 coefficient.  Therefore the current swept lower bound cannot imply a
 positive residual lower bound.
 
@@ -174,22 +175,22 @@ sqrt (integral (F-P)^2)
 The module must remain independent of zeta so that it can be reused by
 other explicit-formula projects.
 
-## Zeta residual endpoint
+## Zeta-parameterized model endpoint
 
 Define:
 
 ```lean
-def normalizedTargetZeroPair (rho : Complex) (y : Real) : Real
-def normalizedPsiResidual (rho : Complex) (y : Real) : Real
+def normalizedCosineModelPair (rho : Complex) (y : Real) : Real
+def normalizedPsiModelResidual (rho : Complex) (y : Real) : Real
 ```
 
 and prove:
 
 1. measurability and interval integrability;
-2. the exact target-pair second-moment identity;
+2. the exact cosine-model second-moment identity;
 3. the explicit interval upper bound;
-4. a conditional residual lower-bound theorem whose hypothesis requires a
-   total second-moment coefficient strictly greater than the target-pair
+4. a conditional model-residual lower-bound theorem whose hypothesis requires a
+   total second-moment coefficient strictly greater than the cosine-model
    coefficient.
 
 Do not claim that the existing swept theorem discharges this hypothesis.
@@ -199,18 +200,19 @@ The constant comparison theorem proves that it does not.
 
 After this branch, the next research question is deliberately narrow:
 
-> Can one prove, using arithmetic information specific to the classical
-> zeta function, that `normalizedPsiResidual rho` has a linear local second
-> moment after the target pair has been removed?
+> Can one first identify `normalizedCosineModelPair rho` with the true
+> selected-pair term in a multiplicity-aware explicit formula, and then prove
+> that `normalizedPsiModelResidual rho` has a linear local second moment?
 
-Generic explicit-formula, zero-free-region, and zero-density arguments are
-not enough: one target pair is compatible with the existing lower bounds,
+The current branch has not crossed that identification bridge. Generic
+zero-free-region and zero-density arguments are also not enough: one cosine
+model is compatible with the existing lower bounds,
 and Beurling-prime constructions realize analogous sharp behavior.  The
 candidate extra inputs are:
 
 1. a classical-prime correlation estimate which excludes the
    one-frequency residual model;
-2. a detector that annihilates the target pair and still has a nonzero
+2. a detector that annihilates the cosine model and still has a nonzero
    arithmetic main term;
 3. a noncircular recurrence theorem weaker than zeta strong recurrence.
 

@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Formalize the exact local second-moment budget of one zeta zero and its conjugate, prove a reusable reverse-triangle residual-energy theorem, and certify that the repository's current swept \(L^2\) lower bound is too small to force any additional zero contribution.
+**Goal:** Formalize the exact local second-moment budget of a zeta-parameterized cosine model, prove a reusable reverse-triangle residual-energy theorem, and certify a model-level obstruction for the repository's current swept \(L^2\) lower bound. This plan does not identify the model with a true explicit-formula zero-pair term.
 
-**Architecture:** Put the zeta-independent Hilbert-space argument in `MathlibAux/ResidualSecondMoment.lean`. Put the cosine-pair calculation, normalized target pair, residual definitions, constant comparison, and conditional zeta endpoint in `PrimeNumberTheorem/VKEdgeResidualAmplification.lean`. Fix every public signature with contract modules and audit public theorem axioms separately.
+**Architecture:** Put the zeta-independent Hilbert-space argument in `MathlibAux/ResidualSecondMoment.lean`. Put the cosine-pair calculation, normalized cosine model, formal psi-minus-model residual definitions, constant comparison, and conditional model endpoint in `PrimeNumberTheorem/VKEdgeResidualAmplification.lean`. Fix every public signature with contract modules and audit public theorem axioms separately.
 
 **Tech Stack:** Lean 4, Mathlib measure theory and `Lp` spaces, interval integrals, existing VK-edge swept \(L^2\) infrastructure, Lake contract targets, shell verification scripts.
 
@@ -90,20 +90,20 @@ git commit -m "feat: formalize residual second-moment lower bound"
 - [x] Add contract checks for:
 
 ```lean
-PrimeNumberTheorem.VKEdgePiOverTwo.cosineZeroPair
+PrimeNumberTheorem.VKEdgePiOverTwo.cosinePairModel
 
-PrimeNumberTheorem.VKEdgePiOverTwo.intervalIntegral_cosineZeroPair_sq
+PrimeNumberTheorem.VKEdgePiOverTwo.intervalIntegral_cosinePairModel_sq
     {m gamma phase a b : ℝ} (hgamma : gamma ≠ 0) :
-    (∫ y in a..b, cosineZeroPair m gamma phase y ^ 2) =
+    (∫ y in a..b, cosinePairModel m gamma phase y ^ 2) =
       2 * m ^ 2 * (b - a) +
         m ^ 2 / gamma *
           (Real.sin (2 * gamma * b - 2 * phase) -
             Real.sin (2 * gamma * a - 2 * phase))
 
-PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosineZeroPair_sq_le
+PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosinePairModel_sq_le
     {m gamma phase a b : ℝ}
     (hab : a ≤ b) (hgamma : gamma ≠ 0) :
-    (∫ y in Set.Icc a b, cosineZeroPair m gamma phase y ^ 2) ≤
+    (∫ y in Set.Icc a b, cosinePairModel m gamma phase y ^ 2) ≤
       2 * m ^ 2 * (b - a) + 2 * m ^ 2 / |gamma|
 ```
 
@@ -112,7 +112,7 @@ PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosineZeroPair_sq_le
 - [x] Define:
 
 ```lean
-def cosineZeroPair (m gamma phase y : ℝ) : ℝ :=
+def cosinePairModel (m gamma phase y : ℝ) : ℝ :=
   -2 * m * Real.cos (gamma * y - phase)
 ```
 
@@ -151,39 +151,39 @@ git commit -m "feat: compute target zero-pair local energy"
 - [x] Extend the contract with:
 
 ```lean
-PrimeNumberTheorem.VKEdgePiOverTwo.normalizedTargetZeroPair
-PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPsiResidual
-PrimeNumberTheorem.VKEdgePiOverTwo.measurable_normalizedTargetZeroPair
-PrimeNumberTheorem.VKEdgePiOverTwo.measurable_normalizedPsiResidual
-PrimeNumberTheorem.VKEdgePiOverTwo.integrableOn_normalizedTargetZeroPair_sq_Icc
-PrimeNumberTheorem.VKEdgePiOverTwo.integrableOn_normalizedPsiResidual_sq_Icc
+PrimeNumberTheorem.VKEdgePiOverTwo.normalizedCosineModelPair
+PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPsiModelResidual
+PrimeNumberTheorem.VKEdgePiOverTwo.measurable_normalizedCosineModelPair
+PrimeNumberTheorem.VKEdgePiOverTwo.measurable_normalizedPsiModelResidual
+PrimeNumberTheorem.VKEdgePiOverTwo.integrableOn_normalizedCosineModelPair_sq_Icc
+PrimeNumberTheorem.VKEdgePiOverTwo.integrableOn_normalizedPsiModelResidual_sq_Icc
 ```
 
 using definitions:
 
 ```lean
-def normalizedTargetZeroPair (rho : ℂ) (y : ℝ) : ℝ :=
-  cosineZeroPair
+def normalizedCosineModelPair (rho : ℂ) (y : ℝ) : ℝ :=
+  cosinePairModel
     (analyticOrderNatAt riemannZeta rho : ℝ)
     rho.im rho.arg y
 
-def normalizedPsiResidual (rho : ℂ) (y : ℝ) : ℝ :=
-  normalizedPsiError rho y - normalizedTargetZeroPair rho y
+def normalizedPsiModelResidual (rho : ℂ) (y : ℝ) : ℝ :=
+  normalizedPsiError rho y - normalizedCosineModelPair rho y
 ```
 
 - [x] Confirm the extended contract fails, then implement the definitions.
 
 - [x] Prove measurability from continuity of `Real.cos`, the existing definition of `normalizedPsiError`, and closure under subtraction.
 
-- [x] Prove interval integrability of both squares on `Icc a b`. Use continuity for the target pair and the existing exponential-growth bound pattern for `normalizedPsiError`; derive residual integrability with `IntegrableOn.sub`.
+- [x] Prove interval integrability of both squares on `Icc a b`. Use continuity for the cosine model and the existing exponential-growth bound pattern for `normalizedPsiError`; derive residual integrability with `IntegrableOn.sub`.
 
-- [x] Add the zeta-specialized target-pair bound:
+- [x] Add the model-parameterized cosine-model bound:
 
 ```lean
-theorem integral_Icc_normalizedTargetZeroPair_sq_le
+theorem integral_Icc_normalizedCosineModelPair_sq_le
     {rho : ℂ} {a b : ℝ}
     (hab : a ≤ b) (hgamma : rho.im ≠ 0) :
-    (∫ y in Set.Icc a b, normalizedTargetZeroPair rho y ^ 2) ≤
+    (∫ y in Set.Icc a b, normalizedCosineModelPair rho y ^ 2) ≤
       2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 * (b - a) +
         2 * (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 / |rho.im|
 ```
@@ -194,7 +194,7 @@ theorem integral_Icc_normalizedTargetZeroPair_sq_le
 lake build Test.VKEdgeResidualAmplificationContract
 git diff --check
 git add PrimeNumberTheorem/VKEdgeResidualAmplification.lean Test/VKEdgeResidualAmplificationContract.lean
-git commit -m "feat: define normalized zeta residual"
+git commit -m "feat: define normalized psi-minus-model residual"
 ```
 
 ## Task 4: Prove the Current Swept Constant Is Below the Residual Gate
@@ -213,7 +213,7 @@ one_le_centeredSharpenedProjectedPsiKernelEnvelopeConstant
 and the public comparison:
 
 ```lean
-theorem centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
+theorem centeredSharpenedSweptOrdinaryL2Constant_lt_cosineModelHalfEnergy
     {epsilon : ℝ} {rho : ℂ} {k : ℕ}
     (hepsilon : 0 < epsilon)
     (hrho1 : rho ≠ 1)
@@ -282,10 +282,10 @@ git commit -m "theorem: certify swept L2 constant below pair energy"
 - Modify: `PrimeNumberTheorem/VKEdgeResidualAmplification.lean`
 - Modify: `Test/VKEdgeResidualAmplificationContract.lean`
 
-- [x] Add a contract for an interval endpoint whose hypotheses explicitly require a total coefficient larger than the target-pair coefficient:
+- [x] Add a contract for an interval endpoint whose hypotheses explicitly require a total coefficient larger than the cosine-model coefficient:
 
 ```lean
-theorem integral_Icc_normalizedPsiResidual_sq_lower
+theorem integral_Icc_normalizedPsiModelResidual_sq_lower
     {rho : ℂ} {a b A B : ℝ}
     (hab : a ≤ b)
     (hgamma : rho.im ≠ 0)
@@ -296,10 +296,10 @@ theorem integral_Icc_normalizedPsiResidual_sq_lower
       A * (b - a) ≤
         ∫ y in Set.Icc a b, normalizedPsiError rho y ^ 2)
     (hpair :
-      (∫ y in Set.Icc a b, normalizedTargetZeroPair rho y ^ 2) ≤
+      (∫ y in Set.Icc a b, normalizedCosineModelPair rho y ^ 2) ≤
         B * (b - a)) :
     (Real.sqrt A - Real.sqrt B) ^ 2 * (b - a) ≤
-      ∫ y in Set.Icc a b, normalizedPsiResidual rho y ^ 2
+      ∫ y in Set.Icc a b, normalizedPsiModelResidual rho y ^ 2
 ```
 
 - [x] Confirm failure, then prove it by applying `MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds` to `volume.restrict (Icc a b)`.
@@ -322,7 +322,7 @@ under `0 < epsilon`, `1 < Y`, and `rho.im ≠ 0`.
 lake build Test.VKEdgeResidualAmplificationContract
 git diff --check
 git add PrimeNumberTheorem/VKEdgeResidualAmplification.lean Test/VKEdgeResidualAmplificationContract.lean
-git commit -m "feat: expose conditional zeta residual energy endpoint"
+git commit -m "feat: expose conditional psi-minus-model residual energy endpoint"
 ```
 
 ## Task 6: Axiom Audit and Research Record
@@ -336,19 +336,19 @@ git commit -m "feat: expose conditional zeta residual energy endpoint"
 
 ```lean
 MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds
-intervalIntegral_cosineZeroPair_sq
-integral_Icc_normalizedTargetZeroPair_sq_le
-centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
-integral_Icc_normalizedPsiResidual_sq_lower
+intervalIntegral_cosinePairModel_sq
+integral_Icc_normalizedCosineModelPair_sq_le
+centeredSharpenedSweptOrdinaryL2Constant_lt_cosineModelHalfEnergy
+integral_Icc_normalizedPsiModelResidual_sq_lower
 ```
 
 - [x] Add the audit target to `lakefile.lean`.
 
 - [x] Record in the research audit:
-  - the target-pair exact energy formula;
+  - the cosine-model exact energy formula;
   - the current swept constant comparison;
   - why fixed-proportion large values do not imply another zero;
-  - the precise new input needed: a total local \(L^2\) coefficient greater than the target-pair budget, or a detector annihilating the target pair while retaining a nonzero arithmetic main term;
+  - the precise new input needed: a total local \(L^2\) coefficient greater than the cosine-model budget, or a detector annihilating the cosine model while retaining a nonzero arithmetic main term;
   - that no RH or zero-density contradiction has been proved.
 
 - [x] Run:
@@ -403,7 +403,7 @@ git diff --name-only 6cea1f4..HEAD
 ```
 
 - [x] Summarize the exact result:
-  - completed: exact target-pair energy, generic residual theorem, conditional residual zeta endpoint, and formal obstruction for the existing swept constant;
+  - completed: exact cosine-model energy, generic residual theorem, conditional residual zeta endpoint, and formal obstruction for the existing swept constant;
   - not completed: positive residual energy, additional zeros, Carlson contradiction, or RH.
 
 - [x] Push only after all verification succeeds:

@@ -2,9 +2,10 @@
 
 ## Scope
 
-This branch asks whether the existing local second-moment theorem forces
-zero contributions beyond one selected zeta zero and its conjugate.  It
-does not assume that local large values automatically create new zeros.
+This branch studies a cosine model whose parameters are copied from a
+selected zeta zero. It does not prove that this model is the actual
+explicit-formula contribution of that zero and its conjugate, and it does
+not assume that local large values automatically create new zeros.
 
 For a zeta zero
 
@@ -12,7 +13,7 @@ For a zeta zero
 rho = beta + i gamma
 ```
 
-of analytic multiplicity `m`, the normalized target-pair contribution is
+of analytic multiplicity `m`, the normalized cosine model is
 
 ```text
 P_rho(y) = -2 m cos(gamma y - arg rho).
@@ -24,9 +25,13 @@ The residual is
 R_rho(y) = normalizedPsiError rho y - P_rho(y).
 ```
 
-## Exact target-pair budget
+Here "residual" means only this formal difference. No theorem in the branch
+identifies it with the sum of other zeros, a contour remainder, or a
+truncation error.
 
-The Lean theorem `intervalIntegral_cosineZeroPair_sq` proves
+## Exact cosine-model budget
+
+The Lean theorem `intervalIntegral_cosinePairModel_sq` proves
 
 ```text
 integral_[a,b] P_rho(y)^2 dy
@@ -63,7 +68,7 @@ B < A
 integral (F-P)^2 >= (sqrt A - sqrt B)^2 L.
 ```
 
-The zeta-specialized endpoints expose this criterion on arbitrary compact
+The model-parameterized endpoints expose this criterion on arbitrary compact
 intervals and on epsilon logarithmic windows.
 
 ## Obstruction for the current swept theorem
@@ -71,7 +76,7 @@ intervals and on epsilon logarithmic windows.
 The theorem
 
 ```text
-centeredSharpenedSweptOrdinaryL2Constant_lt_targetPairHalfEnergy
+centeredSharpenedSweptOrdinaryL2Constant_lt_cosineModelHalfEnergy
 ```
 
 proves
@@ -81,15 +86,16 @@ centeredSharpenedSweptOrdinaryL2Constant epsilon rho k
   < epsilon * m^2.
 ```
 
-The target conjugate pair alone has leading energy
+The cosine model alone has leading energy
 
 ```text
 2 * epsilon * m^2 * log Y.
 ```
 
-Therefore the existing swept lower bound is below one half of the energy
-that the selected pair can already supply.  It does not satisfy the
-residual criterion and cannot force an additional zero contribution.
+Therefore the existing swept lower bound is below one half of the model
+energy budget. It does not satisfy the formal residual criterion. Without
+an explicit-formula identification theorem, this comparison makes no claim
+about additional zero contributions.
 
 The fixed-proportion large-value theorem has the same limitation.  A
 single cosine pair already occupies a fixed positive fraction of every
@@ -103,8 +109,8 @@ To continue toward a zero-density contradiction, one needs at least one
 new theorem of one of the following forms:
 
 1. a local second-moment lower bound with coefficient strictly greater
-   than the full target-pair budget `B_Y`;
-2. a detector that annihilates the target pair while retaining a nonzero
+   than the full cosine-model budget `B_Y`;
+2. a detector that annihilates the cosine model while retaining a nonzero
    arithmetic main term for the classical primes;
 3. an arithmetic correlation theorem that excludes the one-frequency
    residual model.
@@ -114,12 +120,14 @@ current explicit-formula lower bound do not provide this input.
 
 ## Claim boundary
 
-This branch proves an exact target-pair energy formula, a reusable residual
-energy theorem, a conditional zeta residual endpoint, and a formal
-obstruction for the existing swept coefficient.
+This branch proves an exact cosine-model energy formula, a reusable
+reverse-triangle theorem, a conditional psi-minus-model endpoint, and a
+formal model-level obstruction for the existing swept coefficient.
 
 It does not prove:
 
+- that the cosine model is the actual selected zero-pair contribution;
+- that the model residual equals other zeros plus analytic remainders;
 - positive residual energy unconditionally;
 - an additional zeta zero;
 - a Carlson zero-density contradiction;
