@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.VKEdgeTargetPairAnnihilator
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check symmetricFrequencyAnnihilator
+#check symmetricFrequencyAnnihilator_cosineZeroPair
+#check symmetricFrequencyAnnihilator_targetPair_eq_zero

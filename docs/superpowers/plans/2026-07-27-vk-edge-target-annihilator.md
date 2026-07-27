@@ -47,7 +47,7 @@ theorem symmetricFrequencyAnnihilator_targetPair_eq_zero
         (cosineZeroPair m gamma phase) y = 0
 ```
 
-- [ ] **Step 1: Add the failing contract and Lake target**
+- [x] **Step 1: Add the failing contract and Lake target**
 
 Create `Test/VKEdgeTargetPairAnnihilatorContract.lean`:
 
@@ -64,7 +64,7 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 Add `Test.VKEdgeTargetPairAnnihilatorContract` as a `lean_lib` root in
 `lakefile.lean`.
 
-- [ ] **Step 2: Run the contract and confirm the expected failure**
+- [x] **Step 2: Run the contract and confirm the expected failure**
 
 Run:
 
@@ -74,7 +74,7 @@ lake build Test.VKEdgeTargetPairAnnihilatorContract
 
 Expected: failure because the source module and declarations do not exist.
 
-- [ ] **Step 3: Implement the detector and multiplier identity**
+- [x] **Step 3: Implement the detector and multiplier identity**
 
 Define:
 
@@ -88,7 +88,7 @@ Prove the multiplier identity by expanding `cosineZeroPair`,
 `Real.cos_add`, and `Real.cos_sub`, then close the polynomial identity with
 `ring`.  Derive target annihilation by setting `lambda = gamma`.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run:
 
