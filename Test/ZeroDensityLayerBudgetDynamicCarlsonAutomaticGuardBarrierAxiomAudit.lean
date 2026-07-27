@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicCarlsonAutomaticGuardBarrier
+
+namespace PrimeNumberTheorem
+
+#print axioms PositiveZeroBucketInput.half_lt_re_of_sigma_half
+#print axioms
+  dynamicCarlsonAutomaticGuardInput_positiveZeros_strictlyRightOfHalf
+#print axioms
+  not_exists_dynamicCarlsonAutomaticGuardPositiveZeroBucketInput
+
+end PrimeNumberTheorem
