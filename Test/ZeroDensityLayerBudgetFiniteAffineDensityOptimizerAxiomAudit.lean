@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetFiniteAffineDensityOptimizer
+
+namespace PrimeNumberTheorem
+
+#print axioms finiteAffineBalancedExponent_marginCertificate
+#print axioms finiteAffineBalancedExponent_maximizes_margin
+#print axioms finiteAffineBalancedExponent_unique
+#print axioms finiteAffineOptimalMargin_pos
+
+end PrimeNumberTheorem
