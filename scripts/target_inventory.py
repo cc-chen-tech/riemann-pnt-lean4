@@ -77,6 +77,7 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.rh_iff_optimal_error",
     "PrimeNumberTheorem.VKEdgePiOverTwo.localizedContourScaleValid",
     "PrimeNumberTheorem.VKEdgePiOverTwo.centeredLocalizedContourScaleValid",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.LocalPsiL2ExponentAtMost",
     "ZeroFreeRegion.VinogradovKorobov.AProcessScheduleAdmissible",
     "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessScheduleValid",
     "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessLeafValid",
