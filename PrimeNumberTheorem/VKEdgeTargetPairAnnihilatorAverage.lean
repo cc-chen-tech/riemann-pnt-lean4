@@ -324,6 +324,55 @@ theorem
         (frequencyAnnihilatorMultiplier gamma (omega i) h : ℂ) * c i)
       omega homegaInj
 
+/-- A collected finite residual package at the selected real-part edge.
+The structure records only the spectral data needed by the step-average
+theorem; identifying such a package inside the full zeta explicit formula is
+a separate analytic input. -/
+structure SameEdgeResidualPackage
+    (rho : ℂ) (ι : Type*) [DecidableEq ι] where
+  support : Finset ι
+  coefficient : ι → ℂ
+  frequency : ι → ℝ
+  frequency_pos : ∀ i ∈ support, 0 < frequency i
+  frequency_injective : Set.InjOn frequency ↑support
+  avoids_target : ∀ i ∈ support, frequency i ≠ rho.im
+  coefficientEnergy_pos :
+    0 < ∑ i ∈ support, ‖coefficient i‖ ^ 2
+
+/-- A nonzero finite same-edge residual package has positive step-averaged
+diagonal energy. This is conditional on the package data, not an existence
+theorem for an additional zeta zero. -/
+theorem sameEdgeResidualPackage_eventually_stepEnergy_pos
+    {rho : ℂ} {ι : Type*} [DecidableEq ι]
+    (hrhoIm : 0 < rho.im)
+    (P : SameEdgeResidualPackage rho ι) :
+    ∀ᶠ H in atTop,
+      0 < stepAveragedDiagonalEnergy
+        P.support P.coefficient P.frequency rho.im H := by
+  filter_upwards [
+    eventually_two_mul_coefficientEnergy_le_stepAveragedDiagonalEnergy
+      P.support P.coefficient P.frequency hrhoIm
+        P.frequency_pos P.avoids_target] with H hH
+  have hpositive :
+      0 < 2 * ∑ i ∈ P.support, ‖P.coefficient i‖ ^ 2 :=
+    mul_pos (by norm_num) P.coefficientEnergy_pos
+  exact hpositive.trans_le hH
+
+/-- The selected target pair alone cannot yield a positive residual-energy
+conclusion after it has been annihilated exactly. -/
+theorem no_sameEdge_conclusion_from_target_pair_alone
+    {rho : ℂ} {h C a b : ℝ}
+    (hC : 0 < C) (hab : a < b) :
+    ¬ C * (b - a) ≤
+      ∫ y in Set.Icc a b,
+        symmetricFrequencyAnnihilator h rho.im
+          (normalizedTargetZeroPair rho) y ^ 2 := by
+  simpa only [normalizedTargetZeroPair] using
+    (no_positive_lower_bound_on_pure_target_pair
+      (h := h) (gamma := rho.im)
+      (m := (analyticOrderNatAt riemannZeta rho : ℝ))
+      (phase := rho.arg) hC hab)
+
 end
 
 end VKEdgePiOverTwo

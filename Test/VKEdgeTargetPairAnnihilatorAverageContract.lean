@@ -14,6 +14,9 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check stepAveragedDiagonalEnergy
 #check eventually_two_mul_coefficientEnergy_le_stepAveragedDiagonalEnergy
 #check abs_intervalIntegral_annihilatedExponentialPolynomial_sub_diagonal_le
+#check SameEdgeResidualPackage
+#check sameEdgeResidualPackage_eventually_stepEnergy_pos
+#check no_sameEdge_conclusion_from_target_pair_alone
 
 example (gamma h : ℝ) :
     frequencyAnnihilatorMultiplier gamma gamma h = 0 :=
