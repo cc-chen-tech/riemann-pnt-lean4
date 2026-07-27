@@ -194,6 +194,52 @@ theorem integral_annihilatedNormalizedPsiError_sq_le_of_residual_shifts
   exact integral_sq_symmetricFrequencyAnnihilator_le_of_shifted
     hplusInt hzeroInt hminusInt hdetInt hplus hzero hminus
 
+/-- The selected zero pair alone cannot supply any positive lower bound after
+the detector has annihilated it. -/
+theorem no_positive_lower_bound_on_pure_target_pair
+    {h gamma m phase C a b : ℝ}
+    (hC : 0 < C) (hab : a < b) :
+    ¬ C * (b - a) ≤
+      ∫ y in Set.Icc a b,
+        symmetricFrequencyAnnihilator h gamma
+          (cosineZeroPair m gamma phase) y ^ 2 := by
+  have hzero :
+      (∫ y in Set.Icc a b,
+        symmetricFrequencyAnnihilator h gamma
+          (cosineZeroPair m gamma phase) y ^ 2) = 0 := by
+    simp_rw [symmetricFrequencyAnnihilator_targetPair_eq_zero]
+    simp
+  rw [hzero]
+  exact not_le_of_gt (mul_pos hC (sub_pos.mpr hab))
+
+/-- At a point where the cosine package is nonzero, a second frequency is
+annihilated exactly when its detector multiplier collides with the selected
+frequency multiplier. -/
+theorem symmetricFrequencyAnnihilator_cosineZeroPair_eq_zero_iff
+    {h gamma m lambda phase y : ℝ}
+    (hm : m ≠ 0)
+    (hy : Real.cos (lambda * y - phase) ≠ 0) :
+    symmetricFrequencyAnnihilator h gamma
+        (cosineZeroPair m lambda phase) y = 0 ↔
+      Real.cos (lambda * h) = Real.cos (gamma * h) := by
+  rw [symmetricFrequencyAnnihilator_cosineZeroPair]
+  have hpair :
+      cosineZeroPair m lambda phase y ≠ 0 := by
+    unfold cosineZeroPair
+    exact mul_ne_zero (mul_ne_zero (by norm_num) hm) hy
+  constructor
+  · intro hzero
+    have hcoefficient :
+        2 * (Real.cos (lambda * h) - Real.cos (gamma * h)) = 0 :=
+      (mul_eq_zero.mp hzero).resolve_right hpair
+    have hdifference :
+        Real.cos (lambda * h) - Real.cos (gamma * h) = 0 :=
+      (mul_eq_zero.mp hcoefficient).resolve_left (by norm_num)
+    linarith
+  · intro hcollision
+    rw [hcollision]
+    ring
+
 end
 
 end VKEdgePiOverTwo

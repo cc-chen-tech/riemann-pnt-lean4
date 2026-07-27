@@ -312,24 +312,24 @@ theorem symmetricFrequencyAnnihilator_cosineZeroPair_eq_zero_iff
       Real.cos (lambda * h) = Real.cos (gamma * h)
 ```
 
-- [ ] **Step 1: Add failing contract checks**
+- [x] **Step 1: Add failing contract checks**
 
 Extend the contract with the two no-go declarations and confirm the expected
 failure.
 
-- [ ] **Step 2: Prove the pure-pair impossibility**
+- [x] **Step 2: Prove the pure-pair impossibility**
 
 Rewrite the integrand pointwise with
 `symmetricFrequencyAnnihilator_targetPair_eq_zero`, simplify the integral to
 zero, and use `hC` plus `hab` to prove `0 < C * (b-a)`.
 
-- [ ] **Step 3: Prove the frequency-collision characterization**
+- [x] **Step 3: Prove the frequency-collision characterization**
 
 Rewrite with the exact multiplier theorem.  The hypotheses `hm` and `hy`
 make the cosine package value nonzero, so the product vanishes exactly when
 the multiplier vanishes.
 
-- [ ] **Step 4: Write the mathematical audit**
+- [x] **Step 4: Write the mathematical audit**
 
 Record:
 
@@ -343,7 +343,7 @@ Record:
   choosing or averaging `h`;
 - no additional zero, Carlson contradiction, or RH claim.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run:
 
