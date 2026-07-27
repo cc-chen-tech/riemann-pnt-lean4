@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroForcingUnifiedTransfer
+
+#print axioms
+  PrimeNumberTheorem.zero_cluster_unified_common_decomposition_transfer
