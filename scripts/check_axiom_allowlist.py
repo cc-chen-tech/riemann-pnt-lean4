@@ -11,6 +11,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_tailResidueLength",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_tailResidueLength_pow",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovMixedNormalizedResidueMoment_one_to_raw",
+    "ZeroFreeRegion.VinogradovKorobov.card_vinogradovResidueClassFinset_completePrimePowerBlock",
+    "ZeroFreeRegion.VinogradovKorobov.card_vinogradovResidueClassFinset_nestedPrimePowerBlock",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_nestedPrimePowerBlock_pow",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovMixedRawResidueNormMoment_one_le_refinement_via_normalized",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_psiError_in_powerOnePlusEpsilonWindow_gt_uniformBellottiGap",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_positive_measure_in_epsilonLogWindow_gt_uniformBellottiGap",
@@ -282,7 +292,13 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "build", "Test.MultiplicityAxiomAudit"],
+        [
+            "lake",
+            "build",
+            "Test.MultiplicityAxiomAudit",
+            "Test.VKEdgePiOverTwoEpsilonOscillationAxiomAudit",
+            "Test.VKEdgePiOverTwoBellottiAxiomAudit",
+        ],
         cwd=ROOT,
         text=True,
         capture_output=True,
