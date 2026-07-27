@@ -17,9 +17,12 @@ theorem measurable_normalizedPsiError_fixedProportion (rho : ℂ) :
   fun_prop
 
 /--
-Conditional on a matching fourth-moment upper bound for the true normalized
-PNT error, an off-line zeta zero forces a fixed-proportion large-value set in
-every sufficiently late epsilon logarithmic window.
+Conditional on an external matching fourth-moment upper bound for the true
+normalized PNT error, an off-line zeta zero forces a fixed-proportion
+large-value set in every sufficiently late epsilon logarithmic window.
+
+The project does not prove `hExternalFourthMoment`; it is an explicit analytic
+hypothesis of this theorem.
 -/
 theorem
     exists_eventually_fixedProportion_largeNormalizedPsiError_of_fourthMoment
@@ -31,7 +34,7 @@ theorem
     (hσrho : sigma < rho.re)
     (hrhoRe1 : rho.re < 1)
     (hC4 : 0 < C4)
-    (hfourth :
+    (hExternalFourthMoment :
       ∀ᶠ Y : ℝ in atTop,
         IntegrableOn
             (fun y => normalizedPsiError rho y ^ 4)
@@ -56,7 +59,7 @@ theorem
         hε hgamma hzero hσ hσrho hrhoRe1 with
     ⟨k, hmissing, hc2, hsecond⟩
   refine ⟨k, hmissing, hc2, ?_⟩
-  filter_upwards [hsecond, hfourth,
+  filter_upwards [hsecond, hExternalFourthMoment,
     eventually_gt_atTop (1 : ℝ)] with Y hsecondY hfourthY hY
   let window : Set ℝ :=
     Icc (Real.log Y) ((1 + ε) * Real.log Y)

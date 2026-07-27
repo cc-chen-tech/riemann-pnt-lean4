@@ -14,6 +14,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.MultiplicityAxiomAudit",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
+    "Test.VKEdgePiOverTwoFixedProportionAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero",
@@ -260,6 +261,9 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.one_lt_epsilonSweepRatio",
     "PrimeNumberTheorem.VKEdgePiOverTwo.localizedGaussianLogWindow_subset_epsilonWindow_of_mem_sweep",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear",
+    "MathlibAux.measure_sq_largeSet_gt_of_scaled_moments",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.measurable_normalizedPsiError_fixedProportion",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_fixedProportion_largeNormalizedPsiError_of_fourthMoment",
 }
 
 REPORT_RE = re.compile(

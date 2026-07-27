@@ -23,8 +23,9 @@ such that the local second moment is eventually larger than
 c2 * log Y.
 ```
 
-The new fixed-proportion endpoint proves the following genuine implication.
-If `C4 > 0` and the true error additionally satisfies
+The new fixed-proportion endpoint proves the following genuine conditional
+implication. If `C4 > 0` and the true error additionally satisfies the
+external fourth-moment hypothesis
 
 ```text
 integral over [log Y, (1 + epsilon) log Y] of F_rho(y)^4
@@ -59,6 +60,8 @@ sqrt (c2 / (2 * epsilon)) * x^(re rho) / norm rho.
 
 The Lean endpoint is
 `exists_eventually_fixedProportion_largeNormalizedPsiError_of_fourthMoment`.
+The hypothesis named `hExternalFourthMoment` is not proved elsewhere in this
+repository and is not discharged by the endpoint.
 
 ## Why the existing fourth-moment module does not instantiate it
 
