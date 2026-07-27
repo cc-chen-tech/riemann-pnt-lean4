@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicCarlsonAutomaticGuardPNTTransfer
+
+namespace PrimeNumberTheorem
+
+#print axioms PositiveZeroBucketInput.externalSigma_lt_norm
+#print axioms
+  relativeChebyshevPsi0Error_natural_dynamicCarlsonAutomaticGuard_negligible
+#print axioms
+  tendsto_relativeChebyshevPsi0Error_natural_dynamicCarlsonAutomaticGuard
+
+end PrimeNumberTheorem
