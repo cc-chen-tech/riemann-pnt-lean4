@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicLogHeightTransfer
+
+#check PrimeNumberTheorem.dynamicLogHeightMajorant
+#check
+  PrimeNumberTheorem.tendsto_dynamicLogHeightMajorant_zero_of_normalizedExponent
+#check
+  PrimeNumberTheorem.tendsto_dynamicLogHeightMajorant_zero_of_logGrowth
+#check
+  PrimeNumberTheorem.tendsto_selectedUniformGoodHeight_dynamicLogHeightMajorant_zero
+#check
+  PrimeNumberTheorem.tendsto_selectedUniformGoodHeight_carlsonStripLogMajorant_zero
