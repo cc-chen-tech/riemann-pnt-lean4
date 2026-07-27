@@ -129,6 +129,124 @@ theorem intervalIntegral_frequencyAnnihilatorMultiplier_sq
   dsimp [primitive]
   simp
 
+/-- The multiplier energy per unit step length. -/
+def normalizedStepMultiplierEnergy
+    (gamma lambda H : ℝ) : ℝ :=
+  H⁻¹ * ∫ h in (0 : ℝ)..H,
+    frequencyAnnihilatorMultiplier gamma lambda h ^ 2
+
+private theorem tendsto_sin_mul_div_atTop
+    {c d : ℝ} (hd : d ≠ 0) :
+    Tendsto (fun H : ℝ => Real.sin (c * H) / (d * H))
+      atTop (𝓝 0) := by
+  have hsinBound :
+      IsBoundedUnder (· ≤ ·) atTop
+        (norm ∘ fun H : ℝ => Real.sin (c * H)) := by
+    apply isBoundedUnder_of_eventually_le
+      (a := (1 : ℝ))
+    exact Eventually.of_forall fun H => by
+      simpa [Function.comp_apply, Real.norm_eq_abs] using
+        Real.abs_sin_le_one (c * H)
+  have hzero :
+      Tendsto
+        (fun H : ℝ => Real.sin (c * H) * H⁻¹)
+        atTop (𝓝 0) :=
+    Filter.isBoundedUnder_le_mul_tendsto_zero
+      hsinBound tendsto_inv_atTop_zero
+  convert hzero.const_mul d⁻¹ using 1
+  · funext H
+    field_simp [hd]
+  · simp
+
+/-- Averaging over the step removes every collision with a fixed distinct
+positive frequency. -/
+theorem tendsto_normalizedStepMultiplierEnergy
+    {gamma lambda : ℝ}
+    (hgamma : 0 < gamma) (hlambda : 0 < lambda)
+    (hne : lambda ≠ gamma) :
+    Tendsto (normalizedStepMultiplierEnergy gamma lambda)
+      atTop (𝓝 4) := by
+  have hsub : lambda - gamma ≠ 0 := sub_ne_zero.mpr hne
+  have hadd : lambda + gamma ≠ 0 := by positivity
+  have hlambdaTerm :
+      Tendsto
+        (fun H : ℝ => Real.sin (2 * lambda * H) / (lambda * H))
+        atTop (𝓝 0) :=
+    tendsto_sin_mul_div_atTop hlambda.ne'
+  have hgammaTerm :
+      Tendsto
+        (fun H : ℝ => Real.sin (2 * gamma * H) / (gamma * H))
+        atTop (𝓝 0) :=
+    tendsto_sin_mul_div_atTop hgamma.ne'
+  have hsubTerm :
+      Tendsto
+        (fun H : ℝ =>
+          Real.sin ((lambda - gamma) * H) /
+            ((lambda - gamma) * H))
+        atTop (𝓝 0) :=
+    tendsto_sin_mul_div_atTop hsub
+  have haddTerm :
+      Tendsto
+        (fun H : ℝ =>
+          Real.sin ((lambda + gamma) * H) /
+            ((lambda + gamma) * H))
+        atTop (𝓝 0) :=
+    tendsto_sin_mul_div_atTop hadd
+  have hformula :
+      ∀ᶠ H : ℝ in atTop,
+        normalizedStepMultiplierEnergy gamma lambda H =
+          4 +
+            Real.sin (2 * lambda * H) / (lambda * H) +
+            Real.sin (2 * gamma * H) / (gamma * H) -
+            4 *
+              (Real.sin ((lambda - gamma) * H) /
+                ((lambda - gamma) * H)) -
+            4 *
+              (Real.sin ((lambda + gamma) * H) /
+                ((lambda + gamma) * H)) := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with H hH
+    rw [normalizedStepMultiplierEnergy,
+      intervalIntegral_frequencyAnnihilatorMultiplier_sq
+        hgamma.ne' hlambda.ne' hne (by
+          intro heq
+          nlinarith)]
+    field_simp [hH.ne', hgamma.ne', hlambda.ne', hsub, hadd]
+  have hlimit :
+      Tendsto
+        (fun H : ℝ =>
+          4 +
+            Real.sin (2 * lambda * H) / (lambda * H) +
+            Real.sin (2 * gamma * H) / (gamma * H) -
+            4 *
+              (Real.sin ((lambda - gamma) * H) /
+                ((lambda - gamma) * H)) -
+            4 *
+              (Real.sin ((lambda + gamma) * H) /
+                ((lambda + gamma) * H)))
+        atTop (𝓝 4) := by
+    convert
+      (((tendsto_const_nhds.add hlambdaTerm).add hgammaTerm).sub
+        (tendsto_const_nhds.mul hsubTerm)).sub
+          (tendsto_const_nhds.mul haddTerm) using 1 <;>
+      norm_num
+  exact hlimit.congr'
+    (hformula.mono fun _H hH => hH.symm)
+
+/-- Every fixed non-target positive frequency eventually contributes at least
+`2` units of normalized step energy. -/
+theorem eventually_two_le_normalizedStepMultiplierEnergy
+    {gamma lambda : ℝ}
+    (hgamma : 0 < gamma) (hlambda : 0 < lambda)
+    (hne : lambda ≠ gamma) :
+    ∀ᶠ H in atTop,
+      2 ≤ normalizedStepMultiplierEnergy gamma lambda H := by
+  have hmem : Set.Ioi (2 : ℝ) ∈ 𝓝 4 :=
+    Ioi_mem_nhds (by norm_num)
+  filter_upwards [
+    (tendsto_normalizedStepMultiplierEnergy hgamma hlambda hne)
+      hmem] with H hH
+  exact hH.le
+
 end
 
 end VKEdgePiOverTwo
