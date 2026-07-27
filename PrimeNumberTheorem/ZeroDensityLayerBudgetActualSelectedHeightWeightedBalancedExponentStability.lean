@@ -90,4 +90,50 @@ theorem
   refine ⟨i, hi, hlower, ?_⟩
   simpa [q, alphaStar] using hupperScaled
 
+/-- Division by the positive bottleneck slope turns the scaled stability bound
+into an explicit interval for the near-optimal exponent. -/
+theorem
+    exists_bottleneck_nearOptimalExponent_interval
+    {beta alpha delta epsilon : ℝ}
+    {n : ℕ}
+    (sigma tau : Fin (n + 1) → ℝ)
+    (hsigma : ∀ i, 1 / 2 < sigma i)
+    (hsigmaOne : ∀ i, sigma i < 1)
+    (hnear :
+      actualSelectedHeightFiniteStripOptimalPhysicalMargin beta sigma tau -
+          epsilon ≤
+        delta)
+    (certificate :
+      ActualSelectedHeightFiniteStripPhysicalMarginCertificate
+        beta sigma tau alpha delta) :
+    ∃ i,
+      actualSelectedHeightFiniteStripOptimalPhysicalMargin beta sigma tau =
+          actualSelectedHeightStripBalancedPhysicalMargin
+            beta (sigma i) (tau i) ∧
+        actualSelectedHeightFiniteStripWeightedBalancedExponent
+              beta sigma tau -
+            epsilon ≤
+          alpha ∧
+        alpha ≤
+          actualSelectedHeightFiniteStripWeightedBalancedExponent
+              beta sigma tau +
+            epsilon /
+              actualSelectedHeightStripCarlsonSlope (sigma i) := by
+  obtain ⟨i, hi, hlower, hscaled⟩ :=
+    exists_bottleneck_nearOptimalExponent_bounds
+      sigma tau hsigma hsigmaOne hnear certificate
+  have hq :
+      0 < actualSelectedHeightStripCarlsonSlope (sigma i) :=
+    actualSelectedHeightStripSlope_pos (hsigma i) (hsigmaOne i)
+  have hdiv :
+      alpha -
+          actualSelectedHeightFiniteStripWeightedBalancedExponent
+            beta sigma tau ≤
+        epsilon /
+          actualSelectedHeightStripCarlsonSlope (sigma i) := by
+    apply (le_div_iff₀ hq).2
+    simpa [mul_comm] using hscaled
+  refine ⟨i, hi, hlower, ?_⟩
+  linarith
+
 end PrimeNumberTheorem
