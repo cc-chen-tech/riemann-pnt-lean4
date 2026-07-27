@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicCarlsonWeightedGoodHeightTransfer
+
+namespace PrimeNumberTheorem
+
+#print axioms eventually_selectedUniformGoodHeight_gt_one_le_self
+#print axioms
+  actualZetaFiniteStrips_weightedBalancedGoodHeight_dynamicCarlson_layerNormSum_negligible
+
+end PrimeNumberTheorem
