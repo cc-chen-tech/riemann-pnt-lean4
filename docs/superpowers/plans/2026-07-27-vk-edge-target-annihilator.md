@@ -139,7 +139,7 @@ theorem annihilatedNormalizedPsiError_eq_threeScale
             (chebyshevPsi (Real.exp (y - h)) - Real.exp (y - h)))
 ```
 
-- [ ] **Step 1: Extend the contract and confirm failure**
+- [x] **Step 1: Extend the contract and confirm failure**
 
 Add `#check` lines for all three declarations above, then run:
 
@@ -149,7 +149,7 @@ lake build Test.VKEdgeTargetPairAnnihilatorContract
 
 Expected: failure at the first missing declaration.
 
-- [ ] **Step 2: Implement the zeta detector and residual identity**
+- [x] **Step 2: Implement the zeta detector and residual identity**
 
 Define:
 
@@ -163,7 +163,7 @@ Unfold `normalizedPsiResidual`, use linearity of
 `symmetricFrequencyAnnihilator`, and rewrite the target-pair term with
 `symmetricFrequencyAnnihilator_targetPair_eq_zero`.
 
-- [ ] **Step 3: Prove the exact three-scale formula**
+- [x] **Step 3: Prove the exact three-scale formula**
 
 Unfold `annihilatedNormalizedPsiError`, `symmetricFrequencyAnnihilator`,
 and `normalizedPsiError`.  Rewrite:
@@ -178,7 +178,7 @@ Real.exp (-rho.re * (y - h))
 
 using `Real.exp_add` and ring normalization.  Finish by `ring`.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run:
 
