@@ -582,3 +582,9 @@ Carlson 正零点索引，从而不要求最大实部层了解 Carlson 的枚举
 在 `c>0` 时固定 `q=c/2`，并保留 `S₀ subset S` 证书。由此，最大实部层
 只需交付有限共轭稳定种子簇及其补集 cap；局部振荡层则针对自动扩张后
 的有限簇证明主项见证，最终 PNT 振荡常数已经明确为严格正的 `c/2`。
+
+自动扩张现在还保留
+`OutsideClusterRealPartCap S beta` 本身，而不只导出 Carlson 枚举上的
+`hreHigh`。这是由 `S₀ subset S` 的补集单调性得到的。因而后续模块可以
+继续把最终簇作为 zeta 层对象使用，最大实部证书不会在进入 Carlson
+求和层后丢失。
