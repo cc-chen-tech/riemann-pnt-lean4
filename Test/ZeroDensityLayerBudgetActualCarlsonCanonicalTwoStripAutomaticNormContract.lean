@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonCanonicalTwoStripAutomaticNorm
+
+open PrimeNumberTheorem
+
+#check exists_pos_le_one_le_norm_on_finset
+#check exists_canonicalTwoStripOutsideCluster_uniform_norm_lower_bound
+#check selectedUniformGoodHeightActualCarlsonCanonicalTwoStripPNTClusterResidual_automatic
