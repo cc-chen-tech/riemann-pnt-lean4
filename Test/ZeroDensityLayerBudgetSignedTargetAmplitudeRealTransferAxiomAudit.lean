@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetSignedTargetAmplitudeRealTransfer
+
+#print axioms PrimeNumberTheorem.HasFarNaturalPointPositiveTargetAmplitudeWitness.toReal
+#print axioms PrimeNumberTheorem.HasFarNaturalPointNegativeTargetAmplitudeWitness.toReal
+#print axioms PrimeNumberTheorem.hasFarSignedTargetAmplitudeWitnesses_of_naturalPoint
