@@ -110,7 +110,65 @@ robustMargin(beta, sigma, alpha)
 Thus moving the truncation exponent by `d` loses exactly `abs d` from the
 minimum power margin.
 
-## 4. Forward upper and lower transfers
+## 4. Boundary-mass extension
+
+The positive-exponent moving-gap route does not justify letting a pointwise
+real-part gap shrink to zero: density growth and contour admissibility force a
+fixed exponent gap in that aggregation scheme. This obstruction is isolated in
+
+```text
+ZeroDensityLayerBudgetMovingGapBarrier.lean
+```
+
+The replacement is a summable actual-kernel argument. For high-strip zeros
+outside `S` satisfying only
+
+```text
+Re rho <= beta,
+```
+
+the normalized weighted tail converges to the exact nondecaying mass on the
+boundary `Re rho = beta`:
+
+```lean
+actualCarlsonOutsideClusterBoundaryMass
+
+actualCarlsonOutsideClusterNormalizedKernelTail_tendsto_boundaryMass
+```
+
+Strict pointwise separation remains available as the zero-boundary-mass special
+case:
+
+```lean
+actualCarlsonOutsideClusterBoundaryMass_eq_zero_of_lt
+```
+
+After the conjugate negative-ordinate zeros are restored, the complete nonreal
+zero contribution has coefficient `2 * boundaryMass`. The generic actual-PNT
+transfer is:
+
+```lean
+eventually_abs_actualCarlsonSelectedHeightPNTClusterResidual_lt_boundaryCoefficient_mul_targetAmplitude
+```
+
+The canonical balanced specialization is:
+
+```lean
+eventually_abs_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTClusterResidual_lt_automatic
+```
+
+It proves, for every `delta > 0`,
+
+```text
+abs(actual PNT error - visible cluster)
+  < (2 * boundaryMass + delta) * targetZeroPowerAmplitude beta
+```
+
+eventually along natural points. The balanced exponent, canonical two-strip
+input, uniform zero-kernel norm lower bound, and selected-height contour
+certificate are all constructed internally.
+
+## 5. Forward upper and lower transfers
 
 ### Empty cluster: zero gap to PNT upper bound
 
@@ -156,7 +214,45 @@ Neither lower theorem constructs the finite-cluster witness. In particular,
 the local pi/2 anti-cancellation theorem belongs to the separate sharp
 oscillation task.
 
-## 5. Quantitative reverse transfers
+### Boundary zeros: exact net cluster coefficient
+
+The unsigned boundary-mass transfer is:
+
+```lean
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTHasFarNaturalPoint_belowNetClusterConstant
+```
+
+If the visible cluster has an external witness with coefficient `c`, then every
+nonnegative coefficient
+
+```text
+q < c - 2 * boundaryMass
+```
+
+survives in the actual PNT error. The proof chooses
+
+```text
+delta = c - q - 2 * boundaryMass,
+```
+
+so the actual residual bound is exactly `(c - q) * A_beta`; there is no
+artificial factor `1 / 2`.
+
+The signed version is:
+
+```lean
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTSharpSignedTransfer_automatic
+```
+
+It transfers external positive and negative cluster witnesses throughout the
+same strict net range `q < c - 2 * boundaryMass`.
+
+This quantifies why a single zero or an arbitrary finite cluster is not enough
+by itself. Finiteness supplies neither an unsigned nor a signed witness
+coefficient `c`, and even a supplied coefficient yields a nontrivial actual-PNT
+conclusion only when it exceeds the boundary loss `2 * boundaryMass`.
+
+## 6. Quantitative reverse transfers
 
 The two-sided reverse theorem is:
 
@@ -182,30 +278,36 @@ witness.
 These reverse theorems do not imply RH. They are conditional exclusion
 principles with explicit zero-gap and cluster-witness inputs.
 
-## 6. Remaining mathematical hypotheses
+## 7. Remaining mathematical hypotheses
 
 The actual Carlson-explicit-formula residual machinery is internalized, but
 the following assumptions remain external:
 
 1. `S` is a finite conjugation-invariant cluster.
-2. Every actual positive zero outside `S` and to the right of the Carlson
-   low strip has real part strictly below `beta`.
+2. On the boundary-mass branch, every actual positive zero outside `S` and to
+   the right of the Carlson low strip has real part at most `beta`; equality is
+   retained quantitatively in `actualCarlsonOutsideClusterBoundaryMass`.
 3. Every real-ordinate nontrivial zero outside `S` has real part strictly
    below `beta`.
 4. For lower or reverse oscillation conclusions, the visible cluster supplies
    the required unsigned or signed far-point witness.
 5. Balanced feasibility requires `(1 + sigma) / 2 < beta`.
 
-Assumption 2 is the main density/oscillation boundary. Carlson density bounds
-how many zeros occur in strips; it does not by itself make every zero outside
-a fixed finite cluster satisfy a strict pointwise real-part gap.
+Assumptions 2 and 4 are the main density/oscillation boundary. Carlson density
+bounds the summable kernel mass and exposes the exact boundary coefficient; it
+does not by itself produce a positive cluster witness or prove that its
+coefficient dominates twice that boundary mass.
 
 If another zero has the same real part as the target and is not in `S`, it is
-not target-negligible under the present pointwise-gap theorem. It must be
-included in the visible cluster or handled by a separate anti-cancellation
-argument.
+not silently treated as target-negligible. It contributes to the audited
+boundary mass. It may instead be included in the visible cluster if the
+separate oscillation theorem supplies a witness for the enlarged cluster.
 
-## 7. Validation boundary
+No abstract exceptional-zero reproduction tree is introduced here. The next
+mathematical bridge remains the separate local finite-cluster oscillation
+theorem supplying `hmain`, `hmainPos`, or `hmainNeg`.
+
+## 8. Validation boundary
 
 Each module in this chain has:
 
