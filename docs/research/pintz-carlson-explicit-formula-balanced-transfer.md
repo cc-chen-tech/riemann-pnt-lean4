@@ -485,3 +485,9 @@ q x^\beta\leq |\psi_0(x)-x|.
 证明不是把无限边界层假设成有限，而是对完整的非负、可求和边界项应用 `summable_iff_vanishing_norm`：先选有限索引集捕获除 `epsilon/2` 外的全部有限尾和，再映射成真实零点 Finset，最后取共轭闭包并用边界质量反单调性保持严格上界。
 
 因此，即便 `Re rho = beta` 上可能有无限多个零点，Carlson 边界常数损失也可由某个有限主簇压到任意小。这比“整个边界层本来就是有限簇”的假设更弱，并为把任意 `q<c` 近似保真地接入实际 `psi_0(x)-x` 转移提供了定量基础。它仍不自动提供该随 `epsilon` 选择的簇的主项振荡见证；该项属于外部局部振荡任务。
+
+## 有限捕获自动适配任意严格振幅间隙
+
+`ZeroDensityLayerBudgetActualCarlsonBoundaryMassFiniteGapCapture.lean` 把 epsilon-捕获直接改写成 transfer 所需条件：只要 `q<c`，就存在共轭稳定有限簇 `S` 使 `2*B_partial(beta,S)<c-q`。特别地，若 `c>0`，存在有限稳定簇满足 `2*B_partial(beta,S)<c`。
+
+因此在 Carlson/显式公式侧，不需要假设整条 `Re rho=beta` 边界只含有限多个零点，也不需要完全捕获边界层；可求和性已经保证任何严格次于主簇系数 `c` 的目标常数都能留出足够的有限簇余量。尚未自动化的唯一相关输入，是这个按间隙选出的有限簇本身必须满足相应的主项振荡见证和外部实部条件。
