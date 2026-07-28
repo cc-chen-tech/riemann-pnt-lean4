@@ -21,6 +21,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeCosineModelAnnihilatorAverageAxiomAudit",
     "Test.VKEdgeArithmeticL2ConverseAxiomAudit",
     "Test.LocalPsiL2ZeroCriterionAxiomAudit",
+    "Test.LocalPsiL2MellinCriterionAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero",
@@ -313,6 +314,10 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.riemannZeta_ne_zero_of_localPsiL2ExponentAtMost",
     "PrimeNumberTheorem.VKEdgePiOverTwo.nontrivialZero_re_eq_half_of_localPsiL2ExponentAtMost_of_im_ne_zero",
     "PrimeNumberTheorem.VKEdgePiOverTwo.riemannHypothesis_of_localPsiL2ExponentAtMost_of_realAxis",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.differentiableAt_mellinPsiError_of_weightedLogPsiL2Above",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.weightedLogPsiL2Above_of_localPsiL2ExponentAtMost",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.riemannZeta_ne_zero_of_mellinPsiError_differentiable",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.riemannHypothesis_of_localPsiL2ExponentAtMost",
 }
 
 REPORT_RE = re.compile(

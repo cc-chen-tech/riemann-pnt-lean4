@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.LocalPsiL2MellinCriterion
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms differentiableAt_mellinPsiError_of_weightedLogPsiL2Above
+#print axioms weightedLogPsiL2Above_of_localPsiL2ExponentAtMost
+#print axioms riemannZeta_ne_zero_of_mellinPsiError_differentiable
+#print axioms riemannHypothesis_of_localPsiL2ExponentAtMost
