@@ -431,3 +431,36 @@ The audited declarations report only:
 
 No Guth-Maynard theorem, zero-reproduction tree, unconditional Omega theorem,
 or RH theorem is asserted by this chain.
+
+## 未归一化 PNT 误差的目标尺度转移
+
+`ZeroDensityLayerBudgetPNTUnnormalizedTargetAmplitudeTransfer.lean` 现在把真实相对误差见证
+
+\[
+q x^{\beta-1}\leq \left|\frac{\psi_0(x)-x}{x}\right|
+\]
+
+在任意远的正实数取样点上无损转成
+
+\[
+q x^\beta\leq |\psi_0(x)-x|.
+\]
+
+形式化证明显式使用
+`chebyshevPsi0Error x = x * relativeChebyshevPsi0Error x` 与
+`x * targetZeroPowerAmplitude beta x = x ^ beta`，因此不会在归一化转换时损失常数 `q`。同一模块同时覆盖无符号、正向、负向和双向见证。
+
+`ZeroDensityLayerBudgetActualCarlsonBalancedBoundaryPNTUnnormalizedOscillation.lean`
+进一步把 balanced Carlson boundary transfer 专门化到真实对象
+`chebyshevPsi0Error x = chebyshevPsi0 x - x`。在
+
+\[
+2\,B_{\partial}(\beta,S)<c
+\]
+
+以及外部可见主簇见证成立时，它给出某个 `q > 0`，使任意远实点上保留
+`q * x ^ beta` 级无符号振荡；正、负主簇见证同时成立时，则给出同一个正 `q` 的双向振荡证书。
+
+这里的 `q` 可以继承外部显式公式主项中已经编码的解析重数和
+`1 / |rho|` 系数，但 `hmain`、`hmainPos`、`hmainNeg` 仍是外部输入。
+所以当前结论是经过审计的条件转移定理，不是无条件 `Omega`、不是 `Omega_±` 的最终闭环，也不推出 RH。
