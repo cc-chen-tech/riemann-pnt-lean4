@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.VKEdgeCosineModelAnnihilatorAverage
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms frequencyAnnihilatorMultiplier_target
+#print axioms intervalIntegral_frequencyAnnihilatorMultiplier_sq
+#print axioms tendsto_normalizedStepMultiplierEnergy
+#print axioms eventually_two_le_normalizedStepMultiplierEnergy
+#print axioms exists_step_intervalIntegral_annihilatedExponentialPolynomial_pos
