@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetWindowEnergySeparationScaled
+
+open PrimeNumberTheorem
+
+#check HasFarWindowCardAdvantage.scaleBoth
+#check HasFarWindowEnergySeparation.toScaledWindowCardAdvantage
