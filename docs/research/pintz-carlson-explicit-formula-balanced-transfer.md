@@ -621,3 +621,25 @@ error facade。对同一个 `sigma`，定理同时选择固定正速率 `rate` �
 条带参数和有限簇证书的统一；它仍明确保留局部振荡输入
 `hmain` 或 `hmainPos`/`hmainNeg`，因此不声称无条件 `Omega`、`Omega_±`
 或 RH。
+
+## 种子簇见证在有限扩张下的定量稳定性
+
+`ZeroDensityLayerBudgetVisibleClusterSeedExtension.lean` 证明实际 visible
+main term 的精确有限和分解
+
+\[
+M_S(x)=M_{S_0}(x)+M_{S\setminus S_0}(x)
+\qquad(S_0\subseteq S).
+\]
+
+因此，若局部振荡任务给出种子簇 `S₀` 在尺度 `c*A(m)` 上的任意远见证，
+而自动新增部分最终满足
+
+\[
+|M_{S\setminus S_0}(m)|<dA(m),
+\]
+
+则最终簇 `S` 在 `(c-d)*A(m)` 尺度上仍有任意远见证。无符号、正向和
+负向版本使用同一个新增项预算。这个引理没有假设新增项自动很小，而是
+把原先要求调用者直接证明最终簇 `hmain` 的缺口，精确拆成“种子簇局部
+振荡”和“新增有限项预算”两个可审计输入。
