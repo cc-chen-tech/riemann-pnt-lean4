@@ -96,3 +96,19 @@ no finite extension can satisfy both required budgets.  This explains
 precisely why a finite seed oscillation coefficient alone is insufficient:
 one still needs a strict quantitative dominance over the seed's entire
 remaining Carlson boundary mass.
+
+## Conjugate capture cost
+
+Carlson boundary mass counts positive-height zeros.  For a finite cluster
+that is conjugation-stable and whose members are all nontrivial zeta zeros,
+the finite visible coefficient mass pays for both signs:
+
+`2 * captured positive Carlson boundary mass
+  <= finite visible cluster coefficient mass`.
+
+This sharper factor is conditional only on an explicit finite-cluster
+membership certificate.  The current finite-seed selector reports boundary
+support and real-part caps, but does not yet expose the stronger declaration
+that every newly adjoined member is a nontrivial zeta zero.  That interface
+gap must be closed before using the factor-two estimate automatically in the
+actual-PNT transfer.
