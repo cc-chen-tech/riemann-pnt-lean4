@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDynamicBoundaryWitnessTransfer
+
+open PrimeNumberTheorem
+
+#print axioms actualDynamicBoundaryMainWitness_naturalTransfer
+#print axioms actualDynamicBoundaryMainWitness_realTransfer
