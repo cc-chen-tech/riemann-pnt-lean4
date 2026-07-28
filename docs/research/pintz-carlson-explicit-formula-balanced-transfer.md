@@ -491,3 +491,31 @@ q x^\beta\leq |\psi_0(x)-x|.
 `ZeroDensityLayerBudgetActualCarlsonBoundaryMassFiniteGapCapture.lean` 把 epsilon-捕获直接改写成 transfer 所需条件：只要 `q<c`，就存在共轭稳定有限簇 `S` 使 `2*B_partial(beta,S)<c-q`。特别地，若 `c>0`，存在有限稳定簇满足 `2*B_partial(beta,S)<c`。
 
 因此在 Carlson/显式公式侧，不需要假设整条 `Re rho=beta` 边界只含有限多个零点，也不需要完全捕获边界层；可求和性已经保证任何严格次于主簇系数 `c` 的目标常数都能留出足够的有限簇余量。尚未自动化的唯一相关输入，是这个按间隙选出的有限簇本身必须满足相应的主项振荡见证和外部实部条件。
+
+## 有限 transfer 簇的结构条件自动构造
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteGapTransferCluster.lean` 继续消除了
+有限捕获簇上的结构性外部条件。给定任意有限簇 `S`，定义
+`actualCarlsonAdjoinRealOrdinateZeros S`，把高度零处全部非平凡零点并入
+`S`。该高度切片是有限集；其成员在复共轭下逐点不变。因此：
+
+- 若 `S` 共轭稳定，并入后的有限簇仍共轭稳定；
+- 并入后，实轴纵坐标零点的簇外补集严格为空；
+- 扩大主簇只会减小 Carlson 簇外边界质量。
+
+于是，只要全局给定实际 Carlson 正零点的实部上界
+
+\[
+\operatorname{Re}\rho\leq\beta,
+\]
+
+并且 `q<c`，就存在一个有限共轭稳定簇同时满足：
+
+- 所有簇外正纵坐标零点的实部不超过 `beta`；
+- 所有簇外实轴纵坐标零点的实部严格小于 `beta`，因为该补集为空；
+- `2*B_partial(beta,S)<c-q`。
+
+这正是 balanced-boundary transfer 在 Carlson 侧需要的完整结构证书。
+它没有构造该有限簇的主项振荡；`hmain`、`hmainPos`、`hmainNeg` 仍由
+独立的局部有限簇振荡任务提供。因此此处闭合的是密度与补集余项条件，
+不是无条件 `Omega` 或 `Omega_±` 定理。
