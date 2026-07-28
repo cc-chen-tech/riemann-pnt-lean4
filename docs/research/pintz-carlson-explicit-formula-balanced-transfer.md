@@ -588,3 +588,15 @@ Carlson 正零点索引，从而不要求最大实部层了解 Carlson 的枚举
 `hreHigh`。这是由 `S₀ subset S` 的补集单调性得到的。因而后续模块可以
 继续把最终簇作为 zeta 层对象使用，最大实部证书不会在进入 Carlson
 求和层后丢失。
+
+## 边界质量捕获的支持集净化
+
+`ZeroDensityLayerBudgetActualCarlsonBoundaryMassFiniteGapSupportedCapture.lean`
+证明 Carlson 边界质量只依赖有限簇在 `Re rho=beta` 上的部分。将任意
+有限簇过滤到该边界后，边界质量严格相等，共轭稳定性保持。因此
+finite-gap 捕获簇可以选择成每个成员都满足 `rho.re=beta`。
+
+有限种子簇扩张已改用这一净化版本，并公开证明：最终簇中既不属于
+`S₀`、也不属于高度零有限集的每个新增成员都位于 `Re rho=beta`。这不会
+解决有限边界簇自身的相位抵消，但排除了自动捕获步骤向局部振荡问题
+引入任意较低实部零点的可能性。
