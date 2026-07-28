@@ -102,6 +102,15 @@ theorem actualEqualRealPartZeroPackageDiagonalEnergy_pos_of_nonempty
       (norm_pos_iff.mpr (mul_ne_zero horder_ne (inv_ne_zero hrho_zero))) 2
   · exact hnonempty
 
+/-- A specified nontrivial zeta zero belongs to its equal-real-part package
+as soon as the package height covers its ordinate. -/
+theorem equalRealPartZeroPackage_nonempty_of_nontrivialZero
+    {rho : ℂ} {T : ℝ}
+    (hzero : RiemannHypothesis.IsNontrivialZero rho)
+    (hT : |rho.im| ≤ T) :
+    (equalRealPartZeroPackage T rho.re).Nonempty := by
+  exact ⟨rho, mem_equalRealPartZeroPackage.mpr ⟨hzero, hT, rfl⟩⟩
+
 /-- Nonemptiness of the actual equal-real-part package is enough to choose a
 positive window length with positive mean-square energy. -/
 theorem exists_actualEqualRealPartZeroPackageEnergy_pos_of_nonempty
@@ -111,6 +120,17 @@ theorem exists_actualEqualRealPartZeroPackageEnergy_pos_of_nonempty
       0 < actualEqualRealPartZeroPackageEnergy T beta L :=
   exists_actualEqualRealPartZeroPackageEnergy_pos
     (actualEqualRealPartZeroPackageDiagonalEnergy_pos_of_nonempty hnonempty)
+
+/-- A specified covered nontrivial zeta zero is enough to choose a positive
+mean-square window for its full equal-real-part package. -/
+theorem exists_actualEqualRealPartZeroPackageEnergy_pos_of_nontrivialZero
+    {rho : ℂ} {T : ℝ}
+    (hzero : RiemannHypothesis.IsNontrivialZero rho)
+    (hT : |rho.im| ≤ T) :
+    ∃ L : ℝ, 0 < L ∧
+      0 < actualEqualRealPartZeroPackageEnergy T rho.re L :=
+  exists_actualEqualRealPartZeroPackageEnergy_pos_of_nonempty
+    (equalRealPartZeroPackage_nonempty_of_nontrivialZero hzero hT)
 
 /-- The actual zero-package/Carlson transfer with the window length chosen
 from positivity of the diagonal energy rather than supplied together with a
