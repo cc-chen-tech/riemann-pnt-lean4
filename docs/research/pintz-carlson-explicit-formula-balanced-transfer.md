@@ -274,6 +274,32 @@ The second conclusion is conditional `Omega_+-style` data along natural points:
 it still requires the external positive and negative visible-cluster witnesses,
 but no longer requires the caller to guess a transferable coefficient.
 
+The real-variable target-scale interfaces are:
+
+```lean
+HasFarPositiveTargetAmplitudeWitness
+
+HasFarNegativeTargetAmplitudeWitness
+
+HasFarSignedTargetAmplitudeWitnesses
+```
+
+Natural-point signed witnesses embed into these interfaces, so the final
+conditional conclusions act directly on
+`relativeChebyshevPsi0Error : Real -> Real`:
+
+```lean
+exists_pos_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTHasFarRealPoint
+
+exists_pos_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTSharpSignedRealWitnesses
+```
+
+Under `2 * boundaryMass < c`, the first produces an unsigned real-variable
+target-scale witness with some coefficient `q > 0`; the second produces one
+common `q > 0` with arbitrarily far positive and negative real witnesses. These
+are transfer theorems, not unconditional `Omega` or `Omega_+-` theorems, because
+their visible-cluster witness hypotheses remain external.
+
 This quantifies why a single zero or an arbitrary finite cluster is not enough
 by itself. Finiteness supplies neither an unsigned nor a signed witness
 coefficient `c`, and even a supplied coefficient yields a nontrivial actual-PNT
