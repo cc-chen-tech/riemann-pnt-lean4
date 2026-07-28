@@ -247,6 +247,33 @@ selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTSharpSignedTransfer_aut
 It transfers external positive and negative cluster witnesses throughout the
 same strict net range `q < c - 2 * boundaryMass`.
 
+The exact nontriviality criterion is formalized as:
+
+```lean
+exists_pos_lt_cluster_sub_two_mul_boundary_iff
+```
+
+It proves:
+
+```text
+(exists q > 0, q < c - 2 * boundaryMass)
+  iff
+2 * boundaryMass < c.
+```
+
+Consequently the following theorems automatically produce some common positive
+coefficient on the actual PNT target scale:
+
+```lean
+exists_pos_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTHasFarNaturalPoint
+
+exists_pos_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTSharpSignedWitnesses
+```
+
+The second conclusion is conditional `Omega_+-style` data along natural points:
+it still requires the external positive and negative visible-cluster witnesses,
+but no longer requires the caller to guess a transferable coefficient.
+
 This quantifies why a single zero or an arbitrary finite cluster is not enough
 by itself. Finiteness supplies neither an unsigned nor a signed witness
 coefficient `c`, and even a supplied coefficient yields a nontrivial actual-PNT
