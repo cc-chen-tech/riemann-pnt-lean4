@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonFiniteAffineLogThresholdDecay
+
+namespace PrimeNumberTheorem
+
+#print axioms carlsonFiniteAffineBalancedLogPowerMajorant_eq_weighted
+#print axioms carlsonFiniteAffineBalancedLogPowerMajorant_le_optimalPhysical
+#print axioms tendsto_carlsonFiniteAffineBalancedLogPowerMajorant_zero_of_threshold
+
+end PrimeNumberTheorem
