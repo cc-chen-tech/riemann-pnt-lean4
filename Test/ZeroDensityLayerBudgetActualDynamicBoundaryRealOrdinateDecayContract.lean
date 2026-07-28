@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDynamicBoundaryRealOrdinateDecay
+
+namespace PrimeNumberTheorem
+
+#check actualDynamicBoundaryRealOrdinateTerm
+#check actualDynamicBoundaryRealOrdinateTerm_nonneg
+#check actualDynamicBoundaryRealOrdinateTerm_tendsto_zero
+#check actualDynamicBoundaryRealOrdinateTerm_sum_tendsto_zero
+#check actualDynamicBoundaryRealNormalizedSum_tendsto_zero
+
+end PrimeNumberTheorem
