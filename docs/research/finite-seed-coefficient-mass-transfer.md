@@ -62,3 +62,25 @@ Hence extension mass below `addedAllowance` and final outside mass below
 `outsideAllowance` force the seed's original outside mass below their sum.
 This is a necessary quantitative compatibility condition for the
 coefficient-mass actual-PNT transfer.
+
+## Sharp finite-extension barrier
+
+If an extension is required to satisfy
+
+`finite mass of (S \ S₀) < loss`
+
+and
+
+`2 * outside mass of S < gap`,
+
+then necessarily
+
+`outside mass of S₀ < loss + gap / 2`.
+
+For the canonical half-retention gap this becomes
+
+`outside mass of S₀ < loss + (c - loss) / 4`.
+
+The contrapositive is formalized as a nonexistence theorem for finite
+extensions.  This states the exact arithmetic threshold that creates a
+contradiction; it does not invoke or formalize a zero-reproduction tree.
