@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonDynamicFullZeroDecay
+
+open Filter
+
+open PrimeNumberTheorem
+
+#check actualCarlsonDynamicRealOrdinateNormalizedSum
+#check actualCarlsonDynamicTruncatedFullZeroNormalizedSum
+#check actualCarlsonDynamicRealOrdinateNormalizedSum_tendsto_zero
+#check actualCarlsonDynamicTruncatedFullZeroNormalizedSum_tendsto_zero
