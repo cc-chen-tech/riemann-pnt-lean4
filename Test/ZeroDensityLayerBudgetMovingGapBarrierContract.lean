@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetMovingGapBarrier
+
+#check PrimeNumberTheorem.pntMovingDensityLogMargin
+#check PrimeNumberTheorem.IsMovingDensityGapAdmissible
+#check PrimeNumberTheorem.pntMovingDensityNormalizedRatio
+#check PrimeNumberTheorem.tendsto_pntMovingDensityNormalizedRatio_zero
+#check PrimeNumberTheorem.eventually_fixedGap_of_contour_and_movingDensity
+#check PrimeNumberTheorem.not_movingDensityGap_tendsto_zero_of_contour
