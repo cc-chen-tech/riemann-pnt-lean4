@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridLowLayerOptimizer
+
+#print axioms PrimeNumberTheorem.pntHybridLowOptimizedTargetExponent_le_max
+#print axioms PrimeNumberTheorem.exists_pos_heightExponent_lowLayer_and_contour_neg_iff
+#print axioms PrimeNumberTheorem.exists_pos_heightExponent_criticalHalf_and_contour_neg_iff
