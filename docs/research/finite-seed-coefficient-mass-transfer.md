@@ -32,3 +32,15 @@ The current theorem exposes this finite allocation tradeoff instead of hiding
 it in a functional eventual hypothesis.  It does not prove that a suitable
 allocation always exists, does not formalize a zero-reproduction argument, and
 does not imply RH or an unconditional Omega theorem.
+
+## Indexed boundary allocation
+
+At the Carlson positive-zero index level there is now an exact identity
+
+`total boundary mass = captured boundary mass + outside boundary mass`.
+
+Consequently, strict captured and outside allowances imply the same summed
+allowance for the total boundary layer.  This is the precise budget
+obstruction behind finite capture.  The captured term is intentionally kept
+as an indexed sum: identifying it with the finite distinct-zero coefficient
+mass requires a separate uniqueness and counting argument.
