@@ -464,3 +464,14 @@ q x^\beta\leq |\psi_0(x)-x|.
 这里的 `q` 可以继承外部显式公式主项中已经编码的解析重数和
 `1 / |rho|` 系数，但 `hmain`、`hmainPos`、`hmainNeg` 仍是外部输入。
 所以当前结论是经过审计的条件转移定理，不是无条件 `Omega`、不是 `Omega_±` 的最终闭环，也不推出 RH。
+
+## 边界层完全捕获后的无损转移
+
+`ZeroDensityLayerBudgetActualCarlsonBalancedBoundaryPNTUnnormalizedBoundaryCapturedOscillation.lean`
+把已有的 boundary-capture 结论提升到了真实未归一化误差。若有限可见簇 `S` 包含每个满足 `Re rho = beta` 的 Carlson 正零点索引，则外部边界质量严格为零。于是：
+
+- 对每个 `0 <= q < c`，无符号主簇见证转成 `|psi_0(x)-x| >= q*x^beta` 的任意远实点见证；
+- 对每个 `0 <= q < c`，正、负主簇见证转成同一个 `q*x^beta` 尺度的双向任意远实点见证；
+- 若 `0 < c`，可以规范地取显式正常数 `q=c/2`。
+
+这说明 Carlson 补集在目标实部边界上的全部常数损失确实集中于未捕获边界质量 `B_partial(beta,S)`；一旦边界层被主簇吸收，转移阈值从 `q<c-2B_partial` 恢复为 `q<c`。剩余未闭合项仍是外部主簇的无符号或双向振荡见证，而不是密度/显式公式余项。
