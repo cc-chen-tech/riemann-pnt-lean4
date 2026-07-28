@@ -541,3 +541,9 @@ q x^\beta\leq |\psi_0(x)-x|.
 调用者逐项组装。剩余缺口被精确收缩为：独立局部振荡任务必须对这个
 按 `q<c` 选择的有限簇给出 `dynamicVisibleClusterPNTMain` 的 `hmain`。
 该接口没有假设或声称已经证明这个局部振荡输入。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteGapPNTSignedUnnormalizedTransfer.lean`
+给出同一选择过程的双向版本。它只选择一个有限共轭稳定簇，并要求该簇
+在相同系数 `c` 下分别提供正向和负向主项见证；结论是在同一个严格次级
+系数 `q<c` 上得到 `psi_0(x)-x` 的正、负任意远实点见证。因而双向链的
+Carlson 侧也已经内部化，但这仍是条件性的 `Omega_±` 转移接口。
