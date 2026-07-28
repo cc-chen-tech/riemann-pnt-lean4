@@ -577,3 +577,8 @@ Carlson 正零点索引，从而不要求最大实部层了解 Carlson 的枚举
 实际有限簇，并分别提供无符号和同一 `q*x^beta` 尺度的双向条件转移。
 尚未闭合的输入仍精确是扩张后有限簇的 `hmain` 或
 `hmainPos`/`hmainNeg`，而不是 Carlson 补集条件。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedGapPNTCanonicalUnnormalizedTransfer.lean`
+在 `c>0` 时固定 `q=c/2`，并保留 `S₀ subset S` 证书。由此，最大实部层
+只需交付有限共轭稳定种子簇及其补集 cap；局部振荡层则针对自动扩张后
+的有限簇证明主项见证，最终 PNT 振荡常数已经明确为严格正的 `c/2`。
