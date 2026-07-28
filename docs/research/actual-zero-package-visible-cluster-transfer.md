@@ -12,6 +12,10 @@ The theorem chain proves:
    `-x^-1` times that fixed package contribution.
 4. The mean-square witness therefore has the exact visible-main scale
    `sqrt(actualEqualRealPartZeroPackageEnergy T beta L) * x^(beta - 1)`.
+5. For every cofinal dynamic height `H`, these window witnesses assemble into
+   `HasFarTargetAmplitudeWitness` with amplitude
+   `sqrt(actualEqualRealPartZeroPackageEnergy T beta L) *
+   targetZeroPowerAmplitude beta`.
 
 The energy coefficient is not replaced by `1`.  A nontrivial downstream
 oscillation statement must retain its positivity and compare all Carlson and
