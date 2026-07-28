@@ -275,6 +275,26 @@ selectedUniformGoodHeightActualCarlsonBalancedPNTEventualLower_forces_emptyClust
 They require only the corresponding one-sided PNT bound and signed cluster
 witness.
 
+The boundary-mass branch has the parallel declarations:
+
+```lean
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTEventualUpper_forces_emptyCluster_automatic
+
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTEventualUpper_forces_emptyCluster_of_positiveWitness_automatic
+
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTEventualLower_forces_emptyCluster_of_negativeWitness_automatic
+```
+
+Here the sharp comparison hypothesis is no longer `q < c`, but
+
+```text
+q < c - 2 * boundaryMass.
+```
+
+Thus the same explicit boundary coefficient governs forward unsigned transfer,
+forward signed transfer, two-sided reverse exclusion, and one-sided reverse
+exclusion.
+
 These reverse theorems do not imply RH. They are conditional exclusion
 principles with explicit zero-gap and cluster-witness inputs.
 
