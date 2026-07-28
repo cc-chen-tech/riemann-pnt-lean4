@@ -547,3 +547,8 @@ q x^\beta\leq |\psi_0(x)-x|.
 在相同系数 `c` 下分别提供正向和负向主项见证；结论是在同一个严格次级
 系数 `q<c` 上得到 `psi_0(x)-x` 的正、负任意远实点见证。因而双向链的
 Carlson 侧也已经内部化，但这仍是条件性的 `Omega_±` 转移接口。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteGapPNTCanonicalUnnormalizedTransfer.lean`
+在 `c>0` 时进一步固定 `q=c/2`。Lean 同时证明该规范系数严格为正，并
+自动选择满足 `2*B_partial<c-c/2` 的有限簇。无符号与双向定理因此都向
+局部振荡任务暴露一个无需额外算术选择的具体目标常数。
