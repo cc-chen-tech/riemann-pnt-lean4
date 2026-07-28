@@ -1,0 +1,4 @@
+import MathlibAux.DriftingExponentialPolynomialHilbert
+
+#print axioms MathlibAux.abs_intervalIntegral_normSq_exponentialPolynomial_sub_diagonal_le_localSeparation
+#print axioms MathlibAux.integral_normSq_driftingExponentialPolynomial_ge_merged_localSeparation

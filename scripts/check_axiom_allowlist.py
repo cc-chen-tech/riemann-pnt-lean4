@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_localSeparation",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_pos_of_localSeparation",
     "PrimeNumberTheorem.VKEdgePiOverTwo.half_norm_finiteZeroClusterCoefficientAt_le_neg_im",
     "PrimeNumberTheorem.VKEdgePiOverTwo.half_sum_norm_finiteZeroClusterCoefficientAt_le_norm_mergedFrequencyCoefficient",
     "PrimeNumberTheorem.VKEdgePiOverTwo.quarter_sum_sameOrdinateFiberMass_sq_le_mergedFrequencyEnergy",
@@ -23,6 +26,8 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.integral_normSq_driftingExponentialPolynomial_ge_merged",
     "MathlibAux.integral_normSq_driftingExponentialPolynomial_pos_merged",
     "MathlibAux.integral_normSq_driftingExponentialPolynomial_pos",
+    "MathlibAux.abs_intervalIntegral_normSq_exponentialPolynomial_sub_diagonal_le_localSeparation",
+    "MathlibAux.integral_normSq_driftingExponentialPolynomial_ge_merged_localSeparation",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_psiError_in_powerOnePlusEpsilonWindow_gt_uniformBellottiGap",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_positive_measure_in_epsilonLogWindow_gt_uniformBellottiGap",
