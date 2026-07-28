@@ -71,6 +71,47 @@ theorem exists_actualEqualRealPartZeroPackageEnergy_pos
   refine ⟨L, hL, actualEqualRealPartZeroPackageEnergy_pos_of_offDiagonal_lt hL ?_⟩
   simpa [B, D] using hbudget
 
+/-- Every member of the actual package contributes a strictly positive
+diagonal term, so a nonempty package has positive diagonal energy. -/
+theorem actualEqualRealPartZeroPackageDiagonalEnergy_pos_of_nonempty
+    {T beta : ℝ}
+    (hnonempty : (equalRealPartZeroPackage T beta).Nonempty) :
+    0 < actualEqualRealPartZeroPackageDiagonalEnergy T beta := by
+  unfold actualEqualRealPartZeroPackageDiagonalEnergy
+  apply Finset.sum_pos
+  · intro rho hrho
+    have hmem := mem_equalRealPartZeroPackage.mp hrho
+    rcases hmem.1 with ⟨hzeta, hre_pos, hre_lt⟩
+    have hrho_zero : rho ≠ 0 := by
+      intro hz
+      have hzre := congrArg Complex.re hz
+      simp only [Complex.zero_re] at hzre
+      linarith
+    have hrho_one : rho ≠ 1 := by
+      intro hone
+      have honere := congrArg Complex.re hone
+      norm_num at honere
+      linarith
+    have horder : 0 < analyticOrderNatAt riemannZeta rho :=
+      ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero
+        hrho_one hzeta
+    have horder_ne :
+        (analyticOrderNatAt riemannZeta rho : ℂ) ≠ 0 := by
+      exact_mod_cast Nat.ne_of_gt horder
+    exact pow_pos
+      (norm_pos_iff.mpr (mul_ne_zero horder_ne (inv_ne_zero hrho_zero))) 2
+  · exact hnonempty
+
+/-- Nonemptiness of the actual equal-real-part package is enough to choose a
+positive window length with positive mean-square energy. -/
+theorem exists_actualEqualRealPartZeroPackageEnergy_pos_of_nonempty
+    {T beta : ℝ}
+    (hnonempty : (equalRealPartZeroPackage T beta).Nonempty) :
+    ∃ L : ℝ, 0 < L ∧
+      0 < actualEqualRealPartZeroPackageEnergy T beta L :=
+  exists_actualEqualRealPartZeroPackageEnergy_pos
+    (actualEqualRealPartZeroPackageDiagonalEnergy_pos_of_nonempty hnonempty)
+
 /-- The actual zero-package/Carlson transfer with the window length chosen
 from positivity of the diagonal energy rather than supplied together with a
 separate package-energy hypothesis. -/
@@ -106,5 +147,37 @@ theorem unified_parametricPNTUpper_actualZeroPackageCarlsonLower_of_diagonalEner
     unified_parametricPNTUpper_actualZeroPackageEnergyCarlsonLower
       threshold hhalf hlt hbeta L hL henergy hmargin certificate
         remainderCertificate⟩
+
+/-- The actual zero-package/Carlson transfer with its mean-square window
+chosen automatically from nonemptiness of the equal-real-part package. -/
+theorem unified_parametricPNTUpper_actualZeroPackageCarlsonLower_of_nonempty
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {T beta alpha : ℝ} (hbeta : 0 < beta)
+    (hnonempty : (equalRealPartZeroPackage T beta).Nonempty)
+    (hmargin : 1 - beta < alpha)
+    {n : ℕ}
+    {input : (x : ℝ) →
+      PositiveZeroOutsideClusterBucketInput
+        (carlsonPolynomialHeight alpha x)
+        (equalRealPartZeroPackage T beta) n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate beta alpha
+        (equalRealPartZeroPackage T beta) n input)
+    (remainderCertificate :
+      ActualPolynomialExplicitFormulaRemainderCertificate alpha) :
+    ∃ L : ℝ, 0 < L ∧
+      ((∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+          Filter.Tendsto
+            (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+            Filter.atTop (nhds 0)) ∧
+        HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+          (fun x =>
+            Real.sqrt (actualEqualRealPartZeroPackageEnergy T beta L) *
+                targetZeroPowerAmplitude beta x /
+              2)) :=
+  unified_parametricPNTUpper_actualZeroPackageCarlsonLower_of_diagonalEnergy_pos
+    threshold hhalf hlt hbeta
+      (actualEqualRealPartZeroPackageDiagonalEnergy_pos_of_nonempty hnonempty)
+      hmargin certificate remainderCertificate
 
 end PrimeNumberTheorem
