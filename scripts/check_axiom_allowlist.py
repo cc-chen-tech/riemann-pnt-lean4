@@ -19,6 +19,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeCosineModelAnnihilatorAxiomAudit",
     "Test.VKEdgeExplicitFormulaPairBridgeAxiomAudit",
     "Test.VKEdgeCosineModelAnnihilatorAverageAxiomAudit",
+    "Test.VKEdgeResidualAmplificationNoGoAxiomAudit",
     "Test.VKEdgeArithmeticL2ConverseAxiomAudit",
     "Test.LocalPsiL2ZeroCriterionAxiomAudit",
     "Test.LocalPsiL2MellinCriterionAxiomAudit",
@@ -318,6 +319,9 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.weightedLogPsiL2Above_of_localPsiL2ExponentAtMost",
     "PrimeNumberTheorem.VKEdgePiOverTwo.riemannZeta_ne_zero_of_mellinPsiError_differentiable",
     "PrimeNumberTheorem.VKEdgePiOverTwo.riemannHypothesis_of_localPsiL2ExponentAtMost",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosinePairModel_sq_ge",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosinePairModel_sq_ge_linear",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.pureCosineModel_linearEnergy_and_annihilator_zero",
 }
 
 REPORT_RE = re.compile(

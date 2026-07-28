@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.VKEdgeResidualAmplificationNoGo
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms integral_Icc_cosinePairModel_sq_ge
+#print axioms integral_Icc_cosinePairModel_sq_ge_linear
+#print axioms pureCosineModel_linearEnergy_and_annihilator_zero
