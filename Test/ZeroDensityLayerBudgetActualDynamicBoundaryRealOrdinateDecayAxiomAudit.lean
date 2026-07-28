@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDynamicBoundaryRealOrdinateDecay
+
+open PrimeNumberTheorem
+
+#print axioms actualDynamicBoundaryRealOrdinateTerm_tendsto_zero
+#print axioms actualDynamicBoundaryRealOrdinateTerm_sum_tendsto_zero
+#print axioms actualDynamicBoundaryRealNormalizedSum_tendsto_zero
