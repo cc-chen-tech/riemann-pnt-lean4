@@ -29,6 +29,10 @@ theorem exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorCanonicalSharpRealTr
       0 < c / 2 ∧
       (∀ rho : ℂ, rho ∈ S ↔ (starRingEnd ℂ) rho ∈ S) ∧
       OutsideClusterRealPartCap S beta ∧
+      (∀ rho ∈ S,
+        rho ∉ S₀ →
+          rho ∉ realOrdinateNontrivialZerosFinset 0 →
+            rho.re = beta) ∧
       (∀ index : ActualCarlsonPositiveZeroIndex sigma,
         actualCarlsonPositiveZero index ∉ S →
           actualCarlsonPositiveZeroRealPart index ≤ beta) ∧
@@ -51,9 +55,10 @@ theorem exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorCanonicalSharpRealTr
   rcases
       exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorSharpRealTransfer
         selection hS₀ hhalf hone hbalance hq hqC hcap with
-    ⟨S, hseed, hS, hcapS, hreHigh, hreReal, hgap, htransfer⟩
+    ⟨S, hseed, hS, hcapS, hsupport, hreHigh, hreReal, hgap, htransfer⟩
   exact
-    ⟨S, hseed, by linarith, hS, hcapS, hreHigh, hreReal, hgap, htransfer⟩
+    ⟨S, hseed, by linarith, hS, hcapS, hsupport,
+      hreHigh, hreReal, hgap, htransfer⟩
 
 /-- Positive and negative finite-seed visible-cluster witnesses transfer at
 the same canonical coefficient `c / 2`. -/
@@ -71,6 +76,10 @@ theorem exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorCanonicalSharpSigned
       0 < c / 2 ∧
       (∀ rho : ℂ, rho ∈ S ↔ (starRingEnd ℂ) rho ∈ S) ∧
       OutsideClusterRealPartCap S beta ∧
+      (∀ rho ∈ S,
+        rho ∉ S₀ →
+          rho ∉ realOrdinateNontrivialZerosFinset 0 →
+            rho.re = beta) ∧
       (∀ index : ActualCarlsonPositiveZeroIndex sigma,
         actualCarlsonPositiveZero index ∉ S →
           actualCarlsonPositiveZeroRealPart index ≤ beta) ∧
@@ -100,8 +109,9 @@ theorem exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorCanonicalSharpSigned
   rcases
       exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorSharpSignedRealTransfer
         selection hS₀ hhalf hone hbalance hq hqC hcap with
-    ⟨S, hseed, hS, hcapS, hreHigh, hreReal, hgap, htransfer⟩
+    ⟨S, hseed, hS, hcapS, hsupport, hreHigh, hreReal, hgap, htransfer⟩
   exact
-    ⟨S, hseed, by linarith, hS, hcapS, hreHigh, hreReal, hgap, htransfer⟩
+    ⟨S, hseed, by linarith, hS, hcapS, hsupport,
+      hreHigh, hreReal, hgap, htransfer⟩
 
 end PrimeNumberTheorem

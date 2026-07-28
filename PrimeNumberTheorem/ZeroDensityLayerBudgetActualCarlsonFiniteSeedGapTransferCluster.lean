@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonFiniteGapTransferCluster
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonBoundaryMassFiniteGapSupportedCapture
 import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridCanonicalOutsideClusterCapTransfer
 
 /-!
@@ -41,6 +42,10 @@ theorem exists_actualCarlsonFiniteSeedGapTransferCluster
       (∀ rho ∈ S₀, rho ∈ S) ∧
       (∀ rho : ℂ, rho ∈ S ↔ (starRingEnd ℂ) rho ∈ S) ∧
       OutsideClusterRealPartCap S beta ∧
+      (∀ rho ∈ S,
+        rho ∉ S₀ →
+          rho ∉ realOrdinateNontrivialZerosFinset 0 →
+            rho.re = beta) ∧
       (∀ index : ActualCarlsonPositiveZeroIndex sigma,
         actualCarlsonPositiveZero index ∉ S →
           actualCarlsonPositiveZeroRealPart index ≤ beta) ∧
@@ -49,9 +54,9 @@ theorem exists_actualCarlsonFiniteSeedGapTransferCluster
       2 * actualCarlsonOutsideClusterBoundaryMass
           (sigma := sigma) beta S < c - q := by
   rcases
-      exists_conjugationStable_actualCarlsonOutsideClusterBoundaryMass_two_mul_lt_gap
+      exists_conjugationStable_boundarySupported_actualCarlsonOutsideClusterBoundaryMass_two_mul_lt_gap
         hhalf hone hqC with
-    ⟨S₁, hS₁, hgap⟩
+    ⟨S₁, hS₁, hS₁Boundary, hgap⟩
   let S :=
     actualCarlsonAdjoinRealOrdinateZeros (S₁ ∪ S₀)
   have hUnion :
@@ -73,6 +78,20 @@ theorem exists_actualCarlsonFiniteSeedGapTransferCluster
     apply hcap rho hzero
     intro hrho
     exact hout (hseed rho hrho)
+  have hsupport :
+      ∀ rho ∈ S,
+        rho ∉ S₀ →
+          rho ∉ realOrdinateNontrivialZerosFinset 0 →
+            rho.re = beta := by
+    intro rho hrho houtSeed houtReal
+    have hrho' :
+        rho ∈ (S₁ ∪ S₀) ∪ realOrdinateNontrivialZerosFinset 0 := by
+      simpa [S, actualCarlsonAdjoinRealOrdinateZeros] using hrho
+    rcases Finset.mem_union.mp hrho' with hUnion | hReal
+    · rcases Finset.mem_union.mp hUnion with hBoundary | hSeed
+      · exact hS₁Boundary rho hBoundary
+      · exact False.elim (houtSeed hSeed)
+    · exact False.elim (houtReal hReal)
   have hreHigh :
       ∀ index : ActualCarlsonPositiveZeroIndex sigma,
         actualCarlsonPositiveZero index ∉ S →
@@ -114,7 +133,7 @@ theorem exists_actualCarlsonFiniteSeedGapTransferCluster
     exact
       actualCarlsonOutsideClusterBoundaryMass_adjoinRealOrdinate_le
         (S₁ ∪ S₀) hhalf hone
-  refine ⟨S, hseed, hS, hcapS, hreHigh, hreReal, ?_⟩
+  refine ⟨S, hseed, hS, hcapS, hsupport, hreHigh, hreReal, ?_⟩
   linarith
 
 end PrimeNumberTheorem

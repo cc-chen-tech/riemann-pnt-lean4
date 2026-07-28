@@ -34,6 +34,10 @@ theorem exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorSharpRealTransfer
       (∀ rho ∈ S₀, rho ∈ S) ∧
       (∀ rho : ℂ, rho ∈ S ↔ (starRingEnd ℂ) rho ∈ S) ∧
       OutsideClusterRealPartCap S beta ∧
+      (∀ rho ∈ S,
+        rho ∉ S₀ →
+          rho ∉ realOrdinateNontrivialZerosFinset 0 →
+            rho.re = beta) ∧
       (∀ index : ActualCarlsonPositiveZeroIndex sigma,
         actualCarlsonPositiveZero index ∉ S →
           actualCarlsonPositiveZeroRealPart index ≤ beta) ∧
@@ -54,8 +58,9 @@ theorem exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorSharpRealTransfer
   rcases
       exists_actualCarlsonFiniteSeedGapTransferCluster
         hS₀ hhalf hone hqC hcap with
-    ⟨S, hseed, hS, hcapS, hreHigh, hreReal, hgap⟩
-  refine ⟨S, hseed, hS, hcapS, hreHigh, hreReal, hgap, ?_⟩
+    ⟨S, hseed, hS, hcapS, hsupport, hreHigh, hreReal, hgap⟩
+  refine
+    ⟨S, hseed, hS, hcapS, hsupport, hreHigh, hreReal, hgap, ?_⟩
   intro hmain
   have hqNet :
       q <
@@ -93,6 +98,10 @@ theorem exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorSharpSignedRealTrans
       (∀ rho ∈ S₀, rho ∈ S) ∧
       (∀ rho : ℂ, rho ∈ S ↔ (starRingEnd ℂ) rho ∈ S) ∧
       OutsideClusterRealPartCap S beta ∧
+      (∀ rho ∈ S,
+        rho ∉ S₀ →
+          rho ∉ realOrdinateNontrivialZerosFinset 0 →
+            rho.re = beta) ∧
       (∀ index : ActualCarlsonPositiveZeroIndex sigma,
         actualCarlsonPositiveZero index ∉ S →
           actualCarlsonPositiveZeroRealPart index ≤ beta) ∧
@@ -120,8 +129,9 @@ theorem exists_actualCarlsonFiniteSeedGapClusterAndPsi0ErrorSharpSignedRealTrans
   rcases
       exists_actualCarlsonFiniteSeedGapTransferCluster
         hS₀ hhalf hone hqC hcap with
-    ⟨S, hseed, hS, hcapS, hreHigh, hreReal, hgap⟩
-  refine ⟨S, hseed, hS, hcapS, hreHigh, hreReal, hgap, ?_⟩
+    ⟨S, hseed, hS, hcapS, hsupport, hreHigh, hreReal, hgap⟩
+  refine
+    ⟨S, hseed, hS, hcapS, hsupport, hreHigh, hreReal, hgap, ?_⟩
   intro hmainPos hmainNeg
   have hqNet :
       q <
