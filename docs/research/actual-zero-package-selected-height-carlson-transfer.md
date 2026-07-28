@@ -21,6 +21,8 @@ sqrt(actualEqualRealPartZeroPackageEnergy T beta L)
 ```
 
 The logarithmic window `L` is chosen internally from package nonemptiness.
+There is also a direct entry point from a specified nontrivial zeta zero
+`rho` with `|Im rho| <= T`; its scale is `x^(Re rho - 1)`.
 The theorem does not construct the selected-height remainder certificate,
 does not remove the strict outside-cluster real-part condition embedded in
 the Carlson certificate, and does not claim an unconditional Omega theorem

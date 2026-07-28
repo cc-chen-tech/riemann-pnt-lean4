@@ -116,4 +116,39 @@ theorem
       threshold hhalf hlt hbeta L hL henergy hmargin hH certificate
         remainderCertificate⟩
 
+/-- Selected-height transfer stated directly from one covered nontrivial zeta
+zero.  The finite main term is the complete equal-real-part package through
+height `T`, not merely the singleton containing `rho`. -/
+theorem
+    unified_parametricPNTUpper_actualZeroPackageSelectedHeightCarlsonLower_of_nontrivialZero
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {rho : ℂ} {T alpha : ℝ}
+    (hzero : RiemannHypothesis.IsNontrivialZero rho)
+    (hT : |rho.im| ≤ T)
+    (hmargin : 1 - rho.re < alpha)
+    {n : ℕ} {H : ℝ → ℝ}
+    (hH : Tendsto H atTop atTop)
+    {input : (x : ℝ) →
+      PositiveZeroOutsideClusterBucketInput
+        (H x) (equalRealPartZeroPackage T rho.re) n}
+    (certificate :
+      ActualCarlsonOutsideClusterGoodHeightFiniteStripCertificate rho.re alpha
+        (equalRealPartZeroPackage T rho.re) n H input)
+    (remainderCertificate :
+      ActualSelectedHeightExplicitFormulaRemainderCertificate alpha H) :
+    ∃ L : ℝ, 0 < L ∧
+      ((∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+        Tendsto
+          (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+          atTop (nhds 0)) ∧
+      HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+        (fun x =>
+          Real.sqrt (actualEqualRealPartZeroPackageEnergy T rho.re L) *
+              targetZeroPowerAmplitude rho.re x /
+            2)) :=
+  unified_parametricPNTUpper_actualZeroPackageSelectedHeightCarlsonLower_of_nonempty
+    threshold hhalf hlt hzero.2.1
+      (equalRealPartZeroPackage_nonempty_of_nontrivialZero hzero hT)
+      hmargin hH certificate remainderCertificate
+
 end PrimeNumberTheorem

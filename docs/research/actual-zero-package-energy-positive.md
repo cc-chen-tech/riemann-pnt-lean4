@@ -17,7 +17,9 @@ The module proves:
 2. `D > 0` implies that some explicit positive `L` satisfies `E(L) > 0`.
 3. A nonempty actual equal-real-part package has `D > 0`, because each zeta
    zero has positive analytic multiplicity and is nonzero.
-4. The actual package/Carlson transfer can therefore choose `L` internally
+4. A specified nontrivial zero `rho` with `|Im rho| <= T` makes the package
+   at `(T, Re rho)` nonempty.
+5. The actual package/Carlson transfer can therefore choose `L` internally
    from package nonemptiness.
 
 This closes the elementary mean-square coefficient once a package member is
