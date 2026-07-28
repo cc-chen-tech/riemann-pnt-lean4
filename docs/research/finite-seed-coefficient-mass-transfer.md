@@ -50,3 +50,15 @@ pairwise disjoint, the base interval is disjoint from every dyadic shell, and
 the combined map from Carlson positive-zero indices to complex zeros is
 injective.  The indexed weight is also identified with the exact
 analytic-multiplicity coefficient of its represented zero.
+
+With uniqueness available, the indexed captured mass is bounded by the full
+finite distinct-zero coefficient mass.  For every seed inclusion `S₀ ⊆ S`,
+the exact relative allocation is
+
+`captured boundary mass of (S \ S₀) + outside mass of S
+  = outside mass of S₀`.
+
+Hence extension mass below `addedAllowance` and final outside mass below
+`outsideAllowance` force the seed's original outside mass below their sum.
+This is a necessary quantitative compatibility condition for the
+coefficient-mass actual-PNT transfer.
