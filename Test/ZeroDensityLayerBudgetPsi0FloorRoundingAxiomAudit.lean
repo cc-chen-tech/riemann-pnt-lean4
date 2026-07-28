@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPsi0FloorRounding
+
+#print axioms PrimeNumberTheorem.chebyshevPsi_eq_natFloor
+#print axioms PrimeNumberTheorem.chebyshevPsi0FloorRoundingBudget_nonneg
+#print axioms PrimeNumberTheorem.abs_chebyshevPsi0Error_sub_natFloor_le
+#print axioms
+  PrimeNumberTheorem.abs_chebyshevPsi0Error_sub_roundingBudget_le_abs_natFloor
+#print axioms PrimeNumberTheorem.continuousExpPsi0Witness_to_natFloor
