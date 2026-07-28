@@ -17,6 +17,7 @@ open scoped BigOperators ComplexConjugate
 namespace PrimeNumberTheorem
 
 open Complex
+open Filter
 open ZeroForcedOscillation
 
 private theorem norm_eq_abs_re_of_conj_eq_self
@@ -171,5 +172,55 @@ theorem exists_far_actualZeroPackage_visibleClusterMain_ge
           Real.exp y := by
             rw [div_eq_mul_inv, ← Real.exp_neg]
             ring
+
+/-- A cofinal dynamic height automatically covers the fixed package on every
+sufficiently far logarithmic window.  Consequently the visible main has far
+witnesses with the exact energy coefficient on the standard target-power
+scale. -/
+theorem hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster
+    (H : ℝ → ℝ) (hH : Tendsto H atTop atTop)
+    (T beta L : ℝ) (hL : 0 < L) :
+    HasFarTargetAmplitudeWitness
+      (dynamicVisibleClusterPNTMain H
+        (equalRealPartZeroPackage T beta))
+      (fun x =>
+        Real.sqrt (actualEqualRealPartZeroPackageEnergy T beta L) *
+          targetZeroPowerAmplitude beta x) := by
+  have hheight : ∀ᶠ x : ℝ in atTop, T ≤ H x :=
+    tendsto_atTop.mp hH T
+  rcases eventually_atTop.1 hheight with ⟨X₀, hX₀⟩
+  intro X
+  let Y := max (max X X₀) 1
+  have hXleY : X ≤ Y :=
+    le_trans (le_max_left X X₀) (le_max_left (max X X₀) 1)
+  have hX₀leY : X₀ ≤ Y :=
+    le_trans (le_max_right X X₀) (le_max_left (max X X₀) 1)
+  have hcover :
+      ∀ y ∈ Set.Ioo Y (Y + L), T ≤ H (Real.exp y) := by
+    intro y hy
+    have hyexp : y ≤ Real.exp y := by
+      linarith [Real.add_one_le_exp y]
+    exact hX₀ (Real.exp y)
+      (le_trans hX₀leY (le_trans hy.1.le hyexp))
+  rcases exists_far_actualZeroPackage_visibleClusterMain_ge
+      H T beta L Y hL hcover with ⟨y, hy, hmain⟩
+  refine ⟨Real.exp y, ?_, ?_⟩
+  · have hyexp : y ≤ Real.exp y := by
+      linarith [Real.add_one_le_exp y]
+    exact le_trans hXleY (le_trans hy.1.le hyexp)
+  · have hpower :
+        targetZeroPowerAmplitude beta (Real.exp y) =
+          Real.exp ((beta - 1) * y) := by
+      unfold targetZeroPowerAmplitude
+      rw [Real.rpow_def_of_pos (Real.exp_pos y), Real.log_exp]
+      congr 1
+      ring
+    change
+      Real.sqrt (actualEqualRealPartZeroPackageEnergy T beta L) *
+          targetZeroPowerAmplitude beta (Real.exp y) ≤
+        |dynamicVisibleClusterPNTMain H
+          (equalRealPartZeroPackage T beta) (Real.exp y)|
+    rw [hpower]
+    exact hmain
 
 end PrimeNumberTheorem
