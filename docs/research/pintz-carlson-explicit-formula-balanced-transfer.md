@@ -252,6 +252,41 @@ by itself. Finiteness supplies neither an unsigned nor a signed witness
 coefficient `c`, and even a supplied coefficient yields a nontrivial actual-PNT
 conclusion only when it exceeds the boundary loss `2 * boundaryMass`.
 
+### Capturing the complete boundary layer
+
+The boundary coefficient is antitone in the visible cluster:
+
+```lean
+actualCarlsonOutsideClusterBoundaryMass_antitone
+```
+
+Thus enlarging `S` cannot worsen the complementary-zero loss. If `S` contains
+every indexed positive zero with `Re rho = beta`, then:
+
+```lean
+actualCarlsonOutsideClusterBoundaryMass_eq_zero_of_boundary_captured
+```
+
+proves that the loss vanishes exactly. The balanced residual then becomes
+arbitrarily small on the target scale:
+
+```lean
+eventually_abs_selectedUniformGoodHeightActualCarlsonBalancedBoundaryCapturedPNTClusterResidual_lt_automatic
+```
+
+and the unsigned and signed transfers recover the full strict range `q < c`:
+
+```lean
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryCapturedPNTHasFarNaturalPoint_belowClusterConstant
+
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryCapturedPNTSharpSignedTransfer_automatic
+```
+
+This is weaker than assuming every outside zero satisfies `Re rho < beta` at
+the interface level: outside zeros are only bounded by `beta`, while the entire
+equality layer is assigned explicitly to the finite main cluster. It still does
+not construct the required cluster witness.
+
 ## 6. Quantitative reverse transfers
 
 The two-sided reverse theorem is:
