@@ -475,3 +475,13 @@ q x^\beta\leq |\psi_0(x)-x|.
 - 若 `0 < c`，可以规范地取显式正常数 `q=c/2`。
 
 这说明 Carlson 补集在目标实部边界上的全部常数损失确实集中于未捕获边界质量 `B_partial(beta,S)`；一旦边界层被主簇吸收，转移阈值从 `q<c-2B_partial` 恢复为 `q<c`。剩余未闭合项仍是外部主簇的无符号或双向振荡见证，而不是密度/显式公式余项。
+
+## 可求和边界层的有限 ε-捕获
+
+`ZeroDensityLayerBudgetActualCarlsonBoundaryMassFiniteCapture.lean` 证明了此前缺失的有限逼近定理。对 `1/2 < sigma < 1`、任意目标实部 `beta` 和任意 `epsilon > 0`，存在共轭稳定有限簇 `S` 使
+
+`actualCarlsonOutsideClusterBoundaryMass (sigma := sigma) beta S < epsilon`。
+
+证明不是把无限边界层假设成有限，而是对完整的非负、可求和边界项应用 `summable_iff_vanishing_norm`：先选有限索引集捕获除 `epsilon/2` 外的全部有限尾和，再映射成真实零点 Finset，最后取共轭闭包并用边界质量反单调性保持严格上界。
+
+因此，即便 `Re rho = beta` 上可能有无限多个零点，Carlson 边界常数损失也可由某个有限主簇压到任意小。这比“整个边界层本来就是有限簇”的假设更弱，并为把任意 `q<c` 近似保真地接入实际 `psi_0(x)-x` 转移提供了定量基础。它仍不自动提供该随 `epsilon` 选择的簇的主项振荡见证；该项属于外部局部振荡任务。
