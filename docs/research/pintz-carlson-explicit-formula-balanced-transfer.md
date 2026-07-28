@@ -656,3 +656,22 @@ M_S(x)=M_{S_0}(x)+M_{S\setminus S_0}(x)
 因此当前局部振荡接口不再要求直接控制自动扩张后的全部相位；它只要求
 种子簇见证和新增有限项的目标尺度预算。后者仍是实质输入，不能仅从
 Carlson 的计数上界推出为零。
+
+`ZeroDensityLayerBudgetVisibleClusterCoefficientMass.lean` 又把新增有限项
+预算具体化为
+
+\[
+\mathcal M(E)=
+\sum_{\rho\in E}\frac{m(\rho)}{|\rho|}.
+\]
+
+对 `Re rho<=beta` 的有限集 `E` 和 `x>=1`，Lean 证明
+
+\[
+|M_E(x)|\leq \mathcal M(E)x^{\beta-1}.
+\]
+
+这是由实际 zeta 核的精确归一化等式逐项求和得到的，保留了解析重数和
+`1/|rho|` 权。于是任意严格数值条件 `M(E)<loss` 自动产生扰动联合定理
+所需的 eventual 严格预算。剩余问题不再是函数级别的 `hnew`，而是自动
+新增有限簇 `S\S₀` 的实部 cap 与显式系数质量是否小于可用振幅余量。
