@@ -67,4 +67,4 @@
 - [x] **Step 2: Run focused builds and `python3 scripts/check_axiom_allowlist.py`.**
 - [x] **Step 3: Run placeholder and whitespace scans.**
 - [x] **Step 4: Run `./scripts/verify-baseline.sh` and the full `lake build`.**
-- [ ] **Step 5: Commit, push, and create a stacked Draft PR against `research/vk-edge-cluster-phase-coercivity`.**
+- [x] **Step 5: Commit, push, and create a stacked Draft PR against `research/vk-edge-cluster-phase-coercivity`.**
