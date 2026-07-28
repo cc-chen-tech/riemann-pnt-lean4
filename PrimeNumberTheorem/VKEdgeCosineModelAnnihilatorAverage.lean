@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.VKEdgeExplicitFormulaPairBridge
 import PrimeNumberTheorem.ZeroForcedOscillation
+import PrimeNumberTheorem.ZeroForcedOscillationExplicitFormula
 
 open Complex Filter MeasureTheory Set Topology
 open scoped BigOperators Interval
@@ -390,6 +391,102 @@ theorem exists_step_intervalIntegral_annihilatedExponentialPolynomial_pos
   apply hone.trans_le
   simpa [annihilatedExponentialPolynomial, transformedCoefficient] using
     hIntegral
+
+/-- Positive-height zeros in the selected equal-real-part package, excluding
+the target frequency `gamma`. The selected target and its conjugate are both
+absent: the former by the frequency inequality and the latter by positivity. -/
+def positiveEqualRealPartResidualPackage
+    (T beta gamma : ℝ) : Finset ℂ :=
+  (PrimeNumberTheorem.ZeroForcedOscillation.equalRealPartZeroPackage T beta).filter
+    fun rho => 0 < rho.im ∧ rho.im ≠ gamma
+
+/-- The actual multiplicity-aware coefficient of a zeta zero in logarithmic
+coordinates. -/
+def zetaEqualRealPartResidualCoefficient (rho : ℂ) : ℂ :=
+  (analyticOrderNatAt riemannZeta rho : ℂ) * rho⁻¹
+
+/-- A nonempty finite package of actual positive-height zeta zeros on the
+selected real-part line, after removing the target frequency, survives some
+target-pair annihilator step and has positive second moment on a finite
+logarithmic interval.
+
+This theorem is conditional only on the finite package being nonempty. It does
+not assert the existence of another same-real-part zero and does not estimate
+the complementary zero or contour terms. -/
+theorem
+    exists_step_intervalIntegral_annihilatedPositiveEqualRealPartResidual_pos
+    {T beta gamma : ℝ}
+    (hgamma : 0 < gamma)
+    (hnonempty :
+      (positiveEqualRealPartResidualPackage T beta gamma).Nonempty) :
+    ∃ h L : ℝ,
+      0 < L ∧
+        0 < ∫ y in (0 : ℝ)..L,
+          ‖annihilatedExponentialPolynomial
+            (positiveEqualRealPartResidualPackage T beta gamma)
+            zetaEqualRealPartResidualCoefficient Complex.im gamma h y‖ ^ 2 := by
+  classical
+  let S := positiveEqualRealPartResidualPackage T beta gamma
+  have hmem {rho : ℂ} (hrho : rho ∈ S) :
+      RiemannHypothesis.IsNontrivialZero rho ∧
+        |rho.im| ≤ T ∧ rho.re = beta ∧
+          0 < rho.im ∧ rho.im ≠ gamma := by
+    have hfilter :
+        rho ∈
+          PrimeNumberTheorem.ZeroForcedOscillation.equalRealPartZeroPackage
+              T beta ∧
+            0 < rho.im ∧ rho.im ≠ gamma := by
+      simpa [S, positiveEqualRealPartResidualPackage] using hrho
+    have hzero :=
+      PrimeNumberTheorem.ZeroForcedOscillation.mem_equalRealPartZeroPackage.mp
+        hfilter.1
+    exact ⟨hzero.1, hzero.2.1, hzero.2.2, hfilter.2.1, hfilter.2.2⟩
+  have homega : ∀ rho ∈ S, 0 < rho.im := by
+    intro rho hrho
+    exact (hmem hrho).2.2.2.1
+  have hne : ∀ rho ∈ S, rho.im ≠ gamma := by
+    intro rho hrho
+    exact (hmem hrho).2.2.2.2
+  have hinj : Set.InjOn Complex.im ↑S := by
+    intro rho hrho z hz him
+    apply Complex.ext
+    · exact (hmem hrho).2.2.1.trans (hmem hz).2.2.1.symm
+    · exact him
+  have hcoeff :
+      0 < ∑ rho ∈ S, ‖zetaEqualRealPartResidualCoefficient rho‖ ^ 2 := by
+    obtain ⟨rho, hrho⟩ := hnonempty
+    have hrhoData := hmem hrho
+    have hrhoNeZero : rho ≠ 0 := by
+      intro hzero
+      have himzero := congrArg Complex.im hzero
+      simp at himzero
+      linarith [hrhoData.2.2.2.1]
+    have hrhoNeOne : rho ≠ 1 := by
+      intro hone
+      have himzero := congrArg Complex.im hone
+      simp at himzero
+      linarith [hrhoData.2.2.2.1]
+    have horder :
+        0 < analyticOrderNatAt riemannZeta rho :=
+      ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero
+        hrhoNeOne hrhoData.1.1
+    have hcoefficientNe :
+        zetaEqualRealPartResidualCoefficient rho ≠ 0 := by
+      apply mul_ne_zero
+      · exact_mod_cast horder.ne'
+      · exact inv_ne_zero hrhoNeZero
+    have hterm :
+        0 < ‖zetaEqualRealPartResidualCoefficient rho‖ ^ 2 :=
+      sq_pos_of_pos (norm_pos_iff.mpr hcoefficientNe)
+    have hle :
+        ‖zetaEqualRealPartResidualCoefficient rho‖ ^ 2 ≤
+          ∑ z ∈ S, ‖zetaEqualRealPartResidualCoefficient z‖ ^ 2 :=
+      Finset.single_le_sum
+        (fun z _hz => sq_nonneg ‖zetaEqualRealPartResidualCoefficient z‖) hrho
+    exact hterm.trans_le hle
+  exact exists_step_intervalIntegral_annihilatedExponentialPolynomial_pos
+    S zetaEqualRealPartResidualCoefficient Complex.im hgamma homega hne hinj
+      hcoeff
 
 end
 

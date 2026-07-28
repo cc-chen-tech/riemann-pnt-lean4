@@ -62,3 +62,20 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
         0 < ∫ y in (0 : ℝ)..L,
           ‖annihilatedExponentialPolynomial
             S c omega gamma h y‖ ^ 2)
+
+#check (positiveEqualRealPartResidualPackage :
+  ℝ → ℝ → ℝ → Finset ℂ)
+
+#check (zetaEqualRealPartResidualCoefficient :
+  ℂ → ℂ)
+
+#check (exists_step_intervalIntegral_annihilatedPositiveEqualRealPartResidual_pos :
+  ∀ {T beta gamma : ℝ},
+    0 < gamma →
+    (positiveEqualRealPartResidualPackage T beta gamma).Nonempty →
+    ∃ h L : ℝ,
+      0 < L ∧
+        0 < ∫ y in (0 : ℝ)..L,
+          ‖annihilatedExponentialPolynomial
+            (positiveEqualRealPartResidualPackage T beta gamma)
+            zetaEqualRealPartResidualCoefficient Complex.im gamma h y‖ ^ 2)

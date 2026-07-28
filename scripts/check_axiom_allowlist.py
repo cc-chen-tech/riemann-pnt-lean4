@@ -303,6 +303,7 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.tendsto_normalizedStepMultiplierEnergy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_two_le_normalizedStepMultiplierEnergy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_step_intervalIntegral_annihilatedExponentialPolynomial_pos",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_step_intervalIntegral_annihilatedPositiveEqualRealPartResidual_pos",
 }
 
 REPORT_RE = re.compile(

@@ -43,11 +43,24 @@ that a nonzero finite residual spectrum cannot be killed for every step.
 The conclusion is an actual positive finite-window second moment, not only a
 positive formal diagonal term.
 
+The module also instantiates this theorem with the repository's actual
+multiplicity-aware zeta coefficients
+
+\[
+c_\rho=\frac{m(\rho)}{\rho}.
+\]
+
+After filtering the finite equal-real-part zero package to positive heights and
+removing the selected target frequency, Lean verifies that a nonempty residual
+package has positive coefficient energy and distinct frequencies. Hence some
+annihilator step leaves that actual finite zeta package with positive
+finite-window second moment.
+
 ## What remains open
 
-The theorem consumes a nonzero finite residual frequency package. It does not
-prove that an arbitrary selected off-critical-line zeta zero has another zero
-on the same real-part edge. It also does not control:
+The zeta specialization assumes that the filtered finite residual package is
+nonempty. It does not prove that an arbitrary selected off-critical-line zeta
+zero has another zero on the same real-part edge. It also does not control:
 
 1. lower-real-part zero contributions after normalization;
 2. the infinite or moving-height zero tail;
