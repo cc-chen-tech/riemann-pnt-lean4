@@ -680,3 +680,10 @@ Carlson 的计数上界推出为零。
 `S₀ subset S`、`Re rho<=beta` 于 `S\S₀`、以及
 `M(S\S₀)<loss` 三项直接把种子簇的 `c` 系数见证传成最终簇的
 `c-loss` 系数见证，无符号与正负版本共用完全相同的有限质量条件。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedExtensionCap.lean` 进一步证明
+新增簇的实部 cap 已经蕴含在现有选择证书中。对
+`rho in S\S₀`，若 `rho` 不在高度零非平凡零点集，则 boundary-support
+证书给出 `Re rho=beta`；若在该高度零集合，则原始
+`OutsideClusterRealPartCap S₀ beta` 直接给出 `Re rho<=beta`。因此接入
+coefficient-mass transfer 时不需要新增外部实部假设。
