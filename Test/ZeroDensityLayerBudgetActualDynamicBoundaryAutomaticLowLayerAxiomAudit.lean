@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDynamicBoundaryAutomaticLowLayer
+
+open PrimeNumberTheorem
+
+#print axioms exists_actualDynamicBoundaryCanonicalLow_uniform_norm_lower_bound
+#print axioms actualDynamicBoundaryCanonicalLowNormalizedSum_tendsto_zero
+#print axioms actualDynamicBoundaryCanonicalPositiveNormalizedSum_tendsto_zero
