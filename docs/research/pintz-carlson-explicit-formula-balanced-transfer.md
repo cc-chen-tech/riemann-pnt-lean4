@@ -552,3 +552,28 @@ Carlson 侧也已经内部化，但这仍是条件性的 `Omega_±` 转移接口
 在 `c>0` 时进一步固定 `q=c/2`。Lean 同时证明该规范系数严格为正，并
 自动选择满足 `2*B_partial<c-c/2` 的有限簇。无符号与双向定理因此都向
 局部振荡任务暴露一个无需额外算术选择的具体目标常数。
+
+## 保留有限最右种子簇的 Carlson 扩张
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedGapTransferCluster.lean` 把
+此前的全局 Carlson 索引上界替换为更自然的 zeta 层条件。给定有限共轭
+稳定种子簇 `S₀`，只要求
+
+\[
+\texttt{OutsideClusterRealPartCap }S_0\,\beta,
+\]
+
+即每个 `S₀` 外非平凡 zeta 零点满足 `Re rho <= beta`。定理自动构造有限
+簇 `S`，使 `S₀ subset S`，并把 Carlson 边界有限捕获簇和全部实轴纵坐标
+零点并入 `S`。扩大簇使边界质量反单调，因此仍保持
+`2*B_partial(beta,S)<c-q`。
+
+这一区别是实质性的：`S₀` 内部可以保留不满足该 cap 的有限异常或最右
+零点，只有其补集受上界约束。模块同时证明 zeta 层 cap 自动作用于真实
+Carlson 正零点索引，从而不要求最大实部层了解 Carlson 的枚举实现。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedGapPNTUnnormalizedTransfer.lean`
+把该扩张直接接到 `psi_0(x)-x`。对任意 `0<=q<c`，它给出包含 `S₀` 的
+实际有限簇，并分别提供无符号和同一 `q*x^beta` 尺度的双向条件转移。
+尚未闭合的输入仍精确是扩张后有限簇的 `hmain` 或
+`hmainPos`/`hmainNeg`，而不是 Carlson 补集条件。
