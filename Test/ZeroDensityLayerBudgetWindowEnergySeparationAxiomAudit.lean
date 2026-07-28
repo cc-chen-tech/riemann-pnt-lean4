@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetWindowEnergySeparation
+
+open PrimeNumberTheorem
+
+#print axioms filter_card_lt_of_sum_sq_lt_count_mul_sq
+#print axioms count_lt_filter_card_of_baseline_add_count_gap_lt_sum_sq
+#print axioms HasFarWindowEnergySeparation.toWindowCardAdvantage
