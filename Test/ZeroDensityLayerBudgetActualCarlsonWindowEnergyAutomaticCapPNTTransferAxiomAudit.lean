@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonWindowEnergyAutomaticCapPNTTransfer
+
+#print axioms
+  PrimeNumberTheorem.HasFarWindowEnergyBudgets.visibleClusterNormalized_toActualPNTWitness
+#print axioms
+  PrimeNumberTheorem.HasFarWindowEnergyBudgets.visibleClusterNormalized_toCanonicalSharpRealPNTWitness
