@@ -519,3 +519,25 @@ q x^\beta\leq |\psi_0(x)-x|.
 它没有构造该有限簇的主项振荡；`hmain`、`hmainPos`、`hmainNeg` 仍由
 独立的局部有限簇振荡任务提供。因此此处闭合的是密度与补集余项条件，
 不是无条件 `Omega` 或 `Omega_±` 定理。
+
+## 选定有限簇到真实 PNT 误差的直接转移
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteGapPNTUnnormalizedTransfer.lean`
+把有限 transfer 簇的存在定理与 balanced Carlson lower transfer、自然数
+取样到实数取样、相对误差到未归一化误差三个步骤直接复合。
+
+对任意 `0 <= q < c`，在平衡条件
+`(1+sigma)/2 < beta` 和全局 `Re rho <= beta` 下，定理自动选择一个有限
+共轭稳定簇 `S`，并同时返回全部结构证书及以下唯一剩余蕴含：
+
+\[
+\text{visible-cluster hmain at coefficient }c
+\quad\Longrightarrow\quad
+|\psi_0(x)-x|\geq qx^\beta
+\text{ at arbitrarily large real }x.
+\]
+
+因此 Carlson 密度、实轴补集、边界质量损失和显式公式余项不再需要由
+调用者逐项组装。剩余缺口被精确收缩为：独立局部振荡任务必须对这个
+按 `q<c` 选择的有限簇给出 `dynamicVisibleClusterPNTMain` 的 `hmain`。
+该接口没有假设或声称已经证明这个局部振荡输入。
