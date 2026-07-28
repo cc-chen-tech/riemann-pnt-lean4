@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetWindowEnergySeparationScaled
+
+open PrimeNumberTheorem
+
+#print axioms HasFarWindowCardAdvantage.scaleBoth
+#print axioms HasFarWindowEnergySeparation.toScaledWindowCardAdvantage
