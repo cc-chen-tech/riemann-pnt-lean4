@@ -15,10 +15,12 @@ The module proves:
 
 1. `B < L * D` and `L > 0` imply `E(L) > 0`.
 2. `D > 0` implies that some explicit positive `L` satisfies `E(L) > 0`.
-3. The actual package/Carlson transfer can therefore choose `L` internally
-   from the single hypothesis `D > 0`.
+3. A nonempty actual equal-real-part package has `D > 0`, because each zeta
+   zero has positive analytic multiplicity and is nonzero.
+4. The actual package/Carlson transfer can therefore choose `L` internally
+   from package nonemptiness.
 
-This is only an arithmetic closure of the mean-square coefficient.  It does
-not prove that a particular zeta-zero package is nonempty, does not construct
-the Carlson outside-cluster certificate, and does not imply an unconditional
-Omega theorem or RH.
+This closes the elementary mean-square coefficient once a package member is
+given.  It does not prove that a package exists at a prescribed `(T,beta)`,
+does not construct the Carlson outside-cluster certificate, and does not
+imply an unconditional Omega theorem or RH.
