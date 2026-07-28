@@ -1,5 +1,5 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonOutsideClusterKernelTail
-import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClusterSignedComplement
+import PrimeNumberTheorem.ZeroDensityLayerBudgetVisibleClusterSeedExtension
 
 /-!
 # Explicit coefficient mass for a finite visible cluster
@@ -165,5 +165,71 @@ theorem eventually_abs_dynamicVisibleClusterPNTMain_lt_loss_mul_targetAmplitude
       (abs_dynamicVisibleClusterPNTMain_le_coefficientMass_mul_targetAmplitude
         T E hmReal hre)
       (mul_lt_mul_of_pos_right hloss htarget)
+
+/-- A seed witness transfers to the expanded visible cluster from a finite
+coefficient-mass inequality alone. -/
+theorem
+    hasFarNaturalPointTargetAmplitudeWitness_visibleCluster_of_seed_of_coefficientMass
+    (T : ℝ → ℝ) {S₀ S : Finset ℂ}
+    (hsub : ∀ rho ∈ S₀, rho ∈ S)
+    {beta c loss : ℝ}
+    (hre : ∀ rho ∈ S \ S₀, rho.re ≤ beta)
+    (hloss : finiteVisibleClusterCoefficientMass (S \ S₀) < loss)
+    (hseed :
+      HasFarNaturalPointTargetAmplitudeWitness
+        (fun m => dynamicVisibleClusterPNTMain T S₀ (m : ℝ))
+        (fun m => c * targetZeroPowerAmplitude beta (m : ℝ))) :
+    HasFarNaturalPointTargetAmplitudeWitness
+      (fun m => dynamicVisibleClusterPNTMain T S (m : ℝ))
+      (fun m => (c - loss) * targetZeroPowerAmplitude beta (m : ℝ)) := by
+  exact
+    hasFarNaturalPointTargetAmplitudeWitness_visibleCluster_of_seed
+      T hsub hseed
+      (eventually_abs_dynamicVisibleClusterPNTMain_lt_loss_mul_targetAmplitude
+        T (S \ S₀) hre hloss)
+
+/-- Positive seed witnesses transfer through the same explicit coefficient
+mass budget. -/
+theorem
+    hasFarNaturalPointPositiveTargetAmplitudeWitness_visibleCluster_of_seed_of_coefficientMass
+    (T : ℝ → ℝ) {S₀ S : Finset ℂ}
+    (hsub : ∀ rho ∈ S₀, rho ∈ S)
+    {beta c loss : ℝ}
+    (hre : ∀ rho ∈ S \ S₀, rho.re ≤ beta)
+    (hloss : finiteVisibleClusterCoefficientMass (S \ S₀) < loss)
+    (hseed :
+      HasFarNaturalPointPositiveTargetAmplitudeWitness
+        (fun m => dynamicVisibleClusterPNTMain T S₀ (m : ℝ))
+        (fun m => c * targetZeroPowerAmplitude beta (m : ℝ))) :
+    HasFarNaturalPointPositiveTargetAmplitudeWitness
+      (fun m => dynamicVisibleClusterPNTMain T S (m : ℝ))
+      (fun m => (c - loss) * targetZeroPowerAmplitude beta (m : ℝ)) := by
+  exact
+    hasFarNaturalPointPositiveTargetAmplitudeWitness_visibleCluster_of_seed
+      T hsub hseed
+      (eventually_abs_dynamicVisibleClusterPNTMain_lt_loss_mul_targetAmplitude
+        T (S \ S₀) hre hloss)
+
+/-- Negative seed witnesses transfer through the same explicit coefficient
+mass budget. -/
+theorem
+    hasFarNaturalPointNegativeTargetAmplitudeWitness_visibleCluster_of_seed_of_coefficientMass
+    (T : ℝ → ℝ) {S₀ S : Finset ℂ}
+    (hsub : ∀ rho ∈ S₀, rho ∈ S)
+    {beta c loss : ℝ}
+    (hre : ∀ rho ∈ S \ S₀, rho.re ≤ beta)
+    (hloss : finiteVisibleClusterCoefficientMass (S \ S₀) < loss)
+    (hseed :
+      HasFarNaturalPointNegativeTargetAmplitudeWitness
+        (fun m => dynamicVisibleClusterPNTMain T S₀ (m : ℝ))
+        (fun m => c * targetZeroPowerAmplitude beta (m : ℝ))) :
+    HasFarNaturalPointNegativeTargetAmplitudeWitness
+      (fun m => dynamicVisibleClusterPNTMain T S (m : ℝ))
+      (fun m => (c - loss) * targetZeroPowerAmplitude beta (m : ℝ)) := by
+  exact
+    hasFarNaturalPointNegativeTargetAmplitudeWitness_visibleCluster_of_seed
+      T hsub hseed
+      (eventually_abs_dynamicVisibleClusterPNTMain_lt_loss_mul_targetAmplitude
+        T (S \ S₀) hre hloss)
 
 end PrimeNumberTheorem
