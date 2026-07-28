@@ -40,6 +40,7 @@ theorem exists_actualCarlsonFiniteSeedGapTransferCluster
     ∃ S : Finset ℂ,
       (∀ rho ∈ S₀, rho ∈ S) ∧
       (∀ rho : ℂ, rho ∈ S ↔ (starRingEnd ℂ) rho ∈ S) ∧
+      OutsideClusterRealPartCap S beta ∧
       (∀ index : ActualCarlsonPositiveZeroIndex sigma,
         actualCarlsonPositiveZero index ∉ S →
           actualCarlsonPositiveZeroRealPart index ≤ beta) ∧
@@ -67,6 +68,11 @@ theorem exists_actualCarlsonFiniteSeedGapTransferCluster
     intro rho hrho
     exact Finset.mem_union_left _
       (Finset.mem_union_right S₁ hrho)
+  have hcapS : OutsideClusterRealPartCap S beta := by
+    intro rho hzero hout
+    apply hcap rho hzero
+    intro hrho
+    exact hout (hseed rho hrho)
   have hreHigh :
       ∀ index : ActualCarlsonPositiveZeroIndex sigma,
         actualCarlsonPositiveZero index ∉ S →
@@ -103,12 +109,12 @@ theorem exists_actualCarlsonFiniteSeedGapTransferCluster
   have hAdjoinMass :
       actualCarlsonOutsideClusterBoundaryMass
           (sigma := sigma) beta S ≤
-        actualCarlsonOutsideClusterBoundaryMass
+      actualCarlsonOutsideClusterBoundaryMass
           (sigma := sigma) beta (S₁ ∪ S₀) := by
     exact
       actualCarlsonOutsideClusterBoundaryMass_adjoinRealOrdinate_le
         (S₁ ∪ S₀) hhalf hone
-  refine ⟨S, hseed, hS, hreHigh, hreReal, ?_⟩
+  refine ⟨S, hseed, hS, hcapS, hreHigh, hreReal, ?_⟩
   linarith
 
 end PrimeNumberTheorem
