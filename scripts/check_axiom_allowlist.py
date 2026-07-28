@@ -20,6 +20,8 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeExplicitFormulaPairBridgeAxiomAudit",
     "Test.VKEdgeCosineModelAnnihilatorAverageAxiomAudit",
     "Test.VKEdgeResidualAmplificationNoGoAxiomAudit",
+    "Test.VKEdgeZeroDensityResidualL2AxiomAudit",
+    "Test.VKEdgeExplicitFormulaResidualBoundAxiomAudit",
     "Test.VKEdgeArithmeticL2ConverseAxiomAudit",
     "Test.LocalPsiL2ZeroCriterionAxiomAudit",
     "Test.LocalPsiL2MellinCriterionAxiomAudit",
@@ -322,6 +324,17 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosinePairModel_sq_ge",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosinePairModel_sq_ge_linear",
     "PrimeNumberTheorem.VKEdgePiOverTwo.pureCosineModel_linearEnergy_and_annihilator_zero",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedPositiveZeroDensityResidualContribution_le_count",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedPositiveZeroDensityResidualContribution_le_count_sq",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedPositiveZeroDensityResidualContribution_le_of_count_exp",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_zeroDensityCount_exp_height_le_of_carlson",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_integral_normSq_positiveZeroDensityResidual_le_of_carlson",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.carlsonResidualDecayRate_pos",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_exponentialTruncationScale_iff",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.no_exponentialTruncationScale_of_gap_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedFiniteNontrivialZeroResidueRemainder_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedExplicitFormulaResidual_le_components",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedExplicitFormulaResidual_le_components_of_gap",
 }
 
 REPORT_RE = re.compile(
