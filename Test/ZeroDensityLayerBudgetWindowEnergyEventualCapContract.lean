@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetWindowEnergyEventualCap
+
+open PrimeNumberTheorem
+
+#check HasFarWindowEnergyBudgets
+#check HasFarWindowEnergyBudgets.toEnergySeparation
