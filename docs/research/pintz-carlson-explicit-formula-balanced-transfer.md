@@ -643,3 +643,16 @@ M_S(x)=M_{S_0}(x)+M_{S\setminus S_0}(x)
 负向版本使用同一个新增项预算。这个引理没有假设新增项自动很小，而是
 把原先要求调用者直接证明最终簇 `hmain` 的缺口，精确拆成“种子簇局部
 振荡”和“新增有限项预算”两个可审计输入。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedPerturbedBidirectionalPNTTransfer.lean`
+已把该稳定性引理接入同参数 actual-PNT 联合证书。若种子簇系数为 `c`，
+新增项预算为 `loss`，并且 `0<c-loss`，则 Carlson 选择过程以净系数
+`c-loss` 构造最终簇，实际未归一化 PNT 振幅为
+
+\[
+\frac{c-\mathrm{loss}}{2}x^\beta.
+\]
+
+因此当前局部振荡接口不再要求直接控制自动扩张后的全部相位；它只要求
+种子簇见证和新增有限项的目标尺度预算。后者仍是实质输入，不能仅从
+Carlson 的计数上界推出为零。
