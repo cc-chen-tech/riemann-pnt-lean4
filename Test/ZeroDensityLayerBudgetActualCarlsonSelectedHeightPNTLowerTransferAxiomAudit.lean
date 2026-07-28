@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonSelectedHeightPNTLowerTransfer
+
+open PrimeNumberTheorem
+
+#print axioms hasFarNaturalPointTargetAmplitudeWitness_of_difference_negligible
+#print axioms selectedUniformGoodHeightActualCarlsonPNTLowerTransfer
