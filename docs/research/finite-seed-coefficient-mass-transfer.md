@@ -84,3 +84,15 @@ For the canonical half-retention gap this becomes
 The contrapositive is formalized as a nonexistence theorem for finite
 extensions.  This states the exact arithmetic threshold that creates a
 contradiction; it does not invoke or formalize a zero-reproduction tree.
+
+Because `0 < c - loss`, the canonical allowance
+`loss + (c - loss) / 4` is strictly smaller than `c`.  Therefore every
+successful canonical finite extension must satisfy
+
+`outside boundary mass of S₀ < c`.
+
+If the seed outside mass is at least `c`, no admissible choice of `loss` and
+no finite extension can satisfy both required budgets.  This explains
+precisely why a finite seed oscillation coefficient alone is insufficient:
+one still needs a strict quantitative dominance over the seed's entire
+remaining Carlson boundary mass.
