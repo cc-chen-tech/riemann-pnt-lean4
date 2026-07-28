@@ -600,3 +600,24 @@ finite-gap 捕获簇可以选择成每个成员都满足 `rho.re=beta`。
 `S₀`、也不属于高度零有限集的每个新增成员都位于 `Re rho=beta`。这不会
 解决有限边界簇自身的相位抵消，但排除了自动捕获步骤向局部振荡问题
 引入任意较低实部零点的可能性。
+
+## 同一参数下的实际 PNT 双向证书
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedBidirectionalPNTTransfer.lean`
+把 actual-PNT 上下两条链放入同一个存在量化证书，而不是只返回抽象
+error facade。对同一个 `sigma`，定理同时选择固定正速率 `rate` 和有限
+簇 `S`，并证明：
+
+- 自然数点上的 `relativeChebyshevPsi0Error` 趋于零；
+- `S` 包含给定种子簇 `S₀`；
+- 最终 `S` 保留 zeta 补集实部 cap、Carlson 正零点 cap、实轴严格 gap；
+- 自动新增的非实轴成员位于 `Re rho=beta`；
+- Carlson 边界质量严格小于规范损失 `c-c/2`；
+- 若该同一有限簇的 visible main term 具有系数 `c` 的任意远见证，则
+  实际未归一化误差 `chebyshevPsi0Error` 具有
+  `(c/2)*x^beta` 的任意远见证。
+
+模块也给出共享同一 `S` 的正负双向版本。这里的“统一”是实际 PNT 对象、
+条带参数和有限簇证书的统一；它仍明确保留局部振荡输入
+`hmain` 或 `hmainPos`/`hmainNeg`，因此不声称无条件 `Omega`、`Omega_±`
+或 RH。
