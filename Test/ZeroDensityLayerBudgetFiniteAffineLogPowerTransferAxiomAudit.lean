@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetFiniteAffineLogPowerTransfer
+
+namespace PrimeNumberTheorem
+
+#print axioms finiteAffineDensityLogPowerMajorant_le_common
+#print axioms tendsto_finiteAffineDensityCommonLogPower_zero
+#print axioms tendsto_finiteAffineDensityLogPowerMajorant_zero
+#print axioms tendsto_finiteAffineBalancedLogPowerMajorant_zero
+
+end PrimeNumberTheorem
