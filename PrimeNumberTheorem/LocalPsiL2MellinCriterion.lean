@@ -2,11 +2,13 @@ import PrimeNumberTheorem.LocalPsiL2ZeroCriterion
 import PrimeNumberTheorem.VKEdgePiOverTwoAbelIntegral
 import ZeroFreeRegion.MeromorphicAux
 import Mathlib.Analysis.Complex.Convex
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.MeasureTheory.Function.L2Space
 
 open Complex Filter Topology
 open Metric Real
+open MeasureTheory
 
 namespace PrimeNumberTheorem
 namespace VKEdgePiOverTwo
@@ -50,17 +52,15 @@ private theorem integrableOn_exp_neg_mul_sq
     IntegrableOn
       (fun y : ℝ => (Real.exp (-delta * y)) ^ 2)
       (Set.Ioi 0) := by
-  have h :=
-    Real.GammaIntegral_convergent
-      (show 0 < (1 : ℝ) by norm_num)
-  have hscaled :=
-    (integrableOn_Ioi_comp_mul_left_iff
-      (fun x : ℝ => Real.exp (-x) * x ^ ((1 : ℝ) - 1))
-      0 (show 0 < 2 * delta by positivity)).mpr h
-  convert hscaled using 1 <;>
-    simp only [mul_zero, sub_self, Real.rpow_zero, mul_one]
+  have h :
+      IntegrableOn
+        (fun y : ℝ => Real.exp ((-2 * delta) * y))
+        (Set.Ioi 0) :=
+    integrableOn_exp_mul_Ioi
+      (show -2 * delta < 0 by linarith) 0
+  convert h using 1
   funext y
-  rw [← Real.exp_add]
+  rw [pow_two, ← Real.exp_add]
   congr 1
   ring
 
@@ -75,16 +75,35 @@ private theorem integrableOn_mul_exp_neg_mul_sq
   have hscaled :=
     (integrableOn_Ioi_comp_mul_left_iff
       (fun x : ℝ => Real.exp (-x) * x ^ ((3 : ℝ) - 1))
-      0 (show 0 < 2 * delta by positivity)).mpr h
-  have hdiv := hscaled.div_const ((2 * delta) ^ 2)
-  convert hdiv using 1
-  funext y
-  simp only [mul_zero, sub_self, Real.rpow_two]
-  rw [div_eq_iff (by positivity : (2 * delta) ^ 2 ≠ 0)]
-  rw [← Real.exp_add]
-  congr 1
-  · ring
-  · ring
+      0 (show 0 < 2 * delta by positivity)).mpr (by
+        simpa using h)
+  have hscaled' :
+      IntegrableOn
+        (fun y : ℝ =>
+          Real.exp (-(2 * delta * y)) * (2 * delta * y) ^ 2)
+        (Set.Ioi 0) := by
+    convert hscaled using 1
+    funext y
+    norm_num [Real.rpow_two]
+  have hdiv := hscaled'.div_const ((2 * delta) ^ 2)
+  apply hdiv.congr
+  filter_upwards [] with y
+  have hexp :
+      Real.exp (-delta * y) ^ 2 =
+        Real.exp (-(2 * delta * y)) := by
+    rw [pow_two, ← Real.exp_add]
+    congr 1
+    ring
+  calc
+    Real.exp (-(2 * delta * y)) * (2 * delta * y) ^ 2 /
+          (2 * delta) ^ 2 =
+        Real.exp (-(2 * delta * y)) * y ^ 2 := by
+      field_simp
+    _ = y ^ 2 * Real.exp (-delta * y) ^ 2 := by
+      rw [hexp]
+      ring
+    _ = (y * Real.exp (-delta * y)) ^ 2 := by
+      rw [mul_pow]
 
 /--
 Weighted logarithmic `L²` control makes the Chebyshev-error Mellin transform
@@ -130,7 +149,7 @@ theorem differentiableAt_mellinPsiError_of_weightedLogPsiL2Above
         2 μ := by
     rw [memLp_two_iff_integrable_sq]
     · simpa [μ, E] using hweightedInt
-    · exact
+    · simpa [μ, Function.comp_def] using
         ((hEmeas.mul (Real.measurable_exp.comp
           (measurable_const.mul measurable_id).neg))
           |>.aestronglyMeasurable).restrict
@@ -147,15 +166,31 @@ theorem differentiableAt_mellinPsiError_of_weightedLogPsiL2Above
       hweightedLp.abs.integrable_mul hgapLp
     convert hproduct using 1
     funext y
-    simp only [bound]
+    change
+      |E y| * y * Real.exp (-(s.re - radius) * y) =
+        |E y * Real.exp (-beta * y)| *
+          (y * Real.exp (-(s.re - radius - beta) * y))
     rw [abs_mul, abs_of_pos (Real.exp_pos _)]
-    rw [← Real.exp_add]
-    congr 1
-    ring
+    symm
+    calc
+      |E y| * Real.exp (-beta * y) *
+            (y * Real.exp (-(s.re - radius - beta) * y)) =
+          |E y| * y *
+            (Real.exp (-beta * y) *
+              Real.exp (-(s.re - radius - beta) * y)) := by ring
+      _ = |E y| * y *
+            Real.exp
+              ((-beta * y) +
+                (-(s.re - radius - beta) * y)) := by
+          rw [← Real.exp_add]
+      _ = |E y| * y *
+            Real.exp (-(s.re - radius) * y) := by
+          congr 2
+          ring
   have hFmeas :
       ∀ᶠ z in 𝓝 s, AEStronglyMeasurable (F z) μ := by
     filter_upwards [] with z
-    exact
+    simpa [F, μ, Function.comp_def] using
       ((hEmeas.complex_ofReal.mul
         (Complex.continuous_exp.measurable.comp
           ((measurable_const.mul measurable_id.complex_ofReal).neg)))
@@ -170,23 +205,35 @@ theorem differentiableAt_mellinPsiError_of_weightedLogPsiL2Above
       · simpa [μ] using integrableOn_exp_neg_mul_sq hgap0
       · fun_prop
     have hproduct :=
-      hweightedLp.integrable_mul hgap0Lp
+      hweightedLp.abs.integrable_mul hgap0Lp
     apply hproduct.mono'
-    · exact
+    · simpa [F, μ, Function.comp_def] using
         ((hEmeas.complex_ofReal.mul
           (Complex.continuous_exp.measurable.comp
             ((measurable_const.mul measurable_id.complex_ofReal).neg)))
           |>.aestronglyMeasurable).restrict
     · filter_upwards [ae_restrict_mem measurableSet_Ioi] with y hy
       dsimp [F]
-      rw [norm_mul, norm_real, Complex.norm_exp, neg_re, mul_re,
-        ofReal_re, ofReal_im]
-      simp only [mul_zero, sub_zero]
-      rw [abs_mul, abs_of_pos (Real.exp_pos _), ← Real.exp_add]
-      ring_nf
-      rfl
+      rw [norm_mul, norm_real, Complex.norm_exp,
+        show (-s * (y : ℂ)).re = -s.re * y by
+          simp [mul_re]]
+      apply le_of_eq
+      calc
+        ‖E y‖ * Real.exp (-s.re * y) =
+            |E y| * Real.exp (-s.re * y) := by
+              rw [Real.norm_eq_abs]
+        _ = |E y| *
+              (Real.exp (-beta * y) *
+                Real.exp (-(s.re - beta) * y)) := by
+              rw [← Real.exp_add]
+              congr 2
+              ring
+        _ = |E y * Real.exp (-beta * y)| *
+              Real.exp (-(s.re - beta) * y) := by
+              rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+              ring
   have hF'meas : AEStronglyMeasurable (F' s) μ := by
-    exact
+    simpa [F', F, μ, Function.comp_def] using
       ((measurable_id.complex_ofReal.neg.mul
         ((hEmeas.complex_ofReal.mul
           (Complex.continuous_exp.measurable.comp
@@ -201,19 +248,31 @@ theorem differentiableAt_mellinPsiError_of_weightedLogPsiL2Above
         simpa [dist_eq_norm] using hz
       have hreabs : |z.re - s.re| ≤ ‖z - s‖ := by
         simpa using abs_re_le_norm (z - s)
+      have hleft :
+          s.re - z.re ≤ |z.re - s.re| := by
+        linarith [neg_abs_le (z.re - s.re)]
       linarith
     have hy0 : 0 ≤ y := hy.le
     dsimp [F', F, bound]
     rw [norm_mul, norm_neg, norm_real, norm_mul, norm_real,
-      Complex.norm_exp, neg_re, mul_re, ofReal_re, ofReal_im]
-    simp only [mul_zero, sub_zero, Real.norm_eq_abs,
-      abs_of_nonneg hy0]
+      Complex.norm_exp,
+      show (-z * (y : ℂ)).re = -z.re * y by
+        simp [mul_re]]
+    simp only [Real.norm_eq_abs, abs_of_nonneg hy0]
     have hexp :
         Real.exp (-z.re * y) ≤
           Real.exp (-(s.re - radius) * y) := by
       exact Real.exp_le_exp.mpr
-        (mul_le_mul_of_nonpos_right hrez.le (by linarith))
-    gcongr
+        (mul_le_mul_of_nonneg_right (neg_le_neg hrez.le) hy0)
+    calc
+      y * (|E y| * Real.exp (-z.re * y)) =
+          (y * |E y|) * Real.exp (-z.re * y) := by ring
+      _ ≤ (y * |E y|) *
+          Real.exp (-(s.re - radius) * y) :=
+        mul_le_mul_of_nonneg_left hexp
+          (mul_nonneg hy0 (abs_nonneg _))
+      _ = |E y| * y *
+          Real.exp (-(s.re - radius) * y) := by ring
   have hdiff :
       ∀ᵐ y ∂μ, ∀ z ∈ Metric.ball s radius,
         HasDerivAt (F · y) (F' z y) z := by
@@ -222,7 +281,9 @@ theorem differentiableAt_mellinPsiError_of_weightedLogPsiL2Above
     convert
       (hasDerivAt_const z (E y : ℂ)).mul
         (((hasDerivAt_id z).neg.mul_const (y : ℂ)).cexp)
-      using 1 <;> ring
+      using 1 <;>
+        simp <;>
+        ring
   have hderiv :=
     hasDerivAt_integral_of_dominated_loc_of_deriv_le
       (Metric.ball_mem_nhds s hradius)
@@ -297,8 +358,8 @@ private theorem integrableOn_weightedLogPsiError_sq_Ioc
       Real.exp ((n : ℝ) + 1) *
       Real.exp (|alpha| * ((n : ℝ) + 1))) ^ 2
   apply IntegrableOn.of_bound
-    (measure_Ioc_lt_top.ne) 
-  · exact
+    measure_Ioc_lt_top
+  · simpa [Function.comp_def] using
       ((measurable_logarithmicPsiError.mul
         (Real.measurable_exp.comp
           (measurable_const.mul measurable_id).neg)).pow_const 2
@@ -306,7 +367,7 @@ private theorem integrableOn_weightedLogPsiError_sq_Ioc
   · filter_upwards [ae_restrict_mem measurableSet_Ioc] with y hy
     have hy0 : 0 ≤ y := by
       exact (Nat.cast_nonneg n).trans hy.1.le
-    have hyUpper : y ≤ (n : ℝ) + 1 := hy.2.le
+    have hyUpper : y ≤ (n : ℝ) + 1 := hy.2
     have hexpY :
         Real.exp y ≤ Real.exp ((n : ℝ) + 1) :=
       Real.exp_le_exp.mpr hyUpper
@@ -328,8 +389,22 @@ private theorem integrableOn_weightedLogPsiError_sq_Ioc
           (Real.log 4 + 5) * Real.exp ((n : ℝ) + 1) *
             Real.exp (|alpha| * ((n : ℝ) + 1)) := by
       rw [abs_mul, abs_of_pos (Real.exp_pos _)]
-      gcongr
-      exact logarithmicPsiError_abs_le_exp_growth y
+      calc
+        |logarithmicPsiError y| * Real.exp (-alpha * y) ≤
+            ((Real.log 4 + 5) * Real.exp ((n : ℝ) + 1)) *
+              Real.exp (-alpha * y) :=
+          mul_le_mul_of_nonneg_right
+            ((logarithmicPsiError_abs_le_exp_growth y).trans
+              (mul_le_mul_of_nonneg_left hexpY hcoef))
+            (Real.exp_pos _).le
+        _ ≤
+            ((Real.log 4 + 5) * Real.exp ((n : ℝ) + 1)) *
+              Real.exp (|alpha| * ((n : ℝ) + 1)) :=
+          mul_le_mul_of_nonneg_left hweight
+            (mul_nonneg hcoef (Real.exp_pos _).le)
+        _ =
+            (Real.log 4 + 5) * Real.exp ((n : ℝ) + 1) *
+              Real.exp (|alpha| * ((n : ℝ) + 1)) := by ring
     have hsq :
         (logarithmicPsiError y * Real.exp (-alpha * y)) ^ 2 ≤ B := by
       dsimp [B]
@@ -398,7 +473,7 @@ theorem weightedLogPsiL2Above_of_localPsiL2ExponentAtMost
         block n ⊆
           Set.Icc (n : ℝ) ((1 + ε) * n) := by
       intro y hy
-      exact ⟨hy.1.le, hy.2.le.trans hnUpper⟩
+      exact ⟨hy.1.le, hy.2.trans hnUpper⟩
     have hrawInt :
         IntegrableOn
           (fun y : ℝ => logarithmicPsiError y ^ 2)
@@ -424,10 +499,22 @@ theorem weightedLogPsiL2Above_of_localPsiL2ExponentAtMost
         exact Real.exp_le_exp.mpr
           (mul_le_mul_of_nonpos_left hyLower
             (by linarith : -2 * alpha ≤ 0))
-      dsimp [f]
-      rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _),
-        mul_pow, ← Real.exp_two_mul]
-      exact mul_le_mul_of_nonneg_left hexp (sq_nonneg _)
+      rw [show ‖f y‖ =
+          logarithmicPsiError y ^ 2 *
+            Real.exp (-2 * alpha * y) by
+        change
+          |(logarithmicPsiError y *
+              Real.exp (-alpha * y)) ^ 2| =
+            logarithmicPsiError y ^ 2 *
+              Real.exp (-2 * alpha * y)
+        rw [abs_of_nonneg (sq_nonneg _), mul_pow]
+        congr 1
+        rw [pow_two, ← Real.exp_add]
+        congr 1
+        ring]
+      simpa [mul_comm] using
+        mul_le_mul_of_nonneg_left hexp
+          (sq_nonneg (logarithmicPsiError y))
     have hfirst :
         (∫ y : ℝ in block n, ‖f y‖) ≤
           ∫ y : ℝ in block n,
@@ -482,8 +569,20 @@ theorem weightedLogPsiL2Above_of_localPsiL2ExponentAtMost
       _ =
           (n : ℝ) *
             Real.exp (-2 * (alpha - beta) * n) := by
-        rw [← Real.exp_add]
-        ring_nf
+        calc
+          Real.exp (-2 * alpha * n) *
+                (Real.exp (2 * beta * n) * n) =
+              (n : ℝ) *
+                (Real.exp (-2 * alpha * n) *
+                  Real.exp (2 * beta * n)) := by ring
+          _ = (n : ℝ) *
+                Real.exp
+                  ((-2 * alpha * n) + (2 * beta * n)) := by
+              rw [← Real.exp_add]
+          _ = (n : ℝ) *
+                Real.exp (-2 * (alpha - beta) * n) := by
+              congr 2
+              ring
   have hblockIntegralSummable :
       Summable fun n : ℕ =>
         ∫ y : ℝ in block n, ‖f y‖ := by
@@ -500,13 +599,13 @@ theorem weightedLogPsiL2Above_of_localPsiL2ExponentAtMost
     simpa [block] using
       (iUnion_Ioc_map_succ_eq_Ioi
         (f := fun n : ℕ => (n : ℝ))
-        (fun n => Nat.cast_nonneg n)
+        (fun n => by simpa using Nat.cast_nonneg n)
         (by
           rw [bddAbove_def]
           push_neg
           intro a
           obtain ⟨n, hn⟩ := exists_nat_gt a
-          exact ⟨(n : ℝ), ⟨n, rfl⟩, hn.le⟩))
+          exact ⟨(n : ℝ), ⟨n, rfl⟩, hn⟩))
   rw [← hUnion]
   exact integrableOn_iUnion_of_summable_integral_norm
     hblockInt hblockIntegralSummable
