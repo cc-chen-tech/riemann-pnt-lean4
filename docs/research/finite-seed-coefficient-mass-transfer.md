@@ -44,3 +44,9 @@ allowance for the total boundary layer.  This is the precise budget
 obstruction behind finite capture.  The captured term is intentionally kept
 as an indexed sum: identifying it with the finite distinct-zero coefficient
 mass requires a separate uniqueness and counting argument.
+
+The first uniqueness step is now isolated: dyadic ordinate shells are
+pairwise disjoint, the base interval is disjoint from every dyadic shell, and
+the combined map from Carlson positive-zero indices to complex zeros is
+injective.  The indexed weight is also identified with the exact
+analytic-multiplicity coefficient of its represented zero.
