@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTMovingSigmaTransfer
+
+#print axioms PrimeNumberTheorem.exists_movingSigmaPNTUpperSchedule
+#print axioms PrimeNumberTheorem.uniformMovingSigmaHybridDensityDecay_of_fixed
+#print axioms PrimeNumberTheorem.MovingSigmaPNTUpperSchedule.relativeBudget_tendsto
+#print axioms PrimeNumberTheorem.MovingSigmaPNTUpperSchedule.relativeError_tendsto
+#print axioms PrimeNumberTheorem.exists_movingSigma_relativeChebyshevPsi0Error_tendsto
