@@ -2,3 +2,4 @@ import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonMovingBalancedDecay
 
 #print axioms PrimeNumberTheorem.carlsonMovingBalancedNormalizedRatio
 #print axioms PrimeNumberTheorem.tendsto_carlsonMovingBalancedNormalizedRatio_zero
+#print axioms PrimeNumberTheorem.tendsto_zero_of_le_const_mul_carlsonMovingBalancedNormalizedRatio

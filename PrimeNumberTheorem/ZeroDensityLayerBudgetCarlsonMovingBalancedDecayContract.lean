@@ -4,5 +4,6 @@ namespace PrimeNumberTheorem
 
 #check carlsonMovingBalancedNormalizedRatio
 #check tendsto_carlsonMovingBalancedNormalizedRatio_zero
+#check tendsto_zero_of_le_const_mul_carlsonMovingBalancedNormalizedRatio
 
 end PrimeNumberTheorem
