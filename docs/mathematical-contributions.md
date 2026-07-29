@@ -41,8 +41,12 @@ sufficiently late interval `[log Y, (1+epsilon) log Y]`.  A fixed-proportion
 large-value refinement is proved only under an explicit external fourth-moment
 upper bound.  Separate merged modules identify the target conjugate pair in a
 finite explicit-formula residue sum and prove collision-safe, phase-coercive
-local `L2` inequalities for actual finite zero packages.  They do not yet
-control the complete complementary zero sum and contour remainder.
+local `L2` inequalities for actual finite zero packages.  The merged
+finite-height bridge further proves an exact decomposition of the standard
+Chebyshev error into the selected cluster and a concrete remainder, and
+transfers the cluster lower bound to the actual `psi` second moment after
+subtracting that remainder moment.  It does not yet prove that the remainder
+is small enough for an unconditional strict lower bound.
 
 ## 1. Real Part of the Logarithmic Derivative Series
 

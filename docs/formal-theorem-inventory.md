@@ -3183,6 +3183,23 @@ charge unresolved near-frequency interaction to an explicit local-separation
 energy.  These are collision-safe finite-cluster inequalities, not a global
 zero-density contradiction or an RH proof.
 
+`PrimeNumberTheorem/VKEdgeZeroClusterExplicitFormulaL2.lean` then connects
+these inequalities to the actual standard Chebyshev error.  Core declarations
+include:
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.chebyshevPsi_sub_exp_eq_neg_cluster_sub_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorAtExponent_eq_neg_cluster_sub_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_cluster_sub_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_pos_of_localSeparation_remainder`
+
+The remainder is concrete: it contains the unselected finite-height zeros,
+the explicit-formula approximation error, closed terms, and the midpoint jump
+correction.  The final positivity theorem assumes that this remainder moment
+is smaller than the displayed cluster budget.  That inequality is not
+currently proved automatically or unconditionally.
+
 ### `ZeroFreeRegion/VinogradovKorobov/VinogradovResidueMassAudit.lean`
 
 Core verified declarations include:

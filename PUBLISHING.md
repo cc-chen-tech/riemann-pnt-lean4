@@ -10,7 +10,10 @@ right-of-critical-line zero to a strict-beyond-`pi/2` PNT-error oscillation in
 every sufficiently late `[Y,Y^(1+epsilon)]` window for fixed `epsilon > 0`.
 It also proves a linear ordinary local second-moment lower bound in every such
 late window and collision-safe, phase-coercive local `L2` estimates for finite
-zeta-zero clusters.
+zeta-zero clusters.  The finite-cluster contribution is also connected by an
+exact finite-height explicit-formula identity to the actual standard
+Chebyshev-`psi` second moment, with the complete concrete remainder retained as
+a subtraction term.
 It does not prove the Riemann Hypothesis, Selberg's `T log T` result, or
 provide numerically explicit values for the existential remainder constants.
 
@@ -48,8 +51,10 @@ strict-beyond-`pi/2` oscillation in every late fixed-epsilon power window are
 theorem-level.  The resulting linear local second-moment lower bound and the
 finite-zero-cluster coercivity inequalities are also theorem-level.  The
 fixed-proportion large-value theorem explicitly assumes an external fourth
-moment bound; the full explicit-formula complement and detector-energy gates
-remain open. RH, Vinogradov--Korobov,
+moment bound.  The actual finite-height complement is now defined and the
+exact `psi` transfer is theorem-level, but no theorem yet proves its remainder
+moment is small enough for the strict positivity endpoint; the detector-energy
+gate also remains open. RH, Vinogradov--Korobov,
 Selberg positive proportion, and any
 unconditional power-saving error below exponent `2/3` remain outside the
 proved boundary.
@@ -88,7 +93,8 @@ Hardy--Littlewood linear critical-line-zero lower bounds, a divergent Pintz
 zero envelope, and right-of-critical-line-zero-forced PNT oscillation beyond
 pi/2 and a linear local second-moment lower bound in every sufficiently late
 fixed-epsilon power window, plus collision-safe finite-zero-cluster local L2
-coercivity.
+coercivity and an exact actual-psi second-moment transfer with a visible
+finite-height remainder.
 ```
 
 Do not claim:
@@ -110,7 +116,8 @@ Hilbert/mean-square infrastructure, Hardy--Littlewood linear lower bounds,
 Pintz envelope divergence, and the implication from a right-of-critical-line
 zero to strict-beyond-pi/2 PNT oscillation in every sufficiently late
 fixed-epsilon power window, together with linear local second-moment and
-finite-zero-cluster coercivity estimates, proved in Lean 4
+finite-zero-cluster coercivity estimates and an exact finite-height
+explicit-formula transfer to the actual psi second moment, proved in Lean 4
 ```
 
 not as:
@@ -136,9 +143,10 @@ For the zero-forced oscillation route, distinguish three trust levels:
   existence of the stated off-line zeta zero;
 - conditional theorem-level: fixed-proportion large values assuming the
   displayed external fourth-moment bound;
-- infrastructure: explicit target-pair identification, annihilator transfer,
-  and finite-cluster coercivity, without a completed global complement/remainder
-  estimate.
+- infrastructure with theorem-level identities: explicit target-pair
+  identification, annihilator transfer, finite-cluster coercivity, and the
+  exact actual-`psi` second-moment lower bound after subtracting the concrete
+  remainder; a sufficiently small remainder estimate is not proved.
 
 ## Unproved Target Statements
 

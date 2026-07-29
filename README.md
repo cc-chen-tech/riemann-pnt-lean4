@@ -9,7 +9,8 @@
 临界线零点定理、全高度 Riemann--von Mangoldt 零点计数公式、固定 `sigma` 的
 Carlson 零密度估计、Pintz 零点包络，以及临界线右侧零点迫使的严格 `pi/2` 以上
 PNT 误差振荡。围绕该振荡，`main` 还包含每个充分靠后的固定幂窗口上的线性局部
-二阶矩下界，以及有限零点簇的碰撞安全局部 `L2` 强制性工具。项目没有证明
+二阶矩下界、有限零点簇的碰撞安全局部 `L2` 强制性工具，以及把有限簇接入真实
+有限高度显式公式的精确 `psi` 二阶矩传递。项目没有证明
 Riemann 假设或 Vinogradov--Korobov 零自由区域。
 
 > **状态边界：** 本页把 `main` 已验证定理、研究分支结果和开放目标分开列出。
@@ -168,6 +169,7 @@ resulting reusable library.
 | 离线零点迫使每个充分靠后固定幂窗口上的线性普通局部二阶矩下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear` | [源码](PrimeNumberTheorem/VKEdgePiOverTwoSweptL2.lean) · [审计](docs/research/vk-edge-swept-l2-contradiction-audit.md) |
 | 实际有限零点簇的碰撞安全局部 `L2` 下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterCoercivity.lean) · [说明](docs/research/vk-edge-cluster-coercivity.md) |
 | 有限零点簇的相位保护局部分离 `L2` 下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterLocalL2.lean) · [定理清单](docs/formal-theorem-inventory.md) |
+| 真实 `psi` 二阶矩的“有限零点簇减完整余项”下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterExplicitFormulaL2.lean) · [实现计划](docs/superpowers/plans/2026-07-29-vk-edge-zero-cluster-explicit-l2.md) |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
@@ -294,10 +296,16 @@ c(rho, epsilon) * log(Y)
 另一组新模块把单个共轭零点对推广到有限零点簇：先合并相同虚部以避免频率碰撞，再用
 相位强制性和局部分离 Hilbert 损失给出局部 `L2` 下界。显式公式桥已严格识别目标
 共轭零点对与余弦模型；三尺度消去器则把正检测器能量转成扩大区间内的残差大值。
+最新的实际显式公式模块还把任意有限子簇从完整有限高度零点和中精确拆出，并证明
 
-尚未闭合的是：为完整零点和选择可控的有限簇、控制互补零点及轮廓余项，并证明消去器
-检测器能量为正。因此这些结果还不是无条件 Pintz 最大阶定理，也没有把离线零点变成
-矛盾或 RH 证明。
+```text
+actual psi second moment
+  >= finite-cluster coercive budget - concrete remainder second moment.
+```
+
+尚未闭合的是：选择可控的有限簇，并证明由未选零点、有限高度近似误差、闭式项和跳跃
+修正组成的具体余项二阶矩小于簇的强制性预算；消去器路线还需证明检测器能量为正。
+因此这些结果还不是无条件 Pintz 最大阶定理，也没有把离线零点变成矛盾或 RH 证明。
 
 ### 9. Vinogradov--Korobov 基础设施
 
@@ -340,7 +348,8 @@ flowchart TD
 
     V["Finite zero cluster"] --> W["Merge equal ordinates and protect phase"]
     W --> X["Collision-safe local L2 coercivity<br/>proved on main"]
-    X --> Z["Full explicit-formula remainder control<br/>open"]
+    X --> Y["Actual psi L2 >= cluster - remainder<br/>proved on main"]
+    Y --> Z["Remainder dominance<br/>open"]
 ```
 
 这些主链分别回答：
@@ -430,6 +439,7 @@ Hardy--Littlewood 形式化的 prior art。
 - 该大值在每个充分靠后的固定 `epsilon` 幂窗口中出现；
 - 同一假设推出窗口长度级别的普通局部二阶矩下界；
 - 共轭零点对的真实显式公式识别、三尺度消去器和有限零点簇碰撞安全 `L2` 工具。
+- 实际有限高度显式公式中的精确“`psi` 二阶矩 ≥ 簇预算减具体余项”传递。
 
 这一组已有独立技术轮廓，但投稿前还应完成系统 prior-art 核查。若要把它从“强形式化与
 新证明架构”升级为更强数学论文，最关键的是闭合完整显式公式互补项，或得到无额外
@@ -516,6 +526,8 @@ lake build \
   Test.VKEdgeZeroClusterPhaseCoercivityAxiomAudit \
   Test.VKEdgeZeroClusterLocalL2Contract \
   Test.VKEdgeZeroClusterLocalL2AxiomAudit \
+  Test.VKEdgeZeroClusterExplicitFormulaL2Contract \
+  Test.VKEdgeZeroClusterExplicitFormulaL2AxiomAudit \
   Test.VinogradovKorobovResidueMassAuditContract \
   Test.VinogradovKorobovResidueMassAxiomAudit \
   Test.VinogradovKorobovAxiomAudit

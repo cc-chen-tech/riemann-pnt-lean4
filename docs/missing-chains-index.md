@@ -84,11 +84,14 @@ This route is not represented by a remaining `def ... : Prop` target, but it
 has a precise theorem-level boundary.  The single-zero local oscillation and
 linear local second moment are proved.  The finite-cluster modules merge equal
 ordinates, protect phase mass, and expose the local-separation loss.  The
-remaining analytic bridge is to select a controlled finite package from the
-full explicit formula and dominate every complementary-zero and contour
-remainder.  The fixed-proportion theorem additionally needs an external
-fourth-moment upper bound.  None of the current declarations converts these
-large values into new zeta zeros or a contradiction.
+actual finite-height explicit formula is now split exactly into a selected
+cluster and a concrete remainder, and the corresponding actual-`psi`
+second-moment transfer is proved.  The remaining analytic bridge is to select
+a controlled finite package and prove that the unselected-zero,
+finite-height-approximation, closed-term, and jump-correction remainder moment
+is smaller than the cluster budget.  The fixed-proportion theorem additionally
+needs an external fourth-moment upper bound.  None of the current declarations
+converts these large values into new zeta zeros or a contradiction.
 
 ## Target-to-Chain Mapping
 
@@ -118,6 +121,7 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear`
 - `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged`
 - `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder`
 - `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedRawResidueNormMoment_one_le_refinement_via_normalized`
 - `ZeroFreeRegion.log_deriv_zeta_re_series`
 - `ZeroFreeRegion.log_deriv_zeta_nonneg_combination`
