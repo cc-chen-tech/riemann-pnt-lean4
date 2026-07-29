@@ -10,6 +10,10 @@ from typing import Dict, Iterable, List, Set
 ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
+AXIOM_AUDIT_MODULES = [
+    "Test.MultiplicityAxiomAudit",
+    "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
+]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_psiError_in_powerOnePlusEpsilonWindow_gt_uniformBellottiGap",
@@ -240,6 +244,19 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_positiveCriticalLine_add_two_mul_zeroDensityCount",
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_add_halfMultiplicity_eq_criticalLine_add_two_mul_zeroDensityCount",
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_criticalLine_add_two_mul_zeroDensityCount",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.gaussianDerivativeExpBound_nonneg",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.polynomialGaussianEnvelopeConstant_nonneg",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exp_scaled_abs_mul_normalizedGaussian_le_exp_one_div_sqrt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.projectedPsiKernelAtCenterEnvelopeConstant_nonneg",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.projectedPsiKernelAtCenter_abs_le_scaled_exp_abs_mul",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.relativeProjectedPsiKernelAtCenterEnvelopeConstant_nonneg",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.centeredSharpenedProjectedPsiKernelEnvelopeConstant_pos",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.centeredSharpenedProjectedPsiKernel_abs_le_inv_sqrt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.centeredNormalizedWindowOrdinarySecondMoment_eq",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.ordinarySecondMoment_lower_of_weightedSecondMoment",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_centeredSharpenedNormalizedPsiError_ordinarySecondMoment_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt",
 }
 
 REPORT_RE = re.compile(
@@ -282,7 +299,7 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "build", "Test.MultiplicityAxiomAudit"],
+        ["lake", "build", *AXIOM_AUDIT_MODULES],
         cwd=ROOT,
         text=True,
         capture_output=True,
