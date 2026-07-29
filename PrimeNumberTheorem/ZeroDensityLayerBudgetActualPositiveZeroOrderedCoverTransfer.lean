@@ -193,6 +193,54 @@ theorem tendsto_dynamicPositivePNTTailNorm_of_orderedCarlsonRightCover
       dynamicPositivePNTTailNorm_le_criticalHalf_add_orderedStripUnion
         (hcover x)
 
+/-- The same transfer only needs the right Carlson cover eventually.  This is
+the form intended for later zero-free-region input. -/
+theorem tendsto_dynamicPositivePNTTailNorm_of_eventually_orderedCarlsonRightCover
+    {n : ℕ} {sigma tau : Fin n → ℝ}
+    {alpha epsilonLow epsilonRight : ℝ}
+    (hhalf : ∀ i, 1 / 2 < sigma i)
+    (hone : ∀ i, sigma i < 1)
+    (halpha : 0 < alpha)
+    (hepsilonLow : 0 < epsilonLow)
+    (hlowMargin : alpha + epsilonLow < 1 / 2)
+    (hepsilonRight : 0 < epsilonRight)
+    (htau :
+      ∀ i,
+        tau i + epsilonRight <
+          carlsonTwoHeightBalancedTauCeiling (sigma i) alpha)
+    (hsep :
+      ∀ i j, i ≠ j →
+        tau i ≤ sigma j ∨ tau j ≤ sigma i)
+    (hcover :
+      ∀ᶠ x in atTop,
+        ActualPositiveCarlsonRightCover sigma tau
+          (carlsonPolynomialHeight alpha x)) :
+    Tendsto
+      (dynamicPositivePNTTailNorm (carlsonPolynomialHeight alpha))
+      atTop (nhds 0) := by
+  have hcritical :=
+    tendsto_actualCriticalHalfCanonicalPNTLayerNorm
+      halpha hepsilonLow hlowMargin
+  have hright :=
+    tendsto_actualPositiveCarlsonOrderedStripUnion_mass
+      hhalf hone halpha hepsilonRight htau hsep
+  have hmajorant :
+      Tendsto
+        (fun x =>
+          dynamicPositiveOutsideClusterPNTLayerNorm
+              (carlsonPolynomialHeight alpha) ∅
+              (actualCriticalHalfCanonicalInput alpha) 0 x +
+            ∑ rho ∈ actualPositiveCarlsonFiniteStripUnion sigma tau
+                (carlsonPolynomialHeight alpha x),
+              ‖pntRelativeZeroContribution x rho‖)
+        atTop (nhds 0) := by
+    simpa using hcritical.add hright
+  refine squeeze_zero' ?_ ?_ hmajorant
+  · exact Filter.Eventually.of_forall fun x => norm_nonneg _
+  · filter_upwards [hcover] with x hx
+    exact
+      dynamicPositivePNTTailNorm_le_criticalHalf_add_orderedStripUnion hx
+
 /-- Endpoint-form corollary of the ordered-cover transfer. -/
 theorem tendsto_dynamicPositivePNTTailNorm_of_orderedCarlsonEndpoints
     {n : ℕ} {sigma tau : Fin n → ℝ}
@@ -224,6 +272,41 @@ theorem tendsto_dynamicPositivePNTTailNorm_of_orderedCarlsonEndpoints
   intro x
   exact actualPositiveCarlsonRightCover_of_endpoints
     (fun rho hrho hright => hcover x rho hrho hright)
+
+/-- Eventual endpoint-form corollary, matching an asymptotic zero-free
+coverage statement. -/
+theorem tendsto_dynamicPositivePNTTailNorm_of_eventually_orderedCarlsonEndpoints
+    {n : ℕ} {sigma tau : Fin n → ℝ}
+    {alpha epsilonLow epsilonRight : ℝ}
+    (hhalf : ∀ i, 1 / 2 < sigma i)
+    (hone : ∀ i, sigma i < 1)
+    (halpha : 0 < alpha)
+    (hepsilonLow : 0 < epsilonLow)
+    (hlowMargin : alpha + epsilonLow < 1 / 2)
+    (hepsilonRight : 0 < epsilonRight)
+    (htau :
+      ∀ i,
+        tau i + epsilonRight <
+          carlsonTwoHeightBalancedTauCeiling (sigma i) alpha)
+    (hsep :
+      ∀ i j, i ≠ j →
+        tau i ≤ sigma j ∨ tau j ≤ sigma i)
+    (hcover :
+      ∀ᶠ x in atTop,
+        ∀ rho,
+          rho ∈ positiveNontrivialZerosFinset
+              (carlsonPolynomialHeight alpha x) →
+            1 / 2 < rho.re →
+              ∃ i, sigma i < rho.re ∧ rho.re ≤ tau i) :
+    Tendsto
+      (dynamicPositivePNTTailNorm (carlsonPolynomialHeight alpha))
+      atTop (nhds 0) := by
+  apply
+    tendsto_dynamicPositivePNTTailNorm_of_eventually_orderedCarlsonRightCover
+      hhalf hone halpha hepsilonLow hlowMargin hepsilonRight htau hsep
+  filter_upwards [hcover] with x hx
+  exact actualPositiveCarlsonRightCover_of_endpoints
+    (fun rho hrho hright => hx rho hrho hright)
 
 end
 
