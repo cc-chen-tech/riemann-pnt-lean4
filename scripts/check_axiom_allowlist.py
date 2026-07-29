@@ -15,6 +15,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
     "Test.VKEdgePiOverTwoFixedProportionAxiomAudit",
+    "Test.VKEdgeResidualAmplificationAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_localSeparation",
@@ -286,6 +287,21 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.measure_sq_largeSet_gt_of_scaled_moments",
     "PrimeNumberTheorem.VKEdgePiOverTwo.measurable_normalizedPsiError_fixedProportion",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_fixedProportion_largeNormalizedPsiError_of_fourthMoment",
+    "MathlibAux.sqrt_integral_sq_sub_lower",
+    "MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.intervalIntegral_cosinePairModel_sq",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_cosinePairModel_sq_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.measurable_normalizedCosineModelPair",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.measurable_normalizedPsiModelResidual",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integrableOn_normalizedCosineModelPair_sq_Icc",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integrableOn_normalizedPsiModelResidual_sq_Icc",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_normalizedCosineModelPair_sq_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.one_div_pi_le_sharpenedMissingHarmonicDenominator",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.one_le_centeredSharpenedProjectedPsiKernelEnvelopeConstant",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.centeredSharpenedSweptOrdinaryL2Constant_lt_cosineModelHalfEnergy",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_normalizedPsiModelResidual_sq_lower",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_normalizedCosineModelPair_sq_le_epsilonLogWindow",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_Icc_normalizedPsiModelResidual_sq_lower_epsilonLogWindow",
 }
 
 REPORT_RE = re.compile(
