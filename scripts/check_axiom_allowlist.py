@@ -20,6 +20,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeExplicitFormulaPairBridgeAxiomAudit",
     "Test.ExplicitFormulaNormalizedWindowRemainderAxiomAudit",
     "Test.VKEdgeZeroClusterApproximationL2AxiomAudit",
+    "Test.VKEdgeHighZeroBucketEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -55,6 +56,10 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_normalizedWindowRemainderEnvelope_atTop_nhds_zero",
     "PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_zeroOrdinateUnitBucketMultiplicity_le_log",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_zeroOrdinateUnitBucketCoefficientMass_le_log_div",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.summable_sq_zeroOrdinateUnitBucketCoefficientMass",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_sum_Icc_sq_zeroOrdinateUnitBucketCoefficientMass_lt",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
