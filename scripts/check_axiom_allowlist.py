@@ -19,6 +19,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeCosineModelAnnihilatorAxiomAudit",
     "Test.VKEdgeExplicitFormulaPairBridgeAxiomAudit",
     "Test.ExplicitFormulaNormalizedWindowRemainderAxiomAudit",
+    "Test.VKEdgeZeroClusterApproximationL2AxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -53,6 +54,7 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_exp_half_norm_real_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le",
     "PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_normalizedWindowRemainderEnvelope_atTop_nhds_zero",
     "PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
