@@ -1,0 +1,18 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonTwoHeightSplit
+
+namespace PrimeNumberTheorem
+
+#check carlsonTwoHeightDensityExponent
+#check carlsonTwoHeightLowExponent
+#check carlsonTwoHeightHighExponent
+#check carlsonTwoHeightBalancedCut
+#check carlsonTwoHeightBalancedExponent
+#check carlsonTwoHeightBalancedCut_pos
+#check carlsonTwoHeightBalancedCut_lt_alpha
+#check carlsonTwoHeightLowExponent_balanced
+#check carlsonTwoHeightHighExponent_balanced
+#check carlsonTwoHeightBalancedExponent_lt_singleHeight
+#check tendsto_carlsonTwoHeightLogMajorant
+#check tendsto_balancedCarlsonTwoHeightLogMajorant
+
+end PrimeNumberTheorem
