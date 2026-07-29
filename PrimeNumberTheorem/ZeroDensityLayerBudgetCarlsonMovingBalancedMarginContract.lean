@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonMovingBalancedMargin
+
+namespace PrimeNumberTheorem
+
+#check carlsonTwoHeightDensityExponent_one_sub
+#check carlsonTwoHeightDensityExponent_one_sub_bounds
+#check carlsonTwoHeightBalancedPenalty_one_sub_le
+#check carlsonTwoHeightBalancedExponent_one_sub_le_neg_half
+#check one_sub_lt_carlsonTwoHeightBalancedTauCeiling
+#check eventually_carlsonTwoHeightBalancedExponent_one_sub_le_neg_half
+
+end PrimeNumberTheorem
