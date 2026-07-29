@@ -400,23 +400,41 @@ private theorem relativeProjectedPsiTailRemainderAtCenter_eq
   rw [abs_of_nonneg (norm_nonneg ((u : ℂ) + I * lambda))]
   ring
 
-private theorem exists_projectedPsiKernelAtCenter_norm_le_scaled_exp_abs_mul
-    (q : ℝ) (A : ℂ[X]) {w : ℂ} (hw : w ≠ 0) :
-    ∃ C : ℝ, 0 ≤ C ∧
-      ∀ m : ℝ, 1 ≤ m → ∀ y : ℝ,
-        |projectedPsiKernelAtCenter q A w m y| ≤
-          C *
-            Real.exp
-              |(Real.sqrt m)⁻¹ * (q * m - y)| *
-            normalizedGaussian m (q * m - y) := by
-  obtain ⟨D, hD, hDbound⟩ :=
-    exists_polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul A
-  let C : ℝ := (2 / ‖w‖) * max ‖w‖ 1 * D
+/-- Explicit envelope constant for a centered projected Psi kernel. -/
+def projectedPsiKernelAtCenterEnvelopeConstant
+    (A : ℂ[X]) (w : ℂ) : ℝ :=
+  (2 / ‖w‖) * max ‖w‖ 1 * polynomialGaussianEnvelopeConstant A
+
+theorem projectedPsiKernelAtCenterEnvelopeConstant_nonneg
+    (A : ℂ[X]) (w : ℂ) :
+    0 ≤ projectedPsiKernelAtCenterEnvelopeConstant A w := by
+  unfold projectedPsiKernelAtCenterEnvelopeConstant
+  exact mul_nonneg
+    (mul_nonneg
+      (div_nonneg (by norm_num) (norm_nonneg w))
+      (le_trans (norm_nonneg w) (le_max_left ‖w‖ 1)))
+    (polynomialGaussianEnvelopeConstant_nonneg A)
+
+/-- Pointwise Hermite-Gaussian envelope for a centered projected Psi
+kernel, with a named finite coefficient constant. -/
+theorem projectedPsiKernelAtCenter_abs_le_scaled_exp_abs_mul
+    (q : ℝ) (A : ℂ[X]) {w : ℂ} (hw : w ≠ 0)
+    (m : ℝ) (hm : 1 ≤ m) (y : ℝ) :
+    |projectedPsiKernelAtCenter q A w m y| ≤
+      projectedPsiKernelAtCenterEnvelopeConstant A w *
+        Real.exp |(Real.sqrt m)⁻¹ * (q * m - y)| *
+        normalizedGaussian m (q * m - y) := by
   have hnormPos : 0 < ‖w‖ := norm_pos_iff.mpr hw
-  refine ⟨C, by positivity, ?_⟩
-  intro m hm y
   let t : ℝ := q * m - y
-  have hsum := hDbound m hm t
+  have hsum' :
+      ‖polynomialGaussianKernel A m t‖ +
+          ‖polynomialGaussianKernelDeriv A m t‖ ≤
+        polynomialGaussianEnvelopeConstant A *
+          Real.exp |(Real.sqrt m)⁻¹ * t| *
+          normalizedGaussian m t := by
+    exact
+      polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul
+        A hm t
   have hweighted :
       ‖w‖ * ‖polynomialGaussianKernel A m t‖ +
           ‖polynomialGaussianKernelDeriv A m t‖ ≤
@@ -465,14 +483,32 @@ private theorem exists_projectedPsiKernelAtCenter_norm_le_scaled_exp_abs_mul
       gcongr
     _ ≤ 2 / ‖w‖ *
           (max ‖w‖ 1 *
-            (D * Real.exp |(Real.sqrt m)⁻¹ * t| *
+            (polynomialGaussianEnvelopeConstant A *
+              Real.exp |(Real.sqrt m)⁻¹ * t| *
               normalizedGaussian m t)) := by
       gcongr
-    _ = C *
+    _ = projectedPsiKernelAtCenterEnvelopeConstant A w *
           Real.exp |(Real.sqrt m)⁻¹ * (q * m - y)| *
           normalizedGaussian m (q * m - y) := by
-      dsimp [C, t]
+      unfold projectedPsiKernelAtCenterEnvelopeConstant
+      dsimp [t]
       ring
+
+private theorem exists_projectedPsiKernelAtCenter_norm_le_scaled_exp_abs_mul
+    (q : ℝ) (A : ℂ[X]) {w : ℂ} (hw : w ≠ 0) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ m : ℝ, 1 ≤ m → ∀ y : ℝ,
+        |projectedPsiKernelAtCenter q A w m y| ≤
+          C *
+            Real.exp
+              |(Real.sqrt m)⁻¹ * (q * m - y)| *
+            normalizedGaussian m (q * m - y) := by
+  exact
+    ⟨projectedPsiKernelAtCenterEnvelopeConstant A w,
+      projectedPsiKernelAtCenterEnvelopeConstant_nonneg A w,
+      fun m hm y =>
+        projectedPsiKernelAtCenter_abs_le_scaled_exp_abs_mul
+          q A hw m hm y⟩
 
 private theorem normalizedPsiError_le_exp_growth_centered
     {u v y : ℝ} (hu : 0 < u) (hu1 : u < 1) (hy : 0 ≤ y) :

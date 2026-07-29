@@ -35,6 +35,15 @@ off-line zero, not a contradiction and not a proof of RH.  Uniform and
 positive-logarithmic-measure refinements in the Bellotti module retain their
 finite distinct-zero-location count as an explicit hypothesis.
 
+The same off-line-zero hypothesis now also gives an ordinary normalized
+PNT-error second-moment lower bound proportional to `log Y` on every
+sufficiently late interval `[log Y, (1+epsilon) log Y]`.  A fixed-proportion
+large-value refinement is proved only under an explicit external fourth-moment
+upper bound.  Separate merged modules identify the target conjugate pair in a
+finite explicit-formula residue sum and prove collision-safe, phase-coercive
+local `L2` inequalities for actual finite zero packages.  They do not yet
+control the complete complementary zero sum and contour remainder.
+
 ## 1. Real Part of the Logarithmic Derivative Series
 
 **Lean declaration:** `ZeroFreeRegion.log_deriv_zeta_re_series`
@@ -289,7 +298,11 @@ Re s >= 1 - c / log |Im s|.
 ```
 
 The remaining zero-free-region target is the stronger Vinogradov-Korobov
-region.  On the explicit-formula side, the principal-value identity, the
+region.  The merged residue-mass audit shows that constant coefficients on
+complete prime-power blocks lose exactly the usual Holder cardinality factor
+when normalized moments are returned to raw moments; normalization by itself
+does not close the Ford/Vinogradov--Korobov exponent gap.  On the
+explicit-formula side, the principal-value identity, the
 moving-height ordinary-PNT estimate, de la Vallee Poussin-form `psi` and
 `pi-Li` remainders, and the forward RH-to-prime-error implication are proved.
 Further work concerns power-saving estimates, stronger zero-free regions, and

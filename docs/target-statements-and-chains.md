@@ -1,7 +1,7 @@
 # Unproved Target Statements and Missing Chains
 
 This file is the authoritative classification of `def ... : Prop` statements
-(as of `2026-07-27`) in this Lean checkout.  It separates genuinely unproved
+(as of `2026-07-29`) in this Lean checkout.  It separates genuinely unproved
 mathematical targets from reusable predicates that already have theorem-level
 proofs.
 
@@ -27,7 +27,7 @@ The safe project positioning is:
 Lean 4 formalization of de la Vallee Poussin 3-4-1/Jensen machinery,
 the classical c/log zero-free region, an ordinary PNT derivation, Hardy and
 Hardy--Littlewood critical-line-zero theorems, and localized zero-forced
-PNT-error oscillation
+PNT-error oscillation with a linear local second-moment lower bound
 ```
 
 ## Target count
@@ -71,12 +71,20 @@ For the chain accounting:
 - `ZeroFreeRegion.classical_zero_free_region_iff_high_height_at_three`
 - `ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region`
 - `ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov`
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedNormalizedResidueMoment_one_to_raw`
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedRawResidueNormMoment_one_le_refinement_via_normalized`
 
 ### Missing mathlib/analytic infrastructure
 
 1. Vinogradov-Korobov exponential-sum estimates;
 2. the corresponding stronger zeta growth and logarithmic-derivative bounds;
 3. assembly of those bounds into the `2/3`-power logarithmic zero-free width.
+
+The merged residue-mass audit is diagnostic rather than a substitute for
+item 1: for constant coefficients on complete prime-power blocks it recovers
+the usual Holder cardinality loss when normalized moments are converted back
+to raw moments.  Any exponent saving must therefore come from additional
+nonuniformity, cancellation, or a genuinely stronger incomplete-moment input.
 
 ---
 
