@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTRectangularStrips
+
+#print axioms PrimeNumberTheorem.norm_pntRelativeSimpleZeroKernel_le_rectangle
+#print axioms PrimeNumberTheorem.PositiveZeroRectangleInput.sum_norm_layer_le
+#print axioms PrimeNumberTheorem.PositiveZeroRectangleInput.norm_positive_sum_le
+#print axioms PrimeNumberTheorem.PositiveZeroRectangleInput.norm_full_sum_le
