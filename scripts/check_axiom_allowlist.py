@@ -11,6 +11,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.chebyshevPsi_sub_exp_eq_neg_cluster_sub_remainder",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorAtExponent_eq_neg_cluster_sub_remainder",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_cluster_sub_remainder",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_pos_of_localSeparation_remainder",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_localSeparation",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_pos_of_localSeparation",
