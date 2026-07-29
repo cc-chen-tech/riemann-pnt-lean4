@@ -47,6 +47,7 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaAux.abs_chebyshevPsi0_sub_floor_le_log",
     "PrimeNumberTheorem.ExplicitFormulaAux.norm_explicitFormulaApproxWithMultiplicity_sub_floor_le",
     "PrimeNumberTheorem.ExplicitFormulaAux.norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_floor",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_real_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
