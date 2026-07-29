@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonMovingLogPowerAbsorption
+
+#print axioms PrimeNumberTheorem.carlsonMovingQuadraticLogPowerEnvelope_admissible
+#print axioms PrimeNumberTheorem.tendsto_carlsonMovingQuadraticLogPowerCoefficientRatio_zero
