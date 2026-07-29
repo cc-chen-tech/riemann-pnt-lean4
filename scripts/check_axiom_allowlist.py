@@ -20,6 +20,16 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeExplicitFormulaPairBridgeAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_tailResidueLength",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_tailResidueLength_pow",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovMixedNormalizedResidueMoment_one_to_raw",
+    "ZeroFreeRegion.VinogradovKorobov.card_vinogradovResidueClassFinset_completePrimePowerBlock",
+    "ZeroFreeRegion.VinogradovKorobov.card_vinogradovResidueClassFinset_nestedPrimePowerBlock",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_nestedPrimePowerBlock_pow",
+    "ZeroFreeRegion.VinogradovKorobov.vinogradovMixedRawResidueNormMoment_one_le_refinement_via_normalized",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_localSeparation",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_pos_of_localSeparation",
