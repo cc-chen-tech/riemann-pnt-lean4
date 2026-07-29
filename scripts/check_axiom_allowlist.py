@@ -21,6 +21,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.ExplicitFormulaNormalizedWindowRemainderAxiomAudit",
     "Test.VKEdgeZeroClusterApproximationL2AxiomAudit",
     "Test.VKEdgeZeroClusterComplementL2AxiomAudit",
+    "Test.VKEdgeHighZeroBucketEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -61,6 +62,10 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_uniform_normalizedEqualRealPartComplementSecondMoment_le",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_normalizedEqualRealPartComplementSecondMoment_lt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normSq_normalizedFiniteZeroClusterPsiRemainderWithoutJump_le_components",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_zeroOrdinateUnitBucketMultiplicity_le_log",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_zeroOrdinateUnitBucketCoefficientMass_le_log_div",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.summable_sq_zeroOrdinateUnitBucketCoefficientMass",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_sum_Icc_sq_zeroOrdinateUnitBucketCoefficientMass_lt",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
