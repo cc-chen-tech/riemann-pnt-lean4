@@ -10,7 +10,9 @@
 Carlson 零密度估计、Pintz 零点包络，以及临界线右侧零点迫使的严格 `pi/2` 以上
 PNT 误差振荡。围绕该振荡，`main` 还包含每个充分靠后的固定幂窗口上的线性局部
 二阶矩下界、有限零点簇的碰撞安全局部 `L2` 强制性工具，以及把有限簇接入真实
-有限高度显式公式的精确 `psi` 二阶矩传递。项目没有证明
+有限高度显式公式的精确 `psi` 二阶矩传递。最新合并链还证明：在任意固定长度的
+对数窗口上，可以选取一个整窗共用的良好截断高度，使归一化有限高度近似余项一致
+趋于零。项目没有证明
 Riemann 假设或 Vinogradov--Korobov 零自由区域。
 
 > **状态边界：** 本页把 `main` 已验证定理、研究分支结果和开放目标分开列出。
@@ -126,7 +128,12 @@ right-of-critical-line zero, localized in every sufficiently late
 `[Y, Y^(1+epsilon)]` window for each fixed `epsilon > 0`. The same hypothesis
 also yields a linear ordinary local second-moment lower bound in every such
 late logarithmic window. Merged finite-zero-cluster modules provide
-collision-safe and phase-coercive local `L2` inequalities.
+collision-safe and phase-coercive local `L2` inequalities. A further merged
+chain removes midpoint jumps almost everywhere, controls the closed terms,
+selects one good truncation height for all real samples in a fixed logarithmic
+window, and proves that the normalized finite-height approximation remainder
+is uniformly arbitrarily small there. This does not control the complementary
+zero package.
 
 The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
@@ -170,6 +177,7 @@ resulting reusable library.
 | 实际有限零点簇的碰撞安全局部 `L2` 下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterCoercivity.lean) · [说明](docs/research/vk-edge-cluster-coercivity.md) |
 | 有限零点簇的相位保护局部分离 `L2` 下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterLocalL2.lean) · [定理清单](docs/formal-theorem-inventory.md) |
 | 真实 `psi` 二阶矩的“有限零点簇减完整余项”下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterExplicitFormulaL2.lean) · [实现计划](docs/superpowers/plans/2026-07-29-vk-edge-zero-cluster-explicit-l2.md) |
+| 固定对数窗口上归一化有限高度显式公式余项一致趋于零 | `PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt` | [源码](PrimeNumberTheorem/ExplicitFormulaNormalizedWindowRemainder.lean) · [说明](docs/research/explicit-formula-normalized-window-remainder.md) |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
@@ -303,8 +311,13 @@ actual psi second moment
   >= finite-cluster coercive budget - concrete remainder second moment.
 ```
 
-尚未闭合的是：选择可控的有限簇，并证明由未选零点、有限高度近似误差、闭式项和跳跃
-修正组成的具体余项二阶矩小于簇的强制性预算；消去器路线还需证明检测器能量为正。
+新合并的余项链进一步证明：跳跃修正在积分中几乎处处消失，闭式项有统一二阶矩控制；
+对固定 `1/2 < beta < 1` 和固定窗口长度 `L`，每个充分靠后的 `[a,a+L]` 都能选取一个
+整窗共用的良好高度 `T`（大小约为 `exp(a/2)`），使有限高度显式公式近似误差除以
+`exp(beta*y)` 后在整窗上一致小于任意给定的正数。
+
+尚未闭合的是：选择可控的有限簇，并控制未选零点组成的**互补零点包**，从而证明完整
+具体余项二阶矩小于簇的强制性预算；消去器路线还需证明检测器能量为正。
 因此这些结果还不是无条件 Pintz 最大阶定理，也没有把离线零点变成矛盾或 RH 证明。
 
 ### 9. Vinogradov--Korobov 基础设施
@@ -440,9 +453,10 @@ Hardy--Littlewood 形式化的 prior art。
 - 同一假设推出窗口长度级别的普通局部二阶矩下界；
 - 共轭零点对的真实显式公式识别、三尺度消去器和有限零点簇碰撞安全 `L2` 工具。
 - 实际有限高度显式公式中的精确“`psi` 二阶矩 ≥ 簇预算减具体余项”传递。
+- 固定对数窗口上整窗共用良好高度的选择，以及归一化有限高度近似余项的一致消失。
 
 这一组已有独立技术轮廓，但投稿前还应完成系统 prior-art 核查。若要把它从“强形式化与
-新证明架构”升级为更强数学论文，最关键的是闭合完整显式公式互补项，或得到无额外
+新证明架构”升级为更强数学论文，最关键的是闭合互补零点包，或得到无额外
 第四矩假设的固定比例/正负振荡结论。
 
 ### 长期独立方向

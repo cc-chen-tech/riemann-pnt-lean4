@@ -3200,6 +3200,37 @@ correction.  The final positivity theorem assumes that this remainder moment
 is smaller than the displayed cluster budget.  That inequality is not
 currently proved automatically or unconditionally.
 
+The following merged modules now control three parts of that remainder:
+
+- `PrimeNumberTheorem/VKEdgeZeroClusterRemainderL2.lean`
+- `PrimeNumberTheorem/VKEdgeZeroClusterClosedTermsL2.lean`
+- `PrimeNumberTheorem/ExplicitFormulaSpatialVariation.lean`
+- `PrimeNumberTheorem/ExplicitFormulaUniformNaturalHeight.lean`
+- `PrimeNumberTheorem/ExplicitFormulaRealInterpolation.lean`
+- `PrimeNumberTheorem/ExplicitFormulaUniformRealHeight.lean`
+- `PrimeNumberTheorem/ExplicitFormulaNormalizedWindowRemainder.lean`
+
+Core verified declarations include:
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.jumpVonMangoldt_exp_ae_eq_zero`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedZeroPackageClosedTermsSecondMoment_le`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_real_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt`
+
+For each fixed `1/2 < beta < 1`, fixed window length `L >= 0`, and `eta > 0`,
+the last theorem selects, for every sufficiently large logarithmic center
+`a`, one good height
+
+```text
+T in [exp(a/2), exp(a/2)+1]
+```
+
+that works for every real `y in [a,a+L]` and makes the finite-height
+approximation error, normalized by `exp(beta*y)`, smaller than `eta`.
+This is an unconditional approximation-remainder theorem.  It does not bound
+the complementary zero package, so the complete remainder-budget inequality
+and the final localized cluster-forced oscillation endpoint remain open.
+
 ### `ZeroFreeRegion/VinogradovKorobov/VinogradovResidueMassAudit.lean`
 
 Core verified declarations include:

@@ -1,7 +1,7 @@
 # Unproved Target Statements and Missing Chains
 
 This file is the authoritative classification of `def ... : Prop` statements
-(as of `2026-07-29`) in this Lean checkout.  It separates genuinely unproved
+(as of `2026-07-30`) in this Lean checkout.  It separates genuinely unproved
 mathematical targets from reusable predicates that already have theorem-level
 proofs.
 

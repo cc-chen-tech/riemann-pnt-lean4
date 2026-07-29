@@ -86,12 +86,16 @@ linear local second moment are proved.  The finite-cluster modules merge equal
 ordinates, protect phase mass, and expose the local-separation loss.  The
 actual finite-height explicit formula is now split exactly into a selected
 cluster and a concrete remainder, and the corresponding actual-`psi`
-second-moment transfer is proved.  The remaining analytic bridge is to select
-a controlled finite package and prove that the unselected-zero,
-finite-height-approximation, closed-term, and jump-correction remainder moment
-is smaller than the cluster budget.  The fixed-proportion theorem additionally
-needs an external fourth-moment upper bound.  None of the current declarations
-converts these large values into new zeta zeros or a contradiction.
+second-moment transfer is proved.  The jump term is now removed almost
+everywhere, the closed terms are bounded, and one common good height makes the
+normalized finite-height approximation error uniformly arbitrarily small on
+each fixed logarithmic window.  The remaining analytic bridge is to select a
+controlled finite package and prove that the **complementary zero package**
+is small enough, together with the now-controlled pieces, to keep the total
+remainder moment below the cluster budget.  The fixed-proportion theorem
+additionally needs an external fourth-moment upper bound.  None of the current
+declarations converts these large values into new zeta zeros or a
+contradiction.
 
 ## Target-to-Chain Mapping
 

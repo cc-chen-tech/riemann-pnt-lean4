@@ -45,8 +45,18 @@ local `L2` inequalities for actual finite zero packages.  The merged
 finite-height bridge further proves an exact decomposition of the standard
 Chebyshev error into the selected cluster and a concrete remainder, and
 transfers the cluster lower bound to the actual `psi` second moment after
-subtracting that remainder moment.  It does not yet prove that the remainder
-is small enough for an unconditional strict lower bound.
+subtracting that remainder moment.  The subsequent merged chain removes the
+midpoint jump almost everywhere, controls the closed terms, interpolates one
+common good-height estimate from natural to real samples, and proves
+
+```text
+exp(-beta*y) * ||finite-height approximation error at exp(y)|| -> 0
+```
+
+uniformly on every fixed-length logarithmic window, for fixed
+`1/2 < beta < 1`.  It does not control the complementary zero package and
+therefore does not yet prove that the complete remainder is small enough for
+an unconditional strict lower bound.
 
 ## 1. Real Part of the Logarithmic Derivative Series
 

@@ -13,7 +13,10 @@ late window and collision-safe, phase-coercive local `L2` estimates for finite
 zeta-zero clusters.  The finite-cluster contribution is also connected by an
 exact finite-height explicit-formula identity to the actual standard
 Chebyshev-`psi` second moment, with the complete concrete remainder retained as
-a subtraction term.
+a subtraction term.  A further theorem-level chain removes jump terms almost
+everywhere, bounds the closed terms, selects one good height for every real
+sample in a fixed logarithmic window, and makes the normalized finite-height
+approximation remainder uniformly arbitrarily small on that window.
 It does not prove the Riemann Hypothesis, Selberg's `T log T` result, or
 provide numerically explicit values for the existential remainder constants.
 
@@ -52,9 +55,11 @@ theorem-level.  The resulting linear local second-moment lower bound and the
 finite-zero-cluster coercivity inequalities are also theorem-level.  The
 fixed-proportion large-value theorem explicitly assumes an external fourth
 moment bound.  The actual finite-height complement is now defined and the
-exact `psi` transfer is theorem-level, but no theorem yet proves its remainder
-moment is small enough for the strict positivity endpoint; the detector-energy
-gate also remains open. RH, Vinogradov--Korobov,
+exact `psi` transfer is theorem-level.  The finite-height approximation, jump,
+and closed-term pieces now have fixed-window control, but no theorem yet
+controls the complementary zero package strongly enough for the strict
+positivity endpoint; the detector-energy gate also remains open. RH,
+Vinogradov--Korobov,
 Selberg positive proportion, and any
 unconditional power-saving error below exponent `2/3` remain outside the
 proved boundary.
@@ -94,7 +99,9 @@ zero envelope, and right-of-critical-line-zero-forced PNT oscillation beyond
 pi/2 and a linear local second-moment lower bound in every sufficiently late
 fixed-epsilon power window, plus collision-safe finite-zero-cluster local L2
 coercivity and an exact actual-psi second-moment transfer with a visible
-finite-height remainder.
+finite-height remainder, together with a uniform fixed-log-window theorem
+making the normalized finite-height approximation remainder arbitrarily small
+at one shared good height.
 ```
 
 Do not claim:
@@ -117,7 +124,9 @@ Pintz envelope divergence, and the implication from a right-of-critical-line
 zero to strict-beyond-pi/2 PNT oscillation in every sufficiently late
 fixed-epsilon power window, together with linear local second-moment and
 finite-zero-cluster coercivity estimates and an exact finite-height
-explicit-formula transfer to the actual psi second moment, proved in Lean 4
+explicit-formula transfer to the actual psi second moment, plus uniform
+fixed-log-window decay of the normalized finite-height approximation remainder,
+proved in Lean 4
 ```
 
 not as:
@@ -146,7 +155,8 @@ For the zero-forced oscillation route, distinguish three trust levels:
 - infrastructure with theorem-level identities: explicit target-pair
   identification, annihilator transfer, finite-cluster coercivity, and the
   exact actual-`psi` second-moment lower bound after subtracting the concrete
-  remainder; a sufficiently small remainder estimate is not proved.
+  remainder; the approximation, jump, and closed-term pieces have fixed-window
+  control, but the complementary zero package does not.
 
 ## Unproved Target Statements
 
