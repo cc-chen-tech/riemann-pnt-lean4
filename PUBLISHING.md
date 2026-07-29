@@ -8,6 +8,9 @@ local-separation Hilbert/mean-square estimates, Hardy--Littlewood linear lower
 bounds, divergence of a Pintz zero envelope, and the implication from a
 right-of-critical-line zero to a strict-beyond-`pi/2` PNT-error oscillation in
 every sufficiently late `[Y,Y^(1+epsilon)]` window for fixed `epsilon > 0`.
+It also proves a linear ordinary local second-moment lower bound in every such
+late window and collision-safe, phase-coercive local `L2` estimates for finite
+zeta-zero clusters.
 It does not prove the Riemann Hypothesis, Selberg's `T log T` result, or
 provide numerically explicit values for the existential remainder constants.
 
@@ -42,7 +45,11 @@ four chain-gap buckets. The ordinary PNT, de la Vallee Poussin-form `psi` and
 local-separation estimates, Hardy--Littlewood linear lower bounds, the Pintz
 envelope, and the implication from a right-of-critical-line zero to
 strict-beyond-`pi/2` oscillation in every late fixed-epsilon power window are
-theorem-level. RH, Vinogradov--Korobov,
+theorem-level.  The resulting linear local second-moment lower bound and the
+finite-zero-cluster coercivity inequalities are also theorem-level.  The
+fixed-proportion large-value theorem explicitly assumes an external fourth
+moment bound; the full explicit-formula complement and detector-energy gates
+remain open. RH, Vinogradov--Korobov,
 Selberg positive proportion, and any
 unconditional power-saving error below exponent `2/3` remain outside the
 proved boundary.
@@ -79,7 +86,9 @@ formula, Carlson's fixed-sigma zero-density estimate, and reusable
 local-separation Hilbert/mean-square infrastructure, together with
 Hardy--Littlewood linear critical-line-zero lower bounds, a divergent Pintz
 zero envelope, and right-of-critical-line-zero-forced PNT oscillation beyond
-pi/2 in every sufficiently late fixed-epsilon power window.
+pi/2 and a linear local second-moment lower bound in every sufficiently late
+fixed-epsilon power window, plus collision-safe finite-zero-cluster local L2
+coercivity.
 ```
 
 Do not claim:
@@ -100,7 +109,8 @@ Riemann--von Mangoldt, fixed-sigma Carlson zero density, and local-separation
 Hilbert/mean-square infrastructure, Hardy--Littlewood linear lower bounds,
 Pintz envelope divergence, and the implication from a right-of-critical-line
 zero to strict-beyond-pi/2 PNT oscillation in every sufficiently late
-fixed-epsilon power window proved in Lean 4
+fixed-epsilon power window, together with linear local second-moment and
+finite-zero-cluster coercivity estimates, proved in Lean 4
 ```
 
 not as:
@@ -113,8 +123,22 @@ The next stronger zero-free-region blocker is the Ford short-sum layer for the
 Vinogradov-Korobov width. The exponential-sum/zeta blocks, prime-power
 conditioning, mixed moments, and coupled-tail recurrences are merged, but the
 tent-kernel localization, smooth-support estimates, and final parameter
-optimization remain open. None of these are needed for the now-proved ordinary
-PNT.
+optimization remain open.  The merged residue-mass audit proves that, for
+constant coefficients on complete prime-power blocks, normalized moments
+recover the usual Holder cardinality loss when converted back to raw moments;
+normalization alone therefore supplies no exponent saving. None of these are
+needed for the now-proved ordinary PNT.
+
+For the zero-forced oscillation route, distinguish three trust levels:
+
+- unconditional theorem-level: strict-beyond-`pi/2` local oscillation and the
+  linear ordinary local second-moment lower bound, conditional only on the
+  existence of the stated off-line zeta zero;
+- conditional theorem-level: fixed-proportion large values assuming the
+  displayed external fourth-moment bound;
+- infrastructure: explicit target-pair identification, annihilator transfer,
+  and finite-cluster coercivity, without a completed global complement/remainder
+  estimate.
 
 ## Unproved Target Statements
 

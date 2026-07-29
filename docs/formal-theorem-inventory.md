@@ -3137,6 +3137,66 @@ theorem parameter in those variants.  None of these implications turns the
 oscillation into a contradiction, proves a signed `Omega_±` statement, or
 proves RH.
 
+### Local second moments, explicit-pair annihilation, and finite zero clusters
+
+The merged local second-moment endpoint
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear`
+
+states that an off-line zeta zero forces an explicit positive multiple of
+`log Y` as a lower bound for the ordinary normalized PNT-error second moment
+on every sufficiently late logarithmic interval
+`[log Y, (1+epsilon) log Y]`.
+
+The fixed-proportion refinement
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_fixedProportion_largeNormalizedPsiError_of_fourthMoment`
+
+is theorem-level but explicitly assumes the displayed external fourth-moment
+upper bound.  The repository does not currently prove that hypothesis.
+
+The model/explicit-formula bridge includes:
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedExplicitFormulaConjugatePair_eq_cosineModel`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroResidueSum_eq_pair_add_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPsiModelResidual_eq_explicitFormulaResidual`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.annihilatedNormalizedPsiError_eq_modelResidual`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_mem_expandedInterval_normalizedPsiModelResidual_sq_gt`
+
+These declarations identify the target conjugate pair in the actual finite
+residue sum and transfer positive annihilator energy to a residual large
+value.  They do not prove that the required detector energy is positive for
+the complete explicit formula, nor do they bound every complementary-zero and
+contour remainder.
+
+The finite-cluster layer includes:
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.quarter_sum_sameOrdinateFiberMass_sq_le_mergedFrequencyEnergy`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.totalCoefficientMass_sq_le_four_card_mul_mergedFrequencyEnergy`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_pos_of_localSeparation`
+
+They merge equal ordinates before measuring diagonal energy, protect the
+remaining coefficient mass against same-frequency phase cancellation, and
+charge unresolved near-frequency interaction to an explicit local-separation
+energy.  These are collision-safe finite-cluster inequalities, not a global
+zero-density contradiction or an RH proof.
+
+### `ZeroFreeRegion/VinogradovKorobov/VinogradovResidueMassAudit.lean`
+
+Core verified declarations include:
+
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card`
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedNormalizedResidueMoment_one_to_raw`
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedRawResidueNormMoment_one_le_refinement_via_normalized`
+
+For constant coefficients on complete prime-power blocks, these theorems
+compute the exact residue-class mass and show that converting a normalized
+mixed moment back to a raw moment recovers the ordinary Holder cardinality
+loss.  This is a negative/diagnostic result: normalization alone does not
+create the exponent saving needed for the final Vinogradov--Korobov route.
+
 ### `GammaResidue.lean`
 
 Core verified declarations:
@@ -3196,7 +3256,7 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-26`, there are **12** mathematical target declarations:
+As of `2026-07-29`, there are **12** mathematical target declarations:
 
 - `HardyTheorem` namespace: **3**
 - `HardyTheorem.Details` namespace: **3**

@@ -8,7 +8,9 @@
 当前 `main` 分支已经包含经典零自由区域、Strong PNT、Hardy 与 Hardy--Littlewood
 临界线零点定理、全高度 Riemann--von Mangoldt 零点计数公式、固定 `sigma` 的
 Carlson 零密度估计、Pintz 零点包络，以及临界线右侧零点迫使的严格 `pi/2` 以上
-PNT 误差振荡。项目没有证明 Riemann 假设或 Vinogradov--Korobov 零自由区域。
+PNT 误差振荡。围绕该振荡，`main` 还包含每个充分靠后的固定幂窗口上的线性局部
+二阶矩下界，以及有限零点簇的碰撞安全局部 `L2` 强制性工具。项目没有证明
+Riemann 假设或 Vinogradov--Korobov 零自由区域。
 
 > **状态边界：** 本页把 `main` 已验证定理、研究分支结果和开放目标分开列出。
 > `def ... : Prop`、条件接口或研究路线不会被计作已经证明的数学定理。
@@ -120,7 +122,10 @@ profile. It also proves Hardy--Littlewood linear lower bounds for distinct and
 odd-multiplicity critical-line zeros, divergence of a Pintz zero envelope, and
 a strict-beyond-`pi/2` PNT-error oscillation forced by any
 right-of-critical-line zero, localized in every sufficiently late
-`[Y, Y^(1+epsilon)]` window for each fixed `epsilon > 0`.
+`[Y, Y^(1+epsilon)]` window for each fixed `epsilon > 0`. The same hypothesis
+also yields a linear ordinary local second-moment lower bound in every such
+late logarithmic window. Merged finite-zero-cluster modules provide
+collision-safe and phase-coercive local `L2` inequalities.
 
 The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
@@ -160,6 +165,9 @@ resulting reusable library.
 | Pintz 零点包络趋于无穷 | `PrimeNumberTheorem.Pintz.tendsto_pintzZeroEnvelope_atTop` | [源码](PrimeNumberTheorem/PintzEnvelope.lean) · [定理清单](docs/formal-theorem-inventory.md) |
 | 临界线右侧零点迫使严格超过 `pi/2` 的 PNT 误差振荡 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_far_psiError_gt_pi_div_two_of_zeta_zero` | [源码](PrimeNumberTheorem/VKEdgePiOverTwoAbelPhase.lean) · [prior-art 审计](docs/research/vk-edge-pi-over-two-prior-art.md) |
 | 上述振荡在每个充分靠后的 `[Y,Y^(1+epsilon)]` 中出现 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo` | [源码](PrimeNumberTheorem/VKEdgePiOverTwoEpsilonOscillation.lean) · [局部化分析记录](docs/research/vk-edge-pi-over-two-localized-transfer.md) |
+| 离线零点迫使每个充分靠后固定幂窗口上的线性普通局部二阶矩下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear` | [源码](PrimeNumberTheorem/VKEdgePiOverTwoSweptL2.lean) · [审计](docs/research/vk-edge-swept-l2-contradiction-audit.md) |
+| 实际有限零点簇的碰撞安全局部 `L2` 下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterCoercivity.lean) · [说明](docs/research/vk-edge-cluster-coercivity.md) |
+| 有限零点簇的相位保护局部分离 `L2` 下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterLocalL2.lean) · [定理清单](docs/formal-theorem-inventory.md) |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
@@ -269,7 +277,29 @@ multiplicity(rho) * C_rho * x^(Re rho) / |rho|,
 并保留其解析重数。仓库另有带 Bellotti 型有限零点位置计数假设的统一常数及
 正对数测度版本；这些版本的计数假设写在 theorem 参数中，不能当成无条件输入。
 
-### 8. Vinogradov--Korobov 基础设施
+### 8. 局部二阶矩、有限零点簇与消去器
+
+严格 `pi/2` 振荡已进一步升级为普通局部二阶矩结论。若存在临界线右侧零点，则对每个
+固定 `epsilon > 0`，每个充分大的 `Y` 都有
+
+```text
+c(rho, epsilon) * log(Y)
+  < integral_[log Y,(1+epsilon)log Y] |normalized psi error|^2,
+```
+
+其中 `c(rho, epsilon) > 0`。这是无须额外第四矩假设的 theorem-level 结论。
+固定比例大值集版本也已形式化，但它明确把匹配的第四矩上界写成 theorem 参数，因此
+仍是条件结论。
+
+另一组新模块把单个共轭零点对推广到有限零点簇：先合并相同虚部以避免频率碰撞，再用
+相位强制性和局部分离 Hilbert 损失给出局部 `L2` 下界。显式公式桥已严格识别目标
+共轭零点对与余弦模型；三尺度消去器则把正检测器能量转成扩大区间内的残差大值。
+
+尚未闭合的是：为完整零点和选择可控的有限簇、控制互补零点及轮廓余项，并证明消去器
+检测器能量为正。因此这些结果还不是无条件 Pintz 最大阶定理，也没有把离线零点变成
+矛盾或 RH 证明。
+
+### 9. Vinogradov--Korobov 基础设施
 
 PR #16--#18 已把指数和与 zeta 分块、prime-power 条件化、加权和混合矩、尺度选择及
 coupled-tail recurrence 合并到 `main`。这些是经过 contract 和 axiom audit 的
@@ -278,7 +308,8 @@ theorem-level 基础设施，但最终
 
 下一层关键输入是 Ford 短和估计：不完整矩、tent-kernel Fourier 局部化、平滑数支持
 估计和参数优化。不能从当前已合并的递推框架自动推出 VK 零自由区域或 `3/5` 型 PNT
-误差。
+误差。新合并的 residue-mass 审计还证明：对均匀系数，归一化矩转回原始矩时会精确
+恢复通常的 Holder 基数损失，因此“只做归一化”不会产生新的指数节省。
 
 ---
 
@@ -305,6 +336,11 @@ flowchart TD
     Q["Right-of-critical-line zeta zero"] --> R["Carlson missing odd harmonic"]
     R --> S["PNT oscillation with constant > pi/2<br/>proved on main"]
     S --> T["Every late [Y,Y^(1+epsilon)] window<br/>proved on main"]
+    T --> U["Linear local second moment<br/>proved on main"]
+
+    V["Finite zero cluster"] --> W["Merge equal ordinates and protect phase"]
+    W --> X["Collision-safe local L2 coercivity<br/>proved on main"]
+    X --> Z["Full explicit-formula remainder control<br/>open"]
 ```
 
 这些主链分别回答：
@@ -325,8 +361,9 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 | 分支或 PR | 当前进展 | 尚未闭合的边界 |
 |---|---|---|
 | [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 在已合并的线性下界之上继续建设 Selberg mollifier、bad-set 和 packing 估计 | Selberg `T log T` 下界仍是 `def ... : Prop` |
-| [Draft PR #19](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/19) | Ford 不完整矩、double Holder、residue-mass audit 和近整数计数的混合草案 | 与 `main` 冲突，且 `FordShortSumPrefixBound` 仍是条件接口；已要求从最新 `main` 拆成独立可审查 PR |
-| [Draft PR #22--#26](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/22) | 从 ordinary/swept `L2` 到固定比例大值、残差放大和目标对消的堆叠实验 | 已定向构建，但中央 axiom 登记、精确 contract、zeta 显式公式语义和内外区间能量桥尚未补齐，暂不属于 `main` |
+| `feat/explicit-formula-unified-next`（本地） | 尝试把 Carlson 边界簇、动态高度和实际 PNT 误差传递统一起来 | 提交量很大但尚无 PR；必须重新审计声明是否依赖外部输入、模型接口或未闭合余项，不能按提交标题计作 `main` 成果 |
+| `agent/vk-ford-incomplete-bridge`（原 PR #19，已关闭） | 保留 Ford 不完整矩、double Holder 和近整数计数实验 | 混合草案过大且与 `main` 冲突；residue-mass 审计已单独作为 PR #27 合并，其余内容需拆成新的可审查 PR |
+| `research/vk-edge-annihilator-h-average-next`（本地） | 继续研究消去器平均和零密度残差能量 | 完整显式公式余项、正检测器能量及真实零点簇选择尚未统一闭合 |
 | 本地分支 `research/weil-extremal-kernels-next`（`a5aa020`） | 有限维区间证书、尾部和极值核实验 | 尚未推送或合并到 `main`；实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
@@ -382,6 +419,21 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 
 这些核心结果已经合并到 `main`。投稿前仍应运行全量构建、定向 axiom audit，并重新核对
 Hardy--Littlewood 形式化的 prior art。
+
+### 正在形成的第三个论文包
+
+**zeta 零点迫使的 PNT 振荡与有限零点簇局部强制性**
+
+当前可用核心：
+
+- 单个临界线右侧零点迫使严格超过 `pi/2` 的 PNT 误差振荡；
+- 该大值在每个充分靠后的固定 `epsilon` 幂窗口中出现；
+- 同一假设推出窗口长度级别的普通局部二阶矩下界；
+- 共轭零点对的真实显式公式识别、三尺度消去器和有限零点簇碰撞安全 `L2` 工具。
+
+这一组已有独立技术轮廓，但投稿前还应完成系统 prior-art 核查。若要把它从“强形式化与
+新证明架构”升级为更强数学论文，最关键的是闭合完整显式公式互补项，或得到无额外
+第四矩假设的固定比例/正负振荡结论。
 
 ### 长期独立方向
 
@@ -448,6 +500,24 @@ lake build \
   Test.VKEdgePiOverTwoEpsilonOscillationAxiomAudit \
   Test.VKEdgePiOverTwoBellottiContract \
   Test.VKEdgePiOverTwoBellottiAxiomAudit \
+  Test.VKEdgePiOverTwoSweptL2Contract \
+  Test.VKEdgePiOverTwoSweptL2AxiomAudit \
+  Test.VKEdgePiOverTwoFixedProportionContract \
+  Test.VKEdgePiOverTwoFixedProportionAxiomAudit \
+  Test.VKEdgeResidualAmplificationContract \
+  Test.VKEdgeResidualAmplificationAxiomAudit \
+  Test.VKEdgeCosineModelAnnihilatorContract \
+  Test.VKEdgeCosineModelAnnihilatorAxiomAudit \
+  Test.VKEdgeExplicitFormulaPairBridgeContract \
+  Test.VKEdgeExplicitFormulaPairBridgeAxiomAudit \
+  Test.VKEdgeZeroClusterCoercivityContract \
+  Test.VKEdgeZeroClusterCoercivityAxiomAudit \
+  Test.VKEdgeZeroClusterPhaseCoercivityContract \
+  Test.VKEdgeZeroClusterPhaseCoercivityAxiomAudit \
+  Test.VKEdgeZeroClusterLocalL2Contract \
+  Test.VKEdgeZeroClusterLocalL2AxiomAudit \
+  Test.VinogradovKorobovResidueMassAuditContract \
+  Test.VinogradovKorobovResidueMassAxiomAudit \
   Test.VinogradovKorobovAxiomAudit
 ```
 

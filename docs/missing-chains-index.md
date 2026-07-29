@@ -57,7 +57,10 @@ Riemann-von Mangoldt asymptotic for the one-sided multiplicity-weighted zeta
 zero count, Hardy--Littlewood linear lower bounds for distinct and
 odd-multiplicity critical-line zeros, divergence of a Pintz zero envelope, and
 a strict-beyond-`pi/2` PNT-error oscillation in every sufficiently late
-fixed-epsilon power window forced by a right-of-critical-line zero.
+fixed-epsilon power window forced by a right-of-critical-line zero.  The same
+hypothesis now also yields a linear ordinary local second-moment lower bound,
+and finite zero packages satisfy collision-safe, phase-coercive local `L2`
+inequalities.
 It is not the first PNT formalization, does not supply numerically explicit
 remainder constants, and is not a proof of RH.
 
@@ -74,6 +77,18 @@ technology rather than more local Jensen/Borel wrappers.
 | Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
 | Hardy quantitative extensions | Hardy's theorem and the Hardy--Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved | Obtain the logarithmic gain from `T` to `T log T` in the odd-zero count | Close the Selberg mollified bad-set estimates, then develop separately formulated Conrey percentage estimates | 7 (1 count target, 2 signed-moment targets, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
+
+### Additional zero-forced-oscillation gap
+
+This route is not represented by a remaining `def ... : Prop` target, but it
+has a precise theorem-level boundary.  The single-zero local oscillation and
+linear local second moment are proved.  The finite-cluster modules merge equal
+ordinates, protect phase mass, and expose the local-separation loss.  The
+remaining analytic bridge is to select a controlled finite package from the
+full explicit formula and dominate every complementary-zero and contour
+remainder.  The fixed-proportion theorem additionally needs an external
+fourth-moment upper bound.  None of the current declarations converts these
+large values into new zeta zeros or a contradiction.
 
 ## Target-to-Chain Mapping
 
@@ -100,6 +115,10 @@ The following proved declarations are the main entry points for future work:
 - `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
 - `PrimeNumberTheorem.Pintz.tendsto_pintzZeroEnvelope_atTop`
 - `PrimeNumberTheorem.VKEdgePiOverTwo.exists_far_psiError_gt_pi_div_two_of_zeta_zero`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation`
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedRawResidueNormMoment_one_le_refinement_via_normalized`
 - `ZeroFreeRegion.log_deriv_zeta_re_series`
 - `ZeroFreeRegion.log_deriv_zeta_nonneg_combination`
 - `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_real_neg_deriv_div`
