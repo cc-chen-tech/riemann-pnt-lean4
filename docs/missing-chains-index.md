@@ -89,8 +89,9 @@ cluster and a concrete remainder, and the corresponding actual-`psi`
 second-moment transfer is proved.  The jump term is now removed almost
 everywhere, the closed terms are bounded, and one common good height makes the
 normalized finite-height approximation error uniformly arbitrarily small on
-each fixed logarithmic window.  The remaining analytic bridge is to select a
-controlled finite package and prove that the **complementary zero package**
+each fixed logarithmic window, both pointwise and in local second moment.  The
+remaining analytic bridge is to select a controlled finite package and prove
+that the **complementary zero package**
 is small enough, together with the now-controlled pieces, to keep the total
 remainder moment below the cluster budget.  The fixed-proportion theorem
 additionally needs an external fourth-moment upper bound.  None of the current

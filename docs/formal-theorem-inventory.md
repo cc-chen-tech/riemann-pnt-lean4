@@ -3209,6 +3209,7 @@ The following merged modules now control three parts of that remainder:
 - `PrimeNumberTheorem/ExplicitFormulaRealInterpolation.lean`
 - `PrimeNumberTheorem/ExplicitFormulaUniformRealHeight.lean`
 - `PrimeNumberTheorem/ExplicitFormulaNormalizedWindowRemainder.lean`
+- `PrimeNumberTheorem/VKEdgeZeroClusterApproximationL2.lean`
 
 Core verified declarations include:
 
@@ -3216,6 +3217,7 @@ Core verified declarations include:
 - `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedZeroPackageClosedTermsSecondMoment_le`
 - `PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_real_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le`
 - `PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt`
 
 For each fixed `1/2 < beta < 1`, fixed window length `L >= 0`, and `eta > 0`,
 the last theorem selects, for every sufficiently large logarithmic center
@@ -3227,7 +3229,9 @@ T in [exp(a/2), exp(a/2)+1]
 
 that works for every real `y in [a,a+L]` and makes the finite-height
 approximation error, normalized by `exp(beta*y)`, smaller than `eta`.
-This is an unconditional approximation-remainder theorem.  It does not bound
+The last listed `VKEdgePiOverTwo` theorem converts this shared-height pointwise
+control into an arbitrarily small local second moment on the same window.
+These are unconditional approximation-remainder theorems.  They do not bound
 the complementary zero package, so the complete remainder-budget inequality
 and the final localized cluster-forced oscillation endpoint remain open.
 

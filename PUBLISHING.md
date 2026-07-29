@@ -16,7 +16,8 @@ Chebyshev-`psi` second moment, with the complete concrete remainder retained as
 a subtraction term.  A further theorem-level chain removes jump terms almost
 everywhere, bounds the closed terms, selects one good height for every real
 sample in a fixed logarithmic window, and makes the normalized finite-height
-approximation remainder uniformly arbitrarily small on that window.
+approximation remainder uniformly arbitrarily small on that window and
+arbitrarily small in its local second moment.
 It does not prove the Riemann Hypothesis, Selberg's `T log T` result, or
 provide numerically explicit values for the existential remainder constants.
 
@@ -101,7 +102,7 @@ fixed-epsilon power window, plus collision-safe finite-zero-cluster local L2
 coercivity and an exact actual-psi second-moment transfer with a visible
 finite-height remainder, together with a uniform fixed-log-window theorem
 making the normalized finite-height approximation remainder arbitrarily small
-at one shared good height.
+at one shared good height, both pointwise and in local `L2`.
 ```
 
 Do not claim:
@@ -126,7 +127,7 @@ fixed-epsilon power window, together with linear local second-moment and
 finite-zero-cluster coercivity estimates and an exact finite-height
 explicit-formula transfer to the actual psi second moment, plus uniform
 fixed-log-window decay of the normalized finite-height approximation remainder,
-proved in Lean 4
+including its local second moment, proved in Lean 4
 ```
 
 not as:
@@ -156,7 +157,8 @@ For the zero-forced oscillation route, distinguish three trust levels:
   identification, annihilator transfer, finite-cluster coercivity, and the
   exact actual-`psi` second-moment lower bound after subtracting the concrete
   remainder; the approximation, jump, and closed-term pieces have fixed-window
-  control, but the complementary zero package does not.
+  control, including local `L2` smallness of the approximation piece, but the
+  complementary zero package does not.
 
 ## Unproved Target Statements
 

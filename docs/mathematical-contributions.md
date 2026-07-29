@@ -54,7 +54,11 @@ exp(-beta*y) * ||finite-height approximation error at exp(y)|| -> 0
 ```
 
 uniformly on every fixed-length logarithmic window, for fixed
-`1/2 < beta < 1`.  It does not control the complementary zero package and
+`1/2 < beta < 1`.  The theorem
+`eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt`
+integrates the same shared-height bound and makes the corresponding local
+second moment smaller than any prescribed `eta > 0`.  It does not control the
+complementary zero package and
 therefore does not yet prove that the complete remainder is small enough for
 an unconditional strict lower bound.
 
