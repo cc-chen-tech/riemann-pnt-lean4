@@ -22,9 +22,9 @@ def polynomialGaussianKernelDeriv (A : ℂ[X]) (m t : ℝ) : ℂ :=
     a *
       ((iteratedDeriv (k + 1) (normalizedGaussian m) t : ℝ) : ℂ)
 
-/-- The Hermite-type polynomial multiplying the standard Gaussian after
-`k` derivatives. -/
-private def gaussianDerivativePolynomial : ℕ → ℝ[X]
+/-- The Hermite-type polynomial multiplying the normalized Gaussian after
+`k` derivatives at unit scale. -/
+def gaussianDerivativePolynomial : ℕ → ℝ[X]
   | 0 => 1
   | k + 1 =>
       (gaussianDerivativePolynomial k).derivative -
@@ -295,11 +295,13 @@ private theorem integral_norm_iteratedDeriv_sum_le_inv_sqrt
           (inv_sqrt_pow_le_inv_sqrt hm (hzero k hk))
           (mul_nonneg hcoeff hmoment)
 
-private def gaussianDerivativeExpBound (k : ℕ) : ℝ :=
+/-- An explicit coefficient bound for the Hermite-type polynomial occurring
+after `k` Gaussian derivatives. -/
+def gaussianDerivativeExpBound (k : ℕ) : ℝ :=
   ∑ j ∈ (gaussianDerivativePolynomial k).support,
     |(gaussianDerivativePolynomial k).coeff j| * (j.factorial : ℝ)
 
-private theorem gaussianDerivativeExpBound_nonneg (k : ℕ) :
+theorem gaussianDerivativeExpBound_nonneg (k : ℕ) :
     0 ≤ gaussianDerivativeExpBound k := by
   exact Finset.sum_nonneg fun j _ =>
     mul_nonneg (abs_nonneg _) (Nat.cast_nonneg _)
@@ -415,6 +417,25 @@ private theorem abs_iteratedDeriv_normalizedGaussian_le_exp_abs_mul
       (gaussianDerivativeExpBound_nonneg k))
     (normalizedGaussian_pos (lt_of_lt_of_le zero_lt_one hm) t).le
 
+/-- The explicit finite coefficient sum controlling a polynomial-Gaussian
+kernel together with its derivative. -/
+def polynomialGaussianEnvelopeConstant (A : ℂ[X]) : ℝ :=
+  (∑ k ∈ A.support,
+    ‖A.coeff k‖ * gaussianDerivativeExpBound k) +
+  ∑ k ∈ A.support,
+    ‖A.coeff k‖ * gaussianDerivativeExpBound (k + 1)
+
+theorem polynomialGaussianEnvelopeConstant_nonneg (A : ℂ[X]) :
+    0 ≤ polynomialGaussianEnvelopeConstant A := by
+  unfold polynomialGaussianEnvelopeConstant
+  exact add_nonneg
+    (Finset.sum_nonneg fun k _ =>
+      mul_nonneg (norm_nonneg _)
+        (gaussianDerivativeExpBound_nonneg k))
+    (Finset.sum_nonneg fun k _ =>
+      mul_nonneg (norm_nonneg _)
+        (gaussianDerivativeExpBound_nonneg (k + 1)))
+
 /--
 For a fixed polynomial, both its Gaussian kernel and its derivative obey the
 Hermite-scaled envelope `C_A exp(|t| / sqrt m) G_m(t)`.  Keeping this scale is
@@ -422,29 +443,13 @@ essential on logarithmic windows whose endpoints are a fixed multiple of
 `m`.
 -/
 theorem
-    exists_polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul
-    (A : ℂ[X]) :
-    ∃ C : ℝ, 0 ≤ C ∧
-      ∀ m : ℝ, 1 ≤ m → ∀ t : ℝ,
-        ‖polynomialGaussianKernel A m t‖ +
-            ‖polynomialGaussianKernelDeriv A m t‖ ≤
-          C * Real.exp |(Real.sqrt m)⁻¹ * t| *
-            normalizedGaussian m t := by
-  let C_A : ℝ :=
-    (∑ k ∈ A.support,
-      ‖A.coeff k‖ * gaussianDerivativeExpBound k) +
-    ∑ k ∈ A.support,
-      ‖A.coeff k‖ * gaussianDerivativeExpBound (k + 1)
-  refine ⟨C_A, ?_, ?_⟩
-  · dsimp [C_A]
-    exact add_nonneg
-      (Finset.sum_nonneg fun k _ =>
-        mul_nonneg (norm_nonneg _)
-          (gaussianDerivativeExpBound_nonneg k))
-      (Finset.sum_nonneg fun k _ =>
-        mul_nonneg (norm_nonneg _)
-          (gaussianDerivativeExpBound_nonneg (k + 1)))
-  · intro m hm t
+    polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul
+    (A : ℂ[X]) {m : ℝ} (hm : 1 ≤ m) (t : ℝ) :
+    ‖polynomialGaussianKernel A m t‖ +
+        ‖polynomialGaussianKernelDeriv A m t‖ ≤
+      polynomialGaussianEnvelopeConstant A *
+        Real.exp |(Real.sqrt m)⁻¹ * t| *
+        normalizedGaussian m t := by
     have hkernel :
         ‖polynomialGaussianKernel A m t‖ ≤
           (∑ k ∈ A.support,
@@ -508,8 +513,86 @@ theorem
               (norm_nonneg (A.coeff k))
         _ = _ := by
           rw [← Finset.sum_mul, ← Finset.sum_mul]
-    dsimp [C_A]
+    unfold polynomialGaussianEnvelopeConstant
     linarith
+
+theorem
+    exists_polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul
+    (A : ℂ[X]) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ m : ℝ, 1 ≤ m → ∀ t : ℝ,
+        ‖polynomialGaussianKernel A m t‖ +
+            ‖polynomialGaussianKernelDeriv A m t‖ ≤
+          C * Real.exp |(Real.sqrt m)⁻¹ * t| *
+            normalizedGaussian m t := by
+  exact
+    ⟨polynomialGaussianEnvelopeConstant A,
+      polynomialGaussianEnvelopeConstant_nonneg A,
+      fun m hm t =>
+        polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul
+          A hm t⟩
+
+/--
+The Hermite-scaled Gaussian envelope has the uniform pointwise bound
+`exp(1) / sqrt(m)`. The deliberately loose constant avoids carrying an
+irrelevant factor involving `pi`.
+-/
+theorem exp_scaled_abs_mul_normalizedGaussian_le_exp_one_div_sqrt
+    {m : ℝ} (hm : 1 ≤ m) (t : ℝ) :
+    Real.exp |(Real.sqrt m)⁻¹ * t| * normalizedGaussian m t ≤
+      Real.exp 1 / Real.sqrt m := by
+  have hmPos : 0 < m := zero_lt_one.trans_le hm
+  have hsqrtPos : 0 < Real.sqrt m := Real.sqrt_pos.2 hmPos
+  have hsqrtNe : Real.sqrt m ≠ 0 := ne_of_gt hsqrtPos
+  let u : ℝ := (Real.sqrt m)⁻¹ * t
+  have huSq : u ^ 2 = t ^ 2 / m := by
+    dsimp [u]
+    rw [inv_mul_eq_div, div_pow]
+    rw [Real.sq_sqrt hmPos.le]
+  have hquad : |u| - u ^ 2 / 4 ≤ 1 := by
+    nlinarith [sq_nonneg (|u| - 2), sq_abs u]
+  have hexp :
+      Real.exp (|u| - u ^ 2 / 4) ≤ Real.exp 1 :=
+    Real.exp_le_exp.mpr hquad
+  have hdenomPos : 0 < 2 * Real.sqrt (Real.pi * m) := by
+    positivity
+  have hsqrtLe :
+      Real.sqrt m ≤ 2 * Real.sqrt (Real.pi * m) := by
+    have hpi : (1 : ℝ) ≤ Real.pi := by
+      nlinarith [Real.pi_gt_three]
+    have hmLe : m ≤ Real.pi * m := by
+      nlinarith
+    have hsqrt := Real.sqrt_le_sqrt hmLe
+    nlinarith [Real.sqrt_nonneg (Real.pi * m)]
+  unfold normalizedGaussian
+  calc
+    Real.exp |(Real.sqrt m)⁻¹ * t| *
+          (Real.exp (-t ^ 2 / (4 * m)) /
+            (2 * Real.sqrt (Real.pi * m))) =
+        Real.exp (|u| - u ^ 2 / 4) /
+          (2 * Real.sqrt (Real.pi * m)) := by
+      rw [← mul_div_assoc, ← Real.exp_add]
+      congr 2
+      rw [huSq]
+      ring
+    _ ≤ Real.exp 1 / (2 * Real.sqrt (Real.pi * m)) :=
+      div_le_div_of_nonneg_right hexp hdenomPos.le
+    _ ≤ Real.exp 1 / Real.sqrt m := by
+      apply (div_le_iff₀ hdenomPos).2
+      calc
+        Real.exp 1 ≤
+            (Real.exp 1 / Real.sqrt m) *
+              (2 * Real.sqrt (Real.pi * m)) := by
+          calc
+            Real.exp 1 =
+                (Real.exp 1 / Real.sqrt m) * Real.sqrt m := by
+              field_simp
+            _ ≤
+                (Real.exp 1 / Real.sqrt m) *
+                  (2 * Real.sqrt (Real.pi * m)) :=
+              mul_le_mul_of_nonneg_left hsqrtLe (by positivity)
+        _ = Real.exp 1 / Real.sqrt m *
+              (2 * Real.sqrt (Real.pi * m)) := rfl
 
 /--
 For a fixed polynomial, both its Gaussian kernel and the termwise
