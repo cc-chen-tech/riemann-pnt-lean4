@@ -13,6 +13,7 @@ ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_AUDIT_MODULES = [
     "Test.MultiplicityAxiomAudit",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
+    "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterContribution_eq_drifting",
@@ -265,6 +266,13 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.ordinarySecondMoment_lower_of_weightedSecondMoment",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_centeredSharpenedNormalizedPsiError_ordinarySecondMoment_gt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exp_scaled_abs_mul_normalizedGaussian_le_sweptEnvelope",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_sweptGaussianEnvelope_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.centeredSharpenedProjectedPsiKernel_abs_le_scaledEnvelope",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.ordinarySecondMoment_linear_lower_of_sweptWeightedLower",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.one_lt_epsilonSweepRatio",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.localizedGaussianLogWindow_subset_epsilonWindow_of_mem_sweep",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear",
 }
 
 REPORT_RE = re.compile(
