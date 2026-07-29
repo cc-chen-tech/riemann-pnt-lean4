@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualMovingCarlsonPointwiseNormalization
+
+#print axioms PrimeNumberTheorem.carlsonPointwiseCountBudget_polynomialHeight_eq
+#print axioms PrimeNumberTheorem.actualMovingCarlsonLowPointwiseMajorant_eq
+#print axioms PrimeNumberTheorem.actualMovingCarlsonHighPointwiseMajorant_eq
