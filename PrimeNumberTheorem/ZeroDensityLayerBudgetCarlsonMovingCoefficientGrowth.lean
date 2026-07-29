@@ -108,6 +108,26 @@ noncomputable def carlsonMovingExplicitSharpCoefficient
       ((1 + Real.exp 4 / (4 * delta)) *
         (1 - (2 : ℝ) ^ (-1 / 2 + 2 * delta))⁻¹)
 
+/-- The public moving formula is definitionally the actual sharp Carlson
+coefficient from `CarlsonZeroDensity`, evaluated at `sigma = 1 - 2 delta`. -/
+theorem carlsonSharpAmbientCoefficient_moving_eq
+    (A delta : ℝ) :
+    CarlsonZeroDensity.carlsonSharpAmbientCoefficient A (1 - 2 * delta) =
+      carlsonMovingExplicitSharpCoefficient A delta := by
+  change
+    2 * (2 + 1 / ((1 - 2 * delta) - 1 / 2)) *
+          (9 * Real.exp 4 /
+              ((2 : ℝ) ^ (2 - 2 * (1 - 2 * delta)) - 1) +
+            6 * Real.exp 4) +
+        16 * Real.pi * (2 + 1 / (2 - 2 * (1 - 2 * delta))) *
+          (144 * Real.exp 8 /
+            ((2 : ℝ) ^ (2 - 2 * (1 - 2 * delta)) - 1)) +
+        4 * ((A + 4) ^ 2 * (1 + 4 * Real.pi)) *
+          ((1 + Real.exp 4 / (2 - 2 * (1 - 2 * delta))) *
+            (1 - (2 : ℝ) ^ (1 / 2 - (1 - 2 * delta)))⁻¹) = _
+  unfold carlsonMovingExplicitSharpCoefficient
+  ring_nf
+
 /-- Explicit polynomial envelope for the moving sharp ambient coefficient.
 Its worst term is quadratic in `delta⁻¹`. -/
 noncomputable def carlsonMovingSharpCoefficientEnvelope
@@ -220,6 +240,44 @@ theorem carlsonMovingExplicitCoefficient_le_envelope
     (carlsonMovingExplicitSharpCoefficient_le_envelope
       hdelta hdeltaUpper) fixedPart
 
+/-- The part of Carlson's final coefficient independent of the moving
+real-part line. -/
+noncomputable def carlsonMovingActualFixedPart : ℝ :=
+  4 * Real.pi * ExplicitFormulaAux.globalZeroMultiplicity 6 +
+    32 * CarlsonZeroDensity.carlsonHorizontalMajorantCoefficient +
+    12 * Real.pi + 125 / 18
+
+theorem carlsonFinalCoefficient_moving_eq
+    (A delta : ℝ) :
+    CarlsonZeroDensity.carlsonFinalCoefficient A (1 - 2 * delta) =
+      carlsonMovingExplicitCoefficient
+        carlsonMovingActualFixedPart A delta := by
+  unfold CarlsonZeroDensity.carlsonFinalCoefficient
+    carlsonMovingActualFixedPart carlsonMovingExplicitCoefficient
+  rw [carlsonSharpAmbientCoefficient_moving_eq]
+  ring
+
+theorem carlsonFinalCoefficient_moving_le_envelope
+    {A delta : ℝ} (hdelta : 0 < delta)
+    (hdeltaUpper : delta ≤ 1 / 8) :
+    CarlsonZeroDensity.carlsonFinalCoefficient A (1 - 2 * delta) ≤
+      carlsonMovingCoefficientEnvelope
+        carlsonMovingActualFixedPart A delta := by
+  rw [carlsonFinalCoefficient_moving_eq]
+  exact carlsonMovingExplicitCoefficient_le_envelope
+    hdelta hdeltaUpper
+
+theorem carlsonMovingActualFixedPart_nonneg :
+    0 ≤ carlsonMovingActualFixedPart := by
+  unfold carlsonMovingActualFixedPart
+  have hhorizontal :
+      0 ≤ CarlsonZeroDensity.carlsonHorizontalMajorantCoefficient :=
+    CarlsonZeroDensity.zero_le_carlsonHorizontalMajorantCoefficient
+  have hmultiplicity :
+      0 ≤ ExplicitFormulaAux.globalZeroMultiplicity 6 :=
+    ExplicitFormulaAux.globalZeroMultiplicity_nonneg 6
+  positivity
+
 /-- The constant term in the Laurent expansion of the moving sharp
 coefficient envelope. -/
 noncomputable def carlsonMovingSharpCoefficientConstantTerm (A : ℝ) : ℝ :=
@@ -244,6 +302,12 @@ noncomputable def carlsonMovingSharpCoefficientQuadraticConstant
   carlsonMovingSharpCoefficientConstantTerm A +
     carlsonMovingSharpCoefficientLinearTerm A +
     carlsonMovingSharpCoefficientQuadraticTerm
+
+/-- Fixed constant controlling the complete actual Carlson coefficient. -/
+noncomputable def carlsonMovingActualCoefficientQuadraticConstant
+    (A : ℝ) : ℝ :=
+  carlsonMovingActualFixedPart +
+    carlsonMovingSharpCoefficientQuadraticConstant A
 
 theorem carlsonMovingSharpCoefficientEnvelope_laurent
     {A delta : ℝ} (hdelta : delta ≠ 0) :
@@ -318,6 +382,38 @@ theorem carlsonMovingSharpCoefficientEnvelope_le_quadratic
           carlsonMovingSharpCoefficientLinearTerm A +
           carlsonMovingSharpCoefficientQuadraticTerm) *
           delta⁻¹ ^ 2 := by ring
+
+/-- The complete actual Carlson coefficient has at most quadratic growth in
+the reciprocal moving gap. -/
+theorem carlsonFinalCoefficient_moving_le_quadratic
+    {A delta : ℝ} (hdelta : 0 < delta)
+    (hdeltaUpper : delta ≤ 1 / 8) :
+    CarlsonZeroDensity.carlsonFinalCoefficient A (1 - 2 * delta) ≤
+      carlsonMovingActualCoefficientQuadraticConstant A / delta ^ 2 := by
+  have hdeltaOne : delta ≤ 1 := hdeltaUpper.trans (by norm_num)
+  have hInvOne : 1 ≤ delta⁻¹ := (one_le_inv₀ hdelta).2 hdeltaOne
+  have hInvSq : 1 ≤ delta⁻¹ ^ 2 := by nlinarith
+  have hfixed :
+      carlsonMovingActualFixedPart ≤
+        carlsonMovingActualFixedPart / delta ^ 2 := by
+    rw [div_eq_mul_inv, ← inv_pow]
+    simpa using mul_le_mul_of_nonneg_left hInvSq
+      carlsonMovingActualFixedPart_nonneg
+  have hsharp :=
+    carlsonMovingSharpCoefficientEnvelope_le_quadratic
+      (A := A) hdelta hdeltaOne
+  calc
+    CarlsonZeroDensity.carlsonFinalCoefficient A (1 - 2 * delta) ≤
+        carlsonMovingActualFixedPart +
+          carlsonMovingSharpCoefficientEnvelope A delta :=
+      carlsonFinalCoefficient_moving_le_envelope hdelta hdeltaUpper
+    _ ≤ carlsonMovingActualFixedPart / delta ^ 2 +
+          carlsonMovingSharpCoefficientQuadraticConstant A / delta ^ 2 :=
+      add_le_add hfixed hsharp
+    _ = carlsonMovingActualCoefficientQuadraticConstant A /
+          delta ^ 2 := by
+      unfold carlsonMovingActualCoefficientQuadraticConstant
+      ring
 
 /-- Logarithmic majorant corresponding exactly to `C * delta⁻²`. -/
 noncomputable def carlsonMovingQuadraticLogEnvelope
