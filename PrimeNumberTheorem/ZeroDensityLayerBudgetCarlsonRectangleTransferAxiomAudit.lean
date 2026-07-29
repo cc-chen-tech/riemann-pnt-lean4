@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonRectangleTransfer
+
+#print axioms PrimeNumberTheorem.carlsonRectangleExponent_eq_stripEndpoint_sub
+#print axioms PrimeNumberTheorem.tendsto_carlsonRectangleLogMajorant
+#print axioms PrimeNumberTheorem.tendsto_dynamicCarlsonCount_mul_polynomialOrdinateRectangleKernel
+#print axioms PrimeNumberTheorem.tendsto_actualPositiveRectangleLayerMass
