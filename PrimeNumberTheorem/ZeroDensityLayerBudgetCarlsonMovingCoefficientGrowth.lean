@@ -319,4 +319,63 @@ theorem carlsonMovingSharpCoefficientEnvelope_le_quadratic
           carlsonMovingSharpCoefficientQuadraticTerm) *
           delta⁻¹ ^ 2 := by ring
 
+/-- Logarithmic majorant corresponding exactly to `C * delta⁻²`. -/
+noncomputable def carlsonMovingQuadraticLogEnvelope
+    (C : ℝ) (delta : ℕ → ℝ) (m : ℕ) : ℝ :=
+  Real.log C + 2 * Real.log (delta m)⁻¹
+
+theorem exp_carlsonMovingQuadraticLogEnvelope
+    {C delta : ℝ} (hC : 0 < C) (hdelta : 0 < delta) :
+    Real.exp (Real.log C + 2 * Real.log delta⁻¹) =
+      C / delta ^ 2 := by
+  rw [Real.exp_add, Real.exp_log hC]
+  have hInv : 0 < delta⁻¹ := inv_pos.mpr hdelta
+  rw [show 2 * Real.log delta⁻¹ =
+      Real.log delta⁻¹ + Real.log delta⁻¹ by ring]
+  rw [Real.exp_add, Real.exp_log hInv]
+  field_simp
+
+/-- The precise remaining growth condition for a quadratic Carlson
+coefficient: its `2 log(1 / delta)` cost must fit inside half of the balanced
+strip gap. -/
+def IsCarlsonMovingQuadraticLogGap
+    (delta : ℕ → ℝ) : Prop :=
+  Tendsto
+    (fun m =>
+      delta m / 2 * Real.log (m : ℝ) -
+        2 * Real.log (delta m)⁻¹)
+    atTop atTop
+
+/-- Any fixed multiple of `delta⁻²` is admissible once the quadratic
+logarithmic gap tends to infinity. -/
+theorem carlsonMovingQuadraticLogEnvelope_admissible
+    {C : ℝ} {delta : ℕ → ℝ}
+    (hgap : IsCarlsonMovingQuadraticLogGap delta) :
+    IsCarlsonMovingBalancedCoefficientAdmissible delta
+      (carlsonMovingQuadraticLogEnvelope C delta) := by
+  have hshift :=
+    tendsto_atTop_add_const_right atTop (-Real.log C) hgap
+  apply hshift.congr'
+  filter_upwards with m
+  unfold carlsonMovingBalancedCoefficientLogMargin
+    carlsonMovingQuadraticLogEnvelope
+  ring
+
+/-- The balanced strip ratio still tends to zero after inserting any
+quadratic moving Carlson coefficient. -/
+theorem tendsto_carlsonMovingQuadraticCoefficientRatio_zero
+    {alpha C : ℝ} {delta : ℕ → ℝ}
+    (halpha : 0 ≤ alpha)
+    (hdelta : ∀ᶠ m : ℕ in atTop,
+      0 < delta m ∧ delta m ≤ 1 / 2 ∧
+        128 * alpha * delta m ≤ 1)
+    (hgap : IsCarlsonMovingQuadraticLogGap delta) :
+    Tendsto
+      (carlsonMovingBalancedCoefficientRatio alpha delta
+        (carlsonMovingQuadraticLogEnvelope C delta))
+      atTop (nhds 0) :=
+  tendsto_carlsonMovingBalancedCoefficientRatio_zero
+    halpha hdelta
+      (carlsonMovingQuadraticLogEnvelope_admissible hgap)
+
 end PrimeNumberTheorem
