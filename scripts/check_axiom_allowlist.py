@@ -15,6 +15,14 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterContribution_eq_drifting",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged",
+    "MathlibAux.norm_driftingExponentialPolynomial_sub_exponentialPolynomial_le",
+    "MathlibAux.exponentialPolynomial_eq_mergedFrequencyPolynomial",
+    "MathlibAux.integral_normSq_driftingExponentialPolynomial_ge",
+    "MathlibAux.integral_normSq_driftingExponentialPolynomial_ge_merged",
+    "MathlibAux.integral_normSq_driftingExponentialPolynomial_pos_merged",
+    "MathlibAux.integral_normSq_driftingExponentialPolynomial_pos",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_psiError_in_powerOnePlusEpsilonWindow_gt_uniformBellottiGap",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_positive_measure_in_epsilonLogWindow_gt_uniformBellottiGap",
