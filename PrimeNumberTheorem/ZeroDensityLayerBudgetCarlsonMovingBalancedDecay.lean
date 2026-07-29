@@ -84,6 +84,36 @@ theorem tendsto_carlsonMovingBalancedNormalizedRatio_zero
         hscaled
       _ = -(delta m / 2 * Real.log (m : ℝ)) := by ring
 
+/-- Any nonnegative actual strip mass eventually dominated by a constant
+multiple of the moving balanced majorant also tends to zero. -/
+theorem tendsto_zero_of_le_const_mul_carlsonMovingBalancedNormalizedRatio
+    {alpha C : ℝ} {delta : ℕ → ℝ} {mass : ℕ → ℝ}
+    (halpha : 0 ≤ alpha)
+    (hdelta :
+      ∀ᶠ m : ℕ in atTop,
+        0 < delta m ∧ delta m ≤ 1 / 2 ∧
+          128 * alpha * delta m ≤ 1)
+    (hlogGap :
+      Tendsto
+        (fun m : ℕ => delta m * Real.log (m : ℝ))
+        atTop atTop)
+    (hmassNonneg : ∀ᶠ m : ℕ in atTop, 0 ≤ mass m)
+    (hmass :
+      ∀ᶠ m : ℕ in atTop,
+        mass m ≤
+          C * carlsonMovingBalancedNormalizedRatio alpha delta m) :
+    Tendsto mass atTop (𝓝 0) := by
+  have hratio :=
+    tendsto_carlsonMovingBalancedNormalizedRatio_zero
+      halpha hdelta hlogGap
+  have hmajorant :
+      Tendsto
+        (fun m : ℕ =>
+          C * carlsonMovingBalancedNormalizedRatio alpha delta m)
+        atTop (𝓝 0) := by
+    simpa using hratio.const_mul C
+  exact squeeze_zero' hmassNonneg hmass hmajorant
+
 end
 
 end PrimeNumberTheorem
