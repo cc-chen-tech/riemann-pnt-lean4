@@ -74,4 +74,4 @@
 - [x] **Step 1: Register public theorems in the central allowlist and audit.**
 - [x] **Step 2: Scan for forbidden placeholders and run `git diff --check`.**
 - [x] **Step 3: Run `./scripts/verify-baseline.sh`.**
-- [ ] **Step 4: Commit, push, and create a Draft PR stacked on PR #30.**
+- [x] **Step 4: Commit, push, and create a Draft PR stacked on PR #30.**
