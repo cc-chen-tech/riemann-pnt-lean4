@@ -16,6 +16,10 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.VKEdgePiOverTwo.half_norm_finiteZeroClusterCoefficientAt_le_neg_im",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.half_sum_norm_finiteZeroClusterCoefficientAt_le_norm_mergedFrequencyCoefficient",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.quarter_sum_sameOrdinateFiberMass_sq_le_mergedFrequencyEnergy",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.totalCoefficientMass_sq_le_four_card_mul_mergedFrequencyEnergy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterContribution_eq_drifting",
     "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged",
     "MathlibAux.norm_driftingExponentialPolynomial_sub_exponentialPolynomial_le",
