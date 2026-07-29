@@ -40,6 +40,7 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteNontrivialZeroSumWithMultiplicity_sub_le",
     "PrimeNumberTheorem.ExplicitFormulaAux.norm_main_sub_finiteZeroSum_sub_le",
     "PrimeNumberTheorem.ExplicitFormulaAux.exists_norm_main_sub_finiteZeroSum_sub_le_mul_log",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_nat_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
