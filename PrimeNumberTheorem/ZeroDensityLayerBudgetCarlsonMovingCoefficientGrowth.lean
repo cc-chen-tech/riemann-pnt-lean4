@@ -91,4 +91,133 @@ theorem carlsonMovingRightGap_eq {delta : ℝ} :
     2 - 2 * (1 - 2 * delta) = 4 * delta := by
   ring
 
+/-- Public replica of the `sigma`-dependent sharp coefficient used internally
+by `CarlsonAsymptotic`, specialized to `sigma = 1 - 2 * delta`.
+
+The original coefficient is private to that file, so this declaration does
+not claim an external Lean equality to it.  It records the exact displayed
+formula needed by a future public pointwise Carlson certificate. -/
+noncomputable def carlsonMovingExplicitSharpCoefficient
+    (A delta : ℝ) : ℝ :=
+  2 * (2 + 1 / (1 / 2 - 2 * delta)) *
+      (9 * Real.exp 4 / ((2 : ℝ) ^ (4 * delta) - 1) +
+        6 * Real.exp 4) +
+    16 * Real.pi * (2 + 1 / (4 * delta)) *
+      (144 * Real.exp 8 / ((2 : ℝ) ^ (4 * delta) - 1)) +
+    4 * ((A + 4) ^ 2 * (1 + 4 * Real.pi)) *
+      ((1 + Real.exp 4 / (4 * delta)) *
+        (1 - (2 : ℝ) ^ (-1 / 2 + 2 * delta))⁻¹)
+
+/-- Explicit polynomial envelope for the moving sharp ambient coefficient.
+Its worst term is quadratic in `delta⁻¹`. -/
+noncomputable def carlsonMovingSharpCoefficientEnvelope
+    (A delta : ℝ) : ℝ :=
+  12 *
+      (9 * Real.exp 4 / (4 * delta * Real.log 2) +
+        6 * Real.exp 4) +
+    16 * Real.pi * (2 + 1 / (4 * delta)) *
+      (144 * Real.exp 8 / (4 * delta * Real.log 2)) +
+    4 * ((A + 4) ^ 2 * (1 + 4 * Real.pi)) *
+      ((1 + Real.exp 4 / (4 * delta)) *
+        carlsonQuarterRpowGap⁻¹)
+
+theorem carlsonMovingExplicitSharpCoefficient_le_envelope
+    {A delta : ℝ} (hdelta : 0 < delta) (hdeltaUpper : delta ≤ 1 / 8) :
+    carlsonMovingExplicitSharpCoefficient A delta ≤
+      carlsonMovingSharpCoefficientEnvelope A delta := by
+  have hhalf := carlsonMovingHalfGap_inv_le_four hdeltaUpper
+  have hpower := carlsonMovingPowerGap_inv_le hdelta
+  have hnegative := carlsonMovingNegativePowerGap_inv_le hdeltaUpper
+  have hpowerPos := carlsonMovingPowerGap_pos hdelta
+  have hlogTwo : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hlinearPos : 0 < 4 * delta * Real.log 2 := by positivity
+  have hrightPos : 0 < 4 * delta := by positivity
+  have hfirstFactor :
+      2 * (2 + 1 / (1 / 2 - 2 * delta)) ≤ 12 := by
+    have hrewrite :
+        (1 / 2 - 2 * delta : ℝ) = (1 - 2 * delta) - 1 / 2 := by
+      ring
+    have hinv : (1 / 2 - 2 * delta)⁻¹ ≤ 4 := by
+      rw [hrewrite]
+      exact hhalf
+    rw [one_div]
+    nlinarith
+  have hpowerBracket :
+      9 * Real.exp 4 / ((2 : ℝ) ^ (4 * delta) - 1) +
+          6 * Real.exp 4 ≤
+        9 * Real.exp 4 / (4 * delta * Real.log 2) +
+          6 * Real.exp 4 := by
+    rw [div_eq_mul_inv, div_eq_mul_inv]
+    have hmul := mul_le_mul_of_nonneg_left hpower
+      (show 0 ≤ 9 * Real.exp 4 by positivity)
+    nlinarith
+  have hfirstBracketNonneg :
+      0 ≤ 9 * Real.exp 4 / ((2 : ℝ) ^ (4 * delta) - 1) +
+        6 * Real.exp 4 := by positivity
+  have hfirst :
+      2 * (2 + 1 / (1 / 2 - 2 * delta)) *
+          (9 * Real.exp 4 / ((2 : ℝ) ^ (4 * delta) - 1) +
+            6 * Real.exp 4) ≤
+        12 *
+          (9 * Real.exp 4 / (4 * delta * Real.log 2) +
+            6 * Real.exp 4) :=
+    (mul_le_mul_of_nonneg_right hfirstFactor hfirstBracketNonneg).trans
+      (mul_le_mul_of_nonneg_left hpowerBracket (by norm_num))
+  have hsecondBracket :
+      144 * Real.exp 8 / ((2 : ℝ) ^ (4 * delta) - 1) ≤
+        144 * Real.exp 8 / (4 * delta * Real.log 2) := by
+    rw [div_eq_mul_inv, div_eq_mul_inv]
+    exact mul_le_mul_of_nonneg_left hpower (by positivity)
+  have hsecondFactorNonneg :
+      0 ≤ 16 * Real.pi * (2 + 1 / (4 * delta)) := by
+    positivity
+  have hsecond :
+      16 * Real.pi * (2 + 1 / (4 * delta)) *
+          (144 * Real.exp 8 / ((2 : ℝ) ^ (4 * delta) - 1)) ≤
+        16 * Real.pi * (2 + 1 / (4 * delta)) *
+          (144 * Real.exp 8 / (4 * delta * Real.log 2)) :=
+    mul_le_mul_of_nonneg_left hsecondBracket hsecondFactorNonneg
+  have hthirdInnerNonneg :
+      0 ≤ 1 + Real.exp 4 / (4 * delta) := by positivity
+  have hthirdInner :
+      (1 + Real.exp 4 / (4 * delta)) *
+          (1 - (2 : ℝ) ^ (-1 / 2 + 2 * delta))⁻¹ ≤
+        (1 + Real.exp 4 / (4 * delta)) *
+          carlsonQuarterRpowGap⁻¹ :=
+    mul_le_mul_of_nonneg_left hnegative hthirdInnerNonneg
+  have hthirdFactorNonneg :
+      0 ≤ 4 * ((A + 4) ^ 2 * (1 + 4 * Real.pi)) := by
+    positivity
+  have hthird :
+      4 * ((A + 4) ^ 2 * (1 + 4 * Real.pi)) *
+          ((1 + Real.exp 4 / (4 * delta)) *
+            (1 - (2 : ℝ) ^ (-1 / 2 + 2 * delta))⁻¹) ≤
+        4 * ((A + 4) ^ 2 * (1 + 4 * Real.pi)) *
+          ((1 + Real.exp 4 / (4 * delta)) *
+            carlsonQuarterRpowGap⁻¹) :=
+    mul_le_mul_of_nonneg_left hthirdInner hthirdFactorNonneg
+  unfold carlsonMovingExplicitSharpCoefficient
+  exact add_le_add (add_le_add hfirst hsecond) hthird
+
+/-- Add an arbitrary fixed, `delta`-independent part to the explicit moving
+sharp coefficient.  This isolates the only coefficient growth that matters
+for the moving-strip logarithmic margin. -/
+noncomputable def carlsonMovingExplicitCoefficient
+    (fixedPart A delta : ℝ) : ℝ :=
+  fixedPart + carlsonMovingExplicitSharpCoefficient A delta
+
+noncomputable def carlsonMovingCoefficientEnvelope
+    (fixedPart A delta : ℝ) : ℝ :=
+  fixedPart + carlsonMovingSharpCoefficientEnvelope A delta
+
+theorem carlsonMovingExplicitCoefficient_le_envelope
+    {fixedPart A delta : ℝ}
+    (hdelta : 0 < delta) (hdeltaUpper : delta ≤ 1 / 8) :
+    carlsonMovingExplicitCoefficient fixedPart A delta ≤
+      carlsonMovingCoefficientEnvelope fixedPart A delta := by
+  unfold carlsonMovingExplicitCoefficient carlsonMovingCoefficientEnvelope
+  exact add_le_add_right
+    (carlsonMovingExplicitSharpCoefficient_le_envelope
+      hdelta hdeltaUpper) fixedPart
+
 end PrimeNumberTheorem
