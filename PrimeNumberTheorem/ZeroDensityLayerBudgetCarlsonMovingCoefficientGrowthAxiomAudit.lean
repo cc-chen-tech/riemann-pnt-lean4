@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonMovingCoefficientGrowthContract
+
+#print axioms PrimeNumberTheorem.carlsonMovingPowerGap_lower
+#print axioms PrimeNumberTheorem.carlsonMovingPowerGap_pos
+#print axioms PrimeNumberTheorem.carlsonMovingPowerGap_inv_le
+#print axioms PrimeNumberTheorem.carlsonQuarterRpowGap
+#print axioms PrimeNumberTheorem.carlsonQuarterRpowGap_pos
+#print axioms PrimeNumberTheorem.carlsonQuarterRpowGap_le_moving
+#print axioms PrimeNumberTheorem.carlsonMovingNegativePowerGap_inv_le
+#print axioms PrimeNumberTheorem.carlsonMovingHalfGap_inv_le_four
+#print axioms PrimeNumberTheorem.carlsonMovingRightGap_eq

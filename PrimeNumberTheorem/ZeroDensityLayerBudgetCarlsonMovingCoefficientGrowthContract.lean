@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonMovingCoefficientGrowth
+
+#check PrimeNumberTheorem.carlsonMovingPowerGap_lower
+#check PrimeNumberTheorem.carlsonMovingPowerGap_pos
+#check PrimeNumberTheorem.carlsonMovingPowerGap_inv_le
+#check PrimeNumberTheorem.carlsonQuarterRpowGap
+#check PrimeNumberTheorem.carlsonQuarterRpowGap_pos
+#check PrimeNumberTheorem.carlsonQuarterRpowGap_le_moving
+#check PrimeNumberTheorem.carlsonMovingNegativePowerGap_inv_le
+#check PrimeNumberTheorem.carlsonMovingHalfGap_inv_le_four
+#check PrimeNumberTheorem.carlsonMovingRightGap_eq
