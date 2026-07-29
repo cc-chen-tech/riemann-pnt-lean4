@@ -114,6 +114,102 @@ theorem tendsto_zero_of_le_const_mul_carlsonMovingBalancedNormalizedRatio
     simpa using hratio.const_mul C
   exact squeeze_zero' hmassNonneg hmass hmajorant
 
+/-- Logarithmic margin after allowing a height-dependent Carlson coefficient
+envelope `exp (logCoefficient m)`. -/
+noncomputable def carlsonMovingBalancedCoefficientLogMargin
+    (delta : ℕ → ℝ) (logCoefficient : ℕ → ℝ) (m : ℕ) : ℝ :=
+  delta m / 2 * Real.log (m : ℝ) - logCoefficient m
+
+/-- A moving Carlson coefficient is admissible when its logarithmic growth is
+absorbed by half of the moving zero-free gap. -/
+def IsCarlsonMovingBalancedCoefficientAdmissible
+    (delta : ℕ → ℝ) (logCoefficient : ℕ → ℝ) : Prop :=
+  Tendsto
+    (carlsonMovingBalancedCoefficientLogMargin delta logCoefficient)
+    atTop atTop
+
+/-- Moving balanced majorant with a nonuniform Carlson coefficient envelope.
+-/
+noncomputable def carlsonMovingBalancedCoefficientRatio
+    (alpha : ℝ) (delta logCoefficient : ℕ → ℝ) (m : ℕ) : ℝ :=
+  Real.exp
+    (logCoefficient m +
+      carlsonTwoHeightBalancedExponent
+          (1 - 2 * delta m) (1 - delta m) alpha *
+        Real.log (m : ℝ))
+
+/-- Logarithmic coefficient admissibility is exactly enough to retain decay;
+no uniform Carlson constant is required. -/
+theorem tendsto_carlsonMovingBalancedCoefficientRatio_zero
+    {alpha : ℝ} {delta logCoefficient : ℕ → ℝ}
+    (halpha : 0 ≤ alpha)
+    (hdelta :
+      ∀ᶠ m : ℕ in atTop,
+        0 < delta m ∧ delta m ≤ 1 / 2 ∧
+          128 * alpha * delta m ≤ 1)
+    (hcoefficient :
+      IsCarlsonMovingBalancedCoefficientAdmissible
+        delta logCoefficient) :
+    Tendsto
+      (carlsonMovingBalancedCoefficientRatio
+        alpha delta logCoefficient)
+      atTop (𝓝 0) := by
+  have hnegative :
+      Tendsto
+        (fun m : ℕ =>
+          -carlsonMovingBalancedCoefficientLogMargin
+            delta logCoefficient m)
+        atTop atBot :=
+    tendsto_neg_atTop_atBot.comp hcoefficient
+  have hmajorant :
+      Tendsto
+        (fun m : ℕ =>
+          Real.exp
+            (-carlsonMovingBalancedCoefficientLogMargin
+              delta logCoefficient m))
+        atTop (𝓝 0) :=
+    Real.tendsto_exp_atBot.comp hnegative
+  refine squeeze_zero' ?_ ?_ hmajorant
+  · exact Filter.Eventually.of_forall fun m =>
+      (Real.exp_pos _).le
+  · filter_upwards
+      [hdelta, eventually_ge_atTop (1 : ℕ)] with m hmDelta hm
+    have hlog : 0 ≤ Real.log (m : ℝ) := by
+      apply Real.log_nonneg
+      exact_mod_cast hm
+    have hexponent :=
+      carlsonTwoHeightBalancedExponent_movingStrip_le_neg_half
+        hmDelta.1 hmDelta.2.1 halpha hmDelta.2.2
+    have hscaled :=
+      mul_le_mul_of_nonneg_right hexponent hlog
+    unfold carlsonMovingBalancedCoefficientRatio
+      carlsonMovingBalancedCoefficientLogMargin
+    rw [Real.exp_le_exp]
+    linarith
+
+/-- Any nonnegative actual moving-strip mass dominated by the admissible
+nonuniform coefficient ratio tends to zero. -/
+theorem tendsto_zero_of_le_carlsonMovingBalancedCoefficientRatio
+    {alpha : ℝ} {delta logCoefficient mass : ℕ → ℝ}
+    (halpha : 0 ≤ alpha)
+    (hdelta :
+      ∀ᶠ m : ℕ in atTop,
+        0 < delta m ∧ delta m ≤ 1 / 2 ∧
+          128 * alpha * delta m ≤ 1)
+    (hcoefficient :
+      IsCarlsonMovingBalancedCoefficientAdmissible
+        delta logCoefficient)
+    (hmassNonneg : ∀ᶠ m : ℕ in atTop, 0 ≤ mass m)
+    (hmass :
+      ∀ᶠ m : ℕ in atTop,
+        mass m ≤
+          carlsonMovingBalancedCoefficientRatio
+            alpha delta logCoefficient m) :
+    Tendsto mass atTop (𝓝 0) := by
+  exact squeeze_zero' hmassNonneg hmass
+    (tendsto_carlsonMovingBalancedCoefficientRatio_zero
+      halpha hdelta hcoefficient)
+
 end
 
 end PrimeNumberTheorem
