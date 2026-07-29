@@ -220,4 +220,103 @@ theorem carlsonMovingExplicitCoefficient_le_envelope
     (carlsonMovingExplicitSharpCoefficient_le_envelope
       hdelta hdeltaUpper) fixedPart
 
+/-- The constant term in the Laurent expansion of the moving sharp
+coefficient envelope. -/
+noncomputable def carlsonMovingSharpCoefficientConstantTerm (A : ℝ) : ℝ :=
+  72 * Real.exp 4 +
+    4 * ((A + 4) ^ 2 * (1 + 4 * Real.pi)) *
+      carlsonQuarterRpowGap⁻¹
+
+/-- The coefficient of `delta⁻¹` in the moving sharp coefficient envelope. -/
+noncomputable def carlsonMovingSharpCoefficientLinearTerm (A : ℝ) : ℝ :=
+  27 * Real.exp 4 / Real.log 2 +
+    1152 * Real.pi * Real.exp 8 / Real.log 2 +
+    ((A + 4) ^ 2 * (1 + 4 * Real.pi)) *
+      carlsonQuarterRpowGap⁻¹ * Real.exp 4
+
+/-- The coefficient of `delta⁻²` in the moving sharp coefficient envelope. -/
+noncomputable def carlsonMovingSharpCoefficientQuadraticTerm : ℝ :=
+  144 * Real.pi * Real.exp 8 / Real.log 2
+
+/-- A fixed constant dominating all three Laurent terms once `delta ≤ 1`. -/
+noncomputable def carlsonMovingSharpCoefficientQuadraticConstant
+    (A : ℝ) : ℝ :=
+  carlsonMovingSharpCoefficientConstantTerm A +
+    carlsonMovingSharpCoefficientLinearTerm A +
+    carlsonMovingSharpCoefficientQuadraticTerm
+
+theorem carlsonMovingSharpCoefficientEnvelope_laurent
+    {A delta : ℝ} (hdelta : delta ≠ 0) :
+    carlsonMovingSharpCoefficientEnvelope A delta =
+      carlsonMovingSharpCoefficientConstantTerm A +
+        carlsonMovingSharpCoefficientLinearTerm A / delta +
+        carlsonMovingSharpCoefficientQuadraticTerm / delta ^ 2 := by
+  have hlogTwo : Real.log 2 ≠ 0 :=
+    (Real.log_pos (by norm_num)).ne'
+  unfold carlsonMovingSharpCoefficientEnvelope
+    carlsonMovingSharpCoefficientConstantTerm
+    carlsonMovingSharpCoefficientLinearTerm
+    carlsonMovingSharpCoefficientQuadraticTerm
+  field_simp
+  ring
+
+theorem carlsonMovingSharpCoefficientConstantTerm_nonneg (A : ℝ) :
+    0 ≤ carlsonMovingSharpCoefficientConstantTerm A := by
+  unfold carlsonMovingSharpCoefficientConstantTerm
+  have hquarterInv : 0 ≤ carlsonQuarterRpowGap⁻¹ :=
+    (inv_pos.mpr carlsonQuarterRpowGap_pos).le
+  positivity
+
+theorem carlsonMovingSharpCoefficientLinearTerm_nonneg (A : ℝ) :
+    0 ≤ carlsonMovingSharpCoefficientLinearTerm A := by
+  unfold carlsonMovingSharpCoefficientLinearTerm
+  have hlogTwo : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hquarterInv : 0 ≤ carlsonQuarterRpowGap⁻¹ :=
+    (inv_pos.mpr carlsonQuarterRpowGap_pos).le
+  positivity
+
+theorem carlsonMovingSharpCoefficientQuadraticTerm_nonneg :
+    0 ≤ carlsonMovingSharpCoefficientQuadraticTerm := by
+  unfold carlsonMovingSharpCoefficientQuadraticTerm
+  have hlogTwo : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  positivity
+
+/-- Quantitative polynomial growth: the explicit moving sharp coefficient
+envelope is bounded by a fixed constant times `delta⁻²`. -/
+theorem carlsonMovingSharpCoefficientEnvelope_le_quadratic
+    {A delta : ℝ} (hdelta : 0 < delta) (hdeltaOne : delta ≤ 1) :
+    carlsonMovingSharpCoefficientEnvelope A delta ≤
+      carlsonMovingSharpCoefficientQuadraticConstant A / delta ^ 2 := by
+  have hInvOne : 1 ≤ delta⁻¹ := by
+    exact (one_le_inv₀ hdelta).2 hdeltaOne
+  have hInvNonneg : 0 ≤ delta⁻¹ := (inv_pos.mpr hdelta).le
+  have hInvLeSq : delta⁻¹ ≤ delta⁻¹ ^ 2 := by
+    nlinarith
+  have hOneLeSq : 1 ≤ delta⁻¹ ^ 2 := by
+    nlinarith
+  have hconstant :=
+    carlsonMovingSharpCoefficientConstantTerm_nonneg A
+  have hlinear :=
+    carlsonMovingSharpCoefficientLinearTerm_nonneg A
+  rw [carlsonMovingSharpCoefficientEnvelope_laurent hdelta.ne']
+  unfold carlsonMovingSharpCoefficientQuadraticConstant
+  rw [div_eq_mul_inv, div_eq_mul_inv, div_eq_mul_inv, ← inv_pow]
+  calc
+    carlsonMovingSharpCoefficientConstantTerm A +
+          carlsonMovingSharpCoefficientLinearTerm A * delta⁻¹ +
+          carlsonMovingSharpCoefficientQuadraticTerm * delta⁻¹ ^ 2 ≤
+        carlsonMovingSharpCoefficientConstantTerm A * delta⁻¹ ^ 2 +
+          carlsonMovingSharpCoefficientLinearTerm A * delta⁻¹ ^ 2 +
+          carlsonMovingSharpCoefficientQuadraticTerm * delta⁻¹ ^ 2 := by
+      exact add_le_add
+        (add_le_add
+          (by simpa using
+            mul_le_mul_of_nonneg_left hOneLeSq hconstant)
+          (mul_le_mul_of_nonneg_left hInvLeSq hlinear))
+        le_rfl
+    _ = (carlsonMovingSharpCoefficientConstantTerm A +
+          carlsonMovingSharpCoefficientLinearTerm A +
+          carlsonMovingSharpCoefficientQuadraticTerm) *
+          delta⁻¹ ^ 2 := by ring
+
 end PrimeNumberTheorem
