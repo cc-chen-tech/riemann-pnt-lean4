@@ -1,0 +1,13 @@
+import MathlibAux.GaussianBucketSchur
+
+#print axioms MathlibAux.gaussianBucketProfile_nonneg
+#print axioms MathlibAux.gaussianBucketKernel_nonneg
+#print axioms MathlibAux.gaussianBucketKernel_comm
+#print axioms MathlibAux.summable_gaussianBucketProfile
+#print axioms MathlibAux.gaussianBucketSchurConstant_eq
+#print axioms MathlibAux.gaussianBucketSchurConstant_pos
+#print axioms MathlibAux.sum_gaussianBucketKernel_le
+#print axioms MathlibAux.exp_neg_mul_sq_le_gaussianBucketKernel
+#print axioms MathlibAux.natDist_sub_one_le_abs_sub_of_mem_unit
+#print axioms MathlibAux.sum_mul_gaussianBucketKernel_le
+#print axioms MathlibAux.sum_gaussianKernel_le_bucketEnergy

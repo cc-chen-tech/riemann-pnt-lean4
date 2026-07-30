@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.VKEdgeHighZeroGaussianEnergy
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.zeroOrdinateBucketGaussianEnergy_le
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.eventually_zeroOrdinateBucketGaussianEnergy_lt
