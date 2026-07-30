@@ -228,6 +228,28 @@ theorem tendsto_dynamicRealOrdinatePNTZeroTailNorm_of_selectedUniformGoodHeight
       realOrdinateNontrivialZerosOutsideClusterFinset] using hnegligible
   simpa [H] using hreal.comp tendsto_natCast_atTop_atTop
 
+/-- A fixed global real-part cap strictly left of one eventually implies the
+moving selected-height cap whenever the moving gap tends to zero. -/
+theorem
+    eventually_actualSelectedHeightMovingPositiveRightEdgeCap_of_globalCap
+    {H : ℝ → ℝ} {delta : ℕ → ℝ} {beta : ℝ}
+    (hbetaOne : beta < 1)
+    (hdeltaZero : Tendsto delta atTop (nhds 0))
+    (hglobalCap :
+      ∀ rho : ℂ,
+        RiemannHypothesis.IsNontrivialZero rho →
+          rho.re ≤ beta) :
+    ∀ᶠ m : ℕ in atTop,
+      ActualSelectedHeightMovingPositiveRightEdgeCap H delta m := by
+  have hdeltaUpper :
+      ∀ᶠ m : ℕ in atTop, delta m < 1 - beta :=
+    (tendsto_order.mp hdeltaZero).2 _ (sub_pos.mpr hbetaOne)
+  filter_upwards [hdeltaUpper] with m hm rho hrho
+  have hzero :
+      RiemannHypothesis.IsNontrivialZero rho :=
+    (mem_positiveNontrivialZerosFinset.mp hrho).1
+  exact (hglobalCap rho hzero).trans (by linarith)
+
 /-- The canonical uniformly good height converts the positive-ordinate moving
 Carlson transfer into decay of the full finite-zero tail.  Conjugation accounts
 for the second positive-ordinate copy, while the real-ordinate residual is
@@ -344,5 +366,45 @@ theorem tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCar
   exact
     tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeight_fullTail
       hinner hinnerOne selection hfull
+
+/-- A fixed global nontrivial-zero real-part cap discharges the moving
+right-edge hypothesis in the canonical Carlson-to-PNT transfer.  The middle
+strip decay remains the sole zero-tail input. -/
+theorem
+    tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson_globalCap
+    {innerAlpha outerAlpha epsilon beta : ℝ}
+    {delta : ℕ → ℝ}
+    (hinner : 0 < innerAlpha)
+    (hstrict : innerAlpha < outerAlpha)
+    (houter : 0 < outerAlpha)
+    (hepsilon : 0 < epsilon)
+    (hmargin : outerAlpha + epsilon < 1 / 2)
+    (hbetaOne : beta < 1)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    (hdelta : ∀ᶠ m : ℕ in atTop,
+      0 < delta m ∧ delta m ≤ 1 / 8 ∧
+        128 * outerAlpha * delta m ≤ 1)
+    (hdeltaZero : Tendsto delta atTop (nhds 0))
+    (hgap : IsCarlsonMovingQuadraticLogPowerGap delta)
+    (hglobalCap :
+      ∀ rho : ℂ,
+        RiemannHypothesis.IsNontrivialZero rho →
+          rho.re ≤ beta)
+    (hmiddle :
+      Tendsto
+        (actualSelectedHeightMovingCarlsonMiddleMass
+          (selectedUniformGoodHeight innerAlpha selection) delta)
+        atTop (nhds 0)) :
+    Tendsto
+      (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+      atTop (nhds 0) := by
+  have hcap :=
+    eventually_actualSelectedHeightMovingPositiveRightEdgeCap_of_globalCap
+      (H := selectedUniformGoodHeight innerAlpha selection)
+      hbetaOne hdeltaZero hglobalCap
+  exact
+    tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson
+      hinner hstrict houter hepsilon hmargin selection
+      hdelta hgap hcap hmiddle
 
 end PrimeNumberTheorem
