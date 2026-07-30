@@ -17,6 +17,7 @@ import HardyTheorem.HardyGoodWindowMeasure
 import HardyTheorem.HardyLittlewoodPacking
 import HardyTheorem.HardyLittlewoodTheorem
 import HardyTheorem.HardyLittlewoodOddTheorem
+import HardyTheorem.HardyLittlewoodLiteratureCount
 import HardyTheorem.SelbergPacking
 import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyShortSecondMoment
@@ -25512,16 +25513,43 @@ theorem criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount
     criticalLineDistinctZeroCount T ≤ criticalLineZeroMultiplicityCount T :=
   HardyTheorem.criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount T
 
-/-- Public literature-aligned Hardy--Littlewood target, counting odd-order
-critical-line zeros detected by sign changes. -/
+/-- Public compatibility target for odd-order critical-line zeros at
+nonnegative ordinates.  Prefer the positive-ordinate target below for the
+literature convention. -/
 abbrev HardyLittlewoodOddLowerBound : Prop :=
   HardyTheorem.hardy_littlewood_odd_lower_bound_target
 
-/-- Public unconditional Hardy--Littlewood theorem for odd-multiplicity
-critical-line zeros, each ordinate counted once. -/
+/-- Public unconditional compatibility theorem for odd-multiplicity
+critical-line zeros at nonnegative ordinates, each ordinate counted once. -/
 theorem hardyLittlewoodOddLowerBound_proved :
     HardyLittlewoodOddLowerBound :=
   HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved
+
+/-- Public positive-ordinate odd-multiplicity count, using the literature
+convention `0 < γ ≤ T`. -/
+noncomputable abbrev positiveCriticalLineOddZeroCount (T : ℝ) : ℕ :=
+  HardyTheorem.positiveCriticalLineOddZeroCount T
+
+/-- Public literature-normalized Hardy--Littlewood target for positive
+ordinates and odd analytic multiplicity. -/
+abbrev HardyLittlewoodPositiveOddLowerBound : Prop :=
+  HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target
+
+/-- Public unconditional literature-normalized odd-multiplicity theorem. -/
+theorem hardyLittlewoodPositiveOddLowerBound_proved :
+    HardyLittlewoodPositiveOddLowerBound :=
+  HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target_proved
+
+/-- Public literature-standard `N₀(T)` lower-bound target, using positive
+ordinates and analytic multiplicity. -/
+abbrev HardyLittlewoodPositiveMultiplicityLowerBound : Prop :=
+  HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target
+
+/-- Public unconditional Hardy--Littlewood lower bound for the
+positive-ordinate, multiplicity-weighted critical-line zero count. -/
+theorem hardyLittlewoodPositiveMultiplicityLowerBound_proved :
+    HardyLittlewoodPositiveMultiplicityLowerBound :=
+  HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target_proved
 
 /-- Public multiplicity-weighted consequence of the Hardy--Littlewood target. -/
 abbrev HardyLittlewoodMultiplicityLowerBound : Prop :=

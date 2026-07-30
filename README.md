@@ -120,7 +120,9 @@ profile.
 The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
 audits. Research branches additionally contain a formal Hardy--Littlewood
-linear lower bound and substantial infrastructure toward Selberg,
+linear lower bound for positive ordinates, both for odd-multiplicity zeros
+counted once and for the standard multiplicity-weighted count, together with
+substantial infrastructure toward Selberg,
 Vinogradov--Korobov, Pintz-style oscillation, and Weil-criterion routes; these
 are reported separately from the merged theorem surface.
 
@@ -325,7 +327,8 @@ VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明
 
 - Hardy 临界线无穷零点定理；
 - 临界线不同零点的线性下界；
-- 奇重数临界线零点的线性下界；
+- 正高度奇重数临界线零点的线性下界，每个零点计一次；
+- 正高度临界线零点按解析重数计数的线性下界；
 - 短窗口积分、符号变化、测度控制与 packing。
 
 在论文宣称这一成果前，必须先完成 Hardy--Littlewood 分支集成和最新全量 axiom audit。

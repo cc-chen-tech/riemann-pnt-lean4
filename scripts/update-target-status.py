@@ -33,8 +33,8 @@ CHAIN_SUMMARY = [
     {
         "name": "Quantitative critical-line extensions",
         "target": "hardy_littlewood_lower_bound_target",
-        "status": "Hardy's infinite-zero theorem is proved; stronger Hardy-Littlewood, Selberg, and Conrey counts remain open",
-        "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets",
+        "status": "Hardy's theorem and the Hardy-Littlewood linear lower bound are proved, including positive-ordinate odd and multiplicity-weighted forms; Selberg and Conrey remain open",
+        "next_step": "close the two Selberg bad-window estimates, then derive the positive-proportion zero count",
     },
 ]
 
@@ -58,6 +58,16 @@ PROVED_REUSABLE_PREDICATES = {
         "HardyTheorem.hardy_zeros_unbounded_target_proved",
     "HardyTheorem.hardy_zeros_abs_unbounded_target":
         "HardyTheorem.hardy_zeros_abs_unbounded_target_proved",
+    "HardyTheorem.hardy_littlewood_lower_bound_target":
+        "HardyTheorem.hardy_littlewood_lower_bound_target_proved",
+    "HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target":
+        "HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target_proved",
+    "HardyTheorem.hardy_littlewood_odd_lower_bound_target":
+        "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
+    "HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target":
+        "HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target_proved",
+    "HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target":
+        "HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target_proved",
 }
 
 

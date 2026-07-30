@@ -63,6 +63,8 @@ REUSABLE_PREDICATES = {
     "HardyTheorem.hardy_littlewood_lower_bound_target",
     "HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target",
     "HardyTheorem.hardy_littlewood_odd_lower_bound_target",
+    "HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target",
+    "HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target",
     "HardyTheorem.selberg_zero_proportion_target",
     "HardyTheorem.HasNegToPosLocalSignChangeAt",
     "HardyTheorem.HasPosToNegLocalSignChangeAt",

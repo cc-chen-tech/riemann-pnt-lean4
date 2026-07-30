@@ -190,4 +190,36 @@ theorem card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_localSignCha
           hchange.1 hchange.2
   · exact hsign
 
+/-- Pairwise-disjoint intervals carrying positive-ordinate local sign changes
+of Hardy's `Z` function inject into the literature-normalized odd zero count. -/
+theorem card_le_positiveCriticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_localSignChanges
+    (G : Finset ℕ) (J : ℕ → Set ℝ) (T : ℝ)
+    (hdisj : (G : Set ℕ).PairwiseDisjoint J)
+    (hsign : ∀ i ∈ G, ∃ t ∈ J i, t ∈ Set.Ioc (0 : ℝ) T ∧
+      HasLocalSignChangeAt hardyZ t) :
+    G.card ≤ positiveCriticalLineOddZeroCount T := by
+  apply card_le_positiveCriticalLineOddZeroCount_of_pairwiseDisjoint_hits
+    G J T hdisj
+  intro i hi
+  obtain ⟨t, htJ, ht, hchange⟩ := hsign i hi
+  refine ⟨t, htJ, mem_positiveCriticalLineOddZerosFinset.mpr ⟨?_, ?_⟩⟩
+  · simp only [criticalLineOddZerosFinset, Finset.mem_filter]
+    refine ⟨?_, ?_⟩
+    · rw [mem_criticalLineZerosFinset]
+      refine ⟨⟨?_, ?_, ?_⟩, ?_, ?_, ?_⟩
+      · convert hardyZ_zero_implies_zeta_zero t
+          (hchange.eq_zero hardyZ_continuous) using 1 <;> norm_num
+      · norm_num
+      · norm_num
+      · norm_num
+      · simpa using ht.1.le
+      · simpa using ht.2
+    · rcases hchange with hchange | hchange
+      · exact odd_analyticOrderNatAt_riemannZeta_of_hardyZ_local_sign_change
+          hchange.1 hchange.2
+      · exact
+          odd_analyticOrderNatAt_riemannZeta_of_hardyZ_reverse_local_sign_change
+            hchange.1 hchange.2
+  · simpa using ht.1
+
 end HardyTheorem

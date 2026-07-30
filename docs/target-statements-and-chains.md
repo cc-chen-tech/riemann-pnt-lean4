@@ -205,10 +205,12 @@ Hardy's classical infinite-zero theorem itself is already proved. The targets
 above are independent signed-moment/AFE routes or stronger quantitative
 zero-counting extensions. The repository now defines odd-order, distinct, and
 analytic-multiplicity counts and proves
-`odd <= distinct = zeroCountOnCriticalLine <= multiplicity`. The
-Hardy-Littlewood and Selberg statements use the odd-order count supplied by
-the sign-change method. The Hardy-Littlewood linear lower bound is now proved;
-the Selberg `T*log T` lower bound remains open.
+`odd <= distinct = zeroCountOnCriticalLine <= multiplicity`.  The public
+Hardy--Littlewood theorem is additionally normalized to positive ordinates
+`0 < gamma <= T`, both for odd-order zeros counted once and for the standard
+multiplicity-weighted count.  The Selberg target now uses that same positive
+odd-order convention.  The Hardy--Littlewood linear lower bound is proved; the
+Selberg `T*log T` lower bound remains open.
 
 ### Current verified anchor theorems
 
@@ -222,7 +224,10 @@ the Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.criticalLineOddZeroCount_le_criticalLineDistinctZeroCount`
 - `HardyTheorem.criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount`
 - `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
+- `HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target_proved`
+- `HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target_proved`
 - `HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
+- `HardyTheorem.positiveCriticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
 - `HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure`
 - `HardyTheorem.integral_normSq_selbergMoebiusMollifier_le_one_add_log`
 - `HardyTheorem.criticalLineDirichletPolynomial_mul_selbergMoebiusMollifier_eq_convolutionSum`

@@ -3073,9 +3073,10 @@ These prove the local Hardy-Z setup, a uniform critical-line first zeta
 approximation, the two dyadic integral bounds, and the final constant-sign
 contradiction.  Consequently Hardy's theorem is proved unconditionally in the
 stronger form that critical-line zeros occur at arbitrarily large positive
-heights.  The signed-moment targets remain as an independent legacy route, and
-the Hardy-Littlewood/Selberg/Conrey targets remain stronger quantitative
-extensions.
+heights.  The Hardy--Littlewood linear lower bound is also proved, including
+positive-ordinate odd-order and multiplicity-weighted forms.  The signed-moment
+targets remain as an independent legacy route; Selberg and Conrey remain the
+open quantitative extensions.
 
 ### `GammaResidue.lean`
 
@@ -3706,7 +3707,8 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    summation from `pi-Li` error back to `theta`, `psi`, and RH.  This closes an
    equivalence theorem but does not prove RH or an equivalent error predicate.
 4. **Hardy quantitative extensions.**
-   Hardy's theorem is proved. Hardy-Littlewood, Selberg, and Conrey-style
-   counting results still need multiplicity-aware definitions and new
-   mean-value estimates; the signed-moment and AFE targets remain independent
-   alternative infrastructure.
+   Hardy's theorem and the Hardy--Littlewood linear lower bound are proved,
+   including positive-ordinate odd and multiplicity-weighted counts. Selberg
+   and Conrey-style counting results still require new mean-value estimates;
+   the signed-moment and AFE targets remain independent alternative
+   infrastructure.

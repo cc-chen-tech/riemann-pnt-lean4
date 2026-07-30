@@ -26,8 +26,9 @@ weighted-moment plan:
 
 The remaining targets in this chain are stronger or independent statements:
 the signed moment asymptotics, the auxiliary AFE and Gamma/theta asymptotics,
-Hardy-Littlewood zero counts, Selberg proportions, and Conrey's percentage
-theorem.
+Selberg proportions, and Conrey's percentage theorem.  The Hardy--Littlewood
+linear lower bound is proved, including the literature convention
+`0 < gamma <= T` and the standard multiplicity-weighted consequence.
 
 ## Verified Lean Starting Point
 
