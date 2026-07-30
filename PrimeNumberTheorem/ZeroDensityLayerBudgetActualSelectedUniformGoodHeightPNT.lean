@@ -125,6 +125,68 @@ theorem tendsto_actualSelectedUniformGoodHeightCriticalHalfPNTLayerNorm_zero
       dynamicPositiveOutsideClusterPNTLayerNorm] using hnormalized
   simpa [H] using hreal.comp tendsto_natCast_atTop_atTop
 
+/-- At canonical good heights, the positive-ordinate finite-zero tail tends to
+zero once the genuine middle-strip and right-edge inputs are supplied.
+Critical-half decay and the moving Carlson strip are discharged internally. -/
+theorem tendsto_dynamicPositivePNTTailNorm_of_selectedUniformGoodHeightMovingCarlson
+    {innerAlpha outerAlpha epsilon : ℝ}
+    {delta : ℕ → ℝ}
+    (hinner : 0 < innerAlpha)
+    (hstrict : innerAlpha < outerAlpha)
+    (houter : 0 < outerAlpha)
+    (hepsilon : 0 < epsilon)
+    (hmargin : outerAlpha + epsilon < 1 / 2)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    (hdelta :
+      ∀ᶠ m : ℕ in atTop,
+        0 < delta m ∧ delta m ≤ 1 / 8 ∧
+          128 * outerAlpha * delta m ≤ 1)
+    (hgap : IsCarlsonMovingQuadraticLogPowerGap delta)
+    (hcap :
+      ∀ᶠ m : ℕ in atTop,
+        ActualSelectedHeightMovingPositiveRightEdgeCap
+          (selectedUniformGoodHeight innerAlpha selection) delta m)
+    (hmiddle :
+      Tendsto
+        (actualSelectedHeightMovingCarlsonMiddleMass
+          (selectedUniformGoodHeight innerAlpha selection) delta)
+        atTop (nhds 0)) :
+    Tendsto
+      (fun m : ℕ =>
+        dynamicPositivePNTTailNorm
+          (selectedUniformGoodHeight innerAlpha selection) (m : ℝ))
+      atTop (nhds 0) := by
+  have hcritical :=
+    tendsto_actualSelectedUniformGoodHeightCriticalHalfPNTLayerNorm_zero
+      hinner hstrict houter hepsilon hmargin selection
+  have hmoving :=
+    tendsto_actualSelectedUniformGoodHeightMovingCarlsonStripMass_zero
+      hinner hstrict houter selection hdelta hgap
+  have hsum :=
+    (hcritical.add hmiddle).add hmoving
+  have hsum0 :
+      Tendsto
+        (fun m : ℕ =>
+          dynamicPositiveOutsideClusterPNTLayerNorm
+                (selectedUniformGoodHeight innerAlpha selection) ∅
+                (actualSelectedHeightCriticalHalfCanonicalInput
+                  (selectedUniformGoodHeight innerAlpha selection))
+                0 (m : ℝ) +
+              actualSelectedHeightMovingCarlsonMiddleMass
+                (selectedUniformGoodHeight innerAlpha selection) delta m +
+            actualSelectedHeightMovingCarlsonStripMass
+              (selectedUniformGoodHeight innerAlpha selection) delta m)
+        atTop (nhds 0) := by
+    simpa using hsum
+  refine squeeze_zero'
+    (Filter.Eventually.of_forall fun m => by
+      unfold dynamicPositivePNTTailNorm
+      exact norm_nonneg _)
+    ?_ hsum0
+  filter_upwards [hcap] with m hm
+  exact
+    dynamicPositivePNTTailNorm_le_selectedCriticalHalf_add_movingMasses hm
+
 /-- At the canonical uniformly good height, decay of the full finite-zero tail
 is enough to force decay of the relative `psi₀` error.  The explicit-formula
 remainder certificate is generated automatically from the selector. -/
