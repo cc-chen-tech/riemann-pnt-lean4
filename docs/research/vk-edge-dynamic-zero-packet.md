@@ -27,7 +27,16 @@ starts from the Gaussian-weighted `L2` energy of the frozen exponential sum
 formed from actual height-`T` complementary zeta zeros.  Each coefficient is
 twisted by the phase at the logarithmic window center `a`; this is the frozen
 model that can later be compared with the actual moving zero contribution on
-that window.  The exact Fourier transform
+that window.  The exact identity
+
+```text
+finiteExponentialSum (phaseTwist c omega a) omega t
+  = finiteExponentialSum c omega (a + t)
+```
+
+locks the sign of this center phase.  The older uncentered second moment in
+the module is retained only as a center-`0` auxiliary form.  The exact Fourier
+transform
 
 ```text
 fourierKernel normalizedGaussian = exp (-m * frequency^2)

@@ -863,6 +863,7 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaLowZeroFinset_disjoint_zetaRightDyadicZeros",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_occupancy_mul_sum_sq",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_or_quantitativeCluster",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.finiteExponentialSum_phaseTwist_eq_shift",
     "PrimeNumberTheorem.VKEdgePiOverTwo.fourierKernel_normalizedGaussian",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFrozenGaussianSecondMoment_le_majorant",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementCenteredFrozenGaussianSecondMoment_le_majorant",

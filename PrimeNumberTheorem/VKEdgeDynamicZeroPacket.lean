@@ -85,6 +85,24 @@ theorem fourierKernel_normalizedGaussian
       push_cast
       ring
 
+/-- Twisting every coefficient by its phase at `a` translates the finite
+exponential sum from local coordinate `t` to logarithmic coordinate `a + t`.
+This identity fixes the sign of the center phase used below. -/
+theorem finiteExponentialSum_phaseTwist_eq_shift
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) (a t : ℝ) :
+    DirichletPolynomial.finiteExponentialSum S
+        (DirichletPolynomial.phaseTwist c omega a) omega t =
+      DirichletPolynomial.finiteExponentialSum S c omega (a + t) := by
+  unfold DirichletPolynomial.finiteExponentialSum
+    DirichletPolynomial.phaseTwist
+  apply Finset.sum_congr rfl
+  intro i hi
+  rw [mul_assoc, ← Complex.exp_add]
+  congr 2
+  push_cast
+  ring
+
 /-- The actual complementary zeta zeros at height `T` lying in the absolute
 ordinate unit bucket `n`. -/
 noncomputable def dynamicComplementZeroPacket
@@ -121,8 +139,10 @@ noncomputable def dynamicComplementPacketIndexSet
     Finset (Σ _n : ℕ, ℂ) :=
   K.sigma fun n => dynamicComplementZeroPacket S T n
 
-/-- Gaussian-weighted second moment of the frozen complementary
-exponential sum over the inspected packet range. -/
+/-- Center-`0` auxiliary Gaussian second moment of the frozen complementary
+exponential sum over the inspected packet range.  The actual logarithmic
+window centered at `a` uses
+`dynamicComplementCenteredFrozenGaussianSecondMoment` below. -/
 noncomputable def dynamicComplementFrozenGaussianSecondMoment
     (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ) (m : ℝ) : ℝ :=
   ∫ t : ℝ, normalizedGaussian m t *
@@ -145,8 +165,8 @@ noncomputable def dynamicComplementCenteredFrozenGaussianSecondMoment
         (fun z => z.2.im) a)
       (fun z => z.2.im) t‖ ^ 2
 
-/-- The frozen Gaussian `L²` energy of the actual finite-height complement is
-bounded by the positive packet majorant. -/
+/-- The center-`0` auxiliary frozen Gaussian `L²` energy is bounded by the
+positive packet majorant. -/
 theorem dynamicComplementFrozenGaussianSecondMoment_le_majorant
     (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ)
     {m : ℝ} (hm : 0 < m) :
