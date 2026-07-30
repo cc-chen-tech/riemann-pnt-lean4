@@ -817,4 +817,50 @@ theorem
       hinner hstrict houter hepsilon hmargin hpowerGap
       hd hdEight hdCoefficient hdCap selection hglobalCap
 
+/-- Fully parameter-selected fixed-cap transfer.  Any global nontrivial-zero
+real-part cap strictly left of one admits compatible selected-height and
+Carlson parameters, hence forces relative `psi₀` decay on natural points. -/
+theorem
+    tendsto_relativeChebyshevPsi0Error_of_globalNontrivialZeroRealPartCap
+    {beta : ℝ}
+    (hbetaOne : beta < 1)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    (hglobalCap :
+      ∀ rho : ℂ,
+        RiemannHypothesis.IsNontrivialZero rho →
+          rho.re ≤ beta) :
+    Tendsto
+      (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+      atTop (nhds 0) := by
+  let outerAlpha : ℝ := min ((1 - beta) / 2) (1 / 4)
+  let innerAlpha : ℝ := outerAlpha / 2
+  let epsilon : ℝ := (1 / 2 - outerAlpha) / 2
+  have hbetaGap : 0 < 1 - beta := by
+    linarith
+  have houter : 0 < outerAlpha := by
+    simp only [outerAlpha, lt_min_iff]
+    exact ⟨by positivity, by norm_num⟩
+  have houterQuarter : outerAlpha ≤ 1 / 4 :=
+    min_le_right _ _
+  have houterBeta : outerAlpha ≤ (1 - beta) / 2 :=
+    min_le_left _ _
+  have hinner : 0 < innerAlpha := by
+    dsimp [innerAlpha]
+    positivity
+  have hstrict : innerAlpha < outerAlpha := by
+    dsimp [innerAlpha]
+    linarith
+  have hepsilon : 0 < epsilon := by
+    dsimp [epsilon]
+    linarith
+  have hmargin : outerAlpha + epsilon < 1 / 2 := by
+    dsimp [epsilon]
+    linarith
+  have hpowerGap : beta + outerAlpha < 1 := by
+    linarith
+  exact
+    tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson_globalCap_explicit
+      hinner hstrict houter hepsilon hmargin hpowerGap
+      selection hglobalCap
+
 end PrimeNumberTheorem
