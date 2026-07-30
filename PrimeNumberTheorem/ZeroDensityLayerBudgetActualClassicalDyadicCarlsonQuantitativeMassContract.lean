@@ -1,0 +1,23 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativeMass
+
+/-!
+# Classical dyadic Carlson quantitative-mass contract
+
+Public contract for the explicit square-root-log majorant controlling the
+Carlson-density part of the moving zero-strip mass.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check exists_eventually_actualDyadicCarlsonMinimalFixedAnchorMass_le_layeredCoarse
+#check classicalDyadicCarlsonSqrtLogMajorant
+#check eventually_carlsonDynamicGapLayeredCoarseLogPowerRatio_le_classicalSqrtLogMajorant
+#check classicalDyadicCarlsonSqrtLogMajorant_eq
+#check tendsto_classicalDyadicCarlsonSqrtLogMajorant_zero
+#check exists_classicalAdmissibleDyadicCarlsonQuantitativeFixedAnchorMajorant
+#check exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativeMassMajorant
+
+end PrimeNumberTheorem
