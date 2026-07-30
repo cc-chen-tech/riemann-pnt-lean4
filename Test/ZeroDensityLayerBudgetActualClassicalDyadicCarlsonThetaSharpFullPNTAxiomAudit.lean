@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonThetaSharpFullPNT
+
+/-!
+Axiom audit for the theta-sharp balanced closed-form full natural-PNT endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms tendsto_classicalDyadicCarlsonThetaMiddleMajorant_zero
+#print axioms tendsto_classicalDyadicCarlsonThetaPositiveZeroTailMajorant_zero
+#print axioms tendsto_classicalDyadicCarlsonThetaFullZeroTailMajorant_zero
+#print axioms tendsto_classicalDyadicCarlsonThetaClosedFormFullPNTErrorMajorant_zero
+#print axioms eventually_abs_relativeChebyshevPsi0Error_le_thetaClosedFormFullPNTMajorant
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonThetaQuantitativeMassMajorant_of_zeroFree
+#print axioms exists_selectedBalancedClassicalAdmissibleDyadicCarlsonThetaClosedFormFullPNTErrorMajorant
+
+end PrimeNumberTheorem
