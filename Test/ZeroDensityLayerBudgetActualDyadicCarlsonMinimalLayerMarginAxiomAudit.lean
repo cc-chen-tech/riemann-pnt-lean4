@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDyadicCarlsonMinimalLayerMargin
+
+open PrimeNumberTheorem
+
+#print axioms natCast_add_one_le_two_pow
+#print axioms dyadicCarlsonLayerCount_add_one_le_inv
+#print axioms carlsonDynamicMinimalLayerCountLogCost_le
+#print axioms isCarlsonMovingQuadraticLogPowerLayerCountGap_minimalSchedule
+#print axioms exists_constants_tendsto_actualDyadicCarlsonMinimalFixedAnchorMass_zero_of_margin
