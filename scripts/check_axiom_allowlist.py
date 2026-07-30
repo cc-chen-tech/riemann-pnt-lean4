@@ -118,6 +118,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.sum_normSq_selbergSqrtZetaSignedRationalPairCoeff_eq_product",
     "HardyTheorem.sum_normSq_selbergSqrtZetaSignedRationalCoeff_eq_product_add_offDiagonal",
     "HardyTheorem.sum_normSq_selbergSqrtZetaSignedRationalCoeff_le_product_add_abs_offDiagonal",
+    "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalCollectedPolynomial_le_localSeparation",
     "HardyTheorem.exists_integral_norm_riemannZeta_critical_line_ge_mul",
     "HardyTheorem.exists_abs_integral_hardyZ_le_rpow_three_quarters",
     "HardyTheorem.hardyZ_zero_set_not_isBounded",
