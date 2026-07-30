@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergSqrtZetaExcessiveArithmeticEndpoint
+
+namespace Test.SelbergSqrtZetaExcessiveArithmeticEndpointContract
+
+#check HardyTheorem.exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_modelEnergy_le
+
+end Test.SelbergSqrtZetaExcessiveArithmeticEndpointContract
