@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDyadicCarlsonMinimalLayers
+
+open PrimeNumberTheorem
+
+#print axioms dyadicCarlsonLayerCount_spec
+#print axioms dyadicCarlsonLayerCount_outer_le_quarter
+#print axioms eventually_dyadicCarlsonLayerSchedule_scale
+#print axioms mem_actualDyadicCarlsonMinimalFixedAnchorWindow
+#print axioms exists_constants_tendsto_actualDyadicCarlsonMinimalFixedAnchorMass_zero
