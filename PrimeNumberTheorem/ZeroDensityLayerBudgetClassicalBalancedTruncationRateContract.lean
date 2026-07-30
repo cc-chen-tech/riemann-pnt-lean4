@@ -1,0 +1,20 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetClassicalBalancedTruncationRate
+
+/-!
+# Classical balanced truncation-rate contract
+
+Public contract exposing the exact relation between the optimized selected
+height, zero-free gap width, and the verified coarse Carlson decay rate.
+-/
+
+namespace PrimeNumberTheorem
+
+#check classicalAdmissibleVerifiedPNTDecayRate
+#check classicalAdmissibleVerifiedPNTDecayRate_pos
+#check classicalAdmissibleVerifiedPNTDecayRate_eq_gapRate_div_four
+#check classicalAdmissibleVerifiedPNTDecayRate_le_contourRate
+#check classicalAdmissibleVerifiedPNTDecayRate_isOptimal
+#check exists_selectedClassicalAdmissibleDyadicCarlsonBalancedZeroFreeGap
+#check exists_balancedClassicalTruncationWithVerifiedBottleneck
+
+end PrimeNumberTheorem

@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetClassicalBalancedTruncationRate
+
+/-!
+Axiom audit for the classical balanced truncation-rate endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms classicalAdmissibleVerifiedPNTDecayRate_pos
+#print axioms classicalAdmissibleVerifiedPNTDecayRate_eq_gapRate_div_four
+#print axioms classicalAdmissibleVerifiedPNTDecayRate_le_contourRate
+#print axioms classicalAdmissibleVerifiedPNTDecayRate_isOptimal
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonBalancedZeroFreeGap
+#print axioms exists_balancedClassicalTruncationWithVerifiedBottleneck
+
+end PrimeNumberTheorem
