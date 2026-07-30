@@ -1,0 +1,4 @@
+import MathlibAux.FourierLowEnergy
+
+#print axioms MathlibAux.integral_norm_sq_fourier_restrict_le
+#print axioms MathlibAux.integral_norm_sq_fourier_low_le
