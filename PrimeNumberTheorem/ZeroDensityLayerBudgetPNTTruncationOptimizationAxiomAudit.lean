@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTTruncationOptimization
+
+#print axioms PrimeNumberTheorem.PintzPNTTruncationGrid.candidates_nonempty
+#print axioms PrimeNumberTheorem.exists_pintzPNTTruncationOptimizer
+#print axioms PrimeNumberTheorem.pintzPNTOptimalTruncationCandidate_le_of_mem
+#print axioms PrimeNumberTheorem.exists_naturalPoint_pintzPNT_hybrid_truncation_optimal
