@@ -217,4 +217,85 @@ theorem
   rw [relativeChebyshevPsi0Error_eq_dynamicFinite_add_closed_add_remainder
     H (m : ℝ)]
 
+/-- Generic ordinary-scale explicit-formula assembler.  Any selected height
+with a vanishing complete finite zero tail and an actual natural-point
+remainder certificate at target `beta = 1` proves relative PNT decay. -/
+theorem tendsto_relativeChebyshevPsi0Error_of_dynamicFullPNTZeroTailNorm
+    {H : ℝ → ℝ}
+    (hfull :
+      Tendsto
+        (fun m : ℕ => dynamicFullPNTZeroTailNorm H (m : ℝ))
+        atTop (nhds 0))
+    (hremainder :
+      ActualSelectedHeightNaturalPointRemainderCertificate 1 H) :
+    Tendsto
+      (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+      atTop (nhds 0) := by
+  have hfiniteAbs :
+      Tendsto
+        (fun m : ℕ =>
+          |(dynamicFinitePNTZeroSum H (m : ℝ)).re|)
+        atTop (nhds 0) := by
+    refine squeeze_zero' ?_ ?_ hfull
+    · filter_upwards with m
+      exact abs_nonneg _
+    · filter_upwards with m
+      calc
+        |(dynamicFinitePNTZeroSum H (m : ℝ)).re| ≤
+            ‖dynamicFinitePNTZeroSum H (m : ℝ)‖ :=
+          abs_re_le_norm _
+        _ = dynamicFullPNTZeroTailNorm H (m : ℝ) := by
+          rfl
+  have hfinite :
+      Tendsto
+        (fun m : ℕ =>
+          (dynamicFinitePNTZeroSum H (m : ℝ)).re)
+        atTop (nhds 0) := by
+    apply tendsto_zero_iff_norm_tendsto_zero.mpr
+    simpa [Real.norm_eq_abs] using hfiniteAbs
+  have hclosedNegligible :=
+    actualPNTClosedRealAxisRelativeTerm_targetAmplitudeNegligible
+      (show (0 : ℝ) < 1 by norm_num)
+  unfold TargetAmplitudeNegligible at hclosedNegligible
+  have hclosedAbs :
+      Tendsto
+        (fun x : ℝ => |actualPNTClosedRealAxisRelativeTerm x|)
+        atTop (nhds 0) := by
+    simpa [targetZeroPowerAmplitude] using hclosedNegligible
+  have hclosed :
+      Tendsto
+        (fun m : ℕ =>
+          actualPNTClosedRealAxisRelativeTerm (m : ℝ))
+        atTop (nhds 0) := by
+    apply tendsto_zero_iff_norm_tendsto_zero.mpr
+    simpa [Real.norm_eq_abs] using
+      hclosedAbs.comp tendsto_natCast_atTop_atTop
+  have hremainderNegligible := hremainder.negligible
+  unfold NaturalPointTargetAmplitudeNegligible at hremainderNegligible
+  have hremainderAbs :
+      Tendsto
+        (fun m : ℕ =>
+          |actualPNTExplicitFormulaRelativeRemainder H (m : ℝ)|)
+        atTop (nhds 0) := by
+    simpa [targetZeroPowerAmplitude] using hremainderNegligible
+  have hremainderTendsto :
+      Tendsto
+        (fun m : ℕ =>
+          actualPNTExplicitFormulaRelativeRemainder H (m : ℝ))
+        atTop (nhds 0) := by
+    apply tendsto_zero_iff_norm_tendsto_zero.mpr
+    simpa [Real.norm_eq_abs] using hremainderAbs
+  have htotal :
+      Tendsto
+        (fun m : ℕ =>
+          (dynamicFinitePNTZeroSum H (m : ℝ)).re +
+            (actualPNTClosedRealAxisRelativeTerm (m : ℝ) +
+              actualPNTExplicitFormulaRelativeRemainder H (m : ℝ)))
+        atTop (nhds 0) := by
+    simpa using hfinite.add (hclosed.add hremainderTendsto)
+  apply htotal.congr'
+  filter_upwards with m
+  rw [relativeChebyshevPsi0Error_eq_dynamicFinite_add_closed_add_remainder
+    H (m : ℝ)]
+
 end PrimeNumberTheorem
