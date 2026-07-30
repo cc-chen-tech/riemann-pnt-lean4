@@ -152,6 +152,41 @@ theorem
         (norm_integral_integral_integral_selbergSqrtZetaSignedCollectedCorrelationDiagonal_le_energy
           T X hT hdelta hroom))
 
+/-- The ordinary-correlation budget with its diagonal term expressed as the
+exact square energy of the rationally collected coefficients. -/
+theorem
+    norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le_rational_energy
+    (kappa T : ℝ) (X : ℕ) {delta : ℝ}
+    (hT : 0 < T) (hdelta : 0 ≤ delta) (hroom : delta ≤ T) :
+    ‖∫ v in 0..delta, ∫ w in 0..delta, ∫ t in T..2 * T - delta,
+        selbergSqrtZetaSignedComplexModel kappa T X (t + v) *
+          (starRingEnd ℂ)
+            (selbergSqrtZetaSignedComplexModel kappa T X (t + w))‖ ≤
+      (delta ^ 2 *
+          ∑ omega ∈
+              selbergSqrtZetaSignedCollectedFrequencySupport
+                (firstZetaApproximationCutoff T) X,
+            ∑ nu ∈
+                selbergSqrtZetaSignedCollectedFrequencySupport
+                  (firstZetaApproximationCutoff T) X,
+              if omega = nu then 0
+              else
+                ‖selbergSqrtZetaSignedCollectedCoeff
+                  (firstZetaApproximationCutoff T) X omega‖ *
+                ‖selbergSqrtZetaSignedCollectedCoeff
+                  (firstZetaApproximationCutoff T) X nu‖ *
+                ((2 + delta / 2) / |omega - nu|)) +
+        delta ^ 2 * (T - delta) *
+          ∑ q ∈ selbergSqrtZetaSignedRationalSupport
+              (firstZetaApproximationCutoff T) X,
+            Complex.normSq
+              (selbergSqrtZetaSignedRationalCoeff
+                (firstZetaApproximationCutoff T) X q) := by
+  simpa only [
+    sum_normSq_collectedCoeff_eq_rationalCoeff] using
+    norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le_energy
+      kappa T X hT hdelta hroom
+
 /-- Backwards-compatible ordinary-correlation budget obtained by replacing
 the exact collected diagonal energy with its raw fiberwise upper bound. -/
 theorem

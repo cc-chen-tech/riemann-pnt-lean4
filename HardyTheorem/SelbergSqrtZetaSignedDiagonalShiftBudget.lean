@@ -1,4 +1,4 @@
-import HardyTheorem.SelbergSqrtZetaSignedCollectedEnergy
+import HardyTheorem.SelbergSqrtZetaSignedRationalRealCollected
 import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
@@ -207,6 +207,26 @@ theorem
           Complex.normSq
             (selbergSqrtZetaSignedCollectedCoeff
               (firstZetaApproximationCutoff T) X omega) := rfl
+
+/-- The exact diagonal budget indexed by the positive rational frequency
+keys, ready for arithmetic estimates on the actual fibers `l / (m*d)`. -/
+theorem
+    norm_integral_integral_integral_selbergSqrtZetaSignedCollectedCorrelationDiagonal_le_rational_energy
+    (T : ℝ) (X : ℕ) {delta : ℝ}
+    (hT : 0 < T) (hdelta : 0 ≤ delta) (hroom : delta ≤ T) :
+    ‖∫ v in 0..delta, ∫ w in 0..delta, ∫ t in T..2 * T - delta,
+        hardyCorrelationAmplitude v w t *
+          selbergSqrtZetaSignedCollectedCorrelationDiagonal T X v w‖ ≤
+      delta ^ 2 * (T - delta) *
+        ∑ q ∈ selbergSqrtZetaSignedRationalSupport
+            (firstZetaApproximationCutoff T) X,
+          Complex.normSq
+            (selbergSqrtZetaSignedRationalCoeff
+              (firstZetaApproximationCutoff T) X q) := by
+  simpa only [
+    sum_normSq_collectedCoeff_eq_rationalCoeff] using
+    norm_integral_integral_integral_selbergSqrtZetaSignedCollectedCorrelationDiagonal_le_energy
+      T X hT hdelta hroom
 
 /-- The exact collected-energy bound implies the previous raw fiber-budget
 bound by finite fiberwise Cauchy--Schwarz. -/
