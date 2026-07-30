@@ -10,6 +10,7 @@ namespace VKEdgePiOverTwo
 #check dynamicComplementGaussianMajorantEnergy
 #check dynamicComplementPacketIndexSet
 #check dynamicComplementFrozenGaussianSecondMoment
+#check dynamicComplementCenteredFrozenGaussianSecondMoment
 
 #check
   (fourierKernel_normalizedGaussian :
@@ -22,6 +23,14 @@ namespace VKEdgePiOverTwo
     ∀ (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ)
       {m : ℝ}, 0 < m →
       dynamicComplementFrozenGaussianSecondMoment S T beta a K m ≤
+        dynamicComplementGaussianMajorantEnergy S T beta a K m)
+
+#check
+  (dynamicComplementCenteredFrozenGaussianSecondMoment_le_majorant :
+    ∀ (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ)
+      {m : ℝ}, 0 < m →
+      dynamicComplementCenteredFrozenGaussianSecondMoment
+          S T beta a K m ≤
         dynamicComplementGaussianMajorantEnergy S T beta a K m)
 
 #check
@@ -60,6 +69,27 @@ namespace VKEdgePiOverTwo
       K.Nonempty →
       eta <
         dynamicComplementFrozenGaussianSecondMoment S T beta a K m →
+      ∃ n ∈ K,
+        eta /
+              (MathlibAux.gaussianBucketSchurConstant *
+                (K.card : ℝ)) <
+            dynamicComplementPacketCoefficientMass S T beta a n ^ 2 ∧
+          (dynamicComplementZeroPacket S T n).Nonempty ∧
+          Disjoint S (dynamicComplementZeroPacket S T n) ∧
+          dynamicComplementZeroPacket S T n ⊆
+            nontrivialZerosFinset T ∧
+          S.card <
+            (S ∪ dynamicComplementZeroPacket S T n).card)
+
+#check
+  (exists_absorbableDynamicComplementPacket_of_centeredFrozenGaussianL2_gt :
+    ∀ {S : Finset ℂ} {T beta a eta m : ℝ} {K : Finset ℕ},
+      0 < eta →
+      1 ≤ m →
+      K.Nonempty →
+      eta <
+        dynamicComplementCenteredFrozenGaussianSecondMoment
+          S T beta a K m →
       ∃ n ∈ K,
         eta /
               (MathlibAux.gaussianBucketSchurConstant *
