@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonHalfSharpRate
+
+/-!
+Axiom audit for the compensated half-sharp Carlson endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms eventually_carlsonDynamicGapLayeredCoarseLogPowerRatio_le_halfMajorant
+#print axioms classicalDyadicCarlsonHalfSqrtLogMajorant_eq
+#print axioms tendsto_classicalDyadicCarlsonHalfSqrtLogMajorant_zero
+#print axioms exists_classicalAdmissibleDyadicCarlsonHalfQuantitativeFixedAnchorMajorant
+#print axioms classicalAdmissibleHalfVerifiedPNTDecayRate_eq
+#print axioms classicalAdmissibleHalfVerifiedPNTDecayRate_pos
+#print axioms classicalAdmissibleVerifiedPNTDecayRate_lt_halfRate
+
+end PrimeNumberTheorem
