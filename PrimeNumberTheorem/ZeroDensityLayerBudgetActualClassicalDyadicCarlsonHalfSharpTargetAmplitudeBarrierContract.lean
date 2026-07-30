@@ -1,0 +1,23 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonHalfSharpTargetAmplitudeBarrier
+
+/-!
+# Half-sharp full-PNT target-amplitude barrier contract
+
+Public contract proving that the attained classical Carlson full-PNT majorant
+does not supply a fixed-power normalized upper bound for reverse transfer.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check classicalDyadicCarlsonThetaHalfToTargetAmplitudeRatio
+#check classicalDyadicCarlsonThetaHalfToTargetAmplitudeRatio_eq
+#check classicalDyadicCarlsonThetaHalfToTargetAmplitudeRatio_tendsto_atTop
+#check classicalDyadicCarlsonThetaHalfKernel_le_closedFormFullPNTErrorMajorant
+#check classicalDyadicCarlsonHalfClosedFormFullPNTToTargetAmplitudeRatio
+#check classicalDyadicCarlsonHalfClosedFormFullPNTToTargetAmplitudeRatio_tendsto_atTop
+#check not_eventually_classicalDyadicCarlsonHalfClosedFormFullPNTMajorant_le_mul_targetAmplitude
+
+end PrimeNumberTheorem
