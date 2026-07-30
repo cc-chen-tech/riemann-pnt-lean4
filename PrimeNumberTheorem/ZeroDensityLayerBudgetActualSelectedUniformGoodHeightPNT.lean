@@ -228,6 +228,61 @@ theorem tendsto_dynamicRealOrdinatePNTZeroTailNorm_of_selectedUniformGoodHeight
       realOrdinateNontrivialZerosOutsideClusterFinset] using hnegligible
   simpa [H] using hreal.comp tendsto_natCast_atTop_atTop
 
+/-- Every fixed positive strip width satisfies the complete moving Carlson
+quadratic-log-power gap: the linear logarithm dominates both the fixed
+coefficient cost and `log log`. -/
+theorem isCarlsonMovingQuadraticLogPowerGap_const
+    {d : ℝ} (hd : 0 < d) :
+    IsCarlsonMovingQuadraticLogPowerGap (fun _ : ℕ => d) := by
+  have hlogNat :
+      Tendsto (fun m : ℕ => Real.log (m : ℝ)) atTop atTop :=
+    Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
+  have hloglogReal :
+      (fun x : ℝ => Real.log (Real.log x)) =o[atTop]
+        (fun x : ℝ => Real.log x) :=
+    Real.isLittleO_log_id_atTop.comp_tendsto Real.tendsto_log_atTop
+  have hloglogNat :
+      (fun m : ℕ => Real.log (Real.log (m : ℝ))) =o[atTop]
+        (fun m : ℕ => Real.log (m : ℝ)) :=
+    hloglogReal.comp_tendsto tendsto_natCast_atTop_atTop
+  have hsmall :
+      ∀ᶠ m : ℕ in atTop,
+        ‖Real.log (Real.log (m : ℝ))‖ ≤
+          d / 16 * ‖Real.log (m : ℝ)‖ :=
+    Asymptotics.isLittleO_iff.mp hloglogNat
+      (show 0 < d / 16 by positivity)
+  have hlinear :
+      Tendsto
+        (fun m : ℕ =>
+          d / 4 * Real.log (m : ℝ) -
+            2 * Real.log d⁻¹)
+        atTop atTop := by
+    have hscaled :
+        Tendsto
+          (fun m : ℕ => d / 4 * Real.log (m : ℝ))
+          atTop atTop :=
+      hlogNat.const_mul_atTop (show 0 < d / 4 by positivity)
+    simpa [sub_eq_add_neg] using
+      tendsto_atTop_add_const_right
+        atTop (-2 * Real.log d⁻¹) hscaled
+  unfold IsCarlsonMovingQuadraticLogPowerGap
+  apply tendsto_atTop_mono' atTop _ hlinear
+  filter_upwards [
+      hsmall,
+      hlogNat.eventually (eventually_ge_atTop (0 : ℝ))] with
+      m hm hlogNonneg
+  have hloglogUpper :
+      Real.log (Real.log (m : ℝ)) ≤
+        d / 16 * Real.log (m : ℝ) := by
+    calc
+      Real.log (Real.log (m : ℝ)) ≤
+          ‖Real.log (Real.log (m : ℝ))‖ :=
+        Real.le_norm_self _
+      _ ≤ d / 16 * ‖Real.log (m : ℝ)‖ := hm
+      _ = d / 16 * Real.log (m : ℝ) := by
+        rw [Real.norm_of_nonneg hlogNonneg]
+  nlinarith
+
 /-- A fixed global real-part cap strictly left of one eventually implies the
 moving selected-height cap whenever the moving gap tends to zero. -/
 theorem
@@ -642,5 +697,57 @@ theorem
     tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson_globalCap
       hinner hstrict houter hepsilon hmargin hbetaOne selection
       hdelta hdeltaZero hgap hglobalCap hmiddle
+
+/-- Constant-width specialization of the fully assembled Carlson-to-PNT
+transfer.  All function-level moving-gap hypotheses are reduced to four
+scalar inequalities on `d`. -/
+theorem
+    tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson_constantGap
+    {innerAlpha outerAlpha epsilon beta d : ℝ}
+    (hinner : 0 < innerAlpha)
+    (hstrict : innerAlpha < outerAlpha)
+    (houter : 0 < outerAlpha)
+    (hepsilon : 0 < epsilon)
+    (hmargin : outerAlpha + epsilon < 1 / 2)
+    (hpowerGap : beta + outerAlpha < 1)
+    (hd : 0 < d)
+    (hdEight : d ≤ 1 / 8)
+    (hdCoefficient : 128 * outerAlpha * d ≤ 1)
+    (hdCap : d ≤ 1 - beta)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    (hglobalCap :
+      ∀ rho : ℂ,
+        RiemannHypothesis.IsNontrivialZero rho →
+          rho.re ≤ beta) :
+    Tendsto
+      (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+      atTop (nhds 0) := by
+  let delta : ℕ → ℝ := fun _ => d
+  have hdelta :
+      ∀ᶠ m : ℕ in atTop,
+        0 < delta m ∧ delta m ≤ 1 / 8 ∧
+          128 * outerAlpha * delta m ≤ 1 := by
+    filter_upwards with m
+    exact ⟨hd, hdEight, hdCoefficient⟩
+  have hgap : IsCarlsonMovingQuadraticLogPowerGap delta := by
+    simpa [delta] using isCarlsonMovingQuadraticLogPowerGap_const hd
+  have hcap :
+      ∀ᶠ m : ℕ in atTop,
+        ActualSelectedHeightMovingPositiveRightEdgeCap
+          (selectedUniformGoodHeight innerAlpha selection) delta m := by
+    filter_upwards with m rho hrho
+    have hzero :
+        RiemannHypothesis.IsNontrivialZero rho :=
+      (mem_positiveNontrivialZerosFinset.mp hrho).1
+    dsimp [delta]
+    exact (hglobalCap rho hzero).trans (by linarith)
+  have hmiddle :=
+    tendsto_actualSelectedUniformGoodHeightMovingCarlsonMiddleMass_zero_of_globalCap
+      (delta := delta)
+      hinner hstrict houter hpowerGap selection hglobalCap
+  exact
+    tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson
+      hinner hstrict houter hepsilon hmargin selection
+      hdelta hgap hcap hmiddle
 
 end PrimeNumberTheorem
