@@ -1,0 +1,14 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightWeightedUnifiedTransfer
+
+open PrimeNumberTheorem
+
+#print axioms
+  ActualWeightedBalancedHeightOutsideClusterCertificate.fullTail_negligible
+#print axioms
+  ActualWeightedBalancedHeightOutsideClusterCertificate.actualSignedComplementCertificate
+#print axioms
+  unified_parametricPNTUpper_actualWeightedBalancedHeightRemainderCertificate
+#print axioms
+  ActualPolynomialExplicitFormulaRemainderCertificate.weightedBalancedHeightCertificate
+#print axioms
+  unified_parametricPNTUpper_actualWeightedBalancedHeightPolynomialRemainderCertificate

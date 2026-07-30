@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightStripProfileRefinement
+
+namespace PrimeNumberTheorem
+
+#print axioms actualSelectedHeightFiniteStripBottleneck_le_iff
+#print axioms le_actualSelectedHeightFiniteStripAlphaCeiling_iff
+#print axioms ActualSelectedHeightFiniteStripProfileRefinement.refl
+#print axioms ActualSelectedHeightFiniteStripProfileRefinement.trans
+#print axioms ActualSelectedHeightFiniteStripProfileRefinement.feasible
+#print axioms
+  ActualSelectedHeightFiniteStripProfileRefinement.robustMargin_mono
+#print axioms
+  ActualSelectedHeightFiniteStripProfileRefinement.robustMargin_eq_of_mutual
+
+end PrimeNumberTheorem

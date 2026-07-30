@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightBalancedExponentOptimality
+
+namespace PrimeNumberTheorem
+
+#print axioms selectedHeightExponentMidpoint_unique_maximizer
+#print axioms actualSelectedHeightFiniteStripBalancedExponent_maximizes
+#print axioms
+  actualSelectedHeightFiniteStripBalancedExponent_unique_maximizer
+#print axioms
+  actualSelectedHeightFiniteStripBalancedExponent_robustMargin_pos
+
+end PrimeNumberTheorem

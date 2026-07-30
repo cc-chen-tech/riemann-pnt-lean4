@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightFiniteStripCertificateChoice
+
+namespace PrimeNumberTheorem
+
+#print axioms
+  actualCarlsonOutsideClusterGoodHeightFiniteStripCertificate_of_thresholds
+
+end PrimeNumberTheorem

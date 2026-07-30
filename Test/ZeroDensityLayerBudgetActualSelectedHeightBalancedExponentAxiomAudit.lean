@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightBalancedExponent
+
+namespace PrimeNumberTheorem
+
+#print axioms contourTransition_lt_stripAlphaCeiling_iff
+#print axioms contourTransition_lt_finiteStripAlphaCeiling_iff
+#print axioms lt_finiteStripAlphaCeiling_iff_all_exponents_neg
+#print axioms actualSelectedHeightFiniteStripBalancedExponent_spec
+
+end PrimeNumberTheorem
