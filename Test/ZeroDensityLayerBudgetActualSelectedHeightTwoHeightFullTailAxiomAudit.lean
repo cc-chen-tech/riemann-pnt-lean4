@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightTwoHeightFullTailContract
+
+open PrimeNumberTheorem
+
+#print axioms canonicalSelectedLayer_subset_polynomialLayer
+#print axioms dynamicSelectedPositiveOutsideClusterPNTTailNorm_le
+#print axioms selectedPositiveOutsideClusterTail_targetAmplitudeNegligible
+#print axioms selectedFullOutsideClusterTail_targetAmplitudeNegligible
