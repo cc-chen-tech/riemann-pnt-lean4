@@ -314,6 +314,9 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_positiveCriticalLine_add_two_mul_zeroDensityCount",
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_add_halfMultiplicity_eq_criticalLine_add_two_mul_zeroDensityCount",
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_criticalLine_add_two_mul_zeroDensityCount",
+    "HardyTheorem.exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_modelEnergy_le",
+    "HardyTheorem.totientSquares_selbergShortRestrictedPairProductMultiplicity_le",
+    "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_logPolynomialHighRange",
 }
 
 REPORT_RE = re.compile(
