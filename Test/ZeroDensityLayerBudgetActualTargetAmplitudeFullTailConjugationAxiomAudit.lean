@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualTargetAmplitudeFullTailConjugationContract
+
+open PrimeNumberTheorem
+
+#print axioms actualPositiveOutsideClusterTail_targetAmplitudeNegligible
+#print axioms actualFullOutsideClusterTail_targetAmplitudeNegligible
+#print axioms tendsto_actualFullOutsideClusterTailTargetAmplitudeNorm
