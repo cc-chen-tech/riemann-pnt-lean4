@@ -78,7 +78,7 @@ theorem
       unfold actualCarlsonAdjoinRealOrdinateZeros
       exact Finset.mem_union_left _ hrho
     rw [hadjoinedEmpty] at hadjoined
-    simpa using hadjoined
+    simp at hadjoined
   · simp
 
 end PrimeNumberTheorem
