@@ -132,6 +132,19 @@ noncomputable def dynamicComplementFrozenGaussianSecondMoment
         (analyticOrderNatAt riemannZeta) beta a z.2)
       (fun z => z.2.im) t‖ ^ 2
 
+/-- Gaussian second moment of the frozen complementary sum after twisting its
+coefficients to the logarithmic window center `a`. -/
+noncomputable def dynamicComplementCenteredFrozenGaussianSecondMoment
+    (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ) (m : ℝ) : ℝ :=
+  ∫ t : ℝ, normalizedGaussian m t *
+    ‖DirichletPolynomial.finiteExponentialSum
+      (dynamicComplementPacketIndexSet S T K)
+      (DirichletPolynomial.phaseTwist
+        (fun z => finiteZeroClusterCoefficientAt
+          (analyticOrderNatAt riemannZeta) beta a z.2)
+        (fun z => z.2.im) a)
+      (fun z => z.2.im) t‖ ^ 2
+
 /-- The frozen Gaussian `L²` energy of the actual finite-height complement is
 bounded by the positive packet majorant. -/
 theorem dynamicComplementFrozenGaussianSecondMoment_le_majorant
@@ -200,6 +213,120 @@ theorem dynamicComplementFrozenGaussianSecondMoment_le_majorant
     _ = dynamicComplementGaussianMajorantEnergy
           S T beta a K m := by
       dsimp [I, c, omega, dynamicComplementPacketIndexSet]
+      rw [Finset.sum_sigma]
+      apply Finset.sum_congr rfl
+      intro n hn
+      calc
+        (∑ rho ∈ dynamicComplementZeroPacket S T n,
+            ∑ w ∈ K.sigma fun k =>
+              dynamicComplementZeroPacket S T k,
+              ‖finiteZeroClusterCoefficientAt
+                  (analyticOrderNatAt riemannZeta) beta a rho‖ *
+                ‖finiteZeroClusterCoefficientAt
+                  (analyticOrderNatAt riemannZeta) beta a w.2‖ *
+                Real.exp (-m * (rho.im - w.2.im) ^ 2)) =
+            ∑ rho ∈ dynamicComplementZeroPacket S T n,
+              ∑ k ∈ K,
+                ∑ tau ∈ dynamicComplementZeroPacket S T k,
+                  ‖finiteZeroClusterCoefficientAt
+                      (analyticOrderNatAt riemannZeta) beta a rho‖ *
+                    ‖finiteZeroClusterCoefficientAt
+                      (analyticOrderNatAt riemannZeta) beta a tau‖ *
+                    Real.exp (-m * (rho.im - tau.im) ^ 2) := by
+          apply Finset.sum_congr rfl
+          intro rho hrho
+          rw [Finset.sum_sigma]
+        _ = ∑ k ∈ K,
+              ∑ rho ∈ dynamicComplementZeroPacket S T n,
+                ∑ tau ∈ dynamicComplementZeroPacket S T k,
+                  ‖finiteZeroClusterCoefficientAt
+                      (analyticOrderNatAt riemannZeta) beta a rho‖ *
+                    ‖finiteZeroClusterCoefficientAt
+                      (analyticOrderNatAt riemannZeta) beta a tau‖ *
+                    Real.exp (-m * (rho.im - tau.im) ^ 2) := by
+          rw [Finset.sum_comm]
+
+/-- Center phase does not change coefficient norms, so the centered frozen
+Gaussian second moment obeys the same packet majorant. -/
+theorem dynamicComplementCenteredFrozenGaussianSecondMoment_le_majorant
+    (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ)
+    {m : ℝ} (hm : 0 < m) :
+    dynamicComplementCenteredFrozenGaussianSecondMoment
+        S T beta a K m ≤
+      dynamicComplementGaussianMajorantEnergy S T beta a K m := by
+  let I : Finset (Σ _n : ℕ, ℂ) :=
+    dynamicComplementPacketIndexSet S T K
+  let base : (Σ _n : ℕ, ℂ) → ℂ := fun z =>
+    finiteZeroClusterCoefficientAt
+      (analyticOrderNatAt riemannZeta) beta a z.2
+  let omega : (Σ _n : ℕ, ℂ) → ℝ := fun z => z.2.im
+  let c : (Σ _n : ℕ, ℂ) → ℂ :=
+    DirichletPolynomial.phaseTwist base omega a
+  let E : ℝ :=
+    dynamicComplementCenteredFrozenGaussianSecondMoment
+      S T beta a K m
+  have hphaseNorm (z : Σ _n : ℕ, ℂ) :
+      ‖c z‖ = ‖base z‖ := by
+    simp [c, DirichletPolynomial.phaseTwist, Complex.norm_exp]
+  have hE_nonneg : 0 ≤ E := by
+    dsimp [E, dynamicComplementCenteredFrozenGaussianSecondMoment]
+    exact integral_nonneg fun t =>
+      mul_nonneg (normalizedGaussian_pos hm t).le (sq_nonneg _)
+  have hform :=
+    DirichletPolynomial.finiteFourierKernelForm_eq_integral_normSq
+      (S := I) (c := c) (omega := omega)
+      (g := normalizedGaussian m)
+      (integrable_normalizedGaussian hm)
+  have hnormForm :
+      ‖DirichletPolynomial.finiteFourierKernelForm
+          I c omega (normalizedGaussian m)‖ = E := by
+    rw [hform, norm_real, Real.norm_eq_abs]
+    have hnonneg :
+        0 ≤ ∫ t : ℝ, normalizedGaussian m t *
+          ‖DirichletPolynomial.finiteExponentialSum I c omega t‖ ^ 2 := by
+      simpa [E, I, c, base, omega,
+        dynamicComplementCenteredFrozenGaussianSecondMoment] using
+          hE_nonneg
+    rw [abs_of_nonneg hnonneg]
+    rfl
+  calc
+    dynamicComplementCenteredFrozenGaussianSecondMoment
+          S T beta a K m =
+        ‖DirichletPolynomial.finiteFourierKernelForm
+          I c omega (normalizedGaussian m)‖ := hnormForm.symm
+    _ = ‖∑ z ∈ I, ∑ w ∈ I,
+          conj (c z) * c w *
+            (Real.exp (-m * (omega w - omega z) ^ 2) : ℂ)‖ := by
+      unfold DirichletPolynomial.finiteFourierKernelForm
+      simp_rw [fourierKernel_normalizedGaussian hm]
+    _ ≤ ∑ z ∈ I, ‖∑ w ∈ I,
+          conj (c z) * c w *
+            (Real.exp (-m * (omega w - omega z) ^ 2) : ℂ)‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ z ∈ I, ∑ w ∈ I,
+          ‖conj (c z) * c w *
+            (Real.exp (-m * (omega w - omega z) ^ 2) : ℂ)‖ := by
+      apply Finset.sum_le_sum
+      intro z hz
+      exact norm_sum_le _ _
+    _ = ∑ z ∈ I, ∑ w ∈ I,
+          ‖c z‖ * ‖c w‖ *
+            Real.exp (-m * (omega z - omega w) ^ 2) := by
+      apply Finset.sum_congr rfl
+      intro z hz
+      apply Finset.sum_congr rfl
+      intro w hw
+      rw [norm_mul, norm_mul, norm_conj, norm_real,
+        Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+      congr 2
+      ring
+    _ = ∑ z ∈ I, ∑ w ∈ I,
+          ‖base z‖ * ‖base w‖ *
+            Real.exp (-m * (omega z - omega w) ^ 2) := by
+      simp_rw [hphaseNorm]
+    _ = dynamicComplementGaussianMajorantEnergy
+          S T beta a K m := by
+      dsimp [I, base, omega, dynamicComplementPacketIndexSet]
       rw [Finset.sum_sigma]
       apply Finset.sum_congr rfl
       intro n hn
@@ -480,6 +607,36 @@ theorem exists_absorbableDynamicComplementPacket_of_frozenGaussianL2_gt
   have hmPos : 0 < m := lt_of_lt_of_le zero_lt_one hm
   have hmajorant :=
     dynamicComplementFrozenGaussianSecondMoment_le_majorant
+      S T beta a K hmPos
+  exact
+    exists_absorbableDynamicComplementPacket_of_gaussianMajorantEnergy_gt
+      heta hm hK (hlarge.trans_le hmajorant)
+
+/-- Window-centered version of the one-step expansion theorem. -/
+theorem
+    exists_absorbableDynamicComplementPacket_of_centeredFrozenGaussianL2_gt
+    {S : Finset ℂ} {T beta a eta m : ℝ} {K : Finset ℕ}
+    (heta : 0 < eta)
+    (hm : 1 ≤ m)
+    (hK : K.Nonempty)
+    (hlarge :
+      eta <
+        dynamicComplementCenteredFrozenGaussianSecondMoment
+          S T beta a K m) :
+    ∃ n ∈ K,
+      eta /
+            (MathlibAux.gaussianBucketSchurConstant *
+              (K.card : ℝ)) <
+          dynamicComplementPacketCoefficientMass S T beta a n ^ 2 ∧
+        (dynamicComplementZeroPacket S T n).Nonempty ∧
+        Disjoint S (dynamicComplementZeroPacket S T n) ∧
+        dynamicComplementZeroPacket S T n ⊆
+          nontrivialZerosFinset T ∧
+        S.card <
+          (S ∪ dynamicComplementZeroPacket S T n).card := by
+  have hmPos : 0 < m := lt_of_lt_of_le zero_lt_one hm
+  have hmajorant :=
+    dynamicComplementCenteredFrozenGaussianSecondMoment_le_majorant
       S T beta a K hmPos
   exact
     exists_absorbableDynamicComplementPacket_of_gaussianMajorantEnergy_gt

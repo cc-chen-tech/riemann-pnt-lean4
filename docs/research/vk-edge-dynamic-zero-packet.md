@@ -20,12 +20,14 @@ multiplicity in every frozen coefficient, and is disjoint from `S`.
 The theorem
 
 ```text
-exists_absorbableDynamicComplementPacket_of_frozenGaussianL2_gt
+exists_absorbableDynamicComplementPacket_of_centeredFrozenGaussianL2_gt
 ```
 
 starts from the Gaussian-weighted `L2` energy of the frozen exponential sum
-formed from actual height-`T` complementary zeta zeros.  The exact Fourier
-transform
+formed from actual height-`T` complementary zeta zeros.  Each coefficient is
+twisted by the phase at the logarithmic window center `a`; this is the frozen
+model that can later be compared with the actual moving zero contribution on
+that window.  The exact Fourier transform
 
 ```text
 fourierKernel normalizedGaussian = exp (-m * frequency^2)
