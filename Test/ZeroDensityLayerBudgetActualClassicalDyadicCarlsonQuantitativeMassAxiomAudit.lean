@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativeMass
+
+/-!
+Axiom audit for the classical quantitative Carlson zero-layer mass endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms exists_eventually_actualDyadicCarlsonMinimalFixedAnchorMass_le_layeredCoarse
+#print axioms eventually_carlsonDynamicGapLayeredCoarseLogPowerRatio_le_classicalSqrtLogMajorant
+#print axioms classicalDyadicCarlsonSqrtLogMajorant_eq
+#print axioms tendsto_classicalDyadicCarlsonSqrtLogMajorant_zero
+#print axioms exists_classicalAdmissibleDyadicCarlsonQuantitativeFixedAnchorMajorant
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativeMassMajorant
+
+end PrimeNumberTheorem
