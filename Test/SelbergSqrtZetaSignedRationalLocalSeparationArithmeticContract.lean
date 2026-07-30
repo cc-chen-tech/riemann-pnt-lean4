@@ -5,7 +5,7 @@ open scoped BigOperators
 
 namespace HardyTheorem
 
-example {N X : ℕ} (hN : 0 < N) (hX : 0 < X)
+example {N X : ℕ}
     (hS : (selbergSqrtZetaSignedRationalSupport N X).Nontrivial)
     {q : ℚ} (hq : q ∈ selbergSqrtZetaSignedRationalSupport N X) :
     1 / ((N * X ^ 2 : ℕ) : ℝ) ≤

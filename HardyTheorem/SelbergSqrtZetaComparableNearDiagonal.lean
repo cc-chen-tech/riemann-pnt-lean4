@@ -34,11 +34,18 @@ theorem inv_abs_log_nat_sub_log_nat_le_max_div_dist
     Nat.dist_pos_of_ne hmn
   have hdistPos : (0 : ℝ) < Nat.dist m n := by
     exact_mod_cast hdistNatPos
-  have hmaxPos : (0 : ℝ) < max m n := by
-    exact_mod_cast lt_of_lt_of_le hm (le_max_left m n)
+  have hmaxPos : (0 : ℝ) < max (m : ℝ) (n : ℝ) :=
+    hmR.trans_le (le_max_left _ _)
   have hdistCast :
       (Nat.dist m n : ℝ) = |(m : ℝ) - (n : ℝ)| := by
-    rw [← Nat.dist_cast_real, Real.dist_eq]
+    rcases le_total m n with hmnle | hnmle
+    · have hmnR : (m : ℝ) ≤ (n : ℝ) := by exact_mod_cast hmnle
+      rw [Nat.dist_eq_sub_of_le hmnle, Nat.cast_sub hmnle,
+        abs_of_nonpos (sub_nonpos.mpr hmnR)]
+      ring
+    · have hnmR : (n : ℝ) ≤ (m : ℝ) := by exact_mod_cast hnmle
+      rw [Nat.dist_eq_sub_of_le_right hnmle, Nat.cast_sub hnmle,
+        abs_of_nonneg (sub_nonneg.mpr hnmR)]
   have hmaxCast :
       (max m n : ℝ) = max (m : ℝ) (n : ℝ) := by
     exact_mod_cast (rfl : max m n = max m n)
@@ -48,10 +55,13 @@ theorem inv_abs_log_nat_sub_log_nat_le_max_div_dist
     rw [hdistCast, hmaxCast]
     simpa only [Real.log_div hmR.ne' hnR.ne'] using
       (MathlibAux.abs_sub_div_max_le_abs_log_div hmR hnR)
+  have hratioPos :
+      0 < (Nat.dist m n : ℝ) / max (m : ℝ) (n : ℝ) :=
+    div_pos hdistPos hmaxPos
   calc
     1 / |Real.log (m : ℝ) - Real.log (n : ℝ)| ≤
         1 / ((Nat.dist m n : ℝ) / (max m n : ℝ)) :=
-      one_div_le_one_div_of_le (div_pos hdistPos hmaxPos) hgap
+      one_div_le_one_div_of_le hratioPos hgap
     _ = (max m n : ℝ) / (Nat.dist m n : ℝ) := by
       field_simp [hdistPos.ne', hmaxPos.ne']
 
@@ -109,9 +119,9 @@ theorem selbergSqrtZetaComparableGapBudget_le_nearDiagonal
     by_cases hcomp : m ≠ n ∧ m < 2 * n ∧ n < 2 * m
     · rw [if_pos hcomp, if_pos hcomp]
       have hmPos : 0 < m := by
-        exact (Finset.mem_Ioc.mp hm).1
+        omega
       have hnPos : 0 < n := by
-        exact (Finset.mem_Ioc.mp hn).1
+        omega
       have hkernel :
           1 /
               |selbergShortDirichletCollectedFrequency m -

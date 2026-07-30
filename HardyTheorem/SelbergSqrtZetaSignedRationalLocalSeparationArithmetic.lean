@@ -99,7 +99,14 @@ theorem sum_normSq_div_localFrequencySeparation_le_arithmeticEnergy
             selbergSqrtZetaSignedRationalFrequency q =
         Complex.normSq (selbergSqrtZetaSignedRationalCoeff N X q) *
           (1 / delta) := by
-            simp only [Q, omega, delta, div_eq_mul_inv, one_div]
+            change
+              Complex.normSq
+                    (selbergSqrtZetaSignedRationalCoeff N X q) *
+                  delta⁻¹ =
+                Complex.normSq
+                    (selbergSqrtZetaSignedRationalCoeff N X q) *
+                  (1 / delta)
+            rw [one_div]
     _ ≤ Complex.normSq (selbergSqrtZetaSignedRationalCoeff N X q) * M :=
       mul_le_mul_of_nonneg_left hrecip hnorm
     _ = M * Complex.normSq
@@ -123,6 +130,8 @@ theorem integral_normSq_rationalCollectedPolynomial_le_arithmeticEnergy
       N X hab hS
   have harithmetic :=
     sum_normSq_div_localFrequencySeparation_le_arithmeticEnergy hN hX hS
+  have hfourPi : (0 : ℝ) ≤ 4 * Real.pi :=
+    mul_nonneg (by norm_num) Real.pi_pos.le
   calc
     (∫ t in a..b,
         Complex.normSq
@@ -147,8 +156,8 @@ theorem integral_normSq_rationalCollectedPolynomial_le_arithmeticEnergy
               ∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
                 Complex.normSq
                   (selbergSqrtZetaSignedRationalCoeff N X q)) := by
-      exact add_le_add_left
-        (mul_le_mul_of_nonneg_left harithmetic (by positivity)) _
+      exact add_le_add le_rfl
+        (mul_le_mul_of_nonneg_left harithmetic hfourPi)
     _ = (b - a + 4 * Real.pi * ((N * X ^ 2 : ℕ) : ℝ)) *
           ∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
             Complex.normSq
