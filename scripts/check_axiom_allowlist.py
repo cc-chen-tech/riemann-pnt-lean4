@@ -27,6 +27,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeDynamicZeroPacketDriftAxiomAudit",
     "Test.VKEdgeDynamicMaximalLayerAxiomAudit",
     "Test.VKEdgeFullMovingComplementEnergyAxiomAudit",
+    "Test.VKEdgeInitialFullMovingEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -117,6 +118,14 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterPsiRemainderWithoutJumpForwardGaussianSecondMoment_le_fullMoving_add_uniformErrors",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFullMovingGaussianSecondMoment_ge_of_normalizedRemainder",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedRemainder_to_fullMovingGaussianEnergy",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPsiError_sq_eq_norm_sq_mul_normalizedChebyshevPsiErrorAtExponent",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedGaussian_sqScale_endpoint",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedGaussian_sqScale_endpoint_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPsiErrorForwardGaussianSecondMoment",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterPsiRemainderWithoutJumpForwardGaussianSecondMoment_empty",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPsiErrorForwardGaussianSecondMoment_ge_endpoint_mul_ordinary",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.initialEmptyClusterResidualGaussianL2Constant",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_emptyClusterResidualForwardGaussianSecondMoment_gt",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
