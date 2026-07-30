@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualAutomaticGoodHeightNaturalUnifiedTransferContract
+
+open PrimeNumberTheorem
+
+#print axioms eventually_selectedUniformGoodHeight_nonneg_le_polynomial
+#print axioms automaticGoodHeight_twoHeight_naturalPointLowerTransfer
+#print axioms unified_automaticGoodHeight_twoHeight_naturalTargetTransfer
