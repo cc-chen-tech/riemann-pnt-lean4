@@ -36,13 +36,17 @@ This estimate is collision-safe.  Zeros in one unit interval may be
 arbitrarily close or have repeated ordinates; the proof charges their complete
 analytic multiplicity to the same bucket.
 
-## Remaining bridge
+## Subsequent Gaussian bridge
 
-The result is the diagonal-energy input, not yet a local second-moment bound
-for the zero sum.  The next theorem must use the Gaussian Fourier kernel to
-control cross-bucket terms by a constant multiple of the bucket square energy.
-After that bridge, the high-ordinate part of the moving complementary zero
-package will vanish without a minimum zero-spacing assumption.
+The diagonal-energy result is now combined in the stacked Gaussian bucket
+branch with a collision-safe Schur estimate.  That theorem controls all
+cross-bucket Gaussian interactions by a constant multiple of this square
+energy, without a minimum zero-spacing assumption.
+
+The remaining analytic bridge is stronger: identify that Gaussian quadratic
+form with the weighted local `L2` norm of the actual moving complementary zero
+sum.  This still has to account for the moving truncation height and the
+real-part drift of each zero coefficient.
 
 Nothing here proves an unconditional zeta/PNT oscillation theorem, a
 zero-density contradiction, or RH.
