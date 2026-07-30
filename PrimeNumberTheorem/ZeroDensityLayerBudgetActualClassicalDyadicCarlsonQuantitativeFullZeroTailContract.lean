@@ -1,0 +1,23 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativeFullZeroTail
+
+/-!
+# Classical dyadic Carlson quantitative full-zero-tail contract
+
+Public contract for the fixed real-ordinate majorant and the combined full
+finite nontrivial-zero-tail majorant.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check classicalRealOrdinateFixedMajorant
+#check classicalRealOrdinateFixedMajorant_nonneg
+#check tendsto_classicalRealOrdinateFixedMajorant_zero
+#check eventually_dynamicRealOrdinatePNTZeroTailNorm_le_classicalFixedMajorant
+#check classicalDyadicCarlsonFullZeroTailMajorant
+#check tendsto_classicalDyadicCarlsonFullZeroTailMajorant_zero
+#check exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativeFullZeroTailMajorant
+
+end PrimeNumberTheorem
