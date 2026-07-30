@@ -99,6 +99,8 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.selbergSqrtZetaSignedRationalFrequency_sub_eq_log_div",
     "HardyTheorem.sum_collectedFrequencyGap_eq_rationalGapBudget",
     "HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le_rational_gap",
+    "HardyTheorem.selbergSqrtZetaSignedRationalShortKernel_eq_triple",
+    "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_eq_re_kernelSum",
     "HardyTheorem.exists_integral_norm_riemannZeta_critical_line_ge_mul",
     "HardyTheorem.exists_abs_integral_hardyZ_le_rpow_three_quarters",
     "HardyTheorem.hardyZ_zero_set_not_isBounded",
