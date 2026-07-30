@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonRectangleTransfer
+
+open Filter Topology
+
+namespace PrimeNumberTheorem
+
+#check carlsonRectangleExponent
+#check polynomialOrdinateRectangleKernel
+#check carlsonRectangleLogMajorant
+#check carlsonRectangleExponent_eq_stripEndpoint_sub
+#check tendsto_carlsonRectangleLogMajorant
+#check tendsto_dynamicCarlsonCount_mul_polynomialOrdinateRectangleKernel
+#check tendsto_actualPositiveRectangleLayerMass
+
+end PrimeNumberTheorem

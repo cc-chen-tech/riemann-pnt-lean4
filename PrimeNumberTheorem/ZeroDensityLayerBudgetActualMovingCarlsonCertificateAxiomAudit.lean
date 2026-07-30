@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualMovingCarlsonCertificateContract
+
+#print axioms PrimeNumberTheorem.actualMovingCarlsonStripMass
+#print axioms PrimeNumberTheorem.IsActualMovingCarlsonTwoHeightCertificate
+#print axioms PrimeNumberTheorem.actualMovingCarlsonStripMass_le_quadraticRatio
+#print axioms PrimeNumberTheorem.actualMovingCarlsonStripMass_nonneg
+#print axioms PrimeNumberTheorem.tendsto_actualMovingCarlsonStripMass_zero
