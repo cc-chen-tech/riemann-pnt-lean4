@@ -228,6 +228,62 @@ theorem tendsto_dynamicRealOrdinatePNTZeroTailNorm_of_selectedUniformGoodHeight
       realOrdinateNontrivialZerosOutsideClusterFinset] using hnegligible
   simpa [H] using hreal.comp tendsto_natCast_atTop_atTop
 
+/-- The canonical uniformly good height converts the positive-ordinate moving
+Carlson transfer into decay of the full finite-zero tail.  Conjugation accounts
+for the second positive-ordinate copy, while the real-ordinate residual is
+automatic. -/
+theorem tendsto_dynamicFullPNTZeroTailNorm_of_selectedUniformGoodHeightMovingCarlson
+    {innerAlpha outerAlpha epsilon : ℝ}
+    {delta : ℕ → ℝ}
+    (hinner : 0 < innerAlpha)
+    (hstrict : innerAlpha < outerAlpha)
+    (houter : 0 < outerAlpha)
+    (hepsilon : 0 < epsilon)
+    (hmargin : outerAlpha + epsilon < 1 / 2)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    (hdelta : ∀ᶠ m : ℕ in atTop,
+      0 < delta m ∧ delta m ≤ 1 / 8 ∧
+        128 * outerAlpha * delta m ≤ 1)
+    (hgap : IsCarlsonMovingQuadraticLogPowerGap delta)
+    (hcap : ∀ᶠ m : ℕ in atTop,
+      ActualSelectedHeightMovingPositiveRightEdgeCap
+        (selectedUniformGoodHeight innerAlpha selection) delta m)
+    (hmiddle :
+      Tendsto
+        (actualSelectedHeightMovingCarlsonMiddleMass
+          (selectedUniformGoodHeight innerAlpha selection) delta)
+        atTop (nhds 0)) :
+    Tendsto
+      (fun m : ℕ =>
+        dynamicFullPNTZeroTailNorm
+          (selectedUniformGoodHeight innerAlpha selection) (m : ℝ))
+      atTop (nhds 0) := by
+  have hpositive :=
+    tendsto_dynamicPositivePNTTailNorm_of_selectedUniformGoodHeightMovingCarlson
+      hinner hstrict houter hepsilon hmargin selection
+      hdelta hgap hcap hmiddle
+  have hreal :=
+    tendsto_dynamicRealOrdinatePNTZeroTailNorm_of_selectedUniformGoodHeight
+      hinner selection
+  have hmajorant :
+      Tendsto
+        (fun m : ℕ =>
+          dynamicPositivePNTTailNorm
+              (selectedUniformGoodHeight innerAlpha selection) (m : ℝ) +
+            dynamicPositivePNTTailNorm
+              (selectedUniformGoodHeight innerAlpha selection) (m : ℝ) +
+            dynamicRealOrdinatePNTZeroTailNorm
+              (selectedUniformGoodHeight innerAlpha selection) (m : ℝ))
+        atTop (nhds 0) := by
+    simpa using (hpositive.add hpositive).add hreal
+  refine squeeze_zero' ?_ ?_ hmajorant
+  · filter_upwards with m
+    exact norm_nonneg _
+  · filter_upwards [eventually_ge_atTop (1 : ℕ)] with m hm
+    have hmPos : 0 < (m : ℝ) := by
+      exact_mod_cast hm
+    exact dynamicFullPNTZeroTailNorm_le_two_positive_add_real hmPos
+
 /-- At the canonical uniformly good height, decay of the full finite-zero tail
 is enough to force decay of the relative `psi₀` error.  The explicit-formula
 remainder certificate is generated automatically from the selector. -/
@@ -250,5 +306,43 @@ theorem tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeight_fullTail
     selectedUniformGoodHeight_actualNaturalRemainderCertificate
       (beta := 1) (alpha := alpha)
       (by norm_num) halpha halphaOne (by simpa using halpha) selection
+
+/-- Canonical moving-Carlson PNT transfer.  Once the middle strip and the
+moving right-edge cap decay at the uniformly good height, the Carlson layer
+budget, conjugation symmetry, real-zero residual, and explicit-formula
+remainder assemble into relative `psi₀` decay. -/
+theorem tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson
+    {innerAlpha outerAlpha epsilon : ℝ}
+    {delta : ℕ → ℝ}
+    (hinner : 0 < innerAlpha)
+    (hstrict : innerAlpha < outerAlpha)
+    (houter : 0 < outerAlpha)
+    (hepsilon : 0 < epsilon)
+    (hmargin : outerAlpha + epsilon < 1 / 2)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    (hdelta : ∀ᶠ m : ℕ in atTop,
+      0 < delta m ∧ delta m ≤ 1 / 8 ∧
+        128 * outerAlpha * delta m ≤ 1)
+    (hgap : IsCarlsonMovingQuadraticLogPowerGap delta)
+    (hcap : ∀ᶠ m : ℕ in atTop,
+      ActualSelectedHeightMovingPositiveRightEdgeCap
+        (selectedUniformGoodHeight innerAlpha selection) delta m)
+    (hmiddle :
+      Tendsto
+        (actualSelectedHeightMovingCarlsonMiddleMass
+          (selectedUniformGoodHeight innerAlpha selection) delta)
+        atTop (nhds 0)) :
+    Tendsto
+      (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+      atTop (nhds 0) := by
+  have hfull :=
+    tendsto_dynamicFullPNTZeroTailNorm_of_selectedUniformGoodHeightMovingCarlson
+      hinner hstrict houter hepsilon hmargin selection
+      hdelta hgap hcap hmiddle
+  have hinnerOne : innerAlpha ≤ 1 := by
+    linarith
+  exact
+    tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeight_fullTail
+      hinner hinnerOne selection hfull
 
 end PrimeNumberTheorem
