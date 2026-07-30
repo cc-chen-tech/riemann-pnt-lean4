@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightGlobalOptimalTruncationParametersContract
+
+open PrimeNumberTheorem
+
+#print axioms jointTwoHeightOptimalDensityThreshold_spec
+#print axioms jointTwoHeightPrescribedCapOuterExponentCeiling_le_global
+#print axioms exists_jointTwoHeightGloballyNearOptimalTruncationParameters
