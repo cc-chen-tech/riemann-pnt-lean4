@@ -212,6 +212,8 @@ lean_lib RiemannPNT where
     `Test.VKEdgeDynamicMaximalLayerAxiomAudit,
     `Test.VKEdgeFullMovingComplementEnergyContract,
     `Test.VKEdgeFullMovingComplementEnergyAxiomAudit,
+    `Test.VKEdgeInitialFullMovingEnergyContract,
+    `Test.VKEdgeInitialFullMovingEnergyAxiomAudit,
     `Test.VKEdgePiOverTwoLocalizedContract,
     `Test.VKEdgePiOverTwoLocalizedAxiomAudit,
     `Test.VKEdgePiOverTwoEpsilonWindowContract,
