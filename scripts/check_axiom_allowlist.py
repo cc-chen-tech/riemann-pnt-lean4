@@ -101,6 +101,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le_rational_gap",
     "HardyTheorem.selbergSqrtZetaSignedRationalShortKernel_eq_triple",
     "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_eq_re_kernelSum",
+    "MathlibAux.integral_normSq_slidingIntegral_le_fourier_low_high",
     "HardyTheorem.exists_integral_norm_riemannZeta_critical_line_ge_mul",
     "HardyTheorem.exists_abs_integral_hardyZ_le_rpow_three_quarters",
     "HardyTheorem.hardyZ_zero_set_not_isBounded",

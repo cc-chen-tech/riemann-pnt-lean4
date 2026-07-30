@@ -200,6 +200,7 @@ import MathlibAux.RectangularFourierEnvelope
 import MathlibAux.MellinLogIntegrability
 import MathlibAux.SlidingWindowParseval
 import MathlibAux.SlidingIntegralFourierCompatibility
+import MathlibAux.SlidingIntegralFourierEnergy
 import HardyTheorem.HardyPhaseHilbertShiftIntegral
 import EulerAndLfunctions
 import PrimeNumberTheorem
