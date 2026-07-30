@@ -13,6 +13,14 @@ namespace VKEdgePiOverTwo
 #check dynamicComplementCenteredFrozenGaussianSecondMoment
 
 #check
+  (finiteExponentialSum_phaseTwist_eq_shift :
+    ∀ {ι : Type} [DecidableEq ι]
+      (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) (a t : ℝ),
+      DirichletPolynomial.finiteExponentialSum S
+          (DirichletPolynomial.phaseTwist c omega a) omega t =
+        DirichletPolynomial.finiteExponentialSum S c omega (a + t))
+
+#check
   (fourierKernel_normalizedGaussian :
     ∀ {m : ℝ}, 0 < m → ∀ xi : ℝ,
       DirichletPolynomial.fourierKernel (normalizedGaussian m) xi =

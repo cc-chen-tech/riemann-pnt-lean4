@@ -76,6 +76,7 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.sum_gaussianKernel_le_bucketEnergy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zeroOrdinateBucketGaussianEnergy_le",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_zeroOrdinateBucketGaussianEnergy_lt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.finiteExponentialSum_phaseTwist_eq_shift",
     "PrimeNumberTheorem.VKEdgePiOverTwo.fourierKernel_normalizedGaussian",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFrozenGaussianSecondMoment_le_majorant",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementCenteredFrozenGaussianSecondMoment_le_majorant",
