@@ -1,0 +1,24 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativePositiveTail
+
+/-!
+# Classical dyadic Carlson quantitative positive-tail contract
+
+Public contract for the explicit critical-half majorant and the combined
+positive-ordinate zero-tail majorant.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check exists_eventually_dynamicPositiveOutsideClusterPNTLayerNorm_div_target_le_actualHybridMajorant_selectedHeight
+#check classicalCriticalHalfMajorant
+#check classicalCriticalHalfMajorant_eq
+#check tendsto_classicalCriticalHalfMajorant_zero
+#check exists_eventually_actualSelectedClassicalAdmissibleCriticalHalfPNTLayerNorm_le_majorant
+#check classicalDyadicCarlsonPositiveZeroTailMajorant
+#check tendsto_classicalDyadicCarlsonPositiveZeroTailMajorant_zero
+#check exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativePositiveZeroTailMajorant
+
+end PrimeNumberTheorem
