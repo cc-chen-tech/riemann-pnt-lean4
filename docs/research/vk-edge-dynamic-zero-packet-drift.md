@@ -32,18 +32,34 @@ finiteExponentialSum (phaseTwist c omega a) omega t
   = finiteExponentialSum c omega (a + t).
 ```
 
-A moving energy larger than the displayed drift budget therefore forces one
-new nonempty packet of actual finite-height zeta zeros, disjoint from the
-current packet set.
+The inspected moving contribution is now split exactly into
+
+```text
+full inspected packet = real-band packet + outside-band packet.
+```
+
+The corresponding Gaussian energy satisfies
+
+```text
+fullEnergy <= 2 * realBandEnergy + 2 * outsideBandEnergy.
+```
+
+This removes the unrealistic requirement that every zero in an entire
+ordinate bucket lie in the real-part band. If the full energy remains large
+after paying the explicit outside-band energy and the displayed drift budget,
+the module forces one new nonempty packet of actual finite-height zeta zeros
+inside the real band. The packet is disjoint from the current packet set,
+strictly increases its cardinality, and every extracted zero carries the
+band certificate.
 
 ## Boundary
 
-This is a conditional finite-height bridge, not an iteration theorem or a
+This is a quantitative finite-height reduction, not an iteration theorem or a
 zero-density contradiction. It still requires:
 
-- a choice of packet indices whose zeros all satisfy the real-part band;
-- a separate estimate for lower-real-part zeros and zeros outside the
-  inspected packet range;
+- a uniform upper bound for the explicit outside-band Gaussian energy;
+- a separate estimate for zeros outside the inspected `K`-indexed packet
+  range and for the contour remainder;
 - a theorem transferring the real explicit-formula remainder into the moving
   packet energy hypothesis;
 - an injective, non-overlapping iteration mechanism before Carlson zero
