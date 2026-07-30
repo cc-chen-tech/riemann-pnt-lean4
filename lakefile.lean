@@ -185,6 +185,8 @@ lean_lib RiemannPNT where
     `Test.VKEdgeInitialFullMovingEnergyAxiomAudit,
     `Test.VKEdgeProportionalWindowTransferContract,
     `Test.VKEdgeProportionalWindowTransferAxiomAudit,
+    `Test.VKEdgeDistinctComplementWitnessContract,
+    `Test.VKEdgeDistinctComplementWitnessAxiomAudit,
     `Test.VKEdgePiOverTwoLocalizedContract,
     `Test.VKEdgePiOverTwoLocalizedAxiomAudit,
     `Test.VKEdgePiOverTwoEpsilonWindowContract,
