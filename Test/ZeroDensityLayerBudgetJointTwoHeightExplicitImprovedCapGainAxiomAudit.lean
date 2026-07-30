@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightExplicitImprovedCapGainContract
+
+open PrimeNumberTheorem
+
+#print axioms jointTwoHeightImprovedGlobalCapThreshold_explicit
+#print axioms jointTwoHeightImprovedGlobalCapThreshold_gain_eq
+#print axioms jointTwoHeightImprovedGlobalCapThreshold_relativeGain_eq
+#print axioms jointTwoHeightImprovedGlobalCapThreshold_relativeGain_mem_Ioo
