@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightExactSigmaOptimizerContract
+
+open PrimeNumberTheorem
+
+#print axioms exists_jointTwoHeightSigmaOptimizer
+#print axioms jointTwoHeightPrescribedCapOuterExponentCeiling_eq_of_sigmaOptimizer
+#print axioms jointTwoHeightPrescribedCapOuterExponentCeiling_le_at_sigmaOptimizer
