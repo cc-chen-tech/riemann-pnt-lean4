@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedActualFourierBudget
+
+#print axioms HardyTheorem.exists_integral_sq_selbergSqrtZetaSignedShortIntegral_le_modelL2Budget_add_error
