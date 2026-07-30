@@ -23,6 +23,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeHighZeroBucketEnergyAxiomAudit",
     "Test.GaussianBucketSchurAxiomAudit",
     "Test.VKEdgeHighZeroGaussianEnergyAxiomAudit",
+    "Test.VKEdgeDynamicZeroPacketAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -75,6 +76,14 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.sum_gaussianKernel_le_bucketEnergy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zeroOrdinateBucketGaussianEnergy_le",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_zeroOrdinateBucketGaussianEnergy_lt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.finiteExponentialSum_phaseTwist_eq_shift",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.fourierKernel_normalizedGaussian",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFrozenGaussianSecondMoment_le_majorant",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementCenteredFrozenGaussianSecondMoment_le_majorant",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementGaussianMajorantEnergy_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_absorbableDynamicComplementPacket_of_gaussianMajorantEnergy_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_absorbableDynamicComplementPacket_of_frozenGaussianL2_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_absorbableDynamicComplementPacket_of_centeredFrozenGaussianL2_gt",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
