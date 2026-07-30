@@ -1,0 +1,13 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonHalfSharpFullPNT
+
+/-!
+Axiom audit for the attained half-sharp closed-form full natural-PNT endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms tendsto_classicalDyadicCarlsonHalfClosedFormFullPNTErrorMajorant_zero
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonHalfQuantitativeMassMajorant_of_zeroFree
+#print axioms exists_selectedBalancedClassicalAdmissibleDyadicCarlsonHalfClosedFormFullPNTErrorMajorant
+
+end PrimeNumberTheorem
