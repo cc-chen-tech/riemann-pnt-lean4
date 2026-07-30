@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPsi0FloorPowerTransfer
+
+#print axioms
+  PrimeNumberTheorem.eventually_chebyshevPsi0FloorRoundingBudget_le_mul_targetPower
+#print axioms
+  PrimeNumberTheorem.eventually_chebyshevPsi0FloorRoundingBudget_exp_le
+#print axioms
+  PrimeNumberTheorem.continuousExpPowerPsi0Witness_to_natFloor_of_roundingSmall
+#print axioms
+  PrimeNumberTheorem.eventually_continuousExpPowerPsi0Witness_to_natFloor

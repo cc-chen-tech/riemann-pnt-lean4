@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetNaturalSamplingTransfer
+
+namespace PrimeNumberTheorem
+
+#check HasFarTargetAmplitudeWitness.toNatural_natFloor_of_eventually_sampling
+#check HasFarTargetAmplitudeWitness.toNatural_natFloor_of_normalized_stability
+#check targetZeroPowerAmplitude_natFloor_ratio_tendsto
+#check const_mul_targetZeroPowerAmplitude_natFloor_ratio_tendsto
+
+end PrimeNumberTheorem
