@@ -1,0 +1,28 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonThetaSharpFullPNT
+
+/-!
+# Theta-sharp balanced Carlson full-PNT contract
+
+Public contract for propagating every strict theta rate between one quarter and
+one half through the actual multiplicity-aware zero sum and the closed-form
+explicit-formula remainder.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check classicalDyadicCarlsonThetaMiddleMajorant
+#check tendsto_classicalDyadicCarlsonThetaMiddleMajorant_zero
+#check classicalDyadicCarlsonThetaPositiveZeroTailMajorant
+#check tendsto_classicalDyadicCarlsonThetaPositiveZeroTailMajorant_zero
+#check classicalDyadicCarlsonThetaFullZeroTailMajorant
+#check tendsto_classicalDyadicCarlsonThetaFullZeroTailMajorant_zero
+#check classicalDyadicCarlsonThetaClosedFormFullPNTErrorMajorant
+#check tendsto_classicalDyadicCarlsonThetaClosedFormFullPNTErrorMajorant_zero
+#check eventually_abs_relativeChebyshevPsi0Error_le_thetaClosedFormFullPNTMajorant
+#check exists_selectedClassicalAdmissibleDyadicCarlsonThetaQuantitativeMassMajorant_of_zeroFree
+#check exists_selectedBalancedClassicalAdmissibleDyadicCarlsonThetaClosedFormFullPNTErrorMajorant
+
+end PrimeNumberTheorem
