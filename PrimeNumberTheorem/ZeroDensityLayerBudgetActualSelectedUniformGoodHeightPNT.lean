@@ -750,4 +750,71 @@ theorem
       hinner hstrict houter hepsilon hmargin selection
       hdelta hgap hcap hmiddle
 
+/-- A positive constant strip width satisfying all Carlson and right-edge
+constraints exists as soon as the selected-height exponent fits below the
+fixed global zero cap. -/
+theorem exists_constantCarlsonGapWidth
+    {outerAlpha beta : ℝ}
+    (houter : 0 < outerAlpha)
+    (hpowerGap : beta + outerAlpha < 1) :
+    ∃ d : ℝ,
+      0 < d ∧
+        d ≤ 1 / 8 ∧
+        128 * outerAlpha * d ≤ 1 ∧
+        d ≤ 1 - beta := by
+  let d : ℝ :=
+    min (1 / 8)
+      (min ((1 - beta) / 2) (1 / (256 * outerAlpha)))
+  have hbetaGap : 0 < 1 - beta := by
+    linarith
+  have hinvGap : 0 < 1 / (256 * outerAlpha) := by
+    positivity
+  have hd : 0 < d := by
+    simp only [d, lt_min_iff]
+    exact ⟨by norm_num, by
+      exact ⟨by positivity, hinvGap⟩⟩
+  refine ⟨d, hd, min_le_left _ _, ?_, ?_⟩
+  · have hdInv : d ≤ 1 / (256 * outerAlpha) :=
+      (min_le_right _ _).trans (min_le_right _ _)
+    have hmul :=
+      mul_le_mul_of_nonneg_left hdInv
+        (show 0 ≤ 128 * outerAlpha by positivity)
+    calc
+      128 * outerAlpha * d ≤
+          128 * outerAlpha * (1 / (256 * outerAlpha)) := hmul
+      _ = 1 / 2 := by
+        field_simp [ne_of_gt houter]
+        <;> ring
+      _ ≤ 1 := by norm_num
+  · have hdHalf : d ≤ (1 - beta) / 2 :=
+      (min_le_right _ _).trans (min_le_left _ _)
+    linarith
+
+/-- Parameter-free constant-gap specialization.  A suitable positive width
+is selected automatically, so the only analytic zero input is the fixed
+global real-part cap. -/
+theorem
+    tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson_globalCap_explicit
+    {innerAlpha outerAlpha epsilon beta : ℝ}
+    (hinner : 0 < innerAlpha)
+    (hstrict : innerAlpha < outerAlpha)
+    (houter : 0 < outerAlpha)
+    (hepsilon : 0 < epsilon)
+    (hmargin : outerAlpha + epsilon < 1 / 2)
+    (hpowerGap : beta + outerAlpha < 1)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    (hglobalCap :
+      ∀ rho : ℂ,
+        RiemannHypothesis.IsNontrivialZero rho →
+          rho.re ≤ beta) :
+    Tendsto
+      (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+      atTop (nhds 0) := by
+  rcases exists_constantCarlsonGapWidth houter hpowerGap with
+    ⟨d, hd, hdEight, hdCoefficient, hdCap⟩
+  exact
+    tendsto_relativeChebyshevPsi0Error_of_selectedUniformGoodHeightMovingCarlson_constantGap
+      hinner hstrict houter hepsilon hmargin hpowerGap
+      hd hdEight hdCoefficient hdCap selection hglobalCap
+
 end PrimeNumberTheorem
