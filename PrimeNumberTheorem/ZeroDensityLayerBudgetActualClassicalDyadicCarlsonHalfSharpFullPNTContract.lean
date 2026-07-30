@@ -1,0 +1,20 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonHalfSharpFullPNT
+
+/-!
+# Half-sharp balanced Carlson full-PNT contract
+
+Public contract for the attained one-quarter balanced height rate propagated
+through the actual multiplicity-aware explicit formula.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check classicalDyadicCarlsonHalfClosedFormFullPNTErrorMajorant
+#check tendsto_classicalDyadicCarlsonHalfClosedFormFullPNTErrorMajorant_zero
+#check exists_selectedClassicalAdmissibleDyadicCarlsonHalfQuantitativeMassMajorant_of_zeroFree
+#check exists_selectedBalancedClassicalAdmissibleDyadicCarlsonHalfClosedFormFullPNTErrorMajorant
+
+end PrimeNumberTheorem
