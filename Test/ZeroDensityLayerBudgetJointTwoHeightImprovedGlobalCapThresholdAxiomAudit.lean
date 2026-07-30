@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightImprovedGlobalCapThresholdContract
+
+open PrimeNumberTheorem
+
+#print axioms jointTwoHeightImprovedGlobalCapThreshold_spec
+#print axioms contourFloor_lt_jointTwoHeightGlobalOuterExponentCeiling_iff
+#print axioms exists_pos_lt_jointTwoHeightGlobalContourGap_of_lt_improvedThreshold
