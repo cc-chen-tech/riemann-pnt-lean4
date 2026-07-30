@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonBalancedQuantitativeMass
+
+/-!
+Axiom audit for the balanced quantitative Carlson mass endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativeMassMajorant_of_zeroFree
+#print axioms exists_selectedBalancedClassicalAdmissibleDyadicCarlsonQuantitativeMassMajorant
+
+end PrimeNumberTheorem
