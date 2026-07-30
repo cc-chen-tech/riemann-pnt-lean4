@@ -176,6 +176,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit",
     "Test.ZeroDensityLayerBudgetTwoHeightNumericalCoreAxiomAudit",
     "Test.ZeroDensityLayerBudgetJointTwoHeightParameterFeasibilityAxiomAudit",
+    "Test.VKEdgeDynamicZeroPacketAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "HardyTheorem.norm_integral_hardyPhaseCorrelationOffDiagonal_dyadic_le",
@@ -862,6 +863,11 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaLowZeroFinset_disjoint_zetaRightDyadicZeros",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_occupancy_mul_sum_sq",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_or_quantitativeCluster",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.fourierKernel_normalizedGaussian",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFrozenGaussianSecondMoment_le_majorant",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementGaussianMajorantEnergy_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_absorbableDynamicComplementPacket_of_gaussianMajorantEnergy_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_absorbableDynamicComplementPacket_of_frozenGaussianL2_gt",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
