@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonGap
+
+#print axioms PrimeNumberTheorem.isCarlsonMovingDyadicLogPowerGap_classicalAdmissible
+#print axioms PrimeNumberTheorem.isSelectedHeightDynamicZeroFree_selectedClassicalAdmissible
+#print axioms PrimeNumberTheorem.exists_selectedClassicalAdmissibleDyadicCarlsonZeroFreeGap
+
