@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativeFullZeroTail
+
+/-!
+Axiom audit for the quantitative classical full finite zero-tail endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms classicalRealOrdinateFixedMajorant_nonneg
+#print axioms tendsto_classicalRealOrdinateFixedMajorant_zero
+#print axioms eventually_dynamicRealOrdinatePNTZeroTailNorm_le_classicalFixedMajorant
+#print axioms tendsto_classicalDyadicCarlsonFullZeroTailMajorant_zero
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativeFullZeroTailMajorant
+
+end PrimeNumberTheorem
