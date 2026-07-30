@@ -1,0 +1,23 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativeMiddleMass
+
+/-!
+# Classical dyadic Carlson quantitative middle-mass contract
+
+Public contract for the explicit low-strip power-log majorant and its sum with
+the Carlson square-root-log majorant.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check exists_eventually_actualSelectedClassicalAdmissibleSevenEighthsLowMass_le_majorant
+#check classicalSevenEighthsLowMajorant
+#check classicalSevenEighthsLowMajorant_eq
+#check tendsto_classicalSevenEighthsLowMajorant_zero
+#check classicalDyadicCarlsonMiddleMajorant
+#check tendsto_classicalDyadicCarlsonMiddleMajorant_zero
+#check exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativeMiddleMajorant
+
+end PrimeNumberTheorem
