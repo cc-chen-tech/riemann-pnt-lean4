@@ -486,5 +486,180 @@ theorem eventually_exists_uniform_goodHeight_normalized_window_remainder_lt
       hC hD hbeta hbeta1 hL ha0A hA hT hy (hraw y hylog3)
   exact hle.trans_lt henvA
 
+/-- The normalized explicit-formula remainder envelope still tends to zero
+when the logarithmic window length grows proportionally to its left endpoint,
+provided the normalization gain `beta - 1 / 2` dominates the window-growth
+loss `(1 - beta) * ε`. -/
+theorem
+    tendsto_normalizedWindowRemainderEnvelope_proportional_atTop_nhds_zero
+    {C D beta ε : ℝ}
+    (hbeta : 1 / 2 < beta)
+    (hbeta1 : beta < 1)
+    (hdecay : (1 - beta) * ε < beta - 1 / 2) :
+    Tendsto
+      (fun a =>
+        normalizedWindowRemainderEnvelope C D beta (ε * a) a)
+      atTop (nhds 0) := by
+  let c : ℝ := (1 / 2 - beta) + (1 - beta) * ε
+  have hc : c < 0 := by
+    dsimp [c]
+    linarith
+  have hfirst0 :
+      Tendsto
+        (fun a : ℝ =>
+          Real.exp (c * a) *
+            ((1 + a + ε * a) ^ 2 + (2 + a) ^ 2))
+        atTop (nhds 0) := by
+    convert
+      tendsto_exp_mul_quadratic_atTop_nhds_zero_of_neg
+        (c := c) (u := (1 + ε) ^ 2 + 1)
+        (v := 2 * ε + 6) (w := 5) hc using 1
+    funext a
+    ring
+  have hfirst :
+      Tendsto
+        (fun a : ℝ =>
+          C * Real.exp ((1 - beta) * (ε * a)) *
+            (Real.exp ((1 / 2 - beta) * a) *
+              ((1 + a + ε * a) ^ 2 + (2 + a) ^ 2)))
+        atTop (nhds 0) := by
+    have hmul :
+        Tendsto
+          (fun a : ℝ =>
+            C *
+              (Real.exp (c * a) *
+                ((1 + a + ε * a) ^ 2 + (2 + a) ^ 2)))
+          atTop (nhds 0) := by
+      simpa using hfirst0.const_mul C
+    convert hmul using 1
+    funext a
+    have hexp :
+        Real.exp ((1 - beta) * (ε * a)) *
+            Real.exp ((1 / 2 - beta) * a) =
+          Real.exp (c * a) := by
+      rw [← Real.exp_add]
+      congr 1
+      dsimp [c]
+      ring
+    rw [show
+        C * Real.exp ((1 - beta) * (ε * a)) *
+              (Real.exp ((1 / 2 - beta) * a) *
+                ((1 + a + ε * a) ^ 2 + (2 + a) ^ 2)) =
+            C *
+              (Real.exp ((1 - beta) * (ε * a)) *
+                Real.exp ((1 / 2 - beta) * a)) *
+              ((1 + a + ε * a) ^ 2 + (2 + a) ^ 2) by
+          ring,
+      hexp]
+    ring
+  have hhalf : 1 / 2 - beta < 0 := by linarith
+  have hsecond0 :
+      Tendsto
+        (fun a : ℝ =>
+          Real.exp ((1 / 2 - beta) * a) * (2 + a))
+        atTop (nhds 0) := by
+    convert
+      tendsto_exp_mul_quadratic_atTop_nhds_zero_of_neg
+        (c := 1 / 2 - beta) (u := 0) (v := 1) (w := 2)
+        hhalf using 1
+    funext a
+    ring
+  have hsecond :
+      Tendsto
+        (fun a : ℝ =>
+          2 * D * Real.exp ((1 / 2 - beta) * a) * (2 + a))
+        atTop (nhds 0) := by
+    have hmul :
+        Tendsto
+          (fun a : ℝ =>
+            (2 * D) *
+              (Real.exp ((1 / 2 - beta) * a) * (2 + a)))
+          atTop (nhds 0) := by
+      simpa using hsecond0.const_mul (2 * D)
+    convert hmul using 1
+    funext a
+    ring
+  have hbetaNeg : -beta < 0 := by linarith
+  have hthird :
+      Tendsto
+        (fun a : ℝ =>
+          Real.exp (-beta * a) *
+            (1 + 2 * VKEdgePiOverTwo.zeroPackageClosedTermsUniformBound +
+              a + ε * a))
+        atTop (nhds 0) := by
+    convert
+      tendsto_exp_mul_quadratic_atTop_nhds_zero_of_neg
+        (c := -beta) (u := 0) (v := 1 + ε)
+        (w :=
+          1 + 2 * VKEdgePiOverTwo.zeroPackageClosedTermsUniformBound)
+        hbetaNeg using 1
+    funext a
+    ring
+  simpa only [normalizedWindowRemainderEnvelope, zero_add] using
+    (hfirst.add hsecond).add hthird
+
+/-- On every sufficiently late proportional logarithmic window
+`[a, (1 + ε) * a]`, one good height of size `exp (a / 2)` makes the
+finite-height explicit-formula approximation uniformly small, whenever the
+normalization gain dominates the proportional-window growth loss. -/
+theorem
+    eventually_exists_uniform_goodHeight_normalized_proportional_window_remainder_lt
+    {beta ε eta : ℝ}
+    (hbeta : 1 / 2 < beta)
+    (hbeta1 : beta < 1)
+    (hε : 0 < ε)
+    (hdecay : (1 - beta) * ε < beta - 1 / 2)
+    (heta : 0 < eta) :
+    ∀ᶠ a : ℝ in atTop,
+      ∃ T ∈ Set.Icc (Real.exp (a / 2)) (Real.exp (a / 2) + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ y ∈ Set.Icc a ((1 + ε) * a),
+            Real.exp (-beta * y) *
+                ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                  (chebyshevPsi0 (Real.exp y) : ℂ)‖ < eta := by
+  rcases
+      exists_uniform_goodHeight_exp_half_norm_real_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le
+      with ⟨C, D, hC, hD, hselect⟩
+  have henv :
+      Tendsto
+        (fun a =>
+          normalizedWindowRemainderEnvelope C D beta (ε * a) a)
+        atTop (nhds 0) :=
+    tendsto_normalizedWindowRemainderEnvelope_proportional_atTop_nhds_zero
+      hbeta hbeta1 hdecay
+  have henvlt :
+      ∀ᶠ a in atTop,
+        normalizedWindowRemainderEnvelope C D beta (ε * a) a < eta :=
+    (tendsto_order.1 henv).2 eta heta
+  have ha0 : ∀ᶠ a : ℝ in atTop, 0 ≤ a := eventually_ge_atTop 0
+  have halog3 :
+      ∀ᶠ a : ℝ in atTop, Real.log 3 ≤ a :=
+    eventually_ge_atTop (Real.log 3)
+  have haEight :
+      ∀ᶠ a : ℝ in atTop, 2 * Real.log 8 ≤ a :=
+    eventually_ge_atTop (2 * Real.log 8)
+  filter_upwards [henvlt, ha0, halog3, haEight] with
+      a henvA ha0A halog3A haEightA
+  have hA : 8 ≤ Real.exp (a / 2) := by
+    calc
+      8 = Real.exp (Real.log 8) :=
+        (Real.exp_log (by norm_num : (0 : ℝ) < 8)).symm
+      _ ≤ Real.exp (a / 2) := by
+        apply Real.exp_le_exp.mpr
+        linarith
+  rcases hselect a hA with ⟨T, hT, hgood, hraw⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro y hy
+  have hylog3 : Real.log 3 ≤ y := halog3A.trans hy.1
+  have hy' : y ∈ Set.Icc a (a + ε * a) := by
+    constructor
+    · exact hy.1
+    · convert hy.2 using 1 <;> ring
+  have hle :=
+    normalized_real_remainder_le_envelope
+      hC hD hbeta hbeta1 (mul_nonneg hε.le ha0A) ha0A hA hT
+      hy' (hraw y hylog3)
+  exact hle.trans_lt henvA
+
 end ExplicitFormulaResidues
 end PrimeNumberTheorem
