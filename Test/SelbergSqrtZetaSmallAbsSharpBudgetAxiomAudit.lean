@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergSqrtZetaSmallAbsSharpBudget
+
+#check HardyTheorem.selbergSqrtZeta_frequencyGap_eq_comparable_add_farGap
+#check HardyTheorem.selbergSqrtZeta_farGap_le_l1
+#print axioms HardyTheorem.selbergSqrtZeta_frequencyGap_eq_comparable_add_farGap
+#print axioms HardyTheorem.selbergSqrtZeta_farGap_le_l1
+#print axioms HardyTheorem.selbergSqrtZetaShortDirichletGapSum_le_comparable_add_far
