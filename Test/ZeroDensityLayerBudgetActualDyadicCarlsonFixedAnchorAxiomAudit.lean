@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDyadicCarlsonFixedAnchor
+
+open PrimeNumberTheorem
+
+#print axioms dyadicCarlsonGap_active_of_outer_le
+#print axioms mem_actualDyadicCarlsonFixedAnchorWindow
+#print axioms tendsto_actualDyadicCarlsonFixedAnchorMass_zero_of_union
+#print axioms exists_constants_tendsto_actualDyadicCarlsonFixedAnchorMass_zero
