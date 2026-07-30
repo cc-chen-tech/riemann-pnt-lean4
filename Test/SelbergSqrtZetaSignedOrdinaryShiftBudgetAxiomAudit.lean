@@ -1,3 +1,4 @@
 import HardyTheorem.SelbergSqrtZetaSignedOrdinaryShiftBudget
 
+#print axioms HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le_energy
 #print axioms HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le

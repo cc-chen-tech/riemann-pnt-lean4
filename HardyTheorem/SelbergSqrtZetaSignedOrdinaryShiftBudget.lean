@@ -13,11 +13,10 @@ open Complex MeasureTheory Set
 
 namespace HardyTheorem
 
-/-- The full shift-averaged ordinary correlation is bounded by the sum of
-the collected unequal-frequency gap budget and the exact same-frequency
-fiber-energy budget. -/
+/-- The full shift-averaged ordinary correlation is bounded by the collected
+unequal-frequency gap budget plus the exact same-frequency collected energy. -/
 theorem
-    norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le
+    norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le_energy
     (kappa T : ℝ) (X : ℕ) {delta : ℝ}
     (hT : 0 < T) (hdelta : 0 ≤ delta) (hroom : delta ≤ T) :
     ‖∫ v in 0..delta, ∫ w in 0..delta, ∫ t in T..2 * T - delta,
@@ -42,14 +41,9 @@ theorem
           ∑ omega ∈
               selbergSqrtZetaSignedCollectedFrequencySupport
                 (firstZetaApproximationCutoff T) X,
-            (((selbergSqrtZetaSignedPhaseSupport
-                (firstZetaApproximationCutoff T) X).filter
-              (fun p => selbergSqrtZetaSignedPhaseFrequency p = omega)).card : ℝ) *
-            ∑ p ∈
-                (selbergSqrtZetaSignedPhaseSupport
-                  (firstZetaApproximationCutoff T) X).filter
-                  (fun p => selbergSqrtZetaSignedPhaseFrequency p = omega),
-              Complex.normSq (selbergSqrtZetaSignedPhaseCoeff X p) := by
+            Complex.normSq
+              (selbergSqrtZetaSignedCollectedCoeff
+                (firstZetaApproximationCutoff T) X omega) := by
   have hlong : T ≤ 2 * T - delta := by linarith
   let nuShift : Measure ℝ := volume.restrict (Ioc 0 delta)
   let muHeight : Measure ℝ := volume.restrict (Ioc T (2 * T - delta))
@@ -155,7 +149,116 @@ theorem
       (add_le_add
         (norm_integral_integral_integral_selbergSqrtZetaSignedComplexCorrelation_sub_diagonal_le_coeff
           kappa T X hT hdelta hroom)
-        (norm_integral_integral_integral_selbergSqrtZetaSignedCollectedCorrelationDiagonal_le_fiber_budget
+        (norm_integral_integral_integral_selbergSqrtZetaSignedCollectedCorrelationDiagonal_le_energy
           T X hT hdelta hroom))
+
+/-- Backwards-compatible ordinary-correlation budget obtained by replacing
+the exact collected diagonal energy with its raw fiberwise upper bound. -/
+theorem
+    norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le
+    (kappa T : ℝ) (X : ℕ) {delta : ℝ}
+    (hT : 0 < T) (hdelta : 0 ≤ delta) (hroom : delta ≤ T) :
+    ‖∫ v in 0..delta, ∫ w in 0..delta, ∫ t in T..2 * T - delta,
+        selbergSqrtZetaSignedComplexModel kappa T X (t + v) *
+          (starRingEnd ℂ)
+            (selbergSqrtZetaSignedComplexModel kappa T X (t + w))‖ ≤
+      (delta ^ 2 *
+          ∑ omega ∈
+              selbergSqrtZetaSignedCollectedFrequencySupport
+                (firstZetaApproximationCutoff T) X,
+            ∑ nu ∈
+                selbergSqrtZetaSignedCollectedFrequencySupport
+                  (firstZetaApproximationCutoff T) X,
+              if omega = nu then 0
+              else
+                ‖selbergSqrtZetaSignedCollectedCoeff
+                  (firstZetaApproximationCutoff T) X omega‖ *
+                ‖selbergSqrtZetaSignedCollectedCoeff
+                  (firstZetaApproximationCutoff T) X nu‖ *
+                ((2 + delta / 2) / |omega - nu|)) +
+        delta ^ 2 * (T - delta) *
+          ∑ omega ∈
+              selbergSqrtZetaSignedCollectedFrequencySupport
+                (firstZetaApproximationCutoff T) X,
+            (((selbergSqrtZetaSignedPhaseSupport
+                (firstZetaApproximationCutoff T) X).filter
+              (fun p => selbergSqrtZetaSignedPhaseFrequency p = omega)).card : ℝ) *
+            ∑ p ∈
+                (selbergSqrtZetaSignedPhaseSupport
+                  (firstZetaApproximationCutoff T) X).filter
+                  (fun p => selbergSqrtZetaSignedPhaseFrequency p = omega),
+              Complex.normSq (selbergSqrtZetaSignedPhaseCoeff X p) := by
+  let gap : ℝ :=
+    delta ^ 2 *
+      ∑ omega ∈
+          selbergSqrtZetaSignedCollectedFrequencySupport
+            (firstZetaApproximationCutoff T) X,
+        ∑ nu ∈
+            selbergSqrtZetaSignedCollectedFrequencySupport
+              (firstZetaApproximationCutoff T) X,
+          if omega = nu then 0
+          else
+            ‖selbergSqrtZetaSignedCollectedCoeff
+              (firstZetaApproximationCutoff T) X omega‖ *
+            ‖selbergSqrtZetaSignedCollectedCoeff
+              (firstZetaApproximationCutoff T) X nu‖ *
+            ((2 + delta / 2) / |omega - nu|)
+  let factor : ℝ := delta ^ 2 * (T - delta)
+  have hfactor : 0 ≤ factor := by
+    dsimp only [factor]
+    exact mul_nonneg (sq_nonneg delta) (sub_nonneg.mpr hroom)
+  have hdiag :
+      factor *
+          (∑ omega ∈
+              selbergSqrtZetaSignedCollectedFrequencySupport
+                (firstZetaApproximationCutoff T) X,
+            Complex.normSq
+              (selbergSqrtZetaSignedCollectedCoeff
+                (firstZetaApproximationCutoff T) X omega)) ≤
+        factor *
+          ∑ omega ∈
+              selbergSqrtZetaSignedCollectedFrequencySupport
+                (firstZetaApproximationCutoff T) X,
+            (((selbergSqrtZetaSignedPhaseSupport
+                (firstZetaApproximationCutoff T) X).filter
+              (fun p => selbergSqrtZetaSignedPhaseFrequency p = omega)).card : ℝ) *
+            ∑ p ∈
+                (selbergSqrtZetaSignedPhaseSupport
+                  (firstZetaApproximationCutoff T) X).filter
+                  (fun p => selbergSqrtZetaSignedPhaseFrequency p = omega),
+              Complex.normSq (selbergSqrtZetaSignedPhaseCoeff X p) :=
+    mul_le_mul_of_nonneg_left
+      (sum_normSq_selbergSqrtZetaSignedCollectedCoeff_le_fiber_budget
+        (firstZetaApproximationCutoff T) X)
+      hfactor
+  calc
+    ‖∫ v in 0..delta, ∫ w in 0..delta, ∫ t in T..2 * T - delta,
+        selbergSqrtZetaSignedComplexModel kappa T X (t + v) *
+          (starRingEnd ℂ)
+            (selbergSqrtZetaSignedComplexModel kappa T X (t + w))‖ ≤
+      gap + factor *
+        ∑ omega ∈
+            selbergSqrtZetaSignedCollectedFrequencySupport
+              (firstZetaApproximationCutoff T) X,
+          Complex.normSq
+            (selbergSqrtZetaSignedCollectedCoeff
+              (firstZetaApproximationCutoff T) X omega) := by
+      simpa only [gap, factor] using
+        norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le_energy
+          kappa T X hT hdelta hroom
+    _ ≤ gap + factor *
+        ∑ omega ∈
+            selbergSqrtZetaSignedCollectedFrequencySupport
+              (firstZetaApproximationCutoff T) X,
+          (((selbergSqrtZetaSignedPhaseSupport
+              (firstZetaApproximationCutoff T) X).filter
+            (fun p => selbergSqrtZetaSignedPhaseFrequency p = omega)).card : ℝ) *
+          ∑ p ∈
+              (selbergSqrtZetaSignedPhaseSupport
+                (firstZetaApproximationCutoff T) X).filter
+                (fun p => selbergSqrtZetaSignedPhaseFrequency p = omega),
+            Complex.normSq (selbergSqrtZetaSignedPhaseCoeff X p) :=
+      add_le_add_right hdiag gap
+    _ = _ := by rfl
 
 end HardyTheorem
