@@ -71,6 +71,60 @@ theorem tendsto_actualSelectedUniformGoodHeightMovingCarlsonStripMass_zero
   filter_upwards [hheight] with m hm
   exact actualSelectedHeightMovingCarlsonStripMass_le_exact hm
 
+/-- The critical-half layer at the canonical good height tends to zero.
+Unlike the earlier unit-window theorem, this uses the selector's actual lower
+window and only its polynomial upper bound and divergence to infinity. -/
+theorem tendsto_actualSelectedUniformGoodHeightCriticalHalfPNTLayerNorm_zero
+    {innerAlpha outerAlpha epsilon : ℝ}
+    (hinner : 0 < innerAlpha)
+    (hstrict : innerAlpha < outerAlpha)
+    (houter : 0 < outerAlpha)
+    (hepsilon : 0 < epsilon)
+    (hmargin : outerAlpha + epsilon < 1 / 2)
+    (selection : UniformNaturalPointGoodHeightSelection) :
+    Tendsto
+      (fun m : ℕ =>
+        dynamicPositiveOutsideClusterPNTLayerNorm
+          (selectedUniformGoodHeight innerAlpha selection) ∅
+          (actualSelectedHeightCriticalHalfCanonicalInput
+            (selectedUniformGoodHeight innerAlpha selection))
+          0 (m : ℝ))
+      atTop (nhds 0) := by
+  let H : ℝ → ℝ := selectedUniformGoodHeight innerAlpha selection
+  obtain ⟨kappa, hkappa, hnorm⟩ :=
+    exists_canonicalTwoStripOutsideCluster_uniform_norm_lower_bound
+      H (1 / 2) ∅
+  have hre :
+      ∀ (x : ℝ),
+        ∀ rho ∈ (actualSelectedHeightCriticalHalfCanonicalInput H x).layer 0,
+          rho.re ≤ 1 / 2 := by
+    intro x rho hrho
+    have h :
+        rho ∈ positiveNontrivialZerosOutsideClusterFinset (H x) ∅ ∧
+          rho.re ≤ 1 / 2 := by
+      simpa [actualSelectedHeightCriticalHalfCanonicalInput,
+        PositiveZeroOutsideClusterBucketInput.layer,
+        pntHybridCanonicalTwoStripOutsideClusterBucketInput] using hrho
+    exact h.2
+  have hnormalized :=
+    tendsto_dynamicPositiveOutsideClusterPNTLayerNorm_div_targetAmplitude_zero_of_hybrid_selectedHeight
+      (beta := 1) (tau := 1 / 2) (alpha := outerAlpha)
+      (epsilon := epsilon)
+      (actualSelectedHeightCriticalHalfCanonicalInput H) 0
+      (eventually_selectedUniformGoodHeight_le_polynomialHeight
+        hinner hstrict selection)
+      (selectedUniformGoodHeight_tendsto_atTop hinner selection)
+      hkappa hnorm hre houter hepsilon (by linarith)
+  have hreal :
+      Tendsto
+        (fun x : ℝ =>
+          dynamicPositiveOutsideClusterPNTLayerNorm H ∅
+            (actualSelectedHeightCriticalHalfCanonicalInput H) 0 x)
+        atTop (nhds 0) := by
+    simpa [targetZeroPowerAmplitude,
+      dynamicPositiveOutsideClusterPNTLayerNorm] using hnormalized
+  simpa [H] using hreal.comp tendsto_natCast_atTop_atTop
+
 /-- At the canonical uniformly good height, decay of the full finite-zero tail
 is enough to force decay of the relative `psi₀` error.  The explicit-formula
 remainder certificate is generated automatically from the selector. -/
