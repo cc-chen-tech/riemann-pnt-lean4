@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativeMiddleMass
+
+/-!
+Axiom audit for the classical quantitative moving-middle zero-mass endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms exists_eventually_actualSelectedClassicalAdmissibleSevenEighthsLowMass_le_majorant
+#print axioms classicalSevenEighthsLowMajorant_eq
+#print axioms tendsto_classicalSevenEighthsLowMajorant_zero
+#print axioms tendsto_classicalDyadicCarlsonMiddleMajorant_zero
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativeMiddleMajorant
+
+end PrimeNumberTheorem
