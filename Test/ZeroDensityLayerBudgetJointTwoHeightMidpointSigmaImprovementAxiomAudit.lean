@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightMidpointSigmaImprovementContract
+
+open PrimeNumberTheorem
+
+#print axioms jointTwoHeightPrescribedCapOuterExponentCeiling_midpoint_gt_capAligned
+#print axioms exists_jointTwoHeightStrictlyImprovedMidpointSigmaParameters
