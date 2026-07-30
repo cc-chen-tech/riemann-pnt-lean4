@@ -187,6 +187,47 @@ theorem tendsto_dynamicPositivePNTTailNorm_of_selectedUniformGoodHeightMovingCar
   exact
     dynamicPositivePNTTailNorm_le_selectedCriticalHalf_add_movingMasses hm
 
+/-- Real-ordinate nontrivial zeros are negligible at the canonical good
+height.  This is unconditional: membership in the nontrivial-zero finset
+already contains the strict bound `re rho < 1`. -/
+theorem tendsto_dynamicRealOrdinatePNTZeroTailNorm_of_selectedUniformGoodHeight
+    {alpha : ℝ}
+    (halpha : 0 < alpha)
+    (selection : UniformNaturalPointGoodHeightSelection) :
+    Tendsto
+      (fun m : ℕ =>
+        dynamicRealOrdinatePNTZeroTailNorm
+          (selectedUniformGoodHeight alpha selection) (m : ℝ))
+      atTop (nhds 0) := by
+  let H : ℝ → ℝ := selectedUniformGoodHeight alpha selection
+  have hHtop : Tendsto H atTop atTop :=
+    selectedUniformGoodHeight_tendsto_atTop halpha selection
+  have hHnonneg : ∀ᶠ x : ℝ in atTop, 0 ≤ H x :=
+    hHtop.eventually (eventually_ge_atTop (0 : ℝ))
+  have hre :
+      ∀ rho ∈ realOrdinateNontrivialZerosOutsideClusterFinset 0 ∅,
+        rho.re < 1 := by
+    intro rho hrho
+    have h :
+        (rho ∈ nontrivialZerosFinset 0 ∧ rho.im ≤ 0) ∧
+          0 ≤ rho.im := by
+      simpa [realOrdinateNontrivialZerosOutsideClusterFinset,
+        realOrdinateNontrivialZerosFinset,
+        nonPositiveNontrivialZerosFinset] using hrho
+    exact (mem_nontrivialZerosFinset.mp h.1.1).1.2.2
+  have hnegligible :=
+    dynamicRealOrdinateOutsideClusterPNTZeroTailNorm_targetAmplitudeNegligible
+      H ∅ 1 hHnonneg hre
+  have hreal :
+      Tendsto
+        (dynamicRealOrdinatePNTZeroTailNorm H)
+        atTop (nhds 0) := by
+    simpa [TargetAmplitudeNegligible, targetZeroPowerAmplitude,
+      dynamicRealOrdinateOutsideClusterPNTZeroTailNorm,
+      dynamicRealOrdinatePNTZeroTailNorm,
+      realOrdinateNontrivialZerosOutsideClusterFinset] using hnegligible
+  simpa [H] using hreal.comp tendsto_natCast_atTop_atTop
+
 /-- At the canonical uniformly good height, decay of the full finite-zero tail
 is enough to force decay of the relative `psi₀` error.  The explicit-formula
 remainder certificate is generated automatically from the selector. -/
