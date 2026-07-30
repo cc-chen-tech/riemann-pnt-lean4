@@ -172,6 +172,7 @@ import MathlibAux.DyadicPartition
 import MathlibAux.DyadicHarmonic
 import MathlibAux.LogRatioLowerBound
 import MathlibAux.SeparatedFrequencyPacking
+import MathlibAux.SeparatedFrequencySquareEnvelope
 import MathlibAux.MinReciprocalSquareSum
 import MathlibAux.GcdLcmQuadratic
 import MathlibAux.MinReciprocalSquareReindex
