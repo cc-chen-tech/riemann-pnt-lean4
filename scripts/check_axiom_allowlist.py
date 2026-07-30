@@ -179,6 +179,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeDynamicZeroPacketAxiomAudit",
     "Test.VKEdgeDynamicZeroPacketDriftAxiomAudit",
     "Test.VKEdgeDynamicMaximalLayerAxiomAudit",
+    "Test.VKEdgeFullMovingComplementEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "HardyTheorem.norm_integral_hardyPhaseCorrelationOffDiagonal_dyadic_le",
@@ -897,6 +898,12 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicMaximalOutsideForwardMovingGaussianSecondMoment_le_exp_gap_sq",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_dynamicMaximalOutsideForwardMovingGaussianSecondMoment_le_log_sq",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_uniformDynamicMaximalLayerAbsorption_of_fullMovingGaussianL2_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementZeroPacket_eq_floorFiber",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementMovingPacketContribution_fullBucketSet",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementForwardMovingGaussianSecondMoment_fullBucketSet",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterPsiRemainderWithoutJumpForwardGaussianSecondMoment_le_fullMoving_add_uniformErrors",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFullMovingGaussianSecondMoment_ge_of_normalizedRemainder",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedRemainder_to_fullMovingGaussianEnergy",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
