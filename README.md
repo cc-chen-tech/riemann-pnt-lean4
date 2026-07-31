@@ -407,7 +407,12 @@ complete/boundary 加权总和控制，因此不再需要独立的第四类算�
 `1 <= X <= N` 的实际参数范围内总有 `ReducedPairSplitEnergy >= 2`，所以该输入
 不可能成立。旧端点虽然逻辑正确，但在实际范围内是空条件，不能算作 `hexcessive`
 的可行闭合。必须先从二阶矩中分离、减去或正确归一化完整对角主项，再只对中心化
-余项提出小预算。完整主项现在已有乘法 Parseval 恒等式：
+余项提出小预算。新的修正路线已经精确抽出 `q=1` Hardy 相位载波，并把 rational
+short model 无损拆成载波与 `q!=1` 余项；载波系数也已精确写成 `(1,1)` reduced ray
+的 complete term 加 boundary defect。在明确的高处窗口条件下，载波短积分现有
+`32/log T` 上界，而不是旧估计丢失振荡后使用的 `H` 上界。下一步必须对载波系数
+给出统一常数界，并只对 noncarrier remainder 建立二阶矩预算。完整主项现在已有
+乘法 Parseval 恒等式：
 按 reduced ratio 收集的平方能量可无损改写成按整数 product 收集的平方能量；低乘积
 区间已压到常数 `19/4`，只剩 `X < n <= X^2` 的有符号截断卷积能量。边界尾项也已有
 `1/d` 加权 Cauchy 上界：第一因子是显式 harmonic tail，没有支持集基数损失；

@@ -43,6 +43,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergSqrtZetaSignedRationalReducedPairShortModelAxiomAudit",
     "Test.SelbergSqrtZetaExcessiveReducedPairEndpointAxiomAudit",
     "Test.SelbergSqrtZetaReducedPairSplitEnergyLowerBoundAxiomAudit",
+    "Test.SelbergSqrtZetaSignedRationalCarrierDecompositionAxiomAudit",
     "Test.SelbergSqrtZetaActualHighRangeEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
@@ -317,6 +318,14 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairSplitEnergy_le",
     "HardyTheorem.two_le_selbergSqrtZetaSignedReducedPairSplitEnergy",
     "HardyTheorem.not_selbergSqrtZetaSignedReducedPairSplitEnergy_le_one_div_768",
+    "HardyTheorem.one_mem_selbergSqrtZetaSignedRationalSupport",
+    "HardyTheorem.selbergSqrtZetaSignedRationalShortModel_eq_carrier_add_noncarrier",
+    "HardyTheorem.selbergSqrtZetaSignedRationalCoeff_one_eq_complete_add_boundary",
+    "HardyTheorem.norm_thetaFrequencyShortIntegral_zero_le_of_base_frequency",
+    "HardyTheorem.quarter_log_le_deriv_thetaModel",
+    "HardyTheorem.norm_thetaFrequencyShortIntegral_zero_le_thirtytwo_div_log",
+    "HardyTheorem.norm_selbergSqrtZetaSignedRationalCarrier_le_thirtytwo_div_log",
+    "HardyTheorem.norm_selbergSqrtZetaSignedRationalShortModel_le_carrier_add_noncarrier",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_coprime",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_denominator_pos",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_scale_facts",

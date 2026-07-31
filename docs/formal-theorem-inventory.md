@@ -4003,7 +4003,16 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    numerical hypothesis is impossible in the intended parameter range and
    that conditional endpoint is vacuous there.  The next endpoint must
    subtract or normalize the unavoidable complete diagonal contribution and
-   budget only the centered remainder.
+   budget only the centered remainder.  The replacement route now extracts
+   the rational carrier `q = 1` exactly.  The theorem
+   `selbergSqrtZetaSignedRationalShortModel_eq_carrier_add_noncarrier`
+   decomposes the full short model without an inequality, while
+   `norm_thetaFrequencyShortIntegral_zero_le_thirtytwo_div_log` retains the
+   carrier's Hardy-phase cancellation and bounds its short integral by
+   `32 / log T` under explicit high-height window hypotheses.  The carrier
+   coefficient is also identified exactly with the `(1,1)` complete ray plus
+   its boundary defect.  A uniform coefficient bound and an `L²` estimate for
+   the noncarrier remainder are the next two inputs.
    On the independent `hsmall` side,
    `selbergSqrtZetaShortCompleteRangePairSum_eq_shortConvolution` identifies
    the complete-zeta high-range coefficient with the actual signed arithmetic
