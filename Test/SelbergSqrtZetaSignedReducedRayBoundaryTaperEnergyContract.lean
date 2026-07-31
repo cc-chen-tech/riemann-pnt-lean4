@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSqrtZetaSignedReducedRayBoundaryTaperEnergy
+
+open scoped BigOperators
+
+#check HardyTheorem.sum_Icc_mul_sq_selbergMoebiusWeight_le_four_mul_sq_div_log_sq
+#check HardyTheorem.selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_four_mul_harmonicTail_sq_mul_harmonic_mul_sq_div_log_sq
