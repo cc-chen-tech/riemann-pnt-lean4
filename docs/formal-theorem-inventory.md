@@ -3995,13 +3995,15 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairBudget_le`
    proves that budget `<= T / 384` and
    `6144 * C^2 * X^2 <= T` imply the required `hexcessive` measure bound
-   `<= T / 24`.  The sharper interface
+   `<= T / 24`.  The interface
    `exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairSplitEnergy_le`
-   absorbs the diagonal reduction and the harmless `4*pi` height threshold:
-   it needs only the single uniform arithmetic condition
-   `ReducedPairSplitEnergy <= 1/768`, plus the same zeta-approximation
-   condition.  This is still a conditional endpoint: proving that split
-   energy estimate remains open.
+   is logically valid under `ReducedPairSplitEnergy <= 1/768`, but the audit
+   theorem `two_le_selbergSqrtZetaSignedReducedPairSplitEnergy` proves that
+   this split energy is at least two whenever `1 <= X <= N`.  Thus the old
+   numerical hypothesis is impossible in the intended parameter range and
+   that conditional endpoint is vacuous there.  The next endpoint must
+   subtract or normalize the unavoidable complete diagonal contribution and
+   budget only the centered remainder.
    On the independent `hsmall` side,
    `selbergSqrtZetaShortCompleteRangePairSum_eq_shortConvolution` identifies
    the complete-zeta high-range coefficient with the actual signed arithmetic

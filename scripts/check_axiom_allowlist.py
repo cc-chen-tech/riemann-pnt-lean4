@@ -42,6 +42,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergSqrtZetaSignedReducedPairCompleteCancellationAxiomAudit",
     "Test.SelbergSqrtZetaSignedRationalReducedPairShortModelAxiomAudit",
     "Test.SelbergSqrtZetaExcessiveReducedPairEndpointAxiomAudit",
+    "Test.SelbergSqrtZetaReducedPairSplitEnergyLowerBoundAxiomAudit",
     "Test.SelbergSqrtZetaActualHighRangeEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
@@ -314,6 +315,8 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairBudget_le",
     "HardyTheorem.selbergSqrtZetaSignedReducedPairShortModelBudget_le_of_splitEnergy_le",
     "HardyTheorem.exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairSplitEnergy_le",
+    "HardyTheorem.two_le_selbergSqrtZetaSignedReducedPairSplitEnergy",
+    "HardyTheorem.not_selbergSqrtZetaSignedReducedPairSplitEnergy_le_one_div_768",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_coprime",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_denominator_pos",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_scale_facts",

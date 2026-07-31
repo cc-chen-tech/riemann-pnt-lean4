@@ -402,18 +402,20 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 complete/boundary 加权总和控制，因此不再需要独立的第四类算术估计。若该预算
 不超过 `T / 384`，且有限 zeta 近似满足
 `6144 * C^2 * X^2 <= T`，则新的 Lean theorem 已推出 `hexcessive` 坏窗口测度
-不超过 `T / 24`。进一步，把高度阈值提高到 `4*pi <= T` 后，只需证明统一的
-`ReducedPairSplitEnergy <= 1/768` 就能自动得到上述预算条件。因此 `hexcessive`
-的剩余缺口已不再是重索引或分析拼装，而是
-证明这组显式互素对总和的尖锐统一上界。完整主项现在已有乘法 Parseval 恒等式：
+不超过 `T / 24`。进一步，把高度阈值提高到 `4*pi <= T` 后，旧条件端点曾把
+`ReducedPairSplitEnergy <= 1/768` 作为充分输入。最新审计已经证明，在
+`1 <= X <= N` 的实际参数范围内总有 `ReducedPairSplitEnergy >= 2`，所以该输入
+不可能成立。旧端点虽然逻辑正确，但在实际范围内是空条件，不能算作 `hexcessive`
+的可行闭合。必须先从二阶矩中分离、减去或正确归一化完整对角主项，再只对中心化
+余项提出小预算。完整主项现在已有乘法 Parseval 恒等式：
 按 reduced ratio 收集的平方能量可无损改写成按整数 product 收集的平方能量；低乘积
 区间已压到常数 `19/4`，只剩 `X < n <= X^2` 的有符号截断卷积能量。边界尾项也已有
 `1/d` 加权 Cauchy 上界：第一因子是显式 harmonic tail，没有支持集基数损失；
 denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一界，因此边界平方
 被压成“显式 harmonic tail 的平方 × 只依赖 `X` 的线性 taper 能量”。该 taper
 能量现在又有无条件显式界 `4 * X^2 / log(X)^2`，所以单条 reduced ray 的边界项
-已获得 `1 / log(X)^2` 节省；还需要把 harmonic tail 与互素对求和统一压进最终
-`ReducedPairSplitEnergy` 预算。独立的 `hsmall` 链也已把
+已获得 `1 / log(X)^2` 节省；还需要把 harmonic tail 与互素对求和统一控制，并
+重写不含不可消除对角质量的 `hexcessive` 预算。独立的 `hsmall` 链也已把
 `X < k <= N` 的高区间对角能量精确改写为实际有符号卷积平方
 `(((sqrt-zeta taper)^2 * zeta)(k))^2/k`，不再使用纤维基数或逐项绝对值上界；
 `k > N` 的实际截断尾项与非对角 gap sum 则仍显式保留。接下来必须分别给出这三个
