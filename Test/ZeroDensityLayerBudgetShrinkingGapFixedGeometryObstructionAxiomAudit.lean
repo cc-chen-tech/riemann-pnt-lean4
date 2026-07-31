@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetShrinkingGapFixedGeometryObstructionContract
+
+open PrimeNumberTheorem
+
+#print axioms tendsto_shrinkingGapPowerEnvelope_zero_of_logMargin
+#print axioms not_tendsto_shrinkingGapPowerEnvelope_zero_of_fixedPositivePenalty
+#print axioms fixedCarlsonLowPenalty_pos
+#print axioms not_tendsto_fixedCarlsonLowPowerEnvelope_zero_of_cap_tendsto_target

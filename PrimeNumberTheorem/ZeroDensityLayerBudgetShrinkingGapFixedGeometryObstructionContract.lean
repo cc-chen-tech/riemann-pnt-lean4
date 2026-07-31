@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetShrinkingGapFixedGeometryObstruction
+
+namespace PrimeNumberTheorem
+
+#check shrinkingGapPowerEnvelope
+#check tendsto_shrinkingGapPowerEnvelope_zero_of_logMargin
+#check not_tendsto_shrinkingGapPowerEnvelope_zero_of_fixedPositivePenalty
+#check fixedCarlsonLowPenalty_pos
+#check not_tendsto_fixedCarlsonLowPowerEnvelope_zero_of_cap_tendsto_target
+
+end PrimeNumberTheorem
