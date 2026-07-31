@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedModelL2Arithmetic
+
+#print axioms HardyTheorem.selbergSqrtZetaSignedModelL2Budget_eq_rational_energy_add_gap

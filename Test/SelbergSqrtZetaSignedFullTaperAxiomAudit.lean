@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSqrtZetaSignedFullTaper
+
+#print axioms HardyTheorem.zeta_mul_selbergSqrtZetaFullTapered
+#print axioms HardyTheorem.zeta_mul_selbergSqrtZetaFullTapered_apply
+#print axioms HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_fullTaper_eq_twoFactors
+#print axioms HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_logExpansion_eq_twoFactors

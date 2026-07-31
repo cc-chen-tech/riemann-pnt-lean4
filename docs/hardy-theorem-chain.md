@@ -34,9 +34,16 @@ an exact harmonic `1/d` representation and a four-term expansion in
 `1 / log X`.  On the complete denominator range, the finite fiber is now
 identified exactly with arithmetic-zeta convolution.  The two single-log
 terms combine to `log(a / b)` times the untapered ray sum and therefore
-cancel identically on a diagonal ray.  The next hard step is to bound the
-remaining non-diagonal, double-log, and truncation-boundary contributions at
-the required `1 / log X` scale.
+cancel identically on a diagonal ray.  The full four-term expression also
+recombines exactly into a negative numerator taper times a positive denominator
+taper.  Boundary scales lie in one explicit harmonic-tail interval, and the
+model `L²` budget is exactly `T` times the rational coefficient energy plus the
+reciprocal-log-gap budget.  This exact decomposition diagnoses a dead end:
+the total energy retains a nonzero main term, while the absolute gap majorant
+forgets the Hermitian phase cancellation.  The next hard step is therefore a
+direct short-window kernel estimate, with stationary frequencies controlled by
+local energy and nonstationary frequencies by first-derivative or Hilbert-type
+cancellation.
 
 ## Verified Lean Starting Point
 

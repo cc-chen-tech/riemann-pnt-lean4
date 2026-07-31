@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSqrtZetaSignedFullTaper
+
+#check HardyTheorem.zeta_mul_selbergSqrtZetaFullTapered
+#check HardyTheorem.zeta_mul_selbergSqrtZetaFullTapered_apply
+#check HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_fullTaper_eq_twoFactors
+#check HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_logExpansion_eq_twoFactors
