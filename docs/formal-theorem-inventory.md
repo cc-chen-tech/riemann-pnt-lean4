@@ -4011,8 +4011,13 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    carrier's Hardy-phase cancellation and bounds its short integral by
    `32 / log T` under explicit high-height window hypotheses.  The carrier
    coefficient is also identified exactly with the `(1,1)` complete ray plus
-   its boundary defect.  A uniform coefficient bound and an `L²` estimate for
-   the noncarrier remainder are the next two inputs.
+   its boundary defect.  The new theorem
+   `selbergSqrtZetaSignedReducedRayBoundaryTerm_one_one_eq_zero` proves that
+   this defect vanishes whenever `2 <= X <= N`, and
+   `normSq_selbergSqrtZetaSignedRationalCoeff_one_le_nineteen_fourths_add_high`
+   reduces the carrier square to `19/4` plus the explicit signed high-product
+   energy.  A uniform bound for that tail and an `L²` estimate for the
+   noncarrier remainder are the next two inputs.
    On the independent `hsmall` side,
    `selbergSqrtZetaShortCompleteRangePairSum_eq_shortConvolution` identifies
    the complete-zeta high-range coefficient with the actual signed arithmetic

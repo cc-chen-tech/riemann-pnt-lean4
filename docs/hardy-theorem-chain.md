@@ -40,8 +40,13 @@ taper.  Boundary scales lie in one explicit harmonic-tail interval, and the
 model `L²` budget is exactly `T` times the rational coefficient energy plus the
 reciprocal-log-gap budget.  This exact decomposition diagnoses a dead end:
 the total energy retains a nonzero main term, while the absolute gap majorant
-forgets the Hermitian phase cancellation.  The next hard step is therefore a
-direct short-window kernel estimate, with stationary frequencies controlled by
+forgets the Hermitian phase cancellation.  The replacement route now splits
+the rational model exactly into its `q=1` Hardy carrier and the noncarrier
+remainder.  When `2 <= X <= N`, the `(1,1)` carrier boundary defect vanishes,
+so its coefficient is exactly the complete ratio coefficient; finite Parseval
+then bounds its square by `19/4` plus the explicit signed high-product energy.
+The next hard step is therefore to bound that tail and the noncarrier model by
+direct short-window kernel estimates, with stationary frequencies controlled by
 local energy and nonstationary frequencies by first-derivative or Hilbert-type
 cancellation.  The first nonstationary estimate is now proved: the derivative
 of the exact shifted rational-pair phase differs from its rational frequency

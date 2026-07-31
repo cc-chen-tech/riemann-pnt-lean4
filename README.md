@@ -411,7 +411,11 @@ complete/boundary 加权总和控制，因此不再需要独立的第四类算�
 short model 无损拆成载波与 `q!=1` 余项；载波系数也已精确写成 `(1,1)` reduced ray
 的 complete term 加 boundary defect。在明确的高处窗口条件下，载波短积分现有
 `32/log T` 上界，而不是旧估计丢失振荡后使用的 `H` 上界。下一步必须对载波系数
-给出统一常数界，并只对 noncarrier remainder 建立二阶矩预算。完整主项现在已有
+给出统一常数界，并只对 noncarrier remainder 建立二阶矩预算。现在进一步证明：
+当 `2 <= X <= N` 时，`(1,1)` reduced ray 的 boundary defect 严格为零，载波系数
+精确等于 complete ratio coefficient；其平方已由 `19/4` 加唯一的 high-product
+energy 控制。因此载波侧不再有边界尾项，真正剩余的算术输入只有 high-product
+energy 的统一界。完整主项现在已有
 乘法 Parseval 恒等式：
 按 reduced ratio 收集的平方能量可无损改写成按整数 product 收集的平方能量；低乘积
 区间已压到常数 `19/4`，只剩 `X < n <= X^2` 的有符号截断卷积能量。边界尾项也已有

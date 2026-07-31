@@ -44,6 +44,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergSqrtZetaExcessiveReducedPairEndpointAxiomAudit",
     "Test.SelbergSqrtZetaReducedPairSplitEnergyLowerBoundAxiomAudit",
     "Test.SelbergSqrtZetaSignedRationalCarrierDecompositionAxiomAudit",
+    "Test.SelbergSqrtZetaSignedRationalCarrierEnergyAxiomAudit",
     "Test.SelbergSqrtZetaActualHighRangeEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
