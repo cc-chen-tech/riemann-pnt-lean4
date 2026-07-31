@@ -56,6 +56,11 @@ under `H / T <= 1 / (N * X^2)`, every pair with gap below `H / T` is diagonal.
 The remaining hard input is a sharp bound for the actual weighted energy
 `sum_q |c_q|^2 / localFrequencySeparation(q)`, followed by the shift integration
 and parameter choice needed for the summed `hexcessive` budget.
+The independent `hsmall` chain now preserves the actual signed convolution
+square throughout the complete-zeta range `X < k <= N`; the old factor-fiber
+cardinality loss is absent.  Its remaining inputs are a sharp bound for that
+signed convolution energy, the genuine `k > N` truncation tail, and the
+off-diagonal logarithmic-frequency gap sum.
 
 ## Verified Lean Starting Point
 

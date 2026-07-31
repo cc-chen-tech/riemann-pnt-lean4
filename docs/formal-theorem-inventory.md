@@ -3807,6 +3807,16 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `ReducedPairSplitEnergy <= 1/768`, plus the same zeta-approximation
    condition.  This is still a conditional endpoint: proving that split
    energy estimate remains open.
+   On the independent `hsmall` side,
+   `selbergSqrtZetaShortCompleteRangePairSum_eq_shortConvolution` identifies
+   the complete-zeta high-range coefficient with the actual signed arithmetic
+   convolution `((short taper)^2 * zeta)(k)`.  The resulting diagonal estimate
+   keeps its square until after the factor-pair sum is collected, removing both
+   the fiber-cardinality and coefficientwise-absolute-value losses.  The final
+   gap-sum bound now separates exactly three remaining inputs: this signed
+   convolution energy on `X < k <= N`, the actual truncation tail for `k > N`,
+   and the off-diagonal logarithmic-frequency gap sum.  None of those three
+   estimates is asserted to be closed.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
    range contains only diagonal pairs.  The remaining target is no longer a
