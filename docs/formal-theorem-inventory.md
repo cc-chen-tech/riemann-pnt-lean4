@@ -3771,6 +3771,13 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    as the minimum of numerator- and denominator-coordinate budgets.  Its two
    one-sided corollaries preserve each signed ray sum inside a single square;
    they do not yet bound that signed arithmetic sum.
+   For the boundary defect,
+   `selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_harmonicTail_mul_denominatorEnergy`
+   applies `1/d`-weighted Cauchy--Schwarz, removes the numerator taper using
+   its unit bound, and keeps the denominator fiber as a signed square.  The
+   first factor is the explicit containing harmonic tail, with no support
+   cardinality loss.  A uniform bound for the remaining denominator-fiber
+   energy is still open.
    The named budget
    `selbergSqrtZetaSignedReducedPairShortModelBudget` packages exactly those
    diagonal, complete-main, and boundary-tail terms.  The theorem
