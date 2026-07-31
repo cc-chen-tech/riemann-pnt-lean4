@@ -3962,7 +3962,13 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_eq_min_coordinateWeights`
    as the minimum of numerator- and denominator-coordinate budgets.  Its two
    one-sided corollaries preserve each signed ray sum inside a single square;
-   they do not yet bound that signed arithmetic sum.
+   they do not discard the signed arithmetic sum.  The multiplicative Parseval
+   theorem `sum_sq_selbergSqrtZetaCompleteRatioCoeff_eq_productCoeff` now
+   identifies the complete ratio energy exactly with product-collected energy.
+   On the product side,
+   `sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_le_nineteen_fourths_add_high`
+   bounds the low product range by `19/4`; the sole remaining complete-main
+   term is the signed truncated-convolution energy on `X < n <= X^2`.
    For the boundary defect,
    `selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_harmonicTail_mul_denominatorEnergy`
    applies `1/d`-weighted Cauchy--Schwarz, removes the numerator taper using
