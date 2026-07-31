@@ -3720,5 +3720,10 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `T * rational energy + reciprocal-gap budget`.  The last identity rules out
    the formerly proposed global-positive-budget route: the total energy keeps
    a nonzero main term and the absolute gap sum erases Hermitian cancellation.
-   The remaining analytic target is instead a direct short-window kernel bound,
-   split into stationary and nonstationary frequency regions.
+   The direct short-window route now proves the exact shifted phase derivative,
+   its `H / (2 * T)` perturbation from the rational frequency gap, and the
+   nonstationary height-integral estimate
+   `8 / |frequencyGap|` whenever `H / T <= |frequencyGap|`.  These are
+   pairwise kernel estimates before coefficient summation.  The remaining
+   analytic target is to sum the nonstationary pairs sharply and control the
+   stationary frequency region.

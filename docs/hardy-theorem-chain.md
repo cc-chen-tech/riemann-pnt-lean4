@@ -43,7 +43,12 @@ the total energy retains a nonzero main term, while the absolute gap majorant
 forgets the Hermitian phase cancellation.  The next hard step is therefore a
 direct short-window kernel estimate, with stationary frequencies controlled by
 local energy and nonstationary frequencies by first-derivative or Hilbert-type
-cancellation.
+cancellation.  The first nonstationary estimate is now proved: the derivative
+of the exact shifted rational-pair phase differs from its rational frequency
+gap by at most `H / (2 * T)`, and a gap of size at least `H / T` yields an
+oscillatory height-integral bound `8 / |frequencyGap|`.  This is a bound for
+one frequency pair before coefficient summation; the stationary contribution
+and the summed `hexcessive` budget remain open.
 
 ## Verified Lean Starting Point
 
