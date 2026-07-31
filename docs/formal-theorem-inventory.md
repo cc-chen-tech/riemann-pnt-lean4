@@ -3784,8 +3784,13 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    applies `1/d`-weighted Cauchy--Schwarz, removes the numerator taper using
    its unit bound, and keeps the denominator fiber as a signed square.  The
    first factor is the explicit containing harmonic tail, with no support
-   cardinality loss.  A uniform bound for the remaining denominator-fiber
-   energy is still open.
+   cardinality loss.  The denominator-fiber square is now bounded uniformly
+   in `N` by
+   `harmonic X * sum_(r<=X) r * selbergMoebiusWeight(X,r)^2`, again without a
+   fiber-cardinality factor.  Consequently the full boundary square is at
+   most the exact harmonic tail squared times that explicit `X`-only energy.
+   Estimating this finite taper energy sharply and summing over canonical
+   reduced pairs remain open.
    The named budget
    `selbergSqrtZetaSignedReducedPairShortModelBudget` packages exactly those
    diagonal, complete-main, and boundary-tail terms.  The theorem

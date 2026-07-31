@@ -293,8 +293,10 @@ complete/boundary 加权总和控制，因此不再需要独立的第四类算�
 改写为 numerator/denominator 两种坐标预算的最小值，并可分别取两种单边上界；
 有符号射线和始终保留在同一个平方内，但其尖锐上界仍未证明。边界尾项也已有
 `1/d` 加权 Cauchy 上界：第一因子是显式 harmonic tail，没有支持集基数损失；
-第二因子保留 denominator fiber 的有符号平方，仍需统一算术估计。这个结论仍是条件端点，不是无条件
-Selberg `T log T` 定理。
+denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一界，因此边界平方
+被压成“显式 harmonic tail 的平方 × 只依赖 `X` 的线性 taper 能量”。还需要对
+这个有限 taper 能量作尖锐估计并对所有互素对求和。这个结论仍是条件端点，不是
+无条件 Selberg `T log T` 定理。
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
