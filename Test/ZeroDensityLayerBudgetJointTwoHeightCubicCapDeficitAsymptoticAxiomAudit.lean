@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightCubicCapDeficitAsymptoticContract
+
+open PrimeNumberTheorem
+
+#print axioms jointTwoHeightImprovedGlobalCapThreshold_cubicDeficit_eq
+#print axioms tendsto_jointTwoHeightImprovedGlobalCapThreshold_cubicDeficit
+#print axioms tendsto_jointTwoHeightImprovedGlobalCapThreshold_deficitRatio_zero
