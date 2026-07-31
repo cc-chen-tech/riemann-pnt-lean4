@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightCubicStrictTargetExponentContract
+
+open PrimeNumberTheorem
+
+#print axioms jointTwoHeightCubicStrictTargetExponent_spec
+#print axioms tendsto_jointTwoHeightCubicStrictTargetExponent_cubicExcess
