@@ -410,4 +410,79 @@ theorem
       field_simp [ne_of_gt hgap]
       norm_num
 
+/-- A uniformly nonstationary rational pair contributes at most the shift
+area times the reciprocal frequency gap to the exact short kernel.  This
+retains the Hermitian phase until after the height integral has been
+estimated. -/
+theorem norm_selbergSqrtZetaSignedRationalShortKernel_le_of_frequencyGap
+    (q r : ℚ) {T H : ℝ}
+    (hT : 0 < T) (hH : 0 ≤ H) (hroom : H ≤ T)
+    (hgap :
+      0 < |selbergSqrtZetaSignedRationalFrequency q -
+        selbergSqrtZetaSignedRationalFrequency r|)
+    (hsep :
+      H / T ≤
+        |selbergSqrtZetaSignedRationalFrequency q -
+          selbergSqrtZetaSignedRationalFrequency r|) :
+    ‖selbergSqrtZetaSignedRationalShortKernel T H q r‖ ≤
+      H ^ 2 *
+        (8 /
+          |selbergSqrtZetaSignedRationalFrequency q -
+            selbergSqrtZetaSignedRationalFrequency r|) := by
+  have hlong : T ≤ 2 * T - H := by linarith
+  let B : ℝ :=
+    8 /
+      |selbergSqrtZetaSignedRationalFrequency q -
+        selbergSqrtZetaSignedRationalFrequency r|
+  have hB : 0 ≤ B := by
+    dsimp only [B]
+    positivity
+  have hinner (v : ℝ) (hv : v ∈ Set.uIcc (0 : ℝ) H) :
+      ‖∫ w in 0..H, ∫ t in T..2 * T - H,
+          Complex.exp
+            (Complex.I *
+              ((selbergSqrtZetaSignedRationalShortKernelPhase
+                q r v w t : ℝ) : ℂ))‖ ≤
+        B * H := by
+    calc
+      ‖∫ w in 0..H, ∫ t in T..2 * T - H,
+          Complex.exp
+            (Complex.I *
+              ((selbergSqrtZetaSignedRationalShortKernelPhase
+                q r v w t : ℝ) : ℂ))‖ ≤
+          B * |H - 0| := by
+        apply intervalIntegral.norm_integral_le_of_norm_le_const
+        intro w hw
+        have hvIcc : v ∈ Set.Icc (0 : ℝ) H := by
+          simpa [Set.uIcc_of_le hH] using hv
+        have hwIcc : w ∈ Set.Icc (0 : ℝ) H := by
+          simpa [Set.uIcc_of_le hH] using
+            (Set.uIoc_subset_uIcc hw)
+        have hvw : |v - w| ≤ H := by
+          rw [abs_sub_le_iff]
+          constructor <;> linarith [hvIcc.1, hvIcc.2, hwIcc.1, hwIcc.2]
+        dsimp only [B]
+        exact
+          norm_integral_cexp_selbergSqrtZetaSignedRationalShortKernelPhase_le_of_frequencyGap
+            q r hT hlong le_rfl hvIcc.1 hwIcc.1 hvw hgap hsep
+      _ = B * H := by rw [sub_zero, abs_of_nonneg hH]
+  rw [selbergSqrtZetaSignedRationalShortKernel_eq_triple q r hT hH hroom]
+  calc
+    ‖∫ v in 0..H, ∫ w in 0..H, ∫ t in T..2 * T - H,
+        Complex.exp
+          (Complex.I *
+            ((selbergSqrtZetaSignedRationalShortKernelPhase
+              q r v w t : ℝ) : ℂ))‖ ≤
+        (B * H) * |H - 0| := by
+      apply intervalIntegral.norm_integral_le_of_norm_le_const
+      intro v hv
+      exact hinner v (Set.uIoc_subset_uIcc hv)
+    _ = H ^ 2 *
+        (8 /
+          |selbergSqrtZetaSignedRationalFrequency q -
+            selbergSqrtZetaSignedRationalFrequency r|) := by
+      rw [sub_zero, abs_of_nonneg hH]
+      dsimp only [B]
+      ring
+
 end HardyTheorem

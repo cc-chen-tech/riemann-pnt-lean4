@@ -3724,6 +3724,13 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    its `H / (2 * T)` perturbation from the rational frequency gap, and the
    nonstationary height-integral estimate
    `8 / |frequencyGap|` whenever `H / T <= |frequencyGap|`.  These are
-   pairwise kernel estimates before coefficient summation.  The remaining
-   analytic target is to sum the nonstationary pairs sharply and control the
-   stationary frequency region.
+   upgraded to the complete pair-kernel estimate
+   `8 * H^2 / |frequencyGap|`.  The fixed-shift complete frequency double sum
+   is now bounded as one Hermitian object by coefficient energy plus
+   local-separation weighted energy via
+   `norm_integral_selbergSqrtZetaSignedRationalFixedShiftPhaseSum_le_localSeparation`.
+   Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
+   arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
+   range contains only diagonal pairs.  The remaining analytic-arithmetic
+   target is a sharp bound for the actual local-separation weighted energy and
+   its integration into the full shift-square `hexcessive` budget.

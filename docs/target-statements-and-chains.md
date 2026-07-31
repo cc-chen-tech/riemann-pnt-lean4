@@ -262,6 +262,11 @@ Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.abs_deriv_selbergSqrtZetaSignedRationalShortKernelPhase_sub_frequencyGap_le`
 - `HardyTheorem.half_abs_frequencyGap_le_abs_deriv_selbergSqrtZetaSignedRationalShortKernelPhase`
 - `HardyTheorem.norm_integral_cexp_selbergSqrtZetaSignedRationalShortKernelPhase_le_of_frequencyGap`
+- `HardyTheorem.norm_selbergSqrtZetaSignedRationalShortKernel_le_of_frequencyGap`
+- `HardyTheorem.H_div_T_le_abs_frequency_sub_of_mem_ne`
+- `HardyTheorem.eq_of_mem_of_abs_frequency_sub_lt_H_div_T`
+- `HardyTheorem.norm_selbergSqrtZetaSignedRationalShortKernel_le_of_mem_ne`
+- `HardyTheorem.norm_integral_selbergSqrtZetaSignedRationalFixedShiftPhaseSum_le_localSeparation`
 - `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant`
 - `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_zero_of_topRange`
 - `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_eq_effectiveSupport`

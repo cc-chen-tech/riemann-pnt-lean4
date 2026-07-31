@@ -46,9 +46,16 @@ local energy and nonstationary frequencies by first-derivative or Hilbert-type
 cancellation.  The first nonstationary estimate is now proved: the derivative
 of the exact shifted rational-pair phase differs from its rational frequency
 gap by at most `H / (2 * T)`, and a gap of size at least `H / T` yields an
-oscillatory height-integral bound `8 / |frequencyGap|`.  This is a bound for
-one frequency pair before coefficient summation; the stationary contribution
-and the summed `hexcessive` budget remain open.
+oscillatory height-integral bound `8 / |frequencyGap|`, hence a complete
+pair-kernel bound `8 * H^2 / |frequencyGap|`.  The fixed-shift complete
+frequency double sum is now kept intact and bounded by the ordinary
+coefficient energy plus its local-frequency-separation weighted energy, so
+the Montgomery--Vaughan cancellation is not replaced by a pairwise absolute
+reciprocal-gap sum.  The arithmetic spacing `1 / (N * X^2)` also proves that,
+under `H / T <= 1 / (N * X^2)`, every pair with gap below `H / T` is diagonal.
+The remaining hard input is a sharp bound for the actual weighted energy
+`sum_q |c_q|^2 / localFrequencySeparation(q)`, followed by the shift integration
+and parameter choice needed for the summed `hexcessive` budget.
 
 ## Verified Lean Starting Point
 

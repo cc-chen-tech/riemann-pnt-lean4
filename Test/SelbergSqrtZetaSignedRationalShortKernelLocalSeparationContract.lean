@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalShortKernelLocalSeparation
+
+#check HardyTheorem.selbergSqrtZetaSignedRationalFixedShiftPhaseSum
+#check HardyTheorem.norm_integral_selbergSqrtZetaSignedRationalFixedShiftPhaseSum_le_localSeparation
