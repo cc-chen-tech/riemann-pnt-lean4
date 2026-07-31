@@ -160,6 +160,8 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.normSq_div_localFrequencySeparation_le_reducedWeight",
     "HardyTheorem.selbergSqrtZetaSignedRationalCoeff_reduced_eq_coprimeRayScaleSum",
     "HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayWeight",
+    "HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayBilinearWeight",
+    "HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayLogExpansionWeight",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_coprime",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_denominator_pos",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_scale_facts",

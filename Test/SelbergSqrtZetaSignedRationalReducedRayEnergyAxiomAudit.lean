@@ -1,3 +1,5 @@
 import HardyTheorem.SelbergSqrtZetaSignedRationalReducedRayEnergy
 
 #print axioms HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayWeight
+#print axioms HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayBilinearWeight
+#print axioms HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayLogExpansionWeight

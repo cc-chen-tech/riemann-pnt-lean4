@@ -3741,6 +3741,13 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    scales on the coprime ray `(a,b)`.  Combining both results gives
    `normSq_div_localFrequencySeparation_le_reducedRayWeight`, which keeps that
    scale sum inside `normSq` and therefore preserves all same-ray
+   cancellation.  Its harmonic-normalized form
+   `normSq_div_localFrequencySeparation_le_reducedRayBilinearWeight` replaces
+   the square-root normalization exactly by `1 / (a*b)` times the complete
+   signed bilinear scale sum squared.  The companion theorem
+   `normSq_div_localFrequencySeparation_le_reducedRayLogExpansionWeight`
+   exposes the exact four-term logarithmic expansion inside the same square,
+   so the remaining global estimate can work directly with its arithmetic
    cancellation.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
