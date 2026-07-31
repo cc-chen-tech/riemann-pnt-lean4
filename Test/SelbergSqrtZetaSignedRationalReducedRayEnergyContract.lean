@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalReducedRayEnergy
+
+#check HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayWeight

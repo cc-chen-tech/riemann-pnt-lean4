@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalCoeffCoprimeRayReindex
+
+#print axioms HardyTheorem.selbergSqrtZetaSignedRationalCoeff_reduced_eq_coprimeRayScaleSum

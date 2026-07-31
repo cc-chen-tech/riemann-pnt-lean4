@@ -3736,9 +3736,15 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    The former global spacing `1 / (N * X^2)` has also been sharpened pointwise:
    a supported reduced key `a / b` has local logarithmic separation at least
    `1 / (1 + X * min (a * N) b)`, and each weighted energy summand inherits
-   the reciprocal reduced-ratio weight.
+   the reciprocal reduced-ratio weight.  The collected coefficient at that
+   key is now exactly reindexed as the finite coefficient sum over positive
+   scales on the coprime ray `(a,b)`.  Combining both results gives
+   `normSq_div_localFrequencySeparation_le_reducedRayWeight`, which keeps that
+   scale sum inside `normSq` and therefore preserves all same-ray
+   cancellation.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
    range contains only diagonal pairs.  The remaining analytic-arithmetic
-   target is to reindex and sum these pointwise reduced-ratio bounds sharply,
-   then insert that arithmetic estimate into the final `hexcessive` budget.
+   target is to sum these exact reduced-ray bounds sharply over the canonical
+   reduced support, then insert that arithmetic estimate into the final
+   `hexcessive` budget.

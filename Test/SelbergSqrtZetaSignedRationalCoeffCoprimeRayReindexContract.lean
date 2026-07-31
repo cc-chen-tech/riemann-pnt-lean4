@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalCoeffCoprimeRayReindex
+
+#check HardyTheorem.selbergSqrtZetaSignedRationalCoeff_reduced_eq_coprimeRayScaleSum
