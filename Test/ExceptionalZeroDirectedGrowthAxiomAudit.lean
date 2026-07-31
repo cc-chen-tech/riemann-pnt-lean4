@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ExceptionalZeroDirectedGrowth
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms directedWitness_of_not_mem_rightHigherExclusionSet
+#print axioms exists_new_right_zero_above_of_fullMovingGaussianSecondMoment_pos
+#print axioms exists_new_right_zero_above_of_remainder_energy_gt_three_errors
+#print axioms exists_strictly_larger_rightZeroSet_of_remainder_energy_gt_three_errors
