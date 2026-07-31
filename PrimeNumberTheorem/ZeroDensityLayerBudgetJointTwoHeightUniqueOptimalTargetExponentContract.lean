@@ -1,0 +1,14 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightUniqueOptimalTargetExponent
+
+namespace PrimeNumberTheorem
+
+#check jointTwoHeightImprovedCapInversePolynomial
+#check continuous_jointTwoHeightImprovedCapInversePolynomial
+#check IsJointTwoHeightOptimalTargetExponent
+#check exists_jointTwoHeightOptimalTargetExponent
+#check IsJointTwoHeightOptimalTargetExponent.unique
+#check existsUnique_jointTwoHeightOptimalTargetExponent
+#check jointTwoHeightOptimalTargetExponent
+#check jointTwoHeightOptimalTargetExponent_spec
+
+end PrimeNumberTheorem

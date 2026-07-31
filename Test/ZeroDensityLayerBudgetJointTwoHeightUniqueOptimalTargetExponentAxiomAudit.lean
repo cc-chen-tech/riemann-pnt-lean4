@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightUniqueOptimalTargetExponentContract
+
+open PrimeNumberTheorem
+
+#print axioms exists_jointTwoHeightOptimalTargetExponent
+#print axioms IsJointTwoHeightOptimalTargetExponent.unique
+#print axioms existsUnique_jointTwoHeightOptimalTargetExponent
+#print axioms jointTwoHeightOptimalTargetExponent_spec
