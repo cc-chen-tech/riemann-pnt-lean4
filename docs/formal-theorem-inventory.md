@@ -3711,4 +3711,9 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    including positive-ordinate odd and multiplicity-weighted counts. Selberg
    and Conrey-style counting results still require new mean-value estimates;
    the signed-moment and AFE targets remain independent alternative
-   infrastructure.
+   infrastructure.  For the Selberg branch, complete denominator fibers are
+   now exact arithmetic-zeta convolutions, and the two complete-range
+   single-log ray terms equal `log(a/b)` times the zero-order ray term.  This
+   proves exact diagonal cancellation but does not yet provide the uniform
+   `1/log X` energy or reciprocal-gap bound needed for the positive-proportion
+   theorem.

@@ -31,7 +31,12 @@ linear lower bound is proved, including the literature convention
 `0 < gamma <= T` and the standard multiplicity-weighted consequence.
 For the open Selberg estimate, the fixed coprime-ray coefficient sum now has
 an exact harmonic `1/d` representation and a four-term expansion in
-`1 / log X`; bounding those signed arithmetic terms is the next hard step.
+`1 / log X`.  On the complete denominator range, the finite fiber is now
+identified exactly with arithmetic-zeta convolution.  The two single-log
+terms combine to `log(a / b)` times the untapered ray sum and therefore
+cancel identically on a diagonal ray.  The next hard step is to bound the
+remaining non-diagonal, double-log, and truncation-boundary contributions at
+the required `1 / log X` scale.
 
 ## Verified Lean Starting Point
 

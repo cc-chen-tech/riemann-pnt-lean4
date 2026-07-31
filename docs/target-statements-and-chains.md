@@ -250,6 +250,10 @@ Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_convolution`
 - `HardyTheorem.selbergSqrtZetaSignedRationalPairCoeff_coprimeRay_eq_invSqrt_mul_invScale`
 - `HardyTheorem.selbergSqrtZetaSignedCoprimeRayScaleSum_eq_invSqrt_mul_logExpansion`
+- `HardyTheorem.zeta_mul_selbergSqrtZetaLogCoeff`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayBilinearScaleSum_eq_complete_zeta_add_boundary`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_singleLog_eq_logRatio`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_singleLog_diagonal_eq_zero`
 - `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant`
 - `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_zero_of_topRange`
 - `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_eq_effectiveSupport`

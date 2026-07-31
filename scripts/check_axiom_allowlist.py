@@ -161,6 +161,13 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.selbergSqrtZetaTaperedCoeff_eq_coeff_sub_invLog_mul_logCoeff",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayBilinearScaleSum_taper_eq_logExpansion",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScaleSum_eq_invSqrt_mul_logExpansion",
+    "HardyTheorem.zeta_mul_selbergSqrtZetaLogCoeff",
+    "HardyTheorem.selbergSqrtZetaSignedDenominatorFiber_eq_divisorsAntidiagonal",
+    "HardyTheorem.sum_selbergSqrtZetaSignedDenominatorFiber_eq_zeta_mul",
+    "HardyTheorem.selbergSqrtZetaSignedDenominatorArithmeticCoeff_eq_zeta_mul",
+    "HardyTheorem.selbergSqrtZetaSignedCoprimeRayBilinearScaleSum_eq_complete_zeta_add_boundary",
+    "HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_singleLog_eq_logRatio",
+    "HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_singleLog_diagonal_eq_zero",
     "HardyTheorem.exists_integral_sq_selbergSqrtZetaSignedShortIntegral_le_modelL2Budget_add_error",
     "HardyTheorem.exists_integral_norm_riemannZeta_critical_line_ge_mul",
     "HardyTheorem.exists_abs_integral_hardyZ_le_rpow_three_quarters",
@@ -385,7 +392,12 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "build", "Test.MultiplicityAxiomAudit"],
+        [
+            "lake",
+            "build",
+            "Test.MultiplicityAxiomAudit",
+            "Test.SelbergSqrtZetaSignedCompleteDenominatorAxiomAudit",
+        ],
         cwd=ROOT,
         text=True,
         capture_output=True,
