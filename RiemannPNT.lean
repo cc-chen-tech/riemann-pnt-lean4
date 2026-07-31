@@ -247,6 +247,7 @@ import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
 import PrimeNumberTheorem.RiemannVonMangoldt.CriticalLinePartition
 import PrimeNumberTheorem.RieszDifference
+import PrimeNumberTheorem.SmoothedErrorTransfer
 import PrimeNumberTheorem.ExplicitFormulaResidues
 import PrimeNumberTheorem.ExplicitFormulaRectangle
 import PrimeNumberTheorem.FirstOrderExplicitFormula

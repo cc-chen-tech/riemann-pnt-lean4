@@ -43,6 +43,28 @@ python3 -m experiments.rh.li_coefficients --n-max 10 --zero-pairs 10
 The output is empirical numerical evidence only. It uses a finite zero list and
 does not prove the Riemann Hypothesis.
 
+### Weil finite-matrix certificates
+
+Create an exact rational `LDL^T` artifact from a JSON object containing
+`matrix` and optional `parameters` fields:
+
+```bash
+python3 -m experiments.rh.weil_extremal_kernels \
+  certify matrix.json certificate.json
+```
+
+Replay the exact checker in a clean process:
+
+```bash
+python3 -m experiments.rh.weil_extremal_kernels verify certificate.json
+```
+
+Matrix entries must be integers or rational strings such as `"-7/12"`.
+Artifacts are explicitly scoped to the stored finite rational matrix; they do
+not certify that the matrix equals an analytic Weil-form matrix. The registered
+analytic target and transfer gaps are fixed in
+`docs/research/weil-extremal-kernel-preregistration.md`.
+
 ## Discrete Search
 
 Search for a small Ramsey counterexample graph:

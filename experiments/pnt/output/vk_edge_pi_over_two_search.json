@@ -1,0 +1,51 @@
+{
+  "analytic_kappa_lower_bound": 1.5719589466599044,
+  "baseline_pi_over_two": 1.5707963267948966,
+  "coefficients": [
+    [
+      1.0,
+      0.0
+    ],
+    [
+      -0.2727272727272727,
+      0.0
+    ],
+    [
+      0.12727272727272726,
+      0.0
+    ],
+    [
+      -0.06493506493506493,
+      0.0
+    ],
+    [
+      0.030303030303030304,
+      0.0
+    ],
+    [
+      -0.008264462809917356,
+      0.0
+    ]
+  ],
+  "estimate": {
+    "interval_end": 512.0,
+    "interval_start": 0.0,
+    "location": 355.0,
+    "mesh_width": 0.00390625,
+    "samples": 131073,
+    "value": 1.6232979142070054
+  },
+  "frequencies": [
+    1.0,
+    3.0,
+    5.0,
+    7.0,
+    9.0,
+    11.0
+  ],
+  "max_terms": 6,
+  "sampled_gap": 0.05250158741210886,
+  "seed": 20260724,
+  "trials": 256,
+  "warning": "sampled finite-interval lower estimate; not a global norm certificate or mathematical proof"
+}

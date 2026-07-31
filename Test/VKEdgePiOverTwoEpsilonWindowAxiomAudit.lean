@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoEpsilonWindow
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.epsilonRadiusCoefficient_pos
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.epsilonRadiusCoefficient_lt_center
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.epsilonRadius_sq_ge_thirtyTwo_mul
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.localizedGaussianLogWindow_epsilonGaussianScale
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.exists_psiError_in_powerOnePlusEpsilonWindow_of_normalizedPsiError

@@ -1,0 +1,11 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovRefinedScale
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovRefinedScale
+#check vinogradovRefinedScale_le_iff
+#check target_le_mul_vinogradovRefinedScale
+#check le_vinogradovRefinedScale
+#check vinogradovRefinedScale_sub_le_errorCeil
+#check vinogradovNormalizedConditionedMoment_le_refinedScale_of_gap
+#check vinogradovWeightedNormalizedConditionedMoment_le_refinedScale_of_gap

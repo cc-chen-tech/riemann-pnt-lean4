@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoOtherEdgeDecay
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.localizedOtherEdgeUpperBound_le_decayEnvelope
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.tendsto_localizedOtherEdgeDecayEnvelope

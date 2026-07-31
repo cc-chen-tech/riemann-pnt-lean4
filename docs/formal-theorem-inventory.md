@@ -19,7 +19,7 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 16
+`def ... : Prop`, the mathematical target inventory is stable at 12
 declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
@@ -3078,6 +3078,179 @@ positive-ordinate odd-order and multiplicity-weighted forms.  The signed-moment
 targets remain as an independent legacy route; Selberg and Conrey remain the
 open quantitative extensions.
 
+### `HardyTheorem/HardyLittlewoodTheorem.lean` and `HardyTheorem/HardyLittlewoodOddTheorem.lean`
+
+The merged unconditional endpoints are:
+
+- `HardyTheorem.hardy_littlewood_lower_bound_target_proved`
+  proves a linear lower bound for distinct critical-line zeta zeros.
+- `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
+  proves the corresponding linear lower bound for critical-line zeros of odd
+  analytic multiplicity, each ordinate counted once.
+
+The proof chain uses fixed short windows, quantitative control of bad starting
+points, local Hardy-`Z` sign changes, and interval packing.  These results do
+not prove Selberg's `T log T` lower bound, positive proportion, or RH.
+
+### `PrimeNumberTheorem/PintzEnvelope.lean`
+
+Core verified declarations include:
+
+- `PrimeNumberTheorem.Pintz.exists_eventually_two_mul_sqrt_le_zeroEnvelope`
+- `PrimeNumberTheorem.Pintz.tendsto_pintzZeroEnvelope_atTop`
+- `PrimeNumberTheorem.Pintz.pintzZeroEnvelope_le_zeroTerm`
+- `PrimeNumberTheorem.Pintz.monotoneOn_pintzZeroEnvelope`
+
+They give a finite-low-zero/high-zero decomposition, a classical
+`sqrt(log x)` lower minorant, monotonicity, and divergence of the zero
+envelope.  They are infrastructure for error oscillation and do not by
+themselves prove Pintz's maximal-order theorem.
+
+### `PrimeNumberTheorem/VKEdgePiOverTwoAbelPhase.lean` and localized successors
+
+The merged implication theorem
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_far_psiError_gt_pi_div_two_of_zeta_zero`
+
+states that a right-of-critical-line zeta zero `rho`, with positive ordinate
+and analytic multiplicity `m`, forces arbitrarily far PNT-error values larger than
+
+```text
+m * C * x^(Re rho) / |rho|
+```
+
+for a zero-dependent constant `C > pi/2`.  Carlson supplies a missing odd
+harmonic and the Abel-phase argument transfers that gap to `chebyshevPsi`.
+The later merged endpoint
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_psiError_in_powerOnePlusEpsilonWindow_gt_strictPiOverTwo`
+
+strengthens the location statement: for every fixed `epsilon > 0` and every
+right-of-critical-line zeta zero with positive ordinate, it selects a missing
+odd harmonic with constant strictly larger than `pi/2`, and every sufficiently
+late interval `[Y,Y^(1+epsilon)]` contains a corresponding large
+`chebyshevPsi` error value.  The proof is in
+`PrimeNumberTheorem/VKEdgePiOverTwoEpsilonOscillation.lean`.
+
+`PrimeNumberTheorem/VKEdgePiOverTwoBellotti.lean` additionally proves uniform
+fixed-budget and positive-logarithmic-measure variants from an explicit
+Bellotti-style distinct-location count hypothesis.  That count remains a
+theorem parameter in those variants.  None of these implications turns the
+oscillation into a contradiction, proves a signed `Omega_±` statement, or
+proves RH.
+
+### Local second moments, explicit-pair annihilation, and finite zero clusters
+
+The merged local second-moment endpoint
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear`
+
+states that an off-line zeta zero forces an explicit positive multiple of
+`log Y` as a lower bound for the ordinary normalized PNT-error second moment
+on every sufficiently late logarithmic interval
+`[log Y, (1+epsilon) log Y]`.
+
+The fixed-proportion refinement
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_fixedProportion_largeNormalizedPsiError_of_fourthMoment`
+
+is theorem-level but explicitly assumes the displayed external fourth-moment
+upper bound.  The repository does not currently prove that hypothesis.
+
+The model/explicit-formula bridge includes:
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedExplicitFormulaConjugatePair_eq_cosineModel`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroResidueSum_eq_pair_add_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPsiModelResidual_eq_explicitFormulaResidual`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.annihilatedNormalizedPsiError_eq_modelResidual`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.exists_mem_expandedInterval_normalizedPsiModelResidual_sq_gt`
+
+These declarations identify the target conjugate pair in the actual finite
+residue sum and transfer positive annihilator energy to a residual large
+value.  They do not prove that the required detector energy is positive for
+the complete explicit formula, nor do they bound every complementary-zero and
+contour remainder.
+
+The finite-cluster layer includes:
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_merged`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.quarter_sum_sameOrdinateFiberMass_sq_le_mergedFrequencyEnergy`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.totalCoefficientMass_sq_le_four_card_mul_mergedFrequencyEnergy`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_ge_phaseCoercive_localSeparation`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedFiniteZeroClusterContribution_pos_of_localSeparation`
+
+They merge equal ordinates before measuring diagonal energy, protect the
+remaining coefficient mass against same-frequency phase cancellation, and
+charge unresolved near-frequency interaction to an explicit local-separation
+energy.  These are collision-safe finite-cluster inequalities, not a global
+zero-density contradiction or an RH proof.
+
+`PrimeNumberTheorem/VKEdgeZeroClusterExplicitFormulaL2.lean` then connects
+these inequalities to the actual standard Chebyshev error.  Core declarations
+include:
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.chebyshevPsi_sub_exp_eq_neg_cluster_sub_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorAtExponent_eq_neg_cluster_sub_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_cluster_sub_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_pos_of_localSeparation_remainder`
+
+The remainder is concrete: it contains the unselected finite-height zeros,
+the explicit-formula approximation error, closed terms, and the midpoint jump
+correction.  The final positivity theorem assumes that this remainder moment
+is smaller than the displayed cluster budget.  That inequality is not
+currently proved automatically or unconditionally.
+
+The following merged modules now control three parts of that remainder:
+
+- `PrimeNumberTheorem/VKEdgeZeroClusterRemainderL2.lean`
+- `PrimeNumberTheorem/VKEdgeZeroClusterClosedTermsL2.lean`
+- `PrimeNumberTheorem/ExplicitFormulaSpatialVariation.lean`
+- `PrimeNumberTheorem/ExplicitFormulaUniformNaturalHeight.lean`
+- `PrimeNumberTheorem/ExplicitFormulaRealInterpolation.lean`
+- `PrimeNumberTheorem/ExplicitFormulaUniformRealHeight.lean`
+- `PrimeNumberTheorem/ExplicitFormulaNormalizedWindowRemainder.lean`
+- `PrimeNumberTheorem/VKEdgeZeroClusterApproximationL2.lean`
+
+Core verified declarations include:
+
+- `PrimeNumberTheorem.VKEdgePiOverTwo.jumpVonMangoldt_exp_ae_eq_zero`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedZeroPackageClosedTermsSecondMoment_le`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_real_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt`
+- `PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt`
+
+For each fixed `1/2 < beta < 1`, fixed window length `L >= 0`, and `eta > 0`,
+the last theorem selects, for every sufficiently large logarithmic center
+`a`, one good height
+
+```text
+T in [exp(a/2), exp(a/2)+1]
+```
+
+that works for every real `y in [a,a+L]` and makes the finite-height
+approximation error, normalized by `exp(beta*y)`, smaller than `eta`.
+The last listed `VKEdgePiOverTwo` theorem converts this shared-height pointwise
+control into an arbitrarily small local second moment on the same window.
+These are unconditional approximation-remainder theorems.  They do not bound
+the complementary zero package, so the complete remainder-budget inequality
+and the final localized cluster-forced oscillation endpoint remain open.
+
+### `ZeroFreeRegion/VinogradovKorobov/VinogradovResidueMassAudit.lean`
+
+Core verified declarations include:
+
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card`
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedNormalizedResidueMoment_one_to_raw`
+- `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedRawResidueNormMoment_one_le_refinement_via_normalized`
+
+For constant coefficients on complete prime-power blocks, these theorems
+compute the exact residue-class mass and show that converting a normalized
+mixed moment back to a raw moment recovers the ordinary Holder cardinality
+loss.  This is a negative/diagnostic result: normalization alone does not
+create the exponent saving needed for the final Vinogradov--Korobov route.
+
 ### `GammaResidue.lean`
 
 Core verified declarations:
@@ -3137,9 +3310,9 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-18`, there are **13** mathematical target declarations:
+As of `2026-07-29`, there are **12** mathematical target declarations:
 
-- `HardyTheorem` namespace: **4**
+- `HardyTheorem` namespace: **3**
 - `HardyTheorem.Details` namespace: **3**
 - `PrimeNumberTheorem` namespace: **4**
 - `KnownResults` namespace: **1**
@@ -3192,12 +3365,18 @@ As of `2026-07-18`, there are **13** mathematical target declarations:
 
 - `integral_asymptotic_target`
 - `hardy_two_signed_moments_target`
-- `hardy_littlewood_lower_bound_target`
-- `selberg_zero_proportion_target`
+
+### `HardyTheorem/CriticalLineMultiplicity.lean`
+
+- `selberg_odd_zero_proportion_target`
 
 `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and
 `hardy_zeros_abs_unbounded_target` remain reusable propositions but are
 discharged by named unconditional theorems. They are not unresolved targets.
+Likewise, `hardy_littlewood_lower_bound_target`,
+`hardy_littlewood_multiplicity_lower_bound_target`, and
+`hardy_littlewood_odd_lower_bound_target` remain reusable proposition-valued
+interfaces discharged by the merged Hardy--Littlewood theorem chain.
 
 ### `HardyTheorem.Details`
 
@@ -3469,8 +3648,10 @@ Current status in `HardyTheorem.lean` target list:
 
 - `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and
   `hardy_zeros_abs_unbounded_target` are all proved reusable predicates.
-- `hardy_littlewood_lower_bound_target` is available as a derived output if
-  `selberg_zero_proportion_target` is available.
+- `hardy_littlewood_lower_bound_target` is proved unconditionally by
+  `HardyTheorem.hardy_littlewood_lower_bound_target_proved`; the older
+  derivation from `selberg_zero_proportion_target` remains a reusable
+  implication, not the only route.
 - `zeroCountOnCriticalLine` counts distinct ordinates and does not encode
   analytic multiplicity; future historical proportion claims must define the
   intended multiplicity convention explicitly.
@@ -3695,7 +3876,10 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
 
 1. **Stronger zero-free region.**
    The classical `c / log |t|` region is proved.  The remaining target is the
-   Vinogradov-Korobov region and its exponential-sum input.
+   Vinogradov-Korobov region.  Exponential-sum/zeta blocks, prime-power
+   conditioning, mixed moments, scale selection, and coupled-tail recurrences
+   are merged; the Ford short-sum input, Fourier localization, smooth support,
+   and final parameter optimization remain open.
 2. **Quantitative explicit formula.**
    The multiplicity-aware symmetric principal-value formula and a uniform
    natural-point polynomial-height truncation error are proved.  Their RH

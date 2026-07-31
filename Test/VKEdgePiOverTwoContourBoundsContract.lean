@@ -1,0 +1,115 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoContourBounds
+
+open Complex Polynomial
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check norm_localizedGaussianWeight
+#check norm_localizedGaussianWeight_left_le
+#check norm_polynomial_eval_le_coeffL1_mul_max_pow
+#check leftLogDerivBound
+#check norm_div_sub_one_left_vertical_le_one
+#check norm_regularizedLogDeriv_localizedGaussianWeight_left_le
+#check norm_regularizedLogDeriv_localizedGaussianWeight_left_le_uniform
+#check norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
+#check norm_localizedGaussianWeight_horizontal_le
+#check norm_localizedGaussianWeight_horizontal_le_uniform
+#check norm_localizedGaussianWeight_horizontal_le_heightGap
+#check norm_div_sub_one_horizontal_le_two
+#check exists_goodHeight_Icc_norm_regularizedLogDeriv_horizontal_le
+#check exists_goodHeight_Icc_norm_integral_regularizedLogDeriv_localizedGaussianWeight_horizontal_le
+#check exists_goodHeight_Icc_norm_integral_regularizedLogDeriv_localizedGaussianWeight_horizontal_le_heightGap
+
+example (A : ℂ[X]) (w z : ℂ) (m : ℝ) :
+    ‖localizedGaussianWeight A w m z‖ =
+      ‖A.eval (z - w)‖ *
+        Real.exp
+          (m * (((z - w).re) ^ 2 - ((z - w).im) ^ 2 +
+            16 * (z - w).re)) :=
+  norm_localizedGaussianWeight A w z m
+
+example (A : ℂ[X]) {u v t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A
+        ((u : ℂ) + I * v) m
+        ((-1 : ℂ) + I * t)‖ ≤
+      ‖A.eval (((-1 : ℂ) + I * t) - ((u : ℂ) + I * v))‖ *
+        Real.exp (-15 * m - m * (t - v) ^ 2) :=
+  norm_localizedGaussianWeight_left_le A hu hu1 hm
+
+example (A : ℂ[X]) (z : ℂ) :
+    ‖A.eval z‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 ‖z‖ ^ A.natDegree :=
+  norm_polynomial_eval_le_coeffL1_mul_max_pow A z
+
+example (t : ℝ) :
+    ‖(((-1 : ℂ) + I * t) /
+      (((-1 : ℂ) + I * t) - 1))‖ ≤ 1 :=
+  norm_div_sub_one_left_vertical_le_one t
+
+example (A : ℂ[X]) {u v T t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hT : 0 ≤ T) (ht : |t| ≤ T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+          ((-1 : ℂ) + I * t) *
+        (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+          (((-1 : ℂ) + I * t) /
+            (((-1 : ℂ) + I * t) - 1)))‖ ≤
+      ‖A.eval (((-1 : ℂ) + I * t) - ((u : ℂ) + I * v))‖ *
+        Real.exp (-15 * m - m * (t - v) ^ 2) *
+          (leftLogDerivBound T + 1) :=
+  norm_regularizedLogDeriv_localizedGaussianWeight_left_le
+    A hu hu1 hT ht hm
+
+example (A : ℂ[X]) {u v T t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hT : 0 ≤ T) (ht : |t| ≤ T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+          ((-1 : ℂ) + I * t) *
+        (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+          (((-1 : ℂ) + I * t) /
+            (((-1 : ℂ) + I * t) - 1)))‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (u + T + |v| + 2) ^ A.natDegree *
+        Real.exp (-15 * m) * (leftLogDerivBound T + 1) :=
+  norm_regularizedLogDeriv_localizedGaussianWeight_left_le_uniform
+    A hu hu1 hT ht hm
+
+example (A : ℂ[X]) {u v T m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hT : 0 ≤ T) (hm : 0 ≤ m) :
+    ‖∫ t : ℝ in (-T)..T,
+        localizedGaussianWeight A ((u : ℂ) + I * v) m
+            ((-1 : ℂ) + I * t) *
+          (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+            (((-1 : ℂ) + I * t) /
+              (((-1 : ℂ) + I * t) - 1)))‖ ≤
+      ((∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (u + T + |v| + 2) ^ A.natDegree *
+        Real.exp (-15 * m) * (leftLogDerivBound T + 1)) *
+          (2 * T) :=
+  norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
+    A hu hu1 hT hm
+
+example (A : ℂ[X]) {u v σ t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hσlo : -1 ≤ σ) (hσhi : σ ≤ u + 2) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+        ((σ : ℂ) + I * t)‖ ≤
+      ‖A.eval (((σ : ℂ) + I * t) - ((u : ℂ) + I * v))‖ *
+        Real.exp (m * (36 - (t - v) ^ 2)) :=
+  norm_localizedGaussianWeight_horizontal_le
+    A hu hu1 hσlo hσhi hm
+
+example (A : ℂ[X]) {u v T σ t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hσlo : -1 ≤ σ) (hσhi : σ ≤ u + 2)
+    (ht : |t| = T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+        ((σ : ℂ) + I * t)‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (T + |v| + 3) ^ A.natDegree *
+          Real.exp (m * (36 - (t - v) ^ 2)) :=
+  norm_localizedGaussianWeight_horizontal_le_uniform
+    A hu hu1 hσlo hσhi ht hm

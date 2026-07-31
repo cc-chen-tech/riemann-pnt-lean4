@@ -27,6 +27,41 @@ ordinary PNT in Lean 4
 In particular, the theorem inventory below proves ordinary PNT but not RH, an
 RH-scale prime-error estimate, or the stronger Vinogradov-Korobov region.
 
+The merged tree also proves that any right-of-critical-line zeta zero with
+positive ordinate forces a multiplicity-sensitive PNT-error oscillation with a
+zero-dependent constant strictly larger than `pi/2` in every sufficiently late
+fixed-epsilon power window `[Y,Y^(1+epsilon)]`.  This is an implication from an
+off-line zero, not a contradiction and not a proof of RH.  Uniform and
+positive-logarithmic-measure refinements in the Bellotti module retain their
+finite distinct-zero-location count as an explicit hypothesis.
+
+The same off-line-zero hypothesis now also gives an ordinary normalized
+PNT-error second-moment lower bound proportional to `log Y` on every
+sufficiently late interval `[log Y, (1+epsilon) log Y]`.  A fixed-proportion
+large-value refinement is proved only under an explicit external fourth-moment
+upper bound.  Separate merged modules identify the target conjugate pair in a
+finite explicit-formula residue sum and prove collision-safe, phase-coercive
+local `L2` inequalities for actual finite zero packages.  The merged
+finite-height bridge further proves an exact decomposition of the standard
+Chebyshev error into the selected cluster and a concrete remainder, and
+transfers the cluster lower bound to the actual `psi` second moment after
+subtracting that remainder moment.  The subsequent merged chain removes the
+midpoint jump almost everywhere, controls the closed terms, interpolates one
+common good-height estimate from natural to real samples, and proves
+
+```text
+exp(-beta*y) * ||finite-height approximation error at exp(y)|| -> 0
+```
+
+uniformly on every fixed-length logarithmic window, for fixed
+`1/2 < beta < 1`.  The theorem
+`eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt`
+integrates the same shared-height bound and makes the corresponding local
+second moment smaller than any prescribed `eta > 0`.  It does not control the
+complementary zero package and
+therefore does not yet prove that the complete remainder is small enough for
+an unconditional strict lower bound.
+
 ## 1. Real Part of the Logarithmic Derivative Series
 
 **Lean declaration:** `ZeroFreeRegion.log_deriv_zeta_re_series`
@@ -281,7 +316,11 @@ Re s >= 1 - c / log |Im s|.
 ```
 
 The remaining zero-free-region target is the stronger Vinogradov-Korobov
-region.  On the explicit-formula side, the principal-value identity, the
+region.  The merged residue-mass audit shows that constant coefficients on
+complete prime-power blocks lose exactly the usual Holder cardinality factor
+when normalized moments are returned to raw moments; normalization by itself
+does not close the Ford/Vinogradov--Korobov exponent gap.  On the
+explicit-formula side, the principal-value identity, the
 moving-height ordinary-PNT estimate, de la Vallee Poussin-form `psi` and
 `pi-Li` remainders, and the forward RH-to-prime-error implication are proved.
 Further work concerns power-saving estimates, stronger zero-free regions, and

@@ -1,0 +1,20 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovIntegerSelector
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovIntPowerSumMod
+#check isVinogradovSolutionIntMod_iff_powerSumMod
+#check vinogradovIntSolutionSelector
+#check vinogradovIntSolutionSelector_eq_indicator
+#check vinogradovIntPhaseMod
+#check vinogradovIntTuplePhaseMod
+#check vinogradovIntTuplePhaseMod_eq_sum_powerSum
+#check vinogradovIntWeylSum
+#check vinogradovIntWeylSum_pow
+#check conj_vinogradovIntWeylSum_pow
+#check normalized_sum_intTuplePair_eq_selector
+
+#print axioms isVinogradovSolutionIntMod_iff_powerSumMod
+#print axioms vinogradovIntSolutionSelector_eq_indicator
+#print axioms normalized_sum_intTuplePair_eq_selector
+#print axioms vinogradovIntWeylSum_pow

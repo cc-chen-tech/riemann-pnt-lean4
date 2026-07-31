@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoConcreteLocalizedData
+
+open Complex Polynomial
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check localizedContourGoodHeightConstant
+#check ConcreteLocalizedContourSlice
+#check exists_concreteLocalizedContourSlice
+#check selectedLocalizedContourRemainder
+#check selectedLocalizedZeroResidueSum
+#check selected_localizedPsiGaussianAverage_eq
+#check tendsto_localizedRightEdgeGaussianUpperBound
+#check tendsto_selectedLocalizedContourRemainder
+#check localizedContourData_of_concreteZetaContour
+#check localizedContourData_of_concreteZetaContourLimit
+#check localizedContourData_of_concreteZetaContourProjectedLimit

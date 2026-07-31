@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoCarlson
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.exists_riemannZeta_ne_zero_at_oddHarmonic_of_zeroDensityCount_le
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.pi_div_two_lt_missingHarmonicLowerBound
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.carlson_zeroDensity_isLittleO_id
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.exists_missing_oddHarmonic_with_strict_gap_of_carlson

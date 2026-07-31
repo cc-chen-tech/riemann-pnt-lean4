@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoFixedProportion
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms MathlibAux.measure_sq_largeSet_gt_of_scaled_moments
+#print axioms measurable_normalizedPsiError_fixedProportion
+#print axioms exists_eventually_fixedProportion_largeNormalizedPsiError_of_fourthMoment

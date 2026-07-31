@@ -1,0 +1,112 @@
+import ZeroFreeRegion.VinogradovKorobov.LogPhase
+
+namespace ZeroFreeRegion.VinogradovKorobov
+
+example (h x : ℝ) (hx : 0 < x) (hh : 0 < h) :
+    logIncrementDifference h x =
+      Real.log (1 + h / (x * (x + h + 1))) :=
+  logIncrementDifference_eq hx hh
+
+example (h : ℝ) (hh : 0 < h) :
+    AntitoneOn (logIncrementDifference h) (Set.Ioi 0) :=
+  antitoneOn_logIncrementDifference hh
+
+example (h x : ℝ) (hx : 0 < x) (hh : 0 < h) :
+    logIncrementDifference h x ≤ h / (x * (x + h + 1)) :=
+  logIncrementDifference_le_fraction hx hh
+
+example (h x : ℝ) (hx : 0 < x) (hh : 0 < h) :
+    h / (x * (x + h + 1) + h) ≤ logIncrementDifference h x :=
+  fraction_le_logIncrementDifference hx hh
+
+example (t : ℝ) (h n : ℕ) :
+    logarithmicCorrelationPhase t h (n + 1) -
+        logarithmicCorrelationPhase t h n =
+      t * logIncrementDifference h n :=
+  logarithmicCorrelationPhase_forwardDifference t h n
+
+example (t : ℝ) (h n : ℕ) (ht : 0 < t) (hh : 0 < h) (hn : 0 < n) :
+    0 < logarithmicCorrelationPhase t h (n + 1) -
+      logarithmicCorrelationPhase t h n :=
+  logarithmicCorrelationPhase_forwardDifference_pos ht hh hn
+
+example (t : ℝ) (h n : ℕ) (ht : 0 ≤ t) (hh : 0 < h) (hn : 0 < n) :
+    logarithmicCorrelationPhase t h (n + 1) -
+        logarithmicCorrelationPhase t h n ≤
+      t * (h : ℝ) / ((n : ℝ) * ((n : ℝ) + h + 1)) :=
+  logarithmicCorrelationPhase_forwardDifference_le_fraction ht hh hn
+
+example (t : ℝ) (h n : ℕ) (ht : 0 ≤ t) (hh : 0 < h) (hn : 0 < n) :
+    t * (h : ℝ) /
+        ((n : ℝ) * ((n : ℝ) + h + 1) + h) ≤
+      logarithmicCorrelationPhase t h (n + 1) -
+        logarithmicCorrelationPhase t h n :=
+  logarithmicCorrelationPhase_forwardDifference_ge_fraction ht hh hn
+
+example (t : ℝ) (h n : ℕ) (ht : 0 ≤ t) (hh : 0 < h) (hn : 0 < n) :
+    logarithmicCorrelationPhase t h (n + 2) -
+        logarithmicCorrelationPhase t h (n + 1) ≤
+      logarithmicCorrelationPhase t h (n + 1) -
+        logarithmicCorrelationPhase t h n :=
+  logarithmicCorrelationPhase_forwardDifference_antitone ht hh hn
+
+example (t : ℝ) (h m k : ℕ) (ht : 0 ≤ t) (hh : 0 < h) (hm : 0 < m) :
+    logarithmicCorrelationPhase t h (m + (k + 1)) -
+        logarithmicCorrelationPhase t h (m + k) ≤
+      logarithmicCorrelationPhase t h (m + 1) -
+        logarithmicCorrelationPhase t h m :=
+  logarithmicCorrelationPhase_forwardDifference_le_start k ht hh hm
+
+example (t : ℝ) (h m k K : ℕ) (ht : 0 ≤ t) (hh : 0 < h)
+    (hm : 0 < m) (hkK : k ≤ K) :
+    logarithmicCorrelationPhase t h (m + (K + 1)) -
+        logarithmicCorrelationPhase t h (m + K) ≤
+      logarithmicCorrelationPhase t h (m + (k + 1)) -
+        logarithmicCorrelationPhase t h (m + k) :=
+  logarithmicCorrelationPhase_forwardDifference_ge_end ht hh hm hkK
+
+example (t : ℝ) (h m N : ℕ) (ht : 0 < t) (hh : 0 < h) (hm : 0 < m)
+    (hlt : ∀ k ≤ N,
+      logarithmicCorrelationPhase t h (m + (k + 1)) -
+        logarithmicCorrelationPhase t h (m + k) < 2 * Real.pi) :
+    ‖∑ k ∈ Finset.range (N + 1),
+        phaseTerm (fun j ↦ logarithmicCorrelationPhase t h (m + j)) k‖ ≤
+      ‖(Complex.exp (Complex.I *
+        ((logarithmicCorrelationPhase t h (m + 1) -
+          logarithmicCorrelationPhase t h m : ℝ) : ℂ)) - 1)⁻¹‖ +
+      ‖(Complex.exp (Complex.I *
+        ((logarithmicCorrelationPhase t h (m + (N + 1)) -
+          logarithmicCorrelationPhase t h (m + N) : ℝ) : ℂ)) - 1)⁻¹‖ +
+      (Real.cot ((logarithmicCorrelationPhase t h (m + (N + 1)) -
+          logarithmicCorrelationPhase t h (m + N)) / 2) -
+        Real.cot ((logarithmicCorrelationPhase t h (m + 1) -
+          logarithmicCorrelationPhase t h m) / 2)) / 2 :=
+  logarithmicCorrelation_kusminLandau_endpoint_bound t h m N ht hh hm hlt
+
+example (t : ℝ) (h m N : ℕ) {delta : ℝ} (ht : 0 < t) (hh : 0 < h)
+    (hm : 0 < m) (hdelta : 0 < delta)
+    (hlast : delta ≤
+      logarithmicCorrelationPhase t h (m + (N + 1)) -
+        logarithmicCorrelationPhase t h (m + N))
+    (hfirst : logarithmicCorrelationPhase t h (m + 1) -
+        logarithmicCorrelationPhase t h m ≤ 2 * Real.pi - delta) :
+    ‖∑ k ∈ Finset.range (N + 1),
+        phaseTerm (fun j ↦ logarithmicCorrelationPhase t h (m + j)) k‖ ≤
+      2 * Real.pi / delta :=
+  logarithmicCorrelation_kusminLandau_two_pi_div
+    t h m N ht hh hm hdelta hlast hfirst
+
+example (t : ℝ) (h m N : ℕ) (ht : 0 < t) (hh : 0 < h) (hm : 0 < m)
+    (hmargin :
+      t * (h : ℝ) / ((m : ℝ) * ((m : ℝ) + h + 1)) +
+        t * (h : ℝ) /
+          (((m + N : ℕ) : ℝ) * (((m + N : ℕ) : ℝ) + h + 1) + h) ≤
+        2 * Real.pi) :
+    ‖∑ k ∈ Finset.range (N + 1),
+        phaseTerm (fun j ↦ logarithmicCorrelationPhase t h (m + j)) k‖ ≤
+      2 * Real.pi *
+          (((m + N : ℕ) : ℝ) * (((m + N : ℕ) : ℝ) + h + 1) + h) /
+        (t * (h : ℝ)) :=
+  logarithmicCorrelation_kusminLandau_explicit t h m N ht hh hm hmargin
+
+end ZeroFreeRegion.VinogradovKorobov

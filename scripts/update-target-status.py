@@ -32,9 +32,9 @@ CHAIN_SUMMARY = [
     },
     {
         "name": "Quantitative critical-line extensions",
-        "target": "hardy_littlewood_lower_bound_target",
-        "status": "Hardy's theorem and the Hardy-Littlewood linear lower bound are proved, including positive-ordinate odd and multiplicity-weighted forms; Selberg and Conrey remain open",
-        "next_step": "close the two Selberg bad-window estimates, then derive the positive-proportion zero count",
+        "target": "selberg_odd_zero_proportion_target",
+        "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds are proved, including positive-ordinate odd and multiplicity-weighted forms; Selberg and Conrey counts remain open",
+        "next_step": "close the two Selberg bad-window estimates and derive the T log T critical-line count, then develop Conrey-style percentage estimates",
     },
 ]
 

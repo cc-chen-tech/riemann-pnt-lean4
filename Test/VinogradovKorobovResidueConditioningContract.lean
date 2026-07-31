@@ -1,0 +1,10 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovResidueConditioning
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovResidueClassFinset
+#check vinogradovResidueClassSum
+#check vinogradovResidueClassFinset_filter_refinement
+#check vinogradovResidueClassSum_eq_sum_refinement
+#check norm_vinogradovResidueClassSum_pow_le_refinement
+#check sum_norm_vinogradovResidueClassSum_pow_le_refinement
