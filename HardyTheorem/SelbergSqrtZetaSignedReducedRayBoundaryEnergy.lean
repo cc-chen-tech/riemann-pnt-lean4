@@ -16,6 +16,16 @@ open scoped BigOperators
 
 namespace HardyTheorem
 
+private theorem harmonic_cast_nonneg (X : ℕ) :
+    0 ≤ (harmonic X : ℝ) := by
+  rw [show (harmonic X : ℝ) =
+      ∑ r ∈ Finset.Icc 1 X, (r : ℝ)⁻¹ by
+    simp only [harmonic_eq_sum_Icc, Rat.cast_sum, Rat.cast_inv,
+      Rat.cast_natCast]]
+  apply Finset.sum_nonneg
+  intro r _hr
+  positivity
+
 private theorem sq_sum_inv_mul_le_sum_inv_mul_sum_inv_mul_sq
     {ι : Type*} [DecidableEq ι]
     (s : Finset ι) (w : ι → ℝ) (f : ι → ℝ)
@@ -158,6 +168,112 @@ theorem
       · apply Finset.sum_nonneg
         intro p _hp
         positivity
+
+/-- The weighted tapered square energy of one denominator fiber is bounded
+by the corresponding global energy on `[1, X]`.  Projection to the second
+coordinate is injective on a fixed product fiber, so this reindexing has no
+fiber-cardinality loss. -/
+theorem
+    sum_weightedSq_selbergSqrtZetaSignedDenominatorFiber_le_globalTaperEnergy
+    (N X k : ℕ) :
+    (∑ p ∈ selbergSqrtZetaSignedDenominatorFiber N X k,
+        (p.2 : ℝ) * (selbergSqrtZetaTaperedCoeff X p.2) ^ 2) ≤
+      ∑ r ∈ Finset.Icc 1 X,
+        (r : ℝ) * (selbergSqrtZetaTaperedCoeff X r) ^ 2 := by
+  classical
+  let S := selbergSqrtZetaSignedDenominatorFiber N X k
+  let f : ℕ → ℝ := fun r =>
+    (r : ℝ) * (selbergSqrtZetaTaperedCoeff X r) ^ 2
+  have hinj :
+      ∀ p ∈ S, ∀ q ∈ S, p.2 = q.2 → p = q := by
+    rintro ⟨m, r⟩ hp ⟨m', r'⟩ hq hrr
+    simp only at hrr
+    subst r'
+    have hmr : m * r = k := (Finset.mem_filter.mp hp).2
+    have hm'r : m' * r = k := (Finset.mem_filter.mp hq).2
+    have hrRange :=
+      (Finset.mem_product.mp (Finset.mem_filter.mp hp).1).2
+    have hrPos : 0 < r := (Finset.mem_Icc.mp hrRange).1
+    have hmm' : m = m' :=
+      Nat.mul_right_cancel hrPos (hmr.trans hm'r.symm)
+    subst m'
+    rfl
+  have himage :
+      S.image Prod.snd ⊆ Finset.Icc 1 X := by
+    intro r hr
+    rcases Finset.mem_image.mp hr with ⟨p, hp, rfl⟩
+    exact
+      (Finset.mem_product.mp (Finset.mem_filter.mp hp).1).2
+  calc
+    (∑ p ∈ selbergSqrtZetaSignedDenominatorFiber N X k,
+        (p.2 : ℝ) * (selbergSqrtZetaTaperedCoeff X p.2) ^ 2) =
+        ∑ r ∈ S.image Prod.snd, f r := by
+      simpa only [S, f] using
+        (Finset.sum_image
+          (f := f) (g := Prod.snd) hinj).symm
+    _ ≤ ∑ r ∈ Finset.Icc 1 X, f r :=
+      Finset.sum_le_sum_of_subset_of_nonneg himage (by
+        intro r _hr _hrNot
+        dsimp only [f]
+        positivity)
+    _ = _ := by rfl
+
+/-- The arithmetic coefficient has absolute value at most one, so the
+global tapered square energy is bounded by the explicit linear-taper energy.
+This keeps the full taper weight instead of replacing it by a support count. -/
+theorem
+    sum_weightedSq_selbergSqrtZetaSignedDenominatorFiber_le_globalLinearTaperEnergy
+    (N X k : ℕ) :
+    (∑ p ∈ selbergSqrtZetaSignedDenominatorFiber N X k,
+        (p.2 : ℝ) * (selbergSqrtZetaTaperedCoeff X p.2) ^ 2) ≤
+      ∑ r ∈ Finset.Icc 1 X,
+        (r : ℝ) * (selbergMoebiusWeight X r) ^ 2 := by
+  calc
+    (∑ p ∈ selbergSqrtZetaSignedDenominatorFiber N X k,
+        (p.2 : ℝ) * (selbergSqrtZetaTaperedCoeff X p.2) ^ 2) ≤
+        ∑ r ∈ Finset.Icc 1 X,
+          (r : ℝ) * (selbergSqrtZetaTaperedCoeff X r) ^ 2 :=
+      sum_weightedSq_selbergSqrtZetaSignedDenominatorFiber_le_globalTaperEnergy
+        N X k
+    _ ≤ _ := by
+      apply Finset.sum_le_sum
+      intro r _hr
+      have hcoeff := abs_selbergSqrtZetaCoeff_le_one r
+      have hcoeff2 : (selbergSqrtZetaCoeff r) ^ 2 ≤ 1 := by
+        simpa only [sq_abs, one_pow] using
+          (sq_le_sq₀ (abs_nonneg (selbergSqrtZetaCoeff r)) zero_le_one).2
+            hcoeff
+      rw [selbergSqrtZetaTaperedCoeff, mul_pow]
+      apply mul_le_mul_of_nonneg_left
+      · simpa only [one_mul] using
+          mul_le_mul_of_nonneg_right hcoeff2
+            (sq_nonneg (selbergMoebiusWeight X r))
+      · positivity
+
+/-- Uniform denominator-fiber signed-square bound.  Its right-hand side
+depends only on `X`: one harmonic factor from weighted Cauchy--Schwarz and
+one explicit weighted linear-taper energy. -/
+theorem
+    sq_sum_selbergSqrtZetaSignedDenominatorFiber_taper_le_uniformLinearTaperEnergy
+    (N X k : ℕ) :
+    (∑ p ∈ selbergSqrtZetaSignedDenominatorFiber N X k,
+        selbergSqrtZetaTaperedCoeff X p.2) ^ 2 ≤
+      (harmonic X : ℝ) *
+        ∑ r ∈ Finset.Icc 1 X,
+          (r : ℝ) * (selbergMoebiusWeight X r) ^ 2 := by
+  calc
+    (∑ p ∈ selbergSqrtZetaSignedDenominatorFiber N X k,
+        selbergSqrtZetaTaperedCoeff X p.2) ^ 2 ≤
+        (harmonic X : ℝ) *
+          ∑ p ∈ selbergSqrtZetaSignedDenominatorFiber N X k,
+            (p.2 : ℝ) * (selbergSqrtZetaTaperedCoeff X p.2) ^ 2 :=
+      sq_sum_selbergSqrtZetaSignedDenominatorFiber_taper_le_harmonic_mul_weightedEnergy
+        N X k
+    _ ≤ _ :=
+      mul_le_mul_of_nonneg_left
+        (sum_weightedSq_selbergSqrtZetaSignedDenominatorFiber_le_globalLinearTaperEnergy
+          N X k)
+        (harmonic_cast_nonneg X)
 
 /-- Weighted Cauchy--Schwarz for the exact boundary defect.  The factor
 `sum (1 / d)` is the genuine harmonic mass of the boundary support, and the
@@ -303,5 +419,93 @@ theorem
       apply Finset.sum_nonneg
       intro d _hd
       positivity
+
+/-- The boundary defect is bounded uniformly by the square of its exact
+containing harmonic tail, the harmonic factor from the denominator fiber,
+and the explicit global linear-taper energy.  Both Cauchy--Schwarz steps keep
+their natural reciprocal weights; no boundary or fiber cardinality occurs. -/
+theorem
+    selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_harmonicTail_sq_mul_uniformLinearTaperEnergy
+    {N X a b : ℕ} (hX : 2 ≤ X) :
+    (selbergSqrtZetaSignedReducedRayBoundaryTerm N X a b) ^ 2 ≤
+      (∑ d ∈ Finset.Ioc
+          (min N X / b)
+          (min (X / a) (N * X / b)),
+          (d : ℝ)⁻¹) ^ 2 *
+        (harmonic X : ℝ) *
+        ∑ r ∈ Finset.Icc 1 X,
+          (r : ℝ) * (selbergMoebiusWeight X r) ^ 2 := by
+  let tail : ℝ :=
+    ∑ d ∈ Finset.Ioc
+      (min N X / b)
+      (min (X / a) (N * X / b)),
+      (d : ℝ)⁻¹
+  let energy : ℝ :=
+    ∑ r ∈ Finset.Icc 1 X,
+      (r : ℝ) * (selbergMoebiusWeight X r) ^ 2
+  have htail_nonneg : 0 ≤ tail := by
+    dsimp only [tail]
+    apply Finset.sum_nonneg
+    intro d _hd
+    positivity
+  have henergy_nonneg : 0 ≤ energy := by
+    dsimp only [energy]
+    apply Finset.sum_nonneg
+    intro r _hr
+    positivity
+  have hconstant_nonneg :
+      0 ≤ (harmonic X : ℝ) * energy :=
+    mul_nonneg (harmonic_cast_nonneg X) henergy_nonneg
+  have hdenominator :
+      (∑ d ∈
+          selbergSqrtZetaSignedCoprimeRayBoundaryScaleSupport N X a b,
+          (d : ℝ)⁻¹ *
+            (∑ p ∈
+                selbergSqrtZetaSignedDenominatorFiber N X (b * d),
+              selbergSqrtZetaTaperedCoeff X p.2) ^ 2) ≤
+        tail * ((harmonic X : ℝ) * energy) := by
+    calc
+      (∑ d ∈
+          selbergSqrtZetaSignedCoprimeRayBoundaryScaleSupport N X a b,
+          (d : ℝ)⁻¹ *
+            (∑ p ∈
+                selbergSqrtZetaSignedDenominatorFiber N X (b * d),
+              selbergSqrtZetaTaperedCoeff X p.2) ^ 2) ≤
+          ∑ d ∈
+            selbergSqrtZetaSignedCoprimeRayBoundaryScaleSupport N X a b,
+            (d : ℝ)⁻¹ * ((harmonic X : ℝ) * energy) := by
+        apply Finset.sum_le_sum
+        intro d _hd
+        apply mul_le_mul_of_nonneg_left
+        · simpa only [energy] using
+            sq_sum_selbergSqrtZetaSignedDenominatorFiber_taper_le_uniformLinearTaperEnergy
+              N X (b * d)
+        · positivity
+      _ = (∑ d ∈
+            selbergSqrtZetaSignedCoprimeRayBoundaryScaleSupport N X a b,
+            (d : ℝ)⁻¹) * ((harmonic X : ℝ) * energy) := by
+        rw [Finset.sum_mul]
+      _ ≤ tail * ((harmonic X : ℝ) * energy) := by
+        apply mul_le_mul_of_nonneg_right
+        · simpa only [tail] using
+            selbergSqrtZetaSignedCoprimeRayBoundaryScaleSupport_sum_inv_le
+              N X a b
+        · exact hconstant_nonneg
+  calc
+    (selbergSqrtZetaSignedReducedRayBoundaryTerm N X a b) ^ 2 ≤
+        tail *
+          ∑ d ∈
+            selbergSqrtZetaSignedCoprimeRayBoundaryScaleSupport N X a b,
+            (d : ℝ)⁻¹ *
+              (∑ p ∈
+                  selbergSqrtZetaSignedDenominatorFiber N X (b * d),
+                selbergSqrtZetaTaperedCoeff X p.2) ^ 2 := by
+      simpa only [tail] using
+        selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_harmonicTail_mul_denominatorEnergy
+          hX
+    _ ≤ tail * (tail * ((harmonic X : ℝ) * energy)) :=
+      mul_le_mul_of_nonneg_left hdenominator htail_nonneg
+    _ = tail ^ 2 * (harmonic X : ℝ) * energy := by ring
+    _ = _ := by rfl
 
 end HardyTheorem
