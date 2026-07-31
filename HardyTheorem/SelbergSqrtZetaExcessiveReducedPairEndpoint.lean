@@ -1,5 +1,6 @@
 import HardyTheorem.SelbergSqrtZetaSignedActualFourierTransfer
 import HardyTheorem.SelbergSqrtZetaSignedLagIntegral
+import HardyTheorem.SelbergSqrtZetaSignedRationalCoefficientReducedPairEnergy
 import HardyTheorem.SelbergSqrtZetaSignedRationalReducedPairShortModel
 
 /-!
@@ -16,6 +17,22 @@ open scoped BigOperators
 
 namespace HardyTheorem
 
+/-- The split complete-plus-boundary arithmetic energy on the canonical
+positive coprime-pair support. -/
+noncomputable def selbergSqrtZetaSignedReducedPairSplitEnergy
+    (N X : ℕ) : ℝ :=
+  ∑ p ∈ selbergSqrtZetaSignedRationalReducedPairSupport N X,
+    (2 *
+        (((X * min (p.1 * N) p.2 + 1 : ℕ) : ℝ) *
+          ((((p.1 * p.2 : ℕ) : ℝ)⁻¹) *
+            (selbergSqrtZetaSignedReducedRayCompleteTerm
+              N X p.1 p.2) ^ 2)) +
+      2 *
+        (((X * min (p.1 * N) p.2 + 1 : ℕ) : ℝ) *
+          ((((p.1 * p.2 : ℕ) : ℝ)⁻¹) *
+            (selbergSqrtZetaSignedReducedRayBoundaryTerm
+              N X p.1 p.2) ^ 2)))
+
 /-- The explicit arithmetic budget produced by the canonical reduced-pair
 short-model estimate. -/
 noncomputable def selbergSqrtZetaSignedReducedPairShortModelBudget
@@ -27,20 +44,43 @@ noncomputable def selbergSqrtZetaSignedReducedPairShortModelBudget
           (selbergSqrtZetaSignedRationalCoeff
             (firstZetaApproximationCutoff T) X q) +
     4 * Real.pi *
-      ∑ p ∈ selbergSqrtZetaSignedRationalReducedPairSupport
-          (firstZetaApproximationCutoff T) X,
-        (2 *
-            (((X * min (p.1 * firstZetaApproximationCutoff T) p.2 +
-                1 : ℕ) : ℝ) *
-              ((((p.1 * p.2 : ℕ) : ℝ)⁻¹) *
-                (selbergSqrtZetaSignedReducedRayCompleteTerm
-                  (firstZetaApproximationCutoff T) X p.1 p.2) ^ 2)) +
-          2 *
-            (((X * min (p.1 * firstZetaApproximationCutoff T) p.2 +
-                1 : ℕ) : ℝ) *
-              ((((p.1 * p.2 : ℕ) : ℝ)⁻¹) *
-                (selbergSqrtZetaSignedReducedRayBoundaryTerm
-                  (firstZetaApproximationCutoff T) X p.1 p.2) ^ 2)))
+      selbergSqrtZetaSignedReducedPairSplitEnergy
+        (firstZetaApproximationCutoff T) X
+
+/-- Once the common split reduced-pair energy is bounded by `B`, both the
+diagonal coefficient term and the local-separation term are bounded by
+`(T-H+4π)B`. -/
+theorem
+    selbergSqrtZetaSignedReducedPairShortModelBudget_le_of_splitEnergy_le
+    {T H B : ℝ} {X : ℕ} (hroom : H ≤ T)
+    (henergy :
+      selbergSqrtZetaSignedReducedPairSplitEnergy
+        (firstZetaApproximationCutoff T) X ≤ B) :
+    selbergSqrtZetaSignedReducedPairShortModelBudget T X H ≤
+      (T - H + 4 * Real.pi) * B := by
+  let N := firstZetaApproximationCutoff T
+  let split := selbergSqrtZetaSignedReducedPairSplitEnergy N X
+  have hdiag :
+      (∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
+          Complex.normSq (selbergSqrtZetaSignedRationalCoeff N X q)) ≤
+        split := by
+    simpa only [split, selbergSqrtZetaSignedReducedPairSplitEnergy] using
+      sum_normSq_selbergSqrtZetaSignedRationalCoeff_le_reducedPairComplete_add_boundary
+        N X
+  have hTH : 0 ≤ T - H := sub_nonneg.mpr hroom
+  have hfactor : 0 ≤ T - H + 4 * Real.pi := by positivity
+  calc
+    selbergSqrtZetaSignedReducedPairShortModelBudget T X H =
+        (T - H) *
+            ∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
+              Complex.normSq (selbergSqrtZetaSignedRationalCoeff N X q) +
+          4 * Real.pi * split := by
+      rfl
+    _ ≤ (T - H) * split + 4 * Real.pi * split :=
+      add_le_add (mul_le_mul_of_nonneg_left hdiag hTH) le_rfl
+    _ = (T - H + 4 * Real.pi) * split := by ring
+    _ ≤ (T - H + 4 * Real.pi) * B :=
+      mul_le_mul_of_nonneg_left henergy hfactor
 
 /-- Named-budget form of the actual rational short-model estimate. -/
 theorem
@@ -167,5 +207,49 @@ theorem
         (selbergSqrtZetaSignedShortIntegral X H t) ^ 2) ≤
         T * (H / 2) ^ 2 / 24 := hmoment
     _ = T / 24 * (H / 2) ^ 2 := by ring
+
+/-- A direct excessive-window endpoint from the single split reduced-pair
+energy.  Raising the height threshold so that `4π ≤ T` turns the uniform
+arithmetic condition `SplitEnergy ≤ 1/768` into the earlier
+`ShortModelBudget ≤ T/384` hypothesis. -/
+theorem
+    exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairSplitEnergy_le :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 1 ≤ T0 ∧
+      ∀ X : ℕ, 2 ≤ X → ∀ T H : ℝ,
+        T0 ≤ T → 0 < H → H ≤ T →
+        (selbergSqrtZetaSignedRationalSupport
+          (firstZetaApproximationCutoff T) X).Nontrivial →
+        selbergSqrtZetaSignedReducedPairSplitEnergy
+          (firstZetaApproximationCutoff T) X ≤ 1 / 768 →
+        6144 * C ^ 2 * (X : ℝ) ^ 2 ≤ T →
+        volume.real
+            (Icc T (2 * T - H) ∩
+              selbergSqrtZetaExcessiveSignedMassStarts X H (H / 2)) ≤
+          T / 24 := by
+  obtain ⟨C, T0, hC, hT0, hendpoint⟩ :=
+    exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairBudget_le
+  let T1 := max T0 (4 * Real.pi)
+  refine ⟨C, T1, hC, hT0.trans (le_max_left _ _), ?_⟩
+  intro X hX T H hT hH hroom hQ hsplit happrox
+  have hTold : T0 ≤ T := (le_max_left T0 (4 * Real.pi)).trans hT
+  have hpi : 4 * Real.pi ≤ T :=
+    (le_max_right T0 (4 * Real.pi)).trans hT
+  have hfactor :
+      T - H + 4 * Real.pi ≤ 2 * T := by
+    linarith
+  have hbudgetFirst :=
+    selbergSqrtZetaSignedReducedPairShortModelBudget_le_of_splitEnergy_le
+      hroom hsplit
+  have hbudget :
+      selbergSqrtZetaSignedReducedPairShortModelBudget T X H ≤
+        T / 384 := by
+    calc
+      selbergSqrtZetaSignedReducedPairShortModelBudget T X H ≤
+          (T - H + 4 * Real.pi) * (1 / 768) :=
+        hbudgetFirst
+      _ ≤ (2 * T) * (1 / 768) :=
+        mul_le_mul_of_nonneg_right hfactor (by norm_num)
+      _ = T / 384 := by ring
+  exact hendpoint X hX T H hTold hH hroom hQ hbudget happrox
 
 end HardyTheorem

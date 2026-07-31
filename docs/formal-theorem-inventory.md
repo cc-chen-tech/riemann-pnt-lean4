@@ -3766,6 +3766,14 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary`;
    the analytic output now contains only diagonal coefficient energy and the
    two explicit canonical arithmetic sums.
+   The diagonal term is no longer an independent arithmetic object:
+   `sum_normSq_selbergSqrtZetaSignedRationalCoeff_eq_reducedPairEnergy`
+   reindexes it exactly as
+   `sum_(a,b) (complete(a,b)+boundary(a,b))^2/(a*b)`, and
+   `sum_normSq_selbergSqrtZetaSignedRationalCoeff_le_reducedPairComplete_add_boundary`
+   controls it by the same weighted complete/boundary sum used for local
+   separation.  Thus the remaining estimate is one common reduced-pair
+   problem, not three unrelated budgets.
    The complete-main geometric weight is also normalized exactly by
    `sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_eq_min_coordinateWeights`
    as the minimum of numerator- and denominator-coordinate budgets.  Its two
@@ -3787,11 +3795,16 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairBudget_le`
    proves that budget `<= T / 384` and
    `6144 * C^2 * X^2 <= T` imply the required `hexcessive` measure bound
-   `<= T / 24`.  This is a conditional endpoint: proving the stated
-   arithmetic budget remains open.
+   `<= T / 24`.  The sharper interface
+   `exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairSplitEnergy_le`
+   absorbs the diagonal reduction and the harmless `4*pi` height threshold:
+   it needs only the single uniform arithmetic condition
+   `ReducedPairSplitEnergy <= 1/768`, plus the same zeta-approximation
+   condition.  This is still a conditional endpoint: proving that split
+   energy estimate remains open.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
    range contains only diagonal pairs.  The remaining target is no longer a
    reindexing problem: it is the sharp
-   arithmetic estimate of the two explicit canonical sums, followed by
+   arithmetic estimate of the common explicit canonical sums, followed by
    insertion into the final `hexcessive` budget.
