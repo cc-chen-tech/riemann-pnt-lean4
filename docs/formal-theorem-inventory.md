@@ -3729,8 +3729,12 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    is now bounded as one Hermitian object by coefficient energy plus
    local-separation weighted energy via
    `norm_integral_selbergSqrtZetaSignedRationalFixedShiftPhaseSum_le_localSeparation`.
+   That fixed-shift estimate is now averaged over the full shift square with
+   exact area cost `H^2`, identified with the real square energy of the actual
+   rational short model, and exported as
+   `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_localSeparation`.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
    range contains only diagonal pairs.  The remaining analytic-arithmetic
-   target is a sharp bound for the actual local-separation weighted energy and
-   its integration into the full shift-square `hexcessive` budget.
+   target is a sharp reduced-ratio bound for the actual local-separation
+   weighted energy and its insertion into the final `hexcessive` budget.
