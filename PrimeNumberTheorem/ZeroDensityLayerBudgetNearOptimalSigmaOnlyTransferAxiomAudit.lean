@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetNearOptimalSigmaOnlyTransfer
+
+namespace PrimeNumberTheorem
+
+#print axioms nearOptimalSigmaOnlyParameters_spec
+#print axioms nearOptimalSigmaOnlySelectedHeight_spec
+#print axioms exists_nearOptimalSigmaOnlySelectedHeight_within
+#print axioms actualNearOptimalSigmaOnlyUnifiedUpperSignedOmega
+
+end PrimeNumberTheorem
