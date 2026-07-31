@@ -122,7 +122,7 @@ worktree target scan, and `git diff --check` pass. The central multiplicity
 audit and complete allowlist command remain pending because unrelated Lean
 jobs repeatedly occupied the global single-process resource window.
 
-- [ ] **Step 5: Commit and publish a Draft PR**
+- [x] **Step 5: Commit and publish a Draft PR**
 
 ```bash
 git add PrimeNumberTheorem/PrimeSideDetectorMainPole.lean \
@@ -140,3 +140,6 @@ git push -u origin research/vk-edge-prime-side-detector
 Create a stacked Draft PR with base
 `research/vk-edge-right-higher-sharp-blocker`. The PR description must call
 this an algebraic obstruction, not a repeatable Sharp lower bound.
+
+Published as Draft PR #141. It remains non-merge-ready until the pending
+central audit and complete allowlist check pass.
