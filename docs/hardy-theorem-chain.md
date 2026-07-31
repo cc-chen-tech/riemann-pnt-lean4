@@ -29,6 +29,9 @@ the signed moment asymptotics, the auxiliary AFE and Gamma/theta asymptotics,
 Selberg proportions, and Conrey's percentage theorem.  The Hardy--Littlewood
 linear lower bound is proved, including the literature convention
 `0 < gamma <= T` and the standard multiplicity-weighted consequence.
+For the open Selberg estimate, the fixed coprime-ray coefficient sum now has
+an exact harmonic `1/d` representation and a four-term expansion in
+`1 / log X`; bounding those signed arithmetic terms is the next hard step.
 
 ## Verified Lean Starting Point
 
