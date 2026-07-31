@@ -3753,9 +3753,17 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    splits that signed sum exactly into a complete-range two-taper main term
    and the explicit boundary-tail defect; the corresponding weighted energy
    bound keeps their sum squared.
+   The canonical reduced-pair support now gives a unique positive coprime
+   representative for every rational frequency and an exact finite-sum
+   reindexing.  Consequently,
+   `sum_normSq_div_localFrequencySeparation_le_reducedPairBilinearEnergy`
+   closes the former global assembly gap: the entire local-separation energy
+   is bounded by one explicit coprime-pair sum with weight
+   `(1 + X * min(a*N,b)) / (a*b)`.  The complete/boundary version and its
+   factor-`2` separated form retain cancellation inside each ray component.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
-   range contains only diagonal pairs.  The remaining analytic-arithmetic
-   target is to sum these exact reduced-ray complete/boundary bounds sharply
-   over the canonical reduced support, then insert that arithmetic estimate
-   into the final `hexcessive` budget.
+   range contains only diagonal pairs.  The remaining target is no longer a
+   reindexing problem: it is the sharp
+   arithmetic estimate of the two explicit canonical sums, followed by
+   insertion into the final `hexcessive` budget.
