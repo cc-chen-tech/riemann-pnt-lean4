@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualPintzCertifiedGoodHeightOptimization
+
+#print axioms PrimeNumberTheorem.actualPintzCertifiedDynamicGrid
+#print axioms PrimeNumberTheorem.actualPintzCertifiedOptimalHeight_truncatedCertificate
+#print axioms PrimeNumberTheorem.actualPintzCertifiedOptimalHeight_property
