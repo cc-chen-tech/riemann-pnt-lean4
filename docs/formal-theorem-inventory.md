@@ -3766,6 +3766,17 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary`;
    the analytic output now contains only diagonal coefficient energy and the
    two explicit canonical arithmetic sums.
+   The named budget
+   `selbergSqrtZetaSignedReducedPairShortModelBudget` packages exactly those
+   diagonal, complete-main, and boundary-tail terms.  The theorem
+   `exists_integral_sq_selbergSqrtZetaSignedShortIntegral_le_reducedPairBudget_add_error`
+   transfers it to the actual mollified Hardy short integral, including the
+   uniform first-zeta approximation error.  Finally,
+   `exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairBudget_le`
+   proves that budget `<= T / 384` and
+   `6144 * C^2 * X^2 <= T` imply the required `hexcessive` measure bound
+   `<= T / 24`.  This is a conditional endpoint: proving the stated
+   arithmetic budget remains open.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
    range contains only diagonal pairs.  The remaining target is no longer a

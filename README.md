@@ -279,6 +279,15 @@ VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明
 | 本地分支 `feat/vinogradov-korobov-exponential-sums` | 差分、矩阵、秩分层和同余系统等指数和基础设施；该分支尚未推送到 `origin` | `vinogradov_korobov_zero_free_region` 仍是 `def ... : Prop` |
 | [Draft PR #8](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/8) | 平滑误差、有限零点簇振荡和有限 Weil certificate | 显式公式仍有 uncontrolled remainder，Weil 路线仍缺无限维桥 |
 
+`research/hardy-littlewood` 的最新边界比上表中的长摘要更进一步：
+全部有理频率已经无损重索引为唯一的正互素对 `(a,b)`，并拆成完整两 taper
+主项与边界尾项。`selbergSqrtZetaSignedReducedPairShortModelBudget` 把对角能量
+和这两个显式算术总和打包；若该预算不超过 `T / 384`，且有限 zeta 近似满足
+`6144 * C^2 * X^2 <= T`，则新的 Lean theorem 已推出 `hexcessive` 坏窗口测度
+不超过 `T / 24`。因此 `hexcessive` 的剩余缺口已不再是重索引或分析拼装，而是
+证明这两个显式互素对总和的尖锐统一上界。这个结论仍是条件端点，不是无条件
+Selberg `T log T` 定理。
+
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
 
