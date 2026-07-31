@@ -3766,6 +3766,11 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary`;
    the analytic output now contains only diagonal coefficient energy and the
    two explicit canonical arithmetic sums.
+   The complete-main geometric weight is also normalized exactly by
+   `sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_eq_min_coordinateWeights`
+   as the minimum of numerator- and denominator-coordinate budgets.  Its two
+   one-sided corollaries preserve each signed ray sum inside a single square;
+   they do not yet bound that signed arithmetic sum.
    The named budget
    `selbergSqrtZetaSignedReducedPairShortModelBudget` packages exactly those
    diagonal, complete-main, and boundary-tail terms.  The theorem
