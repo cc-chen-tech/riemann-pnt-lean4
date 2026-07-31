@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetVariableBoundaryMonotoneAbsorptionGapContract
+
+#print axioms PrimeNumberTheorem.variableBoundaryAbsorptionOrGap_of_monotone
+#print axioms PrimeNumberTheorem.variableBoundaryVisibleNormalizedKernelTail_tendsto_zero_of_monotone
