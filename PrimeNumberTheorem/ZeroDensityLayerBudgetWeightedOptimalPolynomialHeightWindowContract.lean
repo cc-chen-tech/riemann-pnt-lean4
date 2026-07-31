@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetWeightedOptimalPolynomialHeightWindow
+
+namespace PrimeNumberTheorem
+
+#check weightedPolynomialHeightFeasibilityGap
+#check weightedOptimalPolynomialHeightSafetyMargin
+#check weightedOptimalPolynomialHeightInnerExponent
+#check weightedOptimalPolynomialHeightOuterExponent
+#check weightedOptimalPolynomialHeightEpsilon
+#check @weightedPolynomialHeightCommonSafetyMargin_le_optimal
+#check weightedOptimalPolynomialHeightWindow_equalMargins
+#check weightedOptimalPolynomialHeight_q_one
+#check @weightedOptimalPolynomialHeightWindow_spec
+#check @weightedOptimalPolynomialSelectedHeight_spec
+
+end PrimeNumberTheorem
