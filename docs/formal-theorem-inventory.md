@@ -3761,6 +3761,11 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    is bounded by one explicit coprime-pair sum with weight
    `(1 + X * min(a*N,b)) / (a*b)`.  The complete/boundary version and its
    factor-`2` separated form retain cancellation inside each ray component.
+   The result is also substituted back into the actual rational short-model
+   `L²` estimate by
+   `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary`;
+   the analytic output now contains only diagonal coefficient energy and the
+   two explicit canonical arithmetic sums.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
    range contains only diagonal pairs.  The remaining target is no longer a

@@ -282,6 +282,7 @@ Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.sum_normSq_div_localFrequencySeparation_le_reducedPairBilinearEnergy`
 - `HardyTheorem.sum_normSq_div_localFrequencySeparation_le_reducedPairCompleteBoundaryEnergy`
 - `HardyTheorem.sum_normSq_div_localFrequencySeparation_le_reducedPairComplete_add_boundary`
+- `HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary`
 - `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant`
 - `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_zero_of_topRange`
 - `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_eq_effectiveSupport`

@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalReducedPairShortModel
+
+#check HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary
