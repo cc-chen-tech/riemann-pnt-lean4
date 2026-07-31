@@ -3733,8 +3733,12 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    exact area cost `H^2`, identified with the real square energy of the actual
    rational short model, and exported as
    `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_localSeparation`.
+   The former global spacing `1 / (N * X^2)` has also been sharpened pointwise:
+   a supported reduced key `a / b` has local logarithmic separation at least
+   `1 / (1 + X * min (a * N) b)`, and each weighted energy summand inherits
+   the reciprocal reduced-ratio weight.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
    range contains only diagonal pairs.  The remaining analytic-arithmetic
-   target is a sharp reduced-ratio bound for the actual local-separation
-   weighted energy and its insertion into the final `hexcessive` budget.
+   target is to reindex and sum these pointwise reduced-ratio bounds sharply,
+   then insert that arithmetic estimate into the final `hexcessive` budget.

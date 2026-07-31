@@ -270,6 +270,8 @@ Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedRationalFixedShiftPhaseSum_le_localSeparation`
 - `HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_eq_re_fixedShiftPhaseSum`
 - `HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_localSeparation`
+- `HardyTheorem.one_div_one_add_X_mul_min_le_localFrequencySeparation_reduced`
+- `HardyTheorem.normSq_div_localFrequencySeparation_le_reducedWeight`
 - `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant`
 - `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_zero_of_topRange`
 - `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_eq_effectiveSupport`
