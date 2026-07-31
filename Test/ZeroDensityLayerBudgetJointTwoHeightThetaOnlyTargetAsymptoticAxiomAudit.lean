@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightThetaOnlyTargetAsymptoticContract
+
+open PrimeNumberTheorem
+
+#print axioms tendsto_jointTwoHeightOptimalTargetExponent_one
+#print axioms tendsto_jointTwoHeightOptimalTargetExponent_gapRatio_one
+#print axioms tendsto_jointTwoHeightOptimalTargetExponent_cubicExcess
+#print axioms tendsto_jointTwoHeightCanonicalStrictTargetExponent_linearExcess

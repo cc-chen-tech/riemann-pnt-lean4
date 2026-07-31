@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightThetaOnlyTargetAsymptotic
+
+namespace PrimeNumberTheorem
+
+#check tendsto_jointTwoHeightOptimalTargetExponent_one
+#check tendsto_jointTwoHeightOptimalTargetExponent_gapRatio_one
+#check tendsto_jointTwoHeightOptimalTargetExponent_cubicExcess
+#check tendsto_jointTwoHeightCanonicalStrictTargetExponent_linearExcess
+
+end PrimeNumberTheorem
