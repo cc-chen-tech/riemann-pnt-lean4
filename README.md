@@ -410,8 +410,10 @@ complete/boundary 加权总和控制，因此不再需要独立的第四类算�
 有符号射线和始终保留在同一个平方内，但其尖锐上界仍未证明。边界尾项也已有
 `1/d` 加权 Cauchy 上界：第一因子是显式 harmonic tail，没有支持集基数损失；
 denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一界，因此边界平方
-被压成“显式 harmonic tail 的平方 × 只依赖 `X` 的线性 taper 能量”。还需要对
-这个有限 taper 能量作尖锐估计并对所有互素对求和。独立的 `hsmall` 链也已把
+被压成“显式 harmonic tail 的平方 × 只依赖 `X` 的线性 taper 能量”。该 taper
+能量现在又有无条件显式界 `4 * X^2 / log(X)^2`，所以单条 reduced ray 的边界项
+已获得 `1 / log(X)^2` 节省；还需要把 harmonic tail 与互素对求和统一压进最终
+`ReducedPairSplitEnergy` 预算。独立的 `hsmall` 链也已把
 `X < k <= N` 的高区间对角能量精确改写为实际有符号卷积平方
 `(((sqrt-zeta taper)^2 * zeta)(k))^2/k`，不再使用纤维基数或逐项绝对值上界；
 `k > N` 的实际截断尾项与非对角 gap sum 则仍显式保留。接下来必须分别给出这三个

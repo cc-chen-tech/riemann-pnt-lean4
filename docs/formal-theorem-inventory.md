@@ -3973,8 +3973,13 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `harmonic X * sum_(r<=X) r * selbergMoebiusWeight(X,r)^2`, again without a
    fiber-cardinality factor.  Consequently the full boundary square is at
    most the exact harmonic tail squared times that explicit `X`-only energy.
-   Estimating this finite taper energy sharply and summing over canonical
-   reduced pairs remain open.
+   The new theorem
+   `sum_Icc_mul_sq_selbergMoebiusWeight_le_four_mul_sq_div_log_sq` bounds this
+   taper energy by `4 * X^2 / log(X)^2`, and
+   `selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_four_mul_harmonicTail_sq_mul_harmonic_mul_sq_div_log_sq`
+   substitutes the saving into the exact reduced-ray boundary estimate.
+   Summing the remaining harmonic-tail expression over canonical reduced
+   pairs sharply enough for the final split-energy budget remains open.
    The named budget
    `selbergSqrtZetaSignedReducedPairShortModelBudget` packages exactly those
    diagonal, complete-main, and boundary-tail terms.  The theorem
