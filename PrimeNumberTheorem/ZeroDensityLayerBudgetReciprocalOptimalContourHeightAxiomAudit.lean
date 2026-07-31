@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetReciprocalOptimalContourHeight
+
+#print axioms PrimeNumberTheorem.reciprocalContourHeightFloor_lt_outer
+#print axioms PrimeNumberTheorem.reciprocalContourNearOptimalWindow_spec
+#print axioms PrimeNumberTheorem.reciprocalContourHeightFloor_optimal
+#print axioms PrimeNumberTheorem.reciprocalContourNearOptimalSelectedHeight_spec
+#print axioms PrimeNumberTheorem.exists_reciprocalContourSelectedHeight_within
