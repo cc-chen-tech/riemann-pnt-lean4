@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualPositiveOutsideClusterCapUnifiedTransferContract
+
+open PrimeNumberTheorem
+
+#print axioms PositiveOutsideClusterRealPartCap
+#print axioms positiveOutsideClusterRealPartCap_of_global
+#print axioms PositiveOutsideClusterRealPartCap.adjoinRealOrdinateZeros
+#print axioms exists_automaticGoodHeight_positiveOutsideClusterRealPartCapNaturalTargetTransfer
