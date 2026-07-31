@@ -1,0 +1,20 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointSlopeOptimalPolynomialHeightWindow
+
+namespace PrimeNumberTheorem
+
+#check jointPolynomialHeightEffectiveSlope
+#check jointPolynomialHeightFeasibilityGap
+#check jointOptimalPolynomialHeightSafetyMargin
+#check jointOptimalPolynomialHeightInnerExponent
+#check jointOptimalPolynomialHeightOuterExponent
+#check jointOptimalPolynomialHeightEpsilon
+#check @jointPolynomialHeightConstraints_iff_effectiveSlope
+#check @jointPolynomialHeightCommonSafetyMargin_le_optimal
+#check jointOptimalPolynomialHeightWindow_equalMargins
+#check @carlsonPolynomialDensitySlope_lt_one
+#check @carlsonFullTransferEffectiveSlope_eq_one
+#check carlsonFullTransferJointOptimizer_eq_unweighted
+#check @fullTransferMargin_implies_carlsonDensityMargin
+#check @exists_carlsonDensityMargin_without_fullTransferMargin
+
+end PrimeNumberTheorem
