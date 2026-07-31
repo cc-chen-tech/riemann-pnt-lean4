@@ -32,6 +32,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeProportionalWindowTransferAxiomAudit",
     "Test.VKEdgeDistinctComplementWitnessAxiomAudit",
     "Test.VKEdgeRightHigherSharpBlockerAxiomAudit",
+    "Test.PrimeSideDetectorMainPoleAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -145,6 +146,11 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.two_mul_currentSharpL2Constant_lt_targetPairLeadingEnergy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.rightHigherFullMovingGaussianSecondMoment_eq_zero_of_no_new_right_zero",
     "PrimeNumberTheorem.VKEdgePiOverTwo.targetPair_absorbed_and_fullMovingEnergy_zero_of_no_new_right_zero",
+    "PrimeNumberTheorem.PrimeSideDetector.finiteDirichletDetectorAtOne_eq_positive_sub_negative",
+    "PrimeNumberTheorem.PrimeSideDetector.finiteDirichletDetectorAtOne_pos_of_nonnegative",
+    "PrimeNumberTheorem.PrimeSideDetector.finiteDirichletDetectorAtOne_ne_zero_of_nonnegative",
+    "PrimeNumberTheorem.PrimeSideDetector.finiteDirichletDetectorAtOne_eq_zero_iff_mass_balance",
+    "PrimeNumberTheorem.PrimeSideDetector.positive_and_negative_coefficients_of_vanishes_at_one",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
