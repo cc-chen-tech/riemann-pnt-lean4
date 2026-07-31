@@ -3748,10 +3748,14 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `normSq_div_localFrequencySeparation_le_reducedRayLogExpansionWeight`
    exposes the exact four-term logarithmic expansion inside the same square,
    so the remaining global estimate can work directly with its arithmetic
-   cancellation.
+   cancellation.  Finally,
+   `selbergSqrtZetaSignedCoprimeRayBilinearScaleSum_eq_complete_add_boundary`
+   splits that signed sum exactly into a complete-range two-taper main term
+   and the explicit boundary-tail defect; the corresponding weighted energy
+   bound keeps their sum squared.
    Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
    arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
    range contains only diagonal pairs.  The remaining analytic-arithmetic
-   target is to sum these exact reduced-ray bounds sharply over the canonical
-   reduced support, then insert that arithmetic estimate into the final
-   `hexcessive` budget.
+   target is to sum these exact reduced-ray complete/boundary bounds sharply
+   over the canonical reduced support, then insert that arithmetic estimate
+   into the final `hexcessive` budget.
