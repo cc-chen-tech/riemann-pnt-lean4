@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightImprovedCapThresholdStrictMono
+
+namespace PrimeNumberTheorem
+
+#check jointTwoHeightCanonicalDensityExponent_strictAnti
+#check jointTwoHeightImprovedGlobalCapThreshold_strictMono
+#check jointTwoHeightImprovedGlobalCapThreshold_twoThird
+#check jointTwoHeightImprovedGlobalCapThreshold_one
+#check jointTwoHeightImprovedGlobalCapThreshold_mem_Ioo
+
+end PrimeNumberTheorem

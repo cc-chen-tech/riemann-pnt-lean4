@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightImprovedCapThresholdStrictMonoContract
+
+open PrimeNumberTheorem
+
+#print axioms jointTwoHeightCanonicalDensityExponent_strictAnti
+#print axioms jointTwoHeightImprovedGlobalCapThreshold_strictMono
+#print axioms jointTwoHeightImprovedGlobalCapThreshold_mem_Ioo
