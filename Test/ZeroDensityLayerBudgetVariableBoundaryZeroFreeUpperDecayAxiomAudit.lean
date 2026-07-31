@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetVariableBoundaryZeroFreeUpperDecay
+
+#print axioms PrimeNumberTheorem.variableBoundaryTargetAmplitude_tendsto_zero_of_zeroFreeDecay
+#print axioms PrimeNumberTheorem.actualSigmaOnlyRunningBoundaryZeroFreeUpperDecaySignedOmega
