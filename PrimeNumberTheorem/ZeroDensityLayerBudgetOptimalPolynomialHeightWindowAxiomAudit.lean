@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetOptimalPolynomialHeightWindow
+
+#print axioms PrimeNumberTheorem.polynomialHeightCommonSafetyMargin_le_optimal
+#print axioms PrimeNumberTheorem.optimalPolynomialHeightWindow_equalMargins
+#print axioms PrimeNumberTheorem.optimalPolynomialHeightWindow_spec
+#print axioms PrimeNumberTheorem.optimalPolynomialSelectedHeight_spec
