@@ -42,7 +42,7 @@
 - Consumes: Mathlib `Polynomial`, `Complex.exp`, and finite products.
 - Produces: the exact public names and types implemented in Task 2.
 
-- [ ] **Step 1: Create the failing contract**
+- [x] **Step 1: Create the failing contract**
 
 ```lean
 import PrimeNumberTheorem.QPowerDetectorAlgebra
@@ -138,7 +138,7 @@ namespace PrimeNumberTheorem.PrimeSideDetector
 end PrimeNumberTheorem.PrimeSideDetector
 ```
 
-- [ ] **Step 2: Verify that the contract fails for the intended reason**
+- [x] **Step 2: Verify that the contract fails for the intended reason**
 
 Run:
 
@@ -148,7 +148,7 @@ LEAN_NUM_THREADS=1 lake env lean Test/QPowerDetectorAlgebraContract.lean
 
 Expected: failure because `PrimeNumberTheorem.QPowerDetectorAlgebra` and its declarations do not exist.
 
-- [ ] **Step 3: Commit the red contract**
+- [x] **Step 3: Commit the red contract**
 
 ```bash
 git add Test/QPowerDetectorAlgebraContract.lean
