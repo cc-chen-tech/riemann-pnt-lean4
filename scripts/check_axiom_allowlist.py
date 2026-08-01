@@ -32,8 +32,10 @@ AXIOM_AUDIT_MODULES = [
     "PrimeNumberTheorem.HalfIsolatedZetaDyadicAdapter.AxiomAudit",
     "Test.SelbergLagDyadicGeometryAxiomAudit",
     "Test.SeparatedFrequencyPackingAxiomAudit",
+    "Test.SeparatedFrequencySquareEnvelopeAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.sum_sq_stationaryMinReciprocalEnvelope_le",
     "MathlibAux.card_sub_one_mul_separation_le_two_mul_radius",
     "HardyTheorem.selberg_lag_dyadic_mem",
     "HardyTheorem.selberg_lag_shifted_dyadic_mem",
