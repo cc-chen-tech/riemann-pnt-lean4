@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ExceptionalZeroDyadicDirectL2
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms zeroOrdinateDyadicGaussianEnergy_le
