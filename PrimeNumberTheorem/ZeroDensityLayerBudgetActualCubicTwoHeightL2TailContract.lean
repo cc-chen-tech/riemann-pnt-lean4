@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCubicTwoHeightL2Tail
+
+namespace PrimeNumberTheorem
+
+#check actualCubicDyadicStripSquareCapacity
+#check actualCubicDyadicStripSquareCapacityExcluding
+#check actualCubicDyadicStripSquareCapacityExcluding_le
+#check actualCubicDyadicStripSquareCapacityExcluding_le_reciprocal
+#check exists_actualCubicDyadicStripSquareCapacityExcluding_le_count
+#check cubicDyadicCountProduct_eq_sixthPower
+
+end PrimeNumberTheorem
