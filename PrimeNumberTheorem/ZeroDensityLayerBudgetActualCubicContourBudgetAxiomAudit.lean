@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCubicContourBudgetContract
+
+open PrimeNumberTheorem.ExplicitFormulaResidues
+
+#print axioms norm_thirdOrderExplicitFormulaIntegrand_eq
+#print axioms norm_thirdOrderExplicitFormulaIntegrand_le
+#print axioms norm_integral_thirdOrder_horizontal_le
+#print axioms exists_goodHeight_Icc_norm_integral_thirdOrder_horizontal_le
+#print axioms cubicRightTruncationExponent_lt_zero
+#print axioms cubicHorizontalContourExponent_lt_zero
