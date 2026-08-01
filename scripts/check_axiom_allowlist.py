@@ -24,6 +24,8 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeHighZeroBucketEnergyAxiomAudit",
     "Test.GaussianBucketSchurAxiomAudit",
     "Test.VKEdgeHighZeroGaussianEnergyAxiomAudit",
+    "MathlibAux.DyadicDriftingGaussianSchur.AxiomAudit",
+    "PrimeNumberTheorem.HalfIsolatedZetaDyadicAdapter.AxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -81,6 +83,14 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.sum_gaussianKernel_le_bucketEnergy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zeroOrdinateBucketGaussianEnergy_le",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_zeroOrdinateBucketGaussianEnergy_lt",
+    "MathlibAux.gaussianGram_le_occupancy_mul_sum_sq",
+    "MathlibAux.dyadicDriftingGaussianGram_le_occupancy_mul_sum_sq",
+    "MathlibAux.dyadicDriftingGaussianGram_le_or_quantitativeCluster",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.zetaDyadicBucketPairs_snd_inj",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicZeros_spec",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.zetaLowZeroFinset_disjoint_zetaRightDyadicZeros",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_occupancy_mul_sum_sq",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_or_quantitativeCluster",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
