@@ -35,8 +35,31 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
       (dynamicComplementDyadicOccupancy S T k : ℝ) ≤
         C * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)))
 
-#check low_actualZetaDyadicZero_mem_rightHigherExclusionSet
-#check exists_rightHigherDyadicSquareCapacity_le_log_linear
-#check rightHigherActualZetaDyadicLinearCapacity_le_zeroDensityCount
+#check
+  (low_actualZetaDyadicZero_mem_rightHigherExclusionSet :
+    ∀ (S : Finset ℂ) {Told sigma T : ℝ} {k : ℕ} {rho : ℂ},
+      rho ∈ actualZetaDyadicZeroBlock k →
+      |rho.im| < 4 → 4 ≤ Told → (2 : ℝ) ^ (k + 1) ≤ T →
+      rho ∈ rightHigherExclusionSet S Told sigma T)
+
+#check
+  (exists_rightHigherDyadicSquareCapacity_le_log_linear :
+    ∃ B : ℝ, 0 ≤ B ∧
+      ∀ (S : Finset ℂ) (Told sigma T : ℝ) (k : ℕ),
+        4 ≤ Told → (2 : ℝ) ^ (k + 1) ≤ T →
+        actualZetaDyadicSquareReciprocalCapacityExcluding k
+            (rightHigherExclusionSet S Told sigma T) ≤
+          (B * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 6))) *
+            actualZetaDyadicLinearReciprocalCapacityExcluding k
+              (rightHigherExclusionSet S Told sigma T))
+
+#check
+  (rightHigherActualZetaDyadicLinearCapacity_le_zeroDensityCount :
+    ∀ (S : Finset ℂ) {Told sigma T : ℝ} (k : ℕ),
+      0 ≤ Told → (2 : ℝ) ^ (k + 1) ≤ T →
+      actualZetaDyadicLinearReciprocalCapacityExcluding k
+          (rightHigherExclusionSet S Told sigma T) ≤
+        (((2 : ℝ) ^ k) ^ 2)⁻¹ *
+          (ZeroDensity.zeroDensityCount sigma ((2 : ℝ) ^ (k + 1)) : ℝ))
 
 end PrimeNumberTheorem.VKEdgePiOverTwo

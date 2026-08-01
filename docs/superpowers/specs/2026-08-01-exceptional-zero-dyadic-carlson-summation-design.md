@@ -119,8 +119,11 @@ E_[K,L),S ≤ gaussianBucketSchurConstant *
     (1 + Occ k) * squareCapacity k.
 ```
 
-The right-higher specialization then consumes the occupancy, square-to-
-linear, and linear-to-Carlson bounds above.
+The right-higher specialization preserves the farther-right alternative.  It
+either returns a surviving packet zero with `beta < rho.re`, together with
+its Carlson-strip, positive-height, and non-exclusion facts, or consumes the
+occupancy, square-to-linear, and linear-to-Carlson bounds above to control the
+whole-range energy.
 
 ### 5. Carlson majorant and uniform high tail
 
@@ -145,11 +148,18 @@ that for `K0 ≤ k`,
 Because `0 < (2 : ℝ)^(q-2) < 1`, the polynomial-geometric sequence on the
 right is summable.  The public endpoint must include both:
 
-1. a finite-range whole-Gram bound for every `K0 ≤ K < L` satisfying
-   `(2 : ℝ)^L ≤ T` and `4 ≤ Told`;
-2. for every `eta > 0`, a cutoff `Keta` such that every such finite range
-   beginning at `K ≥ Keta` has energy less than `eta`, uniformly in `S`,
-   `T`, and the upper endpoint `L`.
+1. an unconditional finite-range whole-Gram bound in terms of the weighted
+   block capacities, retaining all cross-block interactions;
+2. for every `eta > 0`, a cutoff `Keta` such that every range with
+   `Keta ≤ K < L`, `(2 : ℝ)^L ≤ T`, and `4 ≤ Told` satisfies the exact
+   dichotomy: either there are `n` and `rho` with `n` in the dyadic range,
+   `rho` surviving the right-higher exclusion packet, `beta < rho.re`,
+   `rho` in the Carlson zero-density finset, `Told < rho.im`, and `rho ∉ S`;
+   or the whole-range centered-frozen energy is less than `eta`.
+
+The high-tail endpoint is this disjunction, not an unconditional energy
+inequality and not a zero-exclusion statement.  It introduces no additional
+no-farther-right hypothesis.
 
 The constants may depend on the fixed strip parameter `sigma` and the
 Gaussian Schur constant, but not on `S`, `T`, `Told`, `K`, or `L`.
