@@ -32,6 +32,9 @@ theorem exists_scaledRightIntegral_eq_residue_sum_sub_thirdOrderContourRemainder
         a < p.re ∧ p.re < c ∧
           -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
       (∀ p ∈ poles, p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
       (∀ p ∈ poles, residue p =
         if p = 1 then (x : ℂ)
         else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 3) ∧
@@ -42,8 +45,8 @@ theorem exists_scaledRightIntegral_eq_residue_sum_sub_thirdOrderContourRemainder
   rcases
       exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residue_sum
         hx ha hac hboundary with
-    ⟨poles, residue, hpoles, hclass, hresidue, hrect⟩
-  refine ⟨poles, residue, hpoles, hclass, hresidue, ?_⟩
+    ⟨poles, residue, hpoles, hclass, hcomplete, hresidue, hrect⟩
+  refine ⟨poles, residue, hpoles, hclass, hcomplete, hresidue, ?_⟩
   have hright := I_mul_verticalIntegral_eq_two_pi_I_mul_scaledIntegral
     (thirdOrderExplicitFormulaIntegrand x) c W
   unfold MathlibAux.boundaryRectIntegral at hrect
@@ -86,6 +89,9 @@ theorem exists_norm_residue_sum_sub_thirdOrderContourRemainder_sub_secondRieszPs
         a < p.re ∧ p.re < c ∧
           -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
       (∀ p ∈ poles, p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
       (∀ p ∈ poles, residue p =
         if p = 1 then (x : ℂ)
         else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 3) ∧
@@ -97,8 +103,8 @@ theorem exists_norm_residue_sum_sub_thirdOrderContourRemainder_sub_secondRieszPs
   rcases
       exists_scaledRightIntegral_eq_residue_sum_sub_thirdOrderContourRemainder
         hx ha hac hboundary with
-    ⟨poles, residue, hpoles, hclass, hresidue, hshift⟩
-  refine ⟨poles, residue, hpoles, hclass, hresidue, ?_⟩
+    ⟨poles, residue, hpoles, hclass, hcomplete, hresidue, hshift⟩
+  refine ⟨poles, residue, hpoles, hclass, hcomplete, hresidue, ?_⟩
   have hperron :=
     norm_truncated_negLogDeriv_thirdOrder_sub_secondRieszPsi_le hx hc hW
   have hintegral :
