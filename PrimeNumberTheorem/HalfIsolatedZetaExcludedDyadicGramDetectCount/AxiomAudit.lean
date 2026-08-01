@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount
+
+open PrimeNumberTheorem
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms zetaRightDyadicGaussianGramExcluding_le_fullMass_or_quantitativeCluster
+#print axioms zetaRightDyadicGaussianGramExcluding_le_fourCarlsonCapacities_or_quantitativeCluster
