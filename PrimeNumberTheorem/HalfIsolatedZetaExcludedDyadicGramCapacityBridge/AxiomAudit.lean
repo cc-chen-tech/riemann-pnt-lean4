@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramCapacityBridge
+
+open PrimeNumberTheorem
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms zetaRightDyadicGaussianGramExcluding_le_occupancy_mul_fullMass
