@@ -2560,7 +2560,11 @@ lean_lib RiemannPNT where
     `Test.ZeroDensityLayerBudgetDyadicReciprocalSummabilityAxiomAudit,
     `PrimeNumberTheorem.VKEdgeDesmoothedLeftDerivative,
     `PrimeNumberTheorem.VKEdgeDesmoothedLeftDerivativeAxiomAudit,
-    `Test.VKEdgeDesmoothedLeftDerivativeContract
+    `Test.VKEdgeDesmoothedLeftDerivativeContract,
+    `Test.VKEdgeCubicMultiplierDerivativeContract,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftAmplitude,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftAmplitudeAxiomAudit,
+    `Test.VKEdgeDesmoothedLeftAmplitudeContract
   ]
 
 require mathlib from "./vendor/mathlib"
