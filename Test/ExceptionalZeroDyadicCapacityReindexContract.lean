@@ -28,4 +28,15 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
       dynamicComplementDyadicLinearReciprocalCapacity S T k =
         actualZetaDyadicLinearReciprocalCapacityExcluding k S)
 
+#check
+  (exists_dynamicComplementDyadicOccupancy_le_log :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (S : Finset ℂ) (T : ℝ) (k : ℕ),
+      2 ≤ k →
+      (dynamicComplementDyadicOccupancy S T k : ℝ) ≤
+        C * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)))
+
+#check low_actualZetaDyadicZero_mem_rightHigherExclusionSet
+#check exists_rightHigherDyadicSquareCapacity_le_log_linear
+#check rightHigherActualZetaDyadicLinearCapacity_le_zeroDensityCount
+
 end PrimeNumberTheorem.VKEdgePiOverTwo
