@@ -8,4 +8,3 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #print axioms halfHeightCarlsonTargetExponent_pos
 #print axioms polynomialWindowCapacity_threshold_iff
 #print axioms halfHeightWindowCapacity_threshold_iff
-#print axioms balancedHeightWindowCapacity_threshold_iff
