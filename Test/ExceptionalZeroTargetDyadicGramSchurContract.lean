@@ -1,0 +1,20 @@
+import PrimeNumberTheorem.ExceptionalZeroTargetDyadicGramSchur
+
+open Complex
+open scoped BigOperators
+
+namespace PrimeNumberTheorem
+namespace VKEdgePiOverTwo
+
+#check dyadicUnitBucketIndexSet
+#check dynamicComplementDyadicOccupancy
+#check finiteZeroClusterCoefficientAt_norm_sq_eq
+#check dynamicComplementDyadicTargetSquareCapacity
+#check dynamicComplementDyadicGaussianMajorantEnergy_le_targetSquareCapacity
+#check rightHigherDyadicGaussianMajorantEnergy_le_targetSquareCapacity
+#check rightHigherDyadic_fartherRight_or_all_re_le
+#check rightHigherDyadicTargetSquareCapacity_le_unweighted_of_re_le
+#check rightHigherDyadic_fartherRight_or_gram_le_unweighted
+
+end VKEdgePiOverTwo
+end PrimeNumberTheorem
