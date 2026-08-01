@@ -1,0 +1,13 @@
+import PrimeNumberTheorem.HalfIsolatedZetaFullDyadicCapacityBridge
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check conjugateFinset
+#check mem_conjugateFinset_iff
+#check not_mem_conjugateFinset_iff
+#check mem_zeroOrdinateUnitBucket_conj_iff
+#check conjugateBucketPair_mem_positiveExcluding_iff
+#check zetaRightDyadicNegativeMassSquareExcluding
+#check zetaRightDyadicNegativeMassSquareExcluding_eq_positive_conjugateFinset
+
+end PrimeNumberTheorem.VKEdgePiOverTwo
