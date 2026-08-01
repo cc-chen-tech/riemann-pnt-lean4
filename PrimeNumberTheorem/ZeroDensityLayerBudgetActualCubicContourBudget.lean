@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetGoodHeightDesmoothedCentralContour
 import PrimeNumberTheorem.ZeroDensityLayerBudgetCubicExplicitFormula
+import PrimeNumberTheorem.PNTFiniteZeroSum
 
 /-!
 # Actual cubic contour budgets
@@ -108,6 +109,49 @@ theorem exists_goodHeight_Icc_norm_integral_thirdOrder_horizontal_le :
     exact hlog t ht sigma (ha.trans hsigmaBounds.1)
       (hsigmaBounds.2.trans hc)
   · positivity
+
+/-- Positive dynamic left boundary obtained by reflecting the proved finite
+height right zero-free edge. -/
+noncomputable def dynamicCubicLeftBoundary (b H : ℝ) : ℝ :=
+  b / (2 * Real.log (H + 6))
+
+/-- Every finite-height nontrivial zeta zero lies strictly to the right of one
+common positive dynamic cubic left boundary.  The factor `1/2` supplies the
+strict gap and keeps the contour away from the Perron origin. -/
+theorem exists_dynamicCubicLeftBoundary_nontrivialZero_re_gt :
+    ∃ b : ℝ, 0 < b ∧
+      ∀ (H : ℝ), 4 ≤ H →
+        0 < dynamicCubicLeftBoundary b H ∧
+        ∀ (rho : ℂ),
+          RiemannHypothesis.IsNontrivialZero rho →
+          |rho.im| ≤ H →
+          dynamicCubicLeftBoundary b H < rho.re := by
+  rcases
+      ExplicitFormulaAux.exists_nontrivialZero_re_le_one_sub_div_log_truncation
+    with ⟨b, hb, hright⟩
+  refine ⟨b, hb, ?_⟩
+  intro H hH
+  have hH6 : 1 < H + 6 := by linarith
+  have hlog : 0 < Real.log (H + 6) := Real.log_pos hH6
+  have hleftPos : 0 < dynamicCubicLeftBoundary b H := by
+    unfold dynamicCubicLeftBoundary
+    positivity
+  refine ⟨hleftPos, ?_⟩
+  intro rho hrho him
+  have hmem : rho ∈ nontrivialZerosFinset H :=
+    nontrivial_zero_mem_nontrivialZerosFinset hrho him
+  have hrefmem : 1 - rho ∈ nontrivialZerosFinset H :=
+    one_sub_mem_nontrivialZerosFinset hmem
+  have href := hright H hH (1 - rho) hrefmem
+  have hrhoLower : b / Real.log (H + 6) ≤ rho.re := by
+    change 1 - rho.re ≤ 1 - b / Real.log (H + 6) at href
+    linarith
+  unfold dynamicCubicLeftBoundary
+  have hhalf : b / (2 * Real.log (H + 6)) <
+      b / Real.log (H + 6) := by
+    rw [div_lt_div_iff₀ (by positivity) hlog]
+    nlinarith
+  exact hhalf.trans_le hrhoLower
 
 /-- Right-line truncation has a strictly negative target-normalized exponent
 under the joint contour window. -/
