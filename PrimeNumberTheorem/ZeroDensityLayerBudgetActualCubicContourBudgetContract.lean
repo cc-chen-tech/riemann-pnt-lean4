@@ -7,5 +7,7 @@ open PrimeNumberTheorem.ExplicitFormulaResidues
 #check norm_thirdOrderExplicitFormulaIntegrand_le
 #check norm_integral_thirdOrder_horizontal_le
 #check exists_goodHeight_Icc_norm_integral_thirdOrder_horizontal_le
+#check dynamicCubicLeftBoundary
+#check exists_dynamicCubicLeftBoundary_nontrivialZero_re_gt
 #check cubicRightTruncationExponent_lt_zero
 #check cubicHorizontalContourExponent_lt_zero
