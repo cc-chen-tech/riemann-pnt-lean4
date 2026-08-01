@@ -763,6 +763,41 @@ private theorem sum_sq_ratioCoeff_over_reducedPairSupport_le
         unfold f
         positivity)
 
+/-- The unweighted complete reduced-pair energy is controlled directly by the
+product-side Parseval energy.  No geometric factor depending on either `N` or
+`X` is introduced. -/
+theorem sum_selbergSqrtZetaSignedReducedPairCompletePlainEnergy_le_nineteen_fourths_add_high
+    {N X : ℕ} (hNX : X ≤ N) (hX : 1 < X)
+    (hlarge : Real.log 4 + 5 ≤ Real.log X) :
+    (∑ p ∈ selbergSqrtZetaSignedRationalReducedPairSupport N X,
+        (((p.1 * p.2 : ℕ) : ℝ)⁻¹) *
+          selbergSqrtZetaSignedReducedRayCompleteTerm
+            N X p.1 p.2 ^ 2) ≤
+      (19 : ℝ) / 4 + selbergSqrtZetaCompleteProductHighEnergy X := by
+  calc
+    (∑ p ∈ selbergSqrtZetaSignedRationalReducedPairSupport N X,
+        (((p.1 * p.2 : ℕ) : ℝ)⁻¹) *
+          selbergSqrtZetaSignedReducedRayCompleteTerm
+            N X p.1 p.2 ^ 2) =
+        ∑ p ∈ selbergSqrtZetaSignedRationalReducedPairSupport N X,
+          selbergSqrtZetaCompleteRatioCoeff X
+            (selbergSqrtZetaSignedReducedPairKey p) ^ 2 := by
+      apply Finset.sum_congr rfl
+      intro p hp
+      have hpFacts :=
+        selbergSqrtZetaSignedRationalReducedPairSupport_mem_iff.mp hp
+      exact inv_mul_completeTerm_sq_eq_ratioCoeff_sq
+        hNX (by omega) hpFacts.1 hpFacts.2.1 hpFacts.2.2.1
+    _ ≤ ∑ q ∈ selbergSqrtZetaCompleteRatioSupport X,
+          selbergSqrtZetaCompleteRatioCoeff X q ^ 2 :=
+      sum_sq_ratioCoeff_over_reducedPairSupport_le hNX (by omega)
+    _ = ∑ n ∈ selbergSqrtZetaCompleteProductSupport X,
+          selbergSqrtZetaCompleteProductCoeff X n ^ 2 :=
+      sum_sq_selbergSqrtZetaCompleteRatioCoeff_eq_productCoeff X
+    _ ≤ (19 : ℝ) / 4 + selbergSqrtZetaCompleteProductHighEnergy X :=
+      sum_sq_selbergSqrtZetaCompleteProductCoeff_le_nineteen_fourths_add_high
+        hX hlarge
+
 /-- The canonical complete main-term energy loses no factor depending on the
 zeta cutoff `N`.  Multiplicative Parseval and the exact two-taper convolution
 reduce it to `X² + 1` times a one-dimensional signed product energy. -/

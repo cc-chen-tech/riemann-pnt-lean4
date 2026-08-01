@@ -443,6 +443,17 @@ denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一
 严格等于一个带 mixed-product cutoff 的 signed rational energy，并再乘上尾区非零频率
 给出的 `(2 / log (N + 1))^2` 衰减。因而不会因为扩大到全 rational energy 而把整块
 低频/载波能量粗略加入这个尾部预算；这不等于逐项删去所有 ratio-one 交叉项。
+该 filtered tail 还已精确写成“全 rational 平方能量减去 `k <= N` 的 product
+平方能量”，并证明随 cutoff 单调递减且始终非负；因此后续可直接复用已有 reduced-pair
+全能量公式，同时必须保留低 product 块的真实扣除。
+这一精确扣除现已接到 reduced-pair complete/boundary 上界，后续算术估计不会先把 tail
+粗放回全能量；ratio-one 项仍可能出现在 cutoff 以上，因此没有被误报为 carrier-free。
+其中 complete reduced-ray 部分又已通过 multiplicative Parseval 压到
+`(X^2+1) * (19/4 + complete-product high energy)`，不再带 zeta cutoff `N` 的损失；
+进一步从精确无权 reduced-pair 恒等式出发，boundary 已保留 harmonic tail 与
+`1/log(X)^2` taper 衰减；complete 部分也直接等于 ratio/product Parseval 能量，
+不再承受局部频率分离使用的额外几何权重 `X^2+1`。
+当前未闭合的是 high product 卷积能量、显式 boundary taper budget 和非对角 gap 的统一尖锐上界。
 `hsmall` 现在剩下 complete-range 有符号卷积能量、这个 filtered mixed-tail energy，
 以及非对角 gap sum 的尖锐统一估计。
 上述结论仍是条件端点，不是无条件 Selberg `T log T` 定理。

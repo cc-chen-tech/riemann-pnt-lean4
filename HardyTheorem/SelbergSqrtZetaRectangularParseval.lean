@@ -642,6 +642,33 @@ theorem
     _ = selbergSqrtZetaSignedRationalMixedProductTailEnergy N X K :=
       (rectangular_ratio_mixed_tail_energy_eq_product_tail_energy N X K).symm
 
+/-- Although it is presented as a signed rational correlation, the filtered
+mixed-product tail energy is nonnegative because it is exactly a sum of
+squared collected product coefficients. -/
+theorem selbergSqrtZetaSignedRationalMixedProductTailEnergy_nonneg
+    (N X K : ℕ) :
+    0 ≤ selbergSqrtZetaSignedRationalMixedProductTailEnergy N X K := by
+  rw [←
+    sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_rectangularProductTail_eq_signedRationalMixedProductTailEnergy]
+  exact Finset.sum_nonneg (fun k _hk => Complex.normSq_nonneg _)
+
+/-- Raising the product cutoff can only decrease the exact filtered tail
+energy. -/
+theorem selbergSqrtZetaSignedRationalMixedProductTailEnergy_antitone_cutoff
+    (N X : ℕ) {K L : ℕ} (hKL : K ≤ L) :
+    selbergSqrtZetaSignedRationalMixedProductTailEnergy N X L ≤
+      selbergSqrtZetaSignedRationalMixedProductTailEnergy N X K := by
+  rw [←
+      sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_rectangularProductTail_eq_signedRationalMixedProductTailEnergy,
+    ←
+      sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_rectangularProductTail_eq_signedRationalMixedProductTailEnergy]
+  apply Finset.sum_le_sum_of_subset_of_nonneg
+  · intro k hk
+    rcases Finset.mem_filter.mp hk with ⟨hkSupport, hkL⟩
+    exact Finset.mem_filter.mpr ⟨hkSupport, hKL.trans_lt hkL⟩
+  · intro k _hk _hnot
+    exact Complex.normSq_nonneg _
+
 /-- The explicit interval tail equals the filtered mixed-product energy.  Any
 interval point not represented by a rectangular triple has zero collected
 coefficient, so no enlargement to the full rational energy is needed. -/
@@ -802,6 +829,61 @@ theorem sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_eq_signedRational
       rw [selbergSqrtZetaShortDirichletCollectedCoeff_eq_zero_of_not_mem_rectangularProductSupport
         hnot]
       simp)
+
+/-- Exact decomposition of the full rational coefficient energy into the
+integer-product block `k <= N` and the genuinely truncated product tail.
+The latter keeps the mixed-product cutoff from filtered rectangular Parseval. -/
+theorem
+    sum_normSq_lowProduct_add_signedRationalMixedProductTailEnergy_eq_signedRationalEnergy
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 1 ≤ X) :
+    (∑ k ∈ Finset.Icc 1 N,
+        Complex.normSq
+          (selbergSqrtZetaShortDirichletCollectedCoeff N X k)) +
+        selbergSqrtZetaSignedRationalMixedProductTailEnergy N X N =
+      ∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
+        Complex.normSq
+          (selbergSqrtZetaSignedRationalCoeff N X q) := by
+  have hNtop : N ≤ N * X * X := by
+    calc
+      N = N * 1 * 1 := by simp
+      _ ≤ N * X * X := Nat.mul_le_mul (Nat.mul_le_mul_left N hX) hX
+  have hsplit :
+      Finset.Icc 1 N ∪ Finset.Ioc N (N * X * X) =
+        Finset.Icc 1 (N * X * X) := by
+    ext k
+    simp only [Finset.mem_union, Finset.mem_Icc, Finset.mem_Ioc]
+    omega
+  have hdisjoint :
+      Disjoint (Finset.Icc 1 N) (Finset.Ioc N (N * X * X)) := by
+    rw [Finset.disjoint_left]
+    intro k hkLow hkTail
+    simp only [Finset.mem_Icc] at hkLow
+    simp only [Finset.mem_Ioc] at hkTail
+    omega
+  rw [←
+    sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_tail_eq_signedRationalMixedProductTailEnergy
+      N X]
+  rw [← Finset.sum_union hdisjoint, hsplit, ← selbergShortDirichletCollectedSupport]
+  exact
+    sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_eq_signedRationalEnergy
+      N X
+
+/-- Subtractive form of the exact filtered-tail decomposition.  This is the
+interface for combining a full reduced-pair energy estimate with a separately
+controlled low-product block. -/
+theorem
+    selbergSqrtZetaSignedRationalMixedProductTailEnergy_eq_signedRationalEnergy_sub_lowProduct
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 1 ≤ X) :
+    selbergSqrtZetaSignedRationalMixedProductTailEnergy N X N =
+      (∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
+          Complex.normSq
+            (selbergSqrtZetaSignedRationalCoeff N X q)) -
+        ∑ k ∈ Finset.Icc 1 N,
+          Complex.normSq
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+  linarith only
+    [sum_normSq_lowProduct_add_signedRationalMixedProductTailEnergy_eq_signedRationalEnergy
+      hN hX]
 
 /-- The genuinely zeta-truncated product tail is controlled by the same exact
 rational coefficient energy.  Since every tail frequency has `k > N`, the
