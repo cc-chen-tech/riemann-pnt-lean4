@@ -969,6 +969,7 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exp_gammaLow_mul_add_one_le_exp_alpha_mul",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedRemainder_to_fullMovingGaussianEnergy_powerHeight_proportional",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_emptyClusterLowHeightFullMovingGaussianSecondMoment_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_emptyClusterLowHeightNormalizedComplementSecondMoment_gt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterComplementContribution_eq_zero_of_subset",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFullMovingGaussianSecondMoment_eq_zero_of_subset",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_nontrivialZero_not_mem_of_fullMovingGaussianSecondMoment_pos",

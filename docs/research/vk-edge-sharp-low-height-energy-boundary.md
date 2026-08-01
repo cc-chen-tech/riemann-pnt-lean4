@@ -28,6 +28,13 @@ The lower-bound constant is
 `initialEmptyClusterFullMovingGaussianL2Constant epsilon rho k`; it is fixed
 before `Y` and therefore does not decay along the cofinal sequence.
 
+The public theorem
+`exists_eventually_emptyClusterLowHeightNormalizedComplementSecondMoment_gt`
+states the endpoint directly using the genuine explicit-formula complement
+`normalizedFiniteZeroClusterComplementContribution`, rather than only the
+internal dynamic bucket decomposition.  Its public type contains the integral
+itself, not merely a named abstract energy interface.
+
 ## Joint two-height parameter compatibility
 
 The existing theorem `exists_jointTwoHeightTargetAmplitudeParameters` should
@@ -106,18 +113,24 @@ theorem exists_cofinally_rightHigher_trueZeta_energy_ge
     (hsigma : 1 / 2 < sigma ∧ sigma < beta)
     (hheights : 0 < gammaLow ∧ gammaLow < alpha ∧ alpha ≤ 1)
     (hwindow : (1 - beta) * (1 + epsilon) < gammaLow) :
-    ∀ (S : Finset Complex) (Told : Real),
-      ∃ eta : Real, 0 < eta ∧
+    ∃ eta0 : Real, 0 < eta0 ∧
+      ∀ (S : Finset Complex) (Told : Real),
         ∀ X : Real, ∃ x : Real, X ≤ x ∧
           ∃ Tlow ∈ Set.Icc (x ^ gammaLow) (x ^ gammaLow + 1),
             Tlow ≤ x ^ alpha ∧
-            eta ≤
+            eta0 ≤
               ∫ t in Set.Icc 0 (epsilon * Real.log x),
                 normalizedGaussian ((epsilon * Real.log x) ^ 2) t *
                   ‖normalizedFiniteZeroClusterComplementContribution
                       (rightHigherExclusionSet S Told sigma Tlow)
                       Tlow beta (Real.log x + t)‖ ^ 2
 ```
+
+Placing `eta0` before `S` is intentional: it is the uniform version needed
+for iteration without uncontrolled loss.  Even the weaker ordering
+`forall S, exists eta(S) > 0` would already force a new higher right-strip
+zero after every finite exclusion, but it would not provide a usable uniform
+iteration budget.
 
 This signature is documentation only.  It is deliberately not introduced as
 a `Prop`, axiom, class, or conditional theorem.

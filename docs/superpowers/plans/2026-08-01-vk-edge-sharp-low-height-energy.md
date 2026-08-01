@@ -42,12 +42,13 @@
 
 **Interfaces:**
 - Consumes: the Task 1 selector, `exists_eventually_emptyClusterResidualForwardGaussianSecondMoment_gt`, and `dynamicComplementFullMovingGaussianSecondMoment_ge_of_normalizedRemainder`.
-- Produces: `exists_eventually_emptyClusterLowHeightFullMovingGaussianSecondMoment_gt`.
+- Produces: `exists_eventually_emptyClusterLowHeightFullMovingGaussianSecondMoment_gt` and the literal genuine-zeta integral endpoint `exists_eventually_emptyClusterLowHeightNormalizedComplementSecondMoment_gt`.
 
 - [x] Write the exact endpoint contract before the source module exists.
 - [x] Run the contract and confirm it fails because the new module is absent.
 - [x] Prove eventual containment of the selected low-height interval below `exp (alpha * a)`.
 - [x] Transfer the true residual lower bound to actual finite-zero complement energy.
+- [x] Rewrite the internal full-bucket energy as the literal Gaussian integral of the genuine finite zeta-zero complement.
 - [x] Run the source and contract with `LEAN_NUM_THREADS=1`.
 - [x] Commit the genuine-zeta `S = empty` endpoint.
 
@@ -64,7 +65,8 @@
 - Produces: checked axiom declarations and a precise statement of the missing arbitrary-`S` analytic input.
 
 - [x] Add dedicated `#print axioms` audit files and exact central allowlist entries.
-- [ ] Run focused source, contract, dedicated audit, central audit, and allowlist parsing serially.
+- [x] Run focused source, exact contracts, and dedicated audits serially.
+- [ ] Re-run the central audit with the literal integral endpoint and complete the full multi-module allowlist parse.
 - [x] Record that deleting the anchor pair blocks an arbitrary-`S` transfer and state the minimal genuine-zeta replacement input.
-- [ ] Run the necessary bounded baseline check without starting a no-target full build.
+- [x] Run the bounded target-inventory, chain-gap, placeholder, Python syntax, and diff checks without starting a no-target full build.
 - [ ] Commit, push, and open a bounded Draft PR.
