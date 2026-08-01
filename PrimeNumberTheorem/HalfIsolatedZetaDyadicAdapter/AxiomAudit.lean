@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.HalfIsolatedZetaDyadicAdapter.Contract
+
+/-! Axiom audit for the actual-zeta dyadic Gram/Schur adapter. -/
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.zetaDyadicBucketPairs_snd_inj
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicZeros_spec
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.zetaLowZeroFinset_disjoint_zetaRightDyadicZeros
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_occupancy_mul_sum_sq
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_or_quantitativeCluster
