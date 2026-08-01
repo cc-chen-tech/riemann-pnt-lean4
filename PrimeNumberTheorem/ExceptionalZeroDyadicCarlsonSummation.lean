@@ -8,6 +8,274 @@ namespace VKEdgePiOverTwo
 
 noncomputable section
 
+/-! ## Carlson polynomial--geometric block majorant -/
+
+noncomputable def carlsonDyadicExponent (sigma : ℝ) : ℝ :=
+  4 * sigma * (1 - sigma)
+
+noncomputable def carlsonDyadicEnergyRatio (sigma : ℝ) : ℝ :=
+  (2 : ℝ) ^ (carlsonDyadicExponent sigma - 2)
+
+noncomputable def carlsonDyadicEnergyMajorant (sigma : ℝ) (k : ℕ) : ℝ :=
+  ((k + 1 : ℕ) : ℝ) ^ 6 * carlsonDyadicEnergyRatio sigma ^ k
+
+theorem carlsonDyadicExponent_lt_one {sigma : ℝ}
+    (hσ : 1 / 2 < sigma) (_hσ1 : sigma < 1) :
+    carlsonDyadicExponent sigma < 1 := by
+  unfold carlsonDyadicExponent
+  nlinarith [sq_pos_of_pos (by linarith : 0 < sigma - 1 / 2)]
+
+private theorem carlsonDyadicEnergyRatio_pos_lt_one {sigma : ℝ}
+    (hσ : 1 / 2 < sigma) (hσ1 : sigma < 1) :
+    0 < carlsonDyadicEnergyRatio sigma ∧
+      carlsonDyadicEnergyRatio sigma < 1 := by
+  have hexponent : carlsonDyadicExponent sigma - 2 < 0 := by
+    linarith [carlsonDyadicExponent_lt_one hσ hσ1]
+  exact ⟨Real.rpow_pos_of_pos (by norm_num) _,
+    Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) hexponent⟩
+
+theorem summable_carlsonDyadicEnergyMajorant {sigma : ℝ}
+    (hσ : 1 / 2 < sigma) (hσ1 : sigma < 1) :
+    Summable (carlsonDyadicEnergyMajorant sigma) := by
+  let r := carlsonDyadicEnergyRatio sigma
+  have hr := carlsonDyadicEnergyRatio_pos_lt_one hσ hσ1
+  have hrnorm : ‖r‖ < 1 := by
+    rw [Real.norm_eq_abs, abs_of_pos hr.1]
+    exact hr.2
+  have hbase : Summable (fun n : ℕ => (n : ℝ) ^ 6 * r ^ n) :=
+    summable_pow_mul_geometric_of_norm_lt_one 6 hrnorm
+  have hshift :
+      Summable (fun n : ℕ => ((n + 1 : ℕ) : ℝ) ^ 6 * r ^ (n + 1)) := by
+    exact (summable_nat_add_iff 1).2 hbase
+  have hscaled := hshift.mul_left r⁻¹
+  refine hscaled.congr fun n => ?_
+  dsimp [carlsonDyadicEnergyMajorant, r]
+  rw [pow_succ]
+  field_simp [ne_of_gt hr.1]
+  rw [pow_succ']
+
+private theorem one_add_log_two_pow_add_le_three_mul
+    (c : ℝ) {k : ℕ} (hk : 2 ≤ k) (hc0 : 0 ≤ c) (hc8 : c ≤ 8) :
+    1 + Real.log ((2 : ℝ) ^ (k + 1) + c) ≤
+      3 * ((k + 1 : ℕ) : ℝ) := by
+  have hpowPos : 0 < (2 : ℝ) ^ (k + 1) := by positivity
+  have hpowEight : (8 : ℝ) ≤ (2 : ℝ) ^ (k + 1) := by
+    calc
+      (8 : ℝ) = (2 : ℝ) ^ 3 := by norm_num
+      _ ≤ (2 : ℝ) ^ (k + 1) :=
+        pow_le_pow_right₀ (by norm_num) (by omega)
+  have hsumPos : 0 < (2 : ℝ) ^ (k + 1) + c := by linarith
+  have hsumLe :
+      (2 : ℝ) ^ (k + 1) + c ≤
+        2 * (2 : ℝ) ^ (k + 1) := by
+    linarith
+  have hlogLe := Real.log_le_log hsumPos hsumLe
+  rw [Real.log_mul (by norm_num) (by positivity), Real.log_pow] at hlogLe
+  have hlogTwoLe : Real.log 2 ≤ 1 := by
+    linarith [Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)]
+  have hkCast : 0 ≤ ((k + 1 : ℕ) : ℝ) := by positivity
+  have hkCastOne : 1 ≤ ((k + 1 : ℕ) : ℝ) := by
+    exact_mod_cast Nat.succ_le_succ (Nat.zero_le k)
+  have hmul := mul_le_mul_of_nonneg_left hlogTwoLe hkCast
+  linarith
+
+private theorem dyadic_carlson_power_identity (sigma : ℝ) (k : ℕ) :
+    ((((2 : ℝ) ^ k) ^ 2)⁻¹ *
+        ((2 : ℝ) ^ (k + 1)) ^ carlsonDyadicExponent sigma) =
+      (2 : ℝ) ^ carlsonDyadicExponent sigma *
+        carlsonDyadicEnergyRatio sigma ^ k := by
+  have hinv : ((((2 : ℝ) ^ k) ^ 2)⁻¹) =
+      (2 : ℝ) ^ (-((k * 2 : ℕ) : ℝ)) := by
+    calc
+      ((((2 : ℝ) ^ k) ^ 2)⁻¹) = ((2 : ℝ) ^ (k * 2))⁻¹ := by
+        rw [pow_mul]
+      _ = ((2 : ℝ) ^ ((k * 2 : ℕ) : ℝ))⁻¹ := by
+        rw [Real.rpow_natCast]
+      _ = (2 : ℝ) ^ (-((k * 2 : ℕ) : ℝ)) := by
+        rw [Real.rpow_neg (by norm_num)]
+  have hheight :
+      ((2 : ℝ) ^ (k + 1)) ^ carlsonDyadicExponent sigma =
+        (2 : ℝ) ^ (((k + 1 : ℕ) : ℝ) *
+          carlsonDyadicExponent sigma) := by
+    exact (Real.rpow_natCast_mul (by norm_num) (k + 1)
+      (carlsonDyadicExponent sigma)).symm
+  rw [hinv, hheight, ← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+  have hexponent :
+      -((k * 2 : ℕ) : ℝ) +
+          ((k + 1 : ℕ) : ℝ) * carlsonDyadicExponent sigma =
+        carlsonDyadicExponent sigma +
+          (carlsonDyadicExponent sigma - 2) * (k : ℝ) := by
+    push_cast
+    ring
+  rw [hexponent, Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+  unfold carlsonDyadicEnergyRatio
+  rw [Real.rpow_mul_natCast (by norm_num)]
+
+/-- After fixing the Carlson strip, one constant and one dyadic cutoff control
+every right-higher complementary block, uniformly in the exclusion set and
+both height parameters. -/
+theorem exists_rightHigherDyadicCapacity_le_carlsonMajorant
+    {sigma : ℝ} (hσ : 1 / 2 < sigma) (hσ1 : sigma < 1) :
+    ∃ A : ℝ, 0 ≤ A ∧ ∃ K0 : ℕ, 2 ≤ K0 ∧
+      ∀ (S : Finset ℂ) (Told T : ℝ) (k : ℕ),
+        4 ≤ Told → K0 ≤ k → (2 : ℝ) ^ (k + 1) ≤ T →
+        (1 + (dynamicComplementDyadicOccupancy
+          (rightHigherExclusionSet S Told sigma T) T k : ℝ)) *
+            dynamicComplementDyadicSquareReciprocalCapacity
+              (rightHigherExclusionSet S Told sigma T) T k ≤
+          A * carlsonDyadicEnergyMajorant sigma k := by
+  rcases exists_dynamicComplementDyadicOccupancy_le_log with
+    ⟨C, hC, hoccupancy⟩
+  rcases exists_rightHigherDyadicSquareCapacity_le_log_linear with
+    ⟨B, hB, hsquare⟩
+  rcases (CarlsonZeroDensity.carlson_zeroDensity_isBigO hσ hσ1).exists_nonneg with
+    ⟨D, hD, hCarlson⟩
+  have hdyadicTendsto :
+      Filter.Tendsto (fun k : ℕ => (2 : ℝ) ^ (k + 1))
+        Filter.atTop Filter.atTop :=
+    (tendsto_pow_atTop_atTop_of_one_lt (r := (2 : ℝ)) (by norm_num)).comp
+      (Filter.tendsto_add_atTop_nat 1)
+  have hCarlsonDyadic := (hCarlson.comp_tendsto hdyadicTendsto).bound
+  rcases Filter.eventually_atTop.1 hCarlsonDyadic with ⟨Kc, hKc⟩
+  let A := 3 * B * (1 + 3 * C) * D *
+    (2 : ℝ) ^ carlsonDyadicExponent sigma
+  let K0 := max 2 Kc
+  refine ⟨A, ?_, K0, le_max_left _ _, ?_⟩
+  · dsimp [A]
+    positivity
+  · intro S Told T k hTold hk hheight
+    have hk2 : 2 ≤ k := (le_max_left 2 Kc).trans (show K0 ≤ k from hk)
+    have hkCarlson : Kc ≤ k :=
+      (le_max_right 2 Kc).trans (show K0 ≤ k from hk)
+    let E := rightHigherExclusionSet S Told sigma T
+    let N : ℝ := ((k + 1 : ℕ) : ℝ)
+    have hNone : 1 ≤ N := by
+      dsimp [N]
+      exact_mod_cast Nat.succ_le_succ (Nat.zero_le k)
+    have hNnonneg : 0 ≤ N := zero_le_one.trans hNone
+    have hlogSeven :
+        1 + Real.log ((2 : ℝ) ^ (k + 1) + 7) ≤ 3 * N := by
+      simpa [N] using
+        (one_add_log_two_pow_add_le_three_mul 7 hk2 (by norm_num) (by norm_num))
+    have hlogSix :
+        1 + Real.log ((2 : ℝ) ^ (k + 1) + 6) ≤ 3 * N := by
+      simpa [N] using
+        (one_add_log_two_pow_add_le_three_mul 6 hk2 (by norm_num) (by norm_num))
+    have hoccupancyRaw := hoccupancy E T k hk2
+    have hoccupancyWeighted :
+        1 + (dynamicComplementDyadicOccupancy E T k : ℝ) ≤
+          (1 + 3 * C) * N := by
+      calc
+        1 + (dynamicComplementDyadicOccupancy E T k : ℝ) ≤
+            1 + C * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)) := by
+          linarith
+        _ ≤ 1 + C * (3 * N) := by
+          gcongr
+        _ ≤ (1 + 3 * C) * N := by
+          nlinarith
+    have hactualSquareNonneg :
+        0 ≤ actualZetaDyadicSquareReciprocalCapacityExcluding k E := by
+      unfold actualZetaDyadicSquareReciprocalCapacityExcluding
+      positivity
+    have hactualLinearNonneg :
+        0 ≤ actualZetaDyadicLinearReciprocalCapacityExcluding k E := by
+      unfold actualZetaDyadicLinearReciprocalCapacityExcluding
+      positivity
+    have hweightNonneg : 0 ≤ (1 + 3 * C) * N := by positivity
+    have hBLog :
+        B * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 6)) ≤
+          (3 * B) * N := by
+      calc
+        B * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 6)) ≤
+            B * (3 * N) := mul_le_mul_of_nonneg_left hlogSix hB
+        _ = (3 * B) * N := by ring
+    have hsquareRaw := hsquare S Told sigma T k hTold hheight
+    have hlinearRaw :=
+      rightHigherActualZetaDyadicLinearCapacity_le_zeroDensityCount
+        S (Told := Told) (sigma := sigma) (T := T) k (by linarith) hheight
+    have hcountRaw := hKc k hkCarlson
+    have hheightPos : 0 < (2 : ℝ) ^ (k + 1) := by positivity
+    have hheightOne : 1 < (2 : ℝ) ^ (k + 1) :=
+      one_lt_pow₀ (by norm_num) (by omega)
+    have hlogHeightPos : 0 < Real.log ((2 : ℝ) ^ (k + 1)) :=
+      Real.log_pos hheightOne
+    have hmodelNonneg :
+        0 ≤ ((2 : ℝ) ^ (k + 1)) ^ carlsonDyadicExponent sigma *
+          Real.log ((2 : ℝ) ^ (k + 1)) ^ 4 := by
+      exact mul_nonneg (Real.rpow_nonneg hheightPos.le _) (by positivity)
+    have hcount :
+        (ZeroDensity.zeroDensityCount sigma ((2 : ℝ) ^ (k + 1)) : ℝ) ≤
+          D * (((2 : ℝ) ^ (k + 1)) ^ carlsonDyadicExponent sigma *
+            Real.log ((2 : ℝ) ^ (k + 1)) ^ 4) := by
+      change
+        ‖(ZeroDensity.zeroDensityCount sigma
+            ((2 : ℝ) ^ (k + 1)) : ℝ)‖ ≤
+          D * ‖((2 : ℝ) ^ (k + 1)) ^ carlsonDyadicExponent sigma *
+            Real.log ((2 : ℝ) ^ (k + 1)) ^ 4‖ at hcountRaw
+      rw [Real.norm_eq_abs,
+        abs_of_nonneg (Nat.cast_nonneg
+          (ZeroDensity.zeroDensityCount sigma ((2 : ℝ) ^ (k + 1)))),
+        Real.norm_eq_abs, abs_of_nonneg hmodelNonneg] at hcountRaw
+      exact hcountRaw
+    have hlogTwoNonneg : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num)
+    have hlogTwoLe : Real.log 2 ≤ 1 := by
+      linarith [Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)]
+    have hlogHeightLe : Real.log ((2 : ℝ) ^ (k + 1)) ≤ N := by
+      rw [Real.log_pow]
+      dsimp [N]
+      simpa using mul_le_mul_of_nonneg_left hlogTwoLe
+        (show 0 ≤ (((k + 1 : ℕ) : ℝ)) by positivity)
+    have hlogFourth :
+        Real.log ((2 : ℝ) ^ (k + 1)) ^ 4 ≤ N ^ 4 :=
+      pow_le_pow_left₀ hlogHeightPos.le hlogHeightLe 4
+    have houterNonneg : 0 ≤ (3 * B) * N := by positivity
+    have hinvNonneg : 0 ≤ ((((2 : ℝ) ^ k) ^ 2)⁻¹) := by positivity
+    calc
+      (1 + (dynamicComplementDyadicOccupancy E T k : ℝ)) *
+          dynamicComplementDyadicSquareReciprocalCapacity E T k =
+          (1 + (dynamicComplementDyadicOccupancy E T k : ℝ)) *
+            actualZetaDyadicSquareReciprocalCapacityExcluding k E := by
+        rw [dynamicComplementDyadicSquareReciprocalCapacity_eq_actual
+          E k hheight]
+      _ ≤ ((1 + 3 * C) * N) *
+            actualZetaDyadicSquareReciprocalCapacityExcluding k E :=
+        mul_le_mul_of_nonneg_right hoccupancyWeighted hactualSquareNonneg
+      _ ≤ ((1 + 3 * C) * N) *
+            ((B * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 6))) *
+              actualZetaDyadicLinearReciprocalCapacityExcluding k E) :=
+        mul_le_mul_of_nonneg_left hsquareRaw hweightNonneg
+      _ ≤ ((1 + 3 * C) * N) *
+            (((3 * B) * N) *
+              actualZetaDyadicLinearReciprocalCapacityExcluding k E) := by
+        gcongr
+      _ ≤ ((1 + 3 * C) * N) *
+            (((3 * B) * N) *
+              (((((2 : ℝ) ^ k) ^ 2)⁻¹) *
+                (ZeroDensity.zeroDensityCount sigma
+                  ((2 : ℝ) ^ (k + 1)) : ℝ))) := by
+        gcongr
+      _ ≤ ((1 + 3 * C) * N) *
+            (((3 * B) * N) *
+              (((((2 : ℝ) ^ k) ^ 2)⁻¹) *
+                (D * (((2 : ℝ) ^ (k + 1)) ^
+                    carlsonDyadicExponent sigma *
+                  Real.log ((2 : ℝ) ^ (k + 1)) ^ 4)))) := by
+        gcongr
+      _ ≤ ((1 + 3 * C) * N) *
+            (((3 * B) * N) *
+              (((((2 : ℝ) ^ k) ^ 2)⁻¹) *
+                (D * (((2 : ℝ) ^ (k + 1)) ^
+                    carlsonDyadicExponent sigma * N ^ 4)))) := by
+        gcongr
+      _ = (3 * B * (1 + 3 * C) * D) * N ^ 6 *
+            (((((2 : ℝ) ^ k) ^ 2)⁻¹) *
+              ((2 : ℝ) ^ (k + 1)) ^ carlsonDyadicExponent sigma) := by
+        ring
+      _ = A * carlsonDyadicEnergyMajorant sigma k := by
+        rw [dyadic_carlson_power_identity]
+        dsimp [A, carlsonDyadicEnergyMajorant, N]
+        ring
+
 /-!
 # Whole-Gram summation across a finite dyadic range
 
@@ -29,7 +297,7 @@ theorem dyadicUnitBucketRange_eq_biUnion {K L : ℕ} (hKL : K ≤ L) :
   | zero =>
       have hK : K = 0 := Nat.eq_zero_of_le_zero hKL
       subst K
-      simp [dyadicUnitBucketRange, dyadicUnitBucketIndexSet]
+      simp [dyadicUnitBucketRange]
   | succ L ih =>
       by_cases hKprev : K ≤ L
       · have hpow : 2 ^ K ≤ 2 ^ L :=
@@ -52,7 +320,7 @@ theorem dyadicUnitBucketRange_eq_biUnion {K L : ℕ} (hKL : K ≤ L) :
             exact Finset.union_comm _ _
       · have hK : K = L + 1 := by omega
         subst K
-        simp [dyadicUnitBucketRange, dyadicUnitBucketIndexSet]
+        simp [dyadicUnitBucketRange]
 
 private theorem dyadicUnitBucketIndexSet_pairwiseDisjoint (K L : ℕ) :
     (Finset.Ico K L : Set ℕ).PairwiseDisjoint dyadicUnitBucketIndexSet := by

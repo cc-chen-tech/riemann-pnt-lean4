@@ -5,6 +5,32 @@ open scoped BigOperators
 
 namespace PrimeNumberTheorem.VKEdgePiOverTwo
 
+#check carlsonDyadicExponent
+#check carlsonDyadicEnergyRatio
+#check carlsonDyadicEnergyMajorant
+
+#check
+  (carlsonDyadicExponent_lt_one :
+    ∀ {sigma : ℝ}, 1 / 2 < sigma → sigma < 1 →
+      carlsonDyadicExponent sigma < 1)
+
+#check
+  (summable_carlsonDyadicEnergyMajorant :
+    ∀ {sigma : ℝ}, 1 / 2 < sigma → sigma < 1 →
+      Summable (carlsonDyadicEnergyMajorant sigma))
+
+#check
+  (exists_rightHigherDyadicCapacity_le_carlsonMajorant :
+    ∀ {sigma : ℝ}, 1 / 2 < sigma → sigma < 1 →
+      ∃ A : ℝ, 0 ≤ A ∧ ∃ K0 : ℕ, 2 ≤ K0 ∧
+        ∀ (S : Finset ℂ) (Told T : ℝ) (k : ℕ),
+          4 ≤ Told → K0 ≤ k → (2 : ℝ) ^ (k + 1) ≤ T →
+          (1 + (dynamicComplementDyadicOccupancy
+            (rightHigherExclusionSet S Told sigma T) T k : ℝ)) *
+              dynamicComplementDyadicSquareReciprocalCapacity
+                (rightHigherExclusionSet S Told sigma T) T k ≤
+            A * carlsonDyadicEnergyMajorant sigma k)
+
 #check dyadicUnitBucketRange
 #check dyadicUnitBucketRange_eq_biUnion
 

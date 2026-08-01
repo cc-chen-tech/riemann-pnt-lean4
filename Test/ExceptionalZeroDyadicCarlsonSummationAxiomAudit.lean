@@ -2,6 +2,10 @@ import PrimeNumberTheorem.ExceptionalZeroDyadicCarlsonSummation
 
 open PrimeNumberTheorem.VKEdgePiOverTwo
 
+#print axioms carlsonDyadicExponent_lt_one
+#print axioms summable_carlsonDyadicEnergyMajorant
+#print axioms exists_rightHigherDyadicCapacity_le_carlsonMajorant
+
 #print axioms dyadicUnitBucketRange_eq_biUnion
 #print axioms dynamicComplementDyadicRangeCenteredFrozenGaussianSecondMoment_le
 #print axioms rightHigherDyadicRange_fartherRight_or_centeredFrozen_le_unweighted
