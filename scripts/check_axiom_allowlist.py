@@ -30,8 +30,12 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeHighZeroGaussianEnergyAxiomAudit",
     "MathlibAux.DyadicDriftingGaussianSchur.AxiomAudit",
     "PrimeNumberTheorem.HalfIsolatedZetaDyadicAdapter.AxiomAudit",
+    "Test.SelbergLagDyadicGeometryAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "HardyTheorem.selberg_lag_dyadic_mem",
+    "HardyTheorem.selberg_lag_shifted_dyadic_mem",
+    "HardyTheorem.selberg_lag_controlInterval_subset_dyadic",
     "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv",
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
     "PrimeNumberTheorem.VKEdgePiOverTwo.chebyshevPsi_sub_exp_eq_neg_cluster_sub_remainder",
