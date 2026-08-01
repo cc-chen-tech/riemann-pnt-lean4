@@ -1,4 +1,3 @@
-import PrimeNumberTheorem.ZeroDensityLayerBudgetActualTargetAmplitudeLowLayerTwoHeight
 import PrimeNumberTheorem.ZeroDensityLayerBudgetTargetAmplitudeTwoHeightExponent
 
 /-!
