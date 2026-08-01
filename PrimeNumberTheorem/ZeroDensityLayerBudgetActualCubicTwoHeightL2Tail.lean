@@ -142,4 +142,137 @@ theorem cubicDyadicCountProduct_eq_sixthPower
   have htwo : (2 : ℝ) ^ n ≠ 0 := by positivity
   field_simp [htwo]
 
+/-- Polynomial exponent of one cubic coefficient-square Carlson block at
+height `x^gamma`, normalized by a fixed target coefficient of real part
+`beta`. -/
+noncomputable def cubicCarlsonL2BlockExponent
+    (beta sigma tau gamma : ℝ) : ℝ :=
+  2 * (tau - beta) +
+    gamma * (carlsonTwoHeightDensityExponent sigma - 6)
+
+/-- The cubic coefficient-square denominator improves the unconditional
+Carlson density slope to at most `-5`. -/
+theorem pntCarlsonClassicalDensityExponent_sub_six_le_neg_five
+    (sigma : ℝ) :
+    pntCarlsonClassicalDensityExponent sigma - 6 ≤ -5 := by
+  have htwo := pntCarlsonClassicalDensityExponent_sub_two_le_neg_one sigma
+  linarith
+
+/-- At the Carlson equality point `sigma = 1/2`, the cubic L2 exponent is
+still strictly negative and equals `-5`. -/
+theorem pntCarlsonClassicalDensityExponent_half_sub_six_eq_neg_five :
+    pntCarlsonClassicalDensityExponent (1 / 2) - 6 = -5 := by
+  rw [pntCarlsonClassicalDensityExponent_half_eq_one]
+  norm_num
+
+/-- Every positive polynomial block exponent has strictly decaying cubic L2
+mass once the strip lies strictly left of the target real part. -/
+theorem cubicCarlsonL2BlockExponent_lt_zero
+    {beta sigma tau gamma : ℝ}
+    (htau : tau < beta) (hgamma : 0 < gamma) :
+    cubicCarlsonL2BlockExponent beta sigma tau gamma < 0 := by
+  have hq : carlsonTwoHeightDensityExponent sigma - 6 ≤ -5 := by
+    simpa [carlsonTwoHeightDensityExponent,
+      pntCarlsonClassicalDensityExponent] using
+      pntCarlsonClassicalDensityExponent_sub_six_le_neg_five sigma
+  have hqneg : carlsonTwoHeightDensityExponent sigma - 6 < 0 := by
+    linarith
+  have hprod :
+      gamma * (carlsonTwoHeightDensityExponent sigma - 6) < 0 :=
+    mul_neg_of_pos_of_neg hgamma hqneg
+  unfold cubicCarlsonL2BlockExponent
+  linarith
+
+/-- The explicit block majorant used in both sides of the two-height split. -/
+noncomputable def actualCubicDyadicCountMajorant
+    (B x sigma tau : ℝ) (n : ℕ) : ℝ :=
+  (x ^ (2 * tau) / ((2 : ℝ) ^ n) ^ 4) *
+    (B * (1 + Real.log ((2 : ℝ) ^ (n + 1) + 6)) *
+      (actualCarlsonDyadicCount sigma (n + 1) /
+        ((2 : ℝ) ^ n) ^ 2))
+
+/-- Actual cubic square tail split once at the dyadic index corresponding to
+the Carlson balance height. -/
+noncomputable def actualCubicTwoHeightSquareTailCapacity
+    (x sigma tau : ℝ) (nLow nSplit nHigh : ℕ)
+    (S : Finset ℂ) : ℝ :=
+  (∑ n ∈ Finset.Icc nLow nSplit,
+      actualCubicDyadicStripSquareCapacityExcluding x sigma tau n S) +
+    ∑ n ∈ Finset.Ioc nSplit nHigh,
+      actualCubicDyadicStripSquareCapacityExcluding x sigma tau n S
+
+/-- The same actual Carlson constant controls both sides of the unique
+two-height split. -/
+theorem exists_actualCubicTwoHeightSquareTailCapacity_le :
+    ∃ B : ℝ, 0 ≤ B ∧
+      ∀ (x sigma tau : ℝ) (nLow nSplit nHigh : ℕ),
+        1 ≤ x →
+        (∀ n ∈ Finset.Icc nLow nSplit, 4 ≤ (2 : ℝ) ^ n) →
+        (∀ n ∈ Finset.Ioc nSplit nHigh, 4 ≤ (2 : ℝ) ^ n) →
+        ∀ S : Finset ℂ,
+          actualCubicTwoHeightSquareTailCapacity
+              x sigma tau nLow nSplit nHigh S ≤
+            (∑ n ∈ Finset.Icc nLow nSplit,
+              actualCubicDyadicCountMajorant B x sigma tau n) +
+              ∑ n ∈ Finset.Ioc nSplit nHigh,
+                actualCubicDyadicCountMajorant B x sigma tau n := by
+  rcases exists_actualCubicDyadicStripSquareCapacityExcluding_le_count with
+    ⟨B, hB, hblock⟩
+  refine ⟨B, hB, ?_⟩
+  intro x sigma tau nLow nSplit nHigh hx hlow hhigh S
+  unfold actualCubicTwoHeightSquareTailCapacity
+    actualCubicDyadicCountMajorant
+  apply add_le_add
+  · exact Finset.sum_le_sum fun n hn => hblock x sigma tau n hx (hlow n hn) S
+  · exact Finset.sum_le_sum fun n hn => hblock x sigma tau n hx (hhigh n hn) S
+
+/-- The joint two-height parameter theorem simultaneously supplies all four
+legacy strict margins and strict cubic L2 decay at the detector, balance, and
+outer exponents. -/
+theorem exists_jointTwoHeightTargetAmplitudeParameters_with_cubicL2
+    {beta : ℝ} (hbeta : 2 / 3 < beta) (hbetaOne : beta < 1) :
+    ∃ sigma tau alpha gammaLow gammaHigh epsilonLow epsilonHigh : ℝ,
+      1 / 2 < sigma ∧
+      sigma < tau ∧
+      tau < beta ∧
+      sigma < 1 ∧
+      1 - beta < alpha ∧
+      0 < alpha ∧
+      alpha ≤ 1 ∧
+      gammaLow = alpha / 2 ∧
+      0 < gammaLow ∧
+      gammaLow ≤ alpha ∧
+      gammaHigh = carlsonTwoHeightBalancedCut sigma alpha ∧
+      0 < gammaHigh ∧
+      gammaHigh < alpha ∧
+      0 < epsilonLow ∧
+      0 < epsilonHigh ∧
+      gammaLow + sigma - beta + epsilonLow < 0 ∧
+      alpha + sigma - beta - gammaLow + epsilonLow < 0 ∧
+      targetAmplitudeCarlsonTwoHeightLowExponent
+          beta sigma tau gammaHigh + epsilonHigh < 0 ∧
+      targetAmplitudeCarlsonTwoHeightHighExponent
+          beta sigma tau alpha gammaHigh + epsilonHigh < 0 ∧
+      cubicCarlsonL2BlockExponent beta sigma tau gammaLow < 0 ∧
+      cubicCarlsonL2BlockExponent beta sigma tau gammaHigh < 0 ∧
+      cubicCarlsonL2BlockExponent beta sigma tau alpha < 0 := by
+  rcases exists_jointTwoHeightTargetAmplitudeParameters hbeta hbetaOne with
+    ⟨sigma, tau, alpha, gammaLow, gammaHigh, epsilonLow, epsilonHigh,
+      hsigmaHalf, hsigmaTau, htauBeta, hsigmaOne,
+      hcontour, halphaPos, halphaOne, hgammaLowEq,
+      hgammaLowPos, hgammaLowAlpha, hgammaHighEq,
+      hgammaHighPos, hgammaHighAlpha,
+      hepsilonLow, hepsilonHigh,
+      hlowMargin, hhighGlobalMargin, hcarlsonLow, hcarlsonHigh⟩
+  refine ⟨sigma, tau, alpha, gammaLow, gammaHigh, epsilonLow, epsilonHigh,
+    hsigmaHalf, hsigmaTau, htauBeta, hsigmaOne,
+    hcontour, halphaPos, halphaOne, hgammaLowEq,
+    hgammaLowPos, hgammaLowAlpha, hgammaHighEq,
+    hgammaHighPos, hgammaHighAlpha,
+    hepsilonLow, hepsilonHigh,
+    hlowMargin, hhighGlobalMargin, hcarlsonLow, hcarlsonHigh, ?_, ?_, ?_⟩
+  · exact cubicCarlsonL2BlockExponent_lt_zero htauBeta hgammaLowPos
+  · exact cubicCarlsonL2BlockExponent_lt_zero htauBeta hgammaHighPos
+  · exact cubicCarlsonL2BlockExponent_lt_zero htauBeta halphaPos
+
 end PrimeNumberTheorem
