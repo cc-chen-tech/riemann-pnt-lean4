@@ -453,7 +453,14 @@ denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一
 进一步从精确无权 reduced-pair 恒等式出发，boundary 已保留 harmonic tail 与
 `1/log(X)^2` taper 衰减；complete 部分也直接等于 ratio/product Parseval 能量，
 不再承受局部频率分离使用的额外几何权重 `X^2+1`。
-当前未闭合的是 high product 卷积能量、显式 boundary taper budget 和非对角 gap 的统一尖锐上界。
+当 `X <= N` 时，显式 boundary taper budget 现已精确限制到 numerator 小于
+denominator 的 reduced rays；numerator 大于等于 denominator 的项全部为零，尤其
+`(1,1)` 载波不贡献边界预算。这是精确支撑消去，不是用支持集大小换取的粗上界。
+此外，每个 reduced pair 的坐标范围现已形式证明为 `a <= X`、`b <= N*X`，并据此
+把二维 boundary budget 压成按 `a` 求和的一维 harmonic-ray 总账：固定 `a` 后，
+所有 `a < b <= N*X` 的倒数质量精确等于 `H_(N*X) - H_a`，而单条射线的 scale tail
+保留 `H_(X/a)^2`。整个降维过程没有引入支持集基数或逐项最大值损失。
+当前未闭合的是 high product 卷积能量、一维 harmonic-ray boundary budget 和非对角 gap 的统一尖锐上界。
 `hsmall` 现在剩下 complete-range 有符号卷积能量、这个 filtered mixed-tail energy，
 以及非对角 gap sum 的尖锐统一估计。
 上述结论仍是条件端点，不是无条件 Selberg `T log T` 定理。
