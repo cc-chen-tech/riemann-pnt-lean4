@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ExceptionalZeroDyadicSquareMultiplicity
+
+open Complex Filter Set Topology
+open scoped BigOperators
+
+namespace PrimeNumberTheorem
+
+#check squareMultiplicityCapacity_le_max_mul_linearMultiplicityCapacity
+#check squareMultiplicityCapacity_sdiff_le
+#check ExplicitFormulaAux.exists_analyticOrderNatAt_riemannZeta_le_log_im_of_nontrivialZero
+#check actualZetaDyadicZeroBlock
+#check actualZetaDyadicSquareReciprocalCapacityExcluding
+#check actualZetaDyadicSquareReciprocalCapacityExcluding_le_linear
+
+end PrimeNumberTheorem
