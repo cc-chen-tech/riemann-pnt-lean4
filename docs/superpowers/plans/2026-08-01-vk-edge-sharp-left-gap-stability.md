@@ -69,4 +69,4 @@
 - [x] Register every public theorem in the central audit and allowlist.
 - [x] Run focused source, contract, dedicated audit, central audit, allowlist registration parser, target consistency, chain-gap, placeholder, and diff checks.
 - [x] Record that strictly-left finite deletions are harmless while same-layer deletion remains the exact analytic blocker.
-- [ ] Commit, push, and open a small Draft PR stacked on PR #263.
+- [x] Commit, push, and open a small Draft PR stacked on PR #263.
