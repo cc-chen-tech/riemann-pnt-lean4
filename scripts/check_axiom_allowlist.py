@@ -28,6 +28,7 @@ AXIOM_AUDIT_MODULES = [
     "PrimeNumberTheorem.HalfIsolatedZetaDyadicAdapter.AxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv",
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
     "PrimeNumberTheorem.VKEdgePiOverTwo.chebyshevPsi_sub_exp_eq_neg_cluster_sub_remainder",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorAtExponent_eq_neg_cluster_sub_remainder",
