@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCommonPoleCubicTripleTransfer
+
+#print axioms PrimeNumberTheorem.ExplicitFormulaResidues.cubicPoleFinset_eq_of_complete
+#print axioms PrimeNumberTheorem.ExplicitFormulaResidues.exists_commonPole_cubicApproximants_chebyshevPsi_bounds

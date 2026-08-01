@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDesmoothedContourEdgeBudgetContract
+
+open PrimeNumberTheorem ExplicitFormulaResidues
+
+#print axioms norm_desmoothedCubicContourIntegrand_eq
+#print axioms norm_desmoothedCubicContourIntegrand_le
+#print axioms norm_desmoothedCubicBottomContourIntegral_le
+#print axioms norm_desmoothedCubicTopContourIntegral_le
+#print axioms norm_desmoothedCubicLeftContourIntegral_le
+#print axioms norm_desmoothedCubicContourRemainder_le_edgeBudgets

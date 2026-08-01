@@ -17,6 +17,8 @@ theorem exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residu
       (∀ p ∈ poles,
         a < p.re ∧ p.re < c ∧ -W < p.im ∧ p.im < W) ∧
       (∀ p ∈ poles, p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈ ([[a, c]] ×ℂ [[-W, W]] : Set ℂ) →
+        p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
       (∀ p ∈ poles, residue p =
         if p = 1 then (x : ℂ)
         else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 3) ∧
@@ -30,7 +32,7 @@ theorem exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residu
     exact isCompact_uIcc.reProdIm isCompact_uIcc
   rcases exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
       hx hKcompact with
-    ⟨poles, residue, hpoles_mem, hpoles_classify, _hpoles_complete,
+    ⟨poles, residue, hpoles_mem, hpoles_classify, hpoles_complete,
       hresidue, hoff_eq, hregular⟩
   let P : Finset ℂ := poles.erase 0
   let residue2 : ℂ → ℂ := fun p => residue p / p
@@ -83,6 +85,11 @@ theorem exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residu
     intro p hp
     have hp' := Finset.mem_erase.mp hp
     exact (hpoles_classify p hp'.2).resolve_left hp'.1
+  have hP_complete : ∀ p, p ∈ K →
+      p = 1 ∨ riemannZeta p = 0 → p ∈ P := by
+    intro p hpK hpclass
+    exact Finset.mem_erase.mpr
+      ⟨hz0_of_mem hpK, hpoles_complete p hpK (Or.inr hpclass)⟩
   have hP_residue : ∀ p ∈ P, residue3 p =
       if p = 1 then (x : ℂ)
       else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 3 := by
@@ -155,7 +162,7 @@ theorem exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residu
           (∑ p ∈ P, (z - p)⁻¹ * residue p) / z ^ 2 by ring]
     rw [hsum_div]
     ring
-  refine ⟨P, residue3, hP_mem, hP_classify, hP_residue, ?_⟩
+  refine ⟨P, residue3, hP_mem, hP_classify, hP_complete, hP_residue, ?_⟩
   calc
     MathlibAux.boundaryRectIntegral
         (thirdOrderExplicitFormulaIntegrand x) a c (-W) W =

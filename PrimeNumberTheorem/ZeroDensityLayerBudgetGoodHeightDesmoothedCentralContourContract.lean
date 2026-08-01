@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetGoodHeightDesmoothedCentralContour
+
+open Complex MeasureTheory Set
+open scoped BigOperators Interval
+
+namespace PrimeNumberTheorem
+namespace ExplicitFormulaResidues
+
+#check goodHeightCubicWidth
+#check two_pi_mul_goodHeightCubicWidth
+#check cubicBottomContourPoint_goodHeightCubicWidth
+#check cubicTopContourPoint_goodHeightCubicWidth
+#check exists_goodHeight_Icc_norm_desmoothedCubicCentralContourIntegrals_le
+#check exists_goodHeight_Icc_norm_desmoothedCubicCentralHorizontalSum_le
+
+end ExplicitFormulaResidues
+end PrimeNumberTheorem
