@@ -1,0 +1,20 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClusterComplementUnifiedTransfer
+
+open PrimeNumberTheorem
+
+#print axioms
+  ActualCarlsonOutsideClusterFiniteStripCertificate.fullTail_negligible
+#print axioms
+  ActualCarlsonOutsideClusterFiniteStripCertificate.signedComplementCertificate
+#print axioms
+  ActualCarlsonOutsideClusterFiniteStripCertificate.actualSignedComplementCertificate
+#print axioms
+  unified_parametricPNTUpper_actualCarlsonOutsideClusterLower
+#print axioms
+  unified_parametricPNTUpper_actualCarlsonSignedComplementLower
+#print axioms
+  unified_parametricPNTUpper_actualExplicitFormulaSignedComplementLower
+#print axioms
+  unified_parametricPNTUpper_actualExplicitFormulaClosedAutomatic
+#print axioms
+  unified_parametricPNTUpper_actualPolynomialRemainderCertificate

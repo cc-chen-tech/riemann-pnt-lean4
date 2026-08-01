@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonConcreteUnified
+
+/-! Compile-time contract for the concrete unified Pintz--Carlson transfer. -/
+
+#check PrimeNumberTheorem.pintzCarlsonClassicalAggregatedDensityLayerTerm
+#check PrimeNumberTheorem.constructAdaptiveClassicalCarlsonUnifiedDynamicZeroTransfer
+#check PrimeNumberTheorem.constructAdaptiveClassicalCarlsonUnifiedDynamicSignedZeroTransfer

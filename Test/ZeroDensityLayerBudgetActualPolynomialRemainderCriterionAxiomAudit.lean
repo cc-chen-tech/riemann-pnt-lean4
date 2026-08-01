@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualPolynomialRemainderCriterion
+
+open PrimeNumberTheorem
+
+#print axioms tendsto_actualPolynomialRemainderTargetMajorant
+#print axioms
+  ActualPolynomialExplicitFormulaRemainderCertificate.targetAmplitudeNegligible

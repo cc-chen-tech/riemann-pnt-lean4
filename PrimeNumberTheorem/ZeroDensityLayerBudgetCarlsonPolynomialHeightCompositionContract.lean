@@ -1,0 +1,18 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonPolynomialHeightComposition
+
+/-!
+# Contract for Carlson polynomial-height composition
+-/
+
+namespace PrimeNumberTheorem
+
+#check carlsonPolynomialHeight
+#check carlsonPolynomialHeightCountMajorant
+#check carlsonPolynomialCountBudget
+#check carlson_zeroDensity_polynomialHeight_isBigO
+#check eventually_carlsonPolynomialHeightCountMajorant_eq_countBudget
+#check carlson_zeroDensity_polynomialHeight_countBudget_isBigO
+#check tendsto_carlsonPolynomialCountBudget_mul_targetKernelRatio
+#check exists_carlsonPolynomialHeight_countBudget_targetNormalized
+
+end PrimeNumberTheorem

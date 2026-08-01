@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonConcreteAdapter
+
+/-! Compile-time contract for the concrete Pintz--Carlson density adapter. -/
+
+#check PrimeNumberTheorem.pintzCarlsonAggregatedDensityLayerTerm
+#check PrimeNumberTheorem.AdaptiveClassicalCarlsonDensityAdapterPackage
+#check PrimeNumberTheorem.constructAdaptiveClassicalCarlsonDensityAdapterPackage

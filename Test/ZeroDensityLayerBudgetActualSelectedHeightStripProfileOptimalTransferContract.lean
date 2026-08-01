@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightStripProfileOptimalTransfer
+
+open PrimeNumberTheorem
+
+#check ActualSelectedHeightFiniteStripProfile.HasUnifiedTransferResult
+#check unified_actualBalancedHeight_of_optimalFiniteStripProfile

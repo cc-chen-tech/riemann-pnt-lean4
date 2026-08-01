@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicLogHeightTransfer
+
+#print axioms
+  PrimeNumberTheorem.tendsto_dynamicLogHeightMajorant_zero_of_normalizedExponent
+#print axioms
+  PrimeNumberTheorem.tendsto_dynamicLogHeightMajorant_zero_of_logGrowth
+#print axioms
+  PrimeNumberTheorem.tendsto_selectedUniformGoodHeight_dynamicLogHeightMajorant_zero
+#print axioms
+  PrimeNumberTheorem.tendsto_selectedUniformGoodHeight_carlsonStripLogMajorant_zero
+#print axioms
+  PrimeNumberTheorem.tendsto_actualWeightedBalancedGoodHeight_carlsonStripLogMajorant_zero
+#print axioms
+  PrimeNumberTheorem.tendsto_dynamicFiniteStripLogMajorant_zero_of_logGrowth
+#print axioms
+  PrimeNumberTheorem.tendsto_actualWeightedBalancedGoodHeight_dynamicFiniteStripLogMajorant_zero

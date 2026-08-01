@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightWeightedBalancedGoodHeightCharacterization
+
+#print axioms
+  PrimeNumberTheorem.selectedUniformGoodHeight_ratio_tendsto_one_iff_exponent_eq
+#print axioms
+  PrimeNumberTheorem.actualSelectedHeightFiniteStrip_optimalMarginCertificate_iff_goodHeightRatio_tendsto_one

@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetTargetAmplitudePowerGap
+
+#print axioms PrimeNumberTheorem.pntPowerLayerToTargetRatio_tendsto_zero_of_lt
+#print axioms PrimeNumberTheorem.pntPowerLayerToTargetRatio_self
+#print axioms PrimeNumberTheorem.not_tendsto_pntPowerLayerToTargetRatio_self_zero
+#print axioms PrimeNumberTheorem.pntPowerLayerToTargetRatio_tendsto_atTop_of_lt
+#print axioms PrimeNumberTheorem.pntInverseScaleToTargetRatio_tendsto_zero

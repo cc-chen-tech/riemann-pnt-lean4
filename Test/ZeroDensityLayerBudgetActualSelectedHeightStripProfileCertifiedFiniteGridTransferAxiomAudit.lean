@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightStripProfileCertifiedFiniteGridTransfer
+
+open PrimeNumberTheorem
+
+#print axioms ActualSelectedHeightFiniteStripGrid.extremalProfile_mem
+#print axioms ActualSelectedHeightFiniteStripGrid.monotoneRoundingCovers_extremalProfile
+#print axioms unified_actualBalancedHeight_of_certifiedExtremalFiniteStripGrid

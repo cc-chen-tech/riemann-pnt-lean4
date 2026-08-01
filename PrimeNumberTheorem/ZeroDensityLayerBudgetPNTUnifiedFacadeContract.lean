@@ -1,0 +1,27 @@
+import PrimeNumberTheorem.ZeroForcingUnifiedTransfer
+
+/-!
+Contract for the public upper/lower transfer facade.  The hybrid PNT upper
+optimizer, its complete fixed-rate relative-error limit, and the independently
+supplied finite-cluster lower transfer are visible without identifying their
+logically separate hypotheses.
+-/
+
+#check PrimeNumberTheorem.exists_naturalPoint_pintzCarlson_goodHeight_hybrid_PNT_upper
+#check PrimeNumberTheorem.exists_naturalPoint_pintzPNT_hybrid_truncation_optimal
+#check PrimeNumberTheorem.exists_pintzConstant_adaptiveHybridDensityBudget_tendsto
+#check PrimeNumberTheorem.singletonZeroThresholdBucketInput
+#check PrimeNumberTheorem.exists_pintzConstant_singletonZeroThresholdHybridDensity_tendsto
+#check PrimeNumberTheorem.exists_fixedRatePNTUpperSchedule
+#check PrimeNumberTheorem.FixedRatePNTUpperSchedule.relativeBudget_tendsto
+#check PrimeNumberTheorem.FixedRatePNTUpperSchedule.relativeError_tendsto
+#check PrimeNumberTheorem.exists_fixedRate_relativeChebyshevPsi0Error_tendsto
+#check PrimeNumberTheorem.exists_pintzConstant_fixedClassicalCarlsonDensity_tendsto
+#check PrimeNumberTheorem.exists_pintzConstant_fixedHybridDensityBudget_tendsto
+#check PrimeNumberTheorem.pntTwoStripBucketInput
+#check PrimeNumberTheorem.FixedSigmaPNTUpperSchedule
+#check PrimeNumberTheorem.exists_fixedSigmaPNTUpperSchedule
+#check PrimeNumberTheorem.FixedSigmaPNTUpperSchedule.relativeBudget_tendsto
+#check PrimeNumberTheorem.exists_fixedRate_pntTwoStrip_relativeChebyshevPsi0Error_tendsto
+#check PrimeNumberTheorem.zero_cluster_oscillation_lower
+#check PrimeNumberTheorem.unified_dynamic_zero_transfer

@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightWeightedGoodHeightOptimality
+
+open PrimeNumberTheorem
+
+#print axioms selectedUniformGoodHeight_div_rpow_tendsto_one
+#print axioms selectedUniformGoodHeight_log_div_log_tendsto
+#print axioms
+  actualSelectedHeightFiniteStripWeightedBalancedGoodHeight_div_optimalScale_tendsto_one
+#print axioms
+  actualSelectedHeightFiniteStripWeightedBalancedGoodHeight_logGrowth_tendsto_optimalExponent

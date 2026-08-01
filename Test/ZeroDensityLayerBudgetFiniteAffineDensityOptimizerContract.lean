@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetFiniteAffineDensityOptimizer
+
+namespace PrimeNumberTheorem
+
+#check finiteAffineStripBalancedMargin
+#check finiteAffineOptimalMargin
+#check finiteAffineBalancedExponent
+#check FiniteAffineDensityMarginCertificate
+#check finiteAffineOptimalMargin_le_strip
+#check le_finiteAffineOptimalMargin
+#check exists_strip_eq_finiteAffineOptimalMargin
+#check finiteAffineBalancedExponent_marginCertificate
+#check finiteAffineBalancedExponent_maximizes_margin
+#check finiteAffineBalancedExponent_unique
+#check finiteAffineOptimalMargin_pos
+
+end PrimeNumberTheorem

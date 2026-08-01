@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPositiveZeroBucket
+
+/-! Contract for positive-half-plane zero buckets. -/
+
+#check PrimeNumberTheorem.PositiveZeroBucketInput.certificate
+#check PrimeNumberTheorem.PositiveZeroBucketInput.layer_card_le_zeroDensityCount
+#check PrimeNumberTheorem.PositiveZeroBucketInput.norm_sum_le_pintzCarlsonDensityBudget

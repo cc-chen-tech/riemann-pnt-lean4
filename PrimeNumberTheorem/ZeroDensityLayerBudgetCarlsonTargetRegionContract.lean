@@ -1,0 +1,19 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonTargetRegion
+
+/-!
+# Contract for Carlson's target-amplitude admissible region
+-/
+
+namespace PrimeNumberTheorem
+
+#check CarlsonZeroDensity.carlson_zeroDensity_isBigO
+#check carlsonClassicalPolynomialDensityExponent
+#check carlsonClassicalTargetThreshold
+#check carlsonClassicalDensitySlope_pos
+#check sigma_lt_carlsonClassicalTargetThreshold
+#check carlsonClassicalTargetThreshold_lt_one
+#check exists_carlsonPolynomialHeight_targetAmplitude_decay_iff
+#check exists_carlsonPolynomialHeight_targetAmplitude_strictMargin
+#check carlson_zeroDensity_with_targetAmplitude_height
+
+end PrimeNumberTheorem

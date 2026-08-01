@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetMovingGapBarrier
+
+#print axioms PrimeNumberTheorem.tendsto_pntMovingDensityNormalizedRatio_zero
+#print axioms PrimeNumberTheorem.eventually_fixedGap_of_contour_and_movingDensity
+#print axioms PrimeNumberTheorem.not_movingDensityGap_tendsto_zero_of_contour

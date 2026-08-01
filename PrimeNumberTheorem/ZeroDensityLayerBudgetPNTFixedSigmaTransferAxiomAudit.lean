@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTFixedSigmaTransfer
+
+#print axioms PrimeNumberTheorem.exists_fixedSigmaPNTUpperSchedule
+#print axioms PrimeNumberTheorem.FixedSigmaPNTUpperSchedule.relativeBudget_tendsto
+#print axioms PrimeNumberTheorem.FixedSigmaPNTUpperSchedule.relativeError_tendsto
+#print axioms PrimeNumberTheorem.exists_pntTwoStripPNTUpperSchedule
+#print axioms PrimeNumberTheorem.exists_fixedRate_pntTwoStrip_relativeChebyshevPsi0Error_tendsto

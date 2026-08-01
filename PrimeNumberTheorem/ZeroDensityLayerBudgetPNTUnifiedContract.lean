@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.ZeroForcingUnifiedTransfer
+
+/-!
+Public contract for the Pintz--Carlson--explicit-formula PNT upper-transfer
+chain.  The existing lower-transfer declarations remain available through the
+unified facade import.
+-/
+
+#check PrimeNumberTheorem.TruncatedPNTErrorCertificate
+#check PrimeNumberTheorem.TruncatedPNTErrorCertificate.abs_chebyshevPsi0_sub_id_le
+#check PrimeNumberTheorem.TruncatedPNTErrorCertificate.abs_chebyshevPsi0_sub_id_le_pintz
+#check PrimeNumberTheorem.TruncatedPNTErrorCertificate.abs_relativeChebyshevPsi0Error_le_pintz
+#check PrimeNumberTheorem.exists_uniform_goodHeight_Icc_truncatedPNTErrorCertificate
+#check PrimeNumberTheorem.naturalPointPintzPNTUpperBudget
+#check PrimeNumberTheorem.naturalPointPintzPNTRelativeUpperBudget
+#check PrimeNumberTheorem.exists_naturalPoint_dynamic_goodHeight_pintz_PNT_upper
