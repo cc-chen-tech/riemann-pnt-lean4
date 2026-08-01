@@ -244,6 +244,49 @@ private theorem
       integral_selbergSqrtZetaSignedRationalNoncarrierPhasePolynomial_shift_eq
         N X (hT.trans_le ht) hH
 
+/-- The actual noncarrier short model has an integrable squared norm on its
+natural dyadic window.  The proof uses the same clamped phase polynomial as
+the Hermitian shift-square identity below. -/
+theorem
+    intervalIntegrable_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel
+    (T : ℝ) (X : ℕ) {H : ℝ}
+    (hT : 0 < T) (hH : 0 ≤ H) (hroom : H ≤ T) :
+    IntervalIntegrable
+      (fun t =>
+        Complex.normSq
+          (selbergSqrtZetaSignedRationalNoncarrierShortModel T X H t))
+      volume T (2 * T - H) := by
+  let N := firstZetaApproximationCutoff T
+  let f : ℝ → ℂ :=
+    selbergSqrtZetaSignedRationalNoncarrierPhasePolynomialClamped T N X
+  have hf : Continuous f :=
+    continuous_selbergSqrtZetaSignedRationalNoncarrierPhasePolynomialClamped
+      hT N X
+  have hlong : T ≤ 2 * T - H := by linarith
+  have hwindow : Continuous (fun t : ℝ => ∫ v in 0..H, f (t + v)) := by
+    apply intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'
+    exact hf.comp (continuous_fst.add continuous_snd)
+  have hclamped :
+      IntervalIntegrable
+        (fun t : ℝ => Complex.normSq (∫ v in 0..H, f (t + v)))
+        volume T (2 * T - H) :=
+    (Complex.continuous_normSq.comp hwindow).intervalIntegrable _ _
+  apply hclamped.congr
+  intro t ht
+  have htIcc : t ∈ Icc T (2 * T - H) := by
+    simpa [uIcc_of_le hlong] using (uIoc_subset_uIcc ht)
+  dsimp only [f]
+  change
+    Complex.normSq
+        (∫ v in 0..H,
+          selbergSqrtZetaSignedRationalNoncarrierPhasePolynomialClamped
+            T N X (t + v)) =
+      Complex.normSq
+        (selbergSqrtZetaSignedRationalNoncarrierShortModel T X H t)
+  rw [integral_selbergSqrtZetaSignedRationalNoncarrierPhasePolynomialClamped_shift_eq
+      hT N X htIcc.1 hH]
+  rfl
+
 /-- The actual noncarrier short-model square energy is the real part of the
 noncarrier fixed-shift Hermitian phase sum. -/
 theorem

@@ -108,7 +108,11 @@ private theorem
   rw [thetaFrequencyShortIntegral_eq_actualTransferClampedIntegral
     (selbergSqrtZetaSignedRationalFrequency q) hH ht]
 
-private theorem
+/-- The exact rational short model has an integrable squared norm on its
+natural dyadic window.  This public form lets downstream carrier/noncarrier
+decompositions use interval-integral monotonicity without rebuilding the
+clamped continuity argument. -/
+theorem
     intervalIntegrable_normSq_selbergSqrtZetaSignedRationalShortModel
     (T : ℝ) (X : ℕ) {H : ℝ}
     (hT : 0 < T) (hH : 0 ≤ H) (hroom : H ≤ T) :

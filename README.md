@@ -395,6 +395,13 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 | `research/vk-edge-annihilator-h-average-next`（本地） | 继续研究消去器平均和零密度残差能量 | 完整显式公式余项、正检测器能量及真实零点簇选择尚未统一闭合 |
 | 本地分支 `research/weil-extremal-kernels-next`（`a5aa020`） | 有限维区间证书、尾部和极值核实验 | 尚未推送或合并到 `main`；实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
 
+`research/hardy-littlewood` 的最新 carrier/noncarrier 端点又关闭了一层分析拼装：
+完整 rational short-model 二阶矩现由 carrier 的显式 `1 / log T` 振荡预算，
+加上规范正互素对支持删去 `(1,1)` 后的 noncarrier 算术预算控制。后者只含
+普通系数平方和与局部分离加权平方和。当前 `hexcessive` 的核心缺口因此不再是
+如何分离主频或如何把短模型接到二阶矩，而是对这两个删点有限和证明足够尖锐的
+统一算术上界，并与 `X(T), H(T), eta(T)` 的选择合成。
+
 `research/hardy-littlewood` 的最新边界比上表中的长摘要更进一步：
 全部有理频率已经无损重索引为唯一的正互素对 `(a,b)`，并拆成完整两 taper
 主项与边界尾项。`selbergSqrtZetaSignedReducedPairShortModelBudget` 把对角能量
@@ -550,7 +557,9 @@ noncarrier 普通能量与局部分离能量。新的总装定理又把这两个
 规范正互素对支持集删去 `(1,1)` 后的两个有限和；加权项保留完整支持的局部分离，
 而这已经被证明是重新计算 noncarrier 代价的合法上界。当前剩余硬问题是分别对
 删点后的普通平方和与局部分离加权和证明足够尖锐的统一算术上界，而不是再做
-分析转移或对 carrier 付费。
+分析转移或对 carrier 付费。新的 carrier/noncarrier 端点已经把完整短模型二阶矩
+直接压到 carrier 的 `1/log T` 振荡预算与上述删点预算之和；这里没有额外的抽象
+局部分离输入。下一步是给删点预算本身建立可随参数选择闭合的数值界。
 
 ### 长期独立方向
 
