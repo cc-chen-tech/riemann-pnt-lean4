@@ -1,3 +1,6 @@
 import MathlibAux.IntervalOscillatoryIntegrationByParts
 
+#print axioms MathlibAux.intervalIntegral_norm_le_mul_log_div_of_norm_le_div
+#print axioms MathlibAux.intervalIntegrable_deriv_of_norm_le_div
+#print axioms MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_totalVariation
 #print axioms MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv
