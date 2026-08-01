@@ -31,8 +31,10 @@ AXIOM_AUDIT_MODULES = [
     "MathlibAux.DyadicDriftingGaussianSchur.AxiomAudit",
     "PrimeNumberTheorem.HalfIsolatedZetaDyadicAdapter.AxiomAudit",
     "Test.SelbergLagDyadicGeometryAxiomAudit",
+    "Test.SeparatedFrequencyPackingAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.card_sub_one_mul_separation_le_two_mul_radius",
     "HardyTheorem.selberg_lag_dyadic_mem",
     "HardyTheorem.selberg_lag_shifted_dyadic_mem",
     "HardyTheorem.selberg_lag_controlInterval_subset_dyadic",
