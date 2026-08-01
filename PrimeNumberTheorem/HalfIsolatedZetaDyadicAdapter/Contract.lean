@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.HalfIsolatedZetaDyadicAdapter
+
+/-! Exact contract for the actual-zeta dyadic Gram/Schur adapter. -/
+
+#check PrimeNumberTheorem.VKEdgePiOverTwo.mem_zetaDyadicBucketPairs
+#check PrimeNumberTheorem.VKEdgePiOverTwo.zetaDyadicBucketPairs_snd_inj
+#check PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicZeros_spec
+#check PrimeNumberTheorem.VKEdgePiOverTwo.zetaLowZeroFinset_disjoint_zetaRightDyadicZeros
+#check PrimeNumberTheorem.VKEdgePiOverTwo.card_zetaRightDyadicUnitCluster
+#check PrimeNumberTheorem.VKEdgePiOverTwo.zetaDyadicBaseMass
+#check PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_occupancy_mul_sum_sq
+#check PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicGaussianGram_le_or_quantitativeCluster
