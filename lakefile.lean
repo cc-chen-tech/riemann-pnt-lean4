@@ -773,7 +773,10 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovLogVanDerCorputContract,
     `MathlibAux.IntervalOscillatoryIntegrationByParts,
     `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
-    `Test.IntervalOscillatoryIntegrationByPartsContract
+    `Test.IntervalOscillatoryIntegrationByPartsContract,
+    `HardyTheorem.SelbergLagDyadicGeometry,
+    `Test.SelbergLagDyadicGeometryAxiomAudit,
+    `Test.SelbergLagDyadicGeometryContract
   ]
 
 require mathlib from "./vendor/mathlib"
