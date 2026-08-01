@@ -1,4 +1,5 @@
 import HardyTheorem.SelbergSqrtZetaSignedRationalShortKernelPhase
+import MathlibAux.SeparatedFrequencySquareEnvelope
 import MathlibAux.SlidingLagCosineBudget
 
 /-!
@@ -447,5 +448,129 @@ theorem abs_squareIntegral_cos_thetaLagPhase_shift_le
     ring
   rw [hintegral]
   simpa only [abs_one, one_mul] using hbudget
+
+private theorem abs_squareIntegral_cos_thetaLagPhase_shift_le_window_sq
+    (omega : ℝ) {H x : ℝ}
+    (hH : 0 ≤ H) :
+    |∫ v in (0 : ℝ)..H, ∫ w in (0 : ℝ)..H,
+        Real.cos (thetaLagPhase omega (x + v) (w - v))| ≤ H ^ 2 := by
+  have hinner (v : ℝ) :
+      |∫ w in (0 : ℝ)..H,
+          Real.cos (thetaLagPhase omega (x + v) (w - v))| ≤ H := by
+    rw [← Real.norm_eq_abs]
+    calc
+      ‖∫ w in (0 : ℝ)..H,
+          Real.cos (thetaLagPhase omega (x + v) (w - v))‖ ≤
+          1 * |H - 0| := by
+        apply intervalIntegral.norm_integral_le_of_norm_le_const
+        intro w _hw
+        rw [Real.norm_eq_abs]
+        exact Real.abs_cos_le_one _
+      _ = H := by
+        rw [sub_zero, abs_of_nonneg hH]
+        ring
+  rw [← Real.norm_eq_abs]
+  calc
+    ‖∫ v in (0 : ℝ)..H, ∫ w in (0 : ℝ)..H,
+        Real.cos (thetaLagPhase omega (x + v) (w - v))‖ ≤
+        H * |H - 0| := by
+      apply intervalIntegral.norm_integral_le_of_norm_le_const
+      intro v _hv
+      rw [Real.norm_eq_abs]
+      exact hinner v
+    _ = H ^ 2 := by
+      rw [sub_zero, abs_of_nonneg hH]
+      ring
+
+/-- Stationary-safe square-window cancellation for the actual Hardy lag
+phase.  At the unique stationary frequency the trivial square-area bound is
+used; all other frequencies receive the reciprocal-square Fourier saving.
+The same tangent-line error is retained in both cases, so this statement can
+be summed directly with `sum_sq_stationaryMinReciprocalEnvelope_le`. -/
+theorem abs_squareIntegral_cos_thetaLagPhase_shift_le_stationaryEnvelope
+    (omega : ℝ) {T H x : ℝ}
+    (hT : 0 < T) (hH : 0 ≤ H) (hHT : H ≤ T / 2)
+    (hx : x ∈ Icc T (2 * T - H)) :
+    |∫ v in (0 : ℝ)..H, ∫ w in (0 : ℝ)..H,
+        Real.cos (thetaLagPhase omega (x + v) (w - v))| ≤
+      (MathlibAux.stationaryMinReciprocalEnvelope
+          H (-deriv thetaModel x) omega) ^ 2 +
+        (H ^ 2 / (T - H)) * H ^ 2 := by
+  let xi : ℝ := -deriv thetaModel x
+  let c : ℝ := thetaLagReferenceFrequency omega x
+  have hTH : 0 < T - H := by linarith
+  have hcEq : c = -(omega - xi) := by
+    simp only [c, xi, thetaLagReferenceFrequency]
+    ring
+  have herror : 0 ≤ (H ^ 2 / (T - H)) * H ^ 2 := by
+    positivity
+  have htrivial :=
+    abs_squareIntegral_cos_thetaLagPhase_shift_le_window_sq
+      omega (x := x) hH
+  by_cases homega : omega = xi
+  · have henv :
+        MathlibAux.stationaryMinReciprocalEnvelope H xi omega = H := by
+      rw [MathlibAux.stationaryMinReciprocalEnvelope, if_pos homega]
+    calc
+      |∫ v in (0 : ℝ)..H, ∫ w in (0 : ℝ)..H,
+          Real.cos (thetaLagPhase omega (x + v) (w - v))| ≤ H ^ 2 :=
+        htrivial
+      _ ≤ H ^ 2 + (H ^ 2 / (T - H)) * H ^ 2 :=
+        le_add_of_nonneg_right herror
+      _ =
+          (MathlibAux.stationaryMinReciprocalEnvelope
+              H (-deriv thetaModel x) omega) ^ 2 +
+            (H ^ 2 / (T - H)) * H ^ 2 := by
+        simpa only [xi] using congrArg
+          (fun y : ℝ => y ^ 2 + (H ^ 2 / (T - H)) * H ^ 2) henv.symm
+  · have hc : c ≠ 0 := by
+      rw [hcEq]
+      exact neg_ne_zero.mpr (sub_ne_zero.mpr homega)
+    have habs : |c| = |omega - xi| := by
+      rw [hcEq, abs_neg]
+    by_cases hshort : H ≤ 2 / |omega - xi|
+    · have henv :
+          MathlibAux.stationaryMinReciprocalEnvelope H xi omega = H := by
+        rw [MathlibAux.stationaryMinReciprocalEnvelope, if_neg homega,
+          min_eq_left hshort]
+      calc
+        |∫ v in (0 : ℝ)..H, ∫ w in (0 : ℝ)..H,
+            Real.cos (thetaLagPhase omega (x + v) (w - v))| ≤ H ^ 2 :=
+          htrivial
+        _ ≤ H ^ 2 + (H ^ 2 / (T - H)) * H ^ 2 :=
+          le_add_of_nonneg_right herror
+        _ =
+            (MathlibAux.stationaryMinReciprocalEnvelope
+                H (-deriv thetaModel x) omega) ^ 2 +
+              (H ^ 2 / (T - H)) * H ^ 2 := by
+          simpa only [xi] using congrArg
+            (fun y : ℝ => y ^ 2 + (H ^ 2 / (T - H)) * H ^ 2) henv.symm
+    · have hrecip : 2 / |omega - xi| ≤ H := le_of_not_ge hshort
+      have henv :
+          MathlibAux.stationaryMinReciprocalEnvelope H xi omega =
+            2 / |omega - xi| := by
+        rw [MathlibAux.stationaryMinReciprocalEnvelope, if_neg homega,
+          min_eq_right hrecip]
+      have hfourier :=
+        abs_squareIntegral_cos_thetaLagPhase_shift_le
+          omega hT hH hHT hx hc
+      have hmain : 4 / c ^ 2 = (2 / |omega - xi|) ^ 2 := by
+        calc
+          4 / c ^ 2 = 4 / |c| ^ 2 := by rw [sq_abs]
+          _ = 4 / |omega - xi| ^ 2 := by rw [habs]
+          _ = (2 / |omega - xi|) ^ 2 := by ring
+      calc
+        |∫ v in (0 : ℝ)..H, ∫ w in (0 : ℝ)..H,
+            Real.cos (thetaLagPhase omega (x + v) (w - v))| ≤
+            4 / c ^ 2 + (H ^ 2 / (T - H)) * H ^ 2 := by
+          simpa only [c] using hfourier
+        _ = (2 / |omega - xi|) ^ 2 +
+              (H ^ 2 / (T - H)) * H ^ 2 := by rw [hmain]
+        _ =
+            (MathlibAux.stationaryMinReciprocalEnvelope
+                H (-deriv thetaModel x) omega) ^ 2 +
+              (H ^ 2 / (T - H)) * H ^ 2 := by
+          simpa only [xi] using congrArg
+            (fun y : ℝ => y ^ 2 + (H ^ 2 / (T - H)) * H ^ 2) henv.symm
 
 end HardyTheorem

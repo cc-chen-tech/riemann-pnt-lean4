@@ -10,3 +10,4 @@ import HardyTheorem.SelbergHardyLagLinearization
 #print axioms HardyTheorem.abs_cos_thetaLagPhase_shift_sub_cos_frozen_le
 #print axioms HardyTheorem.abs_squareIntegral_cos_thetaLagPhase_le
 #print axioms HardyTheorem.abs_squareIntegral_cos_thetaLagPhase_shift_le
+#print axioms HardyTheorem.abs_squareIntegral_cos_thetaLagPhase_shift_le_stationaryEnvelope

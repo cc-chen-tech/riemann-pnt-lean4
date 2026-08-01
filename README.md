@@ -442,6 +442,14 @@ denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一
 `k > N` 的实际截断尾项与非对角 gap sum 则仍显式保留。接下来必须分别给出这三个
 量的尖锐统一估计。上述结论仍是条件端点，不是无条件 Selberg `T log T` 定理。
 
+矩形有限模型现在还有一条更直接的精确 Parseval 恒等式：在真实三重支持上交换两个
+numerator 坐标，会把“有理频率相等”无损转换成“整数乘积相等”，且保持两个原始有符号
+系数的乘积不变。因此，实际 short Dirichlet collected coefficients 的平方能量严格等于
+signed rational collected coefficients 的平方能量；把求和扩展到完整
+`1 <= k <= N*X^2` 区间也不产生误差，因为未出现的乘积系数已形式证明为零。这个结果
+没有使用绝对值 majorant、Cauchy 粗界或 fiber-cardinality 损失，可让 `hsmall` 的实际
+乘积能量与 `hexcessive` 的 rational-frequency 能量共享同一精确算术对象。
+
 **2026-08-01 的 Selberg 支撑链进展。** 完整 reduced-ratio Parseval 恒等式现在可以先
 删去 `(1,1)` 载波，再把剩余平方能量精确写成 product energy 减载波能量；证明中不再
 出现此前局部分离造成的 `X^2 + 1` 损失。大参数边界也已精确化：当 `b * X <= N` 时，
@@ -467,8 +475,11 @@ Hardy 系数统一求和到 `T * eta^2 / 24` 预算内。
 左端点频率 `thetaLagReferenceFrequency omega x`，余弦误差不超过 `H^2/(T-H)`。
 当该冻结频率非零时，真实方窗余弦积分因此至多为
 `4/frequency^2 + H^4/(T-H)`。这关闭了“局部相位线性化如何进入方窗积分”的拼装缺口；
-但某些实际频率会穿过零点，下一步必须把驻相频率用平凡 `H^2` 预算隔离，再对非驻相频率
-使用上述 Fourier 衰减并连同真实 signed coefficients 一起求和。
+驻相与非驻相情形现又统一为同一个 `stationaryMinReciprocalEnvelope` 平方包络：冻结频率
+恰为零时自动使用平凡 `H^2` 面积界，其余频率使用 `4/frequency^2` Fourier 衰减，且两种
+情形都保留同一 `H^4/(T-H)` 曲率误差。这个结论已可直接接到现有 separated-frequency
+平方和估计。下一步仍必须保留真实 signed coefficients 的整体抵消来完成求和；逐项取绝对值
+再套普通 `L2` 的路线仍不足以闭合 `hexcessive`。
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
