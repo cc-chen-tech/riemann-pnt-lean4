@@ -123,6 +123,7 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_positive_measure_in_epsilonLogWindow_gt_uniformBellottiGap",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_psiError_in_powerOnePlusEpsilonWindow_gt_of_bellottiEdgeCount",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_positive_measure_in_epsilonLogWindow_gt_of_bellottiEdgeCount",
+    "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_zeroFree_closedBall",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_closedBall_logDeriv_le_log_sq",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_deriv_logDeriv_le_log_cube",
