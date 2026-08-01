@@ -12,6 +12,9 @@ open HardyTheorem
 #check abs_thetaLagPhase_sub_linearized_le
 #check abs_thetaLagPhase_sub_linearized_le_window_sq
 #check abs_cos_thetaLagPhase_sub_cos_linearized_le
+#check abs_cos_thetaLagPhase_shift_sub_cos_frozen_le
+#check abs_squareIntegral_cos_thetaLagPhase_le
+#check abs_squareIntegral_cos_thetaLagPhase_shift_le
 
 example (omega : ℝ) {x : ℝ} (hx : 0 < x) :
     thetaLagReferenceFrequency omega x =

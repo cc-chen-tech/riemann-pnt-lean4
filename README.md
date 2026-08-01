@@ -462,6 +462,14 @@ autocorrelation 的 Fourier 抵消。当前两个最终输入仍是 `hsmall` 与
 前者缺实际高区间 gap sum 的尖锐估计，后者缺把相位线性化、三角核衰减和真实 mollified
 Hardy 系数统一求和到 `T * eta^2 / 24` 预算内。
 
+相位链现又进一步进入实际 autocorrelation 坐标：对
+`x in [T, 2*T-H]`、`v,w in [0,H]`，`thetaLagPhase omega (x+v) (w-v)` 已被统一冻结到
+左端点频率 `thetaLagReferenceFrequency omega x`，余弦误差不超过 `H^2/(T-H)`。
+当该冻结频率非零时，真实方窗余弦积分因此至多为
+`4/frequency^2 + H^4/(T-H)`。这关闭了“局部相位线性化如何进入方窗积分”的拼装缺口；
+但某些实际频率会穿过零点，下一步必须把驻相频率用平凡 `H^2` 预算隔离，再对非驻相频率
+使用上述 Fourier 衰减并连同真实 signed coefficients 一起求和。
+
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
 

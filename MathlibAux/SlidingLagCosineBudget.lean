@@ -86,7 +86,7 @@ by the triangle-kernel Fourier saving plus the square-area error. -/
 theorem abs_squareIntegral_le_cosine_difference_main_add_uniform_error
     {F : ℝ → ℝ → ℝ} (hF : Continuous (Function.uncurry F))
     {H K c epsilon : ℝ} (hH : 0 ≤ H) (hc : c ≠ 0)
-    (hbound : ∀ v w : ℝ,
+    (hbound : ∀ v ∈ Icc (0 : ℝ) H, ∀ w ∈ Icc (0 : ℝ) H,
       |F v w - K * Real.cos (c * (w - v))| ≤ epsilon) :
     |∫ v in (0 : ℝ)..H, ∫ w in (0 : ℝ)..H, F v w| ≤
       |K| * (4 / c ^ 2) + epsilon * H ^ 2 := by
@@ -169,7 +169,7 @@ theorem abs_squareIntegral_le_cosine_difference_main_add_uniform_error
             ((hE.comp (continuous_const.prodMk continuous_id)).abs
               |>.intervalIntegrable _ _)
             intervalIntegrable_const
-            (fun w _hw => by simpa only [E] using hbound v w)
+            (fun w hw => by simpa only [E] using hbound v _hv w hw)
         _ = epsilon * H := by
           rw [intervalIntegral.integral_const, smul_eq_mul]
           ring
