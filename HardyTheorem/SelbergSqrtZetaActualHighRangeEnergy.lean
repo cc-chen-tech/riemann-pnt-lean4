@@ -1,4 +1,5 @@
 import HardyTheorem.SelbergSqrtZetaGapDecomposition
+import HardyTheorem.SelbergSqrtZetaRectangularParseval
 
 open Complex
 open scoped BigOperators ArithmeticFunction
@@ -225,6 +226,35 @@ theorem
           hXone H)
         le_rfl))
 
+/-- The full diagonal budget with the zeta-truncation tail absorbed into the
+same exact rational coefficient energy supplied by rectangular Parseval, while
+retaining the uniform tail-frequency decay `(2 / log (N + 1))^2`. -/
+theorem
+    sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_rationalEnergy
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X) (hXN : X ≤ N)
+    (hlarge : Real.log 4 + 5 ≤ Real.log X) (H : ℝ) :
+    (∑ k ∈ Finset.Ioc 1 (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+      (15 : ℝ) / 4 * H ^ 2 +
+        ((∑ k ∈ Finset.Ioc X N,
+            (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
+              ((selbergSqrtZetaShortCompleteRangePairSum X k) ^ 2 /
+                (k : ℝ))) +
+          (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+            ∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
+              Complex.normSq
+                (selbergSqrtZetaSignedRationalCoeff N X q)) := by
+  exact
+    (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_actualTail
+      hN hX hXN hlarge H).trans
+      (add_le_add le_rfl
+        (add_le_add le_rfl
+          (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul_signedRationalEnergy
+            hN X H)))
+
 /-- Direct gap-sum endpoint with the actual signed high-range pair energy.
 The off-diagonal and the `k > N` truncation tail remain actual collected
 quantities; the `X²` pair-cardinality majorant is absent. -/
@@ -262,6 +292,46 @@ theorem
   exact add_le_add
     (mul_le_mul_of_nonneg_left
       (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_actualTail
+        hN hX hXN hlarge H)
+      (sub_nonneg.mpr hAB))
+    le_rfl
+
+/-- Gap-sum endpoint in which the actual zeta-truncation tail has been
+eliminated in favor of the common rational coefficient energy.  The remaining
+non-diagonal logarithmic gap form is unchanged. -/
+theorem
+    selbergSqrtZetaShortDirichletGapSum_le_signedPairEnergy_add_logDecay_mul_rationalEnergy_add_offDiagonal
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X) (hXN : X ≤ N)
+    (hlarge : Real.log 4 + 5 ≤ Real.log X)
+    {A B H : ℝ} (hAB : A ≤ B) :
+    selbergSqrtZetaShortDirichletGapSum N X A B H ≤
+      (B - A) *
+          ((15 : ℝ) / 4 * H ^ 2 +
+            ((∑ k ∈ Finset.Ioc X N,
+                (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
+                  ((selbergSqrtZetaShortCompleteRangePairSum X k) ^ 2 /
+                    (k : ℝ))) +
+              (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+                ∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
+                  Complex.normSq
+                    (selbergSqrtZetaSignedRationalCoeff N X q))) +
+        H ^ 2 *
+          ∑ m ∈ Finset.Ioc 1 (N * X * X),
+            ∑ n ∈ Finset.Ioc 1 (N * X * X),
+              2 *
+                    ‖selbergSqrtZetaShortDirichletCollectedCoeff N X m‖ *
+                  ‖selbergSqrtZetaShortDirichletCollectedCoeff N X n‖ /
+                |selbergShortDirichletCollectedFrequency m -
+                  selbergShortDirichletCollectedFrequency n| := by
+  rw [selbergSqrtZetaShortDirichletGapSum_eq_slidingExponentialGapSum]
+  apply
+    (MathlibAux.slidingExponentialGapSum_le_diagonal_add_frequencyGap
+      (Finset.Ioc 1 (N * X * X))
+      (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+      selbergShortDirichletCollectedFrequency hAB).trans
+  exact add_le_add
+    (mul_le_mul_of_nonneg_left
+      (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_rationalEnergy
         hN hX hXN hlarge H)
       (sub_nonneg.mpr hAB))
     le_rfl

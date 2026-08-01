@@ -439,8 +439,11 @@ denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一
 并闭合不含不可消除对角质量的 `hexcessive` 预算。独立的 `hsmall` 链也已把
 `X < k <= N` 的高区间对角能量精确改写为实际有符号卷积平方
 `(((sqrt-zeta taper)^2 * zeta)(k))^2/k`，不再使用纤维基数或逐项绝对值上界；
-`k > N` 的实际截断尾项与非对角 gap sum 则仍显式保留。接下来必须分别给出这三个
-量的尖锐统一估计。上述结论仍是条件端点，不是无条件 Selberg `T log T` 定理。
+`k > N` 的实际截断尾项现已通过矩形 Parseval 被同一个 rational coefficient energy
+控制，并保留尾区非零频率给出的 `(2 / log (N + 1))^2` 衰减。全 rational energy
+仍包含常数模态，但它不再通过单纯 `H^2` 粗界无衰减地进入预算。`hsmall` 现在剩下 complete-range 有符号卷积能量、
+与 `hexcessive` 共享的 rational energy，以及非对角 gap sum 的尖锐统一估计。
+上述结论仍是条件端点，不是无条件 Selberg `T log T` 定理。
 
 矩形有限模型现在还有一条更直接的精确 Parseval 恒等式：在真实三重支持上交换两个
 numerator 坐标，会把“有理频率相等”无损转换成“整数乘积相等”，且保持两个原始有符号

@@ -1,4 +1,5 @@
 import HardyTheorem.SelbergSqrtZetaSignedRationalCoefficientEnergySharp
+import HardyTheorem.SelbergSqrtZetaLowRangeSliding
 import HardyTheorem.SelbergSqrtZetaShortCollected
 
 /-!
@@ -437,5 +438,100 @@ theorem sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_eq_signedRational
       rw [selbergSqrtZetaShortDirichletCollectedCoeff_eq_zero_of_not_mem_rectangularProductSupport
         hnot]
       simp)
+
+/-- The genuinely zeta-truncated product tail is controlled by the same exact
+rational coefficient energy.  Since every tail frequency has `k > N`, the
+sliding-window multiplier contributes the uniform decay
+`(2 / log (N + 1))^2`; no separate tail majorant or fiber count is introduced. -/
+theorem
+    sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul_signedRationalEnergy
+    {N : ℕ} (hN : 1 ≤ N) (X : ℕ) (H : ℝ) :
+    (∑ k ∈ Finset.Ioc N (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+      (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+        ∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
+          Complex.normSq
+            (selbergSqrtZetaSignedRationalCoeff N X q) := by
+  have hsubset :
+      Finset.Ioc N (N * X * X) ⊆
+        selbergShortDirichletCollectedSupport N X := by
+    intro k hk
+    obtain ⟨hkN, hkTop⟩ := Finset.mem_Ioc.mp hk
+    rw [selbergShortDirichletCollectedSupport]
+    exact Finset.mem_Icc.mpr ⟨by omega, hkTop⟩
+  calc
+    (∑ k ∈ Finset.Ioc N (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+        ∑ k ∈ Finset.Ioc N (N * X * X),
+          (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 * Complex.normSq
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+      apply Finset.sum_le_sum
+      intro k hk
+      obtain ⟨hkN, _hkTop⟩ := Finset.mem_Ioc.mp hk
+      have hN1 : (1 : ℝ) < (N + 1 : ℕ) := by exact_mod_cast (show 1 < N + 1 by omega)
+      have hk1 : (1 : ℝ) < k := by exact_mod_cast (show 1 < k by omega)
+      have hlogN : 0 < Real.log ((N + 1 : ℕ) : ℝ) := Real.log_pos hN1
+      have hlogk : 0 < Real.log (k : ℝ) := Real.log_pos hk1
+      have hNk : ((N + 1 : ℕ) : ℝ) ≤ (k : ℝ) := by exact_mod_cast (show N + 1 ≤ k by omega)
+      have hlogMono :
+          Real.log ((N + 1 : ℕ) : ℝ) ≤ Real.log (k : ℝ) :=
+        Real.strictMonoOn_log.monotoneOn
+          (zero_lt_one.trans hN1) (zero_lt_one.trans hk1) hNk
+      have hdiv :
+          2 / Real.log (k : ℝ) ≤ 2 / Real.log ((N + 1 : ℕ) : ℝ) :=
+        div_le_div_of_nonneg_left (by norm_num) hlogN hlogMono
+      have hfreq : selbergShortDirichletCollectedFrequency k ≠ 0 := by
+        rw [selbergShortDirichletCollectedFrequency_eq_neg_log]
+        exact neg_ne_zero.mpr hlogk.ne'
+      have hfreqAbs :
+          |selbergShortDirichletCollectedFrequency k| = Real.log (k : ℝ) := by
+        rw [selbergShortDirichletCollectedFrequency_eq_neg_log, abs_neg,
+          abs_of_pos hlogk]
+      have hslide := MathlibAux.norm_slidingExponentialCoefficient_le_min
+        (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+        selbergShortDirichletCollectedFrequency k hfreq (H := H)
+      rw [hfreqAbs] at hslide
+      rw [Complex.normSq_eq_norm_sq]
+      calc
+        ‖MathlibAux.slidingExponentialCoefficient H
+              (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+              selbergShortDirichletCollectedFrequency k‖ ^ 2 ≤
+            (‖selbergSqrtZetaShortDirichletCollectedCoeff N X k‖ *
+              min |H| (2 / Real.log (k : ℝ))) ^ 2 :=
+          (sq_le_sq₀ (norm_nonneg _) (by positivity)).2 hslide
+        _ ≤ (‖selbergSqrtZetaShortDirichletCollectedCoeff N X k‖ *
+              (2 / Real.log ((N + 1 : ℕ) : ℝ))) ^ 2 := by
+          apply sq_le_sq₀ (by positivity) (by positivity) |>.2
+          exact mul_le_mul_of_nonneg_left
+            ((min_le_right _ _).trans hdiv) (norm_nonneg _)
+        _ = (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+              Complex.normSq
+                (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+          rw [Complex.normSq_eq_norm_sq]
+          ring
+    _ = (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+        ∑ k ∈ Finset.Ioc N (N * X * X),
+          Complex.normSq
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+      rw [Finset.mul_sum]
+    _ ≤ (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+        ∑ k ∈ selbergShortDirichletCollectedSupport N X,
+          Complex.normSq
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+      apply mul_le_mul_of_nonneg_left
+      · exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
+          (fun k _hk _hnot => Complex.normSq_nonneg _)
+      · positivity
+    _ = (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+        ∑ q ∈ selbergSqrtZetaSignedRationalSupport N X,
+          Complex.normSq
+            (selbergSqrtZetaSignedRationalCoeff N X q) := by
+      rw [sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_eq_signedRationalEnergy]
 
 end HardyTheorem
