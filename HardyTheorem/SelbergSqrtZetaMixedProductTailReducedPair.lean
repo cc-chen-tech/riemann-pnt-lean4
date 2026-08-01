@@ -428,6 +428,128 @@ theorem
           rw [sum_inv_Ioc_eq_harmonic_sub haNX]
           ring
 
+private theorem harmonic_cast_mono_mixedProductTail
+    {L U : ℕ} (hLU : L ≤ U) :
+    (harmonic L : ℝ) ≤ (harmonic U : ℝ) := by
+  have hsumNonneg :
+      0 ≤ ∑ d ∈ Finset.Ioc L U, (d : ℝ)⁻¹ := by
+    positivity
+  rw [sum_inv_Ioc_eq_harmonic_sub hLU] at hsumNonneg
+  linarith
+
+/-- A scalar harmonic-polynomial bound for the boundary budget.  This step
+does replace `H_{X/a}` and `H_{NX}-H_a` by their endpoint maxima, but it still
+introduces no finite-support cardinality or coefficientwise absolute-value
+loss. -/
+theorem
+    selbergSqrtZetaSignedRationalBoundaryTaperBudget_le_harmonicPolynomial
+    {N X : ℕ} (hX : 1 ≤ X) (hXN : X ≤ N) :
+    selbergSqrtZetaSignedRationalBoundaryTaperBudget N X ≤
+      (harmonic X : ℝ) ^ 4 * (harmonic (N * X) : ℝ) *
+        (4 * (X : ℝ) ^ 2 / (Real.log X) ^ 2) := by
+  have hRay :=
+    selbergSqrtZetaSignedRationalBoundaryTaperBudget_le_harmonicRaySum
+      hX hXN
+  calc
+    selbergSqrtZetaSignedRationalBoundaryTaperBudget N X ≤
+        ∑ a ∈ Finset.Icc 1 X,
+          (a : ℝ)⁻¹ *
+            (harmonic (X / a) : ℝ) ^ 2 *
+            ((harmonic (N * X) : ℝ) - (harmonic a : ℝ)) *
+            (harmonic X : ℝ) *
+            (4 * (X : ℝ) ^ 2 / (Real.log X) ^ 2) := hRay
+    _ ≤ ∑ a ∈ Finset.Icc 1 X,
+          (a : ℝ)⁻¹ *
+            (harmonic X : ℝ) ^ 2 *
+            (harmonic (N * X) : ℝ) *
+            (harmonic X : ℝ) *
+            (4 * (X : ℝ) ^ 2 / (Real.log X) ^ 2) := by
+      apply Finset.sum_le_sum
+      intro a ha
+      have haFacts := Finset.mem_Icc.mp ha
+      have hNPos : 0 < N := hX.trans hXN
+      have haNX : a ≤ N * X :=
+        haFacts.2.trans (Nat.le_mul_of_pos_left X hNPos)
+      have hdivH :
+          (harmonic (X / a) : ℝ) ≤ (harmonic X : ℝ) :=
+        harmonic_cast_mono_mixedProductTail (Nat.div_le_self X a)
+      have hdivNonneg : 0 ≤ (harmonic (X / a) : ℝ) :=
+        harmonic_cast_nonneg_mixedProductTail _
+      have hXNonneg : 0 ≤ (harmonic X : ℝ) :=
+        harmonic_cast_nonneg_mixedProductTail _
+      have hsq :
+          (harmonic (X / a) : ℝ) ^ 2 ≤ (harmonic X : ℝ) ^ 2 :=
+        (sq_le_sq₀ hdivNonneg hXNonneg).2 hdivH
+      have haH : (harmonic a : ℝ) ≤ (harmonic (N * X) : ℝ) :=
+        harmonic_cast_mono_mixedProductTail haNX
+      have hdiffNonneg :
+          0 ≤ (harmonic (N * X) : ℝ) - (harmonic a : ℝ) := by
+        linarith
+      have hdiffLe :
+          (harmonic (N * X) : ℝ) - (harmonic a : ℝ) ≤
+            (harmonic (N * X) : ℝ) := by
+        linarith [harmonic_cast_nonneg_mixedProductTail a]
+      gcongr
+    _ = ∑ a ∈ Finset.Icc 1 X,
+          (a : ℝ)⁻¹ *
+            ((harmonic X : ℝ) ^ 2 *
+              (harmonic (N * X) : ℝ) *
+              (harmonic X : ℝ) *
+              (4 * (X : ℝ) ^ 2 / (Real.log X) ^ 2)) := by
+      apply Finset.sum_congr rfl
+      intro a _ha
+      ring
+    _ = (∑ a ∈ Finset.Icc 1 X, (a : ℝ)⁻¹) *
+          ((harmonic X : ℝ) ^ 2 *
+            (harmonic (N * X) : ℝ) *
+            (harmonic X : ℝ) *
+            (4 * (X : ℝ) ^ 2 / (Real.log X) ^ 2)) := by
+      rw [Finset.sum_mul]
+    _ = (harmonic X : ℝ) *
+          ((harmonic X : ℝ) ^ 2 *
+            (harmonic (N * X) : ℝ) *
+            (harmonic X : ℝ) *
+            (4 * (X : ℝ) ^ 2 / (Real.log X) ^ 2)) := by
+      rw [show (∑ a ∈ Finset.Icc 1 X, (a : ℝ)⁻¹) =
+          (harmonic X : ℝ) by
+        simp only [harmonic_eq_sum_Icc, Rat.cast_sum, Rat.cast_inv,
+          Rat.cast_natCast]]
+    _ = (harmonic X : ℝ) ^ 4 * (harmonic (N * X) : ℝ) *
+          (4 * (X : ℝ) ^ 2 / (Real.log X) ^ 2) := by
+      ring
+
+/-- Replacing the harmonic factors by their standard logarithmic upper
+bounds gives a completely explicit boundary-budget estimate. -/
+theorem
+    selbergSqrtZetaSignedRationalBoundaryTaperBudget_le_logPolynomial
+    {N X : ℕ} (hX : 2 ≤ X) (hXN : X ≤ N) :
+    selbergSqrtZetaSignedRationalBoundaryTaperBudget N X ≤
+      (1 + Real.log X) ^ 4 * (1 + Real.log (N * X)) *
+        (4 * (X : ℝ) ^ 2 / (Real.log X) ^ 2) := by
+  have hPoly :=
+    selbergSqrtZetaSignedRationalBoundaryTaperBudget_le_harmonicPolynomial
+      (by omega) hXN
+  have hHX : (harmonic X : ℝ) ≤ 1 + Real.log X :=
+    harmonic_le_one_add_log X
+  have hHNX : (harmonic (N * X) : ℝ) ≤ 1 + Real.log (N * X) :=
+    by simpa only [Nat.cast_mul] using harmonic_le_one_add_log (N * X)
+  have hHXNonneg : 0 ≤ (harmonic X : ℝ) :=
+    harmonic_cast_nonneg_mixedProductTail _
+  have hHNXNonneg : 0 ≤ (harmonic (N * X) : ℝ) :=
+    harmonic_cast_nonneg_mixedProductTail _
+  have hlogXNonneg : 0 ≤ 1 + Real.log X := by
+    have : (0 : ℝ) ≤ Real.log X :=
+      Real.log_nonneg (by exact_mod_cast (show 1 ≤ X by omega))
+    linarith
+  have hlogNXNonneg : 0 ≤ 1 + Real.log (N * X) := by
+    have hNX : 1 ≤ N * X :=
+      Nat.mul_pos (by omega) (by omega)
+    have : (0 : ℝ) ≤ Real.log (N * X) :=
+      Real.log_nonneg (by exact_mod_cast hNX)
+    linarith
+  exact hPoly.trans (by
+    gcongr)
+
 /-- The unweighted boundary square sum is controlled by the explicit taper
 budget.  Unlike the local-separation budget, this introduces no geometric
 factor `X * min (a*N) b + 1`. -/

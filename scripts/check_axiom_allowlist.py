@@ -102,6 +102,8 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.selbergSqrtZetaSignedRationalBoundaryTaperSummand_le_harmonicRay",
     "HardyTheorem.selbergSqrtZetaSignedRationalBoundaryTaperBudget_eq_filter_numerator_lt_denominator",
     "HardyTheorem.selbergSqrtZetaSignedRationalBoundaryTaperBudget_le_harmonicRaySum",
+    "HardyTheorem.selbergSqrtZetaSignedRationalBoundaryTaperBudget_le_harmonicPolynomial",
+    "HardyTheorem.selbergSqrtZetaSignedRationalBoundaryTaperBudget_le_logPolynomial",
     "HardyTheorem.sum_selbergSqrtZetaSignedRationalBoundaryPlain_le_boundaryTaperBudget",
     "HardyTheorem.selbergSqrtZetaSignedRationalMixedProductTailEnergy_le_completeProductHigh_add_boundaryTaper_sub_lowProduct",
     "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_rationalEnergy",

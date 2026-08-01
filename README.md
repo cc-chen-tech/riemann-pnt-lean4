@@ -460,6 +460,9 @@ denominator 的 reduced rays；numerator 大于等于 denominator 的项全部�
 把二维 boundary budget 压成按 `a` 求和的一维 harmonic-ray 总账：固定 `a` 后，
 所有 `a < b <= N*X` 的倒数质量精确等于 `H_(N*X) - H_a`，而单条射线的 scale tail
 保留 `H_(X/a)^2`。整个降维过程没有引入支持集基数或逐项最大值损失。
+在此精确总账之后，代码还提供了便于后续参数核算的标量版本：boundary budget 至多为
+`H_X^4 * H_(N*X) * 4X^2/log(X)^2`，并进一步替换成只含 `log X` 与 `log(N*X)` 的显式式子。
+这一步明确使用了调和因子的端点最大值，因此是可靠的通用上界，但没有声称它已足够闭合 Selberg 预算。
 当前未闭合的是 high product 卷积能量、一维 harmonic-ray boundary budget 和非对角 gap 的统一尖锐上界。
 `hsmall` 现在剩下 complete-range 有符号卷积能量、这个 filtered mixed-tail energy，
 以及非对角 gap sum 的尖锐统一估计。
