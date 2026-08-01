@@ -11,7 +11,19 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.intervalIntegral_norm_le_mul_log_div_of_norm_le_div",
+    "MathlibAux.intervalIntegrable_deriv_of_norm_le_div",
+    "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_totalVariation",
     "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_deriv_cubicKernelMultiplier_le_eight_div_norm",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.desmoothedCubicLeftContourIntegrand_eq_rpow_mul_amplitude_mul_cexp",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_desmoothedLeftOscillatoryAmplitude_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.differentiableAt_desmoothedLeftOscillatoryAmplitude",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_deriv_desmoothedLeftOscillatoryAmplitude_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_intervalIntegral_desmoothedLeftOscillatoryAmplitude_mul_cexp_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_intervalIntegral_desmoothedCubicLeftContourIntegrand_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_dynamicCubicLeftBoundary_logDeriv_and_deriv_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_dynamicCubicLeftBoundary_positive_interval_oscillatory_bound",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_zeroFree_closedBall",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_closedBall_logDeriv_le_log_sq",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_deriv_logDeriv_le_log_cube",
