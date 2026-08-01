@@ -4,13 +4,14 @@ namespace PrimeNumberTheorem
 
 open Complex Set
 
-/-- On every fixed finite-height segment of the imaginary axis, zeta is
-analytic and nonzero.  Compactness therefore supplies a uniform right-hand
-thickening on which the actual logarithmic derivative is bounded. -/
-theorem exists_norm_logDeriv_riemannZeta_bound_on_right_thickening_of_imaginary_segment
+/-- On every fixed finite-height segment of the imaginary axis, compactness
+supplies a uniform right-hand thickening on which the actual logarithmic
+derivative is both analytic and bounded. -/
+theorem exists_analyticAt_norm_logDeriv_riemannZeta_bound_on_right_thickening_of_imaginary_segment
     (T : ℝ) :
     ∃ δ C : ℝ, 0 < δ ∧ 0 ≤ C ∧
       ∀ σ t : ℝ, 0 ≤ σ → σ ≤ δ → |t| ≤ T →
+        AnalyticAt ℂ (logDeriv riemannZeta) ((σ : ℂ) + I * t) ∧
         ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C := by
   let K : Set ℂ := Set.Icc (0 : ℝ) 0 ×ℂ Set.Icc (-T) T
   let U : Set ℂ := {z | AnalyticAt ℂ (logDeriv riemannZeta) z}
@@ -69,6 +70,19 @@ theorem exists_norm_logDeriv_riemannZeta_bound_on_right_thickening_of_imaginary_
     Metric.mem_cthickening_of_dist_le z y δ K hyK hdist
   have hzBound : ‖logDeriv riemannZeta z‖ ≤ C0 :=
     hC0 ⟨z, hzKδ, rfl⟩
-  exact hzBound.trans (le_max_left _ _)
+  refine ⟨?_, hzBound.trans (le_max_left _ _)⟩
+  simpa [U, z] using hδU hzKδ
+
+/-- Backwards-compatible boundedness-only projection of the analytic
+right-thickening theorem. -/
+theorem exists_norm_logDeriv_riemannZeta_bound_on_right_thickening_of_imaginary_segment
+    (T : ℝ) :
+    ∃ δ C : ℝ, 0 < δ ∧ 0 ≤ C ∧
+      ∀ σ t : ℝ, 0 ≤ σ → σ ≤ δ → |t| ≤ T →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C := by
+  rcases
+      exists_analyticAt_norm_logDeriv_riemannZeta_bound_on_right_thickening_of_imaginary_segment T with
+    ⟨δ, C, hδ, hC, h⟩
+  exact ⟨δ, C, hδ, hC, fun σ t hσ0 hσδ ht => (h σ t hσ0 hσδ ht).2⟩
 
 end PrimeNumberTheorem
