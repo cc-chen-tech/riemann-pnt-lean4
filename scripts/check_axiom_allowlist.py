@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_zeroFree_closedBall",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_closedBall_logDeriv_le_log_sq",
     "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_deriv_logDeriv_le_log_cube",

@@ -1,0 +1,3 @@
+import MathlibAux.IntervalOscillatoryIntegrationByParts
+
+#print axioms MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv

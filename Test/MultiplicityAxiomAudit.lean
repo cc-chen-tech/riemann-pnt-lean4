@@ -7,6 +7,7 @@ import PrimeNumberTheorem.RHNaturalPsiError
 import PrimeNumberTheorem.RHPrimeCountingConverse
 import PrimeNumberTheorem.VKEdgeDesmoothedLeftDerivative
 import HardyTheorem.FirstZetaApproximation
+import MathlibAux.IntervalOscillatoryIntegrationByParts
 import RiemannPNT
 
 #print axioms PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero
@@ -236,3 +237,4 @@ import RiemannPNT
 #print axioms PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_zeroFree_closedBall
 #print axioms PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_closedBall_logDeriv_le_log_sq
 #print axioms PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_deriv_logDeriv_le_log_cube
+#print axioms MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv
