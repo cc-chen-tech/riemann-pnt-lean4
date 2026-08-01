@@ -173,6 +173,49 @@ theorem exists_quantitativeRealBandPacket_of_forwardMovingGaussianL2_gt
     ⟨n, hnK, P, rfl, hmass, hsubset, hdisjoint,
       hband, hheight, hnonempty, hgrowth.2.1⟩
 
+/-- Preserve a genuine detection branch while upgrading the moving-energy
+branch to the complete quantitative real-band packet certificate.  The
+cluster alternative is exactly the output of
+`exists_quantitativeRealBandPacket_of_forwardMovingGaussianL2_gt`; in
+particular, its Schur and bucket-count constants remain explicit. -/
+theorem
+    detect_or_exists_quantitativeRealBandPacket_of_forwardMovingGaussianL2_gt
+    {S : Finset ℂ} {T beta a eta m L delta : ℝ} {K : Finset ℕ}
+    (hS : S ⊆ nontrivialZerosFinset T)
+    (heta : 0 < eta)
+    (hm : 1 ≤ m)
+    (hL : 0 ≤ L)
+    (hdelta : 0 ≤ delta)
+    (hK : K.Nonempty)
+    (hdetectOrLarge :
+      (∃ rho ∈ nontrivialZerosFinset T, rho ∉ S) ∨
+        2 * eta +
+            2 * (1 - Real.exp (-delta * L)) ^ 2 *
+              (∑ n ∈ K,
+                dynamicComplementRealBandPacketCoefficientMass
+                  S T beta a delta n) ^ 2 <
+          dynamicComplementRealBandForwardMovingGaussianSecondMoment
+            S T beta a delta K m L) :
+    (∃ rho ∈ nontrivialZerosFinset T, rho ∉ S) ∨
+      ∃ n ∈ K, ∃ P : Finset ℂ,
+        P = dynamicComplementRealBandZeroPacket S T beta delta n ∧
+        eta / (MathlibAux.gaussianBucketSchurConstant * K.card) <
+            dynamicComplementRealBandPacketCoefficientMass
+              S T beta a delta n ^ 2 ∧
+        P ⊆ nontrivialZerosFinset T ∧
+        Disjoint S P ∧
+        (∀ rho ∈ P,
+          beta - delta ≤ rho.re ∧ rho.re ≤ beta) ∧
+        (∀ rho ∈ P,
+          (n : ℝ) ≤ |rho.im| ∧ |rho.im| < (n : ℝ) + 1) ∧
+        P.Nonempty ∧
+        S.card < (S ∪ P).card := by
+  rcases hdetectOrLarge with hdetect | hlarge
+  · exact Or.inl hdetect
+  · exact Or.inr
+      (exists_quantitativeRealBandPacket_of_forwardMovingGaussianL2_gt
+        hS heta hm hL hdelta hK hlarge)
+
 end
 
 end ExceptionalZeroDetectOrCount

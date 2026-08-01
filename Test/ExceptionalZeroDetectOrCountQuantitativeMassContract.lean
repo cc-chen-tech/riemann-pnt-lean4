@@ -73,5 +73,39 @@ open VKEdgePiOverTwo
         P.Nonempty ∧
         S.card < (S ∪ P).card)
 
+#check
+  (detect_or_exists_quantitativeRealBandPacket_of_forwardMovingGaussianL2_gt :
+    ∀ {S : Finset ℂ} {T beta a eta m L delta : ℝ}
+      {K : Finset ℕ},
+      S ⊆ nontrivialZerosFinset T →
+      0 < eta →
+      1 ≤ m →
+      0 ≤ L →
+      0 ≤ delta →
+      K.Nonempty →
+      ((∃ rho ∈ nontrivialZerosFinset T, rho ∉ S) ∨
+        2 * eta +
+            2 * (1 - Real.exp (-delta * L)) ^ 2 *
+              (∑ n ∈ K,
+                dynamicComplementRealBandPacketCoefficientMass
+                  S T beta a delta n) ^ 2 <
+          dynamicComplementRealBandForwardMovingGaussianSecondMoment
+            S T beta a delta K m L) →
+      (∃ rho ∈ nontrivialZerosFinset T, rho ∉ S) ∨
+        ∃ n ∈ K, ∃ P : Finset ℂ,
+          P = dynamicComplementRealBandZeroPacket
+              S T beta delta n ∧
+          eta / (MathlibAux.gaussianBucketSchurConstant * K.card) <
+              dynamicComplementRealBandPacketCoefficientMass
+                S T beta a delta n ^ 2 ∧
+          P ⊆ nontrivialZerosFinset T ∧
+          Disjoint S P ∧
+          (∀ rho ∈ P,
+            beta - delta ≤ rho.re ∧ rho.re ≤ beta) ∧
+          (∀ rho ∈ P,
+            (n : ℝ) ≤ |rho.im| ∧ |rho.im| < (n : ℝ) + 1) ∧
+          P.Nonempty ∧
+          S.card < (S ∪ P).card)
+
 end ExceptionalZeroDetectOrCount
 end PrimeNumberTheorem
