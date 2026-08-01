@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCubicTwoHeightL2TailContract
+
+open PrimeNumberTheorem
+
+#print axioms actualCubicDyadicStripSquareCapacityExcluding_le
+#print axioms actualCubicDyadicStripSquareCapacityExcluding_le_reciprocal
+#print axioms exists_actualCubicDyadicStripSquareCapacityExcluding_le_count
+#print axioms cubicDyadicCountProduct_eq_sixthPower
