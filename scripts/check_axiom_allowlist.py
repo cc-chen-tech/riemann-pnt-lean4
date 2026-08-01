@@ -34,6 +34,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeRightHigherSharpBlockerAxiomAudit",
     "Test.PrimeSideDetectorMainPoleAxiomAudit",
     "Test.QPowerDetectorAxiomAudit",
+    "Test.QPowerDetectorScaleBarrierAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -172,6 +173,12 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.PrimeSideDetector.polynomialWeightedL1At_realNodeFactor_le",
     "PrimeNumberTheorem.PrimeSideDetector.polynomialWeightedL1At_conjugatePairFactor_le",
     "PrimeNumberTheorem.PrimeSideDetector.normalizedQPowerPolynomial_weightedL1_le",
+    "PrimeNumberTheorem.PrimeSideDetector.norm_evalRealPolynomial_le_polynomialWeightedL1At_norm",
+    "PrimeNumberTheorem.PrimeSideDetector.polynomialWeightedL1At_le_ratio_pow_of_natDegree_le",
+    "PrimeNumberTheorem.PrimeSideDetector.norm_qPowerNode",
+    "PrimeNumberTheorem.PrimeSideDetector.qPowerDetector_weightedL1At_one_lower",
+    "PrimeNumberTheorem.PrimeSideDetector.qPowerDetector_negativeMassAt_one_lower",
+    "PrimeNumberTheorem.PrimeSideDetector.qPowerDetector_supportCompatible_negativeMass_loss",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
