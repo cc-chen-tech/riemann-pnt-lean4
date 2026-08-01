@@ -13,6 +13,5 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
 #check halfHeightCarlsonTargetExponent_pos
 #check polynomialWindowCapacity_threshold_iff
 #check halfHeightWindowCapacity_threshold_iff
-#check balancedHeightWindowCapacity_threshold_iff
 
 end PrimeNumberTheorem.VKEdgePiOverTwo

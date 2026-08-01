@@ -16,10 +16,12 @@ in the right-higher explicit-formula energy.  Its summand is the target-
 normalized Pintz kernel weight.  Thus the bridge changes neither the zero set,
 the truncation height, nor the normalization.
 
-The final exponent lemmas also record a genuine obstruction: at the natural
-`x^(1/2)` truncation of the right-higher construction, the classical Carlson
-count exponent cannot make this target-normalized capacity decay for any
-`1/2 < sigma < beta < 1`.
+The half-height exponent lemma records only an obstruction for the current
+majorant: at `T = x^(1/2)`, the classical Carlson count exponent combined with
+the squared L1 absolute mass cannot make the target-normalized capacity decay
+for `1/2 < sigma < beta < 1`.  This module does not analyze a direct L2 bound,
+a dyadic weighted Carlson capacity, or a two-height tail transfer.  In
+particular, it proves no Carlson contradiction and excludes no off-line zero.
 -/
 
 /-- Target-normalized absolute zero mass on the exact right-higher complement.
@@ -188,7 +190,8 @@ theorem rightHigherGaussianSecondMoment_le_absoluteCapacity
 
 /-- With height `H(x) = x^(1/2)`, the classical Carlson count exponent plus
 target normalization is strictly positive throughout the zeta strip.  Hence
-the corresponding polynomial majorant cannot decay. -/
+the current classical-count plus squared-L1-mass polynomial majorant cannot
+decay. -/
 theorem halfHeightCarlsonTargetExponent_pos
     {sigma beta : ℝ}
     (hsigma : 1 / 2 < sigma) (hsigmaOne : sigma < 1)
@@ -202,9 +205,10 @@ theorem halfHeightCarlsonTargetExponent_pos
     ring
   linarith
 
-/-- If `M(x) >= x^theta` and one zero is reused at most `x^overlap`, the
-polynomial window count beats a Carlson capacity of height exponent `alpha`
-exactly when the net window exponent exceeds the composed Carlson exponent. -/
+/-- Thin integration interface: if `M(x) >= x^theta` and one zero is reused at
+most `x^overlap`, the polynomial window count beats a Carlson capacity of
+height exponent `alpha` exactly when the net window exponent exceeds the
+composed Carlson exponent. -/
 theorem polynomialWindowCapacity_threshold_iff
     (theta overlap alpha sigma : ℝ) :
     theta - overlap > alpha * (4 * sigma * (1 - sigma)) ↔
@@ -217,15 +221,6 @@ theorem halfHeightWindowCapacity_threshold_iff
     (theta overlap sigma : ℝ) :
     theta - overlap > (1 / 2 : ℝ) * (4 * sigma * (1 - sigma)) ↔
       theta > overlap + 2 * sigma * (1 - sigma) := by
-  constructor <;> intro h <;> nlinarith
-
-/-- The balanced height `alpha = (1-sigma)/2` requires
-`theta > overlap + 2 sigma (1-sigma)^2`. -/
-theorem balancedHeightWindowCapacity_threshold_iff
-    (theta overlap sigma : ℝ) :
-    theta - overlap >
-        ((1 - sigma) / 2) * (4 * sigma * (1 - sigma)) ↔
-      theta > overlap + 2 * sigma * (1 - sigma) ^ 2 := by
   constructor <;> intro h <;> nlinarith
 
 end
