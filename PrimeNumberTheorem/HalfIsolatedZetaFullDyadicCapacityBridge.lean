@@ -152,6 +152,108 @@ theorem zetaRightDyadicNegativeMassSquareExcluding_eq_positive_conjugateFinset
     rw [zetaDyadicBaseMass_conjugateBucketPair
       (nontrivialZero_of_mem_negativePairsExcluding hp)]
 
+theorem zetaRightDyadicNegativeMassSquareExcluding_le_twoCarlsonCapacities
+    {x sigma beta : ℝ} {k : ℕ} {S : Finset ℂ}
+    (hx : 1 ≤ x) (hk : 1 ≤ k) (hsigma : sigma < beta) :
+    zetaRightDyadicNegativeMassSquareExcluding x beta k S ≤
+      (x ^ (1 - beta)) ^ 2 *
+        (actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+            sigma 1 (k - 1) (conjugateFinset S) +
+          actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+            sigma 1 k (conjugateFinset S)) := by
+  rw [zetaRightDyadicNegativeMassSquareExcluding_eq_positive_conjugateFinset]
+  exact zetaRightDyadicPositiveMassSquareExcluding_le_twoCarlsonCapacities
+    hx hk hsigma
+
+/-- All right-strip bucket pairs in one dyadic block after deleting `S`. -/
+def zetaRightDyadicPairsExcluding
+    (beta : ℝ) (k : ℕ) (S : Finset ℂ) : Finset (ℕ × ℂ) :=
+  (zetaRightDyadicBucketPairs beta k).filter fun p => p.2 ∉ S
+
+/-- Square mass of the full positive-and-negative excluded dyadic block. -/
+def zetaRightDyadicFullMassSquareExcluding
+    (x beta : ℝ) (k : ℕ) (S : Finset ℂ) : ℝ :=
+  ∑ p ∈ zetaRightDyadicPairsExcluding beta k S,
+    zetaDyadicBaseMass x beta p ^ 2
+
+private theorem im_ne_zero_of_mem_zetaRightDyadicBucketPairs
+    {beta : ℝ} {k : ℕ} {p : ℕ × ℂ}
+    (hp : p ∈ zetaRightDyadicBucketPairs beta k) :
+    p.2.im ≠ 0 := by
+  have hpZero : p.2 ∈ zetaRightDyadicZeros beta k :=
+    Finset.mem_image.mpr ⟨p, hp, rfl⟩
+  have hlower := (zetaRightDyadicZeros_spec hpZero).2.1
+  have hpow : (0 : ℝ) < ((2 ^ k : ℕ) : ℝ) := by positivity
+  exact abs_pos.mp (lt_of_lt_of_le hpow hlower)
+
+theorem zetaRightDyadicPositive_add_negativeMassSquareExcluding_eq_full
+    (x beta : ℝ) (k : ℕ) (S : Finset ℂ) :
+    zetaRightDyadicPositiveMassSquareExcluding x beta k S +
+        zetaRightDyadicNegativeMassSquareExcluding x beta k S =
+      zetaRightDyadicFullMassSquareExcluding x beta k S := by
+  have hpos :
+      zetaRightDyadicPositivePairsExcluding beta k S =
+        (zetaRightDyadicPairsExcluding beta k S).filter fun p => 0 < p.2.im := by
+    ext p
+    simp [zetaRightDyadicPositivePairsExcluding, zetaRightDyadicPairsExcluding,
+      and_left_comm, and_comm]
+    tauto
+  have hneg :
+      zetaRightDyadicNegativePairsExcluding beta k S =
+        (zetaRightDyadicPairsExcluding beta k S).filter fun p => ¬ 0 < p.2.im := by
+    ext p
+    simp only [zetaRightDyadicNegativePairsExcluding, zetaRightDyadicPairsExcluding,
+      Finset.mem_filter]
+    constructor
+    · rintro ⟨hp, him, hnot⟩
+      exact ⟨⟨hp, hnot⟩, not_lt.mpr (le_of_lt him)⟩
+    · rintro ⟨⟨hp, hnot⟩, him⟩
+      refine ⟨hp, ?_, hnot⟩
+      exact lt_of_le_of_ne (not_lt.mp him)
+        (im_ne_zero_of_mem_zetaRightDyadicBucketPairs hp)
+  unfold zetaRightDyadicPositiveMassSquareExcluding
+    zetaRightDyadicNegativeMassSquareExcluding
+    zetaRightDyadicFullMassSquareExcluding
+  rw [hpos, hneg]
+  exact Finset.sum_filter_add_sum_filter_not
+    (zetaRightDyadicPairsExcluding beta k S)
+    (fun p => 0 < p.2.im)
+    (fun p => zetaDyadicBaseMass x beta p ^ 2)
+
+theorem zetaRightDyadicFullMassSquareExcluding_le_fourCarlsonCapacities
+    {x sigma beta : ℝ} {k : ℕ} {S : Finset ℂ}
+    (hx : 1 ≤ x) (hk : 1 ≤ k) (hsigma : sigma < beta) :
+    zetaRightDyadicFullMassSquareExcluding x beta k S ≤
+      (x ^ (1 - beta)) ^ 2 *
+        ((actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma 1 (k - 1) S +
+            actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma 1 k S) +
+          (actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma 1 (k - 1) (conjugateFinset S) +
+            actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma 1 k (conjugateFinset S))) := by
+  rw [← zetaRightDyadicPositive_add_negativeMassSquareExcluding_eq_full]
+  calc
+    zetaRightDyadicPositiveMassSquareExcluding x beta k S +
+        zetaRightDyadicNegativeMassSquareExcluding x beta k S ≤
+      (x ^ (1 - beta)) ^ 2 *
+          (actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma 1 (k - 1) S +
+            actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma 1 k S) +
+        (x ^ (1 - beta)) ^ 2 *
+          (actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma 1 (k - 1) (conjugateFinset S) +
+            actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma 1 k (conjugateFinset S)) :=
+      add_le_add
+        (zetaRightDyadicPositiveMassSquareExcluding_le_twoCarlsonCapacities
+          hx hk hsigma)
+        (zetaRightDyadicNegativeMassSquareExcluding_le_twoCarlsonCapacities
+          hx hk hsigma)
+    _ = _ := by ring
+
 end
 
 end VKEdgePiOverTwo
