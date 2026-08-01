@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCubicKernelSecondDifference
+
+#print axioms PrimeNumberTheorem.secondLogForwardDifference_exp_div_cube
+#print axioms PrimeNumberTheorem.secondLogForwardDifference_exp_div_cube_normalized
+#print axioms PrimeNumberTheorem.secondLogForwardDifference_const_mul_exp_div_cube_normalized
