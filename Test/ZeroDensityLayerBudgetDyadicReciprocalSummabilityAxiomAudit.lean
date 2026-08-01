@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDyadicReciprocalSummability
+
+#print axioms PrimeNumberTheorem.pntDyadicReciprocalDensityRatio_lt_one
+#print axioms PrimeNumberTheorem.summable_pntDyadicReciprocalDensityMajorant
+#print axioms PrimeNumberTheorem.summable_of_le_pntDyadicReciprocalDensityMajorant

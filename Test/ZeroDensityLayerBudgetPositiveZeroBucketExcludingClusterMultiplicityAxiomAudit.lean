@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPositiveZeroBucketExcludingClusterMultiplicity
+
+open PrimeNumberTheorem
+
+#print axioms
+  PositiveZeroOutsideClusterBucketInput.layer_multiplicityMass_le_zeroDensityCount
+#print axioms
+  PositiveZeroOutsideClusterBucketInput.sum_norm_pntRelativeZeroContribution_layer_le_count
+#print axioms
+  PositiveZeroOutsideClusterBucketInput.norm_positive_pntRelativeZeroContribution_sum_le

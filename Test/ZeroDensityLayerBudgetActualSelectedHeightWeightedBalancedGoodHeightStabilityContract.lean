@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightWeightedBalancedGoodHeightStability
+
+#check
+  PrimeNumberTheorem.selectedUniformGoodHeight_log_ratio_div_log_tendsto
+#check
+  PrimeNumberTheorem.selectedUniformGoodHeight_log_ratio_actualWeightedBalanced_div_log_tendsto
+#check
+  PrimeNumberTheorem.exists_bottleneck_nearOptimalGoodHeight_logRatio_limit_bounds

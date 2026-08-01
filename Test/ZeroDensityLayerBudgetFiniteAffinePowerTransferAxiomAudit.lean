@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetFiniteAffinePowerTransfer
+
+namespace PrimeNumberTheorem
+
+#print axioms finiteAffineDensityPowerMajorant_le_commonDecay
+#print axioms tendsto_finiteAffineDensityPowerMajorant_zero
+#print axioms finiteAffineBalancedPowerMajorant_le_optimalDecay
+#print axioms tendsto_finiteAffineBalancedPowerMajorant_zero
+
+end PrimeNumberTheorem

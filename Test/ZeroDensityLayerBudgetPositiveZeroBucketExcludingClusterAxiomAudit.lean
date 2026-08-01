@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPositiveZeroBucketExcludingCluster
+
+open PrimeNumberTheorem
+
+#print axioms mem_positiveNontrivialZerosOutsideClusterFinset
+#print axioms PositiveZeroOutsideClusterBucketInput.certificate
+#print axioms
+  PositiveZeroOutsideClusterBucketInput.layer_subset_zeroDensityZerosFinset
+#print axioms
+  PositiveZeroOutsideClusterBucketInput.layer_card_le_zeroDensityCount
+#print axioms
+  PositiveZeroOutsideClusterBucketInput.norm_sum_le_pintzCarlsonDensityBudget

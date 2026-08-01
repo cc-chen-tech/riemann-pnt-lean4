@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicCarlsonProductComparison
+
+namespace PrimeNumberTheorem
+
+#check eventually_dynamicCarlsonProduct_le_dynamicLogHeightMajorant
+#check
+  actualZetaFiniteStrips_dynamicCarlsonLogHeight_layerNormSum_negligible
+
+end PrimeNumberTheorem

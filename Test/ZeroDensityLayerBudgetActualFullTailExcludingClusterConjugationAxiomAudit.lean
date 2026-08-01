@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation
+
+open PrimeNumberTheorem
+
+#print axioms sum_clusterExcludedTerm_eq_sum_sdiff
+#print axioms clusterExcludedTerm_conj
+#print axioms
+  sum_negativeOutsideCluster_eq_conj_sum_positiveOutsideCluster
+#print axioms
+  finiteZeroSumOutsideCluster_eq_positive_add_negative_add_real
+#print axioms
+  dynamicFullOutsideClusterPNTZeroTailNorm_le_two_positive_add_real
+#print axioms
+  dynamicFullOutsideClusterPNTZeroTailNorm_targetAmplitudeNegligible
+#print axioms
+  actualZetaFiniteStripsOutsideCluster_fullTail_targetAmplitudeNegligible

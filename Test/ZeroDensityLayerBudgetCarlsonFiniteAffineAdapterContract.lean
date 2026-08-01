@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonFiniteAffineAdapter
+
+namespace PrimeNumberTheorem
+
+#check carlsonAffineDensityFloor
+#check carlsonAffineDensityCeiling
+#check carlsonAffineDensitySlope
+#check carlsonAffineStripBalancedMargin_eq
+#check carlsonAffineOptimalMargin_eq
+#check carlsonAffineBalancedExponent_eq
+#check carlsonPhysicalMarginCertificate_iff_finiteAffine
+#check carlsonWeightedBalancedExponent_marginCertificate_via_finiteAffine
+#check carlsonWeightedBalancedExponent_maximizes_via_finiteAffine
+#check carlsonWeightedBalancedExponent_unique_via_finiteAffine
+#check carlsonAffineOptimalMargin_pos
+
+end PrimeNumberTheorem
