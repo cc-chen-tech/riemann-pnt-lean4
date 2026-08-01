@@ -7,16 +7,19 @@ open ExplicitFormulaResidues
 
 /-- The positive dynamic cubic boundary eventually enters the fixed compact
 right-thickening of the imaginary axis.  Hence every fixed low-height segment
-of the actual left edge has a uniform `O(1)` logarithmic-derivative budget. -/
-theorem exists_dynamicCubicLowLeft_logDeriv_budget
+of the actual left edge is a segment of analyticity with a uniform `O(1)`
+logarithmic-derivative budget. -/
+theorem exists_dynamicCubicLowLeft_analyticAt_logDeriv_budget
     (b T : ℝ) (hb : 0 < b) :
     ∃ C H0 : ℝ, 0 ≤ C ∧ 4 ≤ H0 ∧
       ∀ H : ℝ, H0 ≤ H →
         ∀ t : ℝ, |t| ≤ T →
+          AnalyticAt ℂ (logDeriv riemannZeta)
+            ((dynamicCubicLeftBoundary b H : ℂ) + I * t) ∧
           ‖logDeriv riemannZeta
             ((dynamicCubicLeftBoundary b H : ℂ) + I * t)‖ ≤ C := by
   rcases
-      exists_norm_logDeriv_riemannZeta_bound_on_right_thickening_of_imaginary_segment T
+      exists_analyticAt_norm_logDeriv_riemannZeta_bound_on_right_thickening_of_imaginary_segment T
       with ⟨δ, C, hδ, hC, hcompact⟩
   let H0 : ℝ := max 4 (Real.exp (b / (2 * δ)))
   have hH0 : 4 ≤ H0 := le_max_left _ _
@@ -44,5 +47,18 @@ theorem exists_dynamicCubicLowLeft_logDeriv_budget
       nlinarith
     nlinarith
   exact hcompact (dynamicCubicLeftBoundary b H) t ha.le haδ ht
+
+/-- Backwards-compatible boundedness-only projection of the analytic dynamic
+low-left budget. -/
+theorem exists_dynamicCubicLowLeft_logDeriv_budget
+    (b T : ℝ) (hb : 0 < b) :
+    ∃ C H0 : ℝ, 0 ≤ C ∧ 4 ≤ H0 ∧
+      ∀ H : ℝ, H0 ≤ H →
+        ∀ t : ℝ, |t| ≤ T →
+          ‖logDeriv riemannZeta
+            ((dynamicCubicLeftBoundary b H : ℂ) + I * t)‖ ≤ C := by
+  rcases exists_dynamicCubicLowLeft_analyticAt_logDeriv_budget b T hb with
+    ⟨C, H0, hC, hH0, h⟩
+  exact ⟨C, H0, hC, hH0, fun H hH t ht => (h H hH t ht).2⟩
 
 end PrimeNumberTheorem
