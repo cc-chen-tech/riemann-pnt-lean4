@@ -1,0 +1,20 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDesmoothedContourEdgeBudget
+
+open Complex MeasureTheory Set
+open scoped BigOperators Interval
+
+namespace PrimeNumberTheorem
+namespace ExplicitFormulaResidues
+
+#check norm_desmoothedCubicContourIntegrand_eq
+#check norm_desmoothedCubicContourIntegrand_le
+#check norm_cubicBottomContourPoint_le_radius
+#check norm_cubicTopContourPoint_le_radius
+#check norm_cubicLeftContourPoint_le_radius
+#check norm_desmoothedCubicBottomContourIntegral_le
+#check norm_desmoothedCubicTopContourIntegral_le
+#check norm_desmoothedCubicLeftContourIntegral_le
+#check norm_desmoothedCubicContourRemainder_le_edgeBudgets
+
+end ExplicitFormulaResidues
+end PrimeNumberTheorem
