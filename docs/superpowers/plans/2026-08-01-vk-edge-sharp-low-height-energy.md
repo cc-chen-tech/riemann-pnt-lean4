@@ -28,11 +28,11 @@
 - Consumes: `exists_uniform_goodHeight_Icc_norm_real_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le`.
 - Produces: `eventually_exists_uniform_goodHeight_normalized_powerHeight_proportional_window_remainder_lt`.
 
-- [ ] Write the exact `#check` contract before the source module exists.
-- [ ] Run the contract and confirm it fails because the new module is absent.
-- [ ] Implement the power-height envelope, pointwise estimate, decay theorem, and selector.
-- [ ] Run the source and contract with `LEAN_NUM_THREADS=1`.
-- [ ] Commit the independently reviewable analytic selector.
+- [x] Write the exact `#check` contract before the source module exists.
+- [x] Run the contract and confirm it fails because the new module is absent.
+- [x] Implement the power-height envelope, pointwise estimate, decay theorem, and selector.
+- [x] Run the source and contract with `LEAN_NUM_THREADS=1`.
+- [x] Commit the independently reviewable analytic selector.
 
 ### Task 2: Empty-cluster cofinal low-height energy
 
@@ -44,12 +44,12 @@
 - Consumes: the Task 1 selector, `exists_eventually_emptyClusterResidualForwardGaussianSecondMoment_gt`, and `dynamicComplementFullMovingGaussianSecondMoment_ge_of_normalizedRemainder`.
 - Produces: `exists_eventually_emptyClusterLowHeightFullMovingGaussianSecondMoment_gt`.
 
-- [ ] Write the exact endpoint contract before the source module exists.
-- [ ] Run the contract and confirm it fails because the new module is absent.
-- [ ] Prove eventual containment of the selected low-height interval below `exp (alpha * a)`.
-- [ ] Transfer the true residual lower bound to actual finite-zero complement energy.
-- [ ] Run the source and contract with `LEAN_NUM_THREADS=1`.
-- [ ] Commit the genuine-zeta `S = empty` endpoint.
+- [x] Write the exact endpoint contract before the source module exists.
+- [x] Run the contract and confirm it fails because the new module is absent.
+- [x] Prove eventual containment of the selected low-height interval below `exp (alpha * a)`.
+- [x] Transfer the true residual lower bound to actual finite-zero complement energy.
+- [x] Run the source and contract with `LEAN_NUM_THREADS=1`.
+- [x] Commit the genuine-zeta `S = empty` endpoint.
 
 ### Task 3: Audit and finite-S boundary
 
@@ -63,8 +63,8 @@
 - Consumes: the two public endpoints.
 - Produces: checked axiom declarations and a precise statement of the missing arbitrary-`S` analytic input.
 
-- [ ] Add dedicated `#print axioms` audit files and exact central allowlist entries.
+- [x] Add dedicated `#print axioms` audit files and exact central allowlist entries.
 - [ ] Run focused source, contract, dedicated audit, central audit, and allowlist parsing serially.
-- [ ] Record that deleting the anchor pair blocks an arbitrary-`S` transfer and state the minimal genuine-zeta replacement input.
+- [x] Record that deleting the anchor pair blocks an arbitrary-`S` transfer and state the minimal genuine-zeta replacement input.
 - [ ] Run the necessary bounded baseline check without starting a no-target full build.
 - [ ] Commit, push, and open a bounded Draft PR.

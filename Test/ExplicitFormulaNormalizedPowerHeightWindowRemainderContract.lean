@@ -5,6 +5,21 @@ open Complex Filter MeasureTheory Set
 namespace PrimeNumberTheorem
 namespace ExplicitFormulaResidues
 
+#check (normalizedPowerHeightWindowRemainderEnvelope :
+  ℝ → ℝ → ℝ → ℝ → ℝ → ℝ → ℝ)
+
+#check
+  (tendsto_normalizedPowerHeightWindowRemainderEnvelope_proportional_atTop_nhds_zero :
+    ∀ {C D beta gammaLow ε : ℝ},
+      1 / 2 < beta →
+      gammaLow < beta →
+      (1 - beta) * (1 + ε) < gammaLow →
+      Tendsto
+        (fun a =>
+          normalizedPowerHeightWindowRemainderEnvelope
+            C D beta gammaLow (ε * a) a)
+        atTop (nhds 0))
+
 #check
   (eventually_exists_uniform_goodHeight_normalized_powerHeight_proportional_window_remainder_lt :
     ∀ {beta gammaLow ε eta : ℝ},
