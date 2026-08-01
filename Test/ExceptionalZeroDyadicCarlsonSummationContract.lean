@@ -5,9 +5,24 @@ open scoped BigOperators
 
 namespace PrimeNumberTheorem.VKEdgePiOverTwo
 
-#check carlsonDyadicExponent
-#check carlsonDyadicEnergyRatio
-#check carlsonDyadicEnergyMajorant
+#check (carlsonDyadicExponent : ℝ → ℝ)
+#check (carlsonDyadicEnergyRatio : ℝ → ℝ)
+#check (carlsonDyadicEnergyMajorant : ℝ → ℕ → ℝ)
+
+example (sigma : ℝ) :
+    carlsonDyadicExponent sigma = 4 * sigma * (1 - sigma) := by
+  rfl
+
+example (sigma : ℝ) :
+    carlsonDyadicEnergyRatio sigma =
+      (2 : ℝ) ^ (4 * sigma * (1 - sigma) - 2) := by
+  rfl
+
+example (sigma : ℝ) (k : ℕ) :
+    carlsonDyadicEnergyMajorant sigma k =
+      ((k + 1 : ℕ) : ℝ) ^ 6 *
+        ((2 : ℝ) ^ (4 * sigma * (1 - sigma) - 2)) ^ k := by
+  rfl
 
 #check
   (carlsonDyadicExponent_lt_one :
@@ -31,8 +46,28 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
                 (rightHigherExclusionSet S Told sigma T) T k ≤
             A * carlsonDyadicEnergyMajorant sigma k)
 
-#check dyadicUnitBucketRange
-#check dyadicUnitBucketRange_eq_biUnion
+#check (dyadicUnitBucketRange : ℕ → ℕ → Finset ℕ)
+
+example (K L : ℕ) :
+    dyadicUnitBucketRange K L = Finset.Icc (2 ^ K) (2 ^ L - 1) := by
+  rfl
+
+#check
+  (dyadicUnitBucketRange_eq_biUnion :
+    ∀ {K L : ℕ}, K ≤ L →
+      dyadicUnitBucketRange K L =
+        (Finset.Ico K L).biUnion dyadicUnitBucketIndexSet)
+
+#check
+  (dynamicComplementDyadicRangeWeightedSquareCapacity :
+    Finset ℂ → ℝ → ℝ → ℝ → ℕ → ℕ → ℝ)
+
+example (S : Finset ℂ) (T beta a : ℝ) (K L : ℕ) :
+    dynamicComplementDyadicRangeWeightedSquareCapacity S T beta a K L =
+      ∑ k ∈ Finset.Ico K L,
+        (1 + (dynamicComplementDyadicOccupancy S T k : ℝ)) *
+          dynamicComplementDyadicTargetSquareCapacity S T beta a k := by
+  rfl
 
 #check
   (dynamicComplementDyadicRangeCenteredFrozenGaussianSecondMoment_le :
