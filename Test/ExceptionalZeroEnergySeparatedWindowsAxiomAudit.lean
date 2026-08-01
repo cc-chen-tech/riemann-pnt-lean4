@@ -1,0 +1,14 @@
+import PrimeNumberTheorem.ExceptionalZeroEnergySeparatedWindows
+
+#print axioms MathlibAux.pairwiseDisjoint_forwardWindow_of_pairwiseSeparated
+#print axioms MathlibAux.card_filter_mem_forwardWindow_le_one
+#print axioms MathlibAux.accumulatedForwardWindowIntegral_eq_integral_globalWindowKernel
+#print axioms MathlibAux.accumulatedForwardWindowIntegral_le_unionIntegral_of_pairwiseSeparated
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms rightHigherSeparatedWindowEnergy_le_accumulatedCapacity
+#print axioms localSafeQ_pos
+#print axioms localSafeAlpha_pos
+#print axioms localSafeAlpha_mul_q
+#print axioms localSafeSquaredCapacityExponent_eq
