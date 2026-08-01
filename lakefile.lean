@@ -756,7 +756,10 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovScaleSelectionContract,
     `Test.VinogradovKorobovCutoffParametersContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
-    `Test.VinogradovKorobovLogVanDerCorputContract
+    `Test.VinogradovKorobovLogVanDerCorputContract,
+    `MathlibAux.IntervalOscillatoryIntegrationByParts,
+    `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
+    `Test.IntervalOscillatoryIntegrationByPartsContract
   ]
 
 require mathlib from "./vendor/mathlib"
