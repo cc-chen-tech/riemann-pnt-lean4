@@ -31,6 +31,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeInitialFullMovingEnergyAxiomAudit",
     "Test.VKEdgeProportionalWindowTransferAxiomAudit",
     "Test.VKEdgeDistinctComplementWitnessAxiomAudit",
+    "Test.VKEdgeRightHigherSharpBlockerAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
@@ -138,6 +139,12 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFullMovingGaussianSecondMoment_eq_zero_of_subset",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_nontrivialZero_not_mem_of_fullMovingGaussianSecondMoment_pos",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_nontrivialZero_not_mem_of_remainder_energy_gt_three_errors",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.mem_rightHigherExclusionSet_of_im_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.targetPair_mem_rightHigherExclusionSet",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.targetPair_not_mem_dynamicComplementZeroSet",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.two_mul_currentSharpL2Constant_lt_targetPairLeadingEnergy",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.rightHigherFullMovingGaussianSecondMoment_eq_zero_of_no_new_right_zero",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.targetPair_absorbed_and_fullMovingEnergy_zero_of_no_new_right_zero",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMassSq_one_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_sq_eq_card",
     "ZeroFreeRegion.VinogradovKorobov.vinogradovResidueMass_one_evenPow_eq_card_pow",
