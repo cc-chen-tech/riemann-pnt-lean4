@@ -11,6 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_AUDIT_MODULES = [
+    "Test.SelbergSqrtZetaSignedReducedPairCompleteUnweightedAxiomAudit",
+    "Test.SelbergSqrtZetaSignedBoundaryLargeNAxiomAudit",
     "Test.SlidingLagCosineBudgetAxiomAudit",
     "Test.MultiplicityAxiomAudit",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
@@ -54,6 +56,15 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergSqrtZetaActualHighRangeEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "HardyTheorem.selbergSqrtZetaCompleteRatioSupport_subset_signedRationalSupport",
+    "HardyTheorem.sum_selbergSqrtZetaSignedReducedPairCompleteUnweighted_erase_one_add_carrier_eq_productEnergy",
+    "HardyTheorem.sum_selbergSqrtZetaSignedReducedPairCompleteUnweighted_erase_one_eq_productEnergy_sub_carrier",
+    "HardyTheorem.sum_selbergSqrtZetaSignedReducedPairCompleteUnweighted_erase_one_le_productEnergy",
+    "HardyTheorem.selbergSqrtZetaSignedDenominatorFiber_eq_divisorsAntidiagonal_filter_snd",
+    "HardyTheorem.selbergSqrtZetaSignedCoprimeRayBoundaryScaleSupport_eq_Ioc_of_b_mul_X_le_N",
+    "HardyTheorem.selbergSqrtZetaSignedReducedRayBoundaryTerm_eq_stable_Ioc",
+    "HardyTheorem.selbergSqrtZetaSignedReducedRayBoundaryTerm_eq_stable_Ioc_of_sq_le",
+    "HardyTheorem.selbergSqrtZetaSignedReducedRayBoundaryTerm_eq_zero_of_denominator_le_numerator",
     "MathlibAux.abs_lagIntegral_le_cosine_main_add_uniform_error",
     "MathlibAux.abs_lagIntegral_le_cosine_main_add_uniform_error_of_nonneg",
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
