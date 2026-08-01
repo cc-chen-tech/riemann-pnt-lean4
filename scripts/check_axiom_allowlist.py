@@ -46,6 +46,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergSqrtZetaSignedRationalCarrierDecompositionAxiomAudit",
     "Test.SelbergSqrtZetaSignedRationalCarrierEnergyAxiomAudit",
     "Test.SelbergSqrtZetaSignedRationalNoncarrierEnergyAxiomAudit",
+    "Test.SelbergSqrtZetaSignedRationalNoncarrierShortKernelAxiomAudit",
     "Test.SelbergSqrtZetaActualHighRangeEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
@@ -336,6 +337,10 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.sum_normSq_div_localFrequencySeparation_noncarrier_le_erase_full",
     "HardyTheorem.noncarrierEnergy_add_carrierEnergy_le_fullEnergy",
     "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalNoncarrierPolynomial_le_localSeparation",
+    "HardyTheorem.selbergSqrtZetaSignedRationalNoncarrierFixedShiftPhaseSum_eq_factorized",
+    "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_eq_re_fixedShiftPhaseSum",
+    "HardyTheorem.norm_integral_selbergSqrtZetaSignedRationalNoncarrierFixedShiftPhaseSum_le_localSeparation",
+    "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_localSeparation",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_coprime",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_denominator_pos",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_scale_facts",

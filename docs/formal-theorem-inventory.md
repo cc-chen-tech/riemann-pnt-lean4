@@ -3961,9 +3961,13 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `image_selbergSqrtZetaSignedReducedPairKey_reducedPairSupport_erase_one`
    identifies that support with the canonical coprime-pair support minus
    `(1,1)`.  The plain and full-separation weighted noncarrier energies are
-   reindexed exactly over this deleted pair support.  These statements isolate
-   the arithmetic object that must be small; they do not yet bound the actual
-   Hardy-phase noncarrier short model uniformly in `T`.
+   reindexed exactly over this deleted pair support.  The fixed-shift
+   factorization and shift-square integration are now repeated on the deleted
+   support by
+   `integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_localSeparation`.
+   This is a bound for the actual Hardy-phase noncarrier short model, and its
+   right-hand side contains no carrier term.  The remaining work is to prove a
+   sharp uniform arithmetic bound for these explicit noncarrier sums.
    The diagonal term is no longer an independent arithmetic object:
    `sum_normSq_selbergSqrtZetaSignedRationalCoeff_eq_reducedPairEnergy`
    reindexes it exactly as

@@ -544,9 +544,10 @@ short model 的二阶矩，所以分析输出不再含抽象局部分离分母�
 因此真正 noncarrier 指数多项式已有独立的 Montgomery--Vaughan 二阶矩界；
 noncarrier 能量加原 carrier 项不超过完整能量。更关键的是，noncarrier
 有理支持已被精确识别为规范正互素对支持集删去 `(1,1)`，普通平方系数和与
-完整支持局部分离加权和都能无损重编号到这个删点互素对总和。当前仍未证明
-实际带 Hardy 相位的 noncarrier short model 满足 Selberg 所需的统一小量界；
-下一步是把这一删点算术和与短窗口核估计合并，而不是再对 carrier 付费。
+完整支持局部分离加权和都能无损重编号到这个删点互素对总和。实际带 Hardy
+相位的 noncarrier short model 现在也已有独立二阶矩界，右端只含重新计算的
+noncarrier 普通能量与局部分离能量。当前剩余硬问题是对这个删点互素对总和
+证明足够尖锐的统一算术上界，而不是再做分析转移或对 carrier 付费。
 
 ### 长期独立方向
 
