@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.VKEdgeDesmoothedLeftDerivative
+
+#print axioms PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_zeroFree_closedBall
+#print axioms PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_closedBall_logDeriv_le_log_sq
+#print axioms PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_deriv_logDeriv_le_log_cube

@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_zeroFree_closedBall",
+    "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_closedBall_logDeriv_le_log_sq",
+    "PrimeNumberTheorem.exists_dynamicCubicLeftBoundary_deriv_logDeriv_le_log_cube",
     "PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero",
     "PrimeNumberTheorem.norm_multiplicity_zero_contribution_le_div_height",
     "PrimeNumberTheorem.sum_analyticOrderNatAt_riemannZeta_le_finsum_divisor_closedBall",
