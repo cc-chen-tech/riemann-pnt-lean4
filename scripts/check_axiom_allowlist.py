@@ -341,6 +341,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_eq_re_fixedShiftPhaseSum",
     "HardyTheorem.norm_integral_selbergSqrtZetaSignedRationalNoncarrierFixedShiftPhaseSum_le_localSeparation",
     "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_localSeparation",
+    "HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_reducedPairEraseBudget",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_coprime",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_denominator_pos",
     "HardyTheorem.selbergSqrtZetaSignedCoprimeRayScales_scale_facts",

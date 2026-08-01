@@ -660,4 +660,125 @@ theorem
         norm_integral_integral_integral_selbergSqrtZetaSignedRationalNoncarrierFixedShiftPhaseSum_le_localSeparation
           (firstZetaApproximationCutoff T) X hT hH hroom hNoncarrier
 
+/-- The actual noncarrier short-model bound with both arithmetic sums
+reindexed exactly over canonical positive coprime pairs other than `(1,1)`.
+The local separation in the weighted term is still that of the full rational
+support, which is an upper bound for the recomputed noncarrier cost. -/
+theorem
+    integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_reducedPairEraseBudget
+    (T : ℝ) (X : ℕ) {H : ℝ}
+    (hT : 0 < T) (hH : 0 ≤ H) (hroom : H ≤ T)
+    (hcutoff : 1 ≤ firstZetaApproximationCutoff T) (hX : 1 ≤ X)
+    (hNoncarrier :
+      (selbergSqrtZetaSignedRationalNoncarrierSupport
+        (firstZetaApproximationCutoff T) X).Nontrivial) :
+    (∫ t in T..2 * T - H,
+        Complex.normSq
+          (selbergSqrtZetaSignedRationalNoncarrierShortModel T X H t)) ≤
+      H ^ 2 *
+        ((T - H) *
+            ∑ p ∈
+                (selbergSqrtZetaSignedRationalReducedPairSupport
+                  (firstZetaApproximationCutoff T) X).erase (1, 1),
+              Complex.normSq
+                (selbergSqrtZetaSignedRationalCoeff
+                  (firstZetaApproximationCutoff T) X
+                  (selbergSqrtZetaSignedReducedPairKey p)) +
+          4 * Real.pi *
+            ∑ p ∈
+                (selbergSqrtZetaSignedRationalReducedPairSupport
+                  (firstZetaApproximationCutoff T) X).erase (1, 1),
+              Complex.normSq
+                  (selbergSqrtZetaSignedRationalCoeff
+                    (firstZetaApproximationCutoff T) X
+                    (selbergSqrtZetaSignedReducedPairKey p)) /
+                PrimeNumberTheorem.DirichletPolynomial.localFrequencySeparation
+                  (selbergSqrtZetaSignedRationalSupport
+                    (firstZetaApproximationCutoff T) X)
+                  selbergSqrtZetaSignedRationalFrequency
+                  (selbergSqrtZetaSignedReducedPairKey p)) := by
+  let N := firstZetaApproximationCutoff T
+  have hbase :=
+    integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_localSeparation
+      T X hT hH hroom hNoncarrier
+  have hsep :=
+    sum_normSq_div_localFrequencySeparation_noncarrier_le_erase_full
+      hNoncarrier
+  have hplain :=
+    sum_normSq_noncarrier_eq_reducedPairSupport_erase_one
+      hcutoff hX
+  have hweighted :=
+    sum_normSq_div_fullLocalSeparation_noncarrier_eq_reducedPairSupport_erase_one
+      hcutoff hX
+  calc
+    (∫ t in T..2 * T - H,
+        Complex.normSq
+          (selbergSqrtZetaSignedRationalNoncarrierShortModel T X H t)) ≤
+        H ^ 2 *
+          ((T - H) *
+              ∑ q ∈ selbergSqrtZetaSignedRationalNoncarrierSupport N X,
+                Complex.normSq (selbergSqrtZetaSignedRationalCoeff N X q) +
+            4 * Real.pi *
+              ∑ q ∈ selbergSqrtZetaSignedRationalNoncarrierSupport N X,
+                Complex.normSq (selbergSqrtZetaSignedRationalCoeff N X q) /
+                  PrimeNumberTheorem.DirichletPolynomial.localFrequencySeparation
+                    (selbergSqrtZetaSignedRationalNoncarrierSupport N X)
+                    selbergSqrtZetaSignedRationalFrequency q) := by
+      simpa only [N] using hbase
+    _ ≤ H ^ 2 *
+          ((T - H) *
+              ∑ q ∈ selbergSqrtZetaSignedRationalNoncarrierSupport N X,
+                Complex.normSq (selbergSqrtZetaSignedRationalCoeff N X q) +
+            4 * Real.pi *
+              ∑ q ∈ selbergSqrtZetaSignedRationalNoncarrierSupport N X,
+                Complex.normSq (selbergSqrtZetaSignedRationalCoeff N X q) /
+                  PrimeNumberTheorem.DirichletPolynomial.localFrequencySeparation
+                    (selbergSqrtZetaSignedRationalSupport N X)
+                    selbergSqrtZetaSignedRationalFrequency q) := by
+      apply mul_le_mul_of_nonneg_left _ (sq_nonneg H)
+      nlinarith [hsep, Real.pi_pos]
+    _ = H ^ 2 *
+        ((T - H) *
+            ∑ p ∈
+                (selbergSqrtZetaSignedRationalReducedPairSupport N X).erase
+                  (1, 1),
+              Complex.normSq
+                (selbergSqrtZetaSignedRationalCoeff N X
+                  (selbergSqrtZetaSignedReducedPairKey p)) +
+          4 * Real.pi *
+            ∑ p ∈
+                (selbergSqrtZetaSignedRationalReducedPairSupport N X).erase
+                  (1, 1),
+              Complex.normSq
+                  (selbergSqrtZetaSignedRationalCoeff N X
+                    (selbergSqrtZetaSignedReducedPairKey p)) /
+                PrimeNumberTheorem.DirichletPolynomial.localFrequencySeparation
+                  (selbergSqrtZetaSignedRationalSupport N X)
+                  selbergSqrtZetaSignedRationalFrequency
+                  (selbergSqrtZetaSignedReducedPairKey p)) := by
+      rw [hplain, hweighted]
+    _ = H ^ 2 *
+        ((T - H) *
+            ∑ p ∈
+                (selbergSqrtZetaSignedRationalReducedPairSupport
+                  (firstZetaApproximationCutoff T) X).erase (1, 1),
+              Complex.normSq
+                (selbergSqrtZetaSignedRationalCoeff
+                  (firstZetaApproximationCutoff T) X
+                  (selbergSqrtZetaSignedReducedPairKey p)) +
+          4 * Real.pi *
+            ∑ p ∈
+                (selbergSqrtZetaSignedRationalReducedPairSupport
+                  (firstZetaApproximationCutoff T) X).erase (1, 1),
+              Complex.normSq
+                  (selbergSqrtZetaSignedRationalCoeff
+                    (firstZetaApproximationCutoff T) X
+                    (selbergSqrtZetaSignedReducedPairKey p)) /
+                PrimeNumberTheorem.DirichletPolynomial.localFrequencySeparation
+                  (selbergSqrtZetaSignedRationalSupport
+                    (firstZetaApproximationCutoff T) X)
+                  selbergSqrtZetaSignedRationalFrequency
+                  (selbergSqrtZetaSignedReducedPairKey p)) := by
+      rfl
+
 end HardyTheorem

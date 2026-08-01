@@ -3966,8 +3966,14 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    support by
    `integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_localSeparation`.
    This is a bound for the actual Hardy-phase noncarrier short model, and its
-   right-hand side contains no carrier term.  The remaining work is to prove a
-   sharp uniform arithmetic bound for these explicit noncarrier sums.
+   right-hand side contains no carrier term.  The follow-up theorem
+   `integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_reducedPairEraseBudget`
+   replaces both right-hand sums exactly by sums over the canonical positive
+   coprime-pair support with `(1,1)` erased.  Its weighted term deliberately
+   keeps the full-support local separation, already proved to dominate the
+   recomputed noncarrier cost.  The remaining work is therefore to prove sharp
+   uniform arithmetic bounds for the explicit deleted-pair plain and weighted
+   sums.
    The diagonal term is no longer an independent arithmetic object:
    `sum_normSq_selbergSqrtZetaSignedRationalCoeff_eq_reducedPairEnergy`
    reindexes it exactly as

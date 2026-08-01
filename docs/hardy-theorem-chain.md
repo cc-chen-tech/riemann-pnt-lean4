@@ -64,9 +64,13 @@ local-separation energy are therefore reindexed without loss by that deleted
 pair support.  The Hermitian shift-square argument has now also been rerun on
 this deleted support: the actual Hardy-phase noncarrier short model has a
 mean-square bound containing only the recomputed noncarrier coefficient and
-local-separation energies.  The remaining `hexcessive` estimate is therefore
-a genuine arithmetic upper bound for the deleted coprime-pair sum, not an
-analytic transfer gap.  The first nonstationary estimate is now proved: the derivative
+local-separation energies.  Both terms in that bound are now reindexed in one
+theorem exactly over the canonical positive-coprime-pair support with `(1,1)`
+erased; the weighted term uses the full-support local separation, which is a
+valid upper bound for the recomputed noncarrier cost.  The remaining
+`hexcessive` estimate is therefore a genuine arithmetic upper bound for two
+explicit deleted-pair sums, not an analytic transfer gap.  The first
+nonstationary estimate is now proved: the derivative
 of the exact shifted rational-pair phase differs from its rational frequency
 gap by at most `H / (2 * T)`, and a gap of size at least `H / T` yields an
 oscillatory height-integral bound `8 / |frequencyGap|`, hence a complete
@@ -76,10 +80,11 @@ coefficient energy plus its local-frequency-separation weighted energy, so
 the Montgomery--Vaughan cancellation is not replaced by a pairwise absolute
 reciprocal-gap sum.  The arithmetic spacing `1 / (N * X^2)` also proves that,
 under `H / T <= 1 / (N * X^2)`, every pair with gap below `H / T` is diagonal.
-The remaining `hexcessive` input is a sharp bound for the actual noncarrier
-weighted energy
-`sum_q |c_q|^2 / localFrequencySeparation(q)`, followed by the shift integration
-and parameter choice needed for the summed `hexcessive` budget.
+The remaining `hexcessive` inputs are sharp uniform bounds for the deleted-pair
+plain coefficient energy and the deleted-pair full-local-separation weighted
+energy.  The shift integration and exact support reindexing are already part of
+the proved short-model theorem; after those two arithmetic estimates, only the
+joint parameter choice remains for the summed `hexcessive` budget.
 The independent `hsmall` chain now preserves the actual signed convolution
 square throughout the complete-zeta range `X < k <= N`; the old factor-fiber
 cardinality loss is absent.  Its remaining inputs are a sharp bound for that
