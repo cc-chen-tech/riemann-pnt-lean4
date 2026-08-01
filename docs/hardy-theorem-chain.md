@@ -26,8 +26,70 @@ weighted-moment plan:
 
 The remaining targets in this chain are stronger or independent statements:
 the signed moment asymptotics, the auxiliary AFE and Gamma/theta asymptotics,
-Hardy-Littlewood zero counts, Selberg proportions, and Conrey's percentage
-theorem.
+Selberg proportions, and Conrey's percentage theorem.  The Hardy--Littlewood
+linear lower bound is proved, including the literature convention
+`0 < gamma <= T` and the standard multiplicity-weighted consequence.
+For the open Selberg estimate, the fixed coprime-ray coefficient sum now has
+an exact harmonic `1/d` representation and a four-term expansion in
+`1 / log X`.  On the complete denominator range, the finite fiber is now
+identified exactly with arithmetic-zeta convolution.  The two single-log
+terms combine to `log(a / b)` times the untapered ray sum and therefore
+cancel identically on a diagonal ray.  The full four-term expression also
+recombines exactly into a negative numerator taper times a positive denominator
+taper.  Boundary scales lie in one explicit harmonic-tail interval, and the
+model `L²` budget is exactly `T` times the rational coefficient energy plus the
+reciprocal-log-gap budget.  This exact decomposition diagnoses a dead end:
+the total energy retains a nonzero main term, while the absolute gap majorant
+forgets the Hermitian phase cancellation.  The replacement route now splits
+the rational model exactly into its `q=1` Hardy carrier and the noncarrier
+remainder.  When `2 <= X <= N`, the `(1,1)` carrier boundary defect vanishes,
+so its coefficient is exactly the complete ratio coefficient.  A finite
+binomial identity proves that the arithmetic-zeta convolution of the local
+square-root-zeta coefficients has absolute value at most one.  The exact
+diagonal formula then bounds the carrier coefficient by `harmonic X`, hence by
+`1 + log X`; after Hardy-phase cancellation the carrier window costs at most
+`(1 + log X) * 32 / log T`.  The complete short model is now bounded by this
+explicit carrier budget plus only the noncarrier remainder.  The next hard step
+is therefore to bound that noncarrier model by direct short-window kernel
+estimates, with stationary frequencies controlled by
+local energy and nonstationary frequencies by first-derivative or Hilbert-type
+cancellation.  Deleting `q = 1` now has a theorem-level energy interface as
+well: local frequency separation can only increase after deletion, the
+resulting noncarrier exponential polynomial has its own Montgomery--Vaughan
+mean-square bound, and the recomputed noncarrier energy plus the original
+carrier term is at most the full energy.  The deleted rational support is
+exactly the image of the canonical positive-coprime-pair support with `(1,1)`
+erased.  Both its plain coefficient energy and its full-support
+local-separation energy are therefore reindexed without loss by that deleted
+pair support.  The Hermitian shift-square argument has now also been rerun on
+this deleted support: the actual Hardy-phase noncarrier short model has a
+mean-square bound containing only the recomputed noncarrier coefficient and
+local-separation energies.  Both terms in that bound are now reindexed in one
+theorem exactly over the canonical positive-coprime-pair support with `(1,1)`
+erased; the weighted term uses the full-support local separation, which is a
+valid upper bound for the recomputed noncarrier cost.  The remaining
+`hexcessive` estimate is therefore a genuine arithmetic upper bound for two
+explicit deleted-pair sums, not an analytic transfer gap.  The first
+nonstationary estimate is now proved: the derivative
+of the exact shifted rational-pair phase differs from its rational frequency
+gap by at most `H / (2 * T)`, and a gap of size at least `H / T` yields an
+oscillatory height-integral bound `8 / |frequencyGap|`, hence a complete
+pair-kernel bound `8 * H^2 / |frequencyGap|`.  The fixed-shift complete
+frequency double sum is now kept intact and bounded by the ordinary
+coefficient energy plus its local-frequency-separation weighted energy, so
+the Montgomery--Vaughan cancellation is not replaced by a pairwise absolute
+reciprocal-gap sum.  The arithmetic spacing `1 / (N * X^2)` also proves that,
+under `H / T <= 1 / (N * X^2)`, every pair with gap below `H / T` is diagonal.
+The remaining `hexcessive` inputs are sharp uniform bounds for the deleted-pair
+plain coefficient energy and the deleted-pair full-local-separation weighted
+energy.  The shift integration and exact support reindexing are already part of
+the proved short-model theorem; after those two arithmetic estimates, only the
+joint parameter choice remains for the summed `hexcessive` budget.
+The independent `hsmall` chain now preserves the actual signed convolution
+square throughout the complete-zeta range `X < k <= N`; the old factor-fiber
+cardinality loss is absent.  Its remaining inputs are a sharp bound for that
+signed convolution energy, the genuine `k > N` truncation tail, and the
+off-diagonal logarithmic-frequency gap sum.
 
 ## Verified Lean Starting Point
 

@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergSqrtZetaSignedModelContinuity
+
+#check HardyTheorem.continuousOn_selbergSqrtZetaSignedThetaModel_Icc_of_pos
+#check HardyTheorem.continuousOn_selbergSqrtZetaSignedThetaModel_Icc_T_two_mul_T
+
+#print axioms HardyTheorem.continuousOn_selbergSqrtZetaSignedThetaModel_Icc_of_pos
+#print axioms HardyTheorem.continuousOn_selbergSqrtZetaSignedThetaModel_Icc_T_two_mul_T

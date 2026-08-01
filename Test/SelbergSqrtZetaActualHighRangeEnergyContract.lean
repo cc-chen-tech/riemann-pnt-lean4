@@ -1,0 +1,25 @@
+import HardyTheorem.SelbergSqrtZetaActualHighRangeEnergy
+
+open scoped BigOperators ArithmeticFunction
+
+namespace Test.SelbergSqrtZetaActualHighRangeEnergyContract
+
+#check HardyTheorem.selbergSqrtZetaShortCompleteRangePairSum_eq_shortConvolution
+#check HardyTheorem.normSq_selbergSqrtZetaShortDirichletCollectedCoeff_eq_signedPairSum_sq_div
+#check HardyTheorem.normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_signedPairSum
+#check HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_completeHighRange_le_signedPairEnergy
+#check HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_actualTail
+#check HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_rationalEnergy
+#check HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_mixedTailEnergy
+#check HardyTheorem.selbergSqrtZetaShortDirichletGapSum_le_signedPairEnergy_add_actualTail_add_offDiagonal
+#check HardyTheorem.selbergSqrtZetaShortDirichletGapSum_le_signedPairEnergy_add_logDecay_mul_rationalEnergy_add_offDiagonal
+#check HardyTheorem.selbergSqrtZetaShortDirichletGapSum_le_signedPairEnergy_add_logDecay_mul_mixedTailEnergy_add_offDiagonal
+
+example {X k : ℕ} (hk : 1 ≤ k) :
+    HardyTheorem.selbergSqrtZetaShortCompleteRangePairSum X k =
+      (((HardyTheorem.selbergShortTaperedSqrtZeta X *
+          HardyTheorem.selbergShortTaperedSqrtZeta X) *
+        (ArithmeticFunction.zeta : ArithmeticFunction ℝ)) k) :=
+  HardyTheorem.selbergSqrtZetaShortCompleteRangePairSum_eq_shortConvolution hk
+
+end Test.SelbergSqrtZetaActualHighRangeEnergyContract

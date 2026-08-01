@@ -3073,8 +3073,10 @@ These prove the local Hardy-Z setup, a uniform critical-line first zeta
 approximation, the two dyadic integral bounds, and the final constant-sign
 contradiction.  Consequently Hardy's theorem is proved unconditionally in the
 stronger form that critical-line zeros occur at arbitrarily large positive
-heights.  The signed-moment targets remain as an independent legacy route, and
-the Selberg/Conrey targets remain stronger quantitative extensions.
+heights.  The Hardy--Littlewood linear lower bound is also proved, including
+positive-ordinate odd-order and multiplicity-weighted forms.  The signed-moment
+targets remain as an independent legacy route; Selberg and Conrey remain the
+open quantitative extensions.
 
 ### `HardyTheorem/HardyLittlewoodTheorem.lean` and `HardyTheorem/HardyLittlewoodOddTheorem.lean`
 
@@ -3889,8 +3891,178 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    summation from `pi-Li` error back to `theta`, `psi`, and RH.  This closes an
    equivalence theorem but does not prove RH or an equivalent error predicate.
 4. **Hardy quantitative extensions.**
-   Hardy's theorem and the Hardy--Littlewood linear lower bounds for distinct
-   and odd-multiplicity critical-line zeros are proved. Selberg's `T log T`
-   lower bound and Conrey-style percentage estimates still need stronger
-   mollified mean-value and bad-set estimates; the signed-moment and AFE
-   targets remain independent alternative infrastructure.
+   Hardy's theorem and the Hardy--Littlewood linear lower bound are proved,
+   including positive-ordinate odd and multiplicity-weighted counts. Selberg
+   and Conrey-style counting results still require new mean-value estimates;
+   the signed-moment and AFE targets remain independent alternative
+   infrastructure.  For the Selberg branch, complete denominator fibers are
+   now exact arithmetic-zeta convolutions, and the two complete-range
+   single-log ray terms equal `log(a/b)` times the zero-order ray term.  This
+   proves exact diagonal cancellation.  The complete four-term taper is also
+   recombined into two linear factors, boundary scales are confined to an
+   explicit harmonic-tail interval, and the model `L²` budget is exactly
+   `T * rational energy + reciprocal-gap budget`.  The last identity rules out
+   the formerly proposed global-positive-budget route: the total energy keeps
+   a nonzero main term and the absolute gap sum erases Hermitian cancellation.
+   The direct short-window route now proves the exact shifted phase derivative,
+   its `H / (2 * T)` perturbation from the rational frequency gap, and the
+   nonstationary height-integral estimate
+   `8 / |frequencyGap|` whenever `H / T <= |frequencyGap|`.  These are
+   upgraded to the complete pair-kernel estimate
+   `8 * H^2 / |frequencyGap|`.  The fixed-shift complete frequency double sum
+   is now bounded as one Hermitian object by coefficient energy plus
+   local-separation weighted energy via
+   `norm_integral_selbergSqrtZetaSignedRationalFixedShiftPhaseSum_le_localSeparation`.
+   That fixed-shift estimate is now averaged over the full shift square with
+   exact area cost `H^2`, identified with the real square energy of the actual
+   rational short model, and exported as
+   `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_localSeparation`.
+   The former global spacing `1 / (N * X^2)` has also been sharpened pointwise:
+   a supported reduced key `a / b` has local logarithmic separation at least
+   `1 / (1 + X * min (a * N) b)`, and each weighted energy summand inherits
+   the reciprocal reduced-ratio weight.  The collected coefficient at that
+   key is now exactly reindexed as the finite coefficient sum over positive
+   scales on the coprime ray `(a,b)`.  Combining both results gives
+   `normSq_div_localFrequencySeparation_le_reducedRayWeight`, which keeps that
+   scale sum inside `normSq` and therefore preserves all same-ray
+   cancellation.  Its harmonic-normalized form
+   `normSq_div_localFrequencySeparation_le_reducedRayBilinearWeight` replaces
+   the square-root normalization exactly by `1 / (a*b)` times the complete
+   signed bilinear scale sum squared.  The companion theorem
+   `normSq_div_localFrequencySeparation_le_reducedRayLogExpansionWeight`
+   exposes the exact four-term logarithmic expansion inside the same square,
+   so the remaining global estimate can work directly with its arithmetic
+   cancellation.  Finally,
+   `selbergSqrtZetaSignedCoprimeRayBilinearScaleSum_eq_complete_add_boundary`
+   splits that signed sum exactly into a complete-range two-taper main term
+   and the explicit boundary-tail defect; the corresponding weighted energy
+   bound keeps their sum squared.
+   The canonical reduced-pair support now gives a unique positive coprime
+   representative for every rational frequency and an exact finite-sum
+   reindexing.  Consequently,
+   `sum_normSq_div_localFrequencySeparation_le_reducedPairBilinearEnergy`
+   closes the former global assembly gap: the entire local-separation energy
+   is bounded by one explicit coprime-pair sum with weight
+   `(1 + X * min(a*N,b)) / (a*b)`.  The complete/boundary version and its
+   factor-`2` separated form retain cancellation inside each ray component.
+   The result is also substituted back into the actual rational short-model
+   `L²` estimate by
+   `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary`;
+   the analytic output now contains only diagonal coefficient energy and the
+   two explicit canonical arithmetic sums.
+   The carrier can now be removed before applying the local-separation mean
+   square theorem.  The generic theorem
+   `localFrequencySeparation_mono_of_subset` proves that deleting frequencies
+   improves every surviving separation.  Consequently
+   `integral_normSq_selbergSqrtZetaSignedRationalNoncarrierPolynomial_le_localSeparation`
+   controls the genuine noncarrier polynomial directly, while
+   `noncarrierEnergy_add_carrierEnergy_le_fullEnergy` verifies that no hidden
+   carrier cost remains.  The exact image theorem
+   `image_selbergSqrtZetaSignedReducedPairKey_reducedPairSupport_erase_one`
+   identifies that support with the canonical coprime-pair support minus
+   `(1,1)`.  The plain and full-separation weighted noncarrier energies are
+   reindexed exactly over this deleted pair support.  The fixed-shift
+   factorization and shift-square integration are now repeated on the deleted
+   support by
+   `integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_localSeparation`.
+   This is a bound for the actual Hardy-phase noncarrier short model, and its
+   right-hand side contains no carrier term.  The follow-up theorem
+   `integral_normSq_selbergSqrtZetaSignedRationalNoncarrierShortModel_le_reducedPairEraseBudget`
+   replaces both right-hand sums exactly by sums over the canonical positive
+   coprime-pair support with `(1,1)` erased.  Its weighted term deliberately
+   keeps the full-support local separation, already proved to dominate the
+   recomputed noncarrier cost.  The remaining work is therefore to prove sharp
+   uniform arithmetic bounds for the explicit deleted-pair plain and weighted
+   sums.
+   The diagonal term is no longer an independent arithmetic object:
+   `sum_normSq_selbergSqrtZetaSignedRationalCoeff_eq_reducedPairEnergy`
+   reindexes it exactly as
+   `sum_(a,b) (complete(a,b)+boundary(a,b))^2/(a*b)`, and
+   `sum_normSq_selbergSqrtZetaSignedRationalCoeff_le_reducedPairComplete_add_boundary`
+   controls it by the same weighted complete/boundary sum used for local
+   separation.  Thus the remaining estimate is one common reduced-pair
+   problem, not three unrelated budgets.
+   The complete-main geometric weight is also normalized exactly by
+   `sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_eq_min_coordinateWeights`
+   as the minimum of numerator- and denominator-coordinate budgets.  Its two
+   one-sided corollaries preserve each signed ray sum inside a single square;
+   they do not discard the signed arithmetic sum.  The multiplicative Parseval
+   theorem `sum_sq_selbergSqrtZetaCompleteRatioCoeff_eq_productCoeff` now
+   identifies the complete ratio energy exactly with product-collected energy.
+   On the product side,
+   `sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_le_nineteen_fourths_add_high`
+   bounds the low product range by `19/4`; the sole remaining complete-main
+   term is the signed truncated-convolution energy on `X < n <= X^2`.
+   For the boundary defect,
+   `selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_harmonicTail_mul_denominatorEnergy`
+   applies `1/d`-weighted Cauchy--Schwarz, removes the numerator taper using
+   its unit bound, and keeps the denominator fiber as a signed square.  The
+   first factor is the explicit containing harmonic tail, with no support
+   cardinality loss.  The denominator-fiber square is now bounded uniformly
+   in `N` by
+   `harmonic X * sum_(r<=X) r * selbergMoebiusWeight(X,r)^2`, again without a
+   fiber-cardinality factor.  Consequently the full boundary square is at
+   most the exact harmonic tail squared times that explicit `X`-only energy.
+   The new theorem
+   `sum_Icc_mul_sq_selbergMoebiusWeight_le_four_mul_sq_div_log_sq` bounds this
+   taper energy by `4 * X^2 / log(X)^2`, and
+   `selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_four_mul_harmonicTail_sq_mul_harmonic_mul_sq_div_log_sq`
+   substitutes the saving into the exact reduced-ray boundary estimate.
+   Summing the remaining harmonic-tail expression over canonical reduced
+   pairs sharply enough for the final split-energy budget remains open.
+   The named budget
+   `selbergSqrtZetaSignedReducedPairShortModelBudget` packages exactly those
+   diagonal, complete-main, and boundary-tail terms.  The theorem
+   `exists_integral_sq_selbergSqrtZetaSignedShortIntegral_le_reducedPairBudget_add_error`
+   transfers it to the actual mollified Hardy short integral, including the
+   uniform first-zeta approximation error.  Finally,
+   `exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairBudget_le`
+   proves that budget `<= T / 384` and
+   `6144 * C^2 * X^2 <= T` imply the required `hexcessive` measure bound
+   `<= T / 24`.  The interface
+   `exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairSplitEnergy_le`
+   is logically valid under `ReducedPairSplitEnergy <= 1/768`, but the audit
+   theorem `two_le_selbergSqrtZetaSignedReducedPairSplitEnergy` proves that
+   this split energy is at least two whenever `1 <= X <= N`.  Thus the old
+   numerical hypothesis is impossible in the intended parameter range and
+   that conditional endpoint is vacuous there.  The next endpoint must
+   subtract or normalize the unavoidable complete diagonal contribution and
+   budget only the centered remainder.  The replacement route now extracts
+   the rational carrier `q = 1` exactly.  The theorem
+   `selbergSqrtZetaSignedRationalShortModel_eq_carrier_add_noncarrier`
+   decomposes the full short model without an inequality, while
+   `norm_thetaFrequencyShortIntegral_zero_le_thirtytwo_div_log` retains the
+   carrier's Hardy-phase cancellation and bounds its short integral by
+   `32 / log T` under explicit high-height window hypotheses.  The carrier
+   coefficient is also identified exactly with the `(1,1)` complete ray plus
+   its boundary defect.  The new theorem
+   `selbergSqrtZetaSignedReducedRayBoundaryTerm_one_one_eq_zero` proves that
+   this defect vanishes whenever `2 <= X <= N`, and
+   `abs_zeta_mul_selbergSqrtZetaCoeff_le_one` proves the complementary
+   arithmetic-zeta convolution coefficient is uniformly bounded by one.
+   From the exact tapered diagonal,
+   `abs_selbergSqrtZetaCompleteRatioCoeff_one_le_harmonic` bounds the complete
+   carrier by `harmonic X`, and
+   `norm_selbergSqrtZetaSignedRationalCoeff_one_le_one_add_log` upgrades this
+   to `1 + log X`.  Finally,
+   `norm_selbergSqrtZetaSignedRationalShortModel_le_log_carrier_add_noncarrier`
+   bounds the full short model by `(1 + log X) * 32 / log T` plus only the
+   noncarrier remainder.  Thus the carrier no longer requires a high-product
+   energy hypothesis; the next `hexcessive` input is the noncarrier `L²`
+   estimate and a compatible parameter choice.
+   On the independent `hsmall` side,
+   `selbergSqrtZetaShortCompleteRangePairSum_eq_shortConvolution` identifies
+   the complete-zeta high-range coefficient with the actual signed arithmetic
+   convolution `((short taper)^2 * zeta)(k)`.  The resulting diagonal estimate
+   keeps its square until after the factor-pair sum is collected, removing both
+   the fiber-cardinality and coefficientwise-absolute-value losses.  The final
+   gap-sum bound now separates exactly three remaining inputs: this signed
+   convolution energy on `X < k <= N`, the actual truncation tail for `k > N`,
+   and the off-diagonal logarithmic-frequency gap sum.  None of those three
+   estimates is asserted to be closed.
+   Moreover, `eq_of_mem_of_abs_frequency_sub_lt_H_div_T` proves that under the
+   arithmetic scale condition `H / T <= 1 / (N * X^2)`, the stationary gap
+   range contains only diagonal pairs.  The remaining target is no longer a
+   reindexing problem: it is the sharp
+   arithmetic estimate of the common explicit canonical sums, followed by
+   insertion into the final `hexcessive` budget.

@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSqrtZetaSignedRawEnergy
+
+#print axioms HardyTheorem.card_selbergSqrtZetaSignedPhaseSupport
+#print axioms HardyTheorem.sum_sum_normSq_selbergSqrtZetaSignedPhaseCoeff_fibers
+#print axioms HardyTheorem.sum_selbergSqrtZetaSignedFrequencyFiberCard_mul_energy_le_raw
+#print axioms HardyTheorem.sum_sum_mul_norm_selbergSqrtZetaSignedCollectedCoeff_le_raw_energy

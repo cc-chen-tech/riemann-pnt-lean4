@@ -8,10 +8,10 @@ namespace HardyTheorem
 /-!
 # Critical-line zero counts with analytic multiplicity
 
-The original `zeroCountOnCriticalLine` counts distinct ordinates.  The
-Hardy--Littlewood, Selberg, and Conrey counting statements are most naturally
-formulated using the analytic multiplicity of each zeta zero.  This file
-provides that count without changing the existing distinct-count API.
+The original `zeroCountOnCriticalLine` counts distinct nonnegative ordinates.
+This file separates multiplicity-weighted, distinct, and odd-multiplicity
+counts.  The positive-ordinate odd count matches the sign-change quantity used
+in the Hardy--Littlewood and Selberg arguments.
 -/
 
 /-- The distinct nontrivial zeta zeros on the critical line with imaginary
@@ -53,6 +53,21 @@ counted once.  These are exactly the zeros detected by sign changes of the
 real Hardy function. -/
 noncomputable def criticalLineOddZeroCount (T : ℝ) : ℕ :=
   (criticalLineOddZerosFinset T).card
+
+/-- Positive-ordinate critical-line zeros of odd analytic multiplicity,
+each counted once. -/
+noncomputable def positiveCriticalLineOddZerosFinset (T : ℝ) : Finset ℂ :=
+  (criticalLineOddZerosFinset T).filter fun ρ => 0 < ρ.im
+
+lemma mem_positiveCriticalLineOddZerosFinset {T : ℝ} {ρ : ℂ} :
+    ρ ∈ positiveCriticalLineOddZerosFinset T ↔
+      ρ ∈ criticalLineOddZerosFinset T ∧ 0 < ρ.im := by
+  simp [positiveCriticalLineOddZerosFinset]
+
+/-- The number of positive-ordinate critical-line zeros of odd analytic
+multiplicity, each counted once. -/
+noncomputable def positiveCriticalLineOddZeroCount (T : ℝ) : ℕ :=
+  (positiveCriticalLineOddZerosFinset T).card
 
 lemma criticalLineZerosFinset_subset {T U : ℝ} (hTU : T ≤ U) :
     criticalLineZerosFinset T ⊆ criticalLineZerosFinset U := by
@@ -207,6 +222,42 @@ theorem card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hits
   have hcard := Fintype.card_le_of_injective F hF
   simpa [criticalLineOddZeroCount] using hcard
 
+/-- Pairwise disjoint height intervals containing positive-ordinate odd-order
+critical-line zeros inject into the literature-normalized odd zero count. -/
+theorem card_le_positiveCriticalLineOddZeroCount_of_pairwiseDisjoint_hits
+    (G : Finset ℕ) (J : ℕ → Set ℝ) (T : ℝ)
+    (hdisj : (G : Set ℕ).PairwiseDisjoint J)
+    (hhit : ∀ i ∈ G, ∃ t ∈ J i,
+      (1 / 2 : ℂ) + I * t ∈ positiveCriticalLineOddZerosFinset T) :
+    G.card ≤ positiveCriticalLineOddZeroCount T := by
+  classical
+  let τ : G → ℝ := fun i => Classical.choose (hhit i i.property)
+  have hτmem (i : G) : τ i ∈ J i :=
+    (Classical.choose_spec (hhit i i.property)).1
+  have hτzero (i : G) :
+      (1 / 2 : ℂ) + I * τ i ∈ positiveCriticalLineOddZerosFinset T :=
+    (Classical.choose_spec (hhit i i.property)).2
+  let F : G → positiveCriticalLineOddZerosFinset T := fun i =>
+    ⟨(1 / 2 : ℂ) + I * τ i, hτzero i⟩
+  have hF : Function.Injective F := by
+    intro i j hij
+    apply Subtype.ext
+    by_contra hne
+    have hval :
+        (1 / 2 : ℂ) + I * τ i = (1 / 2 : ℂ) + I * τ j :=
+      congrArg Subtype.val hij
+    have hτeq : τ i = τ j := by
+      have him := congrArg Complex.im hval
+      simpa using him
+    have hd : Disjoint (J (i : ℕ)) (J (j : ℕ)) :=
+      hdisj i.property j.property hne
+    have hjmem : τ i ∈ J (j : ℕ) := by
+      rw [hτeq]
+      exact hτmem j
+    exact Set.disjoint_left.1 hd (hτmem i) hjmem
+  have hcard := Fintype.card_le_of_injective F hF
+  simpa [positiveCriticalLineOddZeroCount] using hcard
+
 /-- A linear lower bound for critical-line zeta zeros counted with analytic
 multiplicity.  This follows from the stronger odd-multiplicity count supplied
 by the Hardy--Littlewood sign-change method. -/
@@ -214,8 +265,8 @@ def hardy_littlewood_multiplicity_lower_bound_target : Prop :=
   ∃ C > 0, ∃ T0 : ℝ, ∀ T ≥ T0,
     (criticalLineZeroMultiplicityCount T : ℝ) ≥ C * T
 
-/-- Literature-aligned Hardy--Littlewood target: linearly many critical-line
-zeros of odd analytic multiplicity, each counted once. -/
+/-- Compatibility Hardy--Littlewood target using nonnegative ordinates.
+The literature-normalized positive-ordinate target is defined downstream. -/
 def hardy_littlewood_odd_lower_bound_target : Prop :=
   ∃ C > 0, ∃ T0 : ℝ, ∀ T ≥ T0,
     (criticalLineOddZeroCount T : ℝ) ≥ C * T
@@ -246,10 +297,10 @@ lemma hardy_theorem_target_of_hardy_littlewood_odd_lower_bound
     (hardy_littlewood_lower_bound_target_of_odd h)
 
 /-- Literature-aligned Selberg target: a positive-proportion-scale lower
-bound for odd-order critical-line zeros counted once. -/
+bound for positive-ordinate odd-order critical-line zeros counted once. -/
 def selberg_odd_zero_proportion_target : Prop :=
   ∃ c > 0, ∃ T0 : ℝ, ∀ T ≥ T0,
-    (criticalLineOddZeroCount T : ℝ) ≥
+    (positiveCriticalLineOddZeroCount T : ℝ) ≥
       c * (T / (2 * Real.pi) * Real.log T)
 
 lemma selberg_zero_proportion_target_of_odd
@@ -259,6 +310,9 @@ lemma selberg_zero_proportion_target_of_odd
   refine ⟨c, hc, T0, fun T hT0 => ?_⟩
   rw [zeroCountOnCriticalLine_eq_criticalLineDistinctZeroCount]
   exact (hT T hT0).trans
-    (by exact_mod_cast criticalLineOddZeroCount_le_criticalLineDistinctZeroCount T)
+    (by
+      exact_mod_cast
+        (Finset.card_le_card (Finset.filter_subset _ _)).trans
+          (criticalLineOddZeroCount_le_criticalLineDistinctZeroCount T))
 
 end HardyTheorem

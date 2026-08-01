@@ -1,0 +1,15 @@
+import MathlibAux.SlidingSignedMassSecondMoment
+
+open MeasureTheory Set
+
+namespace MathlibAux
+
+#check continuous_slidingWindowMass_of_continuous
+#check integral_sq_slidingWindowMass_eq_correlation
+#check volume_abs_slidingWindowMass_ge_inter_Icc_le_secondMoment
+
+#print axioms continuous_slidingWindowMass_of_continuous
+#print axioms integral_sq_slidingWindowMass_eq_correlation
+#print axioms volume_abs_slidingWindowMass_ge_inter_Icc_le_secondMoment
+
+end MathlibAux

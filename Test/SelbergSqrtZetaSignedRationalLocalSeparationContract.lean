@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalLocalSeparation
+
+open Complex
+
+namespace Test.SelbergSqrtZetaSignedRationalLocalSeparationContract
+
+#check HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalCollectedPolynomial_le_localSeparation
+
+end Test.SelbergSqrtZetaSignedRationalLocalSeparationContract

@@ -1,0 +1,11 @@
+import MathlibAux.SlidingLagBudget
+
+#check MathlibAux.lagSection_length
+#check MathlibAux.continuousOn_lagInner
+#check MathlibAux.integral_triangleKernel_eq_sq
+#check MathlibAux.intervalIntegral_lagIntegral_add
+#check MathlibAux.abs_lagIntegral_le_of_forall_norm_le
+
+#print axioms MathlibAux.integral_triangleKernel_eq_sq
+#print axioms MathlibAux.intervalIntegral_lagIntegral_add
+#print axioms MathlibAux.abs_lagIntegral_le_of_forall_norm_le

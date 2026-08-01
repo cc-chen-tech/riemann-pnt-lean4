@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalRealCollected
+
+#print axioms HardyTheorem.selbergSqrtZetaSignedRationalFrequency_injOn
+#print axioms HardyTheorem.selbergSqrtZetaSignedCollectedCoeff_rationalFrequency
+#print axioms HardyTheorem.image_rationalFrequency_rationalSupport
+#print axioms HardyTheorem.sum_normSq_collectedCoeff_eq_rationalCoeff

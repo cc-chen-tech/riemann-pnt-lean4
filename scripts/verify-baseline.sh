@@ -7,7 +7,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 printf '%s\n' "[verify-baseline] lake build"
-lake build
+lake -Kjobs=1 build
 
 printf '%s\n' "[verify-baseline] scanning for sorry/admit/axiom"
 if rg -n "^[[:space:]]*(sorry|admit|axiom)\b|:= by[[:space:]]*(sorry|admit)\b|\bby[[:space:]]+(sorry|admit)\b" \

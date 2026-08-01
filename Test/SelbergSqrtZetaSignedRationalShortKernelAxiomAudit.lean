@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalShortKernel
+
+#print axioms HardyTheorem.selbergSqrtZetaSignedRationalShortKernel_eq_triple
+#print axioms HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_eq_re_kernelSum

@@ -214,10 +214,12 @@ Hardy's classical infinite-zero theorem itself is already proved. The targets
 above are independent signed-moment/AFE routes or stronger quantitative
 zero-counting extensions. The repository now defines odd-order, distinct, and
 analytic-multiplicity counts and proves
-`odd <= distinct = zeroCountOnCriticalLine <= multiplicity`. The
-Hardy-Littlewood and Selberg statements use the odd-order count supplied by
-the sign-change method. The Hardy-Littlewood linear lower bound is now proved;
-the Selberg `T*log T` lower bound remains open.
+`odd <= distinct = zeroCountOnCriticalLine <= multiplicity`.  The public
+Hardy--Littlewood theorem is additionally normalized to positive ordinates
+`0 < gamma <= T`, both for odd-order zeros counted once and for the standard
+multiplicity-weighted count.  The Selberg target now uses that same positive
+odd-order convention.  The Hardy--Littlewood linear lower bound is proved; the
+Selberg `T*log T` lower bound remains open.
 
 ### Current verified anchor theorems
 
@@ -231,7 +233,10 @@ the Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.criticalLineOddZeroCount_le_criticalLineDistinctZeroCount`
 - `HardyTheorem.criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount`
 - `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
+- `HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target_proved`
+- `HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target_proved`
 - `HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
+- `HardyTheorem.positiveCriticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
 - `HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure`
 - `HardyTheorem.integral_normSq_selbergMoebiusMollifier_le_one_add_log`
 - `HardyTheorem.criticalLineDirichletPolynomial_mul_selbergMoebiusMollifier_eq_convolutionSum`
@@ -252,6 +257,52 @@ the Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.selbergMollifiedShortDirichletPolynomial_eq_integral_expansion`
 - `HardyTheorem.selbergShortDirichletCollectedPolynomial_sub_one_eq`
 - `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_convolution`
+- `HardyTheorem.selbergSqrtZetaSignedRationalPairCoeff_coprimeRay_eq_invSqrt_mul_invScale`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayScaleSum_eq_invSqrt_mul_logExpansion`
+- `HardyTheorem.zeta_mul_selbergSqrtZetaLogCoeff`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayBilinearScaleSum_eq_complete_zeta_add_boundary`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_singleLog_eq_logRatio`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_singleLog_diagonal_eq_zero`
+- `HardyTheorem.zeta_mul_selbergSqrtZetaFullTapered_apply`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayComplete_logExpansion_eq_twoFactors`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayBoundaryScaleSupport_sum_inv_le`
+- `HardyTheorem.selbergSqrtZetaSignedModelL2Budget_eq_rational_energy_add_gap`
+- `HardyTheorem.deriv_selbergSqrtZetaSignedRationalShortKernelPhase`
+- `HardyTheorem.abs_deriv_selbergSqrtZetaSignedRationalShortKernelPhase_sub_frequencyGap_le`
+- `HardyTheorem.half_abs_frequencyGap_le_abs_deriv_selbergSqrtZetaSignedRationalShortKernelPhase`
+- `HardyTheorem.norm_integral_cexp_selbergSqrtZetaSignedRationalShortKernelPhase_le_of_frequencyGap`
+- `HardyTheorem.norm_selbergSqrtZetaSignedRationalShortKernel_le_of_frequencyGap`
+- `HardyTheorem.H_div_T_le_abs_frequency_sub_of_mem_ne`
+- `HardyTheorem.eq_of_mem_of_abs_frequency_sub_lt_H_div_T`
+- `HardyTheorem.norm_selbergSqrtZetaSignedRationalShortKernel_le_of_mem_ne`
+- `HardyTheorem.norm_integral_selbergSqrtZetaSignedRationalFixedShiftPhaseSum_le_localSeparation`
+- `HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedRationalFixedShiftPhaseSum_le_localSeparation`
+- `HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_eq_re_fixedShiftPhaseSum`
+- `HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_localSeparation`
+- `HardyTheorem.one_div_one_add_X_mul_min_le_localFrequencySeparation_reduced`
+- `HardyTheorem.normSq_div_localFrequencySeparation_le_reducedWeight`
+- `HardyTheorem.selbergSqrtZetaSignedRationalCoeff_reduced_eq_coprimeRayScaleSum`
+- `HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayWeight`
+- `HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayBilinearWeight`
+- `HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayLogExpansionWeight`
+- `HardyTheorem.selbergSqrtZetaSignedCoprimeRayBilinearScaleSum_eq_complete_add_boundary`
+- `HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayCompleteBoundaryWeight`
+- `HardyTheorem.selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_harmonicTail_mul_denominatorEnergy`
+- `HardyTheorem.sq_sum_selbergSqrtZetaSignedDenominatorFiber_taper_le_uniformLinearTaperEnergy`
+- `HardyTheorem.selbergSqrtZetaSignedReducedRayBoundaryTerm_sq_le_harmonicTail_sq_mul_uniformLinearTaperEnergy`
+- `HardyTheorem.sum_selbergSqrtZetaSignedRationalSupport_eq_reducedPairSupport`
+- `HardyTheorem.sum_normSq_div_localFrequencySeparation_le_reducedPairBilinearEnergy`
+- `HardyTheorem.sum_normSq_div_localFrequencySeparation_le_reducedPairCompleteBoundaryEnergy`
+- `HardyTheorem.sum_normSq_div_localFrequencySeparation_le_reducedPairComplete_add_boundary`
+- `HardyTheorem.sum_normSq_selbergSqrtZetaSignedRationalCoeff_eq_reducedPairEnergy`
+- `HardyTheorem.sum_normSq_selbergSqrtZetaSignedRationalCoeff_le_reducedPairComplete_add_boundary`
+- `HardyTheorem.sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_eq_min_coordinateWeights`
+- `HardyTheorem.sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_le_denominatorCoordinateBudget`
+- `HardyTheorem.sum_selbergSqrtZetaSignedReducedPairCompleteEnergy_le_numeratorCoordinateBudget`
+- `HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary`
+- `HardyTheorem.exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairBudget_le`
+- `HardyTheorem.selbergSqrtZetaSignedReducedPairShortModelBudget_le_of_splitEnergy_le`
+- `HardyTheorem.exists_volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_reducedPairSplitEnergy_le`
 - `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant`
 - `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_zero_of_topRange`
 - `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_eq_effectiveSupport`

@@ -1,0 +1,8 @@
+import MathlibAux.SlidingSignedLagIntegral
+
+open MeasureTheory
+
+#check MathlibAux.integral_sq_slidingWindowMass_eq_correlation
+#check MathlibAux.integral_sq_slidingWindowMass_eq_lagIntegral
+#print axioms MathlibAux.integral_sq_slidingWindowMass_eq_correlation
+#print axioms MathlibAux.integral_sq_slidingWindowMass_eq_lagIntegral

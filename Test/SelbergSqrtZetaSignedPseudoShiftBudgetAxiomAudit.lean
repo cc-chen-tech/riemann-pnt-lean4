@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSqrtZetaSignedPseudoShiftBudget
+
+#print axioms HardyTheorem.integrable_selbergSqrtZetaSignedPseudoShiftKernel
+#print axioms HardyTheorem.selbergSqrtZetaSignedPseudoShiftKernel_fubini
+#print axioms HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedComplexModel_mul_shift_le

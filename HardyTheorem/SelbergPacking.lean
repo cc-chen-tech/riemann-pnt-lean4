@@ -72,6 +72,63 @@ theorem criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
         all_goals ring_nf
   exact hpack.trans hcountReal
 
+/-- The same packing estimate with the literature convention `0 < γ ≤ 2T`.
+All packed windows begin above the positive height `T`, so no center-point
+correction is needed. -/
+theorem positiveCriticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
+    (T H : ℝ) (good : Set ℝ) (hH : 0 < H) (hT8H : 8 * H ≤ T)
+    (hbad : volume.real (Set.Icc T (2 * T - H) \ good) ≤ T / 12)
+    (hsign : ∀ t ∈ good ∩ Set.Icc T (2 * T - 2 * H),
+      ∃ u ∈ Set.Ioo t (t + H), HasLocalSignChangeAt hardyZ u) :
+    T / (12 * H) ≤ (positiveCriticalLineOddZeroCount (2 * T) : ℝ) := by
+  have hTpos : 0 < T := by
+    nlinarith [hH]
+  have hab : T ≤ 2 * T - H := by
+    linarith
+  obtain ⟨G, start, hGcard, hstart, hdisj⟩ :=
+    MathlibAux.exists_many_pairwiseDisjoint_windows_of_measure_compl_le
+      good T (2 * T - H) H (T / 12) hH hab hbad
+  have hcountNat : G.card ≤ positiveCriticalLineOddZeroCount (2 * T) := by
+    apply
+      card_le_positiveCriticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_localSignChanges
+        G (fun i ↦ Set.Ioo (start i) (start i + H)) (2 * T) hdisj
+    intro i hi
+    have hsi := hstart i hi
+    have hsi' : start i ∈ good ∩ Set.Icc T (2 * T - 2 * H) := by
+      rcases hsi with ⟨hgood, hlow, hupp⟩
+      exact ⟨hgood, hlow, by linarith⟩
+    obtain ⟨u, huWindow, huSign⟩ := hsign (start i) hsi'
+    refine ⟨u, huWindow, ⟨?_, ?_⟩, huSign⟩
+    · exact hTpos.trans (hsi'.2.1.trans_lt huWindow.1)
+    · nlinarith [hsi'.2.2, huWindow.2]
+  have hcountReal :
+      (G.card : ℝ) ≤ (positiveCriticalLineOddZeroCount (2 * T) : ℝ) := by
+    exact_mod_cast hcountNat
+  let q : ℝ := (T - H) / (3 * H)
+  have hfloorLower : q - 1 ≤ (Nat.floor q : ℝ) :=
+    (Nat.sub_one_lt_floor q).le
+  have halgebra :
+      T / (12 * H) ≤ q - 1 - (T / 12) / H := by
+    have hnonneg : 0 ≤ (T - 8 * H) / (6 * H) := by
+      exact div_nonneg (by linarith) (by positivity)
+    have hid :
+        q - 1 - (T / 12) / H - T / (12 * H) =
+          (T - 8 * H) / (6 * H) := by
+      dsimp only [q]
+      field_simp [ne_of_gt hH]
+      all_goals ring_nf
+    linarith
+  have hpack : T / (12 * H) ≤ (G.card : ℝ) := by
+    calc
+      T / (12 * H) ≤ q - 1 - (T / 12) / H := halgebra
+      _ ≤ (Nat.floor q : ℝ) - (T / 12) / H :=
+        sub_le_sub_right hfloorLower _
+      _ ≤ (G.card : ℝ) := by
+        dsimp only [q]
+        convert hGcard using 1
+        all_goals ring_nf
+  exact hpack.trans hcountReal
+
 /-- Eventual good windows of length `A / log T`, each carrying a local
 Hardy-Z sign change, imply the repository's Selberg odd-zero proportion
 target. -/
@@ -122,8 +179,8 @@ theorem selberg_odd_zero_proportion_target_of_log_good_window_measure
       8 * H ≤ 8 * A := mul_le_mul_of_nonneg_left hHleA (by norm_num)
       _ ≤ T := hT8A
   have hfinite :
-      T / (12 * H) ≤ (criticalLineOddZeroCount (2 * T) : ℝ) :=
-    criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
+      T / (12 * H) ≤ (positiveCriticalLineOddZeroCount (2 * T) : ℝ) :=
+    positiveCriticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
       T H (good T) hH hT8H
       (by simpa only [H] using hbad T hT0)
       (by simpa only [H] using hsign T hT0)
@@ -159,8 +216,8 @@ theorem selberg_odd_zero_proportion_target_of_log_good_window_measure
     _ = T / (12 * H) := by
       dsimp only [H]
       field_simp [ne_of_gt hA, ne_of_gt hlogpos]
-    _ ≤ (criticalLineOddZeroCount (2 * T) : ℝ) := hfinite
-    _ = (criticalLineOddZeroCount X : ℝ) := by
+    _ ≤ (positiveCriticalLineOddZeroCount (2 * T) : ℝ) := hfinite
+    _ = (positiveCriticalLineOddZeroCount X : ℝ) := by
       congr 2
       exact hX.symm
 

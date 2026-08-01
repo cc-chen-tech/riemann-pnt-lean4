@@ -1,5 +1,6 @@
 import HardyTheorem.HardyPhaseSecondMoment
 import MathlibAux.LogarithmicHilbertIntegrationByParts
+import MathlibAux.AmplitudeExponentialGapIntegral
 
 open Complex MeasureTheory Set
 
@@ -357,5 +358,50 @@ theorem norm_integral_hardyPhaseCorrelationOffDiagonal_le_of_upper
         (2 * ∑ n ∈ s, Complex.normSq (coeff n))) := by
       simp only [normSq_hardyShiftTwist]
       ring
+
+/-- The common Hardy phase difference can be combined with an arbitrary
+finite real-frequency off-diagonal form.  Equal-frequency index pairs are
+part of the diagonal block; every remaining pair receives the explicit
+reciprocal-frequency gap bound. -/
+theorem
+    norm_integral_hardyCorrelationAmplitude_mul_exponentialOffDiagonal_le
+    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    (left right : ι → ℂ) (freq : ι → ℝ)
+    {T delta v w : ℝ} (hT : 0 < T) (hdelta : 0 ≤ delta)
+    (hroom : delta ≤ T) (hv : v ∈ Set.Icc 0 delta)
+    (hw : w ∈ Set.Icc 0 delta) :
+    ‖∫ t in T..2 * T - delta,
+        hardyCorrelationAmplitude v w t *
+          MathlibAux.exponentialOffDiagonalForm
+            s left right freq t‖ ≤
+      ∑ i ∈ s, ∑ j ∈ s,
+        if freq i = freq j then 0
+        else ‖left i‖ * ‖right j‖ *
+          ((2 + delta / 2) / |freq i - freq j|) := by
+  have hab : T ≤ 2 * T - delta := by linarith
+  let A : ℝ → ℂ := hardyCorrelationAmplitude v w
+  let A' : ℝ → ℂ := hardyCorrelationAmplitudeDerivative v w
+  have hA : ∀ t ∈ Set.uIcc T (2 * T - delta),
+      HasDerivAt A (A' t) t := by
+    intro t ht
+    rw [Set.uIcc_of_le hab] at ht
+    exact hasDerivAt_hardyCorrelationAmplitude
+      (by linarith [hT, ht.1, hv.1])
+      (by linarith [hT, ht.1, hw.1])
+  have hAend : ‖A T‖ ≤ 1 ∧ ‖A (2 * T - delta)‖ ≤ 1 := by
+    constructor <;> dsimp only [A, hardyCorrelationAmplitude] <;>
+      rw [Complex.norm_exp_I_mul_ofReal]
+  have hA'int : IntervalIntegrable A' volume T (2 * T - delta) := by
+    apply ContinuousOn.intervalIntegrable_of_Icc hab
+    intro t ht
+    exact (continuousAt_hardyCorrelationAmplitudeDerivative
+      (by linarith [hT, ht.1, hv.1])
+      (by linarith [hT, ht.1, hw.1])).continuousWithinAt
+  have hvariation : (∫ t in T..2 * T - delta, ‖A' t‖) ≤ delta / 2 :=
+    integral_norm_hardyCorrelationAmplitudeDerivative_le
+      hT hdelta hroom hv hw
+  simpa only [A, one_mul, mul_one] using
+    (MathlibAux.norm_integral_amplitude_mul_exponentialOffDiagonal_le
+      s left right freq hab hA hAend hA'int hvariation)
 
 end HardyTheorem

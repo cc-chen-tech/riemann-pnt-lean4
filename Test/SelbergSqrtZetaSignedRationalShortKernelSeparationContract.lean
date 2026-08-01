@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalShortKernelSeparation
+
+#check HardyTheorem.H_div_T_le_abs_frequency_sub_of_mem_ne
+#check HardyTheorem.eq_of_mem_of_abs_frequency_sub_lt_H_div_T
+#check HardyTheorem.norm_selbergSqrtZetaSignedRationalShortKernel_le_of_mem_ne

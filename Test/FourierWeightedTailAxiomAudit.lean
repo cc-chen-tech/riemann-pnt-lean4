@@ -1,0 +1,3 @@
+import MathlibAux.FourierWeightedTail
+
+#print axioms MathlibAux.integral_normSq_fourier_weightedTail_le

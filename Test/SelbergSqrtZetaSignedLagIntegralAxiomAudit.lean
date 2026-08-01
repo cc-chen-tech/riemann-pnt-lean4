@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSqrtZetaSignedLagIntegral
+
+#print axioms HardyTheorem.integral_sq_selbergSqrtZetaSignedShortIntegral_eq_lagIntegral
+#print axioms HardyTheorem.volume_selbergSqrtZetaExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_lagIntegral_le

@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedPseudoFiberBudget
+
+#print axioms HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedComplexModel_mul_shift_le_fiber_budget

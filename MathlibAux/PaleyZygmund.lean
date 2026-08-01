@@ -15,19 +15,20 @@ set.  The formulation uses `Measure.real`, matching the real-valued integral
 estimates used by the analytic-number-theory development.
 -/
 
-/-- Setwise Cauchy--Schwarz with the constant function `1`. -/
-theorem sq_setIntegral_le_measureReal_mul_setIntegral_sq
+/-- Setwise Cauchy--Schwarz with the constant function `1`, assuming only
+strong measurability on the restricted set. -/
+theorem
+    sq_setIntegral_le_measureReal_mul_setIntegral_sq_of_aestronglyMeasurable
     {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {s : Set α} {f : α → ℝ}
     (hμs : μ s ≠ ⊤)
-    (hf : Measurable f) (hf_sq : IntegrableOn (fun x => f x ^ 2) s μ) :
+    (hf : AEStronglyMeasurable f (μ.restrict s))
+    (hf_sq : IntegrableOn (fun x => f x ^ 2) s μ) :
     (∫ x in s, f x ∂μ) ^ 2 ≤ μ.real s * ∫ x in s, f x ^ 2 ∂μ := by
   haveI : IsFiniteMeasure (μ.restrict s) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hμs.lt_top⟩
-  have hf_asm : AEStronglyMeasurable f (μ.restrict s) :=
-    hf.aestronglyMeasurable
   have hf_memLp : MemLp f 2 (μ.restrict s) :=
-    (memLp_two_iff_integrable_sq hf_asm).2 hf_sq
+    (memLp_two_iff_integrable_sq hf).2 hf_sq
   have hone_memLp : MemLp (fun _ : α => (1 : ℝ)) 2 (μ.restrict s) :=
     memLp_const 1
   let F : Lp ℝ 2 (μ.restrict s) := hf_memLp.toLp f
@@ -68,6 +69,16 @@ theorem sq_setIntegral_le_measureReal_mul_setIntegral_sq
       simp [pow_two]]
   rw [honeF, honeone, hFF] at hcs
   simpa [pow_two] using hcs
+
+/-- Setwise Cauchy--Schwarz with the constant function `1`. -/
+theorem sq_setIntegral_le_measureReal_mul_setIntegral_sq
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {s : Set α} {f : α → ℝ}
+    (hμs : μ s ≠ ⊤)
+    (hf : Measurable f) (hf_sq : IntegrableOn (fun x => f x ^ 2) s μ) :
+    (∫ x in s, f x ∂μ) ^ 2 ≤ μ.real s * ∫ x in s, f x ^ 2 ∂μ :=
+  sq_setIntegral_le_measureReal_mul_setIntegral_sq_of_aestronglyMeasurable
+    hμs hf.aestronglyMeasurable hf_sq
 
 /-- Paley--Zygmund in product form.  This avoids dividing by the second
 moment, so it remains meaningful even when that moment vanishes. -/

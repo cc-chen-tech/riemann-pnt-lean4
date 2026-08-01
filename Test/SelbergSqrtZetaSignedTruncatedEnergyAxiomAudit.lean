@@ -1,0 +1,18 @@
+import HardyTheorem.SelbergSqrtZetaSignedTruncatedEnergy
+
+open Complex MeasureTheory
+
+namespace HardyTheorem
+
+#check integral_normSq_selbergSqrtZetaSignedTruncatedPhase_eq_phasePolynomial
+#check integral_normSq_selbergSqrtZetaSignedTruncatedPhase_eq_collectedTriplePolynomial
+#check integral_normSq_selbergSqrtZetaSignedTruncatedPhase_le_modelL2Budget
+
+#print axioms
+  HardyTheorem.integral_normSq_selbergSqrtZetaSignedTruncatedPhase_eq_phasePolynomial
+#print axioms
+  HardyTheorem.integral_normSq_selbergSqrtZetaSignedTruncatedPhase_eq_collectedTriplePolynomial
+#print axioms
+  HardyTheorem.integral_normSq_selbergSqrtZetaSignedTruncatedPhase_le_modelL2Budget
+
+end HardyTheorem

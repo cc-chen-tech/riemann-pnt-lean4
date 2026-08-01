@@ -788,6 +788,17 @@ private theorem norm_integral_cexp_phase_le_of_second_deriv_local
     rw [hconj_integral, norm_star] at hbound
     exact hbound
 
+/-- A local-smoothness version of the second-derivative oscillatory estimate.
+Only two derivatives on the integration interval are required. -/
+theorem norm_integral_cexp_phase_le_of_second_deriv_on_Icc
+    {F : ℝ → ℝ} {a b r : ℝ}
+    (hab : a ≤ b) (hr : 0 < r)
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
+    (hsecond : (∀ x ∈ Icc a b, r ≤ iteratedDeriv 2 F x) ∨
+      (∀ x ∈ Icc a b, iteratedDeriv 2 F x ≤ -r)) :
+    ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤ 12 / Real.sqrt r :=
+  norm_integral_cexp_phase_le_of_second_deriv_local hab hr hF hsecond
+
 /-- A second-derivative oscillatory integral estimate with an explicit absolute constant.
 The second derivative may have either sign, but its sign is fixed on the interval. -/
 theorem norm_integral_cexp_phase_le_of_second_deriv

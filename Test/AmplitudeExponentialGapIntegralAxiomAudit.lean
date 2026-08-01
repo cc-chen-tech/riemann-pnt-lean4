@@ -1,0 +1,4 @@
+import MathlibAux.AmplitudeExponentialGapIntegral
+
+#print axioms MathlibAux.norm_integral_amplitude_mul_cexp_linear_le
+#print axioms MathlibAux.norm_integral_amplitude_mul_exponentialOffDiagonal_le

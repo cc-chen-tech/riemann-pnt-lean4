@@ -139,8 +139,9 @@ The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
 audits. The merged tree also contains substantial finite exponential-sum,
 prime-power conditioning, mixed-moment, and coupled-tail infrastructure toward
-Vinogradov--Korobov. Research branches continue with Selberg, stronger local
-oscillation density, Ford's incomplete-moment bridge, and infinite-dimensional
+Vinogradov--Korobov. Research branches continue with the positive-ordinate
+Hardy--Littlewood bounds, Selberg's `T log T` count, stronger local oscillation
+density, Ford's incomplete-moment bridge, and infinite-dimensional
 Weil-criterion routes; these are reported separately from the merged theorem
 surface.
 
@@ -385,11 +386,105 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 
 | 分支或 PR | 当前进展 | 尚未闭合的边界 |
 |---|---|---|
-| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 在已合并的线性下界之上继续建设 Selberg mollifier、bad-set 和 packing 估计 | Selberg `T log T` 下界仍是 `def ... : Prop` |
+| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 已证明 `hardy_littlewood_lower_bound_target_proved` 和奇重数强化版；Selberg 工作现已把 `hsmall` 与 `hexcessive` 统一到同一个 `zeta^(-1/2)` mollifier。已证明 sqrt-zeta 短区间绝对质量下界及其 gap-sum 坏窗口归约、临界线上 mollifier 的 `2 sqrt X` 范数界、实际 signed mollified Hardy 函数到有限 `thetaModel` 的统一点态近似、该模型与有限三重相位多项式的精确等式、实部自相关与伪自相关的分解、lag 区域始终留在同一 dyadic 高度带的几何引理，以及公共 Hardy 相位差乘任意实频率多项式的 frequency-gap 界。实部自相关分解现已提升到完整 shift-height 三重积分：真实 signed theta model 的相关积分严格等于 ordinary complex correlation 与 pseudo-correlation 两个积分实部之和的一半，并保留为两个范数之和的一半。重复频率现在既可按实频率纤维精确收集，也可按规范化正有理 key `l/(m*d)` 精确收集，并已形式证明两种同频关系等价；这使后续重数、能量与频率间隙估计成为明确的有限算术问题。收集后的实际 signed 模型已有移位普通相关和伪相关的精确有限双和展开，普通相关又被严格拆成同频主块与真正非对角 gap form，去掉主块后的整个高度积分已进一步压缩为只含 collected coefficients 与 `1/abs(omega-nu)` 的有限和；该固定移位界现已无条件提升到整个 `[0,delta]^2` shift 方块，外层积分代价精确为面积 `delta^2`。普通相关的同频主块也已在完整 shift-height 方块上积分，得到精确的体积因子 `delta^2 * (T-delta)` 与 raw frequency-fiber energy 预算；普通相关的完整三重积分现已正式由“非对角 gap 预算 + 同频 fiber-energy 预算”直接控制。伪相关相位的二阶导数已精确化为两个正倒数之和，因此每个实际 collected 频率对的整个高度积分现有统一 `O(sqrt T)` 界，即使一阶导数出现驻点也不例外；这个固定移位估计也已提升到整个 `[0,delta]^2` shift 方块，代价同样精确为 `delta^2`。其系数 L1 双和还已用有限 Cauchy--Schwarz 压缩到“distinct 频率数 × collected L2 能量”，并继续接到原始三重频率纤维的精确重数能量预算；与 outer-shift 定理合成后，整个伪相关分析积分已直接归约成这一有限算术预算。频率纤维分割的总能量现又已精确重组，并用“每个纤维不超过全支持、distinct 频率不超过全支持”压缩为“原始支持大小平方 × 原始系数总能量”；原始支持大小已精确计算为 `N * X * X`。真实函数到有限模型的三重积分误差已提升到完整 `[0,H]^2` shift 方块，外层代价精确为 `H^2`；有限模型本身又由显式系数 L1 和无条件统一控制，因此总预算中已不再保留外加的模型上界假设。上述三条分析链现在已在 `selbergSqrtZetaSignedTotalShiftBudget` 中完成总装：真实三重自相关直接受“模型误差 + (ordinary gap + diagonal fiber + pseudo fiber)/2”这一单一显式有限预算控制。短区间二阶矩又已严格识别为同一固定 shift 方块，并证明只要 `TotalShiftBudget ≤ T * eta^2 / 24`，`hexcessive` 所需的坏集合测度就自动不超过 `T/24`。新的 local-separation 路线还把完整有理频率相位和作为一个 Hermitian 整体估计，精确提升到 `[0,H]^2`，并已直接转成实际 rational short model 的二阶矩界；积分与模型之间的拼装缺口因此关闭。全局粗间距 `1/(N*X^2)` 也已按 reduced ratio `a/b` 改进为点态界 `1/(1+X*min(a*N,b))`，相应的单项加权能量界已进入 Lean。`hsmall` 的高区间还被精确降维为受限除数对的 lcm/harmonic 公式和 totient 加权有限平方和 | Selberg `T log T` 下界仍是目标。剩余硬问题是：(1) 把 reduced-ratio 单项界重索引并求和成足够尖锐的全局算术上界；(2) 把该界接入并证明 `TotalShiftBudget ≤ T * eta^2 / 24`，这需要选择 `X(T)`、`eta(T)` 并给出真实算术渐近界；(3) 保留 `min(H, 2/log k)` 衰减与实际系数抵消，闭合 `hsmall` 的高区间；完成后再统一选择窗口常数 |
+| [PR #11: Pintz envelope](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/11) | 零点 envelope、单调性和经典 `sqrt(log x)` 下界 | 尚无到 `psi` 或 `pi-Li` 振荡/最大阶的桥 |
+| 本地分支 `feat/vinogradov-korobov-exponential-sums` | 差分、矩阵、秩分层和同余系统等指数和基础设施；该分支尚未推送到 `origin` | `vinogradov_korobov_zero_free_region` 仍是 `def ... : Prop` |
+| [Draft PR #8](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/8) | 平滑误差、有限零点簇振荡和有限 Weil certificate | 显式公式仍有 uncontrolled remainder，Weil 路线仍缺无限维桥 |
 | `feat/explicit-formula-unified-next`（本地） | 尝试把 Carlson 边界簇、动态高度和实际 PNT 误差传递统一起来 | 提交量很大但尚无 PR；必须重新审计声明是否依赖外部输入、模型接口或未闭合余项，不能按提交标题计作 `main` 成果 |
 | `agent/vk-ford-incomplete-bridge`（原 PR #19，已关闭） | 保留 Ford 不完整矩、double Holder 和近整数计数实验 | 混合草案过大且与 `main` 冲突；residue-mass 审计已单独作为 PR #27 合并，其余内容需拆成新的可审查 PR |
 | `research/vk-edge-annihilator-h-average-next`（本地） | 继续研究消去器平均和零密度残差能量 | 完整显式公式余项、正检测器能量及真实零点簇选择尚未统一闭合 |
 | 本地分支 `research/weil-extremal-kernels-next`（`a5aa020`） | 有限维区间证书、尾部和极值核实验 | 尚未推送或合并到 `main`；实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
+
+`research/hardy-littlewood` 的最新 carrier/noncarrier 端点又关闭了一层分析拼装：
+完整 rational short-model 二阶矩现由 carrier 的显式 `1 / log T` 振荡预算，
+加上规范正互素对支持删去 `(1,1)` 后的 noncarrier 算术预算控制。后者只含
+普通系数平方和与局部分离加权平方和。当前 `hexcessive` 的核心缺口因此不再是
+如何分离主频或如何把短模型接到二阶矩，而是对这两个删点有限和证明足够尖锐的
+统一算术上界，并与 `X(T), H(T), eta(T)` 的选择合成。
+
+`research/hardy-littlewood` 的最新边界比上表中的长摘要更进一步：
+全部有理频率已经无损重索引为唯一的正互素对 `(a,b)`，并拆成完整两 taper
+主项与边界尾项。`selbergSqrtZetaSignedReducedPairShortModelBudget` 把对角能量
+和这两个显式算术总和打包；对角能量现已精确重索引到同一组互素对，并由同一个
+complete/boundary 加权总和控制，因此不再需要独立的第四类算术估计。若该预算
+不超过 `T / 384`，且有限 zeta 近似满足
+`6144 * C^2 * X^2 <= T`，则新的 Lean theorem 已推出 `hexcessive` 坏窗口测度
+不超过 `T / 24`。进一步，把高度阈值提高到 `4*pi <= T` 后，旧条件端点曾把
+`ReducedPairSplitEnergy <= 1/768` 作为充分输入。最新审计已经证明，在
+`1 <= X <= N` 的实际参数范围内总有 `ReducedPairSplitEnergy >= 2`，所以该输入
+不可能成立。旧端点虽然逻辑正确，但在实际范围内是空条件，不能算作 `hexcessive`
+的可行闭合。必须先从二阶矩中分离、减去或正确归一化完整对角主项，再只对中心化
+余项提出小预算。新的修正路线已经精确抽出 `q=1` Hardy 相位载波，并把 rational
+short model 无损拆成载波与 `q!=1` 余项；载波系数也已精确写成 `(1,1)` reduced ray
+的 complete term 加 boundary defect。在明确的高处窗口条件下，载波短积分现有
+`32/log T` 上界，而不是旧估计丢失振荡后使用的 `H` 上界。下一步必须对载波系数
+给出足以抵消该振荡增益的增长界，并只对 noncarrier remainder 建立二阶矩预算。现在进一步证明：
+当 `2 <= X <= N` 时，`(1,1)` reduced ray 的 boundary defect 严格为零，载波系数
+精确等于 complete ratio coefficient。对局部 Euler 系数的有限和恒等式表明
+`|(zeta * sqrt-zetaCoeff)(n)| <= 1`；代回精确对角公式后，载波系数直接受调和数
+控制，因此不超过 `1 + log X`。结合相位积分的 `32/log T` 节省，在上述高处与
+`2 <= X <= N` 条件下，完整载波窗口无需额外能量假设即可压到
+`(1 + log X) * 32/log T`；完整短模型则严格只剩这一显式项
+与 noncarrier remainder。故 `hexcessive` 的载波侧不再依赖 high-product energy，
+真正剩余的核心输入是 noncarrier remainder 的二阶矩预算和参数选择。完整主项另有
+乘法 Parseval 恒等式：
+按 reduced ratio 收集的平方能量可无损改写成按整数 product 收集的平方能量；低乘积
+区间已压到常数 `19/4`，只剩 `X < n <= X^2` 的有符号截断卷积能量。边界尾项也已有
+`1/d` 加权 Cauchy 上界：第一因子是显式 harmonic tail，没有支持集基数损失；
+denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一界，因此边界平方
+被压成“显式 harmonic tail 的平方 × 只依赖 `X` 的线性 taper 能量”。该 taper
+能量现在又有无条件显式界 `4 * X^2 / log(X)^2`，所以单条 reduced ray 的边界项
+已获得 `1 / log(X)^2` 节省；这些全频能量界仍可用于 noncarrier 分析，但不再是
+载波估计的前置条件。接下来要把 noncarrier 的局部分离与互素对求和统一控制，
+并闭合不含不可消除对角质量的 `hexcessive` 预算。独立的 `hsmall` 链也已把
+`X < k <= N` 的高区间对角能量精确改写为实际有符号卷积平方
+`(((sqrt-zeta taper)^2 * zeta)(k))^2/k`，不再使用纤维基数或逐项绝对值上界；
+`k > N` 的实际截断尾项现在保留 product cutoff 做了 filtered 矩形 Parseval：其平方和
+严格等于一个带 mixed-product cutoff 的 signed rational energy，并再乘上尾区非零频率
+给出的 `(2 / log (N + 1))^2` 衰减。因而不会因为扩大到全 rational energy 而把整块
+低频/载波能量粗略加入这个尾部预算；这不等于逐项删去所有 ratio-one 交叉项。
+`hsmall` 现在剩下 complete-range 有符号卷积能量、这个 filtered mixed-tail energy，
+以及非对角 gap sum 的尖锐统一估计。
+上述结论仍是条件端点，不是无条件 Selberg `T log T` 定理。
+
+矩形有限模型现在还有一条更直接的精确 Parseval 恒等式：在真实三重支持上交换两个
+numerator 坐标，会把“有理频率相等”无损转换成“整数乘积相等”，且保持两个原始有符号
+系数的乘积不变。因此，实际 short Dirichlet collected coefficients 的平方能量严格等于
+signed rational collected coefficients 的平方能量；把求和扩展到完整
+`1 <= k <= N*X^2` 区间也不产生误差，因为未出现的乘积系数已形式证明为零。这个结果
+没有使用绝对值 majorant、Cauchy 粗界或 fiber-cardinality 损失，可让 `hsmall` 的实际
+乘积能量与 `hexcessive` 的 rational-frequency 能量共享同一精确算术对象。
+
+**2026-08-01 的 Selberg 支撑链进展。** 完整 reduced-ratio Parseval 恒等式现在可以先
+删去 `(1,1)` 载波，再把剩余平方能量精确写成 product energy 减载波能量；证明中不再
+出现此前局部分离造成的 `X^2 + 1` 损失。大参数边界也已精确化：当 `b * X <= N` 时，
+边界支撑稳定为 `(X / b, X / a]`；在 `X^2 <= N`、`b <= X` 时自动满足该条件，并且
+`b <= a` 的射线边界严格为零。这个结论同时说明 `a < b` 的边界一般仍然存在，不能把
+全部边界项直接删掉。
+
+分析侧新增了两块可组合的真实定理。第一块证明 Hardy 相位差在 dyadic 高度短窗口内可
+由中心频率线性化，导数漂移至多为 `|tau| / (2 * (T - H))`，余弦误差至多为
+`H^2 / (2 * (T - H))`。第二块证明：若一个连续平方窗口核与
+`K * cos(c * (w - v))` 的逐点误差至多为 `epsilon`，则其二重积分的绝对值至多为
+`|K| * 4 / c^2 + epsilon * H^2`。这把真实相位近似接到了三角核 Fourier 衰减上。
+这些定理只使用标准 Lean/Mathlib 公理，并已进入中央审计。
+
+这些进展没有闭合 Selberg 正比例定理。数值探索和精确恒等式都表明，先取绝对值再使用
+普通 `L2` 的路线即使删掉 `X^2 + 1` 损失也不够尖锐；`hexcessive` 仍必须保留 signed
+autocorrelation 的 Fourier 抵消。当前两个最终输入仍是 `hsmall` 与 `hexcessive`：
+前者缺实际高区间 gap sum 的尖锐估计，后者缺把相位线性化、三角核衰减和真实 mollified
+Hardy 系数统一求和到 `T * eta^2 / 24` 预算内。
+
+相位链现又进一步进入实际 autocorrelation 坐标：对
+`x in [T, 2*T-H]`、`v,w in [0,H]`，`thetaLagPhase omega (x+v) (w-v)` 已被统一冻结到
+左端点频率 `thetaLagReferenceFrequency omega x`，余弦误差不超过 `H^2/(T-H)`。
+当该冻结频率非零时，真实方窗余弦积分因此至多为
+`4/frequency^2 + H^4/(T-H)`。这关闭了“局部相位线性化如何进入方窗积分”的拼装缺口；
+驻相与非驻相情形现又统一为同一个 `stationaryMinReciprocalEnvelope` 平方包络：冻结频率
+恰为零时自动使用平凡 `H^2` 面积界，其余频率使用 `4/frequency^2` Fourier 衰减，且两种
+情形都保留同一 `H^4/(T-H)` 曲率误差。这个结论已可直接接到现有 separated-frequency
+平方和估计。下一步仍必须保留真实 signed coefficients 的整体抵消来完成求和；逐项取绝对值
+再套普通 `L2` 的路线仍不足以闭合 `hexcessive`。
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
@@ -439,7 +534,8 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 
 - Hardy 临界线无穷零点定理；
 - 临界线不同零点的线性下界；
-- 奇重数临界线零点的线性下界；
+- 正高度奇重数临界线零点的线性下界，每个零点计一次；
+- 正高度临界线零点按解析重数计数的线性下界；
 - 短窗口积分、符号变化、测度控制与 packing。
 
 这些核心结果已经合并到 `main`。投稿前仍应运行全量构建、定向 axiom audit，并重新核对
@@ -462,6 +558,52 @@ Hardy--Littlewood 形式化的 prior art。
 这一组已有独立技术轮廓，但投稿前还应完成系统 prior-art 核查。若要把它从“强形式化与
 新证明架构”升级为更强数学论文，最关键的是闭合互补零点包，或得到无额外
 第四矩假设的固定比例/正负振荡结论。
+
+Selberg 路线当前还没有闭合 `T log T` 下界。研究分支已经把互素射线
+上的系数和精确改写为带 `1/d` 权重的四项对数展开；完整分母区间
+现在又被精确识别为 arithmetic-zeta 卷积，两个一次对数项在固定
+正射线上合并为 `log(a/b)` 倍零阶项，并在对角射线上严格相消。四项
+展开还可重新合并为一个负 taper 与一个正 taper 的乘积。截断边界
+已被限制到显式 harmonic-tail 区间，而模型二阶矩已经精确拆成
+`T * rational energy + reciprocal-gap budget`。这个精确分解同时说明：
+总能量保留非零主项，而绝对值 gap budget 丢掉了短窗口中需要的相位
+抵消，因此不能把二者分别压到对数小量来闭合 `hexcessive`。当前主线同时保留
+Hermitian 相位的短窗口核估计，并利用 ratio/product Parseval 处理完整主项：先分驻相与非驻相区域，
+再分别使用局部能量和一阶导数/Hilbert 型抵消。非驻相部分现已完成
+第一块真实估计：短窗口相位导数与有理频率差的偏差至多为 `H/(2T)`；
+当频率差至少为 `H/T` 时，对应高度积分的范数至多为频率差倒数的
+8 倍，完整二重短窗口核因此至多为 `8 H^2 / |frequencyGap|`。
+更重要的是，固定两个窗口偏移后的完整频率双和现已作为一个整体
+处理：其高度积分由普通系数平方能量和 local-frequency-separation
+加权能量控制，没有退化回逐对绝对值 reciprocal-gap 和。实际有理
+支持的最小间隔还证明了：若 `H/T <= 1/(N X^2)`，则
+`|frequencyGap| < H/T` 的支持点对只能是对角项。新的约分尺度估计
+把单点代价改进为 `1 + X min(aN,b)`；同时，约分频率 `a/b` 的实际
+系数已经精确重索引为互素射线 `(a,b)` 上的有限尺度和，并且尺度和
+始终保留在平方范数内部，没有丢失同射线抵消；同一个界还已改写成
+精确的 `1/(ab)` 调和归一化以及现有四项对数展开，使剩余算术抵消
+直接可见；射线和又已精确拆成完整分母区间的两个 taper 主项与显式
+边界尾项。全部有理频率也已无损重索引为唯一的正互素对，因此完整
+局部分离能量现在直接受一个规范 `(a,b)` 总和控制，权重精确为
+`(1 + X min(aN,b))/(ab)`；完整项与边界项还能只损失固定因子 2 后
+分别估计。尚缺的是证明这两个显式互素对总和足够小，并将所得界与
+对角能量、shift 积分和参数选择合成。新的总和已经接回实际 rational
+short model 的二阶矩，所以分析输出不再含抽象局部分离分母；最终仍需验证
+`hexcessive` 所需的统一总预算。
+
+主频删除现在也进入了同一条可计算链。局部分离在删去 `q=1` 后只会改善，
+因此真正 noncarrier 指数多项式已有独立的 Montgomery--Vaughan 二阶矩界；
+noncarrier 能量加原 carrier 项不超过完整能量。更关键的是，noncarrier
+有理支持已被精确识别为规范正互素对支持集删去 `(1,1)`，普通平方系数和与
+完整支持局部分离加权和都能无损重编号到这个删点互素对总和。实际带 Hardy
+相位的 noncarrier short model 现在也已有独立二阶矩界，右端只含重新计算的
+noncarrier 普通能量与局部分离能量。新的总装定理又把这两个右端量精确改写为
+规范正互素对支持集删去 `(1,1)` 后的两个有限和；加权项保留完整支持的局部分离，
+而这已经被证明是重新计算 noncarrier 代价的合法上界。当前剩余硬问题是分别对
+删点后的普通平方和与局部分离加权和证明足够尖锐的统一算术上界，而不是再做
+分析转移或对 carrier 付费。新的 carrier/noncarrier 端点已经把完整短模型二阶矩
+直接压到 carrier 的 `1/log T` 振荡预算与上述删点预算之和；这里没有额外的抽象
+局部分离输入。下一步是给删点预算本身建立可随参数选择闭合的数值界。
 
 ### 长期独立方向
 

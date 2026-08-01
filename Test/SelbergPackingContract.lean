@@ -5,6 +5,7 @@ open Complex MeasureTheory Set
 namespace HardyTheorem
 
 #check criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
+#check positiveCriticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
 #check selberg_odd_zero_proportion_target_of_log_good_window_measure
 
 example (T H : ℝ) (good : Set ℝ) (hH : 0 < H) (hT8H : 8 * H ≤ T)
@@ -13,6 +14,14 @@ example (T H : ℝ) (good : Set ℝ) (hH : 0 < H) (hT8H : 8 * H ≤ T)
       ∃ u ∈ Set.Ioo t (t + H), HasLocalSignChangeAt hardyZ u) :
     T / (12 * H) ≤ (criticalLineOddZeroCount (2 * T) : ℝ) := by
   exact criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
+    T H good hH hT8H hbad hsign
+
+example (T H : ℝ) (good : Set ℝ) (hH : 0 < H) (hT8H : 8 * H ≤ T)
+    (hbad : volume.real (Set.Icc T (2 * T - H) \ good) ≤ T / 12)
+    (hsign : ∀ t ∈ good ∩ Set.Icc T (2 * T - 2 * H),
+      ∃ u ∈ Set.Ioo t (t + H), HasLocalSignChangeAt hardyZ u) :
+    T / (12 * H) ≤ (positiveCriticalLineOddZeroCount (2 * T) : ℝ) := by
+  exact positiveCriticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
     T H good hH hT8H hbad hsign
 
 example (A T0 : ℝ) (good : ℝ → Set ℝ) (hA : 0 < A)

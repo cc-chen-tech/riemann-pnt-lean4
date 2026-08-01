@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergSqrtZetaSignedActualFourierBudget
+
+namespace Test.SelbergSqrtZetaSignedActualFourierBudgetContract
+
+#check HardyTheorem.exists_integral_sq_selbergSqrtZetaSignedShortIntegral_le_modelL2Budget_add_error
+
+end Test.SelbergSqrtZetaSignedActualFourierBudgetContract
