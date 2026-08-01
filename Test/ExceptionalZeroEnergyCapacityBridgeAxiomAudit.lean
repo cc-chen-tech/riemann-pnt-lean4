@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ExceptionalZeroEnergyCapacityBridge
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms rightHigherTargetNormalizedAbsoluteMass_nonneg
+#print axioms finiteZeroClusterCoefficientAt_zero_norm_eq_kernelWeight
+#print axioms norm_normalizedRightHigherComplement_le_absoluteMass
+#print axioms rightHigherGaussianSecondMoment_le_absoluteCapacity
+#print axioms halfHeightCarlsonTargetExponent_pos
+#print axioms polynomialWindowCapacity_threshold_iff
+#print axioms halfHeightWindowCapacity_threshold_iff
