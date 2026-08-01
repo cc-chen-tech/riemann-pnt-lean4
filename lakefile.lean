@@ -756,7 +756,10 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovScaleSelectionContract,
     `Test.VinogradovKorobovCutoffParametersContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
-    `Test.VinogradovKorobovLogVanDerCorputContract
+    `Test.VinogradovKorobovLogVanDerCorputContract,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftDerivative,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftDerivativeAxiomAudit,
+    `Test.VKEdgeDesmoothedLeftDerivativeContract
   ]
 
 require mathlib from "./vendor/mathlib"
