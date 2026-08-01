@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ExceptionalZeroDyadicCapacityReindex
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms dynamicComplementZeroPacket_eq_zeroOrdinateUnitBucket_sdiff_of_dyadic
+#print axioms dynamicComplementDyadicSquareReciprocalCapacity_eq_actual
+#print axioms dynamicComplementDyadicLinearReciprocalCapacity_eq_actual
