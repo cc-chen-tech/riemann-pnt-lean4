@@ -2564,7 +2564,10 @@ lean_lib RiemannPNT where
     `Test.VKEdgeCubicMultiplierDerivativeContract,
     `PrimeNumberTheorem.VKEdgeDesmoothedLeftAmplitude,
     `PrimeNumberTheorem.VKEdgeDesmoothedLeftAmplitudeAxiomAudit,
-    `Test.VKEdgeDesmoothedLeftAmplitudeContract
+    `Test.VKEdgeDesmoothedLeftAmplitudeContract,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftNegativeAmplitude,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftNegativeAmplitudeAxiomAudit,
+    `Test.VKEdgeDesmoothedLeftNegativeAmplitudeContract
   ]
 
 require mathlib from "./vendor/mathlib"
