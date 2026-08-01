@@ -1,0 +1,18 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetInnerZeroFreeHorizontalBudget
+
+open Complex MeasureTheory Set
+open scoped BigOperators Interval
+
+namespace PrimeNumberTheorem
+namespace ExplicitFormulaResidues
+
+#check innerZeroFreeHorizontalLeftBoundary
+#check innerZeroFreeHorizontalLogBudget
+#check norm_logDeriv_cubicBottomContourPoint_le_innerZeroFreeHorizontalLogBudget
+#check norm_logDeriv_cubicTopContourPoint_le_innerZeroFreeHorizontalLogBudget
+#check norm_desmoothedCubicBottomInnerZeroFreeContourIntegral_le
+#check norm_desmoothedCubicTopInnerZeroFreeContourIntegral_le
+#check exists_actual_innerZeroFreeHorizontalContourBudgets
+
+end ExplicitFormulaResidues
+end PrimeNumberTheorem
