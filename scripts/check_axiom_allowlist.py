@@ -191,6 +191,8 @@ AXIOM_AUDIT_MODULES = [
     "Test.ExceptionalZeroDyadicSquareMultiplicityAxiomAudit",
     "Test.ExceptionalZeroDetectOrCountQuantitativeMassAxiomAudit",
     "Test.VKEdgeRightHigherSharpBlockerAxiomAudit",
+    "Test.ExplicitFormulaNormalizedPowerHeightWindowRemainderAxiomAudit",
+    "Test.VKEdgeSharpLowHeightEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.directedWitness_of_not_mem_rightHigherExclusionSet",
@@ -881,6 +883,9 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.PrimeSideDetector.qPowerDetector_supportCompatible_negativeMass_loss",
     "PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_normalizedWindowRemainderEnvelope_proportional_atTop_nhds_zero",
     "PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_proportional_window_remainder_lt",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.normalizedPowerHeightWindowRemainderEnvelope",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_normalizedPowerHeightWindowRemainderEnvelope_proportional_atTop_nhds_zero",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_powerHeight_proportional_window_remainder_lt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterComplementContribution_equalRealPart",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_uniform_norm_normalizedEqualRealPartComplementContribution_le",
@@ -961,6 +966,9 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedRemainder_to_fullMovingGaussianEnergy_proportional",
     "PrimeNumberTheorem.VKEdgePiOverTwo.initialEmptyClusterFullMovingGaussianL2Constant",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_emptyClusterFullMovingGaussianSecondMoment_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exp_gammaLow_mul_add_one_le_exp_alpha_mul",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedRemainder_to_fullMovingGaussianEnergy_powerHeight_proportional",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_emptyClusterLowHeightFullMovingGaussianSecondMoment_gt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterComplementContribution_eq_zero_of_subset",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFullMovingGaussianSecondMoment_eq_zero_of_subset",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_nontrivialZero_not_mem_of_fullMovingGaussianSecondMoment_pos",
