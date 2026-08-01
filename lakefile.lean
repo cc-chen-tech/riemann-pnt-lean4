@@ -762,7 +762,11 @@ lean_lib RiemannPNT where
     `Test.VKEdgeDesmoothedLeftDerivativeContract,
     `MathlibAux.IntervalOscillatoryIntegrationByParts,
     `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
-    `Test.IntervalOscillatoryIntegrationByPartsContract
+    `Test.IntervalOscillatoryIntegrationByPartsContract,
+    `Test.VKEdgeCubicMultiplierDerivativeContract,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftAmplitude,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftAmplitudeAxiomAudit,
+    `Test.VKEdgeDesmoothedLeftAmplitudeContract
   ]
 
 require mathlib from "./vendor/mathlib"
