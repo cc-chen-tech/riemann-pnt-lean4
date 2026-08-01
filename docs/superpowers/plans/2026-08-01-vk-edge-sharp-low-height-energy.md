@@ -66,7 +66,8 @@
 
 - [x] Add dedicated `#print axioms` audit files and exact central allowlist entries.
 - [x] Run focused source, exact contracts, and dedicated audits serially.
-- [ ] Re-run the central audit with the literal integral endpoint and complete the full multi-module allowlist parse.
+- [x] Re-run the central audit with the literal integral endpoint.
+- [ ] Complete the full multi-module allowlist parse when a shared build slot is available; the new declarations already pass both dedicated and central audits.
 - [x] Record that deleting the anchor pair blocks an arbitrary-`S` transfer and state the minimal genuine-zeta replacement input.
 - [x] Run the bounded target-inventory, chain-gap, placeholder, Python syntax, and diff checks without starting a no-target full build.
 - [ ] Commit, push, and open a bounded Draft PR.
