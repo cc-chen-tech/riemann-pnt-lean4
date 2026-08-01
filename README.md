@@ -464,6 +464,9 @@ denominator 的 reduced rays；numerator 大于等于 denominator 的项全部�
 `H_X^4 * H_(N*X) * 4X^2/log(X)^2`，并进一步替换成只含 `log X` 与 `log(N*X)` 的显式式子。
 这一步明确使用了调和因子的端点最大值，因此是可靠的通用上界，但没有声称它已足够闭合 Selberg 预算。
 当前未闭合的是 high product 卷积能量、一维 harmonic-ray boundary budget 和非对角 gap 的统一尖锐上界。
+high product 能量现在也有了精确有限正规形：它等于 `X < n <= X^2` 上的平方和，
+每个通项保留方框截断后的有符号除数反对角和，并带权 `1/n`。这个等式没有先取逐项绝对值，
+因此把下一步问题准确收窄为估计真实的方框卷积抵消，而不是估计一个被支持集基数放大的替代量。
 `hsmall` 现在剩下 complete-range 有符号卷积能量、这个 filtered mixed-tail energy，
 以及非对角 gap sum 的尖锐统一估计。
 上述结论仍是条件端点，不是无条件 Selberg `T log T` 定理。

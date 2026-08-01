@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergSqrtZetaCompleteProductHighEnergy
+
+open scoped BigOperators ArithmeticFunction
+
+#check HardyTheorem.selbergSqrtZetaCompleteProductFiber_eq_divisorsAntidiagonal_filter_box
+#check HardyTheorem.selbergSqrtZetaCompleteProductCoeff_eq_invSqrt_mul_boxedDivisorSum
+#check HardyTheorem.selbergSqrtZetaCompleteProductHighEnergy_eq_boxedDivisorEnergy
