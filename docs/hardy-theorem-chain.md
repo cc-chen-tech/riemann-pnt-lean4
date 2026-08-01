@@ -53,7 +53,17 @@ explicit carrier budget plus only the noncarrier remainder.  The next hard step
 is therefore to bound that noncarrier model by direct short-window kernel
 estimates, with stationary frequencies controlled by
 local energy and nonstationary frequencies by first-derivative or Hilbert-type
-cancellation.  The first nonstationary estimate is now proved: the derivative
+cancellation.  Deleting `q = 1` now has a theorem-level energy interface as
+well: local frequency separation can only increase after deletion, the
+resulting noncarrier exponential polynomial has its own Montgomery--Vaughan
+mean-square bound, and the recomputed noncarrier energy plus the original
+carrier term is at most the full energy.  The deleted rational support is
+exactly the image of the canonical positive-coprime-pair support with `(1,1)`
+erased.  Both its plain coefficient energy and its full-support
+local-separation energy are therefore reindexed without loss by that deleted
+pair support.  This exposes the next estimate as a genuine arithmetic sum with
+the carrier absent; it does not yet prove the required uniform short-model
+bound.  The first nonstationary estimate is now proved: the derivative
 of the exact shifted rational-pair phase differs from its rational frequency
 gap by at most `H / (2 * T)`, and a gap of size at least `H / T` yields an
 oscillatory height-integral bound `8 / |frequencyGap|`, hence a complete

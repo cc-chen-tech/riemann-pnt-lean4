@@ -540,6 +540,14 @@ Hermitian 相位的短窗口核估计，并利用 ratio/product Parseval 处理�
 short model 的二阶矩，所以分析输出不再含抽象局部分离分母；最终仍需验证
 `hexcessive` 所需的统一总预算。
 
+主频删除现在也进入了同一条可计算链。局部分离在删去 `q=1` 后只会改善，
+因此真正 noncarrier 指数多项式已有独立的 Montgomery--Vaughan 二阶矩界；
+noncarrier 能量加原 carrier 项不超过完整能量。更关键的是，noncarrier
+有理支持已被精确识别为规范正互素对支持集删去 `(1,1)`，普通平方系数和与
+完整支持局部分离加权和都能无损重编号到这个删点互素对总和。当前仍未证明
+实际带 Hardy 相位的 noncarrier short model 满足 Selberg 所需的统一小量界；
+下一步是把这一删点算术和与短窗口核估计合并，而不是再对 carrier 付费。
+
 ### 长期独立方向
 
 - Selberg 正比例：若完成 `N_0(T) >= c T log T`，会显著增强临界线论文；

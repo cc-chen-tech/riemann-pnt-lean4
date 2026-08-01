@@ -3950,6 +3950,20 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    `integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary`;
    the analytic output now contains only diagonal coefficient energy and the
    two explicit canonical arithmetic sums.
+   The carrier can now be removed before applying the local-separation mean
+   square theorem.  The generic theorem
+   `localFrequencySeparation_mono_of_subset` proves that deleting frequencies
+   improves every surviving separation.  Consequently
+   `integral_normSq_selbergSqrtZetaSignedRationalNoncarrierPolynomial_le_localSeparation`
+   controls the genuine noncarrier polynomial directly, while
+   `noncarrierEnergy_add_carrierEnergy_le_fullEnergy` verifies that no hidden
+   carrier cost remains.  The exact image theorem
+   `image_selbergSqrtZetaSignedReducedPairKey_reducedPairSupport_erase_one`
+   identifies that support with the canonical coprime-pair support minus
+   `(1,1)`.  The plain and full-separation weighted noncarrier energies are
+   reindexed exactly over this deleted pair support.  These statements isolate
+   the arithmetic object that must be small; they do not yet bound the actual
+   Hardy-phase noncarrier short model uniformly in `T`.
    The diagonal term is no longer an independent arithmetic object:
    `sum_normSq_selbergSqrtZetaSignedRationalCoeff_eq_reducedPairEnergy`
    reindexes it exactly as
