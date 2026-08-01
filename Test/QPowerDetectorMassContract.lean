@@ -28,4 +28,32 @@ namespace PrimeNumberTheorem.PrimeSideDetector
       polynomialWeightedL1At ((q : Real)⁻¹)
         (normalizedQPowerPolynomial q realNodes pairNodes z0) / 2)
 
+#check (@polynomialWeightedL1At_mul_le :
+  forall {r : Real} (hr : 0 ≤ r) (p q : Polynomial Real),
+    polynomialWeightedL1At r (p * q) ≤
+      polynomialWeightedL1At r p * polynomialWeightedL1At r q)
+
+#check (polynomialWeightedL1At_realNodeFactor_le :
+  forall {r : Real}, 0 ≤ r → forall u : Real,
+    polynomialWeightedL1At r (realNodeFactor u) ≤ r + |u|)
+
+#check (polynomialWeightedL1At_conjugatePairFactor_le :
+  forall {r : Real}, 0 ≤ r → forall z : Complex,
+    polynomialWeightedL1At r (conjugatePairFactor z) ≤
+      (r + ‖z‖) ^ 2)
+
+#check (@normalizedQPowerPolynomial_weightedL1_le :
+  forall {q : Nat} {realNodes : Finset Real}
+      {pairNodes : Finset Complex} {z0 : Complex} {r : Real},
+    0 ≤ r →
+    polynomialWeightedL1At r
+        (normalizedQPowerPolynomial q realNodes pairNodes z0) ≤
+      polynomialWeightedL1At r
+          (realLinearInterpolator z0
+            (evalRealPolynomial
+              (qPowerAnnihilator q realNodes pairNodes) z0)⁻¹) *
+        (r + ((q : Real)⁻¹)) *
+        (∏ u ∈ realNodes, (r + |u|)) *
+        (∏ z ∈ pairNodes, (r + ‖z‖) ^ 2))
+
 end PrimeNumberTheorem.PrimeSideDetector
