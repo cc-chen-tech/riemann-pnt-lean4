@@ -29,7 +29,7 @@ namespace PrimeNumberTheorem.PrimeSideDetector
         (normalizedQPowerPolynomial q realNodes pairNodes z0) / 2)
 
 #check (@polynomialWeightedL1At_mul_le :
-  forall {r : Real} (hr : 0 ≤ r) (p q : Polynomial Real),
+  forall {r : Real} (_hr : 0 ≤ r) (p q : Polynomial Real),
     polynomialWeightedL1At r (p * q) ≤
       polynomialWeightedL1At r p * polynomialWeightedL1At r q)
 
