@@ -165,7 +165,7 @@ git commit -m "test: lock q-power detector algebra API"
 - Consumes: the exact contract from Task 1.
 - Produces: a real polynomial with exact main-node, real-node, and conjugate-pair annihilation and exact target normalization.
 
-- [ ] **Step 1: Define q-power nodes and real polynomial evaluation**
+- [x] **Step 1: Define q-power nodes and real polynomial evaluation**
 
 ```lean
 def qPowerNode (q : Nat) (s : Complex) : Complex :=
@@ -185,7 +185,7 @@ using `Complex.ext`, and reducing the quadratic identity to `Complex.normSq`.
 Prove `qPowerNode_one` from positivity of a nonzero natural number,
 `Real.exp_neg`, and `Real.exp_log`.
 
-- [ ] **Step 2: Define and prove the real linear interpolation lemma**
+- [x] **Step 2: Define and prove the real linear interpolation lemma**
 
 ```lean
 def realLinearInterpolator (z w : Complex) : Polynomial Real :=
@@ -199,7 +199,7 @@ def realLinearInterpolator (z w : Complex) : Polynomial Real :=
 For `z.im != 0`, prove equality by comparing real and imaginary parts.  For
 `z.im = 0`, use the contract hypothesis `z.im = 0 -> w.im = 0`.
 
-- [ ] **Step 3: Define the annihilator and normalized polynomial**
+- [x] **Step 3: Define the annihilator and normalized polynomial**
 
 ```lean
 def qPowerAnnihilator
@@ -220,13 +220,13 @@ Before applying the interpolation theorem, prove that if a real polynomial is
 evaluated at a real complex number then the result has zero imaginary part.
 This supplies the branch compatibility hypothesis when `z0.im = 0`.
 
-- [ ] **Step 4: Prove exact response and annihilation**
+- [x] **Step 4: Prove exact response and annihilation**
 
 Prove all four normalized-polynomial theorems in the contract.  The target
 theorem uses `inv_mul_cancel₀`; each annihilation theorem uses the corresponding
 zero factor before multiplication by the interpolator.
 
-- [ ] **Step 5: Define the detector evaluation**
+- [x] **Step 5: Define the detector evaluation**
 
 ```lean
 def qPowerDetector (q : Nat) (H : Polynomial Real) (s : Complex) : Complex :=
@@ -247,7 +247,7 @@ prove `normalizedQPowerDetector_at_target` from the polynomial normalization
 theorem, and `normalizedQPowerDetector_at_one` by rewriting `qPowerNode_one`
 and applying the main-node annihilation theorem.
 
-- [ ] **Step 6: Run focused source and contract checks**
+- [x] **Step 6: Run focused source and contract checks**
 
 Run serially:
 
@@ -258,7 +258,7 @@ LEAN_NUM_THREADS=1 lake env lean Test/QPowerDetectorAlgebraContract.lean
 
 Expected: both exit with status 0.
 
-- [ ] **Step 7: Commit the algebra layer**
+- [x] **Step 7: Commit the algebra layer**
 
 ```bash
 git add PrimeNumberTheorem/QPowerDetectorAlgebra.lean Test/QPowerDetectorAlgebraContract.lean
@@ -275,7 +275,7 @@ git commit -m "feat: construct normalized q-power detector"
 - Consumes: `normalizedQPowerPolynomial` from Task 2.
 - Produces: exact positive/negative coefficient masses and the half-weighted-L1 identity at any nonnegative vanished real node.
 
-- [ ] **Step 1: Create the failing mass contract**
+- [x] **Step 1: Create the failing mass contract**
 
 ```lean
 import PrimeNumberTheorem.QPowerDetectorMass
@@ -311,7 +311,7 @@ namespace PrimeNumberTheorem.PrimeSideDetector
 end PrimeNumberTheorem.PrimeSideDetector
 ```
 
-- [ ] **Step 2: Verify the mass contract fails**
+- [x] **Step 2: Verify the mass contract fails**
 
 Run:
 
@@ -321,7 +321,7 @@ LEAN_NUM_THREADS=1 lake env lean Test/QPowerDetectorMassContract.lean
 
 Expected: failure because `QPowerDetectorMass` does not exist.
 
-- [ ] **Step 3: Implement coefficient masses**
+- [x] **Step 3: Implement coefficient masses**
 
 ```lean
 def polynomialPositiveMassAt (r : Real) (p : Polynomial Real) : Real :=
@@ -337,7 +337,7 @@ def polynomialWeightedL1At (r : Real) (p : Polynomial Real) : Real :=
 Use `Polynomial.eval_eq_sum_range` or the support-sum evaluation lemma already
 available in Mathlib to prove the positive-minus-negative decomposition.
 
-- [ ] **Step 4: Prove the half-L1 identity**
+- [x] **Step 4: Prove the half-L1 identity**
 
 For `r >= 0`, prove termwise
 
@@ -349,7 +349,7 @@ after multiplication by `r^k`.  Combine this sum identity with vanished
 evaluation, which makes positive mass equal negative mass.  Specialize it to
 `normalizedQPowerPolynomial` using `normalizedQPowerPolynomial_eval_main`.
 
-- [ ] **Step 5: Run focused source and contract checks**
+- [x] **Step 5: Run focused source and contract checks**
 
 ```bash
 LEAN_NUM_THREADS=1 lake env lean PrimeNumberTheorem/QPowerDetectorMass.lean
@@ -358,7 +358,7 @@ LEAN_NUM_THREADS=1 lake env lean Test/QPowerDetectorMassContract.lean
 
 Expected: both exit with status 0.
 
-- [ ] **Step 6: Commit the exact mass layer**
+- [x] **Step 6: Commit the exact mass layer**
 
 ```bash
 git add PrimeNumberTheorem/QPowerDetectorMass.lean Test/QPowerDetectorMassContract.lean
@@ -375,7 +375,7 @@ git commit -m "feat: quantify q-power detector negative mass"
 - Consumes: `polynomialWeightedL1At`, factor constructors, and normalized polynomial data.
 - Produces: a closed-form coefficient-loss bound expressed only through the interpolation coefficients, real nodes, pair nodes, and `q`.
 
-- [ ] **Step 1: Extend the failing contract with the norm inequalities**
+- [x] **Step 1: Extend the failing contract with the norm inequalities**
 
 Add exact checks for:
 
@@ -406,7 +406,7 @@ polynomialWeightedL1At r
   * (∏ z ∈ pairNodes, (r + Complex.abs z) ^ 2).
 ```
 
-- [ ] **Step 2: Verify the extended contract fails**
+- [x] **Step 2: Verify the extended contract fails**
 
 Run:
 
