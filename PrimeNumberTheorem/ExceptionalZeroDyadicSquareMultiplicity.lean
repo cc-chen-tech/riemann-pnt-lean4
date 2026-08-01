@@ -80,4 +80,32 @@ theorem actualZetaDyadicSquareReciprocalCapacityExcluding_le_linear
       (fun rho => (‖rho‖ ^ 2)⁻¹) M
       (fun _ _ => Nat.cast_nonneg _) (fun _ _ => inv_nonneg.mpr (sq_nonneg _)) hM
 
+/-- If every zero below the fixed local-multiplicity threshold is placed in
+`S`, then one logarithmic dyadic cap controls the deleted square capacity. -/
+theorem exists_actualZetaDyadicSquareReciprocalCapacityExcluding_le_log_linear :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ k : ℕ, ∀ S : Finset ℂ,
+      (∀ rho ∈ actualZetaDyadicZeroBlock k, |rho.im| < 4 → rho ∈ S) →
+      actualZetaDyadicSquareReciprocalCapacityExcluding k S ≤
+        (B * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 6))) *
+          actualZetaDyadicLinearReciprocalCapacityExcluding k S := by
+  rcases ExplicitFormulaAux.exists_analyticOrderNatAt_riemannZeta_le_log_im_of_nontrivialZero
+    with ⟨B, hB, hpoint⟩
+  refine ⟨B, hB, ?_⟩
+  intro k S hlow
+  apply actualZetaDyadicSquareReciprocalCapacityExcluding_le_linear
+  intro rho hrho
+  have hnotS : rho ∉ S := (Finset.mem_sdiff.mp hrho).2
+  have hblock := (Finset.mem_sdiff.mp hrho).1
+  rcases Finset.mem_filter.mp hblock with ⟨hzero, hbounds⟩
+  have hheight : 4 ≤ |rho.im| := by
+    by_contra h
+    exact hnotS (hlow rho hblock (lt_of_not_ge h))
+  have hbase := hpoint rho (mem_nontrivialZerosFinset.mp hzero).1 hheight
+  have hlog : Real.log (|rho.im| + 6) ≤
+      Real.log ((2 : ℝ) ^ (k + 1) + 6) := by
+    apply Real.log_le_log
+    · positivity
+    · linarith [hbounds.2]
+  exact hbase.trans (mul_le_mul_of_nonneg_left (by linarith [hlog]) hB)
+
 end PrimeNumberTheorem

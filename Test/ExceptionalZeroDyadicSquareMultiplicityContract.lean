@@ -11,5 +11,6 @@ namespace PrimeNumberTheorem
 #check actualZetaDyadicZeroBlock
 #check actualZetaDyadicSquareReciprocalCapacityExcluding
 #check actualZetaDyadicSquareReciprocalCapacityExcluding_le_linear
+#check exists_actualZetaDyadicSquareReciprocalCapacityExcluding_le_log_linear
 
 end PrimeNumberTheorem
