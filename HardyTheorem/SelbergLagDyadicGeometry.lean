@@ -14,8 +14,7 @@ inside the dyadic interval used by the short-interval argument.
 /-- A point in the lag section's translated interior interval remains in the
 original dyadic interval. -/
 theorem selberg_lag_dyadic_mem
-    {T H τ v x : ℝ} (hH0 : 0 ≤ H) (hHT : H ≤ T)
-    (hτ : τ ∈ Icc (-H) H)
+    {T H τ v x : ℝ} (hτ : τ ∈ Icc (-H) H)
     (hv : v ∈ Icc (max 0 (-τ)) (min H (H - τ)))
     (hx : x ∈ Icc (T + v) ((2 * T - H) + v)) :
     x ∈ Icc T (2 * T) := by
@@ -29,8 +28,7 @@ theorem selberg_lag_dyadic_mem
 /-- The lag translate of a point in the triangular section remains in the
 same dyadic interval. -/
 theorem selberg_lag_shifted_dyadic_mem
-    {T H τ v x : ℝ} (hH0 : 0 ≤ H) (hHT : H ≤ T)
-    (hτ : τ ∈ Icc (-H) H)
+    {T H τ v x : ℝ} (hτ : τ ∈ Icc (-H) H)
     (hv : v ∈ Icc (max 0 (-τ)) (min H (H - τ)))
     (hx : x ∈ Icc (T + v) ((2 * T - H) + v)) :
     x + τ ∈ Icc T (2 * T) := by
@@ -48,8 +46,7 @@ theorem selberg_lag_shifted_dyadic_mem
 /-- The control interval spanning the original and translated lag sections is
 contained in the dyadic interval. -/
 theorem selberg_lag_controlInterval_subset_dyadic
-    {T H τ v : ℝ} (hH0 : 0 ≤ H) (hHT : H ≤ T)
-    (hτ : τ ∈ Icc (-H) H)
+    {T H τ v : ℝ} (hτ : τ ∈ Icc (-H) H)
     (hv : v ∈ Icc (max 0 (-τ)) (min H (H - τ))) :
     Icc (min (T + v) (T + v + τ))
         (max ((2 * T - H) + v) ((2 * T - H) + v + τ)) ⊆ Icc T (2 * T) := by
