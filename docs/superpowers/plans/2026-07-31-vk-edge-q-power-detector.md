@@ -416,13 +416,13 @@ LEAN_NUM_THREADS=1 lake env lean Test/QPowerDetectorMassContract.lean
 
 Expected: failure only on the newly introduced theorem names.
 
-- [ ] **Step 3: Prove weighted-L1 submultiplicativity**
+- [x] **Step 3: Prove weighted-L1 submultiplicativity**
 
 Expand product coefficients with `Polynomial.coeff_mul`, bound each convolution
 term by the triangle inequality, and exchange the finite sums.  Use `r >= 0`
 to rewrite `r^(i+j)` as `r^i * r^j` without changing signs.
 
-- [ ] **Step 4: Prove factor bounds**
+- [x] **Step 4: Prove factor bounds**
 
 For `realNodeFactor`, inspect coefficients in degrees zero and one.  For
 `conjugatePairFactor`, inspect degrees zero through two and use
@@ -435,13 +435,13 @@ normSq z = (abs z)^2.
 The resulting quadratic coefficient bound is exactly bounded by
 `(r + abs z)^2`.
 
-- [ ] **Step 5: Assemble the normalized detector bound**
+- [x] **Step 5: Assemble the normalized detector bound**
 
 Apply submultiplicativity to the annihilator products and the real linear
 interpolator.  Use `Finset.prod_le_prod` with nonnegative factors to obtain
 `normalizedQPowerPolynomial_weightedL1_le`.
 
-- [ ] **Step 6: Run focused source and contract checks**
+- [x] **Step 6: Run focused source and contract checks**
 
 ```bash
 LEAN_NUM_THREADS=1 lake env lean PrimeNumberTheorem/QPowerDetectorMass.lean
@@ -450,7 +450,7 @@ LEAN_NUM_THREADS=1 lake env lean Test/QPowerDetectorMassContract.lean
 
 Expected: both exit with status 0.
 
-- [ ] **Step 7: Commit the explicit bound**
+- [x] **Step 7: Commit the explicit bound**
 
 ```bash
 git add PrimeNumberTheorem/QPowerDetectorMass.lean Test/QPowerDetectorMassContract.lean
@@ -469,26 +469,26 @@ git commit -m "feat: bound q-power detector coefficient loss"
 - Consumes: all public theorems from Tasks 2-4.
 - Produces: focused build targets, exact type locks, and standard-axiom evidence.
 
-- [ ] **Step 1: Add every public theorem to the dedicated audit**
+- [x] **Step 1: Add every public theorem to the dedicated audit**
 
 Create `Test/QPowerDetectorAxiomAudit.lean` importing both new source modules
 and add one `#print axioms` command for every public theorem named in both
 contracts.  Definitions do not need `#print axioms` entries.
 
-- [ ] **Step 2: Wire Lake targets and central audit imports**
+- [x] **Step 2: Wire Lake targets and central audit imports**
 
 Add the two source modules beside `PrimeSideDetectorMainPole` in `lakefile.lean`.
 Add the two contracts and dedicated audit beside the existing prime-side
 detector tests.  Import both source modules in `Test/MultiplicityAxiomAudit.lean`
 and append the same theorem list used by the dedicated audit.
 
-- [ ] **Step 3: Extend the central allowlist**
+- [x] **Step 3: Extend the central allowlist**
 
 Add `Test.QPowerDetectorAxiomAudit` to the audit-module list in
 `scripts/check_axiom_allowlist.py`.  Add every public theorem's fully qualified
 name under `PrimeNumberTheorem.PrimeSideDetector` to the declaration allowlist.
 
-- [ ] **Step 4: Run focused builds serially**
+- [x] **Step 4: Run focused builds serially**
 
 After confirming global Lean is idle, run:
 
@@ -503,7 +503,7 @@ LEAN_NUM_THREADS=1 lake build +Test.QPowerDetectorAxiomAudit:olean
 Expected: every command exits with status 0 and at most one Lean child is
 active at any time.
 
-- [ ] **Step 5: Run the allowlist parser and central audit**
+- [x] **Step 5: Run the allowlist parser and central audit**
 
 ```bash
 python3 scripts/check_axiom_allowlist.py
@@ -514,7 +514,7 @@ Expected: the parser reports no missing or stale declarations, and the central
 audit exits with status 0.  If another task starts Lean, stop only this branch's
 process and resume later from cache.
 
-- [ ] **Step 6: Commit audit wiring**
+- [x] **Step 6: Commit audit wiring**
 
 ```bash
 git add lakefile.lean Test/MultiplicityAxiomAudit.lean \
@@ -531,7 +531,7 @@ git commit -m "test: audit q-power detector theorems"
 - Consumes: verified theorem names and actual axiom output.
 - Produces: an honest milestone record and a reviewable small stacked PR.
 
-- [ ] **Step 1: Update the research note with exact proved results**
+- [x] **Step 1: Update the research note with exact proved results**
 
 Record:
 
@@ -555,6 +555,12 @@ git status --short
 Expected: no forbidden placeholder or project axiom in the new files, baseline
 verification passes, no whitespace error, and only intentional documentation
 changes remain.
+
+Focused/static verification and `git diff --check` passed.  The no-target full
+repository baseline did not complete: it exited during ordinary build progress
+near `8515/9191`, without a theorem error in the captured tail.  Keep this item
+open; do not reinterpret the interrupted full rebuild as either a mathematical
+failure or a completed baseline.
 
 - [ ] **Step 3: Commit the verified boundary note**
 

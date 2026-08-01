@@ -2,9 +2,23 @@
 
 ## Status and scope
 
-This document fixes the design for the next Sharp-oscillation experiment.  It
-does not assert that the detector exists in Lean yet, and it does not close the
-repeatable Sharp lower bound required by Gate B.
+The algebraic detector and its coefficient-mass layer are now proved in Lean:
+
+- `PrimeNumberTheorem/QPowerDetectorAlgebra.lean` constructs a real finite
+  q-power detector, cancels the main node and prescribed real/conjugate-pair
+  nodes, and normalizes its target response to `1`;
+- `PrimeNumberTheorem/QPowerDetectorMass.lean` proves the exact half-weighted
+  `L1` negative-mass identity and a factorized weighted-loss bound.
+
+Both exact contracts and the dedicated/central axiom audits pass.  This still
+does not close the repeatable Sharp lower bound required by Gate B.
+
+The focused source, contract, dedicated audit, central audit, allowlist, and
+static placeholder checks pass.  A final no-target `verify-baseline.sh` run did
+not finish its full repository rebuild: it stopped with status `1` during
+normal build progress near target `8515/9191`, without a reported Lean theorem
+error in the captured tail.  This branch therefore does not claim a completed
+full-repository baseline run.
 
 The purpose is to construct a finite real Dirichlet polynomial that cancels
 the zeta main pole and a prescribed finite set of already-used zero poles,
@@ -154,19 +168,23 @@ Because `A_q(1) = 0`, the existing main-pole identity gives the exact formula
 negativeMass(q, H_q) = weightedL1(q, H_q) / 2.
 ```
 
-The polynomial product gives the explicit coarse estimate
+The compiled factorized estimate is
 
 ```text
-weightedL1(q, H_q)
-  <= (|a| + |b| / q)
-     * (2 / q)
-     * product (rho in P) (1 / q + |z_q(rho)|).
+polynomialWeightedL1At r H_q
+  <= polynomialWeightedL1At r R_q
+     * (r + q^(-1))
+     * product (u in realNodes) (r + |u|)
+     * product (z in pairNodes) (r + |z|)^2.
 ```
 
-Here the factor `2 / q` comes from the main-pole factor
-`z - q^(-1)`.  All quantities on the right are determined by `P`, `s0`, and
-`q`.  The exact finite negative mass is retained as the primary quantity; the
-product bound is only a closed-form certificate.
+At the main node take `r = q^(-1)`, so the main factor contributes `2 / q`.
+The conjugate-pair factor is bounded by `(r + |z|)^2`.  The interpolation
+factor remains explicit on the right: a fully numerical bound additionally
+requires a lower bound for `|D_q(z0)|` and an upper bound for the real linear
+interpolator.  The exact finite negative mass remains the primary quantity;
+the product theorem is a factorized certificate, not yet a strict
+response-minus-loss result.
 
 ## Mathematical success gate
 
@@ -249,29 +267,32 @@ support to larger q-powers.
 
 The implementation should be split into independently auditable layers.
 
-1. `QPowerDetectorAlgebra`
+1. `QPowerDetectorAlgebra` -- **proved and audited**
    - define `z_q`, `D_q`, the real normalizer, `H_q`, and `A_q`;
    - prove real coefficients and exact vanishing/normalization;
    - prove the finite q-power Dirichlet expansion.
 
-2. `QPowerDetectorMass`
+2. `QPowerDetectorMass` -- **proved and audited**
    - identify detector mass at `s = 1` with coefficient mass;
    - prove the exact half-weighted-L1 identity;
    - prove the explicit product bound.
 
-3. `QPowerDetectorBaseSelection`
+3. `QPowerDetectorBaseSelection` -- **paper proof only**
    - prove finite prime-base avoidance;
    - remove the parameterized noncollision assumption.
 
-4. `QPowerDetectorPrimeResponse`
+4. `QPowerDetectorPrimeResponse` -- **not proved**
    - instantiate the detector in the real zeta contour formula;
    - state the actual loss multiplier, with every remainder term visible;
    - prove the strict response-minus-loss inequality or record its exact
      numerical/analytic failure.
 
-Every public endpoint requires an exact contract and axiom audit.  The first
-three layers are algebraic infrastructure.  Only the fourth layer can supply
-the repeatable Sharp input requested by Gate B.
+Every compiled public endpoint has an exact contract and axiom audit.  The
+generic algebra deliberately accepts every natural `q`; for `q = 1` the node
+map is constant and target normalization cannot satisfy its nonvanishing
+premise.  The real prime-side entry point must therefore require `1 < q` or
+`Nat.Prime q`.  Only the fourth layer can supply the repeatable Sharp input
+requested by Gate B.
 
 ## Failure rules
 
@@ -300,3 +321,11 @@ Even a completed algebraic detector would not by itself prove:
 Gate B remains responsible for witness extraction, finite-set growth, and
 Carlson stitching.  This branch owns only the detector construction and the
 analytic response-minus-cancellation estimate.
+
+The next Sharp endpoint is more specific than the detector algebra: for a
+fixed true zeta zero with `beta > 2 / 3`, first prove a cofinal lower bound for
+the genuine finite-zero complement energy with `S = empty`, keeping the outer
+explicit-formula height `H = x^alpha` separate from the low detector height
+`Y = x^gammaLow`.  Only after that should it be upgraded to arbitrary finite
+`S`, with the dependence of the positive constant on `S` made explicit and
+controlled.
