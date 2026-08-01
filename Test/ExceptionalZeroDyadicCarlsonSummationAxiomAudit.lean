@@ -9,3 +9,4 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #print axioms dyadicUnitBucketRange_eq_biUnion
 #print axioms dynamicComplementDyadicRangeCenteredFrozenGaussianSecondMoment_le
 #print axioms rightHigherDyadicRange_fartherRight_or_centeredFrozen_le_unweighted
+#print axioms eventually_rightHigherDyadicRange_fartherRight_or_energy_lt

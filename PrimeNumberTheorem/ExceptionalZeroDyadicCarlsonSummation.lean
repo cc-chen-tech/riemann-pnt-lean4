@@ -507,6 +507,108 @@ theorem rightHigherDyadicRange_fartherRight_or_centeredFrozen_le_unweighted
       · positivity
     · exact MathlibAux.gaussianBucketSchurConstant_pos.le
 
+/-- Uniformly above one dyadic cutoff, every finite right-higher range either
+contains an actual surviving zero strictly to the right of `beta`, with the
+full directed Carlson-strip witness data, or its one whole-range centered
+frozen energy is smaller than `eta`. -/
+theorem eventually_rightHigherDyadicRange_fartherRight_or_energy_lt
+    {sigma beta eta : ℝ}
+    (hσ : 1 / 2 < sigma) (hσ1 : sigma < 1) (_hσβ : sigma < beta)
+    (hη : 0 < eta) :
+    ∃ Keta : ℕ, 2 ≤ Keta ∧
+      ∀ (S : Finset ℂ) {Told T a : ℝ} {K L : ℕ} {m : ℝ},
+        4 ≤ Told → 0 ≤ a → 1 ≤ m →
+        Keta ≤ K → K < L → (2 : ℝ) ^ L ≤ T →
+        (∃ n ∈ dyadicUnitBucketRange K L, ∃ rho,
+          rho ∈ dynamicComplementZeroPacket
+              (rightHigherExclusionSet S Told sigma T) T n ∧
+            beta < rho.re ∧
+            rho ∈ ZeroDensity.zeroDensityZerosFinset sigma T ∧
+            Told < rho.im ∧ rho ∉ S) ∨
+          dynamicComplementCenteredFrozenGaussianSecondMoment
+              (rightHigherExclusionSet S Told sigma T) T beta a
+              (dyadicUnitBucketRange K L) m < eta := by
+  classical
+  rcases exists_rightHigherDyadicCapacity_le_carlsonMajorant hσ hσ1 with
+    ⟨A, hA, K0, hK0, hblock⟩
+  let C : ℝ := MathlibAux.gaussianBucketSchurConstant
+  have hC : 0 < C := MathlibAux.gaussianBucketSchurConstant_pos
+  have hAmax : 0 < max A 1 := lt_of_lt_of_le zero_lt_one (le_max_right A 1)
+  have hdenom : 0 < C * max A 1 := mul_pos hC hAmax
+  have hsummable := summable_carlsonDyadicEnergyMajorant hσ hσ1
+  rw [summable_iff_vanishing_norm] at hsummable
+  obtain ⟨cutoff, hcutoff⟩ :=
+    hsummable (eta / (C * max A 1)) (div_pos hη hdenom)
+  let Ktail : ℕ :=
+    if h : cutoff.Nonempty then cutoff.max' h + 1 else 0
+  let Keta : ℕ := max K0 Ktail
+  refine ⟨Keta, hK0.trans (le_max_left K0 Ktail), ?_⟩
+  intro S Told T a K L m hTold ha hm hKetaK hKL hLT
+  have hK0K : K0 ≤ K :=
+    (le_max_left K0 Ktail).trans (show Keta ≤ K from hKetaK)
+  have hKtailK : Ktail ≤ K :=
+    (le_max_right K0 Ktail).trans (show Keta ≤ K from hKetaK)
+  have hdisjoint : Disjoint (Finset.Ico K L) cutoff := by
+    rw [Finset.disjoint_left]
+    intro k hkIco hkCutoff
+    have hkLower : K ≤ k := (Finset.mem_Ico.mp hkIco).1
+    by_cases hne : cutoff.Nonempty
+    · have hkMax : k ≤ cutoff.max' hne :=
+        Finset.le_max' cutoff k hkCutoff
+      have htailLower : cutoff.max' hne + 1 ≤ K := by
+        simpa [Ktail, hne] using hKtailK
+      omega
+    · exact (hne ⟨k, hkCutoff⟩).elim
+  have hmajorantNonneg :
+      0 ≤ ∑ k ∈ Finset.Ico K L, carlsonDyadicEnergyMajorant sigma k := by
+    apply Finset.sum_nonneg
+    intro k hk
+    exact mul_nonneg (by positivity)
+      (pow_nonneg (carlsonDyadicEnergyRatio_pos_lt_one hσ hσ1).1.le k)
+  have hmajorantSmall :
+      (∑ k ∈ Finset.Ico K L, carlsonDyadicEnergyMajorant sigma k) <
+        eta / (C * max A 1) := by
+    have hsmall := hcutoff (Finset.Ico K L) hdisjoint
+    rw [Real.norm_eq_abs, abs_of_nonneg hmajorantNonneg] at hsmall
+    exact hsmall
+  have hscaledSmall :
+      C * (max A 1 *
+        ∑ k ∈ Finset.Ico K L, carlsonDyadicEnergyMajorant sigma k) <
+          eta := by
+    have hmul := (lt_div_iff₀ hdenom).mp hmajorantSmall
+    simpa [mul_assoc, mul_comm, mul_left_comm] using hmul
+  rcases rightHigherDyadicRange_fartherRight_or_centeredFrozen_le_unweighted
+      S (Told := Told) (sigma := sigma) (T := T) (beta := beta) (a := a)
+        (by linarith) ha (by omega : K ≤ L) hm with hfar | henergy
+  · exact Or.inl hfar
+  · right
+    have hblockSum :
+        (∑ k ∈ Finset.Ico K L,
+          (1 + (dynamicComplementDyadicOccupancy
+            (rightHigherExclusionSet S Told sigma T) T k : ℝ)) *
+              dynamicComplementDyadicSquareReciprocalCapacity
+                (rightHigherExclusionSet S Told sigma T) T k) ≤
+          A * ∑ k ∈ Finset.Ico K L,
+            carlsonDyadicEnergyMajorant sigma k := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_le_sum
+      intro k hk
+      apply hblock S Told T k hTold
+      · exact hK0K.trans (Finset.mem_Ico.mp hk).1
+      · have hkSuccL : k + 1 ≤ L := by
+          exact Nat.succ_le_iff.mpr (Finset.mem_Ico.mp hk).2
+        exact (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hkSuccL).trans hLT
+    have hAmajorantLe :
+        A * ∑ k ∈ Finset.Ico K L,
+            carlsonDyadicEnergyMajorant sigma k ≤
+          max A 1 * ∑ k ∈ Finset.Ico K L,
+            carlsonDyadicEnergyMajorant sigma k :=
+      mul_le_mul_of_nonneg_right (le_max_left A 1) hmajorantNonneg
+    exact lt_of_le_of_lt
+      (henergy.trans
+        (mul_le_mul_of_nonneg_left (hblockSum.trans hAmajorantLe) hC.le))
+      hscaledSmall
+
 end
 
 end VKEdgePiOverTwo
