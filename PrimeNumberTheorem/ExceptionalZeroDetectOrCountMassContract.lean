@@ -1,0 +1,13 @@
+import PrimeNumberTheorem.ExceptionalZeroDetectOrCountMass
+
+open Complex
+open scoped BigOperators
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check norm_finiteZeroClusterCoefficientAt_le_analyticMultiplicity
+#check sum_norm_finiteZeroClusterCoefficientAt_le_analyticMultiplicityMass
+#check gaussianCoefficientMass_lowerBound_to_analyticMultiplicityMass
+#check newZero_or_gaussianCoefficientMass_to_detect_or_count
+
+end PrimeNumberTheorem.VKEdgePiOverTwo
