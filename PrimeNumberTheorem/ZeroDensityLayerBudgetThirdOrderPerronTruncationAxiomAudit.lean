@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetThirdOrderPerronTruncation
+
+#print axioms PrimeNumberTheorem.norm_thirdOrderPerronKernel_le
+#print axioms PrimeNumberTheorem.integrable_thirdOrderPerronKernel
+#print axioms PrimeNumberTheorem.norm_integral_thirdOrderPerronKernel_Ioi_le
+#print axioms PrimeNumberTheorem.norm_integral_thirdOrderPerronKernel_Iic_le
+#print axioms PrimeNumberTheorem.norm_truncated_thirdOrderPerron_sub_half_sq_max_le
