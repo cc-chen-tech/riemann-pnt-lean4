@@ -4014,10 +4014,18 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    its boundary defect.  The new theorem
    `selbergSqrtZetaSignedReducedRayBoundaryTerm_one_one_eq_zero` proves that
    this defect vanishes whenever `2 <= X <= N`, and
-   `normSq_selbergSqrtZetaSignedRationalCoeff_one_le_nineteen_fourths_add_high`
-   reduces the carrier square to `19/4` plus the explicit signed high-product
-   energy.  A uniform bound for that tail and an `L²` estimate for the
-   noncarrier remainder are the next two inputs.
+   `abs_zeta_mul_selbergSqrtZetaCoeff_le_one` proves the complementary
+   arithmetic-zeta convolution coefficient is uniformly bounded by one.
+   From the exact tapered diagonal,
+   `abs_selbergSqrtZetaCompleteRatioCoeff_one_le_harmonic` bounds the complete
+   carrier by `harmonic X`, and
+   `norm_selbergSqrtZetaSignedRationalCoeff_one_le_one_add_log` upgrades this
+   to `1 + log X`.  Finally,
+   `norm_selbergSqrtZetaSignedRationalShortModel_le_log_carrier_add_noncarrier`
+   bounds the full short model by `(1 + log X) * 32 / log T` plus only the
+   noncarrier remainder.  Thus the carrier no longer requires a high-product
+   energy hypothesis; the next `hexcessive` input is the noncarrier `L²`
+   estimate and a compatible parameter choice.
    On the independent `hsmall` side,
    `selbergSqrtZetaShortCompleteRangePairSum_eq_shortConvolution` identifies
    the complete-zeta high-range coefficient with the actual signed arithmetic

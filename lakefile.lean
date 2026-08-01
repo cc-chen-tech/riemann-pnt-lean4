@@ -444,6 +444,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.SelbergSqrtZetaExcessiveReducedPairEndpoint,
     `HardyTheorem.SelbergSqrtZetaReducedPairSplitEnergyLowerBound,
     `HardyTheorem.SelbergSqrtZetaSignedRationalCarrierDecomposition,
+    `HardyTheorem.SelbergSqrtZetaInverseCoeffBound,
     `HardyTheorem.SelbergSqrtZetaSignedRationalCarrierEnergy,
     `HardyTheorem.SelbergSqrtZetaSignedRationalCoprimeRayReindex,
     `HardyTheorem.SelbergSqrtZetaSignedRationalCoprimeRayCoeff,

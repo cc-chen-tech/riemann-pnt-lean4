@@ -43,10 +43,15 @@ the total energy retains a nonzero main term, while the absolute gap majorant
 forgets the Hermitian phase cancellation.  The replacement route now splits
 the rational model exactly into its `q=1` Hardy carrier and the noncarrier
 remainder.  When `2 <= X <= N`, the `(1,1)` carrier boundary defect vanishes,
-so its coefficient is exactly the complete ratio coefficient; finite Parseval
-then bounds its square by `19/4` plus the explicit signed high-product energy.
-The next hard step is therefore to bound that tail and the noncarrier model by
-direct short-window kernel estimates, with stationary frequencies controlled by
+so its coefficient is exactly the complete ratio coefficient.  A finite
+binomial identity proves that the arithmetic-zeta convolution of the local
+square-root-zeta coefficients has absolute value at most one.  The exact
+diagonal formula then bounds the carrier coefficient by `harmonic X`, hence by
+`1 + log X`; after Hardy-phase cancellation the carrier window costs at most
+`(1 + log X) * 32 / log T`.  The complete short model is now bounded by this
+explicit carrier budget plus only the noncarrier remainder.  The next hard step
+is therefore to bound that noncarrier model by direct short-window kernel
+estimates, with stationary frequencies controlled by
 local energy and nonstationary frequencies by first-derivative or Hilbert-type
 cancellation.  The first nonstationary estimate is now proved: the derivative
 of the exact shifted rational-pair phase differs from its rational frequency
@@ -58,7 +63,8 @@ coefficient energy plus its local-frequency-separation weighted energy, so
 the Montgomery--Vaughan cancellation is not replaced by a pairwise absolute
 reciprocal-gap sum.  The arithmetic spacing `1 / (N * X^2)` also proves that,
 under `H / T <= 1 / (N * X^2)`, every pair with gap below `H / T` is diagonal.
-The remaining hard input is a sharp bound for the actual weighted energy
+The remaining `hexcessive` input is a sharp bound for the actual noncarrier
+weighted energy
 `sum_q |c_q|^2 / localFrequencySeparation(q)`, followed by the shift integration
 and parameter choice needed for the summed `hexcessive` budget.
 The independent `hsmall` chain now preserves the actual signed convolution

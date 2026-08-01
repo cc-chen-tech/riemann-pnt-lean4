@@ -411,11 +411,15 @@ complete/boundary 加权总和控制，因此不再需要独立的第四类算�
 short model 无损拆成载波与 `q!=1` 余项；载波系数也已精确写成 `(1,1)` reduced ray
 的 complete term 加 boundary defect。在明确的高处窗口条件下，载波短积分现有
 `32/log T` 上界，而不是旧估计丢失振荡后使用的 `H` 上界。下一步必须对载波系数
-给出统一常数界，并只对 noncarrier remainder 建立二阶矩预算。现在进一步证明：
+给出足以抵消该振荡增益的增长界，并只对 noncarrier remainder 建立二阶矩预算。现在进一步证明：
 当 `2 <= X <= N` 时，`(1,1)` reduced ray 的 boundary defect 严格为零，载波系数
-精确等于 complete ratio coefficient；其平方已由 `19/4` 加唯一的 high-product
-energy 控制。因此载波侧不再有边界尾项，真正剩余的算术输入只有 high-product
-energy 的统一界。完整主项现在已有
+精确等于 complete ratio coefficient。对局部 Euler 系数的有限和恒等式表明
+`|(zeta * sqrt-zetaCoeff)(n)| <= 1`；代回精确对角公式后，载波系数直接受调和数
+控制，因此不超过 `1 + log X`。结合相位积分的 `32/log T` 节省，在上述高处与
+`2 <= X <= N` 条件下，完整载波窗口无需额外能量假设即可压到
+`(1 + log X) * 32/log T`；完整短模型则严格只剩这一显式项
+与 noncarrier remainder。故 `hexcessive` 的载波侧不再依赖 high-product energy，
+真正剩余的核心输入是 noncarrier remainder 的二阶矩预算和参数选择。完整主项另有
 乘法 Parseval 恒等式：
 按 reduced ratio 收集的平方能量可无损改写成按整数 product 收集的平方能量；低乘积
 区间已压到常数 `19/4`，只剩 `X < n <= X^2` 的有符号截断卷积能量。边界尾项也已有
@@ -423,8 +427,9 @@ energy 的统一界。完整主项现在已有
 denominator fiber 的有符号平方现已进一步得到不依赖 `N` 的统一界，因此边界平方
 被压成“显式 harmonic tail 的平方 × 只依赖 `X` 的线性 taper 能量”。该 taper
 能量现在又有无条件显式界 `4 * X^2 / log(X)^2`，所以单条 reduced ray 的边界项
-已获得 `1 / log(X)^2` 节省；还需要把 harmonic tail 与互素对求和统一控制，并
-重写不含不可消除对角质量的 `hexcessive` 预算。独立的 `hsmall` 链也已把
+已获得 `1 / log(X)^2` 节省；这些全频能量界仍可用于 noncarrier 分析，但不再是
+载波估计的前置条件。接下来要把 noncarrier 的局部分离与互素对求和统一控制，
+并闭合不含不可消除对角质量的 `hexcessive` 预算。独立的 `hsmall` 链也已把
 `X < k <= N` 的高区间对角能量精确改写为实际有符号卷积平方
 `(((sqrt-zeta taper)^2 * zeta)(k))^2/k`，不再使用纤维基数或逐项绝对值上界；
 `k > N` 的实际截断尾项与非对角 gap sum 则仍显式保留。接下来必须分别给出这三个
