@@ -165,6 +165,75 @@ private theorem sum_sq_image_fiber_eq_cross_rectangular
       intro x _hx
       rw [Finset.sum_filter]
 
+private theorem sum_sq_image_fiber_filter_eq_cross_rectangular
+    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    (S : Finset α) (key : α → β) (c : α → ℝ)
+    (pred : β → Prop) [DecidablePred pred] :
+    (∑ y ∈ (S.image key).filter pred,
+        (∑ x ∈ S.filter (fun x => key x = y), c x) ^ 2) =
+      ∑ x ∈ S, ∑ z ∈ S,
+        if key z = key x ∧ pred (key x) then c x * c z else 0 := by
+  classical
+  let S' := S.filter (fun x => pred (key x))
+  have hsupport : S'.image key = (S.image key).filter pred := by
+    ext y
+    constructor
+    · intro hy
+      rcases Finset.mem_image.mp hy with ⟨x, hx, rfl⟩
+      exact Finset.mem_filter.mpr
+        ⟨Finset.mem_image.mpr
+            ⟨x, (Finset.mem_filter.mp hx).1, rfl⟩,
+          (Finset.mem_filter.mp hx).2⟩
+    · intro hy
+      rcases Finset.mem_filter.mp hy with ⟨hyImage, hpred⟩
+      rcases Finset.mem_image.mp hyImage with ⟨x, hx, rfl⟩
+      exact Finset.mem_image.mpr
+        ⟨x, Finset.mem_filter.mpr ⟨hx, hpred⟩, rfl⟩
+  have hfiber (y : β) (hy : pred y) :
+      S'.filter (fun x => key x = y) =
+        S.filter (fun x => key x = y) := by
+    ext x
+    constructor
+    · intro hx
+      exact Finset.mem_filter.mpr
+        ⟨(Finset.mem_filter.mp (Finset.mem_filter.mp hx).1).1,
+          (Finset.mem_filter.mp hx).2⟩
+    · intro hx
+      rcases Finset.mem_filter.mp hx with ⟨hxS, hkey⟩
+      have hxPred : pred (key x) := by simpa [hkey] using hy
+      exact Finset.mem_filter.mpr
+        ⟨Finset.mem_filter.mpr ⟨hxS, hxPred⟩, hkey⟩
+  calc
+    (∑ y ∈ (S.image key).filter pred,
+        (∑ x ∈ S.filter (fun x => key x = y), c x) ^ 2) =
+        ∑ y ∈ S'.image key,
+          (∑ x ∈ S.filter (fun x => key x = y), c x) ^ 2 := by
+      rw [hsupport]
+    _ = ∑ y ∈ S'.image key,
+          (∑ x ∈ S'.filter (fun x => key x = y), c x) ^ 2 := by
+      apply Finset.sum_congr rfl
+      intro y hy
+      rcases Finset.mem_image.mp hy with ⟨x, hx, rfl⟩
+      rw [hfiber]
+      exact (Finset.mem_filter.mp hx).2
+    _ = ∑ x ∈ S', ∑ z ∈ S',
+          if key z = key x then c x * c z else 0 :=
+      sum_sq_image_fiber_eq_cross_rectangular S' key c
+    _ = ∑ x ∈ S, ∑ z ∈ S,
+          if key z = key x ∧ pred (key x) then c x * c z else 0 := by
+      simp only [S', Finset.sum_filter]
+      apply Finset.sum_congr rfl
+      intro x _hx
+      by_cases hxPred : pred (key x)
+      · rw [if_pos hxPred]
+        apply Finset.sum_congr rfl
+        intro z _hz
+        by_cases hkey : key z = key x
+        · have hzPred : pred (key z) := by simpa [hkey] using hxPred
+          simp [hkey, hxPred]
+        · simp [hkey, hxPred]
+      · simp [hxPred]
+
 private def swapRectangularNumerators
     (x : (ℕ × (ℕ × ℕ)) × (ℕ × (ℕ × ℕ))) :
     (ℕ × (ℕ × ℕ)) × (ℕ × (ℕ × ℕ)) :=
@@ -250,6 +319,26 @@ private theorem rawCoeff_mul_swapRectangularNumerators
     selbergSqrtZetaSignedPhaseCoeff]
   simp
   ring
+
+/-- The mixed product produced on the first component when the two numerator
+coordinates are exchanged. -/
+def selbergSqrtZetaRectangularMixedProductKey
+    (p r : ℕ × (ℕ × ℕ)) : ℕ :=
+  p.1 * p.2.1 * r.2.2
+
+/-- Signed rational correlation restricted to pairs whose mixed product lies
+above `K`.  Unlike the full rational energy, this remembers the original
+integer-product tail condition through the numerator exchange. -/
+noncomputable def selbergSqrtZetaSignedRationalMixedProductTailEnergy
+    (N X K : ℕ) : ℝ :=
+  ∑ p ∈ selbergSqrtZetaSignedPhaseSupport N X,
+    ∑ r ∈ selbergSqrtZetaSignedPhaseSupport N X,
+      if selbergSqrtZetaSignedRationalKey r =
+            selbergSqrtZetaSignedRationalKey p ∧
+          K < selbergSqrtZetaRectangularMixedProductKey p r
+      then selbergSqrtZetaRectangularRawCoeff X p *
+        selbergSqrtZetaRectangularRawCoeff X r
+      else 0
 
 private theorem rectangular_ratio_energy_eq_product_energy
     (N X : ℕ) :
@@ -346,6 +435,114 @@ private theorem rectangular_ratio_energy_eq_product_energy
               selbergSqrtZetaRectangularProductKey p
           then c p * c r else 0 := Finset.sum_product P P _
 
+private theorem
+    rectangular_ratio_mixed_tail_energy_eq_product_tail_energy
+    (N X K : ℕ) :
+    selbergSqrtZetaSignedRationalMixedProductTailEnergy N X K =
+      ∑ k ∈ (selbergSqrtZetaRectangularProductSupport N X).filter
+          (fun k => K < k),
+        (∑ p ∈ (selbergSqrtZetaSignedPhaseSupport N X).filter
+            (fun p => selbergSqrtZetaRectangularProductKey p = k),
+          selbergSqrtZetaRectangularRawCoeff X p) ^ 2 := by
+  classical
+  let P := selbergSqrtZetaSignedPhaseSupport N X
+  let c := selbergSqrtZetaRectangularRawCoeff X
+  unfold selbergSqrtZetaSignedRationalMixedProductTailEnergy
+    selbergSqrtZetaRectangularProductSupport
+  rw [sum_sq_image_fiber_filter_eq_cross_rectangular P
+      selbergSqrtZetaRectangularProductKey c (fun k => K < k)]
+  change
+    (∑ p ∈ P, ∑ r ∈ P,
+      if selbergSqrtZetaSignedRationalKey r =
+            selbergSqrtZetaSignedRationalKey p ∧
+          K < selbergSqrtZetaRectangularMixedProductKey p r
+      then c p * c r else 0) =
+    ∑ p ∈ P, ∑ r ∈ P,
+      if selbergSqrtZetaRectangularProductKey r =
+            selbergSqrtZetaRectangularProductKey p ∧
+          K < selbergSqrtZetaRectangularProductKey p
+      then c p * c r else 0
+  calc
+    (∑ p ∈ P, ∑ r ∈ P,
+        if selbergSqrtZetaSignedRationalKey r =
+              selbergSqrtZetaSignedRationalKey p ∧
+            K < selbergSqrtZetaRectangularMixedProductKey p r
+        then c p * c r else 0) =
+        ∑ x ∈ P.product P,
+          if selbergSqrtZetaSignedRationalKey x.2 =
+                selbergSqrtZetaSignedRationalKey x.1 ∧
+              K < selbergSqrtZetaRectangularMixedProductKey x.1 x.2
+          then c x.1 * c x.2 else 0 := by
+      exact
+        (Finset.sum_product P P
+          (fun x : (ℕ × (ℕ × ℕ)) × (ℕ × (ℕ × ℕ)) =>
+            if selbergSqrtZetaSignedRationalKey x.2 =
+                  selbergSqrtZetaSignedRationalKey x.1 ∧
+                K < selbergSqrtZetaRectangularMixedProductKey x.1 x.2
+            then c x.1 * c x.2 else 0)).symm
+    _ = ∑ x ∈ P.product P,
+          if selbergSqrtZetaRectangularProductKey x.2 =
+                selbergSqrtZetaRectangularProductKey x.1 ∧
+              K < selbergSqrtZetaRectangularProductKey x.1
+          then c x.1 * c x.2 else 0 := by
+      refine Finset.sum_bij
+        (fun x _hx => swapRectangularNumerators x) ?_ ?_ ?_ ?_
+      · intro x hx
+        exact swapRectangularNumerators_mem hx
+      · intro x _hx y _hy hxy
+        exact swapRectangularNumerators_involutive.injective hxy
+      · intro y hy
+        refine ⟨swapRectangularNumerators y,
+          swapRectangularNumerators_mem hy, ?_⟩
+        exact swapRectangularNumerators_involutive y
+      · intro x hx
+        have hx' := Finset.mem_product.mp hx
+        have hkey := rationalKey_eq_iff_swappedProductKey_eq hx'.1 hx'.2
+        have hkeySwap :
+            selbergSqrtZetaSignedRationalKey x.2 =
+                selbergSqrtZetaSignedRationalKey x.1 ↔
+              selbergSqrtZetaRectangularProductKey
+                  (swapRectangularNumerators x).2 =
+                selbergSqrtZetaRectangularProductKey
+                  (swapRectangularNumerators x).1 := by
+          simpa only [swapRectangularNumerators] using hkey
+        have htailSwap :
+            K < selbergSqrtZetaRectangularMixedProductKey x.1 x.2 ↔
+              K < selbergSqrtZetaRectangularProductKey
+                (swapRectangularNumerators x).1 := by
+          rfl
+        change
+          (if selbergSqrtZetaSignedRationalKey x.2 =
+                selbergSqrtZetaSignedRationalKey x.1 ∧
+              K < selbergSqrtZetaRectangularMixedProductKey x.1 x.2
+            then c x.1 * c x.2 else 0) =
+          if selbergSqrtZetaRectangularProductKey
+                  (swapRectangularNumerators x).2 =
+                selbergSqrtZetaRectangularProductKey
+                  (swapRectangularNumerators x).1 ∧
+              K < selbergSqrtZetaRectangularProductKey
+                (swapRectangularNumerators x).1
+          then c (swapRectangularNumerators x).1 *
+            c (swapRectangularNumerators x).2 else 0
+        by_cases hsource :
+            selbergSqrtZetaSignedRationalKey x.2 =
+                selbergSqrtZetaSignedRationalKey x.1 ∧
+              K < selbergSqrtZetaRectangularMixedProductKey x.1 x.2
+        · rw [if_pos hsource,
+            if_pos ⟨hkeySwap.mp hsource.1, htailSwap.mp hsource.2⟩]
+          exact rawCoeff_mul_swapRectangularNumerators X x
+        · rw [if_neg hsource]
+          symm
+          apply if_neg
+          intro htarget
+          exact hsource
+            ⟨hkeySwap.mpr htarget.1, htailSwap.mpr htarget.2⟩
+    _ = ∑ p ∈ P, ∑ r ∈ P,
+          if selbergSqrtZetaRectangularProductKey r =
+                selbergSqrtZetaRectangularProductKey p ∧
+              K < selbergSqrtZetaRectangularProductKey p
+          then c p * c r else 0 := Finset.sum_product P P _
+
 /-- Every actually represented rectangular product lies in the explicit
 positive product interval used by the collected short polynomial. -/
 theorem selbergSqrtZetaRectangularProductSupport_subset_collectedSupport
@@ -416,6 +613,173 @@ theorem
       rw [selbergSqrtZetaSignedRationalCoeff_eq_ofReal_rawFiberSum]
       simp [Complex.normSq_apply, pow_two]
 
+/-- Exact filtered rectangular Parseval identity for the genuine product tail.
+The right side retains the mixed-product cutoff created by exchanging the two
+numerator coordinates, rather than enlarging the tail to the full rational
+coefficient energy. -/
+theorem
+    sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_rectangularProductTail_eq_signedRationalMixedProductTailEnergy
+    (N X K : ℕ) :
+    (∑ k ∈ (selbergSqrtZetaRectangularProductSupport N X).filter
+        (fun k => K < k),
+      Complex.normSq
+        (selbergSqrtZetaShortDirichletCollectedCoeff N X k)) =
+      selbergSqrtZetaSignedRationalMixedProductTailEnergy N X K := by
+  calc
+    (∑ k ∈ (selbergSqrtZetaRectangularProductSupport N X).filter
+        (fun k => K < k),
+      Complex.normSq
+        (selbergSqrtZetaShortDirichletCollectedCoeff N X k)) =
+        ∑ k ∈ (selbergSqrtZetaRectangularProductSupport N X).filter
+            (fun k => K < k),
+          (∑ p ∈ (selbergSqrtZetaSignedPhaseSupport N X).filter
+              (fun p => selbergSqrtZetaRectangularProductKey p = k),
+            selbergSqrtZetaRectangularRawCoeff X p) ^ 2 := by
+      apply Finset.sum_congr rfl
+      intro k _hk
+      rw [selbergSqrtZetaShortDirichletCollectedCoeff_eq_ofReal_rawProductFiberSum]
+      simp [Complex.normSq_apply, pow_two]
+    _ = selbergSqrtZetaSignedRationalMixedProductTailEnergy N X K :=
+      (rectangular_ratio_mixed_tail_energy_eq_product_tail_energy N X K).symm
+
+/-- The explicit interval tail equals the filtered mixed-product energy.  Any
+interval point not represented by a rectangular triple has zero collected
+coefficient, so no enlargement to the full rational energy is needed. -/
+theorem
+    sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_tail_eq_signedRationalMixedProductTailEnergy
+    (N X : ℕ) :
+    (∑ k ∈ Finset.Ioc N (N * X * X),
+      Complex.normSq
+        (selbergSqrtZetaShortDirichletCollectedCoeff N X k)) =
+      selbergSqrtZetaSignedRationalMixedProductTailEnergy N X N := by
+  have hsubset :
+      (selbergSqrtZetaRectangularProductSupport N X).filter
+          (fun k => N < k) ⊆
+        Finset.Ioc N (N * X * X) := by
+    intro k hk
+    rcases Finset.mem_filter.mp hk with ⟨hkProduct, hkN⟩
+    have hkCollected :=
+      selbergSqrtZetaRectangularProductSupport_subset_collectedSupport N X
+        hkProduct
+    rw [selbergShortDirichletCollectedSupport] at hkCollected
+    exact Finset.mem_Ioc.mpr ⟨hkN, (Finset.mem_Icc.mp hkCollected).2⟩
+  calc
+    (∑ k ∈ Finset.Ioc N (N * X * X),
+      Complex.normSq
+        (selbergSqrtZetaShortDirichletCollectedCoeff N X k)) =
+        ∑ k ∈ (selbergSqrtZetaRectangularProductSupport N X).filter
+            (fun k => N < k),
+          Complex.normSq
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+      symm
+      exact Finset.sum_subset hsubset
+        (by
+          intro k hkInterval hkNotFiltered
+          have hkNotProduct :
+              k ∉ selbergSqrtZetaRectangularProductSupport N X := by
+            intro hkProduct
+            exact hkNotFiltered
+              (Finset.mem_filter.mpr
+                ⟨hkProduct, (Finset.mem_Ioc.mp hkInterval).1⟩)
+          rw [selbergSqrtZetaShortDirichletCollectedCoeff_eq_zero_of_not_mem_rectangularProductSupport
+            hkNotProduct]
+          simp)
+    _ = selbergSqrtZetaSignedRationalMixedProductTailEnergy N X N :=
+      sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_rectangularProductTail_eq_signedRationalMixedProductTailEnergy
+        N X N
+
+private theorem
+    normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul
+    {N k : ℕ} (hN : 1 ≤ N) (hkN : N < k) (X : ℕ) (H : ℝ) :
+    Complex.normSq
+        (MathlibAux.slidingExponentialCoefficient H
+          (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+          selbergShortDirichletCollectedFrequency k) ≤
+      (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+        Complex.normSq
+          (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+  have hN1 : (1 : ℝ) < (N + 1 : ℕ) := by
+    exact_mod_cast (show 1 < N + 1 by omega)
+  have hk1 : (1 : ℝ) < k := by
+    exact_mod_cast (show 1 < k by omega)
+  have hlogN : 0 < Real.log ((N + 1 : ℕ) : ℝ) := Real.log_pos hN1
+  have hlogk : 0 < Real.log (k : ℝ) := Real.log_pos hk1
+  have hNk : ((N + 1 : ℕ) : ℝ) ≤ (k : ℝ) := by
+    exact_mod_cast (show N + 1 ≤ k by omega)
+  have hlogMono :
+      Real.log ((N + 1 : ℕ) : ℝ) ≤ Real.log (k : ℝ) :=
+    Real.strictMonoOn_log.monotoneOn
+      (zero_lt_one.trans hN1) (zero_lt_one.trans hk1) hNk
+  have hdiv :
+      2 / Real.log (k : ℝ) ≤ 2 / Real.log ((N + 1 : ℕ) : ℝ) :=
+    div_le_div_of_nonneg_left (by norm_num) hlogN hlogMono
+  have hfreq : selbergShortDirichletCollectedFrequency k ≠ 0 := by
+    rw [selbergShortDirichletCollectedFrequency_eq_neg_log]
+    exact neg_ne_zero.mpr hlogk.ne'
+  have hfreqAbs :
+      |selbergShortDirichletCollectedFrequency k| = Real.log (k : ℝ) := by
+    rw [selbergShortDirichletCollectedFrequency_eq_neg_log, abs_neg,
+      abs_of_pos hlogk]
+  have hslide := MathlibAux.norm_slidingExponentialCoefficient_le_min
+    (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+    selbergShortDirichletCollectedFrequency k hfreq (H := H)
+  rw [hfreqAbs] at hslide
+  rw [Complex.normSq_eq_norm_sq]
+  calc
+    ‖MathlibAux.slidingExponentialCoefficient H
+          (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+          selbergShortDirichletCollectedFrequency k‖ ^ 2 ≤
+        (‖selbergSqrtZetaShortDirichletCollectedCoeff N X k‖ *
+          min |H| (2 / Real.log (k : ℝ))) ^ 2 :=
+      (sq_le_sq₀ (norm_nonneg _) (by positivity)).2 hslide
+    _ ≤ (‖selbergSqrtZetaShortDirichletCollectedCoeff N X k‖ *
+          (2 / Real.log ((N + 1 : ℕ) : ℝ))) ^ 2 := by
+      apply sq_le_sq₀ (by positivity) (by positivity) |>.2
+      exact mul_le_mul_of_nonneg_left
+        ((min_le_right _ _).trans hdiv) (norm_nonneg _)
+    _ = (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+          Complex.normSq
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+      rw [Complex.normSq_eq_norm_sq]
+      ring
+
+/-- The sliding-window tail is controlled by the exact filtered mixed-product
+energy.  This retains the high-frequency cutoff instead of enlarging the
+right side to the entire rational coefficient energy. -/
+theorem
+    sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul_signedRationalMixedProductTailEnergy
+    {N : ℕ} (hN : 1 ≤ N) (X : ℕ) (H : ℝ) :
+    (∑ k ∈ Finset.Ioc N (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+      (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+        selbergSqrtZetaSignedRationalMixedProductTailEnergy N X N := by
+  calc
+    (∑ k ∈ Finset.Ioc N (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+        ∑ k ∈ Finset.Ioc N (N * X * X),
+          (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+            Complex.normSq
+              (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+      apply Finset.sum_le_sum
+      intro k hk
+      exact
+        normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul
+          hN (Finset.mem_Ioc.mp hk).1 X H
+    _ = (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+        ∑ k ∈ Finset.Ioc N (N * X * X),
+          Complex.normSq
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
+      rw [Finset.mul_sum]
+    _ = (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+        selbergSqrtZetaSignedRationalMixedProductTailEnergy N X N := by
+      rw [sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_tail_eq_signedRationalMixedProductTailEnergy]
+
 /-- The same exact Parseval identity over the existing explicit interval
 `1 <= k <= N*X*X`.  The additional interval points contribute zero because
 they are not represented by a finite triple. -/
@@ -473,48 +837,9 @@ theorem
             (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
       apply Finset.sum_le_sum
       intro k hk
-      obtain ⟨hkN, _hkTop⟩ := Finset.mem_Ioc.mp hk
-      have hN1 : (1 : ℝ) < (N + 1 : ℕ) := by exact_mod_cast (show 1 < N + 1 by omega)
-      have hk1 : (1 : ℝ) < k := by exact_mod_cast (show 1 < k by omega)
-      have hlogN : 0 < Real.log ((N + 1 : ℕ) : ℝ) := Real.log_pos hN1
-      have hlogk : 0 < Real.log (k : ℝ) := Real.log_pos hk1
-      have hNk : ((N + 1 : ℕ) : ℝ) ≤ (k : ℝ) := by exact_mod_cast (show N + 1 ≤ k by omega)
-      have hlogMono :
-          Real.log ((N + 1 : ℕ) : ℝ) ≤ Real.log (k : ℝ) :=
-        Real.strictMonoOn_log.monotoneOn
-          (zero_lt_one.trans hN1) (zero_lt_one.trans hk1) hNk
-      have hdiv :
-          2 / Real.log (k : ℝ) ≤ 2 / Real.log ((N + 1 : ℕ) : ℝ) :=
-        div_le_div_of_nonneg_left (by norm_num) hlogN hlogMono
-      have hfreq : selbergShortDirichletCollectedFrequency k ≠ 0 := by
-        rw [selbergShortDirichletCollectedFrequency_eq_neg_log]
-        exact neg_ne_zero.mpr hlogk.ne'
-      have hfreqAbs :
-          |selbergShortDirichletCollectedFrequency k| = Real.log (k : ℝ) := by
-        rw [selbergShortDirichletCollectedFrequency_eq_neg_log, abs_neg,
-          abs_of_pos hlogk]
-      have hslide := MathlibAux.norm_slidingExponentialCoefficient_le_min
-        (selbergSqrtZetaShortDirichletCollectedCoeff N X)
-        selbergShortDirichletCollectedFrequency k hfreq (H := H)
-      rw [hfreqAbs] at hslide
-      rw [Complex.normSq_eq_norm_sq]
-      calc
-        ‖MathlibAux.slidingExponentialCoefficient H
-              (selbergSqrtZetaShortDirichletCollectedCoeff N X)
-              selbergShortDirichletCollectedFrequency k‖ ^ 2 ≤
-            (‖selbergSqrtZetaShortDirichletCollectedCoeff N X k‖ *
-              min |H| (2 / Real.log (k : ℝ))) ^ 2 :=
-          (sq_le_sq₀ (norm_nonneg _) (by positivity)).2 hslide
-        _ ≤ (‖selbergSqrtZetaShortDirichletCollectedCoeff N X k‖ *
-              (2 / Real.log ((N + 1 : ℕ) : ℝ))) ^ 2 := by
-          apply sq_le_sq₀ (by positivity) (by positivity) |>.2
-          exact mul_le_mul_of_nonneg_left
-            ((min_le_right _ _).trans hdiv) (norm_nonneg _)
-        _ = (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
-              Complex.normSq
-                (selbergSqrtZetaShortDirichletCollectedCoeff N X k) := by
-          rw [Complex.normSq_eq_norm_sq]
-          ring
+      exact
+        normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul
+          hN (Finset.mem_Ioc.mp hk).1 X H
     _ = (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
         ∑ k ∈ Finset.Ioc N (N * X * X),
           Complex.normSq

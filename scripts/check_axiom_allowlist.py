@@ -86,8 +86,13 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_rectangularProductSupport_eq_signedRationalEnergy",
     "HardyTheorem.sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_eq_signedRationalEnergy",
     "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul_signedRationalEnergy",
+    "HardyTheorem.sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_rectangularProductTail_eq_signedRationalMixedProductTailEnergy",
+    "HardyTheorem.sum_normSq_selbergSqrtZetaShortDirichletCollectedCoeff_tail_eq_signedRationalMixedProductTailEnergy",
+    "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul_signedRationalMixedProductTailEnergy",
     "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_rationalEnergy",
+    "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_mixedTailEnergy",
     "HardyTheorem.selbergSqrtZetaShortDirichletGapSum_le_signedPairEnergy_add_logDecay_mul_rationalEnergy_add_offDiagonal",
+    "HardyTheorem.selbergSqrtZetaShortDirichletGapSum_le_signedPairEnergy_add_logDecay_mul_mixedTailEnergy_add_offDiagonal",
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
     "PrimeNumberTheorem.VKEdgePiOverTwo.chebyshevPsi_sub_exp_eq_neg_cluster_sub_remainder",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorAtExponent_eq_neg_cluster_sub_remainder",
@@ -711,7 +716,7 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "build", *AXIOM_AUDIT_MODULES],
+        ["lake", "-Kjobs=1", "build", *AXIOM_AUDIT_MODULES],
         cwd=ROOT,
         text=True,
         capture_output=True,

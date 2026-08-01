@@ -255,6 +255,33 @@ theorem
           (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul_signedRationalEnergy
             hN X H)))
 
+/-- The strengthened diagonal budget retaining the exact mixed-product cutoff
+in the zeta-truncation tail.  In particular, it does not enlarge the tail to
+the entire rational coefficient energy. -/
+theorem
+    sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_mixedTailEnergy
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X) (hXN : X ≤ N)
+    (hlarge : Real.log 4 + 5 ≤ Real.log X) (H : ℝ) :
+    (∑ k ∈ Finset.Ioc 1 (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+      (15 : ℝ) / 4 * H ^ 2 +
+        ((∑ k ∈ Finset.Ioc X N,
+            (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
+              ((selbergSqrtZetaShortCompleteRangePairSum X k) ^ 2 /
+                (k : ℝ))) +
+          (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+            selbergSqrtZetaSignedRationalMixedProductTailEnergy N X N) := by
+  exact
+    (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_actualTail
+      hN hX hXN hlarge H).trans
+      (add_le_add le_rfl
+        (add_le_add le_rfl
+          (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_tail_le_logDecay_mul_signedRationalMixedProductTailEnergy
+            hN X H)))
+
 /-- Direct gap-sum endpoint with the actual signed high-range pair energy.
 The off-diagonal and the `k > N` truncation tail remain actual collected
 quantities; the `X²` pair-cardinality majorant is absent. -/
@@ -332,6 +359,44 @@ theorem
   exact add_le_add
     (mul_le_mul_of_nonneg_left
       (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_rationalEnergy
+        hN hX hXN hlarge H)
+      (sub_nonneg.mpr hAB))
+    le_rfl
+
+/-- The `hsmall` gap-sum endpoint with the exact mixed-product tail retained.
+This is strictly structured for the remaining arithmetic estimate: only
+product frequencies above `N` occur in the tail term. -/
+theorem
+    selbergSqrtZetaShortDirichletGapSum_le_signedPairEnergy_add_logDecay_mul_mixedTailEnergy_add_offDiagonal
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X) (hXN : X ≤ N)
+    (hlarge : Real.log 4 + 5 ≤ Real.log X)
+    {A B H : ℝ} (hAB : A ≤ B) :
+    selbergSqrtZetaShortDirichletGapSum N X A B H ≤
+      (B - A) *
+          ((15 : ℝ) / 4 * H ^ 2 +
+            ((∑ k ∈ Finset.Ioc X N,
+                (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
+                  ((selbergSqrtZetaShortCompleteRangePairSum X k) ^ 2 /
+                    (k : ℝ))) +
+              (2 / Real.log ((N + 1 : ℕ) : ℝ)) ^ 2 *
+                selbergSqrtZetaSignedRationalMixedProductTailEnergy N X N)) +
+        H ^ 2 *
+          ∑ m ∈ Finset.Ioc 1 (N * X * X),
+            ∑ n ∈ Finset.Ioc 1 (N * X * X),
+              2 *
+                    ‖selbergSqrtZetaShortDirichletCollectedCoeff N X m‖ *
+                  ‖selbergSqrtZetaShortDirichletCollectedCoeff N X n‖ /
+                |selbergShortDirichletCollectedFrequency m -
+                  selbergShortDirichletCollectedFrequency n| := by
+  rw [selbergSqrtZetaShortDirichletGapSum_eq_slidingExponentialGapSum]
+  apply
+    (MathlibAux.slidingExponentialGapSum_le_diagonal_add_frequencyGap
+      (Finset.Ioc 1 (N * X * X))
+      (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+      selbergShortDirichletCollectedFrequency hAB).trans
+  exact add_le_add
+    (mul_le_mul_of_nonneg_left
+      (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_signedPairEnergy_add_logDecay_mul_mixedTailEnergy
         hN hX hXN hlarge H)
       (sub_nonneg.mpr hAB))
     le_rfl
