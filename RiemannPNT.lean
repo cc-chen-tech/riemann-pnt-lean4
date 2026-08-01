@@ -212,6 +212,7 @@ import MathlibAux.FejerTriangleKernel
 import MathlibAux.SlidingRegionSwap
 import MathlibAux.TriangleKernelFourier
 import MathlibAux.SlidingLagBudget
+import MathlibAux.SlidingLagCosineBudget
 import MathlibAux.SlidingExponentialCoefficientBound
 import MathlibAux.SlidingExponentialGapDecomposition
 import MathlibAux.AmplitudeExponentialGapIntegral

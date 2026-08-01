@@ -1,0 +1,10 @@
+import MathlibAux.SlidingLagCosineBudget
+
+open MeasureTheory Set
+
+namespace MathlibAux
+
+#check abs_lagIntegral_le_cosine_main_add_uniform_error
+#check abs_lagIntegral_le_cosine_main_add_uniform_error_of_nonneg
+
+end MathlibAux

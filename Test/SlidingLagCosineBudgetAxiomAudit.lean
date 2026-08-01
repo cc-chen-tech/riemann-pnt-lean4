@@ -1,0 +1,4 @@
+import MathlibAux.SlidingLagCosineBudget
+
+#print axioms MathlibAux.abs_lagIntegral_le_cosine_main_add_uniform_error
+#print axioms MathlibAux.abs_lagIntegral_le_cosine_main_add_uniform_error_of_nonneg

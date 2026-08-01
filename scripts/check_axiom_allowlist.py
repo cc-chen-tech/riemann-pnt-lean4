@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_AUDIT_MODULES = [
+    "Test.SlidingLagCosineBudgetAxiomAudit",
     "Test.MultiplicityAxiomAudit",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
@@ -53,6 +54,8 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergSqrtZetaActualHighRangeEnergyAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.abs_lagIntegral_le_cosine_main_add_uniform_error",
+    "MathlibAux.abs_lagIntegral_le_cosine_main_add_uniform_error_of_nonneg",
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
     "PrimeNumberTheorem.VKEdgePiOverTwo.chebyshevPsi_sub_exp_eq_neg_cluster_sub_remainder",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorAtExponent_eq_neg_cluster_sub_remainder",
