@@ -6,6 +6,7 @@ open scoped BigOperators
 namespace PrimeNumberTheorem.VKEdgePiOverTwo
 
 #check rightHigherTargetNormalizedAbsoluteMass
+#check rightHigherTargetNormalizedAbsoluteMass_nonneg
 #check finiteZeroClusterCoefficientAt_zero_norm_eq_kernelWeight
 #check norm_normalizedRightHigherComplement_le_absoluteMass
 #check rightHigherGaussianAbsoluteCapacity
