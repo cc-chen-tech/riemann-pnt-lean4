@@ -266,6 +266,54 @@ theorem
   unfold initialEmptyClusterFullMovingGaussianL2Constant
   exact hbudget.trans_le henergy
 
+/-- The same `S = empty` endpoint, stated directly as the Gaussian second
+moment of the genuine finite zeta-zero complement appearing in the explicit
+formula.  This removes the internal bucket decomposition from the public
+analytic statement. -/
+theorem
+    exists_eventually_emptyClusterLowHeightNormalizedComplementSecondMoment_gt
+    {ε : ℝ} {rho : ℂ} {sigma gammaLow alpha : ℝ}
+    (hε : 0 < ε)
+    (hgamma : 0 < rho.im)
+    (hzero : riemannZeta rho = 0)
+    (hσ : 1 / 2 < sigma)
+    (hσrho : sigma < rho.re)
+    (hrhoTwoThirds : 2 / 3 < rho.re)
+    (hrhoRe1 : rho.re < 1)
+    (hgammaLow : 0 < gammaLow)
+    (hgammaLowBeta : gammaLow < rho.re)
+    (hdecay : (1 - rho.re) * (1 + ε) < gammaLow)
+    (hgammaLowAlpha : gammaLow < alpha)
+    (halpha1 : alpha ≤ 1) :
+    ∃ k : ℕ,
+      riemannZeta (missingHarmonicContourCenter rho k) ≠ 0 ∧
+      0 < initialEmptyClusterFullMovingGaussianL2Constant ε rho k ∧
+      ∀ᶠ Y : ℝ in atTop,
+        ∃ Tlow ∈
+            Set.Icc
+              (Real.exp (gammaLow * Real.log Y))
+              (Real.exp (gammaLow * Real.log Y) + 1),
+          ExplicitFormulaAux.goodHeight Tlow ∧
+            Tlow ≤ Real.exp (alpha * Real.log Y) ∧
+            initialEmptyClusterFullMovingGaussianL2Constant ε rho k <
+              ∫ t : ℝ in Set.Icc 0 (ε * Real.log Y),
+                normalizedGaussian ((ε * Real.log Y) ^ 2) t *
+                  ‖normalizedFiniteZeroClusterComplementContribution
+                    ∅ Tlow rho.re (Real.log Y + t)‖ ^ 2 := by
+  rcases
+      exists_eventually_emptyClusterLowHeightFullMovingGaussianSecondMoment_gt
+        hε hgamma hzero hσ hσrho hrhoTwoThirds hrhoRe1 hgammaLow
+          hgammaLowBeta hdecay hgammaLowAlpha halpha1 with
+    ⟨k, hmissing, hconstant, henergy⟩
+  refine ⟨k, hmissing, hconstant, ?_⟩
+  filter_upwards [henergy] with Y henergyY
+  rcases henergyY with ⟨Tlow, hTlow, hgood, houter, hlower⟩
+  refine ⟨Tlow, hTlow, hgood, houter, ?_⟩
+  simpa only [
+    dynamicComplementForwardMovingGaussianSecondMoment_fullBucketSet,
+    normalizedFiniteZeroClusterComplementForwardGaussianSecondMoment] using
+    hlower
+
 end
 
 end VKEdgePiOverTwo
