@@ -2,3 +2,4 @@ import MathlibAux.SlidingLagCosineBudget
 
 #print axioms MathlibAux.abs_lagIntegral_le_cosine_main_add_uniform_error
 #print axioms MathlibAux.abs_lagIntegral_le_cosine_main_add_uniform_error_of_nonneg
+#print axioms MathlibAux.abs_squareIntegral_le_cosine_difference_main_add_uniform_error

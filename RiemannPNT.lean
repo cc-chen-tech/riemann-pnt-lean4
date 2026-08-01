@@ -66,6 +66,7 @@ import HardyTheorem.SelbergShortAbsLower
 import HardyTheorem.SelbergMollifiedTripleDirichlet
 import HardyTheorem.SelbergMollifiedTripleCollected
 import HardyTheorem.SelbergMollifiedHardyPhasePolynomial
+import HardyTheorem.SelbergHardyLagLinearization
 import HardyTheorem.SelbergSqrtZetaArithmetic
 import HardyTheorem.SelbergSqrtZetaMollifier
 import HardyTheorem.SelbergSqrtZetaCollectedArithmetic
