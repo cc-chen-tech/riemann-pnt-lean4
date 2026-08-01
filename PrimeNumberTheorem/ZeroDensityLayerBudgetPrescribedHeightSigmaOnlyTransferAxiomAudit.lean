@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPrescribedHeightSigmaOnlyTransfer
+
+namespace PrimeNumberTheorem
+
+#print axioms prescribedHeightSigmaOnlyParameters_spec
+#print axioms prescribedHeightSigmaOnlySelectedHeight_spec
+#print axioms actualPrescribedHeightSigmaOnlyUnifiedUpperSignedOmega
+
+end PrimeNumberTheorem
