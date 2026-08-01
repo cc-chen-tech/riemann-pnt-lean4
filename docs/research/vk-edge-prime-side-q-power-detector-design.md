@@ -106,6 +106,39 @@ candidates than forbidden points leave a valid base.
 This prime-selection lemma is a separate theorem.  The detector construction
 must not hide base noncollision inside an unproved choice.
 
+### Mathematical base-selection result
+
+The finite avoidance claim has now been proved on paper.  Let
+
+```text
+E = {rho in P | re rho = re s0},
+M = card E.
+```
+
+Then any `M + 1` distinct prime candidates contain a prime `q` for which
+
+```text
+z_q(s0) != z_q(rho)  for every rho in P.
+```
+
+Indeed, different real parts already give different node moduli.  For a fixed
+`rho` with the same real part, collision at two distinct primes would give
+
+```text
+(im rho - im s0) * log p = 2 * pi * k,
+(im rho - im s0) * log r = 2 * pi * l
+```
+
+with nonzero integers `k,l`.  After making their signs positive this implies
+`p^|l| = r^|k|`, contradicting uniqueness of prime powers.  Thus each old
+point excludes at most one prime, and finite pigeonhole gives the result.
+
+The candidate count `M + 1` is uniformly sharp without further information
+about `P`.  This is a mathematical proof checkpoint, not yet a compiled Lean
+theorem.  The Lean bottleneck is the conversion of the signed periodicity
+witness from `Complex.exp_eq_exp_iff_exists_int` into positive natural
+exponents for the prime-power argument.
+
 ## Negative mass and explicit bound
 
 For `H_q(z) = sum_k c_k z^k`, define
@@ -157,6 +190,60 @@ next admissible refinement is to replace the linear normalizer by a bounded
 degree real polynomial and minimize the weighted coefficient norm under the
 same interpolation constraints.  A conditional theorem assuming the strict
 inequality is not a completed Sharp result.
+
+### No-free-shift audit
+
+Multiplying the detector by a high power of `z` and renormalizing at `s0`
+does make the algebraic negative mass decay like
+
+```text
+q^(-N * (1 - re s0)).
+```
+
+This does not improve the analytic response-to-loss ratio.  If
+`H_N(z) = lambda_N z^N H(z)`, the exact Perron-side identity is
+
+```text
+P_(H_N)(q^N * X) = lambda_N * P_H(X).
+```
+
+At the same support-compatible scale,
+
+```text
+(q^N * X)^(1 - beta) * negativeMass(H_N)
+  = X^(1 - beta) * negativeMass(H).
+```
+
+Thus the Perron multiplier exactly cancels the apparent mass improvement.
+At a fixed observation scale the shifted prime-side detector eventually
+vanishes, forcing the normalized target residue to be cancelled by other
+residues or contour terms.  High degree alone is therefore not an admissible
+optimization argument.
+
+The future response theorem must be scale-aware.  For a concrete projected
+detected quantity it must prove an inequality of the form
+
+```text
+Detected_H(x)
+  >= kappa * x^beta
+       - (log 4 + 4) * x * negativeMass(H)
+       - E_H(x),
+```
+
+where `kappa > 0` comes from an explicit phase window and `E_H(x)` names every
+remaining zero residue, trivial-zero term, horizontal/left-edge integral, and
+truncation error.  The strict gate is
+
+```text
+kappa
+  > (log 4 + 4) * x^(1 - beta) * negativeMass(H)
+      + x^(-beta) * E_H(x).
+```
+
+A genuine gain must therefore come from signed prime correlation, a kernel
+whose loss grows more slowly under dilation, contour cancellation, or an
+already-effective bounded-support detector.  It cannot come from shifting the
+support to larger q-powers.
 
 ## Planned theorem layers
 
