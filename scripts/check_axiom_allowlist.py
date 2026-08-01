@@ -193,6 +193,8 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeRightHigherSharpBlockerAxiomAudit",
     "Test.ExplicitFormulaNormalizedPowerHeightWindowRemainderAxiomAudit",
     "Test.VKEdgeSharpLowHeightEnergyAxiomAudit",
+    "Test.VKEdgeSharpLeftGapDecayAxiomAudit",
+    "Test.VKEdgeSharpLeftGapStabilityAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.directedWitness_of_not_mem_rightHigherExclusionSet",
@@ -970,6 +972,12 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedRemainder_to_fullMovingGaussianEnergy_powerHeight_proportional",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_emptyClusterLowHeightFullMovingGaussianSecondMoment_gt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_emptyClusterLowHeightNormalizedComplementSecondMoment_gt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.finiteZeroClusterReciprocalMultiplicityMass_nonneg",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedFiniteZeroClusterContribution_le_exp_leftGap",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterContributionForwardGaussianSecondMoment_le_exp_leftGap",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterComplementContribution_empty_eq_selected_add_complement",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterComplementForwardGaussianSecondMoment_gt_quarter_of_leftGap",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_eventually_leftGapFiniteSetLowHeightNormalizedComplementSecondMoment_gt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedFiniteZeroClusterComplementContribution_eq_zero_of_subset",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementFullMovingGaussianSecondMoment_eq_zero_of_subset",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_nontrivialZero_not_mem_of_fullMovingGaussianSecondMoment_pos",
