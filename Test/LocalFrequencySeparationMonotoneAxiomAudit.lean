@@ -1,0 +1,3 @@
+import MathlibAux.LocalFrequencySeparationMonotone
+
+#print axioms PrimeNumberTheorem.DirichletPolynomial.localFrequencySeparation_mono_of_subset
