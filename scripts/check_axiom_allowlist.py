@@ -40,8 +40,17 @@ AXIOM_AUDIT_MODULES = [
     "Test.SlidingIntegralFourierEnergyAxiomAudit",
     "Test.FourierLowEnergyAxiomAudit",
     "Test.FourierWeightedTailAxiomAudit",
+    "Test.SlidingRegionSwapAxiomAudit",
+    "Test.SlidingSignedMassSecondMomentAxiomAudit",
+    "Test.SlidingSignedLagIntegralAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.intervalIntegral_pair_sub_swap",
+    "MathlibAux.intervalIntegral_pair_sub_eq_lagIntegral",
+    "MathlibAux.continuous_slidingWindowMass_of_continuous",
+    "MathlibAux.integral_sq_slidingWindowMass_eq_correlation",
+    "MathlibAux.volume_abs_slidingWindowMass_ge_inter_Icc_le_secondMoment",
+    "MathlibAux.integral_sq_slidingWindowMass_eq_lagIntegral",
     "MathlibAux.integral_normSq_slidingIntegral_le_fourier_low_high",
     "MathlibAux.integral_norm_sq_fourier_restrict_le",
     "MathlibAux.integral_norm_sq_fourier_low_le",
