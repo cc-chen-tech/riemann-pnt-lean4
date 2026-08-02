@@ -28,6 +28,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.SincSquareFourier,
     `PrimeNumberTheorem.PositiveFourierKernel,
     `PrimeNumberTheorem.LocalSeparationKernel,
+    `MathlibAux.LocalFrequencySeparationMonotone,
     `PrimeNumberTheorem.MonotoneExtremalKernel,
     `PrimeNumberTheorem.CarneiroLittmannProfile,
     `PrimeNumberTheorem.WeightedHilbertKernel,
@@ -627,6 +628,7 @@ lean_lib RiemannPNT where
     `Test.SincSquareFourierContract,
     `Test.PositiveFourierKernelContract,
     `Test.LocalSeparationKernelContract,
+    `Test.LocalFrequencySeparationMonotoneContract,
     `Test.MonotoneExtremalKernelContract,
     `Test.CarneiroLittmannProfileContract,
     `Test.WeightedHilbertKernelContract,
@@ -818,7 +820,8 @@ lean_lib RiemannPNT where
     `Test.AutocorrelationApproximationAxiomAudit,
     `Test.AmplitudeExponentialGapIntegralAxiomAudit,
     `Test.CollectedExponentialPolynomialAxiomAudit,
-    `Test.CollectedCoefficientEnergyAxiomAudit
+    `Test.CollectedCoefficientEnergyAxiomAudit,
+    `Test.LocalFrequencySeparationMonotoneAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
