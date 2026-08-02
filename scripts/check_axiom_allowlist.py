@@ -40,6 +40,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.CollectedExponentialPolynomialAxiomAudit",
     "Test.CollectedCoefficientEnergyAxiomAudit",
     "Test.LocalFrequencySeparationMonotoneAxiomAudit",
+    "Test.ExponentialPolynomialShiftedCorrelationAxiomAudit",
     "Test.SlidingIntegralFourierEnergyAxiomAudit",
     "Test.FourierLowEnergyAxiomAudit",
     "Test.FourierWeightedTailAxiomAudit",
@@ -48,6 +49,9 @@ AXIOM_AUDIT_MODULES = [
     "Test.SlidingSignedLagIntegralAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.exponentialPolynomial_mul_conj_shift_eq_double_sum",
+    "MathlibAux.exponentialPolynomial_mul_shift_eq_double_sum",
+    "MathlibAux.exponentialPolynomial_mul_conj_shift_eq_diagonal_add_offDiagonal",
     "PrimeNumberTheorem.DirichletPolynomial.localFrequencySeparation_mono_of_subset",
     "MathlibAux.sum_normSq_collectedCoefficient_le_fiber_budget",
     "MathlibAux.norm_integral_amplitude_mul_cexp_linear_le",
