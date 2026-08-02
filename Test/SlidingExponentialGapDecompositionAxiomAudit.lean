@@ -1,0 +1,3 @@
+import MathlibAux.SlidingExponentialGapDecomposition
+
+#print axioms MathlibAux.slidingExponentialGapSum_le_diagonal_add_frequencyGap
