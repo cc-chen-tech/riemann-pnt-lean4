@@ -22,6 +22,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.ExplicitFormulaProportionalWindowRemainderAxiomAudit",
     "Test.VKEdgeZeroClusterApproximationL2AxiomAudit",
     "Test.VKEdgeHighZeroBucketEnergyAxiomAudit",
+    "Test.ExceptionalZeroTargetDyadicOccupancyAxiomAudit",
     "Test.GaussianBucketSchurAxiomAudit",
     "Test.VKEdgeHighZeroGaussianEnergyAxiomAudit",
     "Test.VKEdgeDynamicZeroPacketAxiomAudit",
@@ -33,6 +34,9 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeDistinctComplementWitnessAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementZeroPacket_card_le_unitBucketMultiplicity",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_dynamicComplementDyadicOccupancy_le_log",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.exists_rightHigherDyadic_fartherRight_or_gram_le_logOccupancy",
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
     "PrimeNumberTheorem.VKEdgePiOverTwo.chebyshevPsi_sub_exp_eq_neg_cluster_sub_remainder",
     "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorAtExponent_eq_neg_cluster_sub_remainder",

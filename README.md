@@ -179,6 +179,7 @@ resulting reusable library.
 | 真实 `psi` 二阶矩的“有限零点簇减完整余项”下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterExplicitFormulaL2.lean) · [实现计划](docs/superpowers/plans/2026-07-29-vk-edge-zero-cluster-explicit-l2.md) |
 | 固定对数窗口上归一化有限高度显式公式余项一致趋于零 | `PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt` | [源码](PrimeNumberTheorem/ExplicitFormulaNormalizedWindowRemainder.lean) · [说明](docs/research/explicit-formula-normalized-window-remainder.md) |
 | 固定对数窗口上归一化有限高度近似误差的局部二阶矩任意小 | `PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterApproximationL2.lean) · [说明](docs/research/vk-edge-approximation-l2-decay.md) |
+| 动态互补零点包的 dyadic 单位窗口占用量为对数级 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_dynamicComplementDyadicOccupancy_le_log` | [源码](PrimeNumberTheorem/ExceptionalZeroTargetDyadicOccupancy.lean)；该结果把局部 Riemann--von Mangoldt 重数界接入 Gram--Schur 容量估计，但不闭合 Gate B |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和

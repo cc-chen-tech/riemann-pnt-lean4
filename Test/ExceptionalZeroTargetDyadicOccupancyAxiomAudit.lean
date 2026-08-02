@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ExceptionalZeroTargetDyadicOccupancy
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms dynamicComplementZeroPacket_card_le_unitBucketMultiplicity
+#print axioms exists_dynamicComplementDyadicOccupancy_le_log
+#print axioms exists_rightHigherDyadic_fartherRight_or_gram_le_logOccupancy
