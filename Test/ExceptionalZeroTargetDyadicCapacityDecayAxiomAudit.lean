@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ExceptionalZeroTargetDyadicCapacityDecay
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms dynamicComplementZeroPacket_squareReciprocalCapacity_le_bucketMass_sq
+#print axioms exists_dynamicComplementDyadicSquareReciprocalCapacity_le_log_sq_div
+#print axioms exists_rightHigherDyadic_fartherRight_or_gram_le_logCube_div
