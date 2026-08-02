@@ -440,6 +440,7 @@ lean_lib RiemannPNT where
     `MathlibAux.SlidingExponentialPolynomialMeanSquare,
     `MathlibAux.FejerTriangleKernel,
     `MathlibAux.TriangleKernelFourier,
+    `MathlibAux.AutocorrelationApproximation,
     `MathlibAux.SlidingExponentialCoefficientBound,
     `MathlibAux.FiberwiseNormSq,
     `Test.ShortIntervalSignChangeMeasureContract,
@@ -484,6 +485,7 @@ lean_lib RiemannPNT where
     `Test.SelbergSignedFinalBoundContract,
     `Test.FejerTriangleKernelContract,
     `Test.TriangleKernelFourierContract,
+    `Test.AutocorrelationApproximationContract,
     `Test.SlidingExponentialPolynomialMeanSquareContract,
     `Test.SlidingExponentialCoefficientBoundContract,
     `Test.FiberwiseNormSqContract,
@@ -788,7 +790,8 @@ lean_lib RiemannPNT where
     `Test.SeparatedFrequencySquareEnvelopeAxiomAudit,
     `Test.SeparatedFrequencySquareEnvelopeContract,
     `Test.FejerTriangleKernelAxiomAudit,
-    `Test.TriangleKernelFourierAxiomAudit
+    `Test.TriangleKernelFourierAxiomAudit,
+    `Test.AutocorrelationApproximationAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
