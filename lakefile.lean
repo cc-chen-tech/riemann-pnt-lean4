@@ -445,6 +445,7 @@ lean_lib RiemannPNT where
     `MathlibAux.TriangleKernelFourier,
     `MathlibAux.AutocorrelationApproximation,
     `MathlibAux.SlidingExponentialCoefficientBound,
+    `MathlibAux.SlidingExponentialGapDecomposition,
     `MathlibAux.AmplitudeExponentialGapIntegral,
     `MathlibAux.ExponentialPolynomialShiftedCorrelation,
     `MathlibAux.FiberwiseNormSq,
@@ -497,6 +498,7 @@ lean_lib RiemannPNT where
     `Test.CollectedExponentialPolynomialContract,
     `Test.CollectedCoefficientEnergyContract,
     `Test.SlidingExponentialCoefficientBoundContract,
+    `Test.SlidingExponentialGapDecompositionContract,
     `Test.FiberwiseNormSqContract,
     `Test.GcdLcmQuadraticContract,
     `Test.IntegralAbsSignChangeContract,
@@ -824,7 +826,8 @@ lean_lib RiemannPNT where
     `Test.CollectedExponentialPolynomialAxiomAudit,
     `Test.CollectedCoefficientEnergyAxiomAudit,
     `Test.LocalFrequencySeparationMonotoneAxiomAudit,
-    `Test.ExponentialPolynomialShiftedCorrelationAxiomAudit
+    `Test.ExponentialPolynomialShiftedCorrelationAxiomAudit,
+    `Test.SlidingExponentialGapDecompositionAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"

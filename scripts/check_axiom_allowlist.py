@@ -41,6 +41,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.CollectedCoefficientEnergyAxiomAudit",
     "Test.LocalFrequencySeparationMonotoneAxiomAudit",
     "Test.ExponentialPolynomialShiftedCorrelationAxiomAudit",
+    "Test.SlidingExponentialGapDecompositionAxiomAudit",
     "Test.SlidingIntegralFourierEnergyAxiomAudit",
     "Test.FourierLowEnergyAxiomAudit",
     "Test.FourierWeightedTailAxiomAudit",
@@ -49,6 +50,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SlidingSignedLagIntegralAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.slidingExponentialGapSum_le_diagonal_add_frequencyGap",
     "MathlibAux.exponentialPolynomial_mul_conj_shift_eq_double_sum",
     "MathlibAux.exponentialPolynomial_mul_shift_eq_double_sum",
     "MathlibAux.exponentialPolynomial_mul_conj_shift_eq_diagonal_add_offDiagonal",
