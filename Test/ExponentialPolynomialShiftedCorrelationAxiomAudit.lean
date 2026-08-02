@@ -1,0 +1,5 @@
+import MathlibAux.ExponentialPolynomialShiftedCorrelation
+
+#print axioms MathlibAux.exponentialPolynomial_mul_conj_shift_eq_double_sum
+#print axioms MathlibAux.exponentialPolynomial_mul_shift_eq_double_sum
+#print axioms MathlibAux.exponentialPolynomial_mul_conj_shift_eq_diagonal_add_offDiagonal
