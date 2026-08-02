@@ -131,6 +131,8 @@ import MathlibAux.MellinLogIntegrability
 import MathlibAux.SlidingWindowParseval
 import MathlibAux.SlidingIntegralFourierCompatibility
 import MathlibAux.SlidingIntegralFourierEnergy
+import MathlibAux.FourierLowEnergy
+import MathlibAux.FourierWeightedTail
 import HardyTheorem.HardyPhaseHilbertShiftIntegral
 import EulerAndLfunctions
 import PrimeNumberTheorem

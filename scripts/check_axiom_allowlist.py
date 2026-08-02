@@ -37,8 +37,15 @@ AXIOM_AUDIT_MODULES = [
     "Test.TriangleKernelFourierAxiomAudit",
     "Test.AutocorrelationApproximationAxiomAudit",
     "Test.CollectedExponentialPolynomialAxiomAudit",
+    "Test.SlidingIntegralFourierEnergyAxiomAudit",
+    "Test.FourierLowEnergyAxiomAudit",
+    "Test.FourierWeightedTailAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.integral_normSq_slidingIntegral_le_fourier_low_high",
+    "MathlibAux.integral_norm_sq_fourier_restrict_le",
+    "MathlibAux.integral_norm_sq_fourier_low_le",
+    "MathlibAux.integral_normSq_fourier_weightedTail_le",
     "MathlibAux.collectedExponentialPolynomial_eq_exponentialPolynomial",
     "MathlibAux.collectedFrequency_injective_on_support",
     "MathlibAux.collectedFrequency_pairwise",
@@ -261,7 +268,6 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.exists_norm_mul_integral_Ioi_floorError_cpow_le",
     "HardyTheorem.exists_riemannZeta_first_approximation",
     "HardyTheorem.criticalLineZetaFirstApprox",
-    "MathlibAux.integral_normSq_slidingIntegral_le_fourier_low_high",
     "HardyTheorem.exists_integral_norm_riemannZeta_critical_line_ge_mul",
     "HardyTheorem.exists_abs_integral_hardyZ_le_rpow_three_quarters",
     "HardyTheorem.hardyZ_zero_set_not_isBounded",
