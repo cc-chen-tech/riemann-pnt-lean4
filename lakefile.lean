@@ -464,7 +464,10 @@ lean_lib RiemannPNT where
     `Test.RiemannVonMangoldtContract,
     `Test.RiemannVonMangoldtAxiomAudit,
     `Test.SmoothedErrorTransferContract,
-    `Test.SmoothedErrorTransferAxiomAudit
+    `Test.SmoothedErrorTransferAxiomAudit,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftDerivative,
+    `PrimeNumberTheorem.VKEdgeDesmoothedLeftDerivativeAxiomAudit,
+    `Test.VKEdgeDesmoothedLeftDerivativeContract
   ]
 
 require mathlib from "./vendor/mathlib"
