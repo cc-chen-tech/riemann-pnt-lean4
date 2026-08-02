@@ -93,6 +93,9 @@ import HardyTheorem.SelbergSmallAbsGapDecomposition
 import HardyTheorem.SelbergSignedFinalBound
 import HardyTheorem.SelbergLagDyadicGeometry
 import MathlibAux.SlidingIntervalCorrelation
+import MathlibAux.SlidingRegionSwap
+import MathlibAux.SlidingSignedMassSecondMoment
+import MathlibAux.SlidingSignedLagIntegral
 import MathlibAux.SlidingWindowBadSet
 import MathlibAux.SlidingExponentialPolynomialMeanSquare
 import MathlibAux.CollectedExponentialPolynomial

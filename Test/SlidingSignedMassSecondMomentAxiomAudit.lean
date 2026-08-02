@@ -1,0 +1,5 @@
+import MathlibAux.SlidingSignedMassSecondMoment
+
+#print axioms MathlibAux.continuous_slidingWindowMass_of_continuous
+#print axioms MathlibAux.integral_sq_slidingWindowMass_eq_correlation
+#print axioms MathlibAux.volume_abs_slidingWindowMass_ge_inter_Icc_le_secondMoment
