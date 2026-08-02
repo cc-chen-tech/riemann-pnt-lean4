@@ -786,7 +786,9 @@ lean_lib RiemannPNT where
     `Test.SeparatedFrequencyPackingContract,
     `MathlibAux.SeparatedFrequencySquareEnvelope,
     `Test.SeparatedFrequencySquareEnvelopeAxiomAudit,
-    `Test.SeparatedFrequencySquareEnvelopeContract
+    `Test.SeparatedFrequencySquareEnvelopeContract,
+    `Test.FejerTriangleKernelAxiomAudit,
+    `Test.TriangleKernelFourierAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"

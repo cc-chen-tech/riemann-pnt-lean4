@@ -1,0 +1,5 @@
+import MathlibAux.FejerTriangleKernel
+
+#check MathlibAux.intervalIntegral_pair_sub_eq_triangle_kernel
+
+#print axioms MathlibAux.intervalIntegral_pair_sub_eq_triangle_kernel

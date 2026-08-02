@@ -33,8 +33,13 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergLagDyadicGeometryAxiomAudit",
     "Test.SeparatedFrequencyPackingAxiomAudit",
     "Test.SeparatedFrequencySquareEnvelopeAxiomAudit",
+    "Test.FejerTriangleKernelAxiomAudit",
+    "Test.TriangleKernelFourierAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.intervalIntegral_pair_sub_eq_triangle_kernel",
+    "MathlibAux.integral_triangleKernel_mul_cos_eq",
+    "MathlibAux.abs_triangleKernel_mul_cos_integral_le",
     "MathlibAux.sum_sq_stationaryMinReciprocalEnvelope_le",
     "MathlibAux.card_sub_one_mul_separation_le_two_mul_radius",
     "HardyTheorem.selberg_lag_dyadic_mem",
