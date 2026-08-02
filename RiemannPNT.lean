@@ -99,6 +99,7 @@ import MathlibAux.SlidingSignedLagIntegral
 import MathlibAux.SlidingWindowBadSet
 import MathlibAux.SlidingExponentialPolynomialMeanSquare
 import MathlibAux.CollectedExponentialPolynomial
+import MathlibAux.CollectedCoefficientEnergy
 import MathlibAux.FejerTriangleKernel
 import MathlibAux.TriangleKernelFourier
 import MathlibAux.AutocorrelationApproximation
