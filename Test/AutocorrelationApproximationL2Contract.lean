@@ -8,6 +8,13 @@ namespace MathlibAux
 #check abs_intervalIntegral_le_sqrt_length_mul_sqrt_intervalIntegral_sq
 #check abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn_L2
 
+example {F : ℝ → ℝ} {A B : ℝ}
+    (hF : ContinuousOn F (Icc A B)) (hAB : A ≤ B) :
+    |∫ x in A..B, F x| ≤
+      Real.sqrt (B - A) * Real.sqrt (∫ x in A..B, F x ^ 2) :=
+  abs_intervalIntegral_le_sqrt_length_mul_sqrt_intervalIntegral_sq_of_continuousOn
+    hF hAB
+
 example {F : ℝ → ℝ} (hF : Continuous F) {A B : ℝ} (hAB : A ≤ B) :
     |∫ x in A..B, F x| ≤
       Real.sqrt (B - A) * Real.sqrt (∫ x in A..B, F x ^ 2) :=

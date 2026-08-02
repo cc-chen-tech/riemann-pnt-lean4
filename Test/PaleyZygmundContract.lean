@@ -18,6 +18,15 @@ namespace MathlibAux
 #print axioms paleyZygmund_smallMass_measure_upper_bound
 #print axioms paleyZygmund_sq_measure_lower_bound
 
+example {alpha : Type*} [MeasurableSpace alpha] {mu : Measure alpha}
+    {s : Set alpha} {f : alpha → ℝ}
+    (hmus : mu s ≠ ⊤)
+    (hf : AEStronglyMeasurable f (mu.restrict s))
+    (hf_sq : IntegrableOn (fun x => f x ^ 2) s mu) :
+    (∫ x in s, f x ∂mu) ^ 2 ≤ mu.real s * ∫ x in s, f x ^ 2 ∂mu :=
+  sq_setIntegral_le_measureReal_mul_setIntegral_sq_of_aestronglyMeasurable
+    hmus hf hf_sq
+
 example {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {s : Set α} {f : α → ℝ} {θ : ℝ}
     (hs : MeasurableSet s) (hμs : μ s ≠ ⊤) (hμs_pos : 0 < μ.real s)
