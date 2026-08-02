@@ -104,6 +104,9 @@ import MathlibAux.LocalFrequencySeparationMonotone
 import MathlibAux.FejerTriangleKernel
 import MathlibAux.TriangleKernelFourier
 import MathlibAux.AutocorrelationApproximation
+import MathlibAux.AutocorrelationApproximationL2
+import MathlibAux.SlidingLagBudget
+import MathlibAux.SlidingLagCosineBudget
 import MathlibAux.SlidingExponentialCoefficientBound
 import MathlibAux.SlidingExponentialGapDecomposition
 import MathlibAux.AmplitudeExponentialGapIntegral

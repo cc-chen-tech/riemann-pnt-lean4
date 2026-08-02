@@ -1,0 +1,5 @@
+import MathlibAux.AutocorrelationApproximationL2
+
+#print axioms MathlibAux.abs_intervalIntegral_le_sqrt_length_mul_sqrt_intervalIntegral_sq_of_continuousOn
+#print axioms MathlibAux.abs_intervalIntegral_le_sqrt_length_mul_sqrt_intervalIntegral_sq
+#print axioms MathlibAux.abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn_L2
