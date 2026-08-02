@@ -1,0 +1,3 @@
+import MathlibAux.CollectedCoefficientEnergy
+
+#print axioms MathlibAux.sum_normSq_collectedCoefficient_le_fiber_budget
