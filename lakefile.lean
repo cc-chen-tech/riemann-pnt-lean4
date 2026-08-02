@@ -779,7 +779,10 @@ lean_lib RiemannPNT where
     `Test.SelbergLagDyadicGeometryContract,
     `MathlibAux.SeparatedFrequencyPacking,
     `Test.SeparatedFrequencyPackingAxiomAudit,
-    `Test.SeparatedFrequencyPackingContract
+    `Test.SeparatedFrequencyPackingContract,
+    `MathlibAux.SeparatedFrequencySquareEnvelope,
+    `Test.SeparatedFrequencySquareEnvelopeAxiomAudit,
+    `Test.SeparatedFrequencySquareEnvelopeContract
   ]
 
 require mathlib from "./vendor/mathlib"
