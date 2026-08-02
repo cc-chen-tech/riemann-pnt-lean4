@@ -36,6 +36,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.FejerTriangleKernelAxiomAudit",
     "Test.TriangleKernelFourierAxiomAudit",
     "Test.AutocorrelationApproximationAxiomAudit",
+    "Test.AmplitudeExponentialGapIntegralAxiomAudit",
     "Test.CollectedExponentialPolynomialAxiomAudit",
     "Test.SlidingIntegralFourierEnergyAxiomAudit",
     "Test.FourierLowEnergyAxiomAudit",
@@ -45,6 +46,8 @@ AXIOM_AUDIT_MODULES = [
     "Test.SlidingSignedLagIntegralAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.norm_integral_amplitude_mul_cexp_linear_le",
+    "MathlibAux.norm_integral_amplitude_mul_exponentialOffDiagonal_le",
     "MathlibAux.intervalIntegral_pair_sub_swap",
     "MathlibAux.intervalIntegral_pair_sub_eq_lagIntegral",
     "MathlibAux.continuous_slidingWindowMass_of_continuous",
