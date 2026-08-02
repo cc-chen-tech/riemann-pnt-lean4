@@ -38,6 +38,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.AutocorrelationApproximationAxiomAudit",
     "Test.AmplitudeExponentialGapIntegralAxiomAudit",
     "Test.CollectedExponentialPolynomialAxiomAudit",
+    "Test.CollectedCoefficientEnergyAxiomAudit",
     "Test.SlidingIntegralFourierEnergyAxiomAudit",
     "Test.FourierLowEnergyAxiomAudit",
     "Test.FourierWeightedTailAxiomAudit",
@@ -46,6 +47,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SlidingSignedLagIntegralAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.sum_normSq_collectedCoefficient_le_fiber_budget",
     "MathlibAux.norm_integral_amplitude_mul_cexp_linear_le",
     "MathlibAux.norm_integral_amplitude_mul_exponentialOffDiagonal_le",
     "MathlibAux.intervalIntegral_pair_sub_swap",
