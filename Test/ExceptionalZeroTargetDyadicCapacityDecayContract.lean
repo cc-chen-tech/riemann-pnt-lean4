@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ExceptionalZeroTargetDyadicCapacityDecay
+
+open Complex
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check dynamicComplementZeroPacket_squareReciprocalCapacity_le_bucketMass_sq
+#check exists_dynamicComplementDyadicSquareReciprocalCapacity_le_log_sq_div
+#check exists_rightHigherDyadic_fartherRight_or_gram_le_logCube_div
+
+end PrimeNumberTheorem.VKEdgePiOverTwo
