@@ -105,6 +105,7 @@ import MathlibAux.FejerTriangleKernel
 import MathlibAux.TriangleKernelFourier
 import MathlibAux.AutocorrelationApproximation
 import MathlibAux.SlidingExponentialCoefficientBound
+import MathlibAux.SlidingExponentialGapDecomposition
 import MathlibAux.AmplitudeExponentialGapIntegral
 import MathlibAux.ExponentialPolynomialShiftedCorrelation
 import MathlibAux.FiberwiseNormSq
