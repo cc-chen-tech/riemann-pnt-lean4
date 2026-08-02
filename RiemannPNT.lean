@@ -106,6 +106,7 @@ import MathlibAux.TriangleKernelFourier
 import MathlibAux.AutocorrelationApproximation
 import MathlibAux.SlidingExponentialCoefficientBound
 import MathlibAux.AmplitudeExponentialGapIntegral
+import MathlibAux.ExponentialPolynomialShiftedCorrelation
 import MathlibAux.FiberwiseNormSq
 import MathlibAux.PaleyZygmund
 import MathlibAux.ExponentialPolynomialFourthMoment
