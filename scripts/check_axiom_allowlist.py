@@ -51,8 +51,14 @@ AXIOM_AUDIT_MODULES = [
     "Test.SlidingRegionSwapAxiomAudit",
     "Test.SlidingSignedMassSecondMomentAxiomAudit",
     "Test.SlidingSignedLagIntegralAxiomAudit",
+    "Test.ThetaFrequencyLinearizationAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "HardyTheorem.norm_thetaFrequencyShortIntegral_le_length",
+    "HardyTheorem.norm_thetaFrequencyShortIntegral_sub_linearized_le",
+    "HardyTheorem.norm_thetaFrequencyLinearizedShortIntegral_le_min",
+    "HardyTheorem.norm_thetaFrequencyShortIntegral_le_min_add_linearization_error",
+    "HardyTheorem.norm_thetaFrequencyShortIntegral_le_envelope",
     "MathlibAux.sq_setIntegral_le_measureReal_mul_setIntegral_sq_of_aestronglyMeasurable",
     "MathlibAux.abs_intervalIntegral_le_sqrt_length_mul_sqrt_intervalIntegral_sq_of_continuousOn",
     "MathlibAux.abs_intervalIntegral_le_sqrt_length_mul_sqrt_intervalIntegral_sq",
