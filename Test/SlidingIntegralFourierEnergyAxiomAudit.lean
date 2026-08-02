@@ -1,0 +1,3 @@
+import MathlibAux.SlidingIntegralFourierEnergy
+
+#print axioms MathlibAux.integral_normSq_slidingIntegral_le_fourier_low_high

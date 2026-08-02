@@ -37,8 +37,15 @@ AXIOM_AUDIT_MODULES = [
     "Test.TriangleKernelFourierAxiomAudit",
     "Test.AutocorrelationApproximationAxiomAudit",
     "Test.CollectedExponentialPolynomialAxiomAudit",
+    "Test.SlidingIntegralFourierEnergyAxiomAudit",
+    "Test.FourierLowEnergyAxiomAudit",
+    "Test.FourierWeightedTailAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.integral_normSq_slidingIntegral_le_fourier_low_high",
+    "MathlibAux.integral_norm_sq_fourier_restrict_le",
+    "MathlibAux.integral_norm_sq_fourier_low_le",
+    "MathlibAux.integral_normSq_fourier_weightedTail_le",
     "MathlibAux.collectedExponentialPolynomial_eq_exponentialPolynomial",
     "MathlibAux.collectedFrequency_injective_on_support",
     "MathlibAux.collectedFrequency_pairwise",
