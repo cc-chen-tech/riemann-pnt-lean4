@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetTwoHeightNumericalCore
+
+open PrimeNumberTheorem
+
+#print axioms carlsonTwoHeightDensityExponent_pos
+#print axioms carlsonTwoHeightDensityExponent_lt_one
+#print axioms carlsonTwoHeightBalancedCut_pos
+#print axioms carlsonTwoHeightBalancedCut_lt_alpha
+#print axioms targetAmplitudeCarlsonTwoHeightLowExponent_balanced
+#print axioms targetAmplitudeCarlsonTwoHeightHighExponent_balanced
+#print axioms targetAmplitudeCarlsonTwoHeightBalancedSlope_pos
+#print axioms targetAmplitudeCarlsonTwoHeightBalancedSlope_lt_half
