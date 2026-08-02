@@ -438,6 +438,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.SelbergSmallAbsGapDecomposition,
     `HardyTheorem.SelbergSignedFinalBound,
     `MathlibAux.SlidingExponentialPolynomialMeanSquare,
+    `MathlibAux.CollectedExponentialPolynomial,
     `MathlibAux.FejerTriangleKernel,
     `MathlibAux.TriangleKernelFourier,
     `MathlibAux.AutocorrelationApproximation,
@@ -487,6 +488,7 @@ lean_lib RiemannPNT where
     `Test.TriangleKernelFourierContract,
     `Test.AutocorrelationApproximationContract,
     `Test.SlidingExponentialPolynomialMeanSquareContract,
+    `Test.CollectedExponentialPolynomialContract,
     `Test.SlidingExponentialCoefficientBoundContract,
     `Test.FiberwiseNormSqContract,
     `Test.GcdLcmQuadraticContract,
@@ -791,7 +793,8 @@ lean_lib RiemannPNT where
     `Test.SeparatedFrequencySquareEnvelopeContract,
     `Test.FejerTriangleKernelAxiomAudit,
     `Test.TriangleKernelFourierAxiomAudit,
-    `Test.AutocorrelationApproximationAxiomAudit
+    `Test.AutocorrelationApproximationAxiomAudit,
+    `Test.CollectedExponentialPolynomialAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
