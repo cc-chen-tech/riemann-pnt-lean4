@@ -36,8 +36,12 @@ AXIOM_AUDIT_MODULES = [
     "Test.FejerTriangleKernelAxiomAudit",
     "Test.TriangleKernelFourierAxiomAudit",
     "Test.AutocorrelationApproximationAxiomAudit",
+    "Test.CollectedExponentialPolynomialAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.collectedExponentialPolynomial_eq_exponentialPolynomial",
+    "MathlibAux.collectedFrequency_injective_on_support",
+    "MathlibAux.collectedFrequency_pairwise",
     "MathlibAux.mem_autocorrelationControlInterval",
     "MathlibAux.add_mem_autocorrelationControlInterval",
     "MathlibAux.abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn",
