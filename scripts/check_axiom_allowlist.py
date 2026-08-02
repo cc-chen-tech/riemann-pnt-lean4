@@ -35,8 +35,13 @@ AXIOM_AUDIT_MODULES = [
     "Test.SeparatedFrequencySquareEnvelopeAxiomAudit",
     "Test.FejerTriangleKernelAxiomAudit",
     "Test.TriangleKernelFourierAxiomAudit",
+    "Test.AutocorrelationApproximationAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "MathlibAux.mem_autocorrelationControlInterval",
+    "MathlibAux.add_mem_autocorrelationControlInterval",
+    "MathlibAux.abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn",
+    "MathlibAux.abs_integral_mul_shift_sub_mul_shift_le",
     "MathlibAux.intervalIntegral_pair_sub_eq_triangle_kernel",
     "MathlibAux.integral_triangleKernel_mul_cos_eq",
     "MathlibAux.abs_triangleKernel_mul_cos_integral_le",
