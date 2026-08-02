@@ -1,0 +1,7 @@
+import MathlibAux.TriangleKernelFourier
+
+#check MathlibAux.integral_triangleKernel_mul_cos_eq
+#check MathlibAux.abs_triangleKernel_mul_cos_integral_le
+
+#print axioms MathlibAux.integral_triangleKernel_mul_cos_eq
+#print axioms MathlibAux.abs_triangleKernel_mul_cos_integral_le

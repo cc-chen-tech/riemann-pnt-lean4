@@ -95,6 +95,8 @@ import HardyTheorem.SelbergLagDyadicGeometry
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.SlidingWindowBadSet
 import MathlibAux.SlidingExponentialPolynomialMeanSquare
+import MathlibAux.FejerTriangleKernel
+import MathlibAux.TriangleKernelFourier
 import MathlibAux.SlidingExponentialCoefficientBound
 import MathlibAux.FiberwiseNormSq
 import MathlibAux.PaleyZygmund
