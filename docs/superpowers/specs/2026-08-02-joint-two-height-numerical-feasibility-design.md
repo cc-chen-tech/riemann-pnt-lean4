@@ -22,12 +22,14 @@ This is a numerical feasibility result only.  It does not prove decay of an
 actual zeta-zero tail, bound a contour remainder, connect the E2 energy to an
 explicit formula, or exclude any zero.
 
-## Stack and provenance
+## Base and provenance
 
-The branch is stacked directly on Draft PR #278 at commit `b5f5e043`.  The
-mathematical construction is audited from research commits `71fe009e` and
-`28105ae9`, but those commits are not cherry-picked because their imports
-would bring the old analytic two-height and full-tail dependency chain.
+The branch is an independent main-based numerical slice and must be replayed
+onto the current `origin/main` immediately before its final verification and
+publication.  The mathematical construction is audited from research commits
+`71fe009e` and `28105ae9`, but those commits are not cherry-picked because
+their imports would bring the old analytic two-height and full-tail dependency
+chain.
 
 The new implementation re-lands only the pure real-arithmetic core.  It must
 not import modules defining actual zero sets, zero counts, explicit-formula
@@ -219,8 +221,8 @@ interfaces for smoothing.  In particular, it proves none of the following:
 - that an actual selected-height or dyadic zeta-zero tail tends to zero;
 - that the unsmoothed contour remainder is compatible with target-height
   normalization;
-- that PR #278's centered-frozen E2 energy is controlled by a two-height
-  explicit formula;
+- that the centered-frozen E2 energy is controlled by a two-height explicit
+  formula;
 - that a Sharp/Witness lower bound exists uniformly over finite `S`;
 - that any zero with real part greater than `2 / 3` is excluded.
 
@@ -237,9 +239,9 @@ energy lower bound or a quantified degeneration compatible with capacity.
 ## PR acceptance boundary
 
 The Draft PR is acceptable only if the exact public formulas and theorem type
-compile from the #278 base, the contracts pass, the axiom boundary is clean,
-and the new source imports remain numerical.  Its mathematical conclusion is
-precisely:
+compile from the current `origin/main`, the contracts pass, the axiom boundary
+is clean, and the new source imports remain numerical.  Its mathematical
+conclusion is precisely:
 
 > For every fixed `2 / 3 < beta < 1`, the stated seven real parameters exist
 > and make all four displayed numerical exponents strictly negative with
