@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergSqrtZetaCoeffBound
+
+#print axioms HardyTheorem.abs_selbergSqrtZetaLocalCoeff_le_one
+#print axioms HardyTheorem.abs_selbergSqrtZetaCoeff_le_one
+#print axioms HardyTheorem.abs_selbergSqrtZetaTaperedCoeff_le_one
+#print axioms HardyTheorem.selbergSqrtZetaMollifierMajorant_le_two_sqrt
+#print axioms HardyTheorem.norm_selbergSqrtZetaMollifier_criticalLine_le_two_sqrt
