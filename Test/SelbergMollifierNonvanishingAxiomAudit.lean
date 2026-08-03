@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergMollifierNonvanishing
+
+#print axioms HardyTheorem.analyticOnNhd_selbergMollifier
+#print axioms HardyTheorem.tendsto_selbergMollifier_real_atTop
+#print axioms HardyTheorem.exists_selbergMollifier_ne_zero
+#print axioms HardyTheorem.analyticOnNhd_selbergMollifier_vertical
+#print axioms HardyTheorem.exists_selbergMollifier_criticalLine_ne_zero_Ioo
+#print axioms HardyTheorem.exists_selbergMollifiedHardyZ_ne_zero_Ioo
