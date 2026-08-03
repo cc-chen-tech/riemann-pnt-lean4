@@ -61,7 +61,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergMollifierNonvanishingAxiomAudit",
     "Test.SelbergSqrtZetaLocalAxiomAudit",
     "Test.ActualCarlsonDyadicShellMassAxiomAudit",
-<<<<<<< HEAD
+    "Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit",
     "Test.ExplicitFormulaProportionalWindowRemainderAxiomAudit",
     "Test.ExceptionalZeroTargetDyadicOccupancyAxiomAudit",
     "Test.ExceptionalZeroTargetDyadicCapacityDecayAxiomAudit",
@@ -73,9 +73,6 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeInitialFullMovingEnergyAxiomAudit",
     "Test.VKEdgeProportionalWindowTransferAxiomAudit",
     "Test.VKEdgeDistinctComplementWitnessAxiomAudit",
-=======
-    "Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit",
->>>>>>> origin/main
 ]
 EXPECTED_DECLARATIONS = {
     "HardyTheorem.analyticOnNhd_selbergMollifier",

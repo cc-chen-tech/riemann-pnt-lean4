@@ -869,8 +869,10 @@ lean_lib RiemannPNT where
     `Test.LocalFrequencySeparationMonotoneAxiomAudit,
     `Test.ExponentialPolynomialShiftedCorrelationAxiomAudit,
     `Test.SlidingExponentialGapDecompositionAxiomAudit,
-<<<<<<< HEAD
+    `Test.ActualCarlsonDyadicShellMassAxiomAudit,
+    `Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit,
     `Test.ActualCarlsonDyadicShellMassAxiomAudit
+,,
     `PrimeNumberTheorem.ExceptionalZeroDyadicDirectL2,
     `PrimeNumberTheorem.ExceptionalZeroDyadicSquareMultiplicity,
     `PrimeNumberTheorem.ExceptionalZeroTargetDyadicGramSchur,
@@ -917,10 +919,6 @@ lean_lib RiemannPNT where
     `Test.VKEdgeProportionalWindowTransferAxiomAudit,
     `Test.VKEdgeDistinctComplementWitnessContract,
     `Test.VKEdgeDistinctComplementWitnessAxiomAudit,
-=======
-    `Test.ActualCarlsonDyadicShellMassAxiomAudit,
-    `Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit
->>>>>>> origin/main
   ]
 
 require mathlib from "./vendor/mathlib"
