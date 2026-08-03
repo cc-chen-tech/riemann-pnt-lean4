@@ -64,6 +64,7 @@ import HardyTheorem.SelbergMollifiedCoefficientArithmetic
 import HardyTheorem.SelbergMollifiedCoefficientEnergy
 import HardyTheorem.SelbergGoodWindowMeasure
 import HardyTheorem.SelbergSignedMassSecondMoment
+import HardyTheorem.SelbergSignedLagIntegral
 import HardyTheorem.SelbergSignedBadSet
 import HardyTheorem.SelbergMollifiedSecondMoment
 import HardyTheorem.SelbergShortAbsLower
