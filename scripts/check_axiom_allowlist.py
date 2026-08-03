@@ -57,6 +57,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.ArithmeticLogLeibnizAxiomAudit",
     "Test.SelbergMollifiedHardyPhasePolynomialAxiomAudit",
     "Test.SelbergSignedMassSecondMomentAxiomAudit",
+    "Test.SelbergSignedLagIntegralAxiomAudit",
     "Test.SelbergMollifierNonvanishingAxiomAudit",
     "Test.ActualCarlsonDyadicShellMassAxiomAudit",
 ]
@@ -75,8 +76,10 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.tendsto_selbergMollifier_real_atTop",
     "HardyTheorem.continuous_selbergSignedShortIntegral",
     "HardyTheorem.integral_sq_signedShortIntegral_eq_correlation",
+    "HardyTheorem.integral_sq_signedShortIntegral_eq_lagIntegral",
     "HardyTheorem.selbergSignedShortIntegral_eq_slidingWindowMass",
     "HardyTheorem.volume_selbergExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_correlation_le",
+    "HardyTheorem.volume_selbergExcessiveSignedMassStarts_inter_Icc_le_T_div_24_of_lagIntegral_le",
     "HardyTheorem.volume_selbergExcessiveSignedMassStarts_inter_Icc_le_signedSecondMoment",
     "HardyTheorem.norm_thetaFrequencyShortIntegral_le_length",
     "HardyTheorem.norm_thetaFrequencyShortIntegral_sub_linearized_le",
