@@ -60,6 +60,7 @@ import HardyTheorem.SelbergMollifierNonvanishing
 import HardyTheorem.SelbergSqrtZetaLocal
 import HardyTheorem.SelbergSqrtZetaArithmetic
 import HardyTheorem.SelbergSqrtZetaMollifier
+import HardyTheorem.SelbergSqrtZetaCollectedArithmetic
 import HardyTheorem.SelbergMollifierMeanSquare
 import HardyTheorem.SelbergMollifiedDirichlet
 import HardyTheorem.ArithmeticLogLeibniz
