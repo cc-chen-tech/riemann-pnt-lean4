@@ -30,13 +30,48 @@ example (beta sigma tau alpha : ℝ) :
       tau - beta +
         targetAmplitudeCarlsonTwoHeightBalancedSlope sigma * alpha := rfl
 
-#check carlsonTwoHeightDensityExponent_pos
-#check carlsonTwoHeightDensityExponent_lt_one
-#check carlsonTwoHeightBalancedCut_pos
-#check carlsonTwoHeightBalancedCut_lt_alpha
-#check targetAmplitudeCarlsonTwoHeightLowExponent_balanced
-#check targetAmplitudeCarlsonTwoHeightHighExponent_balanced
-#check targetAmplitudeCarlsonTwoHeightBalancedSlope_pos
-#check targetAmplitudeCarlsonTwoHeightBalancedSlope_lt_half
+example {sigma : ℝ} (hhalf : 1 / 2 < sigma) (hone : sigma < 1) :
+    0 < carlsonTwoHeightDensityExponent sigma :=
+  carlsonTwoHeightDensityExponent_pos hhalf hone
+
+example {sigma : ℝ} (hhalf : 1 / 2 < sigma) :
+    carlsonTwoHeightDensityExponent sigma < 1 :=
+  carlsonTwoHeightDensityExponent_lt_one hhalf
+
+example {sigma alpha : ℝ}
+    (hhalf : 1 / 2 < sigma) (hone : sigma < 1)
+    (halpha : 0 < alpha) :
+    0 < carlsonTwoHeightBalancedCut sigma alpha :=
+  carlsonTwoHeightBalancedCut_pos hhalf hone halpha
+
+example {sigma alpha : ℝ}
+    (hhalf : 1 / 2 < sigma) (hone : sigma < 1)
+    (halpha : 0 < alpha) :
+    carlsonTwoHeightBalancedCut sigma alpha < alpha :=
+  carlsonTwoHeightBalancedCut_lt_alpha hhalf hone halpha
+
+example {sigma : ℝ} (hhalf : 1 / 2 < sigma) (hone : sigma < 1) :
+    0 < targetAmplitudeCarlsonTwoHeightBalancedSlope sigma :=
+  targetAmplitudeCarlsonTwoHeightBalancedSlope_pos hhalf hone
+
+example {beta sigma tau alpha : ℝ}
+    (hden : carlsonTwoHeightDensityExponent sigma + 1 ≠ 0) :
+    targetAmplitudeCarlsonTwoHeightLowExponent beta sigma tau
+        (carlsonTwoHeightBalancedCut sigma alpha) =
+      targetAmplitudeCarlsonTwoHeightBalancedExponent
+        beta sigma tau alpha :=
+  targetAmplitudeCarlsonTwoHeightLowExponent_balanced hden
+
+example {beta sigma tau alpha : ℝ}
+    (hden : carlsonTwoHeightDensityExponent sigma + 1 ≠ 0) :
+    targetAmplitudeCarlsonTwoHeightHighExponent beta sigma tau alpha
+        (carlsonTwoHeightBalancedCut sigma alpha) =
+      targetAmplitudeCarlsonTwoHeightBalancedExponent
+        beta sigma tau alpha :=
+  targetAmplitudeCarlsonTwoHeightHighExponent_balanced hden
+
+example {sigma : ℝ} (hhalf : 1 / 2 < sigma) (hone : sigma < 1) :
+    targetAmplitudeCarlsonTwoHeightBalancedSlope sigma < 1 / 2 :=
+  targetAmplitudeCarlsonTwoHeightBalancedSlope_lt_half hhalf hone
 
 end PrimeNumberTheorem

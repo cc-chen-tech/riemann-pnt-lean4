@@ -238,7 +238,7 @@ energy lower bound or a quantified degeneration compatible with capacity.
 
 ## PR acceptance boundary
 
-The Draft PR is acceptable only if the exact public formulas and theorem type
+The Ready PR is acceptable only if the exact public formulas and theorem type
 compile from the current `origin/main`, the contracts pass, the axiom boundary
 is clean, and the new source imports remain numerical.  Its mathematical
 conclusion is precisely:
