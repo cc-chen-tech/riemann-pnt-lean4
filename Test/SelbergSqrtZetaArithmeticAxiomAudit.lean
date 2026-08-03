@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergSqrtZetaArithmetic
+
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_zero
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_one
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_apply_ne_zero
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_apply_prime_pow
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_isMultiplicative
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_sq_apply_prime_pow
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_mul_self
