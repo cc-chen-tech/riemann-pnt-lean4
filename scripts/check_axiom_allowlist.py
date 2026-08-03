@@ -53,9 +53,15 @@ AXIOM_AUDIT_MODULES = [
     "Test.SlidingSignedLagIntegralAxiomAudit",
     "Test.ThetaFrequencyLinearizationAxiomAudit",
     "Test.ArithmeticLogLeibnizAxiomAudit",
+    "Test.SelbergMollifiedHardyPhasePolynomialAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "HardyTheorem.exp_I_thetaModel_mul_criticalLinePolynomial_mul_mollifier_mul_conj_eq_collectedPhasePolynomial",
+    "HardyTheorem.exp_I_thetaModel_mul_criticalLinePolynomial_mul_mollifier_mul_conj_eq_phasePolynomial",
     "HardyTheorem.arithmeticFunction_pmul_log_mul",
+    "HardyTheorem.selbergMollifiedHardyPhaseCollectedPolynomial_eq_exp_mul_collectedPolynomial",
+    "HardyTheorem.selbergMollifiedHardyPhasePolynomial_eq_collectedPolynomial",
+    "HardyTheorem.selbergMollifiedHardyPhasePolynomial_eq_exp_mul_triplePolynomial",
     "HardyTheorem.norm_thetaFrequencyShortIntegral_le_length",
     "HardyTheorem.norm_thetaFrequencyShortIntegral_sub_linearized_le",
     "HardyTheorem.norm_thetaFrequencyLinearizedShortIntegral_le_min",
