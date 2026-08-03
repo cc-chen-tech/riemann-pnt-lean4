@@ -64,6 +64,7 @@ import HardyTheorem.SelbergSqrtZetaCollectedArithmetic
 import HardyTheorem.SelbergSqrtZetaLowRangeEnergy
 import HardyTheorem.SelbergSqrtZetaLowRangeSliding
 import HardyTheorem.SelbergSqrtZetaShortCollected
+import HardyTheorem.SelbergSqrtZetaShortExpansion
 import HardyTheorem.SelbergMollifierMeanSquare
 import HardyTheorem.SelbergMollifiedDirichlet
 import HardyTheorem.ArithmeticLogLeibniz
