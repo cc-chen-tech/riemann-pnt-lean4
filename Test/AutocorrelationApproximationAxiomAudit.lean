@@ -1,0 +1,17 @@
+import MathlibAux.AutocorrelationApproximation
+
+open MeasureTheory Set
+
+namespace MathlibAux
+
+#check mem_autocorrelationControlInterval
+#check add_mem_autocorrelationControlInterval
+#check abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn
+#check abs_integral_mul_shift_sub_mul_shift_le
+
+#print axioms mem_autocorrelationControlInterval
+#print axioms add_mem_autocorrelationControlInterval
+#print axioms abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn
+#print axioms abs_integral_mul_shift_sub_mul_shift_le
+
+end MathlibAux

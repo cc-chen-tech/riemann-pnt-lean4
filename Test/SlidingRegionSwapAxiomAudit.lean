@@ -1,0 +1,4 @@
+import MathlibAux.SlidingRegionSwap
+
+#print axioms MathlibAux.intervalIntegral_pair_sub_swap
+#print axioms MathlibAux.intervalIntegral_pair_sub_eq_lagIntegral

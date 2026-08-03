@@ -5,16 +5,27 @@ open MeasureTheory Set
 namespace MathlibAux
 
 #check sq_setIntegral_le_measureReal_mul_setIntegral_sq
+#check sq_setIntegral_le_measureReal_mul_setIntegral_sq_of_aestronglyMeasurable
 #check paleyZygmund_mul_secondMoment_le_measure
 #check paleyZygmund_measure_lower_bound
 #check paleyZygmund_smallMass_measure_upper_bound
 #check paleyZygmund_sq_measure_lower_bound
 
 #print axioms sq_setIntegral_le_measureReal_mul_setIntegral_sq
+#print axioms sq_setIntegral_le_measureReal_mul_setIntegral_sq_of_aestronglyMeasurable
 #print axioms paleyZygmund_mul_secondMoment_le_measure
 #print axioms paleyZygmund_measure_lower_bound
 #print axioms paleyZygmund_smallMass_measure_upper_bound
 #print axioms paleyZygmund_sq_measure_lower_bound
+
+example {alpha : Type*} [MeasurableSpace alpha] {mu : Measure alpha}
+    {s : Set alpha} {f : alpha → ℝ}
+    (hmus : mu s ≠ ⊤)
+    (hf : AEStronglyMeasurable f (mu.restrict s))
+    (hf_sq : IntegrableOn (fun x => f x ^ 2) s mu) :
+    (∫ x in s, f x ∂mu) ^ 2 ≤ mu.real s * ∫ x in s, f x ^ 2 ∂mu :=
+  sq_setIntegral_le_measureReal_mul_setIntegral_sq_of_aestronglyMeasurable
+    hmus hf hf_sq
 
 example {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {s : Set α} {f : α → ℝ} {θ : ℝ}
