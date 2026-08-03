@@ -464,6 +464,7 @@ lean_lib RiemannPNT where
     `MathlibAux.SlidingLagCosineBudget,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonDyadicReciprocalCount,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonDyadicShellMass,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacity,
     `MathlibAux.SlidingExponentialCoefficientBound,
     `MathlibAux.SlidingExponentialGapDecomposition,
     `MathlibAux.AmplitudeExponentialGapIntegral,
@@ -530,6 +531,7 @@ lean_lib RiemannPNT where
     `Test.AmplitudeExponentialGapIntegralContract,
     `Test.ExponentialPolynomialShiftedCorrelationContract,
     `Test.ActualCarlsonDyadicShellMassContract,
+    `Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityContract,
     `Test.SlidingExponentialPolynomialMeanSquareContract,
     `Test.CollectedExponentialPolynomialContract,
     `Test.CollectedCoefficientEnergyContract,
@@ -867,6 +869,7 @@ lean_lib RiemannPNT where
     `Test.LocalFrequencySeparationMonotoneAxiomAudit,
     `Test.ExponentialPolynomialShiftedCorrelationAxiomAudit,
     `Test.SlidingExponentialGapDecompositionAxiomAudit,
+<<<<<<< HEAD
     `Test.ActualCarlsonDyadicShellMassAxiomAudit
     `PrimeNumberTheorem.ExceptionalZeroDyadicDirectL2,
     `PrimeNumberTheorem.ExceptionalZeroDyadicSquareMultiplicity,
@@ -914,6 +917,10 @@ lean_lib RiemannPNT where
     `Test.VKEdgeProportionalWindowTransferAxiomAudit,
     `Test.VKEdgeDistinctComplementWitnessContract,
     `Test.VKEdgeDistinctComplementWitnessAxiomAudit,
+=======
+    `Test.ActualCarlsonDyadicShellMassAxiomAudit,
+    `Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit
+>>>>>>> origin/main
   ]
 
 require mathlib from "./vendor/mathlib"

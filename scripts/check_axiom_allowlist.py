@@ -61,6 +61,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergMollifierNonvanishingAxiomAudit",
     "Test.SelbergSqrtZetaLocalAxiomAudit",
     "Test.ActualCarlsonDyadicShellMassAxiomAudit",
+<<<<<<< HEAD
     "Test.ExplicitFormulaProportionalWindowRemainderAxiomAudit",
     "Test.ExceptionalZeroTargetDyadicOccupancyAxiomAudit",
     "Test.ExceptionalZeroTargetDyadicCapacityDecayAxiomAudit",
@@ -72,6 +73,9 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeInitialFullMovingEnergyAxiomAudit",
     "Test.VKEdgeProportionalWindowTransferAxiomAudit",
     "Test.VKEdgeDistinctComplementWitnessAxiomAudit",
+=======
+    "Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit",
+>>>>>>> origin/main
 ]
 EXPECTED_DECLARATIONS = {
     "HardyTheorem.analyticOnNhd_selbergMollifier",
@@ -162,6 +166,22 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.actualCarlsonDyadicShellMultiplicityMass_nonneg",
     "PrimeNumberTheorem.actualCarlsonDyadicCount_div_lower_eq_two_mul_weighted_succ",
     "PrimeNumberTheorem.summable_actualCarlsonDyadicShellMultiplicityMass",
+    "PrimeNumberTheorem.squareMultiplicityCapacity_le_max_mul_linearMultiplicityCapacity",
+    "PrimeNumberTheorem.squareMultiplicityCapacity_sdiff_le",
+    "PrimeNumberTheorem.ExplicitFormulaAux.exists_analyticOrderNatAt_riemannZeta_le_log_im_of_nontrivialZero",
+    "PrimeNumberTheorem.actualCarlsonDyadicZeroStrip_subset_shell",
+    "PrimeNumberTheorem.actualCarlsonDyadicStripLinearMultiplicityCapacity_nonneg",
+    "PrimeNumberTheorem.actualCarlsonDyadicStripLinearReciprocalSquareCapacity_nonneg",
+    "PrimeNumberTheorem.actualCarlsonDyadicStripSquareReciprocalCapacity_nonneg",
+    "PrimeNumberTheorem.actualCarlsonDyadicStripLinearMultiplicityCapacity_le_count",
+    "PrimeNumberTheorem.actualCarlsonDyadicStripLinearReciprocalSquareCapacity_le_count_div_sq",
+    "PrimeNumberTheorem.exists_actualCarlsonDyadicStrip_maxMultiplicity_le_log",
+    "PrimeNumberTheorem.exists_actualCarlsonDyadicStripSquareReciprocalCapacity_le_count",
+    "PrimeNumberTheorem.exists_actualCarlsonDyadicStripSquareReciprocalCapacityExcluding_le_count",
+    "PrimeNumberTheorem.pntCarlsonClassicalDensityExponent_le_one",
+    "PrimeNumberTheorem.pntCarlsonClassicalDensityExponent_sub_two_le_neg_one",
+    "PrimeNumberTheorem.pntCarlsonClassicalDensityExponent_sub_two_lt_zero",
+    "PrimeNumberTheorem.pntCarlsonClassicalDensityExponent_half_eq_one",
     "MathlibAux.mem_autocorrelationControlInterval",
     "MathlibAux.add_mem_autocorrelationControlInterval",
     "MathlibAux.abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn",
