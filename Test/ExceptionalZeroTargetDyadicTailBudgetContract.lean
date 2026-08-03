@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ExceptionalZeroTargetDyadicTailBudget
+
+open Complex
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check summable_dyadicLogCubeDiv
+#check eventually_sum_Icc_dyadicLogCubeDiv_lt
+#check eventually_rightHigherDyadic_fartherRight_or_gram_tail_lt
+
+end PrimeNumberTheorem.VKEdgePiOverTwo

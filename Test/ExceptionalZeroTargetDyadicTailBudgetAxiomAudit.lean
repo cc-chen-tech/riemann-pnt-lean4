@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ExceptionalZeroTargetDyadicTailBudget
+
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms summable_dyadicLogCubeDiv
+#print axioms eventually_sum_Icc_dyadicLogCubeDiv_lt
+#print axioms eventually_rightHigherDyadic_fartherRight_or_gram_tail_lt
