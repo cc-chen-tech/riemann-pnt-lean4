@@ -1,0 +1,3 @@
+import HardyTheorem.ArithmeticLogLeibniz
+
+#print axioms HardyTheorem.arithmeticFunction_pmul_log_mul

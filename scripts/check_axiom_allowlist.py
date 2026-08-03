@@ -52,8 +52,10 @@ AXIOM_AUDIT_MODULES = [
     "Test.SlidingSignedMassSecondMomentAxiomAudit",
     "Test.SlidingSignedLagIntegralAxiomAudit",
     "Test.ThetaFrequencyLinearizationAxiomAudit",
+    "Test.ArithmeticLogLeibnizAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "HardyTheorem.arithmeticFunction_pmul_log_mul",
     "HardyTheorem.norm_thetaFrequencyShortIntegral_le_length",
     "HardyTheorem.norm_thetaFrequencyShortIntegral_sub_linearized_le",
     "HardyTheorem.norm_thetaFrequencyLinearizedShortIntegral_le_min",
