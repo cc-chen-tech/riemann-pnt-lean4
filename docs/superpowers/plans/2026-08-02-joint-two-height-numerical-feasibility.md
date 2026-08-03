@@ -6,7 +6,7 @@
 
 **Architecture:** A dependency-free numerical core owns the Carlson density exponent, balanced cut, target-normalized low/high exponents, and only the algebraic lemmas needed downstream. A second module constructs the seven witnesses. Exact-type contracts are written and observed failing before production declarations, and separate axiom audits lock the proof boundary.
 
-**Tech Stack:** Lean 4, Mathlib real arithmetic (`linarith`, `nlinarith`, `field_simp`, `ring`), Lake, Git worktrees, GitHub Draft PRs.
+**Tech Stack:** Lean 4, Mathlib real arithmetic (`linarith`, `nlinarith`, `field_simp`, `ring`), Lake, Git worktrees, GitHub Ready PRs.
 
 ## Global Constraints
 
@@ -439,7 +439,7 @@ git commit -m "feat: prove joint two-height parameter feasibility"
 
 **Interfaces:**
 - Consumes: Tasks 1 and 2.
-- Produces: fresh evidence that the Draft PR contains only numerical
+- Produces: fresh evidence that the Ready PR contains only numerical
   feasibility and is safe to publish directly against `main`.
 
 - [ ] **Step 1: Verify the import boundary**
@@ -528,7 +528,7 @@ an empty commit.
 
 After re-reading the approved spec line by line, use the GitHub publication
 workflow to push `codex/joint-two-height-numerical-feasibility` and open a
-Draft PR with base `main`.
+Ready PR with base `main`.
 
 The PR title must state numerical feasibility, not tail decay or zero
 exclusion.  The body must include:
@@ -541,4 +541,5 @@ Not proved: an actual-zeta tail bound, smoothing/two-height transfer,
 Sharp/Witness lower bound, Carlson contradiction, or zero-free half-plane.
 ```
 
-Keep the PR Draft and do not merge it.
+Publish the PR as Ready only after every required gate passes on the locked
+current `origin/main`.
