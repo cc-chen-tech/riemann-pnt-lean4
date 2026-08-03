@@ -1,0 +1,11 @@
+import HardyTheorem.SelbergSqrtZetaMollifier
+
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_apply
+#print axioms HardyTheorem.selbergSqrtZetaTaperedCoeff_one
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_one
+#print axioms HardyTheorem.selbergSqrtZetaTaperedCoeff_prime
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_apply_prime_pow
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_sq_apply_prime
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_sq_apply_prime_pow
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_sq_mul_zeta_apply_prime
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_sq_mul_zeta_apply_prime_pow
