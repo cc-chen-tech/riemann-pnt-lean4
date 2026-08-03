@@ -17,6 +17,8 @@ import HardyTheorem.HardyGoodWindowMeasure
 import HardyTheorem.HardyLittlewoodPacking
 import HardyTheorem.HardyLittlewoodTheorem
 import HardyTheorem.HardyLittlewoodOddTheorem
+import HardyTheorem.PositiveCriticalLineOddCount
+import HardyTheorem.HardyLittlewoodLiteratureCount
 import HardyTheorem.SelbergPacking
 import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyShortSecondMoment

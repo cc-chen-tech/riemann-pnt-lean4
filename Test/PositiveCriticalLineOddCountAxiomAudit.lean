@@ -1,0 +1,3 @@
+import HardyTheorem.PositiveCriticalLineOddCount
+
+#print axioms HardyTheorem.mem_positiveCriticalLineOddZerosFinset
