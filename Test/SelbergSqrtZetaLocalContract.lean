@@ -89,4 +89,3 @@ example (L : ℝ) (n : ℕ) :
         else L ^ 2 / 4) =
       L + (n : ℝ) * L ^ 2 / 4 :=
   sum_range_selbergSqrtZetaLocalTaperedConvolution L n
-
