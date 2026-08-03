@@ -24,6 +24,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeHighZeroBucketEnergyAxiomAudit",
     "Test.ExceptionalZeroTargetDyadicOccupancyAxiomAudit",
     "Test.ExceptionalZeroTargetDyadicCapacityDecayAxiomAudit",
+    "Test.ExceptionalZeroTargetDyadicTailBudgetAxiomAudit",
     "Test.GaussianBucketSchurAxiomAudit",
     "Test.VKEdgeHighZeroGaussianEnergyAxiomAudit",
     "Test.VKEdgeDynamicZeroPacketAxiomAudit",
@@ -35,6 +36,9 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeDistinctComplementWitnessAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.VKEdgePiOverTwo.summable_dyadicLogCubeDiv",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_sum_Icc_dyadicLogCubeDiv_lt",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_rightHigherDyadic_fartherRight_or_gram_tail_lt",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementZeroPacket_squareReciprocalCapacity_le_bucketMass_sq",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_dynamicComplementDyadicSquareReciprocalCapacity_le_log_sq_div",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_rightHigherDyadic_fartherRight_or_gram_le_logCube_div",

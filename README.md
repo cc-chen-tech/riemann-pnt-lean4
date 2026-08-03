@@ -181,6 +181,7 @@ resulting reusable library.
 | 固定对数窗口上归一化有限高度近似误差的局部二阶矩任意小 | `PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterApproximationL2.lean) · [说明](docs/research/vk-edge-approximation-l2-decay.md) |
 | 动态互补零点包的 dyadic 单位窗口占用量为对数级 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_dynamicComplementDyadicOccupancy_le_log` | [源码](PrimeNumberTheorem/ExceptionalZeroTargetDyadicOccupancy.lean)；该结果把局部 Riemann--von Mangoldt 重数界接入 Gram--Schur 容量估计，但不闭合 Gate B |
 | 动态互补零点包的平方重数倒数容量按 `log^2(H)/H` 衰减 | `PrimeNumberTheorem.VKEdgePiOverTwo.exists_dynamicComplementDyadicSquareReciprocalCapacity_le_log_sq_div` | [源码](PrimeNumberTheorem/ExceptionalZeroTargetDyadicCapacityDecay.lean)；与对数占用量合并后得到单个 dyadic Gram 块的 `log^3(H)/H` 上界，但仍不提供 Sharp 下界或可重复剩余能量 |
+| 高 dyadic Gram 块的 `log^3(H)/H` 上界可求和且尾预算任意小 | `PrimeNumberTheorem.VKEdgePiOverTwo.eventually_rightHigherDyadic_fartherRight_or_gram_tail_lt` | [源码](PrimeNumberTheorem/ExceptionalZeroTargetDyadicTailBudget.lean)；固定参数下，高度尾部要么出现更右零点，要么总 Gram 质量小于任意正阈值；仍不提供 Sharp 下界或 Gate B 闭合 |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
