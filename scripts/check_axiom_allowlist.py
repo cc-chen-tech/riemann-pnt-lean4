@@ -58,6 +58,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergMollifiedHardyPhasePolynomialAxiomAudit",
     "Test.SelbergSignedMassSecondMomentAxiomAudit",
     "Test.SelbergMollifierNonvanishingAxiomAudit",
+    "Test.ActualCarlsonDyadicShellMassAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "HardyTheorem.analyticOnNhd_selbergMollifier",
@@ -117,6 +118,12 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.collectedExponentialPolynomial_eq_exponentialPolynomial",
     "MathlibAux.collectedFrequency_injective_on_support",
     "MathlibAux.collectedFrequency_pairwise",
+    "PrimeNumberTheorem.pntCarlsonClassicalDensityExponent_lt_one",
+    "PrimeNumberTheorem.summable_pntCarlsonDyadicLogFourthMajorant",
+    "PrimeNumberTheorem.CarlsonEventualMajorant.eventually_actualCarlsonDyadicReciprocalCount_le",
+    "PrimeNumberTheorem.exists_summable_actualCarlsonDyadicReciprocalCount",
+    "PrimeNumberTheorem.actualCarlsonDyadicShellMultiplicityMass_le_count_div",
+    "PrimeNumberTheorem.summable_actualCarlsonDyadicShellMultiplicityMass",
     "MathlibAux.mem_autocorrelationControlInterval",
     "MathlibAux.add_mem_autocorrelationControlInterval",
     "MathlibAux.abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn",

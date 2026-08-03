@@ -460,6 +460,8 @@ lean_lib RiemannPNT where
     `MathlibAux.AutocorrelationApproximationL2,
     `MathlibAux.SlidingLagBudget,
     `MathlibAux.SlidingLagCosineBudget,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonDyadicReciprocalCount,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonDyadicShellMass,
     `MathlibAux.SlidingExponentialCoefficientBound,
     `MathlibAux.SlidingExponentialGapDecomposition,
     `MathlibAux.AmplitudeExponentialGapIntegral,
@@ -521,6 +523,7 @@ lean_lib RiemannPNT where
     `Test.SlidingLagCosineBudgetContract,
     `Test.AmplitudeExponentialGapIntegralContract,
     `Test.ExponentialPolynomialShiftedCorrelationContract,
+    `Test.ActualCarlsonDyadicShellMassContract,
     `Test.SlidingExponentialPolynomialMeanSquareContract,
     `Test.CollectedExponentialPolynomialContract,
     `Test.CollectedCoefficientEnergyContract,
@@ -857,7 +860,8 @@ lean_lib RiemannPNT where
     `Test.CollectedCoefficientEnergyAxiomAudit,
     `Test.LocalFrequencySeparationMonotoneAxiomAudit,
     `Test.ExponentialPolynomialShiftedCorrelationAxiomAudit,
-    `Test.SlidingExponentialGapDecompositionAxiomAudit
+    `Test.SlidingExponentialGapDecompositionAxiomAudit,
+    `Test.ActualCarlsonDyadicShellMassAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
