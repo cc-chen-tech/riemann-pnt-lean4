@@ -2,15 +2,15 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Prove, on top of Draft PR #278, the pure real-arithmetic seven-parameter feasibility theorem for every `2 / 3 < beta < 1`, with four explicit strictly negative exponent margins.
+**Goal:** Prove, as an independent main-based slice, the pure real-arithmetic seven-parameter feasibility theorem for every `2 / 3 < beta < 1`, with four explicit strictly negative exponent margins.
 
 **Architecture:** A dependency-free numerical core owns the Carlson density exponent, balanced cut, target-normalized low/high exponents, and only the algebraic lemmas needed downstream. A second module constructs the seven witnesses. Exact-type contracts are written and observed failing before production declarations, and separate axiom audits lock the proof boundary.
 
-**Tech Stack:** Lean 4, Mathlib real arithmetic (`linarith`, `nlinarith`, `field_simp`, `ring`), Lake, Git stacked worktrees, GitHub Draft PRs.
+**Tech Stack:** Lean 4, Mathlib real arithmetic (`linarith`, `nlinarith`, `field_simp`, `ring`), Lake, Git worktrees, GitHub Draft PRs.
 
 ## Global Constraints
 
-- Base exactly on `codex/exceptional-zero-dyadic-carlson-summation` / Draft PR #278; do not merge or rebase onto `main` in this slice.
+- Rebase the unpublished branch onto the current `origin/main` immediately before final verification and publication.
 - Keep only pure real arithmetic. Do not import actual zero-set, zero-count, explicit-formula tail, contour, smoothing, Sharp, or Witness modules.
 - Preserve exactly seven witnesses: `sigma tau alpha gammaLow gammaHigh epsilonLow epsilonHigh`.
 - Preserve exactly the four strict negative-margin conditions in the approved theorem type.
@@ -440,7 +440,7 @@ git commit -m "feat: prove joint two-height parameter feasibility"
 **Interfaces:**
 - Consumes: Tasks 1 and 2.
 - Produces: fresh evidence that the Draft PR contains only numerical
-  feasibility and is safe to publish as a stack on #278.
+  feasibility and is safe to publish directly against `main`.
 
 - [ ] **Step 1: Verify the import boundary**
 
@@ -498,8 +498,8 @@ enforces the analytic boundary.
 Run:
 
 ```bash
-git diff --check codex/exceptional-zero-dyadic-carlson-summation...HEAD
-git diff --stat codex/exceptional-zero-dyadic-carlson-summation...HEAD
+git diff --check origin/main...HEAD
+git diff --stat origin/main...HEAD
 git status --short --ignored | sed -n '1,80p'
 rg -n 'exclude.*zero|zero-free|actual.*tail.*(decay|small|zero)' \
   docs/superpowers/specs/2026-08-02-joint-two-height-numerical-feasibility-design.md \
@@ -508,7 +508,7 @@ rg -n 'exclude.*zero|zero-free|actual.*tail.*(decay|small|zero)' \
 ```
 
 Expected: only the design, plan, two implementation modules, four test files,
-and `lakefile.lean` differ from #278; `.lake` and `vendor` are ignored; any
+and `lakefile.lean` differ from `origin/main`; `.lake` and `vendor` are ignored; any
 claim-wording matches occur only in explicit non-claim boundaries.
 
 - [ ] **Step 5: Commit the implementation plan if still uncommitted**
@@ -528,7 +528,7 @@ an empty commit.
 
 After re-reading the approved spec line by line, use the GitHub publication
 workflow to push `codex/joint-two-height-numerical-feasibility` and open a
-Draft PR with base `codex/exceptional-zero-dyadic-carlson-summation`.
+Draft PR with base `main`.
 
 The PR title must state numerical feasibility, not tail decay or zero
 exclusion.  The body must include:
