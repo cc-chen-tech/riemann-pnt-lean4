@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSqrtZetaInverseCoeffBound
+
+#print axioms HardyTheorem.sum_range_selbergSqrtZetaLocalCoeff_eq
+#print axioms HardyTheorem.abs_sum_range_selbergSqrtZetaLocalCoeff_le_one
+#print axioms HardyTheorem.zeta_mul_selbergSqrtZetaCoeff_apply_prime_pow
+#print axioms HardyTheorem.abs_zeta_mul_selbergSqrtZetaCoeff_le_one
