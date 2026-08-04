@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSqrtZetaAbsLower
+
+#print axioms HardyTheorem.selbergSqrtZetaShortDirichletPolynomialIntegral_eq
+#print axioms HardyTheorem.abs_selbergSqrtZetaMollifiedHardyZ_eq_norm_zeta_mul_mollifier_sq
+#print axioms HardyTheorem.exists_selbergSqrtZetaAbsShortIntegral_ge_sub_shortDirichlet
+#print axioms HardyTheorem.exists_selbergSqrtZetaAbsShortIntegral_ge_sub_mollifiedPolynomial
