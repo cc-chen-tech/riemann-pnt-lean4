@@ -545,6 +545,7 @@ lean_lib RiemannPNT where
     `Test.SelbergMertensBoundContract,
     `Test.SelbergMollifiedTripleMainLowerContract,
     `Test.SelbergSmallAbsBadSetContract,
+    `Test.SelbergSmallAbsBadSetAxiomAudit,
     `Test.SelbergShortDirichletExpansionContract,
     `Test.SelbergShortDirichletCollectedContract,
     `Test.SelbergShortCollectedArithmeticContract,
