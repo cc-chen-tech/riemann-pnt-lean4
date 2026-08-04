@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSqrtZetaSignedModelCorrelation
+
+#print axioms HardyTheorem.selbergSqrtZetaSignedThetaModel_eq_complexModel_re
+#print axioms HardyTheorem.selbergSqrtZetaSignedThetaModel_mul_eq_correlation_add_pseudocorrelation
