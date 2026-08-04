@@ -78,6 +78,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergSqrtZetaSignedRationalCollectedAxiomAudit",
     "Test.SelbergSqrtZetaSignedApproximationAxiomAudit",
     "Test.SelbergSqrtZetaSignedModelPolynomialAxiomAudit",
+    "Test.SelbergSqrtZetaSignedModelContinuityAxiomAudit",
     "Test.ActualCarlsonDyadicShellMassAxiomAudit",
     "Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit",
     "Test.ZeroDensityLayerBudgetTwoHeightNumericalCoreAxiomAudit",
