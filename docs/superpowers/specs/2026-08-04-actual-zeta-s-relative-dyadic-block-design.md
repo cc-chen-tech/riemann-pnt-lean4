@@ -88,14 +88,18 @@ Define
 `actualTargetDyadicBucketPairsExcluding S sigma beta k`
 
 by further filtering the surviving source pairs by `rho.re <= beta`.
-Equivalently, its second projections are exactly
+Its second projections are contained in
 
 `actualCarlsonDyadicZeroStrip sigma beta k \ S`.
 
-The equality with the actual Carlson strip is a proved membership theorem,
-not a documentation-only correspondence.  Equality at `rho.re = beta` belongs
-to this target-side set; only strict inequality `beta < rho.re` belongs to the
-farther-right branch.
+This is a subset theorem, not an equality theorem: `zetaDyadicBucketPairs k`
+uses the absolute-ordinate interval `[2^k, 2^(k+1))`, while the actual Carlson
+shell uses `(2^k, 2^(k+1)]`.  Filtering the former by the latter can therefore
+omit a zero exactly at the Carlson shell's upper endpoint.  The subset is all
+that the capacity proof needs: injectively reindex the pair sum over its second
+projections, then enlarge that nonnegative sum to the full S-relative actual
+strip.  Equality at `rho.re = beta` belongs to the target-side filter; only
+strict inequality `beta < rho.re` belongs to the farther-right branch.
 
 ## Target-normalized Gram energy
 
@@ -201,7 +205,8 @@ for every public definition and theorem.  It covers:
 - deleting the complete actual block;
 - preservation of the boundary case `rho.re = beta` in the energy branch;
 - strictness of the farther-right branch;
-- lower-inclusive and upper-exclusive dyadic endpoints;
+- the existing bucket interval `[2^k, 2^(k+1))` and the actual shell interval
+  `(2^k, 2^(k+1)]`, including the projection-subset boundary behavior;
 - retention of analytic multiplicity squared and `1 / ||rho||^2`; and
 - the fact that the final constant is quantified before `S`.
 
