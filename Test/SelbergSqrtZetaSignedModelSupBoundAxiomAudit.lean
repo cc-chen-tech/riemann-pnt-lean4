@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedModelSupBound
+
+#print axioms HardyTheorem.abs_selbergSqrtZetaSignedThetaModel_le_modelSupBoundL1
