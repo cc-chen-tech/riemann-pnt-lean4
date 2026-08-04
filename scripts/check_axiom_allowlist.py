@@ -74,6 +74,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit",
     "Test.ZeroDensityLayerBudgetTwoHeightNumericalCoreAxiomAudit",
     "Test.ZeroDensityLayerBudgetJointTwoHeightParameterFeasibilityAxiomAudit",
+    "Test.ZeroDensityLayerBudgetActualCubicTwoHeightL2TailAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.carlsonTwoHeightDensityExponent_pos",
@@ -85,6 +86,15 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.targetAmplitudeCarlsonTwoHeightHighExponent_balanced",
     "PrimeNumberTheorem.targetAmplitudeCarlsonTwoHeightBalancedSlope_lt_half",
     "PrimeNumberTheorem.exists_jointTwoHeightTargetAmplitudeParameters",
+    "PrimeNumberTheorem.actualCubicDyadicStripSquareCapacityExcluding_le",
+    "PrimeNumberTheorem.actualCubicDyadicStripSquareCapacityExcluding_le_reciprocal",
+    "PrimeNumberTheorem.exists_actualCubicDyadicStripSquareCapacityExcluding_le_count",
+    "PrimeNumberTheorem.cubicDyadicCountProduct_eq_sixthPower",
+    "PrimeNumberTheorem.pntCarlsonClassicalDensityExponent_sub_six_le_neg_five",
+    "PrimeNumberTheorem.pntCarlsonClassicalDensityExponent_half_sub_six_eq_neg_five",
+    "PrimeNumberTheorem.cubicCarlsonL2BlockExponent_lt_zero",
+    "PrimeNumberTheorem.exists_actualCubicTwoHeightSquareTailCapacity_le",
+    "PrimeNumberTheorem.exists_jointTwoHeightTargetAmplitudeParameters_with_cubicL2",
     "HardyTheorem.analyticOnNhd_selbergMollifier",
     "HardyTheorem.analyticOnNhd_selbergMollifier_vertical",
     "HardyTheorem.exp_I_thetaModel_mul_criticalLinePolynomial_mul_mollifier_mul_conj_eq_collectedPhasePolynomial",
