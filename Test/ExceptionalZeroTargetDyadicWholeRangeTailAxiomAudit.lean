@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ExceptionalZeroTargetDyadicWholeRangeTail
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms targetDyadicUnitBucketRange_eq_biUnion
+#print axioms dynamicComplementTargetDyadicRangeCenteredFrozenGaussianSecondMoment_le
+#print axioms exists_dynamicComplementDyadicWeightedSquareCapacity_le_logCubeDiv
+#print axioms eventually_rightHigherTargetDyadicRange_fartherRight_or_energy_lt
+
+end PrimeNumberTheorem.VKEdgePiOverTwo
