@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSqrtZetaSignedModelPolynomial
+
+#print axioms HardyTheorem.selbergSqrtZetaSignedThetaModel_eq_re_exp_I_kappa_mul_signedPhasePolynomial
+#print axioms HardyTheorem.selbergSqrtZetaSignedThetaModel_mul_eq_re_exp_I_kappa_mul_signedPhasePolynomial_mul
