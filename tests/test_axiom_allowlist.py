@@ -21,6 +21,16 @@ def test_parse_axiom_report_handles_multiline_axiom_lists():
     }
 
 
+def test_parse_axiom_report_handles_lean_names_ending_in_prime():
+    output = """
+'Example.bound\'' depends on axioms: [propext, Classical.choice, Quot.sound]
+"""
+
+    assert check_axiom_allowlist.parse_axiom_report(output) == {
+        "Example.bound'": {"propext", "Classical.choice", "Quot.sound"},
+    }
+
+
 def test_validate_axioms_rejects_missing_declarations_and_unexpected_axioms():
     reports = {
         "Example.first": {"propext", "Classical.choice", "Quot.sound", "Bad.axiom"},

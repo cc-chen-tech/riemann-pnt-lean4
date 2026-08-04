@@ -73,6 +73,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.SelbergSqrtZetaHighRangeEnergyAxiomAudit",
     "Test.SelbergSqrtZetaCollectedWeightedEnergyAxiomAudit",
     "Test.SelbergSqrtZetaAbsLowerAxiomAudit",
+    "Test.SelbergSqrtZetaSmallAbsGapBoundAxiomAudit",
     "Test.SelbergSqrtZetaSignedPhasePolynomialAxiomAudit",
     "Test.ActualCarlsonDyadicShellMassAxiomAudit",
     "Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit",
@@ -204,6 +205,9 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.abs_selbergSqrtZetaMollifiedHardyZ_eq_norm_zeta_mul_mollifier_sq",
     "HardyTheorem.exists_selbergSqrtZetaAbsShortIntegral_ge_sub_shortDirichlet",
     "HardyTheorem.exists_selbergSqrtZetaAbsShortIntegral_ge_sub_mollifiedPolynomial",
+    "HardyTheorem.integral_normSq_selbergSqrtZetaMollifiedShortDirichletPolynomial_le_gapSum'",
+    "HardyTheorem.volume_smallMassStarts_inter_Icc_le_sqrtZetaGapSum",
+    "HardyTheorem.exists_volume_selbergSqrtZetaSmallAbsoluteMassStarts_inter_Icc_le_gapSum",
     "HardyTheorem.criticalLineDirichletPolynomial_mul_sqrtZetaMollifier_mul_conj_eq_signedTripleSum",
     "HardyTheorem.criticalLineDirichletPolynomial_mul_sqrtZetaMollifier_mul_conj_eq_signedTriplePolynomial",
     "HardyTheorem.selbergSqrtZetaSignedPhasePolynomial_eq_exp_mul_signedTriplePolynomial",
@@ -719,7 +723,7 @@ EXPECTED_DECLARATIONS = {
 }
 
 REPORT_RE = re.compile(
-    r"'([^']+)' depends on axioms:\s*\[([^\]]*)\]",
+    r"'([^\n]+)' depends on axioms:\s*\[([^\]]*)\]",
     flags=re.MULTILINE,
 )
 

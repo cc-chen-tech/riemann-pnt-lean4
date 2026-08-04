@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSqrtZetaSmallAbsGapBound
+
+#print axioms HardyTheorem.integral_normSq_selbergSqrtZetaMollifiedShortDirichletPolynomial_le_gapSum'
+#print axioms HardyTheorem.volume_smallMassStarts_inter_Icc_le_sqrtZetaGapSum
+#print axioms HardyTheorem.exists_volume_selbergSqrtZetaSmallAbsoluteMassStarts_inter_Icc_le_gapSum
