@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSmallAbsBadSet
+
+#print axioms HardyTheorem.volume_smallMassStarts_inter_Icc_le_of_L2
+#print axioms HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_of_shortDirichletL2
