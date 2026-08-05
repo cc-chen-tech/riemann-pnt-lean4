@@ -130,6 +130,171 @@ theorem actualTargetDyadicBucket_fibre_card_le_occupancy
       exact Finset.mem_image.mpr ⟨p, hp, hpn⟩
     simp [actualTargetDyadicOccupancy, P, hempty]
 
+/-- Target-normalized reciprocal-multiplicity mass at forward-window origin
+`a`. -/
+noncomputable def actualTargetDyadicBaseMass
+    (beta a : ℝ) (p : ℕ × ℂ) : ℝ :=
+  zeroReciprocalMultiplicityCoefficient p.2 *
+    Real.exp ((p.2.re - beta) * a)
+
+/-- Forward motion from the origin has nonpositive drift on the target side. -/
+def actualTargetDyadicForwardDrift
+    (beta : ℝ) (p : ℕ × ℂ) : ℝ :=
+  p.2.re - beta
+
+/-- Whole Gaussian Gram energy of the surviving actual dyadic source block. -/
+noncomputable def actualSRelativeTargetDyadicGaussianGram
+    (S : Finset ℂ) (sigma beta a : ℝ) (k : ℕ) (t m : ℝ) : ℝ :=
+  MathlibAux.dyadicDriftingGaussianGram
+    (actualSRelativeDyadicBucketPairs S sigma k)
+    (actualTargetDyadicBaseMass beta a)
+    (actualTargetDyadicForwardDrift beta)
+    (fun p => p.2.im) t m
+
+private theorem actualTargetDyadicBaseMass_nonneg
+    (beta a : ℝ) (p : ℕ × ℂ) :
+    0 ≤ actualTargetDyadicBaseMass beta a p := by
+  unfold actualTargetDyadicBaseMass zeroReciprocalMultiplicityCoefficient
+  exact mul_nonneg
+    (div_nonneg (Nat.cast_nonneg _) (norm_nonneg _))
+    (Real.exp_pos _).le
+
+private theorem actualTargetDyadic_frequency_gap
+    {S : Finset ℂ} {sigma beta : ℝ} {k : ℕ} {p q : ℕ × ℂ}
+    (hp : p ∈ actualTargetDyadicBucketPairsExcluding S sigma beta k)
+    (hq : q ∈ actualTargetDyadicBucketPairsExcluding S sigma beta k) :
+    (((p.1).dist q.1 - 1 : ℕ) : ℝ) ≤ |p.2.im - q.2.im| := by
+  have hpZeta := (mem_actualSRelativeDyadicBucketPairs.mp
+    (mem_actualTargetDyadicBucketPairsExcluding.mp hp).1).1
+  have hqZeta := (mem_actualSRelativeDyadicBucketPairs.mp
+    (mem_actualTargetDyadicBucketPairsExcluding.mp hq).1).1
+  have hpBucket := (mem_zetaDyadicBucketPairs.mp hpZeta).2
+  have hqBucket := (mem_zetaDyadicBucketPairs.mp hqZeta).2
+  have hpBounds := (Finset.mem_filter.mp hpBucket).2
+  have hqBounds := (Finset.mem_filter.mp hqBucket).2
+  exact (MathlibAux.natDist_sub_one_le_abs_sub_of_mem_unit
+    hpBounds.1 hpBounds.2 hqBounds.1 hqBounds.2).trans
+      (abs_abs_sub_abs_le_abs_sub p.2.im q.2.im)
+
+/-- The squared target masses inject into the full S-relative actual Carlson
+reciprocal-square capacity. -/
+theorem sum_actualTargetDyadicBaseMass_sq_le_capacity
+    (S : Finset ℂ) (sigma beta a : ℝ) (k : ℕ) (ha : 0 ≤ a) :
+    (∑ p ∈ actualTargetDyadicBucketPairsExcluding S sigma beta k,
+      actualTargetDyadicBaseMass beta a p ^ 2) ≤
+        actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+          sigma beta k S := by
+  classical
+  let P := actualTargetDyadicBucketPairsExcluding S sigma beta k
+  let c : ℂ → ℝ := zeroReciprocalMultiplicityCoefficient
+  have hmass : ∀ p ∈ P,
+      actualTargetDyadicBaseMass beta a p ^ 2 ≤ c p.2 ^ 2 := by
+    intro p hp
+    have htarget := (mem_actualTargetDyadicBucketPairsExcluding.mp hp).2
+    have hcoeff : 0 ≤ c p.2 := by
+      dsimp only [c]
+      unfold zeroReciprocalMultiplicityCoefficient
+      exact div_nonneg (Nat.cast_nonneg _) (norm_nonneg _)
+    have hexp : Real.exp ((p.2.re - beta) * a) ≤ 1 := by
+      rw [← Real.exp_zero]
+      exact Real.exp_le_exp.mpr
+        (mul_nonpos_of_nonpos_of_nonneg (sub_nonpos.mpr htarget) ha)
+    have hbase : actualTargetDyadicBaseMass beta a p ≤ c p.2 := by
+      unfold actualTargetDyadicBaseMass
+      exact mul_le_of_le_one_right hcoeff hexp
+    exact (sq_le_sq₀ (actualTargetDyadicBaseMass_nonneg beta a p) hcoeff).2 hbase
+  have hinj : ∀ p ∈ P, ∀ q ∈ P, p.2 = q.2 → p = q := by
+    intro p hp q hq hpq
+    exact actualTargetDyadicBucketPairsExcluding_snd_inj S sigma beta k hp hq hpq
+  have himage : P.image Prod.snd ⊆
+      actualCarlsonDyadicZeroStrip sigma beta k \ S := by
+    exact image_snd_actualTargetDyadicBucketPairsExcluding_subset
+      S sigma beta k
+  change (∑ p ∈ P, actualTargetDyadicBaseMass beta a p ^ 2) ≤ _
+  calc
+    (∑ p ∈ P, actualTargetDyadicBaseMass beta a p ^ 2) ≤
+        ∑ p ∈ P, c p.2 ^ 2 := Finset.sum_le_sum hmass
+    _ = ∑ rho ∈ P.image Prod.snd, c rho ^ 2 := by
+      exact (Finset.sum_image
+        (f := fun rho : ℂ => c rho ^ 2) hinj).symm
+    _ ≤ ∑ rho ∈ actualCarlsonDyadicZeroStrip sigma beta k \ S,
+        c rho ^ 2 :=
+      Finset.sum_le_sum_of_subset_of_nonneg himage (by
+        intro rho _hrho _himage
+        exact sq_nonneg (c rho))
+    _ = actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+          sigma beta k S := by
+      simp only [actualCarlsonDyadicStripSquareReciprocalCapacityExcluding,
+        c, zeroReciprocalMultiplicityCoefficient, div_pow]
+
+/-- A surviving actual shell zero is strictly farther right than `beta`, or
+the whole source Gram is controlled by target occupancy and actual capacity. -/
+theorem actualSRelativeDyadic_fartherRight_or_gram_le_capacity
+    (S : Finset ℂ) (sigma beta a : ℝ) (k : ℕ) {t m : ℝ}
+    (ha : 0 ≤ a) (ht : 0 ≤ t) (hm : 1 ≤ m) :
+    (∃ rho ∈ actualCarlsonDyadicZeroShell sigma k \ S,
+      beta < rho.re) ∨
+      actualSRelativeTargetDyadicGaussianGram S sigma beta a k t m ≤
+        MathlibAux.gaussianBucketSchurConstant *
+          (1 + (actualTargetDyadicOccupancy S sigma beta k : ℝ)) *
+            actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma beta k S := by
+  by_cases hfar : ∃ rho ∈ actualCarlsonDyadicZeroShell sigma k \ S,
+      beta < rho.re
+  · exact Or.inl hfar
+  · right
+    have hre : ∀ rho ∈ actualCarlsonDyadicZeroShell sigma k \ S,
+        rho.re ≤ beta := by
+      intro rho hrho
+      exact le_of_not_gt fun hright => hfar ⟨rho, hrho, hright⟩
+    have hsets := actualSRelativeDyadicBucketPairs_eq_target_of_re_le hre
+    unfold actualSRelativeTargetDyadicGaussianGram
+    rw [hsets]
+    calc
+      MathlibAux.dyadicDriftingGaussianGram
+          (actualTargetDyadicBucketPairsExcluding S sigma beta k)
+          (actualTargetDyadicBaseMass beta a)
+          (actualTargetDyadicForwardDrift beta)
+          (fun p => p.2.im) t m ≤
+          MathlibAux.gaussianBucketSchurConstant *
+            (((actualTargetDyadicOccupancy S sigma beta k + 1 : ℕ) : ℝ)) *
+              ∑ p ∈ actualTargetDyadicBucketPairsExcluding S sigma beta k,
+                actualTargetDyadicBaseMass beta a p ^ 2 := by
+        apply MathlibAux.dyadicDriftingGaussianGram_le_occupancy_mul_sum_sq
+          (bucket := Prod.fst)
+          (occupancy := actualTargetDyadicOccupancy S sigma beta k)
+        · exact ht
+        · exact hm
+        · intro p _hp
+          exact actualTargetDyadicBaseMass_nonneg beta a p
+        · intro p hp
+          exact sub_nonpos.mpr
+            (mem_actualTargetDyadicBucketPairsExcluding.mp hp).2
+        · intro p hp q hq
+          exact actualTargetDyadic_frequency_gap hp hq
+        · intro n hn
+          exact (actualTargetDyadicBucket_fibre_card_le_occupancy
+            S sigma beta k n).trans (by omega)
+      _ = MathlibAux.gaussianBucketSchurConstant *
+            (1 + (actualTargetDyadicOccupancy S sigma beta k : ℝ)) *
+              ∑ p ∈ actualTargetDyadicBucketPairsExcluding S sigma beta k,
+                actualTargetDyadicBaseMass beta a p ^ 2 := by
+        have hcast :
+            (((actualTargetDyadicOccupancy S sigma beta k + 1 : ℕ) : ℝ)) =
+              1 + (actualTargetDyadicOccupancy S sigma beta k : ℝ) := by
+          norm_num
+          ring
+        rw [hcast]
+      _ ≤ MathlibAux.gaussianBucketSchurConstant *
+            (1 + (actualTargetDyadicOccupancy S sigma beta k : ℝ)) *
+              actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+                sigma beta k S := by
+        exact mul_le_mul_of_nonneg_left
+          (sum_actualTargetDyadicBaseMass_sq_le_capacity
+            S sigma beta a k ha)
+          (mul_nonneg MathlibAux.gaussianBucketSchurConstant_pos.le
+            (by positivity))
+
 end
 
 end VKEdgePiOverTwo
