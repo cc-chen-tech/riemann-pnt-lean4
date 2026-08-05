@@ -948,7 +948,8 @@ lean_lib RiemannPNT where
     `Test.ExponentialPolynomialShiftedCorrelationAxiomAudit,
     `Test.SlidingExponentialGapDecompositionAxiomAudit,
     `Test.ActualCarlsonDyadicShellMassAxiomAudit,
-    `Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit
+    `Test.ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacityAxiomAudit,
+    `Test.ZeroDensityLayerBudgetActualTargetDyadicBlockGramAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
