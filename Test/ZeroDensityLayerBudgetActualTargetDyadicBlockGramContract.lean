@@ -86,4 +86,22 @@ example (S : Finset ℂ) (sigma beta a : ℝ) (k : ℕ) {t m : ℝ}
   actualSRelativeDyadic_fartherRight_or_gram_le_capacity
     S sigma beta a k ha ht hm
 
+example : ∃ C : ℝ, 0 ≤ C ∧
+    ∀ (S : Finset ℂ) (sigma beta : ℝ) (k : ℕ),
+      4 ≤ 2 ^ k →
+      (actualTargetDyadicOccupancy S sigma beta k : ℝ) ≤
+        C * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)) :=
+  exists_actualTargetDyadicOccupancy_le_log
+
+example : ∃ D : ℝ, 0 ≤ D ∧
+    ∀ (S : Finset ℂ) (sigma beta a : ℝ) (k : ℕ) {t m : ℝ},
+      0 ≤ a → 0 ≤ t → 1 ≤ m → 4 ≤ 2 ^ k →
+      (∃ rho ∈ actualCarlsonDyadicZeroShell sigma k \ S,
+        beta < rho.re) ∨
+        actualSRelativeTargetDyadicGaussianGram S sigma beta a k t m ≤
+          D * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)) ^ 2 *
+            (actualCarlsonDyadicCount sigma (k + 1) /
+              ((2 : ℝ) ^ k) ^ 2) :=
+  exists_actualSRelativeDyadic_fartherRight_or_gram_le_count
+
 end PrimeNumberTheorem.VKEdgePiOverTwo

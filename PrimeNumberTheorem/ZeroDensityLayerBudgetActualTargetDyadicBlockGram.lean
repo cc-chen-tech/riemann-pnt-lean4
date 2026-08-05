@@ -295,6 +295,205 @@ theorem actualSRelativeDyadic_fartherRight_or_gram_le_capacity
           (mul_nonneg MathlibAux.gaussianBucketSchurConstant_pos.le
             (by positivity))
 
+private theorem actualTargetDyadic_fibre_card_cast_le_bucketMultiplicity
+    (S : Finset ℂ) (sigma beta : ℝ) (k n : ℕ) :
+    (((actualTargetDyadicBucketPairsExcluding S sigma beta k).filter
+      (fun p => p.1 = n)).card : ℝ) ≤
+        zeroOrdinateUnitBucketMultiplicity n := by
+  classical
+  let P := actualTargetDyadicBucketPairsExcluding S sigma beta k
+  let F := P.filter fun p => p.1 = n
+  let Z := F.image Prod.snd
+  have hsubset : Z ⊆ zeroOrdinateUnitBucket n := by
+    intro rho hrho
+    rcases Finset.mem_image.mp hrho with ⟨p, hp, rfl⟩
+    have hp' := Finset.mem_filter.mp hp
+    have hpZeta := (mem_actualSRelativeDyadicBucketPairs.mp
+      (mem_actualTargetDyadicBucketPairsExcluding.mp hp'.1).1).1
+    have hpBucket := (mem_zetaDyadicBucketPairs.mp hpZeta).2
+    simpa [hp'.2] using hpBucket
+  have hinj : ∀ p ∈ F, ∀ q ∈ F, p.2 = q.2 → p = q := by
+    intro p hp q hq hpq
+    exact actualTargetDyadicBucketPairsExcluding_snd_inj S sigma beta k
+      (Finset.mem_filter.mp hp).1 (Finset.mem_filter.mp hq).1 hpq
+  have hcard : Z.card = F.card := by
+    exact Finset.card_image_iff.mpr hinj
+  have hpositive : ∀ rho ∈ Z, 1 ≤ analyticOrderNatAt riemannZeta rho := by
+    intro rho hrho
+    have hrhoBucket := hsubset hrho
+    have hzero := (mem_nontrivialZerosFinset.mp
+      (Finset.mem_filter.mp hrhoBucket).1).1
+    have hrhoOne : rho ≠ 1 := by
+      intro hrhoOne
+      have hre := congrArg Complex.re hrhoOne
+      simp at hre
+      linarith [hzero.2.2]
+    exact ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero
+      hrhoOne hzero.1
+  have hcardSum : Z.card ≤
+      ∑ rho ∈ Z, analyticOrderNatAt riemannZeta rho := by
+    simpa using Z.card_nsmul_le_sum
+      (fun rho => analyticOrderNatAt riemannZeta rho) 1 hpositive
+  have hsumSubset :
+      (∑ rho ∈ Z, analyticOrderNatAt riemannZeta rho) ≤
+        ∑ rho ∈ zeroOrdinateUnitBucket n,
+          analyticOrderNatAt riemannZeta rho := by
+    exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
+      (fun _rho _hbucket _hZ => Nat.zero_le _)
+  unfold zeroOrdinateUnitBucketMultiplicity
+  change (F.card : ℝ) ≤
+    ∑ rho ∈ zeroOrdinateUnitBucket n,
+      (analyticOrderNatAt riemannZeta rho : ℝ)
+  rw [← hcard]
+  exact_mod_cast hcardSum.trans hsumSubset
+
+/-- Actual target occupancy is logarithmic uniformly in the deleted finite
+set `S`; the constant is chosen before `S`. -/
+theorem exists_actualTargetDyadicOccupancy_le_log :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ (S : Finset ℂ) (sigma beta : ℝ) (k : ℕ), 4 ≤ 2 ^ k →
+        (actualTargetDyadicOccupancy S sigma beta k : ℝ) ≤
+          C * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)) := by
+  rcases exists_zeroOrdinateUnitBucketMultiplicity_le_log with
+    ⟨C, hC, hbucket⟩
+  refine ⟨C, hC, ?_⟩
+  intro S sigma beta k hk
+  let P := actualTargetDyadicBucketPairsExcluding S sigma beta k
+  let labels := P.image Prod.fst
+  let fibre : ℕ → ℕ := fun n => (P.filter fun p => p.1 = n).card
+  change ((labels.sup fibre : ℕ) : ℝ) ≤
+    C * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7))
+  by_cases hlabels : labels.Nonempty
+  · rcases Finset.sup_mem_of_nonempty (f := fibre) hlabels with
+      ⟨n, hn, hvalue⟩
+    rw [← hvalue]
+    rcases Finset.mem_image.mp hn with ⟨p, hp, hpn⟩
+    have hpZeta := (mem_actualSRelativeDyadicBucketPairs.mp
+      (mem_actualTargetDyadicBucketPairsExcluding.mp hp).1).1
+    have hpBlock := (mem_zetaDyadicBucketPairs.mp hpZeta).1
+    have hpBounds := Finset.mem_Ico.mp hpBlock
+    have hnLower : 2 ^ k ≤ n := by simpa [hpn] using hpBounds.1
+    have hnUpper : n < 2 ^ (k + 1) := by simpa [hpn] using hpBounds.2
+    have hnFour : 4 ≤ n := hk.trans hnLower
+    have hcard := actualTargetDyadic_fibre_card_cast_le_bucketMultiplicity
+      S sigma beta k n
+    have hbucketN := hbucket n hnFour
+    have hnUpperReal : (n : ℝ) ≤ (2 : ℝ) ^ (k + 1) := by
+      exact_mod_cast hnUpper.le
+    have hlog : Real.log ((n : ℝ) + 7) ≤
+        Real.log ((2 : ℝ) ^ (k + 1) + 7) := by
+      exact Real.log_le_log (by positivity) (by linarith)
+    calc
+      (fibre n : ℝ) ≤ zeroOrdinateUnitBucketMultiplicity n := by
+        simpa only [fibre, P] using hcard
+      _ ≤ C * (1 + Real.log ((n : ℝ) + 7)) := hbucketN
+      _ ≤ C * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)) :=
+        mul_le_mul_of_nonneg_left (by linarith) hC
+  · have hlabelsEmpty : labels = ∅ :=
+      Finset.not_nonempty_iff_eq_empty.mp hlabels
+    rw [hlabelsEmpty]
+    simp only [Finset.sup_empty, Nat.bot_eq_zero, Nat.cast_zero]
+    have hpow : 0 ≤ (2 : ℝ) ^ (k + 1) := by positivity
+    have harg : 1 ≤ (2 : ℝ) ^ (k + 1) + 7 := by linarith
+    exact mul_nonneg hC
+      (add_nonneg (show (0 : ℝ) ≤ 1 by norm_num) (Real.log_nonneg harg))
+
+/-- Single-block Carlson-count corollary of the exact whole-Gram dichotomy.
+The uniform constant is independent of the deleted finite set `S`. -/
+theorem exists_actualSRelativeDyadic_fartherRight_or_gram_le_count :
+    ∃ D : ℝ, 0 ≤ D ∧
+      ∀ (S : Finset ℂ) (sigma beta a : ℝ) (k : ℕ) {t m : ℝ},
+        0 ≤ a → 0 ≤ t → 1 ≤ m → 4 ≤ 2 ^ k →
+        (∃ rho ∈ actualCarlsonDyadicZeroShell sigma k \ S,
+          beta < rho.re) ∨
+          actualSRelativeTargetDyadicGaussianGram S sigma beta a k t m ≤
+            D * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)) ^ 2 *
+              (actualCarlsonDyadicCount sigma (k + 1) /
+                ((2 : ℝ) ^ k) ^ 2) := by
+  rcases exists_actualTargetDyadicOccupancy_le_log with ⟨C, hC, hocc⟩
+  rcases
+      exists_actualCarlsonDyadicStripSquareReciprocalCapacityExcluding_le_count
+    with ⟨B, hB, hcap⟩
+  let D := MathlibAux.gaussianBucketSchurConstant * (C + 1) * B
+  refine ⟨D, ?_, ?_⟩
+  · dsimp only [D]
+    exact mul_nonneg
+      (mul_nonneg MathlibAux.gaussianBucketSchurConstant_pos.le
+        (by linarith)) hB
+  · intro S sigma beta a k t m ha ht hm hk
+    rcases actualSRelativeDyadic_fartherRight_or_gram_le_capacity
+      S sigma beta a k ha ht hm with hfar | henergy
+    · exact Or.inl hfar
+    · right
+      let L := 1 + Real.log ((2 : ℝ) ^ (k + 1) + 7)
+      let Q := actualCarlsonDyadicCount sigma (k + 1) /
+        ((2 : ℝ) ^ k) ^ 2
+      have hkReal : 4 ≤ (2 : ℝ) ^ k := by exact_mod_cast hk
+      have hoccBound := hocc S sigma beta k hk
+      have hcapBound := hcap sigma beta k hkReal S
+      have hL : 1 ≤ L := by
+        dsimp only [L]
+        have hpow : 0 ≤ (2 : ℝ) ^ (k + 1) := by positivity
+        have harg : 1 ≤ (2 : ℝ) ^ (k + 1) + 7 := by linarith
+        nlinarith [Real.log_nonneg harg]
+      have hL0 : 0 ≤ L := (by norm_num : (0 : ℝ) ≤ 1).trans hL
+      have hoccFactor :
+          1 + (actualTargetDyadicOccupancy S sigma beta k : ℝ) ≤
+            (C + 1) * L := by
+        dsimp only [L]
+        nlinarith
+      have hlogSix : 0 ≤ 1 + Real.log ((2 : ℝ) ^ (k + 1) + 6) := by
+        have hpow : 0 ≤ (2 : ℝ) ^ (k + 1) := by positivity
+        have harg : 1 ≤ (2 : ℝ) ^ (k + 1) + 6 := by linarith
+        nlinarith [Real.log_nonneg harg]
+      have hlogSixLe : 1 + Real.log ((2 : ℝ) ^ (k + 1) + 6) ≤ L := by
+        dsimp only [L]
+        have hlog : Real.log ((2 : ℝ) ^ (k + 1) + 6) ≤
+            Real.log ((2 : ℝ) ^ (k + 1) + 7) := by
+          exact Real.log_le_log (by positivity) (by linarith)
+        linarith
+      have hQ : 0 ≤ Q := by
+        dsimp only [Q]
+        exact div_nonneg (actualCarlsonDyadicCount_nonneg sigma (k + 1))
+          (sq_nonneg _)
+      have hcapCommon :
+          actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma beta k S ≤ B * L * Q := by
+        calc
+          actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+              sigma beta k S ≤
+              (B * (1 + Real.log ((2 : ℝ) ^ (k + 1) + 6))) * Q := by
+            simpa only [Q] using hcapBound
+          _ ≤ B * L * Q := by
+            exact mul_le_mul_of_nonneg_right
+              (mul_le_mul_of_nonneg_left hlogSixLe hB) hQ
+      have hcapacity0 :
+          0 ≤ actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+            sigma beta k S := by
+        unfold actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+        positivity
+      calc
+        actualSRelativeTargetDyadicGaussianGram S sigma beta a k t m ≤
+            MathlibAux.gaussianBucketSchurConstant *
+              (1 + (actualTargetDyadicOccupancy S sigma beta k : ℝ)) *
+                actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+                  sigma beta k S := henergy
+        _ ≤ MathlibAux.gaussianBucketSchurConstant * ((C + 1) * L) *
+                actualCarlsonDyadicStripSquareReciprocalCapacityExcluding
+                  sigma beta k S := by
+          exact mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_left hoccFactor
+              MathlibAux.gaussianBucketSchurConstant_pos.le)
+            hcapacity0
+        _ ≤ MathlibAux.gaussianBucketSchurConstant * ((C + 1) * L) *
+              (B * L * Q) := by
+          exact mul_le_mul_of_nonneg_left hcapCommon
+            (mul_nonneg MathlibAux.gaussianBucketSchurConstant_pos.le
+              (mul_nonneg (by linarith) hL0))
+        _ = D * L ^ 2 * Q := by
+          dsimp only [D]
+          ring
+
 end
 
 end VKEdgePiOverTwo
