@@ -558,6 +558,8 @@ lean_lib RiemannPNT where
     `Test.SelbergSqrtZetaSignedCollectedPhaseAxiomAudit,
     `Test.SelbergSqrtZetaSignedCollectedCorrelationContract,
     `Test.SelbergSqrtZetaSignedCollectedCorrelationAxiomAudit,
+    `Test.SelbergSqrtZetaSignedCorrelationBudgetBatchContract,
+    `Test.OscillatoryIntegralLocalSecondDerivativeAxiomAudit,
     `Test.SelbergSqrtZetaSignedCollectedGapBoundAxiomAudit,
     `Test.SelbergSqrtZetaSignedCollectedEnergyAxiomAudit,
     `Test.SelbergSqrtZetaSignedCollectedL1AxiomAudit,
