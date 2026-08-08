@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalLocalSeparation
+
+#print axioms HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalCollectedPolynomial_le_localSeparation
