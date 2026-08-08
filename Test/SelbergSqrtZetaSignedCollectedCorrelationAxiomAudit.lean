@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSqrtZetaSignedCollectedCorrelation
+
+#print axioms HardyTheorem.selbergSqrtZetaSignedComplexModel_mul_conj_shift_eq
+#print axioms HardyTheorem.selbergSqrtZetaSignedComplexModel_mul_shift_eq
+#print axioms HardyTheorem.selbergSqrtZetaSignedComplexModel_mul_conj_shift_eq_diagonal_add_offDiagonal
