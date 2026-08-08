@@ -1,0 +1,3 @@
+import HardyTheorem.OscillatoryIntegral
+
+#print axioms HardyTheorem.OscillatoryIntegral.norm_integral_cexp_phase_le_of_second_deriv_on_Icc
