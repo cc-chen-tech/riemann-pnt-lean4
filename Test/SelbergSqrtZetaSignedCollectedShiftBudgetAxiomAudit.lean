@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSqrtZetaSignedCollectedShiftBudget
+
+#print axioms HardyTheorem.integrable_selbergSqrtZetaSignedCollectedCorrelationShiftKernel
+#print axioms HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedComplexCorrelation_sub_diagonal_le_coeff
