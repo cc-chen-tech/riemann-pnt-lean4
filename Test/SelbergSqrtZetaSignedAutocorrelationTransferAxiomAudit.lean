@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedAutocorrelationTransfer
+
+#print axioms HardyTheorem.exists_abs_integral_selbergSqrtZetaMollifiedAutocorrelation_sub_signedThetaModel_le
