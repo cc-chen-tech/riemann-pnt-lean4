@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSqrtZetaSignedModelShiftDecomposition
+
+#print axioms HardyTheorem.integrable_selbergSqrtZetaSignedOrdinaryShiftKernel
+#print axioms HardyTheorem.integral_selbergSqrtZetaSignedThetaShiftKernel_eq
+#print axioms HardyTheorem.abs_integral_integral_integral_selbergSqrtZetaSignedThetaModel_mul_shift_le
