@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTRealOrdinateDecay
+
+#print axioms PrimeNumberTheorem.realOrdinateNontrivialZerosFinset_eq_zeroHeight
+#print axioms PrimeNumberTheorem.tendsto_pntRelativeZeroContribution_atTop
+#print axioms PrimeNumberTheorem.tendsto_realOrdinateRelativeZeroResidual_of_eventually_nonneg
+#print axioms PrimeNumberTheorem.cofinalTrivialZeroContribution_zero
