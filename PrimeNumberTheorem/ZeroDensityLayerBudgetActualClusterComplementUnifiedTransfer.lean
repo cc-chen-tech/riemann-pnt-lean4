@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualRealOrdinateExcludingCluster
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualPolynomialRemainderCriterion
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualOscillationBoundary
 
 /-!
@@ -106,6 +107,29 @@ theorem
   complement_dominated := hdominated
   excluded_tail_negligible := certificate.fullTail_negligible
 
+/-- The concrete real part of the actual outside-cluster zeta sum supplies the
+signed complement certificate without any external domination hypothesis. -/
+theorem
+    ActualCarlsonOutsideClusterFiniteStripCertificate.actualSignedComplementCertificate
+    {beta alpha : ℝ} {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input) :
+    ClusterExcludedTargetComplementCertificate
+      (targetZeroPowerAmplitude beta)
+      (dynamicOutsideClusterPNTComplement
+        (carlsonPolynomialHeight alpha) S)
+      (dynamicFullOutsideClusterPNTZeroTailNorm
+        (carlsonPolynomialHeight alpha) S) := by
+  apply certificate.signedComplementCertificate
+  exact Filter.Eventually.of_forall fun x =>
+    abs_dynamicOutsideClusterPNTComplement_le_tailNorm
+      (carlsonPolynomialHeight alpha) S x
+
 /--
 Concrete unified transfer using actual zeta zeros outside the main cluster.
 
@@ -159,5 +183,167 @@ theorem
       (certificate.signedComplementCertificate
         complement hcomplementDominated)
       hrealAxis hcontour hmain hdecomp
+
+/--
+Concrete specialization in which the complementary-zero term is the real part
+of the actual zeta zero sum outside `S`; its norm domination is automatic.
+-/
+theorem
+    unified_parametricPNTUpper_actualCarlsonSignedComplementLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input)
+    {realAxis contour : ℝ → ℝ}
+    (hrealAxis :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta) realAxis)
+    (hcontour :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta) contour)
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (carlsonPolynomialHeight alpha) S)
+        (targetZeroPowerAmplitude beta))
+    (hdecomp :
+      ∀ x : ℝ,
+        relativeChebyshevPsi0Error x =
+          dynamicVisibleClusterPNTMain
+              (carlsonPolynomialHeight alpha) S x +
+            (realAxis x + contour x +
+              dynamicOutsideClusterPNTComplement
+                (carlsonPolynomialHeight alpha) S x)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  exact
+    unified_parametricPNTUpper_clusterExcludedComplementLower
+      threshold hhalf hlt
+      certificate.actualSignedComplementCertificate
+      hrealAxis hcontour hmain hdecomp
+
+/-- The fully concrete lower-transfer facade: the signed complement and exact
+decomposition are derived from the actual finite-height explicit formula.
+The remaining hypotheses are the two target-normalized residual estimates and
+a far witness for the visible main cluster. -/
+theorem
+    unified_parametricPNTUpper_actualExplicitFormulaSignedComplementLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input)
+    (hclosed :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta)
+        actualPNTClosedRealAxisRelativeTerm)
+    (hremainder :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta)
+        (actualPNTExplicitFormulaRelativeRemainder
+          (carlsonPolynomialHeight alpha)))
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (carlsonPolynomialHeight alpha) S)
+        (targetZeroPowerAmplitude beta)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  apply unified_parametricPNTUpper_actualCarlsonSignedComplementLower
+    threshold hhalf hlt certificate hclosed hremainder hmain
+  intro x
+  exact
+      relativeChebyshevPsi0Error_eq_visibleCluster_add_actualResiduals
+      (carlsonPolynomialHeight alpha) S x
+
+/-- Positive target real part automatically discharges the closed real-axis
+term, leaving only the actual explicit-formula remainder and visible-cluster
+far witness as lower-transfer inputs. -/
+theorem
+    unified_parametricPNTUpper_actualExplicitFormulaClosedAutomatic
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} (hbeta : 0 < beta)
+    {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input)
+    (hremainder :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta)
+        (actualPNTExplicitFormulaRelativeRemainder
+          (carlsonPolynomialHeight alpha)))
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (carlsonPolynomialHeight alpha) S)
+        (targetZeroPowerAmplitude beta)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  exact
+    unified_parametricPNTUpper_actualExplicitFormulaSignedComplementLower
+      threshold hhalf hlt certificate
+      (actualPNTClosedRealAxisRelativeTerm_targetAmplitudeNegligible hbeta)
+      hremainder hmain
+
+/-- A uniform polynomial-height actual remainder certificate and the strict
+margin `1 - beta < alpha` automatically discharge the last analytic
+remainder hypothesis. The visible-cluster far witness remains the genuine
+anti-cancellation input. -/
+theorem
+    unified_parametricPNTUpper_actualPolynomialRemainderCertificate
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} (hbeta : 0 < beta)
+    (hmargin : 1 - beta < alpha)
+    {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input)
+    (remainderCertificate :
+      ActualPolynomialExplicitFormulaRemainderCertificate alpha)
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (carlsonPolynomialHeight alpha) S)
+        (targetZeroPowerAmplitude beta)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  exact
+    unified_parametricPNTUpper_actualExplicitFormulaClosedAutomatic
+      threshold hhalf hlt hbeta certificate
+      (remainderCertificate.targetAmplitudeNegligible hmargin)
+      hmain
 
 end PrimeNumberTheorem
