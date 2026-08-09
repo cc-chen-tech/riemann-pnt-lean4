@@ -83,6 +83,7 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.NaturalPointTargetAmplitudeNegligible",
     "PrimeNumberTheorem.HasFarNaturalPointTargetAmplitudeWitness",
     "PrimeNumberTheorem.HasFarTargetAmplitudeWitness",
+    "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile",
     "PrimeNumberTheorem.IsTargetAmplitudeAdmissibleHeight",
     "PrimeNumberTheorem.IsPNTSubpolynomialLogHeight",
     "PrimeNumberTheorem.IsConjugationInvariantCluster",
