@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridDensity
+
+#print axioms PrimeNumberTheorem.pintzCarlsonClassicalAggregatedDensityLayerTerm_le_hybrid
+#print axioms PrimeNumberTheorem.exists_globalCoefficient_lowDensityBudget_le_growthMajorant
+#print axioms PrimeNumberTheorem.pintzCarlsonHybridDensityBudget_nonneg

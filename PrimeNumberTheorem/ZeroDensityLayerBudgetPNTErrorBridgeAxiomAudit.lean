@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTErrorBridge
+
+#print axioms PrimeNumberTheorem.TruncatedPNTErrorCertificate.abs_chebyshevPsi0_sub_id_le
+#print axioms PrimeNumberTheorem.TruncatedPNTErrorCertificate.abs_chebyshevPsi0_sub_id_le_pintz
+#print axioms PrimeNumberTheorem.TruncatedPNTErrorCertificate.abs_relativeChebyshevPsi0Error_le_pintz
