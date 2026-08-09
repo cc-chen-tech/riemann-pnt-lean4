@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonHeight
+
+#print axioms PrimeNumberTheorem.pintzCarlsonHeight_pos
+#print axioms PrimeNumberTheorem.tendsto_pintzCarlsonHeight_atTop
+#print axioms PrimeNumberTheorem.log_pintzCarlsonHeight
+#print axioms PrimeNumberTheorem.pintzCarlsonHeight_rpow
+#print axioms PrimeNumberTheorem.pintzCarlsonMajorantKernel_eq_gapModel
+#print axioms PrimeNumberTheorem.exists_pintzConstant_carlsonMajorantAtHeight_tendsto
+#print axioms PrimeNumberTheorem.exists_pintzConstant_finiteCarlsonMajorantAtHeight_tendsto
