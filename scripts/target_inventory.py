@@ -80,6 +80,8 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.HasFarNegativeWitness",
     "PrimeNumberTheorem.IsEventuallyHalfSmall",
     "PrimeNumberTheorem.TargetAmplitudeNegligible",
+    "PrimeNumberTheorem.NaturalPointTargetAmplitudeNegligible",
+    "PrimeNumberTheorem.HasFarNaturalPointTargetAmplitudeWitness",
     "PrimeNumberTheorem.HasFarTargetAmplitudeWitness",
     "PrimeNumberTheorem.IsTargetAmplitudeAdmissibleHeight",
     "PrimeNumberTheorem.IsPNTSubpolynomialLogHeight",
