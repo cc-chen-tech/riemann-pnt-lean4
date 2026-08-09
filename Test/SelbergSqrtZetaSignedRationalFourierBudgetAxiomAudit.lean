@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalFourierBudget
+
+#check HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_five_mul_modelL2Budget
+
+#print axioms
+  HardyTheorem.integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_five_mul_modelL2Budget
