@@ -246,6 +246,8 @@ lean_lib RiemannPNT where
     `Test.VKEdgeProportionalWindowTransferAxiomAudit,
     `Test.VKEdgeDistinctComplementWitnessContract,
     `Test.VKEdgeDistinctComplementWitnessAxiomAudit,
+    `Test.VKEdgeRightHigherSharpBlockerContract,
+    `Test.VKEdgeRightHigherSharpBlockerAxiomAudit,
     `Test.VKEdgePiOverTwoLocalizedContract,
     `Test.VKEdgePiOverTwoLocalizedAxiomAudit,
     `Test.VKEdgePiOverTwoEpsilonWindowContract,
