@@ -88,6 +88,7 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.localizedContourScaleValid",
     "PrimeNumberTheorem.VKEdgePiOverTwo.centeredLocalizedContourScaleValid",
     "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementRealBand",
+    "MathlibAux.finiteCentersPairwiseSeparated",
     "ZeroFreeRegion.VinogradovKorobov.AProcessScheduleAdmissible",
     "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessScheduleValid",
     "ZeroFreeRegion.VinogradovKorobov.ZetaAProcessLeafValid",

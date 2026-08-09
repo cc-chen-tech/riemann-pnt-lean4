@@ -1,0 +1,18 @@
+import PrimeNumberTheorem.ExceptionalZeroEnergyCapacityBridge
+
+open Complex MeasureTheory Set
+open scoped BigOperators
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check rightHigherTargetNormalizedAbsoluteMass
+#check rightHigherTargetNormalizedAbsoluteMass_nonneg
+#check finiteZeroClusterCoefficientAt_zero_norm_eq_kernelWeight
+#check norm_normalizedRightHigherComplement_le_absoluteMass
+#check rightHigherGaussianAbsoluteCapacity
+#check rightHigherGaussianSecondMoment_le_absoluteCapacity
+#check halfHeightCarlsonTargetExponent_pos
+#check polynomialWindowCapacity_threshold_iff
+#check halfHeightWindowCapacity_threshold_iff
+
+end PrimeNumberTheorem.VKEdgePiOverTwo
