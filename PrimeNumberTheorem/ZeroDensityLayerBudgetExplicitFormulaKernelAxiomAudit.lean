@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetExplicitFormulaKernel
+
+#print axioms PrimeNumberTheorem.pntExplicitFormulaZeroTerm_conj
+#print axioms PrimeNumberTheorem.pntFiniteZeroContribution_conj
+#print axioms PrimeNumberTheorem.pntRelativeZeroContribution_conj
+#print axioms PrimeNumberTheorem.PositiveZeroBucketInput.norm_full_pntFiniteZeroContribution_sum_le
+#print axioms PrimeNumberTheorem.PositiveZeroBucketInput.norm_full_pntRelativeZeroContribution_sum_le
