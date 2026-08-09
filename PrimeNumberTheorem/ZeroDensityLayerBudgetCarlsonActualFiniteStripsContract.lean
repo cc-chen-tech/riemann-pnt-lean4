@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonActualFiniteStrips
+
+/-!
+# Contract for finite actual Carlson zeta strips
+-/
+
+namespace PrimeNumberTheorem
+
+#check dynamicPositivePNTTailNorm
+#check dynamicPositivePNTTailNorm_le_sum_layerNorms
+#check targetZeroPowerAmplitude_eventually_pos
+#check actualZetaFiniteStrips_layerNormSum_targetAmplitudeNegligible
+#check actualZetaFiniteStrips_positiveTail_targetAmplitudeNegligible
+
+end PrimeNumberTheorem

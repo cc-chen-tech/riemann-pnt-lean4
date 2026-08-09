@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonCertificate
+
+/-!
+# Contract for actual Carlson finite-strip certificates
+-/
+
+namespace PrimeNumberTheorem
+
+#check ActualCarlsonFiniteStripCertificate
+#check ActualCarlsonFiniteStripCertificate.positiveTail_negligible
+#check ActualCarlsonFiniteStripCertificate.fullTail_negligible
+#check actualCarlsonTwoHeightPNTZeroTailControl
+#check actualCarlsonTwoHeightPNTZeroTail_combined_negligible
+
+end PrimeNumberTheorem

@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualZetaStripEndpointKernel
+
+/-!
+# Contract for actual zeta strip-endpoint kernels
+-/
+
+namespace PrimeNumberTheorem
+
+#check stripEndpointRelativeKernelBudget
+#check norm_pntRelativeSimpleZeroKernel_le_stripEndpoint
+#check stripEndpointRelativeKernelBudget_nonneg
+#check dynamicPositivePNTLayerNorm_le_carlson_mul_stripEndpoint
+#check dynamicPositivePNTLayerNorm_stripEndpointTargetLayerBudget
+
+end PrimeNumberTheorem

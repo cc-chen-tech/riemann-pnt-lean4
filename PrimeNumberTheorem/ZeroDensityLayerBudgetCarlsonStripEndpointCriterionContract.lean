@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonStripEndpointCriterion
+
+/-!
+# Contract for the Carlson strip-endpoint criterion
+-/
+
+namespace PrimeNumberTheorem
+
+#check targetAmplitudeStripEndpointExponent
+#check targetAmplitudeStripEndpointExponent_eq_base_add_width
+#check targetAmplitudeStripEndpointExponent_nonneg
+#check carlsonStripEndpointTargetThreshold
+#check exists_carlsonPolynomialHeight_stripEndpoint_decay_iff
+#check carlsonStripEndpointTargetThreshold_sub_classical
+#check carlsonClassicalTargetThreshold_lt_stripEndpoint
+
+end PrimeNumberTheorem

@@ -1,0 +1,14 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualFullTailConjugation
+
+/-!
+# Contract for full-tail conjugation
+-/
+
+namespace PrimeNumberTheorem
+
+#check dynamicFullPNTZeroTailNorm
+#check dynamicRealOrdinatePNTZeroTailNorm
+#check dynamicFullPNTZeroTailNorm_le_two_positive_add_real
+#check dynamicFullPNTZeroTailNorm_targetAmplitudeNegligible
+
+end PrimeNumberTheorem
