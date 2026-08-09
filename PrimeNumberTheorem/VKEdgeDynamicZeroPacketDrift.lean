@@ -1,0 +1,943 @@
+import PrimeNumberTheorem.VKEdgeDynamicZeroPacket
+
+open Complex
+open MeasureTheory Set
+open scoped BigOperators
+
+namespace PrimeNumberTheorem
+namespace VKEdgePiOverTwo
+
+noncomputable section
+
+/-!
+# Real-part drift for dynamic zeta-zero packets
+
+This module compares the actual normalized contribution of the finite-height
+complementary zeta packets with the exponential sum obtained by freezing every
+real part at the logarithmic center `a`.  The comparison is pointwise on the
+forward window and keeps the real-part band loss explicit.
+-/
+
+/-- The closed real-part band used to separate slowly drifting zeros from the
+remaining inspected finite-height zeros. -/
+def dynamicComplementRealBand
+    (beta delta : ℝ) (rho : ℂ) : Prop :=
+  beta - delta ≤ rho.re ∧ rho.re ≤ beta
+
+/-- The part of one inspected ordinate bucket lying in the chosen real-part
+band. -/
+noncomputable def dynamicComplementRealBandZeroPacket
+    (S : Finset ℂ) (T beta delta : ℝ) (n : ℕ) : Finset ℂ := by
+  classical
+  exact (dynamicComplementZeroPacket S T n).filter
+    (dynamicComplementRealBand beta delta)
+
+/-- The part of one inspected ordinate bucket lying outside the chosen
+real-part band. -/
+noncomputable def dynamicComplementOutsideRealBandZeroPacket
+    (S : Finset ℂ) (T beta delta : ℝ) (n : ℕ) : Finset ℂ := by
+  classical
+  exact (dynamicComplementZeroPacket S T n).filter
+    (fun rho => ¬ dynamicComplementRealBand beta delta rho)
+
+/-- Sigma-indexed union of the inspected packets lying in the real-part
+band. -/
+noncomputable def dynamicComplementRealBandPacketIndexSet
+    (S : Finset ℂ) (T beta delta : ℝ) (K : Finset ℕ) :
+    Finset (Σ _n : ℕ, ℂ) :=
+  K.sigma fun n => dynamicComplementRealBandZeroPacket S T beta delta n
+
+/-- Sigma-indexed union of the inspected packets lying outside the real-part
+band. -/
+noncomputable def dynamicComplementOutsideRealBandPacketIndexSet
+    (S : Finset ℂ) (T beta delta : ℝ) (K : Finset ℕ) :
+    Finset (Σ _n : ℕ, ℂ) :=
+  K.sigma fun n => dynamicComplementOutsideRealBandZeroPacket S T beta delta n
+
+/-- Frozen coefficient mass of one real-band packet. -/
+noncomputable def dynamicComplementRealBandPacketCoefficientMass
+    (S : Finset ℂ) (T beta a delta : ℝ) (n : ℕ) : ℝ :=
+  ∑ rho ∈ dynamicComplementRealBandZeroPacket S T beta delta n,
+    ‖finiteZeroClusterCoefficientAt
+      (analyticOrderNatAt riemannZeta) beta a rho‖
+
+/-- The actual moving contribution of the inspected complementary zeta
+packets.  The coefficient records analytic multiplicity and the value frozen
+at `a`; the drift restores the true real part at `y`. -/
+noncomputable def dynamicComplementMovingPacketContribution
+    (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ) (y : ℝ) : ℂ :=
+  MathlibAux.driftingExponentialPolynomial
+    (dynamicComplementPacketIndexSet S T K)
+    (fun z => finiteZeroClusterCoefficientAt
+      (analyticOrderNatAt riemannZeta) beta a z.2)
+    (fun z => z.2.im)
+    (fun z => z.2.re - beta)
+    a y
+
+/-- The actual moving contribution from the inspected zeros in the selected
+real-part band. -/
+noncomputable def dynamicComplementRealBandMovingPacketContribution
+    (S : Finset ℂ) (T beta a delta : ℝ) (K : Finset ℕ) (y : ℝ) : ℂ :=
+  MathlibAux.driftingExponentialPolynomial
+    (dynamicComplementRealBandPacketIndexSet S T beta delta K)
+    (fun z => finiteZeroClusterCoefficientAt
+      (analyticOrderNatAt riemannZeta) beta a z.2)
+    (fun z => z.2.im)
+    (fun z => z.2.re - beta)
+    a y
+
+/-- The actual moving contribution from the inspected zeros outside the
+selected real-part band. -/
+noncomputable def dynamicComplementOutsideRealBandMovingPacketContribution
+    (S : Finset ℂ) (T beta a delta : ℝ) (K : Finset ℕ) (y : ℝ) : ℂ :=
+  MathlibAux.driftingExponentialPolynomial
+    (dynamicComplementOutsideRealBandPacketIndexSet S T beta delta K)
+    (fun z => finiteZeroClusterCoefficientAt
+      (analyticOrderNatAt riemannZeta) beta a z.2)
+    (fun z => z.2.im)
+    (fun z => z.2.re - beta)
+    a y
+
+/-- The inspected moving contribution splits exactly into its real-band and
+outside-band parts. -/
+theorem dynamicComplementMovingPacketContribution_eq_realBand_add_outside
+    (S : Finset ℂ) (T beta a delta : ℝ) (K : Finset ℕ) (y : ℝ) :
+    dynamicComplementMovingPacketContribution S T beta a K y =
+      dynamicComplementRealBandMovingPacketContribution
+          S T beta a delta K y +
+        dynamicComplementOutsideRealBandMovingPacketContribution
+          S T beta a delta K y := by
+  classical
+  unfold dynamicComplementMovingPacketContribution
+    dynamicComplementRealBandMovingPacketContribution
+    dynamicComplementOutsideRealBandMovingPacketContribution
+    MathlibAux.driftingExponentialPolynomial
+    dynamicComplementRealBandPacketIndexSet
+    dynamicComplementOutsideRealBandPacketIndexSet
+    dynamicComplementRealBandZeroPacket
+    dynamicComplementOutsideRealBandZeroPacket
+    dynamicComplementPacketIndexSet
+  rw [Finset.sum_sigma, Finset.sum_sigma, Finset.sum_sigma]
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro n hn
+  simpa using
+    (Finset.sum_filter_add_sum_filter_not
+      (dynamicComplementZeroPacket S T n)
+      (dynamicComplementRealBand beta delta)
+      (fun rho =>
+        finiteZeroClusterCoefficientAt
+            (analyticOrderNatAt riemannZeta) beta a rho *
+          (Real.exp ((rho.re - beta) * (y - a)) : ℂ) *
+            Complex.exp (I * (rho.im * y)))).symm
+
+/-- The same actual packet collection with its real-part growth frozen at the
+logarithmic center `a`. -/
+noncomputable def dynamicComplementFrozenPacketContribution
+    (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ) (y : ℝ) : ℂ :=
+  MathlibAux.exponentialPolynomial
+    (dynamicComplementPacketIndexSet S T K)
+    (fun z => finiteZeroClusterCoefficientAt
+      (analyticOrderNatAt riemannZeta) beta a z.2)
+    (fun z => z.2.im)
+    y
+
+/-- Gaussian energy of the actual moving complementary packet collection on
+the forward centered window `[0, L]`. -/
+noncomputable def dynamicComplementForwardMovingGaussianSecondMoment
+    (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ)
+    (m L : ℝ) : ℝ :=
+  ∫ t : ℝ in Set.Icc 0 L,
+    normalizedGaussian m t *
+      ‖dynamicComplementMovingPacketContribution
+        S T beta a K (a + t)‖ ^ 2
+
+/-- Forward Gaussian energy of the inspected real-band moving packet. -/
+noncomputable def dynamicComplementRealBandForwardMovingGaussianSecondMoment
+    (S : Finset ℂ) (T beta a delta : ℝ) (K : Finset ℕ)
+    (m L : ℝ) : ℝ :=
+  ∫ t : ℝ in Set.Icc 0 L,
+    normalizedGaussian m t *
+      ‖dynamicComplementRealBandMovingPacketContribution
+        S T beta a delta K (a + t)‖ ^ 2
+
+/-- Forward Gaussian energy of the inspected outside-band moving packet. -/
+noncomputable def dynamicComplementOutsideRealBandForwardMovingGaussianSecondMoment
+    (S : Finset ℂ) (T beta a delta : ℝ) (K : Finset ℕ)
+    (m L : ℝ) : ℝ :=
+  ∫ t : ℝ in Set.Icc 0 L,
+    normalizedGaussian m t *
+      ‖dynamicComplementOutsideRealBandMovingPacketContribution
+        S T beta a delta K (a + t)‖ ^ 2
+
+private noncomputable def dynamicComplementRealBandExclusionSet
+    (S : Finset ℂ) (T beta delta : ℝ) : Finset ℂ := by
+  classical
+  exact S ∪ (nontrivialZerosFinset T).filter
+    (fun rho => ¬ dynamicComplementRealBand beta delta rho)
+
+private theorem dynamicComplementZeroPacket_realBandExclusionSet
+    (S : Finset ℂ) (T beta delta : ℝ) (n : ℕ) :
+    dynamicComplementZeroPacket
+        (dynamicComplementRealBandExclusionSet S T beta delta) T n =
+      dynamicComplementRealBandZeroPacket S T beta delta n := by
+  classical
+  ext rho
+  simp only [dynamicComplementZeroPacket,
+    dynamicComplementRealBandExclusionSet,
+    dynamicComplementRealBandZeroPacket,
+    Finset.mem_inter, Finset.mem_sdiff, Finset.mem_union,
+    Finset.mem_filter]
+  constructor
+  · rintro ⟨hbucket, hzero, hnot⟩
+    refine ⟨⟨hbucket, hzero, ?_⟩, ?_⟩
+    · intro hrhoS
+      exact hnot (Or.inl hrhoS)
+    · by_contra hout
+      exact hnot (Or.inr ⟨hzero, hout⟩)
+  · rintro ⟨⟨hbucket, hzero, hnotS⟩, hband⟩
+    refine ⟨hbucket, hzero, ?_⟩
+    rintro (hrhoS | ⟨_, hout⟩)
+    · exact hnotS hrhoS
+    · exact hout hband
+
+private theorem dynamicComplementPacketCoefficientMass_realBandExclusionSet
+    (S : Finset ℂ) (T beta a delta : ℝ) (n : ℕ) :
+    dynamicComplementPacketCoefficientMass
+        (dynamicComplementRealBandExclusionSet S T beta delta)
+        T beta a n =
+      dynamicComplementRealBandPacketCoefficientMass
+        S T beta a delta n := by
+  unfold dynamicComplementPacketCoefficientMass
+    dynamicComplementRealBandPacketCoefficientMass
+  rw [dynamicComplementZeroPacket_realBandExclusionSet]
+
+private theorem dynamicComplementPacketIndexSet_realBandExclusionSet
+    (S : Finset ℂ) (T beta delta : ℝ) (K : Finset ℕ) :
+    dynamicComplementPacketIndexSet
+        (dynamicComplementRealBandExclusionSet S T beta delta) T K =
+      dynamicComplementRealBandPacketIndexSet S T beta delta K := by
+  classical
+  unfold dynamicComplementPacketIndexSet
+    dynamicComplementRealBandPacketIndexSet
+  simp_rw [dynamicComplementZeroPacket_realBandExclusionSet]
+
+private theorem dynamicComplementMovingPacketContribution_realBandExclusionSet
+    (S : Finset ℂ) (T beta a delta : ℝ) (K : Finset ℕ) (y : ℝ) :
+    dynamicComplementMovingPacketContribution
+        (dynamicComplementRealBandExclusionSet S T beta delta)
+        T beta a K y =
+      dynamicComplementRealBandMovingPacketContribution
+        S T beta a delta K y := by
+  unfold dynamicComplementMovingPacketContribution
+    dynamicComplementRealBandMovingPacketContribution
+  rw [dynamicComplementPacketIndexSet_realBandExclusionSet]
+
+private theorem dynamicComplementForwardMovingGaussianSecondMoment_realBandExclusionSet
+    (S : Finset ℂ) (T beta a delta : ℝ) (K : Finset ℕ)
+    (m L : ℝ) :
+    dynamicComplementForwardMovingGaussianSecondMoment
+        (dynamicComplementRealBandExclusionSet S T beta delta)
+        T beta a K m L =
+      dynamicComplementRealBandForwardMovingGaussianSecondMoment
+        S T beta a delta K m L := by
+  unfold dynamicComplementForwardMovingGaussianSecondMoment
+    dynamicComplementRealBandForwardMovingGaussianSecondMoment
+  apply MeasureTheory.integral_congr_ae
+  filter_upwards with t
+  rw [dynamicComplementMovingPacketContribution_realBandExclusionSet]
+
+/-- The full inspected moving energy is bounded by twice the real-band energy
+plus twice the outside-band energy.  This is the quantitative interface at
+which a later explicit-formula argument must control the outside band. -/
+theorem dynamicComplementForwardMovingGaussianSecondMoment_le_realBand_add_outside
+    (S : Finset ℂ) (T beta a delta : ℝ) (K : Finset ℕ)
+    {m L : ℝ} (hm : 0 < m) :
+    dynamicComplementForwardMovingGaussianSecondMoment
+        S T beta a K m L ≤
+      2 * dynamicComplementRealBandForwardMovingGaussianSecondMoment
+          S T beta a delta K m L +
+        2 * dynamicComplementOutsideRealBandForwardMovingGaussianSecondMoment
+          S T beta a delta K m L := by
+  let weight : ℝ → ℝ := normalizedGaussian m
+  let whole : ℝ → ℂ := fun t =>
+    dynamicComplementMovingPacketContribution S T beta a K (a + t)
+  let band : ℝ → ℂ := fun t =>
+    dynamicComplementRealBandMovingPacketContribution
+      S T beta a delta K (a + t)
+  let outside : ℝ → ℂ := fun t =>
+    dynamicComplementOutsideRealBandMovingPacketContribution
+      S T beta a delta K (a + t)
+  have hweight : Continuous weight := by
+    dsimp [weight]
+    exact continuous_iff_continuousAt.mpr fun t =>
+      (hasDerivAt_normalizedGaussian hm t).continuousAt
+  have hwhole : Continuous whole := by
+    dsimp [whole, dynamicComplementMovingPacketContribution,
+      MathlibAux.driftingExponentialPolynomial]
+    fun_prop
+  have hband : Continuous band := by
+    dsimp [band, dynamicComplementRealBandMovingPacketContribution,
+      MathlibAux.driftingExponentialPolynomial]
+    fun_prop
+  have houtside : Continuous outside := by
+    dsimp [outside,
+      dynamicComplementOutsideRealBandMovingPacketContribution,
+      MathlibAux.driftingExponentialPolynomial]
+    fun_prop
+  have hwholeInt :
+      IntegrableOn (fun t => weight t * ‖whole t‖ ^ 2)
+        (Set.Icc 0 L) :=
+    (hweight.mul (hwhole.norm.pow 2)).continuousOn.integrableOn_compact
+      isCompact_Icc
+  have hbandInt :
+      IntegrableOn (fun t => weight t * ‖band t‖ ^ 2)
+        (Set.Icc 0 L) :=
+    (hweight.mul (hband.norm.pow 2)).continuousOn.integrableOn_compact
+      isCompact_Icc
+  have houtsideInt :
+      IntegrableOn (fun t => weight t * ‖outside t‖ ^ 2)
+        (Set.Icc 0 L) :=
+    (hweight.mul (houtside.norm.pow 2)).continuousOn.integrableOn_compact
+      isCompact_Icc
+  have hpoint (t : ℝ) :
+      weight t * ‖whole t‖ ^ 2 ≤
+        weight t * (2 * ‖band t‖ ^ 2 + 2 * ‖outside t‖ ^ 2) := by
+    have hsplit : whole t = band t + outside t := by
+      exact dynamicComplementMovingPacketContribution_eq_realBand_add_outside
+        S T beta a delta K (a + t)
+    have htriangle : ‖whole t‖ ≤ ‖band t‖ + ‖outside t‖ := by
+      rw [hsplit]
+      exact norm_add_le _ _
+    have hsquare :
+        ‖whole t‖ ^ 2 ≤ 2 * ‖band t‖ ^ 2 + 2 * ‖outside t‖ ^ 2 := by
+      nlinarith [norm_nonneg (whole t), norm_nonneg (band t),
+        norm_nonneg (outside t),
+        sq_nonneg (‖band t‖ - ‖outside t‖)]
+    exact mul_le_mul_of_nonneg_left hsquare
+      (normalizedGaussian_pos hm t).le
+  have hupperInt :
+      IntegrableOn
+        (fun t => weight t *
+          (2 * ‖band t‖ ^ 2 + 2 * ‖outside t‖ ^ 2))
+        (Set.Icc 0 L) := by
+    have hinside : Continuous (fun t : ℝ =>
+        2 * ‖band t‖ ^ 2 + 2 * ‖outside t‖ ^ 2) :=
+      (continuous_const.mul (hband.norm.pow 2)).add
+        (continuous_const.mul (houtside.norm.pow 2))
+    exact (hweight.mul hinside).continuousOn.integrableOn_compact
+      isCompact_Icc
+  have hmono :
+      (∫ t : ℝ in Set.Icc 0 L, weight t * ‖whole t‖ ^ 2) ≤
+        ∫ t : ℝ in Set.Icc 0 L,
+          weight t *
+            (2 * ‖band t‖ ^ 2 + 2 * ‖outside t‖ ^ 2) :=
+    setIntegral_mono_on hwholeInt hupperInt measurableSet_Icc
+      (fun t _ => hpoint t)
+  have hsplit :
+      (∫ t : ℝ in Set.Icc 0 L,
+          weight t *
+            (2 * ‖band t‖ ^ 2 + 2 * ‖outside t‖ ^ 2)) =
+        2 * (∫ t : ℝ in Set.Icc 0 L, weight t * ‖band t‖ ^ 2) +
+          2 * (∫ t : ℝ in Set.Icc 0 L,
+            weight t * ‖outside t‖ ^ 2) := by
+    calc
+      _ = ∫ t : ℝ in Set.Icc 0 L,
+          (2 * (weight t * ‖band t‖ ^ 2) +
+            2 * (weight t * ‖outside t‖ ^ 2)) := by
+        apply MeasureTheory.integral_congr_ae
+        filter_upwards with t
+        ring
+      _ =
+          (∫ t : ℝ in Set.Icc 0 L,
+            2 * (weight t * ‖band t‖ ^ 2)) +
+          ∫ t : ℝ in Set.Icc 0 L,
+            2 * (weight t * ‖outside t‖ ^ 2) :=
+        MeasureTheory.integral_add
+          (hbandInt.const_mul 2) (houtsideInt.const_mul 2)
+      _ = _ := by
+        rw [MeasureTheory.integral_const_mul,
+          MeasureTheory.integral_const_mul]
+  rw [hsplit] at hmono
+  simpa [dynamicComplementForwardMovingGaussianSecondMoment,
+    dynamicComplementRealBandForwardMovingGaussianSecondMoment,
+    dynamicComplementOutsideRealBandForwardMovingGaussianSecondMoment,
+    weight, whole, band, outside] using hmono
+
+/-- On a forward logarithmic window, zeros in the real-part band
+`[beta - delta, beta]` differ from their frozen packet model by the explicit
+drift factor `1 - exp (-delta * (y - a))`. -/
+theorem norm_dynamicComplementMovingPacketContribution_sub_frozen_le
+    {S : Finset ℂ} {T beta a delta y : ℝ} {K : Finset ℕ}
+    (hdelta : 0 ≤ delta)
+    (hay : a ≤ y)
+    (hband : ∀ n ∈ K, ∀ rho ∈ dynamicComplementZeroPacket S T n,
+      beta - delta ≤ rho.re ∧ rho.re ≤ beta) :
+    ‖dynamicComplementMovingPacketContribution S T beta a K y -
+        dynamicComplementFrozenPacketContribution S T beta a K y‖ ≤
+      (1 - Real.exp (-delta * (y - a))) *
+        ∑ n ∈ K, dynamicComplementPacketCoefficientMass S T beta a n := by
+  classical
+  let I := dynamicComplementPacketIndexSet S T K
+  let coeff : (Σ _n : ℕ, ℂ) → ℂ := fun z =>
+    finiteZeroClusterCoefficientAt
+      (analyticOrderNatAt riemannZeta) beta a z.2
+  let freq : (Σ _n : ℕ, ℂ) → ℝ := fun z => z.2.im
+  let drift : (Σ _n : ℕ, ℂ) → ℝ := fun z => z.2.re - beta
+  have hdrift : ∀ z ∈ I, -delta ≤ drift z ∧ drift z ≤ 0 := by
+    intro z hz
+    have hz' :
+        z.1 ∈ K ∧ z.2 ∈ dynamicComplementZeroPacket S T z.1 := by
+      simpa [I, dynamicComplementPacketIndexSet] using
+        (Finset.mem_sigma.mp hz)
+    have hb := hband z.1 hz'.1 z.2 hz'.2
+    dsimp [drift]
+    constructor <;> linarith
+  have hmass :
+      (∑ z ∈ I, ‖coeff z‖) =
+        ∑ n ∈ K, dynamicComplementPacketCoefficientMass S T beta a n := by
+    dsimp [I, coeff, dynamicComplementPacketIndexSet,
+      dynamicComplementPacketCoefficientMass]
+    rw [Finset.sum_sigma]
+  have h :=
+    MathlibAux.norm_driftingExponentialPolynomial_sub_exponentialPolynomial_le
+      (S := I) (coeff := coeff) (freq := freq) (drift := drift)
+      hdelta hay hdrift
+  rw [hmass] at h
+  simpa [dynamicComplementMovingPacketContribution,
+    dynamicComplementFrozenPacketContribution, I, coeff, freq, drift] using h
+
+private theorem dynamicComplementFrozenPacketContribution_centered
+    (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ) (t : ℝ) :
+    dynamicComplementFrozenPacketContribution S T beta a K (a + t) =
+      DirichletPolynomial.finiteExponentialSum
+        (dynamicComplementPacketIndexSet S T K)
+        (DirichletPolynomial.phaseTwist
+          (fun z => finiteZeroClusterCoefficientAt
+            (analyticOrderNatAt riemannZeta) beta a z.2)
+        (fun z => z.2.im) a)
+        (fun z => z.2.im) t := by
+  classical
+  change
+    DirichletPolynomial.finiteExponentialSum
+        (dynamicComplementPacketIndexSet S T K)
+        (fun z => finiteZeroClusterCoefficientAt
+          (analyticOrderNatAt riemannZeta) beta a z.2)
+        (fun z => z.2.im) (a + t) =
+      _
+  exact
+    (finiteExponentialSum_phaseTwist_eq_shift
+      (dynamicComplementPacketIndexSet S T K)
+      (fun z => finiteZeroClusterCoefficientAt
+        (analyticOrderNatAt riemannZeta) beta a z.2)
+      (fun z => z.2.im) a t).symm
+
+private theorem norm_finiteExponentialSum_le_sum_norm
+    {ι : Type*} [DecidableEq ι]
+    (I₀ : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) (t : ℝ) :
+    ‖DirichletPolynomial.finiteExponentialSum I₀ c omega t‖ ≤
+      ∑ i ∈ I₀, ‖c i‖ := by
+  unfold DirichletPolynomial.finiteExponentialSum
+  calc
+    ‖∑ i ∈ I₀, c i * Complex.exp (Complex.I * (omega i * t))‖ ≤
+        ∑ i ∈ I₀,
+          ‖c i * Complex.exp (Complex.I * (omega i * t))‖ :=
+      norm_sum_le _ _
+    _ = ∑ i ∈ I₀, ‖c i‖ := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [norm_mul, Complex.norm_exp]
+      simp
+
+private theorem integrable_centeredFrozenGaussianIntegrand
+    (S : Finset ℂ) (T beta a : ℝ) (K : Finset ℕ)
+    {m : ℝ} (hm : 0 < m) :
+    Integrable (fun t : ℝ =>
+      normalizedGaussian m t *
+        ‖dynamicComplementFrozenPacketContribution
+          S T beta a K (a + t)‖ ^ 2) := by
+  classical
+  let mass : ℝ :=
+    ∑ n ∈ K, dynamicComplementPacketCoefficientMass S T beta a n
+  have hmajor :
+      Integrable (fun t : ℝ => normalizedGaussian m t * mass ^ 2) :=
+    by
+      simpa [mul_comm] using
+        (integrable_normalizedGaussian hm).const_mul (mass ^ 2)
+  apply hmajor.mono'
+  · have hweight : Continuous (normalizedGaussian m) :=
+      continuous_iff_continuousAt.mpr fun t =>
+        (hasDerivAt_normalizedGaussian hm t).continuousAt
+    have hfrozen : Continuous (fun t : ℝ =>
+        dynamicComplementFrozenPacketContribution
+          S T beta a K (a + t)) := by
+      unfold dynamicComplementFrozenPacketContribution
+        MathlibAux.exponentialPolynomial
+      fun_prop
+    exact (hweight.mul (hfrozen.norm.pow 2)).aestronglyMeasurable
+  filter_upwards with t
+  have hsum :
+      ‖dynamicComplementFrozenPacketContribution S T beta a K (a + t)‖ ≤
+        mass := by
+    have h :=
+      norm_finiteExponentialSum_le_sum_norm
+        (dynamicComplementPacketIndexSet S T K)
+        (fun z => finiteZeroClusterCoefficientAt
+          (analyticOrderNatAt riemannZeta) beta a z.2)
+        (fun z => z.2.im) (a + t)
+    change
+      ‖DirichletPolynomial.finiteExponentialSum
+        (dynamicComplementPacketIndexSet S T K)
+        (fun z => finiteZeroClusterCoefficientAt
+          (analyticOrderNatAt riemannZeta) beta a z.2)
+        (fun z => z.2.im) (a + t)‖ ≤ mass
+    calc
+      _ ≤ ∑ z ∈ dynamicComplementPacketIndexSet S T K,
+          ‖finiteZeroClusterCoefficientAt
+            (analyticOrderNatAt riemannZeta) beta a z.2‖ := h
+      _ = mass := by
+        dsimp [mass, dynamicComplementPacketIndexSet,
+          dynamicComplementPacketCoefficientMass]
+        rw [Finset.sum_sigma]
+  have hmass : 0 ≤ mass := by
+    dsimp [mass]
+    apply Finset.sum_nonneg
+    intro n hn
+    unfold dynamicComplementPacketCoefficientMass
+    positivity
+  have hsquare :
+      ‖dynamicComplementFrozenPacketContribution
+          S T beta a K (a + t)‖ ^ 2 ≤ mass ^ 2 :=
+    pow_le_pow_left₀ (norm_nonneg _) hsum 2
+  rw [Real.norm_eq_abs, abs_of_nonneg
+    (mul_nonneg (normalizedGaussian_pos hm t).le (sq_nonneg _))]
+  exact mul_le_mul_of_nonneg_left hsquare
+    (normalizedGaussian_pos hm t).le
+
+/-- On a forward centered Gaussian window, the actual moving packet energy is
+bounded by twice the centered frozen energy plus the explicit real-part drift
+loss.  No separation of ordinates is required. -/
+theorem dynamicComplementForwardMovingGaussianSecondMoment_le_centeredFrozen
+    {S : Finset ℂ} {T beta a m L delta : ℝ} {K : Finset ℕ}
+    (hm : 0 < m)
+    (hL : 0 ≤ L)
+    (hdelta : 0 ≤ delta)
+    (hband : ∀ n ∈ K, ∀ rho ∈ dynamicComplementZeroPacket S T n,
+      beta - delta ≤ rho.re ∧ rho.re ≤ beta) :
+    dynamicComplementForwardMovingGaussianSecondMoment
+        S T beta a K m L ≤
+      2 * dynamicComplementCenteredFrozenGaussianSecondMoment
+          S T beta a K m +
+        2 * (1 - Real.exp (-delta * L)) ^ 2 *
+          (∑ n ∈ K,
+            dynamicComplementPacketCoefficientMass S T beta a n) ^ 2 := by
+  classical
+  let moving : ℝ → ℂ := fun t =>
+    dynamicComplementMovingPacketContribution S T beta a K (a + t)
+  let frozen : ℝ → ℂ := fun t =>
+    dynamicComplementFrozenPacketContribution S T beta a K (a + t)
+  let weight : ℝ → ℝ := normalizedGaussian m
+  let mass : ℝ :=
+    ∑ n ∈ K, dynamicComplementPacketCoefficientMass S T beta a n
+  let q : ℝ := 1 - Real.exp (-delta * L)
+  have hweightContinuous : Continuous weight := by
+    dsimp [weight]
+    exact continuous_iff_continuousAt.mpr fun t =>
+      (hasDerivAt_normalizedGaussian hm t).continuousAt
+  have hmovingContinuous : Continuous moving := by
+    dsimp [moving, dynamicComplementMovingPacketContribution,
+      MathlibAux.driftingExponentialPolynomial]
+    fun_prop
+  have hfrozenContinuous : Continuous frozen := by
+    dsimp [frozen, dynamicComplementFrozenPacketContribution,
+      MathlibAux.exponentialPolynomial]
+    fun_prop
+  have hq : 0 ≤ q := by
+    dsimp [q]
+    exact sub_nonneg.mpr
+      (Real.exp_le_one_iff.mpr
+        (mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hdelta) hL))
+  have hmass : 0 ≤ mass := by
+    dsimp [mass]
+    apply Finset.sum_nonneg
+    intro n hn
+    unfold dynamicComplementPacketCoefficientMass
+    positivity
+  have hclose (t : ℝ) (ht : t ∈ Set.Icc 0 L) :
+      ‖moving t - frozen t‖ ≤ q * mass := by
+    have hpoint :=
+      norm_dynamicComplementMovingPacketContribution_sub_frozen_le
+        (S := S) (T := T) (beta := beta) (a := a)
+        (delta := delta) (y := a + t) (K := K)
+        hdelta (by linarith [ht.1]) hband
+    have hqt :
+        1 - Real.exp (-delta * ((a + t) - a)) ≤ q := by
+      have hexp :
+          Real.exp (-delta * L) ≤ Real.exp (-delta * t) := by
+        apply Real.exp_le_exp.mpr
+        exact mul_le_mul_of_nonpos_left ht.2 (neg_nonpos.mpr hdelta)
+      dsimp [q]
+      convert (sub_le_sub_left hexp 1) using 1 <;> ring
+    exact hpoint.trans
+      (mul_le_mul_of_nonneg_right hqt hmass)
+  have hpoint (t : ℝ) (ht : t ∈ Set.Icc 0 L) :
+      weight t * ‖moving t‖ ^ 2 ≤
+        weight t *
+          (2 * ‖frozen t‖ ^ 2 + 2 * (q * mass) ^ 2) := by
+    have htriangle :
+        ‖moving t‖ ≤ ‖frozen t‖ + q * mass := by
+      calc
+        ‖moving t‖ =
+            ‖(moving t - frozen t) + frozen t‖ := by ring_nf
+        _ ≤ ‖moving t - frozen t‖ + ‖frozen t‖ := norm_add_le _ _
+        _ ≤ q * mass + ‖frozen t‖ :=
+          add_le_add_left (hclose t ht) _
+        _ = ‖frozen t‖ + q * mass := by ring
+    have hsquare :
+        ‖moving t‖ ^ 2 ≤
+          2 * ‖frozen t‖ ^ 2 + 2 * (q * mass) ^ 2 := by
+      nlinarith [norm_nonneg (moving t), norm_nonneg (frozen t),
+        mul_nonneg hq hmass,
+        sq_nonneg (‖frozen t‖ - q * mass)]
+    exact mul_le_mul_of_nonneg_left hsquare
+      (normalizedGaussian_pos hm t).le
+  have hmovingInt :
+      IntegrableOn (fun t => weight t * ‖moving t‖ ^ 2)
+        (Set.Icc 0 L) := by
+    exact (hweightContinuous.mul
+      (hmovingContinuous.norm.pow 2)).continuousOn.integrableOn_compact
+        isCompact_Icc
+  have hfrozenInt :
+      IntegrableOn (fun t => weight t * ‖frozen t‖ ^ 2)
+        (Set.Icc 0 L) := by
+    exact (hweightContinuous.mul
+      (hfrozenContinuous.norm.pow 2)).continuousOn.integrableOn_compact
+        isCompact_Icc
+  have hconstInt :
+      IntegrableOn (fun t => weight t * (q * mass) ^ 2)
+        (Set.Icc 0 L) := by
+    simpa [weight, mul_comm] using
+      ((integrable_normalizedGaussian hm).const_mul
+        ((q * mass) ^ 2)).integrableOn
+  have hupperInt :
+      IntegrableOn
+        (fun t => weight t *
+          (2 * ‖frozen t‖ ^ 2 + 2 * (q * mass) ^ 2))
+        (Set.Icc 0 L) := by
+    have hinside : Continuous (fun t : ℝ =>
+        2 * ‖frozen t‖ ^ 2 + 2 * (q * mass) ^ 2) :=
+      (continuous_const.mul (hfrozenContinuous.norm.pow 2)).add
+        continuous_const
+    exact (hweightContinuous.mul hinside).continuousOn.integrableOn_compact
+      isCompact_Icc
+  have hmono :
+      (∫ t : ℝ in Set.Icc 0 L, weight t * ‖moving t‖ ^ 2) ≤
+        ∫ t : ℝ in Set.Icc 0 L,
+          weight t *
+            (2 * ‖frozen t‖ ^ 2 + 2 * (q * mass) ^ 2) :=
+    setIntegral_mono_on hmovingInt hupperInt measurableSet_Icc hpoint
+  have hsplit :
+      (∫ t : ℝ in Set.Icc 0 L,
+          weight t *
+            (2 * ‖frozen t‖ ^ 2 + 2 * (q * mass) ^ 2)) =
+        2 * (∫ t : ℝ in Set.Icc 0 L,
+          weight t * ‖frozen t‖ ^ 2) +
+        2 * (q * mass) ^ 2 *
+          (∫ t : ℝ in Set.Icc 0 L, weight t) := by
+    calc
+      (∫ t : ℝ in Set.Icc 0 L,
+          weight t *
+            (2 * ‖frozen t‖ ^ 2 + 2 * (q * mass) ^ 2)) =
+          ∫ t : ℝ in Set.Icc 0 L,
+            (2 * (weight t * ‖frozen t‖ ^ 2) +
+              2 * (weight t * (q * mass) ^ 2)) := by
+        apply MeasureTheory.integral_congr_ae
+        filter_upwards with t
+        ring
+      _ =
+          (∫ t : ℝ in Set.Icc 0 L,
+            2 * (weight t * ‖frozen t‖ ^ 2)) +
+          ∫ t : ℝ in Set.Icc 0 L,
+            2 * (weight t * (q * mass) ^ 2) :=
+        MeasureTheory.integral_add
+          (hfrozenInt.const_mul 2) (hconstInt.const_mul 2)
+      _ =
+          2 * (∫ t : ℝ in Set.Icc 0 L,
+            weight t * ‖frozen t‖ ^ 2) +
+          2 * (q * mass) ^ 2 *
+            (∫ t : ℝ in Set.Icc 0 L, weight t) := by
+        rw [MeasureTheory.integral_const_mul,
+          MeasureTheory.integral_const_mul,
+          MeasureTheory.integral_mul_const]
+        ring
+  have hweightMass :
+      (∫ t : ℝ in Set.Icc 0 L, weight t) ≤ 1 := by
+    calc
+      (∫ t : ℝ in Set.Icc 0 L, weight t) ≤ ∫ t : ℝ, weight t :=
+        setIntegral_le_integral (integrable_normalizedGaussian hm)
+          (Filter.Eventually.of_forall fun t =>
+            (normalizedGaussian_pos hm t).le)
+      _ = 1 := integral_normalizedGaussian hm
+  have hfrozenGlobal :
+      Integrable (fun t : ℝ => weight t * ‖frozen t‖ ^ 2) := by
+    simpa [weight, frozen] using
+      integrable_centeredFrozenGaussianIntegrand S T beta a K hm
+  have hfrozenSet :
+      (∫ t : ℝ in Set.Icc 0 L, weight t * ‖frozen t‖ ^ 2) ≤
+        dynamicComplementCenteredFrozenGaussianSecondMoment
+          S T beta a K m := by
+    calc
+      (∫ t : ℝ in Set.Icc 0 L, weight t * ‖frozen t‖ ^ 2) ≤
+          ∫ t : ℝ, weight t * ‖frozen t‖ ^ 2 :=
+        setIntegral_le_integral hfrozenGlobal
+          (Filter.Eventually.of_forall fun t =>
+            mul_nonneg (normalizedGaussian_pos hm t).le (sq_nonneg _))
+      _ = dynamicComplementCenteredFrozenGaussianSecondMoment
+          S T beta a K m := by
+        unfold dynamicComplementCenteredFrozenGaussianSecondMoment
+        apply MeasureTheory.integral_congr_ae
+        filter_upwards with t
+        dsimp [weight, frozen]
+        rw [dynamicComplementFrozenPacketContribution_centered]
+  rw [hsplit] at hmono
+  dsimp [dynamicComplementForwardMovingGaussianSecondMoment,
+    moving, frozen, weight, q, mass] at hmono ⊢
+  nlinarith [hfrozenSet, hweightMass, sq_nonneg (q * mass)]
+
+/-- A genuinely large Gaussian `L²` contribution from the actual moving
+finite-height complement forces a new nonempty packet of actual zeta zeros.
+The displayed drift budget is proved above; it is not an external
+small-complement assumption. -/
+theorem exists_absorbableDynamicComplementPacket_of_forwardMovingGaussianL2_gt
+    {S : Finset ℂ} {T beta a eta m L delta : ℝ} {K : Finset ℕ}
+    (heta : 0 < eta)
+    (hm : 1 ≤ m)
+    (hL : 0 ≤ L)
+    (hdelta : 0 ≤ delta)
+    (hK : K.Nonempty)
+    (hband : ∀ n ∈ K, ∀ rho ∈ dynamicComplementZeroPacket S T n,
+      beta - delta ≤ rho.re ∧ rho.re ≤ beta)
+    (hlarge :
+      2 * eta +
+          2 * (1 - Real.exp (-delta * L)) ^ 2 *
+            (∑ n ∈ K,
+              dynamicComplementPacketCoefficientMass S T beta a n) ^ 2 <
+        dynamicComplementForwardMovingGaussianSecondMoment
+          S T beta a K m L) :
+    ∃ n ∈ K,
+      eta / (MathlibAux.gaussianBucketSchurConstant * K.card) <
+          dynamicComplementPacketCoefficientMass S T beta a n ^ 2 ∧
+        (dynamicComplementZeroPacket S T n).Nonempty ∧
+          Disjoint S (dynamicComplementZeroPacket S T n) ∧
+            dynamicComplementZeroPacket S T n ⊆
+              nontrivialZerosFinset T ∧
+              S.card < (S ∪ dynamicComplementZeroPacket S T n).card := by
+  have hm0 : 0 < m := lt_of_lt_of_le zero_lt_one hm
+  have hupper :=
+    dynamicComplementForwardMovingGaussianSecondMoment_le_centeredFrozen
+      (S := S) (T := T) (beta := beta) (a := a) (m := m)
+      (L := L) (delta := delta) (K := K)
+      hm0 hL hdelta hband
+  have henergy :
+      eta <
+        dynamicComplementCenteredFrozenGaussianSecondMoment
+          S T beta a K m := by
+    nlinarith
+  exact
+    exists_absorbableDynamicComplementPacket_of_centeredFrozenGaussianL2_gt
+      heta hm hK henergy
+
+/-- A large moving `L²` contribution from the explicitly filtered real band
+forces a new nonempty packet of actual zeta zeros in that band.  Unlike the
+generic theorem above, this endpoint has no hypothesis asserting that every
+zero in an entire ordinate bucket lies in the band. -/
+theorem
+    exists_absorbableDynamicComplementRealBandPacket_of_forwardMovingGaussianL2_gt
+    {S : Finset ℂ} {T beta a eta m L delta : ℝ} {K : Finset ℕ}
+    (heta : 0 < eta)
+    (hm : 1 ≤ m)
+    (hL : 0 ≤ L)
+    (hdelta : 0 ≤ delta)
+    (hK : K.Nonempty)
+    (hlarge :
+      2 * eta +
+          2 * (1 - Real.exp (-delta * L)) ^ 2 *
+            (∑ n ∈ K,
+              dynamicComplementRealBandPacketCoefficientMass
+                S T beta a delta n) ^ 2 <
+        dynamicComplementRealBandForwardMovingGaussianSecondMoment
+          S T beta a delta K m L) :
+    ∃ n ∈ K,
+      eta / (MathlibAux.gaussianBucketSchurConstant * K.card) <
+          dynamicComplementRealBandPacketCoefficientMass
+            S T beta a delta n ^ 2 ∧
+        (dynamicComplementRealBandZeroPacket
+          S T beta delta n).Nonempty ∧
+          Disjoint S
+            (dynamicComplementRealBandZeroPacket
+              S T beta delta n) ∧
+            dynamicComplementRealBandZeroPacket
+                S T beta delta n ⊆
+              nontrivialZerosFinset T ∧
+              S.card <
+                (S ∪ dynamicComplementRealBandZeroPacket
+                  S T beta delta n).card ∧
+                ∀ rho ∈ dynamicComplementRealBandZeroPacket
+                    S T beta delta n,
+                  dynamicComplementRealBand beta delta rho := by
+  classical
+  let Sband :=
+    dynamicComplementRealBandExclusionSet S T beta delta
+  have hband :
+      ∀ n ∈ K, ∀ rho ∈ dynamicComplementZeroPacket Sband T n,
+        beta - delta ≤ rho.re ∧ rho.re ≤ beta := by
+    intro n hn rho hrho
+    change rho ∈ dynamicComplementZeroPacket
+      (dynamicComplementRealBandExclusionSet S T beta delta) T n at hrho
+    rw [dynamicComplementZeroPacket_realBandExclusionSet] at hrho
+    have hrho' :
+        rho ∈ dynamicComplementRealBandZeroPacket
+          S T beta delta n := by
+      exact hrho
+    exact (Finset.mem_filter.mp hrho').2
+  have hlarge' :
+      2 * eta +
+          2 * (1 - Real.exp (-delta * L)) ^ 2 *
+            (∑ n ∈ K,
+              dynamicComplementPacketCoefficientMass
+                Sband T beta a n) ^ 2 <
+        dynamicComplementForwardMovingGaussianSecondMoment
+          Sband T beta a K m L := by
+    simpa [Sband,
+      dynamicComplementPacketCoefficientMass_realBandExclusionSet,
+      dynamicComplementForwardMovingGaussianSecondMoment_realBandExclusionSet]
+      using hlarge
+  obtain ⟨n, hnK, hmass, hnonempty, hdisjointBand,
+      hsubset, hcardBand⟩ :=
+    exists_absorbableDynamicComplementPacket_of_forwardMovingGaussianL2_gt
+      (S := Sband) (T := T) (beta := beta) (a := a)
+      (eta := eta) (m := m) (L := L) (delta := delta) (K := K)
+      heta hm hL hdelta hK hband hlarge'
+  have hpacket :
+      dynamicComplementZeroPacket Sband T n =
+        dynamicComplementRealBandZeroPacket S T beta delta n := by
+    simpa [Sband] using
+      dynamicComplementZeroPacket_realBandExclusionSet
+        S T beta delta n
+  have hmass' :
+      eta / (MathlibAux.gaussianBucketSchurConstant * K.card) <
+        dynamicComplementRealBandPacketCoefficientMass
+          S T beta a delta n ^ 2 := by
+    simpa [Sband,
+      dynamicComplementPacketCoefficientMass_realBandExclusionSet]
+      using hmass
+  have hnonempty' :
+      (dynamicComplementRealBandZeroPacket
+        S T beta delta n).Nonempty := by
+    rwa [hpacket] at hnonempty
+  have hdisjoint :
+      Disjoint S
+        (dynamicComplementRealBandZeroPacket
+          S T beta delta n) := by
+    rw [Finset.disjoint_left]
+    intro rho hrhoS hrhoPacket
+    have hrhoSband : rho ∈ Sband := by
+      exact Finset.mem_union_left _ hrhoS
+    exact (Finset.disjoint_left.mp hdisjointBand)
+      hrhoSband (hpacket ▸ hrhoPacket)
+  have hsubset' :
+      dynamicComplementRealBandZeroPacket
+          S T beta delta n ⊆
+        nontrivialZerosFinset T := by
+    simpa [hpacket] using hsubset
+  have hcardUnion :
+      (S ∪ dynamicComplementRealBandZeroPacket
+        S T beta delta n).card =
+        S.card +
+          (dynamicComplementRealBandZeroPacket
+            S T beta delta n).card :=
+    Finset.card_union_of_disjoint hdisjoint
+  have hcard :
+      S.card <
+        (S ∪ dynamicComplementRealBandZeroPacket
+          S T beta delta n).card := by
+    have hcardPacket :
+        0 <
+          (dynamicComplementRealBandZeroPacket
+            S T beta delta n).card :=
+      hnonempty'.card_pos
+    rw [hcardUnion]
+    omega
+  have hrealBand :
+      ∀ rho ∈ dynamicComplementRealBandZeroPacket
+          S T beta delta n,
+        dynamicComplementRealBand beta delta rho := by
+    intro rho hrho
+    exact (Finset.mem_filter.mp hrho).2
+  exact ⟨n, hnK, hmass', hnonempty', hdisjoint, hsubset',
+    hcard, hrealBand⟩
+
+/-- If the full inspected moving energy is large after paying both the
+real-part drift budget and the exact outside-band Gaussian energy, then one
+new real-band packet can be absorbed.  Once the full-energy lower bound has
+been established, the additional input exposed by this reduction is an upper
+bound for the displayed outside-band energy. -/
+theorem
+    exists_absorbableDynamicComplementRealBandPacket_of_fullMovingGaussianL2_gt
+    {S : Finset ℂ} {T beta a eta m L delta : ℝ} {K : Finset ℕ}
+    (heta : 0 < eta)
+    (hm : 1 ≤ m)
+    (hL : 0 ≤ L)
+    (hdelta : 0 ≤ delta)
+    (hK : K.Nonempty)
+    (hlarge :
+      2 *
+          (2 * eta +
+            2 * (1 - Real.exp (-delta * L)) ^ 2 *
+              (∑ n ∈ K,
+                dynamicComplementRealBandPacketCoefficientMass
+                  S T beta a delta n) ^ 2) +
+          2 *
+            dynamicComplementOutsideRealBandForwardMovingGaussianSecondMoment
+              S T beta a delta K m L <
+        dynamicComplementForwardMovingGaussianSecondMoment
+          S T beta a K m L) :
+    ∃ n ∈ K,
+      eta / (MathlibAux.gaussianBucketSchurConstant * K.card) <
+          dynamicComplementRealBandPacketCoefficientMass
+            S T beta a delta n ^ 2 ∧
+        (dynamicComplementRealBandZeroPacket
+          S T beta delta n).Nonempty ∧
+          Disjoint S
+            (dynamicComplementRealBandZeroPacket
+              S T beta delta n) ∧
+            dynamicComplementRealBandZeroPacket
+                S T beta delta n ⊆
+              nontrivialZerosFinset T ∧
+              S.card <
+                (S ∪ dynamicComplementRealBandZeroPacket
+                  S T beta delta n).card ∧
+                ∀ rho ∈ dynamicComplementRealBandZeroPacket
+                    S T beta delta n,
+                  dynamicComplementRealBand beta delta rho := by
+  have hm0 : 0 < m := lt_of_lt_of_le zero_lt_one hm
+  have hupper :=
+    dynamicComplementForwardMovingGaussianSecondMoment_le_realBand_add_outside
+      S T beta a delta K (m := m) (L := L) hm0
+  have hbandLarge :
+      2 * eta +
+          2 * (1 - Real.exp (-delta * L)) ^ 2 *
+            (∑ n ∈ K,
+              dynamicComplementRealBandPacketCoefficientMass
+                S T beta a delta n) ^ 2 <
+        dynamicComplementRealBandForwardMovingGaussianSecondMoment
+          S T beta a delta K m L := by
+    nlinarith
+  exact
+    exists_absorbableDynamicComplementRealBandPacket_of_forwardMovingGaussianL2_gt
+      heta hm hL hdelta hK hbandLarge
+
+end
+
+end VKEdgePiOverTwo
+end PrimeNumberTheorem
