@@ -2,7 +2,7 @@ import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonUnified
 
 namespace PrimeNumberTheorem
 
-example
+noncomputable example
     {ι : Type*} [DecidableEq ι]
     {upperError lowerError main remainder : ℝ → ℝ}
     {cost : ℝ → ℝ → ℝ} {grid : DynamicFiniteHeightGrid}

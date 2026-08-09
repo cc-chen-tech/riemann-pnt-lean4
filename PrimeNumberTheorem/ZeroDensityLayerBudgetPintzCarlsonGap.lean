@@ -118,9 +118,20 @@ theorem tendsto_pintzCarlsonGap_rpow_mul_exp
   refine
     (hreal.comp tendsto_pintzCarlsonSqrtLogScale_atTop).congr' ?_
   filter_upwards with x
-  congr 2
-  dsimp [d]
-  ring
+  have harg :
+      -d * pintzCarlsonSqrtLogScale x =
+        (a * k - 2 * Real.sqrt c) *
+          pintzCarlsonSqrtLogScale x := by
+    dsimp [d]
+    ring
+  change
+    pintzCarlsonSqrtLogScale x ^ p *
+        Real.exp (-d * pintzCarlsonSqrtLogScale x) =
+      pintzCarlsonSqrtLogScale x ^ p *
+        Real.exp
+          ((a * k - 2 * Real.sqrt c) *
+            pintzCarlsonSqrtLogScale x)
+  rw [harg]
 
 /-- Carlson's classical fixed-strip exponent inserted into the gap criterion.
 This is the exact admissible-rate inequality for the power part of the
@@ -154,8 +165,9 @@ theorem tendsto_const_mul_carlsonExponent_pintzGap
               (((4 * sigma * (1 - sigma)) * k -
                   2 * Real.sqrt c) *
                 pintzCarlsonSqrtLogScale x)))
-      atTop (𝓝 0) :=
-  (tendsto_carlsonExponent_pintzGap p sigma k c hgap).const_mul C
+      atTop (𝓝 0) := by
+  simpa only [mul_zero] using
+    (tendsto_carlsonExponent_pintzGap p sigma k c hgap).const_mul C
 
 /-- The fourth logarithmic power in Carlson's classical majorant, represented
 as a fixed fourth power of the square-root logarithmic scale, is absorbed by
@@ -216,7 +228,9 @@ theorem exists_pintzConstant_carlsonWeightedKernel_tendsto :
       (a := 4 * sigma * (1 - sigma))
       (k := k)
       (c := c)
-      (fun x => by positivity)
+      (fun x => by
+        apply mul_nonneg hC
+        exact Real.rpow_nonneg (Real.sqrt_nonneg _) _)
       henvelope
       hmodel
   simpa only [mul_assoc] using hweighted

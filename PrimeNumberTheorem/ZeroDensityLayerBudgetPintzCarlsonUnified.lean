@@ -1,5 +1,7 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzGrid
 
+open Filter Topology
+
 namespace PrimeNumberTheorem
 
 /-!
@@ -105,9 +107,9 @@ noncomputable def constructPintzCarlsonUnifiedDynamicZeroTransferSigned
           pintzInput.toDynamicFiniteHeightGrid)
         layerTerm)
     (hdecomp : ∀ x, lowerError x = main x + remainder x) :
-    EventuallyUnifiedDynamicZeroTransferSignedResult upperError lowerError cost
+    EventuallyUnifiedDynamicSignedZeroTransferResult upperError lowerError cost
       pintzInput.toDynamicFiniteHeightGrid admissible slack amplitude :=
-  constructEventuallyZeroFreeCarlsonUnifiedDynamicZeroTransferSigned
+  constructEventuallyZeroFreeCarlsonUnifiedDynamicSignedZeroTransfer
     hamplitude
     pintzInput.toEventuallyZeroFreeHeightCertificate
     explicitFormula
