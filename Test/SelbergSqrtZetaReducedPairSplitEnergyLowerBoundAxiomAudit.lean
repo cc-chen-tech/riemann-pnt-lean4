@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSqrtZetaReducedPairSplitEnergyLowerBound
+
+#print axioms HardyTheorem.two_le_selbergSqrtZetaSignedReducedPairSplitEnergy
+#print axioms HardyTheorem.not_selbergSqrtZetaSignedReducedPairSplitEnergy_le_one_div_768
