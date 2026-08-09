@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaGapDecomposition
+
+#print axioms HardyTheorem.selbergSqrtZetaShortDirichletGapSum_le_diagonal_add_offDiagonal
