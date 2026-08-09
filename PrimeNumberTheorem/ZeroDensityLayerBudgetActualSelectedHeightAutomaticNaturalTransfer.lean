@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightNaturalRemainderDecay
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightNaturalTransfer
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightFiniteStripCertificateChoice
 
 /-!
 # Automatic selected-height natural-point lower transfer
@@ -60,5 +61,113 @@ theorem
     (selectedUniformGoodHeight_actualNaturalRemainderCertificate
       hbeta halpha halphaOne hmargin selection)
     hmain
+
+/-- Bidirectional automatic selected-height transfer on the genuine relative
+Chebyshev error.
+
+The upper component is the parametric Pintz--Carlson PNT decay theorem.  The
+lower component uses the same selected height in the finite-strip complement,
+the actual explicit-formula remainder, and the visible cluster.  Thus this is
+one public interface for upper and lower transfer, while the mathematically
+separate anti-cancellation statement remains the explicit hypothesis `hmain`.
+-/
+theorem
+    unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} (hbeta : 0 < beta)
+    (halpha : 0 < alpha) (halphaOne : alpha ≤ 1)
+    (hmargin : 1 - beta < alpha)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (selectedUniformGoodHeight alpha selection x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterGoodHeightFiniteStripCertificate
+        beta alpha S n
+        (selectedUniformGoodHeight alpha selection) input)
+    (hmain :
+      HasFarNaturalPointTargetAmplitudeWitness
+        (fun m : ℕ =>
+          dynamicVisibleClusterPNTMain
+            (selectedUniformGoodHeight alpha selection) S (m : ℝ))
+        (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) :=
+  ⟨exists_fixedRate_parametricTwoStrip_relativeChebyshevPsi0Error_tendsto
+      threshold hhalf hlt,
+    selectedUniformGoodHeight_actualNaturalPointRemainder_lowerTransfer
+      hbeta halpha halphaOne hmargin selection certificate hmain⟩
+
+/-- Fully selected finite-strip bidirectional transfer.
+
+Endpoint thresholds choose one shared polynomial exponent.  That exponent
+chooses the uniform good-height schedule and automatic positive strip slacks.
+The resulting actual Carlson certificate and actual explicit-formula remainder
+certificate are then consumed by the bidirectional transfer.  The remaining
+inputs are precisely the genuine zero-layer geometry and the independent
+natural-point main-cluster witness.
+-/
+theorem
+    unified_parametricPNTUpper_actualSelectedHeightThresholdsNaturalPointLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta : ℝ} {n : ℕ} (sigma tau : Fin n → ℝ)
+    (hbeta : 0 < beta) (hbetaOne : beta < 1)
+    (hsigma : ∀ i, 1 / 2 < sigma i)
+    (hsigmaOne : ∀ i, sigma i < 1)
+    (hthreshold :
+      ∀ i,
+        carlsonStripEndpointTargetThreshold (sigma i) (tau i) < beta)
+    (selection : UniformNaturalPointGoodHeightSelection)
+    {S : Finset ℂ}
+    (input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (actualSelectedHeightFiniteStripChosenHeight beta sigma tau
+            hbeta hbetaOne hsigma hsigmaOne hthreshold selection x)
+          S n)
+    (kappa : Fin n → ℝ)
+    (hS : IsConjugationInvariantCluster S)
+    (hfixedSigma : ∀ i x, (input x).sigma i = sigma i)
+    (hkappa : ∀ i, 0 < kappa i)
+    (hnorm :
+      ∀ i x, ∀ rho ∈ (input x).layer i, kappa i ≤ ‖rho‖)
+    (hre :
+      ∀ i x, ∀ rho ∈ (input x).layer i, rho.re ≤ tau i)
+    (hreal :
+      ∀ rho ∈
+        realOrdinateNontrivialZerosOutsideClusterFinset 0 S,
+        rho.re < beta)
+    (hmain :
+      HasFarNaturalPointTargetAmplitudeWitness
+        (fun m : ℕ =>
+          dynamicVisibleClusterPNTMain
+            (actualSelectedHeightFiniteStripChosenHeight beta sigma tau
+              hbeta hbetaOne hsigma hsigmaOne hthreshold selection)
+            S (m : ℝ))
+        (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  have hspec :=
+    actualSelectedHeightFiniteStripExponent_spec beta sigma tau
+      hbeta hbetaOne hsigma hsigmaOne hthreshold
+  let certificate :=
+    actualCarlsonOutsideClusterGoodHeightFiniteStripCertificate_of_thresholds
+      sigma tau hbeta hbetaOne hsigma hsigmaOne hthreshold selection
+      input kappa hS hfixedSigma hkappa hnorm hre hreal
+  simpa [actualSelectedHeightFiniteStripChosenHeight,
+    actualSelectedHeightFiniteStripChosenExponent] using
+    (unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
+      threshold hhalf hlt hbeta hspec.1 hspec.2.1 hspec.2.2.1
+      selection certificate hmain)
 
 end PrimeNumberTheorem
