@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedRationalReducedRatio
+
+#print axioms HardyTheorem.crossProduct_eq_iff_exists_coprime_scales

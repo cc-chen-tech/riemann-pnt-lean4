@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSqrtZetaSignedActualFourierTransfer
+
+#check HardyTheorem.exists_integral_sq_selbergSqrtZetaSignedShortIntegral_le_rationalShortModel_add_error
+
+#print axioms HardyTheorem.exists_integral_sq_selbergSqrtZetaSignedShortIntegral_le_rationalShortModel_add_error
