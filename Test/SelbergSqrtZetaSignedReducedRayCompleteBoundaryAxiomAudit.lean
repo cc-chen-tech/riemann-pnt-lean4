@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSqrtZetaSignedReducedRayCompleteBoundary
+
+#print axioms HardyTheorem.selbergSqrtZetaSignedCoprimeRayBilinearScaleSum_eq_complete_add_boundary
+#print axioms HardyTheorem.normSq_div_localFrequencySeparation_le_reducedRayCompleteBoundaryWeight
