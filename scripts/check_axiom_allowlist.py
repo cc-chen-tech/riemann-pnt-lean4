@@ -195,8 +195,17 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeSharpLowHeightEnergyAxiomAudit",
     "Test.VKEdgeSharpLeftGapDecayAxiomAudit",
     "Test.VKEdgeSharpLeftGapStabilityAxiomAudit",
+    "Test.ExceptionalZeroTargetDyadicGramSchurAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementZeroPacket_card_le_dyadicOccupancy",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.finiteZeroClusterCoefficientAt_norm_sq_eq",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementDyadicGaussianMajorantEnergy_le_targetSquareCapacity",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementDyadicCenteredFrozenGaussianSecondMoment_le_targetSquareCapacity",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.rightHigherDyadicCenteredFrozenGaussianSecondMoment_le_targetSquareCapacity",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.rightHigherDyadic_fartherRight_or_all_re_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.rightHigherDyadicTargetSquareCapacity_le_unweighted_of_re_le",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.rightHigherDyadic_fartherRight_or_gram_le_unweighted",
     "PrimeNumberTheorem.VKEdgePiOverTwo.directedWitness_of_not_mem_rightHigherExclusionSet",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_new_right_zero_above_of_fullMovingGaussianSecondMoment_pos",
     "PrimeNumberTheorem.VKEdgePiOverTwo.exists_new_right_zero_above_of_remainder_energy_gt_three_errors",
