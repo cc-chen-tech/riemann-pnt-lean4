@@ -15,7 +15,7 @@ namespace PrimeNumberTheorem
 def finiteLayerBudget {ι : Type*} [DecidableEq ι]
     (layers : Finset ι) (layerTerm : ι → ℝ → ℝ → ℝ)
     (x T : ℝ) : ℝ :=
-  ∑ i in layers, layerTerm i x T
+  ∑ i ∈ layers, layerTerm i x T
 
 /-- Evaluate the finite real-part layer sum along a dynamic height schedule. -/
 def finiteLayerBudgetAlong {ι : Type*} [DecidableEq ι]
@@ -42,28 +42,19 @@ theorem finiteLayerBudgetAlong_tendsto_zero
     (layerTerm : ι → ℝ → ℝ → ℝ) :
     (∀ i ∈ layers,
       Filter.Tendsto (fun x => layerTerm i x (height x))
-        Filter.atTop (nhds 0)) →
+      Filter.atTop (nhds 0)) →
     Filter.Tendsto (finiteLayerBudgetAlong layers height layerTerm)
       Filter.atTop (nhds 0) := by
-  classical
-  induction layers using Finset.induction_on with
-  | empty =>
-      intro h
-      simp [finiteLayerBudgetAlong, finiteLayerBudget]
-  | @insert a s ha ih =>
-      intro h
-      have haZero :
-          Filter.Tendsto (fun x => layerTerm a x (height x))
-            Filter.atTop (nhds 0) :=
-        h a (by simp)
-      have hsZero :
-          Filter.Tendsto (finiteLayerBudgetAlong s height layerTerm)
-            Filter.atTop (nhds 0) :=
-        ih (by
-          intro i hi
-          exact h i (by simp [hi]))
-      simpa [finiteLayerBudgetAlong, finiteLayerBudget, ha] using
-        haZero.add hsZero
+  intro h
+  have hsum :
+      Filter.Tendsto
+        (fun x : ℝ => ∑ i ∈ layers, layerTerm i x (height x))
+        Filter.atTop (nhds (∑ i ∈ layers, (0 : ℝ))) := by
+    apply tendsto_finset_sum layers
+    intro i hi
+    exact h i hi
+  simpa only [finiteLayerBudgetAlong, finiteLayerBudget,
+      Finset.sum_const_zero] using hsum
 
 theorem FiniteDynamicLayerDecay.total_tendsto_zero
     {ι : Type*} [DecidableEq ι]
