@@ -1,0 +1,13 @@
+import HardyTheorem.SelbergHardyLagLinearization
+
+#print axioms HardyTheorem.hasDerivAt_thetaLagPhase
+#print axioms HardyTheorem.deriv_thetaLagPhase_zero
+#print axioms HardyTheorem.thetaLagReferenceFrequency_eq
+#print axioms HardyTheorem.abs_deriv_thetaLagPhase_sub_referenceFrequency_le
+#print axioms HardyTheorem.abs_thetaLagPhase_sub_linearized_le
+#print axioms HardyTheorem.abs_thetaLagPhase_sub_linearized_le_window_sq
+#print axioms HardyTheorem.abs_cos_thetaLagPhase_sub_cos_linearized_le
+#print axioms HardyTheorem.abs_cos_thetaLagPhase_shift_sub_cos_frozen_le
+#print axioms HardyTheorem.abs_squareIntegral_cos_thetaLagPhase_le
+#print axioms HardyTheorem.abs_squareIntegral_cos_thetaLagPhase_shift_le
+#print axioms HardyTheorem.abs_squareIntegral_cos_thetaLagPhase_shift_le_stationaryEnvelope
