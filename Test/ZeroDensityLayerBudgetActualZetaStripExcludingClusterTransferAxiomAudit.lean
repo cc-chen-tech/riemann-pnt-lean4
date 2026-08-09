@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualZetaStripExcludingClusterTransfer
+
+open PrimeNumberTheorem
+
+#print axioms
+  dynamicPositiveOutsideClusterPNTLayerNorm_le_carlson_mul_stripEndpoint
+#print axioms actualZetaOutsideClusterStrip_carlsonTargetLayerBudget

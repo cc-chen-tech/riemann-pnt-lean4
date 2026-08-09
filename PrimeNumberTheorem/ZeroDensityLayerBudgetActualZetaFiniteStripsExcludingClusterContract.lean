@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualZetaFiniteStripsExcludingCluster
+
+namespace PrimeNumberTheorem
+
+#check dynamicPositiveOutsideClusterPNTTailNorm
+#check dynamicPositiveOutsideClusterPNTTailNorm_le_sum_layerNorms
+#check
+  actualZetaFiniteStripsOutsideCluster_layerNormSum_targetAmplitudeNegligible
+#check
+  actualZetaFiniteStripsOutsideCluster_positiveTail_targetAmplitudeNegligible
+
+end PrimeNumberTheorem

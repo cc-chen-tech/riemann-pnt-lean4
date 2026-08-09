@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualRealOrdinateExcludingCluster
+
+open PrimeNumberTheorem
+
+#print axioms
+  tendsto_norm_pntRelativeZeroContribution_div_targetZeroPowerAmplitude
+#print axioms
+  realOrdinateNontrivialZerosOutsideClusterFinset_eq_zeroHeight
+#print axioms
+  dynamicRealOrdinateOutsideClusterPNTZeroTailNorm_targetAmplitudeNegligible
+#print axioms
+  dynamicRealOrdinateOutsideClusterPNTZeroTailNorm_carlsonPolynomial_negligible
