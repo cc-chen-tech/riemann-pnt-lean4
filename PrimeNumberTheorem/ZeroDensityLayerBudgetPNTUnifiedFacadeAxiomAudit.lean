@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroForcingUnifiedTransfer
+
+#print axioms PrimeNumberTheorem.exists_naturalPoint_pintzCarlson_goodHeight_hybrid_PNT_upper
+#print axioms PrimeNumberTheorem.exists_naturalPoint_pintzPNT_hybrid_truncation_optimal
+#print axioms PrimeNumberTheorem.exists_pintzConstant_adaptiveHybridDensityBudget_tendsto
+#print axioms PrimeNumberTheorem.zero_cluster_oscillation_lower
+#print axioms PrimeNumberTheorem.unified_dynamic_zero_transfer
