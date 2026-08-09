@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonExplicitFormulaBridge
+
+/-! Axiom audit for the concrete explicit-formula tail bridge. -/
+
+#print axioms PrimeNumberTheorem.norm_tail_sum_le_pintzCarlsonAggregatedDensityLayerTerm
+#print axioms PrimeNumberTheorem.dynamicExplicitFormulaUpperCertificate_of_pintzCarlsonTail

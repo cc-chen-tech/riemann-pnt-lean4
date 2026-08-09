@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPositiveZeroConjugation
+
+/-! Axiom audit for positive/negative zero conjugation recovery. -/
+
+#print axioms PrimeNumberTheorem.finiteZeroSum_eq_positive_add_negative_add_real
+#print axioms PrimeNumberTheorem.sum_negative_eq_conj_sum_positive
+#print axioms PrimeNumberTheorem.PositiveZeroBucketInput.norm_full_sum_le_two_mul_pintzCarlsonBudget_add_real
