@@ -82,6 +82,7 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.TargetAmplitudeNegligible",
     "PrimeNumberTheorem.HasFarTargetAmplitudeWitness",
     "PrimeNumberTheorem.IsTargetAmplitudeAdmissibleHeight",
+    "PrimeNumberTheorem.IsPNTSubpolynomialLogHeight",
     "PrimeNumberTheorem.dynamicExplicitFormulaHeight",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
     "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
