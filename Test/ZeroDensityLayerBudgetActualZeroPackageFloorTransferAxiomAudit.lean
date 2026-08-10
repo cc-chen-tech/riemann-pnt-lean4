@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualZeroPackageFloorTransfer
+
+#print axioms PrimeNumberTheorem.actualEqualRealPartZeroPackageEnergy
+#print axioms
+  PrimeNumberTheorem.exists_far_norm_actualEqualRealPartZeroPackageContribution_ge
+#print axioms
+  PrimeNumberTheorem.exists_far_natFloor_chebyshevPsi0Error_ge_of_actualZeroPackage
+#print axioms
+  PrimeNumberTheorem.eventually_exists_far_natFloor_chebyshevPsi0Error_ge_of_actualZeroPackage
