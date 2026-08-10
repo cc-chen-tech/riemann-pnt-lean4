@@ -111,4 +111,42 @@ theorem HasFarTargetAmplitudeWitness.toNatural_natFloor_of_normalized_stability
   exact le_of_lt (by
     simpa using (div_lt_iff₀ hx).1 hdiv)
 
+/-- The target power amplitude is asymptotically unchanged by taking the
+natural floor of its argument. -/
+theorem targetZeroPowerAmplitude_natFloor_ratio_tendsto
+    (beta : ℝ) :
+    Tendsto
+      (fun x : ℝ =>
+        targetZeroPowerAmplitude beta (⌊x⌋₊ : ℝ) /
+          targetZeroPowerAmplitude beta x)
+      atTop (nhds 1) := by
+  have hratio :
+      Tendsto (fun x : ℝ => (⌊x⌋₊ : ℝ) / x)
+        atTop (nhds 1) :=
+    tendsto_nat_floor_div_atTop
+  have hrpow :
+      Tendsto
+        (fun x : ℝ => ((⌊x⌋₊ : ℝ) / x) ^ (beta - 1))
+        atTop (nhds 1) := by
+    simpa using hratio.rpow_const (Or.inl one_ne_zero)
+  apply hrpow.congr'
+  filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
+  have hfloor_nonneg : 0 ≤ (⌊x⌋₊ : ℝ) := by positivity
+  simp only [targetZeroPowerAmplitude]
+  exact Real.div_rpow hfloor_nonneg hx (beta - 1)
+
+/-- A fixed nonzero coefficient cancels from the floor ratio of the target
+power amplitude. -/
+theorem const_mul_targetZeroPowerAmplitude_natFloor_ratio_tendsto
+    (beta c : ℝ) (hc : c ≠ 0) :
+    Tendsto
+      (fun x : ℝ =>
+        (c * targetZeroPowerAmplitude beta (⌊x⌋₊ : ℝ)) /
+          (c * targetZeroPowerAmplitude beta x))
+      atTop (nhds 1) := by
+  apply
+    (targetZeroPowerAmplitude_natFloor_ratio_tendsto beta).congr'
+  filter_upwards with x
+  field_simp [hc]
+
 end PrimeNumberTheorem

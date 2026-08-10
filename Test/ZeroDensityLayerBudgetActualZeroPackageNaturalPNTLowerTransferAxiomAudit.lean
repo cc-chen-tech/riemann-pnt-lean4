@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualZeroPackageNaturalPNTLowerTransfer
+
+#print axioms PrimeNumberTheorem.NaturalPointTargetAmplitudeNegligible.const_mul_amplitude
+#print axioms PrimeNumberTheorem.actualZeroPackage_naturalPointRemainder_lowerTransfer

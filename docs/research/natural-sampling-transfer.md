@@ -26,5 +26,15 @@ HasFarNaturalPointTargetAmplitudeWitness
 ```
 
 The result keeps every strict fraction `q < 1`; it does not hide a fixed
-constant loss.  The remaining analytic task is to prove the two normalized
-limits for the actual finite equal-real-part zeta-zero package.
+constant loss.
+
+The module also proves automatically that
+
+```text
+targetZeroPowerAmplitude beta (floor x)
+  / targetZeroPowerAmplitude beta x -> 1,
+```
+
+including after multiplication by any fixed nonzero coefficient.  Thus the
+only remaining analytic sampling limit for the actual package is the
+normalized variation of its finite visible zero sum over a unit interval.
