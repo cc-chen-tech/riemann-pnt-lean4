@@ -108,6 +108,8 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.DynamicBoundaryPackageCoefficientCap",
     "PrimeNumberTheorem.UniformMovingSigmaHybridDensityDecay",
     "PrimeNumberTheorem.MovingSigmaAnchoredAt",
+    "PrimeNumberTheorem.ActualPositiveCarlsonRightCover",
+    "PrimeNumberTheorem.IsCarlsonMovingBalancedCoefficientAdmissible",
     "PrimeNumberTheorem.dynamicExplicitFormulaHeight",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
     "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
