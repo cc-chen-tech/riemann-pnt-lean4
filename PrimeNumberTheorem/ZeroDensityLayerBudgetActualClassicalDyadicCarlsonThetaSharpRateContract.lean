@@ -1,0 +1,25 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonThetaSharpRate
+
+/-!
+# Theta-sharp classical dyadic Carlson rate contract
+
+Public contract for the asymptotically sharp theta-family of classical
+Carlson layer and actual fixed-anchor mass majorants.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check classicalDyadicCarlsonThetaSqrtLogMajorant
+#check eventually_carlsonDynamicGapLayeredCoarseLogPowerRatio_le_thetaMajorant
+#check classicalDyadicCarlsonThetaSqrtLogMajorant_eq
+#check tendsto_classicalDyadicCarlsonThetaSqrtLogMajorant_zero
+#check exists_classicalAdmissibleDyadicCarlsonThetaQuantitativeFixedAnchorMajorant
+#check classicalAdmissibleThetaVerifiedPNTDecayRate
+#check classicalAdmissibleThetaVerifiedPNTDecayRate_pos
+#check classicalAdmissibleVerifiedPNTDecayRate_lt_thetaRate
+#check classicalAdmissibleThetaVerifiedPNTDecayRate_lt_quarterHeightRate
+
+end PrimeNumberTheorem

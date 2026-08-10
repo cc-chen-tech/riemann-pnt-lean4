@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonThetaSharpRate
+
+/-!
+Axiom audit for the theta-sharp Carlson rate endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms eventually_carlsonDynamicGapLayeredCoarseLogPowerRatio_le_thetaMajorant
+#print axioms classicalDyadicCarlsonThetaSqrtLogMajorant_eq
+#print axioms tendsto_classicalDyadicCarlsonThetaSqrtLogMajorant_zero
+#print axioms exists_classicalAdmissibleDyadicCarlsonThetaQuantitativeFixedAnchorMajorant
+#print axioms classicalAdmissibleThetaVerifiedPNTDecayRate_pos
+#print axioms classicalAdmissibleVerifiedPNTDecayRate_lt_thetaRate
+#print axioms classicalAdmissibleThetaVerifiedPNTDecayRate_lt_quarterHeightRate
+
+end PrimeNumberTheorem

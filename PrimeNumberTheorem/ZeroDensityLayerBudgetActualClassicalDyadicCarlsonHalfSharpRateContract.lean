@@ -1,0 +1,24 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonHalfSharpRate
+
+/-!
+# Half-sharp classical dyadic Carlson rate contract
+
+Public contract for the compensated endpoint `theta = 1 / 2`, which attains
+one quarter of the balanced height rate.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check classicalDyadicCarlsonHalfSqrtLogMajorant
+#check eventually_carlsonDynamicGapLayeredCoarseLogPowerRatio_le_halfMajorant
+#check classicalDyadicCarlsonHalfSqrtLogMajorant_eq
+#check tendsto_classicalDyadicCarlsonHalfSqrtLogMajorant_zero
+#check exists_classicalAdmissibleDyadicCarlsonHalfQuantitativeFixedAnchorMajorant
+#check classicalAdmissibleHalfVerifiedPNTDecayRate_eq
+#check classicalAdmissibleHalfVerifiedPNTDecayRate_pos
+#check classicalAdmissibleVerifiedPNTDecayRate_lt_halfRate
+
+end PrimeNumberTheorem
