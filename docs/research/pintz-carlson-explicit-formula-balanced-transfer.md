@@ -1,7 +1,7 @@
 # Pintz-Carlson-explicit-formula balanced transfer: audited theorem chain
 
 This note records the exact formal boundary of the actual-zeta balanced
-transfer chain on `feat/explicit-formula-unified-next`. It is a theorem-chain
+transfer chain integrated into `main`. It is a theorem-chain
 audit, not an RH claim and not an unconditional oscillation claim.
 
 ## 1. Common PNT object
