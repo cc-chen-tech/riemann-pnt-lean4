@@ -84,6 +84,8 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.HasFarNaturalPointTargetAmplitudeWitness",
     "PrimeNumberTheorem.HasFarNaturalPointPositiveTargetAmplitudeWitness",
     "PrimeNumberTheorem.HasFarNaturalPointNegativeTargetAmplitudeWitness",
+    "PrimeNumberTheorem.HasFarPositiveTargetAmplitudeWitness",
+    "PrimeNumberTheorem.HasFarNegativeTargetAmplitudeWitness",
     "PrimeNumberTheorem.HasFarTargetAmplitudeWitness",
     "PrimeNumberTheorem.FiniteHeightRightEdgeZeroFree",
     "PrimeNumberTheorem.GlobalRightEdgeZeroFree",
