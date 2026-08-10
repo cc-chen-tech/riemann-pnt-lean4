@@ -104,6 +104,7 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.OutsideClusterRealPartCap",
     "PrimeNumberTheorem.HeightwiseOutsideClusterRealPartCap",
     "PrimeNumberTheorem.IsMovingDensityGapAdmissible",
+    "PrimeNumberTheorem.IsAdaptiveBoundaryLocalDensityAdmissible",
     "PrimeNumberTheorem.dynamicExplicitFormulaHeight",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
     "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",

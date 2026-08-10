@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDynamicBoundaryFullTail
+
+open PrimeNumberTheorem
+
+#print axioms actualDynamicBoundaryPositiveNormalizedSum_tendsto_zero
+#print axioms actualDynamicBoundaryFullNormalizedSum_tendsto_zero
+#print axioms abs_dynamicOutsideDynamicBoundaryPNTComplement_div_target_tendsto_zero
