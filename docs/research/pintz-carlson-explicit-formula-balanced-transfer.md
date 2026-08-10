@@ -485,3 +485,70 @@ q x^\beta\leq |\psi_0(x)-x|.
 证明不是把无限边界层假设成有限，而是对完整的非负、可求和边界项应用 `summable_iff_vanishing_norm`：先选有限索引集捕获除 `epsilon/2` 外的全部有限尾和，再映射成真实零点 Finset，最后取共轭闭包并用边界质量反单调性保持严格上界。
 
 因此，即便 `Re rho = beta` 上可能有无限多个零点，Carlson 边界常数损失也可由某个有限主簇压到任意小。这比“整个边界层本来就是有限簇”的假设更弱，并为把任意 `q<c` 近似保真地接入实际 `psi_0(x)-x` 转移提供了定量基础。它仍不自动提供该随 `epsilon` 选择的簇的主项振荡见证；该项属于外部局部振荡任务。
+
+## 有限捕获自动适配任意严格振幅间隙
+
+`ZeroDensityLayerBudgetActualCarlsonBoundaryMassFiniteGapCapture.lean` 把 epsilon-捕获直接改写成 transfer 所需条件：只要 `q<c`，就存在共轭稳定有限簇 `S` 使 `2*B_partial(beta,S)<c-q`。特别地，若 `c>0`，存在有限稳定簇满足 `2*B_partial(beta,S)<c`。
+
+因此在 Carlson/显式公式侧，不需要假设整条 `Re rho=beta` 边界只含有限多个零点，也不需要完全捕获边界层；可求和性已经保证任何严格次于主簇系数 `c` 的目标常数都能留出足够的有限簇余量。尚未自动化的唯一相关输入，是这个按间隙选出的有限簇本身必须满足相应的主项振荡见证和外部实部条件。
+
+## 有限 transfer 簇的结构条件自动构造
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteGapTransferCluster.lean` 继续消除了
+有限捕获簇上的结构性外部条件。给定任意有限簇 `S`，定义
+`actualCarlsonAdjoinRealOrdinateZeros S`，把高度零处全部非平凡零点并入
+`S`。该高度切片是有限集；其成员在复共轭下逐点不变。因此：
+
+- 若 `S` 共轭稳定，并入后的有限簇仍共轭稳定；
+- 并入后，实轴纵坐标零点的簇外补集严格为空；
+- 扩大主簇只会减小 Carlson 簇外边界质量。
+
+于是，只要全局给定实际 Carlson 正零点的实部上界
+
+\[
+\operatorname{Re}\rho\leq\beta,
+\]
+
+并且 `q<c`，就存在一个有限共轭稳定簇同时满足：
+
+- 所有簇外正纵坐标零点的实部不超过 `beta`；
+- 所有簇外实轴纵坐标零点的实部严格小于 `beta`，因为该补集为空；
+- `2*B_partial(beta,S)<c-q`。
+
+这正是 balanced-boundary transfer 在 Carlson 侧需要的完整结构证书。
+它没有构造该有限簇的主项振荡；`hmain`、`hmainPos`、`hmainNeg` 仍由
+独立的局部有限簇振荡任务提供。因此此处闭合的是密度与补集余项条件，
+不是无条件 `Omega` 或 `Omega_±` 定理。
+
+## 选定有限簇到真实 PNT 误差的直接转移
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteGapPNTUnnormalizedTransfer.lean`
+把有限 transfer 簇的存在定理与 balanced Carlson lower transfer、自然数
+取样到实数取样、相对误差到未归一化误差三个步骤直接复合。
+
+对任意 `0 <= q < c`，在平衡条件
+`(1+sigma)/2 < beta` 和全局 `Re rho <= beta` 下，定理自动选择一个有限
+共轭稳定簇 `S`，并同时返回全部结构证书及以下唯一剩余蕴含：
+
+\[
+\text{visible-cluster hmain at coefficient }c
+\quad\Longrightarrow\quad
+|\psi_0(x)-x|\geq qx^\beta
+\text{ at arbitrarily large real }x.
+\]
+
+因此 Carlson 密度、实轴补集、边界质量损失和显式公式余项不再需要由
+调用者逐项组装。剩余缺口被精确收缩为：独立局部振荡任务必须对这个
+按 `q<c` 选择的有限簇给出 `dynamicVisibleClusterPNTMain` 的 `hmain`。
+该接口没有假设或声称已经证明这个局部振荡输入。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteGapPNTSignedUnnormalizedTransfer.lean`
+给出同一选择过程的双向版本。它只选择一个有限共轭稳定簇，并要求该簇
+在相同系数 `c` 下分别提供正向和负向主项见证；结论是在同一个严格次级
+系数 `q<c` 上得到 `psi_0(x)-x` 的正、负任意远实点见证。因而双向链的
+Carlson 侧也已经内部化，但这仍是条件性的 `Omega_±` 转移接口。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteGapPNTCanonicalUnnormalizedTransfer.lean`
+在 `c>0` 时进一步固定 `q=c/2`。Lean 同时证明该规范系数严格为正，并
+自动选择满足 `2*B_partial<c-c/2` 的有限簇。无符号与双向定理因此都向
+局部振荡任务暴露一个无需额外算术选择的具体目标常数。
