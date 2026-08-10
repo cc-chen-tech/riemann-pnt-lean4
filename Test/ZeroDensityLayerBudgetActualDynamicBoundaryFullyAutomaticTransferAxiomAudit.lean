@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualDynamicBoundaryFullyAutomaticTransfer
+
+open PrimeNumberTheorem
+
+#print axioms actualDynamicBoundaryFullyAutomaticPNTUpperTransfer
+#print axioms actualDynamicBoundaryFullyAutomaticPNTBidirectionalTransfer
