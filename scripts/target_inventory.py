@@ -107,6 +107,7 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.IsAdaptiveBoundaryLocalDensityAdmissible",
     "PrimeNumberTheorem.DynamicBoundaryPackageCoefficientCap",
     "PrimeNumberTheorem.UniformMovingSigmaHybridDensityDecay",
+    "PrimeNumberTheorem.MovingSigmaAnchoredAt",
     "PrimeNumberTheorem.dynamicExplicitFormulaHeight",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
     "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
