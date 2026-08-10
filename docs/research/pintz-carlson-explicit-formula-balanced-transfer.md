@@ -552,3 +552,94 @@ Carlson 侧也已经内部化，但这仍是条件性的 `Omega_±` 转移接口
 在 `c>0` 时进一步固定 `q=c/2`。Lean 同时证明该规范系数严格为正，并
 自动选择满足 `2*B_partial<c-c/2` 的有限簇。无符号与双向定理因此都向
 局部振荡任务暴露一个无需额外算术选择的具体目标常数。
+
+## 保留有限最右种子簇的 Carlson 扩张
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedGapTransferCluster.lean` 把
+此前的全局 Carlson 索引上界替换为更自然的 zeta 层条件。给定有限共轭
+稳定种子簇 `S₀`，只要求
+
+\[
+\texttt{OutsideClusterRealPartCap }S_0\,\beta,
+\]
+
+即每个 `S₀` 外非平凡 zeta 零点满足 `Re rho <= beta`。定理自动构造有限
+簇 `S`，使 `S₀ subset S`，并把 Carlson 边界有限捕获簇和全部实轴纵坐标
+零点并入 `S`。扩大簇使边界质量反单调，因此仍保持
+`2*B_partial(beta,S)<c-q`。
+
+这一区别是实质性的：`S₀` 内部可以保留不满足该 cap 的有限异常或最右
+零点，只有其补集受上界约束。模块同时证明 zeta 层 cap 自动作用于真实
+Carlson 正零点索引，从而不要求最大实部层了解 Carlson 的枚举实现。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedGapPNTUnnormalizedTransfer.lean`
+把该扩张直接接到 `psi_0(x)-x`。对任意 `0<=q<c`，它给出包含 `S₀` 的
+实际有限簇，并分别提供无符号和同一 `q*x^beta` 尺度的双向条件转移。
+尚未闭合的输入仍精确是扩张后有限簇的 `hmain` 或
+`hmainPos`/`hmainNeg`，而不是 Carlson 补集条件。
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedGapPNTCanonicalUnnormalizedTransfer.lean`
+在 `c>0` 时固定 `q=c/2`，并保留 `S₀ subset S` 证书。由此，最大实部层
+只需交付有限共轭稳定种子簇及其补集 cap；局部振荡层则针对自动扩张后
+的有限簇证明主项见证，最终 PNT 振荡常数已经明确为严格正的 `c/2`。
+
+自动扩张现在还保留
+`OutsideClusterRealPartCap S beta` 本身，而不只导出 Carlson 枚举上的
+`hreHigh`。这是由 `S₀ subset S` 的补集单调性得到的。因而后续模块可以
+继续把最终簇作为 zeta 层对象使用，最大实部证书不会在进入 Carlson
+求和层后丢失。
+
+## 边界质量捕获的支持集净化
+
+`ZeroDensityLayerBudgetActualCarlsonBoundaryMassFiniteGapSupportedCapture.lean`
+证明 Carlson 边界质量只依赖有限簇在 `Re rho=beta` 上的部分。将任意
+有限簇过滤到该边界后，边界质量严格相等，共轭稳定性保持。因此
+finite-gap 捕获簇可以选择成每个成员都满足 `rho.re=beta`。
+
+有限种子簇扩张已改用这一净化版本，并公开证明：最终簇中既不属于
+`S₀`、也不属于高度零有限集的每个新增成员都位于 `Re rho=beta`。这不会
+解决有限边界簇自身的相位抵消，但排除了自动捕获步骤向局部振荡问题
+引入任意较低实部零点的可能性。
+
+## 同一参数下的实际 PNT 双向证书
+
+`ZeroDensityLayerBudgetActualCarlsonFiniteSeedBidirectionalPNTTransfer.lean`
+把 actual-PNT 上下两条链放入同一个存在量化证书，而不是只返回抽象
+error facade。对同一个 `sigma`，定理同时选择固定正速率 `rate` 和有限
+簇 `S`，并证明：
+
+- 自然数点上的 `relativeChebyshevPsi0Error` 趋于零；
+- `S` 包含给定种子簇 `S₀`；
+- 最终 `S` 保留 zeta 补集实部 cap、Carlson 正零点 cap、实轴严格 gap；
+- 自动新增的非实轴成员位于 `Re rho=beta`；
+- Carlson 边界质量严格小于规范损失 `c-c/2`；
+- 若该同一有限簇的 visible main term 具有系数 `c` 的任意远见证，则
+  实际未归一化误差 `chebyshevPsi0Error` 具有
+  `(c/2)*x^beta` 的任意远见证。
+
+模块也给出共享同一 `S` 的正负双向版本。这里的“统一”是实际 PNT 对象、
+条带参数和有限簇证书的统一；它仍明确保留局部振荡输入
+`hmain` 或 `hmainPos`/`hmainNeg`，因此不声称无条件 `Omega`、`Omega_±`
+或 RH。
+
+## 种子簇见证在有限扩张下的定量稳定性
+
+`ZeroDensityLayerBudgetVisibleClusterSeedExtension.lean` 证明实际 visible
+main term 的精确有限和分解
+
+\[
+M_S(x)=M_{S_0}(x)+M_{S\setminus S_0}(x)
+\qquad(S_0\subseteq S).
+\]
+
+因此，若局部振荡任务给出种子簇 `S₀` 在尺度 `c*A(m)` 上的任意远见证，
+而自动新增部分最终满足
+
+\[
+|M_{S\setminus S_0}(m)|<dA(m),
+\]
+
+则最终簇 `S` 在 `(c-d)*A(m)` 尺度上仍有任意远见证。无符号、正向和
+负向版本使用同一个新增项预算。这个引理没有假设新增项自动很小，而是
+把原先要求调用者直接证明最终簇 `hmain` 的缺口，精确拆成“种子簇局部
+振荡”和“新增有限项预算”两个可审计输入。
