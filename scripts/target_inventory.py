@@ -109,6 +109,8 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.UniformMovingSigmaHybridDensityDecay",
     "PrimeNumberTheorem.MovingSigmaAnchoredAt",
     "PrimeNumberTheorem.ActualPositiveCarlsonRightCover",
+    "PrimeNumberTheorem.ActualMovingPositiveRightEdgeCap",
+    "PrimeNumberTheorem.ActualSelectedHeightMovingPositiveRightEdgeCap",
     "PrimeNumberTheorem.IsCarlsonMovingBalancedCoefficientAdmissible",
     "PrimeNumberTheorem.IsActualMovingCarlsonTwoHeightCertificate",
     "PrimeNumberTheorem.IsActualMovingCarlsonTwoHeightCountCertificate",
