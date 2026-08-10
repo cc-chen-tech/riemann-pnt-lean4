@@ -1,0 +1,24 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonDynamicLayerCount
+
+/-!
+# Contract for dynamic Carlson layer-count aggregation
+-/
+
+namespace PrimeNumberTheorem
+
+#check carlsonDynamicLayerCountLogCost
+#check carlsonMovingLayeredQuadraticLogEnvelope
+#check IsCarlsonMovingQuadraticLayerCountGap
+#check carlsonMovingLayeredQuadraticLogEnvelope_admissible
+#check carlsonMovingLayeredQuadraticRatio_eq
+#check carlsonDynamicFiniteLayerMass
+#check carlsonDynamicFiniteLayerMass_le_layeredQuadraticRatio
+#check tendsto_carlsonDynamicFiniteLayerMass_zero
+#check carlsonMovingLayeredQuadraticLogPowerEnvelope
+#check IsCarlsonMovingQuadraticLogPowerLayerCountGap
+#check carlsonMovingLayeredQuadraticLogPowerEnvelope_admissible
+#check carlsonMovingLayeredQuadraticLogPowerRatio_eq
+#check carlsonDynamicFiniteLayerMass_le_layeredQuadraticLogPowerRatio
+#check tendsto_carlsonDynamicFiniteLayerMass_zero_logPower
+
+end PrimeNumberTheorem
