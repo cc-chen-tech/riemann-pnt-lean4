@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonActualOrderedBalancedStrips
+
+namespace PrimeNumberTheorem
+
+#check actualPositiveCarlsonStrip_disjoint_of_tau_le_sigma
+#check actualPositiveCarlsonStrips_pairwiseDisjoint_of_endpoints
+#check tendsto_actualPositiveCarlsonOrderedStripUnion_mass
+
+end PrimeNumberTheorem
