@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualZeroPackageNaturalAutomaticRemainder
+
+open Filter
+open scoped Topology
+
+#check PrimeNumberTheorem.actualZeroPackage_selectedUniformGoodHeight_naturalLowerTransfer
+#check PrimeNumberTheorem.actualZeroPackage_selectedUniformGoodHeight_naturalLowerTransfer_of_nonempty
