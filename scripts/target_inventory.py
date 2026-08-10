@@ -115,6 +115,7 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.IsCarlsonMovingQuadraticLayerCountGap",
     "PrimeNumberTheorem.IsCarlsonMovingQuadraticLogPowerLayerCountGap",
     "PrimeNumberTheorem.IsCarlsonMovingDyadicLogPowerGap",
+    "PrimeNumberTheorem.IsSelectedHeightDynamicZeroFree",
     "PrimeNumberTheorem.CarlsonDynamicGapFamilySeparated",
     "PrimeNumberTheorem.IsActualDynamicCarlsonGapFamilyCountCertificate",
     "PrimeNumberTheorem.IsCarlsonDynamicGapFamilyRatioDominated",
