@@ -1122,6 +1122,8 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightLowLayer,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightFiniteStrips,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightClusterResidual,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightSharpTransfer,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightBidirectionalTransfer,
     `MathlibAux.SlidingExponentialCoefficientBound,
     `MathlibAux.SlidingExponentialGapDecomposition,
     `MathlibAux.AmplitudeExponentialGapIntegral,
@@ -1366,6 +1368,8 @@ lean_lib RiemannPNT where
     `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightLowLayerContract,
     `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightFiniteStripsContract,
     `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightClusterResidualContract,
+    `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightSharpTransferContract,
+    `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightBidirectionalTransferContract,
     `Test.SlidingExponentialPolynomialMeanSquareContract,
     `Test.CollectedExponentialPolynomialContract,
     `Test.CollectedCoefficientEnergyContract,
@@ -1731,7 +1735,9 @@ lean_lib RiemannPNT where
     `Test.ZeroDensityLayerBudgetPNTHybridAffineSelectedHeightAxiomAudit,
     `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightLowLayerAxiomAudit,
     `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightFiniteStripsAxiomAudit,
-    `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightClusterResidualAxiomAudit
+    `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightClusterResidualAxiomAudit,
+    `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightSharpTransferAxiomAudit,
+    `Test.ZeroDensityLayerBudgetPNTHybridActualSelectedHeightBidirectionalTransferAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
