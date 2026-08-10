@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlson
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDyadicReciprocalSummability
 
 /-!
 # Actual Carlson dyadic reciprocal count
@@ -113,6 +114,14 @@ theorem dyadic_rpow_div_eq_carlsonDyadicReciprocalRatio
       rw [Real.rpow_def_of_pos (by norm_num)]
       congr 2
       ring
+
+/-- Compatibility name used by the historical dyadic stack. -/
+theorem dyadic_rpow_div_eq_pntDyadicReciprocalDensityRatio
+    (q : ℝ) (n : ℕ) :
+    (((2 : ℝ) ^ n) ^ q) / (2 : ℝ) ^ n =
+      pntDyadicReciprocalDensityRatio q ^ n := by
+  simpa only [pntDyadicReciprocalDensityRatio] using
+    dyadic_rpow_div_eq_carlsonDyadicReciprocalRatio q n
 
 theorem carlsonDyadicModel_div_eq_logFourthMajorant
     (C sigma : ℝ) (n : ℕ) :
