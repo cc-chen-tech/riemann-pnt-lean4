@@ -89,6 +89,8 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.HasFarTargetAmplitudeWitness",
     "PrimeNumberTheorem.HasFarWindowCardAdvantage",
     "PrimeNumberTheorem.HasFarWindowSecondMomentAdvantage",
+    "PrimeNumberTheorem.HasFarWindowEnergyBudgets",
+    "PrimeNumberTheorem.HasFarWindowEnergySeparation",
     "PrimeNumberTheorem.FiniteHeightRightEdgeZeroFree",
     "PrimeNumberTheorem.GlobalRightEdgeZeroFree",
     "PrimeNumberTheorem.PositiveNontrivialZerosStrictlyRightOfHalf",
