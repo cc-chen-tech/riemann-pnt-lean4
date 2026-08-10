@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonBalancedHeight
+
+open PrimeNumberTheorem
+
+#check actualCarlsonBalancedHeightExponent
+#check actualCarlsonBalancedEpsilon
+#check actualCarlsonHeightRobustMargin
+#check actualCarlsonBalancedHeightExponent_contour_margin
+#check actualCarlsonBalancedHeightExponent_low_margin
+#check actualCarlsonBalancedEpsilon_pos
+#check actualCarlsonBalancedHeight_low_margin_with_epsilon
+#check actualCarlsonHeightRobustMargin_le_balanced
+#check actualCarlsonHeightRobustMargin_balanced
+#check
+  selectedUniformGoodHeightActualCarlsonBalancedPNTClusterResidual_automatic

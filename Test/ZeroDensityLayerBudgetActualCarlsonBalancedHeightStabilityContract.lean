@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonBalancedHeightStability
+
+open PrimeNumberTheorem
+
+#check actualCarlsonHeightRobustMargin_eq_balanced_sub_abs
+#check actualCarlsonHeightRobustMargin_eq_balanced_iff
+#check actualCarlsonHeightRobustMargin_near_optimal_iff
