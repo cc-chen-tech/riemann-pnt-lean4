@@ -274,6 +274,32 @@ The second conclusion is conditional `Omega_+-style` data along natural points:
 it still requires the external positive and negative visible-cluster witnesses,
 but no longer requires the caller to guess a transferable coefficient.
 
+The real-variable target-scale interfaces are:
+
+```lean
+HasFarPositiveTargetAmplitudeWitness
+
+HasFarNegativeTargetAmplitudeWitness
+
+HasFarSignedTargetAmplitudeWitnesses
+```
+
+Natural-point signed witnesses embed into these interfaces, so the final
+conditional conclusions act directly on
+`relativeChebyshevPsi0Error : Real -> Real`:
+
+```lean
+exists_pos_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTHasFarRealPoint
+
+exists_pos_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTSharpSignedRealWitnesses
+```
+
+Under `2 * boundaryMass < c`, the first produces an unsigned real-variable
+target-scale witness with some coefficient `q > 0`; the second produces one
+common `q > 0` with arbitrarily far positive and negative real witnesses. These
+are transfer theorems, not unconditional `Omega` or `Omega_+-` theorems, because
+their visible-cluster witness hypotheses remain external.
+
 This quantifies why a single zero or an arbitrary finite cluster is not enough
 by itself. Finiteness supplies neither an unsigned nor a signed witness
 coefficient `c`, and even a supplied coefficient yields a nontrivial actual-PNT
@@ -405,3 +431,57 @@ The audited declarations report only:
 
 No Guth-Maynard theorem, zero-reproduction tree, unconditional Omega theorem,
 or RH theorem is asserted by this chain.
+
+## 未归一化 PNT 误差的目标尺度转移
+
+`ZeroDensityLayerBudgetPNTUnnormalizedTargetAmplitudeTransfer.lean` 现在把真实相对误差见证
+
+\[
+q x^{\beta-1}\leq \left|\frac{\psi_0(x)-x}{x}\right|
+\]
+
+在任意远的正实数取样点上无损转成
+
+\[
+q x^\beta\leq |\psi_0(x)-x|.
+\]
+
+形式化证明显式使用
+`chebyshevPsi0Error x = x * relativeChebyshevPsi0Error x` 与
+`x * targetZeroPowerAmplitude beta x = x ^ beta`，因此不会在归一化转换时损失常数 `q`。同一模块同时覆盖无符号、正向、负向和双向见证。
+
+`ZeroDensityLayerBudgetActualCarlsonBalancedBoundaryPNTUnnormalizedOscillation.lean`
+进一步把 balanced Carlson boundary transfer 专门化到真实对象
+`chebyshevPsi0Error x = chebyshevPsi0 x - x`。在
+
+\[
+2\,B_{\partial}(\beta,S)<c
+\]
+
+以及外部可见主簇见证成立时，它给出某个 `q > 0`，使任意远实点上保留
+`q * x ^ beta` 级无符号振荡；正、负主簇见证同时成立时，则给出同一个正 `q` 的双向振荡证书。
+
+这里的 `q` 可以继承外部显式公式主项中已经编码的解析重数和
+`1 / |rho|` 系数，但 `hmain`、`hmainPos`、`hmainNeg` 仍是外部输入。
+所以当前结论是经过审计的条件转移定理，不是无条件 `Omega`、不是 `Omega_±` 的最终闭环，也不推出 RH。
+
+## 边界层完全捕获后的无损转移
+
+`ZeroDensityLayerBudgetActualCarlsonBalancedBoundaryPNTUnnormalizedBoundaryCapturedOscillation.lean`
+把已有的 boundary-capture 结论提升到了真实未归一化误差。若有限可见簇 `S` 包含每个满足 `Re rho = beta` 的 Carlson 正零点索引，则外部边界质量严格为零。于是：
+
+- 对每个 `0 <= q < c`，无符号主簇见证转成 `|psi_0(x)-x| >= q*x^beta` 的任意远实点见证；
+- 对每个 `0 <= q < c`，正、负主簇见证转成同一个 `q*x^beta` 尺度的双向任意远实点见证；
+- 若 `0 < c`，可以规范地取显式正常数 `q=c/2`。
+
+这说明 Carlson 补集在目标实部边界上的全部常数损失确实集中于未捕获边界质量 `B_partial(beta,S)`；一旦边界层被主簇吸收，转移阈值从 `q<c-2B_partial` 恢复为 `q<c`。剩余未闭合项仍是外部主簇的无符号或双向振荡见证，而不是密度/显式公式余项。
+
+## 可求和边界层的有限 ε-捕获
+
+`ZeroDensityLayerBudgetActualCarlsonBoundaryMassFiniteCapture.lean` 证明了此前缺失的有限逼近定理。对 `1/2 < sigma < 1`、任意目标实部 `beta` 和任意 `epsilon > 0`，存在共轭稳定有限簇 `S` 使
+
+`actualCarlsonOutsideClusterBoundaryMass (sigma := sigma) beta S < epsilon`。
+
+证明不是把无限边界层假设成有限，而是对完整的非负、可求和边界项应用 `summable_iff_vanishing_norm`：先选有限索引集捕获除 `epsilon/2` 外的全部有限尾和，再映射成真实零点 Finset，最后取共轭闭包并用边界质量反单调性保持严格上界。
+
+因此，即便 `Re rho = beta` 上可能有无限多个零点，Carlson 边界常数损失也可由某个有限主簇压到任意小。这比“整个边界层本来就是有限簇”的假设更弱，并为把任意 `q<c` 近似保真地接入实际 `psi_0(x)-x` 转移提供了定量基础。它仍不自动提供该随 `epsilon` 选择的簇的主项振荡见证；该项属于外部局部振荡任务。
