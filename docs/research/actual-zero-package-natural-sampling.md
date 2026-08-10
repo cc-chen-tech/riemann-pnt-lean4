@@ -23,4 +23,3 @@ zero-reproduction argument. It also does not by itself prove an Omega theorem.
 Its role is to transfer the already established continuous far-witness for the
 actual package to natural-number evaluation points without losing the target
 power scale.
-

@@ -28,4 +28,3 @@ and `floor x`.
 This is a main-term witness.  A full PNT-error lower bound still requires all
 real-axis, complementary-zero, and contour remainders to be negligible at the
 same scaled amplitude.
-

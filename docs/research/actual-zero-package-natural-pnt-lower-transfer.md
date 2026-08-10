@@ -28,4 +28,3 @@ coefficient is not discarded or normalized away.
 
 This is a conditional transfer theorem. It does not assert that the Carlson
 certificate exists for every zero package, and it does not imply RH.
-
