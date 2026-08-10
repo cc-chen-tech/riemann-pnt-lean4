@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetWindowSecondMomentBadCount
+
+open PrimeNumberTheorem
+
+#check HasFarWindowSecondMomentAdvantage
+#check filter_card_lt_of_sum_sq_lt_card_mul_sq
+#check HasFarWindowSecondMomentAdvantage.toWindowCardAdvantage

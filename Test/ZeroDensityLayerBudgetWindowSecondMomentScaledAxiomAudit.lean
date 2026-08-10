@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetWindowSecondMomentScaled
+
+open PrimeNumberTheorem
+
+#print axioms HasFarWindowSecondMomentAdvantage.toScaledWindowCardAdvantage
