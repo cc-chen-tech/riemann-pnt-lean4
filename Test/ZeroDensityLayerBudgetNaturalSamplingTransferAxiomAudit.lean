@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetNaturalSamplingTransfer
+
+#print axioms PrimeNumberTheorem.HasFarTargetAmplitudeWitness.toNatural_natFloor_of_eventually_sampling
+#print axioms PrimeNumberTheorem.HasFarTargetAmplitudeWitness.toNatural_natFloor_of_normalized_stability
