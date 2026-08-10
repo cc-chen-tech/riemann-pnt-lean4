@@ -50,3 +50,65 @@ pairwise disjoint, the base interval is disjoint from every dyadic shell, and
 the combined map from Carlson positive-zero indices to complex zeros is
 injective.  The indexed weight is also identified with the exact
 analytic-multiplicity coefficient of its represented zero.
+
+With uniqueness available, the indexed captured mass is bounded by the full
+finite distinct-zero coefficient mass.  For every seed inclusion `S₀ ⊆ S`,
+the exact relative allocation is
+
+`captured boundary mass of (S \ S₀) + outside mass of S
+  = outside mass of S₀`.
+
+Hence extension mass below `addedAllowance` and final outside mass below
+`outsideAllowance` force the seed's original outside mass below their sum.
+This is a necessary quantitative compatibility condition for the
+coefficient-mass actual-PNT transfer.
+
+## Sharp finite-extension barrier
+
+If an extension is required to satisfy
+
+`finite mass of (S \ S₀) < loss`
+
+and
+
+`2 * outside mass of S < gap`,
+
+then necessarily
+
+`outside mass of S₀ < loss + gap / 2`.
+
+For the canonical half-retention gap this becomes
+
+`outside mass of S₀ < loss + (c - loss) / 4`.
+
+The contrapositive is formalized as a nonexistence theorem for finite
+extensions.  This states the exact arithmetic threshold that creates a
+contradiction; it does not invoke or formalize a zero-reproduction tree.
+
+Because `0 < c - loss`, the canonical allowance
+`loss + (c - loss) / 4` is strictly smaller than `c`.  Therefore every
+successful canonical finite extension must satisfy
+
+`outside boundary mass of S₀ < c`.
+
+If the seed outside mass is at least `c`, no admissible choice of `loss` and
+no finite extension can satisfy both required budgets.  This explains
+precisely why a finite seed oscillation coefficient alone is insufficient:
+one still needs a strict quantitative dominance over the seed's entire
+remaining Carlson boundary mass.
+
+## Conjugate capture cost
+
+Carlson boundary mass counts positive-height zeros.  For a finite cluster
+that is conjugation-stable and whose members are all nontrivial zeta zeros,
+the finite visible coefficient mass pays for both signs:
+
+`2 * captured positive Carlson boundary mass
+  <= finite visible cluster coefficient mass`.
+
+This sharper factor is conditional only on an explicit finite-cluster
+membership certificate.  The current finite-seed selector reports boundary
+support and real-part caps, but does not yet expose the stronger declaration
+that every newly adjoined member is a nontrivial zeta zero.  That interface
+gap must be closed before using the factor-two estimate automatically in the
+actual-PNT transfer.
