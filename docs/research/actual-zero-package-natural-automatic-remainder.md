@@ -23,4 +23,3 @@ The remaining explicit hypothesis is the Carlson outside-cluster good-height
 finite-strip certificate for that same package and selector.  Removing this
 last hypothesis requires a genuine quantitative complement theorem, not an
 interface rearrangement.
-

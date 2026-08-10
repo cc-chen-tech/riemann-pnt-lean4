@@ -46,4 +46,3 @@ Carlson density bounds how many zeros occur in a strip. It does not by itself
 give the strict real-part separation encoded by the last two conditions.
 Eliminating them would require either enlarging the main package to include
 all boundary zeros or proving a new boundary-mass/anti-cancellation theorem.
-

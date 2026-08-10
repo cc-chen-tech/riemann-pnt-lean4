@@ -36,4 +36,3 @@ requires global exhaustion of the target real-part line. Carlson density alone
 does not provide that exhaustion. A more general unconditional route must
 either use a dynamically growing main package or control the full boundary
 package without treating it as a negligible complement.
-

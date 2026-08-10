@@ -14,4 +14,3 @@ q * sqrt(E(T, Re rho, L)) * x^(Re rho - 1) / 2.
 The Carlson outside-cluster finite-strip certificate remains an explicit
 hypothesis. Thus this theorem is a concrete zero-to-PNT transfer interface,
 not an unconditional Omega theorem.
-
