@@ -247,10 +247,72 @@ selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTSharpSignedTransfer_aut
 It transfers external positive and negative cluster witnesses throughout the
 same strict net range `q < c - 2 * boundaryMass`.
 
+The exact nontriviality criterion is formalized as:
+
+```lean
+exists_pos_lt_cluster_sub_two_mul_boundary_iff
+```
+
+It proves:
+
+```text
+(exists q > 0, q < c - 2 * boundaryMass)
+  iff
+2 * boundaryMass < c.
+```
+
+Consequently the following theorems automatically produce some common positive
+coefficient on the actual PNT target scale:
+
+```lean
+exists_pos_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTHasFarNaturalPoint
+
+exists_pos_selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTSharpSignedWitnesses
+```
+
+The second conclusion is conditional `Omega_+-style` data along natural points:
+it still requires the external positive and negative visible-cluster witnesses,
+but no longer requires the caller to guess a transferable coefficient.
+
 This quantifies why a single zero or an arbitrary finite cluster is not enough
 by itself. Finiteness supplies neither an unsigned nor a signed witness
 coefficient `c`, and even a supplied coefficient yields a nontrivial actual-PNT
 conclusion only when it exceeds the boundary loss `2 * boundaryMass`.
+
+### Capturing the complete boundary layer
+
+The boundary coefficient is antitone in the visible cluster:
+
+```lean
+actualCarlsonOutsideClusterBoundaryMass_antitone
+```
+
+Thus enlarging `S` cannot worsen the complementary-zero loss. If `S` contains
+every indexed positive zero with `Re rho = beta`, then:
+
+```lean
+actualCarlsonOutsideClusterBoundaryMass_eq_zero_of_boundary_captured
+```
+
+proves that the loss vanishes exactly. The balanced residual then becomes
+arbitrarily small on the target scale:
+
+```lean
+eventually_abs_selectedUniformGoodHeightActualCarlsonBalancedBoundaryCapturedPNTClusterResidual_lt_automatic
+```
+
+and the unsigned and signed transfers recover the full strict range `q < c`:
+
+```lean
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryCapturedPNTHasFarNaturalPoint_belowClusterConstant
+
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryCapturedPNTSharpSignedTransfer_automatic
+```
+
+This is weaker than assuming every outside zero satisfies `Re rho < beta` at
+the interface level: outside zeros are only bounded by `beta`, while the entire
+equality layer is assigned explicitly to the finite main cluster. It still does
+not construct the required cluster witness.
 
 ## 6. Quantitative reverse transfers
 
@@ -274,6 +336,26 @@ selectedUniformGoodHeightActualCarlsonBalancedPNTEventualLower_forces_emptyClust
 
 They require only the corresponding one-sided PNT bound and signed cluster
 witness.
+
+The boundary-mass branch has the parallel declarations:
+
+```lean
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTEventualUpper_forces_emptyCluster_automatic
+
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTEventualUpper_forces_emptyCluster_of_positiveWitness_automatic
+
+selectedUniformGoodHeightActualCarlsonBalancedBoundaryPNTEventualLower_forces_emptyCluster_of_negativeWitness_automatic
+```
+
+Here the sharp comparison hypothesis is no longer `q < c`, but
+
+```text
+q < c - 2 * boundaryMass.
+```
+
+Thus the same explicit boundary coefficient governs forward unsigned transfer,
+forward signed transfer, two-sided reverse exclusion, and one-sided reverse
+exclusion.
 
 These reverse theorems do not imply RH. They are conditional exclusion
 principles with explicit zero-gap and cluster-witness inputs.
