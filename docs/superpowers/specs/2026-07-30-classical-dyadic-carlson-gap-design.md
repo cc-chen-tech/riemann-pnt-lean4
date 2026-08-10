@@ -96,4 +96,3 @@ does not yet reassemble the complete PNT error at the classical selected
 height. It does not modify or depend on the separately owned complementary
 bound or VK-edge modules, and it does not claim a new zero-free region, a new
 zero-density theorem, an unconditional oscillation theorem, or RH.
-

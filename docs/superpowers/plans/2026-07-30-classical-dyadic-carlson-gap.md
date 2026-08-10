@@ -80,4 +80,3 @@ existence theorem chooses the admissibly balanced constants.
 - [ ] Assemble the Carlson-gap and selected-height zero-free conclusions.
 - [ ] Register every public declaration in the exact contract.
 - [ ] Print axioms for the two endpoint theorems.
-
