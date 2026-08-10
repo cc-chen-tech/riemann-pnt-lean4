@@ -1,0 +1,14 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativeFullPNT
+
+/-!
+Axiom audit for the quantitative classical full natural-PNT endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms tendsto_abs_actualPNTClosedRealAxisRelativeTerm_natural_zero
+#print axioms tendsto_classicalDyadicCarlsonFullPNTErrorMajorant_zero
+#print axioms eventually_abs_relativeChebyshevPsi0Error_le_classicalFullPNTMajorant
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativeFullPNTErrorMajorant
+
+end PrimeNumberTheorem

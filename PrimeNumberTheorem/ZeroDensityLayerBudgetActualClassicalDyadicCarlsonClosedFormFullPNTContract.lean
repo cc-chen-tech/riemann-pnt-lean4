@@ -1,0 +1,24 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonClosedFormFullPNT
+
+/-!
+# Classical dyadic Carlson closed-form full-PNT contract
+
+Public contract replacing the final opaque natural remainder certificate by
+the proved two-scale square-root-log contour majorant.
+-/
+
+open Filter
+open scoped Topology
+
+namespace PrimeNumberTheorem
+
+#check classicalClosedLogRelativeMajorant
+#check tendsto_classicalClosedLogRelativeMajorant_zero
+#check classicalAdmissibleClosedFormNaturalRemainderMajorant
+#check eventually_selectedClassicalNaturalRemainderUpperBound_le_closedForm
+#check classicalDyadicCarlsonClosedFormFullPNTErrorMajorant
+#check tendsto_classicalDyadicCarlsonClosedFormFullPNTErrorMajorant_zero
+#check eventually_classicalFullPNTMajorant_le_closedForm
+#check exists_selectedClassicalAdmissibleDyadicCarlsonClosedFormFullPNTErrorMajorant
+
+end PrimeNumberTheorem

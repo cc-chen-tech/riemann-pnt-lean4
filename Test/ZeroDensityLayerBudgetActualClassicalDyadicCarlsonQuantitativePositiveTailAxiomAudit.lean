@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonQuantitativePositiveTail
+
+/-!
+Axiom audit for the quantitative classical positive-zero-tail endpoint.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms exists_eventually_dynamicPositiveOutsideClusterPNTLayerNorm_div_target_le_actualHybridMajorant_selectedHeight
+#print axioms classicalCriticalHalfMajorant_eq
+#print axioms tendsto_classicalCriticalHalfMajorant_zero
+#print axioms exists_eventually_actualSelectedClassicalAdmissibleCriticalHalfPNTLayerNorm_le_majorant
+#print axioms tendsto_classicalDyadicCarlsonPositiveZeroTailMajorant_zero
+#print axioms exists_selectedClassicalAdmissibleDyadicCarlsonQuantitativePositiveZeroTailMajorant
+
+end PrimeNumberTheorem
