@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualMovingCarlsonBalancedExponent
+
+#print axioms PrimeNumberTheorem.carlsonMovingBalancedCut_pos
+#print axioms PrimeNumberTheorem.carlsonMovingBalancedCut_lt_alpha
+#print axioms PrimeNumberTheorem.carlsonMovingLowExponent_eq_balanced
+#print axioms PrimeNumberTheorem.carlsonMovingHighExponent_eq_balanced

@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualMovingCarlsonAutomaticDecay
+
+#print axioms PrimeNumberTheorem.actualMovingCarlsonStripMass_le_logPowerRatio
+#print axioms PrimeNumberTheorem.tendsto_actualMovingCarlsonStripMass_zero_of_pointwiseCount
