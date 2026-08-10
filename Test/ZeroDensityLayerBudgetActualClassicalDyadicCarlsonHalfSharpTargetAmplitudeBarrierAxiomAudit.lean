@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClassicalDyadicCarlsonHalfSharpTargetAmplitudeBarrier
+
+/-!
+Axiom audit for the concrete half-sharp full-PNT target-amplitude barrier.
+-/
+
+namespace PrimeNumberTheorem
+
+#print axioms classicalDyadicCarlsonThetaHalfToTargetAmplitudeRatio_eq
+#print axioms classicalDyadicCarlsonThetaHalfToTargetAmplitudeRatio_tendsto_atTop
+#print axioms classicalDyadicCarlsonThetaHalfKernel_le_closedFormFullPNTErrorMajorant
+#print axioms classicalDyadicCarlsonHalfClosedFormFullPNTToTargetAmplitudeRatio_tendsto_atTop
+#print axioms not_eventually_classicalDyadicCarlsonHalfClosedFormFullPNTMajorant_le_mul_targetAmplitude
+
+end PrimeNumberTheorem
