@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroForcingUnifiedTransfer
+
+#print axioms
+  PrimeNumberTheorem.zero_cluster_unified_common_decomposition_transfer
+#print axioms
+  PrimeNumberTheorem.norm_equalRealPartClusterPackage_le_exp_mul_coefficientMass
+#print axioms
+  PrimeNumberTheorem.zero_cluster_unified_common_decomposition_transfer_automatic_main

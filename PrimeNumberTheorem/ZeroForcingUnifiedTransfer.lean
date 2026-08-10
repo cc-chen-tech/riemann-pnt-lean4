@@ -256,3 +256,168 @@ theorem unified_parametricPNTUpper_targetAmplitudeLower
         hamplitude hrealAxis hcontour hcomplement hmain hdecomp⟩
 
 end PrimeNumberTheorem
+
+namespace PrimeNumberTheorem
+
+/-- The equal-real-part main cluster has the exact `exp (β * y)` growth scale,
+with analytic multiplicity and the `1 / ‖ρ‖` kernel weight retained. -/
+theorem norm_equalRealPartClusterPackage_le_exp_mul_coefficientMass
+    (S : Finset ℂ) (multiplicity : ℂ → ℕ) (β y : ℝ)
+    (hre : ∀ ρ ∈ S, ρ.re = β) :
+    ‖equalRealPartClusterPackage S multiplicity y‖ ≤
+      Real.exp (β * y) *
+        ∑ ρ ∈ S, ‖(multiplicity ρ : ℂ) * ρ⁻¹‖ := by
+  rw [equalRealPartClusterPackage,
+    ZeroForcedOscillation.equalRealPart_zeroPackage_eq_exponentialPolynomial
+      S multiplicity β y hre,
+    norm_mul, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos (Real.exp_pos (β * y))]
+  apply mul_le_mul_of_nonneg_left _ (Real.exp_pos (β * y)).le
+  change
+    ‖ZeroForcedOscillation.exponentialPolynomial S
+        (fun ρ => (multiplicity ρ : ℂ) * ρ⁻¹) Complex.im y‖ ≤
+      ∑ ρ ∈ S, ‖(multiplicity ρ : ℂ) * ρ⁻¹‖
+  calc
+    _ ≤
+        ∑ ρ ∈ S,
+          ‖((multiplicity ρ : ℂ) * ρ⁻¹) *
+            Complex.exp (Complex.I * (ρ.im * y))‖ :=
+      norm_sum_le _ _
+    _ = ∑ ρ ∈ S, ‖(multiplicity ρ : ℂ) * ρ⁻¹‖ := by
+      apply Finset.sum_congr rfl
+      intro ρ _
+      rw [norm_mul, Complex.norm_exp]
+      simp
+
+/--
+Common-decomposition upper/lower transfer with the finite main-cluster budget
+generated automatically at its correct `exp (β * y)` scale.
+-/
+noncomputable def
+    zero_cluster_unified_common_decomposition_transfer_automatic_main
+    (S : Finset ℂ) (multiplicity : ℂ → ℕ) (β L x₀ : ℝ)
+    (hL : 0 < L) (hre : ∀ ρ ∈ S, ρ.re = β)
+    (pntError complement remainder : ℝ → ℂ)
+    (hdecomp :
+      ∀ y, pntError y =
+        equalRealPartClusterPackage S multiplicity y +
+          complement y + remainder y)
+    (complementBudget remainderBudget : ℝ → ℝ)
+    (hcomplement : ∀ y, ‖complement y‖ ≤ complementBudget y)
+    (hremainder : ∀ y, ‖remainder y‖ ≤ remainderBudget y) :
+    DynamicUpperConclusion pntError
+        (fun y =>
+          Real.exp (β * y) *
+                ∑ ρ ∈ S, ‖(multiplicity ρ : ℂ) * ρ⁻¹‖ +
+            complementBudget y + remainderBudget y)
+        x₀ ×
+      OscillationLowerConclusion pntError
+        (fun y =>
+          Real.sqrt
+              (equalRealPartClusterAmplitude S multiplicity β L y) -
+            complementBudget y - remainderBudget y) := by
+  refine ⟨?_, zero_cluster_oscillation_lower
+    S multiplicity β L hL hre pntError complement remainder hdecomp
+      complementBudget remainderBudget hcomplement hremainder⟩
+  constructor
+  intro y _
+  rw [hdecomp y]
+  calc
+    ‖equalRealPartClusterPackage S multiplicity y +
+          complement y + remainder y‖
+        ≤
+      ‖equalRealPartClusterPackage S multiplicity y‖ +
+          ‖complement y‖ + ‖remainder y‖ := by
+            calc
+              _ ≤
+                  ‖equalRealPartClusterPackage S multiplicity y +
+                      complement y‖ +
+                    ‖remainder y‖ :=
+                norm_add_le _ _
+              _ ≤
+                  (‖equalRealPartClusterPackage S multiplicity y‖ +
+                      ‖complement y‖) +
+                    ‖remainder y‖ := by
+                simpa [add_comm, add_left_comm, add_assoc] using
+                  add_le_add_right (norm_add_le
+                    (equalRealPartClusterPackage S multiplicity y)
+                    (complement y)) ‖remainder y‖
+    _ ≤
+        Real.exp (β * y) *
+              ∑ ρ ∈ S, ‖(multiplicity ρ : ℂ) * ρ⁻¹‖ +
+          complementBudget y + remainderBudget y :=
+      add_le_add
+        (add_le_add
+          (norm_equalRealPartClusterPackage_le_exp_mul_coefficientMass
+            S multiplicity β y hre)
+          (hcomplement y))
+        (hremainder y)
+
+end PrimeNumberTheorem
+
+namespace PrimeNumberTheorem
+
+/--
+A common explicit-formula decomposition simultaneously produces an upper
+estimate and a finite-cluster oscillation lower estimate.
+
+Unlike `unified_dynamic_transfer`, the two conclusions here are not supplied
+as independent hypotheses.  They are both derived from the same identity
+
+`pntError = equalRealPartClusterPackage + complement + remainder`
+
+and the same complementary and remainder budgets.  The only extra upper input
+is a pointwise norm budget for the finite main cluster itself.
+-/
+noncomputable def zero_cluster_unified_common_decomposition_transfer
+    (S : Finset ℂ) (multiplicity : ℂ → ℕ) (β L x₀ : ℝ)
+    (hL : 0 < L) (hre : ∀ ρ ∈ S, ρ.re = β)
+    (pntError complement remainder : ℝ → ℂ)
+    (hdecomp :
+      ∀ y, pntError y =
+        equalRealPartClusterPackage S multiplicity y +
+          complement y + remainder y)
+    (mainBudget complementBudget remainderBudget : ℝ → ℝ)
+    (hmain :
+      ∀ y,
+        ‖equalRealPartClusterPackage S multiplicity y‖ ≤ mainBudget y)
+    (hcomplement : ∀ y, ‖complement y‖ ≤ complementBudget y)
+    (hremainder : ∀ y, ‖remainder y‖ ≤ remainderBudget y) :
+    DynamicUpperConclusion pntError
+        (fun y => mainBudget y + complementBudget y + remainderBudget y) x₀ ×
+      OscillationLowerConclusion pntError
+        (fun y =>
+          Real.sqrt
+              (equalRealPartClusterAmplitude S multiplicity β L y) -
+            complementBudget y - remainderBudget y) := by
+  refine ⟨?_, zero_cluster_oscillation_lower
+    S multiplicity β L hL hre pntError complement remainder hdecomp
+      complementBudget remainderBudget hcomplement hremainder⟩
+  constructor
+  intro y _
+  rw [hdecomp y]
+  calc
+    ‖equalRealPartClusterPackage S multiplicity y +
+          complement y + remainder y‖
+        ≤
+      ‖equalRealPartClusterPackage S multiplicity y‖ +
+          ‖complement y‖ + ‖remainder y‖ := by
+            calc
+              _ ≤
+                  ‖equalRealPartClusterPackage S multiplicity y +
+                      complement y‖ +
+                    ‖remainder y‖ :=
+                norm_add_le _ _
+              _ ≤
+                  (‖equalRealPartClusterPackage S multiplicity y‖ +
+                      ‖complement y‖) +
+                    ‖remainder y‖ :=
+                by
+                  simpa [add_comm, add_left_comm, add_assoc] using
+                    add_le_add_right (norm_add_le
+                      (equalRealPartClusterPackage S multiplicity y)
+                      (complement y)) ‖remainder y‖
+    _ ≤ mainBudget y + complementBudget y + remainderBudget y :=
+      add_le_add (add_le_add (hmain y) (hcomplement y)) (hremainder y)
+
+end PrimeNumberTheorem
