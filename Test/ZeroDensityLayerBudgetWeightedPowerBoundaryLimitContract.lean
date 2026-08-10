@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetWeightedPowerBoundaryLimit
+
+open PrimeNumberTheorem
+
+#check weightedPowerBoundaryMass
+#check weightedPowerLayers_tendsto_boundaryMass_of_summable
+#check weightedPowerBoundaryMass_eq_zero_of_lt
