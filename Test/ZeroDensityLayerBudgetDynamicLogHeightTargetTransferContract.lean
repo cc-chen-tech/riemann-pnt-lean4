@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicLogHeightTargetTransfer
+
+namespace PrimeNumberTheorem
+
+#check targetAmplitudeNegligible_of_eventually_normalized_le_of_tendsto_zero
+#check
+  targetAmplitudeNegligible_of_eventually_normalized_le_dynamicFiniteStripLogMajorant
+#check
+  targetAmplitudeNegligible_of_eventually_normalized_le_actualWeightedBalancedGoodHeight_dynamicFiniteStripLogMajorant
+
+end PrimeNumberTheorem
