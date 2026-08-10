@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonFiniteAffinePowerTransfer
+
+namespace PrimeNumberTheorem
+
+#check carlsonFiniteAffineBalancedPowerMajorant
+#check carlsonAffineDensitySlope_pos
+#check carlsonFiniteAffineBalancedPowerMajorant_eq_weighted
+#check carlsonFiniteAffineBalancedPowerMajorant_le_optimalDecay
+#check tendsto_carlsonFiniteAffineBalancedPowerMajorant_zero
+
+end PrimeNumberTheorem

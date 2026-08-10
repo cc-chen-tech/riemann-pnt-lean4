@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicCarlsonTwoStageExponentOptimality
+
+namespace PrimeNumberTheorem
+
+#print axioms dynamicCarlsonAutomaticExponentPair_certificate
+#print axioms dynamicCarlsonAutomaticExponentPair_unique
+#print axioms dynamicCarlsonAutomaticExponentPair_margins_pos
+
+end PrimeNumberTheorem
