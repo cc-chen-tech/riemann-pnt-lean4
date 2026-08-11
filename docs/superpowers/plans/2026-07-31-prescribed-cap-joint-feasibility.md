@@ -68,4 +68,3 @@
 - [ ] **Step 4: Commit docs and code separately**
 
 - [ ] **Step 5: Open a draft PR based on stack46**
-

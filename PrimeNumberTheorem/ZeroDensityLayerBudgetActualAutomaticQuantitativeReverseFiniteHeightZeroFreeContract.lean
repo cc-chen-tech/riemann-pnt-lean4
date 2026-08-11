@@ -6,4 +6,3 @@ namespace PrimeNumberTheorem
 #check exists_automaticGoodHeight_globalRealPartBound_eventualUpper_finiteHeightZeroFree
 
 end PrimeNumberTheorem
-

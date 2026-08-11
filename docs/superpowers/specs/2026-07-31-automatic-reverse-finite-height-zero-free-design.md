@@ -30,4 +30,3 @@ The result remains conditional on:
   cluster is nonempty.
 
 No sharp witness is constructed in this module.
-

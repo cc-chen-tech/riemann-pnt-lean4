@@ -36,4 +36,3 @@ The theorem does not construct the visible-cluster witness. It isolates that
 sharp-oscillation input while automating numerical parameters, selected
 height, Carlson cap, conjugation, real ordinates, and explicit-formula
 remainders.
-

@@ -6,4 +6,3 @@ namespace PrimeNumberTheorem
 #check exists_jointTwoHeightTargetAmplitudeParameters_above_cap
 
 end PrimeNumberTheorem
-

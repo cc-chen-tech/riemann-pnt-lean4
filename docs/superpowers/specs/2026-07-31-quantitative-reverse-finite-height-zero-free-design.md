@@ -29,4 +29,3 @@ is incompatible with a nonempty visible cluster whenever `q < 1 / 2`.
 
 The global real-part bound and the nonempty-cluster witness remain explicit.
 The result does not prove RH or construct the sharp witness.
-

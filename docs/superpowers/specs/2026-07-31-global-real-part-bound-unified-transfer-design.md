@@ -32,4 +32,3 @@ The theorem returns fixed-rate natural-point relative PNT convergence and
 half-target-amplitude oscillation transfer. It does not construct the
 visible-cluster witness and does not assert an unconditional global zeta-zero
 real-part bound.
-

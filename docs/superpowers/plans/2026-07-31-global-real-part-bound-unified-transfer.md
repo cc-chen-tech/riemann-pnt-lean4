@@ -68,4 +68,3 @@ Expected axiom set: `propext`, `Classical.choice`, `Quot.sound`.
 - [ ] **Step 2: Commit code and audits**
 
 - [ ] **Step 3: Push and open the stacked draft PR**
-

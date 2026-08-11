@@ -30,4 +30,3 @@ fact `theta < tau` immediately supplies the selected-height strip cap.
 
 This module proves only the numerical statement; the global zero real-part
 bound remains an explicit analytic input.
-

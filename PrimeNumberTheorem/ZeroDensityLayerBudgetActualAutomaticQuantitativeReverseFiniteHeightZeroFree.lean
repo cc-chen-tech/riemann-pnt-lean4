@@ -130,4 +130,3 @@ theorem
   · simp
 
 end PrimeNumberTheorem
-

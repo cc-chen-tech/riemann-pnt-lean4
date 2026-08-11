@@ -116,4 +116,3 @@ theorem exists_automaticGoodHeight_globalRealPartBoundNaturalTargetTransfer
       hstripLow hstripHigh hcap hreal hmain
 
 end PrimeNumberTheorem
-

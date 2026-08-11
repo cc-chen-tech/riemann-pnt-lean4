@@ -94,4 +94,3 @@ theorem
   simpa [div_eq_mul_inv, mul_comm] using hfar
 
 end PrimeNumberTheorem
-
