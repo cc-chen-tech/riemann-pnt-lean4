@@ -188,4 +188,3 @@ theorem exists_jointTwoHeightNearOptimalTruncationParameters
       hlowLow, hlowHigh, hstripLow, hstripHigh⟩
 
 end PrimeNumberTheorem
-

@@ -11,4 +11,3 @@ namespace PrimeNumberTheorem
 #check exists_contourCompatible_jointTwoHeightPrescribedCapOuterExponent_iff_arithmetic
 
 end PrimeNumberTheorem
-

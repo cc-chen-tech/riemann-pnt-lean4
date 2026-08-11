@@ -42,4 +42,3 @@ For `1 / 2 < sigma < 1`, the contour floor lies below `C` exactly when:
 
 This identifies the precise truncation-height obstruction rather than merely
 constructing one midpoint witness.
-

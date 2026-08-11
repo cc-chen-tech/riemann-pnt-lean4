@@ -43,4 +43,3 @@ The contour floor lies below the optimized ceiling exactly when:
 - `0 < beta`;
 - `sigma < (3 * beta - 1) / 2`;
 - `a(sigma) * (1 - beta) + max sigma theta - beta < 0`.
-

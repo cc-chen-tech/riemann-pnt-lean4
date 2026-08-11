@@ -72,4 +72,3 @@
 - [ ] **Step 3: Commit docs and code separately**
 
 - [ ] **Step 4: Open a draft PR based on stack52**
-

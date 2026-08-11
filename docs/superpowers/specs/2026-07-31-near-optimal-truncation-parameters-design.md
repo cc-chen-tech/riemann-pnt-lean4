@@ -39,4 +39,3 @@ constructs both cuts and margins.
 
 The output is a complete transfer-ready parameter tuple whose outer-height
 exponent is exactly `eta` below the proven supremum.
-

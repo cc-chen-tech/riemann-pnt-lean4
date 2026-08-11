@@ -35,4 +35,3 @@ For every supplied natural-point visible-cluster witness, the theorem returns:
 - a half-target-amplitude far witness for the actual relative Chebyshev error.
 
 The sharp visible-cluster witness remains explicit.
-

@@ -172,4 +172,3 @@ theorem exists_contourCompatible_jointTwoHeightOuterExponent_iff_arithmetic
       hsigmaHalf hsigmaOne)
 
 end PrimeNumberTheorem
-

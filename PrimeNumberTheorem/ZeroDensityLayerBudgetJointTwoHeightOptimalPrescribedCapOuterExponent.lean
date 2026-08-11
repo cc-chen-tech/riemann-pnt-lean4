@@ -225,4 +225,3 @@ theorem
       hsigmaHalf hsigmaOne)
 
 end PrimeNumberTheorem
-
