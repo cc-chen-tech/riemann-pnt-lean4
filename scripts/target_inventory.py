@@ -99,6 +99,8 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.ActualSelectedHeightFiniteStripGrid",
     "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile.RobustMarginAntitoneCost",
     "PrimeNumberTheorem.IsTargetAmplitudeAdmissibleHeight",
+    "PrimeNumberTheorem.IsJointTwoHeightOuterExponentFeasible",
+    "PrimeNumberTheorem.IsJointTwoHeightPrescribedCapOuterExponentFeasible",
     "PrimeNumberTheorem.IsPNTSubpolynomialLogHeight",
     "PrimeNumberTheorem.IsConjugationInvariantCluster",
     "PrimeNumberTheorem.OutsideClusterRealPartCap",
