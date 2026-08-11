@@ -1,4 +1,4 @@
-import PrimeNumberTheorem.ZeroDensityLayerBudgetTwoHeightNumericalCore
+import PrimeNumberTheorem.ZeroDensityLayerBudgetTargetAmplitudeTwoHeightExponent
 
 /-!
 # Joint two-height target-amplitude parameter feasibility
