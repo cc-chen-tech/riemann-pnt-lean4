@@ -9,20 +9,34 @@ noncomputable section
 
 -- Five public definitions.
 
-example (sigma tau : ℝ) (n : ℕ) : Finset ℂ :=
-  actualCarlsonDyadicZeroStrip sigma tau n
+example (sigma tau : ℝ) (n : ℕ) :
+    actualCarlsonDyadicZeroStrip sigma tau n =
+      (actualCarlsonDyadicZeroShell sigma n).filter fun rho => rho.re ≤ tau :=
+  rfl
 
-example (sigma tau : ℝ) (n : ℕ) : ℝ :=
-  actualCarlsonDyadicStripLinearMultiplicityCapacity sigma tau n
+example (sigma tau : ℝ) (n : ℕ) :
+    actualCarlsonDyadicStripLinearMultiplicityCapacity sigma tau n =
+      ∑ rho ∈ actualCarlsonDyadicZeroStrip sigma tau n,
+        (analyticOrderNatAt riemannZeta rho : ℝ) :=
+  rfl
 
-example (sigma tau : ℝ) (n : ℕ) : ℝ :=
-  actualCarlsonDyadicStripLinearReciprocalSquareCapacity sigma tau n
+example (sigma tau : ℝ) (n : ℕ) :
+    actualCarlsonDyadicStripLinearReciprocalSquareCapacity sigma tau n =
+      ∑ rho ∈ actualCarlsonDyadicZeroStrip sigma tau n,
+        (analyticOrderNatAt riemannZeta rho : ℝ) / ‖rho‖ ^ 2 :=
+  rfl
 
-example (sigma tau : ℝ) (n : ℕ) : ℝ :=
-  actualCarlsonDyadicStripSquareReciprocalCapacity sigma tau n
+example (sigma tau : ℝ) (n : ℕ) :
+    actualCarlsonDyadicStripSquareReciprocalCapacity sigma tau n =
+      ∑ rho ∈ actualCarlsonDyadicZeroStrip sigma tau n,
+        (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 / ‖rho‖ ^ 2 :=
+  rfl
 
-example (sigma tau : ℝ) (n : ℕ) (S : Finset ℂ) : ℝ :=
-  actualCarlsonDyadicStripSquareReciprocalCapacityExcluding sigma tau n S
+example (sigma tau : ℝ) (n : ℕ) (S : Finset ℂ) :
+    actualCarlsonDyadicStripSquareReciprocalCapacityExcluding sigma tau n S =
+      ∑ rho ∈ actualCarlsonDyadicZeroStrip sigma tau n \ S,
+        (analyticOrderNatAt riemannZeta rho : ℝ) ^ 2 / ‖rho‖ ^ 2 :=
+  rfl
 
 -- Sixteen public theorems.
 
