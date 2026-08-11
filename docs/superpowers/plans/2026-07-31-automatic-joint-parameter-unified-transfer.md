@@ -86,4 +86,3 @@ Expected axiom set: `propext`, `Classical.choice`, `Quot.sound`.
 
 Use base
 `research/pintz-carlson-stack-44-joint-two-height-parameter-feasibility`.
-

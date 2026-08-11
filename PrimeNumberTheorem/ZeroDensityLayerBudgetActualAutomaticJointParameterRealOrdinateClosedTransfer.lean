@@ -85,4 +85,3 @@ theorem exists_automaticGoodHeight_jointParameterRealOrdinateClosedTransfer
     htransfer selection hSAdjoined hcap hreal hmain
 
 end PrimeNumberTheorem
-

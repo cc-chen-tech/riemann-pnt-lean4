@@ -26,4 +26,3 @@ the real-ordinate bound for every `beta`.
 The selected-height strip cap and visible-cluster natural-point witness remain
 explicit and must both refer to the enlarged cluster. No claim is made that
 either input follows from the adjunction operation.
-

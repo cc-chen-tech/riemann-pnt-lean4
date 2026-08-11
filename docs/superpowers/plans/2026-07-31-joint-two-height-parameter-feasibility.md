@@ -100,4 +100,3 @@ Use branch
 `research/pintz-carlson-stack-44-joint-two-height-parameter-feasibility`
 and base
 `research/pintz-carlson-stack-43-automatic-good-height-natural-unified-transfer`.
-

@@ -86,4 +86,3 @@ theorem exists_automaticGoodHeight_jointParameterNaturalTargetTransfer
       hstripLow hstripHigh hcap hreal hmain
 
 end PrimeNumberTheorem
-

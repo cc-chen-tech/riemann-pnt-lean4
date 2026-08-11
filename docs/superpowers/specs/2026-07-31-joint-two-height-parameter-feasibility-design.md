@@ -61,4 +61,3 @@ facts required by the existing low-layer and Carlson transfer theorems.
 The contract checks only the new theorem. The axiom audit must report the
 standard Lean classical axioms already accepted in this repository and no
 new analytic hypothesis.
-

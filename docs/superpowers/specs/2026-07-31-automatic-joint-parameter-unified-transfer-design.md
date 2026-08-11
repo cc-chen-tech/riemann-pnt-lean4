@@ -38,4 +38,3 @@ The balanced cuts and strict margins are hidden internal witnesses.
 This theorem does not prove the strip cap, the real-ordinate bound, or the
 visible-cluster witness. It does not modify the complementary-zero or
 sharp-oscillation developments.
-
