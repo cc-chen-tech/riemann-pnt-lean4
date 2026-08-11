@@ -1,0 +1,6 @@
+import MathlibAux.BoundaryRectHigherPrincipalParts
+
+#print axioms MathlibAux.boundaryRectIntegral_inv_sq_eq_zero
+#print axioms MathlibAux.boundaryRectIntegral_inv_cube_eq_zero
+#print axioms MathlibAux.boundaryRectIntegral_const_mul_inv_sq_eq_zero
+#print axioms MathlibAux.boundaryRectIntegral_const_mul_inv_cube_eq_zero
