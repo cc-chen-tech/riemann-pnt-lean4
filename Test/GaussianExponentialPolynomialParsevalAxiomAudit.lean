@@ -1,0 +1,4 @@
+import MathlibAux.GaussianExponentialPolynomialParseval
+
+#print axioms MathlibAux.gaussianWeightedSecondMoment_eq_hermitian_sum
+#print axioms MathlibAux.gaussianWeightedSecondMoment_le_driftingGram
