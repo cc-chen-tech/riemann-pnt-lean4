@@ -101,6 +101,7 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.IsTargetAmplitudeAdmissibleHeight",
     "PrimeNumberTheorem.IsJointTwoHeightOuterExponentFeasible",
     "PrimeNumberTheorem.IsJointTwoHeightPrescribedCapOuterExponentFeasible",
+    "PrimeNumberTheorem.IsJointTwoHeightSigmaOptimizer",
     "PrimeNumberTheorem.IsPNTSubpolynomialLogHeight",
     "PrimeNumberTheorem.IsConjugationInvariantCluster",
     "PrimeNumberTheorem.OutsideClusterRealPartCap",
