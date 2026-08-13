@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30",
+  "timestamp": "2026-08-14",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -10,7 +10,11 @@
         "file": "HardyTheorem/CriticalLineMultiplicity.lean",
         "line": 250,
         "shape": "<unknown>",
-        "depends_on": []
+        "depends_on": [],
+        "externally_proved_by": {
+          "source": "anthropics/zeta-23-lean Theorem B (two_thirds_simple_on_critical_line_cumulative, Zeta23.thmB0_mult_cumulative)",
+          "note": "externally kernel-checked: at least 2/3 of the zeros are simple and on the critical line; simple zeros are a subset of odd-multiplicity zeros, so the target closes with c ~ 2/3 via N(T) ~ (T/2pi) log T (Zeta23's own Riemann-von Mangoldt). See docs/research/zeta23-selberg-bridge.md."
+        }
       },
       {
         "name": "integral_asymptotic_target",
@@ -96,7 +100,11 @@
         "file": "RiemannExplorer.lean",
         "line": 235,
         "shape": "∃c>0, ∃T0, ∀T≥T0, zeroCountOnCriticalLine T ≥ c*(T/(2π)*log T)",
-        "depends_on": []
+        "depends_on": [],
+        "externally_proved_by": {
+          "source": "anthropics/zeta-23-lean Theorem B, via the repo's existing chain selberg_zero_proportion_target_of_odd and conrey_40_percent_zeros_on_critical_line_target_of_selberg",
+          "note": "downstream closure: follows from the Zeta23-implied Selberg odd-proportion target with no new analysis."
+        }
       }
     ],
     "Global": [
@@ -169,6 +177,18 @@
       "proved_by": "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved"
     },
     {
+      "name": "hardy_littlewood_positive_odd_lower_bound_target",
+      "qualified_name": "HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target",
+      "file": "HardyTheorem/HardyLittlewoodLiteratureCount.lean",
+      "line": 96
+    },
+    {
+      "name": "hardy_littlewood_positive_multiplicity_lower_bound_target",
+      "qualified_name": "HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target",
+      "file": "HardyTheorem/HardyLittlewoodLiteratureCount.lean",
+      "line": 134
+    },
+    {
       "name": "HasNegToPosLocalSignChangeAt",
       "qualified_name": "HardyTheorem.HasNegToPosLocalSignChangeAt",
       "file": "HardyTheorem/ShortIntervalSignChangeMeasure.lean",
@@ -227,10 +247,22 @@
       "line": 1640
     },
     {
+      "name": "finiteCentersPairwiseSeparated",
+      "qualified_name": "MathlibAux.finiteCentersPairwiseSeparated",
+      "file": "MathlibAux/SeparatedForwardWindows.lean",
+      "line": 31
+    },
+    {
       "name": "goodHeight",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
       "file": "PrimeNumberTheorem/ExplicitFormulaAux.lean",
       "line": 137
+    },
+    {
+      "name": "dynamicComplementRealBand",
+      "qualified_name": "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementRealBand",
+      "file": "PrimeNumberTheorem/VKEdgeDynamicZeroPacketDrift.lean",
+      "line": 23
     },
     {
       "name": "centeredLocalizedContourScaleValid",
@@ -243,6 +275,360 @@
       "qualified_name": "PrimeNumberTheorem.VKEdgePiOverTwo.localizedContourScaleValid",
       "file": "PrimeNumberTheorem/VKEdgePiOverTwoConcreteLocalizedData.lean",
       "line": 81
+    },
+    {
+      "name": "IsCarlsonMovingDyadicLogPowerGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingDyadicLogPowerGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDyadicCarlsonMinimalLayerMargin.lean",
+      "line": 70
+    },
+    {
+      "name": "IsSelectedHeightDynamicZeroFree",
+      "qualified_name": "PrimeNumberTheorem.IsSelectedHeightDynamicZeroFree",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDyadicCarlsonSelectedHeightPNT.lean",
+      "line": 345
+    },
+    {
+      "name": "DynamicBoundaryPackageCoefficientCap",
+      "qualified_name": "PrimeNumberTheorem.DynamicBoundaryPackageCoefficientCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicBoundaryUpperTransfer.lean",
+      "line": 22
+    },
+    {
+      "name": "ActualDynamicCarlsonGapFamilyHeightConditions",
+      "qualified_name": "PrimeNumberTheorem.ActualDynamicCarlsonGapFamilyHeightConditions",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicCarlsonAutomaticCount.lean",
+      "line": 20
+    },
+    {
+      "name": "CarlsonDynamicGapFamilySeparated",
+      "qualified_name": "PrimeNumberTheorem.CarlsonDynamicGapFamilySeparated",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicCarlsonGapFamily.lean",
+      "line": 60
+    },
+    {
+      "name": "IsActualDynamicCarlsonGapFamilyCountCertificate",
+      "qualified_name": "PrimeNumberTheorem.IsActualDynamicCarlsonGapFamilyCountCertificate",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicCarlsonGapFamily.lean",
+      "line": 103
+    },
+    {
+      "name": "IsCarlsonDynamicGapFamilyRatioDominated",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonDynamicGapFamilyRatioDominated",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicCarlsonGapFamily.lean",
+      "line": 209
+    },
+    {
+      "name": "IsConjugationInvariantCluster",
+      "qualified_name": "PrimeNumberTheorem.IsConjugationInvariantCluster",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation.lean",
+      "line": 21
+    },
+    {
+      "name": "IsActualMovingCarlsonTwoHeightCertificate",
+      "qualified_name": "PrimeNumberTheorem.IsActualMovingCarlsonTwoHeightCertificate",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualMovingCarlsonCertificate.lean",
+      "line": 32
+    },
+    {
+      "name": "ActualMovingPositiveRightEdgeCap",
+      "qualified_name": "PrimeNumberTheorem.ActualMovingPositiveRightEdgeCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualMovingCarlsonPositiveTailTransfer.lean",
+      "line": 36
+    },
+    {
+      "name": "IsActualMovingCarlsonTwoHeightCountCertificate",
+      "qualified_name": "PrimeNumberTheorem.IsActualMovingCarlsonTwoHeightCountCertificate",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualMovingTwoHeightCountCertificate.lean",
+      "line": 10
+    },
+    {
+      "name": "ActualPositiveCarlsonRightCover",
+      "qualified_name": "PrimeNumberTheorem.ActualPositiveCarlsonRightCover",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualPositiveZeroOrderedCoverTransfer.lean",
+      "line": 27
+    },
+    {
+      "name": "ActualSelectedHeightMovingPositiveRightEdgeCap",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightMovingPositiveRightEdgeCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightMovingCarlsonPositiveTailTransfer.lean",
+      "line": 29
+    },
+    {
+      "name": "NaturalPointTargetAmplitudeNegligible",
+      "qualified_name": "PrimeNumberTheorem.NaturalPointTargetAmplitudeNegligible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightNaturalTransfer.lean",
+      "line": 23
+    },
+    {
+      "name": "HasFarNaturalPointTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNaturalPointTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightNaturalTransfer.lean",
+      "line": 31
+    },
+    {
+      "name": "RobustMarginAntitoneCost",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile.RobustMarginAntitoneCost",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileCertifiedCostOptimality.lean",
+      "line": 26
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripGrid",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripGrid",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileFiniteGridDirectionalSelection.lean",
+      "line": 17
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripGrid",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripGrid",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileFiniteGridDirectionalSelection.lean",
+      "line": 24
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripProfile",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileOptimalTransfer.lean",
+      "line": 21
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripProfile",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileOptimization.lean",
+      "line": 49
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripProfile",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileOptimization.lean",
+      "line": 54
+    },
+    {
+      "name": "IsAdaptiveBoundaryLocalDensityAdmissible",
+      "qualified_name": "PrimeNumberTheorem.IsAdaptiveBoundaryLocalDensityAdmissible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetAdaptiveBoundaryLocalDensity.lean",
+      "line": 28
+    },
+    {
+      "name": "ZeroDensityMajorant",
+      "qualified_name": "PrimeNumberTheorem.ZeroDensityMajorant",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlson.lean",
+      "line": 12
+    },
+    {
+      "name": "IsCarlsonMovingQuadraticLayerCountGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingQuadraticLayerCountGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonDynamicLayerCount.lean",
+      "line": 48
+    },
+    {
+      "name": "IsCarlsonMovingQuadraticLogPowerLayerCountGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingQuadraticLogPowerLayerCountGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonDynamicLayerCount.lean",
+      "line": 186
+    },
+    {
+      "name": "IsCarlsonMovingBalancedCoefficientAdmissible",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingBalancedCoefficientAdmissible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonMovingBalancedDecay.lean",
+      "line": 125
+    },
+    {
+      "name": "IsCarlsonMovingQuadraticLogGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingQuadraticLogGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonMovingCoefficientGrowth.lean",
+      "line": 437
+    },
+    {
+      "name": "IsCarlsonMovingQuadraticLogPowerGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingQuadraticLogPowerGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonMovingLogPowerAbsorption.lean",
+      "line": 17
+    },
+    {
+      "name": "CarlsonPointwiseHeightConditions",
+      "qualified_name": "PrimeNumberTheorem.CarlsonPointwiseHeightConditions",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonMovingTwoHeightPointwiseCount.lean",
+      "line": 9
+    },
+    {
+      "name": "AdmissibleHeight",
+      "qualified_name": "PrimeNumberTheorem.AdmissibleHeight",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetDynamic.lean",
+      "line": 8
+    },
+    {
+      "name": "IsOptimalHeight",
+      "qualified_name": "PrimeNumberTheorem.IsOptimalHeight",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetDynamic.lean",
+      "line": 33
+    },
+    {
+      "name": "IsJointTwoHeightOuterExponentFeasible",
+      "qualified_name": "PrimeNumberTheorem.IsJointTwoHeightOuterExponentFeasible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetJointTwoHeightOptimalOuterExponent.lean",
+      "line": 15
+    },
+    {
+      "name": "IsJointTwoHeightPrescribedCapOuterExponentFeasible",
+      "qualified_name": "PrimeNumberTheorem.IsJointTwoHeightPrescribedCapOuterExponentFeasible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetJointTwoHeightOptimalPrescribedCapOuterExponent.lean",
+      "line": 15
+    },
+    {
+      "name": "IsMovingDensityGapAdmissible",
+      "qualified_name": "PrimeNumberTheorem.IsMovingDensityGapAdmissible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetMovingGapBarrier.lean",
+      "line": 31
+    },
+    {
+      "name": "HasFarNormWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNormWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetOmegaTransfer.lean",
+      "line": 19
+    },
+    {
+      "name": "HasFarPositiveWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarPositiveWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetOmegaTransfer.lean",
+      "line": 23
+    },
+    {
+      "name": "HasFarNegativeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNegativeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetOmegaTransfer.lean",
+      "line": 27
+    },
+    {
+      "name": "IsEventuallyHalfSmall",
+      "qualified_name": "PrimeNumberTheorem.IsEventuallyHalfSmall",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetOmegaTransfer.lean",
+      "line": 39
+    },
+    {
+      "name": "MovingSigmaAnchoredAt",
+      "qualified_name": "PrimeNumberTheorem.MovingSigmaAnchoredAt",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTAnchoredMovingSigma.lean",
+      "line": 25
+    },
+    {
+      "name": "PositiveOutsideClusterBucketFamilyAboveHalf",
+      "qualified_name": "PrimeNumberTheorem.PositiveOutsideClusterBucketFamilyAboveHalf",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTDynamicFiniteClusterTailInconsistency.lean",
+      "line": 107
+    },
+    {
+      "name": "GlobalRightEdgeZeroFree",
+      "qualified_name": "PrimeNumberTheorem.GlobalRightEdgeZeroFree",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTDynamicReverseZeroFree.lean",
+      "line": 31
+    },
+    {
+      "name": "PositiveNontrivialZerosStrictlyRightOfHalf",
+      "qualified_name": "PrimeNumberTheorem.PositiveNontrivialZerosStrictlyRightOfHalf",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTDynamicTailHalfBarrier.lean",
+      "line": 78
+    },
+    {
+      "name": "OutsideClusterRealPartCap",
+      "qualified_name": "PrimeNumberTheorem.OutsideClusterRealPartCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTHybridCanonicalOutsideClusterCapTransfer.lean",
+      "line": 14
+    },
+    {
+      "name": "HeightwiseOutsideClusterRealPartCap",
+      "qualified_name": "PrimeNumberTheorem.HeightwiseOutsideClusterRealPartCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTHybridCofinalOutsideClusterCap.lean",
+      "line": 17
+    },
+    {
+      "name": "UniformMovingSigmaHybridDensityDecay",
+      "qualified_name": "PrimeNumberTheorem.UniformMovingSigmaHybridDensityDecay",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTMovingSigmaTransfer.lean",
+      "line": 122
+    },
+    {
+      "name": "HasFarNaturalPointPositiveTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNaturalPointPositiveTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTSharpSignedOmega.lean",
+      "line": 26
+    },
+    {
+      "name": "HasFarNaturalPointNegativeTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNaturalPointNegativeTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTSharpSignedOmega.lean",
+      "line": 31
+    },
+    {
+      "name": "FiniteHeightRightEdgeZeroFree",
+      "qualified_name": "PrimeNumberTheorem.FiniteHeightRightEdgeZeroFree",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTSignedReverseZeroFree.lean",
+      "line": 52
+    },
+    {
+      "name": "HasFarPositiveTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarPositiveTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetSignedTargetAmplitudeRealTransfer.lean",
+      "line": 16
+    },
+    {
+      "name": "HasFarNegativeTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNegativeTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetSignedTargetAmplitudeRealTransfer.lean",
+      "line": 22
+    },
+    {
+      "name": "IsTargetAmplitudeAdmissibleHeight",
+      "qualified_name": "PrimeNumberTheorem.IsTargetAmplitudeAdmissibleHeight",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetTargetAmplitudeHeightCriterion.lean",
+      "line": 31
+    },
+    {
+      "name": "IsPNTSubpolynomialLogHeight",
+      "qualified_name": "PrimeNumberTheorem.IsPNTSubpolynomialLogHeight",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetTargetAmplitudeHeightIncompatibility.lean",
+      "line": 22
+    },
+    {
+      "name": "TargetAmplitudeNegligible",
+      "qualified_name": "PrimeNumberTheorem.TargetAmplitudeNegligible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetTargetAmplitudeTransfer.lean",
+      "line": 24
+    },
+    {
+      "name": "HasFarTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetTargetAmplitudeTransfer.lean",
+      "line": 89
+    },
+    {
+      "name": "HasFarWindowCardAdvantage",
+      "qualified_name": "PrimeNumberTheorem.HasFarWindowCardAdvantage",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetWindowCountAntiCancellation.lean",
+      "line": 23
+    },
+    {
+      "name": "HasFarWindowEnergyBudgets",
+      "qualified_name": "PrimeNumberTheorem.HasFarWindowEnergyBudgets",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetWindowEnergyEventualCap.lean",
+      "line": 20
+    },
+    {
+      "name": "HasFarWindowEnergySeparation",
+      "qualified_name": "PrimeNumberTheorem.HasFarWindowEnergySeparation",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetWindowEnergySeparation.lean",
+      "line": 117
+    },
+    {
+      "name": "HasFarWindowSecondMomentAdvantage",
+      "qualified_name": "PrimeNumberTheorem.HasFarWindowSecondMomentAdvantage",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetWindowSecondMomentBadCount.lean",
+      "line": 19
+    },
+    {
+      "name": "dynamicExplicitFormulaHeight",
+      "qualified_name": "PrimeNumberTheorem.dynamicExplicitFormulaHeight",
+      "file": "PrimeNumberTheorem/ZeroForcingUnifiedTransfer.lean",
+      "line": 49
     },
     {
       "name": "PNTForm1",
@@ -476,8 +862,8 @@
     {
       "name": "Quantitative critical-line extensions",
       "target": "selberg_odd_zero_proportion_target",
-      "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved; Selberg and Conrey counts remain open",
-      "next_step": "obtain the logarithmic gain needed for Selberg's T log T critical-line count, then develop Conrey-style percentage estimates"
+      "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved; Selberg and Conrey counts are closed externally by anthropics/zeta-23-lean Theorem B (at least 2/3 of the zeros are simple and on the critical line, kernel-checked), pending an in-repo merge and definitional bridge",
+      "next_step": "merge Zeta23 (toolchain v4.33.0-rc2, Mathlib v4.33.0-rc2) and add the bridge lemma N0simple <= criticalLineOddZeroCount; see docs/research/zeta23-selberg-bridge.md"
     }
   ],
   "chain_inventory": {
@@ -503,7 +889,7 @@
   "mathematical_target_count": 12,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 48,
+  "reusable_predicate_count": 111,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 65
+  "all_scanned_prop_defs_count": 128
 }

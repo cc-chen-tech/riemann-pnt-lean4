@@ -33,8 +33,8 @@ CHAIN_SUMMARY = [
     {
         "name": "Quantitative critical-line extensions",
         "target": "selberg_odd_zero_proportion_target",
-        "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved; Selberg and Conrey counts remain open",
-        "next_step": "obtain the logarithmic gain needed for Selberg's T log T critical-line count, then develop Conrey-style percentage estimates",
+        "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved; Selberg and Conrey counts are closed externally by anthropics/zeta-23-lean Theorem B (at least 2/3 of the zeros are simple and on the critical line, kernel-checked), pending an in-repo merge and definitional bridge",
+        "next_step": "merge Zeta23 (toolchain v4.33.0-rc2, Mathlib v4.33.0-rc2) and add the bridge lemma N0simple <= criticalLineOddZeroCount; see docs/research/zeta23-selberg-bridge.md",
     },
 ]
 
@@ -65,6 +65,31 @@ PROVED_REUSABLE_PREDICATES = {
         "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
     "HardyTheorem.hardy_littlewood_odd_lower_bound_target":
         "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
+}
+
+# Targets closed by externally kernel-checked formalizations (other Lean
+# projects), recorded as provenance on the still-open in-repo `def ... : Prop`.
+# They remain in `remaining_prop_targets` (the repo has not closed them
+# itself) but carry an `externally_proved_by` annotation so the inventory
+# reflects that no new analytic mathematics is needed to close them.
+EXTERNALLY_PROVEN = {
+    "HardyTheorem.selberg_odd_zero_proportion_target": {
+        "source": "anthropics/zeta-23-lean Theorem B "
+                  "(two_thirds_simple_on_critical_line_cumulative, "
+                  "Zeta23.thmB0_mult_cumulative)",
+        "note": "externally kernel-checked: at least 2/3 of the zeros are "
+                "simple and on the critical line; simple zeros are a subset "
+                "of odd-multiplicity zeros, so the target closes with c ~ 2/3 "
+                "via N(T) ~ (T/2pi) log T (Zeta23's own Riemann-von Mangoldt). "
+                "See docs/research/zeta23-selberg-bridge.md.",
+    },
+    "KnownResults.conrey_40_percent_zeros_on_critical_line_target": {
+        "source": "anthropics/zeta-23-lean Theorem B, via the repo's existing "
+                  "chain selberg_zero_proportion_target_of_odd and "
+                  "conrey_40_percent_zeros_on_critical_line_target_of_selberg",
+        "note": "downstream closure: follows from the Zeta23-implied Selberg "
+                "odd-proportion target with no new analysis.",
+    },
 }
 
 
@@ -110,7 +135,8 @@ def build_status() -> dict[str, object]:
                     previous_shapes.get(record.name, "<unknown>"),
                 ),
                 "depends_on": [],
-            }
+            } | ({"externally_proved_by": EXTERNALLY_PROVEN[record.qualified_name]}
+                 if record.qualified_name in EXTERNALLY_PROVEN else {})
         )
 
     return {

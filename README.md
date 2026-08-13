@@ -390,6 +390,7 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 | `agent/vk-ford-incomplete-bridge`（原 PR #19，已关闭） | 保留 Ford 不完整矩、double Holder 和近整数计数实验 | 混合草案过大且与 `main` 冲突；residue-mass 审计已单独作为 PR #27 合并，其余内容需拆成新的可审查 PR |
 | `research/vk-edge-annihilator-h-average-next`（本地） | 继续研究消去器平均和零密度残差能量 | 完整显式公式余项、正检测器能量及真实零点簇选择尚未统一闭合 |
 | 本地分支 `research/weil-extremal-kernels-next`（`a5aa020`） | 有限维区间证书、尾部和极值核实验 | 尚未推送或合并到 `main`；实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
+| `research/zeta23-merge`（本分支） | 引入 Anthropic [zeta-23-lean](https://github.com/anthropics/zeta-23-lean) 的外部机器检查证明（≥ 2/3 的零点简单且在临界线上，Theorems A–E），经定义级桥接闭合 Selberg 奇重数正比例与 Conrey 40% 两个开放目标；附带 rank–trace 方法边界对账（见 [docs/research/zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md)） | in-repo 闭合依赖工具链迁移（v4.33.0-rc2 / Mathlib 4.33，待决策门）；不证明 RH、VK 区域或 RH 尺度误差 |
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
@@ -412,6 +413,17 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 该目标已被证明。项目的声明分类规则见
 [Implementation Standards](docs/implementation-standards.md) 和
 [Target Statements and Chains](docs/target-statements-and-chains.md)。
+
+> **外部 SOTA 参考（2026-08）：** Anthropic 的
+> [zeta-23-lean](https://github.com/anthropics/zeta-23-lean)（Lean 4 / Mathlib，
+> 无 `sorry`，axiom 审计仅 `propext`/`Classical.choice`/`Quot.sound`）机器检查
+> 证明了"超过三分之二的 zeta 零点位于临界线上且为简单零点"（Theorems A–E，
+> 含原始 Dirichlet L 函数版本）。该定理经定义级桥接可闭合本仓库的
+> `HardyTheorem.selberg_odd_zero_proportion_target` 与
+> `KnownResults.conrey_40_percent_zeros_on_critical_line_target`（见
+> [docs/research/zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md)）。
+> 上面的"没有证明"清单针对**本仓库内核**：这两个目标在本仓库合并完成前
+> 仍是开放 `def ... : Prop`，但闭合它们已不需要新的解析数学。
 
 ---
 
