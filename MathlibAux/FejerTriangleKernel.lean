@@ -72,7 +72,6 @@ theorem intervalIntegral_pair_sub_eq_triangle_kernel
     have hbnd : (H - H) * G H - (H - 0) * G 0 = 0 := by
       rw [hG0]
       ring
-    dsimp only at hsum
     rw [hsplit, hneg, hbnd] at hsum
     linarith
   -- Integration by parts on the left half: ∫ (H + τ) f τ = -∫ G τ over -H..0.
@@ -100,7 +99,6 @@ theorem intervalIntegral_pair_sub_eq_triangle_kernel
     have hbnd : (H + 0) * G 0 - (H + -H) * G (-H) = 0 := by
       rw [hG0]
       ring
-    dsimp only at hsum
     rw [hsplit, hone, hbnd] at hsum
     linarith
   -- Substitutions collapsing the square integral to primitive integrals.

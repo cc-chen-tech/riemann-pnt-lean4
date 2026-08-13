@@ -76,11 +76,11 @@ theorem abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn
     hP.mono hbaseMaps
   have hFshift : ContinuousOn (fun x : ℝ => F (x + τ))
       (Set.uIcc A B) := by
-    simpa only [Function.comp_def] using
+    simpa only [Function.comp_def, Pi.add_apply, id_eq] using
       hF.comp (continuous_id.add continuous_const).continuousOn hshiftMaps
   have hPshift : ContinuousOn (fun x : ℝ => P (x + τ))
       (Set.uIcc A B) := by
-    simpa only [Function.comp_def] using
+    simpa only [Function.comp_def, Pi.add_apply, id_eq] using
       hP.comp (continuous_id.add continuous_const).continuousOn hshiftMaps
   have hf_cont : ContinuousOn f (Set.uIcc A B) := by
     dsimp only [f]

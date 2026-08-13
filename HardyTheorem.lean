@@ -806,7 +806,7 @@ lemma weightedIntegralOf_eventually_positive_of_tail_dominates
   let g : ℝ → ℝ := fun t => weightFunction n t * f t
   have hg : Continuous g := by
     have hw : Continuous fun t : ℝ => weightFunction n t := by
-      simpa [weightFunction] using (continuous_id.pow (2 * n))
+      simpa [weightFunction, Pi.pow_apply] using (continuous_id.pow (2 * n))
     exact hw.mul hf
   have htail_gt :
       ∀ᶠ T in atTop, -(∫ t in (0 : ℝ)..A, g t) < ∫ t in A..T, g t :=
@@ -868,7 +868,7 @@ lemma weightedIntegral_eventually_bddBelow_of_hardyZ_positive
   refine ⟨∫ t in (0 : ℝ)..A, g t, ?_⟩
   have hg : Continuous g := by
     have hw : Continuous fun t : ℝ => weightFunction n t := by
-      simpa [weightFunction] using (continuous_id.pow (2 * n))
+      simpa [weightFunction, Pi.pow_apply] using (continuous_id.pow (2 * n))
     exact hw.mul hardyZ_continuous
   filter_upwards [eventually_ge_atTop A] with T hT
   have htail_nonneg : 0 ≤ ∫ t in A..T, g t := by
@@ -897,7 +897,7 @@ lemma weightedIntegral_eventually_bddAbove_of_hardyZ_negative
   refine ⟨∫ t in (0 : ℝ)..A, g t, ?_⟩
   have hg : Continuous g := by
     have hw : Continuous fun t : ℝ => weightFunction n t := by
-      simpa [weightFunction] using (continuous_id.pow (2 * n))
+      simpa [weightFunction, Pi.pow_apply] using (continuous_id.pow (2 * n))
     exact hw.mul hardyZ_continuous
   filter_upwards [eventually_ge_atTop A] with T hT
   have htail_nonpos : ∫ t in A..T, g t ≤ 0 := by
@@ -1242,7 +1242,7 @@ lemma finite_abs_le_inter_of_compl_mem_codiscrete {S : Set ℝ}
     {t : ℝ | |t| ≤ B ∧ t ∈ S}.Finite := by
   by_cases hB : 0 ≤ B
   · rcases compl_mem_codiscrete_iff.mp hS with ⟨hSclosed, hSdisc⟩
-    have hSdisc' : IsDiscrete S := isDiscrete_iff_discreteTopology.mpr hSdisc
+    have hSdisc' : IsDiscrete S := hSdisc
     have hcompact : IsCompact (Set.Icc (-B) B ∩ S) :=
       isCompact_Icc.inter_right hSclosed
     have hdisc : IsDiscrete (Set.Icc (-B) B ∩ S) :=

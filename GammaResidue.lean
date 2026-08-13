@@ -174,7 +174,7 @@ theorem IsSimplePoleOfGamma (n : ℕ) :
       simpa using (hdz.mul hz.differentiableAt)
     simpa [g, mul_comm, mul_left_comm, mul_assoc] using hgz
   have hne : ∀ᶠ z in nhdsWithin c ({c}ᶜ), z ≠ c := by
-    simpa [Filter.Eventually, Set.mem_setOf_eq] using
+    simpa [Filter.Eventually, Set.mem_ofPred_eq] using
       (self_mem_nhdsWithin : ({c}ᶜ : Set ℂ) ∈ nhdsWithin c ({c}ᶜ))
   have hg_update_event : ∀ᶠ z in nhdsWithin c ({c}ᶜ), DifferentiableAt ℂ (Function.update g c R) z := by
     refine (hg_event_diff.and hne).mono ?_

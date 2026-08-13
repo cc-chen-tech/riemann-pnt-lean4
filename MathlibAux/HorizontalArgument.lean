@@ -34,7 +34,7 @@ theorem intervalIntegral_im_inv_horizontal_sub_eq
     funext sigma
     have hinner : HasDerivAt
         (fun x : ℝ => (x - u.re) / d) (1 / d) sigma := by
-      convert ((hasDerivAt_id sigma).sub_const u.re).div_const d using 1
+      simpa using ((hasDerivAt_id sigma).sub_const u.re).div_const d
     have hcomp := (Real.hasDerivAt_arctan ((sigma - u.re) / d)).comp sigma hinner
     change deriv F sigma = -d / ((sigma - u.re) ^ 2 + d ^ 2)
     rw [show deriv F sigma =
