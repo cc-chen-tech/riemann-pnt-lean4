@@ -77,9 +77,23 @@ lake env lean comparator/PrintAxioms/PairCeiling.lean
   即：定理签名与桥接蓝图（`zeta23-selberg-bridge.md` 引理 1–3）完全吻合，
   且只依赖 Lean 三个标准公理——**"外部机器检查证明"标注在此升级为已验证
   结论**（该定理层面）；
-- [ ] `comparator/PrintAxioms` 全套（15+12+6 个受信任声明的对照审计）：
-  `Solution`/`comparator` 模块在受限环境下编译缓慢，仍在后台进行；此为
-  完整性审计，不改变上述定理层面的结论。
+- [x] **完整 comparator 对照审计通过**（`AUDIT_DONE`）：`Solution` /
+  `Solution.Multiplicity` / `Solution.XiPrime` / `comparator` 全部构建
+  （9002 jobs），`#print axioms` 输出抽样：
+
+  ```text
+  'two_thirds_on_critical_line'            depends on axioms: [propext, Classical.choice, Quot.sound]
+  'two_thirds_on_critical_line_cumulative' depends on axioms: [propext, Classical.choice, Quot.sound]
+  'two_thirds_simple_on_critical_line'     depends on axioms: [propext, Classical.choice, Quot.sound]
+  'two_thirds_simple_on_critical_line_cumulative' depends on axioms: [propext, Classical.choice, Quot.sound]
+  'five_sixths_distinct'                   depends on axioms: [propext, Classical.choice, Quot.sound]
+  'five_sixths_distinct_cumulative'        depends on axioms: [propext, Classical.choice, Quot.sound]
+  'xiPrime_simple_zeros_on_critical_line'(_cumulative) depends on axioms: [propext, Classical.choice, Quot.sound]
+  ```
+
+  即：Zeta23 的 Theorem A/B/C 与 ξ′ 附加结果全部无 `sorry`、无自定义公理。
+  **结论：Zeta23 是一个完整、可构建、axiom 干净的外部机器检查证明
+  （按本仓库自己的"内核检查即证明"标准）。**
 
 ## 声明边界
 
