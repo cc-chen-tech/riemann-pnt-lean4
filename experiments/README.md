@@ -76,6 +76,8 @@ python3 -m experiments.rh.short_interval_signed_l2_audit \
 
 This checks finite correlation identities and exponent arithmetic only.  It
 does not prove the open signed off-diagonal estimate or a zero-free region.
+The accompanying tests also verify the nonconstant-weight double-frequency
+DFT identity and the four-term Vaughan identity on finite inputs.
 
 ## Discrete Search
 
