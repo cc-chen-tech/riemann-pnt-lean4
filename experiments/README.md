@@ -65,6 +65,18 @@ not certify that the matrix equals an analytic Weil-form matrix. The registered
 analytic target and transfer gaps are fixed in
 `docs/research/weil-extremal-kernel-preregistration.md`.
 
+### Signed short-interval L2 audit
+
+Print the exponent ledger for the proposed strict `Re(rho)>2/3` route:
+
+```bash
+python3 -m experiments.rh.short_interval_signed_l2_audit \
+  --a 2/3 --beta 3/4
+```
+
+This checks finite correlation identities and exponent arithmetic only.  It
+does not prove the open signed off-diagonal estimate or a zero-free region.
+
 ## Discrete Search
 
 Search for a small Ramsey counterexample graph:
