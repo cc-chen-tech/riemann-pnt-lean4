@@ -39,7 +39,7 @@ theorem integral_mul_cexp_Ioi (a : ℂ) (ha : a.re < 0) :
       convert ((((Complex.hasDerivAt_exp (a * u)).comp (u : ℂ)
         ((hasDerivAt_id (u : ℂ)).const_mul a)).mul
           ((((hasDerivAt_id (u : ℂ)).const_mul a).sub_const 1))).div_const (a ^ 2)) using 1 <;>
-        simp only [Function.comp_apply, id_eq] <;> field_simp <;> ring
+        (try rfl) <;> simp only [Function.comp_apply, id_eq] <;> field_simp <;> ring
     simpa [F, H] using hH.comp_ofReal
   have hlim : Filter.Tendsto F Filter.atTop (𝓝 0) := by
     have hexp : Tendsto (fun u : ℝ => Complex.exp (a * u)) atTop (𝓝 0) := by
@@ -131,7 +131,7 @@ theorem integrable_fourier_smoothPerronStep (c : ℝ) (hc : 0 < c) :
   apply (integrable_norm_iff hmeas).mp
   have hk : 2 * Real.pi / c ≠ 0 := by positivity
   have h := (integrable_inv_one_add_sq.comp_mul_left' hk).const_mul (c ^ (-2 : ℤ))
-  convert h using 1
+  convert h using 1 <;> (try rfl)
   funext w
   rw [show (c : ℂ) + 2 * Real.pi * w * Complex.I =
       (c : ℂ) + ((2 * Real.pi * w : ℝ) : ℂ) * Complex.I by push_cast; ring]

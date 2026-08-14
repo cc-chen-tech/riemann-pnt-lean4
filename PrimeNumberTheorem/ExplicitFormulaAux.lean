@@ -579,7 +579,7 @@ theorem hasSum_trivialZeroResidueSeries {x : ℝ} (hx : 1 < x) :
   have hlog := Real.hasSum_pow_div_log_of_abs_lt_one
     (show |x ^ (-2 : ℝ)| < 1 by rw [abs_of_pos hypos]; exact hylt)
   have hhalf := hlog.mul_left (1 / 2 : ℝ)
-  convert hhalf using 1
+  convert hhalf using 1 <;> (try rfl)
   · funext n
     rw [← Real.rpow_natCast]
     rw [← Real.rpow_mul hxpos.le]

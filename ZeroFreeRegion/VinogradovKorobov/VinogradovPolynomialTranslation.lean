@@ -226,6 +226,7 @@ theorem exists_vinogradovCenteredTaylor_eq_truncation_add_tail
   rw [sub_eq_iff_eq_add] at hθ
   simpa only [add_comm] using hθ
 
+set_option maxHeartbeats 0 in
 /-- Wooley's translated spaced-polynomial expansion: the first `r`
 nonconstant terms have the prescribed center powers and a coefficient matrix
 congruent to the binomial matrix, while all remaining terms enter through an
@@ -250,12 +251,17 @@ theorem exists_vinogradovCenteredTaylor_spaced_expansion
       (vinogradovSpacedPolynomial p c k n ψ)
   refine ⟨Ω, θ, fun i ↦ (hΩ i).2, ?_⟩
   rw [hθ]
-  congr 2
-  unfold vinogradovCenteredTaylorTruncation
-  apply Finset.sum_congr rfl
-  intro i _
-  rw [(hΩ i).1]
+  rw [show vinogradovCenteredTaylorTruncation r ξ
+        (vinogradovSpacedPolynomial p c k n ψ) =
+      (∑ i : Fin r,
+        Polynomial.C (ξ ^ (n - (↑i + 1)) * Ω i) *
+          Polynomial.X ^ (↑i + 1)) by
+    unfold vinogradovCenteredTaylorTruncation
+    apply Finset.sum_congr rfl
+    intro i _
+    rw [(hΩ i).1]]
 
+set_option maxHeartbeats 800000 in
 /-- The same translated expansion without requiring every retained degree to
 lie below the monomial degree. Natural subtraction records the zero-exponent
 case, while the associated binomial coefficient is then zero modulo the
@@ -280,11 +286,15 @@ theorem exists_vinogradovCenteredTaylor_spaced_expansion_all
       (vinogradovSpacedPolynomial p c k n ψ)
   refine ⟨Ω, θ, fun i ↦ (hΩ i).2, ?_⟩
   rw [hθ]
-  congr 2
-  unfold vinogradovCenteredTaylorTruncation
-  apply Finset.sum_congr rfl
-  intro i _
-  rw [(hΩ i).1]
+  rw [show vinogradovCenteredTaylorTruncation r ξ
+        (vinogradovSpacedPolynomial p c k n ψ) =
+      (∑ i : Fin r,
+        Polynomial.C (ξ ^ (n - (↑i + 1)) * Ω i) *
+          Polynomial.X ^ (↑i + 1)) by
+    unfold vinogradovCenteredTaylorTruncation
+    apply Finset.sum_congr rfl
+    intro i _
+    rw [(hΩ i).1]]
 
 /-- The row-wise translated high-degree spaced system from Wooley's equation
 (7.10), packaged with its perturbed binomial coefficient matrix and common

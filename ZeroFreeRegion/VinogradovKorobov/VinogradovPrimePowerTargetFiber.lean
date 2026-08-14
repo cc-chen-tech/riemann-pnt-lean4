@@ -70,7 +70,7 @@ private theorem vinogradovPrimeTargetCompleteResidueTupleEquiv_apply
   funext i
   change vinogradovPrimeTargetCompleteResidueEquiv p
     (Fin.cast (by simp) (x i)) = _
-  simpa only [Nat.cast_add, Nat.cast_one] using
+  simpa [Nat.cast_add, Nat.cast_one] using
     vinogradovPrimeTargetCompleteResidueEquiv_apply p
       (Fin.cast (by simp) (x i))
 
@@ -573,7 +573,7 @@ theorem mem_vinogradovPrimePowerBlockFixedDataSet_iff_image_mem
       have hj' := hj.add_right
         (-vinogradovPowerSumInt
           (fun i ↦ (((tail i).val + 1 : ℕ) : ℤ)) j)
-      simpa [vinogradovPrimePowerBlockTarget] using hj'
+      simpa [vinogradovPrimePowerBlockTarget, sub_eq_add_neg] using hj'
 
 /-- The fixed-data representation maps onto every nonsingular solution with
 a selected left head block. -/

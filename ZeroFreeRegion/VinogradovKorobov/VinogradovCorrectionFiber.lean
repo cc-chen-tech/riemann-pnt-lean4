@@ -130,7 +130,7 @@ theorem vinogradovPrimePowerCorrectionSolutionSet_powerSum_modEq
           (Fin.natAdd 0 i))).mp
       ((mem_vinogradovPrimePowerCorrectionSolutionSet_iff
         p d s n xy z).mp hz) j
-  simpa only [vinogradovPrimePowerLiftAmbientEquiv_fst_val_add_one,
+  simpa [vinogradovPrimePowerLiftAmbientEquiv_fst_val_add_one,
     vinogradovPrimePowerLiftAmbientEquiv_snd_val_add_one] using hj
 
 /-- Any two admissible one-step corrections above the same base pair have
