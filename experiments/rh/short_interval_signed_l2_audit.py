@@ -8,6 +8,7 @@ prove a zero-free region.
 from __future__ import annotations
 
 import argparse
+import cmath
 import json
 import math
 from dataclasses import asdict, dataclass
@@ -62,6 +63,55 @@ class ZeroDensityExponents:
     carlson_derivative: Number
     ingham_derivative: Number
     linear_eight_thirds_derivative: Fraction
+
+
+@dataclass(frozen=True)
+class CyclicFourierIdentity:
+    direct_energy: float
+    double_frequency_energy: float
+    diagonal_frequency_energy: float
+    frequency_off_diagonal: float
+    imaginary_residual: float
+
+
+@dataclass(frozen=True)
+class VaughanComponents:
+    short_lambda: float
+    type_i_log: float
+    type_i_correction: float
+    type_ii: float
+
+    @property
+    def total(self) -> float:
+        return (
+            self.short_lambda
+            + self.type_i_log
+            + self.type_i_correction
+            + self.type_ii
+        )
+
+    @property
+    def centered_total(self) -> float:
+        return self.total - 1.0
+
+
+@dataclass(frozen=True)
+class VaughanBudgetEntry:
+    name: str
+    family: str
+    available_exponent: Fraction
+    target_exponent: Fraction
+    deficit: Fraction
+    audited_input: str
+    missing_input: str
+
+
+@dataclass(frozen=True)
+class VaughanBudgetAudit:
+    target_exponent: Fraction
+    entries: Tuple[VaughanBudgetEntry, ...]
+    should_stop_vaughan: bool
+    guth_maynard_gate_open: bool
 
 
 def _require_unit_interval(name: str, value: Real) -> None:
@@ -159,6 +209,221 @@ def psi_window_decomposition(
         centered_sum=centered_sum,
         floor_remainder=floor_remainder,
         integer_count=integer_count,
+    )
+
+
+def von_mangoldt(n: int) -> float:
+    """Return the von Mangoldt value using a dependency-free factor check."""
+
+    if n < 2:
+        return 0.0
+    prime = 2
+    while prime * prime <= n and n % prime != 0:
+        prime += 1
+    if n % prime != 0:
+        prime = n
+    remaining = n
+    while remaining % prime == 0:
+        remaining //= prime
+    return math.log(prime) if remaining == 1 else 0.0
+
+
+def mobius(n: int) -> int:
+    """Return the Moebius function by trial division."""
+
+    if n < 1:
+        raise ValueError("mobius is defined here only for positive integers")
+    remaining = n
+    prime_factors = 0
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            remaining //= prime
+            if remaining % prime == 0:
+                return 0
+            prime_factors += 1
+        while remaining % prime == 0:
+            remaining //= prime
+        prime += 1
+    if remaining > 1:
+        prime_factors += 1
+    return -1 if prime_factors % 2 else 1
+
+
+def _divisors(n: int) -> Tuple[int, ...]:
+    return tuple(divisor for divisor in range(1, n + 1) if n % divisor == 0)
+
+
+def vaughan_components(
+    n: int, *, u_cutoff: int, v_cutoff: int
+) -> VaughanComponents:
+    """Evaluate the exact four-term Vaughan identity at one integer.
+
+    The convention is
+
+    ``Lambda = mu_<=U*log - Lambda_<=V*mu_<=U*1
+                + 1*mu_>U*Lambda_>V + Lambda_<=V``.
+    """
+
+    if n < 1:
+        raise ValueError("n must be positive")
+    if u_cutoff < 1 or v_cutoff < 1:
+        raise ValueError("Vaughan cutoffs must be positive")
+
+    divisors = _divisors(n)
+    short_lambda = von_mangoldt(n) if n <= v_cutoff else 0.0
+    type_i_log = sum(
+        mobius(divisor) * math.log(n // divisor)
+        for divisor in divisors
+        if divisor <= u_cutoff
+    )
+    type_i_correction = -sum(
+        von_mangoldt(lambda_factor) * mobius(mu_factor)
+        for lambda_factor in divisors
+        if lambda_factor <= v_cutoff
+        for mu_factor in _divisors(n // lambda_factor)
+        if mu_factor <= u_cutoff
+    )
+    type_ii = sum(
+        mobius(mu_factor) * von_mangoldt(lambda_factor)
+        for lambda_factor in divisors
+        if lambda_factor > v_cutoff
+        for mu_factor in _divisors(n // lambda_factor)
+        if mu_factor > u_cutoff
+    )
+    return VaughanComponents(
+        short_lambda=short_lambda,
+        type_i_log=type_i_log,
+        type_i_correction=type_i_correction,
+        type_ii=type_ii,
+    )
+
+
+def vaughan_two_thirds_budget() -> VaughanBudgetAudit:
+    """Record the fixed-power failures under the currently audited inputs.
+
+    The entries are disjoint frequency regimes of the exact weighted Fourier
+    identity.  Vaughan's decomposition does not improve their power using only
+    the currently available PNT, large-sieve, and mean-value estimates.
+    """
+
+    target = Fraction(5, 3)
+    available = Fraction(7, 3)
+    deficit = available - target
+    entries = (
+        VaughanBudgetEntry(
+            name="very_low_frequency",
+            family="grouped Type I plus centering",
+            available_exponent=available,
+            target_exponent=target,
+            deficit=deficit,
+            audited_input="classical PNT error on |alpha| <= X^-1",
+            missing_input="power-scale centered prime-sum cancellation",
+        ),
+        VaughanBudgetEntry(
+            name="transition_frequency",
+            family="nonbalanced Type II",
+            available_exponent=available,
+            target_exponent=target,
+            deficit=deficit,
+            audited_input="continuous large sieve on X^-1 < |alpha| < H^-1",
+            missing_input="signed spectral non-concentration saving one H",
+        ),
+        VaughanBudgetEntry(
+            name="high_frequency",
+            family="balanced Type II",
+            available_exponent=available,
+            target_exponent=target,
+            deficit=deficit,
+            audited_input="Montgomery--Vaughan mean value with |alpha|^-2 window",
+            missing_input="localized bilinear mean square saving one H",
+        ),
+    )
+    fixed_power_failures = sum(entry.deficit > 0 for entry in entries)
+    unique_failure = fixed_power_failures == 1
+    return VaughanBudgetAudit(
+        target_exponent=target,
+        entries=entries,
+        should_stop_vaughan=fixed_power_failures >= 2,
+        guth_maynard_gate_open=unique_failure,
+    )
+
+
+def _discrete_fourier_transform(values: Iterable[complex]) -> Tuple[complex, ...]:
+    entries = tuple(complex(value) for value in values)
+    size = len(entries)
+    return tuple(
+        sum(
+            value * cmath.exp(-2j * math.pi * index * frequency / size)
+            for index, value in enumerate(entries)
+        )
+        for frequency in range(size)
+    )
+
+
+def finite_cyclic_weighted_fourier_identity(
+    coefficients: Iterable[float], *, window_length: int, weights: Iterable[float]
+) -> CyclicFourierIdentity:
+    """Check the exact weighted double-frequency identity on a finite cycle.
+
+    With the DFT convention ``f_hat(k)=sum_j f(j)e(-jk/q)``, multiplication
+    by a nonconstant position weight couples frequencies through
+    ``W_hat(l-k)``.  This finite identity models the two-frequency coupling
+    caused by the smooth factor ``w(x/X)`` in the continuous problem.
+    """
+
+    coeffs = tuple(float(value) for value in coefficients)
+    position_weights = tuple(float(value) for value in weights)
+    size = len(coeffs)
+    if size == 0:
+        raise ValueError("coefficients must be nonempty")
+    if len(position_weights) != size:
+        raise ValueError("weights must have the same length as coefficients")
+    if not 0 <= window_length <= size:
+        raise ValueError("window_length must lie between zero and the cycle size")
+    if any(weight < 0 for weight in position_weights):
+        raise ValueError("weights must be nonnegative")
+
+    window_values = tuple(
+        sum(coeffs[(position + offset) % size] for offset in range(1, window_length + 1))
+        for position in range(size)
+    )
+    direct_energy = sum(
+        weight * value * value
+        for weight, value in zip(position_weights, window_values)
+    )
+
+    backward_window = tuple(
+        1.0 if size - window_length <= index < size else 0.0
+        for index in range(size)
+    )
+    coefficient_transform = _discrete_fourier_transform(coeffs)
+    window_transform = _discrete_fourier_transform(backward_window)
+    weighted_window_transform = tuple(
+        coefficient_transform[index] * window_transform[index]
+        for index in range(size)
+    )
+    position_weight_transform = _discrete_fourier_transform(position_weights)
+
+    double_frequency = sum(
+        weighted_window_transform[left]
+        * weighted_window_transform[right].conjugate()
+        * position_weight_transform[(right - left) % size]
+        for left in range(size)
+        for right in range(size)
+    ) / (size * size)
+    diagonal_frequency = (
+        position_weight_transform[0]
+        * sum(abs(value) ** 2 for value in weighted_window_transform)
+        / (size * size)
+    )
+
+    return CyclicFourierIdentity(
+        direct_energy=direct_energy,
+        double_frequency_energy=double_frequency.real,
+        diagonal_frequency_energy=diagonal_frequency.real,
+        frequency_off_diagonal=(double_frequency - diagonal_frequency).real,
+        imaginary_residual=double_frequency.imag,
     )
 
 

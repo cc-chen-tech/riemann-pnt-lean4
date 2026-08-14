@@ -4,8 +4,13 @@ import pytest
 
 from experiments.rh.short_interval_signed_l2_audit import (
     exponent_ledger,
+    finite_cyclic_weighted_fourier_identity,
     growth_exponent,
+    mobius,
     psi_window_decomposition,
+    vaughan_two_thirds_budget,
+    vaughan_components,
+    von_mangoldt,
     weighted_centered_identity,
     zero_density_exponents,
 )
@@ -80,3 +85,85 @@ def test_packet_growth_uses_logarithmic_generation_rate() -> None:
         growth_exponent(c=2, k=1)
     with pytest.raises(ValueError, match="c must be positive"):
         growth_exponent(c=0, k=2)
+
+
+def test_nonconstant_weight_requires_double_frequency_coupling() -> None:
+    coefficients = [3.0, -2.0, 5.0, -7.0, 1.5, 4.0, -1.0, 2.0]
+    weights = [0.2, 0.5, 1.0, 1.5, 1.3, 0.8, 0.4, 0.1]
+
+    identity = finite_cyclic_weighted_fourier_identity(
+        coefficients, window_length=3, weights=weights
+    )
+
+    assert identity.direct_energy == pytest.approx(
+        identity.double_frequency_energy, abs=1e-9
+    )
+    assert abs(identity.imaginary_residual) < 1e-9
+    assert abs(identity.frequency_off_diagonal) > 1e-3
+    assert identity.direct_energy != pytest.approx(
+        identity.diagonal_frequency_energy, abs=1e-3
+    )
+
+
+def test_constant_weight_collapses_to_single_frequency_parseval() -> None:
+    coefficients = [1.0, -1.0, 2.0, 0.5, -3.0, 4.0]
+
+    identity = finite_cyclic_weighted_fourier_identity(
+        coefficients, window_length=2, weights=[1.0] * len(coefficients)
+    )
+
+    assert identity.direct_energy == pytest.approx(
+        identity.diagonal_frequency_energy, abs=1e-9
+    )
+    assert identity.frequency_off_diagonal == pytest.approx(0.0, abs=1e-9)
+
+
+def test_actual_von_mangoldt_coefficients_satisfy_fourier_identity() -> None:
+    coefficients = [von_mangoldt(n) - 1.0 for n in range(2, 18)]
+    weights = [float((j + 1) * (16 - j)) for j in range(16)]
+
+    identity = finite_cyclic_weighted_fourier_identity(
+        coefficients, window_length=4, weights=weights
+    )
+
+    assert von_mangoldt(8) == pytest.approx(__import__("math").log(2))
+    assert von_mangoldt(12) == 0.0
+    assert identity.direct_energy == pytest.approx(
+        identity.double_frequency_energy, rel=1e-11, abs=1e-9
+    )
+
+
+def test_vaughan_identity_holds_pointwise_before_estimating_blocks() -> None:
+    for n in range(1, 201):
+        components = vaughan_components(n, u_cutoff=5, v_cutoff=5)
+        assert components.total == pytest.approx(von_mangoldt(n), abs=1e-12)
+        assert components.centered_total == pytest.approx(
+            von_mangoldt(n) - 1.0, abs=1e-12
+        )
+
+
+def test_mobius_values_used_by_vaughan_identity() -> None:
+    assert [mobius(n) for n in range(1, 11)] == [
+        1,
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        -1,
+        0,
+        0,
+        1,
+    ]
+
+
+def test_two_thirds_budget_triggers_multiple_failure_stop_rule() -> None:
+    audit = vaughan_two_thirds_budget()
+    failures = [entry for entry in audit.entries if entry.deficit > 0]
+
+    assert audit.target_exponent == Fraction(5, 3)
+    assert len(failures) >= 2
+    assert all(entry.available_exponent == Fraction(7, 3) for entry in failures)
+    assert all(entry.deficit == Fraction(2, 3) for entry in failures)
+    assert audit.should_stop_vaughan
+    assert not audit.guth_maynard_gate_open
