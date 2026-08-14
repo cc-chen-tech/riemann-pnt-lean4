@@ -23,6 +23,25 @@ paper derivations in this audit, but still require independent mathematical
 review.  Gate C remains open as one structured signed off-diagonal estimate.
 No new Lean interface is introduced at this checkpoint.
 
+## 2026-08-15 follow-up decision
+
+The two preregistered follow-up audits are now complete:
+
+- [the independent Gate Z review](2026-08-15-short-interval-l2-gate-z-independent-review.md)
+  accepts the Mellin-pole zero-forcing argument at the fixed exponent
+  `a=2/3`;
+- [the Gate C Fourier/Vaughan audit](2026-08-15-signed-l2-gate-c-fourier-vaughan-audit.md)
+  proves the exact double-frequency and Vaughan identities but triggers the
+  multiple-failure stop rule.
+
+The off-diagonal correlation remains one algebraic term before frequency
+decomposition.  After exact Fourier localization, however, its very-low,
+transition, and high-frequency regimes each remain at `X^(7/3+o(1))` under
+the audited inputs.  Thus the phrase "one structured excess term" below must
+not be read as "one unique balanced block eligible for Guth--Maynard".  The
+Guth--Maynard and third-order Heath--Brown branches are not activated, and no
+Lean interface is admissible.
+
 ## 1. Definition and target
 
 Let `w` and `nu` be fixed nonnegative smooth functions, normalized to have
