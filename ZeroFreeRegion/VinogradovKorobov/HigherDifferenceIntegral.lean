@@ -82,10 +82,8 @@ lemma hasDerivAt_realIteratedPhaseDifference_of_tower
       have hright : HasDerivAt
           (fun y ↦ realIteratedPhaseDifference shifts (F j) (y + h))
           (realIteratedPhaseDifference shifts (F (j + 1)) (x + h)) x := by
-        convert hrightBase.comp x ((hasDerivAt_id x).add_const h) using 1 <;>
-          simp
-      convert hleft.sub hright using 1 <;>
-        simp [realPhaseDifference]
+        convert hrightBase.comp x ((hasDerivAt_id x).add_const h) using 1 <;> (try rfl) <;> simp
+      convert hleft.sub hright using 1 <;> (try rfl) <;> simp
 
 /-- An arbitrary finite signed difference is an iterated integral of the
 corresponding member of a derivative tower. -/

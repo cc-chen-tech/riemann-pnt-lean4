@@ -828,7 +828,7 @@ theorem deriv_hardyPhase {n : ℕ} (hn : n ≠ 0) {t : ℝ} (ht : 0 < t) :
   have h_arg :
       HasDerivAt (fun x : ℝ => x / (2 * Real.pi * ((n : ℝ) ^ 2)))
         (1 / (2 * Real.pi * ((n : ℝ) ^ 2))) t := by
-    convert (hasDerivAt_id t).div_const (2 * Real.pi * ((n : ℝ) ^ 2)) using 1 <;> simp <;> field_simp <;> ring
+    convert (hasDerivAt_id t).div_const (2 * Real.pi * ((n : ℝ) ^ 2)) using 1 <;> rfl
   have h_log := h_arg.log harg_ne
   have h_linear : HasDerivAt (fun x : ℝ => x / 2) (1 / 2) t := by
     simpa using (hasDerivAt_id t).div_const 2
@@ -839,7 +839,7 @@ theorem deriv_hardyPhase {n : ℕ} (hn : n ≠ 0) {t : ℝ} (ht : 0 < t) :
           (t / 2) *
             ((1 / (2 * Real.pi * ((n : ℝ) ^ 2))) /
               (t / (2 * Real.pi * ((n : ℝ) ^ 2))))) t := by
-    convert ((h_linear.mul (h_log.sub_const 1)).sub_const (Real.pi / 8)) using 1 <;> simp <;> field_simp <;> ring
+    convert ((h_linear.mul (h_log.sub_const 1)).sub_const (Real.pi / 8)) using 1 <;> rfl
   rw [h_phase.deriv]
   field_simp [ne_of_gt ht, hc]
   ring
@@ -862,7 +862,7 @@ theorem iteratedDeriv_two_hardyPhase
   have h_arg :
       HasDerivAt (fun x : ℝ => x / (2 * Real.pi * ((n : ℝ) ^ 2)))
         (1 / (2 * Real.pi * ((n : ℝ) ^ 2))) t := by
-    convert (hasDerivAt_id t).div_const (2 * Real.pi * ((n : ℝ) ^ 2)) using 1 <;> simp <;> field_simp <;> ring
+    convert (hasDerivAt_id t).div_const (2 * Real.pi * ((n : ℝ) ^ 2)) using 1 <;> rfl
   have h_g :
       HasDerivAt g
         ((1 / 2) *

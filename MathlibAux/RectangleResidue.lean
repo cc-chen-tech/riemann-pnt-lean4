@@ -580,9 +580,9 @@ theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R
           congr 1
           apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
       _ = ∫ u : ℝ in -R..R, ((u : ℂ) - (R : ℂ) * I)⁻¹ := by
-        simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc, add_right_neg] using
-          (intervalIntegral.integral_comp_add_right
-            (fun u : ℝ => ((u : ℂ) - (R : ℂ) * I)⁻¹) (-c.re))
+        convert (intervalIntegral.integral_comp_add_right
+          (fun u : ℝ => ((u : ℂ) - (R : ℂ) * I)⁻¹) (-c.re)) using 1 <;>
+          (try rfl) <;> (try simp [sub_eq_add_neg]) <;> ring
   have htop :
       (∫ x : ℝ in (c.re - R)..(c.re + R),
           (((x : ℂ) + (c.im + R) * I) - c)⁻¹) =
@@ -599,9 +599,9 @@ theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R
           congr 1
           apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
       _ = ∫ u : ℝ in -R..R, ((u : ℂ) + (R : ℂ) * I)⁻¹ := by
-        simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc, add_right_neg] using
-          (intervalIntegral.integral_comp_add_right
-            (fun u : ℝ => ((u : ℂ) + (R : ℂ) * I)⁻¹) (-c.re))
+        convert (intervalIntegral.integral_comp_add_right
+          (fun u : ℝ => ((u : ℂ) + (R : ℂ) * I)⁻¹) (-c.re)) using 1 <;>
+          (try rfl) <;> (try simp [sub_eq_add_neg]) <;> ring
   have hright :
       (∫ y : ℝ in (c.im - R)..(c.im + R),
           ((c.re : ℂ) + (R : ℂ) + (y : ℂ) * I - c)⁻¹) =
@@ -618,9 +618,9 @@ theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R
           congr 1
           apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
       _ = ∫ v : ℝ in -R..R, ((R : ℂ) + (v : ℂ) * I)⁻¹ := by
-        simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc, add_right_neg] using
-          (intervalIntegral.integral_comp_add_right
-            (fun v : ℝ => ((R : ℂ) + (v : ℂ) * I)⁻¹) (-c.im))
+        convert (intervalIntegral.integral_comp_add_right
+          (fun v : ℝ => ((R : ℂ) + (v : ℂ) * I)⁻¹) (-c.im)) using 1 <;>
+          (try rfl) <;> (try simp [sub_eq_add_neg]) <;> ring
   have hleft :
       (∫ y : ℝ in (c.im - R)..(c.im + R),
           ((c.re : ℂ) - (R : ℂ) + (y : ℂ) * I - c)⁻¹) =
@@ -637,11 +637,11 @@ theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R
           congr 1
           apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
       _ = ∫ v : ℝ in -R..R, (-(R : ℂ) + (v : ℂ) * I)⁻¹ := by
-        simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc, add_right_neg] using
-          (intervalIntegral.integral_comp_add_right
-            (fun v : ℝ => (-(R : ℂ) + (v : ℂ) * I)⁻¹) (-c.im))
+        convert (intervalIntegral.integral_comp_add_right
+          (fun v : ℝ => (-(R : ℂ) + (v : ℂ) * I)⁻¹) (-c.im)) using 1 <;>
+          (try rfl) <;> (try simp [sub_eq_add_neg]) <;> ring
   rw [rectangleBoundaryIntegral, hbottom, htop, hright, hleft]
-  simpa [rectangleBoundaryIntegral] using rectangleBoundaryIntegral_inv_zero hR
+  simpa [rectangleBoundaryIntegral, sub_eq_add_neg] using rectangleBoundaryIntegral_inv_zero hR
 
 /-- The square boundary integral of `1 / (z-p)` is `2πi` whenever `p` lies
 strictly inside the square.  This is the rectangle simple-pole kernel needed

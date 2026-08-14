@@ -86,8 +86,12 @@ private lemma hasDerivAt_cot (x : ℝ) (hx : Real.sin x ≠ 0) :
   rw [show Real.cot = fun y ↦ Real.cos y / Real.sin y by
     funext y; exact Real.cot_eq_cos_div_sin y]
   convert (Real.hasDerivAt_cos x).div (Real.hasDerivAt_sin x) hx using 1
-  field_simp
-  nlinarith [Real.sin_sq_add_cos_sq x]
+  · rfl
+  · rfl
+  · rfl
+  · rw [zpow_neg]
+    field_simp
+    nlinarith [Real.sin_sq_add_cos_sq x]
 
 /-- Cotangent is antitone on every closed subinterval of `(0, π)`. -/
 lemma antitoneOn_cot_Icc {a b : ℝ} (ha : 0 < a) (hb : b < Real.pi) :

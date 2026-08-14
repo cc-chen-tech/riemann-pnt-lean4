@@ -69,7 +69,7 @@ private theorem integral_sawtooth_mul_cexp_int_frequency
   have hu : ∀ x ∈ [[(0 : ℝ), 2 * Real.pi]], HasDerivAt u (u' x) x := by
     intro x hx
     dsimp only [u, u']
-    simpa [Pi.sub_apply] using
+    simpa [Pi.sub_apply, Pi.sub_def, ofRealCLM_apply] using
       ((hasDerivAt_const x (Real.pi : ℂ)).sub
         Complex.ofRealCLM.hasDerivAt)
   have hv : ∀ x ∈ [[(0 : ℝ), 2 * Real.pi]], HasDerivAt v (v' x) x := by

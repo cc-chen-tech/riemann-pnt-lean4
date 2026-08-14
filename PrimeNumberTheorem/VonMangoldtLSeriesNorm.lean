@@ -23,11 +23,11 @@ private theorem tsum_one_div_nat_rpow_le_one_add_inv_sub_one
       (∑' n : ℕ, 1 / (n + 1 : ℝ) ^ s) =
         ∑' n : ℕ, 1 / (n : ℝ) ^ s := by
     simpa [Real.zero_rpow (by linarith : s ≠ 0)] using hsplit
-  have hterm : 0 ≤ ZetaAsymptotics.term_tsum s :=
+  have hterm : 0 ≤ ZetaAsymptotics.termTSum s :=
     tsum_nonneg fun n => ZetaAsymptotics.term_nonneg (n + 1) s
   have haux := ZetaAsymptotics.zeta_limit_aux1 hs
   rw [← hshift]
-  exact hterm
+  nlinarith [haux, hterm, (by linarith : 0 < s)]
 
 /-- Quantitative growth of the absolute von Mangoldt Dirichlet series as its
 real part approaches one. -/

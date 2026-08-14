@@ -250,8 +250,7 @@ theorem rectangularMultiplier_plancherel_le
     have hy : y ≠ 0 := by
       exact abs_pos.mp (lt_of_le_of_lt (by positivity) hyAbs)
     convert normSq_rectangularFourierMultiplier_mul_le_frequency hH.le hy (fhat y) using 1
-    all_goals simp [tail]
-    all_goals ring
+    all_goals (try rfl) <;> (try simp [tail]) <;> ring
   calc
     (∫ y : ℝ, energy y) = (∫ y in low, energy y) + ∫ y in lowᶜ, energy y :=
       (integral_add_compl hlow henergy).symm

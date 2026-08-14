@@ -34,8 +34,9 @@ theorem intervalIntegral_mul_cexp_linear_eq_integration_by_parts
         (fun y : ℝ => (y : ℂ) / c - 1 / c ^ 2) (1 / c) x := by
       simpa using
         (((hasDerivAt_id (x : ℂ)).comp_ofReal.div_const c).sub_const (1 / c ^ 2))
-    convert h_exp_deriv.mul h_linear_deriv using 1
-    ring_nf
+    convert h_exp_deriv.mul h_linear_deriv using 1 <;> (try rfl) <;> (try simp)
+    · field_simp [hc]
+      ring
   have h_weighted :
       (∫ v in (0 : ℝ)..delta, (v : ℂ) * Complex.exp (c * v)) =
         Complex.exp (c * delta) * ((delta : ℂ) / c - 1 / c ^ 2) + 1 / c ^ 2 := by

@@ -47,7 +47,7 @@ theorem vinogradovResidueWeightedSum_eq_zero_of_mass_eq_zero
       coefficient m = 0 := by
     intro m hm
     have hterm : ‖coefficient m‖₊ ^ 2 = 0 :=
-      (Finset.sum_eq_zero_iff_of_nonneg fun _ _ ↦ zero_le _).mp hsq m hm
+      (Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => by positivity)).mp hsq m hm
     simpa using hterm
   unfold vinogradovResidueWeightedSum vinogradovResidueClassSum
   apply Finset.sum_eq_zero
@@ -178,7 +178,7 @@ theorem NNReal.pow_two_mul_sum_le_card_mul_mass_mul_moment
     _ ≤ (S.card : ℝ≥0) ^ w *
         ((∑ i ∈ S, mass i ^ 2) ^ (w - 1) *
           ∑ i ∈ S, mass i ^ 2 * (value i ^ 2) ^ w) := by
-      exact mul_le_mul_of_nonneg_left hweighted (zero_le _)
+      exact mul_le_mul_of_nonneg_left hweighted (by positivity)
     _ = (S.card : ℝ≥0) ^ w *
         (∑ i ∈ S, mass i ^ 2) ^ (w - 1) *
           ∑ i ∈ S, mass i ^ 2 * value i ^ (2 * w) := by

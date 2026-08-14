@@ -30,6 +30,7 @@ theorem fixed_left_solution_count_le_factorial (k s X : ℕ) (hsk : s ≤ k)
       apply Multiset.coe_eq_coe.mp
       have hsol : IsVinogradovSolutionNat k s X x y := by
         exact (Finset.mem_filter.mp hy).2
+      change (List.ofFn y : Multiset (Fin X)) = (List.ofFn x : Multiset (Fin X))
       simpa using (hsol.multiset_eq hsk).symm
     _ ≤ (List.ofFn x).permutations.length :=
       List.toFinset_card_le (List.ofFn x).permutations
