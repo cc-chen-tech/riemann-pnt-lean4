@@ -406,7 +406,7 @@ private theorem integrable_positiveTailKernel
       isCompact_Icc.measure_lt_top.ne).integrable_indicator measurableSet_Icc
   · have hnorm : Integrable (fun t : ℝ => ‖t * q t‖) := hmoment.norm
     have hindicator := hnorm.indicator (s := Ici 0) measurableSet_Ici
-    convert hindicator using 1
+    convert hindicator using 1 <;> (try rfl)
     funext t
     by_cases ht : 0 ≤ t
     · have heq : (fun x : ℝ => ‖positiveTailKernel q (x, t)‖) =
@@ -1228,7 +1228,7 @@ theorem integral_carneiroLittmannDensity_eq_neg_one :
   have hBderiv {z : ℝ} (hz0 : 0 ≤ z) (hz1 : z ≤ 1) :
       HasDerivAt B 0 z := by
     have hlin : HasDerivAt (fun y : ℝ => a * (y : ℂ)) a z := by
-      simpa only [mul_one] using
+      simpa [mul_one] using
         ((hasDerivAt_id (z : ℂ)).const_mul a).comp_ofReal
     have hexp := hlin.cexp
     have hpoly : HasDerivAt
