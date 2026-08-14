@@ -28,6 +28,12 @@ provide numerically explicit values for the existential remainder constants.
 - Last verified local result: see the current verification log before release
 - Current code-level `sorry` count: 0
 - Remaining mathematical `def ... : Prop` targets: 12
+  (2 of these -- `selberg_odd_zero_proportion_target` and
+  `KnownResults.conrey_40_percent_zeros_on_critical_line_target` -- are
+  closed externally by the verified Anthropic `zeta-23-lean` Theorem B;
+  in-repo closure would migrate the toolchain to Lean `v4.33.0-rc2` /
+  Mathlib `v4.33.0-rc2`, see
+  [zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md))
 - Route-interface `def ... : Prop` declarations: 5
 - Reusable Prop predicates: 48
 - Unclassified Prop declarations: 0

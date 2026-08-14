@@ -216,8 +216,22 @@ zero-counting extensions. The repository now defines odd-order, distinct, and
 analytic-multiplicity counts and proves
 `odd <= distinct = zeroCountOnCriticalLine <= multiplicity`. The
 Hardy-Littlewood and Selberg statements use the odd-order count supplied by
-the sign-change method. The Hardy-Littlewood linear lower bound is now proved;
-the Selberg `T*log T` lower bound remains open.
+the sign-change method. The Hardy-Littlewood linear lower bound is now proved.
+
+**External closure of the Selberg/Conrey proportion targets (2026-08):**
+`HardyTheorem.selberg_odd_zero_proportion_target` and
+`KnownResults.conrey_40_percent_zeros_on_critical_line_target` are closed by
+the independently verified Anthropic `zeta-23-lean` Theorem B
+(`Zeta23.thmB₀_mult_cumulative`): at least 2/3 of the zeta zeros are simple
+and on the critical line, kernel-checked with `#print axioms` =
+`[propext, Classical.choice, Quot.sound]` (see
+[zeta23-selberg-bridge.md](research/zeta23-selberg-bridge.md)). The simple
+zeros are a subset of odd-multiplicity zeros, so the odd-proportion target
+closes with `c = (2/3 − ε)(1 − ε′)`; the Conrey target follows through the
+repo's existing `selberg_zero_proportion_target_of_odd` and
+`conrey_40_percent_zeros_on_critical_line_target_of_selberg` lemmas. The
+in-repo merge (toolchain v4.33 + definitional bridge) is pending; until then
+the two `def ... : Prop` remain open in this repository's kernel.
 
 ### Current verified anchor theorems
 
