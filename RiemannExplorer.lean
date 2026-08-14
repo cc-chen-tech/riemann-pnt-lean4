@@ -42,7 +42,7 @@ theorem euler_product (s : ℂ) (hs : 1 < s.re) :
 /-- ζ函数在 s=1 处有简单极点，留数为 1 -/
 theorem zeta_pole_at_one :
     Tendsto (fun s ↦ (s - 1) * riemannZeta s) (nhdsWithin 1 {x | x ≠ 1}) (nhds 1) := by
-  simpa using riemannZeta_residue_one
+  simpa [Set.compl_singleton_eq] using riemannZeta_residue_one
 
 /-! ## 函数方程相关 -/
 

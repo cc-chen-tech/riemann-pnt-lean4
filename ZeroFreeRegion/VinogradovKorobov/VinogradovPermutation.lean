@@ -290,7 +290,7 @@ theorem firstNonsingularBlock_iff_direct
     · intro j hj hjinj
       let j' : Fin q := ⟨j.val, by
         change j.val < q
-        simpa [block] using hj⟩
+        simpa [block, Fin.lt_def] using hj⟩
       have hsing :=
         (allBlocksSingular_iff_forall_selectedBlock
           p k 0 q split.1).mp hparts.1 j'
@@ -303,10 +303,8 @@ theorem firstNonsingularBlock_iff_direct
         (hi.symm.trans (hil.trans hl))
     · intro i j hij
       apply hparts.2
-      simpa [block, vinogradovSelectedBlockIndex,
-        vinogradovBlockIndex,
-        vinogradovFirstNonsingularEquiv_selectedBlock,
-        e, split] using hij
+      simp [split, e] at hij ⊢
+      exact hij
   · intro hdirect
     have hprefix : VinogradovAllBlocksSingular p k 0 q split.1 := by
       apply (allBlocksSingular_iff_forall_selectedBlock
@@ -326,10 +324,8 @@ theorem firstNonsingularBlock_iff_direct
     have hselected : Function.Injective split.2.1 := by
       intro i j hij
       apply hdirect.2
-      simpa [block, vinogradovSelectedBlockIndex,
-        vinogradovBlockIndex,
-        vinogradovFirstNonsingularEquiv_selectedBlock,
-        e, split] using hij
+      simp [split, e] at hij ⊢
+      exact hij
     simpa [VinogradovFirstNonsingularBlock, e, split] using
       And.intro hprefix hselected
 
@@ -352,7 +348,8 @@ theorem VinogradovFirstNonsingularBlock.selectedBlock_injective
     exact hfull.2
   intro i j hij
   apply hsplit
-  simpa [e, split, vinogradovFirstNonsingularEquiv_selectedBlock] using hij
+  simp [split, e] at hij ⊢
+  exact hij
 
 /-- A first-nonsingular stratum is contained in the recursive stratum having
 at least one nonsingular selected block. -/
