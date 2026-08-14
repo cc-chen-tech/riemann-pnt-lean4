@@ -24,7 +24,8 @@ theorem integral_conj_mul_integral_eq_triple
       ∫ v, ∫ w, ∫ t, conj (F t v) * G t w ∂μ ∂ξ ∂ν := by
   let H : α → β × γ → ℂ := fun t p => conj (F t p.1) * G t p.2
   have hH : Integrable (Function.uncurry H) (μ.prod (ν.prod ξ)) := by
-    simpa [H, Function.uncurry] using h
+    change Integrable (fun p : α × (β × γ) => H p.1 p.2) (μ.prod (ν.prod ξ))
+    simpa [H] using h
   calc
     _ = ∫ t, ∫ p, H t p ∂ν.prod ξ ∂μ := by
       apply integral_congr_ae
