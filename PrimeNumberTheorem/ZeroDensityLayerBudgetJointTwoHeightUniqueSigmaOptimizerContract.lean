@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetJointTwoHeightUniqueSigmaOptimizer
+
+namespace PrimeNumberTheorem
+
+#check carlsonTwoHeightDensityExponent_strictAntiOn_half
+#check targetAmplitudeCarlsonTwoHeightBalancedSlope_strictAntiOn_half_one
+#check IsJointTwoHeightSigmaOptimizer.unique
+#check existsUnique_jointTwoHeightSigmaOptimizer
+
+end PrimeNumberTheorem
