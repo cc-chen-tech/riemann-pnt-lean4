@@ -158,8 +158,8 @@ theorem integrable_cumulativeExtremalWeight {psi : ℝ → ℝ}
   cases j with
   | zero => exact MeasureTheory.integrable_zero ℝ ℝ volume
   | succ j =>
-      simpa only [cumulativeExtremalWeight] using
-        hpsi.integrable_dilation (hq j)
+      change Integrable (fun t => psi (q j * t))
+      exact hpsi.integrable_dilation (hq j)
 
 theorem cumulativeExtremalWeight_sub_nonneg {psi : ℝ → ℝ}
     (hpsi : MonotoneExtremalKernelCertificate psi)

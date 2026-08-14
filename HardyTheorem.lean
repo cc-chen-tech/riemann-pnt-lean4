@@ -806,7 +806,8 @@ lemma weightedIntegralOf_eventually_positive_of_tail_dominates
   let g : ℝ → ℝ := fun t => weightFunction n t * f t
   have hg : Continuous g := by
     have hw : Continuous fun t : ℝ => weightFunction n t := by
-      simpa [weightFunction, Pi.pow_apply] using (continuous_id.pow (2 * n))
+      change Continuous (fun t : ℝ => t ^ (2 * n))
+      exact continuous_id.pow (2 * n)
     exact hw.mul hf
   have htail_gt :
       ∀ᶠ T in atTop, -(∫ t in (0 : ℝ)..A, g t) < ∫ t in A..T, g t :=
@@ -868,7 +869,8 @@ lemma weightedIntegral_eventually_bddBelow_of_hardyZ_positive
   refine ⟨∫ t in (0 : ℝ)..A, g t, ?_⟩
   have hg : Continuous g := by
     have hw : Continuous fun t : ℝ => weightFunction n t := by
-      simpa [weightFunction, Pi.pow_apply] using (continuous_id.pow (2 * n))
+      change Continuous (fun t : ℝ => t ^ (2 * n))
+      exact continuous_id.pow (2 * n)
     exact hw.mul hardyZ_continuous
   filter_upwards [eventually_ge_atTop A] with T hT
   have htail_nonneg : 0 ≤ ∫ t in A..T, g t := by
@@ -897,7 +899,8 @@ lemma weightedIntegral_eventually_bddAbove_of_hardyZ_negative
   refine ⟨∫ t in (0 : ℝ)..A, g t, ?_⟩
   have hg : Continuous g := by
     have hw : Continuous fun t : ℝ => weightFunction n t := by
-      simpa [weightFunction, Pi.pow_apply] using (continuous_id.pow (2 * n))
+      change Continuous (fun t : ℝ => t ^ (2 * n))
+      exact continuous_id.pow (2 * n)
     exact hw.mul hardyZ_continuous
   filter_upwards [eventually_ge_atTop A] with T hT
   have htail_nonpos : ∫ t in A..T, g t ≤ 0 := by
@@ -1575,7 +1578,7 @@ lemma zeroCountOnCriticalLine_mono_of_finite {T U : ℝ}
     (s := ST) (t := SU) lift ?_ ?_ (by simpa [SU] using hfiniteU)
   · simpa [zeroCountOnCriticalLine, ST, SU] using hle
   · intro t ht
-    simpa [SU, lift] using ht
+    simpa [SU, ST, lift] using ht
   · intro t₁ _ht₁ t₂ _ht₂ heq
     exact Subtype.ext
       (congr_arg (fun z : Set.Icc (0 : ℝ) U => (z : ℝ)) heq)

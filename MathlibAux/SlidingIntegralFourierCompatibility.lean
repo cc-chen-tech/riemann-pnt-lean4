@@ -200,6 +200,8 @@ theorem coe_fourier_toLp_two_ae_eq_of_integrable
     hgSupport.comp_left rfl
   let phi : SchwartzMap ℝ ℂ :=
     hgSupportC.toSchwartzMap (Complex.ofRealCLM.contDiff.comp hgSmooth)
+  let fp : SchwartzMap ℝ ℂ := 𝓕 phi
+  let ff : ℝ → ℂ := 𝓕 f
   have hdist := MeasureTheory.Lp.fourier_toTemperedDistribution_eq (hf2.toLp f)
   have happ := congrArg (fun D : TemperedDistribution ℝ ℂ => D phi) hdist
   have hfubini := VectorFourier.integral_fourierIntegral_smul_eq_flip
@@ -207,12 +209,14 @@ theorem coe_fourier_toLp_two_ae_eq_of_integrable
     Real.continuous_fourierChar continuous_inner hf phi.integrable
   have hphiFourier (x : ℝ) :
       VectorFourier.fourierIntegral Real.fourierChar volume (innerₗ ℝ).flip
-        (phi : ℝ → ℂ) x = (𝓕 phi) x := by
+        (phi : ℝ → ℂ) x = fp x := by
+    dsimp [fp]
     rw [flip_innerₗ]
     rfl
   have hfFourier (x : ℝ) :
       VectorFourier.fourierIntegral Real.fourierChar volume (innerₗ ℝ)
-        f x = 𝓕 f x := by
+        f x = ff x := by
+    dsimp [ff]
     rfl
   have hphiValue (x : ℝ) : phi x = (g x : ℂ) := by
     rfl
@@ -220,21 +224,29 @@ theorem coe_fourier_toLp_two_ae_eq_of_integrable
   have hleft :
       (∫ x, g x • (𝓕 (hf2.toLp f) :
         Lp (α := ℝ) ℂ 2 (volume : Measure ℝ)) x) =
-        ∫ x, (𝓕 phi) x * (hf2.toLp f) x := by
-    simpa only [phi, TemperedDistribution.fourier_apply,
-      MeasureTheory.Lp.toTemperedDistribution_apply, Function.comp_apply,
-      Complex.ofRealCLM_apply, RCLike.real_smul_eq_coe_mul, smul_eq_mul,
-      mul_comm] using happ.symm
+        ∫ x, fp x * (hf2.toLp f) x := by
+    calc
+      (∫ x, g x • (𝓕 (hf2.toLp f) :
+          Lp (α := ℝ) ℂ 2 (volume : Measure ℝ)) x) =
+          ∫ x, phi x • (𝓕 (hf2.toLp f) :
+            Lp (α := ℝ) ℂ 2 (volume : Measure ℝ)) x := by
+        apply integral_congr_ae
+        filter_upwards with x
+        simp [hphiValue]
+      _ = ∫ x, fp x • (hf2.toLp f) x := by
+        simpa only [TemperedDistribution.fourier_apply,
+          MeasureTheory.Lp.toTemperedDistribution_apply] using happ.symm
+      _ = ∫ x, fp x * (hf2.toLp f) x := by
+        congr 1
   calc
-    _ = ∫ x, (𝓕 phi) x * (hf2.toLp f) x := hleft
-    _ = ∫ x, (𝓕 phi) x * f x := by
+    _ = ∫ x, fp x * (hf2.toLp f) x := hleft
+    _ = ∫ x, fp x * f x := by
       apply integral_congr_ae
       filter_upwards [hf2.coeFn_toLp] with x hx
       rw [hx]
-    _ = ∫ x, g x • 𝓕 f x := by
-      simpa only [phi, Function.comp_apply, Complex.ofRealCLM_apply,
-        RCLike.real_smul_eq_coe_mul, smul_eq_mul, flip_innerₗ,
-        mul_comm] using hfubini.symm
+    _ = ∫ x, g x • ff x := by
+      simp only [RCLike.real_smul_eq_coe_mul, smul_eq_mul, mul_comm] at hfubini ⊢
+      exact hfubini.symm
 
 /-- On `L1 ∩ L2`, whenever the classical Fourier transform is also in `L2`,
 Mathlib's abstract `L2` Fourier transform is represented by the classical
@@ -264,37 +276,55 @@ theorem coe_fourierInv_toLp_two_ae_eq_of_integrable
     hgSupport.comp_left rfl
   let phi : SchwartzMap ℝ ℂ :=
     hgSupportC.toSchwartzMap (Complex.ofRealCLM.contDiff.comp hgSmooth)
+  let fip : SchwartzMap ℝ ℂ := 𝓕⁻ phi
+  let ff : ℝ → ℂ := 𝓕 f
   have hdist := MeasureTheory.Lp.fourierInv_toTemperedDistribution_eq
     (hfourier2.toLp (𝓕 f))
   have happ := congrArg (fun D : TemperedDistribution ℝ ℂ => D phi) hdist
   have hfubini := VectorFourier.integral_fourierIntegral_smul_eq_flip
     (e := Real.fourierChar) (L := innerₗ ℝ) (μ := volume) (ν := volume)
-    Real.continuous_fourierChar continuous_inner hf (𝓕⁻ phi).integrable
+    Real.continuous_fourierChar continuous_inner hf fip.integrable
   have hFourierInv (x : ℝ) :
       VectorFourier.fourierIntegral Real.fourierChar volume (innerₗ ℝ).flip
-        ((𝓕⁻ phi : SchwartzMap ℝ ℂ) : ℝ → ℂ) x = phi x := by
+        (fip : ℝ → ℂ) x = phi x := by
+    dsimp [fip]
     rw [flip_innerₗ]
     change (𝓕 (𝓕⁻ phi) : SchwartzMap ℝ ℂ) x = phi x
     rw [fourier_fourierInv_eq]
-  simp_rw [hFourierInv] at hfubini
+  have hfFourier (x : ℝ) :
+      VectorFourier.fourierIntegral Real.fourierChar volume (innerₗ ℝ)
+        f x = ff x := by
+    dsimp [ff]
+    rfl
+  have hphiValue (x : ℝ) : phi x = (g x : ℂ) := by
+    rfl
+  simp_rw [hFourierInv, hfFourier, hphiValue] at hfubini
   have hleft :
       (∫ x, g x • (𝓕⁻ (hfourier2.toLp (𝓕 f)) :
         Lp (α := ℝ) ℂ 2 (volume : Measure ℝ)) x) =
-        ∫ x, (𝓕⁻ phi) x * (hfourier2.toLp (𝓕 f)) x := by
-    simpa only [phi, TemperedDistribution.fourierInv_apply,
-      MeasureTheory.Lp.toTemperedDistribution_apply, Function.comp_apply,
-      Complex.ofRealCLM_apply, RCLike.real_smul_eq_coe_mul, smul_eq_mul,
-      mul_comm] using happ.symm
+        ∫ x, fip x * (hfourier2.toLp (𝓕 f)) x := by
+    calc
+      (∫ x, g x • (𝓕⁻ (hfourier2.toLp (𝓕 f)) :
+          Lp (α := ℝ) ℂ 2 (volume : Measure ℝ)) x) =
+          ∫ x, phi x • (𝓕⁻ (hfourier2.toLp (𝓕 f)) :
+            Lp (α := ℝ) ℂ 2 (volume : Measure ℝ)) x := by
+        apply integral_congr_ae
+        filter_upwards with x
+        simp [hphiValue]
+      _ = ∫ x, fip x • (hfourier2.toLp (𝓕 f)) x := by
+        simpa only [TemperedDistribution.fourierInv_apply,
+          MeasureTheory.Lp.toTemperedDistribution_apply] using happ.symm
+      _ = ∫ x, fip x * (hfourier2.toLp (𝓕 f)) x := by
+        congr 1
   calc
-    _ = ∫ x, (𝓕⁻ phi) x * (hfourier2.toLp (𝓕 f)) x := hleft
-    _ = ∫ x, (𝓕⁻ phi) x * 𝓕 f x := by
+    _ = ∫ x, fip x * (hfourier2.toLp (𝓕 f)) x := hleft
+    _ = ∫ x, fip x * ff x := by
       apply integral_congr_ae
       filter_upwards [hfourier2.coeFn_toLp] with x hx
       rw [hx]
     _ = ∫ x, g x • f x := by
-      simpa only [phi, Function.comp_apply, Complex.ofRealCLM_apply,
-        RCLike.real_smul_eq_coe_mul, smul_eq_mul, flip_innerₗ,
-        SchwartzMap.fourierInv_coe, mul_comm] using hfubini
+      simp only [RCLike.real_smul_eq_coe_mul, smul_eq_mul, mul_comm] at hfubini ⊢
+      exact hfubini
 
 /-- The genuine sliding integral is integrable. -/
 theorem integrable_slidingIntegral

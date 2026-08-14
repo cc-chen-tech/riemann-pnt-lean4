@@ -26,7 +26,7 @@ lemma hasDerivAt_logDerivativeTower
   | succ r =>
       have hz := (hasDerivAt_zpow (-1 - (r : ℤ)) x (.inl hx.ne')).const_mul
         ((-1 : ℝ) ^ r * (r.factorial : ℝ))
-      convert hz using 1
+      convert hz using 1 <;> (try rfl)
       simp only [logDerivativeTower_succ, Nat.cast_add, Nat.cast_one,
         Nat.factorial_succ, Nat.cast_mul, Nat.cast_add_one, pow_succ]
       push_cast

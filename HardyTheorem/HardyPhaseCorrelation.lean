@@ -433,7 +433,7 @@ theorem norm_integral_cexp_shifted_hardyPhase_le_of_base_frequency
   have hF : ∀ x ∈ Icc (0 : ℝ) delta, ContDiffAt ℝ 2 F x := by
     intro x hx
     have hxtpos : 0 < x + t := by linarith [hT, hTt, hx.1]
-    simpa only [F] using
+    simpa [F, Function.comp_def] using
       (contDiffAt_hardyPhase_two hn hxtpos).comp x
         (contDiffAt_id.add contDiffAt_const)
   have hmono : MonotoneOn (deriv F) (Icc (0 : ℝ) delta) := by

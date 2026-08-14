@@ -46,13 +46,14 @@ lemma norm_zetaOscillation_correlationSum_eq (t : ℝ) (h m N : ℕ) :
       congr 1
       apply Finset.sum_congr rfl
       intro k hk
-      simpa only [Nat.add_assoc] using zetaOscillation_mul_conj_shift t (m + k) h
+      simpa only [Nat.add_assoc, phaseTerm] using zetaOscillation_mul_conj_shift t (m + k) h
     _ = ‖(starRingEnd ℂ) (∑ k ∈ Finset.range N,
         phaseTerm (fun j ↦ logarithmicCorrelationPhase t h (m + j)) k)‖ := by
       rw [map_sum]
     _ = ‖∑ k ∈ Finset.range N,
         phaseTerm (fun j ↦ logarithmicCorrelationPhase t h (m + j)) k‖ := by
-      simpa only using norm_star (∑ k ∈ Finset.range N,
+      rw [starRingEnd_apply]
+      exact norm_star (∑ k ∈ Finset.range N,
         phaseTerm (fun j ↦ logarithmicCorrelationPhase t h (m + j)) k)
 
 /-- Quantitative bound for the zeta autocorrelation sum supplied to van der

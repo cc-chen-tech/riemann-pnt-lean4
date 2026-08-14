@@ -40,7 +40,7 @@ theorem integral_normSq_fourier_weightedTail_le
     have hnum : AEStronglyMeasurable (fun y : ℝ => ‖fhat y‖ ^ 2)
         (volume.restrict tail) :=
       hfhatSq.aestronglyMeasurable.mono_measure Measure.restrict_le_self
-    simpa only [weighted, div_eq_mul_inv, Pi.mul_apply] using hnum.mul hinv
+    simpa only [weighted, div_eq_mul_inv, Pi.mul_def] using hnum.mul hinv
   have hpoint (y : ℝ) (hy : y ∈ tail) :
       weighted y ≤ H ^ 2 * ‖fhat y‖ ^ 2 := by
     have hyAbs : 1 / H < |y| := by simpa only [tail, mem_setOf_eq] using hy
