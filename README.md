@@ -418,7 +418,10 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 > [zeta-23-lean](https://github.com/anthropics/zeta-23-lean)（Lean 4 / Mathlib，
 > 无 `sorry`，axiom 审计仅 `propext`/`Classical.choice`/`Quot.sound`）机器检查
 > 证明了"超过三分之二的 zeta 零点位于临界线上且为简单零点"（Theorems A–E，
-> 含原始 Dirichlet L 函数版本）。该定理经定义级桥接可闭合本仓库的
+> 含原始 Dirichlet L 函数版本）。**本仓库已独立验证**：完整构建通过，
+> 桥接输入定理 `Zeta23.thmB₀_mult_cumulative` 的 `#print axioms` 仅含三个
+> 标准公理（见 [docs/research/zeta23-external-verification.md](docs/research/zeta23-external-verification.md)）。
+> 该定理经定义级桥接可闭合本仓库的
 > `HardyTheorem.selberg_odd_zero_proportion_target` 与
 > `KnownResults.conrey_40_percent_zeros_on_critical_line_target`（见
 > [docs/research/zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md)）。

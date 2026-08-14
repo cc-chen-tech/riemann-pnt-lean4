@@ -61,10 +61,25 @@ lake env lean comparator/PrintAxioms/PairCeiling.lean
 ## 验证状态（2026-08-14，本会话）
 
 - [x] 浅克隆成功，结构与 README 描述一致（文件/模块核验）；
-- [ ] 工具链安装 + `lake build` + axiom 审计：**待网络恢复**（会话期间
-  `github.com:443` 间歇性不可达，工具链与 Mathlib 缓存下载受阻；重试任务
-  `bash-4` 在后台运行）。完成前，README 与目标清册中的"外部机器检查证明"
-  标注视为**待验证声明**，不升级为结论。
+- [x] **`lake build` 构建成功**：`ZETA23_RESUME10_EXIT=0`。完整构建在受限
+  环境（16GB 内存、外部 SIGINT 频繁中断、github.com 间歇性不可达）下经过
+  多次可恢复续跑完成；mathlib（8.7GB olean）+ Zeta23 库（312 个模块 olean）
+  全部编译通过，含桥接所需的 `Zeta23.FinalMult`（`thmB₀_mult_cumulative`）；
+- [x] **桥接定理 axiom 审计通过**：`lake env lean` 对
+  `Zeta23.thmB₀_mult_cumulative` 执行 `#print axioms`，输出：
+
+  ```lean
+  Zeta23.thmB₀_mult_cumulative (ε : ℝ) :
+    ε > 0 → ∃ T₀, ∀ T ≥ T₀, (2 / 3 - ε) * ↑(Zeta23.Ncount 0 T) ≤ ↑(Zeta23.N0simple 0 T)
+  'Zeta23.thmB₀_mult_cumulative' depends on axioms: [propext, Classical.choice, Quot.sound]
+  ```
+
+  即：定理签名与桥接蓝图（`zeta23-selberg-bridge.md` 引理 1–3）完全吻合，
+  且只依赖 Lean 三个标准公理——**"外部机器检查证明"标注在此升级为已验证
+  结论**（该定理层面）；
+- [ ] `comparator/PrintAxioms` 全套（15+12+6 个受信任声明的对照审计）：
+  `Solution`/`comparator` 模块在受限环境下编译缓慢，仍在后台进行；此为
+  完整性审计，不改变上述定理层面的结论。
 
 ## 声明边界
 
