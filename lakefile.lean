@@ -295,6 +295,8 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.ExceptionalZeroAmplificationIntegration,
     `PrimeNumberTheorem.ExceptionalZeroAmplificationContract,
     `Test.ExceptionalZeroAmplificationAssemblyAxiomAudit,
+    `PrimeNumberTheorem.ExceptionalZeroAmplificationGateContract,
+    `PrimeNumberTheorem.ExceptionalZeroAmplificationGateAxiomAudit,
     `PrimeNumberTheorem.ExceptionalZeroEnergyCapacityBridge,
     `PrimeNumberTheorem.ExceptionalZeroEnergyCapacityBridgeContract,
     `Test.ExceptionalZeroEnergyCapacityBridgeAxiomAudit,
