@@ -325,3 +325,27 @@ moving-height ordinary-PNT estimate, de la Vallee Poussin-form `psi` and
 `pi-Li` remainders, and the forward RH-to-prime-error implication are proved.
 Further work concerns power-saving estimates, stronger zero-free regions, and
 numerically explicit constants.
+
+## External SOTA Merge: Anthropic zeta-23-lean (2026-08)
+
+As a separate, independently kernel-checked artifact, Anthropic's
+[`zeta-23-lean`](https://github.com/anthropics/zeta-23-lean) proves that at
+least 2/3 of the zeta zeros are simple and on the critical line (Theorems A--E,
+including primitive Dirichlet L-functions).  This repository independently
+verified the artifact: full `lake build` passed and the bridge input theorem
+`Zeta23.thmB₀_mult_cumulative` has `#print axioms` =
+`[propext, Classical.choice, Quot.sound]` (see
+[zeta23-external-verification.md](research/zeta23-external-verification.md)).
+
+Consequence for this repository's open targets:
+`HardyTheorem.Zeta23SelbergBridge` vendors the axiom-clean `Zeta23` library
+and closes `selberg_odd_zero_proportion_target` and
+`KnownResults.conrey_40_percent_zeros_on_critical_line_target` inside this
+repository's kernel through a definition-level bridge (simple zeros are a
+subset of odd-multiplicity zeros; the counting functions coincide; the
+Conrey target follows through the repo's existing implication lemmas) -- no
+new analytic mathematics is required.  The explicit proportion constant is
+`7/48`.  The classical rank--trace method boundary and what the external
+closure supersedes are documented in
+[zeta23-selberg-bridge.md](research/zeta23-selberg-bridge.md) and
+[rank-trace-method-boundary.md](research/rank-trace-method-boundary.md).

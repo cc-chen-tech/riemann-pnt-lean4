@@ -685,16 +685,17 @@ Mellin integral at `1` and uses monotonicity of real powers in opposite
 directions on `(0,1]` and `[1,infinity)`. -/
 theorem norm_strongFEPair_Λ_le_endpoint_integrals
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    (P : StrongFEPair E) (w : ℂ) (hw0 : 0 ≤ w.re) (hw1 : w.re ≤ 1 / 2) :
+    (P : WeakFEPair E) (hP : IsStrongFEPair P)
+    (w : ℂ) (hw0 : 0 ≤ w.re) (hw1 : w.re ≤ 1 / 2) :
     ‖P.Λ w‖ ≤
       (∫ x : ℝ in Set.Ioc 0 1, ‖(x : ℂ) ^ ((0 : ℂ) - 1) • P.f x‖) +
         ∫ x : ℝ in Set.Ioi 1, ‖(x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x‖ := by
   let Fw : ℝ → E := fun x => (x : ℂ) ^ (w - 1) • P.f x
   let F0 : ℝ → E := fun x => (x : ℂ) ^ ((0 : ℂ) - 1) • P.f x
   let Fhalf : ℝ → E := fun x => (x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x
-  have hMw := P.hasMellin w
-  have hM0 := P.hasMellin (0 : ℂ)
-  have hMhalf := P.hasMellin (1 / 2 : ℂ)
+  have hMw := hP.hasMellin w
+  have hM0 := hP.hasMellin (0 : ℂ)
+  have hMhalf := hP.hasMellin (1 / 2 : ℂ)
   have hFw : IntegrableOn Fw (Set.Ioi (0 : ℝ)) := by
     simpa [MellinConvergent, Fw] using hMw.1
   have hF0 : IntegrableOn F0 (Set.Ioi (0 : ℝ)) := by
@@ -751,12 +752,19 @@ theorem exists_norm_completedRiemannZeta₀_le_on_zero_one :
       ∫ x : ℝ in Set.Ioi 1, ‖(x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x‖
   refine ⟨max (C0 / 2) 0, le_max_right _ _, ?_⟩
   intro s hs0 hs1
-  have h := norm_strongFEPair_Λ_le_endpoint_integrals P (s / 2)
+  have hP : IsStrongFEPair P :=
+    (HurwitzZeta.hurwitzEvenFEPair 0).isStrongFEPair_toStrongFEPair
+  have h := norm_strongFEPair_Λ_le_endpoint_integrals P hP (s / 2)
     (by simp; linarith) (by simp; linarith)
   have hcompleted : ‖completedRiemannZeta₀ s‖ ≤ C0 / 2 := by
-    simpa [completedRiemannZeta₀, HurwitzZeta.completedHurwitzZetaEven₀,
-      WeakFEPair.Λ₀, StrongFEPair.Λ, P, C0, norm_div] using
-        (div_le_div_of_nonneg_right h (by norm_num : (0 : ℝ) ≤ 2))
+    have hΛeq : (HurwitzZeta.hurwitzEvenFEPair 0).Λ₀ (s / 2) = P.Λ (s / 2) := by
+      change mellin (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (s / 2) =
+        P.Λ (s / 2)
+      dsimp [P]
+      exact ((HurwitzZeta.hurwitzEvenFEPair 0).isStrongFEPair_toStrongFEPair.hasMellin (s / 2)).2
+    rw [completedRiemannZeta₀, HurwitzZeta.completedHurwitzZetaEven₀, hΛeq]
+    simpa [P, C0, norm_div] using
+      (div_le_div_of_nonneg_right h (by norm_num : (0 : ℝ) ≤ 2))
   exact hcompleted.trans (le_max_left _ _)
 
 /-- The square of `sinh x` is bounded by half of `sinh (2x)` for nonnegative
@@ -1904,7 +1912,7 @@ lemma exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two
     exact hσ_ne_one (by simpa using congrArg Complex.re hs)
   have hdist : dist (σ : ℂ) (1 : ℂ) ≤ r := by
     have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
-      simpa using Complex.isometry_ofReal.dist_eq σ 1
+      simpa [Real.dist_eq] using Complex.isometry_ofReal.dist_eq σ 1
     have habs_eq : |σ - 1| = σ - 1 := abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
     rw [hdist_eq, habs_eq]
     linarith
@@ -1976,7 +1984,7 @@ lemma exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_con
     exact hσ_ne_one (by simpa using congrArg Complex.re hs)
   have hdist : dist (σ : ℂ) (1 : ℂ) ≤ r := by
     have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
-      simpa using Complex.isometry_ofReal.dist_eq σ 1
+      simpa [Real.dist_eq] using Complex.isometry_ofReal.dist_eq σ 1
     have habs_eq : |σ - 1| = σ - 1 := abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
     rw [hdist_eq, habs_eq]
     linarith
@@ -2007,7 +2015,7 @@ lemma exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_c
     exact hσ_ne_one (by simpa using congrArg Complex.re hs)
   have hdist : dist (σ : ℂ) (1 : ℂ) ≤ r := by
     have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
-      simpa using Complex.isometry_ofReal.dist_eq σ 1
+      simpa [Real.dist_eq] using Complex.isometry_ofReal.dist_eq σ 1
     have habs_eq : |σ - 1| = σ - 1 := abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
     rw [hdist_eq, habs_eq]
     linarith
@@ -2081,7 +2089,7 @@ lemma exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_s
     exact hσ_ne_one (by simpa using congrArg Complex.re hs)
   have hdist_le : dist (σ : ℂ) (1 : ℂ) ≤ r / 2 := by
     have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
-      simpa using Complex.isometry_ofReal.dist_eq σ 1
+      simpa [Real.dist_eq] using Complex.isometry_ofReal.dist_eq σ 1
     have habs_eq : |σ - 1| = σ - 1 :=
       abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
     rw [hdist_eq, habs_eq]
@@ -7976,7 +7984,8 @@ lemma riemannZeta_eq_mul_natFloor_integral_of_one_lt_re {s : ℂ}
   have h := LSeries_eq_mul_integral_of_nonneg
     (fun _ : ℕ => (1 : ℝ)) zero_le_one hs hO (fun _ => zero_le_one)
   have hz : L (fun _ : ℕ => ((1 : ℝ) : ℂ)) s = riemannZeta s := by
-    simpa using LSeries_one_eq_riemannZeta hs
+    change L 1 s = riemannZeta s
+    exact LSeries_one_eq_riemannZeta hs
   rw [hz] at h
   simpa using h
 
@@ -8181,9 +8190,9 @@ private lemma differentiableAt_mellin_riemannZetaFloorErrorAboveOneComplex_neg
       (by simp only [Complex.neg_re]; linarith)
       (riemannZetaFloorErrorAboveOneComplex_isBigO_zero (-s.re - 1))
       (by simp only [Complex.neg_re]; linarith)
-  simpa only [Function.comp_apply] using
-    hMellin.comp s
+  convert hMellin.comp s
       (differentiableAt_id.neg : DifferentiableAt ℂ (fun z : ℂ => -z) s)
+    using 1 <;> (try rfl)
 
 /-- Abel's pole-plus-floor-error formula continues from the half-plane of
 absolute convergence to the punctured half-plane `Re(s) > 0`.
@@ -12505,7 +12514,9 @@ lemma meromorphicOn_logDeriv_sub_finset_principalParts
       have hterm :
           MeromorphicAt (fun w : ℂ => (multiplicity ρ : ℂ) * (w - ρ)⁻¹) z :=
         (MeromorphicAt.const (multiplicity ρ : ℂ) z).mul hlinear.inv
-      simpa only [Finset.sum_insert hρ] using hterm.add ih
+      convert hterm.add ih using 1 <;> (try rfl)
+      funext z
+      simp [Pi.add_apply, Finset.sum_insert hρ]
 
 /-- If the zeros of an analytic function on `U` are exactly a finite set and
 their analytic multiplicities are supplied, subtracting all corresponding
@@ -12574,7 +12585,7 @@ lemma analyticOnNhd_toMeromorphicNFOn_logDeriv_sub_finset_principalParts
       exact analyticAt_const.mul
         ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hρx.symm))
     refine ⟨raw, ?_, Filter.EventuallyEq.rfl⟩
-    simpa [raw] using hlog.sub hsum
+    convert hlog.sub hsum using 1 <;> (try rfl)
 
 /-- Zeta-specific analytic regularization of the multiplicity-weighted local
 logarithmic derivative at any finite-order point away from the pole. -/
@@ -13529,10 +13540,9 @@ lemma logDeriv_translatedCanonicalNumerator
       (-a / R) z := by
     change HasDerivAt (fun z => ((R : ℂ) ^ 2 - a * (z - c)) / R)
       (-a / R) z
-    convert (((hasDerivAt_const z ((R : ℂ) ^ 2)).sub
-      ((hasDerivAt_const z a).mul ((hasDerivAt_id z).sub_const c))).div_const R)
-      using 1
-    all_goals ring
+    simpa [a, sub_eq_add_neg] using
+      (((hasDerivAt_const z ((R : ℂ) ^ 2)).sub
+        ((hasDerivAt_const z a).mul ((hasDerivAt_id z).sub_const c))).div_const R)
   rw [logDeriv_apply, hderiv.deriv]
   change (-a / R) / ((((R : ℂ) ^ 2 - a * (z - c)) / R)) =
     -a / ((R : ℂ) ^ 2 - a * (z - c))
@@ -13558,8 +13568,7 @@ lemma norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
     have hua_pos : 0 < ‖u - c‖ := norm_pos_iff.mpr (sub_ne_zero.mpr huc)
     let raw : ℂ := (R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)
     have hstar_norm : ‖(starRingEnd ℂ) (u - c)‖ = ‖u - c‖ := by
-      change ‖conj (u - c)‖ = ‖u - c‖
-      exact RCLike.norm_conj _
+      exact RCLike.norm_conj (u - c)
     have hRnorm : ‖((R : ℂ) ^ 2)‖ = R ^ 2 := by
       rw [norm_pow, norm_real, Real.norm_eq_abs, abs_of_pos hR]
     have hprod_norm :
@@ -14115,7 +14124,7 @@ lemma factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
       fun w => fac w * g w := by
     apply hza.meromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin
       hrhsa.meromorphicAt hzU hacc
-    simpa [fac, D, U, Pi.smul_apply', smul_eq_mul] using hfactor
+    convert hfactor using 1 <;> (try rfl)
   have hfactorN : riemannZeta =ᶠ[nhds z] fun w => fac w * g w :=
     (hza.continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
       hrhsa.continuousAt).mp hfactorNE
@@ -14362,7 +14371,7 @@ lemma logDeriv_factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
   have hfactorNE : riemannZeta =ᶠ[nhdsWithin z {z}ᶜ] fun w => fac w * g w := by
     apply hza.meromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin
       hrhsa.meromorphicAt hzU hacc
-    simpa [fac, D, U, Pi.smul_apply', smul_eq_mul] using hfactor
+    convert hfactor using 1 <;> (try rfl)
   have hfactorN : riemannZeta =ᶠ[nhds z] fun w => fac w * g w :=
     (hza.continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
       hrhsa.continuousAt).mp hfactorNE
@@ -14374,8 +14383,7 @@ lemma logDeriv_factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
     hfaca.differentiableAt (hg z hzU).differentiableAt
   have hfaclog : logDeriv fac z =
       ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹ := by
-    simpa [fac] using
-      logDeriv_finprod_sub_zpow_eq_finsum_mul_inv hDfinite hsep
+    convert logDeriv_finprod_sub_zpow_eq_finsum_mul_inv hDfinite hsep using 1 <;> (try rfl)
   calc
     logDeriv riemannZeta z = logDeriv (fun w => fac w * g w) z := hlogeq
     _ = logDeriv fac z + logDeriv g z := hmul
@@ -14544,7 +14552,7 @@ lemma exists_logDeriv_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
   have hfactorNE : riemannZeta =ᶠ[nhdsWithin z {z}ᶜ] fun w => fac w * g w := by
     apply hza.meromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin
       hrhsa.meromorphicAt hzU hacc
-    simpa [fac, D, U, Pi.smul_apply', smul_eq_mul] using hfactor
+    convert hfactor using 1 <;> (try rfl)
   have hfactorN : riemannZeta =ᶠ[nhds z] fun w => fac w * g w :=
     (hza.continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
       hrhsa.continuousAt).mp hfactorNE
@@ -14556,8 +14564,7 @@ lemma exists_logDeriv_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
     hfaca.differentiableAt (hg z hzU).differentiableAt
   have hfaclog : logDeriv fac z =
       ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹ := by
-    simpa [fac] using
-      logDeriv_finprod_sub_zpow_eq_finsum_mul_inv hDfinite hsep
+    convert logDeriv_finprod_sub_zpow_eq_finsum_mul_inv hDfinite hsep using 1 <;> (try rfl)
   calc
     logDeriv riemannZeta z = logDeriv (fun w => fac w * g w) z := hlogeq
     _ = logDeriv fac z + logDeriv g z := hmul
@@ -15674,9 +15681,8 @@ lemma differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_righ
     (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
     DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
       (closedBall ((σ : ℂ) + I * t) R) := by
-  simpa only [Pi.neg_apply] using
-    (differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
-      (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).neg
+  convert (differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+      (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).neg using 1 <;> (try rfl)
 
 /-- Standard-radius differentiability of `logDeriv ζ` on the moving disk
 centered at `σ + it`, where `σ = 1 + a / log |t|`. -/
@@ -15699,9 +15705,8 @@ lemma differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul
     DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
       (closedBall ((1 + a / Real.log |t| : ℝ) + I * t)
         (a / (2 * Real.log |t|))) := by
-  simpa only [Pi.neg_apply] using
-    (differentiableOn_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
-      hT0 ha ha_le ht).neg
+  convert (differentiableOn_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
+      hT0 ha ha_le ht).neg using 1 <;> (try rfl)
 
 /-- Standard-radius differentiability of `logDeriv ζ` on the shifted moving
 disk centered at `σ + 2it`, where `σ = 1 + a / log |t|`. -/
@@ -15724,9 +15729,8 @@ lemma differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_two_I
     DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
       (closedBall ((1 + a / Real.log |t| : ℝ) + I * (2 * t))
         (a / (2 * Real.log |t|))) := by
-  simpa only [Pi.neg_apply] using
-    (differentiableOn_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius
-      hT0 ha ha_le ht).neg
+  convert (differentiableOn_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius
+      hT0 ha ha_le ht).neg using 1 <;> (try rfl)
 
 /-- Differentiability of the zero-centered translate
 `z ↦ logDeriv ζ (z + (σ + I*t))` on the local open disk used by centered
@@ -15755,9 +15759,8 @@ lemma differentiableOn_neg_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_r
     DifferentiableOn ℂ
       (fun z : ℂ => -logDeriv riemannZeta (z + ((σ : ℂ) + I * t)))
       (ball 0 R) := by
-  simpa only [Pi.neg_apply] using
-    (differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
-      (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).neg
+  convert (differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
+      (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).neg using 1 <;> (try rfl)
 
 /-- Direct Borel-Carathéodory wrapper for `logDeriv ζ` on a `σ + I*t` disk
 whose geometry places it in the right half-plane and away from the pole.  The
@@ -17928,7 +17931,7 @@ lemma differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift
       DifferentiableOn ℂ (fun w : ℂ => (n : ℂ) * (w - rho)⁻¹)
         (ball center (2 * r)) :=
     hinv.const_mul (n : ℂ)
-  simpa [center, rho] using hbase.add hmul
+  convert hbase.add hmul using 1 <;> (try rfl)
 
 /-- Right-shifted Borel-Carathéodory transfer for the signed regular part
 `-logDeriv ζ(w) + (w-ρ)⁻¹`, normalized to the pure `log |t|` scale.
@@ -19663,7 +19666,7 @@ lemma meromorphic_logDeriv_riemannZeta :
 meromorphic. -/
 lemma meromorphic_neg_logDeriv_riemannZeta :
     Meromorphic (fun z : ℂ => -logDeriv riemannZeta z) := by
-  simpa only [Pi.neg_apply] using meromorphic_logDeriv_riemannZeta.neg
+  convert meromorphic_logDeriv_riemannZeta.neg using 1 <;> (try rfl)
 
 /-- Translating the input of a global meromorphic function preserves
 meromorphicity.
@@ -24814,7 +24817,7 @@ lemma divisor_neg_of_meromorphicOn {f : ℂ → ℂ} {U : Set ℂ}
   ext z
   by_cases hz : z ∈ U
   · have hneg : MeromorphicOn (fun z : ℂ => -f z) U := by
-      simpa only [Pi.neg_apply] using hf.neg
+      convert hf.neg using 1 <;> (try rfl)
     rw [MeromorphicOn.divisor_apply hneg hz, MeromorphicOn.divisor_apply hf hz]
     have hfun : (fun w : ℂ => -f w) = (fun _ : ℂ => (-1 : ℂ)) • f := by
       ext w

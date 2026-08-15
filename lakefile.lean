@@ -2419,7 +2419,10 @@ lean_lib RiemannPNT where
     `Test.ZeroDensityLayerBudgetPNTHybridCofinalOutsideClusterCapAxiomAudit,
     `Test.ZeroDensityLayerBudgetMovingGapBarrierAxiomAudit,
     `Test.ZeroDensityLayerBudgetWeightedPowerDominatedConvergenceAxiomAudit,
-    `Test.ZeroDensityLayerBudgetDyadicReciprocalSummabilityAxiomAudit
+    `Test.ZeroDensityLayerBudgetDyadicReciprocalSummabilityAxiomAudit,
+    `Test.Zeta23SelbergBridgeContract,
+    `Test.Zeta23SelbergBridgeAxiomAudit,
+    `Zeta23
   ]
 
 require mathlib from "./vendor/mathlib"

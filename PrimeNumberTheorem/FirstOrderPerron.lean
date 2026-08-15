@@ -50,8 +50,19 @@ private lemma hasDerivAt_firstOrderBoundaryPrimitive
           |>.const_add (c : ℂ)).mul_const u)).div
             (((((hasDerivAt_id (w : ℂ)).const_mul (2 * Real.pi : ℂ)).mul_const Complex.I)
               |>.const_add (c : ℂ))) hden) using 1 <;>
-      simp only [Function.comp_apply, id_eq] <;> field_simp <;> ring
-  simpa [firstOrderBoundaryPrimitive, H] using hH.comp_ofReal
+      all_goals (first
+        | rfl
+        | funext z <;> rfl
+        | simp only [id_eq] <;> field_simp <;> ring)
+  have hHofReal : HasDerivAt (fun w : ℝ => H w)
+      ((2 * Real.pi * Complex.I) *
+        (u * H (w : ℂ) -
+          Complex.exp (((c : ℂ) + 2 * Real.pi * (w : ℂ) * Complex.I) * u) /
+            ((c : ℂ) + 2 * Real.pi * (w : ℂ) * Complex.I) ^ 2)) w := by
+    simpa only [ofRealCLM_apply, ofReal_one, mul_one] using!
+      hH.comp w ofRealCLM.hasDerivAt
+  dsimp [firstOrderBoundaryPrimitive, H]
+  exact hHofReal
 
 /-- Integration by parts reduces a finite first-order Perron integral to its
 two endpoint values and the finite second-order Perron integral. -/

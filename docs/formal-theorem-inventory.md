@@ -3368,6 +3368,17 @@ As of `2026-07-29`, there are **12** mathematical target declarations:
 
 - `selberg_odd_zero_proportion_target`
 
+> **Closed in-repo (2026-08, via verified external artifact):** this target
+> is proved by `HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`,
+> which combines the independently built and kernel-checked
+> `Zeta23.thmB₀_mult_cumulative` (Anthropic `zeta-23-lean` Theorem B: at
+> least 2/3 of zeta zeros are simple and on the critical line;
+> `#print axioms` = `[propext, Classical.choice, Quot.sound]`) with this
+> repository's own all-height Riemann–von Mangoldt lower bound.  The bridge
+> is definition-level: simple zeros inject into odd-multiplicity zeros and
+> the two counting functions coincide.  See
+> [zeta23-selberg-bridge.md](research/zeta23-selberg-bridge.md).
+
 `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and
 `hardy_zeros_abs_unbounded_target` remain reusable propositions but are
 discharged by named unconditional theorems. They are not unresolved targets.
@@ -3406,6 +3417,12 @@ the global target.
 - `conrey_40_percent_zeros_on_critical_line_target`
   target: a positive-proportion statement on critical-line zeros, expressed as
   a target alias for `HardyTheorem.selberg_zero_proportion_target`.
+  **Closed in-repo (2026-08, via verified external artifact):** proved by
+  `HardyTheorem.Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23`
+  through the Zeta23-implied `selberg_odd_zero_proportion_target` and the
+  repo's existing `selberg_zero_proportion_target_of_odd` and
+  `conrey_40_percent_zeros_on_critical_line_target_of_selberg` lemmas (see
+  [zeta23-selberg-bridge.md](research/zeta23-selberg-bridge.md)).
 
 ## Route Interfaces and Reusable Predicates
 

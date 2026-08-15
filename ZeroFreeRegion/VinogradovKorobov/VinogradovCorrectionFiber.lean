@@ -130,8 +130,9 @@ theorem vinogradovPrimePowerCorrectionSolutionSet_powerSum_modEq
           (Fin.natAdd 0 i))).mp
       ((mem_vinogradovPrimePowerCorrectionSolutionSet_iff
         p d s n xy z).mp hz) j
-  simpa [vinogradovPrimePowerLiftAmbientEquiv_fst_val_add_one,
-    vinogradovPrimePowerLiftAmbientEquiv_snd_val_add_one] using hj
+  rw [← vinogradovPrimePowerLiftAmbientEquiv_fst_val_add_one,
+      ← vinogradovPrimePowerLiftAmbientEquiv_snd_val_add_one]
+  exact hj
 
 /-- Any two admissible one-step corrections above the same base pair have
 the same image under the pair Jacobian. -/
