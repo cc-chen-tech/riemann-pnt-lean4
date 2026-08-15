@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.ExceptionalZeroAmplificationIntegration
+
+namespace PrimeNumberTheorem
+namespace ExceptionalZeroAmplification
+
+#check iterativeWindowLayer_eq_halfIsolatedDirectedIteration
+#check halfIsolatedDirectedWindowLayerCertificate
+#check exceptionalZeroAmplificationCarlsonAdapter
+#check exceptionalZeroAmplification_to_carlson_of_expandingLayers
+
+end ExceptionalZeroAmplification
+end PrimeNumberTheorem
