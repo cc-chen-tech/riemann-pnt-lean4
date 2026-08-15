@@ -176,7 +176,7 @@ theorem iterativeBranch_carlson_contradiction
     refine (Filter.tendsto_atTop.2 ?_)
     intro r
     have hA := (Filter.tendsto_atTop.1 hgap) r
-    filter_upwards [hA, hlower'] with T hA' hlower'' 
+    filter_upwards [hA, hlower'] with T hA' hlower''
     have hupper : (C.localContribution : ℝ) * (C.branchCount n T) ≤
         disjointWindowFamilyLowerCount (C.windows n) (C.cluster n) (C.windowStart n)
           realPart ordinate sigma H T := hlower''
