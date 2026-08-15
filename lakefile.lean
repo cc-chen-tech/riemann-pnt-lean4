@@ -4,6 +4,7 @@ open Lake DSL
 package «riemann-pnt» where
   version := v!"0.1.0"
 
+set_option maxRecDepth 10000 in
 @[default_target]
 lean_lib RiemannPNT where
   roots := #[
@@ -2557,7 +2558,19 @@ lean_lib RiemannPNT where
     `Test.ZeroDensityLayerBudgetPNTHybridCofinalOutsideClusterCapAxiomAudit,
     `Test.ZeroDensityLayerBudgetMovingGapBarrierAxiomAudit,
     `Test.ZeroDensityLayerBudgetWeightedPowerDominatedConvergenceAxiomAudit,
-    `Test.ZeroDensityLayerBudgetDyadicReciprocalSummabilityAxiomAudit
+    `Test.ZeroDensityLayerBudgetDyadicReciprocalSummabilityAxiomAudit,
+    `PrimeNumberTheorem.HalfIsolatedZetaDyadicCapacityBridge,
+    `PrimeNumberTheorem.HalfIsolatedZetaDyadicCapacityBridge.AxiomAudit,
+    `PrimeNumberTheorem.HalfIsolatedZetaDyadicCapacityBridge.Contract,
+    `PrimeNumberTheorem.HalfIsolatedZetaFullDyadicCapacityBridge,
+    `PrimeNumberTheorem.HalfIsolatedZetaFullDyadicCapacityBridge.AxiomAudit,
+    `PrimeNumberTheorem.HalfIsolatedZetaFullDyadicCapacityBridge.Contract,
+    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramCapacityBridge,
+    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramCapacityBridge.AxiomAudit,
+    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramCapacityBridge.Contract,
+    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount,
+    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.AxiomAudit,
+    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.Contract
   ]
 
 require mathlib from "./vendor/mathlib"

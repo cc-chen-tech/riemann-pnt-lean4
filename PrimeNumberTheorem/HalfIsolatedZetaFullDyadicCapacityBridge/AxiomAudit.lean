@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.HalfIsolatedZetaFullDyadicCapacityBridge
+
+namespace PrimeNumberTheorem.VKEdgePiOverTwo
+
+#print axioms zetaRightDyadicNegativeMassSquareExcluding_eq_positive_conjugateFinset
+
+end PrimeNumberTheorem.VKEdgePiOverTwo
