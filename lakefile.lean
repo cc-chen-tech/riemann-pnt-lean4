@@ -4,6 +4,7 @@ open Lake DSL
 package «riemann-pnt» where
   version := v!"0.1.0"
 
+set_option maxRecDepth 10000 in
 @[default_target]
 lean_lib RiemannPNT where
   roots := #[
