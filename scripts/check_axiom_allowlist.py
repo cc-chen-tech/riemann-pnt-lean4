@@ -638,6 +638,7 @@ AXIOM_AUDIT_MODULES = [
     "PrimeNumberTheorem.ZeroDensityAmplificationAuditIterationDepthAxiomAudit",
     "PrimeNumberTheorem.ZeroDensityAmplificationAuditIterationExpansionAxiomAudit",
     "Test.ExceptionalZeroAmplificationAssemblyAxiomAudit",
+    "PrimeNumberTheorem.ExceptionalZeroAmplificationGateAxiomAudit",
     "Test.ExceptionalZeroEnergyCapacityBridgeAxiomAudit",
     "Test.ExceptionalZeroEnergySeparatedWindowsAxiomAudit",
     "Test.ExceptionalZeroDyadicDirectL2AxiomAudit",
@@ -3417,6 +3418,9 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.halfIsolatedAdapter_qpow_carlson_contradiction",
     "PrimeNumberTheorem.ExceptionalZeroAmplification.iterativeWindowLayer_eq_halfIsolatedDirectedIteration",
     "PrimeNumberTheorem.ExceptionalZeroAmplification.exceptionalZeroAmplification_to_carlson_of_expandingLayers",
+    "PrimeNumberTheorem.ExceptionalZeroAmplificationGate.amplificationGate",
+    "PrimeNumberTheorem.ExceptionalZeroAmplificationGate.amplificationGate_of_inputs",
+    "PrimeNumberTheorem.ExceptionalZeroAmplificationGate.amplificationGate_excludes_seed",
 }
 
 REPORT_RE = re.compile(
