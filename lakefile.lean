@@ -2570,7 +2570,31 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramCapacityBridge.Contract,
     `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount,
     `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.AxiomAudit,
-    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.Contract
+    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.Contract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetThirdOrderPerronInversion,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetThirdOrderPerronInversionContract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetThirdOrderPerronInversionAxiomAudit,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetThirdOrderPerronTruncation,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetThirdOrderPerronTruncationContract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetThirdOrderPerronTruncationAxiomAudit,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetVonMangoldtSecondRieszPerron,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetVonMangoldtSecondRieszPerronContract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetVonMangoldtSecondRieszPerronAxiomAudit,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCompleteCubicLogDerivPerron,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCompleteCubicLogDerivPerronContract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCompleteCubicLogDerivPerronAxiomAudit,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCubicExplicitFormula,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCubicExplicitFormulaContract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCubicExplicitFormulaAxiomAudit,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetQuadraticHingeSecondDifference,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetQuadraticHingeSecondDifferenceContract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetQuadraticHingeSecondDifferenceAxiomAudit,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetSecondRieszPsiSandwich,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetSecondRieszPsiSandwichContract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetSecondRieszPsiSandwichAxiomAudit,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCubicExplicitFormulaSecondDifferenceTransfer,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCubicExplicitFormulaSecondDifferenceTransferContract,
+    `PrimeNumberTheorem.ZeroDensityLayerBudgetCubicExplicitFormulaSecondDifferenceTransferAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
