@@ -14,6 +14,8 @@ lean_lib RiemannPNT where
     `HardyTheorem,
     `EulerAndLfunctions,
     `WeilExtremalKernels.FiniteQuadraticForm,
+    `WeilExtremalKernels.Certificates.C13N16,
+    `WeilExtremalKernels.Certificates.C13N32,
     `PrimeNumberTheorem,
     `PrimeNumberTheorem.FirstOrderPerron,
     `PrimeNumberTheorem.FirstOrderLSeriesPerron,

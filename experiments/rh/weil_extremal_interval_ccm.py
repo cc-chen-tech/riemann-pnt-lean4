@@ -86,6 +86,16 @@ PROVENANCE_NOTE = (
     "ulp at 70 significant digits so the frozen 70-digit pointwise "
     "cross-check values are covered."
 )
+SOURCE_ARCHIMEDEAN = "archimedean_loewner"
+SOURCE_PRIME = "prime_loewner"
+SOURCE_POLE = "pole_rank_two"
+SOURCE_TOTAL = "total"
+SOURCE_LABELS = (
+    SOURCE_ARCHIMEDEAN,
+    SOURCE_PRIME,
+    SOURCE_POLE,
+    SOURCE_TOTAL,
+)
 
 Entry = Tuple[int, int]
 IntervalMatrix = Dict[Entry, Any]
@@ -132,13 +142,21 @@ def prime_powers_up_to(c: int) -> Tuple[Tuple[int, int], ...]:
     return tuple(powers)
 
 
-def assemble_ccm_interval(c: int, N: int, prec_bits: int) -> IntervalMatrix:
-    """Assemble all full-matrix entries as rigorous Arb real balls.
+def assemble_ccm_source_intervals(
+    c: int, N: int, prec_bits: int
+) -> Dict[str, IntervalMatrix]:
+    """Assemble the three analytic source matrices and their exact sum.
 
     This is the interval counterpart of
     ``weil_extremal_crosscheck.assemble_ccm_closed_form``: the same CCM
     hypergeometric/Lerch formula, evaluated in ``arb``/``acb`` ball arithmetic
-    so that every returned ball strictly contains the exact entry value.
+    so that every returned ball strictly contains the exact entry value.  The
+    returned decomposition is
+
+        Q = L(alpha) + L(prime_value) + 2 c c^T - 2 s s^T,
+
+    where diagonal entries of each Loewner matrix are supplied by the
+    corresponding derivatives.  No positivity is inferred here.
     """
     _require_parameters(c, N, prec_bits)
     flint = _flint()
@@ -216,10 +234,14 @@ def assemble_ccm_interval(c: int, N: int, prec_bits: int) -> IntervalMatrix:
                 )
             return -2 * total
 
-        p0 = {n: alpha(n) + prime_value(n) for n in range(-N, N + 1)}
-        p0_derivative = {
-            n: -2 * (gamma(n) - beta(n)) + prime_derivative(n)
+        alpha_values = {n: alpha(n) for n in range(-N, N + 1)}
+        prime_values = {n: prime_value(n) for n in range(-N, N + 1)}
+        alpha_derivatives = {
+            n: -2 * (gamma(n) - beta(n))
             for n in range(-N, N + 1)
+        }
+        prime_derivatives = {
+            n: prime_derivative(n) for n in range(-N, N + 1)
         }
 
         sinh_quarter_L = (L / 4).sinh()
@@ -240,7 +262,10 @@ def assemble_ccm_interval(c: int, N: int, prec_bits: int) -> IntervalMatrix:
         pole_c_values = {n: pole_c(n) for n in range(-N, N + 1)}
         pole_s_values = {n: pole_s(n) for n in range(-N, N + 1)}
 
-        entries: IntervalMatrix = {}
+        archimedean_entries: IntervalMatrix = {}
+        prime_entries: IntervalMatrix = {}
+        pole_entries: IntervalMatrix = {}
+        total_entries: IntervalMatrix = {}
         for m in range(-N, N + 1):
             for n in range(-N, N + 1):
                 pole = 2 * (
@@ -248,12 +273,32 @@ def assemble_ccm_interval(c: int, N: int, prec_bits: int) -> IntervalMatrix:
                     - pole_s_values[m] * pole_s_values[n]
                 )
                 if m == n:
-                    entries[(m, n)] = p0_derivative[n] + pole
+                    archimedean = alpha_derivatives[n]
+                    prime = prime_derivatives[n]
                 else:
-                    entries[(m, n)] = (p0[m] - p0[n]) / (m - n) + pole
-        return entries
+                    archimedean = (
+                        alpha_values[m] - alpha_values[n]
+                    ) / (m - n)
+                    prime = (
+                        prime_values[m] - prime_values[n]
+                    ) / (m - n)
+                archimedean_entries[(m, n)] = archimedean
+                prime_entries[(m, n)] = prime
+                pole_entries[(m, n)] = pole
+                total_entries[(m, n)] = archimedean + prime + pole
+        return {
+            SOURCE_ARCHIMEDEAN: archimedean_entries,
+            SOURCE_PRIME: prime_entries,
+            SOURCE_POLE: pole_entries,
+            SOURCE_TOTAL: total_entries,
+        }
     finally:
         flint.ctx.prec = previous_prec
+
+
+def assemble_ccm_interval(c: int, N: int, prec_bits: int) -> IntervalMatrix:
+    """Assemble the full CCM matrix as rigorous Arb real balls."""
+    return assemble_ccm_source_intervals(c, N, prec_bits)[SOURCE_TOTAL]
 
 
 def _decimal(value: Any) -> Decimal | None:
