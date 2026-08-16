@@ -86,7 +86,9 @@ theorem logDeriv_Gammaℝ {s : ℂ} (hsGamma : ∀ n : ℕ, s / 2 ≠ -(n : ℂ)
       (Complex.differentiableAt_Gamma (s / 2) hsGamma) (by fun_prop)
     calc
       logDeriv G s = logDeriv Complex.Gamma (s / 2) *
-          deriv (fun z : ℂ => z / 2) s := by simpa [G] using hcomp
+          deriv (fun z : ℂ => z / 2) s := by
+        dsimp only [G]
+        convert hcomp using 1 <;> all_goals (first | rfl | funext z <;> rfl)
       _ = Complex.digamma (s / 2) * ((1 : ℂ) / 2) := by
         rw [← Complex.digamma_def]
         congr 1
@@ -182,7 +184,8 @@ theorem logDeriv_riemannZeta_eq_completed_reflection {s : ℂ}
           logDeriv (fun z : ℂ => completedRiemannZeta (1 - z)) s := by
             rw [hFEfun]
       _ = logDeriv completedRiemannZeta (1 - s) *
-          deriv (fun z : ℂ => 1 - z) s := by simpa using hcomp
+          deriv (fun z : ℂ => 1 - z) s := by
+        convert hcomp using 1 <;> all_goals (first | rfl | funext z <;> rfl)
       _ = -logDeriv completedRiemannZeta (1 - s) := by
         have hderiv : deriv (fun z : ℂ => 1 - z) s = -1 := by
           convert ((hasDerivAt_const s 1).sub (hasDerivAt_id s)).deriv using 1

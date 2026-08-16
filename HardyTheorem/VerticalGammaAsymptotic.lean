@@ -21,7 +21,7 @@ private lemma periodizedBernoulli_two_ae_eq_local (n : ℕ) :
     simp [ae_iff, measure_singleton]
   filter_upwards [ae_restrict_mem measurableSet_Ioc, ae_restrict_of_ae hend] with x hx hne
   have hx' : (n : ℝ) < x ∧ x ≤ (n : ℝ) + 1 := by
-    simpa only [Nat.cast_add, Nat.cast_one] using hx
+    simpa only [Nat.cast_add, Nat.cast_one, mem_Ioc] using hx
   have hy : x - (n : ℝ) ∈ Set.Ico (0 : ℝ) 1 := by
     constructor
     · linarith [hx'.1]
@@ -53,9 +53,10 @@ private lemma hasDerivAt_neg_inv_sq_const_add_ofReal {z : ℂ} {x : ℝ}
   have hi := hg.inv hzx
   have hp := hi.pow 2
   have hn := hp.neg
-  convert hn.comp_ofReal using 1
-  simp only [Nat.cast_ofNat, Nat.reduceSub, pow_one, Pi.inv_apply]
-  field_simp [hzx]
+  convert hn.comp_ofReal using 1 <;>
+    all_goals (first | rfl | funext z <;> rfl |
+      simp only [Nat.cast_ofNat, Nat.reduceSub, pow_one, Pi.inv_apply] <;>
+        field_simp [hzx] <;> ring)
 
 /-- The second-order Euler--Maclaurin identity on one unit interval for
 `x ↦ (z+x)⁻¹`. -/
@@ -93,14 +94,17 @@ private theorem inv_const_add_unit_eulerMaclaurin
       (hasDerivAt_id x).sub_const (n : ℝ)
     dsimp only [B1, localBernoulliOne]
     convert (hasDerivAt_bernoulliFun 1 (x - n)).comp x hsub using 1 <;>
-      norm_num
+      all_goals (first | rfl | funext y <;> dsimp [B1, localBernoulliOne] <;> rfl |
+        norm_num)
   have hB2 : ∀ x ∈ Set.Icc (n : ℝ) (n + 1 : ℕ), HasDerivAt B2h (B1 x) x := by
     intro x _hx
     have hsub : HasDerivAt (fun y : ℝ => y - (n : ℝ)) 1 x :=
       (hasDerivAt_id x).sub_const (n : ℝ)
     dsimp only [B2h, B1, localBernoulliTwoHalf, localBernoulliOne]
-    convert ((hasDerivAt_bernoulliFun 2 (x - n)).comp x hsub).div_const 2 using 1
-    all_goals norm_num
+    convert ((hasDerivAt_bernoulliFun 2 (x - n)).comp x hsub).div_const 2 using 1 <;>
+      all_goals (first | rfl |
+        funext y <;> dsimp [B2h, B1, localBernoulliTwoHalf, localBernoulliOne] <;> rfl |
+        norm_num)
   have hB1int : IntervalIntegrable B1 volume (n : ℝ) (n + 1 : ℕ) := by
     apply Continuous.intervalIntegrable
     dsimp only [B1, localBernoulliOne]
@@ -292,10 +296,14 @@ private theorem tendsto_log_const_add_natCast_sub_log (z : ℂ) (hz : 0 < z.re) 
   have hinv : Tendsto (fun N : ℕ => ((N : ℂ)⁻¹)) atTop (𝓝 0) :=
     tendsto_inv_atTop_nhds_zero_nat
   have hsmall : Tendsto (fun N : ℕ => 1 + z * (N : ℂ)⁻¹) atTop (𝓝 1) := by
-    simpa using tendsto_const_nhds.add (tendsto_const_nhds.mul hinv)
+    convert tendsto_const_nhds.add (tendsto_const_nhds.mul hinv) using 1 <;>
+      all_goals (first | rfl | funext N <;> rfl | ring)
   have hlog : Tendsto (fun N : ℕ => Complex.log (1 + z * (N : ℂ)⁻¹))
       atTop (𝓝 0) := by
-    simpa using (Complex.hasDerivAt_log Complex.one_mem_slitPlane).continuousAt.tendsto.comp hsmall
+    rw [show (𝓝 (0 : ℂ)) = 𝓝 (Complex.log 1) by rw [Complex.log_one]]
+    convert (Complex.hasDerivAt_log Complex.one_mem_slitPlane).continuousAt.tendsto.comp hsmall
+      using 1 <;>
+      all_goals (first | rfl | funext N <;> rfl | ring)
   apply hlog.congr'
   filter_upwards [eventually_ne_atTop 0] with N hN
   have hNpos : 0 < (N : ℝ) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hN)
@@ -415,7 +423,9 @@ private theorem hasDerivAt_gammaQuarterVertical (t : ℝ) :
   rw [hlogDeriv] at hGamma
   have hcomp := (hGamma.comp (t : ℂ) hW).comp_ofReal
   convert hcomp using 1 <;>
-    simp [gammaQuarterLogDerivative, gammaQuarterVertical, W] <;> ring
+    all_goals (first | rfl |
+      funext y <;> simp [gammaQuarterLogDerivative, gammaQuarterVertical, W] <;> ring_nf |
+      simp [gammaQuarterLogDerivative, gammaQuarterVertical, W] <;> ring_nf)
 
 private theorem hasDerivAt_gammaQuarterLogIntegral (t : ℝ) :
     HasDerivAt gammaQuarterLogIntegral (gammaQuarterLogDerivative t) t := by
@@ -435,8 +445,8 @@ private theorem gammaQuarterVertical_eq_base_mul_exp_logIntegral
     have hG := hasDerivAt_gammaQuarterVertical x
     have hA := hasDerivAt_gammaQuarterLogIntegral x
     dsimp only [Q]
-    convert hG.mul hA.neg.cexp using 1
-    ring
+    convert hG.mul hA.neg.cexp using 1 <;>
+      all_goals (first | rfl | funext y <;> rfl | ring)
   have hzeroInt : IntervalIntegrable (fun _ : ℝ => (0 : ℂ)) volume 1 t :=
     (continuous_const : Continuous (fun _ : ℝ => (0 : ℂ))).intervalIntegrable _ _
   have hconst := intervalIntegral.integral_eq_sub_of_hasDerivAt hQ hzeroInt

@@ -15,12 +15,12 @@ theorem hasDerivAt_riemannVonMangoldtMainTerm
   have harg : T / (2 * Real.pi) ≠ 0 := div_ne_zero hT hc
   have hlinear : HasDerivAt (fun x : ℝ => x / (2 * Real.pi))
       (1 / (2 * Real.pi)) T := by
-    convert (hasDerivAt_id T).div_const (2 * Real.pi) using 1
+    convert (hasDerivAt_id T).div_const (2 * Real.pi) using 1 <;>
+      all_goals (first | rfl | funext x <;> rfl | ring)
   have hlog := hlinear.log harg
   unfold riemannVonMangoldtMainTerm
-  convert (hlinear.mul hlog).sub hlinear using 1
-  field_simp [hT, hc]
-  ring
+  convert (hlinear.mul hlog).sub hlinear using 1 <;>
+    all_goals (first | rfl | funext x <;> rfl | field_simp [hT, hc] <;> ring)
 
 private theorem abs_mainTerm_sub_le_log_of_unit_interval
     {a b H : ℝ} (ha : 7 ≤ a) (hab : a < b)

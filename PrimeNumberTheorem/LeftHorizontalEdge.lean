@@ -419,7 +419,8 @@ private theorem intervalIntegrable_farLeft_eulerFactor
       (fun v : ℝ => (x : ℂ) ^ ((v : ℂ) + T * I)) σ := by
     simpa [s, Function.comp_def] using hpowBase.comp_of_eq hmap (by simp [s])
   have hquot := (hlog.mul hpow).div hmap hs0
-  simpa [s] using hquot.continuousWithinAt
+  convert hquot.continuousWithinAt using 1 <;>
+    all_goals (first | rfl | funext z <;> rfl)
 
 /-- On a finite far-left horizontal segment, subtracting the Archimedean
 Gamma-factor integral from the full explicit-formula integral leaves exactly
@@ -526,7 +527,9 @@ private theorem intervalIntegrable_farLeft_elementaryGamma
         (Real.pi / 2 : ℂ) *
           Complex.tan (Real.pi * ((u : ℂ) + T * I) / 2)) σ := by fun_prop
   have hquot := (hcoeff.mul hpow).div hmap hs0
-  simpa [farLeftElementaryGammaIntegrand, s] using hquot.continuousWithinAt
+  dsimp only [farLeftElementaryGammaIntegrand, s]
+  convert hquot.continuousWithinAt using 1 <;>
+    all_goals (first | rfl | funext z <;> rfl)
 
 private theorem intervalIntegrable_farLeft_digamma
     {x ε a T : ℝ} (hx : 1 < x) (hε : 0 < ε)
@@ -576,10 +579,10 @@ private theorem intervalIntegrable_farLeft_cotCorrection
           Complex.sin (Real.pi * ((u : ℂ) + T * I)) by
       funext u
       rw [Complex.cot_eq_cos_div_sin]]
-    simpa [Function.comp_def] using
-      (Complex.differentiableAt_cos.continuousAt.comp hqmap).div
+    convert ((Complex.differentiableAt_cos.continuousAt.comp hqmap).div
         (Complex.differentiableAt_sin.continuousAt.comp hqmap)
-        (by simpa [q, s] using hsin)
+        (by simpa [q, s] using hsin)) using 1 <;>
+      all_goals (first | rfl | funext u <;> rfl)
   have hpowBase : ContinuousAt (fun z : ℂ => (x : ℂ) ^ z) s :=
     (((differentiableAt_id : DifferentiableAt ℂ (fun z : ℂ => z) s).const_cpow
       (Or.inl (ofReal_ne_zero.mpr (ne_of_gt (zero_lt_one.trans hx))))).continuousAt)
@@ -907,7 +910,7 @@ private theorem intervalIntegral_neg_mul_rpow_exponent {x a b : ℝ}
         (-1 / Real.log x) σ := by
       convert (hasDerivAt_const σ (1 / Real.log x ^ 2)).sub
         ((hasDerivAt_id σ).div_const (Real.log x)) using 1
-      all_goals ring
+      all_goals (first | rfl | funext u <;> rfl | ring)
     have hmul := hp.mul hq
     change deriv F σ = (-σ) * x ^ σ
     rw [show deriv F σ =

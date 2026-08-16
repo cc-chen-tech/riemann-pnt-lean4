@@ -90,18 +90,21 @@ lemma n0simple_zero_le_criticalLineOddZeroCount (T : ℝ) :
       {ρ : ℂ | Zeta23.zeroMult ρ = 1}).ncard ≤
     (criticalLineOddZerosFinset T).card
   rw [← Set.ncard_coe_finset (criticalLineOddZerosFinset T)]
-  apply Set.ncard_le_ncard
-  intro ρ hρ
-  rcases hρ with ⟨hρ₁, hρ₂⟩
-  rcases hρ₁ with ⟨hρ₀, hρ_re⟩
-  rw [Finset.mem_filter]
-  refine ⟨mem_criticalLineZerosFinset.mpr ?_, ?_⟩
-  · rcases mem_zeta23_zerosIn_zero.mp hρ₀ with ⟨hnt, him, hle⟩
-    exact ⟨hnt, hρ_re, le_of_lt him, hle⟩
-  · have hmult : analyticOrderNatAt riemannZeta ρ = 1 := by
-      simpa [zeroMult_eq_analyticOrderNatAt ρ] using hρ₂
-    rw [hmult]
-    exact ⟨0, by norm_num⟩
+  exact Set.ncard_le_ncard
+    (by
+      intro ρ hρ
+      rcases hρ with ⟨hρ₁, hρ₂⟩
+      rcases hρ₁ with ⟨hρ₀, hρ_re⟩
+      simp only [criticalLineOddZerosFinset, Finset.coe_filter, Finset.mem_coe,
+        Set.mem_setOf_eq]
+      refine ⟨mem_criticalLineZerosFinset.mpr ?_, ?_⟩
+      · rcases mem_zeta23_zerosIn_zero.mp hρ₀ with ⟨hnt, him, hle⟩
+        exact ⟨hnt, hρ_re, le_of_lt him, hle⟩
+      · have hmult : analyticOrderNatAt riemannZeta ρ = 1 := by
+          simpa [zeroMult_eq_analyticOrderNatAt ρ] using hρ₂
+        rw [hmult]
+        exact ⟨0, by norm_num⟩)
+    (criticalLineOddZerosFinset T).finite_toSet
 
 /-- Bridge lemma 2: Zeta23's `Ncount 0 T` satisfies the Selberg-scale lower
 bound, transferred from this repository's all-height Riemann–von Mangoldt
@@ -141,7 +144,7 @@ theorem selberg_odd_zero_proportion_target_of_zeta23 :
       _ = (2 / 3 - 1 / 12 : ℝ) * (Zeta23.Ncount 0 T : ℝ) := by norm_num
       _ ≤ (Zeta23.N0simple 0 T : ℝ) := hB'
       _ ≤ (criticalLineOddZeroCount T : ℝ) :=
-        exact_mod_cast n0simple_zero_le_criticalLineOddZeroCount T
+        Nat.cast_le.mpr (n0simple_zero_le_criticalLineOddZeroCount T)
   have htarget : (criticalLineOddZeroCount T : ℝ) ≥ (7 / 12 : ℝ) * c * X := hgap
   simpa [X] using htarget
 

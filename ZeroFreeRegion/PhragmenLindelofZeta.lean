@@ -26,7 +26,8 @@ lemma diffContOnCl_normalizedRiemannZetaCarrier :
     linarith [hscc.1]
   unfold normalizedRiemannZetaCarrier
   exact (differentiable_riemannZetaEntireRegularization.differentiableAt.div
-    ((differentiableAt_id.add_const 2).pow 4) (pow_ne_zero 4 hs2)).differentiableWithinAt
+    ((differentiableAt_id.add (differentiableAt_const (2 : ℂ))).pow 4)
+      (pow_ne_zero 4 hs2)).differentiableWithinAt
 
 lemma normalizedRiemannZetaCarrier_isBigO_riemannZetaEntireRegularization :
     normalizedRiemannZetaCarrier

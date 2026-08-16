@@ -1,8 +1,8 @@
 import HardyTheorem.Zeta23SelbergBridge
 
-/-- Axiom audit for the Zeta23 bridge: the two closed targets and the
-bridge lemmas must depend only on the three standard Lean axioms
-(`propext`, `Classical.choice`, `Quot.sound`). -/
+-- Axiom audit for the Zeta23 bridge: the two closed targets and the
+-- bridge lemmas must depend only on the three standard Lean axioms
+-- (`propext`, `Classical.choice`, `Quot.sound`).
 
 #print axioms
   HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23
