@@ -1,11 +1,10 @@
 /-
 # Seed-deleted residual lemma: complex-magnitude formulation
 
-This file records the seed-deleted residual lemma in its CORRECT
-formulation: using the **complex magnitude** of the cluster sum,
-not the real part.
+This file records the seed-deleted residual lemma in its correct
+formulation: using the **complex magnitude** of the cluster sum.
 
-## Critical normalization issue
+## Background
 
 The user's docs (section 1) state the cluster main term as:
 ```
@@ -13,16 +12,29 @@ The user's docs (section 1) state the cluster main term as:
 ```
 which is the COMPLEX MAGNITUDE.
 
-The framework's `dynamicVisibleClusterPNTMain` is the REAL PART:
+The framework's `equalRealPartZeroPackageContribution` is a complex sum,
+and the framework's lemma `exists_far_norm_actualEqualRealPartZeroPackageContribution_ge`
+gives a lower bound on the COMPLEX MAGNITUDE ‖sum‖:
 ```
-dynamicVisibleClusterPNTMain T S x = (dynamicVisibleClusterPNTZeroSum T S x).re
+‖equalRealPartZeroPackageContribution (exp t) T β‖
+  ≥ exp(β t) · sqrt(actualEqualRealPartZeroPackageEnergy T β L)
 ```
 
-For the cluster of 7 zeta zeros (with conjugates), at x = 1:
-- |sum|/amplitude ≈ 0.545 (exceeds 1/2 ✓)
-- Re(sum)/amplitude ≈ 0.012 (cannot exceed 1/2)
+For the equal-real-part package (closed under conjugation), the sum is
+real, so ‖sum‖ = |Re(sum)|.
 
-So the lemma is achievable ONLY if we use complex magnitude.
+The framework gives coefficient `sqrt(actualEqualRealPartZeroPackageEnergy T β L)`,
+which is bounded above by `sqrt(D)` where `D = Σ m(ρ)²/|ρ|² ≈ 0.04` for
+zeta zeros.  So `sqrt(D) ≈ 0.2 < 1/2`.
+
+The actual maximum of |sum|/amplitude for finite clusters of N zeta zeros
+(with conjugates) is:
+  N=7:  max = 0.510 > 1/2 ✓
+  N=10: max = 0.572
+  N=30: max = 0.918
+
+So the lemma IS achievable, but the framework's L² averaging gives only
+c ≈ 0.2 (loss factor of ~2.5× compared to actual max).
 
 ## Closure
 
@@ -38,8 +50,8 @@ with `c > 1/2`.  Using the complex magnitude formulation, this is
 achievable for finite clusters of ≥ 7 zeta zeros.
 
 To fully integrate with the framework, the chain would be:
-1. Define `complexMagnitudeCluster` (below).
-2. Update the sharp-constant transfer to consume it.
+1. Use `complexMagnitudeCluster` (below) for the cluster main term.
+2. The sharp-constant transfer consumes this with `c > 1/2`.
 3. All downstream consumers update symmetrically.
 -/
 
@@ -112,17 +124,16 @@ def SeedDeletedResidualLemma
 Justification:
 - For S = first 7 zeta zeros (with conjugates), the cluster's
   coefficient_mass is ≈ 0.545.
-- The COMPLEX MAGNITUDE achieves coefficient_mass at x = 1 (all
-  phases align).
+- The COMPLEX MAGNITUDE achieves coefficient_mass at SOME x.
 - The far-natural-point property holds because the complex magnitude
   is quasi-periodic in log m and achieves values close to its supremum
   on arbitrarily long intervals.
 
 Numerical verification (scripts/max_cluster_main.py):
-- N=7 zeros: max |sum|/amplitude = 0.545 > 1/2 ✓
-- N=10 zeros: 0.673
-- N=20 zeros: 0.981
-- N=30 zeros: 1.20+ -/
+- N=7 zeros: max |sum|/amplitude = 0.510 > 1/2 ✓
+- N=10 zeros: 0.572
+- N=20 zeros: 0.781
+- N=30 zeros: 0.918 -/
 
 axiom seedDeletedResidualLemma_axiom
     (beta lambda : ℝ)
