@@ -1,0 +1,4 @@
+import MathlibAux.DyadicNegativeLogPolynomialMeanSquare
+
+#print axioms MathlibAux.integral_normSq_negLogExponentialPolynomial_le_weighted_dyadic
+#print axioms MathlibAux.integral_normSq_negLogExponentialPolynomial_le_squareWeighted_dyadic
