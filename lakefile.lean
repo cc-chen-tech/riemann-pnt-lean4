@@ -24,6 +24,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.DirichletPolynomialMeanSquare,
     `PrimeNumberTheorem.FourierL1L2,
     `MathlibAux.WeightedCauchySchwarz,
+    `MathlibAux.FiniteSpectrumGap,
     `PrimeNumberTheorem.SincSquareIntegral,
     `PrimeNumberTheorem.SincSquareFourier,
     `PrimeNumberTheorem.PositiveFourierKernel,
