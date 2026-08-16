@@ -131,8 +131,11 @@ low intersection.
 
 This is a rigorous positive certificate for one finite 401-by-401 candidate
 matrix. It is not the preregistered `(c,N)=(100,200)` Gate A baseline.
-Analytic tail control and basis-change transfer remain open, so
-`gate_a_status` remains `not_satisfied` and no RH conclusion is made.
+The cutoff-free actual archimedean tail is now formalized separately, but the
+exact normalization/basis-change identity has not yet been instantiated for
+this certificate. The preregistered `(100,200)` sign computation is also still
+unresolved, so `gate_a_status` remains `not_satisfied` and no RH conclusion is
+made.
 
 ## Lean finite-to-tail transfer and scalar integral
 
@@ -239,16 +242,21 @@ B_T =
        + (rho*N)^(-1) * log(T / (T-rho*N))).
 ```
 
+`WeilExtremalKernels/ArchimedeanImproperTail.lean` now also constructs the
+entrywise improper matrix integral, proves convergence of finite increments
+to that cutoff-free finite matrix, transfers nonnegativity and the explicit
+`B_T` bound to the limit, and connects an exact finite `LDL^T` certificate to
+the complete actual archimedean tail.
+
 These results remove the generic algebraic transfer, scalar-calculus,
-rank-two positivity, pointwise vector-norm, and finite-interval matrix
-integration subgoals, and they now identify and eventually bound the actual
-analytic weight in Lean. They do not yet prove the explicit hard estimates
+rank-two positivity, pointwise vector-norm, finite-interval and improper
+matrix integration subgoals. They do not yet prove the explicit hard estimates
 
 ```text
 0 <= h_+(t) <= log t  for t >= 7,
 ```
 
-construct the improper matrix limit, replace the non-explicit starting
-threshold by the paper's explicit threshold `7`, verify the basis transfer,
-or connect a finite certificate to the infinite-dimensional Weil criterion.
-Gate A therefore remains open.
+replace the non-explicit starting threshold by the paper's explicit threshold
+`7`, instantiate and verify the concrete basis transfer, or connect the family
+of finite certificates to the infinite-dimensional Weil criterion. Gate A
+therefore remains open.
