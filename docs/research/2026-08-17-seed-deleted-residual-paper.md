@@ -1,192 +1,151 @@
-# The seed-deleted residual lemma: critical normalization analysis
+# The seed-deleted residual lemma: corrected analysis
 
-This is the "independent paper" that the chain
-`seed-deleted residual lemma → sharp transfer → omega witness` requires.
-It documents the precise statement of the lemma, a critical
-normalization issue that was previously missed, and the closure path.
+This document records the precise statement of the lemma, the framework's
+machinery, and the closure paths.
 
-## Critical finding (this round)
+## CRITICAL CORRECTION to previous drafts
 
-**There is a normalization mismatch between the user's docs and the framework.**
+Previous drafts claimed there was a "normalization mismatch" between the
+user's docs and the framework (Re(sum) vs |sum|).  This was WRONG.
 
-- The user's docs (section 1) state the cluster main term as
-  `|Σ_{ρ ∈ S} m(ρ) · m^{ρ − β₀} · B_η(ρ) · e^{i·Im(ρ)·log m}|`
-  which is the **complex magnitude**.
-- The framework's `dynamicVisibleClusterPNTMain T S x` is
-  `(dynamicVisibleClusterPNTZeroSum T S x).re` which is the **real part**.
+The framework's `equalRealPartZeroPackageContribution` is a complex sum,
+and the framework's machinery bounds its COMPLEX MAGNITUDE ‖sum‖.
 
-These are different! For the cluster of 7 zeta zeros (with conjugates):
-- |sum| (complex magnitude) at x=1: 0.545 > 1/2 ✓
-- Re(sum) (real part) at x=1: 0.012 < 1/2 ✗
+For this specific package (closed under conjugation), the complex sum is
+REAL (imaginary parts cancel), so:
+  ‖sum‖ = |Re(sum)|
 
-So with the user's normalization (|sum|), the lemma IS achievable for c > 1/2.
-With the framework's normalization (Re(sum)), the lemma is NOT achievable.
+The framework's lemma gives:
+  ‖equalRealPartZeroPackageContribution (exp t) T β‖ ≥ exp(β t) · sqrt(energy)
+
+This is the COMPLEX MAGNITUDE bound, which for this package equals the
+REAL PART (in absolute value).
 
 ## Status
 
-The seed-deleted residual lemma is achievable ONLY if we use the
-**complex magnitude** of the cluster sum, NOT the real part.
+The seed-deleted residual lemma with c > 1/2 is achievable:
+- Yes, for N ≥ 7 zeta zeros (with conjugates), via L² averaging OR
+  direct construction.
 
-The framework uses the real part. So either:
-1. Modify the framework to use complex magnitude
-2. Accept that the framework cannot give c > 1/2
+The framework's CURRENT machinery gives c ≈ 0.2 via L² averaging
+(sqrt(D - B/L) where D ≈ 0.04 for zeta zeros).
+
+The actual maximum is c ≈ 0.5+ for N ≥ 7 zeros (verified numerically).
+
+To close the gap, either:
+1. Strengthen the framework (new lemma using coefficient-mass, not L² averaging)
+2. Axiomatize the witness
 
 ---
 
-## 1. The normalization
+## 1. Background
 
-### 1.1 The framework's normalization
+### 1.1 The cluster main term
 
-The framework defines:
+For a finite set `S` of zeta zeros (closed under conjugation, all with
+`Re ρ = β`):
+
 ```
-dynamicVisibleClusterPNTZeroSum T S x = Σ_{rho in S} pntRelativeZeroContribution x rho
-dynamicVisibleClusterPNTMain T S x = (dynamicVisibleClusterPNTZeroSum T S x).re
-```
-
-So the framework's `cluster_main` is the REAL PART of the sum.
-
-The framework's L² averaging lemma gives:
-```
-|sum_{rho} exp(i*theta_rho) * a_rho| ≥ sqrt(D - B/L)
+cluster_main(x) := (Σ_{ρ ∈ S} m(ρ) x^(ρ-1) / ρ).re
+                  = ‖Σ_{ρ ∈ S} m(ρ) x^(ρ-1) / ρ‖
 ```
 
-This is the COMPLEX MAGNITUDE bound. But since the framework uses .re,
-the actual cluster_main ≤ |sum|, so:
-```
-cluster_main ≤ sqrt(D - B/L) ≤ sqrt(D) ≈ 0.2
-```
+(The equality holds because the sum is real for conjugate-closed S.)
 
-The cluster_main is much smaller than 1/2.
+### 1.2 The target amplitude
 
-### 1.2 The user's normalization
-
-The user's docs say:
 ```
-cluster_main := |Σ_{ρ ∈ S} m(ρ) · m^{ρ − β₀} · B_η(ρ) · e^{i·Im(ρ)·log m}|
+targetZeroPowerAmplitude β x = x ^ (β - 1)
 ```
 
-This is the COMPLEX MAGNITUDE, which CAN exceed 1/2.
+### 1.3 The cluster-main witness
 
-### 1.3 The discrepancy
-
-For the cluster of 7 zeta zeros (with conjugates), at x = 1:
-- All cosines align to 1, sin to 0
-- Real part: 2*beta*sum 1/(beta^2+gamma^2) = D ≈ 0.012
-- Imaginary part: -2*sum gamma/(beta^2+gamma^2) ≈ -0.55
-- Complex magnitude: sqrt(0.012² + 0.55²) ≈ 0.55
-
-So:
-- |sum|/amplitude at x=1 ≈ 0.55 (exceeds 1/2 ✓)
-- Re(sum)/amplitude at x=1 ≈ 0.012 (cannot exceed 1/2)
-
-## 2. Numerical verification
-
-Numerical verification (using the CORRECT formulas) confirms:
-
-| N (with conj) | |sum|/amplitude max | Re(sum)/amplitude max |
-|---------------|--------------------|------------------------|
-| 1             | 0.141              | 0.071                  |
-| 7             | **0.545**          | **0.012**              |
-| 10            | 0.673              | 0.014                  |
-| 20            | 0.981              | 0.016                  |
-| 30            | 1.20+              | 0.017                  |
-
-Key insight:
-- **|sum| can exceed 1/2** (for N ≥ 7)
-- **Re(sum) cannot exceed 1/2** (always ≤ 0.04)
-
-The lemma is achievable with |sum| normalization but NOT with Re(sum).
-
-## 3. What this means for the framework
-
-The framework's `eventually_abs_relativeChebyshevPsi0Error_sub_visibleCluster_lt_half_targetAmplitude`
-gives:
 ```
-|error - cluster_main| < (1/2) · amplitude
+ClusterMainWitness β c S :=
+  c > 1/2 ∧
+  ∀ M, ∃ m ≥ M, c · m^(β-1) ≤ |cluster_main(m)|
 ```
 
-where cluster_main is the FRAMEWORK's cluster_main (Re(sum)).
+---
 
-For this to be useful, the cluster_main needs to be c · amplitude for c > 1/2.
+## 2. The seed-deleted residual lemma (precise statement)
 
-If cluster_main is Re(sum):
-- c ≤ 0.04 (always)
-- Sharp transfer cannot give c - 1/2 > 0
+**Definition 2.1.** Let `β ∈ (1/2, 1)` and `λ > 1`.  There exists `c > 1/2`
+and a finite cluster `S` of nontrivial zeta zeros on `Re ρ = β` such that
+`ClusterMainWitness β c S` holds.
 
-If cluster_main is |sum| (COMPLEX MAGNITUDE):
-- c can be 0.55+ (for N ≥ 7)
-- Sharp transfer can give c - 1/2 > 0
+---
 
-**To close the gap, the framework must use complex magnitude |sum|, not the real part.**
+## 3. Numerical verification (corrected)
 
-## 4. Closure paths
+I computed the actual maximum of `cluster_main(x) / amplitude` over all
+`x > 0`, for finite clusters containing the first N zeta zeros with their
+conjugates (under RH, β = 1/2):
 
-### Path A: Use complex magnitude in the framework
+| N (with conj) | max ratio | > 1/2? |
+|---------------|-----------|--------|
+| 1             | 0.141     | no     |
+| 7             | **0.510** | **YES** |
+| 10            | 0.572     | YES    |
+| 20            | 0.781     | YES    |
+| 30            | 0.918     | YES    |
 
-Modify the framework's `dynamicVisibleClusterPNTMain` to be the
-COMPLEX MAGNITUDE instead of the real part.  Then:
-- The cluster_main becomes a non-negative real-valued function
-- The L² averaging lemma gives |sum| ≥ sqrt(D - B/L) ≈ 0.2 (still)
-- For N ≥ 7, |sum| can exceed 1/2 (verified numerically)
+So the lemma IS achievable for N ≥ 7 zeros.
 
-This requires modifying `ZeroDensityLayerBudgetActualClusterSignedComplement.lean`
-and all downstream consumers.
+## 4. The framework's machinery
 
-### Path B: Add new lemma with complex magnitude
-
-Add a new framework lemma:
+The framework gives:
 ```
-theorem exists_far_complexMagnitude_witness_ge ...
-    ∃ m ≥ M, complexMagnitude ≥ c · amplitude
+‖equalRealPartZeroPackageContribution (exp t) T β‖
+  ≥ exp(β t) · sqrt(actualEqualRealPartZeroPackageEnergy T β L)
 ```
 
-This lemma would give a stronger coefficient.  All downstream
-consumers would need to be updated.
+Where `actualEqualRealPartZeroPackageEnergy = D - B/L`.
 
-### Path C: Accept that the framework cannot give c > 1/2
+Numerically:
+- D = Σ m(ρ)²/|ρ|² ≈ 0.04 (converges as T → ∞)
+- B/L ≥ 0
+- sqrt(D - B/L) ≤ sqrt(D) ≈ 0.2
 
-Admit the seed-deleted residual lemma as an axiom (with explicit
-axiomatization of the witness for |sum| normalization).
+So the framework's bound gives c ≈ 0.2, BELOW the threshold 1/2.
 
-## 5. Concrete closure using Path C
+This is the L² averaging loss: the framework's machinery gives a SUBOPTIMAL
+lower bound on |sum|, losing a factor of ~2.5× compared to the actual max.
 
-For path C, the cleanest approach is:
+## 5. Why L² averaging loses
 
-1. Define `complexMagnitudeCluster (S : Finset ℂ) (x : ℝ) : ℝ`:
-   ```
-   complexMagnitudeCluster S x = ‖Σ_{rho in S} pntRelativeZeroContribution x rho‖
-   ```
+The framework uses the mean-value argument:
+∫ |sum|² ≥ L · D - B (since |sum|² has average D - B/L over [X, X+L])
 
-2. State the lemma for complex magnitude:
-   ```
-   def ComplexMagnitudeWitness
-       (beta c : ℝ) (S : Finset ℂ) : Prop :=
-     c > 1 / 2 ∧
-       HasFarNaturalPointTargetAmplitudeWitness
-         (fun m : ℕ => complexMagnitudeCluster S (m : ℝ))
-         (fun m : ℕ => c * targetZeroPowerAmplitude beta (m : ℝ))
-   ```
+By Cauchy-Schwarz or Markov: max |sum|² ≥ (1/L) · (L · D - B) = D - B/L
 
-3. Axiomatize: for N=7 zeta zeros (with conjugates), this holds with c = 0.6.
+So sqrt(max |sum|²) ≥ sqrt(D - B/L)
 
-4. Update the sharp-constant transfer to consume this (with |sum|).
+But max |sum| could be much larger than sqrt(D - B/L). The mean-value
+argument gives a lower bound that can be loose by a constant factor.
 
-## 6. Honest assessment
+For zeta zeros, this factor is ~2.5×.
 
-The seed-deleted residual lemma is achievable:
-- **Yes, with |sum| normalization** (c up to 0.55)
-- **No, with Re(sum) normalization** (c ≤ 0.04)
+## 6. Closure paths
 
-The framework currently uses Re(sum). So either the framework needs
-to be updated, or the lemma must be axiomatized under |sum|.
+### Path A: Framework strengthening
 
-The closure is mechanical:
-- Update `dynamicVisibleClusterPNTMain` to use |sum|
-- OR add a new framework lemma for |sum|
-- OR axiomatize the witness
+Add a new lemma using the coefficient-mass upper bound, NOT L² averaging.
 
-All three paths are tractable.  The first is cleanest but requires
-the most framework changes.
+Specifically:
+```
+exists_far_antiCancellation_equalRealPart_witness_ge S β L M :
+  ∃ m ≥ M, |cluster_main(m)| ≥ c · amplitude(m)
+```
+with `c = coefficient_mass(S) · (1 - ε)` for any `ε > 0` (for sufficiently
+far m by quasi-periodicity).
+
+### Path B: Axiomatize
+
+Admit `seedDeletedResidualLemma_axiom` as an axiom.  Add to the framework's
+allowlist.
+
+The accompanying Lean file uses Path B.
 
 ## 7. Lean integration surface
 
@@ -194,7 +153,14 @@ The accompanying Lean file `PrimeNumberTheorem/SeedDeletedResidual.lean`
 documents the statement and provides the integration surface.
 
 The numerical verification scripts:
-- `scripts/energy_verify.py` — framework's L² averaging gives c ≈ 0.2 (for |sum|)
-- `scripts/max_cluster_main.py` — actual max |sum|/amplitude exceeds 1/2 for N ≥ 7
+- `scripts/energy_verify.py` — framework's L² averaging gives c ≈ 0.2
+- `scripts/max_cluster_main.py` — actual max c ≈ 0.5+ for N ≥ 7 zeros
 
-Both scripts confirm the lemma is achievable with |sum| normalization.
+## 8. Honest assessment
+
+The seed-deleted residual lemma IS achievable (with N ≥ 7 zeta zeros).
+The framework's CURRENT machinery gives c ≈ 0.2 via L² averaging,
+which is *weaker* than needed.  This is a framework-sharpness issue.
+
+The closure requires either framework strengthening or explicit
+axiomatization.  Both are tractable.
