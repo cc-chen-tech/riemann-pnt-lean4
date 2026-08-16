@@ -109,7 +109,7 @@ noncomputable def packageDiagonalEnergy (T beta : ℝ) : ℝ :=
 /-- The off-diagonal budget of the package.  Bounded above by
 `Σ_{ρ ≠ ρ'} 2 · m(ρ) · m(ρ') / (|ρ| · |ρ'| · |Im ρ - Im ρ'|)`. -/
 noncomputable def packageOffDiagonalBudget (T beta : ℝ) : ℝ :=
-  ZeroForcedOscillation.offDiagonalBound
+  PrimeNumberTheorem.ZeroForcedOscillation.offDiagonalBound
     (equalRealPartZeroPackage T beta)
     (fun rho => (PrimeNumberTheorem.zeroMultiplicity rho : ℂ) * rho⁻¹)
     Complex.im
@@ -184,10 +184,12 @@ theorem seedDeletedResidualLemma_of_energyInput
   -- The coefficient c = sqrt(packageMeanSquareEnergy) exceeds 1/2
   -- by the energy inequality input.
   let c := Real.sqrt (packageMeanSquareEnergy T beta L)
-  have hc_pos : 0 < c := Real.sqrt_pos_of_pos (by linarith [henergy.2.2.2.1])
+  have hEnergyPos : 0 < packageMeanSquareEnergy T beta L :=
+    lt_of_lt_of_le (by norm_num : (0 : ℝ) < 1 / 4) henergy.2.2.2.2.le
+  have hc_pos : 0 < c := Real.sqrt_pos_of_pos hEnergyPos
   have hc : 1 / 2 < c := by
     rw [Real.sqrt_lt_sqrt_iff_left₀ (by positivity : (0 : ℝ) ≤ 1/4)]
-    linarith [henergy.2.2.2]
+    linarith [henergy.2.2.2.2]
   refine ⟨c, hc, equalRealPartZeroPackage T beta, ?_, ?_⟩
   · -- All elements are nontrivial zeta zeros with Re rho = beta
     intro rho hrho
