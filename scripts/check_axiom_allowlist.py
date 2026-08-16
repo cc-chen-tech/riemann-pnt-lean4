@@ -15,6 +15,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
     "Test.VKEdgePiOverTwoFixedProportionAxiomAudit",
+    "Test.VKEdgePiOverTwoQuantitativeMeasureAxiomAudit",
     "Test.VKEdgeResidualAmplificationAxiomAudit",
     "Test.VKEdgeCosineModelAnnihilatorAxiomAudit",
     "Test.VKEdgeExplicitFormulaPairBridgeAxiomAudit",

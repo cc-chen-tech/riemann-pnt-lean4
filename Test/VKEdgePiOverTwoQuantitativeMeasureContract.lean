@@ -4,6 +4,30 @@ open Complex Filter MeasureTheory Set
 
 open PrimeNumberTheorem.VKEdgePiOverTwo
 
+#check (centeredThresholdEnergyGap : Real -> Real -> Real -> Real)
+#check (centeredNormalizedPsiErrorWindowEnvelope :
+  Real -> Real -> Complex -> Real -> Real)
+#check (centeredSharpenedWeightedErrorEnvelope :
+  Real -> Real -> Complex -> Nat -> Real -> Real)
+#check (centeredStrictPiOverTwoMeasureLowerBound :
+  Real -> Real -> Complex -> Nat -> Real -> Real)
+
+#check (centeredThresholdEnergyGap_pos :
+  ∀ {multiplicity mean C : Real},
+    0 < multiplicity -> 0 < mean -> 0 ≤ C -> C < multiplicity / mean ->
+      0 < centeredThresholdEnergyGap multiplicity mean C)
+
+#check (normalizedPsiError_abs_le_centeredWindowEnvelope :
+  ∀ {q d m y : Real} {rho : Complex},
+    rho.re < 1 -> y ∈ localizedGaussianLogWindow q d m ->
+      |normalizedPsiError rho y| ≤
+        centeredNormalizedPsiErrorWindowEnvelope q d rho m)
+
+#check (centeredStrictPiOverTwoMeasureLowerBound_pos :
+  ∀ {q d m : Real} {rho : Complex} {k : Nat},
+    0 < m -> 0 < rho.re -> rho.re < 1 -> riemannZeta rho = 0 ->
+      0 < centeredStrictPiOverTwoMeasureLowerBound q d rho k m)
+
 example
     {alpha : Type*} [MeasurableSpace alpha] {mu : Measure alpha}
     {s : Set alpha} {f w : alpha -> Real} {C B : Real}

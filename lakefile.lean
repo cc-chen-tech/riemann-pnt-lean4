@@ -340,6 +340,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.VKEdgePiOverTwoPositiveMeasure,
     `PrimeNumberTheorem.VKEdgePiOverTwoQuantitativeMeasure,
     `Test.VKEdgePiOverTwoQuantitativeMeasureContract,
+    `Test.VKEdgePiOverTwoQuantitativeMeasureAxiomAudit,
     `PrimeNumberTheorem.VKEdgePiOverTwoBellotti,
     `PrimeNumberTheorem.VKEdgePiOverTwoConcreteContourAssembly,
     `PrimeNumberTheorem.VKEdgePiOverTwoRightTailBound,
