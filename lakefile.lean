@@ -2135,6 +2135,7 @@ lean_lib RiemannPNT where
     `Test.SmoothedErrorTransferAxiomAudit,
     `Test.VinogradovKorobovVanDerCorputContract,
     `Test.VinogradovKorobovAxiomAudit,
+    `Test.VinogradovKorobovFordIncompleteAxiomAudit,
     `Test.VinogradovKorobovExponentialSumContract,
     `Test.VinogradovKorobovFirstDerivativeContract,
     `Test.VinogradovKorobovLogPhaseContract,

@@ -178,6 +178,9 @@ REUSABLE_PREDICATES = {
     "ZeroFreeRegion.VinogradovKorobov.IsVinogradovWeightedSolutionMod",
     "ZeroFreeRegion.VinogradovKorobov.IsVinogradovWeightedSolutionInt",
     "ZeroFreeRegion.VinogradovKorobov.IsVinogradovMixedAffineEquationInt",
+    "ZeroFreeRegion.VinogradovKorobov.FordShortSumPrefixBound",
+    "ZeroFreeRegion.VinogradovKorobov.IsIncompleteVinogradovSolutionMod",
+    "ZeroFreeRegion.VinogradovKorobov.IsIncompleteSolutionOnMod",
 }
 
 
