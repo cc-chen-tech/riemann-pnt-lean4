@@ -58,6 +58,32 @@ theorem actualCubicDyadicStripGaussianSecondMomentExcluding_le_gram
   intro rho hrho
   exact norm_actualCubicPhaseFaithfulCoefficient x beta rho
 
+/-- Direct phase-faithful cubic Gaussian `L2` capacity bound for one actual
+Carlson strip after deleting an arbitrary finite set.  The half-isolated input
+is only the unit-bucket occupancy hypothesis; no cardinality-square or extra
+logarithmic loss is introduced when passing from the complex polynomial to the
+positive-mass Gram bound. -/
+theorem actualCubicDyadicStripGaussianSecondMomentExcluding_le_occupancy_mul_capacity
+    {x beta sigma tau t width : ℝ} (n occupancy : ℕ) (S : Finset ℂ)
+    (hx : 0 ≤ x) (ht : 0 ≤ t) (hwidth : 1 ≤ width)
+    (hoccupancy :
+      ∀ q ∈ (actualCarlsonDyadicZeroStrip sigma tau n \ S).image
+          actualCubicDyadicUnitBucket,
+        ((actualCarlsonDyadicZeroStrip sigma tau n \ S).filter fun rho =>
+          actualCubicDyadicUnitBucket rho = q).card ≤ occupancy + 1) :
+    actualCubicDyadicStripGaussianSecondMomentExcluding
+        x beta sigma tau n S t width ≤
+      MathlibAux.gaussianBucketSchurConstant *
+        ((occupancy + 1 : ℕ) : ℝ) *
+          (x ^ (-2 * beta) *
+            actualCubicDyadicStripSquareCapacityExcluding
+              x sigma tau n S) := by
+  exact le_trans
+    (actualCubicDyadicStripGaussianSecondMomentExcluding_le_gram
+      x beta sigma tau n S t (lt_of_lt_of_le zero_lt_one hwidth))
+    (actualCubicDyadicStripGaussianGramExcluding_le_occupancy_mul_capacity
+      n occupancy S hx ht hwidth hoccupancy)
+
 end
 
 end PrimeNumberTheorem

@@ -39,6 +39,23 @@ example (x beta sigma tau : ℝ) (n : ℕ) (S : Finset ℂ) (t : ℝ)
   actualCubicDyadicStripGaussianSecondMomentExcluding_le_gram
     x beta sigma tau n S t hwidth
 
+example {x beta sigma tau t width : ℝ} (n occupancy : ℕ) (S : Finset ℂ)
+    (hx : 0 ≤ x) (ht : 0 ≤ t) (hwidth : 1 ≤ width)
+    (hoccupancy :
+      ∀ q ∈ (actualCarlsonDyadicZeroStrip sigma tau n \ S).image
+          actualCubicDyadicUnitBucket,
+        ((actualCarlsonDyadicZeroStrip sigma tau n \ S).filter fun rho =>
+          actualCubicDyadicUnitBucket rho = q).card ≤ occupancy + 1) :
+    actualCubicDyadicStripGaussianSecondMomentExcluding
+        x beta sigma tau n S t width ≤
+      MathlibAux.gaussianBucketSchurConstant *
+        ((occupancy + 1 : ℕ) : ℝ) *
+          (x ^ (-2 * beta) *
+            actualCubicDyadicStripSquareCapacityExcluding
+              x sigma tau n S) :=
+  actualCubicDyadicStripGaussianSecondMomentExcluding_le_occupancy_mul_capacity
+    n occupancy S hx ht hwidth hoccupancy
+
 end
 
 end PrimeNumberTheorem

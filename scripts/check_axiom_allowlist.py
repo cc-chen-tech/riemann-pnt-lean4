@@ -2848,6 +2848,7 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.gaussianWeightedSecondMoment_le_driftingGram",
     "PrimeNumberTheorem.norm_actualCubicPhaseFaithfulCoefficient",
     "PrimeNumberTheorem.actualCubicDyadicStripGaussianSecondMomentExcluding_le_gram",
+    "PrimeNumberTheorem.actualCubicDyadicStripGaussianSecondMomentExcluding_le_occupancy_mul_capacity",
     "PrimeNumberTheorem.actualCubicLowDyadicL2BlockCapacityMajorant_eq_capacity_of_lt",
     "PrimeNumberTheorem.actualCubicLowDyadicL2BlockCapacityMajorant_eq_logFifth_of_ge",
     "PrimeNumberTheorem.exists_actualCubicNormalizedSmoothedStripEnergyUpTo_le_lowDyadicL2CapacityMajorant",
