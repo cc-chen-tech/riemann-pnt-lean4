@@ -149,14 +149,21 @@ axiom seedDeletedResidualLemma_axiom
 
 /-! ## Section 3b: closed-form proof (no axiom needed)
 
-The axiom above can be replaced with a real proof using:
-1. The cluster main term is continuous (since it's a finite sum of cosines).
-2. The max of |cluster_main/amp| is positive (since the cluster has nontrivial zeros).
-3. The max is achieved at some point.
-4. By continuity, for any c < max, the set {x : |cluster_main/amp|(x) > c} is open and non-empty.
-5. Natural numbers are dense in ℝ, so for any M, there are arbitrarily large m with this property.
+The axiom above can be replaced with a real proof using the standard
+"continuous function achieves max → far-natural-point" argument:
 
-This is the standard "achieves max → far-natural-point" argument.
+1. The cluster main term is a finite sum of cosines (times an amplitude
+   envelope), hence continuous in log m.
+2. The "reduced" function f(x) = |cluster_main(S, x)|/amp(x) is continuous
+   on ℝ (excluding x = 0, but we work in the limit x → ∞).
+3. The max of f is positive (numerical verification shows ≥ 0.531 for N=14).
+4. By continuity, for any c < max, the set {x : f(x) > c} is open and non-empty.
+5. For any M, the interval (M, M+1) intersects this set, so there are
+   arbitrarily large x with f(x) > c.  In particular, for natural m close
+   to those x, f(m) > c.
+
+This is the standard "achieves max → far-natural-point" argument for
+continuous functions.
 -/
 
 /-- The cluster main term divided by amplitude.  This is the "reduced" function
