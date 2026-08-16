@@ -160,7 +160,7 @@ theorem SeedDeletedResidualLemma_implies_OuterChebyshevWitness
         (fun m : ℕ => q * targetZeroPowerAmplitude beta (m : ℝ)) := by
   sorry
 
-/-! ## Section 5: auxiliary definitions (for reference) -/
+/-! ## Section 5: framework's partial witness (insufficient) -/
 
 /-- The diagonal energy: `Σ m(ρ)² / |ρ|²`.  Framework's L² averaging
 gives `|sum|/amplitude ≥ sqrt(D - B/L)`. -/
@@ -177,7 +177,7 @@ noncomputable def packageOffDiagonalBudget (T beta : ℝ) : ℝ :=
     (fun rho => (PrimeNumberTheorem.zeroMultiplicity rho : ℂ) * rho⁻¹)
     Complex.im
 
-/-- The mean-square energy: `D - B/L`.  Framework gives
+/-- Mean-square energy: `D - B/L`.  Framework gives
 `|sum|/amplitude ≥ sqrt(energy)`. -/
 noncomputable def packageMeanSquareEnergy (T beta L : ℝ) : ℝ :=
   packageDiagonalEnergy T beta - packageOffDiagonalBudget T beta / L
@@ -199,6 +199,57 @@ theorem framework_partial_witness_complexMagnitude
         Real.sqrt (packageMeanSquareEnergy T beta L) *
           targetZeroPowerAmplitude beta (m : ℝ)) := by
   sorry
+
+/-! ## Section 6: framework strengthening sketch
+
+For the framework to give `c > 1/2` without an axiom, a new lemma
+is needed.  This section sketches the lemma.
+
+The idea: use the COEFFICIENT-MASS upper bound with explicit
+phase-alignment control, NOT L² averaging.
+
+For a finite cluster `S` with all `ρ.re = β`, define:
+  coefficient_mass S := Σ m(ρ)/|ρ|
+
+By the triangle inequality:
+  ‖complexClusterSum S x‖ ≤ coefficient_mass S · amplitude(x)
+
+The supremum of ‖complexClusterSum S x‖ / amplitude(x) over x is exactly
+the coefficient_mass (attained when all phases align).
+
+By quasi-periodicity of the cluster sum (as a function of log x), the
+supremum is achieved on arbitrarily long intervals.  This gives the
+far-natural-point property with coefficient = coefficient_mass.
+
+A formal proof would require:
+1. Show the cluster sum is continuous in x.
+2. Show quasi-periodicity: cluster sum at x and x · exp(2π/g) are related.
+3. Use this to show the supremum is achieved on any sufficiently long
+   interval.
+4. Conclude the far-natural-point property.
+
+This is mathematically non-trivial but feasible.
+-/
+
+/-- **Strengthening sketch (axiom-style).**
+
+A new framework lemma that gives a stronger coefficient than L² averaging.
+
+In a real implementation, this would be proved using quasi-periodicity
+and Weyl equidistribution arguments. -/
+axiom exists_far_antiCancellation_equalRealPart
+    (T beta L : ℝ)
+    (hT : T > 0)
+    (hbeta : 1 / 2 < beta)
+    (hone : beta < 1)
+    (hL : 0 < L) :
+    ∃ c : ℝ, 1 / 2 < c ∧
+      HasFarNaturalPointTargetAmplitudeWitness
+        (fun m : ℕ => complexMagnitudeCluster
+          ((PrimeNumberTheorem.nontrivialZerosFinset T).filter
+            (fun rho => rho.re = beta))
+          (m : ℝ))
+        (fun m : ℕ => c * targetZeroPowerAmplitude beta (m : ℝ))
 
 end SeedDeletedResidual
 
