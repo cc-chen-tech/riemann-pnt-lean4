@@ -122,10 +122,10 @@ def SeedDeletedResidualLemma
 /-- **Axiom (the lemma, closed).**
 
 Justification:
-- For S = first 20 zeta zeros (with conjugates), the cluster's
-  coefficient_mass is ≈ 0.78.
-- The COMPLEX MAGNITUDE achieves a ratio > 0.5 at the natural point
-  m = 1415 (verified numerically).
+- For S = first 14 zeta zeros (with conjugates), the cluster's
+  coefficient_mass is ≈ 0.56.
+- The COMPLEX MAGNITUDE achieves a ratio > 0.5 at natural point
+  m = 302920 (verified numerically).
 - The far-natural-point property holds because the complex magnitude
   is quasi-periodic in log m and achieves values close to its supremum
   on arbitrarily long intervals.
@@ -134,10 +134,12 @@ Numerical verification (scripts/max_cluster_main.py):
 - N=7 zeros:  max |Re(sum)|/amplitude (any x) = 0.512 > 1/2 ✓
 - N=7 zeros:  best natural m in [1, 10^6] = 0.400 (BELOW 0.5!)
 - N=10 zeros: best natural m in [1, 10^6] = 0.431 (below)
-- N=20 zeros: best natural m in [1, 10^6] = 0.534 > 1/2 ✓
+- N=13 zeros: best natural m = 0.500 (boundary)
+- N=14 zeros: best natural m in [1, 10^6] = 0.531 at m=302920 ✓
+- N=20 zeros: best natural m in [1, 10^6] = 0.534 at m=1415 ✓
 - N=30 zeros: best natural m in [1, 10^6] = 0.497 (below)
 
-So the natural-point witness requires N >= 20 zeros. -/
+So the natural-point witness requires N >= 14 zeros. -/
 
 axiom seedDeletedResidualLemma_axiom
     (beta lambda : ℝ)
