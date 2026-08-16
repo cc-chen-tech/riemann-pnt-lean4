@@ -39,7 +39,7 @@ private lemma periodizedBernoulli_two_ae_eq_local (n : ℕ) :
     simp [ae_iff, measure_singleton]
   filter_upwards [ae_restrict_mem measurableSet_Ioc, ae_restrict_of_ae hend] with x hx hne
   have hx' : (n : ℝ) < x ∧ x ≤ (n : ℝ) + 1 := by
-    simpa only [Nat.cast_add, Nat.cast_one] using hx
+    simpa only [Nat.cast_add, Nat.cast_one, mem_Ioc] using hx
   have hy : x - (n : ℝ) ∈ Set.Ico (0 : ℝ) 1 := by
     constructor
     · linarith [hx'.1]
@@ -92,8 +92,7 @@ private lemma intervalIntegral_centeredFloorError_cpow_eq_bernoulliTwo_unit
     have hB := (hasDerivAt_bernoulliFun 2 (x - n)).comp x hsub
     dsimp only [H, D, localCenteredBernoulliOne]
     convert hB.neg.div_const 2 using 1
-    all_goals simp only [Nat.cast_ofNat, Nat.reduceSub, mul_one]
-    all_goals ring
+    all_goals (first | rfl | simp only [Nat.cast_ofNat, Nat.reduceSub, mul_one] <;> ring)
   have hD_int : IntervalIntegrable D volume (n : ℝ) (n + 1 : ℕ) := by
     have hD_cont : Continuous D := by
       dsimp only [D, localCenteredBernoulliOne]
@@ -299,7 +298,8 @@ private noncomputable def bernoulliTwoFourierCoeff (k : ℤ) : ℂ :=
 
 private lemma summable_bernoulliTwoFourierCoeff :
     Summable bernoulliTwoFourierCoeff := by
-  simpa only [bernoulliTwoFourierCoeff, Nat.cast_ofNat] using
+  dsimp only [bernoulliTwoFourierCoeff]
+  simpa only [Nat.cast_ofNat] using
     (summable_bernoulli_fourier (by norm_num : 2 ≤ 2))
 
 private lemma hasSum_bernoulliTwoFourier (x : ℝ) :
@@ -386,7 +386,9 @@ theorem exists_norm_intervalIntegral_periodizedBernoulli_two_mellin_le :
       have hexp : ContinuousAt
           (fun y : ℝ => Complex.exp (I * (-t * Real.log y))) x := by
         exact (continuousAt_const.mul (continuousAt_const.mul hcastLog)).cexp
-      simpa only [W, Complex.real_smul] using hcastRpow.mul hexp
+      dsimp only [W]
+      convert hcastRpow.mul hexp using 1 <;>
+        all_goals (first | rfl | funext z <;> rfl)
     exact ((continuousAt_const.mul hfour).mul hW).continuousWithinAt
   have hbound : ∀ k : ℤ, ∀ᵐ x ∂volume, x ∈ Set.uIoc a b →
       ‖F k x‖ ≤ ‖bernoulliTwoFourierCoeff k‖ * a ^ (-p) := by

@@ -31,7 +31,12 @@ private lemma hasDerivAt_firstOrderBoundaryPrimitive
           |>.const_add (c : ℂ)).mul_const u)).div
             (((((hasDerivAt_id (w : ℂ)).const_mul (2 * Real.pi : ℂ)).mul_const Complex.I)
               |>.const_add (c : ℂ))) hden) using 1 <;>
-      all_goals (trace_state; fail "STOP HERE")
+      all_goals (first
+        | rfl
+        | funext z <;> rfl
+        | (field_simp [hden] <;> simp only [id_eq, Function.comp_apply] <;> ring)
+        | (ring_nf <;> ring)
+        | fail "unhandled")
 
 set_option linter.unusedTactic false in
 example : True := by trivial

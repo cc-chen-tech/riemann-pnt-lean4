@@ -726,7 +726,9 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
       (((MeromorphicAt.id z).sub (MeromorphicAt.const p z)).inv.mul
         (MeromorphicAt.const (residue p) z))
   have hraw_meromorphic : MeromorphicOn raw K := by
-    simpa [raw] using hintegrand_meromorphic.sub hprincipal_meromorphic
+    dsimp [raw]
+    convert hintegrand_meromorphic.sub hprincipal_meromorphic using 1 <;>
+      all_goals (first | rfl | funext z <;> rfl)
   have hpoles_mem : ∀ p ∈ poles, p = 0 ∨ p ∈ K := by
     intro p hp
     simp only [poles, Finset.mem_union, hDfinite.mem_toFinset,
@@ -855,7 +857,9 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
       exact
         ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hps.symm)).mul
           analyticAt_const
-    simpa [raw] using hintegrand.sub hsum
+    dsimp [raw]
+    convert hintegrand.sub hsum using 1 <;>
+      all_goals (first | rfl | funext z <;> rfl)
   have hregular :
       AnalyticOnNhd ℂ (toMeromorphicNFOn raw K) K := by
     apply

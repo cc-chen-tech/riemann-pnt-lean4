@@ -53,7 +53,8 @@ private lemma hasDerivAt_firstOrderBoundaryPrimitive
       all_goals (first
         | rfl
         | funext z <;> rfl
-        | simp only [id_eq] <;> field_simp [I_sq] <;> ring)
+        | (field_simp [hden] <;> simp only [id_eq, Function.comp_apply] <;> ring)
+        | (ring_nf <;> ring))
   have hHofReal : HasDerivAt (fun w : ℝ => H w)
       ((2 * Real.pi * Complex.I) *
         (u * H (w : ℂ) -
