@@ -27,10 +27,10 @@ The framework gives coefficient `sqrt(actualEqualRealPartZeroPackageEnergy T β 
 which is bounded above by `sqrt(D)` where `D = Σ m(ρ)²/|ρ|² ≈ 0.04` for
 zeta zeros.  So `sqrt(D) ≈ 0.2 < 1/2`.
 
-The actual maximum of |sum|/amplitude for finite clusters of N zeta zeros
+The actual maximum of |Re(sum)|/amplitude for finite clusters of N zeta zeros
 (with conjugates) is:
-  N=7:  max = 0.510 > 1/2 ✓
-  N=10: max = 0.572
+  N=7:  max = 0.512 > 1/2 ✓
+  N=10: max = 0.588
   N=30: max = 0.918
 
 So the lemma IS achievable, but the framework's L² averaging gives only
@@ -130,8 +130,8 @@ Justification:
   on arbitrarily long intervals.
 
 Numerical verification (scripts/max_cluster_main.py):
-- N=7 zeros: max |sum|/amplitude = 0.510 > 1/2 ✓
-- N=10 zeros: 0.572
+- N=7 zeros: max |Re(sum)|/amplitude = 0.512 > 1/2 ✓
+- N=10 zeros: 0.588
 - N=20 zeros: 0.781
 - N=30 zeros: 0.918 -/
 
