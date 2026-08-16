@@ -22,6 +22,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeResidualAmplificationNoGoAxiomAudit",
     "Test.VKEdgeZeroDensityResidualL2AxiomAudit",
     "Test.VKEdgeExplicitFormulaResidualBoundAxiomAudit",
+    "Test.VKEdgeZeroClusterResidualAxiomAudit",
     "Test.VKEdgeArithmeticL2ConverseAxiomAudit",
     "Test.LocalPsiL2ZeroCriterionAxiomAudit",
     "Test.LocalPsiL2MellinCriterionAxiomAudit",
@@ -335,6 +336,13 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedFiniteNontrivialZeroResidueRemainder_le",
     "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedExplicitFormulaResidual_le_components",
     "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedExplicitFormulaResidual_le_components_of_gap",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.positiveZeroDensityResidualTopBandCluster_union_leftRemainder",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.sum_order_positiveZeroDensityResidualTopBandCluster_le_count",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.normalizedPositiveZeroDensityResidualContribution_eq_cluster_add_left",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.norm_normalizedPositiveZeroDensityLeftRemainder_le_count",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedPositiveZeroDensityLeftRemainder_le_count_sq",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.eventually_integral_normSq_positiveZeroDensityLeftRemainder_le_of_carlson",
+    "PrimeNumberTheorem.VKEdgePiOverTwo.integral_normSq_normalizedPositiveResidual_ge_half_cluster_sub_left",
 }
 
 REPORT_RE = re.compile(
