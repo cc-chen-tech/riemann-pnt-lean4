@@ -28,6 +28,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeHighZeroBucketEnergyAxiomAudit",
     "Test.GaussianBucketSchurAxiomAudit",
     "Test.VKEdgeHighZeroGaussianEnergyAxiomAudit",
+    "Test.VKEdgeDynamicZeroPacketAxiomAudit",
     "MathlibAux.DyadicDriftingGaussianSchur.AxiomAudit",
     "PrimeNumberTheorem.HalfIsolatedZetaDyadicAdapter.AxiomAudit",
     "Test.SelbergLagDyadicGeometryAxiomAudit",
