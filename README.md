@@ -335,6 +335,13 @@ theorem-level 基础设施，但最终
 误差。新合并的 residue-mass 审计还证明：对均匀系数，归一化矩转回原始矩时会精确
 恢复通常的 Holder 基数损失，因此“只做归一化”不会产生新的指数节省。
 
+新增模块把 Ford 路线所需的不完全均值对象再向前推进一层：对连续次数窗口
+`h, ..., h + d - 1`、任意有限字母表以及任意有限支持，有限模 Fourier 正交性给出
+“归一化 `2s` 次矩 = 相应同余方程解数”的精确恒等式；未归一化支持矩也等于系数空间
+体积乘以该解数。这里仍然只有恒等式和基数型平凡上界，尚未证明 Ford 引理 5.1 所需的
+非平凡不完全均值上界。精确边界见
+[`docs/research/vk-ford-incomplete-support-moment.md`](docs/research/vk-ford-incomplete-support-moment.md)。
+
 ---
 
 ## 证明架构

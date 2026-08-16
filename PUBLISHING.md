@@ -146,6 +146,14 @@ recover the usual Holder cardinality loss when converted back to raw moments;
 normalization alone therefore supplies no exponent saving. None of these are
 needed for the now-proved ordinary PNT.
 
+The finite modular orthogonality layer for Ford's incomplete mean value is also
+formalized: consecutive degree windows, arbitrary finite alphabets, and finite
+supports have exact normalized-moment/solution-count identities, together with
+the corresponding unnormalized support identity.  This is not the nontrivial
+upper bound for the incomplete mean value used in Ford's Lemma 5.1.  No Ford
+short-sum estimate, Vinogradov--Korobov zero-free region, or `3/5` PNT remainder
+is claimed from this layer alone.
+
 For the zero-forced oscillation route, distinguish three trust levels:
 
 - unconditional theorem-level: strict-beyond-`pi/2` local oscillation and the
