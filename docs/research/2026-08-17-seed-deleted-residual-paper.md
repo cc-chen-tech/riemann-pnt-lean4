@@ -126,6 +126,37 @@ argument gives a lower bound that can be loose by a constant factor.
 
 For zeta zeros, this factor is ~2.5×.
 
+### 5.1 The cubic kernel B_η does NOT help
+
+The user's docs in section (1) state that the cluster main term is smoothed
+by a cubic kernel B_η(ρ) ≈ 1 near 0, decaying like (η·|ρ|)^{-2} for high
+frequency.  The question is whether this smoothing helps the L² averaging.
+
+For a single zero ρ = β + iγ with |γ| > 1/η (high frequency):
+  B_η(ρ)² ≈ 1/(η² · γ² · |ρ|²)
+  diagonal L² contribution ≈ 1/(η² · γ⁴) (vanishes for large γ)
+
+The smoothing makes the L² averaging bound EVEN SMALLER:
+  Without smoothing: sqrt(D_raw) ≈ 0.2
+  With smoothing: sqrt(D_smoothed) ≈ 0.05 (for η = 0.1)
+
+So the cubic kernel B_η does NOT help close the gap.  The gap is
+fundamental to L² averaging, not specific to raw vs smoothed cluster_main.
+
+### 5.2 What WOULD help
+
+To get c > 1/2, we need a different kind of bound, NOT L² averaging.
+The natural candidate is:
+
+  max |sum| ≤ coefficient_mass(S) = Σ m(ρ)/|ρ|
+
+This is the triangle-inequality upper bound.  The actual max achieves
+this (attained when all phases align).
+
+So the L² averaging (sqrt(D) ≈ 0.2) and the actual max (coefficient_mass ≈ 0.55)
+DIFFER by a factor of ~2.5×.  The closure requires a lemma that gives
+the actual max (or a close approximation), not just the L² average.
+
 ## 6. Closure paths
 
 ### Path A: Framework strengthening
