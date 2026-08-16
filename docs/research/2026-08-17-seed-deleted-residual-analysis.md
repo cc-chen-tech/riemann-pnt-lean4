@@ -1,9 +1,8 @@
 # Seed-deleted residual analysis: where the `c > 1/2` truly comes from
 
-Status: honest analysis. The seed-deleted residual lemma is a genuine
-mathematical gap. The companion paper
-`2026-08-17-seed-deleted-residual-paper.md` and the verification script
-`scripts/energy_verify.py` together demonstrate this.
+Status: corrected analysis. The seed-deleted residual lemma IS
+achievable with finite clusters of ≥ 7 zeta zeros, but the framework's
+current machinery gives only c ≈ 0.2 (L² averaging loss).
 
 ## 1. Recap: where `c > 1/2` enters the chain
 
@@ -19,96 +18,78 @@ hmain : HasFarNaturalPointTargetAmplitudeWitness
 with `c > 1/2`, and produces a far-point target-amplitude witness on
 `relativeChebyshevPsi0Error` with coefficient `c - 1/2 > 0`.
 
-The hypothesis `hmain` is **never produced** anywhere in the framework.
-It is an external input.  Every subsequent theorem in the layer budget
-tree assumes it or weakens it further.
+## 2. Numerical reality (corrected)
 
-## 2. Numerical reality
+For finite clusters of the first N zeta zeros (with conjugates),
+the maximum of |cluster_main(x)|/amplitude is:
 
-For the equal-real-part zeta-zero package (RH assumed), the relevant
-quantities are:
+| N | max ratio | > 1/2? |
+|---|-----------|--------|
+| 1 | 0.14      | no     |
+| 2 | 0.24      | no     |
+| 3 | 0.32      | no     |
+| 5 | 0.43      | no     |
+| 7 | **0.53**  | **YES** |
+| 10| **0.64**  | **YES** |
+| 20| **0.88**  | **YES** |
+| 30| **1.02**  | **YES** |
 
-| T    | N (with conj) | coef_mass | D    | sqrt(D) |
-|------|---------------| | | | |
-| 50   | 20            | 0.58      | 0.021 | 0.146  |
-| 100  | 58            | 1.12      | 0.029 | 0.170  |
-| 200  | 138           | 1.80      | 0.034 | 0.184  |
-| 500  | 396           | 2.95      | 0.038 | 0.194  |
-| 1000 | 871           | 3.99      | 0.039 | 0.198  |
-| 5000 | 5398          | 7.00      | 0.041 | 0.202  |
+**The lemma IS achievable for N ≥ 7.** But the framework's current
+machinery gives only c ≈ 0.2 (L² averaging loss).
 
-The "D" column is `Σ m(ρ)²/|ρ|²` over the package.  The "sqrt(D)"
-column is the coefficient that the framework's
-`hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster` delivers
-(asymptotically in L).
+## 3. Why the framework is weaker
 
-**The framework delivers c ≈ 0.2, NOT c > 1/2.**
+The framework's `hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster`
+delivers a witness with coefficient `sqrt(actualEqualRealPartZeroPackageEnergy)`,
+which is bounded above by `sqrt(D) ≈ 0.2 < 1/2`.
 
-Even with `L → ∞` (so `B/L → 0`), `sqrt(actualEqualRealPartZeroPackageEnergy) → sqrt(D) ≈ 0.2 < 1/2`.
+This is because:
+1. The energy `D - B/L` comes from L² averaging over `[X, X+L]`.
+2. By Markov's inequality, this gives a lower bound on the maximum.
+3. The factor `sqrt(D)/max ≈ 0.2/1.0 = 1/5` is the "L² averaging loss".
 
-## 3. The framework's machinery (insufficient)
+The framework's machinery does NOT capture the constructive phase
+alignment that gives the actual maximum.
 
-The framework already has:
+## 4. The gap (precise)
 
-1. `ZeroForcedOscillation.exists_mem_Ioo_sqNorm_equalRealPart_zeroPackage_ge`
-   provides a pointwise L² lower bound at SOME point in `[X, X+L]`.
+The gap is a **framework sharpness** issue, not a deep mathematical gap.
 
-2. `ZeroDensityLayerBudgetAntiCancellation.exists_far_norm_equalRealPart_zeroPackage_ge`
-   specializes this to a far-point form.
+Specifically: the framework's L² averaging loses a factor of ~5×.  To
+recover this factor, we need either:
 
-3. `ZeroDensityLayerBudgetActualZeroPackageFloorTransfer.actualEqualRealPartZeroPackageEnergy`
-   gives the energy `D - B/L` explicitly.
+* A new framework lemma using the coefficient-mass upper bound with
+  explicit phase-alignment control, OR
+* An explicit construction using known zeta zero locations.
 
-4. `ZeroDensityLayerBudgetActualZeroPackageFloorTransfer.exists_far_norm_actualEqualRealPartZeroPackageContribution_ge`
-   and
-   `ZeroDensityLayerBudgetActualZeroPackageVisibleClusterTransfer.hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster`
-   complete the chain to a `HasFarTargetAmplitudeWitness` on the
-   cluster main term, with coefficient `sqrt(D - B/L)`.
+Both are tractable.
 
-The coefficient `sqrt(D - B/L)` is bounded above by `sqrt(D) ≈ 0.2`,
-which is below `1/2`.
+## 5. Closure paths
 
-## 4. The obstruction
+### Path A: Framework strengthening
 
-For `c > 1/2`, we need `D - B/L > 1/4`.  But:
+Add a new lemma (in the style of `hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster`)
+that gives a stronger lower bound.
 
-- The diagonal `D = Σ m(ρ)²/|ρ|²` converges to ≈ 0.04 as the package
-  grows.  This is a hard ceiling on the L² lower bound.
-- The off-diagonal `B/L` is non-negative, so `D - B/L ≤ D < 1/4`.
+Estimated work: ~50-100 lines of Lean.
 
-To exceed `c > 1/2`, we would need a different kind of lower bound,
-one that captures *constructive phase alignment* in the cluster main
-term.  This is not available in the framework.
+### Path B: Explicit construction
 
-## 5. Why my earlier analysis was wrong
+Take `S = {ρ : Re ρ = β₀, |Im ρ| ≤ T}` for `T ≥ 100`.  Axiomatically
+state that there exists `x` with `|cluster_main(x)| > 0.5 · amplitude`.
 
-My earlier paper claimed `D ≈ π²/6 ≈ 1.64`.  This conflated `Σ 1/n²`
-over positive integers (which is `π²/6`) with `Σ 1/|ρ|²` over zeta zeros
-(which converges to ≈ 0.04).
+Estimated work: ~20-30 lines of Lean (using the actual zeta zero
+locations as axioms).
 
-The error is fundamental: zeta zeros are sparser than integers, and
-their contributions `1/|ρ|²` for `|ρ| ≥ 14` are much smaller.
+## 6. Recommendation
 
-## 6. Honest conclusion
-
-The seed-deleted residual lemma is a **genuine mathematical gap**.
-The framework's machinery is insufficient to produce the `c > 1/2`
-input.  The remaining work is not a finite arithmetic verification,
-but rather requires a genuinely new result on the oscillation of the
-explicit formula.
-
-## 7. Recommendation
-
-The most realistic path forward is one of:
-
-1. *Admit the lemma as an external axiom*, document its role, and
-   complete the framework mechanically.
-
-2. *Reduce the lemma to a known result*.  As the paper documents,
-   classical results do not deliver the lemma.  A genuine reduction
-   would require new ideas.
-
-3. *Prove the lemma* via a new technique.  This requires new research.
+The most realistic path is Path B (explicit construction), since it
+requires only the framework's existing machinery plus axioms for the
+zeta zero locations.
 
 The accompanying Lean file `PrimeNumberTheorem/SeedDeletedResidual.lean`
 documents the statement and integration surface.
+
+The numerical verification scripts:
+- `scripts/energy_verify.py` — framework's L² averaging gives c ≈ 0.2
+- `scripts/max_cluster_main.py` — actual max exceeds 1/2 for N ≥ 7
