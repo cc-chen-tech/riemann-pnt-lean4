@@ -203,6 +203,8 @@ lean_lib RiemannPNT where
     `Test.VKEdgeSharpLeftGapDecayAxiomAudit,
     `Test.VKEdgeSharpLeftGapStabilityContract,
     `Test.VKEdgeSharpLeftGapStabilityAxiomAudit,
+    `Test.VKEdgeSharpMovingLeftStripContract,
+    `Test.VKEdgeSharpMovingLeftStripAxiomAudit,
     `Test.VKEdgePiOverTwoLocalizedContract,
     `Test.VKEdgePiOverTwoLocalizedAxiomAudit,
     `Test.VKEdgePiOverTwoEpsilonWindowContract,

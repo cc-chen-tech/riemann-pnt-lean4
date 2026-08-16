@@ -36,6 +36,7 @@ AXIOM_AUDIT_MODULES = [
     "Test.VKEdgeSharpLowHeightEnergyAxiomAudit",
     "Test.VKEdgeSharpLeftGapDecayAxiomAudit",
     "Test.VKEdgeSharpLeftGapStabilityAxiomAudit",
+    "Test.VKEdgeSharpMovingLeftStripAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.VKEdgePiOverTwo.finiteNontrivialZeroSumWithMultiplicity_eq_cluster_add_complement",
