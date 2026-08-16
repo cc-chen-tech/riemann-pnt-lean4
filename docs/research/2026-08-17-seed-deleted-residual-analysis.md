@@ -1,7 +1,9 @@
 # Seed-deleted residual analysis: where the `c > 1/2` truly comes from
 
-Status: analysis (corrected). Companion paper `2026-08-17-seed-deleted-residual-paper.md`
-gives the full constructive argument.
+Status: honest analysis. The seed-deleted residual lemma is a genuine
+mathematical gap. The companion paper
+`2026-08-17-seed-deleted-residual-paper.md` and the verification script
+`scripts/energy_verify.py` together demonstrate this.
 
 ## 1. Recap: where `c > 1/2` enters the chain
 
@@ -17,33 +19,36 @@ hmain : HasFarNaturalPointTargetAmplitudeWitness
 with `c > 1/2`, and produces a far-point target-amplitude witness on
 `relativeChebyshevPsi0Error` with coefficient `c - 1/2 > 0`.
 
-## 2. What `hmain` mathematically means
+The hypothesis `hmain` is **never produced** anywhere in the framework.
+It is an external input.  Every subsequent theorem in the layer budget
+tree assumes it or weakens it further.
 
-`targetZeroPowerAmplitude beta m = m^(beta - 1)`. The relative zero contribution is
+## 2. Numerical reality
 
-```
-pntRelativeZeroContribution x rho
-  = -analyticOrderNatAt riemannZeta rho * x^(rho - 1) / rho
-```
+For the equal-real-part zeta-zero package (RH assumed), the relevant
+quantities are:
 
-So a single zero `ρ = β₀ + iγ₀` with analytic multiplicity `1` contributes
+| T    | N (with conj) | coef_mass | D    | sqrt(D) |
+|------|---------------| | | | |
+| 50   | 20            | 0.58      | 0.021 | 0.146  |
+| 100  | 58            | 1.12      | 0.029 | 0.170  |
+| 200  | 138           | 1.80      | 0.034 | 0.184  |
+| 500  | 396           | 2.95      | 0.038 | 0.194  |
+| 1000 | 871           | 3.99      | 0.039 | 0.198  |
+| 5000 | 5398          | 7.00      | 0.041 | 0.202  |
 
-```
-real part at m : -m^(beta - 1) * Re(e^{iγ₀ · log m} / rho_0)
-```
+The "D" column is `Σ m(ρ)²/|ρ|²` over the package.  The "sqrt(D)"
+column is the coefficient that the framework's
+`hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster` delivers
+(asymptotically in L).
 
-to `dynamicVisibleClusterPNTMain T S m`, provided `m^(β-1)` does not exceed
-`T m` (the dynamic cut-off, which is some `X^γ` scale; in any case very large
-once `m` is large).
+**The framework delivers c ≈ 0.2, NOT c > 1/2.**
 
-For S = {ρ₀}, the maximal value of `|cluster_main(m)| / m^(beta - 1)` over `m` is
-exactly `1 / |rho_0|`. With `|rho_0| >= 14.13` for the first nontrivial zero, this
-maximal ratio is `≤ 0.071`. **A single zero cannot give `c > 1/2`.**
+Even with `L → ∞` (so `B/L → 0`), `sqrt(actualEqualRealPartZeroPackageEnergy) → sqrt(D) ≈ 0.2 < 1/2`.
 
-## 3. The framework's existing machinery (key finding)
+## 3. The framework's machinery (insufficient)
 
-After careful review, the framework already contains the machinery to
-produce the `hmain` input with `c > 1/2`.  The chain is:
+The framework already has:
 
 1. `ZeroForcedOscillation.exists_mem_Ioo_sqNorm_equalRealPart_zeroPackage_ge`
    provides a pointwise L² lower bound at SOME point in `[X, X+L]`.
@@ -52,9 +57,7 @@ produce the `hmain` input with `c > 1/2`.  The chain is:
    specializes this to a far-point form.
 
 3. `ZeroDensityLayerBudgetActualZeroPackageFloorTransfer.actualEqualRealPartZeroPackageEnergy`
-   gives the energy `D - B/L` explicitly, where `D = Σ m(ρ)²/|ρ|²`
-   is the diagonal mass and `B = offDiagonalBound` is the off-diagonal
-   budget.
+   gives the energy `D - B/L` explicitly.
 
 4. `ZeroDensityLayerBudgetActualZeroPackageFloorTransfer.exists_far_norm_actualEqualRealPartZeroPackageContribution_ge`
    and
@@ -62,60 +65,50 @@ produce the `hmain` input with `c > 1/2`.  The chain is:
    complete the chain to a `HasFarTargetAmplitudeWitness` on the
    cluster main term, with coefficient `sqrt(D - B/L)`.
 
-The remaining work is a finite numerical verification that `D - B/L > 1/4`
-for some explicit `(T, β, L)`.  This is a bounded-arity finite
-arithmetic computation, not a research-level result.
+The coefficient `sqrt(D - B/L)` is bounded above by `sqrt(D) ≈ 0.2`,
+which is below `1/2`.
 
-## 4. The energy inequality
+## 4. The obstruction
 
-`actualEqualRealPartZeroPackageEnergy T β L = D - B/L`
+For `c > 1/2`, we need `D - B/L > 1/4`.  But:
 
-where:
+- The diagonal `D = Σ m(ρ)²/|ρ|²` converges to ≈ 0.04 as the package
+  grows.  This is a hard ceiling on the L² lower bound.
+- The off-diagonal `B/L` is non-negative, so `D - B/L ≤ D < 1/4`.
 
-- `D = Σ_{ρ ∈ equalRealPartZeroPackage T β} m(ρ)²/|ρ|²` (diagonal)
-- `B = Σ_{ρ, ρ' distinct} 2 · m(ρ) · m(ρ') / (|ρ| · |ρ'| · |Im ρ - Im ρ'|)`
-  (off-diagonal budget, from `ZeroForcedOscillation.offDiagonalBound`)
+To exceed `c > 1/2`, we would need a different kind of lower bound,
+one that captures *constructive phase alignment* in the cluster main
+term.  This is not available in the framework.
 
-For zeta zeros with multiplicities 1, the diagonal mass converges
-to `π²/6 ≈ 1.64` as `T → ∞`, and is bounded below by 1.6 for `T ≥ 10`.
+## 5. Why my earlier analysis was wrong
 
-The off-diagonal budget `B` depends on the actual zeta zero locations.
-For the standard "evenly distributed" heuristic, `B` is approximately
-`C · log² T` for some constant `C`.  Choosing `L` large enough so that
-`B/L < 1.4` makes `D - B/L > 0.25`, satisfying the energy inequality.
+My earlier paper claimed `D ≈ π²/6 ≈ 1.64`.  This conflated `Σ 1/n²`
+over positive integers (which is `π²/6`) with `Σ 1/|ρ|²` over zeta zeros
+(which converges to ≈ 0.04).
 
-## 5. Comparison with original analysis
+The error is fundamental: zeta zeros are sparser than integers, and
+their contributions `1/|ρ|²` for `|ρ| ≥ 14` are much smaller.
 
-The original version of this document claimed the lemma was "genuine
-research" requiring new ideas.  This was a misreading of the framework.
-The framework does have the machinery; only the final finite numerical
-verification remains.
+## 6. Honest conclusion
 
-The companion paper `2026-08-17-seed-deleted-residual-paper.md` provides
-the corrected constructive argument and the Lean integration surface.
-
-## 6. Honest conclusion (revised)
-
-The seed-deleted residual lemma is provable from existing framework
-machinery, with one finite numerical verification remaining.
-
-The integration is purely mechanical:
-- Replace `hmain` in `ZeroDensityLayerBudgetSharpConstantTransfer.lean`
-  with the lemma statement.
-- All downstream consumers (over 60 sites in the framework) update
-  symmetrically.
-
-The remaining finite computation is the kind of bounded-arity
-arithmetic that the framework's `offDiagonalBound` machinery supports
-directly.
+The seed-deleted residual lemma is a **genuine mathematical gap**.
+The framework's machinery is insufficient to produce the `c > 1/2`
+input.  The remaining work is not a finite arithmetic verification,
+but rather requires a genuinely new result on the oscillation of the
+explicit formula.
 
 ## 7. Recommendation
 
-1. Run the finite numerical verification for some explicit `(T, β, L)`
-   (e.g., `T = 50`, `β = 0.6`, `L = 10`).
-2. Update the sharp-constant transfer to consume the lemma directly.
-3. The framework closes end-to-end.
+The most realistic path forward is one of:
 
-The accompanying Lean file
-`PrimeNumberTheorem/SeedDeletedResidual.lean` documents the statement
-and integration surface.
+1. *Admit the lemma as an external axiom*, document its role, and
+   complete the framework mechanically.
+
+2. *Reduce the lemma to a known result*.  As the paper documents,
+   classical results do not deliver the lemma.  A genuine reduction
+   would require new ideas.
+
+3. *Prove the lemma* via a new technique.  This requires new research.
+
+The accompanying Lean file `PrimeNumberTheorem/SeedDeletedResidual.lean`
+documents the statement and integration surface.

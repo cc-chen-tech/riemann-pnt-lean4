@@ -1,50 +1,44 @@
 /-
-# Seed-deleted residual lemma: constructive proof via framework machinery
+# Seed-deleted residual lemma: statement of record (and gap analysis)
 
 This file records the precise mathematical statement of the
 *seed-deleted residual lemma* that the sharp-constant transfer
 (`ZeroDensityLayerBudgetSharpConstantTransfer.lean`) consumes as
-its `c > 1/2` input, AND provides the explicit reduction to existing
-framework machinery.
+its `c > 1/2` input.
 
-## Key finding (correction to original analysis)
+It is intentionally a **statement of record**, not a proof.  The
+companion document `docs/research/2026-08-17-seed-deleted-residual-analysis.md`
+and the verification script `scripts/energy_verify.py` together
+demonstrate that:
 
-The framework already contains the machinery to produce the witness
-`hmain` with `c > 1/2`.  Specifically:
+* The framework's `hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster`
+  produces a witness, but with coefficient `sqrt(D - B/L) ≈ 0.2`,
+  which is **below** `1/2`.
+* The lemma is therefore a **genuine mathematical gap**, not a Lean
+  engineering task.
 
-* `ZeroForcedOscillation.exists_mem_Ioo_sqNorm_equalRealPart_zeroPackage_ge`
-  provides a pointwise L² lower bound at SOME point in `[X, X+L]`.
+## Key finding (corrected)
 
-* `ZeroDensityLayerBudgetAntiCancellation.exists_far_norm_equalRealPart_zeroPackage_ge`
-  specializes this to a far-point form.
+The framework's machinery produces:
+```
+|cluster_main(x)| / amplitude ≥ sqrt(actualEqualRealPartZeroPackageEnergy)
+                                       = sqrt(D - B/L)
+                                       ≤ sqrt(D) ≈ 0.2
+```
 
-* `ZeroDensityLayerBudgetActualZeroPackageFloorTransfer.actualEqualRealPartZeroPackageEnergy`
-  gives the energy `D - B/L` explicitly.
-
-* `ZeroDensityLayerBudgetActualZeroPackageFloorTransfer.exists_far_norm_actualEqualRealPartZeroPackageContribution_ge`
-  and
-  `ZeroDensityLayerBudgetActualZeroPackageVisibleClusterTransfer.hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster`
-  complete the chain to a `HasFarTargetAmplitudeWitness` on the
-  cluster main term, with coefficient `sqrt(D - B/L)`.
-
-The remaining work is a *finite numerical verification* that
-`D - B/L > 1/4` for some explicit `(T, β, L)`.  This is a bounded-arity
-calculation, not a research-level result.
+For the lemma to hold with `c > 1/2`, we need `sqrt(D - B/L) > 1/2`,
+i.e., `D - B/L > 1/4 = 0.25`.  But `D` converges to ≈ 0.04 (NOT π²/6 ≈ 1.64)
+as the package grows.  The framework's machinery is **insufficient**.
 
 ## How this file integrates
 
 In a clean integration, the existing sharp-constant transfer would be
-updated so that its only *required* hypothesis is the lemma below.  The
-lemma would then appear in the layer-budget tree as the single external
-input that the entire transfer chain requires.  Concretely:
+updated so that its only *required* hypothesis is the lemma below.
+The lemma would then appear in the layer-budget tree as the single
+external input that the entire transfer chain requires.
 
-* `ZeroDensityLayerBudgetSharpConstantTransfer.lean` — currently takes
-  `hmain` as input; would be updated to take the lemma below.
-* All downstream layer-budget transfer theorems that also consume `hmain`
-  (over 60 sites in the framework) would be updated symmetrically.
-
-This mechanical update is the right engineering surface for admitting the
-lemma once its proof is supplied.
+This is purely mechanical once the lemma is supplied.  Until then,
+the lemma remains the single genuine mathematical gap in the chain.
 -/
 
 import Mathlib
@@ -101,7 +95,8 @@ noncomputable def equalRealPartZeroPackage (T beta : ℝ) : Finset ℂ :=
   (PrimeNumberTheorem.nontrivialZerosFinset T).filter
     (fun rho => rho.re = beta)
 
-/-- The diagonal energy of the package: `Σ m(ρ)² / |ρ|²`. -/
+/-- The diagonal energy of the package: `Σ m(ρ)² / |ρ|²`.  Under RH with
+all multiplicities 1, this converges to ≈ 0.04 as `T → ∞`. -/
 noncomputable def packageDiagonalEnergy (T beta : ℝ) : ℝ :=
   ∑ rho ∈ equalRealPartZeroPackage T beta,
     ‖(PrimeNumberTheorem.zeroMultiplicity rho : ℂ) * rho⁻¹‖ ^ 2
@@ -141,71 +136,90 @@ def SeedDeletedResidualLemma
           rho.re = beta₀ ∧ RiemannHypothesis.IsNontrivialZero rho) ∧
         ClusterMainWitness beta₀ c S
 
-/-! ## Section 5: the finite numerical verification input
+/-! ## Section 5: the gap
 
-The lemma reduces to a single finite verification:
+The lemma is **not provable** from existing framework machinery.
+
+The framework's `hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster`
+delivers a witness with coefficient `sqrt(actualEqualRealPartZeroPackageEnergy)`,
+which is bounded above by `sqrt(D) ≈ 0.2 < 1/2`.
+
+To obtain `c > 1/2`, we would need a different kind of lower bound on
+the cluster main term — one that captures constructive phase alignment.
+This is not available in the framework or the literature.
+
+## Status of the cluster-main witness input
+
+The framework provides `ClusterMainWitness` (with `c ≈ 0.2`) but NOT
+the version needed by the sharp transfer (`c > 1/2`).  The difference
+is the genuine mathematical gap.
+
+The accompanying Lean file documents the precise statement.  Closing
+the gap requires either:
+
+* A genuinely new result on the oscillation of the explicit formula
+  (which is not in the literature), or
+* Admitting the lemma as an external axiom and documenting its role.
+
+## How this integrates
+
+If admitted as an external input, the sharp-constant transfer would
+take the lemma as its hypothesis, and all downstream consumers
+(over 60 sites in the framework) would update symmetrically.  This
+is purely mechanical work once the lemma is supplied.
 -/
 
-/-- The energy-inequality input: a single `(T, beta, L)` triple for
-which the mean-square energy exceeds `1/4`.
+/-- **Theorem (witness placeholder).**
 
-This is a **finite numerical computation** that depends on the actual
-zeta zero locations in the package.  It is the *only* non-trivial
-remaining input. -/
-def EnergyInequalityInput (T beta L : ℝ) : Prop :=
-  T > 0 ∧
-    1 / 2 < beta ∧
-    beta < 1 ∧
-    0 < L ∧
-    packageMeanSquareEnergy T beta L > 1 / 4
+The eventual proof obligation: construct, for each admissible
+`(beta₀, lambda)`, a coefficient `c > 1/2` and a finite cluster `S`
+of zeta zeros on the line `Re rho = beta₀` such that the cluster-main
+witness holds.
 
-/-! ## Section 6: the constructive proof -/
+This theorem is currently *admitted* — it is the single external input
+the framework requires.  A real proof requires new research. -/
+theorem seedDeletedResidualLemmaWitness
+    (beta₀ lambda : ℝ)
+    (hbeta₀ : 1 / 2 < beta₀)
+    (hlambda : 1 < lambda) :
+    SeedDeletedResidualLemma beta₀ lambda := by
+  -- ADMITTED.  This is the single gap in the chain.
+  -- The proof requires new research and is not in the literature.
+  sorry
 
-/-- **Theorem (seed-deleted residual lemma from energy input).**
+/-! ## Section 6: framework's partial witness (insufficient) -/
 
-Given an explicit `(T, beta, L)` satisfying the energy inequality, the
-seed-deleted residual lemma follows by a direct application of the
-framework's existing machinery:
-- `ZeroForcedOscillation.exists_mem_Ioo_sqNorm_equalRealPart_zeroPackage_ge`
-- `ZeroDensityLayerBudgetAntiCancellation.exists_far_norm_equalRealPart_zeroPackage_ge`
-- `ZeroDensityLayerBudgetActualZeroPackageFloorTransfer.exists_far_norm_actualEqualRealPartZeroPackageContribution_ge`
-- `ZeroDensityLayerBudgetActualZeroPackageVisibleClusterTransfer.hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster`
+/-- **Theorem (framework's partial witness).**
 
-These combine to deliver a `HasFarTargetAmplitudeWitness` with
-coefficient `sqrt(packageMeanSquareEnergy) > 1/2`, which is exactly
-`ClusterMainWitness beta (sqrt(packageMeanSquareEnergy)) S` for the
-equal-real-part package `S`. -/
-theorem seedDeletedResidualLemma_of_energyInput
+The framework provides a *partial* cluster-main witness via
+`hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster`.  This
+delivers coefficient `sqrt(actualEqualRealPartZeroPackageEnergy)`,
+which is bounded above by `sqrt(D) ≈ 0.2 < 1/2`.
+
+This theorem is **not** the seed-deleted residual lemma.  It is the
+framework's best attempt; it falls short by a constant factor of
+about 2.5×. -/
+theorem framework_partial_witness
     (T beta L : ℝ)
-    (henergy : EnergyInequalityInput T beta L)
-    (lambda : ℝ) (hlambda : 1 < lambda) :
-    SeedDeletedResidualLemma beta lambda := by
-  refine ⟨henergy.2.1, hlambda, ?_⟩
-  -- The coefficient c = sqrt(packageMeanSquareEnergy) exceeds 1/2
-  -- by the energy inequality input.
-  let c := Real.sqrt (packageMeanSquareEnergy T beta L)
-  have hEnergyPos : 0 < packageMeanSquareEnergy T beta L :=
-    lt_of_lt_of_le (by norm_num : (0 : ℝ) < 1 / 4) henergy.2.2.2.2.le
-  have hc_pos : 0 < c := Real.sqrt_pos_of_pos hEnergyPos
-  have hc : 1 / 2 < c := by
-    rw [Real.sqrt_lt_sqrt_iff_left₀ (by positivity : (0 : ℝ) ≤ 1/4)]
-    linarith [henergy.2.2.2.2]
-  refine ⟨c, hc, equalRealPartZeroPackage T beta, ?_, ?_⟩
-  · -- All elements are nontrivial zeta zeros with Re rho = beta
-    intro rho hrho
-    refine ⟨?_, ?_⟩
-    · exact (Finset.mem_filter.mp hrho).2
-    · exact (PrimeNumberTheorem.mem_nontrivialZerosFinset.mp
-              (Finset.mem_of_mem_filter hrho)).1
-  · -- The cluster-main witness
-    refine ⟨hc, ?_⟩
-    -- Apply the framework's far-target witness theorem.
-    -- The full Lean statement would import and apply:
-    -- hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster
-    -- with H a cofinal dynamic height.
-    sorry
+    (hT : T > 0)
+    (hbeta : 1 / 2 < beta)
+    (hone : beta < 1)
+    (hL : 0 < L)
+    (H : ℝ → ℝ) (hH : Tendsto H atTop atTop) :
+    HasFarNaturalPointTargetAmplitudeWitness
+      (fun m : ℕ => clusterMainTerm (equalRealPartZeroPackage T beta) (m : ℝ))
+      (fun m : ℕ =>
+        Real.sqrt (packageMeanSquareEnergy T beta L) *
+          targetZeroPowerAmplitude beta (m : ℝ)) := by
+  -- This follows directly from the framework's
+  -- hasFarTargetAmplitudeWitness_actualZeroPackage_visibleCluster
+  -- combined with abs_dynamicVisibleClusterPNTMain_equalRealPartZeroPackage
+  -- and the bridge dynamicVisibleClusterPNTZeroSum_equalRealPartZeroPackage.
+  -- The coefficient is sqrt(actualEqualRealPartZeroPackageEnergy)
+  -- = sqrt(packageMeanSquareEnergy).
+  sorry
 
-/-! ## Section 7: bridge to outer Chebyshev scale -/
+/-! ## Section 7: bridge to outer Chebyshev scale (mechanical) -/
 
 /-- **Theorem (lemma implies outer Chebyshev witness).**
 
@@ -224,10 +238,6 @@ theorem SeedDeletedResidualLemma_implies_OuterChebyshevWitness
         (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
         (fun m : ℕ => q * targetZeroPowerAmplitude beta₀ (m : ℝ)) := by
   -- The bridge is the framework's `actualWeightedBalancedGoodHeightPNTSharpConstantTransfer`.
-  -- We take the cluster S from the seed and apply the sharp transfer.
-  -- 1. Pick the S from hseed.
-  -- 2. Construct the height T(x) needed by the sharp transfer.
-  -- 3. Apply the sharp transfer with the resulting cluster-main witness.
   sorry
 
 end SeedDeletedResidual
