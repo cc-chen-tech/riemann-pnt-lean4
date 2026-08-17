@@ -94,11 +94,11 @@ theorem abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn_L2
   have hFcontrolInt : IntervalIntegrable (fun x => F x ^ 2) volume lo hi := by
     apply ContinuousOn.intervalIntegrable
     rw [uIcc_of_le hlohi]
-    simpa only [lo, hi] using hF.pow 2
+    simpa only [lo, hi, Pi.pow_def] using hF.pow 2
   have hPcontrolInt : IntervalIntegrable (fun x => P x ^ 2) volume lo hi := by
     apply ContinuousOn.intervalIntegrable
     rw [uIcc_of_le hlohi]
-    simpa only [lo, hi] using hP.pow 2
+    simpa only [lo, hi, Pi.pow_def] using hP.pow 2
   have hFshiftSq :
       (∫ x in A..B, F (x + tau) ^ 2) ≤ MF := by
     calc
@@ -135,7 +135,7 @@ theorem abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn_L2
     · have hx' : x + tau ≤ B + tau := by linarith [hx.2]
       exact hx'.trans hBtauhi
   have hFshiftCont : ContinuousOn (fun x => F (x + tau)) (Icc A B) := by
-    simpa only [Function.comp_def] using
+    simpa only [Function.comp_def, Pi.add_apply, id_eq] using
       hF.comp (continuous_id.add continuous_const).continuousOn hshiftMaps
   have hPbaseCont : ContinuousOn P (Icc A B) :=
     hP.mono hbaseMaps
@@ -178,7 +178,7 @@ theorem abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn_L2
   have hFbaseCont : ContinuousOn F (Icc A B) :=
     hF.mono hbaseMaps
   have hPshiftCont : ContinuousOn (fun x => P (x + tau)) (Icc A B) := by
-    simpa only [Function.comp_def] using
+    simpa only [Function.comp_def, Pi.add_apply, id_eq] using
       hP.comp (continuous_id.add continuous_const).continuousOn hshiftMaps
   have hintervalInt :
       ∀ {g : ℝ → ℝ}, ContinuousOn g (Icc A B) →
@@ -246,7 +246,7 @@ theorem abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn_L2
         (∫ x in A..B, eps * (|F (x + tau)| + |P x|)) =
             (∫ x in A..B, eps * |F (x + tau)|) +
               ∫ x in A..B, eps * |P x| := by
-                simpa only [mul_add] using
+                simpa only [mul_add, Pi.mul_def] using
                   intervalIntegral.integral_add
                     (hintervalInt
                       (continuousOn_const.mul hFshiftCont.abs))

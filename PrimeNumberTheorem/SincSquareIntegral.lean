@@ -129,13 +129,15 @@ theorem integrable_sinc_sq :
 
 theorem centeredUnitIntervalIndicator_memLp_one :
     MemLp centeredUnitIntervalIndicator 1 := by
-  simpa [centeredUnitIntervalIndicator] using
+  change MemLp (fun x : ℝ => (Icc (-(1 / 2 : ℝ)) (1 / 2 : ℝ)).indicator (fun _ => 1) x) 1 volume
+  simpa using
     memLp_indicator_const 1 measurableSet_Icc (1 : ℂ)
       (Or.inr isCompact_Icc.measure_lt_top.ne)
 
 theorem centeredUnitIntervalIndicator_memLp_two :
     MemLp centeredUnitIntervalIndicator 2 := by
-  simpa [centeredUnitIntervalIndicator] using
+  change MemLp (fun x : ℝ => (Icc (-(1 / 2 : ℝ)) (1 / 2 : ℝ)).indicator (fun _ => 1) x) 2 volume
+  simpa using
     memLp_indicator_const 2 measurableSet_Icc (1 : ℂ)
       (Or.inr isCompact_Icc.measure_lt_top.ne)
 

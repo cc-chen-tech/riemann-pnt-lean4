@@ -25,6 +25,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.DirichletPolynomialMeanSquare,
     `PrimeNumberTheorem.FourierL1L2,
     `MathlibAux.WeightedCauchySchwarz,
+    `MathlibAux.FiniteSpectrumGap,
     `PrimeNumberTheorem.SincSquareIntegral,
     `PrimeNumberTheorem.SincSquareFourier,
     `PrimeNumberTheorem.PositiveFourierKernel,
@@ -2570,7 +2571,10 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramCapacityBridge.Contract,
     `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount,
     `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.AxiomAudit,
-    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.Contract
+    `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.Contract,
+    `Test.Zeta23SelbergBridgeContract,
+    `Test.Zeta23SelbergBridgeAxiomAudit,
+    `Zeta23
   ]
 
 require mathlib from "./vendor/mathlib"

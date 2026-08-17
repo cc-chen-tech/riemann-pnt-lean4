@@ -61,7 +61,7 @@ private theorem iteratedDeriv_normalizedGaussian_one
                 normalizedGaussian 1 t +
               (gaussianDerivativePolynomial k).eval t *
                 normalizedGaussianDeriv 1 t by
-        simpa only [Pi.mul_apply] using hderiv.deriv]
+        simpa only [Pi.mul_def, Pi.mul_apply] using hderiv.deriv]
       simp only [gaussianDerivativePolynomial, eval_sub, eval_mul, eval_C,
         eval_X, normalizedGaussianDeriv]
       ring

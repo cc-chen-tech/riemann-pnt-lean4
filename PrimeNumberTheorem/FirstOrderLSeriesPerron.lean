@@ -1282,7 +1282,13 @@ private lemma norm_intervalIntegral_firstOrderPerronTerm_sub_halfStep_le_of_log_
       1 / 2 - Real.arctan (2 * Real.pi * W / c) / Real.pi ≤
         c / (2 * Real.pi ^ 2 * W) := by
     simpa [y] using hscalar
-  convert mul_le_mul_of_nonneg_left hscalar' hv_nonneg using 1 <;> ring
+  have hgoal :
+      (vonMangoldt n : ℝ) *
+          (1 / 2 - Real.arctan (2 * Real.pi * W / c) / Real.pi) ≤
+        (vonMangoldt n : ℝ) * (c / (2 * Real.pi ^ 2 * W)) :=
+    mul_le_mul_of_nonneg_left hscalar' hv_nonneg
+  simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc, neg_add,
+    mul_comm, mul_left_comm, mul_assoc, div_eq_mul_inv] using hgoal
 
 /-- The full von Mangoldt Dirichlet series satisfies ordinary first-order
 Perron inversion.  The symmetric truncation converges to the midpoint value

@@ -18,7 +18,9 @@ theorem int_pow_add_mul_modEq_sq (q x h : ℤ) (n : ℕ) :
     rw [mul_pow]
     exact dvd_mul_right (q ^ 2) (h ^ 2)
   have hraw := hscale.trans (sq_dvd_add_pow_sub_sub (q * h) x n)
-  convert hraw.neg_right using 1 <;> ring
+  have hneg : q ^ 2 ∣ -((x + q * h) ^ n - x ^ (n - 1) * (q * h) * (n : ℤ) - x ^ n) :=
+    hraw.neg_right
+  simpa [sub_eq_add_neg, add_assoc, mul_assoc, mul_left_comm, mul_comm] using hneg
 
 /-- Simultaneous first-order Taylor expansion of every power sum.  The
 linear term is exactly the power-sum Jacobian applied to the increment

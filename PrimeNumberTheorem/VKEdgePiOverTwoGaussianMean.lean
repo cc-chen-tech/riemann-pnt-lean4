@@ -36,14 +36,13 @@ theorem hasDerivAt_normalizedGaussian {m : ℝ} (hm : 0 < m) (t : ℝ) :
   have hinner :
       HasDerivAt (fun x : ℝ => -x ^ 2 / (4 * m))
         (-(t / (2 * m))) t := by
-    convert ((hasDerivAt_pow 2 t).neg.div_const (4 * m)) using 1 <;>
-      field_simp <;> ring
+    convert ((hasDerivAt_pow 2 t).neg.div_const (4 * m)) using 1 <;> (try rfl) <;> ring_nf
   have hexp :
       HasDerivAt (fun x : ℝ => Real.exp (-x ^ 2 / (4 * m)))
         (-(t / (2 * m)) * Real.exp (-t ^ 2 / (4 * m))) t := by
     simpa only [mul_comm] using hinner.exp
   convert hexp.div_const (2 * Real.sqrt (Real.pi * m)) using 1 <;>
-    simp only [normalizedGaussian, normalizedGaussianDeriv] <;> ring
+    (try rfl) <;> (try simp only [normalizedGaussian, normalizedGaussianDeriv]) <;> ring
 
 theorem integrable_normalizedGaussian {m : ℝ} (hm : 0 < m) :
     Integrable (normalizedGaussian m) := by
@@ -345,7 +344,7 @@ theorem exists_uniform_normalizedGaussian_periodicMean_bound
         (f := f) (P := P) (x := c - t) hcontinuous).comp t
         ((hasDerivAt_const t c).sub (hasDerivAt_id t))
     convert hcomp.neg using 1 <;>
-      simp only [gShift, g] <;> ring
+      (try rfl) <;> (try simp [gShift, g]) <;> ring
   have hGaussianContinuous : Continuous (normalizedGaussian m) := by
     rw [continuous_iff_continuousAt]
     intro t

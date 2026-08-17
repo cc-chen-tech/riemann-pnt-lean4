@@ -220,14 +220,14 @@ private theorem hasDerivAt_timeDependentLogHilbertPrimitiveTerm
         (I * ((Real.log m - Real.log n : ℝ) : ℂ)) t := by
       convert (Complex.ofRealCLM.hasDerivAt.const_mul
         (I * ((Real.log m - Real.log n : ℝ) : ℂ))) using 1 <;>
-        simp only [Complex.ofRealCLM_apply, Complex.ofReal_one, mul_one]
+        (try rfl) <;> (try simp only [Complex.ofRealCLM_apply, Complex.ofReal_one, mul_one])
       funext x
       push_cast
       ring
     have hterm := (hamp.mul harg.cexp).mul_const
       (((1 / (Real.log (m : ℝ) - Real.log (n : ℝ)) : ℝ) : ℂ))
     simp only [hmn, if_false]
-    convert hterm using 1
+    convert hterm using 1 <;> (try rfl)
     · funext x
       simp only [Pi.mul_apply, starRingEnd_apply]
       push_cast
@@ -288,7 +288,7 @@ theorem hasDerivAt_timeDependentLogHilbertPrimitive
     (fun m hm => HasDerivAt.fun_sum (u := s) (x := t)
       (fun n hn => hasDerivAt_timeDependentLogHilbertPrimitiveTerm
         coeff coeff' (hpositive m hm) (hpositive n hn)
-        (hderiv m hm) (hderiv n hn))) using 1
+        (hderiv m hm) (hderiv n hn))) using 1 <;> (try rfl)
   unfold logOffDiagonalForm timeDependentLogHilbertVariation
   simp only [Finset.mul_sum]
   simp_rw [← Finset.sum_add_distrib]

@@ -27,7 +27,7 @@ private lemma hasDerivAt_gammaRInvRegularFactor_zero :
   have hp : HasDerivAt p (Complex.log Real.pi / 2) 0 := by
     have h := ((hasDerivAt_id (0 : ℂ)).div_const 2).const_cpow
       (c := (Real.pi : ℂ)) (Or.inl (ofReal_ne_zero.mpr Real.pi_ne_zero))
-    convert h using 1 <;> simp <;> ring
+    convert h using 1 <;> (try rfl) <;> (try simp [p, Pi.mul_def]) <;> ring_nf
   have hinner : HasDerivAt (fun s : ℂ => s / 2 + 1) (1 / 2) 0 :=
     ((hasDerivAt_id (0 : ℂ)).div_const 2).add_const 1
   have hg : HasDerivAt g (γ / 2) 0 := by
@@ -40,10 +40,10 @@ private lemma hasDerivAt_gammaRInvRegularFactor_zero :
       simp [Complex.hasDerivAt_Gamma_one.deriv, Gamma_one]
     have hcomp := houter.hasDerivAt.comp 0 hinner
     rw [houterDeriv] at hcomp
-    convert hcomp using 1 <;> simp <;> ring
+    convert hcomp using 1 <;> (try rfl) <;> (try simp [g, Pi.mul_def]) <;> ring_nf
   have hmul := (hp.const_mul (1 / 2 : ℂ)).mul hg
   convert hmul using 1 <;>
-    simp [p, g] <;> ring
+    (try rfl) <;> (try simp [p, g, Pi.mul_def]) <;> ring_nf
 
 private lemma inv_Gammaℝ_eq_mul_regularFactor (s : ℂ) :
     (Gammaℝ s)⁻¹ = s * gammaRInvRegularFactor s := by

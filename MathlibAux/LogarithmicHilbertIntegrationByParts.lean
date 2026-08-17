@@ -60,11 +60,9 @@ private theorem hasDerivAt_logarithmicHilbertPrimitiveTerm
         (fun x : ℝ => (((Real.log m - Real.log n) * x : ℝ) : ℂ))
         ((Real.log m - Real.log n : ℝ) : ℂ) t := by
       convert Complex.ofRealCLM.hasDerivAt.const_mul
-        ((Real.log m - Real.log n : ℝ) : ℂ) using 1
-      · funext x
-        simp only [Complex.ofRealCLM_apply, Complex.ofReal_sub,
-          Complex.ofReal_mul]
-      · simp only [Complex.ofRealCLM_apply, Complex.ofReal_one, mul_one]
+        ((Real.log m - Real.log n : ℝ) : ℂ) using 1 <;>
+        (try rfl) <;> (try funext x; simp only [Complex.ofRealCLM_apply,
+          Complex.ofReal_sub, Complex.ofReal_mul]) <;> (try simp [Complex.ofRealCLM_apply])
     have harg : HasDerivAt
         (fun x : ℝ => I *
           (((Real.log m - Real.log n) * x : ℝ) : ℂ))
@@ -85,7 +83,7 @@ private theorem hasDerivAt_logarithmicHilbertPrimitiveTerm
         (starRingEnd ℂ) (left n) * right m *
           Complex.exp (I * ((Real.log m - Real.log n) * t)) by
       simp only [logOffDiagonalTerm, if_neg hmn]]
-    convert hterm using 1
+    convert hterm using 1 <;> (try rfl)
     · funext y
       rw [show I * (((Real.log m - Real.log n) * y : ℝ) : ℂ) =
           I * ((Real.log m : ℝ) : ℂ) * (y : ℂ) -
@@ -111,8 +109,9 @@ private theorem hasDerivAt_logarithmicHilbertPrimitive
   convert HasDerivAt.fun_sum (u := s) (x := t)
     (fun m hm => HasDerivAt.fun_sum (u := s) (x := t)
       (fun n hn => hasDerivAt_logarithmicHilbertPrimitiveTerm
-        left right (hpositive m hm) (hpositive n hn) t)) using 1
-  simp only [Finset.mul_sum]
+        left right (hpositive m hm) (hpositive n hn) t)) using 1 <;>
+    (try rfl)
+  simp_rw [Finset.mul_sum]
 
 private theorem logarithmicHilbertPrimitive_eq_bilinearForm
     (s : Finset ℕ) (left right : ℕ → ℂ) (t : ℝ) :
@@ -312,7 +311,7 @@ theorem norm_integral_amplitude_mul_logOffDiagonalForm_neg_le
     have h := (IntervalIntegrable.iff_comp_neg (a := a) (b := b)).mp hA'int
     exact h.symm
   have hAnegInt : IntervalIntegrable Aneg' volume (-b) (-a) := by
-    simpa only [Aneg'] using hcompInt.neg
+    simpa only [Aneg', Pi.neg_def] using hcompInt.neg
   have hvariationNeg : (∫ x in -b..-a, ‖Aneg' x‖) ≤ V := by
     calc
       (∫ x in -b..-a, ‖Aneg' x‖) =
@@ -458,8 +457,7 @@ theorem norm_integral_amplitude_mul_logOffDiagonalForm_le_of_upper
       ∑ n ∈ s, Complex.normSq (right n))
   apply norm_integral_amplitude_mul_logOffDiagonalForm_le_of_primitive_bound
     s left right hpositive hab hA hAend hA'int hvariation
-  · dsimp only [K]
-    apply mul_nonneg
+  · apply mul_nonneg
     · exact mul_nonneg (by positivity) (Nat.cast_nonneg N)
     · exact add_nonneg
         (Finset.sum_nonneg fun n hn => Complex.normSq_nonneg (left n))
@@ -501,7 +499,7 @@ theorem norm_integral_amplitude_mul_logOffDiagonalForm_neg_le_of_upper
     have h := (IntervalIntegrable.iff_comp_neg (a := a) (b := b)).mp hA'int
     exact h.symm
   have hAnegInt : IntervalIntegrable Aneg' volume (-b) (-a) := by
-    simpa only [Aneg'] using hcompInt.neg
+    simpa only [Aneg', Pi.neg_def] using hcompInt.neg
   have hvariationNeg : (∫ x in -b..-a, ‖Aneg' x‖) ≤ V := by
     calc
       (∫ x in -b..-a, ‖Aneg' x‖) =

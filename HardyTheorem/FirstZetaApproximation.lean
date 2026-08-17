@@ -39,7 +39,7 @@ private lemma periodizedBernoulli_two_ae_eq_local (n : ℕ) :
     simp [ae_iff, measure_singleton]
   filter_upwards [ae_restrict_mem measurableSet_Ioc, ae_restrict_of_ae hend] with x hx hne
   have hx' : (n : ℝ) < x ∧ x ≤ (n : ℝ) + 1 := by
-    simpa only [Nat.cast_add, Nat.cast_one] using hx
+    simpa only [Nat.cast_add, Nat.cast_one, mem_Ioc] using hx
   have hy : x - (n : ℝ) ∈ Set.Ico (0 : ℝ) 1 := by
     constructor
     · linarith [hx'.1]
@@ -92,8 +92,7 @@ private lemma intervalIntegral_centeredFloorError_cpow_eq_bernoulliTwo_unit
     have hB := (hasDerivAt_bernoulliFun 2 (x - n)).comp x hsub
     dsimp only [H, D, localCenteredBernoulliOne]
     convert hB.neg.div_const 2 using 1
-    all_goals simp only [Nat.cast_ofNat, Nat.reduceSub, mul_one]
-    all_goals ring
+    all_goals (first | rfl | simp only [Nat.cast_ofNat, Nat.reduceSub, mul_one] <;> ring)
   have hD_int : IntervalIntegrable D volume (n : ℝ) (n + 1 : ℕ) := by
     have hD_cont : Continuous D := by
       dsimp only [D, localCenteredBernoulliOne]
@@ -299,7 +298,9 @@ private noncomputable def bernoulliTwoFourierCoeff (k : ℤ) : ℂ :=
 
 private lemma summable_bernoulliTwoFourierCoeff :
     Summable bernoulliTwoFourierCoeff := by
-  simpa only [bernoulliTwoFourierCoeff, Nat.cast_ofNat] using
+  change Summable
+    (fun k : ℤ => -(Nat.factorial 2 : ℂ) / (2 * Real.pi * I * k) ^ (2 : ℕ))
+  simpa only [Nat.cast_ofNat] using
     (summable_bernoulli_fourier (by norm_num : 2 ≤ 2))
 
 private lemma hasSum_bernoulliTwoFourier (x : ℝ) :
@@ -386,7 +387,9 @@ theorem exists_norm_intervalIntegral_periodizedBernoulli_two_mellin_le :
       have hexp : ContinuousAt
           (fun y : ℝ => Complex.exp (I * (-t * Real.log y))) x := by
         exact (continuousAt_const.mul (continuousAt_const.mul hcastLog)).cexp
-      simpa only [W, Complex.real_smul] using hcastRpow.mul hexp
+      dsimp only [W]
+      convert hcastRpow.mul hexp using 1 <;>
+        all_goals (first | rfl | funext z <;> rfl)
     exact ((continuousAt_const.mul hfour).mul hW).continuousWithinAt
   have hbound : ∀ k : ℤ, ∀ᵐ x ∂volume, x ∈ Set.uIoc a b →
       ‖F k x‖ ≤ ‖bernoulliTwoFourierCoeff k‖ * a ^ (-p) := by
@@ -1138,6 +1141,9 @@ theorem norm_integral_inv_nat_cpow_criticalLine_le
     rw [Complex.norm_exp]
     have hre : (c * (t : ℂ)).re = 0 := by
       dsimp [c]
+      rw [Complex.mul_re, Complex.mul_im]
+      simp only [Complex.mul_re, Complex.mul_im, Complex.neg_re, Complex.neg_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im]
       ring
     rw [hre, Real.exp_zero]
   have hosc : ‖∫ t in a..b, Complex.exp (c * t)‖ ≤ 2 / Real.log n := by
@@ -1640,7 +1646,8 @@ theorem exists_integral_norm_riemannZeta_critical_line_ge_mul :
           (nhds (riemannZeta ((1 / 2 : ℂ) + I * t))) from hzbase).comp
         (show Tendsto (fun u : ℝ => (1 / 2 : ℂ) + I * u)
           (nhds t) (nhds ((1 / 2 : ℂ) + I * t)) from hpath)
-    simpa only [F, Function.comp_apply] using hzcont.continuousWithinAt
+    dsimp only [F]
+    exact hzcont.continuousWithinAt
   have hFint : IntervalIntegrable F volume T (2 * T) :=
     ContinuousOn.intervalIntegrable (by
       simpa only [Set.uIcc_of_le hTtwo] using hFcont)
@@ -1660,8 +1667,6 @@ theorem exists_integral_norm_riemannZeta_critical_line_ge_mul :
         (continuous_const.intervalIntegrable _ _) hQint]
   have hone : (∫ _t in T..(2 * T), (1 : ℂ)) = (T : ℂ) := by
     simp
-    change (((2 * T - T : ℝ) : ℂ) * 1) = (T : ℂ)
-    push_cast
     ring
   have hOneEq :
       (T : ℂ) =

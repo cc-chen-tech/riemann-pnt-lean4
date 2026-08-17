@@ -56,13 +56,11 @@ theorem isVinogradovSolutionMod_uncycledPair_iff
     Q d X k r q a hk uv.1 uv.2).symm
   have he : e uv = xy := e.apply_symm_apply xy
   have hx : vinogradovCycledHeadTailTuple k r q a hk uv.1 = xy.1 := by
-    simpa only [e, vinogradovCycledHeadTailPairEquiv,
-      Equiv.prodCongr_apply,
+    simpa [e, vinogradovCycledHeadTailPairEquiv,
       vinogradovCycledHeadTailFunctionEquiv_apply] using
         congrArg Prod.fst he
   have hy : vinogradovCycledHeadTailTuple k r q a hk uv.2 = xy.2 := by
-    simpa only [e, vinogradovCycledHeadTailPairEquiv,
-      Equiv.prodCongr_apply,
+    simpa [e, vinogradovCycledHeadTailPairEquiv,
       vinogradovCycledHeadTailFunctionEquiv_apply] using
         congrArg Prod.snd he
   simpa only [uv, hx, hy] using h
@@ -160,7 +158,7 @@ theorem mem_vinogradovPrimeFirstNonsingularAmbientSet_iff
     funext i
     change vinogradovFirstStratumCompleteResidueEquiv p
       (Fin.cast (by simp) (x i)) = _
-    simpa only [Nat.cast_add, Nat.cast_one] using
+    simpa [Nat.cast_add, Nat.cast_one] using
       vinogradovFirstStratumCompleteResidueEquiv_apply p
         (Fin.cast (by simp) (x i))
   simp only [vinogradovPrimeFirstNonsingularAmbientSet, Finset.mem_map]
@@ -456,7 +454,8 @@ theorem mem_vinogradovPrimePowerFirstNonsingularLiftSet_iff_image_mem
     · exact
         (vinogradovPrimePowerLiftAmbientEquiv_uncycled_firstNonsingular_iff
           p k r q a n hk xy z).mpr hbaseParts.1
-    · simpa only [Nat.add_assoc] using hhighOriginal
+    · simpa [Nat.add_assoc, vinogradovCycledHeadTailPairEquiv,
+        Equiv.prodCongr_apply, Equiv.prodCongr_symm] using hhighOriginal
   · intro hhighCycledMem
     have hhighOriginalMem :=
       (mem_vinogradovPrimePowerCycledFirstNonsingularSolutionSet_iff
@@ -475,7 +474,8 @@ theorem mem_vinogradovPrimePowerFirstNonsingularLiftSet_iff_image_mem
             (α := Fin (p ^ (n + 2))) k r q a hk).symm
               (vinogradovPrimePowerLiftAmbientEquiv p k
                 (q * k + a * k + r) n ⟨xy, z⟩)).2 := by
-      simpa only [Nat.add_assoc] using hhighParts.2
+      simpa [Nat.add_assoc, vinogradovCycledHeadTailPairEquiv,
+        Equiv.prodCongr_apply, Equiv.prodCongr_symm] using hhighParts.2
     have hhighCycled :=
       (isVinogradovSolutionMod_uncycledPair_iff
         (p ^ (n + 2)) k (p ^ (n + 2)) k r q a hk _).mp
@@ -667,7 +667,8 @@ theorem vinogradovCycledHeadTailPairEquiv_mem_nonsingular
   constructor
   · have hinj := hmem.1.cycledHeadTail_injective hk
     simpa [vinogradovCycledHeadTailPairEquiv,
-      vinogradovCycledHeadTailFunctionEquiv] using hinj
+      vinogradovCycledHeadTailTuple,
+      Equiv.prodCongr_apply] using hinj
   · exact (isVinogradovSolutionMod_cycledHeadTail_iff
       (p ^ (n + 1)) k (p ^ (n + 1)) k r q a hk xy.1 xy.2).mpr hmem.2
 

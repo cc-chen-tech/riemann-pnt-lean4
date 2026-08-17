@@ -14,7 +14,7 @@ private theorem summable_one_div_nat_add_two_sq :
     simpa [Real.rpow_two] using
       ((Real.summable_one_div_nat_rpow).mpr (by norm_num : (1 : ℝ) < 2))
   convert (summable_nat_add_iff 2).mpr hbase using 1 with n
-  norm_num
+  all_goals (first | rfl | push_cast <;> ring)
 
 private theorem riemannZeta_sub_one_eq_tail (t : ℝ) :
     riemannZeta ((2 : ℂ) + (t : ℂ) * I) - 1 =
@@ -57,7 +57,7 @@ private theorem summable_zeta_tail (t : ℝ) :
   have hs : 1 < s.re := by simp [s]
   have hbase := (Complex.summable_one_div_nat_cpow).mpr hs
   convert (summable_nat_add_iff 2).mpr hbase using 1 with n
-  simp [s]
+  all_goals (first | rfl | simp [s])
 
 private theorem norm_riemannZeta_two_add_mul_I_sub_one_lt_one (t : ℝ) :
     ‖riemannZeta ((2 : ℂ) + (t : ℂ) * I) - 1‖ < 1 := by
@@ -108,15 +108,16 @@ private theorem hasDerivAt_zetaRightVerticalArgument (t : ℝ) :
   have hzeta : HasDerivAt
       (fun x : ℝ => riemannZeta ((2 : ℂ) + (x : ℂ) * I))
       (deriv riemannZeta s * I) t := by
-    simpa [s] using
-      (differentiableAt_riemannZeta hs1).hasDerivAt.comp t hline
+    convert (differentiableAt_riemannZeta hs1).hasDerivAt.comp t hline using 1 <;>
+      all_goals (first | rfl | funext x <;> rfl | dsimp [s])
   have hslit : riemannZeta s ∈ Complex.slitPlane := by
     rw [Complex.mem_slitPlane_iff]
     exact Or.inl (by simpa [s] using riemannZeta_two_add_mul_I_re_pos t)
   have hlog := hzeta.clog_real hslit
   have him := Complex.imCLM.hasFDerivAt.comp_hasDerivAt t hlog
-  convert him using 1
-  simp only [Complex.imCLM_apply, logDeriv_apply]
+  convert him using 1 <;>
+    all_goals (first | rfl | funext x <;> rfl |
+      simp only [Complex.imCLM_apply, logDeriv_apply])
   change (deriv riemannZeta s / riemannZeta s).re =
     (deriv riemannZeta s * I / riemannZeta s).im
   rw [show deriv riemannZeta s * I / riemannZeta s =

@@ -171,11 +171,11 @@ theorem IsSimplePoleOfGamma (n : ℕ) :
         simp
       exact differentiableAt_id.add hconst
     have hgz : DifferentiableAt ℂ (fun t : ℂ ↦ (t + (n : ℂ)) * Complex.Gamma t) z := by
-      simpa using (hdz.mul hz.differentiableAt)
-    simpa [g, mul_comm, mul_left_comm, mul_assoc] using hgz
+      convert hdz.mul hz.differentiableAt using 1 <;> (try rfl) <;> (try simp [Pi.mul_def])
+    convert hgz using 1 <;> (try rfl) <;> (try simp [Pi.mul_def])
   have hne : ∀ᶠ z in nhdsWithin c ({c}ᶜ), z ≠ c := by
-    simpa [Filter.Eventually, Set.mem_setOf_eq] using
-      (self_mem_nhdsWithin : ({c}ᶜ : Set ℂ) ∈ nhdsWithin c ({c}ᶜ))
+    filter_upwards [self_mem_nhdsWithin] with z hz
+    simpa using hz
   have hg_update_event : ∀ᶠ z in nhdsWithin c ({c}ᶜ), DifferentiableAt ℂ (Function.update g c R) z := by
     refine (hg_event_diff.and hne).mono ?_
     intro z hz

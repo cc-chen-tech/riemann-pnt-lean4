@@ -44,8 +44,9 @@ theorem abs_integral_im_shiftedDivisorPrincipalPart_le_pi_mul_mass
       (z := u) (σ := (3 / 2 : ℝ)) (t := T) (R := (7 / 5 : ℝ))
       (H := |T| - 7 / 5) (by simpa [c] using hu) (by linarith) (by linarith)
   have hD : ∀ u, 0 ≤ D u := by
+    intro u
     simpa [D, shiftedZetaDivisor, c] using
-      (ZeroFreeRegion.divisor_riemannZeta_closedBall_nonneg havoid)
+      (ZeroFreeRegion.divisor_riemannZeta_closedBall_nonneg havoid) u
   have hheight : ∀ u ∈ S, T ≠ u.im := by
     intro u hu hEq
     have huSupport : u ∈ D.support := hfinite.mem_toFinset.mp hu
@@ -332,8 +333,9 @@ theorem exists_abs_zetaHorizontalArgumentVariation_le_log :
             using hreg
         simpa [Real.norm_eq_abs, z] using him.trans hreg')
     rw [abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2 - 1 / 2)] at hbound
-    convert hbound using 1
-    ring
+    convert hbound using 1 <;>
+      all_goals (first | rfl | funext z <;> rfl | ring | ring_nf |
+        rw [Real.norm_eq_abs])
   have hmass :
       (∑ᶠ u, (shiftedZetaDivisor T u : ℝ)) ≤ Bmass * L := by
     simpa [shiftedZetaDivisor, L, abs_of_nonneg hTnonneg] using

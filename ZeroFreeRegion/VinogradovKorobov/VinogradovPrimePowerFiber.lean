@@ -271,8 +271,36 @@ theorem mem_vinogradovBlockSingularResidueSet_iff
     x ∈ vinogradovBlockSingularResidueSet p k r ↔
       ¬Function.Injective (fun i : Fin k ↦ x (Fin.castAdd r i)) := by
   classical
-  simp [vinogradovBlockSingularResidueSet, vinogradovSingularResidueSet,
-    splitResidueTupleEquiv, Equiv.trans_apply]
+  have hsplit (x : Fin (k + r) → ZMod p) :
+      splitResidueTupleEquiv p k r x =
+        (fun i : Fin k => x (Fin.castAdd r i),
+         fun i : Fin r => x (Fin.natAdd k i)) := by
+    unfold splitResidueTupleEquiv
+    simp
+  constructor
+  · intro hx
+    rw [vinogradovBlockSingularResidueSet] at hx
+    rw [Finset.mem_map] at hx
+    rcases hx with ⟨y, hy, hxeq⟩
+    rcases y with ⟨a, x₁⟩
+    have hy' : a ∈ vinogradovSingularResidueSet p k := by
+      simpa using (Finset.mem_product.mp hy).1
+    have ha : ¬Function.Injective a := by
+      simpa [vinogradovSingularResidueSet] using hy'
+    have hxeq' : (a, x₁) = splitResidueTupleEquiv p k r x := by
+      simpa using (congrArg (splitResidueTupleEquiv p k r) hxeq)
+    rw [hsplit x] at hxeq'
+    have ha' : a = fun i : Fin k => x (Fin.castAdd r i) := by
+      exact congrArg Prod.fst hxeq'
+    exact ha' ▸ ha
+  · intro hn
+    rw [vinogradovBlockSingularResidueSet, Finset.mem_map]
+    refine ⟨(fun i : Fin k => x (Fin.castAdd r i),
+        fun i : Fin r => x (Fin.natAdd k i)), ?_, ?_⟩
+    · exact Finset.mk_mem_product
+        (by simpa [vinogradovSingularResidueSet] using hn) (by simp)
+    · rw [← hsplit x]
+      simp
 
 /-- Appending `r` unrestricted coordinates multiplies the singular block
 count by exactly `p^r`. -/

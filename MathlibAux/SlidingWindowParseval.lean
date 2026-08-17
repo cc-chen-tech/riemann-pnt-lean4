@@ -35,11 +35,6 @@ theorem rectangularFourierMultiplier_eq (H y : ℝ) :
   by_cases hy : y = 0
   · subst y
     simp [rectangularFourierMultiplier]
-    apply Complex.ext
-    · change (((H : ℂ) * 1).re) = (H : ℂ).re
-      simp
-    · change (((H : ℂ) * 1).im) = (H : ℂ).im
-      simp
   · rw [if_neg hy]
     have hc : I * (((2 * Real.pi * y : ℝ)) : ℂ) ≠ 0 := by
       exact mul_ne_zero I_ne_zero (ofReal_ne_zero.mpr
@@ -218,7 +213,7 @@ theorem rectangularMultiplier_plancherel_le
         (volume.restrict lowᶜ) :=
       (hfhatSq.aestronglyMeasurable.const_mul 4).mono_measure
         (Measure.restrict_le_self : volume.restrict lowᶜ ≤ volume)
-    simpa only [tail, div_eq_mul_inv, Pi.mul_apply] using hnum.mul hinv
+    simpa only [tail, div_eq_mul_inv, Pi.mul_apply, Pi.mul_def] using hnum.mul hinv
   have htail : IntegrableOn tail lowᶜ := by
     apply Integrable.mono'
       ((hfhatSq.const_mul (4 * H ^ 2)).integrableOn) htailMeas
@@ -255,8 +250,7 @@ theorem rectangularMultiplier_plancherel_le
     have hy : y ≠ 0 := by
       exact abs_pos.mp (lt_of_le_of_lt (by positivity) hyAbs)
     convert normSq_rectangularFourierMultiplier_mul_le_frequency hH.le hy (fhat y) using 1
-    all_goals simp only [tail]
-    all_goals ring
+    all_goals (try rfl) <;> (try simp [tail]) <;> ring
   calc
     (∫ y : ℝ, energy y) = (∫ y in low, energy y) + ∫ y in lowᶜ, energy y :=
       (integral_add_compl hlow henergy).symm

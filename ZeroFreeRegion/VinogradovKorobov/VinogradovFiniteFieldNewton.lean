@@ -144,6 +144,7 @@ theorem fixed_left_residue_solution_count_le_factorial
       apply Multiset.coe_eq_coe.mp
       have hsol : IsVinogradovResidueSolution p k s x y :=
         (Finset.mem_filter.mp hy).2
+      change (List.ofFn y : Multiset (ZMod p)) = (List.ofFn x : Multiset (ZMod p))
       simpa using (hsol.multiset_eq p k s hsk hsp).symm
     _ ≤ (List.ofFn x).permutations.length :=
       List.toFinset_card_le (List.ofFn x).permutations

@@ -22,7 +22,7 @@ theorem fourier_mul_convolution_eq_of_integrable
       (ContinuousLinearMap.mul ℂ ℂ).flip hf
     apply hbase.bdd_mul (by fun_prop) (c := 1)
     filter_upwards with p
-    simp
+    exact le_of_eq (Circle.norm_coe (z := 𝐞 (-(p.1 * xi))))
   calc
     𝓕 (f ⋆[ContinuousLinearMap.mul ℂ ℂ] g) xi =
         𝓕 (g ⋆[(ContinuousLinearMap.mul ℂ ℂ).flip] f) xi := by
@@ -66,7 +66,7 @@ theorem fourier_mul_convolution_eq_of_integrable
         simp only [ContinuousLinearMap.mul_apply', Circle.smul_def, smul_eq_mul]
         ring
       rw [heq]
-      simpa only [ContinuousLinearMap.mul_apply] using
+      simpa only [ContinuousLinearMap.mul_apply'] using
         (MeasureTheory.integral_mul_const (μ := volume)
           (𝐞 (-(y * xi)) • g y)
           (fun x => 𝐞 (-(x * xi)) • f x))
@@ -75,7 +75,7 @@ theorem fourier_mul_convolution_eq_of_integrable
         (∫ y, 𝐞 (-(y * xi)) • g y) := by
       change (∫ y, (∫ x, 𝐞 (-(x * xi)) • f x) *
         (𝐞 (-(y * xi)) • g y)) = _
-      simpa only [ContinuousLinearMap.mul_apply] using
+      simpa only [ContinuousLinearMap.mul_apply'] using
         (MeasureTheory.integral_const_mul
           (∫ x, 𝐞 (-(x * xi)) • f x)
           (fun y => 𝐞 (-(y * xi)) • g y))
@@ -228,8 +228,10 @@ theorem fourier_sinc_pi_add_one_sq (xi : ℝ) :
     rw [Fourier.fourierIntegral_def, Real.fourier_real_eq]
   rw [hscalar, hscalar] at htranslate
   rw [fourier_sinc_pi_mul_sq] at htranslate
-  simpa only [f, Function.comp_apply, one_mul, Real.fourierChar_apply,
-    Circle.smul_def, smul_eq_mul] using htranslate
+  convert htranslate using 2
+  · funext x
+    dsimp [f]
+  · rw [Circle.smul_def, smul_eq_mul, Real.fourierChar_apply, one_mul]
 
 theorem fourier_sinc_pi_add_one_sq_eq_zero
     {xi : ℝ} (hxi : 1 ≤ |xi|) :

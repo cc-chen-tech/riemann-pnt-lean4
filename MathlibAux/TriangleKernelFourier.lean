@@ -109,7 +109,6 @@ theorem integral_triangleKernel_mul_cos_eq
           ).intervalIntegrable (0 : ℝ) H)
     have hbnd : (H - H) * (c⁻¹ * Real.sin (c * H)) - (H - 0) * (c⁻¹ * Real.sin (c * 0)) = 0 := by
       simp
-    dsimp only at hsum
     rw [hsplit_int, hbnd] at hsum
     -- ∫ (H - τ) cos = ∫ c⁻¹ sin (c τ)
     have hsin : (∫ τ in (0 : ℝ)..H, (-1) * (c⁻¹ * Real.sin (c * τ))) =

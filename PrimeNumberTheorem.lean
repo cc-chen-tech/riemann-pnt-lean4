@@ -508,7 +508,7 @@ lemma logIntegral_asymptotic :
           rw [this]
           simpa using (tendsto_const_nhds (x := (4 : ℝ))).mul tendsto_inv_atTop_zero
         have h4 := h3.comp h2
-        simpa using h4
+        simpa [Function.comp_def] using h4
       have h2 : Tendsto (fun x : ℝ ↦ (Real.sqrt x / (Real.log 2)^2) * (Real.log x / x)) atTop (𝓝 0) := by
         have : (fun x : ℝ ↦ (Real.sqrt x / (Real.log 2)^2) * (Real.log x / x))
             = (fun x : ℝ ↦ (1 / (Real.log 2)^2) * (Real.log x / Real.sqrt x)) := by
@@ -2363,7 +2363,7 @@ lemma sqrt_mul_log_isLittleO_logIntegral :
           (Real.sqrt x * (Real.log x)^2 / x) /
             (logIntegral x * Real.log x / x))
         atTop (𝓝 0) := by
-    simpa using hnum.div hden (by norm_num : (1 : ℝ) ≠ 0)
+    simpa [Pi.div_def] using hnum.div hden one_ne_zero
   have heq :
       (fun x : ℝ =>
           (Real.sqrt x * (Real.log x)^2 / x) /
@@ -3833,11 +3833,14 @@ lemma locallyIntegrableOn_psiErrorAboveOne :
   intro x hx
   rcases herr x hx with ⟨u, hu, hint⟩
   exact ⟨u, hu, by
+    change IntegrableOn (fun x : ℝ => psiErrorAboveOne x) u volume
     simpa [psiErrorAboveOne] using hint.indicator measurableSet_Ici⟩
 
 /-- Complex coercion preserves local integrability of the cutoff `ψ` error. -/
 lemma locallyIntegrableOn_psiErrorAboveOneComplex :
     LocallyIntegrableOn psiErrorAboveOneComplex (Set.Ioi (0 : ℝ)) := by
+  change LocallyIntegrableOn (fun x : ℝ => psiErrorAboveOneComplex x)
+      (Set.Ioi (0 : ℝ))
   simpa [psiErrorAboveOneComplex, Function.comp_def] using
     Complex.ofRealCLM.locallyIntegrableOn_comp
       locallyIntegrableOn_psiErrorAboveOne
@@ -3946,9 +3949,9 @@ theorem differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
       (by simp only [Complex.neg_re]; linarith)
       (psiErrorAboveOneComplex_isBigO_zero (-s.re - 1))
       (by simp only [Complex.neg_re]; linarith)
-  simpa only [Function.comp_apply] using
-    hMellin.comp s
+  convert hMellin.comp s
       (differentiableAt_id.neg : DifferentiableAt ℂ (fun z : ℂ => -z) s)
+    using 1 <;> (try rfl)
 
 /-- On the half-plane of absolute convergence, the Mellin transform of the
 cutoff `ψ(x)-x` error is exactly the regularized logarithmic derivative
@@ -4048,7 +4051,7 @@ theorem mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
         rw [Chebyshev.psi_eq_sum_Icc, Nat.floor_natCast]
         rw [← Finset.insert_Icc_add_one_left_eq_Icc n.zero_le,
           Finset.sum_insert (by aesop)]
-        simp [ArithmeticFunction.vonMangoldt]
+        simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
       have hnonneg :
           0 ≤ ∑ k ∈ Finset.Icc 1 n, ArithmeticFunction.vonMangoldt k :=
         Finset.sum_nonneg fun _ _ => ArithmeticFunction.vonMangoldt_nonneg
@@ -4078,7 +4081,7 @@ theorem mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
       rw [chebyshevPsi_eq_mathlib, Chebyshev.psi_eq_sum_Icc]
       rw [← Finset.insert_Icc_add_one_left_eq_Icc (Nat.zero_le ⌊t⌋₊),
         Finset.sum_insert (by aesop)]
-      simp [ArithmeticFunction.vonMangoldt]
+      simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
     calc
       (∑ k ∈ Finset.Icc 1 ⌊t⌋₊,
           (ArithmeticFunction.vonMangoldt k : ℂ)) *
@@ -4111,10 +4114,9 @@ logarithmic-derivative model is differentiable throughout `Re(s) > θ`. -/
 theorem differentiableAt_regularizedNegLogDerivModel_of_psi_power_error
     {θ : ℝ} (herror : PsiPowerErrorBound θ) {s : ℂ} (hs : θ < s.re) :
     DifferentiableAt ℂ regularizedNegLogDerivModel s := by
-  simpa [regularizedNegLogDerivModel] using
-    (differentiableAt_id : DifferentiableAt ℂ (fun z : ℂ => z) s).mul
+  convert (differentiableAt_id : DifferentiableAt ℂ (fun z : ℂ => z) s).mul
       (differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
-        herror hs)
+        herror hs) using 1 <;> (try rfl)
 
 /-- Set-level version of
 `differentiableAt_regularizedNegLogDerivModel_of_psi_power_error`. -/
@@ -8297,7 +8299,7 @@ lemma explicit_formula_von_mangoldt_of_error_tendsto_zero
   have hsum := h.add (tendsto_const_nhds : Tendsto
     (fun _T : ℝ => (chebyshevPsi0 x : ℂ)) atTop
     (𝓝 (chebyshevPsi0 x : ℂ)))
-  simpa only [sub_add_cancel, zero_add] using hsum
+  simpa [explicit_formula_von_mangoldt, sub_add_cancel, zero_add] using hsum
 
 lemma explicit_formula_von_mangoldt_iff_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
@@ -8475,14 +8477,14 @@ lemma explicit_formula_von_mangoldt_unweighted_re_tendsto
     (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re) atTop
       (𝓝 (chebyshevPsi0 x)) := by
-  simpa [explicit_formula_von_mangoldt_unweighted] using
+  simpa [explicit_formula_von_mangoldt_unweighted, Function.comp_def] using
     (Complex.continuous_re.tendsto (chebyshevPsi0 x : ℂ)).comp h
 
 lemma explicit_formula_von_mangoldt_unweighted_im_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) := by
-  simpa [explicit_formula_von_mangoldt_unweighted] using
+  simpa [explicit_formula_von_mangoldt_unweighted, Function.comp_def] using
     (Complex.continuous_im.tendsto (chebyshevPsi0 x : ℂ)).comp h
 
 lemma explicit_formula_von_mangoldt_unweighted_re_error_tendsto_zero
@@ -8490,7 +8492,7 @@ lemma explicit_formula_von_mangoldt_unweighted_re_error_tendsto_zero
     (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
       atTop (𝓝 0) := by
-  simpa using
+  simpa [Function.comp_def] using
     (Complex.continuous_re.tendsto (0 : ℂ)).comp
       (explicit_formula_von_mangoldt_unweighted_error_tendsto_zero h)
 
@@ -8510,11 +8512,13 @@ lemma explicit_formula_von_mangoldt_unweighted_of_re_im_tendsto
   have hreC :
       Tendsto (fun T : ℝ => ((explicitFormulaApprox x T).re : ℂ)) atTop
         (𝓝 (chebyshevPsi0 x : ℂ)) := by
-    simpa using (Complex.ofRealCLM.continuous.tendsto (chebyshevPsi0 x)).comp hre
+    simpa [Function.comp_def] using
+      (Complex.ofRealCLM.continuous.tendsto (chebyshevPsi0 x)).comp hre
   have himC :
       Tendsto (fun T : ℝ => ((explicitFormulaApprox x T).im : ℂ)) atTop
         (𝓝 (0 : ℂ)) := by
-    simpa using (Complex.ofRealCLM.continuous.tendsto (0 : ℝ)).comp him
+    simpa [Function.comp_def] using
+      (Complex.ofRealCLM.continuous.tendsto (0 : ℝ)).comp him
   have hI :
       Tendsto (fun T : ℝ => ((explicitFormulaApprox x T).im : ℂ) * I) atTop
         (𝓝 ((0 : ℂ) * I)) :=

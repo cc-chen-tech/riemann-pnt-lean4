@@ -109,12 +109,16 @@ pair. -/
 theorem integrable_completedZetaLogKernel :
     MeasureTheory.Integrable completedZetaLogKernel := by
   have hmellin : MellinConvergent
-      (HurwitzZeta.hurwitzEvenFEPair 0).f_modif ((1 / 4 : ℝ) : ℂ) :=
-    ((HurwitzZeta.hurwitzEvenFEPair 0).toStrongFEPair.hasMellin
-      ((1 / 4 : ℝ) : ℂ)).1
-  simpa only [completedZetaLogKernel] using
-    (MathlibAux.integrable_logMellinKernel_of_mellinConvergent
-      (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (1 / 4 : ℝ) hmellin)
+      (HurwitzZeta.hurwitzEvenFEPair 0).f_modif ((1 / 4 : ℝ) : ℂ) := by
+    have hstrong : IsStrongFEPair
+        (HurwitzZeta.hurwitzEvenFEPair 0).toStrongFEPair :=
+      (HurwitzZeta.hurwitzEvenFEPair 0).isStrongFEPair_toStrongFEPair
+    exact (hstrong.hasMellin ((1 / 4 : ℝ) : ℂ)).1
+  change MeasureTheory.Integrable
+    (fun u => MathlibAux.logMellinKernel
+      (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (1 / 4 : ℝ) u)
+  exact (MathlibAux.integrable_logMellinKernel_of_mellinConvergent
+    (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (1 / 4 : ℝ) hmellin)
 
 /-- Exact critical-line Fourier formula for the pole-removed completed zeta
 function.  Mathlib's Fourier variable uses the `2 * pi` normalization, hence

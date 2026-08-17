@@ -27,10 +27,9 @@ theorem norm_intervalIntegral_mul_cexp_linear_le_of_norm_deriv
         (fun y : ℝ => Complex.exp (I * (omega * y)))
         (Complex.exp (I * (omega * t)) * c) t := by
       convert (Complex.hasDerivAt_exp (I * (omega * t))).comp t
-        (((hasDerivAt_id (t : ℂ)).comp_ofReal.const_mul (omega : ℂ)).const_mul I) using 1
-      simp [c]
-    convert hexp.div_const c using 1
-    field_simp [hc]
+        (((hasDerivAt_id (t : ℂ)).comp_ofReal.const_mul (omega : ℂ)).const_mul I) using 1 <;>
+        (try rfl) <;> (try simp) <;> ring
+    convert hexp.div_const c using 1 <;> (try rfl) <;> (try simp) <;> field_simp [hc]
   have hV'int : IntervalIntegrable
       (fun t : ℝ => Complex.exp (I * (omega * t))) volume u v := by
     apply Continuous.intervalIntegrable

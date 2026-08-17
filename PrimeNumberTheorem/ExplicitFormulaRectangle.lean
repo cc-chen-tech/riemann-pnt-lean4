@@ -27,7 +27,7 @@ theorem exists_rectangleBoundaryIntegral_explicitFormulaIntegrand_eq_residue_sum
         (2 * Real.pi * I) * ∑ p ∈ poles, residue p := by
   classical
   have hcompact : IsCompact (MathlibAux.closedRectangle c R) := by
-    simpa [MathlibAux.closedRectangle] using
+    simpa [MathlibAux.closedRectangle, Set.uIcc] using
       (isCompact_Icc.reProdIm isCompact_Icc)
   rcases
       exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder

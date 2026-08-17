@@ -57,8 +57,9 @@ theorem norm_integral_timeDependentLogOffDiagonal_le_of_measurable
     unfold logOffDiagonalTerm
     by_cases hmn : m = n
     · subst n
-      simpa using (continuousWithinAt_const :
-        ContinuousWithinAt (fun _x : ℝ ↦ (0 : ℂ)) (Set.Icc a b) t)
+      simpa [ContinuousWithinAt] using
+        (continuousWithinAt_const :
+          ContinuousWithinAt (fun _x : ℝ ↦ (0 : ℂ)) (Set.Icc a b) t)
     · simp only [hmn, if_false]
       have hncont := hcoeffCont n hn t ht
       have hmcont := hcoeffCont m hm t ht
@@ -205,8 +206,9 @@ theorem integral_normSq_timeDependentLogPolynomial_le_of_measurable
     unfold logOffDiagonalTerm
     by_cases hmn : m = n
     · subst n
-      simpa using (continuousWithinAt_const :
-        ContinuousWithinAt (fun _x : ℝ ↦ (0 : ℂ)) (Set.Icc a b) t)
+      simpa [ContinuousWithinAt] using
+        (continuousWithinAt_const :
+          ContinuousWithinAt (fun _x : ℝ ↦ (0 : ℂ)) (Set.Icc a b) t)
     · simp only [hmn, if_false]
       have hncont := hcoeffCont n hn t ht
       have hmcont := hcoeffCont m hm t ht

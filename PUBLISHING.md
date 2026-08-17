@@ -23,11 +23,18 @@ provide numerically explicit values for the existential remainder constants.
 
 ## Current Verified Baseline
 
-- Lean toolchain: `leanprover/lean4:v4.29.1`
+- Lean toolchain: `leanprover/lean4:v4.33.0-rc2` (Zeta23 bridge branch)
 - Build command: `lake build`
 - Last verified local result: see the current verification log before release
 - Current code-level `sorry` count: 0
 - Remaining mathematical `def ... : Prop` targets: 12
+  (2 of these -- `selberg_odd_zero_proportion_target` and
+  `KnownResults.conrey_40_percent_zeros_on_critical_line_target` -- are
+  closed by the verified Anthropic `zeta-23-lean` Theorem B through the
+  in-repo bridge `HardyTheorem.Zeta23SelbergBridge`, which imports the
+  vendored, axiom-clean `Zeta23` library and closes both targets inside
+  this repository's kernel; see
+  [zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md))
 - Route-interface `def ... : Prop` declarations: 5
 - Reusable Prop predicates: 48
 - Unclassified Prop declarations: 0

@@ -169,10 +169,12 @@ private theorem deriv_completedZeta_one_sub (s : ℂ) :
   have hright : HasDerivAt (fun z : ℂ => xi (1 - z))
       (-deriv xi (1 - s)) s := by
     have hinner : HasDerivAt (fun z : ℂ => 1 - z) (-1) s := by
-      simpa using (hasDerivAt_const s (1 : ℂ)).sub (hasDerivAt_id' s)
+      convert (hasDerivAt_const s (1 : ℂ)).sub (hasDerivAt_id' s) using 1 <;>
+        all_goals (first | rfl | funext z <;> rfl | ring)
     have houter : HasDerivAt xi (deriv xi (1 - s)) (1 - s) :=
       differentiable_completedZeta.differentiableAt.hasDerivAt
-    convert houter.comp s hinner using 1 <;> simp [xi]
+    convert houter.comp s hinner using 1 <;>
+      all_goals (first | rfl | funext z <;> rfl | ring)
   have heq : deriv (fun z : ℂ => xi (1 - z)) s = deriv xi s := by
     rw [hfun]
   rw [hright.deriv] at heq

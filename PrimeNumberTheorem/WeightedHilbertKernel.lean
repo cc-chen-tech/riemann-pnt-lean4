@@ -22,7 +22,7 @@ theorem integrable_positiveKernelIncrement
   cases j with
   | zero => simpa [positiveKernelIncrement] using hg 0
   | succ j =>
-      simpa [positiveKernelIncrement] using (hg (j + 1)).sub (hg j)
+      simpa [positiveKernelIncrement, Pi.sub_def] using (hg (j + 1)).sub (hg j)
 
 /-- A pointwise increasing sequence of nonnegative kernels has nonnegative
 successive increments. -/

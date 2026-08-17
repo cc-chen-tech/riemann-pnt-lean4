@@ -228,7 +228,7 @@ theorem mem_vinogradovSolutionCorrectionSet_iff
       (-vinogradovPowerSumInt
         (fun i ↦ x (Fin.natAdd k i) +
           (p : ℤ) ^ (n + 1) * (z.1.1 i).val) j)
-    simpa [vinogradovSolutionCorrectionTarget] using this
+    simpa [vinogradovSolutionCorrectionTarget, sub_eq_add_neg] using this
 
 /-- A nonsingular left head block leaves at most `p^(k+2r)` complete
 one-step corrections of the pair. -/

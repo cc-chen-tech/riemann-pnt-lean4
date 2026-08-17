@@ -219,6 +219,6 @@ theorem sum_sq_stationaryMinReciprocalEnvelope_le
         ring
   rw [← hsum]
   rw [show S.card = (S.card - 1) + 1 by omega, Finset.sum_range_succ']
-  convert add_le_add (hfirst (f 0)) htail using 1 <;> ring
+  convert add_le_add (hfirst (f 0)) htail using 1 <;> ac_rfl
 
 end MathlibAux

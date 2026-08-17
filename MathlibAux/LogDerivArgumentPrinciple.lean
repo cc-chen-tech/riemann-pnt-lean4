@@ -64,7 +64,9 @@ theorem boundaryRectIntegral_logDeriv_eq_finite_zero_multiplicity_sum
       exact analyticAt_const.mul
         ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hzr))
     have hrawAnalytic : AnalyticAt ℂ raw z := by
-      simpa [raw] using hlogAnalytic.sub hsumAnalytic
+      dsimp [raw]
+      convert hlogAnalytic.sub hsumAnalytic using 1 <;>
+        all_goals (first | rfl | funext z <;> rfl)
     have hgEq : g z = raw z := by
       rw [show g z = toMeromorphicNFOn raw K z by rfl,
         toMeromorphicNFOn_eq_toMeromorphicNFAt hrawMeromorphic hzK,

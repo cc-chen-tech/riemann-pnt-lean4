@@ -67,7 +67,6 @@ theorem vinogradovAffineTail_modEq_zero {s : ℕ}
   obtain ⟨z, hz⟩ := pow_dvd_pow q hm.1
   refine ⟨(n.choose m : ℤ) * ξ ^ (n - m) * z *
     vinogradovPowerSumDifferenceInt x y m, ?_⟩
-  dsimp
   rw [hz]
   ring)
 
