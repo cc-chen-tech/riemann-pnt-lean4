@@ -3844,9 +3844,9 @@ lemma locallyIntegrableOn_psiErrorAboveOne :
 /-- Complex coercion preserves local integrability of the cutoff `ψ` error. -/
 lemma locallyIntegrableOn_psiErrorAboveOneComplex :
     LocallyIntegrableOn psiErrorAboveOneComplex (Set.Ioi (0 : ℝ)) := by
-  change LocallyIntegrableOn (fun x => ↑(psiErrorAboveOne x)) (Set.Ioi (0 : ℝ))
-  exact Complex.ofRealCLM.locallyIntegrableOn_comp
-    locallyIntegrableOn_psiErrorAboveOne
+  convert (Complex.ofRealCLM.locallyIntegrableOn_comp
+      locallyIntegrableOn_psiErrorAboveOne) using 1
+  rfl
 
 /-- A power-scale `ψ` error bound gives the same bound for the cutoff complex
 error at infinity. -/
@@ -3955,8 +3955,9 @@ theorem differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
   convert (hMellin.comp s
       (differentiableAt_id.neg : DifferentiableAt ℂ (fun z : ℂ => -z) s)) using 1
   · rfl
-  · funext z
+  · ext x y
     rfl
+  · rfl
 
 /-- On the half-plane of absolute convergence, the Mellin transform of the
 cutoff `ψ(x)-x` error is exactly the regularized logarithmic derivative
