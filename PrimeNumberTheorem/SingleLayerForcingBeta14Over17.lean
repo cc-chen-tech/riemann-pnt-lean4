@@ -68,10 +68,12 @@ theorem powerGrowth_logGap_contradiction
         rw [mul_assoc (A * X ^ d) (Real.log X ^ (-k)) (Real.log X ^ k)]
         simpa [hmid]
       have h3 : B * (Real.log X) ^ 4 * (Real.log X) ^ k = B * (Real.log X) ^ (4 + k) := by
-        have hpowadd : (Real.log X) ^ 4 * (Real.log X) ^ k = (Real.log X) ^ (4 + k) :=
-          Real.rpow_add hlogpos 4 k
+        have hpowadd : (Real.log X) ^ (4 : ℝ) * (Real.log X) ^ k = (Real.log X) ^ (4 + k) :=
+          (Real.rpow_add hlogpos 4 k).symm
+        have hnat : (Real.log X) ^ 4 = (Real.log X) ^ (4 : ℝ) :=
+          (Real.rpow_natCast (Real.log X) 4).symm
         rw [mul_assoc B (Real.log X ^ 4) (Real.log X ^ k)]
-        simpa [hpowadd]
+        rw [hnat, hpowadd]
       simpa [h2, h3] using h1
     have hupper : A * X ^ d ≤ B * X ^ (d / 2) :=
       le_trans hmul (mul_le_mul_of_nonneg_left hlogX hB)
@@ -82,10 +84,18 @@ theorem powerGrowth_logGap_contradiction
           rw [mul_assoc]
           have hXd : X ^ d = X ^ (d / 2) * X ^ (d / 2) := by
             have hsum : d = d / 2 + d / 2 := by ring
-            rw [hsum, Real.rpow_add hXpos]
+            conv_lhs => rw [hsum]
+            rw [Real.rpow_add hXpos]
           rw [← hXd]
           exact hupper
-        exact (mul_le_mul_right hXpos2).mp hmain
+        have hm : ((A * X ^ (d / 2)) * (X ^ (d / 2))) * (X ^ (d / 2))⁻¹ ≤
+            (B * X ^ (d / 2)) * (X ^ (d / 2))⁻¹ :=
+          mul_le_mul_of_nonneg_right hmain (inv_nonneg.mpr hXpos2.le)
+        have hcan : ((A * X ^ (d / 2)) * (X ^ (d / 2))) * (X ^ (d / 2))⁻¹ = A * X ^ (d / 2) := by
+          rw [mul_assoc, mul_inv_cancel₀ hXpos2.ne', mul_one]
+        have hcan2 : (B * X ^ (d / 2)) * (X ^ (d / 2))⁻¹ = B := by
+          rw [mul_assoc, mul_inv_cancel₀ hXpos2.ne', mul_one]
+        rwa [hcan, hcan2] at hm
       exact (le_div_iff₀' hA).mpr (by simpa [mul_comm] using hA')
     have hXfinal : X ≤ (B / A) ^ (2 / d) := by
       have hpos : 0 ≤ B / A := div_nonneg hB hA.le
@@ -94,7 +104,6 @@ theorem powerGrowth_logGap_contradiction
         rw [← Real.rpow_mul hXpos.le (d / 2) (2 / d)]
         have hmul' : (d / 2) * (2 / d) = 1 := by
           field_simp [hd.ne']
-          ring
         rw [hmul', Real.rpow_one]
       calc
         X = (X ^ (d / 2)) ^ (2 / d) := hbase
@@ -103,7 +112,7 @@ theorem powerGrowth_logGap_contradiction
     exact hXfinal
   have hcontr : ∀ᶠ X in atTop, (B / A) ^ (2 / d) < X :=
     Filter.eventually_gt_atTop ((B / A) ^ (2 / d))
-  filter_upwards [hbound, hcontr] with X hb hc
+  rcases Filter.Eventually.exists (Filter.Eventually.and hbound hcontr) with ⟨X, hb, hc⟩
   linarith
 
 /-- The single-layer contradiction: the forcing lower count at
@@ -125,7 +134,8 @@ theorem singleLayerForcing_carlson_contradiction
   have hγpos : 0 < lam * (1 - β) := mul_pos hlam (sub_pos.mpr hβ1)
   have hγ0 : 0 ≤ lam * (1 - β) := le_of_lt hγpos
   have hq0 : 0 ≤ 4 * σ * (1 - σ) :=
-    mul_nonneg (mul_nonneg (by norm_num : 0 ≤ (4 : ℝ)) hσ.le) (sub_nonneg.mpr hσ1.le)
+    mul_nonneg (mul_nonneg (by norm_num : 0 ≤ (4 : ℝ)) (le_trans (by norm_num : 0 ≤ (1 / 2 : ℝ)) hσ.le))
+      (sub_nonneg.mpr hσ1.le)
   have hCarlsonX : ∀ᶠ X in atTop,
       (ZeroDensity.zeroDensityCount σ (X ^ (lam * (1 - β))) : ℝ) ≤
         (hCarlson.C : ℝ) * ‖(X ^ (lam * (1 - β))) ^ (4 * σ * (1 - σ)) *
@@ -155,10 +165,17 @@ theorem singleLayerForcing_carlson_contradiction
         positivity
       rw [abs_of_nonneg hnonneg]
       have hγ4 : ((lam * (1 - β)) * Real.log X) ^ 4 = (lam * (1 - β)) ^ 4 * (Real.log X) ^ 4 := by
-        rw [Real.mul_rpow hγ0 hlogX0]
+        rw [mul_pow]
       rw [hγ4]
       ring
-    exact hlowX.trans (by simpa [hnorm4] using hupX)
+    exact hlowX.trans (by
+      calc
+        (ZeroDensity.zeroDensityCount σ (X ^ (lam * (1 - β))) : ℝ) ≤
+            (hCarlson.C : ℝ) * (X ^ (lam * (1 - β) * (4 * σ * (1 - σ))) * (lam * (1 - β)) ^ 4 *
+              (Real.log X) ^ 4) := by
+          simpa [hnorm4] using hupX
+        _ = (hCarlson.C : ℝ) * (lam * (1 - β)) ^ 4 *
+            X ^ (lam * (1 - β) * (4 * σ * (1 - σ))) * (Real.log X) ^ 4 := by ring)
   have hd : 0 < 2 * lam * (β - σ) - 2 * lam * (1 - β) * (4 * σ * (1 - σ)) := by
     linarith [hgap]
   have hfin : ∀ᶠ X in atTop,
@@ -220,7 +237,7 @@ theorem singleLayerForcing_carlson_contradiction
     rwa [hdiv', hdiv''] at hdiv
   have hB : 0 ≤ (hCarlson.C : ℝ) * (lam * (1 - β)) ^ 4 :=
     mul_nonneg (by exact_mod_cast hCarlson.C_nonneg)
-      (Real.rpow_nonneg hγ0 4)
+      (pow_nonneg hγ0 4)
   exact powerGrowth_logGap_contradiction
     (A := c) (B := (hCarlson.C : ℝ) * (lam * (1 - β)) ^ 4) (k := k)
     (d := 2 * lam * (β - σ) - 2 * lam * (1 - β) * (4 * σ * (1 - σ)))
@@ -239,7 +256,8 @@ theorem no_nontrivial_zero_re_gt_14_over_17_of_forcing
     (hforcing : ∀ β lam : ℝ, (14 / 17 : ℝ) < β → β < 1 → 0 < lam →
       ∃ c k : ℝ, 0 < c ∧ 0 < k ∧
         ∀ᶠ X in atTop,
-          c * X ^ (2 * lam * (β - 2 / 3) - lam * (1 - β) * (8 / 9 : ℝ)) * (Real.log X) ^ (-k) ≤
+          c * X ^ (2 * lam * (β - 2 / 3) - lam * (1 - β) * (4 * (2 / 3 : ℝ) * (1 - (2 / 3 : ℝ)))) *
+              (Real.log X) ^ (-k) ≤
             (ZeroDensity.zeroDensityCount (2 / 3 : ℝ) (X ^ (lam * (1 - β))) : ℝ)) :
     ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → ρ.re ≤ (14 / 17 : ℝ) := by
   intro ρ hρ
@@ -247,8 +265,8 @@ theorem no_nontrivial_zero_re_gt_14_over_17_of_forcing
   have hβ : (14 / 17 : ℝ) < ρ.re := lt_of_not_ge hgt
   have hβ1 : ρ.re < 1 := hρ.2.2
   rcases hforcing ρ.re 1 hβ hβ1 (by norm_num : 0 < (1 : ℝ)) with ⟨c, k, hc, hk, hlow⟩
-  have hgap : (1 - ρ.re) * (8 / 9 : ℝ) <
-      2 * (ρ.re - 2 / 3) - (1 - ρ.re) * (8 / 9) := by
+  have hgap : 1 * (1 - ρ.re) * (4 * (2 / 3 : ℝ) * (1 - (2 / 3 : ℝ))) <
+      2 * 1 * (ρ.re - 2 / 3) - 1 * (1 - ρ.re) * (4 * (2 / 3 : ℝ) * (1 - (2 / 3 : ℝ))) := by
     nlinarith [hβ]
   have hFalse := singleLayerForcing_carlson_contradiction
     (σ := 2 / 3) (β := ρ.re) (lam := 1) (c := c) (k := k)

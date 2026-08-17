@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.SingleLayerForcingBeta14Over17
+
+#print axioms PrimeNumberTheorem.powerGrowth_logGap_contradiction
+#print axioms PrimeNumberTheorem.singleLayerForcing_carlson_contradiction
+#print axioms PrimeNumberTheorem.no_nontrivial_zero_re_gt_14_over_17_of_forcing
