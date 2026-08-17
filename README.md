@@ -489,9 +489,10 @@ Riemann--von Mangoldt、Hardy、Carlson 和 Hilbert 型不等式都是经典数�
 
 ### 工具链
 
-- Lean: `leanprover/lean4:v4.29.1`
+- Lean: `leanprover/lean4:v4.33.0-rc2`
 - 构建系统: Lake
-- 基础库: Mathlib
+- 基础库: Mathlib(固定 commit `51e6992efd06126df61a496bebf8f49482a4e129`,
+  tag `v4.33.0-rc2`)
 
 当前 `lakefile.lean` 使用本地路径依赖：
 
@@ -499,9 +500,16 @@ Riemann--von Mangoldt、Hardy、Carlson 和 Hilbert 型不等式都是经典数�
 require mathlib from "./vendor/mathlib"
 ```
 
-因此新克隆需要在 `vendor/mathlib` 放置与 Lean 4.29.1 匹配的 Mathlib checkout，
-或者在发布工件中恢复为固定 commit 的 Git 依赖。详情见
+因此新克隆需要在 `vendor/mathlib` 放置上述 commit 的 Mathlib checkout
+(可选:`cd vendor/mathlib && lake exe cache get` 拉取预编译缓存),或者在
+发布工件中恢复为固定 commit 的 Git 依赖。`vendor/mathlib` 被 git 忽略;
+从本仓库的既有 worktree 整体复制该目录(含 `.lake` 缓存)也可以。
+详细步骤见 [INSTALL.md](INSTALL.md),发布要求见
 [Publishing Readiness](PUBLISHING.md)。
+
+> 仓库自带 vendored `Zeta23/`(Anthropic `zeta-23-lean`,Apache 2.0),
+> 已随 git 跟踪,无需额外准备;来源与许可见
+> [docs/research/zeta23-merge-provenance.md](docs/research/zeta23-merge-provenance.md)。
 
 ### 全量构建
 

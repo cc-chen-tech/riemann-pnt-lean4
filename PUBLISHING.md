@@ -189,6 +189,7 @@ by git, a public release should either:
 - switch `lakefile.lean` back to a pinned Mathlib git dependency and regenerate
   `lake-manifest.json`, or
 - provide explicit instructions for reconstructing `vendor/mathlib` at Mathlib
-  4.29.1.
+  `v4.33.0-rc2` (commit `51e6992efd06126df61a496bebf8f49482a4e129`); the
+  instructions in `INSTALL.md` already cover this.
 
 The first option is preferable for review and archiving.
