@@ -120,7 +120,8 @@ lemma log_riemannZeta_dirichlet_series (s : ℝ) (hs : 1 < s) :
     have hsum := summable_riemannZetaSummand (show 1 < (s : ℂ).re by rw [Complex.ofReal_re]; exact_mod_cast hs)
     have hsum' := hsum.of_norm
     have hsum_log := hsum'.clog_one_sub.neg.subtype {p | p.Prime}
-    simpa using hsum_log
+    exact (show Summable (fun p : Nat.Primes ↦ -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))) from
+      hsum_log)
   -- 5. 证明级数的虚部为 0
   have h_sum_im : (∑' p : Nat.Primes, -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).im = 0 := by
     rw [im_tsum h_sum]
@@ -329,7 +330,7 @@ lemma riemannZeta_gt_one_div_sub (σ : ℝ) (hσ : 1 < σ) :
   · push Not at hσ2
     have h_eq := ZetaAsymptotics.zeta_limit_aux1 hσ
     rw [riemannZeta_re_eq_tsum_real σ hσ]
-    have h_term_le : ZetaAsymptotics.term_tsum σ ≤ 1 - Real.eulerMascheroniConstant := by
+    have h_term_le : ZetaAsymptotics.termTSum σ ≤ 1 - Real.eulerMascheroniConstant := by
       have h_summable_1 := ZetaAsymptotics.term_tsum_one.summable
       have h_le : ∀ n, ZetaAsymptotics.term (n + 1) σ ≤ ZetaAsymptotics.term (n + 1) 1 := by
         intro n
@@ -352,13 +353,13 @@ lemma riemannZeta_gt_one_div_sub (σ : ℝ) (hσ : 1 < σ) :
           · exact Real.rpow_le_rpow_of_exponent_le hx_ge_one (by linarith)
       have h_summable_σ : Summable (fun n => ZetaAsymptotics.term (n + 1) σ) :=
         Summable.of_nonneg_of_le (fun n => ZetaAsymptotics.term_nonneg _ _) h_le h_summable_1
-      calc ZetaAsymptotics.term_tsum σ
+      calc ZetaAsymptotics.termTSum σ
           = ∑' n, ZetaAsymptotics.term (n + 1) σ := rfl
         _ ≤ ∑' n, ZetaAsymptotics.term (n + 1) 1 :=
             h_summable_σ.tsum_le_tsum h_le h_summable_1
         _ = 1 - Real.eulerMascheroniConstant := ZetaAsymptotics.term_tsum_one.tsum_eq
     have hγ := Real.one_half_lt_eulerMascheroniConstant
-    have h1 : σ * ZetaAsymptotics.term_tsum σ ≤ σ * (1 - Real.eulerMascheroniConstant) :=
+    have h1 : σ * ZetaAsymptotics.termTSum σ ≤ σ * (1 - Real.eulerMascheroniConstant) :=
       mul_le_mul_of_nonneg_left h_term_le (by linarith)
     have h2 : σ * (1 - Real.eulerMascheroniConstant) < 1 := by nlinarith
     linarith
@@ -369,9 +370,9 @@ lemma riemannZeta_re_le_sigma_div_sub (σ : ℝ) (hσ : 1 < σ) :
     (riemannZeta (σ : ℂ)).re ≤ σ / (σ - 1) := by
   rw [riemannZeta_re_eq_tsum_real σ hσ]
   have h_eq := ZetaAsymptotics.zeta_limit_aux1 hσ
-  have h_tsum_nonneg : 0 ≤ ZetaAsymptotics.term_tsum σ :=
+  have h_tsum_nonneg : 0 ≤ ZetaAsymptotics.termTSum σ :=
     tsum_nonneg (fun n => ZetaAsymptotics.term_nonneg (n + 1) σ)
-  have h_mul_nonneg : 0 ≤ σ * ZetaAsymptotics.term_tsum σ :=
+  have h_mul_nonneg : 0 ≤ σ * ZetaAsymptotics.termTSum σ :=
     mul_nonneg (by linarith) h_tsum_nonneg
   have h_le : (∑' n : ℕ, 1 / (↑n + 1 : ℝ) ^ σ) ≤ 1 / (σ - 1) + 1 := by linarith
   have h_rw : σ / (σ - 1) = 1 / (σ - 1) + 1 := by
@@ -580,7 +581,7 @@ lemma log_deriv_zeta_pos_real (σ : ℝ) (hσ : 1 < σ) :
   simp only [Complex.ofReal_im, zero_mul, Real.cos_zero, mul_one]
   have h_nonneg : ∀ n : ℕ, 0 ≤ Λ n / (↑n : ℝ) ^ σ := fun n ↦ by
     rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp [ArithmeticFunction.vonMangoldt]
+    · simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
     · exact div_nonneg ArithmeticFunction.vonMangoldt_nonneg
         (Real.rpow_nonneg (Nat.cast_nonneg n) σ)
   have h_term2 : (0 : ℝ) < Λ 2 / (2 : ℝ) ^ σ := by
@@ -619,7 +620,7 @@ derivative by the real-axis one. -/
 lemma norm_LSeries_vonMangoldt_term_eq_real (s : ℂ) (n : ℕ) :
     ‖LSeries.term (↗Λ) s n‖ = Λ n / (n : ℝ) ^ s.re := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [LSeries.term, ArithmeticFunction.vonMangoldt]
+  · simp [LSeries.term, ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
   · rw [LSeries.term_def₀ (by simp : (↗Λ) 0 = 0)]
     have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr hn
     rw [norm_mul]
@@ -682,8 +683,8 @@ lemma chebyshev_psi_nat_eq_sum_Icc_one (n : ℕ) :
   rw [Chebyshev.psi_eq_sum_Icc]
   rw [Nat.floor_natCast]
   rw [← Finset.insert_Icc_add_one_left_eq_Icc n.zero_le,
-    Finset.sum_insert (by aesop)]
-  simp [ArithmeticFunction.vonMangoldt]
+    Finset.sum_insert (by simp)]
+  simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
 
 /-- Chebyshev's upper bound gives the linear partial-sum estimate for
 von Mangoldt coefficients. This is the zeta-specific input for Abel/L-series
@@ -719,7 +720,8 @@ lemma norm_vonMangoldt_lseries_integral_le_chebyshev_pole (σ : ℝ) (hσ : 1 < 
     exact (integrableOn_Ioi_rpow_of_lt (by linarith : -σ < -1) zero_lt_one).const_mul _
   refine (MeasureTheory.norm_integral_le_of_norm_le (μ := volume.restrict (Set.Ioi (1 : ℝ)))
       (g := fun t : ℝ => (Real.log 4 + 4) * t ^ (-σ)) ?_ ?_).trans_eq ?_
-  · simpa using hint
+  · change Integrable (fun t : ℝ => (Real.log 4 + 4) * t ^ (-σ)) (volume.restrict (Set.Ioi (1 : ℝ)))
+    exact hint
   · refine MeasureTheory.ae_restrict_of_forall_mem measurableSet_Ioi ?_
     intro t ht
     have htpos : 0 < t := zero_lt_one.trans ht
@@ -728,8 +730,8 @@ lemma norm_vonMangoldt_lseries_integral_le_chebyshev_pole (σ : ℝ) (hσ : 1 < 
     have hsum_eq : ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, Λ k = Chebyshev.psi t := by
       rw [Chebyshev.psi_eq_sum_Icc]
       rw [← Finset.insert_Icc_add_one_left_eq_Icc (Nat.zero_le ⌊t⌋₊),
-        Finset.sum_insert (by aesop)]
-      simp [ArithmeticFunction.vonMangoldt]
+        Finset.sum_insert (by simp)]
+      simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
     have hsum_nonneg : 0 ≤ ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, Λ k :=
       Finset.sum_nonneg fun k hk => ArithmeticFunction.vonMangoldt_nonneg
     have hnorm_sum :
@@ -931,7 +933,7 @@ lemma log_deriv_zeta_antitone {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ :
   have h_pointwise : ∀ n : ℕ, Λ n / (↑n : ℝ) ^ σ₂ ≤ Λ n / (↑n : ℝ) ^ σ₁ := by
     intro n
     rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp [ArithmeticFunction.vonMangoldt]
+    · simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
     · apply div_le_div_of_nonneg_left ArithmeticFunction.vonMangoldt_nonneg
       · exact Real.rpow_pos_of_pos (Nat.cast_pos.mpr hn) σ₁
       · exact Real.rpow_le_rpow_of_exponent_le
@@ -943,7 +945,7 @@ lemma log_deriv_zeta_antitone {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ :
     exact (Complex.reCLM.summable h_ls).congr (fun n => by
       simp only [Complex.reCLM_apply, LSeries.term]
       split_ifs with hn
-      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · subst hn; simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
       · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
             natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
         simp only [Complex.ofReal_im, Complex.ofReal_re, zero_mul, Real.cos_zero, mul_one,
@@ -1133,7 +1135,7 @@ lemma log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
     exact h_map.congr (fun n ↦ by
       simp only [Complex.reCLM_apply, LSeries.term]
       split_ifs with hn
-      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · subst hn; simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
       · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
             natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
         ring)
@@ -1173,7 +1175,7 @@ lemma log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
   rw [h_lhs]
   exact tsum_nonneg (fun n ↦ by
     rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp [ArithmeticFunction.vonMangoldt]
+    · simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
     · have hΛ : 0 ≤ Λ n := ArithmeticFunction.vonMangoldt_nonneg
       have hden : 0 ≤ (n : ℝ) ^ σ :=
         (Real.rpow_pos_of_pos (Nat.cast_pos.mpr hn) σ).le
@@ -1264,7 +1266,7 @@ lemma log_deriv_zeta_finset_series_identity
     exact h_map.congr (fun n ↦ by
       simp only [Complex.reCLM_apply, LSeries.term]
       split_ifs with hn
-      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · subst hn; simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
       · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
             natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
         ring)
@@ -1335,7 +1337,7 @@ lemma log_deriv_zeta_nonneg_finset_combination
   rw [hseries]
   exact tsum_nonneg (fun n ↦ by
     rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp [ArithmeticFunction.vonMangoldt]
+    · simp [ArithmeticFunction.vonMangoldt, not_isPrimePow_zero]
     · have hΛ : 0 ≤ Λ n := ArithmeticFunction.vonMangoldt_nonneg
       have htrig : 0 ≤
           ∑ k ∈ S, a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ))) :=
