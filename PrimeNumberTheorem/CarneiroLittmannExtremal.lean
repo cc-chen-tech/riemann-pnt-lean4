@@ -196,7 +196,7 @@ theorem monotoneOn_carneiroLittmannPrimitive_Iic :
   · intro x hx
     exact (hasDerivAt_carneiroLittmannPrimitive x).hasDerivWithinAt
   · intro x hx
-    have hxNeg : x < 0 := by simpa only [interior_Iic] using hx
+    have hxNeg : x < 0 := by simpa only [interior_Iic, Set.mem_Iio] using hx
     exact carneiroLittmannDerivative_nonneg_of_neg hxNeg
 
 /-- The primitive decreases after its peak at zero. -/
@@ -210,7 +210,7 @@ theorem antitoneOn_carneiroLittmannPrimitive_Ici :
   · intro x hx
     exact (hasDerivAt_carneiroLittmannPrimitive x).hasDerivWithinAt
   · intro x hx
-    have hxPos : 0 < x := by simpa only [interior_Ici] using hx
+    have hxPos : 0 < x := by simpa only [interior_Ici, Set.mem_Ioi] using hx
     exact carneiroLittmannDerivative_nonpos_of_pos hxPos
 
 /-- The positive tail decays cubically. -/

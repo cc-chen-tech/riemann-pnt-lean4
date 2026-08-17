@@ -129,7 +129,8 @@ theorem integrable_carneiroLittmannSincSquareBase :
 
 theorem integrable_carneiroLittmannSincSquare :
     MeasureTheory.Integrable carneiroLittmannSincSquare := by
-  simpa only [carneiroLittmannSincSquare, add_comm] using
+  change MeasureTheory.Integrable (fun t => carneiroLittmannSincSquareBase (t + 1))
+  simpa only [add_comm] using
     integrable_carneiroLittmannSincSquareBase.comp_add_left 1
 
 /-- The normalized sinc is the Fourier integral of the unit interval.  This
@@ -314,7 +315,7 @@ theorem integral_carneiroLittmannTranslationDifference_eq_zero :
     (∫ x, carneiroLittmannTranslationDifference x) = 0 := by
   have hDen : Filter.Tendsto (fun T : ℝ => T - 1)
       Filter.atTop Filter.atTop := by
-    simpa only [sub_eq_add_neg] using
+    simpa only [sub_eq_add_neg, id_eq] using
       (Filter.tendsto_atTop_add_const_right Filter.atTop (-1 : ℝ)
         Filter.tendsto_id)
   have hUpper : Filter.Tendsto (fun T : ℝ => 2 / (T - 1))

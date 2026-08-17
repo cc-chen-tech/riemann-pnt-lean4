@@ -257,7 +257,9 @@ theorem gammaCanonicalProduct_eq_one_div_Gamma {z : ℂ} (hz : 0 < z.re) :
       simpa only [zero_mul] using hc.mul_const z
     have h := (Complex.continuous_exp.tendsto 0).comp hmul
     convert h using 1
-    simp
+    · funext n
+      congr 1
+    · simp [Complex.exp_zero]
   have hright : Tendsto
       (fun n : ℕ => (Complex.GammaSeq z n)⁻¹ *
         Complex.exp (((Real.eulerMascheroniConstant : ℂ) -
@@ -545,7 +547,10 @@ theorem norm_tsum_digammaGaussTerm_le {z : ℂ} (hz : 0 < z.re)
         intro n
         have h := norm_digammaGaussTerm_le_norm_div_sq hz (n + N)
         convert h using 1
-        all_goals (push_cast; ring)
+        · rfl
+        · push_cast
+          rw [one_div, div_eq_mul_inv]
+          ring_nf
       _ = ‖z‖ * (∑' n : ℕ, 1 / (N + n + 1 : ℝ) ^ 2) := tsum_mul_left
       _ ≤ ‖z‖ * (1 / (N : ℝ)) :=
         mul_le_mul_of_nonneg_left (tsum_one_div_nat_add_sq_le hN) (norm_nonneg z)

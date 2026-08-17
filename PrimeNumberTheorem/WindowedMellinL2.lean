@@ -74,7 +74,7 @@ theorem integral_cpow_eq_integralFactor {ρ : ℂ} {X lam γ : ℝ}
     have hval : (z * (t : ℂ) ^ (z - 1)) * z⁻¹ = (t : ℂ) ^ (z - 1) := by
       rw [← div_eq_mul_inv]
       field_simp [hz']
-    simpa [hval] using hm
+    simpa [hval, div_eq_mul_inv] using hm
   have hcont : ContinuousOn (fun t : ℝ => (t : ℂ) ^ (z - 1)) (Set.uIcc X (X ^ lam)) := by
     exact ContinuousOn.cpow_const
       (f := fun t : ℝ => (t : ℂ)) (b := z - 1)
@@ -109,7 +109,7 @@ theorem integral_rpow_sub_one_eq {X lam β : ℝ} (hX : 0 < X) (hlampos : 0 < X 
     have hval : (β * t ^ (β - 1)) * β⁻¹ = t ^ (β - 1) := by
       rw [← div_eq_mul_inv]
       field_simp [hβ]
-    simpa [hval] using hm
+    simpa [hval, div_eq_mul_inv] using hm
   have hcont : ContinuousOn (fun t : ℝ => t ^ (β - 1)) (Set.uIcc X (X ^ lam)) := by
     intro t ht
     exact (Real.continuousAt_rpow_const t (β - 1) (Or.inl (ne_of_gt (hmem_pos t ht)))).continuousWithinAt

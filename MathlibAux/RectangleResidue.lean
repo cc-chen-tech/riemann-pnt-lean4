@@ -559,6 +559,7 @@ theorem rectangleBoundaryIntegral_inv_zero {R : ℝ} (hR : 0 < R) :
   rw [hdecomp, hhorizontal0, hvertical]
   ring
 
+set_option maxHeartbeats 2000000 in
 /-- The positively oriented boundary integral of the simple-pole kernel
 `1 / (z-c)` around a square centered at `c` is `2πi`. -/
 theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R) :
@@ -580,8 +581,20 @@ theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R
           congr 1
           apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
       _ = ∫ u : ℝ in -R..R, ((u : ℂ) - (R : ℂ) * I)⁻¹ := by
-        convert intervalIntegral.integral_comp_add_right
-          (fun u : ℝ => ((u : ℂ) - (R : ℂ) * I)⁻¹) (-c.re) using 1 <;> ring_nf
+        have hsub := intervalIntegral.integral_comp_add_right
+          (f := fun u : ℝ => ((u : ℂ) - (R : ℂ) * I)⁻¹) (d := -c.re)
+          (a := c.re - R) (b := c.re + R)
+        have hcong : (∫ x : ℝ in c.re - R..c.re + R, (↑(x - c.re) - ↑R * I)⁻¹) =
+            ∫ x : ℝ in c.re - R..c.re + R, ((x + -c.re : ℂ) - (R : ℂ) * I)⁻¹ := by
+          apply intervalIntegral.integral_congr
+          intro x hx
+          congr 1
+          push_cast
+          ring
+        rw [hcong]
+        rw [show (c.re - R) + -c.re = -R by ring,
+          show (c.re + R) + -c.re = R by ring] at hsub
+        simpa using hsub
   have htop :
       (∫ x : ℝ in (c.re - R)..(c.re + R),
           (((x : ℂ) + (c.im + R) * I) - c)⁻¹) =
@@ -598,8 +611,20 @@ theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R
           congr 1
           apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
       _ = ∫ u : ℝ in -R..R, ((u : ℂ) + (R : ℂ) * I)⁻¹ := by
-        convert intervalIntegral.integral_comp_add_right
-          (fun u : ℝ => ((u : ℂ) + (R : ℂ) * I)⁻¹) (-c.re) using 1 <;> ring_nf
+        have hsub := intervalIntegral.integral_comp_add_right
+          (f := fun u : ℝ => ((u : ℂ) + (R : ℂ) * I)⁻¹) (d := -c.re)
+          (a := c.re - R) (b := c.re + R)
+        have hcong : (∫ x : ℝ in c.re - R..c.re + R, (↑(x - c.re) + ↑R * I)⁻¹) =
+            ∫ x : ℝ in c.re - R..c.re + R, ((x + -c.re : ℂ) + (R : ℂ) * I)⁻¹ := by
+          apply intervalIntegral.integral_congr
+          intro x hx
+          congr 1
+          push_cast
+          ring
+        rw [hcong]
+        rw [show (c.re - R) + -c.re = -R by ring,
+          show (c.re + R) + -c.re = R by ring] at hsub
+        simpa using hsub
   have hright :
       (∫ y : ℝ in (c.im - R)..(c.im + R),
           ((c.re : ℂ) + (R : ℂ) + (y : ℂ) * I - c)⁻¹) =
@@ -616,8 +641,20 @@ theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R
           congr 1
           apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
       _ = ∫ v : ℝ in -R..R, ((R : ℂ) + (v : ℂ) * I)⁻¹ := by
-        convert intervalIntegral.integral_comp_add_right
-          (fun v : ℝ => ((R : ℂ) + (v : ℂ) * I)⁻¹) (-c.im) using 1 <;> ring_nf
+        have hsub := intervalIntegral.integral_comp_add_right
+          (f := fun v : ℝ => ((R : ℂ) + (v : ℂ) * I)⁻¹) (d := -c.im)
+          (a := c.im - R) (b := c.im + R)
+        have hcong : (∫ v : ℝ in c.im - R..c.im + R, ((R : ℂ) + (↑(v - c.im)) * I)⁻¹) =
+            ∫ v : ℝ in c.im - R..c.im + R, ((R : ℂ) + ((v + -c.im : ℂ)) * I)⁻¹ := by
+          apply intervalIntegral.integral_congr
+          intro v hv
+          congr 1
+          push_cast
+          ring
+        rw [hcong]
+        rw [show (c.im - R) + -c.im = -R by ring,
+          show (c.im + R) + -c.im = R by ring] at hsub
+        simpa using hsub
   have hleft :
       (∫ y : ℝ in (c.im - R)..(c.im + R),
           ((c.re : ℂ) - (R : ℂ) + (y : ℂ) * I - c)⁻¹) =
@@ -634,10 +671,25 @@ theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R
           congr 1
           apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
       _ = ∫ v : ℝ in -R..R, (-(R : ℂ) + (v : ℂ) * I)⁻¹ := by
-        convert intervalIntegral.integral_comp_add_right
-          (fun v : ℝ => (-(R : ℂ) + (v : ℂ) * I)⁻¹) (-c.im) using 1 <;> ring_nf
+        have hsub := intervalIntegral.integral_comp_add_right
+          (f := fun v : ℝ => (-(R : ℂ) + (v : ℂ) * I)⁻¹) (d := -c.im)
+          (a := c.im - R) (b := c.im + R)
+        have hcong : (∫ v : ℝ in c.im - R..c.im + R, (-(R : ℂ) + (↑(v - c.im)) * I)⁻¹) =
+            ∫ v : ℝ in c.im - R..c.im + R, (-(R : ℂ) + ((v + -c.im : ℂ)) * I)⁻¹ := by
+          apply intervalIntegral.integral_congr
+          intro v hv
+          congr 1
+          push_cast
+          ring
+        rw [hcong]
+        rw [show (c.im - R) + -c.im = -R by ring,
+          show (c.im + R) + -c.im = R by ring] at hsub
+        simpa using hsub
+  set_option maxHeartbeats 1000000 in
   rw [rectangleBoundaryIntegral, hbottom, htop, hright, hleft]
-  simpa [rectangleBoundaryIntegral] using rectangleBoundaryIntegral_inv_zero hR
+  set_option maxHeartbeats 1000000 in
+  simpa [rectangleBoundaryIntegral, sub_eq_add_neg, Complex.zero_re, Complex.zero_im, smul_eq_mul]
+    using rectangleBoundaryIntegral_inv_zero hR
 
 /-- The square boundary integral of `1 / (z-p)` is `2πi` whenever `p` lies
 strictly inside the square.  This is the rectangle simple-pole kernel needed

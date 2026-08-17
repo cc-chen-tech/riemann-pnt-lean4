@@ -86,7 +86,7 @@ theorem positiveOutsideClusterLayerLowOrdinate_multiplicityMass_le
     refine ⟨hmem.1, ?_⟩
     rw [abs_of_pos hmem.2.1]
     exact himU
-  · intro rho _ _
+  · intro rho _ _ 
     exact
       (Nat.cast_nonneg (analyticOrderNatAt riemannZeta rho) :
         (0 : ℝ) ≤ (analyticOrderNatAt riemannZeta rho : ℝ))
