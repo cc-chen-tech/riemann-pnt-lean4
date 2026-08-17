@@ -508,7 +508,9 @@ lemma logIntegral_asymptotic :
           rw [this]
           simpa using (tendsto_const_nhds (x := (4 : ℝ))).mul tendsto_inv_atTop_zero
         have h4 := h3.comp h2
-        simpa using h4
+        convert h4 using 1
+        funext x
+        rfl
       have h2 : Tendsto (fun x : ℝ ↦ (Real.sqrt x / (Real.log 2)^2) * (Real.log x / x)) atTop (𝓝 0) := by
         have : (fun x : ℝ ↦ (Real.sqrt x / (Real.log 2)^2) * (Real.log x / x))
             = (fun x : ℝ ↦ (1 / (Real.log 2)^2) * (Real.log x / Real.sqrt x)) := by
@@ -2363,7 +2365,10 @@ lemma sqrt_mul_log_isLittleO_logIntegral :
           (Real.sqrt x * (Real.log x)^2 / x) /
             (logIntegral x * Real.log x / x))
         atTop (𝓝 0) := by
-    simpa using hnum.div hden (by norm_num : (1 : ℝ) ≠ 0)
+    convert (hnum.div hden (by norm_num : (1 : ℝ) ≠ 0)) using 1
+    · funext x
+      rfl
+    · norm_num
   have heq :
       (fun x : ℝ =>
           (Real.sqrt x * (Real.log x)^2 / x) /
@@ -3833,14 +3838,15 @@ lemma locallyIntegrableOn_psiErrorAboveOne :
   intro x hx
   rcases herr x hx with ⟨u, hu, hint⟩
   exact ⟨u, hu, by
-    simpa [psiErrorAboveOne] using hint.indicator measurableSet_Ici⟩
+    change IntegrableOn ((Set.Ici 1).indicator fun x => chebyshevPsi x - x) u
+    exact hint.indicator measurableSet_Ici⟩
 
 /-- Complex coercion preserves local integrability of the cutoff `ψ` error. -/
 lemma locallyIntegrableOn_psiErrorAboveOneComplex :
     LocallyIntegrableOn psiErrorAboveOneComplex (Set.Ioi (0 : ℝ)) := by
-  simpa [psiErrorAboveOneComplex, Function.comp_def] using
-    Complex.ofRealCLM.locallyIntegrableOn_comp
-      locallyIntegrableOn_psiErrorAboveOne
+  change LocallyIntegrableOn (fun x => ↑(psiErrorAboveOne x)) (Set.Ioi (0 : ℝ))
+  exact Complex.ofRealCLM.locallyIntegrableOn_comp
+    locallyIntegrableOn_psiErrorAboveOne
 
 /-- A power-scale `ψ` error bound gives the same bound for the cutoff complex
 error at infinity. -/
@@ -3946,9 +3952,11 @@ theorem differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
       (by simp only [Complex.neg_re]; linarith)
       (psiErrorAboveOneComplex_isBigO_zero (-s.re - 1))
       (by simp only [Complex.neg_re]; linarith)
-  simpa only [Function.comp_apply] using
-    hMellin.comp s
-      (differentiableAt_id.neg : DifferentiableAt ℂ (fun z : ℂ => -z) s)
+  convert (hMellin.comp s
+      (differentiableAt_id.neg : DifferentiableAt ℂ (fun z : ℂ => -z) s)) using 1
+  · rfl
+  · funext z
+    rfl
 
 /-- On the half-plane of absolute convergence, the Mellin transform of the
 cutoff `ψ(x)-x` error is exactly the regularized logarithmic derivative
