@@ -104,3 +104,6 @@ lake env lean comparator/PrintAxioms/PairCeiling.lean
    仓库侧**的工作，见 `zeta23-selberg-bridge.md`，不属于 Zeta23 的声明。
 3. 工具链差异（本仓库 4.29.1 vs Zeta23 4.33.0-rc2）意味着直接 merge 前
    必须经过 `research/zeta23-toolchain-triage` 的迁移试测（决策门）。
+   **该决策门已通过**:`research/zeta23-toolchain-triage` 于 2026-08 合并入
+   `main`(merge commit `f92f9965`),桥接定理在内核内闭合两目标,合并后
+   全量桥接闭包构建通过。

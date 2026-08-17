@@ -123,11 +123,17 @@ selberg_odd_zero_proportion_target
 - 本仓库开放目标出处：`HardyTheorem/CriticalLineMultiplicity.lean`（250 行）、
   `RiemannExplorer.lean`（235 行）
 
-## 验证状态（2026-08-14）
+## 验证状态（2026-08-16，已合并 main）
 
 - Zeta23 完整构建通过（`ZETA23_RESUME10_EXIT=0`，312 个模块 olean）；
 - 桥接输入定理 `Zeta23.thmB₀_mult_cumulative` 的 `#print axioms` 审计：
   **仅 `[propext, Classical.choice, Quot.sound]`**，无 `sorry`/自定义公理；
   签名与本文件引理 1–3 的蓝图完全吻合（cumulative 形式，`(2/3 − ε)` 系数）；
-- 因此本文件描述的两目标闭合链在**输入定理层面已验证**；剩余工作是把
-  Zeta23 vendor 进本仓库（工具链 4.33）并组装引理 1–3（见"合并蓝图"）。
+- **桥接已完成并合并到 `main`**(merge commit `f92f9965`):`HardyTheorem/Zeta23SelbergBridge.lean`
+  组装了引理 1–3,定理 `selberg_odd_zero_proportion_target_of_zeta23` 与
+  `conrey_40_percent_zeros_on_critical_line_target_of_zeta23` 均在仓库内核内
+  证明,显式常数 `7/48`,公理审计仅三个标准公理;`Test/Zeta23SelbergBridgeContract.lean`
+  与 `Test/Zeta23SelbergBridgeAxiomAudit.lean` 随附;
+- 合并后 `main` 全量桥接闭包构建通过(`lake build`,8885 jobs);
+- 上游 LICENSE/NOTICE 已随 `Zeta23/` vendor;全部来源与归属见
+  [zeta23-merge-provenance.md](zeta23-merge-provenance.md)。

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30",
+  "timestamp": "2026-08-16",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -10,7 +10,8 @@
         "file": "HardyTheorem/CriticalLineMultiplicity.lean",
         "line": 250,
         "shape": "<unknown>",
-        "depends_on": []
+        "depends_on": [],
+        "closed_by_zeta23_bridge": true
       },
       {
         "name": "integral_asymptotic_target",
@@ -96,7 +97,8 @@
         "file": "RiemannExplorer.lean",
         "line": 235,
         "shape": "∃c>0, ∃T0, ∀T≥T0, zeroCountOnCriticalLine T ≥ c*(T/(2π)*log T)",
-        "depends_on": []
+        "depends_on": [],
+        "closed_by_zeta23_bridge": true
       }
     ],
     "Global": [
@@ -505,5 +507,21 @@
   "route_interface_true_body_count": 0,
   "reusable_predicate_count": 48,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 65
+  "all_scanned_prop_defs_count": 65,
+  "zeta23_closure": {
+    "note": "In-repo closure via the Zeta23 bridge (merged to main, commit f92f9965). Inputs: Anthropic zeta-23-lean Theorem B (Apache 2.0, axiom-clean, upstream commit 3635e748) + this repository own all-height RvM. Bridge: HardyTheorem.Zeta23SelbergBridge; explicit constant 7/48. Axiom audit: [propext, Classical.choice, Quot.sound]. See docs/research/zeta23-merge-provenance.md.",
+    "closed_targets": [
+      {
+        "name": "selberg_odd_zero_proportion_target",
+        "qualified_name": "HardyTheorem.selberg_odd_zero_proportion_target",
+        "proved_by": "HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23"
+      },
+      {
+        "name": "conrey_40_percent_zeros_on_critical_line_target",
+        "qualified_name": "KnownResults.conrey_40_percent_zeros_on_critical_line_target",
+        "proved_by": "HardyTheorem.Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23"
+      }
+    ],
+    "declaration_count_note": "The 12 Prop declarations remain in the sources; 2 of them are now closed by the bridge. The count here keeps the declaration total for script compatibility."
+  }
 }

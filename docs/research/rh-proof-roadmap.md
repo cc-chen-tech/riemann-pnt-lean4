@@ -39,6 +39,21 @@ The current repository already contains useful RH-adjacent material:
   - Provides local numerical data for `pi(x)`, `theta(x)`, `psi(x)`, and
     `Li(x)`.
 
+## Critical-line proportion targets: closed externally (2026-08)
+
+`HardyTheorem.selberg_odd_zero_proportion_target` and
+`KnownResults.conrey_40_percent_zeros_on_critical_line_target` are now closed
+inside this repository's kernel by `HardyTheorem.Zeta23SelbergBridge`
+(merged to `main`, commit `f92f9965`).  The analytic input is Anthropic's
+machine-checked Theorem B of
+[`zeta-23-lean`](https://github.com/anthropics/zeta-23-lean) (at least 2/3 of
+the zeros simple and on the critical line; Apache 2.0, axiom-clean), combined
+with this repository's own all-height Riemann--von Mangoldt lower bound; the
+bridge is definition-level assembly with explicit constant `7/48`.  This
+changes none of the RH routes below: the proportion theorems bound
+critical-line zeros but do not exclude zeros off the line.  Attribution and
+license: [zeta23-merge-provenance.md](zeta23-merge-provenance.md).
+
 ## Main Principle
 
 Do not try to write "the proof of RH" directly. Instead, promote one statement

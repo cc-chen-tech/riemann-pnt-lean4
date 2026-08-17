@@ -407,7 +407,7 @@ Current status:
 
 ### Contour and residue theorem
 
-Mathlib 4.29.1 has useful contour pieces:
+Mathlib 4.33.0-rc2 has useful contour pieces:
 
 1. `Complex.integral_boundary_rect_eq_zero_of_differentiable_on_off_countable`.
 2. `Complex.integral_boundary_rect_eq_zero_of_continuousOn_of_differentiableOn`.

@@ -12,8 +12,14 @@ PNT 误差振荡。围绕该振荡，`main` 还包含每个充分靠后的固定
 二阶矩下界、有限零点簇的碰撞安全局部 `L2` 强制性工具，以及把有限簇接入真实
 有限高度显式公式的精确 `psi` 二阶矩传递。最新合并链还证明：在任意固定长度的
 对数窗口上，可以选取一个整窗共用的良好截断高度，使归一化有限高度近似余项一致
-趋于零，并使其局部二阶矩任意小。项目没有证明
-Riemann 假设或 Vinogradov--Korobov 零自由区域。
+趋于零，并使其局部二阶矩任意小。此外，`main` 通过
+[Zeta23 桥接](HardyTheorem/Zeta23SelbergBridge.lean)在仓库内核内闭合了
+Selberg 奇重零点正比例目标与 Conrey 40% 目标：输入是 Anthropic
+[`zeta-23-lean`](https://github.com/anthropics/zeta-23-lean) 的机器检查
+Theorem B(至少 2/3 的零点简单且在临界线上,Apache 2.0)与本仓库自己的全高度
+Riemann--von Mangoldt 下界,桥接本身是定义级组装(来源与归属见
+[docs/research/zeta23-merge-provenance.md](docs/research/zeta23-merge-provenance.md))。
+项目没有证明 Riemann 假设或 Vinogradov--Korobov 零自由区域。
 
 > **状态边界：** 本页把 `main` 已验证定理、研究分支结果和开放目标分开列出。
 > `def ... : Prop`、条件接口或研究路线不会被计作已经证明的数学定理。
@@ -133,7 +139,16 @@ chain removes midpoint jumps almost everywhere, controls the closed terms,
 selects one good truncation height for all real samples in a fixed logarithmic
 window, and proves that the normalized finite-height approximation remainder
 is uniformly arbitrarily small there, hence also arbitrarily small in local
-`L2`. This does not control the complementary zero package.
+`L2`. This does not control the complementary zero package.  Through the
+Zeta23 bridge (`HardyTheorem.Zeta23SelbergBridge`), `main` additionally
+closes the Selberg odd-multiplicity positive-proportion target and the
+Conrey 40% target inside this repository's kernel: the inputs are the
+independently machine-checked Theorem B of Anthropic's
+[`zeta-23-lean`](https://github.com/anthropics/zeta-23-lean) (at least 2/3
+of the zeros are simple and on the critical line; Apache 2.0) and this
+repository's own all-height Riemann--von Mangoldt lower bound, and the
+bridge itself is definition-level assembly with the explicit proportion
+constant `7/48` (attribution: [provenance note](docs/research/zeta23-merge-provenance.md)).
 
 The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
@@ -145,8 +160,11 @@ Weil-criterion routes; these are reported separately from the merged theorem
 surface.
 
 The project does **not** prove the Riemann Hypothesis, the
-Vinogradov--Korobov zero-free region, Selberg's positive-proportion theorem,
-or numerically explicit final constants. Classical mathematical theorems are
+Vinogradov--Korobov zero-free region, or numerically explicit final
+constants. Selberg's positive-proportion theorem and Conrey's percentage
+theorem are closed in-repo through the external machine-checked Zeta23
+Theorem B (see above); the analytic content of that theorem is Anthropic's,
+not this repository's. Classical mathematical theorems are
 not presented as new results; the contribution is their machine-checked Lean
 formalization, the proof architecture required to connect them, and the
 resulting reusable library.
@@ -179,6 +197,8 @@ resulting reusable library.
 | 真实 `psi` 二阶矩的“有限零点簇减完整余项”下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterExplicitFormulaL2.lean) · [实现计划](docs/superpowers/plans/2026-07-29-vk-edge-zero-cluster-explicit-l2.md) |
 | 固定对数窗口上归一化有限高度显式公式余项一致趋于零 | `PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt` | [源码](PrimeNumberTheorem/ExplicitFormulaNormalizedWindowRemainder.lean) · [说明](docs/research/explicit-formula-normalized-window-remainder.md) |
 | 固定对数窗口上归一化有限高度近似误差的局部二阶矩任意小 | `PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterApproximationL2.lean) · [说明](docs/research/vk-edge-approximation-l2-decay.md) |
+| Selberg 奇重数临界线零点正比例(`c · T log T` 尺度) | `HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`(显式常数 `7/48`) | [桥接源码](HardyTheorem/Zeta23SelbergBridge.lean) · [桥接蓝图](docs/research/zeta23-selberg-bridge.md) · [来源说明](docs/research/zeta23-merge-provenance.md) |
+| Conrey 40% 临界线正比例 | `HardyTheorem.Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23` | [桥接源码](HardyTheorem/Zeta23SelbergBridge.lean) · 同上 |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
@@ -403,8 +423,13 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 - Riemann 假设；
 - Vinogradov--Korobov 零自由区域；
 - 无条件平方根尺度素数误差；
-- Selberg 的临界线零点正比例定理；
-- Conrey 的百分比定理；
+- Selberg 的临界线零点正比例定理——**已通过外部机器检查证明在仓库内核内闭合**:
+  Anthropic `zeta-23-lean` 的 Theorem B(至少 2/3 零点简单且在临界线上)+
+  本仓库定义级桥接(`HardyTheorem.Zeta23SelbergBridge`,常数 7/48);定理的解析
+  内核属于 Anthropic,见[来源说明](docs/research/zeta23-merge-provenance.md);
+- Conrey 的百分比定理——同上,经仓库既有的
+  `selberg_zero_proportion_target_of_odd` 与
+  `conrey_40_percent_zeros_on_critical_line_target_of_selberg` 蕴含链闭合;
 - Pintz 的均值阶或最大阶振荡定理；
 - 带最终数值常数的显式 Strong PNT 或零自由区域。
 
