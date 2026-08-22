@@ -149,21 +149,18 @@ axiom seedDeletedResidualLemma_axiom
 
 /-! ## Section 3b: closed-form proof (no axiom needed)
 
-The axiom above can be replaced with a real proof using the standard
-"continuous function achieves max → far-natural-point" argument:
+The axiom above can be replaced with a real proof using the QUASI-PERIODICITY
+argument:
 
 1. The cluster main term is a finite sum of cosines (times an amplitude
-   envelope), hence continuous in log m.
-2. The "reduced" function f(x) = |cluster_main(S, x)|/amp(x) is continuous
-   on ℝ (excluding x = 0, but we work in the limit x → ∞).
-3. The max of f is positive (numerical verification shows ≥ 0.531 for N=14).
-4. By continuity, for any c < max, the set {x : f(x) > c} is open and non-empty.
-5. For any M, the interval (M, M+1) intersects this set, so there are
-   arbitrarily large x with f(x) > c.  In particular, for natural m close
-   to those x, f(m) > c.
+   envelope), hence quasi-periodic in log m.
+2. For a quasi-periodic function f, the set {x : f x > c} is invariant under
+   translation by the period, hence unbounded if non-empty.
+3. For any c < sup f, this set is non-empty (by continuity + open set at max).
+4. For any M, the set {natural m ≥ M : f m > c} is unbounded, hence non-empty.
+5. Therefore the far-natural-point property holds.
 
-This is the standard "achieves max → far-natural-point" argument for
-continuous functions.
+This is the standard "continuous + periodic → far-natural-point" argument.
 -/
 
 /-- The cluster main term divided by amplitude.  This is the "reduced" function
