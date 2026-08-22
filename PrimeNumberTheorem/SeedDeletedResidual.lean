@@ -168,16 +168,29 @@ whose far-natural-point property is what we need to prove. -/
 noncomputable def reducedClusterMain (S : Finset ℂ) (x : ℝ) : ℝ :=
   complexMagnitudeCluster S x / targetZeroPowerAmplitude 0 x
 
-/-- A continuous function on ℝ that achieves a value > c above any M. -/
+/-- A continuous function on ℝ that achieves a value > c above any M.
+    Standard δ-ε argument. -/
 lemma continuous_above_any_M
     (f : ℝ → ℝ) (hf : Continuous f) (c : ℝ) (M : ℕ)
     (hachieves : ∃ x₀, f x₀ > c) :
     ∃ x : ℝ, M < x ∧ f x > c := by
   obtain ⟨x₀, hx₀⟩ := hachieves
-  -- f is continuous, so for ε = (f x₀ - c) / 2 > 0, ∃ δ > 0 such that
-  -- |x - x₀| < δ → |f x - f x₀| < ε
-  -- Then for x with |x - x₀| < δ, f x > f x₀ - ε > c
-  sorry
+  -- f is continuous at x₀
+  have hcont : ContinuousAt f x₀ := hf.continuousAt
+  -- Let ε := (f x₀ - c) / 2 > 0
+  have hε_pos : 0 < (f x₀ - c) / 2 := by positivity
+  -- ∃ δ > 0 such that |x - x₀| < δ → |f x - f x₀| < ε
+  obtain ⟨δ, hδ_pos, hδ⟩ := Metric.continuousAt_iff.mp hcont ((f x₀ - c) / 2) hε_pos
+  -- Choose x = max (M : ℝ) (x₀ + δ / 2). Then x > M and |x - x₀| ≤ δ / 2 < δ.
+  set x := max (M : ℝ) (x₀ + δ / 2)
+  have hMx : (M : ℝ) < x := by exact_mod_cast M.lt_add_one.trans_le (le_max_left _ _)
+  have h_lt : |x - x₀| ≤ δ / 2 := by
+    rw [abs_le]
+    refine ⟨by linarith [le_max_right _ _], by linarith [le_max_right _ _]⟩
+  have h_lt' : |x - x₀| < δ := lt_of_le_of_lt h_lt (half_lt_self hδ_pos)
+  have h_cont : |f x - f x₀| < (f x₀ - c) / 2 := hδ h_lt'
+  have h_close : f x > f x₀ - (f x₀ - c) / 2 := by linarith [h_cont]
+  linarith [hx₀, h_close]
 
 /-- The "far-natural-point" property: for any continuous f and any c < max,
 there are arbitrarily large natural m with f(m) > c. -/
