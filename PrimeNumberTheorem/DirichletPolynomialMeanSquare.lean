@@ -150,8 +150,11 @@ private theorem integral_exp_mul_complex {a b : ℝ} {c : ℂ} (hc : c ≠ 0) :
     conv => congr
     rw [← mul_div_cancel_right₀ (Complex.exp (c * x)) hc]
     apply ((Complex.hasDerivAt_exp _).comp x _).div_const c
-    simpa only [mul_one] using
-      ((hasDerivAt_id (x : ℂ)).const_mul _).comp_ofReal
+    have hlin := (by
+      simpa only [mul_one] using
+        ((hasDerivAt_id (x : ℂ)).const_mul c).comp_ofReal)
+    exact (show HasDerivAt (fun y : ℝ => (c * (y : ℂ))) (c : ℂ) x from by
+      simpa using hlin)
   rw [intervalIntegral.integral_deriv_eq_sub' _
     (funext fun x => (hderiv x).deriv)
     (fun x _ => (hderiv x).differentiableAt)]

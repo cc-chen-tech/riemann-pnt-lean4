@@ -40,10 +40,26 @@ private lemma hasDerivAt_gammaRInvRegularFactor_zero :
       simp [Complex.hasDerivAt_Gamma_one.deriv, Gamma_one]
     have hcomp := houter.hasDerivAt.comp 0 hinner
     rw [houterDeriv] at hcomp
-    convert hcomp using 1 <;> simp <;> ring
+    convert hcomp using 1
+    · rfl
+    · rfl
+    · funext s
+      rfl
+    · ring_nf
   have hmul := (hp.const_mul (1 / 2 : ℂ)).mul hg
-  convert hmul using 1 <;>
-    simp [p, g] <;> ring
+  convert hmul using 1
+  · rfl
+  · rfl
+  · funext s
+    rfl
+  · have hp0 : p 0 = 1 := by
+      dsimp [p]
+      norm_num
+    have hg0 : g 0 = 1 := by
+      dsimp [g]
+      norm_num [Gamma_one]
+    rw [hp0, hg0]
+    ring_nf
 
 private lemma inv_Gammaℝ_eq_mul_regularFactor (s : ℂ) :
     (Gammaℝ s)⁻¹ = s * gammaRInvRegularFactor s := by

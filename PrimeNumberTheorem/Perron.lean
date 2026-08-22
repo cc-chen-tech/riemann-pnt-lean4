@@ -38,8 +38,9 @@ theorem integral_mul_cexp_Ioi (a : ℂ) (ha : a.re < 0) :
       dsimp [H]
       convert ((((Complex.hasDerivAt_exp (a * u)).comp (u : ℂ)
         ((hasDerivAt_id (u : ℂ)).const_mul a)).mul
-          ((((hasDerivAt_id (u : ℂ)).const_mul a).sub_const 1))).div_const (a ^ 2)) using 1 <;>
-        simp only [Function.comp_apply, id_eq] <;> field_simp <;> ring
+          ((((hasDerivAt_id (u : ℂ)).const_mul a).sub_const 1))).div_const (a ^ 2)) using 1
+      all_goals (first | rfl | (funext y; rfl) |
+        (simp only [Function.comp_apply, id_eq]; field_simp; ring) | (field_simp; ring))
     simpa [F, H] using hH.comp_ofReal
   have hlim : Filter.Tendsto F Filter.atTop (𝓝 0) := by
     have hexp : Tendsto (fun u : ℝ => Complex.exp (a * u)) atTop (𝓝 0) := by
@@ -132,11 +133,12 @@ theorem integrable_fourier_smoothPerronStep (c : ℝ) (hc : 0 < c) :
   have hk : 2 * Real.pi / c ≠ 0 := by positivity
   have h := (integrable_inv_one_add_sq.comp_mul_left' hk).const_mul (c ^ (-2 : ℤ))
   convert h using 1
-  funext w
-  rw [show (c : ℂ) + 2 * Real.pi * w * Complex.I =
-      (c : ℂ) + ((2 * Real.pi * w : ℝ) : ℂ) * Complex.I by push_cast; ring]
-  rw [norm_div, norm_one, norm_pow, Complex.sq_norm, Complex.normSq_add_mul_I]
-  field_simp
+  all_goals (first | rfl |
+    (funext w
+     rw [show (c : ℂ) + 2 * Real.pi * w * Complex.I =
+        (c : ℂ) + ((2 * Real.pi * w : ℝ) : ℂ) * Complex.I by push_cast; ring]
+     rw [norm_div, norm_one, norm_pow, Complex.sq_norm, Complex.normSq_add_mul_I]
+     field_simp))
 
 theorem fourierInv_secondOrderPerronKernel (c : ℝ) (hc : 0 < c) (u : ℝ) :
     𝓕⁻ (fun w : ℝ => (1 / ((c : ℂ) + 2 * Real.pi * w * Complex.I) ^ 2 : ℂ)) u =

@@ -136,8 +136,8 @@ theorem integrable_scaledKernelSequence {C : ℝ} {kappa : ℂ}
     (profile : PositiveHilbertKernelProfile C kappa)
     {delta : ℕ → ℝ} {n : ℕ} (hdelta : 0 < delta n) :
     Integrable (scaledKernelSequence profile delta n) := by
-  simpa only [scaledKernelSequence] using
-    profile.integrable_kernel.comp_mul_left' hdelta.ne'
+  change Integrable (fun x => profile.kernel (delta n * x))
+  exact profile.integrable_kernel.comp_mul_left' hdelta.ne'
 
 /-- Every member of a scaled positive-kernel sequence is nonnegative. -/
 theorem scaledKernelSequence_nonneg {C : ℝ} {kappa : ℂ}

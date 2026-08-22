@@ -121,7 +121,7 @@ theorem norm_integral_cexp_phase_le_of_monotone_deriv_local
     intro x hx
     have hp_diff : DifferentiableAt ℝ (deriv F) x :=
       ((hF x hx).derivWithin (m := 1) (by norm_num)).differentiableAt (by norm_num)
-    simpa [q] using hp_diff.inv (hp_ne hx)
+    exact (show DifferentiableAt ℝ q x from hp_diff.inv (hp_ne hx))
   have hq_mono : MonotoneOn q (Icc a b) ∨ AntitoneOn q (Icc a b) := by
     rcases hsign with hpos | hneg
     · rcases hmono with hpmono | hpanti
@@ -394,8 +394,11 @@ private lemma hasDerivAt_fourierMellinPhase
   unfold fourierMellinPhase
   convert (((hasDerivAt_id x).const_mul (2 * Real.pi * (k : ℝ))).sub
     ((Real.hasDerivAt_log hx).const_mul t)) using 1
-  all_goals simp only [inv_eq_one_div]
-  all_goals ring
+  · rfl
+  · rfl
+  · funext y
+    rfl
+  · ring_nf
 
 /-- A nonzero Fourier mode gains one inverse power of its frequency after it
 is combined with Mellin oscillation.  The range `|t| ≤ a` keeps every mode
@@ -788,17 +791,6 @@ private theorem norm_integral_cexp_phase_le_of_second_deriv_local
     rw [hconj_integral, norm_star] at hbound
     exact hbound
 
-/-- A local-smoothness version of the second-derivative oscillatory estimate.
-Only two derivatives on the integration interval are required. -/
-theorem norm_integral_cexp_phase_le_of_second_deriv_on_Icc
-    {F : ℝ → ℝ} {a b r : ℝ}
-    (hab : a ≤ b) (hr : 0 < r)
-    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
-    (hsecond : (∀ x ∈ Icc a b, r ≤ iteratedDeriv 2 F x) ∨
-      (∀ x ∈ Icc a b, iteratedDeriv 2 F x ≤ -r)) :
-    ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤ 12 / Real.sqrt r :=
-  norm_integral_cexp_phase_le_of_second_deriv_local hab hr hF hsecond
-
 /-- A second-derivative oscillatory integral estimate with an explicit absolute constant.
 The second derivative may have either sign, but its sign is fixed on the interval. -/
 theorem norm_integral_cexp_phase_le_of_second_deriv
@@ -829,6 +821,10 @@ theorem deriv_hardyPhase {n : ℕ} (hn : n ≠ 0) {t : ℝ} (ht : 0 < t) :
       HasDerivAt (fun x : ℝ => x / (2 * Real.pi * ((n : ℝ) ^ 2)))
         (1 / (2 * Real.pi * ((n : ℝ) ^ 2))) t := by
     convert (hasDerivAt_id t).div_const (2 * Real.pi * ((n : ℝ) ^ 2)) using 1
+    · rfl
+    · rfl
+    · funext y
+      rfl
   have h_log := h_arg.log harg_ne
   have h_linear : HasDerivAt (fun x : ℝ => x / 2) (1 / 2) t := by
     simpa using (hasDerivAt_id t).div_const 2
@@ -840,6 +836,10 @@ theorem deriv_hardyPhase {n : ℕ} (hn : n ≠ 0) {t : ℝ} (ht : 0 < t) :
             ((1 / (2 * Real.pi * ((n : ℝ) ^ 2))) /
               (t / (2 * Real.pi * ((n : ℝ) ^ 2))))) t := by
     convert ((h_linear.mul (h_log.sub_const 1)).sub_const (Real.pi / 8)) using 1
+    · rfl
+    · rfl
+    · funext y
+      rfl
   rw [h_phase.deriv]
   field_simp [ne_of_gt ht, hc]
   ring
@@ -863,6 +863,10 @@ theorem iteratedDeriv_two_hardyPhase
       HasDerivAt (fun x : ℝ => x / (2 * Real.pi * ((n : ℝ) ^ 2)))
         (1 / (2 * Real.pi * ((n : ℝ) ^ 2))) t := by
     convert (hasDerivAt_id t).div_const (2 * Real.pi * ((n : ℝ) ^ 2)) using 1
+    · rfl
+    · rfl
+    · funext y
+      rfl
   have h_g :
       HasDerivAt g
         ((1 / 2) *
@@ -885,8 +889,8 @@ theorem contDiffAt_hardyPhase_two
     contDiffAt_id.div_const _
   have hlinear : ContDiffAt ℝ 2 (fun x : ℝ => x / 2) t :=
     contDiffAt_id.div_const 2
-  simpa [hardyPhase] using
-    (hlinear.mul ((harg.log harg_ne).sub contDiffAt_const)).sub contDiffAt_const
+  change ContDiffAt ℝ 2 (fun x : ℝ => x / 2 * (Real.log (x / (2 * Real.pi * ((n : ℝ) ^ 2))) - 1) - Real.pi / 8) t
+  exact (hlinear.mul ((harg.log harg_ne).sub contDiffAt_const)).sub contDiffAt_const
 
 /-- The Hardy first-approximation phase satisfies a uniform second-derivative estimate
 on every dyadic interval `[T, 2T]` with `T ≥ 1`. -/

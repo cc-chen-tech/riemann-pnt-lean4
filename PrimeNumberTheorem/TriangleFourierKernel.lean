@@ -107,17 +107,24 @@ private theorem intervalIntegral_affine_mul_cexp {a b c : ℂ}
         (c * Complex.exp (c * x)) x := by
       convert ((Complex.hasDerivAt_exp (c * x)).comp x
         (((hasDerivAt_id (x : ℂ)).const_mul c).comp_ofReal)) using 1
-      all_goals ring
+      · rfl
+      · funext y
+        rfl
+      · ring
     have hAffine : HasDerivAt (fun y : ℝ => a + b * y) b x := by
       convert (((hasDerivAt_id (x : ℂ)).const_mul b).comp_ofReal.const_add a) using 1
-      all_goals ring
+      · rfl
+      · funext y
+        rfl
+      · ring_nf
     have hBracket : HasDerivAt
         (fun y : ℝ => (a + b * y) / c - b / c ^ 2) (b / c) x := by
       convert (hAffine.div_const c).sub_const (b / c ^ 2) using 1
     convert hExp.mul hBracket using 1
-    all_goals
-      dsimp [P]
-      field_simp [hc]
+    · rfl
+    · funext y
+      rfl
+    · field_simp [hc]
       ring
   rw [intervalIntegral.integral_deriv_eq_sub' P (funext fun x => (hP x).deriv)
     (fun x _ => (hP x).differentiableAt)]

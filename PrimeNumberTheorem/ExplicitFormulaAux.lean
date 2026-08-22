@@ -580,12 +580,9 @@ theorem hasSum_trivialZeroResidueSeries {x : ℝ} (hx : 1 < x) :
     (show |x ^ (-2 : ℝ)| < 1 by rw [abs_of_pos hypos]; exact hylt)
   have hhalf := hlog.mul_left (1 / 2 : ℝ)
   convert hhalf using 1
-  · funext n
-    rw [← Real.rpow_natCast]
-    rw [← Real.rpow_mul hxpos.le]
-    norm_num
-    field_simp
-  · ring
+  all_goals (first | rfl |
+    (funext n; rw [← Real.rpow_natCast]; rw [← Real.rpow_mul hxpos.le]; norm_num; field_simp) |
+    ring)
 
 /-- Complex form of the trivial-zero residue series.  The summand is exactly
 `-x^ρ/ρ` for `ρ = -2(n+1)`. -/
