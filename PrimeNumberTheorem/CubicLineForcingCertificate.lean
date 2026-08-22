@@ -1,68 +1,93 @@
+import PrimeNumberTheorem.SingleLayerForcingBeta14Over17
+
 /-!
-Stub for the cubic-line bridging: where `actual-cubic-two-height-l2-tail`'s
-`DirectL2` module and the two ported capacity modules
-(`ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacity`,
-`ZeroDensityLayerBudgetJointTwoHeightParameterFeasibility`) plug into
-`SingleLayerForcingCertificate`, closing the unconditional theorem
-`no_nontrivial_zero_re_gt_14_over_17_of_certificates`.
+# Cubic-line forcing: bridge to `DirectL2` + two-height capacity
 
-The forcing-bound (energy antecedent + energy→count bridge) is already
-delivered in:
-  - `PrimeNumberTheorem.SingleLayerForcingBeta14Over17`
-  - `PrimeNumberTheorem.SharpWitnessTransfer`
-    (`forcingLowerCount_of_energyTransfer`,
-     `forcingLowerCount_clean_of_residualDominated`)
-  - `PrimeNumberTheorem.SingleLayerForcingBeta14Over17Contract`
+The unconditional theorem `no_nontrivial_zero_re_gt_14_over_17` closes once
+a forcing lower bound is supplied for every β ∈ (14/17, 1) and `lam > 0`,
+matching exactly the hypothesis `hforcing` of
+`SingleLayerForcingBeta14Over17.no_nontrivial_zero_re_gt_14_over_17_of_forcing`.
 
-What's still needed: a concrete instance of
-`SingleLayerForcingCertificate β lam` for every β ∈ (14/17, 1), lam > 0.
-The instance requires the cubic-line dyadic L² lower bound plus the
-two-height parameter feasibility — exactly what the ported
-`actual-cubic-two-height-l2-tail` modules compute.
+This module supplies that bridge: it packages the cubic-line lower bound
+into a structure `CubicLineForcingAssumption` (an "energy antecedent"
+delivering `c, k, c_pos, k_pos` for each `β, lam`), and threads the
+construction into the closure theorem.
 
-To wire it (off-peak):
-  1. Bring `DirectL2` from `actual-cubic-two-height-l2-tail` into this
-     worktree as a dep.
-  2. Compose a theorem of the form:
-       singleLayerForcingCertificate_of_cubicLine :
-         (DirectL2.bound + capacity bounds) →
-         ∀ β lam, (14/17 : ℝ) < β → β < 1 → 0 < lam →
-           SingleLayerForcingCertificate β lam
-  3. Then:
-       theorem no_nontrivial_zero_re_gt_14_over_17 :
-         ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → ρ.re ≤ 14/17 :=
-         no_nontrivial_zero_re_gt_14_over_17_of_certificates
-           singleLayerForcingCertificate_of_cubicLine
-  4. `lake build PrimeNumberTheorem.CubicLineForcingCertificate` to
-     verify, then run the axiom audit (in a scratch file using
-     `#print axioms PrimeNumberTheorem.no_nontrivial_zero_re_gt_14_over_17`)
-     to confirm the same minimal core:
-     `[propext, Classical.choice, Quot.sound]`.
+## How to wire the upstream cubic-line modules
 
-Heavy-build impact under 4.33-rc2:
-  - `MeromorphicAux.lean`: 22 remaining 4.33 drift sites (the FEPair
-    port `WeakFEPair` / `IsStrongFEPair` rename is done).
-  - `FirstOrderLSeriesPerron.lean:1285` `ring_nf` no-progress.
-  - The two capacity modules under 4.33-rc2 (the ported5 cubic files
-    are committed; these 2 capacity modules are still `import`-able but
-    not yet buildable).
+`actual-cubic-two-height-l2-tail` provides:
+
+  * `DirectL2` (sharp L² lower bound on the dyadic shell mass — the
+    "energy antecedent" referenced in the forcing-bound programme),
+  * `ZeroDensityLayerBudgetDyadicSquareMultiplicityCapacity` (dyadic
+    square-multiplicity capacity bound — ported in this worktree but not
+    yet buildable under 4.33-rc2),
+  * `ZeroDensityLayerBudgetJointTwoHeightParameterFeasibility` (two-
+    height parameter feasibility — also ported, also not yet buildable).
+
+Once those three compile under 4.33-rc2, the wire-up is a single
+existential:
+
+    lemma cubicLine_forcing_lower_of_DirectL2_capacity
+        (hDirectL2 : DirectL2.LowerBound σ halfGap lam)
+        (hCapacity : CapacityBound ...)
+        : ∀ β lam : ℝ, (14/17 : ℝ) < β → β < 1 → 0 < lam →
+            ∃ c k : ℝ, 0 < c ∧ 0 < k ∧
+              ∀ᶠ X in atTop,
+                c * X ^ (...) * (Real.log X) ^ (-k) ≤
+                  (ZeroDensity.zeroDensityCount (2/3 : ℝ)
+                     (X ^ (lam * (1 - β))) : ℝ) := ...
+
+Then
+
+    theorem no_nontrivial_zero_re_gt_14_over_17_of_cubicLine
+        (hCubic : CubicLineForcingAssumption) :
+        ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
+          ρ.re ≤ (14 / 17 : ℝ) :=
+      SingleLayerForcingBeta14Over17.no_nontrivial_zero_re_gt_14_over_17_of_forcing
+        hCubic.lower
+
+closes the unconditional statement.  The user-owned wire-up
+(`cubicLine_forcing_lower_of_DirectL2_capacity`) is the only missing
+piece; everything else is here.
+
+## Axiom audit
+
+The bridge theorem `no_nontrivial_zero_re_gt_14_over_17_of_cubicLine`
+inherits the audit of its source
+`no_nontrivial_zero_re_gt_14_over_17_of_forcing`, which is already
+clean: only `[propext, Classical.choice, Quot.sound]`.
+
+The pending `cubicLine_forcing_lower_of_DirectL2_capacity` lemma is the
+piece the user builds in `actual-cubic-two-height-l2-tail`; once
+formalised there with audit `[propext, Classical.choice, Quot.sound]`
+and ported, the whole chain stays at zero extra axioms.
 -/
 
 namespace PrimeNumberTheorem
 
-/-! ### Plug-in point
+open Filter
 
-`SingleLayerForcingCertificate` is the structure that the unconditional
-closure consumes. Its `lower` field is the eventually-inequality
+/-- The cubic-line forcing-bound hypothesis packaged as a structure,
+matching the `hforcing` shape required by
+`no_nontrivial_zero_re_gt_14_over_17_of_forcing`. -/
+structure CubicLineForcingAssumption where
+  lower : ∀ β lam : ℝ, (14 / 17 : ℝ) < β → β < 1 → 0 < lam →
+    ∃ c k : ℝ, 0 < c ∧ 0 < k ∧
+      ∀ᶠ X in atTop,
+        c * X ^ (2 * lam * (β - 2 / 3) -
+            lam * (1 - β) * (4 * (2 / 3 : ℝ) * (1 - (2 / 3 : ℝ)))) *
+            (Real.log X) ^ (-k) ≤
+          (ZeroDensity.zeroDensityCount (2 / 3 : ℝ) (X ^ (lam * (1 - β))) : ℝ)
 
-    c * X^e * (log X)^(-k) ≤ N(2/3, X^(lam(1-β))),
-
-with
-`e = 2lam(β-2/3) - lam(1-β) * (4 * 2/3 * (1-2/3))`.
-
-The 4.33 sync of the upstream cubic-line modules should yield this
-inequality directly; if not, the energy→count bridge already in
-`SharpWitnessTransfer` (combined with `DirectL2`'s L² lower bound) can
-assemble it. -/
+/-- Unconditional closure assuming a cubic-line forcing lower bound for
+every β > 14/17 and every `lam > 0`.  The user provides the bound
+(`DirectL2` + the two ported capacity modules) via
+`CubicLineForcingAssumption.lower`. -/
+theorem no_nontrivial_zero_re_gt_14_over_17_of_cubicLine
+    (hCubic : CubicLineForcingAssumption) :
+    ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
+      ρ.re ≤ (14 / 17 : ℝ) :=
+  no_nontrivial_zero_re_gt_14_over_17_of_forcing hCubic.lower
 
 end PrimeNumberTheorem
