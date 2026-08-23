@@ -53,8 +53,10 @@ theorem finiteLayerBudgetAlong_tendsto_zero
     apply tendsto_finset_sum layers
     intro i hi
     exact h i hi
-  simpa only [finiteLayerBudgetAlong, finiteLayerBudget,
-      Finset.sum_const_zero] using hsum
+  change Filter.Tendsto (finiteLayerBudgetAlong layers height layerTerm)
+    Filter.atTop (nhds 0)
+  unfold finiteLayerBudgetAlong finiteLayerBudget
+  simpa [Finset.sum_const_zero] using hsum
 
 theorem FiniteDynamicLayerDecay.total_tendsto_zero
     {ι : Type*} [DecidableEq ι]

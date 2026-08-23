@@ -371,7 +371,8 @@ theorem exists_nat_abs_chebyshevPsi0_sub_id_le_exp_sqrt_log :
           (1 + Real.log (A + 6)) ^ 2) / T + left := by
     have hformula1 := hformula0
     simp [finiteTrivialZeroSum] at hformula1
-    simpa [approx, x, left] using hformula1
+    simpa [approx, x, left, ExplicitFormulaAux.chebyshevPsi0,
+      PrimeNumberTheorem.chebyshevPsi0] using hformula1
   have hformulaClean :
       ‖approx‖ ≤ 13 * Cc * x * u ^ 4 * Real.exp (-a * u) +
         4 * Kl * u :=

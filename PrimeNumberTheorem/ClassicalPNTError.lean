@@ -84,7 +84,8 @@ theorem exists_nat_eventually_abs_chebyshevPsi0_sub_id_le_exp_neg_sqrt_log :
           (pntSqrtLog m ^ 4 * Real.exp (-a * pntSqrtLog m) +
             pntSqrtLog m ^ 2 *
               Real.exp (-(1 / 2 : ℝ) * pntSqrtLog m)) := by
-      simpa only [pntSqrtLog] using hpoint
+      simpa only [pntSqrtLog, ExplicitFormulaAux.chebyshevPsi0,
+        PrimeNumberTheorem.chebyshevPsi0] using hpoint
     _ ≤ C * (m : ℝ) *
         (Real.exp (-c * pntSqrtLog m) +
           Real.exp (-c * pntSqrtLog m)) :=

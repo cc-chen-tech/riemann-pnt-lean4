@@ -48,7 +48,7 @@ theorem isVinogradovMixedAffineCongruenceInt_iff_joinTuple
           (fun i ↦ eta + (p : ℤ) ^ b * v i) j)
     convert hadd using 1 <;>
       simp only [vinogradovPowerSumDifferenceInt,
-        vinogradovPowerSumInt] <;> ring
+        vinogradovPowerSumInt, Nat.cast_pow] <;> ring
   · intro h j
     have hj := h j
     rw [vinogradovPowerSumInt_joinTuple,
@@ -59,7 +59,7 @@ theorem isVinogradovMixedAffineCongruenceInt_iff_joinTuple
           (fun i ↦ eta + (p : ℤ) ^ b * v i) j))
     convert hsub using 1 <;>
       simp only [vinogradovPowerSumDifferenceInt,
-        vinogradovPowerSumInt] <;> ring
+        vinogradovPowerSumInt, Nat.cast_pow] <;> ring
 
 /-- Centering a mixed modular system at `eta` exposes the exact factor
 `p^(b(j+1))` contributed by the restricted block. -/
@@ -89,7 +89,7 @@ theorem IsVinogradovMixedAffineCongruenceInt.centered_powerSum_modEq
     have hadd := hl.add_right
       (vinogradovPowerSumInt y l +
         vinogradovPowerSumInt (fun i ↦ eta + q * v i) l)
-    convert hadd using 1 <;> ring
+    convert hadd using 1 <;> try norm_num <;> ring
   have htranslated := hjoin.translate (-eta)
   have hleft :
       (fun i : Fin (r + t) ↦
@@ -124,7 +124,7 @@ theorem IsVinogradovMixedAffineCongruenceInt.centered_powerSum_modEq
         vinogradovPowerSumInt (fun i ↦ y i - eta) j)
       ((p : ℤ) ^ (b * (j.val + 1)) *
         (vinogradovPowerSumInt u j - vinogradovPowerSumInt v j)) by
-      convert hrearranged using 1 <;> ring)
+      convert hrearranged using 1 <;> simp [Nat.cast_pow] <;> ring)
 
 /-- Once the common ambient exponent is no larger than the restricted-block
 factor, the centered main power-sum difference vanishes modulo `p^B`. -/

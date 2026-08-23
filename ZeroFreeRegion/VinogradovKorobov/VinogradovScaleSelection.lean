@@ -31,7 +31,7 @@ theorem vinogradovCubicEnvelope_le_sixtyFour_mul
   have hroot :
       1 ≤ Nat.nthRoot 3 N := by
     rw [Nat.le_nthRoot_iff (by norm_num : 3 ≠ 0)]
-    simpa using hN
+    exact Nat.succ_le_of_lt hN
   have hrootCube :
       Nat.nthRoot 3 N ^ 3 ≤ N :=
     Nat.pow_nthRoot_le (.inl (by norm_num : 3 ≠ 0))

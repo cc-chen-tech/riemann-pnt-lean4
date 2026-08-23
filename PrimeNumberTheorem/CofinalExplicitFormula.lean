@@ -1429,12 +1429,12 @@ theorem exists_cofinal_nontrivialZeroSum_tendsto
       (fun n : ℕ => ∫ σ : ℝ in (-1)..2,
         explicitFormulaIntegrand x ((σ : ℂ) + I * T n))
       atTop (nhds 0) := by
-    simpa [T] using hcentralTop0.comp hetop
+    simpa [T, Function.comp_def] using hcentralTop0.comp hetop
   have hcentralBottom : Tendsto
       (fun n : ℕ => ∫ σ : ℝ in (-1)..2,
         explicitFormulaIntegrand x ((σ : ℂ) - I * T n))
       atTop (nhds 0) := by
-    simpa [T] using hcentralBottom0.comp hetop
+    simpa [T, Function.comp_def, sub_eq_add_neg] using hcentralBottom0.comp hetop
   let A : ℕ → ℝ := fun n => -(2 * ((e n : ℕ) : ℝ) + 1)
   let a : ℝ → ℝ := fun t => A (Function.invFun T t)
   have ha_eval (n : ℕ) : a (T n) = A n := by
@@ -1593,7 +1593,7 @@ theorem exists_cofinal_nontrivialZeroSum_tendsto
   · intro n
     simpa [A, e] using hformula' n
   · simpa [A, e] using hremainder
-  · simpa only [sub_eq_add_neg, add_zero] using hzeroSum.congr' (by
+  · simpa only [sub_eq_add_neg, add_zero, mainTerm] using hzeroSum.congr' (by
       filter_upwards [] with n
       have heq := hformula' n
       dsimp [mainTerm]
