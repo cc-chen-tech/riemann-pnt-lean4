@@ -1179,6 +1179,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonFiniteSeedPerturbedBidirectionalPNTTransfer,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetVisibleClusterCoefficientMass,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonFiniteSeedExtensionCap,
+    `PrimeNumberTheorem.SeedDeletedResidual,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonFiniteSeedCoefficientMassBidirectionalPNTTransfer,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonBoundaryMassAllocation,
     `PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonPositiveZeroIndexInjective,
