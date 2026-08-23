@@ -79,6 +79,14 @@ def test_two_thirds_crossing_belongs_to_linear_comparison_not_ingham() -> None:
     assert density.best_recorded == Fraction(3, 4)
 
 
+@pytest.mark.parametrize("sigma", [Fraction(1, 4), Fraction(1, 2)])
+def test_zero_density_exponents_rejects_left_of_route_domain(sigma: Fraction) -> None:
+    with pytest.raises(
+        ValueError, match="sigma must lie strictly between 1/2 and 1"
+    ):
+        zero_density_exponents(sigma)
+
+
 def test_packet_growth_uses_logarithmic_generation_rate() -> None:
     assert growth_exponent(c=2, k=2) == pytest.approx(1.0)
     with pytest.raises(ValueError, match="k must be greater than 1"):

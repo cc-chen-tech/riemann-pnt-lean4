@@ -432,10 +432,13 @@ def zero_density_exponents(sigma: Number) -> ZeroDensityExponents:
 
     Ingham's classical exponent is 3(1-sigma)/(2-sigma).  The frequently
     quoted linear curve 8(1-sigma)/3 is recorded separately: it crosses the
-    Carlson curve at 2/3 but is not the exact Ingham exponent.
+    Carlson curve at 2/3 but is not the exact Ingham exponent.  This ledger is
+    restricted to the route's right-of-critical-line domain; it must not rank
+    these bounds for sigma at or left of 1/2.
     """
 
-    _require_unit_interval("sigma", sigma)
+    if not Fraction(1, 2) < sigma < 1:
+        raise ValueError("sigma must lie strictly between 1/2 and 1")
     carlson = 4 * sigma * (1 - sigma)
     ingham = 3 * (1 - sigma) / (2 - sigma)
     guth_maynard = 15 * (1 - sigma) / (3 + 5 * sigma)
