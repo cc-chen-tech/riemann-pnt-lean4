@@ -97,7 +97,7 @@ theorem exists_explicitFormula_regularization_without_zero
   · have hinv : AnalyticOnNhd ℂ (fun z : ℂ => z⁻¹) K :=
       analyticOnNhd_id.inv hzero
     by_cases h0 : 0 ∈ poles0
-    · simpa [g, h0, baseR] using
+    · simpa [g, h0, baseR] using!
         hanalytic.add (hinv.mul analyticOnNhd_const)
     · simpa [g, h0, baseR] using hanalytic
   · intro z hzK hzPoles
