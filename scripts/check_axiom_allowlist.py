@@ -9,10 +9,7 @@ from typing import Dict, Iterable, List, Set
 
 ROOT = Path(__file__).resolve().parents[1]
 
-ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound",
-                  "PrimeNumberTheorem.SeedDeletedResidual.seedDeletedResidualLemma_axiom",
-                  "PrimeNumberTheorem.SeedDeletedResidual.exists_countAdvantage_equalRealPart",
-                  "PrimeNumberTheorem.SeedDeletedResidual.framework_partial_witness_complexMagnitude"}
+ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_AUDIT_MODULES = [
     "Test.MultiplicityAxiomAudit",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
