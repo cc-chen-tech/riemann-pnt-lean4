@@ -86,9 +86,14 @@ theorem exists_parametricTwoStripPNTUpperSchedule
       Nonempty
         (FixedSigmaPNTUpperSchedule C rate
           (pntParametricTwoStripSigma threshold)) := by
-  simpa using
-    (exists_fixedSigmaPNTUpperSchedule hrate
-      (pntParametricTwoStripBucketInput threshold) (fun _ => rfl))
+  have hsigma :
+      (pntParametricTwoStripBucketInput threshold 0).sigma =
+        pntParametricTwoStripSigma threshold := by
+    funext i
+    rfl
+  rw [← hsigma]
+  exact exists_fixedSigmaPNTUpperSchedule hrate
+    (pntParametricTwoStripBucketInput threshold) (fun _ => rfl)
 
 /-- For every fixed strip boundary in `(1 / 2, 1)`, some positive
 Pintz-Carlson height rate gives decay of the actual relative PNT error on
