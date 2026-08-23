@@ -92,6 +92,7 @@ noncomputable def normalizedPsiErrorForwardGaussianSecondMoment
 private theorem measurable_normalizedPsiError_initialEnergy (rho : ℂ) :
     Measurable (normalizedPsiError rho) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using
       Chebyshev.psi_mono.measurable
   unfold normalizedPsiError

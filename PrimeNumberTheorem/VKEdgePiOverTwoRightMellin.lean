@@ -296,11 +296,10 @@ theorem integrable_rightEdgeMellinProduct
       Complex.exp
         (((Real.log x : ℝ) : ℂ) * (-(s0 + 1)))
   have hP : Integrable P := by
-    dsimp [P, rightEdgeGaussianFactor]
-    convert
+    change Integrable (fun t : ℝ => rightEdgeGaussianFactor A m w t) volume
+    simpa [rightEdgeGaussianFactor] using
       integrable_verticalPolynomialGaussian_add_mul
-        A hm w 2 (16 * m) using 1 <;>
-      push_cast
+        A hm w 2 (16 * m)
   have hs0 : 1 < s0.re := by
     dsimp [s0]
     linarith

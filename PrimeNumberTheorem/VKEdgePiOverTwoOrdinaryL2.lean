@@ -235,6 +235,10 @@ theorem ordinarySecondMoment_lower_of_weightedSecondMoment
         (fun y =>
           (K / Real.sqrt m) * normalizedPsiError rho y ^ 2)
         (localizedGaussianLogWindow q d m) := by
+    change Integrable
+      (fun y : ℝ =>
+        (K / Real.sqrt m) * normalizedPsiError rho y ^ 2)
+      (volume.restrict (localizedGaussianLogWindow q d m))
     simpa [mul_comm] using hordinaryInt.const_mul (K / Real.sqrt m)
   have hmomentLe :
       centeredNormalizedWindowSecondMoment q d rho kernel m ≤
@@ -272,6 +276,7 @@ theorem ordinarySecondMoment_lower_of_weightedSecondMoment
 private theorem measurable_normalizedPsiError_ordinary (rho : ℂ) :
     Measurable (normalizedPsiError rho) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using Chebyshev.psi_mono.measurable
   unfold normalizedPsiError
   fun_prop

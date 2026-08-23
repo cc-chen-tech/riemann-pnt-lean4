@@ -407,7 +407,7 @@ theorem tendsto_localizedRightEdgeTail_linearHeight
   have hsqrt :
       Tendsto (fun m : ℝ => Real.sqrt (Real.pi / (m / 2)))
         atTop (𝓝 0) := by
-    simpa using (Real.continuous_sqrt.tendsto 0).comp hquot
+    simpa [Function.comp_def] using (Real.continuous_sqrt.tendsto 0).comp hquot
   have hupper : Tendsto upper atTop (𝓝 0) := by
     simpa [upper] using hsqrt.const_mul C
   have hbound :

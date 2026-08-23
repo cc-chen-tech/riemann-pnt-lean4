@@ -41,6 +41,7 @@ theorem tendsto_epsilonGaussianScale_atTop {ε : ℝ} (hε : 0 < ε) :
           (epsilonCenterCoefficient ε -
             epsilonRadiusCoefficient ε)⁻¹ by
         exact inv_pos.mpr hgap)
+  change Tendsto (fun Y : ℝ => epsilonGaussianScale ε Y) atTop atTop
   simpa [epsilonGaussianScale, div_eq_mul_inv, mul_comm] using h
 
 /--

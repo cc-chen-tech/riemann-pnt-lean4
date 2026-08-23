@@ -578,6 +578,7 @@ private theorem measurable_normalizedPsiError_centered
     (w : ℂ) :
     Measurable (normalizedPsiError w) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using
       Chebyshev.psi_mono.measurable
   unfold normalizedPsiError
@@ -968,7 +969,7 @@ theorem tendsto_projectedPsiTailRemainderAtCenter
       q d A hq hd hdq hmargin hu hu1
   have hlinear :
       Tendsto (fun m : ℝ => -q * m) atTop atBot := by
-    simpa only [Function.comp_apply, neg_mul] using
+    simpa [Function.comp_def, id_eq, neg_mul] using
       tendsto_neg_atTop_atBot.comp
         (tendsto_id.const_mul_atTop hq)
   have hupper :

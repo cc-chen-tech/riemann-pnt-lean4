@@ -33,7 +33,7 @@ theorem intervalIntegral_cosinePairModel_sq
         HasDerivAt (fun x : ℝ => 2 * gamma * x - 2 * phase)
           (2 * gamma) y := by
       convert ((hasDerivAt_id y).const_mul (2 * gamma)).sub_const
-        (2 * phase) using 1 <;> ring
+        (2 * phase) using 1 <;> (try rfl) <;> ring
     have hsin :
         HasDerivAt
           (fun x : ℝ =>
@@ -46,8 +46,8 @@ theorem intervalIntegral_cosinePairModel_sq
     have hmain :
         HasDerivAt (fun x : ℝ => 2 * m ^ 2 * x)
           (2 * m ^ 2) y := by
-      convert (hasDerivAt_id y).const_mul (2 * m ^ 2) using 1 <;> ring
-    convert hmain.add hsin using 1
+      convert (hasDerivAt_id y).const_mul (2 * m ^ 2) using 1 <;> (try rfl) <;> ring
+    convert hmain.add hsin using 1 <;> (try rfl)
     · rw [show 2 * gamma * y - 2 * phase =
           2 * (gamma * y - phase) by ring,
         Real.cos_two_mul]
@@ -134,6 +134,7 @@ theorem measurable_normalizedCosineModelPair (rho : ℂ) :
 private theorem measurable_normalizedPsiError_residual (rho : ℂ) :
     Measurable (normalizedPsiError rho) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using
       Chebyshev.psi_mono.measurable
   unfold normalizedPsiError
@@ -238,16 +239,16 @@ theorem integrableOn_normalizedPsiModelResidual_sq_Icc
       (memLp_two_iff_integrable_sq
         ((measurable_normalizedPsiError_residual rho).aestronglyMeasurable
           (μ := μ))).2
-    simpa [μ] using
+    simpa [μ, IntegrableOn] using
       integrableOn_normalizedPsiError_sq_Icc_residual hrhoRe1 a b
   have hp : MemLp (normalizedCosineModelPair rho) 2 μ := by
     apply
       (memLp_two_iff_integrable_sq
         ((measurable_normalizedCosineModelPair rho).aestronglyMeasurable
           (μ := μ))).2
-    simpa [μ] using
+    simpa [μ, IntegrableOn] using
       integrableOn_normalizedCosineModelPair_sq_Icc rho a b
-  simpa only [normalizedPsiModelResidual, Pi.sub_apply, μ] using
+  simpa [normalizedPsiModelResidual, Pi.sub_apply, μ, IntegrableOn] using
     (hf.sub hp).integrable_sq
 
 theorem integral_Icc_normalizedCosineModelPair_sq_le
@@ -401,7 +402,6 @@ theorem centeredSharpenedSweptOrdinaryL2Constant_lt_cosineModelHalfEnergy
         (Real.pi * multiplicity ^ 2) * (R - 1) / (q - d) := by
     dsimp [numerator]
     gcongr
-    exact sub_nonneg.mpr hRone.le
   have hqFormula :
       q = 64 * (epsilon + 4) ^ 2 / epsilon ^ 2 := by
     dsimp [q, epsilonCenterCoefficient]
@@ -494,14 +494,14 @@ theorem integral_Icc_normalizedPsiModelResidual_sq_lower
       (memLp_two_iff_integrable_sq
         ((measurable_normalizedPsiError_residual rho).aestronglyMeasurable
           (μ := μ))).2
-    simpa [μ] using
+    simpa [μ, IntegrableOn] using
       integrableOn_normalizedPsiError_sq_Icc_residual hrhoRe1 a b
   have hp : MemLp (normalizedCosineModelPair rho) 2 μ := by
     apply
       (memLp_two_iff_integrable_sq
         ((measurable_normalizedCosineModelPair rho).aestronglyMeasurable
           (μ := μ))).2
-    simpa [μ] using
+    simpa [μ, IntegrableOn] using
       integrableOn_normalizedCosineModelPair_sq_Icc rho a b
   have hres :=
     MathlibAux.integral_sq_sub_lower_of_integral_sq_bounds

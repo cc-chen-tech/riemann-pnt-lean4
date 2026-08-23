@@ -21,7 +21,7 @@ private lemma tendsto_exp_neg_mul_atTop_zero {a : ℝ} (ha : 0 < a) :
     Tendsto (fun y : ℝ => Real.exp (-a * y)) atTop (𝓝 0) := by
   have hlinear : Tendsto (fun y : ℝ => a * y) atTop atTop :=
     by simpa [mul_comm] using tendsto_id.atTop_mul_const ha
-  simpa only [neg_mul] using
+  simpa only [neg_mul, Function.comp_def] using
     Real.tendsto_exp_neg_atTop_nhds_zero.comp hlinear
 
 private lemma integrableOn_exp_neg_mul_Ioi {a : ℝ} (ha : 0 < a) :
@@ -99,13 +99,19 @@ theorem tendsto_realAbelMean_of_continuous_periodic
       have heint : IntegrableOn e (Set.Ioi 0) := by
         simpa [e] using integrableOn_exp_neg_mul_Ioi haPos
       have hPeint : IntegrableOn (fun y => P y * e y) (Set.Ioi 0) := by
-        simpa [mul_comm] using
-          heint.mul_bdd hPcont.aestronglyMeasurable
-            (by filter_upwards [] with y; exact hPbound y)
+        change Integrable (fun y : ℝ => P y * e y)
+          (volume.restrict (Set.Ioi 0))
+        convert heint.mul_bdd hPcont.aestronglyMeasurable
+            (by filter_upwards [] with y; exact hPbound y) using 1
+        ext y
+        ring
       have hqeint : IntegrableOn (fun y => q y * e y) (Set.Ioi 0) := by
-        simpa [mul_comm] using
-          heint.mul_bdd hqcont.aestronglyMeasurable
-            (by filter_upwards [] with y; exact hqbound y)
+        change Integrable (fun y : ℝ => q y * e y)
+          (volume.restrict (Set.Ioi 0))
+        convert heint.mul_bdd hqcont.aestronglyMeasurable
+            (by filter_upwards [] with y; exact hqbound y) using 1
+        ext y
+        ring
       have hPderiv :
           ∀ y ∈ Set.Ioi (0 : ℝ), HasDerivAt P (q y) y := by
         intro y _hy
@@ -121,7 +127,7 @@ theorem tendsto_realAbelMean_of_continuous_periodic
         convert
           (Real.hasDerivAt_exp (-a * y)).comp y
             ((hasDerivAt_const y (-a)).mul (hasDerivAt_id y)) using 1 <;>
-          ring
+          (try rfl) <;> ring
       have hzero :
           Tendsto (P * e) (𝓝[>] (0 : ℝ)) (𝓝 0) := by
         have hprod : ContinuousAt (P * e) 0 :=
@@ -151,7 +157,7 @@ theorem tendsto_realAbelMean_of_continuous_periodic
             convert hPeint.const_mul (-a) using 1
             ext y
             ring)
-          (by simpa [Pi.mul_apply, mul_comm] using hqeint)
+          hqeint
           hzero hinfty
       have hidentity :
           (∫ y in Set.Ioi (0 : ℝ), q y * e y) =
@@ -388,6 +394,7 @@ private lemma integral_cos_real_mul
       ((Real.hasDerivAt_sin (c * theta)).comp theta
         ((hasDerivAt_const theta c).mul (hasDerivAt_id theta))).const_mul
           (1 / c) using 1 <;>
+      (try rfl) <;>
       field_simp [hc] <;>
       ring
   have hint :
