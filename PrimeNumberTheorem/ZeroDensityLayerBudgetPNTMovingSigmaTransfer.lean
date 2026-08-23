@@ -150,6 +150,11 @@ theorem uniformMovingSigmaHybridDensityDecay_of_fixed
   intro height _hheight
   have hdensityNat :=
     hdensity.comp tendsto_natCast_atTop_atTop
+  change Tendsto
+      (fun m : ℕ =>
+        pintzCarlsonHybridDensityBudget sigma (m : ℝ)
+          (pintzCarlsonHeight rate (m : ℝ)))
+      atTop (nhds 0) at hdensityNat
   simpa only [hsigma] using hdensityNat
 
 /-- A moving-threshold density limit absorbs the remaining real-ordinate,
