@@ -3303,6 +3303,37 @@ This file provides project-level definitions and wrappers:
 It also records exploratory strategy strings.  Those strings are explanatory
 metadata, not proof results.
 
+### PR #474 windowed detector and single-layer forcing modules
+
+The following merged modules contain proved declarations and focused axiom
+audits:
+
+- `PrimeNumberTheorem/WindowedMellinL2.lean`,
+  `PrimeNumberTheorem/WindowedDetectorResponseKernel.lean`, and
+  `PrimeNumberTheorem/WindowedMellinResponseIdentity.lean`: per-zero Mellin
+  response formulas, local cubic-kernel coefficients, and the response
+  identity under an explicit truncated-formula/error input;
+- `PrimeNumberTheorem/HalfIsolatedZeroDichotomy/DetectionPointChoice.lean`:
+  interval covering, windowed multiplicity, dyadic distance, and good-point
+  selection theorems;
+- `PrimeNumberTheorem/WindowedMellinL3.lean` and
+  `PrimeNumberTheorem/WindowedDetectorConclusion.lean`: complementary/top
+  layer estimates and the conditional L3 capstone;
+- `PrimeNumberTheorem/SharpWitnessTransfer.lean`: deterministic
+  energy-to-pointwise and energy-to-count transfers;
+- `PrimeNumberTheorem/SingleLayerForcingBeta14Over17.lean` and its contract:
+  the power-versus-polylog contradiction and the conditional transfer from a
+  forcing lower count to `Re(rho) <= 14/17`;
+- `PrimeNumberTheorem/CubicLineForcingCertificate.lean`: the structure and
+  terminal theorem that consume, but do not construct, the missing concrete
+  forcing certificate.
+
+The terminal `14/17` and `2/3` declarations are conditional theorems.  The
+repository does not yet construct `CubicLineForcingAssumption.lower` from the
+concrete `DirectL2`/capacity inputs, nor `GateAssemblyInput` for every feasible
+tuple.  See
+[`2026-08-24-pr474-windowed-detector-single-layer-forcing.md`](research/2026-08-24-pr474-windowed-detector-single-layer-forcing.md).
+
 ## Target Statements, Not Proved Theorems
 
 The following declarations are intentionally `def ... : Prop` targets.  They

@@ -1,0 +1,14 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCubicKernelLocal
+/-!
+Axiom audit for the local cubic zero kernel.
+Expected: only `propext`, `Classical.choice`, `Quot.sound`.
+-/
+open PrimeNumberTheorem
+#print axioms ExplicitFormulaResidues.cubicZeroResidueSecondDifference_div_sq_eq_simple_mul_multiplier
+#print axioms ExplicitFormulaResidues.norm_cubicSimpleZeroKernel_eq
+#print axioms ExplicitFormulaResidues.norm_cubicZeroResidueSecondDifference_div_sq_eq
+#print axioms ExplicitFormulaResidues.norm_cubicKernelMultiplier_sub_one_le_three_mul
+#print axioms ExplicitFormulaResidues.norm_cubicZeroResidueSecondDifference_correctScale_bounds
+#print axioms ExplicitFormulaResidues.exists_pos_forall_mem_norm_cubicKernelMultiplier_sub_one_lt
+#print axioms ExplicitFormulaResidues.norm_cubicKernelMultiplier_le_nine_div_sq
+#print axioms ExplicitFormulaResidues.norm_cubicKernelMultiplier_le_uniform

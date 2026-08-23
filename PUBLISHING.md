@@ -167,6 +167,22 @@ For the zero-forced oscillation route, distinguish three trust levels:
   control, including local `L2` smallness of the approximation piece, but the
   complementary zero package does not.
 
+For the PR #474 windowed-detector and single-layer-forcing route, keep a
+separate boundary:
+
+- theorem-level: Mellin response and cubic-kernel identities, detection-point
+  choice, L3 mass/contradiction transfers, sharp-witness transfers, and the
+  Carlson contradiction after a forcing lower count is supplied;
+- still external to the closure: a concrete proof of
+  `CubicLineForcingAssumption.lower` from `DirectL2` plus the two-height
+  capacity inputs, and a `GateAssemblyInput` supplier for every feasible
+  parameter tuple;
+- forbidden publication claim: an unconditional `Re(rho) <= 14/17` or
+  `Re(rho) <= 2/3` theorem.
+
+See
+[`2026-08-24-pr474-windowed-detector-single-layer-forcing.md`](docs/research/2026-08-24-pr474-windowed-detector-single-layer-forcing.md).
+
 ## Unproved Target Statements
 
 | File | Remaining `sorry` count | Main target statements |

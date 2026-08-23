@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.WindowedDetectorConclusion
+
+#print axioms PrimeNumberTheorem.WindowedMellinL3.windowedDetector_contradicts_noTopLayerZero
+#print axioms PrimeNumberTheorem.WindowedMellinL3.windowedDetector_topLayerMass_exceeds

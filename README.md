@@ -355,6 +355,25 @@ theorem-level 基础设施，但最终
 误差。新合并的 residue-mass 审计还证明：对均匀系数，归一化矩转回原始矩时会精确
 恢复通常的 Holder 基数损失，因此“只做归一化”不会产生新的指数节省。
 
+### 10. 窗口检测器与 `14/17` 单层强制路线
+
+仓库现在还包含窗口 Mellin 响应、局部三次零点核、检测点选择、L3 顶层质量结论、
+能量到点值/计数传递，以及“给定强制下界则排除 `Re(rho) > 14/17`”的定理链。
+这些声明均为 theorem-level，并配有 axiom audit；详细边界见
+[PR #474 路线审计](docs/research/2026-08-24-pr474-windowed-detector-single-layer-forcing.md)。
+
+这里最重要的逻辑边界是：
+
+```text
+具体 DirectL2 + 两高度容量输入
+  -> CubicLineForcingAssumption.lower       （尚未证明）
+  -> no_nontrivial_zero_re_gt_14_over_17... （已证明的条件式传递）
+```
+
+类似地，`2/3` gate 的终端排除定理仍以对每个可行参数都存在
+`GateAssemblyInput` 为显式假设。因此这些新模块既不是无条件 `14/17` 零自由定理，
+也不是无条件 `2/3` 零自由定理，更不是 RH 证明。
+
 ---
 
 ## 证明架构
@@ -423,6 +442,7 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
 - Riemann 假设；
 - Vinogradov--Korobov 零自由区域；
 - 无条件平方根尺度素数误差；
+- 无条件的 `Re(rho) <= 14/17` 或 `Re(rho) <= 2/3` 非平凡零点排除；
 - Selberg 的临界线零点正比例定理——**已通过外部机器检查证明在仓库内核内闭合**:
   Anthropic `zeta-23-lean` 的 Theorem B(至少 2/3 零点简单且在临界线上)+
   本仓库定义级桥接(`HardyTheorem.Zeta23SelbergBridge`,常数 7/48);定理的解析

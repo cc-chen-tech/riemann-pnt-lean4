@@ -98,6 +98,22 @@ additionally needs an external fourth-moment upper bound.  None of the current
 declarations converts these large values into new zeta zeros or a
 contradiction.
 
+### Additional single-layer forcing and windowed-detector gap
+
+PR #474 proves the Mellin-response, cubic-kernel, detection-point, L3 transfer,
+sharp-witness, and Carlson contradiction components as Lean theorems.  It does
+not prove the concrete supplier that turns the existing `DirectL2` and
+two-height capacity results into `CubicLineForcingAssumption.lower` for every
+required `beta` and `lam`.  Consequently
+`no_nontrivial_zero_re_gt_14_over_17_of_cubicLine` remains a conditional
+closure theorem, not an unconditional zero-free result.
+
+The parallel `2/3` terminal theorem likewise requires a `GateAssemblyInput`
+for every feasible tuple; the actual branching, separation, explicit-formula
+error, lower-count, and exponent-budget suppliers remain visible assumptions.
+This boundary is documented in
+[`2026-08-24-pr474-windowed-detector-single-layer-forcing.md`](research/2026-08-24-pr474-windowed-detector-single-layer-forcing.md).
+
 ## Target-to-Chain Mapping
 
 | File | Target | Chain | Why it is still open |

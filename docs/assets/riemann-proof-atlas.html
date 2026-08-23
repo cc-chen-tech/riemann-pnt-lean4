@@ -1235,20 +1235,20 @@
       },
       {
         id: "zero-density",
-        title: "零点密度估计",
-        english: "Zero-density estimates",
-        status: "frontier",
+        title: "Carlson 固定 σ 零点密度",
+        english: "Fixed-sigma Carlson zero density",
+        status: "proved",
         core: false,
         summary: "不要求逐个排除所有零点，而是控制靠近 Re(s)=1 的零点数量。",
         formula: "N(σ, T) ≤ T^{A(1−σ)} (log T)^B",
         intuition: "即使无法确定每个零点的位置，只要危险区域中的零点足够稀，也能改进素数分布估计。",
         leanEvidence: [
-          "本项目已有 zeta 零点与局部解析工具可作为未来底层接口",
-          "当前仓库没有完成零点密度主定理",
-          "该方向需要新的均值估计、零点计数与全局解析基础设施"
+          "carlson_zeroDensity_isBigO 已证明固定 1/2 < σ < 1 的 Carlson 上界",
+          "PR #474 已加入窗口 Mellin、三次核与单层强制的条件式传递",
+          "14/17 与 2/3 终端仍缺具体 forcing/gate 输入，不能写成无条件零自由结论"
         ],
-        impact: "可能通向更强的平均型素数分布结论，但不是当前经典 PNT 主链的必要最短路径。",
-        warning: "这是独立的高难度研究方向，不能由现有零自由区域直接推出。",
+        impact: "给出靠右零点数量的已验证上界，并为条件式单层强制矛盾提供 Carlson 端点。",
+        warning: "固定 σ 零密度已经证明；从它到 Re(ρ)≤14/17 或 Re(ρ)≤2/3 仍需要尚未证明的具体下界供应器。",
         dependsOn: ["zeta-tools", "zero-free"],
         compact: { x: 86, y: 13 },
         expanded: { x: 88, y: 14 }
