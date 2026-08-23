@@ -7986,7 +7986,9 @@ lemma riemannZeta_eq_mul_natFloor_integral_of_one_lt_re {s : ℂ}
   have h := LSeries_eq_mul_integral_of_nonneg
     (fun _ : ℕ => (1 : ℝ)) zero_le_one hs hO (fun _ => zero_le_one)
   have hz : L (fun _ : ℕ => ((1 : ℝ) : ℂ)) s = riemannZeta s := by
-    simpa using LSeries_one_eq_riemannZeta hs
+    have hL : L (fun _ : ℕ => ((1 : ℝ) : ℂ)) s = L (fun _ => (1 : ℂ)) s := by
+      congr; funext n; simp
+    rw [hL, ← LSeries_one_eq_riemannZeta hs]
   rw [hz] at h
   simpa using h
 
