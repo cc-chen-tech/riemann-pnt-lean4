@@ -46,7 +46,7 @@ theorem carlson_zeroDensity_polynomialHeight_isBigO
           (carlsonPolynomialHeight alpha x) : ℝ))
       =O[Filter.atTop]
     (carlsonPolynomialHeightCountMajorant sigma alpha) := by
-  simpa [carlsonPolynomialHeightCountMajorant,
+  simpa [Function.comp_apply, carlsonPolynomialHeightCountMajorant,
     carlsonPolynomialHeight] using
     (CarlsonZeroDensity.carlson_zeroDensity_isBigO hsigma hsigmaOne).comp_tendsto
       (tendsto_rpow_atTop halpha)
