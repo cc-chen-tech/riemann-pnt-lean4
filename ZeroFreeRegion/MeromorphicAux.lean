@@ -685,16 +685,16 @@ Mellin integral at `1` and uses monotonicity of real powers in opposite
 directions on `(0,1]` and `[1,infinity)`. -/
 theorem norm_strongFEPair_Λ_le_endpoint_integrals
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    (P : StrongFEPair E) (w : ℂ) (hw0 : 0 ≤ w.re) (hw1 : w.re ≤ 1 / 2) :
+    (P : WeakFEPair E) (hP : IsStrongFEPair P) (w : ℂ) (hw0 : 0 ≤ w.re) (hw1 : w.re ≤ 1 / 2) :
     ‖P.Λ w‖ ≤
       (∫ x : ℝ in Set.Ioc 0 1, ‖(x : ℂ) ^ ((0 : ℂ) - 1) • P.f x‖) +
         ∫ x : ℝ in Set.Ioi 1, ‖(x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x‖ := by
   let Fw : ℝ → E := fun x => (x : ℂ) ^ (w - 1) • P.f x
   let F0 : ℝ → E := fun x => (x : ℂ) ^ ((0 : ℂ) - 1) • P.f x
   let Fhalf : ℝ → E := fun x => (x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x
-  have hMw := P.hasMellin w
-  have hM0 := P.hasMellin (0 : ℂ)
-  have hMhalf := P.hasMellin (1 / 2 : ℂ)
+  have hMw := hP.hasMellin w
+  have hM0 := hP.hasMellin (0 : ℂ)
+  have hMhalf := hP.hasMellin (1 / 2 : ℂ)
   have hFw : IntegrableOn Fw (Set.Ioi (0 : ℝ)) := by
     simpa [MellinConvergent, Fw] using hMw.1
   have hF0 : IntegrableOn F0 (Set.Ioi (0 : ℝ)) := by
@@ -746,16 +746,18 @@ theorem exists_norm_completedRiemannZeta₀_le_on_zero_one :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ s : ℂ, 0 ≤ s.re → s.re ≤ 1 →
       ‖completedRiemannZeta₀ s‖ ≤ C := by
   let P := (HurwitzZeta.hurwitzEvenFEPair 0).toStrongFEPair
+  let hP : IsStrongFEPair P := (HurwitzZeta.hurwitzEvenFEPair 0).isStrongFEPair_toStrongFEPair
   let C0 :=
     (∫ x : ℝ in Set.Ioc 0 1, ‖(x : ℂ) ^ ((0 : ℂ) - 1) • P.f x‖) +
       ∫ x : ℝ in Set.Ioi 1, ‖(x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x‖
   refine ⟨max (C0 / 2) 0, le_max_right _ _, ?_⟩
   intro s hs0 hs1
-  have h := norm_strongFEPair_Λ_le_endpoint_integrals P (s / 2)
+  have h := norm_strongFEPair_Λ_le_endpoint_integrals P hP (s / 2)
     (by simp; linarith) (by simp; linarith)
   have hcompleted : ‖completedRiemannZeta₀ s‖ ≤ C0 / 2 := by
     simpa [completedRiemannZeta₀, HurwitzZeta.completedHurwitzZetaEven₀,
-      WeakFEPair.Λ₀, StrongFEPair.Λ, P, C0, norm_div] using
+      WeakFEPair.Λ₀, IsStrongFEPair.Λ_eq, P, C0, norm_div,
+      hP.isStrongFEPair_toStrongFEPair.hf₀, hP.isStrongFEPair_toStrongFEPair.hg₀] using
         (div_le_div_of_nonneg_right h (by norm_num : (0 : ℝ) ≤ 2))
   exact hcompleted.trans (le_max_left _ _)
 
@@ -1904,7 +1906,9 @@ lemma exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two
     exact hσ_ne_one (by simpa using congrArg Complex.re hs)
   have hdist : dist (σ : ℂ) (1 : ℂ) ≤ r := by
     have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
-      simpa using Complex.isometry_ofReal.dist_eq σ 1
+      rw [dist_eq_norm]
+        rw [show (σ : ℂ) - 1 = ((σ - 1 : ℝ) : ℂ) from by push_cast; ring]
+        exact (Complex.norm_real _).trans Real.norm_eq_abs
     have habs_eq : |σ - 1| = σ - 1 := abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
     rw [hdist_eq, habs_eq]
     linarith
@@ -1976,7 +1980,9 @@ lemma exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_con
     exact hσ_ne_one (by simpa using congrArg Complex.re hs)
   have hdist : dist (σ : ℂ) (1 : ℂ) ≤ r := by
     have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
-      simpa using Complex.isometry_ofReal.dist_eq σ 1
+      rw [dist_eq_norm]
+        rw [show (σ : ℂ) - 1 = ((σ - 1 : ℝ) : ℂ) from by push_cast; ring]
+        exact (Complex.norm_real _).trans Real.norm_eq_abs
     have habs_eq : |σ - 1| = σ - 1 := abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
     rw [hdist_eq, habs_eq]
     linarith
@@ -2007,7 +2013,9 @@ lemma exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_c
     exact hσ_ne_one (by simpa using congrArg Complex.re hs)
   have hdist : dist (σ : ℂ) (1 : ℂ) ≤ r := by
     have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
-      simpa using Complex.isometry_ofReal.dist_eq σ 1
+      rw [dist_eq_norm]
+        rw [show (σ : ℂ) - 1 = ((σ - 1 : ℝ) : ℂ) from by push_cast; ring]
+        exact (Complex.norm_real _).trans Real.norm_eq_abs
     have habs_eq : |σ - 1| = σ - 1 := abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
     rw [hdist_eq, habs_eq]
     linarith
@@ -2081,7 +2089,9 @@ lemma exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_s
     exact hσ_ne_one (by simpa using congrArg Complex.re hs)
   have hdist_le : dist (σ : ℂ) (1 : ℂ) ≤ r / 2 := by
     have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
-      simpa using Complex.isometry_ofReal.dist_eq σ 1
+      rw [dist_eq_norm]
+        rw [show (σ : ℂ) - 1 = ((σ - 1 : ℝ) : ℂ) from by push_cast; ring]
+        exact (Complex.norm_real _).trans Real.norm_eq_abs
     have habs_eq : |σ - 1| = σ - 1 :=
       abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
     rw [hdist_eq, habs_eq]
