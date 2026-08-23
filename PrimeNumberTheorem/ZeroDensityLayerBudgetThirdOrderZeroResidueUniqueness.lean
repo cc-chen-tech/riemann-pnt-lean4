@@ -198,7 +198,7 @@ theorem exists_thirdOrderExplicitFormula_zeroPole_regularization_explicit_zero_r
               AnalyticAt ℂ (fun z : ℂ => (z - p)⁻¹ * residue p) 0 := by
             exact ((analyticAt_id.sub analyticAt_const).inv
               (sub_ne_zero.mpr hp0.symm)).mul analyticAt_const
-          simpa only [Finset.sum_insert hp] using hterm.add (ih hs')
+          simpa only [Finset.sum_insert hp] using! hterm.add (ih hs')
     exact hsum nonzeroPoles hpNonzero
   let localG : ℂ → ℂ := fun z => G z + localPrincipal z
   have hlocalG : AnalyticAt ℂ localG 0 := by

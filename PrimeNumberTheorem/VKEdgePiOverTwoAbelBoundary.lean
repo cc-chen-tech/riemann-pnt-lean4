@@ -146,7 +146,10 @@ theorem regularizedNegLogDerivModel_eq_neg_logDeriv_sub_pole_of_power_error
         hunitEventually.deriv_eq
       _ = deriv (fun z : ℂ => z - 1) s * riemannZeta s +
           (s - 1) * deriv riemannZeta s := by
-        simpa only [Pi.mul_apply] using deriv_mul hleft hright
+        change deriv ((fun z : ℂ => z - 1) * riemannZeta) s =
+          deriv (fun z : ℂ => z - 1) s * riemannZeta s +
+            (s - 1) * deriv riemannZeta s
+        simpa [Pi.mul_apply] using deriv_mul hleft hright
       _ = riemannZeta s + (s - 1) * deriv riemannZeta s := by
         simp
   have hzeta : riemannZeta s ≠ 0 := hZetaNe s hsU

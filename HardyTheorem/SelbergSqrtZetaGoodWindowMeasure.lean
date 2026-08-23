@@ -36,6 +36,7 @@ def selbergSqrtZetaGoodWindowStarts
 /-- The square-root-zeta mollified Hardy function is continuous. -/
 theorem continuous_selbergSqrtZetaMollifiedHardyZ (X : ℕ) :
     Continuous (selbergSqrtZetaMollifiedHardyZ X) := by
+  change Continuous (fun t : ℝ => selbergSqrtZetaMollifiedHardyZ X t)
   simpa only [selbergSqrtZetaMollifiedHardyZ] using
     continuous_selbergMollifiedHardyZ X
       (fun n => (selbergSqrtZetaTaperedCoeff X n : ℂ))

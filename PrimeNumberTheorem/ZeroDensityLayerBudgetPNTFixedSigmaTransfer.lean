@@ -173,9 +173,12 @@ theorem exists_pntTwoStripPNTUpperSchedule
     {rate : ℝ} (hrate : 0 < rate) :
     ∃ C : ℝ, 0 ≤ C ∧
       Nonempty (FixedSigmaPNTUpperSchedule C rate pntTwoStripSigma) := by
-  simpa only [pntTwoStripBucketInput_sigma] using
-    exists_fixedSigmaPNTUpperSchedule hrate pntTwoStripBucketInput
-      (fun T => rfl)
+  have hsigma : (pntTwoStripBucketInput 0).sigma = pntTwoStripSigma := by
+    funext i
+    exact pntTwoStripBucketInput_sigma 0 i
+  rw [← hsigma]
+  exact exists_fixedSigmaPNTUpperSchedule hrate pntTwoStripBucketInput
+    (fun T => rfl)
 
 /-- There exists a positive fixed rate for which the actual natural-point
 relative PNT error decays through a genuine low/global plus high/Carlson

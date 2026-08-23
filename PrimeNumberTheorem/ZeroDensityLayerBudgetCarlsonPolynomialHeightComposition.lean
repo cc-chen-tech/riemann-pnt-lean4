@@ -46,10 +46,18 @@ theorem carlson_zeroDensity_polynomialHeight_isBigO
           (carlsonPolynomialHeight alpha x) : ℝ))
       =O[Filter.atTop]
     (carlsonPolynomialHeightCountMajorant sigma alpha) := by
-  simpa [carlsonPolynomialHeightCountMajorant,
-    carlsonPolynomialHeight] using
+  have h :=
     (CarlsonZeroDensity.carlson_zeroDensity_isBigO hsigma hsigmaOne).comp_tendsto
       (tendsto_rpow_atTop halpha)
+  change
+    (fun x : ℝ =>
+      (ZeroDensity.zeroDensityCount sigma (x ^ alpha) : ℝ))
+      =O[Filter.atTop]
+    (fun x : ℝ =>
+      (x ^ alpha) ^ (4 * sigma * (1 - sigma)) *
+        (Real.log (x ^ alpha)) ^ (4 : ℕ)) at h
+  simpa only [carlsonPolynomialHeightCountMajorant,
+    carlsonPolynomialHeight] using h
 
 /-- The composed Carlson majorant and its direct `x`-scale budget agree
 eventually. -/

@@ -794,7 +794,8 @@ theorem tendsto_sharpenedProjectedPsiCoefficient
           apply
             (integrable_norm_iff
               (hactualCont.sub hleadingCont).aestronglyMeasurable).mp
-          simpa only [actual, leading, Real.norm_eq_abs] using hdiffInt
+          simpa only [actual, leading, Pi.sub_apply, Real.norm_eq_abs]
+            using hdiffInt
         have heq :
             actual m =
               (fun y => actual m y - leading m y) + leading m := by
@@ -1145,7 +1146,7 @@ noncomputable def sharpenedConcreteLocalizedContourData
     have hre :
         Tendsto (fun m => (zeroPair m).re)
           atTop (𝓝 multiplicity) := by
-      simpa using
+      simpa [Function.comp_def] using
         Complex.continuous_re.continuousAt.tendsto.comp hzeroPair
     exact tendsto_const_nhds.mul hre
   have hcoefficient :=
@@ -1190,7 +1191,7 @@ noncomputable def sharpenedConcreteLocalizedContourData
     have hnorm :
         Tendsto (fun m => ‖contourPair m‖)
           atTop (𝓝 0) := by
-      simpa using tendsto_norm.comp hcontourPair
+      simpa [Function.comp_def] using tendsto_norm.comp hcontourPair
     simpa using hnorm.div_const Real.pi
   have htargetTail :
       Tendsto
@@ -1293,7 +1294,7 @@ noncomputable def sharpenedConcreteLocalizedContourData
             sharpenedProjectedPsiCoefficient rho k m +
           psiTail m := by
     dsimp [L, psiTail, targetA, missingA, center, c]
-    convert hpsiM using 1 <;> ring
+    convert hpsiM using 1 <;> (try rfl) <;> ring
   rw [hsignalEq]
   change
     -L.re / Real.pi + (contourPair m).re / Real.pi ≤

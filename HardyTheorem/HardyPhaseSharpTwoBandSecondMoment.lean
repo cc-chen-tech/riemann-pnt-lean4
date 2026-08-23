@@ -22,7 +22,7 @@ theorem hardyPhaseLinearizedSum_eq_partial_add_partial
             fun n ↦ ¬n < M) delta t := by
   rw [hardyPhaseLinearizedSum, hardyPhaseLinearizedPartialSum,
     hardyPhaseLinearizedPartialSum]
-  simpa only using
+  simpa [hardyPhaseLinearizedCoeff] using
     (Finset.sum_filter_add_sum_filter_not
       (Finset.Icc 1 (firstZetaApproximationCutoff T))
       (fun n ↦ n < M)

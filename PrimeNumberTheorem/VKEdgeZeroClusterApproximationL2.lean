@@ -50,6 +50,7 @@ private theorem
           (explicitFormulaApproxWithMultiplicity (Real.exp y) T -
             (chebyshevPsi (Real.exp y) : ℂ))) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using
       Chebyshev.psi_mono.measurable
   unfold explicitFormulaApproxWithMultiplicity
@@ -77,7 +78,9 @@ private theorem
       T beta
   have hnorm :=
     (hmeas.congr hae.symm).norm
-  simpa [pow_two] using hnorm.mul hnorm
+  convert hnorm.mul hnorm using 1 <;> (try rfl)
+  · funext y
+    simp [pow_two]
 
 /-- On every fixed logarithmic window, one good truncation height makes the
 normalized finite-height approximation-error second moment arbitrarily small.

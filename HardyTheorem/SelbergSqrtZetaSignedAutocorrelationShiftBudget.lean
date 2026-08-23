@@ -93,8 +93,12 @@ theorem integrable_selbergSqrtZetaSignedAutocorrelationShiftKernels
     have hmodelContinuous : ContinuousOn
         (selbergSqrtZetaSignedThetaModelAutocorrelationShiftKernel
           kappa T X) box := by
-      simpa only [
-        selbergSqrtZetaSignedThetaModelAutocorrelationShiftKernel] using
+      change ContinuousOn
+        ((fun p : (ℝ × ℝ) × ℝ =>
+          selbergSqrtZetaSignedThetaModel kappa T X (p.2 + p.1.1)) *
+          fun p : (ℝ × ℝ) × ℝ =>
+            selbergSqrtZetaSignedThetaModel kappa T X (p.2 + p.1.2)) box
+      simpa [selbergSqrtZetaSignedThetaModelAutocorrelationShiftKernel] using
         hmodelV.mul hmodelW
     exact hmodelContinuous.integrableOn_compact hcompact
   have hsmall :

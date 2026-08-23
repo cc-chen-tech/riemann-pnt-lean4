@@ -65,7 +65,7 @@ theorem hasDerivAt_log_norm_vertical
   have hcompComplex :
       HasDerivAt (fun z : ℂ => f ((sigma : ℂ) + I * z))
         (deriv f s * I) (t : ℂ) := by
-    simpa [s] using hf.differentiableAt.hasDerivAt.comp (t : ℂ) hparam
+    simpa [s, Function.comp_def] using hf.differentiableAt.hasDerivAt.comp (t : ℂ) hparam
   have hvertical :
       HasDerivAt (fun u : ℝ => f ((sigma : ℂ) + I * (u : ℂ)))
         (deriv f s * I) t := by
@@ -75,7 +75,7 @@ theorem hasDerivAt_log_norm_vertical
     exact pow_ne_zero 2 (norm_ne_zero_iff.mpr (by simpa [s] using hne))
   have hlogNormSq := hnormSq.log hnormSqNe
   have hhalf := hlogNormSq.const_mul (2 : ℝ)⁻¹
-  convert hhalf using 1
+  convert hhalf using 1 <;> (try rfl)
   · funext u
     rw [Real.log_pow]
     ring
@@ -105,15 +105,14 @@ theorem hasDerivAt_im_log_vertical_of_analyticAt
   have hcompComplex :
       HasDerivAt (fun z : ℂ => f ((sigma : ℂ) + I * z))
         (deriv f s * I) (t : ℂ) := by
-    simpa [s] using hf.differentiableAt.hasDerivAt.comp (t : ℂ) hparam
+    simpa [s, Function.comp_def] using hf.differentiableAt.hasDerivAt.comp (t : ℂ) hparam
   have hvertical :
       HasDerivAt (fun u : ℝ => f ((sigma : ℂ) + I * (u : ℂ)))
         (deriv f s * I) t := by
     simpa using hcompComplex.comp_ofReal
   have hlog := hvertical.clog_real (by simpa [s] using hslit)
   have him := Complex.imCLM.hasFDerivAt.comp_hasDerivAt t hlog
-  convert him using 1
-  simp only [Complex.imCLM_apply, logDeriv_apply]
+  convert him using 1 <;> (try rfl)
   change (deriv f s / f s).re = (deriv f s * I / f s).im
   rw [show deriv f s * I / f s = I * (deriv f s / f s) by ring]
   simp
@@ -272,7 +271,7 @@ theorem hasDerivAt_log_norm_horizontal
   have hcompComplex :
       HasDerivAt (fun z : ℂ => f (z + (y : ℂ) * I))
         (deriv f s) (x : ℂ) := by
-    simpa [s] using hf.differentiableAt.hasDerivAt.comp (x : ℂ) hparam
+    simpa [s, Function.comp_def] using hf.differentiableAt.hasDerivAt.comp (x : ℂ) hparam
   have hhorizontal :
       HasDerivAt (fun u : ℝ => f ((u : ℂ) + (y : ℂ) * I))
         (deriv f s) x := by
@@ -282,7 +281,7 @@ theorem hasDerivAt_log_norm_horizontal
     exact pow_ne_zero 2 (norm_ne_zero_iff.mpr (by simpa [s] using hne))
   have hlogNormSq := hnormSq.log hnormSqNe
   have hhalf := hlogNormSq.const_mul (2 : ℝ)⁻¹
-  convert hhalf using 1
+  convert hhalf using 1 <;> (try rfl)
   · funext u
     rw [Real.log_pow]
     ring
@@ -443,8 +442,9 @@ theorem boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
       ¬(x0 < z.re ∧ z.re < x1 ∧ y0 < z.im ∧ z.im < y1) →
         AnalyticAt ℂ raw z := by
     intro z hz hnot
-    have hlog : AnalyticAt ℂ (logDeriv f) z :=
-      (hfU z hz).deriv.div (hfU z hz) (hboundaryNonzero z hz hnot)
+    have hlog : AnalyticAt ℂ (fun w : ℂ => logDeriv f w) z := by
+      change AnalyticAt ℂ (deriv f / f) z
+      exact (hfU z hz).deriv.div (hfU z hz) (hboundaryNonzero z hz hnot)
     have hsum : AnalyticAt ℂ
         (fun w : ℂ =>
           ∑ rho ∈ poles, (multiplicity rho : ℂ) * (w - rho)⁻¹) z := by
@@ -456,7 +456,7 @@ theorem boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
         exact hnot (hpoles rho hrho)
       exact analyticAt_const.mul
         ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hzr))
-    simpa [raw] using hlog.sub hsum
+    convert hlog.sub hsum using 1 <;> (try rfl)
   have hregularEqBoundary : ∀ z ∈ U,
       ¬(x0 < z.re ∧ z.re < x1 ∧ y0 < z.im ∧ z.im < y1) →
         regular z = raw z := by

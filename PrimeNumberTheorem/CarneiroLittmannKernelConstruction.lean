@@ -350,15 +350,20 @@ private theorem hasDerivAt_carneiroLittmannFourierPhase (xi x : ℝ) :
   have hInner : HasDerivAt
       (fun y : ℝ => (Complex.I * (xi : ℂ)) * (y : ℂ))
       (Complex.I * (xi : ℂ)) x := by
-    convert (((hasDerivAt_id (x : ℂ)).const_mul
-        (Complex.I * (xi : ℂ))).comp_ofReal) using 1
-    all_goals (first | rfl | (funext y; rfl) | ring_nf)
+    simpa only [mul_one, id_eq] using
+      ((hasDerivAt_id (x : ℂ)).const_mul
+        (Complex.I * (xi : ℂ))).comp_ofReal
   have h := (Complex.hasDerivAt_exp
     ((Complex.I * (xi : ℂ)) * (x : ℂ))).comp x hInner
-  convert h using 1
-  all_goals (first | rfl |
-    (funext y; unfold carneiroLittmannFourierPhase; congr 1; push_cast; ring) |
-    (unfold carneiroLittmannFourierPhase; push_cast; ring) | ring_nf)
+  convert h using 1 <;> (try rfl)
+  · funext y
+    unfold carneiroLittmannFourierPhase
+    congr 1
+    push_cast
+    ring
+  · unfold carneiroLittmannFourierPhase
+    push_cast
+    ring
 
 private theorem tendsto_carneiroLittmannKernelError_mul_phase_atTop (xi : ℝ) :
     Filter.Tendsto
@@ -400,10 +405,9 @@ private theorem tendsto_mul_carneiroLittmannKernelError_Ioi_zero : Filter.Tendst
     have hCum : ContinuousAt carneiroLittmannCumulative 0 :=
       continuous_carneiroLittmannCumulative.continuousAt
     have hOne : ContinuousAt (fun _ : ℝ => (1 : ℝ)) 0 := continuousAt_const
-    convert (hId.mul (hCum.sub hOne)).tendsto using 1
-    · funext x
-      rfl
-    · norm_num
+    simpa using (hId.mul (hCum.sub hOne)).tendsto.congr' (by
+      filter_upwards [] with x
+      simp [Pi.mul_apply, Pi.sub_apply])
   refine (hBase.mono_left inf_le_left).congr' ?_
   filter_upwards [self_mem_nhdsWithin] with x hx
   have hx' : 0 < x := hx
@@ -418,11 +422,9 @@ private theorem tendsto_mul_carneiroLittmannKernelError_Iio_zero : Filter.Tendst
     have hId : ContinuousAt (fun x : ℝ => x) 0 := continuousAt_id
     have hCum : ContinuousAt carneiroLittmannCumulative 0 :=
       continuous_carneiroLittmannCumulative.continuousAt
-    convert (hId.mul hCum).tendsto using 1
-    · funext x
-      rfl
-    · simp only [Pi.mul_apply]
-      norm_num
+    simpa using (hId.mul hCum).tendsto.congr' (by
+      filter_upwards [] with x
+      simp [Pi.mul_apply])
   refine (hBase.mono_left inf_le_left).congr' ?_
   filter_upwards [self_mem_nhdsWithin] with x hx
   have hx' : x < 0 := hx
@@ -527,8 +529,9 @@ noncomputable def carneiroLittmannRawKernel (x : ℝ) : ℝ :=
 
 theorem integrable_carneiroLittmannRawKernel :
     Integrable carneiroLittmannRawKernel := by
-  change Integrable (fun x => 2 * carneiroLittmannKernelError x)
-  exact integrable_carneiroLittmannKernelError.const_mul 2
+  change Integrable (fun x : ℝ => 2 * carneiroLittmannKernelError x) volume
+  simpa only [carneiroLittmannRawKernel] using
+    integrable_carneiroLittmannKernelError.const_mul 2
 
 theorem carneiroLittmannRawKernel_nonneg (x : ℝ) :
     0 ≤ carneiroLittmannRawKernel x := by
@@ -657,12 +660,16 @@ private theorem fourierKernel_carneiroLittmannDerivative_add_error (xi : ℝ) :
     rw [carneiroLittmannKernelError, if_pos hx.le]
   have hPhaseRightZero : Filter.Tendsto (carneiroLittmannFourierPhase xi)
       (nhdsWithin 0 (Set.Ioi 0)) (nhds 1) := by
-    simpa [nhdsWithin, carneiroLittmannFourierPhase, Complex.exp_zero] using
+    change Filter.Tendsto (carneiroLittmannFourierPhase xi)
+      (nhds 0 ⊓ Filter.principal (Set.Ioi 0)) (nhds 1)
+    simpa [carneiroLittmannFourierPhase] using
       ((hasDerivAt_carneiroLittmannFourierPhase xi 0).continuousAt.tendsto).mono_left
         inf_le_left
   have hPhaseLeftZero : Filter.Tendsto (carneiroLittmannFourierPhase xi)
       (nhdsWithin 0 (Set.Iio 0)) (nhds 1) := by
-    simpa [nhdsWithin, carneiroLittmannFourierPhase, Complex.exp_zero] using
+    change Filter.Tendsto (carneiroLittmannFourierPhase xi)
+      (nhds 0 ⊓ Filter.principal (Set.Iio 0)) (nhds 1)
+    simpa [carneiroLittmannFourierPhase] using
       ((hasDerivAt_carneiroLittmannFourierPhase xi 0).continuousAt.tendsto).mono_left
         inf_le_left
   have hRightZero : Filter.Tendsto
@@ -672,11 +679,12 @@ private theorem fourierKernel_carneiroLittmannDerivative_add_error (xi : ℝ) :
       (nhds ((carneiroLittmannCumulative 0 - 1 : ℝ) : ℂ)) := by
     have hCast := (Complex.continuous_ofReal.continuousAt.tendsto.comp
       hErrorRightZeroReal).mul hPhaseRightZero
-    change Filter.Tendsto (fun x : ℝ => ↑(carneiroLittmannKernelError x) *
-        Complex.exp (Complex.I * (xi * x)))
-      (nhdsWithin 0 (Set.Ioi 0)) (nhds ((carneiroLittmannCumulative 0 - 1 : ℝ) : ℂ))
-    simpa [carneiroLittmannFourierPhase, mul_one, Complex.exp_zero, Complex.ofReal_mul,
-      nhdsWithin] using hCast
+    change Filter.Tendsto
+      (fun x : ℝ => (carneiroLittmannKernelError x : ℂ) *
+        carneiroLittmannFourierPhase xi x)
+      (nhdsWithin 0 (Set.Ioi 0))
+      (nhds ((carneiroLittmannCumulative 0 - 1 : ℝ) : ℂ))
+    simpa using hCast
   have hLeftZero : Filter.Tendsto
       ((fun x : ℝ => (carneiroLittmannKernelError x : ℂ)) *
         carneiroLittmannFourierPhase xi)
@@ -684,11 +692,12 @@ private theorem fourierKernel_carneiroLittmannDerivative_add_error (xi : ℝ) :
       (nhds ((carneiroLittmannCumulative 0 : ℝ) : ℂ)) := by
     have hCast := (Complex.continuous_ofReal.continuousAt.tendsto.comp
       hErrorLeftZeroReal).mul hPhaseLeftZero
-    change Filter.Tendsto (fun x : ℝ => ↑(carneiroLittmannKernelError x) *
-        Complex.exp (Complex.I * (xi * x)))
-      (nhdsWithin 0 (Set.Iio 0)) (nhds ((carneiroLittmannCumulative 0 : ℝ) : ℂ))
-    simpa [carneiroLittmannFourierPhase, mul_one, Complex.exp_zero, Complex.ofReal_mul,
-      nhdsWithin] using hCast
+    change Filter.Tendsto
+      (fun x : ℝ => (carneiroLittmannKernelError x : ℂ) *
+        carneiroLittmannFourierPhase xi x)
+      (nhdsWithin 0 (Set.Iio 0))
+      (nhds ((carneiroLittmannCumulative 0 : ℝ) : ℂ))
+    simpa using hCast
   have hRight := integral_Ioi_deriv_mul_eq_sub
     (a := (0 : ℝ))
     (u := fun x : ℝ => (carneiroLittmannKernelError x : ℂ))

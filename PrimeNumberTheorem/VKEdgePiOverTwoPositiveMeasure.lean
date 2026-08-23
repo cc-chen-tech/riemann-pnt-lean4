@@ -11,6 +11,7 @@ noncomputable section
 private theorem measurable_normalizedPsiError_measure (rho : ℂ) :
     Measurable (normalizedPsiError rho) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using
       Chebyshev.psi_mono.measurable
   unfold normalizedPsiError
@@ -63,7 +64,7 @@ theorem
         Tendsto (fun _m : ℝ => C ^ 2) atTop (𝓝 (C ^ 2)) :=
       tendsto_const_nhds
     have h := hconst.mul data.coefficient_tendsto
-    convert h using 1 <;> ring
+    convert h using 1 <;> (try rfl) <;> ring
   have hscaledUpper :
       ∀ᶠ m : ℝ in atTop,
         C ^ 2 * data.coefficient m < midpoint :=

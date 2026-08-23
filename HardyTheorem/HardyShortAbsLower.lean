@@ -99,7 +99,7 @@ theorem exists_hardyShortAbsIntegral_ge_sub_shortDirichlet :
           (nhds (riemannZeta ((1 / 2 : ℂ) + I * u))) from hzbase).comp
         (show Tendsto (fun v : ℝ => (1 / 2 : ℂ) + I * v)
           (nhds u) (nhds ((1 / 2 : ℂ) + I * u)) from hpath)
-    simpa only [F, Function.comp_apply] using hzcont.continuousWithinAt
+    simpa only [F, Function.comp_def, Function.comp_apply] using hzcont.continuousWithinAt
   have hFint : IntervalIntegrable F volume t (t + delta) :=
     ContinuousOn.intervalIntegrable (by
       simpa only [uIcc_of_le htt] using hFcont)

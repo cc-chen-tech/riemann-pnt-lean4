@@ -105,6 +105,7 @@ theorem CenteredLocalizedContourData.eventually_exists_normalizedPsiError_gt
       (data.signal_tendsto.sub data.remainder_tendsto).div
         data.coefficient_tendsto hmeanTwo
     convert h using 1
+    · rfl
     · congr 1
       field_simp
       ring
@@ -882,7 +883,7 @@ theorem tendsto_centeredSharpenedProjectedPsiCoefficient
     have hinv :
         Tendsto (fun m : ℝ => (Real.sqrt m)⁻¹) atTop (𝓝 0) :=
       tendsto_inv_atTop_zero.comp Real.tendsto_sqrt_atTop
-    convert hinv.const_mul C using 1 <;> simp
+    convert hinv.const_mul C using 1 <;> (try rfl) <;> simp
   have hcoefficientError :
       Tendsto
         (fun m : ℝ =>
@@ -916,7 +917,8 @@ theorem tendsto_centeredSharpenedProjectedPsiCoefficient
           apply
             (integrable_norm_iff
               (hactualCont.sub hleadingCont).aestronglyMeasurable).mp
-          simpa only [actual, leading, Real.norm_eq_abs] using hdiffInt
+          simpa only [actual, leading, Pi.sub_apply, Real.norm_eq_abs]
+            using hdiffInt
         have heq :
             actual m =
               (fun y => actual m y - leading m y) + leading m := by
@@ -1492,7 +1494,7 @@ noncomputable def sharpenedCenteredLocalizedContourData
     have hre :
         Tendsto (fun m => (zeroPair m).re)
           atTop (𝓝 multiplicity) := by
-      simpa using
+      simpa [Function.comp_def] using
         Complex.continuous_re.continuousAt.tendsto.comp hzeroPair
     exact tendsto_const_nhds.mul hre
   have hcoefficient :=
@@ -1537,7 +1539,7 @@ noncomputable def sharpenedCenteredLocalizedContourData
     have hnorm :
         Tendsto (fun m => ‖contourPair m‖)
           atTop (𝓝 0) := by
-      simpa using tendsto_norm.comp hcontourPair
+      simpa [Function.comp_def] using tendsto_norm.comp hcontourPair
     simpa using hnorm.div_const Real.pi
   have htargetTail :
       Tendsto
@@ -1594,6 +1596,7 @@ noncomputable def sharpenedCenteredLocalizedContourData
   have herrorMeasurable :
       Measurable (normalizedPsiError rho) := by
     have hpsi : Measurable chebyshevPsi := by
+      change Measurable (Chebyshev.psi : ℝ → ℝ)
       simpa only [chebyshevPsi_eq_mathlib] using
         Chebyshev.psi_mono.measurable
     unfold normalizedPsiError
@@ -1722,7 +1725,9 @@ noncomputable def sharpenedCenteredLocalizedContourData
               (centeredSharpenedProjectedPsiKernel q rho k) m +
             psiTail m := by
       dsimp [L, psiTail, targetA, missingA, center, c]
-      convert hpsiM using 1 <;> ring
+      convert hpsiM using 1
+      · simp [Complex.add_re, Complex.mul_re]
+      · ring
     rw [hsignalEq]
     change
       -L.re / Real.pi + (contourPair m).re / Real.pi ≤
@@ -1823,7 +1828,9 @@ noncomputable def sharpenedCenteredLocalizedContourData
             centeredSharpenedProjectedPsiCoefficient q rho k m +
           psiTail m := by
     dsimp [L, psiTail, targetA, missingA, center, c]
-    convert hpsiM using 1 <;> ring
+    convert hpsiM using 1
+    · simp [Complex.add_re, Complex.mul_re]
+    · ring
   rw [hsignalEq]
   change
     -L.re / Real.pi + (contourPair m).re / Real.pi ≤

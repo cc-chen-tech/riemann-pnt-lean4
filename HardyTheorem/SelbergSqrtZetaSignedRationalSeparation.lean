@@ -36,11 +36,15 @@ private theorem one_div_sq_nat_mul_le_abs_sub_rationalKey
   let b : ℕ := p.1 * p.2.1
   let c : ℕ := r.2.2
   let d : ℕ := r.1 * r.2.1
-  have ha : 0 < a := by simpa only [a] using hplI.1
+  have ha : 0 < a := by
+    dsimp only [a]
+    omega
   have hb : 0 < b := by
     dsimp only [b]
     exact Nat.mul_pos hpmI.1 hpdI.1
-  have hc : 0 < c := by simpa only [c] using hrlI.1
+  have hc : 0 < c := by
+    dsimp only [c]
+    omega
   have hd : 0 < d := by
     dsimp only [d]
     exact Nat.mul_pos hrmI.1 hrdI.1
@@ -162,11 +166,15 @@ private theorem one_div_nat_mul_sq_le_abs_sub_rationalFrequency
   let b : ℕ := p.1 * p.2.1
   let c : ℕ := r.2.2
   let d : ℕ := r.1 * r.2.1
-  have ha : 0 < a := by simpa only [a] using hplI.1
+  have ha : 0 < a := by
+    dsimp only [a]
+    omega
   have hb : 0 < b := by
     dsimp only [b]
     exact Nat.mul_pos hpmI.1 hpdI.1
-  have hc : 0 < c := by simpa only [c] using hrlI.1
+  have hc : 0 < c := by
+    dsimp only [c]
+    omega
   have hd : 0 < d := by
     dsimp only [d]
     exact Nat.mul_pos hrmI.1 hrdI.1

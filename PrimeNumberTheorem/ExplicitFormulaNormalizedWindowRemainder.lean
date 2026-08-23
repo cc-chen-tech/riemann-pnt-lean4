@@ -196,6 +196,8 @@ theorem tendsto_normalizedWindowRemainderEnvelope_atTop_nhds_zero
         hnbeta using 1
     funext a
     ring
+  change Tendsto (fun a : ℝ => normalizedWindowRemainderEnvelope C D beta L a)
+    atTop (𝓝 0)
   simpa only [normalizedWindowRemainderEnvelope, zero_add] using
     (hfirst.add hsecond).add hthird
 

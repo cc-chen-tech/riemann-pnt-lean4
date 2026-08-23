@@ -330,7 +330,7 @@ theorem vinogradovMixedModConditionedSolutionSet_subset_mainFarScale_product
     intro j
     have hj := (hfar j).add_right (vinogradovPowerSumInt y' j)
     simpa only [vinogradovPowerSumDifferenceInt, vinogradovPowerSumInt,
-      sub_add_cancel, zero_add] using hj
+      sub_add_cancel, zero_add, Nat.cast_pow] using hj
   · simp
 
 /-- The mixed conditioned solution count is bounded by the number of free

@@ -94,7 +94,8 @@ theorem
         Complex.normSq
           (selbergSqrtZetaSignedRationalShortModel T X H t)) ≤
       H ^ 2 * selbergSqrtZetaSignedReducedPairShortModelBudget T X H := by
-  simpa only [selbergSqrtZetaSignedReducedPairShortModelBudget] using
+  simpa only [selbergSqrtZetaSignedReducedPairShortModelBudget,
+    selbergSqrtZetaSignedReducedPairSplitEnergy] using
     integral_normSq_selbergSqrtZetaSignedRationalShortModel_le_reducedPairComplete_add_boundary
       kappa T X hT hH hroom hQ
 

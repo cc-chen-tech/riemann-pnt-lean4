@@ -203,8 +203,8 @@ private theorem hasDerivAt_carneiroLittmannSpectralPhase (u : ℝ) :
       (fun y : ℝ => -carneiroLittmannSpectralFrequency * (y : ℂ))
       (-carneiroLittmannSpectralFrequency) u := by
     convert (((hasDerivAt_id (u : ℂ)).const_mul
-      (-carneiroLittmannSpectralFrequency)).comp_ofReal) using 1
-    all_goals (first | rfl | (funext y; rfl) | ring_nf)
+      (-carneiroLittmannSpectralFrequency)).comp_ofReal) using 1 <;>
+      simp [Function.comp_def] <;> ring
   have hExp := (Complex.hasDerivAt_exp
     (-carneiroLittmannSpectralFrequency * (u : ℂ))).comp u hInner
   have hPhaseEq : carneiroLittmannSpectralPhase = fun y : ℝ =>
@@ -216,8 +216,7 @@ private theorem hasDerivAt_carneiroLittmannSpectralPhase (u : ℝ) :
     push_cast
     ring
   rw [hPhaseEq]
-  convert hExp using 1
-  all_goals (first | rfl | (funext y; rfl) | ring_nf)
+  simpa only [Function.comp_apply, Function.comp_def, id_eq, mul_comm] using hExp
 
 private theorem hasDerivAt_carneiroLittmannSpectralPrimitiveLeft (u : ℝ) :
     HasDerivAt carneiroLittmannSpectralPrimitiveLeft
@@ -225,13 +224,14 @@ private theorem hasDerivAt_carneiroLittmannSpectralPrimitiveLeft (u : ℝ) :
   have hAffine : HasDerivAt (fun y : ℝ => ((1 + y : ℝ) : ℂ)) 1 u := by
     have hId : HasDerivAt (fun y : ℝ => (y : ℂ)) 1 u :=
       (hasDerivAt_id (u : ℂ)).comp_ofReal
-    convert hId.const_add 1 using 1
-    all_goals (first | rfl | (funext y; push_cast; ring) | ring_nf)
+    convert hId.const_add 1 using 1 <;> (try rfl)
+    funext y
+    push_cast
+    ring
   convert hAffine.mul
-    ((hasDerivAt_carneiroLittmannSpectralPhase u).sub_const 1) using 1
-  all_goals (first | rfl | (funext y; simp [carneiroLittmannSpectralPrimitiveLeft,
-        carneiroLittmannSpectralPrimitiveDerivativeLeft]) |
-    (dsimp [carneiroLittmannSpectralPrimitiveDerivativeLeft]; ring_nf) | ring_nf)
+    ((hasDerivAt_carneiroLittmannSpectralPhase u).sub_const 1) using 1 <;>
+      (try rfl) <;> simp [carneiroLittmannSpectralPrimitiveLeft,
+        carneiroLittmannSpectralPrimitiveDerivativeLeft] <;> ring
 
 private theorem hasDerivAt_carneiroLittmannSpectralPrimitiveRight (u : ℝ) :
     HasDerivAt carneiroLittmannSpectralPrimitiveRight
@@ -239,13 +239,14 @@ private theorem hasDerivAt_carneiroLittmannSpectralPrimitiveRight (u : ℝ) :
   have hAffine : HasDerivAt (fun y : ℝ => ((1 - y : ℝ) : ℂ)) (-1) u := by
     have hId : HasDerivAt (fun y : ℝ => (y : ℂ)) 1 u :=
       (hasDerivAt_id (u : ℂ)).comp_ofReal
-    convert hId.const_sub 1 using 1
-    all_goals (first | rfl | (funext y; push_cast; ring) | ring_nf)
+    convert hId.const_sub 1 using 1 <;> (try rfl)
+    funext y
+    push_cast
+    ring
   convert hAffine.mul
-    ((hasDerivAt_carneiroLittmannSpectralPhase u).sub_const 1) using 1
-  all_goals (first | rfl | (funext y; simp [carneiroLittmannSpectralPrimitiveRight,
-        carneiroLittmannSpectralPrimitiveDerivativeRight]) |
-    (dsimp [carneiroLittmannSpectralPrimitiveDerivativeRight]; ring_nf) | ring_nf)
+    ((hasDerivAt_carneiroLittmannSpectralPhase u).sub_const 1) using 1 <;>
+      (try rfl) <;> simp [carneiroLittmannSpectralPrimitiveRight,
+        carneiroLittmannSpectralPrimitiveDerivativeRight] <;> ring
 
 private theorem continuous_carneiroLittmannSpectralPrimitiveLeft :
     Continuous carneiroLittmannSpectralPrimitiveLeft := by

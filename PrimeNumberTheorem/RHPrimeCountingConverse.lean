@@ -210,7 +210,9 @@ private lemma abs_integral_primeCountingLi_error_div_le
       have hinv : ContinuousAt (fun u : ℝ => (Real.sqrt u)⁻¹) t :=
         Real.continuous_sqrt.continuousAt.inv₀ hsqrt
       exact ContinuousAt.continuousWithinAt (by
-        simpa [one_div] using hconst.mul hinv)
+        convert hconst.mul hinv using 1 <;> (try rfl)
+        · funext u
+          simp [one_div, Pi.mul_apply])
   have hpoint : ∀ t ∈ Set.Icc 2 x, |K t| ≤ M t := by
     intro t ht
     have ht2 : 2 ≤ t := ht.1

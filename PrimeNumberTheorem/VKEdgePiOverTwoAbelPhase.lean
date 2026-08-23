@@ -236,6 +236,7 @@ theorem integrableOn_exp_mul_normalizedPsiError_mul_realPhaseCos
     integrableOn_logarithmicPsiError_exp_of_power_error
       (beta := rho.re) (lambda := lambda) herror ha
   have hFint : IntegrableOn F (Set.Ioi 0) := by
+    change Integrable (fun y : ℝ => F y) (volume.restrict (Set.Ioi 0))
     simpa only [F, mul_assoc] using
       (hbase.const_mul (‖rho‖ : ℂ)).const_mul
         (Complex.exp (((phase : ℝ) : ℂ) * I))
@@ -271,6 +272,7 @@ theorem realAbelMean_normalizedPsiError_mul_realPhaseCos
   have hGint : IntegrableOn G (Set.Ioi 0) := by
     simpa only [G] using hbase
   have hFint : IntegrableOn F (Set.Ioi 0) := by
+    change Integrable (fun y : ℝ => F y) (volume.restrict (Set.Ioi 0))
     simpa only [F, mul_assoc] using
       (hGint.const_mul (‖rho‖ : ℂ)).const_mul u
   rw [realAbelMean, psiAbelCoefficient]
@@ -371,7 +373,7 @@ theorem tendsto_targetPhaseAbelMean_of_zeta_zero
             ((‖rho‖ : ℂ) *
               psiAbelCoefficient rho.re rho.im a)).re)
         (𝓝[>] 0) (𝓝 (m : ℝ)) := by
-    simpa only [Function.comp_apply] using
+    simpa [Function.comp_def] using
       Complex.continuous_re.continuousAt.tendsto.comp hphase
   apply hre.congr'
   filter_upwards [self_mem_nhdsWithin] with a ha
@@ -412,7 +414,7 @@ theorem tendsto_realPhaseAbelMean_of_zeta_ne_zero
             ((‖rho‖ : ℂ) *
               psiAbelCoefficient rho.re lambda a)).re)
         (𝓝[>] 0) (𝓝 0) := by
-    simpa only [Function.comp_apply, Complex.zero_re] using
+    simpa [Function.comp_def, Complex.zero_re] using
       Complex.continuous_re.continuousAt.tendsto.comp hphase
   apply hre.congr'
   filter_upwards [self_mem_nhdsWithin] with a ha

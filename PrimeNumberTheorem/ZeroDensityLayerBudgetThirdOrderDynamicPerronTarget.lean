@@ -50,7 +50,12 @@ theorem tendsto_thirdOrderNormalizedDynamicPerronPowerMajorant
     {beta c : ℝ} (hexponent : c - 3 / 2 - beta < 0) :
     Tendsto (thirdOrderNormalizedDynamicPerronPowerMajorant beta c)
       atTop (nhds 0) := by
-  simpa [thirdOrderNormalizedDynamicPerronPowerMajorant] using
+  change Tendsto
+    (fun x : ℝ =>
+      (ExplicitFormulaResidues.vonMangoldtLSeriesNorm (c - 1) /
+        (2 * Real.pi)) * x ^ (c - 3 / 2 - beta))
+    atTop (nhds 0)
+  simpa using
     (tendsto_const_nhds.mul
       (tendsto_rpow_neg_atTop_nhds_zero hexponent))
 

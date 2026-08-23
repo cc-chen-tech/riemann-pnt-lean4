@@ -138,10 +138,15 @@ theorem exists_pintzConstant_fixedClassicalCarlsonDensity_tendsto
           (fun i T => (ZeroDensity.zeroDensityCount (sigma i) T : ℝ))
           (fun i T => Nat.cast_nonneg _)
           selectRate x
-    · simpa only [selectRate] using hmajorant rate hrate hgap
-  simpa only [selectRate, pintzCarlsonActualDensityBudget,
-    pintzCarlsonClassicalAggregatedDensityLayerTerm,
-    pintzCarlsonAggregatedDensityLayerTerm] using hactual
+    · simpa only [selectRate, pintzCarlsonFiniteLayerBudget] using
+        hmajorant rate hrate hgap
+  change Tendsto
+    (pintzCarlsonActualDensityBudget
+      layers
+      (fun i T => (ZeroDensity.zeroDensityCount (sigma i) T : ℝ))
+      selectRate)
+    atTop (nhds 0)
+  exact hactual
 
 /-- Carlson decay for exactly the high indices of a fixed threshold family,
 with one Pintz constant valid for every sufficiently small fixed rate. -/

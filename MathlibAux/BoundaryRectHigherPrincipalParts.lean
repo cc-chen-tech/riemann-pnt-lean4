@@ -17,7 +17,7 @@ private lemma hasDerivAt_neg_inv_horizontal
   have hz : HasDerivAt (fun z : ℂ => z + (y : ℂ) * I) 1 (x : ℂ) :=
     (hasDerivAt_id (x : ℂ)).add_const ((y : ℂ) * I)
   have h := (hz.inv hzne).neg
-  simpa only [neg_div, neg_neg] using h.comp_ofReal
+  simpa only [neg_div, neg_neg] using! h.comp_ofReal
 
 private lemma hasDerivAt_neg_inv_vertical
     {x y : ℝ} (hx : x ≠ 0) :
@@ -31,7 +31,7 @@ private lemma hasDerivAt_neg_inv_vertical
   have hz : HasDerivAt (fun z : ℂ => (x : ℂ) + z * I) I (y : ℂ) := by
     simpa using (hasDerivAt_id (y : ℂ)).mul_const I |>.const_add (x : ℂ)
   have h := (hz.inv hzne).neg
-  simpa only [neg_div, neg_neg] using h.comp_ofReal
+  simpa only [neg_div, neg_neg] using! h.comp_ofReal
 
 theorem boundaryRectIntegral_inv_sq_eq_zero
     {x0 x1 y0 y1 : ℝ}
