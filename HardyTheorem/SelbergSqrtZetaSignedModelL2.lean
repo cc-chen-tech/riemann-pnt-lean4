@@ -54,7 +54,7 @@ theorem integral_sq_selbergSqrtZetaSignedThetaModel_le_modelL2Budget
   let N : ℕ := firstZetaApproximationCutoff T
   let K : Finset ℝ :=
     selbergSqrtZetaSignedCollectedFrequencySupport N X
-  let a : ℝ → ℂ := selbergSqrtZetaSignedCollectedCoeff N X
+  let a : ℝ → ℂ := fun omega => selbergSqrtZetaSignedCollectedCoeff N X omega
   let Q : ℝ → ℂ :=
     selbergSqrtZetaSignedCollectedTriplePolynomial N X
   have hTtwo : T ≤ 2 * T := by linarith
@@ -118,7 +118,7 @@ theorem integral_sq_selbergSqrtZetaSignedThetaModel_le_modelL2Budget
         (by
           intro omega homega nu hnu hne
           exact hne)
-    simpa only [Q, K, a, N,
+    simpa [Q, K, a, N,
       selbergSqrtZetaSignedCollectedTriplePolynomial,
       MathlibAux.collectedExponentialPolynomial,
       selbergSqrtZetaSignedCollectedFrequencySupport,

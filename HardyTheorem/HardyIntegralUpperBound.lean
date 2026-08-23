@@ -75,7 +75,6 @@ theorem norm_integral_cexp_hardyPhase_le_of_two_sqrt_lt
     have hqpos : 0 < q := div_pos hxpos (by positivity)
     have hq : q ≤ 1 / 12 := by
       apply (div_le_iff₀ (by positivity : 0 < 2 * Real.pi * (n : ℝ) ^ 2)).2
-      dsimp only [q]
       nlinarith [hx.2, hden]
     have hlog : Real.log q ≤ q - 1 := Real.log_le_sub_one_of_pos hqpos
     rw [OscillatoryIntegral.deriv_hardyPhase hn hxpos]

@@ -64,7 +64,9 @@ theorem
   have hplI := Finset.mem_Icc.mp hpl
   let c : ℕ := p.2.2
   let d : ℕ := p.1 * p.2.1
-  have hc : 0 < c := by simpa only [c] using hplI.1
+  have hc : 0 < c := by
+    dsimp only [c]
+    omega
   have hd : 0 < d := by
     dsimp only [d]
     exact Nat.mul_pos hpmI.1 hpdI.1

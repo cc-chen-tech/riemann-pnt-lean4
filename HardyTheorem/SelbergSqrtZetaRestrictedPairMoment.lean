@@ -149,9 +149,8 @@ theorem sum_completeRangePair_kernel_eq_productMultiplicity
       intro p hp
       rw [(Finset.mem_filter.mp hp).2]
     _ = (selbergShortRestrictedPairProductMultiplicity X r : ℝ) * F r := by
-      simp only [selbergShortRestrictedPairProductMultiplicity, P, g,
-        selbergShortCompleteRangePairProduct, Finset.sum_const,
-        nsmul_eq_mul]
+      rw [Finset.sum_const, nsmul_eq_mul]
+      congr 1
 
 /-- A kernel depending only on the products of two pairs is exactly the
 corresponding quadratic form in the unsigned product multiplicities. -/

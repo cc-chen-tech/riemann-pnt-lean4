@@ -151,6 +151,10 @@ theorem abs_thetaLagPhase_sub_linearized_le
     have hRhas : HasDerivAt R
         (-(deriv thetaModel (x + u) + omega) -
           thetaLagReferenceFrequency omega x) u := by
+      change HasDerivAt
+        (thetaLagPhase omega x - fun y : ℝ => thetaLagReferenceFrequency omega x * y)
+        (-(deriv thetaModel (x + u) + omega) -
+          thetaLagReferenceFrequency omega x) u
       simpa only [R, id_eq, mul_one] using hphase.sub hlinear
     have hdrift :=
       abs_deriv_thetaLagPhase_sub_referenceFrequency_le

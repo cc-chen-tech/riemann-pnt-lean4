@@ -115,8 +115,14 @@ theorem sum_selbergSqrtZetaSignedDenominatorFiber_eq_zeta_mul
   have hprod0 : p.1 * p.2 ≠ 0 := by
     rw [hprod]
     exact hne
-  simp [ArithmeticFunction.zeta,
-    left_ne_zero_of_mul hprod0]
+  rw [ArithmeticFunction.natCoe_apply]
+  have hp : p.1 ≠ 0 := by
+    intro hp
+    apply hprod0
+    rw [hp]
+    simp
+  rw [ArithmeticFunction.zeta_apply_ne hp]
+  simp
 
 /-- The complete arithmetic denominator coefficient is the zeta convolution
 of the unrestricted tapered coefficient. -/
