@@ -67,6 +67,11 @@ PROVED_REUSABLE_PREDICATES = {
         "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
 }
 
+CLOSED_BY_ZETA23_BRIDGE = {
+    "HardyTheorem.selberg_odd_zero_proportion_target",
+    "KnownResults.conrey_40_percent_zeros_on_critical_line_target",
+}
+
 
 def load_previous_shapes() -> dict[str, str]:
     """Load existing target shapes so we do not overwrite handcrafted metadata."""
@@ -100,7 +105,7 @@ def build_status() -> dict[str, object]:
     for record in math_targets:
         namespace = _namespace_of(record.qualified_name)
         grouped.setdefault(namespace, []).append(
-            {
+            ({
                 "name": record.name,
                 "qualified_name": record.qualified_name,
                 "file": str(record.file.relative_to(ROOT)),
@@ -110,7 +115,8 @@ def build_status() -> dict[str, object]:
                     previous_shapes.get(record.name, "<unknown>"),
                 ),
                 "depends_on": [],
-            }
+            } | ({"closed_by_zeta23_bridge": True}
+                 if record.qualified_name in CLOSED_BY_ZETA23_BRIDGE else {}))
         )
 
     return {

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-16",
+  "timestamp": "2026-08-23",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -35,7 +35,7 @@
         "name": "gamma_asymptotic_half_plus_it_target",
         "qualified_name": "HardyTheorem.Details.gamma_asymptotic_half_plus_it_target",
         "file": "HardyTheorem.lean",
-        "line": 1893,
+        "line": 1896,
         "shape": "(fun t => Gamma(1/2 + I*t)) ~ (sqrt(2π) * exp(I*t*log t - I*t) * exp(-π*t/2))",
         "depends_on": []
       },
@@ -43,7 +43,7 @@
         "name": "theta_asymptotic_target",
         "qualified_name": "HardyTheorem.Details.theta_asymptotic_target",
         "file": "HardyTheorem.lean",
-        "line": 1918,
+        "line": 1921,
         "shape": "∃θ, exp(I*θ t)=exp(I*thetaPhase t) ∧ (fun t => θ t) ~ (t/2*log(t/(2π))-t/2-π/8)",
         "depends_on": []
       },
@@ -51,8 +51,26 @@
         "name": "approximate_functional_equation_target",
         "qualified_name": "HardyTheorem.Details.approximate_functional_equation_target",
         "file": "HardyTheorem.lean",
-        "line": 1945,
+        "line": 1948,
         "shape": "∃C>0, ∀t>1, ∃R, zeta(1/2+It)=finite sums + R ∧ ‖R‖ ≤ C*t^(-1/4)",
+        "depends_on": []
+      }
+    ],
+    "FiniteSpectrumGap": [
+      {
+        "name": "finiteSpectrumGapTarget",
+        "qualified_name": "FiniteSpectrumGap.finiteSpectrumGapTarget",
+        "file": "MathlibAux/FiniteSpectrumGap.lean",
+        "line": 84,
+        "shape": "<unknown>",
+        "depends_on": []
+      },
+      {
+        "name": "kappaFormTarget",
+        "qualified_name": "FiniteSpectrumGap.kappaFormTarget",
+        "file": "MathlibAux/FiniteSpectrumGap.lean",
+        "line": 90,
+        "shape": "<unknown>",
         "depends_on": []
       }
     ],
@@ -106,7 +124,7 @@
         "name": "vinogradov_korobov_zero_free_region",
         "qualified_name": "vinogradov_korobov_zero_free_region",
         "file": "ZeroFreeRegion.lean",
-        "line": 4548,
+        "line": 4557,
         "shape": "∃c>0, ∀s, |s.im|≥3 → s.re ≥ 1 - c/(log|s.im|)^(2/3)* (log(log|s.im|))^(-1/3) → riemannZeta s ≠ 0",
         "depends_on": []
       }
@@ -125,7 +143,7 @@
       "name": "rectangleIntegral_meromorphic_eq_residue_sum",
       "qualified_name": "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum",
       "file": "MathlibAux/RectangleResidue.lean",
-      "line": 1080,
+      "line": 1084,
       "chain": "Explicit formula",
       "body": "real_statement"
     },
@@ -171,6 +189,18 @@
       "proved_by": "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved"
     },
     {
+      "name": "hardy_littlewood_positive_odd_lower_bound_target",
+      "qualified_name": "HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target",
+      "file": "HardyTheorem/HardyLittlewoodLiteratureCount.lean",
+      "line": 96
+    },
+    {
+      "name": "hardy_littlewood_positive_multiplicity_lower_bound_target",
+      "qualified_name": "HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target",
+      "file": "HardyTheorem/HardyLittlewoodLiteratureCount.lean",
+      "line": 134
+    },
+    {
       "name": "HasNegToPosLocalSignChangeAt",
       "qualified_name": "HardyTheorem.HasNegToPosLocalSignChangeAt",
       "file": "HardyTheorem/ShortIntervalSignChangeMeasure.lean",
@@ -198,41 +228,125 @@
       "name": "hardy_theorem_target",
       "qualified_name": "HardyTheorem.hardy_theorem_target",
       "file": "HardyTheorem.lean",
-      "line": 1004,
+      "line": 1007,
       "proved_by": "HardyTheorem.hardy_theorem_target_proved"
     },
     {
       "name": "hardy_zeros_unbounded_target",
       "qualified_name": "HardyTheorem.hardy_zeros_unbounded_target",
       "file": "HardyTheorem.lean",
-      "line": 1084,
+      "line": 1087,
       "proved_by": "HardyTheorem.hardy_zeros_unbounded_target_proved"
     },
     {
       "name": "hardy_zeros_abs_unbounded_target",
       "qualified_name": "HardyTheorem.hardy_zeros_abs_unbounded_target",
       "file": "HardyTheorem.lean",
-      "line": 1090,
+      "line": 1093,
       "proved_by": "HardyTheorem.hardy_zeros_abs_unbounded_target_proved"
     },
     {
       "name": "hardy_littlewood_lower_bound_target",
       "qualified_name": "HardyTheorem.hardy_littlewood_lower_bound_target",
       "file": "HardyTheorem.lean",
-      "line": 1637,
+      "line": 1640,
       "proved_by": "HardyTheorem.hardy_littlewood_lower_bound_target_proved"
     },
     {
       "name": "selberg_zero_proportion_target",
       "qualified_name": "HardyTheorem.selberg_zero_proportion_target",
       "file": "HardyTheorem.lean",
-      "line": 1640
+      "line": 1643
+    },
+    {
+      "name": "IsAdmissible",
+      "qualified_name": "FiniteSpectrumGap.IsAdmissible",
+      "file": "MathlibAux/FiniteSpectrumGap.lean",
+      "line": 51
+    },
+    {
+      "name": "finiteCentersPairwiseSeparated",
+      "qualified_name": "MathlibAux.finiteCentersPairwiseSeparated",
+      "file": "MathlibAux/SeparatedForwardWindows.lean",
+      "line": 31
     },
     {
       "name": "goodHeight",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
       "file": "PrimeNumberTheorem/ExplicitFormulaAux.lean",
       "line": 137
+    },
+    {
+      "name": "HalfIsolatedSimplifiedDetectorInput",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedZeroDichotomy.HalfIsolatedSimplifiedDetectorInput",
+      "file": "PrimeNumberTheorem/HalfIsolatedZeroDichotomy/Audit.lean",
+      "line": 107
+    },
+    {
+      "name": "HalfIsolatedPureSimplifiedDetectorInput",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedZeroDichotomy.HalfIsolatedPureSimplifiedDetectorInput",
+      "file": "PrimeNumberTheorem/HalfIsolatedZeroDichotomy/Audit.lean",
+      "line": 155
+    },
+    {
+      "name": "HalfIsolatedResidualControlForDetector",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedZeroDichotomy.HalfIsolatedResidualControlForDetector",
+      "file": "PrimeNumberTheorem/HalfIsolatedZeroDichotomy/Audit.lean",
+      "line": 165
+    },
+    {
+      "name": "IsTopLayerZero",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedZeroDichotomy.IsTopLayerZero",
+      "file": "PrimeNumberTheorem/HalfIsolatedZeroDichotomy/Contract.lean",
+      "line": 25
+    },
+    {
+      "name": "IsHalfIsolatedZero",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedZeroDichotomy.IsHalfIsolatedZero",
+      "file": "PrimeNumberTheorem/HalfIsolatedZeroDichotomy/Contract.lean",
+      "line": 34
+    },
+    {
+      "name": "IsInQuantitativeLocalCluster",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedZeroDichotomy.IsInQuantitativeLocalCluster",
+      "file": "PrimeNumberTheorem/HalfIsolatedZeroDichotomy/Contract.lean",
+      "line": 52
+    },
+    {
+      "name": "HasHalfIsolatedDichotomy",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedZeroDichotomy.HasHalfIsolatedDichotomy",
+      "file": "PrimeNumberTheorem/HalfIsolatedZeroDichotomy/Contract.lean",
+      "line": 56
+    },
+    {
+      "name": "HalfIsolatedDirectedGrowth",
+      "qualified_name": "PrimeNumberTheorem.VKEdgeConditionalPackage.HalfIsolatedDirectedGrowth",
+      "file": "PrimeNumberTheorem/VKEdgeConditionalPackage.lean",
+      "line": 89
+    },
+    {
+      "name": "HalfIsolatedConclusion",
+      "qualified_name": "PrimeNumberTheorem.VKEdgeConditionalPackage.HalfIsolatedConclusion",
+      "file": "PrimeNumberTheorem/VKEdgeConditionalPackage.lean",
+      "line": 93
+    },
+    {
+      "name": "ClusteredConclusion",
+      "qualified_name": "PrimeNumberTheorem.VKEdgeConditionalPackage.ClusteredConclusion",
+      "file": "PrimeNumberTheorem/VKEdgeConditionalPackage.lean",
+      "line": 100
+    },
+    {
+      "name": "HalfIsolatedDirectedGrowthPotential",
+      "qualified_name": "PrimeNumberTheorem.VKEdgeConditionalPackage.HalfIsolatedDirectedGrowthPotential",
+      "file": "PrimeNumberTheorem/VKEdgeConditionalPackage.lean",
+      "line": 168
+    },
+    {
+      "name": "dynamicComplementRealBand",
+      "qualified_name": "PrimeNumberTheorem.VKEdgePiOverTwo.dynamicComplementRealBand",
+      "file": "PrimeNumberTheorem/VKEdgeDynamicZeroPacketDrift.lean",
+      "line": 23
     },
     {
       "name": "centeredLocalizedContourScaleValid",
@@ -245,6 +359,384 @@
       "qualified_name": "PrimeNumberTheorem.VKEdgePiOverTwo.localizedContourScaleValid",
       "file": "PrimeNumberTheorem/VKEdgePiOverTwoConcreteLocalizedData.lean",
       "line": 81
+    },
+    {
+      "name": "HalfIsolatedDetectorContractOutput",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedDetectorContractOutput",
+      "file": "PrimeNumberTheorem/ZeroDensityAmplificationAudit.lean",
+      "line": 181
+    },
+    {
+      "name": "HalfIsolatedDetectorAmplificationContract",
+      "qualified_name": "PrimeNumberTheorem.HalfIsolatedDetectorAmplificationContract",
+      "file": "PrimeNumberTheorem/ZeroDensityAmplificationAuditContract.lean",
+      "line": 88
+    },
+    {
+      "name": "windowStartPairwiseSeparated",
+      "qualified_name": "PrimeNumberTheorem.windowStartPairwiseSeparated",
+      "file": "PrimeNumberTheorem/ZeroDensityAmplificationAuditIteration.lean",
+      "line": 7
+    },
+    {
+      "name": "IsCarlsonMovingDyadicLogPowerGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingDyadicLogPowerGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDyadicCarlsonMinimalLayerMargin.lean",
+      "line": 70
+    },
+    {
+      "name": "IsSelectedHeightDynamicZeroFree",
+      "qualified_name": "PrimeNumberTheorem.IsSelectedHeightDynamicZeroFree",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDyadicCarlsonSelectedHeightPNT.lean",
+      "line": 345
+    },
+    {
+      "name": "DynamicBoundaryPackageCoefficientCap",
+      "qualified_name": "PrimeNumberTheorem.DynamicBoundaryPackageCoefficientCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicBoundaryUpperTransfer.lean",
+      "line": 22
+    },
+    {
+      "name": "ActualDynamicCarlsonGapFamilyHeightConditions",
+      "qualified_name": "PrimeNumberTheorem.ActualDynamicCarlsonGapFamilyHeightConditions",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicCarlsonAutomaticCount.lean",
+      "line": 20
+    },
+    {
+      "name": "CarlsonDynamicGapFamilySeparated",
+      "qualified_name": "PrimeNumberTheorem.CarlsonDynamicGapFamilySeparated",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicCarlsonGapFamily.lean",
+      "line": 60
+    },
+    {
+      "name": "IsActualDynamicCarlsonGapFamilyCountCertificate",
+      "qualified_name": "PrimeNumberTheorem.IsActualDynamicCarlsonGapFamilyCountCertificate",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicCarlsonGapFamily.lean",
+      "line": 103
+    },
+    {
+      "name": "IsCarlsonDynamicGapFamilyRatioDominated",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonDynamicGapFamilyRatioDominated",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualDynamicCarlsonGapFamily.lean",
+      "line": 209
+    },
+    {
+      "name": "IsConjugationInvariantCluster",
+      "qualified_name": "PrimeNumberTheorem.IsConjugationInvariantCluster",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation.lean",
+      "line": 21
+    },
+    {
+      "name": "IsActualMovingCarlsonTwoHeightCertificate",
+      "qualified_name": "PrimeNumberTheorem.IsActualMovingCarlsonTwoHeightCertificate",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualMovingCarlsonCertificate.lean",
+      "line": 32
+    },
+    {
+      "name": "ActualMovingPositiveRightEdgeCap",
+      "qualified_name": "PrimeNumberTheorem.ActualMovingPositiveRightEdgeCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualMovingCarlsonPositiveTailTransfer.lean",
+      "line": 36
+    },
+    {
+      "name": "IsActualMovingCarlsonTwoHeightCountCertificate",
+      "qualified_name": "PrimeNumberTheorem.IsActualMovingCarlsonTwoHeightCountCertificate",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualMovingTwoHeightCountCertificate.lean",
+      "line": 10
+    },
+    {
+      "name": "ActualPositiveCarlsonRightCover",
+      "qualified_name": "PrimeNumberTheorem.ActualPositiveCarlsonRightCover",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualPositiveZeroOrderedCoverTransfer.lean",
+      "line": 27
+    },
+    {
+      "name": "ActualSelectedHeightMovingPositiveRightEdgeCap",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightMovingPositiveRightEdgeCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightMovingCarlsonPositiveTailTransfer.lean",
+      "line": 29
+    },
+    {
+      "name": "NaturalPointTargetAmplitudeNegligible",
+      "qualified_name": "PrimeNumberTheorem.NaturalPointTargetAmplitudeNegligible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightNaturalTransfer.lean",
+      "line": 23
+    },
+    {
+      "name": "HasFarNaturalPointTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNaturalPointTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightNaturalTransfer.lean",
+      "line": 31
+    },
+    {
+      "name": "RobustMarginAntitoneCost",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile.RobustMarginAntitoneCost",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileCertifiedCostOptimality.lean",
+      "line": 26
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripGrid",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripGrid",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileFiniteGridDirectionalSelection.lean",
+      "line": 17
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripGrid",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripGrid",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileFiniteGridDirectionalSelection.lean",
+      "line": 24
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripProfile",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileOptimalTransfer.lean",
+      "line": 21
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripProfile",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileOptimization.lean",
+      "line": 49
+    },
+    {
+      "name": "ActualSelectedHeightFiniteStripProfile",
+      "qualified_name": "PrimeNumberTheorem.ActualSelectedHeightFiniteStripProfile",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetActualSelectedHeightStripProfileOptimization.lean",
+      "line": 54
+    },
+    {
+      "name": "IsAdaptiveBoundaryLocalDensityAdmissible",
+      "qualified_name": "PrimeNumberTheorem.IsAdaptiveBoundaryLocalDensityAdmissible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetAdaptiveBoundaryLocalDensity.lean",
+      "line": 28
+    },
+    {
+      "name": "ZeroDensityMajorant",
+      "qualified_name": "PrimeNumberTheorem.ZeroDensityMajorant",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlson.lean",
+      "line": 12
+    },
+    {
+      "name": "IsCarlsonMovingQuadraticLayerCountGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingQuadraticLayerCountGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonDynamicLayerCount.lean",
+      "line": 48
+    },
+    {
+      "name": "IsCarlsonMovingQuadraticLogPowerLayerCountGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingQuadraticLogPowerLayerCountGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonDynamicLayerCount.lean",
+      "line": 186
+    },
+    {
+      "name": "IsCarlsonMovingBalancedCoefficientAdmissible",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingBalancedCoefficientAdmissible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonMovingBalancedDecay.lean",
+      "line": 125
+    },
+    {
+      "name": "IsCarlsonMovingQuadraticLogGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingQuadraticLogGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonMovingCoefficientGrowth.lean",
+      "line": 437
+    },
+    {
+      "name": "IsCarlsonMovingQuadraticLogPowerGap",
+      "qualified_name": "PrimeNumberTheorem.IsCarlsonMovingQuadraticLogPowerGap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonMovingLogPowerAbsorption.lean",
+      "line": 17
+    },
+    {
+      "name": "CarlsonPointwiseHeightConditions",
+      "qualified_name": "PrimeNumberTheorem.CarlsonPointwiseHeightConditions",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonMovingTwoHeightPointwiseCount.lean",
+      "line": 9
+    },
+    {
+      "name": "AdmissibleHeight",
+      "qualified_name": "PrimeNumberTheorem.AdmissibleHeight",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetDynamic.lean",
+      "line": 8
+    },
+    {
+      "name": "IsOptimalHeight",
+      "qualified_name": "PrimeNumberTheorem.IsOptimalHeight",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetDynamic.lean",
+      "line": 33
+    },
+    {
+      "name": "IsJointTwoHeightSigmaOptimizer",
+      "qualified_name": "PrimeNumberTheorem.IsJointTwoHeightSigmaOptimizer",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetJointTwoHeightExactSigmaOptimizer.lean",
+      "line": 139
+    },
+    {
+      "name": "IsJointTwoHeightOuterExponentFeasible",
+      "qualified_name": "PrimeNumberTheorem.IsJointTwoHeightOuterExponentFeasible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetJointTwoHeightOptimalOuterExponent.lean",
+      "line": 15
+    },
+    {
+      "name": "IsJointTwoHeightPrescribedCapOuterExponentFeasible",
+      "qualified_name": "PrimeNumberTheorem.IsJointTwoHeightPrescribedCapOuterExponentFeasible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetJointTwoHeightOptimalPrescribedCapOuterExponent.lean",
+      "line": 15
+    },
+    {
+      "name": "IsMovingDensityGapAdmissible",
+      "qualified_name": "PrimeNumberTheorem.IsMovingDensityGapAdmissible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetMovingGapBarrier.lean",
+      "line": 31
+    },
+    {
+      "name": "HasFarNormWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNormWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetOmegaTransfer.lean",
+      "line": 19
+    },
+    {
+      "name": "HasFarPositiveWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarPositiveWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetOmegaTransfer.lean",
+      "line": 23
+    },
+    {
+      "name": "HasFarNegativeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNegativeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetOmegaTransfer.lean",
+      "line": 27
+    },
+    {
+      "name": "IsEventuallyHalfSmall",
+      "qualified_name": "PrimeNumberTheorem.IsEventuallyHalfSmall",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetOmegaTransfer.lean",
+      "line": 39
+    },
+    {
+      "name": "MovingSigmaAnchoredAt",
+      "qualified_name": "PrimeNumberTheorem.MovingSigmaAnchoredAt",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTAnchoredMovingSigma.lean",
+      "line": 25
+    },
+    {
+      "name": "PositiveOutsideClusterBucketFamilyAboveHalf",
+      "qualified_name": "PrimeNumberTheorem.PositiveOutsideClusterBucketFamilyAboveHalf",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTDynamicFiniteClusterTailInconsistency.lean",
+      "line": 107
+    },
+    {
+      "name": "GlobalRightEdgeZeroFree",
+      "qualified_name": "PrimeNumberTheorem.GlobalRightEdgeZeroFree",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTDynamicReverseZeroFree.lean",
+      "line": 31
+    },
+    {
+      "name": "PositiveNontrivialZerosStrictlyRightOfHalf",
+      "qualified_name": "PrimeNumberTheorem.PositiveNontrivialZerosStrictlyRightOfHalf",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTDynamicTailHalfBarrier.lean",
+      "line": 78
+    },
+    {
+      "name": "OutsideClusterRealPartCap",
+      "qualified_name": "PrimeNumberTheorem.OutsideClusterRealPartCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTHybridCanonicalOutsideClusterCapTransfer.lean",
+      "line": 14
+    },
+    {
+      "name": "HeightwiseOutsideClusterRealPartCap",
+      "qualified_name": "PrimeNumberTheorem.HeightwiseOutsideClusterRealPartCap",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTHybridCofinalOutsideClusterCap.lean",
+      "line": 17
+    },
+    {
+      "name": "UniformMovingSigmaHybridDensityDecay",
+      "qualified_name": "PrimeNumberTheorem.UniformMovingSigmaHybridDensityDecay",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTMovingSigmaTransfer.lean",
+      "line": 122
+    },
+    {
+      "name": "HasFarNaturalPointPositiveTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNaturalPointPositiveTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTSharpSignedOmega.lean",
+      "line": 26
+    },
+    {
+      "name": "HasFarNaturalPointNegativeTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNaturalPointNegativeTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTSharpSignedOmega.lean",
+      "line": 31
+    },
+    {
+      "name": "FiniteHeightRightEdgeZeroFree",
+      "qualified_name": "PrimeNumberTheorem.FiniteHeightRightEdgeZeroFree",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetPNTSignedReverseZeroFree.lean",
+      "line": 52
+    },
+    {
+      "name": "HasFarPositiveTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarPositiveTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetSignedTargetAmplitudeRealTransfer.lean",
+      "line": 16
+    },
+    {
+      "name": "HasFarNegativeTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarNegativeTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetSignedTargetAmplitudeRealTransfer.lean",
+      "line": 22
+    },
+    {
+      "name": "IsTargetAmplitudeAdmissibleHeight",
+      "qualified_name": "PrimeNumberTheorem.IsTargetAmplitudeAdmissibleHeight",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetTargetAmplitudeHeightCriterion.lean",
+      "line": 31
+    },
+    {
+      "name": "IsPNTSubpolynomialLogHeight",
+      "qualified_name": "PrimeNumberTheorem.IsPNTSubpolynomialLogHeight",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetTargetAmplitudeHeightIncompatibility.lean",
+      "line": 22
+    },
+    {
+      "name": "TargetAmplitudeNegligible",
+      "qualified_name": "PrimeNumberTheorem.TargetAmplitudeNegligible",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetTargetAmplitudeTransfer.lean",
+      "line": 24
+    },
+    {
+      "name": "HasFarTargetAmplitudeWitness",
+      "qualified_name": "PrimeNumberTheorem.HasFarTargetAmplitudeWitness",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetTargetAmplitudeTransfer.lean",
+      "line": 89
+    },
+    {
+      "name": "HasFarWindowCardAdvantage",
+      "qualified_name": "PrimeNumberTheorem.HasFarWindowCardAdvantage",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetWindowCountAntiCancellation.lean",
+      "line": 23
+    },
+    {
+      "name": "HasFarWindowEnergyBudgets",
+      "qualified_name": "PrimeNumberTheorem.HasFarWindowEnergyBudgets",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetWindowEnergyEventualCap.lean",
+      "line": 20
+    },
+    {
+      "name": "HasFarWindowEnergySeparation",
+      "qualified_name": "PrimeNumberTheorem.HasFarWindowEnergySeparation",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetWindowEnergySeparation.lean",
+      "line": 117
+    },
+    {
+      "name": "HasFarWindowSecondMomentAdvantage",
+      "qualified_name": "PrimeNumberTheorem.HasFarWindowSecondMomentAdvantage",
+      "file": "PrimeNumberTheorem/ZeroDensityLayerBudgetWindowSecondMomentBadCount.lean",
+      "line": 19
+    },
+    {
+      "name": "dynamicExplicitFormulaHeight",
+      "qualified_name": "PrimeNumberTheorem.dynamicExplicitFormulaHeight",
+      "file": "PrimeNumberTheorem/ZeroForcingUnifiedTransfer.lean",
+      "line": 49
     },
     {
       "name": "PNTForm1",
@@ -278,19 +770,19 @@
       "name": "ExplicitFormulaConversePowerTarget",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
       "file": "PrimeNumberTheorem.lean",
-      "line": 4396
+      "line": 4398
     },
     {
       "name": "explicit_formula_von_mangoldt_unweighted",
       "qualified_name": "PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted",
       "file": "PrimeNumberTheorem.lean",
-      "line": 8188
+      "line": 8190
     },
     {
       "name": "explicit_formula_von_mangoldt",
       "qualified_name": "PrimeNumberTheorem.explicit_formula_von_mangoldt",
       "file": "PrimeNumberTheorem.lean",
-      "line": 8210
+      "line": 8212
     },
     {
       "name": "AProcessScheduleAdmissible",
@@ -404,7 +896,7 @@
       "name": "IsVinogradovResidueSolution",
       "qualified_name": "ZeroFreeRegion.VinogradovKorobov.IsVinogradovResidueSolution",
       "file": "ZeroFreeRegion/VinogradovKorobov/VinogradovPrimePowerFiber.lean",
-      "line": 322
+      "line": 350
     },
     {
       "name": "IsVinogradovSolutionInt",
@@ -452,7 +944,421 @@
       "name": "classical_zero_free_region",
       "qualified_name": "ZeroFreeRegion.classical_zero_free_region",
       "file": "ZeroFreeRegion.lean",
-      "line": 2715
+      "line": 2724
+    },
+    {
+      "name": "EF_lit",
+      "qualified_name": "Zeta23.EF.EF_lit",
+      "file": "Zeta23/ExplicitFormula.lean",
+      "line": 81
+    },
+    {
+      "name": "EF_paper",
+      "qualified_name": "Zeta23.EF.EF_paper",
+      "file": "Zeta23/ExplicitFormula.lean",
+      "line": 88
+    },
+    {
+      "name": "LogDerivZetaHasBound",
+      "qualified_name": "LogDerivZetaHasBound",
+      "file": "Zeta23/FromPNTPlus/MediumPNT.lean",
+      "line": 751
+    },
+    {
+      "name": "LogDerivZetaIsHoloSmall",
+      "qualified_name": "LogDerivZetaIsHoloSmall",
+      "file": "Zeta23/FromPNTPlus/MediumPNT.lean",
+      "line": 755
+    },
+    {
+      "name": "RectangleBorderIntegrable",
+      "qualified_name": "RectangleBorderIntegrable",
+      "file": "Zeta23/FromPNTPlus/ResidueCalcOnRectangles.lean",
+      "line": 151
+    },
+    {
+      "name": "HasSimplePolesOn",
+      "qualified_name": "HasSimplePolesOn",
+      "file": "Zeta23/FromPNTPlus/ResidueCalcOnRectangles.lean",
+      "line": 636
+    },
+    {
+      "name": "StirlingHyp",
+      "qualified_name": "Zeta23.MuInts.StirlingHyp",
+      "file": "Zeta23/GammaFacts/IntMu.lean",
+      "line": 24
+    },
+    {
+      "name": "ExplicitFormulaPaper",
+      "qualified_name": "Zeta23.ExplicitFormulaPaper",
+      "file": "Zeta23/Hypotheses.lean",
+      "line": 48
+    },
+    {
+      "name": "MVHilbert",
+      "qualified_name": "Zeta23.MVHilbert",
+      "file": "Zeta23/Hypotheses.lean",
+      "line": 107
+    },
+    {
+      "name": "PosDefOn",
+      "qualified_name": "RHLinalg.PosDefOn",
+      "file": "Zeta23/LinAlg/Sylvester.lean",
+      "line": 47
+    },
+    {
+      "name": "EigenBound",
+      "qualified_name": "Zeta23.MV.EigenBound",
+      "file": "Zeta23/MV/Duality.lean",
+      "line": 34
+    },
+    {
+      "name": "MVDiag",
+      "qualified_name": "Zeta23.MVDiag",
+      "file": "Zeta23/MV.lean",
+      "line": 52
+    },
+    {
+      "name": "NearCUE",
+      "qualified_name": "Zeta23.PairCeiling.NearCUE",
+      "file": "Zeta23/PairCeiling/NearCUE.lean",
+      "line": 34
+    },
+    {
+      "name": "EventuallyAt",
+      "qualified_name": "Zeta23.PrimeSide.EventuallyAt",
+      "file": "Zeta23/PrimeSideA/Basic.lean",
+      "line": 152
+    },
+    {
+      "name": "EventuallyAtCore",
+      "qualified_name": "EventuallyAtCore",
+      "file": "Zeta23/PrimeSideA/Basic.lean",
+      "line": 505
+    },
+    {
+      "name": "NuBound",
+      "qualified_name": "Zeta23.PrimeSide.NuBound",
+      "file": "Zeta23/PrimeSideA/EndsCore.lean",
+      "line": 63
+    },
+    {
+      "name": "LocalHypsEventually",
+      "qualified_name": "Zeta23.PrimeSide.LocalHypsEventually",
+      "file": "Zeta23/PrimeSideB/Concrete.lean",
+      "line": 74
+    },
+    {
+      "name": "EvBound",
+      "qualified_name": "Zeta23.EvBound",
+      "file": "Zeta23/PrimeSideTemp.lean",
+      "line": 44
+    },
+    {
+      "name": "ThmTracesHyp",
+      "qualified_name": "Zeta23.ThmTracesHyp",
+      "file": "Zeta23/PrimeSideTemp.lean",
+      "line": 97
+    },
+    {
+      "name": "GoodHeight",
+      "qualified_name": "Zeta23.RvM.GoodHeight",
+      "file": "Zeta23/RvM/Defs.lean",
+      "line": 31
+    },
+    {
+      "name": "IsNontrivialZero",
+      "qualified_name": "Zeta23.IsNontrivialZero",
+      "file": "Zeta23/Statement.lean",
+      "line": 38
+    },
+    {
+      "name": "ThmA_statement",
+      "qualified_name": "ThmA_statement",
+      "file": "Zeta23/Statement.lean",
+      "line": 179
+    },
+    {
+      "name": "ThmB_statement",
+      "qualified_name": "ThmB_statement",
+      "file": "Zeta23/Statement.lean",
+      "line": 183
+    },
+    {
+      "name": "ThmC_statement",
+      "qualified_name": "ThmC_statement",
+      "file": "Zeta23/Statement.lean",
+      "line": 187
+    },
+    {
+      "name": "InTail",
+      "qualified_name": "Zeta23.Tail.InTail",
+      "file": "Zeta23/Tail/Basic.lean",
+      "line": 36
+    },
+    {
+      "name": "LocalHypsCoreDEventually",
+      "qualified_name": "Zeta23.ThmD.LocalHypsCoreDEventually",
+      "file": "Zeta23/ThmD/Concrete.lean",
+      "line": 57
+    },
+    {
+      "name": "EF_lit_chi",
+      "qualified_name": "Zeta23.ThmE.EF_lit_chi",
+      "file": "Zeta23/ThmE/EFLitChi.lean",
+      "line": 46
+    },
+    {
+      "name": "ExplicitFormulaPaperChi",
+      "qualified_name": "Zeta23.ThmE.ExplicitFormulaPaperChi",
+      "file": "Zeta23/ThmE/Hypotheses.lean",
+      "line": 80
+    },
+    {
+      "name": "GoodHeightL",
+      "qualified_name": "Zeta23.ThmE.GoodHeightL",
+      "file": "Zeta23/ThmE/RvMChiDefs.lean",
+      "line": 21
+    },
+    {
+      "name": "IsNontrivialZeroL",
+      "qualified_name": "Zeta23.ThmE.IsNontrivialZeroL",
+      "file": "Zeta23/ThmE/Statement.lean",
+      "line": 48
+    },
+    {
+      "name": "ThmTracesHypChi",
+      "qualified_name": "Zeta23.ThmE.ThmTracesHypChi",
+      "file": "Zeta23/ThmE/TracesHypChi.lean",
+      "line": 57
+    },
+    {
+      "name": "ThmTracesHypE",
+      "qualified_name": "Zeta23.ThmTracesHypE",
+      "file": "Zeta23/TracesBoundsE.lean",
+      "line": 49
+    },
+    {
+      "name": "IsXiDerivZero",
+      "qualified_name": "Zeta23.XiPrime.IsXiDerivZero",
+      "file": "Zeta23/XiPrime/Defs.lean",
+      "line": 40
+    },
+    {
+      "name": "IsWZero",
+      "qualified_name": "Zeta23.XiPrime.IsWZero",
+      "file": "Zeta23/XiPrime/Defs.lean",
+      "line": 229
+    },
+    {
+      "name": "FullLineIdentity",
+      "qualified_name": "Zeta23.XiPrime.FullLineIdentity",
+      "file": "Zeta23/XiPrime/ExplicitFormula/LitCorr.lean",
+      "line": 281
+    },
+    {
+      "name": "RationalLine",
+      "qualified_name": "Zeta23.XiPrime.RationalLine",
+      "file": "Zeta23/XiPrime/ExplicitFormula/LitCorr.lean",
+      "line": 289
+    },
+    {
+      "name": "CoeffFacts",
+      "qualified_name": "Zeta23.XiPrime.CoeffFacts",
+      "file": "Zeta23/XiPrime/ExplicitFormula/XiEFAssembly.lean",
+      "line": 52
+    },
+    {
+      "name": "TestWeightFacts",
+      "qualified_name": "Zeta23.XiPrime.TestWeightFacts",
+      "file": "Zeta23/XiPrime/ExplicitFormula/XiEFAssembly.lean",
+      "line": 86
+    },
+    {
+      "name": "GoodHeightW",
+      "qualified_name": "Zeta23.XiPrime.Hardy.GoodHeightW",
+      "file": "Zeta23/XiPrime/Hardy/Contour.lean",
+      "line": 28
+    },
+    {
+      "name": "WFullLineIdentityWith",
+      "qualified_name": "Zeta23.XiPrime.WFullLineIdentityWith",
+      "file": "Zeta23/XiPrime/Hardy/EFLitCorrW.lean",
+      "line": 45
+    },
+    {
+      "name": "WFullLineIdentity",
+      "qualified_name": "Zeta23.XiPrime.WFullLineIdentity",
+      "file": "Zeta23/XiPrime/Hardy/EFLitCorrW.lean",
+      "line": 55
+    },
+    {
+      "name": "LminusLineIdentity",
+      "qualified_name": "Zeta23.XiPrime.LminusLineIdentity",
+      "file": "Zeta23/XiPrime/Hardy/EFLitCorrW.lean",
+      "line": 59
+    },
+    {
+      "name": "LineFactsW",
+      "qualified_name": "Zeta23.XiPrime.LineFactsW",
+      "file": "Zeta23/XiPrime/Hardy/EFMain.lean",
+      "line": 40
+    },
+    {
+      "name": "ContourFactsW",
+      "qualified_name": "Zeta23.XiPrime.ContourFactsW",
+      "file": "Zeta23/XiPrime/Hardy/EFMain.lean",
+      "line": 46
+    },
+    {
+      "name": "CoeffFactsC",
+      "qualified_name": "Zeta23.XiPrime.CoeffFactsC",
+      "file": "Zeta23/XiPrime/Hardy/EFMain.lean",
+      "line": 54
+    },
+    {
+      "name": "PPInput",
+      "qualified_name": "Zeta23.XiPrime.PPInput",
+      "file": "Zeta23/XiPrime/PrimeSide/Concrete.lean",
+      "line": 62
+    },
+    {
+      "name": "AdmFamily",
+      "qualified_name": "Zeta23.XiPrime.AdmFamily",
+      "file": "Zeta23/XiPrime/PrimeSide/Concrete.lean",
+      "line": 71
+    },
+    {
+      "name": "MomentsW",
+      "qualified_name": "Zeta23.MomentsW",
+      "file": "Zeta23/XiPrime/PrimeSide/Moments.lean",
+      "line": 79
+    },
+    {
+      "name": "XiZerosAreZetaZeros",
+      "qualified_name": "Zeta23.XiPrime.XiZerosAreZetaZeros",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 73
+    },
+    {
+      "name": "XiDerivZerosInStrip",
+      "qualified_name": "Zeta23.XiPrime.XiDerivZerosInStrip",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 84
+    },
+    {
+      "name": "XiDerivRvM",
+      "qualified_name": "Zeta23.XiDerivRvM",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 137
+    },
+    {
+      "name": "D1Summable",
+      "qualified_name": "Zeta23.D1Summable",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 182
+    },
+    {
+      "name": "XiEF",
+      "qualified_name": "Zeta23.XiEF",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 204
+    },
+    {
+      "name": "XiTraceTransfer",
+      "qualified_name": "Zeta23.XiTraceTransfer",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 217
+    },
+    {
+      "name": "CoeffMoments",
+      "qualified_name": "Zeta23.CoeffMoments",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 236
+    },
+    {
+      "name": "GzMoments",
+      "qualified_name": "Zeta23.GzMoments",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 246
+    },
+    {
+      "name": "CertFlat",
+      "qualified_name": "Zeta23.CertFlat",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 266
+    },
+    {
+      "name": "CertQuartic",
+      "qualified_name": "Zeta23.CertQuartic",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 272
+    },
+    {
+      "name": "FixedLamBounds",
+      "qualified_name": "Zeta23.FixedLamBounds",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 287
+    },
+    {
+      "name": "HeadlineFlat",
+      "qualified_name": "Zeta23.HeadlineFlat",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 297
+    },
+    {
+      "name": "HeadlineQuartic",
+      "qualified_name": "Zeta23.HeadlineQuartic",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 304
+    },
+    {
+      "name": "HeadlineCumulative",
+      "qualified_name": "Zeta23.HeadlineCumulative",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 311
+    },
+    {
+      "name": "WZerosInStrip",
+      "qualified_name": "Zeta23.WZerosInStrip",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 335
+    },
+    {
+      "name": "HeadlineW",
+      "qualified_name": "HeadlineW",
+      "file": "Zeta23/XiPrime/Statement.lean",
+      "line": 392
+    },
+    {
+      "name": "WEF",
+      "qualified_name": "Zeta23.XiPrime.WEF",
+      "file": "Zeta23/XiPrime/StatementW.lean",
+      "line": 71
+    },
+    {
+      "name": "WRvM",
+      "qualified_name": "Zeta23.XiPrime.WRvM",
+      "file": "Zeta23/XiPrime/StatementW.lean",
+      "line": 98
+    },
+    {
+      "name": "PPUpper",
+      "qualified_name": "Zeta23.XiPrime.PPUpper",
+      "file": "Zeta23/XiPrime/Transfer/Inputs.lean",
+      "line": 80
+    },
+    {
+      "name": "HatNegligible",
+      "qualified_name": "Zeta23.XiPrime.HatNegligible",
+      "file": "Zeta23/XiPrime/Transfer.lean",
+      "line": 63
+    },
+    {
+      "name": "GoodHeight",
+      "qualified_name": "Zeta23.XiPrime.ZeroCount.GoodHeight",
+      "file": "Zeta23/XiPrime/ZeroCount/Contour.lean",
+      "line": 28
     }
   ],
   "unclassified_prop_defs": [],
@@ -493,6 +1399,8 @@
       "conrey_40_percent_zeros_on_critical_line_target"
     ],
     "Quantitative zero-free region": [
+      "finiteSpectrumGapTarget",
+      "kappaFormTarget",
       "vinogradov_korobov_zero_free_region"
     ],
     "RH error equivalence": [
@@ -502,26 +1410,10 @@
       "RH_ErrorBound"
     ]
   },
-  "mathematical_target_count": 12,
+  "mathematical_target_count": 14,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 48,
+  "reusable_predicate_count": 196,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 65,
-  "zeta23_closure": {
-    "note": "In-repo closure via the Zeta23 bridge (merged to main, commit f92f9965). Inputs: Anthropic zeta-23-lean Theorem B (Apache 2.0, axiom-clean, upstream commit 3635e748) + this repository own all-height RvM. Bridge: HardyTheorem.Zeta23SelbergBridge; explicit constant 7/48. Axiom audit: [propext, Classical.choice, Quot.sound]. See docs/research/zeta23-merge-provenance.md.",
-    "closed_targets": [
-      {
-        "name": "selberg_odd_zero_proportion_target",
-        "qualified_name": "HardyTheorem.selberg_odd_zero_proportion_target",
-        "proved_by": "HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23"
-      },
-      {
-        "name": "conrey_40_percent_zeros_on_critical_line_target",
-        "qualified_name": "KnownResults.conrey_40_percent_zeros_on_critical_line_target",
-        "proved_by": "HardyTheorem.Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23"
-      }
-    ],
-    "declaration_count_note": "The 12 Prop declarations remain in the sources; 2 of them are now closed by the bridge. The count here keeps the declaration total for script compatibility."
-  }
+  "all_scanned_prop_defs_count": 215
 }
