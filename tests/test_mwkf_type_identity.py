@@ -9,6 +9,7 @@ from scripts.mwkf_mobius_type_identity import (
     crt_reciprocity_numerators,
     double_split_mobius_identity,
     mobius,
+    poisson_congruence_reparametrization,
     split_mobius_identity,
     type_scale_bounds,
 )
@@ -60,6 +61,15 @@ def test_squarefree_factorization_gives_exact_common_b_phase() -> None:
             s=s, a=a, b=b, n=n
         )
         assert (inverse - mod_a - mod_b).denominator == 1
+
+
+def test_h_poisson_frequency_is_exact_shifted_equation() -> None:
+    for r, s, delta, k in ((5, 7, 3, -2), (7, 11, -4, 3), (11, 13, 8, 0)):
+        v, j = poisson_congruence_reparametrization(
+            r=r, s=s, delta=delta, k=k
+        )
+        assert r * v - delta == j * s
+        assert (r * v - delta) % s == 0
 
 
 def test_one_third_split_has_exact_balanced_scales() -> None:

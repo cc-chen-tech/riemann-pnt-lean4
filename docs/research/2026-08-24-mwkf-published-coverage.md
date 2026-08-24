@@ -85,28 +85,147 @@ For the balanced maximal box \((3,3,5)\), it gives
 
 ## 3. Completion adapters
 
-Completion in \(h\) modulo \(s\) is kinematically available only when
-\(h\geq\sigma\).  Since the core has \(h\leq\sigma-m\), this forces the
-critical face
+Smooth Poisson summation in \(h\) is an exact identity at every relative
+scale; it is not restricted to \(H\geq S\).  For fixed \(r,s,\delta\),
+write the coupled normalized \(h\)-weight as \(u(h/H)\), with Fourier
+transform \(\widehat u(\xi)=\int u(x)e(-x\xi)\,dx\).  Then
 
 \[
- m=0,\qquad h=\sigma.
+ \sum_{h\in\mathbb Z}u(h/H)e\!\left(-\frac{h\delta\bar r}s\right)
+ =H\sum_{k\in\mathbb Z}
+ \widehat u\!\left(H\left(k+\frac{\delta\bar r}s\right)\right).
 \tag{3.1}
 \]
 
-Completion in \(\delta\) is kinematically available on
+Put
 
 \[
- \ell\geq\sigma,qquad
- \ell\leq m+\rho-1.
+ v=k s+\delta\bar r.
 \tag{3.2}
 \]
 
-Neither kinematic condition is itself an estimate.  No cited theorem in the
-current source set bounds the original coupled kernel on (3.1) or (3.2)
-with the saving (1.1).  Accordingly the adapters return
-`no_cited_completed_kernel_bound`; these faces remain residual rather than
-being silently declared covered.
+The right side of (3.1) is therefore an infinite smooth sum over
+
+\[
+ rv\equiv\delta\pmod s,
+ \qquad
+ \delta=rv-js,\quad j\in\mathbb Z,
+\tag{3.3}
+\]
+
+with transform argument \(Hv/s\).  Repeated integration by parts in the
+normalized \(h\)-variable gives the effective dual range
+
+\[
+ |v|\leq \frac SH\mathscr L^C,
+ \qquad
+ |j|\leq
+ 4\frac RH\mathscr L^C+4\frac LS,
+\tag{3.4}
+\]
+
+while the complement remains an explicit transform tail.  Hence the exact
+zero-slack dual exponents are
+
+\[
+ v_{\rm dual}=\max(0,\sigma-h),
+ \qquad
+ j_{\rm dual}=\max(0,\rho-h,\ell-\sigma).
+\tag{3.5}
+\]
+
+For the balanced maximal witness both are \(1/2\).  Poisson summation in
+\(\delta\) has the analogous dual exponent
+\(\max(0,\sigma-\ell)=1/2\), with the nonlinear logarithmic phase retained
+inside its coupled Fourier transform.
+
+No cited theorem in the current source set bounds the shifted equation
+(3.3), with its original Möbius weights and coupled transform, by the saving
+(1.1).  Accordingly both adapters return
+`no_cited_completed_kernel_bound`.  The correction is that short-frequency
+boxes now expose a nonempty short dual sum instead of being rejected as
+kinematically unavailable.
+
+For the actual coupled box, let \(\widehat\Psi_h\) denote the Fourier
+transform only in its normalized \(h/H\) coordinate, including the smooth
+dyadic \(h\)-cutoff.  Equations (3.1)--(3.3) give the exact identity
+
+\[
+ \mathfrak S_q[\Psi]=H\,\mathfrak C_q[\widehat\Psi_h],
+\tag{3.6}
+\]
+
+where
+
+\[
+\begin{aligned}
+ \mathfrak C_q[\widehat\Psi_h]
+ :={}&\sum_{\substack{r\asymp R,\ s\asymp S,\\
+                      \delta\asymp L,\ v,j\in\mathbb Z\\
+                      \delta=rv-js\\
+                      (r,s)=1,\ (q,rs)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)\\
+ &\quad\times
+ \widehat\Psi_h\!\left(
+  \frac rR,\frac sS,\frac\delta L,\frac{Hv}s
+ \right).
+\end{aligned}
+\tag{3.7}
+\]
+
+The Fourier transform in (3.7) is not compactly supported; its rapid decay
+is retained in the displayed weight, so (3.6) has no truncation remainder.
+The exact local inequality sufficient for the accepted coupled-kernel gate
+is therefore
+
+\[
+ \boxed{\mathrm{SM}_{1/1000}:\qquad
+ |\mathfrak C_q[\widehat\Psi_h]|
+ \ll_W \frac{RS}{H}T^{-1/1000}.}
+\tag{3.8}
+\]
+
+At the balanced maximal witness, (3.4) gives
+
+\[
+ r,s\sim T^3,\qquad
+ |v|,|j|\ll T^{1/2}\mathscr L^C,\qquad
+ |\delta|\sim T^{5/2},
+\tag{3.9}
+\]
+
+and (3.8) is the explicit bound
+
+\[
+ |\mathfrak C_q[\widehat\Psi_h]|
+ \ll_W T^{7/2-1/1000}.
+\tag{3.10}
+\]
+
+The zero-slack lattice-volume exponent of (3.7) is \(6\): the four free
+scales contribute \(3+3+1/2+1/2\), while the window
+\(|rv-js|\sim T^{5/2}\) inside products of scale \(T^{7/2}\) imposes one
+power of codimension.  Thus square-root cancellation would have exponent
+\(3\), leaving a margin \(1/2-1/1000\) over (3.10).  This volume comparison
+is only a target ledger, not a proof of cancellation.
+
+Writing \(v=g v_0\), \(j=g j_0\), \((v_0,j_0)=1\), and requiring
+\(g\mid\delta\), every solution can be parameterized exactly as
+
+\[
+ r=r_0+j_0t,\qquad s=s_0+v_0t,
+ \qquad v_0r_0-j_0s_0=\delta/g.
+\tag{3.11}
+\]
+
+This identifies (3.8) as an averaged two-linear-form Möbius correlation
+with slopes as large as \(T^{1/2}\).  Matomäki--Radziwiłł--Tao,
+arXiv:1503.05121, Theorem 1.6, has a factor \(A^{2k}\) for slopes bounded
+by \(A\) and supplies logarithmic rather than the required \(T^{5/2}\)
+reduction from the volume exponent.  Consequently it is not an adapter for
+(3.8).  The remaining new input can now be stated as the single shifted
+Möbius inequality \(\mathrm{SM}_{1/1000}\), with transform-tail seminorms
+kept uniform.
 
 ## 4. Wright fixed-factor adapter
 

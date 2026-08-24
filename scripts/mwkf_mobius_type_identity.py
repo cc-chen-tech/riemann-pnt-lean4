@@ -122,6 +122,27 @@ def crt_reciprocity_numerators(
     return inverse, mod_a, mod_b
 
 
+def poisson_congruence_reparametrization(
+    *,
+    r: int,
+    s: int,
+    delta: int,
+    k: int,
+) -> tuple[int, int]:
+    """Reparametrize an ``h``-Poisson frequency by a shifted equation.
+
+    With ``bar(r)`` chosen modulo ``s``, put
+    ``v = k*s + delta*bar(r)``.  Then the returned integer ``j`` satisfies
+    the exact equation ``delta = r*v - j*s``.
+    """
+    if r <= 0 or s <= 1 or gcd(r, s) != 1:
+        raise ValueError("require r > 0, s > 1, and (r,s)=1")
+    v = k * s + delta * pow(r, -1, s)
+    numerator = r * v - delta
+    assert numerator % s == 0
+    return v, numerator // s
+
+
 @dataclass(frozen=True)
 class TypeScaleBounds:
     u_exp: Fraction

@@ -7,6 +7,9 @@ sys.path.insert(0, str(Path(__file__).parents[1]))
 from scripts.audit_mwkf_coverage import (
     TARGET_SAVING,
     bcr_adapter,
+    completion_dual_exponent,
+    h_completion_adapter,
+    h_poisson_shifted_scales,
     route_box,
     wright_fixed_factor_adapter,
 )
@@ -35,6 +38,26 @@ def test_balanced_maximal_box_has_exact_bcr_deficit() -> None:
     assert result.reason == "insufficient_saving"
 
 
+def test_short_h_poisson_has_half_power_dual_not_a_kinematic_rejection() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert completion_dual_exponent(box.h, box.sigma) == F(1, 2)
+    result = h_completion_adapter(box)
+    assert not result.applicable
+    assert result.reason == "no_cited_completed_kernel_bound"
+    assert "dual exponent max(0,sigma-h)=1/2" in result.conditions
+
+
+def test_balanced_h_poisson_reduces_to_exact_critical_shifted_scales() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    scales = h_poisson_shifted_scales(box)
+    assert scales.v == F(1, 2)
+    assert scales.j == F(1, 2)
+    assert scales.shift == F(5, 2)
+    assert scales.target == F(7, 2)
+    assert scales.volume == F(6)
+    assert scales.square_root_margin == F(1, 2)
+
+
 def test_wright_rejects_a_box_without_a_fixed_denominator_factor() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     result = wright_fixed_factor_adapter(box, fixed_factor=None)
@@ -58,6 +81,10 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
     for marker in (
         "## 2. Exact BCR adapter",
         "## 3. Completion adapters",
+        r"v=k s+\delta\bar r",
+        r"\delta=rv-js",
+        r"\mathrm{SM}_{1/1000}",
+        r"T^{7/2-1/1000}",
         "## 4. Wright fixed-factor adapter",
         "## 5. Exact residual witnesses",
         "published coverage result: residual cells remain",

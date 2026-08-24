@@ -36,8 +36,54 @@ class RouteResult:
     conditions: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class ShiftedPoissonScales:
+    v: Fraction
+    j: Fraction
+    shift: Fraction
+    target: Fraction
+    volume: Fraction
+    square_root_margin: Fraction
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
+
+
+def completion_dual_exponent(
+    length_exponent: Fraction,
+    modulus_exponent: Fraction,
+) -> Fraction:
+    """Length of the effective smooth-Poisson dual interval."""
+    return _positive_part(modulus_exponent - length_exponent)
+
+
+def h_poisson_shifted_scales(box: ExponentBox) -> ShiftedPoissonScales:
+    """Exact zero-slack ledger after Poisson summation in ``h``.
+
+    The transformed equation is ``delta = r*v - j*s``.  ``volume`` is
+    the lattice-volume exponent before arithmetic cancellation; it records
+    the codimension imposed by the shift window and is not an estimate.
+    """
+    v = completion_dual_exponent(box.h, box.sigma)
+    j = max(F(0), box.rho - box.h, box.ell - box.sigma)
+    product_scale = max(box.rho + v, box.sigma + j)
+    volume = (
+        box.rho
+        + box.sigma
+        + v
+        + j
+        - _positive_part(product_scale - box.ell)
+    )
+    target = box.rho + box.sigma - box.h
+    return ShiftedPoissonScales(
+        v=v,
+        j=j,
+        shift=box.ell,
+        target=target,
+        volume=volume,
+        square_root_margin=target - volume / 2,
+    )
 
 
 def bcr_adapter(box: ExponentBox) -> RouteResult:
@@ -79,32 +125,34 @@ def bcr_adapter(box: ExponentBox) -> RouteResult:
 
 
 def h_completion_adapter(box: ExponentBox) -> RouteResult:
-    kinematic = box.h >= box.sigma
+    dual = completion_dual_exponent(box.h, box.sigma)
     return RouteResult(
         route="h_completion",
         applicable=False,
         saving=None,
         source="finite Poisson completion modulo s",
-        reason=(
-            "no_cited_completed_kernel_bound"
-            if kinematic else "frequency_shorter_than_modulus"
+        reason="no_cited_completed_kernel_bound",
+        conditions=(
+            f"dual exponent max(0,sigma-h)={dual}",
+            "rv congruent to delta modulo s",
+            "coupled Fourier kernel retained",
         ),
-        conditions=("h >= sigma", "coupled kernel retained"),
     )
 
 
 def delta_completion_adapter(box: ExponentBox) -> RouteResult:
-    kinematic = box.ell >= box.sigma
+    dual = completion_dual_exponent(box.ell, box.sigma)
     return RouteResult(
         route="delta_completion",
         applicable=False,
         saving=None,
         source="finite Poisson completion modulo s",
-        reason=(
-            "no_cited_completed_kernel_bound"
-            if kinematic else "shift_shorter_than_modulus"
+        reason="no_cited_completed_kernel_bound",
+        conditions=(
+            f"dual exponent max(0,sigma-ell)={dual}",
+            "rh congruent to transformed delta frequency modulo s",
+            "coupled Fourier kernel retained",
         ),
-        conditions=("ell >= sigma", "coupled kernel retained"),
     )
 
 
