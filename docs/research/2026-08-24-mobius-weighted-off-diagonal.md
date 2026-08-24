@@ -810,10 +810,20 @@ and
 Thus the common divisor carries no Möbius sign; both reduced variables
 retain Möbius weights.
 
-Fix \(0<\eta<10^{-3}\). Repeated integration by parts in (2.7) and (4.4),
-together with (2.5), shows the following precise statement. For every
-\(B>0\), the part of (4.8) outside the boxes satisfying (5.3)--(5.8) is
-\(O_{B,W,\eta}(T^{-B})\):
+Put \(\mathscr L=\log(2T)\).  Fix a tail target \(D>20\), and then choose
+an integer \(B=B(D,W)\geq100\).  Call the boxes satisfying (5.3)--(5.8)
+the **polylogarithmic core**, and denote the exact sum of all remaining
+nonzero modes by \(\mathcal R_{\rm tail}^{(B)}\).  Then (4.8) gives
+
+\[
+ \mathcal R_{N,T}=\mathcal E_{\rm arch}
+ +\mathcal R_{\rm tail}^{(B)}
+ +\sum_{\text{core }q,R,S,K,M,L,H}
+  \mathcal O^{\ne0}_{q;R,S,K,M,L,H}.
+\tag{5.2a}
+\]
+
+The core boxes satisfy
 
 \[
  1\leq q,\qquad qR/2\leq N,\qquad qS/2\leq N;
@@ -831,7 +841,7 @@ together with (2.5), shows the following precise statement. For every
 \]
 
 \[
- KM\leq T^{1+\eta};
+ KM\leq T\mathscr L^B;
 \tag{5.6}
 \]
 
@@ -843,24 +853,73 @@ together with (2.5), shows the following precise statement. For every
 In particular,
 
 \[
- M\leq4T^{(1+\eta)/2}\sqrt{\frac SR},\qquad
- K\leq4T^{(1+\eta)/2}\sqrt{\frac RS}.
+ M\leq4(T\mathscr L^B)^{1/2}\sqrt{\frac SR},\qquad
+ K\leq4(T\mathscr L^B)^{1/2}\sqrt{\frac RS}.
 \tag{5.7a}
 \]
 
 \[
- 1\leq |\delta|\leq 8MR\,T^{-1+\eta},\qquad
- 1\leq |h|\leq 8S M^{-1}T^\eta.
+ 1\leq |\delta|\leq \frac{8MR}{T}\mathscr L^B,\qquad
+ 1\leq |h|\leq \frac{8S}{M}\mathscr L^B.
 \tag{5.8}
 \]
 
 A retained nonempty box must consequently also satisfy
 
 \[
- MR\geq\frac18T^{1-\eta},\qquad
- S\geq\frac18MT^{-\eta}.
+ MR\geq\frac{T}{8\mathscr L^B},\qquad
+ S\geq\frac{M}{8\mathscr L^B}.
 \tag{5.8a}
 \]
+
+Here are the two integrations by parts used for (5.8).  With
+
+\[
+ \Phi_t(t)=t\log\left(1+\frac\delta{xr}\right),\qquad
+ \mathcal L_t=
+ \frac1{i\log(1+\delta/(xr))}\frac d{dt},
+\tag{5.8b}
+\]
+
+we have \(\mathcal L_t e^{i\Phi_t}=e^{i\Phi_t}\).  The bounds (2.5) and
+the derivatives of \(W(t/T)\) show that \(J\) integrations contribute
+\(\ll_J(T|\log(1+\delta/(xr))|)^{-J}\).  Outside
+\(|\log(1+\delta/(xr))|\leq\mathscr L^B/T\), this gives a
+\(\mathscr L^{-BJ}\) seminorm gain for each kernel.  On dyadic support the
+complementary logarithmic inequality implies the first core bound in (5.8).
+
+For the Poisson phase use
+
+\[
+ \mathcal L_x=-\frac{s}{2\pi i h}\frac d{dx},\qquad
+ \mathcal L_x e(-hx/s)=e(-hx/s).
+\tag{5.8c}
+\]
+
+On the retained \(\delta\)-range, every \(x\)-derivative of the other
+factors in (4.4) costs at most \(C_j\mathscr L^{Bj}/M^j\).  Hence \(J\)
+integrations with \(\mathcal L_x\) give a \(\mathscr L^{-BJ}\) kernel
+seminorm gain unless the second core bound in (5.8) holds.  A Mellin shift
+in (2.3) gives analogous rapid seminorm decay outside (5.6).  Finally,
+(4.3), (5.5), and the retained \(\delta\)-range give (5.7).
+
+These pointwise seminorm gains do **not** by themselves prove
+\(\mathcal R_{\rm tail}^{(B)}=o(T)\).  Indeed, the elementary absolute
+majorants
+
+\[
+ \left(\sum_{d\leq T^3}\frac{|a_N(d)|}{\sqrt d}\right)^2
+ \ll T^3,
+ \qquad
+ \sum_{m,n\geq1}\frac1{\sqrt{mn}}
+ \left(1+\frac{mn}{T}\right)^{-A}\ll_A T^{1/2}\mathscr L
+\tag{5.8d}
+\]
+
+leave a crude integrated scale \(T^{9/2}\mathscr L\).  No fixed power of
+\(\mathscr L^{-1}\) removes the resulting \(T^{7/2}\) gap.  Thus the
+polylogarithmic tail requires a Möbius-sensitive estimate and remains an
+explicit analytic obligation below.
 
 The constants 8 and 16 in (5.7)--(5.8) follow from the fixed support
 \([1/2,2]\) in (3.1). They may be replaced by other fixed constants only if
@@ -876,15 +935,15 @@ Dyadically write
 Every retained box therefore satisfies
 
 \[
- 1\leq L\leq8MR T^{-1+\eta},\qquad
- 1\leq H\leq8S M^{-1}T^\eta,
+ 1\leq L\leq\frac{8MR}{T}\mathscr L^B,\qquad
+ 1\leq H\leq\frac{8S}{M}\mathscr L^B,
 \tag{5.10}
 \]
 
 and hence
 
 \[
- A:=LH\leq64RS T^{-1+2\eta}.
+ A:=LH\leq\frac{64RS}{T}\mathscr L^{2B}.
 \tag{5.11}
 \]
 
@@ -910,7 +969,7 @@ where, for each multi-index \(\mathbf j\),
 
 \[
  \|\partial^{\mathbf j}\Psi\|_\infty
- \leq C_{\mathbf j,W,\eta}T^{|\mathbf j|\eta}.
+ \leq C_{\mathbf j,W,D}\mathscr L^{B|\mathbf j|}.
 \tag{5.14}
 \]
 
@@ -924,11 +983,12 @@ has the exact scale
 \tag{5.15}
 \]
 
-## 6. The single local inequality that would prove the target
+## 6. The local coupled-kernel gate for an asymptotic
 
-Smooth Mellin/Fourier separation of the admissible kernel in (5.14) reduces
-\(\mathfrak S[\Psi]\) to \(T^{O(\eta)}\) superpositions of the following
-three-variable sums. For
+### 6.1 Gate comparison
+
+For comparison with BCR, smooth Mellin/Fourier separation of the admissible
+kernel in (5.14) produces the following three-variable sums. For
 
 \[
  x\in\left[\frac{M}{8S},\frac{8M}{S}\right],\qquad
@@ -973,46 +1033,109 @@ arbitrary. It is a divisor-convolution coefficient and satisfies
 \tag{6.4}
 \]
 
-The required new local statement is:
-
-> **MWKF(3).** Uniformly for every squarefree \(q\), all variables satisfying
-> (5.3), (5.6), (5.7), (5.10), all \(x,y\) in (6.1), and all admissible
-> smooth weights in (6.2)--(6.3),
-> \[
-> \boxed{
->  |\mathfrak T_q(R,S;L,H;x,y)|
->  \leq C_{\varepsilon,W}RS\,T^\varepsilon. }
-> \tag{6.5}
-> \]
-
-This is the promised Möbius-weighted trilinear Kloosterman-fraction gate.
-Its exponents are explicit: exponent 1 in the product \(RS\), and no
-positive power of \(A=LH\).
-
-Indeed, (5.15) and (6.5) give
+Let a fixed separation scheme write the coupled weight as
 
 \[
- |\mathcal O^{\ne0}_{q;R,S,K,M,L,H}|
- \ll_{\varepsilon,W}\frac{T^{1+\varepsilon}}q.
+ \Psi(\mathbf u)=\int_{\Omega}\widehat\Psi(\xi)
+ \prod_{j=1}^4\psi_{j,\xi}(u_j)\,d\xi,
+ \qquad
+ \|\widehat\Psi\|_{L^1(\Omega)}\ll_W\mathscr L^{C_{\rm sep}}.
+\tag{6.5}
+\]
+
+Fourier/Mellin inversion and the triangle inequality give the exact chain
+
+\[
+ |\mathfrak S_q[\Psi]|
+ \leq\int_\Omega|\widehat\Psi(\xi)|
+       |\mathfrak T_q(\xi)|\,d\xi
+ \leq\|\widehat\Psi\|_1\sup_{\xi\in\Omega}|\mathfrak T_q(\xi)|.
 \tag{6.6}
 \]
 
-There are \(O_\eta((\log T)^6)\) retained dyadic choices, and
+Consequently the three candidate gates, from strongest to weakest, are:
+
+1. **Uniform-separated:**
+   \(\sup_\xi|\mathfrak T_q(\xi)|
+   \ll RS T^{-1/1000}\mathscr L^{-C_{\rm sep}}\).
+2. **Integrated-separated:**
+   \(\int|\widehat\Psi(\xi)||\mathfrak T_q(\xi)|d\xi
+   \ll RS T^{-1/1000}\).
+3. **Coupled-kernel:**
+   \(|\mathfrak S_q[\Psi]|\ll RS T^{-1/1000}\).
+
+Only the last expression occurs in the exact box formula (5.15).  Neither
+Minkowski nor an early absolute value is needed after it.  Thus the formal
+interface for the next analytic slice is the weakest of the three:
+
+> **Accepted local gate after exact audit: coupled-kernel.** Uniformly for
+> squarefree \(q\), all boxes satisfying (5.3), (5.6), (5.7), (5.10), and
+> the actual coupled weights satisfying (5.14), prove
+> \[
+> \boxed{
+>  |\mathfrak S_{q;R,S,K,M,L,H}[\Psi]|
+>  \leq C_W RS\,T^{-1/1000}. }
+> \tag{CK\(_{1/1000}\)}
+> \]
+
+This gate is unproved.  The exponent \(1/1000\) is fixed merely to make the
+global target unambiguous; any fixed positive power saving, or a fully
+accounted logarithmic saving exceeding \(C_{\rm sep}+7\), would suffice.
+The former \(RS T^\varepsilon\) gate proves only a
+\(T^{1+\varepsilon}\) bound and is not sufficient for the asymptotic.
+The second required local statement is the polylogarithmic-tail estimate
 
 \[
- \sum_{q\leq N}\frac{\mu^2(q)}q\ll\log(2N).
+ \boxed{\mathrm{TAIL}_{B,D}:\qquad
+ |\mathcal R_{\rm tail}^{(B)}|\ll_W T\mathscr L^{-D}.}
+\tag{6.6a}
+\]
+
+It too is unproved; (5.8d) explains why it cannot be replaced by an
+absolute-value argument.
+
+### 6.2 Boundary diagnostics and global implication
+
+The exact-rational checker prints the following non-proof diagnostics:
+
+| witness | \((\rho,\sigma,m,k,\ell,h,\kappa)\) | \(a\) | \(a-(\rho+\sigma)/2\) |
+|---|---|---:|---:|
+| balanced_max_a | \((3,3,1/2,1/2,5/2,5/2,0)\) | 5 | 2 |
+| large_q_endpoint | \((1,1,0,0,0,1,2)\) | 1 | 0 |
+| r_long | \((3,2,0,1,2,2,0)\) | 4 | \(3/2\) |
+| s_long | \((2,3,1,0,2,2,0)\) | 4 | \(3/2\) |
+
+The \(T^2\) balanced gap is a failure of the arbitrary-coefficient BCR
+third-variable range; it is not a counterexample to the coupled structured
+gate.
+
+Assuming CK\(_{1/1000}\), (5.15) gives each retained box the bound
+
+\[
+ |\mathcal O^{\ne0}_{q;R,S,K,M,L,H}|
+ \ll_W\frac{T^{1-1/1000}}q.
 \tag{6.7}
 \]
 
-Therefore (6.5) implies
+There are \(O_W(\mathscr L^6)\) retained dyadic choices, and
 
 \[
-\boxed{\mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}.}
+ \sum_{q\leq N}\frac{\mu^2(q)}q\ll\mathscr L.
 \tag{6.8}
 \]
 
-All analytic tails already contribute \(O_{B,W,\eta}(T^{-B})\), so no
-additional arithmetic estimate is needed after MWKF(3).
+Together with (4.5j), CK\(_{1/1000}\) and
+TAIL\(_{B,D}\) prove the precise conditional implication
+
+\[
+ \boxed{\mathrm{CK}_{1/1000}+\mathrm{TAIL}_{B,D}
+ \quad\Longrightarrow\quad
+ \mathcal R_{T^3,T}
+ \ll_W T^{1-1/1000}\mathscr L^7+T\mathscr L^{-D}=o_W(T).}
+\tag{6.9}
+\]
+
+No separated supremum is used in this implication.
 
 ## 7. Term-by-term correspondence with Bettin--Chandee--Radziwiłł
 
@@ -1029,12 +1152,12 @@ The notation correspondence is:
 | \(q\delta=m_1e-m_2d\) | \(d\Delta=m_1n_2-m_2n_1\) after gcd extraction | shifted-divisor variable |
 | \(L\leq|\delta|\leq2L\) | \(0<|\Delta|\leq D/d\) | short shift |
 | \(H\leq|h|\leq2H\) | \(0<|h|<H_d\) | nonzero Poisson frequency |
-| \(H\leq8S/M\,T^\eta\) | \(H_d=N_2/(dM)T^\varepsilon\) | Fourier cutoff |
+| \(H\leq8S\mathscr L^B/M\) | \(H_d=N_2/(dM)T^\varepsilon\) | Fourier cutoff |
 | \(a=h\delta\) | \(a=h\Delta\) | third trilinear variable |
-| \(A=LH\leq64RS/T^{1-2\eta}\) | \(A=N_1N_2/(d^2T^{1-\varepsilon})\) | length of the \(a\)-variable |
+| \(A=LH\leq64RS\mathscr L^{2B}/T\) | \(A=N_1N_2/(d^2T^{1-\varepsilon})\) | length of the \(a\)-variable |
 | \(e(-a\bar r/s)\) | \(e(-a\bar n_1/n_2)\) | Kloosterman-fraction phase |
 | \(\nu_{x,y}(a)\) in (6.2) | \(\nu_{x,y}(a)=\sum_{h\Delta=a}e(-hx+\Delta y/2\pi)\) | divisor-convolution coefficient |
-| (6.5) | BCR Proposition 1 / Conjecture 1 slot | arithmetic input |
+| CK\(_{1/1000}\) | BCR Proposition 1 / Conjecture 1 slot | arithmetic input, before separation here |
 
 The four methodological differences forced by \(N=T^3\) are exact:
 
@@ -1053,15 +1176,16 @@ The four methodological differences forced by \(N=T^3\) are exact:
 
 3. **Range of the third variable.** BCR Conjecture 1 assumes
    \(A\leq(RS)^{1/2+\varepsilon}\). Here
-   \(A\leq RS/T^{1-2\eta}\). For \(R=S=T^3\), the latter permits
-   \(A=T^{5+2\eta}\), while the BCR hypothesis permits only
+   \(A\leq64RS\mathscr L^{2B}/T\). For \(R=S=T^3\), the latter permits
+   \(A=64T^5\mathscr L^{2B}\), while the BCR hypothesis permits only
    \(A\leq T^{3+\varepsilon}\). Thus even BCR's conjectural arbitrary-
    coefficient estimate does not cover the present long-\(a\) boxes.
 
 4. **Arithmetic structure.** BCR discard the nature of \(a_n\) and use only
    \(L^2\) norms. Equation (5.2) keeps both signs \(\mu(r)\mu(s)\), and
-   (6.2) keeps the factorization \(a=h\delta\). MWKF(3) is asserted only for
-   this structured class, not for arbitrary coefficients.
+   (6.2) keeps the factorization \(a=h\delta\). CK\(_{1/1000}\) is posed
+   only for the original coupled structured class, not for arbitrary
+   coefficients.
 
 For balanced \(R=S=X\), the BCR proven local calculation gives, after the
 archimedean normalization in (5.15),
@@ -1085,10 +1209,11 @@ At \(X=T^3\), the two terms in (7.1) are
 \tag{7.3}
 \]
 
-MWKF(3) instead gives \(T^{1+\varepsilon}\) for the corresponding box.
-The missing savings relative to (7.3) cannot come from a rearrangement of
-the BCR norm inequalities; it has to use the simultaneous Möbius weights
-and the divisor-convolution restriction on \(a\).
+CK\(_{1/1000}\) would instead give \(T^{1-1/1000}\) for the corresponding
+box before logarithmic aggregation.  The missing savings relative to (7.3)
+cannot come from a rearrangement of the BCR norm inequalities; it has to use
+the simultaneous Möbius weights, the divisor-convolution restriction on
+\(a\), and the coupled archimedean kernel.
 
 The \(T^{3/4}\) result in BCR concerns a product of a smooth polynomial of
 length \(T^{1/2}\) and a second polynomial of length \(T^{1/4}\), where Watt's
@@ -1098,29 +1223,53 @@ that theorem supplies no box estimate for (6.3).
 
 ## 8. What has and has not been proved
 
+**Phase-1 classification: exact reduction remains blocked.**
+
 Proved in this note:
 
-* the exact AFE expansion (2.4)--(2.7);
-* the exact finite main quadratic form (1.1);
-* the exact shifted-divisor remainder (3.5);
-* the exact Kloosterman-fraction remainder (4.5), (4.8);
-* all effective dyadic ranges (5.3)--(5.11);
+* the pole-cancelled exact AFE and its convergence bounds, (2.0)--(2.7);
+* the finite diagonal and exact shifted-divisor reindexing, (2.8)--(3.8);
+* the Poisson coefficient, phase, and complete nonzero-mode kernel,
+  (4.1)--(4.5);
+* the corrected zero-mode identity, including the previously omitted
+  \(1-4z^2\) zero and the exact archimedean correction,
+  (4.5a)--(4.8);
+* the exact separation (5.2a) into a polylogarithmic core and a named tail,
+  and the core-box normalization (5.3)--(5.15);
 * the implication
-  \(\mathrm{MWKF}(3)\Longrightarrow\mathcal R_{T^3,T}\ll T^{1+\varepsilon}\).
+  \(\mathrm{CK}_{1/1000}+\mathrm{TAIL}_{B,D}
+  \Rightarrow\mathcal R_{T^3,T}=o_W(T)\),
+  (6.7)--(6.9).
 
 Not proved here:
 
-* MWKF(3), equation (6.5).
+* CK\(_{1/1000}\), the accepted coupled-kernel gate;
+* TAIL\(_{B,D}\), the Möbius-sensitive aggregation outside the
+  polylogarithmic core;
+* complete coverage of its parameter polytope by published estimates;
+* the residual Möbius Type I/II estimate;
+* the unconditional \(T^3\) long-mollifier asymptotic.
 
-That inequality is the remaining long-mollifier problem. Treating it as an
-already available consequence of BCR would be incorrect for the range
-reason in item 3 of Section 7.
+Thus Phase 1 verifies the infinite exact decomposition but remains blocked
+at the finite polylogarithmic reduction demanded for the final theorem.
+Treating either CK\(_{1/1000}\) or TAIL\(_{B,D}\) as an already available
+consequence of BCR would be incorrect.
 
 ## 9. Primary references
 
 * S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of
   the Riemann zeta function with Dirichlet polynomials*, arXiv:1411.7764,
   especially Proposition 1 and Sections 3.1--3.4.
+* S. Bettin, V. Chandee, *Trilinear forms with Kloosterman fractions*,
+  arXiv:1502.00769, Theorem 1, as a Region-A input for the next coverage
+  slice; no claim of full-polytope coverage is made here.
+* T. Wright, *A note on trilinear forms with partially fixed denominator*,
+  arXiv:2604.25177v2, as a future fixed-factor Region-C input; its hypotheses
+  have not yet been mapped over the whole polytope.
+* arXiv:2601.00292 is **withdrawn from this project's admissible analytic
+  inputs**: the author record reports a missing \(L^2\) factor (changing the
+  relevant loss from \(L^5\) to \(L^7\)), so the advertised improvement is
+  not used.
 * M. Radziwiłł, *Limitations to mollifying \(\zeta(s)\)*,
   arXiv:1207.6583, for Farmer's all-\(\theta\) long-mollifier conjecture and
   the nontrivial role of the off-diagonal.

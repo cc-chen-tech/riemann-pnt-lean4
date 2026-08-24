@@ -10,6 +10,7 @@ from scripts.audit_mwkf_ranges import (
     ExponentBox,
     admissibility_violations,
     boundary_witnesses,
+    derived_bounds,
     is_admissible,
 )
 
@@ -36,6 +37,22 @@ def test_unbalanced_endpoint_boxes_remain_admissible() -> None:
     assert witnesses["r_long"].third_length == F(4)
     assert witnesses["s_long"].third_length == F(4)
     assert witnesses["large_q_endpoint"].kappa == F(2)
+
+
+def test_derived_bounds_match_the_written_polytope() -> None:
+    for box in boundary_witnesses().values():
+        bounds = derived_bounds(box)
+        assert bounds["a"] == box.ell + box.h
+        assert bounds["a"] <= bounds["a_cap"]
+        assert box.m <= bounds["m_cap"]
+        assert box.k <= bounds["k_cap"]
+
+
+def test_balanced_box_exhibits_the_long_a_gap() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert box.third_length == F(5)
+    assert (box.rho + box.sigma) / 2 == F(3)
+    assert box.third_length - (box.rho + box.sigma) / 2 == F(2)
 
 
 @pytest.mark.parametrize(
@@ -90,3 +107,16 @@ def test_research_note_exposes_poisson_audit_ledger() -> None:
     assert "zero-mode audit result:" in text
     assert "C_t(z)\\zeta(1-2z)g_t(-z)" in text
     assert "\\mathcal E_{\\rm arch}" in text
+
+
+def test_research_note_has_one_honest_phase_one_classification() -> None:
+    text = NOTE.read_text()
+    labels = (
+        "Phase-1 classification: exact reduction verified",
+        "Phase-1 classification: corrected reduction verified",
+        "Phase-1 classification: exact reduction remains blocked",
+    )
+    assert sum(label in text for label in labels) == 1
+    assert "Accepted local gate after exact audit:" in text
+    assert "arXiv:2601.00292" in text
+    assert "withdrawn" in text.lower()
