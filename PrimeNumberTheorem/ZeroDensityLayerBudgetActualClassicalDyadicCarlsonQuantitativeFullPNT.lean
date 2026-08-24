@@ -37,7 +37,15 @@ lemma tendsto_classicalDyadicCarlsonFullPNTErrorMajorant_zero
   have hremainder :=
     tendsto_selectedClassicalAdmissibleNaturalRemainderUpperBound_zero
       hb selection
-  simpa [classicalDyadicCarlsonFullPNTErrorMajorant] using
+  change Tendsto
+    (fun m : ℕ =>
+      classicalDyadicCarlsonFullZeroTailMajorant
+          E eta C kappa D rate m +
+        |actualPNTClosedRealAxisRelativeTerm (m : ℝ)| +
+        selectedClassicalAdmissibleNaturalRemainderUpperBound
+          b selection m)
+    atTop (nhds 0)
+  simpa only [add_zero] using
     (hzeros.add tendsto_abs_actualPNTClosedRealAxisRelativeTerm_natural_zero).add
       hremainder
 
