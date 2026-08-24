@@ -84,7 +84,8 @@ theorem
             (actualCarlsonPolynomialGoodHeightBase alpha x + 1) := by
     simpa [H, alpha,
       actualSelectedHeightFiniteStripWeightedBalancedGoodHeight,
-      actualCarlsonPolynomialGoodHeightBase] using
+      actualCarlsonPolynomialGoodHeightBase,
+      carlsonPolynomialHeight] using
       eventually_selectedUniformGoodHeight_mem halpha selection
   have hheightNonneg : ∀ᶠ x : ℝ in atTop, 0 ≤ H x :=
     eventually_selectedHeight_nonneg halpha hheightInterval
@@ -149,8 +150,13 @@ theorem
         (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))
         (fun m : ℕ =>
           actualPNTExplicitFormulaRelativeRemainder H (m : ℝ)) := by
-    simpa [H, alpha,
-      actualSelectedHeightFiniteStripWeightedBalancedGoodHeight] using
+    change
+      NaturalPointTargetAmplitudeNegligible
+        (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))
+        (fun m : ℕ =>
+          actualPNTExplicitFormulaRelativeRemainder
+            (selectedUniformGoodHeight alpha selection) (m : ℝ))
+    exact
       (selectedUniformGoodHeight_actualNaturalRemainderCertificate
         hbeta halpha halphaOne hmargin selection).negligible
   have hcomplement :
