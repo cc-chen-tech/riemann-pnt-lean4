@@ -692,46 +692,159 @@ Both bases in (4.5c) lie in \((0,1)\).  For real \(0<\alpha<2\), shift
 
 After inserting \(\rho_\alpha\), the \(x\)-integrals and the
 \(\delta\)-sum are absolutely convergent on this initial line.  Indeed, put
-\(a=s_t+z\), \(b=1-s_t+z\), and write \(k=|\delta|\).  Direct beta
-integrals give
+\(a=s_t+z\), \(b=1-s_t+z\), and write \(k=|\delta|\).  For
+\(\delta=k\), substitute \(u=rx/k\); for \(\delta=-k\), substitute
+\(u=(rx-k)/k\).  The two integrals become, respectively,
+
+\[
+\begin{aligned}
+ r^{a-1}k^{-2z}\int_0^\infty
+ u^{-a+\alpha}(1+u)^{-b-\alpha}\,du,\qquad
+ r^{a-1}k^{-2z}\int_0^\infty
+ u^{-b+\alpha}(1+u)^{-a-\alpha}\,du.
+\end{aligned}
+\tag{4.5e0}
+\]
+
+Thus the beta evaluations are
 
 \[
 \begin{aligned}
  \int_0^\infty x^{-a}(rx+k)^{-b}
-  \left(\frac{rx}{rx+k}\right)^\alpha dx
+ \left(\frac{rx}{rx+k}\right)^\alpha dx
  &=r^{a-1}k^{-2z}
-   \frac{\Gamma(1-a+\alpha)\Gamma(2z)}
-        {\Gamma(b+\alpha)},\\
+ \frac{\Gamma(1-a+\alpha)\Gamma(2z)}
+      {\Gamma(b+\alpha)},\\
  \int_{k/r}^\infty x^{-a}(rx-k)^{-b}
-  \left(\frac{rx-k}{rx}\right)^\alpha dx
+ \left(\frac{rx-k}{rx}\right)^\alpha dx
  &=r^{a-1}k^{-2z}
-   \frac{\Gamma(1-b+\alpha)\Gamma(2z)}
-        {\Gamma(a+\alpha)}.
+ \frac{\Gamma(1-b+\alpha)\Gamma(2z)}
+      {\Gamma(a+\alpha)}.
 \end{aligned}
 \tag{4.5e}
 \]
 
 The endpoint beta parameters have positive real parts by (4.5d), and
 \(\sum k^{-2z}=\zeta(2z)\) converges absolutely because
-\(\sigma_\alpha>1/2\).  Repeated integration by parts in \(t\), together
-with (2.5), makes the \(t\)-integrated version of (4.5b) locally uniformly
-convergent as \(\alpha\downarrow0\).  The moving line in (4.5d) is
-essential: the beta poles \(z=s_t+\alpha\) and
-\(z=1-s_t+\alpha\) remain to its right, so none crosses the contour.  At
-\(\alpha=0\), their limits \(s_t,1-s_t\) are cancelled by the zeros of
-\(G_t\); the limiting pole of \(\zeta(2z)\) at \(z=1/2\) is cancelled by
-the cosine zero displayed in (4.5i).  The resulting regular product may
-then be moved to any fixed \(1/2<\sigma<3/2\), again without a residue.
-Thus the limit recovers the unmodified zero mode, rather than a regularized
-replacement or a boundary contribution.  It gives the signed series
+\(\sigma_\alpha>1/2\).  Define
 
 \[
- \zeta(2z)\Gamma(2z)B_t(z),\qquad
- B_t(z)=
- \frac{\Gamma(1-s_t-z)}{\Gamma(1-s_t+z)}
- +\frac{\Gamma(s_t-z)}{\Gamma(s_t+z)}.
+\begin{aligned}
+ B_{t,\alpha}(z)
+ :={}&
+ \frac{\Gamma(1-s_t-z+\alpha)}
+      {\Gamma(1-s_t+z+\alpha)}
+ +\frac{\Gamma(s_t-z+\alpha)}
+       {\Gamma(s_t+z+\alpha)},\\
+ B_t(z):={}&B_{t,0}(z).
+\end{aligned}
 \tag{4.5f}
 \]
+
+The signed \(k\)-series on the initial line is therefore
+\(\zeta(2z)\Gamma(2z)B_{t,\alpha}(z)\).
+
+Here is an \(\alpha\)-independent majorant for returning to (4.5b).
+After the same two substitutions in the unexpanded \(V_t\)-integral, put
+
+\[
+ U=u(1+u),\qquad
+ X_{k,u}=\frac{k^2U}{rs},\qquad
+ L(u)=\log\frac{1+u}{u}.
+\]
+
+The measure and square-root denominator together become
+\(\sqrt{s/r}\,U^{-1/2}du\), for either sign of \(\delta\), and
+\(0<\rho_\alpha\leq1\).  Repeated integration by parts in \(t\), using
+(2.5), gives, for every \(A,J>0\),
+
+\[
+ \left|\int_{\mathbb R}W(t/T)V_t(X_{k,u})
+ e^{\pm itL(u)}\,dt\right|
+ \ll_{A,J,W}
+ T\left(1+\frac{k^2U}{rsT}\right)^{-A}
+   \left(1+T L(u)\right)^{-J}.
+\tag{4.5f.1}
+\]
+
+For \(A>1/2\),
+
+\[
+ \sum_{k\geq1}\left(1+\frac{k^2U}{rsT}\right)^{-A}
+ \ll_A
+ \begin{cases}
+  (rsT/U)^{1/2},&0<U\leq rsT,\\
+  (rsT/U)^A,&U>rsT.
+ \end{cases}
+\tag{4.5f.2}
+\]
+
+Equations (4.5f.1)--(4.5f.2), multiplied by \(T U^{-1/2}\), are the required
+majorant for the \(k,u\)-sum.  As \(u\downarrow0\),
+\(U\asymp u\) and \(L(u)\asymp\log(1/u)\), so it is
+\(O(u^{-1}(1+\log(1/u))^{-J})\); as \(u\to\infty\),
+\(U\asymp u^2\), so it is \(O(u^{-1-2A})\).  Taking \(J>1\) makes both
+tails integrable, uniformly for \(0\leq\alpha\leq1\).  The outer
+\(q,r,s\)-sum is finite because \(qr,qs\leq N\).  Dominated convergence
+therefore proves that the regulated zero mode tends to the unmodified
+(4.5b).
+
+It remains to justify the limit on the moving Mellin line.  The complete
+beta-pole ledger from (4.5f) is
+
+\[
+ z=s_t+\alpha+n,\qquad
+ z=1-s_t+\alpha+n,\qquad n=0,1,2,\ldots .
+\tag{4.5f.3}
+\]
+
+The \(n=0\) poles lie to the right of
+\(\Re z=1/2+\alpha/2\), while every \(n\geq1\) pole has
+\(\Re z\geq3/2+\alpha\).  Near \(s_t\), write \(z=s_t+w\);
+near \(1-s_t\), write \(z=1-s_t+w\).  Uniformly for
+\(t\in[T,2T]\), \(0<\alpha\leq1\), and small \(w\) on the moving line,
+the simple zeros of \(G_t\) and the gamma expansion at zero give
+
+\[
+\begin{aligned}
+ G_t(s_t+w)B_{t,\alpha}(s_t+w)
+ &=O_T\left(1+\frac{|w|}{|\alpha-w|}\right)=O_T(1),\\
+ G_t(1-s_t+w)B_{t,\alpha}(1-s_t+w)
+ &=O_T\left(1+\frac{|w|}{|\alpha-w|}\right)=O_T(1),
+\end{aligned}
+\tag{4.5f.4}
+\]
+
+because \(\Re w=\alpha/2\) implies
+\(|w|=|\alpha-w|\).  At the third possible collision, write
+\(z=1/2+w\).  Analyticity of the gamma ratios and
+
+\[
+ B_{t,0}(1/2)
+ =\frac{\Gamma(-it)}{\Gamma(1-it)}
+  +\frac{\Gamma(it)}{\Gamma(1+it)}=0
+\]
+
+give, on the same line,
+
+\[
+ B_{t,\alpha}(1/2+w)=O_T(\alpha+|w|)=O_T(|w|),
+ \qquad
+ \zeta(1+2w)=O(|w|^{-1}),
+\tag{4.5f.5}
+\]
+
+so \(\zeta(2z)B_{t,\alpha}(z)=O_T(1)\) there.  Away from these three
+neighborhoods, Stirling's formula and the Gaussian in \(G_t\) give a
+common integrable vertical majorant.  Thus dominated convergence also
+holds on the moving Mellin line.  At \(\alpha=0\), the first two collisions
+are cancelled by \(G_t\), the third by (4.5f.5), and all \(n\geq1\) poles
+remain at or beyond \(\Re z=3/2\).  The regular limiting product may
+therefore be moved to any fixed \(1/2<\sigma<3/2\), without a residue or
+boundary contribution.
+
+At \(\alpha=0\), the signed series is consequently
+\(\zeta(2z)\Gamma(2z)B_t(z)\), with \(B_t=B_{t,0}\) as in (4.5f).
 
 There is no coprimality condition on \(\delta\): once \((r,s)=1\), every
 \(\delta\ne0\) gives the unique residue class (4.3a).  Thus the local
@@ -887,11 +1000,72 @@ turns it into the bracket in (1.1).  Also
 
 which is the logarithm in the independently proved LCM normalization.  The
 second line of (4.7) records why the correction cannot be erased in an exact
-identity.  Nevertheless it is beyond all polynomial orders at the present
-height: splitting the \((-c)\)-line into \(|\Im z|\leq t/2\) and its
-complement, using
-\(1-\mathfrak A_t(z)=-\sin(\pi z)/(\cosh(\pi t)-\sin(\pi z))\)
-on the first part and the Gaussian in \(G_t\) on the second, gives
+identity.  To bound the complete correction, first use
+\(|a_N(n)|\leq1\), \((d^*e^*)^c\leq N^{2c}\), and the finite gcd expansion
+
+\[
+\begin{aligned}
+ \sum_{d,e\leq N}\frac1{[d,e]}
+ &=\sum_{k\leq N}\frac{\varphi(k)}{k^2}
+   H_{\lfloor N/k\rfloor}^2
+ \leq(1+\log N)^2\sum_{k\leq N}\frac1k
+ \ll\log^3(2N),\\
+ \sum_{d,e\leq N}
+ \frac{|a_N(d)a_N(e)|}{[d,e]}(d^*e^*)^c
+ &\leq N^{2c}\sum_{d,e\leq N}\frac1{[d,e]}
+ \ll N^{2c}\log^3(2N).
+\end{aligned}
+\tag{4.7c.0}
+\]
+
+The first equality follows from
+\((d,e)=\sum_{k\mid d,\ k\mid e}\varphi(k)\), followed by
+\(d=kd'\), \(e=ke'\); thus (4.7c.0) needs no external estimate.  On
+\(z=-c+iv\),
+
+\[
+ 1-\mathfrak A_t(z)
+ =-\frac{\sin(\pi z)}{\cosh(\pi t)-\sin(\pi z)}.
+\]
+
+Since \(0<c<1/4\), direct comparison of numerator and denominator gives
+
+\[
+\begin{aligned}
+ |1-\mathfrak A_t(-c+iv)|
+ &\ll_c e^{-\pi(t-|v|)},&& |v|\leq t/2,\\
+ |1-\mathfrak A_t(-c+iv)|
+ &\leq1\leq2,&& |v|>t/2.
+\end{aligned}
+\tag{4.7c.1}
+\]
+
+Indeed, the central estimate uses
+\(|\sin(\pi(-c+iv))|\ll_c e^{\pi|v|}\) and
+\(\cosh(\pi t)\asymp e^{\pi t}\).  For the second estimate,
+\(\Re\sin(\pi(-c+iv))<0\), and
+\[
+ |\cosh(\pi t)-\sin(\pi(-c+iv))|^2
+ -|\sin(\pi(-c+iv))|^2
+ =\cosh^2(\pi t)
+  +2\sin(\pi c)\cosh(\pi t)\cosh(\pi v)>0.
+\]
+
+Apply (2.5i) on \(\Re z=-c\) and the polynomial vertical-strip bound for
+\(\zeta(1-2c+2iv)\).  On \(|v|\leq t/2\), (4.7c.1) contributes
+\(e^{-\pi t/2}\); on the complement, the Gaussian in \(G_t\) contributes
+\(e^{-t^2/9}\), after absorbing every polynomial in \(v\).  Equations
+(4.7c.0)--(4.7c.1), the length-\(T\) \(t\)-integral, and (2.5i) therefore give
+
+\[
+ |\mathcal C_{N,W}(T)|
+ \ll_{c,W}
+ T^{1-c}N^{2c}\log^3(2N)
+ \left(e^{-\pi T/2}+e^{-T^2/9}\right).
+\tag{4.7c.2}
+\]
+
+For \(N=T^3\), the right side is beyond all polynomial orders:
 
 \[
  \mathcal C_{T^3,W}(T)=O_{B,W}(T^{-B})\qquad(B>0).
