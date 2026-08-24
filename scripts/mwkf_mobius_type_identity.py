@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
-from math import isqrt
+from math import gcd, isqrt
 
 
 def mobius(n: int) -> int:
@@ -68,6 +68,58 @@ def split_mobius_identity(
         else:
             type_ii += term
     return mobius(n), type_i, type_ii
+
+
+def double_split_mobius_identity(
+    r: int,
+    s: int,
+    *,
+    cutoff_u: int,
+    cutoff_v: int,
+) -> tuple[int, dict[str, int]]:
+    """Split ``mu(r) * mu(s)`` into the four exact Type sectors.
+
+    Each one-variable identity has a minus sign.  Their product therefore
+    has a plus sign in every ``I/I``, ``I/II``, ``II/I``, and ``II/II``
+    sector.
+    """
+    mu_r, r_i, r_ii = split_mobius_identity(
+        r, cutoff_u=cutoff_u, cutoff_v=cutoff_v
+    )
+    mu_s, s_i, s_ii = split_mobius_identity(
+        s, cutoff_u=cutoff_u, cutoff_v=cutoff_v
+    )
+    sectors = {
+        "I/I": r_i * s_i,
+        "I/II": r_i * s_ii,
+        "II/I": r_ii * s_i,
+        "II/II": r_ii * s_ii,
+    }
+    return mu_r * mu_s, sectors
+
+
+def crt_reciprocity_numerators(
+    *,
+    s: int,
+    a: int,
+    b: int,
+    n: int,
+) -> tuple[Fraction, Fraction, Fraction]:
+    """Return the three rational phases in the squarefree CRT identity.
+
+    If ``(a,b)=(s,a*b)=1``, then modulo one
+
+    ``n*bar(s)/(a*b) = n*bar(s*b)/a + n*bar(s*a)/b``.
+
+    Returning exact :class:`Fraction` values lets tests check the congruence
+    without floating-point evaluation of the exponential.
+    """
+    if a <= 1 or b <= 1 or gcd(a, b) != 1 or gcd(s, a * b) != 1:
+        raise ValueError("require a,b > 1 and (a,b)=(s,a*b)=1")
+    inverse = Fraction(n * pow(s, -1, a * b), a * b)
+    mod_a = Fraction(n * pow(s * b, -1, a), a)
+    mod_b = Fraction(n * pow(s * a, -1, b), b)
+    return inverse, mod_a, mod_b
 
 
 @dataclass(frozen=True)

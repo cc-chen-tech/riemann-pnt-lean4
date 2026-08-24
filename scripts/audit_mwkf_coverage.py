@@ -171,6 +171,119 @@ def wright_fixed_factor_adapter(
     )
 
 
+def wright_type_i_adapter(
+    box: ExponentBox,
+    *,
+    a_factor: Fraction,
+    b_factor: Fraction,
+) -> RouteResult:
+    """Map a Type-I factorization ``r=a*b`` after reciprocity.
+
+    The phase becomes ``e(h*delta*bar(s)/(a*b))``.  For each fixed ``a``
+    Wright has ``M=S``, ``N=B``, ``A=LH``, and ``R_fix=A_0``.  The final
+    exponent includes the outer trivial sum over the fixed ``a`` values.
+    """
+    if a_factor < 0 or b_factor < 0 or a_factor + b_factor != box.rho:
+        return RouteResult(
+            route="wright_type_i",
+            applicable=False,
+            saving=None,
+            source="Wright, arXiv:2604.25177v2, main theorem",
+            reason="invalid_type_i_factorization",
+            conditions=("a_factor+b_factor=rho",),
+        )
+
+    m = box.sigma
+    n = b_factor
+    a = box.third_length
+    f = a_factor
+    theorem_conditions = m <= 2 * n and (f == 0 or m > 0)
+    prefactor = a + m + n + f / 4
+    prefactor += F(1, 4) * _positive_part(a - m - n)
+    bracket = max(
+        -n / 8,
+        f / 8 + n / 8 - m / 4,
+        m / 10 - 3 * f / 20 - a / 20 - 3 * n / 20,
+        3 * n / 20 - 3 * a / 20 - m / 5,
+        3 * n / 8 - m / 2,
+    )
+    # Wright is applied for each fixed a; summing those values costs A_0.
+    bound = prefactor + bracket + f
+    saving = box.rho + box.sigma - bound
+    applicable = theorem_conditions and saving > TARGET_SAVING
+    if applicable:
+        reason = "covered"
+    elif not theorem_conditions:
+        reason = "wright_hypotheses_fail"
+    else:
+        reason = "insufficient_saving"
+    return RouteResult(
+        route="wright_type_i",
+        applicable=applicable,
+        saving=saving,
+        source="Wright, arXiv:2604.25177v2, main theorem",
+        reason=reason,
+        conditions=(
+            "reciprocity applied",
+            "M=S and N=B_0",
+            "M <= N^2",
+            "outer fixed-factor sum included",
+        ),
+    )
+
+
+def wright_denominator_factor_adapter(
+    box: ExponentBox,
+    *,
+    fixed_factor: Fraction,
+    remaining_factor: Fraction,
+) -> RouteResult:
+    """Audit Wright after splitting the denominator ``s=c*d``.
+
+    For each fixed ``c`` the theorem has ``M=R``, ``N=D``,
+    ``R_fix=C``, and ``A=LH``.  The returned exponent subtracts the
+    unavoidable outer trivial sum over all fixed ``c`` values.
+    """
+    if (
+        fixed_factor < 0
+        or remaining_factor < 0
+        or fixed_factor + remaining_factor != box.sigma
+    ):
+        return RouteResult(
+            route="wright_denominator_factor",
+            applicable=False,
+            saving=None,
+            source="Wright, arXiv:2604.25177v2, main theorem",
+            reason="invalid_denominator_factorization",
+            conditions=("fixed_factor+remaining_factor=sigma",),
+        )
+
+    fixed = wright_fixed_factor_adapter(box, fixed_factor=fixed_factor)
+    assert fixed.saving is not None
+    saving = fixed.saving - fixed_factor
+    theorem_conditions = box.rho <= 2 * remaining_factor
+    applicable = theorem_conditions and saving > TARGET_SAVING
+    if applicable:
+        reason = "covered"
+    elif not theorem_conditions:
+        reason = "wright_hypotheses_fail"
+    else:
+        reason = "insufficient_saving"
+    return RouteResult(
+        route="wright_denominator_factor",
+        applicable=applicable,
+        saving=saving,
+        source="Wright, arXiv:2604.25177v2, main theorem",
+        reason=reason,
+        conditions=(
+            "s=C_0*D_0",
+            "M=R and N=D_0",
+            "M <= N^2",
+            "outer fixed-factor sum included",
+        ),
+    )
+
+
 def route_box(box: ExponentBox) -> RouteResult:
     """Return the unique primary route in the approved priority order."""
     bcr = bcr_adapter(box)
