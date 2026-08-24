@@ -85,28 +85,225 @@ For the balanced maximal box \((3,3,5)\), it gives
 
 ## 3. Completion adapters
 
-Completion in \(h\) modulo \(s\) is kinematically available only when
-\(h\geq\sigma\).  Since the core has \(h\leq\sigma-m\), this forces the
-critical face
+Smooth Poisson summation in \(h\) is an exact identity at every relative
+scale; it is not restricted to \(H\geq S\).  For fixed \(r,s,\delta\),
+write the coupled normalized \(h\)-weight as \(u(h/H)\), with Fourier
+transform \(\widehat u(\xi)=\int u(x)e(-x\xi)\,dx\).  Then
 
 \[
- m=0,\qquad h=\sigma.
+ \sum_{h\in\mathbb Z}u(h/H)e\!\left(-\frac{h\delta\bar r}s\right)
+ =H\sum_{k\in\mathbb Z}
+ \widehat u\!\left(H\left(k+\frac{\delta\bar r}s\right)\right).
 \tag{3.1}
 \]
 
-Completion in \(\delta\) is kinematically available on
+Put
 
 \[
- \ell\geq\sigma,qquad
- \ell\leq m+\rho-1.
+ v=k s+\delta\bar r.
 \tag{3.2}
 \]
 
-Neither kinematic condition is itself an estimate.  No cited theorem in the
-current source set bounds the original coupled kernel on (3.1) or (3.2)
-with the saving (1.1).  Accordingly the adapters return
-`no_cited_completed_kernel_bound`; these faces remain residual rather than
-being silently declared covered.
+The right side of (3.1) is therefore an infinite smooth sum over
+
+\[
+ rv\equiv\delta\pmod s,
+ \qquad
+ \delta=rv-js,\quad j\in\mathbb Z,
+\tag{3.3}
+\]
+
+with transform argument \(Hv/s\).  Repeated integration by parts in the
+normalized \(h\)-variable gives the effective dual range
+
+\[
+ |v|\leq \frac SH\mathscr L^C,
+ \qquad
+ |j|\leq
+ 4\frac RH\mathscr L^C+4\frac LS,
+\tag{3.4}
+\]
+
+while the complement remains an explicit transform tail.  Hence the exact
+zero-slack dual exponents are
+
+\[
+ v_{\rm dual}=\max(0,\sigma-h),
+ \qquad
+ j_{\rm dual}=\max(0,\rho-h,\ell-\sigma).
+\tag{3.5}
+\]
+
+For the balanced maximal witness both are \(1/2\).  Poisson summation in
+\(\delta\) has the analogous dual exponent
+\(\max(0,\sigma-\ell)=1/2\), with the nonlinear logarithmic phase retained
+inside its coupled Fourier transform.
+
+No cited theorem in the current source set bounds the shifted equation
+(3.3), with its original Möbius weights and coupled transform, by the saving
+(1.1).  Accordingly both adapters return
+`no_cited_completed_kernel_bound`.  The correction is that short-frequency
+boxes now expose a nonempty short dual sum instead of being rejected as
+kinematically unavailable.
+
+For the actual coupled box, let \(\widehat\Psi_h\) denote the Fourier
+transform only in its normalized \(h/H\) coordinate, including the smooth
+dyadic \(h\)-cutoff.  Equations (3.1)--(3.3) give the exact identity
+
+\[
+ \mathfrak S_q[\Psi]=H\,\mathfrak C_q[\widehat\Psi_h],
+\tag{3.6}
+\]
+
+where
+
+\[
+\begin{aligned}
+ \mathfrak C_q[\widehat\Psi_h]
+ :={}&\sum_{\substack{r\asymp R,\ s\asymp S,\\
+                      \delta\asymp L,\ v,j\in\mathbb Z\\
+                      \delta=rv-js\\
+                      (r,s)=1,\ (q,rs)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)\\
+ &\quad\times
+ \widehat\Psi_h\!\left(
+  \frac rR,\frac sS,\frac\delta L,\frac{Hv}s
+ \right).
+\end{aligned}
+\tag{3.7}
+\]
+
+The Fourier transform in (3.7) is not compactly supported; its rapid decay
+is retained in the displayed weight, so (3.6) has no truncation remainder.
+The exact local inequality sufficient for the accepted coupled-kernel gate
+is therefore
+
+\[
+ \boxed{\mathrm{SM}_{1/1000}:\qquad
+ |\mathfrak C_q[\widehat\Psi_h]|
+ \ll_W \frac{RS}{H}T^{-1/1000}.}
+\tag{3.8}
+\]
+
+At the balanced maximal witness, (3.4) gives
+
+\[
+ r,s\sim T^3,\qquad
+ |v|,|j|\ll T^{1/2}\mathscr L^C,\qquad
+ |\delta|\sim T^{5/2},
+\tag{3.9}
+\]
+
+and (3.8) is the explicit bound
+
+\[
+ |\mathfrak C_q[\widehat\Psi_h]|
+ \ll_W T^{7/2-1/1000}.
+\tag{3.10}
+\]
+
+The zero-slack lattice-volume exponent of (3.7) is \(6\): the four free
+scales contribute \(3+3+1/2+1/2\), while the window
+\(|rv-js|\sim T^{5/2}\) inside products of scale \(T^{7/2}\) imposes one
+power of codimension.  Thus square-root cancellation would have exponent
+\(3\), leaving a margin \(1/2-1/1000\) over (3.10).  This volume comparison
+is only a target ledger, not a proof of cancellation.
+
+Writing \(v=g v_0\), \(j=g j_0\), \((v_0,j_0)=1\), and requiring
+\(g\mid\delta\), every solution can be parameterized exactly as
+
+\[
+ r=r_0+j_0t,\qquad s=s_0+v_0t,
+ \qquad v_0r_0-j_0s_0=\delta/g.
+\tag{3.11}
+\]
+
+The fixed bounded dual box \(v=j=1\) is already a sharp obstruction to a
+routine use of averaged Chowla.  In this box (3.3) becomes
+
+\[
+ \delta=r-s,
+\tag{3.12}
+\]
+
+and its exact contribution is
+
+\[
+\begin{aligned}
+ \mathfrak C_{q;1,1}
+ :={}&\sum_{\substack{s\asymp S,\ \delta\asymp L\\
+                      s+\delta\asymp R\\
+                      (s,\delta)=1,\ (q,s(s+\delta))=1}}
+ \mu(s+\delta)\mu(s)
+ p_N(q(s+\delta))p_N(qs)\\
+ &\quad\times
+ \widehat\Psi_h\!\left(
+  \frac{s+\delta}{R},\frac sS,\frac\delta L,\frac Hs
+ \right).
+\end{aligned}
+\tag{\mathrm{RES}_{1,1}}
+\]
+
+For \(R=S=T^3\) and \(L=T^{5/2}\), this box has lattice-volume scale
+
+\[
+ RL=T^{11/2},
+\tag{3.13}
+\]
+
+whereas its dyadic local version of (3.8) asks for
+
+\[
+ |\mathfrak C_{q;1,1}|
+ \ll_W T^{7/2-1/1000}.
+\tag{3.14}
+\]
+
+Thus this cell requires the explicit saving \(T^{2+1/1000}\) over its
+volume bound.  Square-root cancellation has exponent \(11/4\), which is
+stronger than (3.14) by \(3/4-1/1000\).
+
+For comparison, inserting \(X=T^3\) and shift range \(H_0=T^{5/2}\)
+into Matomäki--Radziwiłł--Tao, arXiv:1503.05121, Theorem 1.1, has the
+quantitative scale
+
+\[
+ T^{11/2}
+ \left(
+  \frac{\log\log T}{\log T}
+  +\frac1{\log^{1/3000}T}
+ \right),
+\tag{3.15}
+\]
+
+before the extra coprimality and coupled weights in
+\(\mathrm{RES}_{1,1}\) are addressed.  This is an explicit logarithmic
+improvement at exponent \(11/2\), not the two-power saving in (3.14).
+Consequently the bounded-dual resonance cell remains uncovered even before
+the growing slopes in (3.11) are considered.
+
+This calculation is a diagnostic for what would be required after applying
+the triangle inequality in \((v,j)\).  It is not a necessary local
+consequence of (3.8): the original moment only requires the full sum
+\(\mathfrak C_q[\widehat\Psi_h]\) to be small, and cancellation between
+different dual cells is allowed.  The global determinant-lattice
+reparametrization and the resulting no-triangle interface are recorded in
+`2026-08-24-mwkf-global-coupled-coefficient-first.md`.
+Section 9 of that note quantifies the kernel issue: isolating bounded \(v\)
+at the hard box requires a Fourier window of width \(T^{-1/2}\), costs
+\(T^{A/2}\) in the \(A\)-th cutoff seminorm, and spreads the physical
+\(h\)-weight from \(T^{5/2}\) to \(T^3\).  Hence
+\(\mathrm{RES}_{1,1}\) is not uniformly isolated in the accepted kernel
+class.
+
+This identifies (3.8) as an averaged two-linear-form Möbius correlation
+with slopes as large as \(T^{1/2}\).  Matomäki--Radziwiłł--Tao,
+arXiv:1503.05121, Theorem 1.6, has a factor \(A^{2k}\) for slopes bounded
+by \(A\) and supplies logarithmic rather than the required \(T^{5/2}\)
+reduction from the volume exponent.  Consequently it is not an adapter for
+(3.8).  The remaining new input can now be stated as the single shifted
+Möbius inequality \(\mathrm{SM}_{1/1000}\), with transform-tail seminorms
+kept uniform.
 
 ## 4. Wright fixed-factor adapter
 
@@ -143,18 +340,107 @@ The deterministic report is:
 | witness | primary route | BCR saving | reason |
 |---|---|---:|---|
 | bcr_small_a | BCR | \(1/20\) | covered |
-| balanced_max_a | Möbius Type I/II | \(-37/8\) | published routes exhausted |
-| large_q_endpoint | Möbius Type I/II | \(-7/8\) | published routes exhausted |
-| r_long | Möbius Type I/II | \(-15/4\) | published routes exhausted |
-| s_long | Möbius Type I/II | \(-15/4\) | published routes exhausted |
+| balanced_max_a | Möbius Farey trilinear | \(-37/8\) | new signed trilinear estimate required |
+| large_q_endpoint | Möbius Farey trilinear | \(-7/8\) | new signed trilinear estimate required |
+| r_long | global coupled operator | \(-15/4\) | new global estimate required |
+| s_long | Möbius Farey trilinear | \(-15/4\) | new signed trilinear estimate required |
 
-The routing priority is BCR, completion, Wright fixed-factor, then Möbius
-Type I/II.  A route becomes primary only when its analytic estimate—not
-merely its kinematic condition—is available.  Hence the completion faces
-and all base Wright calls currently flow to the residual route.
+The routing priority is BCR, completion, Wright fixed-factor, the exact
+signed-\(j\) Farey reduction when \(L<S\), and finally the unreduced global
+coupled operator.  The Möbius Type-I/II split remains an exact diagnostic
+decomposition inside the residual routes, but it is no longer imposed box
+by box before global cancellation.  A route becomes covered only when its
+analytic estimate—not merely its kinematic condition—is available.  Hence
+the completion faces and all base Wright calls currently flow to one of the
+two global residual interfaces.
 
 **published coverage result: residual cells remain.**  In particular, the
 balanced witness has a fixed positive deficit of \(37/8\), and the separate
 tail obligation \(\mathrm{TAIL}_{B,D}\) is also uncovered.  The next slice
-must prove a new Möbius Type I/II estimate; a zero-residual coverage report
-cannot be produced from the cited results.
+must prove the two signed Farey trilinear bounds
+FTF\(_{\epsilon,1/1000}\) in the balanced box, without first taking
+absolute values in the size of the Poisson-dual variable; a zero-residual
+coverage report cannot be produced from the cited results.
+
+The coefficient-first note also gives the exact finite-residue completion
+
+\[
+ \mathfrak F_{q,\epsilon}=\frac LS\mathfrak D_{q,\epsilon},
+ \qquad
+ \mathfrak D_{q,\epsilon}\ \,\text{has phase}\ \,
+ e\left(\frac{crv}{s}\right).
+\]
+
+In the balanced box, \(c,v\ll T^{1/2}\mathscr L^C\).  The equivalent
+completed gate is
+
+\[
+ \mathrm{CFK}_{\epsilon,1/1000}:
+ \qquad
+ |\mathfrak D_{q,\epsilon}|\ll_W T^{4-1/1000}.
+\]
+
+Its normalized ambient exponent is \(7\), so it needs saving
+\(3001/1000\).  An optimistic generic Bettin--Chandee treatment after
+collapsing \(a=cv\) has exponent \(67/10\), leaving the exact deficit
+\(2701/1000\).  CFK is therefore an equivalent explicit
+Kloosterman-fraction interface, not a published-coverage claim.
+
+The completion zero mode is not an additional residual cell.  For each
+signed weight, \(G(0)=0\), hence
+
+\[
+ \sum_{c\bmod s}\Omega(c)=0,
+ \qquad
+ \sum_{c\bmod s}\Omega(c)e(crv/s)
+ =\sum_{c\ne0}\Omega(c)\{e(crv/s)-1\}.
+\]
+
+Thus CFK may be posed with nonzero residue frequencies only, provided the
+centered phase is retained.  The determinant cell \(v=0\) is independently
+empty because \(0<|\delta|<s\).
+
+Korolev--Shparlinski Theorem 2.1 does not cover this centered family.  Its
+prime-modulus and nonexceptional-trace hypotheses fail because \(s\) is a
+general squarefree modulus and \(e(cvr/s)\) is precisely an
+exceptional linear additive trace.  The adapter returns
+`linear_additive_trace_is_exceptional`; moreover the theorem supplies only
+\(X(\log\log p)/(\log p)\), not the power saving needed to move the CFK
+ambient exponent from \(7\) below \(4\).
+
+Finally, grouping the nonzero completion variables by \(a=cv\) gives the
+exact coefficient
+
+\[
+ \Gamma_{r,s,\epsilon}(a)
+ =\sum_{\substack{c\mid a\\c\in\mathcal C_s\setminus\{0\}}}
+ \Omega_{r,s,a/c,\epsilon}(c)
+\]
+
+and reduces CFK to the two centered trilinear sums
+\(\mathrm{CMT}_{\epsilon,1/1000}\) in \((r,s,a)\), with
+\(|a|\ll T\mathscr L^{2C}\) and phase \(e(ar/s)-1\).  This is an
+exact finite reindexing, but \(\Gamma\) depends on \((r,s)\), so it is not
+an arbitrary separated third-variable coefficient covered by BCR.
+
+The additive large sieve is no substitute.  Under the optimistic fiction
+that all \(a/s\) are distinct it gives exponent \(13/2\), still
+\(2501/1000\) above the target.  Since \((a,s)\) is unrestricted, a reduced
+fraction can occur with multiplicity as large as \(T\); the resulting
+Cauchy cost \(T^{1/2}\) returns exponent \(7\), with deficit
+\(3001/1000\).  This calculation already assumes separated coefficients,
+which the actual \(\Gamma_{r,s,\epsilon}\) are not.
+
+There is also an exact symmetric finite completion on
+\((\mathbb Z/s\mathbb Z)^2\):
+
+\[
+ \mathfrak S_q[\Psi]=\frac{HL}{S}\mathfrak D_q^{(2)}[\Theta],
+ \qquad
+ \sum_c\Theta(c,v)=\sum_v\Theta(c,v)=0.
+\]
+
+The finite Gauss kernel is
+\(\sum_{x,y}e((cx+vy-\bar rxy)/s)=s e(rcv/s)\).  This gives the same CMT
+target and a finite coefficient \(\Lambda_{r,s}(a)\) after \(a=cv\); it
+does not add a published estimate.
