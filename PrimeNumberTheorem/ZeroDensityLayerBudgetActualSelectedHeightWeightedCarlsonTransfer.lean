@@ -79,12 +79,19 @@ theorem actualZetaStrip_weightedBalancedHeight_carlsonTargetLayerBudget
           delta / 2 < 0 := by
     dsimp [alpha, delta] at hendpoint ⊢
     linarith
-  simpa [actualSelectedHeightFiniteStripWeightedBalancedHeight, alpha] using
-    (actualZetaStrip_carlsonTargetLayerBudget
-      (beta := beta) (sigma := sigma i) (tau := tau i)
-      (alpha := alpha) (kappa := kappa i) (epsilon := delta / 2)
-      input i hfixedSigma (hsigma i) (hsigmaOne i) halpha hkappa
-      hnorm hre (by linarith) hmargin)
+  change
+    PintzCarlsonTargetLayerBudget
+      (targetZeroPowerAmplitude beta)
+      (dynamicPositivePNTLayerNorm
+        (carlsonPolynomialHeight alpha) input i)
+      (dynamicCarlsonLayerCount (sigma i)
+        (carlsonPolynomialHeight alpha))
+      (stripEndpointRelativeKernelBudget (kappa i) (tau i))
+  exact actualZetaStrip_carlsonTargetLayerBudget
+    (beta := beta) (sigma := sigma i) (tau := tau i)
+    (alpha := alpha) (kappa := kappa i) (epsilon := delta / 2)
+    input i hfixedSigma (hsigma i) (hsigmaOne i) halpha hkappa
+    hnorm hre (by linarith) hmargin
 
 /-- The actual outside-cluster finite strip norm sum is target-negligible at
 the slope-weighted balanced height. -/

@@ -42,7 +42,12 @@ theorem TargetAmplitudeNegligible.naturalPoint
       (fun m : ℕ => remainder (m : ℝ)) := by
   unfold TargetAmplitudeNegligible at hnegligible
   unfold NaturalPointTargetAmplitudeNegligible
-  simpa only using hnegligible.comp tendsto_natCast_atTop_atTop
+  change
+    Tendsto
+      ((fun x => |remainder x| / amplitude x) ∘
+        fun m : ℕ => (m : ℝ))
+      atTop (𝓝 0)
+  exact hnegligible.comp tendsto_natCast_atTop_atTop
 
 /-- Eventual positivity on the real ray remains valid at natural samples. -/
 theorem eventually_naturalPoint_pos_of_eventually_pos
