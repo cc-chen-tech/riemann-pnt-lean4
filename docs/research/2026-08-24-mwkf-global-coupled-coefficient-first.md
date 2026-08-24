@@ -1009,3 +1009,142 @@ This calculation still ignores the genuine \((r,s)\)-dependence of
 \(\Gamma\) and the centered constant term, so it is only a rejection
 ledger, not a bound for CMT.  These exact values are recorded in
 `farey_completion_scales`.
+
+## 15. Symmetric finite completion and double centering
+
+The sequential construction in Sections 10--14 has an equivalent fully
+finite form which keeps the two original short variables symmetric.  For
+fixed \((r,s)\), put
+
+\[
+ \Phi_{r,s}(h,\delta)
+ :=\Psi\left(\frac rR,\frac sS,\frac\delta L,\frac hH\right)
+\tag{15.1}
+\]
+
+and periodize it on \((\mathbb Z/s\mathbb Z)^2\):
+
+\[
+ F_{r,s}(x,y)
+ :=\sum_{\substack{h\equiv x\ (s)\\\delta\equiv y\ (s)}}
+ \Phi_{r,s}(h,\delta).
+\tag{15.2}
+\]
+
+The sum is finite because \(\Phi\) is compactly supported.  Define
+
+\[
+ \widetilde F_{r,s}(c,v)
+ :=\frac1{s^2}\sum_{x,y\bmod s}F_{r,s}(x,y)
+ e\left(-\frac{cx+vy}{s}\right),
+ \qquad
+ \Theta_{r,s}(c,v):=\frac{s^2}{HL}\widetilde F_{r,s}(c,v).
+\tag{15.3}
+\]
+
+For \((r,s)=1\), additive-character orthogonality gives the exact finite
+Gauss identity
+
+\[
+ \sum_{x,y\bmod s}
+ e\left(\frac{cx+vy-\bar rxy}{s}\right)
+ =s\,e\left(\frac{rcv}{s}\right).
+\tag{15.4}
+\]
+
+Indeed the \(x\)-sum forces \(y\equiv rc\pmod s\), after which the
+remaining phase is \(rcv/s\).  The integer form of (15.4) is tested by
+`bilinear_gauss_via_orthogonality`.  Substitution into the original core
+sum (1.1) yields
+
+\[
+ \boxed{
+ \mathfrak S_q[\Psi]=\frac{HL}{S}\mathfrak D_q^{(2)}[\Theta],}
+\tag{15.5}
+\]
+
+where
+
+\[
+\begin{aligned}
+ \mathfrak D_q^{(2)}[\Theta]
+ :={}&\sum_{\substack{r\asymp R,\ s\asymp S\\
+                       (r,s)=1,\ (q,rs)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)\frac Ss\\
+ &\quad\times\sum_{c,v\bmod s}
+ \Theta_{r,s}(c,v)e\left(\frac{rcv}{s}\right).
+\end{aligned}
+\tag{15.6}
+\]
+
+At the hard box, \(2H,2L<s\) for all sufficiently large \(T\).  Since
+the original dyadic supports exclude \(h=0\) and \(\delta=0\),
+
+\[
+ F_{r,s}(0,y)=F_{r,s}(x,0)=0.
+\tag{15.7}
+\]
+
+Fourier inversion therefore gives the two exact zero-sum identities
+
+\[
+ \sum_{c\bmod s}\Theta_{r,s}(c,v)=0,
+ \qquad
+ \sum_{v\bmod s}\Theta_{r,s}(c,v)=0.
+\tag{15.8}
+\]
+
+Consequently (15.6) is exactly
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak D_q^{(2)}[\Theta]
+ ={}&\sum_{r,s}\mu(r)\mu(s)p_N(qr)p_N(qs)\frac Ss\\
+ &\quad\times
+ \sum_{\substack{c,v\bmod s\\c\ne0,\ v\ne0}}
+ \Theta_{r,s}(c,v)
+ \left\{e\left(\frac{rcv}{s}\right)-1\right\}.
+\end{aligned}}
+\tag{15.9}
+\]
+
+The two-dimensional inclusion--exclusion behind (15.8)--(15.9) is checked
+by `double_centered_completion_via_orthogonality`.  Repeated finite
+summation by parts gives, for least absolute representatives,
+
+\[
+ |\Theta_{r,s}(c,v)|
+ \ll_{A,W}
+ \left(1+\frac{H|c|_s}{s}\right)^{-A}
+ \left(1+\frac{L|v|_s}{s}\right)^{-A}.
+\tag{15.10}
+\]
+
+Thus \(|c|_s\ll(S/H)\mathscr L^C\) and
+\(|v|_s\ll(S/L)\mathscr L^C\).  Grouping \(a=cv\) now produces the
+genuinely finite coefficient
+
+\[
+ \Lambda_{r,s}(a)
+ :=\sum_{\substack{c\mid a\\
+                    c,a/c\in\mathcal C_s\setminus\{0\}}}
+ \Theta_{r,s}(c,a/c),
+\tag{15.11}
+\]
+
+with the same effective range \(|a|\ll S^2(HL)^{-1}\mathscr L^{2C}\)
+and the same centered phase \(e(ar/s)-1\).  Equations (15.5)--(15.11)
+give a finite-group version of CMT with no infinite transform index and
+with zero row and column sums exposed explicitly.  The hard-box prefactor
+has exponent
+
+\[
+ \ell+h-\sigma=\frac52+\frac52-3=2,
+\tag{15.12}
+\]
+
+so the CMT target remains exactly \(T^{4-1/1000}\).  This symmetric
+completion removes a bookkeeping ambiguity but supplies no estimate by
+itself; the required cancellation is still the two-Möbius bound for
+(15.9), or equivalently its product-frequency form (15.11).

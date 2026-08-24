@@ -430,3 +430,17 @@ fraction can occur with multiplicity as large as \(T\); the resulting
 Cauchy cost \(T^{1/2}\) returns exponent \(7\), with deficit
 \(3001/1000\).  This calculation already assumes separated coefficients,
 which the actual \(\Gamma_{r,s,\epsilon}\) are not.
+
+There is also an exact symmetric finite completion on
+\((\mathbb Z/s\mathbb Z)^2\):
+
+\[
+ \mathfrak S_q[\Psi]=\frac{HL}{S}\mathfrak D_q^{(2)}[\Theta],
+ \qquad
+ \sum_c\Theta(c,v)=\sum_v\Theta(c,v)=0.
+\]
+
+The finite Gauss kernel is
+\(\sum_{x,y}e((cx+vy-\bar rxy)/s)=s e(rcv/s)\).  This gives the same CMT
+target and a finite coefficient \(\Lambda_{r,s}(a)\) after \(a=cv\); it
+does not add a published estimate.

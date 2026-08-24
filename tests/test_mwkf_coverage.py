@@ -159,6 +159,8 @@ def test_finite_residue_completion_has_exact_hard_box_gate() -> None:
     assert scales.residue_frequency == F(1, 2)
     assert scales.product_frequency == F(1)
     assert scales.residue_density_prefactor == F(-1, 2)
+    assert scales.two_dimensional_completion_prefactor == F(2)
+    assert scales.both_coordinate_axes_empty
     assert scales.farey_gate_target == F(3499, 1000)
     assert scales.normalized_gate_target == F(3999, 1000)
     assert scales.normalized_volume == F(7)
@@ -213,6 +215,8 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
         r"\Gamma_{r,s,\epsilon}(a)",
         r"2501/1000",
         "fraction can occur with multiplicity",
+        r"\mathfrak S_q[\Psi]=\frac{HL}{S}\mathfrak D_q^{(2)}[\Theta]",
+        r"\sum_c\Theta(c,v)=\sum_v\Theta(c,v)=0",
         "## 4. Wright fixed-factor adapter",
         "## 5. Exact residual witnesses",
         "published coverage result: residual cells remain",

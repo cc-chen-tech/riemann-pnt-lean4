@@ -96,6 +96,8 @@ class FareyCompletionScales:
     residue_frequency: Fraction
     product_frequency: Fraction
     residue_density_prefactor: Fraction
+    two_dimensional_completion_prefactor: Fraction
+    both_coordinate_axes_empty: bool
     farey_gate_target: Fraction
     normalized_gate_target: Fraction
     normalized_volume: Fraction
@@ -339,6 +341,12 @@ def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
         residue_frequency=residue_frequency,
         product_frequency=product_frequency,
         residue_density_prefactor=prefactor,
+        two_dimensional_completion_prefactor=(
+            box.ell + box.h - box.sigma
+        ),
+        both_coordinate_axes_empty=(
+            box.ell < box.sigma and box.h < box.sigma
+        ),
         farey_gate_target=farey_target,
         normalized_gate_target=normalized_target,
         normalized_volume=volume,

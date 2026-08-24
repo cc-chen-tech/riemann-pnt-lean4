@@ -523,3 +523,9 @@ balanced input is then the pair CMT\(_{\epsilon,1/1000}\), with
 \(T^{4-1/1000}\).  A Type-I/II proof must act on this
 \((r,s)\)-dependent divisor convolution rather than replace it by an
 arbitrary \(a\)-coefficient.
+
+The same gate also has a symmetric finite-group realization.  The
+two-dimensional Fourier coefficient \(\Theta_{r,s}(c,v)\) has zero row and
+column sums, effective lengths \(S/H\) and \(S/L\), and finite product
+coefficient \(\Lambda_{r,s}(a)\).  This removes the infinite transform
+index from CFK but leaves the CMT exponent unchanged.

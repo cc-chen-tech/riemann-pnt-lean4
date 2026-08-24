@@ -271,6 +271,65 @@ def centered_product_frequency_coefficients(
     return grouped
 
 
+def bilinear_gauss_via_orthogonality(
+    *,
+    r: int,
+    modulus: int,
+    c: int,
+    v: int,
+) -> tuple[int, int]:
+    """Return the exact coefficient and phase of the finite bilinear kernel.
+
+    If ``bar(r)`` is the inverse of ``r`` modulo ``s``, summing first in
+    ``x`` gives
+
+    ``sum_{x,y mod s} e((c*x+v*y-bar(r)*x*y)/s)``
+    ``= s*e(r*c*v/s)``.
+
+    The return value ``(s, r*c*v mod s)`` records this identity without
+    evaluating any floating-point roots of unity.
+    """
+    if modulus <= 1 or gcd(r, modulus) != 1:
+        raise ValueError("require modulus > 1 and (r,modulus)=1")
+    surviving_y = (r * c) % modulus
+    return modulus, (v * surviving_y) % modulus
+
+
+def double_centered_completion_via_orthogonality(
+    values: tuple[tuple[int | Fraction, ...], ...],
+    *,
+    residue_x: int,
+    residue_y: int,
+) -> Fraction:
+    """Evaluate exact two-dimensional nonzero-character centering.
+
+    For a function ``F`` on ``(Z/sZ)^2``, the centered transform equals
+
+    ``F(x,y)-F(x,0)-F(0,y)+F(0,0)``.
+
+    In particular, if ``F`` vanishes on both coordinate axes, its complete
+    value is recovered using only nonzero characters in both variables.
+    """
+    modulus = len(values)
+    if modulus <= 1 or any(len(row) != modulus for row in values):
+        raise ValueError("values must be a square group table of order > 1")
+    target_x = residue_x % modulus
+    target_y = residue_y % modulus
+    total = Fraction(0)
+    for x, row in enumerate(values):
+        kernel_x = (
+            nonzero_character_orthogonality(modulus, target_x - x)
+            - nonzero_character_orthogonality(modulus, -x)
+        )
+        for y, value in enumerate(row):
+            kernel_y = (
+                nonzero_character_orthogonality(modulus, target_y - y)
+                - nonzero_character_orthogonality(modulus, -y)
+            )
+            total += Fraction(value) * kernel_x * kernel_y
+    return total / (modulus * modulus)
+
+
 @dataclass(frozen=True)
 class TypeScaleBounds:
     u_exp: Fraction

@@ -7,9 +7,11 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.mwkf_mobius_type_identity import (
+    bilinear_gauss_via_orthogonality,
     c_u,
     centered_completion_via_orthogonality,
     centered_product_frequency_coefficients,
+    double_centered_completion_via_orthogonality,
     crt_reciprocity_numerators,
     double_split_mobius_identity,
     determinant_lattice_solution,
@@ -169,6 +171,40 @@ def test_centered_product_frequencies_group_without_loss() -> None:
 def test_centered_product_grouping_rejects_a_zero_completion_frequency() -> None:
     with pytest.raises(ValueError, match="completion frequency c"):
         centered_product_frequency_coefficients(((0, 3, F(1)),))
+
+
+def test_bilinear_finite_gauss_kernel_has_the_exact_surviving_phase() -> None:
+    coefficient, phase_residue = bilinear_gauss_via_orthogonality(
+        r=5, modulus=13, c=4, v=7
+    )
+    assert coefficient == 13
+    assert phase_residue == (5 * 4 * 7) % 13
+
+
+def test_double_centering_recovers_a_weight_vanishing_on_both_axes() -> None:
+    values = (
+        (0, 0, 0, 0, 0),
+        (0, 3, -2, 5, 7),
+        (0, -4, 6, 1, 8),
+        (0, 9, 2, -3, 4),
+        (0, 5, -7, 6, 2),
+    )
+    for x, row in enumerate(values):
+        for y, expected in enumerate(row):
+            assert double_centered_completion_via_orthogonality(
+                values, residue_x=x, residue_y=y
+            ) == expected
+
+
+def test_double_centering_is_inclusion_exclusion_for_general_weights() -> None:
+    values = (
+        (11, 2, 3),
+        (5, 7, 13),
+        (17, 19, 23),
+    )
+    assert double_centered_completion_via_orthogonality(
+        values, residue_x=2, residue_y=1
+    ) == F(19 - 17 - 2 + 11)
 
 
 def test_one_third_split_has_exact_balanced_scales() -> None:
