@@ -90,10 +90,14 @@ theorem
         (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))
         (fun m : ℕ =>
           actualPNTExplicitFormulaRelativeRemainder H (m : ℝ)) := by
-    simpa [H, alpha,
-      actualSelectedHeightFiniteStripWeightedBalancedGoodHeight] using
-      (selectedUniformGoodHeight_actualNaturalRemainderCertificate
-        hbeta halpha halphaOne hmargin selection).negligible
+    change
+      NaturalPointTargetAmplitudeNegligible
+        (fun m : ℕ => targetZeroPowerAmplitude beta (m : ℝ))
+        (fun m : ℕ =>
+          actualPNTExplicitFormulaRelativeRemainder
+            (selectedUniformGoodHeight alpha selection) (m : ℝ))
+    exact (selectedUniformGoodHeight_actualNaturalRemainderCertificate
+      hbeta halpha halphaOne hmargin selection).negligible
   simpa only [add_zero] using hstripNat.add hremainder
 
 end PrimeNumberTheorem
