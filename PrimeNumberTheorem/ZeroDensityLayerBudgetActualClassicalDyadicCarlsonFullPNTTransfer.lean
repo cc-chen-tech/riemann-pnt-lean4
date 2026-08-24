@@ -163,8 +163,12 @@ lemma tendsto_dynamicRealOrdinatePNTZeroTailNorm_of_height_tendsto
   unfold TargetAmplitudeNegligible at hnegligible
   have hrealTendsto :
       Tendsto (dynamicRealOrdinatePNTZeroTailNorm H) atTop (𝓝 0) := by
-    simpa [targetZeroPowerAmplitude,
-      dynamicRealOrdinatePNTZeroTailNorm] using hnegligible
+    have habs : Tendsto
+        (fun x : ℝ => |dynamicRealOrdinatePNTZeroTailNorm H x|)
+        atTop (𝓝 0) := by
+      simpa [targetZeroPowerAmplitude] using hnegligible
+    apply tendsto_zero_iff_norm_tendsto_zero.mpr
+    simpa only [Real.norm_eq_abs] using habs
   exact hrealTendsto.comp tendsto_natCast_atTop_atTop
 
 lemma tendsto_selectedClassicalAdmissibleRealOrdinatePNTZeroTailNorm_zero
