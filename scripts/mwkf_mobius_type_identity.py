@@ -168,6 +168,41 @@ def determinant_lattice_solution(
     return delta * j_0 + translate * r, delta * v_0 + translate * s
 
 
+def _ceil_div(numerator: int, denominator: int) -> int:
+    return -((-numerator) // denominator)
+
+
+def signed_shift_solutions(
+    *,
+    r: int,
+    s: int,
+    v: int,
+    delta_min: int,
+    delta_max: int,
+    sign: int,
+) -> tuple[tuple[int, int], ...]:
+    """Return every ``(j,delta)`` in one signed determinant window.
+
+    The returned solutions satisfy ``delta=r*v-j*s`` and
+    ``delta_min <= sign*delta <= delta_max``.  If the window width is
+    strictly smaller than ``s``, the tuple has length at most one.
+    """
+    if r <= 0 or s <= 0:
+        raise ValueError("require r,s > 0")
+    if delta_min < 0 or delta_min > delta_max:
+        raise ValueError("require 0 <= delta_min <= delta_max")
+    if sign not in (-1, 1):
+        raise ValueError("sign must be -1 or 1")
+    product = r * v
+    if sign == 1:
+        j_min = _ceil_div(product - delta_max, s)
+        j_max = (product - delta_min) // s
+    else:
+        j_min = _ceil_div(product + delta_min, s)
+        j_max = (product + delta_max) // s
+    return tuple((j, product - j * s) for j in range(j_min, j_max + 1))
+
+
 @dataclass(frozen=True)
 class TypeScaleBounds:
     u_exp: Fraction

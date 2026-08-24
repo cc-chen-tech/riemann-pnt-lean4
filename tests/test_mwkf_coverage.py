@@ -8,6 +8,10 @@ from scripts.audit_mwkf_coverage import (
     TARGET_SAVING,
     bcr_adapter,
     completion_dual_exponent,
+    dual_cell_isolation_scales,
+    farey_critical_scales,
+    farey_completion_scales,
+    farey_trilinear_adapter,
     h_completion_adapter,
     h_poisson_shifted_scales,
     h_poisson_subbox_scales,
@@ -85,9 +89,23 @@ def test_primary_route_is_unique_and_residual_is_explicit() -> None:
 
     balanced = boundary_witnesses()["balanced_max_a"]
     residual = route_box(balanced)
-    assert residual.route == "global_coupled_operator"
-    assert residual.reason == "new_global_operator_estimate_required"
+    assert residual.route == "mobius_farey_trilinear"
+    assert residual.reason == "new_farey_trilinear_estimate_required"
     assert residual.saving is None
+
+
+def test_farey_route_requires_a_shift_window_shorter_than_s() -> None:
+    balanced = farey_trilinear_adapter(
+        boundary_witnesses()["balanced_max_a"]
+    )
+    assert balanced.reason == "new_farey_trilinear_estimate_required"
+    assert "j unique after splitting the sign of delta" in balanced.conditions
+
+    r_long = farey_trilinear_adapter(boundary_witnesses()["r_long"])
+    assert r_long.reason == "shift_window_not_shorter_than_s"
+    assert route_box(boundary_witnesses()["r_long"]).route == (
+        "global_coupled_operator"
+    )
 
 
 def test_hard_box_is_stationary_but_has_no_large_phase_parameter() -> None:
@@ -98,6 +116,55 @@ def test_hard_box_is_stationary_but_has_no_large_phase_parameter() -> None:
     assert scales.fourier_phase_variation == F(0)
     assert scales.same_sign_derivative_parameter == F(0)
     assert not scales.same_sign_power_saving
+
+
+def test_bounded_dual_cell_requires_power_scale_kernel_spread() -> None:
+    scales = dual_cell_isolation_scales(
+        boundary_witnesses()["balanced_max_a"], dual_v=F(0)
+    )
+    assert scales.fourier_window == F(-1, 2)
+    assert scales.normalized_h_spread == F(1, 2)
+    assert scales.physical_h_support == F(3)
+    assert scales.seminorm_cost_per_derivative == F(1, 2)
+    assert not scales.uniform_in_original_kernel_class
+
+
+def test_maximal_dual_scale_isolates_without_power_seminorm_loss() -> None:
+    scales = dual_cell_isolation_scales(
+        boundary_witnesses()["balanced_max_a"], dual_v=F(1, 2)
+    )
+    assert scales.fourier_window == F(0)
+    assert scales.normalized_h_spread == F(0)
+    assert scales.physical_h_support == F(5, 2)
+    assert scales.uniform_in_original_kernel_class
+
+
+def test_maximal_dual_box_is_at_the_farey_critical_scale() -> None:
+    scales = farey_critical_scales(
+        boundary_witnesses()["balanced_max_a"], dual_v=F(1, 2)
+    )
+    assert scales.j_interval == F(-1, 2)
+    assert scales.at_most_one_j
+    assert scales.rational_approximation == F(-1)
+    assert scales.farey_spacing == F(-1)
+    assert scales.approximation_minus_spacing == F(0)
+
+
+def test_finite_residue_completion_has_exact_hard_box_gate() -> None:
+    scales = farey_completion_scales(
+        boundary_witnesses()["balanced_max_a"]
+    )
+    assert scales.v == F(1, 2)
+    assert scales.k == F(1, 2)
+    assert scales.product_frequency == F(1)
+    assert scales.residue_density_prefactor == F(-1, 2)
+    assert scales.farey_gate_target == F(3499, 1000)
+    assert scales.normalized_gate_target == F(3999, 1000)
+    assert scales.normalized_volume == F(7)
+    assert scales.required_saving == F(3001, 1000)
+    assert scales.square_root_margin == F(499, 1000)
+    assert scales.generic_bcr_bound == F(67, 10)
+    assert scales.generic_bcr_deficit == F(2701, 1000)
 
 
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
@@ -112,6 +179,9 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
         r"\mathrm{RES}_{1,1}",
         r"T^{11/2}",
         r"T^{2+1/1000}",
+        r"\mathrm{CFK}_{\epsilon,1/1000}",
+        r"T^{4-1/1000}",
+        r"2701/1000",
         "## 4. Wright fixed-factor adapter",
         "## 5. Exact residual witnesses",
         "published coverage result: residual cells remain",

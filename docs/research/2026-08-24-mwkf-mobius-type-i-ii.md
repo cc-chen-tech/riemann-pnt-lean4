@@ -493,8 +493,18 @@ proved here.
 
 Consequently this slice reduces the residual problem to two explicit
 Möbius-weighted multilinear inequalities, but it does not establish the
-unconditional long-mollifier asymptotic.  The active primary gate is now the
-no-triangle global determinant operator GCO\(_{1/1000}\) in
-`2026-08-24-mwkf-global-coupled-coefficient-first.md`; proving the two local
-inequalities here would imply that gate, but failure to prove them does not
-disprove the possibility of global cancellation.
+unconditional long-mollifier asymptotic.  In the balanced short-shift box,
+the active primary gate is now the pair of no-triangle signed Farey sums
+FTF\(_{\epsilon,1/1000}\) in
+`2026-08-24-mwkf-global-coupled-coefficient-first.md`; together they are
+exactly GCO\(_{1/1000}\).  Proving the two local inequalities here would
+imply that gate, but failure to prove them does not disprove the possibility
+of global cancellation.
+
+Finite Fourier inversion in the signed shift residue gives the equivalent
+completed interface CFK\(_{\epsilon,1/1000}\): a pair of sums with phase
+\(e(krv/s)\), \(k,v\ll T^{1/2}\mathscr L^C\), and target
+\(T^{4-1/1000}\).  The exact generic-coefficient deficit is
+\(2701/1000\).  A subsequent Type-I/II argument must therefore retain both
+Möbius weights and the product structure \(a=kv\); treating the collapsed
+frequency coefficients as arbitrary cannot close the gate.

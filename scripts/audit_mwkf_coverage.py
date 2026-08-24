@@ -70,6 +70,41 @@ class JointPhaseScales:
     same_sign_power_saving: bool
 
 
+@dataclass(frozen=True)
+class DualCellIsolationScales:
+    dual_v: Fraction
+    fourier_window: Fraction
+    normalized_h_spread: Fraction
+    physical_h_support: Fraction
+    seminorm_cost_per_derivative: Fraction
+    uniform_in_original_kernel_class: bool
+
+
+@dataclass(frozen=True)
+class FareyCriticalScales:
+    dual_v: Fraction
+    j_interval: Fraction
+    at_most_one_j: bool
+    rational_approximation: Fraction
+    farey_spacing: Fraction
+    approximation_minus_spacing: Fraction
+
+
+@dataclass(frozen=True)
+class FareyCompletionScales:
+    v: Fraction
+    k: Fraction
+    product_frequency: Fraction
+    residue_density_prefactor: Fraction
+    farey_gate_target: Fraction
+    normalized_gate_target: Fraction
+    normalized_volume: Fraction
+    required_saving: Fraction
+    square_root_margin: Fraction
+    generic_bcr_bound: Fraction
+    generic_bcr_deficit: Fraction
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -176,6 +211,111 @@ def joint_phase_scales(box: ExponentBox) -> JointPhaseScales:
         same_sign_derivative_parameter=parameter,
         on_stationary_face=box.h == stationary_h,
         same_sign_power_saving=parameter > 0,
+    )
+
+
+def dual_cell_isolation_scales(
+    box: ExponentBox,
+    *,
+    dual_v: Fraction,
+) -> DualCellIsolationScales:
+    """Ledger for isolating a dyadic ``v`` scale after ``h``-Poisson.
+
+    The Fourier coordinate is ``xi=H*v/s``.  A scale
+    ``v \\asymp T^nu`` therefore occupies a window of exponent
+    ``h+nu-sigma``.  Multiplication by a cutoff on that window convolves
+    the normalized ``h/H`` weight over the reciprocal scale.  A positive
+    reciprocal exponent is a power loss in every derivative seminorm, so
+    the isolated cell is not uniform in the original coupled-kernel class.
+    """
+    dual_max = completion_dual_exponent(box.h, box.sigma)
+    if dual_v < 0 or dual_v > dual_max:
+        raise ValueError("dual_v exceeds the h-Poisson range")
+    fourier_window = box.h + dual_v - box.sigma
+    spread = _positive_part(-fourier_window)
+    return DualCellIsolationScales(
+        dual_v=dual_v,
+        fourier_window=fourier_window,
+        normalized_h_spread=spread,
+        physical_h_support=box.h + spread,
+        seminorm_cost_per_derivative=spread,
+        uniform_in_original_kernel_class=spread == 0,
+    )
+
+
+def farey_critical_scales(
+    box: ExponentBox,
+    *,
+    dual_v: Fraction,
+) -> FareyCriticalScales:
+    """Ledger for ``r/s`` approximated by the dual rational ``j/v``.
+
+    The determinant equation gives the exact identity
+    ``r/s-j/v=delta/(s*v)``.  The natural spacing between fractions of
+    denominator ``T^dual_v`` is ``T^(-2*dual_v)``.  For fixed ``r,s,v``,
+    the allowed ``j`` interval has length exponent ``ell-sigma``.
+    """
+    dual_max = completion_dual_exponent(box.h, box.sigma)
+    if dual_v < 0 or dual_v > dual_max:
+        raise ValueError("dual_v exceeds the h-Poisson range")
+    approximation = box.ell - box.sigma - dual_v
+    spacing = -2 * dual_v
+    j_interval = box.ell - box.sigma
+    return FareyCriticalScales(
+        dual_v=dual_v,
+        j_interval=j_interval,
+        at_most_one_j=j_interval < 0,
+        rational_approximation=approximation,
+        farey_spacing=spacing,
+        approximation_minus_spacing=approximation - spacing,
+    )
+
+
+def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
+    """Ledger after exact finite Fourier inversion in the shift residue.
+
+    The signed shift has scale ``L=T^ell`` inside residues modulo
+    ``s=T^sigma``.  Its normalized Fourier coefficients contribute the
+    exact density factor ``L/S`` and have effective frequency length
+    ``K=S/L``.  The existing ``h``-Poisson frequency has length ``V=S/H``.
+    Removing the density factor turns the Farey target into the target for
+    a four-variable Kloosterman-fraction sum in ``(r,s,k,v)``.
+
+    These are support and normalization exponents only; the function does
+    not assert cancellation in that completed sum.
+    """
+    v = completion_dual_exponent(box.h, box.sigma)
+    k = completion_dual_exponent(box.ell, box.sigma)
+    prefactor = box.ell - box.sigma
+    farey_target = box.rho + box.sigma - box.h - TARGET_SAVING
+    normalized_target = farey_target - prefactor
+    volume = box.rho + box.sigma + v + k
+    product_frequency = v + k
+    total = product_frequency + box.rho + box.sigma
+    longest = max(box.rho, box.sigma)
+    large_a = F(1, 2) * _positive_part(
+        product_frequency - box.rho - box.sigma
+    )
+    bcr_term_1 = F(17, 20) * total + F(1, 4) * longest + large_a
+    bcr_term_2 = (
+        F(7, 8) * (box.rho + box.sigma)
+        + product_frequency
+        + F(1, 8) * longest
+        + large_a
+    )
+    generic_bcr_bound = max(bcr_term_1, bcr_term_2)
+    return FareyCompletionScales(
+        v=v,
+        k=k,
+        product_frequency=product_frequency,
+        residue_density_prefactor=prefactor,
+        farey_gate_target=farey_target,
+        normalized_gate_target=normalized_target,
+        normalized_volume=volume,
+        required_saving=volume - normalized_target,
+        square_root_margin=normalized_target - volume / 2,
+        generic_bcr_bound=generic_bcr_bound,
+        generic_bcr_deficit=generic_bcr_bound - normalized_target,
     )
 
 
@@ -425,6 +565,34 @@ def wright_denominator_factor_adapter(
     )
 
 
+def farey_trilinear_adapter(box: ExponentBox) -> RouteResult:
+    """Reduce a short signed shift window to one ``j`` per ``(r,s,v)``.
+
+    This is an exact reindexing adapter, not the missing analytic estimate.
+    It applies kinematically when ``L/S`` is a negative power of ``T``.
+    """
+    short_window = box.ell < box.sigma
+    return RouteResult(
+        route="mobius_farey_trilinear",
+        applicable=False,
+        saving=None,
+        source=(
+            "exact signed-j reindexing; new Farey estimate required"
+        ),
+        reason=(
+            "new_farey_trilinear_estimate_required"
+            if short_window
+            else "shift_window_not_shorter_than_s"
+        ),
+        conditions=(
+            "split positive and negative delta",
+            "j unique after splitting the sign of delta",
+            "retain all v in the coupled Fourier kernel",
+            "preserve both Mobius weights",
+        ),
+    )
+
+
 def route_box(box: ExponentBox) -> RouteResult:
     """Return the unique primary route in the approved priority order."""
     bcr = bcr_adapter(box)
@@ -437,6 +605,9 @@ def route_box(box: ExponentBox) -> RouteResult:
     wright = wright_fixed_factor_adapter(box, fixed_factor=None)
     if wright.applicable:
         return wright
+    farey = farey_trilinear_adapter(box)
+    if farey.reason == "new_farey_trilinear_estimate_required":
+        return farey
     return RouteResult(
         route="global_coupled_operator",
         applicable=False,

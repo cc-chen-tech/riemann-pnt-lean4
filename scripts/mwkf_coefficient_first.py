@@ -25,6 +25,15 @@ class CoefficientFirstScales:
     euler_maclaurin_pole: Fraction
 
 
+@dataclass(frozen=True)
+class ZeroRouteAudit:
+    zero_residue_amplification: Fraction
+    origin_interval_zero_free_boundary: Fraction
+    dyadic_interval_zero_free_boundary: Fraction
+    bettin_gonek_applicable: bool
+    reason: str
+
+
 def coefficient_first_scales(
     *,
     mollifier_exponent: Fraction,
@@ -46,6 +55,44 @@ def coefficient_first_scales(
         ),
         product_support=mollifier_exponent + zeta_cutoff_exponent,
         euler_maclaurin_pole=zeta_cutoff_exponent / 2 - 1,
+    )
+
+
+def zero_route_audit(
+    *,
+    mollifier_exponent: Fraction,
+    zero_real_part: Fraction,
+    all_lengths_up_to_cutoff: bool,
+) -> ZeroRouteAudit:
+    """Audit the Perron zero factor and Bettin--Gonek length scope.
+
+    In the ratio integral for ``zeta(s) M_N(s)``, a zero ``rho`` produces
+    ``N^(rho-s)``.  At ``Re(s)=1/2`` and ``N=T^theta`` its power exponent is
+    ``theta*(Re(rho)-1/2)``.  Bettin--Gonek Theorems 1 and 2 instead assume
+    the moment bound for every ``2 <= N <= T^theta``; a result only at the
+    endpoint length does not meet that hypothesis.
+    """
+    if mollifier_exponent <= 0:
+        raise ValueError("mollifier_exponent must be positive")
+    if zero_real_part < 0 or zero_real_part > 1:
+        raise ValueError("zero_real_part must lie in [0,1]")
+    applicable = all_lengths_up_to_cutoff
+    return ZeroRouteAudit(
+        zero_residue_amplification=(
+            mollifier_exponent * (zero_real_part - Fraction(1, 2))
+        ),
+        origin_interval_zero_free_boundary=(
+            Fraction(1, 2) + Fraction(1, 2) / mollifier_exponent
+        ),
+        dyadic_interval_zero_free_boundary=(
+            Fraction(1, 2) + Fraction(2) / mollifier_exponent
+        ),
+        bettin_gonek_applicable=applicable,
+        reason=(
+            "all_lengths_scope_satisfied"
+            if applicable
+            else "requires_all_lengths_up_to_T_theta"
+        ),
     )
 
 

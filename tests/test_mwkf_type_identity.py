@@ -12,6 +12,7 @@ from scripts.mwkf_mobius_type_identity import (
     mobius,
     poisson_congruence_reparametrization,
     split_mobius_identity,
+    signed_shift_solutions,
     type_scale_bounds,
 )
 from scripts.audit_mwkf_coverage import (
@@ -88,6 +89,36 @@ def test_global_determinant_lattice_keeps_all_v_j_solutions_coupled() -> None:
         )
         assert next_j - j == r
         assert next_v - v == s
+
+
+def test_short_signed_shift_window_has_a_unique_j() -> None:
+    assert signed_shift_solutions(
+        r=101,
+        s=103,
+        v=10,
+        delta_min=80,
+        delta_max=90,
+        sign=1,
+    ) == ((9, 83),)
+    assert signed_shift_solutions(
+        r=101,
+        s=103,
+        v=10,
+        delta_min=15,
+        delta_max=25,
+        sign=-1,
+    ) == ((10, -20),)
+
+
+def test_signed_shift_helper_returns_every_solution_in_a_wide_window() -> None:
+    assert signed_shift_solutions(
+        r=5,
+        s=7,
+        v=8,
+        delta_min=1,
+        delta_max=15,
+        sign=1,
+    ) == ((4, 12), (5, 5))
 
 
 def test_one_third_split_has_exact_balanced_scales() -> None:

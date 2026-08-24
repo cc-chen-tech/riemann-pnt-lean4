@@ -13,6 +13,7 @@ from scripts.mwkf_coefficient_first import (
     scaled_boundary_correction,
     scaled_truncated_product_coefficient,
     scaled_zeta_mollifier_coefficient,
+    zero_route_audit,
 )
 
 
@@ -82,3 +83,25 @@ def test_truncating_zeta_at_the_mollifier_length_has_a_large_pole_term() -> None
     assert scales.product_support == F(6)
     # X^(1-s)/(s-1) has size T^(x/2-1) on Re(s)=1/2.
     assert scales.euler_maclaurin_pole == F(1, 2)
+
+
+def test_perron_zero_residue_amplifies_an_off_line_zero() -> None:
+    audit = zero_route_audit(
+        mollifier_exponent=F(3),
+        zero_real_part=F(3, 4),
+        all_lengths_up_to_cutoff=False,
+    )
+    assert audit.zero_residue_amplification == F(3, 4)
+    assert audit.origin_interval_zero_free_boundary == F(2, 3)
+    assert audit.dyadic_interval_zero_free_boundary == F(7, 6)
+
+
+def test_single_mollifier_length_does_not_meet_bettin_gonek_scope() -> None:
+    audit = zero_route_audit(
+        mollifier_exponent=F(3),
+        zero_real_part=F(1, 2),
+        all_lengths_up_to_cutoff=False,
+    )
+    assert audit.zero_residue_amplification == F(0)
+    assert not audit.bettin_gonek_applicable
+    assert audit.reason == "requires_all_lengths_up_to_T_theta"

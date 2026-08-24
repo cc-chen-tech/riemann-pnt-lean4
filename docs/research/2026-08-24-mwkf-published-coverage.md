@@ -289,6 +289,12 @@ consequence of (3.8): the original moment only requires the full sum
 different dual cells is allowed.  The global determinant-lattice
 reparametrization and the resulting no-triangle interface are recorded in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md`.
+Section 9 of that note quantifies the kernel issue: isolating bounded \(v\)
+at the hard box requires a Fourier window of width \(T^{-1/2}\), costs
+\(T^{A/2}\) in the \(A\)-th cutoff seminorm, and spreads the physical
+\(h\)-weight from \(T^{5/2}\) to \(T^3\).  Hence
+\(\mathrm{RES}_{1,1}\) is not uniformly isolated in the accepted kernel
+class.
 
 This identifies (3.8) as an averaged two-linear-form Möbius correlation
 with slopes as large as \(T^{1/2}\).  Matomäki--Radziwiłł--Tao,
@@ -334,22 +340,48 @@ The deterministic report is:
 | witness | primary route | BCR saving | reason |
 |---|---|---:|---|
 | bcr_small_a | BCR | \(1/20\) | covered |
-| balanced_max_a | global coupled operator | \(-37/8\) | new global estimate required |
-| large_q_endpoint | global coupled operator | \(-7/8\) | new global estimate required |
+| balanced_max_a | Möbius Farey trilinear | \(-37/8\) | new signed trilinear estimate required |
+| large_q_endpoint | Möbius Farey trilinear | \(-7/8\) | new signed trilinear estimate required |
 | r_long | global coupled operator | \(-15/4\) | new global estimate required |
-| s_long | global coupled operator | \(-15/4\) | new global estimate required |
+| s_long | Möbius Farey trilinear | \(-15/4\) | new signed trilinear estimate required |
 
-The routing priority is BCR, completion, Wright fixed-factor, then the
-global coupled operator.  The Möbius Type-I/II split remains an exact
-diagnostic decomposition inside the last route, but it is no longer imposed
-box by box before global cancellation.  A route becomes covered only when
-its analytic estimate—not merely its kinematic condition—is available.
-Hence the completion faces and all base Wright calls currently flow to the
-global residual route.
+The routing priority is BCR, completion, Wright fixed-factor, the exact
+signed-\(j\) Farey reduction when \(L<S\), and finally the unreduced global
+coupled operator.  The Möbius Type-I/II split remains an exact diagnostic
+decomposition inside the residual routes, but it is no longer imposed box
+by box before global cancellation.  A route becomes covered only when its
+analytic estimate—not merely its kinematic condition—is available.  Hence
+the completion faces and all base Wright calls currently flow to one of the
+two global residual interfaces.
 
 **published coverage result: residual cells remain.**  In particular, the
 balanced witness has a fixed positive deficit of \(37/8\), and the separate
 tail obligation \(\mathrm{TAIL}_{B,D}\) is also uncovered.  The next slice
-must prove GCO\(_{1/1000}\) without first taking absolute values in the
-Poisson-dual variables; a zero-residual coverage report cannot be produced
-from the cited results.
+must prove the two signed Farey trilinear bounds
+FTF\(_{\epsilon,1/1000}\) in the balanced box, without first taking
+absolute values in the size of the Poisson-dual variable; a zero-residual
+coverage report cannot be produced from the cited results.
+
+The coefficient-first note also gives the exact finite-residue completion
+
+\[
+ \mathfrak F_{q,\epsilon}=\frac LS\mathfrak D_{q,\epsilon},
+ \qquad
+ \mathfrak D_{q,\epsilon}\ \,\text{has phase}\ \,
+ e\left(\frac{krv}{s}\right).
+\]
+
+In the balanced box, \(k,v\ll T^{1/2}\mathscr L^C\).  The equivalent
+completed gate is
+
+\[
+ \mathrm{CFK}_{\epsilon,1/1000}:
+ \qquad
+ |\mathfrak D_{q,\epsilon}|\ll_W T^{4-1/1000}.
+\]
+
+Its normalized ambient exponent is \(7\), so it needs saving
+\(3001/1000\).  An optimistic generic Bettin--Chandee treatment after
+collapsing \(a=kv\) has exponent \(67/10\), leaving the exact deficit
+\(2701/1000\).  CFK is therefore an equivalent explicit
+Kloosterman-fraction interface, not a published-coverage claim.
