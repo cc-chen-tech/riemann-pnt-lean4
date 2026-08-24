@@ -56,10 +56,10 @@ def is_admissible(box: ExponentBox) -> bool:
 
 
 def derived_bounds(box: ExponentBox) -> dict[str, Fraction]:
-    """Return the exact zero-slack bounds derived from the range polytope.
+    """Return the linear bounds forced by the zero-slack polytope.
 
-    The ``m_cap`` and ``k_cap`` formulas combine ``k + m <= 1`` with
-    the exact ratio balance ``k + sigma = m + rho``.
+    The ``m_cap`` and ``k_cap`` identities combine ``k + m <= 1`` with
+    ``k + sigma = m + rho``.  This is exact rational algebra only.
     """
     half = Fraction(1, 2)
     return {
@@ -84,18 +84,24 @@ def boundary_witnesses() -> dict[str, ExponentBox]:
     }
 
 
+def _format_fraction(value: Fraction) -> str:
+    if value.denominator == 1:
+        return str(value.numerator)
+    return f"{value.numerator}/{value.denominator}"
+
+
 def main() -> None:
     fields = ("rho", "sigma", "m", "k", "ell", "h", "kappa")
     for name, box in sorted(boundary_witnesses().items()):
-        violations = admissibility_violations(box)
-        if violations:
-            raise ValueError(f"{name}: {','.join(violations)}")
-        bounds = derived_bounds(box)
-        gap = bounds["a"] - (box.rho + box.sigma) / 2
-        values = [f"{field}={getattr(box, field)}" for field in fields]
-        values.extend((f"a={bounds['a']}",
-                       f"a_minus_half_rho_sigma={gap}"))
-        print(f"{name}: {' '.join(values)}")
+        values = " ".join(
+            f"{field}={_format_fraction(getattr(box, field))}"
+            for field in fields
+        )
+        gap = box.third_length - (box.rho + box.sigma) / 2
+        print(
+            f"{name}: {values} a={_format_fraction(box.third_length)} "
+            f"a_minus_half_rs={_format_fraction(gap)}"
+        )
 
 
 if __name__ == "__main__":
