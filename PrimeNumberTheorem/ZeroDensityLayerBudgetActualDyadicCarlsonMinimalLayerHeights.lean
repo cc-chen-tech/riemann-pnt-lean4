@@ -221,13 +221,16 @@ theorem actualDynamicDyadicCarlsonMinimalHeightConditions
             (m : ℝ)) :=
     Real.log_le_log (by positivity) hbalancedHeight
   constructor
-  · simpa [g, carlsonMovingBalancedCut] using
-      carlsonPointwiseHeightConditions_of_threeFourths
-        (hfloor6.trans hbalancedHeight)
-        (hlogFloor.trans hbalancedLog)
-        hsigma
-        (hC₁Floor.trans hbalancedHeight)
-        (hC₂Floor.trans hbalancedHeight)
+  · change
+      CarlsonPointwiseHeightConditions C₁ C₂ (1 - 2 * g)
+        (carlsonPolynomialHeight
+          (carlsonTwoHeightBalancedCut (1 - 2 * g) alpha) (m : ℝ))
+    exact carlsonPointwiseHeightConditions_of_threeFourths
+      (hfloor6.trans hbalancedHeight)
+      (hlogFloor.trans hbalancedLog)
+      hsigma
+      (hC₁Floor.trans hbalancedHeight)
+      (hC₂Floor.trans hbalancedHeight)
   · simpa [g] using
       carlsonPointwiseHeightConditions_of_threeFourths
         hfixed6 hlogFixed hsigma hC₁Fixed hC₂Fixed

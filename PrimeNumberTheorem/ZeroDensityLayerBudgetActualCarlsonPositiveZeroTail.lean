@@ -82,8 +82,9 @@ theorem summable_actualCarlsonPositiveZeroWeight {sigma : ℝ}
     Summable (@actualCarlsonPositiveZeroWeight sigma) := by
   apply Summable.sum actualCarlsonPositiveZeroWeight
   · exact Summable.of_finite
-  · simpa [Function.comp_def, actualCarlsonPositiveZeroWeight] using
-      summable_actualCarlsonDyadicZeroWeight hhalf hone
+  · refine (summable_actualCarlsonDyadicZeroWeight hhalf hone).congr ?_
+    intro index
+    rfl
 
 /-- Pointwise strict separation from `beta` is enough for the complete
 positive-zero weighted power tail to vanish. -/

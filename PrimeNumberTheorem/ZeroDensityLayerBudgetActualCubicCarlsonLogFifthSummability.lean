@@ -55,8 +55,10 @@ theorem summable_actualCubicCarlsonDyadicLogFifthMajorant
       (((n + 1 : ℕ) : ℝ) ^ 5 *
         actualCubicCarlsonDyadicRatio sigma ^ (n + 1))) := by
     simpa only using (summable_nat_add_iff 1).mpr hbase
-  simpa only [actualCubicCarlsonDyadicLogFifthMajorant, ← mul_assoc] using
-    hshift.mul_left C
+  change Summable (fun n : ℕ =>
+    C * ((n + 1 : ℕ) : ℝ) ^ 5 *
+      actualCubicCarlsonDyadicRatio sigma ^ (n + 1))
+  simpa only [mul_assoc] using hshift.mul_left C
 
 /-- An eventual log-fifth bound suffices for summability; finitely many initial
 dyadic blocks are retained rather than silently discarded. -/
