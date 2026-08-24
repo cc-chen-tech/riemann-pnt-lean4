@@ -155,7 +155,7 @@ def test_finite_residue_completion_has_exact_hard_box_gate() -> None:
         boundary_witnesses()["balanced_max_a"]
     )
     assert scales.v == F(1, 2)
-    assert scales.k == F(1, 2)
+    assert scales.residue_frequency == F(1, 2)
     assert scales.product_frequency == F(1)
     assert scales.residue_density_prefactor == F(-1, 2)
     assert scales.farey_gate_target == F(3499, 1000)
@@ -165,6 +165,9 @@ def test_finite_residue_completion_has_exact_hard_box_gate() -> None:
     assert scales.square_root_margin == F(499, 1000)
     assert scales.generic_bcr_bound == F(67, 10)
     assert scales.generic_bcr_deficit == F(2701, 1000)
+    assert scales.zero_k_volume == F(13, 2)
+    assert scales.zero_k_required_saving == F(2501, 1000)
+    assert scales.zero_k_square_root_margin == F(749, 1000)
 
 
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:

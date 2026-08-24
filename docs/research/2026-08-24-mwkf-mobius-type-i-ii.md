@@ -503,8 +503,13 @@ of global cancellation.
 
 Finite Fourier inversion in the signed shift residue gives the equivalent
 completed interface CFK\(_{\epsilon,1/1000}\): a pair of sums with phase
-\(e(krv/s)\), \(k,v\ll T^{1/2}\mathscr L^C\), and target
+\(e(crv/s)\), \(c,v\ll T^{1/2}\mathscr L^C\), and target
 \(T^{4-1/1000}\).  The exact generic-coefficient deficit is
 \(2701/1000\).  A subsequent Type-I/II argument must therefore retain both
-Möbius weights and the product structure \(a=kv\); treating the collapsed
+Möbius weights and the product structure \(a=cv\); treating the collapsed
 frequency coefficients as arbitrary cannot close the gate.
+
+Nor may the residue frequency be split termwise for free: the artificial
+\(c=0\) completion mode alone has ambient exponent \(13/2\) and would need
+saving \(2501/1000\) at the CFK target.  The exact determinant range has no
+\(v=0\) solution, so these are different zero modes.

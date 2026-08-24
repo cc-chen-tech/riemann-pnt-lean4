@@ -368,10 +368,10 @@ The coefficient-first note also gives the exact finite-residue completion
  \mathfrak F_{q,\epsilon}=\frac LS\mathfrak D_{q,\epsilon},
  \qquad
  \mathfrak D_{q,\epsilon}\ \,\text{has phase}\ \,
- e\left(\frac{krv}{s}\right).
+ e\left(\frac{crv}{s}\right).
 \]
 
-In the balanced box, \(k,v\ll T^{1/2}\mathscr L^C\).  The equivalent
+In the balanced box, \(c,v\ll T^{1/2}\mathscr L^C\).  The equivalent
 completed gate is
 
 \[
@@ -382,6 +382,12 @@ completed gate is
 
 Its normalized ambient exponent is \(7\), so it needs saving
 \(3001/1000\).  An optimistic generic Bettin--Chandee treatment after
-collapsing \(a=kv\) has exponent \(67/10\), leaving the exact deficit
+collapsing \(a=cv\) has exponent \(67/10\), leaving the exact deficit
 \(2701/1000\).  CFK is therefore an equivalent explicit
 Kloosterman-fraction interface, not a published-coverage claim.
+
+The finite completion is also no-triangle in its residue frequency.  The
+\(v=0\) determinant cell is empty in the signed hard box, whereas the
+artificial \(c=0\) Fourier mode is nonoscillatory.  Bounding that mode
+separately at the CFK target would require saving \(2501/1000\) from its
+ambient exponent \(13/2\).  No audited adapter provides this bound.

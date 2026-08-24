@@ -121,6 +121,18 @@ def test_signed_shift_helper_returns_every_solution_in_a_wide_window() -> None:
     ) == ((4, 12), (5, 5))
 
 
+def test_zero_v_has_no_solution_in_a_nonzero_submodular_shift_window() -> None:
+    for sign in (-1, 1):
+        assert signed_shift_solutions(
+            r=101,
+            s=103,
+            v=0,
+            delta_min=10,
+            delta_max=20,
+            sign=sign,
+        ) == ()
+
+
 def test_one_third_split_has_exact_balanced_scales() -> None:
     scales = type_scale_bounds(F(3), u=F(1, 3), v=F(1, 3))
     assert scales.u_exp == F(1)

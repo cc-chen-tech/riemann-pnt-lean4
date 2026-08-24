@@ -93,7 +93,7 @@ class FareyCriticalScales:
 @dataclass(frozen=True)
 class FareyCompletionScales:
     v: Fraction
-    k: Fraction
+    residue_frequency: Fraction
     product_frequency: Fraction
     residue_density_prefactor: Fraction
     farey_gate_target: Fraction
@@ -103,6 +103,9 @@ class FareyCompletionScales:
     square_root_margin: Fraction
     generic_bcr_bound: Fraction
     generic_bcr_deficit: Fraction
+    zero_k_volume: Fraction
+    zero_k_required_saving: Fraction
+    zero_k_square_root_margin: Fraction
 
 
 def _positive_part(value: Fraction) -> Fraction:
@@ -279,18 +282,18 @@ def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
     exact density factor ``L/S`` and have effective frequency length
     ``K=S/L``.  The existing ``h``-Poisson frequency has length ``V=S/H``.
     Removing the density factor turns the Farey target into the target for
-    a four-variable Kloosterman-fraction sum in ``(r,s,k,v)``.
+    a four-variable Kloosterman-fraction sum in ``(r,s,c,v)``.
 
     These are support and normalization exponents only; the function does
     not assert cancellation in that completed sum.
     """
     v = completion_dual_exponent(box.h, box.sigma)
-    k = completion_dual_exponent(box.ell, box.sigma)
+    residue_frequency = completion_dual_exponent(box.ell, box.sigma)
     prefactor = box.ell - box.sigma
     farey_target = box.rho + box.sigma - box.h - TARGET_SAVING
     normalized_target = farey_target - prefactor
-    volume = box.rho + box.sigma + v + k
-    product_frequency = v + k
+    volume = box.rho + box.sigma + v + residue_frequency
+    product_frequency = v + residue_frequency
     total = product_frequency + box.rho + box.sigma
     longest = max(box.rho, box.sigma)
     large_a = F(1, 2) * _positive_part(
@@ -304,9 +307,10 @@ def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
         + large_a
     )
     generic_bcr_bound = max(bcr_term_1, bcr_term_2)
+    zero_k_volume = box.rho + box.sigma + v
     return FareyCompletionScales(
         v=v,
-        k=k,
+        residue_frequency=residue_frequency,
         product_frequency=product_frequency,
         residue_density_prefactor=prefactor,
         farey_gate_target=farey_target,
@@ -316,6 +320,9 @@ def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
         square_root_margin=normalized_target - volume / 2,
         generic_bcr_bound=generic_bcr_bound,
         generic_bcr_deficit=generic_bcr_bound - normalized_target,
+        zero_k_volume=zero_k_volume,
+        zero_k_required_saving=zero_k_volume - normalized_target,
+        zero_k_square_root_margin=normalized_target - zero_k_volume / 2,
     )
 
 

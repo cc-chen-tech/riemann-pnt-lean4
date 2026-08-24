@@ -700,12 +700,12 @@ sufficiently large \(T\), so it contains at most one term.  Its normalized
 finite Fourier transform is
 
 \[
- \widetilde G_{r,s,v,\epsilon}(k)
+ \widetilde G_{r,s,v,\epsilon}(c)
  :=\frac1s\sum_{x\bmod s}G_{r,s,v,\epsilon}(x)
- e\left(-\frac{kx}{s}\right),
+ e\left(-\frac{cx}{s}\right),
  \qquad
- \Omega_{r,s,v,\epsilon}(k)
- :=\frac{s}{L}\widetilde G_{r,s,v,\epsilon}(k).
+ \Omega_{r,s,v,\epsilon}(c)
+ :=\frac{s}{L}\widetilde G_{r,s,v,\epsilon}(c).
 \tag{12.2}
 \]
 
@@ -714,9 +714,9 @@ with no truncation,
 
 \[
  G_{r,s,v,\epsilon}(rv)
- =\frac Ls\sum_{k\bmod s}
- \Omega_{r,s,v,\epsilon}(k)
- e\left(\frac{krv}{s}\right).
+ =\frac Ls\sum_{c\bmod s}
+ \Omega_{r,s,v,\epsilon}(c)
+ e\left(\frac{crv}{s}\right).
 \tag{12.3}
 \]
 
@@ -737,21 +737,21 @@ where
  :={}&\sum_{\substack{r\asymp R,\ s\asymp S\\
                        (r,s)=1,\ (q,rs)=1}}
  \mu(r)\mu(s)p_N(qr)p_N(qs)\frac Ss\\
- &\quad\times\sum_{v\in\mathbb Z}\sum_{k\bmod s}
- \Omega_{r,s,v,\epsilon}(k)
- e\left(\frac{krv}{s}\right).
+ &\quad\times\sum_{v\in\mathbb Z}\sum_{c\bmod s}
+ \Omega_{r,s,v,\epsilon}(c)
+ e\left(\frac{crv}{s}\right).
 \end{aligned}
 \tag{12.5}
 \]
 
-Writing \(|k|_s\) for the least absolute representative modulo \(s\),
+Writing \(|c|_s\) for the least absolute representative modulo \(s\),
 repeated finite summation by parts in (12.2), together with the original
 Fourier decay in \(v\), gives for every fixed \(A\geq0\)
 
 \[
- \Omega_{r,s,v,\epsilon}(k)
+ \Omega_{r,s,v,\epsilon}(c)
  \ll_{A,W}
- \left(1+\frac{L|k|_s}{s}\right)^{-A}
+ \left(1+\frac{L|c|_s}{s}\right)^{-A}
  \left(1+\frac{H|v|}{s}\right)^{-A},
 \tag{12.6}
 \]
@@ -764,15 +764,15 @@ claim is used in (12.4).  The effective, but not sharply truncated, ranges
 are
 
 \[
- |k|_s\ll\frac SL\mathscr L^C,
+ |c|_s\ll\frac SL\mathscr L^C,
  \qquad
  |v|\ll\frac SH\mathscr L^C.
 \tag{12.7}
 \]
 
 At the hard box both lengths are \(T^{1/2}\mathscr L^C\), and the phase
-only sees their product \(a=kv\), of length at most
-\(T\mathscr L^{2C}\).  The kernel still depends separately on \(k\) and
+only sees their product \(a=cv\), of length at most
+\(T\mathscr L^{2C}\).  The kernel still depends separately on \(c\) and
 \(v\); collapsing them to a single divisor-weighted coefficient therefore
 requires a kernel separation argument and is not part of the identity
 (12.4).
@@ -787,7 +787,7 @@ the normalized completed gate
 \tag{CFK\(_{\epsilon,1/1000}\)}
 \]
 
-The ambient \((r,s,k,v)\)-volume has exponent \(7\), so CFK asks for
+The ambient \((r,s,c,v)\)-volume has exponent \(7\), so CFK asks for
 saving \(3001/1000\).  Its square-root exponent is \(7/2\), stronger
 than the target by \(499/1000\).  Even after an optimistic lossless
 collapse to a generic trilinear sum with frequency length \(T\), the two
@@ -804,4 +804,25 @@ The first dominates and exceeds the CFK target by \(2701/1000\).
 Therefore finite completion supplies a concrete Kloosterman-fraction
 interface, but the generic-coefficient theorem still does not close it.
 The new analytic question is whether the two Möbius weights, together with
-the product structure \(a=kv\), recover that exact deficit.
+the product structure \(a=cv\), recover that exact deficit.
+
+There is also a precise zero-frequency warning.  In the signed hard box,
+\(v=0\) gives \(\delta=-js\); since \(0<|\delta|<s\), it has no solution.
+By contrast, the artificial completion frequency \(c=0\) is present in
+(12.5), and its phase is constant.  If it is separated by a triangle
+inequality, its ambient \((r,s,v)\)-volume exponent is \(13/2\).  Meeting
+the same normalized target would require
+
+\[
+ |\mathfrak D_{q,\epsilon}^{(c=0)}|
+ \ll_W T^{4-1/1000},
+ \qquad
+ \text{saving }\frac{2501}{1000}.
+\tag{12.9}
+\]
+
+Its square-root exponent \(13/4\) is stronger than the target by
+\(749/1000\), but no such Möbius-weighted estimate is supplied here.
+Hence completion has not made the problem termwise: an admissible CFK
+argument must either prove (12.9) from the Möbius structure or retain
+cancellation between \(c=0\) and \(c\ne0\).
