@@ -104,3 +104,16 @@ def test_balanced_box_exhibits_the_long_a_gap() -> None:
     assert box.third_length == F(5)
     assert (box.rho + box.sigma) / 2 == F(3)
     assert box.third_length - (box.rho + box.sigma) / 2 == F(2)
+
+
+def test_research_note_has_one_honest_phase_one_classification() -> None:
+    text = NOTE.read_text()
+    labels = (
+        "Phase-1 classification: exact reduction verified",
+        "Phase-1 classification: corrected reduction verified",
+        "Phase-1 classification: exact reduction remains blocked",
+    )
+    assert sum(label in text for label in labels) == 1
+    assert "Accepted local gate after exact audit:" in text
+    assert "arXiv:2601.00292" in text
+    assert "withdrawn" in text.lower()

@@ -5,13 +5,14 @@
 > | Component | Status |
 > |---|---|
 > | LCM main quadratic form | proved separately |
-> | Exact AFE and shifted-divisor identity | under audit in Sections 2--3 |
-> | Poisson zero/nonzero-mode identity | proved after correction in Section 4 |
+> | Exact AFE and shifted-divisor identity | verified in Sections 2--3 |
+> | Corrected Poisson zero/nonzero-mode identity | verified in Section 4 |
+> | Effective ranges and coupled-kernel reduction | verified in Sections 5--6 |
 > | Coupled-kernel MWKF local estimate | unproved |
 >
 > Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
-> A row is promoted from “under audit” only after the displayed convergence,
-> contour-shift, and reindexing arguments have all been supplied.
+> The verified rows concern the reduction and its correction; they do not
+> promote the unproved local estimate to a published or available theorem.
 
 ## 1. Statement and normalization
 
@@ -1836,33 +1837,43 @@ that theorem supplies no box estimate for (6.3).
 
 ## 8. What has and has not been proved
 
-The status table at the top is the controlling audit ledger.  The LCM main
-quadratic form is proved separately.  Sections 2--3 now expose the exact AFE
-and shifted-divisor derivations for audit, including their convergence,
-contour-orientation, and reindexing checks.  They remain marked “under audit”
-until independent review accepts those derivations.
+Phase-1 classification: corrected reduction verified
 
-Section 4 proves the Poisson zero/nonzero-mode identity after correcting the
-baseline zero-mode functional-equation step.  The exact remainder contains
-the archimedean term \(\mathcal C_{N,W}(T)\) in (4.6c), although (4.7c)
-makes it smaller than every power of \(T\) when \(N=T^3\).
-\(\operatorname{MWKF}_{\rm ck}(3)\), equation (6.9), is unproved.
-Equation (6.10) is only the proved conditional implication from that
-proposed local estimate, not an available remainder bound.  The correction
-\(\mathcal C_{T^3,W}(T)\) is bounded separately in (6.13); it is not part of
-the MWKF assumption.  Treating the coupled-kernel gate as an already
-available consequence of BCR would be incorrect for the range reason in
-item 3 of Section 7.
+The classification applies to the reduction, not to the desired
+\(T^3\) asymptotic.  The controlling proof-status ledger is:
+
+| Claim | Status | Complete derivation or exact status location |
+|---|---|---|
+| Completed AFE and diagonal extraction | verified | (2.0)--(2.10), including pole cancellation, absolute convergence, uniform weight bounds, and the diagonal parametrization |
+| Shifted-divisor expansion | verified | (3.1)--(3.8), including the absolute dyadic reindexing and full smooth kernel |
+| Poisson zero/nonzero-mode decomposition | verified after correction | (4.1)--(4.8); the omitted sine quotient is restored in (4.5i)--(4.6c), and the complete correction bound is (4.7c.0)--(4.7c) |
+| Effective ranges and coupled-kernel normalization | verified | (5.1)--(5.15), including both nonstationary cutoffs and the exact kernel scale |
+| Comparison of the three candidate gates | verified logical reduction | (6.0)--(6.8); only \({\rm(US)}\Rightarrow{\rm(IS)}\Rightarrow{\rm(CK)}\) is proved |
+| Coupled-kernel estimate \(\operatorname{MWKF}_{\rm ck}(3)\) | **unproved** | stated, not derived, in (6.9) |
+| Global remainder bound | **conditional** | the complete implication from the unproved gate is (6.10)--(6.13), with \(\mathcal C_{T^3,W}(T)\) added separately |
+
+The LCM quadratic form consumed in (1.1)--(1.5) was proved separately; this
+note fixes its normalization but does not reproduce that independent proof.
+The exact-rational boundary witnesses in Section 6 are diagnostics, not
+analytic estimates.  Likewise, the published results listed below are
+coverage inputs, not proofs of (6.9).  In particular, neither BCR nor the
+future Wright input currently supplies the coupled-kernel estimate over the
+whole exponent polytope, and no unconditional \(\theta=3\) closure is claimed.
 
 ## 9. Primary references
 
-* S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of
-  the Riemann zeta function with Dirichlet polynomials*, arXiv:1411.7764,
-  especially Proposition 1 and Sections 3.1--3.4.
-* M. Radziwiłł, *Limitations to mollifying \(\zeta(s)\)*,
-  arXiv:1207.6583, for Farmer's all-\(\theta\) long-mollifier conjecture and
-  the nontrivial role of the off-diagonal.
-* K. Pratt, N. Robles, *Perturbed moments and a longer mollifier for
-  critical zeros of \(\zeta\)*, arXiv:1706.04593, for later exploitation of
-  Möbius/convolution structure up to lengths below \(T^{4/7}\) or
-  \(T^{6/11}\), still far from \(T^3\).
+The metadata and ranges in this table were checked against the linked
+primary records on 2026-08-25.
+
+| Source | Primary-source status | Exact range used here | Audit disposition |
+|---|---|---|---|
+| S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of the Riemann zeta function with Dirichlet polynomials*, [arXiv:1411.7764](https://arxiv.org/abs/1411.7764), J. Reine Angew. Math. **729** (2017), 51--79 | published | arbitrary coefficients for \(N=T^\theta\), \(\theta<17/33=1/2+1/66\); special product of lengths \(T^{1/2}\) and \(T^{1/4}\), hence total length below \(T^{3/4}\); Proposition 1/Conjecture 1 supply the local comparison in Section 7 | retained published input; its arbitrary-coefficient conjectural range does not cover the long-\(a\) boxes |
+| M. Radziwiłł, *Limitations to mollifying \(\zeta(s)\)*, [arXiv:1207.6583v3](https://arxiv.org/abs/1207.6583) | arXiv preprint | Theorem 1 treats \(M_\theta\) of length \(T^\theta\) for every fixed \(\theta>0\), proving a lower-bound limitation and the nontrivial role of off-diagonal terms; its asymptotic Proposition B is restricted to \(\theta<1/2\) | retained conceptual limitation, not an estimate for (6.9) and not a claim of all-length asymptotic coverage |
+| K. Pratt, N. Robles, *Perturbed moments and a longer mollifier for critical zeros of \(\zeta\)*, [arXiv:1706.04593v3](https://arxiv.org/abs/1706.04593), Res. Number Theory **4** (2018), 9 | published | \(\theta<4/7\) for coefficients \(\mu(n)f(n)\), and \(\theta<6/11\) for the Feng-type coefficients \(\mu^2(n)(\mu*\Lambda^{*k})(n)f(n)\) | retained structured-coefficient input; both ranges remain far below \(\theta=3\) |
+| T. Wright, *Trilinear Kloosterman fractions I: partially fixed moduli and unbalanced convolutions*, [arXiv:2604.25177v2](https://arxiv.org/abs/2604.25177) | v2 revised 2026-08-07; not yet used in the reduction | improved estimates with a partially fixed modulus and unbalanced convolution hypotheses | future Region-C input only; no claim that its hypotheses already cover the exponent polytope or prove (6.9) |
+
+> **Withdrawn-source warning.**  [arXiv:2601.00292v2](https://arxiv.org/abs/2601.00292),
+> *Bilinear forms with Kloosterman fractions and applications*, is withdrawn
+> and is not an input to this note.  The official withdrawal comment reports
+> a missing \(L^2\) factor in equation (2.53), changing \(L^5\) to \(L^7\),
+> so the argument does not yield the claimed improved bound.
