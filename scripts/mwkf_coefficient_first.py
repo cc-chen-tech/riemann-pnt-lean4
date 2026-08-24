@@ -10,12 +10,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
-from typing import TypeAlias
+if __package__:
+    from scripts.mwkf_mobius_type_identity import divisors, mobius
+else:
+    from mwkf_mobius_type_identity import divisors, mobius
 
-from scripts.mwkf_mobius_type_identity import divisors, mobius
 
-
-FormalLog: TypeAlias = dict[int, int]
+FormalLog = dict[int, int]
 
 
 @dataclass(frozen=True)
