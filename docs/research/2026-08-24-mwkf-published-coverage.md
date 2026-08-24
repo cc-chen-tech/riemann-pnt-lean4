@@ -282,6 +282,14 @@ improvement at exponent \(11/2\), not the two-power saving in (3.14).
 Consequently the bounded-dual resonance cell remains uncovered even before
 the growing slopes in (3.11) are considered.
 
+This calculation is a diagnostic for what would be required after applying
+the triangle inequality in \((v,j)\).  It is not a necessary local
+consequence of (3.8): the original moment only requires the full sum
+\(\mathfrak C_q[\widehat\Psi_h]\) to be small, and cancellation between
+different dual cells is allowed.  The global determinant-lattice
+reparametrization and the resulting no-triangle interface are recorded in
+`2026-08-24-mwkf-global-coupled-coefficient-first.md`.
+
 This identifies (3.8) as an averaged two-linear-form Möbius correlation
 with slopes as large as \(T^{1/2}\).  Matomäki--Radziwiłł--Tao,
 arXiv:1503.05121, Theorem 1.6, has a factor \(A^{2k}\) for slopes bounded
@@ -326,18 +334,22 @@ The deterministic report is:
 | witness | primary route | BCR saving | reason |
 |---|---|---:|---|
 | bcr_small_a | BCR | \(1/20\) | covered |
-| balanced_max_a | Möbius Type I/II | \(-37/8\) | published routes exhausted |
-| large_q_endpoint | Möbius Type I/II | \(-7/8\) | published routes exhausted |
-| r_long | Möbius Type I/II | \(-15/4\) | published routes exhausted |
-| s_long | Möbius Type I/II | \(-15/4\) | published routes exhausted |
+| balanced_max_a | global coupled operator | \(-37/8\) | new global estimate required |
+| large_q_endpoint | global coupled operator | \(-7/8\) | new global estimate required |
+| r_long | global coupled operator | \(-15/4\) | new global estimate required |
+| s_long | global coupled operator | \(-15/4\) | new global estimate required |
 
-The routing priority is BCR, completion, Wright fixed-factor, then Möbius
-Type I/II.  A route becomes primary only when its analytic estimate—not
-merely its kinematic condition—is available.  Hence the completion faces
-and all base Wright calls currently flow to the residual route.
+The routing priority is BCR, completion, Wright fixed-factor, then the
+global coupled operator.  The Möbius Type-I/II split remains an exact
+diagnostic decomposition inside the last route, but it is no longer imposed
+box by box before global cancellation.  A route becomes covered only when
+its analytic estimate—not merely its kinematic condition—is available.
+Hence the completion faces and all base Wright calls currently flow to the
+global residual route.
 
 **published coverage result: residual cells remain.**  In particular, the
 balanced witness has a fixed positive deficit of \(37/8\), and the separate
 tail obligation \(\mathrm{TAIL}_{B,D}\) is also uncovered.  The next slice
-must prove a new Möbius Type I/II estimate; a zero-residual coverage report
-cannot be produced from the cited results.
+must prove GCO\(_{1/1000}\) without first taking absolute values in the
+Poisson-dual variables; a zero-residual coverage report cannot be produced
+from the cited results.

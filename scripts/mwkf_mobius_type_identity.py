@@ -143,6 +143,31 @@ def poisson_congruence_reparametrization(
     return v, numerator // s
 
 
+def determinant_lattice_solution(
+    *,
+    r: int,
+    s: int,
+    delta: int,
+    translate: int,
+) -> tuple[int, int]:
+    """Parameterize the full affine lattice ``r*v-j*s=delta``.
+
+    Choose ``v_0`` as the inverse of ``r`` modulo ``s`` and put
+    ``j_0=(r*v_0-1)/s``.  Every translated pair
+
+    ``j=delta*j_0+translate*r``,
+    ``v=delta*v_0+translate*s``
+
+    has determinant ``delta``; conversely every integral solution is one
+    such translate because ``(r,s)=1``.
+    """
+    if r <= 0 or s <= 1 or gcd(r, s) != 1:
+        raise ValueError("require r > 0, s > 1, and (r,s)=1")
+    v_0 = pow(r, -1, s)
+    j_0 = (r * v_0 - 1) // s
+    return delta * j_0 + translate * r, delta * v_0 + translate * s
+
+
 @dataclass(frozen=True)
 class TypeScaleBounds:
     u_exp: Fraction

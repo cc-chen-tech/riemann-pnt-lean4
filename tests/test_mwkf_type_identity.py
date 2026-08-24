@@ -8,6 +8,7 @@ from scripts.mwkf_mobius_type_identity import (
     c_u,
     crt_reciprocity_numerators,
     double_split_mobius_identity,
+    determinant_lattice_solution,
     mobius,
     poisson_congruence_reparametrization,
     split_mobius_identity,
@@ -70,6 +71,23 @@ def test_h_poisson_frequency_is_exact_shifted_equation() -> None:
         )
         assert r * v - delta == j * s
         assert (r * v - delta) % s == 0
+
+
+def test_global_determinant_lattice_keeps_all_v_j_solutions_coupled() -> None:
+    for r, s, delta, k in (
+        (5, 7, 3, -2),
+        (7, 11, -4, 3),
+        (11, 13, 8, 0),
+    ):
+        j, v = determinant_lattice_solution(
+            r=r, s=s, delta=delta, translate=k
+        )
+        assert r * v - j * s == delta
+        next_j, next_v = determinant_lattice_solution(
+            r=r, s=s, delta=delta, translate=k + 1
+        )
+        assert next_j - j == r
+        assert next_v - v == s
 
 
 def test_one_third_split_has_exact_balanced_scales() -> None:

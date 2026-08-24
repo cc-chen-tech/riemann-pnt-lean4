@@ -60,6 +60,16 @@ class ShiftedPoissonSubboxScales:
     square_root_margin: Fraction
 
 
+@dataclass(frozen=True)
+class JointPhaseScales:
+    stationary_h: Fraction
+    t_phase_variation: Fraction
+    fourier_phase_variation: Fraction
+    same_sign_derivative_parameter: Fraction
+    on_stationary_face: bool
+    same_sign_power_saving: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -138,6 +148,34 @@ def h_poisson_subbox_scales(
         volume=volume,
         required_saving=volume - gate_target,
         square_root_margin=gate_target - volume / 2,
+    )
+
+
+def joint_phase_scales(box: ExponentBox) -> JointPhaseScales:
+    """Audit the joint ``(x,t)`` phase before ``h``-Poisson.
+
+    On ``x \\asymp T^m`` the phase is
+
+    ``t*log(1+delta/(x*r)) - 2*pi*h*x/s``.
+
+    In the small-shift regime its two normalized variation exponents are
+    ``1+ell-m-rho`` and ``h+m-sigma``.  For opposite signs of ``h`` and
+    ``delta`` the stationary face is
+    ``h=sigma+1+ell-2*m-rho``.  For equal signs the derivatives add, but
+    integration by parts yields a power of ``T`` only when their largest
+    normalized variation exponent is strictly positive.
+    """
+    t_variation = F(1) + box.ell - box.m - box.rho
+    fourier_variation = box.h + box.m - box.sigma
+    parameter = max(t_variation, fourier_variation)
+    stationary_h = box.sigma + 1 + box.ell - 2 * box.m - box.rho
+    return JointPhaseScales(
+        stationary_h=stationary_h,
+        t_phase_variation=t_variation,
+        fourier_phase_variation=fourier_variation,
+        same_sign_derivative_parameter=parameter,
+        on_stationary_face=box.h == stationary_h,
+        same_sign_power_saving=parameter > 0,
     )
 
 
@@ -400,12 +438,16 @@ def route_box(box: ExponentBox) -> RouteResult:
     if wright.applicable:
         return wright
     return RouteResult(
-        route="mobius_type_i_ii",
+        route="global_coupled_operator",
         applicable=False,
         saving=None,
         source="new estimate required",
-        reason="published_routes_exhausted",
-        conditions=("preserve both Mobius weights", "retain h*delta coupling"),
+        reason="new_global_operator_estimate_required",
+        conditions=(
+            "sum v,j before absolute values",
+            "preserve both Mobius weights",
+            "retain delta=r*v-j*s and the Fourier kernel",
+        ),
     )
 
 

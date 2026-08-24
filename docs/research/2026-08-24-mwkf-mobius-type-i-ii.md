@@ -25,6 +25,13 @@ uncovered, with BCR saving \(-37/8\).  The purpose here is to reduce (1.1)
 to two Möbius-sensitive local inequalities.  This note does not prove those
 inequalities.
 
+The later global-coupled audit shows that imposing these inequalities on
+every factor box is sufficient but not necessary: it applies triangle
+inequalities before cancellation between Poisson-dual cells.  Accordingly,
+the Type-I/II sums below are retained as exact diagnostic identities and as
+possible components of a global dispersion argument, not as the primary
+logical gate for the original moment.
+
 ## 2. Exact Möbius identity
 
 For a real cutoff \(U\geq1\), define
@@ -486,4 +493,8 @@ proved here.
 
 Consequently this slice reduces the residual problem to two explicit
 Möbius-weighted multilinear inequalities, but it does not establish the
-unconditional long-mollifier asymptotic.
+unconditional long-mollifier asymptotic.  The active primary gate is now the
+no-triangle global determinant operator GCO\(_{1/1000}\) in
+`2026-08-24-mwkf-global-coupled-coefficient-first.md`; proving the two local
+inequalities here would imply that gate, but failure to prove them does not
+disprove the possibility of global cancellation.

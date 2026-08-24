@@ -11,6 +11,7 @@ from scripts.audit_mwkf_coverage import (
     h_completion_adapter,
     h_poisson_shifted_scales,
     h_poisson_subbox_scales,
+    joint_phase_scales,
     route_box,
     wright_fixed_factor_adapter,
 )
@@ -84,9 +85,19 @@ def test_primary_route_is_unique_and_residual_is_explicit() -> None:
 
     balanced = boundary_witnesses()["balanced_max_a"]
     residual = route_box(balanced)
-    assert residual.route == "mobius_type_i_ii"
-    assert residual.reason == "published_routes_exhausted"
+    assert residual.route == "global_coupled_operator"
+    assert residual.reason == "new_global_operator_estimate_required"
     assert residual.saving is None
+
+
+def test_hard_box_is_stationary_but_has_no_large_phase_parameter() -> None:
+    scales = joint_phase_scales(boundary_witnesses()["balanced_max_a"])
+    assert scales.stationary_h == F(5, 2)
+    assert scales.on_stationary_face
+    assert scales.t_phase_variation == F(0)
+    assert scales.fourier_phase_variation == F(0)
+    assert scales.same_sign_derivative_parameter == F(0)
+    assert not scales.same_sign_power_saving
 
 
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
