@@ -6,7 +6,7 @@
 > |---|---|
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
-> | Poisson zero/nonzero-mode identity | under audit in Section 4 |
+> | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
 > | Coupled-kernel local estimate at length \(T^3\) | unproved |
 >
 > Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
@@ -113,6 +113,7 @@ so that \(\Lambda\) is meromorphic with simple poles only at \(0\) and
 
 \[
  G_t(z)=e^{z^2}
+ \left(1-4z^2\right)
  \left(1-\frac{z^2}{s_t^2}\right)
  \left(1-\frac{z^2}{(1-s_t)^2}\right),
 \tag{2.1}
@@ -154,6 +155,12 @@ cancelled by the zeros
  \qquad
  1-z^2/(1-s_t)^2\quad\hbox{at }1-s_t,s_t-1.
 \]
+
+The additional even factor \(1-4z^2\) makes
+\(G_t(1/2)=G_t(-1/2)=0\).  It is not needed for the four moving poles,
+but it cancels the \(z=1/2\) boundary pole that appears when the zero
+Poisson mode is Mellin transformed in Section 4.  It satisfies
+\(G_t(0)=1\), so it changes neither (2.3b) nor the residue at \(z=0\).
 
 For \(V>0\), integrate around the rectangle with vertical sides
 \(\Re z=2,-2\) and horizontal sides \(\Im z=\pm V\).  Stirling's formula
@@ -444,6 +451,8 @@ shifted-divisor formulation without using the words “approximately” or
 
 ## 4. Exact Poisson/Kloosterman-fraction formula
 
+### 4.1 Residue class and Poisson normalization
+
 To retain the Möbius coefficients, Poisson summation must be applied to a
 zeta variable, not to \(d\) or \(e\). Use the BCR orientation
 
@@ -465,10 +474,35 @@ Then \(q\mid\Delta\). Put \(\Delta=q\delta\). Equation (4.1) becomes
  m_1s-m_2r=\delta,
 \qquad
  m_2r\equiv-\delta\pmod s,
-\qquad
+ \qquad
  m_1=\frac{m_2r+\delta}{s}.
 \tag{4.3}
 \]
+
+Because \((r,s)=1\), this is the single residue class
+
+\[
+ m_2\equiv-\bar r\delta\pmod s.
+\tag{4.3a}
+\]
+
+Our Fourier convention is
+
+\[
+ \widehat f(\xi)=\int_{\mathbb R}f(x)e(-\xi x)\,dx,
+ \qquad
+ \sum_{n\equiv b\ ({\rm mod}\ s)}f(n)
+ =\frac1s\sum_{h\in\mathbb Z}e(hb/s)\widehat f(h/s).
+\tag{4.3b}
+\]
+
+For fixed \(r,s,\delta\), extend the smooth dyadic summand by zero unless
+\(x>0\) and \(xr+\delta>0\).  Formula (4.3b), with
+\(b=-\bar r\delta\), supplies the factor \(s^{-1}\), the Fourier factor
+\(e(-hx/s)\), and the arithmetic phase
+\(e(-h\delta\bar r/s)\).  Multiplication by the coefficient already
+present before Poisson, \(2/(q\sqrt{rs})\), therefore gives exactly
+\(2/(q\sqrt{rs}\,s)\), as displayed below.
 
 For dyadic \(R,S,K,M\), define
 
@@ -506,9 +540,158 @@ summation in the residue class
 \]
 
 Here \(\bar r\) is the inverse of \(r\bmod s\). Formula (4.5) is exact and
-contains all nonzero Poisson modes. Summing the \(h=0\) modes over all
-dyadic boxes and adding (2.10), Mellin inversion and the functional equation
-give
+contains all nonzero Poisson modes.
+
+### 4.2 Zero mode from a common Mellin integral
+
+We next sum the \(K,M\) partitions in (4.4) before doing any Mellin
+inversion.  The positivity condition remains \(x>0\) and \(xr+\delta>0\).
+For fixed \(q,r,s\), the resulting \(h=0\) expression is
+
+\[
+\begin{aligned}
+ Z_{q,r,s}={}&\frac{2a_N(qr)a_N(qs)}{q\sqrt{rs}\,s}
+ \sum_{\delta\ne0}\int_0^\infty
+ \mathbf1_{xr+\delta>0}\frac{dx}{\sqrt{x(xr+\delta)/s}}\\
+ &\quad\times\int_{\mathbb R}W(t/T)
+ V_t\!\left(\frac{x(xr+\delta)}s\right)
+ \exp\!\left(it\log\left(1+\frac{\delta}{xr}\right)\right)dt.
+\end{aligned}
+\tag{4.5a}
+\]
+
+This order of summation is important.  There is no vertical line on which
+one may naively insert (2.3), integrate \(x\), and sum \(\delta\) all by
+absolute convergence: the beta integral asks for \(\Re z<1/2\), whereas
+\(\sum_{\delta\ge1}\delta^{-2z}\) asks for \(\Re z>1/2\).  The baseline
+derivation omitted this incompatibility.  The following common-kernel
+calculation resolves it; the zero \(G_t(1/2)=0\) added in (2.1) is essential.
+
+For \(0<c<1/4\), introduce symmetric cutoffs
+\(|\delta|\leq Y\) and \(Y^{-1}\leq x,(xr+\delta)/s\leq Y\).
+All sums and integrals are then finite.  First shift (2.3), without crossing
+a pole, from \(\Re z=2\) to a fixed \(\Re z=\sigma\) with
+\(1/2<\sigma<1\).  This choice lies to the left of the first uncancelled
+moving beta poles at \(z=s_t+1\) and \(z=2-s_t\).  Insert that
+representation, split the two signs of \(\delta\), and use respectively
+
+\[
+ x=\frac{\delta v}{r}\quad(\delta>0,\ v>0),
+ \qquad
+ x=\frac{|\delta|(1+v)}r\quad(\delta<0,\ v>0).
+\tag{4.5b}
+\]
+
+The two complete beta integrals obtained after removing the cutoffs are
+
+\[
+\begin{aligned}
+ B_+(t,z)&=
+ \frac{\Gamma(1-s_t-z)\Gamma(2z)}
+      {\Gamma(1-s_t+z)},\\
+ B_-(t,z)&=
+ \frac{\Gamma(s_t-z)\Gamma(2z)}
+      {\Gamma(s_t+z)}.
+\end{aligned}
+\tag{4.5c}
+\]
+
+To justify removal of the cutoffs, first keep the incomplete beta integrals,
+move their common Mellin line from \(\Re z=\sigma\) to \(\Re z=c\), and only
+then let \(Y\to\infty\).  Euler--Maclaurin applied to the truncated
+\(\delta\)-sum shows that its sole boundary term is the residue at
+\(z=1/2\); the moving poles at \(s_t,1-s_t\) are cancelled by (2.1), and
+the next such poles lie to the right of \(\sigma\).  The \(z=1/2\) term
+vanishes because \(G_t(1/2)=0\).  The remaining boundary
+integrals are
+\(O_{A,t,r,s}(Y^{-A})\) after \(A+2\) integrations by parts in the logarithmic
+variable in (4.5a), using (2.5).  Thus dominated convergence applies on
+\(\Re z=c\).  This proves, rather than assumes, the regularized common
+Mellin identity
+
+\[
+\begin{aligned}
+ \sum_{R,S,K,M}\mathcal O^{h=0}_{q;R,S,K,M}
+ ={}&\frac2{2\pi i}
+ \sum_{\substack{r,s\ge1\\(r,s)=1}}
+ \frac{a_N(qr)a_N(qs)}{qrs}
+ \int_{\mathbb R}W(t/T)\\
+ &\times\int_{(c)}(rs)^z\zeta(2z)g_t(z)G_t(z)
+ H_t(z)\frac{dz}{z}\,dt,
+\end{aligned}
+\tag{4.5d}
+\]
+
+where the integral on \(\Re z=c\) is the continuation furnished by the
+cutoff limit and
+
+\[
+ H_t(z)=\Gamma(2z)\left{
+ \frac{\Gamma(s_t-z)}{\Gamma(s_t+z)}
+ +\frac{\Gamma(1-s_t-z)}{\Gamma(1-s_t+z)}
+ \right}.
+\tag{4.5e}
+\]
+
+The duplication and reflection formulas for \(\Gamma\), followed by the
+functional equation of \(\zeta\), give the exact meromorphic identity
+
+\[
+ \boxed{\zeta(2z)g_t(z)H_t(z)
+ =C_t(z)\zeta(1-2z)g_t(-z),}
+\tag{4.5f}
+\]
+
+where
+
+\[
+ C_t(z)=\frac1{2\cos(\pi z)}\left{
+ \frac{\sin(\frac\pi2(1-s_t-z))}
+      {\sin(\frac\pi2(1-s_t+z))}
+ +\frac{\sin(\frac\pi2(s_t-z))}
+      {\sin(\frac\pi2(s_t+z))}
+ \right}.
+\tag{4.5g}
+\]
+
+Thus the baseline replacement \(C_t(z)=1\) was not an exact identity.
+There is no arithmetic Euler factor in (4.5f): after \(q=(d,e)\), the only
+condition is \((r,s)=1\), and \(\delta\) is unrestricted.  Split
+\(C_t=1+(C_t-1)\).  In the term with 1, set \(z=-w\); the upward
+\((c)\)-line becomes the downward \((-c)\)-line.  Retain the other term as
+the exact archimedean correction
+
+\[
+\begin{aligned}
+ \mathcal E_{\rm arch}:={}&\frac2{2\pi i}
+ \sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]}
+ \int_{\mathbb R}W(t/T)\\
+ &\times\int_{(c)}(d^*e^*)^zG_t(z)\zeta(1-2z)g_t(-z)
+ \bigl(C_t(z)-1\bigr)\frac{dz}{z}\,dt.
+\end{aligned}
+\tag{4.5h}
+\]
+
+For \(z=c+i\tau\), \(0<c<1/4\), the elementary exponential formulas for
+the sines in (4.5g) show, when \(|\tau|\leq T/2\),
+
+\[
+ |C_t(c+i\tau)-1|\ll_c e^{-\pi T/2}(1+|\tau|)^2.
+\tag{4.5i}
+\]
+
+When \(|\tau|>T/2\), the factor
+\(|e^{z^2}|=e^{c^2-\tau^2}\), together with Stirling, bounds the integrand
+in (4.5h) by \(e^{-\tau^2/2}T^{O_c(1)}\).  Since the \(d,e\)-sum is finite
+and is at most \(T^{O_c(1)}\) under \(N=T^3\), (4.5i) and the Gaussian tail
+give, for every \(A>0\),
+
+\[
+ \boxed{\mathcal E_{\rm arch}=O_{A,W}(T^{-A}).}
+\tag{4.5j}
+\]
+
+Adding the diagonal (2.10), Mellin inversion gives
 
 \[
  \mathcal D=
@@ -523,32 +706,50 @@ give
 while, for any fixed \(0<c<1/4\), the sum of the zero Poisson modes is
 
 \[
+\begin{aligned}
  \sum_{q,R,S,K,M}\mathcal O^{h=0}_{q;R,S,K,M}
- =
- -\frac2{2\pi i}
+ ={}&-\frac2{2\pi i}
  \sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]}
  \int_{\mathbb R}W(t/T)
  \int_{(-c)}
- (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)\frac{dz}{z}\,dt.
+ (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)\frac{dz}{z}\,dt\\
+ &+\mathcal E_{\rm arch}.
+\end{aligned}
 \tag{4.6b}
 \]
 
-To obtain (4.6b), first sum (4.4) over the dyadic \(K,M\), then Mellin
-invert \(V_t\), sum \(\delta\ne0\), and apply the completed functional
-equation. The \(\delta\)-Dirichlet series is \(\zeta(2z)\); the completed
-functional equation changes it to \(\zeta(1+2z)\) and changes \(z\) to
-\(-z\). The minus sign is the orientation change of that contour. Every
-interchange is absolutely convergent on the initial lines by (2.5).
-Subtracting the two vertical integrals in (4.6a)--(4.6b) crosses only
-\(z=0\). Hence
+The phrase “every interchange is absolutely convergent on an initial line”
+in the baseline was false; (4.5b)--(4.5g) is the corrected cutoff argument.
+After that correction, subtracting the two vertical integrals in
+(4.6a)--(4.6b) crosses only \(z=0\). Hence
 
 \[
  \mathcal D+\sum_{q,R,S,K,M}\mathcal O^{h=0}_{q;R,S,K,M}
- =T\mathcal Q_{N,T}.
+ =T\mathcal Q_{N,T}+\mathcal E_{\rm arch}.
 \tag{4.6}
 \]
 
-The residue at \(z=0\) in (4.6) is
+### 4.3 Residue and main-term normalization
+
+At \(z=0\), use
+
+\[
+ \zeta(1+2z)=\frac1{2z}+\gamma+O(z),\qquad
+ (d^*e^*)^{-z}=1-z\log(d^*e^*)+O(z^2),
+\tag{4.6c}
+\]
+
+and
+
+\[
+ g_t(z)=1+z\lambda(t)+O_t(z^2),\qquad
+ G_t(z)=1+O_t(z^2).
+\tag{4.6d}
+\]
+
+The added factor \(1-4z^2\) in \(G_t\) has no linear term.  Multiplying
+(4.6c)--(4.6d), then accounting for the outer \(1/z\), gives the following
+residue at \(z=0\):
 
 \[
  \operatorname{Res}_{z=0}
@@ -566,6 +767,7 @@ The factor 2 in (2.4) turns (4.7) into the bracket in (1.1). Combining
 \boxed{
  I_{N,W}(T)=T\mathcal Q_{N,T}+\mathcal R_{N,T},\qquad
  \mathcal R_{N,T}=
+ \mathcal E_{\rm arch}+
  \sum_{q\geq1}\sum_{R,S,K,M}
  \mathcal O^{\ne0}_{q;R,S,K,M}. }
 \tag{4.8}
@@ -573,6 +775,19 @@ The factor 2 in (2.4) turns (4.7) into the bracket in (1.1). Combining
 
 The sum in (4.8) is countable and absolutely convergent; therefore (4.8),
 unlike a truncated AFE formula, has no omitted error.
+
+Since \(d^*e^*=de/(d,e)^2\), the logarithm in (4.7) is
+\(2\log(d,e)-\log d-\log e\), exactly the LCM normalization used in the
+separate main-term calculation.
+
+**zero-mode audit result: the baseline identity required correction;** the
+kernel (2.1) now contains \(1-4z^2\), and the incompatible raw Fubini step
+has been replaced by the cutoff/common-Mellin argument (4.5b)--(4.5e).
+Most importantly, the exact trigonometric multiplier \(C_t(z)\) in
+(4.5f)--(4.5g) is retained.  Its difference from 1 is the explicit term
+\(\mathcal E_{\rm arch}\), not a suppressed equality; (4.5j) makes this
+correction smaller than every power of \(T\).  Equations (4.6a)--(4.8) are
+the corrected identities.
 
 ## 5. Möbius support and all effective variable ranges
 

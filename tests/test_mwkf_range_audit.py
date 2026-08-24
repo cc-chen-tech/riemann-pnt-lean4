@@ -76,3 +76,17 @@ def test_research_note_exposes_afe_audit_ledger() -> None:
     ):
         assert marker in text
     assert "\\Lambda(s)=\\gamma(s)\\zeta(s)" in text
+    assert "\\left(1-4z^2\\right)" in text
+
+
+def test_research_note_exposes_poisson_audit_ledger() -> None:
+    text = NOTE.read_text()
+    for marker in (
+        "### 4.1 Residue class and Poisson normalization",
+        "### 4.2 Zero mode from a common Mellin integral",
+        "### 4.3 Residue and main-term normalization",
+    ):
+        assert marker in text
+    assert "zero-mode audit result:" in text
+    assert "C_t(z)\\zeta(1-2z)g_t(-z)" in text
+    assert "\\mathcal E_{\\rm arch}" in text
