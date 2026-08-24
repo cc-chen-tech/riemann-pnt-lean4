@@ -10,6 +10,7 @@ from scripts.audit_mwkf_ranges import (
     ExponentBox,
     admissibility_violations,
     boundary_witnesses,
+    derived_bounds,
     is_admissible,
 )
 
@@ -87,3 +88,19 @@ def test_research_note_exposes_poisson_audit_ledger() -> None:
     ):
         assert marker in text
     assert "zero-mode audit result:" in text
+
+
+def test_derived_bounds_match_the_written_polytope() -> None:
+    for box in boundary_witnesses().values():
+        bounds = derived_bounds(box)
+        assert bounds["a"] == box.ell + box.h
+        assert bounds["a"] <= bounds["a_cap"]
+        assert box.m <= bounds["m_cap"]
+        assert box.k <= bounds["k_cap"]
+
+
+def test_balanced_box_exhibits_the_long_a_gap() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert box.third_length == F(5)
+    assert (box.rho + box.sigma) / 2 == F(3)
+    assert box.third_length - (box.rho + box.sigma) / 2 == F(2)

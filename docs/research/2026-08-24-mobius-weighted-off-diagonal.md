@@ -7,7 +7,7 @@
 > | LCM main quadratic form | proved separately |
 > | Exact AFE and shifted-divisor identity | under audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after correction in Section 4 |
-> | MWKF local estimate | unproved |
+> | Coupled-kernel MWKF local estimate | unproved |
 >
 > Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
 > A row is promoted from “under audit” only after the displayed convergence,
@@ -1118,8 +1118,114 @@ and
 Thus the common divisor carries no Möbius sign; both reduced variables
 retain Möbius weights.
 
-Fix \(0<\eta<10^{-3}\). Repeated integration by parts in (2.7) and (4.4),
-together with (2.5), shows the following precise statement. For every
+Fix \(0<\eta<10^{-3}\).  We first run the integrations by parts with
+\(\eta_0=\eta/100\), and only then enlarge the surviving ranges to the
+displayed \(\eta\)-ranges.  This slack budgeting matters: fixed support
+constants and derivatives of the exact coupled kernel are absorbed by
+\(T^{O(\eta)}\), not by an unrecorded fixed power of \(T\).
+
+Here are the two operators used in the audit.  For fixed
+\(x,r,\delta\), put
+
+\[
+ \lambda(x,r,\delta)=\log\left(1+\frac{\delta}{xr}\right),
+ \qquad
+ \mathcal L_t=\frac1{i\lambda(x,r,\delta)}\frac{\partial}{\partial t}.
+\tag{5.3a}
+\]
+
+Then \(\mathcal L_t e^{it\lambda}=e^{it\lambda}\).  By (2.5), every
+derivative falling on \(W(t/T)V_t(x(xr+\delta)/s)\) costs \(T^{-1}\).
+Thus \(J\) integrations by parts give
+
+\[
+ T\bigl(1+T|\lambda(x,r,\delta)|\bigr)^{-J}
+ \left(1+\frac{x(xr+\delta)}{sT}\right)^{-A}.
+\tag{5.3b}
+\]
+
+Consequently a retained box has
+\(|\lambda|\leq T^{-1+\eta_0}\).  This uses the exact logarithm.  Since
+
+\[
+ \delta=xr(e^\lambda-1),\qquad
+ |e^\lambda-1|\leq2|\lambda|\quad(|\lambda|\leq1/2),
+\tag{5.3c}
+\]
+
+the support \(x\leq2M,\ r\leq2R\) gives
+
+\[
+ |\delta|\leq8MR\,T^{-1+\eta_0}.
+\tag{5.3d}
+\]
+
+Also \(m_1s=xr+\delta=xre^\lambda\).  The four dyadic support intervals,
+and the fact that their scale ratios are powers of two, therefore give,
+after the \(\eta_0\)-to-\(\eta\) enlargement,
+
+\[
+ \frac1{16}\leq\frac{KS}{MR}\leq16.
+\tag{5.3e}
+\]
+
+The AFE weight has argument \(xm_1\in[KM/4,4KM]\).  Its rapid decay in
+(2.5) leaves
+
+\[
+ KM\leq T^{1+\eta}.
+\tag{5.3f}
+\]
+
+For the Fourier cutoff, retain the complete \(x\)-phase
+
+\[
+ \Phi(x)=-\frac{2\pi hx}{s}
+   +t\log\left(1+\frac{\delta}{xr}\right),
+ \qquad
+ \Phi'(x)=-\frac{2\pi h}{s}
+   -\frac{t\delta}{x(xr+\delta)},
+\tag{5.3g}
+\]
+
+and use
+
+\[
+ \mathcal L_x=\frac1{i\Phi'(x)}\frac{\partial}{\partial x},
+ \qquad \mathcal L_xe^{i\Phi(x)}=e^{i\Phi(x)}.
+\tag{5.3h}
+\]
+
+In the normalized variable \(X=x/M\), the derivatives of the second term
+in (5.3g) are
+
+\[
+ \partial_X^j\left\{t\log\left(1+
+ \frac{\delta}{MXr}\right)\right\}
+ \ll_j \frac{T|\delta|}{MR}\ll T^{\eta_0}\qquad(j\geq1).
+\tag{5.3i}
+\]
+
+The denominator stays away from zero on the \(F_K\)-support; this is where
+the positivity condition in (4.3a) is used.  If
+\(|h|M/S\) exceeds a fixed multiple of \(1+T|\delta|/(MR)\), (5.3h)
+is nonstationary, and \(J\) integrations give
+
+\[
+ \left(1+\frac{|h|M}{S}\right)^{-J}T^{J\eta_0}.
+\tag{5.3j}
+\]
+
+The gap \(\eta-\eta_0\) absorbs the fixed multiple and makes (5.3j)
+\(O_B(T^{-B})\) outside
+
+\[
+ |h|\leq8SM^{-1}T^\eta.
+\tag{5.3k}
+\]
+
+Equations (5.3b), (5.3j), and (2.5), with as many integrations or weight
+decay powers as required, prove the following precise statement.  For every
 \(B>0\), the part of the nonzero-mode sum in (4.8) outside the boxes
 satisfying (5.3)--(5.8) is \(O_{B,W,\eta}(T^{-B})\):
 
@@ -1170,9 +1276,10 @@ A retained nonempty box must consequently also satisfy
 \tag{5.8a}
 \]
 
-The constants 8 and 16 in (5.7)--(5.8) follow from the fixed support
-\([1/2,2]\) in (3.1). They may be replaced by other fixed constants only if
-the dyadic partition is changed.
+The constants 8 and 16 in (5.7)--(5.8) are fixed envelopes for the support
+\([1/2,2]\) in (3.1), after the explicit \(\eta_0\)-to-\(\eta\)
+enlargement above.  They are not claimed to be sharp stationary-phase
+constants.
 
 Dyadically write
 
@@ -1204,6 +1311,38 @@ The oscillating arithmetic phase is exactly
 \tag{5.12}
 \]
 
+At zero slack, write
+
+\[
+ (R,S,M,K,L,H,q)
+ =(T^\rho,T^\sigma,T^m,T^k,T^\ell,T^h,T^\kappa).
+\tag{5.12a}
+\]
+
+Equations (5.3), (5.6), (5.7), and (5.10) give the exponent polytope
+
+\[
+\begin{gathered}
+ \kappa+\rho\leq3,\qquad \kappa+\sigma\leq3,\qquad
+ k+m\leq1,\qquad k+\sigma=m+\rho,\\
+ \ell\leq m+\rho-1,\qquad h\leq\sigma-m,\qquad
+ a:=\ell+h\leq\rho+\sigma-1.
+\end{gathered}
+\tag{5.12b}
+\]
+
+Combining \(k+m\leq1\) with \(k+\sigma=m+\rho\) also gives
+
+\[
+ m\leq\frac{1+\sigma-\rho}{2},\qquad
+ k\leq\frac{1+\rho-\sigma}{2}.
+\tag{5.12c}
+\]
+
+The exact-rational script checks these linear implications and boundary
+witnesses only.  It is a regression tool, not a proof of the analytic
+truncations above.
+
 After the changes \(x=MX\), \(t=T\tau\), the archimedean kernel in a
 retained box has the normalization
 
@@ -1214,7 +1353,51 @@ retained box has the normalization
 \tag{5.13}
 \]
 
-where, for each multi-index \(\mathbf j\),
+This scale can be read directly from the coupled kernel, without a Taylor
+expansion.  Put
+
+\[
+ \lambda_0=\frac{L}{MR},\qquad
+ \omega_0=\frac{HM}{S},\qquad
+ \chi_0=\frac{M^2R}{ST},\qquad
+ (u,v,\alpha,\beta)=
+ \left(\frac rR,\frac sS,\frac\delta L,\frac hH\right).
+\tag{5.13a}
+\]
+
+Apart from the fixed dyadic cutoffs, the dimensionless kernel in (5.13) is
+
+\[
+\begin{aligned}
+ \Psi^\circ(u,v,\alpha,\beta)
+={}&\int_0^\infty
+ \frac{F(X)F\!\left(\dfrac{MR}{KS}
+              \dfrac{Xu+\lambda_0\alpha}{v}\right)}
+ {\sqrt{X(Xu+\lambda_0\alpha)/v}}\,
+ e\!\left(-\frac{\omega_0\beta X}{v}\right)\\
+ &\times\int_{\mathbb R}W(\tau)
+ V_{T\tau}\!\left(
+ T\chi_0\frac{X(Xu+\lambda_0\alpha)}v\right)
+ \exp\!\left(iT\tau\log\left(
+ 1+\frac{\lambda_0\alpha}{Xu}\right)\right)d\tau\,dX .
+\end{aligned}
+\tag{5.13b}
+\]
+
+Thus the exact logarithm and its coupling to \(X,u,\alpha,\tau\) remain
+inside \(\Psi^\circ\).  The bounds already proved give
+
+\[
+ T\lambda_0\ll T^\eta,\qquad
+ \omega_0\ll T^\eta,\qquad
+ \chi_0\ll T^\eta,\qquad
+ \frac1{16}\leq\frac{KS}{MR}\leq16.
+\tag{5.13c}
+\]
+
+Together with (2.5), these show that differentiating (5.13b) introduces no
+power beyond \(T^{O(\eta)}\).  After the initial \(\eta_0\)-budget is
+renamed as \(\eta\), for each multi-index \(\mathbf j\),
 
 \[
  \|\partial^{\mathbf j}\Psi\|_\infty
@@ -1222,9 +1405,17 @@ where, for each multi-index \(\mathbf j\),
 \tag{5.14}
 \]
 
-The factors \(r/R\), \(s/S\), and \(s^{-1}\sqrt{rs}^{-1}\) range in fixed
-compact intervals and can be absorbed into \(\Psi\). Consequently one box
-has the exact scale
+Indeed, the Jacobian \(dx\,dt=MT\,dX\,d\tau\) and the square-root
+denominator in (4.4) contribute \(T\sqrt{S/R}\).  Moreover
+
+\[
+ \frac{\sqrt{S/R}}{\sqrt{rs}\,s}
+ =\frac1{RS}\,u^{-1/2}v^{-3/2}.
+\tag{5.14a}
+\]
+
+The last two fixed smooth factors, together with \(F_R,F_S\), are absorbed
+into \(\Psi\).  Consequently one box has the exact scale
 
 \[
  \mathcal O^{\ne0}_{q;R,S,K,M,L,H}
@@ -1232,11 +1423,28 @@ has the exact scale
 \tag{5.15}
 \]
 
-## 6. The single local inequality that would prove the target
+## 6. Exact comparison of the three local gates
 
-Smooth Mellin/Fourier separation of the admissible kernel in (5.14) reduces
-\(\mathfrak S[\Psi]\) to \(T^{O(\eta)}\) superpositions of the following
-three-variable sums. For
+The coupled sum in the exact normalization (5.15) is
+
+\[
+\begin{aligned}
+ \mathfrak S_q[\Psi]
+={}&\sum_{\substack{R/2\leq r\leq2R,\ S/2\leq s\leq2S\\
+                    qr,qs\leq N,\ (r,s)=(q,rs)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)\\
+ &\quad\times
+ \sum_{\substack{L\leq|\delta|\leq2L\\
+                  H\leq|h|\leq2H}}
+ \Psi\left(\frac rR,\frac sS,\frac\delta L,\frac hH\right)
+ e\left(-\frac{h\delta\bar r}{s}\right).
+\end{aligned}
+\tag{6.0}
+\]
+
+No absolute value has been taken between the \(r,s,\delta,h\) sums.
+Factoring fixed outer cutoffs from \(\Psi\), smooth Mellin/Fourier inversion
+produces the following separated family.  For
 
 \[
  x\in\left[\frac{M}{8S},\frac{8M}{S}\right],\qquad
@@ -1257,72 +1465,219 @@ where \(U,V\in C_c^\infty([-2,-1]\cup[1,2])\), with every fixed derivative
 bounded by a constant. Define
 
 \[
-\boxed{
 \begin{aligned}
- \mathfrak T_q(R,S;L,H;x,y)
+ \mathfrak T_q(\theta;R,S;L,H;x,y)
  ={}&\sum_{a\ne0}\nu_{x,y}(a)
  \sum_{\substack{R/2\leq r\leq2R\\S/2\leq s\leq2S\\
                   qr,qs\leq N\\(r,s)=(q,rs)=1}}
  \mu(r)\mu(s)p_N(qr)p_N(qs)\\
  &\qquad\times U_1(r/R)V_1(s/S)
+ \left(\frac rR\right)^{i\theta_1}
+ \left(\frac sS\right)^{i\theta_2}
  e\left(-\frac{a\bar r}{s}\right),
-\end{aligned}}
+\end{aligned}
 \tag{6.3}
 \]
 
-with \(U_1,V_1\in C_c^\infty([1/2,2])\). The coefficient in (6.2) is not
-arbitrary. It is a divisor-convolution coefficient and satisfies
+where \(\theta=(\theta_1,\theta_2)\), and
+\(U_1,V_1\in C_c^\infty([1/2,2])\).  The Mellin twists may equivalently
+be included in the two displayed weights.  The coefficient in (6.2) is
+not arbitrary. It is a divisor-convolution coefficient and satisfies
 
 \[
  \operatorname{supp}\nu\subset
  \{a:LH\leq|a|\leq4LH\},\qquad
- |\nu(a)|\leq\tau(|a|),\qquad
+ |\nu(a)|\ll_{U,V}\tau(|a|),\qquad
  \|\nu\|_2\ll_\varepsilon(LH)^{1/2+\varepsilon}.
 \tag{6.4}
 \]
 
-The required new local statement is:
+### 6.1 Gate comparison
 
-> **MWKF(3).** Uniformly for every squarefree \(q\), all variables satisfying
-> (5.3), (5.6), (5.7), (5.10), all \(x,y\) in (6.1), and all admissible
-> smooth weights in (6.2)--(6.3),
+We now record the transform norm rather than hiding it in
+\(T^{O(\eta)}\).  Let \(\Phi\) be the residual smooth kernel after the
+four fixed dyadic cutoffs have been factored, put
+
+\[
+ \Phi^\#(p_1,p_2,\alpha,\beta)
+ =\Phi(e^{p_1},e^{p_2},\alpha,\beta),
+\]
+
+and use the Fourier convention
+
+\[
+ \widehat{\Phi^\#}(\vartheta)
+ =\int_{\mathbb R^4}\Phi^\#(z)e^{-i\vartheta\cdot z}\,dz.
+\]
+
+With
+
+\[
+ \Omega_\Psi(\theta;x,y)
+ =\frac{2\pi LH}{(2\pi)^4}
+ \widehat{\Phi^\#}(\theta_1,\theta_2,Ly,-2\pi Hx),
+\tag{6.5}
+\]
+
+Mellin inversion in \(r/R,s/S\) and Fourier inversion in
+\(\delta/L,h/H\) give, for every \(B>0\),
+
+\[
+ \mathfrak S_q[\Psi]
+ =\int_{\mathbb R^2}\int_{\mathcal X}
+ \Omega_\Psi(\theta;x,y)
+ \mathfrak T_q(\theta;R,S;L,H;x,y)\,dx\,dy\,d\theta
++O_{B,W,\eta}(T^{-B}),
+\tag{6.6}
+\]
+
+where \(\mathcal X\) is the rectangle in (6.1).  The contribution outside
+\(\mathcal X\), and the large-\(\theta\) Mellin tail, have the stated rapid
+decay by the same nonstationary operators as in Section 5.  Endpoint
+flatness of the dyadic cutoffs handles the boundary of the displayed
+rectangle.
+
+The change of variables in (6.5) gives the exact \(L^1\)-norm identity
+
+\[
+\begin{aligned}
+ \|\Omega_\Psi\|_1
+ &:=
+ \int_{\mathbb R^2}\int_{\mathbb R^2}
+ |\Omega_\Psi(\theta;x,y)|\,dx\,dy\,d\theta\\
+ &=\frac1{(2\pi)^4}\|\widehat{\Phi^\#}\|_{L^1(\mathbb R^4)}\\
+ &\leq C
+ \left(\sum_{|\gamma|\leq3}
+ \|\partial^\gamma\Phi^\#\|_2^2\right)^{1/2}
+ \ll_{W,\eta}T^{3\eta}.
+\end{aligned}
+\tag{6.7}
+\]
+
+The penultimate inequality is Cauchy--Schwarz with
+\((1+|\vartheta|^2)^{-3/2}\in L^2(\mathbb R^4)\), followed by
+Plancherel.  Thus the three candidate gates, all in the normalization of
+(5.15), are:
+
+1. **Uniform-separated gate**
+
+   \[
+    \sup_{\substack{(x,y)\in\mathcal X\\|\theta|\leq T^\eta}}
+    |\mathfrak T_q(\theta;R,S;L,H;x,y)|
+    \ll_{\varepsilon,W}RS\,T^\varepsilon.
+   \tag{US}
+   \]
+
+2. **Integrated-separated gate**
+
+   \[
+    \int_{\mathbb R^2}\int_{\mathcal X}
+    |\Omega_\Psi(\theta;x,y)|
+    |\mathfrak T_q(\theta;R,S;L,H;x,y)|
+    \,dx\,dy\,d\theta
+    \ll_{\varepsilon,W}RS\,T^\varepsilon.
+   \tag{IS}
+   \]
+
+3. **Coupled-kernel gate**
+
+   \[
+    |\mathfrak S_q[\Psi]|
+    \ll_{\varepsilon,W}RS\,T^\varepsilon.
+   \tag{CK}
+   \]
+
+The implication arrows used here are explicit.  Minkowski and (6.7) give
+
+\[
+ \int|\Omega_\Psi|\,|\mathfrak T_q|
+ \leq\|\Omega_\Psi\|_1\sup|\mathfrak T_q|
+ \ll T^{3\eta}\sup|\mathfrak T_q|,
+\]
+
+and Fourier--Mellin inversion followed by the triangle inequality gives
+
+\[
+ |\mathfrak S_q[\Psi]|
+ \leq\int|\Omega_\Psi|\,|\mathfrak T_q|+O_B(T^{-B}).
+\]
+
+After choosing \(\eta<\varepsilon/6\), with the usual relabelling of
+\(\varepsilon/2\), these are the one-way implications
+
+\[
+ \text{\rm(US)}\Longrightarrow\text{\rm(IS)}
+ \Longrightarrow\text{\rm(CK)}.
+\tag{6.8}
+\]
+
+No reverse implication is used or asserted.  Since (5.15) contains
+\(\mathfrak S_q[\Psi]\) itself, (CK) is the weakest of the three candidates
+that is sufficient for the global reduction.  Replacing it by (US) would
+take an absolute value before the transform integrations and impose a
+strictly stronger target without necessity.
+
+The exact-rational boundary diagnostics are non-proof checks:
+
+| witness | \((\rho,\sigma,m,k,\ell,h,\kappa)\) | \(a\) | \(a-(\rho+\sigma)/2\) | diagnostic |
+|---|---:|---:|---:|---|
+| balanced_max_a | \((3,3,1/2,1/2,5/2,5/2,0)\) | \(5\) | \(2\) | factor \(T^2\) beyond the arbitrary-coefficient BCR conjectural range |
+| large_q_endpoint | \((1,1,0,0,0,1,2)\) | \(1\) | \(0\) | on the arbitrary-coefficient boundary |
+| r_long | \((3,2,0,1,2,2,0)\) | \(4\) | \(3/2\) | unbalanced long-\(a\) failure of that BCR range |
+| s_long | \((2,3,1,0,2,2,0)\) | \(4\) | \(3/2\) | unbalanced long-\(a\) failure of that BCR range |
+
+In particular, the balanced \(T^2\) gap is a failure of the
+**arbitrary-coefficient BCR conjectural range** to cover this box.  It is
+not a counterexample to (CK), whose coefficients and kernel remain
+structured and coupled.
+
+> **Accepted local target and conditional implication.**
+>
+> Accepted local gate after exact audit: coupled-kernel.
+>
+> The accepted line names the following unproved assumption, uniformly for
+> squarefree \(q\), all variables satisfying (5.3), (5.6), (5.7), (5.10),
+> and the actual kernels (5.13b)--(5.14):
 > \[
-> \boxed{
->  |\mathfrak T_q(R,S;L,H;x,y)|
->  \leq C_{\varepsilon,W}RS\,T^\varepsilon. }
-> \tag{6.5}
+> \boxed{\operatorname{MWKF}_{\rm ck}(3):\quad
+> |\mathfrak S_q[\Psi]|
+> \leq C_{\varepsilon,W}RS\,T^\varepsilon.}
+> \tag{6.9}
+> \]
+> Its proved consequence is the conditional implication
+> \[
+> \boxed{\operatorname{MWKF}_{\rm ck}(3)
+> \Longrightarrow
+> \mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}.}
+> \tag{6.10}
 > \]
 
-This is the promised Möbius-weighted trilinear Kloosterman-fraction gate.
-Its exponents are explicit: exponent 1 in the product \(RS\), and no
-positive power of \(A=LH\).
-
-Indeed, (5.15) and (6.5) give
+Indeed, (5.15) and the assumed (6.9) give, for each retained box,
 
 \[
  |\mathcal O^{\ne0}_{q;R,S,K,M,L,H}|
  \ll_{\varepsilon,W}\frac{T^{1+\varepsilon}}q.
-\tag{6.6}
+\tag{6.11}
 \]
 
 There are \(O_\eta((\log T)^6)\) retained dyadic choices, and
 
 \[
  \sum_{q\leq N}\frac{\mu^2(q)}q\ll\log(2N).
-\tag{6.7}
+\tag{6.12}
 \]
 
-Therefore (6.5) implies
+It follows conditionally that the complete nonzero-mode sum in (4.8) is
+\(O_{\varepsilon,W}(T^{1+\varepsilon})\).  Separately, not as part of
+\(\operatorname{MWKF}_{\rm ck}(3)\), equation (4.7c) gives
 
 \[
-\boxed{\mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}.}
-\tag{6.8}
+ \mathcal C_{T^3,W}(T)=O_{B,W}(T^{-B}).
+\tag{6.13}
 \]
 
-Here the extra exact term \(\mathcal C_{T^3,W}(T)\) in (4.8) is absorbed by
-(4.7c).  All analytic tails already contribute
-\(O_{B,W,\eta}(T^{-B})\), so no additional arithmetic estimate is needed
-after MWKF(3).
+Adding this explicit archimedean correction and the analytic tails to the
+conditional nonzero-mode bound proves exactly the implication in (6.10).
 
 ## 7. Term-by-term correspondence with Bettin--Chandee--Radziwiłł
 
@@ -1344,7 +1699,7 @@ The notation correspondence is:
 | \(A=LH\leq64RS/T^{1-2\eta}\) | \(A=N_1N_2/(d^2T^{1-\varepsilon})\) | length of the \(a\)-variable |
 | \(e(-a\bar r/s)\) | \(e(-a\bar n_1/n_2)\) | Kloosterman-fraction phase |
 | \(\nu_{x,y}(a)\) in (6.2) | \(\nu_{x,y}(a)=\sum_{h\Delta=a}e(-hx+\Delta y/2\pi)\) | divisor-convolution coefficient |
-| (6.5) | BCR Proposition 1 / Conjecture 1 slot | arithmetic input |
+| (US), with arbitrary coefficients | BCR Proposition 1 / Conjecture 1 slot | stronger comparison gate; (6.9) is the accepted structured target |
 
 The four methodological differences forced by \(N=T^3\) are exact:
 
@@ -1369,9 +1724,10 @@ The four methodological differences forced by \(N=T^3\) are exact:
    coefficient estimate does not cover the present long-\(a\) boxes.
 
 4. **Arithmetic structure.** BCR discard the nature of \(a_n\) and use only
-   \(L^2\) norms. Equation (5.2) keeps both signs \(\mu(r)\mu(s)\), and
-   (6.2) keeps the factorization \(a=h\delta\). MWKF(3) is asserted only for
-   this structured class, not for arbitrary coefficients.
+   \(L^2\) norms. Equation (5.2) keeps both signs \(\mu(r)\mu(s)\), while
+   (6.0) keeps \(a=h\delta\) inside the actual coupled kernel.  The unproved
+   target \(\operatorname{MWKF}_{\rm ck}(3)\) is asserted only for this
+   structured class, not for arbitrary coefficients.
 
 For balanced \(R=S=X\), the BCR proven local calculation gives, after the
 archimedean normalization in (5.15),
@@ -1395,7 +1751,8 @@ At \(X=T^3\), the two terms in (7.1) are
 \tag{7.3}
 \]
 
-MWKF(3) instead gives \(T^{1+\varepsilon}\) for the corresponding box.
+The assumed \(\operatorname{MWKF}_{\rm ck}(3)\) would instead give
+\(T^{1+\varepsilon}\) for the corresponding box.
 The missing savings relative to (7.3) cannot come from a rearrangement of
 the BCR norm inequalities; it has to use the simultaneous Möbius weights
 and the divisor-convolution restriction on \(a\).
@@ -1417,11 +1774,14 @@ until independent review accepts those derivations.
 Section 4 proves the Poisson zero/nonzero-mode identity after correcting the
 baseline zero-mode functional-equation step.  The exact remainder contains
 the archimedean term \(\mathcal C_{N,W}(T)\) in (4.6c), although (4.7c)
-makes it smaller than every power of \(T\) when \(N=T^3\).  MWKF(3),
-equation (6.5), is unproved.  Equations (6.6)--(6.8) are only a conditional
-implication from that proposed local estimate, not an available bound.
-Treating MWKF(3) as an already available consequence of BCR would be
-incorrect for the range reason in item 3 of Section 7.
+makes it smaller than every power of \(T\) when \(N=T^3\).
+\(\operatorname{MWKF}_{\rm ck}(3)\), equation (6.9), is unproved.
+Equation (6.10) is only the proved conditional implication from that
+proposed local estimate, not an available remainder bound.  The correction
+\(\mathcal C_{T^3,W}(T)\) is bounded separately in (6.13); it is not part of
+the MWKF assumption.  Treating the coupled-kernel gate as an already
+available consequence of BCR would be incorrect for the range reason in
+item 3 of Section 7.
 
 ## 9. Primary references
 
