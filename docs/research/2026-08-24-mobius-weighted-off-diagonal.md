@@ -703,7 +703,15 @@ Adding the diagonal (2.10), Mellin inversion gives
 \tag{4.6a}
 \]
 
-while, for any fixed \(0<c<1/4\), the sum of the zero Poisson modes is
+so its factor \((d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)\) agrees prime by
+prime and power by power with (4.6b).  The sole discrepancy is the
+archimedean factor \(\mathfrak A_t(z)\).
+
+### 4.3 Residue and main-term normalization
+
+Add and subtract the \((-c)\)-line without \(\mathfrak A_t\).  The difference
+of the two common Mellin integrals crosses only \(z=0\), while the remaining
+exact term is
 
 \[
 \begin{aligned}
@@ -752,16 +760,126 @@ The added factor \(1-4z^2\) in \(G_t\) has no linear term.  Multiplying
 residue at \(z=0\):
 
 \[
+\begin{gathered}
+ \zeta(1+2z)=\frac1{2z}+\gamma+O(z),\qquad
+ (d^*e^*)^{-z}=1-z\log(d^*e^*)+O(z^2),\\
+ g_t(z)=1+z\lambda(t)+O_t(z^2),\qquad
+ G_t(z)=1+O_t(z^2).
+\end{gathered}
+\tag{4.7a}
+\]
+
+They give
+
+\[
+\begin{aligned}
  \operatorname{Res}_{z=0}
  \left(
   (d^*e^*)^{-z}\zeta(1+2z)g_t(z)\frac{G_t(z)}z
  \right)
- =\frac12\left(\lambda(t)-\log(d^*e^*)+2\gamma\right).
+ &=\frac12\left(\lambda(t)-\log(d^*e^*)+2\gamma\right),\\
+ \operatorname{Res}_{z=0}
+ \left(
+  (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)
+  \frac{1-\mathfrak A_t(z)}z
+ \right)
+ &=-\frac{\pi}{2\cosh(\pi t)}.
+\end{aligned}
 \tag{4.7}
 \]
 
-The factor 2 in (2.4) turns (4.7) into the bracket in (1.1). Combining
-(4.5) and (4.6) proves the exact decomposition
+The first line is the requested main residue.  The outer factor 2 in (2.4)
+turns it into the bracket in (1.1).  Also
+
+\[
+ d^*e^*=rs=\frac{de}{(d,e)^2},\qquad
+ -\log(d^*e^*)=2\log(d,e)-\log d-\log e,
+\tag{4.7b}
+\]
+
+which is the logarithm in the independently proved LCM normalization.  The
+second line of (4.7) records why the correction cannot be erased in an exact
+identity.  To bound the complete correction, first use
+\(|a_N(n)|\leq1\), \((d^*e^*)^c\leq N^{2c}\), and the finite gcd expansion
+
+\[
+\begin{aligned}
+ \sum_{d,e\leq N}\frac1{[d,e]}
+ &=\sum_{k\leq N}\frac{\varphi(k)}{k^2}
+   H_{\lfloor N/k\rfloor}^2
+ \leq(1+\log N)^2\sum_{k\leq N}\frac1k
+ \ll\log^3(2N),\\
+ \sum_{d,e\leq N}
+ \frac{|a_N(d)a_N(e)|}{[d,e]}(d^*e^*)^c
+ &\leq N^{2c}\sum_{d,e\leq N}\frac1{[d,e]}
+ \ll N^{2c}\log^3(2N).
+\end{aligned}
+\tag{4.7c.0}
+\]
+
+The first equality follows from
+\((d,e)=\sum_{k\mid d,\ k\mid e}\varphi(k)\), followed by
+\(d=kd'\), \(e=ke'\); thus (4.7c.0) needs no external estimate.  On
+\(z=-c+iv\),
+
+\[
+ 1-\mathfrak A_t(z)
+ =-\frac{\sin(\pi z)}{\cosh(\pi t)-\sin(\pi z)}.
+\]
+
+Since \(0<c<1/4\), direct comparison of numerator and denominator gives
+
+\[
+\begin{aligned}
+ |1-\mathfrak A_t(-c+iv)|
+ &\ll_c e^{-\pi(t-|v|)},&& |v|\leq t/2,\\
+ |1-\mathfrak A_t(-c+iv)|
+ &\leq1\leq2,&& |v|>t/2.
+\end{aligned}
+\tag{4.7c.1}
+\]
+
+Indeed, the central estimate uses
+\(|\sin(\pi(-c+iv))|\ll_c e^{\pi|v|}\) and
+\(\cosh(\pi t)\asymp e^{\pi t}\).  For the second estimate,
+\(\Re\sin(\pi(-c+iv))<0\), and
+\[
+ |\cosh(\pi t)-\sin(\pi(-c+iv))|^2
+ -|\sin(\pi(-c+iv))|^2
+ =\cosh^2(\pi t)
+  +2\sin(\pi c)\cosh(\pi t)\cosh(\pi v)>0.
+\]
+
+Apply (2.5i) on \(\Re z=-c\) and the polynomial vertical-strip bound for
+\(\zeta(1-2c+2iv)\).  On \(|v|\leq t/2\), (4.7c.1) contributes
+\(e^{-\pi t/2}\); on the complement, the Gaussian in \(G_t\) contributes
+\(e^{-t^2/9}\), after absorbing every polynomial in \(v\).  Equations
+(4.7c.0)--(4.7c.1), the length-\(T\) \(t\)-integral, and (2.5i) therefore give
+
+\[
+ |\mathcal C_{N,W}(T)|
+ \ll_{c,W}
+ T^{1-c}N^{2c}\log^3(2N)
+ \left(e^{-\pi T/2}+e^{-T^2/9}\right).
+\tag{4.7c.2}
+\]
+
+For \(N=T^3\), the right side is beyond all polynomial orders:
+
+\[
+ \mathcal C_{T^3,W}(T)=O_{B,W}(T^{-B})\qquad(B>0).
+\tag{4.7c}
+\]
+
+Thus the exact correction is negligible for the later conditional estimate,
+but it remains present in every exact formula.
+
+zero-mode audit result: the baseline identity required correction;
+(4.6b) contains the remaining archimedean factor \(\mathfrak A_t(z)\), and
+(4.6), (4.6c), and (4.8) contain the remaining term
+\(\mathcal C_{N,W}(T)\).
+
+Combining (4.5) with the corrected (4.6) proves the exact decomposition
 
 \[
 \boxed{
@@ -773,8 +891,10 @@ The factor 2 in (2.4) turns (4.7) into the bracket in (1.1). Combining
 \tag{4.8}
 \]
 
-The sum in (4.8) is countable and absolutely convergent; therefore (4.8),
-unlike a truncated AFE formula, has no omitted error.
+The nonzero-mode sum in (4.8) is taken in the complete dyadic Poisson
+ordering used above.  The convergence supplied by (2.5) and repeated
+integration by parts in \(t\) justifies that limit; no rearrangement of
+individual Fourier modes and no truncated-AFE error is hidden in (4.8).
 
 Since \(d^*e^*=de/(d,e)^2\), the logarithm in (4.7) is
 \(2\log(d,e)-\log d-\log e\), exactly the LCM normalization used in the
@@ -955,6 +1075,38 @@ The oscillating arithmetic phase is exactly
 \tag{5.12}
 \]
 
+At zero slack, write
+
+\[
+ (R,S,M,K,L,H,q)
+ =(T^\rho,T^\sigma,T^m,T^k,T^\ell,T^h,T^\kappa).
+\tag{5.12a}
+\]
+
+Equations (5.3), (5.6), (5.7), and (5.10) give the exponent polytope
+
+\[
+\begin{gathered}
+ \kappa+\rho\leq3,\qquad \kappa+\sigma\leq3,\qquad
+ k+m\leq1,\qquad k+\sigma=m+\rho,\\
+ \ell\leq m+\rho-1,\qquad h\leq\sigma-m,\qquad
+ a:=\ell+h\leq\rho+\sigma-1.
+\end{gathered}
+\tag{5.12b}
+\]
+
+Combining \(k+m\leq1\) with \(k+\sigma=m+\rho\) also gives
+
+\[
+ m\leq\frac{1+\sigma-\rho}{2},\qquad
+ k\leq\frac{1+\rho-\sigma}{2}.
+\tag{5.12c}
+\]
+
+The exact-rational script checks these linear implications and boundary
+witnesses only.  It is a regression tool, not a proof of the analytic
+truncations above.
+
 After the changes \(x=MX\), \(t=T\tau\), the archimedean kernel in a
 retained box has the normalization
 
@@ -965,7 +1117,51 @@ retained box has the normalization
 \tag{5.13}
 \]
 
-where, for each multi-index \(\mathbf j\),
+This scale can be read directly from the coupled kernel, without a Taylor
+expansion.  Put
+
+\[
+ \lambda_0=\frac{L}{MR},\qquad
+ \omega_0=\frac{HM}{S},\qquad
+ \chi_0=\frac{M^2R}{ST},\qquad
+ (u,v,\alpha,\beta)=
+ \left(\frac rR,\frac sS,\frac\delta L,\frac hH\right).
+\tag{5.13a}
+\]
+
+Apart from the fixed dyadic cutoffs, the dimensionless kernel in (5.13) is
+
+\[
+\begin{aligned}
+ \Psi^\circ(u,v,\alpha,\beta)
+={}&\int_0^\infty
+ \frac{F(X)F\!\left(\dfrac{MR}{KS}
+              \dfrac{Xu+\lambda_0\alpha}{v}\right)}
+ {\sqrt{X(Xu+\lambda_0\alpha)/v}}\,
+ e\!\left(-\frac{\omega_0\beta X}{v}\right)\\
+ &\times\int_{\mathbb R}W(\tau)
+ V_{T\tau}\!\left(
+ T\chi_0\frac{X(Xu+\lambda_0\alpha)}v\right)
+ \exp\!\left(iT\tau\log\left(
+ 1+\frac{\lambda_0\alpha}{Xu}\right)\right)d\tau\,dX .
+\end{aligned}
+\tag{5.13b}
+\]
+
+Thus the exact logarithm and its coupling to \(X,u,\alpha,\tau\) remain
+inside \(\Psi^\circ\).  The bounds already proved give
+
+\[
+ T\lambda_0\ll T^\eta,\qquad
+ \omega_0\ll T^\eta,\qquad
+ \chi_0\ll T^\eta,\qquad
+ \frac1{16}\leq\frac{KS}{MR}\leq16.
+\tag{5.13c}
+\]
+
+Together with (2.5), these show that differentiating (5.13b) introduces no
+power beyond \(T^{O(\eta)}\).  After the initial \(\eta_0\)-budget is
+renamed as \(\eta\), for each multi-index \(\mathbf j\),
 
 \[
  \|\partial^{\mathbf j}\Psi\|_\infty
@@ -973,9 +1169,17 @@ where, for each multi-index \(\mathbf j\),
 \tag{5.14}
 \]
 
-The factors \(r/R\), \(s/S\), and \(s^{-1}\sqrt{rs}^{-1}\) range in fixed
-compact intervals and can be absorbed into \(\Psi\). Consequently one box
-has the exact scale
+Indeed, the Jacobian \(dx\,dt=MT\,dX\,d\tau\) and the square-root
+denominator in (4.4) contribute \(T\sqrt{S/R}\).  Moreover
+
+\[
+ \frac{\sqrt{S/R}}{\sqrt{rs}\,s}
+ =\frac1{RS}\,u^{-1/2}v^{-3/2}.
+\tag{5.14a}
+\]
+
+The last two fixed smooth factors, together with \(F_R,F_S\), are absorbed
+into \(\Psi\).  Consequently one box has the exact scale
 
 \[
  \mathcal O^{\ne0}_{q;R,S,K,M,L,H}
@@ -991,12 +1195,55 @@ For comparison with BCR, smooth Mellin/Fourier separation of the admissible
 kernel in (5.14) produces the following three-variable sums. For
 
 \[
- x\in\left[\frac{M}{8S},\frac{8M}{S}\right],\qquad
- y\in\left[\frac{T}{8MR},\frac{8T}{MR}\right],
+\begin{aligned}
+ \mathfrak S_q[\Psi]
+={}&\sum_{\substack{R/2\leq r\leq2R,\ S/2\leq s\leq2S\\
+                    qr,qs\leq N,\ (r,s)=(q,rs)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)\\
+ &\quad\times
+ \sum_{\substack{L\leq|\delta|\leq2L\\
+                  H\leq|h|\leq2H}}
+ \Psi\left(\frac rR,\frac sS,\frac\delta L,\frac hH\right)
+ e\left(-\frac{h\delta\bar r}{s}\right).
+\end{aligned}
+\tag{6.0}
+\]
+
+No absolute value has been taken between the \(r,s,\delta,h\) sums.
+Factoring fixed outer cutoffs from \(\Psi\), smooth Mellin/Fourier inversion
+produces the following separated family.  The correct additive Fourier
+window is two-sided.  For a sufficiently large fixed \(C_0\), put
+
+\[
+ \mathcal X_\eta=
+ \left\{(x,y)\in\mathbb R^2:
+ |x|\leq C_0\left(\frac MS+\frac{T^\eta}{H}\right),\
+ |y|\leq C_0\left(\frac T{MR}+\frac{T^\eta}{L}\right)\right\}.
 \tag{6.1}
 \]
 
-put
+Indeed, the \(\beta\)-phase in (5.13b) has Fourier centre
+\[
+ x=\frac{MX}{Sv}\asymp\frac MS
+\]
+and the fixed \(\beta\)-cutoff has Fourier width
+\(T^{O(\eta_0)}/H\).  The derivative of the exact \(\alpha\)-phase is
+\[
+ \partial_\alpha\left[
+ T\tau\log\left(1+\frac{\lambda_0\alpha}{Xu}\right)\right]
+ =\frac{T\tau\lambda_0}{Xu+\lambda_0\alpha},
+\]
+so its \(y\)-centre is \(\asymp T/(MR)\), while the fixed
+\(\alpha\)-cutoff has width \(T^{O(\eta_0)}/L\).  The enlargement from
+\(\eta_0\) to \(\eta\) gives (6.1).  In particular, when either centre is
+smaller than the reciprocal cutoff length, (6.1) retains zero and both
+signs; no lower bound on \(HM/S\) or \(TL/(MR)\) is being assumed.
+For example, the admissible box
+\(R=S=T^3,\ M=K=T^{1/2},\ L=H=1\) has both centres \(T^{-5/2}\),
+whereas (6.1) includes \(|x|,|y|\leq C_0(T^{-5/2}+T^\eta)\);
+the low and negative frequencies are therefore present.
+
+For every \((x,y)\in\mathbb R^2\), put
 
 \[
  \nu_{x,y}(a)=
@@ -1006,29 +1253,32 @@ put
 \]
 
 where \(U,V\in C_c^\infty([-2,-1]\cup[1,2])\), with every fixed derivative
-bounded by a constant. Define
+bounded by a constant.  For
+\(\theta=(\theta_1,\theta_2)\in\mathbb R^2\), define
 
 \[
-\boxed{
 \begin{aligned}
- \mathfrak T_q(R,S;L,H;x,y)
+ \mathfrak T_q(\theta;R,S;L,H;x,y)
  ={}&\sum_{a\ne0}\nu_{x,y}(a)
  \sum_{\substack{R/2\leq r\leq2R\\S/2\leq s\leq2S\\
                   qr,qs\leq N\\(r,s)=(q,rs)=1}}
  \mu(r)\mu(s)p_N(qr)p_N(qs)\\
  &\qquad\times U_1(r/R)V_1(s/S)
+ \left(\frac rR\right)^{i\theta_1}
+ \left(\frac sS\right)^{i\theta_2}
  e\left(-\frac{a\bar r}{s}\right),
-\end{aligned}}
+\end{aligned}
 \tag{6.3}
 \]
 
-with \(U_1,V_1\in C_c^\infty([1/2,2])\). The coefficient in (6.2) is not
-arbitrary. It is a divisor-convolution coefficient and satisfies
+with \(U_1,V_1\in C_c^\infty([1/2,2])\).  The Mellin twists may equivalently
+be included in the two displayed weights.  The coefficient in (6.2) is
+not arbitrary. It is a divisor-convolution coefficient and satisfies
 
 \[
  \operatorname{supp}\nu\subset
  \{a:LH\leq|a|\leq4LH\},\qquad
- |\nu(a)|\leq\tau(|a|),\qquad
+ |\nu(a)|\ll_{U,V}\tau(|a|),\qquad
  \|\nu\|_2\ll_\varepsilon(LH)^{1/2+\varepsilon}.
 \tag{6.4}
 \]
@@ -1241,7 +1491,15 @@ Proved in this note:
   \Rightarrow\mathcal R_{T^3,T}=o_W(T)\),
   (6.7)--(6.9).
 
-Not proved here:
+| Claim | Status | Complete derivation or exact status location |
+|---|---|---|
+| Completed AFE and diagonal extraction | verified | (2.0)--(2.10), including pole cancellation, absolute convergence, uniform weight bounds, and the diagonal parametrization |
+| Shifted-divisor expansion | verified | (3.1)--(3.8), including the absolute dyadic reindexing and full smooth kernel |
+| Poisson zero/nonzero-mode decomposition | verified after correction | (4.1)--(4.8); the omitted sine quotient is restored in (4.5i)--(4.6c), and the complete correction bound is (4.7c.0)--(4.7c) |
+| Effective ranges and coupled-kernel normalization | verified | (5.1)--(5.15), including both nonstationary cutoffs and the exact kernel scale |
+| Comparison of the three candidate gates | verified logical reduction | (6.0)--(6.8); only \({\rm(US)}\Rightarrow{\rm(IS)}\Rightarrow{\rm(CK)}\) is proved |
+| Coupled-kernel estimate \(\operatorname{MWKF}_{\rm ck}(3)\) | **unproved** | stated, not derived, in (6.9) |
+| Global remainder bound | **conditional** | the complete implication from the unproved gate is (6.10)--(6.13), with \(\mathcal C_{T^3,W}(T)\) added separately |
 
 * CK\(_{1/1000}\), the accepted coupled-kernel gate;
 * TAIL\(_{B,D}\), the Möbius-sensitive aggregation outside the
