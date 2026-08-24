@@ -218,6 +218,70 @@ Writing \(v=g v_0\), \(j=g j_0\), \((v_0,j_0)=1\), and requiring
 \tag{3.11}
 \]
 
+The fixed bounded dual box \(v=j=1\) is already a sharp obstruction to a
+routine use of averaged Chowla.  In this box (3.3) becomes
+
+\[
+ \delta=r-s,
+\tag{3.12}
+\]
+
+and its exact contribution is
+
+\[
+\begin{aligned}
+ \mathfrak C_{q;1,1}
+ :={}&\sum_{\substack{s\asymp S,\ \delta\asymp L\\
+                      s+\delta\asymp R\\
+                      (s,\delta)=1,\ (q,s(s+\delta))=1}}
+ \mu(s+\delta)\mu(s)
+ p_N(q(s+\delta))p_N(qs)\\
+ &\quad\times
+ \widehat\Psi_h\!\left(
+  \frac{s+\delta}{R},\frac sS,\frac\delta L,\frac Hs
+ \right).
+\end{aligned}
+\tag{\mathrm{RES}_{1,1}}
+\]
+
+For \(R=S=T^3\) and \(L=T^{5/2}\), this box has lattice-volume scale
+
+\[
+ RL=T^{11/2},
+\tag{3.13}
+\]
+
+whereas its dyadic local version of (3.8) asks for
+
+\[
+ |\mathfrak C_{q;1,1}|
+ \ll_W T^{7/2-1/1000}.
+\tag{3.14}
+\]
+
+Thus this cell requires the explicit saving \(T^{2+1/1000}\) over its
+volume bound.  Square-root cancellation has exponent \(11/4\), which is
+stronger than (3.14) by \(3/4-1/1000\).
+
+For comparison, inserting \(X=T^3\) and shift range \(H_0=T^{5/2}\)
+into Matomäki--Radziwiłł--Tao, arXiv:1503.05121, Theorem 1.1, has the
+quantitative scale
+
+\[
+ T^{11/2}
+ \left(
+  \frac{\log\log T}{\log T}
+  +\frac1{\log^{1/3000}T}
+ \right),
+\tag{3.15}
+\]
+
+before the extra coprimality and coupled weights in
+\(\mathrm{RES}_{1,1}\) are addressed.  This is an explicit logarithmic
+improvement at exponent \(11/2\), not the two-power saving in (3.14).
+Consequently the bounded-dual resonance cell remains uncovered even before
+the growing slopes in (3.11) are considered.
+
 This identifies (3.8) as an averaged two-linear-form Möbius correlation
 with slopes as large as \(T^{1/2}\).  Matomäki--Radziwiłł--Tao,
 arXiv:1503.05121, Theorem 1.6, has a factor \(A^{2k}\) for slopes bounded

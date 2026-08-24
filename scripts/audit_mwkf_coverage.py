@@ -42,7 +42,21 @@ class ShiftedPoissonScales:
     j: Fraction
     shift: Fraction
     target: Fraction
+    gate_target: Fraction
     volume: Fraction
+    required_saving: Fraction
+    square_root_margin: Fraction
+
+
+@dataclass(frozen=True)
+class ShiftedPoissonSubboxScales:
+    v: Fraction
+    j: Fraction
+    shift: Fraction
+    target: Fraction
+    gate_target: Fraction
+    volume: Fraction
+    required_saving: Fraction
     square_root_margin: Fraction
 
 
@@ -76,13 +90,54 @@ def h_poisson_shifted_scales(box: ExponentBox) -> ShiftedPoissonScales:
         - _positive_part(product_scale - box.ell)
     )
     target = box.rho + box.sigma - box.h
+    gate_target = target - TARGET_SAVING
     return ShiftedPoissonScales(
         v=v,
         j=j,
         shift=box.ell,
         target=target,
+        gate_target=gate_target,
         volume=volume,
-        square_root_margin=target - volume / 2,
+        required_saving=volume - gate_target,
+        square_root_margin=gate_target - volume / 2,
+    )
+
+
+def h_poisson_subbox_scales(
+    box: ExponentBox,
+    *,
+    v: Fraction,
+    j: Fraction,
+) -> ShiftedPoissonSubboxScales:
+    """Ledger for one dyadic ``(v,j)`` box after ``h``-Poisson.
+
+    Exponent zero includes every fixed bounded interval, in particular the
+    resonance box ``v=j=1``.  The returned saving is volume minus the
+    coupled target and does not assert that such cancellation is known.
+    """
+    v_max = completion_dual_exponent(box.h, box.sigma)
+    j_max = max(F(0), box.rho - box.h, box.ell - box.sigma)
+    if v < 0 or j < 0 or v > v_max or j > j_max:
+        raise ValueError("subbox exponents exceed the h-Poisson dual ranges")
+    product_scale = max(box.rho + v, box.sigma + j)
+    volume = (
+        box.rho
+        + box.sigma
+        + v
+        + j
+        - _positive_part(product_scale - box.ell)
+    )
+    target = box.rho + box.sigma - box.h
+    gate_target = target - TARGET_SAVING
+    return ShiftedPoissonSubboxScales(
+        v=v,
+        j=j,
+        shift=box.ell,
+        target=target,
+        gate_target=gate_target,
+        volume=volume,
+        required_saving=volume - gate_target,
+        square_root_margin=gate_target - volume / 2,
     )
 
 
