@@ -509,7 +509,9 @@ completed interface CFK\(_{\epsilon,1/1000}\): a pair of sums with phase
 Möbius weights and the product structure \(a=cv\); treating the collapsed
 frequency coefficients as arbitrary cannot close the gate.
 
-Nor may the residue frequency be split termwise for free: the artificial
-\(c=0\) completion mode alone has ambient exponent \(13/2\) and would need
-saving \(2501/1000\) at the CFK target.  The exact determinant range has no
-\(v=0\) solution, so these are different zero modes.
+The signed support gives the exact centering relation
+\(\sum_{c\bmod s}\Omega(c)=0\).  Hence the completion may be rewritten
+using only \(c\ne0\) and the phase \(e(crv/s)-1\); no separate \(c=0\)
+estimate is required.  The determinant range also has no \(v=0\) solution.
+Any Type-I/II or spectral step applied after completion must preserve this
+centered difference.

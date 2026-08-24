@@ -203,6 +203,49 @@ def signed_shift_solutions(
     return tuple((j, product - j * s) for j in range(j_min, j_max + 1))
 
 
+def nonzero_character_orthogonality(modulus: int, integer: int) -> int:
+    """Exact sum of all nontrivial additive characters modulo ``modulus``.
+
+    Algebraically,
+    ``sum_{c=1}^{s-1} exp(2*pi*i*c*n/s)`` is ``s-1`` when ``s|n`` and
+    ``-1`` otherwise.  Returning that integer avoids floating-point roots
+    of unity in the finite-completion audit.
+    """
+    if modulus <= 1:
+        raise ValueError("modulus must exceed one")
+    return modulus - 1 if integer % modulus == 0 else -1
+
+
+def centered_completion_via_orthogonality(
+    values: tuple[int | Fraction, ...],
+    *,
+    residue: int,
+) -> Fraction:
+    """Evaluate the nonzero-frequency centered finite Fourier inversion.
+
+    For a function ``G`` on ``Z/sZ``, nonzero-character orthogonality gives
+
+    ``G(n)-G(0) = (1/s) sum_x G(x) [K(n-x)-K(-x)]``,
+
+    where ``K(y)`` is the sum of the nontrivial additive characters.  Thus
+    a signed shift weight with ``G(0)=0`` is recovered using only nonzero
+    completion frequencies and the centered phase ``e(c*n/s)-1``.
+    """
+    modulus = len(values)
+    if modulus <= 1:
+        raise ValueError("values must define a group of order > 1")
+    n = residue % modulus
+    total = sum(
+        Fraction(value)
+        * (
+            nonzero_character_orthogonality(modulus, n - x)
+            - nonzero_character_orthogonality(modulus, -x)
+        )
+        for x, value in enumerate(values)
+    )
+    return total / modulus
+
+
 @dataclass(frozen=True)
 class TypeScaleBounds:
     u_exp: Fraction

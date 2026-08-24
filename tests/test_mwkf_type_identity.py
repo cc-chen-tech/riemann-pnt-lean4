@@ -6,6 +6,7 @@ sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.mwkf_mobius_type_identity import (
     c_u,
+    centered_completion_via_orthogonality,
     crt_reciprocity_numerators,
     double_split_mobius_identity,
     determinant_lattice_solution,
@@ -131,6 +132,22 @@ def test_zero_v_has_no_solution_in_a_nonzero_submodular_shift_window() -> None:
             delta_max=20,
             sign=sign,
         ) == ()
+
+
+def test_centered_nonzero_characters_recover_a_zero_at_origin_weight() -> None:
+    values = (0, 3, -2, 5, 0, 7, -4)
+    for residue, expected in enumerate(values):
+        assert centered_completion_via_orthogonality(
+            values, residue=residue
+        ) == expected
+
+
+def test_centered_completion_subtracts_the_origin_for_general_weights() -> None:
+    values = (11, 3, -2, 5, 0)
+    for residue, value in enumerate(values):
+        assert centered_completion_via_orthogonality(
+            values, residue=residue
+        ) == value - values[0]
 
 
 def test_one_third_split_has_exact_balanced_scales() -> None:

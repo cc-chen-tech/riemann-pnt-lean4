@@ -806,23 +806,45 @@ interface, but the generic-coefficient theorem still does not close it.
 The new analytic question is whether the two Möbius weights, together with
 the product structure \(a=cv\), recover that exact deficit.
 
-There is also a precise zero-frequency warning.  In the signed hard box,
-\(v=0\) gives \(\delta=-js\); since \(0<|\delta|<s\), it has no solution.
-By contrast, the artificial completion frequency \(c=0\) is present in
-(12.5), and its phase is constant.  If it is separated by a triangle
-inequality, its ambient \((r,s,v)\)-volume exponent is \(13/2\).  Meeting
-the same normalized target would require
+The apparent completion zero mode can in fact be removed exactly.  Since
+\(2L<s\) and the signed support excludes \(\delta=0\), (12.1) gives
 
 \[
- |\mathfrak D_{q,\epsilon}^{(c=0)}|
- \ll_W T^{4-1/1000},
- \qquad
- \text{saving }\frac{2501}{1000}.
+ G_{r,s,v,\epsilon}(0)=0.
 \tag{12.9}
 \]
 
-Its square-root exponent \(13/4\) is stronger than the target by
-\(749/1000\), but no such Möbius-weighted estimate is supplied here.
-Hence completion has not made the problem termwise: an admissible CFK
-argument must either prove (12.9) from the Möbius structure or retain
-cancellation between \(c=0\) and \(c\ne0\).
+Summing (12.2) over all characters and using finite Fourier inversion
+therefore yields
+
+\[
+ \sum_{c\bmod s}\Omega_{r,s,v,\epsilon}(c)
+ =\frac sL G_{r,s,v,\epsilon}(0)=0.
+\tag{12.10}
+\]
+
+Consequently (12.5) has the exact centered form
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak D_{q,\epsilon}
+ ={}&\sum_{\substack{r\asymp R,\ s\asymp S\\
+                       (r,s)=1,\ (q,rs)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)\frac Ss\\
+ &\quad\times\sum_{v\in\mathbb Z}
+ \sum_{\substack{c\bmod s\\c\not\equiv0\ (s)}}
+ \Omega_{r,s,v,\epsilon}(c)
+ \left\{e\left(\frac{crv}{s}\right)-1\right\}.
+\end{aligned}}
+\tag{12.11}
+\]
+
+This is not a cancellation conjecture: it is character orthogonality on
+\(\mathbb Z/s\mathbb Z\), checked without numerical roots of unity by
+`centered_completion_via_orthogonality`.  Likewise, \(v=0\) gives
+\(\delta=-js\), so \(0<|\delta|<s\) shows that the original determinant
+cell is empty.  Thus neither dual variable has an independent zero-mode
+obligation.  The missing CFK estimate is now a genuinely nonzero,
+centered Möbius--Farey sum; the subtraction in (12.11) must be retained
+when invoking a spectral or dispersion estimate.

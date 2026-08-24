@@ -103,9 +103,7 @@ class FareyCompletionScales:
     square_root_margin: Fraction
     generic_bcr_bound: Fraction
     generic_bcr_deficit: Fraction
-    zero_k_volume: Fraction
-    zero_k_required_saving: Fraction
-    zero_k_square_root_margin: Fraction
+    zero_residue_forces_centering: bool
 
 
 def _positive_part(value: Fraction) -> Fraction:
@@ -307,7 +305,6 @@ def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
         + large_a
     )
     generic_bcr_bound = max(bcr_term_1, bcr_term_2)
-    zero_k_volume = box.rho + box.sigma + v
     return FareyCompletionScales(
         v=v,
         residue_frequency=residue_frequency,
@@ -320,9 +317,7 @@ def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
         square_root_margin=normalized_target - volume / 2,
         generic_bcr_bound=generic_bcr_bound,
         generic_bcr_deficit=generic_bcr_bound - normalized_target,
-        zero_k_volume=zero_k_volume,
-        zero_k_required_saving=zero_k_volume - normalized_target,
-        zero_k_square_root_margin=normalized_target - zero_k_volume / 2,
+        zero_residue_forces_centering=box.ell < box.sigma,
     )
 
 

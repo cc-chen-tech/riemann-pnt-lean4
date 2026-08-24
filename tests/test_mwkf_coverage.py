@@ -165,9 +165,7 @@ def test_finite_residue_completion_has_exact_hard_box_gate() -> None:
     assert scales.square_root_margin == F(499, 1000)
     assert scales.generic_bcr_bound == F(67, 10)
     assert scales.generic_bcr_deficit == F(2701, 1000)
-    assert scales.zero_k_volume == F(13, 2)
-    assert scales.zero_k_required_saving == F(2501, 1000)
-    assert scales.zero_k_square_root_margin == F(749, 1000)
+    assert scales.zero_residue_forces_centering
 
 
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
@@ -185,6 +183,8 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
         r"\mathrm{CFK}_{\epsilon,1/1000}",
         r"T^{4-1/1000}",
         r"2701/1000",
+        r"\sum_{c\bmod s}\Omega(c)=0",
+        r"e(crv/s)-1",
         "## 4. Wright fixed-factor adapter",
         "## 5. Exact residual witnesses",
         "published coverage result: residual cells remain",

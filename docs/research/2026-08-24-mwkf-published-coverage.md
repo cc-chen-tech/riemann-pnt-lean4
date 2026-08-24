@@ -386,8 +386,16 @@ collapsing \(a=cv\) has exponent \(67/10\), leaving the exact deficit
 \(2701/1000\).  CFK is therefore an equivalent explicit
 Kloosterman-fraction interface, not a published-coverage claim.
 
-The finite completion is also no-triangle in its residue frequency.  The
-\(v=0\) determinant cell is empty in the signed hard box, whereas the
-artificial \(c=0\) Fourier mode is nonoscillatory.  Bounding that mode
-separately at the CFK target would require saving \(2501/1000\) from its
-ambient exponent \(13/2\).  No audited adapter provides this bound.
+The completion zero mode is not an additional residual cell.  For each
+signed weight, \(G(0)=0\), hence
+
+\[
+ \sum_{c\bmod s}\Omega(c)=0,
+ \qquad
+ \sum_{c\bmod s}\Omega(c)e(crv/s)
+ =\sum_{c\ne0}\Omega(c)\{e(crv/s)-1\}.
+\]
+
+Thus CFK may be posed with nonzero residue frequencies only, provided the
+centered phase is retained.  The determinant cell \(v=0\) is independently
+empty because \(0<|\delta|<s\).
