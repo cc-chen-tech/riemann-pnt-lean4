@@ -299,6 +299,8 @@ theorem norm_cubicKernelMultiplier_le_nine_div_sq
     rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hh]
   have hRe : u.re ≤ Real.log 2 := by
     dsimp [u]
+    simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
+      zero_mul, sub_zero]
     nlinarith [hre1, hhsmall, hh]
   have hexp : ‖Complex.exp u‖ ≤ 2 := by
     rw [Complex.norm_exp]
