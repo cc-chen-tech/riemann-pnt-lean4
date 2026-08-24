@@ -77,8 +77,14 @@ theorem
   have hspec :=
     actualSelectedHeightFiniteStripWeightedBalancedExponent_spec
       sigma tau hbetaOne hsigma hsigmaOne htau hthreshold
-  simpa [actualSelectedHeightFiniteStripWeightedBalancedGoodHeight] using
-    selectedUniformGoodHeight_tendsto_atTop hspec.2.1 selection
+  change
+    Tendsto
+      (selectedUniformGoodHeight
+        (actualSelectedHeightFiniteStripWeightedBalancedExponent
+          beta sigma tau)
+        selection)
+      atTop atTop
+  exact selectedUniformGoodHeight_tendsto_atTop hspec.2.1 selection
 
 /-- Global right-edge zero-freeness is exactly finite-height right-edge
 zero-freeness at every height. -/
