@@ -1444,15 +1444,39 @@ The coupled sum in the exact normalization (5.15) is
 
 No absolute value has been taken between the \(r,s,\delta,h\) sums.
 Factoring fixed outer cutoffs from \(\Psi\), smooth Mellin/Fourier inversion
-produces the following separated family.  For
+produces the following separated family.  The correct additive Fourier
+window is two-sided.  For a sufficiently large fixed \(C_0\), put
 
 \[
- x\in\left[\frac{M}{8S},\frac{8M}{S}\right],\qquad
- y\in\left[\frac{T}{8MR},\frac{8T}{MR}\right],
+ \mathcal X_\eta=
+ \left\{(x,y)\in\mathbb R^2:
+ |x|\leq C_0\left(\frac MS+\frac{T^\eta}{H}\right),\
+ |y|\leq C_0\left(\frac T{MR}+\frac{T^\eta}{L}\right)\right\}.
 \tag{6.1}
 \]
 
-put
+Indeed, the \(\beta\)-phase in (5.13b) has Fourier centre
+\[
+ x=\frac{MX}{Sv}\asymp\frac MS
+\]
+and the fixed \(\beta\)-cutoff has Fourier width
+\(T^{O(\eta_0)}/H\).  The derivative of the exact \(\alpha\)-phase is
+\[
+ \partial_\alpha\left[
+ T\tau\log\left(1+\frac{\lambda_0\alpha}{Xu}\right)\right]
+ =\frac{T\tau\lambda_0}{Xu+\lambda_0\alpha},
+\]
+so its \(y\)-centre is \(\asymp T/(MR)\), while the fixed
+\(\alpha\)-cutoff has width \(T^{O(\eta_0)}/L\).  The enlargement from
+\(\eta_0\) to \(\eta\) gives (6.1).  In particular, when either centre is
+smaller than the reciprocal cutoff length, (6.1) retains zero and both
+signs; no lower bound on \(HM/S\) or \(TL/(MR)\) is being assumed.
+For example, the admissible box
+\(R=S=T^3,\ M=K=T^{1/2},\ L=H=1\) has both centres \(T^{-5/2}\),
+whereas (6.1) includes \(|x|,|y|\leq C_0(T^{-5/2}+T^\eta)\);
+the low and negative frequencies are therefore present.
+
+For \((x,y)\in\mathcal X_\eta\), put
 
 \[
  \nu_{x,y}(a)=
@@ -1510,7 +1534,7 @@ and use the Fourier convention
  =\int_{\mathbb R^4}\Phi^\#(z)e^{-i\vartheta\cdot z}\,dz.
 \]
 
-With
+Define
 
 \[
  \Omega_\Psi(\theta;x,y)
@@ -1519,23 +1543,63 @@ With
 \tag{6.5}
 \]
 
+and the common truncated transform domain
+
+\[
+ \Theta_\eta=[-C_0T^\eta,C_0T^\eta]^2,\qquad
+ \mathcal D_\eta=\Theta_\eta\times\mathcal X_\eta.
+\tag{6.5a}
+\]
+
 Mellin inversion in \(r/R,s/S\) and Fourier inversion in
-\(\delta/L,h/H\) give, for every \(B>0\),
+\(\delta/L,h/H\) first give the exact full-space identity
 
 \[
  \mathfrak S_q[\Psi]
- =\int_{\mathbb R^2}\int_{\mathcal X}
+ =\int_{\mathbb R^2}\int_{\mathbb R^2}
  \Omega_\Psi(\theta;x,y)
- \mathfrak T_q(\theta;R,S;L,H;x,y)\,dx\,dy\,d\theta
-+O_{B,W,\eta}(T^{-B}),
-\tag{6.6}
+ \mathfrak T_q(\theta;R,S;L,H;x,y)\,dx\,dy\,d\theta.
+\tag{6.6a}
 \]
 
-where \(\mathcal X\) is the rectangle in (6.1).  The contribution outside
-\(\mathcal X\), and the large-\(\theta\) Mellin tail, have the stated rapid
-decay by the same nonstationary operators as in Section 5.  Endpoint
-flatness of the dyadic cutoffs handles the boundary of the displayed
-rectangle.
+The same \(\eta_0\)-slack used in Section 5 makes the truncation literal.
+Repeated integration by parts in \(\alpha,\beta\) outside the additive
+window (6.1), and in \(p_1,p_2\) outside \(\Theta_\eta\), gives arbitrary
+power decay.  More precisely, \(C_0\) is chosen to contain every phase
+gradient allowed by (5.13c).  On the complement, at least one combined
+Fourier/Mellin phase derivative has size \(\gg T^\eta\), while all of its
+higher normalized derivatives are \(O(T^\eta)\).  Each application of the
+corresponding nonstationary operator therefore gains \(T^{-\eta}\);
+the initial \(\eta_0\)-budget absorbs fixed derivative constants.
+Since the trivial bound
+
+\[
+ |\mathfrak T_q(\theta;R,S;L,H;x,y)|
+ \ll_{U,V,U_1,V_1}RSLH
+\]
+
+is polynomial in \(T\) throughout (5.3)--(5.10), the number of integrations
+may be chosen after \(B\).  Hence, for every \(B>0\),
+
+\[
+ \int_{\mathbb R^4\setminus\mathcal D_\eta}
+ |\Omega_\Psi(\theta;x,y)|
+ |\mathfrak T_q(\theta;R,S;L,H;x,y)|
+ \,d\theta\,dx\,dy
+ \ll_{B,W,\eta}T^{-B},
+\tag{6.6b}
+\]
+
+and therefore
+
+\[
+ \mathfrak S_q[\Psi]
+ =\int_{\Theta_\eta}\int_{\mathcal X_\eta}
+ \Omega_\Psi(\theta;x,y)
+ \mathfrak T_q(\theta;R,S;L,H;x,y)\,dx\,dy\,d\theta
++O_{B,W,\eta}(T^{-B}).
+\tag{6.6c}
+\]
 
 The change of variables in (6.5) gives the exact \(L^1\)-norm identity
 
@@ -1562,7 +1626,8 @@ Plancherel.  Thus the three candidate gates, all in the normalization of
 1. **Uniform-separated gate**
 
    \[
-    \sup_{\substack{(x,y)\in\mathcal X\\|\theta|\leq T^\eta}}
+    \sup_{\substack{\theta\in\Theta_\eta\\
+                    (x,y)\in\mathcal X_\eta}}
     |\mathfrak T_q(\theta;R,S;L,H;x,y)|
     \ll_{\varepsilon,W}RS\,T^\varepsilon.
    \tag{US}
@@ -1571,7 +1636,7 @@ Plancherel.  Thus the three candidate gates, all in the normalization of
 2. **Integrated-separated gate**
 
    \[
-    \int_{\mathbb R^2}\int_{\mathcal X}
+    \int_{\Theta_\eta}\int_{\mathcal X_\eta}
     |\Omega_\Psi(\theta;x,y)|
     |\mathfrak T_q(\theta;R,S;L,H;x,y)|
     \,dx\,dy\,d\theta
@@ -1587,19 +1652,25 @@ Plancherel.  Thus the three candidate gates, all in the normalization of
    \tag{CK}
    \]
 
-The implication arrows used here are explicit.  Minkowski and (6.7) give
+The implication arrows now use the same domain \(\mathcal D_\eta\).
+Minkowski and (6.7) give
 
 \[
- \int|\Omega_\Psi|\,|\mathfrak T_q|
- \leq\|\Omega_\Psi\|_1\sup|\mathfrak T_q|
+ \int_{\Theta_\eta}\int_{\mathcal X_\eta}
+ |\Omega_\Psi|\,|\mathfrak T_q|
+ \leq\|\Omega_\Psi\|_{L^1(\mathcal D_\eta)}
+      \sup_{\mathcal D_\eta}|\mathfrak T_q|
  \ll T^{3\eta}\sup|\mathfrak T_q|,
 \]
 
-and Fourier--Mellin inversion followed by the triangle inequality gives
+while (6.6b)--(6.6c) and the triangle inequality give
 
 \[
  |\mathfrak S_q[\Psi]|
- \leq\int|\Omega_\Psi|\,|\mathfrak T_q|+O_B(T^{-B}).
+ \leq
+ \int_{\Theta_\eta}\int_{\mathcal X_\eta}
+ |\Omega_\Psi|\,|\mathfrak T_q|
++O_B(T^{-B}).
 \]
 
 After choosing \(\eta<\varepsilon/6\), with the usual relabelling of
