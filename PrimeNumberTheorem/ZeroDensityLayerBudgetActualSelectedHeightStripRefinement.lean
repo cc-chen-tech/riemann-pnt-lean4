@@ -34,7 +34,6 @@ theorem carlsonStripEndpointTargetThreshold_mono_tau
   have hden : 0 < 1 + q := by linarith
   dsimp [carlsonStripEndpointTargetThreshold]
   apply (div_le_div_iff_of_pos_right hden).2
-  dsimp [q]
   linarith
 
 /-- Strictly tightening a strip upper endpoint strictly improves its endpoint
@@ -52,7 +51,6 @@ theorem carlsonStripEndpointTargetThreshold_strictMono_tau
   have hden : 0 < 1 + q := by linarith
   dsimp [carlsonStripEndpointTargetThreshold]
   apply (div_lt_div_iff_of_pos_right hden).2
-  dsimp [q]
   linarith
 
 /-- The admissible alpha ceiling is antitone in the strip upper endpoint. -/
@@ -68,7 +66,6 @@ theorem actualSelectedHeightStripAlphaCeiling_antitone_tau
       carlsonClassicalDensitySlope_pos hsigma hsigmaOne
   dsimp [actualSelectedHeightStripAlphaCeiling]
   apply (div_le_div_iff_of_pos_right hq).2
-  dsimp [q]
   linarith
 
 /-- Some strip attains the common finite alpha ceiling. -/

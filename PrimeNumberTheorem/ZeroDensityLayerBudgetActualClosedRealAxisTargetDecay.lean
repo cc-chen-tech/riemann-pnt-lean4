@@ -44,7 +44,11 @@ theorem tendsto_log_one_sub_rpow_neg_two_atTop :
   have hlog :=
     (Real.continuousAt_log (by norm_num : (1 : ℝ) ≠ 0)).tendsto.comp
       hargument
-  simpa using hlog
+  change
+    Tendsto
+      (Real.log ∘ fun x : ℝ => 1 - x ^ (-2 : ℝ))
+      atTop (nhds 0)
+  simpa only [Real.log_one] using hlog
 
 /-- The closed numerator has a finite limit. -/
 theorem tendsto_actualPNTClosedRealAxisNumerator :

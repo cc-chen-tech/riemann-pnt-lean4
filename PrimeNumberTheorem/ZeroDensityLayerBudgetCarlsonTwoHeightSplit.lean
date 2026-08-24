@@ -177,7 +177,13 @@ theorem tendsto_carlsonTwoHeightLogMajorant
         atTop (nhds 0) :=
     tendsto_carlsonRectangleLogMajorant hepsilon (by
       simpa [carlsonTwoHeightHighExponent] using hhigh)
-  simpa [carlsonTwoHeightLogMajorant] using hlow'.add hhigh'
+  change
+    Tendsto
+      (fun x =>
+        carlsonRectangleLogMajorant sigma tau gamma 0 x +
+          carlsonRectangleLogMajorant sigma tau alpha gamma x)
+      atTop (nhds 0)
+  simpa only [zero_add] using hlow'.add hhigh'
 
 /-- At the balanced cut, one strict exponent margin discharges both halves of
 the two-height split. -/

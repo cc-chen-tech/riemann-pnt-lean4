@@ -105,6 +105,7 @@ theorem actualSelectedHeightStripBalancedPhysicalMargin_pos
   have hq : 0 < q := actualSelectedHeightStripSlope_pos hsigma hsigmaOne
   have hden : 0 < 1 + q := by linarith
   have hthreshold' : (tau + q) / (1 + q) < beta := by
+    dsimp [q]
     simpa [carlsonStripEndpointTargetThreshold,
       actualSelectedHeightStripCarlsonSlope] using hthreshold
   have hcross := (div_lt_iff₀ hden).1 hthreshold'
