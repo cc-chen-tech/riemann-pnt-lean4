@@ -1476,7 +1476,7 @@ For example, the admissible box
 whereas (6.1) includes \(|x|,|y|\leq C_0(T^{-5/2}+T^\eta)\);
 the low and negative frequencies are therefore present.
 
-For \((x,y)\in\mathcal X_\eta\), put
+For every \((x,y)\in\mathbb R^2\), put
 
 \[
  \nu_{x,y}(a)=
@@ -1486,7 +1486,8 @@ For \((x,y)\in\mathcal X_\eta\), put
 \]
 
 where \(U,V\in C_c^\infty([-2,-1]\cup[1,2])\), with every fixed derivative
-bounded by a constant. Define
+bounded by a constant.  For
+\(\theta=(\theta_1,\theta_2)\in\mathbb R^2\), define
 
 \[
 \begin{aligned}
@@ -1503,8 +1504,7 @@ bounded by a constant. Define
 \tag{6.3}
 \]
 
-where \(\theta=(\theta_1,\theta_2)\), and
-\(U_1,V_1\in C_c^\infty([1/2,2])\).  The Mellin twists may equivalently
+with \(U_1,V_1\in C_c^\infty([1/2,2])\).  The Mellin twists may equivalently
 be included in the two displayed weights.  The coefficient in (6.2) is
 not arbitrary. It is a divisor-convolution coefficient and satisfies
 
