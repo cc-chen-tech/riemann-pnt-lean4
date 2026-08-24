@@ -12,8 +12,9 @@ namespace HardyTheorem
 # Zeta23 → Selberg/Conrey bridge (external machine-checked closure)
 
 This file assembles the three-step bridge described in
-`docs/research/zeta23-selberg-bridge.md`.  It imports the vendored,
-axiom-clean external artifact `Zeta23` (Anthropic's Lean formalization of
+`docs/research/zeta23-selberg-bridge.md`.  It imports the vendored
+external artifact `Zeta23`, whose audit introduces no extra axioms
+(Anthropic's Lean formalization of
 "More than two thirds of the zeros of the Riemann zeta function lie on the
 critical line", Apache 2.0) and closes two of this repository's open
 `def ... : Prop` targets:
