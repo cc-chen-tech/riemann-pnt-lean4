@@ -6,7 +6,7 @@
 > |---|---|
 > | LCM main quadratic form | proved separately |
 > | Exact AFE and shifted-divisor identity | under audit in Sections 2--3 |
-> | Poisson zero/nonzero-mode identity | under audit in Section 4 |
+> | Poisson zero/nonzero-mode identity | proved after correction in Section 4 |
 > | MWKF local estimate | unproved |
 >
 > Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
@@ -554,13 +554,47 @@ Write
 Then \(q\mid\Delta\). Put \(\Delta=q\delta\). Equation (4.1) becomes
 
 \[
- m_1s-m_2r=\delta,
-\qquad
- m_2r\equiv-\delta\pmod s,
-\qquad
- m_1=\frac{m_2r+\delta}{s}.
+ m_1s-m_2r=\delta.
 \tag{4.3}
 \]
+
+### 4.1 Residue class and Poisson normalization
+
+Since \((r,s)=1\), equation (4.3) is equivalent to
+
+\[
+ m_2\equiv-\bar r\delta\pmod s,
+ \qquad
+ m_1=\frac{m_2r+\delta}{s},
+ \qquad m_2>0,\quad m_2r+\delta>0.
+\tag{4.3a}
+\]
+
+Our Fourier convention and the corresponding residue-class Poisson formula
+are
+
+\[
+ \widehat f(\xi)=\int_{\mathbb R}f(x)e(-\xi x)\,dx,
+ \qquad
+ \sum_{n\equiv b\ (s)}f(n)
+ =\frac1s\sum_{h\in\mathbb Z}e(hb/s)\widehat f(h/s).
+\tag{4.3b}
+\]
+
+For each dyadic box the factors below make the extension by zero to
+\(\mathbb R\) smooth and compactly supported.  Taking
+\(b=-\bar r\delta\) in (4.3b) therefore contributes
+
+\[
+ \frac1s e\left(-\frac{h\delta\bar r}{s}\right)
+ \int_{\mathbb R}f(x)e(-hx/s)\,dx.
+\tag{4.3c}
+\]
+
+The factor preceding the \(m_2\)-sum in (2.6) is
+\(2/(q\sqrt{rs})\).  Thus (4.3c) gives exactly
+\(2/(q\sqrt{rs}\,s)\), with the displayed minus sign in the phase; no
+factor of \(q\), \(r\), or \(s\) is absorbed into the kernel.
 
 For dyadic \(R,S,K,M\), define
 
@@ -598,9 +632,178 @@ summation in the residue class
 \]
 
 Here \(\bar r\) is the inverse of \(r\bmod s\). Formula (4.5) is exact and
-contains all nonzero Poisson modes. Summing the \(h=0\) modes over all
-dyadic boxes and adding (2.10), Mellin inversion and the functional equation
-give
+contains all nonzero Poisson modes.  The conditions \((r,s)=1\),
+\(qr,qs\leq N\), and the positivity condition in (4.3a) remain in force.
+
+### 4.2 Zero mode from a common Mellin integral
+
+First sum the \(K,M\) partitions, before Mellin inversion.  On the domain
+\(x>0\), \(xr+\delta>0\), equation (3.1) gives
+
+\[
+ \sum_{K,M}F_M(x)F_K((xr+\delta)/s)=1.
+\tag{4.5a}
+\]
+
+All dyadic scales occur in (4.5a), including scales whose original integer
+sum is empty; the complete Poisson identity for each such scale is zero.
+Consequently (4.5a) introduces no endpoint or boundary term.  The sum of all
+zero modes is therefore
+
+\[
+\begin{aligned}
+ \mathcal Z_0={}&2
+ \sum_{\substack{q,r,s\geq1\\(r,s)=1\\qr,qs\leq N}}
+ \frac{a_N(qr)a_N(qs)}{q\sqrt{rs}\,s}
+ \sum_{\delta\ne0}
+ \int_{\mathbb R}W(t/T)\int_{\substack{x>0\\xr+\delta>0}}
+ \frac{V_t(x(xr+\delta)/s)}{\sqrt{x(xr+\delta)/s}}\\
+ &\hspace{44mm}\times
+ \left(1+\frac{\delta}{xr}\right)^{it}dx\,dt.
+\end{aligned}
+\tag{4.5b}
+\]
+
+There is no unregularized Mellin line on which the endpoint integrals and
+the signed \(\delta\)-series are both absolutely convergent: the endpoints
+ask for \(\Re z<1/2\), whereas \(\sum_{k\geq1}k^{-2z}\) asks for
+\(\Re z>1/2\).  To avoid a false Fubini step, introduce the temporary
+endpoint regulator
+
+\[
+ \rho_\alpha(x,\delta)=
+ \begin{cases}
+  (rx/(rx+\delta))^\alpha,&\delta>0,\\
+  ((rx+\delta)/(rx))^\alpha,&\delta<0.
+ \end{cases}
+\tag{4.5c}
+\]
+
+Both bases in (4.5c) lie in \((0,1)\).  For real \(0<\alpha<2\), shift
+(2.3), without crossing \(z=0\), to the moving line
+
+\[
+ \Re z=\sigma_\alpha:=\frac12+\frac\alpha2;
+ \qquad
+ \frac12<\sigma_\alpha<\frac32,\qquad
+ \alpha>\sigma_\alpha-\frac12.
+\tag{4.5d}
+\]
+
+After inserting \(\rho_\alpha\), the \(x\)-integrals and the
+\(\delta\)-sum are absolutely convergent on this initial line.  Indeed, put
+\(a=s_t+z\), \(b=1-s_t+z\), and write \(k=|\delta|\).  Direct beta
+integrals give
+
+\[
+\begin{aligned}
+ \int_0^\infty x^{-a}(rx+k)^{-b}
+  \left(\frac{rx}{rx+k}\right)^\alpha dx
+ &=r^{a-1}k^{-2z}
+   \frac{\Gamma(1-a+\alpha)\Gamma(2z)}
+        {\Gamma(b+\alpha)},\\
+ \int_{k/r}^\infty x^{-a}(rx-k)^{-b}
+  \left(\frac{rx-k}{rx}\right)^\alpha dx
+ &=r^{a-1}k^{-2z}
+   \frac{\Gamma(1-b+\alpha)\Gamma(2z)}
+        {\Gamma(a+\alpha)}.
+\end{aligned}
+\tag{4.5e}
+\]
+
+The endpoint beta parameters have positive real parts by (4.5d), and
+\(\sum k^{-2z}=\zeta(2z)\) converges absolutely because
+\(\sigma_\alpha>1/2\).  Repeated integration by parts in \(t\), together
+with (2.5), makes the \(t\)-integrated version of (4.5b) locally uniformly
+convergent as \(\alpha\downarrow0\).  The moving line in (4.5d) is
+essential: the beta poles \(z=s_t+\alpha\) and
+\(z=1-s_t+\alpha\) remain to its right, so none crosses the contour.  At
+\(\alpha=0\), their limits \(s_t,1-s_t\) are cancelled by the zeros of
+\(G_t\); the limiting pole of \(\zeta(2z)\) at \(z=1/2\) is cancelled by
+the cosine zero displayed in (4.5i).  The resulting regular product may
+then be moved to any fixed \(1/2<\sigma<3/2\), again without a residue.
+Thus the limit recovers the unmodified zero mode, rather than a regularized
+replacement or a boundary contribution.  It gives the signed series
+
+\[
+ \zeta(2z)\Gamma(2z)B_t(z),\qquad
+ B_t(z)=
+ \frac{\Gamma(1-s_t-z)}{\Gamma(1-s_t+z)}
+ +\frac{\Gamma(s_t-z)}{\Gamma(s_t+z)}.
+\tag{4.5f}
+\]
+
+There is no coprimality condition on \(\delta\): once \((r,s)=1\), every
+\(\delta\ne0\) gives the unique residue class (4.3a).  Thus the local
+factors in (4.5f) are exactly
+\((1-p^{-2z})^{-1}\), with no deleted prime factor.  Moreover the powers
+outside (4.5e) simplify exactly as
+
+\[
+ \frac{2}{q\sqrt{rs}\,s}\,\sqrt{s}\,r^{-it}s^z
+ r^{s_t+z-1}
+ =\frac2{qrs}(rs)^z
+ =\frac2{[d,e]}(d^*e^*)^z,
+ \qquad d^*=r,\quad e^*=s.
+\tag{4.5g}
+\]
+
+The completed functional equation used at this point is
+
+\[
+ \pi^{-z}\Gamma(z)\zeta(2z)
+ =\pi^{z-1/2}\Gamma(1/2-z)\zeta(1-2z).
+\tag{4.5h}
+\]
+
+Reflection and duplication give, term by term,
+
+\[
+ B_t(z)=2^{1-2z}\pi^{-2z}\cos(\pi z)
+ \frac{\sin(\pi s_t)}{\sin(\pi s_t)+\sin(\pi z)}
+ \frac{g_t(-z)}{g_t(z)}.
+\tag{4.5i}
+\]
+
+Combining (4.5h)--(4.5i) yields the exact transformation
+
+\[
+ \zeta(2z)\Gamma(2z)B_t(z)g_t(z)
+ =\frac{\sin(\pi s_t)}{\sin(\pi s_t)+\sin(\pi z)}
+  \zeta(1-2z)g_t(-z).
+\tag{4.5j}
+\]
+
+The quotient of sines in (4.5j) is not identically one.  This is the
+archimedean factor omitted in the baseline formula.  Put
+
+\[
+ \mathfrak A_t(z)=\frac{\sin(\pi s_t)}{\sin(\pi s_t)-\sin(\pi z)}
+ =\frac{\cosh(\pi t)}{\cosh(\pi t)-\sin(\pi z)}.
+\tag{4.5k}
+\]
+
+After \(z\mapsto-z\), the orientation change supplies a minus sign and
+(4.5j) supplies \(\mathfrak A_t(z)\).  The poles of \(\mathfrak A_t\) are
+\(s_t+2k\) and \(1-s_t+2k\).  Choosing \(\sigma<3/2\), the shift from
+\(\Re z=-\sigma\) to \(\Re z=-c\), \(0<c<1/4\), crosses none of them;
+the possible \(g_t\)-poles on \(\Re z=-1/2\) are cancelled by \(G_t\) as
+in Section 2.1.  Therefore the corrected zero-mode formula is
+
+\[
+ \boxed{
+ \mathcal Z_0
+ =-
+ \frac2{2\pi i}
+ \sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]}
+ \int_{\mathbb R}W(t/T)
+ \int_{(-c)}
+ (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)\mathfrak A_t(z)
+ \frac{dz}{z}\,dt. }
+\tag{4.6b}
+\]
+
+The diagonal calculation has no sine quotient.  Directly from (2.10),
 
 \[
  \mathcal D=
@@ -612,59 +815,113 @@ give
 \tag{4.6a}
 \]
 
-while, for any fixed \(0<c<1/4\), the sum of the zero Poisson modes is
+so its factor \((d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)\) agrees prime by
+prime and power by power with (4.6b).  The sole discrepancy is the
+archimedean factor \(\mathfrak A_t(z)\).
+
+### 4.3 Residue and main-term normalization
+
+Add and subtract the \((-c)\)-line without \(\mathfrak A_t\).  The difference
+of the two common Mellin integrals crosses only \(z=0\), while the remaining
+exact term is
 
 \[
- \sum_{q,R,S,K,M}\mathcal O^{h=0}_{q;R,S,K,M}
- =
- -\frac2{2\pi i}
+ \boxed{
+ \mathcal C_{N,W}(T)=
+ \frac2{2\pi i}
  \sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]}
  \int_{\mathbb R}W(t/T)
  \int_{(-c)}
- (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)\frac{dz}{z}\,dt.
-\tag{4.6b}
+ (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)
+ \bigl(1-\mathfrak A_t(z)\bigr)\frac{dz}{z}\,dt. }
+\tag{4.6c}
 \]
 
-To obtain (4.6b), first sum (4.4) over the dyadic \(K,M\), then Mellin
-invert \(V_t\), sum \(\delta\ne0\), and apply the completed functional
-equation. The \(\delta\)-Dirichlet series is \(\zeta(2z)\); the completed
-functional equation changes it to \(\zeta(1+2z)\) and changes \(z\) to
-\(-z\). The minus sign is the orientation change of that contour. Every
-interchange is absolutely convergent on the initial lines by (2.5).
-Subtracting the two vertical integrals in (4.6a)--(4.6b) crosses only
-\(z=0\). Hence
+Consequently the corrected diagonal-plus-zero-mode identity is
 
 \[
- \mathcal D+\sum_{q,R,S,K,M}\mathcal O^{h=0}_{q;R,S,K,M}
- =T\mathcal Q_{N,T}.
+ \boxed{\mathcal D+\mathcal Z_0
+ =T\mathcal Q_{N,T}+\mathcal C_{N,W}(T).}
 \tag{4.6}
 \]
 
-The residue at \(z=0\) in (4.6) is
+For completeness, the expansions at \(z=0\) are
 
 \[
+\begin{gathered}
+ \zeta(1+2z)=\frac1{2z}+\gamma+O(z),\qquad
+ (d^*e^*)^{-z}=1-z\log(d^*e^*)+O(z^2),\\
+ g_t(z)=1+z\lambda(t)+O_t(z^2),\qquad
+ G_t(z)=1+O_t(z^2).
+\end{gathered}
+\tag{4.7a}
+\]
+
+They give
+
+\[
+\begin{aligned}
  \operatorname{Res}_{z=0}
  \left(
   (d^*e^*)^{-z}\zeta(1+2z)g_t(z)\frac{G_t(z)}z
  \right)
- =\frac12\left(\lambda(t)-\log(d^*e^*)+2\gamma\right).
+ &=\frac12\left(\lambda(t)-\log(d^*e^*)+2\gamma\right),\\
+ \operatorname{Res}_{z=0}
+ \left(
+  (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)
+  \frac{1-\mathfrak A_t(z)}z
+ \right)
+ &=-\frac{\pi}{2\cosh(\pi t)}.
+\end{aligned}
 \tag{4.7}
 \]
 
-The factor 2 in (2.4) turns (4.7) into the bracket in (1.1). Combining
-(4.5) and (4.6) proves the exact decomposition
+The first line is the requested main residue.  The outer factor 2 in (2.4)
+turns it into the bracket in (1.1).  Also
+
+\[
+ d^*e^*=rs=\frac{de}{(d,e)^2},\qquad
+ -\log(d^*e^*)=2\log(d,e)-\log d-\log e,
+\tag{4.7b}
+\]
+
+which is the logarithm in the independently proved LCM normalization.  The
+second line of (4.7) records why the correction cannot be erased in an exact
+identity.  Nevertheless it is beyond all polynomial orders at the present
+height: splitting the \((-c)\)-line into \(|\Im z|\leq t/2\) and its
+complement, using
+\(1-\mathfrak A_t(z)=-\sin(\pi z)/(\cosh(\pi t)-\sin(\pi z))\)
+on the first part and the Gaussian in \(G_t\) on the second, gives
+
+\[
+ \mathcal C_{T^3,W}(T)=O_{B,W}(T^{-B})\qquad(B>0).
+\tag{4.7c}
+\]
+
+Thus the exact correction is negligible for the later conditional estimate,
+but it remains present in every exact formula.
+
+zero-mode audit result: the baseline identity required correction;
+(4.6b) contains the remaining archimedean factor \(\mathfrak A_t(z)\), and
+(4.6), (4.6c), and (4.8) contain the remaining term
+\(\mathcal C_{N,W}(T)\).
+
+Combining (4.5) with the corrected (4.6) proves the exact decomposition
 
 \[
 \boxed{
  I_{N,W}(T)=T\mathcal Q_{N,T}+\mathcal R_{N,T},\qquad
  \mathcal R_{N,T}=
+ \mathcal C_{N,W}(T)+
  \sum_{q\geq1}\sum_{R,S,K,M}
  \mathcal O^{\ne0}_{q;R,S,K,M}. }
 \tag{4.8}
 \]
 
-The sum in (4.8) is countable and absolutely convergent; therefore (4.8),
-unlike a truncated AFE formula, has no omitted error.
+The nonzero-mode sum in (4.8) is taken in the complete dyadic Poisson
+ordering used above.  The convergence supplied by (2.5) and repeated
+integration by parts in \(t\) justifies that limit; no rearrangement of
+individual Fourier modes and no truncated-AFE error is hidden in (4.8).
 
 ## 5. Möbius support and all effective variable ranges
 
@@ -689,8 +946,8 @@ retain Möbius weights.
 
 Fix \(0<\eta<10^{-3}\). Repeated integration by parts in (2.7) and (4.4),
 together with (2.5), shows the following precise statement. For every
-\(B>0\), the part of (4.8) outside the boxes satisfying (5.3)--(5.8) is
-\(O_{B,W,\eta}(T^{-B})\):
+\(B>0\), the part of the nonzero-mode sum in (4.8) outside the boxes
+satisfying (5.3)--(5.8) is \(O_{B,W,\eta}(T^{-B})\):
 
 \[
  1\leq q,\qquad qR/2\leq N,\qquad qS/2\leq N;
@@ -888,8 +1145,10 @@ Therefore (6.5) implies
 \tag{6.8}
 \]
 
-All analytic tails already contribute \(O_{B,W,\eta}(T^{-B})\), so no
-additional arithmetic estimate is needed after MWKF(3).
+Here the extra exact term \(\mathcal C_{T^3,W}(T)\) in (4.8) is absorbed by
+(4.7c).  All analytic tails already contribute
+\(O_{B,W,\eta}(T^{-B})\), so no additional arithmetic estimate is needed
+after MWKF(3).
 
 ## 7. Term-by-term correspondence with Bettin--Chandee--Radziwiłł
 
@@ -981,13 +1240,14 @@ and shifted-divisor derivations for audit, including their convergence,
 contour-orientation, and reindexing checks.  They remain marked “under audit”
 until independent review accepts those derivations.
 
-The Poisson zero/nonzero-mode identity in Section 4, and therefore the later
-effective-range reduction that depends on it, remain under audit and are not
-certified as proved by this note.  MWKF(3), equation (6.5), is unproved.
-Equations (6.6)--(6.8) are only a conditional implication from that proposed
-local estimate, not an available bound.  Treating MWKF(3) as an already
-available consequence of BCR would be incorrect for the range reason in
-item 3 of Section 7.
+Section 4 proves the Poisson zero/nonzero-mode identity after correcting the
+baseline zero-mode functional-equation step.  The exact remainder contains
+the archimedean term \(\mathcal C_{N,W}(T)\) in (4.6c), although (4.7c)
+makes it smaller than every power of \(T\) when \(N=T^3\).  MWKF(3),
+equation (6.5), is unproved.  Equations (6.6)--(6.8) are only a conditional
+implication from that proposed local estimate, not an available bound.
+Treating MWKF(3) as an already available consequence of BCR would be
+incorrect for the range reason in item 3 of Section 7.
 
 ## 9. Primary references
 
