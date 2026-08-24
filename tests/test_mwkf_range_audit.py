@@ -14,6 +14,9 @@ from scripts.audit_mwkf_ranges import (
 )
 
 
+NOTE = Path("docs/research/2026-08-24-mobius-weighted-off-diagonal.md")
+
+
 def test_balanced_maximal_third_variable_box() -> None:
     box = ExponentBox(
         rho=F(3), sigma=F(3), m=F(1, 2), k=F(1, 2),
@@ -61,3 +64,15 @@ def test_each_constraint_has_a_stable_failure_code(
 ) -> None:
     assert code in admissibility_violations(box)
     assert not is_admissible(box)
+
+
+def test_research_note_exposes_afe_audit_ledger() -> None:
+    text = NOTE.read_text()
+    for marker in (
+        "> **Current proof status.**",
+        "### 2.1 Completion and pole cancellation",
+        "### 2.2 Absolute convergence and termwise expansion",
+        "### 2.3 Uniform weight bounds",
+    ):
+        assert marker in text
+    assert "\\Lambda(s)=\\gamma(s)\\zeta(s)" in text
