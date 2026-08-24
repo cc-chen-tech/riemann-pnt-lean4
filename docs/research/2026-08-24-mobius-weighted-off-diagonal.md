@@ -1,5 +1,18 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **Current proof status.**
+>
+> | component | status in this note |
+> |---|---|
+> | LCM main quadratic form | proved separately; its normalization is rechecked below |
+> | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
+> | Poisson zero/nonzero-mode identity | under audit in Section 4 |
+> | Coupled-kernel local estimate at length \(T^3\) | unproved |
+>
+> Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
+> A row is promoted from “under audit” only after the displayed convergence,
+> contour-shift, and reindexing arguments have all been supplied.
+
 ## 1. Statement and normalization
 
 Let
@@ -90,7 +103,15 @@ Use the following exact completed functional equation instead.
 Put
 
 \[
- \gamma(s)=\pi^{-s/2}\Gamma(s/2),\qquad
+ \Lambda(s)=\gamma(s)\zeta(s),\qquad
+ \gamma(s)=\pi^{-s/2}\Gamma(s/2),
+\tag{2.0}
+\]
+
+so that \(\Lambda\) is meromorphic with simple poles only at \(0\) and
+\(1\), and \(\Lambda(s)=\Lambda(1-s)\).  Also put
+
+\[
  G_t(z)=e^{z^2}
  \left(1-\frac{z^2}{s_t^2}\right)
  \left(1-\frac{z^2}{(1-s_t)^2}\right),
@@ -113,7 +134,9 @@ For \(x>0\), define
 \tag{2.3}
 \]
 
-Here is the contour derivation. Let
+### 2.1 Completion and pole cancellation
+
+Let
 
 \[
  \mathscr J_t=
@@ -122,12 +145,56 @@ Here is the contour derivation. Let
 \tag{2.3a}
 \]
 
-The four zeros in (2.1) cancel the poles at
-\(z=-s_t,1-s_t,s_t-1,s_t\). Shift (2.3a) to \(\Re z=-2\).
-The residue at \(z=0\) is
-\(\Lambda(s_t)\Lambda(1-s_t)\). On the new line, use
-\(\Lambda(s)=\Lambda(1-s)\), substitute \(z\mapsto-z\), and use the
-evenness of \(G_t\). The new-line integral is \(-\mathscr J_t\).
+The poles of \(\Lambda(s_t+z)\) occur at \(z=-s_t,1-s_t\), and those of
+\(\Lambda(1-s_t+z)\) occur at \(z=s_t-1,s_t\).  Respectively, they are
+cancelled by the zeros
+
+\[
+ 1-z^2/s_t^2\quad\hbox{at }-s_t,s_t,
+ \qquad
+ 1-z^2/(1-s_t)^2\quad\hbox{at }1-s_t,s_t-1.
+\]
+
+For \(V>0\), integrate around the rectangle with vertical sides
+\(\Re z=2,-2\) and horizontal sides \(\Im z=\pm V\).  Stirling's formula
+in fixed vertical strips, the polynomial vertical-strip bound for
+\(\zeta\), and
+\(|e^{(\sigma+iV)^2}|=e^{\sigma^2-V^2}\) give, uniformly for
+\(-2\leq\sigma\leq2\),
+
+\[
+ \left|G_t(\sigma+iV)
+ \Lambda(s_t+\sigma+iV)\Lambda(1-s_t+\sigma+iV)
+ /(\sigma+iV)\right|
+ \leq C_t(1+V)^{C_t}e^{-V^2}.
+\tag{2.3c}
+\]
+
+Consequently both horizontal integrals tend to zero as \(V\to\infty\).
+After the four cancellations above, the only pole inside the rectangle is
+the pole at \(z=0\) contributed by \(1/z\), with residue
+\(\Lambda(s_t)\Lambda(1-s_t)\).  Hence
+
+\[
+ \mathscr J_t=\Lambda(s_t)\Lambda(1-s_t)
+ +\frac1{2\pi i}\int_{(-2)}
+ G_t(z)\Lambda(s_t+z)\Lambda(1-s_t+z)\frac{dz}{z}.
+\tag{2.3d}
+\]
+
+On the last integral, use the functional equation and set \(z=-w\).
+The line \(\Re z=-2\), oriented upwards, becomes the line
+\(\Re w=2\), oriented downwards.  The evenness of \(G_t\) and the identity
+\(dz/z=dw/w\) therefore give
+
+\[
+ \frac1{2\pi i}\int_{(-2)}\cdots\frac{dz}{z}
+ =-\frac1{2\pi i}\int_{(2)}
+ G_t(w)\Lambda(s_t+w)\Lambda(1-s_t+w)\frac{dw}{w}
+ =-\mathscr J_t.
+\tag{2.3e}
+\]
+
 Consequently
 
 \[
@@ -135,10 +202,22 @@ Consequently
 \tag{2.3b}
 \]
 
-On \(\Re z=2\), both zeta factors in (2.3a) have absolutely convergent
-Dirichlet series. Expand them, divide (2.3b) by
-\(\gamma(s_t)\gamma(1-s_t)\), and interchange the absolutely convergent
-sum and integral. Swapping the two summation names gives the exact identity
+### 2.2 Absolute convergence and termwise expansion
+
+On \(\Re z=2\), both zeta factors have real part \(5/2\), and their
+Dirichlet series have the absolute majorant
+
+\[
+ \sum_{m,n\geq1}(mn)^{-5/2}=\zeta(5/2)^2<\infty.
+\tag{2.3f}
+\]
+
+For fixed \(t\), Stirling's formula makes the remaining vertical integrand
+a polynomial in \(1+|\Im z|\) times \(e^{-(\Im z)^2}\).  Thus (2.3f)
+and Tonelli's theorem justify expanding both zeta factors and interchanging
+the double series with the integral.  Dividing (2.3b) by
+\(\gamma(s_t)\gamma(1-s_t)\), then swapping the two summation names, gives
+the exact identity
 
 \[
 \boxed{
@@ -157,6 +236,52 @@ There is no error term in (2.4). For every \(A,j,k\geq0\), uniformly for
  \leq C_{A,j,k}\left(1+\frac{x}{T}\right)^{-A}.
 \tag{2.5}
 \]
+
+In particular, choosing any \(A>1/2\), the later double series has the
+direct absolute majorant
+
+\[
+ \begin{aligned}
+ \sum_{m,n\geq1}\frac1{\sqrt{mn}}
+ \left(1+\frac{mn}{T}\right)^{-A}
+ &=\sum_{v\geq1}\frac{d(v)}{\sqrt v}
+   \left(1+\frac vT\right)^{-A}<\infty.
+ \end{aligned}
+\tag{2.5a}
+\]
+
+Indeed, for any \(0<\epsilon<A-1/2\), the tail is bounded using
+\(d(v)\ll_\epsilon v^\epsilon\); the initial segment is finite.
+
+### 2.3 Uniform weight bounds
+
+Here are the details behind (2.5).  On a vertical line \(\Re z=c\),
+\(x^j\partial_x^j x^{-z}=(-z)(-z-1)\cdots(-z-j+1)x^{-z}\).
+Moreover, repeated \(t\)-differentiation of \(g_t(z)G_t(z)\) produces
+finite sums of products of:
+
+* that degree-\(j\) polynomial in \(z\);
+* differences of polygamma functions at arguments separated by \(z/2\);
+* derivatives of \(s_t^{-2}\) and \((1-s_t)^{-2}\).
+
+Uniform Stirling expansions for \(T\leq t\leq2T\), after splitting the
+vertical integral into \(|\Im z|\leq T/2\) and its Gaussian tail, give
+
+\[
+ \left|\partial_t^k\{G_t(z)g_t(z)\}\right|
+ \leq C_{c,j,k}T^{c-k}(1+|z|)^{C_{c,j,k}}
+ e^{-(\Im z)^2/2}.
+\tag{2.5b}
+\]
+
+For \(x\geq T\), shift (2.3) to \(\Re z=A\); no pole is crossed and
+(2.5b) gives \(x^jT^k|\partial_x^j\partial_t^kV_t(x)|
+\ll_{A,j,k}(T/x)^A\).  For \(x\leq T\), shift to a fixed line
+\(\Re z=-c\), \(0<c<1/4\).  When \(j=k=0\), the crossed residue is \(1\);
+when \(j+k>0\), it is zero (the \(x\)-multiplier vanishes at \(z=0\), or
+the residue \(G_t(0)g_t(0)=1\) is independent of \(t\)).  The new-line
+integral is \(O_{j,k}((x/T)^c)\).  These two estimates prove (2.5), with
+no factor \(T^{\epsilon_{j,k}}\).
 
 Expanding the mollifier in (2.4) gives the exact twisted-moment formula
 
@@ -261,6 +386,13 @@ For dyadic \(D,E,M_1,M_2\), let
 \]
 
 The countable sum in (3.3) is absolutely convergent by (2.5), and
+opening the two mollifier sums causes no convergence issue because they are
+finite.  For every fixed positive integer \(x\), only finitely many dyadic
+factors \(F_X(x)\) are nonzero (in fact at most three for the support in
+(3.1)).  Hence the four dyadic partitions may be inserted term by term and
+then interchanged with the absolutely convergent off-diagonal sum.  Equation
+(3.1) is an identity on \((0,\infty)\), so this reindexing produces neither
+an endpoint term nor a limiting boundary term.  Therefore
 
 \[
  I_{N,W}(T)=\mathcal D+
