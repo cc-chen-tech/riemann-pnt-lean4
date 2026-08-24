@@ -81,7 +81,9 @@ theorem summable_pntCarlsonDyadicLogFourthMajorant
       ‖pntCarlsonDyadicReciprocalRatio sigma‖ < 1 := by
     rw [Real.norm_eq_abs, abs_of_pos hratioPos]
     exact pntCarlsonDyadicReciprocalRatio_lt_one hhalf
-  simpa only [pntCarlsonDyadicLogFourthMajorant, ← mul_assoc] using
+  change Summable (fun n : ℕ =>
+    C * (n : ℝ) ^ 4 * pntCarlsonDyadicReciprocalRatio sigma ^ n)
+  simpa only [mul_assoc] using
     (summable_pow_mul_geometric_of_norm_lt_one
       (R := ℝ) 4 hratioNorm).mul_left C
 
