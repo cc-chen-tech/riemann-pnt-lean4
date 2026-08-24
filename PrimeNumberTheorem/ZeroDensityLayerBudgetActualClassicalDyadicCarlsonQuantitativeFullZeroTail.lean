@@ -43,7 +43,12 @@ lemma tendsto_classicalRealOrdinateFixedMajorant_zero :
       atTop (nhds 0) := by
     simpa only [Finset.sum_const_zero] using
       tendsto_finset_sum realZeros hterm
-  simpa [classicalRealOrdinateFixedMajorant, realZeros] using hsum
+  change Tendsto
+    (fun m : ℕ =>
+      ∑ rho ∈ realOrdinateNontrivialZerosFinset 0,
+        ‖pntRelativeZeroContribution (m : ℝ) rho‖)
+    atTop (nhds 0)
+  simpa only [realZeros] using hsum
 
 lemma eventually_dynamicRealOrdinatePNTZeroTailNorm_le_classicalFixedMajorant
     {H : ℝ → ℝ} (hHtop : Tendsto H atTop atTop) :
@@ -76,7 +81,15 @@ lemma tendsto_classicalDyadicCarlsonFullZeroTailMajorant_zero
   have hpositive :=
     tendsto_classicalDyadicCarlsonPositiveZeroTailMajorant_zero
       (D := D) hE heta hC hkappa hrate
-  simpa [classicalDyadicCarlsonFullZeroTailMajorant] using
+  change Tendsto
+    (fun m : ℕ =>
+      classicalDyadicCarlsonPositiveZeroTailMajorant
+          E eta C kappa D rate m +
+        classicalDyadicCarlsonPositiveZeroTailMajorant
+          E eta C kappa D rate m +
+        classicalRealOrdinateFixedMajorant m)
+    atTop (nhds 0)
+  simpa only [add_zero] using
     (hpositive.add hpositive).add
       tendsto_classicalRealOrdinateFixedMajorant_zero
 
