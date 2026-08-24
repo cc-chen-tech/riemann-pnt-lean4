@@ -100,8 +100,17 @@ def
   constant := certificate.constant
   constant_nonneg := certificate.constant_nonneg
   eventually_bound := by
-    simpa [actualSelectedHeightFiniteStripWeightedBalancedHeight] using
-      certificate.eventually_bound
+    change
+      ∀ᶠ x : ℝ in atTop,
+        |actualPNTExplicitFormulaRelativeRemainder
+            (carlsonPolynomialHeight
+              (actualSelectedHeightFiniteStripWeightedBalancedExponent
+                beta sigma tau)) x| ≤
+          certificate.constant *
+            x ^ (-actualSelectedHeightFiniteStripWeightedBalancedExponent
+              beta sigma tau) *
+            (1 + Real.log x) ^ (2 : ℕ)
+    exact certificate.eventually_bound
 
 /--
 Weighted unified transfer from the standard uniform polynomial-height

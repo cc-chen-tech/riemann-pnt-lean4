@@ -27,8 +27,12 @@ theorem classicalBalancedHeightBase_tendsto_atTop {b : ℝ} (hb : 0 < b) :
         (fun x : ℝ => Real.sqrt b * Real.sqrt (Real.log x))
         atTop atTop :=
     hsqrtLog.const_mul_atTop (Real.sqrt_pos.2 hb)
-  simpa [classicalBalancedHeightBase] using
-    Real.tendsto_exp_atTop.comp hscaled
+  change
+    Tendsto
+      (Real.exp ∘ fun x : ℝ =>
+        Real.sqrt b * Real.sqrt (Real.log x))
+      atTop atTop
+  exact Real.tendsto_exp_atTop.comp hscaled
 
 /-- The selected height lies eventually in the optimal unit window. -/
 theorem eventually_selectedClassicalBalancedGoodHeight_mem

@@ -229,11 +229,18 @@ theorem unified_actualBalancedHeight_of_monotoneRoundedStripProfile
   have hradius :
       (0 : ℝ) < 2 * benchmark.optimalRobustMargin beta := by
     linarith
-  simpa using
+  dsimp only
+  obtain ⟨hresult, hbalanced, hmargin, hscale⟩ :=
     unified_actualBalancedHeight_of_stripAlphaCeilingCoverage
       (beta := beta) (epsilon := 0)
       threshold hhalf hlt hbeta hbetaOne candidates hne benchmark
       hcandidate hsigma hsigmaOne le_rfl hcoverage hradius
       selection input kappa hS hfixedSigma hkappa hnorm hre hreal hmain
+  refine ⟨hresult, ?_, ?_, ?_⟩
+  · simpa only [zero_div, add_zero] using hbalanced
+  · simpa only [zero_div, add_zero] using hmargin
+  intro x hx
+  change x ^ benchmark.balancedExponent beta ≤ _
+  simpa only [zero_div, sub_zero] using hscale x hx
 
 end PrimeNumberTheorem

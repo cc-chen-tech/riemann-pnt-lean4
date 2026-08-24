@@ -185,9 +185,11 @@ theorem
       ActualSelectedHeightNaturalPointRemainderCertificate beta
         (actualSelectedHeightFiniteStripWeightedBalancedGoodHeight
           beta sigma tau selection) := by
-    simpa [actualSelectedHeightFiniteStripWeightedBalancedGoodHeight, alpha] using
-      selectedUniformGoodHeight_actualNaturalRemainderCertificate
-        hbeta halpha halphaOne hmargin selection
+    change
+      ActualSelectedHeightNaturalPointRemainderCertificate beta
+        (selectedUniformGoodHeight alpha selection)
+    exact selectedUniformGoodHeight_actualNaturalRemainderCertificate
+      hbeta halpha halphaOne hmargin selection
   exact
     ⟨exists_fixedRate_parametricTwoStrip_relativeChebyshevPsi0Error_tendsto
         threshold hhalf hlt,
