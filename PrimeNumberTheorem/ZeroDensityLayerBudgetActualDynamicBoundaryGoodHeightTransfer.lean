@@ -68,10 +68,16 @@ theorem actualDynamicBoundaryCanonicalSelectedGoodHeight_spec
       (selectedUniformGoodHeight_tendsto_atTop halpha
         uniformNaturalPointGoodHeightSelection).comp
           tendsto_natCast_atTop_atTop
-  · simpa [actualDynamicBoundaryCanonicalSelectedGoodHeight] using
-      selectedUniformGoodHeight_actualNaturalRemainderCertificate
-        hbeta halpha halphaOne hcontourMargin
-          uniformNaturalPointGoodHeightSelection
+  · have hheight_eq :
+        actualDynamicBoundaryCanonicalSelectedGoodHeight alpha =
+          selectedUniformGoodHeight alpha
+            uniformNaturalPointGoodHeightSelection := by
+      funext x
+      rfl
+    rw [hheight_eq]
+    exact selectedUniformGoodHeight_actualNaturalRemainderCertificate
+      hbeta halpha halphaOne hcontourMargin
+        uniformNaturalPointGoodHeightSelection
 
 /-- Fully automatic upper transfer at the canonical selected good height.
 

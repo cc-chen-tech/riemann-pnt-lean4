@@ -176,7 +176,12 @@ lemma tendsto_classicalDyadicCarlsonMiddleMajorant_zero
     (hC : 0 ≤ C) (hkappa : 0 < kappa) (hrate : 0 < rate) :
     Tendsto (classicalDyadicCarlsonMiddleMajorant C kappa D rate)
       atTop (nhds 0) := by
-  simpa [classicalDyadicCarlsonMiddleMajorant] using
+  change Tendsto
+    (fun m : ℕ =>
+      classicalSevenEighthsLowMajorant C kappa m +
+        classicalDyadicCarlsonSqrtLogMajorant D rate m)
+    atTop (nhds 0)
+  simpa only [add_zero] using
     (tendsto_classicalSevenEighthsLowMajorant_zero hC hkappa).add
       (tendsto_classicalDyadicCarlsonSqrtLogMajorant_zero D hrate)
 
