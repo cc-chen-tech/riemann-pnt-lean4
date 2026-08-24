@@ -1969,7 +1969,6 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.pntDyadicReciprocalWeightedCount_nonneg",
     "PrimeNumberTheorem.summable_pntDyadicReciprocalWeightedCount_of_eventually_le",
     "PrimeNumberTheorem.actualCarlsonDyadicCount_nonneg",
-    "PrimeNumberTheorem.dyadic_rpow_div_eq_carlsonDyadicReciprocalRatio",
     "PrimeNumberTheorem.carlsonDyadicModel_div_eq_logFourthMajorant",
     "PrimeNumberTheorem.CarlsonEventualMajorant.eventually_actualCarlsonDyadicReciprocalCount_le",
     "PrimeNumberTheorem.CarlsonEventualMajorant.summable_actualCarlsonDyadicReciprocalCount",
