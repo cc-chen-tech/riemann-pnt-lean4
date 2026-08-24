@@ -38,8 +38,11 @@ theorem finiteVisibleClusterCoefficientMass_map_highPositive_eq
   rw [Finset.sum_map]
   apply Finset.sum_congr rfl
   intro rho _
-  simp [actualCarlsonHighPositiveZeroValueEmbedding,
-    actualCarlsonPositiveZeroWeight_eq_coefficient,
+  change
+    (analyticOrderNatAt riemannZeta rho.1 : ℝ) / ‖rho.1‖ =
+      actualCarlsonPositiveZeroWeight
+        (actualCarlsonPositiveZeroIndexOf rho)
+  rw [actualCarlsonPositiveZeroWeight_eq_coefficient,
     actualCarlsonPositiveZero_indexOf]
 
 /--
@@ -104,8 +107,14 @@ theorem finiteVisibleClusterCoefficientMass_le_actualCarlsonPositiveZeroWeight_t
     E.attach.map lift
   have hvalues :
       s.map (actualCarlsonHighPositiveZeroValueEmbedding sigma) = E := by
-    ext rho
-    simp [s, lift, actualCarlsonHighPositiveZeroValueEmbedding]
+    dsimp only [s]
+    rw [Finset.map_map]
+    have hemb :
+        lift.trans (actualCarlsonHighPositiveZeroValueEmbedding sigma) =
+          Function.Embedding.subtype (fun rho => rho ∈ E) := by
+      ext rho
+      rfl
+    rw [hemb, Finset.attach_map_val]
   rw [← hvalues]
   exact
     finite_actualCarlsonHighPositiveZeroCoefficientMass_le_tsum

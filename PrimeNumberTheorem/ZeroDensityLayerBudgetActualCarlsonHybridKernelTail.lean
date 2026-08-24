@@ -73,7 +73,14 @@ theorem actualCarlsonHybridNormalizedKernelMajorant_tendsto_zero
   have hhigh :=
     actualCarlsonOutsideClusterNormalizedKernelTail_tendsto_zero
       S hhalf hone hreHigh
-  simpa [actualCarlsonHybridNormalizedKernelMajorant] using hlowNat.add hhigh
+  change Tendsto
+    (fun m : ℕ =>
+      |dynamicPositiveOutsideClusterPNTLayerNorm
+          (carlsonPolynomialHeight alpha) S input i (m : ℝ)| /
+          targetZeroPowerAmplitude beta (m : ℝ) +
+        actualCarlsonOutsideClusterNormalizedKernelTail beta S m)
+    atTop (nhds 0)
+  simpa only [zero_add] using hlowNat.add hhigh
 
 end
 
