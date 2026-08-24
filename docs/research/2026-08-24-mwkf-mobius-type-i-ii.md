@@ -515,3 +515,11 @@ using only \(c\ne0\) and the phase \(e(crv/s)-1\); no separate \(c=0\)
 estimate is required.  The determinant range also has no \(v=0\) solution.
 Any Type-I/II or spectral step applied after completion must preserve this
 centered difference.
+
+Equivalently, group \(a=cv\) and retain the exact coefficient family
+\(\Gamma_{r,s,\epsilon}(a)\) from the coefficient-first note.  The active
+balanced input is then the pair CMT\(_{\epsilon,1/1000}\), with
+\(|a|\ll T\mathscr L^{2C}\), phase \(e(ar/s)-1\), and target
+\(T^{4-1/1000}\).  A Type-I/II proof must act on this
+\((r,s)\)-dependent divisor convolution rather than replace it by an
+arbitrary \(a\)-coefficient.

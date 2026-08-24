@@ -103,7 +103,23 @@ class FareyCompletionScales:
     square_root_margin: Fraction
     generic_bcr_bound: Fraction
     generic_bcr_deficit: Fraction
+    optimistic_distinct_large_sieve_bound: Fraction
+    optimistic_distinct_large_sieve_deficit: Fraction
+    fraction_multiplicity_exponent: Fraction
+    separated_additive_large_sieve_bound: Fraction
+    separated_additive_large_sieve_deficit: Fraction
     zero_residue_forces_centering: bool
+
+
+@dataclass(frozen=True)
+class MobiusTraceFunctionAudit:
+    length_margin: Fraction
+    length_hypothesis: bool
+    modulus_is_prime: bool
+    trace_is_nonexceptional: bool
+    theorem_applicable: bool
+    power_target_covered: bool
+    reasons: tuple[str, ...]
 
 
 def _positive_part(value: Fraction) -> Fraction:
@@ -305,6 +321,19 @@ def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
         + large_a
     )
     generic_bcr_bound = max(bcr_term_1, bcr_term_2)
+    optimistic_large_sieve_bound = (
+        box.rho
+        + box.sigma
+        + product_frequency
+        + max(box.rho, 2 * box.sigma)
+    ) / 2
+    # Fractions a/s need not be reduced.  A fixed reduced fraction can have
+    # up to T^product_frequency representatives in the (a,s) box.  Combining
+    # duplicate points by Cauchy costs half that exponent.
+    fraction_multiplicity = product_frequency
+    additive_large_sieve_bound = (
+        optimistic_large_sieve_bound + fraction_multiplicity / 2
+    )
     return FareyCompletionScales(
         v=v,
         residue_frequency=residue_frequency,
@@ -317,7 +346,60 @@ def farey_completion_scales(box: ExponentBox) -> FareyCompletionScales:
         square_root_margin=normalized_target - volume / 2,
         generic_bcr_bound=generic_bcr_bound,
         generic_bcr_deficit=generic_bcr_bound - normalized_target,
+        optimistic_distinct_large_sieve_bound=(
+            optimistic_large_sieve_bound
+        ),
+        optimistic_distinct_large_sieve_deficit=(
+            optimistic_large_sieve_bound - normalized_target
+        ),
+        fraction_multiplicity_exponent=fraction_multiplicity,
+        separated_additive_large_sieve_bound=additive_large_sieve_bound,
+        separated_additive_large_sieve_deficit=(
+            additive_large_sieve_bound - normalized_target
+        ),
         zero_residue_forces_centering=box.ell < box.sigma,
+    )
+
+
+def mobius_trace_function_audit(
+    box: ExponentBox,
+    *,
+    modulus_is_prime: bool,
+    trace_is_nonexceptional: bool,
+) -> MobiusTraceFunctionAudit:
+    """Audit Korolev--Shparlinski Theorem 2.1 against a CFK slice.
+
+    The theorem treats a prime modulus, a nonexceptional bounded-
+    conductor trace function, and a Möbius interval longer than
+    ``p^(1/2+epsilon)``.  Its conclusion saves one logarithm (up to
+    ``loglog``), not a fixed power.  The CFK phase in the ``r`` variable is
+    linear additive, ``e(c*v*r/s)``, which belongs to the exceptional class
+    explicitly excluded by the theorem; its modulus ``s`` also varies over
+    general squarefree integers.
+    """
+    length_margin = box.rho - box.sigma / 2
+    length_hypothesis = length_margin > 0
+    reasons: list[str] = []
+    if not modulus_is_prime:
+        reasons.append("requires_prime_modulus")
+    if not trace_is_nonexceptional:
+        reasons.append("linear_additive_trace_is_exceptional")
+    if not length_hypothesis:
+        reasons.append("interval_not_beyond_square_root")
+    reasons.append("only_logarithmic_saving")
+    theorem_applicable = (
+        modulus_is_prime
+        and trace_is_nonexceptional
+        and length_hypothesis
+    )
+    return MobiusTraceFunctionAudit(
+        length_margin=length_margin,
+        length_hypothesis=length_hypothesis,
+        modulus_is_prime=modulus_is_prime,
+        trace_is_nonexceptional=trace_is_nonexceptional,
+        theorem_applicable=theorem_applicable,
+        power_target_covered=False,
+        reasons=tuple(reasons),
     )
 
 

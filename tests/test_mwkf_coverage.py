@@ -16,6 +16,7 @@ from scripts.audit_mwkf_coverage import (
     h_poisson_shifted_scales,
     h_poisson_subbox_scales,
     joint_phase_scales,
+    mobius_trace_function_audit,
     route_box,
     wright_fixed_factor_adapter,
 )
@@ -165,7 +166,29 @@ def test_finite_residue_completion_has_exact_hard_box_gate() -> None:
     assert scales.square_root_margin == F(499, 1000)
     assert scales.generic_bcr_bound == F(67, 10)
     assert scales.generic_bcr_deficit == F(2701, 1000)
+    assert scales.optimistic_distinct_large_sieve_bound == F(13, 2)
+    assert scales.optimistic_distinct_large_sieve_deficit == F(2501, 1000)
+    assert scales.fraction_multiplicity_exponent == F(1)
+    assert scales.separated_additive_large_sieve_bound == F(7)
+    assert scales.separated_additive_large_sieve_deficit == F(3001, 1000)
     assert scales.zero_residue_forces_centering
+
+
+def test_mobius_trace_theorem_rejects_the_centered_cfk_family() -> None:
+    audit = mobius_trace_function_audit(
+        boundary_witnesses()["balanced_max_a"],
+        modulus_is_prime=False,
+        trace_is_nonexceptional=False,
+    )
+    assert audit.length_margin == F(3, 2)
+    assert audit.length_hypothesis
+    assert not audit.theorem_applicable
+    assert not audit.power_target_covered
+    assert audit.reasons == (
+        "requires_prime_modulus",
+        "linear_additive_trace_is_exceptional",
+        "only_logarithmic_saving",
+    )
 
 
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
@@ -185,6 +208,11 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
         r"2701/1000",
         r"\sum_{c\bmod s}\Omega(c)=0",
         r"e(crv/s)-1",
+        "linear_additive_trace_is_exceptional",
+        r"\mathrm{CMT}_{\epsilon,1/1000}",
+        r"\Gamma_{r,s,\epsilon}(a)",
+        r"2501/1000",
+        "fraction can occur with multiplicity",
         "## 4. Wright fixed-factor adapter",
         "## 5. Exact residual witnesses",
         "published coverage result: residual cells remain",

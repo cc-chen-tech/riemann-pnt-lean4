@@ -399,3 +399,34 @@ signed weight, \(G(0)=0\), hence
 Thus CFK may be posed with nonzero residue frequencies only, provided the
 centered phase is retained.  The determinant cell \(v=0\) is independently
 empty because \(0<|\delta|<s\).
+
+Korolev--Shparlinski Theorem 2.1 does not cover this centered family.  Its
+prime-modulus and nonexceptional-trace hypotheses fail because \(s\) is a
+general squarefree modulus and \(e(cvr/s)\) is precisely an
+exceptional linear additive trace.  The adapter returns
+`linear_additive_trace_is_exceptional`; moreover the theorem supplies only
+\(X(\log\log p)/(\log p)\), not the power saving needed to move the CFK
+ambient exponent from \(7\) below \(4\).
+
+Finally, grouping the nonzero completion variables by \(a=cv\) gives the
+exact coefficient
+
+\[
+ \Gamma_{r,s,\epsilon}(a)
+ =\sum_{\substack{c\mid a\\c\in\mathcal C_s\setminus\{0\}}}
+ \Omega_{r,s,a/c,\epsilon}(c)
+\]
+
+and reduces CFK to the two centered trilinear sums
+\(\mathrm{CMT}_{\epsilon,1/1000}\) in \((r,s,a)\), with
+\(|a|\ll T\mathscr L^{2C}\) and phase \(e(ar/s)-1\).  This is an
+exact finite reindexing, but \(\Gamma\) depends on \((r,s)\), so it is not
+an arbitrary separated third-variable coefficient covered by BCR.
+
+The additive large sieve is no substitute.  Under the optimistic fiction
+that all \(a/s\) are distinct it gives exponent \(13/2\), still
+\(2501/1000\) above the target.  Since \((a,s)\) is unrestricted, a reduced
+fraction can occur with multiplicity as large as \(T\); the resulting
+Cauchy cost \(T^{1/2}\) returns exponent \(7\), with deficit
+\(3001/1000\).  This calculation already assumes separated coefficients,
+which the actual \(\Gamma_{r,s,\epsilon}\) are not.

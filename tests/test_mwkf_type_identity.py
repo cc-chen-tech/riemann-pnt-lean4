@@ -2,11 +2,14 @@ from fractions import Fraction as F
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.mwkf_mobius_type_identity import (
     c_u,
     centered_completion_via_orthogonality,
+    centered_product_frequency_coefficients,
     crt_reciprocity_numerators,
     double_split_mobius_identity,
     determinant_lattice_solution,
@@ -148,6 +151,24 @@ def test_centered_completion_subtracts_the_origin_for_general_weights() -> None:
         assert centered_completion_via_orthogonality(
             values, residue=residue
         ) == value - values[0]
+
+
+def test_centered_product_frequencies_group_without_loss() -> None:
+    grouped = centered_product_frequency_coefficients(
+        (
+            (1, 2, F(3)),
+            (2, 1, F(5)),
+            (-1, -2, F(7)),
+            (-2, 1, F(11)),
+            (3, 0, F(101)),
+        )
+    )
+    assert grouped == {2: F(15), -2: F(11)}
+
+
+def test_centered_product_grouping_rejects_a_zero_completion_frequency() -> None:
+    with pytest.raises(ValueError, match="completion frequency c"):
+        centered_product_frequency_coefficients(((0, 3, F(1)),))
 
 
 def test_one_third_split_has_exact_balanced_scales() -> None:

@@ -848,3 +848,164 @@ cell is empty.  Thus neither dual variable has an independent zero-mode
 obligation.  The missing CFK estimate is now a genuinely nonzero,
 centered Möbius--Farey sum; the subtraction in (12.11) must be retained
 when invoking a spectral or dispersion estimate.
+
+## 13. Exact rejection of the single-trace Möbius theorem
+
+For fixed \((s,c,v)\), the arithmetic phase in (12.11), as a function of
+\(r\), is the linear additive trace
+
+\[
+ \mathcal K_{s,c,v}(r)=e\left(\frac{cvr}{s}\right).
+\tag{13.1}
+\]
+
+Korolev--Shparlinski, arXiv:1804.01337, Theorem 2.1, gives
+
+\[
+ \sum_{n\leq X}\mu(n)\mathcal K(n)
+ \ll_\varepsilon X\frac{\log\log p}{\log p}
+\tag{13.2}
+\]
+
+when \(p\) is prime, \(X\geq p^{1/2+\varepsilon}\),
+and \(\mathcal K\) is a nonexceptional bounded-conductor trace function.
+The paper explicitly excludes functions proportional to
+\(e(an/p)\chi(n)\).  The complete hypothesis audit for (13.1) is:
+
+| hypothesis of Theorem 2.1 | centered CFK realization | result |
+|---|---|---|
+| \(X\geq p^{1/2+\varepsilon}\) | \(R=T^3\), \(s\asymp T^3\) | satisfied with exponent margin \(3/2\) |
+| prime modulus | \(s\) ranges over general squarefree integers | fails |
+| nonexceptional trace | \(e(cvr/s)\) is linear additive | fails explicitly |
+| power saving | conclusion (13.2) saves one logarithm | does not cover CFK |
+
+Even a formal application of (13.2) to each \((s,c,v)\) would replace
+the ambient \(T^7\) only by \(T^7(\log T)^{-1}\log\log T\), whereas CFK
+requires \(T^{4-1/1000}\).  The centered subtraction does not change the
+exceptional trace classification.  The exact-rational rejection is encoded
+by `mobius_trace_function_audit`, whose hard-box reason tuple is
+
+```
+requires_prime_modulus
+linear_additive_trace_is_exceptional
+only_logarithmic_saving
+```
+
+Thus the available single-Möbius trace theorem is not the missing
+two-Möbius dispersion estimate.
+
+## 14. Collapse to two centered Möbius trilinear sums
+
+Choose the symmetric complete residue system
+
+\[
+ \mathcal C_s=\{c\in\mathbb Z:-s/2<c\leq s/2\}.
+\tag{14.1}
+\]
+
+In (12.11), \(c\ne0\), and the term \(v=0\) vanishes because its centered
+phase is \(e(0)-1=0\).  Hence every surviving pair has a nonzero product
+\(a=cv\).  For \(a\ne0\), define the exact coefficient family
+
+\[
+ \boxed{
+ \Gamma_{r,s,\epsilon}(a)
+ :=\sum_{\substack{c\mid a\\
+                    c\in\mathcal C_s\setminus\{0\}}}
+ \Omega_{r,s,a/c,\epsilon}(c).}
+\tag{14.2}
+\]
+
+Finite grouping by \(a=cv\), with no absolute value, turns (12.11) into
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak D_{q,\epsilon}
+ ={}&\sum_{\substack{r\asymp R,\ s\asymp S\\
+                      (r,s)=1,\ (q,rs)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)\frac Ss\\
+ &\quad\times\sum_{a\ne0}
+ \Gamma_{r,s,\epsilon}(a)
+ \left\{e\left(\frac{ar}{s}\right)-1\right\}.
+\end{aligned}}
+\tag{14.3}
+\]
+
+The finite version of this reindexing is checked by
+`centered_product_frequency_coefficients`.  Equation (12.6) gives, for
+every fixed \(A\), the explicit coefficient majorant
+
+\[
+ |\Gamma_{r,s,\epsilon}(a)|
+ \ll_{A,W}
+ \sum_{\substack{c\mid a\\0<|c|\leq s/2}}
+ \left(1+\frac{L|c|}{s}\right)^{-A}
+ \left(1+\frac{H|a/c|}{s}\right)^{-A}.
+\tag{14.4}
+\]
+
+Thus its effective product-frequency range is
+
+\[
+ 0<|a|\ll\frac{S^2}{LH}\mathscr L^{2C}.
+\tag{14.5}
+\]
+
+At the balanced hard box, (14.5) is \(|a|\ll T\mathscr L^{2C}\).
+The final local input can therefore be stated as exactly two trilinear
+inequalities, one for each sign:
+
+\[
+\boxed{
+\mathrm{CMT}_{\epsilon,1/1000}:\qquad
+ \left|
+ \sum_{r,s}\mu(r)\mu(s)p_N(qr)p_N(qs)\frac Ss
+ \sum_{a\ne0}\Gamma_{r,s,\epsilon}(a)
+ \{e(ar/s)-1\}
+ \right|
+ \ll_W T^{4-1/1000}.}
+\tag{14.6}
+\]
+
+CMT is equivalent to the corresponding CFK bound, not a stronger
+termwise requirement.  Its ambient \((r,s,a)\)-exponent is still \(7\).
+The decisive structure is that \(\Gamma_{r,s,\epsilon}(a)\) is the
+divisor convolution (14.2), depends on \((r,s)\), and appears only against
+the centered phase inherited from (12.10).  Treating it as an arbitrary
+separated coefficient is not a valid theorem adapter; even the optimistic
+separated
+Bettin--Chandee exponent remains \(67/10\), with deficit \(2701/1000\).
+Consequently the unconditional asymptotic is now reduced to the two
+explicit centered Möbius trilinear estimates (14.6), plus the already
+separate analytic-tail obligation.
+
+For completeness, the ordinary additive large sieve does not close
+(14.6).  If one first replaces \(\Gamma_{r,s,\epsilon}(a)\) by separated
+coefficients and also pretends that all fractions \(a/s\) are distinct,
+the standard spacing \(\|a_1/s_1-a_2/s_2\|\geq(4S^2)^{-1}\) gives the
+exponent
+
+\[
+ \frac\rho2+\frac{\sigma+1}{2}
+ +\frac{\max(\rho,2\sigma)}2
+ =\frac{13}{2}.
+\tag{14.7}
+\]
+
+Even this optimistic value exceeds the CMT target by \(2501/1000\).
+Moreover the actual fractions are not reduced.  A fixed reduced fraction
+can have up to \(T^1\) representatives \((a,s)=g(a',s')\) in the hard
+box; combining duplicates by Cauchy costs \(T^{1/2}\).  The honest
+separated large-sieve ledger therefore returns exponent
+
+\[
+ \frac{13}{2}+\frac12=7,
+\tag{14.8}
+\]
+
+which is the ambient exponent and misses the target by \(3001/1000\).
+This calculation still ignores the genuine \((r,s)\)-dependence of
+\(\Gamma\) and the centered constant term, so it is only a rejection
+ledger, not a bound for CMT.  These exact values are recorded in
+`farey_completion_scales`.

@@ -246,6 +246,31 @@ def centered_completion_via_orthogonality(
     return total / modulus
 
 
+def centered_product_frequency_coefficients(
+    terms: tuple[tuple[int, int, int | Fraction], ...],
+) -> dict[int, Fraction]:
+    """Group a centered ``(c,v)`` sum exactly by ``a=c*v``.
+
+    The centered completion has no ``c=0`` term and carries the phase
+    ``e(c*v*r/s)-1``.  Terms with ``v=0`` therefore vanish identically.
+    Every remaining pair has a nonzero integer product, so finite
+    reindexing gives one coefficient for each product frequency ``a``.
+    """
+    grouped: dict[int, Fraction] = {}
+    for c, v, weight in terms:
+        if c == 0:
+            raise ValueError("completion frequency c must be nonzero")
+        if v == 0:
+            continue
+        product = c * v
+        new_weight = grouped.get(product, Fraction(0)) + Fraction(weight)
+        if new_weight:
+            grouped[product] = new_weight
+        else:
+            grouped.pop(product, None)
+    return grouped
+
+
 @dataclass(frozen=True)
 class TypeScaleBounds:
     u_exp: Fraction
