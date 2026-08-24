@@ -17,7 +17,12 @@ lemma tendsto_classicalDyadicCarlsonThetaMiddleMajorant_zero
     Tendsto
       (classicalDyadicCarlsonThetaMiddleMajorant C kappa D rate theta)
       atTop (nhds 0) := by
-  simpa [classicalDyadicCarlsonThetaMiddleMajorant] using
+  change Tendsto
+    (fun m : ℕ =>
+      classicalSevenEighthsLowMajorant C kappa m +
+        classicalDyadicCarlsonThetaSqrtLogMajorant D rate theta m)
+    atTop (nhds 0)
+  simpa only [add_zero] using
     (tendsto_classicalSevenEighthsLowMajorant_zero hC hkappa).add
       (tendsto_classicalDyadicCarlsonThetaSqrtLogMajorant_zero
         D hrate htheta)
@@ -37,7 +42,14 @@ lemma tendsto_classicalDyadicCarlsonThetaPositiveZeroTailMajorant_zero
     Tendsto
       (classicalDyadicCarlsonThetaPositiveZeroTailMajorant
         E eta C kappa D rate theta) atTop (nhds 0) := by
-  simpa [classicalDyadicCarlsonThetaPositiveZeroTailMajorant] using
+  change Tendsto
+    (fun m : ℕ =>
+      (classicalCriticalHalfMajorant E eta m +
+        classicalDyadicCarlsonThetaMiddleMajorant
+          C kappa D rate theta m) +
+      classicalDyadicCarlsonThetaSqrtLogMajorant D rate theta m)
+    atTop (nhds 0)
+  simpa only [add_zero] using
     ((tendsto_classicalCriticalHalfMajorant_zero hE heta).add
       (tendsto_classicalDyadicCarlsonThetaMiddleMajorant_zero
         hC hkappa hrate htheta)).add
@@ -63,7 +75,15 @@ lemma tendsto_classicalDyadicCarlsonThetaFullZeroTailMajorant_zero
   have hpositive :=
     tendsto_classicalDyadicCarlsonThetaPositiveZeroTailMajorant_zero
       (D := D) hE heta hC hkappa hrate htheta
-  simpa [classicalDyadicCarlsonThetaFullZeroTailMajorant] using
+  change Tendsto
+    (fun m : ℕ =>
+      classicalDyadicCarlsonThetaPositiveZeroTailMajorant
+          E eta C kappa D rate theta m +
+        classicalDyadicCarlsonThetaPositiveZeroTailMajorant
+          E eta C kappa D rate theta m +
+        classicalRealOrdinateFixedMajorant m)
+    atTop (nhds 0)
+  simpa only [add_zero] using
     (hpositive.add hpositive).add
       tendsto_classicalRealOrdinateFixedMajorant_zero
 
@@ -92,9 +112,23 @@ lemma tendsto_classicalDyadicCarlsonThetaClosedFormFullPNTErrorMajorant_zero
   have hremainder : Tendsto
       (classicalAdmissibleClosedFormNaturalRemainderMajorant b selection)
       atTop (nhds 0) := by
-    simpa [classicalAdmissibleClosedFormNaturalRemainderMajorant] using
+    change Tendsto
+      (fun m : ℕ =>
+        cofinalPNTZeroDepthRelativeRemainderMajorant selection.constant
+            (classicalAdmissibleBalancedRate b) m +
+          classicalClosedLogRelativeMajorant m)
+      atTop (nhds 0)
+    simpa only [add_zero] using
       hcontour.add tendsto_classicalClosedLogRelativeMajorant_zero
-  simpa [classicalDyadicCarlsonThetaClosedFormFullPNTErrorMajorant] using
+  change Tendsto
+    (fun m : ℕ =>
+      classicalDyadicCarlsonThetaFullZeroTailMajorant
+          E eta C kappa D rate theta m +
+        |actualPNTClosedRealAxisRelativeTerm (m : ℝ)| +
+        classicalAdmissibleClosedFormNaturalRemainderMajorant
+          b selection m)
+    atTop (nhds 0)
+  simpa only [add_zero] using
     (hzeros.add
       tendsto_abs_actualPNTClosedRealAxisRelativeTerm_natural_zero).add
       hremainder
