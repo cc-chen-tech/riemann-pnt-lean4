@@ -2,12 +2,12 @@
 
 > **Current proof status.**
 >
-> | component | status in this note |
+> | Component | Status |
 > |---|---|
-> | LCM main quadratic form | proved separately; its normalization is rechecked below |
-> | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
+> | LCM main quadratic form | proved separately |
+> | Exact AFE and shifted-divisor identity | under audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | under audit in Section 4 |
-> | Coupled-kernel local estimate at length \(T^3\) | unproved |
+> | MWKF local estimate | unproved |
 >
 > Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
 > A row is promoted from “under audit” only after the displayed convergence,
@@ -146,17 +146,22 @@ Let
 \]
 
 The poles of \(\Lambda(s_t+z)\) occur at \(z=-s_t,1-s_t\), and those of
-\(\Lambda(1-s_t+z)\) occur at \(z=s_t-1,s_t\).  Respectively, they are
-cancelled by the zeros
+\(\Lambda(1-s_t+z)\) occur at \(z=s_t-1,s_t\).  In that order, they are
+cancelled by the following zeros:
 
 \[
- 1-z^2/s_t^2\quad\hbox{at }-s_t,s_t,
- \qquad
- 1-z^2/(1-s_t)^2\quad\hbox{at }1-s_t,s_t-1.
+ \begin{array}{c|c}
+ \text{pole} & \text{zero of }G_t\\ \hline
+ -s_t & 1-z^2/s_t^2\\
+ 1-s_t & 1-z^2/(1-s_t)^2\\
+ s_t-1=-(1-s_t) & 1-z^2/(1-s_t)^2\\
+ s_t & 1-z^2/s_t^2
+ \end{array}
 \]
 
-For \(V>0\), integrate around the rectangle with vertical sides
-\(\Re z=2,-2\) and horizontal sides \(\Im z=\pm V\).  Stirling's formula
+For \(V>2t+2\), use the positively oriented rectangle with vertices
+\(-2-iV,2-iV,2+iV,-2+iV\).  Its right side is traversed upward and its
+left side downward.  Stirling's formula
 in fixed vertical strips, the polynomial vertical-strip bound for
 \(\zeta\), and
 \(|e^{(\sigma+iV)^2}|=e^{\sigma^2-V^2}\) give, uniformly for
@@ -204,8 +209,9 @@ Consequently
 
 ### 2.2 Absolute convergence and termwise expansion
 
-On \(\Re z=2\), both zeta factors have real part \(5/2\), and their
-Dirichlet series have the absolute majorant
+On \(\Re z=2\), the two zeta arguments satisfy
+\(\Re(s_t+z)=\Re(1-s_t+z)=5/2\), and their Dirichlet series have the
+absolute majorant
 
 \[
  \sum_{m,n\geq1}(mn)^{-5/2}=\zeta(5/2)^2<\infty.
@@ -255,33 +261,113 @@ Indeed, for any \(0<\epsilon<A-1/2\), the tail is bounded using
 
 ### 2.3 Uniform weight bounds
 
-Here are the details behind (2.5).  On a vertical line \(\Re z=c\),
-\(x^j\partial_x^j x^{-z}=(-z)(-z-1)\cdots(-z-j+1)x^{-z}\).
-Moreover, repeated \(t\)-differentiation of \(g_t(z)G_t(z)\) produces
-finite sums of products of:
-
-* that degree-\(j\) polynomial in \(z\);
-* differences of polygamma functions at arguments separated by \(z/2\);
-* derivatives of \(s_t^{-2}\) and \((1-s_t)^{-2}\).
-
-Uniform Stirling expansions for \(T\leq t\leq2T\), after splitting the
-vertical integral into \(|\Im z|\leq T/2\) and its Gaussian tail, give
+Here are the derivatives entering (2.5).  Put the signed falling-factorial
+polynomial
 
 \[
- \left|\partial_t^k\{G_t(z)g_t(z)\}\right|
- \leq C_{c,j,k}T^{c-k}(1+|z|)^{C_{c,j,k}}
- e^{-(\Im z)^2/2}.
+ P_j(z)=\prod_{r=0}^{j-1}(-z-r),\qquad P_0(z)=1.
+\]
+
+Differentiation under the absolutely convergent Mellin integral gives
+
+\[
+ x^j\partial_x^j\partial_t^kV_t(x)=\frac1{2\pi i}\int_{(2)}
+ P_j(z)\partial_t^k\!\left(G_t(z)g_t(z)\right)
+ x^{-z}\frac{dz}{z}.
 \tag{2.5b}
 \]
 
-For \(x\geq T\), shift (2.3) to \(\Re z=A\); no pole is crossed and
-(2.5b) gives \(x^jT^k|\partial_x^j\partial_t^kV_t(x)|
-\ll_{A,j,k}(T/x)^A\).  For \(x\leq T\), shift to a fixed line
-\(\Re z=-c\), \(0<c<1/4\).  When \(j=k=0\), the crossed residue is \(1\);
-when \(j+k>0\), it is zero (the \(x\)-multiplier vanishes at \(z=0\), or
-the residue \(G_t(0)g_t(0)=1\) is independent of \(t\)).  The new-line
-integral is \(O_{j,k}((x/T)^c)\).  These two estimates prove (2.5), with
-no factor \(T^{\epsilon_{j,k}}\).
+Thus the \(j\) derivatives in \(x\) contribute exactly the degree-\(j\)
+polynomial \(P_j(z)\).  For the \(t\)-dependence of \(G_t\), write
+\(A_t(z)=1-z^2/s_t^2\) and
+\(B_t(z)=1-z^2/(1-s_t)^2\).  Direct differentiation gives, for \(a\geq1\),
+
+\[
+ \partial_t^aA_t(z)
+ =(-1)^{a+1}i^a(a+1)!\,z^2s_t^{-a-2},\qquad
+ \partial_t^aB_t(z)
+ =-i^a(a+1)!\,z^2(1-s_t)^{-a-2},
+\tag{2.5c}
+\]
+
+and hence
+
+\[
+ \partial_t^kG_t(z)=e^{z^2}
+ \sum_{a+b=k}{k\choose a}
+ (\partial_t^aA_t(z))(\partial_t^bB_t(z)).
+\tag{2.5d}
+\]
+
+Every positive derivative in (2.5c) therefore contributes the displayed
+power \(z^2\) and an inverse power \(s_t^{-a-2}\) or
+\((1-s_t)^{-a-2}\).  On \(T\leq t\leq2T\), multiplying a total of \(k\)
+derivatives by \(T^k\) leaves only a fixed polynomial in \(|z|\).
+
+For \(g_t\), define the logarithmic gamma derivatives
+
+\[
+ \ell_r(w)=\frac{d^r}{dw^r}\log\gamma(w)
+ =\begin{cases}
+ -\frac12\log\pi+\frac12\psi(w/2),&r=1,\\
+ 2^{-r}\psi^{(r-1)}(w/2),&r\geq2,
+ \end{cases}
+\tag{2.5e}
+\]
+
+where \(\psi^{(r-1)}\) is a polygamma function.  Exact logarithmic
+differentiation gives
+
+\[
+ L_r(t,z):=\partial_t^r\log g_t(z)
+ =i^r\bigl(\ell_r(s_t+z)-\ell_r(s_t)\bigr)
+  +(-i)^r\bigl(\ell_r(1-s_t+z)-\ell_r(1-s_t)\bigr),
+\tag{2.5f}
+\]
+
+and Fa\`a di Bruno's formula gives
+
+\[
+ \partial_t^kg_t(z)=g_t(z)
+ B_k\bigl(L_1(t,z),\ldots,L_k(t,z)\bigr),
+\tag{2.5g}
+\]
+
+where \(B_k\) is the complete Bell polynomial.  Thus the only additional
+factors are the polygamma differences in (2.5f), whose arguments inside
+each difference are separated by \(z/2\).
+
+Fix \(c>-1/2\).  On \(\Re z=c\) and \(|\Im z|\leq T/2\), the standard
+polygamma estimates applied to (2.5f) give
+
+\[
+ L_r(t,z)\ll_{c,r}T^{-r}(1+|z|)^{C_r}.
+\tag{2.5h}
+\]
+
+For \(|\Im z|>T/2\), the factor \(e^{z^2}\) supplies Gaussian decay;
+the polynomial and logarithmic factors from Stirling and the polygamma
+functions are absorbed by \(e^{-(\Im z)^2/2}\).  Equations
+(2.5c)--(2.5h), after splitting the vertical integral into these central
+and tail ranges, yield
+
+\[
+ T^k\left|\partial_t^k\{G_t(c+iv)g_t(c+iv)\}\right|
+ \ll_{c,k}T^c(1+|v|)^{C_{c,k}}e^{-v^2/2}.
+\tag{2.5i}
+\]
+
+For \(0<x\leq T\), shift (2.5b) to \(\Re z=-c\), where
+\(0<c<1/4\).  The only crossed pole is \(z=0\).  Its residue is
+\(G_t(0)g_t(0)=1\) when \(j=k=0\), and it is zero when \(j+k>0\), since
+\(P_j(0)=0\) for \(j>0\) and the residue \(1\) is independent of \(t\).
+The new-line integral is \(O_{j,k}((x/T)^c)\).  For \(x\geq T\), shift
+instead to \(\Re z=A+1\), crossing no pole; (2.5i) gives
+\(O_{A,j,k}((T/x)^{A+1})\).  The horizontal pieces vanish by the same
+Gaussian estimate.  The use of \(A+1\), rather than \(A\), explicitly
+handles \(A=0\) without placing the shifted contour on the pole at \(z=0\).
+These two estimates prove (2.5), for \(T\geq2\), with no factor
+\(T^{\epsilon_{j,k}}\).
 
 Expanding the mollifier in (2.4) gives the exact twisted-moment formula
 
@@ -385,14 +471,20 @@ For dyadic \(D,E,M_1,M_2\), let
 \tag{3.3}
 \]
 
-The countable sum in (3.3) is absolutely convergent by (2.5), and
-opening the two mollifier sums causes no convergence issue because they are
-finite.  For every fixed positive integer \(x\), only finitely many dyadic
-factors \(F_X(x)\) are nonzero (in fact at most three for the support in
-(3.1)).  Hence the four dyadic partitions may be inserted term by term and
-then interchanged with the absolutely convergent off-diagonal sum.  Equation
-(3.1) is an identity on \((0,\infty)\), so this reindexing produces neither
-an endpoint term nor a limiting boundary term.  Therefore
+Opening the two mollifier sums causes no convergence issue because the
+\(d,e\) sums are finite.  On the support of \(W(t/T)\), (2.5) and (2.5a)
+majorize the remaining \(m,n\) sum absolutely, uniformly over those finitely
+many \(d,e\).  It is therefore legitimate first to open the mollifier and
+then to separate the equations \(me=nd\) and \(me\ne nd\).
+
+For every fixed positive integer \(u\), only finitely many dyadic factors
+\(F_X(u)\) are nonzero (in fact at most three for the support in (3.1)).
+Thus all four dyadic partitions may be inserted term by term.  Each
+individual sum in (3.3) is finite because all four variables have compact
+dyadic support, while (2.5a) permits the countable sum over boxes to be
+rearranged absolutely.  Equation (3.1) is an identity on \((0,\infty)\),
+so this reindexing produces neither an endpoint term nor a limiting boundary
+term.  Therefore
 
 \[
  I_{N,W}(T)=\mathcal D+
@@ -883,23 +975,19 @@ that theorem supplies no box estimate for (6.3).
 
 ## 8. What has and has not been proved
 
-Proved in this note:
+The status table at the top is the controlling audit ledger.  The LCM main
+quadratic form is proved separately.  Sections 2--3 now expose the exact AFE
+and shifted-divisor derivations for audit, including their convergence,
+contour-orientation, and reindexing checks.  They remain marked “under audit”
+until independent review accepts those derivations.
 
-* the exact AFE expansion (2.4)--(2.7);
-* the exact finite main quadratic form (1.1);
-* the exact shifted-divisor remainder (3.5);
-* the exact Kloosterman-fraction remainder (4.5), (4.8);
-* all effective dyadic ranges (5.3)--(5.11);
-* the implication
-  \(\mathrm{MWKF}(3)\Longrightarrow\mathcal R_{T^3,T}\ll T^{1+\varepsilon}\).
-
-Not proved here:
-
-* MWKF(3), equation (6.5).
-
-That inequality is the remaining long-mollifier problem. Treating it as an
-already available consequence of BCR would be incorrect for the range
-reason in item 3 of Section 7.
+The Poisson zero/nonzero-mode identity in Section 4, and therefore the later
+effective-range reduction that depends on it, remain under audit and are not
+certified as proved by this note.  MWKF(3), equation (6.5), is unproved.
+Equations (6.6)--(6.8) are only a conditional implication from that proposed
+local estimate, not an available bound.  Treating MWKF(3) as an already
+available consequence of BCR would be incorrect for the range reason in
+item 3 of Section 7.
 
 ## 9. Primary references
 
