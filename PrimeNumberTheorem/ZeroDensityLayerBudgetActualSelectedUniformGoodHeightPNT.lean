@@ -123,7 +123,9 @@ theorem tendsto_actualSelectedUniformGoodHeightCriticalHalfPNTLayerNorm_zero
         atTop (nhds 0) := by
     simpa [targetZeroPowerAmplitude,
       dynamicPositiveOutsideClusterPNTLayerNorm] using hnormalized
-  simpa [H] using hreal.comp tendsto_natCast_atTop_atTop
+  apply (hreal.comp tendsto_natCast_atTop_atTop).congr'
+  filter_upwards with m
+  rfl
 
 /-- At canonical good heights, the positive-ordinate finite-zero tail tends to
 zero once the genuine middle-strip and right-edge inputs are supplied.
@@ -218,15 +220,28 @@ theorem tendsto_dynamicRealOrdinatePNTZeroTailNorm_of_selectedUniformGoodHeight
   have hnegligible :=
     dynamicRealOrdinateOutsideClusterPNTZeroTailNorm_targetAmplitudeNegligible
       H ∅ 1 hHnonneg hre
+  have heq :
+      dynamicRealOrdinateOutsideClusterPNTZeroTailNorm H ∅ =
+        dynamicRealOrdinatePNTZeroTailNorm H := by
+    funext x
+    simp [dynamicRealOrdinateOutsideClusterPNTZeroTailNorm,
+      realOrdinateNontrivialZerosOutsideClusterFinset,
+      dynamicRealOrdinatePNTZeroTailNorm]
+  rw [heq] at hnegligible
+  unfold TargetAmplitudeNegligible at hnegligible
   have hreal :
       Tendsto
         (dynamicRealOrdinatePNTZeroTailNorm H)
         atTop (nhds 0) := by
-    simpa [TargetAmplitudeNegligible, targetZeroPowerAmplitude,
-      dynamicRealOrdinateOutsideClusterPNTZeroTailNorm,
-      dynamicRealOrdinatePNTZeroTailNorm,
-      realOrdinateNontrivialZerosOutsideClusterFinset] using hnegligible
-  simpa [H] using hreal.comp tendsto_natCast_atTop_atTop
+    have habs : Tendsto
+        (fun x : ℝ => |dynamicRealOrdinatePNTZeroTailNorm H x|)
+        atTop (nhds 0) := by
+      simpa [targetZeroPowerAmplitude] using hnegligible
+    apply tendsto_zero_iff_norm_tendsto_zero.mpr
+    simpa only [Real.norm_eq_abs] using habs
+  apply (hreal.comp tendsto_natCast_atTop_atTop).congr'
+  filter_upwards with m
+  rfl
 
 /-- Every fixed positive strip width satisfies the complete moving Carlson
 quadratic-log-power gap: the linear logarithm dominates both the fixed

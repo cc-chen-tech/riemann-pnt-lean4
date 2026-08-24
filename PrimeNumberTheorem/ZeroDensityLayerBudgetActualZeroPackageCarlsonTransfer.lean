@@ -97,8 +97,8 @@ theorem
   have hc : 0 < c := Real.sqrt_pos.2 henergy
   have hheight :
       Tendsto (carlsonPolynomialHeight alpha) atTop atTop := by
-    simpa [carlsonPolynomialHeight] using
-      (tendsto_rpow_atTop certificate.alpha_pos)
+    change Tendsto (fun x : ℝ => x ^ alpha) atTop atTop
+    exact tendsto_rpow_atTop certificate.alpha_pos
   have hmain :
       HasFarTargetAmplitudeWitness
         (dynamicVisibleClusterPNTMain
