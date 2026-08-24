@@ -39,9 +39,20 @@ theorem summable_actualCubicCarlsonLogFifthCore (sigma : ℝ) :
   have hr : ‖actualCubicCarlsonDyadicRatio sigma‖ < 1 := by
     rw [Real.norm_eq_abs, abs_of_pos (actualCubicCarlsonDyadicRatio_pos sigma)]
     exact actualCubicCarlsonDyadicRatio_lt_one sigma
-  simpa [actualCubicCarlsonLogFifthCore] using
-    ((summable_nat_add_iff 1).2
-      (summable_pow_mul_geometric_of_norm_lt_one (R := ℝ) 5 hr))
+  have hbase : Summable (fun n : ℕ =>
+      (n : ℝ) ^ 5 * actualCubicCarlsonDyadicRatio sigma ^ n) :=
+    summable_pow_mul_geometric_of_norm_lt_one (R := ℝ) 5 hr
+  have hshift : Summable (fun n : ℕ =>
+      (((n + 1 : ℕ) : ℝ) ^ 5 *
+        actualCubicCarlsonDyadicRatio sigma ^ (n + 1))) := by
+    simpa only using (summable_nat_add_iff 1).mpr hbase
+  have hfun : actualCubicCarlsonLogFifthCore sigma =
+      (fun n : ℕ => (((n + 1 : ℕ) : ℝ) ^ 5 *
+        actualCubicCarlsonDyadicRatio sigma ^ (n + 1))) := by
+    funext n
+    simp only [actualCubicCarlsonLogFifthCore, Nat.cast_add, Nat.cast_one]
+  rw [hfun]
+  exact hshift
 
 theorem actualCubicCarlsonLogFifthConstant_nonneg (sigma : ℝ) :
     0 ≤ actualCubicCarlsonLogFifthConstant sigma := by

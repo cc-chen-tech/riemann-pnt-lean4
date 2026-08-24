@@ -154,24 +154,21 @@ theorem exists_far_actualZeroPackage_visibleClusterMain_ge
   rw [abs_dynamicVisibleClusterPNTMain_equalRealPartZeroPackage
     H (Real.exp_pos y) (hcover y hy)]
   have hdiv := div_le_div_of_nonneg_right hmain (Real.exp_nonneg y)
-  convert hdiv using 1
   calc
     Real.sqrt (actualEqualRealPartZeroPackageEnergy T beta L) *
           Real.exp ((beta - 1) * y) =
-        Real.sqrt (actualEqualRealPartZeroPackageEnergy T beta L) *
-          Real.exp (beta * y + -y) := by
-            congr 2
-            ring
-    _ =
-        Real.sqrt (actualEqualRealPartZeroPackageEnergy T beta L) *
-          (Real.exp (beta * y) * Real.exp (-y)) := by
-            rw [Real.exp_add]
-    _ =
         Real.exp (beta * y) *
             Real.sqrt (actualEqualRealPartZeroPackageEnergy T beta L) /
           Real.exp y := by
             rw [div_eq_mul_inv, ← Real.exp_neg]
+            have hexp : Real.exp ((beta - 1) * y) =
+                Real.exp (beta * y) * Real.exp (-y) := by
+              rw [← Real.exp_add]
+              congr 1
+              ring
+            rw [hexp]
             ring
+    _ ≤ _ := hdiv
 
 /-- A cofinal dynamic height automatically covers the fixed package on every
 sufficiently far logarithmic window.  Consequently the visible main has far

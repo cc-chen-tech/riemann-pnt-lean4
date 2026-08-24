@@ -59,8 +59,18 @@ theorem actualPositiveOutsideClusterTail_targetAmplitudeNegligible
       hlowLow hlowHigh hgammaHigh hgammaHighAlpha
       hepsilonHigh hstripLow hstripHigh hcap
   unfold TargetAmplitudeNegligible
-  simpa [actualPositiveOutsideClusterTailTargetAmplitudeNorm,
-    dynamicPositiveOutsideClusterPNTTailNorm] using h
+  change Tendsto
+    (fun x : ℝ =>
+      dynamicPositiveOutsideClusterPNTTailNorm
+          (carlsonPolynomialHeight alpha) S x /
+        targetZeroPowerAmplitude beta x)
+    atTop (nhds 0) at h
+  have hnonneg (x : ℝ) :
+      0 ≤ dynamicPositiveOutsideClusterPNTTailNorm
+        (carlsonPolynomialHeight alpha) S x := by
+    unfold dynamicPositiveOutsideClusterPNTTailNorm
+    exact norm_nonneg _
+  simpa only [abs_of_nonneg (hnonneg _)] using h
 
 /-- Under conjugation invariance and the strict real-ordinate residual
 condition, the complete actual outside-cluster zero tail is negligible on
@@ -158,7 +168,17 @@ theorem tendsto_actualFullOutsideClusterTailTargetAmplitudeNorm
       hlowLow hlowHigh hgammaHigh hgammaHighAlpha
       hepsilonHigh hstripLow hstripHigh hcap hreal
   unfold TargetAmplitudeNegligible at h
-  simpa [actualFullOutsideClusterTailTargetAmplitudeNorm,
-    dynamicFullOutsideClusterPNTZeroTailNorm] using h
+  change Tendsto
+    (fun x : ℝ =>
+      dynamicFullOutsideClusterPNTZeroTailNorm
+          (carlsonPolynomialHeight alpha) S x /
+        targetZeroPowerAmplitude beta x)
+    atTop (nhds 0)
+  have hnonneg (x : ℝ) :
+      0 ≤ dynamicFullOutsideClusterPNTZeroTailNorm
+        (carlsonPolynomialHeight alpha) S x := by
+    unfold dynamicFullOutsideClusterPNTZeroTailNorm
+    exact norm_nonneg _
+  simpa only [abs_of_nonneg (hnonneg _)] using h
 
 end PrimeNumberTheorem
