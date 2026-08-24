@@ -39,6 +39,22 @@ def test_unbalanced_endpoint_boxes_remain_admissible() -> None:
     assert witnesses["large_q_endpoint"].kappa == F(2)
 
 
+def test_derived_bounds_match_the_written_polytope() -> None:
+    for box in boundary_witnesses().values():
+        bounds = derived_bounds(box)
+        assert bounds["a"] == box.ell + box.h
+        assert bounds["a"] <= bounds["a_cap"]
+        assert box.m <= bounds["m_cap"]
+        assert box.k <= bounds["k_cap"]
+
+
+def test_balanced_box_exhibits_the_long_a_gap() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert box.third_length == F(5)
+    assert (box.rho + box.sigma) / 2 == F(3)
+    assert box.third_length - (box.rho + box.sigma) / 2 == F(2)
+
+
 @pytest.mark.parametrize(
     ("box", "code"),
     [
@@ -77,6 +93,7 @@ def test_research_note_exposes_afe_audit_ledger() -> None:
     ):
         assert marker in text
     assert "\\Lambda(s)=\\gamma(s)\\zeta(s)" in text
+    assert "\\left(1-4z^2\\right)" in text
 
 
 def test_research_note_exposes_poisson_audit_ledger() -> None:
@@ -88,22 +105,8 @@ def test_research_note_exposes_poisson_audit_ledger() -> None:
     ):
         assert marker in text
     assert "zero-mode audit result:" in text
-
-
-def test_derived_bounds_match_the_written_polytope() -> None:
-    for box in boundary_witnesses().values():
-        bounds = derived_bounds(box)
-        assert bounds["a"] == box.ell + box.h
-        assert bounds["a"] <= bounds["a_cap"]
-        assert box.m <= bounds["m_cap"]
-        assert box.k <= bounds["k_cap"]
-
-
-def test_balanced_box_exhibits_the_long_a_gap() -> None:
-    box = boundary_witnesses()["balanced_max_a"]
-    assert box.third_length == F(5)
-    assert (box.rho + box.sigma) / 2 == F(3)
-    assert box.third_length - (box.rho + box.sigma) / 2 == F(2)
+    assert "C_t(z)\\zeta(1-2z)g_t(-z)" in text
+    assert "\\mathcal E_{\\rm arch}" in text
 
 
 def test_research_note_has_one_honest_phase_one_classification() -> None:

@@ -2,17 +2,16 @@
 
 > **Current proof status.**
 >
-> | Component | Status |
+> | component | status in this note |
 > |---|---|
-> | LCM main quadratic form | proved separately |
-> | Exact AFE and shifted-divisor identity | verified in Sections 2--3 |
-> | Corrected Poisson zero/nonzero-mode identity | verified in Section 4 |
-> | Effective ranges and coupled-kernel reduction | verified in Sections 5--6 |
-> | Coupled-kernel MWKF local estimate | unproved |
+> | LCM main quadratic form | proved separately; its normalization is rechecked below |
+> | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
+> | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
+> | Coupled-kernel local estimate at length \(T^3\) | unproved |
 >
 > Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
-> The verified rows concern the reduction and its correction; they do not
-> promote the unproved local estimate to a published or available theorem.
+> A row is promoted from “under audit” only after the displayed convergence,
+> contour-shift, and reindexing arguments have all been supplied.
 
 ## 1. Statement and normalization
 
@@ -114,6 +113,7 @@ so that \(\Lambda\) is meromorphic with simple poles only at \(0\) and
 
 \[
  G_t(z)=e^{z^2}
+ \left(1-4z^2\right)
  \left(1-\frac{z^2}{s_t^2}\right)
  \left(1-\frac{z^2}{(1-s_t)^2}\right),
 \tag{2.1}
@@ -147,22 +147,23 @@ Let
 \]
 
 The poles of \(\Lambda(s_t+z)\) occur at \(z=-s_t,1-s_t\), and those of
-\(\Lambda(1-s_t+z)\) occur at \(z=s_t-1,s_t\).  In that order, they are
-cancelled by the following zeros:
+\(\Lambda(1-s_t+z)\) occur at \(z=s_t-1,s_t\).  Respectively, they are
+cancelled by the zeros
 
 \[
- \begin{array}{c|c}
- \text{pole} & \text{zero of }G_t\\ \hline
- -s_t & 1-z^2/s_t^2\\
- 1-s_t & 1-z^2/(1-s_t)^2\\
- s_t-1=-(1-s_t) & 1-z^2/(1-s_t)^2\\
- s_t & 1-z^2/s_t^2
- \end{array}
+ 1-z^2/s_t^2\quad\hbox{at }-s_t,s_t,
+ \qquad
+ 1-z^2/(1-s_t)^2\quad\hbox{at }1-s_t,s_t-1.
 \]
 
-For \(V>2t+2\), use the positively oriented rectangle with vertices
-\(-2-iV,2-iV,2+iV,-2+iV\).  Its right side is traversed upward and its
-left side downward.  Stirling's formula
+The additional even factor \(1-4z^2\) makes
+\(G_t(1/2)=G_t(-1/2)=0\).  It is not needed for the four moving poles,
+but it cancels the \(z=1/2\) boundary pole that appears when the zero
+Poisson mode is Mellin transformed in Section 4.  It satisfies
+\(G_t(0)=1\), so it changes neither (2.3b) nor the residue at \(z=0\).
+
+For \(V>0\), integrate around the rectangle with vertical sides
+\(\Re z=2,-2\) and horizontal sides \(\Im z=\pm V\).  Stirling's formula
 in fixed vertical strips, the polynomial vertical-strip bound for
 \(\zeta\), and
 \(|e^{(\sigma+iV)^2}|=e^{\sigma^2-V^2}\) give, uniformly for
@@ -210,9 +211,8 @@ Consequently
 
 ### 2.2 Absolute convergence and termwise expansion
 
-On \(\Re z=2\), the two zeta arguments satisfy
-\(\Re(s_t+z)=\Re(1-s_t+z)=5/2\), and their Dirichlet series have the
-absolute majorant
+On \(\Re z=2\), both zeta factors have real part \(5/2\), and their
+Dirichlet series have the absolute majorant
 
 \[
  \sum_{m,n\geq1}(mn)^{-5/2}=\zeta(5/2)^2<\infty.
@@ -262,113 +262,33 @@ Indeed, for any \(0<\epsilon<A-1/2\), the tail is bounded using
 
 ### 2.3 Uniform weight bounds
 
-Here are the derivatives entering (2.5).  Put the signed falling-factorial
-polynomial
+Here are the details behind (2.5).  On a vertical line \(\Re z=c\),
+\(x^j\partial_x^j x^{-z}=(-z)(-z-1)\cdots(-z-j+1)x^{-z}\).
+Moreover, repeated \(t\)-differentiation of \(g_t(z)G_t(z)\) produces
+finite sums of products of:
+
+* that degree-\(j\) polynomial in \(z\);
+* differences of polygamma functions at arguments separated by \(z/2\);
+* derivatives of \(s_t^{-2}\) and \((1-s_t)^{-2}\).
+
+Uniform Stirling expansions for \(T\leq t\leq2T\), after splitting the
+vertical integral into \(|\Im z|\leq T/2\) and its Gaussian tail, give
 
 \[
- P_j(z)=\prod_{r=0}^{j-1}(-z-r),\qquad P_0(z)=1.
-\]
-
-Differentiation under the absolutely convergent Mellin integral gives
-
-\[
- x^j\partial_x^j\partial_t^kV_t(x)=\frac1{2\pi i}\int_{(2)}
- P_j(z)\partial_t^k\!\left(G_t(z)g_t(z)\right)
- x^{-z}\frac{dz}{z}.
+ \left|\partial_t^k\{G_t(z)g_t(z)\}\right|
+ \leq C_{c,j,k}T^{c-k}(1+|z|)^{C_{c,j,k}}
+ e^{-(\Im z)^2/2}.
 \tag{2.5b}
 \]
 
-Thus the \(j\) derivatives in \(x\) contribute exactly the degree-\(j\)
-polynomial \(P_j(z)\).  For the \(t\)-dependence of \(G_t\), write
-\(A_t(z)=1-z^2/s_t^2\) and
-\(B_t(z)=1-z^2/(1-s_t)^2\).  Direct differentiation gives, for \(a\geq1\),
-
-\[
- \partial_t^aA_t(z)
- =(-1)^{a+1}i^a(a+1)!\,z^2s_t^{-a-2},\qquad
- \partial_t^aB_t(z)
- =-i^a(a+1)!\,z^2(1-s_t)^{-a-2},
-\tag{2.5c}
-\]
-
-and hence
-
-\[
- \partial_t^kG_t(z)=e^{z^2}
- \sum_{a+b=k}{k\choose a}
- (\partial_t^aA_t(z))(\partial_t^bB_t(z)).
-\tag{2.5d}
-\]
-
-Every positive derivative in (2.5c) therefore contributes the displayed
-power \(z^2\) and an inverse power \(s_t^{-a-2}\) or
-\((1-s_t)^{-a-2}\).  On \(T\leq t\leq2T\), multiplying a total of \(k\)
-derivatives by \(T^k\) leaves only a fixed polynomial in \(|z|\).
-
-For \(g_t\), define the logarithmic gamma derivatives
-
-\[
- \ell_r(w)=\frac{d^r}{dw^r}\log\gamma(w)
- =\begin{cases}
- -\frac12\log\pi+\frac12\psi(w/2),&r=1,\\
- 2^{-r}\psi^{(r-1)}(w/2),&r\geq2,
- \end{cases}
-\tag{2.5e}
-\]
-
-where \(\psi^{(r-1)}\) is a polygamma function.  Exact logarithmic
-differentiation gives
-
-\[
- L_r(t,z):=\partial_t^r\log g_t(z)
- =i^r\bigl(\ell_r(s_t+z)-\ell_r(s_t)\bigr)
-  +(-i)^r\bigl(\ell_r(1-s_t+z)-\ell_r(1-s_t)\bigr),
-\tag{2.5f}
-\]
-
-and Fa\`a di Bruno's formula gives
-
-\[
- \partial_t^kg_t(z)=g_t(z)
- B_k\bigl(L_1(t,z),\ldots,L_k(t,z)\bigr),
-\tag{2.5g}
-\]
-
-where \(B_k\) is the complete Bell polynomial.  Thus the only additional
-factors are the polygamma differences in (2.5f), whose arguments inside
-each difference are separated by \(z/2\).
-
-Fix \(c>-1/2\).  On \(\Re z=c\) and \(|\Im z|\leq T/2\), the standard
-polygamma estimates applied to (2.5f) give
-
-\[
- L_r(t,z)\ll_{c,r}T^{-r}(1+|z|)^{C_r}.
-\tag{2.5h}
-\]
-
-For \(|\Im z|>T/2\), the factor \(e^{z^2}\) supplies Gaussian decay;
-the polynomial and logarithmic factors from Stirling and the polygamma
-functions are absorbed by \(e^{-(\Im z)^2/2}\).  Equations
-(2.5c)--(2.5h), after splitting the vertical integral into these central
-and tail ranges, yield
-
-\[
- T^k\left|\partial_t^k\{G_t(c+iv)g_t(c+iv)\}\right|
- \ll_{c,k}T^c(1+|v|)^{C_{c,k}}e^{-v^2/2}.
-\tag{2.5i}
-\]
-
-For \(0<x\leq T\), shift (2.5b) to \(\Re z=-c\), where
-\(0<c<1/4\).  The only crossed pole is \(z=0\).  Its residue is
-\(G_t(0)g_t(0)=1\) when \(j=k=0\), and it is zero when \(j+k>0\), since
-\(P_j(0)=0\) for \(j>0\) and the residue \(1\) is independent of \(t\).
-The new-line integral is \(O_{j,k}((x/T)^c)\).  For \(x\geq T\), shift
-instead to \(\Re z=A+1\), crossing no pole; (2.5i) gives
-\(O_{A,j,k}((T/x)^{A+1})\).  The horizontal pieces vanish by the same
-Gaussian estimate.  The use of \(A+1\), rather than \(A\), explicitly
-handles \(A=0\) without placing the shifted contour on the pole at \(z=0\).
-These two estimates prove (2.5), for \(T\geq2\), with no factor
-\(T^{\epsilon_{j,k}}\).
+For \(x\geq T\), shift (2.3) to \(\Re z=A\); no pole is crossed and
+(2.5b) gives \(x^jT^k|\partial_x^j\partial_t^kV_t(x)|
+\ll_{A,j,k}(T/x)^A\).  For \(x\leq T\), shift to a fixed line
+\(\Re z=-c\), \(0<c<1/4\).  When \(j=k=0\), the crossed residue is \(1\);
+when \(j+k>0\), it is zero (the \(x\)-multiplier vanishes at \(z=0\), or
+the residue \(G_t(0)g_t(0)=1\) is independent of \(t\)).  The new-line
+integral is \(O_{j,k}((x/T)^c)\).  These two estimates prove (2.5), with
+no factor \(T^{\epsilon_{j,k}}\).
 
 Expanding the mollifier in (2.4) gives the exact twisted-moment formula
 
@@ -472,20 +392,14 @@ For dyadic \(D,E,M_1,M_2\), let
 \tag{3.3}
 \]
 
-Opening the two mollifier sums causes no convergence issue because the
-\(d,e\) sums are finite.  On the support of \(W(t/T)\), (2.5) and (2.5a)
-majorize the remaining \(m,n\) sum absolutely, uniformly over those finitely
-many \(d,e\).  It is therefore legitimate first to open the mollifier and
-then to separate the equations \(me=nd\) and \(me\ne nd\).
-
-For every fixed positive integer \(u\), only finitely many dyadic factors
-\(F_X(u)\) are nonzero (in fact at most three for the support in (3.1)).
-Thus all four dyadic partitions may be inserted term by term.  Each
-individual sum in (3.3) is finite because all four variables have compact
-dyadic support, while (2.5a) permits the countable sum over boxes to be
-rearranged absolutely.  Equation (3.1) is an identity on \((0,\infty)\),
-so this reindexing produces neither an endpoint term nor a limiting boundary
-term.  Therefore
+The countable sum in (3.3) is absolutely convergent by (2.5), and
+opening the two mollifier sums causes no convergence issue because they are
+finite.  For every fixed positive integer \(x\), only finitely many dyadic
+factors \(F_X(x)\) are nonzero (in fact at most three for the support in
+(3.1)).  Hence the four dyadic partitions may be inserted term by term and
+then interchanged with the absolutely convergent off-diagonal sum.  Equation
+(3.1) is an identity on \((0,\infty)\), so this reindexing produces neither
+an endpoint term nor a limiting boundary term.  Therefore
 
 \[
  I_{N,W}(T)=\mathcal D+
@@ -537,6 +451,8 @@ shifted-divisor formulation without using the words “approximately” or
 
 ## 4. Exact Poisson/Kloosterman-fraction formula
 
+### 4.1 Residue class and Poisson normalization
+
 To retain the Möbius coefficients, Poisson summation must be applied to a
 zeta variable, not to \(d\) or \(e\). Use the BCR orientation
 
@@ -555,47 +471,38 @@ Write
 Then \(q\mid\Delta\). Put \(\Delta=q\delta\). Equation (4.1) becomes
 
 \[
- m_1s-m_2r=\delta.
+ m_1s-m_2r=\delta,
+\qquad
+ m_2r\equiv-\delta\pmod s,
+ \qquad
+ m_1=\frac{m_2r+\delta}{s}.
 \tag{4.3}
 \]
 
-### 4.1 Residue class and Poisson normalization
-
-Since \((r,s)=1\), equation (4.3) is equivalent to
+Because \((r,s)=1\), this is the single residue class
 
 \[
- m_2\equiv-\bar r\delta\pmod s,
- \qquad
- m_1=\frac{m_2r+\delta}{s},
- \qquad m_2>0,\quad m_2r+\delta>0.
+ m_2\equiv-\bar r\delta\pmod s.
 \tag{4.3a}
 \]
 
-Our Fourier convention and the corresponding residue-class Poisson formula
-are
+Our Fourier convention is
 
 \[
  \widehat f(\xi)=\int_{\mathbb R}f(x)e(-\xi x)\,dx,
  \qquad
- \sum_{n\equiv b\ (s)}f(n)
+ \sum_{n\equiv b\ ({\rm mod}\ s)}f(n)
  =\frac1s\sum_{h\in\mathbb Z}e(hb/s)\widehat f(h/s).
 \tag{4.3b}
 \]
 
-For each dyadic box the factors below make the extension by zero to
-\(\mathbb R\) smooth and compactly supported.  Taking
-\(b=-\bar r\delta\) in (4.3b) therefore contributes
-
-\[
- \frac1s e\left(-\frac{h\delta\bar r}{s}\right)
- \int_{\mathbb R}f(x)e(-hx/s)\,dx.
-\tag{4.3c}
-\]
-
-The factor preceding the \(m_2\)-sum in (2.6) is
-\(2/(q\sqrt{rs})\).  Thus (4.3c) gives exactly
-\(2/(q\sqrt{rs}\,s)\), with the displayed minus sign in the phase; no
-factor of \(q\), \(r\), or \(s\) is absorbed into the kernel.
+For fixed \(r,s,\delta\), extend the smooth dyadic summand by zero unless
+\(x>0\) and \(xr+\delta>0\).  Formula (4.3b), with
+\(b=-\bar r\delta\), supplies the factor \(s^{-1}\), the Fourier factor
+\(e(-hx/s)\), and the arithmetic phase
+\(e(-h\delta\bar r/s)\).  Multiplication by the coefficient already
+present before Poisson, \(2/(q\sqrt{rs})\), therefore gives exactly
+\(2/(q\sqrt{rs}\,s)\), as displayed below.
 
 For dyadic \(R,S,K,M\), define
 
@@ -633,291 +540,158 @@ summation in the residue class
 \]
 
 Here \(\bar r\) is the inverse of \(r\bmod s\). Formula (4.5) is exact and
-contains all nonzero Poisson modes.  The conditions \((r,s)=1\),
-\(qr,qs\leq N\), and the positivity condition in (4.3a) remain in force.
+contains all nonzero Poisson modes.
 
 ### 4.2 Zero mode from a common Mellin integral
 
-First sum the \(K,M\) partitions, before Mellin inversion.  On the domain
-\(x>0\), \(xr+\delta>0\), equation (3.1) gives
+We next sum the \(K,M\) partitions in (4.4) before doing any Mellin
+inversion.  The positivity condition remains \(x>0\) and \(xr+\delta>0\).
+For fixed \(q,r,s\), the resulting \(h=0\) expression is
 
 \[
- \sum_{K,M}F_M(x)F_K((xr+\delta)/s)=1.
+\begin{aligned}
+ Z_{q,r,s}={}&\frac{2a_N(qr)a_N(qs)}{q\sqrt{rs}\,s}
+ \sum_{\delta\ne0}\int_0^\infty
+ \mathbf1_{xr+\delta>0}\frac{dx}{\sqrt{x(xr+\delta)/s}}\\
+ &\quad\times\int_{\mathbb R}W(t/T)
+ V_t\!\left(\frac{x(xr+\delta)}s\right)
+ \exp\!\left(it\log\left(1+\frac{\delta}{xr}\right)\right)dt.
+\end{aligned}
 \tag{4.5a}
 \]
 
-All dyadic scales occur in (4.5a), including scales whose original integer
-sum is empty; the complete Poisson identity for each such scale is zero.
-Consequently (4.5a) introduces no endpoint or boundary term.  The sum of all
-zero modes is therefore
+This order of summation is important.  There is no vertical line on which
+one may naively insert (2.3), integrate \(x\), and sum \(\delta\) all by
+absolute convergence: the beta integral asks for \(\Re z<1/2\), whereas
+\(\sum_{\delta\ge1}\delta^{-2z}\) asks for \(\Re z>1/2\).  The baseline
+derivation omitted this incompatibility.  The following common-kernel
+calculation resolves it; the zero \(G_t(1/2)=0\) added in (2.1) is essential.
+
+For \(0<c<1/4\), introduce symmetric cutoffs
+\(|\delta|\leq Y\) and \(Y^{-1}\leq x,(xr+\delta)/s\leq Y\).
+All sums and integrals are then finite.  First shift (2.3), without crossing
+a pole, from \(\Re z=2\) to a fixed \(\Re z=\sigma\) with
+\(1/2<\sigma<1\).  This choice lies to the left of the first uncancelled
+moving beta poles at \(z=s_t+1\) and \(z=2-s_t\).  Insert that
+representation, split the two signs of \(\delta\), and use respectively
 
 \[
-\begin{aligned}
- \mathcal Z_0={}&2
- \sum_{\substack{q,r,s\geq1\\(r,s)=1\\qr,qs\leq N}}
- \frac{a_N(qr)a_N(qs)}{q\sqrt{rs}\,s}
- \sum_{\delta\ne0}
- \int_{\mathbb R}W(t/T)\int_{\substack{x>0\\xr+\delta>0}}
- \frac{V_t(x(xr+\delta)/s)}{\sqrt{x(xr+\delta)/s}}\\
- &\hspace{44mm}\times
- \left(1+\frac{\delta}{xr}\right)^{it}dx\,dt.
-\end{aligned}
+ x=\frac{\delta v}{r}\quad(\delta>0,\ v>0),
+ \qquad
+ x=\frac{|\delta|(1+v)}r\quad(\delta<0,\ v>0).
 \tag{4.5b}
 \]
 
-There is no unregularized Mellin line on which the endpoint integrals and
-the signed \(\delta\)-series are both absolutely convergent: the endpoints
-ask for \(\Re z<1/2\), whereas \(\sum_{k\geq1}k^{-2z}\) asks for
-\(\Re z>1/2\).  To avoid a false Fubini step, introduce the temporary
-endpoint regulator
+The two complete beta integrals obtained after removing the cutoffs are
 
 \[
- \rho_\alpha(x,\delta)=
- \begin{cases}
-  (rx/(rx+\delta))^\alpha,&\delta>0,\\
-  ((rx+\delta)/(rx))^\alpha,&\delta<0.
- \end{cases}
+\begin{aligned}
+ B_+(t,z)&=
+ \frac{\Gamma(1-s_t-z)\Gamma(2z)}
+      {\Gamma(1-s_t+z)},\\
+ B_-(t,z)&=
+ \frac{\Gamma(s_t-z)\Gamma(2z)}
+      {\Gamma(s_t+z)}.
+\end{aligned}
 \tag{4.5c}
 \]
 
-Both bases in (4.5c) lie in \((0,1)\).  For real \(0<\alpha<2\), shift
-(2.3), without crossing \(z=0\), to the moving line
+To justify removal of the cutoffs, first keep the incomplete beta integrals,
+move their common Mellin line from \(\Re z=\sigma\) to \(\Re z=c\), and only
+then let \(Y\to\infty\).  Euler--Maclaurin applied to the truncated
+\(\delta\)-sum shows that its sole boundary term is the residue at
+\(z=1/2\); the moving poles at \(s_t,1-s_t\) are cancelled by (2.1), and
+the next such poles lie to the right of \(\sigma\).  The \(z=1/2\) term
+vanishes because \(G_t(1/2)=0\).  The remaining boundary
+integrals are
+\(O_{A,t,r,s}(Y^{-A})\) after \(A+2\) integrations by parts in the logarithmic
+variable in (4.5a), using (2.5).  Thus dominated convergence applies on
+\(\Re z=c\).  This proves, rather than assumes, the regularized common
+Mellin identity
 
 \[
- \Re z=\sigma_\alpha:=\frac12+\frac\alpha2;
- \qquad
- \frac12<\sigma_\alpha<\frac32,\qquad
- \alpha>\sigma_\alpha-\frac12.
+\begin{aligned}
+ \sum_{R,S,K,M}\mathcal O^{h=0}_{q;R,S,K,M}
+ ={}&\frac2{2\pi i}
+ \sum_{\substack{r,s\ge1\\(r,s)=1}}
+ \frac{a_N(qr)a_N(qs)}{qrs}
+ \int_{\mathbb R}W(t/T)\\
+ &\times\int_{(c)}(rs)^z\zeta(2z)g_t(z)G_t(z)
+ H_t(z)\frac{dz}{z}\,dt,
+\end{aligned}
 \tag{4.5d}
 \]
 
-After inserting \(\rho_\alpha\), the \(x\)-integrals and the
-\(\delta\)-sum are absolutely convergent on this initial line.  Indeed, put
-\(a=s_t+z\), \(b=1-s_t+z\), and write \(k=|\delta|\).  For
-\(\delta=k\), substitute \(u=rx/k\); for \(\delta=-k\), substitute
-\(u=(rx-k)/k\).  The two integrals become, respectively,
+where the integral on \(\Re z=c\) is the continuation furnished by the
+cutoff limit and
 
 \[
-\begin{aligned}
- r^{a-1}k^{-2z}\int_0^\infty
- u^{-a+\alpha}(1+u)^{-b-\alpha}\,du,\qquad
- r^{a-1}k^{-2z}\int_0^\infty
- u^{-b+\alpha}(1+u)^{-a-\alpha}\,du.
-\end{aligned}
-\tag{4.5e0}
-\]
-
-Thus the beta evaluations are
-
-\[
-\begin{aligned}
- \int_0^\infty x^{-a}(rx+k)^{-b}
- \left(\frac{rx}{rx+k}\right)^\alpha dx
- &=r^{a-1}k^{-2z}
- \frac{\Gamma(1-a+\alpha)\Gamma(2z)}
-      {\Gamma(b+\alpha)},\\
- \int_{k/r}^\infty x^{-a}(rx-k)^{-b}
- \left(\frac{rx-k}{rx}\right)^\alpha dx
- &=r^{a-1}k^{-2z}
- \frac{\Gamma(1-b+\alpha)\Gamma(2z)}
-      {\Gamma(a+\alpha)}.
-\end{aligned}
+ H_t(z)=\Gamma(2z)\left{
+ \frac{\Gamma(s_t-z)}{\Gamma(s_t+z)}
+ +\frac{\Gamma(1-s_t-z)}{\Gamma(1-s_t+z)}
+ \right}.
 \tag{4.5e}
 \]
 
-The endpoint beta parameters have positive real parts by (4.5d), and
-\(\sum k^{-2z}=\zeta(2z)\) converges absolutely because
-\(\sigma_\alpha>1/2\).  Define
+The duplication and reflection formulas for \(\Gamma\), followed by the
+functional equation of \(\zeta\), give the exact meromorphic identity
 
 \[
-\begin{aligned}
- B_{t,\alpha}(z)
- :={}&
- \frac{\Gamma(1-s_t-z+\alpha)}
-      {\Gamma(1-s_t+z+\alpha)}
- +\frac{\Gamma(s_t-z+\alpha)}
-       {\Gamma(s_t+z+\alpha)},\\
- B_t(z):={}&B_{t,0}(z).
-\end{aligned}
+ \boxed{\zeta(2z)g_t(z)H_t(z)
+ =C_t(z)\zeta(1-2z)g_t(-z),}
 \tag{4.5f}
 \]
 
-The signed \(k\)-series on the initial line is therefore
-\(\zeta(2z)\Gamma(2z)B_{t,\alpha}(z)\).
-
-Here is an \(\alpha\)-independent majorant for returning to (4.5b).
-After the same two substitutions in the unexpanded \(V_t\)-integral, put
+where
 
 \[
- U=u(1+u),\qquad
- X_{k,u}=\frac{k^2U}{rs},\qquad
- L(u)=\log\frac{1+u}{u}.
-\]
-
-The measure and square-root denominator together become
-\(\sqrt{s/r}\,U^{-1/2}du\), for either sign of \(\delta\), and
-\(0<\rho_\alpha\leq1\).  Repeated integration by parts in \(t\), using
-(2.5), gives, for every \(A,J>0\),
-
-\[
- \left|\int_{\mathbb R}W(t/T)V_t(X_{k,u})
- e^{\pm itL(u)}\,dt\right|
- \ll_{A,J,W}
- T\left(1+\frac{k^2U}{rsT}\right)^{-A}
-   \left(1+T L(u)\right)^{-J}.
-\tag{4.5f.1}
-\]
-
-For \(A>1/2\),
-
-\[
- \sum_{k\geq1}\left(1+\frac{k^2U}{rsT}\right)^{-A}
- \ll_A
- \begin{cases}
-  (rsT/U)^{1/2},&0<U\leq rsT,\\
-  (rsT/U)^A,&U>rsT.
- \end{cases}
-\tag{4.5f.2}
-\]
-
-Equations (4.5f.1)--(4.5f.2), multiplied by \(T U^{-1/2}\), are the required
-majorant for the \(k,u\)-sum.  As \(u\downarrow0\),
-\(U\asymp u\) and \(L(u)\asymp\log(1/u)\), so it is
-\(O(u^{-1}(1+\log(1/u))^{-J})\); as \(u\to\infty\),
-\(U\asymp u^2\), so it is \(O(u^{-1-2A})\).  Taking \(J>1\) makes both
-tails integrable, uniformly for \(0\leq\alpha\leq1\).  The outer
-\(q,r,s\)-sum is finite because \(qr,qs\leq N\).  Dominated convergence
-therefore proves that the regulated zero mode tends to the unmodified
-(4.5b).
-
-It remains to justify the limit on the moving Mellin line.  The complete
-beta-pole ledger from (4.5f) is
-
-\[
- z=s_t+\alpha+n,\qquad
- z=1-s_t+\alpha+n,\qquad n=0,1,2,\ldots .
-\tag{4.5f.3}
-\]
-
-The \(n=0\) poles lie to the right of
-\(\Re z=1/2+\alpha/2\), while every \(n\geq1\) pole has
-\(\Re z\geq3/2+\alpha\).  Near \(s_t\), write \(z=s_t+w\);
-near \(1-s_t\), write \(z=1-s_t+w\).  Uniformly for
-\(t\in[T,2T]\), \(0<\alpha\leq1\), and small \(w\) on the moving line,
-the simple zeros of \(G_t\) and the gamma expansion at zero give
-
-\[
-\begin{aligned}
- G_t(s_t+w)B_{t,\alpha}(s_t+w)
- &=O_T\left(1+\frac{|w|}{|\alpha-w|}\right)=O_T(1),\\
- G_t(1-s_t+w)B_{t,\alpha}(1-s_t+w)
- &=O_T\left(1+\frac{|w|}{|\alpha-w|}\right)=O_T(1),
-\end{aligned}
-\tag{4.5f.4}
-\]
-
-because \(\Re w=\alpha/2\) implies
-\(|w|=|\alpha-w|\).  At the third possible collision, write
-\(z=1/2+w\).  Analyticity of the gamma ratios and
-
-\[
- B_{t,0}(1/2)
- =\frac{\Gamma(-it)}{\Gamma(1-it)}
-  +\frac{\Gamma(it)}{\Gamma(1+it)}=0
-\]
-
-give, on the same line,
-
-\[
- B_{t,\alpha}(1/2+w)=O_T(\alpha+|w|)=O_T(|w|),
- \qquad
- \zeta(1+2w)=O(|w|^{-1}),
-\tag{4.5f.5}
-\]
-
-so \(\zeta(2z)B_{t,\alpha}(z)=O_T(1)\) there.  Away from these three
-neighborhoods, Stirling's formula and the Gaussian in \(G_t\) give a
-common integrable vertical majorant.  Thus dominated convergence also
-holds on the moving Mellin line.  At \(\alpha=0\), the first two collisions
-are cancelled by \(G_t\), the third by (4.5f.5), and all \(n\geq1\) poles
-remain at or beyond \(\Re z=3/2\).  The regular limiting product may
-therefore be moved to any fixed \(1/2<\sigma<3/2\), without a residue or
-boundary contribution.
-
-At \(\alpha=0\), the signed series is consequently
-\(\zeta(2z)\Gamma(2z)B_t(z)\), with \(B_t=B_{t,0}\) as in (4.5f).
-
-There is no coprimality condition on \(\delta\): once \((r,s)=1\), every
-\(\delta\ne0\) gives the unique residue class (4.3a).  Thus the local
-factors in (4.5f) are exactly
-\((1-p^{-2z})^{-1}\), with no deleted prime factor.  Moreover the powers
-outside (4.5e) simplify exactly as
-
-\[
- \frac{2}{q\sqrt{rs}\,s}\,\sqrt{s}\,r^{-it}s^z
- r^{s_t+z-1}
- =\frac2{qrs}(rs)^z
- =\frac2{[d,e]}(d^*e^*)^z,
- \qquad d^*=r,\quad e^*=s.
+ C_t(z)=\frac1{2\cos(\pi z)}\left{
+ \frac{\sin(\frac\pi2(1-s_t-z))}
+      {\sin(\frac\pi2(1-s_t+z))}
+ +\frac{\sin(\frac\pi2(s_t-z))}
+      {\sin(\frac\pi2(s_t+z))}
+ \right}.
 \tag{4.5g}
 \]
 
-The completed functional equation used at this point is
+Thus the baseline replacement \(C_t(z)=1\) was not an exact identity.
+There is no arithmetic Euler factor in (4.5f): after \(q=(d,e)\), the only
+condition is \((r,s)=1\), and \(\delta\) is unrestricted.  Split
+\(C_t=1+(C_t-1)\).  In the term with 1, set \(z=-w\); the upward
+\((c)\)-line becomes the downward \((-c)\)-line.  Retain the other term as
+the exact archimedean correction
 
 \[
- \pi^{-z}\Gamma(z)\zeta(2z)
- =\pi^{z-1/2}\Gamma(1/2-z)\zeta(1-2z).
+\begin{aligned}
+ \mathcal E_{\rm arch}:={}&\frac2{2\pi i}
+ \sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]}
+ \int_{\mathbb R}W(t/T)\\
+ &\times\int_{(c)}(d^*e^*)^zG_t(z)\zeta(1-2z)g_t(-z)
+ \bigl(C_t(z)-1\bigr)\frac{dz}{z}\,dt.
+\end{aligned}
 \tag{4.5h}
 \]
 
-Reflection and duplication give, term by term,
+For \(z=c+i\tau\), \(0<c<1/4\), the elementary exponential formulas for
+the sines in (4.5g) show, when \(|\tau|\leq T/2\),
 
 \[
- B_t(z)=2^{1-2z}\pi^{-2z}\cos(\pi z)
- \frac{\sin(\pi s_t)}{\sin(\pi s_t)+\sin(\pi z)}
- \frac{g_t(-z)}{g_t(z)}.
+ |C_t(c+i\tau)-1|\ll_c e^{-\pi T/2}(1+|\tau|)^2.
 \tag{4.5i}
 \]
 
-Combining (4.5h)--(4.5i) yields the exact transformation
+When \(|\tau|>T/2\), the factor
+\(|e^{z^2}|=e^{c^2-\tau^2}\), together with Stirling, bounds the integrand
+in (4.5h) by \(e^{-\tau^2/2}T^{O_c(1)}\).  Since the \(d,e\)-sum is finite
+and is at most \(T^{O_c(1)}\) under \(N=T^3\), (4.5i) and the Gaussian tail
+give, for every \(A>0\),
 
 \[
- \zeta(2z)\Gamma(2z)B_t(z)g_t(z)
- =\frac{\sin(\pi s_t)}{\sin(\pi s_t)+\sin(\pi z)}
-  \zeta(1-2z)g_t(-z).
+ \boxed{\mathcal E_{\rm arch}=O_{A,W}(T^{-A}).}
 \tag{4.5j}
 \]
 
-The quotient of sines in (4.5j) is not identically one.  This is the
-archimedean factor omitted in the baseline formula.  Put
-
-\[
- \mathfrak A_t(z)=\frac{\sin(\pi s_t)}{\sin(\pi s_t)-\sin(\pi z)}
- =\frac{\cosh(\pi t)}{\cosh(\pi t)-\sin(\pi z)}.
-\tag{4.5k}
-\]
-
-After \(z\mapsto-z\), the orientation change supplies a minus sign and
-(4.5j) supplies \(\mathfrak A_t(z)\).  The poles of \(\mathfrak A_t\) are
-\(s_t+2k\) and \(1-s_t+2k\).  Choosing \(\sigma<3/2\), the shift from
-\(\Re z=-\sigma\) to \(\Re z=-c\), \(0<c<1/4\), crosses none of them;
-the possible \(g_t\)-poles on \(\Re z=-1/2\) are cancelled by \(G_t\) as
-in Section 2.1.  Therefore the corrected zero-mode formula is
-
-\[
- \boxed{
- \mathcal Z_0
- =-
- \frac2{2\pi i}
- \sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]}
- \int_{\mathbb R}W(t/T)
- \int_{(-c)}
- (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)\mathfrak A_t(z)
- \frac{dz}{z}\,dt. }
-\tag{4.6b}
-\]
-
-The diagonal calculation has no sine quotient.  Directly from (2.10),
+Adding the diagonal (2.10), Mellin inversion gives
 
 \[
  \mathcal D=
@@ -940,26 +714,50 @@ of the two common Mellin integrals crosses only \(z=0\), while the remaining
 exact term is
 
 \[
- \boxed{
- \mathcal C_{N,W}(T)=
- \frac2{2\pi i}
+\begin{aligned}
+ \sum_{q,R,S,K,M}\mathcal O^{h=0}_{q;R,S,K,M}
+ ={}&-\frac2{2\pi i}
  \sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]}
  \int_{\mathbb R}W(t/T)
  \int_{(-c)}
- (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)
- \bigl(1-\mathfrak A_t(z)\bigr)\frac{dz}{z}\,dt. }
-\tag{4.6c}
+ (d^*e^*)^{-z}\zeta(1+2z)g_t(z)G_t(z)\frac{dz}{z}\,dt\\
+ &+\mathcal E_{\rm arch}.
+\end{aligned}
+\tag{4.6b}
 \]
 
-Consequently the corrected diagonal-plus-zero-mode identity is
+The phrase “every interchange is absolutely convergent on an initial line”
+in the baseline was false; (4.5b)--(4.5g) is the corrected cutoff argument.
+After that correction, subtracting the two vertical integrals in
+(4.6a)--(4.6b) crosses only \(z=0\). Hence
 
 \[
- \boxed{\mathcal D+\mathcal Z_0
- =T\mathcal Q_{N,T}+\mathcal C_{N,W}(T).}
+ \mathcal D+\sum_{q,R,S,K,M}\mathcal O^{h=0}_{q;R,S,K,M}
+ =T\mathcal Q_{N,T}+\mathcal E_{\rm arch}.
 \tag{4.6}
 \]
 
-For completeness, the expansions at \(z=0\) are
+### 4.3 Residue and main-term normalization
+
+At \(z=0\), use
+
+\[
+ \zeta(1+2z)=\frac1{2z}+\gamma+O(z),\qquad
+ (d^*e^*)^{-z}=1-z\log(d^*e^*)+O(z^2),
+\tag{4.6c}
+\]
+
+and
+
+\[
+ g_t(z)=1+z\lambda(t)+O_t(z^2),\qquad
+ G_t(z)=1+O_t(z^2).
+\tag{4.6d}
+\]
+
+The added factor \(1-4z^2\) in \(G_t\) has no linear term.  Multiplying
+(4.6c)--(4.6d), then accounting for the outer \(1/z\), gives the following
+residue at \(z=0\):
 
 \[
 \begin{gathered}
@@ -1087,7 +885,7 @@ Combining (4.5) with the corrected (4.6) proves the exact decomposition
 \boxed{
  I_{N,W}(T)=T\mathcal Q_{N,T}+\mathcal R_{N,T},\qquad
  \mathcal R_{N,T}=
- \mathcal C_{N,W}(T)+
+ \mathcal E_{\rm arch}+
  \sum_{q\geq1}\sum_{R,S,K,M}
  \mathcal O^{\ne0}_{q;R,S,K,M}. }
 \tag{4.8}
@@ -1097,6 +895,19 @@ The nonzero-mode sum in (4.8) is taken in the complete dyadic Poisson
 ordering used above.  The convergence supplied by (2.5) and repeated
 integration by parts in \(t\) justifies that limit; no rearrangement of
 individual Fourier modes and no truncated-AFE error is hidden in (4.8).
+
+Since \(d^*e^*=de/(d,e)^2\), the logarithm in (4.7) is
+\(2\log(d,e)-\log d-\log e\), exactly the LCM normalization used in the
+separate main-term calculation.
+
+**zero-mode audit result: the baseline identity required correction;** the
+kernel (2.1) now contains \(1-4z^2\), and the incompatible raw Fubini step
+has been replaced by the cutoff/common-Mellin argument (4.5b)--(4.5e).
+Most importantly, the exact trigonometric multiplier \(C_t(z)\) in
+(4.5f)--(4.5g) is retained.  Its difference from 1 is the explicit term
+\(\mathcal E_{\rm arch}\), not a suppressed equality; (4.5j) makes this
+correction smaller than every power of \(T\).  Equations (4.6a)--(4.8) are
+the corrected identities.
 
 ## 5. Möbius support and all effective variable ranges
 
@@ -1119,116 +930,20 @@ and
 Thus the common divisor carries no Möbius sign; both reduced variables
 retain Möbius weights.
 
-Fix \(0<\eta<10^{-3}\).  We first run the integrations by parts with
-\(\eta_0=\eta/100\), and only then enlarge the surviving ranges to the
-displayed \(\eta\)-ranges.  This slack budgeting matters: fixed support
-constants and derivatives of the exact coupled kernel are absorbed by
-\(T^{O(\eta)}\), not by an unrecorded fixed power of \(T\).
-
-Here are the two operators used in the audit.  For fixed
-\(x,r,\delta\), put
+Put \(\mathscr L=\log(2T)\).  Fix a tail target \(D>20\), and then choose
+an integer \(B=B(D,W)\geq100\).  Call the boxes satisfying (5.3)--(5.8)
+the **polylogarithmic core**, and denote the exact sum of all remaining
+nonzero modes by \(\mathcal R_{\rm tail}^{(B)}\).  Then (4.8) gives
 
 \[
- \lambda(x,r,\delta)=\log\left(1+\frac{\delta}{xr}\right),
- \qquad
- \mathcal L_t=\frac1{i\lambda(x,r,\delta)}\frac{\partial}{\partial t}.
-\tag{5.3a}
+ \mathcal R_{N,T}=\mathcal E_{\rm arch}
+ +\mathcal R_{\rm tail}^{(B)}
+ +\sum_{\text{core }q,R,S,K,M,L,H}
+  \mathcal O^{\ne0}_{q;R,S,K,M,L,H}.
+\tag{5.2a}
 \]
 
-Then \(\mathcal L_t e^{it\lambda}=e^{it\lambda}\).  By (2.5), every
-derivative falling on \(W(t/T)V_t(x(xr+\delta)/s)\) costs \(T^{-1}\).
-Thus \(J\) integrations by parts give
-
-\[
- T\bigl(1+T|\lambda(x,r,\delta)|\bigr)^{-J}
- \left(1+\frac{x(xr+\delta)}{sT}\right)^{-A}.
-\tag{5.3b}
-\]
-
-Consequently a retained box has
-\(|\lambda|\leq T^{-1+\eta_0}\).  This uses the exact logarithm.  Since
-
-\[
- \delta=xr(e^\lambda-1),\qquad
- |e^\lambda-1|\leq2|\lambda|\quad(|\lambda|\leq1/2),
-\tag{5.3c}
-\]
-
-the support \(x\leq2M,\ r\leq2R\) gives
-
-\[
- |\delta|\leq8MR\,T^{-1+\eta_0}.
-\tag{5.3d}
-\]
-
-Also \(m_1s=xr+\delta=xre^\lambda\).  The four dyadic support intervals,
-and the fact that their scale ratios are powers of two, therefore give,
-after the \(\eta_0\)-to-\(\eta\) enlargement,
-
-\[
- \frac1{16}\leq\frac{KS}{MR}\leq16.
-\tag{5.3e}
-\]
-
-The AFE weight has argument \(xm_1\in[KM/4,4KM]\).  Its rapid decay in
-(2.5) leaves
-
-\[
- KM\leq T^{1+\eta}.
-\tag{5.3f}
-\]
-
-For the Fourier cutoff, retain the complete \(x\)-phase
-
-\[
- \Phi(x)=-\frac{2\pi hx}{s}
-   +t\log\left(1+\frac{\delta}{xr}\right),
- \qquad
- \Phi'(x)=-\frac{2\pi h}{s}
-   -\frac{t\delta}{x(xr+\delta)},
-\tag{5.3g}
-\]
-
-and use
-
-\[
- \mathcal L_x=\frac1{i\Phi'(x)}\frac{\partial}{\partial x},
- \qquad \mathcal L_xe^{i\Phi(x)}=e^{i\Phi(x)}.
-\tag{5.3h}
-\]
-
-In the normalized variable \(X=x/M\), the derivatives of the second term
-in (5.3g) are
-
-\[
- \partial_X^j\left\{t\log\left(1+
- \frac{\delta}{MXr}\right)\right\}
- \ll_j \frac{T|\delta|}{MR}\ll T^{\eta_0}\qquad(j\geq1).
-\tag{5.3i}
-\]
-
-The denominator stays away from zero on the \(F_K\)-support; this is where
-the positivity condition in (4.3a) is used.  If
-\(|h|M/S\) exceeds a fixed multiple of \(1+T|\delta|/(MR)\), (5.3h)
-is nonstationary, and \(J\) integrations give
-
-\[
- \left(1+\frac{|h|M}{S}\right)^{-J}T^{J\eta_0}.
-\tag{5.3j}
-\]
-
-The gap \(\eta-\eta_0\) absorbs the fixed multiple and makes (5.3j)
-\(O_B(T^{-B})\) outside
-
-\[
- |h|\leq8SM^{-1}T^\eta.
-\tag{5.3k}
-\]
-
-Equations (5.3b), (5.3j), and (2.5), with as many integrations or weight
-decay powers as required, prove the following precise statement.  For every
-\(B>0\), the part of the nonzero-mode sum in (4.8) outside the boxes
-satisfying (5.3)--(5.8) is \(O_{B,W,\eta}(T^{-B})\):
+The core boxes satisfy
 
 \[
  1\leq q,\qquad qR/2\leq N,\qquad qS/2\leq N;
@@ -1246,7 +961,7 @@ satisfying (5.3)--(5.8) is \(O_{B,W,\eta}(T^{-B})\):
 \]
 
 \[
- KM\leq T^{1+\eta};
+ KM\leq T\mathscr L^B;
 \tag{5.6}
 \]
 
@@ -1258,29 +973,77 @@ satisfying (5.3)--(5.8) is \(O_{B,W,\eta}(T^{-B})\):
 In particular,
 
 \[
- M\leq4T^{(1+\eta)/2}\sqrt{\frac SR},\qquad
- K\leq4T^{(1+\eta)/2}\sqrt{\frac RS}.
+ M\leq4(T\mathscr L^B)^{1/2}\sqrt{\frac SR},\qquad
+ K\leq4(T\mathscr L^B)^{1/2}\sqrt{\frac RS}.
 \tag{5.7a}
 \]
 
 \[
- 1\leq |\delta|\leq 8MR\,T^{-1+\eta},\qquad
- 1\leq |h|\leq 8S M^{-1}T^\eta.
+ 1\leq |\delta|\leq \frac{8MR}{T}\mathscr L^B,\qquad
+ 1\leq |h|\leq \frac{8S}{M}\mathscr L^B.
 \tag{5.8}
 \]
 
 A retained nonempty box must consequently also satisfy
 
 \[
- MR\geq\frac18T^{1-\eta},\qquad
- S\geq\frac18MT^{-\eta}.
+ MR\geq\frac{T}{8\mathscr L^B},\qquad
+ S\geq\frac{M}{8\mathscr L^B}.
 \tag{5.8a}
 \]
 
-The constants 8 and 16 in (5.7)--(5.8) are fixed envelopes for the support
-\([1/2,2]\) in (3.1), after the explicit \(\eta_0\)-to-\(\eta\)
-enlargement above.  They are not claimed to be sharp stationary-phase
-constants.
+Here are the two integrations by parts used for (5.8).  With
+
+\[
+ \Phi_t(t)=t\log\left(1+\frac\delta{xr}\right),\qquad
+ \mathcal L_t=
+ \frac1{i\log(1+\delta/(xr))}\frac d{dt},
+\tag{5.8b}
+\]
+
+we have \(\mathcal L_t e^{i\Phi_t}=e^{i\Phi_t}\).  The bounds (2.5) and
+the derivatives of \(W(t/T)\) show that \(J\) integrations contribute
+\(\ll_J(T|\log(1+\delta/(xr))|)^{-J}\).  Outside
+\(|\log(1+\delta/(xr))|\leq\mathscr L^B/T\), this gives a
+\(\mathscr L^{-BJ}\) seminorm gain for each kernel.  On dyadic support the
+complementary logarithmic inequality implies the first core bound in (5.8).
+
+For the Poisson phase use
+
+\[
+ \mathcal L_x=-\frac{s}{2\pi i h}\frac d{dx},\qquad
+ \mathcal L_x e(-hx/s)=e(-hx/s).
+\tag{5.8c}
+\]
+
+On the retained \(\delta\)-range, every \(x\)-derivative of the other
+factors in (4.4) costs at most \(C_j\mathscr L^{Bj}/M^j\).  Hence \(J\)
+integrations with \(\mathcal L_x\) give a \(\mathscr L^{-BJ}\) kernel
+seminorm gain unless the second core bound in (5.8) holds.  A Mellin shift
+in (2.3) gives analogous rapid seminorm decay outside (5.6).  Finally,
+(4.3), (5.5), and the retained \(\delta\)-range give (5.7).
+
+These pointwise seminorm gains do **not** by themselves prove
+\(\mathcal R_{\rm tail}^{(B)}=o(T)\).  Indeed, the elementary absolute
+majorants
+
+\[
+ \left(\sum_{d\leq T^3}\frac{|a_N(d)|}{\sqrt d}\right)^2
+ \ll T^3,
+ \qquad
+ \sum_{m,n\geq1}\frac1{\sqrt{mn}}
+ \left(1+\frac{mn}{T}\right)^{-A}\ll_A T^{1/2}\mathscr L
+\tag{5.8d}
+\]
+
+leave a crude integrated scale \(T^{9/2}\mathscr L\).  No fixed power of
+\(\mathscr L^{-1}\) removes the resulting \(T^{7/2}\) gap.  Thus the
+polylogarithmic tail requires a Möbius-sensitive estimate and remains an
+explicit analytic obligation below.
+
+The constants 8 and 16 in (5.7)--(5.8) follow from the fixed support
+\([1/2,2]\) in (3.1). They may be replaced by other fixed constants only if
+the dyadic partition is changed.
 
 Dyadically write
 
@@ -1292,15 +1055,15 @@ Dyadically write
 Every retained box therefore satisfies
 
 \[
- 1\leq L\leq8MR T^{-1+\eta},\qquad
- 1\leq H\leq8S M^{-1}T^\eta,
+ 1\leq L\leq\frac{8MR}{T}\mathscr L^B,\qquad
+ 1\leq H\leq\frac{8S}{M}\mathscr L^B,
 \tag{5.10}
 \]
 
 and hence
 
 \[
- A:=LH\leq64RS T^{-1+2\eta}.
+ A:=LH\leq\frac{64RS}{T}\mathscr L^{2B}.
 \tag{5.11}
 \]
 
@@ -1402,7 +1165,7 @@ renamed as \(\eta\), for each multi-index \(\mathbf j\),
 
 \[
  \|\partial^{\mathbf j}\Psi\|_\infty
- \leq C_{\mathbf j,W,\eta}T^{|\mathbf j|\eta}.
+ \leq C_{\mathbf j,W,D}\mathscr L^{B|\mathbf j|}.
 \tag{5.14}
 \]
 
@@ -1424,9 +1187,12 @@ into \(\Psi\).  Consequently one box has the exact scale
 \tag{5.15}
 \]
 
-## 6. Exact comparison of the three local gates
+## 6. The local coupled-kernel gate for an asymptotic
 
-The coupled sum in the exact normalization (5.15) is
+### 6.1 Gate comparison
+
+For comparison with BCR, smooth Mellin/Fourier separation of the admissible
+kernel in (5.14) produces the following three-variable sums. For
 
 \[
 \begin{aligned}
@@ -1517,239 +1283,109 @@ not arbitrary. It is a divisor-convolution coefficient and satisfies
 \tag{6.4}
 \]
 
-### 6.1 Gate comparison
-
-We now record the transform norm rather than hiding it in
-\(T^{O(\eta)}\).  Let \(\Phi\) be the residual smooth kernel after the
-four fixed dyadic cutoffs have been factored, put
+Let a fixed separation scheme write the coupled weight as
 
 \[
- \Phi^\#(p_1,p_2,\alpha,\beta)
- =\Phi(e^{p_1},e^{p_2},\alpha,\beta),
-\]
-
-and use the Fourier convention
-
-\[
- \widehat{\Phi^\#}(\vartheta)
- =\int_{\mathbb R^4}\Phi^\#(z)e^{-i\vartheta\cdot z}\,dz.
-\]
-
-Define
-
-\[
- \Omega_\Psi(\theta;x,y)
- =\frac{2\pi LH}{(2\pi)^4}
- \widehat{\Phi^\#}(\theta_1,\theta_2,Ly,-2\pi Hx),
+ \Psi(\mathbf u)=\int_{\Omega}\widehat\Psi(\xi)
+ \prod_{j=1}^4\psi_{j,\xi}(u_j)\,d\xi,
+ \qquad
+ \|\widehat\Psi\|_{L^1(\Omega)}\ll_W\mathscr L^{C_{\rm sep}}.
 \tag{6.5}
 \]
 
-and the common truncated transform domain
-
-\[
- \Theta_\eta=[-C_0T^\eta,C_0T^\eta]^2,\qquad
- \mathcal D_\eta=\Theta_\eta\times\mathcal X_\eta.
-\tag{6.5a}
-\]
-
-Mellin inversion in \(r/R,s/S\) and Fourier inversion in
-\(\delta/L,h/H\) first give the exact full-space identity
-
-\[
- \mathfrak S_q[\Psi]
- =\int_{\mathbb R^2}\int_{\mathbb R^2}
- \Omega_\Psi(\theta;x,y)
- \mathfrak T_q(\theta;R,S;L,H;x,y)\,dx\,dy\,d\theta.
-\tag{6.6a}
-\]
-
-The same \(\eta_0\)-slack used in Section 5 makes the truncation literal.
-Repeated integration by parts in \(\alpha,\beta\) outside the additive
-window (6.1), and in \(p_1,p_2\) outside \(\Theta_\eta\), gives arbitrary
-power decay.  More precisely, \(C_0\) is chosen to contain every phase
-gradient allowed by (5.13c).  On the complement, at least one combined
-Fourier/Mellin phase derivative has size \(\gg T^\eta\), while all of its
-higher normalized derivatives are \(O(T^\eta)\).  Each application of the
-corresponding nonstationary operator therefore gains \(T^{-\eta}\);
-the initial \(\eta_0\)-budget absorbs fixed derivative constants.
-Since the trivial bound
-
-\[
- |\mathfrak T_q(\theta;R,S;L,H;x,y)|
- \ll_{U,V,U_1,V_1}RSLH
-\]
-
-is polynomial in \(T\) throughout (5.3)--(5.10), the number of integrations
-may be chosen after \(B\).  Hence, for every \(B>0\),
-
-\[
- \int_{\mathbb R^4\setminus\mathcal D_\eta}
- |\Omega_\Psi(\theta;x,y)|
- |\mathfrak T_q(\theta;R,S;L,H;x,y)|
- \,d\theta\,dx\,dy
- \ll_{B,W,\eta}T^{-B},
-\tag{6.6b}
-\]
-
-and therefore
-
-\[
- \mathfrak S_q[\Psi]
- =\int_{\Theta_\eta}\int_{\mathcal X_\eta}
- \Omega_\Psi(\theta;x,y)
- \mathfrak T_q(\theta;R,S;L,H;x,y)\,dx\,dy\,d\theta
-+O_{B,W,\eta}(T^{-B}).
-\tag{6.6c}
-\]
-
-The change of variables in (6.5) gives the exact \(L^1\)-norm identity
-
-\[
-\begin{aligned}
- \|\Omega_\Psi\|_1
- &:=
- \int_{\mathbb R^2}\int_{\mathbb R^2}
- |\Omega_\Psi(\theta;x,y)|\,dx\,dy\,d\theta\\
- &=\frac1{(2\pi)^4}\|\widehat{\Phi^\#}\|_{L^1(\mathbb R^4)}\\
- &\leq C
- \left(\sum_{|\gamma|\leq3}
- \|\partial^\gamma\Phi^\#\|_2^2\right)^{1/2}
- \ll_{W,\eta}T^{3\eta}.
-\end{aligned}
-\tag{6.7}
-\]
-
-The penultimate inequality is Cauchy--Schwarz with
-\((1+|\vartheta|^2)^{-3/2}\in L^2(\mathbb R^4)\), followed by
-Plancherel.  Thus the three candidate gates, all in the normalization of
-(5.15), are:
-
-1. **Uniform-separated gate**
-
-   \[
-    \sup_{\substack{\theta\in\Theta_\eta\\
-                    (x,y)\in\mathcal X_\eta}}
-    |\mathfrak T_q(\theta;R,S;L,H;x,y)|
-    \ll_{\varepsilon,W}RS\,T^\varepsilon.
-   \tag{US}
-   \]
-
-2. **Integrated-separated gate**
-
-   \[
-    \int_{\Theta_\eta}\int_{\mathcal X_\eta}
-    |\Omega_\Psi(\theta;x,y)|
-    |\mathfrak T_q(\theta;R,S;L,H;x,y)|
-    \,dx\,dy\,d\theta
-    \ll_{\varepsilon,W}RS\,T^\varepsilon.
-   \tag{IS}
-   \]
-
-3. **Coupled-kernel gate**
-
-   \[
-    |\mathfrak S_q[\Psi]|
-    \ll_{\varepsilon,W}RS\,T^\varepsilon.
-   \tag{CK}
-   \]
-
-The implication arrows now use the same domain \(\mathcal D_\eta\).
-Minkowski and (6.7) give
-
-\[
- \int_{\Theta_\eta}\int_{\mathcal X_\eta}
- |\Omega_\Psi|\,|\mathfrak T_q|
- \leq\|\Omega_\Psi\|_{L^1(\mathcal D_\eta)}
-      \sup_{\mathcal D_\eta}|\mathfrak T_q|
- \ll T^{3\eta}\sup|\mathfrak T_q|,
-\]
-
-while (6.6b)--(6.6c) and the triangle inequality give
+Fourier/Mellin inversion and the triangle inequality give the exact chain
 
 \[
  |\mathfrak S_q[\Psi]|
- \leq
- \int_{\Theta_\eta}\int_{\mathcal X_\eta}
- |\Omega_\Psi|\,|\mathfrak T_q|
-+O_B(T^{-B}).
+ \leq\int_\Omega|\widehat\Psi(\xi)|
+       |\mathfrak T_q(\xi)|\,d\xi
+ \leq\|\widehat\Psi\|_1\sup_{\xi\in\Omega}|\mathfrak T_q(\xi)|.
+\tag{6.6}
 \]
 
-After choosing \(\eta<\varepsilon/6\), with the usual relabelling of
-\(\varepsilon/2\), these are the one-way implications
+Consequently the three candidate gates, from strongest to weakest, are:
+
+1. **Uniform-separated:**
+   \(\sup_\xi|\mathfrak T_q(\xi)|
+   \ll RS T^{-1/1000}\mathscr L^{-C_{\rm sep}}\).
+2. **Integrated-separated:**
+   \(\int|\widehat\Psi(\xi)||\mathfrak T_q(\xi)|d\xi
+   \ll RS T^{-1/1000}\).
+3. **Coupled-kernel:**
+   \(|\mathfrak S_q[\Psi]|\ll RS T^{-1/1000}\).
+
+Only the last expression occurs in the exact box formula (5.15).  Neither
+Minkowski nor an early absolute value is needed after it.  Thus the formal
+interface for the next analytic slice is the weakest of the three:
+
+> **Accepted local gate after exact audit: coupled-kernel.** Uniformly for
+> squarefree \(q\), all boxes satisfying (5.3), (5.6), (5.7), (5.10), and
+> the actual coupled weights satisfying (5.14), prove
+> \[
+> \boxed{
+>  |\mathfrak S_{q;R,S,K,M,L,H}[\Psi]|
+>  \leq C_W RS\,T^{-1/1000}. }
+> \tag{CK\(_{1/1000}\)}
+> \]
+
+This gate is unproved.  The exponent \(1/1000\) is fixed merely to make the
+global target unambiguous; any fixed positive power saving, or a fully
+accounted logarithmic saving exceeding \(C_{\rm sep}+7\), would suffice.
+The former \(RS T^\varepsilon\) gate proves only a
+\(T^{1+\varepsilon}\) bound and is not sufficient for the asymptotic.
+The second required local statement is the polylogarithmic-tail estimate
 
 \[
- \text{\rm(US)}\Longrightarrow\text{\rm(IS)}
- \Longrightarrow\text{\rm(CK)}.
-\tag{6.8}
+ \boxed{\mathrm{TAIL}_{B,D}:\qquad
+ |\mathcal R_{\rm tail}^{(B)}|\ll_W T\mathscr L^{-D}.}
+\tag{6.6a}
 \]
 
-No reverse implication is used or asserted.  Since (5.15) contains
-\(\mathfrak S_q[\Psi]\) itself, (CK) is the weakest of the three candidates
-that is sufficient for the global reduction.  Replacing it by (US) would
-take an absolute value before the transform integrations and impose a
-strictly stronger target without necessity.
+It too is unproved; (5.8d) explains why it cannot be replaced by an
+absolute-value argument.
 
-The exact-rational boundary diagnostics are non-proof checks:
+### 6.2 Boundary diagnostics and global implication
 
-| witness | \((\rho,\sigma,m,k,\ell,h,\kappa)\) | \(a\) | \(a-(\rho+\sigma)/2\) | diagnostic |
-|---|---:|---:|---:|---|
-| balanced_max_a | \((3,3,1/2,1/2,5/2,5/2,0)\) | \(5\) | \(2\) | factor \(T^2\) beyond the arbitrary-coefficient BCR conjectural range |
-| large_q_endpoint | \((1,1,0,0,0,1,2)\) | \(1\) | \(0\) | on the arbitrary-coefficient boundary |
-| r_long | \((3,2,0,1,2,2,0)\) | \(4\) | \(3/2\) | unbalanced long-\(a\) failure of that BCR range |
-| s_long | \((2,3,1,0,2,2,0)\) | \(4\) | \(3/2\) | unbalanced long-\(a\) failure of that BCR range |
+The exact-rational checker prints the following non-proof diagnostics:
 
-In particular, the balanced \(T^2\) gap is a failure of the
-**arbitrary-coefficient BCR conjectural range** to cover this box.  It is
-not a counterexample to (CK), whose coefficients and kernel remain
-structured and coupled.
+| witness | \((\rho,\sigma,m,k,\ell,h,\kappa)\) | \(a\) | \(a-(\rho+\sigma)/2\) |
+|---|---|---:|---:|
+| balanced_max_a | \((3,3,1/2,1/2,5/2,5/2,0)\) | 5 | 2 |
+| large_q_endpoint | \((1,1,0,0,0,1,2)\) | 1 | 0 |
+| r_long | \((3,2,0,1,2,2,0)\) | 4 | \(3/2\) |
+| s_long | \((2,3,1,0,2,2,0)\) | 4 | \(3/2\) |
 
-> **Accepted local target and conditional implication.**
->
-> Accepted local gate after exact audit: coupled-kernel.
->
-> The accepted line names the following unproved assumption, uniformly for
-> squarefree \(q\), all variables satisfying (5.3), (5.6), (5.7), (5.10),
-> and the actual kernels (5.13b)--(5.14):
-> \[
-> \boxed{\operatorname{MWKF}_{\rm ck}(3):\quad
-> |\mathfrak S_q[\Psi]|
-> \leq C_{\varepsilon,W}RS\,T^\varepsilon.}
-> \tag{6.9}
-> \]
-> Its proved consequence is the conditional implication
-> \[
-> \boxed{\operatorname{MWKF}_{\rm ck}(3)
-> \Longrightarrow
-> \mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}.}
-> \tag{6.10}
-> \]
+The \(T^2\) balanced gap is a failure of the arbitrary-coefficient BCR
+third-variable range; it is not a counterexample to the coupled structured
+gate.
 
-Indeed, (5.15) and the assumed (6.9) give, for each retained box,
+Assuming CK\(_{1/1000}\), (5.15) gives each retained box the bound
 
 \[
  |\mathcal O^{\ne0}_{q;R,S,K,M,L,H}|
- \ll_{\varepsilon,W}\frac{T^{1+\varepsilon}}q.
-\tag{6.11}
+ \ll_W\frac{T^{1-1/1000}}q.
+\tag{6.7}
 \]
 
-There are \(O_\eta((\log T)^6)\) retained dyadic choices, and
+There are \(O_W(\mathscr L^6)\) retained dyadic choices, and
 
 \[
- \sum_{q\leq N}\frac{\mu^2(q)}q\ll\log(2N).
-\tag{6.12}
+ \sum_{q\leq N}\frac{\mu^2(q)}q\ll\mathscr L.
+\tag{6.8}
 \]
 
-It follows conditionally that the complete nonzero-mode sum in (4.8) is
-\(O_{\varepsilon,W}(T^{1+\varepsilon})\).  Separately, not as part of
-\(\operatorname{MWKF}_{\rm ck}(3)\), equation (4.7c) gives
+Together with (4.5j), CK\(_{1/1000}\) and
+TAIL\(_{B,D}\) prove the precise conditional implication
 
 \[
- \mathcal C_{T^3,W}(T)=O_{B,W}(T^{-B}).
-\tag{6.13}
+ \boxed{\mathrm{CK}_{1/1000}+\mathrm{TAIL}_{B,D}
+ \quad\Longrightarrow\quad
+ \mathcal R_{T^3,T}
+ \ll_W T^{1-1/1000}\mathscr L^7+T\mathscr L^{-D}=o_W(T).}
+\tag{6.9}
 \]
 
-Adding this explicit archimedean correction and the analytic tails to the
-conditional nonzero-mode bound proves exactly the implication in (6.10).
+No separated supremum is used in this implication.
 
 ## 7. Term-by-term correspondence with Bettin--Chandee--Radziwiłł
 
@@ -1766,12 +1402,12 @@ The notation correspondence is:
 | \(q\delta=m_1e-m_2d\) | \(d\Delta=m_1n_2-m_2n_1\) after gcd extraction | shifted-divisor variable |
 | \(L\leq|\delta|\leq2L\) | \(0<|\Delta|\leq D/d\) | short shift |
 | \(H\leq|h|\leq2H\) | \(0<|h|<H_d\) | nonzero Poisson frequency |
-| \(H\leq8S/M\,T^\eta\) | \(H_d=N_2/(dM)T^\varepsilon\) | Fourier cutoff |
+| \(H\leq8S\mathscr L^B/M\) | \(H_d=N_2/(dM)T^\varepsilon\) | Fourier cutoff |
 | \(a=h\delta\) | \(a=h\Delta\) | third trilinear variable |
-| \(A=LH\leq64RS/T^{1-2\eta}\) | \(A=N_1N_2/(d^2T^{1-\varepsilon})\) | length of the \(a\)-variable |
+| \(A=LH\leq64RS\mathscr L^{2B}/T\) | \(A=N_1N_2/(d^2T^{1-\varepsilon})\) | length of the \(a\)-variable |
 | \(e(-a\bar r/s)\) | \(e(-a\bar n_1/n_2)\) | Kloosterman-fraction phase |
 | \(\nu_{x,y}(a)\) in (6.2) | \(\nu_{x,y}(a)=\sum_{h\Delta=a}e(-hx+\Delta y/2\pi)\) | divisor-convolution coefficient |
-| (US), with arbitrary coefficients | BCR Proposition 1 / Conjecture 1 slot | stronger comparison gate; (6.9) is the accepted structured target |
+| CK\(_{1/1000}\) | BCR Proposition 1 / Conjecture 1 slot | arithmetic input, before separation here |
 
 The four methodological differences forced by \(N=T^3\) are exact:
 
@@ -1790,16 +1426,16 @@ The four methodological differences forced by \(N=T^3\) are exact:
 
 3. **Range of the third variable.** BCR Conjecture 1 assumes
    \(A\leq(RS)^{1/2+\varepsilon}\). Here
-   \(A\leq RS/T^{1-2\eta}\). For \(R=S=T^3\), the latter permits
-   \(A=T^{5+2\eta}\), while the BCR hypothesis permits only
+   \(A\leq64RS\mathscr L^{2B}/T\). For \(R=S=T^3\), the latter permits
+   \(A=64T^5\mathscr L^{2B}\), while the BCR hypothesis permits only
    \(A\leq T^{3+\varepsilon}\). Thus even BCR's conjectural arbitrary-
    coefficient estimate does not cover the present long-\(a\) boxes.
 
 4. **Arithmetic structure.** BCR discard the nature of \(a_n\) and use only
-   \(L^2\) norms. Equation (5.2) keeps both signs \(\mu(r)\mu(s)\), while
-   (6.0) keeps \(a=h\delta\) inside the actual coupled kernel.  The unproved
-   target \(\operatorname{MWKF}_{\rm ck}(3)\) is asserted only for this
-   structured class, not for arbitrary coefficients.
+   \(L^2\) norms. Equation (5.2) keeps both signs \(\mu(r)\mu(s)\), and
+   (6.2) keeps the factorization \(a=h\delta\). CK\(_{1/1000}\) is posed
+   only for the original coupled structured class, not for arbitrary
+   coefficients.
 
 For balanced \(R=S=X\), the BCR proven local calculation gives, after the
 archimedean normalization in (5.15),
@@ -1823,11 +1459,11 @@ At \(X=T^3\), the two terms in (7.1) are
 \tag{7.3}
 \]
 
-The assumed \(\operatorname{MWKF}_{\rm ck}(3)\) would instead give
-\(T^{1+\varepsilon}\) for the corresponding box.
-The missing savings relative to (7.3) cannot come from a rearrangement of
-the BCR norm inequalities; it has to use the simultaneous Möbius weights
-and the divisor-convolution restriction on \(a\).
+CK\(_{1/1000}\) would instead give \(T^{1-1/1000}\) for the corresponding
+box before logarithmic aggregation.  The missing savings relative to (7.3)
+cannot come from a rearrangement of the BCR norm inequalities; it has to use
+the simultaneous Möbius weights, the divisor-convolution restriction on
+\(a\), and the coupled archimedean kernel.
 
 The \(T^{3/4}\) result in BCR concerns a product of a smooth polynomial of
 length \(T^{1/2}\) and a second polynomial of length \(T^{1/4}\), where Watt's
@@ -1837,10 +1473,23 @@ that theorem supplies no box estimate for (6.3).
 
 ## 8. What has and has not been proved
 
-Phase-1 classification: corrected reduction verified
+**Phase-1 classification: exact reduction remains blocked.**
 
-The classification applies to the reduction, not to the desired
-\(T^3\) asymptotic.  The controlling proof-status ledger is:
+Proved in this note:
+
+* the pole-cancelled exact AFE and its convergence bounds, (2.0)--(2.7);
+* the finite diagonal and exact shifted-divisor reindexing, (2.8)--(3.8);
+* the Poisson coefficient, phase, and complete nonzero-mode kernel,
+  (4.1)--(4.5);
+* the corrected zero-mode identity, including the previously omitted
+  \(1-4z^2\) zero and the exact archimedean correction,
+  (4.5a)--(4.8);
+* the exact separation (5.2a) into a polylogarithmic core and a named tail,
+  and the core-box normalization (5.3)--(5.15);
+* the implication
+  \(\mathrm{CK}_{1/1000}+\mathrm{TAIL}_{B,D}
+  \Rightarrow\mathcal R_{T^3,T}=o_W(T)\),
+  (6.7)--(6.9).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -1852,28 +1501,37 @@ The classification applies to the reduction, not to the desired
 | Coupled-kernel estimate \(\operatorname{MWKF}_{\rm ck}(3)\) | **unproved** | stated, not derived, in (6.9) |
 | Global remainder bound | **conditional** | the complete implication from the unproved gate is (6.10)--(6.13), with \(\mathcal C_{T^3,W}(T)\) added separately |
 
-The LCM quadratic form consumed in (1.1)--(1.5) was proved separately; this
-note fixes its normalization but does not reproduce that independent proof.
-The exact-rational boundary witnesses in Section 6 are diagnostics, not
-analytic estimates.  Likewise, the published results listed below are
-coverage inputs, not proofs of (6.9).  In particular, neither BCR nor the
-future Wright input currently supplies the coupled-kernel estimate over the
-whole exponent polytope, and no unconditional \(\theta=3\) closure is claimed.
+* CK\(_{1/1000}\), the accepted coupled-kernel gate;
+* TAIL\(_{B,D}\), the Möbius-sensitive aggregation outside the
+  polylogarithmic core;
+* complete coverage of its parameter polytope by published estimates;
+* the residual Möbius Type I/II estimate;
+* the unconditional \(T^3\) long-mollifier asymptotic.
+
+Thus Phase 1 verifies the infinite exact decomposition but remains blocked
+at the finite polylogarithmic reduction demanded for the final theorem.
+Treating either CK\(_{1/1000}\) or TAIL\(_{B,D}\) as an already available
+consequence of BCR would be incorrect.
 
 ## 9. Primary references
 
-The metadata and ranges in this table were checked against the linked
-primary records on 2026-08-25.
-
-| Source | Primary-source status | Exact range used here | Audit disposition |
-|---|---|---|---|
-| S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of the Riemann zeta function with Dirichlet polynomials*, [arXiv:1411.7764](https://arxiv.org/abs/1411.7764), J. Reine Angew. Math. **729** (2017), 51--79 | published | arbitrary coefficients for \(N=T^\theta\), \(\theta<17/33=1/2+1/66\); special product of lengths \(T^{1/2}\) and \(T^{1/4}\), hence total length below \(T^{3/4}\); Proposition 1/Conjecture 1 supply the local comparison in Section 7 | retained published input; its arbitrary-coefficient conjectural range does not cover the long-\(a\) boxes |
-| M. Radziwiłł, *Limitations to mollifying \(\zeta(s)\)*, [arXiv:1207.6583v3](https://arxiv.org/abs/1207.6583) | arXiv preprint | Theorem 1 treats \(M_\theta\) of length \(T^\theta\) for every fixed \(\theta>0\), proving a lower-bound limitation and the nontrivial role of off-diagonal terms; its asymptotic Proposition B is restricted to \(\theta<1/2\) | retained conceptual limitation, not an estimate for (6.9) and not a claim of all-length asymptotic coverage |
-| K. Pratt, N. Robles, *Perturbed moments and a longer mollifier for critical zeros of \(\zeta\)*, [arXiv:1706.04593v3](https://arxiv.org/abs/1706.04593), Res. Number Theory **4** (2018), 9 | published | \(\theta<4/7\) for coefficients \(\mu(n)f(n)\), and \(\theta<6/11\) for the Feng-type coefficients \(\mu^2(n)(\mu*\Lambda^{*k})(n)f(n)\) | retained structured-coefficient input; both ranges remain far below \(\theta=3\) |
-| T. Wright, *Trilinear Kloosterman fractions I: partially fixed moduli and unbalanced convolutions*, [arXiv:2604.25177v2](https://arxiv.org/abs/2604.25177) | v2 revised 2026-08-07; not yet used in the reduction | improved estimates with a partially fixed modulus and unbalanced convolution hypotheses | future Region-C input only; no claim that its hypotheses already cover the exponent polytope or prove (6.9) |
-
-> **Withdrawn-source warning.**  [arXiv:2601.00292v2](https://arxiv.org/abs/2601.00292),
-> *Bilinear forms with Kloosterman fractions and applications*, is withdrawn
-> and is not an input to this note.  The official withdrawal comment reports
-> a missing \(L^2\) factor in equation (2.53), changing \(L^5\) to \(L^7\),
-> so the argument does not yield the claimed improved bound.
+* S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of
+  the Riemann zeta function with Dirichlet polynomials*, arXiv:1411.7764,
+  especially Proposition 1 and Sections 3.1--3.4.
+* S. Bettin, V. Chandee, *Trilinear forms with Kloosterman fractions*,
+  arXiv:1502.00769, Theorem 1, as a Region-A input for the next coverage
+  slice; no claim of full-polytope coverage is made here.
+* T. Wright, *A note on trilinear forms with partially fixed denominator*,
+  arXiv:2604.25177v2, as a future fixed-factor Region-C input; its hypotheses
+  have not yet been mapped over the whole polytope.
+* arXiv:2601.00292 is **withdrawn from this project's admissible analytic
+  inputs**: the author record reports a missing \(L^2\) factor (changing the
+  relevant loss from \(L^5\) to \(L^7\)), so the advertised improvement is
+  not used.
+* M. Radziwiłł, *Limitations to mollifying \(\zeta(s)\)*,
+  arXiv:1207.6583, for Farmer's all-\(\theta\) long-mollifier conjecture and
+  the nontrivial role of the off-diagonal.
+* K. Pratt, N. Robles, *Perturbed moments and a longer mollifier for
+  critical zeros of \(\zeta\)*, arXiv:1706.04593, for later exploitation of
+  Möbius/convolution structure up to lengths below \(T^{4/7}\) or
+  \(T^{6/11}\), still far from \(T^3\).
