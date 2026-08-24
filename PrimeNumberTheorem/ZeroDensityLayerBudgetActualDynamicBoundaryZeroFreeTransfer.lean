@@ -118,7 +118,8 @@ theorem actualDynamicBoundaryCanonicalBetaZeroFree_relativePNT_tendsto_zero
       hbeta hbetaOne hzeroFree heta
   have htargetReal :
       Tendsto (targetZeroPowerAmplitude beta) atTop (nhds 0) := by
-    simpa only [targetZeroPowerAmplitude, neg_sub] using
+    change Tendsto (fun x : ℝ => x ^ (beta - 1)) atTop (nhds 0)
+    simpa only [neg_sub] using
       tendsto_rpow_neg_atTop
         (show 0 < 1 - beta by linarith)
   have htargetNat :
