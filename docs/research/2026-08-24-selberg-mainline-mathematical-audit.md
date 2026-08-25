@@ -25,9 +25,19 @@ kernel with the genuine sliding integral and exact Mathlib Fourier
 normalization.  S3 is now complete, and S4 has both its exact critical-line
 modulus bridge, its genuine `re(s)=2` first-moment main term, and its uniform
 horizontal-edge estimate.  Its uniform lower-Stirling estimate is now also
-formalized.  The theorem remains incomplete until these S4 components are
-assembled into the lower first moment and the S5/packing interfaces are
-instantiated.
+formalized.  The exact Cauchy rectangle identity and the quantitative finite
+lower bound
+
+\[
+ \left|\int_a^bG_X(\tfrac12+it)\,dt\right|
+ \ge (b-a)-\frac{16}{\log2}-|U|-|B|
+\]
+
+are now formalized as well, together with their dyadic specialization
+`T/2 - 16/log 2 - 2*C*X*sqrt(T/2)`.  The theorem remains incomplete until
+the fixed-power integer parameter is inserted, the S4 modulus/Stirling
+bridge and S4b sliding transfer are assembled, and the S5/packing interfaces
+are instantiated.
 
 The main conclusion is decisive:
 
@@ -2663,9 +2673,25 @@ the reflected completed function is proved in Lean; the right-edge main
 term is now proved in Lean with the explicit remainder `16/log 2`.
 The horizontal-edge estimate is now proved in Lean via the uniform first Abel
 approximation.  The uniform lower Stirling bound is now proved in Lean from
-the existing digamma expansion.  The remaining S4 work is the contour
-identity/lower-first-moment assembly and its Tonelli/end-interval transfer,
-not a missing analytic estimate.
+the existing digamma expansion.  The exact contour identity is now proved in
+Lean with the orientation
+
+\[
+ L=R+i(U-B),
+\]
+
+and is assembled with `R=(b-a)+E`, `|E|<=16/log 2`, and the two horizontal
+bounds.  This gives the quantitative dyadic lower bound
+
+\[
+ \left|\int_{T/2}^{T}G_X(\tfrac12+it)\,dt\right|
+ \ge \frac T2-\frac{16}{\log2}-2CX\sqrt{T/2}.
+\]
+
+The remaining S4 work is therefore the fixed-power integer parameter choice,
+the pointwise modulus/Stirling integration that yields S4a, and the
+Tonelli/end-interval transfer yielding S4b; it is not a missing contour or
+analytic edge estimate.
 
 ### Sign change and multiplicity
 
@@ -2695,7 +2721,9 @@ It uses neither RH nor any zero-density hypothesis, Farmer's long-mollifier
 conjecture, `MWKF(3)`, a Bettin--Chandee conjecture, nor the Zeta23 bridge.
 Lean formalization is therefore admissible for the Selberg slice and has
 closed S1, S12, S13, S-arith, the full two-sided S2 off-diagonal estimate,
-and the signed integrated diagonal asymptotic.
+the signed integrated diagonal asymptotic, and the finite S4 contour lower
+bound.  The fixed-parameter S4a/S4b and the S5/final odd-zero assembly remain
+open.
 
 The object-level `J` bridge is now also closed through the following exact
 stages.  The physical theta kernel at `log u` equals the original
