@@ -5037,6 +5037,110 @@ cluster bound, the fixed target, and the uniform diagonal margin.  It
 keeps nonzero_joint_gram_estimate_proved=False and
 published_coverage=False.
 
+### 4.41 Full zero geometric Gram closes after factorization
+
+Fix a Type-II factor box and expand the square on the left of
+(4.339), keeping the common variable \(b\).  Put
+
+\[
+ w_i=a_i b-ks_i,
+ \qquad
+ \Gamma=a_1s_2-a_2s_1.
+\tag{4.343}
+\]
+
+Eliminating \(b\) from the two shifted equations gives the exact
+cross relation
+
+\[
+ \boxed{a_2w_1-a_1w_2=k\Gamma.}
+\tag{4.344}
+\]
+
+Consequently the support \(a_i\asymp T^{1-\beta}\) and
+\(|w_i|\asymp T^\theta\) imposes
+
+\[
+ |\Gamma|\ll T^{\,1-\beta+\theta}.
+\tag{4.345}
+\]
+
+Suppose first that \(\Gamma=0\).  Then
+\(a_1/s_1=a_2/s_2\).  The coprimality in (4.337) gives
+\((a_i,s_i)=1\); because all four variables are positive, the two
+fractions are primitive and hence
+
+\[
+ a_1=a_2,
+ \qquad
+ s_1=s_2,
+ \qquad
+ w_1=w_2.
+\tag{4.346}
+\]
+
+The last equality follows either from (4.343) or directly from the
+common-\(b\) equations.  Notice that (4.346) does **not** force
+\(h_1\delta_1=h_2\delta_2\).  Thus the whole product-frequency
+off-diagonal must remain inside the positive square
+
+\[
+ \left|
+   \sum_n \nu_{a,b,s}(n)
+   e\!\left(-\frac{n\overline{ab}}s\right)
+ \right|^2.
+\tag{4.347}
+\]
+
+Apply the reciprocal-cluster large sieve used in Section 4.38 to
+(4.347) before taking absolute values in the two \(n\)-variables.
+Together with the exact product energy
+
+\[
+ \sum_n|\nu_{a,b,s}(n)|^2
+ \ll_W HL\log(2\min(H,L)),
+\tag{4.348}
+\]
+
+the power exponent of the complete \(\Gamma=0\) contribution is
+
+\[
+ \beta+(1-\beta)+\theta+1=2+\theta.
+\tag{4.349}
+\]
+
+The harmless logarithm in (4.348) is absorbed by the fixed power
+margin.  Comparing (4.349) with the square target (4.339), that margin
+is exactly
+
+\[
+ \left(4-\beta-\frac1{250}\right)-(2+\theta)
+ =2-\beta-\theta-\frac1{250}.
+\tag{4.350}
+\]
+
+It is uniformly positive, with the same worst value
+\(247/750\) at \((\theta,\beta)=(1,2/3)\).  Hence (4.339) is proved
+for the full zero geometric Gram, including all unequal
+\((h_1,\delta_1),(h_2,\delta_2)\) pairs.
+
+The sole remaining Type-II input is therefore the part of the square
+with
+
+\[
+ 0<|\Gamma|\ll T^{\,1-\beta+\theta},
+\tag{4.351}
+\]
+
+subject to (4.343)--(4.345), both Möbius weights
+\(\mu(s_1)\mu(s_2)\), both reciprocal phases, and the coupled kernel.
+No estimate for (4.351) is asserted here.
+
+The adapter transition_factor_square_geometry_audit records
+(4.343)--(4.351).  It sets full_zero_geometry_closes=True but keeps
+nonzero_geometric_determinant_gate_proved=False and
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

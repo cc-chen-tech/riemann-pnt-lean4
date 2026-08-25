@@ -890,6 +890,38 @@ def test_transition_far_shell_type_ii_diagonal_has_uniform_margin() -> None:
     assert not worst.published_coverage
 
 
+def test_transition_factor_square_full_zero_geometry_closes() -> None:
+    """Coprimality makes Gamma=0 primitive; cluster L2 closes all n-pairs."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_factor_square_geometry_audit",
+        None,
+    )
+    assert adapter is not None, "transition square-geometry adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    worst = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+    )
+
+    assert worst.geometric_determinant_max_exponent == F(4, 3)
+    assert worst.full_zero_geometry_exponent == F(3)
+    assert worst.type_ii_square_target_exponent == F(2497, 750)
+    assert worst.full_zero_geometry_margin == F(247, 750)
+    assert worst.common_b_cross_relation_exact
+    assert worst.zero_determinant_primitive_pairs_identical
+    assert worst.product_frequency_offdiagonal_retained
+    assert worst.reciprocal_cluster_l2_applied_before_absolute_n_pairs
+    assert worst.full_zero_geometry_closes
+    assert worst.nonzero_geometric_determinant_gate_required
+    assert not worst.nonzero_geometric_determinant_gate_proved
+    assert not worst.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2254,6 +2286,14 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "proved=False covered=False"
     ) in output
     assert (
+        "large_q_transition: factor_square_geometry="
+        "theta=1,beta=2/3,Gamma_max=4/3,zero=3,"
+        "square_target=2497/750,zero_margin=247/750 "
+        "cross_relation=True primitive_zero=True n_offdiag=True "
+        "cluster_l2=True zero_closes=True nonzero_gate=True "
+        "proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2659,5 +2699,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"ab-ks=w",
         r"\mathcal F_{\theta,\beta}",
         "transition_far_shell_factor_box_audit",
+        "### 4.41 Full zero geometric Gram closes after factorization",
+        r"\Gamma=a_1s_2-a_2s_1",
+        r"a_2w_1-a_1w_2=k\Gamma",
+        "transition_factor_square_geometry_audit",
     ):
         assert marker in text

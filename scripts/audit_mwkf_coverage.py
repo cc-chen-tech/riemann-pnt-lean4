@@ -490,6 +490,25 @@ class TransitionFarShellFactorBoxAudit:
 
 
 @dataclass(frozen=True)
+class TransitionFactorSquareGeometryAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    a_exponent: Fraction
+    geometric_determinant_max_exponent: Fraction
+    full_zero_geometry_exponent: Fraction
+    type_ii_square_target_exponent: Fraction
+    full_zero_geometry_margin: Fraction
+    common_b_cross_relation_exact: bool
+    zero_determinant_primitive_pairs_identical: bool
+    product_frequency_offdiagonal_retained: bool
+    reciprocal_cluster_l2_applied_before_absolute_n_pairs: bool
+    full_zero_geometry_closes: bool
+    nonzero_geometric_determinant_gate_required: bool
+    nonzero_geometric_determinant_gate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2419,6 +2438,51 @@ def transition_far_shell_factor_box_audit(
         identity_diagonal_closes=diagonal_margin > 0,
         nonzero_joint_gram_estimate_required=True,
         nonzero_joint_gram_estimate_proved=False,
+        published_coverage=False,
+    )
+
+
+def transition_factor_square_geometry_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+) -> TransitionFactorSquareGeometryAudit:
+    """Split the factor-box square by Gamma=a1*s2-a2*s1.
+
+    The common-b equations w_i=a_i*b-k*s_i imply
+    a2*w1-a1*w2=k*Gamma, so Gamma has exponent at most
+    (rho-beta)+distance.  Gamma=0 forces the two primitive coprime
+    pairs (a_i,s_i) to agree.  The remaining product-frequency
+    offdiagonal is bounded in L2 by the same reciprocity-cluster energy,
+    giving exponent 2+theta rather than the squared L1 exponent.
+    """
+    factor = transition_far_shell_factor_box_audit(
+        box,
+        distance=distance,
+        b_exponent=b_exponent,
+    )
+    determinant_max = factor.a_exponent + distance
+    zero_geometry = box.rho + box.ell + box.h + distance
+    margin = factor.type_ii_square_target_exponent - zero_geometry
+
+    return TransitionFactorSquareGeometryAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        a_exponent=factor.a_exponent,
+        geometric_determinant_max_exponent=determinant_max,
+        full_zero_geometry_exponent=zero_geometry,
+        type_ii_square_target_exponent=(
+            factor.type_ii_square_target_exponent
+        ),
+        full_zero_geometry_margin=margin,
+        common_b_cross_relation_exact=True,
+        zero_determinant_primitive_pairs_identical=True,
+        product_frequency_offdiagonal_retained=True,
+        reciprocal_cluster_l2_applied_before_absolute_n_pairs=True,
+        full_zero_geometry_closes=margin > 0,
+        nonzero_geometric_determinant_gate_required=True,
+        nonzero_geometric_determinant_gate_proved=False,
         published_coverage=False,
     )
 
@@ -5395,6 +5459,19 @@ def main() -> None:
         "cluster=5/2,target=999/500,required=251/500,"
         "diag=3,square_target=2497/750,diag_margin=247/750 "
         "shifted=True phase=True diag_closes=True nonzero_joint=True "
+        "proved=False covered=False"
+    )
+    transition_square_geometry = transition_factor_square_geometry_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+    )
+    print(
+        "large_q_transition: factor_square_geometry="
+        "theta=1,beta=2/3,Gamma_max=4/3,zero=3,"
+        "square_target=2497/750,zero_margin=247/750 "
+        "cross_relation=True primitive_zero=True n_offdiag=True "
+        "cluster_l2=True zero_closes=True nonzero_gate=True "
         "proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
