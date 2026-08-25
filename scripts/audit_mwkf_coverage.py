@@ -498,6 +498,47 @@ class LongCutoffQuotientSplitAudit:
 
 
 @dataclass(frozen=True)
+class LongCutoffQuotientBDHAudit:
+    modulus_exponent: Fraction
+    query_family_exponent: Fraction
+    progression_length_exponent: Fraction
+    total_cardinality_exponent: Fraction
+    residue_multiplicity_exponent: Fraction
+    outer_coefficient_l2_squared_exponent: Fraction
+    ideal_bdh_variance_exponent: Fraction
+    optimistic_bdh_bound_exponent: Fraction
+    farey_gate_target_exponent: Fraction
+    bdh_remaining_deficit: Fraction
+    completion_conversion_exponent: Fraction
+    max_centered_product_phase_saving: Fraction
+    optimistic_centered_bound_exponent: Fraction
+    completed_gate_target_exponent: Fraction
+    centered_remaining_deficit: Fraction
+    common_weight_hypothesis_verified: bool
+    centered_geometric_saving_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
+class PascadiIncompleteKloostermanAudit:
+    product_n_exponent: Fraction
+    incomplete_d_exponent: Fraction
+    modulus_c_exponent: Fraction
+    coefficient_l2_exponent: Fraction
+    regular_i_squared_exponent: Fraction
+    exceptional_i_squared_exponent: Fraction
+    i_exponent: Fraction
+    optimistic_bound_exponent: Fraction
+    gate_target_exponent: Fraction
+    remaining_deficit: Fraction
+    product_coefficient_separated_optimistically: bool
+    assumption_14_verified: bool
+    direct_corollary_hypotheses_verified: bool
+    published_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class BCFixedDeterminantAudit:
     short_variable_exponents: tuple[Fraction, Fraction]
     long_variable_exponents: tuple[Fraction, Fraction]
@@ -2231,6 +2272,194 @@ def long_cutoff_quotient_split_audit(
     )
 
 
+def long_cutoff_quotient_bdh_audit(
+    box: ExponentBox,
+    *,
+    b_exponent: Fraction,
+    d_exponent: Fraction,
+    dual_v_exponent: Fraction,
+    dual_j_exponent: Fraction,
+) -> LongCutoffQuotientBDHAudit:
+    """Test the quotient progression against an optimistic BDH variance.
+
+    Let ``Q=T^(beta+kappa+nu)`` be the unreduced modulus ``b*d*|v|``.
+    Reindexing by ``delta,j`` gives ``T^(ell+j)`` residue queries for
+    each factor-product family.  Even if all query-dependent kernels are
+    replaced by one common progression weight, the coefficient
+    multiplicity and the ideal variance
+
+    ``sum_(m~Q) sum_(a mod m) |E(m,a)|^2 <= S*Q``
+
+    yield the recorded Cauchy bound.  This is an optimistic exponent
+    ledger, not an invocation of a published BDH theorem.
+
+    The second ledger converts from the signed-Farey normalization to
+    finite completion by ``S/L`` and then grants the *full* product-phase
+    variation ``(S/H)*V`` as a saving.  The latter is also only an
+    optimistic benchmark: resonant fractions and the genuine coupled
+    Fourier coefficient prevent a termwise geometric-sum argument.
+    """
+    max_v_exponent = completion_dual_exponent(box.h, box.sigma)
+    max_j_exponent = max(
+        F(0),
+        box.rho - box.h,
+        box.ell - box.sigma,
+    )
+    for name, value in (
+        ("b", b_exponent),
+        ("d", d_exponent),
+        ("v", dual_v_exponent),
+        ("j", dual_j_exponent),
+    ):
+        if value < 0:
+            raise ValueError(f"{name} exponent must be nonnegative")
+    if dual_v_exponent > max_v_exponent:
+        raise ValueError("v exponent lies outside the completion range")
+    if dual_j_exponent > max_j_exponent:
+        raise ValueError("j exponent lies outside the determinant range")
+
+    modulus_exponent = b_exponent + d_exponent + dual_v_exponent
+    if modulus_exponent > box.sigma / 2:
+        raise ValueError("quotient modulus exceeds the BDH square-root face")
+    shift_query_exponent = box.ell + dual_j_exponent
+    query_family_exponent = modulus_exponent + shift_query_exponent
+    progression_length_exponent = box.sigma - modulus_exponent
+    total_cardinality_exponent = shift_query_exponent + box.sigma
+    residue_multiplicity_exponent = _positive_part(
+        shift_query_exponent - modulus_exponent
+    )
+    outer_coefficient_l2_squared_exponent = (
+        query_family_exponent + residue_multiplicity_exponent
+    )
+    ideal_bdh_variance_exponent = box.sigma + modulus_exponent
+    optimistic_bdh_bound_exponent = (
+        outer_coefficient_l2_squared_exponent
+        + ideal_bdh_variance_exponent
+    ) / 2
+    farey_gate_target_exponent = (
+        box.rho + box.sigma - box.h - TARGET_SAVING
+    )
+    bdh_remaining_deficit = _positive_part(
+        optimistic_bdh_bound_exponent - farey_gate_target_exponent
+    )
+
+    completion_conversion_exponent = box.sigma - box.ell
+    c_frequency_exponent = completion_dual_exponent(box.h, box.sigma)
+    max_centered_product_phase_saving = (
+        c_frequency_exponent + dual_v_exponent
+    )
+    optimistic_centered_bound_exponent = (
+        optimistic_bdh_bound_exponent
+        + completion_conversion_exponent
+        - max_centered_product_phase_saving
+    )
+    completed_gate_target_exponent = (
+        farey_gate_target_exponent + completion_conversion_exponent
+    )
+    centered_remaining_deficit = _positive_part(
+        optimistic_centered_bound_exponent - completed_gate_target_exponent
+    )
+
+    return LongCutoffQuotientBDHAudit(
+        modulus_exponent=modulus_exponent,
+        query_family_exponent=query_family_exponent,
+        progression_length_exponent=progression_length_exponent,
+        total_cardinality_exponent=total_cardinality_exponent,
+        residue_multiplicity_exponent=residue_multiplicity_exponent,
+        outer_coefficient_l2_squared_exponent=(
+            outer_coefficient_l2_squared_exponent
+        ),
+        ideal_bdh_variance_exponent=ideal_bdh_variance_exponent,
+        optimistic_bdh_bound_exponent=optimistic_bdh_bound_exponent,
+        farey_gate_target_exponent=farey_gate_target_exponent,
+        bdh_remaining_deficit=bdh_remaining_deficit,
+        completion_conversion_exponent=completion_conversion_exponent,
+        max_centered_product_phase_saving=(
+            max_centered_product_phase_saving
+        ),
+        optimistic_centered_bound_exponent=(
+            optimistic_centered_bound_exponent
+        ),
+        completed_gate_target_exponent=completed_gate_target_exponent,
+        centered_remaining_deficit=centered_remaining_deficit,
+        common_weight_hypothesis_verified=False,
+        centered_geometric_saving_proved=False,
+        published_coverage=False,
+    )
+
+
+def pascadi_incomplete_kloosterman_audit(
+    box: ExponentBox,
+) -> PascadiIncompleteKloostermanAudit:
+    """Insert the original core into Pascadi Corollary 18 optimistically.
+
+    Corollary 18 bounds an incomplete Kloosterman form with phase
+    ``e(+-n*inverse(r*d)/(s*c))`` and
+
+    ``I^2 = D^2*N*R + exceptional_factor``
+    ``      * C*S*(C+D*R)*(R*S+N)``.
+
+    Give the MWKF core the most favorable direct identification: set the
+    level factors ``R=S=1``, take the incomplete variables to be the
+    original ``r,s``, and collapse ``n=h*delta``.  This assumes that the
+    genuinely coupled product coefficient can be separated and satisfy
+    Assumption 14.  Even after those unverified concessions, the regular
+    spectrum term alone is much larger than the Farey gate.
+    """
+    product_n_exponent = box.h + box.ell
+    incomplete_d_exponent = box.rho
+    modulus_c_exponent = box.sigma
+    coefficient_l2_exponent = product_n_exponent / 2
+    level_r_exponent = F(0)
+    level_s_exponent = F(0)
+    regular_i_squared_exponent = (
+        2 * incomplete_d_exponent
+        + product_n_exponent
+        + level_r_exponent
+    )
+    exceptional_i_squared_exponent = (
+        modulus_c_exponent
+        + level_s_exponent
+        + max(
+            modulus_c_exponent,
+            incomplete_d_exponent + level_r_exponent,
+        )
+        + max(
+            level_r_exponent + level_s_exponent,
+            product_n_exponent,
+        )
+    )
+    i_exponent = max(
+        regular_i_squared_exponent,
+        exceptional_i_squared_exponent,
+    ) / 2
+    optimistic_bound_exponent = coefficient_l2_exponent + i_exponent
+    gate_target_exponent = (
+        box.rho + box.sigma - box.h - TARGET_SAVING
+    )
+    remaining_deficit = _positive_part(
+        optimistic_bound_exponent - gate_target_exponent
+    )
+
+    return PascadiIncompleteKloostermanAudit(
+        product_n_exponent=product_n_exponent,
+        incomplete_d_exponent=incomplete_d_exponent,
+        modulus_c_exponent=modulus_c_exponent,
+        coefficient_l2_exponent=coefficient_l2_exponent,
+        regular_i_squared_exponent=regular_i_squared_exponent,
+        exceptional_i_squared_exponent=exceptional_i_squared_exponent,
+        i_exponent=i_exponent,
+        optimistic_bound_exponent=optimistic_bound_exponent,
+        gate_target_exponent=gate_target_exponent,
+        remaining_deficit=remaining_deficit,
+        product_coefficient_separated_optimistically=True,
+        assumption_14_verified=False,
+        direct_corollary_hypotheses_verified=False,
+        published_coverage=False,
+        source="Pascadi, arXiv:2404.04239v3, Corollary 18 (5.35)",
+    )
+
+
 def bc_fixed_determinant_audit(box: ExponentBox) -> BCFixedDeterminantAudit:
     """Insert the hard determinant lattice into BC Corollary 1.
 
@@ -2941,6 +3170,60 @@ def main() -> None:
         f"{endpoint_quotient_audit.standard_bv_coupled_hypotheses_verified}"
         + " covered="
         f"{endpoint_quotient_audit.published_coverage}"
+    )
+    quotient_bdh_parts: list[str] = []
+    for b_exponent, d_exponent, v_exponent in (
+        (F(0), F(0), F(0)),
+        (F(199, 200), F(1, 200), F(1, 2)),
+    ):
+        bdh_audit = long_cutoff_quotient_bdh_audit(
+            hard,
+            b_exponent=b_exponent,
+            d_exponent=d_exponent,
+            dual_v_exponent=v_exponent,
+            dual_j_exponent=F(1, 2),
+        )
+        quotient_bdh_parts.append(
+            f"{_fmt(bdh_audit.modulus_exponent)}:bdh="
+            f"{_fmt(bdh_audit.optimistic_bdh_bound_exponent)},"
+            "bdh_deficit="
+            f"{_fmt(bdh_audit.bdh_remaining_deficit)},"
+            "centered="
+            f"{_fmt(bdh_audit.optimistic_centered_bound_exponent)},"
+            "centered_deficit="
+            f"{_fmt(bdh_audit.centered_remaining_deficit)}"
+        )
+    endpoint_bdh_audit = long_cutoff_quotient_bdh_audit(
+        hard,
+        b_exponent=F(199, 200),
+        d_exponent=F(1, 200),
+        dual_v_exponent=F(1, 2),
+        dual_j_exponent=F(1, 2),
+    )
+    print(
+        "balanced_max_a: quotient_bdh="
+        + ";".join(quotient_bdh_parts)
+        + " common="
+        f"{endpoint_bdh_audit.common_weight_hypothesis_verified}"
+        + " phase="
+        f"{endpoint_bdh_audit.centered_geometric_saving_proved}"
+        + " covered="
+        f"{endpoint_bdh_audit.published_coverage}"
+    )
+    pascadi_audit = pascadi_incomplete_kloosterman_audit(hard)
+    print(
+        "balanced_max_a: pascadi_incomplete="
+        "i2_regular="
+        f"{_fmt(pascadi_audit.regular_i_squared_exponent)} "
+        "i2_exceptional="
+        f"{_fmt(pascadi_audit.exceptional_i_squared_exponent)} "
+        f"bound={_fmt(pascadi_audit.optimistic_bound_exponent)} "
+        f"target={_fmt(pascadi_audit.gate_target_exponent)} "
+        f"deficit={_fmt(pascadi_audit.remaining_deficit)} "
+        f"assumption14={pascadi_audit.assumption_14_verified} "
+        "direct="
+        f"{pascadi_audit.direct_corollary_hypotheses_verified} "
+        f"covered={pascadi_audit.published_coverage}"
     )
     determinant_audit = bc_fixed_determinant_audit(hard)
     print(

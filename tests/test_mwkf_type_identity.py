@@ -472,6 +472,11 @@ def test_type_note_names_both_local_inequalities_and_blocker() -> None:
         r"\frac{n_1\overline{s_1a_1}-n_2\overline{s_2a_2}}b",
         r"s_{\rm Wright,den}=-5",
         r"SP\(_b\)",
+        r"\mathfrak Z_q(B,V;\mathcal D)",
+        r"e\!\left(\frac{bdecv}{s}\right)-1",
+        r"\mathrm{QCT}_{B,V,\mathcal D}",
+        r"\frac{1751}{1000}",
+        r"\frac{751}{1000}",
         "new spectral proposition status: unproved",
     ):
         assert marker in text

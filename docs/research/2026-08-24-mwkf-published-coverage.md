@@ -335,6 +335,54 @@ this audit controls that joint weighted average, and the complementary
 QII sector is a new two-Möbius determinant sum.  Both published-coverage
 flags therefore remain false.
 
+### 3.11 Pascadi incomplete-Kloosterman adapter
+
+Pascadi, arXiv:2404.04239v3, Corollary 18, equation (5.35), bounds an
+incomplete Kloosterman form with phase
+\[
+ e\!\left(\frac{\pm n\overline{rd}}{sc}\right)
+\]
+by \(\|w_{r,s}A_{N,r,s}\|_2 I\), where
+\[
+ I^2
+ =D^2NR+
+ \left(1+\frac{C^2}{R^2S Y_N}\right)^{2\theta_{\max}}
+ CS(C+DR)(RS+N).
+\tag{3.18}
+\]
+
+For an optimistic direct comparison with the MWKF core, take the level
+factors \(R=S=1\), the incomplete variables
+\(d=r_{\rm MWKF}\asymp T^3\),
+\(c=s_{\rm MWKF}\asymp T^3\), and collapse
+\(n=h\delta\asymp T^5\).  Also pretend that the coupled
+\((h,\delta,r,s)\)-kernel separates into a coefficient satisfying
+Assumption 14 with the best generic norm \(A_N=T^{5/2+o(1)}\).  Then both
+terms of \(I^2\) have exponent \(11\):
+\[
+ D^2N=T^{11},\qquad
+ C(C+D)(1+N)=T^{11+o(1)}.
+\tag{3.19}
+\]
+Hence \(I=T^{11/2+o(1)}\), and the optimistic Corollary 18 output is
+\[
+ T^{5/2}T^{11/2}=T^8.
+\tag{3.20}
+\]
+Against \(T^{3499/1000}\), its deficit is
+\[
+ 8-\frac{3499}{1000}=\frac{4501}{1000}.
+\tag{3.21}
+\]
+
+The actual direct hypotheses are weaker, not stronger: the product
+coefficient does not separate, Assumption 14 has not been verified for
+the coupled kernel, and QCT has a linear centered phase rather than the
+inverse phase in (3.18).  Thus Corollary 18 supplies no published
+coverage here.  The adapter pascadi_incomplete_kloosterman_audit records
+the regular and exceptional terms separately and sets all hypothesis and
+coverage flags to false.
+
 ## 4. Wright fixed-factor adapter
 
 Wright, arXiv:2604.25177v2, treats

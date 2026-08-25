@@ -110,6 +110,78 @@ def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     assert other_end.large_cofactor_max_exponent == F(2)
 
 
+def test_ideal_bdh_still_misses_the_quotient_gate_at_square_root_level() -> None:
+    """Even an optimistic common-weight BDH model leaves a power gap."""
+    adapter = getattr(
+        coverage_audit,
+        "long_cutoff_quotient_bdh_audit",
+        None,
+    )
+    assert adapter is not None, "long-cutoff quotient BDH audit is missing"
+
+    hard = boundary_witnesses()["balanced_max_a"]
+    endpoint = adapter(
+        hard,
+        b_exponent=F(199, 200),
+        d_exponent=F(1, 200),
+        dual_v_exponent=F(1, 2),
+        dual_j_exponent=F(1, 2),
+    )
+    assert endpoint.modulus_exponent == F(3, 2)
+    assert endpoint.query_family_exponent == F(9, 2)
+    assert endpoint.progression_length_exponent == F(3, 2)
+    assert endpoint.total_cardinality_exponent == F(6)
+    assert endpoint.residue_multiplicity_exponent == F(3, 2)
+    assert endpoint.outer_coefficient_l2_squared_exponent == F(6)
+    assert endpoint.ideal_bdh_variance_exponent == F(9, 2)
+    assert endpoint.optimistic_bdh_bound_exponent == F(21, 4)
+    assert endpoint.farey_gate_target_exponent == F(3499, 1000)
+    assert endpoint.bdh_remaining_deficit == F(1751, 1000)
+    assert endpoint.completion_conversion_exponent == F(1, 2)
+    assert endpoint.max_centered_product_phase_saving == F(1)
+    assert endpoint.optimistic_centered_bound_exponent == F(19, 4)
+    assert endpoint.completed_gate_target_exponent == F(3999, 1000)
+    assert endpoint.centered_remaining_deficit == F(751, 1000)
+    assert not endpoint.common_weight_hypothesis_verified
+    assert not endpoint.centered_geometric_saving_proved
+    assert not endpoint.published_coverage
+
+    zero_modulus = adapter(
+        hard,
+        b_exponent=F(0),
+        d_exponent=F(0),
+        dual_v_exponent=F(0),
+        dual_j_exponent=F(1, 2),
+    )
+    assert zero_modulus.optimistic_bdh_bound_exponent == F(9, 2)
+    assert zero_modulus.centered_remaining_deficit == F(501, 1000)
+
+
+def test_pascadi_incomplete_kloosterman_regular_term_is_too_large() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "pascadi_incomplete_kloosterman_audit",
+        None,
+    )
+    assert adapter is not None, "Pascadi Corollary 18 audit is missing"
+
+    result = adapter(boundary_witnesses()["balanced_max_a"])
+    assert result.product_n_exponent == F(5)
+    assert result.incomplete_d_exponent == F(3)
+    assert result.modulus_c_exponent == F(3)
+    assert result.coefficient_l2_exponent == F(5, 2)
+    assert result.regular_i_squared_exponent == F(11)
+    assert result.exceptional_i_squared_exponent == F(11)
+    assert result.i_exponent == F(11, 2)
+    assert result.optimistic_bound_exponent == F(8)
+    assert result.gate_target_exponent == F(3499, 1000)
+    assert result.remaining_deficit == F(4501, 1000)
+    assert result.product_coefficient_separated_optimistically
+    assert not result.assumption_14_verified
+    assert not result.direct_corollary_hypotheses_verified
+    assert not result.published_coverage
+
+
 def test_v_equals_j_equals_one_is_an_exact_average_chowla_witness() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     scales = h_poisson_subbox_scales(box, v=F(0), j=F(0))
@@ -1121,6 +1193,20 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "gcd_reduces=True direct_bv=False covered=False"
     ) in output
     assert (
+        "balanced_max_a: quotient_bdh="
+        "0:bdh=9/2,bdh_deficit=1001/1000,"
+        "centered=9/2,centered_deficit=501/1000;"
+        "3/2:bdh=21/4,bdh_deficit=1751/1000,"
+        "centered=19/4,centered_deficit=751/1000 "
+        "common=False phase=False covered=False"
+    ) in output
+    assert (
+        "balanced_max_a: pascadi_incomplete="
+        "i2_regular=11 i2_exceptional=11 bound=8 "
+        "target=3499/1000 deficit=4501/1000 "
+        "assumption14=False direct=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: bc_fixed_determinant="
         "error=111/10 fixed_trivial=7/2 summed_trivial=6 "
         "target=3499/1000 mobius_save=2501/1000 "
@@ -1157,6 +1243,9 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
         r"\mathrm{QBV}_{\epsilon}",
         r"\mathrm{QII}_{\epsilon}",
         "standard Bombieri--Vinogradov hypotheses are not verified",
+        "Pascadi, arXiv:2404.04239v3, Corollary 18",
+        r"T^8",
+        r"\frac{4501}{1000}",
         "## 4. Wright fixed-factor adapter",
         "## 5. Exact residual witnesses",
         "published coverage result: residual cells remain",

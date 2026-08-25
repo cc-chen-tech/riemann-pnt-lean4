@@ -1229,6 +1229,154 @@ The function long_cutoff_quotient_split_audit records
 (4.8bc)--(4.8bd), with both direct-BV and published-coverage flags false.
 This is a new proof architecture, but it has not closed MD, FTF, or CMT.
 
+### 4.6 The centered quotient form and the exact BDH deficit
+
+The loss in QBV can be quantified before attempting a theorem adapter.
+On a \(b\asymp T^\beta\), \(d\asymp T^\kappa\),
+\(|v|\asymp T^\nu\), \(|j|\asymp T^\iota\) box, put
+
+\[
+ q_0=\beta+\kappa+\nu\le\frac32.
+\tag{4.8bf}
+\]
+
+There are \(T^{q_0+\ell+\iota}\) progression queries in
+\((b,d,v,\delta,j)\), while one residue modulo \(T^{q_0}\) has the
+optimistic multiplicity \(T^{\ell+\iota-q_0}\).  At the hard endpoint
+\((\ell,\iota,\sigma)=(5/2,1/2,3)\), the resulting outer coefficient
+\(L^2\)-norm squared has exponent
+
+\[
+ (q_0+\ell+\iota)+(\ell+\iota-q_0)
+ =2(\ell+\iota)=6.
+\tag{4.8bg}
+\]
+
+Now grant the ideal common-weight variance
+
+\[
+ \sum_{m\asymp T^{q_0}}\sum_{a\bmod m}
+ \left|E(m,a)\right|^2
+ \ll T^{\sigma+q_0+\varepsilon}.
+\tag{4.8bh}
+\]
+
+Cauchy with (4.8bg)--(4.8bh) gives only
+
+\[
+ T^{(6+3+q_0)/2+\varepsilon}
+ =T^{9/2+q_0/2+\varepsilon}.
+\tag{4.8bi}
+\]
+
+Relative to the FTF target \(T^{3499/1000}\), the remaining deficit is
+
+\[
+ \frac92+\frac{q_0}{2}-\frac{3499}{1000}
+ =\frac{1001}{1000}+\frac{q_0}{2}.
+\tag{4.8bj}
+\]
+
+It equals \(\frac{1751}{1000}\) at \(q_0=3/2\).  This is already an optimistic
+calculation: the actual \(E(m,a)\) has a query-dependent transformed
+kernel, so (4.8bh) is not directly available with one common weight.
+
+The missing oscillation is exposed by inserting the long cutoff into the
+double-centered finite completion (15.9) of the coefficient-first note.
+With \(\mathcal C_s=(-s/2,s/2]\cap\mathbb Z\), define the exact sum
+
+\[
+\begin{aligned}
+ \mathfrak Z_q(B,V;\mathcal D)
+ :={}&-\sum_{b\ge1}\mu(b)\omega_B(b)
+ \sum_{\substack{d\in\mathcal D\\d\le U}}\mu(d)
+ \sum_{\substack{e\ge1\\de>U}}
+ \sum_{\substack{s\asymp S\\
+                  (bde,s)=1\\(q,bdes)=1}}
+ \mu(s)p_N(qbde)p_N(qs)\frac Ss\\
+ &\times
+ \sum_{\substack{c,v\in\mathcal C_s\setminus\{0\}}}
+ \omega_V(v)\Theta_{bde,s}(c,v)
+ \left\{
+ e\!\left(\frac{bdecv}{s}\right)-1
+ \right\}.
+\end{aligned}
+\tag{4.8bk}
+\]
+
+All notation and normalization in (4.8bk) are those of
+(15.3)--(15.10).  In particular,
+
+\[
+ \sum_{c\bmod s}\Theta_{r,s}(c,v)
+ =\sum_{v\bmod s}\Theta_{r,s}(c,v)=0,
+\tag{4.8bl}
+\]
+
+and the least absolute representatives have effective scales
+\[
+ |c|\ll\frac SH\mathscr L^C,\qquad
+ |v|\ll\frac SL\mathscr L^C.
+\tag{4.8bm}
+\]
+Summing (4.8bk) over \(B,V\) and partitioning \(1\le d\le U\) is exactly
+the long-cutoff expansion of \(\mathfrak D_q^{(2)}[\Theta]\); no triangle
+inequality or kernel separation is used.
+
+Consequently the centered quotient theorem needed on either
+\(\mathcal D=\{d\le D_{B,V}\}\) or
+\(\mathcal D=\{D_{B,V}<d\le U\}\) is
+
+\[
+ \boxed{
+ \mathrm{QCT}_{B,V,\mathcal D}:\qquad
+ |\mathfrak Z_q(B,V;\mathcal D)|
+ \ll_{A,W}T^{3999/1000}\mathscr L^{-A}.}
+\tag{4.8bn}
+\]
+
+This target is the FTF target multiplied by the exact completion factor
+\(S/L=T^{1/2}\).
+
+The centered phase does create a new oscillatory resource.  If
+\(E_0=R/(BD)\) is the \(e\)-length and
+\(|c|\asymp T^\chi\), then its total phase variation across \(e\) is
+
+\[
+ E_0\frac{BD|cv|}{S}
+ =\frac RS|cv|,
+ \qquad 0\le\chi,\nu\le\frac12.
+\tag{4.8bo}
+\]
+
+Even granting the full \(T^{\chi+\nu}\) as geometric cancellation, and
+also granting (4.8bh), the completed bound has exponent
+
+\[
+ \frac92+\frac{q_0}{2}
+ +\frac12-(\chi+\nu)
+ =5+\frac{q_0}{2}-\chi-\nu.
+\tag{4.8bp}
+\]
+
+At the maximal face
+\((q_0,\chi,\nu)=(3/2,1/2,1/2)\), this is \(19/4\), still exceeding the
+QCT target by
+
+\[
+ \frac{19}{4}-\frac{3999}{1000}
+ =\frac{751}{1000}.
+\tag{4.8bq}
+\]
+
+Thus neither an ideal BDH variance nor one-dimensional completion in the
+unweighted quotient \(e\), even combined optimistically, proves QCT.
+The remaining estimate must obtain joint cancellation involving at least
+one of \(\mu(d)\), \(\mu(s)\), the \((c,v)\) double centering, or the
+modulus average.  The function long_cutoff_quotient_bdh_audit records
+(4.8bf)--(4.8bq); its common-weight, geometric-saving, and
+published-coverage flags are all false.
+
 For comparison with this new single-sector route, the remainder of
 Section 4 returns to the earlier \(U=V=T\) Type-II split.
 
