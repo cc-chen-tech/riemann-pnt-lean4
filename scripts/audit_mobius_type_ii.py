@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""Finite Möbius identity and fixed-factor Type-I exponent audit.
+
+This module verifies finite convolution algebra and rational inequalities.
+It does not prove the residual averaged Type-II oscillatory estimate.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from fractions import Fraction
+from functools import lru_cache
+
+try:
+    from scripts.audit_mwkf_ranges import (
+        ExponentBox,
+        boundary_witnesses,
+        is_admissible,
+    )
+except ModuleNotFoundError:  # Direct invocation.
+    from audit_mwkf_ranges import (  # type: ignore[no-redef]
+        ExponentBox,
+        boundary_witnesses,
+        is_admissible,
+    )
+
+
+def divisors(n: int) -> tuple[int, ...]:
+    small: list[int] = []
+    large: list[int] = []
+    d = 1
+    while d * d <= n:
+        if n % d == 0:
+            small.append(d)
+            if d * d != n:
+                large.append(n // d)
+        d += 1
+    return tuple(small + list(reversed(large)))
+
+
+@lru_cache(maxsize=None)
+def mobius(n: int) -> int:
+    if n < 1:
+        raise ValueError("mobius is defined here only for positive integers")
+    value = 1
+    remaining = n
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            remaining //= prime
+            value = -value
+            if remaining % prime == 0:
+                return 0
+            while remaining % prime == 0:
+                remaining //= prime
+        prime += 1
+    if remaining > 1:
+        value = -value
+    return value
+
+
+def short_mobius(n: int, cutoff: int) -> int:
+    return mobius(n) if n <= cutoff else 0
+
+
+@lru_cache(maxsize=None)
+def c_coefficient(n: int, cutoff: int) -> int:
+    """Coefficient of ``1 * mu_{<=U} - delta_1``."""
+
+    if cutoff < 1 or n < 1:
+        raise ValueError("n and cutoff must be positive")
+    total = sum(mobius(d) for d in divisors(n) if d <= cutoff)
+    return total - (1 if n == 1 else 0)
+
+
+@lru_cache(maxsize=None)
+def _c_power(n: int, cutoff: int, power: int) -> int:
+    if power < 0:
+        raise ValueError("power must be nonnegative")
+    if power == 0:
+        return 1 if n == 1 else 0
+    return sum(
+        c_coefficient(d, cutoff) * _c_power(n // d, cutoff, power - 1)
+        for d in divisors(n)
+    )
+
+
+def mobius_geometric_value(n: int, cutoff: int, depth: int) -> int:
+    """Evaluate the truncated geometric convolution identity at ``n``."""
+
+    if depth < 1:
+        raise ValueError("depth must be positive")
+    total = 0
+    for power in range(depth):
+        convolution = sum(
+            short_mobius(d, cutoff)
+            * _c_power(n // d, cutoff, power)
+            for d in divisors(n)
+        )
+        total += (-1) ** power * convolution
+    return total
+
+
+@dataclass(frozen=True)
+class WrightFactorSavings:
+    first: Fraction
+    second: Fraction
+    third: Fraction
+    fourth: Fraction
+    fifth: Fraction
+
+    def values(self) -> tuple[Fraction, ...]:
+        return (
+            self.first,
+            self.second,
+            self.third,
+            self.fourth,
+            self.fifth,
+        )
+
+
+def wright_factor_savings(
+    box: ExponentBox, tau: Fraction
+) -> WrightFactorSavings:
+    """Savings after fixing ``s = u n`` and summing ``u`` in L1.
+
+    Here ``U = T^tau``. The formulas include the full factor ``U`` from
+    taking absolute values over the fixed denominator factor.
+    """
+
+    a = box.third_length
+    return WrightFactorSavings(
+        first=box.sigma / 8 - a - 3 * tau / 8,
+        second=box.rho / 4 - box.sigma / 8 - a - tau / 4,
+        third=(
+            3 * box.sigma / 20
+            - box.rho / 10
+            - 19 * a / 20
+            - tau / 4
+        ),
+        fourth=(
+            box.rho / 5
+            - 3 * box.sigma / 20
+            - 17 * a / 20
+            - tau / 10
+        ),
+        fifth=(
+            box.rho / 2
+            - 3 * box.sigma / 8
+            - a
+            + tau / 8
+        ),
+    )
+
+
+def wright_factor_covers(box: ExponentBox, tau: Fraction) -> bool:
+    """Whether the termwise fixed-factor route reaches the local target."""
+
+    if not is_admissible(box) or tau < 0 or tau > box.sigma:
+        return False
+    if box.rho > 2 * (box.sigma - tau):
+        return False
+    return all(value >= 0 for value in wright_factor_savings(box, tau).values())
+
+
+def _format_fraction(value: Fraction) -> str:
+    if value.denominator == 1:
+        return str(value.numerator)
+    return f"{value.numerator}/{value.denominator}"
+
+
+def main() -> None:
+    for name, box in sorted(boundary_witnesses().items()):
+        savings = wright_factor_savings(box, Fraction(0))
+        text = ",".join(_format_fraction(value) for value in savings.values())
+        print(f"{name}: tau=0 wright_factor_savings={text}")
+
+
+if __name__ == "__main__":
+    main()

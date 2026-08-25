@@ -1756,7 +1756,200 @@ remaining work is precisely an estimate that first factorizes one Möbius
 variable while retaining the other Möbius weight, the product
 \(a=h\delta\), and the coupled kernel.
 
-## 9. What has and has not been proved
+## 9. Exact Möbius decomposition and the residual Type-II gate
+
+This section performs the factorization demanded by Region D. It does not
+claim the resulting Type-II estimate.
+
+### 9.1 A finite convolution identity
+
+For a real cutoff \(U\geq2\), define the finitely supported sequence
+
+\[
+ \mu_U(n)=\mu(n)\mathbf1_{n\leq U},\qquad
+ c_U=\mathbf1*\mu_U-\delta_1,
+\tag{9.1}
+\]
+
+where \(\mathbf1(n)=1\), \(\delta_1(1)=1\), and \(*\) is Dirichlet
+convolution. Since \(\mu*\mathbf1=\delta_1\),
+
+\[
+ \mu*(\delta_1+c_U)
+ =\mu*\mathbf1*\mu_U=\mu_U,
+\]
+
+and hence
+
+\[
+ \mu=\mu_U-\mu*c_U.
+\tag{9.2}
+\]
+
+Iterating (9.2) \(J\) times gives the exact sequence identity
+
+\[
+ \boxed{
+ \mu=\sum_{j=0}^{J-1}(-1)^j\mu_U*c_U^{*j}
+      +(-1)^J\mu*c_U^{*J}.}
+\tag{9.3}
+\]
+
+There is no analytic truncation in (9.3). For \(n\leq U\), every divisor
+of \(n\) is at most \(U\), so
+
+\[
+ c_U(n)=\sum_{d\mid n}\mu(d)-\delta_1(n)=0.
+\tag{9.4}
+\]
+
+It follows that \(c_U^{*J}(n)=0\) for \(n\leq U^J\). Therefore
+
+\[
+ \boxed{
+ \mu(n)=\sum_{j=0}^{J-1}(-1)^j
+ (\mu_U*c_U^{*j})(n)\qquad(n\leq U^J).}
+\tag{9.5}
+\]
+
+The finite checker verifies (9.5) directly on integers and separately
+checks the support gap (9.4). This is a regression check for the algebra,
+not a proof of an exponential-sum estimate.
+
+### 9.2 Substitution without discarding either arithmetic structure
+
+Choose \(U^J\geq2S\) and substitute (9.5) only for the \(s\)-weight in
+(6.0). For each \(j\), put
+
+\[
+ C_{j,U}(n)=c_U^{*j}(n).
+\tag{9.6}
+\]
+
+Before any absolute value, the corresponding contribution is exactly a
+finite linear combination of
+
+\[
+ \begin{aligned}
+ \mathfrak D_{j,q}[\Psi]
+ ={}&\sum_{u\leq U}\mu(u)
+ \sum_{\substack{r,n,h,\delta\\
+                  r\asymp R,\ un\asymp S\\
+                  h\asymp H,\ \delta\asymp L\\
+                  (r,un)=(q,run)=1}}
+ \mu(r)C_{j,U}(n)\,p_N(qr)p_N(qun)\\
+ &\qquad\times
+ \Psi\left(\frac rR,\frac{un}{S},\frac\delta L,\frac hH\right)
+ e\left(-\frac{h\delta\bar r}{un}\right).
+ \end{aligned}
+\tag{9.7}
+\]
+
+Thus the other Möbius weight \(\mu(r)\), every short Möbius sign
+\(\mu(u)\), the factorization \(a=h\delta\), the coprimality conditions,
+and the coupled kernel all remain present. Moreover
+\(|c_U(n)|\leq\tau(n)\), so for fixed \(J\),
+\(|C_{j,U}(n)|\leq\tau_{O_J(1)}(n)\). This supplies the required
+divisor-bounded \(L^2\) norm after \(u\) is fixed, but it does not justify
+summing absolute values over \(u\).
+
+### 9.3 The termwise fixed-factor route
+
+To audit precisely what is lost by doing just that, dyadically take
+\(u\asymp U_0=T^\tau\) in (9.7), fix \(u\), and apply Wright's theorem with
+
+\[
+ X=R,\qquad Y=S/U_0,\qquad A=LH,\qquad R_0=u.
+\tag{9.8}
+\]
+
+The theorem requires
+
+\[
+ \rho\leq2(\sigma-\tau),\qquad \tau\leq\sigma,
+\tag{9.9}
+\]
+
+besides the polynomial-size fixed-factor condition. The norm product is
+\(T^{(\rho+\sigma-\tau+a)/2+\varepsilon}\). Multiplying by Wright's
+\((AXY)^{1/2}R_0^{1/4}\), and then paying the full
+\(T^\tau\) cost for the termwise \(u\)-sum, gives the common exponent
+\(\rho+\sigma+a+\tau/4\) before the five parenthetical terms in (8.9).
+Subtracting from the target \(\rho+\sigma\) gives the exact savings
+
+\[
+ \begin{aligned}
+ d_1&=\frac{\sigma}{8}-a-\frac{3\tau}{8},\\
+ d_2&=\frac{\rho}{4}-\frac{\sigma}{8}-a-\frac{\tau}{4},\\
+ d_3&=\frac{3\sigma}{20}-\frac{\rho}{10}
+      -\frac{19a}{20}-\frac{\tau}{4},\\
+ d_4&=\frac{\rho}{5}-\frac{3\sigma}{20}
+      -\frac{17a}{20}-\frac{\tau}{10},\\
+ d_5&=\frac{\rho}{2}-\frac{3\sigma}{8}-a+\frac{\tau}{8}.
+ \end{aligned}
+\tag{9.10}
+\]
+
+All five must be nonnegative. In particular,
+
+\[
+ d_1=\frac{\sigma}{8}-a-\frac{3\tau}{8}
+ \leq\frac{\sigma}{8}-a.
+\tag{9.11}
+\]
+
+Thus the fixed factor does not relax the decisive arbitrary-\(a\)
+condition; after termwise summation it makes that condition strictly worse.
+For the balanced maximal box
+
+\[
+ (\rho,\sigma,a)=(3,3,5),\qquad 0\leq\tau\leq\frac32,
+\]
+
+condition (9.9) permits the displayed interval, but
+
+\[
+ d_1=-\frac{37}{8}-\frac{3\tau}{8}<0.
+\tag{9.12}
+\]
+
+Even as \(\tau\to0\), the first Wright term is larger than the local
+\(RS\) target by \(T^{37/8-o(1)}\). This obstruction is independent of
+the discrepant third \(A\)-exponent noted after (8.9).
+
+### 9.4 The residual averaged Type-II statement
+
+The only legitimate next object is (9.7) with the \(u\)-sum still inside.
+After dyadic localization it has the form
+
+\[
+ \boxed{
+ \sum_{u\asymp U_0}\lambda_u
+ \sum_{r,n,h,\delta}
+ \mu(r)\beta_u(n)
+ \Psi\left(\frac rR,\frac{un}{S},\frac\delta L,\frac hH\right)
+ e\left(-\frac{h\delta\bar r}{un}\right),}
+\tag{9.13}
+\]
+
+with the coprimalities from (9.7),
+\(\lambda_u=\mu(u)\), and divisor-bounded \(\beta_u\). A proof of
+CK\(_{\rm ub}(3)\) must bound the sum (9.13) before taking absolute values
+over \(u\), and must also exploit that \(h,\delta\) remain separate.
+Neither Bettin--Chandee Theorem 1 nor Wright Theorem 2.1 contains this
+simultaneous fixed-factor average.
+
+Accordingly, the exact residual gate is:
+
+> **Averaged Möbius Type-II gate.** Prove that the sum (9.13), summed over
+> the finitely many \(j<J\) in (9.5), is
+> \(O_{\varepsilon,W}(RS T^\varepsilon)\) throughout the residual Region D.
+
+This gate is no longer an arbitrary MWKF placeholder: its variables,
+coefficients, factorization identity, coprimalities, and the failure of the
+termwise published estimate are explicit. It remains unproved.
+
+## 10. What has and has not been proved
 
 **Current classification: published coverage complete; Region D remains
 unproved.**
@@ -1781,6 +1974,9 @@ Proved in this note:
   \(\mathrm{CK}_{\rm ub}(3)\Rightarrow
   \mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}\), (6.13);
 * the exact Region A--C coverage classification, (8.1)--(8.9).
+* the finite Möbius identity (9.3)--(9.5), its exact substitution (9.7),
+  and the five-term proof that termwise fixed-factor summation does not
+  cover the residual boxes, (9.8)--(9.12).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -1791,11 +1987,14 @@ Proved in this note:
 | Comparison of the three candidate gates | verified logical reduction | (6.0)--(6.8); only \({\rm(US)}\Rightarrow{\rm(IS)}\Rightarrow{\rm(CK)}\) is proved |
 | Upper-bound tail outside the power-enlarged core | verified | (6.10)--(6.12), by fixed-order integration by parts depending on \(\varepsilon\) |
 | Published Region A--C coverage | verified | exact inequalities and hypothesis ledger in Section 8 |
+| Finite Möbius Type-I/II decomposition | verified | exact convolution identity and retained coupled sum in (9.1)--(9.7) |
+| Termwise Wright route after \(s=un\) | verified insufficient | five exact savings (9.10); balanced gap (9.12) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
+| Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
 
 * CK\(_{\rm ub}(3)\), the accepted weakest upper-bound gate;
-* the residual Möbius Type I/II estimate;
+* the averaged Möbius Type-II estimate (9.13);
 * the unconditional \(T^3\) long-mollifier upper bound;
 * separately, CK\(_{1/1000}\) and TAIL\(_{B,D}\) for an asymptotic.
 
@@ -1804,7 +2003,7 @@ obstruction to the stated \(O(T^{1+\varepsilon})\) goal. That goal remains
 blocked only at the residual coupled Region-D estimate. Treating this
 estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 
-## 10. Primary references
+## 11. Primary references
 
 * S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of
   the Riemann zeta function with Dirichlet polynomials*, arXiv:1411.7764,
