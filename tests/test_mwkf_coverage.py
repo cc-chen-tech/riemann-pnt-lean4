@@ -2011,6 +2011,9 @@ def test_mobius_hecke_euler_factor_is_a_zeta_and_l_reciprocal() -> None:
     assert audit.balanced_reciprocal_l_factor_count == 2
     assert audit.balanced_zeta_factor_count == 3
     assert audit.balanced_k_local_first_nontrivial_degree == 3
+    assert audit.classical_kuznetsov_hecke_index_is_shift
+    assert audit.mobius_entries_are_not_classical_hecke_indices
+    assert audit.balanced_factor_is_conditional_spectral_diagnostic
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
@@ -3831,7 +3834,9 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "large_q_transition: mobius_hecke_reciprocal_l="
         "line=1/2,required=1/2,k_first_degree=3,local_exact=True,"
         "k_converges=True,balanced_exact=True,L_factors=2,zeta_factors=3,"
-        "balanced_k_first_degree=3,kuznetsov=False,negative_moment=False,"
+        "balanced_k_first_degree=3,hecke_index_shift=True,"
+        "mobius_entries_not_indices=True,conditional=True,"
+        "kuznetsov=False,negative_moment=False,"
         "half_power=False,covered=False"
     ) in output
     assert (

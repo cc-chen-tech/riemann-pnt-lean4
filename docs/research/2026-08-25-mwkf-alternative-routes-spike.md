@@ -8186,6 +8186,15 @@ factor for the Mellin component is
 Hence the actual spectral candidate needs a two-factor reciprocal-
 \(L\) negative moment, not merely the single factor in (4.578).
 
+Here "candidate" is conditional on a new geometric-to-spectral adapter.
+Section 4.16 proves that in the classical Kuznetsov orbit attached to
+the determinant equation, the Hecke index is the shift \(h\) (there
+denoted \(\delta\)); the Möbius-weighted matrix entries are not Hecke
+indices.  Therefore (4.578d) is the exact Euler series which would occur
+if a relative trace formula placed the balanced coefficient in a
+spectral Fourier slot.  The standard Kuznetsov formula does not by
+itself produce that slot from (4.500).
+
 This identifies the Möbius gain which a Kuznetsov treatment would have
 to preserve.  It does not yet prove a bound for the determinant kernel:
 
@@ -8206,7 +8215,9 @@ and is not a proof.  The adapter
 transition_mobius_hecke_reciprocal_l_audit records the exact local
 factorizations (4.575) and (4.578a)--(4.578d), their three zeta factors,
 the degree-three start of both correction products, and the remaining
-half-power gate.  It keeps actual_kuznetsov_reduction_derived=False,
+half-power gate.  It also records that the classical Hecke index is the
+shift and marks the balanced factor as a conditional spectral
+diagnostic.  It keeps actual_kuznetsov_reduction_derived=False,
 reciprocal_l_negative_moment_proved=False, and
 whole_line_family_covered=False.
 

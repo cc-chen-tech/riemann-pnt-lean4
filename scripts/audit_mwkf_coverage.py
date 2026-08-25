@@ -946,6 +946,9 @@ class TransitionMobiusHeckeReciprocalLAudit:
     balanced_reciprocal_l_factor_count: int
     balanced_zeta_factor_count: int
     balanced_k_local_first_nontrivial_degree: int
+    classical_kuznetsov_hecke_index_is_shift: bool
+    mobius_entries_are_not_classical_hecke_indices: bool
+    balanced_factor_is_conditional_spectral_diagnostic: bool
     actual_kuznetsov_reduction_derived: bool
     reciprocal_l_negative_moment_proved: bool
     required_half_power_saving_certified: bool
@@ -4812,6 +4815,9 @@ def transition_mobius_hecke_reciprocal_l_audit(
             )
             if coefficient != 0
         ),
+        classical_kuznetsov_hecke_index_is_shift=True,
+        mobius_entries_are_not_classical_hecke_indices=True,
+        balanced_factor_is_conditional_spectral_diagnostic=True,
         actual_kuznetsov_reduction_derived=False,
         reciprocal_l_negative_moment_proved=False,
         required_half_power_saving_certified=False,
@@ -8726,7 +8732,9 @@ def main() -> None:
         "large_q_transition: mobius_hecke_reciprocal_l="
         "line=1/2,required=1/2,k_first_degree=3,local_exact=True,"
         "k_converges=True,balanced_exact=True,L_factors=2,zeta_factors=3,"
-        "balanced_k_first_degree=3,kuznetsov=False,negative_moment=False,"
+        "balanced_k_first_degree=3,hecke_index_shift=True,"
+        "mobius_entries_not_indices=True,conditional=True,"
+        "kuznetsov=False,negative_moment=False,"
         "half_power=False,covered=False"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
