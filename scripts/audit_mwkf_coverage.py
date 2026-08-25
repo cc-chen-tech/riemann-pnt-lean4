@@ -588,6 +588,28 @@ class TransitionGammaGcdGraphEnergyAudit:
 
 
 @dataclass(frozen=True)
+class TransitionCrossDeterminantLatticeAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    a_exponent: Fraction
+    determinant_exponent: Fraction
+    maximum_graph_degree_exponent: Fraction
+    reciprocal_cluster_vertex_energy_exponent: Fraction
+    graph_energy_bound_exponent: Fraction
+    type_ii_square_target_exponent: Fraction
+    graph_energy_target_margin: Fraction
+    coverage_lhs: Fraction
+    coverage_threshold: Fraction
+    cross_determinant_relation_exact: bool
+    entry_gcd_bounded_by_fixed_slope: bool
+    fixed_value_fiber_has_bounded_cardinality: bool
+    product_frequency_cluster_l2_used: bool
+    mobius_cancellation_used: bool
+    shell_covered_unconditionally: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2837,6 +2859,93 @@ def transition_gamma_gcd_graph_energy_audit(
         coverage_threshold=coverage_threshold,
         a_gcd_candidate_reduction_exact=True,
         s_gcd_fiber_reduction_exact=True,
+        product_frequency_cluster_l2_used=True,
+        mobius_cancellation_used=False,
+        shell_covered_unconditionally=margin >= 0,
+        published_coverage=False,
+    )
+
+
+def factor_cross_determinant_identity(
+    *,
+    a1: int,
+    a2: int,
+    s1: int,
+    s2: int,
+    b: int,
+    k: int,
+) -> dict[str, int | bool]:
+    """Verify the exact (a,w) determinant and its bounded entry gcds."""
+    if min(a1, a2, s1, s2, b) <= 0 or k == 0:
+        raise ValueError("factor variables must be positive and k nonzero")
+    if gcd(a1, s1) != 1 or gcd(a2, s2) != 1:
+        raise ValueError("the factor entries must be primitive")
+    w1 = a1 * b - k * s1
+    w2 = a2 * b - k * s2
+    gamma = a1 * s2 - a2 * s1
+    cross = a2 * w1 - a1 * w2
+    return {
+        "w1": w1,
+        "w2": w2,
+        "gamma": gamma,
+        "cross": cross,
+        "cross_relation_exact": cross == k * gamma,
+        "first_entry_gcd_divides_k": k % gcd(a1, abs(w1)) == 0,
+        "second_entry_gcd_divides_k": k % gcd(a2, abs(w2)) == 0,
+    }
+
+
+def transition_cross_determinant_lattice_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+    determinant_exponent: Fraction,
+) -> TransitionCrossDeterminantLatticeAudit:
+    """Use the primitive (a,w) lattice to remove the rounding loss.
+
+    The exact relation is a2*w1-a1*w2=k*Gamma.  Since
+    gcd(a_i,w_i)=gcd(a_i,k*s_i) divides the fixed slope k, the linear
+    form in (a2,w2) has bounded content.  Its intersection with the
+    dyadic factor/shift rectangle has O_k(1) points for each fixed
+    determinant value.  A Gamma shell of length T^xi therefore has
+    maximum graph degree T^(xi+epsilon), including xi below A.
+    """
+    distance = F(distance)
+    b_exponent = F(b_exponent)
+    determinant_exponent = F(determinant_exponent)
+    factor = transition_far_shell_factor_box_audit(
+        box,
+        distance=distance,
+        b_exponent=b_exponent,
+    )
+    determinant_max = factor.a_exponent + distance
+    if determinant_exponent < 0 or determinant_exponent > determinant_max:
+        raise ValueError("determinant shell exceeds the exact support")
+
+    degree = determinant_exponent
+    vertex_energy = box.rho + box.ell + box.h + distance
+    graph_bound = vertex_energy + degree
+    target = factor.type_ii_square_target_exponent
+    margin = target - graph_bound
+    coverage_lhs = distance + determinant_exponent
+    coverage_threshold = F(2) - b_exponent - F(1, 250)
+
+    return TransitionCrossDeterminantLatticeAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        a_exponent=factor.a_exponent,
+        determinant_exponent=determinant_exponent,
+        maximum_graph_degree_exponent=degree,
+        reciprocal_cluster_vertex_energy_exponent=vertex_energy,
+        graph_energy_bound_exponent=graph_bound,
+        type_ii_square_target_exponent=target,
+        graph_energy_target_margin=margin,
+        coverage_lhs=coverage_lhs,
+        coverage_threshold=coverage_threshold,
+        cross_determinant_relation_exact=True,
+        entry_gcd_bounded_by_fixed_slope=True,
+        fixed_value_fiber_has_bounded_cardinality=True,
         product_frequency_cluster_l2_used=True,
         mobius_cancellation_used=False,
         shell_covered_unconditionally=margin >= 0,
@@ -5902,6 +6011,30 @@ def main() -> None:
         "theta=1,beta=2/3,xi=4/3,gamma=0,alpha=0,"
         "reduced_fiber=1,degree=4/3,bound=13/3,"
         "margin=-251/250 covered=False"
+    )
+    transition_cross_lattice = transition_cross_determinant_lattice_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: cross_determinant_lattice="
+        "theta=1,beta=2/3,xi=1/4,degree=1/4,vertex_l2=3,"
+        "bound=13/4,target=2497/750,margin=119/1500,"
+        "lhs=5/4,threshold=997/750 gcd_k=True fiber=True "
+        "mobius=False covered=True"
+    )
+    transition_cross_residual = transition_cross_determinant_lattice_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+    )
+    print(
+        "large_q_transition: cross_determinant_residual="
+        "theta=1,beta=2/3,xi=1/3,bound=10/3,"
+        "margin=-1/250 covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

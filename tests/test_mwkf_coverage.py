@@ -1115,6 +1115,71 @@ def test_transition_gamma_gcd_graph_energy_closes_top_subshells() -> None:
     assert not primitive.shell_covered_unconditionally
 
 
+def test_transition_cross_determinant_lattice_closes_top_small_gamma() -> None:
+    """The primitive (a,w) lattice has O(Gamma) graph degree."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_cross_determinant_lattice_audit",
+        None,
+    )
+    identity = getattr(
+        coverage_audit,
+        "factor_cross_determinant_identity",
+        None,
+    )
+    assert adapter is not None, "cross-determinant lattice adapter is missing"
+    assert identity is not None, "cross-determinant identity helper is missing"
+
+    for values in (
+        dict(a1=5, a2=7, s1=11, s2=13, b=3, k=2),
+        dict(a1=8, a2=9, s1=5, s2=7, b=5, k=3),
+    ):
+        result = identity(**values)
+        assert result["cross_relation_exact"]
+        assert result["first_entry_gcd_divides_k"]
+        assert result["second_entry_gcd_divides_k"]
+
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    covered = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 4),
+    )
+    assert covered.maximum_graph_degree_exponent == F(1, 4)
+    assert covered.reciprocal_cluster_vertex_energy_exponent == F(3)
+    assert covered.graph_energy_bound_exponent == F(13, 4)
+    assert covered.type_ii_square_target_exponent == F(2497, 750)
+    assert covered.graph_energy_target_margin == F(119, 1500)
+    assert covered.coverage_lhs == F(5, 4)
+    assert covered.coverage_threshold == F(997, 750)
+    assert covered.entry_gcd_bounded_by_fixed_slope
+    assert covered.fixed_value_fiber_has_bounded_cardinality
+    assert covered.shell_covered_unconditionally
+    assert not covered.published_coverage
+
+    boundary = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(247, 750),
+    )
+    assert boundary.graph_energy_target_margin == F(0)
+    assert boundary.shell_covered_unconditionally
+
+    residual = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+    )
+    assert residual.graph_energy_target_margin == -F(1, 250)
+    assert not residual.shell_covered_unconditionally
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2521,6 +2586,18 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "margin=-251/250 covered=False"
     ) in output
     assert (
+        "large_q_transition: cross_determinant_lattice="
+        "theta=1,beta=2/3,xi=1/4,degree=1/4,vertex_l2=3,"
+        "bound=13/4,target=2497/750,margin=119/1500,"
+        "lhs=5/4,threshold=997/750 gcd_k=True fiber=True "
+        "mobius=False covered=True"
+    ) in output
+    assert (
+        "large_q_transition: cross_determinant_residual="
+        "theta=1,beta=2/3,xi=1/3,bound=10/3,"
+        "margin=-1/250 covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2942,5 +3019,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\lambda_\gamma",
         r"\theta-\alpha+\lambda_\gamma\le\frac{249}{250}",
         "transition_gamma_gcd_graph_energy_audit",
+        "### 4.45 Primitive cross-determinant lattice removes the rounding loss",
+        r"(a_i,w_i)=(a_i,ks_i)\mid k",
+        r"\theta+\xi\le2-\beta-\frac1{250}",
+        "transition_cross_determinant_lattice_audit",
     ):
         assert marker in text

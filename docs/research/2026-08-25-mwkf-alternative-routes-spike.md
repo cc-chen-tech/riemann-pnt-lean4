@@ -5565,6 +5565,117 @@ The adapter transition_gamma_gcd_graph_energy_audit records
 when (4.384) holds, uses no Möbius cancellation, and keeps
 published_coverage=False.
 
+### 4.45 Primitive cross-determinant lattice removes the rounding loss
+
+There is a further exact improvement in the small-\(\xi\) region.
+Return to the common-\(b\) identities
+
+\[
+ w_i=a_ib-ks_i,\qquad (a_i,s_i)=1.
+\tag{4.389}
+\]
+
+They imply both
+
+\[
+ \boxed{a_2w_1-a_1w_2=k\Gamma}
+\tag{4.390}
+\]
+
+and
+
+\[
+ \boxed{(a_i,w_i)=(a_i,ks_i)\mid k.}
+\tag{4.391}
+\]
+
+The slope \(k\) belongs to a fixed finite set, so the content of the
+linear form in (4.390) is uniformly bounded.
+
+Fix the first vertex \((a_1,w_1)\), and fix one value
+\(\Delta=k\Gamma\).  If a solution \((a_2^{(0)},w_2^{(0)})\) exists,
+all solutions are
+
+\[
+ (a_2,w_2)=
+ (a_2^{(0)},w_2^{(0)})
+ t\left(\frac{a_1}{g},\frac{w_1}{g}\right),
+ \qquad g=(a_1,w_1).
+\tag{4.392}
+\]
+
+Because \(a_2\asymp a_1\), \(w_2\asymp w_1\), and \(g\mid k\),
+only \(O_k(1)\) integers \(t\) occur in the dyadic rectangle.  A
+determinant shell \(|\Gamma|\asymp T^\xi\) contains
+\(O_k(T^{\xi+\varepsilon})\) admissible values of \(\Delta\).
+Consequently its graph degree satisfies
+
+\[
+ \boxed{\Delta_{\max}\ll_k T^{\,\xi+\varepsilon}.}
+\tag{4.393}
+\]
+
+This removes the \(T^{1-\beta}\) rounding term that appeared when one
+bounded the number of \(s_2\) separately for every \(a_2\).
+Combining (4.393) with the reciprocal-cluster vertex energy (4.371)
+gives
+
+\[
+ \boxed{
+ |\mathcal G_{\theta,\beta;\xi,\gamma,\alpha}|
+ \ll_{\varepsilon,W,k}
+ T^{\,2+\theta+\xi+\varepsilon}.}
+\tag{4.394}
+\]
+
+No Möbius or inter-vertex phase cancellation is used.  Comparing
+(4.394) with (4.362), the exact coverage condition is
+
+\[
+ \boxed{\theta+\xi\le2-\beta-\frac1{250}.}
+\tag{4.395}
+\]
+
+This condition is stronger than (4.374) whenever
+\(\xi<1-\beta\).  In particular, on the top distance face
+\(\theta=1\), it closes
+
+\[
+ \boxed{0\le\xi\le1-\beta-\frac1{250}.}
+\tag{4.396}
+\]
+
+At the rational covered witness
+
+\[
+ (\theta,\beta,\xi)=\left(1,\frac23,\frac14\right),
+\tag{4.397}
+\]
+
+the graph exponent is \(13/4\) and the target margin is
+
+\[
+ \boxed{\frac{119}{1500}}.
+\tag{4.398}
+\]
+
+The exact boundary is \(\xi=247/750\), where the margin is zero.  At
+\(\xi=1/3\), (4.394) has exponent \(10/3\) and misses the fixed target
+by \(1/250\).  Thus the primitive top residual is no longer the full
+determinant range: it begins only in the thin high-determinant region
+
+\[
+ \boxed{
+ 1-\beta-\frac1{250}<\xi\le1-\beta+1.}
+\tag{4.399}
+\]
+
+The adapter transition_cross_determinant_lattice_audit records
+(4.389)--(4.399).  The helper factor_cross_determinant_identity
+verifies (4.390)--(4.391) on exact finite fixtures.  The adapter sets
+shell_covered_unconditionally=True exactly on (4.395) and keeps
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
