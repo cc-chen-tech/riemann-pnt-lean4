@@ -7992,7 +7992,7 @@ Plancherel--Pólya sampling inequality for exponential polynomials,
 followed by dyadic layer cake, shows that (4.566) follows from
 
 \[
- \sum_{V\ {m dyadic}}R_\mu(V;T,U)V^4
+ \sum_{V\ {\rm dyadic}}R_\mu(V;T,U)V^4
  \ll T^3(\log T)^{1+o(1)}.
 \tag{4.567}
 \]
@@ -9627,7 +9627,7 @@ are \(T^{6+o(1)}\) root points.  Cauchy over the points followed by the
 large sieve therefore has exponent
 
 \[
- \frac62+rac{\max(5,12)+5}{2}
+ \frac62+\frac{\max(5,12)+5}{2}
  =\frac{23}{2}.
 \tag{4.677}
 \]
@@ -9637,7 +9637,7 @@ The physical local target has exponent six, so the deficit is
 energy both have exponent seven.  The identical calculation gives
 
 \[
- \frac62+rac{\max(7,12)+7}{2}
+ \frac62+\frac{\max(7,12)+7}{2}
  =\frac{25}{2},
  \qquad
  \frac{25}{2}-7=\frac{11}{2}.
@@ -9704,7 +9704,8 @@ congruences for \((A-1)/2\) are compatible even though the moduli
 \(2d,2e\) have common factor two.
 
 At the balanced central Type-II cell, write \(D=E=T^3\) and use the
-physical numerator \(k=h\delta\asymp T^5\).  After grouping equal
+physical numerator \(k:=-h\delta\), so \(|k|\asymp T^5\).  This sign
+matches the midpoint arithmetic phase in (4.659).  After grouping equal
 products into the coefficient \(\nu(k)\), the remaining sum is exactly
 of the form
 
@@ -9713,7 +9714,7 @@ of the form
  \mathcal{RTII}_{q}(D,E,K)
  :={}&\sum_{|k|\asymp K}\nu(k)
  \sum_{\substack{d\asymp D,\ e\asymp E\\
-                  (d,e)=1,\ de\ {m squarefree}}}
+                  (d,e)=1,\ de\ {\rm squarefree}}}
  c_U(d)\mu(e)\\
  &\quad\times
  \sum_{\substack{A_d^2\equiv1\ (2d)\\
@@ -9748,11 +9749,246 @@ exponents \((3,3,5)\).  It retains \(c_U(d)\) on one side and \(\mu(e)\)
 on the other.  The published Hermitian Kloosterman-fraction theorems do
 not apply termwise: their numerator is fixed, whereas here the two
 numerators \(k y_d\) and \(k y_e\) vary with the root fibers, and
-\(\Omega_q\) is joint in every variable.  Thus (4.683) is an exact new
-local gate, not a proved estimate.  The helper
+\(\Omega_q\) is joint in every variable.  The subtraction of one in
+the completed formula (4.673) is still exact: summing
+\(\widetilde\Theta(c,v)\) over all \(c,v\) selects the physical residue
+class \(h\equiv\delta\equiv0\pmod Q\), which is empty because
+\(0<H,L<Q\) and both dyadic variables are nonzero.  Therefore the
+completed frequency formula may use \(e(Acv/Q)-1\), while its exact
+physical inverse (4.682) has \(e(-Ah\delta/Q)\) and no subtraction.
+Thus (4.683) is an exact new local gate, not a proved estimate.  The helper
 `midpoint_root_crt_phase_identity` checks (4.680)--(4.681) with exact
 rationals, and `midpoint_root_type_ii_audit` keeps
+`completed_centering_exact=True`,
+`physical_zero_residue_vanishes=True`,
+`physical_centered_subtraction_present=False`, and
 `root_type_ii_bound_verified=False`.
+
+### 4.80 Root fibers unfold to four classical fraction variables
+
+Write the ordered factorization represented by \(A_d\) as
+\(d=d_r d_s\), with \(A_d\equiv-1\pmod {2d_r}\) and
+\(A_d\equiv1\pmod {2d_s}\), and define \(e=e_r e_s\) in the same
+way.  The four factors are pairwise coprime on the squarefree support.
+The idempotents \(y_d=(A_d-1)/2\) and \(y_e=(A_e-1)/2\) then satisfy
+
+\[
+ \boxed{
+ y_d\equiv-d_s\overline{d_s}_{d_r}\pmod d,
+ \qquad
+ y_e\equiv-e_s\overline{e_s}_{e_r}\pmod e.}
+\tag{4.684}
+\]
+
+Indeed the first displayed representative is \(-1\) modulo \(d_r\)
+and zero modulo \(d_s\), which uniquely characterizes \(y_d\); the
+second identity is identical.  Substitution into (4.681) gives the
+exact four-factor phase
+
+\[
+ \boxed{
+ e\!\left(\frac{kA}{2de}\right)
+ =e\!\left(
+    \frac{k}{2de}
+   -\frac{k\,\overline{d_s e}_{d_r}}{d_r}
+   -\frac{k\,\overline{e_s d}_{e_r}}{e_r}
+          \right).}
+\tag{4.685}
+\]
+
+A denominator equal to one contributes zero to the corresponding
+fraction.  The combined root has negative sign precisely on
+\(r=d_r e_r\) and positive sign precisely on \(s=d_s e_s\), so (4.685)
+is the midpoint phase for the original ordered factorization
+\(de=rs\), not merely a congruent surrogate.
+
+After dyadic subdivision, (4.682) is therefore a sum of the exact form
+
+\[
+\begin{aligned}
+ \mathcal F_q(D_r,D_s,E_r,E_s,K)
+ :={}&\sum_{|k|\asymp K}\nu(k)
+ \sum_{\substack{d_r\asymp D_r,\ d_s\asymp D_s\\
+                  e_r\asymp E_r,\ e_s\asymp E_s\\
+                  d_r d_s e_r e_s\ {\rm squarefree}}}
+ c_U(d_r d_s)\mu(e_r)\mu(e_s)\\
+ &\quad\times
+ \Omega_q(d_r d_s,e_r e_s,A_{d_r,d_s},A_{e_r,e_s},k)\\
+ &\quad\times e\!\left(
+   \frac{k}{2d_r d_s e_r e_s}
+  -\frac{k\,\overline{d_s e_r e_s}_{d_r}}{d_r}
+  -\frac{k\,\overline{e_s d_r d_s}_{e_r}}{e_r}
+                         \right).
+\end{aligned}
+\tag{4.686}
+\]
+
+The squarefree condition in (4.686) is equivalent to individual
+squarefreeness plus all six cross-coprimality conditions.  The weight is
+exactly the joint weight from (4.682): it still contains the original
+coupled transform, the \(q\)-coprimality, both mollifier tapers, and the
+four support restrictions.  In particular no tensor separation is
+asserted.
+
+On the balanced central face the complete dyadic scale list can be
+parametrized by \(0\le\alpha\le3\):
+
+\[
+ D_r=T^\alpha,
+ \quad D_s=T^{3-\alpha},
+ \quad E_r=T^{3-\alpha},
+ \quad E_s=T^\alpha,
+ \quad K=T^5.
+\tag{4.686a}
+\]
+
+Thus \(D_rD_s=E_rE_s=D_rE_r=D_sE_s=T^3\).  Up to powers of
+\(\log T\) from the dyadic partition, the precise local inequality
+sufficient on every such box is
+
+\[
+ \boxed{
+ |\mathcal F_q(T^\alpha,T^{3-\alpha},
+                    T^{3-\alpha},T^\alpha,T^5)|
+ \ll_{B,W}T^6(\log T)^{-B}
+ \quad(0\le\alpha\le3).}
+\tag{4.687}
+\]
+
+The endpoint \(\alpha=3\) has
+\((d_r,d_s,e_r,e_s)=(d,1,1,e)\).  Formula (4.685) becomes
+
+\[
+ e\!\left(\frac{k}{2de}-\frac{k\bar e_d}{d}\right)
+ =e\!\left(\frac{k(2d\bar d_e-1)}{2de}\right),
+\tag{4.688}
+\]
+
+where the equality follows from additive reciprocity.  Hence this
+endpoint recovers the original hard Kloosterman fraction with weight
+\(c_U(d)\mu(e)\); root unfolding does not delete the endpoint sector.
+It does, however, replace the abstract root fiber by the explicit
+four-variable family (4.686), so any successful Cauchy--reciprocity--
+complementary-divisor--Kuznetsov argument can now be stated directly on
+the variables it must average.  The exact helper
+`midpoint_root_four_factor_phase_identity` verifies (4.684)--(4.685)
+and recovery of \(r,s\); the ledger keeps
+`completed_centering_exact=True`,
+`physical_zero_residue_vanishes=True`,
+`physical_centered_subtraction_present=False`, and
+`four_factor_type_ii_bound_verified=False`.
+
+### 4.81 One physical Poisson step gives the exact resonance lattice
+
+There is a useful deterministic saving inside each fixed balanced
+root point before any Möbius estimate.  Fix coprime \(r,s>1\), put
+
+\[
+ Q=2rs,
+ \qquad
+ A=2r\bar r_s-1,
+ \qquad
+ U=Q/L,
+\tag{4.689}
+\]
+
+and retain the joint physical amplitude as
+\(\Phi_{r,s,h}(\delta/L)\).  With the convention
+\(\widehat f(\xi)=\int_{\mathbb R}f(x)e(-x\xi)\,dx\), Poisson
+summation in \(\delta\) alone gives the exact identity
+
+\[
+ \sum_{\delta\in\mathbb Z}
+ \Phi_{r,s,h}(\delta/L)e\!\left(-\frac{Ah\delta}{Q}\right)
+ =L\sum_{v\in\mathbb Z}
+ \widehat\Phi_{r,s,h}\!\left(L\left(v+\frac{Ah}{Q}\right)\right).
+\tag{4.690}
+\]
+
+All other variables remain frozen in (4.690); no separation of the
+joint kernel is used.  The already proved dyadic derivative bounds give,
+for every fixed \(C>0\),
+
+\[
+ \left|\widehat\Phi_{r,s,h}\!\left(\frac{Lu}{Q}\right)\right|
+ \ll_{C,W}\left(1+\frac{|u|}{U}\right)^{-C}.
+\tag{4.690a}
+\]
+
+For a term of (4.690), define the integer \(u:=Ah+vQ\).  Since
+\(A\equiv-1\pmod {2r}\) and \(A\equiv1\pmod {2s}\), there are unique
+integers \(a,b\) satisfying
+
+\[
+ \boxed{
+ h=ra+sb,
+ \qquad
+ u=ra-sb,
+ \qquad
+ a=\frac{h+u}{2r},
+ \quad b=\frac{h-u}{2s}.}
+\tag{4.691}
+\]
+
+Conversely (4.691) gives \(u\equiv Ah\pmod Q\), because it gives the
+two defining congruences modulo \(2r\) and \(2s\).  Thus (4.691) is a
+bijection, including the even-prime branch; it is exactly the
+determinant-line resonance in root coordinates.
+
+For \(|h|\le2H\) and \(|u|\le X\), (4.691) gives the elementary lattice
+count
+
+\[
+ \#\{(h,u)\}
+ \le
+ \left(2+\frac{2H+X}{r}\right)
+ \left(2+\frac{4H}{s}\right).
+\tag{4.692}
+\]
+
+Indeed the first factor bounds the possible integers \(a\) from
+\(|2ra|=|h+u|\le2H+X\); after \(a\) is fixed, the interval of possible
+\(b\) cut out by \(|h|\le2H\) has length at most \(4H/s\).  Applying
+(4.692) on the shells \(2^{j-1}U<|u|\le2^jU\), and then summing the
+decay (4.690a), proves
+
+\[
+ \sum_{h\asymp H}\left|
+  \sum_{\delta\asymp L}
+   \Phi_{r,s,h}(\delta/L)e\!\left(-\frac{Ah\delta}{Q}\right)
+                         \right|
+ \ll_{C,W}
+ L\left(1+\frac{H+U}{r}\right)
+  \left(1+\frac{H}{s}\right).
+\tag{4.692a}
+\]
+
+At the central box
+\(r,s\asymp T^3\), \(H=L=T^{5/2}\), \(Q\asymp T^6\), and
+\(U\asymp T^{7/2}\).  Hence (4.692a) is \(O_W(T^3)\), a proved
+\(T^2\) saving over the raw \(HL=T^5\) physical pair.  Summing this
+pointwise bound absolutely over the \(T^6\) outer root points gives
+only \(T^9\).  The remaining sufficient inequality is therefore the
+explicit signed outer gate
+
+\[
+ \boxed{
+ \left|\sum_{\substack{r,s\asymp T^3\\(r,s)=1}}
+ \mu(r)\mu(s)p_N(r)p_N(s)\,\mathcal B_{r,s}\right|
+ \ll_{B,W}T^6(\log T)^{-B},
+ \qquad
+ |\mathcal B_{r,s}|\ll_W T^3.}
+\tag{4.693}
+\]
+
+Thus the physical oscillation supplies two of the five powers needed
+from the raw \((h,\delta)\)-family, while (4.693) still requires the
+full square-root saving \(T^3\) across the \(T^6\) two-Möbius outer
+points.  No cited published result proves this joint square-root gate.
+The helper `midpoint_involution_resonance_lattice_identity` checks
+(4.691) exactly, `midpoint_physical_poisson_audit` records the exponent
+ledger, and `outer_mobius_square_root_verified=False` remains the proof
+boundary.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

@@ -1256,9 +1256,51 @@ class MidpointRootTypeIIAudit:
     left_factor_has_truncated_divisor_coefficient: bool
     right_factor_retains_mobius: bool
     root_fibers_are_subpower: bool
+    completed_centering_exact: bool
+    physical_zero_residue_vanishes: bool
+    physical_centered_subtraction_present: bool
     published_hermitian_theorem_has_root_dependent_numerator: bool
     actual_transform_coefficient_remains_joint: bool
     root_type_ii_bound_verified: bool
+
+
+@dataclass(frozen=True)
+class MidpointRootFourFactorAudit:
+    left_product_exponent: Fraction
+    right_product_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    recovered_r_exponent: Fraction
+    recovered_s_exponent: Fraction
+    root_fibers_unfold_to_ordered_factorizations: bool
+    four_factors_are_pairwise_coprime: bool
+    truncated_divisor_coefficient_remains_on_left_product: bool
+    mobius_splits_over_right_factors: bool
+    kloosterman_phase_identity_exact: bool
+    completed_centering_exact: bool
+    physical_zero_residue_vanishes: bool
+    physical_centered_subtraction_present: bool
+    extreme_sector_recovers_hard_fraction: bool
+    actual_smooth_weight_remains_joint: bool
+    four_factor_type_ii_bound_verified: bool
+
+
+@dataclass(frozen=True)
+class MidpointPhysicalPoissonAudit:
+    modulus_exponent: Fraction
+    h_exponent: Fraction
+    delta_exponent: Fraction
+    resonance_window_exponent: Fraction
+    lattice_parameter_exponent: Fraction
+    pointwise_bilinear_bound_exponent: Fraction
+    raw_bilinear_exponent: Fraction
+    physical_oscillation_saving_exponent: Fraction
+    outer_root_point_exponent: Fraction
+    outer_target_exponent: Fraction
+    required_outer_saving_exponent: Fraction
+    resonance_lattice_bijection_exact: bool
+    one_variable_poisson_exact: bool
+    joint_weight_has_uniform_delta_derivatives: bool
+    outer_mobius_square_root_verified: bool
 
 
 @dataclass(frozen=True)
@@ -6301,9 +6343,217 @@ def midpoint_root_type_ii_audit() -> MidpointRootTypeIIAudit:
         left_factor_has_truncated_divisor_coefficient=True,
         right_factor_retains_mobius=True,
         root_fibers_are_subpower=True,
+        completed_centering_exact=True,
+        physical_zero_residue_vanishes=True,
+        physical_centered_subtraction_present=False,
         published_hermitian_theorem_has_root_dependent_numerator=False,
         actual_transform_coefficient_remains_joint=True,
         root_type_ii_bound_verified=False,
+    )
+
+
+def midpoint_root_four_factor_phase_identity(
+    *,
+    d_r: int,
+    d_s: int,
+    e_r: int,
+    e_s: int,
+    numerator: int,
+) -> dict[str, Fraction | int | bool]:
+    """Unfold both root fibers into four coprime factor variables.
+
+    The roots attached to ``d=d_r*d_s`` and ``e=e_r*e_s`` take sign
+    ``-1`` on the ``r`` factors and sign ``+1`` on the ``s`` factors.
+    Thus the combined root recovers ``r=d_r*e_r`` and ``s=d_s*e_s``.
+    The two CRT reciprocal phases become classical Kloosterman fractions
+
+        -k*inverse(d_s*e mod d_r)/d_r,
+        -k*inverse(e_s*d mod e_r)/e_r.
+
+    Denominator one contributes the zero phase.
+    """
+    factors = (d_r, d_s, e_r, e_s)
+    if any(factor <= 0 for factor in factors):
+        raise ValueError("root four-factor variables must be positive")
+    pairwise_coprime = all(
+        gcd(factors[i], factors[j]) == 1
+        for i in range(len(factors))
+        for j in range(i + 1, len(factors))
+    )
+    if not pairwise_coprime:
+        raise ValueError("root four-factor variables must be pairwise coprime")
+
+    d = d_r * d_s
+    e = e_r * e_s
+    if d <= 1 or e <= 1:
+        raise ValueError("both Type-II products must exceed one")
+
+    def mod_one(value: Fraction) -> Fraction:
+        return F(value.numerator % value.denominator, value.denominator)
+
+    def ordered_root(r_factor: int, s_factor: int) -> int:
+        modulus = 2 * r_factor * s_factor
+        inverse = pow(r_factor, -1, s_factor) if s_factor > 1 else 0
+        return (2 * r_factor * inverse - 1) % modulus
+
+    def negative_inverse_phase(value: int, modulus: int) -> Fraction:
+        if modulus == 1:
+            return F(0)
+        return mod_one(F(-numerator * pow(value, -1, modulus), modulus))
+
+    root_d = ordered_root(d_r, d_s)
+    root_e = ordered_root(e_r, e_s)
+    crt = midpoint_root_crt_phase_identity(
+        a=d,
+        b=e,
+        root_a=root_d,
+        root_b=root_e,
+        numerator=numerator,
+    )
+    recovered_r = d_r * e_r
+    recovered_s = d_s * e_s
+    original_root = ordered_root(recovered_r, recovered_s)
+    combined_modulus = 2 * d * e
+    left_phase = negative_inverse_phase(d_s * e, d_r)
+    right_phase = negative_inverse_phase(e_s * d, e_r)
+    correction = mod_one(F(numerator, combined_modulus))
+    four_factor_phase = mod_one(correction + left_phase + right_phase)
+    full_phase = crt["full_phase"]
+    phase_exact = full_phase == four_factor_phase
+    root_recovers = int(crt["combined_root"]) == original_root
+    extreme_sector = d_s == 1 and e_r == 1
+    extreme_exact = (
+        extreme_sector
+        and recovered_r == d
+        and recovered_s == e
+        and phase_exact
+    )
+    return {
+        "d": d,
+        "e": e,
+        "root_d": root_d,
+        "root_e": root_e,
+        "combined_root": int(crt["combined_root"]),
+        "recovered_r": recovered_r,
+        "recovered_s": recovered_s,
+        "full_phase": full_phase,
+        "small_correction_phase": correction,
+        "left_kloosterman_phase": left_phase,
+        "right_kloosterman_phase": right_phase,
+        "four_factor_phase": four_factor_phase,
+        "all_factors_pairwise_coprime": pairwise_coprime,
+        "combined_root_recovers_original_factorization": root_recovers,
+        "root_phase_equals_four_factor_phase": phase_exact,
+        "extreme_sector_recovers_original_fraction": extreme_exact,
+    }
+
+
+def midpoint_root_four_factor_audit() -> MidpointRootFourFactorAudit:
+    """Record the central four-factor Type-II interface and proof status."""
+    return MidpointRootFourFactorAudit(
+        left_product_exponent=F(3),
+        right_product_exponent=F(3),
+        physical_numerator_exponent=F(5),
+        recovered_r_exponent=F(3),
+        recovered_s_exponent=F(3),
+        root_fibers_unfold_to_ordered_factorizations=True,
+        four_factors_are_pairwise_coprime=True,
+        truncated_divisor_coefficient_remains_on_left_product=True,
+        mobius_splits_over_right_factors=True,
+        kloosterman_phase_identity_exact=True,
+        completed_centering_exact=True,
+        physical_zero_residue_vanishes=True,
+        physical_centered_subtraction_present=False,
+        extreme_sector_recovers_hard_fraction=True,
+        actual_smooth_weight_remains_joint=True,
+        four_factor_type_ii_bound_verified=False,
+    )
+
+
+def midpoint_involution_resonance_lattice_identity(
+    *,
+    r: int,
+    s: int,
+    h: int,
+    poisson_frequency: int,
+) -> dict[str, int | bool]:
+    """Convert a physical Poisson resonance into a two-variable lattice.
+
+    For ``Q=2*r*s`` and ``A=2*r*inverse(r mod s)-1``, put
+    ``u=A*h+v*Q``.  The involution signs give ``u=-h (mod 2r)`` and
+    ``u=h (mod 2s)``.  Hence the integers
+
+        a=(h+u)/(2r),  b=(h-u)/(2s)
+
+    are well defined and satisfy ``h=r*a+s*b`` and ``u=r*a-s*b``.
+    This is an exact bijection, including when one factor is even.
+    """
+    if r <= 1 or s <= 1:
+        raise ValueError("midpoint resonance factors must exceed one")
+    if gcd(r, s) != 1:
+        raise ValueError("midpoint resonance factors must be coprime")
+    modulus = 2 * r * s
+    midpoint_root = (2 * r * pow(r, -1, s) - 1) % modulus
+    resonance_integer = midpoint_root * h + poisson_frequency * modulus
+    numerator_a = h + resonance_integer
+    numerator_b = h - resonance_integer
+    a_integral = numerator_a % (2 * r) == 0
+    b_integral = numerator_b % (2 * s) == 0
+    a = numerator_a // (2 * r) if a_integral else 0
+    b = numerator_b // (2 * s) if b_integral else 0
+    h_reconstructed = r * a + s * b
+    u_reconstructed = r * a - s * b
+    root_congruences = (
+        (resonance_integer + h) % (2 * r) == 0
+        and (resonance_integer - h) % (2 * s) == 0
+    )
+    return {
+        "modulus": modulus,
+        "midpoint_root": midpoint_root,
+        "resonance_integer": resonance_integer,
+        "a": a,
+        "b": b,
+        "h_equals_r_a_plus_s_b": h_reconstructed == h,
+        "u_equals_r_a_minus_s_b": u_reconstructed == resonance_integer,
+        "root_congruences_exact": root_congruences,
+        "lattice_bijection_exact": (
+            a_integral
+            and b_integral
+            and h_reconstructed == h
+            and u_reconstructed == resonance_integer
+        ),
+    }
+
+
+def midpoint_physical_poisson_audit() -> MidpointPhysicalPoissonAudit:
+    """Record the central physical-Poisson resonance ledger."""
+    modulus = F(6)
+    h_length = F(5, 2)
+    delta_length = F(5, 2)
+    resonance = modulus - delta_length
+    factor_length = F(3)
+    lattice_parameter = resonance - factor_length
+    pointwise = delta_length + lattice_parameter
+    raw = h_length + delta_length
+    outer_points = 2 * factor_length
+    outer_target = F(6)
+    required_outer_saving = outer_points + pointwise - outer_target
+    return MidpointPhysicalPoissonAudit(
+        modulus_exponent=modulus,
+        h_exponent=h_length,
+        delta_exponent=delta_length,
+        resonance_window_exponent=resonance,
+        lattice_parameter_exponent=lattice_parameter,
+        pointwise_bilinear_bound_exponent=pointwise,
+        raw_bilinear_exponent=raw,
+        physical_oscillation_saving_exponent=raw - pointwise,
+        outer_root_point_exponent=outer_points,
+        outer_target_exponent=outer_target,
+        required_outer_saving_exponent=required_outer_saving,
+        resonance_lattice_bijection_exact=True,
+        one_variable_poisson_exact=True,
+        joint_weight_has_uniform_delta_derivatives=True,
+        outer_mobius_square_root_verified=False,
     )
 
 
@@ -10549,10 +10799,69 @@ def main() -> None:
         f"{root_type_ii.left_factor_has_truncated_divisor_coefficient},"
         f"right_mu={root_type_ii.right_factor_retains_mobius},"
         f"root_fibers_subpower={root_type_ii.root_fibers_are_subpower},"
+        f"completed_centering={root_type_ii.completed_centering_exact},"
+        f"zero_residue={root_type_ii.physical_zero_residue_vanishes},"
+        "physical_subtraction="
+        f"{root_type_ii.physical_centered_subtraction_present},"
         "fixed_numerator="
         f"{root_type_ii.published_hermitian_theorem_has_root_dependent_numerator},"
         f"joint={root_type_ii.actual_transform_coefficient_remains_joint},"
         f"published={root_type_ii.root_type_ii_bound_verified}"
+    )
+    root_four_factor = midpoint_root_four_factor_audit()
+    print(
+        "large_q_transition: root_four_factor="
+        f"left_product={_fmt(root_four_factor.left_product_exponent)},"
+        f"right_product={_fmt(root_four_factor.right_product_exponent)},"
+        "physical_numerator="
+        f"{_fmt(root_four_factor.physical_numerator_exponent)},"
+        f"r={_fmt(root_four_factor.recovered_r_exponent)},"
+        f"s={_fmt(root_four_factor.recovered_s_exponent)},"
+        "roots_unfold="
+        f"{root_four_factor.root_fibers_unfold_to_ordered_factorizations},"
+        f"pairwise={root_four_factor.four_factors_are_pairwise_coprime},"
+        "left_cU="
+        f"{root_four_factor.truncated_divisor_coefficient_remains_on_left_product},"
+        "right_mu_splits="
+        f"{root_four_factor.mobius_splits_over_right_factors},"
+        f"phase={root_four_factor.kloosterman_phase_identity_exact},"
+        "completed_centering="
+        f"{root_four_factor.completed_centering_exact},"
+        f"zero_residue={root_four_factor.physical_zero_residue_vanishes},"
+        "physical_subtraction="
+        f"{root_four_factor.physical_centered_subtraction_present},"
+        "extreme_hard="
+        f"{root_four_factor.extreme_sector_recovers_hard_fraction},"
+        f"joint={root_four_factor.actual_smooth_weight_remains_joint},"
+        f"published={root_four_factor.four_factor_type_ii_bound_verified}"
+    )
+    physical_poisson = midpoint_physical_poisson_audit()
+    print(
+        "large_q_transition: midpoint_physical_poisson="
+        f"Q={_fmt(physical_poisson.modulus_exponent)},"
+        f"h={_fmt(physical_poisson.h_exponent)},"
+        f"delta={_fmt(physical_poisson.delta_exponent)},"
+        "resonance="
+        f"{_fmt(physical_poisson.resonance_window_exponent)},"
+        "lattice="
+        f"{_fmt(physical_poisson.lattice_parameter_exponent)},"
+        "pointwise="
+        f"{_fmt(physical_poisson.pointwise_bilinear_bound_exponent)},"
+        f"raw={_fmt(physical_poisson.raw_bilinear_exponent)},"
+        "physical_save="
+        f"{_fmt(physical_poisson.physical_oscillation_saving_exponent)},"
+        "outer_points="
+        f"{_fmt(physical_poisson.outer_root_point_exponent)},"
+        f"outer_target={_fmt(physical_poisson.outer_target_exponent)},"
+        "outer_required_save="
+        f"{_fmt(physical_poisson.required_outer_saving_exponent)},"
+        "lattice_exact="
+        f"{physical_poisson.resonance_lattice_bijection_exact},"
+        f"poisson_exact={physical_poisson.one_variable_poisson_exact},"
+        "joint_derivatives="
+        f"{physical_poisson.joint_weight_has_uniform_delta_derivatives},"
+        "outer_sqrt="
+        f"{physical_poisson.outer_mobius_square_root_verified}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

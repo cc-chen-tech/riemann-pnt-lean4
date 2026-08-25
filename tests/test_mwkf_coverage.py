@@ -2414,7 +2414,19 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "### 4.79 Root CRT exposes the exact Möbius Type-II kernel",
         "\\tag{4.680}",
         "\\tag{4.683}",
+        "k:=-h\\delta",
+        "completed_centering_exact=True",
+        "physical_zero_residue_vanishes=True",
+        "physical_centered_subtraction_present=False",
         "root_type_ii_bound_verified=False",
+        "### 4.80 Root fibers unfold to four classical fraction variables",
+        "\\tag{4.685}",
+        "\\tag{4.687}",
+        "four_factor_type_ii_bound_verified=False",
+        "### 4.81 One physical Poisson step gives the exact resonance lattice",
+        "\\tag{4.691}",
+        "\\tag{4.693}",
+        "outer_mobius_square_root_verified=False",
     ):
         assert marker in note
 
@@ -2468,8 +2480,24 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "large_q_transition: root_type_ii="
         "product=6,left=3,right=3,physical_numerator=5,dual_numerator=7,"
         "crt=True,reciprocal_split=True,left_cU=True,right_mu=True,"
-        "root_fibers_subpower=True,fixed_numerator=False,joint=True,"
+        "root_fibers_subpower=True,completed_centering=True,zero_residue=True,"
+        "physical_subtraction=False,fixed_numerator=False,joint=True,"
         "published=False"
+    ) in report
+    assert (
+        "large_q_transition: root_four_factor="
+        "left_product=3,right_product=3,physical_numerator=5,"
+        "r=3,s=3,roots_unfold=True,pairwise=True,left_cU=True,"
+        "right_mu_splits=True,phase=True,completed_centering=True,"
+        "zero_residue=True,physical_subtraction=False,extreme_hard=True,joint=True,"
+        "published=False"
+    ) in report
+    assert (
+        "large_q_transition: midpoint_physical_poisson="
+        "Q=6,h=5/2,delta=5/2,resonance=7/2,lattice=1/2,"
+        "pointwise=3,raw=5,physical_save=2,outer_points=6,"
+        "outer_target=6,outer_required_save=3,lattice_exact=True,"
+        "poisson_exact=True,joint_derivatives=True,outer_sqrt=False"
     ) in report
 
 
@@ -2801,9 +2829,145 @@ def test_root_crt_phase_split_and_type_ii_kernel_are_exact() -> None:
     assert audit.left_factor_has_truncated_divisor_coefficient
     assert audit.right_factor_retains_mobius
     assert audit.root_fibers_are_subpower
+    assert audit.completed_centering_exact
+    assert audit.physical_zero_residue_vanishes
+    assert not audit.physical_centered_subtraction_present
     assert not audit.published_hermitian_theorem_has_root_dependent_numerator
     assert audit.actual_transform_coefficient_remains_joint
     assert not audit.root_type_ii_bound_verified
+
+
+def test_root_type_ii_unfolds_to_exact_four_factor_kloosterman_phase() -> None:
+    helper = getattr(
+        coverage_audit,
+        "midpoint_root_four_factor_phase_identity",
+        None,
+    )
+    assert helper is not None, "root four-factor phase helper is missing"
+
+    exact = helper(d_r=3, d_s=5, e_r=7, e_s=2, numerator=11)
+    assert exact["d"] == 15
+    assert exact["e"] == 14
+    assert exact["recovered_r"] == 21
+    assert exact["recovered_s"] == 10
+    assert exact["root_d"] == 11
+    assert exact["root_e"] == 13
+    assert exact["combined_root"] == 41
+    assert exact["full_phase"] == F(31, 420)
+    assert exact["small_correction_phase"] == F(11, 420)
+    assert exact["left_kloosterman_phase"] == F(1, 3)
+    assert exact["right_kloosterman_phase"] == F(5, 7)
+    assert exact["all_factors_pairwise_coprime"]
+    assert exact["combined_root_recovers_original_factorization"]
+    assert exact["root_phase_equals_four_factor_phase"]
+
+    extreme = helper(d_r=3, d_s=1, e_r=1, e_s=5, numerator=7)
+    assert extreme["recovered_r"] == 3
+    assert extreme["recovered_s"] == 5
+    assert extreme["full_phase"] == F(17, 30)
+    assert extreme["small_correction_phase"] == F(7, 30)
+    assert extreme["left_kloosterman_phase"] == F(1, 3)
+    assert extreme["right_kloosterman_phase"] == F(0)
+    assert extreme["extreme_sector_recovers_original_fraction"]
+
+    for d_r, d_s, e_r, e_s in (
+        (2, 3, 5, 7),
+        (3, 5, 7, 11),
+        (5, 1, 1, 14),
+        (1, 15, 2, 7),
+    ):
+        for numerator in (-13, 0, 17):
+            sample = helper(
+                d_r=d_r,
+                d_s=d_s,
+                e_r=e_r,
+                e_s=e_s,
+                numerator=numerator,
+            )
+            assert sample["all_factors_pairwise_coprime"]
+            assert sample["combined_root_recovers_original_factorization"]
+            assert sample["root_phase_equals_four_factor_phase"]
+
+    adapter = getattr(
+        coverage_audit,
+        "midpoint_root_four_factor_audit",
+        None,
+    )
+    assert adapter is not None, "root four-factor audit is missing"
+    audit = adapter()
+    assert audit.left_product_exponent == F(3)
+    assert audit.right_product_exponent == F(3)
+    assert audit.physical_numerator_exponent == F(5)
+    assert audit.recovered_r_exponent == F(3)
+    assert audit.recovered_s_exponent == F(3)
+    assert audit.root_fibers_unfold_to_ordered_factorizations
+    assert audit.four_factors_are_pairwise_coprime
+    assert audit.truncated_divisor_coefficient_remains_on_left_product
+    assert audit.mobius_splits_over_right_factors
+    assert audit.kloosterman_phase_identity_exact
+    assert audit.completed_centering_exact
+    assert audit.physical_zero_residue_vanishes
+    assert not audit.physical_centered_subtraction_present
+    assert audit.extreme_sector_recovers_hard_fraction
+    assert audit.actual_smooth_weight_remains_joint
+    assert not audit.four_factor_type_ii_bound_verified
+
+
+def test_midpoint_physical_poisson_resonance_lattice_is_exact() -> None:
+    helper = getattr(
+        coverage_audit,
+        "midpoint_involution_resonance_lattice_identity",
+        None,
+    )
+    assert helper is not None, "midpoint resonance-lattice helper is missing"
+    exact = helper(r=5, s=7, h=1, poisson_frequency=0)
+    assert exact["modulus"] == 70
+    assert exact["midpoint_root"] == 29
+    assert exact["resonance_integer"] == 29
+    assert exact["a"] == 3
+    assert exact["b"] == -2
+    assert exact["h_equals_r_a_plus_s_b"]
+    assert exact["u_equals_r_a_minus_s_b"]
+    assert exact["root_congruences_exact"]
+    assert exact["lattice_bijection_exact"]
+
+    for r, s, h, frequency in (
+        (3, 5, 11, -2),
+        (5, 8, -7, 3),
+        (7, 9, 23, -1),
+        (11, 13, -19, 4),
+    ):
+        sample = helper(
+            r=r,
+            s=s,
+            h=h,
+            poisson_frequency=frequency,
+        )
+        assert sample["root_congruences_exact"]
+        assert sample["lattice_bijection_exact"]
+
+    adapter = getattr(
+        coverage_audit,
+        "midpoint_physical_poisson_audit",
+        None,
+    )
+    assert adapter is not None, "midpoint physical-Poisson audit is missing"
+    audit = adapter()
+    assert audit.modulus_exponent == F(6)
+    assert audit.h_exponent == F(5, 2)
+    assert audit.delta_exponent == F(5, 2)
+    assert audit.resonance_window_exponent == F(7, 2)
+    assert audit.lattice_parameter_exponent == F(1, 2)
+    assert audit.pointwise_bilinear_bound_exponent == F(3)
+    assert audit.raw_bilinear_exponent == F(5)
+    assert audit.physical_oscillation_saving_exponent == F(2)
+    assert audit.outer_root_point_exponent == F(6)
+    assert audit.outer_target_exponent == F(6)
+    assert audit.required_outer_saving_exponent == F(3)
+    assert audit.resonance_lattice_bijection_exact
+    assert audit.one_variable_poisson_exact
+    assert audit.joint_weight_has_uniform_delta_derivatives
+    assert not audit.outer_mobius_square_root_verified
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
