@@ -149,7 +149,7 @@ git diff --check
 
 Expected: every command exits zero and no new placeholder is present.
 
-- [ ] **Step 5: Commit and update PR #484**
+- [x] **Step 5: Commit and update PR #484**
 
 ```bash
 git add HardyTheorem/SelbergResidueFourierMass.lean \
