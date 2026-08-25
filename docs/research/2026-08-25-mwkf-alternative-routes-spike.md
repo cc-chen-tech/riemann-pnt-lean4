@@ -13483,6 +13483,180 @@ the recovered determinant window \(5/2\).  It keeps the dyadic
 convolution-saving, physical-kernel, and whole-gate flags false.
 
 
+### 4.109d A smooth product-index average removes the finite-prime Ramanujan loss for newforms
+
+The \(35/64\) in (4.845a) was obtained only after freezing the combined
+Hecke index.  The original physical variables provide a different
+ordering.  This is consistent with the Ramanujan-independent
+shifted-convolution refinement in
+[Milićević--Qin--Wu](https://arxiv.org/abs/2511.07550), especially their
+equations (3.11') and (3.13), but the product-index lemma needed here
+can be proved directly.
+
+Let \(f\) be a primitive cusp form of trivial nebentypus, level \(Q_f\),
+and analytic conductor \(\mathcal C_f\).  Let
+\(W_1,W_2\in C_c^\infty((1/2,2))\), and put
+
+\[
+ \mathcal J_f(H_1,H_2)
+ :=\sum_{h,\delta\ge1}\lambda_f(h\delta)
+ W_1(h/H_1)W_2(\delta/H_2).
+\]
+
+At \(p\nmid Q_f\), the degree-two Hecke recurrence gives ordinary
+Möbius inversion.  At \(p\mid Q_f\), the primitive local standard
+factor has degree at most one, so its coefficients are completely
+multiplicative.  Prime-by-prime comparison therefore gives the exact
+all-index identity
+
+\[
+ \boxed{
+ \lambda_f(h\delta)
+ =\sum_{\substack{d\mid(h,\delta)\\(d,Q_f)=1}}\mu(d)
+   \lambda_f(h/d)\lambda_f(\delta/d).}
+\tag{4.845s}
+\]
+
+Consequently
+
+\[
+ \boxed{
+ \mathcal J_f(H_1,H_2)
+ =\sum_{\substack{d\ge1\\(d,Q_f)=1}}\mu(d)
+ A_f(H_1/d;W_1)A_f(H_2/d;W_2),}
+\tag{4.845t}
+\]
+
+where
+
+\[
+ A_f(Y;W):=\sum_{n\ge1}\lambda_f(n)W(n/Y).
+\]
+
+For a product of normalized smooth weights, (4.845t) is an identity of
+finite sums.  A general two-variable smooth weight is an exact Mellin
+superposition of these products; the physical QCT kernel still has to
+be shown to possess the required uniform nuclear norm, so that passage
+is not assumed below.
+
+Let \(H_0=\min(H_1,H_2)\), \(H_*=\max(H_1,H_2)\), and, with a fixed
+large \(B\), split at
+
+\[
+ \boxed{D_0=\frac{H_0}{\mathcal C_f(\log T)^B}.}
+\tag{4.845u}
+\]
+
+Since \(L(s,f)\) is entire, Mellin inversion and the functional equation
+give, for every fixed \(J\), uniformly when
+\(Y\ge\mathcal C_f(\log T)^B\),
+
+\[
+ \boxed{
+ A_f(Y;W)
+ \ll_{J,W}\mathcal C_f^{1/2}
+ \left(\frac{\mathcal C_f}{Y}\right)^J
+ (\mathcal C_fY)^{o(1)}.}
+\tag{4.845v}
+\]
+
+Taking \(J\) after \(B\) therefore gives
+
+\[
+ \boxed{
+ \sum_{\substack{d\le D_0\\(d,Q_f)=1}}\mu(d)
+ A_f(H_1/d;W_1)A_f(H_2/d;W_2)
+ \ll_{A,W_1,W_2}H_0(\log T)^{-A}.}
+\tag{4.845w}
+\]
+
+For \(d>D_0\), interchange the finite sums in (4.845t):
+
+\[
+ \boxed{
+ \sum_{a,b}\lambda_f(a)\lambda_f(b)
+ \sum_{\substack{d>D_0\\(d,Q_f)=1}}\mu(d)
+ W_1(da/H_1)W_2(db/H_2).}
+\tag{4.845x}
+\]
+
+On a compatible dyadic pair \(a\asymp A,b\asymp B_1\), the inner
+variable has scale
+\(D\asymp H_1/A\asymp H_2/B_1\ge D_0\).  The zeta zero-free region and
+partial summation give, for every fixed \(A_0\),
+
+\[
+ \boxed{
+ \sum_{\substack{d\\(d,Q_f)=1}}
+ \mu(d)W_1(da/H_1)W_2(db/H_2)
+ \ll_{A_0,W_1,W_2}D(\log T)^{-A_0}.}
+\tag{4.845y}
+\]
+
+The same bound holds with \((d,Q)=1\) for polynomial \(Q\), after the
+finite Euler factors are retained; their zero-free-contour cost is
+smaller than the Vinogradov--Korobov decay and is absorbed by choosing
+\(A_0\) larger.  Rankin--Selberg and Cauchy give
+
+\[
+ \sum_{a\asymp A}|\lambda_f(a)|\ll A(\mathcal C_fA)^{o(1)}
+\]
+
+and similarly for \(b\).  Hence one compatible block in (4.845x) is
+
+\[
+ AB_1D(\log T)^{-A_0}
+ \asymp H_2A(\log T)^{-A_0}.
+\]
+
+Since \(A\le H_1/D_0\), summing the logarithmically many blocks gives
+
+\[
+ \boxed{
+ \sum_{\substack{d>D_0\\(d,Q_f)=1}}\mu(d)
+ A_f(H_1/d;W_1)A_f(H_2/d;W_2)
+ \ll_{A,W_1,W_2}
+ H_*\mathcal C_f(\log T)^{-A}.}
+\tag{4.845z}
+\]
+
+At the critical scales
+
+\[
+ H_1=H_2=T^{5/2},\qquad \mathcal C_f=T^{1+o(1)},
+\]
+
+(4.845u), (4.845w), and (4.845z) become
+
+\[
+ \boxed{
+ D_0=T^{3/2}(\log T)^{-B},\qquad
+ \mathcal J_{f,\mathrm{small}}\ll T^{5/2}(\log T)^{-A},\qquad
+ \mathcal J_{f,\mathrm{large}}\ll T^{7/2}(\log T)^{-A}.}
+\tag{4.845aa}
+\]
+
+Thus the smooth product-index newform component, including its ramified
+local factors, avoids the pointwise
+\((H_1H_2)^{7/64}=T^{35/64}\) charge and supplies the logarithmic decay
+required at the zero-margin endpoint.  This is a proved local lemma,
+not yet the full finite-prime gate.  Three interfaces remain:
+
+1. the oldclass coefficients must be inserted into (4.845s) without
+   losing (4.845z);
+2. the physical five-variable QCT transform must be decomposed with a
+   polylogarithmic, not positive-power, product nuclear norm; and
+3. the other two Möbius entry weights and Type-I level family must remain
+   inside the spectral sum until (4.840) is recovered.
+
+The adapter smooth_hecke_product_mobius_audit records the critical split
+\(3/2\), the small-\(d\) exponent \(5/2\), the large-\(d\) endpoint
+\(7/2\), its arbitrary logarithmic decay, and removal of the \(35/64\)
+pointwise loss for the product-smooth newform component.  It records
+the primitive ramified factors as restored, while leaving the oldclass,
+physical-kernel, finite-prime-gate, and whole-gate flags false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

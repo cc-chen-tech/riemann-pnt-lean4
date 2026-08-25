@@ -1703,6 +1703,32 @@ class FareyDilateConvolutionPoissonAudit:
 
 
 @dataclass(frozen=True)
+class SmoothHeckeProductMobiusAudit:
+    left_index_exponent: Fraction
+    right_index_exponent: Fraction
+    product_index_exponent: Fraction
+    spectral_conductor_exponent: Fraction
+    pointwise_ramanujan_theta: Fraction
+    pointwise_finite_prime_loss_exponent: Fraction
+    common_divisor_split_exponent: Fraction
+    small_divisor_cusp_bound_exponent: Fraction
+    large_divisor_mobius_pnt_bound_exponent: Fraction
+    large_divisor_saving_over_index_volume: Fraction
+    large_divisor_endpoint_has_arbitrary_log_decay: bool
+    unramified_hecke_mobius_inversion_exact: bool
+    cusp_l_function_is_entire: bool
+    small_divisor_functional_equation_shift_valid: bool
+    large_divisor_uses_only_rankin_selberg_and_mobius_pnt: bool
+    pointwise_ramanujan_loss_removed_for_product_smooth_newforms: bool
+    eisenstein_spectrum_requires_separate_existing_treatment: bool
+    ramified_newform_local_factors_restored: bool
+    oldclass_coefficients_restored: bool
+    physical_coupled_kernel_restored: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -8869,6 +8895,84 @@ def farey_dilate_convolution_poisson_audit(
     )
 
 
+def smooth_hecke_product_mobius_audit(
+    *,
+    left_index_exponent: Fraction,
+    right_index_exponent: Fraction,
+    spectral_conductor_exponent: Fraction,
+    pointwise_ramanujan_theta: Fraction = F(7, 64),
+) -> SmoothHeckeProductMobiusAudit:
+    """Average a smooth product Hecke index before pointwise bounds.
+
+    For a primitive newform with trivial nebentypus,
+
+    ``lambda(h*delta) = sum_(d|(h,delta)) mu(d)``
+    ``                         * lambda(h/d) lambda(delta/d)``.
+
+    Let the two smooth index lengths be ``T^a`` and ``T^b`` and let the
+    analytic conductor of the cusp form be ``T^kappa``.  Split the
+    common divisor at ``T^(min(a,b)-kappa)`` (up to polylogarithms).
+
+    Below the split, both quotient lengths exceed the conductor.
+    Mellin inversion, entireness of the cusp L-function, and its
+    functional equation shift each smooth Hecke sum past the critical
+    strip; after summing the common divisor, the exponent is
+    ``min(a,b)``.
+
+    Above the split, interchange the divisor and quotient sums.  The
+    common divisor is still Mobius weighted, so the zeta zero-free
+    region supplies arbitrary logarithmic decay.  Rankin--Selberg on
+    the two quotient sums gives exponent ``max(a,b)+kappa``.  Therefore
+    the tail saves ``min(a,b)-kappa`` relative to the raw index volume
+    and never invokes the pointwise cost ``(a+b)*theta``.
+
+    At ramified primes the primitive local standard factor has degree
+    at most one, so its coefficients are completely multiplicative;
+    the common Mobius divisor is simply restricted to primes away from
+    the level.  The statement audited here is the product-smooth
+    newform component.  Oldclasses and the original coupled QCT
+    transform must still be restored separately.
+    """
+    left = F(left_index_exponent)
+    right = F(right_index_exponent)
+    conductor = F(spectral_conductor_exponent)
+    theta = F(pointwise_ramanujan_theta)
+    if min(left, right, conductor, theta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    shortest = min(left, right)
+    longest = max(left, right)
+    if conductor >= shortest:
+        raise ValueError("spectral conductor must be shorter than both indices")
+
+    split = shortest - conductor
+    product = left + right
+    tail = longest + conductor
+    return SmoothHeckeProductMobiusAudit(
+        left_index_exponent=left,
+        right_index_exponent=right,
+        product_index_exponent=product,
+        spectral_conductor_exponent=conductor,
+        pointwise_ramanujan_theta=theta,
+        pointwise_finite_prime_loss_exponent=product * theta,
+        common_divisor_split_exponent=split,
+        small_divisor_cusp_bound_exponent=shortest,
+        large_divisor_mobius_pnt_bound_exponent=tail,
+        large_divisor_saving_over_index_volume=product - tail,
+        large_divisor_endpoint_has_arbitrary_log_decay=True,
+        unramified_hecke_mobius_inversion_exact=True,
+        cusp_l_function_is_entire=True,
+        small_divisor_functional_equation_shift_valid=True,
+        large_divisor_uses_only_rankin_selberg_and_mobius_pnt=True,
+        pointwise_ramanujan_loss_removed_for_product_smooth_newforms=True,
+        eisenstein_spectrum_requires_separate_existing_treatment=True,
+        ramified_newform_local_factors_restored=True,
+        oldclass_coefficients_restored=False,
+        physical_coupled_kernel_restored=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -15399,6 +15503,48 @@ def main() -> None:
         f"{farey_grouped.dyadic_mobius_convolution_supplies_power_saving},"
         f"physical={farey_grouped.physical_coupled_kernel_restored},"
         f"covered={farey_grouped.whole_mobius_gate_covered}"
+    )
+    hecke_product = smooth_hecke_product_mobius_audit(
+        left_index_exponent=F(5, 2),
+        right_index_exponent=F(5, 2),
+        spectral_conductor_exponent=F(1),
+    )
+    print(
+        "large_q_transition: smooth_hecke_product_mobius="
+        f"left={_fmt(hecke_product.left_index_exponent)},"
+        f"right={_fmt(hecke_product.right_index_exponent)},"
+        f"product={_fmt(hecke_product.product_index_exponent)},"
+        f"conductor={_fmt(hecke_product.spectral_conductor_exponent)},"
+        f"theta={_fmt(hecke_product.pointwise_ramanujan_theta)},"
+        "pointwise_loss="
+        f"{_fmt(hecke_product.pointwise_finite_prime_loss_exponent)},"
+        f"split={_fmt(hecke_product.common_divisor_split_exponent)},"
+        "small="
+        f"{_fmt(hecke_product.small_divisor_cusp_bound_exponent)},"
+        "large="
+        f"{_fmt(hecke_product.large_divisor_mobius_pnt_bound_exponent)},"
+        "saving="
+        f"{_fmt(hecke_product.large_divisor_saving_over_index_volume)},"
+        "log="
+        f"{hecke_product.large_divisor_endpoint_has_arbitrary_log_decay},"
+        "hecke_identity="
+        f"{hecke_product.unramified_hecke_mobius_inversion_exact},"
+        f"entire={hecke_product.cusp_l_function_is_entire},"
+        "functional_equation="
+        f"{hecke_product.small_divisor_functional_equation_shift_valid},"
+        "rankin_pnt="
+        f"{hecke_product.large_divisor_uses_only_rankin_selberg_and_mobius_pnt},"
+        "pointwise_removed="
+        f"{hecke_product.pointwise_ramanujan_loss_removed_for_product_smooth_newforms},"
+        "eisenstein_separate="
+        f"{hecke_product.eisenstein_spectrum_requires_separate_existing_treatment},"
+        "ramified_newform="
+        f"{hecke_product.ramified_newform_local_factors_restored},"
+        f"oldclass={hecke_product.oldclass_coefficients_restored},"
+        f"physical={hecke_product.physical_coupled_kernel_restored},"
+        "finite_gate="
+        f"{hecke_product.finite_prime_hecke_gate_covered},"
+        f"covered={hecke_product.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

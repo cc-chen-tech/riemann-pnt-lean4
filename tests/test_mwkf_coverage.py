@@ -2759,6 +2759,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "physical=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: smooth_hecke_product_mobius="
+        "left=5/2,right=5/2,product=5,conductor=1,theta=7/64,"
+        "pointwise_loss=35/64,split=3/2,small=5/2,large=7/2,"
+        "saving=3/2,log=True,hecke_identity=True,entire=True,"
+        "functional_equation=True,rankin_pnt=True,pointwise_removed=True,"
+        "eisenstein_separate=True,ramified_newform=True,oldclass=False,physical=False,"
+        "finite_gate=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: newform_level_mobius_projector="
         "prime=5,index=6,mobius=-2,newform=-1/6,difference=-11/6,"
         "geometric=True,squarefree=True,oldclass_tail=True,"
@@ -4080,6 +4089,50 @@ def test_grouped_dilate_convolution_and_double_poisson_return_the_same_gate() ->
     assert hard.double_dilate_poisson_returns_original_determinant
     assert not hard.dyadic_mobius_convolution_supplies_power_saving
     assert not hard.physical_coupled_kernel_restored
+    assert not hard.whole_mobius_gate_covered
+
+
+def test_smooth_hecke_product_average_removes_the_pointwise_finite_prime_loss() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109d A smooth product-index average removes the finite-prime Ramanujan loss for newforms",
+        "\\tag{4.845s}",
+        "\\tag{4.845z}",
+        "\\tag{4.845aa}",
+        "smooth_hecke_product_mobius_audit",
+    ):
+        assert marker in note
+
+    adapter = getattr(
+        coverage_audit,
+        "smooth_hecke_product_mobius_audit",
+        None,
+    )
+    assert adapter is not None, "smooth Hecke-product Möbius audit is missing"
+
+    hard = adapter(
+        left_index_exponent=F(5, 2),
+        right_index_exponent=F(5, 2),
+        spectral_conductor_exponent=F(1),
+        pointwise_ramanujan_theta=F(7, 64),
+    )
+    assert hard.product_index_exponent == F(5)
+    assert hard.pointwise_finite_prime_loss_exponent == F(35, 64)
+    assert hard.common_divisor_split_exponent == F(3, 2)
+    assert hard.small_divisor_cusp_bound_exponent == F(5, 2)
+    assert hard.large_divisor_mobius_pnt_bound_exponent == F(7, 2)
+    assert hard.large_divisor_saving_over_index_volume == F(3, 2)
+    assert hard.large_divisor_endpoint_has_arbitrary_log_decay
+    assert hard.unramified_hecke_mobius_inversion_exact
+    assert hard.cusp_l_function_is_entire
+    assert hard.small_divisor_functional_equation_shift_valid
+    assert hard.large_divisor_uses_only_rankin_selberg_and_mobius_pnt
+    assert hard.pointwise_ramanujan_loss_removed_for_product_smooth_newforms
+    assert hard.eisenstein_spectrum_requires_separate_existing_treatment
+    assert hard.ramified_newform_local_factors_restored
+    assert not hard.oldclass_coefficients_restored
+    assert not hard.physical_coupled_kernel_restored
+    assert not hard.finite_prime_hecke_gate_covered
     assert not hard.whole_mobius_gate_covered
 
 
