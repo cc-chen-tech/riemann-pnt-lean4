@@ -2,7 +2,7 @@
 
 > Status: paper proof complete in
 > `docs/research/2026-08-24-selberg-mainline-mathematical-audit.md`;
-> Status: Tasks 1--3 complete in Lean; Tasks 4--5 pending.  This plan
+> Status: Tasks 1--5 complete in Lean.  This plan
 > deliberately separates the arithmetic/Gaussian input from Plancherel and
 > from the abstract sliding window argument.
 

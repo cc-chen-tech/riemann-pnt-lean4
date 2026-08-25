@@ -1460,7 +1460,7 @@ and therefore
  \tag{S3b}
 \]
 
-Thus S3 is closed at paper level.  Its Lean decomposition should be:
+Thus S3 is closed at paper level.  Its Lean decomposition is:
 
 1. a `G=delta^(-2)` low-mass specialization of the existing
    `J(1,theta)` bridge;
@@ -1470,7 +1470,7 @@ Thus S3 is closed at paper level.  Its Lean decomposition should be:
 4. an abstract nonnegative sliding-window Cauchy--Schwarz--Tonelli theorem
    proving the factor `h^2`.
 
-The first three Lean layers are now complete.  In particular,
+All four Lean layers are now complete.  In particular,
 `SelbergGlobalLowMass.lean` instantiates only `J(1,theta)` at
 `G=delta^(-2)`, while `SelbergPhysicalThetaGaussianTail.lean` proves the
 single-term decay, the uniform theta-ray bound, the two finite mollifier
@@ -1490,9 +1490,12 @@ retaining more than enough strict power saving.  The new
 `SelbergGlobalFourierMass.lean` then assembles the residue and nonconstant
 positive half-line masses, proves the exact `y=2*pi*w` transport, reflects
 the scalar Fourier energy by reality, and applies Mathlib's `L2` Plancherel
-isometry.  Thus (S3a) is now complete in Lean.  The abstract absolute sliding
-window theorem and its Selberg specialization remain to be formalized, so
-(S3b), and hence all of S3, is not yet marked complete in Lean.
+isometry.  Thus (S3a) is complete in Lean.  Finally,
+`MathlibAux/AbsoluteSlidingWindowL2.lean` proves the abstract exact-constant
+bound by setwise Cauchy--Schwarz and convolution with the backward rectangular
+kernel, whose integral is exactly `H`.  The public
+`SelbergSlidingAbsoluteSecondMoment.lean` specializes this result to (S3a).
+Consequently (S3b), and hence all of S3, is now complete in Lean.
 
 ### S4. First absolute moment
 
