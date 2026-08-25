@@ -7245,6 +7245,125 @@ four-variable count, the exact deficits \(7/16\) and \(11/24\), the
 Theorem 11 count failure, the Theorem 12 threshold (4.523), and the two
 kernel-hypothesis failures.  It keeps published_coverage=False.
 
+### 4.58 Exact line Fourier window and the constant-phase microarc
+
+There is a final frequency boundary that every proposed completion of
+(4.500) must retain.  Fix one integer \(g=T^\gamma\) on the top
+determinant face, and put
+
+\[
+ A=T^{1-\gamma}.
+\tag{4.524}
+\]
+
+Then \(a,b,h\) have length \(A\), while \(r_1,r_2\) have length \(T\).
+For every integer tuple, ordinary character orthogonality gives
+
+\[
+\boxed{
+ \mathbf1_{br_1-ar_2=h}
+ =\int_0^1 e\!\left(\alpha(br_1-ar_2-h)\right)\,d\alpha.}
+\tag{4.525}
+\]
+
+This identity is inserted before any tensor separation of
+\(\Psi_{q,k,D,G}\).  If the signed \(h\)-cutoff is
+\(\psi(h/A)\), its exact Poisson formula is
+
+\[
+ \sum_{h\in\mathbb Z}\psi(h/A)e(-\alpha h)
+ =A\sum_{\ell\in\mathbb Z}
+   \widehat\psi\!\left(A(\alpha+\ell)\right).
+\tag{4.526}
+\]
+
+Thus the complete frequency window has width exponent
+
+\[
+ -(1-\gamma).
+\tag{4.527}
+\]
+
+The two product phases \(br_1\) and \(ar_2\) have scale
+\(AT=T^{2-\gamma}\).  Their phase is constant only on the microarc
+
+\[
+ \boxed{|\alpha|\ll(AT)^{-1}=T^{-(2-\gamma)}.}
+\tag{4.528}
+\]
+
+The exponent difference between (4.527) and (4.528) is exactly one:
+the full \(h\)-window contains one power of \(T\) constant-phase
+microarc scales.  For fixed \(g\), the raw line-family exponent and its
+allocated target are respectively
+
+\[
+ \boxed{1+2(1-\gamma)=3-2\gamma,\qquad
+        1+(1-\gamma)=2-\gamma.}
+\tag{4.529}
+\]
+
+Their difference is \(1-\gamma\), in agreement with (4.504).
+
+The following calculation is only a diagnostic separated model, not a
+replacement for the coupled kernel.  Suppose one tensor component were
+constant in the cross variables, and set
+
+\[
+ B_{A,T}(\alpha)
+ :=\sum_{a\asymp A}\sum_{r\asymp T}
+   \mu(a)\mu(r)U(a/A)V(r/T)e(\alpha ar).
+\tag{4.530}
+\]
+
+On (4.528), the contribution of this component is bounded at its natural
+scale by
+
+\[
+ A\cdot\frac1{AT}\,|B_{A,T}(0)|^2
+ =\frac1T|M_U(A)M_V(T)|^2,
+\tag{4.531}
+\]
+
+where \(M_U(A)=\sum\mu(a)U(a/A)\), and similarly for \(M_V\).  To reach
+the fixed-\(g\) target \(AT\), (4.531) would require
+
+\[
+\boxed{|M_U(A)M_V(T)|\ll T\sqrt A.}
+\tag{4.532}
+\]
+
+The trivial exponent of the product on the left is
+\(1+(1-\gamma)\); the target exponent is
+\(1+(1-\gamma)/2\).  Hence the missing product saving is exactly
+
+\[
+ \boxed{\frac{1-\gamma}{2}.}
+\tag{4.533}
+\]
+
+Classical zero-free-region bounds for either weighted Mertens sum give
+arbitrary logarithmic or subpower savings, not the fixed power in
+(4.533).  On the other hand, (4.532) is not declared a necessary
+consequence of the actual line gate: the tensor expansion of
+\(\Psi_{q,k,D,G}\) has not been proved to contain a nonzero constant
+cross component.  The correct conclusion is narrower.  A Kloosterman
+estimate valid only outside (4.528) cannot close (4.504) unless it is
+paired with either
+
+1. a proof that the actual coupled kernel annihilates the constant
+   microarc component; or
+2. a Möbius estimate supplying its exact share of (4.533).
+
+The helper transition_line_finite_fourier_identity verifies (4.525) by
+finite character orthogonality with a modulus larger than the integer
+defect.  The adapter transition_line_fourier_microarc_audit records
+(4.527)--(4.533).  It keeps
+actual_coupled_weight_tensor_separated=False,
+nonzero_constant_tensor_mode_verified=False,
+microarc_mertens_reduction_is_actual_gate=False, and
+whole_line_family_covered=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

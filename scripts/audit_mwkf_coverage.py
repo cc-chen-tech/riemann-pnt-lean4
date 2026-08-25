@@ -912,6 +912,29 @@ class TransitionBourgainGaraevMultilinearAudit:
 
 
 @dataclass(frozen=True)
+class TransitionLineFourierMicroarcAudit:
+    denominator_gcd_exponent: Fraction
+    denominator_cofactor_exponent: Fraction
+    h_window_exponent: Fraction
+    product_phase_scale_exponent: Fraction
+    full_frequency_window_exponent: Fraction
+    constant_phase_microarc_exponent: Fraction
+    microarcs_in_full_window_exponent: Fraction
+    fixed_g_raw_line_exponent: Fraction
+    fixed_g_target_exponent: Fraction
+    required_fixed_g_saving_exponent: Fraction
+    separated_mertens_product_trivial_exponent: Fraction
+    separated_mertens_product_target_exponent: Fraction
+    required_mertens_product_saving_exponent: Fraction
+    finite_fourier_orthogonality_exact: bool
+    h_window_poisson_localization_exact: bool
+    actual_coupled_weight_tensor_separated: bool
+    nonzero_constant_tensor_mode_verified: bool
+    microarc_mertens_reduction_is_actual_gate: bool
+    whole_line_family_covered: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -4451,6 +4474,96 @@ def transition_bourgain_garaev_multilinear_audit(
     )
 
 
+def transition_line_finite_fourier_identity(
+    *,
+    a: int,
+    b: int,
+    r1: int,
+    r2: int,
+    h: int,
+    modulus: int,
+) -> dict[str, int | bool]:
+    """Check finite-character detection of ``b*r1-a*r2=h``.
+
+    If ``Q`` is larger than the absolute line defect, congruence modulo
+    ``Q`` is equivalent to integer equality.  Character orthogonality
+    then represents the equality indicator as
+    ``Q^(-1) sum_(j mod Q) e(j*defect/Q)`` exactly.
+    """
+    if min(a, b, r1, r2, modulus) <= 0:
+        raise ValueError("line variables and Fourier modulus are positive")
+    defect = b * r1 - a * r2 - h
+    if modulus <= abs(defect):
+        raise ValueError("modulus must exceed the absolute line defect")
+    congruence = int(defect % modulus == 0)
+    equality = int(defect == 0)
+    return {
+        "line_defect": defect,
+        "congruence_indicator": congruence,
+        "integer_equality_indicator": equality,
+        "finite_fourier_detects_integer_equality": congruence == equality,
+    }
+
+
+def transition_line_fourier_microarc_audit(
+    *,
+    denominator_gcd_exponent: Fraction,
+) -> TransitionLineFourierMicroarcAudit:
+    """Audit the exact frequency scales of the top determinant line.
+
+    Fix one integer ``g=T^gamma`` and put ``A=T^(1-gamma)``.  The
+    equation ``b*r1-a*r2=h`` has ``a,b,h`` of length ``A`` and
+    ``r1,r2`` of length ``T``.  Fourier orthogonality detects the line,
+    and Poisson in the smooth h-window localizes to ``|alpha|<=A^(-1)``.
+    The products ``a*r`` have scale ``A*T``, so the constant-phase
+    microarc has width ``(A*T)^(-1)``; the full window contains exactly
+    one power of T such microarc scales.
+
+    In a fictitious tensor-separated constant mode, the microarc is
+    ``T^(-1)|M(A)M(T)|^2``.  Reaching the fixed-g target ``A*T`` would
+    require ``|M(A)M(T)|<=T*sqrt(A)``, a saving ``A^(1/2)`` in the
+    product, or exponent ``(1-gamma)/2``.  The actual coupled weight has
+    not been tensor-separated and its constant tensor coefficient has
+    not been shown nonzero, so this is a diagnostic obstruction rather
+    than a necessary theorem interface.
+    """
+    common_gcd = F(denominator_gcd_exponent)
+    if common_gcd < 0 or common_gcd > F(1):
+        raise ValueError("denominator gcd exponent must lie in [0,1]")
+    alpha = F(1) - common_gcd
+    product_scale = alpha + F(1)
+    full_window = -alpha
+    microarc = -product_scale
+    microarc_count = full_window - microarc
+    raw = F(1) + 2 * alpha
+    target = F(1) + alpha
+    required = raw - target
+    mertens_trivial = alpha + F(1)
+    mertens_target = F(1) + alpha / 2
+    mertens_saving = mertens_trivial - mertens_target
+    return TransitionLineFourierMicroarcAudit(
+        denominator_gcd_exponent=common_gcd,
+        denominator_cofactor_exponent=alpha,
+        h_window_exponent=alpha,
+        product_phase_scale_exponent=product_scale,
+        full_frequency_window_exponent=full_window,
+        constant_phase_microarc_exponent=microarc,
+        microarcs_in_full_window_exponent=microarc_count,
+        fixed_g_raw_line_exponent=raw,
+        fixed_g_target_exponent=target,
+        required_fixed_g_saving_exponent=required,
+        separated_mertens_product_trivial_exponent=mertens_trivial,
+        separated_mertens_product_target_exponent=mertens_target,
+        required_mertens_product_saving_exponent=mertens_saving,
+        finite_fourier_orthogonality_exact=True,
+        h_window_poisson_localization_exact=True,
+        actual_coupled_weight_tensor_separated=False,
+        nonzero_constant_tensor_mode_verified=False,
+        microarc_mertens_reduction_is_actual_gate=False,
+        whole_line_family_covered=False,
+    )
+
+
 def h_poisson_subbox_scales(
     box: ExponentBox,
     *,
@@ -7805,6 +7918,17 @@ def main() -> None:
         "thm12_threshold=9,thm12_length=False,prime_required=True,"
         "all_prime=False,product_intervals=False,separable=False,"
         "phase=False,covered=False"
+    )
+    transition_line_microarc = transition_line_fourier_microarc_audit(
+        denominator_gcd_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: line_fourier_microarc="
+        "gamma=1/2,A=1/2,h=1/2,product=3/2,window=-1/2,"
+        "microarc=-3/2,microcells=1,fixed_raw=2,fixed_target=3/2,"
+        "required=1/2,mertens_trivial=3/2,mertens_target=5/4,"
+        "mertens_required=1/4,fourier=True,h_poisson=True,"
+        "tensor=False,constant=False,actual_gate=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

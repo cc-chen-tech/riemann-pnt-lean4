@@ -1925,6 +1925,61 @@ def test_bourgain_garaev_multilinear_theorems_do_not_close_balanced_cell() -> No
     assert not audit.published_coverage
 
 
+def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
+    helper = getattr(
+        coverage_audit,
+        "transition_line_finite_fourier_identity",
+        None,
+    )
+    assert helper is not None, "line Fourier identity helper is missing"
+    exact = helper(a=5, b=7, r1=13, r2=18, h=1, modulus=101)
+    assert exact["line_defect"] == 0
+    assert exact["congruence_indicator"] == 1
+    assert exact["integer_equality_indicator"] == 1
+    assert exact["finite_fourier_detects_integer_equality"]
+
+    off = helper(a=5, b=7, r1=13, r2=18, h=2, modulus=101)
+    assert off["line_defect"] == -1
+    assert off["congruence_indicator"] == 0
+    assert off["integer_equality_indicator"] == 0
+    assert off["finite_fourier_detects_integer_equality"]
+
+    adapter = getattr(
+        coverage_audit,
+        "transition_line_fourier_microarc_audit",
+        None,
+    )
+    assert adapter is not None, "line Fourier microarc audit is missing"
+    balanced = adapter(denominator_gcd_exponent=F(1, 2))
+    assert balanced.denominator_cofactor_exponent == F(1, 2)
+    assert balanced.h_window_exponent == F(1, 2)
+    assert balanced.product_phase_scale_exponent == F(3, 2)
+    assert balanced.full_frequency_window_exponent == F(-1, 2)
+    assert balanced.constant_phase_microarc_exponent == F(-3, 2)
+    assert balanced.microarcs_in_full_window_exponent == F(1)
+    assert balanced.fixed_g_raw_line_exponent == F(2)
+    assert balanced.fixed_g_target_exponent == F(3, 2)
+    assert balanced.required_fixed_g_saving_exponent == F(1, 2)
+    assert balanced.separated_mertens_product_trivial_exponent == F(3, 2)
+    assert balanced.separated_mertens_product_target_exponent == F(5, 4)
+    assert balanced.required_mertens_product_saving_exponent == F(1, 4)
+    assert balanced.finite_fourier_orthogonality_exact
+    assert balanced.h_window_poisson_localization_exact
+    assert not balanced.actual_coupled_weight_tensor_separated
+    assert not balanced.nonzero_constant_tensor_mode_verified
+    assert not balanced.microarc_mertens_reduction_is_actual_gate
+    assert not balanced.whole_line_family_covered
+
+    general = adapter(denominator_gcd_exponent=F(1, 4))
+    assert general.denominator_cofactor_exponent == F(3, 4)
+    assert general.product_phase_scale_exponent == F(7, 4)
+    assert general.constant_phase_microarc_exponent == F(-7, 4)
+    assert general.fixed_g_raw_line_exponent == F(5, 2)
+    assert general.fixed_g_target_exponent == F(7, 4)
+    assert general.required_fixed_g_saving_exponent == F(3, 4)
+    assert general.required_mertens_product_saving_exponent == F(3, 8)
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -3925,5 +3980,10 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\frac12-\frac1{24}=\frac{11}{24}",
         r"N>p^9",
         "transition_bourgain_garaev_multilinear_audit",
+        "### 4.58 Exact line Fourier window and the constant-phase microarc",
+        r"\mathbf1_{br_1-ar_2=h}",
+        r"|\alpha|\ll(AT)^{-1}",
+        r"|M_U(A)M_V(T)|\ll T\sqrt A",
+        "transition_line_fourier_microarc_audit",
     ):
         assert marker in text
