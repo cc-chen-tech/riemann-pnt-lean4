@@ -6260,6 +6260,257 @@ critical face, and records the net \(1/2\) logarithmic saving.  It
 keeps two_entry_square_root_gate_proved=False and
 whole_transition_face_covered=False until (4.443) is proved.
 
+### 4.51 Critical h-Poisson determinant line
+
+There is a second exact representation of the same transition
+obstruction which does not first factor either Möbius entry.  It exposes
+an additional unimodularity that is hidden in (4.404).  Return to
+\(\mathrm{TFS}_\theta(q,k)\) in (4.328), put
+
+\[
+ H=L=T^{1/2},\qquad D=T^\theta,
+ \qquad \frac12<\theta\le1,
+\tag{4.448}
+\]
+
+and, with all the other variables fixed, define
+
+\[
+ \phi_{s,w,\delta}(u)
+ :=\Psi_{q,k}\!\left(
+   \frac sT,\frac wD,u,\frac\delta L\right),
+ \qquad
+ \widehat\phi_{s,w,\delta}(\xi)
+ :=\int_{\mathbb R}\phi_{s,w,\delta}(u)e(-u\xi)\,du.
+\tag{4.449}
+\]
+
+Poisson summation in the complete integer \(h\)-sum is the exact
+identity
+
+\[
+\boxed{
+ \sum_{h\in\mathbb Z}
+ \phi_{s,w,\delta}(h/H)
+ e\!\left(-\frac{h\delta\bar w}{s}\right)
+ =H\!\sum_{\substack{v,j\in\mathbb Z\\wv-js=\delta}}
+ \widehat\phi_{s,w,\delta}\!\left(\frac{Hv}{s}\right).}
+\tag{4.450}
+\]
+
+Indeed, ordinary Poisson gives
+\(H\sum_{\ell\in\mathbb Z}\widehat\phi
+(H(\ell+\delta\bar w/s))\).  Setting
+\(v=\ell s+\delta\bar w\) and
+\(j=(wv-\delta)/s\) is a bijection onto the right side of
+(4.450).  Thus no congruence class, sign, or normalization is omitted.
+The sum over \(v,j\) in (4.450) is infinite and exact; the derivative
+bounds of \(\Psi_{q,k}\) give arbitrary-power decay outside the dual
+boxes below.
+
+On the boundary dual box the variables have the scales
+
+\[
+ |v|\asymp T^{1/2},\qquad
+ |j|\asymp T^{\theta-1/2},\qquad
+ |\delta|\asymp T^{1/2}.
+\tag{4.451}
+\]
+
+Neither \(v\) nor \(j\) is zero on this box.  Put
+
+\[
+ g=(|v|,|j|),\qquad v=gv_0,\qquad j=gj_0,
+ \qquad \delta=g\delta_0,
+ \qquad (v_0,j_0)=1.
+\tag{4.452}
+\]
+
+Choose \(x,y\in\mathbb Z\) with
+\(xv_0+yj_0=1\).  Every solution of the divided determinant equation
+\(wv_0-j_0s=\delta_0\), with no omission or multiplicity, is
+
+\[
+ w=x\delta_0+j_0n,qquad
+ s=-y\delta_0+v_0n,qquad n\in\mathbb Z.
+\tag{4.453}
+\]
+
+The second Möbius entry is \(r=ks+w\), hence
+
+\[
+\boxed{
+ \begin{pmatrix}s\\r\end{pmatrix}
+ =
+ \begin{pmatrix}
+  -y&v_0\\x-ky&j_0+kv_0
+ \end{pmatrix}
+ \begin{pmatrix}\delta_0\\n\end{pmatrix},
+ \qquad
+ \det\begin{pmatrix}
+  -y&v_0\\x-ky&j_0+kv_0
+ \end{pmatrix}=-1.}
+\tag{4.454}
+\]
+
+Thus the two arguments of
+\(\mu(s)\mu(r)\) are exactly unimodular integer coordinates, not two
+arbitrary affine forms.
+
+Let \(\mathcal K_{q,k,g,v_0,j_0}(\delta_0,n)\) denote
+
+\[
+ p_N(qs)p_N(qr)
+ \widehat\phi_{s,r-ks,g\delta_0}
+ \!\left(\frac{Hgv_0}{s}\right),
+\tag{4.455}
+\]
+
+multiplied by the original signed dyadic cutoffs.  It is declared zero
+unless
+
+\[
+ s\asymp T,\quad r\asymp T,\quad r-ks\asymp T^\theta,
+ \quad (r,s)=1,\quad(q,rs)=1,
+ \quad g\delta_0\asymp T^{1/2}.
+\tag{4.456}
+\]
+
+All fixed transition factors and the complete transformed kernel remain
+inside \(\mathcal K\).  Equations (4.450)--(4.456) give the finite-input,
+absolutely convergent identity
+
+\[
+\boxed{
+ \mathrm{TFS}_\theta(q,k)
+ =H\sum_{g\ge1}
+  \sum_{\substack{v_0,j_0\in\mathbb Z\setminus\{0\}\\
+                   (v_0,j_0)=1}}
+  \sum_{\delta_0,n\in\mathbb Z}
+  \mu(-y\delta_0+v_0n)
+  \mu((x-ky)\delta_0+(j_0+kv_0)n)
+  \mathcal K_{q,k,g,v_0,j_0}(\delta_0,n).}
+\tag{4.457}
+\]
+
+The dependence of \(x,y\) on the primitive slope is explicit.  Changing
+the Bezout pair only translates the integer \(n\), so (4.457) is
+independent of that choice.
+
+Write \(g\asymp T^\gamma\).  Exact support gives
+
+\[
+ 0\le\gamma\le\theta-\frac12
+\tag{4.458}
+\]
+
+and the exponent ledger is
+
+\[
+\begin{array}{c|c}
+ \text{family}&\log_T\text{-scale}\\ \hline
+ g&\gamma\\
+ v_0&1/2-\gamma\\
+ j_0&\theta-1/2-\gamma\\
+ \delta_0&1/2-\gamma\\
+ n&1/2+\gamma.
+\end{array}
+\tag{4.459}
+\]
+
+In particular, the inner unimodular area is independent of the shell:
+
+\[
+ \boxed{(1/2-\gamma)+(1/2+\gamma)=1.}
+\tag{4.460}
+\]
+
+The outer \((g,v_0,j_0)\)-family has exponent \(\theta-\gamma\).
+Consequently the absolute cardinality before the Poisson factor has
+exponent \(1+\theta-\gamma\), and after the factor \(H\) it is
+
+\[
+ \boxed{\frac32+\theta-\gamma.}
+\tag{4.461}
+\]
+
+Comparison with the asymptotic-level local target \(T^2\) shows that
+the exact inner saving required is
+
+\[
+ \boxed{s_{h\mathrm P}(\theta,\gamma)
+ =\left(\theta-\frac12-\gamma\right)_+.}
+\tag{4.462}
+\]
+
+A square root in the area (4.460) saves \(T^{1/2}\).  Its power margin
+over (4.462) is
+
+\[
+ \boxed{\frac12-s_{h\mathrm P}(\theta,\gamma)
+ =1-\theta+\gamma,}
+\tag{4.463}
+\]
+
+because (4.458) makes the positive part active except at its upper
+endpoint.  Equality in (4.463) occurs if and only if
+
+\[
+ \boxed{\theta=1,\qquad\gamma=0.}
+\tag{4.464}
+\]
+
+This recovers the unique critical face of (4.442) without Type-II
+factorization.  At the opposite endpoint
+\(\gamma=\theta-1/2\), (4.461) already equals \(2\); the two original
+mollifier tapers supply the logarithmic little-oh factor on that maximal
+gcd layer without using Möbius cancellation.
+
+The sharp averaged theorem suggested by (4.457) is the diagonal-scale
+slope square function.  If \(\mathcal S(g,v_0,j_0)\) denotes the inner
+\((\delta_0,n)\)-sum in (4.457) with the endpoint tapers replaced by
+bounded smooth cutoffs, the required estimate is
+
+\[
+\boxed{
+ \sum_{\substack{g\asymp T^\gamma\\
+                  |v_0|\asymp T^{1/2-\gamma}\\
+                  |j_0|\asymp T^{\theta-1/2-\gamma}\\
+                  (v_0,j_0)=1}}
+ |\mathcal S(g,v_0,j_0)|^2
+ \ll_W T^{1+\theta-\gamma}(\log T)^{o(1)}.}
+\tag{4.465}
+\]
+
+The right side is exactly the identity-diagonal cardinality.  Cauchy
+in the slope family then gives
+
+\[
+ \sum_{g,v_0,j_0}|\mathcal S(g,v_0,j_0)|
+ \ll_W T^{1/2+\theta-\gamma}(\log T)^{o(1)},
+\tag{4.466}
+\]
+
+and multiplication by \(H\) yields
+\(T^{1+\theta-\gamma}(\log T)^{o(1)}\), with equality at (4.464) and
+positive power slack everywhere else.
+
+Equation (4.465) is not yet proved.  Expanding its left side produces
+a signed four-Möbius off-diagonal.  Fourier separation of the thin
+determinant cutoff has a nonzero zero-frequency component; using the
+Davenport bound on the two Möbius exponential sums separately loses the
+full thin-strip factor and does not reach the diagonal scale.  Hence
+(4.465), rather than a pointwise two-point Chowla assertion, is the
+precise new spectral/large-sieve target of this route.
+
+The helper transition_h_poisson_line_identity checks (4.453)--(4.454)
+on exact integer fixtures.  The adapter transition_h_poisson_line_audit
+records (4.451), (4.458)--(4.464), marks the maximal-gcd layer closed by
+absolute counting plus the existing endpoint tapers, and keeps
+fixed_slope_square_root_proved=False,
+averaged_slope_square_function_proved=False, and
+whole_far_shell_covered=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

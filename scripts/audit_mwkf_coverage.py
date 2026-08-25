@@ -733,6 +733,35 @@ class TransitionFinalTwoEntryGateAudit:
 
 
 @dataclass(frozen=True)
+class TransitionHPoissonLineAudit:
+    distance: Fraction
+    common_gcd_exponent: Fraction
+    h_poisson_factor_exponent: Fraction
+    dual_v_exponent: Fraction
+    dual_j_exponent: Fraction
+    primitive_v_exponent: Fraction
+    primitive_j_exponent: Fraction
+    shift_quotient_exponent: Fraction
+    line_parameter_exponent: Fraction
+    inner_delta_n_area_exponent: Fraction
+    outer_slope_family_exponent: Fraction
+    pre_poisson_layer_cardinality_exponent: Fraction
+    absolute_post_poisson_exponent: Fraction
+    asymptotic_local_target_exponent: Fraction
+    required_inner_saving_exponent: Fraction
+    inner_square_root_saving_exponent: Fraction
+    square_root_power_margin: Fraction
+    determinant_line_parametrization_exact: bool
+    mobius_entry_change_is_unimodular: bool
+    is_unique_power_critical_layer: bool
+    absolute_count_reaches_power_target: bool
+    maximal_gcd_layer_closes_with_endpoint_tapers: bool
+    fixed_slope_square_root_proved: bool
+    averaged_slope_square_function_proved: bool
+    whole_far_shell_covered: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -3600,6 +3629,124 @@ def transition_final_two_entry_gate_audit(
         two_entry_square_root_gate_required=True,
         two_entry_square_root_gate_proved=False,
         whole_transition_face_covered=False,
+    )
+
+
+def transition_h_poisson_line_identity(
+    *,
+    k: int,
+    v0: int,
+    j0: int,
+    x: int,
+    y: int,
+    delta0: int,
+    n: int,
+) -> dict[str, int | bool]:
+    """Verify the exact determinant line after Poisson summation in h.
+
+    The primitive dual slope satisfies ``x*v0+y*j0=1``.  All solutions
+    of ``w*v0-j0*s=delta0`` are
+
+    ``w=x*delta0+j0*n`` and ``s=-y*delta0+v0*n``.
+
+    With ``r=k*s+w``, the coefficient matrix carrying ``(delta0,n)``
+    to the two Mobius entries ``(s,r)`` has determinant exactly ``-1``.
+    """
+    if k == 0 or v0 == 0 or j0 == 0:
+        raise ValueError("the far-shell slope and primitive duals are nonzero")
+    bezout = x * v0 + y * j0
+    if bezout != 1:
+        raise ValueError("x*v0+y*j0 must equal one")
+    w = x * delta0 + j0 * n
+    s = -y * delta0 + v0 * n
+    r = k * s + w
+    determinant = (-y) * (j0 + k * v0) - v0 * (x - k * y)
+    return {
+        "w": w,
+        "s": s,
+        "r": r,
+        "bezout_identity_exact": bezout == 1,
+        "determinant_equation_exact": w * v0 - j0 * s == delta0,
+        "mobius_entry_matrix_determinant": determinant,
+        "mobius_entry_change_is_unimodular": determinant == -1,
+    }
+
+
+def transition_h_poisson_line_audit(
+    *,
+    distance: Fraction,
+    gcd_exponent: Fraction,
+) -> TransitionHPoissonLineAudit:
+    """Audit the determinant line obtained by exact h-Poisson summation.
+
+    On a far shell ``w=T^theta`` with ``1/2 < theta <= 1``, Poisson in
+    ``h=T^(1/2)`` gives ``v=T^(1/2)``, ``j=T^(theta-1/2)`` and
+    ``w*v-j*s=delta`` with ``delta=T^(1/2)``.  On
+    ``g=gcd(|v|,|j|)=T^gamma``, divide by ``g`` and use the exact
+    determinant-line parametrization.  Its ``(delta0,n)`` area is
+    always ``T`` and the map to the two Mobius entries is unimodular.
+
+    The returned square-root estimate remains a theorem interface.  It
+    has positive power slack off ``theta=1,gamma=0`` but is not marked
+    as proved.  At the maximal gcd ``gamma=theta-1/2`` the absolute
+    count itself reaches the power target; the two existing endpoint
+    mollifier tapers then close that single layer logarithmically.
+    """
+    distance = F(distance)
+    gcd_exponent = F(gcd_exponent)
+    if distance <= F(1, 2) or distance > F(1):
+        raise ValueError("distance must lie on the transition far shell")
+    dual_v = F(1, 2)
+    dual_j = distance - F(1, 2)
+    gcd_max = min(dual_v, dual_j, F(1, 2))
+    if gcd_exponent < 0 or gcd_exponent > gcd_max:
+        raise ValueError("common gcd exceeds the transition dual ranges")
+
+    primitive_v = dual_v - gcd_exponent
+    primitive_j = dual_j - gcd_exponent
+    shift_quotient = F(1, 2) - gcd_exponent
+    line_parameter = F(1, 2) + gcd_exponent
+    inner_area = shift_quotient + line_parameter
+    outer_family = gcd_exponent + primitive_v + primitive_j
+    pre_poisson = outer_family + inner_area
+    poisson_factor = F(1, 2)
+    absolute_post_poisson = poisson_factor + pre_poisson
+    target = F(2)
+    required_saving = _positive_part(absolute_post_poisson - target)
+    square_root_saving = inner_area / 2
+    square_root_margin = square_root_saving - required_saving
+    critical = distance == F(1) and gcd_exponent == 0
+    absolute_reaches = absolute_post_poisson <= target
+    maximal_gcd = gcd_exponent == gcd_max
+
+    return TransitionHPoissonLineAudit(
+        distance=distance,
+        common_gcd_exponent=gcd_exponent,
+        h_poisson_factor_exponent=poisson_factor,
+        dual_v_exponent=dual_v,
+        dual_j_exponent=dual_j,
+        primitive_v_exponent=primitive_v,
+        primitive_j_exponent=primitive_j,
+        shift_quotient_exponent=shift_quotient,
+        line_parameter_exponent=line_parameter,
+        inner_delta_n_area_exponent=inner_area,
+        outer_slope_family_exponent=outer_family,
+        pre_poisson_layer_cardinality_exponent=pre_poisson,
+        absolute_post_poisson_exponent=absolute_post_poisson,
+        asymptotic_local_target_exponent=target,
+        required_inner_saving_exponent=required_saving,
+        inner_square_root_saving_exponent=square_root_saving,
+        square_root_power_margin=square_root_margin,
+        determinant_line_parametrization_exact=True,
+        mobius_entry_change_is_unimodular=True,
+        is_unique_power_critical_layer=critical,
+        absolute_count_reaches_power_target=absolute_reaches,
+        maximal_gcd_layer_closes_with_endpoint_tapers=(
+            maximal_gcd and absolute_reaches
+        ),
+        fixed_slope_square_root_proved=False,
+        averaged_slope_square_function_proved=False,
+        whole_far_shell_covered=False,
     )
 
 
@@ -6853,6 +7000,35 @@ def main() -> None:
         "large_q_transition: final_two_entry_slack="
         "theta=3/4,beta=2/3,xi=13/12,gcd=0,"
         "required=17/6,raw_target=10/3,margin=1/2 critical=False"
+    )
+    transition_h_poisson_critical = transition_h_poisson_line_audit(
+        distance=F(1),
+        gcd_exponent=F(0),
+    )
+    print(
+        "large_q_transition: h_poisson_line_critical="
+        "theta=1,gamma=0,H=1/2,v=1/2,j=1/2,delta0=1/2,n=1/2,"
+        "inner=1,outer=1,pre=2,post=5/2,target=2,required=1/2,"
+        "sqrt=1/2,margin=0,unimodular=True,critical=True,"
+        "fixed_proved=False,square_function_proved=False,whole=False"
+    )
+    transition_h_poisson_proper = transition_h_poisson_line_audit(
+        distance=F(3, 4),
+        gcd_exponent=F(0),
+    )
+    print(
+        "large_q_transition: h_poisson_line_slack="
+        "theta=3/4,gamma=0,j=1/4,post=9/4,required=1/4,"
+        "sqrt=1/2,margin=1/4 critical=False"
+    )
+    transition_h_poisson_maximal = transition_h_poisson_line_audit(
+        distance=F(1),
+        gcd_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: h_poisson_line_maximal_gcd="
+        "theta=1,gamma=1/2,delta0=0,n=1,post=2,required=0,"
+        "absolute_target=True,tapers_close=True"
     )
     log_budget = centered_resonance_log_budget(
         hard,

@@ -1505,6 +1505,82 @@ def test_transition_final_two_entry_gate_has_only_one_critical_face() -> None:
     assert not slack.is_unique_power_critical_face
 
 
+def test_transition_h_poisson_line_is_unimodular_in_the_two_mobius_entries() -> None:
+    """The critical h-Poisson determinant line has determinant minus one."""
+    identity = getattr(
+        coverage_audit,
+        "transition_h_poisson_line_identity",
+        None,
+    )
+    assert identity is not None, "transition h-Poisson line helper is missing"
+
+    result = identity(
+        k=2,
+        v0=5,
+        j0=3,
+        x=2,
+        y=-3,
+        delta0=7,
+        n=11,
+    )
+    assert result["bezout_identity_exact"]
+    assert result["w"] == 47
+    assert result["s"] == 76
+    assert result["r"] == 199
+    assert result["determinant_equation_exact"]
+    assert result["mobius_entry_matrix_determinant"] == -1
+    assert result["mobius_entry_change_is_unimodular"]
+
+
+def test_transition_h_poisson_line_gate_has_one_power_critical_layer() -> None:
+    """After h-Poisson, inner area T and only theta=1,g=1 is critical."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_h_poisson_line_audit",
+        None,
+    )
+    assert adapter is not None, "transition h-Poisson line audit is missing"
+
+    critical = adapter(distance=F(1), gcd_exponent=F(0))
+    assert critical.h_poisson_factor_exponent == F(1, 2)
+    assert critical.dual_v_exponent == F(1, 2)
+    assert critical.dual_j_exponent == F(1, 2)
+    assert critical.primitive_v_exponent == F(1, 2)
+    assert critical.primitive_j_exponent == F(1, 2)
+    assert critical.shift_quotient_exponent == F(1, 2)
+    assert critical.line_parameter_exponent == F(1, 2)
+    assert critical.inner_delta_n_area_exponent == F(1)
+    assert critical.outer_slope_family_exponent == F(1)
+    assert critical.pre_poisson_layer_cardinality_exponent == F(2)
+    assert critical.absolute_post_poisson_exponent == F(5, 2)
+    assert critical.asymptotic_local_target_exponent == F(2)
+    assert critical.required_inner_saving_exponent == F(1, 2)
+    assert critical.inner_square_root_saving_exponent == F(1, 2)
+    assert critical.square_root_power_margin == F(0)
+    assert critical.is_unique_power_critical_layer
+    assert critical.mobius_entry_change_is_unimodular
+    assert not critical.fixed_slope_square_root_proved
+    assert not critical.averaged_slope_square_function_proved
+    assert not critical.whole_far_shell_covered
+
+    proper = adapter(distance=F(3, 4), gcd_exponent=F(0))
+    assert proper.dual_j_exponent == F(1, 4)
+    assert proper.outer_slope_family_exponent == F(3, 4)
+    assert proper.absolute_post_poisson_exponent == F(9, 4)
+    assert proper.required_inner_saving_exponent == F(1, 4)
+    assert proper.square_root_power_margin == F(1, 4)
+    assert not proper.is_unique_power_critical_layer
+
+    maximal_gcd = adapter(distance=F(1), gcd_exponent=F(1, 2))
+    assert maximal_gcd.primitive_j_exponent == F(0)
+    assert maximal_gcd.shift_quotient_exponent == F(0)
+    assert maximal_gcd.line_parameter_exponent == F(1)
+    assert maximal_gcd.absolute_post_poisson_exponent == F(2)
+    assert maximal_gcd.required_inner_saving_exponent == F(0)
+    assert maximal_gcd.absolute_count_reaches_power_target
+    assert maximal_gcd.maximal_gcd_layer_closes_with_endpoint_tapers
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2996,6 +3072,23 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "required=17/6,raw_target=10/3,margin=1/2 critical=False"
     ) in output
     assert (
+        "large_q_transition: h_poisson_line_critical="
+        "theta=1,gamma=0,H=1/2,v=1/2,j=1/2,delta0=1/2,n=1/2,"
+        "inner=1,outer=1,pre=2,post=5/2,target=2,required=1/2,"
+        "sqrt=1/2,margin=0,unimodular=True,critical=True,"
+        "fixed_proved=False,square_function_proved=False,whole=False"
+    ) in output
+    assert (
+        "large_q_transition: h_poisson_line_slack="
+        "theta=3/4,gamma=0,j=1/4,post=9/4,required=1/4,"
+        "sqrt=1/2,margin=1/4 critical=False"
+    ) in output
+    assert (
+        "large_q_transition: h_poisson_line_maximal_gcd="
+        "theta=1,gamma=1/2,delta0=0,n=1,post=2,required=0,"
+        "absolute_target=True,tapers_close=True"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -3441,5 +3534,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"2(1-\theta)+(1-\beta+\theta-\xi)+g",
         r"(\log T)^{-1/2}",
         "transition_final_two_entry_gate_audit",
+        "### 4.51 Critical h-Poisson determinant line",
+        r"wv-js=\delta",
+        r"\det\begin{pmatrix}",
+        "transition_h_poisson_line_audit",
     ):
         assert marker in text
