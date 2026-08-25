@@ -1225,6 +1225,97 @@ the negative full-collar margin (4.72).  Certification still requires the
 constant-scale hypotheses (4.66), which are not encoded by exponent data
 alone.
 
+### 4.9 Exact endpoint-critical aggregation ledger
+
+The seven-logarithm ledger in (2.7) is deliberately uniform over the
+whole core.  It is not the sharp ledger on the genuine endpoint-critical
+family.  At power scale that family is cut out by
+
+\[
+ \kappa+\rho=\kappa+\sigma=3,
+ \qquad k+\sigma=m+\rho,
+ \qquad h=\sigma-m,
+ \qquad \ell=m+\rho-1.
+\tag{4.74}
+\]
+
+For the following count, the corresponding constant-scale hypotheses are
+also required: both inequalities in (4.66), the fixed ratio window (5.7)
+of the exact-audit note, and, for a fixed \(B_0>0\),
+
+\[
+ \mathscr L^{-B_0}\frac SM\le H
+ \le 8\mathscr L^{B_0}\frac SM,
+ \qquad
+ \mathscr L^{-B_0}\frac{MR}{T}\le L
+ \le 8\mathscr L^{B_0}\frac{MR}{T}.
+\tag{4.75}
+\]
+
+Now count the retained boxes before applying absolute values.  For each
+fixed \(q\), the two endpoint conditions leave \(O(1)\) choices for
+\(R,S\).  Once \(M,R,S\) are fixed, (5.7) leaves \(O(1)\) choices for
+\(K\).  Each interval in (4.75) contains
+\(O_{B_0}(\log\log T)\) dyadic values.  The \(M\)-sum is still genuine:
+when \(R=S\), the whole line
+
+\[
+ 0\le m=k\le\frac12,
+ \qquad h=3-m,
+ \qquad \ell=2+m
+\tag{4.76}
+\]
+
+satisfies (4.74), and \(HL\asymp RS/T\) is independent of \(M\).
+Consequently the exact critical-family aggregation is
+
+\[
+ O_{B_0}\!\left(
+   \underbrace{\mathscr L}_{M\text{-dyadic}}
+   \underbrace{\mathscr L}_{\sum_{q\le N}\mu^2(q)/q}
+   (\log\log T)^2
+ \right)
+ =O_{B_0}\!\left(\mathscr L^2(\log\log T)^2\right).
+\tag{4.77}
+\]
+
+Thus the two endpoint tapers in (4.67) cancel exactly the two powers of
+\(\mathscr L\) in (4.77).  On the full \(D=T\) collar, (4.68) therefore
+gives only
+
+\[
+ O_{W,B_0}\!\left(T(\log\log T)^2\right),
+\tag{4.78}
+\]
+
+which is still not \(o_W(T)\).  Any fixed additional logarithmic saving
+would close this face.  A precise sufficient local gate is: for some
+fixed \(\eta>0\), uniformly over (4.74)--(4.75),
+
+\[
+ \boxed{
+ |\mathfrak D^{(2)}_{q,D=T}|
+ \ll_{W,B_0,\eta}RCV\,\mathscr L^{-2-\eta}.}
+\tag{4.79}
+\]
+
+Indeed, (4.77) then gives
+\(O(T\mathscr L^{-\eta}(\log\log T)^2)=o(T)\).
+The optimistic MRT factor \(\mathscr L^{-1/3000}\) from (4.35) would be
+more than sufficient at the level of this exact ledger.  It is not a
+theorem for the sum at hand: the joint coefficient is not an admissible published MRT coefficient,
+because it simultaneously contains the
+\(s\)-dependent smooth kernel, the moving shift, and the completed
+frequency variables.  Hence published coverage remains false.
+
+This sharpens, rather than contradicts, (4.72).  The margin \(-5\) is the
+uniform whole-core count; on the critical family the exact power of
+\(\mathscr L\) after the endpoint tapers is zero, with the explicit
+\((\log\log T)^2\) loss in (4.78).  The exact-rational function
+endpoint_critical_aggregation_budget records (4.74)--(4.79), while
+deliberately returning false for joint-coefficient acceptance and
+published coverage.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -182,6 +182,27 @@ class EndpointCenteredResonanceLogBudget:
 
 
 @dataclass(frozen=True)
+class EndpointCriticalAggregationBudget:
+    raw_dyadic_log_loss: Fraction
+    endpoint_rs_removed: Fraction
+    ratio_k_removed: Fraction
+    critical_hl_removed: Fraction
+    remaining_dyadic_log_loss: Fraction
+    harmonic_q_log_loss: Fraction
+    total_log_power_loss: Fraction
+    endpoint_log_saving: Fraction
+    net_log_power: Fraction
+    polyloglog_loss_exponent: Fraction
+    mrt_log_power_margin: Fraction
+    critical_face: bool
+    extra_log_saving_required: bool
+    mrt_beats_polyloglog: bool
+    would_close_if_joint_weight_admissible: bool
+    joint_coefficient_accepted: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class FarResonanceShellScales:
     distance: Fraction
     product_frequency: Fraction
@@ -726,6 +747,111 @@ def endpoint_centered_resonance_log_budget(
             and centered_completion_applicable
             and nonempty_log_collar
             and global_log_margin > 0
+        ),
+    )
+
+
+def endpoint_critical_aggregation_budget(
+    box: ExponentBox,
+    *,
+    endpoint_factors: int,
+    mrt_log_saving: Fraction,
+) -> EndpointCriticalAggregationBudget:
+    """Count logarithmic losses on the full endpoint-critical family.
+
+    The crude global ledger has six dyadic parameters ``R,S,K,M,L,H``.
+    On this face, the two endpoint constraints determine ``R,S`` for a
+    fixed ``q``; ratio balance determines ``K`` from ``M``; and the two
+    critical frequency constraints determine ``H,L`` from ``M,R,S``.
+    The entire line ``0 <= m <= 1/2`` remains, so the ``M`` dyadic sum is
+    genuine.  Together with the harmonic ``q`` sum this leaves two powers
+    of ``log T``.  Polylogarithmic critical collars for ``H,L`` contribute
+    only ``(log log T)^2``.
+
+    The exponent equalities do not certify the constant endpoint collars
+    or the hypotheses of an averaged-Chowla theorem.  In particular the
+    actual joint ``(s,shift,frequency)`` coefficient is deliberately left
+    unaccepted, so this adapter never turns the optimistic MRT saving into
+    published coverage.
+    """
+    if endpoint_factors not in (0, 1, 2):
+        raise ValueError("endpoint_factors must be 0, 1, or 2")
+    if mrt_log_saving < 0:
+        raise ValueError("mrt_log_saving must be nonnegative")
+
+    raw_dyadic_log_loss = F(6)
+    harmonic_q_log_loss = F(1)
+    endpoint_faces = sum(
+        exponent == F(3)
+        for exponent in (
+            box.kappa + box.rho,
+            box.kappa + box.sigma,
+        )
+    )
+    endpoint_rs_removed = F(2) if endpoint_faces == 2 else F(0)
+    ratio_face = box.k + box.sigma == box.m + box.rho
+    ratio_k_removed = F(1) if ratio_face else F(0)
+    h_critical = box.h == box.sigma - box.m
+    ell_critical = box.ell == box.m + box.rho - 1
+    critical_hl_removed = F(h_critical) + F(ell_critical)
+    remaining_dyadic_log_loss = (
+        raw_dyadic_log_loss
+        - endpoint_rs_removed
+        - ratio_k_removed
+        - critical_hl_removed
+    )
+    total_log_power_loss = (
+        remaining_dyadic_log_loss + harmonic_q_log_loss
+    )
+    certified_endpoint_factors = min(endpoint_factors, endpoint_faces)
+    endpoint_log_saving = F(certified_endpoint_factors)
+    net_log_power = endpoint_log_saving - total_log_power_loss
+    polyloglog_loss_exponent = (
+        F(2) if h_critical and ell_critical else F(0)
+    )
+    critical_face = (
+        is_admissible(box)
+        and endpoint_faces == 2
+        and endpoint_factors == 2
+        and ratio_face
+        and h_critical
+        and ell_critical
+    )
+    extra_log_saving_required = (
+        critical_face
+        and polyloglog_loss_exponent > 0
+        and net_log_power <= 0
+    )
+    mrt_log_power_margin = net_log_power + mrt_log_saving
+    mrt_beats_polyloglog = (
+        critical_face and mrt_log_power_margin > 0
+    )
+    joint_coefficient_accepted = False
+    would_close_if_joint_weight_admissible = (
+        critical_face and mrt_beats_polyloglog
+    )
+    return EndpointCriticalAggregationBudget(
+        raw_dyadic_log_loss=raw_dyadic_log_loss,
+        endpoint_rs_removed=endpoint_rs_removed,
+        ratio_k_removed=ratio_k_removed,
+        critical_hl_removed=critical_hl_removed,
+        remaining_dyadic_log_loss=remaining_dyadic_log_loss,
+        harmonic_q_log_loss=harmonic_q_log_loss,
+        total_log_power_loss=total_log_power_loss,
+        endpoint_log_saving=endpoint_log_saving,
+        net_log_power=net_log_power,
+        polyloglog_loss_exponent=polyloglog_loss_exponent,
+        mrt_log_power_margin=mrt_log_power_margin,
+        critical_face=critical_face,
+        extra_log_saving_required=extra_log_saving_required,
+        mrt_beats_polyloglog=mrt_beats_polyloglog,
+        would_close_if_joint_weight_admissible=(
+            would_close_if_joint_weight_admissible
+        ),
+        joint_coefficient_accepted=joint_coefficient_accepted,
+        published_coverage=(
+            would_close_if_joint_weight_admissible
+            and joint_coefficient_accepted
         ),
     )
 
@@ -1323,6 +1449,23 @@ def main() -> None:
         f"endpoint_log_saving={_fmt(endpoint_budget.endpoint_log_saving)} "
         "full_collar_global_margin="
         f"{_fmt(endpoint_budget.full_power_collar_global_log_margin)}"
+    )
+    endpoint_critical = endpoint_critical_aggregation_budget(
+        hard,
+        endpoint_factors=2,
+        mrt_log_saving=F(1, 3000),
+    )
+    print(
+        "balanced_max_a: "
+        "endpoint_critical_log_loss="
+        f"{_fmt(endpoint_critical.total_log_power_loss)} "
+        f"endpoint_taper={_fmt(endpoint_critical.endpoint_log_saving)} "
+        f"net_log_power={_fmt(endpoint_critical.net_log_power)} "
+        "polyloglog_loss="
+        f"{_fmt(endpoint_critical.polyloglog_loss_exponent)} "
+        f"mrt_margin={_fmt(endpoint_critical.mrt_log_power_margin)} "
+        "joint_weight="
+        f"{endpoint_critical.joint_coefficient_accepted}"
     )
     distances = (F(1), F(3, 2), F(2), F(5, 2), F(3))
     shell_savings = ",".join(

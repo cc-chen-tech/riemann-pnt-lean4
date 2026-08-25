@@ -27,6 +27,9 @@ from scripts.audit_mwkf_ranges import ExponentBox, boundary_witnesses
 COVERAGE_NOTE = Path(
     "docs/research/2026-08-24-mwkf-published-coverage.md"
 )
+ALTERNATIVE_ROUTES_NOTE = Path(
+    "docs/research/2026-08-25-mwkf-alternative-routes-spike.md"
+)
 
 
 def test_bcr_covers_a_small_third_variable_box() -> None:
@@ -315,6 +318,51 @@ def test_endpoint_tapers_expand_the_logarithmic_resonance_collar() -> None:
     assert not off_endpoint.produces_little_o
 
 
+def test_endpoint_critical_face_has_only_two_log_t_aggregation_losses() -> None:
+    """Catch reusing the crude seven-log ledger on the critical face."""
+    adapter = getattr(
+        coverage_audit,
+        "endpoint_critical_aggregation_budget",
+        None,
+    )
+    assert adapter is not None, (
+        "endpoint-critical aggregation adapter is missing"
+    )
+    box = boundary_witnesses()["balanced_max_a"]
+
+    budget = adapter(
+        box,
+        endpoint_factors=2,
+        mrt_log_saving=F(1, 3000),
+    )
+    assert budget.raw_dyadic_log_loss == F(6)
+    assert budget.endpoint_rs_removed == F(2)
+    assert budget.ratio_k_removed == F(1)
+    assert budget.critical_hl_removed == F(2)
+    assert budget.remaining_dyadic_log_loss == F(1)
+    assert budget.harmonic_q_log_loss == F(1)
+    assert budget.total_log_power_loss == F(2)
+    assert budget.endpoint_log_saving == F(2)
+    assert budget.net_log_power == F(0)
+    assert budget.polyloglog_loss_exponent == F(2)
+    assert budget.mrt_log_power_margin == F(1, 3000)
+    assert budget.critical_face
+    assert budget.extra_log_saving_required
+    assert budget.mrt_beats_polyloglog
+    assert budget.would_close_if_joint_weight_admissible
+    assert not budget.joint_coefficient_accepted
+    assert not budget.published_coverage
+
+    off_face = adapter(
+        boundary_witnesses()["s_long"],
+        endpoint_factors=2,
+        mrt_log_saving=F(1, 3000),
+    )
+    assert not off_face.critical_face
+    assert not off_face.would_close_if_joint_weight_admissible
+    assert not off_face.published_coverage
+
+
 def test_far_resonance_shell_has_the_exact_piecewise_power_deficit() -> None:
     """Catch dropping the centered phase before it saturates at distance T^2."""
     adapter = getattr(
@@ -467,6 +515,11 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "full_collar_global_margin=-5"
     ) in output
     assert (
+        "balanced_max_a: endpoint_critical_log_loss=2 "
+        "endpoint_taper=2 net_log_power=0 polyloglog_loss=2 "
+        "mrt_margin=1/3000 joint_weight=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_far_shell_required_savings="
         "1:0,3/2:1,2:2,5/2:5/2,3:3 "
         "mrt_critical_log_shortfall=23999/3000"
@@ -512,3 +565,19 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
         assert marker in text
     assert "-37/8" in text
     assert "no_fixed_denominator_factor" in text
+
+
+def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
+    text = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "## 4.9 Exact endpoint-critical aggregation ledger",
+        r"\kappa+\rho=\kappa+\sigma=3",
+        r"k+\sigma=m+\rho",
+        r"h=\sigma-m",
+        r"\ell=m+\rho-1",
+        r"(\log\log T)^2",
+        r"\mathscr L^{-1/3000}",
+        "joint coefficient is not an admissible published MRT coefficient",
+        "published coverage remains false",
+    ):
+        assert marker in text
