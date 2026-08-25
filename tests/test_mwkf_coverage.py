@@ -2411,6 +2411,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.676}",
         "\\tag{4.678}",
         "root_farey_large_sieve_closes_gate=False",
+        "### 4.79 Root CRT exposes the exact Möbius Type-II kernel",
+        "\\tag{4.680}",
+        "\\tag{4.683}",
+        "root_type_ii_bound_verified=False",
     ):
         assert marker in note
 
@@ -2459,6 +2463,13 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "physical_target=6,physical_deficit=11/2,dual_numerator=7,"
         "dual_energy=7,dual_bound=25/2,dual_target=7,dual_deficit=11/2,"
         "injective=True,reduced=True,separated=False,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: root_type_ii="
+        "product=6,left=3,right=3,physical_numerator=5,dual_numerator=7,"
+        "crt=True,reciprocal_split=True,left_cU=True,right_mu=True,"
+        "root_fibers_subpower=True,fixed_numerator=False,joint=True,"
+        "published=False"
     ) in report
 
 
@@ -2730,6 +2741,69 @@ def test_root_farey_large_sieve_has_the_exact_eleven_halves_deficit() -> None:
     assert audit.root_fractions_reduced
     assert not audit.actual_joint_coefficient_is_separated
     assert not audit.root_farey_large_sieve_closes_gate
+
+
+def test_root_crt_phase_split_and_type_ii_kernel_are_exact() -> None:
+    helper = getattr(
+        coverage_audit,
+        "midpoint_root_crt_phase_identity",
+        None,
+    )
+    assert helper is not None, "root CRT phase helper is missing"
+    exact = helper(a=3, b=5, root_a=5, root_b=9, numerator=7)
+    assert exact["combined_root"] == 29
+    assert exact["combined_modulus"] == 30
+    assert exact["combined_root_squared_is_one"]
+    assert exact["combined_root_restricts_to_root_a"]
+    assert exact["combined_root_restricts_to_root_b"]
+    assert exact["full_phase"] == F(23, 30)
+    assert exact["small_correction_phase"] == F(7, 30)
+    assert exact["left_reciprocal_phase"] == F(1, 3)
+    assert exact["right_reciprocal_phase"] == F(1, 5)
+    assert exact["phase_split_exact_mod_one"]
+
+    for a, b in ((2, 3), (3, 10), (5, 14), (7, 15)):
+        roots_a = coverage_audit.midpoint_unitary_divisor_root_bijection(
+            n=a
+        )["roots"]
+        roots_b = coverage_audit.midpoint_unitary_divisor_root_bijection(
+            n=b
+        )["roots"]
+        for root_a in roots_a:
+            for root_b in roots_b:
+                for numerator in (-11, 0, 8):
+                    sample = helper(
+                        a=a,
+                        b=b,
+                        root_a=root_a,
+                        root_b=root_b,
+                        numerator=numerator,
+                    )
+                    assert sample["combined_root_squared_is_one"]
+                    assert sample["combined_root_restricts_to_root_a"]
+                    assert sample["combined_root_restricts_to_root_b"]
+                    assert sample["phase_split_exact_mod_one"]
+
+    adapter = getattr(
+        coverage_audit,
+        "midpoint_root_type_ii_audit",
+        None,
+    )
+    assert adapter is not None, "root Type-II audit is missing"
+    audit = adapter()
+    assert audit.product_exponent == F(6)
+    assert audit.left_factor_exponent == F(3)
+    assert audit.right_factor_exponent == F(3)
+    assert audit.physical_numerator_exponent == F(5)
+    assert audit.dual_numerator_exponent == F(7)
+    assert audit.generalized_crt_exact
+    assert audit.reciprocal_phase_split_exact
+    assert audit.left_factor_has_truncated_divisor_coefficient
+    assert audit.right_factor_retains_mobius
+    assert audit.root_fibers_are_subpower
+    assert not audit.published_hermitian_theorem_has_root_dependent_numerator
+    assert audit.actual_transform_coefficient_remains_joint
+    assert not audit.root_type_ii_bound_verified
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

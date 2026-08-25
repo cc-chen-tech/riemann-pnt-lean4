@@ -1245,6 +1245,23 @@ class MidpointRootFareyLargeSieveAudit:
 
 
 @dataclass(frozen=True)
+class MidpointRootTypeIIAudit:
+    product_exponent: Fraction
+    left_factor_exponent: Fraction
+    right_factor_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    dual_numerator_exponent: Fraction
+    generalized_crt_exact: bool
+    reciprocal_phase_split_exact: bool
+    left_factor_has_truncated_divisor_coefficient: bool
+    right_factor_retains_mobius: bool
+    root_fibers_are_subpower: bool
+    published_hermitian_theorem_has_root_dependent_numerator: bool
+    actual_transform_coefficient_remains_joint: bool
+    root_type_ii_bound_verified: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -6206,6 +6223,90 @@ def midpoint_root_farey_large_sieve_audit(
     )
 
 
+def midpoint_root_crt_phase_identity(
+    *,
+    a: int,
+    b: int,
+    root_a: int,
+    root_b: int,
+    numerator: int,
+) -> dict[str, Fraction | int | bool]:
+    """Compose roots modulo ``2*a`` and ``2*b`` and split the phase.
+
+    Since both roots are odd, put ``y_a=(root_a-1)/2`` and similarly for
+    ``b``.  Ordinary CRT composes ``y`` modulo ``a*b``; then ``A=2*y+1``
+    is the unique compatible root modulo ``2*a*b``.  Dividing the CRT
+    identity by ``a*b`` gives two reciprocal phases plus the exact small
+    correction ``numerator/(2*a*b)``.
+    """
+    if a <= 1 or b <= 1:
+        raise ValueError("root CRT factors must exceed one")
+    if gcd(a, b) != 1:
+        raise ValueError("root CRT factors must be coprime")
+    if root_a % 2 == 0 or root_b % 2 == 0:
+        raise ValueError("roots modulo twice a factor must be odd")
+    if root_a * root_a % (2 * a) != 1:
+        raise ValueError("root_a is not a square root of one modulo 2*a")
+    if root_b * root_b % (2 * b) != 1:
+        raise ValueError("root_b is not a square root of one modulo 2*b")
+
+    def mod_one(value: Fraction) -> Fraction:
+        return F(value.numerator % value.denominator, value.denominator)
+
+    y_a = ((root_a % (2 * a)) - 1) // 2
+    y_b = ((root_b % (2 * b)) - 1) // 2
+    inverse_b_mod_a = pow(b, -1, a)
+    inverse_a_mod_b = pow(a, -1, b)
+    product = a * b
+    y = (
+        y_a * b * inverse_b_mod_a
+        + y_b * a * inverse_a_mod_b
+    ) % product
+    combined_root = 2 * y + 1
+    combined_modulus = 2 * product
+    full_phase = F((numerator * combined_root) % combined_modulus, combined_modulus)
+    correction = mod_one(F(numerator, combined_modulus))
+    left = mod_one(F(numerator * y_a * inverse_b_mod_a, a))
+    right = mod_one(F(numerator * y_b * inverse_a_mod_b, b))
+    return {
+        "combined_root": combined_root,
+        "combined_modulus": combined_modulus,
+        "combined_root_squared_is_one": (
+            combined_root * combined_root % combined_modulus == 1
+        ),
+        "combined_root_restricts_to_root_a": (
+            combined_root - root_a
+        ) % (2 * a) == 0,
+        "combined_root_restricts_to_root_b": (
+            combined_root - root_b
+        ) % (2 * b) == 0,
+        "full_phase": full_phase,
+        "small_correction_phase": correction,
+        "left_reciprocal_phase": left,
+        "right_reciprocal_phase": right,
+        "phase_split_exact_mod_one": full_phase == mod_one(correction + left + right),
+    }
+
+
+def midpoint_root_type_ii_audit() -> MidpointRootTypeIIAudit:
+    """Record the balanced root-CRT Type-II interface."""
+    return MidpointRootTypeIIAudit(
+        product_exponent=F(6),
+        left_factor_exponent=F(3),
+        right_factor_exponent=F(3),
+        physical_numerator_exponent=F(5),
+        dual_numerator_exponent=F(7),
+        generalized_crt_exact=True,
+        reciprocal_phase_split_exact=True,
+        left_factor_has_truncated_divisor_coefficient=True,
+        right_factor_retains_mobius=True,
+        root_fibers_are_subpower=True,
+        published_hermitian_theorem_has_root_dependent_numerator=False,
+        actual_transform_coefficient_remains_joint=True,
+        root_type_ii_bound_verified=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -10432,6 +10533,26 @@ def main() -> None:
         f"reduced={root_farey.root_fractions_reduced},"
         f"separated={root_farey.actual_joint_coefficient_is_separated},"
         f"closes={root_farey.root_farey_large_sieve_closes_gate}"
+    )
+    root_type_ii = midpoint_root_type_ii_audit()
+    print(
+        "large_q_transition: root_type_ii="
+        f"product={_fmt(root_type_ii.product_exponent)},"
+        f"left={_fmt(root_type_ii.left_factor_exponent)},"
+        f"right={_fmt(root_type_ii.right_factor_exponent)},"
+        "physical_numerator="
+        f"{_fmt(root_type_ii.physical_numerator_exponent)},"
+        f"dual_numerator={_fmt(root_type_ii.dual_numerator_exponent)},"
+        f"crt={root_type_ii.generalized_crt_exact},"
+        f"reciprocal_split={root_type_ii.reciprocal_phase_split_exact},"
+        "left_cU="
+        f"{root_type_ii.left_factor_has_truncated_divisor_coefficient},"
+        f"right_mu={root_type_ii.right_factor_retains_mobius},"
+        f"root_fibers_subpower={root_type_ii.root_fibers_are_subpower},"
+        "fixed_numerator="
+        f"{root_type_ii.published_hermitian_theorem_has_root_dependent_numerator},"
+        f"joint={root_type_ii.actual_transform_coefficient_remains_joint},"
+        f"published={root_type_ii.root_type_ii_bound_verified}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

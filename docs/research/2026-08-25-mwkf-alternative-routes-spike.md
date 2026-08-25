@@ -9655,6 +9655,105 @@ the root points first is ruled out.  The helper
 while `midpoint_root_farey_large_sieve_audit` records both \(11/2\)
 deficits and keeps `root_farey_large_sieve_closes_gate=False`.
 
+### 4.79 Root CRT exposes the exact Möbius Type-II kernel
+
+Apply the approved finite identity to the single outer Möbius factor in
+(4.673).  For \(n>U\),
+
+\[
+ \mu(n)=-\sum_{de=n,\ d>U}c_U(d)\mu(e),
+ \qquad
+ c_U(d)=\sum_{j\mid d,\ j\le U}\mu(j).
+\tag{4.679}
+\]
+
+The Type-II cells have \(d>U\) and \(e>V\).  Since the contributing
+\(n\) are squarefree, \((d,e)=1\).  A root modulo \(2de\) splits
+uniquely into roots \(A_d\pmod{2d}\) and \(A_e\pmod{2e}\).  Put
+
+\[
+ y_d:=\frac{A_d-1}{2}\pmod d,
+ \qquad
+ y_e:=\frac{A_e-1}{2}\pmod e.
+\]
+
+Ordinary CRT applied to \(y=(A-1)/2\pmod{de}\) gives
+
+\[
+ y\equiv y_d\,e\bar e_d+y_e\,d\bar d_e\pmod{de},
+ \qquad
+ A=2y+1\pmod{2de}.
+\tag{4.680}
+\]
+
+Here \(\bar e_d\) and \(\bar d_e\) are the indicated inverses.  Dividing
+(4.680) by \(de\) yields the exact phase factorization, valid for every
+integer \(k\),
+
+\[
+ \boxed{
+ e\!\left(\frac{kA}{2de}\right)
+ =e\!\left(\frac{k}{2de}\right)
+  e\!\left(\frac{k y_d\bar e_d}{d}\right)
+  e\!\left(\frac{k y_e\bar d_e}{e}\right).}
+\tag{4.681}
+\]
+
+This handles the even prime as well: the roots are odd, so the two
+congruences for \((A-1)/2\) are compatible even though the moduli
+\(2d,2e\) have common factor two.
+
+At the balanced central Type-II cell, write \(D=E=T^3\) and use the
+physical numerator \(k=h\delta\asymp T^5\).  After grouping equal
+products into the coefficient \(\nu(k)\), the remaining sum is exactly
+of the form
+
+\[
+\begin{aligned}
+ \mathcal{RTII}_{q}(D,E,K)
+ :={}&\sum_{|k|\asymp K}\nu(k)
+ \sum_{\substack{d\asymp D,\ e\asymp E\\
+                  (d,e)=1,\ de\ {m squarefree}}}
+ c_U(d)\mu(e)\\
+ &\quad\times
+ \sum_{\substack{A_d^2\equiv1\ (2d)\\
+                  A_e^2\equiv1\ (2e)}}
+ \Omega_q(d,e,A_d,A_e,k)\\
+ &\quad\times e\!\left(\frac{k}{2de}
+       +\frac{k y_d\bar e_d}{d}
+       +\frac{k y_e\bar d_e}{e}\right).
+\end{aligned}
+\tag{4.682}
+\]
+
+The weight \(\Omega_q\) is the original coupled smooth kernel together
+with the balanced-root condition recovered from the combined root in
+(4.680), both endpoint tapers, \((q,de)=1\), and
+\(qr_A,qs_A\le N\).  No factor in it has been separated.  The root
+fibers have size \((de)^{o(1)}\).  The completed version replaces the
+single \(k\)-sum by \(c,v\asymp T^{7/2}\) and uses \(k=cv\); it is
+exactly equivalent by (4.663a).
+
+Consequently one sufficient central-cell theorem is
+
+\[
+ \boxed{
+ |\mathcal{RTII}_{q}(T^3,T^3,T^5)|
+ \ll_{B,W}T^6(\log T)^{-B}.}
+\tag{4.683}
+\]
+
+Formula (4.682) is a three-scale Möbius-weighted Type-II sum with fixed
+exponents \((3,3,5)\).  It retains \(c_U(d)\) on one side and \(\mu(e)\)
+on the other.  The published Hermitian Kloosterman-fraction theorems do
+not apply termwise: their numerator is fixed, whereas here the two
+numerators \(k y_d\) and \(k y_e\) vary with the root fibers, and
+\(\Omega_q\) is joint in every variable.  Thus (4.683) is an exact new
+local gate, not a proved estimate.  The helper
+`midpoint_root_crt_phase_identity` checks (4.680)--(4.681) with exact
+rationals, and `midpoint_root_type_ii_audit` keeps
+`root_type_ii_bound_verified=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
