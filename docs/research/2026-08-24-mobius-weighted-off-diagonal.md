@@ -1886,6 +1886,7 @@ finite linear combination of
  \sum_{\substack{r,n,h,\delta\\
                   r\asymp R,\ un\asymp S\\
                   h\asymp H,\ \delta\asymp L\\
+                  \mu(un)^2=1\\
                   (r,un)=(q,run)=1}}
  \mu(r)C_{j,U}(n)\,p_N(qr)p_N(qun)\\
  &\qquad\times
@@ -1897,7 +1898,11 @@ finite linear combination of
 
 Thus the other Möbius weight \(\mu(r)\), every short Möbius sign
 \(\mu(u)\), the factorization \(a=h\delta\), the coprimality conditions,
-and the coupled kernel all remain present. Moreover
+and the coupled kernel all remain present.  The squarefree indicator is
+legitimate term by term: insert \(\mu(s)^2\) before applying (9.5), which
+does not change \(\mu(s)\), and then write \(s=un\).  In particular
+\((u,n)=1\); this condition must not be inferred from the convolution
+without the indicator.  Moreover,
 \(|c_U(n)|\leq\tau(n)\), so for fixed \(J\),
 \(|C_{j,U}(n)|\leq\tau_{O_J(1)}(n)\). This supplies the required
 divisor-bounded \(L^2\) norm after \(u\) is fixed, but it does not justify
@@ -2318,6 +2323,203 @@ provide the missing ingredient, which must
 exploit the Möbius weights together with the coupled product
 \(a=h\delta\), not merely Farey spacing or Euler products.
 
+### 9.10 Two-sided finite Möbius decomposition and a dispersion interface
+
+The one-sided sum (9.13) still treats \(\mu(r)\) as a single long
+coefficient.  Fix depths \(I,J\geq1\), and apply (9.5) independently with
+cutoffs \(V,U\), chosen so that
+
+\[
+ V^I\geq2R,\qquad U^J\geq2S,
+\]
+
+and put \(C_{i,V}=c_V^{*i}\), \(C_{j,U}=c_U^{*j}\).  Before expanding,
+insert the harmless squarefree indicators \(\mu(r)^2\mu(s)^2\).  The
+original coupled sum is then exactly
+
+\[
+ \boxed{
+ \mathfrak S_q[\Psi]
+ =\sum_{i<I}\sum_{j<J}(-1)^{i+j}
+ \mathfrak E_{i,j,q}[\Psi],}
+\tag{9.37}
+\]
+
+where
+
+\[
+\begin{aligned}
+ \mathfrak E_{i,j,q}[\Psi]
+ ={}&\sum_{v\leq V}\sum_{u\leq U}\mu(v)\mu(u)
+ \sum_{\substack{w,n,h,\delta\\
+                  vw\asymp R,\ un\asymp S\\
+                  h\asymp H,\ \delta\asymp L\\
+                  \mu(vw)^2=\mu(un)^2=1\\
+                  (vw,un)=(q,vwun)=1}}
+ C_{i,V}(w)C_{j,U}(n)\\
+ &\quad\times p_N(qvw)p_N(qun)
+ \Psi\left(\frac{vw}{R},\frac{un}{S},
+           \frac{\delta}{L},\frac hH\right)
+ e\left(-\frac{h\delta\overline{vw}}{un}\right).
+\end{aligned}
+\tag{9.38}
+\]
+
+This is a finite identity, not a Vaughan-identity asymptotic.  The
+squarefree indicators imply
+
+\[
+ (v,w)=(u,n)=1,
+\]
+
+and the remaining coprimality in (9.38) makes the four factors across the
+two sides pairwise coprime.  Consequently CRT gives the termwise identity
+
+\[
+ e_{un}\!\left(-a\overline{vw}\right)
+ =
+ e_u\!\left(-a\,\bar n\,\bar v\,\bar w\right)
+ e_n\!\left(-a\,\bar u\,\bar v\,\bar w\right),
+ \qquad a=h\delta.
+\tag{9.39}
+\]
+
+All inverses in the first factor are taken modulo \(u\), and those in the
+second modulo \(n\).  Formula (9.39) shows both the gain and the
+obstruction of the double decomposition: two short Möbius averages are
+now explicit, but neither is an independent coefficient because each
+inverse phase still contains the variables from the other side.
+
+There is a precise dispersion interface for the remaining cancellation.
+Let
+
+\[
+ Z=\min(L,H),\qquad Y=\max(L,H),
+\]
+
+write \(z\) for the shorter of \(\delta,h\), and \(y\) for the other
+variable.  After dyadically localizing \(u,v\), let
+\(\mathcal B_{i,j;u,v}(z)\) denote the inner \(w,n,y\)-sum in (9.38) for
+fixed \(u,v\); the displayed \(u,v\) sums below remain inside the absolute
+value.  Cauchy--Schwarz shows
+that the following mean-square statement is sufficient:
+
+\[
+ \boxed{
+ \sum_{z\asymp Z}
+ \left|
+ \sum_{u\asymp U_0}\sum_{v\asymp V_0}
+ \mu(u)\mu(v)\mathcal B_{i,j;u,v}(z)
+ \right|^2
+ \ll_{\varepsilon,W}
+ \frac{R^2S^2}{Z}\,T^\varepsilon.}
+\tag{9.40}
+\]
+
+Indeed, multiplication by \(Z^{1/2}\) after Cauchy gives
+\(RS T^\varepsilon\); the fixed numbers of \(i,j\) and the logarithmically
+many \(u,v\) boxes are absorbed into \(T^\varepsilon\).  Thus (9.40) for
+all two-sided pieces implies CK\(_{\rm ub}(3)\) on the residual
+\(\ell,h>0\) region.
+
+The scale comparison is now explicit.  Joint completion gives only the
+pointwise bound \(RS T^\varepsilon\) for each \(z\), hence the left side of
+(9.40) is currently bounded by
+
+\[
+ ZR^2S^2T^\varepsilon,
+\tag{9.41}
+\]
+
+which misses (9.40) by \(Z^2=T^{2\min(\ell,h)}\).  A random-term
+square-root benchmark for the expanded \(w,n,y\)-sum is
+\(ZRSY\); compared with the target in (9.40), it would still require the
+additional power
+
+\[
+ T^{\max(0,\,2\min(\ell,h)+\max(\ell,h)-\rho-\sigma)}.
+\tag{9.42}
+\]
+
+For the balanced maximal box, (9.41) misses by \(T^5\), while the
+random-term benchmark (9.42) misses by \(T^{3/2}\).  Neither estimate is
+claimed here.  Equations (9.37)--(9.40) identify the exact new theorem
+that a dispersion, spectral, or trace-function argument would have to
+prove while retaining both Möbius averages and the product \(h\delta\).
+The finite checker verifies the two-sided convolution identity on every
+integer pair in its test range; it does not certify (9.40).
+
+### 9.11 Pascadi's 2024 spectral-dispersion corollary
+
+Pascadi's Corollary 18 gives an incomplete Kloosterman bound with
+simultaneous averages over variables \(r_{\rm P},s_{\rm P},n_{\rm P},
+c_{\rm P},d_{\rm P}\):
+
+\[
+ \sum_{r_{\rm P},s_{\rm P}}w_{r_{\rm P},s_{\rm P}}
+ \sum_{n_{\rm P}}a_{n_{\rm P},r_{\rm P},s_{\rm P}}
+ \sum_{c_{\rm P},d_{\rm P}}
+ \Phi\,e\left(\pm n_{\rm P}
+ \frac{\overline{r_{\rm P}d_{\rm P}}}
+ {s_{\rm P}c_{\rm P}}\right).
+\tag{9.43}
+\]
+
+There is a direct, fully legitimate specialization to (6.3).  Split the
+two signs of \(a\), take
+
+\[
+ R_{\rm P}=R,\quad S_{\rm P}=S,\quad N_{\rm P}=A,\quad
+ C_{\rm P}=D_{\rm P}=1,
+\tag{9.44}
+\]
+
+choose the smooth \(c_{\rm P},d_{\rm P}\) cutoffs to contain only the
+integer 1, put \(a_{n_{\rm P},r_{\rm P},s_{\rm P}}=\nu(n_{\rm P})\),
+and absorb the Möbius and Selberg weights into \(w_{r_{\rm P},s_{\rm P}}\).
+The arbitrary-sequence large sieve hypothesis is available with
+\(Y_{N_{\rm P}}=1\) and
+\(A_{N_{\rm P},r_{\rm P},s_{\rm P}}\ll A^{1/2+\varepsilon}\).
+
+Under (9.44), the corollary gives
+
+\[
+ |\mathfrak T_q|
+ \ll_\varepsilon
+ (RSA)^{1/2}
+ \left\{
+ AR+S(1+R)(RS+A)
+ \right\}^{1/2}T^\varepsilon.
+\tag{9.45}
+\]
+
+The admissible relation \(A\ll RS/T\) makes the expression in braces
+\(\asymp R^2S^2\), up to endpoint constants and \(T^\varepsilon\).
+Consequently the resulting scale is
+
+\[
+ |\mathfrak T_q|
+ \ll_\varepsilon (RS)^{3/2}A^{1/2}T^\varepsilon,
+\tag{9.46}
+\]
+
+whose loss over the local target has exponent
+\((\rho+\sigma+a)/2\).  It is \(11/2\) in the balanced maximal box.
+The frequency-concentration parameter in Pascadi's theorem modifies the
+exceptional-spectrum multiplier, but the regular-spectrum term
+\(S(1+R)(RS+A)\) already dominates here.  Thus even a stronger value of
+that parameter does not create a covered box through this direct
+specialization.
+
+One can instead try to map \(v,w,u,n\) from (9.38) to
+\(r_{\rm P},d_{\rm P},s_{\rm P},c_{\rm P}\).  That is not a direct
+application of Corollary 18 because the \(c_{\rm P},d_{\rm P}\) variables
+then carry the rough coefficients \(C_{i,V}(w)C_{j,U}(n)\), whereas the
+corollary permits smooth weights there.  Removing those coefficients by
+absolute values would discard the two-sided Type-II structure.  The
+spectral-dispersion result is therefore recorded as a valid but
+insufficient direct route, not as a proof of (9.40).
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -2354,6 +2556,10 @@ Proved in this note:
   \(T^{5-o(1)}\) residual gap, (9.27)--(9.30).
 * the boundary-safe elementary Farey large-sieve estimate and its exact
   \(A^{1/2}\) loss, (9.31)--(9.36).
+* the two-sided finite Möbius decomposition, its CRT phase, and the exact
+  dispersion interface, (9.37)--(9.42).
+* the direct specialization of Pascadi's spectral-dispersion corollary
+  and its \(T^{11/2}\) balanced gap, (9.43)--(9.46).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -2371,6 +2577,9 @@ Proved in this note:
 | Reverse Poisson | verified exact but tautological | returns the shifted-divisor congruence and zero-mode subtraction, (9.26) |
 | One-variable Möbius inverse-phase route | verified insufficient | arbitrary composite moduli give only logarithmic saving; balanced power gap \(T^{5-o(1)}\), (9.27)--(9.30) |
 | Elementary Farey large sieve | verified insufficient | uniform bound \(RS A^{1/2}T^\varepsilon\); balanced gap \(T^{5/2+\varepsilon}\), (9.31)--(9.36) |
+| Two-sided Möbius decomposition | verified finite identity | both short Möbius averages and \(h\delta\) retained, (9.37)--(9.39) |
+| Möbius dispersion estimate | **unproved** | sufficient mean-square gate (9.40); present pointwise gap (9.41) |
+| Pascadi 2024 spectral dispersion | verified insufficient | direct scale \((RS)^{3/2}A^{1/2}\); balanced gap \(T^{11/2}\), (9.43)--(9.46) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
@@ -2399,6 +2608,9 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   Kloosterman Sums*, Geom. Funct. Anal. (online 21 August 2026),
   DOI 10.1007/s00039-026-00746-0, especially Theorem 7.8; audited in
   Section 9.5.
+* A. Pascadi, *Large sieve inequalities for exceptional Maass forms and
+  the greatest prime factor of \(n^2+1\)*, arXiv:2404.04239,
+  Corollary 18; specialized in Section 9.11.
 * D. Milićević, X. Qin, X. Wu, *Bilinear forms with Kloosterman sums and
   moments of twisted L-functions*, arXiv:2511.07550, Theorem 1.1; audited
   in Section 9.6.

@@ -101,6 +101,27 @@ def mobius_geometric_value(n: int, cutoff: int, depth: int) -> int:
     return total
 
 
+def two_sided_mobius_geometric_value(
+    r: int,
+    s: int,
+    *,
+    cutoff_r: int,
+    cutoff_s: int,
+    depth_r: int,
+    depth_s: int,
+) -> int:
+    """Evaluate the exact finite expansion of ``mu(r) * mu(s)``.
+
+    The two truncated geometric convolution identities are applied
+    independently.  Keeping their product unexpanded in analytic work is
+    what retains both outer short Möbius averages.
+    """
+
+    return mobius_geometric_value(
+        r, cutoff_r, depth_r
+    ) * mobius_geometric_value(s, cutoff_s, depth_s)
+
+
 @dataclass(frozen=True)
 class WrightFactorSavings:
     first: Fraction
@@ -204,6 +225,36 @@ def elementary_large_sieve_loss(box: ExponentBox) -> Fraction:
     if not is_admissible(box):
         raise ValueError("large-sieve loss is defined only on admissible boxes")
     return box.third_length / 2
+
+
+def dispersion_pointwise_mean_square_gap(box: ExponentBox) -> Fraction:
+    """Gap between pointwise joint completion and dispersion target (9.40)."""
+
+    if not is_admissible(box):
+        raise ValueError("dispersion gap is defined only on admissible boxes")
+    return 2 * min(box.ell, box.h)
+
+
+def dispersion_random_benchmark_gap(box: ExponentBox) -> Fraction:
+    """Extra power needed beyond the random-term benchmark in (9.42)."""
+
+    if not is_admissible(box):
+        raise ValueError("dispersion gap is defined only on admissible boxes")
+    shorter = min(box.ell, box.h)
+    longer = max(box.ell, box.h)
+    return max(Fraction(0), 2 * shorter + longer - box.rho - box.sigma)
+
+
+def pascadi_2024_direct_dispersion_gap(box: ExponentBox) -> Fraction:
+    """Gap from Pascadi 2024, Corollary 18 with C=D=1 and N=A.
+
+    The regular-spectrum term dominates on the admissible polytope.  Its
+    exponent is 3(rho+sigma)/2 + a/2 against the rho+sigma target.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("Pascadi gap is defined only on admissible boxes")
+    return (box.rho + box.sigma + box.third_length) / 2
 
 
 def pascadi_full_residue_savings(

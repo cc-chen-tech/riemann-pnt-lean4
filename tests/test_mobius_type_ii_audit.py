@@ -10,14 +10,18 @@ from scripts.audit_mobius_type_ii import (
     PascadiFullResidueSavings,
     WrightFactorSavings,
     c_coefficient,
+    dispersion_pointwise_mean_square_gap,
+    dispersion_random_benchmark_gap,
     elementary_large_sieve_loss,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
     mobius_geometric_value,
     pascadi_balanced_gap,
+    pascadi_2024_direct_dispersion_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
+    two_sided_mobius_geometric_value,
     wright_factor_covers,
     wright_factor_savings,
 )
@@ -147,3 +151,31 @@ def test_elementary_large_sieve_loses_exactly_square_root_of_a() -> None:
     assert elementary_large_sieve_loss(witnesses["r_long"]) == F(2)
     assert elementary_large_sieve_loss(witnesses["s_long"]) == F(2)
     assert elementary_large_sieve_loss(witnesses["large_q_endpoint"]) == F(1, 2)
+
+
+def test_two_sided_finite_mobius_decomposition_preserves_both_signs() -> None:
+    limit = 80
+    cutoff_r, cutoff_s = 3, 5
+    depth_r = least_depth(cutoff_r, limit)
+    depth_s = least_depth(cutoff_s, limit)
+    for r in range(1, limit + 1):
+        for s in range(1, limit + 1):
+            assert two_sided_mobius_geometric_value(
+                r,
+                s,
+                cutoff_r=cutoff_r,
+                cutoff_s=cutoff_s,
+                depth_r=depth_r,
+                depth_s=depth_s,
+            ) == naive_mobius(r) * naive_mobius(s)
+
+
+def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert dispersion_pointwise_mean_square_gap(box) == F(5)
+    assert dispersion_random_benchmark_gap(box) == F(3, 2)
+
+
+def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert pascadi_2024_direct_dispersion_gap(box) == F(11, 2)
