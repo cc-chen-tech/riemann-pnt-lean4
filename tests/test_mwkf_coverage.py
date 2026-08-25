@@ -280,6 +280,42 @@ def test_endpoint_slope_square_offdiagonal_has_a_half_power_random_margin() -> N
         assert not audit.published_coverage
 
 
+def test_endpoint_cokernel_has_one_character_dimension_not_two() -> None:
+    """A primitive 2x2 determinant lattice has cyclic cokernel of order Delta."""
+    adapter = getattr(
+        coverage_audit,
+        "endpoint_cokernel_character_audit",
+        None,
+    )
+    assert adapter is not None, "endpoint cokernel character audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected_residual = {
+        F(0): F(5, 2),
+        F(1, 4): F(2),
+        F(1, 2): F(3, 2),
+    }
+    for gamma, residual in expected_residual.items():
+        audit = adapter(
+            box,
+            gcd_exponent=gamma,
+            determinant_exponent=F(5),
+        )
+        assert audit.smith_first_invariant_exponent == F(0)
+        assert audit.smith_second_invariant_exponent == F(5)
+        assert audit.cokernel_character_family_exponent == F(5)
+        assert audit.orthogonality_normalization_saving == F(5)
+        assert audit.naive_two_congruence_character_exponent == F(10)
+        assert audit.character_square_root_saving == F(5, 2)
+        assert audit.remaining_saving_after_character_square_root == residual
+        assert audit.primitive_rows_force_cyclic_cokernel
+        assert audit.two_cramer_congruences_are_independent is False
+        assert audit.single_finite_character_family_is_exact
+        assert audit.four_mobius_entry_cancellation_still_required
+        assert not audit.hybrid_character_entry_estimate_proved
+        assert not audit.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1522,6 +1558,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "square_log=4 four_mu=True proved=False covered=False"
     ) in output
     assert (
+        "balanced_max_a: endpoint_cokernel_character="
+        "0:required=5,char_sqrt=5/2,residual=5/2;"
+        "1/4:required=9/2,char_sqrt=5/2,residual=2;"
+        "1/2:required=4,char_sqrt=5/2,residual=3/2 "
+        "smith=1,Delta chars=Delta not_Delta2=True proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -1817,5 +1860,14 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "signed four-Möbius",
         "endpoint_slope_offdiagonal_audit",
         "offdiagonal_estimate_proved=False",
+        "### 4.24 Smith normal form and the single cokernel character family",
+        r"\operatorname{SNF}(B)=\operatorname{diag}(1,|\Delta_{12}|)",
+        r"|B^{-T}\mathbb Z^2/\mathbb Z^2|=|\Delta_{12}|",
+        r"\frac1{|\Delta_{12}|}",
+        "not two independent congruences",
+        r"T^{5/2}",
+        "hybrid character--entry",
+        "endpoint_cokernel_character_audit",
+        "hybrid_character_entry_estimate_proved=False",
     ):
         assert marker in text

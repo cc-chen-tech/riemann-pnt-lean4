@@ -173,6 +173,26 @@ class EndpointSlopeOffDiagonalAudit:
 
 
 @dataclass(frozen=True)
+class EndpointCokernelCharacterAudit:
+    common_gcd_exponent: Fraction
+    cross_determinant_exponent: Fraction
+    smith_first_invariant_exponent: Fraction
+    smith_second_invariant_exponent: Fraction
+    cokernel_character_family_exponent: Fraction
+    orthogonality_normalization_saving: Fraction
+    naive_two_congruence_character_exponent: Fraction
+    odsf_required_saving: Fraction
+    character_square_root_saving: Fraction
+    remaining_saving_after_character_square_root: Fraction
+    primitive_rows_force_cyclic_cokernel: bool
+    two_cramer_congruences_are_independent: bool
+    single_finite_character_family_is_exact: bool
+    four_mobius_entry_cancellation_still_required: bool
+    hybrid_character_entry_estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -1208,6 +1228,62 @@ def endpoint_slope_offdiagonal_audit(
         signed_four_mobius_offdiagonal_required=True,
         published_four_mobius_spectral_bound_available=False,
         offdiagonal_estimate_proved=False,
+        published_coverage=False,
+    )
+
+
+def endpoint_cokernel_character_audit(
+    box: ExponentBox,
+    *,
+    gcd_exponent: Fraction,
+    determinant_exponent: Fraction,
+) -> EndpointCokernelCharacterAudit:
+    """Record the one-dimensional finite character group behind Cramer.
+
+    For primitive rows ``(r_i,s_i)``, the determinant matrix
+
+    ``B=((r1,-s1),(r2,-s2))``
+
+    has first Smith invariant one and second invariant ``|Delta|``.
+    Therefore ``Z^2/B Z^2`` is cyclic of order ``|Delta|``.  The two
+    Cramer numerator divisibilities have joint density ``|Delta|^-1``,
+    not ``|Delta|^-2``, and exact finite orthogonality uses one family of
+    ``|Delta|`` characters.
+
+    Square-root cancellation in that character family saves only half of
+    the determinant exponent.  The returned residual is the additional
+    saving that must still come from the signed four-Möbius matrix-entry
+    sum and its coupled transform weight; no such estimate is asserted.
+    """
+    offdiagonal = endpoint_slope_offdiagonal_audit(
+        box,
+        gcd_exponent=gcd_exponent,
+    )
+    if determinant_exponent < 0:
+        raise ValueError("determinant exponent must be nonnegative")
+    if determinant_exponent > offdiagonal.cross_determinant_max_exponent:
+        raise ValueError("determinant exponent exceeds the fraction collar")
+
+    character_square_root = determinant_exponent / 2
+    return EndpointCokernelCharacterAudit(
+        common_gcd_exponent=gcd_exponent,
+        cross_determinant_exponent=determinant_exponent,
+        smith_first_invariant_exponent=F(0),
+        smith_second_invariant_exponent=determinant_exponent,
+        cokernel_character_family_exponent=determinant_exponent,
+        orthogonality_normalization_saving=determinant_exponent,
+        naive_two_congruence_character_exponent=2 * determinant_exponent,
+        odsf_required_saving=offdiagonal.required_offdiagonal_saving,
+        character_square_root_saving=character_square_root,
+        remaining_saving_after_character_square_root=(
+            offdiagonal.required_offdiagonal_saving
+            - character_square_root
+        ),
+        primitive_rows_force_cyclic_cokernel=True,
+        two_cramer_congruences_are_independent=False,
+        single_finite_character_family_is_exact=True,
+        four_mobius_entry_cancellation_still_required=True,
+        hybrid_character_entry_estimate_proved=False,
         published_coverage=False,
     )
 
@@ -3944,6 +4020,27 @@ def main() -> None:
         "balanced_max_a: endpoint_slope_offdiagonal="
         + ";".join(slope_offdiagonal_parts)
         + " square_log=4 four_mu=True proved=False covered=False"
+    )
+    cokernel_parts: list[str] = []
+    for gcd_exponent in (F(0), F(1, 4), F(1, 2)):
+        cokernel_audit = endpoint_cokernel_character_audit(
+            hard,
+            gcd_exponent=gcd_exponent,
+            determinant_exponent=F(5),
+        )
+        cokernel_parts.append(
+            f"{_fmt(gcd_exponent)}:required="
+            f"{_fmt(cokernel_audit.odsf_required_saving)},"
+            "char_sqrt="
+            f"{_fmt(cokernel_audit.character_square_root_saving)},"
+            "residual="
+            f"{_fmt(cokernel_audit.remaining_saving_after_character_square_root)}"
+        )
+    print(
+        "balanced_max_a: endpoint_cokernel_character="
+        + ";".join(cokernel_parts)
+        + " smith=1,Delta chars=Delta not_Delta2=True"
+        + " proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

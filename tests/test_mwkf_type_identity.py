@@ -16,6 +16,7 @@ from scripts.mwkf_mobius_type_identity import (
     double_centered_completion_via_orthogonality,
     crt_reciprocity_numerators,
     double_split_mobius_identity,
+    determinant_cokernel_coordinates,
     determinant_line_coordinates,
     determinant_line_coprimality_indicator,
     determinant_line_coprimality_residue,
@@ -286,6 +287,52 @@ def test_zero_cross_determinant_is_exactly_the_primitive_identity_diagonal() -> 
     assert audit.zero_determinant_is_identity_diagonal
     assert audit.recovered_primitive_j is None
     assert audit.recovered_primitive_v is None
+
+
+def test_primitive_cross_determinant_cokernel_has_only_delta_characters() -> None:
+    """The two Cramer divisibilities have joint index |Delta|, not Delta^2."""
+    for r1, s1, r2, s2 in (
+        (1, 2, 3, 1),
+        (1, 1, 1, 7),
+        (2, 5, 7, 3),
+    ):
+        audit = determinant_cokernel_coordinates(
+            r1=r1,
+            s1=s1,
+            r2=r2,
+            s2=s2,
+        )
+        modulus = abs(r1 * s2 - r2 * s1)
+        assert audit.modulus == modulus
+        assert audit.smith_first_invariant == 1
+        assert audit.smith_second_invariant == modulus
+        assert audit.cokernel_is_cyclic
+        assert len(audit.admissible_shift_residues) == modulus
+        assert len(audit.annihilator_characters) == modulus
+
+        admissible = set(audit.admissible_shift_residues)
+        annihilator = audit.annihilator_characters
+        for delta1 in range(modulus):
+            for delta2 in range(modulus):
+                phases = tuple(
+                    (a * delta1 + b * delta2) % modulus
+                    for a, b in annihilator
+                )
+                if (delta1, delta2) in admissible:
+                    assert phases == (0,) * modulus
+                else:
+                    # Exact finite-character orthogonality: every residue
+                    # in the image of this nontrivial character has the
+                    # same multiplicity, so its root-of-unity sum is zero.
+                    image = sorted(set(phases))
+                    multiplicities = {phases.count(value) for value in image}
+                    assert len(multiplicities) == 1
+                    assert len(image) > 1
+
+
+def test_determinant_cokernel_rejects_nonprimitive_rows() -> None:
+    with pytest.raises(ValueError, match="primitive determinant rows"):
+        determinant_cokernel_coordinates(r1=2, s1=4, r2=1, s2=3)
 
 
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:

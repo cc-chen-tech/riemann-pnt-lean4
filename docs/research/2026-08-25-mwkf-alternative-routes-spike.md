@@ -2988,6 +2988,124 @@ cross-determinant range \(|\Delta_{12}|\ll T^5\), and the benchmark
 margin \(1/2+\gamma\).  It leaves
 `offdiagonal_estimate_proved=False` and `published_coverage=False`.
 
+### 4.24 Smith normal form and the single cokernel character family
+
+The two divisibility conditions in (4.196) must not be treated as two
+independent congruences modulo \(\Delta_{12}\).  Put
+
+\[
+ B=
+ \begin{pmatrix}
+  r_1&-s_1\\
+  r_2&-s_2
+ \end{pmatrix},
+ \qquad
+ \boldsymbol\delta=
+ \begin{pmatrix}\delta_1\\\delta_2\end{pmatrix},
+ \qquad
+ \boldsymbol u=
+ \begin{pmatrix}v_0\\j_0\end{pmatrix}.
+\tag{4.203}
+\]
+
+Then the two determinant equations are the single lattice equation
+
+\[
+ \boldsymbol\delta=B\boldsymbol u,
+ \qquad \det B=-\Delta_{12}.
+\tag{4.204}
+\]
+
+Every row \((r_i,s_i)\) is primitive.  Hence the gcd of all four
+entries of \(B\) is one, which is the first Smith invariant.  Since the
+product of the two Smith invariants is \(|\det B|\), one has the exact
+normal form
+
+\[
+ \boxed{
+ \operatorname{SNF}(B)=\operatorname{diag}(1,|\Delta_{12}|).}
+\tag{4.205}
+\]
+
+In particular,
+
+\[
+ \mathbb Z^2/B\mathbb Z^2\simeq
+ \mathbb Z/|\Delta_{12}|\mathbb Z,
+ \qquad
+ |B^{-T}\mathbb Z^2/\mathbb Z^2|=|\Delta_{12}|.
+\tag{4.206}
+\]
+
+Let
+
+\[
+ \mathcal A_B=
+ \left\{(a,b)\bmod |\Delta_{12}|:
+ \begin{array}{l}
+  ar_1+br_2\equiv0\pmod{|\Delta_{12}|},\\
+  as_1+bs_2\equiv0\pmod{|\Delta_{12}|}
+ \end{array}
+ \right\}.
+\tag{4.207}
+\]
+
+This annihilator has exactly \(|\Delta_{12}|\) elements.  Finite-group
+orthogonality therefore gives, for every integral shift vector,
+
+\[
+ \boxed{
+ \mathbf1_{\boldsymbol\delta\in B\mathbb Z^2}
+ =\frac1{|\Delta_{12}|}
+  \sum_{(a,b)\in\mathcal A_B}
+  e\!\left(\frac{a\delta_1+b\delta_2}
+                 {|\Delta_{12}|}\right).}
+\tag{4.208}
+\]
+
+Formula (4.208) is exactly equivalent to integrality of both quotients
+in (4.196).  It uses \(|\Delta_{12}|\) characters and the normalization
+\(|\Delta_{12}|^{-1}\), not \(|\Delta_{12}|^2\) characters and
+\(|\Delta_{12}|^{-2}\).  They are not two independent congruences: the
+two Cramer divisibilities define one cyclic cokernel condition.  The
+finite helper `determinant_cokernel_coordinates` exhaustively constructs
+both the image residues and the annihilator and verifies that each has
+cardinality \(|\Delta_{12}|\).
+
+On the maximal shell (4.198), the cyclic character family has exponent
+5.  Square-root cancellation in this family alone could save at most
+
+\[
+ T^{5/2}.
+\tag{4.209}
+\]
+
+Against the ODSF requirement (4.201), that still leaves the exact
+entry-side saving
+
+\[
+ (5-2\gamma)-\frac52=\frac52-2\gamma,
+ \qquad 0\le\gamma\le\frac12.
+\tag{4.210}
+\]
+
+It ranges from \(T^{5/2}\) at \(g\asymp1\) to \(T^{3/2}\) at
+\(g\asymp T^{1/2}\).  Therefore Smith reduction removes a false second
+character dimension, but it does not by itself prove ODSF.  The next
+valid spectral interface is a hybrid character--entry estimate: retain
+the single cyclic family (4.208), all four Möbius weights on the entries
+of the two primitive rows, the recovered-slope cutoffs, and
+\(\mathcal W_1\overline{\mathcal W_2}\), and obtain the residual saving
+(4.210) after the character square root.  No published theorem checked in
+this audit supplies that coupled estimate.
+
+The adapter `endpoint_cokernel_character_audit` records the one Smith
+invariant, the \(|\Delta_{12}|\)-element character family, the false
+\(|\Delta_{12}|^2\) alternative, and the residual exponent
+\(5/2-2\gamma\).  It leaves
+`hybrid_character_entry_estimate_proved=False` and
+`published_coverage=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

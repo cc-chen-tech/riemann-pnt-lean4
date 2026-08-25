@@ -98,6 +98,16 @@ class DeterminantSlopeSquareCoordinates:
     zero_determinant_is_identity_diagonal: bool
 
 
+@dataclass(frozen=True)
+class DeterminantCokernelCoordinates:
+    modulus: int
+    smith_first_invariant: int
+    smith_second_invariant: int
+    admissible_shift_residues: tuple[tuple[int, int], ...]
+    annihilator_characters: tuple[tuple[int, int], ...]
+    cokernel_is_cyclic: bool
+
+
 def proportional_diagonal_coordinates(
     *,
     n1: int,
@@ -792,6 +802,79 @@ def determinant_slope_square_coordinates(
         recovered_primitive_j=recovered_j,
         recovered_primitive_v=recovered_v,
         zero_determinant_is_identity_diagonal=False,
+    )
+
+
+def determinant_cokernel_coordinates(
+    *,
+    r1: int,
+    s1: int,
+    r2: int,
+    s2: int,
+) -> DeterminantCokernelCoordinates:
+    """Audit the finite cokernel behind the two Cramer divisibilities.
+
+    Put
+
+    ``B=((r1,-s1),(r2,-s2))`` and
+    ``(delta1,delta2)^t = B (v,j)^t``.
+
+    If both positive rows ``(r_i,s_i)`` are primitive and
+    ``Delta=r1*s2-r2*s1`` is nonzero, the gcd of all entries of ``B`` is
+    one.  The Smith invariants are therefore ``1, |Delta|``.  Hence the
+    two displayed Cramer congruences have *joint* index ``|Delta|``;
+    treating them as two independent modulus-``Delta`` conditions would
+    introduce a false extra factor ``|Delta|``.
+
+    The returned finite sets verify both sides of exact character
+    orthogonality.  ``admissible_shift_residues`` is the image of ``B``
+    modulo ``|Delta|`` (equivalently the Cramer-integral shifts), while
+    ``annihilator_characters`` is its Pontryagin annihilator.  Each set
+    has exactly ``|Delta|`` elements.
+    """
+    if min(r1, s1, r2, s2) < 1:
+        raise ValueError("require positive determinant rows")
+    if gcd(r1, s1) != 1 or gcd(r2, s2) != 1:
+        raise ValueError("require primitive determinant rows")
+
+    cross_determinant = r1 * s2 - r2 * s1
+    if cross_determinant == 0:
+        raise ValueError("require a nonzero cross determinant")
+    modulus = abs(cross_determinant)
+    first_invariant = gcd(gcd(r1, s1), gcd(r2, s2))
+    if first_invariant != 1:
+        raise AssertionError(
+            "primitive rows must have first Smith invariant one"
+        )
+    second_invariant = modulus
+
+    admissible: list[tuple[int, int]] = []
+    annihilator: list[tuple[int, int]] = []
+    for first in range(modulus):
+        for second in range(modulus):
+            v_numerator = first * s2 - second * s1
+            j_numerator = first * r2 - second * r1
+            if (
+                v_numerator % modulus == 0
+                and j_numerator % modulus == 0
+            ):
+                admissible.append((first, second))
+            if (
+                (first * r1 + second * r2) % modulus == 0
+                and (first * s1 + second * s2) % modulus == 0
+            ):
+                annihilator.append((first, second))
+
+    if len(admissible) != modulus or len(annihilator) != modulus:
+        raise AssertionError("determinant cokernel cardinality changed")
+
+    return DeterminantCokernelCoordinates(
+        modulus=modulus,
+        smith_first_invariant=first_invariant,
+        smith_second_invariant=second_invariant,
+        admissible_shift_residues=tuple(admissible),
+        annihilator_characters=tuple(annihilator),
+        cokernel_is_cyclic=True,
     )
 
 
