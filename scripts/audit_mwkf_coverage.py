@@ -610,6 +610,31 @@ class TransitionCrossDeterminantLatticeAudit:
 
 
 @dataclass(frozen=True)
+class TransitionFareyHeckeOrbitAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    determinant_exponent: Fraction
+    hecke_index_exponent: Fraction
+    entry_exponent: Fraction
+    modulus_exponent: Fraction
+    product_frequency_exponent: Fraction
+    type_ii_square_target_exponent: Fraction
+    signed_entry_determinant_exact: bool
+    reciprocal_square_phase_exact: bool
+    hecke_index_contains_common_b: bool
+    common_b_weight_is_mobius_squared: bool
+    hecke_index_has_mobius_weight: bool
+    both_entry_mobius_weights_retained: bool
+    affine_cofactor_weights_joint_in_entry_and_modulus: bool
+    archimedean_reciprocity_correction_retained: bool
+    coupled_kernel_retained: bool
+    classical_kuznetsov_adapter_verified: bool
+    new_entry_weighted_hecke_estimate_required: bool
+    new_entry_weighted_hecke_estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2949,6 +2974,128 @@ def transition_cross_determinant_lattice_audit(
         product_frequency_cluster_l2_used=True,
         mobius_cancellation_used=False,
         shell_covered_unconditionally=margin >= 0,
+        published_coverage=False,
+    )
+
+
+def factor_farey_hecke_orbit_identity(
+    *,
+    a1: int,
+    a2: int,
+    s1: int,
+    s2: int,
+    b: int,
+    k: int,
+    n1: int,
+    n2: int,
+) -> dict[str, int | bool]:
+    """Verify the signed determinant orbit and the complete square phase."""
+    if min(a1, a2, s1, s2, b) <= 0 or k == 0:
+        raise ValueError("factor variables must be positive and k nonzero")
+    w1 = a1 * b - k * s1
+    w2 = a2 * b - k * s2
+    if w1 == 0 or w2 == 0:
+        raise ValueError("the far-shell shifts must be nonzero")
+    if gcd(s1, abs(w1)) != 1 or gcd(s2, abs(w2)) != 1:
+        raise ValueError("reciprocity requires primitive entry pairs")
+
+    epsilon1 = 1 if w1 > 0 else -1
+    epsilon2 = 1 if w2 > 0 else -1
+    modulus1 = abs(w1)
+    modulus2 = abs(w2)
+    x1 = epsilon1 * s1
+    x2 = epsilon2 * s2
+    gamma = a1 * s2 - a2 * s1
+    hecke_determinant = x1 * modulus2 - x2 * modulus1
+    expected_determinant = -epsilon1 * epsilon2 * b * gamma
+
+    original_phase = (
+        Fraction(-n1 * pow(w1, -1, s1), s1)
+        + Fraction(n2 * pow(w2, -1, s2), s2)
+    )
+    reciprocal_phase = (
+        Fraction(n1 * pow(x1, -1, modulus1), modulus1)
+        - Fraction(n2 * pow(x2, -1, modulus2), modulus2)
+        - Fraction(n1, s1 * w1)
+        + Fraction(n2, s2 * w2)
+    )
+    cofactor1_numerator = epsilon1 * (modulus1 + k * x1)
+    cofactor2_numerator = epsilon2 * (modulus2 + k * x2)
+
+    return {
+        "w1": w1,
+        "w2": w2,
+        "x1": x1,
+        "x2": x2,
+        "hecke_determinant": hecke_determinant,
+        "expected_determinant": expected_determinant,
+        "hecke_determinant_exact": (
+            hecke_determinant == expected_determinant
+        ),
+        "reciprocal_square_phase_exact": (
+            (original_phase - reciprocal_phase).denominator == 1
+        ),
+        "first_affine_cofactor_exact": (
+            cofactor1_numerator == a1 * b
+        ),
+        "second_affine_cofactor_exact": (
+            cofactor2_numerator == a2 * b
+        ),
+    }
+
+
+def transition_farey_hecke_orbit_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+    determinant_exponent: Fraction,
+) -> TransitionFareyHeckeOrbitAudit:
+    """Record the exact generalized Kloosterman orbit of the residual.
+
+    With W_i=abs(w_i) and x_i=sgn(w_i)*s_i, the determinant is
+    -sgn(w1*w2)*b*Gamma and the reciprocal phases have moduli W_i.
+    The Cauchy step changes mu(b) to mu(b)^2, so the Hecke index has no
+    Mobius weight.  The two surviving Mobius weights are on the residue
+    entries x_i, while c_U(a_i) depends jointly on
+    a_i=sgn(w_i)*(W_i+k*x_i)/b.  This is not a classical free
+    Kuznetsov coefficient family.
+    """
+    distance = F(distance)
+    b_exponent = F(b_exponent)
+    determinant_exponent = F(determinant_exponent)
+    shell = transition_nonzero_gamma_shell_audit(
+        box,
+        distance=distance,
+        b_exponent=b_exponent,
+        determinant_exponent=determinant_exponent,
+        s_gcd_exponent=F(0),
+        a_gcd_exponent=F(0),
+    )
+
+    return TransitionFareyHeckeOrbitAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        determinant_exponent=determinant_exponent,
+        hecke_index_exponent=b_exponent + determinant_exponent,
+        entry_exponent=box.sigma,
+        modulus_exponent=distance,
+        product_frequency_exponent=box.ell + box.h,
+        type_ii_square_target_exponent=(
+            shell.type_ii_square_target_exponent
+        ),
+        signed_entry_determinant_exact=True,
+        reciprocal_square_phase_exact=True,
+        hecke_index_contains_common_b=True,
+        common_b_weight_is_mobius_squared=True,
+        hecke_index_has_mobius_weight=False,
+        both_entry_mobius_weights_retained=True,
+        affine_cofactor_weights_joint_in_entry_and_modulus=True,
+        archimedean_reciprocity_correction_retained=True,
+        coupled_kernel_retained=True,
+        classical_kuznetsov_adapter_verified=False,
+        new_entry_weighted_hecke_estimate_required=True,
+        new_entry_weighted_hecke_estimate_proved=False,
         published_coverage=False,
     )
 
@@ -6035,6 +6182,30 @@ def main() -> None:
         "large_q_transition: cross_determinant_residual="
         "theta=1,beta=2/3,xi=1/3,bound=10/3,"
         "margin=-1/250 covered=False"
+    )
+    transition_farey_hecke = transition_farey_hecke_orbit_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+    )
+    print(
+        "large_q_transition: farey_hecke_orbit="
+        "theta=1,beta=2/3,xi=1/3,hecke=1,entry=1,modulus=1,"
+        "frequency=1,target=2497/750 determinant=True phase=True "
+        "b_in_index=True mu_b_squared=True mu_index=False "
+        "entry_mu=True cofactor_joint=True arch=True coupled=True "
+        "kuznetsov=False new_entry_hecke=True proved=False covered=False"
+    )
+    transition_farey_hecke_maximal = transition_farey_hecke_orbit_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+    )
+    print(
+        "large_q_transition: farey_hecke_maximal="
+        "theta=1,beta=2/3,xi=4/3,hecke=2 covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

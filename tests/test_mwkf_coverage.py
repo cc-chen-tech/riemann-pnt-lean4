@@ -1180,6 +1180,67 @@ def test_transition_cross_determinant_lattice_closes_top_small_gamma() -> None:
     assert not residual.shell_covered_unconditionally
 
 
+def test_transition_farey_hecke_orbit_retains_the_actual_weights() -> None:
+    """The residual is an exact determinant orbit, not a free Kuznetsov sum."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_farey_hecke_orbit_audit",
+        None,
+    )
+    identity = getattr(
+        coverage_audit,
+        "factor_farey_hecke_orbit_identity",
+        None,
+    )
+    assert adapter is not None, "Farey-Hecke orbit adapter is missing"
+    assert identity is not None, "Farey-Hecke identity helper is missing"
+
+    for values in (
+        dict(a1=5, a2=7, s1=11, s2=13, b=3, k=2, n1=7, n2=-5),
+        dict(a1=8, a2=9, s1=5, s2=7, b=3, k=2, n1=-4, n2=9),
+    ):
+        exact = identity(**values)
+        assert exact["hecke_determinant_exact"]
+        assert exact["reciprocal_square_phase_exact"]
+        assert exact["first_affine_cofactor_exact"]
+        assert exact["second_affine_cofactor_exact"]
+
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    first_residual = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+    )
+    assert first_residual.hecke_index_exponent == F(1)
+    assert first_residual.entry_exponent == F(1)
+    assert first_residual.modulus_exponent == F(1)
+    assert first_residual.product_frequency_exponent == F(1)
+    assert first_residual.type_ii_square_target_exponent == F(2497, 750)
+    assert first_residual.hecke_index_contains_common_b
+    assert first_residual.common_b_weight_is_mobius_squared
+    assert not first_residual.hecke_index_has_mobius_weight
+    assert first_residual.both_entry_mobius_weights_retained
+    assert first_residual.affine_cofactor_weights_joint_in_entry_and_modulus
+    assert first_residual.archimedean_reciprocity_correction_retained
+    assert first_residual.coupled_kernel_retained
+    assert not first_residual.classical_kuznetsov_adapter_verified
+    assert first_residual.new_entry_weighted_hecke_estimate_required
+    assert not first_residual.new_entry_weighted_hecke_estimate_proved
+    assert not first_residual.published_coverage
+
+    maximal = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+    )
+    assert maximal.hecke_index_exponent == F(2)
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2598,6 +2659,18 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "margin=-1/250 covered=False"
     ) in output
     assert (
+        "large_q_transition: farey_hecke_orbit="
+        "theta=1,beta=2/3,xi=1/3,hecke=1,entry=1,modulus=1,"
+        "frequency=1,target=2497/750 determinant=True phase=True "
+        "b_in_index=True mu_b_squared=True mu_index=False "
+        "entry_mu=True cofactor_joint=True arch=True coupled=True "
+        "kuznetsov=False new_entry_hecke=True proved=False covered=False"
+    ) in output
+    assert (
+        "large_q_transition: farey_hecke_maximal="
+        "theta=1,beta=2/3,xi=4/3,hecke=2 covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -3023,5 +3096,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"(a_i,w_i)=(a_i,ks_i)\mid k",
         r"\theta+\xi\le2-\beta-\frac1{250}",
         "transition_cross_determinant_lattice_audit",
+        "### 4.46 Exact Farey--Hecke orbit of the remaining band",
+        r"x_1W_2-x_2W_1",
+        r"a_i=\frac{\epsilon_i(W_i+kx_i)}b",
+        "transition_farey_hecke_orbit_audit",
     ):
         assert marker in text

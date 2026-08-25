@@ -5676,6 +5676,130 @@ verifies (4.390)--(4.391) on exact finite fixtures.  The adapter sets
 shell_covered_unconditionally=True exactly on (4.395) and keeps
 published_coverage=False.
 
+### 4.46 Exact Farey--Hecke orbit of the remaining band
+
+The high-determinant residual in (4.399) has an exact generalized
+Kloosterman interpretation.  Split the signs of \(w_i\), and put
+
+\[
+ \epsilon_i=\operatorname{sgn}(w_i),\qquad
+ W_i=|w_i|,\qquad x_i=\epsilon_i s_i.
+\tag{4.400}
+\]
+
+Then \((x_i,W_i)=1\), and the cross determinant is
+
+\[
+\boxed{
+ x_1W_2-x_2W_1
+ =-\epsilon_1\epsilon_2\,b\Gamma.}
+\tag{4.401}
+\]
+
+The full square phase, including the reciprocity corrections, is
+
+\[
+\boxed{
+ e\!\left(
+   \frac{n_1\overline{x_1}}{W_1}
+  -\frac{n_2\overline{x_2}}{W_2}
+  -\frac{n_1}{s_1w_1}
+  +\frac{n_2}{s_2w_2}
+ \right).}
+\tag{4.402}
+\]
+
+No sign is hidden in (4.402).  Moreover the two factor weights are
+recovered from the matrix entries by the exact formula
+
+\[
+\boxed{
+ a_i=\frac{\epsilon_i(W_i+kx_i)}b.}
+\tag{4.403}
+\]
+
+Thus \(b\mid W_i+kx_i\), with the positivity and dyadic support of
+\(a_i\) retained.
+
+For fixed signs, define the remaining determinant-orbit sum
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal H_{\theta,\beta;\xi,\gamma,\alpha}
+ :={}&
+ \sum_{\substack{b\asymp T^\beta,\ \mu(b)^2=1\\
+                  \epsilon_i x_i\asymp T,\ W_i\asymp T^\theta\\
+                  (x_i,W_i)=1\\
+                  b\mid W_i+kx_i\\
+                  a_i=\epsilon_i(W_i+kx_i)/b
+                       \asymp T^{1-\beta}\\
+                  x_1W_2-x_2W_1
+                    =-\epsilon_1\epsilon_2b\Gamma\\
+                  |\Gamma|\asymp T^\xi\\
+                  (|x_1|,|x_2|)\asymp T^\gamma\\
+                  (a_1,a_2)\asymp T^\alpha}}
+ c_U(a_1)c_U(a_2)\mu(|x_1|)\mu(|x_2|)\\
+ &\quad\times
+ \sum_{n_1,n_2}
+ \nu_1(n_1)\overline{\nu_2(n_2)}
+ \widetilde{\mathscr W}_{q,k}
+ (b,\boldsymbol x,\boldsymbol W,\boldsymbol n)\\
+ &\quad\times
+ e\!\left(
+   \frac{n_1\overline{x_1}}{W_1}
+  -\frac{n_2\overline{x_2}}{W_2}
+  -\frac{n_1}{\epsilon_1x_1\epsilon_1W_1}
+  +\frac{n_2}{\epsilon_2x_2\epsilon_2W_2}
+ \right).
+\end{aligned}}
+\tag{4.404}
+\]
+
+The last two rational terms have deliberately not been suppressed;
+\(\epsilon_i^2=1\) reduces their denominators to \(x_iW_i=s_iw_i\),
+but the displayed form records their origin.  All \(q\)-coprimalities,
+endpoint tapers, shell cutoffs, and the coupled transform kernel are
+part of \(\widetilde{\mathscr W}_{q,k}\).
+
+The determinant/Hecke index in (4.401) has exponent
+
+\[
+ \boxed{\beta+\xi.}
+\tag{4.405}
+\]
+
+At the first uncovered top witness
+\((\theta,\beta,\xi)=(1,2/3,1/3)\), this index has length \(T\); at the
+maximal determinant \(\xi=4/3\), it has length \(T^2\).  The required
+local inequality remains
+
+\[
+ \boxed{
+ |\mathcal H_{\theta,\beta;\xi,\gamma,\alpha}|
+ \ll_{\varepsilon,W}
+ T^{\,4-\beta-1/250+\varepsilon}.}
+\tag{4.406}
+\]
+
+The location of the arithmetic weights matters.  Cauchy has changed
+the common factor from \(\mu(b)\) to \(\mu(b)^2\), while \(\Gamma\)
+has no Möbius weight.  Hence the Hecke index
+\(-\epsilon_1\epsilon_2b\Gamma\) is not Möbius weighted.  The two
+genuine Möbius weights remain on the residue entries \(x_1,x_2\), and
+the coefficients \(c_U(a_i)\) depend jointly on \(x_i,W_i,b\) through
+(4.403).  A classical Kuznetsov formula for freely completed residue
+classes therefore does not directly imply (4.406).
+
+The helper factor_farey_hecke_orbit_identity verifies
+(4.401)--(4.403), including both signs and the complete rational
+phase, on exact finite fixtures.  The adapter
+transition_farey_hecke_orbit_audit records the index, entry, modulus,
+and product-frequency scales.  It keeps
+classical_kuznetsov_adapter_verified=False,
+new_entry_weighted_hecke_estimate_proved=False, and
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
