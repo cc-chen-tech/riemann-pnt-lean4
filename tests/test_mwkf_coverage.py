@@ -854,6 +854,42 @@ def test_transition_far_shell_is_one_explicit_two_mobius_gate() -> None:
     assert not top.published_coverage
 
 
+def test_transition_far_shell_type_ii_diagonal_has_uniform_margin() -> None:
+    """The final factor boxes leave only a nonzero joint Gram estimate."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_far_shell_factor_box_audit",
+        None,
+    )
+    assert adapter is not None, "transition factor-box adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    worst = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+    )
+
+    assert worst.mobius_cutoff_exponent == F(1, 3)
+    assert worst.type_split_exponent == F(1, 3)
+    assert worst.b_exponent_range == (F(0), F(2, 3))
+    assert worst.a_exponent == F(1, 3)
+    assert worst.shifted_equation_is_exact
+    assert worst.reciprocal_phase_reindexed_exactly
+    assert worst.unsquared_cluster_bound_exponent == F(5, 2)
+    assert worst.unsquared_fixed_target_exponent == F(999, 500)
+    assert worst.unsquared_required_saving == F(251, 500)
+    assert worst.identity_diagonal_exponent == F(3)
+    assert worst.type_ii_square_target_exponent == F(2497, 750)
+    assert worst.identity_diagonal_margin == F(247, 750)
+    assert worst.identity_diagonal_closes
+    assert worst.nonzero_joint_gram_estimate_required
+    assert not worst.nonzero_joint_gram_estimate_proved
+    assert not worst.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2210,6 +2246,14 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "new_joint=True proved=False covered=False"
     ) in output
     assert (
+        "large_q_transition: far_shell_factor_box="
+        "theta=1,beta=2/3,U=1/3,V=1/3,a=1/3,"
+        "cluster=5/2,target=999/500,required=251/500,"
+        "diag=3,square_target=2497/750,diag_margin=247/750 "
+        "shifted=True phase=True diag_closes=True nonzero_joint=True "
+        "proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2611,5 +2655,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\theta-\frac12+\frac1{1000}",
         r"\frac{421}{1000}",
         "transition_far_shell_mobius_gate_audit",
+        "### 4.40 Exact Type-I/II factor boxes for the far-shell gate",
+        r"ab-ks=w",
+        r"\mathcal F_{\theta,\beta}",
+        "transition_far_shell_factor_box_audit",
     ):
         assert marker in text

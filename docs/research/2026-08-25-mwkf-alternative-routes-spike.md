@@ -4922,6 +4922,121 @@ lengths, the current bound, the fixed target, the required saving, the
 optimistic FKM comparison, and the three failed hypotheses.  It keeps
 estimate_proved=False and published_coverage=False.
 
+### 4.40 Exact Type-I/II factor boxes for the far-shell gate
+
+Apply (4.5) only to the first Möbius weight in (4.328), with
+
+\[
+ U=V=T^{1/3}.
+\tag{4.333}
+\]
+
+Since \(r=ks+w\asymp T>U\),
+
+\[
+ \mu(r)=-\sum_{\substack{ab=r\\a>U}}c_U(a)\mu(b).
+\tag{4.334}
+\]
+
+Split at \(b\le V\), and dyadically put
+
+\[
+ b\asymp T^\beta,\qquad
+ a\asymp T^{1-\beta},\qquad
+ 0\le\beta\le\frac23.
+\tag{4.335}
+\]
+
+The shifted equation and reciprocal phase are exactly
+
+\[
+ \boxed{ab-ks=w,\qquad
+ e(-h\delta\bar w/s)=e(-h\delta\overline{ab}/s).}
+\tag{4.336}
+\]
+
+There is no complementary-divisor condition and no discarded CRT
+factor.  Define the resulting factor box
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal F_{\theta,\beta}:={}&
+ \sum_{\substack{b\asymp T^\beta,\ a\asymp T^{1-\beta}\\
+                  s\asymp T,\ w=ab-ks\asymp T^\theta\\
+                  (ab,s)=1,\ (q,abs)=1}}
+ c_U(a)\mu(b)\mu(s)
+ p_N(qab)p_N(qs)                                      \\
+ &\quad\times
+ \sum_{h,\delta\asymp T^{1/2}}
+ \Psi_{q,k,\theta,\beta}(a,b,s,h,\delta)
+ e\!\left(-\frac{h\delta\overline{ab}}s\right).
+\end{aligned}}
+\tag{4.337}
+\]
+
+The exact Type-I and Type-II pieces of
+\(\mathrm{TFS}_\theta\) are the sums of (4.337) over respectively
+\(\beta\le1/3\) and \(\beta>1/3\), with the outer minus sign in
+(4.334).
+
+A fixed-power estimate sufficient after the logarithmic number of
+factor boxes is
+
+\[
+ |\mathcal F_{\theta,\beta}|
+ \ll_{\varepsilon,W}T^{\,2-1/500+\varepsilon}.
+\tag{4.338}
+\]
+
+For a Type-II box write
+\(\mathcal F_{\theta,\beta}=\sum_b\mu(b)\mathcal A_b\).
+Cauchy reduces (4.338) to
+
+\[
+ \boxed{
+ \sum_{b\asymp T^\beta}|\mathcal A_b|^2
+ \ll_{\varepsilon,W}
+ T^{\,4-\beta-1/250+\varepsilon}.}
+\tag{4.339}
+\]
+
+The literal identity tuple has one copy of \(b,a\), one
+\(s\)-interval of length \(T^\theta\) from
+\(|ab-ks|\asymp T^\theta\), and the product-coefficient energy \(HL=T\).
+Its exponent is therefore
+
+\[
+ \beta+(1-\beta)+\theta+1=2+\theta.
+\tag{4.340}
+\]
+
+The margin below (4.339) is
+
+\[
+ 2-\beta-\theta-\frac1{250}.
+\tag{4.341}
+\]
+
+It is smallest at \((\theta,\beta)=(1,2/3)\), where it equals
+
+\[
+ \boxed{\frac13-\frac1{250}=\frac{247}{750}>0.}
+\tag{4.342}
+\]
+
+Thus the positive identity diagonal closes uniformly in every final
+factor box.  The surviving analytic input is the nonzero joint Gram
+part of (4.339), with the second Möbius weight, the equation (4.336),
+the complete phase, and the coupled kernel retained.  No published
+adapter registered above proves that estimate.
+
+The adapter transition_far_shell_factor_box_audit records
+(4.333)--(4.342), including the exact factor range, the current
+cluster bound, the fixed target, and the uniform diagonal margin.  It
+keeps nonzero_joint_gram_estimate_proved=False and
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -468,6 +468,28 @@ class TransitionFarShellMobiusGateAudit:
 
 
 @dataclass(frozen=True)
+class TransitionFarShellFactorBoxAudit:
+    distance: Fraction
+    mobius_cutoff_exponent: Fraction
+    type_split_exponent: Fraction
+    b_exponent: Fraction
+    b_exponent_range: tuple[Fraction, Fraction]
+    a_exponent: Fraction
+    shifted_equation_is_exact: bool
+    reciprocal_phase_reindexed_exactly: bool
+    unsquared_cluster_bound_exponent: Fraction
+    unsquared_fixed_target_exponent: Fraction
+    unsquared_required_saving: Fraction
+    identity_diagonal_exponent: Fraction
+    type_ii_square_target_exponent: Fraction
+    identity_diagonal_margin: Fraction
+    identity_diagonal_closes: bool
+    nonzero_joint_gram_estimate_required: bool
+    nonzero_joint_gram_estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2332,6 +2354,71 @@ def transition_far_shell_mobius_gate_audit(
         joint_cofactor_hypothesis=False,
         new_joint_two_mobius_estimate_required=True,
         estimate_proved=False,
+        published_coverage=False,
+    )
+
+
+def transition_far_shell_factor_box_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+) -> TransitionFarShellFactorBoxAudit:
+    """Factor the surviving far shell by the exact Möbius identity.
+
+    Use U=V=T^(rho/3), r=a*b=k*s+w, and dyadically localize
+    b=T^beta.  The original reciprocal phase is unchanged because
+    a*b is congruent to w modulo s.  Cauchy in b leaves an identity
+    diagonal of exponent beta+(rho-beta)+distance+(ell+h).
+    """
+    if not _is_large_q_afe_transition_face(box):
+        raise ValueError("box is not on the large-q AFE transition face")
+    if distance <= F(1, 2) or distance > F(1):
+        raise ValueError("far transition shell requires 1/2 < theta <= 1")
+    cutoff = box.rho / 3
+    b_range = (F(0), 2 * box.rho / 3)
+    if not b_range[0] <= b_exponent <= b_range[1]:
+        raise ValueError("b exponent lies outside the exact factor range")
+
+    a_exponent = box.rho - b_exponent
+    cluster = reciprocal_cluster_large_sieve_scales(
+        box,
+        distance=distance,
+    )
+    unsquared_target = box.rho + box.sigma - F(1, 500)
+    unsquared_required = (
+        cluster.best_unconditional_bound - unsquared_target
+    )
+    identity_diagonal = (
+        b_exponent
+        + a_exponent
+        + distance
+        + box.ell
+        + box.h
+    )
+    square_target = 2 * unsquared_target - b_exponent
+    diagonal_margin = square_target - identity_diagonal
+
+    return TransitionFarShellFactorBoxAudit(
+        distance=distance,
+        mobius_cutoff_exponent=cutoff,
+        type_split_exponent=cutoff,
+        b_exponent=b_exponent,
+        b_exponent_range=b_range,
+        a_exponent=a_exponent,
+        shifted_equation_is_exact=True,
+        reciprocal_phase_reindexed_exactly=True,
+        unsquared_cluster_bound_exponent=(
+            cluster.best_unconditional_bound
+        ),
+        unsquared_fixed_target_exponent=unsquared_target,
+        unsquared_required_saving=unsquared_required,
+        identity_diagonal_exponent=identity_diagonal,
+        type_ii_square_target_exponent=square_target,
+        identity_diagonal_margin=diagonal_margin,
+        identity_diagonal_closes=diagonal_margin > 0,
+        nonzero_joint_gram_estimate_required=True,
+        nonzero_joint_gram_estimate_proved=False,
         published_coverage=False,
     )
 
@@ -5296,6 +5383,19 @@ def main() -> None:
         "fkm_residual=421/1000 two_mu=True coupled=True "
         "prime_factor=False frequency=False cofactor=False "
         "new_joint=True proved=False covered=False"
+    )
+    transition_far_factor = transition_far_shell_factor_box_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+    )
+    print(
+        "large_q_transition: far_shell_factor_box="
+        "theta=1,beta=2/3,U=1/3,V=1/3,a=1/3,"
+        "cluster=5/2,target=999/500,required=251/500,"
+        "diag=3,square_target=2497/750,diag_margin=247/750 "
+        "shifted=True phase=True diag_closes=True nonzero_joint=True "
+        "proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
