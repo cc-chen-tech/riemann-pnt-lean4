@@ -1325,6 +1325,50 @@ class RootSalieAdapterAudit:
 
 
 @dataclass(frozen=True)
+class RootSalieJointAverageAudit:
+    left_root_factor_exponent: Fraction
+    right_root_factor_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    bcr_term_1_exponent: Fraction
+    bcr_term_2_exponent: Fraction
+    bcr_bound_exponent: Fraction
+    physical_target_exponent: Fraction
+    bcr_deficit_exponent: Fraction
+    square_product_pair_count_exponent: Fraction
+    dfi_square_main_short_factor_cutoff_exponent: Fraction
+    dfi_long_long_cutoff_exponent: Fraction
+    balanced_root_factor_exponent: Fraction
+    fixed_square_hermitian_bound_exponent: Fraction
+    absolute_square_family_bound_exponent: Fraction
+    absolute_square_family_deficit_exponent: Fraction
+    salie_factorization_matches_midpoint_phase: bool
+    joint_average_is_existing_bcr_endpoint: bool
+    bcr_accepts_mobius_coefficients: bool
+    bcr_uses_mobius_beyond_l2: bool
+    balanced_root_filter_excludes_dfi_square_main: bool
+    joint_salie_route_closes_root_gate: bool
+
+
+@dataclass(frozen=True)
+class SquareSalieGaussCompletionAudit:
+    r_exponent: Fraction
+    s_exponent: Fraction
+    square_root_exponent: Fraction
+    x_exponent: Fraction
+    y_exponent: Fraction
+    gauss_normalization_exponent: Fraction
+    t_poisson_resonance_exponent: Fraction
+    localized_pointwise_exponent: Fraction
+    direct_square_sector_pointwise_exponent: Fraction
+    double_gauss_identity_exact: bool
+    cross_character_depends_only_on_mod8: bool
+    square_root_variable_is_linearized: bool
+    remaining_quadratic_weight_is_joint: bool
+    gauss_completion_improves_square_sector: bool
+    square_salie_gauss_route_closes_gate: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -6704,6 +6748,263 @@ def root_salie_adapter_audit() -> RootSalieAdapterAudit:
     )
 
 
+def square_product_common_kernel_identity(
+    *,
+    left: int,
+    right: int,
+) -> dict[str, int | bool]:
+    """Parametrize ``left*right`` square by one squarefree kernel.
+
+    Positive integers have square product exactly when their squarefree
+    kernels agree.  In that case ``left=g*x^2`` and ``right=g*y^2``
+    with one squarefree ``g`` and uniquely determined positive ``x,y``.
+    """
+    if left <= 0 or right <= 0:
+        raise ValueError("square-product variables must be positive")
+
+    def squarefree_kernel(value: int) -> int:
+        kernel = 1
+        prime = 2
+        remaining = value
+        while prime * prime <= remaining:
+            parity = 0
+            while remaining % prime == 0:
+                remaining //= prime
+                parity ^= 1
+            if parity:
+                kernel *= prime
+            prime += 1
+        if remaining > 1:
+            kernel *= remaining
+        return kernel
+
+    left_kernel = squarefree_kernel(left)
+    right_kernel = squarefree_kernel(right)
+    common = left_kernel == right_kernel
+    kernel = left_kernel if common else 0
+    left_quotient = left // kernel if common else 0
+    right_quotient = right // kernel if common else 0
+    left_factor = isqrt(left_quotient) if common else 0
+    right_factor = isqrt(right_quotient) if common else 0
+    product_root = isqrt(left * right)
+    product_square = product_root * product_root == left * right
+    return {
+        "left": left,
+        "right": right,
+        "left_squarefree_kernel": left_kernel,
+        "right_squarefree_kernel": right_kernel,
+        "common_kernel_exists": common,
+        "common_squarefree_kernel": kernel,
+        "left_square_factor": left_factor,
+        "right_square_factor": right_factor,
+        "product_is_square": product_square,
+        "left_reconstruction_exact": (
+            common and kernel * left_factor * left_factor == left
+        ),
+        "right_reconstruction_exact": (
+            common and kernel * right_factor * right_factor == right
+        ),
+    }
+
+
+def root_salie_joint_average_audit() -> RootSalieJointAverageAudit:
+    """Match joint Salié averaging to the balanced BCR endpoint."""
+    left = F(3)
+    right = F(3)
+    numerator = F(5)
+    total = left + right + numerator
+    term_1 = F(17, 20) * total + F(1, 4) * max(left, right)
+    term_2 = (
+        F(7, 8) * (left + right)
+        + numerator
+        + F(1, 8) * max(left, right)
+    )
+    bound = max(term_1, term_2)
+    target = F(6)
+    square_pairs = F(5, 2)
+    # In DFI Theorem 4, with modulus length x=T^6 and square parameter
+    # a=T^5, the exceptional main term comes from n <= y.  Their
+    # choices (5.4), (5.14) give y=T^(7/5), z=T^(174/59).  The balanced
+    # roots m,n=T^3 lie in S3, so that main term is absent here.
+    short_factor_cutoff = min(
+        -F(1, 5) * numerator + F(2, 5) * (left + right),
+        -F(1, 2) * numerator + F(2, 3) * (left + right),
+    )
+    long_long_cutoff = (
+        -F(6, 59) * max(numerator, left + right)
+        + F(35, 59) * (left + right)
+    )
+    # DFI Theorem H, formula (1.5), for each fixed a=t^2:
+    # ||alpha|| ||beta|| (a+MN)^(3/8) (M+N)^(11/48).
+    fixed_square_hermitian = (
+        F(1, 2) * (left + right)
+        + F(3, 8) * max(numerator, left + right)
+        + F(11, 48) * max(left, right)
+    )
+    absolute_square_family = square_pairs + fixed_square_hermitian
+    return RootSalieJointAverageAudit(
+        left_root_factor_exponent=left,
+        right_root_factor_exponent=right,
+        physical_numerator_exponent=numerator,
+        bcr_term_1_exponent=term_1,
+        bcr_term_2_exponent=term_2,
+        bcr_bound_exponent=bound,
+        physical_target_exponent=target,
+        bcr_deficit_exponent=bound - target,
+        square_product_pair_count_exponent=square_pairs,
+        dfi_square_main_short_factor_cutoff_exponent=short_factor_cutoff,
+        dfi_long_long_cutoff_exponent=long_long_cutoff,
+        balanced_root_factor_exponent=min(left, right),
+        fixed_square_hermitian_bound_exponent=fixed_square_hermitian,
+        absolute_square_family_bound_exponent=absolute_square_family,
+        absolute_square_family_deficit_exponent=(
+            absolute_square_family - target
+        ),
+        salie_factorization_matches_midpoint_phase=True,
+        joint_average_is_existing_bcr_endpoint=True,
+        bcr_accepts_mobius_coefficients=True,
+        bcr_uses_mobius_beyond_l2=False,
+        balanced_root_filter_excludes_dfi_square_main=(
+            min(left, right) > long_long_cutoff > short_factor_cutoff
+        ),
+        joint_salie_route_closes_root_gate=False,
+    )
+
+
+def square_salie_double_gauss_identity(
+    *,
+    r: int,
+    s: int,
+    square_root: int,
+) -> dict[str, object]:
+    """Linearize a square Salié numerator by two quadratic Gauss sums.
+
+    Coefficient tables modulo ``r*s`` verify
+
+        G(-2r;s) G(2s;r) e(2t^2(rbar/s-sbar/r))
+        = sum_{x mod s,y mod r}
+          e((-2r*x^2+4t*x)/s + (2s*y^2+4t*y)/r).
+
+    The exponent on the right is also exactly
+    ``2*z*(w+2*t)/(r*s)`` for ``z=r*x+s*y`` and ``w=s*y-r*x``.
+    """
+    if r <= 1 or s <= 1 or r % 2 == 0 or s % 2 == 0:
+        raise ValueError("double-Gauss factors must be odd and exceed one")
+    if gcd(r, s) != 1:
+        raise ValueError("double-Gauss factors must be coprime")
+    modulus = r * s
+    inverse_r_mod_s = pow(r, -1, s)
+    inverse_s_mod_r = pow(s, -1, r)
+    target_numerator = (
+        2
+        * square_root
+        * square_root
+        * (r * inverse_r_mod_s - s * inverse_s_mod_r)
+    ) % modulus
+
+    left_coefficients = {residue: 0 for residue in range(modulus)}
+    for u in range(s):
+        for v in range(r):
+            exponent = (
+                -2 * r * r * u * u
+                + 2 * s * s * v * v
+                + target_numerator
+            ) % modulus
+            left_coefficients[exponent] += 1
+
+    right_coefficients = {residue: 0 for residue in range(modulus)}
+    factorized_coefficients = {residue: 0 for residue in range(modulus)}
+    phase_factorization = True
+    for x in range(s):
+        for y in range(r):
+            exponent = (
+                -2 * r * r * x * x
+                + 4 * square_root * r * x
+                + 2 * s * s * y * y
+                + 4 * square_root * s * y
+            ) % modulus
+            z = r * x + s * y
+            w = s * y - r * x
+            factorized = (2 * z * (w + 2 * square_root)) % modulus
+            right_coefficients[exponent] += 1
+            factorized_coefficients[factorized] += 1
+            phase_factorization = phase_factorization and exponent == factorized
+
+    def jacobi_symbol(value: int, odd_modulus: int) -> int:
+        value %= odd_modulus
+        sign = 1
+        while value:
+            while value % 2 == 0:
+                value //= 2
+                if odd_modulus % 8 in (3, 5):
+                    sign = -sign
+            value, odd_modulus = odd_modulus, value
+            if value % 4 == odd_modulus % 4 == 3:
+                sign = -sign
+            value %= odd_modulus
+        return sign if odd_modulus == 1 else 0
+
+    direct_character = jacobi_symbol(-2 * r, s) * jacobi_symbol(2 * s, r)
+    minus_one_s = -1 if s % 4 == 3 else 1
+    two_s = -1 if s % 8 in (3, 5) else 1
+    two_r = -1 if r % 8 in (3, 5) else 1
+    reciprocity = -1 if r % 4 == s % 4 == 3 else 1
+    mod8_character = minus_one_s * two_s * two_r * reciprocity
+    return {
+        "r": r,
+        "s": s,
+        "square_root": square_root,
+        "modulus": modulus,
+        "target_phase_numerator": target_numerator,
+        "factors_are_odd_coprime": r % 2 == s % 2 == 1 and gcd(r, s) == 1,
+        "left_coefficients": tuple(left_coefficients.items()),
+        "right_coefficients": tuple(right_coefficients.items()),
+        "quadratic_completion_identity_exact": (
+            left_coefficients == right_coefficients
+        ),
+        "combined_phase_factorization_exact": (
+            phase_factorization and right_coefficients == factorized_coefficients
+        ),
+        "gauss_product_character": direct_character,
+        "mod8_character": mod8_character,
+        "gauss_product_character_is_mod8_local": (
+            direct_character == mod8_character
+        ),
+    }
+
+
+def square_salie_gauss_completion_audit() -> SquareSalieGaussCompletionAudit:
+    """Record the hard-box ledger after double quadratic completion."""
+    r = F(3)
+    s = F(3)
+    square_root = F(5, 2)
+    x = s
+    y = r
+    normalization = -F(1, 2) * (r + s)
+    resonance = r + s - square_root
+    localized_pointwise = square_root + resonance + normalization
+    direct_square = square_root
+    return SquareSalieGaussCompletionAudit(
+        r_exponent=r,
+        s_exponent=s,
+        square_root_exponent=square_root,
+        x_exponent=x,
+        y_exponent=y,
+        gauss_normalization_exponent=normalization,
+        t_poisson_resonance_exponent=resonance,
+        localized_pointwise_exponent=localized_pointwise,
+        direct_square_sector_pointwise_exponent=direct_square,
+        double_gauss_identity_exact=True,
+        cross_character_depends_only_on_mod8=True,
+        square_root_variable_is_linearized=True,
+        remaining_quadratic_weight_is_joint=True,
+        gauss_completion_improves_square_sector=(
+            localized_pointwise < direct_square
+        ),
+        square_salie_gauss_route_closes_gate=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -11043,6 +11344,69 @@ def main() -> None:
         "joint="
         f"{root_salie.theorem_accepts_joint_transform_weight},"
         f"closes={root_salie.salie_adapter_closes_root_gate}"
+    )
+    salie_joint = root_salie_joint_average_audit()
+    print(
+        "large_q_transition: root_salie_joint="
+        f"m={_fmt(salie_joint.left_root_factor_exponent)},"
+        f"n={_fmt(salie_joint.right_root_factor_exponent)},"
+        f"numerator={_fmt(salie_joint.physical_numerator_exponent)},"
+        f"bc1={_fmt(salie_joint.bcr_term_1_exponent)},"
+        f"bc2={_fmt(salie_joint.bcr_term_2_exponent)},"
+        f"bound={_fmt(salie_joint.bcr_bound_exponent)},"
+        f"target={_fmt(salie_joint.physical_target_exponent)},"
+        f"deficit={_fmt(salie_joint.bcr_deficit_exponent)},"
+        "square_pairs="
+        f"{_fmt(salie_joint.square_product_pair_count_exponent)},"
+        "dfi_y="
+        f"{_fmt(salie_joint.dfi_square_main_short_factor_cutoff_exponent)},"
+        "dfi_z="
+        f"{_fmt(salie_joint.dfi_long_long_cutoff_exponent)},"
+        "balanced="
+        f"{_fmt(salie_joint.balanced_root_factor_exponent)},"
+        "fixed_square="
+        f"{_fmt(salie_joint.fixed_square_hermitian_bound_exponent)},"
+        "square_bound="
+        f"{_fmt(salie_joint.absolute_square_family_bound_exponent)},"
+        "square_deficit="
+        f"{_fmt(salie_joint.absolute_square_family_deficit_exponent)},"
+        "phase="
+        f"{salie_joint.salie_factorization_matches_midpoint_phase},"
+        "bcr_endpoint="
+        f"{salie_joint.joint_average_is_existing_bcr_endpoint},"
+        "mobius_coefficients="
+        f"{salie_joint.bcr_accepts_mobius_coefficients},"
+        "mobius_beyond_l2="
+        f"{salie_joint.bcr_uses_mobius_beyond_l2},"
+        "dfi_main_excluded="
+        f"{salie_joint.balanced_root_filter_excludes_dfi_square_main},"
+        f"closes={salie_joint.joint_salie_route_closes_root_gate}"
+    )
+    salie_gauss = square_salie_gauss_completion_audit()
+    print(
+        "large_q_transition: square_salie_gauss="
+        f"r={_fmt(salie_gauss.r_exponent)},"
+        f"s={_fmt(salie_gauss.s_exponent)},"
+        f"t={_fmt(salie_gauss.square_root_exponent)},"
+        f"x={_fmt(salie_gauss.x_exponent)},"
+        f"y={_fmt(salie_gauss.y_exponent)},"
+        "normalization="
+        f"{_fmt(salie_gauss.gauss_normalization_exponent)},"
+        "resonance="
+        f"{_fmt(salie_gauss.t_poisson_resonance_exponent)},"
+        "localized_pointwise="
+        f"{_fmt(salie_gauss.localized_pointwise_exponent)},"
+        "direct_square="
+        f"{_fmt(salie_gauss.direct_square_sector_pointwise_exponent)},"
+        f"identity={salie_gauss.double_gauss_identity_exact},"
+        "character_mod8="
+        f"{salie_gauss.cross_character_depends_only_on_mod8},"
+        "t_linear="
+        f"{salie_gauss.square_root_variable_is_linearized},"
+        f"joint={salie_gauss.remaining_quadratic_weight_is_joint},"
+        "improves="
+        f"{salie_gauss.gauss_completion_improves_square_sector},"
+        f"closes={salie_gauss.square_salie_gauss_route_closes_gate}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

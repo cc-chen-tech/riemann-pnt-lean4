@@ -10121,6 +10121,252 @@ The helper `odd_root_trace_salie_coefficient_identity` verifies (4.696a)
 with integer coefficient tables, while `root_salie_adapter_audit` keeps
 `salie_adapter_closes_root_gate=False`.
 
+### 4.83 Joint Salié averaging is the existing BCR endpoint
+
+Opening the Salié sum does not create a previously unused generic
+numerator average.  For odd \(c\) and \((2a,c)=1\), the exact evaluation
+used by Duke--Friedlander--Iwaniec is
+
+\[
+ \boxed{
+ c^{-1/2}S(a,a;c)
+ =\varepsilon_c\left(\frac ac\right)
+  \sum_{\substack{mn=c\\(m,n)=1}}
+  e\!\left(2a\left(\frac{\bar m}{n}-\frac{\bar n}{m}\right)\right).}
+\tag{4.699}
+\]
+
+On the midpoint parity branch on which \(k=4a\), (4.666) identifies
+the phase in (4.699), up to the already recorded parity factor, with
+the full-root phase \(e(kA/(2c))\).  The balanced-root filter is exactly
+\(m,n\asymp T^3\), while \(a\asymp T^5\).  Therefore simultaneous
+averaging over the numerator with arbitrary coefficients is precisely
+the Bettin--Chandee trilinear input at
+
+\[
+ A=T^5,
+ \qquad M=N=T^3.
+\]
+
+Substitution in their two terms gives
+
+\[
+ \mathrm{BC}_1
+ =\frac{17}{20}(5+3+3)+\frac34
+ =\frac{101}{10},
+ \qquad
+ \mathrm{BC}_2
+ =\frac78(3+3)+5+\frac38
+ =\frac{85}{8}.
+\tag{4.700}
+\]
+
+The larger exponent is \(85/8\); against the physical target six, the
+exact deficit is
+
+\[
+ \boxed{\frac{85}{8}-6=\frac{37}{8}.}
+\tag{4.701}
+\]
+
+This is exactly the \(\delta=3\) endpoint already present in (4.49).
+Hence neither the Salié evaluation nor a generic spectral large sieve
+improves the published BCR coverage.  Any improvement must keep
+\(\mu(m)\mu(n)\) inside the joint estimate rather than replace those
+coefficients by their \(L^2\) norms.
+
+The square-numerator exception can also be isolated exactly.  For
+positive physical variables, \(h\delta\) is a square if and only if
+there are unique positive \(x,y\) and one squarefree \(g\) such that
+
+\[
+ \boxed{h=gx^2,\qquad \delta=gy^2.}
+\tag{4.702}
+\]
+
+Consequently, for dyadic lengths \(H,L\),
+
+\[
+ \#\{h\asymp H,\ \delta\asymp L:h\delta\text{ is a square}\}
+ \ll \sum_{g\le2\min(H,L)}
+       \sqrt{\frac Hg}\sqrt{\frac Lg}
+ \ll \sqrt{HL}\log(2HL).
+\tag{4.702a}
+\]
+
+At \(H=L=T^{5/2}\), this square-parameter family has exponent \(5/2\).
+DFI Theorem 4 does have a genuine main term for an unrestricted modulus
+average with square parameter.  That main term cannot be transferred to our
+balanced-root sum.  In the proof of that theorem it is produced only by
+the pieces called \(S_1\) and \(\bar S_1\), where one factor is at most
+\(y\).  At \(a=T^5\), \(x=T^6\), and fixed congruence modulus, their
+choices (5.4) and (5.14) are exactly
+
+\[
+ y=T^{7/5},\qquad z=T^{174/59}.
+\tag{4.702b}
+\]
+
+Our filter has both factors of length \(T^3\), and
+\(3>174/59>7/5\).  It lies entirely in their long--long piece \(S_3\),
+which is bounded by Theorem H and has no exceptional main term.  Thus
+the earlier transfer of a modulus-length \(T^6\) square main term into
+the balanced sector was invalid; no Möbius cancellation of such a term
+is required.
+
+For each fixed square numerator \(a=t^2\asymp T^5\), DFI Theorem H,
+formula (1.5), with \(M=N=T^3\), gives the exact exponent
+
+\[
+ \|\alpha\|_2\|\beta\|_2
+ (a+MN)^{3/8}(M+N)^{11/48}
+ \ll T^{3+18/8+33/48+\varepsilon}
+ =T^{95/16+\varepsilon}.
+\tag{4.702c}
+\]
+
+The theorem accepts \(\alpha_m=\mu(m)\) and \(\beta_n=\mu(n)\), but
+uses them only through their \(L^2\) norms.  Summing (4.702c) absolutely
+over the \(T^{5/2}\) possible square roots gives
+
+\[
+ T^{5/2+95/16}=T^{135/16},
+ \qquad \frac{135}{16}-6=\frac{39}{16}.
+\tag{4.702d}
+\]
+
+Thus the square sector is smaller than the full numerator family, but
+the published balanced Hermitian estimate is still short by
+\(T^{39/16}\) at the MWKF target.  The exact remaining square-sector
+gate is
+
+\[
+ \boxed{
+ \left|\sum_{t\asymp T^{5/2}}\nu(4t^2)
+  \sum_{n\asymp T^6}\mu(n)
+  \sum_{A\in\mathscr A_{T^3,T^3}(n)}
+  \Omega_q(n,A,4t^2)e\!\left(\frac{2t^2A}{n}\right)
+       \right|
+ \ll_{B,W}T^6(\log T)^{-B}.}
+\tag{4.703}
+\]
+
+Formula (4.703) retains the balanced-root test and the actual joint
+kernel.  The helper `square_product_common_kernel_identity` verifies
+(4.702), while `root_salie_joint_average_audit` records the BCR
+correspondence, the corrected \(39/16\) square-sector deficit, and
+`balanced_root_filter_excludes_dfi_square_main=True`.
+
+### 4.84 Quadratic Gauss completion linearizes the square numerator
+
+There is one further exact transformation of (4.703), but its raw
+length ledger goes in the wrong direction.  Put
+
+\[
+ G(a;c):=\sum_{x\bmod c}e\!\left(\frac{ax^2}{c}\right).
+\]
+
+For odd coprime \(r,s\) and every integer \(t\), completing the two
+quadratic phases gives the finite identity
+
+\[
+\boxed{
+ G(-2r;s)G(2s;r)
+ e\!\left(2t^2\left(\frac{\bar r}{s}
+                  -\frac{\bar s}{r}\right)\right)
+ =\sum_{x\bmod s}\sum_{y\bmod r}
+ e\!\left(\frac{-2rx^2+4tx}{s}
+           +\frac{2sy^2+4ty}{r}\right).}
+\tag{4.704}
+\]
+
+Indeed, translation by \(t\bar r\bmod s\) in the first Gauss sum and
+by \(t\bar s\bmod r\) in the second gives (4.704) term by term.  The
+usual odd Gauss evaluation shows that
+
+\[
+ \eta(r,s):=\frac{\sqrt{rs}}{G(-2r;s)G(2s;r)},
+ \qquad |\eta(r,s)|=1,
+\tag{4.705}
+\]
+
+and \(\eta(r,s)\) depends only on the residue classes of \(r,s\bmod8\).
+In particular, its cross Jacobi factor is exactly
+
+\[
+ \left(\frac{-2r}{s}\right)\left(\frac{2s}{r}\right)
+ =\left(\frac{-1}{s}\right)
+  \left(\frac2s\right)\left(\frac2r\right)
+  (-1)^{(r-1)(s-1)/4}.
+\]
+
+Thus there is no uncontrolled quadratic character joining the two
+long factors.
+
+The new phase has a useful exact factorization.  Set
+
+\[
+ z:=rx+sy,\qquad w:=sy-rx.
+\]
+
+Then
+
+\[
+ \frac{-2rx^2+4tx}{s}+\frac{2sy^2+4ty}{r}
+ \equiv \frac{2z(w+2t)}{rs}\pmod 1.
+\tag{4.706}
+\]
+
+Consequently the square root \(t\) is linear rather than quadratic.
+However, on the hard box
+
+\[
+ r\asymp s\asymp T^3,\qquad t\asymp T^{5/2},\qquad
+ x\bmod s,\quad y\bmod r,\quad (r,s)=1,\quad 2\nmid rs,
+\]
+
+the map \((x,y)\mapsto z\bmod rs\) is a bijection.  Smooth summation in
+\(t\) restricts \(z\) to intervals of total length
+\(rs/T^{5/2}=T^{7/2}\) around the finitely many resonant residue
+classes.  Even granting rapid decay away from those intervals, the
+pointwise absolute ledger is therefore
+
+\[
+ T^{-3}\cdot T^{7/2}\cdot T^{5/2}=T^3.
+\]
+
+Here \(T^{-3}\) is the Gauss normalization \((rs)^{-1/2}\).  Direct
+absolute summation of the original square family costs only
+\(T^{5/2}\).  Thus Gauss completion loses \(T^{1/2}\) unless the
+quadratic residue variables and the two Möbius weights are estimated
+jointly.
+
+Writing \(\Omega_q(r,s,t)\) for the exact dyadic coupled weight inherited
+from (4.703), the remaining transformed gate is
+
+\[
+\boxed{
+ \left|\sum_{\substack{r\asymp T^3,\ s\asymp T^3\\
+                       (r,s)=1,\ 2\nmid rs}}
+ \frac{\mu(r)\mu(s)\eta(r,s)}{\sqrt{rs}}
+ \sum_{x\bmod s}\sum_{y\bmod r}
+ \sum_{t\asymp T^{5/2}}
+ \nu(4t^2)\Omega_q(r,s,t)
+ e\!\left(\frac{2(rx+sy)(sy-rx+2t)}{rs}\right)
+ \right|
+ \ll_{B,W}T^6(\log T)^{-B}.}
+\tag{4.707}
+\]
+
+No published estimate located in this audit accepts the simultaneous
+quadratic residue sums, the two Möbius modulus weights, and the coupled
+weight in (4.707).  The helper
+`square_salie_double_gauss_identity` verifies (4.704), (4.706), and the
+mod-eight character formula by exact coefficient tables.  The ledger
+`square_salie_gauss_completion_audit` therefore keeps
+`gauss_completion_improves_square_sector=False` and does not close the
+MWKF gate.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

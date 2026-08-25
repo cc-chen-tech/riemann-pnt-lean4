@@ -2433,6 +2433,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.696}",
         "\\tag{4.698}",
         "salie_adapter_closes_root_gate=False",
+        "### 4.83 Joint Salié averaging is the existing BCR endpoint",
+        "\\tag{4.701}",
+        "\\tag{4.703}",
+        "balanced_root_filter_excludes_dfi_square_main=True",
+        "### 4.84 Quadratic Gauss completion linearizes the square numerator",
+        "\\tag{4.705}",
+        "\\tag{4.707}",
+        "gauss_completion_improves_square_sector=False",
     ):
         assert marker in note
 
@@ -2513,6 +2521,22 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "odd_trace_exact=True,even_branch=False,balanced_filter=False,"
         "mobius_modulus=False,fixed_numerator=False,square_exception=False,"
         "joint=False,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: root_salie_joint="
+        "m=3,n=3,numerator=5,bc1=101/10,bc2=85/8,bound=85/8,"
+        "target=6,deficit=37/8,square_pairs=5/2,dfi_y=7/5,"
+        "dfi_z=174/59,balanced=3,fixed_square=95/16,"
+        "square_bound=135/16,square_deficit=39/16,phase=True,"
+        "bcr_endpoint=True,mobius_coefficients=True,mobius_beyond_l2=False,"
+        "dfi_main_excluded=True,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: square_salie_gauss="
+        "r=3,s=3,t=5/2,x=3,y=3,normalization=-3,resonance=7/2,"
+        "localized_pointwise=3,direct_square=5/2,identity=True,"
+        "character_mod8=True,t_linear=True,joint=True,improves=False,"
+        "closes=False"
     ) in report
 
 
@@ -3030,6 +3054,98 @@ def test_odd_root_trace_has_exact_salie_coefficient_identity() -> None:
     assert not audit.square_numerator_exception_covered
     assert not audit.theorem_accepts_joint_transform_weight
     assert not audit.salie_adapter_closes_root_gate
+
+
+def test_square_product_sector_and_joint_salie_ledger_are_exact() -> None:
+    helper = getattr(
+        coverage_audit,
+        "square_product_common_kernel_identity",
+        None,
+    )
+    assert helper is not None, "square-product kernel helper is missing"
+    for left, right, expected_kernel, expected_x, expected_y in (
+        (12, 75, 3, 2, 5),
+        (18, 8, 2, 3, 2),
+        (45, 20, 5, 3, 2),
+        (49, 81, 1, 7, 9),
+    ):
+        exact = helper(left=left, right=right)
+        assert exact["product_is_square"]
+        assert exact["common_squarefree_kernel"] == expected_kernel
+        assert exact["left_square_factor"] == expected_x
+        assert exact["right_square_factor"] == expected_y
+        assert exact["left_reconstruction_exact"]
+        assert exact["right_reconstruction_exact"]
+    nonsquare = helper(left=12, right=50)
+    assert not nonsquare["product_is_square"]
+    assert not nonsquare["common_kernel_exists"]
+
+    adapter = getattr(
+        coverage_audit,
+        "root_salie_joint_average_audit",
+        None,
+    )
+    assert adapter is not None, "joint Salié average audit is missing"
+    audit = adapter()
+    assert audit.left_root_factor_exponent == F(3)
+    assert audit.right_root_factor_exponent == F(3)
+    assert audit.physical_numerator_exponent == F(5)
+    assert audit.bcr_term_1_exponent == F(101, 10)
+    assert audit.bcr_term_2_exponent == F(85, 8)
+    assert audit.bcr_bound_exponent == F(85, 8)
+    assert audit.physical_target_exponent == F(6)
+    assert audit.bcr_deficit_exponent == F(37, 8)
+    assert audit.square_product_pair_count_exponent == F(5, 2)
+    assert audit.dfi_square_main_short_factor_cutoff_exponent == F(7, 5)
+    assert audit.dfi_long_long_cutoff_exponent == F(174, 59)
+    assert audit.balanced_root_factor_exponent == F(3)
+    assert audit.fixed_square_hermitian_bound_exponent == F(95, 16)
+    assert audit.absolute_square_family_bound_exponent == F(135, 16)
+    assert audit.absolute_square_family_deficit_exponent == F(39, 16)
+    assert audit.salie_factorization_matches_midpoint_phase
+    assert audit.joint_average_is_existing_bcr_endpoint
+    assert audit.bcr_accepts_mobius_coefficients
+    assert not audit.bcr_uses_mobius_beyond_l2
+    assert audit.balanced_root_filter_excludes_dfi_square_main
+    assert not audit.joint_salie_route_closes_root_gate
+
+
+def test_square_salie_quadratic_gauss_completion_is_exact() -> None:
+    helper = getattr(
+        coverage_audit,
+        "square_salie_double_gauss_identity",
+        None,
+    )
+    assert helper is not None, "square Salié double-Gauss helper is missing"
+    for r, s, t in ((3, 5, 2), (5, 7, 3), (7, 9, -2), (11, 13, 4)):
+        exact = helper(r=r, s=s, square_root=t)
+        assert exact["factors_are_odd_coprime"]
+        assert exact["quadratic_completion_identity_exact"]
+        assert exact["combined_phase_factorization_exact"]
+        assert exact["gauss_product_character_is_mod8_local"]
+
+    adapter = getattr(
+        coverage_audit,
+        "square_salie_gauss_completion_audit",
+        None,
+    )
+    assert adapter is not None, "square Salié Gauss audit is missing"
+    audit = adapter()
+    assert audit.r_exponent == F(3)
+    assert audit.s_exponent == F(3)
+    assert audit.square_root_exponent == F(5, 2)
+    assert audit.x_exponent == F(3)
+    assert audit.y_exponent == F(3)
+    assert audit.gauss_normalization_exponent == F(-3)
+    assert audit.t_poisson_resonance_exponent == F(7, 2)
+    assert audit.localized_pointwise_exponent == F(3)
+    assert audit.direct_square_sector_pointwise_exponent == F(5, 2)
+    assert audit.double_gauss_identity_exact
+    assert audit.cross_character_depends_only_on_mod8
+    assert audit.square_root_variable_is_linearized
+    assert audit.remaining_quadratic_weight_is_joint
+    assert not audit.gauss_completion_improves_square_sector
+    assert not audit.square_salie_gauss_route_closes_gate
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
