@@ -899,7 +899,7 @@
       <p class="site-header__index">LEAN 4 · ANALYTIC NUMBER THEORY</p>
       <h1 id="atlas-title">The Riemann Proof Atlas</h1>
     </div>
-    <p class="site-header__intro">一张区分已证明组件、待连接路线与远期目标的研究地图。距离表示依赖深度，不表示完成百分比。</p>
+    <p class="site-header__intro">一张聚焦 PNT、零自由区域与 RH 误差接口，区分已证明组件、待连接路线与远期目标的研究地图。距离表示依赖深度，不表示完成百分比。</p>
   </header>
 
   <main>
@@ -917,6 +917,7 @@
           <p class="legend-item"><span class="legend-marker legend-marker--route" aria-hidden="true">◆</span><span><strong>正在连接</strong><br>路线接口或尚未闭合的证明链</span></p>
           <p class="legend-item"><span class="legend-marker legend-marker--frontier" aria-hidden="true">○</span><span><strong>研究前沿</strong><br>不能当作当前项目结论</span></p>
           <p class="map-note">箭头从依赖项指向后续结论。外圈不是时间轴，而是从已核验源代码到开放数学目标的证明距离。</p>
+          <p class="map-note"><strong>2026-08-26 状态补充：</strong>Selberg 目标与定义等价的旧 Conrey 命名别名已通过外部机器检查的 Zeta23 Theorem B 在本仓库内核中闭合；真正的 Conrey 严格大于 2/5 简单零点目标仍开放。仓库原生 Selberg/MWKF 路线的 LCM 主项与精确归约已审计，但 global coupled operator、中心化 Möbius--Farey 三线性估计和变换尾项仍开放。这些边界不可混写。</p>
         </aside>
 
         <div id="atlas-map" class="map-stage" aria-label="证明依赖关系图" data-layout="compact">
@@ -998,13 +999,13 @@
             <span class="node-title">其他形式化 PNT</span>
             <span class="node-status">○ 外部参照</span>
           </button>
-          <button class="network-node" type="button" data-concept-id="zero-density" data-status="frontier" style="--x: 86%; --y: 13%;" aria-pressed="false" hidden>
+          <button class="network-node" type="button" data-concept-id="zero-density" data-status="proved" style="--x: 86%; --y: 13%;" aria-pressed="false" hidden>
             <span class="node-title">零点密度估计</span>
-            <span class="node-status">○ 研究前沿</span>
+            <span class="node-status">● 已证明组件</span>
           </button>
-          <button class="network-node" type="button" data-concept-id="rh-error" data-status="frontier" style="--x: 91%; --y: 61%;" aria-pressed="false" hidden>
+          <button class="network-node" type="button" data-concept-id="rh-error" data-status="proved" style="--x: 91%; --y: 61%;" aria-pressed="false" hidden>
             <span class="node-title">RH 误差等价链</span>
-            <span class="node-status">○ 研究前沿</span>
+            <span class="node-status">● 等价链已证明</span>
           </button>
           <button id="rh" class="map-node" type="button" data-concept-id="rh" data-status="frontier" style="--x: 88%; --y: 82%;" aria-pressed="false">
             <span class="node-title">黎曼猜想</span>
@@ -1023,7 +1024,7 @@
         <button class="action-button" type="button" data-action="open-concept" data-concept-id="zero-free">进入概念页</button>
       </section>
 
-      <noscript>本页面的核心路线是：Riemann zeta 函数 → zeta 工具 → 经典零自由区域 → Perron/显式公式 → PNT。普通 PNT 以及 ψ 和 π−Li 的经典余项已证明；RH 与 2/3 以下幂次误差仍开放。启用 JavaScript 后可查看全部 13 个概念的证据与边界说明。</noscript>
+      <noscript>本页面的核心路线是：Riemann zeta 函数 → zeta 工具 → 经典零自由区域 → Perron/显式公式 → PNT。普通 PNT、ψ 和 π−Li 的经典余项以及 RH 误差等价链已证明；RH 本身与 2/3 以下无条件幂次误差仍开放。Selberg 目标和旧 Conrey 命名别名通过外部机器检查的 Zeta23 输入在仓库内核中闭合，而真正的 Conrey 严格大于 2/5 简单零点目标与仓库原生 MWKF 重证明仍开放。启用 JavaScript 后可查看全部 13 个概念的证据与边界说明。</noscript>
     </section>
 
     <article id="concept-view" class="concept-view" hidden aria-live="polite"></article>
@@ -1257,18 +1258,18 @@
         id: "rh-error",
         title: "RH 误差等价链",
         english: "RH-scale error equivalence chain",
-        status: "frontier",
+        status: "proved",
         core: false,
-        summary: "把 RH 与 ψ、θ、π 在平方根尺度附近的误差控制连接起来。",
-        formula: "RH  ⇒  ψ(x) − x = O(√x · log²x)",
+        summary: "已证明 RH 与 ψ、θ、π 在平方根尺度附近的误差谓词之间的双向等价链。",
+        formula: "RH  ⇔  RH-scale ψ/θ/π error predicates",
         intuition: "若所有非平凡零点都在临界线上，显式公式中的振荡项自然落到平方根量级。",
         leanEvidence: [
-          "项目已有 RH_PsiErrorBound 等目标谓词",
-          "已有从 RH 尺度 ψ 误差到若干结论的条件式桥梁",
-          "RH 到该误差界所需的截断显式公式与零点和估计仍开放"
+          "rh_iff_optimal_error_proved 已闭合正反两个方向",
+          "RH_PsiErrorBound、RH_ThetaErrorBound 与 RH_PrimeCountingLiErrorBound 保留为条件接口",
+          "等价链已证明不代表 RH 或任一等价误差谓词得到无条件证明"
         ],
-        impact: "明确 RH 与素数计数精细误差之间的双向研究接口。",
-        warning: "条件式蕴含和接口不是 RH 本身的证明，也不是 RH 尺度误差的无条件证明。",
+        impact: "把未来任何 RH 或平方根尺度误差端点自动连接到其余等价表述。",
+        warning: "已证明的是等价关系，不是 RH 本身，也不是 RH 尺度误差的无条件证明。",
         dependsOn: ["rh", "explicit-formula"],
         compact: { x: 91, y: 61 },
         expanded: { x: 88, y: 69 }

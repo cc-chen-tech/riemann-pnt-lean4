@@ -5,10 +5,14 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **12** unresolved mathematical `def ... : Prop` targets,
-partitioned into exactly **4** analytic chains.  The recursive scanner also
-tracks 5 route interfaces and 48 reusable Prop predicates so subdirectory
-interfaces cannot be hidden by the target count:
+At present there are **15** tracked mathematical `def ... : Prop` target
+declarations, partitioned into exactly **4** analytic chains. Two of those
+target shapes (Selberg odd-zero proportion and the legacy top-level
+Conrey-named alias) are
+discharged by named theorems through the verified Zeta23 bridge; they are kept
+in the inventory because the declarations remain useful interfaces. The
+recursive scanner also tracks 6 route interfaces and 197 reusable Prop
+predicates so subdirectory interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region
 2. Explicit formula
@@ -65,18 +69,19 @@ It is not the first PNT formalization, does not supply numerically explicit
 remainder constants, and is not a proof of RH.
 
 For the zero-free-region route, the classical `c/log |t|` milestone is now
-proved by `classical_zero_free_region_proved`.  The remaining target in this
-chain is the stronger Vinogradov-Korobov region, which requires exponential-sum
-technology rather than more local Jensen/Borel wrappers.
+proved by `classical_zero_free_region_proved`. The tracked targets in this
+chain are the stronger Vinogradov--Korobov region and two finite-spectrum gap
+forms. They require exponential-sum or missing-odd-harmonic input rather than
+more local Jensen/Borel wrappers.
 
 ## Chain Status Summary
 
-| Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
+| Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Tracked target declarations |
 | --- | --- | --- | --- | --- |
-| Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target; the exponential-sum, prime-power, mixed-moment, and tail-recurrence layers are merged | Close the Ford short-sum input, tent-kernel localization, smooth-support estimates, and final parameter optimization | Prove the first unconditional `FordShortSumPrefixBound` instance without weakening the proved classical theorem | 1 |
+| Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region`, `FiniteSpectrumGap.finiteSpectrumGapTarget`, and `FiniteSpectrumGap.kappaFormTarget` remain targets; the exponential-sum, prime-power, mixed-moment, and tail-recurrence layers are merged | Separate the Ford short-sum route from the finite-spectrum missing-odd-harmonic route | Prove one genuine upstream input without weakening the proved classical theorem or assuming the target itself | 3 |
 | Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
-| Hardy quantitative extensions | Hardy's theorem and the Hardy--Littlewood linear lower bounds are proved.  The independent Selberg `c T log T` theorem is proved.  Zeta23 also closes `selberg_odd_zero_proportion_target` and the definitionally Selberg, Conrey-named legacy alias.  The genuine Conrey target `conreyTwoFifthsSimpleZerosTarget` instead counts simple critical-line zeros against the full multiplicity count and requires a constant strictly above `2/5`; its exact explicit-integral certificate and count definitions are proved, but its analytic lower-bound interface remains an explicit hypothesis. | Prove the long-mollifier mean square at length `T^(4/7-epsilon)` and transfer it through the argument principle to the genuine simple-zero count. | Formalize the BCH/Deshouillers--Iwaniec off-diagonal estimate with all smoothing, boundary, and uniformity terms, then discharge `conreyExplicitAnalyticLowerBound`. | 5 (2 signed-moment targets, 3 in `HardyTheorem.Details`), plus the explicit Conrey analytic gate |
+| Hardy quantitative extensions | Hardy's theorem, the Hardy--Littlewood linear lower bounds, and the independent Selberg `c T log T` theorem are proved. Zeta23 closes `selberg_odd_zero_proportion_target` and the definitionally Selberg, Conrey-named legacy alias. The genuine Conrey target `conreyTwoFifthsSimpleZerosTarget` instead counts simple critical-line zeros against the full multiplicity count and requires a constant strictly above `2/5`; its exact explicit-integral certificate and count definitions are proved, but its analytic lower-bound interface remains an explicit hypothesis. | Keep the externally sourced Zeta23 closure and the native Selberg result separate from the still-open genuine Conrey route | Formalize the BCH/Deshouillers--Iwaniec off-diagonal estimate with all smoothing, boundary, and uniformity terms, then discharge `conreyExplicitAnalyticLowerBound` | 8 (2 closed by Zeta23; 6 unresolved), plus the explicit Conrey analytic gate |
 
 ### Additional zero-forced-oscillation gap
 
@@ -114,22 +119,37 @@ error, lower-count, and exponent-budget suppliers remain visible assumptions.
 This boundary is documented in
 [`2026-08-24-pr474-windowed-detector-single-layer-forcing.md`](research/2026-08-24-pr474-windowed-detector-single-layer-forcing.md).
 
+### Additional Selberg/MWKF research gap
+
+PR #478--#482 add an audited Selberg--Möbius LCM main term, an exact
+off-diagonal reduction, a published-estimate coverage map, and finite exact
+models for centered Möbius Type-I/II and Farey decompositions. These are
+research documents and Python audit scripts on `main`, not new Lean target
+closures. The unconditional `N=T^3` long-mollifier asymptotic still requires a
+global coupled operator estimate, the centered Möbius--Farey trilinear saving,
+and an independent transform-tail bound. See
+[`2026-08-24-mobius-weighted-off-diagonal.md`](research/2026-08-24-mobius-weighted-off-diagonal.md)
+and
+[`2026-08-24-mwkf-global-coupled-coefficient-first.md`](research/2026-08-24-mwkf-global-coupled-coefficient-first.md).
+
 ## Target-to-Chain Mapping
 
-| File | Target | Chain | Why it is still open |
+| File | Target | Chain | Status / remaining native route |
 | --- | --- | --- | --- |
 | `ZeroFreeRegion.lean` | `vinogradov_korobov_zero_free_region` (global namespace) | Quantitative zero-free region | Requires Vinogradov–Korobov exponential-sum technology |
+| `MathlibAux/FiniteSpectrumGap.lean` | `FiniteSpectrumGap.finiteSpectrumGapTarget` | Quantitative zero-free region | Explicit constants are proved; the missing-odd-harmonic finite-spectrum gap remains unformalized |
+| `MathlibAux/FiniteSpectrumGap.lean` | `FiniteSpectrumGap.kappaFormTarget` | Quantitative zero-free region | Equivalent infimum form of the same unproved finite-spectrum gap |
 | `PrimeNumberTheorem.lean` | `RH_PsiErrorBound` | RH error equivalence | Equivalent to RH by a proved theorem; neither proposition is proved unconditionally |
 | `PrimeNumberTheorem.lean` | `RH_ThetaErrorBound` | RH error equivalence | Equivalent to `RH_PsiErrorBound`; RH implies it, but it remains unresolved without assuming RH |
 | `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | Equivalent to RH by proved forward and reverse implications; not known unconditionally |
 | `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Pointwise reformulation of `RH_PrimeCountingLiErrorBound`; RH implies it |
 | `HardyTheorem.lean` | `integral_asymptotic_target` | Quantitative critical-line extensions | Signed-moment asymptotic input |
 | `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Quantitative critical-line extensions | Asymptotics for the first two weighted moments |
-| `HardyTheorem/CriticalLineMultiplicity.lean` | `selberg_odd_zero_proportion_target` | Quantitative critical-line extensions | Selberg-scale lower bound for odd-multiplicity critical-line zeros |
+| `HardyTheorem/CriticalLineMultiplicity.lean` | `selberg_odd_zero_proportion_target` | Quantitative critical-line extensions | Discharged by `Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`; an independent native mollifier/MWKF proof remains open |
 | `HardyTheorem.lean` | `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target` | Quantitative critical-line extensions | Gamma asymptotic used in approximate functional equation setup |
 | `HardyTheorem.lean` | `HardyTheorem.Details.theta_asymptotic_target` | Quantitative critical-line extensions | Riemann–Siegel theta asymptotic setup |
 | `HardyTheorem.lean` | `HardyTheorem.Details.approximate_functional_equation_target` | Quantitative critical-line extensions | Residual error form of the AFE used by Hardy integrals |
-| `RiemannExplorer.lean` | `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | Legacy compatibility surface | Definitionally the Selberg positive-proportion target; the name does not encode Conrey's strict simple-zero constant |
+| `RiemannExplorer.lean` | `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | Legacy compatibility surface | Definitionally the Selberg positive-proportion target and discharged by `Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23`; the name does not encode Conrey's strict simple-zero constant |
 | `HardyTheorem/ConreySimpleZeroCount.lean` | `HardyTheorem.conreyTwoFifthsSimpleZerosTarget` | Genuine Conrey extension | Requires a strict `> 2/5` eventual lower bound for simple critical-line zeros against the full multiplicity count |
 | `HardyTheorem/ConreyTwoFifthsBridge.lean` | `HardyTheorem.conreyExplicitAnalyticLowerBound` | Genuine Conrey analytic gate | Requires the long-mollifier mean square and argument-principle transfer; it is an explicit hypothesis, not a proved theorem |
 

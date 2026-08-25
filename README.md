@@ -156,10 +156,12 @@ The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
 audits. The merged tree also contains substantial finite exponential-sum,
 prime-power conditioning, mixed-moment, and coupled-tail infrastructure toward
-Vinogradov--Korobov. Research branches continue with Selberg, stronger local
-oscillation density, Ford's incomplete-moment bridge, and infinite-dimensional
-Weil-criterion routes; these are reported separately from the merged theorem
-surface.
+Vinogradov--Korobov. The repository-native Selberg mollifier and MWKF route,
+stronger local oscillation density, Ford's incomplete-moment bridge, and
+infinite-dimensional Weil-criterion routes remain research programs; their
+audits and conditional reductions are reported separately from the merged
+theorem surface. In particular, this native Selberg route is distinct from the
+Zeta23-based kernel closure above.
 
 The project does **not** prove the Riemann Hypothesis, the
 Vinogradov--Korobov zero-free region, or numerically explicit final
@@ -390,11 +392,17 @@ flowchart TD
 
     F["Hardy Z function and first approximation"] --> G["Infinitely many critical-line zeros<br/>proved on main"]
     G --> H["Hardy-Littlewood linear lower bound<br/>proved on main"]
-    H --> I["Selberg positive proportion<br/>open target"]
+    H --> I["Native Selberg mollifier route<br/>independent reproof open"]
+    I --> IA["LCM main term and exact off-diagonal reduction<br/>audited on main"]
+    IA --> IB["Coupled operator, Mobius-Farey and tail inputs<br/>open"]
 
     J["Multiplicity-aware zero count"] --> K["Riemann-von Mangoldt<br/>proved on main"]
     J --> L["Mollifier, detector, mean square"]
     L --> M["Carlson zero-density estimate<br/>proved on main"]
+
+    ZA["Zeta23 Theorem B<br/>externally machine-checked"] --> ZB["Selberg target and legacy Conrey alias<br/>closed in repository kernel"]
+    K --> ZB
+    K --> ZC["Genuine Conrey simple-zero target > 2/5<br/>open analytic gate"]
 
     N["Exponential-sum, conditioning, and recurrence infrastructure<br/>proved on main"] --> O["Ford short-sum bridge<br/>open"]
     O --> P["Vinogradov-Korobov region<br/>open target"]
@@ -416,25 +424,33 @@ flowchart TD
 - 临界线上至少存在多少零点；
 - 全部零点和靠右零点分别有多少。
 
-Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsilon` 幂窗口更精细的
-局部分布仍需要新的上游估计，不能由当前已证明定理自动推出。
+仓库原生的 Selberg mollifier/MWKF 重证明、最终 VK、Pintz 最大阶、正负双向振荡以及
+比固定 `epsilon` 幂窗口更精细的局部分布仍需要新的上游估计，不能由当前已证明定理
+自动推出。这里的“原生重证明仍开放”不否定 Zeta23 外部机器验证输入已经在本仓库内核
+中闭合 Selberg 目标及定义等价的旧 Conrey 命名别名；真正的 Conrey `> 2/5`
+简单零点目标仍需独立解析输入。
 
 ---
 
-## 活跃研究分支
+## 活跃研究路线
 
-以下结果不属于当前 `main` 的公开定理面。
+以下内容不属于当前 `main` 的公开 theorem-level 结果。部分研究审计和可执行有限模型已经
+合并到 `main`，但它们只负责暴露精确归约、适用范围和剩余输入，不能按文档或脚本名称
+计作新数学定理。
 
-| 分支或 PR | 当前进展 | 尚未闭合的边界 |
+| 路线与入口 | 当前进展 | 尚未闭合的边界 |
 |---|---|---|
-| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 在已合并的线性下界之上继续建设 Selberg mollifier、bad-set 和 packing 估计 | Selberg `T log T` 下界仍是 `def ... : Prop` |
-| `feat/explicit-formula-unified-next`（本地） | 尝试把 Carlson 边界簇、动态高度和实际 PNT 误差传递统一起来 | 提交量很大但尚无 PR；必须重新审计声明是否依赖外部输入、模型接口或未闭合余项，不能按提交标题计作 `main` 成果 |
-| `agent/vk-ford-incomplete-bridge`（原 PR #19，已关闭） | 保留 Ford 不完整矩、double Holder 和近整数计数实验 | 混合草案过大且与 `main` 冲突；residue-mass 审计已单独作为 PR #27 合并，其余内容需拆成新的可审查 PR |
-| `research/vk-edge-annihilator-h-average-next`（本地） | 继续研究消去器平均和零密度残差能量 | 完整显式公式余项、正检测器能量及真实零点簇选择尚未统一闭合 |
-| 本地分支 `research/weil-extremal-kernels-next`（`a5aa020`） | 有限维区间证书、尾部和极值核实验 | 尚未推送或合并到 `main`；实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
+| `main` 中的 Selberg/MWKF 审计（PR #478--#482） | [LCM 主项](docs/research/2026-08-24-selberg-mobius-lcm-main-term.md)、[精确 off-diagonal](docs/research/2026-08-24-mobius-weighted-off-diagonal.md)、[已发表覆盖表](docs/research/2026-08-24-mwkf-published-coverage.md)、[Möbius Type I/II](docs/research/2026-08-24-mwkf-mobius-type-i-ii.md)与[全局耦合审计](docs/research/2026-08-24-mwkf-global-coupled-coefficient-first.md)已经整理，并有 Python 精确有限模型测试 | 无条件 `N=T^3` 长 mollifier 渐近仍缺 global coupled operator、中心化 Möbius--Farey 三线性估计及变换尾项控制；这些文档不是 Lean theorem |
+| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 在已合并的线性下界之上继续建设仓库原生 Selberg mollifier、bad-set 和 packing 估计 | 不依赖 Zeta23 的原生 `T log T`/正比例重证明仍开放；目标本身已通过 Zeta23 桥在内核中闭合 |
+| [`feat/explicit-formula-unified-next`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/feat/explicit-formula-unified-next) | 尝试把 Carlson 边界簇、动态高度和实际 PNT 误差传递统一起来 | 必须重新审计声明是否依赖外部输入、模型接口或未闭合余项，不能按提交标题计作 `main` 成果 |
+| [`agent/vk-ford-incomplete-bridge`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/agent/vk-ford-incomplete-bridge)（原 PR #19，已关闭） | 保留 Ford 不完整矩、double Hölder 和近整数计数实验 | 混合草案过大且与 `main` 冲突；residue-mass 审计已单独合并，其余内容需拆成新的可审查 PR |
+| [`research/vk-edge-annihilator-h-average-next`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/vk-edge-annihilator-h-average-next) | 继续研究消去器平均和零密度残差能量 | 完整显式公式余项、正检测器能量及真实零点簇选择尚未统一闭合 |
+| [`research/weil-extremal-kernels-next`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/weil-extremal-kernels-next) | 有限维区间证书、尾部和极值核实验 | 实际 Weil 核的有限到无限维 Gate A/B 仍未闭合 |
 
-研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
-并检查它是否已经重基或合并到当前 `main`。
+研究分支和 open PR 会快速变化。实时状态应以
+[GitHub Pull Requests](https://github.com/cc-chen-tech/riemann-pnt-lean4/pulls) 为准；引用其中
+结果前，应记录 branch commit，重新运行定向 contract，并检查它是否已经重基或合并到
+当前 `main`。
 
 ---
 
@@ -455,8 +471,16 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
   层已形式化，但均方估计、论证原理及 Deshouillers--Iwaniec 谱输入仍是开放层。
   旧的 `conrey_40_percent_zeros_on_critical_line_target_of_selberg` 只推出定义上
   等同 Selberg 的兼容别名，不能作为该定理的证明；
+- 不依赖外部 Zeta23 工件、完全由本仓库 Selberg mollifier/MWKF 分析给出的原生
+  `T log T`/正比例重证明；
 - Pintz 的均值阶或最大阶振荡定理；
 - 带最终数值常数的显式 Strong PNT 或零自由区域。
+
+Selberg 奇重零点正比例目标和 Conrey 百分比目标不属于上面的“未证明”列表：它们已经
+通过 Anthropic `zeta-23-lean` 的外部机器检查 Theorem B 与本仓库的定义级桥接在本仓库
+内核中闭合，显式常数为 `7/48`。但 Theorem B 的解析内容属于 Anthropic，本仓库没有把
+那份分析重新形式化为独立的原生 mollifier 证明；来源与公理边界见
+[zeta23-merge-provenance.md](docs/research/zeta23-merge-provenance.md)。
 
 这些名称可能出现在 `def ... : Prop`、条件闭合定理或研究分支中。出现一个目标声明并不等于
 该目标已被证明。项目的声明分类规则见
@@ -515,7 +539,10 @@ Hardy--Littlewood 形式化的 prior art。
 
 ### 长期独立方向
 
-- Selberg 正比例：若完成 `N_0(T) >= c T log T`，会显著增强临界线论文；
+- Selberg 原生重证明：在不调用 Zeta23 Theorem B 的前提下闭合 mollifier/MWKF
+  `N_0(T) >= c T log T` 路线，会形成独立的解析形式化贡献；
+- 长 mollifier/MWKF：把已审计的 `N=T^3` 精确归约推进到 global coupled operator、
+  中心化 Möbius--Farey 三线性估计和变换尾项的无条件闭合；
 - Vinogradov--Korobov：已合并基础设施与最终 zeta 零自由区域应分阶段成文；
 - Pintz/零点迫使振荡：临界线右侧零点迫使 `pi/2` 以上振荡，并在每个充分靠后的固定
   `epsilon` 幂窗口中出现的蕴含已证；最大阶、正负双向版本和更细密度结论仍开放；
@@ -579,6 +606,8 @@ lake build \
   Test.CarneiroLittmannProfileContract \
   Test.HardyLittlewoodTheoremContract \
   Test.HardyLittlewoodOddTheoremContract \
+  Test.Zeta23SelbergBridgeContract \
+  Test.Zeta23SelbergBridgeAxiomAudit \
   Test.PintzEnvelopeContract \
   Test.VKEdgePiOverTwoAbelPhaseContract \
   Test.VKEdgePiOverTwoAbelPhaseAxiomAudit \
@@ -604,6 +633,13 @@ lake build \
   Test.VKEdgeZeroClusterLocalL2AxiomAudit \
   Test.VKEdgeZeroClusterExplicitFormulaL2Contract \
   Test.VKEdgeZeroClusterExplicitFormulaL2AxiomAudit \
+  Test.WindowedMellinResponseIdentityAxiomAudit \
+  Test.CubicKernelLocalAxiomAudit \
+  Test.DetectionPointChoiceAxiomAudit \
+  Test.WindowedDetectorConclusionAxiomAudit \
+  Test.SingleLayerForcingBeta14Over17ContractAxiomAudit \
+  Test.ExceptionalZeroAmplificationGateInputSupplierAxiomAudit \
+  Test.AmplificationGateExponentBudgetAxiomAudit \
   Test.VinogradovKorobovResidueMassAuditContract \
   Test.VinogradovKorobovResidueMassAxiomAudit \
   Test.VinogradovKorobovAxiomAudit
@@ -638,6 +674,9 @@ python3 scripts/list-prop-targets.py
 - [Carlson 零密度估计](docs/carlson-zero-density-chain.md)
 - [局部分离 Hilbert 不等式](docs/local-separation-hilbert-chain.md)
 - [RH 误差等价链](docs/rh-error-equivalence-chain.md)
+- [Selberg--Möbius LCM 主项审计](docs/research/2026-08-24-selberg-mobius-lcm-main-term.md)
+- [`N=T^3` Möbius off-diagonal 精确审计](docs/research/2026-08-24-mobius-weighted-off-diagonal.md)
+- [MWKF 已发表覆盖与剩余输入](docs/research/2026-08-24-mwkf-published-coverage.md)
 
 ### 面向形式化审稿人和贡献者
 

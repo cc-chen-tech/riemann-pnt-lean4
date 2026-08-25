@@ -19,8 +19,10 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 12
-declarations, and the Python experiment tests pass.
+`def ... : Prop`, the mathematical target inventory contains 15 declarations,
+6 route interfaces, and 197 reusable predicates, and the Python experiment
+tests pass. Two target-shaped declarations are discharged through the verified
+Zeta23 bridge; their presence in the inventory does not make them unresolved.
 
 ## Proved Project-Local Results
 
@@ -3074,7 +3076,10 @@ approximation, the two dyadic integral bounds, and the final constant-sign
 contradiction.  Consequently Hardy's theorem is proved unconditionally in the
 stronger form that critical-line zeros occur at arbitrarily large positive
 heights.  The signed-moment targets remain as an independent legacy route, and
-the Selberg/Conrey targets remain stronger quantitative extensions.
+the Selberg and genuine Conrey target shapes remain stronger quantitative
+extensions. Zeta23 discharges the Selberg target and its definitionally equal
+legacy Conrey-named alias; the genuine strict `> 2/5` simple-zero target remains
+open, as does a repository-native Selberg mollifier reproof.
 
 ### `HardyTheorem/HardyLittlewoodTheorem.lean` and `HardyTheorem/HardyLittlewoodOddTheorem.lean`
 
@@ -3087,8 +3092,11 @@ The merged unconditional endpoints are:
   analytic multiplicity, each ordinate counted once.
 
 The proof chain uses fixed short windows, quantitative control of bad starting
-points, local Hardy-`Z` sign changes, and interval packing.  These results do
-not prove Selberg's `T log T` lower bound, positive proportion, or RH.
+points, local Hardy-`Z` sign changes, and interval packing.  These
+Hardy--Littlewood modules alone do not prove Selberg's `T log T` lower bound,
+positive proportion, or RH. The repository-wide Selberg target and legacy
+Conrey-alias closure instead comes from the separately attributed Zeta23
+bridge; it does not close Conrey's genuine strict two-fifths simple-zero target.
 
 ### `PrimeNumberTheorem/PintzEnvelope.lean`
 
@@ -3334,15 +3342,17 @@ concrete `DirectL2`/capacity inputs, nor `GateAssemblyInput` for every feasible
 tuple.  See
 [`2026-08-24-pr474-windowed-detector-single-layer-forcing.md`](research/2026-08-24-pr474-windowed-detector-single-layer-forcing.md).
 
-## Target Statements, Not Proved Theorems
+## Mathematical Target Declarations
 
-The following declarations are intentionally `def ... : Prop` targets.  They
-are not exported as theorems and should not be cited as proved.
+The following declarations are intentionally `def ... : Prop` targets. A target
+declaration is not itself a proof. Most remain unresolved; where a named theorem
+discharges the same proposition, that closure is recorded explicitly below.
 
-As of `2026-07-29`, there are **12** mathematical target declarations:
+As of `2026-08-26`, there are **15** mathematical target declarations:
 
-- `HardyTheorem` namespace: **3**
+- `HardyTheorem` namespace: **4**
 - `HardyTheorem.Details` namespace: **3**
+- `FiniteSpectrumGap` namespace: **2**
 - `PrimeNumberTheorem` namespace: **4**
 - `KnownResults` namespace: **1**
 - `ZeroFreeRegion` namespace: **0**
@@ -3354,6 +3364,17 @@ As of `2026-07-29`, there are **12** mathematical target declarations:
   target: the stronger Vinogradov-Korobov zero-free region.  This declaration
   currently lives in the global namespace even though it is in
   `ZeroFreeRegion.lean`.
+
+### `MathlibAux/FiniteSpectrumGap.lean`
+
+- `FiniteSpectrumGap.finiteSpectrumGapTarget`
+- `FiniteSpectrumGap.kappaFormTarget`
+
+These are equivalent-form research targets for the explicit strict gap above
+`pi/2` for finite admissible exponential spectra. The module proves positivity
+and constant-chain infrastructure, but the missing-odd-harmonic analytic step
+that supplies the full gap is not yet formalized. They are not consequences of
+the merged PR #474 forcing interfaces.
 
 ### Completed ordinary PNT predicates
 
@@ -3951,7 +3972,9 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    equivalence theorem but does not prove RH or an equivalent error predicate.
 4. **Hardy quantitative extensions.**
    Hardy's theorem and the Hardy--Littlewood linear lower bounds for distinct
-   and odd-multiplicity critical-line zeros are proved. Selberg's `T log T`
-   lower bound and Conrey-style percentage estimates still need stronger
-   mollified mean-value and bad-set estimates; the signed-moment and AFE
-   targets remain independent alternative infrastructure.
+   and odd-multiplicity critical-line zeros are proved. Zeta23 closes the
+   Selberg target and definitionally equal legacy Conrey-named alias. The
+   genuine strict `> 2/5` simple-zero proposition remains open; its native
+   proof still needs the long-mollifier mean square, argument principle, and
+   off-diagonal spectral input. The signed-moment and AFE targets remain
+   alternative infrastructure.

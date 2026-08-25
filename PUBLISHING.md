@@ -18,25 +18,33 @@ everywhere, bounds the closed terms, selects one good height for every real
 sample in a fixed logarithmic window, and makes the normalized finite-height
 approximation remainder uniformly arbitrarily small on that window and
 arbitrarily small in its local second moment.
-It does not prove the Riemann Hypothesis, Selberg's `T log T` result, or
+It does not prove the Riemann Hypothesis, independently reprove Selberg's
+`T log T` result through this repository's native mollifier/MWKF route, or
 provide numerically explicit values for the existential remainder constants.
+The Selberg target and the definitionally equivalent legacy Conrey-named alias
+are nevertheless closed inside this repository's kernel through the
+independently machine-checked Anthropic Zeta23 Theorem B; that external
+analytic input must remain explicit in every publication claim. Conrey's
+genuine strict `> 2/5` simple-zero theorem remains open.
 
 ## Current Verified Baseline
 
-- Lean toolchain: `leanprover/lean4:v4.33.0-rc2` (Zeta23 bridge branch)
+- Lean toolchain: `leanprover/lean4:v4.33.0-rc2` (`main`)
 - Build command: `lake build`
-- Last verified local result: see the current verification log before release
+- Last full Lean baseline: record the current commit and fresh `lake build`
+  output in the release log
 - Current code-level `sorry` count: 0
-- Remaining mathematical `def ... : Prop` targets: 12
+- Tracked mathematical `def ... : Prop` targets: 15
   (2 of these -- `selberg_odd_zero_proportion_target` and
   `KnownResults.conrey_40_percent_zeros_on_critical_line_target` -- are
   closed by the verified Anthropic `zeta-23-lean` Theorem B through the
   in-repo bridge `HardyTheorem.Zeta23SelbergBridge`, which imports the
   vendored, axiom-clean `Zeta23` library and closes both targets inside
   this repository's kernel; see
-  [zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md))
-- Route-interface `def ... : Prop` declarations: 5
-- Reusable Prop predicates: 48
+  [zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md)); the
+  inventory also includes the two unproved `FiniteSpectrumGap` target forms
+- Route-interface `def ... : Prop` declarations: 6
+- Reusable Prop predicates: 197
 - Unclassified Prop declarations: 0
 
 ## Required Gates Before Public Mathematical Claims
@@ -53,7 +61,7 @@ python3 scripts/list-prop-targets.py
 
 The baseline script runs `lake build`, recursively scans project Lean sources
 for real placeholder proof forms, checks that every `def ... : Prop` is
-classified, checks the 12-item mathematical target inventory, and validates the
+classified, checks the 15-item mathematical target inventory, and validates the
 four chain-gap buckets. The ordinary PNT, de la Vallee Poussin-form `psi` and
 `pi-Li` errors, Hardy's theorem, Riemann--von Mangoldt, Carlson zero density,
 local-separation estimates, Hardy--Littlewood linear lower bounds, the Pintz
@@ -67,10 +75,12 @@ exact `psi` transfer is theorem-level.  The finite-height approximation, jump,
 and closed-term pieces now have fixed-window control, but no theorem yet
 controls the complementary zero package strongly enough for the strict
 positivity endpoint; the detector-energy gate also remains open. RH,
-Vinogradov--Korobov,
-Selberg positive proportion, and any
-unconditional power-saving error below exponent `2/3` remain outside the
-proved boundary.
+Vinogradov--Korobov, a repository-native Selberg/MWKF reproof independent of
+Zeta23, and any unconditional power-saving error below exponent `2/3` remain
+outside the proved boundary. The Zeta23-based Selberg and legacy-alias closure
+is inside the kernel but must be attributed as an external machine-checked
+analytic input. Conrey's genuine strict two-fifths simple-zero target remains
+outside the proved boundary.
 
 As of the current baseline, no route interface has a body equal to `True`.
 `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is still an explicit
@@ -183,12 +193,31 @@ separate boundary:
 See
 [`2026-08-24-pr474-windowed-detector-single-layer-forcing.md`](docs/research/2026-08-24-pr474-windowed-detector-single-layer-forcing.md).
 
+For the merged PR #478--#482 Selberg/MWKF research records, keep a third
+boundary:
+
+- audited on `main`: the Selberg--Möbius LCM main term, exact mollified AFE and
+  off-diagonal reindexing, the published-coverage map, and finite exact models
+  for the centered Möbius Type-I/II and Farey reductions;
+- still unproved: the global coupled operator estimate, the centered
+  Möbius--Farey trilinear estimate with the required saving, and the independent
+  transform-tail obligation;
+- forbidden publication claim: an unconditional `N=T^3` long-mollifier
+  asymptotic or a new theorem-level Selberg proof derived only from those
+  research documents and Python scripts.
+
+See
+[`2026-08-24-mobius-weighted-off-diagonal.md`](docs/research/2026-08-24-mobius-weighted-off-diagonal.md),
+[`2026-08-24-mwkf-published-coverage.md`](docs/research/2026-08-24-mwkf-published-coverage.md),
+and
+[`2026-08-24-mwkf-global-coupled-coefficient-first.md`](docs/research/2026-08-24-mwkf-global-coupled-coefficient-first.md).
+
 ## Unproved Target Statements
 
 | File | Remaining `sorry` count | Main target statements |
 |---|---:|---|
 | `ZeroFreeRegion.lean` | 0 | Classical `c/log |t|` region proved; Vinogradov-Korobov remains a target |
-| `HardyTheorem.lean`, `HardyTheorem/CriticalLineMultiplicity.lean` | 0 | Hardy and Hardy--Littlewood linear lower bounds proved; Selberg's `T log T` and Conrey-style percentage estimates remain open |
+| `HardyTheorem.lean`, `HardyTheorem/CriticalLineMultiplicity.lean`, `HardyTheorem/ConreySimpleZeroCount.lean` | 0 | Hardy and Hardy--Littlewood linear lower bounds and the independent Selberg theorem are proved; Zeta23 closes the Selberg target and legacy Conrey-named alias, while the genuine strict `> 2/5` simple-zero target and its long-mollifier analytic gate remain open |
 | `PrimeNumberTheorem.lean`, `PrimeNumberTheorem/PNTFromDynamicPerron.lean`, `PrimeNumberTheorem/ClassicalPNTError.lean`, and `PrimeNumberTheorem/ClassicalPrimeCountingError.lean` | 0 | Ordinary PNT and the de la Vallee Poussin-form `psi` and `pi-Li` remainders proved; unconditional RH-scale predicates remain open |
 
 ## Release Dependency Issue
