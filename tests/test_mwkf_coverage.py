@@ -1581,6 +1581,61 @@ def test_transition_h_poisson_line_gate_has_one_power_critical_layer() -> None:
     assert maximal_gcd.maximal_gcd_layer_closes_with_endpoint_tapers
 
 
+def test_transition_h_poisson_square_cramer_recovers_the_unique_dual_slope() -> None:
+    helper = getattr(
+        coverage_audit,
+        "transition_h_poisson_square_cramer_identity",
+        None,
+    )
+    assert helper is not None, "transition square Cramer helper is missing"
+
+    result = helper(
+        k=1,
+        s1=5,
+        w1=2,
+        s2=7,
+        w2=4,
+        v=3,
+        j=1,
+    )
+    assert result["r1"] == 7
+    assert result["r2"] == 11
+    assert result["delta1"] == 1
+    assert result["delta2"] == 5
+    assert result["cross_determinant"] == -6
+    assert result["coefficient_determinant"] == 6
+    assert result["recovered_v"] == 3
+    assert result["recovered_j"] == 1
+    assert result["cramer_divisibilities_exact"]
+    assert result["dual_slope_recovered_exactly"]
+
+
+def test_transition_h_poisson_square_has_one_half_entry_saving_after_characters() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_h_poisson_square_offdiagonal_audit",
+        None,
+    )
+    assert adapter is not None, "transition square offdiagonal audit is missing"
+    audit = adapter()
+    assert audit.primitive_slope_pair_exponent == F(1)
+    assert audit.inner_area_exponent == F(1)
+    assert audit.expanded_square_cardinality_exponent == F(3)
+    assert audit.identity_diagonal_exponent == F(2)
+    assert audit.square_function_target_exponent == F(2)
+    assert audit.required_offdiagonal_saving_exponent == F(1)
+    assert audit.cross_determinant_max_exponent == F(1)
+    assert audit.top_cokernel_character_exponent == F(1)
+    assert audit.character_square_root_saving_exponent == F(1, 2)
+    assert audit.remaining_mobius_entry_saving_exponent == F(1, 2)
+    assert audit.zero_cross_determinant_is_identity_diagonal
+    assert audit.nonzero_cross_determinant_recovers_unique_slope
+    assert audit.cokernel_is_one_cyclic_character_family
+    assert audit.signed_four_mobius_hecke_sum_required
+    assert not audit.hybrid_mobius_hecke_estimate_proved
+    assert not audit.critical_square_function_proved
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -3089,6 +3144,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "absolute_target=True,tapers_close=True"
     ) in output
     assert (
+        "large_q_transition: h_poisson_square_offdiagonal="
+        "slope_pair=1,inner=1,expanded=3,diagonal=2,target=2,"
+        "required=1,Delta_max=1,cokernel=1,char_sqrt=1/2,"
+        "entry_remaining=1/2,zero_is_diagonal=True,cramer=True,"
+        "cyclic=True,four_mu=True,hybrid_proved=False,square_proved=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -3538,5 +3600,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"wv-js=\delta",
         r"\det\begin{pmatrix}",
         "transition_h_poisson_line_audit",
+        "### 4.52 Cross-determinant expansion of the critical slope square",
+        r"\Delta=r_1s_2-r_2s_1",
+        r"T^{1/2}",
+        "transition_h_poisson_square_offdiagonal_audit",
     ):
         assert marker in text

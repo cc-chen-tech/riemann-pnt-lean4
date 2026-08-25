@@ -6511,6 +6511,152 @@ fixed_slope_square_root_proved=False,
 averaged_slope_square_function_proved=False, and
 whole_far_shell_covered=False.
 
+### 4.52 Cross-determinant expansion of the critical slope square
+
+The critical case of (4.465) can be reindexed once more.  Fix
+\(\theta=1\), \(g=1\), and write the two entries in the expanded square
+as
+
+\[
+ w_iv-j s_i=\delta_i,qquad
+ r_i=ks_i+w_i,qquad i=1,2.
+\tag{4.467}
+\]
+
+Put
+
+\[
+ \boxed{\Delta=r_1s_2-r_2s_1=w_1s_2-w_2s_1.}
+\tag{4.468}
+\]
+
+If \(\Delta=0\), positivity and
+\((r_i,s_i)=1\) give \((r_1,s_1)=(r_2,s_2)\), hence also
+\(w_1=w_2\) and \(\delta_1=\delta_2\).  This is exactly the positive
+identity diagonal of (4.465), not an off-diagonal family.
+
+For \(\Delta\ne0\), Cramer's rule recovers the unique dual slope:
+
+\[
+\boxed{
+ v=\frac{s_2\delta_1-s_1\delta_2}{\Delta},
+ \qquad
+ j=\frac{w_2\delta_1-w_1\delta_2}{\Delta}.}
+\tag{4.469}
+\]
+
+The signs in (4.469) follow directly from the coefficient matrix
+
+\[
+ B=\begin{pmatrix}w_1&-s_1\\w_2&-s_2\end{pmatrix},
+ \qquad \det B=-\Delta.
+\tag{4.470}
+\]
+
+On the critical support
+\(|s_i|,|w_i|\asymp T\),
+\(|\delta_i|\asymp T^{1/2}\), and
+\(|v|,|j|\asymp T^{1/2}\).  Equation (4.469) therefore gives the exact
+fraction collar
+
+\[
+ \boxed{0<|\Delta|\ll_W T.}
+\tag{4.471}
+\]
+
+In particular the determinant conductor is one full power smaller than
+the unrestricted entry determinant bound \(T^2\).
+
+Let \(\mathcal K_i\) be the two copies of (4.455), with the recovered
+\((v,j)\) from (4.469), and retain every support, coprimality, sign, and
+endpoint factor.  Removing only the identity diagonal gives the exact
+critical off-diagonal
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak Q^{\mathrm{crit}}_{q,k}
+ :={}&
+ \sum_{\substack{r_i,s_i\asymp T\\
+                   w_i=r_i-ks_i\asymp T\\
+                   (r_i,s_i)=1,\ (q,r_is_i)=1\\
+                   0<|\Delta|\ll_W T}}
+ \mu(r_1)\mu(s_1)\mu(r_2)\mu(s_2)\\
+ &\quad\times
+ \sum_{\substack{\delta_1,\delta_2\asymp T^{1/2}\\
+  \Delta\mid s_2\delta_1-s_1\delta_2\\
+  \Delta\mid w_2\delta_1-w_1\delta_2\\
+  |(s_2\delta_1-s_1\delta_2)/\Delta|\asymp T^{1/2}\\
+  |(w_2\delta_1-w_1\delta_2)/\Delta|\asymp T^{1/2}\\
+  ((s_2\delta_1-s_1\delta_2)/\Delta,
+   (w_2\delta_1-w_1\delta_2)/\Delta)=1}}
+ \mathcal K_1\overline{\mathcal K_2}.
+\end{aligned}}
+\tag{4.472}
+\]
+
+The desired square-function inequality (4.465) is equivalent to
+
+\[
+ \boxed{
+ |\mathfrak Q^{\mathrm{crit}}_{q,k}|
+ \ll_W T^2(\log T)^{o(1)},}
+\tag{4.473}
+\]
+
+together with the already retained identity diagonal.  The raw expanded
+off-diagonal in (4.472) has exponent
+
+\[
+ \boxed{1+2\cdot1=3,}
+\tag{4.474}
+\]
+
+where the first term is the primitive \((v,j)\)-family and each inner
+line has area exponent one.  Thus (4.473) requires exactly one power of
+saving.
+
+The two divisibilities in (4.472) do not define two independent
+character families.  Each row \((w_i,-s_i)\) is primitive, since
+\((w_i,s_i)=(r_i,s_i)=1\).  Hence the first Smith invariant of \(B\)
+is one and
+
+\[
+ \boxed{
+ \operatorname{SNF}(B)=\operatorname{diag}(1,|\Delta|),
+ \qquad
+ \mathbb Z^2/B\mathbb Z^2\simeq\mathbb Z/|\Delta|\mathbb Z.}
+\tag{4.475}
+\]
+
+Exact orthogonality therefore uses one cyclic family of
+\(|\Delta|\) characters.  On the top shell \(|\Delta|\asymp T\), a
+square root in that character family saves \(T^{1/2}\).  The remaining
+new saving is precisely
+
+\[
+ \boxed{T^{1/2}}
+\tag{4.476}
+\]
+
+from the signed four-Möbius Hecke-entry sum with the coupled kernel.
+This is the same arithmetic obstruction seen from the Farey--Hecke
+orbit in Section 4.46, now with conductor, normalization, and residual
+exponent fixed by (4.471)--(4.476).
+
+No registered Kuznetsov or spectral-large-sieve theorem supplies
+(4.476) with four simultaneous Möbius entry weights and the recovered
+shift kernel.  Accordingly, (4.473) and its top-conductor hybrid
+Möbius--Hecke saving (4.476) remain unproved.
+
+The helper transition_h_poisson_square_cramer_identity checks
+(4.468)--(4.470) on exact integer fixtures.  The adapter
+transition_h_poisson_square_offdiagonal_audit records the exponents
+\(3\to2\), the determinant collar exponent one, the single cyclic
+character family, and the remaining \(1/2\) entry saving; it keeps
+hybrid_mobius_hecke_estimate_proved=False and
+critical_square_function_proved=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

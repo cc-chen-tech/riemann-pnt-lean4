@@ -762,6 +762,26 @@ class TransitionHPoissonLineAudit:
 
 
 @dataclass(frozen=True)
+class TransitionHPoissonSquareOffdiagonalAudit:
+    primitive_slope_pair_exponent: Fraction
+    inner_area_exponent: Fraction
+    expanded_square_cardinality_exponent: Fraction
+    identity_diagonal_exponent: Fraction
+    square_function_target_exponent: Fraction
+    required_offdiagonal_saving_exponent: Fraction
+    cross_determinant_max_exponent: Fraction
+    top_cokernel_character_exponent: Fraction
+    character_square_root_saving_exponent: Fraction
+    remaining_mobius_entry_saving_exponent: Fraction
+    zero_cross_determinant_is_identity_diagonal: bool
+    nonzero_cross_determinant_recovers_unique_slope: bool
+    cokernel_is_one_cyclic_character_family: bool
+    signed_four_mobius_hecke_sum_required: bool
+    hybrid_mobius_hecke_estimate_proved: bool
+    critical_square_function_proved: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -3747,6 +3767,118 @@ def transition_h_poisson_line_audit(
         fixed_slope_square_root_proved=False,
         averaged_slope_square_function_proved=False,
         whole_far_shell_covered=False,
+    )
+
+
+def transition_h_poisson_square_cramer_identity(
+    *,
+    k: int,
+    s1: int,
+    w1: int,
+    s2: int,
+    w2: int,
+    v: int,
+    j: int,
+) -> dict[str, int | bool]:
+    """Verify Cramer recovery in the critical h-Poisson square."""
+    if min(s1, s2) <= 0 or k == 0:
+        raise ValueError("transition denominators and slope must be nonzero")
+    if gcd(s1, abs(w1)) != 1 or gcd(s2, abs(w2)) != 1:
+        raise ValueError("the two determinant rows must be primitive")
+    r1 = k * s1 + w1
+    r2 = k * s2 + w2
+    delta1 = w1 * v - j * s1
+    delta2 = w2 * v - j * s2
+    cross = r1 * s2 - r2 * s1
+    coefficient_determinant = s1 * w2 - w1 * s2
+    if cross == 0:
+        raise ValueError("Cramer recovery requires nonzero cross determinant")
+    v_numerator = s2 * delta1 - s1 * delta2
+    j_numerator = w2 * delta1 - w1 * delta2
+    return {
+        "r1": r1,
+        "r2": r2,
+        "delta1": delta1,
+        "delta2": delta2,
+        "cross_determinant": cross,
+        "coefficient_determinant": coefficient_determinant,
+        "recovered_v": v_numerator // cross,
+        "recovered_j": j_numerator // cross,
+        "cramer_divisibilities_exact": (
+            v_numerator % cross == 0 and j_numerator % cross == 0
+        ),
+        "dual_slope_recovered_exactly": (
+            v_numerator == cross * v and j_numerator == cross * j
+        ),
+    }
+
+
+def transition_h_poisson_square_offdiagonal_audit(
+) -> TransitionHPoissonSquareOffdiagonalAudit:
+    """Specialize the cross-determinant square to theta=1 and g=1.
+
+    The primitive slope pair has cardinality ``T`` and each inner
+    determinant line has area ``T``.  Its expanded square therefore has
+    exponent three, while the identity diagonal and desired square
+    function both have exponent two.  The fraction collar forces
+    ``Delta=r1*s2-r2*s1`` to have exponent at most one.  On the top
+    determinant shell, Smith normal form gives one cyclic character
+    family of size ``T``.  A character square root saves ``T^(1/2)``;
+    the remaining ``T^(1/2)`` must come from the four Mobius-weighted
+    Hecke matrix entries and the coupled kernel.
+    """
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    offdiagonal = endpoint_slope_offdiagonal_audit(
+        transition_box,
+        gcd_exponent=F(0),
+    )
+    cokernel = endpoint_cokernel_character_audit(
+        transition_box,
+        gcd_exponent=F(0),
+        determinant_exponent=F(1),
+    )
+    return TransitionHPoissonSquareOffdiagonalAudit(
+        primitive_slope_pair_exponent=(
+            offdiagonal.primitive_slope_pair_exponent
+        ),
+        inner_area_exponent=offdiagonal.inner_delta_n_area_exponent,
+        expanded_square_cardinality_exponent=(
+            offdiagonal.expanded_offdiagonal_cardinality_exponent
+        ),
+        identity_diagonal_exponent=offdiagonal.raw_identity_diagonal_exponent,
+        square_function_target_exponent=(
+            offdiagonal.coarse_endpoint_target_exponent
+        ),
+        required_offdiagonal_saving_exponent=(
+            offdiagonal.required_offdiagonal_saving
+        ),
+        cross_determinant_max_exponent=(
+            offdiagonal.cross_determinant_max_exponent
+        ),
+        top_cokernel_character_exponent=(
+            cokernel.cokernel_character_family_exponent
+        ),
+        character_square_root_saving_exponent=(
+            cokernel.character_square_root_saving
+        ),
+        remaining_mobius_entry_saving_exponent=(
+            cokernel.remaining_saving_after_character_square_root
+        ),
+        zero_cross_determinant_is_identity_diagonal=(
+            offdiagonal.zero_cross_determinant_is_identity_diagonal
+        ),
+        nonzero_cross_determinant_recovers_unique_slope=(
+            offdiagonal.nonzero_cross_determinant_recovers_unique_slope
+        ),
+        cokernel_is_one_cyclic_character_family=(
+            cokernel.single_finite_character_family_is_exact
+        ),
+        signed_four_mobius_hecke_sum_required=True,
+        hybrid_mobius_hecke_estimate_proved=False,
+        critical_square_function_proved=False,
     )
 
 
@@ -7029,6 +7161,16 @@ def main() -> None:
         "large_q_transition: h_poisson_line_maximal_gcd="
         "theta=1,gamma=1/2,delta0=0,n=1,post=2,required=0,"
         "absolute_target=True,tapers_close=True"
+    )
+    transition_h_poisson_square = (
+        transition_h_poisson_square_offdiagonal_audit()
+    )
+    print(
+        "large_q_transition: h_poisson_square_offdiagonal="
+        "slope_pair=1,inner=1,expanded=3,diagonal=2,target=2,"
+        "required=1,Delta_max=1,cokernel=1,char_sqrt=1/2,"
+        "entry_remaining=1/2,zero_is_diagonal=True,cramer=True,"
+        "cyclic=True,four_mu=True,hybrid_proved=False,square_proved=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
