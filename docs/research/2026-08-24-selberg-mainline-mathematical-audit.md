@@ -34,12 +34,15 @@ lower bound
 \]
 
 are now formalized as well, together with their dyadic specialization
-`T/2 - 16/log 2 - 2*C*X*sqrt(T/2)`.  The theorem remains incomplete until
-the fixed-power integer parameter is inserted, the S4b sliding transfer is
-assembled, and the S5/packing interfaces are instantiated.  The S4a
-modulus/Stirling integration is now formalized: once each of the fixed and
-horizontal contour errors is at most `T/8`, it yields the required positive
-constant times `T^(3/4)` lower bound.
+`T/2 - 16/log 2 - 2*C*X*sqrt(T/2)`.  The fixed paper parameter
+`X=floor(T^(1/32))` is now inserted: the horizontal cost is
+`O(T^(17/32))`, so both contour errors are eventually at most `T/8`.
+The modulus/Stirling bridge therefore gives S4a on `[T/2,T]` and `[0,T]`
+with the actual integer cutoff.  The Tonelli sliding transfer S4b is also
+formalized.  Its dyadic form avoids a separate endpoint error: for
+`0 <= H <= T/2`, the interior `[H,T]` already contains `[T/2,T]`.
+The theorem remains incomplete until the S5/packing interfaces are
+instantiated and the final odd-zero theorem is assembled.
 
 The main conclusion is decisive:
 
@@ -1625,7 +1628,7 @@ The current honest repository status is:
 ```text
 Hardy                         proved
 Hardy--Littlewood c*T         proved
-Selberg c*T*log T             S1--S3 proved; S4 analytic gates proved, contour assembly remains
+Selberg c*T*log T             S1--S4 proved; S5 and final odd-zero assembly remain
 T^3 linear Möbius moment      separate open long-mollifier problem
 Conrey two fifths             not yet formalized
 ```
@@ -2694,9 +2697,20 @@ The pointwise modulus/Stirling integration is now formalized in
 `SelbergFirstMomentLower.lean`.  It first proves the parameter-independent
 implication from a `T/4` contour lower bound to `c*T^(3/4)` absolute completed
 mass, then combines it with the dyadic contour theorem under the two exact
-absorption hypotheses.  The remaining S4 work is therefore the fixed-power
-integer parameter choice and the Tonelli/end-interval transfer yielding S4b;
-it is not a missing contour, Stirling, or analytic edge estimate.
+absorption hypotheses.  `SelbergFirstMomentParameter.lean` now takes
+`X=floor(T^(1/32))` and proves those hypotheses eventually, using
+`X*sqrt(T) <= T^(17/32)` and `T^(15/32) -> infinity`.  This closes the actual
+S4a statement.  `SlidingWindowFirstMoment.lean` proves the generic Tonelli
+coverage inequality
+
+\[
+ H\int_H^Tg(u)\,du
+ \le \int_0^T\int_t^{t+H}g(u)\,du\,dt
+\]
+
+for continuous nonnegative `g`.  Since `H<=T/2`, the dyadic S4a interval is
+contained in `[H,T]`; `SelbergFirstMomentSliding.lean` therefore closes S4b
+without a separate end-interval subtraction.
 
 ### Sign change and multiplicity
 
@@ -2712,8 +2726,8 @@ each ordinate at most twice.
 
 The Selberg derivation is unconditional at paper level, subject only to the
 standard classical inputs listed below.  This is not yet a repository-level
-theorem: S4 still requires assembly of the proved contour estimates,
-followed by S5 and the final odd-zero assembly.  Its external analytic inputs
+theorem: S1--S4 are now assembled, while S5 and the final odd-zero assembly
+remain.  Its external analytic inputs
 are all established theorems:
 
 * the zero-free line `zeta(1+it) != 0` and a reciprocal bound there;
@@ -2728,8 +2742,8 @@ Lean formalization is therefore admissible for the Selberg slice and has
 closed S1, S12, S13, S-arith, the full two-sided S2 off-diagonal estimate,
 the signed integrated diagonal asymptotic, the finite S4 contour lower bound,
 and the S4a modulus/Stirling bridge under its exact horizontal-absorption
-hypotheses.  The fixed integer parameter, S4b, and the S5/final odd-zero
-assembly remain open.
+hypotheses.  The fixed integer parameter and S4b are now closed as well.
+Only the S5/final odd-zero assembly remains open on the Selberg mainline.
 
 The object-level `J` bridge is now also closed through the following exact
 stages.  The physical theta kernel at `log u` equals the original
@@ -2913,9 +2927,9 @@ transform.  The final assembly is now formalized in
 
 The explicit witness produced by the proof is
 `4*pi*C_low + 16*pi*C_high`; this is exactly the absorption of the two
-terms in `(S2-Plancherel)`.  Thus S2 is closed in Lean.  The next work is
-S3, then S4, followed by instantiating S5 and the odd-multiplicity packing
-theorem.
+terms in `(S2-Plancherel)`.  Thus S2 is closed in Lean.  S3 and S4 are now
+also closed.  The next work is to instantiate S5 and the odd-multiplicity
+packing theorem.
 Thus the Lean development has not yet proved the final Selberg
 positive-proportion theorem, despite the unconditional paper-level route
 above.
