@@ -3963,10 +3963,44 @@ def test_exceptional_oldclass_leading_mobius_sum_hits_zero_free_barrier() -> Non
     assert endpoint.inverse_zeta_square_factor_exact
     assert endpoint.smooth_sum_bound_would_imply_zero_free_strip
     assert not endpoint.required_fixed_zero_free_strip_known
-    assert not endpoint.full_oldclass_tail_recombined
+    assert endpoint.full_oldclass_tail_recombined
     assert not endpoint.averaged_newform_cancellation_proved
     assert not endpoint.direct_perron_route_closes_exceptional_gate
     assert not endpoint.whole_mobius_gate_covered
+
+
+def test_full_oldclass_tail_preserves_inverse_zeta_square_barrier() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "exceptional_full_oldclass_tail_audit",
+        None,
+    )
+    assert adapter is not None, "full oldclass-tail audit is missing"
+
+    endpoint = adapter(
+        prime=5,
+        hecke_eigenvalue_squared=F(1),
+        exceptional_parameter=F(7, 64),
+        ramanujan_theta=F(7, 64),
+    )
+    assert endpoint.level_index == F(6)
+    assert endpoint.local_rho == F(31, 36)
+    assert endpoint.leading_oldclass_multiplier == F(1, 6)
+    assert endpoint.full_oldclass_multiplier == F(6, 31)
+    assert endpoint.tail_correction == F(5, 186)
+    assert endpoint.full_mobius_prime_coefficient == F(-12, 31)
+    assert endpoint.leading_prime_decay_exponent == F(-1)
+    assert endpoint.tail_error_decay_exponent == F(-57, 32)
+    assert endpoint.inverse_zeta_correction_boundary == F(-9, 32)
+    assert endpoint.tail_correction_boundary == F(-9, 16)
+    assert endpoint.full_prime_power_tail_recombined
+    assert endpoint.full_multiplier_identity_exact
+    assert endpoint.tail_changes_only_second_order_euler_terms
+    assert endpoint.inverse_zeta_square_factor_persists
+    assert endpoint.full_tail_cancels_inverse_zeta_poles is False
+    assert endpoint.averaged_newform_cancellation_proved is False
+    assert endpoint.direct_perron_route_closes_exceptional_gate is False
+    assert endpoint.whole_mobius_gate_covered is False
 
 
 def test_robles_additive_twist_bound_misses_four_mobius_gate_by_one_fifth() -> None:

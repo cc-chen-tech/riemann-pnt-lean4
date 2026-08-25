@@ -13291,13 +13291,99 @@ reach exponent zero.
 
 This is deliberately a statement about the direct leading-cofactor
 Perron route, not a rejection of the complete spectral strategy.  The
-prime-power oldclass tail in (4.847), its modified Hecke indices, or a
-signed average over newforms could in principle cancel the poles in
-(4.849b); no such recombination has been proved.  The adapter
+prime-power oldclass tail in (4.847) is recombined exactly in Section
+4.110b below.  A signed average over newforms remains a logically
+separate possible source of cancellation.  The adapter
 exceptional_oldclass_mobius_perron_audit records the exact endpoint
 \(2\beta=7/32\), the boundary \(2\beta-1/2=-9/32\), and the required
-zero-free line \(25/32\), while keeping all full-tail, newform-average,
-and coverage flags false.
+zero-free line \(25/32\).  Section 4.110b upgrades its full-tail flag
+after the exact recombination, while the newform-average and coverage
+flags remain false.
+
+
+### 4.110b The complete prime-power oldclass tail preserves the first-order inverse-zeta factor
+
+The qualification about the oldclass tail in Section 4.110a can be
+removed.  Fix a newform \(f\) of level \(M\), let \(p\nmid Mmn\), and
+write
+
+\[
+ \rho_f(p)=1-\frac{p\lambda_f(p)^2}{(p+1)^2}.
+\]
+
+Petrow--Young's exact oldform formula has
+
+\[
+ \sum_{j\geq0}\frac{p^j}{\nu(p^j)^2}
+ \left(\sum_{d\mid p^j}c_{p^j}(d)\lambda_f(d)\right)^2.
+\]
+
+Here \(\nu(p^j)=(p+1)^j\), and the defining Chebyshev identity gives
+\(\sum_{d\mid p^j}c_{p^j}(d)\lambda_f(d)=\lambda_f(p)^j\).
+Thus this is a geometric series, not an unspecified error:
+
+\[
+ \boxed{
+ \sum_{j\geq0}\frac{p^j\lambda_f(p)^{2j}}{(p+1)^{2j}}
+ =\frac1{\rho_f(p)}.}
+ \tag{4.849e}
+\]
+
+After the exterior squarefree-level factor \(1/\nu(p)=1/(p+1)\),
+the exact complete oldclass multiplier is therefore
+
+\[
+ \boxed{
+ B_f(p):=\frac1{(p+1)\rho_f(p)}
+ =\frac{p+1}{(p+1)^2-p\lambda_f(p)^2}.}
+ \tag{4.849f}
+\]
+
+If \(|\lambda_f(p)|\ll p^\theta\), \(0\leq\theta<1/2\), then
+
+\[
+ \boxed{
+ B_f(p)=\frac1p+O_f\!\left(p^{-2+2\theta}\right).}
+ \tag{4.849g}
+\]
+
+Consequently, after inserting \(\alpha(p)=-2\) and the exceptional
+factor \(p^{2\beta-w}\), the full local factor is
+
+\[
+ 1-2p^{2\beta-w}B_f(p)
+ =1-2p^{-(w+1-2\beta)}
+  +O_f\!\left(p^{2\beta-\Re w-2+2\theta}\right).
+ \tag{4.849h}
+\]
+
+The quotient by
+\((1-p^{-(w+1-2\beta)})^2\) is therefore absolutely convergent in
+
+\[
+ \boxed{
+ \Re w>
+ \max\left\{2\beta+2\theta-1,\ 2\beta-\frac12\right\}.}
+ \tag{4.849i}
+\]
+
+At \(\beta=\theta=7/64\), the tail-error boundary is \(-9/16\),
+while the quadratic inverse-zeta boundary is \(-9/32\); the latter is
+still decisive.  In particular, the \(j\geq1\) tail changes only
+second-order Euler terms and does not algebraically supply the missing
+\(+2p^{-(w+1-2\beta)}\) term.  Finite local factors can have isolated
+zeros, so this statement is deliberately not a blanket nonvanishing
+claim for the remaining Euler product.  It is the precise assertion
+needed here: the complete oldclass tail does not cancel the
+inverse-\(\zeta(w+1-2\beta)^2\) factor prime by prime.  Any remaining
+spectral route must obtain genuinely signed cancellation across the
+newform family, not from the oldclass geometric series itself.
+
+For the exact test witness \(p=5\), \(\lambda_f(5)^2=1\), one has
+\(\rho_f(5)=31/36\), \(B_f(5)=6/31\), tail correction \(5/186\), and
+full Möbius coefficient \(-12/31\).  The adapter
+exceptional_full_oldclass_tail_audit records these identities and
+keeps the newform-average, Perron-closure, and whole-gate flags false.
 
 
 ### 4.111 The new (4/5) Möbius additive-twist bound leaves only a (T^{1/5}) model deficit

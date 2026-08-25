@@ -1654,6 +1654,32 @@ class ExceptionalOldclassMobiusPerronAudit:
 
 
 @dataclass(frozen=True)
+class ExceptionalFullOldclassTailAudit:
+    prime: int
+    hecke_eigenvalue_squared: Fraction
+    exceptional_parameter: Fraction
+    ramanujan_theta: Fraction
+    level_index: Fraction
+    local_rho: Fraction
+    leading_oldclass_multiplier: Fraction
+    full_oldclass_multiplier: Fraction
+    tail_correction: Fraction
+    full_mobius_prime_coefficient: Fraction
+    leading_prime_decay_exponent: Fraction
+    tail_error_decay_exponent: Fraction
+    inverse_zeta_correction_boundary: Fraction
+    tail_correction_boundary: Fraction
+    full_prime_power_tail_recombined: bool
+    full_multiplier_identity_exact: bool
+    tail_changes_only_second_order_euler_terms: bool
+    inverse_zeta_square_factor_persists: bool
+    full_tail_cancels_inverse_zeta_poles: bool
+    averaged_newform_cancellation_proved: bool
+    direct_perron_route_closes_exceptional_gate: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class RoblesFourMobiusMinorArcAudit:
     variable_length_exponent: Fraction
     raw_determinant_exponent: Fraction
@@ -8561,9 +8587,10 @@ def exceptional_oldclass_mobius_perron_audit(
     power ``Q^(2*v)`` would make this series holomorphic for ``Re(w)>0``;
     because ``H_v`` is nonzero there near the right edge, this would force
     zeta to be zero-free for ``Re(s)>1-2*v``.  At ``v=7/64`` this is the
-    unproved strip ``Re(s)>25/32``.  This audits only the leading cofactor:
-    the prime-power oldclass tail and an average over newforms could in
-    principle create additional cancellation, but neither is derived.
+    unproved strip ``Re(s)>25/32``.  The complete prime-power oldclass
+    tail is recombined by ``exceptional_full_oldclass_tail_audit`` and
+    preserves this first-order factor.  Cancellation averaged over
+    newforms is not derived.
     """
     v = F(exceptional_parameter)
     if v <= 0 or v >= F(1, 2):
@@ -8582,7 +8609,83 @@ def exceptional_oldclass_mobius_perron_audit(
         inverse_zeta_square_factor_exact=True,
         smooth_sum_bound_would_imply_zero_free_strip=True,
         required_fixed_zero_free_strip_known=False,
-        full_oldclass_tail_recombined=False,
+        full_oldclass_tail_recombined=True,
+        averaged_newform_cancellation_proved=False,
+        direct_perron_route_closes_exceptional_gate=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def exceptional_full_oldclass_tail_audit(
+    *,
+    prime: int,
+    hecke_eigenvalue_squared: Fraction,
+    exceptional_parameter: Fraction,
+    ramanujan_theta: Fraction,
+) -> ExceptionalFullOldclassTailAudit:
+    """Recombine the exact prime-power oldclass tail at one prime.
+
+    For ``(mn,p)=1``, the Petrow--Young oldform formula sums the complete
+    ``ell|p^infinity`` tail to
+
+    ``1 / ((p+1)*rho_f(p))``, where
+    ``rho_f(p)=1-p*lambda_f(p)^2/(p+1)^2``.
+
+    Hence the full multiplier equals
+
+    ``(p+1)/((p+1)^2-p*lambda_f(p)^2)``.
+
+    Under ``lambda_f(p)^2 << p^(2*theta)``, it is
+    ``p^-1 + O(p^(-2+2*theta))``.  Multiplication by the exceptional
+    factor ``p^(2*v-w)`` therefore leaves the first-order Euler term
+    ``-2*p^(2*v-w-1)`` unchanged.  The tail correction converges for
+    ``Re(w)>2*v+2*theta-1``; comparison with the inverse-zeta-square
+    factor also has the quadratic boundary ``Re(w)>2*v-1/2``.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if any(prime % divisor == 0 for divisor in range(2, isqrt(prime) + 1)):
+        raise ValueError("prime must be prime")
+
+    lambda_sq = F(hecke_eigenvalue_squared)
+    v = F(exceptional_parameter)
+    theta = F(ramanujan_theta)
+    if lambda_sq < 0:
+        raise ValueError("hecke_eigenvalue_squared must be nonnegative")
+    if v <= 0 or v >= F(1, 2):
+        raise ValueError("exceptional_parameter must lie in (0, 1/2)")
+    if theta < 0 or theta >= F(1, 2):
+        raise ValueError("ramanujan_theta must lie in [0, 1/2)")
+
+    level_index = F(prime + 1)
+    rho = F(1) - F(prime) * lambda_sq / level_index**2
+    if rho <= 0:
+        raise ValueError("local rho must be positive")
+    leading = F(1) / level_index
+    full = F(1) / (level_index * rho)
+    tail_boundary = 2 * v + 2 * theta - F(1)
+    zeta_boundary = 2 * v - F(1, 2)
+
+    return ExceptionalFullOldclassTailAudit(
+        prime=prime,
+        hecke_eigenvalue_squared=lambda_sq,
+        exceptional_parameter=v,
+        ramanujan_theta=theta,
+        level_index=level_index,
+        local_rho=rho,
+        leading_oldclass_multiplier=leading,
+        full_oldclass_multiplier=full,
+        tail_correction=full - leading,
+        full_mobius_prime_coefficient=F(-2) * full,
+        leading_prime_decay_exponent=F(-1),
+        tail_error_decay_exponent=-F(2) + 2 * theta,
+        inverse_zeta_correction_boundary=zeta_boundary,
+        tail_correction_boundary=tail_boundary,
+        full_prime_power_tail_recombined=True,
+        full_multiplier_identity_exact=True,
+        tail_changes_only_second_order_euler_terms=(theta < F(1, 2)),
+        inverse_zeta_square_factor_persists=True,
+        full_tail_cancels_inverse_zeta_poles=False,
         averaged_newform_cancellation_proved=False,
         direct_perron_route_closes_exceptional_gate=False,
         whole_mobius_gate_covered=False,
@@ -14860,6 +14963,44 @@ def main() -> None:
         "perron="
         f"{oldclass_perron.direct_perron_route_closes_exceptional_gate},"
         f"covered={oldclass_perron.whole_mobius_gate_covered}"
+    )
+    full_oldclass = exceptional_full_oldclass_tail_audit(
+        prime=5,
+        hecke_eigenvalue_squared=F(1),
+        exceptional_parameter=F(7, 64),
+        ramanujan_theta=F(7, 64),
+    )
+    print(
+        "large_q_transition: exceptional_full_oldclass_tail="
+        f"p={full_oldclass.prime},"
+        f"lambda2={_fmt(full_oldclass.hecke_eigenvalue_squared)},"
+        f"rho={_fmt(full_oldclass.local_rho)},"
+        "leading="
+        f"{_fmt(full_oldclass.leading_oldclass_multiplier)},"
+        f"full={_fmt(full_oldclass.full_oldclass_multiplier)},"
+        f"tail={_fmt(full_oldclass.tail_correction)},"
+        "mobius_full="
+        f"{_fmt(full_oldclass.full_mobius_prime_coefficient)},"
+        "tail_decay="
+        f"{_fmt(full_oldclass.tail_error_decay_exponent)},"
+        "zeta_boundary="
+        f"{_fmt(full_oldclass.inverse_zeta_correction_boundary)},"
+        "tail_boundary="
+        f"{_fmt(full_oldclass.tail_correction_boundary)},"
+        "recombined="
+        f"{full_oldclass.full_prime_power_tail_recombined},"
+        f"exact={full_oldclass.full_multiplier_identity_exact},"
+        "second_order="
+        f"{full_oldclass.tail_changes_only_second_order_euler_terms},"
+        "zeta_persists="
+        f"{full_oldclass.inverse_zeta_square_factor_persists},"
+        "tail_cancels="
+        f"{full_oldclass.full_tail_cancels_inverse_zeta_poles},"
+        "newform_average="
+        f"{full_oldclass.averaged_newform_cancellation_proved},"
+        "perron="
+        f"{full_oldclass.direct_perron_route_closes_exceptional_gate},"
+        f"covered={full_oldclass.whole_mobius_gate_covered}"
     )
     robles_minor = robles_four_mobius_minor_arc_audit(
         variable_length_exponent=F(1),
