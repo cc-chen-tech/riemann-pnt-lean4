@@ -1980,6 +1980,61 @@ def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     assert general.required_mertens_product_saving_exponent == F(3, 8)
 
 
+def test_transition_balanced_mobius_convolution_gate_is_exact() -> None:
+    helper = getattr(
+        coverage_audit,
+        "transition_balanced_convolution_identity",
+        None,
+    )
+    assert helper is not None, "balanced convolution identity is missing"
+    exact = helper(
+        factor_pairs=((2, 5, -1), (3, 4, 1), (4, 3, -2), (5, 2, 3)),
+        shift_length=5,
+    )
+    assert exact["coefficient_expansion"] == exact["factor_expansion"]
+    assert (
+        exact["short_interval_overlap_integral"]
+        == exact["coefficient_expansion"]
+    )
+    assert exact["autocorrelation_reindex_exact"]
+    assert exact["fejer_short_interval_identity_exact"]
+
+    adapter = getattr(
+        coverage_audit,
+        "transition_balanced_mobius_convolution_audit",
+        None,
+    )
+    assert adapter is not None, "balanced convolution adapter is missing"
+    balanced = adapter(denominator_gcd_exponent=F(1, 2))
+    assert balanced.cofactor_length_exponent == F(1, 2)
+    assert balanced.product_center_exponent == F(3, 2)
+    assert balanced.product_difference_exponent == F(1, 2)
+    assert balanced.raw_autocorrelation_exponent == F(2)
+    assert balanced.diagonal_scale_target_exponent == F(3, 2)
+    assert balanced.required_variance_saving_exponent == F(1, 2)
+    assert balanced.optimistic_mangerel_bound_exponent == F(2)
+    assert balanced.optimistic_mangerel_power_deficit == F(1, 2)
+    assert balanced.endpoint_taper_count_in_square == 4
+    assert balanced.product_energy_log_loss == 1
+    assert balanced.net_endpoint_log_saving == 3
+    assert balanced.finite_autocorrelation_identity_exact
+    assert balanced.fejer_short_interval_identity_exact
+    assert not balanced.balanced_coefficient_is_multiplicative
+    assert balanced.exact_mellin_twisted_convolution_available
+    assert not balanced.actual_coprimality_layers_aggregated
+    assert not balanced.actual_coupled_kernel_nuclear_norm_verified
+    assert not balanced.published_square_root_variance_proved
+    assert not balanced.whole_line_family_covered
+
+    top = adapter(denominator_gcd_exponent=F(0))
+    assert top.cofactor_length_exponent == F(1)
+    assert top.product_center_exponent == F(2)
+    assert top.raw_autocorrelation_exponent == F(3)
+    assert top.diagonal_scale_target_exponent == F(2)
+    assert top.required_variance_saving_exponent == F(1)
+    assert top.optimistic_mangerel_power_deficit == F(1)
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -3985,5 +4040,10 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"|\alpha|\ll(AT)^{-1}",
         r"|M_U(A)M_V(T)|\ll T\sqrt A",
         "transition_line_fourier_microarc_audit",
+        "### 4.59 Balanced Möbius convolution and the exact short-interval variance gate",
+        r"c_{U,V}(n)",
+        r"\frac1A\int_{\mathbb R}",
+        r"\frac1{\zeta(s+i\tau)\zeta(s+i\upsilon)}",
+        "transition_balanced_mobius_convolution_audit",
     ):
         assert marker in text

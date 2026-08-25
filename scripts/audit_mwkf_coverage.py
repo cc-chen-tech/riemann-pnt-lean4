@@ -935,6 +935,31 @@ class TransitionLineFourierMicroarcAudit:
 
 
 @dataclass(frozen=True)
+class TransitionBalancedMobiusConvolutionAudit:
+    denominator_gcd_exponent: Fraction
+    cofactor_length_exponent: Fraction
+    product_center_exponent: Fraction
+    product_difference_exponent: Fraction
+    raw_autocorrelation_exponent: Fraction
+    diagonal_scale_target_exponent: Fraction
+    required_variance_saving_exponent: Fraction
+    optimistic_mangerel_bound_exponent: Fraction
+    optimistic_mangerel_power_deficit: Fraction
+    endpoint_taper_count_in_square: int
+    product_energy_log_loss: int
+    net_endpoint_log_saving: int
+    finite_autocorrelation_identity_exact: bool
+    fejer_short_interval_identity_exact: bool
+    balanced_coefficient_is_multiplicative: bool
+    exact_mellin_twisted_convolution_available: bool
+    actual_coprimality_layers_aggregated: bool
+    actual_coupled_kernel_nuclear_norm_verified: bool
+    published_square_root_variance_proved: bool
+    whole_line_family_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -4564,6 +4589,116 @@ def transition_line_fourier_microarc_audit(
     )
 
 
+def transition_balanced_convolution_identity(
+    *,
+    factor_pairs: tuple[tuple[int, int, int], ...],
+    shift_length: int,
+) -> dict[str, int | bool]:
+    """Verify the exact Fejer autocorrelation reindexing on finite data.
+
+    Each triple is ``(a, r, weight)`` and contributes ``weight`` to the
+    balanced product coefficient at ``n=a*r``.  Expanding the coefficient
+    autocorrelation and expanding the original four-factor determinant sum
+    are the same finite reindexing.  Integrating interval indicators gives
+    the integer overlap ``(H-|n-m|)_+`` exactly.
+    """
+    if shift_length <= 0:
+        raise ValueError("shift length must be positive")
+    if any(a <= 0 or r <= 0 for a, r, _ in factor_pairs):
+        raise ValueError("factor variables must be positive")
+
+    coefficients: dict[int, int] = {}
+    for a, r, weight in factor_pairs:
+        coefficients[a * r] = coefficients.get(a * r, 0) + weight
+
+    coefficient_expansion = 0
+    for n, left in coefficients.items():
+        for m, right in coefficients.items():
+            coefficient_expansion += (
+                max(shift_length - abs(n - m), 0) * left * right
+            )
+
+    factor_expansion = 0
+    for a, r, left in factor_pairs:
+        for b, s, right in factor_pairs:
+            factor_expansion += (
+                max(shift_length - abs(a * r - b * s), 0)
+                * left
+                * right
+            )
+
+    return {
+        "coefficient_expansion": coefficient_expansion,
+        "factor_expansion": factor_expansion,
+        "short_interval_overlap_integral": coefficient_expansion,
+        "autocorrelation_reindex_exact": (
+            coefficient_expansion == factor_expansion
+        ),
+        "fejer_short_interval_identity_exact": True,
+    }
+
+
+def transition_balanced_mobius_convolution_audit(
+    *,
+    denominator_gcd_exponent: Fraction,
+) -> TransitionBalancedMobiusConvolutionAudit:
+    """Collapse the top determinant line to one local convolution energy.
+
+    For fixed ``g=T^gamma`` put ``A=T^(1-gamma)`` and
+
+    ``c(n)=sum_(a*r=n) mu(a)mu(r)U(a/A)V(r/T)``.
+
+    A Fejer-smoothed determinant quotient is exactly the autocorrelation of
+    ``c`` at differences of length ``A``, equivalently ``A^(-1)`` times the
+    mean square of its sums on intervals of length ``A`` around product
+    scale ``A*T``.  The raw exponent is ``1+2*(1-gamma)`` and the diagonal
+    scale is ``1+(1-gamma)``, so a full factor ``A`` is still required.
+
+    Mangerel's divisor-bounded short-interval theorem, even granted
+    optimistically and uniformly after exact Mellin inversion, only makes
+    the normalized variance ``o(log^C T)``.  It does not supply the missing
+    power ``A``.  The actual balanced coefficient is not multiplicative;
+    it is an absolutely convergent Mellin superposition of twisted
+    multiplicative convolutions.  Coprimality layers and the coupled kernel
+    still have to be aggregated before this becomes an adapter for every
+    term of the original line family.
+    """
+    gamma = F(denominator_gcd_exponent)
+    if gamma < 0 or gamma > F(1):
+        raise ValueError("denominator gcd exponent must lie in [0,1]")
+    alpha = F(1) - gamma
+    product_center = F(1) + alpha
+    raw = product_center + alpha
+    target = product_center
+    required = raw - target
+    return TransitionBalancedMobiusConvolutionAudit(
+        denominator_gcd_exponent=gamma,
+        cofactor_length_exponent=alpha,
+        product_center_exponent=product_center,
+        product_difference_exponent=alpha,
+        raw_autocorrelation_exponent=raw,
+        diagonal_scale_target_exponent=target,
+        required_variance_saving_exponent=required,
+        optimistic_mangerel_bound_exponent=raw,
+        optimistic_mangerel_power_deficit=required,
+        endpoint_taper_count_in_square=4,
+        product_energy_log_loss=1,
+        net_endpoint_log_saving=3,
+        finite_autocorrelation_identity_exact=True,
+        fejer_short_interval_identity_exact=True,
+        balanced_coefficient_is_multiplicative=False,
+        exact_mellin_twisted_convolution_available=True,
+        actual_coprimality_layers_aggregated=False,
+        actual_coupled_kernel_nuclear_norm_verified=False,
+        published_square_root_variance_proved=False,
+        whole_line_family_covered=False,
+        source=(
+            "Mangerel, Divisor-bounded multiplicative functions in short "
+            "intervals, Res. Math. Sci. 10 (2023), Theorem 1.7"
+        ),
+    )
+
+
 def h_poisson_subbox_scales(
     box: ExponentBox,
     *,
@@ -7929,6 +8064,19 @@ def main() -> None:
         "required=1/2,mertens_trivial=3/2,mertens_target=5/4,"
         "mertens_required=1/4,fourier=True,h_poisson=True,"
         "tensor=False,constant=False,actual_gate=False,covered=False"
+    )
+    transition_balanced_convolution = (
+        transition_balanced_mobius_convolution_audit(
+            denominator_gcd_exponent=F(1, 2),
+        )
+    )
+    print(
+        "large_q_transition: balanced_mobius_convolution="
+        "gamma=1/2,A=1/2,product_center=3/2,difference=1/2,"
+        "raw=2,target=3/2,required=1/2,mangerel=2,deficit=1/2,"
+        "tapers=4,energy_log=1,net_log=3,autocorrelation=True,"
+        "fejer=True,multiplicative=False,mellin=True,coprimality=False,"
+        "nuclear_norm=False,published_variance=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

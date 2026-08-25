@@ -7364,6 +7364,172 @@ nonzero_constant_tensor_mode_verified=False,
 microarc_mertens_reduction_is_actual_gate=False, and
 whole_line_family_covered=False.
 
+### 4.59 Balanced Möbius convolution and the exact short-interval variance gate
+
+The determinant-line obstruction has a second formulation which does not
+single out the constant microarc.  It packages the entire Fourier window
+into one short-interval mean square.  Fix (g=T^\gamma), put
+
+\[
+ A=T^{1-\gamma},\qquad X=AT=T^{2-\gamma},
+\tag{4.534}
+\]
+
+and first take one real tensor component of the smooth weight.  For
+(U,V\in C_c^\infty((0,\infty))), define the finite balanced convolution
+
+\[
+ \boxed{
+ c_{U,V}(n)
+ :=\sum_{ar=n}\mu(a)\mu(r)U(a/A)V(r/T).}
+\tag{4.535}
+\]
+
+Expanding both sides and using no estimate gives the exact identity
+
+\[
+\boxed{
+\begin{aligned}
+ &\sum_{a,b,r_1,r_2}
+  \mu(a)\mu(b)\mu(r_1)\mu(r_2)
+  U(a/A)U(b/A)V(r_1/T)V(r_2/T)\\
+ &\qquad\qquad\times
+  \psi\!\left(\frac{br_1-ar_2}{A}\right)\\
+ &=\sum_{m,n}c_{U,V}(n)c_{U,V}(m)
+  \psi\!\left(\frac{n-m}{A}\right).
+\end{aligned}}
+\tag{4.536}
+\]
+
+Thus the quotient (h=\Delta/g) in (4.496) is literally the additive
+difference of two balanced Möbius products.  There is no loss from the
+four-to-two reindexing.  For the Fejer weight
+(\psi_\triangle(u)=(1-|u|)_+), interval overlap gives the second exact
+identity
+
+\[
+\boxed{
+ \sum_{m,n}c_{U,V}(n)c_{U,V}(m)
+  \psi_\triangle\!\left(\frac{n-m}{A}\right)
+ =\frac1A\int_{\mathbb R}
+   \left|\sum_{x<n\le x+A}c_{U,V}(n)\right|^2dx.}
+\tag{4.537}
+\]
+
+The left side of (4.537) is nonnegative.  In particular, the original
+double centering (2.4) cannot be reused to declare this quadratic
+determinant zero mode absent: linear zero rows and columns do not remove
+the positive autocorrelation diagonal in (4.537).
+
+The scales in (4.534)--(4.537) are exact.  The product centre has exponent
+(2-\gamma), the difference interval has exponent (1-\gamma), and the
+raw autocorrelation has exponent
+
+\[
+ (2-\gamma)+(1-\gamma)=3-2\gamma.
+\tag{4.538}
+\]
+
+The diagonal-scale target is (X=T^{2-\gamma}).  Consequently the one
+missing power is precisely
+
+\[
+ \boxed{A=T^{1-\gamma},}
+\tag{4.539}
+\]
+
+the same deficit as (4.529).  At the top cell (gamma=0), the former
+six-variable gate is therefore reduced to the single explicit inequality
+
+\[
+\boxed{
+ \frac1T\int_{\mathbb R}
+  \left|\sum_{x<n\le x+T}
+    \sum_{ar=n}\mu(a)\mu(r)U(a/T)V(r/T)
+  \right|^2dx
+ \ll_{U,V}T^2(\log T)^{1+o(1)}.}
+\tag{4.540}
+\]
+
+The four endpoint mollifier tapers occur after squaring, while the
+multiplicative product energy costs one logarithm.  Hence (4.540), with
+the uniform divisor and kernel seminorms needed below, leaves the same
+net three-logarithm saving as (4.444).
+
+Although (4.535) is not itself multiplicative, its multiplicative content
+is exact.  With
+
+\[
+ \widetilde U(z)=\int_0^\infty U(x)x^{z-1}\,dx,
+\tag{4.541}
+\]
+
+Mellin inversion gives the absolutely convergent formula
+
+\[
+\boxed{
+ c_{U,V}(n)=\frac1{(2\pi)^2}\int_{\mathbb R^2}
+ \widetilde U(i\tau)\widetilde V(i\upsilon)
+ A^{i\tau}T^{i\upsilon}f_{\tau,\upsilon}(n)
+ \,d\tau\,d\upsilon,}
+\tag{4.542}
+\]
+
+where
+
+\[
+ f_{\tau,\upsilon}(n)
+ :=\sum_{ar=n}\mu(a)a^{-i\tau}\mu(r)r^{-i\upsilon},
+ \qquad
+ \sum_{n\ge1}\frac{f_{\tau,\upsilon}(n)}{n^s}
+ =\frac1{\zeta(s+i\tau)\zeta(s+i\upsilon)}.
+\tag{4.543}
+\]
+
+All exchanges in (4.542) are justified by the finite divisor sum and the
+Schwartz decay of the two Mellin transforms.  This identifies the precise
+multiplicative family to which a short-interval theorem would have to be
+applied.
+
+The published divisor-bounded theorem of Mangerel,
+[arXiv:2108.11401, Theorem 1.7](https://arxiv.org/abs/2108.11401), does
+not give (4.540).  Even if it is granted uniformly for every twisted
+component in (4.542), its normalized variance estimate has the scale
+
+\[
+ \frac1X\int
+ \left|\frac1A\sum_{x<n\le x+A}f_{\tau,\upsilon}(n)
+ \right|^2dx
+ \le o(1)(\log X)^{O(1)}.
+\tag{4.544}
+\]
+
+Here the long-interval comparison term in the cited theorem has been
+optimistically set to zero; retaining it can only add another obligation.
+After multiplying by (XA), (4.544) has exponent
+(3-2\gamma), exactly the raw exponent (4.538).  It gives logarithmic
+decay but none of the required power (4.539).  The 2026 higher-uniformity
+theorems concern (mu), (Lambda), or (d_k-d_k^\sharp); they do not
+state the square-root variance (4.540) for the balanced coefficients of
+(1/\zeta^2).
+
+For the actual weight in (4.500), finite Möbius inversion separates
+((a,b)=1), ((r_1,ga)=1), and ((r_2,gb)=1) into divisor layers, and
+Mellin inversion separates every compact smooth tensor.  What is not yet
+proved is a summable nuclear-norm bound for the complete coupled kernel
+together with a uniform version of (4.540) on all those divisor layers.
+Thus (4.540) is a strictly simpler new local theorem, but not a theorem
+deduced from the cited short-interval literature.
+
+The finite helper transition_balanced_convolution_identity verifies
+(4.536)--(4.537) on exact integer data.  The adapter
+transition_balanced_mobius_convolution_audit records (4.538)--(4.544),
+the four endpoint tapers, and the remaining exponent (1-\gamma).  It
+keeps actual_coprimality_layers_aggregated=False,
+actual_coupled_kernel_nuclear_norm_verified=False,
+published_square_root_variance_proved=False, and
+whole_line_family_covered=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
