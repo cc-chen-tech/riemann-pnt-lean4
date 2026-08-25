@@ -2686,6 +2686,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "physical=False,core=False"
     ) in report
     assert (
+        "large_q_transition: hard_vertex_four_mobius="
+        "ambient=2,shift=1,gcd=1/2,primitive=1/2,"
+        "shift_quotient=1/2,line=1/2,raw=5/2,target=2,"
+        "required=1/2,outer_sqrt=1/2,shift_full=1/2,"
+        "unimodular=True,critical=True,mrtt_log_only=True,"
+        "top_chowla=False,top_log=False,published_spectral=False,"
+        "physical=False,proved=False"
+    ) in report
+    assert (
         "large_q_transition: inverse_zeta_zero_free_implication="
         "ambient=1,window=1/2,variance=3/2,block=3/4,"
         "abscissa=3/4,x_integral=True,cauchy=True,dyadic=True,"
@@ -3685,6 +3694,64 @@ def test_mrtt_signed_power_shift_adapter_separates_model_from_physical_kernel() 
     assert not below_long_threshold.mrtt_scale_closes_mwkf_model
     assert not below_long_threshold.full_ratio_twisted_multiplicative_family_covered
     assert not below_long_threshold.physical_gcd_layer_adapter_verified
+
+
+def test_hard_vertex_four_mobius_determinant_line_is_unimodular() -> None:
+    helper = getattr(
+        coverage_audit,
+        "hard_vertex_four_mobius_determinant_line_identity",
+        None,
+    )
+    assert helper is not None, "four-Möbius determinant helper is missing"
+
+    for a in range(2, 13):
+        for c in range(2, 13):
+            for b, d in ((5, 8), (7, 3), (11, 12)):
+                identity = helper(a=a, b=b, c=c, d=d)
+                assert identity["gcd_extracted_exact"]
+                assert identity["primitive_slopes_coprime"]
+                assert identity["shift_quotient_integral"]
+                assert identity["bezout_identity_exact"]
+                assert identity["coordinate_change_determinant"] == -1
+                assert identity["b_reconstructed"] == b
+                assert identity["d_reconstructed"] == d
+                assert identity["determinant_reconstructed_exact"]
+
+
+def test_hard_vertex_four_mobius_gate_needs_exact_outer_square_root() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "hard_vertex_four_mobius_determinant_audit",
+        None,
+    )
+    assert adapter is not None, "four-Möbius determinant audit is missing"
+
+    for kappa, raw, saving in (
+        (F(0), F(3), F(1)),
+        (F(1, 2), F(5, 2), F(1, 2)),
+        (F(1), F(2), F(0)),
+    ):
+        audit = adapter(gcd_exponent=kappa)
+        assert audit.ambient_product_exponent == F(2)
+        assert audit.shift_exponent == F(1)
+        assert audit.primitive_slope_exponent == F(1) - kappa
+        assert audit.shift_quotient_exponent == F(1) - kappa
+        assert audit.line_parameter_exponent == kappa
+        assert audit.raw_gcd_layer_exponent == raw
+        assert audit.local_target_exponent == F(2)
+        assert audit.required_power_saving == saving
+        assert audit.outer_slope_pair_square_root_saving == saving
+        assert audit.shift_quotient_full_cancellation_saving == saving
+        assert audit.unimodular_line_parameterization_exact
+        assert audit.outer_square_root_is_exponent_critical
+        assert audit.mrtt_supplies_only_logarithmic_saving
+        assert audit.top_face_contains_fixed_shift_chowla == (
+            kappa == F(1)
+        )
+        assert not audit.top_face_logarithmic_saving_proved
+        assert not audit.published_centered_outer_mobius_spectral_bound
+        assert not audit.physical_ratio_kernel_restored
+        assert not audit.hard_vertex_determinant_estimate_proved
 
 
 def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:

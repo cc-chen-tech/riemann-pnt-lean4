@@ -12665,6 +12665,153 @@ coefficientwise through \(n=U^K\).  Its status fields deliberately keep
 `physical_gcd_layer_adapter_verified=False`, and
 `whole_strict_power_core_covered=False`.
 
+### 4.106 The hard vertex is a unimodular four-Möbius determinant shell
+
+The missing factor in (4.820) can be seen without a circle-method
+normalization.  First freeze the product-compatible coefficient
+\(f=\mu*\mu\).  For smooth \(V,V'\) and a nonzero-shift weight \(w\),
+finite reindexing gives the exact identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal A(Y,H)
+ &:=
+ \sum_h w(h/H)\sum_n
+ f(n)V(n/Y)f(n+h)V'((n+h)/Y)\\
+ &=\sum_{a,b,c,d\geq1}
+ \mu(a)\mu(b)\mu(c)\mu(d)
+ w\!\left(\frac{cd-ab}{H}\right)
+ V(ab/Y)V'(cd/Y).
+ \end{aligned}}
+\tag{4.821}
+\]
+
+At the hard vertex \(Y=T^2\), \(H=T\), the balanced factor box has
+\(a,b,c,d\asymp T\) and \(|cd-ab|\asymp T\).  For fixed \(a,b,c\), the
+allowed \(d\)-interval has length
+\(O(H/c+1)=O(1)\).  Its raw cardinality therefore has exponent \(3\),
+whereas the required correlation scale in (4.820) is \(Y=T^2\).
+
+Now dyadically extract
+
+\[
+ g=(a,c)\asymp G=T^\kappa,\qquad
+ a=ga_0,\quad c=gc_0,\quad(a_0,c_0)=1,
+ \qquad 0\leq\kappa\leq1.
+\tag{4.822}
+\]
+
+The shift is divisible by \(g\).  Writing \(cd-ab=gk\) gives
+
+\[
+ c_0d-a_0b=k.
+\tag{4.823}
+\]
+
+Choose any Bézout pair \(p,q\) satisfying
+\(c_0p-a_0q=1\).  Every integral solution of (4.823), with no omission
+or multiplicity, is
+
+\[
+ \boxed{
+ d=pk+a_0t,\qquad b=qk+c_0t,\qquad t\in\mathbb Z.}
+\tag{4.824}
+\]
+
+Indeed the coordinate matrix is unimodular:
+
+\[
+ \det
+ \begin{pmatrix}
+ q&c_0\\ p&a_0
+ \end{pmatrix}
+ =qa_0-c_0p=-1.
+\tag{4.825}
+\]
+
+Changing the Bézout pair only translates \(t\), so the finite sum is
+independent of this choice.  The exact dyadic scales are
+
+\[
+ \boxed{
+ \begin{array}{c|ccccc}
+ \text{variable}&g&a_0&c_0&k&t\\ \hline
+ \log_T(\text{length})
+ &\kappa&1-\kappa&1-\kappa&1-\kappa&\kappa .
+ \end{array}}
+\tag{4.826}
+\]
+
+The \(t\)-range is the intersection of the two intervals imposed by
+\(b,d\asymp T\), hence has length \(O(G+1)\).  Consequently one gcd
+layer has raw exponent
+
+\[
+ E_{\mathrm{raw}}(\kappa)
+ =\kappa+2(1-\kappa)+(1-\kappa)+\kappa
+ =3-\kappa.
+\]
+
+A precise model gate is therefore
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal S_\kappa[\Psi]
+ :=\sum_{g\asymp T^\kappa}
+ \sum_{\substack{a_0,c_0\asymp T^{1-\kappa}\\(a_0,c_0)=1}}
+ \sum_{k\asymp T^{1-\kappa}}\sum_t
+ &\mu(ga_0)\mu(gc_0)\\
+ {}\times&
+ \mu(qk+c_0t)\mu(pk+a_0t)\Psi
+ \ll_{B,\Psi}T^2(\log T)^{-B}.
+ \end{aligned}}
+\tag{4.827}
+\]
+
+Here \(\Psi\) imposes (4.824), positivity, all four balanced dyadic
+ranges, and the chosen signed shift box.  The required power saving is
+
+\[
+ (3-\kappa)-2=1-\kappa.
+\]
+
+This is exactly square-root cancellation in the pair
+\((a_0,c_0)\), whose joint exponent is \(2(1-\kappa)\); equivalently it
+is complete cancellation in the \(k\)-block.  Even where an
+averaged-Chowla input can be adapted, its logarithmic saving relative
+to the raw layer does not provide this power.
+
+The endpoint \(\kappa=1\) requires a separate warning.  Its positive
+power deficit vanishes, but taking \(a_0=c_0=1\), \(p=1\), and \(q=0\)
+leaves the subfamily
+
+\[
+ \sum_{g\asymp T}\mu(g)^2
+ \sum_{t\asymp T}\mu(t)\mu(t+k)\Psi(g,t,k),
+ \qquad k\asymp1.
+\]
+
+Arbitrary logarithmic saving here contains the ordinary Cesàro
+fixed-shift two-point Chowla problem and is not known.  The closed
+polylogarithmic gcd collar for the actual physical coefficients in
+Section 4.100 uses an additional outer Möbius cancellation; it cannot be
+transferred after freezing the coefficient to \(f=\mu*\mu\).
+Thus every strict \(\kappa<1\) layer needs a new centered
+outer-Möbius spectral estimate, while the top model face still needs a
+new logarithmic cancellation.
+
+The helper
+`hard_vertex_four_mobius_determinant_line_identity` verifies
+(4.822)--(4.825) on exact integers.  The exponent adapter
+`hard_vertex_four_mobius_determinant_audit` records (4.826)
+and the critical saving in (4.827).  This is a product-compatible
+hard-vertex model: the actual ratio-Mellin deformation and physical gcd
+allocations have not yet been restored.  Accordingly both the model
+estimate and the full MWKF core remain unproved.
+
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

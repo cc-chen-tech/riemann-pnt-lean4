@@ -1510,6 +1510,29 @@ class MRTTSignedMobiusPowerShiftAudit:
 
 
 @dataclass(frozen=True)
+class HardVertexFourMobiusDeterminantAudit:
+    ambient_product_exponent: Fraction
+    shift_exponent: Fraction
+    gcd_exponent: Fraction
+    primitive_slope_exponent: Fraction
+    shift_quotient_exponent: Fraction
+    line_parameter_exponent: Fraction
+    raw_gcd_layer_exponent: Fraction
+    local_target_exponent: Fraction
+    required_power_saving: Fraction
+    outer_slope_pair_square_root_saving: Fraction
+    shift_quotient_full_cancellation_saving: Fraction
+    unimodular_line_parameterization_exact: bool
+    outer_square_root_is_exponent_critical: bool
+    mrtt_supplies_only_logarithmic_saving: bool
+    top_face_contains_fixed_shift_chowla: bool
+    top_face_logarithmic_saving_proved: bool
+    published_centered_outer_mobius_spectral_bound: bool
+    physical_ratio_kernel_restored: bool
+    hard_vertex_determinant_estimate_proved: bool
+
+
+@dataclass(frozen=True)
 class InverseZetaVarianceZeroFreeAudit:
     ambient_length_exponent: Fraction
     short_window_exponent: Fraction
@@ -7929,6 +7952,131 @@ def mrtt_signed_mobius_power_shift_audit(
     )
 
 
+def hard_vertex_four_mobius_determinant_line_identity(
+    *,
+    a: int,
+    b: int,
+    c: int,
+    d: int,
+) -> dict[str, int | bool]:
+    """Parametrize ``c*d-a*b`` by primitive slopes and one line.
+
+    Write ``a=g*a0`` and ``c=g*c0``.  Then
+    ``c0*d-a0*b=k`` with ``k=(c*d-a*b)/g``.  If
+    ``c0*p-a0*q=1``, every point on this determinant line is
+
+    ``b=q*k+c0*t`` and ``d=p*k+a0*t``.
+
+    The map from ``(k,t)`` to ``(b,d)`` has determinant ``-1``.
+    The helper computes a Bezout pair and verifies the reconstruction
+    without choosing residue-class representatives.
+    """
+    if min(a, b, c, d) <= 0:
+        raise ValueError("a, b, c, and d must be positive")
+
+    common = gcd(a, c)
+    a0 = a // common
+    c0 = c // common
+    shift = c * d - a * b
+    k, remainder = divmod(shift, common)
+
+    def extended_gcd(left: int, right: int) -> tuple[int, int, int]:
+        old_r, new_r = left, right
+        old_s, new_s = 1, 0
+        old_t, new_t = 0, 1
+        while new_r:
+            quotient = old_r // new_r
+            old_r, new_r = new_r, old_r - quotient * new_r
+            old_s, new_s = new_s, old_s - quotient * new_s
+            old_t, new_t = new_t, old_t - quotient * new_t
+        return old_r, old_s, old_t
+
+    bezout_gcd, p, plus_a0_coefficient = extended_gcd(c0, a0)
+    q = -plus_a0_coefficient
+    t_numerator = d - p * k
+    t, t_remainder = divmod(t_numerator, a0)
+    b_reconstructed = q * k + c0 * t
+    d_reconstructed = p * k + a0 * t
+    coordinate_determinant = q * a0 - c0 * p
+
+    return {
+        "gcd": common,
+        "a0": a0,
+        "c0": c0,
+        "shift": shift,
+        "shift_quotient": k,
+        "line_parameter": t,
+        "bezout_p": p,
+        "bezout_q": q,
+        "coordinate_change_determinant": coordinate_determinant,
+        "b_reconstructed": b_reconstructed,
+        "d_reconstructed": d_reconstructed,
+        "gcd_extracted_exact": a == common * a0 and c == common * c0,
+        "primitive_slopes_coprime": gcd(a0, c0) == 1,
+        "shift_quotient_integral": remainder == 0,
+        "bezout_identity_exact": (
+            bezout_gcd == 1 and c0 * p - a0 * q == 1
+        ),
+        "determinant_reconstructed_exact": (
+            t_remainder == 0
+            and b_reconstructed == b
+            and d_reconstructed == d
+            and c0 * d_reconstructed - a0 * b_reconstructed == k
+        ),
+    }
+
+
+def hard_vertex_four_mobius_determinant_audit(
+    *,
+    gcd_exponent: Fraction,
+) -> HardVertexFourMobiusDeterminantAudit:
+    """Record the exact exponent gate for the balanced hard vertex.
+
+    In the product-compatible model ``f=mu*mu``, the shifted average
+    at ``Y=T^2`` and ``H=T`` expands into four variables of length
+    ``T`` with ``c*d-a*b`` of length ``T``.  On
+    ``g=gcd(a,c)=T^kappa`` the primitive slopes and shift quotient
+    have length ``T^(1-kappa)``, while the determinant-line parameter
+    has length ``T^kappa``.  The layer cardinality is ``T^(3-kappa)``.
+
+    The local target ``T^2`` therefore needs ``T^(1-kappa)``.  This
+    is exactly square-root cancellation in the pair of primitive
+    slopes, or equivalently complete cancellation in the shift
+    quotient.  Neither estimate is asserted here.
+    """
+    kappa = F(gcd_exponent)
+    if kappa < 0 or kappa > 1:
+        raise ValueError("gcd_exponent must lie in [0,1]")
+    primitive = F(1) - kappa
+    raw = F(3) - kappa
+    target = F(2)
+    required = raw - target
+    outer_square_root = (F(2) * primitive) / 2
+    return HardVertexFourMobiusDeterminantAudit(
+        ambient_product_exponent=F(2),
+        shift_exponent=F(1),
+        gcd_exponent=kappa,
+        primitive_slope_exponent=primitive,
+        shift_quotient_exponent=primitive,
+        line_parameter_exponent=kappa,
+        raw_gcd_layer_exponent=raw,
+        local_target_exponent=target,
+        required_power_saving=required,
+        outer_slope_pair_square_root_saving=outer_square_root,
+        shift_quotient_full_cancellation_saving=primitive,
+        unimodular_line_parameterization_exact=True,
+        outer_square_root_is_exponent_critical=(
+            outer_square_root == required
+        ),
+        mrtt_supplies_only_logarithmic_saving=True,
+        top_face_contains_fixed_shift_chowla=(kappa == 1),
+        top_face_logarithmic_saving_proved=False,
+        published_centered_outer_mobius_spectral_bound=False,
+        physical_ratio_kernel_restored=False,
+        hard_vertex_determinant_estimate_proved=False,
+    )
+
+
 def inverse_zeta_variance_zero_free_audit(
 ) -> InverseZetaVarianceZeroFreeAudit:
     """Record the zero-free consequence of the strong sufficient gate.
@@ -13844,6 +13992,40 @@ def main() -> None:
         "physical="
         f"{mrtt_signed.physical_gcd_layer_adapter_verified},"
         f"core={mrtt_signed.whole_strict_power_core_covered}"
+    )
+    four_mobius = hard_vertex_four_mobius_determinant_audit(
+        gcd_exponent=F(1, 2)
+    )
+    print(
+        "large_q_transition: hard_vertex_four_mobius="
+        f"ambient={_fmt(four_mobius.ambient_product_exponent)},"
+        f"shift={_fmt(four_mobius.shift_exponent)},"
+        f"gcd={_fmt(four_mobius.gcd_exponent)},"
+        f"primitive={_fmt(four_mobius.primitive_slope_exponent)},"
+        "shift_quotient="
+        f"{_fmt(four_mobius.shift_quotient_exponent)},"
+        f"line={_fmt(four_mobius.line_parameter_exponent)},"
+        f"raw={_fmt(four_mobius.raw_gcd_layer_exponent)},"
+        f"target={_fmt(four_mobius.local_target_exponent)},"
+        f"required={_fmt(four_mobius.required_power_saving)},"
+        "outer_sqrt="
+        f"{_fmt(four_mobius.outer_slope_pair_square_root_saving)},"
+        "shift_full="
+        f"{_fmt(four_mobius.shift_quotient_full_cancellation_saving)},"
+        "unimodular="
+        f"{four_mobius.unimodular_line_parameterization_exact},"
+        "critical="
+        f"{four_mobius.outer_square_root_is_exponent_critical},"
+        "mrtt_log_only="
+        f"{four_mobius.mrtt_supplies_only_logarithmic_saving},"
+        "top_chowla="
+        f"{four_mobius.top_face_contains_fixed_shift_chowla},"
+        "top_log="
+        f"{four_mobius.top_face_logarithmic_saving_proved},"
+        "published_spectral="
+        f"{four_mobius.published_centered_outer_mobius_spectral_bound},"
+        f"physical={four_mobius.physical_ratio_kernel_restored},"
+        f"proved={four_mobius.hard_vertex_determinant_estimate_proved}"
     )
     zero_free = inverse_zeta_variance_zero_free_audit()
     print(
