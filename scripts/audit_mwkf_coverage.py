@@ -509,6 +509,37 @@ class TransitionFactorSquareGeometryAudit:
 
 
 @dataclass(frozen=True)
+class TransitionNonzeroGammaShellAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    a_exponent: Fraction
+    determinant_exponent: Fraction
+    determinant_exponent_range: tuple[Fraction, Fraction]
+    s_gcd_exponent: Fraction
+    a_gcd_exponent: Fraction
+    s_gcd_divides_determinant: bool
+    a_gcd_divides_determinant: bool
+    common_b_cross_relation_exact: bool
+    lcm_modulus_exponent: Fraction
+    b_completion_dual_exponent: Fraction
+    primitive_a_step_exponent: Fraction
+    determinant_orbit_length_exponent: Fraction
+    determinant_orbit_parametrization_exact: bool
+    current_cluster_square_bound_exponent: Fraction
+    cluster_square_bound_independently_proved: bool
+    type_ii_square_target_exponent: Fraction
+    required_joint_saving_exponent: Fraction
+    reciprocity_modulus_exponent: Fraction
+    reciprocity_strictly_reduces_modulus: bool
+    both_s_mobius_weights_retained: bool
+    product_frequency_pair_retained: bool
+    coupled_kernel_retained: bool
+    complete_nonzero_shell_estimate_required: bool
+    complete_nonzero_shell_estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2483,6 +2514,145 @@ def transition_factor_square_geometry_audit(
         full_zero_geometry_closes=margin > 0,
         nonzero_geometric_determinant_gate_required=True,
         nonzero_geometric_determinant_gate_proved=False,
+        published_coverage=False,
+    )
+
+
+def factor_determinant_orbit_parameter(
+    *,
+    a1: int,
+    a2: int,
+    s1: int,
+    s2: int,
+    other_s1: int,
+    other_s2: int,
+) -> int | None:
+    """Recover the exact affine-orbit parameter at fixed determinant.
+
+    Put d=gcd(a1,a2) and u_i=a_i/d.  Two integer pairs have the same
+    determinant a1*s2-a2*s1 exactly when their difference is
+    t*(u1,u2) for an integer t.  None records a different determinant
+    or inconsistent coordinate quotients.
+    """
+    if min(a1, a2) <= 0:
+        raise ValueError("factor entries must be positive")
+    determinant = a1 * s2 - a2 * s1
+    other_determinant = a1 * other_s2 - a2 * other_s1
+    if determinant != other_determinant:
+        return None
+
+    common = gcd(a1, a2)
+    u1 = a1 // common
+    u2 = a2 // common
+    delta_s1 = other_s1 - s1
+    delta_s2 = other_s2 - s2
+    if delta_s1 % u1 != 0 or delta_s2 % u2 != 0:
+        return None
+    t1 = delta_s1 // u1
+    t2 = delta_s2 // u2
+    return t1 if t1 == t2 else None
+
+
+def signed_reciprocity_phase_identity(*, w: int, s: int, n: int) -> bool:
+    """Verify reciprocity after moving the modulus from s to abs(w)."""
+    if w == 0 or s <= 0:
+        raise ValueError("reciprocity requires w nonzero and s positive")
+    modulus_w = abs(w)
+    if gcd(modulus_w, s) != 1:
+        raise ValueError("reciprocity requires coprime entries")
+    sign_w = 1 if w > 0 else -1
+    inverse_w_mod_s = pow(w, -1, s)
+    inverse_s_mod_w = pow(s, -1, modulus_w)
+    left = Fraction(-n * inverse_w_mod_s, s)
+    right = (
+        Fraction(sign_w * n * inverse_s_mod_w, modulus_w)
+        - Fraction(sign_w * n, modulus_w * s)
+    )
+    return (left - right).denominator == 1
+
+
+def transition_nonzero_gamma_shell_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+    determinant_exponent: Fraction,
+    s_gcd_exponent: Fraction,
+    a_gcd_exponent: Fraction,
+) -> TransitionNonzeroGammaShellAudit:
+    """Record the exact final nonzero-Gamma factor-square shell.
+
+    Here Gamma=a1*s2-a2*s1 and w_i=a_i*b-k*s_i.  The two equations
+    imply a2*w1-a1*w2=k*Gamma.  Both gcds divide Gamma.  At fixed
+    a1,a2,Gamma, the s-solutions form the primitive affine orbit with
+    step (a1/d_a,a2/d_a); the two w windows shorten its parameter
+    length to D/(A/d_a).
+
+    The baseline square exponent is the square of the proved
+    reciprocity-cluster bound, divided by the Cauchy length B.  The
+    returned positive gap is the additional joint saving required from
+    the nonzero determinant average; it is not asserted to be proved.
+    """
+    distance = F(distance)
+    b_exponent = F(b_exponent)
+    determinant_exponent = F(determinant_exponent)
+    s_gcd_exponent = F(s_gcd_exponent)
+    a_gcd_exponent = F(a_gcd_exponent)
+    factor = transition_far_shell_factor_box_audit(
+        box,
+        distance=distance,
+        b_exponent=b_exponent,
+    )
+    determinant_max = factor.a_exponent + distance
+    if determinant_exponent < 0 or determinant_exponent > determinant_max:
+        raise ValueError("determinant shell exceeds the exact support")
+    if s_gcd_exponent < 0 or s_gcd_exponent > min(
+        box.sigma,
+        determinant_exponent,
+    ):
+        raise ValueError("s-gcd shell cannot divide the determinant")
+    if a_gcd_exponent < 0 or a_gcd_exponent > min(
+        factor.a_exponent,
+        determinant_exponent,
+    ):
+        raise ValueError("a-gcd shell cannot divide the determinant")
+
+    lcm_modulus = 2 * box.sigma - s_gcd_exponent
+    b_dual = max(F(0), lcm_modulus - b_exponent)
+    primitive_step = factor.a_exponent - a_gcd_exponent
+    orbit_length = max(F(0), distance - primitive_step)
+    cluster_square = (
+        2 * factor.unsquared_cluster_bound_exponent - b_exponent
+    )
+    target = factor.type_ii_square_target_exponent
+
+    return TransitionNonzeroGammaShellAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        a_exponent=factor.a_exponent,
+        determinant_exponent=determinant_exponent,
+        determinant_exponent_range=(F(0), determinant_max),
+        s_gcd_exponent=s_gcd_exponent,
+        a_gcd_exponent=a_gcd_exponent,
+        s_gcd_divides_determinant=True,
+        a_gcd_divides_determinant=True,
+        common_b_cross_relation_exact=True,
+        lcm_modulus_exponent=lcm_modulus,
+        b_completion_dual_exponent=b_dual,
+        primitive_a_step_exponent=primitive_step,
+        determinant_orbit_length_exponent=orbit_length,
+        determinant_orbit_parametrization_exact=True,
+        current_cluster_square_bound_exponent=cluster_square,
+        cluster_square_bound_independently_proved=False,
+        type_ii_square_target_exponent=target,
+        required_joint_saving_exponent=cluster_square - target,
+        reciprocity_modulus_exponent=distance,
+        reciprocity_strictly_reduces_modulus=distance < box.sigma,
+        both_s_mobius_weights_retained=True,
+        product_frequency_pair_retained=True,
+        coupled_kernel_retained=True,
+        complete_nonzero_shell_estimate_required=True,
+        complete_nonzero_shell_estimate_proved=False,
         published_coverage=False,
     )
 
@@ -5472,6 +5642,23 @@ def main() -> None:
         "square_target=2497/750,zero_margin=247/750 "
         "cross_relation=True primitive_zero=True n_offdiag=True "
         "cluster_l2=True zero_closes=True nonzero_gate=True "
+        "proved=False covered=False"
+    )
+    transition_nonzero_gamma = transition_nonzero_gamma_shell_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        s_gcd_exponent=F(0),
+        a_gcd_exponent=F(0),
+    )
+    print(
+        "large_q_transition: nonzero_gamma_shell="
+        "theta=1,beta=2/3,xi=4/3,gamma=0,alpha=0,"
+        "lcm=2,bdual=4/3,astep=1/3,orbit=2/3,"
+        "cluster_square=13/3,target=2497/750,required=251/250 "
+        "reciprocity_mod=1,reduces=False two_mu=True n_pair=True "
+        "coupled=True exact_orbit=True square_proved=False required_gate=True "
         "proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(

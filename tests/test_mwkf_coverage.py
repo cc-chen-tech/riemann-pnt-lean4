@@ -922,6 +922,87 @@ def test_transition_factor_square_full_zero_geometry_closes() -> None:
     assert not worst.published_coverage
 
 
+def test_transition_nonzero_gamma_shell_has_exact_orbit_and_gate() -> None:
+    """The last Gram gate has an exact determinant orbit and power ledger."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_nonzero_gamma_shell_audit",
+        None,
+    )
+    orbit = getattr(
+        coverage_audit,
+        "factor_determinant_orbit_parameter",
+        None,
+    )
+    reciprocity = getattr(
+        coverage_audit,
+        "signed_reciprocity_phase_identity",
+        None,
+    )
+    assert adapter is not None, "nonzero-Gamma shell adapter is missing"
+    assert orbit is not None, "factor determinant-orbit helper is missing"
+    assert reciprocity is not None, "signed reciprocity helper is missing"
+
+    # Both pairs have determinant 7 for (a1,a2)=(6,9).  Their
+    # difference is one primitive step (2,3).
+    assert orbit(
+        a1=6,
+        a2=9,
+        s1=5,
+        s2=11,
+        other_s1=7,
+        other_s2=14,
+    ) == 1
+    assert orbit(
+        a1=6,
+        a2=9,
+        s1=5,
+        s2=11,
+        other_s1=9,
+        other_s2=17,
+    ) == 2
+    assert orbit(
+        a1=6,
+        a2=9,
+        s1=5,
+        s2=11,
+        other_s1=6,
+        other_s2=12,
+    ) is None
+    for w, s, n in ((3, 11, 7), (-3, 11, 7), (8, 13, -5)):
+        assert reciprocity(w=w, s=s, n=n)
+
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    generic_top = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        s_gcd_exponent=F(0),
+        a_gcd_exponent=F(0),
+    )
+
+    assert generic_top.determinant_exponent_range == (F(0), F(4, 3))
+    assert generic_top.s_gcd_divides_determinant
+    assert generic_top.a_gcd_divides_determinant
+    assert generic_top.lcm_modulus_exponent == F(2)
+    assert generic_top.b_completion_dual_exponent == F(4, 3)
+    assert generic_top.primitive_a_step_exponent == F(1, 3)
+    assert generic_top.determinant_orbit_length_exponent == F(2, 3)
+    assert generic_top.current_cluster_square_bound_exponent == F(13, 3)
+    assert not generic_top.cluster_square_bound_independently_proved
+    assert generic_top.type_ii_square_target_exponent == F(2497, 750)
+    assert generic_top.required_joint_saving_exponent == F(251, 250)
+    assert generic_top.reciprocity_modulus_exponent == F(1)
+    assert not generic_top.reciprocity_strictly_reduces_modulus
+    assert generic_top.complete_nonzero_shell_estimate_required
+    assert not generic_top.complete_nonzero_shell_estimate_proved
+    assert not generic_top.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2294,6 +2375,15 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "proved=False covered=False"
     ) in output
     assert (
+        "large_q_transition: nonzero_gamma_shell="
+        "theta=1,beta=2/3,xi=4/3,gamma=0,alpha=0,"
+        "lcm=2,bdual=4/3,astep=1/3,orbit=2/3,"
+        "cluster_square=13/3,target=2497/750,required=251/250 "
+        "reciprocity_mod=1,reduces=False two_mu=True n_pair=True "
+        "coupled=True exact_orbit=True square_proved=False required_gate=True "
+        "proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2703,5 +2793,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\Gamma=a_1s_2-a_2s_1",
         r"a_2w_1-a_1w_2=k\Gamma",
         "transition_factor_square_geometry_audit",
+        "### 4.42 Exact nonzero determinant shells and affine orbit",
+        r"s_i=s_i^{(0)}+u_i t",
+        r"2\theta-1+\frac1{250}",
+        "transition_nonzero_gamma_shell_audit",
     ):
         assert marker in text

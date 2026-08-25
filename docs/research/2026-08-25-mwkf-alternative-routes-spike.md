@@ -5141,6 +5141,188 @@ The adapter transition_factor_square_geometry_audit records
 nonzero_geometric_determinant_gate_proved=False and
 published_coverage=False.
 
+### 4.42 Exact nonzero determinant shells and affine orbit
+
+Dyadically decompose the remaining range (4.351) by
+
+\[
+ |\Gamma|\asymp T^\xi,\qquad
+ (s_1,s_2)\asymp T^\gamma,\qquad
+ (a_1,a_2)\asymp T^\alpha.
+\tag{4.352}
+\]
+
+The exact support and the two determinant divisibilities give
+
+\[
+\boxed{
+\begin{aligned}
+ 0&\le \xi\le 1-\beta+\theta,\\
+ 0&\le \gamma\le\min(1,\xi),\\
+ 0&\le \alpha\le\min(1-\beta,\xi).
+\end{aligned}}
+\tag{4.353}
+\]
+
+Indeed both \((s_1,s_2)\) and \((a_1,a_2)\) divide
+\(\Gamma=a_1s_2-a_2s_1\).  Write
+
+\[
+ d_a=(a_1,a_2),\qquad a_i=d_au_i,\qquad (u_1,u_2)=1.
+\tag{4.354}
+\]
+
+For fixed \(a_1,a_2,\Gamma\), choose one solution
+\((s_1^{(0)},s_2^{(0)})\) of
+
+\[
+ u_1s_2-u_2s_1=\Gamma/d_a.
+\tag{4.355}
+\]
+
+Every other integral solution, and no other pair, is
+
+\[
+ \boxed{s_i=s_i^{(0)}+u_i t\quad(i=1,2),\qquad t\in\mathbb Z.}
+\tag{4.356}
+\]
+
+Along this orbit the common-\(b\) equations become
+
+\[
+ w_i=w_i^{(0)}-ku_it.
+\tag{4.357}
+\]
+
+Since \(u_i\asymp T^{1-\beta-\alpha}\), the two windows
+\(|w_i|\asymp T^\theta\) restrict the orbit parameter to an interval
+of length
+
+\[
+ \ll 1+T^{\,\theta-1+\beta+\alpha}.
+\tag{4.358}
+\]
+
+This is the exact complementary-divisor parametrization of the
+geometric part; no second free \(s\)-variable remains.
+
+There are two simultaneous exact descriptions of the phase.  First,
+with \(g_s=(s_1,s_2)\) and \(\ell=[s_1,s_2]\), (4.305) gives
+
+\[
+ \ell\asymp T^{2-\gamma},\qquad
+ \ell/B=T^{2-\gamma-\beta}.
+\tag{4.359}
+\]
+
+Second, put \(\epsilon_i=\operatorname{sgn}(w_i)\).  Signed additive
+reciprocity gives
+
+\[
+\boxed{
+ e\!\left(-\frac{n_i\overline{w_i}}{s_i}\right)
+ =
+ e\!\left(\frac{\epsilon_i n_i\overline{s_i}}{|w_i|}\right)
+ e\!\left(-\frac{\epsilon_i n_i}{|w_i|s_i}\right).}
+\tag{4.360}
+\]
+
+Thus (4.360) moves each reciprocal modulus from \(T\) to
+\(T^\theta\).  This is a strict conductor reduction when
+\(\theta<1\), but gives no reduction on the top face \(\theta=1\).
+The Archimedean factors in (4.360) remain part of the coupled weight
+and cannot be deleted.
+
+For completeness, define the last local sum by
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal G_{\theta,\beta;\xi,\gamma,\alpha}:={}&
+ \sum_{\substack{b\asymp T^\beta,\ \mu(b)^2=1\\
+                  a_i\asymp T^{1-\beta},\ s_i\asymp T\\
+                  w_i=a_ib-ks_i,\ |w_i|\asymp T^\theta\\
+                  |\Gamma|\asymp T^\xi,\ \Gamma\ne0\\
+                  (s_1,s_2)\asymp T^\gamma\\
+                  (a_1,a_2)\asymp T^\alpha\\
+                  (q,a_1a_2bs_1s_2)=1\\
+                  (a_ib,s_i)=1}}
+ c_U(a_1)c_U(a_2)\mu(s_1)\mu(s_2)\\
+ &\quad\times
+ \sum_{n_1,n_2}
+ \nu_1(n_1)\overline{\nu_2(n_2)}
+ \mathscr W_{q,k,\theta,\beta}
+   (\boldsymbol a,\boldsymbol s,b,\boldsymbol n)\\
+ &\quad\times
+ e\!\left(-\frac{n_1\overline{w_1}}{s_1}
+           +\frac{n_2\overline{w_2}}{s_2}\right).
+\end{aligned}}
+\tag{4.361}
+\]
+
+The \(n_i=h_i\delta_i\) divisor-convolution coefficients, both
+Möbius weights, all shell cutoffs, both endpoint tapers, and the full
+coupled transform kernel are included in (4.361).  The estimate needed
+uniformly on every admissible shell is
+
+\[
+ \boxed{
+ |\mathcal G_{\theta,\beta;\xi,\gamma,\alpha}|
+ \ll_{\varepsilon,W}
+ T^{\,4-\beta-1/250+\varepsilon}.}
+\tag{4.362}
+\]
+
+The proved direct reciprocal-cluster bound for one factor box is
+\(T^{3/2+\theta+\varepsilon}\).  For comparison with the sufficient
+Cauchy gate, its square-level exponent ledger, normalized by the
+Cauchy length \(B=T^\beta\), is
+
+\[
+ T^{\,3+2\theta-\beta+\varepsilon}.
+\tag{4.363}
+\]
+
+Equation (4.363) is not an independent bound for
+\(\sum_b|\mathcal A_b|^2\): a bound for the signed \(b\)-sum cannot be
+reversed through Cauchy.  Rather, it is the baseline that a
+Cauchy-compatible reproduction of the cluster argument would have to
+improve.  On that route the precise additional joint saving is
+
+\[
+\boxed{
+ \left(3+2\theta-\beta\right)
+ -\left(4-\beta-\frac1{250}\right)
+ =2\theta-1+\frac1{250}.}
+\tag{4.364}
+\]
+
+At the top shell
+\[
+ (\theta,\beta,\xi,\gamma,\alpha)
+ =\left(1,\frac23,\frac43,0,0\right),
+\tag{4.365}
+\]
+the affine-orbit length is \(T^{2/3}\), the lcm modulus is \(T^2\),
+the \(b\)-completion dual length is \(T^{4/3}\), and the missing
+saving is
+
+\[
+ \boxed{\frac{251}{250}.}
+\tag{4.366}
+\]
+
+Thus separate \(b\)-completion and the conductor change (4.360) do
+not close the top shell.  A proof of (4.362) must be genuinely joint in
+the determinant orbit, the two \(\mu(s_i)\) weights, and the
+product-frequency pair.  The adapter
+transition_nonzero_gamma_shell_audit records (4.352)--(4.366), while
+factor_determinant_orbit_parameter and
+signed_reciprocity_phase_identity verify (4.356) and (4.360) on exact
+finite fixtures.  It keeps cluster_square_bound_independently_proved=False,
+complete_nonzero_shell_estimate_proved=False, and
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
