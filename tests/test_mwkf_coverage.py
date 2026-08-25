@@ -2157,6 +2157,47 @@ def test_transition_variance_is_a_mixed_mobius_fourth_moment_gate() -> None:
     assert top.symmetric_top_face_is_mobius_fourth_moment
 
 
+def test_generic_large_values_do_not_prove_the_mobius_fourth_moment() -> None:
+    """Catch any adapter that spends a logarithmic theorem as a power saving."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_mobius_large_value_audit",
+        None,
+    )
+    assert adapter is not None, "Möbius large-value adapter is missing"
+
+    boundary = adapter(amplitude_exponent=F(1, 2))
+    assert boundary.unnormalized_fourth_moment_target_exponent == F(3)
+    assert boundary.required_large_value_count_exponent == F(1)
+    assert boundary.classical_large_value_count_exponent == F(1)
+    assert boundary.classical_fourth_contribution_exponent == F(3)
+    assert boundary.best_published_fourth_contribution_exponent == F(3)
+    assert boundary.best_published_power_deficit == F(0)
+    assert boundary.power_boundary_covered
+
+    medium = adapter(amplitude_exponent=F(2, 3))
+    assert medium.required_large_value_count_exponent == F(1, 3)
+    assert medium.classical_large_value_count_exponent == F(2, 3)
+    assert medium.classical_fourth_contribution_exponent == F(10, 3)
+    assert medium.guth_maynard_term1_contribution_exponent == F(10, 3)
+    assert medium.guth_maynard_term2_contribution_exponent == F(18, 5)
+    assert medium.guth_maynard_term3_contribution_exponent == F(17, 5)
+    assert medium.guth_maynard_fourth_contribution_exponent == F(18, 5)
+    assert medium.best_published_fourth_contribution_exponent == F(10, 3)
+    assert medium.best_published_power_deficit == F(1, 3)
+    assert medium.menon_positive_power_saving_exponent == F(0)
+    assert not medium.mobius_large_value_theorem_proved
+    assert not medium.power_boundary_covered
+
+    high = adapter(amplitude_exponent=F(4, 5))
+    assert high.required_large_value_count_exponent == F(-1, 5)
+    assert high.required_count_exponent_is_negative
+    assert high.componentwise_fourth_moment_pointwise_threshold == F(3, 4)
+    assert high.best_published_power_deficit == F(3, 5)
+    assert not high.original_signed_dcv_requires_componentwise_large_values
+    assert not high.whole_line_family_covered
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(

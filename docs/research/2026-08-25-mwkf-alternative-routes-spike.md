@@ -7889,6 +7889,129 @@ published_mixed_fourth_moment_proved=False and
 whole_line_family_covered=False.  Thus Section 4.61 changes the analytic
 language of the obstruction, but does not declare M4\(_\gamma\) proved.
 
+### 4.62 Exact amplitude ledger for the stronger top fourth-moment route
+
+The sufficient componentwise estimate (4.562) can itself be tested against
+the strongest generic large-value inputs without confusing it with the
+original signed DCV kernel.  Absorb the factor \(x^{-1/2}\) into the smooth
+weight and write, exactly,
+
+\[
+ P_{T,U}(t)=T^{-1/2}D_U(t),\qquad
+ D_U(t):=\sum_{T<n\le2T}\mu(n)\widetilde U(n/T)n^{-it},
+ \quad \widetilde U(x)=x^{-1/2}U(x).
+\tag{4.565}
+\]
+
+Thus (4.562) asks for the unnormalised fourth moment
+
+\[
+ \boxed{\int_{\mathbb R}|D_U(t)|^4\Omega(t/T)\,dt
+ \ll_{U,W}T^3(\log T)^{1+o(1)}.}
+\tag{4.566}
+\]
+
+Let \(R_\mu(V;T,U)\) be the maximum cardinality of a one-separated set
+\(\mathcal T\) in an interval of length \(O(T)\) on which
+\(|D_U(t)|\ge V\).  After removing the harmless phase \(T^{-it}\), the
+frequencies of \(D_U\) lie in the fixed interval \([0,\log2]\).  The
+Plancherel--Pólya sampling inequality for exponential polynomials,
+followed by dyadic layer cake, shows that (4.566) follows from
+
+\[
+ \sum_{V\ {m dyadic}}R_\mu(V;T,U)V^4
+ \ll T^3(\log T)^{1+o(1)}.
+\tag{4.567}
+\]
+
+For a fixed amplitude \(V=T^\sigma\), \(1/2\le\sigma\le1\), the exact
+power required by (4.567) is therefore
+
+\[
+ \boxed{R_\mu(T^\sigma;T,U)
+ \ll T^{3-4\sigma+o(1)}.}
+\tag{MLV\(_\sigma\)}
+\]
+
+At \(N=T\), the classical Montgomery--Halász--Huxley large-value bound
+has total exponent
+
+\[
+ R(V)\ll T^{2+o(1)}V^{-2},
+\tag{4.568}
+\]
+
+throughout \(\sigma\ge1/2\); its companion minimum is never larger on
+this range.  Multiplying by \(V^4\) gives fourth-moment exponent
+
+\[
+ \boxed{2+2\sigma,}
+\tag{4.569}
+\]
+
+and hence the exact deficit
+
+\[
+ \boxed{(2+2\sigma)-3=2\sigma-1.}
+\tag{4.570}
+\]
+
+Guth--Maynard, arXiv:2405.20552v2, Theorem 1.1, gives at \(N=T\)
+
+\[
+ R(V)\ll T^{o(1)}
+ \left(T^2V^{-2}+T^{18/5}V^{-4}+T^{17/5}V^{-4}\right).
+\tag{4.571}
+\]
+
+After multiplication by \(V^4\), its three contribution exponents are
+
+\[
+ \boxed{2+2\sigma,\qquad\frac{18}{5},\qquad\frac{17}{5}.}
+\tag{4.572}
+\]
+
+Taking the better of (4.568) and (4.571) leaves (4.569) unchanged.  For
+example, at \(\sigma=2/3\) the required count exponent is \(1/3\), the
+classical count exponent is \(2/3\), and the best fourth-moment exponent
+is \(10/3\), leaving the fixed deficit \(1/3\).  The Guth--Maynard bound
+alone has exponent \(18/5\) there and leaves deficit \(3/5\).
+
+Menon's Theorems 1.1 and 1.5 give logarithmic decay for Möbius short
+intervals and averaged Chowla correlations.  They contribute exponent zero
+to (4.570), not a positive power.  In fact the paper identifies
+\(1/\log H\) as the effective limit of the Matomäki--Radziwiłł averaged
+shift method, so it cannot fill any interval \(\sigma>1/2\).
+
+There is also a sharp pointwise warning for a nonnegative \(\Omega\) that
+is bounded below on a fixed subinterval of \([1,2]\).  When
+\(\sigma>3/4\), the
+right side of MLV\(_\sigma\) has negative exponent.  The sampling
+inequality then forces the large-value set to be empty for all sufficiently
+large \(T\), up to the displayed subpower slack.  Thus a uniform proof of
+(4.566) entails the pointwise threshold
+
+\[
+ \boxed{\sup_{T\le t\le2T}|D_U(t)|
+ \le T^{3/4+o(1)}.}
+\tag{4.573}
+\]
+
+No audited theorem proves (4.573) for Möbius coefficients.  This does not
+turn (4.573) into a necessary consequence of the original signed line
+family: Section 4.61 already showed that DCV is a signed superposition and
+does not imply each separated fourth moment.  The correct routing decision
+is therefore to reject generic/componentwise large values as a closure of
+DCV, while retaining MLV\(_\sigma\) as the exact theorem needed if that
+stronger route is pursued.
+
+The adapter transition_mobius_large_value_audit implements
+(4.566)--(4.572) with `Fraction`.  It records the exact deficit
+\(2\sigma-1\), the threshold \(3/4\), and Menon's zero positive-power
+saving.  It sets mobius_large_value_theorem_proved=False,
+original_signed_dcv_requires_componentwise_large_values=False, and
+whole_line_family_covered=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

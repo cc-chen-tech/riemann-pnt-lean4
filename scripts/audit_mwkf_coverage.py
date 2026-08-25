@@ -1007,6 +1007,29 @@ class TransitionMobiusDirichletFourthMomentAudit:
 
 
 @dataclass(frozen=True)
+class TransitionMobiusLargeValueAudit:
+    amplitude_exponent: Fraction
+    unnormalized_fourth_moment_target_exponent: Fraction
+    required_large_value_count_exponent: Fraction
+    required_count_exponent_is_negative: bool
+    classical_large_value_count_exponent: Fraction
+    classical_fourth_contribution_exponent: Fraction
+    guth_maynard_term1_contribution_exponent: Fraction
+    guth_maynard_term2_contribution_exponent: Fraction
+    guth_maynard_term3_contribution_exponent: Fraction
+    guth_maynard_fourth_contribution_exponent: Fraction
+    best_published_fourth_contribution_exponent: Fraction
+    best_published_power_deficit: Fraction
+    menon_positive_power_saving_exponent: Fraction
+    componentwise_fourth_moment_pointwise_threshold: Fraction
+    mobius_large_value_theorem_proved: bool
+    power_boundary_covered: bool
+    original_signed_dcv_requires_componentwise_large_values: bool
+    whole_line_family_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -5024,6 +5047,63 @@ def transition_mobius_dirichlet_fourth_moment_audit(
     )
 
 
+def transition_mobius_large_value_audit(
+    *,
+    amplitude_exponent: Fraction,
+) -> TransitionMobiusLargeValueAudit:
+    """Compare the top Möbius fourth-moment tail with published bounds.
+
+    For the unnormalised polynomial of length ``N=T``, a value
+    ``V=T^sigma`` contributes ``R(V)V^4``.  The desired normalised
+    fourth moment ``O(T log^(1+o(1)) T)`` is the unnormalised target
+    ``T^(3+o(1))``, so it asks for ``R(V)<=T^(3-4 sigma+o(1))``.
+
+    The classical first large-value term is ``T^2 V^-2``.  At ``N=T``,
+    Guth--Maynard Theorem 1.1 contributes after multiplication by
+    ``V^4`` the three exponents ``2+2 sigma``, ``18/5``, and ``17/5``.
+    Menon's short-interval estimates save logarithms only, hence zero
+    on this positive-power ledger.
+    """
+    sigma = F(amplitude_exponent)
+    if sigma < F(1, 2) or sigma > F(1):
+        raise ValueError("amplitude exponent must lie in [1/2,1]")
+    target = F(3)
+    required_count = target - F(4) * sigma
+    classical_count = F(2) - F(2) * sigma
+    classical_contribution = classical_count + F(4) * sigma
+    gm1 = F(2) + F(2) * sigma
+    gm2 = F(18, 5)
+    gm3 = F(17, 5)
+    gm_contribution = max(gm1, gm2, gm3)
+    best = min(classical_contribution, gm_contribution)
+    deficit = max(F(0), best - target)
+    return TransitionMobiusLargeValueAudit(
+        amplitude_exponent=sigma,
+        unnormalized_fourth_moment_target_exponent=target,
+        required_large_value_count_exponent=required_count,
+        required_count_exponent_is_negative=required_count < 0,
+        classical_large_value_count_exponent=classical_count,
+        classical_fourth_contribution_exponent=classical_contribution,
+        guth_maynard_term1_contribution_exponent=gm1,
+        guth_maynard_term2_contribution_exponent=gm2,
+        guth_maynard_term3_contribution_exponent=gm3,
+        guth_maynard_fourth_contribution_exponent=gm_contribution,
+        best_published_fourth_contribution_exponent=best,
+        best_published_power_deficit=deficit,
+        menon_positive_power_saving_exponent=F(0),
+        componentwise_fourth_moment_pointwise_threshold=F(3, 4),
+        mobius_large_value_theorem_proved=False,
+        power_boundary_covered=deficit == 0,
+        original_signed_dcv_requires_componentwise_large_values=False,
+        whole_line_family_covered=False,
+        source=(
+            "Classical Montgomery-Halasz-Huxley large values; "
+            "Guth--Maynard, arXiv:2405.20552v2, Theorem 1.1; and "
+            "Menon, arXiv:2607.15574v1, Theorems 1.1 and 1.5."
+        ),
+    )
+
+
 def h_poisson_subbox_scales(
     box: ExponentBox,
     *,
@@ -8424,6 +8504,17 @@ def main() -> None:
         "scaled_log_inversion=True,zero_compact_exclusion=False,coprimality=True,"
         "dcv_superposition=True,uniform_sufficient=True,"
         "dcv_implies_components=False,published=False,covered=False"
+    )
+    transition_large_values = transition_mobius_large_value_audit(
+        amplitude_exponent=F(2, 3),
+    )
+    print(
+        "large_q_transition: mobius_large_values="
+        "sigma=2/3,target=3,required_count=1/3,classical_count=2/3,"
+        "classical_moment=10/3,gm1=10/3,gm2=18/5,gm3=17/5,"
+        "gm_moment=18/5,best=10/3,deficit=1/3,menon_power=0,"
+        "pointwise_threshold=3/4,mobius_theorem=False,"
+        "signed_dcv_requires_components=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
