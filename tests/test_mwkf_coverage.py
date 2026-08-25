@@ -234,6 +234,115 @@ def test_centered_resonance_collar_gains_twice_the_cutoff_slack() -> None:
     assert scales.nonempty_collar
 
 
+def test_centered_resonance_log_cutoff_pays_the_full_global_ledger() -> None:
+    """Catch spending the logarithmic cutoff only once after summing shifts."""
+    adapter = getattr(
+        coverage_audit,
+        "centered_resonance_log_budget",
+        None,
+    )
+    assert adapter is not None, "centered-resonance log adapter is missing"
+
+    budget = adapter(
+        boundary_witnesses()["balanced_max_a"],
+        gate_log_power=F(8),
+    )
+    assert budget.resonance_power_cutoff == F(1)
+    assert budget.resonance_log_cutoff == F(4)
+    assert budget.near_bound_power == F(4)
+    assert budget.near_bound_log_saving == F(8)
+    assert budget.aggregation_log_loss == F(7)
+    assert budget.global_log_margin == F(1)
+    assert budget.power_matches_gate
+    assert budget.centered_completion_applicable
+    assert budget.nonempty_log_collar
+    assert budget.produces_little_o
+
+    uncentered = adapter(
+        boundary_witnesses()["r_long"],
+        gate_log_power=F(8),
+    )
+    assert not uncentered.centered_completion_applicable
+    assert not uncentered.produces_little_o
+
+    empty = adapter(
+        boundary_witnesses()["s_long"],
+        gate_log_power=F(8),
+    )
+    assert empty.centered_completion_applicable
+    assert not empty.nonempty_log_collar
+    assert not empty.produces_little_o
+
+
+def test_far_resonance_shell_has_the_exact_piecewise_power_deficit() -> None:
+    """Catch dropping the centered phase before it saturates at distance T^2."""
+    adapter = getattr(
+        coverage_audit,
+        "far_resonance_shell_scales",
+        None,
+    )
+    assert adapter is not None, "far-resonance shell adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(1): (F(-1), F(4), F(0), True),
+        F(3, 2): (F(-1, 2), F(5), F(1), False),
+        F(2): (F(0), F(6), F(2), False),
+        F(5, 2): (F(0), F(13, 2), F(5, 2), False),
+        F(3): (F(0), F(7), F(3), False),
+    }
+    for distance, want in expected.items():
+        scales = adapter(box, distance=distance)
+        assert scales.phase_amplitude == want[0]
+        assert scales.absolute_bound == want[1]
+        assert scales.required_power_saving == want[2]
+        assert scales.at_power_barrier is want[3]
+        assert scales.logarithmic_gate_target == F(4)
+
+
+def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
+    """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
+    adapter = getattr(
+        coverage_audit,
+        "averaged_chowla_shell_audit",
+        None,
+    )
+    assert adapter is not None, "averaged-Chowla shell adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    critical = adapter(box, distance=F(1), gate_log_power=F(8))
+    assert critical.required_power_saving == F(0)
+    assert critical.theorem_log_saving == F(1, 3000)
+    assert critical.required_log_saving == F(8)
+    assert critical.log_shortfall == F(23999, 3000)
+    assert not critical.theorem_applicable
+    assert critical.reasons == (
+        "joint_s_shift_frequency_coefficient",
+        "insufficient_logarithmic_saving",
+    )
+
+    power_shell = adapter(box, distance=F(3, 2), gate_log_power=F(8))
+    assert power_shell.required_power_saving == F(1)
+    assert "positive_power_deficit" in power_shell.reasons
+    assert not power_shell.theorem_applicable
+
+
+def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
+    """Catch a deterministic report which hides the narrowed residual theorem."""
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: centered_log_cutoff_power=1 "
+        "centered_log_cutoff_log=4 near_bound_log=8 "
+        "global_log_margin=1"
+    ) in output
+    assert (
+        "balanced_max_a: far_shell_required_savings="
+        "1:0,3/2:1,2:2,5/2:5/2,3:3 "
+        "mrt_critical_log_shortfall=23999/3000"
+    ) in output
+
+
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
     text = COVERAGE_NOTE.read_text()
     for marker in (

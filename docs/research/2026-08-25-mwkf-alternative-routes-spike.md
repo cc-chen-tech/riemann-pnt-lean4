@@ -574,6 +574,160 @@ still requires the pre-Cauchy two-Möbius dispersion estimate, and the
 separate \(\mathrm{TAIL}_{B,D}\) obligation remains.  It does, however,
 remove the entire near-resonance range from that new theorem.
 
+The same estimate should be matched to the logarithmic, rather than the
+power, gate.  Write \(\mathscr L=\log(2T)\).  In a double-centered box
+with \(R\ge CV\mathscr L^B\), and for \(B>7\), set
+
+\[
+ D_B:=\left(\frac{R}{CV}\right)^{1/2}\mathscr L^{-B/2}.
+\tag{4.25}
+\]
+
+Equation (4.21) now gives the exact asymptotic-level estimate
+
+\[
+ \boxed{
+ |\mathfrak D_{q,\mathrm{near}}^{(2)}(D_B)|
+ \ll_W RCV\,\mathscr L^{-B}.}
+\tag{4.26}
+\]
+
+After (2.2) and the current seven-logarithm aggregation in (2.7), the
+contribution of (4.26) to the original remainder is
+
+\[
+ \ll_W T\mathscr L^{7-B}=o_W(T).
+\tag{4.27}
+\]
+
+In the hard box,
+
+\[
+ D_B=T\mathscr L^{-B/2}.
+\tag{4.28}
+\]
+
+Thus (4.28), rather than the smaller fixed-power collar in (4.23), is the
+sharp boundary to use in the residual theorem.  The function
+centered_resonance_log_budget records (4.25)--(4.27) with exact rational
+logarithmic exponents.
+
+### 4.3 Exact far-resonance shell gate
+
+For a dyadic \(D\) with \(D_B<D\ll S\), let
+\(\mathfrak D_{q,D}^{(2)}\) denote the restriction of the exact sum
+(4.10) to
+
+\[
+ D<\Delta_s(d)\le2D.
+\tag{4.29}
+\]
+
+All coprimality, endpoint, dyadic, Möbius, and coefficient conditions in
+(4.10) remain in force.  Besides (4.16), the decay of \(\Theta\) gives
+
+\[
+ \sum_{a\ne0}|\Lambda_{r,s}(a)|
+ \le \sum_{\substack{c,v\in\mathcal C_s\\cv\ne0}}
+       |\Theta_{r,s}(c,v)|
+ \ll_W CV.
+\tag{4.30}
+\]
+
+There are \(O(D)\) admissible shift integers in (4.29) for each
+\(s\asymp S\).  Using (4.19) until its phase bound reaches one, and
+(4.30) afterwards, proves the piecewise absolute estimate
+
+\[
+ \boxed{
+ |\mathfrak D_{q,D}^{(2)}|
+ \ll_W
+ \begin{cases}
+   (CV)^2D^2,&D\le S/(CV),\\[2mm]
+   SDCV,&S/(CV)\le D\ll S.
+ \end{cases}}
+\tag{4.31}
+\]
+
+The two expressions agree at \(D=S/(CV)\).  Therefore the precise
+missing shell theorem is
+
+\[
+ \boxed{
+ \mathrm{FRSD}_{B}:\qquad
+ |\mathfrak D_{q,D}^{(2)}|
+ \ll_{B,W}RCV\,\mathscr L^{-B}
+ \quad(D_B<D\ll S),\qquad B>7.}
+\tag{4.32}
+\]
+
+Relative to (4.31), (4.32) asks for the cancellation multiplier
+
+\[
+ \mathscr L^{-B}
+ \begin{cases}
+   R/(CV D^2),&D\le S/(CV),\\[2mm]
+   R/(SD),&D\ge S/(CV).
+ \end{cases}
+\tag{4.33}
+\]
+
+At the hard box write \(D=T^\delta\).  The absolute exponent and the
+required positive-power saving exponent are exactly
+
+\[
+\begin{array}{c|c|c}
+ \text{distance range}&\text{absolute exponent}
+   &\text{required saving}\\ \hline
+ 1\le\delta\le2&2+2\delta&2\delta-2\\
+ 2\le\delta\le3&4+\delta&\delta.
+\end{array}
+\tag{4.34}
+\]
+
+In particular, \(\delta=1\) is a purely logarithmic critical face,
+\(\delta=2\) requires a two-power saving, and the largest shell
+\(\delta=3\) requires a three-power saving.  The exact-rational function
+far_resonance_shell_scales records (4.31)--(4.34).  It is only a gate:
+no existing adapter in this audit proves (4.32), because the completed
+coefficient still depends jointly on \((s,d,a)\).
+
+The shell formulation also sharpens the averaged-Chowla rejection.  At
+the critical power face \(\delta=1\), there is no positive-power deficit,
+but Matomäki--Radziwiłł--Tao's quantitative factor gives only
+
+\[
+ \mathscr L^{-1/3000}
+\tag{4.35}
+\]
+
+after absorbing its smaller
+\((\log\log D)/\log D\) term.  Taking the first integer gate \(B=8\),
+the exact logarithmic shortfall is
+
+\[
+ 8-\frac1{3000}=\frac{23999}{3000}.
+\tag{4.36}
+\]
+
+This calculation is still optimistic: the actual
+\(\Lambda_{s+d,s}(a)\) is a joint base--shift--frequency coefficient and
+is not an input allowed by that theorem.  For every \(\delta>1\), the
+positive deficits in (4.34) already rule out a logarithmic theorem even
+under this optimistic replacement.  The function
+averaged_chowla_shell_audit records both rejection mechanisms separately.
+
+The other published adapters do not improve after merely imposing
+(4.29).  The separated Bettin--Chandee comparison still has exponent
+\(67/10\) against the power target \(4\), hence deficit \(27/10\), because
+the shift restriction does not make \(\Lambda_{s+d,s}(a)\) a separated
+coefficient.  The hard-endpoint Wright Type-I and fixed-denominator
+adapters retain savings \(-45/8\) and \(-5\), respectively.  Finally,
+arXiv:2601.00292 remains excluded from the admissible inputs because its
+claimed improvement omits the reported \(L^2\) factor.  Consequently
+(4.32), with the piecewise savings (4.34), is the smallest remaining
+far-resonance analytic input in this normalization.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

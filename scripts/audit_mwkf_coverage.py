@@ -24,6 +24,7 @@ from scripts.audit_mwkf_ranges import (
 
 F = Fraction
 TARGET_SAVING = F(1, 1000)
+AGGREGATION_LOG_LOSS = F(7)
 
 
 @dataclass(frozen=True)
@@ -148,6 +149,43 @@ class CenteredResonanceScales:
     logarithmic_gate_target: Fraction
     saving: Fraction
     nonempty_collar: bool
+
+
+@dataclass(frozen=True)
+class CenteredResonanceLogBudget:
+    resonance_power_cutoff: Fraction
+    resonance_log_cutoff: Fraction
+    near_bound_power: Fraction
+    near_bound_log_saving: Fraction
+    aggregation_log_loss: Fraction
+    global_log_margin: Fraction
+    power_matches_gate: bool
+    centered_completion_applicable: bool
+    nonempty_log_collar: bool
+    produces_little_o: bool
+
+
+@dataclass(frozen=True)
+class FarResonanceShellScales:
+    distance: Fraction
+    product_frequency: Fraction
+    phase_amplitude: Fraction
+    absolute_bound: Fraction
+    logarithmic_gate_target: Fraction
+    required_power_saving: Fraction
+    at_power_barrier: bool
+
+
+@dataclass(frozen=True)
+class AveragedChowlaShellAudit:
+    distance: Fraction
+    required_power_saving: Fraction
+    theorem_log_saving: Fraction
+    required_log_saving: Fraction
+    log_shortfall: Fraction
+    theorem_applicable: bool
+    source: str
+    reasons: tuple[str, ...]
 
 
 def _positive_part(value: Fraction) -> Fraction:
@@ -518,6 +556,138 @@ def centered_resonance_scales(
     )
 
 
+def centered_resonance_log_budget(
+    box: ExponentBox,
+    *,
+    gate_log_power: Fraction,
+) -> CenteredResonanceLogBudget:
+    """Pay the logarithmic LMSD gate with the squared collar width.
+
+    With ``p=log_T(CV)``, choose
+    ``D=T^((rho-p)/2) log(2T)^(-B/2)``.  The bound
+    ``(CV)^2 D^2`` is then exactly
+    ``T^(rho+p) log(2T)^(-B)``.  The present global ledger loses seven
+    logarithms, so ``B>7`` produces ``o(T)`` after aggregation.
+    """
+    if gate_log_power < 0:
+        raise ValueError("gate_log_power must be nonnegative")
+    completion = farey_completion_scales(box)
+    product_frequency = completion.product_frequency
+    resonance_power_cutoff = (box.rho - product_frequency) / 2
+    resonance_log_cutoff = gate_log_power / 2
+    near_bound_power = (
+        2 * product_frequency + 2 * resonance_power_cutoff
+    )
+    near_bound_log_saving = 2 * resonance_log_cutoff
+    logarithmic_gate_power = (
+        completion.normalized_gate_target + TARGET_SAVING
+    )
+    power_matches_gate = near_bound_power == logarithmic_gate_power
+    global_log_margin = gate_log_power - AGGREGATION_LOG_LOSS
+    centered_completion_applicable = completion.both_coordinate_axes_empty
+    nonempty_log_collar = resonance_power_cutoff > 0
+    return CenteredResonanceLogBudget(
+        resonance_power_cutoff=resonance_power_cutoff,
+        resonance_log_cutoff=resonance_log_cutoff,
+        near_bound_power=near_bound_power,
+        near_bound_log_saving=near_bound_log_saving,
+        aggregation_log_loss=AGGREGATION_LOG_LOSS,
+        global_log_margin=global_log_margin,
+        power_matches_gate=power_matches_gate,
+        centered_completion_applicable=centered_completion_applicable,
+        nonempty_log_collar=nonempty_log_collar,
+        produces_little_o=(
+            power_matches_gate
+            and centered_completion_applicable
+            and nonempty_log_collar
+            and global_log_margin > 0
+        ),
+    )
+
+
+def far_resonance_shell_scales(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+) -> FarResonanceShellScales:
+    """Absolute ledger for ``Delta_s(d) asy T^distance``.
+
+    There are ``T^(sigma+distance)`` base/shift pairs and the completed
+    product-frequency L1 scale is ``T^p``.  Centering contributes
+    ``min(1, T^(distance+p-sigma))``.  The difference between this
+    absolute exponent and the LMSD power target is the exact cancellation
+    which a far-resonance theorem must supply on this shell.
+    """
+    if distance < 0 or distance > max(box.rho, box.sigma):
+        raise ValueError("distance exceeds the shifted-variable range")
+    completion = farey_completion_scales(box)
+    product_frequency = completion.product_frequency
+    phase_amplitude = min(
+        F(0),
+        distance + product_frequency - box.sigma,
+    )
+    absolute_bound = (
+        box.sigma
+        + distance
+        + product_frequency
+        + phase_amplitude
+    )
+    logarithmic_gate_target = (
+        completion.normalized_gate_target + TARGET_SAVING
+    )
+    return FarResonanceShellScales(
+        distance=distance,
+        product_frequency=product_frequency,
+        phase_amplitude=phase_amplitude,
+        absolute_bound=absolute_bound,
+        logarithmic_gate_target=logarithmic_gate_target,
+        required_power_saving=_positive_part(
+            absolute_bound - logarithmic_gate_target
+        ),
+        at_power_barrier=absolute_bound == logarithmic_gate_target,
+    )
+
+
+def averaged_chowla_shell_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    gate_log_power: Fraction,
+) -> AveragedChowlaShellAudit:
+    """Compare MRT's quantitative decay with one resonance shell.
+
+    For a power-sized shift interval, Theorem 1.6 gives at best the
+    ``log(X)^(-1/3000)`` term in its stated quantitative factor.  This
+    cannot meet a larger logarithmic gate, and it never pays a positive
+    power deficit.  The actual completed coefficient also depends jointly
+    on the base, shift, and product frequency, outside the theorem input.
+    """
+    if gate_log_power < 0:
+        raise ValueError("gate_log_power must be nonnegative")
+    shell = far_resonance_shell_scales(box, distance=distance)
+    theorem_log_saving = F(1, 3000)
+    log_shortfall = _positive_part(
+        gate_log_power - theorem_log_saving
+    )
+    reasons = ["joint_s_shift_frequency_coefficient"]
+    if shell.required_power_saving > 0:
+        reasons.append("positive_power_deficit")
+    elif log_shortfall > 0:
+        reasons.append("insufficient_logarithmic_saving")
+    return AveragedChowlaShellAudit(
+        distance=distance,
+        required_power_saving=shell.required_power_saving,
+        theorem_log_saving=theorem_log_saving,
+        required_log_saving=gate_log_power,
+        log_shortfall=log_shortfall,
+        theorem_applicable=False,
+        source=(
+            "Matomaki-Radziwill-Tao, arXiv:1503.05121, Theorem 1.6"
+        ),
+        reasons=tuple(reasons),
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -839,6 +1009,35 @@ def main() -> None:
             f"{name}: primary={result.route} reason={result.reason} "
             f"bcr_saving={_fmt(bcr.saving)} target={_fmt(TARGET_SAVING)}"
         )
+
+    hard = boxes["balanced_max_a"]
+    log_budget = centered_resonance_log_budget(
+        hard,
+        gate_log_power=F(8),
+    )
+    print(
+        "balanced_max_a: "
+        f"centered_log_cutoff_power={_fmt(log_budget.resonance_power_cutoff)} "
+        f"centered_log_cutoff_log={_fmt(log_budget.resonance_log_cutoff)} "
+        f"near_bound_log={_fmt(log_budget.near_bound_log_saving)} "
+        f"global_log_margin={_fmt(log_budget.global_log_margin)}"
+    )
+    distances = (F(1), F(3, 2), F(2), F(5, 2), F(3))
+    shell_savings = ",".join(
+        f"{_fmt(distance)}:"
+        f"{_fmt(far_resonance_shell_scales(hard, distance=distance).required_power_saving)}"
+        for distance in distances
+    )
+    mrt = averaged_chowla_shell_audit(
+        hard,
+        distance=F(1),
+        gate_log_power=F(8),
+    )
+    print(
+        "balanced_max_a: "
+        f"far_shell_required_savings={shell_savings} "
+        f"mrt_critical_log_shortfall={_fmt(mrt.log_shortfall)}"
+    )
 
 
 if __name__ == "__main__":
