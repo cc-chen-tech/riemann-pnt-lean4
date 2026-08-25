@@ -1470,7 +1470,7 @@ Thus S3 is closed at paper level.  Its Lean decomposition should be:
 4. an abstract nonnegative sliding-window Cauchy--Schwarz--Tonelli theorem
    proving the factor `h^2`.
 
-The first two Lean layers are now complete.  In particular,
+The first three Lean layers are now complete.  In particular,
 `SelbergGlobalLowMass.lean` instantiates only `J(1,theta)` at
 `G=delta^(-2)`, while `SelbergPhysicalThetaGaussianTail.lean` proves the
 single-term decay, the uniform theta-ray bound, the two finite mollifier
@@ -1486,10 +1486,13 @@ bound
 
 The last inequality reuses the already proved `X^4<=delta^(-1/2)` twice.
 This avoids square-root algebra from the complete Gaussian integral while
-retaining more than enough strict power saving.  The positive explicit-kernel
-assembly, whole-line Plancherel transport, and abstract absolute sliding
-window theorem remain to be formalized; S3a/S3b are therefore not yet marked
-complete in Lean.
+retaining more than enough strict power saving.  The new
+`SelbergGlobalFourierMass.lean` then assembles the residue and nonconstant
+positive half-line masses, proves the exact `y=2*pi*w` transport, reflects
+the scalar Fourier energy by reality, and applies Mathlib's `L2` Plancherel
+isometry.  Thus (S3a) is now complete in Lean.  The abstract absolute sliding
+window theorem and its Selberg specialization remain to be formalized, so
+(S3b), and hence all of S3, is not yet marked complete in Lean.
 
 ### S4. First absolute moment
 

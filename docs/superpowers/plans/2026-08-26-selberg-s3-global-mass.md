@@ -2,9 +2,9 @@
 
 > Status: paper proof complete in
 > `docs/research/2026-08-24-selberg-mainline-mathematical-audit.md`;
-> Lean implementation pending.  This plan deliberately separates the
-> arithmetic/Gaussian input from Plancherel and from the abstract sliding
-> window argument.
+> Status: Tasks 1--3 complete in Lean; Tasks 4--5 pending.  This plan
+> deliberately separates the arithmetic/Gaussian input from Plancherel and
+> from the abstract sliding window argument.
 
 **Goal:** Prove the S3 global square-mass estimate for
 `selbergCompletedMollifiedFComplex`, then derive the absolute sliding-window
