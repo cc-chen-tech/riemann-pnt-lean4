@@ -1066,6 +1066,55 @@ def test_transition_gamma_graph_energy_closes_a_strict_region() -> None:
     assert not top_small_determinant.shell_covered_unconditionally
 
 
+def test_transition_gamma_gcd_graph_energy_closes_top_subshells() -> None:
+    """The a- and s-gcd shells reduce graph degree at theta=1."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_gamma_gcd_graph_energy_audit",
+        None,
+    )
+    assert adapter is not None, "gcd-sensitive Gamma graph adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+
+    high_gcd = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        s_gcd_exponent=F(1),
+        a_gcd_exponent=F(1, 100),
+    )
+    assert high_gcd.raw_determinant_fiber_exponent == F(1)
+    assert high_gcd.gcd_reduced_fiber_exponent == F(0)
+    assert high_gcd.maximum_graph_degree_exponent == F(97, 300)
+    assert high_gcd.graph_energy_bound_exponent == F(997, 300)
+    assert high_gcd.type_ii_square_target_exponent == F(2497, 750)
+    assert high_gcd.graph_energy_target_margin == F(3, 500)
+    assert high_gcd.coverage_lhs == F(99, 100)
+    assert high_gcd.coverage_threshold == F(249, 250)
+    assert high_gcd.a_gcd_candidate_reduction_exact
+    assert high_gcd.s_gcd_fiber_reduction_exact
+    assert high_gcd.shell_covered_unconditionally
+    assert not high_gcd.published_coverage
+
+    primitive = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        s_gcd_exponent=F(0),
+        a_gcd_exponent=F(0),
+    )
+    assert primitive.gcd_reduced_fiber_exponent == F(1)
+    assert primitive.maximum_graph_degree_exponent == F(4, 3)
+    assert primitive.graph_energy_bound_exponent == F(13, 3)
+    assert primitive.graph_energy_target_margin == -F(251, 250)
+    assert not primitive.shell_covered_unconditionally
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2459,6 +2508,19 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "bound=23/6,margin=-63/125 covered=False"
     ) in output
     assert (
+        "large_q_transition: gamma_gcd_graph_top="
+        "theta=1,beta=2/3,xi=4/3,gamma=1,alpha=1/100,"
+        "raw_fiber=1,reduced_fiber=0,degree=97/300,"
+        "bound=997/300,target=2497/750,margin=3/500,"
+        "lhs=99/100,threshold=249/250 covered=True"
+    ) in output
+    assert (
+        "large_q_transition: gamma_gcd_graph_primitive="
+        "theta=1,beta=2/3,xi=4/3,gamma=0,alpha=0,"
+        "reduced_fiber=1,degree=4/3,bound=13/3,"
+        "margin=-251/250 covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2876,5 +2938,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\sum_{\{x,y\}\in E}|z_xz_y|",
         r"\theta+\lambda\le\frac{249}{250}",
         "transition_gamma_graph_energy_audit",
+        "### 4.44 Gcd-sensitive graph-degree sharpening",
+        r"\lambda_\gamma",
+        r"\theta-\alpha+\lambda_\gamma\le\frac{249}{250}",
+        "transition_gamma_gcd_graph_energy_audit",
     ):
         assert marker in text

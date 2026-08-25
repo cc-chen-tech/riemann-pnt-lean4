@@ -5462,6 +5462,109 @@ witness.  It sets shell_covered_unconditionally=True exactly on
 local graph-energy argument above rather than an external theorem.  It
 does not mark the whole transition face covered.
 
+### 4.44 Gcd-sensitive graph-degree sharpening
+
+The graph degree in (4.370) deliberately ignored the two gcd shells in
+(4.352).  They give an additional unconditional reduction.  Fix the
+first vertex \(x_1=(a_1,s_1)\).  On the shell
+
+\[
+ d_a=(a_1,a_2)\asymp T^\alpha,
+\tag{4.379}
+\]
+
+the integer \(d_a\) is a divisor of \(a_1\).  There are
+\(T^\varepsilon\) possible divisors in the shell, and for each one
+there are \(O(T^{1-\beta-\alpha})\) multiples \(a_2\) in its dyadic
+interval.  This replaces the \(T^{1-\beta}\) factor in (4.370).
+
+Likewise \(d_s=(s_1,s_2)\asymp T^\gamma\) is a divisor of \(s_1\).
+The intersection of the determinant interval and the shifted window
+has raw length exponent
+
+\[
+ \lambda_0=
+ \max\!\left(0,\min\!\left(\theta,\xi-1+\beta\right)\right).
+\tag{4.380}
+\]
+
+Counting only multiples of \(d_s\) changes this to
+
+\[
+ \boxed{\lambda_\gamma=\max(0,\lambda_0-\gamma).}
+\tag{4.381}
+\]
+
+Thus the gcd-sensitive maximum degree is
+
+\[
+ \boxed{
+ \Delta_{\max}(\alpha,\gamma)
+ \ll T^{\,1-\beta-\alpha+\lambda_\gamma+\varepsilon}.}
+\tag{4.382}
+\]
+
+Combining (4.382) with the same vertex energy (4.371) proves
+
+\[
+ \boxed{
+ |\mathcal G_{\theta,\beta;\xi,\gamma,\alpha}|
+ \ll_{\varepsilon,W}
+ T^{\,3-\beta+\theta-\alpha+\lambda_\gamma+\varepsilon}.}
+\tag{4.383}
+\]
+
+The exact enlarged coverage condition is therefore
+
+\[
+\boxed{
+ \theta-\alpha+\lambda_\gamma\le\frac{249}{250}.}
+\tag{4.384}
+\]
+
+This removes part of the top distance face.  On the maximal determinant
+shell \((\theta,\xi)=(1,1-\beta+1)\), one has
+\(\lambda_0=1\), so (4.384) becomes
+
+\[
+ \boxed{\alpha+\gamma\ge\frac{251}{250}.}
+\tag{4.385}
+\]
+
+For the rational witness
+
+\[
+ \left(\theta,\beta,\xi,\gamma,\alpha\right)
+ =
+ \left(1,\frac23,\frac43,1,\frac1{100}\right),
+\tag{4.386}
+\]
+
+one has \(\lambda_\gamma=0\), maximum-degree exponent \(97/300\),
+graph exponent \(997/300\), and positive target margin
+
+\[
+ \boxed{\frac3{500}}.
+\tag{4.387}
+\]
+
+By contrast, the primitive-gcd top witness
+
+\[
+ \left(1,\frac23,\frac43,0,0\right)
+\tag{4.388}
+\]
+
+has \(\lambda_\gamma=1\), maximum-degree exponent \(4/3\), graph
+exponent \(13/3\), and deficit \(251/250\).  Thus the remaining top
+problem is forced toward small \((a_1,a_2)\) and small
+\((s_1,s_2)\), rather than being uniform over all gcd geometries.
+
+The adapter transition_gamma_gcd_graph_energy_audit records
+(4.379)--(4.388).  It sets shell_covered_unconditionally=True exactly
+when (4.384) holds, uses no Möbius cancellation, and keeps
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

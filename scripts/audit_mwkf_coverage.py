@@ -563,6 +563,31 @@ class TransitionGammaGraphEnergyAudit:
 
 
 @dataclass(frozen=True)
+class TransitionGammaGcdGraphEnergyAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    a_exponent: Fraction
+    determinant_exponent: Fraction
+    s_gcd_exponent: Fraction
+    a_gcd_exponent: Fraction
+    raw_determinant_fiber_exponent: Fraction
+    gcd_reduced_fiber_exponent: Fraction
+    maximum_graph_degree_exponent: Fraction
+    reciprocal_cluster_vertex_energy_exponent: Fraction
+    graph_energy_bound_exponent: Fraction
+    type_ii_square_target_exponent: Fraction
+    graph_energy_target_margin: Fraction
+    coverage_lhs: Fraction
+    coverage_threshold: Fraction
+    a_gcd_candidate_reduction_exact: bool
+    s_gcd_fiber_reduction_exact: bool
+    product_frequency_cluster_l2_used: bool
+    mobius_cancellation_used: bool
+    shell_covered_unconditionally: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2743,6 +2768,77 @@ def transition_gamma_graph_energy_audit(
         product_frequency_cluster_l2_used=True,
         mobius_cancellation_used=False,
         phase_cancellation_between_distinct_vertices_used=False,
+        shell_covered_unconditionally=margin >= 0,
+        published_coverage=False,
+    )
+
+
+def transition_gamma_gcd_graph_energy_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+    determinant_exponent: Fraction,
+    s_gcd_exponent: Fraction,
+    a_gcd_exponent: Fraction,
+) -> TransitionGammaGcdGraphEnergyAudit:
+    """Sharpen the determinant graph degree on fixed gcd shells.
+
+    For a fixed first vertex, d_a=(a1,a2) must be a divisor of a1 in
+    the selected alpha shell, so a2 has only A/d_a candidates.  Likewise
+    d_s=(s1,s2) is a divisor of s1, and the determinant interval for s2
+    contains only 1+min(D,G/A)/d_s admissible multiples.  Divisor-shell
+    choices cost T^epsilon and no cancellation.
+    """
+    distance = F(distance)
+    b_exponent = F(b_exponent)
+    determinant_exponent = F(determinant_exponent)
+    s_gcd_exponent = F(s_gcd_exponent)
+    a_gcd_exponent = F(a_gcd_exponent)
+    shell = transition_nonzero_gamma_shell_audit(
+        box,
+        distance=distance,
+        b_exponent=b_exponent,
+        determinant_exponent=determinant_exponent,
+        s_gcd_exponent=s_gcd_exponent,
+        a_gcd_exponent=a_gcd_exponent,
+    )
+
+    raw_fiber = max(
+        F(0),
+        min(distance, determinant_exponent - shell.a_exponent),
+    )
+    reduced_fiber = max(F(0), raw_fiber - s_gcd_exponent)
+    maximum_degree = (
+        shell.a_exponent - a_gcd_exponent + reduced_fiber
+    )
+    vertex_energy = box.rho + box.ell + box.h + distance
+    graph_bound = vertex_energy + maximum_degree
+    target = shell.type_ii_square_target_exponent
+    margin = target - graph_bound
+    coverage_lhs = distance - a_gcd_exponent + reduced_fiber
+    coverage_threshold = F(1) - F(1, 250)
+
+    return TransitionGammaGcdGraphEnergyAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        a_exponent=shell.a_exponent,
+        determinant_exponent=determinant_exponent,
+        s_gcd_exponent=s_gcd_exponent,
+        a_gcd_exponent=a_gcd_exponent,
+        raw_determinant_fiber_exponent=raw_fiber,
+        gcd_reduced_fiber_exponent=reduced_fiber,
+        maximum_graph_degree_exponent=maximum_degree,
+        reciprocal_cluster_vertex_energy_exponent=vertex_energy,
+        graph_energy_bound_exponent=graph_bound,
+        type_ii_square_target_exponent=target,
+        graph_energy_target_margin=margin,
+        coverage_lhs=coverage_lhs,
+        coverage_threshold=coverage_threshold,
+        a_gcd_candidate_reduction_exact=True,
+        s_gcd_fiber_reduction_exact=True,
+        product_frequency_cluster_l2_used=True,
+        mobius_cancellation_used=False,
         shell_covered_unconditionally=margin >= 0,
         published_coverage=False,
     )
@@ -5775,6 +5871,37 @@ def main() -> None:
         "large_q_transition: gamma_graph_residual="
         "theta=3/4,beta=2/3,xi=13/12,fiber=3/4,"
         "bound=23/6,margin=-63/125 covered=False"
+    )
+    transition_gcd_graph_top = transition_gamma_gcd_graph_energy_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        s_gcd_exponent=F(1),
+        a_gcd_exponent=F(1, 100),
+    )
+    print(
+        "large_q_transition: gamma_gcd_graph_top="
+        "theta=1,beta=2/3,xi=4/3,gamma=1,alpha=1/100,"
+        "raw_fiber=1,reduced_fiber=0,degree=97/300,"
+        "bound=997/300,target=2497/750,margin=3/500,"
+        "lhs=99/100,threshold=249/250 covered=True"
+    )
+    transition_gcd_graph_primitive = (
+        transition_gamma_gcd_graph_energy_audit(
+            transition_box,
+            distance=F(1),
+            b_exponent=F(2, 3),
+            determinant_exponent=F(4, 3),
+            s_gcd_exponent=F(0),
+            a_gcd_exponent=F(0),
+        )
+    )
+    print(
+        "large_q_transition: gamma_gcd_graph_primitive="
+        "theta=1,beta=2/3,xi=4/3,gamma=0,alpha=0,"
+        "reduced_fiber=1,degree=4/3,bound=13/3,"
+        "margin=-251/250 covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
