@@ -2455,6 +2455,8 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "darbar_das_route_closes_mobius_gate=False",
         "### 4.88 Ratio Mellin inversion restores a multiplicative inverse-zeta family",
         "\\tag{4.720}",
+        "\\tag{4.723a}",
+        "\\tag{4.723c}",
         "\\tag{4.725}",
         "shifted_inverse_zeta_variance_proved=False",
         "### 4.89 Published additive twists of $\\mu*\\mu$ miss the local variance scale",
@@ -2528,7 +2530,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "### 4.104 Double Poisson exposes a resonance but absolute summation enlarges the deficit",
         "\\tag{4.801}",
         "\\tag{4.805}",
+        "\\tag{4.806}",
+        "\\tag{4.809}",
         "absolute_double_poisson_route_covered=False",
+        "double_poisson_improves_bblr=False",
     ):
         assert marker in note
 
@@ -2655,7 +2660,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "factor=1,product=2,window=1,variance_target=3,"
         "ratio_coordinates=True,inversion=True,multiplicative=True,"
         "dirichlet_series=True,outer_smooth=True,tau_decay=True,"
-        "tau_uniform_sufficient=True,tau_zero_full=True,mangerel=4,"
+        "tau_uniform_sufficient=True,tau_zero_full=True,tau_zero_pole=4,"
+        "diag_log=3,target_log=1,excess=2,euler_no_p=True,euler_half=True,"
+        "needs_offdiag=True,diagonal_lower=False,diagonal_disproves=False,"
+        "joint_diag_log1=True,mangerel=4,"
         "mangerel_deficit=1,mangerel_log=True,tau_hypotheses=False,"
         "published=False,closes=False"
     ) in report
@@ -2786,6 +2794,13 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "transformed_global=16/5,target=2,required=6/5,"
         "identity=True,scales=True,loss_formula=True,covered=False,"
         "pre_cauchy=True"
+    ) in report
+    assert (
+        "large_q_transition: strict_power_double_poisson_bblr="
+        "sharp=True,before=43/10/129/40,normalization=-4/5,"
+        "totals=41/10/121/40,deficits=21/10/41/40,"
+        "original=21/10/5/8,ab_invariant=True,watt_extra=2/5,"
+        "watt_nonnegative=True,improves=False"
     ) in report
 
 
@@ -3529,6 +3544,14 @@ def test_ratio_mellin_coordinates_restore_multiplicativity_exactly() -> None:
     assert exact["left_reconstruction_squared_exact"]
     assert exact["right_reconstruction_squared_exact"]
 
+    local_factor = getattr(
+        coverage_audit,
+        "mobius_square_convolution_second_moment_local_factor",
+        None,
+    )
+    assert local_factor is not None, "mu*mu square local-factor helper is missing"
+    assert local_factor() == (1, 0, -9, 16, -9, 0, 1)
+
     adapter = getattr(
         coverage_audit,
         "restricted_mobius_ratio_mellin_audit",
@@ -3548,6 +3571,16 @@ def test_ratio_mellin_coordinates_restore_multiplicativity_exactly() -> None:
     assert audit.ratio_transform_is_rapidly_decaying
     assert audit.uniform_single_tau_variance_is_sufficient
     assert audit.tau_zero_is_full_mobius_convolution
+    assert audit.tau_zero_square_dirichlet_series_zeta_pole_order == 4
+    assert audit.tau_zero_diagonal_log_exponent == 3
+    assert audit.required_diagonal_log_exponent == 1
+    assert audit.tau_zero_euler_remainder_has_no_prime_term
+    assert audit.tau_zero_euler_remainder_converges_for_real_part_gt_half
+    assert audit.tau_zero_formal_diagonal_log_excess == 2
+    assert audit.tau_zero_diagonal_excess_requires_offdiagonal_cancellation
+    assert audit.diagonal_term_is_not_lower_bound_for_full_variance
+    assert not audit.tau_zero_diagonal_alone_disproves_uniform_gate
+    assert audit.joint_ratio_recombination_has_restricted_diagonal_log_order_one
     assert audit.optimistic_mangerel_variance_exponent == F(4)
     assert audit.mangerel_power_deficit == F(1)
     assert audit.mangerel_only_supplies_logarithmic_saving
@@ -4206,6 +4239,20 @@ def test_strict_power_double_poisson_resonance_ledger_is_exact() -> None:
     assert audit.absolute_transform_loss_is_one_minus_delta_plus_theta
     assert not audit.absolute_double_poisson_route_covered
     assert audit.pre_cauchy_signed_resonance_estimate_required
+    assert audit.bblr_sharp_range_verified
+    assert audit.bblr_ab_before_normalization_exponent == F(43, 10)
+    assert audit.bblr_watt_before_normalization_exponent == F(129, 40)
+    assert audit.transform_normalization_exponent == F(-4, 5)
+    assert audit.bblr_ab_total_exponent == F(41, 10)
+    assert audit.bblr_watt_total_exponent == F(121, 40)
+    assert audit.bblr_ab_deficit == F(21, 10)
+    assert audit.bblr_watt_deficit == F(41, 40)
+    assert audit.original_bblr_ab_deficit == F(21, 10)
+    assert audit.original_bblr_watt_deficit == F(5, 8)
+    assert audit.bblr_ab_deficit_is_invariant
+    assert audit.bblr_watt_extra_deficit == F(2, 5)
+    assert audit.bblr_watt_extra_deficit_is_nonnegative
+    assert not audit.double_poisson_improves_bblr
 
     hard_vertex = adapter(
         collapsed_exponent=F(1),
@@ -4218,6 +4265,11 @@ def test_strict_power_double_poisson_resonance_ledger_is_exact() -> None:
     assert hard_vertex.absolute_transform_loss_exponent == 0
     assert hard_vertex.transformed_required_saving_exponent == F(1)
     assert not hard_vertex.absolute_double_poisson_route_covered
+    assert hard_vertex.bblr_ab_deficit == F(5, 2)
+    assert hard_vertex.bblr_watt_deficit == F(1)
+    assert hard_vertex.bblr_ab_deficit_is_invariant
+    assert hard_vertex.bblr_watt_extra_deficit == 0
+    assert not hard_vertex.double_poisson_improves_bblr
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

@@ -1444,6 +1444,16 @@ class RestrictedMobiusRatioMellinAudit:
     ratio_transform_is_rapidly_decaying: bool
     uniform_single_tau_variance_is_sufficient: bool
     tau_zero_is_full_mobius_convolution: bool
+    tau_zero_square_dirichlet_series_zeta_pole_order: int
+    tau_zero_diagonal_log_exponent: int
+    required_diagonal_log_exponent: int
+    tau_zero_euler_remainder_has_no_prime_term: bool
+    tau_zero_euler_remainder_converges_for_real_part_gt_half: bool
+    tau_zero_formal_diagonal_log_excess: int
+    tau_zero_diagonal_excess_requires_offdiagonal_cancellation: bool
+    diagonal_term_is_not_lower_bound_for_full_variance: bool
+    tau_zero_diagonal_alone_disproves_uniform_gate: bool
+    joint_ratio_recombination_has_restricted_diagonal_log_order_one: bool
     optimistic_mangerel_variance_exponent: Fraction
     mangerel_power_deficit: Fraction
     mangerel_only_supplies_logarithmic_saving: bool
@@ -1803,6 +1813,20 @@ class StrictPowerDoublePoissonResonanceAudit:
     absolute_transform_loss_is_one_minus_delta_plus_theta: bool
     absolute_double_poisson_route_covered: bool
     pre_cauchy_signed_resonance_estimate_required: bool
+    bblr_sharp_range_verified: bool
+    bblr_ab_before_normalization_exponent: Fraction
+    bblr_watt_before_normalization_exponent: Fraction
+    transform_normalization_exponent: Fraction
+    bblr_ab_total_exponent: Fraction
+    bblr_watt_total_exponent: Fraction
+    bblr_ab_deficit: Fraction
+    bblr_watt_deficit: Fraction
+    original_bblr_ab_deficit: Fraction
+    original_bblr_watt_deficit: Fraction
+    bblr_ab_deficit_is_invariant: bool
+    bblr_watt_extra_deficit: Fraction
+    bblr_watt_extra_deficit_is_nonnegative: bool
+    double_poisson_improves_bblr: bool
 
 
 @dataclass(frozen=True)
@@ -7648,6 +7672,24 @@ def restricted_product_ratio_coordinates(
     }
 
 
+def mobius_square_convolution_second_moment_local_factor(
+) -> tuple[int, ...]:
+    """Return the Euler remainder after extracting zeta(s)^4.
+
+    For ``f=mu*mu`` the local square series is ``1+4*z+z^2``.
+    Multiplication by ``(1-z)^4`` removes the fourth-order zeta pole.
+    The missing linear term proves absolute Euler convergence for
+    ``Re(s)>1/2``.
+    """
+    zeta_inverse_fourth = (1, -4, 6, -4, 1)
+    local_square = (1, 4, 1)
+    product = [0] * (len(zeta_inverse_fourth) + len(local_square) - 1)
+    for i, left in enumerate(zeta_inverse_fourth):
+        for j, right in enumerate(local_square):
+            product[i + j] += left * right
+    return tuple(product)
+
+
 def restricted_mobius_ratio_mellin_audit(
 ) -> RestrictedMobiusRatioMellinAudit:
     """Remove the dyadic divisor restriction by ratio Fourier inversion.
@@ -7675,6 +7717,16 @@ def restricted_mobius_ratio_mellin_audit(
         ratio_transform_is_rapidly_decaying=True,
         uniform_single_tau_variance_is_sufficient=True,
         tau_zero_is_full_mobius_convolution=True,
+        tau_zero_square_dirichlet_series_zeta_pole_order=4,
+        tau_zero_diagonal_log_exponent=3,
+        required_diagonal_log_exponent=1,
+        tau_zero_euler_remainder_has_no_prime_term=True,
+        tau_zero_euler_remainder_converges_for_real_part_gt_half=True,
+        tau_zero_formal_diagonal_log_excess=2,
+        tau_zero_diagonal_excess_requires_offdiagonal_cancellation=True,
+        diagonal_term_is_not_lower_bound_for_full_variance=True,
+        tau_zero_diagonal_alone_disproves_uniform_gate=False,
+        joint_ratio_recombination_has_restricted_diagonal_log_order_one=True,
         optimistic_mangerel_variance_exponent=product + F(2) * window,
         mangerel_power_deficit=window,
         mangerel_only_supplies_logarithmic_saving=True,
@@ -8951,6 +9003,39 @@ def strict_power_double_poisson_resonance_audit(
     transformed_global = transformed_inner + gamma
     target = 1 + s
     required = transformed_global - target
+
+    # Reinsert the transformed variables into the sharp form of BBLR
+    # Proposition 3.1.  Its outer variables are r,t, its two nontrivial
+    # inner variables are l,k, and its shift has exponent 1+theta.
+    # The sharp-range condition is
+    #
+    #   (1+r1)+(1+r2) >= 2*(1+theta),
+    #
+    # which is exactly delta >= theta.
+    bblr_outer_sum = left_modulus + right_modulus
+    bblr_outer_max = max(left_modulus, right_modulus)
+    bblr_ab_before = F(1, 2) + resonance_shift + bblr_outer_sum
+    bblr_watt_before = (
+        F(3, 4)
+        + F(3, 2) * resonance_shift
+        + bblr_outer_max / 2
+    )
+    transform_normalization = poisson_amplitude + overlap_integral
+    bblr_ab_total = bblr_ab_before + transform_normalization + gamma
+    bblr_watt_total = (
+        bblr_watt_before + transform_normalization + gamma
+    )
+    bblr_ab_deficit = bblr_ab_total - target
+    bblr_watt_deficit = bblr_watt_total - target
+    original_bblr = strict_power_convolution_kloosterman_audit(
+        collapsed_exponent=s,
+        cofactor_exponent=delta,
+        quotient_exponent=theta,
+        left_cross_gcd_exponent=r1,
+    )
+    bblr_watt_extra = (
+        bblr_watt_deficit - original_bblr.bblr_watt_deficit
+    )
     return StrictPowerDoublePoissonResonanceAudit(
         collapsed_exponent=s,
         cofactor_exponent=delta,
@@ -8981,6 +9066,30 @@ def strict_power_double_poisson_resonance_audit(
         ),
         absolute_double_poisson_route_covered=False,
         pre_cauchy_signed_resonance_estimate_required=True,
+        bblr_sharp_range_verified=(
+            bblr_outer_sum >= 2 * resonance_shift
+            and delta >= theta
+        ),
+        bblr_ab_before_normalization_exponent=bblr_ab_before,
+        bblr_watt_before_normalization_exponent=bblr_watt_before,
+        transform_normalization_exponent=transform_normalization,
+        bblr_ab_total_exponent=bblr_ab_total,
+        bblr_watt_total_exponent=bblr_watt_total,
+        bblr_ab_deficit=bblr_ab_deficit,
+        bblr_watt_deficit=bblr_watt_deficit,
+        original_bblr_ab_deficit=original_bblr.bblr_ab_deficit,
+        original_bblr_watt_deficit=original_bblr.bblr_watt_deficit,
+        bblr_ab_deficit_is_invariant=(
+            bblr_ab_deficit == original_bblr.bblr_ab_deficit
+        ),
+        bblr_watt_extra_deficit=bblr_watt_extra,
+        bblr_watt_extra_deficit_is_nonnegative=(
+            bblr_watt_extra >= 0
+        ),
+        double_poisson_improves_bblr=(
+            bblr_ab_deficit < original_bblr.bblr_ab_deficit
+            or bblr_watt_deficit < original_bblr.bblr_watt_deficit
+        ),
     )
 
 
@@ -13498,6 +13607,23 @@ def main() -> None:
         "tau_uniform_sufficient="
         f"{ratio_mellin.uniform_single_tau_variance_is_sufficient},"
         f"tau_zero_full={ratio_mellin.tau_zero_is_full_mobius_convolution},"
+        "tau_zero_pole="
+        f"{ratio_mellin.tau_zero_square_dirichlet_series_zeta_pole_order},"
+        f"diag_log={ratio_mellin.tau_zero_diagonal_log_exponent},"
+        f"target_log={ratio_mellin.required_diagonal_log_exponent},"
+        f"excess={ratio_mellin.tau_zero_formal_diagonal_log_excess},"
+        "euler_no_p="
+        f"{ratio_mellin.tau_zero_euler_remainder_has_no_prime_term},"
+        "euler_half="
+        f"{ratio_mellin.tau_zero_euler_remainder_converges_for_real_part_gt_half},"
+        "needs_offdiag="
+        f"{ratio_mellin.tau_zero_diagonal_excess_requires_offdiagonal_cancellation},"
+        "diagonal_lower="
+        f"{not ratio_mellin.diagonal_term_is_not_lower_bound_for_full_variance},"
+        "diagonal_disproves="
+        f"{ratio_mellin.tau_zero_diagonal_alone_disproves_uniform_gate},"
+        "joint_diag_log1="
+        f"{ratio_mellin.joint_ratio_recombination_has_restricted_diagonal_log_order_one},"
         "mangerel="
         f"{_fmt(ratio_mellin.optimistic_mangerel_variance_exponent)},"
         "mangerel_deficit="
@@ -13985,6 +14111,28 @@ def main() -> None:
         f"covered={double_poisson.absolute_double_poisson_route_covered},"
         "pre_cauchy="
         f"{double_poisson.pre_cauchy_signed_resonance_estimate_required}"
+    )
+    print(
+        "large_q_transition: strict_power_double_poisson_bblr="
+        f"sharp={double_poisson.bblr_sharp_range_verified},"
+        "before="
+        f"{_fmt(double_poisson.bblr_ab_before_normalization_exponent)}/"
+        f"{_fmt(double_poisson.bblr_watt_before_normalization_exponent)},"
+        f"normalization={_fmt(double_poisson.transform_normalization_exponent)},"
+        "totals="
+        f"{_fmt(double_poisson.bblr_ab_total_exponent)}/"
+        f"{_fmt(double_poisson.bblr_watt_total_exponent)},"
+        "deficits="
+        f"{_fmt(double_poisson.bblr_ab_deficit)}/"
+        f"{_fmt(double_poisson.bblr_watt_deficit)},"
+        "original="
+        f"{_fmt(double_poisson.original_bblr_ab_deficit)}/"
+        f"{_fmt(double_poisson.original_bblr_watt_deficit)},"
+        f"ab_invariant={double_poisson.bblr_ab_deficit_is_invariant},"
+        f"watt_extra={_fmt(double_poisson.bblr_watt_extra_deficit)},"
+        "watt_nonnegative="
+        f"{double_poisson.bblr_watt_extra_deficit_is_nonnegative},"
+        f"improves={double_poisson.double_poisson_improves_bblr}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

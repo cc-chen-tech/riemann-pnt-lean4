@@ -10699,6 +10699,58 @@ negative logarithmic power.  Estimate (4.723), with the exact
 seminorm bookkeeping needed by (4.716), implies the separated
 fourth-moment gate (4.711).
 
+The \(\tau=0\) member also has a larger *formal diagonal* than the
+restricted coefficient in (4.708).  Since
+
+\[
+ f_0(p)=-2,\qquad f_0(p^2)=1,\qquad f_0(p^j)=0\quad(j\geq3),
+\]
+
+one has the exact Euler factorization
+
+\[
+ \boxed{
+ \sum_{n\geq1}\frac{|f_0(n)|^2}{n^s}
+ =\prod_p(1+4p^{-s}+p^{-2s})
+ =\zeta(s)^4G(s),}
+\tag{4.723a}
+\]
+
+where
+
+\[
+ \boxed{
+ G_p(s)
+ =(1-p^{-s})^4(1+4p^{-s}+p^{-2s})
+ =1-9p^{-2s}+16p^{-3s}-9p^{-4s}+p^{-6s}.}
+\tag{4.723b}
+\]
+
+Thus \(G\) converges absolutely for \(\Re s>1/2\), and the classical
+Selberg--Delange calculation gives a smooth formal diagonal of order
+\(XH(\log X)^3\).  This is two logarithms larger than the requested
+\(XH(\log X)^{1+o(1)}\).
+
+This observation does **not** disprove (4.723).  Expanding its full
+short-interval energy gives
+
+\[
+ \boxed{
+ H\sum_{m,n}f_0(m)\overline{f_0(n)}
+ V_0(m/X)\overline{V_0(n/X)}
+ (\phi*\widetilde\phi)((m-n)/H).}
+\tag{4.723c}
+\]
+
+Although (4.723c) is nonnegative as a whole, its off-diagonal terms are
+signed, so the \(m=n\) contribution is not a lower bound for the full
+energy.  A bound of the size in (4.723) would have to cancel both surplus
+diagonal logarithms through those off-diagonal terms.  By contrast, the
+joint ratio recombination returns the restricted \(C_U\), whose exact
+diagonal has only one logarithm by (4.710).  Hence taking Cauchy in
+\(\tau\) discards a genuine two-logarithm recombination, but this remains
+a logarithmic issue and supplies no positive power.
+
 At \(\tau=0\), however, \(f_0=\mu*\mu\).  Thus this reduction removes
 the dyadic divisor restriction but retains the genuine inverse-zeta
 variance problem:
@@ -10738,9 +10790,13 @@ polylogarithmic \(\tau\)-range is unnecessary for this rejection and is
 not asserted.
 
 The exact-rational helper `restricted_product_ratio_coordinates`
-checks both factor reconstructions without numerical square roots.
+checks both factor reconstructions without numerical square roots.  The
+helper `mobius_square_convolution_second_moment_local_factor` verifies
+the polynomial in (4.723b) coefficient by coefficient.
 The adapter `restricted_mobius_ratio_mellin_audit` records the
-\(X=T^2,H=T\) ledger and keeps
+\(X=T^2,H=T\) ledger, the formal three-logarithm diagonal, and the fact
+that this diagonal alone is not a lower bound for the full signed
+variance.  It keeps
 `shifted_inverse_zeta_variance_proved=False`.
 
 ### 4.89 Published additive twists of $\mu*\mu$ miss the local variance scale
@@ -12351,6 +12407,70 @@ Restoring \((u_0,v_0,q)\), whose total exponent is \(\gamma\), gives
 \tag{4.805}
 \]
 
+There is a legal BBLR comparison on the transformed side.  Use \(r,t\)
+as its arbitrary outer-coefficient variables, \(l,k\) as the two
+nontrivial inner variables, and \(n\) as its shift.  The outer sum,
+largest outer scale, side-product scale, and shift scale are
+
+\[
+ S'=2+\delta+\theta,\qquad
+ M'_\ast=1+r_\ast,\qquad
+ P'=2+\theta,\qquad
+ \alpha'=1+\theta.
+\]
+
+The sharp-range condition (4.604) becomes
+
+\[
+ \boxed{S'\geq2\alpha'
+ \quad\Longleftrightarrow\quad \delta\geq\theta,}
+\tag{4.806}
+\]
+
+which holds everywhere on (4.781).  Equations (4.605) give, before
+restoring the transform normalization,
+
+\[
+ \boxed{
+ E'_{\rm AB}=\frac72+\delta+2\theta,\qquad
+ E'_{\rm Watt}=\frac{11}{4}+\frac32\theta+\frac12r_\ast.}
+\tag{4.807}
+\]
+
+The product of the Poisson amplitude and the common overlap width has
+exponent
+
+\[
+ (\delta-\theta)-1=\delta-\theta-1.
+\]
+
+Adding this factor and the outside exponent \(\gamma=s-\delta\), then
+subtracting the target \(1+s\), gives the exact transformed BBLR
+deficits
+
+\[
+ \boxed{
+ D'_{\rm AB}=\frac32+\delta+\theta,\qquad
+ D'_{\rm Watt}=\frac34+\frac12\theta+\frac12r_\ast.}
+\tag{4.808}
+\]
+
+The first expression is identical to the original deficit in (4.790).
+For the second expression,
+
+\[
+ \boxed{
+ D'_{\rm Watt}-D_{\rm Watt}
+ =\frac{1+\theta-\delta}{2}\geq0.}
+\tag{4.809}
+\]
+
+Equality in (4.809) is possible only at
+\((s,\delta,\theta)=(1,1,0)\).  Therefore simultaneous slope Poisson
+summation never improves the published BBLR estimate: its first error is
+invariant and its Watt error is weakly worse, becoming equal only on the
+hard vertex.
+
 Thus an absolute treatment of the resonance needs \(T^{1+\theta}\),
 whereas the original core needs \(T^\delta\).  The extra loss is exactly
 \(T^{1-\delta+\theta}\).  At the hard vertex this extra loss is zero, but
@@ -12358,7 +12478,9 @@ the original \(T^1\) deficit remains.  Consequently the double-Poisson
 coordinate is retained only as a possible *signed pre-Cauchy* spectral
 interface; it supplies no unconditional box by itself.  The adapter
 `strict_power_double_poisson_resonance_audit` records (4.801)--(4.805) and
-keeps `absolute_double_poisson_route_covered=False`.
+the comparison (4.806)--(4.809).  It keeps
+`absolute_double_poisson_route_covered=False` and
+`double_poisson_improves_bblr=False`.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
