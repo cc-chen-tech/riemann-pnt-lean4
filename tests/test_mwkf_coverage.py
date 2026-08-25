@@ -1450,6 +1450,61 @@ def test_transition_triple_gcd_lattice_concentrates_the_core() -> None:
     assert not primitive.shell_covered_unconditionally
 
 
+def test_transition_final_two_entry_gate_has_only_one_critical_face() -> None:
+    """A full two-entry square root has power slack except at one face."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_final_two_entry_gate_audit",
+        None,
+    )
+    assert adapter is not None, "final two-entry gate adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+
+    critical = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        a_gcd_exponent=F(0),
+        s_gcd_exponent=F(0),
+        w_gcd_exponent=F(0),
+    )
+    assert critical.reduced_determinant_exponent == F(4, 3)
+    assert critical.current_graph_bound_exponent == F(13, 3)
+    assert critical.two_entry_square_root_saving_exponent == F(1)
+    assert critical.required_two_entry_bound_exponent == F(10, 3)
+    assert critical.raw_type_ii_square_target_exponent == F(10, 3)
+    assert critical.power_margin == F(0)
+    assert critical.margin_identity_exact
+    assert critical.is_unique_power_critical_face
+    assert critical.endpoint_taper_square_log_saving == F(4)
+    assert critical.product_energy_log_loss == F(1)
+    assert critical.post_cauchy_log_saving == F(3, 2)
+    assert critical.beta_box_union_log_loss == F(1)
+    assert critical.global_net_log_saving == F(1, 2)
+    assert critical.global_remainder_power_exponent == F(1)
+    assert critical.two_entry_square_root_gate_required
+    assert not critical.two_entry_square_root_gate_proved
+    assert not critical.whole_transition_face_covered
+
+    slack = adapter(
+        transition_box,
+        distance=F(3, 4),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(13, 12),
+        a_gcd_exponent=F(0),
+        s_gcd_exponent=F(0),
+        w_gcd_exponent=F(0),
+    )
+    assert slack.required_two_entry_bound_exponent == F(17, 6)
+    assert slack.raw_type_ii_square_target_exponent == F(10, 3)
+    assert slack.power_margin == F(1, 2)
+    assert not slack.is_unique_power_critical_face
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2927,6 +2982,20 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "reduced=4/3,bound=13/3,margin=-251/250 covered=False"
     ) in output
     assert (
+        "large_q_transition: final_two_entry_gate="
+        "theta=1,beta=2/3,xi=4/3,gcd=0,reduced=4/3,"
+        "graph=13/3,sqrt_save=1,required=10/3,raw_target=10/3,"
+        "margin=0,identity=True critical=True taper_log=4,"
+        "energy_log=1,post_cauchy_log=3/2,beta_log=1,"
+        "global_log=1/2,global_power=1 required_gate=True "
+        "proved=False whole=False"
+    ) in output
+    assert (
+        "large_q_transition: final_two_entry_slack="
+        "theta=3/4,beta=2/3,xi=13/12,gcd=0,"
+        "required=17/6,raw_target=10/3,margin=1/2 critical=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -3368,5 +3437,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"d_ad_sd_w",
         r"(\xi-\alpha-\gamma-\omega)_+",
         "transition_triple_gcd_lattice_audit",
+        "### 4.50 One final two-entry square-root theorem",
+        r"2(1-\theta)+(1-\beta+\theta-\xi)+g",
+        r"(\log T)^{-1/2}",
+        "transition_final_two_entry_gate_audit",
     ):
         assert marker in text

@@ -708,6 +708,31 @@ class TransitionTripleGcdLatticeAudit:
 
 
 @dataclass(frozen=True)
+class TransitionFinalTwoEntryGateAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    determinant_exponent: Fraction
+    total_gcd_exponent: Fraction
+    reduced_determinant_exponent: Fraction
+    current_graph_bound_exponent: Fraction
+    two_entry_square_root_saving_exponent: Fraction
+    required_two_entry_bound_exponent: Fraction
+    raw_type_ii_square_target_exponent: Fraction
+    power_margin: Fraction
+    margin_identity_exact: bool
+    is_unique_power_critical_face: bool
+    endpoint_taper_square_log_saving: Fraction
+    product_energy_log_loss: Fraction
+    post_cauchy_log_saving: Fraction
+    beta_box_union_log_loss: Fraction
+    global_net_log_saving: Fraction
+    global_remainder_power_exponent: Fraction
+    two_entry_square_root_gate_required: bool
+    two_entry_square_root_gate_proved: bool
+    whole_transition_face_covered: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -3482,6 +3507,99 @@ def transition_triple_gcd_lattice_audit(
         mobius_cancellation_used=False,
         shell_covered_unconditionally=margin >= 0,
         published_coverage=False,
+    )
+
+
+def transition_final_two_entry_gate_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+    determinant_exponent: Fraction,
+    a_gcd_exponent: Fraction,
+    s_gcd_exponent: Fraction,
+    w_gcd_exponent: Fraction,
+) -> TransitionFinalTwoEntryGateAudit:
+    """Normalize the residual to one full two-entry square-root estimate.
+
+    The triple-gcd graph bound has exponent 2+theta+rho_Gamma.  Saving
+    one full power of T corresponds to square-root cancellation in each
+    of the two length-T Mobius residue entries.  The resulting exponent
+    is at most the raw Type-II square target 4-beta.  Equality occurs
+    only at theta=1, maximal determinant, and zero total gcd exponent.
+
+    On that face the four squared endpoint tapers save log^4, the
+    product-frequency energy loses log^1, Cauchy halves the remaining
+    log^3, and the beta-box union loses one log.  The net log saving is
+    therefore 1/2, provided the new arithmetic estimate has no fixed
+    positive log-power loss.
+    """
+    distance = F(distance)
+    b_exponent = F(b_exponent)
+    determinant_exponent = F(determinant_exponent)
+    a_gcd_exponent = F(a_gcd_exponent)
+    s_gcd_exponent = F(s_gcd_exponent)
+    w_gcd_exponent = F(w_gcd_exponent)
+    factor = transition_far_shell_factor_box_audit(
+        box,
+        distance=distance,
+        b_exponent=b_exponent,
+    )
+    determinant_max = factor.a_exponent + distance
+    if determinant_exponent < 0 or determinant_exponent > determinant_max:
+        raise ValueError("determinant shell exceeds the exact support")
+    total_gcd = (
+        a_gcd_exponent + s_gcd_exponent + w_gcd_exponent
+    )
+    if min(a_gcd_exponent, s_gcd_exponent, w_gcd_exponent) < 0:
+        raise ValueError("gcd exponents must be nonnegative")
+    if total_gcd > determinant_exponent:
+        raise ValueError("triple gcd cannot divide the determinant shell")
+
+    reduced = determinant_exponent - total_gcd
+    graph_bound = F(2) + distance + reduced
+    square_root_saving = F(1)
+    required_bound = graph_bound - square_root_saving
+    raw_target = F(4) - b_exponent
+    margin = raw_target - required_bound
+    expected_margin = (
+        2 * (F(1) - distance)
+        + (F(1) - b_exponent + distance - determinant_exponent)
+        + total_gcd
+    )
+    critical = (
+        distance == F(1)
+        and determinant_exponent == determinant_max
+        and total_gcd == 0
+    )
+    taper_log = F(4)
+    product_log = F(1)
+    post_cauchy_log = (taper_log - product_log) / 2
+    beta_union_log = F(1)
+    global_net_log = post_cauchy_log - beta_union_log
+
+    return TransitionFinalTwoEntryGateAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        determinant_exponent=determinant_exponent,
+        total_gcd_exponent=total_gcd,
+        reduced_determinant_exponent=reduced,
+        current_graph_bound_exponent=graph_bound,
+        two_entry_square_root_saving_exponent=square_root_saving,
+        required_two_entry_bound_exponent=required_bound,
+        raw_type_ii_square_target_exponent=raw_target,
+        power_margin=margin,
+        margin_identity_exact=margin == expected_margin,
+        is_unique_power_critical_face=critical,
+        endpoint_taper_square_log_saving=taper_log,
+        product_energy_log_loss=product_log,
+        post_cauchy_log_saving=post_cauchy_log,
+        beta_box_union_log_loss=beta_union_log,
+        global_net_log_saving=global_net_log,
+        global_remainder_power_exponent=F(1),
+        two_entry_square_root_gate_required=True,
+        two_entry_square_root_gate_proved=False,
+        whole_transition_face_covered=False,
     )
 
 
@@ -6703,6 +6821,38 @@ def main() -> None:
         "large_q_transition: triple_gcd_primitive="
         "theta=1,beta=2/3,xi=4/3,alpha=0,gamma=0,omega=0,"
         "reduced=4/3,bound=13/3,margin=-251/250 covered=False"
+    )
+    transition_final_gate = transition_final_two_entry_gate_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        a_gcd_exponent=F(0),
+        s_gcd_exponent=F(0),
+        w_gcd_exponent=F(0),
+    )
+    print(
+        "large_q_transition: final_two_entry_gate="
+        "theta=1,beta=2/3,xi=4/3,gcd=0,reduced=4/3,"
+        "graph=13/3,sqrt_save=1,required=10/3,raw_target=10/3,"
+        "margin=0,identity=True critical=True taper_log=4,"
+        "energy_log=1,post_cauchy_log=3/2,beta_log=1,"
+        "global_log=1/2,global_power=1 required_gate=True "
+        "proved=False whole=False"
+    )
+    transition_final_slack = transition_final_two_entry_gate_audit(
+        transition_box,
+        distance=F(3, 4),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(13, 12),
+        a_gcd_exponent=F(0),
+        s_gcd_exponent=F(0),
+        w_gcd_exponent=F(0),
+    )
+    print(
+        "large_q_transition: final_two_entry_slack="
+        "theta=3/4,beta=2/3,xi=13/12,gcd=0,"
+        "required=17/6,raw_target=10/3,margin=1/2 critical=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

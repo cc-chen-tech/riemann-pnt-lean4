@@ -6138,6 +6138,128 @@ transition_triple_gcd_lattice_audit records (4.426)--(4.437), sets
 shell_covered_unconditionally=True exactly on (4.433), uses no Möbius
 cancellation, and keeps published_coverage=False.
 
+### 4.50 One final two-entry square-root theorem
+
+Sections 4.45--4.49 show that the remaining transition-face estimate
+has a natural normalization which removes the artificial \(1/250\)
+slack.  Put
+
+\[
+ g=\alpha+\gamma+\omega,\qquad
+ \rho_\Gamma=(\xi-g)_+.
+\tag{4.438}
+\]
+
+The current graph-energy exponent is
+
+\[
+ 2+\theta+\rho_\Gamma.
+\tag{4.439}
+\]
+
+There are two genuine length-\(T\) Möbius residue entries in (4.404).
+Square-root cancellation in each entry means one full power of saving
+in the expanded square.  The resulting local exponent is
+
+\[
+ \boxed{1+\theta+\rho_\Gamma.}
+\tag{4.440}
+\]
+
+Compare (4.440) with the raw Type-II square target \(4-\beta\).
+Using \(\rho_\Gamma=\xi-g\) on every nonempty residual shell gives the
+exact identity
+
+\[
+\boxed{
+\begin{aligned}
+ &(4-\beta)-(1+\theta+\rho_\Gamma)\\
+ &\qquad=
+ 2(1-\theta)+(1-\beta+\theta-\xi)+g
+ \ge0.
+\end{aligned}}
+\tag{4.441}
+\]
+
+Every term on the right is nonnegative by support.  Equality holds if
+and only if
+
+\[
+ \boxed{
+ \theta=1,\qquad
+ \xi=1-\beta+\theta,\qquad
+ \alpha=\gamma=\omega=0.}
+\tag{4.442}
+\]
+
+Thus there is only one power-critical face.
+
+To state the missing theorem without hiding logarithms, let
+\(\mathcal H^\circ\) denote (4.404) with the four squared endpoint
+tapers replaced by bounded smooth cutoffs, while retaining the
+product-frequency coefficients and every other weight.  The exact
+transition theorem required is
+
+\[
+\boxed{
+ |\mathcal H^\circ_{\theta,\beta;\xi,\gamma,\alpha,\omega}|
+ \ll_W
+ T^{\,1+\theta+\rho_\Gamma}
+ (\log T)^{1+o(1)}.}
+\tag{4.443}
+\]
+
+The single displayed logarithm is the product energy (4.321);
+(4.443) permits no additional fixed positive power of \(\log T\).
+Equivalently, after restoring the four actual endpoint tapers, the
+critical face must satisfy
+
+\[
+ |\mathcal H_{\mathrm{crit},\beta}|
+ \ll_W
+ T^{\,4-\beta}(\log T)^{-3+o(1)}.
+\tag{4.444}
+\]
+
+Cauchy in \(b\) turns (4.444) into
+
+\[
+ |\mathcal F_{\mathrm{crit},\beta}|
+ \ll_W
+ T^2(\log T)^{-3/2+o(1)}.
+\tag{4.445}
+\]
+
+There are \(O(\log T)\) dyadic \(\beta\)-boxes, while the top
+\(\theta\)-shell, maximal determinant shell, signs, and slopes have
+bounded multiplicity at the critical face.  Hence their union is
+
+\[
+ \ll_W T^2(\log T)^{-1/2+o(1)}.
+\tag{4.446}
+\]
+
+Finally the same \(q\)-normalization as in (4.326) gives
+
+\[
+ \boxed{
+ O_W\!\left(T(\log T)^{-1/2+o(1)}\right)=o_W(T).}
+\tag{4.447}
+\]
+
+Every noncritical shell has the positive power margin in (4.441), so
+all fixed polylogarithmic partition losses are absorbed there.
+Consequently (4.443), together with the unconditional graph regions
+already proved, closes the entire remaining far-shell transition
+family.  It does not by itself certify the separate nontransition
+residual families recorded elsewhere in this document.
+
+The adapter transition_final_two_entry_gate_audit records
+(4.438)--(4.447), verifies the margin identity and uniqueness of the
+critical face, and records the net \(1/2\) logarithmic saving.  It
+keeps two_entry_square_root_gate_proved=False and
+whole_transition_face_covered=False until (4.443) is proved.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
