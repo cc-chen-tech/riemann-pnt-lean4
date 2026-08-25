@@ -1,4 +1,5 @@
 from fractions import Fraction as F
+from math import gcd
 import sys
 from pathlib import Path
 
@@ -9,10 +10,14 @@ from scripts.audit_mobius_type_ii import (
     MQWBlockSavings,
     PascadiFullResidueSavings,
     WrightFactorSavings,
+    balanced_dual_low_mode_mobius_exponent,
     c_coefficient,
+    character_large_sieve_unit_gap,
     dispersion_pointwise_mean_square_gap,
     dispersion_random_benchmark_gap,
+    direct_fourfold_random_margin,
     elementary_large_sieve_loss,
+    inverse_product_phase_mod_one,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
@@ -21,6 +26,7 @@ from scripts.audit_mobius_type_ii import (
     pascadi_2024_direct_dispersion_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
+    reduce_inverse_product_phase,
     two_sided_mobius_geometric_value,
     wright_factor_covers,
     wright_factor_savings,
@@ -174,6 +180,45 @@ def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     assert dispersion_pointwise_mean_square_gap(box) == F(5)
     assert dispersion_random_benchmark_gap(box) == F(3, 2)
+
+
+def test_full_fourfold_random_scale_has_half_power_margin() -> None:
+    witnesses = boundary_witnesses()
+    assert direct_fourfold_random_margin(witnesses["balanced_max_a"]) == F(1, 2)
+    for box in witnesses.values():
+        assert direct_fourfold_random_margin(box) >= F(1, 2)
+
+
+def test_character_large_sieve_unit_stratum_keeps_balanced_half_a_loss() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert character_large_sieve_unit_gap(box) == F(5, 2)
+    assert balanced_dual_low_mode_mobius_exponent(box) == F(2, 3)
+
+
+def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:
+    for s in range(1, 41):
+        if naive_mobius(s) == 0:
+            continue
+        for r in range(1, 2 * s + 1):
+            if gcd(r, s) != 1:
+                continue
+            for h in range(1, 17):
+                for delta in range(1, 17):
+                    reduced = reduce_inverse_product_phase(r, s, h, delta)
+                    assert reduced.d * reduced.e * reduced.modulus == s
+                    assert gcd(reduced.d, reduced.e) == 1
+                    assert gcd(reduced.d, reduced.modulus) == 1
+                    assert gcd(reduced.e, reduced.modulus) == 1
+                    assert gcd(reduced.h_reduced, reduced.modulus) == 1
+                    assert gcd(reduced.delta_reduced, reduced.modulus) == 1
+                    assert inverse_product_phase_mod_one(r, s, h, delta) == (
+                        inverse_product_phase_mod_one(
+                            r,
+                            reduced.modulus,
+                            reduced.h_reduced,
+                            reduced.delta_reduced,
+                        )
+                    )
 
 
 def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:

@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import lru_cache
+from math import gcd
 
 try:
     from scripts.audit_mwkf_ranges import (
@@ -243,6 +244,119 @@ def dispersion_random_benchmark_gap(box: ExponentBox) -> Fraction:
     shorter = min(box.ell, box.h)
     longer = max(box.ell, box.h)
     return max(Fraction(0), 2 * shorter + longer - box.rho - box.sigma)
+
+
+def direct_fourfold_random_margin(box: ExponentBox) -> Fraction:
+    """Margin between the local target and the full random-term scale.
+
+    The uncut ``r,s,h,delta`` sum has ``R*S*L*H`` terms, so its formal
+    square-root scale has exponent ``(rho+sigma+a)/2``.  The local target
+    has exponent ``rho+sigma``.  On the retained polytope ``a <=
+    rho+sigma-1``, hence this diagnostic margin is always at least 1/2.
+    It is only a scale comparison, not a cancellation theorem.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("random margin is defined only on admissible boxes")
+    return (box.rho + box.sigma - box.third_length) / 2
+
+
+def character_large_sieve_unit_gap(box: ExponentBox) -> Fraction:
+    """Best exponent gap from the direct unit-stratum character sieve.
+
+    With denominator length ``S``, character orthogonality, one second
+    moment, and two fourth moments give
+
+    ``S^(1/2) * ((S^2+R)R)^(1/2) * A^(1/2)``.
+
+    Reciprocity supplies the same estimate with ``R,S`` interchanged.
+    This function returns the smaller loss over the local ``RS`` target.
+    A nonpositive value would mean that this diagnostic covers the box.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("character-sieve gap is defined only on admissible boxes")
+    denominator_s = (
+        box.third_length
+        + max(2 * box.sigma, box.rho)
+        - box.rho
+        - box.sigma
+    ) / 2
+    denominator_r = (
+        box.third_length
+        + max(2 * box.rho, box.sigma)
+        - box.rho
+        - box.sigma
+    ) / 2
+    return min(denominator_s, denominator_r)
+
+
+def balanced_dual_low_mode_mobius_exponent(box: ExponentBox) -> Fraction:
+    """Per-variable Möbius exponent sufficient for the dual lowest mode.
+
+    This diagnostic applies only when ``R=S``.  Dualizing both long
+    character sums contributes ``A/S``.  If each of the remaining smooth
+    Möbius sums of length ``R=S`` is bounded by ``R^beta``, the local
+    ``RS`` target asks ``A/S * R^(2 beta) <= R*S``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("dual-mode exponent is defined only on admissible boxes")
+    if box.rho != box.sigma or box.rho == 0:
+        raise ValueError("dual-mode exponent diagnostic requires R=S>1")
+    return (3 * box.rho - box.third_length) / (2 * box.rho)
+
+
+@dataclass(frozen=True)
+class ReducedInversePhase:
+    """Exact gcd reduction of ``e_s(-h*delta*r^{-1})``.
+
+    In the application ``s`` is squarefree because it carries ``mu(s)``.
+    Then ``d``, ``e``, and ``modulus`` are pairwise coprime.  The phase
+    reduction itself remains valid without squarefreeness.
+    """
+
+    d: int
+    e: int
+    modulus: int
+    h_reduced: int
+    delta_reduced: int
+
+
+def reduce_inverse_product_phase(
+    r: int, s: int, h: int, delta: int
+) -> ReducedInversePhase:
+    """Return the exact reduced-modulus data for the inverse phase.
+
+    With ``d=(h,s)``, ``e=(delta,s/d)``, and ``c=s/(d*e)``, one has
+
+    ``e_s(-h*delta*inv_s(r)) = e_c(-(h/d)*(delta/e)*inv_c(r))``.
+    """
+
+    if min(r, s, h, delta) < 1:
+        raise ValueError("phase variables must be positive")
+    if gcd(r, s) != 1:
+        raise ValueError("r must be invertible modulo s")
+    d = gcd(h, s)
+    e = gcd(delta, s // d)
+    modulus = s // (d * e)
+    return ReducedInversePhase(
+        d=d,
+        e=e,
+        modulus=modulus,
+        h_reduced=h // d,
+        delta_reduced=delta // e,
+    )
+
+
+def inverse_product_phase_mod_one(r: int, s: int, h: int, delta: int) -> Fraction:
+    """Represent ``-h*delta*inv_s(r)/s`` as an exact element of Q/Z."""
+
+    if s == 1:
+        return Fraction(0)
+    if gcd(r, s) != 1:
+        raise ValueError("r must be invertible modulo s")
+    return Fraction(-h * delta * pow(r, -1, s), s) % 1
 
 
 def pascadi_2024_direct_dispersion_gap(box: ExponentBox) -> Fraction:

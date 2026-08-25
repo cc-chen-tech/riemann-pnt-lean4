@@ -2445,9 +2445,10 @@ additional power
 
 For the balanced maximal box, (9.41) misses by \(T^5\), while the
 random-term benchmark (9.42) misses by \(T^{3/2}\).  Neither estimate is
-claimed here.  Equations (9.37)--(9.40) identify the exact new theorem
-that a dispersion, spectral, or trace-function argument would have to
-prove while retaining both Möbius averages and the product \(h\delta\).
+claimed here.  Equations (9.37)--(9.40) identify one exact sufficient
+mean-square theorem that a dispersion, spectral, or trace-function
+argument could prove while retaining both Möbius averages and the product
+\(h\delta\).  It is not asserted to be the weakest possible interface.
 The finite checker verifies the two-sided convolution identity on every
 integer pair in its test range; it does not certify (9.40).
 
@@ -2522,6 +2523,168 @@ absolute values would discard the two-sided Type-II structure.  The
 spectral-dispersion result is therefore recorded as a valid but
 insufficient direct route, not as a proof of (9.40).
 
+### 9.12 The direct fourfold scale and an exact gcd--character stratification
+
+The mean-square interface (9.40) pays Cauchy--Schwarz in the shorter of
+\(h,\delta\) before exploiting cancellation in the full sum.  This can be
+substantially stronger than the original coupled-kernel target.  The
+formal square-root scale of the uncut fourfold sum is
+
+\[
+ (RSLH)^{1/2}=(RSA)^{1/2}.
+\tag{9.47}
+\]
+
+Since every retained box satisfies \(A\ll RS/T\),
+
+\[
+ \frac{RS}{(RSA)^{1/2}}
+ =\left(\frac{RS}{A}\right)^{1/2}
+ \gg T^{1/2-O(\eta)}.
+\tag{9.48}
+\]
+
+Thus a genuine square-root estimate for the original \(r,s,h,\delta\)
+sum would have a half-power margin everywhere in the polytope.  At the
+balanced maximal box its diagnostic scale is \(T^{11/2}\), below the
+\(T^6\) local target.  This is only a scale calculation; it does not
+assert random cancellation.  It does show that the additional
+\(T^{3/2}\) demanded by the random benchmark for (9.40) is a loss of that
+particular Cauchy interface, not an intrinsic requirement of (6.0).
+
+There is an exact way to expose all resonances before applying any
+inequality.  Because \(\mu(s)\ne0\), \(s\) is squarefree.  For each term put
+
+\[
+ d=(|h|,s),\qquad e=(|\delta|,s/d),\qquad
+ c=\frac{s}{de},\qquad h=dh_1,\quad \delta=e\delta_1.
+\tag{9.49}
+\]
+
+Then \(d,e,c\) are pairwise coprime,
+\((h_1,ec)=(\delta_1,c)=1\), and reduction of the inverse modulo every
+divisor of \(s\) gives the termwise identity
+
+\[
+ \boxed{
+ e_s(-h\delta\bar r)
+ =e_c(-h_1\delta_1\bar r).}
+\tag{9.50}
+\]
+
+Here the right side is \(1\) when \(c=1\).  For \(c>1\), define
+\(\tau_c(\chi)=\sum_{x\bmod c}\chi(x)e_c(x)\).  Multiplicative
+orthogonality on \((\mathbb Z/c\mathbb Z)^\times\) now separates the
+three variables exactly:
+
+\[
+ \boxed{
+ e_c(-h_1\delta_1\bar r)
+ =\frac1{\varphi(c)}\sum_{\chi\ ({\rm mod}\ c)}
+ \tau_c(\chi)\,\overline{\chi(-1)}
+ \overline{\chi(h_1)}\overline{\chi(\delta_1)}\chi(r).}
+\tag{9.51}
+\]
+
+After the already justified Fourier--Mellin separation (6.5), each
+piece of (6.0) is therefore a finite linear combination of expressions
+of the exact shape
+
+\[
+ \sum_{\substack{d,e,c\\dec\asymp S}}
+ \frac{\mu(d)\mu(e)\mu(c)}{\varphi(c)}
+ \sum_{\chi\ ({\rm mod}\ c)}\tau_c(\chi)\overline{\chi(-1)}
+ \mathcal R_{d,e,c}(\chi)
+ \mathcal H_{d,e,c}(\bar\chi)
+ \mathcal D_{d,e,c}(\bar\chi),
+\tag{9.52}
+\]
+
+with the pairwise coprimalities and the two exact-gcd conditions from
+(9.49) retained in the three factors.  In particular, the fully resonant
+part is precisely \(c=1\); it must be estimated together with the
+\(\mu(d)\mu(e)\) divisor signs rather than hidden inside an absolute gcd
+bound.  For \(c>1\), (9.52) replaces the additive inverse-product phase
+by a hybrid character problem in which \(h_1,\delta_1,r\) are genuinely
+separated and the modulus average still carries \(\mu(c)\tau_c(\chi)\).
+
+The ordinary multiplicative large sieve does not close this interface.
+Already on the unit stratum \(d=e=1\), use
+\(|\tau_c(\chi)|\leq c^{1/2}\), the character large sieve for the
+\(r\)-second moment, and the same inequality applied to the Dirichlet
+convolution of each short sequence with itself for the \(h\)- and
+\(\delta\)-fourth moments.  Since \(H,L\ll S T^\varepsilon\), Hölder gives
+
+\[
+ |\mathfrak S_{\rm unit}|
+ \ll_\varepsilon
+ S^{1/2}\bigl((S^2+R)R\bigr)^{1/2}A^{1/2}T^\varepsilon.
+\tag{9.53}
+\]
+
+Reciprocity supplies (9.53) with \(R,S\) interchanged.  In the balanced
+maximal box the right side is \(T^{17/2+\varepsilon}\), still
+\(T^{5/2}\) above the \(T^6\) target.  Thus termwise character moments
+recover no more than the previously visible balanced joint-completion
+scale.
+
+Dualizing the two long character sums explains why a termwise refinement
+also stops at a genuine zeta-zero barrier.  For a primitive character and
+the Fourier convention of Section 4, character Poisson summation is
+
+\[
+ \sum_n\bar\chi(n)W(n/X)
+ =\frac{X}{c}\tau_c(\bar\chi)
+   \sum_m\chi(m)\widehat W(mX/c).
+\tag{9.54}
+\]
+
+Apply (9.54) with \(X=H,L\).  The dual lengths are \(c/H,c/L\), and
+\(\tau_c(\chi)\tau_c(\bar\chi)=\chi(-1)c\).  After the conductor
+decomposition for imprimitive characters, the lowest nonzero dual mode
+contains a smooth multiple of
+
+\[
+ \frac{A}{S}
+ \sum_{r\asymp R}\sum_{c\asymp S}
+ \mu(r)\mu(c)e(\pm r/c).
+\tag{9.55}
+\]
+
+This is a diagnostic component, not a lower bound for the full sum:
+different conductors, dual frequencies, and gcd strata can still cancel.
+If (9.55) is estimated separately in the balanced maximal box, however,
+its double Möbius sum must be \(O(T^{4+\varepsilon})\).  Since
+\(R=S=T^3\) and \(e(\pm r/c)\) is a smooth function of the compact ratio
+\(r/c\), Mellin separation would require the power bound
+\(\sum_{n\asymp X}\mu(n)n^{it}\ll X^{2/3+\varepsilon}\) for each factor.
+The classical zero-free region supplies only a subexponential saving from
+\(X\), not the required power.  Thus dualizing term by term reaches the
+same \(2/3\) zero-free boundary that appears in the long-mollifier
+literature; it cannot be used as an unconditional proof.
+
+The new, strictly more faithful interface is therefore to prove (9.52)
+before taking absolute values over the gcd strata or the moduli, using
+the simultaneous \(\mu(c)\tau_c(\chi)\) average.  The finite checker
+verifies (9.49)--(9.50) for all squarefree moduli and variables in its
+test range and records both the exact exponent gap in (9.53) and the
+\(2/3\) exponent forced by the separated lowest mode.  Formula (9.51) is
+the standard finite character orthogonality identity, not an analytic
+estimate.
+
+This difficulty is consistent with the known status of long mollifiers.
+The mollifier here is exactly the linear mollifier used in Farmer's
+all-\(\theta\) conjecture.  Bettin--Gonek show that the stronger hypothesis
+\(I_N(0,T)\ll_\varepsilon T^{1+\varepsilon}\), uniformly for every
+\(N\le T^\theta\), would exclude zeros with
+\(\Re s>1/2+1/(2\theta)\); at \(\theta=3\) that is the zero-free half-plane
+\(\Re s>2/3\).  Their dyadic-interval theorem has the weaker boundary
+\(1/2+2/\theta\), which is trivial at \(\theta=3\), so it does not turn the
+specific present target into a quasi-Riemann-hypothesis claim.  It does,
+however, confirm that a polynomial-length \(T^{1+\varepsilon}\) mollified
+upper bound belongs to the open long-mollifier problem and is not a
+routine consequence of the classical large sieve or an Euler product.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -2562,6 +2725,9 @@ Proved in this note:
   dispersion interface, (9.37)--(9.42).
 * the direct specialization of Pascadi's spectral-dispersion corollary
   and its \(T^{11/2}\) balanced gap, (9.43)--(9.46).
+* the direct fourfold scale comparison, exact gcd--character phase
+  stratification, and the standard character-large-sieve obstruction,
+  including the dual lowest-mode zero-free barrier, (9.47)--(9.55).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -2582,6 +2748,7 @@ Proved in this note:
 | Two-sided Möbius decomposition | verified finite identity | both short Möbius averages and \(h\delta\) retained, (9.37)--(9.39) |
 | Möbius dispersion estimate | **unproved** | sufficient mean-square gate (9.40); present pointwise gap (9.41) |
 | Pascadi 2024 spectral dispersion | verified insufficient | direct scale \((RS)^{3/2}A^{1/2}\); balanced gap \(T^{11/2}\), (9.43)--(9.46) |
+| Gcd--character stratification | verified finite identity; termwise routes insufficient | direct margin and exact separation (9.47)--(9.52); large-sieve gap \(T^{5/2}\), (9.53); dual \(2/3\) barrier, (9.54)--(9.55) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
@@ -2626,6 +2793,10 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 * M. Radziwiłł, *Limitations to mollifying \(\zeta(s)\)*,
   arXiv:1207.6583, for Farmer's all-\(\theta\) long-mollifier conjecture and
   the nontrivial role of the off-diagonal.
+* S. Bettin, S. M. Gonek, *The \(\theta=\infty\) conjecture implies the
+  Riemann hypothesis*, arXiv:1604.02740, Theorems 1 and 2; used in
+  Section 9.12 only to classify the strength of polynomial-length
+  mollified upper bounds, not as an estimate for the present remainder.
 * K. Pratt, N. Robles, *Perturbed moments and a longer mollifier for
   critical zeros of \(\zeta\)*, arXiv:1706.04593, for later exploitation of
   Möbius/convolution structure up to lengths below \(T^{4/7}\) or
