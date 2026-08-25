@@ -444,6 +444,30 @@ class TransitionReciprocalClusterClosureAudit:
 
 
 @dataclass(frozen=True)
+class TransitionFarShellMobiusGateAudit:
+    distance: Fraction
+    shifted_variable_exponent: Fraction
+    modulus_exponent: Fraction
+    product_frequency_exponent: Fraction
+    current_cluster_bound_exponent: Fraction
+    fixed_gate_target_exponent: Fraction
+    required_new_mobius_saving: Fraction
+    fkm_eta: Fraction
+    optimistic_fkm_applications: int
+    optimistic_fkm_total_saving: Fraction
+    residual_after_optimistic_fkm: Fraction
+    left_mobius_weight_retained: bool
+    right_mobius_weight_retained: bool
+    coupled_kernel_retained: bool
+    uniform_prime_factor_hypothesis: bool
+    nonzero_prime_frequency_uniform: bool
+    joint_cofactor_hypothesis: bool
+    new_joint_two_mobius_estimate_required: bool
+    estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2251,6 +2275,64 @@ def transition_reciprocal_cluster_closure_audit(
         whole_transition_face_covered=False,
         residual_distance_open_interval=(F(1, 2), F(1)),
         residual_required_saving_at_top=F(1, 2),
+    )
+
+
+def transition_far_shell_mobius_gate_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    fkm_eta: Fraction,
+    optimistic_fkm_applications: int,
+) -> TransitionFarShellMobiusGateAudit:
+    """State the surviving transition shell as one two-Möbius sum.
+
+    For D=T^theta with theta>1/2, reciprocity clustering gives exponent
+    3/2+theta.  The fixed coupled-kernel gate has exponent
+    2-1/1000.  Fouvry--Kowalski--Michel can save eta*theta per
+    optimistic application when a prime factor of exactly the requested
+    size and every nonzero-frequency/cofactor hypothesis are granted.
+    Those hypotheses are not uniform in the actual squarefree moduli.
+    """
+    if not _is_large_q_afe_transition_face(box):
+        raise ValueError("box is not on the large-q AFE transition face")
+    if distance <= F(1, 2) or distance > F(1):
+        raise ValueError("far transition shell requires 1/2 < theta <= 1")
+    if fkm_eta <= 0 or fkm_eta >= F(1, 24):
+        raise ValueError("FKM eta must lie strictly between 0 and 1/24")
+    if optimistic_fkm_applications not in (1, 2):
+        raise ValueError("FKM applications must be one or two")
+
+    cluster = reciprocal_cluster_large_sieve_scales(
+        box,
+        distance=distance,
+    )
+    fixed_target = box.rho + box.sigma - TARGET_SAVING
+    required = cluster.best_unconditional_bound - fixed_target
+    fkm_total = optimistic_fkm_applications * fkm_eta * distance
+    residual = _positive_part(required - fkm_total)
+
+    return TransitionFarShellMobiusGateAudit(
+        distance=distance,
+        shifted_variable_exponent=distance,
+        modulus_exponent=box.sigma,
+        product_frequency_exponent=box.ell + box.h,
+        current_cluster_bound_exponent=cluster.best_unconditional_bound,
+        fixed_gate_target_exponent=fixed_target,
+        required_new_mobius_saving=required,
+        fkm_eta=fkm_eta,
+        optimistic_fkm_applications=optimistic_fkm_applications,
+        optimistic_fkm_total_saving=fkm_total,
+        residual_after_optimistic_fkm=residual,
+        left_mobius_weight_retained=True,
+        right_mobius_weight_retained=True,
+        coupled_kernel_retained=True,
+        uniform_prime_factor_hypothesis=False,
+        nonzero_prime_frequency_uniform=False,
+        joint_cofactor_hypothesis=False,
+        new_joint_two_mobius_estimate_required=True,
+        estimate_proved=False,
+        published_coverage=False,
     )
 
 
@@ -5200,6 +5282,20 @@ def main() -> None:
         "taper_log=2,energy_log=1/2,shell_log=1,kernel_log=0,"
         "net_log=1/2,global_power=1 low_union=True "
         "residual=(1/2,1],top_save=1/2 whole_face=False"
+    )
+    transition_far_gate = transition_far_shell_mobius_gate_audit(
+        transition_box,
+        distance=F(1),
+        fkm_eta=F(1, 25),
+        optimistic_fkm_applications=2,
+    )
+    print(
+        "large_q_transition: far_shell_mobius_gate="
+        "theta=1,bound=5/2,target=1999/1000,required=501/1000,"
+        "fkm_eta=1/25,fkm_apps=2,fkm_save=2/25,"
+        "fkm_residual=421/1000 two_mu=True coupled=True "
+        "prime_factor=False frequency=False cofactor=False "
+        "new_joint=True proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

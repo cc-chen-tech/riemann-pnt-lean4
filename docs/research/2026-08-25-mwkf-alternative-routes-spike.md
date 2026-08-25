@@ -4837,6 +4837,91 @@ tapers, the dyadic-shell loss, the net \(1/2\) logarithmic saving, and
 low_difference_union_covered=True.  It keeps
 whole_transition_face_covered=False.
 
+### 4.39 The remaining transition far-shell trilinear gate
+
+After Section 4.38 the positive-power transition residual is one
+explicit family.  For \(D=T^\theta\), \(1/2<\theta\le1\), and one of
+the finitely many slopes \(k\), define
+
+\[
+\boxed{
+\begin{aligned}
+ \mathrm{TFS}_{\theta}(q,k):={}&
+ \sum_{\substack{s\asymp T,\ w\asymp D\\
+                  ks+w\asymp T,\ (w,s)=1\\
+                  (q,s(ks+w))=1}}
+ \mu(s)\mu(ks+w)
+ p_N(qs)p_N(q(ks+w))                              \\
+ &\quad\times
+ \sum_{h,\delta\asymp T^{1/2}}
+ \Psi_{q,k}\!\left(
+   \frac sT,\frac wD,\frac h{T^{1/2}},
+   \frac\delta{T^{1/2}}\right)
+ e\!\left(-\frac{h\delta\bar w}{s}\right).
+\end{aligned}}
+\tag{4.328}
+\]
+
+Both signs of \(h,\delta,w\), the exact support restrictions, and all
+fixed transition kernel factors are included in \(\Psi_{q,k}\).
+Neither Möbius weight has been replaced by an arbitrary coefficient.
+
+The reciprocity-cluster estimate (4.323) gives
+
+\[
+ |\mathrm{TFS}_{\theta}(q,k)|
+ \ll_W T^{3/2+\theta}(\log T)^{O(1)}
+\tag{4.329}
+\]
+
+before spending the endpoint tapers.  A fixed-power version sufficient
+for the coupled gate is
+
+\[
+ \boxed{
+ |\mathrm{TFS}_{\theta}(q,k)|
+ \ll_{\varepsilon,W}
+ T^{\,2-1/1000+\varepsilon}.}
+\tag{4.330}
+\]
+
+Thus the exact new arithmetic saving demanded on this shell is
+
+\[
+ \boxed{\theta-\frac12+\frac1{1000}.}
+\tag{4.331}
+\]
+
+This is smaller than the former undifferentiated transition saving
+\(501/1000\) on every proper shell and equals it only at \(\theta=1\).
+
+The Fouvry--Kowalski--Michel trace estimate does not close (4.330).
+Grant, contrary to the actual uniform hypotheses, a prime modulus
+factor of size \(T^\theta\), a nonzero frequency modulo that prime, and
+complete separation of the cofactor phase.  Theorem 1.7 of
+arXiv:1211.6043v3 saves at most \(T^{\eta\theta}\) per application,
+where every \(\eta<1/24\).  Even granting two independent
+applications and taking the admissible value \(\eta=1/25\), the top
+shell retains
+
+\[
+ \boxed{
+ \frac{501}{1000}-\frac2{25}
+ =\frac{421}{1000}.}
+\tag{4.332}
+\]
+
+The optimistic hypotheses fail separately: a squarefree \(s\) need not
+have a prime factor in the prescribed power interval; product
+frequencies divisible by that prime produce a constant trace; and the
+complementary CRT phase remains joint.  Consequently (4.328)--(4.331),
+not a prime-trace corollary, are the surviving theorem interface.
+
+The adapter transition_far_shell_mobius_gate_audit records all variable
+lengths, the current bound, the fixed target, the required saving, the
+optimistic FKM comparison, and the three failed hypotheses.  It keeps
+estimate_proved=False and published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -816,6 +816,44 @@ def test_transition_reciprocity_clusters_close_the_sqrt_difference_union() -> No
     assert audit.residual_required_saving_at_top == F(1, 2)
 
 
+def test_transition_far_shell_is_one_explicit_two_mobius_gate() -> None:
+    """The top shell retains 421/1000 even after two optimistic FKM uses."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_far_shell_mobius_gate_audit",
+        None,
+    )
+    assert adapter is not None, "transition far-shell gate adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    top = adapter(
+        transition_box,
+        distance=F(1),
+        fkm_eta=F(1, 25),
+        optimistic_fkm_applications=2,
+    )
+
+    assert top.current_cluster_bound_exponent == F(5, 2)
+    assert top.fixed_gate_target_exponent == F(1999, 1000)
+    assert top.required_new_mobius_saving == F(501, 1000)
+    assert top.optimistic_fkm_total_saving == F(2, 25)
+    assert top.residual_after_optimistic_fkm == F(421, 1000)
+    assert top.shifted_variable_exponent == F(1)
+    assert top.modulus_exponent == F(1)
+    assert top.product_frequency_exponent == F(1)
+    assert top.left_mobius_weight_retained
+    assert top.right_mobius_weight_retained
+    assert top.coupled_kernel_retained
+    assert not top.uniform_prime_factor_hypothesis
+    assert not top.nonzero_prime_frequency_uniform
+    assert not top.joint_cofactor_hypothesis
+    assert top.new_joint_two_mobius_estimate_required
+    assert not top.estimate_proved
+    assert not top.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2164,6 +2202,14 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "residual=(1/2,1],top_save=1/2 whole_face=False"
     ) in output
     assert (
+        "large_q_transition: far_shell_mobius_gate="
+        "theta=1,bound=5/2,target=1999/1000,required=501/1000,"
+        "fkm_eta=1/25,fkm_apps=2,fkm_save=2/25,"
+        "fkm_residual=421/1000 two_mu=True coupled=True "
+        "prime_factor=False frequency=False cofactor=False "
+        "new_joint=True proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2560,5 +2606,10 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\sum_a|\nu(a)|^2\ll_W HL\log(2\min(H,L))",
         r"T(\log T)^{-1/2}",
         "transition_reciprocal_cluster_closure_audit",
+        "### 4.39 The remaining transition far-shell trilinear gate",
+        r"\mathrm{TFS}_{\theta}",
+        r"\theta-\frac12+\frac1{1000}",
+        r"\frac{421}{1000}",
+        "transition_far_shell_mobius_gate_audit",
     ):
         assert marker in text
