@@ -202,6 +202,7 @@ class LargeQEndpointUnpoissonAudit:
     q_family_cardinality_exponent: Fraction
     aggregated_remainder_exponent: Fraction
     endpoint_taper_log_saving: Fraction
+    shift_log_depth: Fraction
     net_log_saving: Fraction
     all_nonzero_h_boxes_regrouped_before_absolute_value: bool
     poisson_zero_mode_has_same_bound: bool
@@ -1318,6 +1319,8 @@ def _is_large_q_bounded_zeta_endpoint(box: ExponentBox) -> bool:
 
 def large_q_endpoint_unpoisson_audit(
     box: ExponentBox,
+    *,
+    shift_log_depth: Fraction,
 ) -> LargeQEndpointUnpoissonAudit:
     """Close the bounded-zeta large-q endpoint by undoing Poisson.
 
@@ -1336,6 +1339,8 @@ def large_q_endpoint_unpoisson_audit(
     """
     if not _is_large_q_bounded_zeta_endpoint(box):
         raise ValueError("box is not the large-q bounded-zeta endpoint")
+    if shift_log_depth < 0:
+        raise ValueError("shift log depth must be nonnegative")
 
     shifted_solutions = box.rho
     height_integral = F(1)
@@ -1351,15 +1356,22 @@ def large_q_endpoint_unpoisson_audit(
         q_family_cardinality_exponent=box.kappa,
         aggregated_remainder_exponent=aggregated,
         endpoint_taper_log_saving=F(2),
-        net_log_saving=F(2),
+        shift_log_depth=shift_log_depth,
+        net_log_saving=F(2) - shift_log_depth,
         all_nonzero_h_boxes_regrouped_before_absolute_value=True,
         poisson_zero_mode_has_same_bound=True,
         mobius_cancellation_used=False,
-        unconditional_coverage=(aggregated == F(1)),
+        unconditional_coverage=(
+            aggregated == F(1) and shift_log_depth < F(2)
+        ),
     )
 
 
-def endpoint_unpoisson_adapter(box: ExponentBox) -> RouteResult:
+def endpoint_unpoisson_adapter(
+    box: ExponentBox,
+    *,
+    shift_log_depth: Fraction | None,
+) -> RouteResult:
     if not _is_large_q_bounded_zeta_endpoint(box):
         return RouteResult(
             route="endpoint_unpoisson",
@@ -1373,13 +1385,32 @@ def endpoint_unpoisson_adapter(box: ExponentBox) -> RouteResult:
                 "regroup every nonzero h box before absolute values",
             ),
         )
-    audit = large_q_endpoint_unpoisson_audit(box)
+    if shift_log_depth is None:
+        return RouteResult(
+            route="endpoint_unpoisson",
+            applicable=False,
+            saving=None,
+            source="exact inverse Poisson and shifted-equation count",
+            reason="polylog_shift_depth_not_encoded",
+            conditions=(
+                "supply the delta-box logarithmic depth",
+                "require that depth to be strictly below two",
+            ),
+        )
+    audit = large_q_endpoint_unpoisson_audit(
+        box,
+        shift_log_depth=shift_log_depth,
+    )
     return RouteResult(
         route="endpoint_unpoisson",
         applicable=audit.unconditional_coverage,
         saving=F(0),
         source="exact inverse Poisson and shifted-equation count",
-        reason="covered_by_endpoint_unpoisson",
+        reason=(
+            "covered_by_endpoint_unpoisson"
+            if audit.unconditional_coverage
+            else "insufficient_endpoint_log_saving"
+        ),
         conditions=(
             "N/4 <= qR,qS <= N",
             "bounded m1,m2,delta boxes",
@@ -3955,7 +3986,10 @@ def route_box(box: ExponentBox) -> RouteResult:
     bcr = bcr_adapter(box)
     if bcr.applicable:
         return bcr
-    endpoint_unpoisson = endpoint_unpoisson_adapter(box)
+    endpoint_unpoisson = endpoint_unpoisson_adapter(
+        box,
+        shift_log_depth=None,
+    )
     if endpoint_unpoisson.applicable:
         return endpoint_unpoisson
     for adapter in (h_completion_adapter, delta_completion_adapter):
@@ -4147,7 +4181,8 @@ def main() -> None:
         + " proved=False covered=False"
     )
     large_q_audit = large_q_endpoint_unpoisson_audit(
-        boxes["large_q_endpoint"]
+        boxes["large_q_endpoint"],
+        shift_log_depth=F(0),
     )
     print(
         "large_q_endpoint: endpoint_unpoisson="
@@ -4159,7 +4194,8 @@ def main() -> None:
         f"{_fmt(large_q_audit.q_family_cardinality_exponent)} "
         "total="
         f"{_fmt(large_q_audit.aggregated_remainder_exponent)} "
-        "taper_log=2 all_h=True zero_mode=True mobius=False covered=True"
+        "shift_log=0 taper_log=2 net_log=2 all_h=True zero_mode=True "
+        "mobius=False bounded_subface=True whole_cell=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

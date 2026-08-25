@@ -3221,6 +3221,42 @@ The route name is `covered_by_endpoint_unpoisson`.  The adapter
 after cardinal summation over \(q\asymp T^2\), together with the two
 remaining logarithms.  It sets `unconditional_coverage=True`.
 
+There is a precise polylogarithmic extension, but not coverage of the
+whole exponent-zero cell.  Write \(K\asymp M\le\mathscr L^C\) and
+\(L\le\mathscr L^\lambda\).  The elementary gcd average
+
+\[
+ \sum_{m_1\asymp K}\sum_{m_2\asymp M}(m_1,m_2)
+ \ll KM\log(2\min\{K,M\})
+\tag{4.221}
+\]
+
+combined with the factor \((m_1m_2)^{-1/2}\) shows that the weighted
+version of (4.215), summed over \(m_1,m_2\), costs
+\(O(R\log(2K)+K)\).  The bounded-zeta argument therefore gives, after
+all polylogarithmic dyadic subdivisions,
+
+\[
+ \sum_q|\mathcal U^{\ne0}_{q;R,S,K,M,L}|
+ \ll_W T\mathscr L^{\lambda-2}(\log\mathscr L)^{O_W(1)}.
+\tag{4.222}
+\]
+
+Thus the strict logarithmic subface
+
+\[
+ \boxed{0\le\lambda<2}
+\tag{4.223}
+\]
+
+is unconditionally \(o(T)\).  At \(\lambda=2\), the fixed positive
+logarithmic margin vanishes, and the argument does not prove little-oh.
+Since `ExponentBox` records only powers of \(T\), not \(\lambda\), the
+global `route_box` deliberately does not promote the entire
+`large_q_endpoint` exponent cell.  The direct
+`endpoint_unpoisson_adapter` certifies (4.223) only after the shift log
+depth is supplied explicitly.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
@@ -3293,7 +3329,9 @@ Sections 4.9--4.12 now unconditionally cover the endpoint logarithmic
 subface \(\beta+\gamma<3/2\), with the larger range
 \(\beta+\gamma<2\) in the unit-slope sector.  The completion coefficient,
 fixed slopes, coprimality, and polylogarithmic character twists are no
-longer residual hypotheses.
+longer residual hypotheses.  Section 4.25 also covers the large-q
+bounded-zeta subface with shift log depth \(\lambda<2\); the deeper
+polylogarithmic part of that exponent cell remains residual.
 
 The next slice must address the remaining regions in this order:
 

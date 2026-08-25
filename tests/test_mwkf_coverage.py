@@ -325,7 +325,7 @@ def test_large_q_bounded_zeta_endpoint_is_covered_after_unpoisson() -> None:
     )
     assert adapter is not None, "large-q endpoint un-Poisson audit is missing"
     box = boundary_witnesses()["large_q_endpoint"]
-    audit = adapter(box)
+    audit = adapter(box, shift_log_depth=F(0))
 
     assert audit.reduced_length_exponent == F(1)
     assert audit.shifted_solution_exponent == F(1)
@@ -335,16 +335,30 @@ def test_large_q_bounded_zeta_endpoint_is_covered_after_unpoisson() -> None:
     assert audit.q_family_cardinality_exponent == F(2)
     assert audit.aggregated_remainder_exponent == F(1)
     assert audit.endpoint_taper_log_saving == F(2)
+    assert audit.shift_log_depth == F(0)
     assert audit.net_log_saving == F(2)
     assert audit.all_nonzero_h_boxes_regrouped_before_absolute_value
     assert audit.poisson_zero_mode_has_same_bound
     assert audit.mobius_cancellation_used is False
     assert audit.unconditional_coverage
 
+    direct_route = coverage_audit.endpoint_unpoisson_adapter(
+        box,
+        shift_log_depth=F(0),
+    )
+    assert direct_route.route == "endpoint_unpoisson"
+    assert direct_route.applicable
+    assert direct_route.reason == "covered_by_endpoint_unpoisson"
+
+    critical = adapter(box, shift_log_depth=F(2))
+    assert critical.net_log_saving == F(0)
+    assert not critical.unconditional_coverage
+
+    # ExponentBox does not encode the polylogarithmic shift depth, so the
+    # global router must not promote the whole exponent cell.
     route = route_box(box)
-    assert route.route == "endpoint_unpoisson"
-    assert route.applicable
-    assert route.reason == "covered_by_endpoint_unpoisson"
+    assert route.route == "mobius_farey_trilinear"
+    assert not route.applicable
 
 
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
@@ -1598,7 +1612,8 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
     assert (
         "large_q_endpoint: endpoint_unpoisson="
         "solutions=1 denominator=3 per_q=-1 q_count=2 total=1 "
-        "taper_log=2 all_h=True zero_mode=True mobius=False covered=True"
+        "shift_log=0 taper_log=2 net_log=2 all_h=True zero_mode=True "
+        "mobius=False bounded_subface=True whole_cell=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
@@ -1913,6 +1928,8 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\sum_{q\asymp T^2}",
         "covered_by_endpoint_unpoisson",
         "large_q_endpoint_unpoisson_audit",
+        r"0\le\lambda<2",
+        "does not promote the entire",
         "unconditional_coverage=True",
     ):
         assert marker in text
