@@ -352,6 +352,39 @@ def test_nonunit_coprimality_dilation_is_exact_finite_mobius_inversion() -> None
                 assert expanded == expected
 
 
+def test_centered_and_principal_ramanujan_terms_recombine_exactly() -> None:
+    for d in range(1, 12):
+        if naive_mobius(d) == 0:
+            continue
+        for e in range(1, 12):
+            if naive_mobius(e) == 0 or gcd(d, e) != 1:
+                continue
+            for c in range(1, 12):
+                if (
+                    naive_mobius(c) == 0
+                    or gcd(d, c) != 1
+                    or gcd(e, c) != 1
+                ):
+                    continue
+                phi_c = sum(
+                    1 for residue in range(1, c + 1) if gcd(residue, c) == 1
+                )
+                for n in range(-8, 9):
+                    for shift in range(1, c + 1):
+                        if gcd(shift, c) != 1:
+                            continue
+                        outer = F(naive_mobius(d) * naive_mobius(e))
+                        shifted = ramanujan_sum(c, n + shift)
+                        principal = outer * F(ramanujan_sum(c, n), phi_c)
+                        centered = outer * (
+                            naive_mobius(c) * shifted
+                            - F(ramanujan_sum(c, n), phi_c)
+                        )
+                        assert centered + principal == (
+                            outer * naive_mobius(c) * shifted
+                        )
+
+
 def test_delta_completed_congruence_has_self_dual_affine_family() -> None:
     for b in range(1, 9):
         for z in range(1, 9):
@@ -434,3 +467,16 @@ def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:
 def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     assert pascadi_2024_direct_dispersion_gap(box) == F(11, 2)
+
+
+def test_research_note_contains_no_embedded_control_characters() -> None:
+    note = (
+        Path(__file__).parents[1]
+        / "docs/research/2026-08-24-mobius-weighted-off-diagonal.md"
+    ).read_text()
+    forbidden = {
+        character
+        for character in note
+        if ord(character) < 32 and character not in {"\n", "\t"}
+    }
+    assert forbidden == set()

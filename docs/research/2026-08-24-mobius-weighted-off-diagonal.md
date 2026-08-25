@@ -3542,9 +3542,9 @@ where \(\mathcal A(\alpha)=\sum_xA_xe(\alpha x)\), and similarly for
 Parseval with only divisor-bounded coefficients gives
 
 \[
- |(9.108)|\ll_arepsilon
+ |(9.108)|\ll_\varepsilon
  V\|A\|_2\|B\|_2T^\varepsilon
- \ll_arepsilon VX_0T^\varepsilon.
+ \ll_\varepsilon VX_0T^\varepsilon.
 \tag{9.109}
 \]
 
@@ -3677,6 +3677,74 @@ is still unproved, but it is strictly more faithful than estimating the
 characters in (9.52) separately and it now covers every nonprincipal gcd
 stratum with one exact centered interface.
 
+### 9.24 Exact recombination and the weakest residual interface
+
+It would still be stronger than the original problem to demand separate
+(O(RS T^\varepsilon)) bounds for (9.69) and (9.115).  The subtraction
+in (9.113) is the local principal projection, so cancellation between it
+and the global principal lattice must remain available.  For fixed
+(d,e,c,r,\delta_1), define that local projection by
+
+\[
+\boxed{
+ \mathfrak P_{d,e,c}(r,\delta_1)
+ =\mu(d)\mu(e)
+ \sum_{k\mid e}\mu(k)\frac ek
+ \sum_nF((e/k)n)\frac{c_c(n)}{\varphi(c)}.}
+\tag{9.116}
+\]
+
+Here (F) retains its full dependence on the fixed outer variables; only
+the displayed arithmetic factor is independent of the inverse residue.
+Adding (9.116) to (9.113) gives the termwise identity
+
+\[
+\boxed{
+ \mathfrak N_{d,e,c}(r,\delta_1)
+ +\mathfrak P_{d,e,c}(r,\delta_1)
+ =\mu(d)\mu(e)\mu(c)
+ \sum_{k\mid e}\mu(k)\frac ek
+ \sum_nF((e/k)n)c_c(n+k\delta_1\bar r).}
+\tag{9.117}
+\]
+
+Thus the centered and principal pieces recombine exactly to the original
+outer-Möbius-weighted phase after the scaled reverse Poisson transform.
+For (c=1), (9.113) vanishes and (9.116) is the whole expression, as
+required.  Summing (9.116) over the unique gcd decomposition (9.49), and
+then using (9.66)--(9.68), recovers the lattice part (9.69) together with
+its already controlled zero-mode subtraction.  No boundary term is left
+between the two descriptions.
+
+Let \(\mathfrak P_{\rm top}\) denote only the residual part of (9.69) on
+
+\[
+ HM=S T^{O(\eta)},\qquad \ell>m,
+\tag{9.118}
+\]
+
+and let \(\mathfrak N_{\rm all}\) denote (9.115), restricted to boxes not
+already covered by Sections 8 and 9.14.  All complementary principal
+pieces are (O(RS T^\varepsilon)) by (9.63)--(9.73), and the tail is
+already controlled by (6.12).  Consequently the weakest residual
+statement furnished by the exact reductions in this note is the joint
+gate
+
+\[
+\boxed{
+ \left|\mathfrak P_{\rm top}+\mathfrak N_{\rm all}\right|
+ \ll_{\varepsilon,W}RS T^\varepsilon.}
+\tag{9.119}
+\]
+
+Equation (9.119) is strictly weaker than proving (9.69) and (9.115)
+separately, and strictly more explicit than CK\(_{\rm ub}(3)\): every
+summand is given by (9.69), (9.111), and (9.113), while all proved
+complementary pieces have been removed.  It is still unproved.  In
+particular, (9.117) also shows why a formal cancellation of the principal
+subtraction cannot by itself close the problem: using that cancellation
+merely reconstructs the original uncentered coupled kernel.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -3750,6 +3818,9 @@ Proved in this note:
 * the global reverse completion of every nonprincipal gcd stratum into
   one dilated centered Ramanujan family, including all \(k\mid e\)
   boundary terms, (9.111)--(9.115).
+* the exact recombination of the centered and principal spectra and the
+  weakest remaining joint gate after all proved complements are removed,
+  (9.116)--(9.119).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -3782,6 +3853,7 @@ Proved in this note:
 | Wright unbalanced-convolution corollary after centering | verified inapplicable | exact product/modulus map (9.103); both published modulus margins are negative throughout \(5/2\leq\jmath\leq3\), (9.104)--(9.105) |
 | Centered Fourier-energy route | exact reformulation; flatness unproved | Parseval loses \(V=J/M\), (9.109); a separated central-arc estimate needs common Mertens exponent from \(7/11\) down to \(7/12\), (9.110) |
 | All nonprincipal gcd strata | exact unified reduction; centered estimate unproved | scaled reverse Poisson (9.111) and mean-zero kernel (9.113)--(9.114); the complete residual family is (9.115), with no characterwise triangle inequality |
+| Recombined residual spectrum | exact identity; joint estimate unproved | principal plus centered kernels recombine termwise in (9.117); the weakest post-reduction gate is the joint sum (9.119), not separate bounds for (9.69) and (9.115) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
