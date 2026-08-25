@@ -6017,6 +6017,127 @@ records (4.415)--(4.425), uses no Möbius cancellation, sets
 shell_covered_unconditionally=True precisely on (4.422), and keeps
 published_coverage=False.
 
+### 4.49 Triple-gcd determinant-value reduction
+
+The entry gcd from (4.352) can be combined with both gcds in
+Section 4.48.  Write
+
+\[
+ d_a=(a_1,a_2),\qquad
+ d_s=(s_1,s_2),\qquad
+ d_w=(w_1,w_2).
+\tag{4.426}
+\]
+
+Primitivity of each column gives the exact coprimalities
+
+\[
+ \boxed{(d_a,d_s)=1,\qquad(d_s,d_w)=1.}
+\tag{4.427}
+\]
+
+As before, \((d_a,d_w)\mid k\).  Since \(d_a,d_s\mid\Gamma\) and
+\(d_w\mid k\Gamma\), equations (4.416)--(4.427) imply
+
+\[
+ \boxed{
+ \frac{d_ad_sd_w}{(d_a,d_w)}\mid k\Gamma.}
+\tag{4.428}
+\]
+
+Consequently a nonempty exponent shell must satisfy
+
+\[
+ \boxed{\alpha+\gamma+\omega\le\xi.}
+\tag{4.429}
+\]
+
+After fixing the three gcd shells, the number of possible determinant
+values is at most
+
+\[
+ T^{\,(\xi-\alpha-\gamma-\omega)_++\varepsilon}.
+\tag{4.430}
+\]
+
+The bounded fixed-value fiber from (4.392) therefore gives
+
+\[
+ \boxed{
+ \Delta_{\max}(\alpha,\gamma,\omega)
+ \ll_{\varepsilon,k}
+ T^{\,(\xi-\alpha-\gamma-\omega)_++\varepsilon}.}
+\tag{4.431}
+\]
+
+Together with (4.371), this proves
+
+\[
+ \boxed{
+ |\mathcal G_{\theta,\beta;\xi,\gamma,\alpha,\omega}|
+ \ll_{\varepsilon,W,k}
+ T^{\,2+\theta+
+       (\xi-\alpha-\gamma-\omega)_++\varepsilon}.}
+\tag{4.432}
+\]
+
+The complete triple-gcd coverage criterion is
+
+\[
+\boxed{
+ \theta+(\xi-\alpha-\gamma-\omega)_+
+ \le2-\beta-\frac1{250}.}
+\tag{4.433}
+\]
+
+Thus, on the first top residual
+\((\theta,\beta,\xi)=(1,2/3,1/3)\), any
+
+\[
+ \alpha+\gamma+\omega\ge\frac1{250}
+\tag{4.434}
+\]
+
+closes.  The witness \((\alpha,\gamma,\omega)=(0,1/100,0)\) has
+graph exponent \(997/300\) and margin \(3/500\).
+
+On the maximal determinant \(\xi=4/3\), condition (4.433) becomes
+
+\[
+ \boxed{\alpha+\gamma+\omega\ge\frac{251}{250}.}
+\tag{4.435}
+\]
+
+For
+\[
+ (\alpha,\gamma,\omega)
+ =\left(\frac13,\frac13,\frac5{12}\right),
+\tag{4.436}
+\]
+the reduced determinant exponent is \(1/4\), the graph exponent is
+\(13/4\), and the margin is \(119/1500\).  The triple-primitive
+witness \((0,0,0)\) still has exponent \(13/3\) and deficit
+\(251/250\).
+
+After all unconditional graph reductions, a residual shell must obey
+
+\[
+\boxed{
+ \theta+(\xi-\alpha-\gamma-\omega)_+
+ >2-\beta-\frac1{250}.}
+\tag{4.437}
+\]
+
+This is the sharpest current elementary localization: the new
+two-entry Möbius estimate is needed only where all three pairwise gcd
+exponents are jointly too small to offset the determinant length.
+
+The helper factor_triple_gcd_divisibility verifies
+(4.427)--(4.428) on exact nonzero-determinant fixtures.  The adapter
+transition_triple_gcd_lattice_audit records (4.426)--(4.437), sets
+shell_covered_unconditionally=True exactly on (4.433), uses no Möbius
+cancellation, and keeps published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

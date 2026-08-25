@@ -1376,6 +1376,80 @@ def test_transition_cross_gcd_lattice_closes_more_high_determinants() -> None:
     assert not primitive_maximal.shell_covered_unconditionally
 
 
+def test_transition_triple_gcd_lattice_concentrates_the_core() -> None:
+    """All three pairwise gcd shells combine up to the fixed slope."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_triple_gcd_lattice_audit",
+        None,
+    )
+    divisibility = getattr(
+        coverage_audit,
+        "factor_triple_gcd_divisibility",
+        None,
+    )
+    assert adapter is not None, "triple-gcd lattice adapter is missing"
+    assert divisibility is not None, "triple-gcd helper is missing"
+
+    exact = divisibility(
+        a1=3,
+        a2=6,
+        s1=55,
+        s2=5,
+        b=2,
+        k=1,
+    )
+    assert exact["a_s_gcds_coprime"]
+    assert exact["s_w_gcds_coprime"]
+    assert exact["a_w_common_gcd_divides_k"]
+    assert exact["triple_gcd_divides_k_gamma"]
+
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    first_residual = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+        a_gcd_exponent=F(0),
+        s_gcd_exponent=F(1, 100),
+        w_gcd_exponent=F(0),
+    )
+    assert first_residual.reduced_determinant_value_exponent == F(97, 300)
+    assert first_residual.graph_energy_bound_exponent == F(997, 300)
+    assert first_residual.graph_energy_target_margin == F(3, 500)
+    assert first_residual.shell_covered_unconditionally
+    assert not first_residual.published_coverage
+
+    maximal = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        a_gcd_exponent=F(1, 3),
+        s_gcd_exponent=F(1, 3),
+        w_gcd_exponent=F(5, 12),
+    )
+    assert maximal.reduced_determinant_value_exponent == F(1, 4)
+    assert maximal.graph_energy_target_margin == F(119, 1500)
+    assert maximal.shell_covered_unconditionally
+
+    primitive = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        a_gcd_exponent=F(0),
+        s_gcd_exponent=F(0),
+        w_gcd_exponent=F(0),
+    )
+    assert primitive.reduced_determinant_value_exponent == F(4, 3)
+    assert primitive.graph_energy_target_margin == -F(251, 250)
+    assert not primitive.shell_covered_unconditionally
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2836,6 +2910,23 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "reduced=4/3,bound=13/3,margin=-251/250 covered=False"
     ) in output
     assert (
+        "large_q_transition: triple_gcd_lattice="
+        "theta=1,beta=2/3,xi=1/3,alpha=0,gamma=1/100,omega=0,"
+        "reduced=97/300,bound=997/300,target=2497/750,"
+        "margin=3/500 triple=True mobius=False covered=True"
+    ) in output
+    assert (
+        "large_q_transition: triple_gcd_maximal="
+        "theta=1,beta=2/3,xi=4/3,alpha=1/3,gamma=1/3,"
+        "omega=5/12,reduced=1/4,bound=13/4,"
+        "margin=119/1500 covered=True"
+    ) in output
+    assert (
+        "large_q_transition: triple_gcd_primitive="
+        "theta=1,beta=2/3,xi=4/3,alpha=0,gamma=0,omega=0,"
+        "reduced=4/3,bound=13/3,margin=-251/250 covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -3273,5 +3364,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"d_w=(w_1,w_2)",
         r"\theta+(\xi-\alpha-\omega)_+",
         "transition_cross_gcd_lattice_audit",
+        "### 4.49 Triple-gcd determinant-value reduction",
+        r"d_ad_sd_w",
+        r"(\xi-\alpha-\gamma-\omega)_+",
+        "transition_triple_gcd_lattice_audit",
     ):
         assert marker in text
