@@ -1,0 +1,14 @@
+import HardyTheorem.SelbergOffDiagonalAbsorption
+
+open HardyTheorem
+
+#check selbergOffDiagonalExplicitBracket
+#check selbergOffDiagonalLogEnvelope
+#check selbergOffDiagonalExplicitBracket_le_five_mul
+#check selbergOffDiagonalAbsorptionScale
+#check selbergOffDiagonalAbsorptionScale_le_power
+#check selbergOffDiagonalPowerGate_of_parameters
+#check exists_selbergOffDiagonalAbsorptionExponent
+#check exists_uniform_selbergOffDiagonalAbsorptionScale_le
+#check selbergOffDiagonalOscillatoryMajorant_le_of_absorptionScale
+#check exists_selbergOffDiagonalOscillatoryMajorant_le

@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergS13EulerProduct
+
+#check HardyTheorem.selbergNatReciprocalMonoidHom
+#check HardyTheorem.selbergNatReciprocalMonoidHom_apply
+#check HardyTheorem.selbergS13ReciprocalHasSum
+#check HardyTheorem.selbergS13FiniteSupportedReciprocalSum_le_eulerProduct
+#check HardyTheorem.selbergS13FiniteMultiplierPairMass
+#check HardyTheorem.selbergS13FiniteMultiplierPairMass_le_eulerProduct

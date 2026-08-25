@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergDiagonalFinalBound
+
+open HardyTheorem
+
+#check exists_norm_selbergDiagonalPhysicalOriginalSum_le

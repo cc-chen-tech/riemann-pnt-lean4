@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSArithmeticPairReindex
+
+open scoped BigOperators
+
+#check HardyTheorem.selbergSmoothCoprime_rho_dvd_products_iff
+#check HardyTheorem.selbergArithmeticPairSum_reindex

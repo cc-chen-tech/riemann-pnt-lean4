@@ -1,0 +1,14 @@
+import HardyTheorem.SelbergJPointwiseExpansion
+
+open HardyTheorem
+
+#check selbergPhysicalThetaRay
+#check summable_selbergPhysicalGaussianTerm_add_one
+#check selbergGaussianThetaSum_log_eq_physicalThetaRay
+#check selbergPhysicalThetaKernel
+#check selbergPhysicalThetaKernel_eq_nonconstantThetaKernel_log
+#check selbergPhysicalExpandedPairIntegrand_eq_product
+#check tsum_selbergPhysicalExpandedPairIntegrand_eq_product
+#check summable_selbergPhysicalExpandedPairIntegrand
+#check selbergPhysicalPairSeries
+#check selbergPhysicalPairSeries_eq_weighted_normSq_kernel

@@ -1,0 +1,18 @@
+import HardyTheorem.SelbergOffDiagonalGapReindex
+
+namespace HardyTheorem
+
+#check selbergPositiveGapCount
+#check selbergPositiveGapResidue
+#check selbergPositiveGapReciprocalSum
+#check selbergPositiveGapResidueSum
+#check selberg_positive_gap_admissible_iff
+#check selberg_positive_gap_residue_bounds
+#check selberg_positive_gap_reindex_identity
+#check selberg_positive_gap_sum_reindex
+#check selberg_positive_gap_reciprocal_sum_le
+#check selberg_positive_gap_count_le_mul_sq
+#check selberg_log_positive_gap_count_le_two_log_mul
+#check selberg_log_mul_sq_le_two_log_mul
+
+end HardyTheorem

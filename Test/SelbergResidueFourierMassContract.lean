@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergResidueFourierMass
+
+open HardyTheorem
+
+#check norm_selbergSqrtZetaPsi_zero_le
+#check norm_selbergSqrtZetaPsi_one_le
+#check norm_selbergSqrtZetaPsi_one_mul_zero_le
+#check normSq_selbergResidueInverseFourierKernel

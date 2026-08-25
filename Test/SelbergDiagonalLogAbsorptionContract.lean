@@ -1,0 +1,10 @@
+import HardyTheorem.SelbergDiagonalLogAbsorption
+
+open HardyTheorem
+
+#check log_two_add_fourth_div_le_rpow
+#check selbergDiagonalRemainderAbsorptionScale_le_of_power_gates
+#check selbergDiagonalRemainderPowerGates_of_parameters
+#check selbergDiagonalRemainderAbsorptionScale_le_of_parameters
+#check exists_selbergDiagonalAbsorptionExponent
+#check exists_uniform_selbergDiagonalRemainderAbsorptionScale_le

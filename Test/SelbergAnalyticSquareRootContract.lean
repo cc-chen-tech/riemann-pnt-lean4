@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergAnalyticSquareRoot
+
+open Set
+
+#check HardyTheorem.analyticOnNhd_of_continuousOn_sq_eq
+#check HardyTheorem.exists_analyticOnNhd_sq_eq

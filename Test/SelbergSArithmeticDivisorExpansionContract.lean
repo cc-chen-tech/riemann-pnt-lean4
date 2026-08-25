@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSArithmeticDivisorExpansion
+
+#check HardyTheorem.selbergNineSquarefreeDivisorCoeff
+#check HardyTheorem.selbergNineSquarefreeDivisorCoeff_apply_prime
+#check HardyTheorem.selbergNineSquarefreeDivisorCoeff_isMultiplicative
+#check HardyTheorem.selbergNineProduct_eq_squarefreeDivisorSum

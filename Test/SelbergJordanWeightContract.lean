@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergJordanWeight
+
+open scoped BigOperators
+
+#check HardyTheorem.sum_divisors_selbergJordanWeight
+#check HardyTheorem.selbergJordanWeight_nonneg
+#check HardyTheorem.selbergJordanWeight_le_rpow

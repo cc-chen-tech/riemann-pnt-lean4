@@ -1,0 +1,12 @@
+import HardyTheorem.SelbergPerronKernel
+
+#check HardyTheorem.perronLogCutoff
+#check HardyTheorem.perronLogCutoff_eq_negLogIndicator_on_pos
+#check HardyTheorem.hasMellin_perronLogCutoff
+#check HardyTheorem.verticalIntegrable_inv_sq
+#check HardyTheorem.continuousAt_perronLogCutoff_of_pos
+#check HardyTheorem.mellinInv_inv_sq_eq_perronLogCutoff
+#check HardyTheorem.perronKernel_ratio_integral_eq
+#check HardyTheorem.perronLogCutoff_nat_div_eq_log
+#check HardyTheorem.perronLogCutoff_nat_div_eq_zero
+#check HardyTheorem.perronKernel_integral_eq

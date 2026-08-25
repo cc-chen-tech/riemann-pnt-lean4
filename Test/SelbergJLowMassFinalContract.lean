@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergJLowMassFinal
+
+open HardyTheorem
+
+#check selbergJLowMass_le_exp_one_mul_J_unconditional
+#check exists_integral_normSq_selbergPhysicalThetaKernel_low_le

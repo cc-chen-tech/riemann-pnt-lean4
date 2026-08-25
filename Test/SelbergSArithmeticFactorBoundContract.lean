@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergSArithmeticFactorBound
+
+#check HardyTheorem.selberg_rpow_shift_local_cancel
+#check HardyTheorem.norm_selbergSmoothOuterFactor
+#check HardyTheorem.selbergGroupedLocalMajorant
+#check HardyTheorem.exists_norm_selbergGroupedLocalFactor_le

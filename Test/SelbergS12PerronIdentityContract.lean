@@ -1,0 +1,10 @@
+import HardyTheorem.SelbergS12PerronIdentity
+
+#check HardyTheorem.selbergS12ShiftedCoprimeCoeff
+#check HardyTheorem.LSeries_term_selbergS12ShiftedCoprimeCoeff
+#check HardyTheorem.LSeries_selbergS12ShiftedCoprimeCoeff_eq
+#check HardyTheorem.LSeriesSummable_selbergS12ShiftedCoprimeCoeff
+#check HardyTheorem.selbergS12WeightedCoprimeSum
+#check HardyTheorem.tsum_selbergS12ShiftedCoprimeCoeff_mul_cutoff_eq
+#check HardyTheorem.selbergS12PerronIntegrand
+#check HardyTheorem.normalized_integral_selbergS12PerronIntegrand_eq_weightedSum

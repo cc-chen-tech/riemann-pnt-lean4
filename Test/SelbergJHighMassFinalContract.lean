@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergJHighMassFinal
+
+open HardyTheorem
+
+#check integral_Ioc_exp_neg_mul_le_inv
+#check exists_integral_normSq_selbergPhysicalThetaKernel_high_le

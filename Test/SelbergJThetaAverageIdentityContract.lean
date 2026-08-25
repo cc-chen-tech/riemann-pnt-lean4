@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergJThetaAverageIdentity
+
+open HardyTheorem
+
+#check selbergJThetaAverageProduct
+#check integrable_selbergJThetaAverageProduct
+#check integral_theta_mul_selbergJ_eq_integral_normSq_mul_thetaAverageKernel

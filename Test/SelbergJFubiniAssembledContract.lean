@@ -1,0 +1,13 @@
+import HardyTheorem.SelbergJFubiniAssembled
+
+open HardyTheorem
+
+#check SelbergJFiniteIndex
+#check SelbergJOuterIndex
+#check selbergJGlobalExpandedPairIntegrand
+#check summable_selbergJGlobalExpandedPairIntegrand
+#check selbergJGlobalPairSeries
+#check selbergJGlobalPairSeries_eq_physicalPairSeries
+#check selbergJ
+#check selbergJ_eq_integral_physicalPairSeries
+#check selbergJ_eq_tsum_integral_globalExpandedPair

@@ -1,0 +1,13 @@
+import HardyTheorem.SelbergJPartition
+
+open HardyTheorem
+
+#check selbergJIntegratedExpandedPair
+#check selbergJDiagonalIndexSet
+#check selbergJForwardIndexSet
+#check selbergJReverseIndexSet
+#check selbergJDiagonalPart
+#check selbergJForwardPart
+#check selbergJReversePart
+#check selbergJGlobalIntegratedSeries_eq_three_parts
+#check selbergJ_eq_diagonal_add_forward_add_reverse

@@ -158,6 +158,54 @@ noncomputable def boundaryRectIntegral
       Complex.I • (∫ y : ℝ in y0..y1, f (x1 + y * Complex.I)) -
         Complex.I • (∫ y : ℝ in y0..y1, f (x0 + y * Complex.I))
 
+/-- Arbitrary rectangle boundary integrals agree when the integrands agree
+on the closed-rectangle boundary. -/
+lemma boundaryRectIntegral_congr_of_eqOn_boundary
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f g : ℂ → E} {x0 x1 y0 y1 : ℝ}
+    (hfg : ∀ z ∈ ([[x0, x1]] ×ℂ [[y0, y1]]),
+      z ∉ (Ioo x0 x1 ×ℂ Ioo y0 y1) → f z = g z) :
+    boundaryRectIntegral f x0 x1 y0 y1 =
+      boundaryRectIntegral g x0 x1 y0 y1 := by
+  have hbottom :
+      (∫ x : ℝ in x0..x1, f (x + y0 * I)) =
+        ∫ x : ℝ in x0..x1, g (x + y0 * I) := by
+    apply intervalIntegral.integral_congr
+    intro x hx
+    apply hfg
+    · simpa [mem_reProdIm] using
+        And.intro hx (left_mem_uIcc : y0 ∈ [[y0, y1]])
+    · simp [mem_reProdIm]
+  have htop :
+      (∫ x : ℝ in x0..x1, f (x + y1 * I)) =
+        ∫ x : ℝ in x0..x1, g (x + y1 * I) := by
+    apply intervalIntegral.integral_congr
+    intro x hx
+    apply hfg
+    · simpa [mem_reProdIm] using
+        And.intro hx (right_mem_uIcc : y1 ∈ [[y0, y1]])
+    · simp [mem_reProdIm]
+  have hright :
+      (∫ y : ℝ in y0..y1, f ((x1 : ℂ) + y * I)) =
+        ∫ y : ℝ in y0..y1, g ((x1 : ℂ) + y * I) := by
+    apply intervalIntegral.integral_congr
+    intro y hy
+    apply hfg
+    · simpa [mem_reProdIm] using
+        And.intro (right_mem_uIcc : x1 ∈ [[x0, x1]]) hy
+    · simp [mem_reProdIm]
+  have hleft :
+      (∫ y : ℝ in y0..y1, f ((x0 : ℂ) + y * I)) =
+        ∫ y : ℝ in y0..y1, g ((x0 : ℂ) + y * I) := by
+    apply intervalIntegral.integral_congr
+    intro y hy
+    apply hfg
+    · simpa [mem_reProdIm] using
+        And.intro (left_mem_uIcc : x0 ∈ [[x0, x1]]) hy
+    · simp [mem_reProdIm]
+  unfold boundaryRectIntegral
+  rw [hbottom, htop, hright, hleft]
+
 lemma rectangleBoundaryIntegral_eq_boundaryRectIntegral
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (f : ℂ → E) (c : ℂ) (R : ℝ) :
@@ -779,6 +827,245 @@ theorem rectangleBoundaryIntegral_sub_inv_of_mem_openRectangle
       (rectangleBoundaryIntegral_eq_boundaryRectIntegral kernel p r).symm
   rw [houter, houter_inner, hinner]
   exact rectangleBoundaryIntegral_sub_inv_center p hr
+
+/-- The boundary integral of `1 / (z-p)` is `2πi` on an arbitrary
+axis-parallel rectangle whose interior contains `p`.  This is the
+non-square contour kernel needed for vertical-line shifts. -/
+theorem boundaryRectIntegral_sub_inv_of_mem_openRect
+    (p : ℂ) {x0 x1 y0 y1 : ℝ}
+    (hx0 : x0 < p.re) (hx1 : p.re < x1)
+    (hy0 : y0 < p.im) (hy1 : p.im < y1) :
+    boundaryRectIntegral (fun z : ℂ => (z - p)⁻¹) x0 x1 y0 y1 =
+      2 * Real.pi * I := by
+  let margin := min (min (p.re - x0) (x1 - p.re))
+    (min (p.im - y0) (y1 - p.im))
+  have hmargin : 0 < margin := by
+    dsimp [margin]
+    exact lt_min (lt_min (sub_pos.mpr hx0) (sub_pos.mpr hx1))
+      (lt_min (sub_pos.mpr hy0) (sub_pos.mpr hy1))
+  let r := margin / 2
+  have hr : 0 < r := by dsimp [r]; positivity
+  have hr_x0 : r < p.re - x0 := by
+    have hm : margin ≤ p.re - x0 :=
+      le_trans (min_le_left _ _) (min_le_left _ _)
+    dsimp [r]
+    linarith
+  have hr_x1 : r < x1 - p.re := by
+    have hm : margin ≤ x1 - p.re :=
+      le_trans (min_le_left _ _) (min_le_right _ _)
+    dsimp [r]
+    linarith
+  have hr_y0 : r < p.im - y0 := by
+    have hm : margin ≤ p.im - y0 :=
+      le_trans (min_le_right _ _) (min_le_left _ _)
+    dsimp [r]
+    linarith
+  have hr_y1 : r < y1 - p.im := by
+    have hm : margin ≤ y1 - p.im :=
+      le_trans (min_le_right _ _) (min_le_right _ _)
+    dsimp [r]
+    linarith
+  let u := p.re - r
+  let v := p.re + r
+  let w := p.im - r
+  let q := p.im + r
+  have hx0u : x0 < u := by dsimp [u]; linarith
+  have huv : u < v := by dsimp [u, v]; linarith
+  have hvx1 : v < x1 := by dsimp [v]; linarith
+  have hy0w : y0 < w := by dsimp [w]; linarith
+  have hwq : w < q := by dsimp [w, q]; linarith
+  have hqy1 : q < y1 := by dsimp [q]; linarith
+  let kernel : ℂ → ℂ := fun z => (z - p)⁻¹
+  have horizontal_continuous : ∀ y : ℝ, y ≠ p.im →
+      Continuous (fun x : ℝ => kernel (x + y * I)) := by
+    intro y hy
+    apply ((Complex.continuous_ofReal.add
+      (continuous_const.mul continuous_const)).sub continuous_const).inv₀
+    intro x hx
+    apply hy
+    have hi := congrArg Complex.im hx
+    simp at hi
+    linarith
+  have vertical_continuous : ∀ x : ℝ, x ≠ p.re →
+      Continuous (fun y : ℝ => kernel (x + y * I)) := by
+    intro x hx
+    apply ((continuous_const.add
+      (Complex.continuous_ofReal.mul continuous_const)).sub continuous_const).inv₀
+    intro y hy
+    apply hx
+    have hr' := congrArg Complex.re hy
+    simp at hr'
+    linarith
+  have hbottom : boundaryRectIntegral kernel x0 x1 y0 w = 0 := by
+    apply boundaryRectIntegral_eq_zero_of_differentiableOn
+    intro z hz
+    apply ((differentiableAt_id.sub_const p).inv ?_).differentiableWithinAt
+    intro hzp
+    have hz_eq : z = p := sub_eq_zero.mp hzp
+    subst z
+    rw [mem_reProdIm] at hz
+    have hzim := hz.2
+    rw [uIcc_of_le hy0w.le] at hzim
+    linarith [hzim.2]
+  have htop : boundaryRectIntegral kernel x0 x1 q y1 = 0 := by
+    apply boundaryRectIntegral_eq_zero_of_differentiableOn
+    intro z hz
+    apply ((differentiableAt_id.sub_const p).inv ?_).differentiableWithinAt
+    intro hzp
+    have hz_eq : z = p := sub_eq_zero.mp hzp
+    subst z
+    rw [mem_reProdIm] at hz
+    have hzim := hz.2
+    rw [uIcc_of_le hqy1.le] at hzim
+    linarith [hzim.1]
+  have hleft : boundaryRectIntegral kernel x0 u w q = 0 := by
+    apply boundaryRectIntegral_eq_zero_of_differentiableOn
+    intro z hz
+    apply ((differentiableAt_id.sub_const p).inv ?_).differentiableWithinAt
+    intro hzp
+    have hz_eq : z = p := sub_eq_zero.mp hzp
+    subst z
+    rw [mem_reProdIm] at hz
+    have hzre := hz.1
+    rw [uIcc_of_le hx0u.le] at hzre
+    linarith [hzre.2]
+  have hright : boundaryRectIntegral kernel v x1 w q = 0 := by
+    apply boundaryRectIntegral_eq_zero_of_differentiableOn
+    intro z hz
+    apply ((differentiableAt_id.sub_const p).inv ?_).differentiableWithinAt
+    intro hzp
+    have hz_eq : z = p := sub_eq_zero.mp hzp
+    subst z
+    rw [mem_reProdIm] at hz
+    have hzre := hz.1
+    rw [uIcc_of_le hvx1.le] at hzre
+    linarith [hzre.1]
+  have houter_inner :
+      boundaryRectIntegral kernel x0 x1 y0 y1 =
+        boundaryRectIntegral kernel u v w q :=
+    boundaryRectIntegral_eq_inner_of_four_rectangles kernel x0 u v x1 y0 w q y1
+      (horizontal_continuous w (by dsimp [w]; linarith))
+      (horizontal_continuous q (by dsimp [q]; linarith))
+      (vertical_continuous x0 (by linarith))
+      (vertical_continuous x1 (by linarith))
+      hbottom htop hleft hright
+  have hinner : boundaryRectIntegral kernel u v w q =
+      rectangleBoundaryIntegral kernel p r := by
+    simpa [u, v, w, q] using
+      (rectangleBoundaryIntegral_eq_boundaryRectIntegral kernel p r).symm
+  rw [houter_inner, hinner]
+  exact rectangleBoundaryIntegral_sub_inv_center p hr
+
+private lemma simplePoleTerm_boundaryRectIntervalIntegrable
+    (p a : ℂ) {x0 x1 y0 y1 : ℝ}
+    (hx0 : x0 < p.re) (hx1 : p.re < x1)
+    (hy0 : y0 < p.im) (hy1 : p.im < y1) :
+    IntervalIntegrable (fun x : ℝ => ((x + y0 * I) - p)⁻¹ * a)
+        MeasureTheory.volume x0 x1 ∧
+      IntervalIntegrable (fun x : ℝ => ((x + y1 * I) - p)⁻¹ * a)
+        MeasureTheory.volume x0 x1 ∧
+      IntervalIntegrable (fun y : ℝ => ((x1 : ℂ) + y * I - p)⁻¹ * a)
+        MeasureTheory.volume y0 y1 ∧
+      IntervalIntegrable (fun y : ℝ => ((x0 : ℂ) + y * I - p)⁻¹ * a)
+        MeasureTheory.volume y0 y1 := by
+  have horizontal_continuous : ∀ y : ℝ, y ≠ p.im →
+      Continuous (fun x : ℝ => ((x + y * I) - p)⁻¹ * a) := by
+    intro y hy
+    apply (((Complex.continuous_ofReal.add
+      (continuous_const.mul continuous_const)).sub continuous_const).inv₀ ?_).mul continuous_const
+    intro x hx
+    apply hy
+    have hi := congrArg Complex.im hx
+    simp at hi
+    linarith
+  have vertical_continuous : ∀ x : ℝ, x ≠ p.re →
+      Continuous (fun y : ℝ => ((x : ℂ) + y * I - p)⁻¹ * a) := by
+    intro x hx
+    apply (((continuous_const.add
+      (Complex.continuous_ofReal.mul continuous_const)).sub continuous_const).inv₀ ?_).mul continuous_const
+    intro y hy
+    apply hx
+    have hr' := congrArg Complex.re hy
+    simp at hr'
+    linarith
+  exact ⟨
+    (horizontal_continuous y0 (by linarith)).intervalIntegrable x0 x1,
+    (horizontal_continuous y1 (by linarith)).intervalIntegrable x0 x1,
+    (vertical_continuous x1 (by linarith)).intervalIntegrable y0 y1,
+    (vertical_continuous x0 (by linarith)).intervalIntegrable y0 y1⟩
+
+/-- A holomorphic remainder plus one simple principal part satisfies the
+residue formula on an arbitrary axis-parallel rectangle. -/
+theorem boundaryRectIntegral_eq_simple_pole_residue_of_differentiableOn
+    {g : ℂ → ℂ} {p a : ℂ} {x0 x1 y0 y1 : ℝ}
+    (hg : DifferentiableOn ℂ g ([[x0, x1]] ×ℂ [[y0, y1]]))
+    (hx0 : x0 < p.re) (hx1 : p.re < x1)
+    (hy0 : y0 < p.im) (hy1 : p.im < y1) :
+    boundaryRectIntegral (fun z => g z + (z - p)⁻¹ * a)
+        x0 x1 y0 y1 =
+      (2 * Real.pi * I) * a := by
+  have hgcont := hg.continuousOn
+  have hgb : IntervalIntegrable (fun x : ℝ => g (x + y0 * I))
+      MeasureTheory.volume x0 x1 := by
+    exact (hgcont.comp
+      (Complex.continuous_ofReal.add
+        (continuous_const.mul continuous_const)).continuousOn (by
+          intro x hx
+          simpa [mem_reProdIm] using
+            And.intro hx (left_mem_uIcc : y0 ∈ [[y0, y1]]))).intervalIntegrable
+  have hgt : IntervalIntegrable (fun x : ℝ => g (x + y1 * I))
+      MeasureTheory.volume x0 x1 := by
+    exact (hgcont.comp
+      (Complex.continuous_ofReal.add
+        (continuous_const.mul continuous_const)).continuousOn (by
+          intro x hx
+          simpa [mem_reProdIm] using
+            And.intro hx (right_mem_uIcc : y1 ∈ [[y0, y1]]))).intervalIntegrable
+  have hgr : IntervalIntegrable (fun y : ℝ => g ((x1 : ℂ) + y * I))
+      MeasureTheory.volume y0 y1 := by
+    exact (hgcont.comp
+      (continuous_const.add
+        (Complex.continuous_ofReal.mul continuous_const)).continuousOn (by
+          intro y hy
+          simpa [mem_reProdIm] using
+            And.intro (right_mem_uIcc : x1 ∈ [[x0, x1]]) hy)).intervalIntegrable
+  have hgl : IntervalIntegrable (fun y : ℝ => g ((x0 : ℂ) + y * I))
+      MeasureTheory.volume y0 y1 := by
+    exact (hgcont.comp
+      (continuous_const.add
+        (Complex.continuous_ofReal.mul continuous_const)).continuousOn (by
+          intro y hy
+          simpa [mem_reProdIm] using
+            And.intro (left_mem_uIcc : x0 ∈ [[x0, x1]]) hy)).intervalIntegrable
+  have hk := simplePoleTerm_boundaryRectIntervalIntegrable
+    p a hx0 hx1 hy0 hy1
+  have hadd :
+      boundaryRectIntegral (fun z => g z + (z - p)⁻¹ * a) x0 x1 y0 y1 =
+        boundaryRectIntegral g x0 x1 y0 y1 +
+          boundaryRectIntegral (fun z => (z - p)⁻¹ * a) x0 x1 y0 y1 := by
+    unfold boundaryRectIntegral
+    rw [intervalIntegral.integral_add hgb hk.1,
+      intervalIntegral.integral_add hgt hk.2.1,
+      intervalIntegral.integral_add hgr hk.2.2.1,
+      intervalIntegral.integral_add hgl hk.2.2.2]
+    module
+  have hgzero : boundaryRectIntegral g x0 x1 y0 y1 = 0 :=
+    boundaryRectIntegral_eq_zero_of_differentiableOn g x0 x1 y0 y1 hg
+  have hkernel : boundaryRectIntegral (fun z : ℂ => (z - p)⁻¹)
+      x0 x1 y0 y1 = 2 * Real.pi * I :=
+    boundaryRectIntegral_sub_inv_of_mem_openRect p hx0 hx1 hy0 hy1
+  have hkernelA : boundaryRectIntegral (fun z : ℂ => (z - p)⁻¹ * a)
+      x0 x1 y0 y1 = (2 * Real.pi * I) * a := by
+    unfold boundaryRectIntegral
+    rw [intervalIntegral.integral_mul_const,
+      intervalIntegral.integral_mul_const,
+      intervalIntegral.integral_mul_const,
+      intervalIntegral.integral_mul_const]
+    unfold boundaryRectIntegral at hkernel
+    simp only [smul_eq_mul] at hkernel ⊢
+    rw [← hkernel]
+    ring
+  rw [hadd, hgzero, zero_add, hkernelA]
 
 private lemma simplePoleTerm_boundaryIntervalIntegrable
     (c p a : ℂ) {R : ℝ} (hp : p ∈ openRectangle c R) :

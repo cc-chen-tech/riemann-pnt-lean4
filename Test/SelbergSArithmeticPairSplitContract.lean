@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergSArithmeticPairSplit
+
+open scoped BigOperators
+
+#check HardyTheorem.selbergArithmeticPairTerm
+#check HardyTheorem.selbergArithmeticPairSum
+#check HardyTheorem.selbergSmoothOuterFactor
+#check HardyTheorem.selbergCoprimeLocalFactor
+#check HardyTheorem.selbergArithmeticPairSum_eq_split

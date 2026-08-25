@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergJFinalBound
+
+open HardyTheorem
+
+#check selbergJ_eq_diagonalPhysical_add_offDiagonalPhysical
+#check exists_abs_selbergJ_le
