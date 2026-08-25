@@ -2475,6 +2475,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.744}",
         "published_bblr_power_coverage_upper=1/4",
         "signed_residual_lower_exponent=1/4",
+        "### 4.93 Exact signed-atom convolution collapses only for product-compatible weights",
+        "\\tag{4.745}",
+        "\\tag{4.748}",
+        "signed_dual_product_collapse_exact=True",
+        "actual_transformed_weight_product_compatible=False",
     ):
         assert marker in note
 
@@ -2634,6 +2639,13 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "prefactor=3/4,error1=2,error2=2,target=2,margin=0,"
         "diagonal_reduction=True,sharp=True,published_upper=1/4,"
         "boundary_log=False,residual_lower=1/4,residual_upper=1,"
+        "whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: signed_dual_convolution="
+        "outer=1/2,dual=1/2,product=1,signed_atoms=2,"
+        "collapse=True,survivor=mobius,cutoff=True,"
+        "product_weight=False,ratio_mellin=True,published=False,"
         "whole_face=False"
     ) in report
 
@@ -3526,6 +3538,48 @@ def test_bblr_h_poisson_signed_cells_reduce_to_one_quarter_boundary() -> None:
     assert boundary.signed_residual_lower_exponent == F(1, 4)
     assert boundary.signed_residual_upper_exponent == F(1)
     assert not boundary.whole_signed_hard_face_covered
+
+
+def test_signed_atom_and_h_poisson_dual_convolution_collapses_exactly() -> None:
+    helper = getattr(
+        coverage_audit,
+        "truncated_signed_dual_convolution_identity",
+        None,
+    )
+    assert helper is not None, "signed-dual convolution helper is missing"
+
+    for cutoff, cofactor, product in (
+        (5, 2, 3),
+        (5, 2, 4),
+        (5, 2, 5),
+        (5, 2, 6),
+        (7, 1, 6),
+        (7, 3, 6),
+        (11, 4, 10),
+        (11, 4, 12),
+    ):
+        exact = helper(cutoff=cutoff, cofactor=cofactor, product=product)
+        assert exact["finite_reindexing_exact"]
+        assert exact["weighted_convolution"] == exact["collapsed_value"]
+
+    audit_adapter = getattr(
+        coverage_audit,
+        "signed_dual_convolution_audit",
+        None,
+    )
+    assert audit_adapter is not None, "signed-dual convolution audit is missing"
+    audit = audit_adapter(outer_atom_exponent=F(1, 2))
+    assert audit.outer_atom_exponent == F(1, 2)
+    assert audit.h_poisson_dual_exponent == F(1, 2)
+    assert audit.product_variable_exponent == F(1)
+    assert audit.signed_atom_count == 2
+    assert audit.signed_dual_product_collapse_exact
+    assert audit.collapsed_coefficient_is_one_mobius
+    assert audit.cutoff_condition_retained_exactly
+    assert not audit.actual_transformed_weight_product_compatible
+    assert audit.ratio_mellin_family_required
+    assert not audit.weighted_collapse_bound_proved
+    assert not audit.whole_signed_hard_face_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

@@ -1532,6 +1532,21 @@ class BBLRHPoissonSignedCellAudit:
 
 
 @dataclass(frozen=True)
+class SignedDualConvolutionAudit:
+    outer_atom_exponent: Fraction
+    h_poisson_dual_exponent: Fraction
+    product_variable_exponent: Fraction
+    signed_atom_count: int
+    signed_dual_product_collapse_exact: bool
+    collapsed_coefficient_is_one_mobius: bool
+    cutoff_condition_retained_exactly: bool
+    actual_transformed_weight_product_compatible: bool
+    ratio_mellin_family_required: bool
+    weighted_collapse_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7624,6 +7639,91 @@ def bblr_h_poisson_signed_cell_audit(
     )
 
 
+def truncated_signed_dual_convolution_identity(
+    *,
+    cutoff: int,
+    cofactor: int,
+    product: int,
+) -> dict[str, int | bool]:
+    """Verify the finite signed-atom/dual convolution collapse.
+
+    For fixed unsigned cofactor ``e``, define
+
+    ``lambda_e(u) = -sum_(d*y=u, d<=U<d*e) mu(d)mu(y)``.
+
+    Convolution with the unsigned h-Poisson dual variable ``j`` is
+    exact:
+
+    ``sum_(u*j=c) lambda_e(u) = -mu(c) 1_(c<=U<c*e)``.
+
+    Indeed, after writing ``u=d*y``, the inner sum over ``y*j=c/d``
+    is ``(mu*1)(c/d)`` and vanishes unless ``d=c``.  This is a finite
+    reindexing; no analytic estimate or asymptotic is used.
+    """
+    if min(cutoff, cofactor, product) <= 0:
+        raise ValueError("cutoff, cofactor, and product must be positive")
+
+    def divisors(n: int) -> tuple[int, ...]:
+        return tuple(d for d in range(1, n + 1) if n % d == 0)
+
+    def signed_atom_coefficient(u: int) -> int:
+        return -sum(
+            _finite_mobius(d) * _finite_mobius(u // d)
+            for d in divisors(u)
+            if d <= cutoff < d * cofactor
+        )
+
+    convolution = sum(
+        signed_atom_coefficient(product // dual)
+        for dual in divisors(product)
+    )
+    collapsed = (
+        -_finite_mobius(product)
+        if product <= cutoff < product * cofactor
+        else 0
+    )
+    return {
+        "cutoff": cutoff,
+        "cofactor": cofactor,
+        "product": product,
+        "weighted_convolution": convolution,
+        "collapsed_value": collapsed,
+        "finite_reindexing_exact": convolution == collapsed,
+    }
+
+
+def signed_dual_convolution_audit(
+    *,
+    outer_atom_exponent: Fraction,
+) -> SignedDualConvolutionAudit:
+    """Record what the exact finite collapse does and does not prove.
+
+    On a diagonal signed cell, one of the two signed-atom products and
+    the second h-Poisson dual both have exponent ``s/2``.  Their product
+    has exponent ``s``.  The finite identity above collapses the two
+    Möbius atoms to one Möbius coefficient only when the remaining test
+    weight depends on ``u`` and ``j`` through ``u*j``.  The actual BBLR
+    transform depends on them separately, so a coupled ratio-Mellin
+    estimate is still required.
+    """
+    atom = outer_atom_exponent
+    if atom < 0 or atom > F(1, 2):
+        raise ValueError("outer_atom_exponent must lie in [0, 1/2]")
+    return SignedDualConvolutionAudit(
+        outer_atom_exponent=atom,
+        h_poisson_dual_exponent=atom,
+        product_variable_exponent=2 * atom,
+        signed_atom_count=2,
+        signed_dual_product_collapse_exact=True,
+        collapsed_coefficient_is_one_mobius=True,
+        cutoff_condition_retained_exactly=True,
+        actual_transformed_weight_product_compatible=False,
+        ratio_mellin_family_required=True,
+        weighted_collapse_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -12260,6 +12360,25 @@ def main() -> None:
         "residual_upper="
         f"{_fmt(signed_h_poisson.signed_residual_upper_exponent)},"
         f"whole_face={signed_h_poisson.whole_signed_hard_face_covered}"
+    )
+    signed_dual = signed_dual_convolution_audit(
+        outer_atom_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: signed_dual_convolution="
+        f"outer={_fmt(signed_dual.outer_atom_exponent)},"
+        f"dual={_fmt(signed_dual.h_poisson_dual_exponent)},"
+        f"product={_fmt(signed_dual.product_variable_exponent)},"
+        f"signed_atoms={signed_dual.signed_atom_count},"
+        f"collapse={signed_dual.signed_dual_product_collapse_exact},"
+        "survivor="
+        f"{'mobius' if signed_dual.collapsed_coefficient_is_one_mobius else 'none'},"
+        f"cutoff={signed_dual.cutoff_condition_retained_exactly},"
+        "product_weight="
+        f"{signed_dual.actual_transformed_weight_product_compatible},"
+        f"ratio_mellin={signed_dual.ratio_mellin_family_required},"
+        f"published={signed_dual.weighted_collapse_bound_proved},"
+        f"whole_face={signed_dual.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

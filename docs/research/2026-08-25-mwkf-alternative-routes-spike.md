@@ -11073,6 +11073,79 @@ ledger with `published_bblr_power_coverage_upper=1/4` and
 `boundary_logarithmic_little_o_closed=False` and
 `whole_signed_hard_face_covered=False`.
 
+### 4.93 Exact signed-atom convolution collapses only for product-compatible weights
+
+There is one more exact cancellation hidden by the cellwise arbitrary-
+coefficient treatment.  For a fixed unsigned cofactor (e), retain the
+two signed atoms in (4.613) and put
+
+\[
+ \lambda_{U,e}(u):=-
+ \sum_{\substack{dy=u\\d\le U<de}}\mu(d)\mu(y).
+\tag{4.745}
+\]
+
+Let (j) be the unsigned dual variable created by the second
+(h)-Poisson step.  If the remaining weight depends on (u,j) only
+through (c=uj), finite Dirichlet convolution gives
+
+\[
+\begin{aligned}
+ \sum_{uj=c}\lambda_{U,e}(u)
+ &=-\sum_{dyj=c\atop d\le U<de}\mu(d)\mu(y)\\
+ &=-\sum_{d\mid c\atop d\le U<de}\mu(d)
+       \sum_{y\mid c/d}\mu(y)\\
+ &=\boxed{-\mu(c)\mathbf 1_{c\le U<ce}}.
+\end{aligned}
+\tag{4.746}
+\]
+
+Thus two signed atoms and one unsigned Poisson dual collapse to one
+Möbius coefficient, with the cutoff retained exactly.  No asymptotic,
+sieve estimate, or extension of a finite sum is used in (4.746).  On the
+top diagonal cell the two factors (u,j\asymp T^{1/2}) become one
+variable (c\asymp T); at general outer exponent (s), their scales are
+(T^{s/2},T^{s/2}), and (c\asymp T^s).
+
+The cancellation is not directly applicable to the actual transform.
+The factors (W(u/U_0)) and
+(\widehat W(j/J_0)), as well as the (F)-kernel in BBLR equation
+(14), depend separately on (u) and (j).  They are not a function of
+(uj).  Mellin separation in the ratio exposes the precise deformation
+of (4.746):
+
+\[
+ \sum_{yj=v}\mu(y)\left(\frac yj\right)^{i\tau}
+ =v^{-i\tau}\sum_{y\mid v}\mu(y)y^{2i\tau}
+ =\boxed{v^{-i\tau}\prod_{p\mid v}(1-p^{2i\tau})}.
+\tag{4.747}
+\]
+
+At (	au=0), (4.747) is (mathbf1_{v=1}), recovering (4.746).
+For nonzero ratio frequency it is a genuine multiplicative coefficient;
+replacing the coupled ratio integral by a uniform pointwise bound would
+return to the inverse-zeta variance obstruction of Section 4.90.
+Therefore the remaining analytic input must retain that integral and
+prove cancellation jointly in the two ratio frequencies.  In particular,
+
+\[
+ \boxed{
+ \texttt{signed\_dual\_product\_collapse\_exact}=\mathrm{True},
+ \qquad
+ \texttt{actual\_transformed\_weight\_product\_compatible}
+ =\mathrm{False}.}
+\tag{4.748}
+\]
+
+The helper `truncated_signed_dual_convolution_identity` verifies
+(4.746) on finite integer data.  The adapter
+`signed_dual_convolution_audit` records the exact scale collapse but
+records `signed_dual_product_collapse_exact=True` and
+`actual_transformed_weight_product_compatible=False`, while keeping
+`weighted_collapse_bound_proved=False`.  This identifies a viable
+pre-Cauchy route—estimate the coupled ratio-Mellin family after the
+finite collapse—but does not yet bound the residual (s\in[1/4,1]).
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
