@@ -2432,13 +2432,72 @@ bounded and its pointwise square is proved exactly:
    |\phi(1)\phi(0)|^2.
 \]
 
-The remaining S2 work is narrower but still substantive: integrate the
-residue on the low and high ranges, combine it with the nonconstant kernel,
-transport those ranges through `y=2*pi*w`, invoke the sliding-window
-Fourier-energy estimate, and absorb the parameters into the target S2
-bound.  Only after that assembly is checked do S3--S5 begin.  Thus the Lean
-development has not yet proved the final Selberg positive-proportion
-theorem, despite the unconditional paper-level route above.
+The residue integrals themselves require no further analytic input.  Put
+
+\[
+ L=\log(X^a)=a\log X,
+ \qquad D=\delta^{-1/2}.
+\]
+
+The tapered coefficients have absolute value at most one, hence
+
+\[
+ |\phi(0)|\le X,
+ \qquad |\phi(1)|\le 1+\log X,
+ \qquad |\phi(1)\phi(0)|\le X(1+\log X)\le X^2.
+\]
+
+Since `X<=delta^(-c)` and `c<1/8`, monotonicity of real powers gives
+
+\[
+ X^4\le\delta^{-4c}\le\delta^{-1/2}=D.
+\]
+
+Consequently, using `L>=2`,
+
+\[
+ \int_0^L |R(y)|^2\,dy
+ \le \frac14X^4\int_0^\infty e^{-y}\,dy
+ \le D,
+ \tag{S2-res-low}
+\]
+
+and
+
+\[
+ \int_L^\infty \frac{|R(y)|^2}{y^2}\,dy
+ \le \frac14\frac{X^4}{L^2}
+      \int_L^\infty e^{-y}\,dy
+ \le \frac{D}{L^2}.
+ \tag{S2-res-high}
+\]
+
+Because `L=a*log X`, these are exactly the same parameter scales as the
+nonconstant estimates, with an admissible constant depending only on the
+fixed parameter `a`:
+
+\[
+ D\le \frac1a D\frac{L}{\log X},
+ \qquad
+ \frac{D}{L^2}=\frac1a\frac{D}{L\log X}.
+\]
+
+Thus the residue low/high mass estimates are closed at paper level.  This
+calculation also shows why no extra mollifier-length restriction is needed:
+the already strict gate `c<1/8` supplies precisely `4c<1/2`.
+
+Lean now formalizes this entire residue calculation: the coefficient fourth
+power bound, its absorption into `delta^(-1/2)`, the pointwise exponential
+envelope, both integrals in (S2-res-low) and (S2-res-high), and the final
+parameter-scale interfaces with the explicit common witness `C=1/a`.
+
+The remaining S2 work is now the assembly step: combine the residue with the
+nonconstant kernel, transport the low/high ranges through `y=2*pi*w`, invoke
+the sliding-window Fourier-energy estimate, and absorb the parameters into
+the target S2 bound.  Only after that assembly is checked do S3--S5 begin.
+Thus the Lean development has not yet proved the final Selberg
+positive-proportion theorem, despite the unconditional paper-level route
+above.
 
 ## 12. Sources checked
 
