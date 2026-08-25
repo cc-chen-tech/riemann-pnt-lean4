@@ -274,6 +274,47 @@ def test_centered_resonance_log_cutoff_pays_the_full_global_ledger() -> None:
     assert not empty.produces_little_o
 
 
+def test_endpoint_tapers_expand_the_logarithmic_resonance_collar() -> None:
+    """Catch counting two endpoint factors twice in the cutoff exponent."""
+    adapter = getattr(
+        coverage_audit,
+        "endpoint_centered_resonance_log_budget",
+        None,
+    )
+    assert adapter is not None, "endpoint-centered log adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    budget = adapter(
+        box,
+        gate_log_power=F(8),
+        endpoint_factors=2,
+    )
+    assert budget.resonance_power_cutoff == F(1)
+    assert budget.endpoint_log_saving == F(2)
+    assert budget.analytic_log_saving_required == F(6)
+    assert budget.resonance_log_cutoff == F(3)
+    assert budget.total_near_bound_log_saving == F(8)
+    assert budget.global_log_margin == F(1)
+    assert budget.full_power_collar_global_log_margin == F(-5)
+    assert budget.endpoint_power_face
+    assert budget.produces_little_o
+
+    one_factor = adapter(
+        box,
+        gate_log_power=F(8),
+        endpoint_factors=1,
+    )
+    assert one_factor.resonance_log_cutoff == F(7, 2)
+
+    off_endpoint = adapter(
+        boundary_witnesses()["s_long"],
+        gate_log_power=F(8),
+        endpoint_factors=2,
+    )
+    assert not off_endpoint.endpoint_power_face
+    assert not off_endpoint.produces_little_o
+
+
 def test_far_resonance_shell_has_the_exact_piecewise_power_deficit() -> None:
     """Catch dropping the centered phase before it saturates at distance T^2."""
     adapter = getattr(
@@ -419,6 +460,11 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
+    ) in output
+    assert (
+        "balanced_max_a: endpoint_log_cutoff_power=1 "
+        "endpoint_log_cutoff_log=3 endpoint_log_saving=2 "
+        "full_collar_global_margin=-5"
     ) in output
     assert (
         "balanced_max_a: centered_far_shell_required_savings="

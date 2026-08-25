@@ -1136,6 +1136,95 @@ This estimate is again unconditional, but it does not close FRSD\(_B\):
 the current remaining power is \(g_{\rm residual}^{\rm current}(\delta)\)
 for every \(\delta>1\), with maximum \(5/2\) at \(\delta=3\).
 
+### 4.8 Endpoint-aware logarithmic collar
+
+The two mollifier tapers enlarge the logarithmic collar on the genuine
+top endpoint.  Assume the exact constant-scale conditions
+
+\[
+ \frac N4\le qR\le N,\qquad
+ \frac N4\le qS\le N.
+\tag{4.66}
+\]
+
+For every retained \(r,s\) with \(qr,qs\le N\), (2.12) gives
+
+\[
+ |p_N(qr)p_N(qs)|
+ \le \frac{(\log 8)^2}{(\log N)^2}
+ \ll \mathscr L^{-2}.
+\tag{4.67}
+\]
+
+Keeping (4.67), rather than replacing both factors by one, upgrades
+(4.21) to
+
+\[
+ |\mathfrak D_{q,\mathrm{near}}^{(2)}(D)|
+ \ll_W (CV)^2D^2\mathscr L^{-2}.
+\tag{4.68}
+\]
+
+For \(B>7\), define the endpoint-aware cutoff
+
+\[
+ D_{B,\mathrm{end}}
+ :=\left(\frac{R}{CV}\right)^{1/2}
+   \mathscr L^{-(B-2)/2}.
+\tag{4.69}
+\]
+
+Equations (4.68)--(4.69) give
+
+\[
+ \boxed{
+ |\mathfrak D_{q,\mathrm{near}}^{(2)}(D_{B,\mathrm{end}})|
+ \ll_W RCV\,\mathscr L^{-B}.}
+\tag{4.70}
+\]
+
+Thus this enlarged collar contributes
+\(O_W(T\mathscr L^{7-B})=o_W(T)\) after the current global aggregation.
+At the hard endpoint and the first integer gate \(B=8\),
+
+\[
+ D_{8,\mathrm{end}}=T\mathscr L^{-3},
+\tag{4.71}
+\]
+
+compared with \(T\mathscr L^{-4}\) in (4.28).
+
+The full power collar \(D=T\) is not covered by this observation alone.
+Putting \(D=(R/(CV))^{1/2}\) in (4.68) gives only
+\(RCV\mathscr L^{-2}\).  Against the present seven-logarithm aggregation,
+the exact global margin is
+
+\[
+ 2-7=-5.
+\tag{4.72}
+\]
+
+Even under the optimistic application of the
+Matomäki--Radziwiłł--Tao factor (4.35), the remaining shortfall for the
+local \(B=8\) gate is
+
+\[
+ 8-2-\frac1{3000}=\frac{17999}{3000};
+\tag{4.73}
+\]
+
+the actual joint coefficient obstruction from Section 4.1 remains as
+well.  Hence the endpoint tapers enlarge the rigorously covered collar by
+one logarithmic power in \(D\), but do not prove the whole
+\(\delta=1\) face.
+
+The exact-rational function endpoint_centered_resonance_log_budget checks
+the two endpoint power faces
+\(\kappa+\rho=\kappa+\sigma=3\), the two taper logarithms, (4.69), and
+the negative full-collar margin (4.72).  Certification still requires the
+constant-scale hypotheses (4.66), which are not encoded by exponent data
+alone.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

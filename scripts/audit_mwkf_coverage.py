@@ -166,6 +166,22 @@ class CenteredResonanceLogBudget:
 
 
 @dataclass(frozen=True)
+class EndpointCenteredResonanceLogBudget:
+    resonance_power_cutoff: Fraction
+    endpoint_log_saving: Fraction
+    analytic_log_saving_required: Fraction
+    resonance_log_cutoff: Fraction
+    total_near_bound_log_saving: Fraction
+    aggregation_log_loss: Fraction
+    global_log_margin: Fraction
+    full_power_collar_global_log_margin: Fraction
+    endpoint_power_face: bool
+    centered_completion_applicable: bool
+    nonempty_log_collar: bool
+    produces_little_o: bool
+
+
+@dataclass(frozen=True)
 class FarResonanceShellScales:
     distance: Fraction
     product_frequency: Fraction
@@ -644,6 +660,69 @@ def centered_resonance_log_budget(
         nonempty_log_collar=nonempty_log_collar,
         produces_little_o=(
             power_matches_gate
+            and centered_completion_applicable
+            and nonempty_log_collar
+            and global_log_margin > 0
+        ),
+    )
+
+
+def endpoint_centered_resonance_log_budget(
+    box: ExponentBox,
+    *,
+    gate_log_power: Fraction,
+    endpoint_factors: int,
+) -> EndpointCenteredResonanceLogBudget:
+    """Insert the available ``p_N`` endpoint logarithms into the collar.
+
+    Each verified top-endpoint mollifier factor contributes one inverse
+    logarithm.  The remaining logarithmic gate is paid by ``D^2``, so its
+    exponent is halved when converted to the cutoff for ``D``.
+    """
+    if gate_log_power < 0:
+        raise ValueError("gate_log_power must be nonnegative")
+    if endpoint_factors not in (0, 1, 2):
+        raise ValueError("endpoint_factors must be 0, 1, or 2")
+    completion = farey_completion_scales(box)
+    product_frequency = completion.product_frequency
+    resonance_power_cutoff = (box.rho - product_frequency) / 2
+    endpoint_log_saving = F(endpoint_factors)
+    analytic_log_saving_required = _positive_part(
+        gate_log_power - endpoint_log_saving
+    )
+    resonance_log_cutoff = analytic_log_saving_required / 2
+    total_near_bound_log_saving = (
+        2 * resonance_log_cutoff + endpoint_log_saving
+    )
+    global_log_margin = (
+        total_near_bound_log_saving - AGGREGATION_LOG_LOSS
+    )
+    available_endpoint_factors = sum(
+        exponent == F(3)
+        for exponent in (
+            box.kappa + box.rho,
+            box.kappa + box.sigma,
+        )
+    )
+    endpoint_power_face = endpoint_factors <= available_endpoint_factors
+    centered_completion_applicable = completion.both_coordinate_axes_empty
+    nonempty_log_collar = resonance_power_cutoff > 0
+    return EndpointCenteredResonanceLogBudget(
+        resonance_power_cutoff=resonance_power_cutoff,
+        endpoint_log_saving=endpoint_log_saving,
+        analytic_log_saving_required=analytic_log_saving_required,
+        resonance_log_cutoff=resonance_log_cutoff,
+        total_near_bound_log_saving=total_near_bound_log_saving,
+        aggregation_log_loss=AGGREGATION_LOG_LOSS,
+        global_log_margin=global_log_margin,
+        full_power_collar_global_log_margin=(
+            endpoint_log_saving - AGGREGATION_LOG_LOSS
+        ),
+        endpoint_power_face=endpoint_power_face,
+        centered_completion_applicable=centered_completion_applicable,
+        nonempty_log_collar=nonempty_log_collar,
+        produces_little_o=(
+            endpoint_power_face
             and centered_completion_applicable
             and nonempty_log_collar
             and global_log_margin > 0
@@ -1231,6 +1310,19 @@ def main() -> None:
         f"centered_log_cutoff_log={_fmt(log_budget.resonance_log_cutoff)} "
         f"near_bound_log={_fmt(log_budget.near_bound_log_saving)} "
         f"global_log_margin={_fmt(log_budget.global_log_margin)}"
+    )
+    endpoint_budget = endpoint_centered_resonance_log_budget(
+        hard,
+        gate_log_power=F(8),
+        endpoint_factors=2,
+    )
+    print(
+        "balanced_max_a: "
+        f"endpoint_log_cutoff_power={_fmt(endpoint_budget.resonance_power_cutoff)} "
+        f"endpoint_log_cutoff_log={_fmt(endpoint_budget.resonance_log_cutoff)} "
+        f"endpoint_log_saving={_fmt(endpoint_budget.endpoint_log_saving)} "
+        "full_collar_global_margin="
+        f"{_fmt(endpoint_budget.full_power_collar_global_log_margin)}"
     )
     distances = (F(1), F(3, 2), F(2), F(5, 2), F(3))
     shell_savings = ",".join(
