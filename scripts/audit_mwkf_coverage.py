@@ -1621,6 +1621,31 @@ class HumphriesExceptionalLevelDensityAudit:
 
 
 @dataclass(frozen=True)
+class FinitePrimeHeckeAverageAudit:
+    kloosterman_modulus_exponent: Fraction
+    left_hecke_index_exponent: Fraction
+    right_hecke_index_exponent: Fraction
+    numerator_product_exponent: Fraction
+    level_exponent: Fraction
+    target_exponent: Fraction
+    ramanujan_theta: Fraction
+    full_ramanujan_level_cauchy_base_exponent: Fraction
+    pointwise_finite_hecke_loss_exponent: Fraction
+    pointwise_total_bound_exponent: Fraction
+    pointwise_power_deficit: Fraction
+    fixed_index_spectral_large_sieve_loss_exponent: Fraction
+    fixed_index_total_bound_exponent: Fraction
+    required_pre_cauchy_hecke_saving_exponent: Fraction
+    required_post_saving_log_decay: bool
+    pascadi_archimedean_exceptional_large_sieve_published: bool
+    pascadi_finite_place_extension_published: bool
+    mobius_entry_to_hecke_index_adapter_derived: bool
+    physical_coupled_kernel_restored: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -8539,6 +8564,79 @@ def humphries_exceptional_level_density_audit(
     )
 
 
+def finite_prime_hecke_average_audit(
+    *,
+    kloosterman_modulus_exponent: Fraction,
+    left_hecke_index_exponent: Fraction,
+    right_hecke_index_exponent: Fraction,
+    level_exponent: Fraction,
+    target_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> FinitePrimeHeckeAverageAudit:
+    """Locate the post-density finite-prime Hecke obstruction.
+
+    With ``X=T^sigma``, ideal square-root aggregation over a level
+    family ``T^lambda`` has full-Ramanujan base exponent
+    ``sigma/2+lambda/2``.  Pointwise Kim--Sarnak on Hecke indices
+    ``T^a`` and ``T^b`` costs ``(a+b)*theta``.
+
+    Applying the ordinary fixed-level spectral large sieve only after
+    freezing both indices is worse: its delta-sequence cost is
+    ``((a-lambda)_+ + (b-lambda)_+)/2``.  At the hard box
+    ``(sigma,a,b,lambda)=(3,5/2,5/2,1)``, this is ``3/2``, compared
+    with the pointwise finite-prime loss ``35/64``.
+
+    Pascadi's 2026 exceptional large sieve treats the archimedean
+    exceptional spectrum for frequency-concentrated sequences.  Its
+    finite-place analogue is explicitly described as a prospective
+    extension, not a theorem.  Thus a successful estimate must average
+    the Mobius entry weights before the positive fixed-index Cauchy
+    step and save the complete pointwise loss, followed by logarithmic
+    decay at the zero-margin target.
+    """
+    sigma = F(kloosterman_modulus_exponent)
+    left = F(left_hecke_index_exponent)
+    right = F(right_hecke_index_exponent)
+    level = F(level_exponent)
+    target = F(target_exponent)
+    theta = F(ramanujan_theta)
+    if min(sigma, left, right, level, target, theta) < 0 or sigma == 0:
+        raise ValueError("scale exponents must be nonnegative and modulus positive")
+
+    numerator = left + right
+    ramanujan_base = sigma / 2 + level / 2
+    pointwise_loss = numerator * theta
+    pointwise_total = ramanujan_base + pointwise_loss
+    fixed_index_loss = (
+        _positive_part(left - level)
+        + _positive_part(right - level)
+    ) / 2
+    fixed_index_total = ramanujan_base + fixed_index_loss
+    return FinitePrimeHeckeAverageAudit(
+        kloosterman_modulus_exponent=sigma,
+        left_hecke_index_exponent=left,
+        right_hecke_index_exponent=right,
+        numerator_product_exponent=numerator,
+        level_exponent=level,
+        target_exponent=target,
+        ramanujan_theta=theta,
+        full_ramanujan_level_cauchy_base_exponent=ramanujan_base,
+        pointwise_finite_hecke_loss_exponent=pointwise_loss,
+        pointwise_total_bound_exponent=pointwise_total,
+        pointwise_power_deficit=_positive_part(pointwise_total - target),
+        fixed_index_spectral_large_sieve_loss_exponent=fixed_index_loss,
+        fixed_index_total_bound_exponent=fixed_index_total,
+        required_pre_cauchy_hecke_saving_exponent=pointwise_loss,
+        required_post_saving_log_decay=(ramanujan_base == target),
+        pascadi_archimedean_exceptional_large_sieve_published=True,
+        pascadi_finite_place_extension_published=False,
+        mobius_entry_to_hecke_index_adapter_derived=False,
+        physical_coupled_kernel_restored=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -14930,6 +15028,48 @@ def main() -> None:
         "exceptional_covered="
         f"{humphries_density.exceptional_spectrum_gate_covered},"
         f"covered={humphries_density.whole_mobius_gate_covered}"
+    )
+    finite_hecke = finite_prime_hecke_average_audit(
+        kloosterman_modulus_exponent=F(3),
+        left_hecke_index_exponent=F(5, 2),
+        right_hecke_index_exponent=F(5, 2),
+        level_exponent=F(1),
+        target_exponent=F(2),
+    )
+    print(
+        "large_q_transition: finite_prime_hecke_average="
+        f"modulus={_fmt(finite_hecke.kloosterman_modulus_exponent)},"
+        f"left={_fmt(finite_hecke.left_hecke_index_exponent)},"
+        f"right={_fmt(finite_hecke.right_hecke_index_exponent)},"
+        "numerator="
+        f"{_fmt(finite_hecke.numerator_product_exponent)},"
+        f"level={_fmt(finite_hecke.level_exponent)},"
+        f"target={_fmt(finite_hecke.target_exponent)},"
+        f"theta={_fmt(finite_hecke.ramanujan_theta)},"
+        "ramanujan_base="
+        f"{_fmt(finite_hecke.full_ramanujan_level_cauchy_base_exponent)},"
+        "pointwise_loss="
+        f"{_fmt(finite_hecke.pointwise_finite_hecke_loss_exponent)},"
+        "pointwise_total="
+        f"{_fmt(finite_hecke.pointwise_total_bound_exponent)},"
+        "pointwise_deficit="
+        f"{_fmt(finite_hecke.pointwise_power_deficit)},"
+        "fixed_ls_loss="
+        f"{_fmt(finite_hecke.fixed_index_spectral_large_sieve_loss_exponent)},"
+        "fixed_ls_total="
+        f"{_fmt(finite_hecke.fixed_index_total_bound_exponent)},"
+        "required_saving="
+        f"{_fmt(finite_hecke.required_pre_cauchy_hecke_saving_exponent)},"
+        f"log={finite_hecke.required_post_saving_log_decay},"
+        "pascadi_arch="
+        f"{finite_hecke.pascadi_archimedean_exceptional_large_sieve_published},"
+        "pascadi_finite="
+        f"{finite_hecke.pascadi_finite_place_extension_published},"
+        "entry_adapter="
+        f"{finite_hecke.mobius_entry_to_hecke_index_adapter_derived},"
+        f"physical={finite_hecke.physical_coupled_kernel_restored},"
+        f"hecke_covered={finite_hecke.finite_prime_hecke_gate_covered},"
+        f"covered={finite_hecke.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

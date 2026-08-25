@@ -2729,6 +2729,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "qct_weights=False,exceptional_covered=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: finite_prime_hecke_average="
+        "modulus=3,left=5/2,right=5/2,numerator=5,level=1,target=2,"
+        "theta=7/64,ramanujan_base=2,pointwise_loss=35/64,"
+        "pointwise_total=163/64,pointwise_deficit=35/64,"
+        "fixed_ls_loss=3/2,fixed_ls_total=7/2,required_saving=35/64,"
+        "log=True,pascadi_arch=True,pascadi_finite=False,"
+        "entry_adapter=False,physical=False,hecke_covered=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: newform_level_mobius_projector="
         "prime=5,index=6,mobius=-2,newform=-1/6,difference=-11/6,"
         "geometric=True,squarefree=True,oldclass_tail=True,"
@@ -3924,6 +3933,39 @@ def test_humphries_density_neutralizes_only_archimedean_exceptional_loss() -> No
     assert not hard.mobius_level_signs_used_by_density_theorem
     assert not hard.qct_spectral_weights_accepted
     assert not hard.exceptional_spectrum_gate_covered
+    assert not hard.whole_mobius_gate_covered
+
+
+def test_finite_prime_hecke_average_is_the_corrected_spectral_gate() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "finite_prime_hecke_average_audit",
+        None,
+    )
+    assert adapter is not None, "finite-prime Hecke-average audit is missing"
+
+    hard = adapter(
+        kloosterman_modulus_exponent=F(3),
+        left_hecke_index_exponent=F(5, 2),
+        right_hecke_index_exponent=F(5, 2),
+        level_exponent=F(1),
+        target_exponent=F(2),
+        ramanujan_theta=F(7, 64),
+    )
+    assert hard.numerator_product_exponent == F(5)
+    assert hard.full_ramanujan_level_cauchy_base_exponent == F(2)
+    assert hard.pointwise_finite_hecke_loss_exponent == F(35, 64)
+    assert hard.pointwise_total_bound_exponent == F(163, 64)
+    assert hard.pointwise_power_deficit == F(35, 64)
+    assert hard.fixed_index_spectral_large_sieve_loss_exponent == F(3, 2)
+    assert hard.fixed_index_total_bound_exponent == F(7, 2)
+    assert hard.required_pre_cauchy_hecke_saving_exponent == F(35, 64)
+    assert hard.required_post_saving_log_decay
+    assert hard.pascadi_archimedean_exceptional_large_sieve_published
+    assert not hard.pascadi_finite_place_extension_published
+    assert not hard.mobius_entry_to_hecke_index_adapter_derived
+    assert not hard.physical_coupled_kernel_restored
+    assert not hard.finite_prime_hecke_gate_covered
     assert not hard.whole_mobius_gate_covered
 
 

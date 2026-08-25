@@ -13164,6 +13164,91 @@ humphries_exceptional_level_density_audit records the ratio exponent
 false.
 
 
+### 4.109a The corrected local gate is a pre-Cauchy finite-prime Hecke average
+
+Section 4.109 changes the interpretation of (4.840).  Write the two
+Hecke-index scales as \(T^a,T^b\), so \(a+b=\tau\).  At level
+\(T^\lambda\), the ideal full-Ramanujan level-Cauchy base is
+
+\[
+ E_{\rm Ram}=\frac{\sigma}{2}+\frac{\lambda}{2}.
+\]
+
+The pointwise finite-prime estimate used in the proof of the
+Blomer--Milićević bound adds \((a+b)\vartheta=\tau\vartheta\).
+Consequently the critical ledger is
+
+\[
+ \boxed{
+ E_{\rm pointwise}
+ =\frac{\sigma}{2}+\frac{\lambda}{2}+\tau\vartheta
+ =2+\frac{35}{64}=\frac{163}{64}.}
+\tag{4.845a}
+\]
+
+Applying the ordinary spectral large sieve after both Hecke indices
+have been frozen is not a remedy.  Its delta-sequence normalization
+costs
+
+\[
+ \boxed{
+ D_{\rm fixed\text{-}LS}
+ =\frac12\big((a-\lambda)_++(b-\lambda)_+\big).}
+\tag{4.845b}
+\]
+
+At the balanced physical index scales
+\(a=b=5/2,\lambda=1\), this is \(3/2\), and hence
+
+\[
+ \boxed{
+ E_{\rm fixed\text{-}LS}=2+\frac32=\frac72.}
+\tag{4.845c}
+\]
+
+This is worse than the pointwise Kim--Sarnak charge \(35/64\).  Thus
+Cauchy followed by a fixed-index large sieve cannot be the missing
+argument.
+
+[Pascadi's exceptional large sieve](https://arxiv.org/abs/2404.04239)
+is directly relevant to the corrected conductor.  Its proved theorems
+handle the archimedean exceptional spectrum for exponential phases and
+dispersion coefficients with concentrated Fourier transform, including
+critical sequence length comparable with level.  The paper separately
+describes a finite-place analogue as a prospective extension; that
+extension is not one of its theorems.  It therefore supports the
+archimedean conclusion of Section 4.109 but does not remove
+\((mn)^\vartheta\).
+
+The weakest sufficient critical inequality is now (4.840) with its
+finite-prime role made explicit:
+
+\[
+ \boxed{
+ \mathfrak H_{\rm entry}[\Psi]
+ \ll_{A,W}
+ T^{\,\sigma/2+\lambda/2}(\log T)^{-A}
+ =T^2(\log T)^{-A}.}
+\tag{4.845d}
+\]
+
+Here \(\mathfrak H_{\rm entry}\) is the signed level/newform sum before
+positive Cauchy, with both Möbius matrix-entry weights, both level
+coefficients, every ratio and gcd allocation, and the physical coupled
+kernel retained.  Relative to (4.845a), (4.845d) must save exactly
+\(T^{35/64}\), then supply logarithmic decay at the zero-margin
+endpoint.  Section 4.16 already proves that classical Kuznetsov puts
+the Hecke operator on the shift, not on either Möbius entry.  Therefore
+deriving \(\mathfrak H_{\rm entry}\) itself requires a new
+entry-weighted relative trace formula or an equivalent pre-Cauchy
+dispersion identity.
+
+The adapter finite_prime_hecke_average_audit records (4.845a)--(4.845c),
+the required \(35/64\), Pascadi's proved archimedean scope, and the
+unproved finite-place and entry-adapter flags.  It does not mark
+(4.845d) as proved.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps
