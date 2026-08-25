@@ -2494,7 +2494,32 @@ parameter-scale interfaces with the explicit common witness `C=1/a`.
 The remaining S2 work is now the assembly step: combine the residue with the
 nonconstant kernel, transport the low/high ranges through `y=2*pi*w`, invoke
 the sliding-window Fourier-energy estimate, and absorb the parameters into
-the target S2 bound.  Only after that assembly is checked do S3--S5 begin.
+the target S2 bound.  The exact consistent choice is
+
+\[
+ H=\frac{2\pi}{L}=\frac{2\pi}{a\log X}.
+\]
+
+Indeed Mathlib uses the frequency `w` in `exp(-2*pi*i*t*w)`, whereas the
+explicit Mellin kernel uses the angular frequency `y=2*pi*w`.  Thus the
+rectangular split `|w|=1/H` becomes `|y|=L`.  The low-frequency Jacobian
+exactly cancels the factor `2*pi` in
+`|Fhat(w)|^2=2*pi*|f(2*pi*w)|^2`; the high weighted integral acquires
+`4*pi^2`.  After reflection of the negative half-line (valid because the
+original `F` is real), the safe bound is precisely `(S2-Plancherel)`.
+
+This also corrects the later shorthand occurrences `H=1/(a log X)`: those
+use angular-frequency notation and are not literally compatible with the
+Mathlib-normalized transform.  The fixed factor `2*pi` changes none of the
+S2--S5 asymptotic conclusions, but it must be retained in the formal proof.
+The first assembly layer is now formalized in
+`SelbergExplicitFourierMass.lean`: it proves the pointwise inequality
+`|R+N|^2 <= 2|R|^2+2|N|^2`, supplies genuine integrability for both pieces
+on the low and weighted-high ranges, and combines their existential
+constants into the full explicit-kernel positive-frequency bounds.  The
+remaining S2 work is therefore exactly the real-Fourier reflection, the
+`2*pi` change of variables, and the final sliding-energy instantiation.
+Only after that assembly is checked do S3--S5 begin.
 Thus the Lean development has not yet proved the final Selberg
 positive-proportion theorem, despite the unconditional paper-level route
 above.
