@@ -2677,6 +2677,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "twisted=False,local_l2=False,closes=False"
     ) in report
     assert (
+        "large_q_transition: mrtt_signed_mobius_power_shift="
+        "ambient=2,shift=1,relative=1/2,long_threshold=8/33,"
+        "delta_threshold=8/25,published_long=True,identity=True,d2=True,"
+        "ramare=True,major=True,typical_verified=False,fixed_power=True,"
+        "average_exponent=3,required_exponent=2,power_deficit=1,"
+        "scale_closes=False,ratio_family=False,product_vertex=False,"
+        "physical=False,core=False"
+    ) in report
+    assert (
         "large_q_transition: inverse_zeta_zero_free_implication="
         "ambient=1,window=1/2,variance=3/2,block=3/4,"
         "abscissa=3/4,x_integral=True,cauchy=True,dyadic=True,"
@@ -3615,6 +3624,67 @@ def test_brz_pointwise_mobius_convolution_bound_misses_local_variance() -> None:
     assert not audit.published_ratio_twisted_family_bound
     assert not audit.published_local_l2_bound
     assert not audit.brz_direct_pointwise_route_closes_variance_gate
+
+
+def test_truncated_heath_brown_identity_for_mobius_is_exact() -> None:
+    helper = getattr(
+        coverage_audit,
+        "truncated_heath_brown_mobius_identity",
+        None,
+    )
+    assert helper is not None, "truncated Möbius identity helper is missing"
+
+    # U^K is the exact validity range.  Exercise squarefree, nonsquarefree,
+    # prime, and endpoint inputs rather than checking only a formal series.
+    for cutoff, depth in ((2, 5), (3, 4), (5, 3)):
+        for n in range(1, cutoff**depth + 1):
+            exact = helper(n=n, cutoff=cutoff, depth=depth)
+            assert exact["in_valid_range"]
+            assert exact["lhs"] == exact["rhs"]
+            assert exact["identity_exact"]
+
+
+def test_mrtt_signed_power_shift_adapter_separates_model_from_physical_kernel() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "mrtt_signed_mobius_power_shift_audit",
+        None,
+    )
+    assert adapter is not None, "signed MRTT power-shift audit is missing"
+
+    hard = adapter(delta=F(1))
+    assert hard.ambient_product_exponent == F(2)
+    assert hard.shift_exponent == F(1)
+    assert hard.relative_shift_exponent == F(1, 2)
+    assert hard.long_shift_threshold == F(8, 33)
+    assert hard.long_shift_delta_threshold == F(8, 25)
+    assert hard.published_long_shift_range_applies
+    assert hard.truncated_mobius_identity_exact
+    assert hard.absolute_coefficient_is_bounded_by_d2
+    assert hard.ramare_prime_factor_is_exact
+    assert hard.major_arc_has_arbitrary_log_decay
+    assert hard.fixed_power_shift_has_arbitrary_log_saving
+    assert hard.mrtt_shift_average_exponent == F(3)
+    assert hard.required_mwkf_correlation_exponent == F(2)
+    assert hard.remaining_shift_power_deficit == F(1)
+    assert not hard.mrtt_scale_closes_mwkf_model
+    assert not hard.full_ratio_twisted_multiplicative_family_covered
+    assert not hard.product_compatible_hard_vertex_covered
+    assert not hard.physical_gcd_layer_adapter_verified
+    assert not hard.whole_strict_power_core_covered
+
+    below_long_threshold = adapter(delta=F(1, 4))
+    assert below_long_threshold.relative_shift_exponent == F(1, 5)
+    assert not below_long_threshold.published_long_shift_range_applies
+    assert not below_long_threshold.fixed_power_shift_has_arbitrary_log_saving
+    assert below_long_threshold.signed_typical_factor_extension_required
+    assert not below_long_threshold.signed_typical_factor_extension_verified
+    assert below_long_threshold.mrtt_shift_average_exponent == F(3, 2)
+    assert below_long_threshold.required_mwkf_correlation_exponent == F(5, 4)
+    assert below_long_threshold.remaining_shift_power_deficit == F(1, 4)
+    assert not below_long_threshold.mrtt_scale_closes_mwkf_model
+    assert not below_long_threshold.full_ratio_twisted_multiplicative_family_covered
+    assert not below_long_threshold.physical_gcd_layer_adapter_verified
 
 
 def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:

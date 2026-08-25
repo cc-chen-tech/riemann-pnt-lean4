@@ -12482,6 +12482,189 @@ the comparison (4.806)--(4.809).  It keeps
 `absolute_double_poisson_route_covered=False` and
 `double_poisson_improves_bblr=False`.
 
+### 4.105 A signed MRTT adapter leaves the exact shift-power deficit
+
+The positive local variance (4.730) is stronger than the original
+centered problem.  A closer published comparison is an averaged
+nonzero-shift correlation.  The coefficient decomposition begins with
+an exact finite identity.  Put
+
+\[
+ a_U(n)=\mu(n)\mathbf 1_{n\leq U}.
+\]
+
+For integers \(K,U\geq1\), the convolution
+\((\mu-a_U)^{*K}(n)\) vanishes when \(n\leq U^K\).  Expanding it and
+convolving by \(\mathbf 1^{*(K-1)}\), using
+\(\mu*\mathbf1=\varepsilon\), gives
+
+\[
+ \boxed{
+ \mu(n)=\sum_{j=1}^{K}(-1)^{j+1}\binom Kj
+ \big(a_U^{*j}*\mathbf1^{*(j-1)}\big)(n),
+ \qquad n\leq U^K.}
+\tag{4.810}
+\]
+
+There is no analytic truncation error in (4.810).  Taking
+\(U=(2Y)^{1/K}\), then choosing \(K>K_0(A,\vartheta)\), makes every
+Möbius factor in the dyadic expansion \(Y^\varepsilon\)-short.  The
+combinatorial decomposition then has the same scale alternatives as in
+Matomäki--Radziwiłł--Tao I:
+
+\[
+ \boxed{
+ \begin{array}{ll}
+ \text{Type II:}&Y^\varepsilon\ll N\ll H_0,\quad NM\asymp Y,\\
+ \text{Type }d_j:&N\ll Y^\varepsilon,\quad
+  H_0\ll M_1\ll\cdots\ll M_j.
+ \end{array}}
+\tag{4.811}
+\]
+
+The long factors in the second line are the \(\mathbf1\)-factors from
+(4.810).  Thus the Type-II input keeps divisor-bounded short
+coefficients, while the Type-\(d_j\) input sees only the permitted long
+unit factors.
+
+For the ratio-twisted product define
+
+\[
+ \mu_z(n)=\mu(n)n^{iz},\qquad
+ f_\tau=\mu_{\tau/2}*\mu_{-\tau/2}.
+\tag{4.812}
+\]
+
+Multiplication by \(n^{iz}\) commutes with Dirichlet convolution.
+Uniformly for \(|\tau|\leq(\log Y)^C\),
+
+\[
+ \boxed{
+ |f_\tau(n)|\leq d_2(n),\qquad
+ f_\tau(pm)=-
+ \big(p^{i\tau/2}+p^{-i\tau/2}\big)f_\tau(m)
+ \quad(p\nmid m).}
+\tag{4.813}
+\]
+
+These are the exact candidate substitutions for a typical-prime-factor
+argument.  The first gives a \(d_2\) majorant for the mean-value and
+large-values steps.  In the Ramaré identity the constant prime
+coefficient is replaced by the parenthesis in (4.813), whose modulus is
+at most \(2\); its two summands translate the height of the same prime
+Dirichlet polynomial.  The extracted prime bands are squarefree, so
+\(p\nmid m\) holds exactly where the second identity is invoked.
+
+The major arcs have arbitrary logarithmic decay.  The hyperbola identity
+and Davenport's uniform Möbius exponential-sum estimate, followed by
+partial summation for the polylogarithmic Archimedean twists, give
+
+\[
+ \boxed{
+ \sup_{\substack{\alpha\in\mathbb R\\
+                  |\tau|\leq(\log Y)^C}}
+ \left|\sum_n f_\tau(n)V(n/Y)e(n\alpha)\right|
+ \ll_{A,C,V}Y(\log Y)^{-A}.}
+\tag{4.814}
+\]
+
+Splitting the convolution at \(d\leq\sqrt{2Y}\) leaves an inner Möbius
+sum of length at least a constant multiple of \(\sqrt Y\); Davenport
+saves an arbitrary logarithmic power, the harmonic \(d\)-sum costs one
+logarithm, and the square boundary is \(O(Y^{1/2+o(1)})\).
+
+The published MRTT long-shift theorem has the following normalization.
+For bounded smooth \(V,V',w\), \(H=Y^\vartheta\), and polylogarithmic
+\(\tau,\upsilon\), it gives
+
+\[
+ \boxed{
+ \sum_h w(h/H)\sum_n
+ f_\tau(n)V(n/Y)
+ \overline{f_\upsilon(n+h)V'((n+h)/Y)}
+ \ll_{A,C,V,V',w}YH(\log Y)^{-A}.}
+\tag{4.815}
+\]
+
+This is an averaged-Chowla estimate: it saves arbitrary logarithms
+relative to the \(YH\) count, but it does not save the number \(H\) of
+shifts.  On a strict core cell,
+
+\[
+ Y=T^{1+\delta},\qquad H=T^\delta,\qquad
+ \vartheta=\frac{\delta}{1+\delta}.
+\tag{4.816}
+\]
+
+MRTT I's published threshold \(\vartheta\geq8/33\) is therefore
+
+\[
+ \boxed{
+ \frac{\delta}{1+\delta}\geq\frac8{33}
+ \quad\Longleftrightarrow\quad
+ \delta\geq\frac8{25}.}
+\tag{4.817}
+\]
+
+Below (4.817), (4.813) and (4.814) identify a plausible signed
+typical-factor adaptation of MRTT II, but they do not by themselves
+reconstruct every exceptional-set and minor-arc estimate in that proof.
+The coverage adapter therefore does not mark the sub-threshold extension
+as verified.  This distinction is immaterial at the hard vertex
+\(\delta=1\), which lies in the published range.
+
+The decisive comparison is between the exponent supplied by (4.815)
+and the exponent required by the MWKF core:
+
+\[
+ \boxed{
+ E_{\mathrm{MRTT}}=(1+\delta)+\delta=1+2\delta,\qquad
+ E_{\mathrm{MWKF}}=1+\delta,\qquad
+ E_{\mathrm{MRTT}}-E_{\mathrm{MWKF}}=\delta.}
+\tag{4.818}
+\]
+
+Restoring the shared gcd exponent \(\gamma=s-\delta\) gives the same
+deficit:
+
+\[
+ \boxed{
+ E_{\mathrm{MRTT,global}}=1+s+\delta,\qquad
+ E_{\mathrm{target}}=1+s,\qquad
+ E_{\mathrm{MRTT,global}}-E_{\mathrm{target}}=\delta.}
+\tag{4.819}
+\]
+
+Consequently even the product-compatible model is not closed.  What is
+actually sufficient is the strictly stronger signed estimate
+
+\[
+ \boxed{
+ \sum_h w(h/H)\sum_n
+ f_\tau(n)V(n/Y)
+ \overline{f_\upsilon(n+h)V'((n+h)/Y)}
+ \ll_{A,C,V,V',w}Y(\log Y)^{-A}.}
+\tag{4.820}
+\]
+
+Estimate (4.820) gains the full power \(H=T^\delta\) beyond the MRTT
+scale and is not a consequence of either MRTT theorem.  It is weaker
+than the positive uniform variance (4.730), because the physical kernel
+is centered and signed, but it remains a genuinely new pre-Cauchy
+spectral/dispersion estimate.  The physical gcd layers and the full
+ratio-twisted coefficient family would still have to be restored after
+proving it.
+
+The exact-rational adapter
+`mrtt_signed_mobius_power_shift_audit` records (4.816)--(4.819), and
+`truncated_heath_brown_mobius_identity` checks (4.810)
+coefficientwise through \(n=U^K\).  Its status fields deliberately keep
+`mrtt_scale_closes_mwkf_model=False`,
+`full_ratio_twisted_multiplicative_family_covered=False`,
+`product_compatible_hard_vertex_covered=False`,
+`physical_gcd_layer_adapter_verified=False`, and
+`whole_strict_power_core_covered=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

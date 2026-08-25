@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
-from math import gcd, isqrt
+from math import comb, gcd, isqrt
 from pathlib import Path
 import sys
 
@@ -1482,6 +1482,31 @@ class BasakRoblesZaharescuMobiusConvolutionAudit:
     published_ratio_twisted_family_bound: bool
     published_local_l2_bound: bool
     brz_direct_pointwise_route_closes_variance_gate: bool
+
+
+@dataclass(frozen=True)
+class MRTTSignedMobiusPowerShiftAudit:
+    ambient_product_exponent: Fraction
+    shift_exponent: Fraction
+    relative_shift_exponent: Fraction
+    long_shift_threshold: Fraction
+    long_shift_delta_threshold: Fraction
+    published_long_shift_range_applies: bool
+    truncated_mobius_identity_exact: bool
+    absolute_coefficient_is_bounded_by_d2: bool
+    ramare_prime_factor_is_exact: bool
+    major_arc_has_arbitrary_log_decay: bool
+    signed_typical_factor_extension_required: bool
+    signed_typical_factor_extension_verified: bool
+    fixed_power_shift_has_arbitrary_log_saving: bool
+    mrtt_shift_average_exponent: Fraction
+    required_mwkf_correlation_exponent: Fraction
+    remaining_shift_power_deficit: Fraction
+    mrtt_scale_closes_mwkf_model: bool
+    full_ratio_twisted_multiplicative_family_covered: bool
+    product_compatible_hard_vertex_covered: bool
+    physical_gcd_layer_adapter_verified: bool
+    whole_strict_power_core_covered: bool
 
 
 @dataclass(frozen=True)
@@ -7690,6 +7715,69 @@ def mobius_square_convolution_second_moment_local_factor(
     return tuple(product)
 
 
+def truncated_heath_brown_mobius_identity(
+    *,
+    n: int,
+    cutoff: int,
+    depth: int,
+) -> dict[str, int | bool]:
+    """Evaluate the finite truncated convolution identity for ``mu``.
+
+    Put ``a=mu 1_[1,U]``.  Since ``(mu-a)^{*K}(n)=0`` for
+    ``n <= U^K``, convolving its binomial expansion by ``1^{*(K-1)}``
+    gives
+
+    ``mu(n)=sum_{j=1}^K (-1)^(j+1) C(K,j)
+                  (a^{*j}*1^{*(j-1)})(n)``.
+
+    The helper evaluates both sides as finite divisor convolutions.  It
+    deliberately reports the validity range rather than silently using
+    the identity outside it.
+    """
+    if n <= 0 or cutoff <= 0 or depth <= 0:
+        raise ValueError("n, cutoff, and depth must be positive")
+
+    divisors = {
+        value: tuple(d for d in range(1, value + 1) if value % d == 0)
+        for value in range(1, n + 1)
+    }
+
+    def convolution(left: list[int], right: list[int]) -> list[int]:
+        result = [0] * (n + 1)
+        for value in range(1, n + 1):
+            result[value] = sum(
+                left[d] * right[value // d] for d in divisors[value]
+            )
+        return result
+
+    delta = [0] * (n + 1)
+    delta[1] = 1
+    one = [0] + [1] * n
+    truncated = [0] * (n + 1)
+    for value in range(1, min(n, cutoff) + 1):
+        truncated[value] = _finite_mobius(value)
+
+    truncated_powers = [delta]
+    one_powers = [delta]
+    for _ in range(depth):
+        truncated_powers.append(convolution(truncated_powers[-1], truncated))
+        one_powers.append(convolution(one_powers[-1], one))
+
+    rhs = 0
+    for j in range(1, depth + 1):
+        coefficient = (-1) ** (j + 1) * comb(depth, j)
+        term = convolution(truncated_powers[j], one_powers[j - 1])[n]
+        rhs += coefficient * term
+    lhs = _finite_mobius(n)
+    in_valid_range = n <= cutoff**depth
+    return {
+        "lhs": lhs,
+        "rhs": rhs,
+        "in_valid_range": in_valid_range,
+        "identity_exact": in_valid_range and lhs == rhs,
+    }
+
+
 def restricted_mobius_ratio_mellin_audit(
 ) -> RestrictedMobiusRatioMellinAudit:
     """Remove the dyadic divisor restriction by ratio Fourier inversion.
@@ -7778,6 +7866,66 @@ def basak_robles_zaharescu_mobius_convolution_audit(
         published_ratio_twisted_family_bound=False,
         published_local_l2_bound=False,
         brz_direct_pointwise_route_closes_variance_gate=False,
+    )
+
+
+def mrtt_signed_mobius_power_shift_audit(
+    *,
+    delta: Fraction,
+) -> MRTTSignedMobiusPowerShiftAudit:
+    """Audit the signed MRTT adapter before the physical gcd layers.
+
+    In one strict-power determinant cell the additive products have
+    length ``Y=T^(1+delta)`` and the shift has length ``H=T^delta``.
+    Thus the relative shift exponent is ``delta/(1+delta)``.  MRTT I's
+    published long-shift threshold ``8/33`` is equivalent to
+    ``delta >= 8/25``.
+
+    The formal signed replacement below the published threshold uses
+    ``abs(mu*mu)<=d_2`` and, for a newly extracted prime ``p`` not
+    dividing ``m``, ``(mu*mu)(pm)=-2(mu*mu)(m)``.  Mellin twists replace
+    ``-2`` by ``-(p^(i tau)+p^(-i tau))``.  Those identities are exact,
+    but a theorem-level reconstruction of every MRTT-II exceptional-set
+    and typical-factor estimate has not been supplied here, so the
+    extension is deliberately not marked verified.
+
+    In the published long-shift range MRTT certifies an
+    averaged-Chowla estimate at scale ``Y*H``.  The MWKF core instead
+    needs the unnormalised shift correlation at scale ``Y``, so the
+    full factor ``H`` remains even before the still-coupled physical
+    gcd-layer coefficients.
+    """
+    delta = F(delta)
+    if delta <= 0:
+        raise ValueError("delta must be positive")
+    ambient = F(1) + delta
+    relative = delta / ambient
+    long_threshold = F(8, 33)
+    delta_threshold = long_threshold / (F(1) - long_threshold)
+    long_applies = relative >= long_threshold
+    signed_extension_required = not long_applies
+    return MRTTSignedMobiusPowerShiftAudit(
+        ambient_product_exponent=ambient,
+        shift_exponent=delta,
+        relative_shift_exponent=relative,
+        long_shift_threshold=long_threshold,
+        long_shift_delta_threshold=delta_threshold,
+        published_long_shift_range_applies=long_applies,
+        truncated_mobius_identity_exact=True,
+        absolute_coefficient_is_bounded_by_d2=True,
+        ramare_prime_factor_is_exact=True,
+        major_arc_has_arbitrary_log_decay=True,
+        signed_typical_factor_extension_required=signed_extension_required,
+        signed_typical_factor_extension_verified=False,
+        fixed_power_shift_has_arbitrary_log_saving=long_applies,
+        mrtt_shift_average_exponent=ambient + delta,
+        required_mwkf_correlation_exponent=ambient,
+        remaining_shift_power_deficit=delta,
+        mrtt_scale_closes_mwkf_model=False,
+        full_ratio_twisted_multiplicative_family_covered=False,
+        product_compatible_hard_vertex_covered=False,
+        physical_gcd_layer_adapter_verified=False,
+        whole_strict_power_core_covered=False,
     )
 
 
@@ -13662,6 +13810,40 @@ def main() -> None:
         f"local_l2={brz.published_local_l2_bound},"
         "closes="
         f"{brz.brz_direct_pointwise_route_closes_variance_gate}"
+    )
+    mrtt_signed = mrtt_signed_mobius_power_shift_audit(delta=F(1))
+    print(
+        "large_q_transition: mrtt_signed_mobius_power_shift="
+        f"ambient={_fmt(mrtt_signed.ambient_product_exponent)},"
+        f"shift={_fmt(mrtt_signed.shift_exponent)},"
+        f"relative={_fmt(mrtt_signed.relative_shift_exponent)},"
+        f"long_threshold={_fmt(mrtt_signed.long_shift_threshold)},"
+        "delta_threshold="
+        f"{_fmt(mrtt_signed.long_shift_delta_threshold)},"
+        "published_long="
+        f"{mrtt_signed.published_long_shift_range_applies},"
+        f"identity={mrtt_signed.truncated_mobius_identity_exact},"
+        f"d2={mrtt_signed.absolute_coefficient_is_bounded_by_d2},"
+        f"ramare={mrtt_signed.ramare_prime_factor_is_exact},"
+        f"major={mrtt_signed.major_arc_has_arbitrary_log_decay},"
+        "typical_verified="
+        f"{mrtt_signed.signed_typical_factor_extension_verified},"
+        "fixed_power="
+        f"{mrtt_signed.fixed_power_shift_has_arbitrary_log_saving},"
+        "average_exponent="
+        f"{_fmt(mrtt_signed.mrtt_shift_average_exponent)},"
+        "required_exponent="
+        f"{_fmt(mrtt_signed.required_mwkf_correlation_exponent)},"
+        "power_deficit="
+        f"{_fmt(mrtt_signed.remaining_shift_power_deficit)},"
+        f"scale_closes={mrtt_signed.mrtt_scale_closes_mwkf_model},"
+        "ratio_family="
+        f"{mrtt_signed.full_ratio_twisted_multiplicative_family_covered},"
+        "product_vertex="
+        f"{mrtt_signed.product_compatible_hard_vertex_covered},"
+        "physical="
+        f"{mrtt_signed.physical_gcd_layer_adapter_verified},"
+        f"core={mrtt_signed.whole_strict_power_core_covered}"
     )
     zero_free = inverse_zeta_variance_zero_free_audit()
     print(
