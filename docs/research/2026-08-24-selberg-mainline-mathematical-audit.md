@@ -1576,16 +1576,39 @@ After `c` is fixed, choose `a` so that the second constant is at most half
 the first.  Then
 
 \[
- \boxed{m(E)\gg T.}
- \tag{S5}
+\boxed{m(E)\gg T.}
+\tag{S5}
 \]
+
+The exact support-set inequality behind this step is now formalized.  Write
+`A(t)=integral_t^(t+h)|F|`, `B(t)=|integral_t^(t+h)F|`, and
+`E={t in [0,T] : B(t)<A(t)}`.  Since `B<=A`, the difference `A-B` vanishes
+off `E`.  If `L<=integral A`, `integral B<=R`, and
+`integral_E (A-B)^2<=M`, then setwise Cauchy--Schwarz gives
+
+\[
+ (L-R)^2\le m(E)M.
+\]
+
+`StrictCancellationMeasure.lean` derives this directly from a signed
+sliding `L^2` bound and a global absolute sliding `L^2` bound.  The remaining
+S5 work is the eventual fixed-parameter algebra: specialize S2--S3 to
+`delta=1/T`, `X=floor(T^(1/32))`, choose the frequency parameter `a>0`
+small enough that the signed term absorbs at most half of S4b, and use
+`log X >= (log T)/64` eventually.
 
 Every `t in E` forces a sign change in `(t,t+h)`.  Partitioning `(0,T)` into
 intervals of length `h`, and allowing each zero to be charged at most twice,
 gives
 
 \[
- N_{0,\mathrm{odd}}(T)\gg \frac{T}{h}\gg T\log T.
+N_{0,\mathrm{odd}}(T)\gg \frac{T}{h}\gg T\log T.
+
+The current repository packing interface assumes the much stronger bound
+that bad starts occupy at most `T/12`; S5 supplies only `m(E)>=kappa*T` for
+some fixed `kappa>0`.  The final assembly must therefore use the direct
+covering inequality `m(E)<=h*N_odd(T+h)` (or an equivalent positive-measure
+packing lemma), not instantiate that near-full-measure interface verbatim.
 \]
 
 The last packing step is already represented, in a dyadic version, by
