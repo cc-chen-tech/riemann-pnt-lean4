@@ -2727,6 +2727,13 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "qct_weights=False,exceptional_covered=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: newform_level_mobius_projector="
+        "prime=5,index=6,mobius=-2,newform=-1/6,difference=-11/6,"
+        "geometric=True,squarefree=True,oldclass_tail=True,"
+        "hecke_modified=True,match=False,projector=False,"
+        "oldforms_killed=False,qct=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: inverse_zeta_zero_free_implication="
         "ambient=1,window=1/2,variance=3/2,block=3/4,"
         "abscissa=3/4,x_integral=True,cauchy=True,dyadic=True,"
@@ -3903,6 +3910,30 @@ def test_humphries_exceptional_density_cannot_close_critical_level_face() -> Non
     assert not hard.qct_spectral_weights_accepted
     assert not hard.exceptional_spectrum_gate_covered
     assert not hard.whole_mobius_gate_covered
+
+
+def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "newform_level_mobius_projector_audit",
+        None,
+    )
+    assert adapter is not None, "newform level-projector audit is missing"
+
+    prime = adapter(prime=5)
+    assert prime.squarefree_level_index == F(6)
+    assert prime.mobius_convolution_prime_coefficient == F(-2)
+    assert prime.newform_leading_sieve_prime_coefficient == F(-1, 6)
+    assert prime.local_coefficient_difference == F(-11, 6)
+    assert prime.geometric_divisor_convolution_identity_exact
+    assert prime.newform_formula_requires_squarefree_level
+    assert prime.newform_prime_power_oldclass_tail_present
+    assert prime.newform_formula_modifies_hecke_indices
+    assert not prime.local_coefficients_match
+    assert not prime.mobius_level_sum_is_exact_newform_projector
+    assert not prime.exceptional_oldforms_annihilated_algebraically
+    assert not prime.qct_newform_spectral_adapter_derived
+    assert not prime.whole_mobius_gate_covered
 
 
 def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:

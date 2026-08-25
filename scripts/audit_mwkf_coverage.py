@@ -1617,6 +1617,24 @@ class HumphriesExceptionalLevelDensityAudit:
 
 
 @dataclass(frozen=True)
+class NewformLevelMobiusProjectorAudit:
+    prime: int
+    squarefree_level_index: Fraction
+    mobius_convolution_prime_coefficient: Fraction
+    newform_leading_sieve_prime_coefficient: Fraction
+    local_coefficient_difference: Fraction
+    geometric_divisor_convolution_identity_exact: bool
+    newform_formula_requires_squarefree_level: bool
+    newform_prime_power_oldclass_tail_present: bool
+    newform_formula_modifies_hecke_indices: bool
+    local_coefficients_match: bool
+    mobius_level_sum_is_exact_newform_projector: bool
+    exceptional_oldforms_annihilated_algebraically: bool
+    qct_newform_spectral_adapter_derived: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class InverseZetaVarianceZeroFreeAudit:
     ambient_length_exponent: Fraction
     short_window_exponent: Fraction
@@ -8414,6 +8432,51 @@ def humphries_exceptional_level_density_audit(
     )
 
 
+def newform_level_mobius_projector_audit(
+    *,
+    prime: int,
+) -> NewformLevelMobiusProjectorAudit:
+    """Compare the Mobius level coefficient with the newform sieve.
+
+    Recombining the Type-I divisibility levels without truncations has
+    coefficient ``alpha=mu*mu``, since
+
+    ``sum_(L|c) (mu*mu)(L) = ((mu*mu)*1)(c) = mu(c)``.
+
+    At a prime, ``alpha(p)=-2``.  In contrast, the exact squarefree
+    newform Bruggeman--Kuznetsov inversion of Young uses leading
+    coefficient ``mu(L)/nu(L)``, where ``nu(p)=p+1``, together with an
+    infinite ``ell|L^infinity`` oldclass tail and modified Hecke
+    indices.  Its prime coefficient is therefore ``-1/(p+1)``, not
+    ``-2``.  This local mismatch prevents interpreting the Mobius
+    level recombination itself as an exact newform projector.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if any(prime % divisor == 0 for divisor in range(2, int(prime**0.5) + 1)):
+        raise ValueError("prime must be prime")
+    level_index = F(prime + 1)
+    mobius_coefficient = F(-2)
+    newform_coefficient = -F(1, prime + 1)
+    difference = mobius_coefficient - newform_coefficient
+    return NewformLevelMobiusProjectorAudit(
+        prime=prime,
+        squarefree_level_index=level_index,
+        mobius_convolution_prime_coefficient=mobius_coefficient,
+        newform_leading_sieve_prime_coefficient=newform_coefficient,
+        local_coefficient_difference=difference,
+        geometric_divisor_convolution_identity_exact=True,
+        newform_formula_requires_squarefree_level=True,
+        newform_prime_power_oldclass_tail_present=True,
+        newform_formula_modifies_hecke_indices=True,
+        local_coefficients_match=(difference == 0),
+        mobius_level_sum_is_exact_newform_projector=False,
+        exceptional_oldforms_annihilated_algebraically=False,
+        qct_newform_spectral_adapter_derived=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def inverse_zeta_variance_zero_free_audit(
 ) -> InverseZetaVarianceZeroFreeAudit:
     """Record the zero-free consequence of the strong sufficient gate.
@@ -14501,6 +14564,33 @@ def main() -> None:
         "exceptional_covered="
         f"{humphries_density.exceptional_spectrum_gate_covered},"
         f"covered={humphries_density.whole_mobius_gate_covered}"
+    )
+    newform_level = newform_level_mobius_projector_audit(prime=5)
+    print(
+        "large_q_transition: newform_level_mobius_projector="
+        f"prime={newform_level.prime},"
+        f"index={_fmt(newform_level.squarefree_level_index)},"
+        "mobius="
+        f"{_fmt(newform_level.mobius_convolution_prime_coefficient)},"
+        "newform="
+        f"{_fmt(newform_level.newform_leading_sieve_prime_coefficient)},"
+        "difference="
+        f"{_fmt(newform_level.local_coefficient_difference)},"
+        "geometric="
+        f"{newform_level.geometric_divisor_convolution_identity_exact},"
+        "squarefree="
+        f"{newform_level.newform_formula_requires_squarefree_level},"
+        "oldclass_tail="
+        f"{newform_level.newform_prime_power_oldclass_tail_present},"
+        "hecke_modified="
+        f"{newform_level.newform_formula_modifies_hecke_indices},"
+        f"match={newform_level.local_coefficients_match},"
+        "projector="
+        f"{newform_level.mobius_level_sum_is_exact_newform_projector},"
+        "oldforms_killed="
+        f"{newform_level.exceptional_oldforms_annihilated_algebraically},"
+        f"qct={newform_level.qct_newform_spectral_adapter_derived},"
+        f"covered={newform_level.whole_mobius_gate_covered}"
     )
     zero_free = inverse_zeta_variance_zero_free_audit()
     print(

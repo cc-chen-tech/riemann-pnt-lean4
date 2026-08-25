@@ -13141,6 +13141,83 @@ thresholds (1) and (3/2), the residual (7/32), and keeps the QCT
 spectral-weight and whole-gate flags false.
 
 
+### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
+
+There remains a possible algebraic escape from Section 4.109: perhaps
+the signed Type-I levels annihilate oldforms before the positive density
+estimate is applied.  The exact newform trace formula rules out this
+automatic identification.
+
+If the unrestricted Type-I level coefficient is
+\(\alpha=\mu*\mu\), then finite Dirichlet convolution gives
+
+\[
+ \boxed{
+ \sum_{L\mid c}\alpha(L)
+ =((\mu*\mu)*\mathbf1)(c)=\mu(c).}
+\tag{4.846}
+\]
+
+Thus summing the divisibility-level geometric formulas does reconstruct
+the Möbius modulus weight.  It does not follow that the same coefficient
+is a newform projector.
+
+For comparison, let \(N\) be squarefree, let \((mn,N)=1\), and write
+\(\Delta_N(m,n)\) for the full Bruggeman--Kuznetsov spectral form.
+The squarefree newform inversion in Young's subsection
+[“Bruggeman--Kuznetsov for newforms, squarefree level”](https://arxiv.org/abs/1710.03624)
+is exactly
+
+\[
+ \boxed{
+ \begin{aligned}
+ \Delta_N^*(m,n)
+ =\sum_{LM=N}\frac{\mu(L)}{\nu(L)}
+ \sum_{\ell\mid L^\infty}\frac{\ell}{\nu(\ell)^2}
+ \sum_{d_1,d_2\mid\ell}
+ c_\ell(d_1)c_\ell(d_2)
+ \Delta_M(md_1,nd_2),
+ \end{aligned}}
+\tag{4.847}
+\]
+
+where \(\nu(p)=p+1\) on a squarefree prime level.  The coprimality
+assumption makes (4.847) the literal specialization of the published
+formula: all of its auxiliary \(u,v,a,b,e_1,e_2\) divisor sums reduce to
+one.  The remaining \(\ell\mid L^\infty\) sum is still present and the
+Hecke indices change from \((m,n)\) to \((md_1,nd_2)\).
+
+At \(N=p\), the \(L=p,\ell=1\) term of (4.847) has coefficient
+
+\[
+ \boxed{
+ \frac{\mu(p)}{\nu(p)}=-\frac1{p+1},}
+\tag{4.848}
+\]
+
+followed by the nonempty prime-power oldclass tail \(\ell=p^j\),
+\(j\geq1\).  On the other hand,
+
+\[
+ \boxed{
+ (\mu*\mu)(p)=\mu(1)\mu(p)+\mu(p)\mu(1)=-2.}
+\tag{4.849}
+\]
+
+For example, at \(p=5\) the leading local coefficients are
+\(-1/6\) and \(-2\), with difference \(-11/6\).  The prime-power tail
+and changed Hecke indices make the mismatch stronger, not weaker.
+Therefore (4.846) is an exact geometric recombination but not the
+newform inversion (4.847); old exceptional forms are not annihilated by
+an algebraic identity already present in the Type-I split.
+
+This does not exclude proving cancellation after inserting the full
+signed coefficient into (4.847).  It says that doing so is a new
+weighted newform estimate rather than a free projection.  The adapter
+`newform_level_mobius_projector_audit` records the prime witness and
+keeps the oldform-annihilation and QCT newform-adapter flags false.
+
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
