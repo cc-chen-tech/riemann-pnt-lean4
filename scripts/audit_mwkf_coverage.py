@@ -124,6 +124,20 @@ class MobiusTraceFunctionAudit:
     reasons: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class AveragedChowlaShiftAudit:
+    shift: Fraction
+    product_frequency: Fraction
+    correlation_volume: Fraction
+    logarithmic_gate_target: Fraction
+    power_deficit: Fraction
+    unit_linear_slopes: bool
+    zero_shift_excluded: bool
+    theorem_applicable: bool
+    source: str
+    reasons: tuple[str, ...]
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -407,6 +421,48 @@ def mobius_trace_function_audit(
         trace_is_nonexceptional=trace_is_nonexceptional,
         theorem_applicable=theorem_applicable,
         power_target_covered=False,
+        reasons=tuple(reasons),
+    )
+
+
+def averaged_chowla_shift_audit(
+    box: ExponentBox,
+) -> AveragedChowlaShiftAudit:
+    """Audit averaged Chowla after the exact substitution ``r=s+d``.
+
+    The centered phase becomes ``e(a*d/s)-1`` because ``a`` is an
+    integer.  Both Möbius arguments, ``s`` and ``s+d``, consequently have
+    unit linear slope.  Matomäki--Radziwiłł--Tao's averaged Elliott theorem
+    supplies logarithmic decay for fixed linear-form weights; it supplies
+    no positive power and does not accept the actual coefficient
+    ``Lambda_{s+d,s}(a)``, which depends jointly on the base and shift.
+    """
+    completion = farey_completion_scales(box)
+    shift = max(box.rho, box.sigma)
+    product_frequency = completion.product_frequency
+    correlation_volume = box.sigma + shift + product_frequency
+    logarithmic_gate_target = (
+        completion.normalized_gate_target + TARGET_SAVING
+    )
+    power_deficit = correlation_volume - logarithmic_gate_target
+    reasons = [
+        "joint_s_shift_frequency_coefficient",
+        "averaged_chowla_saves_only_logarithms",
+    ]
+    if power_deficit > 0:
+        reasons.append("positive_power_deficit")
+    return AveragedChowlaShiftAudit(
+        shift=shift,
+        product_frequency=product_frequency,
+        correlation_volume=correlation_volume,
+        logarithmic_gate_target=logarithmic_gate_target,
+        power_deficit=power_deficit,
+        unit_linear_slopes=True,
+        zero_shift_excluded=min(box.rho, box.sigma) > 0,
+        theorem_applicable=False,
+        source=(
+            "Matomaki-Radziwill-Tao, arXiv:1503.05121, Theorem 1.6"
+        ),
         reasons=tuple(reasons),
     )
 

@@ -346,6 +346,109 @@ the weaker logarithmic gate (4.6)--(4.7).  This is a viable program, not a
 completed estimate.  The separate seminorm-sensitive
 \(\mathrm{TAIL}_{B,D}\) obligation also remains.
 
+### 4.1 Exact centered-shift form and averaged Chowla audit
+
+There is a further exact reindexing which exposes what an averaged-Chowla
+input can and cannot do.  Put
+
+\[
+ d=r-s.
+\tag{4.8}
+\]
+
+Since \(a\) is an integer,
+
+\[
+ \boxed{
+ e\left(\frac{ar}{s}\right)-1
+ =e\left(\frac{a(s+d)}s\right)-1
+ =e\left(\frac{ad}s\right)-1.}
+\tag{4.9}
+\]
+
+Moreover \((r,s)=1\) is exactly \((s,d)=1\).  For all sufficiently
+large \(T\) in a box with positive \(r\)- and \(s\)-exponents, \(d=0\)
+is impossible: it would give \((r,s)=s>1\).  Thus (2.3), after grouping
+\(a=cv\), is exactly
+
+\[
+\begin{aligned}
+ \mathfrak D_q^{(2)}[\Theta]
+ ={}&\sum_{\substack{S/2\le s\le2S\\
+                      R/2\le s+d\le2R\\
+                      d\ne0,\ (s,d)=1\\
+                      (q,s(s+d))=1\\
+                      qs,q(s+d)\le N}}
+ \mu(s+d)\mu(s)p_N(q(s+d))p_N(qs)\frac Ss\\
+ &\quad\times\sum_{a\ne0}\Lambda_{s+d,s}(a)
+ \left\{e\left(\frac{ad}{s}\right)-1\right\}.
+\end{aligned}
+\tag{4.10}
+\]
+
+No oscillatory estimate is used in (4.8)--(4.10).  In the balanced hard
+box the exact interval constraints imply
+
+\[
+ -\frac32T^3\le d\le\frac32T^3,
+\tag{4.11}
+\]
+
+while the effective product-frequency exponent is one.
+
+Matomäki--Radziwiłł--Tao, Theorem 1.6, applies to averages of fixed
+linear-form correlations.  The substitution (4.8) is favourable in one
+respect: the two forms \(s\) and \(s+d\) both have unit slope, so the
+theorem's \(A^2\) loss for growing linear coefficients is absent.  For
+the Möbius function its quantitative factor is bounded by
+
+\[
+ \eta(X,D)
+ :=\frac{\log\log D}{\log D}
+   +\frac1{\log^{1/3000}X},
+\tag{4.12}
+\]
+
+up to a change of the absolute implied constant when
+\(10\le D\le X\).
+
+This still does not estimate (4.10).  There are two exact failures.
+First, \(\Lambda_{s+d,s}(a)\) depends jointly on the base variable
+\(s\), the shift \(d\), and the product frequency \(a\); it is not a
+fixed coefficient attached to either linear form in Theorem 1.6.
+Second, even under the optimistic replacement
+\(|\Lambda_{s+d,s}(a)|\le T^{o(1)}\), taking the triangle inequality in
+\(a\) gives exponent
+
+\[
+ \underbrace{3}_{s}
+ +\underbrace{3}_{d}
+ +\underbrace{1}_{a}=7,
+\tag{4.13}
+\]
+
+with only the logarithmic factor (4.12).  The logarithmic LMSD target has
+exponent four, so the exact remaining power deficit is
+
+\[
+ 7-4=3.
+\tag{4.14}
+\]
+
+The function `averaged_chowla_shift_audit` records (4.11)--(4.14) with
+exact rational exponents and returns the rejection reasons
+
+```
+joint_s_shift_frequency_coefficient
+averaged_chowla_saves_only_logarithms
+positive_power_deficit
+```
+
+Therefore averaged Chowla is not the spectral power-saving step.  It can
+only be a candidate for the final logarithmic gain after a pre-Cauchy
+spectral argument has already reduced exponent seven to the barrier
+exponent four.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

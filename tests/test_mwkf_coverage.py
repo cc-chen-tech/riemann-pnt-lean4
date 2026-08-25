@@ -4,6 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
+from scripts import audit_mwkf_coverage as coverage_audit
 from scripts.audit_mwkf_coverage import (
     TARGET_SAVING,
     bcr_adapter,
@@ -190,6 +191,27 @@ def test_mobius_trace_theorem_rejects_the_centered_cfk_family() -> None:
         "requires_prime_modulus",
         "linear_additive_trace_is_exceptional",
         "only_logarithmic_saving",
+    )
+
+
+def test_averaged_chowla_keeps_an_exact_three_power_hard_box_deficit() -> None:
+    """Catch treating a logarithmic averaged-Chowla gain as a power gain."""
+    adapter = getattr(coverage_audit, "averaged_chowla_shift_audit", None)
+    assert adapter is not None, "averaged-Chowla adapter is missing"
+
+    audit = adapter(boundary_witnesses()["balanced_max_a"])
+    assert audit.shift == F(3)
+    assert audit.product_frequency == F(1)
+    assert audit.correlation_volume == F(7)
+    assert audit.logarithmic_gate_target == F(4)
+    assert audit.power_deficit == F(3)
+    assert audit.unit_linear_slopes
+    assert audit.zero_shift_excluded
+    assert not audit.theorem_applicable
+    assert audit.reasons == (
+        "joint_s_shift_frequency_coefficient",
+        "averaged_chowla_saves_only_logarithms",
+        "positive_power_deficit",
     )
 
 
