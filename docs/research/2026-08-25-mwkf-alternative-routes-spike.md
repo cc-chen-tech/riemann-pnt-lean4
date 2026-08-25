@@ -12812,6 +12812,93 @@ allocations have not yet been restored.  Accordingly both the model
 estimate and the full MWKF core remain unproved.
 
 
+### 4.107 Periodic arithmetic-weight Kuznetsov cannot encode the modulus Möbius gain
+
+[Blomer--Milićević's arithmetic-weight Kuznetsov theorem](https://arxiv.org/abs/1410.4538)
+permits a
+periodic weight on the Kloosterman modulus, so it is a natural possible
+replacement for the inadmissible entry-weighted trace formula of
+Section 4.64.  Their normalization is
+
+\[
+ \boxed{
+ \widehat f(\chi)
+ =\frac1{\varphi(q)^{1/2}}
+   \sum_{a\bmod q}^{*}\overline{\chi(a)}f(a),\qquad
+ \|\widehat f\|_1=\sum_{\chi\bmod q}|\widehat f(\chi)|.}
+\tag{4.828}
+\]
+
+For \(f:(\mathbb Z/q\mathbb Z)^\times\to\mathbb C\), fixed smooth
+\(f_\infty\), and \(mn\leq X^2\), their Theorem 1 states
+
+\[
+ \boxed{
+ \sum_{\substack{c\geq1\\(c,q)=1}}
+ \frac{S(m,n;c)}{c^{1/2}}f(c)f_\infty(c/X)
+ \ll_{f_\infty,\varepsilon}
+ X^{1/2+2\vartheta}\|\widehat f\|_1(mnq)^\varepsilon,}
+\tag{4.829}
+\]
+
+where \(\vartheta=7/64\) is currently admissible.
+
+Give this theorem its most favorable direct interpretation for a Möbius
+modulus weight.  Choose a prime \(q>2X\), so reduction modulo \(q\) is
+injective on \([X,2X]\), and define \(f(c\bmod q)=\mu(c)\) on that
+interval and zero on the other reduced residues.  Multiplicative
+Parseval and the squarefree density give
+
+\[
+ \boxed{
+ \|\widehat f\|_1\geq\|\widehat f\|_2
+ =\left(\sum_{a\bmod q}^{*}|f(a)|^2\right)^{1/2}
+ =X^{1/2+o(1)}.}
+\tag{4.830}
+\]
+
+Consequently the smallest right side compatible with Parseval already
+has exponent
+
+\[
+ \boxed{
+ E_{\mathrm{BM}}
+ =\left(\frac12+2\vartheta\right)+\frac12
+ =1+2\vartheta.}
+\tag{4.831}
+\]
+
+The normalized modulus sum has the direct Weil-bound exponent \(1\).
+Thus the published theorem loses \(X^{2\vartheta}\); even under the
+Selberg conjecture \(\vartheta=0\), it merely ties the trivial exponent
+and supplies no power saving.
+
+On the balanced QCT box \(X=S=T^3\), the combined physical numerator has
+scale \(h\delta=T^5\), so the favorable Linnik-range check
+\(T^5\leq X^2=T^6\) succeeds.  Nevertheless,
+
+\[
+ \boxed{
+ E_{\mathrm{BM}}=\frac{117}{32},\qquad
+ E_{\mathrm{triv}}=3,\qquad
+ E_{\mathrm{BM}}-E_{\mathrm{triv}}=\frac{21}{32}}
+\tag{4.832}
+\]
+
+in \(T\)-exponents.  This deficit occurs before charging the fact that
+the QCT kernel is an incomplete, coupled orbit rather than the complete
+Kloosterman family in (4.829).
+
+This audit rejects the direct collision-free periodic encoding.  It
+does not assert that no specially chosen smaller period can agree with
+a finite Möbius interval, and it does not reject a Type-I/II expansion
+followed by separate level formulas.  Such a hybrid must still retain
+the two Möbius cofactors and is exactly the unresolved centered
+dispersion problem, not an application of (4.829) alone.  The coverage
+adapter records the Parseval lower bound, the \(21/32\) hard-box deficit,
+the zero Selberg margin, and leaves the whole Möbius gate unproved.
+
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

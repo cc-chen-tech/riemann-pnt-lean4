@@ -1533,6 +1533,28 @@ class HardVertexFourMobiusDeterminantAudit:
 
 
 @dataclass(frozen=True)
+class BlomerMilicevicMobiusModulusAudit:
+    kloosterman_modulus_scale_exponent: Fraction
+    numerator_product_exponent: Fraction
+    periodic_encoding_modulus_exponent: Fraction
+    mobius_support_l2_lower_exponent: Fraction
+    ramanujan_theta: Fraction
+    bm_archimedean_factor_exponent: Fraction
+    bm_total_bound_exponent: Fraction
+    trivial_normalized_modulus_sum_exponent: Fraction
+    published_bound_deficit: Fraction
+    selberg_hypothetical_bound_exponent: Fraction
+    selberg_hypothetical_margin: Fraction
+    linnik_range_hypothesis_holds: bool
+    collision_free_exact_periodic_encoding_available: bool
+    fourier_l1_lower_bound_follows_from_parseval: bool
+    small_period_exact_mobius_encoding_ruled_out: bool
+    actual_qct_kernel_is_complete_kloosterman_family: bool
+    direct_periodic_weight_adapter_has_power_saving: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class InverseZetaVarianceZeroFreeAudit:
     ambient_length_exponent: Fraction
     short_window_exponent: Fraction
@@ -8077,6 +8099,66 @@ def hard_vertex_four_mobius_determinant_audit(
     )
 
 
+def blomer_milicevic_mobius_modulus_audit(
+    *,
+    modulus_scale_exponent: Fraction,
+    numerator_product_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> BlomerMilicevicMobiusModulusAudit:
+    """Audit direct periodic encoding of a Möbius modulus weight.
+
+    Blomer--Milićević Theorem 1 bounds a normalized Kloosterman
+    modulus sum at scale ``X`` by
+
+    ``X^(1/2+2*theta) * ||f_hat||_1``
+
+    when the arithmetic modulus weight is periodic modulo ``q``.
+    A collision-free exact encoding of the values of ``mu(c)`` on one
+    interval ``c ~ X`` may take ``q > 2X``.  Its support contains
+    ``X^(1+o(1))`` squarefree values, so normalized multiplicative
+    Parseval gives ``||f_hat||_1 >= ||f_hat||_2 = X^(1/2+o(1))``.
+
+    Thus even the smallest norm allowed by Parseval returns exponent
+    ``X^(1+2*theta)``.  With Kim--Sarnak ``theta=7/64`` this is worse
+    than the trivial normalized modulus sum; with Selberg ``theta=0``
+    it merely ties it.  This rejects only the direct collision-free
+    periodic encoding.  It does not prove that every smaller period
+    fails to match a finite Möbius interval, and it does not identify
+    the QCT kernel with the complete Kloosterman family in the theorem.
+    """
+    sigma = F(modulus_scale_exponent)
+    numerator = F(numerator_product_exponent)
+    theta = F(ramanujan_theta)
+    if sigma <= 0 or numerator < 0 or theta < 0:
+        raise ValueError("exponents must be nonnegative and modulus positive")
+    periodic = sigma
+    l2_lower = sigma / 2
+    archimedean = sigma * (F(1, 2) + F(2) * theta)
+    total = archimedean + l2_lower
+    trivial = sigma
+    selberg_total = sigma
+    return BlomerMilicevicMobiusModulusAudit(
+        kloosterman_modulus_scale_exponent=sigma,
+        numerator_product_exponent=numerator,
+        periodic_encoding_modulus_exponent=periodic,
+        mobius_support_l2_lower_exponent=l2_lower,
+        ramanujan_theta=theta,
+        bm_archimedean_factor_exponent=archimedean,
+        bm_total_bound_exponent=total,
+        trivial_normalized_modulus_sum_exponent=trivial,
+        published_bound_deficit=total - trivial,
+        selberg_hypothetical_bound_exponent=selberg_total,
+        selberg_hypothetical_margin=trivial - selberg_total,
+        linnik_range_hypothesis_holds=(numerator <= F(2) * sigma),
+        collision_free_exact_periodic_encoding_available=True,
+        fourier_l1_lower_bound_follows_from_parseval=True,
+        small_period_exact_mobius_encoding_ruled_out=False,
+        actual_qct_kernel_is_complete_kloosterman_family=False,
+        direct_periodic_weight_adapter_has_power_saving=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def inverse_zeta_variance_zero_free_audit(
 ) -> InverseZetaVarianceZeroFreeAudit:
     """Record the zero-free consequence of the strong sufficient gate.
@@ -14026,6 +14108,37 @@ def main() -> None:
         f"{four_mobius.published_centered_outer_mobius_spectral_bound},"
         f"physical={four_mobius.physical_ratio_kernel_restored},"
         f"proved={four_mobius.hard_vertex_determinant_estimate_proved}"
+    )
+    bm_mobius = blomer_milicevic_mobius_modulus_audit(
+        modulus_scale_exponent=F(3),
+        numerator_product_exponent=F(5),
+    )
+    print(
+        "large_q_transition: blomer_milicevic_mobius_modulus="
+        f"modulus={_fmt(bm_mobius.kloosterman_modulus_scale_exponent)},"
+        f"period={_fmt(bm_mobius.periodic_encoding_modulus_exponent)},"
+        f"l2={_fmt(bm_mobius.mobius_support_l2_lower_exponent)},"
+        f"theta={_fmt(bm_mobius.ramanujan_theta)},"
+        f"base={_fmt(bm_mobius.bm_archimedean_factor_exponent)},"
+        f"total={_fmt(bm_mobius.bm_total_bound_exponent)},"
+        "trivial="
+        f"{_fmt(bm_mobius.trivial_normalized_modulus_sum_exponent)},"
+        f"deficit={_fmt(bm_mobius.published_bound_deficit)},"
+        "selberg="
+        f"{_fmt(bm_mobius.selberg_hypothetical_bound_exponent)},"
+        f"selberg_margin={_fmt(bm_mobius.selberg_hypothetical_margin)},"
+        f"linnik={bm_mobius.linnik_range_hypothesis_holds},"
+        "injective="
+        f"{bm_mobius.collision_free_exact_periodic_encoding_available},"
+        "parseval="
+        f"{bm_mobius.fourier_l1_lower_bound_follows_from_parseval},"
+        "small_period_ruled_out="
+        f"{bm_mobius.small_period_exact_mobius_encoding_ruled_out},"
+        "qct_complete="
+        f"{bm_mobius.actual_qct_kernel_is_complete_kloosterman_family},"
+        "power_saving="
+        f"{bm_mobius.direct_periodic_weight_adapter_has_power_saving},"
+        f"covered={bm_mobius.whole_mobius_gate_covered}"
     )
     zero_free = inverse_zeta_variance_zero_free_audit()
     print(

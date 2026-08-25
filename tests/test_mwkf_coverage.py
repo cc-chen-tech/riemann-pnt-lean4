@@ -2695,6 +2695,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "physical=False,proved=False"
     ) in report
     assert (
+        "large_q_transition: blomer_milicevic_mobius_modulus="
+        "modulus=3,period=3,l2=3/2,theta=7/64,"
+        "base=69/32,total=117/32,trivial=3,deficit=21/32,"
+        "selberg=3,selberg_margin=0,linnik=True,injective=True,"
+        "parseval=True,small_period_ruled_out=False,qct_complete=False,"
+        "power_saving=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: inverse_zeta_zero_free_implication="
         "ambient=1,window=1/2,variance=3/2,block=3/4,"
         "abscissa=3/4,x_integral=True,cauchy=True,dyadic=True,"
@@ -3752,6 +3760,37 @@ def test_hard_vertex_four_mobius_gate_needs_exact_outer_square_root() -> None:
         assert not audit.published_centered_outer_mobius_spectral_bound
         assert not audit.physical_ratio_kernel_restored
         assert not audit.hard_vertex_determinant_estimate_proved
+
+
+def test_blomer_milicevic_periodic_mobius_encoding_has_no_power_gain() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "blomer_milicevic_mobius_modulus_audit",
+        None,
+    )
+    assert adapter is not None, "Blomer--Milićević modulus audit is missing"
+
+    hard = adapter(
+        modulus_scale_exponent=F(3),
+        numerator_product_exponent=F(5),
+    )
+    assert hard.kloosterman_modulus_scale_exponent == F(3)
+    assert hard.periodic_encoding_modulus_exponent == F(3)
+    assert hard.mobius_support_l2_lower_exponent == F(3, 2)
+    assert hard.ramanujan_theta == F(7, 64)
+    assert hard.bm_archimedean_factor_exponent == F(69, 32)
+    assert hard.bm_total_bound_exponent == F(117, 32)
+    assert hard.trivial_normalized_modulus_sum_exponent == F(3)
+    assert hard.published_bound_deficit == F(21, 32)
+    assert hard.selberg_hypothetical_bound_exponent == F(3)
+    assert hard.selberg_hypothetical_margin == F(0)
+    assert hard.linnik_range_hypothesis_holds
+    assert hard.collision_free_exact_periodic_encoding_available
+    assert hard.fourier_l1_lower_bound_follows_from_parseval
+    assert not hard.small_period_exact_mobius_encoding_ruled_out
+    assert not hard.actual_qct_kernel_is_complete_kloosterman_family
+    assert not hard.direct_periodic_weight_adapter_has_power_saving
+    assert not hard.whole_mobius_gate_covered
 
 
 def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:
