@@ -218,6 +218,22 @@ class PrimitiveFractionLargeSieveScales:
     improves_absolute_bound: bool
 
 
+@dataclass(frozen=True)
+class ReciprocalClusterLargeSieveScales:
+    distance: Fraction
+    cluster_multiplicity: Fraction
+    farey_center_spacing: Fraction
+    reciprocity_correction: Fraction
+    numerator_resolution: Fraction
+    correction_within_resolution: bool
+    clustered_large_sieve_bound: Fraction
+    primitive_best_bound: Fraction
+    best_unconditional_bound: Fraction
+    gate_target: Fraction
+    remaining_power_saving: Fraction
+    improves_primitive_bound: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -821,6 +837,67 @@ def primitive_fraction_large_sieve_scales(
     )
 
 
+def reciprocal_cluster_large_sieve_scales(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+) -> ReciprocalClusterLargeSieveScales:
+    """Large-sieve ledger after reciprocity to Farey centers modulo ``w``.
+
+    The identity ``-bar(w)/s = bar(s)/w - 1/(s*w) (mod 1)`` places each
+    frequency within ``1/(S*D)`` of a reduced denominator-``D`` Farey
+    point.  When ``S*D >= H*L``, that displacement is below the numerator
+    resolution.  Each center has ``S/D`` preimages, and a resolution
+    interval meets ``1+D^2/(H*L)`` centers.  The local-density large sieve
+    therefore has exponent
+
+    ``(S*D)^(1/2) * (S/D)^(1/2)``
+    ``* (H*L+D^2)^(1/2) * (H*L)^(1/2+epsilon)``.
+    """
+    numerator_product_length = box.ell + box.h
+    if distance < 0 or distance > box.sigma:
+        raise ValueError("reciprocal clustering requires 0 <= D <= S")
+    correction_within_resolution = (
+        box.sigma + distance >= numerator_product_length
+    )
+    if not correction_within_resolution:
+        raise ValueError("reciprocity correction exceeds numerator resolution")
+    cluster_multiplicity = box.sigma - distance
+    clustered_large_sieve_bound = (
+        box.sigma
+        + max(numerator_product_length, 2 * distance) / 2
+        + numerator_product_length / 2
+    )
+    primitive = primitive_fraction_large_sieve_scales(
+        box,
+        distance=distance,
+    )
+    best_unconditional_bound = min(
+        clustered_large_sieve_bound,
+        primitive.best_unconditional_bound,
+    )
+    gate_target = box.rho + box.sigma
+    return ReciprocalClusterLargeSieveScales(
+        distance=distance,
+        cluster_multiplicity=cluster_multiplicity,
+        farey_center_spacing=-2 * distance,
+        reciprocity_correction=-box.sigma - distance,
+        numerator_resolution=-numerator_product_length,
+        correction_within_resolution=correction_within_resolution,
+        clustered_large_sieve_bound=clustered_large_sieve_bound,
+        primitive_best_bound=primitive.best_unconditional_bound,
+        best_unconditional_bound=best_unconditional_bound,
+        gate_target=gate_target,
+        remaining_power_saving=_positive_part(
+            best_unconditional_bound - gate_target
+        ),
+        improves_primitive_bound=(
+            clustered_large_sieve_bound
+            < primitive.best_unconditional_bound
+        ),
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -1179,6 +1256,16 @@ def main() -> None:
     print(
         "balanced_max_a: "
         f"primitive_ls_best_remaining={primitive_savings}"
+    )
+    reciprocal_distances = (F(2), F(5, 2), F(3))
+    reciprocal_savings = ",".join(
+        f"{_fmt(distance)}:"
+        f"{_fmt(reciprocal_cluster_large_sieve_scales(hard, distance=distance).remaining_power_saving)}"
+        for distance in reciprocal_distances
+    )
+    print(
+        "balanced_max_a: "
+        f"reciprocal_cluster_best_remaining={reciprocal_savings}"
     )
 
 

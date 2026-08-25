@@ -358,6 +358,32 @@ def test_primitive_fraction_large_sieve_improves_the_two_largest_shells() -> Non
         assert audit.primitive_fraction_spacing == F(-6)
 
 
+def test_reciprocal_clustering_flattens_the_middle_large_shell_deficit() -> None:
+    """Catch omitting the S/D cluster multiplicity after reciprocity."""
+    adapter = getattr(
+        coverage_audit,
+        "reciprocal_cluster_large_sieve_scales",
+        None,
+    )
+    assert adapter is not None, "reciprocal-cluster adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(2): (F(1), F(8), F(8), F(2), False),
+        F(5, 2): (F(1, 2), F(8), F(8), F(2), True),
+        F(3): (F(0), F(17, 2), F(17, 2), F(5, 2), False),
+    }
+    for distance, want in expected.items():
+        audit = adapter(box, distance=distance)
+        assert audit.cluster_multiplicity == want[0]
+        assert audit.clustered_large_sieve_bound == want[1]
+        assert audit.best_unconditional_bound == want[2]
+        assert audit.remaining_power_saving == want[3]
+        assert audit.improves_primitive_bound is want[4]
+        assert audit.correction_within_resolution
+        assert audit.farey_center_spacing == -2 * distance
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -402,6 +428,10 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
     assert (
         "balanced_max_a: primitive_ls_best_remaining="
         "1:0,3/2:1,2:2,5/2:9/4,3:5/2"
+    ) in output
+    assert (
+        "balanced_max_a: reciprocal_cluster_best_remaining="
+        "2:2,5/2:2,3:5/2"
     ) in output
 
 

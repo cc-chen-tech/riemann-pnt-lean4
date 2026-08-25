@@ -1026,6 +1026,116 @@ This still does not prove FRSD\(_B\): the shells
 \(\delta=1\) face needs the separate logarithmic gain already identified
 in (4.35)--(4.36).
 
+### 4.7 Reciprocity clustering at numerator resolution
+
+For the large shells, additive reciprocity exposes more spacing structure.
+After splitting the sign of \(w\), the exact identity is
+
+\[
+ -\frac{\bar w}{s}
+ \equiv \frac{\bar s}{w}-\frac1{sw}\pmod1.
+\tag{4.57}
+\]
+
+The first term is a reduced Farey fraction of denominator \(|w|\asymp D\).
+The second term moves it by \(O((SD)^{-1})\).  Put \(A=HL\).  Whenever
+
+\[
+ SD\ge A,
+\tag{4.58}
+\]
+
+the displacement in (4.57) is at most the numerator resolution \(A^{-1}\).
+A fixed reduced center \(\bar s/w\) determines \(w\), its sign, and one
+residue class for \(s\bmod |w|\); hence it has
+
+\[
+ O(1+S/D)=O(S/D)
+\tag{4.59}
+\]
+
+preimages in the present range.  The reduced centers have spacing
+\(\gg D^{-2}\).  Therefore an interval of length \(O(A^{-1})\) contains
+at most
+
+\[
+ O\left(\frac SD\left(1+\frac{D^2}{A}\right)\right)
+\tag{4.60}
+\]
+
+actual frequencies \(-\bar w/s\).
+
+The local-density form of the additive large sieve follows by partitioning
+the frequency multiset into \(O((4.60))\) subsets separated by
+\(\gg A^{-1}\).  Together with (4.52), it gives
+
+\[
+ \sum_{\substack{s\asymp S\\D<|w|\le2D\\(s,w)=1}}
+ \left|\sum_n\nu(n)e\left(-\frac{n\bar w}s\right)\right|^2
+ \ll_{\varepsilon,W}
+ \frac SD(A+D^2)A^{1+\varepsilon}.
+\tag{4.61}
+\]
+
+Applying outer Cauchy over the \(O(SD)\) shell pairs and restoring the
+separation integral proves the unconditional bound
+
+\[
+ \boxed{
+ |\mathfrak G_{q,j}(D)|
+ \ll_{\varepsilon,W}
+ \mathscr L^{C_{\rm sep}}
+ S(HL+D^2)^{1/2}(HL)^{1/2+\varepsilon},
+ \qquad SD\ge HL.}
+\tag{4.62}
+\]
+
+At the hard box condition (4.58) is exactly \(\delta\ge2\), and (4.62)
+has exponent
+
+\[
+ \begin{cases}
+ 8,&2\le\delta\le5/2,\\
+ 11/2+\delta,&5/2\le\delta\le3.
+ \end{cases}
+\tag{4.63}
+\]
+
+Combining (4.62) with both estimates used in (4.55) gives the new current
+minimum
+
+\[
+\begin{array}{c|c|c|c}
+ \delta&\text{centered}&\text{primitive LS}
+   &\text{reciprocity-cluster best / remaining saving}\\ \hline
+ 2&8&8&8\ /\ 2\\
+ 5/2&17/2&33/4&8\ /\ 2\\
+ 3&9&17/2&17/2\ /\ 5/2.
+\end{array}
+\tag{4.64}
+\]
+
+Consequently (4.56) is sharpened to
+
+\[
+ \boxed{
+ g_{\rm residual}^{\rm current}(\delta)=
+ \begin{cases}
+ 2\delta-2,&1\le\delta\le2,\\[1mm]
+ 2,&2\le\delta\le5/2,\\[1mm]
+ \delta-1/2,&5/2\le\delta\le3.
+ \end{cases}}
+\tag{4.65}
+\]
+
+The exact-rational function reciprocal_cluster_large_sieve_scales checks
+the applicability condition (4.58), the multiplicity \(S/D\), the Farey
+spacing \(D^{-2}\), and every exponent in (4.62)--(4.65).
+
+This estimate is again unconditional, but it does not close FRSD\(_B\):
+the current remaining power is \(g_{\rm residual}^{\rm current}(\delta)\)
+for every \(\delta>1\), with maximum \(5/2\) at \(\delta=3\).
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
