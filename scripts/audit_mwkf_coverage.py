@@ -1306,6 +1306,25 @@ class MidpointPhysicalPoissonAudit:
 
 
 @dataclass(frozen=True)
+class RootSalieAdapterAudit:
+    modulus_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    fixed_numerator_bound_exponent: Fraction
+    fixed_numerator_saving_exponent: Fraction
+    absolute_numerator_sum_bound_exponent: Fraction
+    physical_target_exponent: Fraction
+    absolute_numerator_sum_deficit_exponent: Fraction
+    odd_full_root_trace_identity_exact: bool
+    even_midpoint_modulus_adapter_verified: bool
+    theorem_accepts_balanced_root_filter: bool
+    theorem_accepts_mobius_modulus_weight: bool
+    theorem_accepts_moving_numerator: bool
+    square_numerator_exception_covered: bool
+    theorem_accepts_joint_transform_weight: bool
+    salie_adapter_closes_root_gate: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -6561,6 +6580,130 @@ def midpoint_physical_poisson_audit() -> MidpointPhysicalPoissonAudit:
     )
 
 
+def odd_root_trace_salie_coefficient_identity(
+    *,
+    modulus: int,
+    numerator: int,
+) -> dict[str, object]:
+    """Check the odd squarefree root-trace/Salié identity coefficientwise.
+
+    Put ``b=numerator^2/4 (mod modulus)`` and let ``chi`` be the Jacobi
+    symbol.  The exact group-ring identity is
+
+        sum_x^* chi(x) [x+b*xbar]
+        = (sum_y chi(y)[y]) (sum_{A^2=1}[numerator*A]).
+
+    Evaluating the basis element ``[z]`` as ``e(z/modulus)`` gives
+    ``T(1,b;modulus)=tau(chi) R_numerator(modulus)`` without numerical
+    approximation.
+    """
+    if modulus <= 1 or modulus % 2 == 0:
+        raise ValueError("Salié root-trace modulus must be odd and exceed one")
+    if gcd(numerator, modulus) != 1:
+        raise ValueError("Salié numerator must be coprime to the modulus")
+
+    remaining = modulus
+    prime_factors: list[int] = []
+    prime = 3
+    squarefree = True
+    while prime * prime <= remaining:
+        if remaining % prime:
+            prime += 2
+            continue
+        remaining //= prime
+        prime_factors.append(prime)
+        if remaining % prime == 0:
+            squarefree = False
+            break
+        prime += 2
+    if squarefree and remaining > 1:
+        prime_factors.append(remaining)
+    if not squarefree:
+        raise ValueError("Salié coefficient identity audit uses squarefree modulus")
+
+    def jacobi_symbol(value: int, odd_modulus: int) -> int:
+        value %= odd_modulus
+        sign = 1
+        while value:
+            while value % 2 == 0:
+                value //= 2
+                if odd_modulus % 8 in (3, 5):
+                    sign = -sign
+            value, odd_modulus = odd_modulus, value
+            if value % 4 == odd_modulus % 4 == 3:
+                sign = -sign
+            value %= odd_modulus
+        return sign if odd_modulus == 1 else 0
+
+    salie_parameter = (
+        numerator * numerator * pow(4, -1, modulus)
+    ) % modulus
+    salie_coefficients = {residue: 0 for residue in range(modulus)}
+    for x in range(modulus):
+        if gcd(x, modulus) != 1:
+            continue
+        exponent = (
+            x + salie_parameter * pow(x, -1, modulus)
+        ) % modulus
+        salie_coefficients[exponent] += jacobi_symbol(x, modulus)
+
+    roots = tuple(
+        residue
+        for residue in range(modulus)
+        if residue * residue % modulus == 1
+    )
+    gauss_root_coefficients = {residue: 0 for residue in range(modulus)}
+    for y in range(modulus):
+        coefficient = jacobi_symbol(y, modulus)
+        if coefficient == 0:
+            continue
+        for root in roots:
+            exponent = (y + numerator * root) % modulus
+            gauss_root_coefficients[exponent] += coefficient
+    return {
+        "modulus": modulus,
+        "numerator": numerator,
+        "salie_parameter": salie_parameter,
+        "prime_factors": tuple(prime_factors),
+        "root_count": len(roots),
+        "modulus_is_odd_squarefree": squarefree and modulus % 2 == 1,
+        "numerator_is_coprime_to_modulus": gcd(numerator, modulus) == 1,
+        "salie_coefficients": tuple(salie_coefficients.items()),
+        "gauss_root_coefficients": tuple(gauss_root_coefficients.items()),
+        "salie_coefficient_identity_exact": (
+            salie_coefficients == gauss_root_coefficients
+        ),
+    }
+
+
+def root_salie_adapter_audit() -> RootSalieAdapterAudit:
+    """Audit DFI's fixed-numerator Salié modulus sum on the hard box."""
+    modulus = F(6)
+    numerator = F(5)
+    # DFI Theorem 7.1 has x^(47/118+35/59)=x^(117/118)
+    # when x dominates the fixed Salié parameter.
+    fixed_bound = modulus * F(117, 118)
+    absolute_k_sum = numerator + fixed_bound
+    target = F(6)
+    return RootSalieAdapterAudit(
+        modulus_exponent=modulus,
+        physical_numerator_exponent=numerator,
+        fixed_numerator_bound_exponent=fixed_bound,
+        fixed_numerator_saving_exponent=modulus - fixed_bound,
+        absolute_numerator_sum_bound_exponent=absolute_k_sum,
+        physical_target_exponent=target,
+        absolute_numerator_sum_deficit_exponent=absolute_k_sum - target,
+        odd_full_root_trace_identity_exact=True,
+        even_midpoint_modulus_adapter_verified=False,
+        theorem_accepts_balanced_root_filter=False,
+        theorem_accepts_mobius_modulus_weight=False,
+        theorem_accepts_moving_numerator=False,
+        square_numerator_exception_covered=False,
+        theorem_accepts_joint_transform_weight=False,
+        salie_adapter_closes_root_gate=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -10870,6 +11013,36 @@ def main() -> None:
         f"{physical_poisson.physical_poisson_route_is_independent},"
         "outer_sqrt="
         f"{physical_poisson.outer_mobius_square_root_verified}"
+    )
+    root_salie = root_salie_adapter_audit()
+    print(
+        "large_q_transition: root_salie_adapter="
+        f"modulus={_fmt(root_salie.modulus_exponent)},"
+        f"numerator={_fmt(root_salie.physical_numerator_exponent)},"
+        "fixed_k_bound="
+        f"{_fmt(root_salie.fixed_numerator_bound_exponent)},"
+        "fixed_k_save="
+        f"{_fmt(root_salie.fixed_numerator_saving_exponent)},"
+        "summed_k_bound="
+        f"{_fmt(root_salie.absolute_numerator_sum_bound_exponent)},"
+        f"target={_fmt(root_salie.physical_target_exponent)},"
+        "deficit="
+        f"{_fmt(root_salie.absolute_numerator_sum_deficit_exponent)},"
+        "odd_trace_exact="
+        f"{root_salie.odd_full_root_trace_identity_exact},"
+        "even_branch="
+        f"{root_salie.even_midpoint_modulus_adapter_verified},"
+        "balanced_filter="
+        f"{root_salie.theorem_accepts_balanced_root_filter},"
+        "mobius_modulus="
+        f"{root_salie.theorem_accepts_mobius_modulus_weight},"
+        "fixed_numerator="
+        f"{root_salie.theorem_accepts_moving_numerator},"
+        "square_exception="
+        f"{root_salie.square_numerator_exception_covered},"
+        "joint="
+        f"{root_salie.theorem_accepts_joint_transform_weight},"
+        f"closes={root_salie.salie_adapter_closes_root_gate}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

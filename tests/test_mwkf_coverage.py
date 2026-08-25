@@ -2429,6 +2429,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.694}",
         "physical_poisson_route_is_independent=False",
         "outer_mobius_square_root_verified=False",
+        "### 4.82 Full root trace is a Salié sum but the adapter is nonuniform",
+        "\\tag{4.696}",
+        "\\tag{4.698}",
+        "salie_adapter_closes_root_gate=False",
     ):
         assert marker in note
 
@@ -2501,6 +2505,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "outer_target=6,outer_required_save=3,lattice_exact=True,"
         "poisson_exact=True,joint_derivatives=True,determinant_line=True,"
         "independent=False,outer_sqrt=False"
+    ) in report
+    assert (
+        "large_q_transition: root_salie_adapter="
+        "modulus=6,numerator=5,fixed_k_bound=351/59,fixed_k_save=3/59,"
+        "summed_k_bound=646/59,target=6,deficit=292/59,"
+        "odd_trace_exact=True,even_branch=False,balanced_filter=False,"
+        "mobius_modulus=False,fixed_numerator=False,square_exception=False,"
+        "joint=False,closes=False"
     ) in report
 
 
@@ -2973,6 +2985,51 @@ def test_midpoint_physical_poisson_resonance_lattice_is_exact() -> None:
     assert audit.determinant_line_correspondence_exact
     assert not audit.physical_poisson_route_is_independent
     assert not audit.outer_mobius_square_root_verified
+
+
+def test_odd_root_trace_has_exact_salie_coefficient_identity() -> None:
+    helper = getattr(
+        coverage_audit,
+        "odd_root_trace_salie_coefficient_identity",
+        None,
+    )
+    assert helper is not None, "odd root-trace Salié helper is missing"
+    for modulus, numerator in (
+        (3, 1),
+        (5, 2),
+        (15, 4),
+        (21, 5),
+        (35, 6),
+        (105, 8),
+    ):
+        exact = helper(modulus=modulus, numerator=numerator)
+        assert exact["modulus_is_odd_squarefree"]
+        assert exact["numerator_is_coprime_to_modulus"]
+        assert exact["root_count"] == 2 ** len(exact["prime_factors"])
+        assert exact["salie_coefficient_identity_exact"]
+
+    adapter = getattr(
+        coverage_audit,
+        "root_salie_adapter_audit",
+        None,
+    )
+    assert adapter is not None, "root-trace Salié adapter is missing"
+    audit = adapter()
+    assert audit.modulus_exponent == F(6)
+    assert audit.physical_numerator_exponent == F(5)
+    assert audit.fixed_numerator_bound_exponent == F(351, 59)
+    assert audit.fixed_numerator_saving_exponent == F(3, 59)
+    assert audit.absolute_numerator_sum_bound_exponent == F(646, 59)
+    assert audit.physical_target_exponent == F(6)
+    assert audit.absolute_numerator_sum_deficit_exponent == F(292, 59)
+    assert audit.odd_full_root_trace_identity_exact
+    assert not audit.even_midpoint_modulus_adapter_verified
+    assert not audit.theorem_accepts_balanced_root_filter
+    assert not audit.theorem_accepts_mobius_modulus_weight
+    assert not audit.theorem_accepts_moving_numerator
+    assert not audit.square_numerator_exception_covered
+    assert not audit.theorem_accepts_joint_transform_weight
+    assert not audit.salie_adapter_closes_root_gate
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

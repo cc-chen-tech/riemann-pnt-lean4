@@ -10020,6 +10020,107 @@ ledger, and records `physical_poisson_route_is_independent=False` and
 `outer_mobius_square_root_verified=False` at the same proof boundary as
 (4.168).
 
+### 4.82 Full root trace is a Salié sum but the adapter is nonuniform
+
+The preceding root reindexing has a genuine metaplectic interpretation
+when the balanced-root filter is temporarily removed.  Let \(n>1\) be
+odd and squarefree, let \(\chi_n\) be the Jacobi symbol, and put
+
+\[
+ \tau_n:=\sum_{y\bmod n}\chi_n(y)e(y/n),
+ \qquad
+ \mathcal W_k(n):=\sum_{A^2\equiv1\ (n)}e(kA/n).
+\tag{4.695}
+\]
+
+For \((k,n)=1\), set \(b\equiv k^2\bar4\pmod n\) and define
+
+\[
+ T(1,b;n):=\sum_{x\bmod n}^{*}\chi_n(x)
+ e\!\left(\frac{x+b\bar x}{n}\right).
+\]
+
+The Salié evaluation is the exact identity
+
+\[
+ \boxed{T(1,k^2\bar4;n)=\tau_n\mathcal W_k(n).}
+\tag{4.696}
+\]
+
+For completeness, (4.696) holds coefficientwise in the group ring of
+\(\mathbb Z/n\mathbb Z\):
+
+\[
+ \sum_x^*\chi_n(x)[x+k^2\bar4\bar x]
+ =\left(\sum_y\chi_n(y)[y]\right)
+  \left(\sum_{A^2\equiv1\ (n)}[kA]\right).
+\tag{4.696a}
+\]
+
+Thus this step uses no analytic estimate.  If \(k=2a\), the change of
+variable \(x=ay\) also gives
+
+\[
+ T(1,a^2;n)=\chi_n(a)S(a,a;n),
+ \qquad
+ S(a,a;n):=\sum_y^*\chi_n(y)e\!\left(\frac{a(y+\bar y)}n\right),
+\tag{4.697}
+\]
+
+which is precisely the diagonal Salié sum in Duke--Friedlander--Iwaniec,
+[Weyl Sums for Quadratic Roots, (7.1)--(7.3)](https://www.math.ucla.edu/~wdduke/preprints/weylsums.pdf).
+Their Theorem 7.1, with the auxiliary parameters suppressed in the most
+favourable way, bounds a smooth fixed-\(a\) modulus sum by
+
+\[
+ x^{47/118+35/59+\varepsilon}
+ =x^{117/118+\varepsilon}
+ \qquad(a<x).
+\]
+
+At \(x=T^6\) and \(a\le T^5\), this is
+
+\[
+ T^{351/59+\varepsilon};
+ \qquad
+ 6-\frac{351}{59}=\frac3{59}.
+\tag{4.698}
+\]
+
+So the published theorem does give a fixed-numerator power saving for
+the unrestricted odd full-root trace.  It does not prove the MWKF gate.
+There are five separate failures:
+
+1. the actual midpoint modulus is \(2n\), and reducing it to the odd
+   trace requires parity splits; the complete even branch has not been
+   matched to the theorem;
+2. \(\mathscr A_{T^3,T^3}(n)\) is a balanced subset of the roots,
+   whereas the Salié sum contains every ordered factorization;
+3. the modulus carries \(\mu(n)\), which is not an allowed smooth
+   coefficient in Theorem 7.1;
+4. \(a\) moves through a family of exponent five and the coupled weight
+   depends jointly on the modulus, root, and numerator, while the theorem
+   fixes \(a\);
+5. the theorem excludes its square-\(a\) exceptional term.
+
+Even discarding all five hypothesis failures and summing (4.698)
+absolutely over the \(T^5\) physical numerators gives exponent
+
+\[
+ 5+\frac{351}{59}=\frac{646}{59},
+ \qquad
+ \frac{646}{59}-6=\frac{292}{59}>0.
+\tag{4.698a}
+\]
+
+Hence fixed-numerator Salié cancellation is short by \(T^{292/59}\)
+before the genuine adapter failures are charged.  A viable metaplectic
+route would require a spectral large sieve simultaneous in the moving
+numerator, the Möbius-weighted modulus, and the balanced root test.
+The helper `odd_root_trace_salie_coefficient_identity` verifies (4.696a)
+with integer coefficient tables, while `root_salie_adapter_audit` keeps
+`salie_adapter_closes_root_gate=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
