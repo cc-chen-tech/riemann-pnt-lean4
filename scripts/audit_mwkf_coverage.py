@@ -441,6 +441,7 @@ class PrimitiveSlopeZeroRayAudit:
     low_slope_benchmark_obstruction: bool
     primitive_slope_mobius_pair_retained: bool
     common_k_mobius_cancellation_available: bool
+    primitive_slope_reciprocal_conductor_present: bool
     published_coverage: bool
 
 
@@ -1971,6 +1972,7 @@ def primitive_slope_zero_ray_audit(
         ),
         primitive_slope_mobius_pair_retained=True,
         common_k_mobius_cancellation_available=False,
+        primitive_slope_reciprocal_conductor_present=False,
         published_coverage=False,
     )
 
@@ -2527,7 +2529,7 @@ def main() -> None:
     print(
         "balanced_max_a: primitive_slope_zero_ray="
         + ";".join(primitive_slope_parts)
-        + " proved=False k_mu=False"
+        + " proved=False k_mu=False slope_phase=False"
     )
 
 

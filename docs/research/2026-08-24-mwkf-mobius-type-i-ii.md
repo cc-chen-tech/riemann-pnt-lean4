@@ -756,6 +756,47 @@ primitive_slope_zero_ray_audit records (4.8x)--(4.8aa).  Its
 double-square-root field is a feasibility benchmark, not a cited or
 proved estimate.
 
+There is also an exact conductor collapse on each general ray.  Because
+\(u\) and \(k\) are coprime and squarefree, every factorization
+\(sa=uk\) has a unique prime allocation
+
+\[
+ s=s_us_k,\qquad a=a_ua_k,\qquad
+ s_ua_u=u,\qquad s_ka_k=k.
+\tag{4.8ab}
+\]
+
+Using \((s,a)=(uk,b)=1\), cancellation of the \(u\)-part in the
+fixed-factor phase is exact:
+
+\[
+ \boxed{
+ \frac{gu\,\overline{sb}}a
+ \equiv
+ \frac{g\,\overline{s_kb}}{a_k}\pmod1.}
+\tag{4.8ac}
+\]
+
+The other two phases in (4.8b) and (4.8c) become
+
+\[
+ -\frac{gu}{abs}=-\frac{g}{kb},
+ \qquad
+ \frac{gu\,\overline{sa}}b
+ \equiv\frac{g\bar k}b\pmod1.
+\tag{4.8ad}
+\]
+
+In the product with the conjugate \((v,k)) amplitude, both phases in
+(4.8ad) cancel identically.  The only residual reciprocal oscillation
+on the zero ray is therefore attached to the allocation of the common
+\(k\)-primes between \(s_k\) and \(a_k\), not to the primitive slopes
+\(u,v\).  Any square-root estimate in \(u,v\) must consequently exploit
+their Möbius correlation with the dyadic and coupled smooth weights; it
+cannot invoke a nonexistent trace-function conductor in those variables.
+The helper zero_ray_phase_reduction verifies (4.8ab)--(4.8ad) with exact
+rational residues.
+
 At the balanced witness, write \(B_0=T^\beta\),
 \(1\leq\beta\leq2\).  The right side of SP\(_b\) has the explicit
 exponent

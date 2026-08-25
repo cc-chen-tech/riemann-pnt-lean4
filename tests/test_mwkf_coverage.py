@@ -848,6 +848,7 @@ def test_primitive_slope_square_root_only_covers_the_large_slope_cells() -> None
         assert audit.low_slope_benchmark_obstruction == (not closes)
         assert audit.primitive_slope_mobius_pair_retained
         assert not audit.common_k_mobius_cancellation_available
+        assert not audit.primitive_slope_reciprocal_conductor_present
         assert not audit.published_coverage
 
 
@@ -955,7 +956,7 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "1/2:need=63/125,sqrt=1/2,slack=False;"
         "3/5:need=63/125,sqrt=3/5,slack=True;"
         "9/2:need=63/125,sqrt=9/2,slack=True "
-        "proved=False k_mu=False"
+        "proved=False k_mu=False slope_phase=False"
     ) in output
 
 

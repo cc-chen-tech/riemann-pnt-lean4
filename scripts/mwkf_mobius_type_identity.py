@@ -46,6 +46,21 @@ class RestrictedZeroRayPairConvolution:
     common_k_mobius_cancels_exactly: bool
 
 
+@dataclass(frozen=True)
+class ZeroRayPhaseReduction:
+    s_u: int
+    a_u: int
+    s_k: int
+    a_k: int
+    original_fixed_phase: Fraction
+    reduced_fixed_phase: Fraction
+    original_real_phase: Fraction
+    product_real_phase: Fraction
+    original_common_b_phase: Fraction
+    product_common_b_phase: Fraction
+    primitive_slope_removed_from_reciprocal_phase: bool
+
+
 def proportional_diagonal_coordinates(
     *,
     n1: int,
@@ -272,6 +287,106 @@ def restricted_zero_ray_pair_convolution(
         squarefree_ray_support=squarefree_ray_support,
         common_k_mobius_cancels_exactly=(
             common_k_mobius_cancels_exactly
+        ),
+    )
+
+
+def _normalized_modular_phase(
+    *,
+    numerator: int,
+    invert: int,
+    modulus: int,
+) -> Fraction:
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    if modulus == 1:
+        return Fraction(0)
+    if gcd(invert, modulus) != 1:
+        raise ValueError("phase denominator is not invertible")
+    residue = numerator * pow(invert, -1, modulus) % modulus
+    return Fraction(residue, modulus)
+
+
+def zero_ray_phase_reduction(
+    *,
+    u: int,
+    k: int,
+    s: int,
+    a: int,
+    b: int,
+    g: int,
+) -> ZeroRayPhaseReduction:
+    """Remove the primitive slope from all zero-ray reciprocal phases.
+
+    Assume the original squarefree support, ``s*a=u*k`` and
+    ``(u,k)=(s,a)=(u*k,b)=1``.  Splitting the prime allocation as
+    ``s=s_u*s_k`` and ``a=a_u*a_k`` gives
+
+    ``g*u*bar(s*b)/a = g*bar(s_k*b)/a_k (mod 1)``.
+
+    The smooth real phase is exactly ``-g/(k*b)``, and the common-``b``
+    phase is ``g*bar(k)/b``.  Thus none of these phases has a primitive
+    slope conductor.
+    """
+    if min(u, k, s, a, b) < 1 or g == 0:
+        raise ValueError("require positive factors and nonzero g")
+    if mobius(u * k) == 0:
+        raise ValueError("require squarefree u*k")
+    if gcd(u, k) != 1 or s * a != u * k:
+        raise ValueError("require coprime u,k and s*a=u*k")
+    if gcd(s, a) != 1 or gcd(u * k, b) != 1:
+        raise ValueError("require the original coprimality support")
+
+    s_u = gcd(s, u)
+    a_u = gcd(a, u)
+    s_k = gcd(s, k)
+    a_k = gcd(a, k)
+    if s_u * a_u != u or s_k * a_k != k:
+        raise AssertionError("squarefree prime allocation failed")
+    if s_u * s_k != s or a_u * a_k != a:
+        raise AssertionError("factorization allocation mismatch")
+
+    original_fixed_phase = _normalized_modular_phase(
+        numerator=g * u,
+        invert=s * b,
+        modulus=a,
+    )
+    reduced_fixed_phase = _normalized_modular_phase(
+        numerator=g,
+        invert=s_k * b,
+        modulus=a_k,
+    )
+    original_real_phase = Fraction(-g * u, a * b * s)
+    product_real_phase = Fraction(-g, k * b)
+    original_common_b_phase = _normalized_modular_phase(
+        numerator=g * u,
+        invert=s * a,
+        modulus=b,
+    )
+    product_common_b_phase = _normalized_modular_phase(
+        numerator=g,
+        invert=k,
+        modulus=b,
+    )
+    primitive_slope_removed = (
+        original_fixed_phase == reduced_fixed_phase
+        and original_real_phase == product_real_phase
+        and original_common_b_phase == product_common_b_phase
+    )
+
+    return ZeroRayPhaseReduction(
+        s_u=s_u,
+        a_u=a_u,
+        s_k=s_k,
+        a_k=a_k,
+        original_fixed_phase=original_fixed_phase,
+        reduced_fixed_phase=reduced_fixed_phase,
+        original_real_phase=original_real_phase,
+        product_real_phase=product_real_phase,
+        original_common_b_phase=original_common_b_phase,
+        product_common_b_phase=product_common_b_phase,
+        primitive_slope_removed_from_reciprocal_phase=(
+            primitive_slope_removed
         ),
     )
 

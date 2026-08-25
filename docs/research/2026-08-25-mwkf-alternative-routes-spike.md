@@ -2003,6 +2003,16 @@ boundary must use the centered/main cross term, the common \(g\)-sum, or
 a nonsplit Gram estimate; an argument that spends Möbius cancellation in
 \(k\) is invalid.
 
+After splitting the squarefree prime allocation
+\(s=s_us_k,\ a=a_ua_k\), reciprocity removes the primitive slope from the
+phase as well:
+\(gu\overline{sb}/a\equiv g\overline{s_kb}/a_k\pmod1\), while the real
+and common-\(b\) phases depend only on \((g,k,b)\) and cancel between the
+two zero-ray amplitudes.  Thus the proposed large-slope benchmark is not
+a trace-function estimate in \(u,v\); it is a Möbius correlation against
+the remaining smooth/allocation weights.  This makes the low-slope
+residual smaller as a parameter region, but structurally harder.
+
 The relevant published comparison points are
 [Bettin--Chandee](https://arxiv.org/abs/1502.00769),
 [Bettin--Chandee--Radziwiłł](https://arxiv.org/abs/1411.7764),

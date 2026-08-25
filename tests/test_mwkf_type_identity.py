@@ -123,6 +123,25 @@ def test_two_general_zero_ray_sectors_move_mobius_to_primitive_slopes() -> None:
     assert shared_prime.pair_sector_product == 0
 
 
+def test_zero_ray_reciprocal_phase_only_sees_the_k_factorization() -> None:
+    """Catch retaining a fake primitive-slope conductor after cancellation."""
+    adapter = getattr(
+        type_identity,
+        "zero_ray_phase_reduction",
+        None,
+    )
+    assert adapter is not None, "zero-ray phase reduction helper is missing"
+
+    for g, s, a in ((13, 10, 21), (-13, 10, 21), (17, 6, 35)):
+        audit = adapter(u=6, k=35, s=s, a=a, b=11, g=g)
+        assert audit.s_u * audit.a_u == 6
+        assert audit.s_k * audit.a_k == 35
+        assert audit.original_fixed_phase == audit.reduced_fixed_phase
+        assert audit.original_real_phase == audit.product_real_phase
+        assert audit.original_common_b_phase == audit.product_common_b_phase
+        assert audit.primitive_slope_removed_from_reciprocal_phase
+
+
 def test_squarefree_factorization_gives_exact_common_b_phase() -> None:
     # e(n * bar(s)/(a*b)) splits into characters modulo a and b.
     for a, b, s, n in ((5, 6, 7, 11), (7, 10, 9, -13), (11, 14, 3, 17)):
