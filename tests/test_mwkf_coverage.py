@@ -361,8 +361,8 @@ def test_large_q_bounded_zeta_endpoint_is_covered_after_unpoisson() -> None:
     assert not route.applicable
 
 
-def test_large_q_critical_shift_closes_after_q_first_menon_transfer() -> None:
-    """At lambda=2, q-first Euler factorization leaves one fixed f=mu*h."""
+def test_q_first_factorization_does_not_drop_the_full_height_phase() -> None:
+    """The Euler density is exact, but untwisted Menon is not an adapter."""
     adapter = getattr(
         coverage_audit,
         "large_q_endpoint_critical_shift_audit",
@@ -387,11 +387,12 @@ def test_large_q_critical_shift_closes_after_q_first_menon_transfer() -> None:
     assert audit.q_restriction_removed_before_correlation
     assert audit.density_weight_has_absolutely_convergent_convolution
     assert audit.fixed_truncation_has_only_fixed_linear_slopes
-    assert audit.menon_shift_average_tends_to_zero
+    assert not audit.menon_shift_average_tends_to_zero
+    assert audit.full_height_phase_must_remain_in_correlation
     assert audit.two_limit_tail_tends_to_zero
-    assert audit.critical_shift_subface_covered
+    assert not audit.critical_shift_subface_covered
     assert not audit.above_critical_subface_covered
-    assert audit.unconditional_coverage
+    assert not audit.unconditional_coverage
 
     growing_zeta = adapter(
         box,
@@ -408,6 +409,68 @@ def test_large_q_critical_shift_closes_after_q_first_menon_transfer() -> None:
     )
     assert not above.critical_shift_subface_covered
     assert not above.unconditional_coverage
+
+
+def test_large_q_growing_zeta_face_reduces_to_one_centered_product_energy() -> None:
+    """Keep delta divisibility before lifting m*s to one product variable."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_growing_zeta_product_lift_audit",
+        None,
+    )
+    assert adapter is not None, "growing-zeta product-lift audit is missing"
+    audit = adapter(
+        boundary_witnesses()["large_q_endpoint"],
+        shift_log_depth=F(2),
+    )
+
+    assert audit.shift_log_depth == F(2)
+    assert audit.endpoint_taper_log_saving == F(2)
+    assert audit.absolute_shift_volume_log_exponent == F(2)
+    assert audit.absolute_power_exponent == F(1)
+    assert audit.gcd_divisibility_removes_spurious_log_loss
+    assert audit.product_lift_identity_is_exact
+    assert audit.zero_shift_is_explicit_diagonal
+    assert audit.required_centered_energy_power_exponent == F(1)
+    assert audit.required_centered_energy_log_exponent == F(2)
+    assert audit.requires_little_oh_of_local_scale
+    assert not audit.published_short_interval_variance_applies
+    assert not audit.centered_product_energy_estimate_proved
+    assert not audit.unconditional_coverage
+
+
+def test_height_phase_closes_zeta_depth_strictly_below_shift() -> None:
+    """The retained t-phase decays by arbitrary powers of L/M."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_height_phase_audit",
+        None,
+    )
+    assert adapter is not None, "large-q height-phase audit is missing"
+    box = boundary_witnesses()["large_q_endpoint"]
+    audit = adapter(
+        box,
+        shift_log_depth=F(2),
+        zeta_log_depth=F(3, 2),
+    )
+
+    assert audit.phase_ratio_log_depth == F(1, 2)
+    assert audit.absolute_before_phase_log_exponent == F(0)
+    assert audit.height_kernel_has_arbitrary_decay
+    assert audit.full_height_phase_retained
+    assert audit.strict_phase_separation
+    assert audit.strict_subface_covered
+    assert audit.unconditional_coverage
+
+    boundary = adapter(
+        box,
+        shift_log_depth=F(2),
+        zeta_log_depth=F(2),
+    )
+    assert boundary.phase_ratio_log_depth == F(0)
+    assert not boundary.strict_phase_separation
+    assert not boundary.strict_subface_covered
+    assert not boundary.unconditional_coverage
 
 
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
@@ -1666,9 +1729,21 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
     ) in output
     assert (
         "large_q_endpoint: endpoint_critical_q_first="
-        "shift_log=2 q_error=1/2 gcd_decay=2 menon=True "
-        "fixed_zeta=True fixed_f=True two_limit=True covered=True "
+        "shift_log=2 q_error=1/2 gcd_decay=2 menon=False "
+        "fixed_zeta=True fixed_f=True two_limit=True covered=False "
         "above=False whole_cell=False"
+    ) in output
+    assert (
+        "large_q_endpoint: growing_zeta_product_lift="
+        "shift_log=2 taper_log=2 absolute_power=1 local_gate=T*L*o(1) "
+        "gcd_log=False exact_lift=True centered=True published=False "
+        "covered=False"
+    ) in output
+    assert (
+        "large_q_endpoint: height_phase="
+        "shift_log=2 zeta_log=3/2 ratio_log=1/2 pre_phase_log=0 "
+        "arbitrary_decay=True retained=True "
+        "covered=True boundary=False whole_cell=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
@@ -1986,7 +2061,7 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"0\le\lambda<2",
         "does not promote the entire",
         "unconditional_coverage=True",
-        "### 4.26 Critical shift depth at fixed zeta scales via q-first Euler factorization",
+        "### 4.26 q-first Euler factorization audit at the critical shift depth",
         r"\mathfrak g(n)=\prod_{p\mid n}\left(1+\frac1p\right)^{-1}",
         r"f=\mu*h",
         r"h(p^a)=\frac1{p+1}",
@@ -1997,6 +2072,22 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "q_restriction_removed_before_correlation=True",
         "fixed_zeta_scales_required=True",
         "large_q_endpoint_critical_shift_audit",
-        "critical_shift_subface_covered=True",
+        "full_height_phase_must_remain_in_correlation=True",
+        "critical_shift_subface_covered=False",
+        "### 4.27 Growing zeta scales: exact product lift and centered energy gate",
+        r"A_{P,\nu}(n):=\sum_{\substack{ms=n",
+        r"m_1s-m_2r=\delta",
+        r"\mathfrak C_{P,L}",
+        r"o_W(TL)",
+        "gcd_divisibility_removes_spurious_log_loss=True",
+        "large_q_growing_zeta_product_lift_audit",
+        "centered_product_energy_estimate_proved=False",
+        "### 4.28 Height-phase closure below the product-scale boundary",
+        r"T\left(1+\frac{|\delta|}{M}\right)^{-A}",
+        r"\mathscr L^{\lambda-2}",
+        r"\mathscr L^\pi",
+        r"\pi<2",
+        "large_q_height_phase_audit",
+        "strict_subface_covered=True",
     ):
         assert marker in text

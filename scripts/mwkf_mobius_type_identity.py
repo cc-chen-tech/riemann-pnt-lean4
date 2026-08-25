@@ -293,6 +293,40 @@ def endpoint_weighted_mobius(n: int) -> Fraction:
     return Fraction(mobius(n)) * endpoint_q_density(n)
 
 
+def product_lift_coefficients(
+    multiplicand_coefficients: dict[int, Fraction],
+    reduced_coefficients: dict[int, Fraction],
+) -> dict[int, Fraction]:
+    """Lift a bilinear ``m*x`` family to exact product coefficients."""
+    lifted: dict[int, Fraction] = {}
+    for multiplicand, multiplicand_weight in multiplicand_coefficients.items():
+        if multiplicand <= 0:
+            raise ValueError("product-lift multiplicands must be positive")
+        for reduced, reduced_weight in reduced_coefficients.items():
+            if reduced <= 0:
+                raise ValueError("product-lift reduced variables must be positive")
+            product = multiplicand * reduced
+            lifted[product] = lifted.get(product, Fraction(0)) + (
+                multiplicand_weight * reduced_weight
+            )
+    return lifted
+
+
+def product_lift_shifted_correlation(
+    left: dict[int, Fraction],
+    right: dict[int, Fraction],
+    shift: int,
+) -> Fraction:
+    """Return ``sum_n left(n) right(n-shift)`` with finite support."""
+    return sum(
+        (
+            left_weight * right.get(product - shift, Fraction(0))
+            for product, left_weight in left.items()
+        ),
+        start=Fraction(0),
+    )
+
+
 def c_u(a: int, cutoff_u: int) -> int:
     return sum(mobius(d) for d in divisors(a) if d <= cutoff_u)
 

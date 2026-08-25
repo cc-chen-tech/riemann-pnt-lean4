@@ -1439,7 +1439,7 @@ remaining arithmetic uniformity.  Thus the strict subface (4.88) is
 covered.  Full published coverage remains false because
 \(\beta+\gamma\ge3/2\), the positive-power far shells, and the transform
 tail remain.  Apart from the bounded-zeta endpoint subfaces proved in
-Sections 4.25--4.26 below, \(q=T^\kappa\), \(\kappa>0\), boxes remain
+Sections 4.25 and 4.28 below, \(q=T^\kappa\), \(\kappa>0\), boxes remain
 positive-power cells rather than part of this logarithmic adapter.
 
 ### 4.11 Finite Fourier bounded-variation separation
@@ -3257,13 +3257,14 @@ global `route_box` deliberately does not promote the entire
 `endpoint_unpoisson_adapter` certifies (4.223) only after the shift log
 depth is supplied explicitly.
 
-### 4.26 Critical shift depth at fixed zeta scales via q-first Euler factorization
+### 4.26 q-first Euler factorization audit at the critical shift depth
 
-The endpoint \(\lambda=2\) can also be included when the dyadic
-\(m_1,m_2\) ranges are fixed independently of \(T\), but only after
-summing \(q\) before applying the averaged Möbius correlation theorem.
-This subsection does not allow \(K\) or \(M\) to grow with \(T\), even
-polylogarithmically.  Insert a fixed smooth dyadic cutoff \(U(q/Q)\),
+It is tempting to include \(\lambda=2\) by summing \(q\) before applying
+an averaged Möbius correlation theorem.  The Euler factorization below
+is exact, but the final Menon step is invalid unless the original height
+phase is retained.  This subsection records the useful arithmetic
+identity and the obstruction; Section 4.28 gives the valid phase-based
+coverage.  Insert a fixed smooth dyadic cutoff \(U(q/Q)\),
 \(Q\asymp T^2\), and define
 
 \[
@@ -3361,16 +3362,21 @@ The finite helper functions `endpoint_q_density`,
 fixtures; (4.231) follows from
 \(\sum_p p^{-1-\sigma}<\infty\).
 
-It remains to transfer Menon's fixed-slope estimate from \(\mu\) to
-\(f\) without assuming uniformity in growing convolution slopes.  First
-truncate the two copies of \(h\) in (4.230) and the divisor expansion of
-\(\mathbf1_{(r,s)=1}\) at a fixed integer \(D\).  For fixed \(D\), and
-because the ranges of \(m_1,m_2\) are fixed independently of \(T\), the
-equation \(m_1s-m_2r=\delta\) becomes a finite collection of correlations
-of two fixed integral linear forms.  Smooth partial summation transfers
-the bounded-variation factor \(\mathcal A_{Q,U}\).  The proved
-fixed-slope consequence (4.87) of Menon's theorem therefore applies to
-every term.
+Truncating the two copies of \(h\) in (4.230) and the divisor expansion
+of \(\mathbf1_{(r,s)=1}\) at a fixed integer \(D\) does leave fixed
+arithmetic slopes when \(m_1,m_2\) are fixed.  It does **not** remove the
+exact height phase
+
+\[
+ \exp\!\left(it\log\left(1+\frac{\delta}{m_2r}\right)\right)
+ =\left(\frac{m_1s}{m_2r}\right)^{it}.
+\tag{4.230a}
+\]
+
+The fixed-slope consequence (4.87) is an untwisted correlation estimate.
+Smooth partial summation of \(\mathcal A_{Q,U}\) does not absorb
+(4.230a), and deleting the phase changes the sum.  Thus the q-first
+factorization alone is not a Menon adapter.
 
 Next let \(T\to\infty\) with \(D\) fixed.  Only after obtaining the
 resulting \(o_D(1)\) factor let \(D\to\infty\).  The \(h\)-tails vanish
@@ -3410,48 +3416,239 @@ the resulting affine lines gives, for fixed nonzero \(m_1,m_2\),
 \tag{4.231b}
 \]
 
-Thus the coprimality tail also vanishes in the order
-\(T\to\infty\), then \(D\to\infty\).  These two inequalities make the
-two-limit argument independent of any theorem whose slopes grow with
-\(T\).
-
-For \(L=\mathscr L^2\), Menon's factor is
-
-\[
- E(T,L)^{1/2}
- =\left(
-   \frac{\log\log L}{\log L}
-   +\frac{(\log\log T)^2}{\log T}
-  \right)^{1/2}=o(1).
-\tag{4.232}
-\]
-
-Combining (4.226), the two endpoint tapers, inverse Poisson as in
-(4.213), and the two-limit transfer gives
-
-\[
- \boxed{
- \mathcal R_{\mathrm{large}\ q,\lambda=2}
- \ll_W T E(T,\mathscr L^2)^{1/2}+o_W(T)=o_W(T).}
-\tag{4.233}
-\]
-
-Therefore the fixed-\(K,M\) bounded-zeta shift subface is now
-\(0\le\lambda\le2\).  If \(\lambda>2\), the positive factor
-\(\mathscr L^{\lambda-2}\) cannot be absorbed by (4.232).  If \(K\) or
-\(M\) grows polylogarithmically, the slopes in the correlation also grow
-and the fixed-slope transfer above is not uniform.  Both families remain
-residual.  As before, the exponent-only router does not promote the whole
-large-q cell.
+Thus the two algebraic tails vanish in the order \(T\to\infty\), then
+\(D\to\infty\), but this does not repair the missing twisted correlation
+estimate.  In particular, the formerly claimed bound obtained by
+inserting Menon's untwisted factor at \(L=\mathscr L^2\) is rejected.
+The exact q-density and convolution remain available for any future
+phase-compatible argument.
 
 The adapter `large_q_endpoint_critical_shift_audit` records the
 \(T^{-1/2}\) Mellin error, the \(d^{-2}\) coprimality tail, the fixed
 convolution (4.230), and the two-limit order.  It sets
 `q_restriction_removed_before_correlation=True` and
-`fixed_zeta_scales_required=True`.  Only when that hypothesis is
-supplied does it set `critical_shift_subface_covered=True`; it leaves
-every \(\lambda>2\) cell and every growing-zeta-scale critical cell
-uncovered.
+`fixed_zeta_scales_required=True` and
+`full_height_phase_must_remain_in_correlation=True`.  It preserves
+`critical_shift_subface_covered=False` and
+`unconditional_coverage=False`.
+
+### 4.27 Growing zeta scales: exact product lift and centered energy gate
+
+The remaining \(\lambda=2\) family with polylogarithmically growing
+\(K\asymp M=:P\) has a sharper exact reduction than the pointwise gcd
+bound in (4.221).  Put \(g=(m_1,m_2)\).  The equation
+
+\[
+ m_1s-m_2r=\delta
+\tag{4.234}
+\]
+
+has no solutions unless \(g\mid\delta\).  For a fixed admissible
+nonzero \(\delta\), the number of solutions in \(r,s\asymp T\) is
+
+\[
+ \ll 1+\frac{Tg}{P}.
+\tag{4.235}
+\]
+
+Retaining \(g\mid\delta\) before summing \(0<|\delta|\le L\), and using
+\((m_1m_2)^{-1/2}\asymp P^{-1}\), gives the exact-scale inequality
+
+\[
+ \begin{aligned}
+ &\sum_{m_1,m_2\asymp P}\frac1{\sqrt{m_1m_2}}
+   \sum_{\substack{0<|\delta|\le L\\g\mid\delta}}
+   \left(1+\frac{Tg}{P}\right)\\
+ &\qquad\ll
+ \frac{L}{P}\sum_{m_1,m_2\asymp P}\frac1g
+ +\frac{TL}{P^2}\sum_{m_1,m_2\asymp P}1
+ \ll LP+TL\ll TL.
+ \end{aligned}
+\tag{4.236}
+\]
+
+Thus the earlier \(\log P\) from summing \((m_1,m_2)\) pointwise is not
+part of the minimal critical gate.  At \(L=\mathscr L^2\), the two
+endpoint tapers turn (4.236) into \(O(T)\), but not \(o(T)\).  One still
+needs cancellation of little-oh size, not a positive power saving.
+
+There is an exact one-variable lift of that cancellation problem.  For
+one tensor component in the absolutely convergent Mellin--Fourier
+separation of the smooth coupled weight, write its left factor as
+\(a_\nu(m,s)\) and define
+
+\[
+ \boxed{
+ A_{P,\nu}(n):=\sum_{\substack{ms=n\\m\asymp P,\ s\asymp T}}
+ \frac{f(s)}{\sqrt m}\,a_\nu(m,s).}
+\tag{4.237}
+\]
+
+For the corresponding right coefficient \(B_{P,\nu}\), the finite
+reindexing \(n=m_1s\), \(n-\delta=m_2r\) gives, with no error,
+
+\[
+ \boxed{
+ \sum_{m_1,m_2,r,s}
+ \frac{f(s)f(r)}{\sqrt{m_1m_2}}
+ a_\nu(m_1,s)b_\nu(m_2,r)
+ \mathbf1_{m_1s-m_2r=\delta}
+ =\sum_n A_{P,\nu}(n)B_{P,\nu}(n-\delta).}
+\tag{4.238}
+\]
+
+The helper functions `product_lift_coefficients` and
+`product_lift_shifted_correlation` verify (4.238) exactly on finite
+rational fixtures.  Möbius inversion of \((r,s)=1\) produces the same
+identity for each \(d\mid\delta\); since \(\delta\ne0\), necessarily
+\(d\le L\), and (4.231b) sums the resulting tail.
+
+Consequently the remaining analytic input can be stated as the single
+centered product-energy gate
+
+\[
+ \boxed{
+ \mathfrak C_{P,L}[\Omega]
+ :=\sum_{0<|\delta|\le L}\sum_n
+ A_P(n)B_P(n-\delta)\Omega(n,\delta)
+ =o_W(TL),}
+\tag{4.239}
+\]
+
+uniformly for the polylogarithmic \(P\)-ranges generated by the exact
+dyadic decomposition.  Here \(\Omega\) includes the remaining shared
+Mellin--Fourier parameters and the summed tensor-variation norm; thus
+(4.239) is the post-separation inequality needed by the original smooth
+kernel, rather than an assertion that the kernel is a single elementary
+tensor.  Since \(L=\mathscr L^2\), (4.239) and the two endpoint tapers
+give \(o_W(T)\).
+
+For the unweighted symmetric triangular kernel
+\(\omega_L(\delta)=(1-|\delta|/L)_+\), (4.239) is precisely the centered
+short-interval variance statement
+
+\[
+ \int_{\mathbb R}\left|
+    \sum_{x<n\le x+L}A_P(n)\right|^2dx
+ -L\sum_n|A_P(n)|^2
+ =o_W(TL^2).
+\tag{4.240}
+\]
+
+The subtracted term is exactly the \(\delta=0\) product diagonal; it is
+not discarded by an upper bound.  Menon's theorem applies to \(\mu\)
+(and the fixed
+convolution transfer in Section 4.26), not uniformly to the growing
+product coefficient (4.237) with its coprimality and coupled weight.
+Therefore (4.240) is a new local variance theorem, not a published
+adapter.
+
+The exact-rational record
+`large_q_growing_zeta_product_lift_audit` sets
+`gcd_divisibility_removes_spurious_log_loss=True` and
+`product_lift_identity_is_exact=True`, but preserves
+`centered_product_energy_estimate_proved=False` and
+`unconditional_coverage=False`.
+
+### 4.28 Height-phase closure below the product-scale boundary
+
+The original height phase already closes the part of (4.239) for which
+the shift scale exceeds the zeta-variable scale.  Let \(M\asymp P\),
+\(|\delta|\asymp D\), and retain the exact phase
+
+\[
+ \theta=\log\left(1+\frac{\delta}{m_2r}\right).
+\tag{4.241}
+\]
+
+All derivatives of the completed AFE amplitude on \(t\asymp T\) satisfy
+the normalized bounds needed for repeated integration by parts.  Hence,
+for every fixed \(A\ge1\),
+
+\[
+ \boxed{
+ \left|\int_{\mathbb R}G(t)
+ e^{it\theta}W(t/T)\,dt\right|
+ \ll_{A,W}T(1+T|\theta|)^{-A}.}
+\tag{4.242}
+\]
+
+On the present support \(r\asymp T\), \(m_2\asymp M\), and
+\(|\delta|\ll (m_2r)/2\).  The elementary inequalities
+\(|x|/2\le|\log(1+x)|\le2|x|\) for \(|x|\le1/2\) give
+
+\[
+ \boxed{
+ T(1+T|\theta|)^{-A}
+ \ll_{A,W}T\left(1+\frac{|\delta|}{M}\right)^{-A}.}
+\tag{4.243}
+\]
+
+Apply (4.243) in the pre-Poisson shifted equation before taking absolute
+values, retain \((m_1,m_2)\mid\delta\) as in (4.236), and sum
+\(q\asymp T^2\) using \(\sum q^{-1}\ll1\).  The contribution of the
+dyadic shift box \(|\delta|\asymp D\) is
+
+\[
+ \ll_{A,W}
+ \frac{T}{\mathscr L^2}
+ D\left(1+\frac{D}{M}\right)^{-A}.
+\tag{4.244}
+\]
+
+The separately subtracted zero Poisson mode is treated from the exact
+common-kernel formula (4.5a) of the off-diagonal note.  On its dyadic
+\(x\asymp M\) support it has the same phase
+\(t\log(1+\delta/(xr))\), hence the same factor
+\((1+D/M)^{-A}\).  The \(x\)-integral has bounded logarithmic mass, and
+the factor \((q\sqrt{rs}\,s)^{-1}\) against the \(O(T^2)\) pairs
+\((r,s)\) gives exactly the scale in (4.244).  Thus subtracting the zero
+mode preserves that bound.  Summing (4.244) over dyadic \(D\le L\),
+with \(A>3\), gives
+
+\[
+ \boxed{
+ \mathcal R_{\mathrm{large}\ q}(L,M)
+ \ll_W \frac{T}{\mathscr L^2}\min(L,M)
+       (\log\mathscr L)^{O_W(1)}.}
+\tag{4.245}
+\]
+
+Write \(L\le\mathscr L^\lambda\) and
+\(M\le\mathscr L^\pi\).  Equation (4.245) is
+
+\[
+ \mathcal R_{\mathrm{large}\ q}(\lambda,\pi)
+ \ll_W T\mathscr L^{\min(\lambda,\pi)-2}
+       (\log\mathscr L)^{O_W(1)}.
+\tag{4.246}
+\]
+
+Therefore every strict subface
+
+\[
+ \boxed{\min(\lambda,\pi)<2}
+\tag{4.247}
+\]
+
+is unconditionally \(o_W(T)\).  In particular, for the critical shift
+depth \(\lambda=2\), all zeta-variable depths
+
+\[
+ \boxed{0\le\pi<2}
+\tag{4.248}
+\]
+
+are covered without a Möbius-correlation theorem.  At \(\pi=2\), the
+ratio \(L/M\) may remain bounded and (4.243) supplies no logarithmic
+decay; this is precisely where the centered product-energy gate (4.239)
+becomes necessary.
+
+The adapter `large_q_height_phase_audit` records the exact phase-ratio
+depth \(\lambda-\pi\), the pre-phase logarithmic exponent
+\(\lambda-2\), and the arbitrary integration-by-parts order.  It sets
+`strict_subface_covered=True` at \((\lambda,\pi)=(2,3/2)\) and rejects
+the boundary \((2,2)\).  The complete phase is retained throughout.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
@@ -3525,19 +3722,24 @@ Sections 4.9--4.12 now unconditionally cover the endpoint logarithmic
 subface \(\beta+\gamma<3/2\), with the larger range
 \(\beta+\gamma<2\) in the unit-slope sector.  The completion coefficient,
 fixed slopes, coprimality, and polylogarithmic character twists are no
-longer residual hypotheses.  Sections 4.25--4.26 also cover the large-q
+longer residual hypotheses.  Sections 4.25 and 4.28 also cover the large-q
 bounded-zeta subface with shift log depth \(\lambda<2\) for fixed
-polylogarithmic zeta-scale exponents, and the critical depth
-\(\lambda=2\) when \(K,M\) are fixed independently of \(T\).  The
-critical growing-\(K,M\) family and the deeper polylogarithmic part of
-that exponent cell remain residual.
+polylogarithmic zeta-scale exponents.  Section 4.28 extends the critical
+depth \(\lambda=2\) to
+\(K,M\le\mathscr L^\pi\) for every fixed \(\pi<2\).  The boundary
+\(\pi\ge2\) and the deeper shift part of that exponent cell remain
+residual; Section 4.27 reduces them to the single centered
+product-energy inequality (4.239).
 
 The next slice must address the remaining regions in this order:
 
-1. the deep endpoint logarithmic cells \(\beta+\gamma\ge3/2\), where the
+1. the \(\pi\ge2\) boundary of the growing-\(K,M\) large-\(q\) critical
+   face through (4.239), where the phase ratio \(L/P\) no longer grows
+   and integration by parts supplies no saving;
+2. the deep endpoint logarithmic cells \(\beta+\gamma\ge3/2\), where the
    fixed-slope black-box transfer has exhausted the square root of Menon's
    one-logarithm saving;
-2. the positive-power far shells, whose current required saving is
+3. the positive-power far shells, whose current required saving is
 
    \[
    g(\delta)=
@@ -3548,15 +3750,15 @@ The next slice must address the remaining regions in this order:
    \end{cases}
    \]
 
-3. the separate transform-tail obligation from the exact reduction.
+4. the separate transform-tail obligation from the exact reduction.
 
-For item 1, another application of the same averaged-Chowla theorem cannot
+For item 2, another application of the same averaged-Chowla theorem cannot
 cross the registered boundary: its method supplies at most one logarithm
 in the unit-slope sector and one half after the all-slope transfer.  A
 successful estimate must use cancellation in the \(q\)- or completion
 frequencies before the cardinal \(q\)-sum.
 
-For item 2, the next genuine power-saving attempt is now more narrowly
+For item 3, the next genuine power-saving attempt is now more narrowly
 specified by Section 4.2 of the Type-I/II note: first use the exact
 \(\mu*c_U\) factorization identity to extract the single-Möbius main
 term and center the remaining product fibers.  The subsequent Gram

@@ -224,9 +224,40 @@ class LargeQEndpointCriticalShiftAudit:
     density_weight_has_absolutely_convergent_convolution: bool
     fixed_truncation_has_only_fixed_linear_slopes: bool
     menon_shift_average_tends_to_zero: bool
+    full_height_phase_must_remain_in_correlation: bool
     two_limit_tail_tends_to_zero: bool
     critical_shift_subface_covered: bool
     above_critical_subface_covered: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
+class LargeQGrowingZetaProductLiftAudit:
+    shift_log_depth: Fraction
+    endpoint_taper_log_saving: Fraction
+    absolute_shift_volume_log_exponent: Fraction
+    absolute_power_exponent: Fraction
+    gcd_divisibility_removes_spurious_log_loss: bool
+    product_lift_identity_is_exact: bool
+    zero_shift_is_explicit_diagonal: bool
+    required_centered_energy_power_exponent: Fraction
+    required_centered_energy_log_exponent: Fraction
+    requires_little_oh_of_local_scale: bool
+    published_short_interval_variance_applies: bool
+    centered_product_energy_estimate_proved: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
+class LargeQHeightPhaseAudit:
+    shift_log_depth: Fraction
+    zeta_log_depth: Fraction
+    phase_ratio_log_depth: Fraction
+    absolute_before_phase_log_exponent: Fraction
+    height_kernel_has_arbitrary_decay: bool
+    full_height_phase_retained: bool
+    strict_phase_separation: bool
+    strict_subface_covered: bool
     unconditional_coverage: bool
 
 
@@ -1446,7 +1477,7 @@ def large_q_endpoint_critical_shift_audit(
     shift_log_depth: Fraction,
     zeta_scales_fixed: bool,
 ) -> LargeQEndpointCriticalShiftAudit:
-    """Close the critical ``L=log(T)^2`` face after summing q first.
+    """Audit, but do not promote, the q-first Euler factorization.
 
     Mellin inversion of the squarefree harmonic q-sum produces
 
@@ -1457,21 +1488,18 @@ def large_q_endpoint_critical_shift_audit(
     ``f(n)=mu(n)g(n)``.  Its exact Euler quotient is ``f=mu*h`` with
     ``h(p^a)=1/(p+1)``; the h-series is absolutely convergent in every
     positive half-plane.  When the zeta-variable scales are fixed
-    independently of T, truncate h and the coprimality divisor at a
-    fixed level, apply the already-audited fixed-slope Menon transfer,
-    let T tend to infinity, and only then let the fixed level tend to
-    infinity.  This two-limit order needs no uniformity in growing
-    convolution slopes.  It does not cover zeta-variable scales which
-    themselves grow polylogarithmically with T.  At shift depth two, the
-    endpoint tapers cancel the shift volume and Menon's averaged
-    correlation supplies the remaining o(1).
+    independently of T, truncating h and the coprimality divisor leaves
+    fixed arithmetic slopes.  The original height phase, however, is an
+    Archimedean/additive twist and is not covered by the untwisted
+    fixed-slope Menon consequence.  Dropping it would invalidate the
+    reduction.  The separate height-phase adapter retains that phase and
+    supplies the actual coverage below the product-scale boundary.
     """
     if not _is_large_q_bounded_zeta_endpoint(box):
         raise ValueError("box is not the large-q bounded-zeta endpoint")
     if shift_log_depth < 0:
         raise ValueError("shift log depth must be nonnegative")
 
-    critical_covered = shift_log_depth == F(2) and zeta_scales_fixed
     return LargeQEndpointCriticalShiftAudit(
         shift_log_depth=shift_log_depth,
         endpoint_taper_log_saving=F(2),
@@ -1484,11 +1512,82 @@ def large_q_endpoint_critical_shift_audit(
         q_restriction_removed_before_correlation=True,
         density_weight_has_absolutely_convergent_convolution=True,
         fixed_truncation_has_only_fixed_linear_slopes=True,
-        menon_shift_average_tends_to_zero=(shift_log_depth > 0),
+        menon_shift_average_tends_to_zero=False,
+        full_height_phase_must_remain_in_correlation=True,
         two_limit_tail_tends_to_zero=True,
-        critical_shift_subface_covered=critical_covered,
+        critical_shift_subface_covered=False,
         above_critical_subface_covered=False,
-        unconditional_coverage=critical_covered,
+        unconditional_coverage=False,
+    )
+
+
+def large_q_growing_zeta_product_lift_audit(
+    box: ExponentBox,
+    *,
+    shift_log_depth: Fraction,
+) -> LargeQGrowingZetaProductLiftAudit:
+    """Record the exact remaining gate when K and M grow polylogarithmically.
+
+    Keeping ``gcd(m1,m2) | delta`` before summing the nonzero shifts removes
+    the logarithm lost by a pointwise gcd bound.  Reindexing ``n=m1*s`` and
+    ``n-delta=m2*r`` then turns the residual into one centered short-shift
+    energy of product-lifted Möbius coefficients.  No published theorem in
+    the current audit proves the required variance uniformly in the growing
+    product scale, so this adapter must remain negative.
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+    if shift_log_depth < 0:
+        raise ValueError("shift log depth must be nonnegative")
+
+    return LargeQGrowingZetaProductLiftAudit(
+        shift_log_depth=shift_log_depth,
+        endpoint_taper_log_saving=F(2),
+        absolute_shift_volume_log_exponent=shift_log_depth,
+        absolute_power_exponent=F(1),
+        gcd_divisibility_removes_spurious_log_loss=True,
+        product_lift_identity_is_exact=True,
+        zero_shift_is_explicit_diagonal=True,
+        required_centered_energy_power_exponent=F(1),
+        required_centered_energy_log_exponent=shift_log_depth,
+        requires_little_oh_of_local_scale=True,
+        published_short_interval_variance_applies=False,
+        centered_product_energy_estimate_proved=False,
+        unconditional_coverage=False,
+    )
+
+
+def large_q_height_phase_audit(
+    box: ExponentBox,
+    *,
+    shift_log_depth: Fraction,
+    zeta_log_depth: Fraction,
+) -> LargeQHeightPhaseAudit:
+    """Retain the height phase and integrate by parts when ``L/M`` grows.
+
+    The exact phase derivative is ``log(1+delta/(m2*r))``.  On the
+    large-q endpoint, repeated integration by parts gives arbitrary
+    decay in ``1+L/M``.  Hence the critical shift depth two is covered
+    whenever the zeta-variable logarithmic depth is strictly below two.
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+    if shift_log_depth < 0 or zeta_log_depth < 0:
+        raise ValueError("logarithmic depths must be nonnegative")
+
+    phase_depth = shift_log_depth - zeta_log_depth
+    separated = phase_depth > 0
+    covered = shift_log_depth == F(2) and separated
+    return LargeQHeightPhaseAudit(
+        shift_log_depth=shift_log_depth,
+        zeta_log_depth=zeta_log_depth,
+        phase_ratio_log_depth=phase_depth,
+        absolute_before_phase_log_exponent=shift_log_depth - F(2),
+        height_kernel_has_arbitrary_decay=True,
+        full_height_phase_retained=True,
+        strict_phase_separation=separated,
+        strict_subface_covered=covered,
+        unconditional_coverage=covered,
     )
 
 
@@ -4280,8 +4379,29 @@ def main() -> None:
         f"{_fmt(large_q_critical.q_mellin_error_power_saving)} "
         "gcd_decay="
         f"{_fmt(large_q_critical.coprimality_divisor_volume_decay)} "
-        "menon=True fixed_zeta=True fixed_f=True two_limit=True covered=True "
+        "menon=False fixed_zeta=True fixed_f=True two_limit=True covered=False "
         "above=False whole_cell=False"
+    )
+    growing_zeta = large_q_growing_zeta_product_lift_audit(
+        boxes["large_q_endpoint"],
+        shift_log_depth=F(2),
+    )
+    print(
+        "large_q_endpoint: growing_zeta_product_lift="
+        "shift_log=2 taper_log=2 absolute_power=1 local_gate=T*L*o(1) "
+        "gcd_log=False exact_lift=True centered=True published=False "
+        "covered=False"
+    )
+    height_phase = large_q_height_phase_audit(
+        boxes["large_q_endpoint"],
+        shift_log_depth=F(2),
+        zeta_log_depth=F(3, 2),
+    )
+    print(
+        "large_q_endpoint: height_phase="
+        "shift_log=2 zeta_log=3/2 ratio_log=1/2 pre_phase_log=0 "
+        "arbitrary_decay=True retained=True "
+        "covered=True boundary=False whole_cell=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

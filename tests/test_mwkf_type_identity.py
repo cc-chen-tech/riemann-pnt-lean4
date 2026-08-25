@@ -26,6 +26,8 @@ from scripts.mwkf_mobius_type_identity import (
     endpoint_q_density,
     endpoint_weighted_mobius,
     mobius,
+    product_lift_coefficients,
+    product_lift_shifted_correlation,
     poisson_congruence_reparametrization,
     split_mobius_identity,
     signed_shift_solutions,
@@ -354,6 +356,30 @@ def test_endpoint_q_density_turns_restricted_mobius_into_fixed_convolution() -> 
             assert endpoint_density_convolution_coefficient(
                 prime**exponent
             ) == F(1, prime + 1)
+
+
+def test_product_lift_is_exact_for_the_growing_zeta_shift_family() -> None:
+    """Regroup m*s-(m'*r)=delta as one product-coefficient correlation."""
+    m_coefficients = {2: F(3, 2), 3: F(-2), 4: F(5, 3)}
+    s_coefficients = {5: F(-1), 6: F(2), 7: F(4, 5)}
+    left = product_lift_coefficients(m_coefficients, s_coefficients)
+    right = product_lift_coefficients(m_coefficients, s_coefficients)
+
+    direct = F(0)
+    for m1, m1_weight in m_coefficients.items():
+        for s, s_weight in s_coefficients.items():
+            for m2, m2_weight in m_coefficients.items():
+                for r, r_weight in s_coefficients.items():
+                    delta = m1 * s - m2 * r
+                    if 0 < abs(delta) <= 5:
+                        direct += m1_weight * s_weight * m2_weight * r_weight
+
+    lifted = sum(
+        product_lift_shifted_correlation(left, right, delta)
+        for delta in range(-5, 6)
+        if delta != 0
+    )
+    assert lifted == direct
 
 
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:
