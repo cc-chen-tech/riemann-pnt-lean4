@@ -2038,6 +2038,190 @@ weight \(\mu(s)\), followed by a family estimate before a positive
 Parseval diagonal is created.  No published theorem establishing that
 adapter is currently registered, so published coverage remains false.
 
+### 4.17 Fixed-modulus completion and the 2026 bilinear bounds
+
+The preceding orbit identity suggests completing the \(r\)-sum before
+using the two long Möbius weights.  To give this route its most favorable
+literal interpretation, first separate the \(r\)-coordinate of the
+coupled kernel.  For fixed \(s\), let
+
+\[
+ F_s(r)=\mu(r)p_N(qr)U(r/R)
+\tag{4.135}
+\]
+
+denote the resulting coefficient, with all fixed Mellin twists absorbed
+into \(U\), and define
+
+\[
+ \widehat F_s(m)=\sum_rF_s(r)e\!\left(-\frac{mr}{s}\right).
+\tag{4.136}
+\]
+
+Finite Fourier orthogonality gives the exact identity
+
+\[
+ \boxed{
+ \sum_{\substack{r\\(r,s)=1}}
+ F_s(r)e\!\left(-\frac{h\delta\bar r}{s}\right)
+ =
+ \frac1s\sum_{m\bmod s}\widehat F_s(m)
+ S(-h\delta,m;s).}
+\tag{4.137}
+\]
+
+The full additive Fourier range \(m\bmod s\) is present; smoothness of
+the original \(r\)-cutoff does not shorten it because \(F_s\) contains
+\(\mu(r)\).  Since \(R\asymp S\), each residue class meets the
+\(r\)-interval only \(O(1)\) times, and Parseval gives
+
+\[
+ \|\widehat F_s\|_2^2
+ =s\sum_{x\bmod s}
+ \left|\sum_{r\equiv x\bmod s}F_s(r)\right|^2
+ \ll sR.
+\tag{4.138}
+\]
+
+At the hard box this norm has exponent \(3\), while the smooth
+\(h\)-coefficient has \(L^2\)-exponent \(5/4\).
+
+Fix \((\delta,s)\) and grant the unverified favorable conditions
+\((\delta,s)=1\) and \((h,s)=1\) on the first bilinear variable.
+Blomer--Pascadi, arXiv:2607.24311v1, Theorem 5.7,
+applied to \(S(-\delta h,m;s)\) with
+
+\[
+ c=s=T^3,\qquad M=H=T^{5/2},\qquad N=s=T^3,
+\tag{4.139}
+\]
+
+has dimensionless factor
+
+\[
+ \max\left\{
+ \frac{(MN)^{1/2}}{c^{3/4}},
+ \frac{N^{1/2}}{c^{1/2}},
+ \frac{M^{1/2}}{c^{1/4}}
+ \right\}
+ =T^{1/2}.
+\tag{4.140}
+\]
+
+Thus the fixed-\((\delta,s)\) bound before the \(s^{-1}\) completion
+factor has exponent
+
+\[
+ 3+\frac54+3+\frac12=\frac{31}{4}.
+\tag{4.141}
+\]
+
+Charging \(s^{-1}\), then summing the \(T^{5/2}\) shifts and the
+\(T^3\) moduli, gives the optimistic global bound
+
+\[
+ T^{31/4}\,T^{-3}\,T^{5/2}\,T^3
+ =T^{41/4+o(1)}.
+\tag{4.142}
+\]
+
+It saves only \(11-41/4=3/4\) over the original cardinal exponent
+\(11\).  The CK target is \(T^{5999/1000}\), so even this optimistic
+application leaves the exact deficit
+
+\[
+ \boxed{\frac{41}{4}-\frac{5999}{1000}
+ =\frac{4251}{1000}.}
+\tag{4.143}
+\]
+
+This termwise published-theorem insertion is not the best bound available
+after (4.137).  Aggregate the product coefficient modulo \(s\):
+
+\[
+ A_s(a)=
+ \sum_{\substack{h\asymp H,\ \delta\asymp L\\
+                  h\delta\equiv a\pmod s}}
+ U(h/H)V(\delta/L).
+\tag{4.143a}
+\]
+
+Its squared norm counts solutions of
+
+\[
+ h\delta-h'\delta'=ks,\qquad |k|\ll 1+\frac{HL}{s}.
+\tag{4.143b}
+\]
+
+For fixed \((h,\delta,k)\) with nonzero
+\(n=h\delta-ks\), the number of allowed pairs
+\((h',\delta')\) is at most \(\tau(|n|)\).  The case \(n=0\) contributes
+nothing because \(h'\delta'\ne0\) on the dyadic support.  Hence
+
+\[
+ \sum_{a\bmod s}|A_s(a)|^2
+ \ll_\varepsilon
+ HL\left(1+\frac{HL}{s}\right)T^\varepsilon
+ \ll T^{7+\varepsilon}.
+\tag{4.143c}
+\]
+
+The Kloosterman matrix has the exact operator factor \(s\).  Indeed it
+is a product of two unnormalised finite Fourier transforms and the
+permutation \(x\mapsto\bar x\) on the unit residues; equivalently,
+
+\[
+ \sum_{m\bmod s}S(a,m;s)\overline{S(a',m;s)}
+ =s\,c_s(a-a').
+\tag{4.143d}
+\]
+
+Combining (4.138), (4.143c), and this operator norm, then charging the
+\(s^{-1}\) in (4.137) and summing the \(T^3\) moduli, gives the stronger
+unconditional estimate for the separated coefficient model
+
+\[
+ T^{7/2}\,T^3\,T^3\,T^{-3}\,T^3
+ =T^{19/2+\varepsilon}.
+\tag{4.143e}
+\]
+
+This saves \(T^{3/2}\) from the cardinal exponent, but it still leaves
+
+\[
+ \boxed{\frac{19}{2}-\frac{5999}{1000}
+ =\frac{3501}{1000}}
+\tag{4.143f}
+\]
+
+above CK.  Thus exact Kloosterman orthogonality, rather than the
+termwise 2026 theorem, is the best registered estimate for this
+completion; neither one closes the gate.
+
+The newer normalized-Kloosterman estimate of
+Milićević--Qin--Wu, arXiv:2511.07550v1, Theorem 1.1, is not directly
+available in this range.  Its hypothesis \(M^{7/5}N<q^{3/2}\) becomes
+
+\[
+ T^{13/2}>T^{9/2},
+\tag{4.144}
+\]
+
+with a fixed two-power violation.  Splitting the full \(m\bmod s\)
+range into shorter intervals would require recombining \(T^2\) or more
+pieces and does not follow from the displayed theorem without a new
+square-function estimate for the query-dependent coefficients.
+
+Equations (4.137)--(4.144) already favor the published theorems: the
+actual kernel has not been separated, neither \((\delta,s)=1\) nor
+\((h,s)=1\) is global,
+and the surviving outer coefficient is \(\mu(s)\) with
+query-dependent coprimality and tapers.  Hence this route neither proves
+the coupled gate nor provides a direct published adapter.  Any successful
+fixed-modulus completion must retain the \(\delta\)- and \(s\)-averages
+inside a genuinely trilinear or dispersion estimate rather than apply
+the current bilinear theorem separately.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

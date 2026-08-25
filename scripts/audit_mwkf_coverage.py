@@ -600,6 +600,40 @@ class DeterminantOrbitHeckeIndexAudit:
 
 
 @dataclass(frozen=True)
+class FixedModulusKloostermanCompletionAudit:
+    modulus_exponent: Fraction
+    h_exponent: Fraction
+    delta_exponent: Fraction
+    r_fourier_l2_exponent: Fraction
+    h_coefficient_l2_exponent: Fraction
+    bp_57_dimensionless_factor_exponent: Fraction
+    bp_57_fixed_delta_s_exponent_before_completion: Fraction
+    completion_normalization_exponent: Fraction
+    bp_57_global_bound_exponent: Fraction
+    original_cardinality_exponent: Fraction
+    bp_57_saving_exponent: Fraction
+    ck_gate_target_exponent: Fraction
+    remaining_deficit: Fraction
+    product_residue_energy_exponent: Fraction
+    product_residue_l2_exponent: Fraction
+    kloosterman_operator_norm_exponent: Fraction
+    orthogonality_global_bound_exponent: Fraction
+    orthogonality_saving_exponent: Fraction
+    orthogonality_remaining_deficit: Fraction
+    best_registered_route: str
+    mqw_size_lhs_exponent: Fraction
+    mqw_size_rhs_exponent: Fraction
+    mqw_size_condition_deficit: Fraction
+    finite_r_completion_exact: bool
+    full_additive_fourier_support_required: bool
+    kernel_separated_optimistically: bool
+    delta_unit_mod_s_verified: bool
+    h_coprimality_mod_s_verified: bool
+    mqw_direct_hypotheses_verified: bool
+    direct_published_coverage: bool
+
+
+@dataclass(frozen=True)
 class BCFixedDeterminantAudit:
     short_variable_exponents: tuple[Fraction, Fraction]
     long_variable_exponents: tuple[Fraction, Fraction]
@@ -2696,6 +2730,130 @@ def determinant_orbit_hecke_index_audit() -> DeterminantOrbitHeckeIndexAudit:
     )
 
 
+def fixed_modulus_kloosterman_completion_audit(
+    box: ExponentBox,
+) -> FixedModulusKloostermanCompletionAudit:
+    """Audit finite completion of the ``r``-sum at fixed modulus ``s``.
+
+    After optimistically separating the coupled ``r``-kernel, finite
+    Fourier inversion gives
+
+    ``s^(-1) sum_m Fhat_s(m) sum_{h,delta} S(-h*delta,m;s)``.
+
+    Parseval gives ``||Fhat_s||_2 <= (s*R)^(1/2)``.  For fixed
+    ``(delta,s)``, Blomer--Pascadi Theorem 5.7 is applied with interval
+    lengths ``M=H``, ``N=s`` and modulus ``c=s``.  The dimensionless
+    factor is the maximum of
+
+    ``(H*s)^(1/2)/s^(3/4)``, ``s^(1/2)/s^(1/2)``, and
+    ``H^(1/2)/s^(1/4)``.
+
+    This is an optimistic rejection: the theorem requires the fixed
+    multiplier ``-delta`` to be a unit modulo ``s``, and the actual
+    kernel has not been separated.  The Milićević--Qin--Wu size condition
+    ``M^(7/5)*N < s^(3/2)`` is recorded independently.
+    """
+    modulus_exponent = box.sigma
+    h_exponent = box.h
+    delta_exponent = box.ell
+    r_fourier_l2_exponent = (box.sigma + box.rho) / 2
+    h_coefficient_l2_exponent = box.h / 2
+    bp_57_dimensionless_factor_exponent = max(
+        F(0),
+        box.h / 2 - box.sigma / 4,
+    )
+    bp_57_fixed_delta_s_exponent_before_completion = (
+        r_fourier_l2_exponent
+        + h_coefficient_l2_exponent
+        + box.sigma
+        + bp_57_dimensionless_factor_exponent
+    )
+    completion_normalization_exponent = -box.sigma
+    bp_57_global_bound_exponent = (
+        bp_57_fixed_delta_s_exponent_before_completion
+        + completion_normalization_exponent
+        + box.ell
+        + box.sigma
+    )
+    original_cardinality_exponent = (
+        box.rho + box.sigma + box.h + box.ell
+    )
+    bp_57_saving_exponent = _positive_part(
+        original_cardinality_exponent - bp_57_global_bound_exponent
+    )
+    ck_gate_target_exponent = box.rho + box.sigma - TARGET_SAVING
+    remaining_deficit = _positive_part(
+        bp_57_global_bound_exponent - ck_gate_target_exponent
+    )
+    mqw_size_lhs_exponent = F(7, 5) * box.h + box.sigma
+    mqw_size_rhs_exponent = F(3, 2) * box.sigma
+    mqw_size_condition_deficit = _positive_part(
+        mqw_size_lhs_exponent - mqw_size_rhs_exponent
+    )
+    product_residue_energy_exponent = (
+        box.h
+        + box.ell
+        + _positive_part(box.h + box.ell - box.sigma)
+    )
+    product_residue_l2_exponent = product_residue_energy_exponent / 2
+    kloosterman_operator_norm_exponent = box.sigma
+    orthogonality_global_bound_exponent = (
+        product_residue_l2_exponent
+        + r_fourier_l2_exponent
+        + kloosterman_operator_norm_exponent
+        + completion_normalization_exponent
+        + box.sigma
+    )
+    orthogonality_saving_exponent = _positive_part(
+        original_cardinality_exponent
+        - orthogonality_global_bound_exponent
+    )
+    orthogonality_remaining_deficit = _positive_part(
+        orthogonality_global_bound_exponent - ck_gate_target_exponent
+    )
+
+    return FixedModulusKloostermanCompletionAudit(
+        modulus_exponent=modulus_exponent,
+        h_exponent=h_exponent,
+        delta_exponent=delta_exponent,
+        r_fourier_l2_exponent=r_fourier_l2_exponent,
+        h_coefficient_l2_exponent=h_coefficient_l2_exponent,
+        bp_57_dimensionless_factor_exponent=(
+            bp_57_dimensionless_factor_exponent
+        ),
+        bp_57_fixed_delta_s_exponent_before_completion=(
+            bp_57_fixed_delta_s_exponent_before_completion
+        ),
+        completion_normalization_exponent=completion_normalization_exponent,
+        bp_57_global_bound_exponent=bp_57_global_bound_exponent,
+        original_cardinality_exponent=original_cardinality_exponent,
+        bp_57_saving_exponent=bp_57_saving_exponent,
+        ck_gate_target_exponent=ck_gate_target_exponent,
+        remaining_deficit=remaining_deficit,
+        product_residue_energy_exponent=product_residue_energy_exponent,
+        product_residue_l2_exponent=product_residue_l2_exponent,
+        kloosterman_operator_norm_exponent=(
+            kloosterman_operator_norm_exponent
+        ),
+        orthogonality_global_bound_exponent=(
+            orthogonality_global_bound_exponent
+        ),
+        orthogonality_saving_exponent=orthogonality_saving_exponent,
+        orthogonality_remaining_deficit=orthogonality_remaining_deficit,
+        best_registered_route="exact_kloosterman_orthogonality",
+        mqw_size_lhs_exponent=mqw_size_lhs_exponent,
+        mqw_size_rhs_exponent=mqw_size_rhs_exponent,
+        mqw_size_condition_deficit=mqw_size_condition_deficit,
+        finite_r_completion_exact=True,
+        full_additive_fourier_support_required=True,
+        kernel_separated_optimistically=True,
+        delta_unit_mod_s_verified=False,
+        h_coprimality_mod_s_verified=False,
+        mqw_direct_hypotheses_verified=False,
+        direct_published_coverage=False,
+    )
+
+
 def bc_fixed_determinant_audit(box: ExponentBox) -> BCFixedDeterminantAudit:
     """Insert the hard determinant lattice into BC Corollary 1.
 
@@ -3531,6 +3689,42 @@ def main() -> None:
         "complete_orbit="
         f"{determinant_orbit_audit.qct_kernel_is_unweighted_complete_orbit} "
         f"covered={determinant_orbit_audit.published_coverage}"
+    )
+    fixed_modulus_audit = fixed_modulus_kloosterman_completion_audit(hard)
+    print(
+        "balanced_max_a: fixed_modulus_kloosterman="
+        "rhat_l2="
+        f"{_fmt(fixed_modulus_audit.r_fourier_l2_exponent)} "
+        "h_l2="
+        f"{_fmt(fixed_modulus_audit.h_coefficient_l2_exponent)} "
+        "bp_factor="
+        f"{_fmt(fixed_modulus_audit.bp_57_dimensionless_factor_exponent)} "
+        "fixed="
+        f"{_fmt(fixed_modulus_audit.bp_57_fixed_delta_s_exponent_before_completion)} "
+        "global="
+        f"{_fmt(fixed_modulus_audit.bp_57_global_bound_exponent)} "
+        "saving="
+        f"{_fmt(fixed_modulus_audit.bp_57_saving_exponent)} "
+        "target="
+        f"{_fmt(fixed_modulus_audit.ck_gate_target_exponent)} "
+        f"deficit={_fmt(fixed_modulus_audit.remaining_deficit)} "
+        "energy="
+        f"{_fmt(fixed_modulus_audit.product_residue_energy_exponent)} "
+        "orth_global="
+        f"{_fmt(fixed_modulus_audit.orthogonality_global_bound_exponent)} "
+        "orth_deficit="
+        f"{_fmt(fixed_modulus_audit.orthogonality_remaining_deficit)} "
+        f"best={fixed_modulus_audit.best_registered_route} "
+        f"mqw={_fmt(fixed_modulus_audit.mqw_size_lhs_exponent)}>"
+        f"{_fmt(fixed_modulus_audit.mqw_size_rhs_exponent)} "
+        "mqw_deficit="
+        f"{_fmt(fixed_modulus_audit.mqw_size_condition_deficit)} "
+        "full_fourier="
+        f"{fixed_modulus_audit.full_additive_fourier_support_required} "
+        f"delta_unit={fixed_modulus_audit.delta_unit_mod_s_verified} "
+        "h_coprime="
+        f"{fixed_modulus_audit.h_coprimality_mod_s_verified} "
+        f"direct={fixed_modulus_audit.direct_published_coverage}"
     )
     determinant_audit = bc_fixed_determinant_audit(hard)
     print(

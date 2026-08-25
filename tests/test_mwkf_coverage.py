@@ -284,6 +284,47 @@ def test_determinant_orbit_sends_the_hecke_index_to_delta_not_r_or_s() -> None:
     assert not result.published_coverage
 
 
+def test_fixed_modulus_kloosterman_completion_still_has_a_power_deficit() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "fixed_modulus_kloosterman_completion_audit",
+        None,
+    )
+    assert adapter is not None, "fixed-modulus Kloosterman audit is missing"
+
+    result = adapter(boundary_witnesses()["balanced_max_a"])
+    assert result.modulus_exponent == F(3)
+    assert result.h_exponent == F(5, 2)
+    assert result.delta_exponent == F(5, 2)
+    assert result.r_fourier_l2_exponent == F(3)
+    assert result.h_coefficient_l2_exponent == F(5, 4)
+    assert result.bp_57_dimensionless_factor_exponent == F(1, 2)
+    assert result.bp_57_fixed_delta_s_exponent_before_completion == F(31, 4)
+    assert result.completion_normalization_exponent == F(-3)
+    assert result.bp_57_global_bound_exponent == F(41, 4)
+    assert result.original_cardinality_exponent == F(11)
+    assert result.bp_57_saving_exponent == F(3, 4)
+    assert result.ck_gate_target_exponent == F(5999, 1000)
+    assert result.remaining_deficit == F(4251, 1000)
+    assert result.product_residue_energy_exponent == F(7)
+    assert result.product_residue_l2_exponent == F(7, 2)
+    assert result.kloosterman_operator_norm_exponent == F(3)
+    assert result.orthogonality_global_bound_exponent == F(19, 2)
+    assert result.orthogonality_saving_exponent == F(3, 2)
+    assert result.orthogonality_remaining_deficit == F(3501, 1000)
+    assert result.best_registered_route == "exact_kloosterman_orthogonality"
+    assert result.mqw_size_lhs_exponent == F(13, 2)
+    assert result.mqw_size_rhs_exponent == F(9, 2)
+    assert result.mqw_size_condition_deficit == F(2)
+    assert result.finite_r_completion_exact
+    assert result.full_additive_fourier_support_required
+    assert result.kernel_separated_optimistically
+    assert not result.delta_unit_mod_s_verified
+    assert not result.h_coprimality_mod_s_verified
+    assert not result.mqw_direct_hypotheses_verified
+    assert not result.direct_published_coverage
+
+
 def test_v_equals_j_equals_one_is_an_exact_average_chowla_witness() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     scales = h_poisson_subbox_scales(box, v=F(0), j=F(0))
@@ -1329,6 +1370,15 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "covered=False"
     ) in output
     assert (
+        "balanced_max_a: fixed_modulus_kloosterman="
+        "rhat_l2=3 h_l2=5/4 bp_factor=1/2 fixed=31/4 "
+        "global=41/4 saving=3/4 target=5999/1000 "
+        "deficit=4251/1000 energy=7 orth_global=19/2 "
+        "orth_deficit=3501/1000 best=exact_kloosterman_orthogonality "
+        "mqw=13/2>9/2 mqw_deficit=2 "
+        "full_fourier=True delta_unit=False h_coprime=False direct=False"
+    ) in output
+    assert (
         "balanced_max_a: bc_fixed_determinant="
         "error=111/10 fixed_trivial=7/2 summed_trivial=6 "
         "target=3499/1000 mobius_save=2501/1000 "
@@ -1414,5 +1464,17 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "the Hecke-operator index is",
         r"the shift \(\delta\)",
         "not either of the two Möbius variables",
+        "### 4.17 Fixed-modulus completion and the 2026 bilinear bounds",
+        r"\frac1s\sum_{m\bmod s}\widehat F_s(m)",
+        r"S(-h\delta,m;s)",
+        "Blomer--Pascadi, arXiv:2607.24311v1, Theorem 5.7",
+        r"T^{41/4+o(1)}",
+        r"\frac{4251}{1000}",
+        r"\sum_{a\bmod s}|A_s(a)|^2",
+        r"\ll T^{7+\varepsilon}",
+        r"T^{19/2+\varepsilon}",
+        r"\frac{3501}{1000}",
+        "Milićević--Qin--Wu, arXiv:2511.07550v1, Theorem 1.1",
+        r"T^{13/2}>T^{9/2}",
     ):
         assert marker in text
