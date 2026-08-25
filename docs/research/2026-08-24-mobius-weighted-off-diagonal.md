@@ -2192,6 +2192,82 @@ even a positive-length portion of the maximal \(a\)-range.  A viable use of
 Möbius cancellation has to be simultaneous with the outer modulus or
 \((h,\delta)\) averages, precisely as required in (9.13).
 
+### 9.9 A two-orientation elementary Farey large-sieve bound
+
+For completeness, one can improve the elementary completion diagnostic
+without using Möbius cancellation.  After the separation justified in
+Section 6.1, consider
+
+\[
+ \mathfrak T=
+ \sum_{a\asymp A}\nu_a
+ \sum_{r\asymp R}\sum_{s\asymp S\atop(r,s)=1}
+ \alpha_r\beta_s e\left(-\frac{a\bar r}{s}\right).
+\tag{9.31}
+\]
+
+For \((c,s)=1\), aggregate the repeated residue classes as
+
+\[
+ \gamma_{c,s}=\beta_s
+ \sum_{r\asymp R\atop\bar r\equiv c\;({\rm mod}\ s)}\alpha_r.
+\tag{9.32}
+\]
+
+The distinct reduced fractions \(c/s\), with \(s\asymp S\), are separated
+by \(\gg S^{-2}\).  The additive large sieve and Cauchy--Schwarz give
+
+\[
+ |\mathfrak T|ll
+ (A+S^2)^{1/2}\|\nu\|_2
+ \left(\sum_{s,c}|\gamma_{c,s}|^2\right)^{1/2}.
+\tag{9.33}
+\]
+
+Each residue class contains \(O(1+R/S)\) integers in the \(r\)-interval,
+including its two incomplete endpoints.  Hence
+
+\[
+ \sum_{s,c}|\gamma_{c,s}|^2
+ \ll(1+R/S)\|\alpha\|_2^2\|\beta\|_2^2,
+\tag{9.34}
+\]
+
+and therefore
+
+\[
+ |\mathfrak T|ll_\varepsilon
+ (A+S^2)^{1/2}(1+R/S)^{1/2}(RSA)^{1/2}T^\varepsilon.
+\tag{9.35}
+\]
+
+Reciprocity supplies (9.35) with \(R,S\) interchanged.  The additional
+factor \(e(-a/(rs))\) has derivatives controlled by
+\(A/(RS)\ll T^{-1+\eta}\), so the same Fourier--Mellin separation costs
+only \(T^\varepsilon\).
+
+The polytope itself gives the exact simplification.  From
+\(\rho-\sigma=k-m\) and \(k+m\leq1\),
+\(|\rho-\sigma|\leq1\); combined with
+\(a\leq\rho+\sigma-1\), this yields
+\(a\leq2\min(\rho,\sigma)\), or
+\(A\leq\min(R^2,S^2)T^\varepsilon\).  Choose the original orientation
+when \(R\geq S\) and the reciprocal orientation when \(S\geq R\).  Then
+
+\[
+ \boxed{|\mathfrak T|\ll_\varepsilon RS\,A^{1/2}T^\varepsilon.}
+\tag{9.36}
+\]
+
+Thus this two-orientation elementary large-sieve route loses exactly
+\(T^{a/2}\) over the local target.  It covers the face \(a=0\), but no
+positive \(a\)-box; at \((\rho,\sigma,a)=(3,3,5)\) its remaining gap is
+\(T^{5/2+\varepsilon}\).  The exact-rational checker records this loss.
+This sharper elementary diagnostic still confirms that this route cannot
+provide the missing ingredient, which must
+exploit the Möbius weights together with the coupled product
+\(a=h\delta\), not merely Farey spacing or Euler products.
+
 ## 10. What has and has not been proved
 
 **Current classification: published coverage complete; Region D remains
@@ -2226,6 +2302,8 @@ Proved in this note:
   reverse-Poisson identity, (9.22)--(9.26).
 * the direct Möbius--inverse-phase audit, including its balanced
   \(T^{5-o(1)}\) residual gap, (9.27)--(9.30).
+* the boundary-safe elementary Farey large-sieve estimate and its exact
+  \(A^{1/2}\) loss, (9.31)--(9.36).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -2242,6 +2320,7 @@ Proved in this note:
 | Milićević--Qin--Wu route | verified inapplicable to the full Fourier box | top box violates \(MN\leq s^{5/4}\); (9.22)--(9.25) |
 | Reverse Poisson | verified exact but tautological | returns the shifted-divisor congruence and zero-mode subtraction, (9.26) |
 | One-variable Möbius inverse-phase route | verified insufficient | arbitrary composite moduli give only logarithmic saving; balanced power gap \(T^{5-o(1)}\), (9.27)--(9.30) |
+| Elementary Farey large sieve | verified insufficient | uniform bound \(RS A^{1/2}T^\varepsilon\); balanced gap \(T^{5/2+\varepsilon}\), (9.31)--(9.36) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

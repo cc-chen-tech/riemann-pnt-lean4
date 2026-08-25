@@ -192,6 +192,20 @@ def mqw_initial_rectangle_supremal_saving() -> Fraction:
     return ceiling
 
 
+def elementary_large_sieve_loss(box: ExponentBox) -> Fraction:
+    """Power lost by the two-orientation Farey large-sieve bound.
+
+    On the admissible polytope, ``A <= min(R^2, S^2)``.  Choosing the
+    better of the original fraction orientation and reciprocity gives
+    ``RS * sqrt(A)``.  Hence the loss over the local ``RS`` target is
+    exactly half the third-variable exponent.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("large-sieve loss is defined only on admissible boxes")
+    return box.third_length / 2
+
+
 def pascadi_full_residue_savings(
     delta: Fraction,
 ) -> PascadiFullResidueSavings:

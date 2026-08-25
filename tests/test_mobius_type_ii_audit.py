@@ -10,6 +10,7 @@ from scripts.audit_mobius_type_ii import (
     PascadiFullResidueSavings,
     WrightFactorSavings,
     c_coefficient,
+    elementary_large_sieve_loss,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
@@ -138,3 +139,11 @@ def test_mqw_third_term_certifies_global_one_sixteenth_ceiling() -> None:
     # a numerical grid search.
     ceiling = F(3, 16) * F(5, 4) - F(11, 64)
     assert ceiling == F(1, 16)
+
+
+def test_elementary_large_sieve_loses_exactly_square_root_of_a() -> None:
+    witnesses = boundary_witnesses()
+    assert elementary_large_sieve_loss(witnesses["balanced_max_a"]) == F(5, 2)
+    assert elementary_large_sieve_loss(witnesses["r_long"]) == F(2)
+    assert elementary_large_sieve_loss(witnesses["s_long"]) == F(2)
+    assert elementary_large_sieve_loss(witnesses["large_q_endpoint"]) == F(1, 2)
