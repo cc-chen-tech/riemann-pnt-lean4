@@ -1369,6 +1369,26 @@ class SquareSalieGaussCompletionAudit:
 
 
 @dataclass(frozen=True)
+class MobiusProductShiftedVarianceAudit:
+    factor_length_exponent: Fraction
+    product_length_exponent: Fraction
+    transform_shift_exponent: Fraction
+    diagonal_power_exponent: Fraction
+    diagonal_logarithmic_exponent: Fraction
+    raw_shifted_determinant_exponent: Fraction
+    shifted_determinant_target_exponent: Fraction
+    required_shifted_determinant_saving_exponent: Fraction
+    product_convolution_identity_exact: bool
+    diagonal_parameterization_exact: bool
+    schwartz_tail_is_power_negligible: bool
+    polylogarithmic_transition_collar_retained: bool
+    equivalent_to_separated_mixed_fourth_moment_gate: bool
+    shifted_mobius_determinant_bound_proved: bool
+    original_signed_kernel_requires_component_gate: bool
+    route_closes_mwkf_gate: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7005,6 +7025,91 @@ def square_salie_gauss_completion_audit() -> SquareSalieGaussCompletionAudit:
     )
 
 
+def balanced_product_diagonal_parameterization(
+    *,
+    a: int,
+    b: int,
+    c: int,
+    d: int,
+) -> dict[str, int | bool]:
+    """Parameterize the multiplicative diagonal ``a*b=c*d`` exactly.
+
+    If ``g=(a,c)``, ``a=g*x`` and ``c=g*y``, then ``(x,y)=1``.
+    Equality of the two products forces ``b=y*k`` and ``d=x*k``.
+    This is the standard parameterization behind the logarithmic, rather
+    than positive-power, cost of the balanced product diagonal.
+    """
+    if min(a, b, c, d) <= 0:
+        raise ValueError("balanced-product variables must be positive")
+    left_product = a * b
+    right_product = c * d
+    product_shift = left_product - right_product
+    common = gcd(a, c)
+    x = a // common
+    y = c // common
+    products_equal = product_shift == 0
+    y_divides_b = products_equal and b % y == 0
+    x_divides_d = products_equal and d % x == 0
+    k_left = b // y if y_divides_b else 0
+    k_right = d // x if x_divides_d else 0
+    k = k_left if k_left == k_right else 0
+    return {
+        "a": a,
+        "b": b,
+        "c": c,
+        "d": d,
+        "left_product": left_product,
+        "right_product": right_product,
+        "product_shift": product_shift,
+        "products_equal": products_equal,
+        "common_factor": common,
+        "left_primitive": x,
+        "right_primitive": y,
+        "complementary_factor": k,
+        "primitive_pair_coprime": gcd(x, y) == 1,
+        "left_reconstruction_exact": common * x == a,
+        "right_reconstruction_exact": common * y == c,
+        "complementary_reconstruction_exact": (
+            products_equal
+            and y_divides_b
+            and x_divides_d
+            and k > 0
+            and y * k == b
+            and x * k == d
+        ),
+    }
+
+
+def mobius_product_shifted_variance_audit(
+) -> MobiusProductShiftedVarianceAudit:
+    """Reduce the separated top Möbius fourth moment to one shift gate."""
+    factor = F(1)
+    product = 2 * factor
+    transform_shift = product - factor
+    raw_offdiagonal = 3 * factor
+    target = 2 * factor
+    return MobiusProductShiftedVarianceAudit(
+        factor_length_exponent=factor,
+        product_length_exponent=product,
+        transform_shift_exponent=transform_shift,
+        diagonal_power_exponent=F(0),
+        diagonal_logarithmic_exponent=F(1),
+        raw_shifted_determinant_exponent=raw_offdiagonal,
+        shifted_determinant_target_exponent=target,
+        required_shifted_determinant_saving_exponent=(
+            raw_offdiagonal - target
+        ),
+        product_convolution_identity_exact=True,
+        diagonal_parameterization_exact=True,
+        schwartz_tail_is_power_negligible=True,
+        polylogarithmic_transition_collar_retained=True,
+        equivalent_to_separated_mixed_fourth_moment_gate=True,
+        shifted_mobius_determinant_bound_proved=False,
+        original_signed_kernel_requires_component_gate=False,
+        route_closes_mwkf_gate=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -11407,6 +11512,37 @@ def main() -> None:
         "improves="
         f"{salie_gauss.gauss_completion_improves_square_sector},"
         f"closes={salie_gauss.square_salie_gauss_route_closes_gate}"
+    )
+    mobius_product_shift = mobius_product_shifted_variance_audit()
+    print(
+        "large_q_transition: mobius_product_shifted_variance="
+        f"factor={_fmt(mobius_product_shift.factor_length_exponent)},"
+        f"product={_fmt(mobius_product_shift.product_length_exponent)},"
+        f"shift={_fmt(mobius_product_shift.transform_shift_exponent)},"
+        "diagonal_power="
+        f"{_fmt(mobius_product_shift.diagonal_power_exponent)},"
+        "diagonal_log="
+        f"{_fmt(mobius_product_shift.diagonal_logarithmic_exponent)},"
+        "raw_offdiag="
+        f"{_fmt(mobius_product_shift.raw_shifted_determinant_exponent)},"
+        "target="
+        f"{_fmt(mobius_product_shift.shifted_determinant_target_exponent)},"
+        "required="
+        f"{_fmt(mobius_product_shift.required_shifted_determinant_saving_exponent)},"
+        "convolution="
+        f"{mobius_product_shift.product_convolution_identity_exact},"
+        "diagonal="
+        f"{mobius_product_shift.diagonal_parameterization_exact},"
+        f"tail={mobius_product_shift.schwartz_tail_is_power_negligible},"
+        "collar="
+        f"{mobius_product_shift.polylogarithmic_transition_collar_retained},"
+        "m4_equivalent="
+        f"{mobius_product_shift.equivalent_to_separated_mixed_fourth_moment_gate},"
+        "bound="
+        f"{mobius_product_shift.shifted_mobius_determinant_bound_proved},"
+        "original_requires="
+        f"{mobius_product_shift.original_signed_kernel_requires_component_gate},"
+        f"closes={mobius_product_shift.route_closes_mwkf_gate}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

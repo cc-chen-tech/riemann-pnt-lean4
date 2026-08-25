@@ -10367,6 +10367,124 @@ mod-eight character formula by exact coefficient tables.  The ledger
 `gauss_completion_improves_square_sector=False` and does not close the
 MWKF gate.
 
+### 4.85 The sufficient Möbius fourth moment is one shifted determinant gate
+
+The top separated fourth moment (4.562) can be reduced exactly one step
+further.  This does not make the componentwise sufficient condition
+necessary for the original signed kernel, but it isolates its complete
+arithmetic content without a generic mean-value bound.
+
+For fixed smooth \(U\) supported in \([1,2]\), put
+
+\[
+ P_U(t):=\sum_n\frac{\mu(n)U(n/T)}{n^{1/2+it}},
+ \qquad
+ C_U(m):=\sum_{ab=m}\mu(a)\mu(b)U(a/T)U(b/T).
+\tag{4.708}
+\]
+
+Then the finite Dirichlet-polynomial identity
+
+\[
+ P_U(t)^2=\sum_m\frac{C_U(m)}{m^{1/2+it}}
+\]
+
+is exact.  With the Fourier convention
+\(\widehat\Omega(\xi)=\int_{\mathbb R}\Omega(u)e(-u\xi)\,du\), direct
+integration gives
+
+\[
+\boxed{
+ \int_{\mathbb R}|P_U(t)|^4\Omega(t/T)\,dt
+ =T\sum_{m,n}
+ \frac{C_U(m)\overline{C_U(n)}}{\sqrt{mn}}
+ \widehat\Omega\!\left(
+   \frac{T}{2\pi}\log\frac mn\right).}
+\tag{4.709}
+\]
+
+There is no approximate functional equation in (4.709).  All sums are
+finite, and \(m,n\in[T^2,4T^2]\).
+
+The multiplicative diagonal has only a logarithmic cost.  If
+\(ab=cd\), set
+
+\[
+ g=(a,c),\qquad a=gx,\qquad c=gy,qquad(x,y)=1.
+\]
+
+Then \(xb=yd\), so there is a unique positive integer \(k\) with
+
+\[
+ \boxed{a=gx,\qquad c=gy,\qquad b=yk,\qquad d=xk.}
+\tag{4.710}
+\]
+
+Conversely (4.710) always gives \(ab=cd\).  The dyadic supports force
+\(x/y\) into a fixed compact subinterval of \((0,\infty)\), and for
+fixed coprime \((x,y)\) both \(g\) and \(k\) have
+\(O(1+T/\max(x,y))\) choices.  Therefore
+
+\[
+ \sum_m\frac{|C_U(m)|^2}{m}
+ \ll_U T^{-2}
+ sum_{\substack{(x,y)=1\\x\asymp y}}
+ \left(1+\frac{T}{\max(x,y)}\right)^2
+ \ll_U\log(2T).
+\]
+
+Thus the diagonal in (4.709) already has the required
+\(T\log T\) size.
+
+For the off-diagonal write \(h=ab-cd\).  Since
+\(ab,cd\asymp T^2\), the Fourier argument in (4.709) is comparable to
+\(h/T\) whenever \(|h|=o(T^2)\).  Every fixed shell
+\(|h|\ge T^{1+\eta}\), \(\eta>0\), is power-negligible after using an
+arbitrarily high Schwartz seminorm of \(\widehat\Omega\).  The
+polylogarithmic collar \(|h|=T^{1+o(1)}\) must remain inside the local
+estimate; it is not discarded as a tail.
+
+The exact sufficient off-diagonal gate is consequently the single sum
+
+\[
+\boxed{
+ \left|
+ \sum_{\substack{a,b,c,d\asymp T\\ab\ne cd}}
+ \frac{\mu(a)\mu(b)\mu(c)\mu(d)
+       U(a/T)U(b/T)\overline{U(c/T)U(d/T)}}
+      {\sqrt{abcd}}
+ \widehat\Omega\!\left(
+   \frac{T}{2\pi}\log\frac{ab}{cd}\right)
+ \right|
+ \ll_{U,\Omega}(\log T)^{1+o(1)}.}
+\tag{4.711}
+\]
+
+On the critical collar \(|h|=T^{1+o(1)}\), the unnormalised solution
+family \(ab-cd=h\) has exponent three: one exponent for \(h\) and two
+for a fixed determinant fiber.  The four factors in (4.711) contribute
+the normalization \(T^{-2}\).  Hence (4.711) requires exactly the
+fixed saving
+
+\[
+ T^3\longrightarrow T^2,
+\]
+
+with additional logarithmic cancellation for the global little-oh.
+This is the same one-power determinant obstruction as (4.473), now
+written as one shifted \((\mu*\mu)\) variance rather than a spectral
+Gram form.  Published short-interval Möbius theorems give logarithmic
+decay from the raw variance but not this diagonal-scale saving.
+
+The helper `balanced_product_diagonal_parameterization` verifies
+(4.710) on integers.  The adapter
+`mobius_product_shifted_variance_audit` records the exponent ledger
+\(3\to2\), retains the polylogarithmic transition collar, and keeps
+`shifted_mobius_determinant_bound_proved=False`.  Finally,
+(4.711) is equivalent to the separated component (4.562), but the
+original signed DCV superposition does not require every such component;
+no converse is asserted.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

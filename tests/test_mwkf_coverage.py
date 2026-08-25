@@ -2441,6 +2441,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.705}",
         "\\tag{4.707}",
         "gauss_completion_improves_square_sector=False",
+        "### 4.85 The sufficient Möbius fourth moment is one shifted determinant gate",
+        "\\tag{4.708}",
+        "\\tag{4.711}",
+        "shifted_mobius_determinant_bound_proved=False",
     ):
         assert marker in note
 
@@ -2537,6 +2541,13 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "localized_pointwise=3,direct_square=5/2,identity=True,"
         "character_mod8=True,t_linear=True,joint=True,improves=False,"
         "closes=False"
+    ) in report
+    assert (
+        "large_q_transition: mobius_product_shifted_variance="
+        "factor=1,product=2,shift=1,diagonal_power=0,diagonal_log=1,"
+        "raw_offdiag=3,target=2,required=1,convolution=True,"
+        "diagonal=True,tail=True,collar=True,m4_equivalent=True,bound=False,"
+        "original_requires=False,closes=False"
     ) in report
 
 
@@ -3146,6 +3157,61 @@ def test_square_salie_quadratic_gauss_completion_is_exact() -> None:
     assert audit.remaining_quadratic_weight_is_joint
     assert not audit.gauss_completion_improves_square_sector
     assert not audit.square_salie_gauss_route_closes_gate
+
+
+def test_balanced_mobius_product_shift_variance_is_exact() -> None:
+    helper = getattr(
+        coverage_audit,
+        "balanced_product_diagonal_parameterization",
+        None,
+    )
+    assert helper is not None, "balanced-product diagonal helper is missing"
+    for a, b, c, d, expected in (
+        (6, 35, 10, 21, (2, 3, 5, 7)),
+        (14, 15, 21, 10, (7, 2, 3, 5)),
+        (25, 14, 35, 10, (5, 5, 7, 2)),
+        (13, 17, 13, 17, (13, 1, 1, 17)),
+    ):
+        exact = helper(a=a, b=b, c=c, d=d)
+        assert exact["products_equal"]
+        assert (
+            exact["common_factor"],
+            exact["left_primitive"],
+            exact["right_primitive"],
+            exact["complementary_factor"],
+        ) == expected
+        assert exact["primitive_pair_coprime"]
+        assert exact["left_reconstruction_exact"]
+        assert exact["right_reconstruction_exact"]
+        assert exact["complementary_reconstruction_exact"]
+
+    off = helper(a=6, b=35, c=10, d=19)
+    assert not off["products_equal"]
+    assert off["product_shift"] == 20
+
+    adapter = getattr(
+        coverage_audit,
+        "mobius_product_shifted_variance_audit",
+        None,
+    )
+    assert adapter is not None, "Möbius product-shift audit is missing"
+    audit = adapter()
+    assert audit.factor_length_exponent == F(1)
+    assert audit.product_length_exponent == F(2)
+    assert audit.transform_shift_exponent == F(1)
+    assert audit.diagonal_power_exponent == F(0)
+    assert audit.diagonal_logarithmic_exponent == F(1)
+    assert audit.raw_shifted_determinant_exponent == F(3)
+    assert audit.shifted_determinant_target_exponent == F(2)
+    assert audit.required_shifted_determinant_saving_exponent == F(1)
+    assert audit.product_convolution_identity_exact
+    assert audit.diagonal_parameterization_exact
+    assert audit.schwartz_tail_is_power_negligible
+    assert audit.polylogarithmic_transition_collar_retained
+    assert audit.equivalent_to_separated_mixed_fourth_moment_gate
+    assert not audit.shifted_mobius_determinant_bound_proved
+    assert not audit.original_signed_kernel_requires_component_gate
+    assert not audit.route_closes_mwkf_gate
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
