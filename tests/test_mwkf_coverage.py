@@ -2445,6 +2445,18 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.708}",
         "\\tag{4.711}",
         "shifted_mobius_determinant_bound_proved=False",
+        "### 4.86 The smooth determinant-surface theorem does not accept the Möbius gate",
+        "\\tag{4.712}",
+        "\\tag{4.715}",
+        "ganguly_guria_route_closes_mobius_gate=False",
+        "### 4.87 Published short-interval variance classes exclude the restricted inverse-zeta square",
+        "\\tag{4.716}",
+        "\\tag{4.719}",
+        "darbar_das_route_closes_mobius_gate=False",
+        "### 4.88 Ratio Mellin inversion restores a multiplicative inverse-zeta family",
+        "\\tag{4.720}",
+        "\\tag{4.725}",
+        "shifted_inverse_zeta_variance_proved=False",
     ):
         assert marker in note
 
@@ -2548,6 +2560,32 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "raw_offdiag=3,target=2,required=1,convolution=True,"
         "diagonal=True,tail=True,collar=True,m4_equivalent=True,bound=False,"
         "original_requires=False,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: ganguly_guria_determinant="
+        "X=1,shift=1,theta=7/64,fixed_error=71/64,"
+        "absolute_shift_sum=135/64,target=2,deficit=7/64,"
+        "fixed_main=2,absolute_main=3,smooth=True,distinct=False,"
+        "arithmetic=False,coefficient_uniform=False,type_i_ii=False,"
+        "ramanujan_power=True,ramanujan_log=False,main_cancel=False,"
+        "closes=False"
+    ) in report
+    assert (
+        "large_q_transition: darbar_das_short_variance="
+        "ambient=2,window=1,generic_variance=4,target_variance=3,"
+        "required=1,full_series_zeta_power=-2,auxiliary_zeta_power=-3,"
+        "h_p=-3,h_p2=3,h_p3=-1,m_class=False,g_class=False,"
+        "restricted_multiplicative=False,full_convolution=False,"
+        "restricted_convolution=False,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: restricted_mobius_ratio_mellin="
+        "factor=1,product=2,window=1,variance_target=3,"
+        "ratio_coordinates=True,inversion=True,multiplicative=True,"
+        "dirichlet_series=True,outer_smooth=True,tau_decay=True,"
+        "tau_uniform_sufficient=True,tau_zero_full=True,mangerel=4,"
+        "mangerel_deficit=1,mangerel_log=True,tau_hypotheses=False,"
+        "published=False,closes=False"
     ) in report
 
 
@@ -3212,6 +3250,110 @@ def test_balanced_mobius_product_shift_variance_is_exact() -> None:
     assert not audit.shifted_mobius_determinant_bound_proved
     assert not audit.original_signed_kernel_requires_component_gate
     assert not audit.route_closes_mwkf_gate
+
+
+def test_ganguly_guria_determinant_adapter_has_exact_residual_power() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "ganguly_guria_determinant_audit",
+        None,
+    )
+    assert adapter is not None, "Ganguly--Guria determinant audit is missing"
+    audit = adapter()
+    assert audit.variable_length_exponent == F(1)
+    assert audit.shift_range_exponent == F(1)
+    assert audit.ramanujan_exponent == F(7, 64)
+    assert audit.fixed_shift_error_exponent == F(71, 64)
+    assert audit.absolute_shift_sum_error_exponent == F(135, 64)
+    assert audit.shifted_determinant_target_exponent == F(2)
+    assert audit.absolute_shift_sum_power_deficit == F(7, 64)
+    assert audit.fixed_shift_main_exponent == F(2)
+    assert audit.absolute_shift_sum_main_exponent == F(3)
+    assert audit.smooth_unweighted_fixed_shift_theorem_proved
+    assert not audit.distinct_tensor_weights_accepted_as_stated
+    assert not audit.arithmetic_coefficients_accepted
+    assert not audit.coefficient_form_uniformity_quantified
+    assert not audit.mobius_type_i_ii_adapter_proved
+    assert audit.ramanujan_conjecture_removes_power_deficit
+    assert not audit.ramanujan_conjecture_supplies_logarithmic_saving
+    assert not audit.mobius_main_term_cancellation_proved
+    assert not audit.ganguly_guria_route_closes_mobius_gate
+
+
+def test_darbar_das_variance_class_excludes_inverse_zeta_square() -> None:
+    coefficients = getattr(
+        coverage_audit,
+        "mobius_triple_convolution_prime_power_coefficients",
+        None,
+    )
+    assert coefficients is not None, "triple-Möbius local helper is missing"
+    assert coefficients() == (1, -3, 3, -1, 0)
+
+    adapter = getattr(
+        coverage_audit,
+        "darbar_das_short_variance_audit",
+        None,
+    )
+    assert adapter is not None, "Darbar--Das variance audit is missing"
+    audit = adapter()
+    assert audit.ambient_length_exponent == F(2)
+    assert audit.short_window_exponent == F(1)
+    assert audit.generic_short_variance_exponent == F(4)
+    assert audit.required_short_variance_exponent == F(3)
+    assert audit.required_variance_saving_exponent == F(1)
+    assert audit.full_mobius_convolution_zeta_power == -2
+    assert audit.required_auxiliary_zeta_power == -3
+    assert audit.required_auxiliary_prime_coefficient == -3
+    assert audit.required_auxiliary_prime_square_coefficient == 3
+    assert audit.required_auxiliary_prime_cube_coefficient == -1
+    assert not audit.auxiliary_fits_squarefree_m_class
+    assert not audit.auxiliary_fits_completely_multiplicative_g_class
+    assert not audit.restricted_convolution_is_multiplicative
+    assert not audit.published_theorem_covers_full_mobius_convolution
+    assert not audit.published_theorem_covers_restricted_convolution
+    assert not audit.darbar_das_route_closes_mobius_gate
+
+
+def test_ratio_mellin_coordinates_restore_multiplicativity_exactly() -> None:
+    coordinates = getattr(
+        coverage_audit,
+        "restricted_product_ratio_coordinates",
+        None,
+    )
+    assert coordinates is not None, "ratio-coordinate helper is missing"
+    exact = coordinates(a=15, b=28, scale=11)
+    assert exact["product_coordinate"] == F(420, 121)
+    assert exact["factor_ratio"] == F(15, 28)
+    assert exact["left_coordinate_squared"] == F(225, 121)
+    assert exact["right_coordinate_squared"] == F(784, 121)
+    assert exact["left_reconstruction_squared_exact"]
+    assert exact["right_reconstruction_squared_exact"]
+
+    adapter = getattr(
+        coverage_audit,
+        "restricted_mobius_ratio_mellin_audit",
+        None,
+    )
+    assert adapter is not None, "ratio-Mellin audit is missing"
+    audit = adapter()
+    assert audit.factor_length_exponent == F(1)
+    assert audit.product_length_exponent == F(2)
+    assert audit.short_window_exponent == F(1)
+    assert audit.required_short_variance_exponent == F(3)
+    assert audit.ratio_coordinate_identity_exact
+    assert audit.ratio_fourier_inversion_exact
+    assert audit.integrand_coefficient_is_multiplicative
+    assert audit.shifted_inverse_zeta_dirichlet_series_exact
+    assert audit.product_coordinate_weight_is_smooth
+    assert audit.ratio_transform_is_rapidly_decaying
+    assert audit.uniform_single_tau_variance_is_sufficient
+    assert audit.tau_zero_is_full_mobius_convolution
+    assert audit.optimistic_mangerel_variance_exponent == F(4)
+    assert audit.mangerel_power_deficit == F(1)
+    assert audit.mangerel_only_supplies_logarithmic_saving
+    assert not audit.uniform_tau_mangerel_hypotheses_verified
+    assert not audit.shifted_inverse_zeta_variance_proved
+    assert not audit.ratio_mellin_route_closes_mobius_gate
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

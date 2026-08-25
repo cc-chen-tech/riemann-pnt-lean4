@@ -10428,7 +10428,7 @@ fixed coprime \((x,y)\) both \(g\) and \(k\) have
 \[
  \sum_m\frac{|C_U(m)|^2}{m}
  \ll_U T^{-2}
- sum_{\substack{(x,y)=1\\x\asymp y}}
+ \sum_{\substack{(x,y)=1\\x\asymp y}}
  \left(1+\frac{T}{\max(x,y)}\right)^2
  \ll_U\log(2T).
 \]
@@ -10484,6 +10484,264 @@ The helper `balanced_product_diagonal_parameterization` verifies
 (4.711) is equivalent to the separated component (4.562), but the
 original signed DCV superposition does not require every such component;
 no converse is asserted.
+
+### 4.86 The smooth determinant-surface theorem does not accept the Möbius gate
+
+Ganguly--Guria, Theorem 1.1, proves the following precise fixed-shift
+statement.  If \(V\in C_c^\infty([1,2])\), \(r\ne0\), and
+
+\[
+ S_V(X,r):=
+ \sum_{ad-bc=r}V(a/X)V(b/X)V(c/X)V(d/X),
+\]
+
+then
+
+\[
+ \boxed{
+ S_V(X,r)=\mathcal M_V(X,r)
+     +O_\varepsilon\!\left(|r|^\theta X^{1+\varepsilon}\right),
+ \qquad \theta\le \frac7{64}.}
+\tag{4.712}
+\]
+
+The support forces \(|r|<3X^2\), and their explicit main term has size
+\(X^2\) in the range relevant here.  This is a theorem for the
+unweighted count with the same smooth function in all four variables.
+It does not state an estimate with four arithmetic coefficient
+sequences.  Remark 1.4 says that the method can also handle
+\(\alpha x_1x_2-\beta x_3x_4=r\), but it gives no dependence on
+\(\alpha,\beta\).  Consequently that remark is not a uniform theorem
+adapter for the divisor parameters produced by a Möbius Type I/II
+identity.
+
+At the critical collar in (4.711), put \(X=T\) and
+\(1\le |r|\le T\mathscr L^A\), where \(A\) is fixed.  The published
+pointwise error in (4.712) is then
+
+\[
+ |r|^{7/64}X^{1+\varepsilon}
+ \le T^{71/64+\varepsilon}\mathscr L^{7A/64}.
+\tag{4.713}
+\]
+
+Even under the strictly stronger, unproved assumption that (4.712)
+accepted the four Möbius weights in (4.711) with the same error,
+absolute summation over the \(T^{1+o(1)}\) shifts would give
+
+\[
+ \boxed{
+ T^{1+o(1)}T^{71/64+\varepsilon}
+   =T^{135/64+\varepsilon+o(1)},
+ \qquad
+ \frac{135}{64}-2=\frac7{64}.}
+\tag{4.714}
+\]
+
+Thus the fixed-shift theorem still misses the unnormalised target
+\(T^2\mathscr L^{1+o(1)}\) by the exact power \(T^{7/64}\).  Assuming
+Ramanujan would remove this positive power, but the resulting
+\(T^{2+\varepsilon}\) ledger supplies neither the required logarithmic
+little-oh nor cancellation of the \(T^2\)-sized main term for each
+shift.  With the theorem as actually stated, the complete implication
+ledger is
+
+\[
+ \boxed{
+ \text{smooth unweighted fixed shift}
+ \not\Longrightarrow
+ \text{four-Möbius shifted determinant},
+ \quad
+ \text{absolute residual deficit}=\frac7{64}.}
+\tag{4.715}
+\]
+
+The only place where the factor \(r^\theta\) enters their proof is the
+pointwise treatment of a Hecke coefficient at \(nr/l\).  Averaging the
+shift before applying the spectral estimate is therefore the natural
+next candidate for eliminating \(7/64\); it still requires a new
+mechanism that transports the four Möbius weights through the initial
+Poisson step.  The adapter `ganguly_guria_determinant_audit` records
+these exact exponents and keeps
+`ganguly_guria_route_closes_mobius_gate=False`.
+
+### 4.87 Published short-interval variance classes exclude the restricted inverse-zeta square
+
+There is a second exact interpretation of the exponent \(3\to2\) in
+(4.711).  The product variable has size \(X=T^2\), while the Fourier
+kernel restricts additive differences to the window
+\(H=X/T=T\).  For a fixed smooth compactly supported additive window
+\(\phi\), the diagonal-scale local variance required by a smoothed
+Gallagher reduction is
+
+\[
+ \boxed{
+ \int_X^{2X}
+ \left|\sum_m C_U(m)\phi\!\left(\frac{m-x}{H}\right)\right|^2dx
+ \ll XH(\log X)^{1+o(1)},
+ \qquad X=T^2,\ H=T.}
+\tag{4.716}
+\]
+
+The generic absolute ledger is \(XH^2=T^4\); (4.716) is
+\(XH=T^3\).  Thus this formulation requires the same one power of
+\(T\) as (4.711), now as square-root variance in intervals of length
+\(X^{1/2}\).
+
+Darbar--Das prove precise short-interval variance formulae for classes
+of the form
+
+\[
+ \mathcal F_{\alpha,\beta,k}
+   =\{\mathbf 1 *_k h:h\in\mathcal M_{\alpha,\beta}
+                          \cup\mathcal G_{\alpha,\beta}\}.
+\tag{4.717}
+\]
+
+This does not include the coefficient needed here.  Even before the
+dyadic factor restriction in \(C_U\), the full convolution
+\(f=\mu*\mu\) has Dirichlet series \(F(s)=\zeta(s)^{-2}\).  If it were
+written in the \(k=1\) form \(f=\mathbf1*h\), then necessarily
+
+\[
+ H(s)=\zeta(s)^{-3},
+ \qquad
+ \sum_{j\ge0}h(p^j)z^j=(1-z)^3
+   =1-3z+3z^2-z^3.
+\tag{4.718}
+\]
+
+The class \(\mathcal M_{\alpha,\beta}\) is squarefree-supported in its
+auxiliary variable, so it forces \(h(p^2)=0\), contrary to
+\(h(p^2)=3\).  The class \(\mathcal G_{\alpha,\beta}\) is completely
+multiplicative; \(h(p)=-3\) would force \(h(p^2)=9\), again contrary
+to (4.718).  Finally, the actual \(C_U\) in (4.708) retains the two
+separate restrictions \(a,b\asymp T\) and is not a multiplicative
+arithmetic function.
+
+Therefore neither the full inverse-zeta square nor its required
+restricted divisor component is an input to the published theorem:
+
+\[
+ \boxed{
+ \text{Darbar--Das variance class}
+ \not\ni \mu*\mu,
+ \qquad
+ \text{and a fortiori it does not contain }C_U.}
+\tag{4.719}
+\]
+
+The helper `mobius_triple_convolution_prime_power_coefficients`
+checks the local polynomial in (4.718) coefficient by coefficient.
+The adapter `darbar_das_short_variance_audit` records the exact
+\(4\to3\) variance ledger and keeps
+`darbar_das_route_closes_mobius_gate=False`.
+
+### 4.88 Ratio Mellin inversion restores a multiplicative inverse-zeta family
+
+The failure of multiplicativity of \(C_U\) is removable.  For
+\(q>0\) and \(y\in\mathbb R\), define
+
+\[
+ F_q(y):=U(\sqrt q\,e^y)U(\sqrt q\,e^{-y}),
+ \qquad
+ \widehat F_q(\tau):=\int_{\mathbb R}F_q(y)e^{-i\tau y}\,dy.
+\tag{4.720}
+\]
+
+If \(m=ab\), \(q=m/T^2\), and
+\(y=\frac12\log(a/b)\), then the two arguments in (4.720) are exactly
+\(a/T\) and \(b/T\).  Fourier inversion in the ratio coordinate gives
+
+\[
+\boxed{
+ C_U(m)=\frac1{2\pi}\int_{\mathbb R}
+ \widehat F_{m/T^2}(\tau)f_\tau(m)\,d\tau,}
+\qquad
+ f_\tau(m):=
+ \sum_{ab=m}\mu(a)\mu(b)(a/b)^{i\tau/2}.
+\tag{4.721}
+\]
+
+This is an exact finite divisor identity followed by ordinary Fourier
+inversion; no truncation occurs in (4.721).  For fixed \(\tau\), the
+coefficient \(f_\tau\) is multiplicative and
+
+\[
+\boxed{
+ \sum_{m\ge1}\frac{f_\tau(m)}{m^s}
+ =\frac1{\zeta(s-i\tau/2)\zeta(s+i\tau/2)},
+ \qquad \Re s>1.}
+\tag{4.722}
+\]
+
+Because \(U\) is smooth and compactly supported, \(q\) is restricted
+to a fixed compact subset of \((0,\infty)\), every \(q\)-derivative of
+\(\widehat F_q(\tau)\) decays faster than any fixed power of
+\(1+|\tau|\), uniformly in \(q\).  Cauchy in \(\tau\) therefore shows
+that a uniform one-parameter local variance estimate is sufficient:
+
+\[
+\boxed{
+ \sup_{|\tau|\le(\log X)^A}
+ \int_X^{2X}
+ \left|\sum_m f_\tau(m)V_\tau(m/X)
+ \phi\!\left(\frac{m-x}{H}\right)\right|^2dx
+ \ll_{A,V,\phi}XH(\log X)^{1+o(1)},
+ \quad H=X^{1/2}.}
+\tag{4.723}
+\]
+
+Here \(V_\tau\) ranges over the bounded Schwartz-seminorm family
+generated by \(q\mapsto\widehat F_q(\tau)\); frequencies outside the
+displayed polylogarithmic range contribute an arbitrarily large
+negative logarithmic power.  Estimate (4.723), with the exact
+seminorm bookkeeping needed by (4.716), implies the separated
+fourth-moment gate (4.711).
+
+At \(\tau=0\), however, \(f_0=\mu*\mu\).  Thus this reduction removes
+the dyadic divisor restriction but retains the genuine inverse-zeta
+variance problem:
+
+\[
+ \boxed{
+ \text{restricted four-Möbius gate}
+ \Longleftarrow
+ \text{uniform square-root variance for }
+ \frac1{\zeta(s-i\tau/2)\zeta(s+i\tau/2)},
+ \quad\text{currently unproved}.}
+\tag{4.724}
+\]
+
+This is exactly the \(\gamma=0\) endpoint of the variance gate (4.540).
+Mangerel's Theorem 1.7, even if its hypotheses and constants are granted
+uniformly for all \(|\tau|\le(\log X)^A\), controls the normalized
+variance only by a quantity of logarithmic size.  This comparison also
+optimistically sets the theorem's long-interval main term to zero;
+retaining it adds an obligation.  Undoing its
+normalization gives the power ledger
+
+\[
+ \boxed{
+ XH^2=T^4
+ \quad\hbox{versus}\quad
+ XH=T^3,
+ \qquad\text{remaining deficit }H=T.}
+\tag{4.725}
+\]
+
+Thus ratio Mellin inversion identifies a clean multiplicative family,
+but the published typical-short-interval theorem still saves only
+logarithms from the raw scale and not the required square-root factor.
+Uniform verification of its non-pretentiousness parameters in the full
+polylogarithmic \(\tau\)-range is unnecessary for this rejection and is
+not asserted.
+
+The exact-rational helper `restricted_product_ratio_coordinates`
+checks both factor reconstructions without numerical square roots.
+The adapter `restricted_mobius_ratio_mellin_audit` records the
+\(X=T^2,H=T\) ledger and keeps
+`shifted_inverse_zeta_variance_proved=False`.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

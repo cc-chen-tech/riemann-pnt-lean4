@@ -1389,6 +1389,70 @@ class MobiusProductShiftedVarianceAudit:
 
 
 @dataclass(frozen=True)
+class GangulyGuriaDeterminantAudit:
+    variable_length_exponent: Fraction
+    shift_range_exponent: Fraction
+    ramanujan_exponent: Fraction
+    fixed_shift_error_exponent: Fraction
+    absolute_shift_sum_error_exponent: Fraction
+    shifted_determinant_target_exponent: Fraction
+    absolute_shift_sum_power_deficit: Fraction
+    fixed_shift_main_exponent: Fraction
+    absolute_shift_sum_main_exponent: Fraction
+    smooth_unweighted_fixed_shift_theorem_proved: bool
+    distinct_tensor_weights_accepted_as_stated: bool
+    arithmetic_coefficients_accepted: bool
+    coefficient_form_uniformity_quantified: bool
+    mobius_type_i_ii_adapter_proved: bool
+    ramanujan_conjecture_removes_power_deficit: bool
+    ramanujan_conjecture_supplies_logarithmic_saving: bool
+    mobius_main_term_cancellation_proved: bool
+    ganguly_guria_route_closes_mobius_gate: bool
+
+
+@dataclass(frozen=True)
+class DarbarDasShortVarianceAudit:
+    ambient_length_exponent: Fraction
+    short_window_exponent: Fraction
+    generic_short_variance_exponent: Fraction
+    required_short_variance_exponent: Fraction
+    required_variance_saving_exponent: Fraction
+    full_mobius_convolution_zeta_power: int
+    required_auxiliary_zeta_power: int
+    required_auxiliary_prime_coefficient: int
+    required_auxiliary_prime_square_coefficient: int
+    required_auxiliary_prime_cube_coefficient: int
+    auxiliary_fits_squarefree_m_class: bool
+    auxiliary_fits_completely_multiplicative_g_class: bool
+    restricted_convolution_is_multiplicative: bool
+    published_theorem_covers_full_mobius_convolution: bool
+    published_theorem_covers_restricted_convolution: bool
+    darbar_das_route_closes_mobius_gate: bool
+
+
+@dataclass(frozen=True)
+class RestrictedMobiusRatioMellinAudit:
+    factor_length_exponent: Fraction
+    product_length_exponent: Fraction
+    short_window_exponent: Fraction
+    required_short_variance_exponent: Fraction
+    ratio_coordinate_identity_exact: bool
+    ratio_fourier_inversion_exact: bool
+    integrand_coefficient_is_multiplicative: bool
+    shifted_inverse_zeta_dirichlet_series_exact: bool
+    product_coordinate_weight_is_smooth: bool
+    ratio_transform_is_rapidly_decaying: bool
+    uniform_single_tau_variance_is_sufficient: bool
+    tau_zero_is_full_mobius_convolution: bool
+    optimistic_mangerel_variance_exponent: Fraction
+    mangerel_power_deficit: Fraction
+    mangerel_only_supplies_logarithmic_saving: bool
+    uniform_tau_mangerel_hypotheses_verified: bool
+    shifted_inverse_zeta_variance_proved: bool
+    ratio_mellin_route_closes_mobius_gate: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7110,6 +7174,163 @@ def mobius_product_shifted_variance_audit(
     )
 
 
+def ganguly_guria_determinant_audit() -> GangulyGuriaDeterminantAudit:
+    """Test the 2026 smooth determinant theorem at the critical collar.
+
+    Ganguly--Guria Theorem 1.1 proves, for an unweighted smooth count on
+    ``ad-bc=r`` with four variables of size ``X``, the pointwise error
+    ``O_eps(|r|^theta X^(1+eps))``.  At ``X=T`` and ``|r|<=T^(1+o(1))``
+    the current ``theta=7/64`` leaves exactly ``T^(7/64)`` after an
+    absolute sum over the shifts.  Its published statement accepts no
+    arithmetic coefficients and gives no uniform coefficient dependence
+    for the extension mentioned in Remark 1.4.
+    """
+    variable = F(1)
+    shift = F(1)
+    theta = F(7, 64)
+    fixed_error = variable + shift * theta
+    aggregate_error = shift + fixed_error
+    target = F(2)
+    fixed_main = F(2) * variable
+    aggregate_main = shift + fixed_main
+    return GangulyGuriaDeterminantAudit(
+        variable_length_exponent=variable,
+        shift_range_exponent=shift,
+        ramanujan_exponent=theta,
+        fixed_shift_error_exponent=fixed_error,
+        absolute_shift_sum_error_exponent=aggregate_error,
+        shifted_determinant_target_exponent=target,
+        absolute_shift_sum_power_deficit=aggregate_error - target,
+        fixed_shift_main_exponent=fixed_main,
+        absolute_shift_sum_main_exponent=aggregate_main,
+        smooth_unweighted_fixed_shift_theorem_proved=True,
+        distinct_tensor_weights_accepted_as_stated=False,
+        arithmetic_coefficients_accepted=False,
+        coefficient_form_uniformity_quantified=False,
+        mobius_type_i_ii_adapter_proved=False,
+        ramanujan_conjecture_removes_power_deficit=True,
+        ramanujan_conjecture_supplies_logarithmic_saving=False,
+        mobius_main_term_cancellation_proved=False,
+        ganguly_guria_route_closes_mobius_gate=False,
+    )
+
+
+def mobius_triple_convolution_prime_power_coefficients(
+) -> tuple[int, int, int, int, int]:
+    """Return coefficients of ``(1-X)^3`` through ``X^4``.
+
+    If ``f=1*h`` were the full convolution ``mu*mu``, then the local
+    Dirichlet series of ``h`` would have to be ``(1-X)^3``.  The last
+    zero makes the finite support explicit.
+    """
+    return (1, -3, 3, -1, 0)
+
+
+def darbar_das_short_variance_audit() -> DarbarDasShortVarianceAudit:
+    """Check the published variance class against ``mu*mu`` and ``C_U``.
+
+    The critical product variable has size ``X=T^2`` and its natural
+    short window has length ``H=T``.  Square-root variance is ``XH``
+    (T-exponent 3), while the absolute/generic ledger is ``XH^2``
+    (T-exponent 4).  Darbar--Das treat functions ``f=1 *_k h`` with
+    ``h`` in two specified local classes.  For ``k=1`` and
+    ``f=mu*mu``, one needs ``h=mu*mu*mu``: its local coefficients
+    ``1,-3,3,-1`` are neither squarefree-supported nor completely
+    multiplicative.  The dyadically restricted ``C_U`` is not a
+    multiplicative function at all.
+    """
+    ambient = F(2)
+    window = F(1)
+    generic = ambient + F(2) * window
+    target = ambient + window
+    local = mobius_triple_convolution_prime_power_coefficients()
+    return DarbarDasShortVarianceAudit(
+        ambient_length_exponent=ambient,
+        short_window_exponent=window,
+        generic_short_variance_exponent=generic,
+        required_short_variance_exponent=target,
+        required_variance_saving_exponent=generic - target,
+        full_mobius_convolution_zeta_power=-2,
+        required_auxiliary_zeta_power=-3,
+        required_auxiliary_prime_coefficient=local[1],
+        required_auxiliary_prime_square_coefficient=local[2],
+        required_auxiliary_prime_cube_coefficient=local[3],
+        auxiliary_fits_squarefree_m_class=False,
+        auxiliary_fits_completely_multiplicative_g_class=False,
+        restricted_convolution_is_multiplicative=False,
+        published_theorem_covers_full_mobius_convolution=False,
+        published_theorem_covers_restricted_convolution=False,
+        darbar_das_route_closes_mobius_gate=False,
+    )
+
+
+def restricted_product_ratio_coordinates(
+    *,
+    a: int,
+    b: int,
+    scale: int,
+) -> dict[str, Fraction | bool]:
+    """Verify the algebraic coordinates used in ratio Mellin inversion.
+
+    With ``q=ab/scale^2`` and ``rho=a/b``, the formal coordinates
+    ``sqrt(q)*sqrt(rho)`` and ``sqrt(q)/sqrt(rho)`` reconstruct
+    ``a/scale`` and ``b/scale``.  Squaring avoids any floating-point
+    square roots and checks the identities over exact rationals.
+    """
+    if min(a, b, scale) <= 0:
+        raise ValueError("factors and scale must be positive")
+    product_coordinate = F(a * b, scale * scale)
+    factor_ratio = F(a, b)
+    left_squared = product_coordinate * factor_ratio
+    right_squared = product_coordinate / factor_ratio
+    expected_left = F(a * a, scale * scale)
+    expected_right = F(b * b, scale * scale)
+    return {
+        "product_coordinate": product_coordinate,
+        "factor_ratio": factor_ratio,
+        "left_coordinate_squared": left_squared,
+        "right_coordinate_squared": right_squared,
+        "left_reconstruction_squared_exact": left_squared == expected_left,
+        "right_reconstruction_squared_exact": right_squared == expected_right,
+    }
+
+
+def restricted_mobius_ratio_mellin_audit(
+) -> RestrictedMobiusRatioMellinAudit:
+    """Remove the dyadic divisor restriction by ratio Fourier inversion.
+
+    For each ratio frequency ``tau``, the coefficient is the convolution
+    of ``mu(n)n^(i tau/2)`` and ``mu(n)n^(-i tau/2)``.  It is
+    multiplicative with Dirichlet series
+    ``1/(zeta(s-i tau/2) zeta(s+i tau/2))``.  Rapid decay of the smooth
+    ratio transform makes a uniform single-``tau`` variance estimate
+    sufficient after Cauchy in the transform variable.
+    """
+    factor = F(1)
+    product = F(2)
+    window = F(1)
+    return RestrictedMobiusRatioMellinAudit(
+        factor_length_exponent=factor,
+        product_length_exponent=product,
+        short_window_exponent=window,
+        required_short_variance_exponent=product + window,
+        ratio_coordinate_identity_exact=True,
+        ratio_fourier_inversion_exact=True,
+        integrand_coefficient_is_multiplicative=True,
+        shifted_inverse_zeta_dirichlet_series_exact=True,
+        product_coordinate_weight_is_smooth=True,
+        ratio_transform_is_rapidly_decaying=True,
+        uniform_single_tau_variance_is_sufficient=True,
+        tau_zero_is_full_mobius_convolution=True,
+        optimistic_mangerel_variance_exponent=product + F(2) * window,
+        mangerel_power_deficit=window,
+        mangerel_only_supplies_logarithmic_saving=True,
+        uniform_tau_mangerel_hypotheses_verified=False,
+        shifted_inverse_zeta_variance_proved=False,
+        ratio_mellin_route_closes_mobius_gate=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -11543,6 +11764,97 @@ def main() -> None:
         "original_requires="
         f"{mobius_product_shift.original_signed_kernel_requires_component_gate},"
         f"closes={mobius_product_shift.route_closes_mwkf_gate}"
+    )
+    gg_determinant = ganguly_guria_determinant_audit()
+    print(
+        "large_q_transition: ganguly_guria_determinant="
+        f"X={_fmt(gg_determinant.variable_length_exponent)},"
+        f"shift={_fmt(gg_determinant.shift_range_exponent)},"
+        f"theta={_fmt(gg_determinant.ramanujan_exponent)},"
+        f"fixed_error={_fmt(gg_determinant.fixed_shift_error_exponent)},"
+        "absolute_shift_sum="
+        f"{_fmt(gg_determinant.absolute_shift_sum_error_exponent)},"
+        f"target={_fmt(gg_determinant.shifted_determinant_target_exponent)},"
+        "deficit="
+        f"{_fmt(gg_determinant.absolute_shift_sum_power_deficit)},"
+        f"fixed_main={_fmt(gg_determinant.fixed_shift_main_exponent)},"
+        f"absolute_main={_fmt(gg_determinant.absolute_shift_sum_main_exponent)},"
+        "smooth="
+        f"{gg_determinant.smooth_unweighted_fixed_shift_theorem_proved},"
+        "distinct="
+        f"{gg_determinant.distinct_tensor_weights_accepted_as_stated},"
+        "arithmetic="
+        f"{gg_determinant.arithmetic_coefficients_accepted},"
+        "coefficient_uniform="
+        f"{gg_determinant.coefficient_form_uniformity_quantified},"
+        f"type_i_ii={gg_determinant.mobius_type_i_ii_adapter_proved},"
+        "ramanujan_power="
+        f"{gg_determinant.ramanujan_conjecture_removes_power_deficit},"
+        "ramanujan_log="
+        f"{gg_determinant.ramanujan_conjecture_supplies_logarithmic_saving},"
+        "main_cancel="
+        f"{gg_determinant.mobius_main_term_cancellation_proved},"
+        f"closes={gg_determinant.ganguly_guria_route_closes_mobius_gate}"
+    )
+    dd_variance = darbar_das_short_variance_audit()
+    print(
+        "large_q_transition: darbar_das_short_variance="
+        f"ambient={_fmt(dd_variance.ambient_length_exponent)},"
+        f"window={_fmt(dd_variance.short_window_exponent)},"
+        "generic_variance="
+        f"{_fmt(dd_variance.generic_short_variance_exponent)},"
+        "target_variance="
+        f"{_fmt(dd_variance.required_short_variance_exponent)},"
+        f"required={_fmt(dd_variance.required_variance_saving_exponent)},"
+        "full_series_zeta_power="
+        f"{dd_variance.full_mobius_convolution_zeta_power},"
+        "auxiliary_zeta_power="
+        f"{dd_variance.required_auxiliary_zeta_power},"
+        f"h_p={dd_variance.required_auxiliary_prime_coefficient},"
+        "h_p2="
+        f"{dd_variance.required_auxiliary_prime_square_coefficient},"
+        "h_p3="
+        f"{dd_variance.required_auxiliary_prime_cube_coefficient},"
+        f"m_class={dd_variance.auxiliary_fits_squarefree_m_class},"
+        f"g_class={dd_variance.auxiliary_fits_completely_multiplicative_g_class},"
+        "restricted_multiplicative="
+        f"{dd_variance.restricted_convolution_is_multiplicative},"
+        "full_convolution="
+        f"{dd_variance.published_theorem_covers_full_mobius_convolution},"
+        "restricted_convolution="
+        f"{dd_variance.published_theorem_covers_restricted_convolution},"
+        f"closes={dd_variance.darbar_das_route_closes_mobius_gate}"
+    )
+    ratio_mellin = restricted_mobius_ratio_mellin_audit()
+    print(
+        "large_q_transition: restricted_mobius_ratio_mellin="
+        f"factor={_fmt(ratio_mellin.factor_length_exponent)},"
+        f"product={_fmt(ratio_mellin.product_length_exponent)},"
+        f"window={_fmt(ratio_mellin.short_window_exponent)},"
+        "variance_target="
+        f"{_fmt(ratio_mellin.required_short_variance_exponent)},"
+        "ratio_coordinates="
+        f"{ratio_mellin.ratio_coordinate_identity_exact},"
+        f"inversion={ratio_mellin.ratio_fourier_inversion_exact},"
+        "multiplicative="
+        f"{ratio_mellin.integrand_coefficient_is_multiplicative},"
+        "dirichlet_series="
+        f"{ratio_mellin.shifted_inverse_zeta_dirichlet_series_exact},"
+        f"outer_smooth={ratio_mellin.product_coordinate_weight_is_smooth},"
+        f"tau_decay={ratio_mellin.ratio_transform_is_rapidly_decaying},"
+        "tau_uniform_sufficient="
+        f"{ratio_mellin.uniform_single_tau_variance_is_sufficient},"
+        f"tau_zero_full={ratio_mellin.tau_zero_is_full_mobius_convolution},"
+        "mangerel="
+        f"{_fmt(ratio_mellin.optimistic_mangerel_variance_exponent)},"
+        "mangerel_deficit="
+        f"{_fmt(ratio_mellin.mangerel_power_deficit)},"
+        "mangerel_log="
+        f"{ratio_mellin.mangerel_only_supplies_logarithmic_saving},"
+        "tau_hypotheses="
+        f"{ratio_mellin.uniform_tau_mangerel_hypotheses_verified},"
+        f"published={ratio_mellin.shifted_inverse_zeta_variance_proved},"
+        f"closes={ratio_mellin.ratio_mellin_route_closes_mobius_gate}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
