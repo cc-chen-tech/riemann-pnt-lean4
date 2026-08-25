@@ -1635,6 +1635,29 @@ class NewformLevelMobiusProjectorAudit:
 
 
 @dataclass(frozen=True)
+class RoblesFourMobiusMinorArcAudit:
+    variable_length_exponent: Fraction
+    raw_determinant_exponent: Fraction
+    target_exponent: Fraction
+    mobius_variables: int
+    balanced_denominator_lower_exponent: Fraction
+    balanced_denominator_upper_exponent: Fraction
+    one_variable_bound_exponent: Fraction
+    one_variable_power_saving: Fraction
+    optimistic_independent_total_saving: Fraction
+    required_determinant_saving: Fraction
+    optimistic_post_bound_exponent: Fraction
+    optimistic_residual_deficit: Fraction
+    q_equals_one_bound_exponent: Fraction
+    centered_kernel_kills_exact_zero_mode: bool
+    centered_kernel_kills_major_arc_neighborhoods: bool
+    four_applications_are_jointly_legal: bool
+    major_arc_power_saving_available: bool
+    physical_coupled_kernel_restored: bool
+    robles_route_closes_gate: bool
+
+
+@dataclass(frozen=True)
 class InverseZetaVarianceZeroFreeAudit:
     ambient_length_exponent: Fraction
     short_window_exponent: Fraction
@@ -8477,6 +8500,69 @@ def newform_level_mobius_projector_audit(
     )
 
 
+def robles_four_mobius_minor_arc_audit(
+    *,
+    variable_length_exponent: Fraction,
+    raw_determinant_exponent: Fraction,
+    target_exponent: Fraction,
+    mobius_variables: int,
+) -> RoblesFourMobiusMinorArcAudit:
+    """Audit the new Vinogradov-quality Mobius additive-twist bound.
+
+    Robles Theorem 2 gives, for ``|alpha-r/q|<=q^-2``,
+
+    ``sum_(n<=x) mu(n)e(n alpha)``
+    `` << (x*q^-1/2 + x^(4/5) + (x*q)^(1/2)) log(x)^C``.
+
+    If ``x=T^chi`` and ``q=T^kappa``, all three terms are at most
+    ``T^(4*chi/5)`` exactly when
+    ``2*chi/5 <= kappa <= 3*chi/5``.  Thus one independently exposed
+    Mobius variable saves at most ``chi/5`` from this pointwise theorem.
+    Granting four independent legal applications on the hard
+    determinant shell saves only ``4/5`` from its raw exponent 3,
+    leaving exponent ``11/5`` against target 2.  This is deliberately
+    optimistic: the bilinear phases do not factor into four independent
+    sums, and the centered kernel removes the exact zero mode but not
+    the major-arc neighborhoods where q is small.
+    """
+    variable = F(variable_length_exponent)
+    raw = F(raw_determinant_exponent)
+    target = F(target_exponent)
+    if variable <= 0 or raw < 0 or target < 0:
+        raise ValueError("scale exponents must be nonnegative and variable positive")
+    if not isinstance(mobius_variables, int) or mobius_variables <= 0:
+        raise ValueError("mobius_variables must be a positive integer")
+
+    lower = F(2, 5) * variable
+    upper = F(3, 5) * variable
+    one_bound = F(4, 5) * variable
+    one_saving = variable - one_bound
+    optimistic_saving = F(mobius_variables) * one_saving
+    required = _positive_part(raw - target)
+    post_bound = raw - optimistic_saving
+    return RoblesFourMobiusMinorArcAudit(
+        variable_length_exponent=variable,
+        raw_determinant_exponent=raw,
+        target_exponent=target,
+        mobius_variables=mobius_variables,
+        balanced_denominator_lower_exponent=lower,
+        balanced_denominator_upper_exponent=upper,
+        one_variable_bound_exponent=one_bound,
+        one_variable_power_saving=one_saving,
+        optimistic_independent_total_saving=optimistic_saving,
+        required_determinant_saving=required,
+        optimistic_post_bound_exponent=post_bound,
+        optimistic_residual_deficit=_positive_part(post_bound - target),
+        q_equals_one_bound_exponent=variable,
+        centered_kernel_kills_exact_zero_mode=True,
+        centered_kernel_kills_major_arc_neighborhoods=False,
+        four_applications_are_jointly_legal=False,
+        major_arc_power_saving_available=False,
+        physical_coupled_kernel_restored=False,
+        robles_route_closes_gate=False,
+    )
+
+
 def inverse_zeta_variance_zero_free_audit(
 ) -> InverseZetaVarianceZeroFreeAudit:
     """Record the zero-free consequence of the strong sufficient gate.
@@ -14591,6 +14677,39 @@ def main() -> None:
         f"{newform_level.exceptional_oldforms_annihilated_algebraically},"
         f"qct={newform_level.qct_newform_spectral_adapter_derived},"
         f"covered={newform_level.whole_mobius_gate_covered}"
+    )
+    robles_minor = robles_four_mobius_minor_arc_audit(
+        variable_length_exponent=F(1),
+        raw_determinant_exponent=F(3),
+        target_exponent=F(2),
+        mobius_variables=4,
+    )
+    print(
+        "large_q_transition: robles_four_mobius_minor_arc="
+        f"variable={_fmt(robles_minor.variable_length_exponent)},"
+        f"raw={_fmt(robles_minor.raw_determinant_exponent)},"
+        f"target={_fmt(robles_minor.target_exponent)},"
+        f"mobius={robles_minor.mobius_variables},"
+        "q_lower="
+        f"{_fmt(robles_minor.balanced_denominator_lower_exponent)},"
+        "q_upper="
+        f"{_fmt(robles_minor.balanced_denominator_upper_exponent)},"
+        f"one_bound={_fmt(robles_minor.one_variable_bound_exponent)},"
+        f"one_saving={_fmt(robles_minor.one_variable_power_saving)},"
+        "total_saving="
+        f"{_fmt(robles_minor.optimistic_independent_total_saving)},"
+        "required="
+        f"{_fmt(robles_minor.required_determinant_saving)},"
+        f"post={_fmt(robles_minor.optimistic_post_bound_exponent)},"
+        f"deficit={_fmt(robles_minor.optimistic_residual_deficit)},"
+        f"q1={_fmt(robles_minor.q_equals_one_bound_exponent)},"
+        f"zero={robles_minor.centered_kernel_kills_exact_zero_mode},"
+        "major_neighborhoods="
+        f"{robles_minor.centered_kernel_kills_major_arc_neighborhoods},"
+        f"joint={robles_minor.four_applications_are_jointly_legal},"
+        f"major_power={robles_minor.major_arc_power_saving_available},"
+        f"physical={robles_minor.physical_coupled_kernel_restored},"
+        f"covered={robles_minor.robles_route_closes_gate}"
     )
     zero_free = inverse_zeta_variance_zero_free_audit()
     print(

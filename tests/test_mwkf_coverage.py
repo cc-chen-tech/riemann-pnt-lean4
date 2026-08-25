@@ -2734,6 +2734,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "oldforms_killed=False,qct=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: robles_four_mobius_minor_arc="
+        "variable=1,raw=3,target=2,mobius=4,q_lower=2/5,q_upper=3/5,"
+        "one_bound=4/5,one_saving=1/5,total_saving=4/5,required=1,"
+        "post=11/5,deficit=1/5,q1=1,zero=True,"
+        "major_neighborhoods=False,joint=False,major_power=False,"
+        "physical=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: inverse_zeta_zero_free_implication="
         "ambient=1,window=1/2,variance=3/2,block=3/4,"
         "abscissa=3/4,x_integral=True,cauchy=True,dyadic=True,"
@@ -3934,6 +3942,37 @@ def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
     assert not prime.exceptional_oldforms_annihilated_algebraically
     assert not prime.qct_newform_spectral_adapter_derived
     assert not prime.whole_mobius_gate_covered
+
+
+def test_robles_additive_twist_bound_misses_four_mobius_gate_by_one_fifth() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "robles_four_mobius_minor_arc_audit",
+        None,
+    )
+    assert adapter is not None, "Robles minor-arc audit is missing"
+
+    hard = adapter(
+        variable_length_exponent=F(1),
+        raw_determinant_exponent=F(3),
+        target_exponent=F(2),
+        mobius_variables=4,
+    )
+    assert hard.balanced_denominator_lower_exponent == F(2, 5)
+    assert hard.balanced_denominator_upper_exponent == F(3, 5)
+    assert hard.one_variable_bound_exponent == F(4, 5)
+    assert hard.one_variable_power_saving == F(1, 5)
+    assert hard.optimistic_independent_total_saving == F(4, 5)
+    assert hard.required_determinant_saving == F(1)
+    assert hard.optimistic_post_bound_exponent == F(11, 5)
+    assert hard.optimistic_residual_deficit == F(1, 5)
+    assert hard.q_equals_one_bound_exponent == F(1)
+    assert hard.centered_kernel_kills_exact_zero_mode
+    assert not hard.centered_kernel_kills_major_arc_neighborhoods
+    assert not hard.four_applications_are_jointly_legal
+    assert not hard.major_arc_power_saving_available
+    assert not hard.physical_coupled_kernel_restored
+    assert not hard.robles_route_closes_gate
 
 
 def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:

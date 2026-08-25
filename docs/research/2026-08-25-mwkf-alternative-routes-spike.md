@@ -13218,6 +13218,100 @@ weighted newform estimate rather than a free projection.  The adapter
 keeps the oldform-annihilation and QCT newform-adapter flags false.
 
 
+### 4.111 The new (4/5) Möbius additive-twist bound leaves only a (T^{1/5}) model deficit
+
+A genuinely new input became available after the earlier route audit.
+[Robles, Theorem 2](https://arxiv.org/abs/2608.07198) proves that there
+is an absolute (C_0>0) such that, for every (x\geq3), every real
+\(\alpha\), and every reduced (r/q) with
+\(|\alpha-r/q|\leq q^{-2}),
+
+\[
+ \boxed{
+ \sum_{n\leq x}\mu(n)e(n\alpha)
+ \ll
+ \left(\frac{x}{\sqrt q}+x^{4/5}+\sqrt{xq}\right)
+ (\log x)^{C_0}.}
+\tag{4.850}
+\]
+
+Unlike Davenport's uniform logarithmic estimate, (4.850) gives a fixed
+power saving on the balanced minor arcs.  Put (x=T^\chi) and
+(q=T^\kappa).  The three power exponents in (4.850) are
+
+\[
+ \chi-\frac\kappa2,qquad
+ \frac{4\chi}{5},qquad
+ \frac\chi2+\frac\kappa2.
+\tag{4.851}
+\]
+
+All three are at most (4\chi/5) if and only if
+
+\[
+ \boxed{
+ \frac{2\chi}{5}\leq\kappa\leq\frac{3\chi}{5}.}
+\tag{4.852}
+\]
+
+Thus one independently exposed length-(T^\chi) Möbius variable gains
+at most (T^{\chi/5}) from the published pointwise theorem.
+
+Apply this ledger to the product-compatible hard shell (4.821), where
+the four Möbius variables have \(\chi=1\), the raw determinant exponent
+is (3), and the target exponent is (2).  Give (4.850) an
+over-optimistic advantage: pretend that the bilinear phases split and
+that the theorem can be applied independently to all four variables.
+Even this grants only
+
+\[
+ \boxed{
+ S_{\mathrm{Robles,opt}}=4\left(1-\frac45\right)=\frac45.}
+\tag{4.853}
+\]
+
+Consequently
+
+\[
+ \boxed{
+ E_{\mathrm{Robles,opt}}=3-\frac45=\frac{11}{5},
+ \qquad
+ E_{\mathrm{Robles,opt}}-2=\frac15.}
+\tag{4.854}
+\]
+
+The word “optimistic” is mathematically essential.  In the centered
+Fourier form the phase is (e(\alpha(ab-cd))); the four sums do not
+factor into four independent one-variable transforms.  A legal
+sequential use of (4.850) must retain the other three coefficients and
+therefore cannot simply multiply four pointwise savings.
+
+There is a second obstruction.  Taking (q=1) in (4.850) gives
+
+\[
+ \boxed{
+ \sum_{n\leq x}\mu(n)e(n\alpha)
+ \ll x(\log x)^{C_0},}
+\tag{4.855}
+\]
+
+with no power saving.  The exact identity (4.769) annihilates the
+constant Fourier mode, but it does not annihilate neighborhoods of the
+small-denominator major arcs.  Those neighborhoods occur inside the
+Schwartz support of \(\widehat w(A\alpha)\) and require their own
+signed major-arc analysis.
+
+Therefore the new theorem materially narrows the hard model deficit
+from one full power to, at best, (1/5) on balanced minor arcs, but it
+does not prove the determinant gate.  A viable hybrid must both make
+the four uses joint (or combine them with a determinant estimate) and
+extract an additional (T^{1/5}), while separately using the physical
+centering on all major arcs.  The adapter
+`robles_four_mobius_minor_arc_audit` records (4.851)--(4.854) and keeps
+the joint-application, major-arc, physical-kernel, and coverage flags
+false.
+
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
