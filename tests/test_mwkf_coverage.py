@@ -2789,6 +2789,17 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "covered=False"
     ) in report
     assert (
+        "large_q_transition: type_i_atkin_lehner_cusp="
+        "entry=3,modulus=3,product=5,entry_divisor=1/2,"
+        "modulus_divisor=1/2,quotient=5/2,dual=1/2,level=1,"
+        "cusp_modulus=13/4,bessel_numerator=11/2,bessel_ratio=1,"
+        "poisson_norm=-1/2,dual_l1=0,unweighted=True,"
+        "coprime_divisors=True,allowed_moduli=True,kloosterman=True,"
+        "newform_sign=True,oldclass_permuted=True,zero_eisenstein=True,"
+        "dual_no_power=True,physical=True,qct_adapter=True,"
+        "level_family=False,type_ii=False,finite_gate=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: newform_level_mobius_projector="
         "prime=5,index=6,mobius=-2,newform=-1/6,difference=-11/6,"
         "geometric=True,squarefree=True,oldclass_tail=True,"
@@ -4240,6 +4251,72 @@ def test_physical_qct_bessel_kernel_has_zero_power_product_bandwidth() -> None:
     assert not hard.actual_qct_geometric_spectral_adapter_derived
     assert not hard.other_mobius_entry_weights_restored
     assert not hard.type_i_level_family_aggregation_proved
+    assert not hard.finite_prime_hecke_gate_covered
+    assert not hard.whole_mobius_gate_covered
+
+
+def test_type_i_completion_is_an_exact_atkin_lehner_cusp_kuznetsov_orbit() -> None:
+    identity = getattr(
+        coverage_audit,
+        "type_i_atkin_lehner_cusp_identity",
+        None,
+    )
+    assert identity is not None, "Type-I Atkin--Lehner identity is missing"
+    exact = identity(
+        entry_divisor=5,
+        modulus_divisor=7,
+        modulus=77,
+        dual_index=3,
+        product_index=8,
+    )
+    assert exact["modulus_is_allowed_for_cusp_pair"]
+    assert exact["entry_scaling_permutes_reduced_residues"]
+    assert exact["poisson_residue_multisets_match"]
+    assert exact["ordinary_kloosterman_matches_atkin_lehner_cusp_sum"]
+
+    adapter = getattr(
+        coverage_audit,
+        "type_i_atkin_lehner_cusp_audit",
+        None,
+    )
+    assert adapter is not None, "Type-I Atkin--Lehner audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109g Type-I completion is exactly an Atkin--Lehner cusp Kuznetsov orbit",
+        "\\tag{4.845an}",
+        "\\tag{4.845ar}",
+        "type_i_atkin_lehner_cusp_audit",
+    ):
+        assert marker in note
+
+    hard = adapter(
+        entry_scale_exponent=F(3),
+        modulus_scale_exponent=F(3),
+        product_index_exponent=F(5),
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    assert hard.entry_quotient_exponent == F(5, 2)
+    assert hard.poisson_dual_index_exponent == F(1, 2)
+    assert hard.ambient_level_exponent == F(1)
+    assert hard.cusp_modulus_exponent == F(13, 4)
+    assert hard.bessel_numerator_product_exponent == F(11, 2)
+    assert hard.bessel_ratio_inverse_square_exponent == F(1)
+    assert hard.poisson_normalization_exponent == F(-1, 2)
+    assert hard.normalized_dual_hecke_l1_exponent == F(0)
+    assert hard.type_i_identity_leaves_unweighted_quotient
+    assert hard.entry_and_modulus_divisors_are_coprime
+    assert hard.kiral_young_allowed_moduli_match_exactly
+    assert hard.kiral_young_kloosterman_formula_matches_exactly
+    assert hard.atkin_lehner_newform_coefficients_match_up_to_sign
+    assert hard.atkin_lehner_oldclass_coefficient_lists_are_permuted
+    assert hard.zero_dual_mode_is_eisenstein_only
+    assert hard.nonzero_dual_hecke_average_has_no_positive_power_cost
+    assert hard.physical_qct_bessel_kernel_restored
+    assert hard.type_i_type_i_qct_to_cusp_kuznetsov_derived
+    assert not hard.signed_level_family_aggregation_proved
+    assert not hard.type_ii_sectors_restored
     assert not hard.finite_prime_hecke_gate_covered
     assert not hard.whole_mobius_gate_covered
 

@@ -13951,6 +13951,169 @@ Accordingly the finite-prime Hecke gate and the whole Möbius gate remain
 unproved.
 
 
+### 4.109g Type-I completion is exactly an Atkin--Lehner cusp Kuznetsov orbit
+
+The geometric adapter left false in Section 4.109f does exist for the
+Type-I/Type-I sector.  Apply the finite Möbius identity (4.833) to the
+two entry weights.  In one fixed factor box write
+
+\[
+ r=Ae,\qquad A=db,\qquad
+ s=B\ell,\qquad B=d'b',
+\tag{4.845an}
+\]
+
+where \(e,\ell\) are the unweighted quotients and the exact inequalities
+\(d\leq U,de>U,b\leq V\), together with their right-hand analogues, are
+retained in the smooth endpoint weights.  The determinant condition
+\((r,s)=1\) implies
+
+\[
+ (A,B)=1,\qquad (A,s)=1.
+\]
+
+The additional \(q\)-coprimality is a finite one-variable divisor layer
+and does not alter the identity below; on the balanced critical face
+\(q=1\).
+
+Put \(n=h\delta\), let \(E\) be the \(e\)-length, and use
+\(\widehat U(\xi)=\int U(x)e(-x\xi)\,dx\).  Poisson summation in the
+unweighted quotient is exact:
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{\substack{e\in\mathbb Z\\(e,s)=1}}
+ U(e/E)e\!\left(-\frac{n\overline{Ae}}s\right)\\
+ &\qquad=\frac Es\sum_{m\in\mathbb Z}
+ \widehat U(mE/s)\,
+ S(\overline A m,-n;s).
+ \end{aligned}}
+\tag{4.845ao}
+\]
+
+Indeed finite residue-class Poisson first gives
+\[
+ \sum_{x\bmod s}^{*}
+ e\!\left(\frac{mx-n\overline A\bar x}{s}\right).
+\]
+The permutation \(y=Ax\bmod s\) changes this residue sum into
+\[
+ \sum_{y\bmod s}^{*}
+ e\!\left(\frac{\overline A m\,y-n\bar y}{s}\right),
+\]
+which is the Kloosterman sum in (4.845ao).  No estimate and no
+completion of a Möbius-weighted variable occurs here: the quotient is
+unweighted because the full finite Type-I identity is retained.
+
+Now use [Kiral--Young, Proposition 2.6 and Lemma
+2.5](https://arxiv.org/abs/1710.00914).  In their notation take
+\[
+ N=BA,\qquad r=B,\qquad s_{\mathrm{KY}}=A.
+\]
+The allowed moduli for the cusp pair
+\((\infty,1/B)\) are exactly
+\[
+ B\mid s,\qquad(s,A)=1,
+\]
+and their explicit formula is
+
+\[
+ \boxed{
+ S_{\infty,1/B}^{(AB)}
+   (m,-n;s\sqrt A)
+ =S(\overline A m,-n;s).}
+\tag{4.845ap}
+\]
+
+Thus (4.845ao) is literally a Kuznetsov Kloosterman orbit between an
+Atkin--Lehner cusp and infinity at level \(AB\).  This is not the
+inadmissible superposition over the determinant Hecke index rejected in
+Section 4.16.
+
+The scale ledger also contains an exact cancellation.  At the balanced
+QCT box let
+\[
+ R=S=T^3,\qquad |h\delta|=T^5,\qquad
+ A=T^\alpha,\qquad B=T^\beta.
+\]
+Then
+
+\[
+ \boxed{
+ \begin{array}{c|c}
+ \text{quantity}&\log_T(\text{scale})\\ \hline
+ E=R/A&3-\alpha\\
+ m\text{ after Poisson}=S/E&\alpha\\
+ AB\text{ (spectral level)}&\alpha+\beta\\
+ s\sqrt A\text{ (cusp modulus)}&3+\alpha/2\\
+ |m h\delta|\text{ (Bessel numerator product)}&5+\alpha.
+ \end{array}}
+\tag{4.845aq}
+\]
+
+In particular the exceptional Bessel exponent remains
+\[
+ 2(3+\alpha/2)-(5+\alpha)=1.
+\]
+The cusp width adds exactly the same \(\alpha\) to the squared modulus
+as completion adds to the numerator product.  Hence the coupled
+conductor calculation (4.842)--(4.845) is unchanged.
+
+The new Fourier index also has no residual finite-prime power cost.
+The completion factor and Rankin--Selberg give, for every primitive
+newform component,
+
+\[
+ \boxed{
+ \frac ES\sum_{m\ne0}
+ |\lambda_f(|m|)\widehat U(mE/S)|
+ \ll (Q_fS)^{o(1)},\qquad
+ \frac ES\cdot\frac SE=1.}
+\tag{4.845ar}
+\]
+
+The \(m=0\) term has no cuspidal Fourier coefficient and belongs to the
+separate Eisenstein calculation.  For \(m\ne0\), (4.845ar) uses only
+\(\sum_{m\asymp M}|\lambda_f(m)|\ll M(Q_fM)^{o(1)}\); it never invokes
+the pointwise \(m^\vartheta\) bound.  Kiral--Young's Atkin--Lehner
+normalization identifies primitive newform Fourier coefficients at the
+two cusps up to the Atkin--Lehner sign.  Their oldclass lemma says that
+the complete lists of shifted-form Fourier coefficients at the two
+cusps are permuted up to signs.  Therefore Sections 4.109d--4.109f
+apply componentwise with the physical kernel and all oldclasses
+retained.
+
+What remains in this sector is now only the signed varying-level
+aggregation.  If \(\mathcal K_{A,B}\) denotes the exact cusp-Kuznetsov
+spectral component after (4.845ao)--(4.845ar), including every endpoint
+condition and the physical nuclear measure, the still-unproved critical
+inequality is
+
+\[
+ \left|
+ \sum_{\substack{d,b,d',b'\\A=db,\ B=d'b'\\(A,B)=1}}
+ \mu(d)\mu(b)\mu(d')\mu(b')\,
+ \mathcal K_{A,B}
+ \right|
+ \ll_{C,W}
+ T^{3/2+(\alpha+\beta)/2}(\log T)^{-C}.
+\tag{SLF\(_{\alpha,\beta}\)}
+\]
+
+At \(\alpha+\beta=1\), this is the \(T^2(\log T)^{-C}\) endpoint in
+(4.840).  Absolute level summation has exponent
+\(3/2+\alpha+\beta\), so SLF requires the exact half-level saving
+\((\alpha+\beta)/2\), plus arbitrary logarithmic decay at equality.
+
+The adapter type_i_atkin_lehner_cusp_audit records the quotient and
+dual scales, level \(AB\), cusp-width shift, invariant Bessel ratio,
+and normalized zero-power \(m\)-average.  It marks the
+Type-I/Type-I QCT-to-cusp-Kuznetsov identity proved.  It keeps
+SLF\(_{\alpha,\beta}\), every Type-II sector, the finite-prime gate, and
+the whole Möbius gate false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

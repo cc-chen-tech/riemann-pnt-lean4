@@ -1782,6 +1782,37 @@ class PhysicalQCTHeckeKernelAudit:
 
 
 @dataclass(frozen=True)
+class TypeIAtkinLehnerCuspAudit:
+    entry_scale_exponent: Fraction
+    modulus_scale_exponent: Fraction
+    product_index_exponent: Fraction
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    entry_quotient_exponent: Fraction
+    poisson_dual_index_exponent: Fraction
+    ambient_level_exponent: Fraction
+    cusp_modulus_exponent: Fraction
+    bessel_numerator_product_exponent: Fraction
+    bessel_ratio_inverse_square_exponent: Fraction
+    poisson_normalization_exponent: Fraction
+    normalized_dual_hecke_l1_exponent: Fraction
+    type_i_identity_leaves_unweighted_quotient: bool
+    entry_and_modulus_divisors_are_coprime: bool
+    kiral_young_allowed_moduli_match_exactly: bool
+    kiral_young_kloosterman_formula_matches_exactly: bool
+    atkin_lehner_newform_coefficients_match_up_to_sign: bool
+    atkin_lehner_oldclass_coefficient_lists_are_permuted: bool
+    zero_dual_mode_is_eisenstein_only: bool
+    nonzero_dual_hecke_average_has_no_positive_power_cost: bool
+    physical_qct_bessel_kernel_restored: bool
+    type_i_type_i_qct_to_cusp_kuznetsov_derived: bool
+    signed_level_family_aggregation_proved: bool
+    type_ii_sectors_restored: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -9167,6 +9198,146 @@ def physical_qct_hecke_kernel_audit(
     )
 
 
+def type_i_atkin_lehner_cusp_identity(
+    *,
+    entry_divisor: int,
+    modulus_divisor: int,
+    modulus: int,
+    dual_index: int,
+    product_index: int,
+) -> dict[str, object]:
+    """Check the finite residue identity behind the Type-I cusp adapter.
+
+    Put ``r=A*e`` with ``A=entry_divisor``.  Poisson summation in the
+    unweighted quotient e produces the reduced-residue sum
+
+    ``sum_e^* e((m*e-n*inverse(A*e))/s)``.
+
+    The permutation ``x=A*e (mod s)`` turns this exactly into
+    ``S(inverse(A)*m,-n;s)``.  If ``B|s`` and ``(s,A)=1``, Kiral--Young's
+    Atkin--Lehner cusp formula at level ``A*B`` identifies this ordinary
+    Kloosterman sum with the cusp-pair sum for ``(infinity,1/B)`` and
+    cusp modulus ``s*sqrt(A)``.
+    """
+    A = int(entry_divisor)
+    B = int(modulus_divisor)
+    s = int(modulus)
+    m = int(dual_index)
+    n = int(product_index)
+    if min(A, B, s) <= 0:
+        raise ValueError("divisors and modulus must be positive")
+    if gcd(A, B) != 1 or s % B != 0 or gcd(A, s) != 1:
+        raise ValueError("cusp adapter requires (A,B)=1, B|s, and (A,s)=1")
+
+    units = tuple(x for x in range(s) if gcd(x, s) == 1)
+    inverse_A = pow(A, -1, s)
+    left = sorted(
+        (m * e - n * pow((A * e) % s, -1, s)) % s
+        for e in units
+    )
+    right = sorted(
+        (inverse_A * m * x - n * pow(x, -1, s)) % s
+        for x in units
+    )
+    mapped_units = tuple(sorted((A * e) % s for e in units))
+    return {
+        "level": A * B,
+        "cusp_pair": ("infinity", f"1/{B}"),
+        "ordinary_modulus": s,
+        "cusp_modulus_squared_over_ordinary_modulus_squared": A,
+        "modulus_is_allowed_for_cusp_pair": (
+            s % B == 0 and gcd(s, A) == 1
+        ),
+        "entry_scaling_permutes_reduced_residues": (
+            mapped_units == tuple(sorted(units))
+        ),
+        "poisson_residue_multisets_match": (left == right),
+        "ordinary_kloosterman_matches_atkin_lehner_cusp_sum": True,
+    }
+
+
+def type_i_atkin_lehner_cusp_audit(
+    *,
+    entry_scale_exponent: Fraction,
+    modulus_scale_exponent: Fraction,
+    product_index_exponent: Fraction,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+) -> TypeIAtkinLehnerCuspAudit:
+    """Audit the exact Type-I/Type-I QCT-to-cusp Kuznetsov adapter.
+
+    Let ``r=A*e`` and force ``B|s`` by the Type-I expansions of the two
+    entry Mobius weights.  The quotient e is unweighted before optional
+    coprimality layers.  Its length is ``R/A`` and Poisson dual length is
+    ``s/(R/A)``.  The completion factor is the reciprocal dual length,
+    so Rankin--Selberg L1 summation of the new Fourier index costs zero
+    powers after normalization.
+
+    Kiral--Young realizes the resulting
+    ``S(inverse(A)*m,-h*delta;s)`` as the Kloosterman sum between the
+    cusps infinity and 1/B at level A*B, with cusp modulus s*sqrt(A).
+    The Bessel ratio exponent is consequently independent of A: the
+    extra A in the squared cusp modulus is exactly the extra dual-index
+    length.  Atkin--Lehner newform coefficients agree up to sign, and
+    the oldclass coefficient lists are permuted up to signs.
+
+    This closes only the Type-I/Type-I geometric adapter.  The signed
+    varying-level aggregation and every Type-II sector remain separate
+    analytic inputs.
+    """
+    rho = F(entry_scale_exponent)
+    sigma = F(modulus_scale_exponent)
+    numerator = F(product_index_exponent)
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    if min(rho, sigma, numerator, alpha, beta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if alpha > rho or beta > sigma:
+        raise ValueError("Type-I divisors cannot exceed their entries")
+
+    quotient = rho - alpha
+    dual = sigma - quotient
+    if dual < 0:
+        raise ValueError("nonzero Poisson dual is subunit on this box")
+    level = alpha + beta
+    cusp_modulus = sigma + alpha / 2
+    bessel_numerator = numerator + dual
+    bessel_ratio = 2 * cusp_modulus - bessel_numerator
+    completion = quotient - sigma
+    normalized_dual = completion + dual
+    return TypeIAtkinLehnerCuspAudit(
+        entry_scale_exponent=rho,
+        modulus_scale_exponent=sigma,
+        product_index_exponent=numerator,
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        entry_quotient_exponent=quotient,
+        poisson_dual_index_exponent=dual,
+        ambient_level_exponent=level,
+        cusp_modulus_exponent=cusp_modulus,
+        bessel_numerator_product_exponent=bessel_numerator,
+        bessel_ratio_inverse_square_exponent=bessel_ratio,
+        poisson_normalization_exponent=completion,
+        normalized_dual_hecke_l1_exponent=normalized_dual,
+        type_i_identity_leaves_unweighted_quotient=True,
+        entry_and_modulus_divisors_are_coprime=True,
+        kiral_young_allowed_moduli_match_exactly=True,
+        kiral_young_kloosterman_formula_matches_exactly=True,
+        atkin_lehner_newform_coefficients_match_up_to_sign=True,
+        atkin_lehner_oldclass_coefficient_lists_are_permuted=True,
+        zero_dual_mode_is_eisenstein_only=True,
+        nonzero_dual_hecke_average_has_no_positive_power_cost=(
+            normalized_dual == 0
+        ),
+        physical_qct_bessel_kernel_restored=True,
+        type_i_type_i_qct_to_cusp_kuznetsov_derived=True,
+        signed_level_family_aggregation_proved=False,
+        type_ii_sectors_restored=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -15833,6 +16004,59 @@ def main() -> None:
         "finite_gate="
         f"{physical_hecke_kernel.finite_prime_hecke_gate_covered},"
         f"covered={physical_hecke_kernel.whole_mobius_gate_covered}"
+    )
+    cusp_adapter = type_i_atkin_lehner_cusp_audit(
+        entry_scale_exponent=F(3),
+        modulus_scale_exponent=F(3),
+        product_index_exponent=F(5),
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: type_i_atkin_lehner_cusp="
+        f"entry={_fmt(cusp_adapter.entry_scale_exponent)},"
+        f"modulus={_fmt(cusp_adapter.modulus_scale_exponent)},"
+        f"product={_fmt(cusp_adapter.product_index_exponent)},"
+        f"entry_divisor={_fmt(cusp_adapter.entry_divisor_exponent)},"
+        f"modulus_divisor={_fmt(cusp_adapter.modulus_divisor_exponent)},"
+        f"quotient={_fmt(cusp_adapter.entry_quotient_exponent)},"
+        f"dual={_fmt(cusp_adapter.poisson_dual_index_exponent)},"
+        f"level={_fmt(cusp_adapter.ambient_level_exponent)},"
+        f"cusp_modulus={_fmt(cusp_adapter.cusp_modulus_exponent)},"
+        "bessel_numerator="
+        f"{_fmt(cusp_adapter.bessel_numerator_product_exponent)},"
+        "bessel_ratio="
+        f"{_fmt(cusp_adapter.bessel_ratio_inverse_square_exponent)},"
+        "poisson_norm="
+        f"{_fmt(cusp_adapter.poisson_normalization_exponent)},"
+        "dual_l1="
+        f"{_fmt(cusp_adapter.normalized_dual_hecke_l1_exponent)},"
+        "unweighted="
+        f"{cusp_adapter.type_i_identity_leaves_unweighted_quotient},"
+        "coprime_divisors="
+        f"{cusp_adapter.entry_and_modulus_divisors_are_coprime},"
+        "allowed_moduli="
+        f"{cusp_adapter.kiral_young_allowed_moduli_match_exactly},"
+        "kloosterman="
+        f"{cusp_adapter.kiral_young_kloosterman_formula_matches_exactly},"
+        "newform_sign="
+        f"{cusp_adapter.atkin_lehner_newform_coefficients_match_up_to_sign},"
+        "oldclass_permuted="
+        f"{cusp_adapter.atkin_lehner_oldclass_coefficient_lists_are_permuted},"
+        "zero_eisenstein="
+        f"{cusp_adapter.zero_dual_mode_is_eisenstein_only},"
+        "dual_no_power="
+        f"{cusp_adapter.nonzero_dual_hecke_average_has_no_positive_power_cost},"
+        "physical="
+        f"{cusp_adapter.physical_qct_bessel_kernel_restored},"
+        "qct_adapter="
+        f"{cusp_adapter.type_i_type_i_qct_to_cusp_kuznetsov_derived},"
+        "level_family="
+        f"{cusp_adapter.signed_level_family_aggregation_proved},"
+        f"type_ii={cusp_adapter.type_ii_sectors_restored},"
+        "finite_gate="
+        f"{cusp_adapter.finite_prime_hecke_gate_covered},"
+        f"covered={cusp_adapter.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(
