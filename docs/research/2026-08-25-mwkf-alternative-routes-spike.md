@@ -10981,6 +10981,98 @@ the adapter `bblr_h_poisson_unsigned_hard_box_audit` records
 `all_unsigned_hard_box_power_closed=True` while keeping
 `whole_signed_hard_face_covered=False`.
 
+### 4.92 The signed hard face reduces to one outer-scale parameter
+
+It remains to keep the two nontrivial outer factors in the BBLR
+decomposition.  Let their common dyadic exponent be (s), so that
+(A,B\asymp T^s), (0\le s\le1).  This loses no positive power.  Indeed,
+if (F_s) denotes the corresponding component before squaring, then for
+the (J=O(\log T)) nonempty dyadic scales the Hilbert-space inequality
+
+\[
+ \left\|\sum_s F_s\right\|_2^2
+ \le J\sum_s\|F_s\|_2^2
+\tag{4.740}
+\]
+
+reduces every asymmetric cross box to a diagonal same-(s) norm.  The
+factor (J) has to be paid later in the logarithmic ledger; it cannot be
+discarded at the endpoint.
+
+Apply the first BBLR Poisson step and then the exact (h)-Poisson
+transformation (4.736).  With signs fixed consistently, inverse removal
+as in (4.737) gives the integer equation
+
+\[
+ \boxed{a m j-b n k=\ell}
+\tag{4.741}
+\]
+
+with the complete dyadic scale table
+
+\[
+ a,b\asymp T^s,qquad
+ m,n\asymp T^{1-s/2},qquad
+ j,k\asymp T^{s/2},qquad
+ \ell\asymp T^s.
+\tag{4.742}
+\]
+
+All six variables retain smooth compactly supported weights; the
+(j,k)-weights are Schwartz transforms of the original (h)-weight.
+Their seminorms are uniform on a fixed dyadic cell.  Coprimality is the
+one inherited from BBLR equation (14), before the same finite gcd
+decomposition used in Section 4.91.  Thus the transformed two sides
+(amj) and (bnk) each have exponent (1+s), while the unrestricted
+solution count has exponent (1+2s).  The first Poisson normalization is
+(T^{1-s}).  Consequently the transformed inner estimate must save
+exactly (T^s) in the outer pair (a,b).
+
+Now apply BBLR Proposition 3.1 to (4.741), with the transformed (a,b)
+as its outer variables and (mj,nk) as its inner products.  Its sharp
+range condition is met at equality because
+(H'=T^s=(AB)^{1/2}).  Substitution in its two error terms gives inner
+exponents
+
+\[
+ E_{AB}=\frac12+3s,qquad
+ E_{\mathrm{Watt}}=\frac34+2s.
+\]
+
+After restoring (T^{1-s}), the two total errors are therefore
+
+\[
+ \boxed{
+ E_1^{\rm tot}=\frac32+2s,qquad
+ E_2^{\rm tot}=\frac74+s,qquad
+ \min(2-E_1^{\rm tot},2-E_2^{\rm tot})=\frac14-s.}
+\tag{4.743}
+\]
+
+The smooth main terms in the cited formula are at most the required
+(T^{1+s}(\log T)^{O(1)}) inner scale by finite divisor reindexing, so
+they introduce no positive-power deficit.  Hence the published estimate
+unconditionally covers each fixed exponent cell (0\le s<1/4).  At
+(s=1/4), both errors have exponent exactly two and (4.740) still costs a
+logarithm; the cited theorem supplies no compensating logarithmic
+little-oh.  Thus the exact current boundary is
+
+\[
+ \boxed{
+ \texttt{published\_bblr\_power\_coverage\_upper}=\frac14,qquad
+ \texttt{signed\_residual\_lower\_exponent}=\frac14,qquad
+ s\in[1/4,1]\text{ remains}.}
+\tag{4.744}
+\]
+
+This is a one-dimensional reduction of the signed hard face, not a proof
+of the full mollifier asymptotic.  The adapter
+`bblr_h_poisson_signed_cell_audit` records the exact rational exponent
+ledger with `published_bblr_power_coverage_upper=1/4` and
+`signed_residual_lower_exponent=1/4`, and deliberately sets
+`boundary_logarithmic_little_o_closed=False` and
+`whole_signed_hard_face_covered=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -1507,6 +1507,31 @@ class BBLRHPoissonUnsignedHardBoxAudit:
 
 
 @dataclass(frozen=True)
+class BBLRHPoissonSignedCellAudit:
+    outer_scale_exponent: Fraction
+    large_inner_factor_exponent: Fraction
+    small_inner_factor_exponent: Fraction
+    transformed_shift_exponent: Fraction
+    transformed_side_product_exponent: Fraction
+    transformed_raw_count_exponent: Fraction
+    transformed_required_bound_exponent: Fraction
+    required_outer_mobius_saving: Fraction
+    h_poisson_prefactor_exponent: Fraction
+    first_total_bblr_error_exponent: Fraction
+    second_total_bblr_error_exponent: Fraction
+    global_target_exponent: Fraction
+    power_margin: Fraction
+    dyadic_cross_terms_reduce_to_diagonal_norms: bool
+    transformed_bblr_sharp_condition_holds: bool
+    published_bblr_power_covers_cell: bool
+    boundary_logarithmic_little_o_closed: bool
+    published_bblr_power_coverage_upper: Fraction
+    signed_residual_lower_exponent: Fraction
+    signed_residual_upper_exponent: Fraction
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7535,6 +7560,70 @@ def bblr_h_poisson_unsigned_hard_box_audit(
     )
 
 
+def bblr_h_poisson_signed_cell_audit(
+    *,
+    outer_scale_exponent: Fraction,
+) -> BBLRHPoissonSignedCellAudit:
+    """Audit the second-BBLR ledger on one signed outer-scale cell.
+
+    Put ``A=B=T^s`` after reducing dyadic cross terms to diagonal norms.
+    The first BBLR step followed by Poisson summation in ``h`` gives the
+    exact transformed equation ``a*m*j - b*n*k = ell`` at scales
+
+    ``a,b=T^s``, ``m,n=T^(1-s/2)``, ``j,k=T^(s/2)``, ``ell=T^s``.
+
+    BBLR Proposition 3.1 is sharp here: its transformed shift equals
+    ``sqrt(A*B)``.  Its two error terms, after restoring the first
+    h-Poisson prefactor ``T^(1-s)``, have exponents ``3/2+2s`` and
+    ``7/4+s``.  Both are below the global exponent two exactly when
+    ``s<1/4``.  The endpoint has no logarithmic little-oh in the cited
+    estimate, so it remains residual.
+    """
+    s = outer_scale_exponent
+    if s < 0 or s > 1:
+        raise ValueError("outer_scale_exponent must lie in [0, 1]")
+
+    large_inner = F(1) - s / 2
+    small_inner = s / 2
+    shift = s
+    side_product = F(1) + s
+    raw_count = F(1) + 2 * s
+    required_bound = F(1) + s
+    prefactor = F(1) - s
+    first_total_error = F(3, 2) + 2 * s
+    second_total_error = F(7, 4) + s
+    target = F(2)
+    margin = min(
+        target - first_total_error,
+        target - second_total_error,
+    )
+    published_upper = F(1, 4)
+
+    return BBLRHPoissonSignedCellAudit(
+        outer_scale_exponent=s,
+        large_inner_factor_exponent=large_inner,
+        small_inner_factor_exponent=small_inner,
+        transformed_shift_exponent=shift,
+        transformed_side_product_exponent=side_product,
+        transformed_raw_count_exponent=raw_count,
+        transformed_required_bound_exponent=required_bound,
+        required_outer_mobius_saving=raw_count - required_bound,
+        h_poisson_prefactor_exponent=prefactor,
+        first_total_bblr_error_exponent=first_total_error,
+        second_total_bblr_error_exponent=second_total_error,
+        global_target_exponent=target,
+        power_margin=margin,
+        dyadic_cross_terms_reduce_to_diagonal_norms=True,
+        transformed_bblr_sharp_condition_holds=(shift == s),
+        published_bblr_power_covers_cell=(s < published_upper),
+        boundary_logarithmic_little_o_closed=False,
+        published_bblr_power_coverage_upper=published_upper,
+        signed_residual_lower_exponent=published_upper,
+        signed_residual_upper_exponent=F(1),
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -12131,6 +12220,46 @@ def main() -> None:
         "log_closed="
         f"{unsigned_h_poisson.global_logarithmic_little_o_closed},"
         f"whole_face={unsigned_h_poisson.whole_signed_hard_face_covered}"
+    )
+    signed_h_poisson = bblr_h_poisson_signed_cell_audit(
+        outer_scale_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: bblr_h_poisson_signed_boundary="
+        f"s={_fmt(signed_h_poisson.outer_scale_exponent)},"
+        "large_inner="
+        f"{_fmt(signed_h_poisson.large_inner_factor_exponent)},"
+        "small_inner="
+        f"{_fmt(signed_h_poisson.small_inner_factor_exponent)},"
+        f"shift={_fmt(signed_h_poisson.transformed_shift_exponent)},"
+        "side="
+        f"{_fmt(signed_h_poisson.transformed_side_product_exponent)},"
+        "raw="
+        f"{_fmt(signed_h_poisson.transformed_raw_count_exponent)},"
+        "required="
+        f"{_fmt(signed_h_poisson.transformed_required_bound_exponent)},"
+        "saving="
+        f"{_fmt(signed_h_poisson.required_outer_mobius_saving)},"
+        "prefactor="
+        f"{_fmt(signed_h_poisson.h_poisson_prefactor_exponent)},"
+        "error1="
+        f"{_fmt(signed_h_poisson.first_total_bblr_error_exponent)},"
+        "error2="
+        f"{_fmt(signed_h_poisson.second_total_bblr_error_exponent)},"
+        f"target={_fmt(signed_h_poisson.global_target_exponent)},"
+        f"margin={_fmt(signed_h_poisson.power_margin)},"
+        "diagonal_reduction="
+        f"{signed_h_poisson.dyadic_cross_terms_reduce_to_diagonal_norms},"
+        f"sharp={signed_h_poisson.transformed_bblr_sharp_condition_holds},"
+        "published_upper="
+        f"{_fmt(signed_h_poisson.published_bblr_power_coverage_upper)},"
+        "boundary_log="
+        f"{signed_h_poisson.boundary_logarithmic_little_o_closed},"
+        "residual_lower="
+        f"{_fmt(signed_h_poisson.signed_residual_lower_exponent)},"
+        "residual_upper="
+        f"{_fmt(signed_h_poisson.signed_residual_upper_exponent)},"
+        f"whole_face={signed_h_poisson.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

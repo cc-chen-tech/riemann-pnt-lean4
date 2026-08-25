@@ -2470,6 +2470,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.739}",
         "all_unsigned_hard_box_power_closed=True",
         "whole_signed_hard_face_covered=False",
+        "### 4.92 The signed hard face reduces to one outer-scale parameter",
+        "\\tag{4.740}",
+        "\\tag{4.744}",
+        "published_bblr_power_coverage_upper=1/4",
+        "signed_residual_lower_exponent=1/4",
     ):
         assert marker in note
 
@@ -2621,6 +2626,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "poisson=True,inverse_removed=True,gcd_sum=True,"
         "positive_d_tail=True,approximation=2,power_closed=True,"
         "log_closed=False,whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: bblr_h_poisson_signed_boundary="
+        "s=1/4,large_inner=7/8,small_inner=1/8,shift=1/4,"
+        "side=5/4,raw=3/2,required=5/4,saving=1/4,"
+        "prefactor=3/4,error1=2,error2=2,target=2,margin=0,"
+        "diagonal_reduction=True,sharp=True,published_upper=1/4,"
+        "boundary_log=False,residual_lower=1/4,residual_upper=1,"
+        "whole_face=False"
     ) in report
 
 
@@ -3476,6 +3490,42 @@ def test_bblr_h_poisson_removes_inverse_and_closes_unsigned_power_box() -> None:
     assert audit.all_unsigned_hard_box_power_closed
     assert not audit.global_logarithmic_little_o_closed
     assert not audit.whole_signed_hard_face_covered
+
+
+def test_bblr_h_poisson_signed_cells_reduce_to_one_quarter_boundary() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "bblr_h_poisson_signed_cell_audit",
+        None,
+    )
+    assert adapter is not None, "signed h-Poisson cell audit is missing"
+
+    interior = adapter(outer_scale_exponent=F(1, 8))
+    assert interior.large_inner_factor_exponent == F(15, 16)
+    assert interior.small_inner_factor_exponent == F(1, 16)
+    assert interior.transformed_shift_exponent == F(1, 8)
+    assert interior.transformed_side_product_exponent == F(9, 8)
+    assert interior.transformed_raw_count_exponent == F(5, 4)
+    assert interior.transformed_required_bound_exponent == F(9, 8)
+    assert interior.required_outer_mobius_saving == F(1, 8)
+    assert interior.h_poisson_prefactor_exponent == F(7, 8)
+    assert interior.first_total_bblr_error_exponent == F(7, 4)
+    assert interior.second_total_bblr_error_exponent == F(15, 8)
+    assert interior.power_margin == F(1, 8)
+    assert interior.dyadic_cross_terms_reduce_to_diagonal_norms
+    assert interior.transformed_bblr_sharp_condition_holds
+    assert interior.published_bblr_power_covers_cell
+
+    boundary = adapter(outer_scale_exponent=F(1, 4))
+    assert boundary.first_total_bblr_error_exponent == F(2)
+    assert boundary.second_total_bblr_error_exponent == F(2)
+    assert boundary.power_margin == F(0)
+    assert not boundary.published_bblr_power_covers_cell
+    assert not boundary.boundary_logarithmic_little_o_closed
+    assert boundary.published_bblr_power_coverage_upper == F(1, 4)
+    assert boundary.signed_residual_lower_exponent == F(1, 4)
+    assert boundary.signed_residual_upper_exponent == F(1)
+    assert not boundary.whole_signed_hard_face_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
