@@ -11469,6 +11469,266 @@ dispersion estimate and the whole signed hard face explicitly unproved;
 it records `primitive_equal_face_coefficient_can_be_nonzero=True` and
 `arbitrary_smooth_weight_enlargement_admissible=False`.
 
+### 4.98 Gcd layers expose the centered coupled-dispersion scale
+
+The equal-product face cannot be estimated separately, but extracting the
+common divisor still gives an exact scale decomposition without taking an
+absolute value.  Put
+
+\[
+ C=T^s,\qquad G=T^\gamma,\qquad A=\frac CG=T^{s-\gamma},
+ \qquad 0\leq\gamma\leq s,
+\]
+
+and on one dyadic gcd layer write
+
+\[
+ \boxed{
+ c=ga,\qquad d=gb,\qquad \ell=gh,\qquad
+ g\asymp G,\quad a,b,|h|\asymp A,\quad(a,b)=1.}
+\tag{4.766}
+\]
+
+The equation \(xc-yd=\ell\) is then exactly \(ax-by=h\).  For fixed
+\((a,b,h)\), all solutions are
+\(x=x_0+bt,\ y=y_0+at\), so the localized \(t\)-interval has length
+\(O(T/A+1)\).  In the power-critical range \(A\leq T\), the complete
+dyadic layer therefore has raw cardinality
+
+\[
+ G\cdot A^2\cdot A\cdot\frac TA
+ =TGA^2=\frac{TC^2}{G},
+ \qquad
+ E_{\rm raw}=1+2s-\gamma.
+\tag{4.767}
+\]
+
+This count retains the entire \(g\)-sum.  It is not a sum of separate
+fixed-\(g\) majorants.
+
+There is also an exact centered Fourier form, but the allocation tensors
+must first be recombined.  Expand the new primitive condition with
+\(\mathbf1_{(a,b)=1}=\sum_{\rho\mid a,b}\mu(\rho)\).  Let
+\(\eta=(r_0,r_1,r_2,r_3,\rho,\tau,\upsilon)\) collect the four allocations
+from (4.755), this fifth primitive-slope allocation, and the two ratio
+frequencies.  Write \(d\nu(\eta)\) for the resulting finite signed divisor
+sum times the two inherited Schwartz Mellin densities.  For fixed \(\eta\),
+let \(p_{g,\eta}(a,x)\) and \(q_{g,\eta}(b,y)\) be the now-separated exact
+cutoff, Möbius, divisibility, and physical-kernel coefficients.  Define
+
+\[
+ F_{g,\eta}(\alpha)
+   =\sum_{a,x}p_{g,\eta}(a,x)e(\alpha ax),\qquad
+ G_{g,\eta}(\alpha)
+   =\sum_{b,y}q_{g,\eta}(b,y)e(\alpha by),
+\]
+
+Let \(w_\eta\in C_c^\infty(\mathbb R\setminus\{0\})\) be the exact
+nonzero-shift weight in this tensor.  Its seminorms are controlled by the
+same Schwartz density already present in \(d\nu(\eta)\).  Recombine before
+taking an absolute value:
+
+\[
+ \mathcal H_{C,G}(\alpha)
+ :=\int d\nu(\eta)\,\widehat w_\eta(A\alpha)
+   \sum_{g\asymp G}
+   F_{g,\eta}(\alpha)\overline{G_{g,\eta}(\alpha)}.
+\]
+
+With \(\widehat w_\eta(\xi)=\int w_\eta(u)e(-u\xi)\,du\), ordinary
+Fourier inversion gives the identity
+
+\[
+ \boxed{
+ \mathfrak V_{C,G}
+ =A\int_{\mathbb R}\mathcal H_{C,G}(\alpha)\,d\alpha.}
+\tag{4.768}
+\]
+
+No arbitrary-coefficient enlargement is made in (4.768).  All outer-scale
+and ratio-Mellin integrations, all five coprimality allocations, and the
+complete \(g\)-sum remain inside \(\mathcal H_{C,G}\).
+
+For every \(\eta\), the shift weight vanishes in a neighbourhood of zero,
+and hence
+
+\[
+ \boxed{
+ A\int_{\mathbb R}\widehat w_\eta(A\alpha)\,d\alpha
+ =w_\eta(0)=0.}
+\tag{4.769}
+\]
+
+Thus the product diagonal \(ax=by\), equivalently the constant Fourier
+mode in (4.768), is annihilated exactly.  This is the useful centering:
+the remaining theorem is an off-diagonal local \(L^2\) estimate, not a
+positive Gram bound containing its identity diagonal.
+
+The global inner target is \(TC=T^{1+s}\).  Hence the exact uniform local
+gate on this gcd layer is
+
+\[
+ \boxed{
+ \left|
+ \int_{\mathbb R}\mathcal H_{C,G}(\alpha)\,d\alpha
+ \right|
+ \ll_{B,W}TG(\log T)^{-B}.}
+\tag{4.770}
+\]
+
+After multiplication by the outside \(A=C/G\), (4.770) gives
+\(TC(\log T)^{-B}\).  Comparing (4.767) with this target shows that the
+required saving is exactly
+
+\[
+ (1+2s-\gamma)-(1+s)=s-\gamma=\log_T A.
+\]
+
+At the top layer \(\gamma=s\), this power requirement becomes zero, but
+the logarithmic little-oh still contains the fixed-affine Chowla subface
+from Section 4.96.  It must remain inside the complete \(g\)- and physical-
+kernel sum.  The averaged Chowla theorem of Matomäki--Radziwiłł--Tao treats
+translations of bounded multiplicative functions after averaging the
+shifts; it does not state (4.770) for the coupled divisor coefficients,
+varying primitive slopes, and retained \(g\)-kernel.  No adapter is claimed.
+
+The helper `collapsed_gcd_layer_parameterization` verifies (4.766) and
+the determinant equivalence on integers.  The `Fraction`-valued adapter
+`collapsed_gcd_layer_centered_kernel_audit` records (4.767)--(4.770), with
+`required_saving_exponent=s-gamma` and
+`fixed_affine_chowla_must_remain_inside_g_sum=True` at the top layer.  It
+keeps `published_averaged_chowla_adapter_applies=False`,
+`centered_coupled_dispersion_bound_proved=False`, and
+`whole_signed_hard_face_covered=False`.
+
+### 4.99 Primitive refactorization closes the top equal-product face
+
+The warning in Section 4.97 is local in the collapsed product \(c\).  The
+complete primitive sum over its hidden factors has an additional
+unconditional cancellation.  On \(c=d\), (4.763) contains
+
+\[
+ (u,v)=1,\qquad uj=vk.
+\]
+
+Euclid's lemma gives the exact bijection
+
+\[
+ \boxed{
+ (u,v)=1,\ uj=vk
+ \quad\Longleftrightarrow\quad
+ j=vq,\ k=uq\quad(q\in\mathbb N),
+ \qquad c=uvq.}
+\tag{4.771}
+\]
+
+At the top balanced cell, the exact half cutoff (4.505) and the scale
+table in Sections 4.92--4.93 give
+\(u,v,j,k,U,e,e'\asymp Z=T^{1/2}\).  Hence (4.771) restricts \(q\) to
+a fixed finite set depending only on the dyadic support constants.
+
+The signed coefficient itself has a useful exact form.  Put \(D=U/e\).
+The inequalities in (4.745) are equivalent to \(D<d\leq U\), and
+therefore
+
+\[
+ \boxed{
+ \lambda_{U,e}
+ =-\big(\mu\mathbf1_{D<\cdot\leq U}\big)*\mu
+ =-(\mu*\mu)
+   +(\mu\mathbf1_{\cdot\leq D})*\mu
+   +(\mu\mathbf1_{\cdot>U})*\mu.}
+\tag{4.772}
+\]
+
+This is a coefficientwise finite identity.  On the balanced cell,
+\(D=O(1)\), \(U\asymp Z\), and the last convolution in (4.772), when
+localized to \(n\asymp Z\), has a bounded complementary factor.
+
+For completeness, the standard prime-number-theorem input needed here
+can be stated uniformly.  Let \(V\) range over a fixed bounded family in
+\(C_c^\infty((0,\infty))\), let \(U/Z\) and \(e/Z\) stay in fixed compact
+subsets of \((0,\infty)\), and let \(r\leq T^{O(1)}\).  For every \(B>0\),
+
+\[
+ \boxed{
+ \sum_{(n,r)=1}\lambda_{U,e}(n)V(n/Z)
+ \ll_{B,V}Z(\log Z)^{-B}\mathcal E_{C_B}(r),
+ \qquad
+ \mathcal E_K(r):=\prod_{p\mid r}\left(1+\frac Kp\right).}
+\tag{4.773}
+\]
+
+Indeed, for the first term on the right of (4.772), the Dirichlet series
+after removing primes dividing \(r\) is exactly
+
+\[
+ \frac1{\zeta(s)^2}\prod_{p\mid r}(1-p^{-s})^{-2}.
+\]
+
+The classical zero-free region and a smooth Perron shift give arbitrary
+logarithmic saving.  The second term in (4.772) is a bounded sum of
+similarly restricted Möbius sums because \(D=O(1)\).  In the third term,
+write \(n=dm\); the support \(n\asymp Z\) and \(d>U\asymp Z\) leave only
+boundedly many \(m\), and the same restricted Möbius estimate applies to
+the \(d\)-sum.  Finally
+\(\mathcal E_K(r)\ll_K(\log\log(3r))^K\), so all removed Euler factors
+are absorbed by increasing \(B\).  This proves (4.773) without a
+zero-density or Chowla hypothesis.
+
+Substitute (4.771) into the physical coefficient before separating the
+long variables.  Uniformly for fixed \(e,e'\), the inherited support
+constants, and \(x,y\asymp T\), set
+
+\[
+ \begin{aligned}
+ \mathfrak E_{x,y}:={}&
+ \sum_{q\asymp1}
+ \sum_{\substack{u,v\asymp Z\\
+       (u,v)=(u,y)=(v,x)=1}}
+ \lambda_{U,e}(u)\lambda_{U,e'}(v)\\
+ &\hspace{35mm}\times
+ \Phi_{x,y,q}(u,vq)\overline{\Phi'_{x,y,q}(v,uq)}.
+ \end{aligned}
+\]
+
+For fixed \(v\), apply (4.773) to the \(u\)-sum with coprimality modulus
+\(r=vy\); the physical weights have the required uniform derivatives.
+Then sum \(v\) absolutely, using
+\(|\lambda_{U,e'}(v)|\leq\tau_2(v)\).  Since the \(q\)-set is finite,
+
+\[
+ \boxed{\mathfrak E_{x,y}\ll_{B,W}Z^2(\log T)^{-B}.}
+\tag{4.774}
+\]
+
+The remaining fixed-affine long-variable sum now needs no Möbius
+correlation theorem.  Bound it by its cardinality \(O(T)\).  As
+\(Z^2=T\), (4.774) gives
+
+\[
+ \boxed{
+ \sum_{x-y=\kappa\atop x,y\asymp T}
+   \mu(x)\mu(y)\mathfrak E_{x,y}
+ \ll_{B,W}T Z^2(\log T)^{-B}
+ =T^2(\log T)^{-B}.}
+\tag{4.775}
+\]
+
+This proves the required logarithmic little-oh on the top primitive
+equal-product face.  It does not contradict the finite coefficient \(4\)
+in (4.764): individual \(c\)-fibres need not vanish; the cancellation is
+the complete outer \((u,v,q)\)-average which Section 4.97 required us to
+retain.  It also does not cover the intermediate gcd layers
+\(0<s-\gamma<1\) in (4.770).
+
+The helpers `primitive_equal_product_factorization` and
+`truncated_signed_atom_interval_convolution` verify (4.771)--(4.772) on
+integers.  The adapter `top_equal_product_outer_pnt_audit` records the
+zero power margin, the arbitrary logarithmic PNT saving, and
+`top_equal_product_face_closed_unconditionally=True`, while retaining
+`whole_signed_hard_face_covered=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

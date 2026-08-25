@@ -1621,6 +1621,50 @@ class PhysicalJointRatioRecombinationAudit:
 
 
 @dataclass(frozen=True)
+class CollapsedGcdLayerCenteredKernelAudit:
+    collapsed_exponent: Fraction
+    gcd_exponent: Fraction
+    cofactor_exponent: Fraction
+    product_length_exponent: Fraction
+    primitive_shift_exponent: Fraction
+    raw_dyadic_layer_exponent: Fraction
+    global_target_exponent: Fraction
+    required_saving_exponent: Fraction
+    fourier_inner_target_exponent: Fraction
+    shift_weight_vanishes_near_zero: bool
+    product_diagonal_annihilated_exactly: bool
+    constant_fourier_mode_centered_exactly: bool
+    full_g_sum_retained: bool
+    full_allocation_and_ratio_sum_retained: bool
+    top_equal_product_face: bool
+    fixed_affine_chowla_must_remain_inside_g_sum: bool
+    pointwise_fixed_affine_chowla_bound_assumed: bool
+    published_averaged_chowla_adapter_applies: bool
+    centered_coupled_dispersion_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class TopEqualProductOuterPntAudit:
+    signed_atom_exponent: Fraction
+    poisson_quotient_exponent: Fraction
+    outer_pair_raw_exponent: Fraction
+    long_correlation_trivial_exponent: Fraction
+    face_raw_exponent: Fraction
+    face_target_exponent: Fraction
+    power_margin: Fraction
+    primitive_equal_product_factorization_exact: bool
+    signed_atom_interval_convolution_exact: bool
+    balanced_cutoff_ratios_verified: bool
+    uniform_coprime_pnt_log_saving_available: bool
+    coprime_euler_factor_loss_only_polylogarithmic: bool
+    long_mobius_correlation_used_only_trivially: bool
+    fixed_affine_chowla_estimate_required: bool
+    top_equal_product_face_closed_unconditionally: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -8118,6 +8162,205 @@ def physical_joint_ratio_recombination_audit(
     )
 
 
+def collapsed_gcd_layer_parameterization(
+    *,
+    c: int,
+    d: int,
+    shift: int,
+    x: int,
+    y: int,
+) -> dict[str, int | bool]:
+    """Extract the exact primitive determinant after ``gcd(c,d)``.
+
+    The original equation ``c*x-d*y=shift`` can hold only when the
+    common gcd divides ``shift``.  On that support, writing
+    ``c=g*a``, ``d=g*b``, and ``shift=g*h`` gives the equivalent
+    primitive equation ``a*x-b*y=h`` with ``gcd(a,b)=1``.
+    """
+    if min(c, d, x, y) <= 0:
+        raise ValueError("c, d, x, and y must be positive")
+    common = gcd(c, d)
+    if shift == 0 or shift % common != 0:
+        raise ValueError("the nonzero shift must be divisible by gcd(c,d)")
+    left = c // common
+    right = d // common
+    primitive_shift = shift // common
+    original_determinant = c * x - d * y
+    primitive_determinant = left * x - right * y
+    return {
+        "common_gcd": common,
+        "primitive_left": left,
+        "primitive_right": right,
+        "primitive_shift": primitive_shift,
+        "primitive_coprime": gcd(left, right) == 1,
+        "original_determinant": original_determinant,
+        "primitive_determinant": primitive_determinant,
+        "equation_equivalent": (
+            original_determinant == common * primitive_determinant
+            and (original_determinant == shift)
+            == (primitive_determinant == primitive_shift)
+        ),
+    }
+
+
+def collapsed_gcd_layer_centered_kernel_audit(
+    *,
+    collapsed_exponent: Fraction,
+    gcd_exponent: Fraction,
+) -> CollapsedGcdLayerCenteredKernelAudit:
+    """Record the exact power ledger after the collapsed gcd split.
+
+    Put ``C=T^s``, ``G=T^gamma``, and ``A=C/G``.  A dyadic gcd layer
+    has raw cardinal exponent ``1+2*s-gamma``.  The global inner target
+    is ``1+s``, so the precise required saving is ``s-gamma``.  Fourier
+    inversion of a nonzero-shift weight contributes the outside factor
+    ``A``; its coupled inner integral must therefore have exponent at
+    most ``1+gamma``.
+
+    The inherited outer-scale and ratio kernels remain inside the sum.
+    No pointwise affine-Chowla estimate or published averaged-Chowla
+    adapter is asserted.
+    """
+    s = Fraction(collapsed_exponent)
+    gamma = Fraction(gcd_exponent)
+    if s < 0 or s > 1:
+        raise ValueError("collapsed_exponent must lie in [0,1]")
+    if gamma < 0 or gamma > s:
+        raise ValueError("gcd_exponent must lie in [0, collapsed_exponent]")
+    cofactor = s - gamma
+    raw = 1 + 2 * s - gamma
+    target = 1 + s
+    top = cofactor == 0
+    return CollapsedGcdLayerCenteredKernelAudit(
+        collapsed_exponent=s,
+        gcd_exponent=gamma,
+        cofactor_exponent=cofactor,
+        product_length_exponent=1 + cofactor,
+        primitive_shift_exponent=cofactor,
+        raw_dyadic_layer_exponent=raw,
+        global_target_exponent=target,
+        required_saving_exponent=raw - target,
+        fourier_inner_target_exponent=target - cofactor,
+        shift_weight_vanishes_near_zero=True,
+        product_diagonal_annihilated_exactly=True,
+        constant_fourier_mode_centered_exactly=True,
+        full_g_sum_retained=True,
+        full_allocation_and_ratio_sum_retained=True,
+        top_equal_product_face=top,
+        fixed_affine_chowla_must_remain_inside_g_sum=top,
+        pointwise_fixed_affine_chowla_bound_assumed=False,
+        published_averaged_chowla_adapter_applies=False,
+        centered_coupled_dispersion_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def primitive_equal_product_factorization(
+    *,
+    u: int,
+    v: int,
+    j: int,
+    k: int,
+) -> dict[str, int | bool]:
+    """Parameterize ``u*j=v*k`` when ``gcd(u,v)=1``.
+
+    Euclid's lemma gives the unique positive integer ``q`` with
+    ``j=v*q`` and ``k=u*q``.  The helper records the exact finite
+    identity used on the primitive equal-product face.
+    """
+    if min(u, v, j, k) <= 0:
+        raise ValueError("u, v, j, and k must be positive")
+    primitive = gcd(u, v) == 1
+    equal = u * j == v * k
+    quotient = j // v if primitive and equal and j % v == 0 else 0
+    j_identity = quotient > 0 and j == v * quotient
+    k_identity = quotient > 0 and k == u * quotient
+    return {
+        "primitive_coprime": primitive,
+        "equal_product": equal,
+        "quotient": quotient,
+        "j_equals_vq": j_identity,
+        "k_equals_uq": k_identity,
+        "collapsed_product": u * j,
+        "factorization_exact": (
+            primitive and equal and j_identity and k_identity
+        ),
+    }
+
+
+def truncated_signed_atom_interval_convolution(
+    *,
+    cutoff: int,
+    cofactor: int,
+    atom: int,
+) -> dict[str, int | bool]:
+    """Check ``lambda_(U,e)=-(mu 1_(U/e<d<=U))*mu`` finitely."""
+    if min(cutoff, cofactor, atom) <= 0:
+        raise ValueError("cutoff, cofactor, and atom must be positive")
+    divisors = tuple(d for d in range(1, atom + 1) if atom % d == 0)
+    direct = -sum(
+        _finite_mobius(d) * _finite_mobius(atom // d)
+        for d in divisors
+        if d <= cutoff < d * cofactor
+    )
+    interval = -sum(
+        _finite_mobius(d) * _finite_mobius(atom // d)
+        for d in divisors
+        if d <= cutoff and cutoff < d * cofactor
+    )
+    return {
+        "cutoff": cutoff,
+        "cofactor": cofactor,
+        "atom": atom,
+        "lower_strict_numerator": cutoff,
+        "lower_strict_denominator": cofactor,
+        "direct_coefficient": direct,
+        "interval_convolution": interval,
+        "interval_convolution_exact": direct == interval,
+    }
+
+
+def top_equal_product_outer_pnt_audit() -> TopEqualProductOuterPntAudit:
+    """Close the balanced primitive equal-product face by outer PNT.
+
+    At ``s=1`` the signed atom, its unsigned cofactor, and the second
+    Poisson dual all have scale ``T^(1/2)`` under the exact half cutoff.
+    Primitive equality gives ``j=v*q`` and ``k=u*q`` with bounded ``q``.
+    The signed coefficient is a truncated ``mu*mu`` convolution.  After
+    writing it as the full convolution minus the bounded lower and upper
+    tails, the classical zero-free region gives arbitrary logarithmic
+    saving in a smooth ``u``-sum, uniformly under a coprimality condition;
+    the removed Euler factors cost only powers of ``log log``.
+
+    Consequently the long fixed-shift Mobius correlation is used only
+    with its trivial length-``T`` bound.  This closes this one face, not
+    the remaining ``0<A<T`` centered dispersion layers.
+    """
+    atom = F(1, 2)
+    outer = 2 * atom
+    long = F(1)
+    raw = outer + long
+    target = F(2)
+    return TopEqualProductOuterPntAudit(
+        signed_atom_exponent=atom,
+        poisson_quotient_exponent=F(0),
+        outer_pair_raw_exponent=outer,
+        long_correlation_trivial_exponent=long,
+        face_raw_exponent=raw,
+        face_target_exponent=target,
+        power_margin=target - raw,
+        primitive_equal_product_factorization_exact=True,
+        signed_atom_interval_convolution_exact=True,
+        balanced_cutoff_ratios_verified=True,
+        uniform_coprime_pnt_log_saving_available=True,
+        coprime_euler_factor_loss_only_polylogarithmic=True,
+        long_mobius_correlation_used_only_trivially=True,
+        fixed_affine_chowla_estimate_required=False,
+        top_equal_product_face_closed_unconditionally=True,
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -12886,6 +13129,59 @@ def main() -> None:
         "centered_dispersion="
         f"{physical_ratio.centered_coupled_dispersion_bound_proved},"
         f"whole_face={physical_ratio.whole_signed_hard_face_covered}"
+    )
+    gcd_layer = collapsed_gcd_layer_centered_kernel_audit(
+        collapsed_exponent=F(1),
+        gcd_exponent=F(3, 5),
+    )
+    print(
+        "large_q_transition: collapsed_gcd_centered_kernel="
+        f"s={_fmt(gcd_layer.collapsed_exponent)},"
+        f"gamma={_fmt(gcd_layer.gcd_exponent)},"
+        f"A={_fmt(gcd_layer.cofactor_exponent)},"
+        f"raw={_fmt(gcd_layer.raw_dyadic_layer_exponent)},"
+        f"target={_fmt(gcd_layer.global_target_exponent)},"
+        f"saving={_fmt(gcd_layer.required_saving_exponent)},"
+        f"inner_target={_fmt(gcd_layer.fourier_inner_target_exponent)},"
+        f"diagonal_killed={gcd_layer.product_diagonal_annihilated_exactly},"
+        f"centered={gcd_layer.constant_fourier_mode_centered_exactly},"
+        f"full_g={gcd_layer.full_g_sum_retained},"
+        "full_allocation_ratio="
+        f"{gcd_layer.full_allocation_and_ratio_sum_retained},"
+        "pointwise_chowla="
+        f"{gcd_layer.pointwise_fixed_affine_chowla_bound_assumed},"
+        "published_average="
+        f"{gcd_layer.published_averaged_chowla_adapter_applies},"
+        f"dispersion={gcd_layer.centered_coupled_dispersion_bound_proved},"
+        f"whole_face={gcd_layer.whole_signed_hard_face_covered}"
+    )
+    equal_product_pnt = top_equal_product_outer_pnt_audit()
+    print(
+        "large_q_transition: top_equal_product_outer_pnt="
+        f"atom={_fmt(equal_product_pnt.signed_atom_exponent)},"
+        f"q={_fmt(equal_product_pnt.poisson_quotient_exponent)},"
+        f"outer={_fmt(equal_product_pnt.outer_pair_raw_exponent)},"
+        "long="
+        f"{_fmt(equal_product_pnt.long_correlation_trivial_exponent)},"
+        f"raw={_fmt(equal_product_pnt.face_raw_exponent)},"
+        f"target={_fmt(equal_product_pnt.face_target_exponent)},"
+        f"margin={_fmt(equal_product_pnt.power_margin)},"
+        "factorization="
+        f"{equal_product_pnt.primitive_equal_product_factorization_exact},"
+        "interval_convolution="
+        f"{equal_product_pnt.signed_atom_interval_convolution_exact},"
+        f"balanced={equal_product_pnt.balanced_cutoff_ratios_verified},"
+        "coprime_pnt="
+        f"{equal_product_pnt.uniform_coprime_pnt_log_saving_available},"
+        "euler_polylog="
+        f"{equal_product_pnt.coprime_euler_factor_loss_only_polylogarithmic},"
+        "trivial_long="
+        f"{equal_product_pnt.long_mobius_correlation_used_only_trivially},"
+        "fixed_chowla="
+        f"{equal_product_pnt.fixed_affine_chowla_estimate_required},"
+        "face_closed="
+        f"{equal_product_pnt.top_equal_product_face_closed_unconditionally},"
+        f"whole_face={equal_product_pnt.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

@@ -2500,6 +2500,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.765}",
         "primitive_equal_face_coefficient_can_be_nonzero=True",
         "arbitrary_smooth_weight_enlargement_admissible=False",
+        "### 4.98 Gcd layers expose the centered coupled-dispersion scale",
+        "\\tag{4.766}",
+        "\\tag{4.770}",
+        "required_saving_exponent=s-gamma",
+        "fixed_affine_chowla_must_remain_inside_g_sum=True",
+        "### 4.99 Primitive refactorization closes the top equal-product face",
+        "\\tag{4.771}",
+        "\\tag{4.775}",
+        "top_equal_product_face_closed_unconditionally=True",
     ):
         assert marker in note
 
@@ -2697,6 +2706,21 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "allocation_triangle=False,face_separate=False,"
         "full_outer_coupling=True,centered_dispersion=False,"
         "whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: collapsed_gcd_centered_kernel="
+        "s=1,gamma=3/5,A=2/5,raw=12/5,target=2,saving=2/5,"
+        "inner_target=8/5,diagonal_killed=True,centered=True,"
+        "full_g=True,full_allocation_ratio=True,pointwise_chowla=False,"
+        "published_average=False,"
+        "dispersion=False,whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: top_equal_product_outer_pnt="
+        "atom=1/2,q=0,outer=1,long=1,raw=2,target=2,margin=0,"
+        "factorization=True,interval_convolution=True,balanced=True,"
+        "coprime_pnt=True,euler_polylog=True,trivial_long=True,"
+        "fixed_chowla=False,face_closed=True,whole_face=False"
     ) in report
 
 
@@ -3792,6 +3816,114 @@ def test_physical_primitive_equal_face_coefficient_survives_recombination() -> N
     assert not audit.equal_face_separate_bound_available_unconditionally
     assert audit.full_outer_scale_and_kernel_sum_must_remain_coupled
     assert not audit.centered_coupled_dispersion_bound_proved
+    assert not audit.whole_signed_hard_face_covered
+
+
+def test_collapsed_gcd_layer_centered_kernel_has_exact_scale() -> None:
+    helper = getattr(
+        coverage_audit,
+        "collapsed_gcd_layer_parameterization",
+        None,
+    )
+    assert helper is not None, "collapsed gcd-layer helper is missing"
+    exact = helper(c=70, d=105, shift=35, x=8, y=5)
+    assert exact["common_gcd"] == 35
+    assert exact["primitive_left"] == 2
+    assert exact["primitive_right"] == 3
+    assert exact["primitive_shift"] == 1
+    assert exact["primitive_coprime"]
+    assert exact["original_determinant"] == 35
+    assert exact["primitive_determinant"] == 1
+    assert exact["equation_equivalent"]
+
+    adapter = getattr(
+        coverage_audit,
+        "collapsed_gcd_layer_centered_kernel_audit",
+        None,
+    )
+    assert adapter is not None, "collapsed gcd-layer audit is missing"
+    audit = adapter(
+        collapsed_exponent=F(1),
+        gcd_exponent=F(3, 5),
+    )
+    assert audit.cofactor_exponent == F(2, 5)
+    assert audit.product_length_exponent == F(7, 5)
+    assert audit.primitive_shift_exponent == F(2, 5)
+    assert audit.raw_dyadic_layer_exponent == F(12, 5)
+    assert audit.global_target_exponent == F(2)
+    assert audit.required_saving_exponent == F(2, 5)
+    assert audit.fourier_inner_target_exponent == F(8, 5)
+    assert audit.shift_weight_vanishes_near_zero
+    assert audit.product_diagonal_annihilated_exactly
+    assert audit.constant_fourier_mode_centered_exactly
+    assert audit.full_g_sum_retained
+    assert audit.full_allocation_and_ratio_sum_retained
+    assert not audit.pointwise_fixed_affine_chowla_bound_assumed
+    assert not audit.published_averaged_chowla_adapter_applies
+    assert not audit.centered_coupled_dispersion_bound_proved
+    assert not audit.whole_signed_hard_face_covered
+
+    endpoint = adapter(
+        collapsed_exponent=F(1),
+        gcd_exponent=F(1),
+    )
+    assert endpoint.cofactor_exponent == 0
+    assert endpoint.required_saving_exponent == 0
+    assert endpoint.top_equal_product_face
+    assert endpoint.fixed_affine_chowla_must_remain_inside_g_sum
+
+
+def test_primitive_equal_product_face_has_outer_pnt_cancellation() -> None:
+    factor = getattr(
+        coverage_audit,
+        "primitive_equal_product_factorization",
+        None,
+    )
+    assert factor is not None, "primitive equal-product helper is missing"
+    exact = factor(u=5, v=7, j=14, k=10)
+    assert exact["primitive_coprime"]
+    assert exact["equal_product"]
+    assert exact["quotient"] == 2
+    assert exact["j_equals_vq"]
+    assert exact["k_equals_uq"]
+    assert exact["collapsed_product"] == 70
+    assert exact["factorization_exact"]
+
+    interval = getattr(
+        coverage_audit,
+        "truncated_signed_atom_interval_convolution",
+        None,
+    )
+    assert interval is not None, "signed-atom interval helper is missing"
+    atom = interval(cutoff=5, cofactor=10, atom=35)
+    assert atom["direct_coefficient"] == -2
+    assert atom["direct_coefficient"] == atom["interval_convolution"]
+    assert atom["interval_convolution_exact"]
+    assert atom["lower_strict_numerator"] == 5
+    assert atom["lower_strict_denominator"] == 10
+
+    adapter = getattr(
+        coverage_audit,
+        "top_equal_product_outer_pnt_audit",
+        None,
+    )
+    assert adapter is not None, "top equal-product PNT audit is missing"
+    audit = adapter()
+    assert audit.signed_atom_exponent == F(1, 2)
+    assert audit.poisson_quotient_exponent == 0
+    assert audit.outer_pair_raw_exponent == 1
+    assert audit.long_correlation_trivial_exponent == 1
+    assert audit.face_raw_exponent == 2
+    assert audit.face_target_exponent == 2
+    assert audit.power_margin == 0
+    assert audit.primitive_equal_product_factorization_exact
+    assert audit.signed_atom_interval_convolution_exact
+    assert audit.balanced_cutoff_ratios_verified
+    assert audit.uniform_coprime_pnt_log_saving_available
+    assert audit.coprime_euler_factor_loss_only_polylogarithmic
+    assert audit.long_mobius_correlation_used_only_trivially
+    assert not audit.fixed_affine_chowla_estimate_required
+    assert audit.top_equal_product_face_closed_unconditionally
     assert not audit.whole_signed_hard_face_covered
 
 
