@@ -24,8 +24,9 @@ Thus S-arith itself is now closed.  S2 is now connected to the exact S1
 kernel with the genuine sliding integral and exact Mathlib Fourier
 normalization.  S3 is now complete, and S4 has both its exact critical-line
 modulus bridge, its genuine `re(s)=2` first-moment main term, and its uniform
-horizontal-edge estimate.  The theorem remains incomplete until the S4
-uniform lower-Stirling estimate is proved and the S5/packing interfaces are
+horizontal-edge estimate.  Its uniform lower-Stirling estimate is now also
+formalized.  The theorem remains incomplete until these S4 components are
+assembled into the lower first moment and the S5/packing interfaces are
 instantiated.
 
 The main conclusion is decisive:
@@ -1612,7 +1613,7 @@ The current honest repository status is:
 ```text
 Hardy                         proved
 Hardy--Littlewood c*T         proved
-Selberg c*T*log T             S1--S3 proved; S4 bridge/right/horizontal proved, Stirling remains
+Selberg c*T*log T             S1--S3 proved; S4 analytic gates proved, contour assembly remains
 T^3 linear Möbius moment      separate open long-mollifier problem
 Conrey two fifths             not yet formalized
 ```
@@ -2461,6 +2462,14 @@ Uniform Stirling on `T/2<=t<=T`, together with
  t^{-1/4}|\zeta(\tfrac12+it)\psi(\tfrac12+it)^2|.
 \]
 
+The one-sided estimate actually needed here is now formalized as
+`exists_pos_rpow_neg_quarter_le_norm_GammaR_mul_selbergTilt`.  Its proof
+integrates the already formalized Bernoulli-remainder digamma expansion:
+the differentiated error is `O(t^(-2))`, hence has bounded integral, while
+the real part of `(z-1/2) Log z-z` has the elementary lower bound
+`-pi*t/4-(log t)/4-O(1)`.  No unproved Stirling axiom or exact asymptotic
+constant is introduced.
+
 Thus (9.3) and the triangle inequality imply
 
 \[
@@ -2653,8 +2662,10 @@ that dyadic height interval.  The exact critical-line modulus bridge back to
 the reflected completed function is proved in Lean; the right-edge main
 term is now proved in Lean with the explicit remainder `16/log 2`.
 The horizontal-edge estimate is now proved in Lean via the uniform first Abel
-approximation.  The uniform lower Stirling bound is the sole remaining S4
-Lean gate.
+approximation.  The uniform lower Stirling bound is now proved in Lean from
+the existing digamma expansion.  The remaining S4 work is the contour
+identity/lower-first-moment assembly and its Tonelli/end-interval transfer,
+not a missing analytic estimate.
 
 ### Sign change and multiplicity
 
@@ -2670,7 +2681,7 @@ each ordinate at most twice.
 
 The Selberg derivation is unconditional at paper level, subject only to the
 standard classical inputs listed below.  This is not yet a repository-level
-theorem: S4 still requires the uniform lower Stirling gate just identified,
+theorem: S4 still requires assembly of the proved contour estimates,
 followed by S5 and the final odd-zero assembly.  Its external analytic inputs
 are all established theorems:
 
