@@ -1729,6 +1729,27 @@ class SmoothHeckeProductMobiusAudit:
 
 
 @dataclass(frozen=True)
+class SmoothHeckeOldclassProductAudit:
+    index_exponent: Fraction
+    ambient_level_exponent: Fraction
+    ramanujan_theta: Fraction
+    minimum_common_divisor_split_exponent: Fraction
+    newform_endpoint_exponent: Fraction
+    oldclass_shift_saving_slope: Fraction
+    worst_oldclass_endpoint_exponent: Fraction
+    worst_oldclass_endpoint_attained_at_newform_shift_zero: bool
+    bm_oldclass_fourier_formula_exact: bool
+    bm_first_index_is_coprime_to_ambient_level: bool
+    oldclass_divisor_allocations_have_subpower_cost: bool
+    every_oldclass_cell_retains_mobius_pnt_log_decay: bool
+    ramified_newform_identity_compatible: bool
+    oldclass_product_smooth_model_covered: bool
+    physical_coupled_kernel_restored: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -8973,6 +8994,72 @@ def smooth_hecke_product_mobius_audit(
     )
 
 
+def smooth_hecke_oldclass_product_audit(
+    *,
+    index_exponent: Fraction,
+    ambient_level_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> SmoothHeckeOldclassProductAudit:
+    """Restore the Blomer--Milicevic oldclass layer in the product model.
+
+    Write the ambient level as ``T^lambda``, the primitive newform level
+    as ``T^rho``, and the oldclass shift as ``T^beta``, so that
+    ``rho + beta = lambda``.  In the exact oldclass Fourier expansion,
+    choose ``c*ell=b`` and distribute ``ell=ell_1*ell_2`` between the two
+    smooth Hecke indices.  If their common exponent is ``u``, the product
+    Mobius split is at least
+
+    ``u - max(log_T ell_1, log_T ell_2) - rho >= u - lambda``.
+
+    The large-common-divisor endpoint, including the two exact oldclass
+    coefficient normalizations, is at most
+
+    ``u + rho + theta*beta``
+    ``  = u + lambda - (1-theta)*beta``.
+
+    Hence every genuine oldclass shift has the power margin
+    ``(1-theta)*beta`` and the worst endpoint is the newform cell
+    ``beta=0``.  Divisor allocations cost only ``T^o(1)``, and every cell
+    retains the arbitrary logarithmic decay from the Mobius PNT.
+
+    This adapter deliberately stops at the product-smooth spectral
+    model.  It does not separate the physical coupled QCT kernel or
+    restore the remaining Mobius entries and level family.
+    """
+    index = F(index_exponent)
+    level = F(ambient_level_exponent)
+    theta = F(ramanujan_theta)
+    if min(index, level, theta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if theta >= 1:
+        raise ValueError("Ramanujan exponent must be smaller than one")
+    if level >= index:
+        raise ValueError("ambient level must be shorter than each index")
+
+    split = index - level
+    endpoint = index + level
+    slope = F(1) - theta
+    return SmoothHeckeOldclassProductAudit(
+        index_exponent=index,
+        ambient_level_exponent=level,
+        ramanujan_theta=theta,
+        minimum_common_divisor_split_exponent=split,
+        newform_endpoint_exponent=endpoint,
+        oldclass_shift_saving_slope=slope,
+        worst_oldclass_endpoint_exponent=endpoint,
+        worst_oldclass_endpoint_attained_at_newform_shift_zero=True,
+        bm_oldclass_fourier_formula_exact=True,
+        bm_first_index_is_coprime_to_ambient_level=True,
+        oldclass_divisor_allocations_have_subpower_cost=True,
+        every_oldclass_cell_retains_mobius_pnt_log_decay=True,
+        ramified_newform_identity_compatible=True,
+        oldclass_product_smooth_model_covered=True,
+        physical_coupled_kernel_restored=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -15545,6 +15632,42 @@ def main() -> None:
         "finite_gate="
         f"{hecke_product.finite_prime_hecke_gate_covered},"
         f"covered={hecke_product.whole_mobius_gate_covered}"
+    )
+    hecke_oldclass = smooth_hecke_oldclass_product_audit(
+        index_exponent=F(5, 2),
+        ambient_level_exponent=F(1),
+    )
+    print(
+        "large_q_transition: smooth_hecke_oldclass_product="
+        f"index={_fmt(hecke_oldclass.index_exponent)},"
+        f"level={_fmt(hecke_oldclass.ambient_level_exponent)},"
+        f"theta={_fmt(hecke_oldclass.ramanujan_theta)},"
+        "split="
+        f"{_fmt(hecke_oldclass.minimum_common_divisor_split_exponent)},"
+        "newform_endpoint="
+        f"{_fmt(hecke_oldclass.newform_endpoint_exponent)},"
+        "oldclass_slope="
+        f"{_fmt(hecke_oldclass.oldclass_shift_saving_slope)},"
+        "worst_endpoint="
+        f"{_fmt(hecke_oldclass.worst_oldclass_endpoint_exponent)},"
+        "worst_at_newform="
+        f"{hecke_oldclass.worst_oldclass_endpoint_attained_at_newform_shift_zero},"
+        "bm_formula="
+        f"{hecke_oldclass.bm_oldclass_fourier_formula_exact},"
+        "first_coprime="
+        f"{hecke_oldclass.bm_first_index_is_coprime_to_ambient_level},"
+        "divisors_subpower="
+        f"{hecke_oldclass.oldclass_divisor_allocations_have_subpower_cost},"
+        "pnt_log="
+        f"{hecke_oldclass.every_oldclass_cell_retains_mobius_pnt_log_decay},"
+        "ramified="
+        f"{hecke_oldclass.ramified_newform_identity_compatible},"
+        "product_model="
+        f"{hecke_oldclass.oldclass_product_smooth_model_covered},"
+        f"physical={hecke_oldclass.physical_coupled_kernel_restored},"
+        "finite_gate="
+        f"{hecke_oldclass.finite_prime_hecke_gate_covered},"
+        f"covered={hecke_oldclass.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

@@ -13657,6 +13657,130 @@ the primitive ramified factors as restored, while leaving the oldclass,
 physical-kernel, finite-prime-gate, and whole-gate flags false.
 
 
+### 4.109e Blomer--Milićević oldclasses preserve the product-smooth endpoint
+
+The first missing interface in Section 4.109d can be restored without
+paying a new power of \(T\).  Let \(f\) be a primitive cusp form of level
+\(Q_f\), let \(b\mid Q/Q_f\), and put
+
+\[
+ \mathcal N_f(b)=
+ \left\{
+ b\prod_{p\mid b}
+ \left(1-\frac{p|\lambda_f(p)|^2}
+ {(p+\chi_0(p))^2}\right)^{-1}
+ \right\}^{1/2}.
+\]
+
+The exact Blomer--Milićević orthonormal oldclass basis satisfies
+
+\[
+ \boxed{
+ \sqrt n\,\rho_{f_{(b)}}(n)
+ =\mathcal N_f(b)\rho_f(1)
+ \sum_{c\ell=b}
+ \frac{\mu(c)\overline{\lambda_f(c)}}{\nu(c)}
+ \lambda_f\!\left(\frac n\ell\right),}
+ \qquad
+ \nu(c)=c\prod_{p\mid c}\left(1+\frac{\chi_0(p)}p\right),
+\tag{4.845ab}
+\]
+
+with \(\lambda_f(x)=0\) when \(x\notin\mathbb N\).  In the
+Blomer--Milićević Kuznetsov reduction the first Fourier index \(m'\)
+satisfies
+
+\[
+ (m',Q)=1.
+\tag{4.845ac}
+\]
+
+Since \(\ell\mid b\mid Q/Q_f\), only \(\ell=1,c=b\) survives in
+(4.845ab) at \(m'\).  At the second Fourier index retain a term
+\(c\ell=b\), and allocate
+\(\ell=\ell_1\ell_2\) to the two smooth Hecke variables.  Write
+
+\[
+ H_1=H_2=T^{u},\quad
+ Q=T^{\lambda+o(1)},\quad
+ Q_f=T^{\rho+o(1)},\quad
+ b=T^{\beta+o(1)},\quad
+ c=T^{\gamma+o(1)},\quad
+ \ell_i=T^{e_i+o(1)}.
+\]
+
+The exact constraints are
+
+\[
+ \rho+\beta=\lambda,\qquad
+ 0\leq\gamma\leq\beta,\qquad
+ e_1+e_2=\beta-\gamma,\qquad e_1,e_2\geq0.
+\tag{4.845ad}
+\]
+
+The product of the two oldclass normalizations in (4.845ab), including
+the Hecke bounds only on \(b\) and \(c\), has exponent
+
+\[
+ \mathcal N_f(b)^2
+ \frac{|\lambda_f(b)\lambda_f(c)|}{\nu(b)\nu(c)}
+ \ll T^{\theta\beta-(1-\theta)\gamma+o(1)}.
+\tag{4.845ae}
+\]
+
+Apply the product-index Möbius identity (4.845s) to the shortened
+lengths \(T^{u-e_1}\) and \(T^{u-e_2}\), with primitive conductor
+\(T^\rho\).  Its common-divisor split remains uniformly long:
+
+\[
+ \begin{aligned}
+ \min(u-e_1,u-e_2)-\rho
+ &=u-\max(e_1,e_2)-\rho\\
+ &\geq u-\beta-\rho
+ =u-\lambda.
+ \end{aligned}
+\tag{4.845af}
+\]
+
+Consequently the Möbius variable still has length at least
+\(T^{u-\lambda}\) in every oldclass cell, so the zero-free-region PNT
+used in (4.845y) retains arbitrary logarithmic decay.  The
+large-common-divisor endpoint, after (4.845ae), is
+
+\[
+ \begin{aligned}
+ E(\rho,\beta,\gamma,e_1,e_2)
+ &=u-\min(e_1,e_2)+\rho
+   +\theta\beta-(1-\theta)\gamma\\
+ &\leq u+\rho+\theta\beta\\
+ &=u+\lambda-(1-\theta)\beta
+ \leq u+\lambda.
+ \end{aligned}
+\tag{4.845ag}
+\]
+
+All sums over \(c,\ell,\ell_1,\ell_2\) are divisor sums and hence cost
+only \(T^{o(1)}\).  At the critical point
+\[
+ u=\frac52,\qquad \lambda=1,\qquad \theta=\frac7{64},
+\]
+(4.845af) is at least \(3/2\), while (4.845ag) is at most \(7/2\).
+The worst endpoint is attained only at \(\beta=0\), the primitive
+newform cell; every genuine oldclass shift \(\beta>0\) gains
+\((57/64)\beta\).  Thus oldclasses preserve the \(7/2\) endpoint and
+its arbitrary logarithmic decay in the product-smooth spectral model.
+This also remains compatible with the ramified primitive identity from
+Section 4.109d, because the latter already restricts its common Möbius
+divisor away from \(Q_f\).
+
+The adapter smooth_hecke_oldclass_product_audit records the minimum
+split \(3/2\), the newform and worst oldclass endpoint \(7/2\), and the
+oldclass saving slope \(57/64\).  It leaves the physical coupled-kernel,
+finite-prime-gate, and whole-gate flags false: the exact
+Blomer--Milićević formula closes the oldclass normalization only after
+one has reached the product-smooth spectral model.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

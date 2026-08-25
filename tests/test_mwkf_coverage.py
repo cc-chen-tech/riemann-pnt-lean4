@@ -2768,6 +2768,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "finite_gate=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: smooth_hecke_oldclass_product="
+        "index=5/2,level=1,theta=7/64,split=3/2,"
+        "newform_endpoint=7/2,oldclass_slope=57/64,"
+        "worst_endpoint=7/2,worst_at_newform=True,bm_formula=True,"
+        "first_coprime=True,divisors_subpower=True,pnt_log=True,"
+        "ramified=True,product_model=True,physical=False,"
+        "finite_gate=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: newform_level_mobius_projector="
         "prime=5,index=6,mobius=-2,newform=-1/6,difference=-11/6,"
         "geometric=True,squarefree=True,oldclass_tail=True,"
@@ -4131,6 +4140,44 @@ def test_smooth_hecke_product_average_removes_the_pointwise_finite_prime_loss() 
     assert hard.eisenstein_spectrum_requires_separate_existing_treatment
     assert hard.ramified_newform_local_factors_restored
     assert not hard.oldclass_coefficients_restored
+    assert not hard.physical_coupled_kernel_restored
+    assert not hard.finite_prime_hecke_gate_covered
+    assert not hard.whole_mobius_gate_covered
+
+
+def test_bm_oldclasses_preserve_the_smooth_product_index_endpoint() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109e Blomer--Milićević oldclasses preserve the product-smooth endpoint",
+        "\\tag{4.845ab}",
+        "\\tag{4.845ag}",
+        "smooth_hecke_oldclass_product_audit",
+    ):
+        assert marker in note
+
+    adapter = getattr(
+        coverage_audit,
+        "smooth_hecke_oldclass_product_audit",
+        None,
+    )
+    assert adapter is not None, "smooth Hecke oldclass audit is missing"
+
+    hard = adapter(
+        index_exponent=F(5, 2),
+        ambient_level_exponent=F(1),
+        ramanujan_theta=F(7, 64),
+    )
+    assert hard.minimum_common_divisor_split_exponent == F(3, 2)
+    assert hard.newform_endpoint_exponent == F(7, 2)
+    assert hard.oldclass_shift_saving_slope == F(57, 64)
+    assert hard.worst_oldclass_endpoint_exponent == F(7, 2)
+    assert hard.worst_oldclass_endpoint_attained_at_newform_shift_zero
+    assert hard.bm_oldclass_fourier_formula_exact
+    assert hard.bm_first_index_is_coprime_to_ambient_level
+    assert hard.oldclass_divisor_allocations_have_subpower_cost
+    assert hard.every_oldclass_cell_retains_mobius_pnt_log_decay
+    assert hard.ramified_newform_identity_compatible
+    assert hard.oldclass_product_smooth_model_covered
     assert not hard.physical_coupled_kernel_restored
     assert not hard.finite_prime_hecke_gate_covered
     assert not hard.whole_mobius_gate_covered
