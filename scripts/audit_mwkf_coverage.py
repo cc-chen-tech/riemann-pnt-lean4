@@ -356,6 +356,51 @@ class TransitionKimAverageShiftedConvolutionAudit:
 
 
 @dataclass(frozen=True)
+class TransitionTypeIIDeterminantAudit:
+    b_exponent: Fraction
+    a_exponent: Fraction
+    numerator_product_exponent: Fraction
+    factorized_y_exponent: Fraction
+    full_zero_determinant_exponent: Fraction
+    square_target_exponent: Fraction
+    full_zero_determinant_margin: Fraction
+    nonzero_determinant_max_exponent: Fraction
+    reciprocalized_y_modulus_exponent: Fraction
+    y_modulus_square_root_exponent: Fraction
+    b_below_y_modulus_square_root_gap: Fraction
+    y_modulus_completed_dual_length_exponent: Fraction
+    full_zero_determinant_separate_majorant_closes: bool
+    y_modulus_fixed_b_interval_reaches_square_root: bool
+    y_modulus_single_completion_supplies_saving: bool
+    nonzero_determinant_gate_required: bool
+    nonzero_determinant_estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
+class TransitionTypeIILcmCompletionAudit:
+    b_exponent: Fraction
+    gcd_s_exponent: Fraction
+    lcm_modulus_exponent: Fraction
+    modulus_square_root_exponent: Fraction
+    b_below_square_root_gap: Fraction
+    b_above_square_root_surplus: Fraction
+    completed_dual_length_exponent: Fraction
+    blomer_pascadi_dimensionless_loss: Fraction
+    nonzero_cardinality_exponent: Fraction
+    square_target_exponent: Fraction
+    required_total_saving: Fraction
+    single_b_weil_saving: Fraction
+    remaining_saving_after_single_b_completion: Fraction
+    original_phase_compresses_to_lcm: bool
+    fixed_b_completion_has_kinematic_saving: bool
+    fixed_b_completion_closes_square_target: bool
+    squarefree_coprime_b_weight_is_smooth: bool
+    blomer_pascadi_adapter_closes: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -1918,6 +1963,133 @@ def transition_kim_average_shifted_convolution_audit(
         theorem_applicable=applicable,
         published_coverage=False,
         source="Kim, arXiv:2509.24152v2, Theorem 1.2",
+    )
+
+
+def transition_type_ii_determinant_audit(
+    box: ExponentBox,
+    *,
+    b_exponent: Fraction,
+) -> TransitionTypeIIDeterminantAudit:
+    """Audit the exact determinant split after transition Type-II Cauchy.
+
+    In the original coupled sum put ``r=a*b``, ``n_i=h_i*delta_i``
+    and ``y_i=s_i*a_i`` after expanding the square in the common factor
+    ``b``.  The common reciprocal phase is governed by
+    ``Delta=n1*y2-n2*y1``.  The full zero ray has cardinality
+    ``B*N*Y*T^epsilon`` by primitive-slope parametrization, not merely
+    the literal identical-tuple cardinality.  For ``Delta != 0`` the
+    reciprocity-expanded modulus is ``y1*y2`` and completion in that
+    nonprimitive modulus has dual length ``Y^2/B``.
+    """
+    if not _is_large_q_afe_transition_face(box):
+        raise ValueError("box is not on the large-q AFE transition face")
+    b_range = (box.rho / 3, 2 * box.rho / 3)
+    if not b_range[0] <= b_exponent <= b_range[1]:
+        raise ValueError("b exponent lies outside the Type-II range")
+
+    a_exponent = box.rho - b_exponent
+    numerator_product = box.ell + box.h
+    factorized_y = box.sigma + a_exponent
+    zero_determinant = b_exponent + numerator_product + factorized_y
+    square_target = (
+        2 * box.rho + 2 * box.sigma
+        - b_exponent
+        - F(1, 250)
+    )
+    zero_margin = square_target - zero_determinant
+    determinant_max = numerator_product + factorized_y
+    modulus = 2 * factorized_y
+    modulus_square_root = factorized_y
+    b_gap = modulus_square_root - b_exponent
+    completed_dual = modulus - b_exponent
+    reaches_square_root = b_exponent >= modulus_square_root
+
+    return TransitionTypeIIDeterminantAudit(
+        b_exponent=b_exponent,
+        a_exponent=a_exponent,
+        numerator_product_exponent=numerator_product,
+        factorized_y_exponent=factorized_y,
+        full_zero_determinant_exponent=zero_determinant,
+        square_target_exponent=square_target,
+        full_zero_determinant_margin=zero_margin,
+        nonzero_determinant_max_exponent=determinant_max,
+        reciprocalized_y_modulus_exponent=modulus,
+        y_modulus_square_root_exponent=modulus_square_root,
+        b_below_y_modulus_square_root_gap=b_gap,
+        y_modulus_completed_dual_length_exponent=completed_dual,
+        full_zero_determinant_separate_majorant_closes=zero_margin > 0,
+        y_modulus_fixed_b_interval_reaches_square_root=(
+            reaches_square_root
+        ),
+        y_modulus_single_completion_supplies_saving=reaches_square_root,
+        nonzero_determinant_gate_required=True,
+        nonzero_determinant_estimate_proved=False,
+        published_coverage=False,
+    )
+
+
+def transition_type_ii_lcm_completion_audit(
+    box: ExponentBox,
+    *,
+    b_exponent: Fraction,
+    gcd_s_exponent: Fraction,
+) -> TransitionTypeIILcmCompletionAudit:
+    """Use the primitive common-``b`` modulus ``lcm(s1,s2)``.
+
+    Before reciprocity, the squared phase is a single reciprocal phase
+    in ``b`` modulo ``lcm(s1,s2)``.  If ``(s1,s2)=T^gamma`` on the
+    transition face, this modulus has exponent ``2-gamma``.  The
+    Blomer--Pascadi Theorem 5.7 comparison uses the optimistic interval
+    lengths ``M=c`` and ``N=c/B`` after completion; its largest
+    dimensionless term has exponent ``c/4`` and hence does not improve
+    the exact Kloosterman operator bound.
+    """
+    if not _is_large_q_afe_transition_face(box):
+        raise ValueError("box is not on the large-q AFE transition face")
+    b_range = (box.rho / 3, 2 * box.rho / 3)
+    if not b_range[0] <= b_exponent <= b_range[1]:
+        raise ValueError("b exponent lies outside the Type-II range")
+    if gcd_s_exponent < 0 or gcd_s_exponent > box.sigma:
+        raise ValueError("gcd exponent lies outside [0,sigma]")
+
+    lcm_modulus = 2 * box.sigma - gcd_s_exponent
+    modulus_square_root = lcm_modulus / 2
+    b_gap = _positive_part(modulus_square_root - b_exponent)
+    b_surplus = _positive_part(b_exponent - modulus_square_root)
+    completed_dual = lcm_modulus - b_exponent
+    bp_loss = lcm_modulus / 4
+    nonzero_cardinality = (
+        F(6) - b_exponent - gcd_s_exponent
+    )
+    square_target = (
+        2 * box.rho + 2 * box.sigma
+        - b_exponent
+        - F(1, 250)
+    )
+    required_total_saving = nonzero_cardinality - square_target
+    remaining_after_b = required_total_saving - b_surplus
+
+    return TransitionTypeIILcmCompletionAudit(
+        b_exponent=b_exponent,
+        gcd_s_exponent=gcd_s_exponent,
+        lcm_modulus_exponent=lcm_modulus,
+        modulus_square_root_exponent=modulus_square_root,
+        b_below_square_root_gap=b_gap,
+        b_above_square_root_surplus=b_surplus,
+        completed_dual_length_exponent=completed_dual,
+        blomer_pascadi_dimensionless_loss=bp_loss,
+        nonzero_cardinality_exponent=nonzero_cardinality,
+        square_target_exponent=square_target,
+        required_total_saving=required_total_saving,
+        single_b_weil_saving=b_surplus,
+        remaining_saving_after_single_b_completion=remaining_after_b,
+        original_phase_compresses_to_lcm=True,
+        fixed_b_completion_has_kinematic_saving=b_surplus > 0,
+        fixed_b_completion_closes_square_target=remaining_after_b <= 0,
+        squarefree_coprime_b_weight_is_smooth=False,
+        blomer_pascadi_adapter_closes=False,
+        published_coverage=False,
     )
 
 
@@ -4806,6 +4978,44 @@ def main() -> None:
         "X=3/2 H=1/2 b1=1 b2=1 h_power=2/3 bound=11/6 "
         "target=1499/1000 deficit=1003/3000 multiplicative=False "
         "mellin_uniform=False applicable=False covered=False"
+    )
+    transition_determinant_left = transition_type_ii_determinant_audit(
+        transition_box,
+        b_exponent=F(1, 3),
+    )
+    transition_determinant_right = transition_type_ii_determinant_audit(
+        transition_box,
+        b_exponent=F(2, 3),
+    )
+    print(
+        "large_q_transition: type_ii_determinant="
+        "1/3:zero=3,target=2747/750,margin=497/750,delta=8/3,"
+        "y_modulus=10/3,y_sqrt=5/3,y_b_gap=4/3,y_dual=3;"
+        "2/3:zero=3,target=2497/750,margin=247/750,delta=7/3,"
+        "y_modulus=8/3,y_sqrt=4/3,y_b_gap=2/3,y_dual=2 "
+        "zero_closes=True b_completion=False nonzero_gate=True "
+        "proved=False covered=False"
+    )
+    transition_lcm_generic = transition_type_ii_lcm_completion_audit(
+        transition_box,
+        b_exponent=F(2, 3),
+        gcd_s_exponent=F(0),
+    )
+    transition_lcm_high_gcd = transition_type_ii_lcm_completion_audit(
+        transition_box,
+        b_exponent=F(2, 3),
+        gcd_s_exponent=F(3, 4),
+    )
+    print(
+        "large_q_transition: type_ii_lcm_completion="
+        "generic:beta=2/3,gcd=0,lcm=2,sqrt=1,b_gap=1/3,"
+        "b_surplus=0,dual=4/3,required=501/250,remain=501/250,"
+        "bp_loss=1/2;"
+        "high_gcd:beta=2/3,gcd=3/4,lcm=5/4,sqrt=5/8,b_gap=0,"
+        "b_surplus=1/24,dual=7/12,required=627/500,"
+        "remain=3637/3000,bp_loss=5/16 "
+        "lcm_phase=True smooth_b=False b_closes=False bp_closes=False "
+        "covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

@@ -4341,6 +4341,296 @@ uniform_common_mellin_twist_hypothesis_verified=False, the deficit
 \(1003/3000\), theorem_applicable=False, and
 published_coverage=False.
 
+### 4.35 Exact transition determinant gate after Type-II Cauchy
+
+The phrase "nonzero Gram" in (4.286) can be made exact on the original
+coupled sum (6.0) of the reduction note.  On the transition face put
+
+\[
+ R=S=T,\qquad H=L=T^{1/2},\qquad
+ r=ab,\quad b\asymp T^\beta,\quad
+ a\asymp T^{1-\beta},
+ \quad \frac13\le\beta\le\frac23.
+\tag{4.293}
+\]
+
+For a fixed dyadic component define, with no separated-kernel
+replacement,
+
+\[
+\begin{aligned}
+ \mathcal A_b:={}&
+ \sum_{a,s,h,\delta}
+ c_U(a)\mu(s)\,
+ \mathbf1_{(ab,s)=1}\mathbf1_{(q,abs)=1}
+ p_N(qab)p_N(qs)                                      \\
+ &\qquad\qquad\times
+ \Psi\!\left(\frac{ab}{R},\frac{s}{S},
+               \frac\delta L,\frac hH\right)
+ e\!\left(-\frac{h\delta\overline{ab}}s\right),
+\end{aligned}
+\tag{4.294}
+\]
+
+where every summation variable is restricted by the exact support in
+(6.0), and \(a>U\).  The squarefree support of \(\mu(ab)\) makes
+\((a,b)=1\), so (4.5) gives the exact Type-II component
+\(-\sum_b\mu(b)\mathcal A_b\).  Thus (4.283) applies to the literal
+amplitude (4.294), not to an arbitrary coefficient model.
+
+Expand \(\sum_b|\mathcal A_b|^2\), and put
+
+\[
+ n_i=h_i\delta_i,\qquad y_i=s_i a_i,
+ \qquad
+ \boxed{\Delta=n_1y_2-n_2y_1}.
+\tag{4.295}
+\]
+
+All inverses below exist because
+\((b,y_1y_2)=(a_i,s_i)=(a_i,b)=(s_i,b)=1\).  Applying reciprocity and
+CRT exactly as in (4.8a)--(4.8c'') gives the complete phase
+
+\[
+\begin{aligned}
+ &e\!\left(-\frac{n_1}{a_1bs_1}
+            +\frac{n_2}{a_2bs_2}\right)
+ e\!\left(\frac{n_1\overline{s_1b}}{a_1}
+            -\frac{n_2\overline{s_2b}}{a_2}\right)       \\
+ &\hspace{24mm}\times
+ e\!\left(\frac{\Delta}{b y_1y_2}\right)
+ e\!\left(-\frac{\Delta\bar b}{y_1y_2}\right).
+\end{aligned}
+\tag{4.296}
+\]
+
+In particular the two fixed-\(a_i\) phases in the first line must not be
+discarded when the last reciprocal phase is transformed.
+
+The zero determinant is the full proportional ray, not just the
+identical tuple.  For a common sign of \(n_1,n_2\), it has the unique
+parametrization
+
+\[
+ |n_1|=gu,\quad |n_2|=gv,\quad
+ y_1=ku,\quad y_2=kv,\quad (u,v)=1.
+\tag{4.297}
+\]
+
+The opposite-sign case is empty.  If \(n_i\asymp N_0\) and
+\(y_i\asymp Y_0\), summing first over the primitive pair gives the
+elementary bound
+
+\[
+ \sum_{\substack{(u,v)=1,\ u\asymp v\\
+                  \max(u,v)\le C_0\min(N_0,Y_0)}}
+ \left(1+\frac{N_0}{\max(u,v)}\right)
+ \left(1+\frac{Y_0}{\max(u,v)}\right)
+ \ll N_0Y_0\log(2T),
+\tag{4.298}
+\]
+
+where the bound on \(\max(u,v)\) comes from the nonempty dyadic
+intervals for \(g,k\); the isolated
+linear terms are smaller in the present ranges.  The divisor
+representations \(n_i=h_i\delta_i\), \(y_i=s_i a_i\), and
+\(|c_U(a_i)|\le\tau(a_i)\) cost \(T^\varepsilon\).  Here
+
+\[
+ N_0=T,\qquad Y_0=T^{2-\beta},\qquad B=T^\beta.
+\tag{4.299}
+\]
+
+Consequently the **entire** \(\Delta=0\) contribution, including every
+nonidentical proportional tuple, is
+
+\[
+ \ll_{\varepsilon,W}BN_0Y_0T^\varepsilon
+ =T^{3+\varepsilon}.
+\tag{4.300}
+\]
+
+Its margins below (4.283) are exactly \(497/750\) at
+\(\beta=1/3\) and \(247/750\) at \(\beta=2/3\).  This strengthens the
+literal-diagonal statement in Section 4.33 and proves that no
+zero-determinant subtraction is needed on this face.
+
+For \(\Delta\ne0\), the exact remaining local theorem is
+
+\[
+\boxed{
+ \begin{aligned}
+ \mathrm{TDG}_{\beta}:={}&
+ \sum_{b\asymp T^\beta}
+ \sum_{\substack{a_i\asymp T^{1-\beta},\ s_i\asymp T\\
+                   h_i,\delta_i\asymp T^{1/2}\\
+                   \Delta=n_1y_2-n_2y_1\ne0}}
+ c_U(a_1)c_U(a_2)\mu(s_1)\mu(s_2)\,
+ \mathscr W_q(\boldsymbol a,\boldsymbol s,
+              \boldsymbol h,\boldsymbol\delta;b)\\
+ &\quad\times
+ e\!\left(-\frac{n_1}{a_1bs_1}
+            +\frac{n_2}{a_2bs_2}
+            +\frac{n_1\overline{s_1b}}{a_1}
+            -\frac{n_2\overline{s_2b}}{a_2}
+            +\frac{\Delta}{b y_1y_2}
+            -\frac{\Delta\bar b}{y_1y_2}\right)
+ \ll_{\varepsilon,W}T^{4-\beta-1/250+\varepsilon}.
+ \end{aligned}}
+\tag{4.301}
+\]
+
+The weight \(\mathscr W_q\) is precisely the product of the two coupled
+weights in (4.294), the four endpoint tapers, the two \(q\)-conditions,
+and the displayed coprimality indicators; no factor in (4.296) is
+absorbed unless it is written in the phase of (4.301).
+
+Formula (4.296) exhibits the following reciprocalized modulus:
+
+\[
+ 0<|\Delta|\ll T^{3-\beta},\qquad
+ y_1y_2\asymp T^{4-2\beta},\qquad
+ B=T^\beta,qquad
+ \frac{y_1y_2}{B}=T^{4-3\beta}.
+\tag{4.302}
+\]
+
+This representation is exact, but \(y_1y_2\) is not the minimal
+conductor of the total \(b\)-phase.  The fixed-\(a_i\) phases and the
+last reciprocal phase must be recombined before assigning that
+conductor.  The exact-rational adapter
+transition_type_ii_determinant_audit records the zero-ray estimate and
+keeps nonzero_determinant_estimate_proved=False.
+
+### 4.36 Minimal common-b conductor is the lcm modulus
+
+Before the reciprocity split (4.296), the squared phase in (4.294) is
+
+\[
+ e\!\left(-\frac{n_1\overline{a_1b}}{s_1}
+            +\frac{n_2\overline{a_2b}}{s_2}\right).
+\tag{4.303}
+\]
+
+Put
+
+\[
+ g=(s_1,s_2),\qquad
+ \ell=[s_1,s_2]=\frac{s_1s_2}{g},
+\tag{4.304}
+\]
+
+and let \(\overline{a_i}^{(s_i)}\) denote the inverse modulo \(s_i\).
+Reduction of \(\bar b\pmod\ell\) modulo each \(s_i\) proves
+
+\[
+ \boxed{
+ (4.303)=e\!\left(\frac{C\bar b}{\ell}\right),\qquad
+ C\equiv
+ -n_1\overline{a_1}^{(s_1)}\frac{\ell}{s_1}
+ +n_2\overline{a_2}^{(s_2)}\frac{\ell}{s_2}
+ \pmod\ell.}
+\tag{4.305}
+\]
+
+Thus the primitive common-\(b\) conductor is \(\ell\), not
+\(y_1y_2\).  On a gcd box \(g\asymp T^\gamma\),
+\(0\le\gamma\le1\),
+
+\[
+ \ell\asymp T^{2-\gamma},\qquad
+ \sqrt\ell=T^{1-\gamma/2},\qquad
+ \frac{\ell}{B}=T^{2-\gamma-\beta}.
+\tag{4.306}
+\]
+
+For a smooth \(b\)-weight, finite Poisson summation gives
+
+\[
+ \sum_{\substack{b\in\mathbb Z\\(b,\ell)=1}}
+ w(b/B)e(C\bar b/\ell)
+ =
+ \frac B\ell\sum_{h\in\mathbb Z}
+ \widehat w(hB/\ell)S(C,h;\ell).
+\tag{4.307}
+\]
+
+The actual Cauchy square contains
+\(\mu(b)^2\mathbf1_{(b,qa_1a_2)=1}\), so square-divisor and
+coprimality inversion are required before (4.307); this arithmetic
+weight is not silently declared smooth.
+
+The single completed sum has a kinematic Weil saving only when
+
+\[
+ \boxed{\beta>1-\frac\gamma2
+ \quad\Longleftrightarrow\quad
+ \gamma>2-2\beta.}
+\tag{4.308}
+\]
+
+Hence the generic low-gcd region remains below square root, while a
+high-gcd subface can cross it.  Condition (4.308) alone is not coverage:
+the divisor expansions and the complete outer average in (4.301) still
+have to meet \(T^{4-\beta-1/250+\varepsilon}\).
+
+Indeed the \(g\asymp T^\gamma\) box contains
+\(T^{2-\gamma+\varepsilon}\) pairs \((s_1,s_2)\).  Before
+oscillation, the nonzero square has cardinal exponent
+
+\[
+ \beta+2(1-\beta)+2+(2-\gamma)
+ =6-\beta-\gamma.
+\tag{4.308a}
+\]
+
+Against (4.301) it therefore requires the saving
+
+\[
+ T^{\,2-\gamma+1/250}.
+\tag{4.308b}
+\]
+
+A single \(b\)-completion supplies at most
+\(T^{(\beta-1+\gamma/2)_+}\).  Even at the most favorable endpoint
+\((\beta,\gamma)=(2/3,1)\), the remaining exponent is
+
+\[
+ \frac{251}{250}-\frac16=\frac{314}{375}>0.
+\tag{4.308c}
+\]
+
+Thus no gcd box is closed by a separate \(b\)-completion.  The
+high-gcd inequality (4.308) only reduces the missing saving; it does not
+remove the need for a joint average over the remaining variables.
+
+Blomer--Pascadi, arXiv:2607.24311v1, Theorem 5.7, gives
+
+\[
+ \sum_{\substack{m\in I,\ n\in J\\(m,c)=1}}
+ \alpha_m\beta_nS(am,n;c)
+ \ll
+ \|\alpha\|_2\|\beta\|_2c^{1+o(1)}
+ \left(
+ \frac{(MN)^{1/2}}{c^{3/4}}
+ +\frac{N^{1/2}}{c^{1/2}}
+ +\frac{M^{1/2}}{c^{1/4}}
+ \right).
+\tag{4.309}
+\]
+
+Even under the optimistic identification \(c=\ell\), \(M=\ell\), and
+\(N=\ell/B\), the largest parenthetical term is \(c^{1/4}\).  It is a
+positive loss \(T^{(2-\gamma)/4}\) relative to the exact Kloosterman
+matrix operator scale, not a saving.  The actual coefficient is also
+query-dependent through \(C\) and the coupled weight.  Therefore
+Theorem 5.7 does not prove (4.301).
+
+The adapter transition_type_ii_lcm_completion_audit records the exact
+lcm conductor, the boundary (4.308), the dual length, the nonsmooth
+squarefree-coprime \(b\)-weight, and the Blomer--Pascadi loss.  It keeps
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

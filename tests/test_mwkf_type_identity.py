@@ -453,6 +453,39 @@ def test_coprime_product_lift_equals_one_common_divisor_sum() -> None:
                     assert (n_left - n_right) % common_divisor == 0
 
 
+def test_squared_type_ii_phase_compresses_to_the_lcm_modulus() -> None:
+    """Verify the minimal common-b conductor on exhaustive small fixtures."""
+    adapter = getattr(type_identity, "lcm_b_phase_compression", None)
+    assert adapter is not None, "lcm b-phase helper is missing"
+
+    for s1 in range(2, 10):
+        for s2 in range(2, 10):
+            for a1 in range(1, 8):
+                for a2 in range(1, 8):
+                    for b in range(1, 8):
+                        if gcd(a1 * b, s1) != 1:
+                            continue
+                        if gcd(a2 * b, s2) != 1:
+                            continue
+                        for n1 in (-5, -1, 1, 4):
+                            for n2 in (-3, 2, 6):
+                                audit = adapter(
+                                    n1=n1,
+                                    a1=a1,
+                                    s1=s1,
+                                    n2=n2,
+                                    a2=a2,
+                                    s2=s2,
+                                    b=b,
+                                )
+                                assert audit.lcm_modulus == (
+                                    s1 * s2 // gcd(s1, s2)
+                                )
+                                assert audit.original_phase == (
+                                    audit.compressed_phase
+                                )
+
+
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:
     """Catch reversing the two primitive ray coordinates in Delta=0."""
     adapter = getattr(

@@ -642,6 +642,114 @@ def test_kim_average_shifted_convolution_still_misses_transition_gate() -> None:
     assert not audit.published_coverage
 
 
+def test_transition_type_ii_full_zero_ray_closes_but_b_completion_fails() -> None:
+    """Audit the full proportional ray and the nonzero determinant modulus."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_type_ii_determinant_audit",
+        None,
+    )
+    assert adapter is not None, "transition determinant adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+
+    left = adapter(transition_box, b_exponent=F(1, 3))
+    right = adapter(transition_box, b_exponent=F(2, 3))
+
+    assert left.numerator_product_exponent == F(1)
+    assert left.factorized_y_exponent == F(5, 3)
+    assert left.full_zero_determinant_exponent == F(3)
+    assert left.square_target_exponent == F(2747, 750)
+    assert left.full_zero_determinant_margin == F(497, 750)
+    assert left.nonzero_determinant_max_exponent == F(8, 3)
+    assert left.reciprocalized_y_modulus_exponent == F(10, 3)
+    assert left.y_modulus_square_root_exponent == F(5, 3)
+    assert left.b_below_y_modulus_square_root_gap == F(4, 3)
+    assert left.y_modulus_completed_dual_length_exponent == F(3)
+
+    assert right.factorized_y_exponent == F(4, 3)
+    assert right.full_zero_determinant_exponent == F(3)
+    assert right.square_target_exponent == F(2497, 750)
+    assert right.full_zero_determinant_margin == F(247, 750)
+    assert right.nonzero_determinant_max_exponent == F(7, 3)
+    assert right.reciprocalized_y_modulus_exponent == F(8, 3)
+    assert right.y_modulus_square_root_exponent == F(4, 3)
+    assert right.b_below_y_modulus_square_root_gap == F(2, 3)
+    assert right.y_modulus_completed_dual_length_exponent == F(2)
+
+    for audit in (left, right):
+        assert audit.full_zero_determinant_separate_majorant_closes
+        assert audit.y_modulus_fixed_b_interval_reaches_square_root is False
+        assert audit.y_modulus_single_completion_supplies_saving is False
+        assert audit.nonzero_determinant_gate_required
+        assert not audit.nonzero_determinant_estimate_proved
+        assert not audit.published_coverage
+
+
+def test_transition_type_ii_uses_the_minimal_lcm_b_conductor() -> None:
+    """The y1*y2 reciprocity modulus is not the primitive b-conductor."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_type_ii_lcm_completion_audit",
+        None,
+    )
+    assert adapter is not None, "transition lcm-completion adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+
+    generic = adapter(
+        transition_box,
+        b_exponent=F(2, 3),
+        gcd_s_exponent=F(0),
+    )
+    assert generic.lcm_modulus_exponent == F(2)
+    assert generic.modulus_square_root_exponent == F(1)
+    assert generic.b_below_square_root_gap == F(1, 3)
+    assert generic.b_above_square_root_surplus == 0
+    assert generic.completed_dual_length_exponent == F(4, 3)
+    assert generic.nonzero_cardinality_exponent == F(16, 3)
+    assert generic.required_total_saving == F(501, 250)
+    assert generic.single_b_weil_saving == 0
+    assert (
+        generic.remaining_saving_after_single_b_completion
+        == F(501, 250)
+    )
+    assert not generic.fixed_b_completion_has_kinematic_saving
+    assert not generic.fixed_b_completion_closes_square_target
+    assert generic.blomer_pascadi_dimensionless_loss == F(1, 2)
+
+    high_gcd = adapter(
+        transition_box,
+        b_exponent=F(2, 3),
+        gcd_s_exponent=F(3, 4),
+    )
+    assert high_gcd.lcm_modulus_exponent == F(5, 4)
+    assert high_gcd.modulus_square_root_exponent == F(5, 8)
+    assert high_gcd.b_below_square_root_gap == 0
+    assert high_gcd.b_above_square_root_surplus == F(1, 24)
+    assert high_gcd.completed_dual_length_exponent == F(7, 12)
+    assert high_gcd.nonzero_cardinality_exponent == F(55, 12)
+    assert high_gcd.required_total_saving == F(627, 500)
+    assert high_gcd.single_b_weil_saving == F(1, 24)
+    assert (
+        high_gcd.remaining_saving_after_single_b_completion
+        == F(3637, 3000)
+    )
+    assert high_gcd.fixed_b_completion_has_kinematic_saving
+    assert not high_gcd.fixed_b_completion_closes_square_target
+    assert high_gcd.blomer_pascadi_dimensionless_loss == F(5, 16)
+
+    for audit in (generic, high_gcd):
+        assert audit.original_phase_compresses_to_lcm
+        assert not audit.squarefree_coprime_b_weight_is_smooth
+        assert not audit.blomer_pascadi_adapter_closes
+        assert not audit.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1956,6 +2064,26 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "mellin_uniform=False applicable=False covered=False"
     ) in output
     assert (
+        "large_q_transition: type_ii_determinant="
+        "1/3:zero=3,target=2747/750,margin=497/750,delta=8/3,"
+        "y_modulus=10/3,y_sqrt=5/3,y_b_gap=4/3,y_dual=3;"
+        "2/3:zero=3,target=2497/750,margin=247/750,delta=7/3,"
+        "y_modulus=8/3,y_sqrt=4/3,y_b_gap=2/3,y_dual=2 "
+        "zero_closes=True b_completion=False nonzero_gate=True "
+        "proved=False covered=False"
+    ) in output
+    assert (
+        "large_q_transition: type_ii_lcm_completion="
+        "generic:beta=2/3,gcd=0,lcm=2,sqrt=1,b_gap=1/3,"
+        "b_surplus=0,dual=4/3,required=501/250,remain=501/250,"
+        "bp_loss=1/2;"
+        "high_gcd:beta=2/3,gcd=3/4,lcm=5/4,sqrt=5/8,b_gap=0,"
+        "b_surplus=1/24,dual=7/12,required=627/500,"
+        "remain=3637/3000,bp_loss=5/16 "
+        "lcm_phase=True smooth_b=False b_closes=False bp_closes=False "
+        "covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2335,5 +2463,14 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "arXiv:2509.24152v2, Theorem 1.2",
         r"\frac{1003}{3000}",
         "transition_kim_average_shifted_convolution_audit",
+        "### 4.35 Exact transition determinant gate after Type-II Cauchy",
+        r"\Delta=n_1y_2-n_2y_1",
+        r"T^{4-2\beta}",
+        "transition_type_ii_determinant_audit",
+        "### 4.36 Minimal common-b conductor is the lcm modulus",
+        r"\ell=[s_1,s_2]",
+        r"\frac{314}{375}",
+        "arXiv:2607.24311v1, Theorem 5.7",
+        "transition_type_ii_lcm_completion_audit",
     ):
         assert marker in text

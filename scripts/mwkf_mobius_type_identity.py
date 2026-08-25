@@ -93,6 +93,14 @@ class CommonBPhaseReciprocity:
 
 
 @dataclass(frozen=True)
+class LcmBPhaseCompression:
+    lcm_modulus: int
+    compressed_numerator: int
+    original_phase: Fraction
+    compressed_phase: Fraction
+
+
+@dataclass(frozen=True)
 class DeterminantLineCoordinates:
     gcd_j_v: int
     primitive_j: int
@@ -675,6 +683,62 @@ def common_b_phase_reciprocity(
         dual_reciprocal_phase=dual_reciprocal_phase,
         reciprocal_completed_phase=reciprocal_completed_phase,
         b_divides_determinant=determinant % b == 0,
+    )
+
+
+def lcm_b_phase_compression(
+    *,
+    n1: int,
+    a1: int,
+    s1: int,
+    n2: int,
+    a2: int,
+    s2: int,
+    b: int,
+) -> LcmBPhaseCompression:
+    """Compress the squared Type-II phase to lcm(s1,s2).
+
+    This checks the original two reciprocal phases against the single
+    common-b phase with numerator
+    C=-n1*bar(a1)*(lcm/s1)+n2*bar(a2)*(lcm/s2).
+    """
+    if min(a1, s1, a2, s2, b) < 1:
+        raise ValueError("require positive factors and moduli")
+    if gcd(a1 * b, s1) != 1 or gcd(a2 * b, s2) != 1:
+        raise ValueError("require a_i*b invertible modulo s_i")
+
+    lcm_modulus = s1 * s2 // gcd(s1, s2)
+    original_phase = _fractional_part(
+        _normalized_modular_phase(
+            numerator=-n1,
+            invert=a1 * b,
+            modulus=s1,
+        )
+        + _normalized_modular_phase(
+            numerator=n2,
+            invert=a2 * b,
+            modulus=s2,
+        )
+    )
+    compressed_numerator = (
+        -n1 * pow(a1, -1, s1) * (lcm_modulus // s1)
+        + n2 * pow(a2, -1, s2) * (lcm_modulus // s2)
+    )
+    compressed_phase = _fractional_part(
+        _normalized_modular_phase(
+            numerator=compressed_numerator,
+            invert=b,
+            modulus=lcm_modulus,
+        )
+    )
+    if original_phase != compressed_phase:
+        raise AssertionError("lcm phase compression failed")
+
+    return LcmBPhaseCompression(
+        lcm_modulus=lcm_modulus,
+        compressed_numerator=compressed_numerator % lcm_modulus,
+        original_phase=original_phase,
+        compressed_phase=compressed_phase,
     )
 
 
