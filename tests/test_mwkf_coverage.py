@@ -2485,6 +2485,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.753}",
         "quotient_mobius_prevents_direct_bv=True",
         "coupled_ratio_mellin_type_ii_bound_proved=False",
+        "### 4.95 Four cross-coprimality allocations make the collapsed superposition exact",
+        "\\tag{4.754}",
+        "\\tag{4.757}",
+        "four_variable_superposition_exact=True",
+        "collapsed_coefficients_independent_of_long_variables=True",
     ):
         assert marker in note
 
@@ -2660,6 +2665,12 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "margin=0,bv_range=True,fixed_shift=False,quotient_mobius=True,"
         "coupled_shift=True,coprime_allocation=True,four_variable=False,"
         "published=False,whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: collapsed_coprimality_allocation="
+        "cross_conditions=4,allocation_divisors=4,identity=True,"
+        "finite=True,power_loss=0,log_loss=4,superposition=True,"
+        "independent=True,bv=False,type_ii=False,whole_face=False"
     ) in report
 
 
@@ -3633,6 +3644,47 @@ def test_coupled_ratio_mellin_gate_has_exact_level_half_endpoint() -> None:
     assert not endpoint.four_variable_reduction_exact
     assert not endpoint.coupled_ratio_mellin_type_ii_bound_proved
     assert not endpoint.whole_signed_hard_face_covered
+
+
+def test_four_cross_coprimalities_give_exact_finite_allocation() -> None:
+    helper = getattr(
+        coverage_audit,
+        "collapsed_cross_coprimality_identity",
+        None,
+    )
+    assert helper is not None, "collapsed coprimality helper is missing"
+
+    for x, u, y, v in (
+        (5, 7, 11, 13),
+        (6, 5, 7, 11),
+        (5, 6, 7, 11),
+        (5, 7, 6, 11),
+        (5, 7, 11, 6),
+        (6, 35, 10, 21),
+    ):
+        exact = helper(x=x, u=u, y=y, v=v)
+        assert exact["four_cross_conditions_equivalent"]
+        assert exact["mobius_allocation_identity_exact"]
+        assert exact["primitive_product_indicator"] == exact["allocation_value"]
+
+    adapter = getattr(
+        coverage_audit,
+        "collapsed_coprimality_allocation_audit",
+        None,
+    )
+    assert adapter is not None, "collapsed coprimality audit is missing"
+    audit = adapter()
+    assert audit.cross_coprimality_condition_count == 4
+    assert audit.mobius_allocation_divisor_count == 4
+    assert audit.product_gcd_factorization_exact
+    assert audit.allocation_is_finite_reindexing
+    assert audit.positive_power_loss_exponent == F(0)
+    assert audit.registered_logarithmic_loss == F(4)
+    assert audit.four_variable_superposition_exact
+    assert audit.collapsed_coefficients_independent_of_long_variables
+    assert not audit.standard_bombieri_vinogradov_adapter_applies
+    assert not audit.coupled_ratio_mellin_type_ii_bound_proved
+    assert not audit.whole_signed_hard_face_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

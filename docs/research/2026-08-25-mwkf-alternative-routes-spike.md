@@ -11231,6 +11231,80 @@ divisor-weighted family.  The audit therefore records
 `four_variable_reduction_exact=False`, and
 `coupled_ratio_mellin_type_ii_bound_proved=False`.
 
+### 4.95 Four cross-coprimality allocations make the collapsed superposition exact
+
+The exactness defect at the end of Section 4.94 is algebraic and can be
+removed.  For (X=xu) and (Y=yv),
+
+\[
+ \boxed{
+ (xu,yv)=1
+ \Longleftrightarrow
+ (x,y)=(x,v)=(u,y)=(u,v)=1.}
+\tag{4.754}
+\]
+
+Apply the finite identity
+(mathbf1_{(a,b)=1}=\sum_{r\mid a,,r\mid b}\mu(r)) to the four
+cross pairs.  This gives
+
+\[
+ \mathbf1_{(xu,yv)=1}
+ =\sum_{\substack{r_0\mid x,y\\r_1\mid x,v\\
+                   r_2\mid u,y\\r_3\mid u,v}}
+   \mu(r_0)\mu(r_1)\mu(r_2)\mu(r_3).
+\tag{4.755}
+\]
+
+There is no compatibility assumption among the (r_i); if a prime
+occurs in several cross gcds, the product of the four finite Möbius sums
+still equals the indicator in (4.754).  For fixed
+((r_0,r_1,r_2,r_3)), the restrictions separate exactly:
+
+\[
+ \operatorname{lcm}(r_0,r_1)\mid x,quad
+ \operatorname{lcm}(r_0,r_2)\mid y,quad
+ \operatorname{lcm}(r_2,r_3)\mid u,quad
+ \operatorname{lcm}(r_1,r_3)\mid v.
+\tag{4.756}
+\]
+
+Consequently the (u,jmapsto c) and (v,kmapsto d) convolutions in
+(4.749) may be performed independently after the allocation is fixed.
+The resulting collapsed (c,d) coefficients depend on the allocation
+divisors and Mellin frequencies, but not on the long variables (x,y).
+Thus (4.750), summed over the four allocation divisors and integrated in
+the two ratio frequencies, is an exact finite superposition for the
+primitive gcd layer.  The nonprimitive BBLR layers have the same
+identity after extracting their common divisor.
+
+Each (r_i) divides two already localized variables.  Absolute divisor
+reindexing therefore has power exponent zero; the audit reserves the
+conservative factor ((\log T)^4), to be absorbed by choosing the (B)
+in (4.752) four units larger.  The exact status is
+
+\[
+ \boxed{
+ \texttt{four\_variable\_superposition\_exact}=\mathrm{True},
+ \qquad
+ \texttt{collapsed\_coefficients\_independent\_of\_long\_variables}
+ =\mathrm{True}.}
+\tag{4.757}
+\]
+
+This closes the coprimality/reindexing gap, not the analytic Type-II
+estimate.  Even with separated coefficient sequences, a standard
+Bombieri--Vinogradov discrepancy does not retain both the Möbius weight
+on (x=(yd+\ell)/c) and the signed full (ell)-average.  The remaining
+new theorem is now precisely the allocation-uniform coupled estimate
+(4.752).  The helper `collapsed_cross_coprimality_identity` checks
+(4.754)--(4.755) on finite data, while
+`collapsed_coprimality_allocation_audit` keeps
+`four_variable_superposition_exact=True` and
+`collapsed_coefficients_independent_of_long_variables=True`, but keeps
+`standard_bombieri_vinogradov_adapter_applies=False` and
+`coupled_ratio_mellin_type_ii_bound_proved=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

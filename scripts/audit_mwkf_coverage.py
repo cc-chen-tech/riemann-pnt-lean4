@@ -1571,6 +1571,21 @@ class CoupledRatioMellinTypeIIGateAudit:
 
 
 @dataclass(frozen=True)
+class CollapsedCoprimalityAllocationAudit:
+    cross_coprimality_condition_count: int
+    mobius_allocation_divisor_count: int
+    product_gcd_factorization_exact: bool
+    allocation_is_finite_reindexing: bool
+    positive_power_loss_exponent: Fraction
+    registered_logarithmic_loss: Fraction
+    four_variable_superposition_exact: bool
+    collapsed_coefficients_independent_of_long_variables: bool
+    standard_bombieri_vinogradov_adapter_applies: bool
+    coupled_ratio_mellin_type_ii_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7802,6 +7817,78 @@ def coupled_ratio_mellin_type_ii_gate_audit(
     )
 
 
+def collapsed_cross_coprimality_identity(
+    *,
+    x: int,
+    u: int,
+    y: int,
+    v: int,
+) -> dict[str, int | bool]:
+    """Expand ``gcd(x*u,y*v)=1`` into four finite Möbius sums.
+
+    The product gcd is one exactly when the four cross gcds
+    ``(x,y)``, ``(x,v)``, ``(u,y)``, and ``(u,v)`` are one.  Applying
+    ``1_(gcd(a,b)=1)=sum_(r|a,r|b) mu(r)`` to each pair gives an exact
+    four-divisor allocation, even when primes occur in several pairs.
+    """
+    if min(x, u, y, v) <= 0:
+        raise ValueError("product factors must be positive")
+
+    cross_gcds = (
+        gcd(x, y),
+        gcd(x, v),
+        gcd(u, y),
+        gcd(u, v),
+    )
+
+    def mobius_gcd_indicator(common: int) -> int:
+        return sum(
+            _finite_mobius(divisor)
+            for divisor in range(1, common + 1)
+            if common % divisor == 0
+        )
+
+    primitive = int(gcd(x * u, y * v) == 1)
+    cross_indicator = int(all(common == 1 for common in cross_gcds))
+    allocation = 1
+    for common in cross_gcds:
+        allocation *= mobius_gcd_indicator(common)
+    return {
+        "primitive_product_indicator": primitive,
+        "cross_coprimality_indicator": cross_indicator,
+        "allocation_value": allocation,
+        "four_cross_conditions_equivalent": primitive == cross_indicator,
+        "mobius_allocation_identity_exact": primitive == allocation,
+    }
+
+
+def collapsed_coprimality_allocation_audit(
+) -> CollapsedCoprimalityAllocationAudit:
+    """Record the exact gcd allocation and the dependence it retains.
+
+    Four finite Möbius inversions make the collapsed determinant an
+    exact superposition.  For fixed allocation divisors, their
+    restrictions separate between ``x``, ``y``, ``u``, and ``v``; the
+    collapsed ``c,d`` coefficients are therefore independent of the
+    long variables.  Exactness and coefficient separation are restored,
+    but the quotient Möbius weight and coupled shift average still keep
+    a standard Bombieri--Vinogradov theorem from being an adapter.
+    """
+    return CollapsedCoprimalityAllocationAudit(
+        cross_coprimality_condition_count=4,
+        mobius_allocation_divisor_count=4,
+        product_gcd_factorization_exact=True,
+        allocation_is_finite_reindexing=True,
+        positive_power_loss_exponent=F(0),
+        registered_logarithmic_loss=F(4),
+        four_variable_superposition_exact=True,
+        collapsed_coefficients_independent_of_long_variables=True,
+        standard_bombieri_vinogradov_adapter_applies=False,
+        coupled_ratio_mellin_type_ii_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -12496,6 +12583,29 @@ def main() -> None:
         "published="
         f"{ratio_type_ii.coupled_ratio_mellin_type_ii_bound_proved},"
         f"whole_face={ratio_type_ii.whole_signed_hard_face_covered}"
+    )
+    coprime_allocation = collapsed_coprimality_allocation_audit()
+    print(
+        "large_q_transition: collapsed_coprimality_allocation="
+        "cross_conditions="
+        f"{coprime_allocation.cross_coprimality_condition_count},"
+        "allocation_divisors="
+        f"{coprime_allocation.mobius_allocation_divisor_count},"
+        f"identity={coprime_allocation.product_gcd_factorization_exact},"
+        f"finite={coprime_allocation.allocation_is_finite_reindexing},"
+        "power_loss="
+        f"{_fmt(coprime_allocation.positive_power_loss_exponent)},"
+        "log_loss="
+        f"{_fmt(coprime_allocation.registered_logarithmic_loss)},"
+        "superposition="
+        f"{coprime_allocation.four_variable_superposition_exact},"
+        "independent="
+        f"{coprime_allocation.collapsed_coefficients_independent_of_long_variables},"
+        "bv="
+        f"{coprime_allocation.standard_bombieri_vinogradov_adapter_applies},"
+        "type_ii="
+        f"{coprime_allocation.coupled_ratio_mellin_type_ii_bound_proved},"
+        f"whole_face={coprime_allocation.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
