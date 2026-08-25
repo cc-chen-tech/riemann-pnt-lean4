@@ -1973,6 +1973,71 @@ The audit records all three gates separately: local Euler identity true,
 QCT spectral derivation false, and uniform logarithmic saving false.
 Published coverage remains false.
 
+### 4.16 Exact determinant orbit: the Hecke index is the shift
+
+The pre-completion determinant equation has the matrix form
+
+\[
+ M=\begin{pmatrix}r&j\\s&v\end{pmatrix},
+ \qquad \det M=rv-js=\delta.
+\tag{4.130}
+\]
+
+Since \((r,s)=1\), reduction modulo the lower-left entry gives
+
+\[
+ rv\equiv\delta\pmod s,\qquad
+ v\equiv\delta\bar r\pmod s,
+\tag{4.131}
+\]
+
+and hence the original reciprocal phase becomes the exact linear orbit
+phase
+
+\[
+ e\!\left(-\frac{h\delta\bar r}{s}\right)
+ =e\!\left(-\frac{hv}{s}\right).
+\tag{4.132}
+\]
+
+At level one, write the generalized Kloosterman orbit as
+
+\[
+ S(m_2,m_1;n;s)
+ =\sum_{\substack{d,d'\bmod s\\dd'\equiv n\pmod s}}
+ e\!\left(\frac{dm_2+d'm_1}{s}\right).
+\tag{4.133}
+\]
+
+The exact substitution
+
+\[
+ (d,d',n,m_2,m_1)=(r,v,\delta,0,-h)
+\tag{4.134}
+\]
+
+turns (4.133) into \(S(0,-h;\delta;s)\) and reproduces (4.132).
+Therefore, in the Knightly--Li trace formula, the Hecke-operator index is
+the shift \(\delta\).  It is not either of the two Möbius variables:
+\(\mu(r)\) weights a residue-matrix entry, while \(\mu(s)\) weights the
+Kloosterman modulus.  The QCT coefficient contains no factor
+\(\mu(\delta)\).
+
+The current kernel is also not the unweighted complete orbit (4.133).
+It has the dyadic restrictions on \(r,v\), the coupled smooth kernel,
+the mollifier tapers and \(q\)-coprimality, and the modulus weight
+\(\mu(s)\).  Consequently, linearly superposing the Knightly--Li formula
+over its Hecke index would insert a new weight \(\mu(\delta)\); it would
+not transform either existing Möbius weight into a Hecke polynomial.
+
+This is an invariant obstruction to the naive spectral adapter, not an
+obstruction to every trace-formula approach.  A viable spectral route
+would need a finite-place test function or a relative trace formula whose
+geometric side itself carries the entry weight \(\mu(r)\) and modulus
+weight \(\mu(s)\), followed by a family estimate before a positive
+Parseval diagonal is created.  No published theorem establishing that
+adapter is currently registered, so published coverage remains false.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

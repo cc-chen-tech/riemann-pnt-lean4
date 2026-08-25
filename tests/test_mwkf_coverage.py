@@ -246,6 +246,44 @@ def test_hecke_mobius_euler_factor_is_exact_but_not_a_qct_adapter() -> None:
     assert not result.published_coverage
 
 
+def test_determinant_orbit_sends_the_hecke_index_to_delta_not_r_or_s() -> None:
+    phase_identity = getattr(
+        coverage_audit,
+        "determinant_orbit_phase_identity",
+        None,
+    )
+    adapter = getattr(
+        coverage_audit,
+        "determinant_orbit_hecke_index_audit",
+        None,
+    )
+    assert phase_identity is not None, "determinant orbit identity is missing"
+    assert adapter is not None, "determinant orbit Hecke audit is missing"
+
+    for r, s, v, j, h in (
+        (2, 5, 3, 1, 7),
+        (5, 7, 4, -2, 3),
+        (8, 9, -5, 4, -6),
+    ):
+        assert phase_identity(r=r, s=s, v=v, j=j, h=h)
+
+    result = adapter()
+    assert result.matrix_entries == ("r", "j", "s", "v")
+    assert result.determinant_symbol == "delta"
+    assert result.modulus_symbol == "s"
+    assert result.residue_pair == ("r", "v")
+    assert result.hecke_operator_index_symbol == "delta"
+    assert result.kloosterman_fourier_indices == ("0", "-h")
+    assert result.original_phase_reduces_to_linear_orbit_phase
+    assert result.r_mobius_weights_residue_entry
+    assert result.s_mobius_weights_modulus
+    assert not result.delta_mobius_weight_present
+    assert not result.knightly_li_superposition_targets_existing_mobius_weight
+    assert not result.two_existing_mobius_weights_become_hecke_polynomials
+    assert not result.qct_kernel_is_unweighted_complete_orbit
+    assert not result.published_coverage
+
+
 def test_v_equals_j_equals_one_is_an_exact_average_chowla_witness() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     scales = h_poisson_subbox_scales(box, v=F(0), j=F(0))
@@ -1284,6 +1322,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "zero_free=False covered=False"
     ) in output
     assert (
+        "balanced_max_a: determinant_orbit_hecke="
+        "det=delta modulus=s residues=r,v hecke_index=delta "
+        "fourier=0,-h phase=True mu_r=entry mu_s=modulus mu_delta=False "
+        "superposition=False two_polynomials=False complete_orbit=False "
+        "covered=False"
+    ) in output
+    assert (
         "balanced_max_a: bc_fixed_determinant="
         "error=111/10 fixed_trivial=7/2 summed_trivial=6 "
         "target=3499/1000 mobius_save=2501/1000 "
@@ -1362,5 +1407,12 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\eta_T\log X\ge B\log\log T",
         "Thorner, arXiv:2608.12257v1, Theorem 1.1",
         "does not supply the required logarithmic saving",
+        "### 4.16 Exact determinant orbit: the Hecke index is the shift",
+        r"M=\begin{pmatrix}r&j\\s&v\end{pmatrix}",
+        r"rv\equiv\delta\pmod s",
+        r"S(0,-h;\delta;s)",
+        "the Hecke-operator index is",
+        r"the shift \(\delta\)",
+        "not either of the two Möbius variables",
     ):
         assert marker in text

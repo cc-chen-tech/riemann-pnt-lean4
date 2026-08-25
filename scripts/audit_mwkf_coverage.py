@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
+from math import gcd
 from pathlib import Path
 import sys
 
@@ -577,6 +578,24 @@ class HeckeMobiusSpectralAudit:
     thorner_polynomial_conductor_saving_tends_to_one: bool
     spectral_conductor_verified: bool
     uniform_zero_free_log_saving_verified: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
+class DeterminantOrbitHeckeIndexAudit:
+    matrix_entries: tuple[str, str, str, str]
+    determinant_symbol: str
+    modulus_symbol: str
+    residue_pair: tuple[str, str]
+    hecke_operator_index_symbol: str
+    kloosterman_fourier_indices: tuple[str, str]
+    original_phase_reduces_to_linear_orbit_phase: bool
+    r_mobius_weights_residue_entry: bool
+    s_mobius_weights_modulus: bool
+    delta_mobius_weight_present: bool
+    knightly_li_superposition_targets_existing_mobius_weight: bool
+    two_existing_mobius_weights_become_hecke_polynomials: bool
+    qct_kernel_is_unweighted_complete_orbit: bool
     published_coverage: bool
 
 
@@ -2625,6 +2644,58 @@ def hecke_mobius_spectral_audit(
     )
 
 
+def determinant_orbit_phase_identity(
+    *,
+    r: int,
+    s: int,
+    v: int,
+    j: int,
+    h: int,
+) -> bool:
+    """Check the exact phase identity on ``delta=r*v-j*s``.
+
+    When ``(r,s)=1``, the determinant congruence gives
+    ``delta*inverse(r) == v (mod s)``.  Thus the original phase
+    ``e(-h*delta*inverse(r)/s)`` is the linear orbit phase
+    ``e(-h*v/s)``.
+    """
+    if s <= 0:
+        raise ValueError("modulus s must be positive")
+    if gcd(r, s) != 1:
+        raise ValueError("r and s must be coprime")
+    delta = r * v - j * s
+    inverse_r = pow(r, -1, s)
+    return (-h * delta * inverse_r + h * v) % s == 0
+
+
+def determinant_orbit_hecke_index_audit() -> DeterminantOrbitHeckeIndexAudit:
+    """Identify the Hecke index in the exact determinant orbit.
+
+    In the level-one generalized Kloosterman sum, take the residue pair
+    ``(d,d')=(r,v)``, modulus ``s``, determinant/Hecke index ``n=delta``,
+    and Fourier indices ``(m2,m1)=(0,-h)``.  The existing Mobius weights
+    are instead on the residue entry ``r`` and on the modulus ``s``.
+    Therefore superposing Knightly--Li in its Hecke index would weight
+    ``delta``, which is not an existing Mobius variable in QCT.
+    """
+    return DeterminantOrbitHeckeIndexAudit(
+        matrix_entries=("r", "j", "s", "v"),
+        determinant_symbol="delta",
+        modulus_symbol="s",
+        residue_pair=("r", "v"),
+        hecke_operator_index_symbol="delta",
+        kloosterman_fourier_indices=("0", "-h"),
+        original_phase_reduces_to_linear_orbit_phase=True,
+        r_mobius_weights_residue_entry=True,
+        s_mobius_weights_modulus=True,
+        delta_mobius_weight_present=False,
+        knightly_li_superposition_targets_existing_mobius_weight=False,
+        two_existing_mobius_weights_become_hecke_polynomials=False,
+        qct_kernel_is_unweighted_complete_orbit=False,
+        published_coverage=False,
+    )
+
+
 def bc_fixed_determinant_audit(box: ExponentBox) -> BCFixedDeterminantAudit:
     """Insert the hard determinant lattice into BC Corollary 1.
 
@@ -3437,6 +3508,29 @@ def main() -> None:
         "zero_free="
         f"{hecke_mobius_audit.uniform_zero_free_log_saving_verified} "
         f"covered={hecke_mobius_audit.published_coverage}"
+    )
+    determinant_orbit_audit = determinant_orbit_hecke_index_audit()
+    print(
+        "balanced_max_a: determinant_orbit_hecke="
+        f"det={determinant_orbit_audit.determinant_symbol} "
+        f"modulus={determinant_orbit_audit.modulus_symbol} "
+        "residues="
+        f"{','.join(determinant_orbit_audit.residue_pair)} "
+        "hecke_index="
+        f"{determinant_orbit_audit.hecke_operator_index_symbol} "
+        "fourier="
+        f"{','.join(determinant_orbit_audit.kloosterman_fourier_indices)} "
+        "phase="
+        f"{determinant_orbit_audit.original_phase_reduces_to_linear_orbit_phase} "
+        "mu_r=entry mu_s=modulus mu_delta="
+        f"{determinant_orbit_audit.delta_mobius_weight_present} "
+        "superposition="
+        f"{determinant_orbit_audit.knightly_li_superposition_targets_existing_mobius_weight} "
+        "two_polynomials="
+        f"{determinant_orbit_audit.two_existing_mobius_weights_become_hecke_polynomials} "
+        "complete_orbit="
+        f"{determinant_orbit_audit.qct_kernel_is_unweighted_complete_orbit} "
+        f"covered={determinant_orbit_audit.published_coverage}"
     )
     determinant_audit = bc_fixed_determinant_audit(hard)
     print(
