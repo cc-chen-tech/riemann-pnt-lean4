@@ -479,6 +479,25 @@ class LongCutoffHCompletionAudit:
 
 
 @dataclass(frozen=True)
+class LongCutoffQuotientSplitAudit:
+    cutoff_exponent: Fraction
+    b_exponent: Fraction
+    dual_v_exponent: Fraction
+    a_exponent: Fraction
+    bv_modulus_exponent: Fraction
+    small_divisor_level_exponent: Fraction
+    expanded_modulus_endpoint: Fraction
+    large_divisor_lower_exponent: Fraction
+    large_divisor_upper_exponent: Fraction
+    large_cofactor_max_exponent: Fraction
+    strict_bv_log_slack_required: bool
+    gcd_reduction_only_decreases_modulus: bool
+    large_sector_retains_two_mobius_weights: bool
+    standard_bv_coupled_hypotheses_verified: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class BCFixedDeterminantAudit:
     short_variable_exponents: tuple[Fraction, Fraction]
     long_variable_exponents: tuple[Fraction, Fraction]
@@ -2142,6 +2161,76 @@ def long_cutoff_h_completion_audit(
     )
 
 
+def long_cutoff_quotient_split_audit(
+    box: ExponentBox,
+    *,
+    cutoff_exponent: Fraction,
+    b_exponent: Fraction,
+    dual_v_exponent: Fraction,
+) -> LongCutoffQuotientSplitAudit:
+    """Split the quotient weight at the exact BV square-root boundary.
+
+    Insert ``r=a*b`` with ``a>U=T^u`` into
+    ``a*b*v-j*s=delta`` and expand
+
+    ``c_U(a)=sum_(d|a,d<=U) mu(d)``, ``a=d*e``.
+
+    Fixing ``delta,j,b,d,v`` restricts ``s`` to one progression modulo
+    ``b*d*|v|`` after the exact gcd reduction.  For a length ``S``
+    Möbius sum, the formal level-one-half endpoint is obtained by taking
+
+    ``d <= D = S^(1/2)/(b*|v|)``.
+
+    The endpoint requires a polylogarithmic retreat in an actual
+    Bombieri--Vinogradov statement.  More importantly, this exponent
+    identity alone does not verify that theorem's averaging hypotheses:
+    the residue classes and smooth weights are coupled to
+    ``delta,j,b,v,d``.  The complementary sector retains ``mu(d)mu(s)``
+    and has cofactor ``e`` of the recorded maximal exponent.
+    """
+    max_b_exponent = box.rho - cutoff_exponent
+    max_v_exponent = completion_dual_exponent(box.h, box.sigma)
+    if cutoff_exponent <= 0 or cutoff_exponent > box.rho:
+        raise ValueError("cutoff exponent lies outside the r range")
+    if b_exponent < 0 or b_exponent > max_b_exponent:
+        raise ValueError("b exponent lies outside the long-cutoff range")
+    if dual_v_exponent < 0 or dual_v_exponent > max_v_exponent:
+        raise ValueError("v exponent lies outside the completion range")
+
+    a_exponent = box.rho - b_exponent
+    bv_modulus_exponent = b_exponent + dual_v_exponent
+    small_divisor_level_exponent = (
+        box.sigma / 2 - bv_modulus_exponent
+    )
+    if small_divisor_level_exponent < 0:
+        raise ValueError("b*v already exceeds the level-one-half modulus")
+    expanded_modulus_endpoint = (
+        bv_modulus_exponent + small_divisor_level_exponent
+    )
+    large_divisor_upper_exponent = min(cutoff_exponent, a_exponent)
+    large_cofactor_max_exponent = (
+        a_exponent - small_divisor_level_exponent
+    )
+
+    return LongCutoffQuotientSplitAudit(
+        cutoff_exponent=cutoff_exponent,
+        b_exponent=b_exponent,
+        dual_v_exponent=dual_v_exponent,
+        a_exponent=a_exponent,
+        bv_modulus_exponent=bv_modulus_exponent,
+        small_divisor_level_exponent=small_divisor_level_exponent,
+        expanded_modulus_endpoint=expanded_modulus_endpoint,
+        large_divisor_lower_exponent=small_divisor_level_exponent,
+        large_divisor_upper_exponent=large_divisor_upper_exponent,
+        large_cofactor_max_exponent=large_cofactor_max_exponent,
+        strict_bv_log_slack_required=True,
+        gcd_reduction_only_decreases_modulus=True,
+        large_sector_retains_two_mobius_weights=True,
+        standard_bv_coupled_hypotheses_verified=False,
+        published_coverage=False,
+    )
+
+
 def bc_fixed_determinant_audit(box: ExponentBox) -> BCFixedDeterminantAudit:
     """Insert the hard determinant lattice into BC Corollary 1.
 
@@ -2820,6 +2909,38 @@ def main() -> None:
         + " full_surplus="
         f"{_fmt(endpoint_h_audit.full_modulus_period_surplus)}"
         + " proved=False"
+    )
+    quotient_split_parts: list[str] = []
+    for b_exponent in (F(0), F(199, 200)):
+        quotient_audit = long_cutoff_quotient_split_audit(
+            hard,
+            cutoff_exponent=F(401, 200),
+            b_exponent=b_exponent,
+            dual_v_exponent=F(1, 2),
+        )
+        quotient_split_parts.append(
+            f"{_fmt(b_exponent)}:dlevel="
+            f"{_fmt(quotient_audit.small_divisor_level_exponent)},"
+            "modulus="
+            f"{_fmt(quotient_audit.expanded_modulus_endpoint)},"
+            "emax="
+            f"{_fmt(quotient_audit.large_cofactor_max_exponent)}"
+        )
+    endpoint_quotient_audit = long_cutoff_quotient_split_audit(
+        hard,
+        cutoff_exponent=F(401, 200),
+        b_exponent=F(199, 200),
+        dual_v_exponent=F(1, 2),
+    )
+    print(
+        "balanced_max_a: long_cutoff_quotient_split="
+        + ";".join(quotient_split_parts)
+        + " gcd_reduces="
+        f"{endpoint_quotient_audit.gcd_reduction_only_decreases_modulus}"
+        + " direct_bv="
+        f"{endpoint_quotient_audit.standard_bv_coupled_hypotheses_verified}"
+        + " covered="
+        f"{endpoint_quotient_audit.published_coverage}"
     )
     determinant_audit = bc_fixed_determinant_audit(hard)
     print(

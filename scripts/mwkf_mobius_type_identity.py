@@ -756,6 +756,49 @@ def double_centered_completion_via_orthogonality(
     return total / (modulus * modulus)
 
 
+def long_cutoff_quotient_progression(
+    *,
+    j: int,
+    delta: int,
+    b: int,
+    d: int,
+    v: int,
+) -> tuple[int, int] | None:
+    """Reduce the exact integrality condition for the quotient cofactor.
+
+    After writing ``r=a*b`` and expanding
+    ``c_U(a)=sum_(d|a,d<=U) mu(d)`` with ``a=d*e``, the determinant
+
+    ``d*e*b*v-j*s=delta``
+
+    makes ``e`` integral precisely when ``j*s+delta`` is divisible by
+    ``b*d*v``.  Put ``M=|b*d*v|`` and ``g=(j,M)``.  There is no solution
+    unless ``g|delta``; otherwise the condition is the single reduced
+    progression
+
+    ``s = -(delta/g)*(j/g)^(-1) (mod M/g)``.
+
+    The returned residue is the least nonnegative representative.  In
+    particular the gcd reduction can only decrease the modulus used by a
+    possible arithmetic-progression theorem.
+    """
+    if b <= 0 or d <= 0 or v == 0:
+        raise ValueError("b,d must be positive and v nonzero")
+    modulus = abs(b * d * v)
+    common = gcd(j, modulus)
+    if delta % common:
+        return None
+    reduced_modulus = modulus // common
+    if reduced_modulus == 1:
+        return 1, 0
+    reduced_j = j // common
+    reduced_delta = delta // common
+    residue = (-reduced_delta * pow(reduced_j, -1, reduced_modulus)) % (
+        reduced_modulus
+    )
+    return reduced_modulus, residue
+
+
 @dataclass(frozen=True)
 class TypeScaleBounds:
     u_exp: Fraction

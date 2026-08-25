@@ -305,6 +305,36 @@ reduction from the volume exponent.  Consequently it is not an adapter for
 Möbius inequality \(\mathrm{SM}_{1/1000}\), with transform-tail seminorms
 kept uniform.
 
+### 3.10 Long-cutoff quotient split
+
+The exact long cutoff \(r=ab\), \(a>T^{401/200}\), followed by
+\[
+ c_U(a)=\sum_{\substack{d\mid a\\d\le U}}\mu(d),\qquad a=de,
+\]
+turns the completed determinant into
+\[
+ d e b v-j s=\delta.
+\tag{3.16}
+\]
+On dyadic boxes \(b\in[B,2B]\), \(|v|\in[V,2V]\), use
+\[
+ D_{B,V}=\frac{S^{1/2}}{4BV\mathscr L^{C_0}}
+\tag{3.17}
+\]
+before taking the integer floor.  The sector \(d\le D_{B,V}\) has
+\(bd|v|<S^{1/2}\mathscr L^{-C_0}\); the complement retains
+\(\mu(d)\mu(s)\) and has \(e\ll T^2\mathscr L^{C_0}\).  The two exact residual names are
+\(\mathrm{QBV}_{\epsilon}\) and \(\mathrm{QII}_{\epsilon}\), both with
+local target \(T^{3499/1000}\mathscr L^{-A}\).
+
+This is only an exponent-level opening.  The standard Bombieri--Vinogradov hypotheses are not verified: after fixing
+\((\delta,j,b,d,v)\), the progression modulus is
+\(bd|v|/(j,bd|v|)\), while the residue multiplicities and transformed
+kernel remain coupled to all five outer variables.  No theorem adapter in
+this audit controls that joint weighted average, and the complementary
+QII sector is a new two-Möbius determinant sum.  Both published-coverage
+flags therefore remain false.
+
 ## 4. Wright fixed-factor adapter
 
 Wright, arXiv:2604.25177v2, treats

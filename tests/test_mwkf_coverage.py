@@ -73,6 +73,43 @@ def test_balanced_h_poisson_reduces_to_exact_critical_shifted_scales() -> None:
     assert scales.square_root_margin == F(499, 1000)
 
 
+def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
+    """The small divisor sector reaches, but must not cross, level 1/2."""
+    adapter = getattr(
+        coverage_audit,
+        "long_cutoff_quotient_split_audit",
+        None,
+    )
+    assert adapter is not None, "long-cutoff quotient split audit is missing"
+
+    hard = boundary_witnesses()["balanced_max_a"]
+    endpoint = adapter(
+        hard,
+        cutoff_exponent=F(401, 200),
+        b_exponent=F(199, 200),
+        dual_v_exponent=F(1, 2),
+    )
+    assert endpoint.a_exponent == F(401, 200)
+    assert endpoint.small_divisor_level_exponent == F(1, 200)
+    assert endpoint.expanded_modulus_endpoint == F(3, 2)
+    assert endpoint.large_cofactor_max_exponent == F(2)
+    assert endpoint.strict_bv_log_slack_required
+    assert endpoint.gcd_reduction_only_decreases_modulus
+    assert endpoint.large_sector_retains_two_mobius_weights
+    assert not endpoint.standard_bv_coupled_hypotheses_verified
+    assert not endpoint.published_coverage
+
+    other_end = adapter(
+        hard,
+        cutoff_exponent=F(401, 200),
+        b_exponent=F(0),
+        dual_v_exponent=F(1, 2),
+    )
+    assert other_end.small_divisor_level_exponent == F(1)
+    assert other_end.expanded_modulus_endpoint == F(3, 2)
+    assert other_end.large_cofactor_max_exponent == F(2)
+
+
 def test_v_equals_j_equals_one_is_an_exact_average_chowla_witness() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     scales = h_poisson_subbox_scales(box, v=F(0), j=F(0))
@@ -1078,6 +1115,12 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "full_surplus=-1/2 proved=False"
     ) in output
     assert (
+        "balanced_max_a: long_cutoff_quotient_split="
+        "0:dlevel=1,modulus=3/2,emax=2;"
+        "199/200:dlevel=1/200,modulus=3/2,emax=2 "
+        "gcd_reduces=True direct_bv=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: bc_fixed_determinant="
         "error=111/10 fixed_trivial=7/2 summed_trivial=6 "
         "target=3499/1000 mobius_save=2501/1000 "
@@ -1109,6 +1152,11 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
         "fraction can occur with multiplicity",
         r"\mathfrak S_q[\Psi]=\frac{HL}{S}\mathfrak D_q^{(2)}[\Theta]",
         r"\sum_c\Theta(c,v)=\sum_v\Theta(c,v)=0",
+        r"d e b v-j s=\delta",
+        r"D_{B,V}=\frac{S^{1/2}}{4BV\mathscr L^{C_0}}",
+        r"\mathrm{QBV}_{\epsilon}",
+        r"\mathrm{QII}_{\epsilon}",
+        "standard Bombieri--Vinogradov hypotheses are not verified",
         "## 4. Wright fixed-factor adapter",
         "## 5. Exact residual witnesses",
         "published coverage result: residual cells remain",

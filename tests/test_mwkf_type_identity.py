@@ -395,6 +395,38 @@ def test_double_centering_is_inclusion_exclusion_for_general_weights() -> None:
     ) == F(19 - 17 - 2 + 11)
 
 
+def test_long_cutoff_quotient_congruence_reduces_by_the_exact_gcd() -> None:
+    adapter = getattr(
+        type_identity,
+        "long_cutoff_quotient_progression",
+        None,
+    )
+    assert adapter is not None, "long-cutoff quotient progression is missing"
+
+    # 3*s + 5 is divisible by 14 exactly when s == 3 (mod 14).
+    assert adapter(j=3, delta=5, b=2, d=1, v=7) == (14, 3)
+
+    # gcd(6, 14)=2 and 2|8, so the reduced modulus is 7.
+    modulus, residue = adapter(j=6, delta=8, b=2, d=1, v=7)
+    assert (modulus, residue) == (7, 1)
+    for s in range(-20, 21):
+        assert ((6 * s + 8) % 14 == 0) == (s % modulus == residue)
+
+    # gcd(6, 14)=2 does not divide 5, hence there is no quotient integer.
+    assert adapter(j=6, delta=5, b=2, d=1, v=7) is None
+
+
+def test_long_cutoff_quotient_progression_rejects_zero_or_negative_factors() -> None:
+    adapter = getattr(
+        type_identity,
+        "long_cutoff_quotient_progression",
+        None,
+    )
+    assert adapter is not None, "long-cutoff quotient progression is missing"
+    with pytest.raises(ValueError, match="b,d must be positive and v nonzero"):
+        adapter(j=1, delta=1, b=0, d=1, v=1)
+
+
 def test_one_third_split_has_exact_balanced_scales() -> None:
     scales = type_scale_bounds(F(3), u=F(1, 3), v=F(1, 3))
     assert scales.u_exp == F(1)

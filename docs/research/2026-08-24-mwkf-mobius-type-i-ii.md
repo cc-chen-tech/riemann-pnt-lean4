@@ -1089,6 +1089,146 @@ not alter the required nonzero-determinant Möbius saving.  The adapter
 bc_fixed_determinant_audit records (4.8aq)--(4.8au), with published
 coverage and direct-hypothesis flags both false.
 
+### 4.5 Quotient-hyperbola split at the level-one-half face
+
+There is one further exact decomposition which is lost if Cauchy is
+applied first.  Insert \(r=ab\), \(a>U=T^{401/200}\), into (4.8ap), and
+expand the quotient coefficient before taking absolute values:
+
+\[
+ c_U(a)=\sum_{\substack{d\mid a\\d\le U}}\mu(d),
+ \qquad a=de,
+ \qquad d e b v-j s=\delta.
+\tag{4.8aw}
+\]
+
+Fix a nonnegative \(\omega\in C_c^\infty((1/2,2))\) satisfying
+\(\sum_{k\in\mathbb Z}\omega(x/2^k)=1\) for \(x>0\).  Put
+\(\omega_B(b)=\omega(b/B)\) and
+\(\omega_V(v)=\omega(|v|/V)\) for \(B,V\in2^{\mathbb Z}\).  For
+\(\mathcal D\subset\mathbb N\), define
+
+\[
+\begin{aligned}
+ \mathfrak Q_{q,\epsilon}(B,V;\mathcal D)
+ :={}&-\sum_{b\ge1}\mu(b)\omega_B(b)
+ \sum_{\substack{d\in\mathcal D\\d\le U}}\mu(d)
+ \sum_{\substack{e\ge1\\de>U}}
+ \sum_{\substack{s\asymp S\\
+                  (bde,s)=1\\(q,bdes)=1}}
+ \mu(s)p_N(qbde)p_N(qs)\\
+ &\times\sum_{v\in\mathbb Z\setminus\{0\}}
+ \omega_V(v)
+ \mathbf1_{j_\epsilon(bde,s,v)\ {\rm exists}}
+ \widehat\Psi_{h,\epsilon}\!\left(
+ \frac{bde}{R},\frac{s}{S},
+ \frac{bdev-j_\epsilon(bde,s,v)s}{L},
+ \frac{Hv}{s}\right).
+\end{aligned}
+\tag{4.8ax}
+\]
+
+The support restrictions \(bde\asymp R\) and \(qbde,q s\le N\) are
+imposed exactly by the first kernel coordinate and the two displayed
+\(p_N\)-weights.  The minus sign is the one in (2.2).  Summing (4.8ax)
+over all \(B,V\), and partitioning \(1\le d\le U\), gives exactly the
+long-cutoff insertion into (10.5) of the coefficient-first note.
+
+For fixed \((\delta,j,b,d,v)\), set
+
+\[
+ M=bd|v|,\qquad g=(j,M).
+\tag{4.8ay}
+\]
+
+There is no integral \(e\) unless \(g\mid\delta\).  When
+\(g\mid\delta\), (4.8aw) is equivalent to
+
+\[
+ s\equiv
+ -\frac{\delta}{g}
+ \left(\frac{j}{g}\right)^{-1}
+ \pmod{M/g},
+ \qquad
+ e=\frac{\delta+js}{bdv}>0.
+\tag{4.8az}
+\]
+
+The inverse exists because \((j/g,M/g)=1\); hence gcd reduction never
+enlarges the modulus.  The finite helper
+long_cutoff_quotient_progression checks (4.8ay)--(4.8az) exactly.
+
+Let \(C_0>0\) be fixed and define the integer cutoff
+
+\[
+ \boxed{
+ D_{B,V}=\left\lfloor
+ \frac{S^{1/2}}{4BV\mathscr L^{C_0}}
+ \right\rfloor.}
+\tag{4.8ba}
+\]
+
+On the support of \(\omega_B\omega_V\), \(b<2B\), \(|v|<2V\), so
+every \(d\le D_{B,V}\) satisfies
+
+\[
+ bd|v|<\frac{S^{1/2}}{\mathscr L^{C_0}}.
+\tag{4.8bb}
+\]
+
+Write \(B=T^\beta\), \(V=T^\nu\).  In the hard box,
+\(0\le\beta\le199/200\) and \(0\le\nu\le1/2\).  Apart from the
+explicit logarithmic retreat in (4.8ba), the endpoint exponents are
+
+\[
+ \kappa_D=\frac32-\beta-\nu\ge\frac1{200},
+ \qquad
+ \beta+\nu+\kappa_D=\frac32.
+\tag{4.8bc}
+\]
+
+In the complementary range \(D_{B,V}<d\le U\), the cofactor obeys
+
+\[
+ e\ll T^{(3-\beta)-\kappa_D}\mathscr L^{C_0}
+ =T^{3/2+\nu}\mathscr L^{C_0}
+ \le T^2\mathscr L^{C_0}.
+\tag{4.8bd}
+\]
+
+Thus this route reduces the remaining estimate to the following two
+uniform local inequalities:
+
+\[
+\begin{aligned}
+ \mathrm{QBV}_{\epsilon}:\quad
+ &\left|\mathfrak Q_{q,\epsilon}
+ (B,V;\{1\le d\le D_{B,V}\})\right|
+ \ll_{A,W}T^{3499/1000}\mathscr L^{-A},\\
+ \mathrm{QII}_{\epsilon}:\quad
+ &\left|\mathfrak Q_{q,\epsilon}
+ (B,V;\{D_{B,V}<d\le U\})\right|
+ \ll_{A,W}T^{3499/1000}\mathscr L^{-A}.
+\end{aligned}
+\tag{4.8be}
+\]
+
+Uniformity is required in \(q,B,V,\epsilon\) and in the original kernel
+seminorms.  QBV reaches the formal Bombieri--Vinogradov modulus boundary
+for a length-\(S=T^3\) Möbius sum.  This exponent match is not a theorem
+adapter: standard Bombieri--Vinogradov hypotheses are not verified for
+(4.8ax), because the residue, its multiplicity, and the kernel are
+jointly coupled to \((\delta,j,b,v,d)\).  Maximizing over the residue and
+then summing those outer parameters loses the required \(2501/1000\)
+power saving.  QII retains the essential pair
+\(\mu(d)\mu(s)\), as well as \(\mu(b)\), and is a bilinear determinant
+sum with \(e\ll T^2\mathscr L^{C_0}\).  No published result audited here
+proves either inequality in (4.8be).
+
+The function long_cutoff_quotient_split_audit records
+(4.8bc)--(4.8bd), with both direct-BV and published-coverage flags false.
+This is a new proof architecture, but it has not closed MD, FTF, or CMT.
+
 For comparison with this new single-sector route, the remainder of
 Section 4 returns to the earlier \(U=V=T\) Type-II split.
 
