@@ -14,6 +14,9 @@ lean_lib RiemannPNT where
     `GammaResidue,
     `HardyTheorem,
     `HardyTheorem.ConreyExplicitCertificate,
+    `HardyTheorem.ConreyExplicitIntegralBridge,
+    `HardyTheorem.ConreySimpleZeroCount,
+    `HardyTheorem.ConreyTwoFifthsBridge,
     `HardyTheorem.SelbergCompletedMollified,
     `HardyTheorem.SelbergFourierMellinAlgebra,
     `HardyTheorem.SelbergComplexGaussianMellin,
@@ -2732,6 +2735,9 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.HalfIsolatedZetaExcludedDyadicGramDetectCount.Contract,
     `Test.Zeta23SelbergBridgeContract,
     `Test.Zeta23SelbergBridgeAxiomAudit,
+    `Test.ConreyExplicitIntegralBridgeContract,
+    `Test.ConreySimpleZeroCountContract,
+    `Test.ConreyTwoFifthsBridgeContract,
     `Zeta23
   ]
 

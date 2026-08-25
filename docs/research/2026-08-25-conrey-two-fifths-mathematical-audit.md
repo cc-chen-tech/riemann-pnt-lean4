@@ -491,7 +491,7 @@ A genuine no-axiom formalization still needs at least the following layers.
    rather than postulating it requires the Kuznetsov/spectral cusp-form
    machinery underlying their 1982 Theorem 12.
 9. The elementary exact integration and exponential Taylor bounds from
-   Section 6.
+   Section 6.  This item is now formalized; see Section 10.
 
 Items 8 and the analytic argument-principle infrastructure dominate the
 formalization cost.  Starting Lean before fixing this ledger would merely
@@ -592,7 +592,86 @@ cubing it, and checks the lower bound by a finite Taylor sum for `exp(18/25)`.
 The remaining comparisons are exact rational arithmetic.  The axiom audit
 reports only Mathlib's standard `propext`, `Classical.choice`, and `Quot.sound`.
 
-This slice deliberately does **not** yet claim that Lean has derived the
-displayed constant from the double integral (C).  That elementary integration
-bridge is the next formalization item.  Nor does it contain the analytic
-mean-square theorem or the Deshouillers--Iwaniec spectral input.
+The next elementary slice is now implemented in
+`HardyTheorem/ConreyExplicitIntegralBridge.lean`, with its public contract in
+`Test/ConreyExplicitIntegralBridgeContract.lean`.  Lean checks, from the
+displayed rational choices of `P`, `Q`, `theta`, and `R`, that
+
+1. `conreyExplicitKernel` is the degree-five polynomial obtained from the
+   differential expression in (C);
+2. `conreyExplicitInnerIntegral_eq` evaluates its squared `x` integral to the
+   exact quadratic polynomial displayed in Section 6;
+3. `conreyExplicitMeanSquareIntegral_eq_constant` evaluates the remaining
+   exponential `y` integral to the certified closed form; and
+4. `conreyExplicitIntegralProportion_gt_two_fifths` derives the strict
+   `2/5` inequality from that actual integral.
+
+Thus the elementary integration and numerical layer is closed in Lean, with
+only Mathlib's standard logical axioms in the audit.  It still does **not**
+contain the analytic mean-square theorem or the Deshouillers--Iwaniec spectral
+input.
+
+## 11. Exact repository target for the genuine theorem
+
+The repository already has the right denominator in
+`PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount T`: it sums analytic
+multiplicity over nontrivial zeros satisfying
+
+\[
+  0<\operatorname{Im}\rho\le T.
+\]
+
+To match Conrey's numerator without importing the unrelated Zeta23 route,
+define the positive simple critical-line finset by filtering that same ambient
+finset with
+
+\[
+  \operatorname{Re}\rho=\frac12,
+  \qquad
+  \operatorname{ord}_{\rho}\zeta=1.
+\]
+
+Its cardinality is exactly the desired `N_0^*(T)`.  In particular, using the
+same ambient finset makes the endpoint convention identical in numerator and
+denominator and avoids the repository's older `[0,T]` distinct-ordinate API.
+
+Rather than forming a quotient when `N(T)` might vanish at small height, the
+Lean target should be the eventual inequality
+
+\[
+  \exists c\in\mathbb R,\quad \frac25<c
+  \quad\text{and}\quad
+  \forall^\infty T,\qquad
+  c\,N(T)\le N_0^*(T).
+\tag{Conrey-target}
+\]
+
+This is the direct denominator-free form of the strict liminf statement.  It
+also records the essential distinction from Selberg: `c` is not merely
+positive, the numerator counts only simple critical-line zeros, and the
+denominator counts every nontrivial zero with analytic multiplicity.
+
+This count and target layer is now implemented in
+`HardyTheorem/ConreySimpleZeroCount.lean`.  Lean also checks monotonicity and
+the sanity bound `N_0^*(T) ≤ N(T)`.
+
+The explicit integral certificate supplies a real number strictly larger than
+`2/5`.  The remaining analytic proof must show that every smaller constant is
+eventually a lower bound for `N_0^*(T)/N(T)`.  That implication is where the
+argument-principle, mollified mean-square, and spectral Kloosterman layers enter;
+the definition of (Conrey-target) itself must not assume any of them.
+
+`HardyTheorem/ConreyTwoFifthsBridge.lean` exposes this exact remainder as the
+proposition `conreyExplicitAnalyticLowerBound`.  It then proves
+`conreyTwoFifthsSimpleZerosTarget_of_explicit_analytic_lower_bound` by choosing
+the midpoint between `2/5` and the certified integral proportion.  The bridge
+is an ordinary implication with an explicit hypothesis, not a postulated
+analytic theorem.  Consequently the code now cleanly separates:
+
+\[
+  \text{unproved analytic lower bound}
+  \quad\Longrightarrow\quad
+  \text{proved logical bridge}
+  \quad\Longrightarrow\quad
+  \text{genuine Conrey target}.
+\]
