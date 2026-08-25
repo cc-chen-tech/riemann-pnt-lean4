@@ -1413,8 +1413,9 @@ the conditional range furnished by this black-box transfer is therefore
 
 while (4.82) remains available for the unit-slope sector alone.
 
-The remaining obstruction is the MWKF completion weight.  One needs a
-uniform bounded-variation separation of
+To turn these correlation estimates into an MWKF estimate, it remains at
+this point to control the completion weight by bounded variation.  The
+required weight is
 
 \[
  (s,w)\longmapsto
@@ -1423,19 +1424,284 @@ uniform bounded-variation separation of
 \tag{4.89}
 \]
 
-whose summed separation norm retains the first-moment scale \((CV)^2\)
-without losing a positive power of \(\mathscr L\).  Coprimality can then
-be Möbius-inverted in \((s,w)\), but that reindexing and the required
-uniform nonpretentious estimate for the resulting \(q,d\)-restricted
-Möbius functions must also be proved.
+whose summed separation norm may cost \((1+x+y)^2\), but Section 4.11
+shows that this cost is amortized by the same box's \(xy\)-gain and loses
+no new positive power of \(\mathscr L\).  Section 4.12 then
+Möbius-inverts the coprimality condition in \((s,w)\) and proves the
+required uniform estimate for the resulting \(q,d\)-restricted Möbius
+functions.
 
 The function improved_averaged_chowla_shell_audit records the unit-slope
 margin \(2-\beta-\gamma\) and the all-sector margin
-\(3/2-\beta-\gamma\).  It marks the fixed-slope square-root transfer as
-proved, but keeps uniform bounded-variation separation as an unmet
-hypothesis, so the joint coefficient is not an admissible published MRT coefficient and published coverage remains false.  The full-family residual logarithmic region is
-\(\beta+\gamma\ge3/2\); all \(q=T^\kappa\), \(\kappa>0\), boxes remain
-positive-power cells rather than part of this logarithmic adapter.
+\(3/2-\beta-\gamma\).  Section 4.11 supplies the bounded-variation step
+for the smooth completion coefficient, and Section 4.12 supplies the
+remaining arithmetic uniformity.  Thus the strict subface (4.88) is
+covered.  Full published coverage remains false because
+\(\beta+\gamma\ge3/2\), the positive-power far shells, and the transform
+tail remain.  All \(q=T^\kappa\), \(\kappa>0\), boxes are positive-power
+cells rather than part of this logarithmic adapter.
+
+### 4.11 Finite Fourier bounded-variation separation
+
+The symmetric completion has an exact lifted formula which is better
+suited to weighted correlation estimates than the collapsed coefficient
+\(\Lambda_{r,s}(a)\).  From (15.1)--(15.3) of the coefficient-first note,
+orthogonality and the definition of the periodization give, for every
+integer representatives \(c,v\),
+
+\[
+ \boxed{
+ \Theta_{r,s}(c,v)
+ =\frac1{HL}\sum_{h,\delta\in\mathbb Z}
+ \Phi_{r,s}(h,\delta)
+ e\!\left(-\frac{ch+v\delta}{s}\right).}
+\tag{4.90}
+\]
+
+The sum is finite because \(\Phi\) is compactly supported.  Formula
+(4.90) is exact even before using \(H,L<s\); periodization simply groups
+the same finite set of integers by their residue classes.
+
+Fix a slope \(k=j+1\in\{1,2,3,4\}\), put \(s=Sz\), \(w=Du\), and define
+
+\[
+ \mathcal B_{c,v}(z,u):=
+ \Theta_{kSz+Du,Sz}(c,v)
+ \left\{e\!\left(\frac{cvDu}{Sz}\right)-1\right\}.
+\tag{4.91}
+\]
+
+The fixed dyadic cutoffs are included in \(\Phi\).  Recall
+
+\[
+ x=\frac{HM}{S},\qquad y=\frac{TL}{MR},\qquad
+ P:=1+x+y.
+\tag{4.92}
+\]
+
+Differentiate the explicit normalized kernel (5.13b).  The fixed support
+ratios and square-root denominator have bounded normalized derivatives;
+the exact \(t\)-phase costs at most \(1+y\), and the \(h\)-Fourier phase
+costs at most \(1+x\).  Derivatives of the AFE weight are harmless because
+\(Z^aV_t^{(a)}(Z)\ll_{a,A}(1+Z/T)^{-A}\).  Consequently, for
+\(a,b\in\{0,1\}\), finite summation by parts in (4.90) gives, for every
+fixed \(A>6\),
+
+\[
+ \left|\partial_z^a\partial_u^b
+ \Theta_{kSz+Du,Sz}(c,v)\right|
+ \ll_{A,W}P^{a+b}
+ \left(1+\frac{|c|}{C}\right)^{-A}
+ \left(1+\frac{|v|}{V}\right)^{-A}.
+\tag{4.93}
+\]
+
+When a \(z\)-derivative hits the finite Fourier phase it introduces
+\(|c|/C+|v|/V\); lowering \(A\) by two absorbs these factors.  A
+\(u\)-derivative through \(r=kSz+Du\) costs \(D/R\le1\), already absorbed
+in (4.93).
+
+On the logarithmic hard face the centered phase has a full power of
+slack:
+
+\[
+ \frac{CVD}{S}=T^{-1+o(1)}.
+\tag{4.94}
+\]
+
+Thus throughout the effective frequency range, every normalized first or
+mixed derivative of the braces in (4.91) is
+\(O(|cv|D/S)\).  Combining this with (4.93), the two-dimensional
+Hardy--Krause norm on the fixed \((z,u)\)-rectangle satisfies
+
+\[
+ \|\mathcal B_{c,v}\|_{\rm HK}
+ \ll_{A,W}\frac{|cv|D}{S}P^2
+ \left(1+\frac{|c|}{C}\right)^{-A+2}
+ \left(1+\frac{|v|}{V}\right)^{-A+2}.
+\tag{4.95}
+\]
+
+The elementary one-dimensional estimates
+
+\[
+ \sum_{n\in\mathbb Z}|n|
+ \left(1+\frac{|n|}{Y}\right)^{-A+2}
+ \ll_A Y^2\qquad(Y>0)
+\tag{4.96}
+\]
+
+For \(0<Y\le1\), this follows from
+\((1+n/Y)^{-A+2}\le(Y/n)^{A-2}\) and \(A>6\); for \(Y\ge1\), split at
+\(n=Y\).  Thus (4.96) also covers endpoint boxes with \(C<1\) or \(V<1\).
+Applying it in the two frequency coordinates gives the required summed separation
+norm
+
+\[
+ \boxed{
+ \sum_{c,v}\|\mathcal B_{c,v}\|_{\rm HK}
+ \ll_W\frac{D}{S}(CV)^2(1+x+y)^2.}
+\tag{4.97}
+\]
+
+The omitted effective-frequency tails are not a new hypothesis.  Choosing
+the summation-by-parts order in (4.93) arbitrarily large makes their total
+in (4.97) \(O_A(\mathscr L^{-A})\) relative to the displayed scale, so
+after all box and \(q\)-sums they are \(o(T)\).
+
+It remains to check that the factor \(P^2\) does not silently consume the
+Menon saving.  Write \(x=\mathscr L^\xi\),
+\(y=\mathscr L^\upsilon\).  The mixed BV derivative costs
+
+\[
+ 2\max(0,\xi,\upsilon),
+\tag{4.98}
+\]
+
+whereas the same box already contributes the gain \(\xi+\upsilon\) from
+\(xy\).  Hence its net BV depth is
+
+\[
+ b_{\rm BV}=2\max(0,\xi,\upsilon)-\xi-\upsilon.
+\tag{4.99}
+\]
+
+If \(\xi,\upsilon\le0\), this is exactly the original frequency depth
+\(-\xi-\upsilon\).  If \(\xi=\upsilon>0\), it is zero: the derivative
+cost exactly spends the positive \(xy\)-gain.  Finally, if
+\(\max(\xi,\upsilon)>0\) and \(\xi\ne\upsilon\), the two terms in the
+coupled physical \(X\)-phase have unequal logarithmic size.  For opposite
+signs their difference is bounded below by the larger scale; for equal
+signs they add.  Repeated integration by parts in \(X\) therefore gives
+an arbitrary fixed negative power of \(\mathscr L\), removing that box.
+
+This proves that (4.97) introduces no additional logarithmic depth on the
+retained phase regimes.  Rectangular partial summation then transfers the
+fixed-slope correlation bound (4.87) through the actual smooth completion
+coefficient.  In particular, the former joint
+base--shift--frequency dependence is no longer an analytic obstruction.
+
+One arithmetic interface remains.  The correlation still contains
+
+\[
+ \mu(s)\mu(ks+w)\mathbf1_{(s,w)=1}
+ \mathbf1_{(q,s(ks+w))=1}.
+\tag{4.100}
+\]
+
+Section 4.12 Möbius-inverts \((s,w)=1\), truncates the resulting common
+divisor with its \(d^{-2}\) volume weight, and proves Menon's fixed-slope
+transfer uniformly for the resulting polylogarithmic \(qd\)-restricted
+Möbius functions.  No completed smooth coefficient remains in that
+interface.  The exact-rational function
+completion_weight_bv_audit records (4.94) and (4.98)--(4.99), explicitly
+distinguishing preservation of the raw \((CV)^2\) moment from preservation
+of the global logarithmic depth.
+
+### 4.12 Coprimality and polylogarithmic character twists
+
+Put
+
+\[
+ \mu_Q(n):=\mu(n)\mathbf1_{(n,Q)=1}.
+\tag{4.101}
+\]
+
+For \(r=ks+w>0\), ordinary Möbius inversion of \((s,w)=1\) gives the
+exact finite identity
+
+\[
+\boxed{
+ \mu_q(s)\mu_q(ks+w)\mathbf1_{(s,w)=1}
+ =\sum_{\substack{d\mid s,\ d\mid w\\(d,q)=1}}
+ \mu(d)\mu_{qd}(s/d)
+ \mu_{qd}(ks/d+w/d).}
+\tag{4.102}
+\]
+
+To verify (4.102), terms with nonsquarefree \(d\) vanish.  For squarefree
+\(d\) coprime to \(q\), write \(s=dn\), \(w=du\).  Then
+
+\[
+ \mu_q(dn)=\mu(d)\mu_{qd}(n),\qquad
+ \mu_q(d(kn+u))=\mu(d)\mu_{qd}(kn+u),
+\tag{4.103}
+\]
+
+and \(\mu(d)^2=1\).  Summing \(\mu(d)\) over common divisors is exactly
+\(\mathbf1_{(s,w)=1}\).  The finite helper
+coprime_centered_mobius_reindex verifies (4.102) over exhaustive bounded
+fixtures, including \(w=0\) and \((d,q)>1\); the displayed proof is the
+general argument.
+
+After \(s=dn\), \(w=du\), the base and shift lengths are \(S/d\) and
+\(D/d\).  Hence the trivial two-dimensional correlation volume carries
+the exact factor
+
+\[
+ \frac{SD}{d^2}.
+\tag{4.104}
+\]
+
+For \(Y=\mathscr L^{A_0}\), absolute summation therefore gives
+
+\[
+ \sum_{d>Y}\frac{SD}{d^2}
+ \ll \frac{SD}{Y}
+ =SD\mathscr L^{-A_0}.
+\tag{4.105}
+\]
+
+The same bound holds with the BV norm (4.97), because dilation by \(d\)
+does not enlarge normalized \((n,u)\)-derivatives.  The exponent \(A_0\)
+is arbitrary and fixed, so this tail is \(o(T)\) after the complete
+polylogarithmic aggregation.
+
+On \(d\le Y\) and \(q\le\mathscr L^\gamma\), the modulus in (4.102)
+satisfies
+
+\[
+ qd\le\mathscr L^{\gamma+A_0}.
+\tag{4.106}
+\]
+
+Moreover
+
+\[
+ \mu_{qd}(n)=\mu(n)\chi_{0,qd}(n),
+\tag{4.107}
+\]
+
+where \(\chi_{0,qd}\) is the principal Dirichlet character modulo \(qd\).
+Menon's character-twisted short-interval theorem is uniform for character
+modulus at most \((\log X)^B\), for every fixed \(B\), and the paper states
+that its Liouville argument carries over to Möbius.  Running the proof of
+improved_exp_sum with (4.107) changes only the major arcs: there the
+principal character is multiplied by a character of modulus at most
+\(\mathscr L^{20}\), so the product still has modulus
+\(\mathscr L^{\gamma+A_0+20}\).  The character-twisted theorem applies
+after enlarging the fixed parameter \(B\).  The minor-arc proof uses only
+one-boundedness and is unchanged.  Thus (4.80), and consequently the
+fixed-slope transfer (4.87), hold uniformly for every function
+\(\mu_{qd}\) occurring in (4.102).
+
+Combining (4.97), (4.102), (4.105), and this uniform twisted transfer
+proves
+
+\[
+ \boxed{
+ \mathcal R_{D=T}(\beta,\gamma)
+ =o(T)\qquad\text{for every fixed }\beta+\gamma<\frac32.}
+\tag{4.108}
+\]
+
+For the unit-slope sector alone, the direct averaged-Chowla theorem gives
+the larger strict range \(\beta+\gamma<2\).  Equality in either boundary
+is not included because the displayed powers of \(\log\mathscr L\) remain.
+The exact-rational function coprimality_restricted_menon_audit records the
+\(d^{-2}\) volume, the \(\mathscr L^{-A_0}\) tail, the modulus exponent
+\(\gamma+A_0\), and the strict all-sector margin
+\(3/2-\beta-\gamma\).
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
@@ -1505,22 +1771,43 @@ zero pair correlation described by Radziwiłł.
 
 ## 7. Selected next slice and falsification tests
 
-The next slice should not try to prove the fixed-power CMT gate.  It should
-do the following in order:
+Sections 4.9--4.12 now unconditionally cover the endpoint logarithmic
+subface \(\beta+\gamma<3/2\), with the larger range
+\(\beta+\gamma<2\) in the unit-slope sector.  The completion coefficient,
+fixed slopes, coprimality, and polylogarithmic character twists are no
+longer residual hypotheses.
 
-1. replace the crude boxwise supremum by a coupled square-function
-   aggregation and determine the smallest exact logarithmic exponent
-   \(B_{\rm agg}\); retain the two endpoint factors (2.12);
-2. derive the Poincaré/Kuznetsov transform of (2.3) before applying
-   Cauchy--Schwarz, including the continuous spectrum;
-3. identify the exact image of each of the four Möbius pieces from (4.5);
-4. prove (4.7) with \(B>B_{\rm agg}\), or exhibit one of the following
-   rational obstructions:
-   - a conductor loss larger than \((RS/(HL))^{1/2}\) by a fixed power;
-   - an unavoidable positive diagonal of size \(RCV\) created before any
-     Möbius saving; or
-   - a spectral coefficient with no multiplicative structure beyond an
-     arbitrary sequence.
+The next slice must address the remaining regions in this order:
+
+1. the deep endpoint logarithmic cells \(\beta+\gamma\ge3/2\), where the
+   fixed-slope black-box transfer has exhausted the square root of Menon's
+   one-logarithm saving;
+2. the positive-power far shells, whose current required saving is
+
+   \[
+   g(\delta)=
+   \begin{cases}
+      2\delta-2,&1<\delta\le2,\\
+      2,&2\le\delta\le5/2,\\
+      \delta-\tfrac12,&5/2\le\delta\le3;
+   \end{cases}
+   \]
+
+3. the separate transform-tail obligation from the exact reduction.
+
+For item 1, another application of the same averaged-Chowla theorem cannot
+cross the registered boundary: its method supplies at most one logarithm
+in the unit-slope sector and one half after the all-slope transfer.  A
+successful estimate must use cancellation in the \(q\)- or completion
+frequencies before the cardinal \(q\)-sum.
+
+For item 2, the next genuine power-saving attempt remains pre-Cauchy
+Möbius Type I/II followed by reciprocity, complementary divisor, and
+Kuznetsov.  It must improve the exact residual function above, not the old
+ambient CMT exponent.  Every proposed local theorem should be rejected if
+it creates a positive diagonal before using both Möbius weights, loses
+more than the registered conductor allowance, or replaces the actual
+coefficient by an arbitrary sequence.
 
 The relevant published comparison points are
 [Bettin--Chandee](https://arxiv.org/abs/1502.00769),
@@ -1533,6 +1820,7 @@ directly apply because both the rational point and its modulus vary in
 (2.3).
 
 The outcome of the spike is therefore precise: Mellin separation and
-length interpolation are rejected; the surviving task is one
-logarithmically strengthened, pre-Cauchy two-Möbius spectral inequality,
-(4.7), together with a sharper global logarithmic ledger.
+length interpolation are rejected; a nonempty endpoint logarithmic region
+is now proved; the surviving task is a power-saving pre-Cauchy
+two-Möbius spectral inequality for the displayed \(g(\delta)\), together
+with the deep-logarithmic and transform-tail estimates.

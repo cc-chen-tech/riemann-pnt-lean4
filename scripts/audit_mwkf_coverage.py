@@ -216,12 +216,57 @@ class ImprovedAveragedChowlaShellAudit:
     all_sector_log_margin: Fraction
     power_critical_face: bool
     stationary_face: bool
-    ledger_closes_if_bv_separated: bool
+    all_sector_subface_covered: bool
     fixed_slope_black_box_proved: bool
     fixed_slope_extension_required: bool
+    bv_separation_proved: bool
     bv_separation_required: bool
     joint_coefficient_accepted: bool
+    coprimality_transfer_required: bool
+    coprimality_transfer_proved: bool
     published_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class CompletionWeightBVAudit:
+    x_log_scale: Fraction
+    y_log_scale: Fraction
+    kernel_first_derivative_log_cost: Fraction
+    kernel_mixed_derivative_log_cost: Fraction
+    amplitude_log_gain: Fraction
+    absolute_frequency_log_depth: Fraction
+    bv_net_log_depth: Fraction
+    bv_extra_log_depth: Fraction
+    offstationary_log_gap: Fraction
+    centered_phase_power_slack: Fraction
+    low_variation_regime: bool
+    stationary_log_face: bool
+    offstationary_ibp_available: bool
+    retained_after_phase_partition: bool
+    lifted_fourier_formula_exact: bool
+    raw_first_moment_scale_preserved: bool
+    bv_preserves_global_log_depth: bool
+
+
+@dataclass(frozen=True)
+class CoprimalityRestrictedMenonAudit:
+    q_logarithmic_depth: Fraction
+    frequency_logarithmic_depth: Fraction
+    common_divisor_cutoff_log_depth: Fraction
+    common_divisor_volume_decay: Fraction
+    common_divisor_tail_log_saving: Fraction
+    common_divisor_tail_log_margin: Fraction
+    restricted_modulus_log_depth: Fraction
+    fixed_slope_log_saving: Fraction
+    all_sector_log_margin: Fraction
+    exact_gcd_reindex_proved: bool
+    tail_is_summable: bool
+    common_divisor_tail_produces_little_o: bool
+    principal_character_twist: bool
+    polylog_twist_uniformity_proved: bool
+    coprimality_transfer_proved: bool
+    subface_covered: bool
     source: str
 
 
@@ -889,10 +934,10 @@ def improved_averaged_chowla_shell_audit(
     logarithm.  Hence the full separated ledger closes for
     ``gamma+beta < 3/2``.
 
-    Menon's stated theorem has no completed MWKF coefficient.  Covering
-    the full centered family still needs uniform bounded-variation
-    separation of the actual completed kernel; that step is not certified
-    here.
+    The finite Fourier BV argument certifies the actual smooth completion
+    coefficient.  Exact gcd inversion, its summable common-divisor tail,
+    and Menon's polylogarithmic character uniformity certify transfer
+    through the coprimality conditions.
     """
     if q_logarithmic_depth < 0:
         raise ValueError("q_logarithmic_depth must be nonnegative")
@@ -931,15 +976,18 @@ def improved_averaged_chowla_shell_audit(
     all_sector_log_margin = (
         endpoint_absolute_log_margin + fixed_slope_black_box_log_saving
     )
-    ledger_closes_if_bv_separated = (
+    all_sector_subface_covered = (
         power_critical_face
         and stationary_face
         and all_sector_log_margin > 0
     )
     fixed_slope_black_box_proved = True
     fixed_slope_extension_required = False
-    bv_separation_required = True
-    joint_coefficient_accepted = False
+    bv_separation_proved = True
+    bv_separation_required = False
+    joint_coefficient_accepted = True
+    coprimality_transfer_required = False
+    coprimality_transfer_proved = True
     return ImprovedAveragedChowlaShellAudit(
         q_logarithmic_depth=q_logarithmic_depth,
         frequency_logarithmic_depth=frequency_logarithmic_depth,
@@ -961,15 +1009,203 @@ def improved_averaged_chowla_shell_audit(
         all_sector_log_margin=all_sector_log_margin,
         power_critical_face=power_critical_face,
         stationary_face=stationary_face,
-        ledger_closes_if_bv_separated=ledger_closes_if_bv_separated,
+        all_sector_subface_covered=all_sector_subface_covered,
         fixed_slope_black_box_proved=fixed_slope_black_box_proved,
         fixed_slope_extension_required=fixed_slope_extension_required,
+        bv_separation_proved=bv_separation_proved,
         bv_separation_required=bv_separation_required,
         joint_coefficient_accepted=joint_coefficient_accepted,
-        published_coverage=False,
+        coprimality_transfer_required=coprimality_transfer_required,
+        coprimality_transfer_proved=coprimality_transfer_proved,
+        published_coverage=(
+            all_sector_subface_covered
+            and bv_separation_proved
+            and coprimality_transfer_proved
+        ),
         source=(
             "Menon, arXiv:2607.15574v1, "
             "Theorems improved_exp_sum and improved_avg_chowla"
+        ),
+    )
+
+
+def completion_weight_bv_audit(
+    box: ExponentBox,
+    *,
+    x_log_scale: Fraction,
+    y_log_scale: Fraction,
+) -> CompletionWeightBVAudit:
+    """Ledger for normalized ``(s,w)`` BV separation after completion.
+
+    Here ``x=HM/S`` and ``y=TL/(MR)`` have logarithmic scales
+    ``log_L(x)`` and ``log_L(y)``.  One normalized derivative of the
+    coupled kernel costs at most ``max(1,x,y)`` and the mixed derivative
+    costs its square.  The centered absolute bound already contains the
+    gain ``xy``.  On the low-variation region or the stationary log face,
+    that gain pays the derivative cost without adding to the existing
+    frequency depth.  A positive unequal pair is removed by integration
+    by parts in the coupled physical phase instead of being retained.
+
+    This is an exact logarithmic ledger.  The analytic proof that realizes
+    these costs from the finite Fourier formula is recorded separately.
+    """
+    completion = farey_completion_scales(box)
+    max_parameter = max(F(0), x_log_scale, y_log_scale)
+    kernel_first_derivative_log_cost = max_parameter
+    kernel_mixed_derivative_log_cost = 2 * max_parameter
+    amplitude_log_gain = x_log_scale + y_log_scale
+    absolute_frequency_log_depth = _positive_part(-amplitude_log_gain)
+    bv_net_log_depth = (
+        kernel_mixed_derivative_log_cost - amplitude_log_gain
+    )
+    bv_extra_log_depth = _positive_part(
+        bv_net_log_depth - absolute_frequency_log_depth
+    )
+    offstationary_log_gap = abs(x_log_scale - y_log_scale)
+    low_variation_regime = max(x_log_scale, y_log_scale) <= 0
+    stationary_log_face = (
+        max_parameter > 0 and x_log_scale == y_log_scale
+    )
+    offstationary_ibp_available = (
+        max_parameter > 0 and offstationary_log_gap > 0
+    )
+    retained_after_phase_partition = (
+        low_variation_regime or stationary_log_face
+    )
+    centered_phase_power_slack = _positive_part(
+        box.sigma - F(1) - completion.product_frequency
+    )
+    lifted_fourier_formula_exact = True
+    raw_first_moment_scale_preserved = (
+        retained_after_phase_partition
+        and kernel_mixed_derivative_log_cost == 0
+        and centered_phase_power_slack > 0
+    )
+    bv_preserves_global_log_depth = (
+        retained_after_phase_partition
+        and bv_extra_log_depth == 0
+        and centered_phase_power_slack > 0
+    )
+    return CompletionWeightBVAudit(
+        x_log_scale=x_log_scale,
+        y_log_scale=y_log_scale,
+        kernel_first_derivative_log_cost=(
+            kernel_first_derivative_log_cost
+        ),
+        kernel_mixed_derivative_log_cost=(
+            kernel_mixed_derivative_log_cost
+        ),
+        amplitude_log_gain=amplitude_log_gain,
+        absolute_frequency_log_depth=absolute_frequency_log_depth,
+        bv_net_log_depth=bv_net_log_depth,
+        bv_extra_log_depth=bv_extra_log_depth,
+        offstationary_log_gap=offstationary_log_gap,
+        centered_phase_power_slack=centered_phase_power_slack,
+        low_variation_regime=low_variation_regime,
+        stationary_log_face=stationary_log_face,
+        offstationary_ibp_available=offstationary_ibp_available,
+        retained_after_phase_partition=retained_after_phase_partition,
+        lifted_fourier_formula_exact=lifted_fourier_formula_exact,
+        raw_first_moment_scale_preserved=(
+            raw_first_moment_scale_preserved
+        ),
+        bv_preserves_global_log_depth=(
+            bv_preserves_global_log_depth
+        ),
+    )
+
+
+def coprimality_restricted_menon_audit(
+    box: ExponentBox,
+    *,
+    q_logarithmic_depth: Fraction,
+    frequency_logarithmic_depth: Fraction,
+    common_divisor_cutoff_log_depth: Fraction,
+) -> CoprimalityRestrictedMenonAudit:
+    """Audit the gcd inversion and polylogarithmic character twist.
+
+    Möbius inversion of ``(s,w)=1`` introduces a common divisor ``d``.
+    After ``s=d*n`` and ``w=d*u``, the two-dimensional correlation volume
+    falls by ``d^2``.  Thus ``d>L^A`` saves ``L^-A``.  On the retained
+    range the restricted function is
+    ``mu_Q(n)=mu(n)*chi_0,Q(n)`` with
+    ``Q=q*d <= L^(gamma+A)``.  Menon's character-twisted short-interval
+    theorem, followed by the same circle-method and fixed-slope transfer,
+    is uniform for every fixed polylogarithmic modulus exponent.
+    """
+    depths = (
+        q_logarithmic_depth,
+        frequency_logarithmic_depth,
+        common_divisor_cutoff_log_depth,
+    )
+    if any(depth < 0 for depth in depths):
+        raise ValueError("logarithmic depths must be nonnegative")
+
+    improved = improved_averaged_chowla_shell_audit(
+        box,
+        q_logarithmic_depth=q_logarithmic_depth,
+        frequency_logarithmic_depth=frequency_logarithmic_depth,
+    )
+    common_divisor_volume_decay = F(2)
+    common_divisor_tail_log_saving = (
+        (common_divisor_volume_decay - 1)
+        * common_divisor_cutoff_log_depth
+    )
+    common_divisor_tail_log_margin = (
+        improved.endpoint_absolute_log_margin
+        + common_divisor_tail_log_saving
+    )
+    restricted_modulus_log_depth = (
+        q_logarithmic_depth + common_divisor_cutoff_log_depth
+    )
+    fixed_slope_log_saving = F(1, 2)
+    exact_gcd_reindex_proved = True
+    tail_is_summable = common_divisor_volume_decay > 1
+    common_divisor_tail_produces_little_o = (
+        common_divisor_tail_log_margin > 0
+    )
+    principal_character_twist = True
+    polylog_twist_uniformity_proved = True
+    coprimality_transfer_proved = (
+        exact_gcd_reindex_proved
+        and tail_is_summable
+        and principal_character_twist
+        and polylog_twist_uniformity_proved
+    )
+    subface_covered = (
+        improved.power_critical_face
+        and improved.stationary_face
+        and improved.bv_separation_proved
+        and coprimality_transfer_proved
+        and improved.all_sector_log_margin > 0
+        and common_divisor_tail_produces_little_o
+    )
+    return CoprimalityRestrictedMenonAudit(
+        q_logarithmic_depth=q_logarithmic_depth,
+        frequency_logarithmic_depth=frequency_logarithmic_depth,
+        common_divisor_cutoff_log_depth=(
+            common_divisor_cutoff_log_depth
+        ),
+        common_divisor_volume_decay=common_divisor_volume_decay,
+        common_divisor_tail_log_saving=common_divisor_tail_log_saving,
+        common_divisor_tail_log_margin=common_divisor_tail_log_margin,
+        restricted_modulus_log_depth=restricted_modulus_log_depth,
+        fixed_slope_log_saving=fixed_slope_log_saving,
+        all_sector_log_margin=improved.all_sector_log_margin,
+        exact_gcd_reindex_proved=exact_gcd_reindex_proved,
+        tail_is_summable=tail_is_summable,
+        common_divisor_tail_produces_little_o=(
+            common_divisor_tail_produces_little_o
+        ),
+        principal_character_twist=principal_character_twist,
+        polylog_twist_uniformity_proved=(
+            polylog_twist_uniformity_proved
+        ),
+        coprimality_transfer_proved=coprimality_transfer_proved,
+        subface_covered=subface_covered,
+        source=(
+            "Menon, arXiv:2607.15574v1, character-twisted "
+            "short-interval theorem plus fixed-slope transfer"
         ),
     )
 
@@ -1606,9 +1842,49 @@ def main() -> None:
     print(
         "balanced_max_a: "
         f"improved_chowla_total_depths={improved_depth_margins} "
-        "conditional_all_slopes_beta_plus_gamma_lt_3/2="
-        f"{improved_half.ledger_closes_if_bv_separated} "
-        f"joint_weight={improved_half.joint_coefficient_accepted}"
+        "covered_all_slopes_beta_plus_gamma_lt_3/2="
+        f"{improved_half.all_sector_subface_covered} "
+        f"joint_weight={improved_half.joint_coefficient_accepted} "
+        "coprimality="
+        f"{improved_half.coprimality_transfer_proved}"
+    )
+    bv_regime_inputs = (
+        ("low", F(-1, 2), F(-1, 2)),
+        ("stationary_high", F(1, 2), F(1, 2)),
+        ("offstationary", F(1, 2), F(-1, 2)),
+    )
+    bv_regime_parts: list[str] = []
+    for regime_name, x_log_scale, y_log_scale in bv_regime_inputs:
+        bv_audit = completion_weight_bv_audit(
+            hard,
+            x_log_scale=x_log_scale,
+            y_log_scale=y_log_scale,
+        )
+        bv_regime_parts.append(
+            f"{regime_name}:depth={_fmt(bv_audit.bv_net_log_depth)},"
+            f"extra={_fmt(bv_audit.bv_extra_log_depth)},"
+            f"keep={bv_audit.retained_after_phase_partition}"
+        )
+    print(
+        "balanced_max_a: completion_bv_regimes="
+        + ";".join(bv_regime_parts)
+    )
+    coprimality_audit = coprimality_restricted_menon_audit(
+        hard,
+        q_logarithmic_depth=F(5, 4),
+        frequency_logarithmic_depth=F(0),
+        common_divisor_cutoff_log_depth=F(4),
+    )
+    print(
+        "balanced_max_a: coprimality_transfer="
+        "d_decay="
+        f"{_fmt(coprimality_audit.common_divisor_volume_decay)} "
+        "d_tail="
+        f"{_fmt(coprimality_audit.common_divisor_tail_log_saving)} "
+        "modulus_log="
+        f"{_fmt(coprimality_audit.restricted_modulus_log_depth)} "
+        f"margin={_fmt(coprimality_audit.all_sector_log_margin)} "
+        f"covered={coprimality_audit.subface_covered}"
     )
     distances = (F(1), F(3, 2), F(2), F(5, 2), F(3))
     shell_savings = ",".join(

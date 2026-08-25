@@ -145,6 +145,36 @@ def test_balanced_resonance_coordinates_have_only_five_fixed_slopes() -> None:
     assert (negative_tie.j, negative_tie.w) == (-1, 5)
 
 
+def test_coprime_centered_mobius_product_reindexes_through_qd() -> None:
+    """Catch omitting (d,q)=1 or the d-restriction after gcd inversion."""
+    adapter = getattr(
+        type_identity,
+        "coprime_centered_mobius_reindex",
+        None,
+    )
+    assert adapter is not None, "coprime centered Möbius reindex is missing"
+
+    for slope in (1, 2, 3, 4):
+        for q in range(1, 8):
+            for s in range(1, 24):
+                for w in range(-9, 10):
+                    r = slope * s + w
+                    if r <= 0:
+                        continue
+                    direct = (
+                        mobius(s)
+                        * mobius(r)
+                        * int(gcd(s, w) == 1)
+                        * int(gcd(q, s * r) == 1)
+                    )
+                    assert adapter(
+                        s=s,
+                        w=w,
+                        slope=slope,
+                        q=q,
+                    ) == direct
+
+
 def test_signed_shift_helper_returns_every_solution_in_a_wide_window() -> None:
     assert signed_shift_solutions(
         r=5,

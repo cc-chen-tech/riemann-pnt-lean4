@@ -44,6 +44,56 @@ def centered_resonance_coordinates(
     return CenteredResonanceCoordinates(j=numerator // s, w=w)
 
 
+def _restricted_mobius(n: int, modulus: int) -> int:
+    """Return ``mu(n)`` restricted to integers coprime to ``modulus``."""
+    return mobius(n) if gcd(n, modulus) == 1 else 0
+
+
+def coprime_centered_mobius_reindex(
+    *,
+    s: int,
+    w: int,
+    slope: int,
+    q: int,
+) -> int:
+    """Evaluate the exact common-divisor reindexing of a centered pair.
+
+    Put ``r=slope*s+w`` and ``mu_Q(n)=mu(n) 1_(n,Q)=1``.  Möbius
+    inversion of ``(s,w)=1`` gives
+
+    ``mu_q(s) mu_q(r) 1_(s,w)=1``
+    `` = sum_{d|(s,w), (d,q)=1} mu(d)``
+    ``     * mu_{qd}(s/d) mu_{qd}(slope*s/d+w/d)``.
+
+    The return value is the right-hand side.  This finite helper checks
+    the reindexing only; it makes no estimate for the resulting sums.
+    """
+    if s <= 0 or slope <= 0 or q <= 0:
+        raise ValueError("require s, slope, q > 0")
+    r = slope * s + w
+    if r <= 0:
+        raise ValueError("require slope*s+w > 0")
+
+    total = 0
+    common_divisor = gcd(s, abs(w))
+    for d in divisors(common_divisor):
+        coefficient = mobius(d)
+        if coefficient == 0 or gcd(d, q) != 1:
+            continue
+        n = s // d
+        shift = w // d
+        restricted_modulus = q * d
+        total += (
+            coefficient
+            * _restricted_mobius(n, restricted_modulus)
+            * _restricted_mobius(
+                slope * n + shift,
+                restricted_modulus,
+            )
+        )
+    return total
+
+
 def mobius(n: int) -> int:
     if n < 1:
         raise ValueError("n must be positive")

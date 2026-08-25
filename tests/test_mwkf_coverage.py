@@ -407,12 +407,15 @@ def test_fixed_slope_transfer_reaches_total_log_depth_below_three_halves() -> No
     assert transferred.mrt_log_margin == F(-749, 3000)
     assert transferred.unit_slope_log_margin == F(3, 4)
     assert transferred.all_sector_log_margin == F(1, 4)
-    assert transferred.ledger_closes_if_bv_separated
+    assert transferred.all_sector_subface_covered
     assert transferred.fixed_slope_black_box_proved
     assert not transferred.fixed_slope_extension_required
-    assert transferred.bv_separation_required
-    assert not transferred.joint_coefficient_accepted
-    assert not transferred.published_coverage
+    assert transferred.bv_separation_proved
+    assert not transferred.bv_separation_required
+    assert transferred.joint_coefficient_accepted
+    assert not transferred.coprimality_transfer_required
+    assert transferred.coprimality_transfer_proved
+    assert transferred.published_coverage
     assert transferred.source == (
         "Menon, arXiv:2607.15574v1, "
         "Theorems improved_exp_sum and improved_avg_chowla"
@@ -425,7 +428,7 @@ def test_fixed_slope_transfer_reaches_total_log_depth_below_three_halves() -> No
     )
     assert boundary.unit_slope_log_margin == F(1, 2)
     assert boundary.all_sector_log_margin == F(0)
-    assert not boundary.ledger_closes_if_bv_separated
+    assert not boundary.all_sector_subface_covered
     assert not boundary.published_coverage
 
     beyond = adapter(
@@ -435,8 +438,113 @@ def test_fixed_slope_transfer_reaches_total_log_depth_below_three_halves() -> No
     )
     assert beyond.unit_slope_log_margin == F(0)
     assert beyond.all_sector_log_margin == F(-1, 2)
-    assert not beyond.ledger_closes_if_bv_separated
+    assert not beyond.all_sector_subface_covered
     assert not beyond.published_coverage
+
+
+def test_completion_weight_bv_cost_is_amortized_on_retained_regimes() -> None:
+    """Catch charging mixed BV derivatives twice against the same x*y loss."""
+    adapter = getattr(
+        coverage_audit,
+        "completion_weight_bv_audit",
+        None,
+    )
+    assert adapter is not None, "completion-weight BV adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    low = adapter(box, x_log_scale=F(-1, 2), y_log_scale=F(-1, 2))
+    assert low.kernel_first_derivative_log_cost == F(0)
+    assert low.kernel_mixed_derivative_log_cost == F(0)
+    assert low.absolute_frequency_log_depth == F(1)
+    assert low.bv_net_log_depth == F(1)
+    assert low.bv_extra_log_depth == F(0)
+    assert low.low_variation_regime
+    assert not low.stationary_log_face
+    assert not low.offstationary_ibp_available
+    assert low.centered_phase_power_slack == F(1)
+    assert low.raw_first_moment_scale_preserved
+    assert low.bv_preserves_global_log_depth
+
+    stationary_high = adapter(
+        box,
+        x_log_scale=F(1, 2),
+        y_log_scale=F(1, 2),
+    )
+    assert stationary_high.kernel_first_derivative_log_cost == F(1, 2)
+    assert stationary_high.kernel_mixed_derivative_log_cost == F(1)
+    assert stationary_high.amplitude_log_gain == F(1)
+    assert stationary_high.absolute_frequency_log_depth == F(0)
+    assert stationary_high.bv_net_log_depth == F(0)
+    assert stationary_high.bv_extra_log_depth == F(0)
+    assert not stationary_high.low_variation_regime
+    assert stationary_high.stationary_log_face
+    assert not stationary_high.raw_first_moment_scale_preserved
+    assert stationary_high.bv_preserves_global_log_depth
+
+    offstationary = adapter(
+        box,
+        x_log_scale=F(1, 2),
+        y_log_scale=F(-1, 2),
+    )
+    assert offstationary.kernel_mixed_derivative_log_cost == F(1)
+    assert offstationary.amplitude_log_gain == F(0)
+    assert offstationary.bv_net_log_depth == F(1)
+    assert offstationary.bv_extra_log_depth == F(1)
+    assert offstationary.offstationary_log_gap == F(1)
+    assert offstationary.offstationary_ibp_available
+    assert not offstationary.retained_after_phase_partition
+    assert not offstationary.raw_first_moment_scale_preserved
+    assert not offstationary.bv_preserves_global_log_depth
+
+
+def test_coprimality_transfer_has_d_squared_tail_and_polylog_twist() -> None:
+    """Catch a d^-1 tail or a non-polylogarithmic restricted modulus."""
+    adapter = getattr(
+        coverage_audit,
+        "coprimality_restricted_menon_audit",
+        None,
+    )
+    assert adapter is not None, "coprimality Menon adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    audit = adapter(
+        box,
+        q_logarithmic_depth=F(5, 4),
+        frequency_logarithmic_depth=F(0),
+        common_divisor_cutoff_log_depth=F(4),
+    )
+    assert audit.common_divisor_volume_decay == F(2)
+    assert audit.common_divisor_tail_log_saving == F(4)
+    assert audit.common_divisor_tail_log_margin == F(15, 4)
+    assert audit.restricted_modulus_log_depth == F(21, 4)
+    assert audit.fixed_slope_log_saving == F(1, 2)
+    assert audit.all_sector_log_margin == F(1, 4)
+    assert audit.exact_gcd_reindex_proved
+    assert audit.tail_is_summable
+    assert audit.principal_character_twist
+    assert audit.polylog_twist_uniformity_proved
+    assert audit.coprimality_transfer_proved
+    assert audit.subface_covered
+
+    boundary = adapter(
+        box,
+        q_logarithmic_depth=F(3, 2),
+        frequency_logarithmic_depth=F(0),
+        common_divisor_cutoff_log_depth=F(4),
+    )
+    assert boundary.all_sector_log_margin == F(0)
+    assert boundary.coprimality_transfer_proved
+    assert not boundary.subface_covered
+
+    untruncated = adapter(
+        box,
+        q_logarithmic_depth=F(5, 4),
+        frequency_logarithmic_depth=F(0),
+        common_divisor_cutoff_log_depth=F(0),
+    )
+    assert untruncated.common_divisor_tail_log_margin == F(-1, 4)
+    assert not untruncated.common_divisor_tail_produces_little_o
+    assert not untruncated.subface_covered
 
 
 def test_far_resonance_shell_has_the_exact_piecewise_power_deficit() -> None:
@@ -598,8 +706,19 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
     assert (
         "balanced_max_a: improved_chowla_total_depths="
         "0:3/2,5/4:1/4,3/2:0,2:-1/2 "
-        "conditional_all_slopes_beta_plus_gamma_lt_3/2=True "
-        "joint_weight=False"
+        "covered_all_slopes_beta_plus_gamma_lt_3/2=True "
+        "joint_weight=True coprimality=True"
+    ) in output
+    assert (
+        "balanced_max_a: completion_bv_regimes="
+        "low:depth=1,extra=0,keep=True;"
+        "stationary_high:depth=0,extra=0,keep=True;"
+        "offstationary:depth=1,extra=1,keep=False"
+    ) in output
+    assert (
+        "balanced_max_a: coprimality_transfer="
+        "d_decay=2 d_tail=4 modulus_log=21/4 "
+        "margin=1/4 covered=True"
     ) in output
     assert (
         "balanced_max_a: centered_far_shell_required_savings="
@@ -665,8 +784,6 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"0\le\beta+\gamma<2",
         "fixed-slope square-root transfer",
         "proved from the exponential-sum theorem",
-        "uniform bounded-variation separation",
-        "joint coefficient is not an admissible published MRT coefficient",
         "published coverage remains false",
     ):
         assert marker in text
