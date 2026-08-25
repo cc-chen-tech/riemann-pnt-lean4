@@ -1224,6 +1224,27 @@ class MidpointUnitaryDivisorAudit:
 
 
 @dataclass(frozen=True)
+class MidpointRootFareyLargeSieveAudit:
+    root_point_count_exponent: Fraction
+    denominator_exponent: Fraction
+    reciprocal_spacing_exponent: Fraction
+    physical_numerator_length_exponent: Fraction
+    physical_product_energy_exponent: Fraction
+    physical_large_sieve_bound_exponent: Fraction
+    physical_target_exponent: Fraction
+    physical_deficit_exponent: Fraction
+    dual_numerator_length_exponent: Fraction
+    dual_product_energy_exponent: Fraction
+    dual_large_sieve_bound_exponent: Fraction
+    dual_target_exponent: Fraction
+    dual_deficit_exponent: Fraction
+    root_fractions_injective: bool
+    root_fractions_reduced: bool
+    actual_joint_coefficient_is_separated: bool
+    root_farey_large_sieve_closes_gate: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -6108,6 +6129,83 @@ def midpoint_unitary_divisor_audit() -> MidpointUnitaryDivisorAudit:
     )
 
 
+def midpoint_root_fraction_identity(*, r: int, s: int) -> dict[str, int | bool]:
+    """Return and recover the reduced root fraction ``A/(2*r*s)``.
+
+    Recovery of the ordered factorization from the root is asserted only
+    on the squarefree support on which the Möbius product is nonzero.
+    """
+    if r <= 0 or s <= 0:
+        raise ValueError("root-fraction factors must be positive")
+    if gcd(r, s) != 1:
+        raise ValueError("root-fraction factors must be coprime")
+    product = r * s
+    root_data = midpoint_unitary_divisor_root_bijection(n=product)
+    if not root_data["squarefree"]:
+        raise ValueError("root-fraction recovery is restricted to squarefree support")
+    modulus = 2 * product
+    coefficient = (2 * r * pow(r, -1, s) - 1) % modulus
+    matching = tuple(
+        item
+        for item in root_data["factorizations"]
+        if item["coefficient"] == coefficient
+    )
+    recovered_r = int(matching[0]["recovered_r"]) if len(matching) == 1 else 0
+    recovered_s = int(matching[0]["recovered_s"]) if len(matching) == 1 else 0
+    return {
+        "numerator": coefficient,
+        "denominator": modulus,
+        "fraction_is_reduced": gcd(coefficient, modulus) == 1,
+        "recovered_r": recovered_r,
+        "recovered_s": recovered_s,
+        "factorization_recovered_exactly": recovered_r == r and recovered_s == s,
+    }
+
+
+def midpoint_root_farey_large_sieve_audit(
+) -> MidpointRootFareyLargeSieveAudit:
+    """Audit the generic additive large sieve on root fractions.
+
+    Reduced denominators have exponent six, hence reciprocal spacing has
+    exponent twelve.  Cauchy over the ``T^6`` root points and the product
+    energy of either numerator gauge leaves the same ``T^(11/2)`` deficit.
+    The calculation optimistically assumes separation of the actual joint
+    transform coefficient.
+    """
+    points = F(6)
+    denominator = F(6)
+    spacing_reciprocal = 2 * denominator
+    physical_length = F(5)
+    physical_energy = F(5)
+    physical_second_moment = max(physical_length, spacing_reciprocal) + physical_energy
+    physical_bound = points / 2 + physical_second_moment / 2
+    physical_target = F(6)
+    dual_length = F(7)
+    dual_energy = F(7)
+    dual_second_moment = max(dual_length, spacing_reciprocal) + dual_energy
+    dual_bound = points / 2 + dual_second_moment / 2
+    dual_target = F(7)
+    return MidpointRootFareyLargeSieveAudit(
+        root_point_count_exponent=points,
+        denominator_exponent=denominator,
+        reciprocal_spacing_exponent=spacing_reciprocal,
+        physical_numerator_length_exponent=physical_length,
+        physical_product_energy_exponent=physical_energy,
+        physical_large_sieve_bound_exponent=physical_bound,
+        physical_target_exponent=physical_target,
+        physical_deficit_exponent=physical_bound - physical_target,
+        dual_numerator_length_exponent=dual_length,
+        dual_product_energy_exponent=dual_energy,
+        dual_large_sieve_bound_exponent=dual_bound,
+        dual_target_exponent=dual_target,
+        dual_deficit_exponent=dual_bound - dual_target,
+        root_fractions_injective=True,
+        root_fractions_reduced=True,
+        actual_joint_coefficient_is_separated=False,
+        root_farey_large_sieve_closes_gate=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -10309,6 +10407,31 @@ def main() -> None:
         f"{midpoint_unitary.balanced_dyadic_condition_is_root_filter},"
         f"joint={midpoint_unitary.root_trace_coefficient_remains_joint},"
         f"published={midpoint_unitary.unitary_root_trace_bound_verified}"
+    )
+    root_farey = midpoint_root_farey_large_sieve_audit()
+    print(
+        "large_q_transition: root_farey_large_sieve="
+        f"points={_fmt(root_farey.root_point_count_exponent)},"
+        f"denominator={_fmt(root_farey.denominator_exponent)},"
+        "spacing_reciprocal="
+        f"{_fmt(root_farey.reciprocal_spacing_exponent)},"
+        "physical_numerator="
+        f"{_fmt(root_farey.physical_numerator_length_exponent)},"
+        "physical_energy="
+        f"{_fmt(root_farey.physical_product_energy_exponent)},"
+        "physical_bound="
+        f"{_fmt(root_farey.physical_large_sieve_bound_exponent)},"
+        f"physical_target={_fmt(root_farey.physical_target_exponent)},"
+        f"physical_deficit={_fmt(root_farey.physical_deficit_exponent)},"
+        f"dual_numerator={_fmt(root_farey.dual_numerator_length_exponent)},"
+        f"dual_energy={_fmt(root_farey.dual_product_energy_exponent)},"
+        f"dual_bound={_fmt(root_farey.dual_large_sieve_bound_exponent)},"
+        f"dual_target={_fmt(root_farey.dual_target_exponent)},"
+        f"dual_deficit={_fmt(root_farey.dual_deficit_exponent)},"
+        f"injective={root_farey.root_fractions_injective},"
+        f"reduced={root_farey.root_fractions_reduced},"
+        f"separated={root_farey.actual_joint_coefficient_is_separated},"
+        f"closes={root_farey.root_farey_large_sieve_closes_gate}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

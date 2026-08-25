@@ -2407,6 +2407,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.670}",
         "\\tag{4.673}",
         "unitary_root_trace_bound_verified=False",
+        "### 4.78 Root-Farey large sieve leaves the same deficit in both gauges",
+        "\\tag{4.676}",
+        "\\tag{4.678}",
+        "root_farey_large_sieve_closes_gate=False",
     ):
         assert marker in note
 
@@ -2447,6 +2451,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "factorization_root_bijection=True,mobius_collapses=True,"
         "root_count_subpower=True,balanced_filter=True,joint=True,"
         "published=False"
+    ) in report
+    assert (
+        "large_q_transition: root_farey_large_sieve="
+        "points=6,denominator=6,spacing_reciprocal=12,"
+        "physical_numerator=5,physical_energy=5,physical_bound=23/2,"
+        "physical_target=6,physical_deficit=11/2,dual_numerator=7,"
+        "dual_energy=7,dual_bound=25/2,dual_target=7,dual_deficit=11/2,"
+        "injective=True,reduced=True,separated=False,closes=False"
     ) in report
 
 
@@ -2672,6 +2684,52 @@ def test_unitary_divisor_reparametrization_records_the_remaining_gate() -> None:
     assert audit.balanced_dyadic_condition_is_root_filter
     assert audit.root_trace_coefficient_remains_joint
     assert not audit.unitary_root_trace_bound_verified
+
+
+def test_root_farey_large_sieve_has_the_exact_eleven_halves_deficit() -> None:
+    helper = getattr(
+        coverage_audit,
+        "midpoint_root_fraction_identity",
+        None,
+    )
+    assert helper is not None, "root-fraction helper is missing"
+    first = helper(r=5, s=7)
+    second = helper(r=7, s=5)
+    assert first["numerator"] == 29
+    assert first["denominator"] == 70
+    assert first["fraction_is_reduced"]
+    assert first["recovered_r"] == 5
+    assert first["recovered_s"] == 7
+    assert first["factorization_recovered_exactly"]
+    assert second["numerator"] == 41
+    assert second["denominator"] == 70
+    assert second["fraction_is_reduced"]
+    assert second["factorization_recovered_exactly"]
+
+    adapter = getattr(
+        coverage_audit,
+        "midpoint_root_farey_large_sieve_audit",
+        None,
+    )
+    assert adapter is not None, "root-Farey large-sieve audit is missing"
+    audit = adapter()
+    assert audit.root_point_count_exponent == F(6)
+    assert audit.denominator_exponent == F(6)
+    assert audit.reciprocal_spacing_exponent == F(12)
+    assert audit.physical_numerator_length_exponent == F(5)
+    assert audit.physical_product_energy_exponent == F(5)
+    assert audit.physical_large_sieve_bound_exponent == F(23, 2)
+    assert audit.physical_target_exponent == F(6)
+    assert audit.physical_deficit_exponent == F(11, 2)
+    assert audit.dual_numerator_length_exponent == F(7)
+    assert audit.dual_product_energy_exponent == F(7)
+    assert audit.dual_large_sieve_bound_exponent == F(25, 2)
+    assert audit.dual_target_exponent == F(7)
+    assert audit.dual_deficit_exponent == F(11, 2)
+    assert audit.root_fractions_injective
+    assert audit.root_fractions_reduced
+    assert not audit.actual_joint_coefficient_is_separated
+    assert not audit.root_farey_large_sieve_closes_gate
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

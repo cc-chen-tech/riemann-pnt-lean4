@@ -9598,6 +9598,63 @@ including the even-prime branch, on finite integers.  The adapter
 `midpoint_unitary_divisor_audit` records the exponents \(6,6,5,7\) and
 keeps `unitary_root_trace_bound_verified=False`.
 
+### 4.78 Root-Farey large sieve leaves the same deficit in both gauges
+
+The fraction attached to a root is reduced:
+
+\[
+ \left(A,2n\right)=1,
+ \qquad
+ \theta_{n,A}:=\frac{A}{2n}\pmod1.
+\tag{4.675}
+\]
+
+Moreover, (4.670)--(4.671) show that \(\theta_{n,A}\) uniquely recovers
+the ordered factorization.  Thus the root fractions are distinct.  For
+\(n_1,n_2\asymp T^6\), ordinary reduced-fraction spacing gives only
+
+\[
+ \|\theta_{n_1,A_1}-\theta_{n_2,A_2}\|
+ \ge\frac1{4n_1n_2}gg T^{-12}.
+\tag{4.676}
+\]
+
+This denominator growth prevents a generic additive large sieve from
+using the reindexing.  On the physical side, the product coefficient
+\(\nu(a)\), \(a=h\delta\), has length exponent five and the exact
+product-energy estimate has exponent five, up to one logarithm.  There
+are \(T^{6+o(1)}\) root points.  Cauchy over the points followed by the
+large sieve therefore has exponent
+
+\[
+ \frac62+rac{\max(5,12)+5}{2}
+ =\frac{23}{2}.
+\tag{4.677}
+\]
+
+The physical local target has exponent six, so the deficit is
+\(23/2-6=11/2\).  On the completed side, \(a=cv\) and its product
+energy both have exponent seven.  The identical calculation gives
+
+\[
+ \frac62+rac{\max(7,12)+7}{2}
+ =\frac{25}{2},
+ \qquad
+ \frac{25}{2}-7=\frac{11}{2}.
+\tag{4.678}
+\]
+
+These are optimistic bounds: the actual smooth coefficient is joint in
+the root point and the numerator variables, so the separation required
+by the displayed large-sieve calculation has not been justified.  Even
+after granting it, the same positive deficit remains in both gauges.
+Consequently the unitary-root reindexing is useful only if \(\mu(n)\)
+is kept inside a Type-II or dispersion step; taking absolute values over
+the root points first is ruled out.  The helper
+`midpoint_root_fraction_identity` checks reduction and exact recovery,
+while `midpoint_root_farey_large_sieve_audit` records both \(11/2\)
+deficits and keeps `root_farey_large_sieve_closes_gate=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
