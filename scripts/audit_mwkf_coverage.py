@@ -465,6 +465,19 @@ class LongMobiusCutoffAudit:
     published_off_diagonal_coverage: bool
 
 
+@dataclass(frozen=True)
+class LongCutoffHCompletionAudit:
+    b_exponent: Fraction
+    a_exponent: Fraction
+    common_b_period_surplus: Fraction
+    fixed_a_normalized_frequency: Fraction
+    full_modulus_period_surplus: Fraction
+    fixed_a_phase_is_smooth_for_b_poisson: bool
+    b_only_poisson_valid: bool
+    full_phase_modulus_exponent: Fraction
+    published_coverage: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -2066,6 +2079,51 @@ def long_mobius_cutoff_audit(
     )
 
 
+def long_cutoff_h_completion_audit(
+    box: ExponentBox,
+    *,
+    b_exponent: Fraction,
+) -> LongCutoffHCompletionAudit:
+    """Reject Poisson in the short ``b`` phase before the ``a`` phase.
+
+    The common-``b`` factor alone has ``H/B`` periods, but the same
+    ``h`` variable also occurs in the fixed-``a`` phase with normalized
+    frequency ``H*L/A``.  That frequency is a positive power throughout
+    the long-cutoff range, so it cannot be hidden in a smooth amplitude.
+    The complete phase still has modulus ``a*b`` of exponent ``rho``.
+    """
+    if not F(0) <= b_exponent <= box.rho:
+        raise ValueError("b exponent lies outside the factor range")
+
+    a_exponent = box.rho - b_exponent
+    common_b_period_surplus = box.h - b_exponent
+    fixed_a_normalized_frequency = (
+        box.h + box.ell - a_exponent
+    )
+    full_modulus_period_surplus = box.h - box.rho
+    fixed_a_phase_is_smooth_for_b_poisson = (
+        fixed_a_normalized_frequency <= 0
+    )
+    b_only_poisson_valid = (
+        common_b_period_surplus > 0
+        and fixed_a_phase_is_smooth_for_b_poisson
+    )
+
+    return LongCutoffHCompletionAudit(
+        b_exponent=b_exponent,
+        a_exponent=a_exponent,
+        common_b_period_surplus=common_b_period_surplus,
+        fixed_a_normalized_frequency=fixed_a_normalized_frequency,
+        full_modulus_period_surplus=full_modulus_period_surplus,
+        fixed_a_phase_is_smooth_for_b_poisson=(
+            fixed_a_phase_is_smooth_for_b_poisson
+        ),
+        b_only_poisson_valid=b_only_poisson_valid,
+        full_phase_modulus_exponent=box.rho,
+        published_coverage=False,
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -2652,6 +2710,29 @@ def main() -> None:
         f"{_fmt(optimized_cutoff.zero_completion_endpoint_c_exponent)}"
         + " global_b_divides_delta="
         f"{optimized_cutoff.full_off_diagonal_imposes_b_divides_delta}"
+    )
+    h_completion_parts: list[str] = []
+    for b_exponent in (F(0), F(199, 200)):
+        h_audit = long_cutoff_h_completion_audit(
+            hard,
+            b_exponent=b_exponent,
+        )
+        h_completion_parts.append(
+            f"{_fmt(b_exponent)}:b_surplus="
+            f"{_fmt(h_audit.common_b_period_surplus)},"
+            f"a_freq={_fmt(h_audit.fixed_a_normalized_frequency)},"
+            f"valid={h_audit.b_only_poisson_valid}"
+        )
+    endpoint_h_audit = long_cutoff_h_completion_audit(
+        hard,
+        b_exponent=F(199, 200),
+    )
+    print(
+        "balanced_max_a: long_cutoff_h_completion="
+        + ";".join(h_completion_parts)
+        + " full_surplus="
+        f"{_fmt(endpoint_h_audit.full_modulus_period_surplus)}"
+        + " proved=False"
     )
 
 

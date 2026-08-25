@@ -2034,6 +2034,14 @@ long-\(a\), short-\(b\), nonzero-determinant sector LCO in (4.8al), not
 only its complementary-divisor zero mode and not the now avoidable
 medium-factor Type-II diagonal.
 
+Nor can one exploit \(b<H\) by Poisson summing only the common-\(b\)
+phase in \(h\).  The simultaneous fixed-\(a\) phase has normalized
+frequency \(HL/A_0=T^{2+\beta}\), while the recombined phase has modulus
+\(ab\asymp T^3\) and \(H/(ab)=T^{-1/2}\).  Treating the fixed-\(a\)
+factor as smooth would discard a positive-power oscillation and produce
+the false condition \(b\mid\delta\).  A valid LCO estimate must transform
+the complete CRT phase.
+
 The relevant published comparison points are
 [Bettin--Chandee](https://arxiv.org/abs/1502.00769),
 [Bettin--Chandee--Radziwiłł](https://arxiv.org/abs/1411.7764),

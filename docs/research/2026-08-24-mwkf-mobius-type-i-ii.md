@@ -937,6 +937,43 @@ zero-mode complementary-divisor endpoint separately from the full
 off-diagonal.  It deliberately sets published off-diagonal coverage to
 false: (4.8al) is unproved.
 
+The short common factor \(b\) does not by itself license Poisson
+summation in \(h\).  If one looks only at the common-\(b\) factor in
+(4.8c), then \(H/B_0\) has exponent
+
+\[
+ \frac52-\beta\ge\frac{301}{200}.
+\tag{4.8am}
+\]
+
+But the same \(h\) occurs simultaneously in the fixed-\(a\) phase
+(4.8b').  Its normalized frequency across the \(h\)-box is
+
+\[
+ \frac{HL}{A_0}
+ =T^{5-(3-\beta)}
+ =T^{2+\beta},
+\qquad
+ 2\le2+\beta\le\frac{599}{200}.
+\tag{4.8an}
+\]
+
+This is a positive power throughout the long-cutoff range, so the
+fixed-\(a\) phase cannot be absorbed into a smooth amplitude before a
+\(b\)-Poisson step.  Recombining both CRT phases returns the legitimate
+full modulus \(ab\asymp T^3\), for which
+
+\[
+ \frac{H}{ab}=T^{-1/2}.
+\tag{4.8ao}
+\]
+
+Therefore the inference “\(b<H\), Poisson in \(h\), hence
+\(b\mid\delta\)” is invalid for LCO.  Any completion must transform the
+full phase and retain the fixed-\(a\) oscillation.  The adapter
+long_cutoff_h_completion_audit records (4.8am)--(4.8ao) and rejects the
+\(b\)-only completion uniformly.
+
 For comparison with this new single-sector route, the remainder of
 Section 4 returns to the earlier \(U=V=T\) Type-II split.
 

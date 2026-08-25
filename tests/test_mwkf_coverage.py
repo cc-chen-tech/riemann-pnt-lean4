@@ -904,6 +904,32 @@ def test_long_mobius_cutoff_removes_only_the_cardinality_diagonal_gap() -> None:
     assert not optimized.published_off_diagonal_coverage
 
 
+def test_short_b_does_not_license_poisson_before_the_a_phase() -> None:
+    """Catch absorbing a positive-power fixed-a frequency into a smooth weight."""
+    adapter = getattr(
+        coverage_audit,
+        "long_cutoff_h_completion_audit",
+        None,
+    )
+    assert adapter is not None, "long-cutoff h-completion audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    endpoint = adapter(box, b_exponent=F(199, 200))
+    assert endpoint.a_exponent == F(401, 200)
+    assert endpoint.common_b_period_surplus == F(301, 200)
+    assert endpoint.fixed_a_normalized_frequency == F(599, 200)
+    assert endpoint.full_modulus_period_surplus == F(-1, 2)
+    assert not endpoint.fixed_a_phase_is_smooth_for_b_poisson
+    assert not endpoint.b_only_poisson_valid
+    assert endpoint.full_phase_modulus_exponent == F(3)
+    assert not endpoint.published_coverage
+
+    smallest_b = adapter(box, b_exponent=F(0))
+    assert smallest_b.common_b_period_surplus == F(5, 2)
+    assert smallest_b.fixed_a_normalized_frequency == F(2)
+    assert not smallest_b.b_only_poisson_valid
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -1017,6 +1043,12 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "401/200:bmax=199/200,margin=1/1000,diag=True "
         "zero_ray=True offdiag=False recip=3 zero_c_endpoint=901/100 "
         "global_b_divides_delta=False"
+    ) in output
+    assert (
+        "balanced_max_a: long_cutoff_h_completion="
+        "0:b_surplus=5/2,a_freq=2,valid=False;"
+        "199/200:b_surplus=301/200,a_freq=599/200,valid=False "
+        "full_surplus=-1/2 proved=False"
     ) in output
 
 
