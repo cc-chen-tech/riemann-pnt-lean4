@@ -1259,8 +1259,162 @@ to be introduced as an axiom.
 
 ### S3. Global square mass and absolute sliding mass
 
-The same Fourier expansion, now without cancellation between the signs of
-`F`, gives
+This step does **not** follow by putting `x=delta^(-2)` into the proved
+`J(x,theta)` estimate: that estimate only has the uniform base-point range
+`x<=X^a`.  Fortunately no such extension is needed.  The low mass uses only
+`J(1,theta)`, and the remaining tail is bounded directly from the absolutely
+convergent Gaussian theta series.
+
+Put
+
+\[
+ D=\delta^{-1/2},\qquad G=\delta^{-2},\qquad
+ L_\delta=\log(1/\delta),\qquad \log G=2L_\delta.
+\]
+
+Assume `log G>=2`, which is an honest eventual small-`delta` condition, and
+choose
+
+\[
+ \theta=\frac1{\log G}\le\frac12.
+\]
+
+If
+
+\[
+ q(u)=|g(u)|^2,
+\]
+
+then positivity and `u^(-theta)>=G^(-theta)=e^(-1)` on `1<=u<=G`
+give
+
+\[
+ \int_1^Gq(u)\,du
+ \le e\int_1^G u^{-\theta}q(u)\,du
+ \le eJ(1,\theta).
+\]
+
+The proved S2 estimate is applicable at `x=1`, because
+`1<=1<=X^a`.  Consequently
+
+\[
+ \boxed{
+ \int_1^Gq(u)\,du
+ \ll D\frac{\log G}{\log X}
+ =2D\frac{L_\delta}{\log X}.}
+ \tag{S3-low}
+\]
+
+This is the precise correction to the tempting but unnecessary use of
+`J(G,theta)`.  It also avoids differentiating `J`.
+
+For the direct tail, write
+
+\[
+ B=\frac{\delta}{2X^2}.
+\]
+
+The elementary sine bound already used in S2 says
+`delta<=2*pi*sin(delta)`.  Hence, for `u>=1`, every positive theta term with
+`1<=kappa,lambda<=X` and `n>=1` satisfies
+
+\[
+ \left|\exp\!\left(-\pi\sin\delta
+       \left(\frac{n\kappa}{\lambda}\right)^2u^2
+       -i\,\cdots\right)\right|
+ \le e^{-Bn^2u^2}\le e^{-Bnu^2}.
+ \tag{S3-ray}
+\]
+
+Moreover `|beta_n|<=1` and the harmonic-sum estimate give
+
+\[
+ \sum_{\kappa,\lambda\le X}
+   \frac{|\beta_\kappa\beta_\lambda|}{\lambda}
+ \le X(1+\log X).
+ \tag{S3-coeff}
+\]
+
+For `u>=G`, put `z=Bu^2`.  From `X<=delta^(-c)`, `c<1/8`, and
+`0<delta<=1`,
+
+\[
+ z\ge BG^2=\frac1{2X^2\delta^3}
+ \ge\frac12\delta^{-3+2c}\ge\frac12.
+\]
+
+The shifted theta series is therefore uniformly geometric:
+
+\[
+ \sum_{n\ge1}e^{-Bn^2u^2}
+ \le\frac{e^{-Bu^2}}{1-e^{-Bu^2}}
+ \le\frac{e^{-Bu^2}}{1-e^{-1/2}}.
+\]
+
+Combining this with (S3-coeff), for an absolute constant `C_0`,
+
+\[
+ q(u)\le C_0X^2(1+\log X)^2e^{-2Bu^2}.
+ \tag{S3-point-tail}
+\]
+
+Now split one Gaussian factor at the endpoint and integrate the other over
+the whole positive ray:
+
+\[
+ \begin{aligned}
+ \int_G^\infty q(u)\,du
+ &\le C_0X^2(1+\log X)^2e^{-BG^2}
+       \int_0^\infty e^{-Bu^2}\,du\\
+ &=C_0\sqrt{\frac\pi2}\,
+       D X^3(1+\log X)^2e^{-BG^2}.
+ \end{aligned}
+\]
+
+The elementary exponential estimate `e^(-z)<=2/z^2` yields
+
+\[
+ e^{-BG^2}\le 8X^4\delta^6.
+\]
+
+Since `1+log X<=X`,
+
+\[
+ \int_G^\infty q(u)\,du
+ \ll D X^9\delta^6
+ \le D\delta^{6-9c}
+ \ll D.
+ \tag{S3-tail-raw}
+\]
+
+The endpoint assumptions force `c>0` and `delta<1`; taking logarithms in
+`X<=delta^(-c)` gives
+
+\[
+ \log X\le cL_\delta<L_\delta.
+\]
+
+Thus the last `D` is absorbed by `D*L_delta/log X`, and
+
+\[
+ \boxed{
+ \int_G^\infty q(u)\,du
+ \ll D\frac{L_\delta}{\log X}.}
+ \tag{S3-tail}
+\]
+
+Under `y=log u`, the exact S1 mass bridge identifies (S3-low) and
+(S3-tail) with the full positive-frequency square mass of the nonconstant
+inverse Fourier kernel.  The residue is even easier: the already proved
+pointwise estimate
+
+\[
+ |R(y)|^2\le D e^{-y}
+\]
+
+gives `integral_0^infinity |R(y)|^2 dy<=D`, which is absorbed by the same
+target.  Applying `|R+N|^2<=2|R|^2+2|N|^2`, reflecting by the proved reality
+symmetry, transporting `y=2*pi*w`, and finally applying Plancherel gives
 
 \[
  \boxed{
@@ -1269,7 +1423,34 @@ The same Fourier expansion, now without cancellation between the signs of
  \tag{S3a}
 \]
 
-Fubini and Cauchy--Schwarz then give
+There is no pointwise inverse-Fourier assumption in this last step.  In
+Mathlib's `L2` convention it is exactly the chain
+
+\[
+ \int|F|^2=\|F\|_2^2=\|\mathcal F_{\rm ml}F\|_2^2
+ =\int|\mathcal F_{\rm ml}F|^2,
+\]
+
+using `MeasureTheory.Lp.norm_fourier_eq`; the a.e. compatibility theorem
+then inserts the explicit S1 kernel.
+
+Finally, for every `h>=0`, pointwise Cauchy--Schwarz gives
+
+\[
+ \left(\int_t^{t+h}|F(u)|\,du\right)^2
+ \le h\int_t^{t+h}|F(u)|^2\,du.
+\]
+
+Tonelli is applicable because the integrand is nonnegative.  For fixed
+`u`, the set of starting points satisfying `t<=u<=t+h` is `[u-h,u]`, of
+measure `h`.  Hence
+
+\[
+ \int_{\mathbb R}\int_t^{t+h}|F(u)|^2\,du\,dt
+ =h\int_{\mathbb R}|F(u)|^2\,du,
+\]
+
+and therefore
 
 \[
  \boxed{
@@ -1278,6 +1459,37 @@ Fubini and Cauchy--Schwarz then give
  \ll \frac{h^2\log(1/\delta)}{\delta^{1/2}\log X}.}
  \tag{S3b}
 \]
+
+Thus S3 is closed at paper level.  Its Lean decomposition should be:
+
+1. a `G=delta^(-2)` low-mass specialization of the existing
+   `J(1,theta)` bridge;
+2. a pointwise physical-theta Gaussian tail bound and its integrated tail;
+3. positive explicit-kernel mass assembly and exact `2*pi`/Plancherel
+   transport;
+4. an abstract nonnegative sliding-window Cauchy--Schwarz--Tonelli theorem
+   proving the factor `h^2`.
+
+The first two Lean layers are now complete.  In particular,
+`SelbergGlobalLowMass.lean` instantiates only `J(1,theta)` at
+`G=delta^(-2)`, while `SelbergPhysicalThetaGaussianTail.lean` proves the
+single-term decay, the uniform theta-ray bound, the two finite mollifier
+sums, and the integrated tail.  For the formal tail integration it uses the
+equally valid simplification `u^2>=G*u` on `u>=G`; this gives the explicit raw
+bound
+
+\[
+ \int_G^\infty q(u)\,du
+ \le \frac{64X^4}{B^2G^3}=256X^8\delta^4
+ \le256\delta^{-1/2}.
+\]
+
+The last inequality reuses the already proved `X^4<=delta^(-1/2)` twice.
+This avoids square-root algebra from the complete Gaussian integral while
+retaining more than enough strict power saving.  The positive explicit-kernel
+assembly, whole-line Plancherel transport, and abstract absolute sliding
+window theorem remain to be formalized; S3a/S3b are therefore not yet marked
+complete in Lean.
 
 ### S4. First absolute moment
 
