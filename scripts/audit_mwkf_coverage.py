@@ -1155,6 +1155,61 @@ class PoissonExchangeSecondOrderAudit:
 
 
 @dataclass(frozen=True)
+class CommonModulusExchangeAudit:
+    common_modulus_exponent: Fraction
+    raw_dual_c_exponent: Fraction
+    raw_dual_v_exponent: Fraction
+    original_gauss_support_divisor_exponent: Fraction
+    swapped_gauss_support_divisor_exponent: Fraction
+    reduced_dual_c_exponent: Fraction
+    reduced_dual_v_exponent: Fraction
+    original_frequency_sublattice_is_r_times_square: bool
+    swapped_frequency_sublattice_is_s_times_square: bool
+    nonzero_sublattice_intersection_empty_mod_rs: bool
+    centered_zero_frequency_annihilated: bool
+    common_modulus_forces_real_completed_coefficient: bool
+    common_modulus_reduces_conductor: bool
+    second_order_collar_unconditional: bool
+
+
+@dataclass(frozen=True)
+class MidpointHermitianCompletionAudit:
+    common_modulus_exponent: Fraction
+    raw_dual_c_exponent: Fraction
+    raw_dual_v_exponent: Fraction
+    completed_ambient_exponent: Fraction
+    completion_prefactor_exponent: Fraction
+    completed_gate_target_exponent: Fraction
+    square_root_ambient_exponent: Fraction
+    allowance_beyond_square_root_exponent: Fraction
+    midpoint_coefficient_is_unit: bool
+    midpoint_coefficient_is_involution: bool
+    exchange_negates_midpoint_coefficient: bool
+    same_frequency_swap_is_conjugate: bool
+    centered_multiplier_zero_on_c_zero_row: bool
+    centered_multiplier_zero_on_v_zero_column: bool
+    modular_involution_phase_is_near_diagonal_small: bool
+    published_bound_verified: bool
+
+
+@dataclass(frozen=True)
+class MidpointPublishedHermitianAdapterAudit:
+    numerator_exponent: Fraction
+    rs_trivial_exponent: Fraction
+    withdrawn_claimed_outer_inner_bound_exponent: Fraction
+    withdrawn_claimed_outer_inner_saving_exponent: Fraction
+    withdrawn_claimed_bulk_inner_bound_exponent: Fraction
+    withdrawn_claimed_bulk_inner_saving_exponent: Fraction
+    theorem_has_moving_numerator: bool
+    theorem_accepts_joint_r_s_c_v_coefficient: bool
+    theorem_supplies_c_v_frequency_average: bool
+    claim_withdrawn_for_missing_l_squared_factor: bool
+    corrected_argument_gives_claimed_improvement: bool
+    withdrawn_claim_closes_midpoint_gate: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5635,6 +5690,284 @@ def poisson_exchange_second_order_audit() -> PoissonExchangeSecondOrderAudit:
     )
 
 
+def common_modulus_degenerate_gauss_identity(
+    *,
+    r: int,
+    s: int,
+    c: int,
+    v: int,
+) -> dict[str, object]:
+    """Evaluate the degenerate bilinear Gauss kernel modulo ``r*s``.
+
+    Put ``Q=r*s``, ``u=inverse(r mod s)``, and ``A=r*u``.  Summing
+    ``e((c*x+v*y-A*x*y)/Q)`` first over ``x`` forces
+    ``c=A*y (mod Q)``.  This has solutions exactly when ``r|c``.  The
+    resulting ``r`` values of ``y`` form one class modulo ``s``; their
+    geometric character sum vanishes unless ``r|v``.  If
+    ``c=r*c0`` and ``v=r*v0``, the exact value is
+
+        Q*r*e(r*c0*v0/s).
+
+    The helper verifies the congruence-orbit part with finite integers and
+    records the character-orthogonality conclusion without floating point.
+    """
+    if r <= 0 or s <= 0:
+        raise ValueError("common-modulus factors must be positive")
+    if gcd(r, s) != 1:
+        raise ValueError("common-modulus Gauss identity requires gcd(r,s)=1")
+    modulus = r * s
+    c_mod = c % modulus
+    v_mod = v % modulus
+    inverse_r_mod_s = pow(r, -1, s)
+    bilinear_coefficient = r * inverse_r_mod_s
+    qualifying_y = tuple(
+        y
+        for y in range(modulus)
+        if (c_mod - bilinear_coefficient * y) % modulus == 0
+    )
+    r_divides_c = c_mod % r == 0
+    r_divides_v = v_mod % r == 0
+    if r_divides_c:
+        c0 = c_mod // r
+        y0 = (r * c0) % s
+        expected_y = tuple(sorted((y0 + s * t) % modulus for t in range(r)))
+    else:
+        c0 = 0
+        expected_y = ()
+    orbit_exact = tuple(sorted(qualifying_y)) == expected_y
+
+    if r_divides_c and r_divides_v:
+        v0 = v_mod // r
+        phase = F((r * c0 * v0) % s, s)
+        amplitude = modulus * r
+        character_exact = len({(v_mod * y) % modulus for y in qualifying_y}) == 1
+    else:
+        phase = None
+        amplitude = 0
+        # Once the exact y-orbit is known, finite character orthogonality
+        # gives sum_(t mod r) e(v*t/r)=0 precisely when r does not divide v.
+        character_exact = (not r_divides_c) or (not r_divides_v)
+    return {
+        "common_modulus": modulus,
+        "bilinear_coefficient": bilinear_coefficient,
+        "qualifying_y": qualifying_y,
+        "r_divides_c": r_divides_c,
+        "r_divides_v": r_divides_v,
+        "r_divides_c_and_v": r_divides_c and r_divides_v,
+        "gauss_support_requires_r_divides_c_and_v": True,
+        "gauss_amplitude": amplitude,
+        "gauss_phase": phase,
+        "orthogonality_derivation_exact": orbit_exact and character_exact,
+    }
+
+
+def common_modulus_exchange_audit() -> CommonModulusExchangeAudit:
+    """Audit lifting both Poisson orientations to the modulus ``r*s``.
+
+    At the balanced hard box, ``r,s=T^3`` and ``H=L=T^(5/2)``.
+    Raw common-modulus dual variables therefore have exponent ``7/2``.
+    The degenerate Gauss identity forces both to be multiples of ``r``
+    in the original orientation and of ``s`` after exchange, reducing
+    each back to exponent ``1/2``.  Since ``gcd(r,s)=1``, the two
+    sublattices meet modulo ``r*s`` only at zero, where the centered phase
+    is zero.  No nonzero coefficient is paired with its conjugate.
+    """
+    common_modulus = F(6)
+    raw_dual = common_modulus - F(5, 2)
+    support_divisor = F(3)
+    reduced_dual = raw_dual - support_divisor
+    return CommonModulusExchangeAudit(
+        common_modulus_exponent=common_modulus,
+        raw_dual_c_exponent=raw_dual,
+        raw_dual_v_exponent=raw_dual,
+        original_gauss_support_divisor_exponent=support_divisor,
+        swapped_gauss_support_divisor_exponent=support_divisor,
+        reduced_dual_c_exponent=reduced_dual,
+        reduced_dual_v_exponent=reduced_dual,
+        original_frequency_sublattice_is_r_times_square=True,
+        swapped_frequency_sublattice_is_s_times_square=True,
+        nonzero_sublattice_intersection_empty_mod_rs=True,
+        centered_zero_frequency_annihilated=True,
+        common_modulus_forces_real_completed_coefficient=False,
+        common_modulus_reduces_conductor=False,
+        second_order_collar_unconditional=False,
+    )
+
+
+def midpoint_common_modulus_involution_identity(
+    *,
+    r: int,
+    s: int,
+    c: int,
+    v: int,
+) -> dict[str, object]:
+    """Evaluate the midpoint-gauged Gauss kernel modulo ``2*r*s``.
+
+    Put ``Q=2*r*s`` and ``A=2*r*inverse(r mod s)-1``.  Then ``A`` is a
+    unit modulo ``Q``, ``A^2=1 (mod Q)``, and exchanging ``r,s`` replaces
+    ``A`` by ``-A``.  Hence
+
+        sum_(x,y mod Q) e((c*x+v*y-A*x*y)/Q) = Q e(A*c*v/Q),
+
+    and the exchanged kernel has the conjugate phase at the same pair
+    ``(c,v)``.  All claims returned here are checked by integer arithmetic.
+    """
+    if r <= 1 or s <= 1:
+        raise ValueError("midpoint factors must exceed one")
+    if gcd(r, s) != 1:
+        raise ValueError("midpoint identity requires gcd(r,s)=1")
+    modulus = 2 * r * s
+    inverse_r_mod_s = pow(r, -1, s)
+    inverse_s_mod_r = pow(s, -1, r)
+    coefficient = (2 * r * inverse_r_mod_s - 1) % modulus
+    swapped_coefficient = (2 * s * inverse_s_mod_r - 1) % modulus
+    c_mod = c % modulus
+    v_mod = v % modulus
+    qualifying_y = tuple(
+        y for y in range(modulus) if (c_mod - coefficient * y) % modulus == 0
+    )
+    expected_y = (coefficient * c_mod) % modulus
+    phase_numerator = (coefficient * c_mod * v_mod) % modulus
+    swapped_phase_numerator = (
+        swapped_coefficient * c_mod * v_mod
+    ) % modulus
+    return {
+        "common_modulus": modulus,
+        "bilinear_coefficient": coefficient,
+        "swapped_bilinear_coefficient": swapped_coefficient,
+        "coefficient_is_unit": gcd(coefficient, modulus) == 1,
+        "coefficient_is_involution": coefficient * coefficient % modulus == 1,
+        "swap_negates_coefficient": (
+            coefficient + swapped_coefficient
+        ) % modulus == 0,
+        "qualifying_y": qualifying_y,
+        "unique_qualifying_y_is_Ac": qualifying_y == (expected_y,),
+        "gauss_amplitude": modulus,
+        "gauss_phase": F(phase_numerator, modulus),
+        "swapped_gauss_phase": F(swapped_phase_numerator, modulus),
+        "swap_phase_is_conjugate": (
+            phase_numerator + swapped_phase_numerator
+        ) % modulus == 0,
+    }
+
+
+def midpoint_hermitian_completion_audit() -> MidpointHermitianCompletionAudit:
+    """Record the exact balanced-box ledger for midpoint completion.
+
+    The common modulus ``2*r*s`` still has exponent six.  With
+    ``H=L=T^(5/2)``, both raw dual windows have exponent ``7/2``.  The
+    completed ambient cardinality is therefore ``T^13``.  The completion
+    prefactor ``H*L/Q`` is ``T^-1``, so the local ``T^6 log^-B`` target
+    becomes a ``T^7 log^-B`` Hermitian-sum gate.  This allows ``T^(1/2)``
+    beyond square root and is not supplied by a verified published theorem.
+    """
+    modulus = F(6)
+    raw_dual = modulus - F(5, 2)
+    ambient = F(3) + F(3) + raw_dual + raw_dual
+    prefactor = F(5, 2) + F(5, 2) - modulus
+    gate_target = F(6) - prefactor
+    square_root = ambient / 2
+    return MidpointHermitianCompletionAudit(
+        common_modulus_exponent=modulus,
+        raw_dual_c_exponent=raw_dual,
+        raw_dual_v_exponent=raw_dual,
+        completed_ambient_exponent=ambient,
+        completion_prefactor_exponent=prefactor,
+        completed_gate_target_exponent=gate_target,
+        square_root_ambient_exponent=square_root,
+        allowance_beyond_square_root_exponent=gate_target - square_root,
+        midpoint_coefficient_is_unit=True,
+        midpoint_coefficient_is_involution=True,
+        exchange_negates_midpoint_coefficient=True,
+        same_frequency_swap_is_conjugate=True,
+        centered_multiplier_zero_on_c_zero_row=True,
+        centered_multiplier_zero_on_v_zero_column=True,
+        modular_involution_phase_is_near_diagonal_small=False,
+        published_bound_verified=False,
+    )
+
+
+def midpoint_salie_phase_identity(
+    *,
+    r: int,
+    s: int,
+    c: int,
+    v: int,
+) -> dict[str, Fraction | bool]:
+    """Match the midpoint phase to an antisymmetric Hermitian fraction.
+
+    For least positive inverses and coprime ``r,s>1``, one has
+    ``r*rbar_s+s*sbar_r=1+r*s``.  Division by two therefore retains a
+    parity correction:
+
+        A*c*v/(2*r*s)
+        = c*v/2 * (rbar_s/s-sbar_r/r) + c*v/2  (mod 1).
+
+    The last term is ``0`` or ``1/2`` and can be absorbed into the dual
+    frequency coefficient as ``(-1)^(c*v)``.
+    """
+    if r <= 1 or s <= 1:
+        raise ValueError("Salié-phase factors must exceed one")
+    if gcd(r, s) != 1:
+        raise ValueError("Salié-phase identity requires gcd(r,s)=1")
+
+    def mod_one(value: Fraction) -> Fraction:
+        return F(value.numerator % value.denominator, value.denominator)
+
+    modulus = 2 * r * s
+    inverse_r_mod_s = pow(r, -1, s)
+    inverse_s_mod_r = pow(s, -1, r)
+    coefficient = (2 * r * inverse_r_mod_s - 1) % modulus
+    midpoint = F((coefficient * c * v) % modulus, modulus)
+    hermitian = mod_one(
+        F(c * v, 2)
+        * (F(inverse_r_mod_s, s) - F(inverse_s_mod_r, r))
+    )
+    parity = F((c * v) % 2, 2)
+    return {
+        "midpoint_phase": midpoint,
+        "hermitian_phase": hermitian,
+        "parity_correction": parity,
+        "identity_exact_mod_one": midpoint == mod_one(hermitian + parity),
+    }
+
+
+def midpoint_published_hermitian_adapter_audit(
+) -> MidpointPublishedHermitianAdapterAudit:
+    """Compare the midpoint operator with the withdrawn Hermitian claim.
+
+    The claimed Theorems 1.4 and 1.8 of arXiv:2601.00292v1 concern a
+    fixed numerator and separated two-variable coefficients.  At
+    ``r,s=T^3`` and the outer dual corner ``a=|c*v|=T^7``, their displayed
+    claimed bound has exponent six after inserting the two L2 norms,
+    exactly the trivial size of the ``r,s`` sum.  Even in the bulk
+    ``a<=T^6`` it has exponent ``23/4`` and does not average the ``c,v``
+    variables.  Version 2 withdraws the improvement because (2.53)
+    missed an ``L^2`` factor, changing ``L^5`` to ``L^7``.
+    """
+    numerator = F(7)
+    trivial = F(6)
+    l2_norms = F(3)
+    common_factors = F(1, 2) + F(1) - F(1, 4)
+    outer = l2_norms + numerator / 4 + common_factors
+    bulk = l2_norms + F(6, 4) + common_factors
+    return MidpointPublishedHermitianAdapterAudit(
+        numerator_exponent=numerator,
+        rs_trivial_exponent=trivial,
+        withdrawn_claimed_outer_inner_bound_exponent=outer,
+        withdrawn_claimed_outer_inner_saving_exponent=trivial - outer,
+        withdrawn_claimed_bulk_inner_bound_exponent=bulk,
+        withdrawn_claimed_bulk_inner_saving_exponent=trivial - bulk,
+        theorem_has_moving_numerator=False,
+        theorem_accepts_joint_r_s_c_v_coefficient=False,
+        theorem_supplies_c_v_frequency_average=False,
+        claim_withdrawn_for_missing_l_squared_factor=True,
+        corrected_argument_gives_claimed_improvement=False,
+        withdrawn_claim_closes_midpoint_gate=False,
+        source="arXiv:2601.00292v2 author comment; v1 Theorems 1.4 and 1.8",
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -9740,6 +10073,83 @@ def main() -> None:
         f"{exchange_audit.second_order_bound_requires_real_coefficient},"
         "second_order="
         f"{exchange_audit.second_order_collar_unconditional}"
+    )
+    common_exchange = common_modulus_exchange_audit()
+    print(
+        "large_q_transition: common_modulus_exchange="
+        f"Q={_fmt(common_exchange.common_modulus_exponent)},"
+        f"craw={_fmt(common_exchange.raw_dual_c_exponent)},"
+        f"vraw={_fmt(common_exchange.raw_dual_v_exponent)},"
+        "original_divisor="
+        f"{_fmt(common_exchange.original_gauss_support_divisor_exponent)},"
+        "swapped_divisor="
+        f"{_fmt(common_exchange.swapped_gauss_support_divisor_exponent)},"
+        f"creduced={_fmt(common_exchange.reduced_dual_c_exponent)},"
+        f"vreduced={_fmt(common_exchange.reduced_dual_v_exponent)},"
+        "r_lattice="
+        f"{common_exchange.original_frequency_sublattice_is_r_times_square},"
+        "s_lattice="
+        f"{common_exchange.swapped_frequency_sublattice_is_s_times_square},"
+        "nonzero_intersection="
+        f"{not common_exchange.nonzero_sublattice_intersection_empty_mod_rs},"
+        "centered_zero="
+        f"{common_exchange.centered_zero_frequency_annihilated},"
+        "coefficient_real="
+        f"{common_exchange.common_modulus_forces_real_completed_coefficient},"
+        "conductor_reduced="
+        f"{common_exchange.common_modulus_reduces_conductor},"
+        "second_order="
+        f"{common_exchange.second_order_collar_unconditional}"
+    )
+    midpoint_hermitian = midpoint_hermitian_completion_audit()
+    print(
+        "large_q_transition: midpoint_hermitian_completion="
+        f"Q={_fmt(midpoint_hermitian.common_modulus_exponent)},"
+        f"craw={_fmt(midpoint_hermitian.raw_dual_c_exponent)},"
+        f"vraw={_fmt(midpoint_hermitian.raw_dual_v_exponent)},"
+        f"ambient={_fmt(midpoint_hermitian.completed_ambient_exponent)},"
+        f"prefactor={_fmt(midpoint_hermitian.completion_prefactor_exponent)},"
+        f"target={_fmt(midpoint_hermitian.completed_gate_target_exponent)},"
+        f"sqrt={_fmt(midpoint_hermitian.square_root_ambient_exponent)},"
+        "allowance="
+        f"{_fmt(midpoint_hermitian.allowance_beyond_square_root_exponent)},"
+        f"unit={midpoint_hermitian.midpoint_coefficient_is_unit},"
+        f"involution={midpoint_hermitian.midpoint_coefficient_is_involution},"
+        "swap_negates="
+        f"{midpoint_hermitian.exchange_negates_midpoint_coefficient},"
+        "same_frequency="
+        f"{midpoint_hermitian.same_frequency_swap_is_conjugate},"
+        "row_centered="
+        f"{midpoint_hermitian.centered_multiplier_zero_on_c_zero_row},"
+        "column_centered="
+        f"{midpoint_hermitian.centered_multiplier_zero_on_v_zero_column},"
+        "small_phase="
+        f"{midpoint_hermitian.modular_involution_phase_is_near_diagonal_small},"
+        f"published={midpoint_hermitian.published_bound_verified}"
+    )
+    midpoint_published = midpoint_published_hermitian_adapter_audit()
+    print(
+        "large_q_transition: midpoint_published_hermitian_adapter="
+        f"numerator={_fmt(midpoint_published.numerator_exponent)},"
+        f"rs_trivial={_fmt(midpoint_published.rs_trivial_exponent)},"
+        "claimed_inner="
+        f"{_fmt(midpoint_published.withdrawn_claimed_outer_inner_bound_exponent)},"
+        "claimed_save="
+        f"{_fmt(midpoint_published.withdrawn_claimed_outer_inner_saving_exponent)},"
+        "bulk_claimed_inner="
+        f"{_fmt(midpoint_published.withdrawn_claimed_bulk_inner_bound_exponent)},"
+        "bulk_save="
+        f"{_fmt(midpoint_published.withdrawn_claimed_bulk_inner_saving_exponent)},"
+        f"fixed_numerator={midpoint_published.theorem_has_moving_numerator},"
+        "separated="
+        f"{midpoint_published.theorem_accepts_joint_r_s_c_v_coefficient},"
+        "frequency_average="
+        f"{midpoint_published.theorem_supplies_c_v_frequency_average},"
+        "withdrawn="
+        f"{midpoint_published.claim_withdrawn_for_missing_l_squared_factor},"
+        "corrected_improved="
+        f"{midpoint_published.corrected_argument_gives_claimed_improvement},"
+        f"closes={midpoint_published.withdrawn_claim_closes_midpoint_gate}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

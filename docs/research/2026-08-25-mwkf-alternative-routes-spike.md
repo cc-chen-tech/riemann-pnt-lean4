@@ -9154,6 +9154,354 @@ exact rationals; `poisson_exchange_second_order_audit` keeps
 quadratic-collar inference.  It does not rule out using the same exchange
 identity inside a future nonsplit spectral argument.
 
+### 4.74 Common-modulus completion recovers two disjoint sublattices
+
+One possible repair of the mismatch in Section 4.73 is to lift both
+Poisson orientations to the common modulus
+
+\[
+ Q=rs,qquad A=r\bar r_s,qquad (r,s)=1,
+\tag{4.649}
+\]
+
+where \(\bar r_s\) is the inverse of \(r\pmod s\).  The original
+fraction phase is then \(e(-Ah\delta/Q)\).  Its two-dimensional finite
+Gauss kernel is
+
+\[
+ G_Q(c,v;A)
+ :=\sum_{x,y\bmod Q}
+ e\!\left(\frac{cx+vy-Axy}{Q}\right).
+\tag{4.650}
+\]
+
+This kernel is degenerate because \((A,Q)=r\).  Summing first over
+\(x\) forces
+
+\[
+ c\equiv Ay\pmod Q.
+\tag{4.651}
+\]
+
+Equation (4.651) is soluble exactly when \(r\mid c\).  If
+\(c=rc_0\), then \(\bar r_s y\equiv c_0\pmod s\), so
+
+\[
+ y\equiv rc_0\pmod s,
+\tag{4.652}
+\]
+
+with exactly \(r\) lifts modulo \(Q\).  Summing the remaining character
+over those lifts gives zero unless \(r\mid v\).  Writing \(v=rv_0\)
+in the nonzero case yields the exact identity
+
+\[
+ \boxed{
+ G_Q(c,v;A)
+ =Qr\,\mathbf1_{r\mid c}\mathbf1_{r\mid v}
+ e\!\left(\frac{r c_0v_0}{s}\right).}
+\tag{4.653}
+\]
+
+Thus the common-modulus lift does not create a new nondegenerate
+completion.  It embeds the original modulus-\(s\) completion in the
+frequency sublattice
+
+\[
+ (c,v)\in(r\mathbb Z/Q\mathbb Z)^2.
+\tag{4.654}
+\]
+
+After exchanging \(r\) and \(s\), the conjugate orientation is supported
+instead on \((s\mathbb Z/Q\mathbb Z)^2\).  Coprimality gives
+
+\[
+ (r\mathbb Z/Q\mathbb Z)^2
+ \cap(s\mathbb Z/Q\mathbb Z)^2
+ =\{(0,0)\}.
+\tag{4.655}
+\]
+
+The sole common frequency does not help: the centered multiplier at
+\((0,0)\) is \(e(0)-1=0\).  Hence no nonzero completed coefficient is
+placed at the same common-modulus frequency as its conjugate.
+
+The conductor ledger says the same thing.  In the balanced hard box,
+
+\[
+ Q=T^6,qquad Q/H=Q/L=T^{7/2}.
+\tag{4.656}
+\]
+
+The divisibility in (4.653) removes \(r=T^3\) from each dual variable,
+leaving \(T^{1/2}\) and \(T^{1/2}\), exactly the original dual scales.
+There is neither a conductor gain nor a new reality constraint.
+
+The helper `common_modulus_degenerate_gauss_identity` checks the solution
+orbit in (4.651)--(4.653) by integer congruences and finite-character
+orthogonality.  The adapter `common_modulus_exchange_audit` records the
+raw and reduced exponents and keeps
+`common_modulus_forces_real_completed_coefficient=False` and
+`second_order_collar_unconditional=False`.  Thus a common-modulus lift
+with the original, ungauged modulus \(Q=rs\) does not rescue the
+quadratic-collar route.  This conclusion does not apply to the distinct
+midpoint gauge and doubled modulus in Section 4.75.
+
+### 4.75 Midpoint gauge gives a nondegenerate Hermitian completion
+
+Normalize the physical kernel in (4.642) by
+
+\[
+ B_{r,s}(\delta,h):=s^{-1}\mathscr K_{R,S,K,M}
+ (r,s;\delta,h).
+\]
+
+Then (4.642) is exactly
+
+\[
+ B_{s,r}(-\delta,-h)
+ =e\!\left(\frac{h\delta}{rs}\right)
+  \overline{B_{r,s}(\delta,h)}.
+\tag{4.657}
+\]
+
+Put
+
+\[
+ \widetilde B_{r,s}(\delta,h)
+ :=e\!\left(-\frac{h\delta}{2rs}\right)B_{r,s}(\delta,h).
+\]
+
+The correction in (4.657) is now divided equally between the two
+orientations, and direct conjugation gives the same-gauge identity
+
+\[
+ \boxed{
+ \widetilde B_{s,r}(-\delta,-h)
+ =\overline{\widetilde B_{r,s}(\delta,h)}.}
+\tag{4.658}
+\]
+
+Moving the half correction from the kernel into the original arithmetic
+phase replaces (4.649) by
+
+\[
+ Q:=2rs,
+ \qquad
+ A_{r,s}:=2r\bar r_s-1,
+ \qquad
+ e\!\left(-\frac{A_{r,s}h\delta}{Q}\right).
+\tag{4.659}
+\]
+
+This coefficient is no longer degenerate.  Modulo \(r\), modulo \(s\),
+and modulo \(2\), respectively, it is \(-1,1,1\); hence
+
+\[
+ (A_{r,s},Q)=1,
+ \qquad
+ A_{r,s}^{\,2}\equiv1\pmod Q.
+\tag{4.660}
+\]
+
+For \(r,s>1\), set \(U=r\bar r_s\) and \(V=s\bar s_r\), using the least
+positive inverses.  The integer \(U+V\) is congruent to one modulo both
+\(r\) and \(s\), lies strictly between one and \(2rs\), and therefore
+\(U+V=1+rs\).  It follows that
+
+\[
+ \boxed{A_{s,r}\equiv-A_{r,s}\pmod{2rs}.}
+\tag{4.661}
+\]
+
+Consequently the doubled-modulus Gauss kernel is exactly nondegenerate.
+Summing first over \(x\pmod Q\) forces the unique congruence
+\(y\equiv A_{r,s}c\pmod Q\), since \(A_{r,s}^{-1}=A_{r,s}\), and gives
+
+\[
+ \boxed{
+ \sum_{x,y\bmod Q}
+ e\!\left(\frac{cx+vy-A_{r,s}xy}{Q}\right)
+ =Qe\!\left(\frac{A_{r,s}cv}{Q}\right).}
+\tag{4.662}
+\]
+
+By (4.661), the exchanged orientation has the complex-conjugate phase
+at the *same* frequency pair \((c,v)\pmod Q\).  To fix the normalization,
+let \(\widetilde\Phi_{r,s}(h,\delta)\) be the midpoint-gauged physical
+smooth amplitude and put
+
+\[
+ \widetilde F_{r,s}(x,y)
+ :=\sum_{\substack{h\equiv x\ (Q)\\\delta\equiv y\ (Q)}}
+ \widetilde\Phi_{r,s}(h,\delta),
+ \qquad
+ \widetilde\Theta_{r,s}(c,v)
+ :=\frac1{HL}\sum_{x,y\bmod Q}\widetilde F_{r,s}(x,y)
+ e\!\left(-\frac{cx+vy}{Q}\right).
+\tag{4.662a}
+\]
+
+These are finite sums.  Fourier inversion and (4.662) give the exact
+centered completed operator
+
+\[
+ \mathfrak H_q[\Psi]
+ :=\sum_{\substack{r\asymp T^3,\ s\asymp T^3\\
+                    (r,s)=1,\ (q,rs)=1\\qr,qs\le N}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)
+ \frac{RS}{rs}
+ \sum_{c,v\bmod Q}
+ \widetilde\Theta_{r,s}(c,v)
+ \left\{e\!\left(\frac{A_{r,s}cv}{2rs}\right)-1\right\}.
+\tag{4.663}
+\]
+
+With this definition there is no dyadic replacement in the prefactor:
+
+\[
+ \boxed{
+ \mathfrak S_q[\Psi]
+ =\frac{HL}{2RS}\mathfrak H_q[\Psi].}
+\tag{4.663a}
+\]
+
+Here \(q\le N/\max(R,S)\), and the displayed balanced hard box has
+\(R=S=T^3\), hence \(q=1\); in general the same formula is read inside
+each fixed \(q,R,S,H,L\) dyadic box.  The physical variables have
+\(h\asymp H=T^{5/2}\) and \(|\delta|\asymp L=T^{5/2}\), while finite
+completion modulo \(Q=2rs\asymp T^6\) and repeated finite summation by
+parts give, for least absolute representatives and every fixed \(A>0\),
+
+\[
+ |\widetilde\Theta_{r,s}(c,v)|
+ \ll_{A,W}
+ \left(1+\frac{H|c|_Q}{Q}\right)^{-A}
+ \left(1+\frac{L|v|_Q}{Q}\right)^{-A}.
+\tag{4.664}
+\]
+
+Thus the effective windows are
+\(|c|_Q\ll(Q/H)(\log T)^C\) and
+\(|v|_Q\ll(Q/L)(\log T)^C\), with transform tails kept separately in
+the logarithmic ledger; (4.663) itself remains an exact finite sum.
+
+The multiplier in (4.663) vanishes identically on the row \(c=0\) and
+the column \(v=0\).  This is exact centering, not a bound.  It does not,
+however, make the modular phase small away from those axes.
+
+The exponent ledger is critical rather than contradictory.  The ambient
+cardinality of \((r,s,c,v)\) is
+
+\[
+ T^{3+3+7/2+7/2}=T^{13},
+ \qquad
+ \frac{HL}{Q}=T^{-1}.
+\]
+
+Thus (4.663a) makes the local target \(|\mathfrak S_q[\Psi]|\ll
+T^6(\log T)^{-B}\) equivalent, after this completion, to the single
+Hermitian gate
+
+\[
+ \boxed{
+ |\mathfrak H_q[\Psi]|
+ \ll_{B,W}T^7(\log T)^{-B}.}
+\tag{4.665}
+\]
+
+Square root of the ambient cardinality is \(T^{13/2}\), so (4.665)
+allows exactly \(T^{1/2}\) beyond square root.  The doubled conductor is
+offset by the prefactor \(HL/Q=T^{-1}\); there is no positive-power
+contradiction.  Conversely, (4.660)--(4.662) alone do not prove (4.665):
+the phase is a moving composite-modulus involution phase, both long
+variables carry Möbius weights, and the coefficient is joint in all four
+variables.  No published theorem adapter has yet been verified for this
+operator.  Accordingly the deterministic audit records
+`midpoint_hermitian_published_bound=False`.  Section 4.75 supplies a new
+exact alternative local gate, not an unconditional proof of it.
+
+The helper `midpoint_common_modulus_involution_identity` verifies
+(4.660)--(4.662) by finite integer arithmetic.  The adapter
+`midpoint_hermitian_completion_audit` records the exponents \(6,7/2,13,
+-1,7,13/2\) and the remaining half-power allowance exactly.
+
+### 4.76 Exact Salié-phase match does not satisfy the published adapter
+
+The phase in (4.663) has an exact relation to the Hermitian
+Kloosterman-fraction sum studied by Dong--Robles--Zeindler.  The identity
+\(r\bar r_s+s\bar s_r=1+rs\) from Section 4.75 gives
+
+\[
+ \boxed{
+ \frac{A_{r,s}cv}{2rs}
+ \equiv
+ \frac{cv}{2}\left(\frac{\bar r_s}{s}
+                    -\frac{\bar s_r}{r}\right)
+ +\frac{cv}{2}\pmod1.}
+\tag{4.666}
+\]
+
+Thus \(e(A_{r,s}cv/(2rs))\) is their antisymmetric Hermitian phase with
+numerator \(a=cv\) and denominator parameter \(b=2\), multiplied by
+\((-1)^{cv}\).  The parity factor depends only on the dual frequencies
+and may be absorbed into \(\widetilde\Theta\).  This is an exact phase
+match, but not a theorem-hypothesis match.
+
+Indeed, Theorems 1.4 and 1.8 claimed in version 1 of
+[arXiv:2601.00292](https://arxiv.org/abs/2601.00292) concern a *fixed*
+integer \(a\) and coefficients of the separated form \(\alpha_r\beta_s\).
+The midpoint operator instead has
+
+\[
+ |a|=|cv|\ll T^7(\log T)^{2C},
+ \qquad
+ \widetilde\Theta_{r,s}(c,v)
+ \text{ joint in }(r,s,c,v),
+\tag{4.667}
+\]
+
+and requires cancellation after summing the entire \(c,v\) family.
+Even if both failures are ignored and the withdrawn displayed estimate
+is inserted one frequency pair at a time, it gives no saving at the
+outer dual corner.  With \(M=N=T^3\), bounded \(r,s\) coefficients and
+\(a=T^7\), the two \(L^2\) norms contribute \(T^3\), while the remaining
+factors in the claimed Theorem 1.4 contribute
+
+\[
+ T^{7/4}T^{1/2}T^1T^{-1/4}=T^3.
+\]
+
+The resulting \(T^6\) is exactly the trivial \(r,s\) size.  In the
+smaller region \(a\le T^6\), the same formal substitution gives
+\(T^{23/4}\), a saving only of \(T^{1/4}\) in the inner two variables and
+no estimate for the outer \(c,v\) average.
+
+There is also a non-negotiable proof-status issue.  The authors' version
+2 comment states that equation (2.53) omitted an \(L^2\) factor, changing
+
+\[
+ L^5\longrightarrow L^7,
+\tag{4.668}
+\]
+
+so the argument no longer yields the advertised improved bound.  The
+paper's Hermitian claim is therefore not an unconditional input.  The
+newer fixed-modulus bilinear Kloosterman-sum theorems of Pascadi,
+Milićević--Qin--Wu, and Blomer--Pascadi have a different kernel: a fixed
+modulus and a bilinear average of classical Kloosterman sums.  Formula
+(4.663) instead has the moving composite modulus \(2rs\), an individual
+involution phase, and four jointly weighted variables.  No direct
+adapter follows from those statements.
+
+The helper `midpoint_salie_phase_identity` checks (4.666), including the
+otherwise easy-to-miss parity term, with exact rationals.  The adapter
+`midpoint_published_hermitian_adapter_audit` records the formal inner
+exponents \(6\) and \(23/4\), all three hypothesis failures, and keeps
+`withdrawn_claim_closes_midpoint_gate=False`.  Therefore the correct next
+problem is not to cite a Hermitian theorem, but to prove a four-variable
+Möbius-weighted extension of (4.665).
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

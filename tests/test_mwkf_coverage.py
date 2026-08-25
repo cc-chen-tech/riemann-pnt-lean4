@@ -1,4 +1,5 @@
 from fractions import Fraction as F
+from math import gcd
 import sys
 from pathlib import Path
 
@@ -2389,6 +2390,19 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.642}",
         "\\tag{4.646}",
         "second_order_collar_unconditional=False",
+        "### 4.74 Common-modulus completion recovers two disjoint sublattices",
+        "\\tag{4.653}",
+        "\\tag{4.655}",
+        "common_modulus_forces_real_completed_coefficient=False",
+        "### 4.75 Midpoint gauge gives a nondegenerate Hermitian completion",
+        "\\tag{4.661}",
+        "\\tag{4.663a}",
+        r"\frac{HL}{2RS}\mathfrak H_q[\Psi]",
+        "\\tag{4.665}",
+        "midpoint_hermitian_published_bound=False",
+        "### 4.76 Exact Salié-phase match does not satisfy the published adapter",
+        "\\tag{4.666}",
+        "withdrawn_claim_closes_midpoint_gate=False",
     ):
         assert marker in note
 
@@ -2401,6 +2415,202 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "coefficient_real=False,linear_imaginary=True,"
         "real_required=True,second_order=False"
     ) in report
+    assert (
+        "large_q_transition: common_modulus_exchange="
+        "Q=6,craw=7/2,vraw=7/2,original_divisor=3,"
+        "swapped_divisor=3,creduced=1/2,vreduced=1/2,"
+        "r_lattice=True,s_lattice=True,nonzero_intersection=False,"
+        "centered_zero=True,coefficient_real=False,"
+        "conductor_reduced=False,second_order=False"
+    ) in report
+    assert (
+        "large_q_transition: midpoint_hermitian_completion="
+        "Q=6,craw=7/2,vraw=7/2,ambient=13,prefactor=-1,"
+        "target=7,sqrt=13/2,allowance=1/2,unit=True,involution=True,"
+        "swap_negates=True,same_frequency=True,row_centered=True,"
+        "column_centered=True,small_phase=False,published=False"
+    ) in report
+    assert (
+        "large_q_transition: midpoint_published_hermitian_adapter="
+        "numerator=7,rs_trivial=6,claimed_inner=6,claimed_save=0,"
+        "bulk_claimed_inner=23/4,bulk_save=1/4,fixed_numerator=False,"
+        "separated=False,frequency_average=False,withdrawn=True,"
+        "corrected_improved=False,closes=False"
+    ) in report
+
+
+def test_common_modulus_gauss_kernel_is_exactly_degenerate() -> None:
+    helper = getattr(
+        coverage_audit,
+        "common_modulus_degenerate_gauss_identity",
+        None,
+    )
+    assert helper is not None, "common-modulus Gauss helper is missing"
+
+    nonzero = helper(r=5, s=7, c=10, v=15)
+    assert nonzero["common_modulus"] == 35
+    assert nonzero["gauss_support_requires_r_divides_c_and_v"]
+    assert nonzero["r_divides_c_and_v"]
+    assert nonzero["orthogonality_derivation_exact"]
+    assert nonzero["gauss_amplitude"] == 175
+    assert nonzero["gauss_phase"] == F(2, 7)
+
+    c_off = helper(r=5, s=7, c=11, v=15)
+    assert not c_off["r_divides_c"]
+    assert c_off["gauss_amplitude"] == 0
+    assert c_off["orthogonality_derivation_exact"]
+
+    v_off = helper(r=5, s=7, c=10, v=16)
+    assert v_off["r_divides_c"]
+    assert not v_off["r_divides_v"]
+    assert v_off["gauss_amplitude"] == 0
+    assert v_off["orthogonality_derivation_exact"]
+
+
+def test_common_modulus_exchange_sublattices_only_meet_at_centered_zero() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "common_modulus_exchange_audit",
+        None,
+    )
+    assert adapter is not None, "common-modulus exchange audit is missing"
+    audit = adapter()
+    assert audit.common_modulus_exponent == F(6)
+    assert audit.raw_dual_c_exponent == F(7, 2)
+    assert audit.raw_dual_v_exponent == F(7, 2)
+    assert audit.original_gauss_support_divisor_exponent == F(3)
+    assert audit.swapped_gauss_support_divisor_exponent == F(3)
+    assert audit.reduced_dual_c_exponent == F(1, 2)
+    assert audit.reduced_dual_v_exponent == F(1, 2)
+    assert audit.original_frequency_sublattice_is_r_times_square
+    assert audit.swapped_frequency_sublattice_is_s_times_square
+    assert audit.nonzero_sublattice_intersection_empty_mod_rs
+    assert audit.centered_zero_frequency_annihilated
+    assert not audit.common_modulus_forces_real_completed_coefficient
+    assert not audit.common_modulus_reduces_conductor
+    assert not audit.second_order_collar_unconditional
+
+
+def test_midpoint_common_modulus_kernel_is_a_nondegenerate_involution() -> None:
+    helper = getattr(
+        coverage_audit,
+        "midpoint_common_modulus_involution_identity",
+        None,
+    )
+    assert helper is not None, "midpoint common-modulus helper is missing"
+
+    exact = helper(r=5, s=7, c=11, v=13)
+    assert exact["common_modulus"] == 70
+    assert exact["bilinear_coefficient"] == 29
+    assert exact["swapped_bilinear_coefficient"] == 41
+    assert exact["coefficient_is_unit"]
+    assert exact["coefficient_is_involution"]
+    assert exact["swap_negates_coefficient"]
+    assert exact["qualifying_y"] == (39,)
+    assert exact["unique_qualifying_y_is_Ac"]
+    assert exact["gauss_amplitude"] == 70
+    assert exact["gauss_phase"] == F(17, 70)
+    assert exact["swapped_gauss_phase"] == F(53, 70)
+    assert exact["swap_phase_is_conjugate"]
+
+    second = helper(r=7, s=9, c=-4, v=8)
+    assert second["coefficient_is_unit"]
+    assert second["coefficient_is_involution"]
+    assert second["swap_negates_coefficient"]
+    assert second["unique_qualifying_y_is_Ac"]
+    assert second["swap_phase_is_conjugate"]
+
+    for r in range(2, 10):
+        for s in range(2, 10):
+            if gcd(r, s) != 1:
+                continue
+            for c in (-5, -1, 0, 2, 7):
+                for v in (-4, 0, 3, 8):
+                    sample = helper(r=r, s=s, c=c, v=v)
+                    assert sample["coefficient_is_unit"]
+                    assert sample["coefficient_is_involution"]
+                    assert sample["swap_negates_coefficient"]
+                    assert sample["unique_qualifying_y_is_Ac"]
+                    assert sample["swap_phase_is_conjugate"]
+
+
+def test_midpoint_hermitian_completion_has_exact_critical_ledger() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "midpoint_hermitian_completion_audit",
+        None,
+    )
+    assert adapter is not None, "midpoint Hermitian completion audit is missing"
+    audit = adapter()
+    assert audit.common_modulus_exponent == F(6)
+    assert audit.raw_dual_c_exponent == F(7, 2)
+    assert audit.raw_dual_v_exponent == F(7, 2)
+    assert audit.completed_ambient_exponent == F(13)
+    assert audit.completion_prefactor_exponent == F(-1)
+    assert audit.completed_gate_target_exponent == F(7)
+    assert audit.square_root_ambient_exponent == F(13, 2)
+    assert audit.allowance_beyond_square_root_exponent == F(1, 2)
+    assert audit.midpoint_coefficient_is_unit
+    assert audit.midpoint_coefficient_is_involution
+    assert audit.exchange_negates_midpoint_coefficient
+    assert audit.same_frequency_swap_is_conjugate
+    assert audit.centered_multiplier_zero_on_c_zero_row
+    assert audit.centered_multiplier_zero_on_v_zero_column
+    assert not audit.modular_involution_phase_is_near_diagonal_small
+    assert not audit.published_bound_verified
+
+
+def test_midpoint_phase_is_exactly_hermitian_up_to_frequency_parity() -> None:
+    helper = getattr(
+        coverage_audit,
+        "midpoint_salie_phase_identity",
+        None,
+    )
+    assert helper is not None, "midpoint Salié-phase helper is missing"
+    odd = helper(r=5, s=7, c=11, v=13)
+    assert odd["midpoint_phase"] == F(17, 70)
+    assert odd["hermitian_phase"] == F(26, 35)
+    assert odd["parity_correction"] == F(1, 2)
+    assert odd["identity_exact_mod_one"]
+
+    even = helper(r=7, s=9, c=4, v=8)
+    assert even["parity_correction"] == F(0)
+    assert even["identity_exact_mod_one"]
+
+    for r in range(2, 10):
+        for s in range(2, 10):
+            if gcd(r, s) != 1:
+                continue
+            for c in (-5, -2, 0, 3, 8):
+                for v in (-7, 0, 4, 9):
+                    assert helper(
+                        r=r,
+                        s=s,
+                        c=c,
+                        v=v,
+                    )["identity_exact_mod_one"]
+
+
+def test_withdrawn_hermitian_claim_does_not_cover_midpoint_operator() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "midpoint_published_hermitian_adapter_audit",
+        None,
+    )
+    assert adapter is not None, "midpoint published-adapter audit is missing"
+    audit = adapter()
+    assert audit.numerator_exponent == F(7)
+    assert audit.rs_trivial_exponent == F(6)
+    assert audit.withdrawn_claimed_outer_inner_bound_exponent == F(6)
+    assert audit.withdrawn_claimed_outer_inner_saving_exponent == F(0)
+    assert audit.withdrawn_claimed_bulk_inner_bound_exponent == F(23, 4)
+    assert audit.withdrawn_claimed_bulk_inner_saving_exponent == F(1, 4)
+    assert not audit.theorem_has_moving_numerator
+    assert not audit.theorem_accepts_joint_r_s_c_v_coefficient
+    assert not audit.theorem_supplies_c_v_frequency_average
+    assert audit.claim_withdrawn_for_missing_l_squared_factor
+    assert not audit.corrected_argument_gives_claimed_improvement
+    assert not audit.withdrawn_claim_closes_midpoint_gate
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
