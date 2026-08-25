@@ -6657,6 +6657,101 @@ character family, and the remaining \(1/2\) entry saving; it keeps
 hybrid_mobius_hecke_estimate_proved=False and
 critical_square_function_proved=False.
 
+### 4.53 Published Kloosterman bilinear bounds do not close the entry gate
+
+The 2025--2026 Kloosterman estimates can now be inserted at their exact
+critical scales.  On the top shell of (4.471), put
+
+\[
+ c=|\Delta|\asymp T,qquad M=N=T^{1/2}.
+\tag{4.477}
+\]
+
+Blomer--Pascadi,
+[arXiv:2607.24311v1](https://arxiv.org/abs/2607.24311), Theorem 1.1,
+states for arbitrary sequences on intervals of length at most \(N\)
+that
+
+\[
+\begin{aligned}
+ &\sum_{m,n}\alpha_m\beta_n S(am,n;c)\\
+ &\quad\ll
+ \|\alpha\|_2\|\beta\|_2c^{1+o(1)}
+ \left(
+  \frac{N^{1/8}}{c^{3/32}}
+ +\frac{N^{5/16}}{c^{3/16}}
+ +\frac{N^{2/3}}{c^{7/18}}
+ \right).
+\end{aligned}
+\tag{4.478}
+\]
+
+At (4.477), the three saving exponents are respectively
+
+\[
+ \boxed{\frac1{32},\qquad\frac1{32},\qquad\frac1{18}.}
+\tag{4.479}
+\]
+
+Thus the uniform theorem saves \(T^{1/32-o(1)}\), whereas (4.476)
+requires \(T^{1/2}\).  The exact deficit is
+
+\[
+ \boxed{\frac12-\frac1{32}=\frac{15}{32}.}
+\tag{4.480}
+\]
+
+Milićević--Qin--Wu,
+[arXiv:2511.07550v1](https://arxiv.org/abs/2511.07550), Theorem 1.1,
+has uniform square-root-range saving \(T^{1/100-o(1)}\).  Its deficit is
+
+\[
+ \boxed{\frac12-\frac1{100}=\frac{49}{100}.}
+\tag{4.481}
+\]
+
+Pascadi,
+[arXiv:2511.08445v1](https://arxiv.org/abs/2511.08445), obtains the
+larger saving \(T^{1/12-o(1)}\) for products of two primes of comparable
+size.  This is not uniform over the determinant moduli in (4.471), and
+even on that favorable family the deficit remains
+
+\[
+ \boxed{\frac12-\frac1{12}=\frac5{12}.}
+\tag{4.482}
+\]
+
+These comparisons already grant more than the present kernel justifies.
+In (4.472), the modulus \(\Delta\), the two recovered Cramer
+frequencies, and the coefficient \(\mathcal K_1\overline{\mathcal K_2}\)
+all vary jointly with the four matrix entries.  They have not been
+reduced to a standard \(S(am,n;c)\) kernel with two coefficient
+sequences independent of the external entries and fixed modulus.
+Consequently the hypotheses of (4.478) are not verified for the actual
+sum.
+
+Even if one grants four independent applications of the strongest
+uniform saving in (4.479), contrary to the shared-modulus and coupled
+coefficient geometry, the total saving would be only
+
+\[
+ 4\cdot\frac1{32}=\frac18,
+ \qquad
+ \boxed{\frac12-\frac18=\frac38}
+\tag{4.483}
+\]
+
+short of the entry gate.  Hence no routing or tensor-separation repair
+can turn these published exponents into (4.473); a genuinely stronger
+use of the simultaneous Möbius structure is necessary.
+
+The adapter transition_published_kloosterman_entry_audit records
+(4.477)--(4.483), including the optimistic hypothesis failures.  It
+keeps standard_kloosterman_kernel_verified=False,
+coefficients_separate_from_matrix_entries=False,
+fixed_modulus_before_entry_sum_verified=False, and
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -1636,6 +1636,34 @@ def test_transition_h_poisson_square_has_one_half_entry_saving_after_characters(
     assert not audit.critical_square_function_proved
 
 
+def test_published_kloosterman_bounds_miss_the_transition_entry_gate() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_published_kloosterman_entry_audit",
+        None,
+    )
+    assert adapter is not None, "published transition Kloosterman audit is missing"
+    audit = adapter()
+    assert audit.modulus_exponent == F(1)
+    assert audit.delta_interval_exponent == F(1, 2)
+    assert audit.required_mobius_entry_saving_exponent == F(1, 2)
+    assert audit.bp_uniform_saving_exponent == F(1, 32)
+    assert audit.bp_uniform_deficit == F(15, 32)
+    assert audit.mqw_uniform_saving_exponent == F(1, 100)
+    assert audit.mqw_uniform_deficit == F(49, 100)
+    assert audit.pascadi_factorable_saving_exponent == F(1, 12)
+    assert audit.pascadi_factorable_deficit == F(5, 12)
+    assert audit.optimistic_four_bp_applications_saving_exponent == F(1, 8)
+    assert audit.optimistic_four_bp_deficit == F(3, 8)
+    assert audit.bp_square_root_length_condition_holds
+    assert audit.bp_arbitrary_sequences_allowed
+    assert not audit.standard_kloosterman_kernel_verified
+    assert not audit.coefficients_separate_from_matrix_entries
+    assert not audit.fixed_modulus_before_entry_sum_verified
+    assert not audit.pascadi_uniform_for_all_moduli
+    assert not audit.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -3151,6 +3179,15 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "cyclic=True,four_mu=True,hybrid_proved=False,square_proved=False"
     ) in output
     assert (
+        "large_q_transition: published_kloosterman_entry="
+        "modulus=1,interval=1/2,required=1/2,"
+        "bp=1/32,bp_deficit=15/32,mqw=1/100,mqw_deficit=49/100,"
+        "pascadi=1/12,pascadi_deficit=5/12,four_bp=1/8,"
+        "four_bp_deficit=3/8,sqrt_range=True,arbitrary=True,"
+        "kernel=False,separable=False,fixed_modulus=False,"
+        "pascadi_uniform=False,covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -3604,5 +3641,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\Delta=r_1s_2-r_2s_1",
         r"T^{1/2}",
         "transition_h_poisson_square_offdiagonal_audit",
+        "### 4.53 Published Kloosterman bilinear bounds do not close the entry gate",
+        r"\frac1{32}",
+        r"\frac{15}{32}",
+        "transition_published_kloosterman_entry_audit",
     ):
         assert marker in text

@@ -782,6 +782,31 @@ class TransitionHPoissonSquareOffdiagonalAudit:
 
 
 @dataclass(frozen=True)
+class TransitionPublishedKloostermanEntryAudit:
+    modulus_exponent: Fraction
+    delta_interval_exponent: Fraction
+    required_mobius_entry_saving_exponent: Fraction
+    bp_uniform_saving_exponent: Fraction
+    bp_uniform_deficit: Fraction
+    mqw_uniform_saving_exponent: Fraction
+    mqw_uniform_deficit: Fraction
+    pascadi_factorable_saving_exponent: Fraction
+    pascadi_factorable_deficit: Fraction
+    optimistic_four_bp_applications_saving_exponent: Fraction
+    optimistic_four_bp_deficit: Fraction
+    bp_square_root_length_condition_holds: bool
+    bp_arbitrary_sequences_allowed: bool
+    standard_kloosterman_kernel_verified: bool
+    coefficients_separate_from_matrix_entries: bool
+    fixed_modulus_before_entry_sum_verified: bool
+    pascadi_uniform_for_all_moduli: bool
+    published_coverage: bool
+    bp_source: str
+    mqw_source: str
+    pascadi_source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -3879,6 +3904,62 @@ def transition_h_poisson_square_offdiagonal_audit(
         signed_four_mobius_hecke_sum_required=True,
         hybrid_mobius_hecke_estimate_proved=False,
         critical_square_function_proved=False,
+    )
+
+
+def transition_published_kloosterman_entry_audit(
+) -> TransitionPublishedKloostermanEntryAudit:
+    """Compare 2025--2026 Kloosterman bounds with the critical entry gate.
+
+    On the top cross-determinant shell the modulus is ``c=T`` and both
+    recovered shift intervals have length ``N=T^(1/2)``.  Blomer--
+    Pascadi Theorem 1.1 saves ``c^(1/32)`` uniformly for arbitrary
+    coefficient sequences in this square-root range.  Milicevic--Qin--
+    Wu Theorem 1.1 saves ``c^(1/100)`` uniformly.  Pascadi's earlier
+    non-abelian result can save ``c^(1/12)`` for favorable composite
+    moduli but is not uniform near primes.
+
+    The transition square still needs ``T^(1/2)`` after the cokernel
+    character square root.  Moreover its recovered kernel and weights
+    depend jointly on the four matrix entries, so they are not literally
+    a fixed-modulus bilinear form with two entry-independent sequences.
+    The numerical comparison is therefore optimistic and still fails.
+    """
+    modulus = F(1)
+    interval = F(1, 2)
+    required = F(1, 2)
+    bp = F(1, 32)
+    mqw = F(1, 100)
+    pascadi = F(1, 12)
+    four_bp = 4 * bp
+    return TransitionPublishedKloostermanEntryAudit(
+        modulus_exponent=modulus,
+        delta_interval_exponent=interval,
+        required_mobius_entry_saving_exponent=required,
+        bp_uniform_saving_exponent=bp,
+        bp_uniform_deficit=required - bp,
+        mqw_uniform_saving_exponent=mqw,
+        mqw_uniform_deficit=required - mqw,
+        pascadi_factorable_saving_exponent=pascadi,
+        pascadi_factorable_deficit=required - pascadi,
+        optimistic_four_bp_applications_saving_exponent=four_bp,
+        optimistic_four_bp_deficit=required - four_bp,
+        bp_square_root_length_condition_holds=(2 * interval == modulus),
+        bp_arbitrary_sequences_allowed=True,
+        standard_kloosterman_kernel_verified=False,
+        coefficients_separate_from_matrix_entries=False,
+        fixed_modulus_before_entry_sum_verified=False,
+        pascadi_uniform_for_all_moduli=False,
+        published_coverage=False,
+        bp_source=(
+            "Blomer--Pascadi, arXiv:2607.24311v1, Theorem 1.1"
+        ),
+        mqw_source=(
+            "Milicevic--Qin--Wu, arXiv:2511.07550v1, Theorem 1.1"
+        ),
+        pascadi_source=(
+            "Pascadi, arXiv:2511.08445v1, square-root range"
+        ),
     )
 
 
@@ -7171,6 +7252,18 @@ def main() -> None:
         "required=1,Delta_max=1,cokernel=1,char_sqrt=1/2,"
         "entry_remaining=1/2,zero_is_diagonal=True,cramer=True,"
         "cyclic=True,four_mu=True,hybrid_proved=False,square_proved=False"
+    )
+    transition_published_kloosterman = (
+        transition_published_kloosterman_entry_audit()
+    )
+    print(
+        "large_q_transition: published_kloosterman_entry="
+        "modulus=1,interval=1/2,required=1/2,"
+        "bp=1/32,bp_deficit=15/32,mqw=1/100,mqw_deficit=49/100,"
+        "pascadi=1/12,pascadi_deficit=5/12,four_bp=1/8,"
+        "four_bp_deficit=3/8,sqrt_range=True,arbitrary=True,"
+        "kernel=False,separable=False,fixed_modulus=False,"
+        "pascadi_uniform=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
