@@ -7,9 +7,12 @@
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
-> | Coupled-kernel local estimate at length \(T^3\) | unproved |
+> | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
+> | Direct published Region A--C coverage | proved/classified in Section 8 |
+> | Residual coupled Region-D estimate at length \(T^3\) | unproved |
 >
-> Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
+> Thus this note is not a proof of the \(T^3\) long-mollifier upper bound
+> or asymptotic.
 > A row is promoted from “under audit” only after the displayed convergence,
 > contour-shift, and reindexing arguments have all been supplied.
 
@@ -1387,6 +1390,95 @@ TAIL\(_{B,D}\) prove the precise conditional implication
 
 No separated supremum is used in this implication.
 
+### 6.3 The genuinely weakest gate for the upper-bound target
+
+The original target of this project is the upper bound
+
+\[
+ I_{T^3,W}(T)\ll_{\varepsilon,W}T^{1+\varepsilon},
+\tag{6.10}
+\]
+
+not an asymptotic with an \(o(T)\) remainder.  The fixed saving in
+CK\(_{1/1000}\) is therefore stronger than the weakest sufficient input.
+For (6.10), fix a target \(\varepsilon_0>0\), put
+\(\eta=\varepsilon_0/100\), and replace every factor
+\(\mathscr L^B\) in (5.6) and (5.8) by \(T^\eta\).  Call the result the
+**power-enlarged upper-bound core**.  Its zero-slack inequalities are still
+(5.12b); before suppressing slack they read
+
+\[
+ k+m\leq1+\eta,\qquad
+ \ell\leq m+\rho-1+\eta,\qquad
+ h\leq\sigma-m+\eta,qquad
+ a\leq\rho+\sigma-1+2\eta.
+\tag{6.11}
+\]
+
+This enlargement removes the separate tail conjecture for the upper-bound
+problem.  Indeed, outside the enlarged \(\delta\)-range, (5.8b) gives
+
+\[
+ \bigl(T|\log(1+\delta/(xr))|\bigr)^{-J}\ll_J T^{-J\eta};
+\]
+
+outside the enlarged \(h\)-range, (5.8c) gives
+
+\[
+ \left(\frac{s}{|h|M}\right)^J\ll_JT^{-J\eta}.
+\]
+
+The Mellin decay used for (5.6) gives the same factor outside
+\(KM\leq T^{1+\eta}\).  The absolute majorant (5.8d), including the
+\(t\)-integration, is \(O_W(T^{9/2+\varepsilon_0/4})\).  Since all
+amplitudes are smooth to arbitrary fixed order, choose the fixed integer
+\(J\) so that
+
+\[
+ J\eta>\frac72+\frac{\varepsilon_0}{2}.
+\]
+
+A union bound over the three complements then proves
+
+\[
+ \mathcal R_{\rm tail}^{(\eta)}
+ \ll_{\varepsilon_0,W}T^{1-\varepsilon_0/4}.
+\tag{6.12}
+\]
+
+This does not prove the polylogarithmic tail statement
+TAIL\(_{B,D}\), and hence does not prove an asymptotic.  It does prove all
+tail control required by (6.10).
+
+The accepted weakest local interface for the upper-bound problem is now
+
+> **Upper-bound coupled-kernel gate \(\mathrm{CK}_{\rm ub}(3)\).** For
+> every \(\varepsilon>0\), uniformly in the power-enlarged boxes (6.11)
+> and the actual coupled weights, prove
+> \[
+>  |\mathfrak S_{q;R,S,K,M,L,H}[\Psi]|
+>  \ll_{\varepsilon,W}RS T^\varepsilon.
+> \tag{CK\(_{\rm ub}(3)\)}
+> \]
+
+By (5.15), each core box is then
+\(O_{\varepsilon,W}(T^{1+\varepsilon}/q)\).  There are
+\(O(\mathscr L^6)\) dyadic choices and (6.8) supplies one more logarithm.
+After allocating \(\varepsilon_0/4\) to the local estimate and absorbing
+all seven logarithms, (6.12) gives the exact implication
+
+\[
+ \boxed{
+ \mathrm{CK}_{\rm ub}(3)
+ \quad\Longrightarrow\quad
+ \mathcal R_{T^3,T}\ll_{\varepsilon_0,W}T^{1+\varepsilon_0}.}
+\tag{6.13}
+\]
+
+Thus CK\(_{\rm ub}(3)\), not CK\(_{1/1000}\) plus
+TAIL\(_{B,D}\), is the weakest sufficient gate presently isolated for the
+user's stated upper-bound target.  It remains unproved.
+
 ## 7. Term-by-term correspondence with Bettin--Chandee--Radziwiłł
 
 The notation correspondence is:
@@ -1471,9 +1563,203 @@ Kloosterman-sum estimate applies. The single polynomial
 \(\mu(n)p_N(n)\mathbf1_{n\leq T^3}\) does not have that factorization, so
 that theorem supplies no box estimate for (6.3).
 
-## 8. What has and has not been proved
+## 8. Exact published-estimate coverage for the upper-bound gate
 
-**Phase-1 classification: exact reduction remains blocked.**
+This section audits Regions A--C against CK\(_{\rm ub}(3)\). It uses the
+separated family only as a sufficient route to the coupled estimate: the
+Fourier--Mellin \(L^1\) loss in (6.5) is polylogarithmic and is absorbed by
+the \(T^\varepsilon\) allowance. Failure of a separated theorem is not a
+counterexample to the coupled gate.
+
+### 8.1 Region A: Bettin--Chandee
+
+Bettin--Chandee, Theorem 1, applies to
+
+\[
+ \mathcal B(X,Y,A)=
+ \sum_{a\asymp A}\sum_{r\asymp X}\sum_{s\asymp Y\atop(r,s)=1}
+ \alpha_r\beta_s\nu_a e\left(-\frac{a\bar r}{s}\right)
+\]
+
+with arbitrary complex coefficients and gives
+
+\[
+ \begin{aligned}
+ |\mathcal B(X,Y,A)|\ll_\varepsilon{}
+ &\|\alpha\|_2\|\beta\|_2\|\nu\|_2
+ \left(1+\frac{A}{XY}\right)^{1/2}\\
+ &\times\left((AXY)^{7/20+\varepsilon}(X+Y)^{1/4}
+ +(AXY)^{3/8+\varepsilon}(AX+AY)^{1/8}\right).
+ \end{aligned}
+\tag{8.1}
+\]
+
+The exact hypothesis ledger in the present application is:
+
+| BC datum | present datum | verification |
+|---|---|---|
+| \(X,Y,A\geq1\), dyadic support | \(R,S,LH\) | (5.4), (5.9) |
+| \((r,s)=1\) | same | (5.1) |
+| nonzero phase parameter | \(\vartheta=-1\) | (5.12) |
+| arbitrary coefficient sequences | the two Möbius weights and \(\nu_{x,y}\) | arbitrary coefficients are allowed |
+| finite \(L^2\) norms | \(\|\alpha\|_2\ll R^{1/2}\), \(\|\beta\|_2\ll S^{1/2}\), \(\|\nu\|_2\ll_\varepsilon A^{1/2+\varepsilon}\) | (6.4) and \(|p_N|\leq1\) |
+| archimedean prefactor | \(1+A/(RS)\ll1+T^{-1+2\eta}\) | (6.11), for fixed \(\eta<1/4\) |
+
+Put \(u=\max(\rho,\sigma)\), \(v=\min(\rho,\sigma)\), and
+\(a=\ell+h\). After inserting the three exact norm bounds, the two terms
+in (8.1) have exponents
+
+\[
+ E_1=\frac{17}{20}(a+\rho+\sigma)+\frac14u,
+ \qquad
+ E_2=\frac78(\rho+\sigma)+a+\frac18u.
+\tag{8.2}
+\]
+
+Consequently Region A covers a box for CK\(_{\rm ub}(3)\) if and only if
+both savings
+
+\[
+ \boxed{
+ \Delta_1=\frac3{20}(\rho+\sigma)-\frac{17}{20}a-\frac14u\geq0,
+ \qquad
+ \Delta_2=\frac18v-a\geq0 }
+\tag{8.3}
+\]
+
+hold, up to the allocated \(O(\eta+\varepsilon)\) slack. These are the
+two exact rational inequalities implemented by the coverage checker.
+
+### 8.2 Region B: completing one factor of \(a=h\delta\)
+
+Fix \(r,s,\delta\). The derivative bounds (5.14), partial summation, and
+the standard smooth geometric-sum estimate give, for \(J>2\),
+
+\[
+ \sum_{h\asymp H}F_{r,s,\delta}(h/H)
+ e\left(-\frac{h\delta\bar r}{s}\right)
+ \ll_{J,\varepsilon}HT^\varepsilon
+ \left(1+H\left\|\frac{\delta\bar r}{s}\right\|\right)^{-J}.
+\tag{8.4}
+\]
+
+Multiplication by \(\bar r\) permutes the residue classes modulo \(s\).
+On a complete residue block,
+
+\[
+ \sum_{b\bmod s}H(1+H\|b/s\|)^{-J}\ll_J H+s.
+\]
+
+Splitting the \(\delta\)-interval into at most \(1+L/s\) such blocks
+retains both the incomplete boundary and the zero residue \(s\mid\delta\):
+
+\[
+ \sum_{\delta\asymp L}\left|
+ \sum_{h\asymp H}F_{r,s,\delta}(h/H)
+ e\left(-\frac{h\delta\bar r}{s}\right)\right|
+ \ll_{J,\varepsilon}T^\varepsilon(1+L/s)(H+s).
+\tag{8.5}
+\]
+
+The symmetric completion in \(\delta\) gives
+\(T^\varepsilon(1+H/s)(L+s)\). The admissible polytope implies
+
+\[
+ h\leq\sigma,\qquad
+ \ell\leq m+\rho-1=k+\sigma-1\leq\sigma.
+\tag{8.6}
+\]
+
+Thus, after removing the outer \(RS\) scale, the trivial bound and the two
+completion bounds have respective exponent losses
+
+\[
+ a,\qquad \sigma,\qquad \sigma.
+\tag{8.7}
+\]
+
+Elementary one-factor completion by itself therefore reaches
+CK\(_{\rm ub}(3)\) exactly on the exponent-zero face \(a=0\). It does not
+cover any positive-length \(h\delta\) region. Formula (8.5), rather than a
+claimed square-root cancellation, is the boundary-safe Region-B result.
+
+### 8.3 Region C: Wright's partially fixed denominator
+
+Wright, Theorem 2.1, concerns
+
+\[
+ \mathcal B(X,Y,A;R_0)=
+ \sum_{a,r,n\atop(r,nR_0)=1}\alpha_r\beta_n\nu_a
+ e\left(\vartheta\frac{a\bar r}{nR_0}\right),
+\tag{8.8}
+\]
+
+under \(X\ll Y^2\) and \(R_0\ll X^C\) for a fixed large \(C\). Its stated
+bound is
+
+\[
+ \begin{aligned}
+ \mathcal B(X,Y,A;R_0)\ll{}&X^\varepsilon
+ \|\alpha\|_2\|\beta\|_2\|\nu\|_2(AXY)^{1/2}R_0^{1/4}
+ \left(1+\frac{|\vartheta|A}{XY}\right)^{1/4}\\
+ &\times\left(
+ Y^{-1/8}+R_0^{1/8}Y^{1/8}X^{-1/4}
+ +\frac{X^{1/10}}{R_0^{3/20}A^{1/20}Y^{3/20}}
+ +\frac{Y^{3/20}}{A^{3/20}X^{1/5}}
+ +\frac{Y^{3/8}}{X^{1/2}}
+ \right).
+ \end{aligned}
+\tag{8.9}
+\]
+
+There are two independent reasons that (8.9) supplies no direct new box in
+the current sum.
+
+First, before factorizing \(s\), (6.0) has denominator \(s\), so the only
+direct identification is \(R_0=1,n=s\). Wright explicitly states that
+\(R_0=1\) recovers Bettin--Chandee equation (7.2); it is not a new
+fixed-factor saving. Taking \(R_0>1\) requires an exact factorization
+\(s=R_0n\), a rule assigning every \(s\) to such a factor, and the retained
+coefficient \(\mu(R_0n)\). That is a structured Type-I/II operation and is
+assigned to Region D, not to direct Region C.
+
+Second, the arXiv v2 source is internally inconsistent in the third term of
+(8.9): the theorem statement has \(A^{-1/20}\), whereas the last displayed
+line of its proof has \(A^{-3/10}\). No exponent depending on that term is
+used here without a corrected statement. The coverage checker therefore
+records Region C as giving no direct improvement, rather than silently
+choosing one of the two exponents.
+
+### 8.4 Coverage table and residual witnesses
+
+The direct published coverage is exactly:
+
+| primary route | exact covered set | result |
+|---|---|---|
+| A: Bettin--Chandee | admissible boxes satisfying both inequalities (8.3) | proved from (8.1) |
+| B: one-factor completion | admissible boxes with \(a=0\) not already assigned to A | proved by (8.4)--(8.7) |
+| C: Wright direct | no additional boxes | \(R_0=1\) gives BC; \(R_0>1\) requires Region D |
+| D: structured residual | every other admissible box | **unproved** |
+
+The deterministic boundary ledger is:
+
+| witness | \((\rho,\sigma,a)\) | \((\Delta_1,\Delta_2)\) | completion losses | route |
+|---|---:|---:|---:|---|
+| balanced maximal \(a\) | \((3,3,5)\) | \((-41/10,-37/8)\) | \((5,3,3)\) | D |
+| \(r\)-long | \((3,2,4)\) | \((-17/5,-15/4)\) | \((4,2,2)\) | D |
+| \(s\)-long | \((2,3,4)\) | \((-17/5,-15/4)\) | \((4,3,3)\) | D |
+| large-\(q\) endpoint | \((1,1,1)\) | \((-4/5,-7/8)\) | \((1,1,1)\) | D |
+
+Hence published arbitrary-coefficient estimates, incomplete completion,
+and the direct fixed-factor theorem do not prove CK\(_{\rm ub}(3)\). The
+remaining work is precisely an estimate that first factorizes one Möbius
+variable while retaining the other Möbius weight, the product
+\(a=h\delta\), and the coupled kernel.
+
+## 9. What has and has not been proved
+
+**Current classification: published coverage complete; Region D remains
+unproved.**
 
 Proved in this note:
 
@@ -1490,6 +1776,11 @@ Proved in this note:
   \(\mathrm{CK}_{1/1000}+\mathrm{TAIL}_{B,D}
   \Rightarrow\mathcal R_{T^3,T}=o_W(T)\),
   (6.7)--(6.9).
+* the power-enlarged upper-bound tail estimate (6.12) and the weakest
+  sufficient implication
+  \(\mathrm{CK}_{\rm ub}(3)\Rightarrow
+  \mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}\), (6.13);
+* the exact Region A--C coverage classification, (8.1)--(8.9).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -1498,32 +1789,31 @@ Proved in this note:
 | Poisson zero/nonzero-mode decomposition | verified after correction | (4.1)--(4.8); the omitted sine quotient is restored in (4.5i)--(4.6c), and the complete correction bound is (4.7c.0)--(4.7c) |
 | Effective ranges and coupled-kernel normalization | verified | (5.1)--(5.15), including both nonstationary cutoffs and the exact kernel scale |
 | Comparison of the three candidate gates | verified logical reduction | (6.0)--(6.8); only \({\rm(US)}\Rightarrow{\rm(IS)}\Rightarrow{\rm(CK)}\) is proved |
-| Coupled-kernel estimate \(\operatorname{MWKF}_{\rm ck}(3)\) | **unproved** | stated, not derived, in (6.9) |
-| Global remainder bound | **conditional** | the complete implication from the unproved gate is (6.10)--(6.13), with \(\mathcal C_{T^3,W}(T)\) added separately |
+| Upper-bound tail outside the power-enlarged core | verified | (6.10)--(6.12), by fixed-order integration by parts depending on \(\varepsilon\) |
+| Published Region A--C coverage | verified | exact inequalities and hypothesis ledger in Section 8 |
+| Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
+| Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
 
-* CK\(_{1/1000}\), the accepted coupled-kernel gate;
-* TAIL\(_{B,D}\), the Möbius-sensitive aggregation outside the
-  polylogarithmic core;
-* complete coverage of its parameter polytope by published estimates;
+* CK\(_{\rm ub}(3)\), the accepted weakest upper-bound gate;
 * the residual Möbius Type I/II estimate;
-* the unconditional \(T^3\) long-mollifier asymptotic.
+* the unconditional \(T^3\) long-mollifier upper bound;
+* separately, CK\(_{1/1000}\) and TAIL\(_{B,D}\) for an asymptotic.
 
-Thus Phase 1 verifies the infinite exact decomposition but remains blocked
-at the finite polylogarithmic reduction demanded for the final theorem.
-Treating either CK\(_{1/1000}\) or TAIL\(_{B,D}\) as an already available
-consequence of BCR would be incorrect.
+Thus the tail obstruction in the polylogarithmic asymptotic setup is not an
+obstruction to the stated \(O(T^{1+\varepsilon})\) goal. That goal remains
+blocked only at the residual coupled Region-D estimate. Treating this
+estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 
-## 9. Primary references
+## 10. Primary references
 
 * S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of
   the Riemann zeta function with Dirichlet polynomials*, arXiv:1411.7764,
   especially Proposition 1 and Sections 3.1--3.4.
 * S. Bettin, V. Chandee, *Trilinear forms with Kloosterman fractions*,
-  arXiv:1502.00769, Theorem 1, as a Region-A input for the next coverage
-  slice; no claim of full-polytope coverage is made here.
-* T. Wright, *A note on trilinear forms with partially fixed denominator*,
-  arXiv:2604.25177v2, as a future fixed-factor Region-C input; its hypotheses
-  have not yet been mapped over the whole polytope.
+  arXiv:1502.00769, Theorem 1 and equation (7.2), used in Section 8.1.
+* T. Wright, *Trilinear Kloosterman fractions I: partially fixed moduli and
+  unbalanced convolutions*, arXiv:2604.25177v2, Theorem 2.1, audited but not
+  used for a new box in Section 8.3.
 * arXiv:2601.00292 is **withdrawn from this project's admissible analytic
   inputs**: the author record reports a missing \(L^2\) factor (changing the
   relevant loss from \(L^5\) to \(L^7\)), so the advertised improvement is
