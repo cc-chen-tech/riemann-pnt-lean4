@@ -1914,15 +1914,103 @@ def test_bourgain_garaev_multilinear_theorems_do_not_close_balanced_cell() -> No
     assert audit.theorem11_minimum_variable_count == 7
     assert audit.theorem11_product_length_condition_holds
     assert not audit.theorem11_variable_count_condition_holds
-    assert audit.theorem12_proof_constant_lower_bound == 144
-    assert audit.theorem12_n4_threshold_exponent_lower_bound == F(9)
+    # Section 10.4 proves the weaker constant C >= 144, but Remark 3 in the
+    # published theorem statement says that Theorem 12 can be taken with
+    # C = 4.  The adapter must use the strongest published statement while
+    # retaining the proof constant as a separate provenance field.
+    assert audit.theorem12_section10_4_proof_constant_lower_bound == 144
+    assert audit.theorem12_published_constant == 4
+    assert audit.theorem12_n4_threshold_exponent == F(1, 4)
     assert not audit.theorem12_length_condition_holds
+    assert audit.theorem13_product_interval_exponent == F(1)
+    assert audit.theorem13_threshold_exponent == F(1, 2)
+    assert audit.theorem13_available_epsilon_margin == F(1, 2)
+    assert audit.theorem13_product_condition_holds
+    assert not audit.theorem13_saving_exponent_is_explicit
+    assert not audit.theorem13_required_half_power_saving_certified
     assert audit.theorems_require_prime_modulus
     assert not audit.actual_determinant_moduli_all_prime
     assert not audit.grouped_product_sets_are_intervals
     assert not audit.actual_four_atom_weights_separate
     assert not audit.reciprocal_product_phase_verified
     assert not audit.published_coverage
+
+
+def test_iterating_mobius_identity_does_not_force_seven_long_variables() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bourgain_garaev_iterated_factorization_audit",
+        None,
+    )
+    assert adapter is not None, "iterated Bourgain--Garaev audit is missing"
+    audit = adapter()
+    assert audit.original_atom_exponent == F(1, 4)
+    assert audit.desired_equal_subatom_count == 2
+    assert audit.desired_subatom_exponent == F(1, 8)
+    assert audit.formal_total_variable_count == 8
+    assert audit.theorem11_minimum_variable_count == 7
+    assert audit.formal_theorem11_count_condition_holds
+    assert audit.formal_theorem11_product_condition_holds
+    assert audit.theorem11_required_half_power_saving_certified is False
+    # A prime in (p^(1/4), 2 p^(1/4)] has no factorization into two
+    # p^(1/8)-scale integers.  The exact finite identity therefore has a
+    # cell with one long unsigned cofactor and only unit signed factors.
+    assert audit.prime_atom_has_balanced_two_factor_decomposition is False
+    assert audit.iterated_identity_forces_seven_positive_length_variables is False
+    assert audit.actual_phase_is_reciprocal_product is False
+    assert audit.actual_moduli_all_prime is False
+    assert audit.published_coverage is False
+
+
+def test_mobius_hecke_euler_factor_is_a_zeta_and_l_reciprocal() -> None:
+    coefficients = getattr(
+        coverage_audit,
+        "mobius_hecke_local_k_coefficients",
+        None,
+    )
+    assert coefficients is not None, "Möbius--Hecke local factor is missing"
+    # For lambda = 3, K_p(x) = 1 - 3 x^3 - 8 x^4 + O(x^5).
+    assert coefficients(hecke_lambda=F(3), degree=4) == (
+        F(1),
+        F(0),
+        F(0),
+        F(-3),
+        F(-8),
+    )
+
+    adapter = getattr(
+        coverage_audit,
+        "transition_mobius_hecke_reciprocal_l_audit",
+        None,
+    )
+    assert adapter is not None, "Möbius--Hecke spectral audit is missing"
+    audit = adapter()
+    assert audit.local_factorization_exact
+    assert audit.k_local_first_nontrivial_degree == 3
+    assert audit.k_euler_product_absolutely_convergent_at_half
+    assert audit.physical_spectral_line == F(1, 2)
+    assert audit.required_mobius_saving_exponent == F(1, 2)
+    assert not audit.actual_kuznetsov_reduction_derived
+    assert not audit.reciprocal_l_negative_moment_proved
+    assert not audit.required_half_power_saving_certified
+    assert not audit.whole_line_family_covered
+
+    balanced_coefficients = getattr(
+        coverage_audit,
+        "balanced_mobius_hecke_local_k_coefficients",
+        None,
+    )
+    assert balanced_coefficients is not None, "balanced local factor is missing"
+    assert balanced_coefficients(
+        hecke_lambda=F(3),
+        left_twist=F(2),
+        right_twist=F(5),
+        degree=3,
+    ) == (F(1), F(0), F(0), F(-609))
+    assert audit.balanced_two_factor_local_factorization_exact
+    assert audit.balanced_reciprocal_l_factor_count == 2
+    assert audit.balanced_zeta_factor_count == 3
+    assert audit.balanced_k_local_first_nontrivial_degree == 3
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
@@ -3722,6 +3810,31 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "pascadi_uniform=False,covered=False"
     ) in output
     assert (
+        "large_q_transition: bourgain_garaev_multilinear="
+        "modulus=1,atom=1/4,n=4,required=1/2,"
+        "thm9=1/16,deficit9=7/16,thm10=1/24,deficit10=11/24,"
+        "thm11_nmin=7,product=True,count=False,section10_4_Cmin=144,"
+        "published_C=4,thm12_threshold=1/4,thm12_length=False,"
+        "thm13_product=1,thm13_threshold=1/2,thm13_margin=1/2,"
+        "thm13_product_holds=True,thm13_explicit=False,"
+        "thm13_half_power=False,prime_required=True,all_prime=False,"
+        "product_intervals=False,separable=False,phase=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: bourgain_garaev_iterated="
+        "atom=1/4,subatoms=2,subatom=1/8,formal_n=8,nmin=7,"
+        "formal_count=True,formal_product=True,thm11_half_power=False,"
+        "prime_balanced=False,"
+        "forces_seven=False,phase=False,all_prime=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: mobius_hecke_reciprocal_l="
+        "line=1/2,required=1/2,k_first_degree=3,local_exact=True,"
+        "k_converges=True,balanced_exact=True,L_factors=2,zeta_factors=3,"
+        "balanced_k_first_degree=3,kuznetsov=False,negative_moment=False,"
+        "half_power=False,covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -4196,7 +4309,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "### 4.57 Bourgain--Garaev multilinear Kloosterman audit at the balanced cell",
         r"\frac12-\frac1{16}=\frac7{16}",
         r"\frac12-\frac1{24}=\frac{11}{24}",
-        r"N>p^9",
+        r"N>p^{4/4^2}=p^{1/4}",
+        r"\prod_{i=1}^n |I_i|>p^{1/2+\varepsilon}",
+        r"n_{\rm formal}=8\ge7",
         "transition_bourgain_garaev_multilinear_audit",
         "### 4.58 Exact line Fourier window and the constant-phase microarc",
         r"\mathbf1_{br_1-ar_2=h}",
@@ -4214,5 +4329,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"(1+p^{-1})^2(1+p^{-2})",
         r"\tag{DCV\(_\gamma\)}",
         "transition_coprimality_layer_audit",
-    ):
+        "### 4.63 Exact Möbius--Hecke Euler factor and the reciprocal-\\(L\\) spectral gate",
+        r"\frac{K_f(s)}{\zeta(2s)L(s,f)}",
+        r"L(s+i\tau,f)L(s+i\upsilon,f)",
+        "transition_mobius_hecke_reciprocal_l_audit",
+        ):
         assert marker in text

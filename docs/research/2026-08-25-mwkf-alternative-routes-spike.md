@@ -7215,35 +7215,108 @@ the four intervals in (4.515) satisfy the separate product condition
 \]
 
 their variable count is four, so the theorem does not apply.  Theorem
-12 does not repair this.  Section 10.4 of the same paper takes
+12 must be read with both its printed proof and the stronger published
+remark.  Section 10.4 of the same paper proves the theorem with
 
 \[
  C=9c^{-2},\qquad c\le\frac14,
 \tag{4.522}
 \]
 
-hence \(C\ge144\).  For \(n=4\), its hypothesis
-\(N>p^{C/n^2}\) requires at least
+hence that proof has \(C\ge144\).  Remark 3 immediately following the
+theorem states that the result can instead be proved with \(C=4\).
+The strongest published threshold at \(n=4\) is therefore
 
 \[
- \boxed{N>p^9,}
+ \boxed{N>p^{4/4^2}=p^{1/4}.}
 \tag{4.523}
 \]
 
-which is incompatible with (4.515).
+The interval length in (4.515) is exactly \(p^{1/4}\), so the strict
+inequality in (4.523) still fails.  The former \(p^9\) threshold was
+only the constant supplied by Section 10.4's particular proof and is
+not the strongest published statement; it is retained in the adapter
+only as provenance.
+
+Theorem 13, omitted from the earlier audit, permits unequal interval
+lengths and assumes
+
+\[
+ \prod_{i=1}^n |I_i|>p^{1/2+\varepsilon}.
+\tag{4.523a}
+\]
+
+The four formal intervals in (4.515) have product \(p\), so (4.523a)
+holds for every fixed \(0<\varepsilon<1/2\).  Its conclusion, however,
+is only
+
+\[
+ \left|\sum_{x_i\in I_i}\prod_i\alpha_i(x_i)
+ e_p\!\left(a\prod_i x_i^{-1}\right)\right|
+ <p^{-\delta(\varepsilon,n)}\prod_i |I_i|,
+\tag{4.523b}
+\]
+
+with no numerical value for \(\delta\).  Section 10.5 obtains the
+saving after \((2k)^n\)-fold Hölder, where \(k=[2/\varepsilon]\), and
+invokes Lemma 1 with an unspecified absolute exponent in
+\(\delta'>(\delta/n)^{Cn}\).  Consequently the paper certifies a fixed
+positive power but does not certify the \(p^{-1/2}\) required by
+(4.515).  This distinction is essential: a statement of
+\(p^{-\delta}\) for some \(\delta>0\) cannot be substituted for the
+specific half-power saving in (4.504).
+
+Nor can one force Theorem 11 merely by iterating (4.506).  Formally
+splitting each of the four \(p^{1/4}\)-atoms into two
+\(p^{1/8}\)-atoms would give
+
+\[
+ n_{\rm formal}=8\ge7,\qquad (p^{1/8})^8=p>p^{1/3+\varepsilon}.
+\tag{4.523c}
+\]
+
+But this is not a consequence of the finite Möbius identity.  If an
+atom \(m\asymp p^{1/4}\) is prime and one reapplies (4.506) with cutoff
+\(p^{1/8}\), then the only nonzero expanded factorization is
+
+\[
+ m=(1)\,(m)\,(1),
+\tag{4.523d}
+\]
+
+where the long factor is unsigned and the two Möbius factors are
+units.  Thus the recursive identity contains dyadic cells with one
+positive-length factor, and it does not force seven equal positive-
+length interval variables.  Such prime atoms occur in the dyadic range
+for all sufficiently large conductors.
+
+Even under the counterfactual assumption that (4.523c) were an exact
+eight-variable box, Theorem 11 would still give only
+\(p^{-\delta(\varepsilon,8)}\) for an unspecified positive \(\delta\),
+not the certified \(p^{-1/2}\) saving required here.
 
 These are again optimistic numerical comparisons.  The determinant
 \(\Delta\) in (4.488) ranges over composite as well as prime moduli,
 and the actual Fourier transform
 \(\widehat F_B(B^{-t}m/d)\) has not been converted to the fixed-prime
 reciprocal-product phase (4.516).  Thus even the savings in
-(4.518)--(4.520) are not direct inputs to (4.504), and they remain too
-small if granted formally.
+(4.518)--(4.520) and (4.523b) are not direct inputs to (4.504).  In the
+line-Fourier representation used in Section 4.58 the exact phase is
+
+\[
+ e_Q\!\left((d_2e_2y_2)r_1-(d_1e_1y_1)r_2-h\right),
+\]
+
+a difference of direct product monomials rather than
+\(e_p(a\prod x_i^{-1})\).
 
 The adapter transition_bourgain_garaev_multilinear_audit records the
 four-variable count, the exact deficits \(7/16\) and \(11/24\), the
-Theorem 11 count failure, the Theorem 12 threshold (4.523), and the two
-kernel-hypothesis failures.  It keeps published_coverage=False.
+Theorem 11 count failure, both Theorem 12 constants, the corrected
+threshold (4.523), Theorem 13's formal product margin \(1/2\), and the
+missing quantitative half-power.  The separate adapter
+transition_bourgain_garaev_iterated_factorization_audit records
+(4.523c)--(4.523d).  Both keep published_coverage=False.
 
 ### 4.58 Exact line Fourier window and the constant-phase microarc
 
@@ -8010,6 +8083,131 @@ The adapter transition_mobius_large_value_audit implements
 \(2\sigma-1\), the threshold \(3/4\), and Menon's zero positive-power
 saving.  It sets mobius_large_value_theorem_proved=False,
 original_signed_dcv_requires_componentwise_large_values=False, and
+whole_line_family_covered=False.
+
+### 4.63 Exact Möbius--Hecke Euler factor and the reciprocal-\(L\) spectral gate
+
+There is a spectral route which uses more than the arbitrary-coefficient
+large sieve, but its arithmetic input must be stated exactly.  Let \(f\)
+be an unramified normalized \(GL(2)\) Hecke eigenform and write
+\(\lambda_f(p)=\lambda_p\).  For \(\Re s>1\), multiplicativity and the
+support of \(\mu\) give
+
+\[
+ D_f(s):=\sum_{n\ge1}\frac{\mu(n)\lambda_f(n)}{n^s}
+ =\prod_p(1-\lambda_p p^{-s}).
+\tag{4.574}
+\]
+
+Put \(x=p^{-s}\).  The unramified Hecke \(L\)-factor and the local
+zeta factor give the exact formal identity
+
+\[
+ 1-\lambda_px
+ =(1-\lambda_px+x^2)(1-x^2)K_{f,p}(x),
+\tag{4.575}
+\]
+
+where
+
+\[
+ \boxed{K_{f,p}(x)
+ =1-\lambda_px^3+(1-\lambda_p^2)x^4+O_f(x^5).}
+\tag{4.576}
+\]
+
+The vanishing of the coefficients of \(x\) and \(x^2\) is exact, not a
+heuristic cancellation.  Coefficient comparison in (4.575) supplies a
+finite recurrence for every coefficient of \(K_{f,p}\); the helper
+mobius_hecke_local_k_coefficients implements that recurrence over
+`Fraction`.
+
+Using the Kim--Sarnak bound
+\(|\lambda_f(p)|\le p^{7/64}+p^{-7/64}\), the first two possible local
+errors on \(\Re s=1/2\) have prime exponents
+
+\[
+ \frac32-\frac7{64}=\frac{89}{64}>1,
+ \qquad
+ 2-\frac{14}{64}=\frac{114}{64}>1.
+\tag{4.577}
+\]
+
+Thus \(K_f(s)=\prod_pK_{f,p}(p^{-s})\) is absolutely convergent on the
+physical half-line (with the usual finite modifications at ramified
+primes), and (4.574) has the meromorphic factorization
+
+\[
+ \boxed{D_f(s)=\frac{K_f(s)}{\zeta(2s)L(s,f)}.}
+\tag{4.578}
+\]
+
+The actual coefficient in (4.543) contains two differently twisted
+Möbius factors.  Put \(u=p^{-i\tau}\), \(v=p^{-i\upsilon}\), and again
+\(x=p^{-s}\).  Its Hecke-twisted local series is exactly
+
+\[
+ 1-\lambda_p(u+v)x+(\lambda_p^2-1)uvx^2.
+\tag{4.578a}
+\]
+
+Define \(K_{f,p;u,v}\) by dividing (4.578a) by
+
+\[
+\begin{aligned}
+ &(1-\lambda_pux+u^2x^2)(1-\lambda_pvx+v^2x^2)\\
+ &\qquad\times(1-u^2x^2)(1-v^2x^2)(1-uvx^2).
+\end{aligned}
+\tag{4.578b}
+\]
+
+Direct coefficient comparison gives
+
+\[
+ K_{f,p;u,v}(x)
+ =1-\lambda_p(u+v)(u^2+v^2)x^3+O_f(x^4),
+\tag{4.578c}
+\]
+
+so the mixed correction again starts in degree three and is absolutely
+convergent on \(\Re s=1/2\).  Therefore the exact unramified Euler
+factor for the Mellin component is
+
+\[
+\boxed{
+ \sum_{n\ge1}\frac{f_{\tau,\upsilon}(n)\lambda_f(n)}{n^s}
+ =\frac{K_{f;\tau,\upsilon}(s)}{
+ L(s+i\tau,f)L(s+i\upsilon,f)
+ \zeta(2s+2i\tau)\zeta(2s+2i\upsilon)
+ \zeta(2s+i\tau+i\upsilon)}.}
+\tag{4.578d}
+\]
+
+Hence the actual spectral candidate needs a two-factor reciprocal-
+\(L\) negative moment, not merely the single factor in (4.578).
+
+This identifies the Möbius gain which a Kuznetsov treatment would have
+to preserve.  It does not yet prove a bound for the determinant kernel:
+
+1. an exact Kuznetsov expansion of (4.500), including the moving
+   \(q,g\), divisor layers, and the coupled five-variable transform, has
+   not been derived;
+2. on \(\Re s=1/2\), (4.578) requires a truncated spectral negative
+   moment of \(L(s,f)\), with the factor \(\zeta(2s)^{-1}\) retained near
+   forced central zeros; and
+3. the required gain in the critical cell is the numerical
+   \(T^{1/2}\) from (4.476), whereas no audited negative-moment theorem
+   certifies that half-power for the actual family.
+
+In particular, replacing the two Möbius sequences by arbitrary
+coefficients before the spectral expansion discards (4.578), while
+formally inserting \(1/L(s,f)\) on the critical line crosses its zeros
+and is not a proof.  The adapter
+transition_mobius_hecke_reciprocal_l_audit records the exact local
+factorizations (4.575) and (4.578a)--(4.578d), their three zeta factors,
+the degree-three start of both correction products, and the remaining
+half-power gate.  It keeps actual_kuznetsov_reduction_derived=False,
+reciprocal_l_negative_moment_proved=False, and
 whole_line_family_covered=False.
 
 ## 5. Route C: endpoint-to-all-length interpolation

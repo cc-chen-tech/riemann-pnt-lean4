@@ -899,9 +899,16 @@ class TransitionBourgainGaraevMultilinearAudit:
     theorem11_minimum_variable_count: int
     theorem11_product_length_condition_holds: bool
     theorem11_variable_count_condition_holds: bool
-    theorem12_proof_constant_lower_bound: int
-    theorem12_n4_threshold_exponent_lower_bound: Fraction
+    theorem12_section10_4_proof_constant_lower_bound: int
+    theorem12_published_constant: int
+    theorem12_n4_threshold_exponent: Fraction
     theorem12_length_condition_holds: bool
+    theorem13_product_interval_exponent: Fraction
+    theorem13_threshold_exponent: Fraction
+    theorem13_available_epsilon_margin: Fraction
+    theorem13_product_condition_holds: bool
+    theorem13_saving_exponent_is_explicit: bool
+    theorem13_required_half_power_saving_certified: bool
     theorems_require_prime_modulus: bool
     actual_determinant_moduli_all_prime: bool
     grouped_product_sets_are_intervals: bool
@@ -909,6 +916,40 @@ class TransitionBourgainGaraevMultilinearAudit:
     reciprocal_product_phase_verified: bool
     published_coverage: bool
     source: str
+
+
+@dataclass(frozen=True)
+class TransitionBourgainGaraevIteratedFactorizationAudit:
+    original_atom_exponent: Fraction
+    desired_equal_subatom_count: int
+    desired_subatom_exponent: Fraction
+    formal_total_variable_count: int
+    theorem11_minimum_variable_count: int
+    formal_theorem11_count_condition_holds: bool
+    formal_theorem11_product_condition_holds: bool
+    theorem11_required_half_power_saving_certified: bool
+    prime_atom_has_balanced_two_factor_decomposition: bool
+    iterated_identity_forces_seven_positive_length_variables: bool
+    actual_phase_is_reciprocal_product: bool
+    actual_moduli_all_prime: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
+class TransitionMobiusHeckeReciprocalLAudit:
+    physical_spectral_line: Fraction
+    required_mobius_saving_exponent: Fraction
+    k_local_first_nontrivial_degree: int
+    local_factorization_exact: bool
+    k_euler_product_absolutely_convergent_at_half: bool
+    balanced_two_factor_local_factorization_exact: bool
+    balanced_reciprocal_l_factor_count: int
+    balanced_zeta_factor_count: int
+    balanced_k_local_first_nontrivial_degree: int
+    actual_kuznetsov_reduction_derived: bool
+    reciprocal_l_negative_moment_proved: bool
+    required_half_power_saving_certified: bool
+    whole_line_family_covered: bool
 
 
 @dataclass(frozen=True)
@@ -4521,9 +4562,14 @@ def transition_bourgain_garaev_multilinear_audit(
     ``p^(1/4)`` at determinant conductor ``p=T``.  Grouping them into
     two product sequences of length ``p^(1/2)``, Theorem 9 saves
     ``p^(1/16)`` and Theorem 10 with ``k1=k2=2`` saves ``p^(1/24)``.
-    Theorem 11 needs at least seven variables.  The proof of Theorem 12
-    takes ``C=9*c^(-2)`` with ``c<=1/4``, hence ``C>=144``; at ``n=4``
-    its length threshold is at least ``p^9`` and is vacuous here.
+    Theorem 11 needs at least seven variables.  Section 10.4 proves
+    Theorem 12 using ``C=9*c^(-2)`` with ``c<=1/4``, hence ``C>=144``,
+    but Remark 3 states the stronger published constant ``C=4``.  At
+    ``n=4`` that published threshold is the strict inequality
+    ``N>p^(1/4)``, whereas this cell has equality.  Theorem 13 does meet
+    its formal product-length condition, but states only an unspecified
+    positive saving and therefore does not certify the required
+    ``p^(-1/2)`` saving.
 
     These numerical comparisons are optimistic: all cited theorems use
     a fixed prime modulus and the reciprocal-product phase, neither of
@@ -4534,8 +4580,11 @@ def transition_bourgain_garaev_multilinear_audit(
     theorem10 = F(1, 24)
     atom_length = F(1, 4)
     variables = 4
-    c_lower_bound = 144
-    theorem12_threshold = F(c_lower_bound, variables * variables)
+    section10_4_constant_lower_bound = 144
+    published_constant = 4
+    theorem12_threshold = F(published_constant, variables * variables)
+    theorem13_product = variables * atom_length
+    theorem13_threshold = F(1, 2)
     return TransitionBourgainGaraevMultilinearAudit(
         modulus_exponent=F(1),
         atom_interval_exponent=atom_length,
@@ -4551,11 +4600,24 @@ def transition_bourgain_garaev_multilinear_audit(
             variables * atom_length > F(1, 3)
         ),
         theorem11_variable_count_condition_holds=(variables >= 7),
-        theorem12_proof_constant_lower_bound=c_lower_bound,
-        theorem12_n4_threshold_exponent_lower_bound=theorem12_threshold,
+        theorem12_section10_4_proof_constant_lower_bound=(
+            section10_4_constant_lower_bound
+        ),
+        theorem12_published_constant=published_constant,
+        theorem12_n4_threshold_exponent=theorem12_threshold,
         theorem12_length_condition_holds=(
             atom_length > theorem12_threshold
         ),
+        theorem13_product_interval_exponent=theorem13_product,
+        theorem13_threshold_exponent=theorem13_threshold,
+        theorem13_available_epsilon_margin=(
+            theorem13_product - theorem13_threshold
+        ),
+        theorem13_product_condition_holds=(
+            theorem13_product > theorem13_threshold
+        ),
+        theorem13_saving_exponent_is_explicit=False,
+        theorem13_required_half_power_saving_certified=False,
         theorems_require_prime_modulus=True,
         actual_determinant_moduli_all_prime=False,
         grouped_product_sets_are_intervals=False,
@@ -4564,8 +4626,196 @@ def transition_bourgain_garaev_multilinear_audit(
         published_coverage=False,
         source=(
             "Bourgain--Garaev, arXiv:1211.4184v1, "
-            "Theorems 9--12 and Section 10.4"
+            "Theorems 9--13, Remark 3, and Sections 10.4--10.5"
         ),
+    )
+
+
+def transition_bourgain_garaev_iterated_factorization_audit(
+) -> TransitionBourgainGaraevIteratedFactorizationAudit:
+    """Reject the formal eight-variable split of the balanced cell.
+
+    Splitting each of the four ``p^(1/4)`` atoms into two formal
+    ``p^(1/8)`` atoms would satisfy the numerical hypotheses of
+    Bourgain--Garaev Theorem 11.  The approved finite Mobius identity
+    does not force such a split: on a prime input its only long factor
+    remains the prime itself and the other factors are units.  Moreover,
+    the exact line Fourier phase is a difference of direct product
+    monomials, not the reciprocal-product phase of Theorems 11--13.
+    """
+    original_atom = F(1, 4)
+    subatom_count = 2
+    subatom = original_atom / subatom_count
+    original_variables = 4
+    formal_variables = original_variables * subatom_count
+    theorem11_minimum = 7
+    return TransitionBourgainGaraevIteratedFactorizationAudit(
+        original_atom_exponent=original_atom,
+        desired_equal_subatom_count=subatom_count,
+        desired_subatom_exponent=subatom,
+        formal_total_variable_count=formal_variables,
+        theorem11_minimum_variable_count=theorem11_minimum,
+        formal_theorem11_count_condition_holds=(
+            formal_variables >= theorem11_minimum
+        ),
+        formal_theorem11_product_condition_holds=(
+            formal_variables * subatom > F(1, 3)
+        ),
+        theorem11_required_half_power_saving_certified=False,
+        prime_atom_has_balanced_two_factor_decomposition=False,
+        iterated_identity_forces_seven_positive_length_variables=False,
+        actual_phase_is_reciprocal_product=False,
+        actual_moduli_all_prime=False,
+        published_coverage=False,
+    )
+
+
+def mobius_hecke_local_k_coefficients(
+    *,
+    hecke_lambda: Fraction,
+    degree: int,
+) -> tuple[Fraction, ...]:
+    """Return the local correction in the exact Möbius--Hecke factor.
+
+    If ``x=p^(-s)`` and ``lambda=lambda_f(p)``, define ``K_p`` by
+
+    ``1-lambda*x = (1-lambda*x+x^2) * (1-x^2) * K_p(x)``.
+
+    The recurrence below performs exact formal power-series division.
+    """
+    if degree < 0:
+        raise ValueError("degree must be nonnegative")
+    coefficients: list[Fraction] = []
+
+    def previous(index: int) -> Fraction:
+        return coefficients[index] if index >= 0 else F(0)
+
+    for index in range(degree + 1):
+        target = F(1) if index == 0 else (-hecke_lambda if index == 1 else F(0))
+        coefficient = (
+            target
+            + hecke_lambda * previous(index - 1)
+            - hecke_lambda * previous(index - 3)
+            + previous(index - 4)
+        )
+        coefficients.append(coefficient)
+    return tuple(coefficients)
+
+
+def balanced_mobius_hecke_local_k_coefficients(
+    *,
+    hecke_lambda: Fraction,
+    left_twist: Fraction,
+    right_twist: Fraction,
+    degree: int,
+) -> tuple[Fraction, ...]:
+    """Return the exact local correction for the balanced convolution.
+
+    The numerator is
+
+    ``1-lambda*(u+v)*x+(lambda^2-1)*u*v*x^2``.
+
+    The denominator before the correction is the product of the two
+    inverse Hecke factors and the three inverse zeta factors with
+    twists ``u^2``, ``v^2``, and ``u*v``.
+    """
+    if degree < 0:
+        raise ValueError("degree must be nonnegative")
+
+    def multiply(
+        left: list[Fraction],
+        right: list[Fraction],
+    ) -> list[Fraction]:
+        product = [F(0) for _ in range(degree + 1)]
+        for left_index, left_value in enumerate(left):
+            for right_index, right_value in enumerate(right):
+                index = left_index + right_index
+                if index <= degree:
+                    product[index] += left_value * right_value
+        return product
+
+    u = left_twist
+    v = right_twist
+    lam = hecke_lambda
+    denominator = [F(1)] + [F(0) for _ in range(degree)]
+    for factor in (
+        [F(1), -lam * u, u * u],
+        [F(1), -lam * v, v * v],
+        [F(1), F(0), -(u * u)],
+        [F(1), F(0), -(v * v)],
+        [F(1), F(0), -(u * v)],
+    ):
+        denominator = multiply(denominator, factor)
+
+    numerator = [
+        F(1),
+        -lam * (u + v),
+        (lam * lam - 1) * u * v,
+    ]
+    numerator.extend(F(0) for _ in range(max(0, degree + 1 - len(numerator))))
+    numerator = numerator[: degree + 1]
+
+    correction: list[Fraction] = []
+    for index in range(degree + 1):
+        coefficient = numerator[index]
+        for denominator_index in range(1, index + 1):
+            coefficient -= (
+                denominator[denominator_index]
+                * correction[index - denominator_index]
+            )
+        correction.append(coefficient)
+    return tuple(correction)
+
+
+def transition_mobius_hecke_reciprocal_l_audit(
+) -> TransitionMobiusHeckeReciprocalLAudit:
+    """Record the exact Euler product and the remaining spectral gate.
+
+    The local identity implies
+
+    ``sum mu(n)lambda_f(n)n^-s = K_f(s)/(zeta(2s)L(s,f))``.
+
+    Since ``K_p=1-lambda_f(p)p^(-3s)+O(p^(-4s+2theta))``, the
+    Kim--Sarnak exponent ``theta=7/64`` gives absolute convergence of
+    ``K_f`` on ``Re(s)=1/2``.  No current adapter derives the actual
+    Kuznetsov transform or supplies the required negative moment of
+    ``L(s,f)`` with a half-power saving.
+    """
+    coefficients = mobius_hecke_local_k_coefficients(
+        hecke_lambda=F(3),
+        degree=4,
+    )
+    balanced_coefficients = balanced_mobius_hecke_local_k_coefficients(
+        hecke_lambda=F(3),
+        left_twist=F(2),
+        right_twist=F(5),
+        degree=4,
+    )
+    return TransitionMobiusHeckeReciprocalLAudit(
+        physical_spectral_line=F(1, 2),
+        required_mobius_saving_exponent=F(1, 2),
+        k_local_first_nontrivial_degree=next(
+            index
+            for index, coefficient in enumerate(coefficients[1:], start=1)
+            if coefficient != 0
+        ),
+        local_factorization_exact=True,
+        k_euler_product_absolutely_convergent_at_half=True,
+        balanced_two_factor_local_factorization_exact=True,
+        balanced_reciprocal_l_factor_count=2,
+        balanced_zeta_factor_count=3,
+        balanced_k_local_first_nontrivial_degree=next(
+            index
+            for index, coefficient in enumerate(
+                balanced_coefficients[1:],
+                start=1,
+            )
+            if coefficient != 0
+        ),
+        actual_kuznetsov_reduction_derived=False,
+        reciprocal_l_negative_moment_proved=False,
+        required_half_power_saving_certified=False,
+        whole_line_family_covered=False,
     )
 
 
@@ -8454,10 +8704,30 @@ def main() -> None:
         "large_q_transition: bourgain_garaev_multilinear="
         "modulus=1,atom=1/4,n=4,required=1/2,"
         "thm9=1/16,deficit9=7/16,thm10=1/24,deficit10=11/24,"
-        "thm11_nmin=7,product=True,count=False,Cmin=144,"
-        "thm12_threshold=9,thm12_length=False,prime_required=True,"
-        "all_prime=False,product_intervals=False,separable=False,"
-        "phase=False,covered=False"
+        "thm11_nmin=7,product=True,count=False,section10_4_Cmin=144,"
+        "published_C=4,thm12_threshold=1/4,thm12_length=False,"
+        "thm13_product=1,thm13_threshold=1/2,thm13_margin=1/2,"
+        "thm13_product_holds=True,thm13_explicit=False,"
+        "thm13_half_power=False,prime_required=True,all_prime=False,"
+        "product_intervals=False,separable=False,phase=False,covered=False"
+    )
+    transition_bourgain_garaev_iterated = (
+        transition_bourgain_garaev_iterated_factorization_audit()
+    )
+    print(
+        "large_q_transition: bourgain_garaev_iterated="
+        "atom=1/4,subatoms=2,subatom=1/8,formal_n=8,nmin=7,"
+        "formal_count=True,formal_product=True,thm11_half_power=False,"
+        "prime_balanced=False,"
+        "forces_seven=False,phase=False,all_prime=False,covered=False"
+    )
+    transition_mobius_hecke = transition_mobius_hecke_reciprocal_l_audit()
+    print(
+        "large_q_transition: mobius_hecke_reciprocal_l="
+        "line=1/2,required=1/2,k_first_degree=3,local_exact=True,"
+        "k_converges=True,balanced_exact=True,L_factors=2,zeta_factors=3,"
+        "balanced_k_first_degree=3,kuznetsov=False,negative_moment=False,"
+        "half_power=False,covered=False"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
