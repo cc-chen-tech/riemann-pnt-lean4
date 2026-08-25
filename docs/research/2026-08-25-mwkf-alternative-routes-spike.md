@@ -2335,6 +2335,164 @@ coupled kernel has been identified.  The exact-rational record is
 `linnik_dispersion_centering_audit`; it preserves
 `published_coverage=False`.
 
+### 4.19 Exact determinant-line form of the surviving two-Möbius average
+
+There is an exact one-dimensional parametrization of every fiber in
+\(\mathrm{MD}_{2501/1000}\).  Isolate signed dyadic boxes
+
+\[
+ |j|\asymp J,\qquad |v|\asymp V,\qquad
+ |\delta|\asymp L,
+ \qquad J=V=T^{1/2},\quad L=T^{5/2}.
+\tag{4.153}
+\]
+
+Put
+
+\[
+ g=(|j|,|v|),\qquad j=gj_0,qquad v=gv_0,qquad
+ (j_0,v_0)=1.
+\tag{4.154}
+\]
+
+The determinant equation has a solution only if \(g\mid\delta\).  Write
+\(\delta=g\delta_0\).  Then
+
+\[
+ rv_0-sj_0=\delta_0.
+\tag{4.155}
+\]
+
+For any one particular integral solution \((r_0,s_0)\), all integral
+solutions of (4.155), with no omission or multiplicity, are
+
+\[
+ \boxed{r_n=r_0+j_0n,qquad s_n=s_0+v_0n,qquad n\in\mathbb Z.}
+\tag{4.156}
+\]
+
+Define the exact coupled line weight
+
+\[
+ \mathcal W_{q,g,j_0,v_0,\delta_0}(n)
+ :=p_N(qr_n)p_N(qs_n)
+   \widehat\Psi_h(r_n,s_n,g\delta_0,gv_0),
+\tag{4.157}
+\]
+
+including in \(\widehat\Psi_h\) all original dyadic cutoffs and the full
+transform phase.  Reindexing (4.8av) by (4.154)--(4.156) gives the finite
+identity
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak M_q(J,V,L)
+ ={}&\sum_{g\ge1}
+ \sum_{\substack{|j_0|\asymp J/g,\ |v_0|\asymp V/g\\
+                   (j_0,v_0)=1}}
+ \sum_{|\delta_0|\asymp L/g}
+ \sum_{\substack{n:\ r_n,s_n\asymp T^3\\
+                   (r_n,s_n)=1,\ (q,r_ns_n)=1}}
+ \mu(r_n)\mu(s_n)
+ \mathcal W_{q,g,j_0,v_0,\delta_0}(n).
+\end{aligned}}
+\tag{4.158}
+\]
+
+Thus a fixed determinant fiber is not a single Möbius sum.  It is the
+two-affine-form correlation
+
+\[
+ \mu(r_0+j_0n)\mu(s_0+v_0n)
+\tag{4.159}
+\]
+
+with growing primitive slopes and a query-dependent coupled weight.
+
+The coprimality in (4.158) also has an exact one-variable form.  Every
+common divisor of \(r_n,s_n\) divides (4.155), hence divides
+\(\delta_0\).  For every squarefree \(d\mid\delta_0\), coprimality of
+\(j_0,v_0\) gives a unique residue \(\nu_d\bmod d\) for which
+\(d\mid r_n\) and \(d\mid s_n\).  Therefore
+
+\[
+ \boxed{
+ \mathbf1_{(r_n,s_n)=1}
+ =\sum_{d\mid\delta_0}\mu(d)
+   \mathbf1_{n\equiv\nu_d\ (d)}.}
+\tag{4.160}
+\]
+
+This leaves \((q,r_ns_n)=1\) explicit.  For every prime \(p\mid q\),
+each of the two linear congruences is either empty, one residue modulo
+\(p\), or identically zero; in the last case the retained fiber is empty.
+
+Write \(g\asymp T^\gamma\), \(0\le\gamma\le1/2\).  The exact exponent
+ledger of (4.158) is
+
+\[
+ \begin{array}{c|c}
+ \text{variable family}&\log_T\text{-scale}\ \\ \hline
+ g&\gamma\\
+ j_0,v_0&1/2-\gamma\quad\text{each}\\
+ \delta_0&5/2-\gamma\\
+ n&\min\{3-(1/2-\gamma),3-(1/2-\gamma)\}
+       =5/2+\gamma.
+ \end{array}
+\tag{4.161}
+\]
+
+Consequently the complete \(g\)-layer has cardinality exponent
+
+\[
+ \gamma+2(1/2-\gamma)+(5/2-\gamma)+(5/2+\gamma)
+ =6-\gamma.
+\tag{4.162}
+\]
+
+The global gate remains \(T^{3499/1000}\).  Hence the exact local saving
+required on this layer is
+
+\[
+ \boxed{
+ s_{\rm line}(\gamma)
+ =6-\gamma-\frac{3499}{1000}
+ =\frac{2501}{1000}-\gamma,
+ \qquad 0\le\gamma\le\frac12.}
+\tag{4.163}
+\]
+
+It ranges from \(2501/1000\) at \(g\asymp1\) to
+\(\frac{2001}{1000}\) at \(g\asymp T^{1/2}\).  Thus extracting a large common divisor never
+reduces the problem to a merely logarithmic estimate.
+
+The averaged-Chowla inputs used in Sections 4.10--4.12 cannot establish
+(4.163).  Their conclusions save logarithms, whereas every layer in
+(4.163) requires a fixed positive power.  Moreover, the proven transfer
+there is for fixed slopes, while \(j_0,v_0\) in (4.161) grow up to
+\(T^{1/2}\), and the weight (4.157) depends on the slopes, shift, and
+line parameter simultaneously.  The determinant-line reindexing is
+therefore an exact reduction, not a theorem adapter.
+
+The remaining proposition can now be stated layerwise: uniformly for
+all \(0\le\gamma\le1/2\), prove
+
+\[
+ \boxed{
+ |\mathfrak M_q(G,J,V,L)|
+ \ll_{B,W}T^{3499/1000}(\log(2T))^{-B},
+ \qquad B>7,}
+\tag{4.164}
+\]
+
+with the exact sum (4.158), the residue expansion (4.160), and the
+coupled weight (4.157).  Equivalently, relative to cardinality, (4.164)
+must save \(T^{s_{\rm line}(\gamma)}\).  This is recorded by
+`determinant_line_mobius_audit`; no published positive-power estimate
+matching its growing-slope and coupled-weight hypotheses is currently
+registered.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

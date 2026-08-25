@@ -72,6 +72,22 @@ class CommonBPhaseReciprocity:
     b_divides_determinant: bool
 
 
+@dataclass(frozen=True)
+class DeterminantLineCoordinates:
+    gcd_j_v: int
+    primitive_j: int
+    primitive_v: int
+    shift_quotient: int
+    particular_r: int
+    particular_s: int
+
+    def solution(self, n: int) -> tuple[int, int]:
+        return (
+            self.particular_r + self.primitive_j * n,
+            self.particular_s + self.primitive_v * n,
+        )
+
+
 def proportional_diagonal_coordinates(
     *,
     n1: int,
@@ -592,6 +608,112 @@ def determinant_lattice_solution(
     v_0 = pow(r, -1, s)
     j_0 = (r * v_0 - 1) // s
     return delta * j_0 + translate * r, delta * v_0 + translate * s
+
+
+def _extended_gcd_nonnegative(a: int, b: int) -> tuple[int, int, int]:
+    if a < 0 or b < 0:
+        raise ValueError("extended gcd inputs must be nonnegative")
+    old_r, r = a, b
+    old_s, s = 1, 0
+    old_t, t = 0, 1
+    while r:
+        quotient = old_r // r
+        old_r, r = r, old_r - quotient * r
+        old_s, s = s, old_s - quotient * s
+        old_t, t = t, old_t - quotient * t
+    return old_r, old_s, old_t
+
+
+def determinant_line_coordinates(
+    *,
+    j: int,
+    v: int,
+    delta: int,
+) -> DeterminantLineCoordinates:
+    """Parameterize exactly ``r*v-j*s=delta`` by one integer ``n``.
+
+    Put ``g=(|j|,|v|)``.  Solubility forces ``g|delta``.  After dividing
+    by ``g``, Bezout gives a particular solution; the primitive kernel
+    vector is ``(j/g,v/g)``.  Hence every solution is returned exactly
+    once by :meth:`DeterminantLineCoordinates.solution`.
+    """
+    if j == 0 or v == 0 or delta == 0:
+        raise ValueError("require nonzero j, v, and delta")
+    common_gcd = gcd(abs(j), abs(v))
+    if delta % common_gcd != 0:
+        raise ValueError("determinant shift is not divisible by (j,v)")
+
+    primitive_j = j // common_gcd
+    primitive_v = v // common_gcd
+    shift_quotient = delta // common_gcd
+    bezout_gcd, x_abs, y_abs = _extended_gcd_nonnegative(
+        abs(primitive_v),
+        abs(primitive_j),
+    )
+    if bezout_gcd != 1:
+        raise AssertionError("primitive determinant slopes are not coprime")
+    x = x_abs if primitive_v > 0 else -x_abs
+    y = y_abs if primitive_j > 0 else -y_abs
+    if x * primitive_v + y * primitive_j != 1:
+        raise AssertionError("signed Bezout normalization failed")
+
+    particular_r = shift_quotient * x
+    particular_s = -shift_quotient * y
+    if (
+        particular_r * primitive_v
+        - particular_s * primitive_j
+        != shift_quotient
+    ):
+        raise AssertionError("particular determinant solution failed")
+
+    return DeterminantLineCoordinates(
+        gcd_j_v=common_gcd,
+        primitive_j=primitive_j,
+        primitive_v=primitive_v,
+        shift_quotient=shift_quotient,
+        particular_r=particular_r,
+        particular_s=particular_s,
+    )
+
+
+def determinant_line_coprimality_residue(
+    coordinates: DeterminantLineCoordinates,
+    *,
+    divisor: int,
+) -> int:
+    """Return the unique ``n mod divisor`` making both line entries zero."""
+    if divisor < 1 or abs(coordinates.shift_quotient) % divisor != 0:
+        raise ValueError("require a positive divisor of the shift quotient")
+    if mobius(divisor) == 0:
+        raise ValueError("require a squarefree divisor")
+    hits = tuple(
+        n
+        for n in range(divisor)
+        if all(value % divisor == 0 for value in coordinates.solution(n))
+    )
+    if len(hits) != 1:
+        raise AssertionError("coprime primitive slopes must give one residue")
+    return hits[0]
+
+
+def determinant_line_coprimality_indicator(
+    coordinates: DeterminantLineCoordinates,
+    *,
+    n: int,
+) -> int:
+    """Evaluate the exact divisor expansion of ``1_(r_n,s_n)=1``."""
+    total = 0
+    for divisor in divisors(abs(coordinates.shift_quotient)):
+        coefficient = mobius(divisor)
+        if coefficient == 0:
+            continue
+        residue = determinant_line_coprimality_residue(
+            coordinates,
+            divisor=divisor,
+        )
+        if n % divisor == residue:
+            total += coefficient
+    return total
 
 
 def _ceil_div(numerator: int, denominator: int) -> int:

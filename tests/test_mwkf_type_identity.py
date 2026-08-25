@@ -16,6 +16,9 @@ from scripts.mwkf_mobius_type_identity import (
     double_centered_completion_via_orthogonality,
     crt_reciprocity_numerators,
     double_split_mobius_identity,
+    determinant_line_coordinates,
+    determinant_line_coprimality_indicator,
+    determinant_line_coprimality_residue,
     determinant_lattice_solution,
     mobius,
     poisson_congruence_reparametrization,
@@ -196,6 +199,52 @@ def test_global_determinant_lattice_keeps_all_v_j_solutions_coupled() -> None:
         )
         assert next_j - j == r
         assert next_v - v == s
+
+
+def test_determinant_line_coordinates_exhaust_every_bounded_solution() -> None:
+    """Catch losing a gcd layer or reversing the primitive line steps."""
+    for j, v, delta in ((6, 15, 21), (-6, 15, 21), (10, -14, -22)):
+        coordinates = determinant_line_coordinates(j=j, v=v, delta=delta)
+        assert coordinates.gcd_j_v == gcd(abs(j), abs(v))
+        assert coordinates.gcd_j_v * coordinates.primitive_j == j
+        assert coordinates.gcd_j_v * coordinates.primitive_v == v
+        assert coordinates.gcd_j_v * coordinates.shift_quotient == delta
+        assert gcd(abs(coordinates.primitive_j), abs(coordinates.primitive_v)) == 1
+
+        line_solutions = {
+            coordinates.solution(n) for n in range(-100, 101)
+        }
+        brute_solutions = {
+            (r, s)
+            for r in range(-30, 31)
+            for s in range(-30, 31)
+            if r * v - j * s == delta
+        }
+        assert brute_solutions <= line_solutions
+        for r, s in line_solutions:
+            assert r * v - j * s == delta
+
+
+def test_determinant_line_coprimality_is_exact_shift_divisor_inversion() -> None:
+    """Catch omitting the unique n-residue attached to d|delta0."""
+    coordinates = determinant_line_coordinates(j=6, v=15, delta=21)
+    for divisor in (1, 7):
+        residue = determinant_line_coprimality_residue(
+            coordinates,
+            divisor=divisor,
+        )
+        hits = [
+            n
+            for n in range(divisor)
+            if all(value % divisor == 0 for value in coordinates.solution(n))
+        ]
+        assert hits == [residue]
+
+    for n in range(-100, 101):
+        r, s = coordinates.solution(n)
+        assert determinant_line_coprimality_indicator(coordinates, n=n) == (
+            1 if gcd(abs(r), abs(s)) == 1 else 0
+        )
 
 
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:

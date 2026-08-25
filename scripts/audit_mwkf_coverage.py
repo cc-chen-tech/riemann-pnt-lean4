@@ -51,6 +51,30 @@ class ShiftedPoissonScales:
 
 
 @dataclass(frozen=True)
+class DeterminantLineMobiusAudit:
+    common_gcd_exponent: Fraction
+    dual_j_exponent: Fraction
+    dual_v_exponent: Fraction
+    primitive_j_exponent: Fraction
+    primitive_v_exponent: Fraction
+    shift_quotient_exponent: Fraction
+    line_parameter_length_exponent: Fraction
+    layer_cardinality_exponent: Fraction
+    global_gate_target_exponent: Fraction
+    required_mobius_saving: Fraction
+    common_gcd_divides_shift: bool
+    primitive_slopes_are_coprime: bool
+    fixed_fiber_is_two_affine_mobius_correlation: bool
+    coprimality_is_one_residue_per_squarefree_shift_divisor: bool
+    published_average_supplies_only_logarithmic_saving: bool
+    published_uniform_growing_slope_hypothesis_verified: bool
+    coupled_weight_hypothesis_verified: bool
+    required_positive_power_saving_proved: bool
+    published_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -713,6 +737,83 @@ def h_poisson_shifted_scales(box: ExponentBox) -> ShiftedPoissonScales:
         volume=volume,
         required_saving=volume - gate_target,
         square_root_margin=gate_target - volume / 2,
+    )
+
+
+def determinant_line_mobius_audit(
+    box: ExponentBox,
+    *,
+    gcd_exponent: Fraction,
+) -> DeterminantLineMobiusAudit:
+    """Parametrize each nonzero determinant fiber by one integer line.
+
+    Write ``j=g*j0``, ``v=g*v0`` with ``(j0,v0)=1``.  The equation
+    ``r*v-j*s=delta`` is soluble only when ``g|delta``; after
+    ``delta=g*delta0`` it is
+
+    ``r*v0-s*j0=delta0``.
+
+    For any particular solution ``(r0,s0)``, all solutions are exactly
+    ``r=r0+j0*n``, ``s=s0+v0*n``.  The Möbius factor on a fixed fiber is
+    therefore the two-affine-form correlation
+    ``mu(r0+j0*n)*mu(s0+v0*n)``.  If ``d|delta0`` is squarefree, the
+    coprimality failure ``d|(r,s)`` restricts ``n`` to one residue class
+    modulo ``d``: uniqueness follows because ``(j0,v0)=1``.
+
+    The returned cardinality includes the dyadic ``g``, primitive slope,
+    shift-quotient, and line-parameter counts.  It is a scale identity,
+    not a cancellation estimate.
+    """
+    shifted = h_poisson_shifted_scales(box)
+    j_exponent = shifted.j
+    v_exponent = shifted.v
+    gcd_max = min(j_exponent, v_exponent, box.ell)
+    if gcd_exponent < 0 or gcd_exponent > gcd_max:
+        raise ValueError("gcd exponent exceeds the determinant dual ranges")
+
+    primitive_j = j_exponent - gcd_exponent
+    primitive_v = v_exponent - gcd_exponent
+    shift_quotient = box.ell - gcd_exponent
+    line_parameter_length = min(
+        box.rho - primitive_j,
+        box.sigma - primitive_v,
+    )
+    if line_parameter_length < 0:
+        raise ValueError("primitive determinant line misses the dyadic box")
+
+    layer_cardinality = (
+        gcd_exponent
+        + primitive_j
+        + primitive_v
+        + shift_quotient
+        + line_parameter_length
+    )
+    required_saving = layer_cardinality - shifted.gate_target
+
+    return DeterminantLineMobiusAudit(
+        common_gcd_exponent=gcd_exponent,
+        dual_j_exponent=j_exponent,
+        dual_v_exponent=v_exponent,
+        primitive_j_exponent=primitive_j,
+        primitive_v_exponent=primitive_v,
+        shift_quotient_exponent=shift_quotient,
+        line_parameter_length_exponent=line_parameter_length,
+        layer_cardinality_exponent=layer_cardinality,
+        global_gate_target_exponent=shifted.gate_target,
+        required_mobius_saving=required_saving,
+        common_gcd_divides_shift=True,
+        primitive_slopes_are_coprime=True,
+        fixed_fiber_is_two_affine_mobius_correlation=True,
+        coprimality_is_one_residue_per_squarefree_shift_divisor=True,
+        published_average_supplies_only_logarithmic_saving=True,
+        published_uniform_growing_slope_hypothesis_verified=False,
+        coupled_weight_hypothesis_verified=False,
+        required_positive_power_saving_proved=False,
+        published_coverage=False,
+        source=(
+            "Matomaki-Radziwill-Tao, arXiv:1503.05121; "
+            "Menon, arXiv:2607.15574"
+        ),
     )
 
 
@@ -3345,6 +3446,25 @@ def main() -> None:
         f"{linnik_audit.signed_off_diagonal_must_cancel_diagonal} "
         f"net_log={_fmt(linnik_audit.net_log_saving)} "
         f"covered={linnik_audit.published_coverage}"
+    )
+    determinant_line_parts: list[str] = []
+    for gcd_exponent in (F(0), F(1, 4), F(1, 2)):
+        line_audit = determinant_line_mobius_audit(
+            hard,
+            gcd_exponent=gcd_exponent,
+        )
+        determinant_line_parts.append(
+            f"{_fmt(gcd_exponent)}:n="
+            f"{_fmt(line_audit.line_parameter_length_exponent)},"
+            "volume="
+            f"{_fmt(line_audit.layer_cardinality_exponent)},"
+            "saving="
+            f"{_fmt(line_audit.required_mobius_saving)}"
+        )
+    print(
+        "balanced_max_a: determinant_line_mobius="
+        + ";".join(determinant_line_parts)
+        + " growing_slopes=False coupled_weight=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

@@ -73,6 +73,43 @@ def test_balanced_h_poisson_reduces_to_exact_critical_shifted_scales() -> None:
     assert scales.square_root_margin == F(499, 1000)
 
 
+def test_determinant_lines_are_affine_mobius_correlations_with_an_exact_gcd_ledger() -> None:
+    """Record every scale after j=g*j0, v=g*v0 on rv-js=delta."""
+    adapter = getattr(
+        coverage_audit,
+        "determinant_line_mobius_audit",
+        None,
+    )
+    assert adapter is not None, "determinant-line Möbius audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(0): (F(1, 2), F(5, 2), F(5, 2), F(6), F(2501, 1000)),
+        F(1, 4): (F(1, 4), F(9, 4), F(11, 4), F(23, 4), F(2251, 1000)),
+        F(1, 2): (F(0), F(2), F(3), F(11, 2), F(2001, 1000)),
+    }
+    for gamma, want in expected.items():
+        audit = adapter(box, gcd_exponent=gamma)
+        assert audit.dual_j_exponent == F(1, 2)
+        assert audit.dual_v_exponent == F(1, 2)
+        assert audit.primitive_j_exponent == want[0]
+        assert audit.primitive_v_exponent == want[0]
+        assert audit.shift_quotient_exponent == want[1]
+        assert audit.line_parameter_length_exponent == want[2]
+        assert audit.layer_cardinality_exponent == want[3]
+        assert audit.global_gate_target_exponent == F(3499, 1000)
+        assert audit.required_mobius_saving == want[4]
+        assert audit.common_gcd_divides_shift
+        assert audit.primitive_slopes_are_coprime
+        assert audit.fixed_fiber_is_two_affine_mobius_correlation
+        assert audit.coprimality_is_one_residue_per_squarefree_shift_divisor
+        assert audit.published_average_supplies_only_logarithmic_saving
+        assert not audit.published_uniform_growing_slope_hypothesis_verified
+        assert not audit.coupled_weight_hypothesis_verified
+        assert not audit.required_positive_power_saving_proved
+        assert not audit.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1280,6 +1317,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "signed_cancellation=True net_log=1 covered=False"
     ) in output
     assert (
+        "balanced_max_a: determinant_line_mobius="
+        "0:n=5/2,volume=6,saving=2501/1000;"
+        "1/4:n=11/4,volume=23/4,saving=2251/1000;"
+        "1/2:n=3,volume=11/2,saving=2001/1000 "
+        "growing_slopes=False coupled_weight=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -1524,5 +1568,14 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"B>7",
         "linnik_dispersion_centering_audit",
         "published_coverage=False",
+        "### 4.19 Exact determinant-line form",
+        r"r_n=r_0+j_0n",
+        r"s_n=s_0+v_0n",
+        r"\mu(r_0+j_0n)\mu(s_0+v_0n)",
+        r"\mathbf1_{(r_n,s_n)=1}",
+        r"6-\gamma",
+        r"\frac{2501}{1000}-\gamma",
+        r"\frac{2001}{1000}",
+        "determinant_line_mobius_audit",
     ):
         assert marker in text
