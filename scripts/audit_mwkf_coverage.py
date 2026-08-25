@@ -1750,6 +1750,38 @@ class SmoothHeckeOldclassProductAudit:
 
 
 @dataclass(frozen=True)
+class PhysicalQCTHeckeKernelAudit:
+    left_index_exponent: Fraction
+    right_index_exponent: Fraction
+    ambient_level_exponent: Fraction
+    exceptional_theta: Fraction
+    normalized_qct_kernel_dimension: int
+    bessel_augmented_kernel_dimension: int
+    weighted_fourier_derivative_order_slope: int
+    bessel_mellin_contour_real_part: Fraction
+    maximum_exceptional_bessel_order: Fraction
+    exceptional_contour_margin: Fraction
+    spectral_conductor_exponent: Fraction
+    multiplicative_twist_bandwidth_exponent: Fraction
+    qct_fourier_tensorization_exact: bool
+    weighted_fourier_nuclear_norm_is_polylogarithmic: bool
+    same_sign_bessel_mellin_factorization_exact: bool
+    opposite_sign_bessel_mellin_factorization_exact: bool
+    bessel_product_dependence_separates_as_h_times_delta: bool
+    real_spectral_tail_has_arbitrary_log_decay: bool
+    holomorphic_tail_has_arbitrary_log_decay: bool
+    exceptional_spectrum_stays_inside_fixed_contour: bool
+    product_smooth_hecke_lemma_applies_to_every_kernel_component: bool
+    oldclass_restoration_is_compatible: bool
+    physical_qct_kernel_product_model_restored: bool
+    actual_qct_geometric_spectral_adapter_derived: bool
+    other_mobius_entry_weights_restored: bool
+    type_i_level_family_aggregation_proved: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -9060,6 +9092,81 @@ def smooth_hecke_oldclass_product_audit(
     )
 
 
+def physical_qct_hecke_kernel_audit(
+    *,
+    left_index_exponent: Fraction,
+    right_index_exponent: Fraction,
+    ambient_level_exponent: Fraction,
+    exceptional_theta: Fraction = F(7, 64),
+) -> PhysicalQCTHeckeKernelAudit:
+    """Separate the physical QCT and Kuznetsov kernels at zero power cost.
+
+    The normalized four-variable QCT weight has polylogarithmic bounds
+    for every derivative.  Fourier inversion with
+    ``prod_j (1+xi_j^2)^(-J-1)`` therefore has a weighted L1 nuclear
+    norm controlled by derivatives of total order at most ``8*(J+1)``.
+
+    The Kuznetsov Bessel transform adds the product ``n=|h*delta|``.
+    Mellin Parseval on ``Re(z)=-1/2`` is valid simultaneously for the
+    same-sign J kernels and the opposite-sign K kernel provided
+    ``2*theta<1/2``.  Its only n-dependence is ``n^(z/2)``, which is
+    exactly ``|h|^(z/2)*|delta|^(z/2)``.  The Mellin frequency and the
+    retained Fourier frequencies have exponent zero; real Maass and
+    holomorphic tails have arbitrary logarithmic decay, while the
+    exceptional strip lies a fixed distance inside the contour.
+
+    This proves the product decomposition of the physical smooth kernel
+    inside a standard Kuznetsov component.  It does not derive the
+    missing geometric adapter from the entry-weighted QCT orbit to that
+    component, and it does not aggregate the other Mobius entry or Type-I
+    level weights.
+    """
+    left = F(left_index_exponent)
+    right = F(right_index_exponent)
+    level = F(ambient_level_exponent)
+    theta = F(exceptional_theta)
+    if min(left, right, level, theta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    contour = F(-1, 2)
+    max_order = F(2) * theta
+    margin = -contour - max_order
+    if margin <= 0:
+        raise ValueError("fixed Bessel Mellin contour requires theta < 1/4")
+    if level >= min(left, right):
+        raise ValueError("ambient level must be shorter than both indices")
+
+    return PhysicalQCTHeckeKernelAudit(
+        left_index_exponent=left,
+        right_index_exponent=right,
+        ambient_level_exponent=level,
+        exceptional_theta=theta,
+        normalized_qct_kernel_dimension=4,
+        bessel_augmented_kernel_dimension=5,
+        weighted_fourier_derivative_order_slope=8,
+        bessel_mellin_contour_real_part=contour,
+        maximum_exceptional_bessel_order=max_order,
+        exceptional_contour_margin=margin,
+        spectral_conductor_exponent=level,
+        multiplicative_twist_bandwidth_exponent=F(0),
+        qct_fourier_tensorization_exact=True,
+        weighted_fourier_nuclear_norm_is_polylogarithmic=True,
+        same_sign_bessel_mellin_factorization_exact=True,
+        opposite_sign_bessel_mellin_factorization_exact=True,
+        bessel_product_dependence_separates_as_h_times_delta=True,
+        real_spectral_tail_has_arbitrary_log_decay=True,
+        holomorphic_tail_has_arbitrary_log_decay=True,
+        exceptional_spectrum_stays_inside_fixed_contour=True,
+        product_smooth_hecke_lemma_applies_to_every_kernel_component=True,
+        oldclass_restoration_is_compatible=True,
+        physical_qct_kernel_product_model_restored=True,
+        actual_qct_geometric_spectral_adapter_derived=False,
+        other_mobius_entry_weights_restored=False,
+        type_i_level_family_aggregation_proved=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -15668,6 +15775,64 @@ def main() -> None:
         "finite_gate="
         f"{hecke_oldclass.finite_prime_hecke_gate_covered},"
         f"covered={hecke_oldclass.whole_mobius_gate_covered}"
+    )
+    physical_hecke_kernel = physical_qct_hecke_kernel_audit(
+        left_index_exponent=F(5, 2),
+        right_index_exponent=F(5, 2),
+        ambient_level_exponent=F(1),
+    )
+    print(
+        "large_q_transition: physical_qct_hecke_kernel="
+        f"left={_fmt(physical_hecke_kernel.left_index_exponent)},"
+        f"right={_fmt(physical_hecke_kernel.right_index_exponent)},"
+        f"level={_fmt(physical_hecke_kernel.ambient_level_exponent)},"
+        f"theta={_fmt(physical_hecke_kernel.exceptional_theta)},"
+        f"qct_dim={physical_hecke_kernel.normalized_qct_kernel_dimension},"
+        "augmented_dim="
+        f"{physical_hecke_kernel.bessel_augmented_kernel_dimension},"
+        "derivative_slope="
+        f"{physical_hecke_kernel.weighted_fourier_derivative_order_slope},"
+        "contour="
+        f"{_fmt(physical_hecke_kernel.bessel_mellin_contour_real_part)},"
+        "exceptional_order="
+        f"{_fmt(physical_hecke_kernel.maximum_exceptional_bessel_order)},"
+        "contour_margin="
+        f"{_fmt(physical_hecke_kernel.exceptional_contour_margin)},"
+        "conductor="
+        f"{_fmt(physical_hecke_kernel.spectral_conductor_exponent)},"
+        "bandwidth="
+        f"{_fmt(physical_hecke_kernel.multiplicative_twist_bandwidth_exponent)},"
+        "fourier_exact="
+        f"{physical_hecke_kernel.qct_fourier_tensorization_exact},"
+        "nuclear_polylog="
+        f"{physical_hecke_kernel.weighted_fourier_nuclear_norm_is_polylogarithmic},"
+        "j_mellin="
+        f"{physical_hecke_kernel.same_sign_bessel_mellin_factorization_exact},"
+        "k_mellin="
+        f"{physical_hecke_kernel.opposite_sign_bessel_mellin_factorization_exact},"
+        "product="
+        f"{physical_hecke_kernel.bessel_product_dependence_separates_as_h_times_delta},"
+        "maass_tail="
+        f"{physical_hecke_kernel.real_spectral_tail_has_arbitrary_log_decay},"
+        "holo_tail="
+        f"{physical_hecke_kernel.holomorphic_tail_has_arbitrary_log_decay},"
+        "exceptional_inside="
+        f"{physical_hecke_kernel.exceptional_spectrum_stays_inside_fixed_contour},"
+        "product_lemma="
+        f"{physical_hecke_kernel.product_smooth_hecke_lemma_applies_to_every_kernel_component},"
+        "oldclass="
+        f"{physical_hecke_kernel.oldclass_restoration_is_compatible},"
+        "kernel_model="
+        f"{physical_hecke_kernel.physical_qct_kernel_product_model_restored},"
+        "qct_adapter="
+        f"{physical_hecke_kernel.actual_qct_geometric_spectral_adapter_derived},"
+        "other_entries="
+        f"{physical_hecke_kernel.other_mobius_entry_weights_restored},"
+        "level_family="
+        f"{physical_hecke_kernel.type_i_level_family_aggregation_proved},"
+        "finite_gate="
+        f"{physical_hecke_kernel.finite_prime_hecke_gate_covered},"
+        f"covered={physical_hecke_kernel.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

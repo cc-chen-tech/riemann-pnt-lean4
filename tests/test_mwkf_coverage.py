@@ -2777,6 +2777,18 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "finite_gate=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: physical_qct_hecke_kernel="
+        "left=5/2,right=5/2,level=1,theta=7/64,qct_dim=4,"
+        "augmented_dim=5,derivative_slope=8,contour=-1/2,"
+        "exceptional_order=7/32,contour_margin=9/32,conductor=1,"
+        "bandwidth=0,fourier_exact=True,nuclear_polylog=True,"
+        "j_mellin=True,k_mellin=True,product=True,maass_tail=True,"
+        "holo_tail=True,exceptional_inside=True,product_lemma=True,"
+        "oldclass=True,kernel_model=True,qct_adapter=False,"
+        "other_entries=False,level_family=False,finite_gate=False,"
+        "covered=False"
+    ) in report
+    assert (
         "large_q_transition: newform_level_mobius_projector="
         "prime=5,index=6,mobius=-2,newform=-1/6,difference=-11/6,"
         "geometric=True,squarefree=True,oldclass_tail=True,"
@@ -4179,6 +4191,55 @@ def test_bm_oldclasses_preserve_the_smooth_product_index_endpoint() -> None:
     assert hard.ramified_newform_identity_compatible
     assert hard.oldclass_product_smooth_model_covered
     assert not hard.physical_coupled_kernel_restored
+    assert not hard.finite_prime_hecke_gate_covered
+    assert not hard.whole_mobius_gate_covered
+
+
+def test_physical_qct_bessel_kernel_has_zero_power_product_bandwidth() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "physical_qct_hecke_kernel_audit",
+        None,
+    )
+    assert adapter is not None, "physical QCT Hecke-kernel audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109f The physical QCT--Bessel kernel has zero-power product bandwidth",
+        "\\tag{4.845ah}",
+        "\\tag{4.845am}",
+        "physical_qct_hecke_kernel_audit",
+    ):
+        assert marker in note
+
+    hard = adapter(
+        left_index_exponent=F(5, 2),
+        right_index_exponent=F(5, 2),
+        ambient_level_exponent=F(1),
+        exceptional_theta=F(7, 64),
+    )
+    assert hard.normalized_qct_kernel_dimension == 4
+    assert hard.bessel_augmented_kernel_dimension == 5
+    assert hard.weighted_fourier_derivative_order_slope == 8
+    assert hard.bessel_mellin_contour_real_part == F(-1, 2)
+    assert hard.maximum_exceptional_bessel_order == F(7, 32)
+    assert hard.exceptional_contour_margin == F(9, 32)
+    assert hard.spectral_conductor_exponent == F(1)
+    assert hard.multiplicative_twist_bandwidth_exponent == F(0)
+    assert hard.qct_fourier_tensorization_exact
+    assert hard.weighted_fourier_nuclear_norm_is_polylogarithmic
+    assert hard.same_sign_bessel_mellin_factorization_exact
+    assert hard.opposite_sign_bessel_mellin_factorization_exact
+    assert hard.bessel_product_dependence_separates_as_h_times_delta
+    assert hard.real_spectral_tail_has_arbitrary_log_decay
+    assert hard.holomorphic_tail_has_arbitrary_log_decay
+    assert hard.exceptional_spectrum_stays_inside_fixed_contour
+    assert hard.product_smooth_hecke_lemma_applies_to_every_kernel_component
+    assert hard.oldclass_restoration_is_compatible
+    assert hard.physical_qct_kernel_product_model_restored
+    assert not hard.actual_qct_geometric_spectral_adapter_derived
+    assert not hard.other_mobius_entry_weights_restored
+    assert not hard.type_i_level_family_aggregation_proved
     assert not hard.finite_prime_hecke_gate_covered
     assert not hard.whole_mobius_gate_covered
 

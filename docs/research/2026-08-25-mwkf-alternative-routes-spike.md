@@ -13781,6 +13781,176 @@ Blomer--Milićević formula closes the oldclass normalization only after
 one has reached the product-smooth spectral model.
 
 
+### 4.109f The physical QCT--Bessel kernel has zero-power product bandwidth
+
+The second interface listed after (4.845aa) separates into an elementary
+QCT tensorization and an exact Bessel--Mellin identity.  This subsection
+closes that smooth-kernel interface, but not the geometric passage from
+the entry-weighted QCT orbit to a standard Kuznetsov formula.
+
+For one retained box, the exact kernel
+\(\Psi(u,v,\alpha,\beta)\) in (5.13b) of the off-diagonal audit is
+compactly supported in four fixed normalized intervals and satisfies
+
+\[
+ \|\partial^{\mathbf j}\Psi\|_\infty
+ \ll_{\mathbf j,W}(\log T)^{C_{\mathbf j}}.
+\]
+
+With
+\[
+ \widehat\Psi(\boldsymbol\xi)
+ =\int_{\mathbb R^4}\Psi(\mathbf x)
+   e(-\boldsymbol\xi\cdot\mathbf x)\,d\mathbf x,
+\]
+Fourier inversion is the exact identity
+
+\[
+ \boxed{
+ \Psi(\mathbf x)
+ =\int_{\mathbb R^4}\widehat\Psi(\boldsymbol\xi)
+ e(\xi_1u)e(\xi_2v)e(\xi_3\alpha)e(\xi_4\beta)
+ \,d\boldsymbol\xi.}
+\tag{4.845ah}
+\]
+
+For every fixed seminorm degree \(J\), applying
+\(\prod_{j=1}^4(1-(2\pi)^{-2}\partial_{x_j}^2)^{J+1}\) before inversion
+gives
+
+\[
+ \boxed{
+ \int_{\mathbb R^4}
+ \prod_{j=1}^4(1+|\xi_j|)^J
+ |\widehat\Psi(\boldsymbol\xi)|\,d\boldsymbol\xi
+ \ll_{J,W}(\log T)^{C_J}.}
+\tag{4.845ai}
+\]
+
+Only derivatives of total order at most \(8(J+1)\) occur.  Thus the
+additive twists in \(h/H\) and \(\delta/L\), together with the two
+entry twists, have an exact weighted nuclear norm of polylogarithmic
+size.
+
+There is one more coupling after a standard Kuznetsov formula is
+available.  Put \(n=|h\delta|\), and in the notation of
+Blomer--Milićević define
+
+\[
+ G_n(x)
+ :=\left(\frac{4\pi q_1\sqrt n}{x}\right)^{1/2}
+ f_\infty\!\left(\frac{4\pi\sqrt n}{xX}\right).
+\]
+
+Direct substitution gives its exact Mellin transform
+
+\[
+ \boxed{
+ \widehat G_n(z)
+ =(q_1X)^{1/2}
+ \left(\frac{4\pi\sqrt n}{X}\right)^z
+ \widehat f_\infty(1/2-z).}
+\tag{4.845aj}
+\]
+
+For the same-sign Kuznetsov kernel, Mellin Parseval and
+\[
+ \int_0^\infty J_\nu(x)x^{w-1}\,dx
+ =2^{w-1}
+ \frac{\Gamma((\nu+w)/2)}
+ {\Gamma((\nu-w+2)/2)}
+\]
+give, on the fixed line \(\Re z=-1/2\),
+
+\[
+ \boxed{
+ \int_0^\infty J_\nu(x)G_n(x)\frac{dx}{x}
+ =\frac1{2\pi i}\int_{(-1/2)}
+ \widehat G_n(z)\,2^{-z-1}
+ \frac{\Gamma((\nu-z)/2)}
+ {\Gamma((\nu+z+2)/2)}\,dz.}
+\tag{4.845ak}
+\]
+
+For the opposite-sign kernel, the identity
+\[
+ \int_0^\infty K_\nu(x)x^{w-1}\,dx
+ =2^{w-2}\Gamma((w+\nu)/2)\Gamma((w-\nu)/2)
+\]
+similarly gives
+
+\[
+ \boxed{
+ \int_0^\infty K_\nu(x)G_n(x)\frac{dx}{x}
+ =\frac1{2\pi i}\int_{(-1/2)}
+ \widehat G_n(z)\,2^{-z-2}
+ \Gamma\!\left(\frac{-z+\nu}{2}\right)
+ \Gamma\!\left(\frac{-z-\nu}{2}\right)\,dz.}
+\tag{4.845al}
+\]
+
+These formulas are first justified with compact truncations in \(x\)
+and \(z\), where Fubini is absolute, and then by the Schwartz decay of
+\(\widehat f_\infty\) and Stirling's formula.  They hold for the two
+fixed sign boxes separately.  If \(t=i\eta\) is exceptional with
+\(|\eta|\leq7/64\), every Bessel order in (4.845ak)--(4.845al) has
+absolute real part at most
+
+\[
+ 2|\eta|\leq\frac7{32}<\frac12=-\Re z;
+\]
+hence the common contour has the fixed margin
+
+\[
+ \boxed{\frac12-\frac7{32}=\frac9{32}.}
+\tag{4.845am}
+\]
+
+The only \(n\)-dependence in (4.845aj) is
+
+\[
+ n^{z/2}=|h|^{z/2}|\delta|^{z/2}.
+\]
+
+It therefore multiplies the two one-variable factors supplied by
+(4.845ah), rather than coupling them.  On \(\Re z=-1/2\), the fixed
+real powers are absorbed into the dyadic normalizations, while
+\(\Im z\) is a Mellin twist.  Equations (4.845ai) and
+(4.845aj)--(4.845al), followed by repeated integration by parts and
+Stirling, give arbitrary logarithmic decay outside
+\[
+ |\boldsymbol\xi|+|\Im z|+|t_f|+k
+ \leq(\log T)^{C}.
+\]
+Inside this range the analytic conductor is
+\[
+ Q_f(1+|t_f|+|\Im z|+k)^2=T^{\lambda+o(1)}
+\]
+when \(Q_f\leq T^\lambda\).  Thus the critical level
+\(\lambda=1\) used in Sections 4.109d--4.109e is unchanged, and every
+separated component is covered by the product-smooth Hecke lemma and
+its exact oldclass restoration.  Any polynomial dependence of those
+lemmas on the one-variable seminorms is absorbed by taking \(J\) larger
+in (4.845ai) and the Möbius-PNT logarithmic exponent larger in
+(4.845y).
+
+The adapter physical_qct_hecke_kernel_audit records the four normalized
+QCT variables, the fifth Bessel-product variable, derivative-order
+slope \(8\), contour \(-1/2\), exceptional margin \(9/32\), and zero
+power Mellin bandwidth.  It marks the physical smooth kernel restored
+*inside each standard Kuznetsov product component*.  It deliberately
+keeps three distinct statements false:
+
+1. no identity has yet transformed the two entry-weighted QCT orbit
+   into the required standard Kuznetsov family;
+2. the other Möbius entry weights have not yet been retained through
+   that transformation; and
+3. the signed Type-I level family has not been aggregated.
+
+Accordingly the finite-prime Hecke gate and the whole Möbius gate remain
+unproved.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps
