@@ -334,6 +334,24 @@ def test_centered_ramanujan_kernel_has_zero_unit_mean() -> None:
                 assert centered_sum == 0
 
 
+def test_nonunit_coprimality_dilation_is_exact_finite_mobius_inversion() -> None:
+    for e in range(1, 20):
+        if naive_mobius(e) == 0:
+            continue
+        e_divisors = [k for k in range(1, e + 1) if e % k == 0]
+        for c in range(1, 20):
+            if naive_mobius(c) == 0 or gcd(e, c) != 1:
+                continue
+            for h in range(-40, 41):
+                expected = int(gcd(h, e * c) == 1)
+                expanded = sum(
+                    naive_mobius(k) * int(gcd(h // k, c) == 1)
+                    for k in e_divisors
+                    if h % k == 0
+                )
+                assert expanded == expected
+
+
 def test_delta_completed_congruence_has_self_dual_affine_family() -> None:
     for b in range(1, 9):
         for z in range(1, 9):

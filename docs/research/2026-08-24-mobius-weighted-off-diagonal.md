@@ -3582,6 +3582,101 @@ Fourier flatness on arcs of width \(1/V\), or exploit a vanishing moment
 of the complete coupled archimedean multiplier before separation.  No
 such flatness or vanishing moment has been established above.
 
+### 9.23 Global reverse completion of every nonprincipal gcd stratum
+
+The unit centered identity extends exactly to the full gcd decomposition
+(9.49).  Fix pairwise coprime squarefree \(d,e,c\), put
+\(s=dec\), \(h=dh_1\), \(\delta=e\delta_1\), and set
+\(\alpha=\delta_1\bar r\pmod c\).  Then
+\((h_1,ec)=1\) and \((\alpha,c)=1\).  Since
+\(dh_1/s=h_1/(ec)\), finite Möbius inversion of the condition
+\((h_1,e)=1\), followed by shifted Poisson summation, gives
+
+\[
+\begin{aligned}
+ &\sum_{h_1\in\mathbb Z\atop(h_1,ec)=1}
+ e_c(-h_1\alpha)\widehat F(h_1/(ec))\\
+ &\quad=\sum_{k\mid e}\mu(k)
+ \sum_{y\in\mathbb Z\atop(y,c)=1}
+ e_c(-ky\alpha)\widehat F\left(\frac{ky}{ec}\right)\\
+ &\quad=\boxed{
+ \sum_{k\mid e}\mu(k)\frac ek
+ \sum_{n\in\mathbb Z}F((e/k)n)c_c(n+k\alpha).}
+\end{aligned}
+\tag{9.111}
+\]
+
+The sign in the last Ramanujan sum again follows from the Fourier
+convention: for \(E=e/k\),
+
+\[
+ \sum_{\ell\in\mathbb Z}
+ \widehat F((\ell+b/c)/E)
+ =E\sum_nF(En)e_c(-nb).
+\tag{9.112}
+\]
+
+Formula (9.111) retains every divisor \(k\mid e\), both incomplete
+endpoints, and the dilation \(e/k\); none may be absorbed into a generic
+divisor-bounded coefficient before estimating the gcd strata jointly.
+
+The principal character modulo \(c\) has phase average
+\(\mu(c)/\varphi(c)\).  Multiplying (9.111) by the original
+\(\mu(s)=\mu(d)\mu(e)\mu(c)\) and subtracting this principal mean yields
+the exact nonprincipal kernel
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak N_{d,e,c}(r,\delta_1)
+ ={}&\mu(d)\mu(e)
+ \sum_{k\mid e}\mu(k)\frac ek
+ \sum_nF((e/k)n)\\
+ &\times\left\{
+ \mu(c)c_c(n+k\delta_1\bar r)
+ -\frac{c_c(n)}{\varphi(c)}\right\}.
+\end{aligned}}
+\tag{9.113}
+\]
+
+For every \(k\mid e\), the shift \(k\delta_1\) is a unit modulo \(c\).
+Therefore (9.87) gives
+
+\[
+ \boxed{
+ \sum_{r\bmod c}^{*}
+ \left\{\mu(c)c_c(n+k\delta_1\bar r)
+ -\frac{c_c(n)}{\varphi(c)}\right\}=0.}
+\tag{9.114}
+\]
+
+When \(c=1\), the bracket in (9.113) is identically zero, exactly as it
+must be: the fully resonant stratum has no nonprincipal character.  The
+possible omitted \(h_1=0\) endpoint when \(e=c=1\) belongs to the already
+extracted Poisson zero mode and disappears from (9.113) as well.
+
+Thus there is no third, unrelated ``nonunit nonprincipal character
+gate''.  Every nonprincipal gcd stratum is a dilated centered Ramanujan
+kernel of the same type as (9.88), with the additional exact signs
+\(\mu(d)\mu(e)\mu(k)\) and lattice scale \(e/k\).  The remaining full
+nonprincipal estimate can be stated as the single family
+
+\[
+ \boxed{
+ \sum_{\substack{d,e,c\ {m pairwise\ coprime}\\dec\asymp S}}
+ \sum_{r,\delta_1}
+ \mu(r)\,\mathfrak N_{d,e,c}(r,\delta_1)
+ \mathcal W_{d,e,c}(r,\delta_1)
+ \ll_{\varepsilon,W}RS T^\varepsilon.}
+\tag{9.115}
+\]
+
+All original Selberg tapers, \(q\)-coprimalities, dyadic endpoints, and
+coupled archimedean factors remain in \(\mathcal W\).  Equation (9.115)
+is still unproved, but it is strictly more faithful than estimating the
+characters in (9.52) separately and it now covers every nonprincipal gcd
+stratum with one exact centered interface.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -3652,6 +3747,9 @@ Proved in this note:
 * the exact convolution/Fourier-energy form, its general-coefficient
   \(V\)-loss, and the separated central-arc Mertens thresholds,
   (9.106)--(9.110).
+* the global reverse completion of every nonprincipal gcd stratum into
+  one dilated centered Ramanujan family, including all \(k\mid e\)
+  boundary terms, (9.111)--(9.115).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -3683,6 +3781,7 @@ Proved in this note:
 | Post-centering published coverage | verified absent on the balanced \(J\)-range | exact scale ledger (9.100); termwise completion loses \(T^{2}\) to \(T^{5/2}\), averaged Chowla has slope loss \(T\), and direct spectral dispersion loses at least \(T^5\) |
 | Wright unbalanced-convolution corollary after centering | verified inapplicable | exact product/modulus map (9.103); both published modulus margins are negative throughout \(5/2\leq\jmath\leq3\), (9.104)--(9.105) |
 | Centered Fourier-energy route | exact reformulation; flatness unproved | Parseval loses \(V=J/M\), (9.109); a separated central-arc estimate needs common Mertens exponent from \(7/11\) down to \(7/12\), (9.110) |
+| All nonprincipal gcd strata | exact unified reduction; centered estimate unproved | scaled reverse Poisson (9.111) and mean-zero kernel (9.113)--(9.114); the complete residual family is (9.115), with no characterwise triangle inequality |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
