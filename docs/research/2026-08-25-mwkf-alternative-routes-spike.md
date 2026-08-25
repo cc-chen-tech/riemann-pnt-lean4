@@ -1993,6 +1993,16 @@ if it creates a positive diagonal before using both Möbius weights,
 loses more than the registered conductor allowance, or replaces the
 actual coefficient by an arbitrary sequence.
 
+The general zero-ray audit narrows this once more.  On
+\(s_1a_1=uk,\ s_2a_2=vk\), the two restricted convolution mains multiply
+to \(\mu(u)\mu(v)\) on squarefree support: the common \(\mu(k)^2\)
+disappears.  If \(u,v\asymp T^\theta\), double square-root cancellation
+in the primitive slopes has enough exponent slack only when
+\(\theta>\beta-1+1/250\).  The low-slope cells at or below that rational
+boundary must use the centered/main cross term, the common \(g\)-sum, or
+a nonsplit Gram estimate; an argument that spends Möbius cancellation in
+\(k\) is invalid.
+
 The relevant published comparison points are
 [Bettin--Chandee](https://arxiv.org/abs/1502.00769),
 [Bettin--Chandee--Radziwiłł](https://arxiv.org/abs/1411.7764),

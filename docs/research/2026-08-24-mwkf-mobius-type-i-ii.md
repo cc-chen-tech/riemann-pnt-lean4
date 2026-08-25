@@ -576,6 +576,32 @@ full_truncated_mobius_convolution and
 restricted_truncated_mobius_convolution verify the two finite identities
 separately; the displayed convolution proof is general.
 
+The same calculation applies to every primitive ray (4.8i), not only
+to \(u=v=1\).  Provided \(uk>U\) and \(vk>U\), the two factorization
+sums are exactly
+
+\[
+ \sum_{s_1a_1=uk\atop a_1>U}\mu(s_1)c_U(a_1)=-\mu(uk),
+ \qquad
+ \sum_{s_2a_2=vk\atop a_2>U}\mu(s_2)c_U(a_2)=-\mu(vk).
+\tag{4.8r'}
+\]
+
+On the original support, \(uk\) and \(vk\) are squarefree and
+\((u,v)=1\).  Hence \(u,v,k\) are pairwise coprime and squarefree, so
+
+\[
+ \boxed{\mu(uk)\mu(vk)=\mu(u)\mu(v)\mu(k)^2
+ =\mu(u)\mu(v).}
+\tag{4.8r''}
+\]
+
+Thus a product-only anchor on both sides moves the surviving Möbius pair
+to the primitive slopes \((u,v)\); it leaves no Möbius cancellation in
+the common radial variable \(k\).  The finite helper
+restricted_zero_ray_pair_convolution checks (4.8r')--(4.8r'') and
+explicitly rejects the simplification off squarefree support.
+
 Let \(\mathcal V_{q,b,g,k}(s,a)\) denote the sum of the complete
 factor-dependent weight over every signed factorization
 \(h\delta=g\) allowed by the fixed \((H,L)\) box.  Thus it includes the
@@ -681,6 +707,54 @@ zero_ray_convolution_centering_audit distinguishes the vanishing full
 convolution (4.8q), the nonzero Type-sector main term (4.8r), and the new
 joint Gram gate (4.8v), and records the repeated \(T^{11}\) obstruction
 (4.8w).
+
+For the general primitive ray, put \(u,v\asymp D=T^\theta\).  The
+conditions \(|gu|,|gv|\asymp HL=T^5\) and
+\(uk,vk\asymp SA_0=T^{6-\beta}\) give the exact zero-slack dyadic
+ledger
+
+\[
+ g\asymp T^{5-\theta},\qquad
+ k\asymp T^{6-\beta-\theta},\qquad
+ 0\le\theta\le6-\beta.
+\tag{4.8x}
+\]
+
+The cardinality exponent of the anchor--anchor term is independent of
+the slope depth:
+
+\[
+ \underbrace{B_0}_{\beta}
+ \underbrace{D^2}_{2\theta}
+ \underbrace{(HL/D)}_{5-\theta}
+ \underbrace{(SA_0/D)}_{6-\beta-\theta}
+ =T^{11}.
+\tag{4.8y}
+\]
+
+By (4.8r''), a hypothetical square-root saving in each of the two
+primitive Möbius slope sums saves at most the benchmark power
+\(T^\theta\) relative to (4.8y).  The required power is
+
+\[
+ 11-(12-\beta-1/250)=\beta-1+1/250.
+\tag{4.8z}
+\]
+
+Therefore this benchmark can have positive slack only in
+
+\[
+ \boxed{\theta>\beta-1+1/250.}
+\tag{4.8aa}
+\]
+
+The complementary low-slope cells
+\(0\le\theta\le\beta-1+1/250\) still require cancellation involving
+the centered factors, \(g\), or the nonsplit signed Gram; no
+\(k\)-Möbius estimate is available there.  The exact-rational adapter
+primitive_slope_zero_ray_audit records (4.8x)--(4.8aa).  Its
+double-square-root field is a feasibility benchmark, not a cited or
+proved estimate.
 
 At the balanced witness, write \(B_0=T^\beta\),
 \(1\leq\beta\leq2\).  The right side of SP\(_b\) has the explicit

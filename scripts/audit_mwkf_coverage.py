@@ -425,6 +425,25 @@ class ZeroRayConvolutionCenteringAudit:
     published_coverage: bool
 
 
+@dataclass(frozen=True)
+class PrimitiveSlopeZeroRayAudit:
+    b_exponent: Fraction
+    slope_exponent: Fraction
+    slope_exponent_range: tuple[Fraction, Fraction]
+    common_n_factor_exponent: Fraction
+    common_y_factor_exponent: Fraction
+    primitive_pair_cardinality_exponent: Fraction
+    explicit_main_cardinality_exponent: Fraction
+    joint_gram_target_exponent: Fraction
+    required_power_saving: Fraction
+    double_square_root_saving: Fraction
+    double_square_root_has_exponent_slack: bool
+    low_slope_benchmark_obstruction: bool
+    primitive_slope_mobius_pair_retained: bool
+    common_k_mobius_cancellation_available: bool
+    published_coverage: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -1879,6 +1898,83 @@ def zero_ray_convolution_centering_audit(
     )
 
 
+def primitive_slope_zero_ray_audit(
+    box: ExponentBox,
+    *,
+    b_exponent: Fraction,
+    slope_exponent: Fraction,
+) -> PrimitiveSlopeZeroRayAudit:
+    """Audit the general primitive ray ``(u,v)`` in ``Delta=0``.
+
+    For ``u,v`` in a dyadic slope box of exponent ``theta``, the exact
+    ray equations give ``g`` exponent ``ell+h-theta`` and ``k`` exponent
+    ``sigma+(rho-beta)-theta``.  The paired restricted convolution main
+    is ``mu(uk)mu(vk)=mu(u)mu(v)`` on squarefree support, so no Möbius
+    cancellation remains in ``k``.  ``double_square_root_saving`` is a
+    benchmark for square-root cancellation in both primitive slopes,
+    not a proved estimate.
+    """
+    b_exponent_range = (box.rho / 3, 2 * box.rho / 3)
+    if not b_exponent_range[0] <= b_exponent <= b_exponent_range[1]:
+        raise ValueError("b exponent lies outside the Type-II range")
+
+    a_exponent = box.rho - b_exponent
+    product_ray_exponent = box.sigma + a_exponent
+    numerator_exponent = box.ell + box.h
+    slope_exponent_range = (
+        F(0),
+        min(product_ray_exponent, numerator_exponent),
+    )
+    if not slope_exponent_range[0] <= slope_exponent <= slope_exponent_range[1]:
+        raise ValueError("slope exponent lies outside the zero-ray range")
+
+    common_n_factor_exponent = numerator_exponent - slope_exponent
+    common_y_factor_exponent = product_ray_exponent - slope_exponent
+    primitive_pair_cardinality_exponent = 2 * slope_exponent
+    explicit_main_cardinality_exponent = (
+        b_exponent
+        + primitive_pair_cardinality_exponent
+        + common_n_factor_exponent
+        + common_y_factor_exponent
+    )
+    joint_gram_target_exponent = (
+        2 * box.rho + 2 * box.sigma - b_exponent - F(1, 250)
+    )
+    required_power_saving = _positive_part(
+        explicit_main_cardinality_exponent - joint_gram_target_exponent
+    )
+    double_square_root_saving = slope_exponent
+    double_square_root_has_exponent_slack = (
+        double_square_root_saving > required_power_saving
+    )
+
+    return PrimitiveSlopeZeroRayAudit(
+        b_exponent=b_exponent,
+        slope_exponent=slope_exponent,
+        slope_exponent_range=slope_exponent_range,
+        common_n_factor_exponent=common_n_factor_exponent,
+        common_y_factor_exponent=common_y_factor_exponent,
+        primitive_pair_cardinality_exponent=(
+            primitive_pair_cardinality_exponent
+        ),
+        explicit_main_cardinality_exponent=(
+            explicit_main_cardinality_exponent
+        ),
+        joint_gram_target_exponent=joint_gram_target_exponent,
+        required_power_saving=required_power_saving,
+        double_square_root_saving=double_square_root_saving,
+        double_square_root_has_exponent_slack=(
+            double_square_root_has_exponent_slack
+        ),
+        low_slope_benchmark_obstruction=(
+            not double_square_root_has_exponent_slack
+        ),
+        primitive_slope_mobius_pair_retained=True,
+        common_k_mobius_cancellation_available=False,
+        published_coverage=False,
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -2413,6 +2509,25 @@ def main() -> None:
         f"{zero_ray_audit.joint_cross_term_required} "
         "joint_gate="
         f"{zero_ray_audit.joint_gram_gate_required}"
+    )
+    primitive_slope_parts: list[str] = []
+    for slope_exponent in (F(0), F(1, 2), F(3, 5), F(9, 2)):
+        slope_audit = primitive_slope_zero_ray_audit(
+            hard,
+            b_exponent=F(3, 2),
+            slope_exponent=slope_exponent,
+        )
+        primitive_slope_parts.append(
+            f"{_fmt(slope_exponent)}:need="
+            f"{_fmt(slope_audit.required_power_saving)},"
+            f"sqrt={_fmt(slope_audit.double_square_root_saving)},"
+            "slack="
+            f"{slope_audit.double_square_root_has_exponent_slack}"
+        )
+    print(
+        "balanced_max_a: primitive_slope_zero_ray="
+        + ";".join(primitive_slope_parts)
+        + " proved=False k_mu=False"
     )
 
 

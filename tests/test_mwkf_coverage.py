@@ -818,6 +818,39 @@ def test_zero_ray_has_exact_global_convolution_centering_but_local_residual() ->
     assert not audit.published_coverage
 
 
+def test_primitive_slope_square_root_only_covers_the_large_slope_cells() -> None:
+    """Catch spending nonexistent k-Möbius cancellation on a zero ray."""
+    adapter = getattr(
+        coverage_audit,
+        "primitive_slope_zero_ray_audit",
+        None,
+    )
+    assert adapter is not None, "primitive-slope zero-ray audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(0): (F(5), F(9, 2), False),
+        F(1, 2): (F(9, 2), F(4), False),
+        F(3, 5): (F(22, 5), F(39, 10), True),
+        F(9, 2): (F(1, 2), F(0), True),
+    }
+    for theta, (g_exp, k_exp, closes) in expected.items():
+        audit = adapter(box, b_exponent=F(3, 2), slope_exponent=theta)
+        assert audit.slope_exponent_range == (F(0), F(9, 2))
+        assert audit.common_n_factor_exponent == g_exp
+        assert audit.common_y_factor_exponent == k_exp
+        assert audit.primitive_pair_cardinality_exponent == 2 * theta
+        assert audit.explicit_main_cardinality_exponent == F(11)
+        assert audit.joint_gram_target_exponent == F(2624, 250)
+        assert audit.required_power_saving == F(63, 125)
+        assert audit.double_square_root_saving == theta
+        assert audit.double_square_root_has_exponent_slack == closes
+        assert audit.low_slope_benchmark_obstruction == (not closes)
+        assert audit.primitive_slope_mobius_pair_retained
+        assert not audit.common_k_mobius_cancellation_available
+        assert not audit.published_coverage
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -915,6 +948,14 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "balanced_max_a: zero_ray_convolution_centering="
         "product=9/2 cutoff=1 full_zero=True "
         "sector_main=-mu main_sq=11 cross=True joint_gate=True"
+    ) in output
+    assert (
+        "balanced_max_a: primitive_slope_zero_ray="
+        "0:need=63/125,sqrt=0,slack=False;"
+        "1/2:need=63/125,sqrt=1/2,slack=False;"
+        "3/5:need=63/125,sqrt=3/5,slack=True;"
+        "9/2:need=63/125,sqrt=9/2,slack=True "
+        "proved=False k_mu=False"
     ) in output
 
 

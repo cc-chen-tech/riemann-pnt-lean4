@@ -31,6 +31,21 @@ class ProportionalDiagonalCoordinates:
     common_y_factor: int
 
 
+@dataclass(frozen=True)
+class RestrictedZeroRayPairConvolution:
+    u: int
+    v: int
+    k: int
+    cutoff_u: int
+    left_product: int
+    right_product: int
+    left_sector_sum: int
+    right_sector_sum: int
+    pair_sector_product: int
+    squarefree_ray_support: bool
+    common_k_mobius_cancels_exactly: bool
+
+
 def proportional_diagonal_coordinates(
     *,
     n1: int,
@@ -201,6 +216,63 @@ def restricted_truncated_mobius_convolution(
         mobius(s) * c_u(n // s, cutoff_u)
         for s in divisors(n)
         if n // s > cutoff_u
+    )
+
+
+def restricted_zero_ray_pair_convolution(
+    *,
+    u: int,
+    v: int,
+    k: int,
+    cutoff_u: int,
+) -> RestrictedZeroRayPairConvolution:
+    """Evaluate both restricted convolutions on one primitive zero ray.
+
+    On squarefree support, ``(u,v)=1`` and the two products ``u*k`` and
+    ``v*k`` squarefree imply ``(k,u*v)=1``.  Hence the common factor
+    contributes ``mu(k)^2=1`` and the paired main coefficient is exactly
+    ``mu(u)*mu(v)`` rather than a Möbius weight in ``k``.
+    """
+    if u < 1 or v < 1 or k < 1 or cutoff_u < 1:
+        raise ValueError("require u, v, k, cutoff_u >= 1")
+    if gcd(u, v) != 1:
+        raise ValueError("require primitive coprime ray coordinates")
+
+    left_product = u * k
+    right_product = v * k
+    left_sector_sum = restricted_truncated_mobius_convolution(
+        n=left_product,
+        cutoff_u=cutoff_u,
+    )
+    right_sector_sum = restricted_truncated_mobius_convolution(
+        n=right_product,
+        cutoff_u=cutoff_u,
+    )
+    pair_sector_product = left_sector_sum * right_sector_sum
+    squarefree_ray_support = (
+        mobius(left_product) != 0 and mobius(right_product) != 0
+    )
+    common_k_mobius_cancels_exactly = (
+        left_product > cutoff_u
+        and right_product > cutoff_u
+        and squarefree_ray_support
+        and pair_sector_product == mobius(u) * mobius(v)
+    )
+
+    return RestrictedZeroRayPairConvolution(
+        u=u,
+        v=v,
+        k=k,
+        cutoff_u=cutoff_u,
+        left_product=left_product,
+        right_product=right_product,
+        left_sector_sum=left_sector_sum,
+        right_sector_sum=right_sector_sum,
+        pair_sector_product=pair_sector_product,
+        squarefree_ray_support=squarefree_ray_support,
+        common_k_mobius_cancels_exactly=(
+            common_k_mobius_cancels_exactly
+        ),
     )
 
 

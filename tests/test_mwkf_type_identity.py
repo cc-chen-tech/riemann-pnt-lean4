@@ -94,6 +94,35 @@ def test_type_sector_convolution_extracts_negative_mobius_above_cutoff() -> None
             assert adapter(n=n, cutoff_u=cutoff) == expected
 
 
+def test_two_general_zero_ray_sectors_move_mobius_to_primitive_slopes() -> None:
+    """Catch claiming residual Möbius cancellation in the common k variable."""
+    adapter = getattr(
+        type_identity,
+        "restricted_zero_ray_pair_convolution",
+        None,
+    )
+    assert adapter is not None, "general zero-ray convolution helper is missing"
+
+    for u, v, k, cutoff in (
+        (1, 2, 3, 1),
+        (2, 3, 5, 2),
+        (2, 5, 3, 2),
+        (3, 5, 2, 1),
+    ):
+        audit = adapter(u=u, v=v, k=k, cutoff_u=cutoff)
+        assert audit.left_product == u * k
+        assert audit.right_product == v * k
+        assert audit.left_sector_sum == -mobius(u * k)
+        assert audit.right_sector_sum == -mobius(v * k)
+        assert audit.pair_sector_product == mobius(u) * mobius(v)
+        assert audit.squarefree_ray_support
+        assert audit.common_k_mobius_cancels_exactly
+
+    shared_prime = adapter(u=2, v=3, k=10, cutoff_u=2)
+    assert not shared_prime.squarefree_ray_support
+    assert shared_prime.pair_sector_product == 0
+
+
 def test_squarefree_factorization_gives_exact_common_b_phase() -> None:
     # e(n * bar(s)/(a*b)) splits into characters modulo a and b.
     for a, b, s, n in ((5, 6, 7, 11), (7, 10, 9, -13), (11, 14, 3, 17)):
