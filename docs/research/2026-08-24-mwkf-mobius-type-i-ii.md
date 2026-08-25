@@ -787,7 +787,7 @@ The other two phases in (4.8b) and (4.8c) become
 \tag{4.8ad}
 \]
 
-In the product with the conjugate \((v,k)) amplitude, both phases in
+In the product with the conjugate \((v,k)\) amplitude, both phases in
 (4.8ad) cancel identically.  The only residual reciprocal oscillation
 on the zero ray is therefore attached to the allocation of the common
 \(k\)-primes between \(s_k\) and \(a_k\), not to the primitive slopes
@@ -796,6 +796,112 @@ their Möbius correlation with the dyadic and coupled smooth weights; it
 cannot invoke a nonexistent trace-function conductor in those variables.
 The helper zero_ray_phase_reduction verifies (4.8ab)--(4.8ad) with exact
 rational residues.
+
+### 4.3 A longer Möbius cutoff removes the cardinality diagonal
+
+The choice \(U=R^{1/3}=T\) in (2.4) is not forced by the finite identity
+(2.2).  At the balanced box, instead set
+
+\[
+ \boxed{U=T^{401/200}.}
+\tag{4.8ae}
+\]
+
+For all sufficiently large \(T\), every \(r\asymp T^3\) still satisfies
+\(r>U\), so (2.2) remains an exact termwise identity.  Omitting the
+auxiliary \(V\)-split altogether gives one sector
+
+\[
+ a>U,\qquad ab=r,\qquad
+ a\gg T^{401/200},\qquad b\ll T^{199/200}.
+\tag{4.8af}
+\]
+
+The implicit constants in (4.8af) come only from the fixed dyadic support
+of \(r\); no terms are discarded.  Write \(B_0=T^\beta\).  Then
+\(0\le\beta\le199/200\), while the cardinality-level identity diagonal
+still has exponent \(11\).  Its post-Cauchy spectral target is
+
+\[
+ T^{12-\beta-1/250}.
+\tag{4.8ag}
+\]
+
+The target is smallest at \(\beta=199/200\), where
+
+\[
+ 12-\frac{199}{200}-\frac1{250}
+ =\frac{11001}{1000}=11+\frac1{1000}.
+\tag{4.8ah}
+\]
+
+Thus this cutoff gives a fixed \(T^{1/1000}\) margin over the
+cardinality diagonal in every factor box.  In fact it covers the entire
+zero complementary divisor.  For a primitive-slope box
+\(u,v\asymp T^\theta\), the count in (4.8y) is \(T^{11}\), independently
+of \(\theta\).  There are \(O(\log T)\) slope boxes, while
+\(|c_U(a)|\le\tau(a)\ll_\varepsilon T^\varepsilon\) and grouping
+\(h\delta=n\) costs another divisor factor.  Consequently, for every
+fixed \(\varepsilon>0\),
+
+\[
+ \boxed{\mathcal E_b^{\Delta=0}\ll_{W,\varepsilon}T^{11+\varepsilon}.}
+\tag{4.8ah'}
+\]
+
+Taking \(\varepsilon<1/1000\), (4.8ah') is smaller than the worst target
+in (4.8ah).  Thus the zero-ray obstruction in (4.8m) is an obstruction
+to the earlier balanced factorization, not to every use of (2.2).
+
+This does **not** prove the new single sector.  Reciprocity still has
+modulus
+
+\[
+ ab=r\asymp T^3,
+\tag{4.8ai}
+\]
+
+so the reciprocal conductor has not shortened.  Moreover, at the best
+endpoint \(\beta=199/200\), the nonzero complementary-divisor range in
+(4.8e) has exponent
+
+\[
+ 5+3+\frac{401}{200}-\frac{199}{200}
+ =\frac{901}{100},
+\tag{4.8aj}
+\]
+
+and it is longer for smaller \(\beta\).  No published adapter audited in
+this branch estimates that coupled off-diagonal.  More precisely, let
+\(\mathcal E_{b,\ne0}^{(401/200)}\) be the exact expansion
+(4.6)--(4.8), with (4.8ae)--(4.8af) in place of (2.4), restricted to
+
+\[
+ \Delta=n_1s_2a_2-n_2s_1a_1\ne0.
+\tag{4.8ak}
+\]
+
+After the unconditional zero-ray bound (4.8ah'), the sole post-Cauchy
+local input for this factorization is
+
+\[
+ \boxed{
+ \mathrm{LCO}_{\beta}:\quad
+ \left|\mathcal E_{b,\ne0}^{(401/200)}\right|
+ \ll_W \frac{R^2S^2}{B_0}T^{-1/250},
+ \qquad 0\le\beta\le\frac{199}{200}.}
+\tag{4.8al}
+\]
+
+All variables, coefficients, coprimality conditions, weights, and phases
+in LCO are exactly those in (4.6)--(4.8); the complementary integer is
+the nonzero \(c=\Delta/b\) in (4.8e).  The exact-rational function
+long_mobius_cutoff_audit records the positive zero-ray margin and the
+unchanged off-diagonal boundary.  It deliberately sets published
+off-diagonal coverage to false: (4.8al) is unproved.
+
+For comparison with this new single-sector route, the remainder of
+Section 4 returns to the earlier \(U=V=T\) Type-II split.
 
 At the balanced witness, write \(B_0=T^\beta\),
 \(1\leq\beta\leq2\).  The right side of SP\(_b\) has the explicit

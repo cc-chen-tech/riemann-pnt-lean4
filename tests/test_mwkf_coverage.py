@@ -852,6 +852,57 @@ def test_primitive_slope_square_root_only_covers_the_large_slope_cells() -> None
         assert not audit.published_coverage
 
 
+def test_long_mobius_cutoff_removes_only_the_cardinality_diagonal_gap() -> None:
+    """Catch fixing U=T, or claiming that a longer U proves off-diagonal."""
+    adapter = getattr(
+        coverage_audit,
+        "long_mobius_cutoff_audit",
+        None,
+    )
+    assert adapter is not None, "long Möbius-cutoff audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    original = adapter(
+        box,
+        cutoff_exponent=F(1),
+        squared_target_saving=F(1, 250),
+    )
+    assert original.complementary_factor_max_exponent == F(2)
+    assert original.worst_diagonal_margin == F(-251, 250)
+    assert not original.all_factor_boxes_have_diagonal_power_slack
+    assert not original.entire_zero_ray_cardinality_has_power_slack
+
+    critical = adapter(
+        box,
+        cutoff_exponent=F(2),
+        squared_target_saving=F(1, 250),
+    )
+    assert critical.complementary_factor_max_exponent == F(1)
+    assert critical.identity_diagonal_exponent == F(11)
+    assert critical.worst_spectral_target_exponent == F(2749, 250)
+    assert critical.worst_diagonal_margin == F(-1, 250)
+    assert not critical.all_factor_boxes_have_diagonal_power_slack
+
+    optimized = adapter(
+        box,
+        cutoff_exponent=F(401, 200),
+        squared_target_saving=F(1, 250),
+    )
+    assert optimized.complementary_factor_max_exponent == F(199, 200)
+    assert optimized.long_factor_min_exponent == F(401, 200)
+    assert optimized.identity_diagonal_exponent == F(11)
+    assert optimized.worst_spectral_target_exponent == F(11001, 1000)
+    assert optimized.worst_diagonal_margin == F(1, 1000)
+    assert optimized.all_factor_boxes_have_diagonal_power_slack
+    assert optimized.entire_zero_ray_cardinality_has_power_slack
+    assert optimized.exact_single_sector_identity
+    assert optimized.v_split_omitted_exactly
+    assert optimized.reciprocal_modulus_exponent == F(3)
+    assert not optimized.reciprocal_conductor_reduced
+    assert optimized.endpoint_complementary_divisor_exponent == F(901, 100)
+    assert not optimized.published_off_diagonal_coverage
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -957,6 +1008,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "3/5:need=63/125,sqrt=3/5,slack=True;"
         "9/2:need=63/125,sqrt=9/2,slack=True "
         "proved=False k_mu=False slope_phase=False"
+    ) in output
+    assert (
+        "balanced_max_a: long_mobius_cutoff="
+        "1:bmax=2,margin=-251/250,diag=False;"
+        "2:bmax=1,margin=-1/250,diag=False;"
+        "401/200:bmax=199/200,margin=1/1000,diag=True "
+        "zero_ray=True offdiag=False recip=3 c_endpoint=901/100"
     ) in output
 
 

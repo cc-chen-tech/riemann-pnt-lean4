@@ -445,6 +445,25 @@ class PrimitiveSlopeZeroRayAudit:
     published_coverage: bool
 
 
+@dataclass(frozen=True)
+class LongMobiusCutoffAudit:
+    cutoff_exponent: Fraction
+    complementary_factor_max_exponent: Fraction
+    long_factor_min_exponent: Fraction
+    squared_target_saving: Fraction
+    identity_diagonal_exponent: Fraction
+    worst_spectral_target_exponent: Fraction
+    worst_diagonal_margin: Fraction
+    all_factor_boxes_have_diagonal_power_slack: bool
+    entire_zero_ray_cardinality_has_power_slack: bool
+    exact_single_sector_identity: bool
+    v_split_omitted_exactly: bool
+    reciprocal_modulus_exponent: Fraction
+    reciprocal_conductor_reduced: bool
+    endpoint_complementary_divisor_exponent: Fraction
+    published_off_diagonal_coverage: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -1977,6 +1996,74 @@ def primitive_slope_zero_ray_audit(
     )
 
 
+def long_mobius_cutoff_audit(
+    box: ExponentBox,
+    *,
+    cutoff_exponent: Fraction,
+    squared_target_saving: Fraction,
+) -> LongMobiusCutoffAudit:
+    """Audit the exact identity with a cutoff longer than ``R^(1/3)``.
+
+    Taking ``U=T^lambda`` in the finite identity (2.2) forces
+    ``a>U`` and hence ``b`` to exponent at most ``rho-lambda``.  No
+    auxiliary ``V`` split is required.  This can put the cardinality
+    diagonal below the post-Cauchy target, but it leaves the reciprocal
+    modulus ``a*b`` at exponent ``rho`` and proves no off-diagonal bound.
+    """
+    if not F(0) < cutoff_exponent < box.rho:
+        raise ValueError("cutoff exponent must lie strictly between 0 and rho")
+    if squared_target_saving <= 0:
+        raise ValueError("squared target saving must be positive")
+
+    complementary_factor_max_exponent = box.rho - cutoff_exponent
+    long_factor_min_exponent = cutoff_exponent
+    identity_diagonal_exponent = (
+        box.rho + box.sigma + box.ell + box.h
+    )
+    worst_spectral_target_exponent = (
+        2 * box.rho
+        + 2 * box.sigma
+        - complementary_factor_max_exponent
+        - squared_target_saving
+    )
+    worst_diagonal_margin = (
+        worst_spectral_target_exponent - identity_diagonal_exponent
+    )
+    endpoint_complementary_divisor_exponent = (
+        box.ell
+        + box.h
+        + box.sigma
+        + long_factor_min_exponent
+        - complementary_factor_max_exponent
+    )
+
+    return LongMobiusCutoffAudit(
+        cutoff_exponent=cutoff_exponent,
+        complementary_factor_max_exponent=(
+            complementary_factor_max_exponent
+        ),
+        long_factor_min_exponent=long_factor_min_exponent,
+        squared_target_saving=squared_target_saving,
+        identity_diagonal_exponent=identity_diagonal_exponent,
+        worst_spectral_target_exponent=worst_spectral_target_exponent,
+        worst_diagonal_margin=worst_diagonal_margin,
+        all_factor_boxes_have_diagonal_power_slack=(
+            worst_diagonal_margin > 0
+        ),
+        entire_zero_ray_cardinality_has_power_slack=(
+            worst_diagonal_margin > 0
+        ),
+        exact_single_sector_identity=True,
+        v_split_omitted_exactly=True,
+        reciprocal_modulus_exponent=box.rho,
+        reciprocal_conductor_reduced=False,
+        endpoint_complementary_divisor_exponent=(
+            endpoint_complementary_divisor_exponent
+        ),
+        published_off_diagonal_coverage=False,
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -2530,6 +2617,37 @@ def main() -> None:
         "balanced_max_a: primitive_slope_zero_ray="
         + ";".join(primitive_slope_parts)
         + " proved=False k_mu=False slope_phase=False"
+    )
+    long_cutoff_parts: list[str] = []
+    for cutoff_exponent in (F(1), F(2), F(401, 200)):
+        cutoff_audit = long_mobius_cutoff_audit(
+            hard,
+            cutoff_exponent=cutoff_exponent,
+            squared_target_saving=F(1, 250),
+        )
+        long_cutoff_parts.append(
+            f"{_fmt(cutoff_exponent)}:bmax="
+            f"{_fmt(cutoff_audit.complementary_factor_max_exponent)},"
+            f"margin={_fmt(cutoff_audit.worst_diagonal_margin)},"
+            "diag="
+            f"{cutoff_audit.all_factor_boxes_have_diagonal_power_slack}"
+        )
+    optimized_cutoff = long_mobius_cutoff_audit(
+        hard,
+        cutoff_exponent=F(401, 200),
+        squared_target_saving=F(1, 250),
+    )
+    print(
+        "balanced_max_a: long_mobius_cutoff="
+        + ";".join(long_cutoff_parts)
+        + " zero_ray="
+        f"{optimized_cutoff.entire_zero_ray_cardinality_has_power_slack}"
+        + " offdiag="
+        f"{optimized_cutoff.published_off_diagonal_coverage}"
+        + " recip="
+        f"{_fmt(optimized_cutoff.reciprocal_modulus_exponent)}"
+        + " c_endpoint="
+        f"{_fmt(optimized_cutoff.endpoint_complementary_divisor_exponent)}"
     )
 
 

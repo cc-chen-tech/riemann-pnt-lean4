@@ -2013,6 +2013,20 @@ a trace-function estimate in \(u,v\); it is a Möbius correlation against
 the remaining smooth/allocation weights.  This makes the low-slope
 residual smaller as a parameter region, but structurally harder.
 
+There is now a cleaner alternative to fighting that zero-ray residual
+inside the balanced \(U=T\) factorization.  The exact Möbius identity
+allows \(U=T^{401/200}\) with no \(V\)-split.  It forces
+\(b\ll T^{199/200}\) and gives a uniform \(T^{1/1000}\) exponent margin
+over the cardinality of every primitive zero-ray layer.  Divisor bounds
+and the logarithmic number of slope boxes therefore cover the entire
+\(\Delta=0\) contribution unconditionally.  This does not prove the
+theorem: \(ab\asymp T^3\) remains the reciprocal modulus and the nonzero
+complementary divisor is still as long as
+\(T^{901/100}\) even at the shortest endpoint.  The next estimate should
+therefore be formulated for this long-\(a\), short-\(b\) single sector,
+namely LCO in (4.8al) of the Type-I/II note, not for the now avoidable
+medium-factor Type-II diagonal.
+
 The relevant published comparison points are
 [Bettin--Chandee](https://arxiv.org/abs/1502.00769),
 [Bettin--Chandee--Radziwiłł](https://arxiv.org/abs/1411.7764),
