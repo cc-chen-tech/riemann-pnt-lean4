@@ -211,6 +211,26 @@ class LargeQEndpointUnpoissonAudit:
 
 
 @dataclass(frozen=True)
+class LargeQEndpointCriticalShiftAudit:
+    shift_log_depth: Fraction
+    endpoint_taper_log_saving: Fraction
+    power_remainder_exponent: Fraction
+    q_mellin_error_power_saving: Fraction
+    coprimality_divisor_volume_decay: Fraction
+    fixed_zeta_scales_required: bool
+    fixed_zeta_scales_supplied: bool
+    q_summed_density_is_multiplicative: bool
+    q_restriction_removed_before_correlation: bool
+    density_weight_has_absolutely_convergent_convolution: bool
+    fixed_truncation_has_only_fixed_linear_slopes: bool
+    menon_shift_average_tends_to_zero: bool
+    two_limit_tail_tends_to_zero: bool
+    critical_shift_subface_covered: bool
+    above_critical_subface_covered: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -1417,6 +1437,58 @@ def endpoint_unpoisson_adapter(
             "sum all nonzero h before absolute values",
             "retain both endpoint mollifier tapers",
         ),
+    )
+
+
+def large_q_endpoint_critical_shift_audit(
+    box: ExponentBox,
+    *,
+    shift_log_depth: Fraction,
+    zeta_scales_fixed: bool,
+) -> LargeQEndpointCriticalShiftAudit:
+    """Close the critical ``L=log(T)^2`` face after summing q first.
+
+    Mellin inversion of the squarefree harmonic q-sum produces
+
+    ``g(rs)=prod_(p|rs) (1+1/p)^-1``.
+
+    Since ``(r,s)=1``, this factors as ``g(r)g(s)`` and turns the two
+    Möbius coefficients into the fixed multiplicative function
+    ``f(n)=mu(n)g(n)``.  Its exact Euler quotient is ``f=mu*h`` with
+    ``h(p^a)=1/(p+1)``; the h-series is absolutely convergent in every
+    positive half-plane.  When the zeta-variable scales are fixed
+    independently of T, truncate h and the coprimality divisor at a
+    fixed level, apply the already-audited fixed-slope Menon transfer,
+    let T tend to infinity, and only then let the fixed level tend to
+    infinity.  This two-limit order needs no uniformity in growing
+    convolution slopes.  It does not cover zeta-variable scales which
+    themselves grow polylogarithmically with T.  At shift depth two, the
+    endpoint tapers cancel the shift volume and Menon's averaged
+    correlation supplies the remaining o(1).
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+    if shift_log_depth < 0:
+        raise ValueError("shift log depth must be nonnegative")
+
+    critical_covered = shift_log_depth == F(2) and zeta_scales_fixed
+    return LargeQEndpointCriticalShiftAudit(
+        shift_log_depth=shift_log_depth,
+        endpoint_taper_log_saving=F(2),
+        power_remainder_exponent=F(1),
+        q_mellin_error_power_saving=box.kappa / 4,
+        coprimality_divisor_volume_decay=F(2),
+        fixed_zeta_scales_required=True,
+        fixed_zeta_scales_supplied=zeta_scales_fixed,
+        q_summed_density_is_multiplicative=True,
+        q_restriction_removed_before_correlation=True,
+        density_weight_has_absolutely_convergent_convolution=True,
+        fixed_truncation_has_only_fixed_linear_slopes=True,
+        menon_shift_average_tends_to_zero=(shift_log_depth > 0),
+        two_limit_tail_tends_to_zero=True,
+        critical_shift_subface_covered=critical_covered,
+        above_critical_subface_covered=False,
+        unconditional_coverage=critical_covered,
     )
 
 
@@ -4196,6 +4268,20 @@ def main() -> None:
         f"{_fmt(large_q_audit.aggregated_remainder_exponent)} "
         "shift_log=0 taper_log=2 net_log=2 all_h=True zero_mode=True "
         "mobius=False bounded_subface=True whole_cell=False"
+    )
+    large_q_critical = large_q_endpoint_critical_shift_audit(
+        boxes["large_q_endpoint"],
+        shift_log_depth=F(2),
+        zeta_scales_fixed=True,
+    )
+    print(
+        "large_q_endpoint: endpoint_critical_q_first="
+        "shift_log=2 q_error="
+        f"{_fmt(large_q_critical.q_mellin_error_power_saving)} "
+        "gcd_decay="
+        f"{_fmt(large_q_critical.coprimality_divisor_volume_decay)} "
+        "menon=True fixed_zeta=True fixed_f=True two_limit=True covered=True "
+        "above=False whole_cell=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

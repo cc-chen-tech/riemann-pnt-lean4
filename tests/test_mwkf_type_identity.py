@@ -22,6 +22,9 @@ from scripts.mwkf_mobius_type_identity import (
     determinant_line_coprimality_residue,
     determinant_lattice_solution,
     determinant_slope_square_coordinates,
+    endpoint_density_convolution_coefficient,
+    endpoint_q_density,
+    endpoint_weighted_mobius,
     mobius,
     poisson_congruence_reparametrization,
     split_mobius_identity,
@@ -333,6 +336,24 @@ def test_primitive_cross_determinant_cokernel_has_only_delta_characters() -> Non
 def test_determinant_cokernel_rejects_nonprimitive_rows() -> None:
     with pytest.raises(ValueError, match="primitive determinant rows"):
         determinant_cokernel_coordinates(r1=2, s1=4, r2=1, s2=3)
+
+
+def test_endpoint_q_density_turns_restricted_mobius_into_fixed_convolution() -> None:
+    """Verify f=mu*h for g(n)=prod_(p|n)(1+1/p)^(-1)."""
+    for n in range(1, 300):
+        convolution = sum(
+            F(mobius(n // divisor))
+            * endpoint_density_convolution_coefficient(divisor)
+            for divisor in type_identity.divisors(n)
+        )
+        assert convolution == endpoint_weighted_mobius(n)
+
+    for prime in (2, 3, 5, 7, 11, 13):
+        assert endpoint_q_density(prime) == F(prime, prime + 1)
+        for exponent in (1, 2, 3):
+            assert endpoint_density_convolution_coefficient(
+                prime**exponent
+            ) == F(1, prime + 1)
 
 
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:

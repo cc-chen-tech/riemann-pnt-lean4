@@ -1438,9 +1438,9 @@ for the smooth completion coefficient, and Section 4.12 supplies the
 remaining arithmetic uniformity.  Thus the strict subface (4.88) is
 covered.  Full published coverage remains false because
 \(\beta+\gamma\ge3/2\), the positive-power far shells, and the transform
-tail remain.  Apart from the bounded-zeta endpoint proved in Section 4.25
-below, \(q=T^\kappa\), \(\kappa>0\), boxes remain positive-power cells
-rather than part of this logarithmic adapter.
+tail remain.  Apart from the bounded-zeta endpoint subfaces proved in
+Sections 4.25--4.26 below, \(q=T^\kappa\), \(\kappa>0\), boxes remain
+positive-power cells rather than part of this logarithmic adapter.
 
 ### 4.11 Finite Fourier bounded-variation separation
 
@@ -3257,6 +3257,202 @@ global `route_box` deliberately does not promote the entire
 `endpoint_unpoisson_adapter` certifies (4.223) only after the shift log
 depth is supplied explicitly.
 
+### 4.26 Critical shift depth at fixed zeta scales via q-first Euler factorization
+
+The endpoint \(\lambda=2\) can also be included when the dyadic
+\(m_1,m_2\) ranges are fixed independently of \(T\), but only after
+summing \(q\) before applying the averaged Möbius correlation theorem.
+This subsection does not allow \(K\) or \(M\) to grow with \(T\), even
+polylogarithmically.  Insert a fixed smooth dyadic cutoff \(U(q/Q)\),
+\(Q\asymp T^2\), and define
+
+\[
+ \mathcal Q_{r,s}(Q)
+ :=\sum_{\substack{q\ge1\\(q,rs)=1}}
+ \frac{\mu(q)^2}{q}U(q/Q)p_N(qr)p_N(qs).
+\tag{4.224}
+\]
+
+The relevant Dirichlet series is exactly
+
+\[
+ \sum_{\substack{q\ge1\\(q,rs)=1}}
+ \frac{\mu(q)^2}{q^{1+z}}
+ =\frac{\zeta(1+z)}{\zeta(2+2z)}
+  \prod_{p\mid rs}(1+p^{-1-z})^{-1}.
+\tag{4.225}
+\]
+
+For \(Y=\log N\), set exactly
+
+\[
+ \mathcal A_{Q,U}(r,s):=
+ \int_0^\infty U(x)
+ \left(\log\frac{N}{Qrx}\right)_+
+ \left(\log\frac{N}{Qsx}\right)_+\frac{dx}{x}.
+\tag{4.226a}
+\]
+
+Apply Mellin inversion to the complete piecewise-smooth weight in
+(4.226a), splitting its two possible endpoint orders along \(r=s\).
+The Mellin contour may be shifted from \(\Re z>0\) to
+\(\Re z=-1/4\).  Only the pole at \(z=0\) is crossed; the denominator
+\(\zeta(2+2z)\) stays in \(\Re(2+2z)\ge3/2\).  Uniformly for
+\(r,s\asymp T\), the residue gives
+
+\[
+ \mathcal Q_{r,s}(Q)
+ =\frac{\mathfrak g(rs)}{\zeta(2)(\log N)^2}
+   \mathcal A_{Q,U}(r,s)
+ +O_{W,\varepsilon}(T^{-1/2+\varepsilon}),
+\tag{4.226}
+\]
+
+Here \(\mathcal A_{Q,U}\) and its normalized first mixed variations are
+uniformly bounded on each of the two endpoint-order regions, and
+
+\[
+ \boxed{
+ \mathfrak g(n)=\prod_{p\mid n}\left(1+\frac1p\right)^{-1}.}
+\tag{4.227}
+\]
+
+The error in (4.226), inserted into the absolute critical-shift count,
+is \(O(T^{1/2+\varepsilon}\mathscr L^2)=o(T)\).  The local factors on
+\(\Re z=-1/4\) cost only \(T^\varepsilon\), so this estimate is uniform
+in the primitive pair.
+
+Since the original support has \((r,s)=1\), (4.227) factors as
+\(\mathfrak g(rs)=\mathfrak g(r)\mathfrak g(s)\).  Put
+
+\[
+ f(n):=\mu(n)\mathfrak g(n).
+\tag{4.228}
+\]
+
+This is one fixed multiplicative function, independent of \(q\).  Its
+Euler product has the exact factorization
+
+\[
+ \sum_{n\ge1}\frac{f(n)}{n^z}
+ =\frac{H(z)}{\zeta(z)},
+ \qquad
+ H_p(z)=1+\frac1{p+1}\sum_{a\ge1}p^{-az}.
+\tag{4.229}
+\]
+
+Equivalently,
+
+\[
+ \boxed{f=\mu*h,\qquad h(p^a)=\frac1{p+1}\quad(a\ge1),}
+\tag{4.230}
+\]
+
+and, for every fixed \(\sigma>0\),
+
+\[
+ \sum_{n\ge1}\frac{|h(n)|}{n^\sigma}<\infty.
+\tag{4.231}
+\]
+
+The finite helper functions `endpoint_q_density`,
+`endpoint_density_convolution_coefficient`, and
+`endpoint_weighted_mobius` verify (4.227)--(4.230) exactly on integer
+fixtures; (4.231) follows from
+\(\sum_p p^{-1-\sigma}<\infty\).
+
+It remains to transfer Menon's fixed-slope estimate from \(\mu\) to
+\(f\) without assuming uniformity in growing convolution slopes.  First
+truncate the two copies of \(h\) in (4.230) and the divisor expansion of
+\(\mathbf1_{(r,s)=1}\) at a fixed integer \(D\).  For fixed \(D\), and
+because the ranges of \(m_1,m_2\) are fixed independently of \(T\), the
+equation \(m_1s-m_2r=\delta\) becomes a finite collection of correlations
+of two fixed integral linear forms.  Smooth partial summation transfers
+the bounded-variation factor \(\mathcal A_{Q,U}\).  The proved
+fixed-slope consequence (4.87) of Menon's theorem therefore applies to
+every term.
+
+Next let \(T\to\infty\) with \(D\) fixed.  Only after obtaining the
+resulting \(o_D(1)\) factor let \(D\to\infty\).  The \(h\)-tails vanish
+by the following explicit estimate.  If
+
+\[
+ H_D(n):=\sum_{\substack{a\mid n\\a>D}}|h(a)|,
+\]
+
+then, for every fixed \(0<\sigma<1\),
+
+\[
+ \frac1X\sum_{X<n\le2X}H_D(n)
+ \le \sum_{a>D}\frac{|h(a)|}{a}
+ +2^\sigma X^{\sigma-1}
+   \sum_{a\ge1}\frac{|h(a)|}{a^\sigma}.
+\tag{4.231a}
+\]
+
+The first term tends to zero with \(D\), and the second tends to zero
+with \(X\) for fixed \(D\).  Triangle inequality followed by
+Cauchy--Schwarz transfers (4.231a) to either factor in the averaged
+fixed-slope correlation.
+
+For the coprimality tail, fix nonzero shifts \(1\le|\delta|\le L\).
+The simultaneous dilation
+\(r=dr',s=ds',\delta=d\delta'\) forces \(d\le L\).  Directly counting
+the resulting affine lines gives, for fixed nonzero \(m_1,m_2\),
+
+\[
+ \frac1{XL}
+ \sum_{\substack{r,s\asymp X\\
+          1\le|m_1s-m_2r|\le L}}
+ \sum_{\substack{d\mid(r,s)\\d>D}}1
+ \ll_{m_1,m_2}
+ \sum_{d>D}\frac1{d^2}+\frac{\log(2L)}{L}.
+\tag{4.231b}
+\]
+
+Thus the coprimality tail also vanishes in the order
+\(T\to\infty\), then \(D\to\infty\).  These two inequalities make the
+two-limit argument independent of any theorem whose slopes grow with
+\(T\).
+
+For \(L=\mathscr L^2\), Menon's factor is
+
+\[
+ E(T,L)^{1/2}
+ =\left(
+   \frac{\log\log L}{\log L}
+   +\frac{(\log\log T)^2}{\log T}
+  \right)^{1/2}=o(1).
+\tag{4.232}
+\]
+
+Combining (4.226), the two endpoint tapers, inverse Poisson as in
+(4.213), and the two-limit transfer gives
+
+\[
+ \boxed{
+ \mathcal R_{\mathrm{large}\ q,\lambda=2}
+ \ll_W T E(T,\mathscr L^2)^{1/2}+o_W(T)=o_W(T).}
+\tag{4.233}
+\]
+
+Therefore the fixed-\(K,M\) bounded-zeta shift subface is now
+\(0\le\lambda\le2\).  If \(\lambda>2\), the positive factor
+\(\mathscr L^{\lambda-2}\) cannot be absorbed by (4.232).  If \(K\) or
+\(M\) grows polylogarithmically, the slopes in the correlation also grow
+and the fixed-slope transfer above is not uniform.  Both families remain
+residual.  As before, the exponent-only router does not promote the whole
+large-q cell.
+
+The adapter `large_q_endpoint_critical_shift_audit` records the
+\(T^{-1/2}\) Mellin error, the \(d^{-2}\) coprimality tail, the fixed
+convolution (4.230), and the two-limit order.  It sets
+`q_restriction_removed_before_correlation=True` and
+`fixed_zeta_scales_required=True`.  Only when that hypothesis is
+supplied does it set `critical_shift_subface_covered=True`; it leaves
+every \(\lambda>2\) cell and every growing-zeta-scale critical cell
+uncovered.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
@@ -3329,9 +3525,12 @@ Sections 4.9--4.12 now unconditionally cover the endpoint logarithmic
 subface \(\beta+\gamma<3/2\), with the larger range
 \(\beta+\gamma<2\) in the unit-slope sector.  The completion coefficient,
 fixed slopes, coprimality, and polylogarithmic character twists are no
-longer residual hypotheses.  Section 4.25 also covers the large-q
-bounded-zeta subface with shift log depth \(\lambda<2\); the deeper
-polylogarithmic part of that exponent cell remains residual.
+longer residual hypotheses.  Sections 4.25--4.26 also cover the large-q
+bounded-zeta subface with shift log depth \(\lambda<2\) for fixed
+polylogarithmic zeta-scale exponents, and the critical depth
+\(\lambda=2\) when \(K,M\) are fixed independently of \(T\).  The
+critical growing-\(K,M\) family and the deeper polylogarithmic part of
+that exponent cell remain residual.
 
 The next slice must address the remaining regions in this order:
 

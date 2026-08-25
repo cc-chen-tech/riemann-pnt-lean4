@@ -248,6 +248,51 @@ def divisors(n: int) -> tuple[int, ...]:
     return tuple(small + list(reversed(large)))
 
 
+def _distinct_prime_factors(n: int) -> tuple[int, ...]:
+    if n <= 0:
+        raise ValueError("factorization input must be positive")
+    factors: list[int] = []
+    candidate = 2
+    remainder = n
+    while candidate * candidate <= remainder:
+        if remainder % candidate == 0:
+            factors.append(candidate)
+            while remainder % candidate == 0:
+                remainder //= candidate
+        candidate += 1
+    if remainder > 1:
+        factors.append(remainder)
+    return tuple(factors)
+
+
+def endpoint_q_density(n: int) -> Fraction:
+    """Return ``prod_(p|n) (1+1/p)^-1`` exactly."""
+    density = Fraction(1)
+    for prime in _distinct_prime_factors(n):
+        density *= Fraction(prime, prime + 1)
+    return density
+
+
+def endpoint_density_convolution_coefficient(n: int) -> Fraction:
+    """Coefficient ``h(n)`` in ``mu(n)*g(n)=(mu*h)(n)``.
+
+    The local factor is ``h(1)=1`` and
+    ``h(p^a)=1/(p+1)`` for every prime power with ``a>=1``.  Hence
+    ``sum |h(n)| n^-sigma`` converges for every ``sigma>0``.
+    """
+    coefficient = Fraction(1)
+    for prime in _distinct_prime_factors(n):
+        coefficient *= Fraction(1, prime + 1)
+    return coefficient
+
+
+def endpoint_weighted_mobius(n: int) -> Fraction:
+    """The fixed multiplicative weight left after endpoint q-summation."""
+    if n <= 0:
+        raise ValueError("endpoint weighted Mobius input must be positive")
+    return Fraction(mobius(n)) * endpoint_q_density(n)
+
+
 def c_u(a: int, cutoff_u: int) -> int:
     return sum(mobius(d) for d in divisors(a) if d <= cutoff_u)
 

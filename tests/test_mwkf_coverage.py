@@ -361,6 +361,55 @@ def test_large_q_bounded_zeta_endpoint_is_covered_after_unpoisson() -> None:
     assert not route.applicable
 
 
+def test_large_q_critical_shift_closes_after_q_first_menon_transfer() -> None:
+    """At lambda=2, q-first Euler factorization leaves one fixed f=mu*h."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_endpoint_critical_shift_audit",
+        None,
+    )
+    assert adapter is not None, "large-q critical-shift audit is missing"
+    box = boundary_witnesses()["large_q_endpoint"]
+    audit = adapter(
+        box,
+        shift_log_depth=F(2),
+        zeta_scales_fixed=True,
+    )
+
+    assert audit.shift_log_depth == F(2)
+    assert audit.endpoint_taper_log_saving == F(2)
+    assert audit.power_remainder_exponent == F(1)
+    assert audit.q_mellin_error_power_saving == F(1, 2)
+    assert audit.coprimality_divisor_volume_decay == F(2)
+    assert audit.fixed_zeta_scales_required
+    assert audit.fixed_zeta_scales_supplied
+    assert audit.q_summed_density_is_multiplicative
+    assert audit.q_restriction_removed_before_correlation
+    assert audit.density_weight_has_absolutely_convergent_convolution
+    assert audit.fixed_truncation_has_only_fixed_linear_slopes
+    assert audit.menon_shift_average_tends_to_zero
+    assert audit.two_limit_tail_tends_to_zero
+    assert audit.critical_shift_subface_covered
+    assert not audit.above_critical_subface_covered
+    assert audit.unconditional_coverage
+
+    growing_zeta = adapter(
+        box,
+        shift_log_depth=F(2),
+        zeta_scales_fixed=False,
+    )
+    assert not growing_zeta.critical_shift_subface_covered
+    assert not growing_zeta.unconditional_coverage
+
+    above = adapter(
+        box,
+        shift_log_depth=F(2001, 1000),
+        zeta_scales_fixed=True,
+    )
+    assert not above.critical_shift_subface_covered
+    assert not above.unconditional_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1616,6 +1665,12 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "mobius=False bounded_subface=True whole_cell=False"
     ) in output
     assert (
+        "large_q_endpoint: endpoint_critical_q_first="
+        "shift_log=2 q_error=1/2 gcd_decay=2 menon=True "
+        "fixed_zeta=True fixed_f=True two_limit=True covered=True "
+        "above=False whole_cell=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -1931,5 +1986,17 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"0\le\lambda<2",
         "does not promote the entire",
         "unconditional_coverage=True",
+        "### 4.26 Critical shift depth at fixed zeta scales via q-first Euler factorization",
+        r"\mathfrak g(n)=\prod_{p\mid n}\left(1+\frac1p\right)^{-1}",
+        r"f=\mu*h",
+        r"h(p^a)=\frac1{p+1}",
+        r"\sum_{n\ge1}\frac{|h(n)|}{n^\sigma}<\infty",
+        r"H_D(n):=\sum_{\substack{a\mid n\\a>D}}|h(a)|",
+        r"\sum_{d>D}\frac1{d^2}+\frac{\log(2L)}{L}",
+        r"\lambda=2",
+        "q_restriction_removed_before_correlation=True",
+        "fixed_zeta_scales_required=True",
+        "large_q_endpoint_critical_shift_audit",
+        "critical_shift_subface_covered=True",
     ):
         assert marker in text
