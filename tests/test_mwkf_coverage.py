@@ -750,6 +750,39 @@ def test_transition_type_ii_uses_the_minimal_lcm_b_conductor() -> None:
         assert not audit.published_coverage
 
 
+def test_long_cutoff_mobius_trace_route_keeps_a_positive_power_gap() -> None:
+    """Two optimistic logarithmic trace savings cannot replace T^(501/500)."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_long_cutoff_mobius_trace_audit",
+        None,
+    )
+    assert adapter is not None, "long-cutoff trace adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    audit = adapter(
+        transition_box,
+        cutoff_gap_exponent=F(1, 10),
+        b_exponent=F(1, 20),
+    )
+
+    assert audit.cutoff_exponent == F(9, 10)
+    assert audit.a_exponent == F(19, 20)
+    assert audit.short_reflected_divisor_exponent == F(1, 20)
+    assert audit.trace_length_over_sqrt_modulus_margin == F(9, 20)
+    assert audit.ambient_unsquared_exponent == F(3)
+    assert audit.fixed_type_ii_target_exponent == F(999, 500)
+    assert audit.remaining_power_deficit_after_two_log_savings == F(501, 500)
+    assert audit.squarefree_reflection_identity_exact
+    assert audit.published_theorem_requires_prime_modulus
+    assert not audit.all_actual_moduli_are_prime
+    assert not audit.nonexceptional_trace_hypothesis_uniform
+    assert not audit.two_logarithmic_savings_close_power_target
+    assert not audit.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2084,6 +2117,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "covered=False"
     ) in output
     assert (
+        "large_q_transition: long_cutoff_mobius_trace="
+        "eta=1/10,beta=1/20,U=9/10,a=19/20,reflected=1/20,"
+        "trace_margin=9/20,ambient=3,target=999/500,"
+        "power_deficit=501/500 identity=True prime_modulus=False "
+        "nonexceptional_uniform=False two_logs_close=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2472,5 +2512,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\frac{314}{375}",
         "arXiv:2607.24311v1, Theorem 5.7",
         "transition_type_ii_lcm_completion_audit",
+        "### 4.37 Long-cutoff Möbius trace route has only logarithmic saving",
+        "arXiv:1804.01337v2, Theorem 2.1",
+        r"\frac{501}{500}",
+        "transition_long_cutoff_mobius_trace_audit",
     ):
         assert marker in text

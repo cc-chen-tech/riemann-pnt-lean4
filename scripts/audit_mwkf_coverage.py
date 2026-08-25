@@ -401,6 +401,27 @@ class TransitionTypeIILcmCompletionAudit:
 
 
 @dataclass(frozen=True)
+class TransitionLongCutoffMobiusTraceAudit:
+    cutoff_gap_exponent: Fraction
+    cutoff_exponent: Fraction
+    b_exponent: Fraction
+    a_exponent: Fraction
+    short_reflected_divisor_exponent: Fraction
+    trace_modulus_exponent: Fraction
+    trace_length_over_sqrt_modulus_margin: Fraction
+    ambient_unsquared_exponent: Fraction
+    fixed_type_ii_target_exponent: Fraction
+    remaining_power_deficit_after_two_log_savings: Fraction
+    squarefree_reflection_identity_exact: bool
+    published_theorem_requires_prime_modulus: bool
+    all_actual_moduli_are_prime: bool
+    nonexceptional_trace_hypothesis_uniform: bool
+    two_logarithmic_savings_close_power_target: bool
+    published_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2090,6 +2111,59 @@ def transition_type_ii_lcm_completion_audit(
         squarefree_coprime_b_weight_is_smooth=False,
         blomer_pascadi_adapter_closes=False,
         published_coverage=False,
+    )
+
+
+def transition_long_cutoff_mobius_trace_audit(
+    box: ExponentBox,
+    *,
+    cutoff_gap_exponent: Fraction,
+    b_exponent: Fraction,
+) -> TransitionLongCutoffMobiusTraceAudit:
+    """Audit a long cutoff followed by Möbius--trace orthogonality.
+
+    Put U=T^(rho-eta), r=a*b, and beta<=eta.  On squarefree support,
+    complementing the divisor sum writes c_U(a) as -mu(a) times a
+    divisor sum of reflected length T^(eta-beta).  Korolev--Shparlinski
+    Theorem 2.1 supplies only a log-log over log saving, even when its
+    prime-modulus and nonexceptional hypotheses are granted.  Two such
+    optimistic logarithmic savings do not alter the positive power gap
+    between the ambient transition sum and the fixed Type-II target.
+    """
+    if not _is_large_q_afe_transition_face(box):
+        raise ValueError("box is not on the large-q AFE transition face")
+    if cutoff_gap_exponent <= 0 or cutoff_gap_exponent >= box.rho:
+        raise ValueError("cutoff gap must lie in (0,rho)")
+    if b_exponent < 0 or b_exponent > cutoff_gap_exponent:
+        raise ValueError("b exponent must lie in [0,cutoff gap]")
+
+    cutoff_exponent = box.rho - cutoff_gap_exponent
+    a_exponent = box.rho - b_exponent
+    reflected = cutoff_gap_exponent - b_exponent
+    trace_modulus = box.sigma
+    trace_margin = a_exponent - trace_modulus / 2
+    ambient = box.rho + box.sigma + box.ell + box.h
+    fixed_target = box.rho + box.sigma - F(1, 500)
+    power_deficit = ambient - fixed_target
+
+    return TransitionLongCutoffMobiusTraceAudit(
+        cutoff_gap_exponent=cutoff_gap_exponent,
+        cutoff_exponent=cutoff_exponent,
+        b_exponent=b_exponent,
+        a_exponent=a_exponent,
+        short_reflected_divisor_exponent=reflected,
+        trace_modulus_exponent=trace_modulus,
+        trace_length_over_sqrt_modulus_margin=trace_margin,
+        ambient_unsquared_exponent=ambient,
+        fixed_type_ii_target_exponent=fixed_target,
+        remaining_power_deficit_after_two_log_savings=power_deficit,
+        squarefree_reflection_identity_exact=True,
+        published_theorem_requires_prime_modulus=True,
+        all_actual_moduli_are_prime=False,
+        nonexceptional_trace_hypothesis_uniform=False,
+        two_logarithmic_savings_close_power_target=False,
+        published_coverage=False,
+        source="Korolev--Shparlinski, arXiv:1804.01337v2, Theorem 2.1",
     )
 
 
@@ -5016,6 +5090,18 @@ def main() -> None:
         "remain=3637/3000,bp_loss=5/16 "
         "lcm_phase=True smooth_b=False b_closes=False bp_closes=False "
         "covered=False"
+    )
+    transition_long_trace = transition_long_cutoff_mobius_trace_audit(
+        transition_box,
+        cutoff_gap_exponent=F(1, 10),
+        b_exponent=F(1, 20),
+    )
+    print(
+        "large_q_transition: long_cutoff_mobius_trace="
+        "eta=1/10,beta=1/20,U=9/10,a=19/20,reflected=1/20,"
+        "trace_margin=9/20,ambient=3,target=999/500,"
+        "power_deficit=501/500 identity=True prime_modulus=False "
+        "nonexceptional_uniform=False two_logs_close=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

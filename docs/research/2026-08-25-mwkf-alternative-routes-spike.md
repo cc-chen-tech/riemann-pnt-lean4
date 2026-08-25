@@ -4631,6 +4631,92 @@ lcm conductor, the boundary (4.308), the dual length, the nonsmooth
 squarefree-coprime \(b\)-weight, and the Blomer--Pascadi loss.  It keeps
 published_coverage=False.
 
+### 4.37 Long-cutoff Möbius trace route has only logarithmic saving
+
+One can retain a genuine second long Möbius weight by moving the
+factorization cutoff close to the transition length.  Let
+
+\[
+ U=T^{1-\eta},\qquad r=ab,\qquad
+ b\asymp T^\beta,\quad a\asymp T^{1-\beta},
+ \qquad 0\le\beta\le\eta<\frac12.
+\tag{4.310}
+\]
+
+If \(a>U\) is squarefree, complete divisor cancellation gives
+
+\[
+\begin{aligned}
+ c_U(a)
+ &= -\sum_{\substack{d\mid a\\d>U}}\mu(d)\\
+ &= \boxed{-\mu(a)
+ \sum_{\substack{e\mid a\\e<a/U}}\mu(e)}.
+\end{aligned}
+\tag{4.311}
+\]
+
+The second equality uses \(d=a/e\) and
+\(\mu(a)=\mu(d)\mu(e)\).  The reflected divisor has length
+
+\[
+ e<T^{\eta-\beta}.
+\tag{4.312}
+\]
+
+Thus (4.294) becomes a short divisor sum whose long variables carry
+\(\mu(a)\mu(s)\), a genuine improvement over arbitrary coefficients.
+
+For a prime modulus \(s\asymp T\), fixed \(b,n\), and
+\((n,s)=1\), the function
+
+\[
+ a\longmapsto e(-n\overline{ab}/s)
+\tag{4.313}
+\]
+
+is a bounded-conductor nonexceptional trace function.
+Korolev--Shparlinski, arXiv:1804.01337v2, Theorem 2.1, proves, for
+interval length \(A\ge s^{1/2+\varepsilon_0}\),
+
+\[
+ \sum_{a\le A}\mu(a)K(a)
+ \ll_{\varepsilon_0}
+ A\frac{\log\log s}{\log s}.
+\tag{4.314}
+\]
+
+The long cutoff lies in that range when
+\(\beta<1/2-\varepsilon_0\).  But (4.314) supplies only one logarithm.
+The transition sum before cancellation has exponent
+
+\[
+ \underbrace{\beta+(1-\beta)}_{r}
+ +\underbrace{1}_{s}
+ +\underbrace{(1/2+1/2)}_{h,\delta}
+ =3.
+\tag{4.315}
+\]
+
+The fixed Type-II target is \(T^{2-1/500+\varepsilon}\).  Even granting
+two independent copies of (4.314), one for each long Möbius variable,
+leaves the positive power deficit
+
+\[
+ \boxed{3-\left(2-\frac1{500}\right)
+ =\frac{501}{500}.}
+\tag{4.316}
+\]
+
+This optimistic comparison also suppresses two actual hypothesis
+failures: \(s\) runs over all squarefree composite moduli, not only
+primes, and \(s\mid n\) gives an exceptional constant phase.  Therefore
+the theorem is neither a direct adapter nor numerically sufficient.
+
+The adapter transition_long_cutoff_mobius_trace_audit records
+(4.310)--(4.316), including the reflected divisor length, trace-range
+margin, prime-modulus failure, and the remaining \(501/500\) power.  It
+keeps published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

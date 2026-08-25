@@ -63,6 +63,20 @@ def test_exact_mobius_type_split_for_all_small_integers() -> None:
             assert lhs == -(type_i + type_ii)
 
 
+def test_long_cutoff_coefficient_reflects_to_short_divisors() -> None:
+    """On squarefree support, c_U(a) is -mu(a) times the reflected sum."""
+    for a in range(2, 120):
+        if mobius(a) == 0:
+            continue
+        for cutoff in range(1, a):
+            reflected = sum(
+                mobius(e)
+                for e in type_identity.divisors(a)
+                if e * cutoff < a
+            )
+            assert c_u(a, cutoff) == -mobius(a) * reflected
+
+
 def test_exact_double_mobius_split_has_four_sectors() -> None:
     for cutoff in range(1, 6):
         for r in range(cutoff + 1, 30):
