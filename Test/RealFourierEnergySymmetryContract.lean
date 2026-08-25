@@ -1,0 +1,8 @@
+import MathlibAux.RealFourierEnergySymmetry
+
+open MathlibAux
+
+#check fourier_neg_eq_conj_of_conj_eq_self
+#check normSq_fourier_even_of_conj_eq_self
+#check integral_abs_sublevel_eq_two_mul_Ioc_of_even
+#check integral_abs_superlevel_eq_two_mul_Ioi_of_even

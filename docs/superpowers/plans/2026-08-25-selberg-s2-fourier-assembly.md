@@ -48,11 +48,11 @@
 - Consumes: real-valuedness of `selbergCompletedMollifiedFComplex` and `selbergFourierLp_ae_eq_sqrt_mul_explicitKernel`.
 - Produces: even Fourier norm-square energy and exact low/high substitutions under `y = 2*pi*w`.
 
-- [ ] Write the failing contracts and verify RED.
-- [ ] Prove `fourier F (-w) = conj (fourier F w)` for integrable real-valued complex `F`.
-- [ ] Split the symmetric low/high sets into positive and negative halves, discarding only null endpoints.
-- [ ] Prove the low Jacobian cancels `2*pi`, while the weighted high term gains exactly `4*pi^2`.
-- [ ] Verify GREEN.
+- [x] Write the failing contracts and verify RED.
+- [x] Prove `fourier F (-w) = conj (fourier F w)` for integrable real-valued complex `F`.
+- [x] Split the symmetric low/high sets into positive and negative halves, discarding only null endpoints.
+- [x] Prove the low Jacobian cancels `2*pi`, while the weighted high term gains exactly `4*pi^2`.
+- [x] Verify GREEN.
 
 ### Task 3: Genuine sliding-window S2 bound
 

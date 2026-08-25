@@ -2517,8 +2517,27 @@ The first assembly layer is now formalized in
 `|R+N|^2 <= 2|R|^2+2|N|^2`, supplies genuine integrability for both pieces
 on the low and weighted-high ranges, and combines their existential
 constants into the full explicit-kernel positive-frequency bounds.  The
-remaining S2 work is therefore exactly the real-Fourier reflection, the
-`2*pi` change of variables, and the final sliding-energy instantiation.
+The second layer is also formalized.  The reusable module
+`RealFourierEnergySymmetry.lean` proves conjugate reflection for the Fourier
+transform of a real-valued complex function and exact two-sided integral
+splittings.  `SelbergFourierEnergyTransport.lean` then proves
+
+\[
+ \int_{|w|\le A}|\widehat F(w)|^2\,dw
+ =2\int_0^{2\pi A}|f(y)|^2\,dy
+\]
+
+and
+
+\[
+ \int_{A<|w|}\frac{|\widehat F(w)|^2}{w^2}\,dw
+ =8\pi^2\int_{2\pi A}^{\infty}\frac{|f(y)|^2}{y^2}\,dy.
+\]
+
+These identities are proved for the actual Mathlib `L2` Fourier
+representative by first identifying it almost everywhere with the classical
+transform.  Thus the remaining S2 work is now only the final
+sliding-energy instantiation and parameter absorption.
 Only after that assembly is checked do S3--S5 begin.
 Thus the Lean development has not yet proved the final Selberg
 positive-proportion theorem, despite the unconditional paper-level route
