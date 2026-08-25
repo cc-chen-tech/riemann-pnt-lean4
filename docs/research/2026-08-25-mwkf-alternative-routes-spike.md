@@ -12157,6 +12157,209 @@ square.  The adapter `strict_power_convolution_kloosterman_audit` records
 (4.786)--(4.795), with both published routes false and
 `near_frequency_type_ii_proved=False`.
 
+### 4.103 The inherited ratio-Mellin kernel has zero power bandwidth
+
+It remains to check whether the ratio variables retained in
+\(d\nu(\eta)\) can make the invisible \(u_0,v_0\) fibres in (4.794a)
+orthogonal before Cauchy.  The exact height phase does not supply such a
+coordinate.  Put
+
+\[
+ z=\frac{\Delta}{m_2r},\qquad
+ \Theta(t;m_2,r,\Delta)=t\log(1+z).
+\]
+
+On the core (5.4), (5.5), and (5.8), \(t\in[T,2T]\) and
+
+\[
+ |z|\leq\frac{32\mathscr L^B}{T},\qquad
+ \partial_{\log r}\Theta
+ =-\frac{tz}{1+z}.
+\tag{4.796}
+\]
+
+For \(T\) large enough that \(|z|\leq1/2\), repeated application of
+\(z\partial_z\) gives, for every fixed \(j\geq1\),
+
+\[
+ \boxed{
+  \left|\partial_{\log r}^{\,j}\Theta\right|
+  +\left|\partial_{\log m_2}^{\,j}\Theta\right|
+  \leq C_j\mathscr L^B.}
+\tag{4.797}
+\]
+
+The other ratio-dependent factors are fixed-support dyadic cutoffs and
+the Schwartz transforms created by the two exact Poisson steps.  Hence,
+for each resulting one-dimensional ratio kernel \(F_T(y)\), its inherited
+seminorms satisfy
+
+\[
+ \|F_T^{(j)}\|_{L^1(\mathbb R)}
+ \leq C_{j,W}\mathscr L^{C_{j,W}},
+\]
+
+and integration by parts in \(y\) gives
+
+\[
+ \boxed{
+ |\widehat F_T(\tau)|
+ \leq C_{J,W}\mathscr L^{C_{J,W}}(1+|\tau|)^{-J}.}
+\tag{4.798}
+\]
+
+In particular, for every fixed \(\eta>0,A\geq0,D>0\), choosing \(J\)
+after \((\eta,A,D,W)\) yields
+
+\[
+ \boxed{
+ \int_{|\tau|>T^\eta}(1+|\tau|)^A
+       |\widehat F_T(\tau)|\,d\tau
+ \ll_{\eta,A,D,W}T^{-D}.}
+\tag{4.799}
+\]
+
+Thus the ratio-Mellin frequency has exact power exponent zero.  This is
+also the reason that the \(T\tau\) occurring in the separately scaled
+transverse inversion (4.560) cannot be counted as a second bandwidth:
+there \(\tau\) is dual to \(T(\log x-\log y)\), and that scaling already
+reconstructs the determinant window.  It is not the unscaled divisor-ratio
+frequency in (4.747)--(4.749).
+
+On the strict-power cell (4.781), the two hidden fibres have lengths
+
+\[
+ U_0=T^{s/2-r_1},\qquad V_0=T^{s/2-r_2}.
+\]
+
+Changing one integer in the first fibre changes its logarithm by
+\(T^{-(s/2-r_1)}\) up to a fixed factor.  A Mellin character needs
+\(|\tau|=T^{s/2-r_1}\) to resolve that spacing, and similarly needs
+\(|\upsilon|=T^{s/2-r_2}\) on the second fibre.  Formula (4.799) removes
+both ranges whenever the corresponding exponent is positive.  Their
+total unresolved exponent is
+
+\[
+ \left(\frac s2-r_1\right)+\left(\frac s2-r_2\right)
+ =s-\delta-\theta=\gamma-\theta.
+\tag{4.800}
+\]
+
+At the hard vertex this total is zero, so there is no hidden fibre to
+resolve, but (4.794a) still has the independent deficit \(\delta=1\).
+Therefore ratio bandwidth neither repairs the grouped Cauchy diagonal on
+the interior nor supplies the missing saving at the vertex.  The only
+remaining admissible interface is still a pre-Cauchy estimate for the
+joint physical kernel.  The adapter
+`strict_power_ratio_mellin_bandwidth_audit` records power bandwidth zero,
+the two exact fibre exponents, and
+`ratio_mellin_supplies_required_delta_saving=False`.
+
+### 4.104 Double Poisson exposes a resonance but absolute summation enlarges the deficit
+
+The first actual second coordinate comes from Poisson summation in both
+reduced slopes, not from ratio Mellin inversion.  Fix \(r,t\) in (4.787),
+put
+
+\[
+ A_0=T^{\delta-r_1},\qquad B_0=T^{\delta-r_2},
+ \qquad H=T^\delta,
+\]
+
+and use the Fourier convention in (4.558).  For fixed smooth weights
+\(U,V,w\), ordinary Poisson summation gives the exact identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{a_0,b_0}U(a_0/A_0)V(b_0/B_0)
+   w\!\left(\frac{ra_0-tb_0}{H}\right)\\
+ &\quad=A_0B_0\sum_{k,l\in\mathbb Z}
+   \int_{\mathbb R}\widehat w(\eta)
+   \widehat U\!\left(A_0\left(k-\frac{\eta r}{H}\right)\right)
+   \widehat V\!\left(B_0\left(-l+\frac{\eta t}{H}\right)\right)
+   \,d\eta .
+ \end{aligned}}
+\tag{4.801}
+\]
+
+The signs in (4.801) use the relabeling \(l\mapsto-l\) in the second
+Poisson sum.  Since
+
+\[
+ rA_0\asymp tB_0\asymp T^{1+\delta},
+\]
+
+the two transform bumps have a common \(\eta\)-width \(T^{-1}\), up to
+the already budgeted Schwartz tails.  Their central frequencies and the
+integer resonance have scales
+
+\[
+ \boxed{
+ \begin{array}{c|ccc}
+  \text{variable}&k&l&n:=kt-lr\\ \hline
+  \log_T(\text{length})
+  &1+r_1-\delta&1+r_2-\delta&1+\theta.
+ \end{array}}
+\tag{4.802}
+\]
+
+Indeed, overlap in (4.801) implies
+
+\[
+ \left|\frac{kH}{r}-\frac{lH}{t}\right|
+ \ll_W T^{-1}\mathscr L^{O_W(1)},
+\]
+
+and clearing denominators gives
+
+\[
+ \boxed{|kt-lr|\ll_W T^{1+\theta}\mathscr L^{O_W(1)}.}
+\tag{4.803}
+\]
+
+The variable \(n=kt-lr\) is always an exact integer; (4.803) is only its
+Schwartz-effective range.  Dyadic subdivision in \(n\), together with the
+rapid transform tails, therefore gives an exact signed resonance family.
+
+This transform is not useful after absolute summation.  Including the
+\((d_1,d_2)\)-volume, the tuple count on the transformed side has exponent
+
+\[
+ (\delta+\theta)+2+(2-\delta+\theta)-1=3+2\theta.
+\]
+
+The Poisson amplitude \(A_0B_0\) has exponent \(\delta-\theta\), and the
+common \(\eta\)-overlap has exponent \(-1\).  Hence the transformed inner
+absolute exponent is
+
+\[
+ \boxed{
+ E_{\rm 2P,abs}=2+\delta+\theta,qquad
+ E_{\rm inner,raw}=1+2\delta,qquad
+ E_{\rm 2P,abs}-E_{\rm inner,raw}=1-\delta+\theta.}
+\tag{4.804}
+\]
+
+Restoring \((u_0,v_0,q)\), whose total exponent is \(\gamma\), gives
+
+\[
+ \boxed{
+ E_{\rm 2P,global}=2+s+\theta,qquad
+ E_{\rm target}=1+s,qquad
+ E_{\rm 2P,global}-E_{\rm target}=1+\theta.}
+\tag{4.805}
+\]
+
+Thus an absolute treatment of the resonance needs \(T^{1+\theta}\),
+whereas the original core needs \(T^\delta\).  The extra loss is exactly
+\(T^{1-\delta+\theta}\).  At the hard vertex this extra loss is zero, but
+the original \(T^1\) deficit remains.  Consequently the double-Poisson
+coordinate is retained only as a possible *signed pre-Cauchy* spectral
+interface; it supplies no unconditional box by itself.  The adapter
+`strict_power_double_poisson_resonance_audit` records (4.801)--(4.805) and
+keeps `absolute_double_poisson_route_covered=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

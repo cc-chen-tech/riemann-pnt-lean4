@@ -2521,6 +2521,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.786}",
         "\\tag{4.795}",
         "near_frequency_type_ii_proved=False",
+        "### 4.103 The inherited ratio-Mellin kernel has zero power bandwidth",
+        "\\tag{4.796}",
+        "\\tag{4.800}",
+        "ratio_mellin_supplies_required_delta_saving=False",
+        "### 4.104 Double Poisson exposes a resonance but absolute summation enlarges the deficit",
+        "\\tag{4.801}",
+        "\\tag{4.805}",
+        "absolute_double_poisson_route_covered=False",
     ):
         assert marker in note
 
@@ -2761,6 +2769,23 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "cross_centered=True,tuple_diagonal=11/5,grouped_diagonal=12/5,"
         "diagonal_target=2,grouped_deficit=2/5,grouped_raw=True,"
         "grouped_killed=False,near_type_ii=False"
+    ) in report
+    assert (
+        "large_q_transition: strict_power_ratio_mellin_bandwidth="
+        "u0=1/4,v0=3/20,hidden=2/5,height_derivative=0,"
+        "ratio_derivative=0,mellin_bandwidth=0,adjacent=1/4/3/20,"
+        "cauchy_deficit=2/5,rapid_tail=True,scaled_not_bandwidth=True,"
+        "second_coordinate=False,resolves_hidden=False,"
+        "supplies_delta=False,pre_cauchy=True"
+    ) in report
+    assert (
+        "large_q_transition: strict_power_double_poisson_resonance="
+        "a0=3/20,b0=1/20,r=5/4,t=27/20,k=17/20,l=19/20,"
+        "product=11/5,shift=6/5,amplitude=1/5,overlap=-1,"
+        "transformed_inner=13/5,original_inner=9/5,loss=4/5,"
+        "transformed_global=16/5,target=2,required=6/5,"
+        "identity=True,scales=True,loss_formula=True,covered=False,"
+        "pre_cauchy=True"
     ) in report
 
 
@@ -4104,6 +4129,95 @@ def test_strict_power_convolution_poisson_and_cauchy_ledgers_are_exact() -> None
     assert boundary.cauchy_grouped_diagonal_is_raw_scale
     assert not boundary.cauchy_grouped_diagonal_killed_by_centering
     assert boundary.hard_vertex_inverse_zeta_square_variance
+
+
+def test_strict_power_ratio_mellin_bandwidth_has_no_power_resolution() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "strict_power_ratio_mellin_bandwidth_audit",
+        None,
+    )
+    assert adapter is not None, "strict-power ratio-Mellin audit is missing"
+    audit = adapter(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    assert audit.left_hidden_fibre_exponent == F(1, 4)
+    assert audit.right_hidden_fibre_exponent == F(3, 20)
+    assert audit.total_hidden_fibre_exponent == F(2, 5)
+    assert audit.height_phase_log_derivative_power_exponent == 0
+    assert audit.ratio_weight_log_derivative_power_exponent == 0
+    assert audit.effective_mellin_frequency_power_exponent == 0
+    assert audit.left_adjacent_resolution_frequency_exponent == F(1, 4)
+    assert audit.right_adjacent_resolution_frequency_exponent == F(3, 20)
+    assert audit.mellin_power_tail_is_rapid
+    assert audit.scaled_T_tau_not_independent_bandwidth
+    assert not audit.height_phase_creates_second_power_coordinate
+    assert not audit.ratio_mellin_resolves_positive_hidden_fibres
+    assert not audit.ratio_mellin_supplies_required_delta_saving
+    assert audit.pre_cauchy_joint_kernel_still_required
+
+    hard_vertex = adapter(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(1),
+        quotient_exponent=F(0),
+        left_cross_gcd_exponent=F(1, 2),
+    )
+    assert hard_vertex.total_hidden_fibre_exponent == 0
+    assert hard_vertex.effective_mellin_frequency_power_exponent == 0
+    assert hard_vertex.ratio_mellin_resolves_positive_hidden_fibres
+    assert not hard_vertex.ratio_mellin_supplies_required_delta_saving
+    assert hard_vertex.remaining_cauchy_deficit_exponent == F(1)
+
+
+def test_strict_power_double_poisson_resonance_ledger_is_exact() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "strict_power_double_poisson_resonance_audit",
+        None,
+    )
+    assert adapter is not None, "strict-power double-Poisson audit is missing"
+    audit = adapter(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    assert audit.left_slope_exponent == F(3, 20)
+    assert audit.right_slope_exponent == F(1, 20)
+    assert audit.left_modulus_exponent == F(5, 4)
+    assert audit.right_modulus_exponent == F(27, 20)
+    assert audit.left_dual_exponent == F(17, 20)
+    assert audit.right_dual_exponent == F(19, 20)
+    assert audit.dual_side_product_exponent == F(11, 5)
+    assert audit.resonance_shift_exponent == F(6, 5)
+    assert audit.poisson_amplitude_exponent == F(1, 5)
+    assert audit.overlap_integral_exponent == F(-1)
+    assert audit.transformed_absolute_inner_exponent == F(13, 5)
+    assert audit.original_inner_raw_exponent == F(9, 5)
+    assert audit.absolute_transform_loss_exponent == F(4, 5)
+    assert audit.transformed_global_absolute_exponent == F(16, 5)
+    assert audit.global_target_exponent == F(2)
+    assert audit.transformed_required_saving_exponent == F(6, 5)
+    assert audit.resonance_identity_exact
+    assert audit.two_poisson_scales_exact
+    assert audit.absolute_transform_loss_is_one_minus_delta_plus_theta
+    assert not audit.absolute_double_poisson_route_covered
+    assert audit.pre_cauchy_signed_resonance_estimate_required
+
+    hard_vertex = adapter(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(1),
+        quotient_exponent=F(0),
+        left_cross_gcd_exponent=F(1, 2),
+    )
+    assert hard_vertex.left_dual_exponent == F(1, 2)
+    assert hard_vertex.right_dual_exponent == F(1, 2)
+    assert hard_vertex.absolute_transform_loss_exponent == 0
+    assert hard_vertex.transformed_required_saving_exponent == F(1)
+    assert not hard_vertex.absolute_double_poisson_route_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

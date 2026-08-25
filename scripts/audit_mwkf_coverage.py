@@ -1751,6 +1751,61 @@ class StrictPowerConvolutionKloostermanAudit:
 
 
 @dataclass(frozen=True)
+class StrictPowerRatioMellinBandwidthAudit:
+    collapsed_exponent: Fraction
+    cofactor_exponent: Fraction
+    quotient_exponent: Fraction
+    left_cross_gcd_exponent: Fraction
+    right_cross_gcd_exponent: Fraction
+    left_hidden_fibre_exponent: Fraction
+    right_hidden_fibre_exponent: Fraction
+    total_hidden_fibre_exponent: Fraction
+    height_phase_log_derivative_power_exponent: Fraction
+    ratio_weight_log_derivative_power_exponent: Fraction
+    effective_mellin_frequency_power_exponent: Fraction
+    left_adjacent_resolution_frequency_exponent: Fraction
+    right_adjacent_resolution_frequency_exponent: Fraction
+    remaining_cauchy_deficit_exponent: Fraction
+    mellin_power_tail_is_rapid: bool
+    scaled_T_tau_not_independent_bandwidth: bool
+    height_phase_creates_second_power_coordinate: bool
+    ratio_mellin_resolves_positive_hidden_fibres: bool
+    ratio_mellin_supplies_required_delta_saving: bool
+    pre_cauchy_joint_kernel_still_required: bool
+
+
+@dataclass(frozen=True)
+class StrictPowerDoublePoissonResonanceAudit:
+    collapsed_exponent: Fraction
+    cofactor_exponent: Fraction
+    gcd_exponent: Fraction
+    quotient_exponent: Fraction
+    left_cross_gcd_exponent: Fraction
+    right_cross_gcd_exponent: Fraction
+    left_slope_exponent: Fraction
+    right_slope_exponent: Fraction
+    left_modulus_exponent: Fraction
+    right_modulus_exponent: Fraction
+    left_dual_exponent: Fraction
+    right_dual_exponent: Fraction
+    dual_side_product_exponent: Fraction
+    resonance_shift_exponent: Fraction
+    poisson_amplitude_exponent: Fraction
+    overlap_integral_exponent: Fraction
+    transformed_absolute_inner_exponent: Fraction
+    original_inner_raw_exponent: Fraction
+    absolute_transform_loss_exponent: Fraction
+    transformed_global_absolute_exponent: Fraction
+    global_target_exponent: Fraction
+    transformed_required_saving_exponent: Fraction
+    resonance_identity_exact: bool
+    two_poisson_scales_exact: bool
+    absolute_transform_loss_is_one_minus_delta_plus_theta: bool
+    absolute_double_poisson_route_covered: bool
+    pre_cauchy_signed_resonance_estimate_required: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -8777,6 +8832,158 @@ def strict_power_convolution_kloosterman_audit(
     )
 
 
+def strict_power_ratio_mellin_bandwidth_audit(
+    *,
+    collapsed_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    quotient_exponent: Fraction,
+    left_cross_gcd_exponent: Fraction,
+) -> StrictPowerRatioMellinBandwidthAudit:
+    """Audit whether the inherited ratio kernel supplies power bandwidth.
+
+    On the exact AFE core, with ``z=Delta/(m*r)``, the height phase obeys
+
+    ``d/d(log r) [t*log(1+z)] = -t*z/(1+z)``.
+
+    The retained shift condition gives ``|t*z| <= log(T)^B``.  Every
+    higher logarithmic derivative has the same power exponent zero.
+    The normalized dyadic ratio weights also have exponent-zero
+    derivatives, so their Mellin transforms are rapidly decreasing once
+    the Mellin frequency has any fixed positive power of ``T``.
+
+    Resolving adjacent integers in a hidden fibre of length ``T^alpha``
+    would require Mellin frequency ``T^alpha``.  Thus the ratio integral
+    cannot de-cohere a positive-power hidden fibre.  If both fibres have
+    exponent zero there is nothing to resolve, but the independent
+    Cauchy deficit ``delta`` remains.
+    """
+    core = strict_power_gcd_core_audit(
+        collapsed_exponent=collapsed_exponent,
+        cofactor_exponent=cofactor_exponent,
+        quotient_exponent=quotient_exponent,
+        left_cross_gcd_exponent=left_cross_gcd_exponent,
+    )
+    left_hidden = core.left_reduced_signed_exponent
+    right_hidden = core.right_reduced_signed_exponent
+    hidden_total = left_hidden + right_hidden
+    zero = F(0)
+    no_positive_hidden_fibre = hidden_total == zero
+    return StrictPowerRatioMellinBandwidthAudit(
+        collapsed_exponent=core.collapsed_exponent,
+        cofactor_exponent=core.cofactor_exponent,
+        quotient_exponent=core.quotient_exponent,
+        left_cross_gcd_exponent=core.left_cross_gcd_exponent,
+        right_cross_gcd_exponent=core.right_cross_gcd_exponent,
+        left_hidden_fibre_exponent=left_hidden,
+        right_hidden_fibre_exponent=right_hidden,
+        total_hidden_fibre_exponent=hidden_total,
+        height_phase_log_derivative_power_exponent=zero,
+        ratio_weight_log_derivative_power_exponent=zero,
+        effective_mellin_frequency_power_exponent=zero,
+        left_adjacent_resolution_frequency_exponent=left_hidden,
+        right_adjacent_resolution_frequency_exponent=right_hidden,
+        remaining_cauchy_deficit_exponent=core.required_saving_exponent,
+        mellin_power_tail_is_rapid=True,
+        scaled_T_tau_not_independent_bandwidth=True,
+        height_phase_creates_second_power_coordinate=False,
+        ratio_mellin_resolves_positive_hidden_fibres=(
+            no_positive_hidden_fibre
+        ),
+        ratio_mellin_supplies_required_delta_saving=False,
+        pre_cauchy_joint_kernel_still_required=True,
+    )
+
+
+def strict_power_double_poisson_resonance_audit(
+    *,
+    collapsed_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    quotient_exponent: Fraction,
+    left_cross_gcd_exponent: Fraction,
+) -> StrictPowerDoublePoissonResonanceAudit:
+    """Audit simultaneous Poisson summation in both reduced slopes.
+
+    For the centered line ``r*a_0-t*b_0=h``, write the Fourier variable
+    as ``eta/H`` with ``H=T^delta``.  Poisson summation localizes
+
+    ``k = eta*r/H + O(A_0^-1)`` and
+    ``l = eta*t/H + O(B_0^-1)``.
+
+    Since ``r*A_0`` and ``t*B_0`` both have exponent ``1+delta``, the
+    two transformed bumps overlap on an eta interval of exponent ``-1``.
+    Clearing denominators gives the exact integer resonance coordinate
+
+    ``n=k*t-l*r`` with ``|n| <= T^(1+theta)``.
+
+    Taking absolute values on this transformed side loses
+    ``T^(1-delta+theta)`` relative to the original inner cardinality.
+    The route is therefore useful only if the signed resonance family is
+    estimated before Cauchy or an absolute tuple sum.
+    """
+    core = strict_power_gcd_core_audit(
+        collapsed_exponent=collapsed_exponent,
+        cofactor_exponent=cofactor_exponent,
+        quotient_exponent=quotient_exponent,
+        left_cross_gcd_exponent=left_cross_gcd_exponent,
+    )
+    s = core.collapsed_exponent
+    delta = core.cofactor_exponent
+    gamma = core.gcd_exponent
+    theta = core.quotient_exponent
+    r1 = core.left_cross_gcd_exponent
+    r2 = core.right_cross_gcd_exponent
+    left_slope = core.left_reduced_slope_exponent
+    right_slope = core.right_reduced_slope_exponent
+    left_modulus = 1 + r1
+    right_modulus = 1 + r2
+    left_dual = left_modulus - delta
+    right_dual = right_modulus - delta
+    dual_product = left_dual + right_modulus
+    resonance_shift = 1 + theta
+    poisson_amplitude = left_slope + right_slope
+    overlap_integral = F(-1)
+
+    # The d_1,d_2,k,l,r,t tuple count, the two Poisson amplitudes, and
+    # the common eta-overlap width combine to the following exponent.
+    transformed_inner = 2 + delta + theta
+    original_inner = 1 + 2 * delta
+    transform_loss = transformed_inner - original_inner
+    transformed_global = transformed_inner + gamma
+    target = 1 + s
+    required = transformed_global - target
+    return StrictPowerDoublePoissonResonanceAudit(
+        collapsed_exponent=s,
+        cofactor_exponent=delta,
+        gcd_exponent=gamma,
+        quotient_exponent=theta,
+        left_cross_gcd_exponent=r1,
+        right_cross_gcd_exponent=r2,
+        left_slope_exponent=left_slope,
+        right_slope_exponent=right_slope,
+        left_modulus_exponent=left_modulus,
+        right_modulus_exponent=right_modulus,
+        left_dual_exponent=left_dual,
+        right_dual_exponent=right_dual,
+        dual_side_product_exponent=dual_product,
+        resonance_shift_exponent=resonance_shift,
+        poisson_amplitude_exponent=poisson_amplitude,
+        overlap_integral_exponent=overlap_integral,
+        transformed_absolute_inner_exponent=transformed_inner,
+        original_inner_raw_exponent=original_inner,
+        absolute_transform_loss_exponent=transform_loss,
+        transformed_global_absolute_exponent=transformed_global,
+        global_target_exponent=target,
+        transformed_required_saving_exponent=required,
+        resonance_identity_exact=True,
+        two_poisson_scales_exact=True,
+        absolute_transform_loss_is_one_minus_delta_plus_theta=(
+            transform_loss == 1 - delta + theta
+        ),
+        absolute_double_poisson_route_covered=False,
+        pre_cauchy_signed_resonance_estimate_required=True,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -13709,6 +13916,75 @@ def main() -> None:
         "grouped_killed="
         f"{strict_convolution.cauchy_grouped_diagonal_killed_by_centering},"
         f"near_type_ii={strict_convolution.near_frequency_type_ii_proved}"
+    )
+    ratio_bandwidth = strict_power_ratio_mellin_bandwidth_audit(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: strict_power_ratio_mellin_bandwidth="
+        f"u0={_fmt(ratio_bandwidth.left_hidden_fibre_exponent)},"
+        f"v0={_fmt(ratio_bandwidth.right_hidden_fibre_exponent)},"
+        f"hidden={_fmt(ratio_bandwidth.total_hidden_fibre_exponent)},"
+        "height_derivative="
+        f"{_fmt(ratio_bandwidth.height_phase_log_derivative_power_exponent)},"
+        "ratio_derivative="
+        f"{_fmt(ratio_bandwidth.ratio_weight_log_derivative_power_exponent)},"
+        "mellin_bandwidth="
+        f"{_fmt(ratio_bandwidth.effective_mellin_frequency_power_exponent)},"
+        "adjacent="
+        f"{_fmt(ratio_bandwidth.left_adjacent_resolution_frequency_exponent)}/"
+        f"{_fmt(ratio_bandwidth.right_adjacent_resolution_frequency_exponent)},"
+        "cauchy_deficit="
+        f"{_fmt(ratio_bandwidth.remaining_cauchy_deficit_exponent)},"
+        f"rapid_tail={ratio_bandwidth.mellin_power_tail_is_rapid},"
+        "scaled_not_bandwidth="
+        f"{ratio_bandwidth.scaled_T_tau_not_independent_bandwidth},"
+        "second_coordinate="
+        f"{ratio_bandwidth.height_phase_creates_second_power_coordinate},"
+        "resolves_hidden="
+        f"{ratio_bandwidth.ratio_mellin_resolves_positive_hidden_fibres},"
+        "supplies_delta="
+        f"{ratio_bandwidth.ratio_mellin_supplies_required_delta_saving},"
+        "pre_cauchy="
+        f"{ratio_bandwidth.pre_cauchy_joint_kernel_still_required}"
+    )
+    double_poisson = strict_power_double_poisson_resonance_audit(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: strict_power_double_poisson_resonance="
+        f"a0={_fmt(double_poisson.left_slope_exponent)},"
+        f"b0={_fmt(double_poisson.right_slope_exponent)},"
+        f"r={_fmt(double_poisson.left_modulus_exponent)},"
+        f"t={_fmt(double_poisson.right_modulus_exponent)},"
+        f"k={_fmt(double_poisson.left_dual_exponent)},"
+        f"l={_fmt(double_poisson.right_dual_exponent)},"
+        f"product={_fmt(double_poisson.dual_side_product_exponent)},"
+        f"shift={_fmt(double_poisson.resonance_shift_exponent)},"
+        f"amplitude={_fmt(double_poisson.poisson_amplitude_exponent)},"
+        f"overlap={_fmt(double_poisson.overlap_integral_exponent)},"
+        "transformed_inner="
+        f"{_fmt(double_poisson.transformed_absolute_inner_exponent)},"
+        f"original_inner={_fmt(double_poisson.original_inner_raw_exponent)},"
+        f"loss={_fmt(double_poisson.absolute_transform_loss_exponent)},"
+        "transformed_global="
+        f"{_fmt(double_poisson.transformed_global_absolute_exponent)},"
+        f"target={_fmt(double_poisson.global_target_exponent)},"
+        "required="
+        f"{_fmt(double_poisson.transformed_required_saving_exponent)},"
+        f"identity={double_poisson.resonance_identity_exact},"
+        f"scales={double_poisson.two_poisson_scales_exact},"
+        "loss_formula="
+        f"{double_poisson.absolute_transform_loss_is_one_minus_delta_plus_theta},"
+        f"covered={double_poisson.absolute_double_poisson_route_covered},"
+        "pre_cauchy="
+        f"{double_poisson.pre_cauchy_signed_resonance_estimate_required}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
