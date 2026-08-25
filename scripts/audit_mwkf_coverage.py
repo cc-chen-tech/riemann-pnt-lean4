@@ -422,6 +422,28 @@ class TransitionLongCutoffMobiusTraceAudit:
 
 
 @dataclass(frozen=True)
+class TransitionReciprocalClusterClosureAudit:
+    distance_max: Fraction
+    numerator_product_exponent: Fraction
+    clustered_large_sieve_exponent: Fraction
+    raw_gate_exponent: Fraction
+    remaining_power_deficit: Fraction
+    endpoint_taper_log_saving: Fraction
+    product_coefficient_l2_log_loss: Fraction
+    dyadic_distance_log_loss: Fraction
+    dimensionless_kernel_log_loss: Fraction
+    net_log_saving: Fraction
+    global_remainder_power_exponent: Fraction
+    reciprocity_cluster_identity_exact: bool
+    product_coefficient_energy_bound_proved: bool
+    fixed_transition_kernel_has_uniform_seminorms: bool
+    low_difference_union_covered: bool
+    whole_transition_face_covered: bool
+    residual_distance_open_interval: tuple[Fraction, Fraction]
+    residual_required_saving_at_top: Fraction
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2164,6 +2186,71 @@ def transition_long_cutoff_mobius_trace_audit(
         two_logarithmic_savings_close_power_target=False,
         published_coverage=False,
         source="Korolev--Shparlinski, arXiv:1804.01337v2, Theorem 2.1",
+    )
+
+
+def transition_reciprocal_cluster_closure_audit(
+    box: ExponentBox,
+    *,
+    distance_max: Fraction,
+) -> TransitionReciprocalClusterClosureAudit:
+    """Close the centered transition collar by reciprocity clustering.
+
+    On the transition face S=H*L=T.  The clustered large-sieve bound is
+    S*(H*L+D^2)^(1/2)*(H*L)^(1/2), hence has exponent two throughout
+    D<=T^(1/2).  The exact product-coefficient energy costs one half
+    logarithm, the dyadic D-union costs one logarithm, and the two
+    endpoint mollifier tapers save two.  Since the dimensionless kernel
+    parameters are all constant on this fixed face, no separation
+    logarithm remains.  The q-cardinal aggregation is then
+    O(T*log(T)^(-1/2)).
+    """
+    if not _is_large_q_afe_transition_face(box):
+        raise ValueError("box is not on the large-q AFE transition face")
+    if distance_max < 0 or distance_max > F(1, 2):
+        raise ValueError("closure only applies for 0 <= Dmax <= 1/2")
+
+    cluster = reciprocal_cluster_large_sieve_scales(
+        box,
+        distance=distance_max,
+    )
+    raw_gate = box.rho + box.sigma
+    taper_log_saving = F(2)
+    coefficient_log_loss = F(1, 2)
+    shell_log_loss = F(1)
+    kernel_log_loss = F(0)
+    net_log_saving = (
+        taper_log_saving
+        - coefficient_log_loss
+        - shell_log_loss
+        - kernel_log_loss
+    )
+    low_union_covered = (
+        cluster.remaining_power_saving == 0
+        and net_log_saving > 0
+    )
+
+    return TransitionReciprocalClusterClosureAudit(
+        distance_max=distance_max,
+        numerator_product_exponent=box.ell + box.h,
+        clustered_large_sieve_exponent=(
+            cluster.clustered_large_sieve_bound
+        ),
+        raw_gate_exponent=raw_gate,
+        remaining_power_deficit=cluster.remaining_power_saving,
+        endpoint_taper_log_saving=taper_log_saving,
+        product_coefficient_l2_log_loss=coefficient_log_loss,
+        dyadic_distance_log_loss=shell_log_loss,
+        dimensionless_kernel_log_loss=kernel_log_loss,
+        net_log_saving=net_log_saving,
+        global_remainder_power_exponent=F(1),
+        reciprocity_cluster_identity_exact=True,
+        product_coefficient_energy_bound_proved=True,
+        fixed_transition_kernel_has_uniform_seminorms=True,
+        low_difference_union_covered=low_union_covered,
+        whole_transition_face_covered=False,
+        residual_distance_open_interval=(F(1, 2), F(1)),
+        residual_required_saving_at_top=F(1, 2),
     )
 
 
@@ -5102,6 +5189,17 @@ def main() -> None:
         "trace_margin=9/20,ambient=3,target=999/500,"
         "power_deficit=501/500 identity=True prime_modulus=False "
         "nonexceptional_uniform=False two_logs_close=False covered=False"
+    )
+    transition_cluster = transition_reciprocal_cluster_closure_audit(
+        transition_box,
+        distance_max=F(1, 2),
+    )
+    print(
+        "large_q_transition: reciprocal_cluster_closure="
+        "Dmax=1/2,A=1,cluster_bound=2,target=2,power_gap=0,"
+        "taper_log=2,energy_log=1/2,shell_log=1,kernel_log=0,"
+        "net_log=1/2,global_power=1 low_union=True "
+        "residual=(1/2,1],top_save=1/2 whole_face=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

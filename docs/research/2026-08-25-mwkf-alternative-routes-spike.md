@@ -4717,6 +4717,126 @@ The adapter transition_long_cutoff_mobius_trace_audit records
 margin, prime-modulus failure, and the remaining \(501/500\) power.  It
 keeps published_coverage=False.
 
+### 4.38 Unconditional square-root difference collar at transition
+
+There is an unconditional transition region which should be removed
+before any new Type-II theorem is attempted.  Partition the bounded
+ratio \(r/s\) into the finitely many integer-slope sectors
+
+\[
+ r=ks+w,\qquad k\asymp1,\qquad (w,s)=1,
+\tag{4.317}
+\]
+
+and put \(D\le |w|\le2D\).  On the transition face
+
+\[
+ R=S=T,\qquad H=L=T^{1/2},\qquad A:=HL=T.
+\tag{4.318}
+\]
+
+The original reciprocal phase uses
+\(\bar r\equiv\bar w\pmod s\).  Reciprocity gives
+
+\[
+ -\frac{\bar w}{s}
+ \equiv \frac{\bar s}{w}-\frac1{sw}\pmod1.
+\tag{4.319}
+\]
+
+Since \(SD\ge A\) for every integer \(D\ge1\), the correction
+\((sw)^{-1}\) is below the numerator resolution \(A^{-1}\).  A reduced
+Farey center \(\bar s/w\) has \(O(S/D)\) preimages, and a resolution
+interval meets \(O(1+D^2/A)\) centers.  The local-density additive
+large sieve therefore gives, with the actual numerator coefficient
+\(\nu(a)\),
+
+\[
+ |\mathfrak S_{q,k}(D)|
+ \ll_W
+ S(A+D^2)^{1/2}\|\nu\|_2.
+\tag{4.320}
+\]
+
+The exact product energy loses only one logarithm.  Indeed
+
+\[
+ \boxed{\sum_a|\nu(a)|^2\ll_W HL\log(2\min(H,L)).}
+\tag{4.321}
+\]
+
+To prove (4.321), write a solution
+\(h_1\delta_1=h_2\delta_2\) as
+
+\[
+ h_1=ga,\quad h_2=gb,\quad
+ \delta_1=bv,\quad\delta_2=av,\qquad (a,b)=1,
+\tag{4.322}
+\]
+
+For \(m=\max(a,b)\), the \(g\)- and \(v\)-intervals contain
+\(O(1+H/m)\) and \(O(1+L/m)\) integers, while there are \(O(m)\)
+coprime comparable pairs with maximum \(m\).  Summing over
+\(m\le2\min(H,L)\) proves (4.321), including all sign choices.
+
+Substituting (4.318)--(4.321) yields
+
+\[
+ |\mathfrak S_{q,k}(D)|
+ \ll_W
+ T^{3/2}(T+D^2)^{1/2}(\log T)^{1/2}.
+\tag{4.323}
+\]
+
+Hence every shell \(1\le D\le T^{1/2}\) is at the raw \(T^2\)
+barrier.  The two endpoint mollifier tapers satisfy
+
+\[
+ |p_N(qr)p_N(qs)|\ll(\log T)^{-2}
+\tag{4.324}
+\]
+
+on this constant-ratio face.  Summing the \(O(\log T)\) dyadic
+\(D\)-shells in (4.323), while retaining (4.324), gives
+
+\[
+ \sum_{\substack{D\ {\rm dyadic}\\D\le T^{1/2}}}
+ |\mathfrak S_{q,k}(D)|
+ \ll_W T^2(\log T)^{-1/2}.
+\tag{4.325}
+\]
+
+No hidden separation logarithm occurs here: in (5.13a) the three
+dimensionless parameters satisfy
+\(T\lambda_0\asymp\omega_0\asymp\chi_0\asymp1\), so the fixed
+compact-kernel seminorms are \(O_W(1)\).  There are only finitely many
+slopes \(k\).  Finally,
+
+\[
+ \sum_{q\asymp T^2}\frac{2T}{qRS}
+ T^2(\log T)^{-1/2}
+ \ll_W T(\log T)^{-1/2}=o_W(T).
+\tag{4.326}
+\]
+
+Thus the union
+
+\[
+ \boxed{\min_{k\asymp1}|r-ks|\le T^{1/2}}
+\tag{4.327}
+\]
+
+is unconditionally covered on the fixed transition face.  For
+\(D=T^\theta\), \(1/2<\theta\le1\), (4.323) has exponent
+\(3/2+\theta\); the remaining positive saving is exactly
+\(\theta-1/2\), reaching \(1/2\) at the top shell.
+
+The adapter transition_reciprocal_cluster_closure_audit records the
+power barrier, the exact product-energy logarithm, both endpoint
+tapers, the dyadic-shell loss, the net \(1/2\) logarithmic saving, and
+low_difference_union_covered=True.  It keeps
+whole_transition_face_covered=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

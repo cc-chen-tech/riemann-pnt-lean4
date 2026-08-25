@@ -783,6 +783,39 @@ def test_long_cutoff_mobius_trace_route_keeps_a_positive_power_gap() -> None:
     assert not audit.published_coverage
 
 
+def test_transition_reciprocity_clusters_close_the_sqrt_difference_union() -> None:
+    """Endpoint tapers turn the D<=T^(1/2) large-sieve barrier into o(T)."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_reciprocal_cluster_closure_audit",
+        None,
+    )
+    assert adapter is not None, "transition cluster-closure adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    audit = adapter(transition_box, distance_max=F(1, 2))
+
+    assert audit.numerator_product_exponent == F(1)
+    assert audit.clustered_large_sieve_exponent == F(2)
+    assert audit.raw_gate_exponent == F(2)
+    assert audit.remaining_power_deficit == 0
+    assert audit.endpoint_taper_log_saving == F(2)
+    assert audit.product_coefficient_l2_log_loss == F(1, 2)
+    assert audit.dyadic_distance_log_loss == F(1)
+    assert audit.net_log_saving == F(1, 2)
+    assert audit.dimensionless_kernel_log_loss == 0
+    assert audit.global_remainder_power_exponent == F(1)
+    assert audit.reciprocity_cluster_identity_exact
+    assert audit.product_coefficient_energy_bound_proved
+    assert audit.fixed_transition_kernel_has_uniform_seminorms
+    assert audit.low_difference_union_covered
+    assert not audit.whole_transition_face_covered
+    assert audit.residual_distance_open_interval == (F(1, 2), F(1))
+    assert audit.residual_required_saving_at_top == F(1, 2)
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2124,6 +2157,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "nonexceptional_uniform=False two_logs_close=False covered=False"
     ) in output
     assert (
+        "large_q_transition: reciprocal_cluster_closure="
+        "Dmax=1/2,A=1,cluster_bound=2,target=2,power_gap=0,"
+        "taper_log=2,energy_log=1/2,shell_log=1,kernel_log=0,"
+        "net_log=1/2,global_power=1 low_union=True "
+        "residual=(1/2,1],top_save=1/2 whole_face=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2516,5 +2556,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "arXiv:1804.01337v2, Theorem 2.1",
         r"\frac{501}{500}",
         "transition_long_cutoff_mobius_trace_audit",
+        "### 4.38 Unconditional square-root difference collar at transition",
+        r"\sum_a|\nu(a)|^2\ll_W HL\log(2\min(H,L))",
+        r"T(\log T)^{-1/2}",
+        "transition_reciprocal_cluster_closure_audit",
     ):
         assert marker in text
