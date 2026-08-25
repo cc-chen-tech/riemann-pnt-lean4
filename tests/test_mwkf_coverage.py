@@ -1815,6 +1815,116 @@ def test_transition_denominator_gcd_line_reduces_to_two_mobius_square_root() -> 
     assert endpoint.shell_covered
 
 
+def test_transition_denominator_type_ii_polytope_has_exact_completion_deficit() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_denominator_mobius_type_ii_audit",
+        None,
+    )
+    assert adapter is not None, "denominator Type-I/II audit is missing"
+
+    all_signed = adapter(
+        determinant_exponent=F(1),
+        denominator_gcd_exponent=F(1, 2),
+        left_short_mobius_exponent=F(1, 4),
+        left_cutoff_divisor_exponent=F(1, 4),
+        right_short_mobius_exponent=F(1, 4),
+        right_cutoff_divisor_exponent=F(1, 4),
+    )
+    assert all_signed.denominator_cofactor_exponent == F(1, 2)
+    assert all_signed.cutoff_exponent == F(1, 4)
+    assert all_signed.left_unsigned_cofactor_exponent == F(0)
+    assert all_signed.right_unsigned_cofactor_exponent == F(0)
+    assert all_signed.signed_mobius_atom_volume_exponent == F(1)
+    assert all_signed.signed_atom_square_root_saving_exponent == F(1, 2)
+    assert all_signed.required_total_saving_exponent == F(1, 2)
+    assert all_signed.remaining_completion_saving_exponent == F(0)
+    assert all_signed.top_face_deficit_identity_exact
+    assert all_signed.no_unsigned_completion_needed
+    assert not all_signed.signed_atom_square_root_proved
+    assert not all_signed.cell_closed_by_registered_bounds
+
+    all_completion = adapter(
+        determinant_exponent=F(1),
+        denominator_gcd_exponent=F(1, 2),
+        left_short_mobius_exponent=F(0),
+        left_cutoff_divisor_exponent=F(0),
+        right_short_mobius_exponent=F(0),
+        right_cutoff_divisor_exponent=F(0),
+    )
+    assert all_completion.left_unsigned_cofactor_exponent == F(1, 2)
+    assert all_completion.right_unsigned_cofactor_exponent == F(1, 2)
+    assert all_completion.signed_mobius_atom_volume_exponent == F(0)
+    assert all_completion.remaining_completion_saving_exponent == F(1, 2)
+    assert all_completion.top_face_unsigned_half_volume_exponent == F(1, 2)
+    assert all_completion.top_face_deficit_identity_exact
+    assert not all_completion.no_unsigned_completion_needed
+    assert not all_completion.unsigned_cofactor_completion_proved
+    assert not all_completion.cell_closed_by_registered_bounds
+
+    lower = adapter(
+        determinant_exponent=F(3, 4),
+        denominator_gcd_exponent=F(1, 4),
+        left_short_mobius_exponent=F(0),
+        left_cutoff_divisor_exponent=F(0),
+        right_short_mobius_exponent=F(0),
+        right_cutoff_divisor_exponent=F(0),
+    )
+    assert lower.denominator_cofactor_exponent == F(3, 4)
+    assert lower.required_total_saving_exponent == F(1, 2)
+    assert lower.top_face_unsigned_half_volume_exponent == F(3, 4)
+    assert lower.off_top_power_margin_exponent == F(1, 4)
+    assert lower.remaining_completion_saving_exponent == F(1, 2)
+    assert lower.general_deficit_identity_exact
+    assert not lower.top_face_deficit_identity_exact
+
+    mixed = adapter(
+        determinant_exponent=F(1),
+        denominator_gcd_exponent=F(1, 2),
+        left_short_mobius_exponent=F(1, 4),
+        left_cutoff_divisor_exponent=F(0),
+        right_short_mobius_exponent=F(0),
+        right_cutoff_divisor_exponent=F(1, 4),
+    )
+    assert mixed.left_unsigned_cofactor_exponent == F(1, 4)
+    assert mixed.right_unsigned_cofactor_exponent == F(1, 4)
+    assert mixed.signed_atom_square_root_saving_exponent == F(1, 4)
+    assert mixed.remaining_completion_saving_exponent == F(1, 4)
+    assert mixed.top_face_deficit_identity_exact
+    assert not mixed.cell_closed_by_registered_bounds
+
+
+def test_bourgain_garaev_multilinear_theorems_do_not_close_balanced_cell() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bourgain_garaev_multilinear_audit",
+        None,
+    )
+    assert adapter is not None, "Bourgain--Garaev audit is missing"
+    audit = adapter()
+    assert audit.modulus_exponent == F(1)
+    assert audit.atom_interval_exponent == F(1, 4)
+    assert audit.actual_multilinear_variable_count == 4
+    assert audit.required_saving_exponent == F(1, 2)
+    assert audit.theorem9_grouped_interval_exponent == F(1, 2)
+    assert audit.theorem9_saving_exponent == F(1, 16)
+    assert audit.theorem9_deficit == F(7, 16)
+    assert audit.theorem10_k2_saving_exponent == F(1, 24)
+    assert audit.theorem10_k2_deficit == F(11, 24)
+    assert audit.theorem11_minimum_variable_count == 7
+    assert audit.theorem11_product_length_condition_holds
+    assert not audit.theorem11_variable_count_condition_holds
+    assert audit.theorem12_proof_constant_lower_bound == 144
+    assert audit.theorem12_n4_threshold_exponent_lower_bound == F(9)
+    assert not audit.theorem12_length_condition_holds
+    assert audit.theorems_require_prime_modulus
+    assert not audit.actual_determinant_moduli_all_prime
+    assert not audit.grouped_product_sets_are_intervals
+    assert not audit.actual_four_atom_weights_separate
+    assert not audit.reciprocal_product_phase_verified
+    assert not audit.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -3805,5 +3915,15 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\mu(ga)\mu(gb)=\mu(a)\mu(b)",
         r"\mathfrak Z_{q,k}(D,G)",
         "transition_denominator_gcd_line_audit",
+        "### 4.56 Exact half-cutoff Type-I/II polytope inside the line-family gate",
+        r"a=d_1e_1y_1",
+        r"M_{\rm sign}=\pi_1+\beta_1+\pi_2+\beta_2",
+        r"C_{\rm comp}",
+        "transition_denominator_mobius_type_ii_audit",
+        "### 4.57 Bourgain--Garaev multilinear Kloosterman audit at the balanced cell",
+        r"\frac12-\frac1{16}=\frac7{16}",
+        r"\frac12-\frac1{24}=\frac{11}{24}",
+        r"N>p^9",
+        "transition_bourgain_garaev_multilinear_audit",
     ):
         assert marker in text

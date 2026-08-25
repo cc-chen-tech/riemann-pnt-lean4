@@ -7023,6 +7023,228 @@ transition_denominator_gcd_line_audit records (4.501)--(4.503), marks
 the absolute endpoint \(\gamma=\kappa\) covered, and keeps
 two_mobius_line_square_root_proved=False elsewhere.
 
+### 4.56 Exact half-cutoff Type-I/II polytope inside the line-family gate
+
+Apply the approved Möbius identity separately to the two cofactor
+weights in (4.500).  Put
+
+\[
+ A=T^\alpha,\qquad \alpha=1-\gamma,
+ \qquad U=V=A^{1/2}.
+\tag{4.505}
+\]
+
+For the left cofactor, with different letters from the global \(q\),
+the finite identity is
+
+\[
+\boxed{
+ \mu(a)
+ =-\sum_{\substack{xy=a\\x>U}}c_U(x)\mu(y)
+ =-\sum_{\substack{dey=a\\de>U,\ d\le U}}
+      \mu(d)\mu(y).}
+\tag{4.506}
+\]
+
+The Type-I part has \(y\le V\), and the Type-II part has \(y>V\).
+Since \(dey\asymp A\) and \(de>U=A^{1/2}\), every dyadic Type-II box
+lies on the boundary exponent \(\log_T y=\alpha/2\); the strict
+inequality is retained in the constant-sized dyadic endpoint rather
+than replaced by an empty exponent cell.
+
+Write the two factorizations as
+
+\[
+ a=d_1e_1y_1,\qquad b=d_2e_2y_2,
+\tag{4.507}
+\]
+
+and put
+
+\[
+ \log_Ty_i=\beta_i,\qquad
+ \log_Td_i=\pi_i,\qquad
+ \log_Te_i=\varepsilon_i.
+\tag{4.508}
+\]
+
+The exact rational polytope is
+
+\[
+\boxed{
+ 0\le\beta_i,\pi_i\le\frac\alpha2,
+ \qquad
+ \varepsilon_i=\alpha-\beta_i-\pi_i\ge0,
+ \qquad i=1,2.}
+\tag{4.509}
+\]
+
+After substitution, the determinant line and the complete arithmetic
+weight are
+
+\[
+\boxed{
+ (d_2e_2y_2)r_1-(d_1e_1y_1)r_2=h,}
+\tag{4.510}
+\]
+
+\[
+ \mu(d_1)\mu(y_1)\mu(d_2)\mu(y_2)
+ \mu(r_1)\mu(r_2),
+\tag{4.511}
+\]
+
+with every condition in (4.499) pulled back through (4.507).  In
+particular, neither the moving \(r_i\)-weights nor the coupled kernel is
+discarded.
+
+The four new signed Möbius atoms in (4.511) have total exponent
+
+\[
+ M_{\rm sign}=\pi_1+\beta_1+\pi_2+\beta_2.
+\tag{4.512}
+\]
+
+A square root in those four atoms would save \(M_{\rm sign}/2\).  The
+total saving required by (4.501) is \(\kappa-\gamma\).  Using (4.509)
+gives the exact identity
+
+\[
+\boxed{
+ (\kappa-\gamma)-\frac{M_{\rm sign}}2
+ =\frac{\varepsilon_1+\varepsilon_2}{2}-(1-\kappa).}
+\tag{4.513}
+\]
+
+Hence the remaining completion requirement in one cell is precisely
+
+\[
+\boxed{
+ C_{\rm comp}
+ =\left(
+   \frac{\varepsilon_1+\varepsilon_2}{2}-(1-\kappa)
+  \right)_+.}
+\tag{4.514}
+\]
+
+On the unique top face \(\kappa=1\), (4.514) is exactly half the
+unsigned \((e_1,e_2)\)-volume.  Off that face, the previously identified
+margin \(1-\kappa\) removes the same amount.  Thus the proposed local
+proof has two noninterchangeable inputs:
+
+1. square-root cancellation in the four signed atoms of (4.511), with
+   the two moving \(\mu(r_i)\) weights retained; and
+2. when \(C_{\rm comp}>0\), completion saving of exactly
+   \(T^{C_{\rm comp}}\) in the two unsigned cofactors.
+
+Cells with \(\varepsilon_1=\varepsilon_2=0\) need no unsigned
+completion, but their signed-atom square-root estimate is still not a
+registered theorem: the determinant equation (4.510) and its kernel
+couple all six Möbius weights.  Conversely, applying completion while
+discarding the signed weights loses the first term in (4.513) and cannot
+close the top face.
+
+The adapter transition_denominator_mobius_type_ii_audit implements
+(4.509)--(4.514) with `Fraction`.  It keeps
+signed_atom_square_root_proved=False and
+unsigned_cofactor_completion_proved=False.  Therefore no non-endpoint
+cell is reported covered merely because its exponent identity is
+feasible.
+
+### 4.57 Bourgain--Garaev multilinear Kloosterman audit at the balanced cell
+
+The all-signed balanced top cell of Section 4.56 has
+
+\[
+ p=T,\qquad
+ |d_1|,|y_1|,|d_2|,|y_2|=p^{1/4},
+\tag{4.515}
+\]
+
+and requires saving \(p^{1/2}\).  Bourgain--Garaev,
+[arXiv:1211.4184v1](https://arxiv.org/abs/1211.4184), treats incomplete
+multilinear Kloosterman sums with phase
+
+\[
+ e_p(a x_1^{-1}\cdots x_n^{-1})
+\tag{4.516}
+\]
+
+for a fixed prime modulus \(p\).  Its theorems can be compared with
+(4.515) before asking whether the actual phase has this form.
+
+Grouping \((d_1,y_1)\) and \((d_2,y_2)\) into two intervals of formal
+length \(N_1=N_2=p^{1/2}\), Theorem 9 gives
+
+\[
+ p^{1/8}N_1^{3/4}N_2^{3/4}
+ \left(\frac{N_1^3}{p}+1\right)^{1/16}
+ \left(\frac{N_2^3}{p}+1\right)^{1/16}
+ =p^{15/16+o(1)}.
+\tag{4.517}
+\]
+
+Relative to the formal volume \(p\), this saves \(p^{1/16}\).  The
+deficit from the required saving is
+
+\[
+ \boxed{\frac12-\frac1{16}=\frac7{16}.}
+\tag{4.518}
+\]
+
+Theorem 10 with \(k_1=k_2=2\) gives the factor
+
+\[
+ p^{1/8}N_1^{-1/6}N_2^{-1/6}=p^{-1/24},
+\tag{4.519}
+\]
+
+so its deficit is
+
+\[
+ \boxed{\frac12-\frac1{24}=\frac{11}{24}.}
+\tag{4.520}
+\]
+
+The genuinely multilinear Theorem 11 requires \(n\ge7\).  Although
+the four intervals in (4.515) satisfy the separate product condition
+
+\[
+ N^4=p>p^{1/3+\varepsilon},
+\tag{4.521}
+\]
+
+their variable count is four, so the theorem does not apply.  Theorem
+12 does not repair this.  Section 10.4 of the same paper takes
+
+\[
+ C=9c^{-2},\qquad c\le\frac14,
+\tag{4.522}
+\]
+
+hence \(C\ge144\).  For \(n=4\), its hypothesis
+\(N>p^{C/n^2}\) requires at least
+
+\[
+ \boxed{N>p^9,}
+\tag{4.523}
+\]
+
+which is incompatible with (4.515).
+
+These are again optimistic numerical comparisons.  The determinant
+\(\Delta\) in (4.488) ranges over composite as well as prime moduli,
+and the actual Fourier transform
+\(\widehat F_B(B^{-t}m/d)\) has not been converted to the fixed-prime
+reciprocal-product phase (4.516).  Thus even the savings in
+(4.518)--(4.520) are not direct inputs to (4.504), and they remain too
+small if granted formally.
+
+The adapter transition_bourgain_garaev_multilinear_audit records the
+four-variable count, the exact deficits \(7/16\) and \(11/24\), the
+Theorem 11 count failure, the Theorem 12 threshold (4.523), and the two
+kernel-hypothesis failures.  It keeps published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

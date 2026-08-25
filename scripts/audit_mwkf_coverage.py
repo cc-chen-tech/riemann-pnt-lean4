@@ -857,6 +857,61 @@ class TransitionDenominatorGcdLineAudit:
 
 
 @dataclass(frozen=True)
+class TransitionDenominatorMobiusTypeIIAudit:
+    determinant_exponent: Fraction
+    denominator_gcd_exponent: Fraction
+    denominator_cofactor_exponent: Fraction
+    cutoff_exponent: Fraction
+    left_short_mobius_exponent: Fraction
+    left_cutoff_divisor_exponent: Fraction
+    left_unsigned_cofactor_exponent: Fraction
+    right_short_mobius_exponent: Fraction
+    right_cutoff_divisor_exponent: Fraction
+    right_unsigned_cofactor_exponent: Fraction
+    signed_mobius_atom_volume_exponent: Fraction
+    signed_atom_square_root_saving_exponent: Fraction
+    required_total_saving_exponent: Fraction
+    top_face_unsigned_half_volume_exponent: Fraction
+    off_top_power_margin_exponent: Fraction
+    remaining_completion_saving_exponent: Fraction
+    left_type_ii_boundary: bool
+    right_type_ii_boundary: bool
+    exact_c_u_factorization_used: bool
+    top_face_deficit_identity_exact: bool
+    general_deficit_identity_exact: bool
+    no_unsigned_completion_needed: bool
+    signed_atom_square_root_proved: bool
+    unsigned_cofactor_completion_proved: bool
+    cell_closed_by_registered_bounds: bool
+
+
+@dataclass(frozen=True)
+class TransitionBourgainGaraevMultilinearAudit:
+    modulus_exponent: Fraction
+    atom_interval_exponent: Fraction
+    actual_multilinear_variable_count: int
+    required_saving_exponent: Fraction
+    theorem9_grouped_interval_exponent: Fraction
+    theorem9_saving_exponent: Fraction
+    theorem9_deficit: Fraction
+    theorem10_k2_saving_exponent: Fraction
+    theorem10_k2_deficit: Fraction
+    theorem11_minimum_variable_count: int
+    theorem11_product_length_condition_holds: bool
+    theorem11_variable_count_condition_holds: bool
+    theorem12_proof_constant_lower_bound: int
+    theorem12_n4_threshold_exponent_lower_bound: Fraction
+    theorem12_length_condition_holds: bool
+    theorems_require_prime_modulus: bool
+    actual_determinant_moduli_all_prime: bool
+    grouped_product_sets_are_intervals: bool
+    actual_four_atom_weights_separate: bool
+    reciprocal_product_phase_verified: bool
+    published_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -4245,6 +4300,157 @@ def transition_denominator_gcd_line_audit(
     )
 
 
+def transition_denominator_mobius_type_ii_audit(
+    *,
+    determinant_exponent: Fraction,
+    denominator_gcd_exponent: Fraction,
+    left_short_mobius_exponent: Fraction,
+    left_cutoff_divisor_exponent: Fraction,
+    right_short_mobius_exponent: Fraction,
+    right_cutoff_divisor_exponent: Fraction,
+) -> TransitionDenominatorMobiusTypeIIAudit:
+    """Exact half-cutoff Type-I/II ledger for the line-family gate.
+
+    Put ``A=T^alpha`` with ``alpha=1-gamma`` and choose
+    ``U=V=A^(1/2)`` in the exact identity
+
+    ``mu(a)=-sum_(xy=a,x>U)c_U(x)mu(y)``.
+
+    Expanding ``c_U(x)`` as ``x=d*e`` gives one signed cutoff divisor
+    ``d``, one unsigned cofactor ``e``, and the signed short factor
+    ``y`` on each side.  Their exponents satisfy
+    ``pi+epsilon+beta=alpha``.  The square root in the four signed
+    Mobius atoms saves half their total volume.  The remaining saving
+    is exactly half the two unsigned cofactor volumes minus the
+    off-top margin ``1-kappa``.  No analytic estimate is asserted.
+    """
+    determinant = F(determinant_exponent)
+    common_gcd = F(denominator_gcd_exponent)
+    if determinant <= 0 or determinant > F(1):
+        raise ValueError("determinant exponent must lie in (0,1]")
+    if common_gcd < 0 or common_gcd > determinant:
+        raise ValueError("the denominator gcd must divide the determinant")
+    alpha = F(1) - common_gcd
+    cutoff = alpha / 2
+    left_short = F(left_short_mobius_exponent)
+    left_divisor = F(left_cutoff_divisor_exponent)
+    right_short = F(right_short_mobius_exponent)
+    right_divisor = F(right_cutoff_divisor_exponent)
+    for name, value in (
+        ("left short factor", left_short),
+        ("left cutoff divisor", left_divisor),
+        ("right short factor", right_short),
+        ("right cutoff divisor", right_divisor),
+    ):
+        if value < 0 or value > cutoff:
+            raise ValueError(f"{name} lies outside the half-cutoff polytope")
+    if left_short + left_divisor > alpha:
+        raise ValueError("left signed factors exceed the cofactor length")
+    if right_short + right_divisor > alpha:
+        raise ValueError("right signed factors exceed the cofactor length")
+
+    left_unsigned = alpha - left_short - left_divisor
+    right_unsigned = alpha - right_short - right_divisor
+    signed_volume = (
+        left_short + left_divisor + right_short + right_divisor
+    )
+    signed_square_root = signed_volume / 2
+    required = determinant - common_gcd
+    unsigned_half = (left_unsigned + right_unsigned) / 2
+    off_top_margin = F(1) - determinant
+    signed_deficit = required - signed_square_root
+    remaining_completion = _positive_part(signed_deficit)
+    endpoint_power_closed = required == 0
+    return TransitionDenominatorMobiusTypeIIAudit(
+        determinant_exponent=determinant,
+        denominator_gcd_exponent=common_gcd,
+        denominator_cofactor_exponent=alpha,
+        cutoff_exponent=cutoff,
+        left_short_mobius_exponent=left_short,
+        left_cutoff_divisor_exponent=left_divisor,
+        left_unsigned_cofactor_exponent=left_unsigned,
+        right_short_mobius_exponent=right_short,
+        right_cutoff_divisor_exponent=right_divisor,
+        right_unsigned_cofactor_exponent=right_unsigned,
+        signed_mobius_atom_volume_exponent=signed_volume,
+        signed_atom_square_root_saving_exponent=signed_square_root,
+        required_total_saving_exponent=required,
+        top_face_unsigned_half_volume_exponent=unsigned_half,
+        off_top_power_margin_exponent=off_top_margin,
+        remaining_completion_saving_exponent=remaining_completion,
+        left_type_ii_boundary=(left_short == cutoff),
+        right_type_ii_boundary=(right_short == cutoff),
+        exact_c_u_factorization_used=True,
+        top_face_deficit_identity_exact=(
+            determinant == F(1)
+            and remaining_completion == unsigned_half
+        ),
+        general_deficit_identity_exact=(
+            signed_deficit == unsigned_half - off_top_margin
+        ),
+        no_unsigned_completion_needed=(remaining_completion == 0),
+        signed_atom_square_root_proved=False,
+        unsigned_cofactor_completion_proved=False,
+        cell_closed_by_registered_bounds=endpoint_power_closed,
+    )
+
+
+def transition_bourgain_garaev_multilinear_audit(
+) -> TransitionBourgainGaraevMultilinearAudit:
+    """Test Bourgain--Garaev against the balanced all-signed cell.
+
+    In the balanced top cell the four new Mobius atoms have length
+    ``p^(1/4)`` at determinant conductor ``p=T``.  Grouping them into
+    two product sequences of length ``p^(1/2)``, Theorem 9 saves
+    ``p^(1/16)`` and Theorem 10 with ``k1=k2=2`` saves ``p^(1/24)``.
+    Theorem 11 needs at least seven variables.  The proof of Theorem 12
+    takes ``C=9*c^(-2)`` with ``c<=1/4``, hence ``C>=144``; at ``n=4``
+    its length threshold is at least ``p^9`` and is vacuous here.
+
+    These numerical comparisons are optimistic: all cited theorems use
+    a fixed prime modulus and the reciprocal-product phase, neither of
+    which has been derived for the varying determinant kernel.
+    """
+    required = F(1, 2)
+    theorem9 = F(1, 16)
+    theorem10 = F(1, 24)
+    atom_length = F(1, 4)
+    variables = 4
+    c_lower_bound = 144
+    theorem12_threshold = F(c_lower_bound, variables * variables)
+    return TransitionBourgainGaraevMultilinearAudit(
+        modulus_exponent=F(1),
+        atom_interval_exponent=atom_length,
+        actual_multilinear_variable_count=variables,
+        required_saving_exponent=required,
+        theorem9_grouped_interval_exponent=F(1, 2),
+        theorem9_saving_exponent=theorem9,
+        theorem9_deficit=required - theorem9,
+        theorem10_k2_saving_exponent=theorem10,
+        theorem10_k2_deficit=required - theorem10,
+        theorem11_minimum_variable_count=7,
+        theorem11_product_length_condition_holds=(
+            variables * atom_length > F(1, 3)
+        ),
+        theorem11_variable_count_condition_holds=(variables >= 7),
+        theorem12_proof_constant_lower_bound=c_lower_bound,
+        theorem12_n4_threshold_exponent_lower_bound=theorem12_threshold,
+        theorem12_length_condition_holds=(
+            atom_length > theorem12_threshold
+        ),
+        theorems_require_prime_modulus=True,
+        actual_determinant_moduli_all_prime=False,
+        grouped_product_sets_are_intervals=False,
+        actual_four_atom_weights_separate=False,
+        reciprocal_product_phase_verified=False,
+        published_coverage=False,
+        source=(
+            "Bourgain--Garaev, arXiv:1211.4184v1, "
+            "Theorems 9--12 and Section 10.4"
+        ),
+    )
+
+
 def h_poisson_subbox_scales(
     box: ExponentBox,
     *,
@@ -7569,6 +7775,36 @@ def main() -> None:
         "raw=5/2,target=2,required=1/2,two_mu_length=1,"
         "two_mu_sqrt=1/2,post=2,margin=0,mobius_exact=True,"
         "critical=True,two_mu_proved=False,covered=False"
+    )
+    transition_denominator_type_ii = (
+        transition_denominator_mobius_type_ii_audit(
+            determinant_exponent=F(1),
+            denominator_gcd_exponent=F(1, 2),
+            left_short_mobius_exponent=F(0),
+            left_cutoff_divisor_exponent=F(0),
+            right_short_mobius_exponent=F(0),
+            right_cutoff_divisor_exponent=F(0),
+        )
+    )
+    print(
+        "large_q_transition: denominator_type_ii_polytope="
+        "kappa=1,gamma=1/2,alpha=1/2,cutoff=1/4,"
+        "signed_volume=0,signed_sqrt=0,unsigned_left=1/2,"
+        "unsigned_right=1/2,required=1/2,completion=1/2,"
+        "identity=True,signed_proved=False,completion_proved=False,"
+        "covered=False"
+    )
+    transition_bourgain_garaev = (
+        transition_bourgain_garaev_multilinear_audit()
+    )
+    print(
+        "large_q_transition: bourgain_garaev_multilinear="
+        "modulus=1,atom=1/4,n=4,required=1/2,"
+        "thm9=1/16,deficit9=7/16,thm10=1/24,deficit10=11/24,"
+        "thm11_nmin=7,product=True,count=False,Cmin=144,"
+        "thm12_threshold=9,thm12_length=False,prime_required=True,"
+        "all_prime=False,product_intervals=False,separable=False,"
+        "phase=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
