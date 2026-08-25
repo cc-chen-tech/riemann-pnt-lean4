@@ -362,6 +362,36 @@ def global_unit_principal_completion_margin(box: ExponentBox) -> Fraction:
     return box.sigma - box.ell - box.m
 
 
+def ramanujan_sum(n: int, frequency: int) -> int:
+    """Exact integer Ramanujan sum ``c_n(frequency)``."""
+
+    if n < 1:
+        raise ValueError("modulus must be positive")
+    return sum(
+        d * mobius(n // d) for d in divisors(gcd(n, abs(frequency)))
+    )
+
+
+def squarefree_outer_mobius_ramanujan(n: int, frequency: int) -> int:
+    """Value of ``mu(n)c_n(frequency)`` on squarefree ``n``."""
+
+    if mobius(n) == 0:
+        raise ValueError("modulus must be squarefree")
+    return mobius(n) * ramanujan_sum(n, frequency)
+
+
+def nonunit_principal_long_factor_floor(box: ExponentBox) -> Fraction:
+    """Exponent floor for the long factor after global h completion.
+
+    Reverse Poisson forces the complementary modulus ``v`` to satisfy
+    ``v <= M``.  In ``s=u*v`` this leaves ``u >= S/M``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("factor floor requires an admissible box")
+    return box.sigma - box.m
+
+
 @dataclass(frozen=True)
 class ReducedInversePhase:
     """Exact gcd reduction of ``e_s(-h*delta*r^{-1})``.

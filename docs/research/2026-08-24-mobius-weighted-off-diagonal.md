@@ -2855,6 +2855,104 @@ polytope margin \(\sigma-\ell-m\geq0\); the analytic identity (9.61)
 follows from finite Möbius inversion followed by the stated Schwartz
 Poisson formula.
 
+### 9.15 Ramanujan projection of all nonunit principal strata
+
+The complete principal projection can be written without choosing a gcd
+stratum.  For every integer \(a\), averaging over the inverse unit group
+gives
+
+\[
+ \frac1{\varphi(s)}\sum_{r\bmod s}^{*}e_s(-a\bar r)
+ =\frac{c_s(a)}{\varphi(s)},
+\tag{9.65}
+\]
+
+where \(c_s(a)\) is the Ramanujan sum.  Since the outer Möbius weight
+forces \(s\) to be squarefree, its divisor formula becomes
+
+\[
+ \boxed{
+ \mu(s)c_s(a)
+ =\sum_{j\mid(s,a)}j\mu(j).}
+\tag{9.66}
+\]
+
+This identity simultaneously contains the unit principal spectrum from
+Section 9.14 and every nonunit principal gcd stratum.
+
+Fix \(s,\delta\), and in a term of (9.66) put
+\(w=(j,\delta)\), \(u=j/w\), and \(s=uwc\).  Then the factorization is
+unique, \(w\mid\delta\), \((u,\delta)=1\), and
+\(j\mid h\delta\) is equivalent to \(u\mid h\).  Writing \(h=uk\),
+ordinary reverse Poisson gives
+
+\[
+ \boxed{
+ \sum_{k\ne0}\widehat F(uk/s)
+ =wc\sum_{n\in\mathbb Z}F(nwc)-\widehat F(0).}
+\tag{9.67}
+\]
+
+The zero-frequency subtractions recombine exactly.  Indeed,
+
+\[
+ \sum_{j\mid s}j\mu(j)=\mu(s)\varphi(s),
+\tag{9.68}
+\]
+
+so the total subtraction in the principal projection is
+\(-\mu(s)\widehat F(0)\), the principal copy of the already extracted
+Poisson zero mode.  It is therefore controlled by the LCM main form and
+its archimedean error from Sections 4.2--4.3; it is not a new Region-D
+remainder.
+
+The lattice part of (9.67) is an exact residual Type-II sum.  Suppressing
+only the already displayed smooth outer factors, it has the finite shape
+
+\[
+\begin{aligned}
+ \mathfrak P_{\rm latt}
+ ={}&\sum_{\substack{u,w,c\geq1\\uwc\asymp S}}
+ \frac{uw\,\mu(u)\mu(w)}{\varphi(uwc)}
+ \sum_{\substack{r\asymp R,\ \delta=w\delta_1\\
+                  (r,uwc)=(u,\delta)=1}}
+ \mu(r)\,\mathcal W(r,uwc,\delta)\\
+ &\qquad\times
+ \left\{wc\sum_{n\in\mathbb Z}
+ F_{r,uwc,\delta}(nwc)\right\}.
+\end{aligned}
+\tag{9.69}
+\]
+
+Every endpoint, sign of \(\delta\), Selberg taper, and \(q\)-coprimality
+condition is retained inside \(\mathcal W\).  No absolute value has been
+taken over \(u,w,c,r,\delta_1\).  The support \(x\asymp M\) forces
+
+\[
+ wc\ll M,\qquad
+ u\asymp\frac{S}{wc}\gg\frac{S}{M}.
+\tag{9.70}
+\]
+
+Thus the nonunit principal remainder is not an arbitrary character sum:
+it is a long--short Type-II form with the two required Möbius weights
+\(\mu(r)\mu(u)\), an additional short sign \(\mu(w)\), and no inverse
+phase left.  In the balanced maximal box,
+
+\[
+ wc\leq T^{1/2+\varepsilon},\qquad
+ u\geq T^{5/2-\varepsilon}.
+\tag{9.71}
+\]
+
+The classical zero-free region applied separately to the \(r\)- and
+\(u\)-sums supplies only subexponential savings and does not close the
+remaining \(\delta_1\)-length.  Hence (9.69) remains unproved, but it is a
+strictly smaller and more structured gate than either (9.40) or the
+original nonunit character family.  The finite checker verifies (9.66)
+for every squarefree modulus and frequency in its test range and records
+the exact exponent floor \(\sigma-m\), equal to \(5/2\) in (9.71).
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -2903,6 +3001,8 @@ Proved in this note:
   (9.56)--(9.60).
 * the coprime reverse-Poisson identity and the unconditional global bound
   for the unit principal spectrum, (9.61)--(9.64).
+* the full Ramanujan projection, its exact zero-mode recombination, and
+  the residual long--short principal Type-II form, (9.65)--(9.71).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -2926,6 +3026,7 @@ Proved in this note:
 | Gcd--character stratification | verified finite identity; termwise routes insufficient | direct margin and exact separation (9.47)--(9.52); large-sieve gap \(T^{5/2}\), (9.53); dual \(2/3\) barrier, (9.54)--(9.55) |
 | Primitive-conductor decomposition | verified finite algebra; standard character moments insufficient | cofactor Möbius sign cancels, (9.56)--(9.58); separate principal term demands the impossible uniform \(1/3\) Mertens scale, (9.59)--(9.60) |
 | Unit principal spectrum | proved globally, not boxwise in \(H\) | coprime reverse Poisson gives \(RLM T^\varepsilon\leq RS T^\varepsilon\), (9.61)--(9.64) |
+| Nonunit principal spectrum | exact reduction; residual Type II unproved | zero-frequency part recombines with the proved LCM zero mode; lattice part has \(wc\ll M\), \(u\gg S/M\), and signs \(\mu(r)\mu(u)\mu(w)\), (9.65)--(9.71) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

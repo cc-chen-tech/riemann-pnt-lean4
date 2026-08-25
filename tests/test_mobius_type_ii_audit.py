@@ -26,11 +26,14 @@ from scripts.audit_mobius_type_ii import (
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
     mobius_geometric_value,
+    nonunit_principal_long_factor_floor,
     pascadi_balanced_gap,
     pascadi_2024_direct_dispersion_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
     reduce_inverse_product_phase,
+    ramanujan_sum,
+    squarefree_outer_mobius_ramanujan,
     two_sided_mobius_geometric_value,
     wright_factor_covers,
     wright_factor_savings,
@@ -224,6 +227,29 @@ def test_coprime_projection_and_global_principal_margin_are_exact() -> None:
     ) == F(0)
     for box in witnesses.values():
         assert global_unit_principal_completion_margin(box) >= 0
+
+
+def test_squarefree_outer_mobius_ramanujan_divisor_identity() -> None:
+    for modulus in range(1, 80):
+        if naive_mobius(modulus) == 0:
+            continue
+        for frequency in range(-80, 81):
+            expected = sum(
+                d * naive_mobius(d)
+                for d in range(1, gcd(modulus, abs(frequency)) + 1)
+                if gcd(modulus, abs(frequency)) % d == 0
+            )
+            assert squarefree_outer_mobius_ramanujan(
+                modulus, frequency
+            ) == expected
+            assert squarefree_outer_mobius_ramanujan(
+                modulus, frequency
+            ) == naive_mobius(modulus) * ramanujan_sum(
+                modulus, frequency
+            )
+    assert nonunit_principal_long_factor_floor(
+        boundary_witnesses()["balanced_max_a"]
+    ) == F(5, 2)
 
 
 def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:
