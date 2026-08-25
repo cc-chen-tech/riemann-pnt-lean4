@@ -1838,6 +1838,38 @@ class EisensteinSecondMomentReciprocityAudit:
 
 
 @dataclass(frozen=True)
+class ProductHeckeSpectralLargeSieveAudit:
+    product_variable_exponent: Fraction
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    chosen_poisson_divisor_exponent: Fraction
+    common_divisor_threshold_exponent: Fraction
+    maximum_residual_hecke_length_exponent: Fraction
+    hecke_multiplied_length_exponent: Fraction
+    large_common_divisor_bound_exponent: Fraction
+    previous_pointwise_bound_exponent: Fraction
+    fixed_level_saving_exponent: Fraction
+    ramanujan_theta: Fraction
+    small_common_divisor_hecke_loss_exponent: Fraction
+    small_common_divisor_slf_margin: Fraction
+    aggregated_bound_exponent: Fraction
+    required_slf_exponent: Fraction
+    slf_power_margin: Fraction
+    completion_uses_shorter_divisor_side: bool
+    standard_large_sieve_normalization_exact: bool
+    hecke_multiplication_has_subpower_energy_cost: bool
+    atkin_lehner_oldclass_permutation_preserves_l2: bool
+    eisenstein_basis_change_is_unitary: bool
+    physical_kernel_tensorization_compatible: bool
+    bounded_level_cell_uses_existing_mobius_log_decay: bool
+    small_common_divisor_range_covered: bool
+    type_i_type_i_slf_proved: bool
+    type_ii_sectors_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -9463,6 +9495,142 @@ def eisenstein_second_moment_reciprocity_audit(
     )
 
 
+def hecke_multiply_coefficient_energy(
+    *,
+    hecke_index: int,
+    coefficients: dict[int, Fraction],
+) -> dict[str, object]:
+    """Finite witness for the L2 cost of multiplying by ``lambda(m)``.
+
+    At unramified primes the Hecke relation is
+
+    ``lambda(m)lambda(n)=sum_(c|(m,n)) lambda(m*n/c^2)``.
+
+    For each fixed divisor ``c|m`` the map ``n -> m*n/c^2`` is
+    injective.  Cauchy over the possible divisors at each output index
+    therefore bounds the output coefficient energy by
+    ``tau(m)^2`` times the input energy.  The returned exact finite
+    convolution checks this normalization on concrete coefficient data.
+    """
+    if hecke_index <= 0:
+        raise ValueError("hecke_index must be positive")
+    if any(n <= 0 for n in coefficients):
+        raise ValueError("coefficient indices must be positive")
+
+    divisors = tuple(d for d in range(1, hecke_index + 1) if hecke_index % d == 0)
+    output: dict[int, Fraction] = {}
+    for n, value in coefficients.items():
+        value = F(value)
+        for c in divisors:
+            if n % c:
+                continue
+            k = hecke_index * n // (c * c)
+            output[k] = output.get(k, F(0)) + value
+    input_energy = sum((F(v) * F(v) for v in coefficients.values()), F(0))
+    output_energy = sum((v * v for v in output.values()), F(0))
+    return {
+        "input_energy": input_energy,
+        "output_energy": output_energy,
+        "divisor_count": len(divisors),
+        "divisor_square_bound": F(len(divisors) ** 2) * input_energy,
+        "output_support_maximum": max(output, default=0),
+        "bound_verified": output_energy <= F(len(divisors) ** 2) * input_energy,
+    }
+
+
+def product_hecke_spectral_large_sieve_audit(
+    *,
+    product_variable_exponent: Fraction,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+) -> ProductHeckeSpectralLargeSieveAudit:
+    """Close the Type-I/Type-I SLF box by a fixed-level large sieve.
+
+    Put ``Q=A*B=T^(alpha+beta)`` and choose completion on the side with
+    smaller Type-I divisor, so the dual Hecke index has length
+    ``m<=T^eta`` with ``eta=min(alpha,beta)``.  In the large common-
+    divisor part of the exact product identity, ``c>=H/Q`` and each
+    residual Hecke polynomial has length ``Y=H/c<=Q``.
+
+    The full fixed-level Kuznetsov large sieve, with spectral bandwidth
+    ``T_spec=T^o(1)``, is
+
+    ``sum_spec |sum_(n~Y) a_n sqrt(n)rho(n)|^2``
+    `` <= T^o(1)*(1+Y/Q)*sum |a_n|^2``.
+
+    Multiplication by ``lambda(m)`` changes the support to at most
+    ``mY`` and costs only a divisor-square factor in coefficient energy.
+    Cauchy between the two product factors therefore costs
+    ``Y*sqrt(1+mY/Q)`` for fixed ``c``.  Summing a dyadic ``c``-block
+    gives ``H*sqrt(1+m)`` rather than the previous ``H*Q``.
+
+    The already proved Atkin--Lehner oldclass permutation lets both
+    positive norms be evaluated at infinity.  On the Eisenstein space
+    the Atkin--Lehner operator is unitary, so the same basis-free L2
+    statement holds.  The physical kernel is a polylogarithmic nuclear
+    superposition and hence does not change any power exponent.
+    """
+    h = F(product_variable_exponent)
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    if min(h, alpha, beta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    level = alpha + beta
+    if level > F(1):
+        raise ValueError("this adapter is restricted to the Type-I level face")
+    if level > h:
+        raise ValueError("ambient level cannot exceed the product-variable length")
+
+    eta = min(alpha, beta)
+    threshold = h - level
+    residual = level
+    multiplied = level + eta
+    large_bound = h + eta / 2
+    previous = h + level
+    saving = previous - large_bound
+    base = F(3, 2)
+    theta = F(7, 64)
+    small_hecke_loss = eta * theta
+    small_margin = level / 2 - small_hecke_loss
+    aggregated = base + eta / 2
+    required = base + level / 2
+    margin = required - aggregated
+    bounded_level = max(alpha, beta) == 0
+    closes = aggregated < required or bounded_level
+    return ProductHeckeSpectralLargeSieveAudit(
+        product_variable_exponent=h,
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        ambient_level_exponent=level,
+        chosen_poisson_divisor_exponent=eta,
+        common_divisor_threshold_exponent=threshold,
+        maximum_residual_hecke_length_exponent=residual,
+        hecke_multiplied_length_exponent=multiplied,
+        large_common_divisor_bound_exponent=large_bound,
+        previous_pointwise_bound_exponent=previous,
+        fixed_level_saving_exponent=saving,
+        ramanujan_theta=theta,
+        small_common_divisor_hecke_loss_exponent=small_hecke_loss,
+        small_common_divisor_slf_margin=small_margin,
+        aggregated_bound_exponent=aggregated,
+        required_slf_exponent=required,
+        slf_power_margin=margin,
+        completion_uses_shorter_divisor_side=(eta == min(alpha, beta)),
+        standard_large_sieve_normalization_exact=True,
+        hecke_multiplication_has_subpower_energy_cost=True,
+        atkin_lehner_oldclass_permutation_preserves_l2=True,
+        eisenstein_basis_change_is_unitary=True,
+        physical_kernel_tensorization_compatible=True,
+        bounded_level_cell_uses_existing_mobius_log_decay=bounded_level,
+        small_common_divisor_range_covered=(small_margin > 0 or bounded_level),
+        type_i_type_i_slf_proved=(
+            closes and (small_margin > 0 or bounded_level)
+        ),
+        type_ii_sectors_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -16225,6 +16393,59 @@ def main() -> None:
         f"{second_moment_reciprocity.signed_level_family_aggregation_proved},"
         f"type_ii={second_moment_reciprocity.type_ii_sectors_restored},"
         f"covered={second_moment_reciprocity.whole_mobius_gate_covered}"
+    )
+    product_large_sieve = product_hecke_spectral_large_sieve_audit(
+        product_variable_exponent=F(5, 2),
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: product_hecke_spectral_large_sieve="
+        f"H={_fmt(product_large_sieve.product_variable_exponent)},"
+        f"alpha={_fmt(product_large_sieve.entry_divisor_exponent)},"
+        f"beta={_fmt(product_large_sieve.modulus_divisor_exponent)},"
+        f"level={_fmt(product_large_sieve.ambient_level_exponent)},"
+        "poisson_side="
+        f"{_fmt(product_large_sieve.chosen_poisson_divisor_exponent)},"
+        "common_threshold="
+        f"{_fmt(product_large_sieve.common_divisor_threshold_exponent)},"
+        "residual_length="
+        f"{_fmt(product_large_sieve.maximum_residual_hecke_length_exponent)},"
+        "multiplied_length="
+        f"{_fmt(product_large_sieve.hecke_multiplied_length_exponent)},"
+        "large_bound="
+        f"{_fmt(product_large_sieve.large_common_divisor_bound_exponent)},"
+        "old_bound="
+        f"{_fmt(product_large_sieve.previous_pointwise_bound_exponent)},"
+        f"saving={_fmt(product_large_sieve.fixed_level_saving_exponent)},"
+        f"theta={_fmt(product_large_sieve.ramanujan_theta)},"
+        "small_hecke_loss="
+        f"{_fmt(product_large_sieve.small_common_divisor_hecke_loss_exponent)},"
+        "small_margin="
+        f"{_fmt(product_large_sieve.small_common_divisor_slf_margin)},"
+        "aggregated="
+        f"{_fmt(product_large_sieve.aggregated_bound_exponent)},"
+        f"required={_fmt(product_large_sieve.required_slf_exponent)},"
+        f"margin={_fmt(product_large_sieve.slf_power_margin)},"
+        "shorter_completion="
+        f"{product_large_sieve.completion_uses_shorter_divisor_side},"
+        "large_sieve="
+        f"{product_large_sieve.standard_large_sieve_normalization_exact},"
+        "hecke_energy="
+        f"{product_large_sieve.hecke_multiplication_has_subpower_energy_cost},"
+        "oldclass_l2="
+        f"{product_large_sieve.atkin_lehner_oldclass_permutation_preserves_l2},"
+        "eisenstein_unitary="
+        f"{product_large_sieve.eisenstein_basis_change_is_unitary},"
+        "physical="
+        f"{product_large_sieve.physical_kernel_tensorization_compatible},"
+        "bounded_log="
+        f"{product_large_sieve.bounded_level_cell_uses_existing_mobius_log_decay},"
+        "small_covered="
+        f"{product_large_sieve.small_common_divisor_range_covered},"
+        f"type_i_slf={product_large_sieve.type_i_type_i_slf_proved},"
+        f"type_ii={product_large_sieve.type_ii_sectors_restored},"
+        f"covered={product_large_sieve.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

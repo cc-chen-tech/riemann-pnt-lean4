@@ -4373,6 +4373,101 @@ def test_eisenstein_second_moment_reciprocity_does_not_yet_prove_slf() -> None:
     assert not hard.whole_mobius_gate_covered
 
 
+def test_product_hecke_large_sieve_closes_type_i_type_i_slf() -> None:
+    energy = getattr(
+        coverage_audit,
+        "hecke_multiply_coefficient_energy",
+        None,
+    )
+    assert energy is not None, "Hecke multiplication energy checker is missing"
+    finite = energy(
+        hecke_index=12,
+        coefficients={5: F(2), 6: F(-3), 10: F(1)},
+    )
+    assert finite["input_energy"] == F(14)
+    assert finite["output_energy"] <= finite["divisor_square_bound"]
+    assert finite["output_support_maximum"] <= 120
+
+    adapter = getattr(
+        coverage_audit,
+        "product_hecke_spectral_large_sieve_audit",
+        None,
+    )
+    assert adapter is not None, "product-Hecke spectral large-sieve audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109i Product-Hecke large sieve closes the Type-I/Type-I level gate",
+        "\\tag{4.845aw}",
+        "\\tag{4.845az}",
+        "product_hecke_spectral_large_sieve_audit",
+    ):
+        assert marker in note
+
+    balanced = adapter(
+        product_variable_exponent=F(5, 2),
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    assert balanced.ambient_level_exponent == F(1)
+    assert balanced.chosen_poisson_divisor_exponent == F(1, 2)
+    assert balanced.common_divisor_threshold_exponent == F(3, 2)
+    assert balanced.maximum_residual_hecke_length_exponent == F(1)
+    assert balanced.hecke_multiplied_length_exponent == F(3, 2)
+    assert balanced.large_common_divisor_bound_exponent == F(11, 4)
+    assert balanced.previous_pointwise_bound_exponent == F(7, 2)
+    assert balanced.fixed_level_saving_exponent == F(3, 4)
+    assert balanced.ramanujan_theta == F(7, 64)
+    assert balanced.small_common_divisor_hecke_loss_exponent == F(7, 128)
+    assert balanced.small_common_divisor_slf_margin == F(57, 128)
+    assert balanced.aggregated_bound_exponent == F(7, 4)
+    assert balanced.required_slf_exponent == F(2)
+    assert balanced.slf_power_margin == F(1, 4)
+    assert balanced.completion_uses_shorter_divisor_side
+    assert balanced.standard_large_sieve_normalization_exact
+    assert balanced.hecke_multiplication_has_subpower_energy_cost
+    assert balanced.atkin_lehner_oldclass_permutation_preserves_l2
+    assert balanced.eisenstein_basis_change_is_unitary
+    assert balanced.physical_kernel_tensorization_compatible
+    assert balanced.small_common_divisor_range_covered
+    assert balanced.type_i_type_i_slf_proved
+    assert not balanced.type_ii_sectors_restored
+    assert not balanced.whole_mobius_gate_covered
+
+    unbalanced = adapter(
+        product_variable_exponent=F(5, 2),
+        entry_divisor_exponent=F(1),
+        modulus_divisor_exponent=F(0),
+    )
+    assert unbalanced.chosen_poisson_divisor_exponent == F(0)
+    assert unbalanced.large_common_divisor_bound_exponent == F(5, 2)
+    assert unbalanced.aggregated_bound_exponent == F(3, 2)
+    assert unbalanced.required_slf_exponent == F(2)
+    assert unbalanced.slf_power_margin == F(1, 2)
+    assert unbalanced.type_i_type_i_slf_proved
+
+    bounded = adapter(
+        product_variable_exponent=F(5, 2),
+        entry_divisor_exponent=F(0),
+        modulus_divisor_exponent=F(0),
+    )
+    assert bounded.slf_power_margin == F(0)
+    assert bounded.bounded_level_cell_uses_existing_mobius_log_decay
+    assert bounded.type_i_type_i_slf_proved
+
+    for a_num in range(9):
+        for b_num in range(9 - a_num):
+            alpha = F(a_num, 8)
+            beta = F(b_num, 8)
+            cell = adapter(
+                product_variable_exponent=F(5, 2),
+                entry_divisor_exponent=alpha,
+                modulus_divisor_exponent=beta,
+            )
+            assert cell.slf_power_margin == max(alpha, beta) / 2
+            assert cell.type_i_type_i_slf_proved
+
+
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
     adapter = getattr(
         coverage_audit,

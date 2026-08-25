@@ -14226,6 +14226,165 @@ eisenstein_second_moment_reciprocity_audit therefore keeps the signed
 level-family, Type-II, and whole Möbius gates false.
 
 
+### 4.109i Product-Hecke large sieve closes the Type-I/Type-I level gate
+
+The level-reciprocity gate in Sections 4.109g--4.109h is unnecessary
+once the product-index identity (4.845s) is combined with the ordinary
+spectral large sieve *before* the common-divisor variable is estimated.
+This ordering was not covered by the fixed-index calculation
+(4.845b): there the two indices still had length (T^{5/2}), whereas
+here their residual lengths are at most the ambient level.
+
+Fix (A=T^alpha,B=T^eta), put (Q=AB), and use reciprocity to
+complete the quotient on the side with the smaller Type-I divisor.  If
+
+[
+ eta=min(alpha,eta),qquad mll T^eta(log T)^C,
+]
+
+then the Atkin--Lehner cusp identity (4.845ao)--(4.845ap) is unchanged,
+with (A,B) interchanged when (eta<alpha).  Let
+(H=T^{5/2}) denote either product-variable length.  In (4.845t), split
+the common divisor (c) at (H/Q).  The small-(c) portion has the
+arbitrary logarithmic decay of (4.845w).  In the remaining portion,
+
+[
+ casymp Cgeq H/Q,qquad Y=H/Cleq Q.
+]
+
+For the full Maaß, holomorphic, and Eisenstein spectrum at level (Q),
+the spectral large sieve, in the Fourier-coefficient normalization used
+by Kuznetsov, is
+
+[
+ \boxed{
+ \int_{\mathscr S_Q(\mathcal T)}
+ \left|\sum_{n\asymp Y}a_n\sqrt n\,\rho_{\pi,\infty}(n)\right|^2
+ d\pi
+ \ll_arepsilon
+ (QY\mathcal T)^\varepsilon
+ \left(\mathcal T^2+\frac YQ\right)
+ \sum_n|a_n|^2.}
+\tag{4.845aw}
+\]
+
+This is the standard Deshouillers--Iwaniec inequality in exactly the
+form stated as the spectral-large-sieve lemma in
+[Blomer--Milićević](https://arxiv.org/abs/1404.7845).  Here the physical
+Bessel--Mellin tensorization from Section 4.109f restricts
+(mathcal T) to a power of (log T), so the parenthesis in (4.845aw)
+has power exponent (max(0,log_T(Y/Q))=0).
+
+Multiplication by the Poisson Hecke index does not introduce a
+pointwise Ramanujan factor.  At unramified primes,
+
+[
+ lambda_pi(m)lambda_pi(n)
+ =\sum_{r\mid(m,n)}lambda_pi(mn/r^2).
+]
+
+If (b_k) is the resulting coefficient sequence, then for each fixed
+(rmid m) the map (nmapsto mn/r^2) is injective.  Cauchy over
+(rmid m) gives
+
+[
+ sum_k|b_k|^2leq	au(m)^2sum_n|a_n|^2,qquad
+ operatorname{supp}bsubset[1,4mY].
+]
+
+The degree-one ramified local factors only delete terms from this
+divisor expansion.  After the finite oldclass shifts from Section
+4.109e, the same estimate holds with a divisor-power loss, hence with
+subpower cost.  Applying (4.845aw) to the multiplied first factor and
+the unmultiplied second factor, then applying Cauchy in the complete
+spectral measure, gives for each fixed common divisor (c)
+
+[
+ \boxed{
+ \int_{\mathscr S_Q(\mathcal T)}
+ |\rho_pi(1)|^2
+ |\lambda_pi(m)A_{\pi,1}(H/c)A_{\pi,2}(H/c)|,d\pi
+ \ll
+ T^{o(1)}Y\left(1+\frac{mY}{Q}\right)^{1/2}.}
+\tag{4.845ax}
+\]
+
+There is no positivity loss from the second cusp.  By
+[Kiral--Young, Lemma 2.5](https://arxiv.org/abs/1710.00914), the full
+oldclass Fourier-coefficient lists at an Atkin--Lehner cusp are a
+signed permutation of their lists at infinity.  For the continuous
+spectrum the Atkin--Lehner operator is unitary, so changing the
+orthonormal Eisenstein basis preserves the squared norm in (4.845aw).
+The total variation of the physical nuclear measure is
+polylogarithmic by (4.845ai).
+
+For completeness, the small-common-divisor range uses a different
+ledger.  The individual functional-equation estimate (4.845v) and the
+choice (cleq H/(Q(log T)^B)) give arbitrary logarithmic decay after
+the (c)-sum.  Estimating the remaining (lambda_pi(m)) there by
+Kim--Sarnak costs at most (M^{7/64}).  Relative to the SLF target its
+power margin is
+
+[
+ rac{alpha+eta}{2}-rac{7}{64}min(alpha,eta)>0
+]
+
+whenever the level has a nonzero power exponent.  If
+(alpha=eta=0), then (M=T^{o(1)}) and the arbitrary logarithmic
+decay absorbs the subpower local factors.  Thus this complementary
+range is also covered; no logarithm is being used to absorb a fixed
+positive power.
+
+Now sum (4.845ax) over (casymp C).  Since (CY=H) and (Yleq Q),
+
+[
+ \boxed{
+ \sum_{c\asymp C}\int_{\mathscr S_Q}
+ |\rho_pi(1)|^2
+ |\lambda_pi(m)A_{\pi,1}(H/c)A_{\pi,2}(H/c)|,d\pi
+ \ll T^{o(1)}H\sqrt{1+m}.}
+\tag{4.845ay}
+\]
+
+The Poisson normalization is (M^{-1}) for (mll M=T^eta), so
+averaging (4.845ay) over (m) has the same worst power
+(H M^{1/2}).  The previous pointwise product bound was (HQ).
+Thus the fixed-level saving is
+
+[
+ Q/M^{1/2}=T^{\alpha+\beta-\eta/2}.
+]
+
+Subtracting this saving from the absolute level aggregation in
+SLF\(_{\alpha,eta}\) gives the exact box ledger
+
+[
+ \boxed{
+ \begin{aligned}
+ E_{\rm new}&=\frac32+\frac12\min(\alpha,\beta),\\
+ E_{\rm SLF}&=\frac32+\frac{\alpha+\beta}{2},\\
+ E_{\rm SLF}-E_{\rm new}
+ &=\frac12\max(\alpha,\beta).
+ \end{aligned}}
+\tag{4.845az}
+]
+
+Every nontrivial power-scale level box therefore has a fixed power
+margin.  When (alpha=eta=0), only bounded/subpower levels occur and
+the arbitrary logarithmic decay already proved in (4.845w)--(4.845z)
+supplies the endpoint decay.  Hence the Type-I/Type-I inequality
+SLF\(_{alpha,eta}) is proved for the full physical kernel, all
+oldclasses, and the continuous spectrum.  The interface
+product_hecke_spectral_large_sieve_audit records the threshold
+(H/Q), the multiplied support (mY), the saving (Q/sqrt m), and
+the margin in (4.845az).
+
+This closes only the Type-I/Type-I sector.  The Type-II sectors still
+contain two genuinely bilinear Möbius factors after Cauchy and are not
+covered by (4.845aw); consequently the whole Möbius gate and the final
+asymptotic remain unproved.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps
