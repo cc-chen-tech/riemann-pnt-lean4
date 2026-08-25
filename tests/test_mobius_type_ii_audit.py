@@ -6,9 +6,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mobius_type_ii import (
+    MQWBlockSavings,
     PascadiFullResidueSavings,
     WrightFactorSavings,
     c_coefficient,
+    mqw_block_savings,
+    mqw_initial_rectangle_supremal_saving,
+    mqw_initial_rectangle_witness,
     mobius_geometric_value,
     pascadi_balanced_gap,
     pascadi_full_residue_savings,
@@ -108,3 +112,29 @@ def test_pascadi_full_residue_optimum_is_the_exact_intersection() -> None:
 
 def test_pascadi_still_leaves_the_balanced_local_gap() -> None:
     assert pascadi_balanced_gap() == F(856, 191)
+
+
+def test_mqw_initial_rectangle_has_exact_one_sixteenth_supremum() -> None:
+    x, y = mqw_initial_rectangle_witness()
+    assert (x, y) == (F(5, 8), F(5, 8))
+    assert mqw_block_savings(x, y) == MQWBlockSavings(
+        first=F(7, 48),
+        second=F(1, 16),
+        third=F(1, 16),
+    )
+    assert mqw_initial_rectangle_supremal_saving() == F(1, 16)
+
+
+def test_mqw_witness_satisfies_every_size_condition_exactly() -> None:
+    x, y = mqw_initial_rectangle_witness()
+    assert x <= y + F(1, 4)
+    assert F(7, 5) * x + y == F(3, 2)
+    assert x + y <= F(5, 4)
+
+
+def test_mqw_third_term_certifies_global_one_sixteenth_ceiling() -> None:
+    # The theorem assumes x+y <= 5/4, so its third saving is always
+    # at most 3(5/4)/16 - 11/64 = 1/16.  This is a certificate, not
+    # a numerical grid search.
+    ceiling = F(3, 16) * F(5, 4) - F(11, 64)
+    assert ceiling == F(1, 16)

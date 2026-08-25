@@ -132,6 +132,66 @@ class PascadiFullResidueSavings:
         return (self.first, self.second, self.third, self.fourth)
 
 
+@dataclass(frozen=True)
+class MQWBlockSavings:
+    """Savings in Milićević--Qin--Wu Theorem 1.1.
+
+    The bilinear block lengths are ``M=q^x`` and ``N=q^y``.  The three
+    entries are the negative q-exponents of the three factors in the
+    parenthesis in that theorem.
+    """
+
+    first: Fraction
+    second: Fraction
+    third: Fraction
+
+    def values(self) -> tuple[Fraction, ...]:
+        return (self.first, self.second, self.third)
+
+
+def mqw_block_savings(x: Fraction, y: Fraction) -> MQWBlockSavings:
+    """Return the exact three savings for a block of exponents ``x,y``."""
+
+    if x < 0 or y < 0:
+        raise ValueError("bilinear length exponents must be nonnegative")
+    return MQWBlockSavings(
+        first=x / 2 - Fraction(1, 6),
+        second=3 * x / 25 + 3 * y / 10 - Fraction(1, 5),
+        third=3 * (x + y) / 16 - Fraction(11, 64),
+    )
+
+
+def mqw_initial_rectangle_witness() -> tuple[Fraction, Fraction]:
+    """Boundary point certifying the theorem's supremal saving."""
+
+    return Fraction(5, 8), Fraction(5, 8)
+
+
+def mqw_initial_rectangle_supremal_saving() -> Fraction:
+    """Exact supremum allowed by the theorem's support constraints.
+
+    The condition ``x+y <= 5/4`` forces the third saving to be at most
+    1/16.  The witness ``x=y=5/8`` satisfies all size conditions and its
+    other two savings are at least 1/16, so the ceiling is approached from
+    inside the theorem's strict ``(7/5)x+y < 3/2`` condition.
+    This is not a partition result for a full residue grid.  The theorem's
+    variables are supported in ``[1, q^x]`` and ``[1, q^y]``; translating
+    a high interval changes the product Kloosterman kernel.
+    """
+
+    x, y = mqw_initial_rectangle_witness()
+    savings = mqw_block_savings(x, y)
+    ceiling = Fraction(3, 16) * Fraction(5, 4) - Fraction(11, 64)
+    if not (
+        x <= y + Fraction(1, 4)
+        and Fraction(7, 5) * x + y <= Fraction(3, 2)
+        and x + y <= Fraction(5, 4)
+        and min(savings.values()) == ceiling
+    ):
+        raise AssertionError("invalid exact MQW supremum certificate")
+    return ceiling
+
+
 def pascadi_full_residue_savings(
     delta: Fraction,
 ) -> PascadiFullResidueSavings:

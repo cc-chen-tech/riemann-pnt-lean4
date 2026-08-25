@@ -2036,6 +2036,162 @@ Pascadi's result improves the published fixed-modulus diagnostic, but it
 does not average the fraction moduli together with the two Möbius weights
 and does not close (9.13).
 
+### 9.6 Audit of Milićević--Qin--Wu
+
+Theorem 1.1 of Milićević--Qin--Wu concerns the normalized fixed-modulus
+kernel
+
+\[
+ \mathrm{Kl}_2(cmn;q)=q^{-1/2}
+ \sum_{x\bmod q}^{*}e\left(\frac{cmnx+\bar x}{q}\right).
+\]
+
+If the coefficient supports are contained in \([1,M]\) and \([1,N]\),
+and
+
+\[
+ 1\leq M\leq Nq^{1/4},\qquad
+ M^{7/5}N<q^{3/2},\qquad MN\leq q^{5/4},
+\tag{9.22}
+\]
+
+their stated estimate is
+
+\[
+\begin{aligned}
+ \sum_{m\leq M}\sum_{n\leq N}\alpha_m\beta_n
+ \mathrm{Kl}_2(cmn;q)
+ \ll{}&q^\varepsilon\|\alpha\|_2\|\beta\|_2(MN)^{1/2}\\
+ &\times\left(
+ M^{-1/2}q^{1/6}
+ +M^{-3/25}N^{-3/10}q^{1/5}
+ +(MN)^{-3/16}q^{11/64}
+ \right).
+\end{aligned}
+\tag{9.23}
+\]
+
+For \(M=q^x,N=q^y\), the three exact savings over the norm-scale
+baseline are
+
+\[
+ d_1=\frac x2-\frac16,\qquad
+ d_2=\frac{3x}{25}+\frac{3y}{10}-\frac15,\qquad
+ d_3=\frac{3(x+y)}{16}-\frac{11}{64}.
+\tag{9.24}
+\]
+
+The last condition in (9.22) forces \(d_3\leq1/16\).  The boundary point
+\(x=y=5/8\) has
+
+\[
+ (d_1,d_2,d_3)=\left(\frac7{48},\frac1{16},\frac1{16}\right),
+\tag{9.25}
+\]
+
+so \(1/16\) is the exact supremal saving on the theorem's admissible
+initial rectangles; it is approached with an arbitrarily small inward
+shift because the middle condition in (9.22) is strict.
+
+This does not produce a partition of the full-residue sum (9.16).
+On the coprime \(b\)-component,
+\(S(m,-b;s)=s^{1/2}\mathrm{Kl}_2(-bm;s)\), but the Fourier variables
+there range through representatives of size \(s\).  Thus the top box has
+\(M=N=s\), which violates \(MN\leq s^{5/4}\).  Cutting
+\([1,s]\) into additively translated intervals does not repair the
+hypothesis: translating either variable changes the product kernel
+\(\mathrm{Kl}_2(-bm;s)\), while (9.23) is an initial-support theorem, not
+an arbitrary short-interval theorem.  Consequently this result gives no
+direct bound for the full Fourier bridge and no new Region-D box.  The
+checker verifies (9.24)--(9.25) using exact fractions.
+
+### 9.7 Exact reverse-Poisson identity
+
+It remains natural to ask whether summing the separated \(h\)-oscillation
+first creates a shorter shifted relation.  For fixed \(r,s,\delta\), let
+\(F_{r,s,\delta}(x)\) denote the complete smooth integrand in (4.4), before
+the factor \(e(-hx/s)\), extended by zero to the real line.  With the
+Fourier convention (4.3b), Poisson summation gives the exact identity
+
+\[
+\begin{aligned}
+ &\sum_{h\ne0}e\left(-\frac{h\delta\bar r}{s}\right)
+ \widehat F_{r,s,\delta}(h/s)\\
+ &\quad=s\sum_{m\equiv-\delta\bar r\;({\rm mod}\ s)}
+ F_{r,s,\delta}(m)-\widehat F_{r,s,\delta}(0).
+\end{aligned}
+\tag{9.26}
+\]
+
+The congruence on the right is exactly (4.3a); putting
+\(m_1=(mr+\delta)/s\) recovers \(m_1s-mr=\delta\).  Thus reverse Poisson
+does not create an additional short variable or an independent congruence:
+it returns the original shifted-divisor sum and subtracts the already
+isolated zero mode.  Formula (9.26) is useful as a normalization check, but
+it supplies no cancellation toward (9.13).  Any successful next step must
+therefore estimate the averaged Möbius Type-II sum before either the
+\(u\)-average or the coupled \((h,\delta)\)-kernel is discarded.
+
+### 9.8 Direct Möbius--inverse-phase estimates
+
+There are published estimates tailored to one of the two Möbius weights.
+Korolev writes
+
+\[
+ S_q(x;f)=\sum_{n\leq x\atop(n,q)=1}
+ f(n)e_q(an^*+bn).
+\tag{9.27}
+\]
+
+For every sufficiently large integer \(q\), in particular for composite
+\(q\), Theorem 1 gives, when
+\(q^{1/2+\varepsilon_0}\ll x\leq q\),
+
+\[
+ |S_q(x;f)|\leq
+ 562x\frac{\log\log q}{\varepsilon_0\log q}
+\tag{9.28}
+\]
+
+for every multiplicative \(|f|\leq1\).  Theorem 5 gives the stronger
+\(xq^{-c\varepsilon_0^4}\) for \(f=\mu\), but only when \(q\) is prime.
+
+On the ordered half \(r\leq s\), apply the most favorable composite
+estimate (9.28) to the \(r\)-sum with \(q=s\), \(x\asymp R\), and
+\(a=-h\delta\), temporarily assuming \((h\delta,s)=1\) and that partial
+summation has absorbed the smooth weight.  On the other half, the exact
+reciprocity formula
+\(\bar r/s+\bar s/r\equiv1/(rs)\pmod1\) swaps \(r,s\); its extra smooth
+factor \(e(-h\delta/(rs))\) is retained in the kernel.  Thus the prefix
+condition \(x\leq q\) is respected on both ordered halves.  In the
+balanced box \(R=S=T^3\), the result replaces one trivial length only by
+
+\[
+ R\frac{\log\log S}{\log S}.
+\tag{9.29}
+\]
+
+After summing \(s\) and the \(A=LH=T^5\) pairs \((h,\delta)\), this is
+still
+
+\[
+ RSA\frac{\log\log S}{\log S}
+ =T^{11}\frac{\log\log T}{\log T},
+\tag{9.30}
+\]
+
+against the local target \(RS=T^6\).  Thus the power gap remains exactly
+\(T^{5-o(1)}\).  The omitted components \((h\delta,s)>1\) require an exact
+gcd split and must be added; a componentwise upper-bound argument cannot
+use them to supply the missing power.  The prime-modulus
+theorem does not apply to the squarefree composite moduli carrying
+\(\mu(s)\), and discarding those moduli would discard the original sum.
+
+Hence the strongest directly matching one-variable theorem does not close
+even a positive-length portion of the maximal \(a\)-range.  A viable use of
+Möbius cancellation has to be simultaneous with the outer modulus or
+\((h,\delta)\) averages, precisely as required in (9.13).
+
 ## 10. What has and has not been proved
 
 **Current classification: published coverage complete; Region D remains
@@ -2066,6 +2222,10 @@ Proved in this note:
   cover the residual boxes, (9.8)--(9.12).
 * the exact applicability audit of Pascadi Theorem 7.8 and its remaining
   balanced exponent gap, (9.14)--(9.21).
+* the exact Milićević--Qin--Wu applicability obstruction and the
+  reverse-Poisson identity, (9.22)--(9.26).
+* the direct Möbius--inverse-phase audit, including its balanced
+  \(T^{5-o(1)}\) residual gap, (9.27)--(9.30).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -2079,6 +2239,9 @@ Proved in this note:
 | Finite Möbius Type-I/II decomposition | verified | exact convolution identity and retained coupled sum in (9.1)--(9.7) |
 | Termwise Wright route after \(s=un\) | verified insufficient | five exact savings (9.10); balanced gap (9.12) |
 | Fixed-modulus Pascadi route | verified insufficient | best full-residue saving \(s^{33/191-o(1)}\); balanced gap (9.21) |
+| Milićević--Qin--Wu route | verified inapplicable to the full Fourier box | top box violates \(MN\leq s^{5/4}\); (9.22)--(9.25) |
+| Reverse Poisson | verified exact but tautological | returns the shifted-divisor congruence and zero-mode subtraction, (9.26) |
+| One-variable Möbius inverse-phase route | verified insufficient | arbitrary composite moduli give only logarithmic saving; balanced power gap \(T^{5-o(1)}\), (9.27)--(9.30) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
@@ -2107,6 +2270,12 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   Kloosterman Sums*, Geom. Funct. Anal. (online 21 August 2026),
   DOI 10.1007/s00039-026-00746-0, especially Theorem 7.8; audited in
   Section 9.5.
+* D. Milićević, X. Qin, X. Wu, *Bilinear forms with Kloosterman sums and
+  moments of twisted L-functions*, arXiv:2511.07550, Theorem 1.1; audited
+  in Section 9.6.
+* M. A. Korolev, *On Kloosterman sums with multiplicative coefficients*,
+  Izv. Math. 82:4 (2018), 647--661, DOI 10.1070/IM8633, Theorems 1 and 5;
+  audited in Section 9.8.
 * arXiv:2601.00292 is **withdrawn from this project's admissible analytic
   inputs**: the author record reports a missing \(L^2\) factor (changing the
   relevant loss from \(L^5\) to \(L^7\)), so the advertised improvement is
