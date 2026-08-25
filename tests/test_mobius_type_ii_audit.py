@@ -6,9 +6,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mobius_type_ii import (
+    PascadiFullResidueSavings,
     WrightFactorSavings,
     c_coefficient,
     mobius_geometric_value,
+    pascadi_balanced_gap,
+    pascadi_full_residue_savings,
+    pascadi_optimal_delta,
     wright_factor_covers,
     wright_factor_savings,
 )
@@ -87,3 +91,20 @@ def test_fixed_factor_never_improves_the_decisive_first_term() -> None:
         for tau in (F(0), F(1, 4), F(1, 2), F(1)):
             savings = wright_factor_savings(box, tau)
             assert savings.first <= baseline
+
+
+def test_pascadi_full_residue_optimum_is_the_exact_intersection() -> None:
+    delta = pascadi_optimal_delta()
+    assert delta == F(7, 191)
+    savings = pascadi_full_residue_savings(delta)
+    assert savings == PascadiFullResidueSavings(
+        first=F(33, 191),
+        second=F(33, 191),
+        third=F(257, 764),
+        fourth=F(13, 24),
+    )
+    assert min(savings.values()) == F(33, 191)
+
+
+def test_pascadi_still_leaves_the_balanced_local_gap() -> None:
+    assert pascadi_balanced_gap() == F(856, 191)

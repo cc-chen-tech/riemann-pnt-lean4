@@ -1949,6 +1949,93 @@ This gate is no longer an arbitrary MWKF placeholder: its variables,
 coefficients, factorization identity, coprimalities, and the failure of the
 termwise published estimate are explicit. It remains unproved.
 
+### 9.5 Audit of the August 2026 Pascadi bilinear theorem
+
+Pascadi's Theorem 7.8, published online on 21 August 2026, gives power
+savings for fixed-modulus bilinear forms of classical Kloosterman sums
+
+\[
+ \sum_{m\leq M}\sum_{n\leq N}\alpha_m\beta_n S(am,n;c).
+\tag{9.14}
+\]
+
+This is not the Kloosterman fraction in (9.13). The exact bridge is finite
+Fourier inversion in \(r\bmod s\). For a separated weight, define
+
+\[
+ \widehat\alpha_s(m)=\sum_{r\bmod s}\alpha_s(r)e(-mr/s),
+ \qquad
+ \beta_s(b)=\sum_{a\equiv b\;({\rm mod}\ s)}\nu(a).
+\tag{9.15}
+\]
+
+Then, on the coprime component,
+
+\[
+ \sum_{r\bmod s}^{*}\alpha_s(r)
+ \sum_a\nu(a)e(-a\bar r/s)
+ =\frac1s\sum_{m,b\bmod s}
+ \widehat\alpha_s(m)\beta_s(b)S(m,-b;s).
+\tag{9.16}
+\]
+
+Components with \(g=(m,b,s)>1\) require a further exact gcd decomposition;
+discarding that obligation would be invalid. To test the strongest possible
+direct consequence of the new theorem, it is already enough to audit the
+most favorable full-residue coprime component of (9.16).
+
+At \(M=N=c\), the four factors in Pascadi Theorem 7.8(i) save respectively
+
+\[
+ \frac{13-53\delta}{64},\qquad
+ \frac{1+\delta}{6},\qquad
+ \frac{4+\delta}{12},\qquad
+ \frac{13}{24}
+\tag{9.17}
+\]
+
+powers of \(c\), where \(0\leq\delta\leq1/24\). The optimum of the minimum
+is attained when the first two are equal:
+
+\[
+ \delta=\frac7{191},\qquad
+ \min(9.17)=\frac{33}{191}.
+\tag{9.18}
+\]
+
+In the balanced maximal box, Plancherel and residue aggregation give the
+optimistic norm scales
+
+\[
+ \|\widehat\alpha_s\|_2\ll s,\qquad
+ \|\beta_s\|_2^2
+ \ll_\varepsilon(1+A/s)A\,T^\varepsilon
+ \asymp A^2s^{-1}T^\varepsilon.
+\tag{9.19}
+\]
+
+After the factor \(1/s\) in (9.16), the trivial fixed-\(s\) scale is
+\(As\). Summing \(s\asymp S\) termwise gives \(AS^2\). Thus for
+\(A=T^5\), \(S=T^3\), the best exponent certified by this direct
+Pascadi route is
+
+\[
+ T^{11-99/191+o(1)}.
+\tag{9.20}
+\]
+
+Relative to the required \(RS=T^6\), the residual gap is
+
+\[
+ \boxed{T^{856/191-o(1)}}.
+\tag{9.21}
+\]
+
+The checker verifies (9.17)--(9.21) with exact rational arithmetic.
+Pascadi's result improves the published fixed-modulus diagnostic, but it
+does not average the fraction moduli together with the two Möbius weights
+and does not close (9.13).
+
 ## 10. What has and has not been proved
 
 **Current classification: published coverage complete; Region D remains
@@ -1977,6 +2064,8 @@ Proved in this note:
 * the finite Möbius identity (9.3)--(9.5), its exact substitution (9.7),
   and the five-term proof that termwise fixed-factor summation does not
   cover the residual boxes, (9.8)--(9.12).
+* the exact applicability audit of Pascadi Theorem 7.8 and its remaining
+  balanced exponent gap, (9.14)--(9.21).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -1989,6 +2078,7 @@ Proved in this note:
 | Published Region A--C coverage | verified | exact inequalities and hypothesis ledger in Section 8 |
 | Finite Möbius Type-I/II decomposition | verified | exact convolution identity and retained coupled sum in (9.1)--(9.7) |
 | Termwise Wright route after \(s=un\) | verified insufficient | five exact savings (9.10); balanced gap (9.12) |
+| Fixed-modulus Pascadi route | verified insufficient | best full-residue saving \(s^{33/191-o(1)}\); balanced gap (9.21) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
@@ -2013,6 +2103,10 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 * T. Wright, *Trilinear Kloosterman fractions I: partially fixed moduli and
   unbalanced convolutions*, arXiv:2604.25177v2, Theorem 2.1, audited but not
   used for a new box in Section 8.3.
+* A. Pascadi, *Non-Abelian Amplification and Bilinear Forms with
+  Kloosterman Sums*, Geom. Funct. Anal. (online 21 August 2026),
+  DOI 10.1007/s00039-026-00746-0, especially Theorem 7.8; audited in
+  Section 9.5.
 * arXiv:2601.00292 is **withdrawn from this project's admissible analytic
   inputs**: the author record reports a missing \(L^2\) factor (changing the
   relevant loss from \(L^5\) to \(L^7\)), so the advertised improvement is

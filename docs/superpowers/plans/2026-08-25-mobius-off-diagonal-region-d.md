@@ -87,6 +87,9 @@
   e(-h\delta\bar r/(un)).
   \]
 - [ ] Record the balanced witness and the exact missing \(T^{37/8}\) saving from the decisive arbitrary-\(a\) term.
+- [ ] Audit Pascadi Theorem 7.8 after finite Fourier inversion of the
+  fraction sum, optimize its four full-residue savings at
+  \(\delta=7/191\), and record the residual balanced gap \(T^{856/191}\).
 
 ### Task 4: Verification and commit
 

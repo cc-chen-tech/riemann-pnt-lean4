@@ -119,6 +119,54 @@ class WrightFactorSavings:
         )
 
 
+@dataclass(frozen=True)
+class PascadiFullResidueSavings:
+    """Four savings from Pascadi Theorem 7.8(i) at M=N=c."""
+
+    first: Fraction
+    second: Fraction
+    third: Fraction
+    fourth: Fraction
+
+    def values(self) -> tuple[Fraction, ...]:
+        return (self.first, self.second, self.third, self.fourth)
+
+
+def pascadi_full_residue_savings(
+    delta: Fraction,
+) -> PascadiFullResidueSavings:
+    """Return powers saved over the full-residue trivial scale.
+
+    These are obtained from Pascadi Theorem 7.8(i) after setting both
+    bilinear lengths equal to the modulus. The theorem assumes
+    ``0 <= delta <= 1/24``.
+    """
+
+    if delta < 0 or delta > Fraction(1, 24):
+        raise ValueError("Pascadi's delta must lie in [0, 1/24]")
+    return PascadiFullResidueSavings(
+        first=(Fraction(13, 64) - Fraction(53, 64) * delta),
+        second=(1 + delta) / 6,
+        third=(4 + delta) / 12,
+        fourth=Fraction(13, 24),
+    )
+
+
+def pascadi_optimal_delta() -> Fraction:
+    """Intersection of the two decisive full-residue savings."""
+
+    return Fraction(7, 191)
+
+
+def pascadi_balanced_gap() -> Fraction:
+    """Residual T-exponent after optimistic use in the balanced box."""
+
+    modulus_saving = min(
+        pascadi_full_residue_savings(pascadi_optimal_delta()).values()
+    )
+    return Fraction(5) - 3 * modulus_saving
+
+
 def wright_factor_savings(
     box: ExponentBox, tau: Fraction
 ) -> WrightFactorSavings:
