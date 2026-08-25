@@ -13249,6 +13249,128 @@ unproved finite-place and entry-adapter flags.  It does not mark
 (4.845d) as proved.
 
 
+### 4.109b Fourier separation of the original Farey family cannot precede positive Cauchy
+
+There is a tempting way to attack (4.845d) before passing to a
+fixed-index spectral sum.  It must first be normalized correctly.  For
+one product-separated component of the signed Farey kernel, let
+\(X=T^x\), \(L=T^\ell\), \(V_1=T^{\nu_1}\),
+\(V_2=T^{\nu_2}\), and put
+
+\[
+ \begin{aligned}
+ P(\alpha)&=\sum_{v\asymp V_1}\sum_{r\asymp X}
+   a_{r,v}\mu(r)e(\alpha rv),\\
+ Q(\alpha)&=\sum_{j\asymp V_2}\sum_{s\asymp X}
+   b_{s,j}\mu(s)e(-\alpha js).
+ \end{aligned}
+\]
+
+With the Fourier convention
+\(\widehat U(\xi)=\int_{\mathbb R}U(y)e(-\xi y)\,dy\), Fourier
+inversion gives the exact identity
+
+\[
+ \boxed{
+ \sum_{r,s,v,j}a_{r,v}b_{s,j}\mu(r)\mu(s)
+ U\!\left(\frac{rv-js}{L}\right)
+ =L\int_{\mathbb R}\widehat U(L\alpha)
+ P(\alpha)Q(\alpha)\,d\alpha.}
+\tag{4.845e}
+\]
+
+The integral in (4.845e) is over the whole real line; the effective
+arc \(|\alpha|\ll L^{-1}(\log T)^C\) follows from the rapid decay of
+\(\widehat U\), with the complementary tail bounded by an arbitrary
+negative power after retaining the original smooth seminorms.  The
+coprimality conditions can be inserted into the coefficients by the
+same finite gcd decomposition used before (10.5).  Equation (4.845e)
+does **not** assert that the physical coupled kernel has already been
+separated: it is the most favorable separated component on which an
+ordinary Fourier--Cauchy argument would have to succeed.
+
+For fixed nonzero \(v\asymp T^\nu\), the local mean-value theorem is
+
+\[
+ \boxed{
+ \int_{|\alpha-\alpha_0|\ll L^{-1}}
+ \left|\sum_{r\asymp X}a_r\mu(r)e(\alpha vr)\right|^2d\alpha
+ \ll
+ \left(\frac XL+\frac1{|v|}\right)
+ \sum_{r\asymp X}|a_r\mu(r)|^2.}
+\tag{4.845f}
+\]
+
+The coefficient energy on the right of (4.845f) has exponent \(x\).
+It may not be deleted.  In the hard cell
+
+\[
+ (x,\ell,\nu_1,\nu_2)=
+ \left(3,\frac52,\frac12,\frac12\right),
+\]
+
+the bandwidth factor in parentheses has exponent \(1/2\), while the
+complete one-dilate mean square has exponent
+
+\[
+ \boxed{x+\max(x-\ell,-\nu_i)=\frac72.}
+\tag{4.845g}
+\]
+
+Applying Cauchy to the \(V_i\)-family before using any signed
+interaction gives, with the normalized Fourier measure
+\(L|\widehat U(L\alpha)|d\alpha\),
+
+\[
+ \boxed{
+ E_{i,\mathrm{Cauchy}}
+ =\ell+2\nu_i+x+\max(x-\ell,-\nu_i)=7.}
+\tag{4.845h}
+\]
+
+Thus Cauchy in (4.845e) yields exponent \(7\), the complete
+four-variable ambient bound.  It has discarded the signed Farey
+window rather than recovered a half power.
+
+The normalization error is easy to diagnose from the self-diagonal.
+In the expansion of either positive short-arc majorant, the literal
+terms \((v_1,r_1)=(v_2,r_2)\) have coefficient energy
+
+\[
+ \boxed{E_{i,\mathrm{self}}=x+\nu_i=\frac72.}
+\tag{4.845i}
+\]
+
+If a new joint Möbius--dilate theorem suppressed every other term down
+to this natural scale without loss, Cauchy on the two sides would give
+only
+
+\[
+ \boxed{
+ E_{\mathrm{ideal}}
+ =\frac12\big((x+\nu_1)+(x+\nu_2)\big)
+ =\frac72.}
+\tag{4.845j}
+\]
+
+This is the zero-slack endpoint and still misses
+FTF\(_{\epsilon,1/1000}\) by \(T^{1/1000}\).  The fact that the
+original signed support excludes \(rv-js=0\), and the exact completed
+identity (12.10) removes its zero character, does not remove the
+positive equal-copy terms in (4.845i) created only after squaring.
+Therefore a successful argument must retain the signed pairing in
+(4.845e) through the new arithmetic estimate, or prove cancellation
+between the diagonal-scale and off-diagonal pieces strong enough to
+supply a power or logarithmic saving.  Ordinary positive Cauchy cannot
+be the missing step.
+
+The adapter farey_dilate_pre_cauchy_audit records (4.845f)--(4.845j),
+including the coefficient-energy factor, the ambient exponent (7),
+the ideal endpoint (7/2), and the remaining (1/1000).  Its physical
+kernel, published joint-dilate estimate, and whole-gate flags remain
+false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

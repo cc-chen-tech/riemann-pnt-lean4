@@ -2738,6 +2738,18 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "entry_adapter=False,physical=False,hecke_covered=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: farey_dilate_pre_cauchy="
+        "entry=3,shift=5/2,left=1/2,right=1/2,gate=3499/1000,"
+        "arc=5/2,left_arc=-2,right_arc=-2,energy=3,"
+        "left_bandwidth=1/2,right_bandwidth=1/2,"
+        "left_local_l2=7/2,right_local_l2=7/2,"
+        "left_self=7/2,right_self=7/2,left_cauchy=7,right_cauchy=7,"
+        "separate=7,separate_deficit=7/2,ideal=7/2,"
+        "ideal_deficit=1/1000,endpoint=7/2,endpoint_reached=True,"
+        "window_lost=True,shift_zero=True,self_removed=False,"
+        "extra_saving=True,published=False,physical=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: newform_level_mobius_projector="
         "prime=5,index=6,mobius=-2,newform=-1/6,difference=-11/6,"
         "geometric=True,squarefree=True,oldclass_tail=True,"
@@ -3966,6 +3978,58 @@ def test_finite_prime_hecke_average_is_the_corrected_spectral_gate() -> None:
     assert not hard.mobius_entry_to_hecke_index_adapter_derived
     assert not hard.physical_coupled_kernel_restored
     assert not hard.finite_prime_hecke_gate_covered
+    assert not hard.whole_mobius_gate_covered
+
+
+def test_pre_cauchy_farey_dilate_family_reaches_only_the_zero_margin_endpoint() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109b Fourier separation of the original Farey family cannot precede positive Cauchy",
+        "\\tag{4.845e}",
+        "\\tag{4.845f}",
+        "\\tag{4.845j}",
+        "farey_dilate_pre_cauchy_audit",
+    ):
+        assert marker in note
+
+    adapter = getattr(
+        coverage_audit,
+        "farey_dilate_pre_cauchy_audit",
+        None,
+    )
+    assert adapter is not None, "pre-Cauchy Farey-dilate audit is missing"
+
+    hard = adapter(
+        mobius_entry_exponent=F(3),
+        shift_window_exponent=F(5, 2),
+        left_dilate_exponent=F(1, 2),
+        right_dilate_exponent=F(1, 2),
+        gate_target_exponent=F(3499, 1000),
+    )
+    assert hard.fourier_arc_denominator_exponent == F(5, 2)
+    assert hard.left_rescaled_arc_exponent == F(-2)
+    assert hard.right_rescaled_arc_exponent == F(-2)
+    assert hard.mobius_coefficient_energy_exponent == F(3)
+    assert hard.left_one_dilate_bandwidth_excess_exponent == F(1, 2)
+    assert hard.right_one_dilate_bandwidth_excess_exponent == F(1, 2)
+    assert hard.left_one_dilate_local_l2_exponent == F(7, 2)
+    assert hard.right_one_dilate_local_l2_exponent == F(7, 2)
+    assert hard.left_family_positive_self_diagonal_exponent == F(7, 2)
+    assert hard.right_family_positive_self_diagonal_exponent == F(7, 2)
+    assert hard.left_family_cauchy_normalized_l2_exponent == F(7)
+    assert hard.right_family_cauchy_normalized_l2_exponent == F(7)
+    assert hard.separate_family_cauchy_bound_exponent == F(7)
+    assert hard.separate_family_cauchy_zero_slack_deficit == F(7, 2)
+    assert hard.ideal_joint_dilate_bound_exponent == F(7, 2)
+    assert hard.ideal_joint_dilate_gate_deficit == F(1, 1000)
+    assert hard.zero_slack_endpoint_exponent == F(7, 2)
+    assert hard.ideal_joint_dilate_reaches_zero_slack_endpoint
+    assert hard.ordinary_fourier_cauchy_loses_farey_window
+    assert hard.shift_zero_mode_removed_before_cauchy
+    assert not hard.positive_self_diagonal_removed_by_shift_centering
+    assert hard.endpoint_requires_additional_logarithmic_or_power_saving
+    assert not hard.published_joint_dilate_endpoint_saving_available
+    assert not hard.physical_coupled_kernel_restored
     assert not hard.whole_mobius_gate_covered
 
 

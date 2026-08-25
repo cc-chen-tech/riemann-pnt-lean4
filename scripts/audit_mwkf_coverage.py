@@ -1646,6 +1646,40 @@ class FinitePrimeHeckeAverageAudit:
 
 
 @dataclass(frozen=True)
+class FareyDilatePreCauchyAudit:
+    mobius_entry_exponent: Fraction
+    shift_window_exponent: Fraction
+    left_dilate_exponent: Fraction
+    right_dilate_exponent: Fraction
+    gate_target_exponent: Fraction
+    fourier_arc_denominator_exponent: Fraction
+    left_rescaled_arc_exponent: Fraction
+    right_rescaled_arc_exponent: Fraction
+    mobius_coefficient_energy_exponent: Fraction
+    left_one_dilate_bandwidth_excess_exponent: Fraction
+    right_one_dilate_bandwidth_excess_exponent: Fraction
+    left_one_dilate_local_l2_exponent: Fraction
+    right_one_dilate_local_l2_exponent: Fraction
+    left_family_positive_self_diagonal_exponent: Fraction
+    right_family_positive_self_diagonal_exponent: Fraction
+    left_family_cauchy_normalized_l2_exponent: Fraction
+    right_family_cauchy_normalized_l2_exponent: Fraction
+    separate_family_cauchy_bound_exponent: Fraction
+    separate_family_cauchy_zero_slack_deficit: Fraction
+    ideal_joint_dilate_bound_exponent: Fraction
+    ideal_joint_dilate_gate_deficit: Fraction
+    zero_slack_endpoint_exponent: Fraction
+    ideal_joint_dilate_reaches_zero_slack_endpoint: bool
+    ordinary_fourier_cauchy_loses_farey_window: bool
+    shift_zero_mode_removed_before_cauchy: bool
+    positive_self_diagonal_removed_by_shift_centering: bool
+    endpoint_requires_additional_logarithmic_or_power_saving: bool
+    published_joint_dilate_endpoint_saving_available: bool
+    physical_coupled_kernel_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -8637,6 +8671,112 @@ def finite_prime_hecke_average_audit(
     )
 
 
+def farey_dilate_pre_cauchy_audit(
+    *,
+    mobius_entry_exponent: Fraction,
+    shift_window_exponent: Fraction,
+    left_dilate_exponent: Fraction,
+    right_dilate_exponent: Fraction,
+    gate_target_exponent: Fraction,
+) -> FareyDilatePreCauchyAudit:
+    """Audit the short-arc dilate family before positive Cauchy.
+
+    For a separated component of the signed Farey kernel, Fourier
+    inversion in ``delta=rv-js`` has an exact prefactor ``T^ell`` and
+    an alpha arc of length ``T^-ell``.  If
+
+    ``P(beta)=sum_(n about T^x) a_n e(beta*n)``, then for a nonzero
+    dilate ``v about T^nu`` the elementary local mean-value theorem is
+
+    ``int_(|alpha| << T^-ell) |P(alpha*v)|^2 d alpha``
+    ``<< T^(x-ell) + T^-nu``.
+
+    The bracket has exponent ``max(x-ell,-nu)``, but it multiplies the
+    coefficient energy ``sum |a_n|^2``, of exponent ``x``.  Omitting
+    that energy is a normalization error.  With the normalized Fourier
+    measure ``T^ell d alpha``, ordinary Cauchy over the dilates has
+    exponent
+
+    ``ell + 2*nu + x + max(x-ell,-nu)``
+
+    for each squared norm.  The literal positive self-diagonal
+    ``(v_1,n_1)=(v_2,n_2)`` instead has exponent ``x+nu``.
+
+    At ``(x,ell,nu_left,nu_right)=(3,5/2,1/2,1/2)``, separate family
+    Cauchy gives exponent ``7``: taking an absolute Fourier norm has
+    lost the entire signed Farey window.  A genuinely joint Mobius--
+    dilate estimate at the positive self-diagonal scale would give
+    exponent ``7/2`` and no power margin.  The signed
+    shift support removes ``delta=0``, but it does not remove the
+    positive terms obtained by setting the two copies of each dilate
+    and each Mobius entry equal after Cauchy.  Consequently even the
+    ideal large-sieve ledger still needs an additional power or
+    logarithmic saving at the endpoint.
+
+    This audit is deliberately for a separated component.  Passing
+    from the original physical coupled kernel to this model without
+    losing the endpoint is not asserted here.
+    """
+    x = F(mobius_entry_exponent)
+    ell = F(shift_window_exponent)
+    left = F(left_dilate_exponent)
+    right = F(right_dilate_exponent)
+    gate = F(gate_target_exponent)
+    if min(x, ell, left, right, gate) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if ell == 0:
+        raise ValueError("shift-window exponent must be positive")
+
+    left_bandwidth = max(x - ell, -left)
+    right_bandwidth = max(x - ell, -right)
+    left_local = x + left_bandwidth
+    right_local = x + right_bandwidth
+    left_diagonal = x + left
+    right_diagonal = x + right
+    left_cauchy = ell + F(2) * left + left_local
+    right_cauchy = ell + F(2) * right + right_local
+    separate_bound = (left_cauchy + right_cauchy) / 2
+    ideal_bound = (left_diagonal + right_diagonal) / 2
+    return FareyDilatePreCauchyAudit(
+        mobius_entry_exponent=x,
+        shift_window_exponent=ell,
+        left_dilate_exponent=left,
+        right_dilate_exponent=right,
+        gate_target_exponent=gate,
+        fourier_arc_denominator_exponent=ell,
+        left_rescaled_arc_exponent=left - ell,
+        right_rescaled_arc_exponent=right - ell,
+        mobius_coefficient_energy_exponent=x,
+        left_one_dilate_bandwidth_excess_exponent=left_bandwidth,
+        right_one_dilate_bandwidth_excess_exponent=right_bandwidth,
+        left_one_dilate_local_l2_exponent=left_local,
+        right_one_dilate_local_l2_exponent=right_local,
+        left_family_positive_self_diagonal_exponent=left_diagonal,
+        right_family_positive_self_diagonal_exponent=right_diagonal,
+        left_family_cauchy_normalized_l2_exponent=left_cauchy,
+        right_family_cauchy_normalized_l2_exponent=right_cauchy,
+        separate_family_cauchy_bound_exponent=separate_bound,
+        separate_family_cauchy_zero_slack_deficit=_positive_part(
+            separate_bound - ideal_bound
+        ),
+        ideal_joint_dilate_bound_exponent=ideal_bound,
+        ideal_joint_dilate_gate_deficit=_positive_part(ideal_bound - gate),
+        zero_slack_endpoint_exponent=ideal_bound,
+        ideal_joint_dilate_reaches_zero_slack_endpoint=(
+            ideal_bound >= gate
+        ),
+        ordinary_fourier_cauchy_loses_farey_window=True,
+        shift_zero_mode_removed_before_cauchy=True,
+        positive_self_diagonal_removed_by_shift_centering=False,
+        endpoint_requires_additional_logarithmic_or_power_saving=(
+            ideal_bound >= gate
+        ),
+        published_joint_dilate_endpoint_saving_available=False,
+        physical_coupled_kernel_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -15070,6 +15210,63 @@ def main() -> None:
         f"physical={finite_hecke.physical_coupled_kernel_restored},"
         f"hecke_covered={finite_hecke.finite_prime_hecke_gate_covered},"
         f"covered={finite_hecke.whole_mobius_gate_covered}"
+    )
+    farey_dilate = farey_dilate_pre_cauchy_audit(
+        mobius_entry_exponent=F(3),
+        shift_window_exponent=F(5, 2),
+        left_dilate_exponent=F(1, 2),
+        right_dilate_exponent=F(1, 2),
+        gate_target_exponent=F(3499, 1000),
+    )
+    print(
+        "large_q_transition: farey_dilate_pre_cauchy="
+        f"entry={_fmt(farey_dilate.mobius_entry_exponent)},"
+        f"shift={_fmt(farey_dilate.shift_window_exponent)},"
+        f"left={_fmt(farey_dilate.left_dilate_exponent)},"
+        f"right={_fmt(farey_dilate.right_dilate_exponent)},"
+        f"gate={_fmt(farey_dilate.gate_target_exponent)},"
+        f"arc={_fmt(farey_dilate.fourier_arc_denominator_exponent)},"
+        f"left_arc={_fmt(farey_dilate.left_rescaled_arc_exponent)},"
+        f"right_arc={_fmt(farey_dilate.right_rescaled_arc_exponent)},"
+        f"energy={_fmt(farey_dilate.mobius_coefficient_energy_exponent)},"
+        "left_bandwidth="
+        f"{_fmt(farey_dilate.left_one_dilate_bandwidth_excess_exponent)},"
+        "right_bandwidth="
+        f"{_fmt(farey_dilate.right_one_dilate_bandwidth_excess_exponent)},"
+        "left_local_l2="
+        f"{_fmt(farey_dilate.left_one_dilate_local_l2_exponent)},"
+        "right_local_l2="
+        f"{_fmt(farey_dilate.right_one_dilate_local_l2_exponent)},"
+        "left_self="
+        f"{_fmt(farey_dilate.left_family_positive_self_diagonal_exponent)},"
+        "right_self="
+        f"{_fmt(farey_dilate.right_family_positive_self_diagonal_exponent)},"
+        "left_cauchy="
+        f"{_fmt(farey_dilate.left_family_cauchy_normalized_l2_exponent)},"
+        "right_cauchy="
+        f"{_fmt(farey_dilate.right_family_cauchy_normalized_l2_exponent)},"
+        "separate="
+        f"{_fmt(farey_dilate.separate_family_cauchy_bound_exponent)},"
+        "separate_deficit="
+        f"{_fmt(farey_dilate.separate_family_cauchy_zero_slack_deficit)},"
+        f"ideal={_fmt(farey_dilate.ideal_joint_dilate_bound_exponent)},"
+        "ideal_deficit="
+        f"{_fmt(farey_dilate.ideal_joint_dilate_gate_deficit)},"
+        f"endpoint={_fmt(farey_dilate.zero_slack_endpoint_exponent)},"
+        "endpoint_reached="
+        f"{farey_dilate.ideal_joint_dilate_reaches_zero_slack_endpoint},"
+        "window_lost="
+        f"{farey_dilate.ordinary_fourier_cauchy_loses_farey_window},"
+        "shift_zero="
+        f"{farey_dilate.shift_zero_mode_removed_before_cauchy},"
+        "self_removed="
+        f"{farey_dilate.positive_self_diagonal_removed_by_shift_centering},"
+        "extra_saving="
+        f"{farey_dilate.endpoint_requires_additional_logarithmic_or_power_saving},"
+        "published="
+        f"{farey_dilate.published_joint_dilate_endpoint_saving_available},"
+        f"physical={farey_dilate.physical_coupled_kernel_restored},"
+        f"covered={farey_dilate.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(
