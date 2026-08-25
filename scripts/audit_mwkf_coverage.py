@@ -138,6 +138,18 @@ class AveragedChowlaShiftAudit:
     reasons: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class CenteredResonanceScales:
+    product_frequency: Fraction
+    coefficient_first_moment: Fraction
+    resonance_cutoff: Fraction
+    phase_variation_at_cutoff: Fraction
+    near_resonance_bound: Fraction
+    logarithmic_gate_target: Fraction
+    saving: Fraction
+    nonempty_collar: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -464,6 +476,45 @@ def averaged_chowla_shift_audit(
             "Matomaki-Radziwill-Tao, arXiv:1503.05121, Theorem 1.6"
         ),
         reasons=tuple(reasons),
+    )
+
+
+def centered_resonance_scales(
+    box: ExponentBox,
+    *,
+    slack: Fraction,
+) -> CenteredResonanceScales:
+    """Ledger for the centered near-resonance collar.
+
+    Put ``p=log_T(CV)`` and ``Delta_s(d)=min_j |d-j*s|``.  Double
+    centering gives a coefficient first moment of exponent ``2*p`` and
+    hence a collar bound ``(CV)^2 D^2``.  Choosing
+    ``D=T^((rho-p)/2-slack)`` saves ``T^(-2*slack)`` against the
+    logarithmic LMSD gate ``T^rho*CV``.
+    """
+    if slack < 0:
+        raise ValueError("slack must be nonnegative")
+    completion = farey_completion_scales(box)
+    product_frequency = completion.product_frequency
+    coefficient_first_moment = 2 * product_frequency
+    resonance_cutoff = (box.rho - product_frequency) / 2 - slack
+    near_resonance_bound = (
+        coefficient_first_moment + 2 * resonance_cutoff
+    )
+    logarithmic_gate_target = (
+        completion.normalized_gate_target + TARGET_SAVING
+    )
+    return CenteredResonanceScales(
+        product_frequency=product_frequency,
+        coefficient_first_moment=coefficient_first_moment,
+        resonance_cutoff=resonance_cutoff,
+        phase_variation_at_cutoff=(
+            resonance_cutoff + product_frequency - box.sigma
+        ),
+        near_resonance_bound=near_resonance_bound,
+        logarithmic_gate_target=logarithmic_gate_target,
+        saving=logarithmic_gate_target - near_resonance_bound,
+        nonempty_collar=resonance_cutoff > 0,
     )
 
 

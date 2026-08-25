@@ -449,6 +449,131 @@ only be a candidate for the final logarithmic gain after a pre-Cauchy
 spectral argument has already reduced exponent seven to the barrier
 exponent four.
 
+### 4.2 An unconditional centered near-resonance collar
+
+The subtraction in (4.10) does give a local estimate before any spectral
+input.  Choose the least absolute representatives
+\(c,v\in\mathcal C_s\), and recall the exact finite coefficient
+
+\[
+ \Lambda_{r,s}(a)
+ :=\sum_{\substack{c\mid a\\
+                    c,a/c\in\mathcal C_s\setminus\{0\}}}
+ \Theta_{r,s}(c,a/c).
+\tag{4.15}
+\]
+
+The centering in (4.10) is exact because the physical \(h\)- and
+\(\delta\)-supports miss both coordinate axes; equivalently the total
+Fourier sum is zero.  No additional assertion
+\(\sum_a\Lambda_{r,s}(a)=0\) is needed.  From the two-variable decay of
+\(\Theta\), with any fixed \(A>3\),
+
+\[
+\begin{aligned}
+ \sum_{a\ne0}|a\Lambda_{r,s}(a)|
+ &\le \sum_{\substack{c,v\in\mathcal C_s\\c v\ne0}}
+          |cv|\,|\Theta_{r,s}(c,v)|\\
+ &\ll_{A,W}
+ \left\{\sum_{c\in\mathbb Z}|c|(1+|c|/C)^{-A}\right\}
+ \left\{\sum_{v\in\mathbb Z}|v|(1+|v|/V)^{-A}\right\}\\
+ &\ll_{A,W}(CV)^2,
+\end{aligned}
+\tag{4.16}
+\]
+
+provided \(C,V\ge1\), as they are in (2.8).  Extending the finite sums to
+\(\mathbb Z\) only enlarges the nonnegative majorant, so (4.16) has no
+transform-tail error.
+
+For \((s,d)=1\), define the exact resonance distance
+
+\[
+ \Delta_s(d):=\min_{j\in\mathbb Z}|d-js|.
+\tag{4.17}
+\]
+
+In the hard box \(s>1\), so \(\Delta_s(d)=0\) would contradict
+\((s,d)=1\).  Since \(a\in\mathbb Z\), choose a minimizing \(j\) in
+(4.17) and use \(e(ad/s)=e(a(d-js)/s)\).  The elementary inequality
+
+\[
+ |e(x)-1|\le2\pi|x|
+\tag{4.18}
+\]
+
+and (4.16) give, for every admissible \((s,d)\),
+
+\[
+ \boxed{
+ \left|\sum_{a\ne0}\Lambda_{s+d,s}(a)
+       \left\{e\left(\frac{ad}{s}\right)-1\right\}\right|
+ \ll_W \frac{\Delta_s(d)}s(CV)^2.}
+\tag{4.19}
+\]
+
+Now restrict (4.10) to \(\Delta_s(d)\le D\), where \(1\le D\le S/2\).
+For fixed \(s\asymp S\), (4.11) confines the possible multiples \(js\)
+to an absolute bounded set.  For each such \(j\), at most two integers
+\(d\) have \(|d-js|=k\).  Consequently
+
+\[
+ \sum_{\substack{d:\ R/2\le s+d\le2R\\
+                   0<\Delta_s(d)\le D}}
+ \Delta_s(d)
+ \ll \sum_{1\le k\le D}k\ll D^2.
+\tag{4.20}
+\]
+
+All arithmetic and mollifier weights outside the inner sum in (4.10)
+have modulus at most one, apart from \(S/s\ll1\).  Summing (4.19) with
+(4.20) over the \(O(S)\) values of \(s\asymp S\) therefore proves the
+unconditional local inequality
+
+\[
+ \boxed{
+ |\mathfrak D_{q,\mathrm{near}}^{(2)}(D)|
+ \ll_W (CV)^2D^2.}
+\tag{4.21}
+\]
+
+In exponent notation put \(CV=T^p\) and choose
+
+\[
+ D=T^{(\rho-p)/2-\eta},\qquad \eta>0.
+\tag{4.22}
+\]
+
+Then (4.21) is \(T^{\rho+p-2\eta}\), whereas the power scale of the
+LMSD gate is \(RCV=T^{\rho+p}\).  At (2.8), \(p=1\), and (4.22)--(4.21)
+become
+
+\[
+ \boxed{
+ \Delta_s(d)\le T^{1-\eta}
+ \quad\Longrightarrow\quad
+ |\mathfrak D_{q,\mathrm{near}}^{(2)}|
+ \ll_W T^{4-2\eta}.}
+\tag{4.23}
+\]
+
+Thus a genuine fixed-power collar around every resonance \(d=js\) is
+already covered.  The exact-rational function
+`centered_resonance_scales` records the exponents in
+(4.16), (4.22), and (4.23); for \(\eta=1/1000\) it returns the saving
+\(1/500\).
+
+This does not prove (2.9): the residual region
+
+\[
+ \Delta_s(d)>T^{1-\eta}
+\tag{4.24}
+\]
+
+still requires the pre-Cauchy two-Möbius dispersion estimate, and the
+separate \(\mathrm{TAIL}_{B,D}\) obligation remains.  It does, however,
+remove the entire near-resonance range from that new theorem.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

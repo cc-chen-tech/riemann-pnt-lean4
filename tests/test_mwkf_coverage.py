@@ -215,6 +215,25 @@ def test_averaged_chowla_keeps_an_exact_three_power_hard_box_deficit() -> None:
     )
 
 
+def test_centered_resonance_collar_gains_twice_the_cutoff_slack() -> None:
+    """Catch losing the squared resonance width in the centered sum."""
+    adapter = getattr(coverage_audit, "centered_resonance_scales", None)
+    assert adapter is not None, "centered-resonance adapter is missing"
+
+    scales = adapter(
+        boundary_witnesses()["balanced_max_a"],
+        slack=F(1, 1000),
+    )
+    assert scales.product_frequency == F(1)
+    assert scales.coefficient_first_moment == F(2)
+    assert scales.resonance_cutoff == F(999, 1000)
+    assert scales.phase_variation_at_cutoff == F(-1001, 1000)
+    assert scales.near_resonance_bound == F(1999, 500)
+    assert scales.logarithmic_gate_target == F(4)
+    assert scales.saving == F(1, 500)
+    assert scales.nonempty_collar
+
+
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
     text = COVERAGE_NOTE.read_text()
     for marker in (
