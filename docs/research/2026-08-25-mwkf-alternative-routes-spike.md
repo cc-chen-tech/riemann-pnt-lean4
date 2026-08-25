@@ -13311,6 +13311,97 @@ centering on all major arcs.  The adapter
 the joint-application, major-arc, physical-kernel, and coverage flags
 false.
 
+### 4.112 The legal balanced Type-II use recovers only the determinant-window count
+
+The deliberately favourable calculation in Section 4.111 starts from
+the already windowed exponent \(3\).  To avoid counting that geometric
+saving twice, apply the actual Type-II corollary in Robles's proof before
+the determinant window is imposed.  In the balanced product box put
+
+
+\[
+ P_T(\alpha)=\sum_{a,b\asymp T}
+   \mu(a)\mu(b)U(a/T)V(b/T)e(\alpha ab),
+\tag{4.856}
+\]
+
+and define \(Q_T\) in the same way with the other two variables.  A
+dyadic partition and Mellin separation of the product cutoff give
+exact integrals of the displayed separated weights.  On a frequency
+cell whose reduced approximant has denominator \(q=T^\kappa\), the
+Type-II estimate with divisor-bounded grouped coefficients in Robles's
+proof, specialized to ambient length \(x=T^2\) and factor lengths
+\(M=N=T\), is
+
+\[
+ |P_T(\alpha)|
+ \ll T\bigl(q+T+T^2/q\bigr)^{1/2}(\log T)^D.
+\tag{4.857}
+\]
+
+Thus its exact \(T\)-exponent is
+
+\[
+ \boxed{
+ E_{\rm side}(\kappa)
+ =1+\frac12\max\{\kappa,1,2-\kappa\}
+ =\frac32+\frac12|\kappa-1|.}
+\tag{4.858}
+\]
+
+The minimum is \(3/2\), attained only at \(\kappa=1\).  The normalization
+must now be restored.  Fourier inversion of the hard model (4.821), with
+\(Y=T^2\) and \(H=T\), is exactly
+
+\[
+ \begin{aligned}
+ \mathcal A(T^2,T)
+ &=T\int_{\mathbb R}\widehat w(T\alpha)
+       P_T(-\alpha)Q_T(\alpha)\,d\alpha\\
+ &=\int_{\mathbb R}\widehat w(u)
+       P_T(-u/T)Q_T(u/T)\,du.
+ \end{aligned}
+\tag{4.859}
+\]
+
+The prefactor \(T\) and the Fourier-window width \(T^{-1}\) cancel.  The
+unwindowed pair \(P_TQ_T\) has ambient exponent \(4\).  Applying (4.857)
+to both sides at the optimal denominator therefore gives
+
+\[
+ \boxed{
+ E_{\rm two\,sides}(1)=2\cdot\frac32=3,
+ \qquad E_{\rm target}=2,
+ \qquad E_{\rm deficit}=1.}
+\tag{4.860}
+\]
+
+Exponent \(3\) is exactly the elementary determinant-window count in
+(4.821).  Hence the two Type-II applications recover the geometric
+codimension-one saving \(T^4\to T^3\); they do not provide any
+post-geometric Möbius saving.  Away from the optimal denominator the
+bound is even larger:
+
+\[
+ \boxed{
+ E_{\rm normalized}(\kappa)=3+|\kappa-1|.}
+\tag{4.861}
+\]
+
+Finally, bounding the product of the two sides pointwise takes an
+absolute value before the \(u\)-integral and loses the exact centering
+
+\[
+ \int_{\mathbb R}\widehat w(u)\,du=w(0)=0.
+\]
+
+So the missing input is not another one-sided additive-twist estimate.
+It is a signed two-side estimate for the centered integral in (4.859)
+which gains a full \(T\) beyond (4.860), together with the inherited
+coprimality and ratio tensors of (4.768).  The adapter
+`robles_balanced_product_fourier_audit` records (4.857)--(4.861) and
+keeps the centering, signed-correlation, and coverage flags false.
+
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

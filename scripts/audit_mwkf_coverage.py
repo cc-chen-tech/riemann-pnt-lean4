@@ -1658,6 +1658,29 @@ class RoblesFourMobiusMinorArcAudit:
 
 
 @dataclass(frozen=True)
+class RoblesBalancedProductFourierAudit:
+    denominator_exponent: Fraction
+    product_length_exponent: Fraction
+    left_factor_exponent: Fraction
+    right_factor_exponent: Fraction
+    fourier_ambient_exponent: Fraction
+    side_type_ii_bound_exponent: Fraction
+    two_side_pointwise_bound_exponent: Fraction
+    fourier_prefactor_exponent: Fraction
+    fourier_window_exponent: Fraction
+    normalized_fourier_bound_exponent: Fraction
+    raw_determinant_exponent: Fraction
+    target_exponent: Fraction
+    remaining_deficit: Fraction
+    denominator_is_balanced_optimum: bool
+    type_ii_bound_recovers_geometric_window_saving: bool
+    type_ii_bound_supplies_post_geometric_saving: bool
+    absolute_product_bound_preserves_centering: bool
+    signed_two_side_correlation_proved: bool
+    robles_route_closes_gate: bool
+
+
+@dataclass(frozen=True)
 class InverseZetaVarianceZeroFreeAudit:
     ambient_length_exponent: Fraction
     short_window_exponent: Fraction
@@ -8563,6 +8586,69 @@ def robles_four_mobius_minor_arc_audit(
     )
 
 
+def robles_balanced_product_fourier_audit(
+    *,
+    denominator_exponent: Fraction,
+) -> RoblesBalancedProductFourierAudit:
+    """Put Robles' Type-II corollary into the hard Fourier normalization.
+
+    In the balanced product box ``m,n ~ T`` the ambient product length is
+    ``x=T^2``.  Robles' Type-II estimate is
+
+    ``x^(1/2) * (q + M + N + x/q)^(1/2)``.
+
+    For ``q=T^kappa`` its exponent is therefore
+
+    ``1 + max(kappa, 1, 2-kappa)/2``.
+
+    The two product sides have ambient exponent four.  Fourier inversion
+    for ``w((cd-ab)/T)`` contributes a prefactor ``T`` and an alpha-window
+    of width ``T^-1``, so these normalization powers cancel.  At the
+    optimum ``kappa=1`` the two pointwise Type-II bounds give exponent
+    three: precisely the raw determinant-window count, not the target
+    exponent two.  Taking an absolute value of the product also discards
+    the exact centered-kernel cancellation.  A signed two-side correlation
+    estimate remains a new input.
+    """
+    kappa = F(denominator_exponent)
+    if kappa < 0 or kappa > 2:
+        raise ValueError("denominator_exponent must lie in [0, 2]")
+
+    product = F(2)
+    factor = F(1)
+    ambient = F(4)
+    side = F(1) + max(kappa, F(1), F(2) - kappa) / 2
+    two_side = 2 * side
+    prefactor = F(1)
+    window = F(-1)
+    normalized = two_side + prefactor + window
+    raw = F(3)
+    target = F(2)
+    return RoblesBalancedProductFourierAudit(
+        denominator_exponent=kappa,
+        product_length_exponent=product,
+        left_factor_exponent=factor,
+        right_factor_exponent=factor,
+        fourier_ambient_exponent=ambient,
+        side_type_ii_bound_exponent=side,
+        two_side_pointwise_bound_exponent=two_side,
+        fourier_prefactor_exponent=prefactor,
+        fourier_window_exponent=window,
+        normalized_fourier_bound_exponent=normalized,
+        raw_determinant_exponent=raw,
+        target_exponent=target,
+        remaining_deficit=_positive_part(normalized - target),
+        denominator_is_balanced_optimum=(kappa == 1),
+        type_ii_bound_recovers_geometric_window_saving=(
+            kappa == 1 and normalized == raw
+        ),
+        type_ii_bound_supplies_post_geometric_saving=(normalized < raw),
+        absolute_product_bound_preserves_centering=False,
+        signed_two_side_correlation_proved=False,
+        robles_route_closes_gate=False,
+    )
+
+
 def inverse_zeta_variance_zero_free_audit(
 ) -> InverseZetaVarianceZeroFreeAudit:
     """Record the zero-free consequence of the strong sufficient gate.
@@ -14710,6 +14796,39 @@ def main() -> None:
         f"major_power={robles_minor.major_arc_power_saving_available},"
         f"physical={robles_minor.physical_coupled_kernel_restored},"
         f"covered={robles_minor.robles_route_closes_gate}"
+    )
+    robles_product = robles_balanced_product_fourier_audit(
+        denominator_exponent=F(1),
+    )
+    print(
+        "large_q_transition: robles_balanced_product_fourier="
+        f"q={_fmt(robles_product.denominator_exponent)},"
+        f"x={_fmt(robles_product.product_length_exponent)},"
+        "factors="
+        f"{_fmt(robles_product.left_factor_exponent)}+"
+        f"{_fmt(robles_product.right_factor_exponent)},"
+        f"ambient={_fmt(robles_product.fourier_ambient_exponent)},"
+        f"side={_fmt(robles_product.side_type_ii_bound_exponent)},"
+        "two_side="
+        f"{_fmt(robles_product.two_side_pointwise_bound_exponent)},"
+        "normalization="
+        f"{_fmt(robles_product.fourier_prefactor_exponent)}"
+        f"{_fmt(robles_product.fourier_window_exponent)},"
+        "normalized="
+        f"{_fmt(robles_product.normalized_fourier_bound_exponent)},"
+        f"raw={_fmt(robles_product.raw_determinant_exponent)},"
+        f"target={_fmt(robles_product.target_exponent)},"
+        f"deficit={_fmt(robles_product.remaining_deficit)},"
+        f"q_optimal={robles_product.denominator_is_balanced_optimum},"
+        "geometric="
+        f"{robles_product.type_ii_bound_recovers_geometric_window_saving},"
+        "post_geometric="
+        f"{robles_product.type_ii_bound_supplies_post_geometric_saving},"
+        "centering="
+        f"{robles_product.absolute_product_bound_preserves_centering},"
+        "signed="
+        f"{robles_product.signed_two_side_correlation_proved},"
+        f"covered={robles_product.robles_route_closes_gate}"
     )
     zero_free = inverse_zeta_variance_zero_free_audit()
     print(

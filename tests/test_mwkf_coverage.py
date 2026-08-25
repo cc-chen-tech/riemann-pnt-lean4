@@ -3975,6 +3975,44 @@ def test_robles_additive_twist_bound_misses_four_mobius_gate_by_one_fifth() -> N
     assert not hard.robles_route_closes_gate
 
 
+def test_robles_balanced_type_ii_only_recovers_geometric_determinant_count() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "robles_balanced_product_fourier_audit",
+        None,
+    )
+    assert adapter is not None, "Robles balanced-product Fourier audit is missing"
+
+    hard = adapter(denominator_exponent=F(1))
+    assert hard.product_length_exponent == F(2)
+    assert hard.left_factor_exponent == F(1)
+    assert hard.right_factor_exponent == F(1)
+    assert hard.fourier_ambient_exponent == F(4)
+    assert hard.side_type_ii_bound_exponent == F(3, 2)
+    assert hard.two_side_pointwise_bound_exponent == F(3)
+    assert hard.fourier_prefactor_exponent == F(1)
+    assert hard.fourier_window_exponent == F(-1)
+    assert hard.normalized_fourier_bound_exponent == F(3)
+    assert hard.raw_determinant_exponent == F(3)
+    assert hard.target_exponent == F(2)
+    assert hard.remaining_deficit == F(1)
+    assert hard.denominator_is_balanced_optimum
+    assert hard.type_ii_bound_recovers_geometric_window_saving
+    assert not hard.type_ii_bound_supplies_post_geometric_saving
+    assert not hard.absolute_product_bound_preserves_centering
+    assert not hard.signed_two_side_correlation_proved
+    assert not hard.robles_route_closes_gate
+
+    lower = adapter(denominator_exponent=F(1, 2))
+    upper = adapter(denominator_exponent=F(3, 2))
+    assert lower.side_type_ii_bound_exponent == F(7, 4)
+    assert upper.side_type_ii_bound_exponent == F(7, 4)
+    assert lower.normalized_fourier_bound_exponent == F(7, 2)
+    assert upper.normalized_fourier_bound_exponent == F(7, 2)
+    assert lower.remaining_deficit == F(3, 2)
+    assert upper.remaining_deficit == F(3, 2)
+
+
 def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:
     adapter = getattr(
         coverage_audit,
