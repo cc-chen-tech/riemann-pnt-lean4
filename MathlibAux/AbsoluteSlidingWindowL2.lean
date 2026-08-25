@@ -1,5 +1,6 @@
 import MathlibAux.PaleyZygmund
 import MathlibAux.SlidingIntegralFourierCompatibility
+import MathlibAux.SlidingSignedMassSecondMoment
 
 open Complex Convolution MeasureTheory Set
 open scoped Convolution Interval
@@ -71,6 +72,45 @@ private theorem integral_real_slidingIntegral_eq
     _ = H * ∫ u : ℝ, q u := by
       rw [integral_complex_ofReal]
       simp
+
+/-- The squared absolute mass in a sliding window is globally integrable for
+a continuous `L²` function.  This is the integrability fact implicit in the
+global `H²` estimate below, exported for measure arguments such as Selberg
+S5. -/
+theorem integrable_sq_abs_slidingWindow
+    {F : ℝ → ℂ} (hFcont : Continuous F) (hF : MemLp F 2)
+    {H : ℝ} (hH : 0 ≤ H) :
+    Integrable (fun t => (∫ u in t..t + H, ‖F u‖) ^ 2) := by
+  let q : ℝ → ℝ := fun u => ‖F u‖ ^ 2
+  let S : ℝ → ℝ := fun t => ∫ u in t..t + H, ‖F u‖
+  let Q : ℝ → ℝ := fun t => ∫ u in t..t + H, q u
+  have hq : Integrable q := by
+    exact (memLp_two_iff_integrable_sq_norm hF.1).mp hF
+  have hQ : Integrable Q := integrable_real_slidingIntegral hq hH
+  have hScont : Continuous S := by
+    exact continuous_slidingWindowMass_of_continuous hFcont.norm H
+  have hpoint : ∀ t : ℝ, S t ^ 2 ≤ H * Q t := by
+    intro t
+    have hcs :=
+      sq_setIntegral_le_measureReal_mul_setIntegral_sq_of_aestronglyMeasurable
+        (s := Ioc t (t + H)) (f := fun u => ‖F u‖)
+        measure_Ioc_lt_top.ne
+        (hF.1.norm.mono_measure Measure.restrict_le_self) hq.integrableOn
+    simpa only [S, Q, q,
+      intervalIntegral.integral_of_le (le_add_of_nonneg_right hH),
+      Measure.real, Real.volume_Ioc, ENNReal.toReal_ofReal hH,
+      add_sub_cancel_left] using hcs
+  apply (hQ.const_mul H).mono
+    ((hScont.pow 2).aestronglyMeasurable)
+  filter_upwards with t
+  have hQnonneg : 0 ≤ Q t := by
+    dsimp only [Q, q]
+    exact intervalIntegral.integral_nonneg
+      (show t ≤ t + H by linarith) fun _ _ => sq_nonneg _
+  change |S t ^ 2| ≤ |H * Q t|
+  rw [abs_of_nonneg (sq_nonneg (S t)),
+    abs_of_nonneg (mul_nonneg hH hQnonneg)]
+  exact hpoint t
 
 /-- The square of the global absolute sliding-window mass is bounded by the
 window length squared times the global `L²` mass. -/

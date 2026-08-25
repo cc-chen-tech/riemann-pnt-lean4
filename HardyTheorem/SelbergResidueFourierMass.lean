@@ -179,6 +179,116 @@ theorem normSq_selbergResidueInverseFourierKernel_le_exp_mul_delta_neg_half
       mul_le_mul_of_nonneg_left hpower hexp0
     _ = delta ^ (-(1 / 2 : ℝ)) * Real.exp (-y) := mul_comm _ _
 
+/-- A sharper residue bound retaining its true finite mollifier size.  This
+is lower order for `X=T^(1/32)` and must not be replaced by the coarser
+`delta^(-1/2)` bound in the final S5 absorption. -/
+theorem normSq_selbergResidueInverseFourierKernel_le_fourth_mul_exp
+    {delta : ℝ} (hdelta : 0 < delta)
+    (hdeltaPi : delta < Real.pi / 2) {X : ℕ} (hX : 2 ≤ X) (y : ℝ) :
+    Complex.normSq (selbergResidueInverseFourierKernel delta X y) ≤
+      (X : ℝ) ^ 4 * Real.exp (-y) := by
+  rw [normSq_selbergResidueInverseFourierKernel hdelta hdeltaPi X y]
+  have hcoeff := normSq_selbergSqrtZetaPsi_one_mul_zero_le_fourth hX
+  have hexp0 : 0 ≤ Real.exp (-y) := (Real.exp_pos _).le
+  have hnormSq0 :
+      0 ≤ Complex.normSq
+        (selbergSqrtZetaPsi X 1 * selbergSqrtZetaPsi X 0) :=
+    Complex.normSq_nonneg _
+  calc
+    (1 / 4 : ℝ) * Real.exp (-y) *
+        Complex.normSq
+          (selbergSqrtZetaPsi X 1 * selbergSqrtZetaPsi X 0) ≤
+      Real.exp (-y) *
+        Complex.normSq
+          (selbergSqrtZetaPsi X 1 * selbergSqrtZetaPsi X 0) := by
+      nlinarith
+    _ ≤ Real.exp (-y) * (X : ℝ) ^ 4 :=
+      mul_le_mul_of_nonneg_left hcoeff hexp0
+    _ = (X : ℝ) ^ 4 * Real.exp (-y) := mul_comm _ _
+
+/-- Low-frequency residue mass with the actual `X^4` size. -/
+theorem integral_normSq_selbergResidueInverseFourierKernel_low_le_fourth
+    {delta L : ℝ} (hdelta : 0 < delta)
+    (hdeltaPi : delta < Real.pi / 2) {X : ℕ} (hX : 2 ≤ X) :
+    (∫ y in Set.Ioc 0 L,
+      Complex.normSq (selbergResidueInverseFourierKernel delta X y)) ≤
+      (X : ℝ) ^ 4 := by
+  let D : ℝ := (X : ℝ) ^ 4
+  have hD0 : 0 ≤ D := by positivity
+  have hmajorInt : MeasureTheory.IntegrableOn
+      (fun y : ℝ => D * Real.exp (-y)) (Set.Ioi 0) := by
+    change MeasureTheory.Integrable (fun y : ℝ => D * Real.exp (-y))
+      (MeasureTheory.volume.restrict (Set.Ioi 0))
+    exact (integrableOn_exp_neg_Ioi 0).const_mul D
+  have hsubset : Set.Ioc 0 L ⊆ Set.Ioi (0 : ℝ) := Set.Ioc_subset_Ioi_self
+  calc
+    (∫ y in Set.Ioc 0 L,
+        Complex.normSq (selbergResidueInverseFourierKernel delta X y)) ≤
+      ∫ y in Set.Ioc 0 L, D * Real.exp (-y) := by
+        apply MeasureTheory.integral_mono_of_nonneg
+        · filter_upwards with y
+          exact Complex.normSq_nonneg _
+        · exact hmajorInt.mono_set hsubset
+        · filter_upwards with y
+          exact normSq_selbergResidueInverseFourierKernel_le_fourth_mul_exp
+            hdelta hdeltaPi hX y
+    _ ≤ ∫ y in Set.Ioi (0 : ℝ), D * Real.exp (-y) := by
+      apply MeasureTheory.setIntegral_mono_set hmajorInt
+      · filter_upwards with y
+        exact mul_nonneg hD0 (Real.exp_pos _).le
+      · exact hsubset.eventuallyLE
+    _ = D := by
+      rw [MeasureTheory.integral_const_mul, integral_exp_neg_Ioi_zero,
+        mul_one]
+    _ = (X : ℝ) ^ 4 := rfl
+
+/-- High-frequency residue mass with the actual `X^4` size. -/
+theorem integral_normSq_selbergResidueInverseFourierKernel_div_sq_high_le_fourth
+    {delta L : ℝ} (hdelta : 0 < delta)
+    (hdeltaPi : delta < Real.pi / 2) {X : ℕ} (hX : 2 ≤ X)
+    (hL : 0 < L) :
+    (∫ y in Set.Ioi L,
+      Complex.normSq (selbergResidueInverseFourierKernel delta X y) /
+        y ^ 2) ≤
+      (X : ℝ) ^ 4 / L ^ 2 := by
+  let D : ℝ := (X : ℝ) ^ 4
+  have hD0 : 0 ≤ D := by positivity
+  have hLsq : 0 < L ^ 2 := sq_pos_of_pos hL
+  have hmajorInt : MeasureTheory.IntegrableOn
+      (fun y : ℝ => (D / L ^ 2) * Real.exp (-y)) (Set.Ioi L) :=
+    (integrableOn_exp_neg_Ioi L).const_mul (D / L ^ 2)
+  calc
+    (∫ y in Set.Ioi L,
+        Complex.normSq (selbergResidueInverseFourierKernel delta X y) /
+          y ^ 2) ≤
+      ∫ y in Set.Ioi L, (D / L ^ 2) * Real.exp (-y) := by
+        apply MeasureTheory.integral_mono_of_nonneg
+        · filter_upwards with y
+          exact div_nonneg (Complex.normSq_nonneg _) (sq_nonneg y)
+        · exact hmajorInt
+        · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi]
+            with y hy
+          have hypos : 0 < y := hL.trans hy
+          have hsq : L ^ 2 ≤ y ^ 2 :=
+            (sq_le_sq₀ hL.le hypos.le).2 hy.le
+          have hpoint :=
+            normSq_selbergResidueInverseFourierKernel_le_fourth_mul_exp
+              hdelta hdeltaPi hX y
+          calc
+            Complex.normSq (selbergResidueInverseFourierKernel delta X y) /
+                y ^ 2 ≤ (D * Real.exp (-y)) / y ^ 2 :=
+              div_le_div_of_nonneg_right hpoint (sq_nonneg y)
+            _ ≤ (D * Real.exp (-y)) / L ^ 2 :=
+              div_le_div_of_nonneg_left
+                (mul_nonneg hD0 (Real.exp_pos _).le) hLsq hsq
+            _ = (D / L ^ 2) * Real.exp (-y) := by ring
+    _ = (D / L ^ 2) * Real.exp (-L) := by
+      rw [MeasureTheory.integral_const_mul, integral_exp_neg_Ioi]
+    _ ≤ D / L ^ 2 :=
+      mul_le_of_le_one_right (div_nonneg hD0 hLsq.le)
+        (Real.exp_le_one_iff.mpr (by linarith))
+    _ = (X : ℝ) ^ 4 / L ^ 2 := rfl
+
 theorem integral_normSq_selbergResidueInverseFourierKernel_low_le_delta_neg_half
     {c delta L : ℝ} (hdelta : 0 < delta) (hdelta1 : delta ≤ 1)
     (hdeltaPi : delta < Real.pi / 2) (hc : 0 ≤ c)
