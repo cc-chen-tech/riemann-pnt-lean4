@@ -1499,10 +1499,28 @@ Consequently (S3b), and hence all of S3, is now complete in Lean.
 
 ### S4. First absolute moment
 
-For `delta <= 1/T`, shift the contour for
-`zeta(s) psi_X(s)^2` as in §§10.20--10.21.  Its constant Dirichlet
-coefficient is one and the remaining coefficients satisfy a divisor
-majorant.  This yields
+This step deliberately uses the auxiliary holomorphic product
+
+\[
+ G_X(s)=\zeta(s)\psi_X(s)^2,
+\]
+
+not the reflected Mellin product
+`zeta(s) psi_X(s) psi_X(1-s)` used in S1.  The two complex values need not
+agree on the critical line.  What S4 needs is only their common modulus:
+the tapered coefficients are real, so
+
+\[
+ |G_X(\tfrac12+it)|
+ =|\zeta(\tfrac12+it)|\,|\psi_X(\tfrac12+it)|^2.
+\]
+
+Together with the positive archimedean factor this is now recorded exactly
+in Lean by
+`abs_selbergCompletedMollifiedF_eq_gamma_tilt_mul_abs_sqrtZeta`.
+For `delta <= 1/T`, shift the contour for `G_X` as in §§10.20--10.21.
+Its ordinary Dirichlet series on `Re(s)=2` has constant coefficient one and
+the remaining coefficients satisfy a divisor majorant.  This yields
 
 \[
  \boxed{
@@ -1592,7 +1610,7 @@ The current honest repository status is:
 ```text
 Hardy                         proved
 Hardy--Littlewood c*T         proved
-Selberg c*T*log T             S1--S2 proved exactly; S3--S4 analytic estimates remain
+Selberg c*T*log T             S1--S3 proved exactly; S4 modulus bridge proved, rectangle/Stirling remain
 T^3 linear Möbius moment      separate open long-mollifier problem
 Conrey two fifths             not yet formalized
 ```
@@ -2333,7 +2351,9 @@ comparable to `T/2` and `T`, the function
  \zeta(s)\psi(s)^2
 \]
 
-is holomorphic: the pole at one lies below the rectangle.  On `Re s=2`,
+is an **auxiliary S4 function**, not the reflected S1 Mellin integrand.
+It is holomorphic on this rectangle: the pole at one lies below the
+rectangle.  On `Re s=2`,
 
 \[
  \zeta(s)\psi(s)^2=1+\sum_{n\ge2}\frac{a_n}{n^s},
@@ -2362,6 +2382,23 @@ Cauchy's theorem and (9.2) consequently give
  \gg T.
  \tag{9.3}
 \]
+
+There is no complex-valued identification of this auxiliary product with
+the S1 integrand.  Instead, on the critical line one has the exact modulus
+identity
+
+\[
+ |F_{\delta,X}(t)|
+ =\frac1{2\sqrt{2\pi}}
+   |\Gamma_{\mathbb R}(\tfrac12+it)|
+   e^{(\pi/4-\delta/2)t}
+   |\zeta(\tfrac12+it)\psi(\tfrac12+it)^2|.       \tag{9.4}
+\]
+
+Indeed `|Z(t)|=|zeta(1/2+it)|` and both mollifier products have modulus
+`|psi(1/2+it)|^2`.  The exact algebraic part of (9.4) is the theorem
+`abs_selbergCompletedMollifiedF_eq_gamma_tilt_mul_abs_sqrtZeta`; no
+Stirling estimate is used in that theorem.
 
 Uniform Stirling on `T/2<=t<=T`, together with
 `exp(-delta*t/2) asymp 1`, shows
@@ -2552,12 +2589,17 @@ The range `x>delta^(-2)` is exponentially small because
 
 ### Lower first moment
 
-Pass.  Apply the rectangle directly between heights `T/2` and `T`; this
+Pass at paper level, with the object distinction now explicit.  Apply the
+rectangle to the auxiliary product `zeta(s) psi(s)^2` directly between
+heights `T/2` and `T`; this
 prevents an invalid subtraction of two unrelated lower bounds.  The right
 edge has main term `iT/2+O(1)`.  Each horizontal edge is
 `O(X*T^(1/4)*log(T)^C)=o(T)` by the convexity bound and the elementary
 mollifier bound.  Uniform Stirling then supplies the factor `T^(-1/4)` on
-that dyadic height interval.
+that dyadic height interval.  The exact critical-line modulus bridge back to
+the reflected completed function is proved in Lean; the right-edge main
+term, horizontal-edge estimate, and uniform lower Stirling bound are the
+three remaining S4 Lean gates.
 
 ### Sign change and multiplicity
 
@@ -2571,8 +2613,11 @@ each ordinate at most twice.
 
 ### Paper-level verdict
 
-The Selberg proof is unconditional and closed at paper level.  Its external
-analytic inputs are all established theorems:
+The Selberg derivation is unconditional at paper level, subject only to the
+standard classical inputs listed below.  This is not yet a repository-level
+theorem: S4 still requires Lean proofs of the three gates just identified,
+followed by S5 and the final odd-zero assembly.  Its external analytic inputs
+are all established theorems:
 
 * the zero-free line `zeta(1+it) != 0` and a reciprocal bound there;
 * the convexity bound for zeta in `1/2<=sigma<=2`;
