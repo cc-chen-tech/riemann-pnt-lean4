@@ -11,6 +11,7 @@ from scripts.audit_mobius_type_ii import (
     PascadiFullResidueSavings,
     WrightFactorSavings,
     balanced_dual_low_mode_mobius_exponent,
+    balanced_principal_character_mobius_exponent,
     c_coefficient,
     character_large_sieve_unit_gap,
     dispersion_pointwise_mean_square_gap,
@@ -18,6 +19,7 @@ from scripts.audit_mobius_type_ii import (
     direct_fourfold_random_margin,
     elementary_large_sieve_loss,
     inverse_product_phase_mod_one,
+    induced_gauss_outer_mobius_sign,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
@@ -193,6 +195,19 @@ def test_character_large_sieve_unit_stratum_keeps_balanced_half_a_loss() -> None
     box = boundary_witnesses()["balanced_max_a"]
     assert character_large_sieve_unit_gap(box) == F(5, 2)
     assert balanced_dual_low_mode_mobius_exponent(box) == F(2, 3)
+    assert balanced_principal_character_mobius_exponent(box) == F(1, 3)
+
+
+def test_induced_gauss_factor_cancels_the_cofactor_mobius_sign() -> None:
+    for conductor in range(1, 31):
+        for cofactor in range(1, 31):
+            if gcd(conductor, cofactor) != 1:
+                continue
+            if naive_mobius(conductor * cofactor) == 0:
+                continue
+            assert induced_gauss_outer_mobius_sign(
+                conductor, cofactor
+            ) == naive_mobius(conductor)
 
 
 def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:

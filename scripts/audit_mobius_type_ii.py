@@ -307,6 +307,38 @@ def balanced_dual_low_mode_mobius_exponent(box: ExponentBox) -> Fraction:
     return (3 * box.rho - box.third_length) / (2 * box.rho)
 
 
+def balanced_principal_character_mobius_exponent(box: ExponentBox) -> Fraction:
+    """Möbius exponent forced by estimating the principal character alone.
+
+    On ``R=S``, the unit-stratum principal-character contribution has
+    diagnostic scale ``A * M(R)``.  Requiring it to be at most ``R*S``
+    asks ``M(R) <= R^beta`` with ``beta=(2*rho-a)/rho``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("principal exponent is defined only on admissible boxes")
+    if box.rho != box.sigma or box.rho == 0:
+        raise ValueError("principal exponent diagnostic requires R=S>1")
+    return (2 * box.rho - box.third_length) / box.rho
+
+
+def induced_gauss_outer_mobius_sign(conductor: int, cofactor: int) -> int:
+    """Arithmetic sign in ``mu(c) tau_c(chi)`` after induction.
+
+    For squarefree coprime ``c=f*k`` and a character induced from conductor
+    ``f``, the Gauss sum contributes ``mu(k)``.  Hence the outer Möbius
+    sign becomes ``mu(f*k)mu(k)=mu(f)``: no Möbius sign remains on ``k``.
+    """
+
+    if conductor < 1 or cofactor < 1:
+        raise ValueError("conductor and cofactor must be positive")
+    if gcd(conductor, cofactor) != 1:
+        raise ValueError("conductor and cofactor must be coprime")
+    if mobius(conductor * cofactor) == 0:
+        raise ValueError("the product must be squarefree")
+    return mobius(conductor * cofactor) * mobius(cofactor)
+
+
 @dataclass(frozen=True)
 class ReducedInversePhase:
     """Exact gcd reduction of ``e_s(-h*delta*r^{-1})``.

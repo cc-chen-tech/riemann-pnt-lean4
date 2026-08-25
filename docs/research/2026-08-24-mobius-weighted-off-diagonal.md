@@ -2664,8 +2664,10 @@ same \(2/3\) zero-free boundary that appears in the long-mollifier
 literature; it cannot be used as an unconditional proof.
 
 The new, strictly more faithful interface is therefore to prove (9.52)
-before taking absolute values over the gcd strata or the moduli, using
-the simultaneous \(\mu(c)\tau_c(\chi)\) average.  The finite checker
+before taking absolute values over the gcd strata, conductors, characters,
+or moduli.  In particular, one cannot assume that the product
+\(\mu(c)\tau_c(\chi)\) itself supplies a Möbius modulus average; the exact
+conductor calculation below shows that it generally does not.  The finite checker
 verifies (9.49)--(9.50) for all squarefree moduli and variables in its
 test range and records both the exact exponent gap in (9.53) and the
 \(2/3\) exponent forced by the separated lowest mode.  Formula (9.51) is
@@ -2684,6 +2686,90 @@ specific present target into a quasi-Riemann-hypothesis claim.  It does,
 however, confirm that a polynomial-length \(T^{1+\varepsilon}\) mollified
 upper bound belongs to the open long-mollifier problem and is not a
 routine consequence of the classical large sieve or an Euler product.
+
+### 9.13 Exact conductor decomposition and mandatory inter-character cancellation
+
+The factor \(\mu(c)\tau_c(\chi)\) in (9.52) does not retain a Möbius
+sign on every modulus variable.  Write the squarefree modulus as
+\(c=fk\), with \((f,k)=1\), and let the character modulo \(c\) be induced
+by the primitive character \(\chi^*\) modulo \(f\).  CRT and the
+Ramanujan sum over the \(k\)-component give the exact formula
+
+\[
+ \boxed{
+ \tau_c(\chi)=\mu(k)\chi^*(k)\tau_f(\chi^*).}
+\tag{9.56}
+\]
+
+Because \(c\) is squarefree,
+\(\mu(c)=\mu(f)\mu(k)\).  Consequently
+
+\[
+ \boxed{
+ \frac{\mu(c)\tau_c(\chi)}{\varphi(c)}
+ =\frac{\mu(f)\tau_f(\chi^*)}{\varphi(f)}
+  \frac{\chi^*(k)}{\varphi(k)}.}
+\tag{9.57}
+\]
+
+The cofactor \(k\) carries no Möbius sign.  At conductor \(f=1\), the
+induced character is the principal character \(\chi_{0,c}\), and
+\(\tau_c(\chi_{0,c})=\mu(c)\).  Hence
+
+\[
+ \boxed{
+ \frac{\mu(c)\tau_c(\chi_{0,c})}{\varphi(c)}
+ =\frac1{\varphi(c)}.}
+\tag{9.58}
+\]
+
+In particular, on the unit gcd stratum the principal-character piece is
+exactly
+
+\[
+ \mathfrak P_{m unit}
+ =\sum_{c\asymp S\atop \mu(c)^2=1}
+   \frac{1}{\varphi(c)}
+   \mathcal R_c(\chi_{0,c})
+   \mathcal H_c(\chi_{0,c})
+   \mathcal D_c(\chi_{0,c}),
+\tag{9.59}
+\]
+
+with all coprimality cutoffs and smooth weights retained.  Its diagnostic
+size is \(A\) times a smooth Möbius sum of length \(R\): the factor
+\(1/\varphi(c)\) cancels the number of moduli only after the two principal
+short sums contribute size \(HL=A\).  In the balanced maximal box,
+estimating (9.59) separately at the \(RS=T^6\) target would require
+
+\[
+ \sum_{r\asymp T^3}\mu(r)W(r/T^3)
+ \ll T^{1+\varepsilon}
+ =(T^3)^{1/3+\varepsilon}.
+\tag{9.60}
+\]
+
+Such a bound cannot hold uniformly for a dyadic partition of smooth
+weights: it would continue \(1/\zeta(s)\) through the critical-line zeros.
+Therefore the direct principal-character estimate cannot be closed even
+by assuming a standard square-root Mertens bound.  A successful character
+method must either extract additional cancellation from the exact
+coprimality average in (9.59), or cancel its excess against the
+nonprincipal characters in the complete sum (9.51).  This gives the
+following strict constraint on the standard moment route:
+
+> **No termwise standard character-moment closure.**  Applying the
+> triangle inequality between the principal and nonprincipal characters,
+> then replacing their coprimality sums by the standard character-moment
+> bounds, cannot prove CK\(_{\rm ub}(3)\) on the balanced maximal box.
+
+Equations (9.56)--(9.60) replace the earlier hope for independent
+\(\mu(c)\tau_c(\chi)\) cancellation by the correct requirement: a
+centered character or spectral transform must preserve cancellation
+between the Ramanujan mean and the entire nonprincipal spectrum.  The
+finite checker verifies the squarefree sign identity
+\(\mu(fk)\mu(k)=\mu(f)\) and the exact balanced exponent \(1/3\); it does
+not prove the required inter-character cancellation.
 
 ## 10. What has and has not been proved
 
@@ -2728,6 +2814,9 @@ Proved in this note:
 * the direct fourfold scale comparison, exact gcd--character phase
   stratification, and the standard character-large-sieve obstruction,
   including the dual lowest-mode zero-free barrier, (9.47)--(9.55).
+* the exact primitive-conductor Gauss factor, cancellation of the cofactor
+  Möbius sign, and the principal-character \(1/3\) obstruction diagnostic,
+  (9.56)--(9.60).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -2749,6 +2838,7 @@ Proved in this note:
 | Möbius dispersion estimate | **unproved** | sufficient mean-square gate (9.40); present pointwise gap (9.41) |
 | Pascadi 2024 spectral dispersion | verified insufficient | direct scale \((RS)^{3/2}A^{1/2}\); balanced gap \(T^{11/2}\), (9.43)--(9.46) |
 | Gcd--character stratification | verified finite identity; termwise routes insufficient | direct margin and exact separation (9.47)--(9.52); large-sieve gap \(T^{5/2}\), (9.53); dual \(2/3\) barrier, (9.54)--(9.55) |
+| Primitive-conductor decomposition | verified finite algebra; standard character moments insufficient | cofactor Möbius sign cancels, (9.56)--(9.58); separate principal term demands the impossible uniform \(1/3\) Mertens scale, (9.59)--(9.60) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
