@@ -1789,6 +1789,97 @@ MWKF coefficient.  The exact-rational function
 prime_factor_trace_twist_audit records all three failures as well as
 (4.112)--(4.115).
 
+### 4.14 Linear completion after the Type-I divisor expansion
+
+The completed phase suggests a more elementary Type-I attack which must
+also retain the original squarefree support.  Expand
+
+\[
+ c_U(a)=\sum_{d\mid a,\ d\le U}\mu(d),\qquad a=de,
+ \qquad r=dbe.
+\tag{4.116}
+\]
+
+For a fixed shell \(|r-ks|\asymp D\), the long quotient \(e\) lies in
+an interval of length
+
+\[
+ Y=\frac{D}{db}.
+\tag{4.117}
+\]
+
+The finite completion has ordinary linear phase
+
+\[
+ e\!\left(\frac{cv\,db\,e}{s}\right),
+\tag{4.118}
+\]
+
+not an inverse phase in \(e\).  The double-zero-sum identity for
+\(\Theta_{r,s}(c,v)\) removes the centered \(-1\) only after the full
+\((c,v)\)-sum is retained.  Thus (4.118) is a legitimate entry point,
+but replacing the \(e\)-coefficient by one is not: the exact support
+still includes
+
+\[
+ \mu^2(dbe)=1,qquad (dbe,sq)=1.
+\tag{4.119}
+\]
+
+Write \(D=T^\delta\), \(db=T^\tau\), and let \(Q\) be the reduced
+denominator in (4.118).  Since \((db,s)=1\), only \(cv\) can cancel a
+factor of \(s\).  At the hard box \(|cv|\ll T\) and \(s\asymp T^3\),
+so
+
+\[
+ Y=T^{\delta-\tau},\qquad Q\ge \frac{S}{CV}=T^2.
+\tag{4.120}
+\]
+
+Schlage--Puchta, arXiv:1105.1616v1, Theorem 3, proves at a reduced
+rational point \(A/Q\)
+
+\[
+ \sum_{e\le Y}\mu^2(e)e(Ae/Q)
+ \ll_\varepsilon
+ Y^\varepsilon\left(\frac YQ+Y^{1/2}+Q\right).
+\tag{4.121}
+\]
+
+Smooth dyadic intervals follow by partial summation and subtraction of
+two initial intervals.  Optimizing the exponent on the right of (4.121)
+over every \(Q\) allowed by (4.120), and then taking the minimum with
+the trivial bound \(Y\), gives
+
+\[
+ \operatorname{exp}_T |(4.121)|
+ =\min(\delta-\tau,2),
+\qquad
+ s_{\rm sqfree}(\delta,\tau)
+ =(\delta-\tau-2)_+.
+\tag{4.122}
+\]
+
+Consequently, on the maximal shell \(\delta=3\), this route saves
+\(T^{1-\tau}\) only for \(\tau<1\).  At and beyond the exact transition
+
+\[
+ \boxed{\tau=u+\beta\ge1,}
+\tag{4.123}
+\]
+
+the published squarefree exponential-sum estimate gives no power saving
+at all.  The allowed Type-I factor boxes have
+\(0\le u,\beta\le1\), so (4.123) is a genuine two-dimensional residual
+region, not an endpoint.  Even the favorable \(\tau=0\) box saves only
+one power and leaves two of the original three powers missing.
+
+This audit is optimistic in one further direction: it has not charged
+the Möbius inversions needed for \((e,dbsq)=1\).  Therefore it can reject
+the route but cannot certify coverage of a favorable subbox.  The
+function squarefree_linear_completion_audit records (4.120)--(4.123)
+and marks the coprimality progressions as uncharged.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

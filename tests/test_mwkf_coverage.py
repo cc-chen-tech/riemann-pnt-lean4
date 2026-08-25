@@ -712,6 +712,52 @@ def test_prime_factor_trace_twists_cannot_pay_the_far_shell_power_deficit() -> N
         )
 
 
+def test_squarefree_linear_completion_stalls_on_long_factor_subboxes() -> None:
+    """Catch treating the Type-I quotient as an unrestricted geometric sum."""
+    adapter = getattr(
+        coverage_audit,
+        "squarefree_linear_completion_audit",
+        None,
+    )
+    assert adapter is not None, "squarefree linear-completion adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    favorable = adapter(
+        box,
+        distance=F(3),
+        short_factor_total=F(0),
+    )
+    assert favorable.long_quotient_interval == F(3)
+    assert favorable.reduced_denominator_lower_bound == F(2)
+    assert favorable.optimistic_theorem_bound == F(2)
+    assert favorable.power_saving == F(1)
+    assert favorable.remaining_shell_deficit == F(2)
+    assert not favorable.factor_subbox_covered
+
+    transition = adapter(
+        box,
+        distance=F(3),
+        short_factor_total=F(1),
+    )
+    assert transition.long_quotient_interval == F(2)
+    assert transition.optimistic_theorem_bound == F(2)
+    assert transition.power_saving == F(0)
+    assert transition.remaining_shell_deficit == F(3)
+    assert not transition.factor_subbox_covered
+
+    worst = adapter(
+        box,
+        distance=F(3),
+        short_factor_total=F(2),
+    )
+    assert worst.long_quotient_interval == F(1)
+    assert worst.optimistic_theorem_bound == F(1)
+    assert worst.power_saving == F(0)
+    assert worst.squarefree_support_retained
+    assert not worst.coprimality_progressions_charged
+    assert not worst.published_coverage
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -793,6 +839,11 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "2:save=4/25,remain=46/25;"
         "3:save=6/25,remain=113/50 covered=False"
     ) in output
+    assert (
+        "balanced_max_a: squarefree_linear_completion="
+        "0:save=1,remain=2;1:save=0,remain=3;"
+        "2:save=0,remain=3 covered=False"
+    ) in output
 
 
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
@@ -847,6 +898,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "### 4.13 Prime-factor trace twists",
         "arXiv:1211.6043v3, Theorem 1.7",
         r"\frac{113}{50}",
+        "### 4.14 Linear completion",
+        "arXiv:1105.1616v1, Theorem 3",
+        r"\tau=u+\beta\ge1",
         "published coverage remains false",
     ):
         assert marker in text

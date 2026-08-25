@@ -361,6 +361,28 @@ class PrimeFactorTraceTwistAudit:
     source: str
 
 
+@dataclass(frozen=True)
+class SquarefreeLinearCompletionAudit:
+    distance: Fraction
+    short_factor_total: Fraction
+    long_quotient_interval: Fraction
+    product_frequency: Fraction
+    reduced_denominator_lower_bound: Fraction
+    optimistic_reduced_denominator: Fraction
+    rational_major_arc_term: Fraction
+    square_root_term: Fraction
+    denominator_term: Fraction
+    optimistic_theorem_bound: Fraction
+    power_saving: Fraction
+    original_shell_deficit: Fraction
+    remaining_shell_deficit: Fraction
+    squarefree_support_retained: bool
+    coprimality_progressions_charged: bool
+    factor_subbox_covered: bool
+    published_coverage: bool
+    source: str
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -1577,6 +1599,95 @@ def prime_factor_trace_twist_audit(
     )
 
 
+def squarefree_linear_completion_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    short_factor_total: Fraction,
+) -> SquarefreeLinearCompletionAudit:
+    """Audit Type-I linear completion without dropping squarefree support.
+
+    Expand ``c_U(a)`` by writing ``a=d*e`` and put ``r=d*b*e``.
+    On a centered shell the long quotient ``e`` has interval exponent
+    ``distance-short_factor_total`` and linear phase
+    ``e(c*v*d*b*e/s)``.  Since ``(d*b,s)=1``, reducing this rational
+    phase can remove at most the ``c*v`` part of exponent ``p``; hence
+    its denominator has exponent at least ``sigma-p``.
+
+    Schlage--Puchta's rational-point squarefree exponential-sum bound is
+    ``Y^(1+eps)/Q + Y^(1/2+eps) + Q*Y^eps``.  We minimize its exponent
+    optimistically over every reduced denominator allowed by the lower
+    bound.  Coprimality progressions are deliberately not charged, so a
+    positive result here is only an upper limit on this route.
+    """
+    if distance < 0 or distance > max(box.rho, box.sigma):
+        raise ValueError("distance exceeds the shifted-variable range")
+    if short_factor_total < 0 or short_factor_total > distance:
+        raise ValueError("short factor total must lie in [0,distance]")
+
+    long_quotient_interval = distance - short_factor_total
+    product_frequency = farey_completion_scales(box).product_frequency
+    reduced_denominator_lower_bound = _positive_part(
+        box.sigma - product_frequency
+    )
+    unconstrained_optimum = long_quotient_interval / 2
+    optimistic_reduced_denominator = max(
+        reduced_denominator_lower_bound,
+        min(box.sigma, unconstrained_optimum),
+    )
+    rational_major_arc_term = _positive_part(
+        long_quotient_interval - optimistic_reduced_denominator
+    )
+    square_root_term = long_quotient_interval / 2
+    denominator_term = optimistic_reduced_denominator
+    optimistic_theorem_bound = min(
+        long_quotient_interval,
+        max(
+            rational_major_arc_term,
+            square_root_term,
+            denominator_term,
+        ),
+    )
+    power_saving = _positive_part(
+        long_quotient_interval - optimistic_theorem_bound
+    )
+    original_shell_deficit = far_resonance_shell_scales(
+        box,
+        distance=distance,
+    ).required_power_saving
+    remaining_shell_deficit = _positive_part(
+        original_shell_deficit - power_saving
+    )
+    factor_subbox_covered = remaining_shell_deficit == 0
+
+    return SquarefreeLinearCompletionAudit(
+        distance=distance,
+        short_factor_total=short_factor_total,
+        long_quotient_interval=long_quotient_interval,
+        product_frequency=product_frequency,
+        reduced_denominator_lower_bound=(
+            reduced_denominator_lower_bound
+        ),
+        optimistic_reduced_denominator=(
+            optimistic_reduced_denominator
+        ),
+        rational_major_arc_term=rational_major_arc_term,
+        square_root_term=square_root_term,
+        denominator_term=denominator_term,
+        optimistic_theorem_bound=optimistic_theorem_bound,
+        power_saving=power_saving,
+        original_shell_deficit=original_shell_deficit,
+        remaining_shell_deficit=remaining_shell_deficit,
+        squarefree_support_retained=True,
+        coprimality_progressions_charged=False,
+        factor_subbox_covered=factor_subbox_covered,
+        published_coverage=False,
+        source=(
+            "Schlage--Puchta, arXiv:1105.1616v1, Theorem 3"
+        ),
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -2059,6 +2170,23 @@ def main() -> None:
     print(
         "balanced_max_a: optimistic_prime_trace_twists="
         + ";".join(trace_twist_parts)
+        + " covered=False"
+    )
+    linear_completion_parts: list[str] = []
+    for short_total in (F(0), F(1), F(2)):
+        linear_audit = squarefree_linear_completion_audit(
+            hard,
+            distance=F(3),
+            short_factor_total=short_total,
+        )
+        linear_completion_parts.append(
+            f"{_fmt(short_total)}:save="
+            f"{_fmt(linear_audit.power_saving)},"
+            f"remain={_fmt(linear_audit.remaining_shell_deficit)}"
+        )
+    print(
+        "balanced_max_a: squarefree_linear_completion="
+        + ";".join(linear_completion_parts)
         + " covered=False"
     )
 
