@@ -11729,6 +11729,267 @@ zero power margin, the arbitrary logarithmic PNT saving, and
 `top_equal_product_face_closed_unconditionally=True`, while retaining
 `whole_signed_hard_face_covered=False`.
 
+### 4.100 The same outer PNT closes every fixed polylog gcd collar
+
+The preceding argument is not confined to \(a=b=1\).  Return to the
+primitive gcd layer (4.766), and retain the hidden factorizations
+
+\[
+ ga=uj,\qquad gb=vk,qquad (a,b)=(u,v)=1.
+\]
+
+They imply \(buj=avk\).  Put
+
+\[
+ d_1=(a,u),\qquad d_2=(b,v),\qquad
+ \Delta=(bu,av).
+\]
+
+The two primitive conditions imply prime by prime that
+\(\Delta=d_1d_2\).  Reducing the two sides by \(\Delta\) and applying
+Euclid's lemma gives the exact parameterization
+
+\[
+ \boxed{
+ \begin{aligned}
+ \Delta&=(bu,av)=(a,u)(b,v)=d_1d_2,\\
+ j&=\frac{av}{\Delta}q,\qquad
+ k=\frac{bu}{\Delta}q,\qquad
+ g=\frac{uv}{\Delta}q,qquad q\in\mathbb N.
+ \end{aligned}}
+\tag{4.776}
+\]
+
+Conversely, (4.776) reconstructs \(uj=ga\) and \(vk=gb\) exactly.
+Writing
+
+\[
+ a=d_1a_0,\quad u=d_1u_0,\quad
+ b=d_2b_0,\quad v=d_2v_0
+\]
+
+turns (4.776) into
+
+\[
+ \boxed{
+ j=a_0v_0q,\qquad k=b_0u_0q,qquad g=u_0v_0q.}
+\tag{4.777}
+\]
+
+The exact gcd conditions are
+
+\[
+ \begin{gathered}
+ (a_0,u_0)=(b_0,v_0)=1,\\
+ (d_1,d_2)=(d_1,b_0)=(a_0,d_2)=(a_0,b_0)=1,\\
+ (d_1,v_0)=(u_0,d_2)=(u_0,v_0)=1.
+ \end{gathered}
+\]
+
+They are restrictions, not discarded density factors.
+
+Let \(Z=C^{1/2}\), and write \(q\asymp Q\).  Since
+\(a,b,h\asymp A=C/G\), \(u,v,j,k\asymp Z\), and \(g\asymp G\),
+(4.777) forces the complete scale table
+
+\[
+ \boxed{
+ d_1d_2=\Delta\asymp AQ,\quad 1\leq Q\ll A,\quad
+ a_0\asymp\frac A{d_1},\quad b_0\asymp\frac A{d_2},\quad
+ u_0\asymp\frac Z{d_1},\quad v_0\asymp\frac Z{d_2}.}
+\tag{4.778}
+\]
+
+At the constant endpoint, \(Q\) ranges over a nonempty fixed compact
+integer set; no growing lower bound is imposed.
+
+The PNT estimate (4.773) is stable under the divisibilities in (4.777).
+For a prescribed \(d_0\leq(\log T)^K\), deleting or forcing its finitely
+many local prime powers changes the Dirichlet series of \(\mu*\mu\) by a
+finite Euler polynomial.  The same zero-free-region argument therefore
+gives, for every \(B\),
+
+\[
+ \boxed{
+ \sum_{\substack{d_0\mid n\\(n,r)=1}}
+   \lambda_{U,e}(n)V(n/Z)
+ \ll_{B,K,V}Z(\log Z)^{-B}
+   \tau(d_0)^{C_B}\mathcal E_{C_B}(r).}
+\tag{4.779}
+\]
+
+For \(s<1\), this is even more direct.  Under the exact half cutoff,
+\(U=T^{1/2}\), while \(u\asymp Z=T^{s/2}\) and the unsigned cofactor
+has size \(e\asymp T^{1-s/2}\).  Thus every divisor of \(u\) satisfies
+\(d\leq U<de\), and \(\lambda_{U,e}(u)=-(\mu*\mu)(u)\) throughout a
+fixed strict exponent cell.  At \(s=1\), the two bounded-factor tails in
+(4.772) give (4.779).
+
+Now suppose
+
+\[
+ 1\leq A=\frac CG\leq(\log T)^K
+\]
+
+for a fixed \(K\).  All variables \(a,b,h,d_1,d_2,q\) and every gcd
+allocation introduced by (4.776)--(4.778) have polylogarithmic total
+variation.  Fix them and the long variables, apply (4.779) to one signed
+atom, and sum the other signed atom absolutely with its divisor bound.
+For fixed \((a,b,h)\), the affine equation \(ax-by=h\) has
+\(O(T/A+1)\) localized solutions.  Consequently all slope, shift,
+allocation, and long-variable sums cost only \(T(\log T)^{O_K(1)}\) on
+top of the natural outer volume \(Z^2=C\).  Choosing the \(B\) in
+(4.779) after these explicit polylogarithmic losses yields
+
+\[
+ \boxed{
+ \mathfrak V_{C,G}ll_{B,K,W}TC(\log T)^{-B},
+ \qquad 1\leq C/G\leq(\log T)^K.}
+\tag{4.780}
+\]
+
+Thus every fixed polylogarithmic neighbourhood of the top gcd face is
+unconditionally closed.  The residual centered-dispersion problem can be
+restricted to \(A>(\log T)^K\) for every fixed \(K\).  This still leaves
+every strict positive exponent cell \(A=T^{s-\gamma}\),
+\(s-\gamma>0\); (4.780) is not a positive-power Type-II theorem.
+
+The helper `primitive_unequal_product_factorization` verifies
+(4.776)--(4.777), including a witness with nontrivial cross gcds
+\((d_1,d_2)=(2,7)\).  The adapter
+`polylog_gcd_collar_outer_pnt_audit` records
+`polylog_gcd_collar_closed_unconditionally=True` and deliberately keeps
+`strict_positive_power_gcd_layers_covered=False` and
+`whole_signed_hard_face_covered=False`.
+
+### 4.101 The strict-power residual is one exact three-block Type-II gate
+
+It remains to state the positive-power core after (4.776) without
+enlarging any coefficient class.  Write
+
+\[
+ C=T^s,\qquad A=T^\delta=\frac CG,\qquad
+ G=T^\gamma,\qquad q=T^\theta,\qquad d_i=T^{r_i}.
+\]
+
+The exact relations \(C=AG\) and \(d_1d_2\asymp Aq\) give
+
+\[
+ \boxed{
+ \gamma=s-\delta,\qquad r_1+r_2=\delta+\theta,
+ \qquad
+ 0\leq\theta\leq\min(\delta,\gamma),
+ \qquad
+ 0\leq r_i\leq\min(\delta,s/2).}
+\tag{4.781}
+\]
+
+The reduced variables in (4.777) have the complete scale table
+
+\[
+ \boxed{
+ \begin{array}{c|ccccc}
+ \text{variable}&a_0&b_0&u_0&v_0&q\\ \hline
+ \log_T(\text{length})
+ &\delta-r_1&\delta-r_2&s/2-r_1&s/2-r_2&\theta.
+ \end{array}}
+\tag{4.782}
+\]
+
+All entries in (4.782) are nonnegative precisely on the polytope
+(4.781).  The reconstruction identities are
+
+\[
+ \begin{aligned}
+ a&=d_1a_0,& b&=d_2b_0,&
+ u&=d_1u_0,& v&=d_2v_0,\\
+ j&=a_0v_0q,& k&=b_0u_0q,&
+ g&=u_0v_0q,& d_1d_2&\asymp Aq.
+ \end{aligned}
+\]
+
+For one dyadic cell, let \(d\nu(\eta)\) retain the four original
+cross-coprimality allocations, the primitive allocations, both ratio
+integrals, and the exact physical kernel.  The strict-power residual is
+the following single three-block sum:
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak C_{s,\delta,\theta,r_1}[\Psi]
+ :=\int d\nu(\eta)
+ \sum_{\substack{
+ d_1,d_2,a_0,b_0,u_0,v_0,q,h,x,y\\
+ d_1a_0x-d_2b_0y=h}}
+ &\lambda_{U,e}(d_1u_0)
+ \overline{\lambda_{U,e'}(d_2v_0)}\\[-2mm]
+ &\times\mu(x)\mu(y)\,Psi_\eta,
+ \end{aligned}}
+\tag{4.783}
+\]
+
+where every variable has the range in (4.781)--(4.782),
+\(h\asymp T^\delta\), \(x,y\asymp T\), and all gcd conditions displayed
+after (4.777) are imposed.  The nonzero-shift centering from (4.768)--
+(4.769) is part of \(\Psi_\eta\); no positive identity diagonal is added.
+
+There are exactly three dynamic blocks in (4.783):
+
+\[
+ \begin{array}{c|c|c}
+ \text{block}&\text{variables}&\text{total exponent}\\ \hline
+ \text{signed--gcd}&(d_1,u_0;d_2,v_0)&
+   (\delta+\theta)+(\gamma-\theta)=s\\
+ \text{reduced unsigned}&(a_0,b_0,q)&
+   (\delta-r_1)+(\delta-r_2)+\theta=\delta\\
+ \text{long determinant}&(x,y,h;\ d_1a_0x-d_2b_0y=h)&1.
+ \end{array}
+\]
+
+Consequently
+
+\[
+ \boxed{
+ E_{\rm raw}=1+s+\delta,\qquad
+ E_{\rm target}=1+s,\qquad
+ E_{\rm raw}-E_{\rm target}
+ =\delta
+ =E_{(a_0,b_0,q)}.}
+\tag{4.784}
+\]
+
+Thus the whole positive-power task on this route is the one local
+inequality
+
+\[
+ \boxed{
+ \mathfrak C_{s,\delta,\theta,r_1}[\Psi]
+ \ll_{B,W}T^{1+s}(\log T)^{-B}}
+\tag{4.785}
+\]
+
+uniformly on the rational polytope (4.781), after excluding the already
+proved polylog collar.  Formula (4.785) must save the complete reduced
+unsigned block by coupling it to both Möbius-bearing blocks; estimating
+that block by cardinality leaves exactly \(T^\delta\).
+
+BBLR Proposition 3.1 is not an adapter for (4.785).  If \(\mu(x),\mu(y)\)
+occupy its two arbitrary outer-coefficient slots, then the two
+\(\lambda(d_i u_i)\) sequences remain arithmetic weights in inner slots
+which the theorem requires to be smooth.  Assigning the \(\lambda\)
+sequences to the outer slots leaves the two long Möbius weights in the
+inner slots.  No role assignment retains both arithmetic sequences on
+each determinant side.  This is a hypothesis failure, in addition to
+the exponent comparisons recorded earlier.
+
+The adapter `strict_power_gcd_core_audit` implements (4.781)--(4.784)
+with `Fraction` and records
+`unsigned_reduced_block_exponent=delta`,
+`bblr_arbitrary_outer_coefficient_adapter_applies=False`, and
+`centered_three_block_type_ii_proved=False`.  Hence (4.785), not the
+fixed-shift Chowla face, is now the unique strict-power local theorem
+left by the collapsed route.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

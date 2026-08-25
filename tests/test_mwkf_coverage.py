@@ -2509,6 +2509,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.771}",
         "\\tag{4.775}",
         "top_equal_product_face_closed_unconditionally=True",
+        "### 4.100 The same outer PNT closes every fixed polylog gcd collar",
+        "\\tag{4.776}",
+        "\\tag{4.780}",
+        "polylog_gcd_collar_closed_unconditionally=True",
+        "### 4.101 The strict-power residual is one exact three-block Type-II gate",
+        "\\tag{4.781}",
+        "\\tag{4.785}",
+        "unsigned_reduced_block_exponent=delta",
     ):
         assert marker in note
 
@@ -2721,6 +2729,22 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "factorization=True,interval_convolution=True,balanced=True,"
         "coprime_pnt=True,euler_polylog=True,trivial_long=True,"
         "fixed_chowla=False,face_closed=True,whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: polylog_gcd_collar_outer_pnt="
+        "K=5,A=0,cross=0,q=0,required=0,factorization=True,"
+        "cross_identity=True,divisible_coprime_pnt=True,"
+        "absorbs_polylog=True,trivial_long=True,collar_closed=True,"
+        "positive_power=False,whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: strict_power_gcd_core="
+        "s=1,delta=2/5,gamma=3/5,theta=1/5,r1=1/4,r2=7/20,"
+        "a0=3/20,b0=1/20,u0=1/4,v0=3/20,unsigned=2/5,"
+        "signed=2/5,g=3/5,raw=12/5,target=2,saving=2/5,"
+        "feasible=True,deficit_block=True,full_coupling=True,"
+        "two_arithmetic=True,bblr_adapter=False,required=True,"
+        "proved=False,whole_face=False"
     ) in report
 
 
@@ -3924,6 +3948,85 @@ def test_primitive_equal_product_face_has_outer_pnt_cancellation() -> None:
     assert audit.long_mobius_correlation_used_only_trivially
     assert not audit.fixed_affine_chowla_estimate_required
     assert audit.top_equal_product_face_closed_unconditionally
+    assert not audit.whole_signed_hard_face_covered
+
+
+def test_primitive_unequal_product_refactorization_closes_polylog_collar() -> None:
+    helper = getattr(
+        coverage_audit,
+        "primitive_unequal_product_factorization",
+        None,
+    )
+    assert helper is not None, "primitive unequal-product helper is missing"
+    exact = helper(a=6, b=35, u=10, v=21, j=9, k=25)
+    assert exact["primitive_slopes"]
+    assert exact["primitive_hidden_factors"]
+    assert exact["left_cross_gcd"] == 2
+    assert exact["right_cross_gcd"] == 7
+    assert exact["cross_gcd_product"] == 14
+    assert exact["cross_gcd_identity"]
+    assert exact["quotient"] == 1
+    assert exact["j_formula"] == 9
+    assert exact["k_formula"] == 25
+    assert exact["common_collapsed_gcd"] == 15
+    assert exact["left_collapsed_product"] == 90
+    assert exact["right_collapsed_product"] == 525
+    assert exact["factorization_exact"]
+
+    adapter = getattr(
+        coverage_audit,
+        "polylog_gcd_collar_outer_pnt_audit",
+        None,
+    )
+    assert adapter is not None, "polylog gcd-collar PNT audit is missing"
+    audit = adapter(polylog_depth=5)
+    assert audit.polylog_depth == 5
+    assert audit.cofactor_power_exponent == 0
+    assert audit.cross_gcd_power_exponent == 0
+    assert audit.poisson_quotient_power_exponent == 0
+    assert audit.required_power_saving_exponent == 0
+    assert audit.primitive_unequal_product_factorization_exact
+    assert audit.cross_gcd_product_identity_exact
+    assert audit.prescribed_divisibility_coprime_pnt_available
+    assert audit.arbitrary_log_saving_absorbs_polylog_variables
+    assert audit.long_affine_mobius_sum_used_only_trivially
+    assert audit.polylog_gcd_collar_closed_unconditionally
+    assert not audit.strict_positive_power_gcd_layers_covered
+    assert not audit.whole_signed_hard_face_covered
+
+
+def test_strict_power_gcd_core_has_one_exact_deficit_block() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "strict_power_gcd_core_audit",
+        None,
+    )
+    assert adapter is not None, "strict-power gcd-core audit is missing"
+    audit = adapter(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    assert audit.gcd_exponent == F(3, 5)
+    assert audit.right_cross_gcd_exponent == F(7, 20)
+    assert audit.left_reduced_slope_exponent == F(3, 20)
+    assert audit.right_reduced_slope_exponent == F(1, 20)
+    assert audit.left_reduced_signed_exponent == F(1, 4)
+    assert audit.right_reduced_signed_exponent == F(3, 20)
+    assert audit.unsigned_reduced_block_exponent == F(2, 5)
+    assert audit.signed_reduced_block_exponent == F(2, 5)
+    assert audit.reconstructed_gcd_exponent == F(3, 5)
+    assert audit.raw_core_exponent == F(12, 5)
+    assert audit.target_core_exponent == F(2)
+    assert audit.required_saving_exponent == F(2, 5)
+    assert audit.exponent_polytope_feasible
+    assert audit.unsigned_block_equals_full_deficit
+    assert audit.all_allocations_and_ratio_integrals_retained
+    assert audit.long_and_collapsed_arithmetic_weights_on_each_side
+    assert not audit.bblr_arbitrary_outer_coefficient_adapter_applies
+    assert audit.centered_three_block_type_ii_required
+    assert not audit.centered_three_block_type_ii_proved
     assert not audit.whole_signed_hard_face_covered
 
 

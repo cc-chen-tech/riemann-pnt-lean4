@@ -1665,6 +1665,51 @@ class TopEqualProductOuterPntAudit:
 
 
 @dataclass(frozen=True)
+class PolylogGcdCollarOuterPntAudit:
+    polylog_depth: int
+    cofactor_power_exponent: Fraction
+    cross_gcd_power_exponent: Fraction
+    poisson_quotient_power_exponent: Fraction
+    required_power_saving_exponent: Fraction
+    primitive_unequal_product_factorization_exact: bool
+    cross_gcd_product_identity_exact: bool
+    prescribed_divisibility_coprime_pnt_available: bool
+    arbitrary_log_saving_absorbs_polylog_variables: bool
+    long_affine_mobius_sum_used_only_trivially: bool
+    polylog_gcd_collar_closed_unconditionally: bool
+    strict_positive_power_gcd_layers_covered: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class StrictPowerGcdCoreAudit:
+    collapsed_exponent: Fraction
+    cofactor_exponent: Fraction
+    gcd_exponent: Fraction
+    quotient_exponent: Fraction
+    left_cross_gcd_exponent: Fraction
+    right_cross_gcd_exponent: Fraction
+    left_reduced_slope_exponent: Fraction
+    right_reduced_slope_exponent: Fraction
+    left_reduced_signed_exponent: Fraction
+    right_reduced_signed_exponent: Fraction
+    unsigned_reduced_block_exponent: Fraction
+    signed_reduced_block_exponent: Fraction
+    reconstructed_gcd_exponent: Fraction
+    raw_core_exponent: Fraction
+    target_core_exponent: Fraction
+    required_saving_exponent: Fraction
+    exponent_polytope_feasible: bool
+    unsigned_block_equals_full_deficit: bool
+    all_allocations_and_ratio_integrals_retained: bool
+    long_and_collapsed_arithmetic_weights_on_each_side: bool
+    bblr_arbitrary_outer_coefficient_adapter_applies: bool
+    centered_three_block_type_ii_required: bool
+    centered_three_block_type_ii_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -8361,6 +8406,177 @@ def top_equal_product_outer_pnt_audit() -> TopEqualProductOuterPntAudit:
     )
 
 
+def primitive_unequal_product_factorization(
+    *,
+    a: int,
+    b: int,
+    u: int,
+    v: int,
+    j: int,
+    k: int,
+) -> dict[str, int | bool]:
+    """Refactor ``b*u*j=a*v*k`` under the two primitive conditions."""
+    if min(a, b, u, v, j, k) <= 0:
+        raise ValueError("a, b, u, v, j, and k must be positive")
+    primitive_slopes = gcd(a, b) == 1
+    primitive_hidden = gcd(u, v) == 1
+    equal = b * u * j == a * v * k
+    left_cross = gcd(a, u)
+    right_cross = gcd(b, v)
+    cross = left_cross * right_cross
+    direct_cross = gcd(b * u, a * v)
+    cross_identity = (
+        primitive_slopes
+        and primitive_hidden
+        and direct_cross == cross
+    )
+    reduced_left = (b * u) // direct_cross
+    reduced_right = (a * v) // direct_cross
+    quotient = (
+        j // reduced_right
+        if equal and j % reduced_right == 0
+        else 0
+    )
+    j_formula = reduced_right * quotient
+    k_formula = reduced_left * quotient
+    common_gcd = (
+        u * v * quotient // direct_cross
+        if quotient > 0 and (u * v * quotient) % direct_cross == 0
+        else 0
+    )
+    left_product = common_gcd * a
+    right_product = common_gcd * b
+    return {
+        "primitive_slopes": primitive_slopes,
+        "primitive_hidden_factors": primitive_hidden,
+        "equal_weighted_product": equal,
+        "left_cross_gcd": left_cross,
+        "right_cross_gcd": right_cross,
+        "cross_gcd_product": direct_cross,
+        "cross_gcd_identity": cross_identity,
+        "quotient": quotient,
+        "j_formula": j_formula,
+        "k_formula": k_formula,
+        "common_collapsed_gcd": common_gcd,
+        "left_collapsed_product": left_product,
+        "right_collapsed_product": right_product,
+        "factorization_exact": (
+            primitive_slopes
+            and primitive_hidden
+            and equal
+            and cross_identity
+            and quotient > 0
+            and j == j_formula
+            and k == k_formula
+            and u * j == left_product
+            and v * k == right_product
+        ),
+    }
+
+
+def polylog_gcd_collar_outer_pnt_audit(
+    *,
+    polylog_depth: int,
+) -> PolylogGcdCollarOuterPntAudit:
+    """Close ``C/G <= log(T)^K`` by the signed-atom PNT.
+
+    The unequal-product factorization introduces only the primitive
+    slopes ``a,b``, their two cross gcds, the primitive shift, and the
+    quotient ``q``.  If ``A=C/G`` is at most a fixed power of ``log T``,
+    all of them have power exponent zero.  The prescribed-divisibility
+    version of the coprime signed-atom PNT has arbitrary logarithmic
+    saving and absorbs their complete finite sums.  This does not cover
+    a cell with ``A=T^delta`` for any fixed positive ``delta``.
+    """
+    if polylog_depth < 0:
+        raise ValueError("polylog_depth must be nonnegative")
+    zero = F(0)
+    return PolylogGcdCollarOuterPntAudit(
+        polylog_depth=polylog_depth,
+        cofactor_power_exponent=zero,
+        cross_gcd_power_exponent=zero,
+        poisson_quotient_power_exponent=zero,
+        required_power_saving_exponent=zero,
+        primitive_unequal_product_factorization_exact=True,
+        cross_gcd_product_identity_exact=True,
+        prescribed_divisibility_coprime_pnt_available=True,
+        arbitrary_log_saving_absorbs_polylog_variables=True,
+        long_affine_mobius_sum_used_only_trivially=True,
+        polylog_gcd_collar_closed_unconditionally=True,
+        strict_positive_power_gcd_layers_covered=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def strict_power_gcd_core_audit(
+    *,
+    collapsed_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    quotient_exponent: Fraction,
+    left_cross_gcd_exponent: Fraction,
+) -> StrictPowerGcdCoreAudit:
+    """Normalize the strict-power core after primitive refactorization.
+
+    Write ``C=T^s``, ``A=C/G=T^delta``, ``q=T^theta`` and
+    ``d_i=T^r_i``.  The identity ``Delta=d_1*d_2=A*q`` forces
+    ``r_1+r_2=delta+theta``.  The reduced unsigned block
+    ``(a_0,b_0,q)`` has total exponent exactly ``delta``, which is the
+    complete gap between the raw core ``1+s+delta`` and target ``1+s``.
+    """
+    s = Fraction(collapsed_exponent)
+    delta = Fraction(cofactor_exponent)
+    theta = Fraction(quotient_exponent)
+    r1 = Fraction(left_cross_gcd_exponent)
+    if s <= 0 or s > 1:
+        raise ValueError("collapsed_exponent must lie in (0,1]")
+    if delta <= 0 or delta > s:
+        raise ValueError("cofactor_exponent must lie in (0,s]")
+    gamma = s - delta
+    if theta < 0 or theta > min(delta, gamma):
+        raise ValueError("quotient_exponent must lie in [0,min(delta,gamma)]")
+    r2 = delta + theta - r1
+    ceiling = min(delta, s / 2)
+    feasible = 0 <= r1 <= ceiling and 0 <= r2 <= ceiling
+    if not feasible:
+        raise ValueError("cross-gcd exponents do not lie in the exact polytope")
+    left_slope = delta - r1
+    right_slope = delta - r2
+    left_signed = s / 2 - r1
+    right_signed = s / 2 - r2
+    unsigned = left_slope + right_slope + theta
+    signed = left_signed + right_signed
+    reconstructed_gcd = signed + theta
+    raw = 1 + s + delta
+    target = 1 + s
+    required = raw - target
+    return StrictPowerGcdCoreAudit(
+        collapsed_exponent=s,
+        cofactor_exponent=delta,
+        gcd_exponent=gamma,
+        quotient_exponent=theta,
+        left_cross_gcd_exponent=r1,
+        right_cross_gcd_exponent=r2,
+        left_reduced_slope_exponent=left_slope,
+        right_reduced_slope_exponent=right_slope,
+        left_reduced_signed_exponent=left_signed,
+        right_reduced_signed_exponent=right_signed,
+        unsigned_reduced_block_exponent=unsigned,
+        signed_reduced_block_exponent=signed,
+        reconstructed_gcd_exponent=reconstructed_gcd,
+        raw_core_exponent=raw,
+        target_core_exponent=target,
+        required_saving_exponent=required,
+        exponent_polytope_feasible=feasible,
+        unsigned_block_equals_full_deficit=unsigned == required,
+        all_allocations_and_ratio_integrals_retained=True,
+        long_and_collapsed_arithmetic_weights_on_each_side=True,
+        bblr_arbitrary_outer_coefficient_adapter_applies=False,
+        centered_three_block_type_ii_required=True,
+        centered_three_block_type_ii_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -13182,6 +13398,69 @@ def main() -> None:
         "face_closed="
         f"{equal_product_pnt.top_equal_product_face_closed_unconditionally},"
         f"whole_face={equal_product_pnt.whole_signed_hard_face_covered}"
+    )
+    polylog_collar = polylog_gcd_collar_outer_pnt_audit(
+        polylog_depth=5,
+    )
+    print(
+        "large_q_transition: polylog_gcd_collar_outer_pnt="
+        f"K={polylog_collar.polylog_depth},"
+        f"A={_fmt(polylog_collar.cofactor_power_exponent)},"
+        f"cross={_fmt(polylog_collar.cross_gcd_power_exponent)},"
+        f"q={_fmt(polylog_collar.poisson_quotient_power_exponent)},"
+        f"required={_fmt(polylog_collar.required_power_saving_exponent)},"
+        "factorization="
+        f"{polylog_collar.primitive_unequal_product_factorization_exact},"
+        "cross_identity="
+        f"{polylog_collar.cross_gcd_product_identity_exact},"
+        "divisible_coprime_pnt="
+        f"{polylog_collar.prescribed_divisibility_coprime_pnt_available},"
+        "absorbs_polylog="
+        f"{polylog_collar.arbitrary_log_saving_absorbs_polylog_variables},"
+        "trivial_long="
+        f"{polylog_collar.long_affine_mobius_sum_used_only_trivially},"
+        "collar_closed="
+        f"{polylog_collar.polylog_gcd_collar_closed_unconditionally},"
+        "positive_power="
+        f"{polylog_collar.strict_positive_power_gcd_layers_covered},"
+        f"whole_face={polylog_collar.whole_signed_hard_face_covered}"
+    )
+    strict_core = strict_power_gcd_core_audit(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: strict_power_gcd_core="
+        f"s={_fmt(strict_core.collapsed_exponent)},"
+        f"delta={_fmt(strict_core.cofactor_exponent)},"
+        f"gamma={_fmt(strict_core.gcd_exponent)},"
+        f"theta={_fmt(strict_core.quotient_exponent)},"
+        f"r1={_fmt(strict_core.left_cross_gcd_exponent)},"
+        f"r2={_fmt(strict_core.right_cross_gcd_exponent)},"
+        f"a0={_fmt(strict_core.left_reduced_slope_exponent)},"
+        f"b0={_fmt(strict_core.right_reduced_slope_exponent)},"
+        f"u0={_fmt(strict_core.left_reduced_signed_exponent)},"
+        f"v0={_fmt(strict_core.right_reduced_signed_exponent)},"
+        "unsigned="
+        f"{_fmt(strict_core.unsigned_reduced_block_exponent)},"
+        f"signed={_fmt(strict_core.signed_reduced_block_exponent)},"
+        f"g={_fmt(strict_core.reconstructed_gcd_exponent)},"
+        f"raw={_fmt(strict_core.raw_core_exponent)},"
+        f"target={_fmt(strict_core.target_core_exponent)},"
+        f"saving={_fmt(strict_core.required_saving_exponent)},"
+        f"feasible={strict_core.exponent_polytope_feasible},"
+        f"deficit_block={strict_core.unsigned_block_equals_full_deficit},"
+        "full_coupling="
+        f"{strict_core.all_allocations_and_ratio_integrals_retained},"
+        "two_arithmetic="
+        f"{strict_core.long_and_collapsed_arithmetic_weights_on_each_side},"
+        "bblr_adapter="
+        f"{strict_core.bblr_arbitrary_outer_coefficient_adapter_applies},"
+        f"required={strict_core.centered_three_block_type_ii_required},"
+        f"proved={strict_core.centered_three_block_type_ii_proved},"
+        f"whole_face={strict_core.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
