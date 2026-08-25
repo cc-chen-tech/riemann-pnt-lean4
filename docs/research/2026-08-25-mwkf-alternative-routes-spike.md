@@ -7685,6 +7685,210 @@ layer_density_aggregation_verified=True, and
 actual_line_family_reduced_to_layered_variance=True.  It keeps
 published_layer_variance_proved=False and whole_line_family_covered=False.
 
+### 4.61 Exact Mellin normalization: the residual gate is a mixed Möbius fourth moment
+
+There is no further combinatorial variable hidden in
+DCV\(_\gamma\).  Its analytic content can be written exactly as a
+Dirichlet-polynomial moment at the original physical height.  Keep one
+Fourier tensor and one divisor layer from Section 4.60.  All divisibility
+and \(q\)-coprimality restrictions below are the one-variable restrictions
+in (4.547) and (4.545).  Put
+
+\[
+\begin{aligned}
+ P_{A,j}(t)&:=\sum_{a\asymp A}
+   \frac{\mu(a)U_j(a/A)}{a^{1/2+it}},\\
+ P_{T,j}(t)&:=\sum_{r\asymp T}
+   \frac{\mu(r)V_j(r/T)}{r^{1/2+it}},
+ \qquad j=1,2,
+\end{aligned}
+\tag{4.555}
+\]
+
+where the smooth weights include the corresponding fixed additive Fourier
+twists.  Define the restricted convolution
+
+\[
+ c_j(n):=\sum_{ar=n}\mu(a)\mu(r)U_j(a/A)V_j(r/T).
+\tag{4.556}
+\]
+
+Both sums in (4.555) are finite, so finite Dirichlet multiplication gives,
+with no convergence qualification,
+
+\[
+ \boxed{P_{A,j}(t)P_{T,j}(t)
+ =\sum_n\frac{c_j(n)}{n^{1/2+it}}.}
+\tag{4.557}
+\]
+
+Set \(X=AT=T^{2-\gamma}\).  Use the Fourier convention
+
+\[
+ \widehat\Omega(\xi)
+ :=\int_{\mathbb R}\Omega(u)e(-u\xi)\,du,
+ \qquad e(x)=e^{2\pi ix}.
+\tag{4.558}
+\]
+
+Expanding the finite products and substituting \(t=Tu\) yields the exact
+identity
+
+\[
+\boxed{
+\begin{aligned}
+ &\int_{\mathbb R}P_{A,1}(t)P_{T,1}(t)
+  \overline{P_{A,2}(t)P_{T,2}(t)}\,\Omega(t/T)\,dt\\
+ &\quad=T\sum_{m,n}\frac{c_1(n)\overline{c_2(m)}}{\sqrt{mn}}
+ \widehat\Omega\!\left(\frac{T}{2\pi}\log\frac nm\right)\\
+ &\quad=\frac1A\sum_{m,n}c_1(n)\overline{c_2(m)}
+ \left(\frac{mn}{X^2}\right)^{-1/2}
+ \widehat\Omega\!\left(\frac{T}{2\pi}\log\frac nm\right).
+\end{aligned}}
+\tag{4.559}
+\]
+
+The last equality uses only \(X=AT\).  It is the normalization which is
+lost if the coefficient autocorrelation and the spectral moment are
+compared by exponent alone.  There is no compact-support assertion for
+the transformed kernel.  For every \(B\ge0\), integration by parts gives
+
+\[
+ \left|\widehat\Omega\!\left(
+   \frac{T}{2\pi}\log\frac nm\right)\right|
+ \le C_{B,\Omega}
+ \left(1+T\left|\log\frac nm\right|\right)^{-B}.
+\tag{4.559a}
+\]
+
+On \(m,n\asymp X\), the range
+\(T|\log(n/m)|\asymp1\) has additive determinant scale
+\(|n-m|\asymp X/T=A\); the exact half-open determinant shell remains the
+one already imposed in (4.499).
+
+The remaining centre and determinant dependence also separates exactly,
+but the scaled coordinates are essential.  If \(J_T(x,y)\) is one
+two-variable kernel after the lift, write
+
+\[
+ u=\log x,\qquad v=\log y,\qquad
+ z=\frac{u+v}{2},\qquad w=T(u-v),
+\]
+
+and put
+\(F_T(z,w)=J_T(e^{z+w/(2T)},e^{z-w/(2T)})\).  The lifted estimates give
+uniform \(L^1\) bounds for fixed derivatives in \((z,w)\), not for an
+unscaled transverse derivative in \((u,v)\).  Fourier inversion in
+\((z,w)\) gives
+
+\[
+ \boxed{J_T(x,y)=\frac1{(2\pi)^2}
+  \int_{\mathbb R^2}\mathcal J_T(\xi,\tau)
+  x^{i(\xi/2+T\tau)}y^{i(\xi/2-T\tau)}
+  \,d\xi\,d\tau,}
+\tag{4.560}
+\]
+
+where \(\mathcal J_T\) has a uniform Schwartz majorant.  Applying
+\((1-\partial_z^2)(1-\partial_w^2)\) proves the integrable majorant without
+a power of \(T\).  The two powers in (4.560) are absorbed into the two
+one-variable weights in (4.555).  Together with (4.554), this proves that
+the actual coupled kernel is an exact signed superposition of the family
+(4.559), with only the already recorded polylogarithmic nuclear norm.
+Fourier inversion reconstructs the physical kernel, so the representation
+is two-sided.  This does **not** mean that an estimate for the original
+signed superposition implies the same estimate for each separated member;
+that reverse inequality would be false without an additional projection
+argument.
+
+Before determinant-shell separation the original time weight is supported
+in \([1,2]\).  After multiplying by the smooth determinant cutoff, the
+effective spectral weight is a convolution of that compactly supported
+weight with a Schwartz function in the scaled variable \(t/T\).  It is
+Schwartz-localized at height \(T\), but it need not vanish at \(t=0\).
+Accordingly M4\(_\gamma\) below is uniform for precisely this translated
+Schwartz family; no false compact exclusion of zero frequency is used.
+
+The coefficient target in DCV\(_\gamma\) is
+
+\[
+ AT(\log T)^{1+o(1)}=X(\log T)^{1+o(1)},
+\tag{4.561}
+\]
+
+By (4.559)--(4.560), the following uniform separated estimate is sufficient
+for that target:
+
+\[
+\boxed{
+ \left|\int_{\mathbb R}P_{A,1}(t)P_{T,1}(t)
+  \overline{P_{A,2}(t)P_{T,2}(t)}\,
+  \Omega(t/T)\,dt\right|
+ \ll_W T(\log T)^{1+o(1)}.}
+\tag{M4\(_\gamma\)}
+\]
+
+At the top face \(\gamma=0\), \(A=T\).  A symmetric member
+\(U_1=U_2=V_1=V_2=U\) of this sufficient family is the concrete fourth
+moment
+
+\[
+ \boxed{
+ \int_{\mathbb R}\left|
+  \sum_{n\asymp T}\frac{\mu(n)U(n/T)}{n^{1/2+it}}
+ \right|^4\Omega(t/T)\,dt
+ \ll_{U,W}T(\log T)^{1+o(1)}.}
+\tag{4.562}
+\]
+
+The converse from DCV\(_\gamma\) to every instance of
+M4\(_\gamma\) is not asserted.  In particular, determinant-shell
+separation convolves the compact physical band with a Schwartz transform,
+and an individual separated weight can have a nonzero zero-frequency
+component.  Bounding that component alone would reintroduce the Mertens
+power gate of Section 4.58, even though cancellations among separated
+components remain available in the original kernel.
+
+The normalization nevertheless shows exactly why a generic mean-value
+theorem cannot prove the sufficient bound.  Applied to the product polynomial of length
+\(X\), Montgomery--Vaughan gives
+
+\[
+ \int |P_{A,1}(t)P_{T,1}(t)|^2|\Omega(t/T)|\,dt
+ \ll_W (T+X)\sum_{n\asymp X}\frac{|c_1(n)|^2}{n}
+ \ll_W X(\log T)^{O(1)}.
+\tag{4.563}
+\]
+
+The exponent on the right is \(2-\gamma\), whereas the target exponent
+in M4\(_\gamma\) is one.  The exact positive-power deficit is therefore
+
+\[
+ \boxed{(2-\gamma)-1=1-\gamma=\log_T A.}
+\tag{4.564}
+\]
+
+The new large-value estimates of Guth--Maynard concern general large
+values of Dirichlet polynomials; they do not state the uniform
+Möbius-weighted mixed moment M4\(_\gamma\), and inserting their generic
+coefficient bounds does not remove (4.564).  Radziwiłł's conditional
+connection between long mollifiers and Montgomery pair correlation is a
+structural warning that this scale is deep, but it is not used here as a
+logical implication: his cited theorem assumes RH and concerns the error
+norm \(1-\zeta M\), while (4.562) is the exact local gate extracted above.
+
+The helper transition_mobius_dirichlet_product_identity checks (4.557)
+on finite rational fixtures.  The adapter
+transition_mobius_dirichlet_fourth_moment_audit records the exact
+\(T/X=A^{-1}\) normalization, the exponents in (4.561)--(4.564), and
+the fact that the separated transform is only Schwartz-localized and does
+not compactly exclude zero.  It records an exact mixed-moment
+superposition and a one-way uniform sufficient condition, while setting
+dcv_implies_each_separated_moment=False.  It keeps
+published_mixed_fourth_moment_proved=False and
+whole_line_family_covered=False.  Thus Section 4.61 changes the analytic
+language of the obstruction, but does not declare M4\(_\gamma\) proved.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

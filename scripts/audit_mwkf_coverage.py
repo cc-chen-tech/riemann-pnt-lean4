@@ -981,6 +981,32 @@ class TransitionCoprimalityLayerAudit:
 
 
 @dataclass(frozen=True)
+class TransitionMobiusDirichletFourthMomentAudit:
+    denominator_gcd_exponent: Fraction
+    cofactor_length_exponent: Fraction
+    long_mobius_polynomial_exponent: Fraction
+    product_polynomial_exponent: Fraction
+    physical_height_exponent: Fraction
+    dcv_coefficient_target_exponent: Fraction
+    coefficient_to_moment_normalization_exponent: Fraction
+    moment_target_exponent: Fraction
+    generic_mean_value_exponent: Fraction
+    generic_mean_value_power_deficit: Fraction
+    exact_dirichlet_product_identity: bool
+    exact_scaled_log_coordinate_kernel_inversion: bool
+    transform_is_schwartz_localized_at_height_T: bool
+    separated_transform_compactly_excludes_zero_frequency: bool
+    coprimality_layers_already_aggregated: bool
+    dcv_exact_mixed_fourth_moment_superposition: bool
+    uniform_mixed_fourth_moment_sufficient_for_dcv: bool
+    dcv_implies_each_separated_moment: bool
+    symmetric_top_face_is_mobius_fourth_moment: bool
+    published_mixed_fourth_moment_proved: bool
+    whole_line_family_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -4887,6 +4913,117 @@ def transition_coprimality_layer_audit(
     )
 
 
+def transition_mobius_dirichlet_product_identity(
+    *,
+    left_terms: tuple[tuple[int, int], ...],
+    right_terms: tuple[tuple[int, int], ...],
+    integer_power: int,
+) -> dict[str, Fraction | bool | dict[int, int]]:
+    """Verify a finite Dirichlet-product/convolution identity exactly.
+
+    This is the algebra underneath
+
+    ``P_A(t) P_T(t) = sum_n c(n) n^(-1/2-it)``.
+
+    Integer powers keep the fixture rational; the finite reindexing is
+    independent of the complex exponent used in the analytic argument.
+    """
+    if integer_power <= 0:
+        raise ValueError("integer power must be positive")
+    if any(n <= 0 for n, _ in left_terms + right_terms):
+        raise ValueError("Dirichlet indices must be positive")
+    convolution: dict[int, int] = {}
+    for left_index, left_coefficient in left_terms:
+        for right_index, right_coefficient in right_terms:
+            product_index = left_index * right_index
+            convolution[product_index] = (
+                convolution.get(product_index, 0)
+                + left_coefficient * right_coefficient
+            )
+    left_sum = sum(
+        (F(coefficient, index**integer_power) for index, coefficient in left_terms),
+        F(0),
+    )
+    right_sum = sum(
+        (
+            F(coefficient, index**integer_power)
+            for index, coefficient in right_terms
+        ),
+        F(0),
+    )
+    product_sum = left_sum * right_sum
+    convolution_sum = sum(
+        (
+            F(coefficient, index**integer_power)
+            for index, coefficient in convolution.items()
+        ),
+        F(0),
+    )
+    return {
+        "left_dirichlet_sum": left_sum,
+        "right_dirichlet_sum": right_sum,
+        "product_dirichlet_sum": product_sum,
+        "convolution_coefficients": convolution,
+        "convolution_dirichlet_sum": convolution_sum,
+        "dirichlet_product_identity_exact": product_sum == convolution_sum,
+    }
+
+
+def transition_mobius_dirichlet_fourth_moment_audit(
+    *,
+    denominator_gcd_exponent: Fraction,
+) -> TransitionMobiusDirichletFourthMomentAudit:
+    """Normalize layered DCV as a mixed-fourth-moment superposition.
+
+    Write ``A=T^(1-gamma)`` and ``X=A*T``.  The exact product polynomial
+    has length ``X``.  Mellin inversion of the actual two-variable kernel
+    contributes ``T/X=1/A`` between coefficient and moment scales.  Thus
+    the DCV coefficient target ``X`` becomes a moment target ``T``.
+    The generic mean-value theorem instead sees the full length ``X`` and
+    misses exactly the power ``A``.
+    """
+    gamma = F(denominator_gcd_exponent)
+    if gamma < 0 or gamma > F(1):
+        raise ValueError("denominator gcd exponent must lie in [0,1]")
+    alpha = F(1) - gamma
+    product = F(1) + alpha
+    height = F(1)
+    normalization = height - product
+    target = product + normalization
+    generic = max(height, product)
+    return TransitionMobiusDirichletFourthMomentAudit(
+        denominator_gcd_exponent=gamma,
+        cofactor_length_exponent=alpha,
+        long_mobius_polynomial_exponent=F(1),
+        product_polynomial_exponent=product,
+        physical_height_exponent=height,
+        dcv_coefficient_target_exponent=product,
+        coefficient_to_moment_normalization_exponent=normalization,
+        moment_target_exponent=target,
+        generic_mean_value_exponent=generic,
+        generic_mean_value_power_deficit=generic - target,
+        exact_dirichlet_product_identity=True,
+        exact_scaled_log_coordinate_kernel_inversion=True,
+        transform_is_schwartz_localized_at_height_T=True,
+        separated_transform_compactly_excludes_zero_frequency=False,
+        coprimality_layers_already_aggregated=True,
+        dcv_exact_mixed_fourth_moment_superposition=True,
+        uniform_mixed_fourth_moment_sufficient_for_dcv=True,
+        dcv_implies_each_separated_moment=False,
+        symmetric_top_face_is_mobius_fourth_moment=gamma == F(0),
+        published_mixed_fourth_moment_proved=False,
+        whole_line_family_covered=False,
+        source=(
+            "Exact finite Dirichlet convolution and scaled-log-coordinate "
+            "Mellin inversion of the physical W(t/T) kernel; uniform "
+            "componentwise control is sufficient but not necessary. The generic "
+            "Dirichlet-polynomial mean value loses A=T^(1-gamma), and no "
+            "audited published theorem proves the required uniform mixed "
+            "Möbius fourth moment."
+        ),
+    )
+
+
 def h_poisson_subbox_scales(
     box: ExponentBox,
     *,
@@ -8275,6 +8412,18 @@ def main() -> None:
         "convergent=True,g_loss=subpolylog,dimension=5,derivatives=10,"
         "determinant_derivative_cost=0,nuclear_norm=True,layers=True,"
         "required=1/2,published_variance=False,reduced=True,covered=False"
+    )
+    transition_fourth_moment = transition_mobius_dirichlet_fourth_moment_audit(
+        denominator_gcd_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: mobius_mixed_fourth_moment="
+        "gamma=1/2,A=1/2,long=1,product=3/2,height=1,"
+        "coefficient_target=3/2,normalization=-1/2,moment_target=1,"
+        "generic=3/2,deficit=1/2,dirichlet_product=True,"
+        "scaled_log_inversion=True,zero_compact_exclusion=False,coprimality=True,"
+        "dcv_superposition=True,uniform_sufficient=True,"
+        "dcv_implies_components=False,published=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

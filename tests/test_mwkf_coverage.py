@@ -2101,6 +2101,62 @@ def test_transition_coprimality_layers_reduce_to_weighted_variance() -> None:
     assert not audit.whole_line_family_covered
 
 
+def test_transition_variance_is_a_mixed_mobius_fourth_moment_gate() -> None:
+    """Catch a lost X/T normalization or a false published-coverage claim."""
+    identity = getattr(
+        coverage_audit,
+        "transition_mobius_dirichlet_product_identity",
+        None,
+    )
+    assert identity is not None, "Dirichlet product identity is missing"
+    exact = identity(
+        left_terms=((2, -1), (3, 2)),
+        right_terms=((5, 3), (7, -2)),
+        integer_power=2,
+    )
+    assert exact["left_dirichlet_sum"] == F(-1, 36)
+    assert exact["right_dirichlet_sum"] == F(97, 1225)
+    assert exact["product_dirichlet_sum"] == F(-97, 44100)
+    assert exact["convolution_dirichlet_sum"] == F(-97, 44100)
+    assert exact["dirichlet_product_identity_exact"]
+
+    adapter = getattr(
+        coverage_audit,
+        "transition_mobius_dirichlet_fourth_moment_audit",
+        None,
+    )
+    assert adapter is not None, "mixed fourth-moment adapter is missing"
+    middle = adapter(denominator_gcd_exponent=F(1, 2))
+    assert middle.cofactor_length_exponent == F(1, 2)
+    assert middle.long_mobius_polynomial_exponent == F(1)
+    assert middle.product_polynomial_exponent == F(3, 2)
+    assert middle.physical_height_exponent == F(1)
+    assert middle.dcv_coefficient_target_exponent == F(3, 2)
+    assert middle.moment_target_exponent == F(1)
+    assert middle.generic_mean_value_exponent == F(3, 2)
+    assert middle.generic_mean_value_power_deficit == F(1, 2)
+    assert middle.coefficient_to_moment_normalization_exponent == F(-1, 2)
+    assert middle.exact_dirichlet_product_identity
+    assert middle.exact_scaled_log_coordinate_kernel_inversion
+    assert middle.transform_is_schwartz_localized_at_height_T
+    assert not middle.separated_transform_compactly_excludes_zero_frequency
+    assert middle.coprimality_layers_already_aggregated
+    assert middle.dcv_exact_mixed_fourth_moment_superposition
+    assert middle.uniform_mixed_fourth_moment_sufficient_for_dcv
+    assert not middle.dcv_implies_each_separated_moment
+    assert not middle.published_mixed_fourth_moment_proved
+    assert not middle.whole_line_family_covered
+
+    top = adapter(denominator_gcd_exponent=F(0))
+    assert top.cofactor_length_exponent == F(1)
+    assert top.product_polynomial_exponent == F(2)
+    assert top.moment_target_exponent == F(1)
+    assert top.generic_mean_value_exponent == F(2)
+    assert top.generic_mean_value_power_deficit == F(1)
+    assert top.coefficient_to_moment_normalization_exponent == F(-1)
+    assert top.symmetric_top_face_is_mobius_fourth_moment
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
