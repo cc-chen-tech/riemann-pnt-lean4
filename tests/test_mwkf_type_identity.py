@@ -30,6 +30,7 @@ from scripts.mwkf_mobius_type_identity import (
     product_lift_shifted_correlation,
     q_free_part,
     q_restricted_mobius_log_signature,
+    q_restricted_twisted_log_signature,
     poisson_congruence_reparametrization,
     split_mobius_identity,
     signed_shift_solutions,
@@ -404,6 +405,32 @@ def test_q_restricted_full_divisor_sum_is_a_sparse_von_mangoldt_signature() -> N
                 () if prime_power_base is None else ((prime_power_base, 1),)
             )
             assert signature.negative_log_prime_coefficients == expected
+
+
+def test_q_restricted_twisted_divisor_sum_has_exact_euler_derivative() -> None:
+    """Verify log(X) P(z)-P'(z) in independent formal prime twists."""
+    for q in range(1, 12):
+        for n in range(1, 90):
+            free_primes = type_identity._distinct_prime_factors(
+                q_free_part(n, q)
+            )
+            twists = {prime: F(prime, prime + 1) for prime in free_primes}
+            signature = q_restricted_twisted_log_signature(n, q, twists)
+            expected_mass = F(1)
+            for prime in free_primes:
+                expected_mass *= 1 - twists[prime]
+            assert signature.twisted_mobius_mass == expected_mass
+
+            expected_logs = []
+            for prime in free_primes:
+                coefficient = twists[prime]
+                for other in free_primes:
+                    if other != prime:
+                        coefficient *= 1 - twists[other]
+                expected_logs.append((prime, coefficient))
+            assert signature.negative_log_prime_coefficients == tuple(
+                expected_logs
+            )
 
 
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:

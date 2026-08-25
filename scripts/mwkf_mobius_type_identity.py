@@ -29,6 +29,12 @@ class RestrictedMobiusLogSignature:
 
 
 @dataclass(frozen=True)
+class TwistedRestrictedMobiusLogSignature:
+    twisted_mobius_mass: Fraction
+    negative_log_prime_coefficients: tuple[tuple[int, Fraction], ...]
+
+
+@dataclass(frozen=True)
 class ProportionalDiagonalCoordinates:
     sign: int
     common_n_factor: int
@@ -341,6 +347,47 @@ def q_restricted_mobius_log_signature(
     return RestrictedMobiusLogSignature(
         mobius_mass=mass,
         negative_log_prime_coefficients=tuple(coefficients),
+    )
+
+
+def q_restricted_twisted_log_signature(
+    n: int,
+    q: int,
+    prime_twists: dict[int, Fraction],
+) -> TwistedRestrictedMobiusLogSignature:
+    """Exact formal signature of the q-restricted ``d^z`` divisor sum."""
+    if n <= 0 or q <= 0:
+        raise ValueError("twisted restricted divisor inputs must be positive")
+    free_primes = _distinct_prime_factors(q_free_part(n, q))
+    missing = tuple(prime for prime in free_primes if prime not in prime_twists)
+    if missing:
+        raise ValueError(f"missing formal prime twists: {missing}")
+
+    restricted = tuple(d for d in divisors(n) if gcd(d, q) == 1)
+    mass = Fraction(0)
+    coefficient_by_prime = {prime: Fraction(0) for prime in free_primes}
+    for divisor in restricted:
+        twisted_weight = Fraction(1)
+        valuations: dict[int, int] = {}
+        for prime in free_primes:
+            valuation = 0
+            remainder = divisor
+            while remainder % prime == 0:
+                valuation += 1
+                remainder //= prime
+            valuations[prime] = valuation
+            twisted_weight *= prime_twists[prime] ** valuation
+        signed_weight = mobius(divisor) * twisted_weight
+        mass += signed_weight
+        for prime, valuation in valuations.items():
+            coefficient_by_prime[prime] -= signed_weight * valuation
+
+    coefficients = tuple(
+        (prime, coefficient_by_prime[prime]) for prime in free_primes
+    )
+    return TwistedRestrictedMobiusLogSignature(
+        twisted_mobius_mass=mass,
+        negative_log_prime_coefficients=coefficients,
     )
 
 

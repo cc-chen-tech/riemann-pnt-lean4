@@ -3719,7 +3719,11 @@ Moreover the AFE factor \(V_t(m_1m_2)\) couples the two zeta variables.
 Thus (4.252) becomes an identity for the actual remainder only after all
 reduced-variable dyadic scales are regrouped and the AFE weight is
 separated, with its residue and transform tail retained.  That
-cross-scale aggregation is not proved here.
+cross-scale aggregation is not proved here in every large-\(q\) cell.
+Section 4.30 below establishes it for the subcritical AFE region
+\(m_1m_2\le T^{1-\eta}\).  In particular this contains the whole
+polylogarithmic endpoint \(K,M\le(\log T)^2\) considered here, so the
+transition collar does not intersect the endpoint gate (4.255).
 
 Subject to that exact aggregation, the retained reduced mollifier
 variable is squarefree, coprime to \(q\), and divides \(n^{(q)}\).
@@ -3771,6 +3775,229 @@ large_q_boundary_reflection_audit records the exact formal completion,
 the prime-forcing main term, and the sieve estimates, but sets
 cross_scale_aggregation_proved=False,
 reflected_tail_energy_estimate_proved=False, and
+unconditional_coverage=False.
+
+### 4.30 Subcritical AFE residue and actual cross-scale completion
+
+The cross-scale interface in Section 4.29 can be completed away from the
+AFE transition.  Fix \(\eta>0\) and restrict to
+
+\[
+ m_1m_2\le T^{1-\eta}.
+\tag{4.256}
+\]
+
+From the completed Mellin definition (2.3) of the off-diagonal note,
+shift the contour to \(\Re z=-c\), where \(0<c<1/4\).  The pole at
+\(z=0\) has residue one, and the pole-cancelling factors in \(G_t\)
+leave no other residue.  The uniform Stirling bound (2.5b) therefore
+gives
+
+\[
+ \boxed{
+ V_t(m_1m_2)
+ =1+O_c\left(\left(\frac{m_1m_2}{T}\right)^c\right)
+ =1+O_c(T^{-c\eta}).}
+\tag{4.257}
+\]
+
+The last error can be aggregated before any cancellation theorem.  On
+one dyadic family write
+
+\[
+ m_1\asymp K,\quad m_2\asymp M,\quad
+ r\asymp R,\quad s\asymp S,\quad KS\asymp MR.
+\tag{4.258}
+\]
+
+Put \(R\asymp KU\), \(S\asymp MU\).  For
+\(g=(m_1,m_2)\), one admissible shift has
+\(O(1+Ug)\) solutions, and the number of nonzero shifts in a box
+\(|\delta|\asymp D\) is \(O(D/g)\).  Against the exact factor
+
+\[
+ \frac{T}{q\sqrt{KMRS}}\asymp\frac{T}{qKMU},
+\]
+
+the weighted sum over the \(O(KM)\) choices of \(m_1,m_2\) is
+
+\[
+ \boxed{\ll_W\frac{TD}{q}.}
+\tag{4.259}
+\]
+
+This count is used when \(U\ge1\).  If \(U<1\), fix \((r,s)\) instead
+and solve the same determinant equation in \((m_1,m_2)\); its line
+length is \(U^{-1}(r,s)\), while there are \(O(KMU^2)\) choices of
+\((r,s)\).  The identical calculation again gives (4.259).  This
+reciprocal choice of the longer lattice direction removes the otherwise
+spurious \(O(1)\)-per-fiber boundary loss.
+
+The endpoint \(q\)-family satisfies
+\(\sum_{q\asymp T^2}q^{-1}\ll1\).  Hence (4.257), all dyadic ratio
+families, and every polylogarithmic shift box contribute
+
+\[
+ \ll_{c,\eta,W}
+ T^{1-c\eta}(\log(2T))^{O_W(1)}
+ =o_W(T).
+\tag{4.260}
+\]
+
+For the residue-one kernel in (4.257), sum the complete smooth
+partitions in \(m_1,m_2,r,s\) before taking absolute values.  The AFE
+factor no longer couples the two divisor variables, so for fixed \(q\)
+and product \(n=ms\) the coefficient is exactly \(B_{q,X}(n)/\log N\)
+from (4.252).  Thus the restricted divisor completion, prime-forcing
+main term, and reflected-tail identity of Section 4.29 apply to the
+actual subcritical AFE contribution, not merely to a formal model.
+
+Globally, outside the bounded-zeta endpoint, the remaining region is the
+transition collar
+
+\[
+ T^{1-\eta}<m_1m_2\ll T^{1+o(1)},
+\tag{4.261}
+\]
+
+where replacing \(V_t\) by one has no fixed power saving.  It belongs to
+different exponent cells with positive \(k+m\).  On the endpoint
+treated in Sections 4.27--4.29 one has
+
+\[
+ K,M\le(\log T)^2,
+ \qquad m_1m_2\ll(\log T)^4\le T^{1-\eta}
+\tag{4.261a}
+\]
+
+for every fixed \(0<\eta<1\) and all sufficiently large \(T\).
+Consequently (4.260) proves the complete cross-scale aggregation needed
+to make (4.252)--(4.255) actual on this endpoint.  The tail × tail
+energy (4.255) is still unproved, so the endpoint itself is not closed.
+
+The adapter large_q_subcritical_afe_completion_audit records the Mellin
+saving \(c\eta\), the exact local scale (4.259), and the residue-kernel
+completion.  It sets
+subcritical_cross_scale_aggregation_proved=True,
+afe_transition_region_intersects_endpoint=False, and
+full_endpoint_cross_scale_aggregation_proved=True, while preserving
+unconditional_coverage=False.
+
+### 4.31 Why one left-line twisted-divisor energy is not exact
+
+There is a tempting but invalid way to treat the other large-\(q\)
+cells near the AFE transition.  Recording its exact failure prevents the
+right-line Euler identity below from being promoted to a left-line
+estimate.  Start on the original absolutely convergent line:
+
+\[
+ V_t(m_1m_2)
+ =\frac1{2\pi i}\int_{(2)}
+ G_t(z)g_t(z)(m_1m_2)^{-z}\frac{dz}{z}.
+\tag{4.262}
+\]
+
+For the product variables \(n_1=m_1s\), \(n_2=m_2r\), the elementary
+identity
+
+\[
+ (m_1m_2)^{-z}=(n_1n_2)^{-z}(sr)^z
+\tag{4.263}
+\]
+
+puts one factor \(d^z\) into each reduced mollifier divisor sum.
+Consequently, on \(\Re z=2\), after summing all smooth dyadic
+partitions before taking absolute values, the divisor-dependent part of
+the exact one-sided coefficient is
+
+\[
+ \boxed{
+ D_{q,X,z}(n):=
+ \frac{n^{-z}}{\log N}
+ \sum_{\substack{d\mid n\\d\le X\\(d,q)=1}}
+ \mu(d)d^z\log\frac{X}{d}.}
+\tag{4.264}
+\]
+
+The remaining divisor-independent normalization is \(n^{-1/2}\); the
+two sides therefore carry
+\(n_1^{-1/2}n_2^{-1/2}D_{q,X,z}(n_1)D_{q,X,z}(n_2)\), together with the
+exact \(q\)-weight, coprimality condition, height phase, and smooth
+cutoffs.  Since \(\Re z=2\), this product expansion is absolutely
+convergent and the reindexing is valid.
+
+Let \(a=n^{(q)}\) and define
+
+\[
+ P_a(z):=\prod_{p\mid a}(1-p^z).
+\tag{4.265}
+\]
+
+The complete, untruncated divisor coefficient has the exact Euler
+formula
+
+\[
+ \boxed{
+ \sum_{\substack{d\mid n\\(d,q)=1}}
+ \mu(d)d^z\log\frac{X}{d}
+ =\log X\,P_{n^{(q)}}(z)-P'_{n^{(q)}}(z).}
+\tag{4.266}
+\]
+
+The finite helper q_restricted_twisted_log_signature verifies (4.266)
+in independent formal variables \(p^z\), including every prime-log
+coefficient.  At \(z=0\), (4.266) is exactly (4.250):
+
+\[
+ \log X\,P_a(0)-P'_a(0)
+ =\log X\,\mathbf1_{a=1}+\Lambda(a).
+\tag{4.267}
+\]
+
+For \(z\ne0\), however, \(P_a(z)\) is generally nonzero for every
+squarefree kernel \(a\); the prime-power sparsity is lost.
+
+One cannot now shift the already reindexed product energy from
+\(\Re z=2\) to \(\Re z=-c\).  For example, if \(p>X\) is prime, the
+only divisor retained in (4.264) is \(d=1\), and hence on the left line
+
+\[
+ p^{-1/2}|D_{q,X,-c+i\tau}(p)|
+ =p^{c-1/2}\frac{\log X}{\log N}.
+\tag{4.268}
+\]
+
+In particular the corresponding one-sided series, and therefore the
+shifted \(n\)-energy obtained by termwise multiplication, is not
+absolutely convergent.
+The Gaussian decay of \(G_t(-c+i\tau)\) controls \(\tau\), not the
+arithmetic \(n\)-tail, so it does not justify interchanging the contour
+shift with the product sum.
+
+Nor does inserting a smooth transition cutoff first preserve (4.264).
+Indeed
+
+\[
+ \chi\!\left(\frac{m_1m_2}{T}\right)
+ =\chi\!\left(\frac{n_1n_2}{rsT}\right)
+\tag{4.269}
+\]
+
+depends simultaneously on the two reduced divisors \(r,s\).  Before a
+further absolutely convergent kernel separation, it cannot be assigned
+to two independent one-sided divisor coefficients.  Thus (4.266) is an
+exact finite Euler identity, but it does **not** by itself reduce the AFE
+transition to one twisted-divisor energy on \(\Re z=-c\).
+
+The adapter large_q_transition_mellin_divisor_audit records the exact
+right-line separation (4.263), the Euler polynomial (4.266), the loss of
+sparsity away from \(z=0\), and the Gaussian transform tail.  It also
+records
+left_line_product_energy_is_absolutely_convergent=False,
+transition_cutoff_preserves_one_sided_divisor_completion=False, and
+transition_reduced_to_one_twisted_divisor_energy=False.  No transition
+coverage is claimed; in particular
+twisted_divisor_energy_estimate_proved=False and
 unconditional_coverage=False.
 
 ## 5. Route C: endpoint-to-all-length interpolation

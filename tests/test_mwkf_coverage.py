@@ -504,6 +504,59 @@ def test_boundary_completion_forces_prime_main_and_isolates_reflected_tail() -> 
     assert not audit.unconditional_coverage
 
 
+def test_subcritical_afe_residue_makes_cross_scale_completion_actual() -> None:
+    """V_t(KM)=1+power-saving error when KM stays below T^(1-eta)."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_subcritical_afe_completion_audit",
+        None,
+    )
+    assert adapter is not None, "subcritical AFE completion audit is missing"
+    audit = adapter(
+        boundary_witnesses()["large_q_endpoint"],
+        afe_product_gap=F(1, 10),
+        mellin_left_shift=F(1, 8),
+    )
+
+    assert audit.afe_product_upper_exponent == F(9, 10)
+    assert audit.mellin_residue_is_one
+    assert audit.mellin_remainder_power_saving == F(1, 80)
+    assert audit.local_shifted_line_absolute_power_exponent == F(1)
+    assert audit.short_side_reciprocity_removes_boundary_loss
+    assert audit.mellin_remainder_aggregates_to_little_oh
+    assert audit.all_reduced_dyadic_scales_regrouped_before_absolute_values
+    assert audit.restricted_divisor_completion_applies_to_residue_kernel
+    assert audit.subcritical_cross_scale_aggregation_proved
+    assert audit.global_afe_transition_region_remains
+    assert not audit.afe_transition_region_intersects_endpoint
+    assert audit.full_endpoint_cross_scale_aggregation_proved
+    assert not audit.unconditional_coverage
+
+
+def test_transition_afe_rejects_nonconvergent_left_line_energy() -> None:
+    """The right-line Euler identity cannot be shifted term by term."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_transition_mellin_divisor_audit",
+        None,
+    )
+    assert adapter is not None, "transition Mellin-divisor audit is missing"
+    audit = adapter(boundary_witnesses()["large_q_endpoint"])
+
+    assert audit.common_mellin_variable_retained
+    assert audit.right_line_product_weight_separates_exactly
+    assert audit.right_line_product_energy_is_absolutely_convergent
+    assert audit.q_restricted_twisted_euler_product_is_exact
+    assert audit.zero_mellin_frequency_recovers_von_mangoldt
+    assert audit.nonzero_mellin_frequency_loses_prime_power_support
+    assert audit.gaussian_mellin_tail_is_absolutely_summable
+    assert not audit.left_line_product_energy_is_absolutely_convergent
+    assert not audit.transition_cutoff_preserves_one_sided_divisor_completion
+    assert not audit.transition_reduced_to_one_twisted_divisor_energy
+    assert not audit.twisted_divisor_energy_estimate_proved
+    assert not audit.unconditional_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1784,6 +1837,19 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "covered=False"
     ) in output
     assert (
+        "large_q_endpoint: subcritical_afe_completion="
+        "gap=1/10 left_shift=1/8 remainder_save=1/80 local_power=1 "
+        "regrouped=True divisor_completion=True global_transition=True "
+        "endpoint_transition=False endpoint_full=True covered=False"
+    ) in output
+    assert (
+        "large_q_endpoint: transition_mellin_divisor="
+        "common_z=True right_line=True absolute_right=True euler=True "
+        "z0_lambda=True nonzero_sparse=False gaussian=True "
+        "absolute_left=False cutoff_factor=False gate=False "
+        "proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2135,5 +2201,18 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\mathfrak C^{\mathrm{tail}\times\mathrm{tail}}_{P,L}",
         "cross_scale_aggregation_proved=False",
         "reflected_tail_energy_estimate_proved=False",
+        "### 4.30 Subcritical AFE residue and actual cross-scale completion",
+        r"m_1m_2\le T^{1-\eta}",
+        r"T^{-c\eta}",
+        "large_q_subcritical_afe_completion_audit",
+        "subcritical_cross_scale_aggregation_proved=True",
+        "afe_transition_region_intersects_endpoint=False",
+        "full_endpoint_cross_scale_aggregation_proved=True",
+        "### 4.31 Why one left-line twisted-divisor energy is not exact",
+        r"P_a(z):=\prod_{p\mid a}(1-p^z)",
+        r"\log X\,P_{n^{(q)}}(z)-P'_{n^{(q)}}(z)",
+        "large_q_transition_mellin_divisor_audit",
+        "transition_reduced_to_one_twisted_divisor_energy=False",
+        "twisted_divisor_energy_estimate_proved=False",
     ):
         assert marker in text

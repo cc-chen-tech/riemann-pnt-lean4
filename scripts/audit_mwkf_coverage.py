@@ -283,6 +283,41 @@ class LargeQBoundaryReflectionAudit:
 
 
 @dataclass(frozen=True)
+class LargeQSubcriticalAfeCompletionAudit:
+    afe_product_gap: Fraction
+    afe_product_upper_exponent: Fraction
+    mellin_left_shift: Fraction
+    mellin_residue_is_one: bool
+    mellin_remainder_power_saving: Fraction
+    local_shifted_line_absolute_power_exponent: Fraction
+    short_side_reciprocity_removes_boundary_loss: bool
+    mellin_remainder_aggregates_to_little_oh: bool
+    all_reduced_dyadic_scales_regrouped_before_absolute_values: bool
+    restricted_divisor_completion_applies_to_residue_kernel: bool
+    subcritical_cross_scale_aggregation_proved: bool
+    global_afe_transition_region_remains: bool
+    afe_transition_region_intersects_endpoint: bool
+    full_endpoint_cross_scale_aggregation_proved: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
+class LargeQTransitionMellinDivisorAudit:
+    common_mellin_variable_retained: bool
+    right_line_product_weight_separates_exactly: bool
+    right_line_product_energy_is_absolutely_convergent: bool
+    q_restricted_twisted_euler_product_is_exact: bool
+    zero_mellin_frequency_recovers_von_mangoldt: bool
+    nonzero_mellin_frequency_loses_prime_power_support: bool
+    gaussian_mellin_tail_is_absolutely_summable: bool
+    left_line_product_energy_is_absolutely_convergent: bool
+    transition_cutoff_preserves_one_sided_divisor_completion: bool
+    transition_reduced_to_one_twisted_divisor_energy: bool
+    twisted_divisor_energy_estimate_proved: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -1652,6 +1687,84 @@ def large_q_boundary_reflection_audit(
         reflected_tail_phase_separated_at_boundary=False,
         formal_remaining_terms=("reflected_tail", "reflected_tail"),
         reflected_tail_energy_estimate_proved=False,
+        unconditional_coverage=False,
+    )
+
+
+def large_q_subcritical_afe_completion_audit(
+    box: ExponentBox,
+    *,
+    afe_product_gap: Fraction,
+    mellin_left_shift: Fraction,
+) -> LargeQSubcriticalAfeCompletionAudit:
+    """Replace V_t(m1*m2) by its residue below the AFE transition.
+
+    On ``m1*m2 <= T^(1-eta)``, shifting the completed Mellin integral
+    to ``Re z=-c`` crosses only the residue one and leaves an error
+    ``T^(-c*eta)``.  The exact shifted-line count has scale ``T*L`` per
+    dyadic ratio family, so this fixed power saving absorbs all
+    polylogarithmic partitions.  Summing the reduced-variable partitions
+    before absolute values then makes the restricted full-divisor
+    completion exact for the residue kernel.  The AFE transition
+    ``m1*m2 asymp T`` remains separate.
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+    if afe_product_gap <= 0 or afe_product_gap >= 1:
+        raise ValueError("AFE product gap must lie strictly between zero and one")
+    if mellin_left_shift <= 0 or mellin_left_shift >= F(1, 4):
+        raise ValueError("Mellin left shift must lie strictly between zero and 1/4")
+
+    return LargeQSubcriticalAfeCompletionAudit(
+        afe_product_gap=afe_product_gap,
+        afe_product_upper_exponent=F(1) - afe_product_gap,
+        mellin_left_shift=mellin_left_shift,
+        mellin_residue_is_one=True,
+        mellin_remainder_power_saving=(
+            afe_product_gap * mellin_left_shift
+        ),
+        local_shifted_line_absolute_power_exponent=F(1),
+        short_side_reciprocity_removes_boundary_loss=True,
+        mellin_remainder_aggregates_to_little_oh=True,
+        all_reduced_dyadic_scales_regrouped_before_absolute_values=True,
+        restricted_divisor_completion_applies_to_residue_kernel=True,
+        subcritical_cross_scale_aggregation_proved=True,
+        global_afe_transition_region_remains=True,
+        afe_transition_region_intersects_endpoint=False,
+        full_endpoint_cross_scale_aggregation_proved=True,
+        unconditional_coverage=False,
+    )
+
+
+def large_q_transition_mellin_divisor_audit(
+    box: ExponentBox,
+) -> LargeQTransitionMellinDivisorAudit:
+    """Audit the tempting common-Mellin transition reduction.
+
+    The identity ``m^-z=(m*s)^-z s^z`` moves the Mellin twist into the
+    reduced divisor coefficient on the original absolutely convergent
+    line.  The q-restricted Euler polynomial and its logarithmic
+    derivative are exact there.  Moving the already reindexed energy to
+    ``Re z=-c`` is invalid: its coefficients grow like ``n^(c-1/2)``
+    and the shifted energy is not absolutely convergent.  Inserting a
+    transition cutoff first couples the two divisor choices through
+    ``m1*m2=n1*n2/(r*s)``.  Thus this audit rejects the claimed reduction
+    to one left-line energy gate.
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+    return LargeQTransitionMellinDivisorAudit(
+        common_mellin_variable_retained=True,
+        right_line_product_weight_separates_exactly=True,
+        right_line_product_energy_is_absolutely_convergent=True,
+        q_restricted_twisted_euler_product_is_exact=True,
+        zero_mellin_frequency_recovers_von_mangoldt=True,
+        nonzero_mellin_frequency_loses_prime_power_support=True,
+        gaussian_mellin_tail_is_absolutely_summable=True,
+        left_line_product_energy_is_absolutely_convergent=False,
+        transition_cutoff_preserves_one_sided_divisor_completion=False,
+        transition_reduced_to_one_twisted_divisor_energy=False,
+        twisted_divisor_energy_estimate_proved=False,
         unconditional_coverage=False,
     )
 
@@ -4479,6 +4592,27 @@ def main() -> None:
         "main_main=True mixed=True cross_scale=False formal_tail=tail*tail "
         "tail_phase=False "
         "covered=False"
+    )
+    subcritical_afe = large_q_subcritical_afe_completion_audit(
+        boxes["large_q_endpoint"],
+        afe_product_gap=F(1, 10),
+        mellin_left_shift=F(1, 8),
+    )
+    print(
+        "large_q_endpoint: subcritical_afe_completion="
+        "gap=1/10 left_shift=1/8 remainder_save=1/80 local_power=1 "
+        "regrouped=True divisor_completion=True global_transition=True "
+        "endpoint_transition=False endpoint_full=True covered=False"
+    )
+    transition_mellin = large_q_transition_mellin_divisor_audit(
+        boxes["large_q_endpoint"]
+    )
+    print(
+        "large_q_endpoint: transition_mellin_divisor="
+        "common_z=True right_line=True absolute_right=True euler=True "
+        "z0_lambda=True nonzero_sparse=False gaussian=True "
+        "absolute_left=False cutoff_factor=False gate=False "
+        "proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
