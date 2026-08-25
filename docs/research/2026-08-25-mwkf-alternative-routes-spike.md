@@ -8762,6 +8762,150 @@ options are now disjoint:
 2. return to the pre-Cauchy slope family (4.457), where cancellation among
    slopes need not pass through the positive DCV square function.
 
+### 4.69 The actual delta-lattice zero mode is a Gram form
+
+Section 4.58 left open whether the coupled kernel might annihilate the
+constant microarc before any Möbius estimate is used.  The exact Jacobian in
+the two-dimensional Poisson formula decides this for the square-function
+route.
+
+For an entry row \(E_i=(w_i,-s_i)\), let \(K_i(v,j)\) denote the exact
+continuous pullback of its transformed kernel, so that its shift coordinate
+is
+
+\[
+ \delta_i=w_iv-s_ij.
+\tag{4.622}
+\]
+
+For an off-diagonal pair, put
+
+\[
+ B=\begin{pmatrix}w_1&-s_1\\w_2&-s_2\end{pmatrix},
+ \qquad |\det B|=|r_1s_2-r_2s_1|=|\Delta|.
+\tag{4.623}
+\]
+
+The exact function used in (4.488) is characterized by
+\(F_B(Bz)=K_1(z)\overline{K_2(z)}\), with \(z=(v,j)^t\).  Therefore the
+ordinary change of variables \(y=Bz\) gives
+
+\[
+ \boxed{
+ \frac1{|\Delta|}\widehat F_B(0)
+ =\int_{\mathbb R^2}K_1(v,j)\overline{K_2(v,j)}\,dv\,dj.}
+\tag{4.624}
+\]
+
+The factor \(|\Delta|^{-1}\) from Poisson summation is cancelled exactly by
+the Jacobian \(|\det B|\).  It is not a residual small density which can
+force the zero mode to vanish.
+
+More generally, restore the identity diagonal and let \(c_E\) be any finite
+entry coefficient, including the original Möbius and endpoint factors.
+Summing (4.624) over the entry pair gives the exact Gram identity
+
+\[
+ \boxed{
+ \sum_{E_1,E_2}c_{E_1}\overline{c_{E_2}}
+ \int K_{E_1}(z)\overline{K_{E_2}(z)}\,dz
+ =\int_{\mathbb R^2}\left|
+   \sum_Ec_EK_E(z)\right|^2dz\ge0.}
+\tag{4.625}
+\]
+
+The \(\Delta\ne0\) contribution is (4.625) minus the already registered
+identity diagonal.  Hence the actual zero mode is not structurally killed by
+the coupled kernel.  Proving it small means proving cancellation in the
+Möbius-weighted vector inside the Gram norm; it cannot be replaced by the
+formal statement \(\widehat F_B(0)=0\).  The zero of \(G_t\) at \(z=1/2\)
+used in Section 4.2 removes a different Mellin boundary term and does not
+annihilate (4.625).
+
+The adapter `transition_delta_lattice_poisson_audit` now records the exact
+covolume/Jacobian cancellation, positivity of the full Gram form, and the
+off-diagonal subtraction.  This closes the first alternative stated at the
+end of Section 4.58 in the negative for the DCV route.  It still does not make
+DCV necessary: the original pre-Cauchy sum (4.457) can exploit cancellation
+among slopes before the positive Gram form is created.
+
+### 4.70 Banks--Shparlinski does not supply the missing slope power
+
+The natural published comparison for the pre-Cauchy alternative is
+[Banks--Shparlinski, Theorems 2.1 and
+2.4](https://arxiv.org/abs/2506.08787).  On the hard transition box, the
+integer relation before Cauchy is
+
+\[
+ rv-(kv+j)s=\delta,
+ \qquad r,s\asymp T,qquad
+ v,j,\delta\asymp T^{1/2}.
+\tag{4.626}
+\]
+
+For fixed \((v,j)\), the maps
+
+\[
+ f(r)=rv,qquad g(s)=-(kv+j)s,qquad \wp(\delta)=-\delta
+\tag{4.627}
+\]
+
+are injective on the relevant intervals.  Theorem 2.1 bounds its ternary
+sum
+
+\[
+ \mathsf S_\mu({\bf D};M)
+ =\sum_{f(n_1)+g(n_2)+\wp(n_3)=M}
+   u_{n_1}v_{n_2}\mu(n_1n_2n_3)
+ \ll_{C,\varepsilon,\deg\wp}
+ (A+B)N(\log N)^{-C}.
+\tag{4.628}
+\]
+
+There are two exact mismatches which must not be hidden in an adapter.
+First, both bilinear slopes in (4.626) must be fixed before (4.627) becomes
+a pair of one-variable injective functions.  Thus the theorem does not sum
+the \(T^{1/2}\)-long \(v\)- and \(j\)-families.  Second, the theorem carries
+\(\mu(n_1n_2n_3)\), whereas the shift \(\delta\) in the actual sum carries
+no Möbius weight.  Splitting \(\delta\) into squarefree and squarefull
+divisor layers can manufacture a ternary Möbius-weighted component, but it
+is only an exact structural decomposition: it neither saves a power nor
+verifies the remaining coupled kernel and coprimality hypotheses.  The
+coverage adapter therefore records `all_actual_kernel_hypotheses_verified`
+as false.
+
+Even granting the most favorable role assignment, the three interval
+lengths are \(T,T,T^{1/2}\), and (4.628) gives a fixed-slope exponent
+\(3/2\).  Direct geometric counting in (4.626) is already better: for each
+\(r\), the admissible \(s\)-interval has bounded length, so its exponent is
+one.  Restoring the two slope variables and the \(h\)-Poisson factor gives
+the exact ledger
+
+\[
+ \underbrace{1}_{\text{fixed-slope count}}
+ +\underbrace{(1/2+1/2)}_{(v,j)}
+ +\underbrace{1/2}_{h\text{-Poisson}}
+ =\frac52,qquad
+ E_{\rm target}=2,qquad
+ E_{\rm target}-E_{\rm BS}=-\frac12.
+\tag{4.629}
+\]
+
+The short-interval variant does not change this conclusion.  Theorem 2.4
+requires \(H\ge N^{5/8+\varepsilon}\); the short variable in (4.626) has
+exponent \(1/2\), and hence
+
+\[
+ \frac12-\frac58=-\frac18.
+\tag{4.630}
+\]
+
+Consequently the published multiple-Möbius theorem is a useful structural
+comparison but does not close the pre-Cauchy sum.  The missing estimate must
+save a fixed half power while summing the bilinear slope family jointly, or
+must exploit the original two-entry Möbius weights before the Gram norm is
+formed.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

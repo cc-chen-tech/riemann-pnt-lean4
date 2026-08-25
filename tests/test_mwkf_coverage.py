@@ -1723,6 +1723,12 @@ def test_transition_delta_lattice_zero_mode_needs_one_power_on_every_shell() -> 
     assert top.primitive_mobius_inversion_exact
     assert top.primitive_divisor_layers_do_not_worsen
     assert top.zero_mode_obstruction_independent_of_determinant_shell
+    assert top.zero_mode_covolume_jacobian_cancels_exactly
+    assert top.zero_mode_is_continuous_slope_gram
+    assert top.full_zero_mode_gram_positive_semidefinite
+    assert top.offdiagonal_is_full_gram_minus_identity_diagonal
+    assert not top.kernel_alone_annihilates_zero_mode
+    assert top.square_function_route_is_only_sufficient
     assert not top.zero_mode_weight_separates_in_the_entries
     assert not top.zero_mode_mobius_variance_proved
     assert not top.whole_delta_lattice_covered
@@ -2187,6 +2193,40 @@ def test_bblr_uncompressed_lemma_keeps_the_half_power_unsigned_deficit() -> None
     assert top.dyadic_layer_exponent == F(1)
     assert top.initial_h_squared_error_exponent == F(2)
     assert top.global_error_exponent == F(5, 2)
+
+
+def test_banks_shparlinski_multiple_mobius_bound_does_not_save_a_slope_power() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_banks_shparlinski_pre_cauchy_audit",
+        None,
+    )
+    assert adapter is not None, "Banks--Shparlinski pre-Cauchy audit is missing"
+    audit = adapter()
+    assert audit.entry_scale_exponent == F(1)
+    assert audit.dual_v_exponent == audit.dual_j_exponent == F(1, 2)
+    assert audit.fixed_slope_family_exponent == F(1)
+    assert audit.shift_variable_exponent == F(1, 2)
+    assert audit.fixed_slope_geometric_count_exponent == F(1)
+    assert audit.best_theorem_role_bound_exponent == F(3, 2)
+    assert audit.best_fixed_slope_bound_exponent == F(1)
+    assert audit.h_poisson_factor_exponent == F(1, 2)
+    assert audit.aggregated_exponent == F(5, 2)
+    assert audit.target_exponent == F(2)
+    assert audit.power_margin == F(-1, 2)
+    assert audit.short_interval_threshold_exponent == F(5, 8)
+    assert audit.actual_short_interval_exponent == F(1, 2)
+    assert audit.short_interval_threshold_margin == F(-1, 8)
+    assert audit.additive_theorem_requires_fixing_both_bilinear_slopes
+    assert audit.original_shift_has_no_mobius_weight
+    assert audit.divisor_convolution_can_insert_the_missing_mobius_weight
+    assert not audit.divisor_convolution_creates_power_saving
+    assert not audit.all_actual_kernel_hypotheses_verified
+    assert not audit.published_theorem_closes_pre_cauchy_sum
+    assert audit.source == (
+        "Banks--Shparlinski, arXiv:2506.08787v1, "
+        "Theorems 2.1 and 2.4"
+    )
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
@@ -3977,6 +4017,16 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "cyclic=True,four_mu=True,hybrid_proved=False,square_proved=False"
     ) in output
     assert (
+        "large_q_transition: delta_lattice_poisson="
+        "kappa=1,delta_area=1,covolume=1,zero_density=0,"
+        "entry_shell=3,zero_absolute=3,target=2,required=1,"
+        "dual_long_spacing=-1/2,dual_transverse_spacing=1/2,"
+        "active_long=1/2,active_transverse=0,primitive_exact=True,"
+        "primitive_layers_worse=False,zero_separable=False,"
+        "jacobian=True,gram=True,psd=True,offdiag_subtract=True,"
+        "kernel_zero=False,sufficient_only=True,zero_proved=False,whole=False"
+    ) in output
+    assert (
         "large_q_transition: published_kloosterman_entry="
         "modulus=1,interval=1/2,required=1/2,"
         "bp=1/32,bp_deficit=15/32,mqw=1/100,mqw_deficit=49/100,"
@@ -4048,6 +4098,15 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "lemma15:d0:z=5/2,x=0,dcount=0,layer=5/2;"
         "d1:z=-1,x=1,dcount=1,layer=1;"
         "global=5/2,target=2,margin=-1/2,improved=False"
+    ) in output
+    assert (
+        "large_q_transition: banks_shparlinski_pre_cauchy="
+        "entry=1,v=1/2,j=1/2,slopes=1,shift=1/2,fixed_count=1,"
+        "theorem=3/2,best=1,H=1/2,aggregate=5/2,target=2,"
+        "margin=-1/2,short_threshold=5/8,short_actual=1/2,"
+        "short_margin=-1/8,fix_slopes=True,shift_mu=False,"
+        "convolution=True,convolution_power=False,hypotheses=False,"
+        "covered=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "

@@ -829,6 +829,12 @@ class TransitionDeltaLatticePoissonAudit:
     primitive_mobius_inversion_exact: bool
     primitive_divisor_layers_do_not_worsen: bool
     zero_mode_obstruction_independent_of_determinant_shell: bool
+    zero_mode_covolume_jacobian_cancels_exactly: bool
+    zero_mode_is_continuous_slope_gram: bool
+    full_zero_mode_gram_positive_semidefinite: bool
+    offdiagonal_is_full_gram_minus_identity_diagonal: bool
+    kernel_alone_annihilates_zero_mode: bool
+    square_function_route_is_only_sufficient: bool
     zero_mode_weight_separates_in_the_entries: bool
     zero_mode_mobius_variance_proved: bool
     whole_delta_lattice_covered: bool
@@ -1064,6 +1070,32 @@ class TransitionBBLRHardUnsignedCellAudit:
     cellwise_mobius_cancellation_available: bool
     cross_outer_scale_recombination_required: bool
     uncompressed_lemma_improves_proposition_bound: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class TransitionBanksShparlinskiPreCauchyAudit:
+    entry_scale_exponent: Fraction
+    dual_v_exponent: Fraction
+    dual_j_exponent: Fraction
+    fixed_slope_family_exponent: Fraction
+    shift_variable_exponent: Fraction
+    fixed_slope_geometric_count_exponent: Fraction
+    best_theorem_role_bound_exponent: Fraction
+    best_fixed_slope_bound_exponent: Fraction
+    h_poisson_factor_exponent: Fraction
+    aggregated_exponent: Fraction
+    target_exponent: Fraction
+    power_margin: Fraction
+    short_interval_threshold_exponent: Fraction
+    actual_short_interval_exponent: Fraction
+    short_interval_threshold_margin: Fraction
+    additive_theorem_requires_fixing_both_bilinear_slopes: bool
+    original_shift_has_no_mobius_weight: bool
+    divisor_convolution_can_insert_the_missing_mobius_weight: bool
+    divisor_convolution_creates_power_saving: bool
+    all_actual_kernel_hypotheses_verified: bool
+    published_theorem_closes_pre_cauchy_sum: bool
     source: str
 
 
@@ -4468,6 +4500,12 @@ def transition_delta_lattice_poisson_audit(
         zero_mode_obstruction_independent_of_determinant_shell=(
             zero_absolute == F(3)
         ),
+        zero_mode_covolume_jacobian_cancels_exactly=True,
+        zero_mode_is_continuous_slope_gram=True,
+        full_zero_mode_gram_positive_semidefinite=True,
+        offdiagonal_is_full_gram_minus_identity_diagonal=True,
+        kernel_alone_annihilates_zero_mode=False,
+        square_function_route_is_only_sufficient=True,
         zero_mode_weight_separates_in_the_entries=False,
         zero_mode_mobius_variance_proved=False,
         whole_delta_lattice_covered=False,
@@ -5237,6 +5275,72 @@ def transition_bblr_hard_unsigned_cell_audit(
         source=(
             "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
             "Proposition 3.1 equations (14)--(16)"
+        ),
+    )
+
+
+def transition_banks_shparlinski_pre_cauchy_audit(
+) -> TransitionBanksShparlinskiPreCauchyAudit:
+    """Test the multiple-Mobius additive bound on the hard slope box.
+
+    Before Cauchy, the hard transition equation is
+
+        r v - (k v + j) s = delta,
+
+    with ``r,s`` of exponent one and ``v,j,delta`` of exponent one
+    half.  Banks--Shparlinski's Theorem 2.1 is ternary additive and
+    puts a Mobius factor on all three summation variables.  Thus the
+    two bilinear slope variables must first be fixed, while the
+    original shift ``delta`` has no Mobius factor.  Divisor convolution
+    can insert that missing factor algebraically, but cannot improve
+    the length estimate.
+
+    With lengths ``T,T,T^(1/2)``, the best assignment to the theorem's
+    roles gives exponent ``3/2`` for a fixed slope.  Direct geometric
+    counting is already exponent one, so the theorem is discarded.
+    Restoring the ``(v,j)`` family and the h-Poisson factor gives
+    ``1+1+1/2=5/2`` against target exponent two.  The short-interval
+    theorem has threshold ``5/8``, whereas the actual short variable
+    has exponent ``1/2``.
+    """
+    entry = F(1)
+    dual_v = F(1, 2)
+    dual_j = F(1, 2)
+    slope_family = dual_v + dual_j
+    shift = F(1, 2)
+    geometric = F(1)
+    theorem = F(3, 2)
+    best_fixed = min(geometric, theorem)
+    h_poisson = F(1, 2)
+    aggregate = best_fixed + slope_family + h_poisson
+    target = F(2)
+    short_threshold = F(5, 8)
+    short_actual = shift
+    return TransitionBanksShparlinskiPreCauchyAudit(
+        entry_scale_exponent=entry,
+        dual_v_exponent=dual_v,
+        dual_j_exponent=dual_j,
+        fixed_slope_family_exponent=slope_family,
+        shift_variable_exponent=shift,
+        fixed_slope_geometric_count_exponent=geometric,
+        best_theorem_role_bound_exponent=theorem,
+        best_fixed_slope_bound_exponent=best_fixed,
+        h_poisson_factor_exponent=h_poisson,
+        aggregated_exponent=aggregate,
+        target_exponent=target,
+        power_margin=target - aggregate,
+        short_interval_threshold_exponent=short_threshold,
+        actual_short_interval_exponent=short_actual,
+        short_interval_threshold_margin=short_actual - short_threshold,
+        additive_theorem_requires_fixing_both_bilinear_slopes=True,
+        original_shift_has_no_mobius_weight=True,
+        divisor_convolution_can_insert_the_missing_mobius_weight=True,
+        divisor_convolution_creates_power_saving=False,
+        all_actual_kernel_hypotheses_verified=False,
+        published_theorem_closes_pre_cauchy_sum=False,
+        source=(
+            "Banks--Shparlinski, arXiv:2506.08787v1, "
+            "Theorems 2.1 and 2.4"
         ),
     )
 
@@ -9088,6 +9192,8 @@ def main() -> None:
         "dual_long_spacing=-1/2,dual_transverse_spacing=1/2,"
         "active_long=1/2,active_transverse=0,primitive_exact=True,"
         "primitive_layers_worse=False,zero_separable=False,"
+        "jacobian=True,gram=True,psd=True,offdiag_subtract=True,"
+        "kernel_zero=False,sufficient_only=True,"
         "zero_proved=False,whole=False"
     )
     transition_denominator_line = transition_denominator_gcd_line_audit(
@@ -9231,6 +9337,37 @@ def main() -> None:
         f"target={_fmt(transition_bblr_unsigned_d0.target_exponent)},"
         f"margin={_fmt(transition_bblr_unsigned_d0.power_margin)},"
         "improved=False"
+    )
+    transition_banks_shparlinski = (
+        transition_banks_shparlinski_pre_cauchy_audit()
+    )
+    print(
+        "large_q_transition: banks_shparlinski_pre_cauchy="
+        f"entry={_fmt(transition_banks_shparlinski.entry_scale_exponent)},"
+        f"v={_fmt(transition_banks_shparlinski.dual_v_exponent)},"
+        f"j={_fmt(transition_banks_shparlinski.dual_j_exponent)},"
+        "slopes="
+        f"{_fmt(transition_banks_shparlinski.fixed_slope_family_exponent)},"
+        "shift="
+        f"{_fmt(transition_banks_shparlinski.shift_variable_exponent)},"
+        "fixed_count="
+        f"{_fmt(transition_banks_shparlinski.fixed_slope_geometric_count_exponent)},"
+        "theorem="
+        f"{_fmt(transition_banks_shparlinski.best_theorem_role_bound_exponent)},"
+        "best="
+        f"{_fmt(transition_banks_shparlinski.best_fixed_slope_bound_exponent)},"
+        f"H={_fmt(transition_banks_shparlinski.h_poisson_factor_exponent)},"
+        f"aggregate={_fmt(transition_banks_shparlinski.aggregated_exponent)},"
+        f"target={_fmt(transition_banks_shparlinski.target_exponent)},"
+        f"margin={_fmt(transition_banks_shparlinski.power_margin)},"
+        "short_threshold="
+        f"{_fmt(transition_banks_shparlinski.short_interval_threshold_exponent)},"
+        "short_actual="
+        f"{_fmt(transition_banks_shparlinski.actual_short_interval_exponent)},"
+        "short_margin="
+        f"{_fmt(transition_banks_shparlinski.short_interval_threshold_margin)},"
+        "fix_slopes=True,shift_mu=False,convolution=True,"
+        "convolution_power=False,hypotheses=False,covered=False"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
