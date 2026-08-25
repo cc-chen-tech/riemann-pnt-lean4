@@ -2719,6 +2719,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "cauchy_proved=False,model_only=True,physical=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: humphries_exceptional_level_density="
+        "modulus=3,target=2,level=1,theta=7/64,slope=4,count=9/16,"
+        "normalized=-7/16,ramanujan_base=2,residual=7/32,"
+        "total=71/32,deficit=7/32,target_level_max=1,neutral_level=3/2,"
+        "compatible=False,linnik_level=True,positive=True,mobius_signs=False,"
+        "qct_weights=False,exceptional_covered=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: inverse_zeta_zero_free_implication="
         "ambient=1,window=1/2,variance=3/2,block=3/4,"
         "abscissa=3/4,x_integral=True,cauchy=True,dyadic=True,"
@@ -3863,6 +3871,38 @@ def test_blomer_milicevic_type_i_level_split_keeps_exceptional_deficit() -> None
     assert endpoint.product_compatible_hard_vertex_only
     assert not endpoint.physical_coupled_kernel_restored
     assert not endpoint.whole_mobius_gate_covered
+
+
+def test_humphries_exceptional_density_cannot_close_critical_level_face() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "humphries_exceptional_level_density_audit",
+        None,
+    )
+    assert adapter is not None, "exceptional level-density audit is missing"
+
+    hard = adapter(
+        modulus_scale_exponent=F(3),
+        target_exponent=F(2),
+        level_family_exponent=F(1),
+    )
+    assert hard.ramanujan_theta == F(7, 64)
+    assert hard.gamma0_density_slope == F(4)
+    assert hard.humphries_count_exponent_at_theta == F(9, 16)
+    assert hard.volume_normalized_count_exponent_at_theta == F(-7, 16)
+    assert hard.ideal_ramanujan_level_cauchy_base_exponent == F(2)
+    assert hard.residual_exceptional_loss_exponent == F(7, 32)
+    assert hard.density_enhanced_bound_exponent == F(71, 32)
+    assert hard.density_enhanced_power_deficit == F(7, 32)
+    assert hard.maximum_level_allowed_by_target == F(1)
+    assert hard.level_needed_to_neutralize_exceptional_growth == F(3, 2)
+    assert not hard.target_and_density_thresholds_compatible
+    assert hard.linnik_scale_dominates_level_family
+    assert hard.density_theorem_is_positive_counting_input
+    assert not hard.mobius_level_signs_used_by_density_theorem
+    assert not hard.qct_spectral_weights_accepted
+    assert not hard.exceptional_spectrum_gate_covered
+    assert not hard.whole_mobius_gate_covered
 
 
 def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:

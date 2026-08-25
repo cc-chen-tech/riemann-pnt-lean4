@@ -13051,6 +13051,96 @@ centered four-variable dispersion estimate.  The adapter
 both the level-Cauchy and physical-kernel proof flags false.
 
 
+### 4.109 Exceptional-eigenvalue density leaves a (T^{7/32}) level-face deficit
+
+The factor (X^{2\vartheta}) in (4.835) is caused by exceptional
+Laplacian eigenvalues.  It is therefore necessary to test the strongest
+published level-density saving before declaring (4.840) new.
+[Humphries, Theorem 1.2](https://arxiv.org/abs/1609.06740), specialized
+to \(\Gamma_0(q)\), trivial character, and no finite-prime condition,
+states that for \(0<\alpha<1/2\),
+
+\[
+ \boxed{
+ N_q(\alpha):=
+ \#\{f\in\mathcal B_0(q):it_f\in(\alpha,1/2)\}
+ \ll_\varepsilon
+ \operatorname{vol}(\Gamma_0(q)\backslash\mathbb H)^{1-4\alpha+\varepsilon}.}
+\tag{4.841}
+\]
+
+For \(q\asymp Q=T^\lambda\), the volume is
+\(q^{1+o(1)}\).  Give (4.841) its most favorable possible use in the
+present problem: divide by one full spectral volume and pretend that the
+remaining QCT Fourier coefficients cost nothing.  Then the normalized
+exceptional count at height \(\nu\) gains (Q^{-4\nu}).  Against the
+Kuznetsov transform factor (X^{2\nu}), this leaves
+
+\[
+ \boxed{
+ \sup_{0\leq\nu\leq\vartheta}
+ X^{2\nu}Q^{-4\nu}
+ =T^{\vartheta\max(2\sigma-4\lambda,0)},
+ \qquad X=T^\sigma.}
+\tag{4.842}
+\]
+
+This already grants more than the theorem literally supplies for the
+joint signed QCT coefficients: (4.841) is a positive counting theorem,
+not a weighted level large sieve.  It is therefore a legitimate
+best-case test of this published input.
+
+At the critical Type-I level face
+
+\[
+ \sigma=3,\qquad\lambda=1,\qquad
+ \vartheta=\frac7{64},
+\]
+
+formula (4.842) has residual exponent
+
+\[
+ \boxed{
+ (2\cdot3-4\cdot1)\frac7{64}=\frac7{32}.}
+\tag{4.843}
+\]
+
+The full-Ramanujan ideal level-Cauchy base in (4.839) is already exactly
+(T^2).  Restoring (4.843) gives
+
+\[
+ \boxed{
+ E_{\mathrm{density}}=2+\frac7{32}=\frac{71}{32},
+ \qquad E_{\mathrm{density}}-2=\frac7{32}.}
+\tag{4.844}
+\]
+
+There is no choice of level exponent which satisfies both required
+inequalities.  The target bound for the ideal Cauchy base requires
+
+\[
+ \lambda\leq2\left(2-\frac32\right)=1,
+\]
+
+whereas neutralizing (4.842) requires
+
+\[
+ \boxed{
+ \lambda\geq\frac{2\sigma}{4}=\frac32.}
+\tag{4.845}
+\]
+
+Thus even the optimistic volume-normalized use of the best audited
+\(\Gamma_0(q)\) exceptional-density exponent cannot close the critical
+level face.  The theorem never sees the signs of the
+\((\mu*\mu)(q)\)-type level coefficient.  Any successful continuation
+must prove cancellation in those signed spectral weights themselves,
+not merely count how many exceptional forms occur.  The adapter
+`humphries_exceptional_level_density_audit` records the incompatible
+thresholds (1) and (3/2), the residual (7/32), and keeps the QCT
+spectral-weight and whole-gate flags false.
+
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

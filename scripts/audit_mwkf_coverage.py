@@ -1593,6 +1593,30 @@ class BlomerMilicevicTypeILevelAudit:
 
 
 @dataclass(frozen=True)
+class HumphriesExceptionalLevelDensityAudit:
+    kloosterman_modulus_scale_exponent: Fraction
+    target_exponent: Fraction
+    level_family_exponent: Fraction
+    ramanujan_theta: Fraction
+    gamma0_density_slope: Fraction
+    humphries_count_exponent_at_theta: Fraction
+    volume_normalized_count_exponent_at_theta: Fraction
+    ideal_ramanujan_level_cauchy_base_exponent: Fraction
+    residual_exceptional_loss_exponent: Fraction
+    density_enhanced_bound_exponent: Fraction
+    density_enhanced_power_deficit: Fraction
+    maximum_level_allowed_by_target: Fraction
+    level_needed_to_neutralize_exceptional_growth: Fraction
+    target_and_density_thresholds_compatible: bool
+    linnik_scale_dominates_level_family: bool
+    density_theorem_is_positive_counting_input: bool
+    mobius_level_signs_used_by_density_theorem: bool
+    qct_spectral_weights_accepted: bool
+    exceptional_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class InverseZetaVarianceZeroFreeAudit:
     ambient_length_exponent: Fraction
     short_window_exponent: Fraction
@@ -8315,6 +8339,81 @@ def blomer_milicevic_type_i_level_audit(
     )
 
 
+def humphries_exceptional_level_density_audit(
+    *,
+    modulus_scale_exponent: Fraction,
+    target_exponent: Fraction,
+    level_family_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+    gamma0_density_slope: Fraction = F(4),
+) -> HumphriesExceptionalLevelDensityAudit:
+    """Give exceptional spectral density its optimistic level gain.
+
+    Humphries' Gamma_0(q) density theorem with no finite-prime
+    conditions gives
+
+    ``# {f : Im(t_f)>nu} << vol(Gamma_0(q))^(1-4*nu+eps)``.
+
+    After the favorable volume normalization, a level ``q~T^lambda``
+    can therefore replace the worst exceptional factor ``X^(2*nu)``
+    by at best ``X^(2*nu) q^(-4*nu)``.  At ``X=T^sigma`` the residual
+    exponent is ``max(2*sigma-4*lambda,0)*nu``.  This deliberately
+    grants linear use of the positive density estimate and the ideal
+    square-root level cost before checking the QCT spectral weights.
+
+    For sigma=3 and lambda=1 the Ramanujan-base level bound is T^2,
+    but the residual Kim--Sarnak exceptional factor is T^(7/32).
+    Neutralizing it needs lambda>=3/2, whereas the target permits only
+    lambda<=1.  The density theorem takes absolute positive counts and
+    does not use the Möbius signs in the level coefficient.
+    """
+    sigma = F(modulus_scale_exponent)
+    target = F(target_exponent)
+    level = F(level_family_exponent)
+    theta = F(ramanujan_theta)
+    slope = F(gamma0_density_slope)
+    if sigma <= 0 or target < 0 or level < 0 or theta < 0:
+        raise ValueError("scale exponents must be nonnegative and modulus positive")
+    if slope <= 0:
+        raise ValueError("density slope must be positive")
+
+    count = F(1) - slope * theta
+    normalized_count = count - F(1)
+    ramanujan_base = sigma / 2 + level / 2
+    residual = _positive_part(
+        (F(2) * sigma - slope * level) * theta
+    )
+    density_bound = ramanujan_base + residual
+    max_target_level = F(2) * (target - sigma / 2)
+    neutral_level = F(2) * sigma / slope
+    return HumphriesExceptionalLevelDensityAudit(
+        kloosterman_modulus_scale_exponent=sigma,
+        target_exponent=target,
+        level_family_exponent=level,
+        ramanujan_theta=theta,
+        gamma0_density_slope=slope,
+        humphries_count_exponent_at_theta=count,
+        volume_normalized_count_exponent_at_theta=normalized_count,
+        ideal_ramanujan_level_cauchy_base_exponent=ramanujan_base,
+        residual_exceptional_loss_exponent=residual,
+        density_enhanced_bound_exponent=density_bound,
+        density_enhanced_power_deficit=_positive_part(
+            density_bound - target
+        ),
+        maximum_level_allowed_by_target=max_target_level,
+        level_needed_to_neutralize_exceptional_growth=neutral_level,
+        target_and_density_thresholds_compatible=(
+            neutral_level <= max_target_level
+        ),
+        linnik_scale_dominates_level_family=(sigma >= level),
+        density_theorem_is_positive_counting_input=True,
+        mobius_level_signs_used_by_density_theorem=False,
+        qct_spectral_weights_accepted=False,
+        exceptional_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def inverse_zeta_variance_zero_free_audit(
 ) -> InverseZetaVarianceZeroFreeAudit:
     """Record the zero-free consequence of the strong sufficient gate.
@@ -14361,6 +14460,47 @@ def main() -> None:
         f"model_only={bm_type_i.product_compatible_hard_vertex_only},"
         f"physical={bm_type_i.physical_coupled_kernel_restored},"
         f"covered={bm_type_i.whole_mobius_gate_covered}"
+    )
+    humphries_density = humphries_exceptional_level_density_audit(
+        modulus_scale_exponent=F(3),
+        target_exponent=F(2),
+        level_family_exponent=F(1),
+    )
+    print(
+        "large_q_transition: humphries_exceptional_level_density="
+        "modulus="
+        f"{_fmt(humphries_density.kloosterman_modulus_scale_exponent)},"
+        f"target={_fmt(humphries_density.target_exponent)},"
+        f"level={_fmt(humphries_density.level_family_exponent)},"
+        f"theta={_fmt(humphries_density.ramanujan_theta)},"
+        f"slope={_fmt(humphries_density.gamma0_density_slope)},"
+        "count="
+        f"{_fmt(humphries_density.humphries_count_exponent_at_theta)},"
+        "normalized="
+        f"{_fmt(humphries_density.volume_normalized_count_exponent_at_theta)},"
+        "ramanujan_base="
+        f"{_fmt(humphries_density.ideal_ramanujan_level_cauchy_base_exponent)},"
+        "residual="
+        f"{_fmt(humphries_density.residual_exceptional_loss_exponent)},"
+        f"total={_fmt(humphries_density.density_enhanced_bound_exponent)},"
+        "deficit="
+        f"{_fmt(humphries_density.density_enhanced_power_deficit)},"
+        "target_level_max="
+        f"{_fmt(humphries_density.maximum_level_allowed_by_target)},"
+        "neutral_level="
+        f"{_fmt(humphries_density.level_needed_to_neutralize_exceptional_growth)},"
+        "compatible="
+        f"{humphries_density.target_and_density_thresholds_compatible},"
+        "linnik_level="
+        f"{humphries_density.linnik_scale_dominates_level_family},"
+        "positive="
+        f"{humphries_density.density_theorem_is_positive_counting_input},"
+        "mobius_signs="
+        f"{humphries_density.mobius_level_signs_used_by_density_theorem},"
+        f"qct_weights={humphries_density.qct_spectral_weights_accepted},"
+        "exceptional_covered="
+        f"{humphries_density.exceptional_spectrum_gate_covered},"
+        f"covered={humphries_density.whole_mobius_gate_covered}"
     )
     zero_free = inverse_zeta_variance_zero_free_audit()
     print(
