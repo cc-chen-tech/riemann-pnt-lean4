@@ -2490,6 +2490,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.757}",
         "four_variable_superposition_exact=True",
         "collapsed_coefficients_independent_of_long_variables=True",
+        "### 4.96 The equal-product face contains an ordinary two-point Chowla correlation",
+        "\\tag{4.758}",
+        "\\tag{4.761}",
+        "equal_collapsed_product_face_present=True",
+        "uniform_ratio_frequency_triangle_gate_admissible=False",
     ):
         assert marker in note
 
@@ -2671,6 +2676,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "cross_conditions=4,allocation_divisors=4,identity=True,"
         "finite=True,power_loss=0,log_loss=4,superposition=True,"
         "independent=True,bv=False,type_ii=False,whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: collapsed_chowla_face_endpoint="
+        "s=1,long=1,collapsed=1,face_raw=2,target=2,margin=0,"
+        "equal_face=True,fixed_shift=True,primitive_excludes=False,"
+        "zero_ratio_mobius=True,chowla=True,ordinary_chowla=False,"
+        "log_little_o=True,pointwise_triangle=False,joint_ratio=True,"
+        "type_ii=False,whole_face=False"
     ) in report
 
 
@@ -3685,6 +3698,46 @@ def test_four_cross_coprimalities_give_exact_finite_allocation() -> None:
     assert not audit.standard_bombieri_vinogradov_adapter_applies
     assert not audit.coupled_ratio_mellin_type_ii_bound_proved
     assert not audit.whole_signed_hard_face_covered
+
+
+def test_equal_collapsed_product_face_contains_fixed_shift_chowla() -> None:
+    helper = getattr(
+        coverage_audit,
+        "collapsed_equal_product_chowla_identity",
+        None,
+    )
+    assert helper is not None, "collapsed Chowla-face helper is missing"
+
+    exact = helper(x=12, y=11, u=5, v=7, j=7, k=5)
+    assert exact["collapsed_products_equal"]
+    assert exact["fixed_shift"] == 1
+    assert exact["determinant_equals_collapsed_product"]
+    assert exact["primitive_product_condition_holds"]
+    assert exact["primitive_condition_does_not_exclude_face"]
+
+    adapter = getattr(
+        coverage_audit,
+        "collapsed_chowla_face_audit",
+        None,
+    )
+    assert adapter is not None, "collapsed Chowla-face audit is missing"
+    endpoint = adapter(outer_scale_exponent=F(1))
+    assert endpoint.long_mobius_variable_exponent == F(1)
+    assert endpoint.collapsed_product_variable_exponent == F(1)
+    assert endpoint.equal_face_raw_exponent == F(2)
+    assert endpoint.required_inner_bound_exponent == F(2)
+    assert endpoint.positive_power_margin == F(0)
+    assert endpoint.equal_collapsed_product_face_present
+    assert endpoint.determinant_reduces_to_fixed_shift
+    assert not endpoint.primitive_gcd_excludes_face
+    assert endpoint.pointwise_zero_ratio_coefficient_is_mobius
+    assert endpoint.face_contains_two_point_chowla
+    assert not endpoint.ordinary_two_point_chowla_available_unconditionally
+    assert endpoint.logarithmic_little_o_required
+    assert not endpoint.uniform_ratio_frequency_triangle_gate_admissible
+    assert endpoint.joint_ratio_integral_must_remain_coupled
+    assert not endpoint.coupled_ratio_mellin_type_ii_bound_proved
+    assert not endpoint.whole_signed_hard_face_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

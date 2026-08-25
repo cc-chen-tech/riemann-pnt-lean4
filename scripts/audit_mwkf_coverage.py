@@ -1586,6 +1586,27 @@ class CollapsedCoprimalityAllocationAudit:
 
 
 @dataclass(frozen=True)
+class CollapsedChowlaFaceAudit:
+    outer_scale_exponent: Fraction
+    long_mobius_variable_exponent: Fraction
+    collapsed_product_variable_exponent: Fraction
+    equal_face_raw_exponent: Fraction
+    required_inner_bound_exponent: Fraction
+    positive_power_margin: Fraction
+    equal_collapsed_product_face_present: bool
+    determinant_reduces_to_fixed_shift: bool
+    primitive_gcd_excludes_face: bool
+    pointwise_zero_ratio_coefficient_is_mobius: bool
+    face_contains_two_point_chowla: bool
+    ordinary_two_point_chowla_available_unconditionally: bool
+    logarithmic_little_o_required: bool
+    uniform_ratio_frequency_triangle_gate_admissible: bool
+    joint_ratio_integral_must_remain_coupled: bool
+    coupled_ratio_mellin_type_ii_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7889,6 +7910,86 @@ def collapsed_coprimality_allocation_audit(
     )
 
 
+def collapsed_equal_product_chowla_identity(
+    *,
+    x: int,
+    y: int,
+    u: int,
+    v: int,
+    j: int,
+    k: int,
+) -> dict[str, int | bool]:
+    """Exhibit the fixed-shift face inside the primitive collapsed model.
+
+    Put ``c=u*j`` and ``d=v*k``.  When ``c=d`` the determinant equation
+    ``x*c-y*d=ell`` becomes ``ell=(x-y)c``.  The primitive condition in
+    the BBLR layer is ``gcd(x*u,y*v)=1``; it need not exclude this face.
+    """
+    if min(x, y, u, v, j, k) <= 0:
+        raise ValueError("collapsed determinant factors must be positive")
+    c = u * j
+    d = v * k
+    shift = x - y
+    determinant = x * c - y * d
+    equal_face = c == d
+    expected = shift * c
+    primitive = gcd(x * u, y * v) == 1
+    return {
+        "collapsed_left_product": c,
+        "collapsed_right_product": d,
+        "collapsed_products_equal": equal_face,
+        "fixed_shift": shift,
+        "determinant": determinant,
+        "expected_equal_face_determinant": expected,
+        "determinant_equals_collapsed_product": (
+            equal_face and shift == 1 and determinant == c
+        ),
+        "primitive_product_condition_holds": primitive,
+        "primitive_condition_does_not_exclude_face": equal_face and primitive,
+    }
+
+
+def collapsed_chowla_face_audit(
+    *,
+    outer_scale_exponent: Fraction,
+) -> CollapsedChowlaFaceAudit:
+    """Record the equal-product boundary of the coupled Type-II gate.
+
+    At ``c=d`` and ``ell=k*c`` the long variables satisfy ``x-y=k``.
+    At zero ratio frequency the exact collapsed coefficient is a single
+    Möbius value, so the equal face contains an ordinary two-point
+    Möbius correlation.  Its count already has the target exponent
+    ``1+s``: no positive-power saving is missing, but a logarithmic
+    little-oh is.  Consequently a pointwise-in-ratio-frequency triangle
+    inequality would demand an unavailable ordinary Chowla estimate.
+    This does not reject the original jointly integrated ratio-Mellin
+    gate, where cancellation between the two frequencies is retained.
+    """
+    s = outer_scale_exponent
+    if s < 0 or s > 1:
+        raise ValueError("outer_scale_exponent must lie in [0, 1]")
+    face = F(1) + s
+    return CollapsedChowlaFaceAudit(
+        outer_scale_exponent=s,
+        long_mobius_variable_exponent=F(1),
+        collapsed_product_variable_exponent=s,
+        equal_face_raw_exponent=face,
+        required_inner_bound_exponent=face,
+        positive_power_margin=F(0),
+        equal_collapsed_product_face_present=True,
+        determinant_reduces_to_fixed_shift=True,
+        primitive_gcd_excludes_face=False,
+        pointwise_zero_ratio_coefficient_is_mobius=True,
+        face_contains_two_point_chowla=True,
+        ordinary_two_point_chowla_available_unconditionally=False,
+        logarithmic_little_o_required=True,
+        uniform_ratio_frequency_triangle_gate_admissible=False,
+        joint_ratio_integral_must_remain_coupled=True,
+        coupled_ratio_mellin_type_ii_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -12606,6 +12707,35 @@ def main() -> None:
         "type_ii="
         f"{coprime_allocation.coupled_ratio_mellin_type_ii_bound_proved},"
         f"whole_face={coprime_allocation.whole_signed_hard_face_covered}"
+    )
+    chowla_face = collapsed_chowla_face_audit(
+        outer_scale_exponent=F(1),
+    )
+    print(
+        "large_q_transition: collapsed_chowla_face_endpoint="
+        f"s={_fmt(chowla_face.outer_scale_exponent)},"
+        f"long={_fmt(chowla_face.long_mobius_variable_exponent)},"
+        "collapsed="
+        f"{_fmt(chowla_face.collapsed_product_variable_exponent)},"
+        f"face_raw={_fmt(chowla_face.equal_face_raw_exponent)},"
+        "target="
+        f"{_fmt(chowla_face.required_inner_bound_exponent)},"
+        f"margin={_fmt(chowla_face.positive_power_margin)},"
+        f"equal_face={chowla_face.equal_collapsed_product_face_present},"
+        "fixed_shift="
+        f"{chowla_face.determinant_reduces_to_fixed_shift},"
+        f"primitive_excludes={chowla_face.primitive_gcd_excludes_face},"
+        "zero_ratio_mobius="
+        f"{chowla_face.pointwise_zero_ratio_coefficient_is_mobius},"
+        f"chowla={chowla_face.face_contains_two_point_chowla},"
+        "ordinary_chowla="
+        f"{chowla_face.ordinary_two_point_chowla_available_unconditionally},"
+        f"log_little_o={chowla_face.logarithmic_little_o_required},"
+        "pointwise_triangle="
+        f"{chowla_face.uniform_ratio_frequency_triangle_gate_admissible},"
+        f"joint_ratio={chowla_face.joint_ratio_integral_must_remain_coupled},"
+        f"type_ii={chowla_face.coupled_ratio_mellin_type_ii_bound_proved},"
+        f"whole_face={chowla_face.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

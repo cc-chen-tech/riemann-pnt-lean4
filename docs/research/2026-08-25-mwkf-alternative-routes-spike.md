@@ -11305,6 +11305,88 @@ new theorem is now precisely the allocation-uniform coupled estimate
 `standard_bombieri_vinogradov_adapter_applies=False` and
 `coupled_ratio_mellin_type_ii_bound_proved=False`.
 
+### 4.96 The equal-product face contains an ordinary two-point Chowla correlation
+
+There is a further boundary on how (4.752) may be estimated.  Write
+
+\[
+ c=uj,\qquad d=vk.
+\]
+
+On the equal-product face, for every fixed nonzero integer \(\kappa\),
+the determinant equation has the exact specialization
+
+\[
+ \boxed{
+ c=d,\quad \ell=\kappa c
+ \quad\Longrightarrow\quad
+ xc-yd=\ell\ \Longleftrightarrow\ x-y=\kappa.}
+\tag{4.758}
+\]
+
+The primitive BBLR condition does not remove this face.  For example,
+
+\[
+ (u,v,j,k,x,y)=(5,7,7,5,12,11)
+\]
+
+gives \(c=uj=vk=d=35\), \(xc-yd=35\), and
+
+\[
+ \boxed{(xu,yv)=(60,77)=1.}
+\tag{4.759}
+\]
+
+Now take the identity-allocation tensor
+\(r_0=r_1=r_2=r_3=1\) in (4.755) and specialize its *pointwise*
+ratio family to \(\tau=\upsilon=0\).  This tensor has no additional
+divisibility restriction, and equation (4.749) gives
+\(\mathcal D_{U,e,0}(c)=-\mu(c)\mathbf 1_{c\le U<ce}\)
+exactly.  Hence, whenever the two cutoff indicators overlap, the
+equal-product, \(\ell=\kappa c\) part of that pointwise tensor is
+
+\[
+ \boxed{
+ \sum_{c\asymp T^s}\mu(c)^2
+   \mathbf 1_{c\le U<ce}\mathbf 1_{c\le U'<ce'}
+ \sum_{x-y=\kappa\atop x,y\asymp T}
+   \mu(x)\mu(y)\Psi_{0,0}(x,y,c,c,\kappa c).}
+\tag{4.760}
+\]
+
+This is an ordinary two-point Möbius correlation in the long variable.
+Its raw exponent is \(1+s\), exactly the required inner exponent in
+(4.751).  Thus there is no remaining positive-power deficit on this
+face, but the global little-oh requires cancellation beyond the trivial
+\(T^{1+s}\) bound.  A theorem uniform for arbitrary separated smooth
+weights in (4.760), imposed separately on every allocation tensor,
+would in particular require the ordinary Cesàro two-point Chowla
+estimate, which is not currently known.
+
+This observation does **not** disprove the actual gate (4.752): a single
+point \((\tau,\upsilon)=(0,0)\) has measure zero, and the inherited
+weight is reconstructed only after the two ratio frequencies are
+integrated jointly.  It does rule out taking absolute values separately
+in those frequencies and asking for a uniform pointwise bound.  The
+correct remaining route must retain the joint ratio integral and its
+cancellation:
+
+\[
+ \boxed{
+ \texttt{equal_collapsed_product_face_present}=\mathrm{True},\qquad
+ \texttt{uniform_ratio_frequency_triangle_gate_admissible}
+ =\mathrm{False}.}
+\tag{4.761}
+\]
+
+The helper `collapsed_equal_product_chowla_identity` verifies
+(4.758)--(4.759) on exact integer data.  The adapter
+`collapsed_chowla_face_audit` records the exponent equality, the
+ordinary-Chowla boundary, and keeps the jointly integrated Type-II gate
+open rather than replacing it by the stronger pointwise statement.  In
+particular it records `equal_collapsed_product_face_present=True` and
+`uniform_ratio_frequency_triangle_gate_admissible=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
