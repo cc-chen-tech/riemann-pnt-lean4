@@ -504,8 +504,8 @@ def test_boundary_completion_forces_prime_main_and_isolates_reflected_tail() -> 
     assert not audit.unconditional_coverage
 
 
-def test_subcritical_afe_residue_makes_cross_scale_completion_actual() -> None:
-    """V_t(KM)=1+power-saving error when KM stays below T^(1-eta)."""
+def test_subcritical_afe_residue_does_not_complete_missing_divisor_scales() -> None:
+    """The local residue error is small, but completion changes zeta scale."""
     adapter = getattr(
         coverage_audit,
         "large_q_subcritical_afe_completion_audit",
@@ -524,12 +524,12 @@ def test_subcritical_afe_residue_makes_cross_scale_completion_actual() -> None:
     assert audit.local_shifted_line_absolute_power_exponent == F(1)
     assert audit.short_side_reciprocity_removes_boundary_loss
     assert audit.mellin_remainder_aggregates_to_little_oh
-    assert audit.all_reduced_dyadic_scales_regrouped_before_absolute_values
-    assert audit.restricted_divisor_completion_applies_to_residue_kernel
-    assert audit.subcritical_cross_scale_aggregation_proved
-    assert audit.global_afe_transition_region_remains
-    assert not audit.afe_transition_region_intersects_endpoint
-    assert audit.full_endpoint_cross_scale_aggregation_proved
+    assert audit.local_endpoint_afe_weight_replaced_by_residue
+    assert not audit.all_reduced_dyadic_scales_regrouped_before_absolute_values
+    assert not audit.restricted_divisor_completion_applies_to_endpoint_residue_kernel
+    assert not audit.subcritical_cross_scale_aggregation_proved
+    assert audit.full_divisor_completion_crosses_afe_transition
+    assert not audit.full_endpoint_cross_scale_aggregation_proved
     assert not audit.unconditional_coverage
 
 
@@ -1839,8 +1839,8 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
     assert (
         "large_q_endpoint: subcritical_afe_completion="
         "gap=1/10 left_shift=1/8 remainder_save=1/80 local_power=1 "
-        "regrouped=True divisor_completion=True global_transition=True "
-        "endpoint_transition=False endpoint_full=True covered=False"
+        "local_residue=True regrouped=False divisor_completion=False "
+        "crosses_transition=True endpoint_full=False covered=False"
     ) in output
     assert (
         "large_q_endpoint: transition_mellin_divisor="
@@ -2201,13 +2201,14 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\mathfrak C^{\mathrm{tail}\times\mathrm{tail}}_{P,L}",
         "cross_scale_aggregation_proved=False",
         "reflected_tail_energy_estimate_proved=False",
-        "### 4.30 Subcritical AFE residue and actual cross-scale completion",
+        "### 4.30 Subcritical AFE residue and the remaining cross-scale obstruction",
         r"m_1m_2\le T^{1-\eta}",
         r"T^{-c\eta}",
         "large_q_subcritical_afe_completion_audit",
-        "subcritical_cross_scale_aggregation_proved=True",
-        "afe_transition_region_intersects_endpoint=False",
-        "full_endpoint_cross_scale_aggregation_proved=True",
+        "local_endpoint_afe_weight_replaced_by_residue=True",
+        "subcritical_cross_scale_aggregation_proved=False",
+        "full_divisor_completion_crosses_afe_transition=True",
+        "full_endpoint_cross_scale_aggregation_proved=False",
         "### 4.31 Why one left-line twisted-divisor energy is not exact",
         r"P_a(z):=\prod_{p\mid a}(1-p^z)",
         r"\log X\,P_{n^{(q)}}(z)-P'_{n^{(q)}}(z)",

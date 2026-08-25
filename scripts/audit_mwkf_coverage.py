@@ -292,11 +292,11 @@ class LargeQSubcriticalAfeCompletionAudit:
     local_shifted_line_absolute_power_exponent: Fraction
     short_side_reciprocity_removes_boundary_loss: bool
     mellin_remainder_aggregates_to_little_oh: bool
+    local_endpoint_afe_weight_replaced_by_residue: bool
     all_reduced_dyadic_scales_regrouped_before_absolute_values: bool
-    restricted_divisor_completion_applies_to_residue_kernel: bool
+    restricted_divisor_completion_applies_to_endpoint_residue_kernel: bool
     subcritical_cross_scale_aggregation_proved: bool
-    global_afe_transition_region_remains: bool
-    afe_transition_region_intersects_endpoint: bool
+    full_divisor_completion_crosses_afe_transition: bool
     full_endpoint_cross_scale_aggregation_proved: bool
     unconditional_coverage: bool
 
@@ -1703,10 +1703,11 @@ def large_q_subcritical_afe_completion_audit(
     to ``Re z=-c`` crosses only the residue one and leaves an error
     ``T^(-c*eta)``.  The exact shifted-line count has scale ``T*L`` per
     dyadic ratio family, so this fixed power saving absorbs all
-    polylogarithmic partitions.  Summing the reduced-variable partitions
-    before absolute values then makes the restricted full-divisor
-    completion exact for the residue kernel.  The AFE transition
-    ``m1*m2 asymp T`` remains separate.
+    polylogarithmic partitions.  This replaces the AFE weight inside the
+    endpoint family.  It does not complete the divisor sum: at fixed
+    product ``n=m*s``, adding divisors ``d`` far below the endpoint scale
+    replaces ``m`` by ``n/d`` and can cross the AFE transition.  Hence
+    the cross-scale restricted-divisor completion remains unproved.
     """
     if not _is_large_q_bounded_zeta_endpoint(box):
         raise ValueError("box is not the large-q bounded-zeta endpoint")
@@ -1726,12 +1727,12 @@ def large_q_subcritical_afe_completion_audit(
         local_shifted_line_absolute_power_exponent=F(1),
         short_side_reciprocity_removes_boundary_loss=True,
         mellin_remainder_aggregates_to_little_oh=True,
-        all_reduced_dyadic_scales_regrouped_before_absolute_values=True,
-        restricted_divisor_completion_applies_to_residue_kernel=True,
-        subcritical_cross_scale_aggregation_proved=True,
-        global_afe_transition_region_remains=True,
-        afe_transition_region_intersects_endpoint=False,
-        full_endpoint_cross_scale_aggregation_proved=True,
+        local_endpoint_afe_weight_replaced_by_residue=True,
+        all_reduced_dyadic_scales_regrouped_before_absolute_values=False,
+        restricted_divisor_completion_applies_to_endpoint_residue_kernel=False,
+        subcritical_cross_scale_aggregation_proved=False,
+        full_divisor_completion_crosses_afe_transition=True,
+        full_endpoint_cross_scale_aggregation_proved=False,
         unconditional_coverage=False,
     )
 
@@ -4601,8 +4602,8 @@ def main() -> None:
     print(
         "large_q_endpoint: subcritical_afe_completion="
         "gap=1/10 left_shift=1/8 remainder_save=1/80 local_power=1 "
-        "regrouped=True divisor_completion=True global_transition=True "
-        "endpoint_transition=False endpoint_full=True covered=False"
+        "local_residue=True regrouped=False divisor_completion=False "
+        "crosses_transition=True endpoint_full=False covered=False"
     )
     transition_mellin = large_q_transition_mellin_divisor_audit(
         boxes["large_q_endpoint"]

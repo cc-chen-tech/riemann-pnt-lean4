@@ -3719,11 +3719,11 @@ Moreover the AFE factor \(V_t(m_1m_2)\) couples the two zeta variables.
 Thus (4.252) becomes an identity for the actual remainder only after all
 reduced-variable dyadic scales are regrouped and the AFE weight is
 separated, with its residue and transform tail retained.  That
-cross-scale aggregation is not proved here in every large-\(q\) cell.
-Section 4.30 below establishes it for the subcritical AFE region
-\(m_1m_2\le T^{1-\eta}\).  In particular this contains the whole
-polylogarithmic endpoint \(K,M\le(\log T)^2\) considered here, so the
-transition collar does not intersect the endpoint gate (4.255).
+cross-scale aggregation is not proved here.  Section 4.30 below removes
+the AFE weight with a power-saving error inside a subcritical endpoint
+box, but also records why this does not authorize the full divisor
+completion: at fixed product, adding the missing divisor scales changes
+the complementary zeta scale and can cross the AFE transition.
 
 Subject to that exact aggregation, the retained reduced mollifier
 variable is squarefree, coprime to \(q\), and divides \(n^{(q)}\).
@@ -3777,10 +3777,10 @@ cross_scale_aggregation_proved=False,
 reflected_tail_energy_estimate_proved=False, and
 unconditional_coverage=False.
 
-### 4.30 Subcritical AFE residue and actual cross-scale completion
+### 4.30 Subcritical AFE residue and the remaining cross-scale obstruction
 
-The cross-scale interface in Section 4.29 can be completed away from the
-AFE transition.  Fix \(\eta>0\) and restrict to
+One part of the cross-scale interface in Section 4.29 can be completed
+locally.  Fix \(\eta>0\) and restrict the original terms to
 
 \[
  m_1m_2\le T^{1-\eta}.
@@ -3844,25 +3844,35 @@ families, and every polylogarithmic shift box contribute
 \tag{4.260}
 \]
 
-For the residue-one kernel in (4.257), sum the complete smooth
-partitions in \(m_1,m_2,r,s\) before taking absolute values.  The AFE
-factor no longer couples the two divisor variables, so for fixed \(q\)
-and product \(n=ms\) the coefficient is exactly \(B_{q,X}(n)/\log N\)
-from (4.252).  Thus the restricted divisor completion, prime-forcing
-main term, and reflected-tail identity of Section 4.29 apply to the
-actual subcritical AFE contribution, not merely to a formal model.
+Thus, inside any already selected subcritical dyadic family, the AFE
+weight may be replaced by its residue one at a total cost \(o_W(T)\).
+This does **not** yet make the coefficient equal to
+\(B_{q,X}(n)/\log N\).  The reason is exact.  If an endpoint term has
+\(n=ms\), with \(m\le P\) and \(s\asymp X\), completing (4.252) adds a
+divisor \(d\mid n\) at every scale \(d\le X\).  The same product is then
+represented as
 
-Globally, outside the bounded-zeta endpoint, the remaining region is the
-transition collar
+\[
+ n=m_dd,\qquad m_d=\frac nd.
+\tag{4.260a}
+\]
+
+For small \(d\), the complementary zeta scale \(m_d\) is no longer
+polylogarithmic.  On the two sides the condition
+\(m_{d_1}m_{d_2}\le T^{1-\eta}\) is therefore not preserved by the full
+divisor completion.  Equivalently, the indicator of the subcritical
+region is a coupled function of \(d_1,d_2\) after the product
+reindexing.
+
+The scales introduced by (4.260a) can enter the transition collar
 
 \[
  T^{1-\eta}<m_1m_2\ll T^{1+o(1)},
 \tag{4.261}
 \]
 
-where replacing \(V_t\) by one has no fixed power saving.  It belongs to
-different exponent cells with positive \(k+m\).  On the endpoint
-treated in Sections 4.27--4.29 one has
+where replacing \(V_t\) by one has no fixed power saving.  The original
+endpoint terms themselves do satisfy
 
 \[
  K,M\le(\log T)^2,
@@ -3870,17 +3880,18 @@ treated in Sections 4.27--4.29 one has
 \tag{4.261a}
 \]
 
-for every fixed \(0<\eta<1\) and all sufficiently large \(T\).
-Consequently (4.260) proves the complete cross-scale aggregation needed
-to make (4.252)--(4.255) actual on this endpoint.  The tail × tail
-energy (4.255) is still unproved, so the endpoint itself is not closed.
+for every fixed \(0<\eta<1\) and all sufficiently large \(T\), but the
+new representations (4.260a) need not.  Consequently (4.260) proves the
+local residue replacement and its aggregate error; it does not prove
+the cross-scale reindexing needed to make (4.252)--(4.255) actual.
 
 The adapter large_q_subcritical_afe_completion_audit records the Mellin
-saving \(c\eta\), the exact local scale (4.259), and the residue-kernel
-completion.  It sets
-subcritical_cross_scale_aggregation_proved=True,
-afe_transition_region_intersects_endpoint=False, and
-full_endpoint_cross_scale_aggregation_proved=True, while preserving
+saving \(c\eta\) and the exact local scale (4.259).  It sets
+local_endpoint_afe_weight_replaced_by_residue=True but records
+all_reduced_dyadic_scales_regrouped_before_absolute_values=False,
+subcritical_cross_scale_aggregation_proved=False,
+full_divisor_completion_crosses_afe_transition=True, and
+full_endpoint_cross_scale_aggregation_proved=False.  Hence
 unconditional_coverage=False.
 
 ### 4.31 Why one left-line twisted-divisor energy is not exact
