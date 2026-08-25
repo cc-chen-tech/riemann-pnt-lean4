@@ -152,6 +152,90 @@ def test_two_dimensional_square_root_reduces_the_determinant_residual_to_small_g
         assert audit.published_coverage is False
 
 
+def test_published_mobius_progression_variance_has_the_wrong_modulus_range() -> None:
+    """Catch applying large-modulus Davenport--Halberstam at Q=X^(1/6)."""
+    adapter = getattr(
+        coverage_audit,
+        "mobius_progression_variance_audit",
+        None,
+    )
+    assert adapter is not None, "Möbius progression-variance audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    zero = adapter(box, gcd_exponent=F(0))
+    assert zero.sequence_length_exponent == F(3)
+    assert zero.progression_modulus_exponent == F(1, 2)
+    assert zero.dh_asymptotic_min_modulus_exponent == F(3)
+    assert zero.dh_modulus_range_deficit == F(5, 2)
+    assert zero.dh_variance_main_exponent == F(7, 2)
+    assert zero.dh_error_exponent == F(6)
+    assert zero.dh_error_over_main_deficit == F(5, 2)
+    assert not zero.dh_asymptotic_range_verified
+    assert zero.dh_small_modulus_upper_bound_exponent == F(6)
+    assert zero.dh_small_modulus_arbitrary_log_saving
+    assert zero.dh_small_modulus_bound_uses_positive_monotonicity
+    assert zero.gs_bv_level_margin == F(1)
+    assert zero.gs_bv_lower_range_verified
+    assert zero.gs_bv_level_verified
+    assert zero.gs_bv_saves_only_logarithms
+    assert zero.one_mobius_progression_discrepancy_only
+    assert not zero.second_mobius_coupled_weight_allowed
+    assert not zero.query_dependent_smooth_weight_allowed
+    assert not zero.published_coverage
+
+    endpoint = adapter(box, gcd_exponent=F(1, 2))
+    assert endpoint.progression_modulus_exponent == F(0)
+    assert endpoint.dh_modulus_range_deficit == F(3)
+    assert endpoint.dh_variance_main_exponent == F(3)
+    assert endpoint.dh_error_over_main_deficit == F(3)
+    assert endpoint.gs_bv_level_margin == F(3, 2)
+    assert not endpoint.gs_bv_lower_range_verified
+    assert not endpoint.gs_bv_level_verified
+    assert not endpoint.published_coverage
+
+
+def test_determinant_slope_square_function_hits_the_logarithmic_gate_exactly() -> None:
+    """Replace the fixed-power USR gate by one signed slope square function."""
+    adapter = getattr(
+        coverage_audit,
+        "determinant_slope_square_function_audit",
+        None,
+    )
+    assert adapter is not None, "determinant slope square-function audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(0): (F(1), F(1, 2)),
+        F(1, 4): (F(1, 2), F(1, 4)),
+        F(1, 2): (F(0), F(0)),
+    }
+    for gamma, (slope_pair, cauchy_cost) in expected.items():
+        audit = adapter(
+            box,
+            gcd_exponent=gamma,
+            gate_log_power=F(8),
+        )
+        assert audit.g_layer_cardinality_exponent == gamma
+        assert audit.primitive_slope_pair_exponent == slope_pair
+        assert audit.slope_cauchy_cost_exponent == cauchy_cost
+        assert audit.proposed_square_function_squared_exponent == F(6)
+        assert audit.proposed_square_function_norm_exponent == F(3)
+        assert audit.aggregated_bound_exponent == F(7, 2)
+        assert audit.logarithmic_gate_target_exponent == F(7, 2)
+        assert audit.power_margin == F(0)
+        assert audit.gate_log_power == F(8)
+        assert audit.aggregation_log_loss == F(7)
+        assert audit.net_log_saving == F(1)
+        assert audit.dh_error_exponent_matches_square_function_power
+        assert audit.one_mobius_dh_scale_available
+        assert audit.fixed_power_deficit_removed_by_logarithmic_gate
+        assert audit.signed_slope_square_function_required
+        assert not audit.second_mobius_coupled_dh_theorem_available
+        assert not audit.coupled_transform_weight_hypothesis_verified
+        assert not audit.square_function_estimate_proved
+        assert not audit.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1373,6 +1457,19 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "unimodular=True proved=False covered=False"
     ) in output
     assert (
+        "balanced_max_a: mobius_progression_variance="
+        "0:Q=1/2,dh_deficit=5/2,gs_margin=1,gs_range=True;"
+        "1/2:Q=0,dh_deficit=3,gs_margin=3/2,gs_range=False "
+        "second_mu=False coupled_weight=False covered=False"
+    ) in output
+    assert (
+        "balanced_max_a: determinant_slope_square_function="
+        "0:slopes=1,cauchy=1/2,bound=7/2;"
+        "1/4:slopes=1/2,cauchy=1/4,bound=7/2;"
+        "1/2:slopes=0,cauchy=0,bound=7/2 "
+        "dh_scale=True power_margin=0 net_log=1 proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -1633,5 +1730,25 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\gamma-\frac1{1000}",
         r"T^{1/1000-\gamma}",
         "determinant_line_square_root_audit",
+        "### 4.21 Möbius progression variance",
+        r"\frac6{\pi^2}XQ",
+        r"X(\log X)^{-A}\le Q\le X",
+        r"X=T^3",
+        r"Q=T^{1/2-\gamma}",
+        r"T^{5/2+\gamma}",
+        r"Q_1=X(\log X)^{-C}",
+        r"\ll_A X^2(\log X)^{-A}",
+        r"T^6(\log T)^{-A}",
+        "arXiv:1703.06865v2",
+        r"1+\gamma",
+        "mobius_progression_variance_audit",
+        "### 4.22 Determinant slope square function",
+        r"\mathrm{DSSF}_{B}(g)",
+        r"T^6(\log(2T))^{-2B}",
+        r"T^\gamma T^{1/2-\gamma}T^3",
+        r"T^{7/2}(\log(2T))^{-B}",
+        r"\tau_Q(d)",
+        "determinant_slope_square_function_audit",
+        "square_function_estimate_proved=False",
     ):
         assert marker in text

@@ -2594,6 +2594,245 @@ The exact-rational function `determinant_line_square_root_audit` records
 (4.167)--(4.172), marks the square-root estimate unproved, and exposes
 the small-\(g\) residual rather than treating USR as established.
 
+### 4.21 Möbius progression variance: the published ranges do not prove USR
+
+The primitive slopes in (4.168) suggest averaging Möbius sums in
+arithmetic progressions.  The relevant published benchmark is the
+Möbius Davenport--Halberstam formula
+
+\[
+ \boxed{
+ \sum_{q\le Q}\sum_{a=1}^{q}|M(X;q,a)|^2
+ =\frac6{\pi^2}XQ+O_A\!\left(X^2(\log X)^{-A}\right),}
+\tag{4.173}
+\]
+
+where
+
+\[
+ M(X;q,a):=\sum_{\substack{n\le X\\n\equiv a\ (q)}}\mu(n).
+\tag{4.174}
+\]
+
+The asymptotic in (4.173) is uniform in the range
+
+\[
+ X(\log X)^{-A}\le Q\le X.
+\tag{4.175}
+\]
+
+This folklore Möbius analogue is given in Hooley, *On the
+Barban--Davenport--Halberstam theorem III*, Theorem 2, and is reproved in
+[Fan, *The Davenport--Halberstam theorem for Möbius
+function*](https://math.dartmouth.edu/~stevefan/papers/The%20Davenport-Halberstam%20Theorem%20for%20Mobius%20Function.pdf).
+
+For the determinant-line family,
+
+\[
+ X=T^3,qquad Q=T^{1/2-\gamma}.
+\tag{4.176}
+\]
+
+The main and error exponents in (4.173) become
+
+\[
+ XQ=T^{7/2-\gamma},
+ \qquad
+ X^2(\log X)^{-A}=T^6(\log X)^{-A}.
+\tag{4.177}
+\]
+
+Thus the error exceeds the variance main term by
+
+\[
+ \boxed{T^{5/2+\gamma}(\log X)^{-A},}
+\tag{4.178}
+\]
+
+and the lower range condition (4.175) fails by the same fixed power
+\(T^{5/2+\gamma}\).  Arbitrarily many logarithms cannot repair this
+range failure for an asymptotic formula.
+
+There is nevertheless a useful upper bound at small moduli.  The left
+side of (4.173) is nonnegative and increases with \(Q\).  Given any
+\(A>0\), apply (4.173) with
+
+\[
+ Q_1=X(\log X)^{-C},\qquad C>A+2.
+\tag{4.181}
+\]
+
+For every \(Q\le Q_1\), positivity and (4.173) give
+
+\[
+ \boxed{
+ \sum_{q\le Q}\sum_{a=1}^{q}|M(X;q,a)|^2
+ \ll_A X^2(\log X)^{-A}.}
+\tag{4.182}
+\]
+
+Thus at \(X=T^3\), the published *one-Möbius* variance does supply the
+power-log scale
+
+\[
+ T^6(\log T)^{-A}
+\tag{4.183}
+\]
+
+even though it supplies no small-\(Q\) asymptotic.  This distinction is
+important for the slope square-function route below.
+
+Granville--Shao,
+[arXiv:1703.06865v2](https://arxiv.org/abs/1703.06865), Theorem 1.2,
+does give a Bombieri--Vinogradov estimate for multiplicative functions in
+the upper range \(Q\le X^{1/2-\varepsilon}\), after removing finitely many
+exceptional character components.  At (4.176), its power-level margin is
+
+\[
+ \frac32-\left(\frac12-\gamma\right)=1+\gamma.
+\tag{4.179}
+\]
+
+But that theorem bounds a one-function progression discrepancy with
+logarithmic saving.  It does not permit the coefficient
+
+\[
+ \mu(-y\delta_0+v_0n)
+ \mathcal W_{q,g,j_0,v_0,\delta_0}(n),
+\tag{4.180}
+\]
+
+which depends jointly on the residue query, the second primitive slope,
+the shift, and the line parameter.  Replacing (4.180) by an arbitrary
+bounded coefficient invalidates the multiplicative-function theorem;
+taking its absolute value destroys the first Möbius cancellation.  When
+\(\gamma=1/2\), the primitive slopes are bounded and the lower modulus
+range in Granville--Shao is not met; that endpoint instead belongs to the
+fixed-slope logarithmic analysis of Sections 4.10--4.12.
+
+Therefore neither published progression theorem proves USR.  The
+function `mobius_progression_variance_audit` records the exact
+\(5/2+\gamma\) Davenport--Halberstam range deficit, the
+\(1+\gamma\) Granville--Shao upper-level margin, and the failure of the
+second-Möbius/coupled-weight hypotheses.  It also records (4.182), so the
+valid small-modulus upper bound is not discarded merely because the
+asymptotic range fails.  It leaves
+`published_coverage=False`.
+
+### 4.22 Determinant slope square function: an exact no-power-deficit gate
+
+Return to the logarithmic global coupled target rather than the stronger
+fixed \(T^{-1/1000}\) target.  Since
+\(\mathfrak S_q=H\mathfrak C_q\), the hard-box local gate for (6.2) of
+the global-coupled note is
+
+\[
+ \boxed{
+ |\mathfrak C_q[\widehat\Psi_h]|
+ \ll_{B,W}T^{7/2}(\log(2T))^{-B},
+ \qquad B>7.}
+\tag{4.184}
+\]
+
+For fixed \(g,j_0,v_0\), define the exact signed inner sum from (4.158)
+
+\[
+\begin{aligned}
+ \mathcal S_{q,g}(j_0,v_0)
+ :={}&\sum_{|\delta_0|\asymp L/g}
+ \sum_{\substack{n:\ r_n,s_n\asymp T^3\\
+                   (r_n,s_n)=1,\ (q,r_ns_n)=1}}
+ \mu(r_n)\mu(s_n)
+ \mathcal W_{q,g,j_0,v_0,\delta_0}(n),
+\end{aligned}
+\tag{4.185}
+\]
+
+where \(r_n,s_n\) and \(\mathcal W\) are exactly (4.156)--(4.157).  The
+new local proposition is the single slope square-function inequality
+
+\[
+\boxed{
+ \mathrm{DSSF}_{B}(g):\qquad
+ \sum_{\substack{|j_0|\asymp J/g,\ |v_0|\asymp V/g\\
+                   (j_0,v_0)=1}}
+ |\mathcal S_{q,g}(j_0,v_0)|^2
+ \ll_{B,W}T^6(\log(2T))^{-2B}.}
+\tag{4.186}
+\]
+
+This proposition has no hidden positive-power deficit.  If
+\(g\asymp G=T^\gamma\), the number of primitive slope pairs has exponent
+
+\[
+ P_G\ll T^{1-2\gamma+o(1)}.
+\tag{4.187}
+\]
+
+Cardinal summation in \(g\), followed by Cauchy only in the *complete
+signed slope family* in (4.186), gives
+
+\[
+\begin{aligned}
+ \sum_{g\asymp G}\sum_{j_0,v_0}
+ |\mathcal S_{q,g}(j_0,v_0)|
+ &\le G P_G^{1/2}
+ \sup_{g\asymp G}
+ \left(\sum_{j_0,v_0}|\mathcal S_{q,g}(j_0,v_0)|^2\right)^{1/2}\\
+ &\ll T^\gamma T^{1/2-\gamma}T^3
+       (\log(2T))^{-B}\\
+ &=T^{7/2}(\log(2T))^{-B}.
+\end{aligned}
+\tag{4.188}
+\]
+
+Therefore DSSF implies (4.184) on every \(0\le\gamma\le1/2\), including
+the formerly exceptional small-\(g\) layers.  The exact cancellation of
+\(\gamma\) in (4.188) is why the logarithmic gate, not the auxiliary
+fixed-power gate, is the correct interface.
+
+The exponent \(6\) in (4.186) is not guessed.  It is exactly the
+\(X^2\)-error scale in the one-Möbius progression bound (4.182) with
+\(X=T^3\).  For comparison, ordinary character orthogonality gives the
+finite identity
+
+\[
+\begin{aligned}
+ \sum_{q\le Q}\sum_{a=1}^q|M(X;q,a)|^2
+ ={}&\lfloor Q\rfloor\sum_{n\le X}\mu(n)^2\\
+ &+2\sum_{1\le d<X}\tau_Q(d)
+       \sum_{n\le X-d}\mu(n)\mu(n+d),
+\end{aligned}
+\tag{4.189}
+\]
+
+where
+
+\[
+ \tau_Q(d):=\sum_{\substack{q\mid d\\q\le Q}}1.
+\tag{4.190}
+\]
+
+Thus the small-modulus variance is a diagonal plus a signed,
+truncated-divisor-weighted Chowla average.  The published proof controls
+that one-Möbius square at the scale required by (4.186).  What it does
+*not* control is the square of (4.185): after expansion this contains two
+Möbius coordinates in each copy, the determinant-line residue
+conditions, cross-slope pairs, and two query-dependent coupled kernels.
+Taking absolute values of the second Möbius coordinate or of the
+cross-slope terms loses precisely the signed structure that DSSF needs.
+
+The remaining theorem has therefore been narrowed from a fixed-slope
+square-root conjecture with a small power defect to the single
+logarithmic square function (4.186).  Its power and log budgets match a
+published one-Möbius theorem, but the two-Möbius coupled extension is new
+and remains unproved.  The adapter
+`determinant_slope_square_function_audit` checks (4.187)--(4.188) for
+every rational \(\gamma\), records the exact match with the
+Davenport--Halberstam error exponent, and leaves
+`square_function_estimate_proved=False` and
+`published_coverage=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -92,6 +92,56 @@ class DeterminantLineSquareRootAudit:
 
 
 @dataclass(frozen=True)
+class MobiusProgressionVarianceAudit:
+    common_gcd_exponent: Fraction
+    sequence_length_exponent: Fraction
+    progression_modulus_exponent: Fraction
+    dh_asymptotic_min_modulus_exponent: Fraction
+    dh_modulus_range_deficit: Fraction
+    dh_variance_main_exponent: Fraction
+    dh_error_exponent: Fraction
+    dh_error_over_main_deficit: Fraction
+    dh_asymptotic_range_verified: bool
+    dh_small_modulus_upper_bound_exponent: Fraction
+    dh_small_modulus_arbitrary_log_saving: bool
+    dh_small_modulus_bound_uses_positive_monotonicity: bool
+    gs_bv_level_margin: Fraction
+    gs_bv_lower_range_verified: bool
+    gs_bv_level_verified: bool
+    gs_bv_saves_only_logarithms: bool
+    one_mobius_progression_discrepancy_only: bool
+    second_mobius_coupled_weight_allowed: bool
+    query_dependent_smooth_weight_allowed: bool
+    published_coverage: bool
+    dh_source: str
+    gs_source: str
+
+
+@dataclass(frozen=True)
+class DeterminantSlopeSquareFunctionAudit:
+    common_gcd_exponent: Fraction
+    g_layer_cardinality_exponent: Fraction
+    primitive_slope_pair_exponent: Fraction
+    slope_cauchy_cost_exponent: Fraction
+    proposed_square_function_squared_exponent: Fraction
+    proposed_square_function_norm_exponent: Fraction
+    aggregated_bound_exponent: Fraction
+    logarithmic_gate_target_exponent: Fraction
+    power_margin: Fraction
+    gate_log_power: Fraction
+    aggregation_log_loss: Fraction
+    net_log_saving: Fraction
+    dh_error_exponent_matches_square_function_power: bool
+    one_mobius_dh_scale_available: bool
+    fixed_power_deficit_removed_by_logarithmic_gate: bool
+    signed_slope_square_function_required: bool
+    second_mobius_coupled_dh_theorem_available: bool
+    coupled_transform_weight_hypothesis_verified: bool
+    square_function_estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -879,6 +929,158 @@ def determinant_line_square_root_audit(
         square_root_has_power_slack=(margin > 0),
         critical_layer_needs_only_log_saving=(margin == 0),
         square_root_bound_proved=False,
+        published_coverage=False,
+    )
+
+
+def mobius_progression_variance_audit(
+    box: ExponentBox,
+    *,
+    gcd_exponent: Fraction,
+) -> MobiusProgressionVarianceAudit:
+    """Audit published progression averages against a determinant line.
+
+    The folklore Davenport--Halberstam formula for Möbius is
+
+    ``sum_(q<=Q) sum_(a mod q) |M(X;q,a)|^2``
+    `` = (6/pi^2) X Q + O_A(X^2 log(X)^(-A))``.
+
+    Its asymptotic range is ``Q >= X log(X)^(-A)``.  On the hard
+    determinant line, ``X=T^3`` while a primitive slope modulus is at
+    most ``T^(1/2-gamma)``; the error therefore dominates the main term
+    by a fixed power.
+
+    Granville--Shao's Bombieri--Vinogradov theorem does reach positive
+    slope exponents below ``X^(1/2-delta)``, but controls an unweighted
+    one-Möbius progression discrepancy with logarithmic saving.  It does
+    not allow the second affine Möbius value or the query-dependent
+    transformed kernel as coefficients.
+    """
+    line = determinant_line_mobius_audit(
+        box,
+        gcd_exponent=gcd_exponent,
+    )
+    sequence_length = max(box.rho, box.sigma)
+    progression_modulus = max(
+        line.primitive_j_exponent,
+        line.primitive_v_exponent,
+    )
+    dh_min_modulus = sequence_length
+    dh_main = sequence_length + progression_modulus
+    dh_error = 2 * sequence_length
+    gs_margin = sequence_length / 2 - progression_modulus
+    gs_lower_range_verified = progression_modulus > 0
+
+    return MobiusProgressionVarianceAudit(
+        common_gcd_exponent=gcd_exponent,
+        sequence_length_exponent=sequence_length,
+        progression_modulus_exponent=progression_modulus,
+        dh_asymptotic_min_modulus_exponent=dh_min_modulus,
+        dh_modulus_range_deficit=(
+            dh_min_modulus - progression_modulus
+        ),
+        dh_variance_main_exponent=dh_main,
+        dh_error_exponent=dh_error,
+        dh_error_over_main_deficit=dh_error - dh_main,
+        dh_asymptotic_range_verified=(
+            progression_modulus >= dh_min_modulus
+        ),
+        dh_small_modulus_upper_bound_exponent=dh_error,
+        dh_small_modulus_arbitrary_log_saving=True,
+        dh_small_modulus_bound_uses_positive_monotonicity=True,
+        gs_bv_level_margin=gs_margin,
+        gs_bv_lower_range_verified=gs_lower_range_verified,
+        gs_bv_level_verified=(
+            gs_margin > 0 and gs_lower_range_verified
+        ),
+        gs_bv_saves_only_logarithms=True,
+        one_mobius_progression_discrepancy_only=True,
+        second_mobius_coupled_weight_allowed=False,
+        query_dependent_smooth_weight_allowed=False,
+        published_coverage=False,
+        dh_source=(
+            "Hooley, J. London Math. Soc. (2) 10 (1975), Theorem 2; "
+            "Fan, The Davenport-Halberstam theorem for Mobius function"
+        ),
+        gs_source=(
+            "Granville-Shao, arXiv:1703.06865v2, Theorem 1.2"
+        ),
+    )
+
+
+def determinant_slope_square_function_audit(
+    box: ExponentBox,
+    *,
+    gcd_exponent: Fraction,
+    gate_log_power: Fraction,
+) -> DeterminantSlopeSquareFunctionAudit:
+    """State the no-power-deficit determinant slope square-function gate.
+
+    For fixed dyadic ``g=T^gamma``, let ``S_(g,j0,v0)`` denote the exact
+    ``(delta0,n)`` sum in the determinant-line form.  The proposed local
+    input is
+
+    ``sum_(j0,v0) |S_(g,j0,v0)|^2``
+    `` << T^(2*max(rho,sigma)) log(T)^(-2B)``.
+
+    At the hard box its square-function norm is ``T^3 log^(-B)``.
+    Cardinal summation over ``g`` and Cauchy over the primitive slope pair
+    cost ``T^gamma`` and ``T^(1/2-gamma)`` respectively, producing exactly
+    ``T^(7/2) log^(-B)``.  This matches the logarithmic global coupled
+    gate, whereas the earlier fixed ``T^(-1/1000)`` gate would leave an
+    artificial ``1/1000`` power deficit.
+    """
+    if gate_log_power <= AGGREGATION_LOG_LOSS:
+        raise ValueError(
+            "gate log power must exceed the global aggregation loss"
+        )
+    line = determinant_line_mobius_audit(
+        box,
+        gcd_exponent=gcd_exponent,
+    )
+    shifted = h_poisson_shifted_scales(box)
+    variance = mobius_progression_variance_audit(
+        box,
+        gcd_exponent=gcd_exponent,
+    )
+    slope_pair = (
+        line.primitive_j_exponent + line.primitive_v_exponent
+    )
+    slope_cauchy = slope_pair / 2
+    square_squared = 2 * variance.sequence_length_exponent
+    square_norm = square_squared / 2
+    aggregated = gcd_exponent + slope_cauchy + square_norm
+    logarithmic_target = shifted.target
+
+    return DeterminantSlopeSquareFunctionAudit(
+        common_gcd_exponent=gcd_exponent,
+        g_layer_cardinality_exponent=gcd_exponent,
+        primitive_slope_pair_exponent=slope_pair,
+        slope_cauchy_cost_exponent=slope_cauchy,
+        proposed_square_function_squared_exponent=square_squared,
+        proposed_square_function_norm_exponent=square_norm,
+        aggregated_bound_exponent=aggregated,
+        logarithmic_gate_target_exponent=logarithmic_target,
+        power_margin=logarithmic_target - aggregated,
+        gate_log_power=gate_log_power,
+        aggregation_log_loss=AGGREGATION_LOG_LOSS,
+        net_log_saving=gate_log_power - AGGREGATION_LOG_LOSS,
+        dh_error_exponent_matches_square_function_power=(
+            variance.dh_error_exponent == square_squared
+        ),
+        one_mobius_dh_scale_available=(
+            variance.dh_small_modulus_upper_bound_exponent
+            == square_squared
+            and variance.dh_small_modulus_arbitrary_log_saving
+        ),
+        fixed_power_deficit_removed_by_logarithmic_gate=(
+            aggregated == logarithmic_target
+            and aggregated > shifted.gate_target
+        ),
+        signed_slope_square_function_required=True,
+        second_mobius_coupled_dh_theorem_available=False,
+        coupled_transform_weight_hypothesis_verified=False,
+        square_function_estimate_proved=False,
         published_coverage=False,
     )
 
@@ -3548,6 +3750,47 @@ def main() -> None:
         "balanced_max_a: determinant_line_square_root="
         + ";".join(determinant_sqrt_parts)
         + " unimodular=True proved=False covered=False"
+    )
+    progression_variance_parts: list[str] = []
+    for gcd_exponent in (F(0), F(1, 2)):
+        variance_audit = mobius_progression_variance_audit(
+            hard,
+            gcd_exponent=gcd_exponent,
+        )
+        progression_variance_parts.append(
+            f"{_fmt(gcd_exponent)}:Q="
+            f"{_fmt(variance_audit.progression_modulus_exponent)},"
+            "dh_deficit="
+            f"{_fmt(variance_audit.dh_error_over_main_deficit)},"
+            "gs_margin="
+            f"{_fmt(variance_audit.gs_bv_level_margin)},"
+            "gs_range="
+            f"{variance_audit.gs_bv_level_verified}"
+        )
+    print(
+        "balanced_max_a: mobius_progression_variance="
+        + ";".join(progression_variance_parts)
+        + " second_mu=False coupled_weight=False covered=False"
+    )
+    slope_square_parts: list[str] = []
+    for gcd_exponent in (F(0), F(1, 4), F(1, 2)):
+        square_audit = determinant_slope_square_function_audit(
+            hard,
+            gcd_exponent=gcd_exponent,
+            gate_log_power=F(8),
+        )
+        slope_square_parts.append(
+            f"{_fmt(gcd_exponent)}:slopes="
+            f"{_fmt(square_audit.primitive_slope_pair_exponent)},"
+            "cauchy="
+            f"{_fmt(square_audit.slope_cauchy_cost_exponent)},"
+            "bound="
+            f"{_fmt(square_audit.aggregated_bound_exponent)}"
+        )
+    print(
+        "balanced_max_a: determinant_slope_square_function="
+        + ";".join(slope_square_parts)
+        + " dh_scale=True power_margin=0 net_log=1 proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
