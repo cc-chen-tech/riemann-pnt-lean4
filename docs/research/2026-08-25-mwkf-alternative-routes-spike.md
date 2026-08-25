@@ -10893,6 +10893,94 @@ is still available.  The adapter `inverse_zeta_variance_zero_free_audit`
 records this logical direction and keeps
 `inverse_zeta_variance_gate_available_unconditionally=False`.
 
+### 4.91 A second Poisson step closes the BBLR all-unsigned hard box at power level
+
+Section 4.68 used the Weil treatment in BBLR Lemma 3.1 and found the
+exponent \(5/2\) in its all-unsigned \(d=1\) layer.  In the forced box
+
+\[
+ A=B=1,\qquad M_1=M_2=N_1=N_2=H=T,
+\tag{4.735}
+\]
+
+the \(h\)-length has an additional exact relation to the Kloosterman
+modulus.  Write \(m=m_1,n=n_1\) in BBLR equation (14), initially take
+\((m,n)=1\), and let \(r=\bar m\pmod n\), \(1\le r<n\).  With the
+Fourier convention of that paper, ordinary Poisson summation gives
+
+\[
+ \boxed{
+ \sum_{h\in\mathbb Z}W_0(h/T)e(\mp\ell hr/n)
+ =T\sum_{k\in\mathbb Z}
+ \widehat W_0\!\left(T(k\pm\ell r/n)\right).}
+\tag{4.736}
+\]
+
+For either consistent choice of signs, put
+\(j=kn\pm\ell r\).  The map \(k\mapsto j\) is a bijection onto the
+corresponding residue class modulo \(n\), and multiplication by \(m\)
+removes the inverse exactly:
+
+\[
+ \boxed{
+ j\equiv\pm\ell\bar m\pmod n
+ \quad\Longleftrightarrow\quad
+ mj\equiv\pm\ell\pmod n.}
+\tag{4.737}
+\]
+
+At \(d=1\), the transform \(F\) in BBLR equation (14) has physical
+\(x\)-scale one, so repeated integration by parts gives
+\(F(m,n,1,\ell)\ll_B(1+|\ell|)^{-B}\).  Since \(n/T\) stays in a
+fixed compact interval, the factor in (4.736) is likewise
+\(O_B((1+|j|)^{-B})\).  For fixed nonzero \(j\), the congruence in
+(4.737) has at most \(O((j,n))\) representatives \(m\asymp T\).
+Moreover the following bound is an elementary finite divisor
+reindexing:
+
+\[
+ \boxed{
+ \sum_{n\asymp T}(j,n)
+ \le \sum_{c\mid j}c\left(\frac{T}{c}+1\right)
+ \le T\tau(|j|)+\sigma_1(|j|).}
+\tag{4.738}
+\]
+
+The case \(j=0\) forces \(n\mid\ell\); because \(\ell\ne0\) in the
+remainder and both transform weights are Schwartz, its total is bounded
+by the same argument.  Summing (4.738) against the two Schwartz
+majorants costs a constant depending only on fixed seminorms.  The
+inner \((m,n,\ell,j)\)-sum is therefore \(O_W(T)\), and the outside
+Poisson factor in (4.736) gives
+
+\[
+ \boxed{
+ \mathcal R^{\mathrm{unsigned}}_{\pm,d=1}
+ \ll_W T^2,
+ \qquad
+ \frac52\longrightarrow2,
+ \quad\text{recovered saving }\frac12.}
+\tag{4.739}
+\]
+
+The same calculation is summable over every original gcd layer.  If
+\((m_1,n_1)=d\), the \(h\)-length and reduced modulus are both
+\(T/d\).  The physical \(x\)-scale of \(F\) is \(d\), whence
+\(F\ll_B d(1+d|\ell|)^{-B}\).  Bounded \(d\) obey (4.739) with a
+uniform constant, while a dyadic layer \(d=T^\eta\), \(\eta>0\), is
+arbitrarily power-negligible after choosing \(B\).  The separate
+approximation term in BBLR equation (14) already has exponent two.
+
+Thus the previously identified *all-unsigned* worst box is closed at
+the positive-power level; it is not an unavoidable \(T^{1/2}\)
+obstruction.  This does not yet close the signed cells with nontrivial
+outer products, nor does (4.739) by itself finish the global
+logarithmic little-oh bookkeeping.  The helper
+`bblr_h_poisson_inverse_removal` checks (4.737) on exact residues, and
+the adapter `bblr_h_poisson_unsigned_hard_box_audit` records
+`all_unsigned_hard_box_power_closed=True` while keeping
+`whole_signed_hard_face_covered=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

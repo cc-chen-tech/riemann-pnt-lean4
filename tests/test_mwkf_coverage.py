@@ -2465,6 +2465,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.731}",
         "\\tag{4.734}",
         "inverse_zeta_variance_gate_available_unconditionally=False",
+        "### 4.91 A second Poisson step closes the BBLR all-unsigned hard box at power level",
+        "\\tag{4.735}",
+        "\\tag{4.739}",
+        "all_unsigned_hard_box_power_closed=True",
+        "whole_signed_hard_face_covered=False",
     ):
         assert marker in note
 
@@ -2609,6 +2614,13 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "ambient=1,window=1/2,variance=3/2,block=3/4,"
         "abscissa=3/4,x_integral=True,cauchy=True,dyadic=True,"
         "zero_free=True,original_necessary=False,available=False"
+    ) in report
+    assert (
+        "large_q_transition: bblr_h_poisson_unsigned="
+        "old=5/2,new=2,target=2,saving=1/2,h_modulus=True,"
+        "poisson=True,inverse_removed=True,gcd_sum=True,"
+        "positive_d_tail=True,approximation=2,power_closed=True,"
+        "log_closed=False,whole_face=False"
     ) in report
 
 
@@ -3426,6 +3438,44 @@ def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:
     assert audit.implies_zeta_zero_free_real_part_gt_three_quarters
     assert not audit.original_mwkf_asymptotic_requires_this_gate
     assert not audit.inverse_zeta_variance_gate_available_unconditionally
+
+
+def test_bblr_h_poisson_removes_inverse_and_closes_unsigned_power_box() -> None:
+    helper = getattr(
+        coverage_audit,
+        "bblr_h_poisson_inverse_removal",
+        None,
+    )
+    assert helper is not None, "BBLR h-Poisson helper is missing"
+    exact = helper(m=7, n=19, ell=5, dual_frequency=-3)
+    assert exact["inverse_residue"] == 11
+    assert exact["poisson_numerator"] == -2
+    assert exact["poisson_residue"] == 17
+    assert exact["inverse_phase_congruence"] == 17
+    assert exact["linear_congruence_left"] == 5
+    assert exact["linear_congruence_right"] == 5
+    assert exact["inverse_removed_exactly"]
+
+    adapter = getattr(
+        coverage_audit,
+        "bblr_h_poisson_unsigned_hard_box_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR h-Poisson audit is missing"
+    audit = adapter()
+    assert audit.old_weil_bound_exponent == F(5, 2)
+    assert audit.h_poisson_bound_exponent == F(2)
+    assert audit.local_target_exponent == F(2)
+    assert audit.recovered_power_saving == F(1, 2)
+    assert audit.h_length_matches_reduced_modulus
+    assert audit.h_poisson_identity_exact
+    assert audit.inverse_fraction_becomes_linear_congruence
+    assert audit.weighted_gcd_sum_is_diagonal_scale
+    assert audit.positive_gcd_layers_are_power_negligible
+    assert audit.approximation_error_exponent == F(2)
+    assert audit.all_unsigned_hard_box_power_closed
+    assert not audit.global_logarithmic_little_o_closed
+    assert not audit.whole_signed_hard_face_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

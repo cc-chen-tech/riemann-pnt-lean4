@@ -1490,6 +1490,23 @@ class InverseZetaVarianceZeroFreeAudit:
 
 
 @dataclass(frozen=True)
+class BBLRHPoissonUnsignedHardBoxAudit:
+    old_weil_bound_exponent: Fraction
+    h_poisson_bound_exponent: Fraction
+    local_target_exponent: Fraction
+    recovered_power_saving: Fraction
+    h_length_matches_reduced_modulus: bool
+    h_poisson_identity_exact: bool
+    inverse_fraction_becomes_linear_congruence: bool
+    weighted_gcd_sum_is_diagonal_scale: bool
+    positive_gcd_layers_are_power_negligible: bool
+    approximation_error_exponent: Fraction
+    all_unsigned_hard_box_power_closed: bool
+    global_logarithmic_little_o_closed: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7446,6 +7463,78 @@ def inverse_zeta_variance_zero_free_audit(
     )
 
 
+def bblr_h_poisson_inverse_removal(
+    *,
+    m: int,
+    n: int,
+    ell: int,
+    dual_frequency: int,
+) -> dict[str, int | bool]:
+    """Check the exact inverse removal after Poisson summation in ``h``.
+
+    For ``r = inverse(m) mod n`` and ``j = k*n + ell*r``, the inverse
+    phase condition ``j == ell*r (mod n)`` is equivalent to the linear
+    congruence ``m*j == ell (mod n)``.  The integer ``k`` parametrizes
+    every representative of the first congruence exactly once.
+    """
+    if min(m, n) <= 0:
+        raise ValueError("m and n must be positive")
+    if gcd(m, n) != 1:
+        raise ValueError("m and n must be coprime")
+    inverse = pow(m, -1, n)
+    numerator = dual_frequency * n + ell * inverse
+    inverse_phase = (ell * inverse) % n
+    linear_left = (m * numerator) % n
+    linear_right = ell % n
+    return {
+        "inverse_residue": inverse,
+        "poisson_numerator": numerator,
+        "poisson_residue": numerator % n,
+        "inverse_phase_congruence": inverse_phase,
+        "linear_congruence_left": linear_left,
+        "linear_congruence_right": linear_right,
+        "inverse_removed_exactly": (
+            numerator % n == inverse_phase
+            and linear_left == linear_right
+        ),
+    }
+
+
+def bblr_h_poisson_unsigned_hard_box_audit(
+) -> BBLRHPoissonUnsignedHardBoxAudit:
+    """Close the power ledger of BBLR's all-unsigned ``d=1`` box.
+
+    In the forced box ``A=B=1`` and ``M_i=N_i=H=T``.  A second
+    Poisson summation in ``h`` changes the Kloosterman inverse into
+    ``m*j == ell (mod n)``.  The two transform variables have rapidly
+    decaying weights.  For fixed nonzero ``j``, the number of ``m`` in
+    a length-``T`` interval is bounded by ``O((j,n))`` and
+    ``sum_(n~T) (j,n) <= T*tau(|j|)+sigma(|j|)``.  Hence the inner
+    transformed count is ``T`` and the outside Poisson factor is ``T``.
+    When the original gcd layer has positive exponent, the remaining
+    Fourier transform has physical length ``d`` and every nonzero
+    ``ell`` is power-negligible by repeated integration by parts.
+    """
+    old = F(5, 2)
+    new = F(2)
+    target = F(2)
+    return BBLRHPoissonUnsignedHardBoxAudit(
+        old_weil_bound_exponent=old,
+        h_poisson_bound_exponent=new,
+        local_target_exponent=target,
+        recovered_power_saving=old - new,
+        h_length_matches_reduced_modulus=True,
+        h_poisson_identity_exact=True,
+        inverse_fraction_becomes_linear_congruence=True,
+        weighted_gcd_sum_is_diagonal_scale=True,
+        positive_gcd_layers_are_power_negligible=True,
+        approximation_error_exponent=F(2),
+        all_unsigned_hard_box_power_closed=True,
+        global_logarithmic_little_o_closed=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -12018,6 +12107,30 @@ def main() -> None:
         f"{zero_free.original_mwkf_asymptotic_requires_this_gate},"
         "available="
         f"{zero_free.inverse_zeta_variance_gate_available_unconditionally}"
+    )
+    unsigned_h_poisson = bblr_h_poisson_unsigned_hard_box_audit()
+    print(
+        "large_q_transition: bblr_h_poisson_unsigned="
+        f"old={_fmt(unsigned_h_poisson.old_weil_bound_exponent)},"
+        f"new={_fmt(unsigned_h_poisson.h_poisson_bound_exponent)},"
+        f"target={_fmt(unsigned_h_poisson.local_target_exponent)},"
+        f"saving={_fmt(unsigned_h_poisson.recovered_power_saving)},"
+        "h_modulus="
+        f"{unsigned_h_poisson.h_length_matches_reduced_modulus},"
+        f"poisson={unsigned_h_poisson.h_poisson_identity_exact},"
+        "inverse_removed="
+        f"{unsigned_h_poisson.inverse_fraction_becomes_linear_congruence},"
+        "gcd_sum="
+        f"{unsigned_h_poisson.weighted_gcd_sum_is_diagonal_scale},"
+        "positive_d_tail="
+        f"{unsigned_h_poisson.positive_gcd_layers_are_power_negligible},"
+        "approximation="
+        f"{_fmt(unsigned_h_poisson.approximation_error_exponent)},"
+        "power_closed="
+        f"{unsigned_h_poisson.all_unsigned_hard_box_power_closed},"
+        "log_closed="
+        f"{unsigned_h_poisson.global_logarithmic_little_o_closed},"
+        f"whole_face={unsigned_h_poisson.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
