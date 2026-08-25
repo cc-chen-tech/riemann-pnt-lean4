@@ -22,9 +22,10 @@ four-variable Jordan quadratic identity (S14), the primewise fourth-power
 comparison, and the final `rho`-sum using (S20) have all been formalized.
 Thus S-arith itself is now closed.  S2 is now connected to the exact S1
 kernel with the genuine sliding integral and exact Mathlib Fourier
-normalization.  The theorem remains incomplete until S3--S4 are connected
-to that same completed mollified function and the S5/packing interfaces are
-instantiated.
+normalization.  S3 is now complete, and S4 has both its exact critical-line
+modulus bridge and its genuine `re(s)=2` first-moment main term.  The theorem
+remains incomplete until the S4 horizontal-edge and uniform lower-Stirling
+estimates are proved and the S5/packing interfaces are instantiated.
 
 The main conclusion is decisive:
 
@@ -1610,7 +1611,7 @@ The current honest repository status is:
 ```text
 Hardy                         proved
 Hardy--Littlewood c*T         proved
-Selberg c*T*log T             S1--S3 proved exactly; S4 modulus bridge proved, rectangle/Stirling remain
+Selberg c*T*log T             S1--S3 proved; S4 bridge/right edge proved, horizontal/Stirling remain
 T^3 linear Möbius moment      separate open long-mollifier problem
 Conrey two fifths             not yet formalized
 ```
@@ -2368,6 +2369,31 @@ so termwise integration gives
  \tag{9.2}
 \]
 
+This right-edge statement is now stronger than the displayed asymptotic in
+Lean.  `SelbergFirstMomentRightEdgeFinite.lean` separates the unique
+zero-frequency triple `(1,1,1)` and integrates every other frequency
+exactly; the estimate `sum n^(-2) <= 2` in each of the three variables gives
+
+\[
+ \left\|\int_a^b
+   \bigl(P_{N,X}(t)-1\bigr)\,dt\right\|
+ \le \frac{16}{\log 2}.
+\]
+
+`SelbergFirstMomentRightEdge.lean` then proves uniform convergence of the
+zeta partial sums on the right line, bounds both each zeta partial sum and
+the mollifier by `2`, and applies dominated convergence.  Consequently the
+actual auxiliary product satisfies, for every real `a,b` and `X>=2`,
+
+\[
+ \boxed{\left\|\int_a^b
+   \bigl(\zeta(2+it)\psi_X(2+it)^2-1\bigr)\,dt\right\|
+ \le \frac{16}{\log 2}.}
+ \tag{9.2-L}
+\]
+
+Thus the right-edge main-term gate of S4 is closed without a new axiom.
+
 Both horizontal edges cost
 `O(X*T^(1/4)*log(T)^C)` for an absolute fixed `C`, using the
 functional equation/convexity estimate in the strip together with the
@@ -2598,8 +2624,9 @@ edge has main term `iT/2+O(1)`.  Each horizontal edge is
 mollifier bound.  Uniform Stirling then supplies the factor `T^(-1/4)` on
 that dyadic height interval.  The exact critical-line modulus bridge back to
 the reflected completed function is proved in Lean; the right-edge main
-term, horizontal-edge estimate, and uniform lower Stirling bound are the
-three remaining S4 Lean gates.
+term is now proved in Lean with the explicit remainder `16/log 2`.
+The horizontal-edge estimate and uniform lower Stirling bound are the two
+remaining S4 Lean gates.
 
 ### Sign change and multiplicity
 
@@ -2615,7 +2642,7 @@ each ordinate at most twice.
 
 The Selberg derivation is unconditional at paper level, subject only to the
 standard classical inputs listed below.  This is not yet a repository-level
-theorem: S4 still requires Lean proofs of the three gates just identified,
+theorem: S4 still requires Lean proofs of the two gates just identified,
 followed by S5 and the final odd-zero assembly.  Its external analytic inputs
 are all established theorems:
 
