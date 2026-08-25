@@ -807,6 +807,56 @@ class TransitionPublishedKloostermanEntryAudit:
 
 
 @dataclass(frozen=True)
+class TransitionDeltaLatticePoissonAudit:
+    determinant_exponent: Fraction
+    delta_length_exponent: Fraction
+    delta_box_area_exponent: Fraction
+    primitive_divisor_exponent: Fraction
+    primitive_divisor_weight_exponent: Fraction
+    lattice_covolume_exponent: Fraction
+    zero_mode_density_exponent: Fraction
+    entry_pair_shell_exponent: Fraction
+    zero_mode_absolute_exponent: Fraction
+    square_function_target_exponent: Fraction
+    required_zero_mode_saving_exponent: Fraction
+    longitudinal_dual_spacing_exponent: Fraction
+    transverse_dual_spacing_exponent: Fraction
+    active_longitudinal_frequency_exponent: Fraction
+    active_transverse_frequency_exponent: Fraction
+    weighted_active_longitudinal_exponent: Fraction
+    primitive_zero_mode_coefficient: str
+    primitive_euler_factor_tail_exponent: Fraction
+    primitive_mobius_inversion_exact: bool
+    primitive_divisor_layers_do_not_worsen: bool
+    zero_mode_obstruction_independent_of_determinant_shell: bool
+    zero_mode_weight_separates_in_the_entries: bool
+    zero_mode_mobius_variance_proved: bool
+    whole_delta_lattice_covered: bool
+
+
+@dataclass(frozen=True)
+class TransitionDenominatorGcdLineAudit:
+    determinant_exponent: Fraction
+    denominator_gcd_exponent: Fraction
+    denominator_cofactor_exponent: Fraction
+    denominator_pair_exponent: Fraction
+    determinant_quotient_exponent: Fraction
+    line_parameter_exponent: Fraction
+    raw_line_family_exponent: Fraction
+    square_function_target_exponent: Fraction
+    required_saving_exponent: Fraction
+    two_denominator_mobius_length_exponent: Fraction
+    two_denominator_square_root_saving_exponent: Fraction
+    post_square_root_exponent: Fraction
+    square_root_power_margin: Fraction
+    mobius_product_reduction_exact: bool
+    top_determinant_is_unique_critical_face: bool
+    absolute_count_reaches_target: bool
+    two_mobius_line_square_root_proved: bool
+    shell_covered: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -3960,6 +4010,238 @@ def transition_published_kloosterman_entry_audit(
         pascadi_source=(
             "Pascadi, arXiv:2511.08445v1, square-root range"
         ),
+    )
+
+
+def transition_delta_lattice_dual_identity(
+    *,
+    s1: int,
+    w1: int,
+    s2: int,
+    w2: int,
+    v: int,
+    j: int,
+    m1: int,
+    m2: int,
+) -> dict[str, int | bool]:
+    """Check the exact primal/dual lattices in the critical square.
+
+    Put ``B=((w1,-s1),(w2,-s2))``.  The recovered shifts are
+    ``delta=B(v,j)^t`` and the dual lattice is ``B^(-t) Z^2``.  This
+    helper keeps the adjugate numerators integral and verifies
+    ``<Bz,B^(-t)m>=<z,m>`` without floating-point arithmetic.
+    """
+    if min(s1, s2) <= 0:
+        raise ValueError("transition denominators must be positive")
+    if gcd(s1, abs(w1)) != 1 or gcd(s2, abs(w2)) != 1:
+        raise ValueError("the two determinant rows must be primitive")
+    coefficient_determinant = s1 * w2 - w1 * s2
+    if coefficient_determinant == 0:
+        raise ValueError("the delta-lattice Poisson step is offdiagonal")
+    cross = -coefficient_determinant
+    delta1 = w1 * v - s1 * j
+    delta2 = w2 * v - s2 * j
+    dual_numerator_1 = -s2 * m1 - w2 * m2
+    dual_numerator_2 = s1 * m1 + w1 * m2
+    pairing_numerator = (
+        delta1 * dual_numerator_1 + delta2 * dual_numerator_2
+    )
+    expected_pairing = v * m1 + j * m2
+    return {
+        "cross_determinant": cross,
+        "coefficient_determinant": coefficient_determinant,
+        "delta1": delta1,
+        "delta2": delta2,
+        "dual_numerator_1": dual_numerator_1,
+        "dual_numerator_2": dual_numerator_2,
+        "scaled_dual_pairing_numerator": pairing_numerator,
+        "dual_pairing_integer": pairing_numerator // coefficient_determinant,
+        "poisson_covolume_exact": (
+            abs(coefficient_determinant) == abs(cross)
+        ),
+        "dual_pairing_exact": (
+            pairing_numerator
+            == coefficient_determinant * expected_pairing
+        ),
+    }
+
+
+def transition_delta_lattice_poisson_audit(
+    *,
+    determinant_exponent: Fraction,
+    primitive_divisor_exponent: Fraction = F(0),
+) -> TransitionDeltaLatticePoissonAudit:
+    """Audit two-dimensional Poisson on the critical shift lattice.
+
+    For entry rows of length ``T`` and determinant ``D=T^kappa``, the
+    shift lattice has covolume ``D``.  Its ``T^(1/2)`` square has area
+    ``T``, so the zero mode has density ``T/D``.  There are
+    ``T^(2+kappa)`` entry pairs on the determinant shell; hence the
+    absolute zero mode is always ``T^3``, independently of ``kappa``.
+
+    Primitivity is retained by ``1_(v,j)=1=sum_{d|v,j}mu(d)``.  On a
+    layer ``d=T^eta``, Poisson on ``d*B Z^2`` contributes ``d^(-2)``.
+    The two singular scales of the primal matrix are ``T`` and
+    ``D/T``.  After multiplying dual frequencies by the shift length
+    and dividing by ``d``, their spacings are ``T^(-1/2-eta)`` and
+    ``T^(3/2-kappa-eta)``.  The weighted number of longitudinal modes
+    is ``T^(1/2-eta)``, so no primitive-divisor layer is worse than
+    ``d=1``.  The recovered slope support makes
+    ``d<=C_W*T^(1/2)``.  Thus the exact zero-mode coefficient is the
+    corresponding truncated sum of ``mu(d)/d^2``; its difference from
+    ``1/zeta(2)`` has exponent ``-1/2`` by the absolutely convergent
+    tail.  The integral still depends jointly on the entry matrix, so
+    this audit does not assert coefficient separation.
+    """
+    determinant = F(determinant_exponent)
+    primitive_divisor = F(primitive_divisor_exponent)
+    if determinant <= 0 or determinant > F(1):
+        raise ValueError("determinant exponent must lie in (0,1]")
+    if primitive_divisor < 0 or primitive_divisor > F(1, 2):
+        raise ValueError("primitive divisor exceeds the recovered slope range")
+    delta_length = F(1, 2)
+    delta_area = 2 * delta_length
+    zero_density = delta_area - determinant
+    entry_pairs = F(2) + determinant
+    zero_absolute = entry_pairs + zero_density
+    target = F(2)
+    divisor_weight = -2 * primitive_divisor
+    longitudinal_spacing = delta_length - F(1) - primitive_divisor
+    transverse_spacing = (
+        delta_length + F(1) - determinant - primitive_divisor
+    )
+    active_longitudinal = -longitudinal_spacing
+    active_transverse = _positive_part(-transverse_spacing)
+    weighted_active = divisor_weight + active_longitudinal
+    return TransitionDeltaLatticePoissonAudit(
+        determinant_exponent=determinant,
+        delta_length_exponent=delta_length,
+        delta_box_area_exponent=delta_area,
+        primitive_divisor_exponent=primitive_divisor,
+        primitive_divisor_weight_exponent=divisor_weight,
+        lattice_covolume_exponent=determinant,
+        zero_mode_density_exponent=zero_density,
+        entry_pair_shell_exponent=entry_pairs,
+        zero_mode_absolute_exponent=zero_absolute,
+        square_function_target_exponent=target,
+        required_zero_mode_saving_exponent=zero_absolute - target,
+        longitudinal_dual_spacing_exponent=longitudinal_spacing,
+        transverse_dual_spacing_exponent=transverse_spacing,
+        active_longitudinal_frequency_exponent=active_longitudinal,
+        active_transverse_frequency_exponent=active_transverse,
+        weighted_active_longitudinal_exponent=weighted_active,
+        primitive_zero_mode_coefficient=(
+            "sum_{d<=C_W*T^(1/2)} mu(d)/d^2"
+        ),
+        primitive_euler_factor_tail_exponent=F(-1, 2),
+        primitive_mobius_inversion_exact=True,
+        primitive_divisor_layers_do_not_worsen=(weighted_active <= F(1, 2)),
+        zero_mode_obstruction_independent_of_determinant_shell=(
+            zero_absolute == F(3)
+        ),
+        zero_mode_weight_separates_in_the_entries=False,
+        zero_mode_mobius_variance_proved=False,
+        whole_delta_lattice_covered=False,
+    )
+
+
+def transition_denominator_gcd_line_identity(
+    *,
+    g: int,
+    a: int,
+    b: int,
+    r1_base: int,
+    r2_base: int,
+    n: int,
+) -> dict[str, int | bool]:
+    """Verify the exact line parametrization after extracting ``(s1,s2)``.
+
+    With ``s1=g*a``, ``s2=g*b`` and ``(a,b)=1``, put
+    ``h=b*r1_base-a*r2_base``.  Every translate
+    ``r1=r1_base+a*n``, ``r2=r2_base+b*n`` then satisfies
+    ``r1*s2-r2*s1=g*h``.
+    """
+    if min(g, a, b) <= 0:
+        raise ValueError("g and the primitive denominator pair are positive")
+    if gcd(a, b) != 1:
+        raise ValueError("a and b must be coprime")
+    s1 = g * a
+    s2 = g * b
+    r1 = r1_base + a * n
+    r2 = r2_base + b * n
+    h = b * r1_base - a * r2_base
+    cross = r1 * s2 - r2 * s1
+    return {
+        "s1": s1,
+        "s2": s2,
+        "r1": r1,
+        "r2": r2,
+        "h": h,
+        "cross_determinant": cross,
+        "denominator_gcd_exact": gcd(s1, s2) == g,
+        "primitive_denominator_pair": gcd(a, b) == 1,
+        "line_equation_exact": cross == g * h,
+    }
+
+
+def transition_denominator_gcd_line_audit(
+    *,
+    determinant_exponent: Fraction,
+    denominator_gcd_exponent: Fraction,
+) -> TransitionDenominatorGcdLineAudit:
+    """Reduce a determinant shell to one two-Mobius line-family gate.
+
+    Write ``D=T^kappa``, ``g=(s1,s2)=T^gamma`` and
+    ``s1=g*a,s2=g*b``.  The dyadic denominator-pair family has exponent
+    ``2-gamma`` (including the choices of ``g``), the quotient
+    ``h=Delta/g`` has exponent ``kappa-gamma``, and the solution-line
+    parameter has exponent ``gamma``.  The raw exponent is therefore
+    ``2+kappa-gamma``.
+
+    On the support of the four Mobius weights, ``g,a,b`` are pairwise
+    coprime and squarefree where needed, so
+    ``mu(g*a)mu(g*b)=mu(a)mu(b)`` exactly.  Square-root cancellation in
+    the two cofactor variables, each of length ``T^(1-gamma)``, saves
+    ``T^(1-gamma)`` and leaves exponent ``1+kappa``.  This has margin
+    ``1-kappa`` and is critical only on the top determinant face.
+    """
+    determinant = F(determinant_exponent)
+    common_gcd = F(denominator_gcd_exponent)
+    if determinant <= 0 or determinant > F(1):
+        raise ValueError("determinant exponent must lie in (0,1]")
+    if common_gcd < 0 or common_gcd > determinant:
+        raise ValueError("the denominator gcd must divide the determinant")
+    cofactor = F(1) - common_gcd
+    denominator_pairs = F(2) - common_gcd
+    determinant_quotient = determinant - common_gcd
+    line_parameter = common_gcd
+    raw = denominator_pairs + determinant_quotient + line_parameter
+    target = F(2)
+    required = _positive_part(raw - target)
+    two_mobius_length = 2 * cofactor
+    square_root_saving = two_mobius_length / 2
+    post_square_root = raw - square_root_saving
+    margin = square_root_saving - required
+    absolute_reaches = raw <= target
+    return TransitionDenominatorGcdLineAudit(
+        determinant_exponent=determinant,
+        denominator_gcd_exponent=common_gcd,
+        denominator_cofactor_exponent=cofactor,
+        denominator_pair_exponent=denominator_pairs,
+        determinant_quotient_exponent=determinant_quotient,
+        line_parameter_exponent=line_parameter,
+        raw_line_family_exponent=raw,
+        square_function_target_exponent=target,
+        required_saving_exponent=required,
+        two_denominator_mobius_length_exponent=two_mobius_length,
+        two_denominator_square_root_saving_exponent=square_root_saving,
+        post_square_root_exponent=post_square_root,
+        square_root_power_margin=margin,
+        mobius_product_reduction_exact=True,
+        top_determinant_is_unique_critical_face=(determinant == F(1)),
+        absolute_count_reaches_target=absolute_reaches,
+        two_mobius_line_square_root_proved=False,
+        shell_covered=absolute_reaches,
     )
 
 
@@ -7264,6 +7546,29 @@ def main() -> None:
         "four_bp_deficit=3/8,sqrt_range=True,arbitrary=True,"
         "kernel=False,separable=False,fixed_modulus=False,"
         "pascadi_uniform=False,covered=False"
+    )
+    transition_delta_lattice = transition_delta_lattice_poisson_audit(
+        determinant_exponent=F(1),
+    )
+    print(
+        "large_q_transition: delta_lattice_poisson="
+        "kappa=1,delta_area=1,covolume=1,zero_density=0,"
+        "entry_shell=3,zero_absolute=3,target=2,required=1,"
+        "dual_long_spacing=-1/2,dual_transverse_spacing=1/2,"
+        "active_long=1/2,active_transverse=0,primitive_exact=True,"
+        "primitive_layers_worse=False,zero_separable=False,"
+        "zero_proved=False,whole=False"
+    )
+    transition_denominator_line = transition_denominator_gcd_line_audit(
+        determinant_exponent=F(1),
+        denominator_gcd_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: denominator_gcd_line="
+        "kappa=1,gamma=1/2,denominator_pairs=3/2,h=1/2,n=1/2,"
+        "raw=5/2,target=2,required=1/2,two_mu_length=1,"
+        "two_mu_sqrt=1/2,post=2,margin=0,mobius_exact=True,"
+        "critical=True,two_mu_proved=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

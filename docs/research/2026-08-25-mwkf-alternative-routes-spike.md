@@ -6752,6 +6752,277 @@ coefficients_separate_from_matrix_entries=False,
 fixed_modulus_before_entry_sum_verified=False, and
 published_coverage=False.
 
+### 4.54 Exact two-dimensional Poisson formula for the critical shift lattice
+
+There is one further exact normalization available before estimating
+(4.472).  For a fixed off-diagonal entry pair put
+
+\[
+ B=\begin{pmatrix}w_1&-s_1\\w_2&-s_2\end{pmatrix},
+ \qquad z=\binom vj,
+ \qquad Bz=\binom{\delta _1}{\delta _2}.
+\tag{4.484}
+\]
+
+Then
+
+\[
+ \det B=s_1w_2-w_1s_2=-\Delta,
+ \qquad \operatorname{covol}(B\mathbb Z^2)=|\Delta|.
+\tag{4.485}
+\]
+
+Let \(F_B\in C_c^\infty(\mathbb R^2)\) be the exact pullback of the
+two factors \(\mathcal K_1\overline{\mathcal K_2}\), including their
+dyadic shift cutoffs, recovered-\((v,j)\) cutoffs, endpoint tapers, and
+the coupled AFE transform.  Thus the inner sum for this entry pair is
+
+\[
+ \sum_{\substack{z\in\mathbb Z^2\\(v,j)=1}}F_B(Bz).
+\tag{4.486}
+\]
+
+The support already recorded in (4.472) gives a fixed constant \(C_W\)
+such that \(F_B(Bz)=0\) unless
+\(0<\max(|v|,|j|)\le C_WT^{1/2}\).  Hence Möbius inversion is finite:
+
+\[
+ \mathbf 1_{(v,j)=1}
+ =\sum_{d\mid(v,j)}\mu(d),
+ \qquad 1\le d\le C_WT^{1/2}.
+\tag{4.487}
+\]
+
+With the Fourier convention
+\(\widehat F(\xi)=\int_{\mathbb R^2}F(x)e(-x\cdot\xi)\,dx\), Poisson
+summation on \(dB\mathbb Z^2\) now gives the exact identity
+
+\[
+\boxed{
+ \sum_{\substack{z\in\mathbb Z^2\\(v,j)=1}}F_B(Bz)
+ =\frac1{|\Delta|}
+  \sum_{1\le d\le C_WT^{1/2}}\frac{\mu(d)}{d^2}
+  \sum_{m\in\mathbb Z^2}
+   \widehat F_B\!\left(\frac{B^{-t}m}{d}\right).}
+\tag{4.488}
+\]
+
+No primitivity factor or Euler factor has been suppressed in (4.488).
+The zero dual frequency is exactly
+
+\[
+ \boxed{
+ \frac{c_W(T)}{|\Delta|}\widehat F_B(0),
+ \qquad
+ c_W(T):=\sum_{1\le d\le C_WT^{1/2}}\frac{\mu(d)}{d^2}.}
+\tag{4.489}
+\]
+
+The comparison with the limiting Euler factor is a separate, absolutely
+convergent tail estimate,
+
+\[
+ \left|c_W(T)-\frac1{\zeta(2)}\right|
+ \le \sum_{d>C_WT^{1/2}}\frac1{d^2}
+ \le \frac1{C_WT^{1/2}-1}.
+\tag{4.490}
+\]
+
+For \(|\Delta|\asymp T^\kappa\), \(0<\kappa\le1\), the shift square
+has area exponent one and its lattice covolume has exponent \(\kappa\).
+The zero-mode density exponent is therefore \(1-\kappa\).  The entry
+pair shell has exponent \(2+\kappa\): four variables of exponent four
+subject to a determinant interval of relative width
+\(T^{\kappa-2}\).  Consequently
+
+\[
+ \boxed{(2+\kappa)+(1-\kappa)=3}
+\tag{4.491}
+\]
+
+on every determinant shell.  Thus the zero mode alone still requires
+one full power to reach the square-function target exponent two; moving
+to smaller determinants does not improve this obstruction.
+
+The nonzero dual geometry is one-dimensional at the exponent level.
+The largest singular value of \(B\) lies between fixed multiples of
+\(T\), and the other equals \(|\Delta|/\sigma_{\max}(B)\).  On
+\(d=T^\eta\), \(0\le\eta\le1/2\), the two Fourier-argument spacings in
+(4.488) have exponents
+
+\[
+ -\frac12-\eta,
+ \qquad
+ \frac32-\kappa-\eta.
+\tag{4.492}
+\]
+
+The second is nonnegative throughout the stated polytope.  There are
+therefore \(T^{1/2+\eta}\) longitudinal modes and only a bounded number
+of transverse modes in compact Fourier support.  After the exact
+\(d^{-2}\) factor in (4.488), their weighted exponent is
+
+\[
+ \boxed{\frac12-\eta\le\frac12.}
+\tag{4.493}
+\]
+
+Thus primitive-divisor layers do not enlarge the cyclic-frequency gate
+of Section 4.52.  They also do not remove the zero mode: the integral
+\(\widehat F_B(0)\) depends jointly on all four entries through the
+coupled kernel and is not a product of two entry-independent
+coefficients.
+
+The helper transition_delta_lattice_dual_identity verifies
+\(\langle Bz,B^{-t}m\rangle=\langle z,m\rangle\) using integral
+adjugate numerators.  The adapter
+transition_delta_lattice_poisson_audit records (4.489)--(4.493), the
+finite primitive coefficient, and the unchanged one-power zero-mode
+deficit.  It keeps zero_mode_weight_separates_in_the_entries=False,
+zero_mode_mobius_variance_proved=False, and
+whole_delta_lattice_covered=False.
+
+### 4.55 Denominator-gcd extraction leaves one two-Möbius line-family gate
+
+The zero mode in (4.489) can be reorganized without losing the four
+Möbius weights.  On a dyadic determinant shell
+\(D=T^\kappa\), extract
+
+\[
+ g=(s_1,s_2)=T^\gamma,
+ \qquad s_1=ga,\quad s_2=gb,\quad(a,b)=1,
+ \qquad 0\le\gamma\le\kappa.
+\tag{4.494}
+\]
+
+The divisibility \(g\mid\Delta\) is exact.  With
+
+\[
+ h=\frac\Delta g,
+\tag{4.495}
+\]
+
+the determinant equation becomes
+
+\[
+ \boxed{br_1-ar_2=h.}
+\tag{4.496}
+\]
+
+Choose once and for all the representative
+\(0\le\rho_1<a\) satisfying
+\(b\rho_1\equiv h\pmod a\), and put
+\(\rho_2=(b\rho_1-h)/a\).  Every integral solution of (4.496), and no
+other pair, is
+
+\[
+ \boxed{r_1=\rho_1+an,\qquad r_2=\rho_2+bn,\qquad n\in\mathbb Z.}
+\tag{4.497}
+\]
+
+If the original Möbius product is nonzero, then \(g,a,b\) are
+squarefree where applicable and
+\((g,ab)=(a,b)=1\).  Therefore
+
+\[
+ \boxed{\mu(s_1)\mu(s_2)
+ =\mu(ga)\mu(gb)=\mu(a)\mu(b).}
+\tag{4.498}
+\]
+
+In particular the common factor carries no residual Möbius sign.  Let
+\(\Psi_{q,k,D,G}\) denote the exact pullback of the zero-mode weight in
+(4.489).  It is supported on
+
+\[
+\begin{gathered}
+ G<g\le2G,\qquad T/G<a,b\le2T/G,\qquad(a,b)=1,\quad(g,ab)=1,\\
+ D/G<|h|\le2D/G,\qquad
+ T<r_i=\rho_i+(a,b)_i n\le2T,\\
+ w_i=r_i-ks_i\ \text{in its fixed signed dyadic interval},\\
+ (r_i,s_i)=1,qquad(q,r_1r_2s_1s_2)=1,
+\end{gathered}
+\tag{4.499}
+\]
+
+and retains both endpoint tapers, all AFE transforms, and the factor
+\(c_W(T)/|gh|\).  The resulting local sum is exactly
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak Z_{q,k}(D,G)
+ :={}&\sum_{G<g\le2G}\mu^2(g)
+ \sum_{\substack{a,b\asymp T/G\\(a,b)=1,(g,ab)=1}}
+ \mu(a)\mu(b)\\
+ &\times\sum_{D/G<|h|\le2D/G}
+ \sum_{n\in\mathbb Z}
+ \mu(\rho_1+an)\mu(\rho_2+bn)
+ \Psi_{q,k,D,G}(g,a,b,h,n).
+\end{aligned}}
+\tag{4.500}
+\]
+
+Here \(a,b\asymp T/G\) is only an abbreviation for the two explicit
+half-open intervals in (4.499); (4.500) contains no omitted arithmetic
+condition.
+
+The exact exponent table for (4.500) is
+
+\[
+\begin{array}{c|c}
+\text{family}&\text{exponent}\\ \hline
+(g,a,b)&2-\gamma\\
+h=\Delta/g&\kappa-\gamma\\
+n\text{ on the solution line}&\gamma\\ \hline
+\text{raw total}&2+\kappa-\gamma.
+\end{array}
+\tag{4.501}
+\]
+
+Both remaining denominator Möbius variables have length exponent
+\(1-\gamma\).  Square-root cancellation in their product saves
+\(1-\gamma\), leaving
+
+\[
+ \boxed{(2+\kappa-\gamma)-(1-\gamma)=1+\kappa.}
+\tag{4.502}
+\]
+
+The target is exponent two, so the power margin is exactly
+
+\[
+ \boxed{1-\kappa.}
+\tag{4.503}
+\]
+
+All shells \(\kappa<1\) would therefore close with fixed power slack.
+The only power-critical face is \(\kappa=1\), uniformly in \(\gamma\).
+At the subface \(\gamma=\kappa\), absolute counting already reaches
+the target.  Away from that subface, the minimal new local theorem is
+
+\[
+\boxed{
+ |\mathfrak Z_{q,k}(T^\kappa,T^\gamma)|
+ \ll_W T^{1+\kappa}\mathscr L^{-C_{\rm agg}-2},
+ \qquad 0\le\gamma<\kappa\le1,}
+\tag{4.504}
+\]
+
+where \(C_{\rm agg}\) is the already explicit global polylogarithmic
+loss exponent.  The two extra logarithms make the dyadic
+\((D,G)\)-sum and the \(q^{-1}\)-sum convergent at the required
+\(o(T)\) level.  Formula (4.504), not four independent Kloosterman
+bounds, is the precise Möbius Type-I/II gate left by this route.
+
+No published result audited in Sections 4.46--4.53 proves (4.504) with
+the two additional Möbius weights on the moving linear forms in
+(4.497).  The helper transition_denominator_gcd_line_identity verifies
+(4.494)--(4.497) on integers.  The adapter
+transition_denominator_gcd_line_audit records (4.501)--(4.503), marks
+the absolute endpoint \(\gamma=\kappa\) covered, and keeps
+two_mobius_line_square_root_proved=False elsewhere.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

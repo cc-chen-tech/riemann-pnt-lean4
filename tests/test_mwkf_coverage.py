@@ -1664,6 +1664,157 @@ def test_published_kloosterman_bounds_miss_the_transition_entry_gate() -> None:
     assert not audit.published_coverage
 
 
+def test_transition_delta_lattice_poisson_has_exact_dual_pairing() -> None:
+    helper = getattr(
+        coverage_audit,
+        "transition_delta_lattice_dual_identity",
+        None,
+    )
+    assert helper is not None, "transition delta-lattice helper is missing"
+
+    result = helper(
+        s1=5,
+        w1=2,
+        s2=7,
+        w2=4,
+        v=3,
+        j=1,
+        m1=2,
+        m2=-1,
+    )
+    assert result["cross_determinant"] == -6
+    assert result["coefficient_determinant"] == 6
+    assert result["delta1"] == 1
+    assert result["delta2"] == 5
+    assert result["dual_numerator_1"] == -10
+    assert result["dual_numerator_2"] == 8
+    assert result["scaled_dual_pairing_numerator"] == 30
+    assert result["dual_pairing_integer"] == 5
+    assert result["poisson_covolume_exact"]
+    assert result["dual_pairing_exact"]
+
+
+def test_transition_delta_lattice_zero_mode_needs_one_power_on_every_shell() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_delta_lattice_poisson_audit",
+        None,
+    )
+    assert adapter is not None, "transition delta-lattice audit is missing"
+
+    top = adapter(determinant_exponent=F(1))
+    assert top.delta_box_area_exponent == F(1)
+    assert top.primitive_divisor_exponent == F(0)
+    assert top.lattice_covolume_exponent == F(1)
+    assert top.zero_mode_density_exponent == F(0)
+    assert top.entry_pair_shell_exponent == F(3)
+    assert top.zero_mode_absolute_exponent == F(3)
+    assert top.square_function_target_exponent == F(2)
+    assert top.required_zero_mode_saving_exponent == F(1)
+    assert top.longitudinal_dual_spacing_exponent == F(-1, 2)
+    assert top.transverse_dual_spacing_exponent == F(1, 2)
+    assert top.active_longitudinal_frequency_exponent == F(1, 2)
+    assert top.active_transverse_frequency_exponent == F(0)
+    assert top.weighted_active_longitudinal_exponent == F(1, 2)
+    assert top.primitive_zero_mode_coefficient == (
+        "sum_{d<=C_W*T^(1/2)} mu(d)/d^2"
+    )
+    assert top.primitive_euler_factor_tail_exponent == F(-1, 2)
+    assert top.primitive_mobius_inversion_exact
+    assert top.primitive_divisor_layers_do_not_worsen
+    assert top.zero_mode_obstruction_independent_of_determinant_shell
+    assert not top.zero_mode_weight_separates_in_the_entries
+    assert not top.zero_mode_mobius_variance_proved
+    assert not top.whole_delta_lattice_covered
+
+    lower = adapter(determinant_exponent=F(3, 4))
+    assert lower.zero_mode_density_exponent == F(1, 4)
+    assert lower.entry_pair_shell_exponent == F(11, 4)
+    assert lower.zero_mode_absolute_exponent == F(3)
+    assert lower.required_zero_mode_saving_exponent == F(1)
+    assert lower.transverse_dual_spacing_exponent == F(3, 4)
+
+    largest_divisor = adapter(
+        determinant_exponent=F(1),
+        primitive_divisor_exponent=F(1, 2),
+    )
+    assert largest_divisor.longitudinal_dual_spacing_exponent == F(-1)
+    assert largest_divisor.transverse_dual_spacing_exponent == F(0)
+    assert largest_divisor.active_longitudinal_frequency_exponent == F(1)
+    assert largest_divisor.primitive_divisor_weight_exponent == F(-1)
+    assert largest_divisor.weighted_active_longitudinal_exponent == F(0)
+    assert largest_divisor.primitive_divisor_layers_do_not_worsen
+
+
+def test_transition_denominator_gcd_line_reduces_to_two_mobius_square_root() -> None:
+    identity = getattr(
+        coverage_audit,
+        "transition_denominator_gcd_line_identity",
+        None,
+    )
+    assert identity is not None, "denominator-gcd line helper is missing"
+    result = identity(
+        g=3,
+        a=5,
+        b=7,
+        r1_base=3,
+        r2_base=4,
+        n=2,
+    )
+    assert result["s1"] == 15
+    assert result["s2"] == 21
+    assert result["r1"] == 13
+    assert result["r2"] == 18
+    assert result["h"] == 1
+    assert result["cross_determinant"] == 3
+    assert result["denominator_gcd_exact"]
+    assert result["primitive_denominator_pair"]
+    assert result["line_equation_exact"]
+
+    adapter = getattr(
+        coverage_audit,
+        "transition_denominator_gcd_line_audit",
+        None,
+    )
+    assert adapter is not None, "denominator-gcd line audit is missing"
+    critical = adapter(
+        determinant_exponent=F(1),
+        denominator_gcd_exponent=F(1, 2),
+    )
+    assert critical.denominator_pair_exponent == F(3, 2)
+    assert critical.determinant_quotient_exponent == F(1, 2)
+    assert critical.line_parameter_exponent == F(1, 2)
+    assert critical.raw_line_family_exponent == F(5, 2)
+    assert critical.required_saving_exponent == F(1, 2)
+    assert critical.two_denominator_mobius_length_exponent == F(1)
+    assert critical.two_denominator_square_root_saving_exponent == F(1, 2)
+    assert critical.post_square_root_exponent == F(2)
+    assert critical.square_root_power_margin == F(0)
+    assert critical.mobius_product_reduction_exact
+    assert critical.top_determinant_is_unique_critical_face
+    assert not critical.two_mobius_line_square_root_proved
+    assert not critical.shell_covered
+
+    lower = adapter(
+        determinant_exponent=F(3, 4),
+        denominator_gcd_exponent=F(1, 4),
+    )
+    assert lower.raw_line_family_exponent == F(5, 2)
+    assert lower.required_saving_exponent == F(1, 2)
+    assert lower.two_denominator_square_root_saving_exponent == F(3, 4)
+    assert lower.post_square_root_exponent == F(7, 4)
+    assert lower.square_root_power_margin == F(1, 4)
+    assert not lower.top_determinant_is_unique_critical_face
+
+    endpoint = adapter(
+        determinant_exponent=F(3, 4),
+        denominator_gcd_exponent=F(3, 4),
+    )
+    assert endpoint.required_saving_exponent == F(0)
+    assert endpoint.absolute_count_reaches_target
+    assert endpoint.shell_covered
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -3645,5 +3796,14 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\frac1{32}",
         r"\frac{15}{32}",
         "transition_published_kloosterman_entry_audit",
+        "### 4.54 Exact two-dimensional Poisson formula for the critical shift lattice",
+        r"\operatorname{covol}(B\mathbb Z^2)=|\Delta|",
+        r"c_W(T):=\sum_{1\le d\le C_WT^{1/2}}\frac{\mu(d)}{d^2}",
+        "transition_delta_lattice_poisson_audit",
+        "### 4.55 Denominator-gcd extraction leaves one two-Möbius line-family gate",
+        r"br_1-ar_2=h",
+        r"\mu(ga)\mu(gb)=\mu(a)\mu(b)",
+        r"\mathfrak Z_{q,k}(D,G)",
+        "transition_denominator_gcd_line_audit",
     ):
         assert marker in text
