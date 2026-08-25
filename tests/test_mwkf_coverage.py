@@ -2698,9 +2698,25 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "large_q_transition: blomer_milicevic_mobius_modulus="
         "modulus=3,period=3,l2=3/2,theta=7/64,"
         "base=69/32,total=117/32,trivial=3,deficit=21/32,"
-        "selberg=3,selberg_margin=0,linnik=True,injective=True,"
+        "selberg=227/64,selberg_deficit=35/64,ramanujan=3,"
+        "ramanujan_margin=0,linnik=True,injective=True,"
         "parseval=True,small_period_ruled_out=False,qct_complete=False,"
         "power_saving=False,covered=False"
+    ) in report
+    assert (
+        "large_q_transition: blomer_milicevic_type_i_level="
+        "modulus=3,numerator=5,target=2,level=1,theta=7/64,"
+        "fixed=69/32,type_i=101/32,type_i_deficit=37/32,"
+        "ideal_cauchy=85/32,ideal_deficit=21/32,"
+        "type_i_threshold=-5/32,cauchy_threshold=-5/16,"
+        "type_i_window=False,cauchy_window=False,selberg_fixed=131/64,"
+        "selberg_type_i_threshold=-3/64,selberg_cauchy_threshold=-3/32,"
+        "selberg_endpoint=163/64,selberg_deficit=35/64,"
+        "ramanujan_fixed=3/2,ramanujan_type_i_threshold=1/2,"
+        "ramanujan_cauchy_threshold=1,ramanujan_endpoint=2,"
+        "ramanujan_margin=0,linnik=True,"
+        "divisibility=True,identity=True,exceptional_removed=False,"
+        "cauchy_proved=False,model_only=True,physical=False,covered=False"
     ) in report
     assert (
         "large_q_transition: inverse_zeta_zero_free_implication="
@@ -3782,8 +3798,10 @@ def test_blomer_milicevic_periodic_mobius_encoding_has_no_power_gain() -> None:
     assert hard.bm_total_bound_exponent == F(117, 32)
     assert hard.trivial_normalized_modulus_sum_exponent == F(3)
     assert hard.published_bound_deficit == F(21, 32)
-    assert hard.selberg_hypothetical_bound_exponent == F(3)
-    assert hard.selberg_hypothetical_margin == F(0)
+    assert hard.selberg_replacement_bound_exponent == F(227, 64)
+    assert hard.selberg_replacement_deficit == F(35, 64)
+    assert hard.full_ramanujan_bound_exponent == F(3)
+    assert hard.full_ramanujan_margin == F(0)
     assert hard.linnik_range_hypothesis_holds
     assert hard.collision_free_exact_periodic_encoding_available
     assert hard.fourier_l1_lower_bound_follows_from_parseval
@@ -3791,6 +3809,60 @@ def test_blomer_milicevic_periodic_mobius_encoding_has_no_power_gain() -> None:
     assert not hard.actual_qct_kernel_is_complete_kloosterman_family
     assert not hard.direct_periodic_weight_adapter_has_power_saving
     assert not hard.whole_mobius_gate_covered
+
+
+def test_blomer_milicevic_type_i_level_split_keeps_exceptional_deficit() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "blomer_milicevic_type_i_level_audit",
+        None,
+    )
+    assert adapter is not None, "BM Type-I level audit is missing"
+
+    level_zero = adapter(
+        modulus_scale_exponent=F(3),
+        numerator_product_exponent=F(5),
+        target_exponent=F(2),
+        exposed_level_box_exponent=F(0),
+    )
+    assert level_zero.fixed_level_bound_exponent == F(69, 32)
+    assert level_zero.type_i_absolute_bound_exponent == F(69, 32)
+    assert level_zero.type_i_power_deficit == F(5, 32)
+    assert level_zero.ideal_level_cauchy_bound_exponent == F(69, 32)
+    assert level_zero.ideal_level_cauchy_power_deficit == F(5, 32)
+    assert level_zero.uniform_type_i_level_threshold == F(-5, 32)
+    assert level_zero.uniform_ideal_cauchy_level_threshold == F(-5, 16)
+    assert not level_zero.uniform_type_i_has_nonnegative_level_window
+    assert not level_zero.uniform_ideal_cauchy_has_nonnegative_level_window
+
+    endpoint = adapter(
+        modulus_scale_exponent=F(3),
+        numerator_product_exponent=F(5),
+        target_exponent=F(2),
+        exposed_level_box_exponent=F(1),
+    )
+    assert endpoint.type_i_absolute_bound_exponent == F(101, 32)
+    assert endpoint.type_i_power_deficit == F(37, 32)
+    assert endpoint.ideal_level_cauchy_bound_exponent == F(85, 32)
+    assert endpoint.ideal_level_cauchy_power_deficit == F(21, 32)
+    assert endpoint.selberg_fixed_level_bound_exponent == F(131, 64)
+    assert endpoint.selberg_type_i_level_threshold == F(-3, 64)
+    assert endpoint.selberg_ideal_cauchy_level_threshold == F(-3, 32)
+    assert endpoint.selberg_ideal_cauchy_bound_exponent == F(163, 64)
+    assert endpoint.selberg_ideal_cauchy_power_deficit == F(35, 64)
+    assert endpoint.full_ramanujan_fixed_level_bound_exponent == F(3, 2)
+    assert endpoint.full_ramanujan_type_i_level_threshold == F(1, 2)
+    assert endpoint.full_ramanujan_ideal_cauchy_level_threshold == F(1)
+    assert endpoint.full_ramanujan_ideal_cauchy_bound_exponent == F(2)
+    assert endpoint.full_ramanujan_ideal_cauchy_power_margin == F(0)
+    assert endpoint.linnik_range_hypothesis_holds
+    assert endpoint.level_divisibility_estimate_occurs_in_bm_proof
+    assert endpoint.exact_mobius_type_i_identity_available
+    assert not endpoint.exceptional_spectrum_removed_for_level_family
+    assert not endpoint.level_cauchy_bound_proved_for_qct_coefficients
+    assert endpoint.product_compatible_hard_vertex_only
+    assert not endpoint.physical_coupled_kernel_restored
+    assert not endpoint.whole_mobius_gate_covered
 
 
 def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:

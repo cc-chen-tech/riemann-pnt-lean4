@@ -12869,9 +12869,12 @@ has exponent
 \]
 
 The normalized modulus sum has the direct Weil-bound exponent \(1\).
-Thus the published theorem loses \(X^{2\vartheta}\); even under the
-Selberg conjecture \(\vartheta=0\), it merely ties the trivial exponent
-and supplies no power saving.
+Thus the published theorem loses \(X^{2\vartheta}\).  The paper's
+Selberg-conjecture remark does **not** set every occurrence of
+\(\vartheta\) to zero: it replaces \(X^{2\vartheta}\) by
+\((mn)^\vartheta\), retaining the finite-prime Ramanujan exponent.
+Only the full Ramanujan conjecture, including Selberg at infinity,
+sets \(\vartheta=0\) and merely ties the trivial exponent.
 
 On the balanced QCT box \(X=S=T^3\), the combined physical numerator has
 scale \(h\delta=T^5\), so the favorable Linnik-range check
@@ -12889,6 +12892,19 @@ in \(T\)-exponents.  This deficit occurs before charging the fact that
 the QCT kernel is an incomplete, coupled orbit rather than the complete
 Kloosterman family in (4.829).
 
+Under Selberg alone, the direct periodic encoding instead has
+
+\[
+ \boxed{
+ E_{\mathrm{BM,Sel}}=3+5\left(\frac7{64}\right)
+ =\frac{227}{64},\qquad
+ E_{\mathrm{BM,Sel}}-3=\frac{35}{64}.}
+\tag{4.832a}
+\]
+
+Full Ramanujan lowers (4.832a) to \(3\), still with zero power-saving
+margin.
+
 This audit rejects the direct collision-free periodic encoding.  It
 does not assert that no specially chosen smaller period can agree with
 a finite Möbius interval, and it does not reject a Type-I/II expansion
@@ -12896,7 +12912,143 @@ followed by separate level formulas.  Such a hybrid must still retain
 the two Möbius cofactors and is exactly the unresolved centered
 dispersion problem, not an application of (4.829) alone.  The coverage
 adapter records the Parseval lower bound, the \(21/32\) hard-box deficit,
-the zero Selberg margin, and leaves the whole Möbius gate unproved.
+the Selberg-only \(35/64\) deficit, the zero full-Ramanujan margin, and
+leaves the whole Möbius gate unproved.
+
+
+### 4.108 Type-I level extraction still needs exceptional-spectrum cancellation
+
+The periodic encoding is deliberately wasteful: it asks one finite
+period to remember every value of \(\mu(c)\).  The exact Möbius
+factorization gives a different use of the same trace formula.  For
+\(c>U\), put
+
+\[
+ \boxed{
+ c_U(a)=\sum_{\substack{d\mid a\\d\leq U}}\mu(d),\qquad
+ \mu(c)=-\sum_{\substack{ab=c\\a>U}}c_U(a)\mu(b).}
+\tag{4.833}
+\]
+
+Split the last sum at \(b\leq V\).  In the Type-I part write \(a=d\ell\)
+inside \(c_U(a)\).  After an exact dyadic partition \(b\asymp B\),
+\(d\asymp D\), a model modulus block is
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal K_{B,D}(m,n;X)
+ =-&\sum_{\substack{b\asymp B\\b\leq V}}\mu(b)
+ \sum_{\substack{d\asymp D\\d\leq U}}\mu(d)
+ \sum_{\substack{\ell\geq1\\bd\ell\asymp X\\d\ell>U}}
+ \frac{S(m,n;bd\ell)}{(bd\ell)^{1/2}}\\
+ &\hspace{35mm}\times
+ F_{b,d}\!\left(\frac{bd\ell}{X}\right).
+ \end{aligned}}
+\tag{4.834}
+\]
+
+The inequalities in (4.834) are retained, not absorbed into asymptotic
+notation.  Partial summation treats their two endpoints, while the
+fixed dyadic functions \(F_{b,d}\) have the inherited uniform smooth
+seminorms.  This is still only the product-compatible modulus model;
+the other Möbius entry, ratio integrals, and physical QCT kernel have
+not been restored.
+
+Estimate (211) in the proof of
+[Blomer--Milićević, Theorem 1](https://arxiv.org/abs/1410.4538) gives,
+uniformly for \(mn\leq X^2\) and every fixed divisibility level \(L\),
+
+\[
+ \boxed{
+ \sum_{L\mid c}\frac{S(m,n;c)}{c^{1/2}}
+ F_\infty(c/X)
+ \ll_{F_\infty,\varepsilon}
+ X^{1/2+2\vartheta}(mnL)^\varepsilon.}
+\tag{4.835}
+\]
+
+Thus (4.835) applies separately to \(L=bd\).  Put
+
+\[
+ X=T^3,\qquad mn=T^5,\qquad
+ B=T^\beta,\quad D=T^\eta,\quad
+ \lambda=\beta+\eta.
+\tag{4.836}
+\]
+
+The Linnik hypothesis is satisfied because \(5\leq2\cdot3\).  Absolute
+summation over \((b,d)\) and, even more favorably, an unproved ideal
+Cauchy aggregation over the \(T^\lambda\) level pairs give respectively
+
+\[
+ \boxed{
+ E_{\mathrm{I,abs}}=\frac{69}{32}+\lambda,\qquad
+ E_{\mathrm{level\text{-}Cauchy}}=\frac{69}{32}+\frac\lambda2.}
+\tag{4.837}
+\]
+
+The hard determinant model requires exponent \(2\).  Consequently the
+two conditions in (4.837) would be
+
+\[
+ \boxed{
+ \lambda<-\frac5{32},\qquad
+ \lambda<-\frac5{16}.}
+\tag{4.838}
+\]
+
+Neither contains a nonnegative level box: the uniform Kim--Sarnak
+exceptional-spectrum factor already loses \(T^{5/32}\) when \(B=D=1\).
+
+Selberg alone replaces the fixed-level exponent \(69/32\) by
+
+\[
+ \frac32+5\left(\frac7{64}\right)=\frac{131}{64}.
+\]
+
+It therefore still requires \(\lambda<-3/64\) after absolute summation
+or \(\lambda<-3/32\) after the ideal Cauchy step.  Under full Ramanujan
+the two bounds become
+
+\[
+ \boxed{
+ E_{\mathrm{I,abs}}^{\mathrm{Ram}}=\frac32+\lambda,\qquad
+ E_{\mathrm{level\text{-}Cauchy}}^{\mathrm{Ram}}
+ =\frac32+\frac\lambda2.}
+\tag{4.839}
+\]
+
+Hence even that conjectural ledger covers only \(\lambda<1/2\) by
+absolute summation and \(\lambda<1\) by ideal level Cauchy.  At the
+critical level face \(\lambda=1\), (4.839) is exactly \(T^2\) and
+supplies none of the logarithmic decay needed for \(o(T)\).
+
+The sharp new local input suggested by this route is therefore a
+Möbius-weighted level-family estimate of the form
+
+\[
+ \boxed{
+ \sum_{\substack{b\asymp B\\d\asymp D}}
+ \alpha_{b,d}
+ \sum_{bd\mid c}\frac{S(m,n;c)}{c^{1/2}}
+ \mathscr F_{b,d}\!\left(\frac c{T^3}\right)
+ \ll_{A,\mathscr F}
+ T^{3/2+\lambda/2}(\log T)^{-A},
+ \qquad 0\leq\lambda\leq1.}
+\tag{4.840}
+\]
+
+Here \(\alpha_{b,d}=\mu(b)\mu(d)\) times the retained Type-I and
+allocation coefficients, while \(\mathscr F_{b,d}\) must still contain
+the second Möbius cofactor and the coupled physical kernel.  In
+particular (4.840) must cancel the exceptional spectrum in the level
+family; it is not the ordinary positive spectral large sieve.  No
+published theorem audited here proves (4.840), and the Type-II sector
+\(b>V\), including level boxes \(\lambda>1\), still requires the
+centered four-variable dispersion estimate.  The adapter
+`blomer_milicevic_type_i_level_audit` records (4.836)--(4.839) and keeps
+both the level-Cauchy and physical-kernel proof flags false.
 
 
 ## 5. Route C: endpoint-to-all-length interpolation

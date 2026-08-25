@@ -1543,14 +1543,52 @@ class BlomerMilicevicMobiusModulusAudit:
     bm_total_bound_exponent: Fraction
     trivial_normalized_modulus_sum_exponent: Fraction
     published_bound_deficit: Fraction
-    selberg_hypothetical_bound_exponent: Fraction
-    selberg_hypothetical_margin: Fraction
+    selberg_replacement_bound_exponent: Fraction
+    selberg_replacement_deficit: Fraction
+    full_ramanujan_bound_exponent: Fraction
+    full_ramanujan_margin: Fraction
     linnik_range_hypothesis_holds: bool
     collision_free_exact_periodic_encoding_available: bool
     fourier_l1_lower_bound_follows_from_parseval: bool
     small_period_exact_mobius_encoding_ruled_out: bool
     actual_qct_kernel_is_complete_kloosterman_family: bool
     direct_periodic_weight_adapter_has_power_saving: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class BlomerMilicevicTypeILevelAudit:
+    kloosterman_modulus_scale_exponent: Fraction
+    numerator_product_exponent: Fraction
+    target_exponent: Fraction
+    exposed_level_box_exponent: Fraction
+    ramanujan_theta: Fraction
+    fixed_level_bound_exponent: Fraction
+    type_i_absolute_bound_exponent: Fraction
+    type_i_power_deficit: Fraction
+    ideal_level_cauchy_bound_exponent: Fraction
+    ideal_level_cauchy_power_deficit: Fraction
+    uniform_type_i_level_threshold: Fraction
+    uniform_ideal_cauchy_level_threshold: Fraction
+    uniform_type_i_has_nonnegative_level_window: bool
+    uniform_ideal_cauchy_has_nonnegative_level_window: bool
+    selberg_fixed_level_bound_exponent: Fraction
+    selberg_type_i_level_threshold: Fraction
+    selberg_ideal_cauchy_level_threshold: Fraction
+    selberg_ideal_cauchy_bound_exponent: Fraction
+    selberg_ideal_cauchy_power_deficit: Fraction
+    full_ramanujan_fixed_level_bound_exponent: Fraction
+    full_ramanujan_type_i_level_threshold: Fraction
+    full_ramanujan_ideal_cauchy_level_threshold: Fraction
+    full_ramanujan_ideal_cauchy_bound_exponent: Fraction
+    full_ramanujan_ideal_cauchy_power_margin: Fraction
+    linnik_range_hypothesis_holds: bool
+    level_divisibility_estimate_occurs_in_bm_proof: bool
+    exact_mobius_type_i_identity_available: bool
+    exceptional_spectrum_removed_for_level_family: bool
+    level_cauchy_bound_proved_for_qct_coefficients: bool
+    product_compatible_hard_vertex_only: bool
+    physical_coupled_kernel_restored: bool
     whole_mobius_gate_covered: bool
 
 
@@ -8120,8 +8158,10 @@ def blomer_milicevic_mobius_modulus_audit(
 
     Thus even the smallest norm allowed by Parseval returns exponent
     ``X^(1+2*theta)``.  With Kim--Sarnak ``theta=7/64`` this is worse
-    than the trivial normalized modulus sum; with Selberg ``theta=0``
-    it merely ties it.  This rejects only the direct collision-free
+    than the trivial normalized modulus sum.  Selberg alone replaces
+    ``X^(2*theta)`` by ``(mn)^theta`` and still loses a power here;
+    only full Ramanujan (including Selberg) makes ``theta=0`` and ties
+    the trivial exponent.  This rejects only the direct collision-free
     periodic encoding.  It does not prove that every smaller period
     fails to match a finite Möbius interval, and it does not identify
     the QCT kernel with the complete Kloosterman family in the theorem.
@@ -8136,7 +8176,8 @@ def blomer_milicevic_mobius_modulus_audit(
     archimedean = sigma * (F(1, 2) + F(2) * theta)
     total = archimedean + l2_lower
     trivial = sigma
-    selberg_total = sigma
+    selberg_total = sigma + numerator * theta
+    full_ramanujan_total = sigma
     return BlomerMilicevicMobiusModulusAudit(
         kloosterman_modulus_scale_exponent=sigma,
         numerator_product_exponent=numerator,
@@ -8147,14 +8188,129 @@ def blomer_milicevic_mobius_modulus_audit(
         bm_total_bound_exponent=total,
         trivial_normalized_modulus_sum_exponent=trivial,
         published_bound_deficit=total - trivial,
-        selberg_hypothetical_bound_exponent=selberg_total,
-        selberg_hypothetical_margin=trivial - selberg_total,
+        selberg_replacement_bound_exponent=selberg_total,
+        selberg_replacement_deficit=_positive_part(
+            selberg_total - trivial
+        ),
+        full_ramanujan_bound_exponent=full_ramanujan_total,
+        full_ramanujan_margin=trivial - full_ramanujan_total,
         linnik_range_hypothesis_holds=(numerator <= F(2) * sigma),
         collision_free_exact_periodic_encoding_available=True,
         fourier_l1_lower_bound_follows_from_parseval=True,
         small_period_exact_mobius_encoding_ruled_out=False,
         actual_qct_kernel_is_complete_kloosterman_family=False,
         direct_periodic_weight_adapter_has_power_saving=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def blomer_milicevic_type_i_level_audit(
+    *,
+    modulus_scale_exponent: Fraction,
+    numerator_product_exponent: Fraction,
+    target_exponent: Fraction,
+    exposed_level_box_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> BlomerMilicevicTypeILevelAudit:
+    """Audit the literal Type-I divisibility-level use of BM.
+
+    In the exact identity
+
+    ``mu(n)=-sum_(a*b=n,a>U)c_U(a)mu(b)``,
+    ``c_U(a)=sum_(d|a,d<=U)mu(d)``, write ``a=d*e``.  Fixing
+    ``b,d`` leaves an unweighted Kloosterman-modulus sum over
+    multiples of the level ``L=b*d``.  Estimate (211) in the proof of
+    Blomer--Milicevic Theorem 1 bounds each such level by
+
+    ``X^(1/2+2*theta+eps)``
+
+    in the Linnik range.  Absolute summation over a level box of size
+    ``T^lambda`` costs ``lambda``.  The most favorable hypothetical
+    Cauchy aggregation costs ``lambda/2``; this latter bound is not a
+    published adapter for the joint QCT coefficients.
+
+    At the hard scales ``X=T^3`` and target ``T^2``, the uniform
+    Kim--Sarnak loss already leaves ``T^(5/32)`` at level exponent
+    zero.  Selberg alone replaces the exceptional factor by
+    ``(mn)^theta`` and still leaves a power deficit.  Under full
+    Ramanujan, Type I reaches only ``lambda<1/2`` and the ideal Cauchy
+    ledger reaches ``lambda<1``; its endpoint has zero margin.  These
+    are exponent diagnostics, not a proof of the
+    physical coupled estimate.
+    """
+    sigma = F(modulus_scale_exponent)
+    numerator = F(numerator_product_exponent)
+    target = F(target_exponent)
+    level = F(exposed_level_box_exponent)
+    theta = F(ramanujan_theta)
+    if sigma <= 0 or numerator < 0 or target < 0:
+        raise ValueError("scale exponents must be nonnegative and modulus positive")
+    if level < 0 or theta < 0:
+        raise ValueError("level and Ramanujan exponents must be nonnegative")
+
+    fixed_level = sigma * (F(1, 2) + F(2) * theta)
+    type_i = fixed_level + level
+    ideal_cauchy = fixed_level + level / 2
+    type_i_threshold = target - fixed_level
+    ideal_cauchy_threshold = F(2) * (target - fixed_level)
+    selberg_fixed = sigma / 2 + numerator * theta
+    selberg_type_i_threshold = target - selberg_fixed
+    selberg_cauchy_threshold = F(2) * (target - selberg_fixed)
+    selberg_cauchy = selberg_fixed + level / 2
+    full_ramanujan_fixed = sigma / 2
+    full_ramanujan_type_i_threshold = target - full_ramanujan_fixed
+    full_ramanujan_cauchy_threshold = F(2) * (
+        target - full_ramanujan_fixed
+    )
+    full_ramanujan_cauchy = full_ramanujan_fixed + level / 2
+    return BlomerMilicevicTypeILevelAudit(
+        kloosterman_modulus_scale_exponent=sigma,
+        numerator_product_exponent=numerator,
+        target_exponent=target,
+        exposed_level_box_exponent=level,
+        ramanujan_theta=theta,
+        fixed_level_bound_exponent=fixed_level,
+        type_i_absolute_bound_exponent=type_i,
+        type_i_power_deficit=_positive_part(type_i - target),
+        ideal_level_cauchy_bound_exponent=ideal_cauchy,
+        ideal_level_cauchy_power_deficit=(
+            _positive_part(ideal_cauchy - target)
+        ),
+        uniform_type_i_level_threshold=type_i_threshold,
+        uniform_ideal_cauchy_level_threshold=ideal_cauchy_threshold,
+        uniform_type_i_has_nonnegative_level_window=(
+            type_i_threshold >= 0
+        ),
+        uniform_ideal_cauchy_has_nonnegative_level_window=(
+            ideal_cauchy_threshold >= 0
+        ),
+        selberg_fixed_level_bound_exponent=selberg_fixed,
+        selberg_type_i_level_threshold=selberg_type_i_threshold,
+        selberg_ideal_cauchy_level_threshold=selberg_cauchy_threshold,
+        selberg_ideal_cauchy_bound_exponent=selberg_cauchy,
+        selberg_ideal_cauchy_power_deficit=_positive_part(
+            selberg_cauchy - target
+        ),
+        full_ramanujan_fixed_level_bound_exponent=full_ramanujan_fixed,
+        full_ramanujan_type_i_level_threshold=(
+            full_ramanujan_type_i_threshold
+        ),
+        full_ramanujan_ideal_cauchy_level_threshold=(
+            full_ramanujan_cauchy_threshold
+        ),
+        full_ramanujan_ideal_cauchy_bound_exponent=(
+            full_ramanujan_cauchy
+        ),
+        full_ramanujan_ideal_cauchy_power_margin=_positive_part(
+            target - full_ramanujan_cauchy
+        ),
+        linnik_range_hypothesis_holds=(numerator <= F(2) * sigma),
+        level_divisibility_estimate_occurs_in_bm_proof=True,
+        exact_mobius_type_i_identity_available=True,
+        exceptional_spectrum_removed_for_level_family=False,
+        level_cauchy_bound_proved_for_qct_coefficients=False,
+        product_compatible_hard_vertex_only=True,
+        physical_coupled_kernel_restored=False,
         whole_mobius_gate_covered=False,
     )
 
@@ -14125,8 +14281,12 @@ def main() -> None:
         f"{_fmt(bm_mobius.trivial_normalized_modulus_sum_exponent)},"
         f"deficit={_fmt(bm_mobius.published_bound_deficit)},"
         "selberg="
-        f"{_fmt(bm_mobius.selberg_hypothetical_bound_exponent)},"
-        f"selberg_margin={_fmt(bm_mobius.selberg_hypothetical_margin)},"
+        f"{_fmt(bm_mobius.selberg_replacement_bound_exponent)},"
+        "selberg_deficit="
+        f"{_fmt(bm_mobius.selberg_replacement_deficit)},"
+        f"ramanujan={_fmt(bm_mobius.full_ramanujan_bound_exponent)},"
+        "ramanujan_margin="
+        f"{_fmt(bm_mobius.full_ramanujan_margin)},"
         f"linnik={bm_mobius.linnik_range_hypothesis_holds},"
         "injective="
         f"{bm_mobius.collision_free_exact_periodic_encoding_available},"
@@ -14139,6 +14299,68 @@ def main() -> None:
         "power_saving="
         f"{bm_mobius.direct_periodic_weight_adapter_has_power_saving},"
         f"covered={bm_mobius.whole_mobius_gate_covered}"
+    )
+    bm_type_i = blomer_milicevic_type_i_level_audit(
+        modulus_scale_exponent=F(3),
+        numerator_product_exponent=F(5),
+        target_exponent=F(2),
+        exposed_level_box_exponent=F(1),
+    )
+    print(
+        "large_q_transition: blomer_milicevic_type_i_level="
+        "modulus="
+        f"{_fmt(bm_type_i.kloosterman_modulus_scale_exponent)},"
+        f"numerator={_fmt(bm_type_i.numerator_product_exponent)},"
+        f"target={_fmt(bm_type_i.target_exponent)},"
+        f"level={_fmt(bm_type_i.exposed_level_box_exponent)},"
+        f"theta={_fmt(bm_type_i.ramanujan_theta)},"
+        f"fixed={_fmt(bm_type_i.fixed_level_bound_exponent)},"
+        f"type_i={_fmt(bm_type_i.type_i_absolute_bound_exponent)},"
+        f"type_i_deficit={_fmt(bm_type_i.type_i_power_deficit)},"
+        "ideal_cauchy="
+        f"{_fmt(bm_type_i.ideal_level_cauchy_bound_exponent)},"
+        "ideal_deficit="
+        f"{_fmt(bm_type_i.ideal_level_cauchy_power_deficit)},"
+        "type_i_threshold="
+        f"{_fmt(bm_type_i.uniform_type_i_level_threshold)},"
+        "cauchy_threshold="
+        f"{_fmt(bm_type_i.uniform_ideal_cauchy_level_threshold)},"
+        "type_i_window="
+        f"{bm_type_i.uniform_type_i_has_nonnegative_level_window},"
+        "cauchy_window="
+        f"{bm_type_i.uniform_ideal_cauchy_has_nonnegative_level_window},"
+        "selberg_fixed="
+        f"{_fmt(bm_type_i.selberg_fixed_level_bound_exponent)},"
+        "selberg_type_i_threshold="
+        f"{_fmt(bm_type_i.selberg_type_i_level_threshold)},"
+        "selberg_cauchy_threshold="
+        f"{_fmt(bm_type_i.selberg_ideal_cauchy_level_threshold)},"
+        "selberg_endpoint="
+        f"{_fmt(bm_type_i.selberg_ideal_cauchy_bound_exponent)},"
+        "selberg_deficit="
+        f"{_fmt(bm_type_i.selberg_ideal_cauchy_power_deficit)},"
+        "ramanujan_fixed="
+        f"{_fmt(bm_type_i.full_ramanujan_fixed_level_bound_exponent)},"
+        "ramanujan_type_i_threshold="
+        f"{_fmt(bm_type_i.full_ramanujan_type_i_level_threshold)},"
+        "ramanujan_cauchy_threshold="
+        f"{_fmt(bm_type_i.full_ramanujan_ideal_cauchy_level_threshold)},"
+        "ramanujan_endpoint="
+        f"{_fmt(bm_type_i.full_ramanujan_ideal_cauchy_bound_exponent)},"
+        "ramanujan_margin="
+        f"{_fmt(bm_type_i.full_ramanujan_ideal_cauchy_power_margin)},"
+        f"linnik={bm_type_i.linnik_range_hypothesis_holds},"
+        "divisibility="
+        f"{bm_type_i.level_divisibility_estimate_occurs_in_bm_proof},"
+        "identity="
+        f"{bm_type_i.exact_mobius_type_i_identity_available},"
+        "exceptional_removed="
+        f"{bm_type_i.exceptional_spectrum_removed_for_level_family},"
+        "cauchy_proved="
+        f"{bm_type_i.level_cauchy_bound_proved_for_qct_coefficients},"
+        f"model_only={bm_type_i.product_compatible_hard_vertex_only},"
+        f"physical={bm_type_i.physical_coupled_kernel_restored},"
+        f"covered={bm_type_i.whole_mobius_gate_covered}"
     )
     zero_free = inverse_zeta_variance_zero_free_audit()
     print(
