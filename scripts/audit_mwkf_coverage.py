@@ -540,6 +540,29 @@ class TransitionNonzeroGammaShellAudit:
 
 
 @dataclass(frozen=True)
+class TransitionGammaGraphEnergyAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    a_exponent: Fraction
+    determinant_exponent: Fraction
+    determinant_max_exponent: Fraction
+    determinant_fiber_exponent: Fraction
+    maximum_graph_degree_exponent: Fraction
+    reciprocal_cluster_vertex_energy_exponent: Fraction
+    graph_energy_bound_exponent: Fraction
+    type_ii_square_target_exponent: Fraction
+    graph_energy_target_margin: Fraction
+    coverage_lhs: Fraction
+    coverage_threshold: Fraction
+    maximum_degree_energy_inequality_exact: bool
+    product_frequency_cluster_l2_used: bool
+    mobius_cancellation_used: bool
+    phase_cancellation_between_distinct_vertices_used: bool
+    shell_covered_unconditionally: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -2653,6 +2676,74 @@ def transition_nonzero_gamma_shell_audit(
         coupled_kernel_retained=True,
         complete_nonzero_shell_estimate_required=True,
         complete_nonzero_shell_estimate_proved=False,
+        published_coverage=False,
+    )
+
+
+def transition_gamma_graph_energy_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+    determinant_exponent: Fraction,
+) -> TransitionGammaGraphEnergyAudit:
+    """Close nonzero determinant shells by graph degree times cluster L2.
+
+    For fixed b, make the factor pairs (a,s) vertices and join two
+    vertices when their determinant lies in the selected dyadic shell.
+    For fixed (a1,s1) and a2, the determinant window restricts s2 to
+    length min(D,G/A).  Hence the maximum degree is
+
+        A * (1 + min(D,G/A)).
+
+    The elementary inequality for a graph of maximum degree Delta,
+    sum_edges abs(z_x*z_y) <= Delta*sum_x abs(z_x)^2, then combines
+    with the already proved reciprocal-cluster L2 energy.  No Mobius
+    or inter-vertex phase cancellation is used.
+    """
+    distance = F(distance)
+    b_exponent = F(b_exponent)
+    determinant_exponent = F(determinant_exponent)
+    factor = transition_far_shell_factor_box_audit(
+        box,
+        distance=distance,
+        b_exponent=b_exponent,
+    )
+    determinant_max = factor.a_exponent + distance
+    if determinant_exponent < 0 or determinant_exponent > determinant_max:
+        raise ValueError("determinant shell exceeds the exact support")
+
+    determinant_fiber = max(
+        F(0),
+        min(distance, determinant_exponent - factor.a_exponent),
+    )
+    maximum_degree = factor.a_exponent + determinant_fiber
+    vertex_energy = box.rho + box.ell + box.h + distance
+    graph_bound = vertex_energy + maximum_degree
+    target = factor.type_ii_square_target_exponent
+    margin = target - graph_bound
+    coverage_lhs = distance + determinant_fiber
+    coverage_threshold = F(1) - F(1, 250)
+
+    return TransitionGammaGraphEnergyAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        a_exponent=factor.a_exponent,
+        determinant_exponent=determinant_exponent,
+        determinant_max_exponent=determinant_max,
+        determinant_fiber_exponent=determinant_fiber,
+        maximum_graph_degree_exponent=maximum_degree,
+        reciprocal_cluster_vertex_energy_exponent=vertex_energy,
+        graph_energy_bound_exponent=graph_bound,
+        type_ii_square_target_exponent=target,
+        graph_energy_target_margin=margin,
+        coverage_lhs=coverage_lhs,
+        coverage_threshold=coverage_threshold,
+        maximum_degree_energy_inequality_exact=True,
+        product_frequency_cluster_l2_used=True,
+        mobius_cancellation_used=False,
+        phase_cancellation_between_distinct_vertices_used=False,
+        shell_covered_unconditionally=margin >= 0,
         published_coverage=False,
     )
 
@@ -5660,6 +5751,30 @@ def main() -> None:
         "reciprocity_mod=1,reduces=False two_mu=True n_pair=True "
         "coupled=True exact_orbit=True square_proved=False required_gate=True "
         "proved=False covered=False"
+    )
+    transition_graph_covered = transition_gamma_graph_energy_audit(
+        transition_box,
+        distance=F(3, 4),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+    )
+    print(
+        "large_q_transition: gamma_graph_energy="
+        "theta=3/4,beta=2/3,xi=1/3,fiber=0,degree=1/3,"
+        "vertex_l2=11/4,bound=37/12,target=2497/750,"
+        "margin=123/500,lhs=3/4,threshold=249/250 "
+        "mobius=False phase=False covered=True"
+    )
+    transition_graph_residual = transition_gamma_graph_energy_audit(
+        transition_box,
+        distance=F(3, 4),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(13, 12),
+    )
+    print(
+        "large_q_transition: gamma_graph_residual="
+        "theta=3/4,beta=2/3,xi=13/12,fiber=3/4,"
+        "bound=23/6,margin=-63/125 covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

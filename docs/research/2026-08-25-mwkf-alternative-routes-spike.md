@@ -5323,6 +5323,145 @@ finite fixtures.  It keeps cluster_square_bound_independently_proved=False,
 complete_nonzero_shell_estimate_proved=False, and
 published_coverage=False.
 
+### 4.43 Unconditional low-determinant graph-energy region
+
+A positive part of (4.362) can be proved without any new cancellation.
+For fixed \(b\), let the vertices be the admissible pairs
+
+\[
+ x=(a,s),\qquad
+ a\asymp T^{1-\beta},\qquad
+ s\asymp T,\qquad
+ w=ab-ks\asymp T^\theta.
+\tag{4.367}
+\]
+
+Join \(x_1=(a_1,s_1)\) to \(x_2=(a_2,s_2)\) when
+
+\[
+ |a_1s_2-a_2s_1|\asymp T^\xi.
+\tag{4.368}
+\]
+
+For fixed \(x_1\) and \(a_2\), condition (4.368) restricts \(s_2\) to
+an interval of length \(O(T^\xi/a_1)\).  The second shifted window in
+(4.367) has length \(O(T^\theta)\).  Therefore, with
+
+\[
+ \lambda:=
+ \max\!\left(0,\min\!\left(\theta,\xi-1+\beta\right)\right),
+\tag{4.369}
+\]
+
+the maximum graph degree satisfies the uniform bound
+
+\[
+ \boxed{\Delta_{\max}\ll T^{\,1-\beta+\lambda+\varepsilon}.}
+\tag{4.370}
+\]
+
+All gcd and congruence restrictions can only decrease this degree.
+The bound also includes both signs of the determinant shell.
+
+Let \(z_x\) denote the complete product-frequency sum at the vertex
+\(x\), including \(c_U(a)\), the smooth shell weight, the endpoint
+tapers, and the coupled kernel.  Applying the same local-density
+additive large sieve as in (4.320) to the squared vertex family, before
+taking absolute values in the two product frequencies, gives
+
+\[
+ \boxed{
+ \sum_b\sum_{x\in\mathcal V_b}|z_x|^2
+ \ll_{\varepsilon,W}T^{\,2+\theta+\varepsilon}.}
+\tag{4.371}
+\]
+
+The factorization \(ab=r\) costs only the divisor multiplicity
+\(T^\varepsilon\), and (4.321) supplies the product-frequency energy.
+At \(\theta=1\), (4.371) has exponent \(3\), in agreement with the
+full zero-geometry calculation (4.349).
+
+For every finite graph of maximum degree \(\Delta_{\max}\),
+
+\[
+ \sum_{\{x,y\}\in E}|z_xz_y|
+ \le
+ \Delta_{\max}\sum_x|z_x|^2.
+\tag{4.372}
+\]
+
+This follows directly from \(2|z_xz_y|\le|z_x|^2+|z_y|^2\).
+Combining (4.370)--(4.372) proves, for the complete
+\(\Gamma\ne0\) shell,
+
+\[
+ \boxed{
+ |\mathcal G_{\theta,\beta;\xi,\gamma,\alpha}|
+ \ll_{\varepsilon,W}
+ T^{\,3-\beta+\theta+\lambda+\varepsilon}.}
+\tag{4.373}
+\]
+
+Neither Möbius cancellation nor cancellation between different
+vertices is used in (4.373).  Comparison with (4.362) gives the exact
+unconditional coverage condition
+
+\[
+\boxed{
+ \theta+\lambda\le\frac{249}{250}.}
+\tag{4.374}
+\]
+
+Equivalently, the newly covered polytope is
+
+\[
+\boxed{
+ \frac12<\theta\le\frac{249}{250},
+ \qquad
+ 0\le\xi\le
+ 1-\beta+\frac{249}{250}-\theta.}
+\tag{4.375}
+\]
+
+For example, at
+
+\[
+ (\theta,\beta,\xi)=\left(\frac34,\frac23,\frac13\right)
+\tag{4.376}
+\]
+
+one has \(\lambda=0\), graph bound exponent \(37/12\), and margin
+
+\[
+ \left(4-\frac23-\frac1{250}\right)-\frac{37}{12}
+ =\boxed{\frac{123}{500}}.
+\tag{4.377}
+\]
+
+At the largest determinant on the same distance shell,
+\(\xi=13/12\), one has \(\lambda=3/4\); (4.373) has exponent
+\(23/6\) and misses the target by \(63/125\).  At the top distance
+\(\theta=1\), even \(\lambda=0\) misses by \(1/250\).  Hence the exact
+residual after (4.374) is
+
+\[
+\boxed{
+\begin{cases}
+ \xi>1-\beta+249/250-\theta,
+   &1/2<\theta\le249/250,\\
+ 0\le\xi\le1-\beta+\theta,
+   &249/250<\theta\le1.
+\end{cases}}
+\tag{4.378}
+\]
+
+The adapter transition_gamma_graph_energy_audit records
+(4.367)--(4.378), including both a covered and an uncovered rational
+witness.  It sets shell_covered_unconditionally=True exactly on
+(4.374), but keeps published_coverage=False because this is the new
+local graph-energy argument above rather than an external theorem.  It
+does not mark the whole transition face covered.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

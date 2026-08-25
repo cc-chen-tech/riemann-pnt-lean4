@@ -1003,6 +1003,69 @@ def test_transition_nonzero_gamma_shell_has_exact_orbit_and_gate() -> None:
     assert not generic_top.published_coverage
 
 
+def test_transition_gamma_graph_energy_closes_a_strict_region() -> None:
+    """Maximum determinant-fiber degree times cluster L2 closes small xi."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_gamma_graph_energy_audit",
+        None,
+    )
+    assert adapter is not None, "Gamma graph-energy adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+
+    covered = adapter(
+        transition_box,
+        distance=F(3, 4),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+    )
+    assert covered.determinant_fiber_exponent == F(0)
+    assert covered.maximum_graph_degree_exponent == F(1, 3)
+    assert covered.reciprocal_cluster_vertex_energy_exponent == F(11, 4)
+    assert covered.graph_energy_bound_exponent == F(37, 12)
+    assert covered.type_ii_square_target_exponent == F(2497, 750)
+    assert covered.graph_energy_target_margin == F(123, 500)
+    assert covered.coverage_threshold == F(249, 250)
+    assert covered.maximum_degree_energy_inequality_exact
+    assert covered.product_frequency_cluster_l2_used
+    assert not covered.mobius_cancellation_used
+    assert not covered.phase_cancellation_between_distinct_vertices_used
+    assert covered.shell_covered_unconditionally
+    assert not covered.published_coverage
+
+    boundary = adapter(
+        transition_box,
+        distance=F(3, 4),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(869, 1500),
+    )
+    assert boundary.coverage_lhs == F(249, 250)
+    assert boundary.graph_energy_target_margin == F(0)
+    assert boundary.shell_covered_unconditionally
+
+    largest_determinant = adapter(
+        transition_box,
+        distance=F(3, 4),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(13, 12),
+    )
+    assert largest_determinant.determinant_fiber_exponent == F(3, 4)
+    assert largest_determinant.graph_energy_target_margin == -F(63, 125)
+    assert not largest_determinant.shell_covered_unconditionally
+
+    top_small_determinant = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+    )
+    assert top_small_determinant.graph_energy_target_margin == -F(1, 250)
+    assert not top_small_determinant.shell_covered_unconditionally
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2384,6 +2447,18 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "proved=False covered=False"
     ) in output
     assert (
+        "large_q_transition: gamma_graph_energy="
+        "theta=3/4,beta=2/3,xi=1/3,fiber=0,degree=1/3,"
+        "vertex_l2=11/4,bound=37/12,target=2497/750,"
+        "margin=123/500,lhs=3/4,threshold=249/250 "
+        "mobius=False phase=False covered=True"
+    ) in output
+    assert (
+        "large_q_transition: gamma_graph_residual="
+        "theta=3/4,beta=2/3,xi=13/12,fiber=3/4,"
+        "bound=23/6,margin=-63/125 covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2797,5 +2872,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"s_i=s_i^{(0)}+u_i t",
         r"2\theta-1+\frac1{250}",
         "transition_nonzero_gamma_shell_audit",
+        "### 4.43 Unconditional low-determinant graph-energy region",
+        r"\sum_{\{x,y\}\in E}|z_xz_y|",
+        r"\theta+\lambda\le\frac{249}{250}",
+        "transition_gamma_graph_energy_audit",
     ):
         assert marker in text
