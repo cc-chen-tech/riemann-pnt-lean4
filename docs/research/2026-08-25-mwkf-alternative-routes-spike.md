@@ -8482,6 +8482,177 @@ transition_general_cutoff_line_gate_audit checks (4.591)--(4.598) with
 `Fraction`, records `cutoff_choice_creates_positive_power_slack=False`,
 and keeps `cell_closed_by_registered_bounds=False`.
 
+### 4.67 BBLR joint quadratic-divisor theorem and its exact hard-face deficit
+
+The preceding audits treat the two determinant sides separately.  There is
+a stronger published comparison point that must be tested before declaring a
+new joint estimate necessary: Proposition 3.1 of
+[Bettin--Bui--Li--Radziwiłł](https://arxiv.org/html/1609.02539v1)
+(BBLR) treats
+
+\[
+ a m_1m_2-b n_1n_2=\pm h
+\tag{4.599}
+\]
+
+with arbitrary divisor-bounded coefficients in the two outer variables and
+independent smooth weights in \(h,m_1,m_2,n_1,n_2\).  This is strictly better
+matched to the present problem than first applying Cauchy to one side.
+
+Write
+
+\[
+ \alpha=1-\gamma,
+ \qquad
+ P=1+\alpha=2-\gamma.
+\tag{4.600}
+\]
+
+Here \(T^\gamma\) is the extracted denominator gcd, \(T^\alpha\) is its
+cofactor scale, and each side of the determinant equation has total product
+scale \(T^P\).  Apply the exact Möbius factorization to both Möbius-bearing
+variables on each side.  Convolve every signed atom on side \(i\) into one
+outer variable \(u_i\asymp T^{s_i}\); the resulting coefficient
+\(\lambda_i(u_i)\) is bounded by a fixed divisor function and hence by
+\(u_i^\varepsilon\).  The two remaining unsigned cofactors occupy the two
+inner BBLR slots.  Thus the exact dyadic equation has the form
+
+\[
+ u_1m_{1,1}m_{1,2}-u_2m_{2,1}m_{2,2}=h,
+ \qquad
+ s_i+\xi_{i,1}+\xi_{i,2}=P,
+\tag{4.601}
+\]
+
+where \(u_i\asymp T^{s_i}\),
+\(m_{i,j}\asymp T^{\xi_{i,j}}\), \(h\asymp T^\alpha\), and every exponent
+in (4.601) is nonnegative.  Dyadic localization supplies precisely the
+independent smooth weights allowed in Proposition 3.1; no separation of
+\(m_{i,1}m_{i,2}\) into a single product weight is being assumed.
+
+Set
+
+\[
+ S=s_1+s_2,
+ \qquad
+ M_\ast=\max(s_1,s_2).
+\tag{4.602}
+\]
+
+The exact BBLR parameter substitution is
+
+\[
+ A=T^{s_1},\qquad B=T^{s_2},\qquad
+ MN=T^{2P-S},\qquad H=T^\alpha,
+\tag{4.603}
+\]
+
+or, in the symmetric parameter used by the audit,
+\(X=(MN)^{1/2}=T^{P-S/2}\).  Both determinant sides have product scale
+\(T^P\), so the side-balance hypothesis is automatic.  The sharp form of
+BBLR Proposition 3.1 requires
+
+\[
+ H\ll(AB)^{1/2+\varepsilon};
+ \quad\text{at exponent level this is exactly}\quad S\ge 2\alpha.
+\tag{4.604}
+\]
+
+After (4.603), the two summands in its sharp error have exact exponents
+
+\[
+ E_{\rm AB}=\frac12+\alpha+S,
+ \qquad
+ E_{\rm Watt}=\frac34+\frac32\alpha+\frac12M_\ast,
+\tag{4.605}
+\]
+
+up to the displayed \(T^\varepsilon\).  Indeed, the common prefactor
+\((ABMNH^2)^{1/4}\) has exponent \(1/2+\alpha\); multiplication by
+\(AB\), respectively by
+\(H^{1/4}(A+B)^{1/2}(ABMN)^{1/8}\), gives (4.605).
+
+Without (4.604), equation (12) of Proposition 3.1 gives
+
+\[
+ E_{\rm gen,1}
+ =\frac34+\frac74\alpha+\frac14S+\frac54M_\ast,
+ \qquad
+ E_{\rm gen,2}=2\alpha.
+\tag{4.606}
+\]
+
+These follow directly from
+
+\[
+ (ABMNH^2)^{3/8}(ABH)^{1/4}(A+B)^{5/4}+H^2.
+\tag{4.607}
+\]
+
+The local target exponent is not an adjustable normalization: it is the
+side-product exponent
+
+\[
+ E_{\rm target}=P=1+\alpha.
+\tag{4.608}
+\]
+
+On the hard face \(\gamma=0\), hence \(\alpha=1\) and \(P=2\).  If
+\(S<2\), only (4.606) is available and its first exponent is minimized at
+\(S=M_\ast=0\):
+
+\[
+ \min E_{\rm gen,1}=\frac52,
+ \qquad E_{\rm gen,2}=2,
+ \qquad E_{\rm target}=2.
+\tag{4.609}
+\]
+
+If \(S\ge2\), the sharp estimate is available, but already
+\(E_{\rm AB}-E_{\rm target}=S-1/2\ge3/2\).  Therefore optimizing over
+every admissible \((s_1,s_2)\) leaves the exact best power margin
+
+\[
+ E_{\rm target}-E_{\rm error}=-\frac12.
+\tag{4.610}
+\]
+
+Thus BBLR misses the hard Möbius face by precisely \(T^{1/2}\), even after
+all signed atoms are placed in its two arbitrary-coefficient slots.
+
+The obstruction is genuinely localized.  For example, at
+
+\[
+ \gamma=\frac45,\quad \alpha=\frac15,\quad
+ s_1=s_2=\frac15,
+\tag{4.611}
+\]
+
+one has \(P=6/5\), \(S=2/5\), \(M_\ast=1/5\), \(X=T\), and (4.604)
+holds.  Equations (4.605) give
+
+\[
+ E_{\rm AB}=\frac{11}{10},
+ \qquad E_{\rm Watt}=\frac{23}{20},
+ \qquad E_{\rm target}=\frac65,
+\tag{4.612}
+\]
+
+so the error has a positive \(T^{1/20}\) margin in that cell.
+Nevertheless Proposition 3.1 also returns a Poisson main term, and BBLR
+Theorem 4.1 recombines the relevant orderings into four main terms.  Their
+exact sum after the present Möbius decomposition has not been shown to
+cancel or to be absorbed by the already registered zero mode.  Hence even
+the cell (4.611) is recorded as uncovered.  Conversely, cancelling those
+main terms would not fix (4.610): the hard-face error itself is already too
+large.
+
+The remaining power theorem can now be stated more sharply.  It must be a
+Möbius-weighted refinement of the joint BBLR quadratic-divisor estimate
+which, on \(\gamma=0\), gains at least \(T^{1/2}\) beyond (4.607), while
+retaining the pre-Cauchy recombination needed to identify its Poisson main
+term.  A separate-side trilinear estimate cannot certify this gain.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -2090,6 +2090,70 @@ def test_general_mobius_cutoff_only_redistributes_the_critical_half_volume() -> 
     assert not audit.cell_closed_by_registered_bounds
 
 
+def test_bblr_joint_quadratic_divisor_still_misses_the_hard_mobius_face() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_quadratic_divisor_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR quadratic-divisor audit is missing"
+    audit = adapter(
+        denominator_gcd_exponent=F(0),
+        left_signed_outer_exponent=F(0),
+        right_signed_outer_exponent=F(0),
+    )
+    assert audit.cofactor_exponent == F(1)
+    assert audit.side_product_exponent == F(2)
+    assert audit.total_signed_outer_exponent == F(0)
+    assert audit.maximum_signed_outer_exponent == F(0)
+    assert audit.unsigned_pair_parameter_exponent == F(2)
+    assert audit.shift_exponent == F(1)
+    assert audit.frequency_parameter_exponent == F(1)
+    assert not audit.sharp_error_formula_applicable
+    assert audit.general_error_first_exponent == F(5, 2)
+    assert audit.general_error_h_squared_exponent == F(2)
+    assert audit.best_error_exponent == F(5, 2)
+    assert audit.target_exponent == F(2)
+    assert audit.best_error_power_margin == F(-1, 2)
+    assert audit.hard_face_global_best_power_margin == F(-1, 2)
+    assert audit.outer_slots_absorb_all_signed_atoms
+    assert audit.remaining_slots_are_two_unsigned_factors_per_side
+    assert audit.arbitrary_coefficients_allowed_only_in_outer_slots
+    assert audit.independent_internal_smooth_weights_supported
+    assert audit.side_product_balance_verified
+    assert audit.outer_coefficient_divisor_bound_verified
+    assert audit.proposition_3_1_hypotheses_verified
+    assert not audit.four_main_terms_cancelled_after_mobius_recombination
+    assert not audit.published_theorem_closes_cell
+
+
+def test_bblr_sharp_error_can_save_power_before_its_main_terms_are_cancelled() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_quadratic_divisor_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR quadratic-divisor audit is missing"
+    audit = adapter(
+        denominator_gcd_exponent=F(4, 5),
+        left_signed_outer_exponent=F(1, 5),
+        right_signed_outer_exponent=F(1, 5),
+    )
+    assert audit.cofactor_exponent == F(1, 5)
+    assert audit.side_product_exponent == F(6, 5)
+    assert audit.total_signed_outer_exponent == F(2, 5)
+    assert audit.unsigned_pair_parameter_exponent == F(1)
+    assert audit.sharp_error_formula_applicable
+    assert audit.sharp_error_ab_exponent == F(11, 10)
+    assert audit.sharp_error_watt_exponent == F(23, 20)
+    assert audit.sharp_error_exponent == F(23, 20)
+    assert audit.target_exponent == F(6, 5)
+    assert audit.best_error_exponent == F(23, 20)
+    assert audit.best_error_power_margin == F(1, 20)
+    assert not audit.four_main_terms_cancelled_after_mobius_recombination
+    assert not audit.published_theorem_closes_cell
+
+
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     helper = getattr(
         coverage_audit,
@@ -3933,6 +3997,15 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "e_left=1/42,e_right=1/8,signed_sqrt=143/336,"
         "unsigned_sqrt=25/336,required=1/2,total=1/2,margin=0,"
         "identity=True,cutoff_slack=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: bblr_quadratic_divisor="
+        "hard:gamma=0,alpha=1,P=2,s1=0,s2=0,S=0,M=0,X=2,"
+        "sharp=False,general1=5/2,h2=2,best=5/2,target=2,"
+        "margin=-1/2,global_margin=-1/2;"
+        "subcritical:gamma=4/5,alpha=1/5,P=6/5,s1=1/5,s2=1/5,"
+        "S=2/5,M=1/5,X=1,sharp=True,e_ab=11/10,e_watt=23/20,"
+        "best=23/20,target=6/5,margin=1/20,main=False,covered=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "

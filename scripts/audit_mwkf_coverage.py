@@ -1007,6 +1007,41 @@ class TransitionGeneralCutoffLineGateAudit:
 
 
 @dataclass(frozen=True)
+class TransitionBBLRQuadraticDivisorAudit:
+    denominator_gcd_exponent: Fraction
+    cofactor_exponent: Fraction
+    side_product_exponent: Fraction
+    left_signed_outer_exponent: Fraction
+    right_signed_outer_exponent: Fraction
+    total_signed_outer_exponent: Fraction
+    maximum_signed_outer_exponent: Fraction
+    unsigned_pair_parameter_exponent: Fraction
+    shift_exponent: Fraction
+    frequency_parameter_exponent: Fraction
+    sharp_error_formula_applicable: bool
+    sharp_error_ab_exponent: Fraction
+    sharp_error_watt_exponent: Fraction
+    sharp_error_exponent: Fraction
+    general_error_first_exponent: Fraction
+    general_error_h_squared_exponent: Fraction
+    general_error_exponent: Fraction
+    target_exponent: Fraction
+    best_error_exponent: Fraction
+    best_error_power_margin: Fraction
+    hard_face_global_best_power_margin: Fraction
+    outer_slots_absorb_all_signed_atoms: bool
+    remaining_slots_are_two_unsigned_factors_per_side: bool
+    arbitrary_coefficients_allowed_only_in_outer_slots: bool
+    independent_internal_smooth_weights_supported: bool
+    side_product_balance_verified: bool
+    outer_coefficient_divisor_bound_verified: bool
+    proposition_3_1_hypotheses_verified: bool
+    four_main_terms_cancelled_after_mobius_recombination: bool
+    published_theorem_closes_cell: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5030,6 +5065,104 @@ def transition_general_cutoff_line_gate_audit(
     )
 
 
+def transition_bblr_quadratic_divisor_audit(
+    *,
+    denominator_gcd_exponent: Fraction,
+    left_signed_outer_exponent: Fraction,
+    right_signed_outer_exponent: Fraction,
+) -> TransitionBBLRQuadraticDivisorAudit:
+    """Map the joint line gate to BBLR's quadratic-divisor theorem.
+
+    Factor both Möbius-bearing variables on each side.  Their signed
+    atoms must all be convolved into BBLR's one arbitrary outer
+    coefficient; the two unsigned cofactors occupy m1,m2.  If a side
+    has product exponent P=2-gamma, signed exponent s_i, and unsigned
+    exponent P-s_i, then BBLR's parameters are
+
+    A=T^s1, B=T^s2, X=T^(P-(s1+s2)/2), H=T^(1-gamma), Z=T.
+
+    The sharp Proposition 3.1 error is available only when
+    s1+s2 >= 2*(1-gamma).  Otherwise the unconditional error (12) must
+    be used.  The theorem also produces four main terms; no cell is
+    covered until their exact recombination under the Möbius identity
+    has been controlled.
+    """
+    gamma = F(denominator_gcd_exponent)
+    if gamma < F(0) or gamma > F(1):
+        raise ValueError("denominator gcd exponent must lie in [0,1]")
+    alpha = F(1) - gamma
+    product = F(1) + alpha
+    left_signed = F(left_signed_outer_exponent)
+    right_signed = F(right_signed_outer_exponent)
+    if not (F(0) <= left_signed <= product):
+        raise ValueError("left signed outer exponent lies outside its side")
+    if not (F(0) <= right_signed <= product):
+        raise ValueError("right signed outer exponent lies outside its side")
+
+    signed_sum = left_signed + right_signed
+    signed_max = max(left_signed, right_signed)
+    unsigned_parameter = product - signed_sum / 2
+    sharp_applicable = signed_sum >= 2 * alpha
+
+    # BBLR Proposition 3.1's sharp error after exact substitution.
+    sharp_ab = F(1, 2) + alpha + signed_sum
+    sharp_watt = F(3, 4) + F(3, 2) * alpha + signed_max / 2
+    sharp_error = max(sharp_ab, sharp_watt)
+
+    # BBLR Proposition 3.1, equation (12), valid without that condition.
+    general_first = (
+        F(3, 4)
+        + F(7, 4) * alpha
+        + signed_sum / 4
+        + F(5, 4) * signed_max
+    )
+    general_h_squared = 2 * alpha
+    general_error = max(general_first, general_h_squared)
+
+    best_error = (
+        min(sharp_error, general_error)
+        if sharp_applicable
+        else general_error
+    )
+    target = product
+    return TransitionBBLRQuadraticDivisorAudit(
+        denominator_gcd_exponent=gamma,
+        cofactor_exponent=alpha,
+        side_product_exponent=product,
+        left_signed_outer_exponent=left_signed,
+        right_signed_outer_exponent=right_signed,
+        total_signed_outer_exponent=signed_sum,
+        maximum_signed_outer_exponent=signed_max,
+        unsigned_pair_parameter_exponent=unsigned_parameter,
+        shift_exponent=alpha,
+        frequency_parameter_exponent=F(1),
+        sharp_error_formula_applicable=sharp_applicable,
+        sharp_error_ab_exponent=sharp_ab,
+        sharp_error_watt_exponent=sharp_watt,
+        sharp_error_exponent=sharp_error,
+        general_error_first_exponent=general_first,
+        general_error_h_squared_exponent=general_h_squared,
+        general_error_exponent=general_error,
+        target_exponent=target,
+        best_error_exponent=best_error,
+        best_error_power_margin=target - best_error,
+        hard_face_global_best_power_margin=F(-1, 2),
+        outer_slots_absorb_all_signed_atoms=True,
+        remaining_slots_are_two_unsigned_factors_per_side=True,
+        arbitrary_coefficients_allowed_only_in_outer_slots=True,
+        independent_internal_smooth_weights_supported=True,
+        side_product_balance_verified=True,
+        outer_coefficient_divisor_bound_verified=True,
+        proposition_3_1_hypotheses_verified=True,
+        four_main_terms_cancelled_after_mobius_recombination=False,
+        published_theorem_closes_cell=False,
+        source=(
+            "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
+            "Proposition 3.1 and equation (12)"
+        ),
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -8979,6 +9112,25 @@ def main() -> None:
         "e_left=1/42,e_right=1/8,signed_sqrt=143/336,"
         "unsigned_sqrt=25/336,required=1/2,total=1/2,margin=0,"
         "identity=True,cutoff_slack=False,covered=False"
+    )
+    transition_bblr_hard = transition_bblr_quadratic_divisor_audit(
+        denominator_gcd_exponent=F(0),
+        left_signed_outer_exponent=F(0),
+        right_signed_outer_exponent=F(0),
+    )
+    transition_bblr_subcritical = transition_bblr_quadratic_divisor_audit(
+        denominator_gcd_exponent=F(4, 5),
+        left_signed_outer_exponent=F(1, 5),
+        right_signed_outer_exponent=F(1, 5),
+    )
+    print(
+        "large_q_transition: bblr_quadratic_divisor="
+        "hard:gamma=0,alpha=1,P=2,s1=0,s2=0,S=0,M=0,X=2,"
+        "sharp=False,general1=5/2,h2=2,best=5/2,target=2,"
+        "margin=-1/2,global_margin=-1/2;"
+        "subcritical:gamma=4/5,alpha=1/5,P=6/5,s1=1/5,s2=1/5,"
+        "S=2/5,M=1/5,X=1,sharp=True,e_ab=11/10,e_watt=23/20,"
+        "best=23/20,target=6/5,margin=1/20,main=False,covered=False"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
