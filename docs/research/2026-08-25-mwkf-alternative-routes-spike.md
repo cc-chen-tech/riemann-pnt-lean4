@@ -818,7 +818,8 @@ congruence over finite integer fixtures.
 
 This is a structural reduction, not the missing cancellation estimate.
 The coefficient in (4.41) still varies jointly with \(s,w,a\), and the
-required shell savings remain exactly those in (4.34).
+centered absolute-value savings before the primitive-fraction refinement
+below are exactly those in (4.34).
 
 ### 4.5 Pre-completion Kloosterman-fraction form
 
@@ -914,6 +915,116 @@ inverse_resonance_bcr_scales records (4.48)--(4.49).  Consequently direct
 Bettin--Chandee treatment covers no far-resonance shell; a successful
 argument must use the two Möbius weights before replacing coefficients by
 their \(L^2\) norms.
+
+### 4.6 An unconditional primitive-fraction large-sieve improvement
+
+The inverse fractions in (4.45) have a feature absent from the completed
+product fractions \(a/s\).  Since \((s,w)=1\), the fraction
+\(\bar w/s\) is reduced.  If two shell pairs give the same point modulo
+one, then
+
+\[
+ \frac{\overline{w_1}}{s_1}
+ \equiv\frac{\overline{w_2}}{s_2}\pmod1,
+\tag{4.50}
+\]
+
+uniqueness of reduced fractions first gives \(s_1=s_2\) and equality of
+the inverse residues; inversion and the centered representative in
+(4.37) then give \(w_1=w_2\).  Thus there is no fraction multiplicity.
+For distinct points with \(s_1,s_2\le2S\),
+
+\[
+ \left\|
+ \frac{\overline{w_1}}{s_1}
+ -\frac{\overline{w_2}}{s_2}
+ \right\|
+ \ge\frac1{s_1s_2}\ge\frac1{4S^2}.
+\tag{4.51}
+\]
+
+Apply the smooth separation (6.5) of the exact-audit note to (4.45).
+For one separated component, grouping \(n=h\delta_0\) produces the
+coefficient \(\nu(n)\) with
+
+\[
+ \operatorname{supp}\nu\subset\{HL\le|n|\le4HL\},
+ \qquad
+ \sum_n|\nu(n)|^2\ll_{\varepsilon,W}(HL)^{1+\varepsilon}.
+\tag{4.52}
+\]
+
+The number of \((s,w)\) pairs in a shell is \(O(SD)\).  Cauchy--Schwarz,
+(4.51), and the additive large sieve give
+
+\[
+\begin{aligned}
+ |\mathfrak G_{q,j}(D)|
+ &\ll_{\varepsilon,W}\mathscr L^{C_{\rm sep}}
+ (SD)^{1/2}
+ \left\{
+ \sum_{\substack{s\asymp S\\D<|w|\le2D\\(s,w)=1}}
+ \left|\sum_n\nu(n)e\left(-\frac{n\bar w}s\right)\right|^2
+ \right\}^{1/2}\\
+ &\ll_{\varepsilon,W}
+ \mathscr L^{C_{\rm sep}}
+ (SD)^{1/2}(HL+S^2)^{1/2}(HL)^{1/2+\varepsilon}.
+\end{aligned}
+\tag{4.53}
+\]
+
+All mollifier, Möbius, coprimality, and endpoint factors have modulus at
+most one in this application.  The separated continuous twists do not
+alter either the spacing or the \(L^2\) norm; integrating them costs only
+the displayed \(\mathscr L^{C_{\rm sep}}\).  Hence (4.53) is an
+unconditional estimate for the actual coupled box, not a new conjectural
+adapter.
+
+At the hard box, (4.53) has exponent
+
+\[
+ 7+\frac{\delta}{2}.
+\tag{4.54}
+\]
+
+Combining it with the centered absolute bound (4.31), multiplied by the
+completion prefactor \(HL/S=T^2\), yields
+
+\[
+\begin{array}{c|c|c|c}
+ \delta&\text{centered bound}&\text{large-sieve bound}
+   &\text{best remaining saving against }T^6\\ \hline
+ 1&6&15/2&0\\
+ 3/2&7&31/4&1\\
+ 2&8&8&2\\
+ 5/2&17/2&33/4&9/4\\
+ 3&9&17/2&5/2.
+\end{array}
+\tag{4.55}
+\]
+
+Equivalently, the positive-power part of the missing fixed-slope estimate
+is reduced from (4.34) to
+
+\[
+ \boxed{
+ g_{\rm residual}(\delta)=
+ \begin{cases}
+ 2\delta-2,&1\le\delta\le2,\\[1mm]
+ 1+\delta/2,&2\le\delta\le3.
+ \end{cases}}
+\tag{4.56}
+\]
+
+The improvement is strict for every \(\delta>2\); at the maximal shell it
+reduces the missing saving from \(T^3\) to \(T^{5/2}\).  The function
+primitive_fraction_large_sieve_scales records (4.51)--(4.56) and
+explicitly fixes the fraction-multiplicity exponent at zero.
+
+This still does not prove FRSD\(_B\): the shells
+\(1<\delta\le3\) retain the positive deficits in (4.56), while the
+\(\delta=1\) face needs the separate logarithmic gain already identified
+in (4.35)--(4.36).
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

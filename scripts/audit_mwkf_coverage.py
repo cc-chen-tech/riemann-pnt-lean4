@@ -203,6 +203,21 @@ class InverseResonanceBCRScales:
     published_coverage: bool
 
 
+@dataclass(frozen=True)
+class PrimitiveFractionLargeSieveScales:
+    distance: Fraction
+    fraction_family: Fraction
+    primitive_fraction_spacing: Fraction
+    fraction_multiplicity: Fraction
+    numerator_product_length: Fraction
+    large_sieve_bound: Fraction
+    centered_absolute_bound: Fraction
+    best_unconditional_bound: Fraction
+    gate_target: Fraction
+    remaining_power_saving: Fraction
+    improves_absolute_bound: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -757,6 +772,55 @@ def inverse_resonance_bcr_scales(
     )
 
 
+def primitive_fraction_large_sieve_scales(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+) -> PrimitiveFractionLargeSieveScales:
+    """Ledger for the additive large sieve on primitive ``bar(w)/s``.
+
+    The shell contains at most ``S*D`` reduced fractions.  Their spacing
+    is ``S^(-2)`` and their multiplicity is one.  After smooth separation,
+    the numerator coefficient has length ``A=H*L`` and squared L2 norm
+    ``T^(log_T A+epsilon)``.  Outer Cauchy and the additive large sieve
+    give
+
+    ``(S*D)^(1/2) * (A+S^2)^(1/2) * A^(1/2+epsilon)``.
+    """
+    shell = far_resonance_shell_scales(box, distance=distance)
+    numerator_product_length = box.ell + box.h
+    fraction_family = box.sigma + distance
+    large_sieve_bound = (
+        fraction_family / 2
+        + max(numerator_product_length, 2 * box.sigma) / 2
+        + numerator_product_length / 2
+    )
+    completion_prefactor = box.ell + box.h - box.sigma
+    centered_absolute_bound = shell.absolute_bound + completion_prefactor
+    best_unconditional_bound = min(
+        large_sieve_bound,
+        centered_absolute_bound,
+    )
+    gate_target = box.rho + box.sigma
+    return PrimitiveFractionLargeSieveScales(
+        distance=distance,
+        fraction_family=fraction_family,
+        primitive_fraction_spacing=-2 * box.sigma,
+        fraction_multiplicity=F(0),
+        numerator_product_length=numerator_product_length,
+        large_sieve_bound=large_sieve_bound,
+        centered_absolute_bound=centered_absolute_bound,
+        best_unconditional_bound=best_unconditional_bound,
+        gate_target=gate_target,
+        remaining_power_saving=_positive_part(
+            best_unconditional_bound - gate_target
+        ),
+        improves_absolute_bound=(
+            large_sieve_bound < centered_absolute_bound
+        ),
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -1104,8 +1168,17 @@ def main() -> None:
     )
     print(
         "balanced_max_a: "
-        f"far_shell_required_savings={shell_savings} "
+        f"centered_far_shell_required_savings={shell_savings} "
         f"mrt_critical_log_shortfall={_fmt(mrt.log_shortfall)}"
+    )
+    primitive_savings = ",".join(
+        f"{_fmt(distance)}:"
+        f"{_fmt(primitive_fraction_large_sieve_scales(hard, distance=distance).remaining_power_saving)}"
+        for distance in distances
+    )
+    print(
+        "balanced_max_a: "
+        f"primitive_ls_best_remaining={primitive_savings}"
     )
 
 

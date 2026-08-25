@@ -330,6 +330,34 @@ def test_inverse_resonance_bcr_deficit_worsens_across_the_shells() -> None:
         assert not audit.published_coverage
 
 
+def test_primitive_fraction_large_sieve_improves_the_two_largest_shells() -> None:
+    """Catch reintroducing product-frequency multiplicity for reduced w/s."""
+    adapter = getattr(
+        coverage_audit,
+        "primitive_fraction_large_sieve_scales",
+        None,
+    )
+    assert adapter is not None, "primitive-fraction large-sieve adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(1): (F(15, 2), F(6), F(0), False),
+        F(3, 2): (F(31, 4), F(7), F(1), False),
+        F(2): (F(8), F(8), F(2), False),
+        F(5, 2): (F(33, 4), F(33, 4), F(9, 4), True),
+        F(3): (F(17, 2), F(17, 2), F(5, 2), True),
+    }
+    for distance, want in expected.items():
+        audit = adapter(box, distance=distance)
+        assert audit.large_sieve_bound == want[0]
+        assert audit.best_unconditional_bound == want[1]
+        assert audit.remaining_power_saving == want[2]
+        assert audit.improves_absolute_bound is want[3]
+        assert audit.gate_target == F(6)
+        assert audit.fraction_multiplicity == F(0)
+        assert audit.primitive_fraction_spacing == F(-6)
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -367,9 +395,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "global_log_margin=1"
     ) in output
     assert (
-        "balanced_max_a: far_shell_required_savings="
+        "balanced_max_a: centered_far_shell_required_savings="
         "1:0,3/2:1,2:2,5/2:5/2,3:3 "
         "mrt_critical_log_shortfall=23999/3000"
+    ) in output
+    assert (
+        "balanced_max_a: primitive_ls_best_remaining="
+        "1:0,3/2:1,2:2,5/2:9/4,3:5/2"
     ) in output
 
 
