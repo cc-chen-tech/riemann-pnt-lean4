@@ -236,7 +236,8 @@ The Type-II chain surviving the diagonal audit in Section 4.2 is
  \text{global product-fiber centering (4.8t)}\ \longrightarrow\
  \text{signed Gram expansion without a triangle inequality}\ \longrightarrow\
  \text{reciprocity}\ \longrightarrow\
- \text{complementary divisor}\ \longrightarrow\
+ \text{full determinant phase (4.8c'')}\ \longrightarrow\
+ \text{completion with zero/nonzero modes}\ \longrightarrow\
  \text{Kuznetsov plus spectral large sieve}.
 \tag{4.3}
 \]
@@ -407,17 +408,42 @@ and the common-\(b\) phase
 \]
 
 All inverses in (4.8c) exist because
-\((a_i,b)=(s_i,a_ib)=1\).  Its zero-frequency congruence is equivalent,
-after multiplication by \(s_1a_1s_2a_2\), to
+\((a_i,b)=(s_i,a_ib)=1\).  Put \(y_i=s_i a_i\).  Without imposing any
+congruence, the full common phase is exactly
 
 \[
- b\mid\Delta,
+ e\!\left(\frac{\Delta\,\overline{y_1y_2}}b\right),
  \qquad
- \Delta:=n_1s_2a_2-n_2s_1a_1.
+ \Delta:=n_1y_2-n_2y_1.
+\tag{4.8c'}
+\]
+
+Reciprocity gives the second exact form
+
+\[
+ \boxed{
+ e\!\left(\frac{\Delta\,\overline{y_1y_2}}b\right)
+ =
+ e\!\left(\frac{\Delta}{b y_1y_2}\right)
+ e\!\left(-\frac{\Delta\bar b}{y_1y_2}\right).}
+\tag{4.8c''}
+\]
+
+On the balanced box,
+\(|\Delta|/(b y_1y_2)\ll T^{-1}\) up to fixed dyadic constants, so the
+first factor in (4.8c'') belongs to the smooth weight.  The second factor
+is the genuine reciprocal oscillation, with modulus \(y_1y_2\).
+
+The special congruence for which the common-\(b\) phase is \(1\) is
+
+\[
+ b\mid\Delta.
 \tag{4.8d}
 \]
 
-For \(\Delta\ne0\), the complementary divisor is the nonzero integer
+Condition (4.8d) is not present in the full expanded square.  Only on
+this special subfamily, when \(\Delta\ne0\), is the complementary divisor
+the nonzero integer
 
 \[
  c=\frac\Delta b,
@@ -436,9 +462,12 @@ where the constant 32 follows from the displayed dyadic supports of
 \tag{4.8f}
 \]
 
-Equations (4.8c)--(4.8f) are the precise complementary-divisor data that a
-Kuznetsov step must consume; neither the \(\Delta=0\) solutions nor the
-nonzero \(c\)-sum may be dropped.
+Equations (4.8c')--(4.8c'') are the phase data for the full determinant
+sum.  Equations (4.8d)--(4.8f) describe only its \(b\mid\Delta\)
+subfamily.  A completion may isolate that subfamily as a zero mode, but
+no such completion has yet been inserted in (4.6)--(4.8).  The helper
+common_b_phase_reciprocity verifies both exact phase forms and exhibits
+examples with \(b\nmid\Delta\).
 
 ### 4.2 The zero complementary divisor forces a joint dispersion audit
 
@@ -528,8 +557,9 @@ global factorization dispersion identity (4.8t), performed before a
 triangle inequality while retaining the four signed Type-I/II sectors.
 It extracts, rather than discards, an explicit single-Möbius main term.
 Only that term, the centered \(\Delta=0\) remainder, and the
-\(\Delta\ne0\) complementary-divisor sum may be passed to their
-respective estimates.  The exact-rational function
+\(\Delta\ne0\) full determinant phase may be passed to their respective
+estimates.  A complementary divisor occurs only after a completion has
+isolated the special mode (4.8d).  The exact-rational function
 type_ii_cauchy_diagonal_audit records the exponent ledger
 (4.8k)--(4.8n), not a diagonal lower bound.
 
@@ -853,17 +883,19 @@ Taking \(\varepsilon<1/1000\), (4.8ah') is smaller than the worst target
 in (4.8ah).  Thus the zero-ray obstruction in (4.8m) is an obstruction
 to the earlier balanced factorization, not to every use of (2.2).
 
-This does **not** prove the new single sector.  Reciprocity still has
-modulus
+This does **not** prove the new single sector.  The original reciprocal
+modulus still contains
 
 \[
  ab=r\asymp T^3,
 \tag{4.8ai}
 \]
 
-so the reciprocal conductor has not shortened.  Moreover, at the best
-endpoint \(\beta=199/200\), the nonzero complementary-divisor range in
-(4.8e) has exponent
+so the original reciprocal conductor has not shortened.  In the full
+post-Cauchy phase (4.8c''), the remaining reciprocal modulus is
+\(y_1y_2\asymp T^{12-2\beta}\).  Moreover, on the special
+\(b\mid\Delta\) subfamily, the shortest complementary-divisor range,
+attained at \(\beta=199/200\), has exponent
 
 \[
  5+3+\frac{401}{200}-\frac{199}{200}
@@ -871,8 +903,10 @@ endpoint \(\beta=199/200\), the nonzero complementary-divisor range in
 \tag{4.8aj}
 \]
 
-and it is longer for smaller \(\beta\).  No published adapter audited in
-this branch estimates that coupled off-diagonal.  More precisely, let
+and it is longer for smaller \(\beta\).  This exponent belongs only to
+the special subfamily (4.8d), not to every nonzero determinant.  No
+published adapter audited in this branch estimates the full coupled
+off-diagonal.  More precisely, let
 \(\mathcal E_{b,\ne0}^{(401/200)}\) be the exact expansion
 (4.6)--(4.8), with (4.8ae)--(4.8af) in place of (2.4), restricted to
 
@@ -894,11 +928,14 @@ local input for this factorization is
 \]
 
 All variables, coefficients, coprimality conditions, weights, and phases
-in LCO are exactly those in (4.6)--(4.8); the complementary integer is
-the nonzero \(c=\Delta/b\) in (4.8e).  The exact-rational function
+in LCO are exactly those in (4.6)--(4.8), with the common phase retained
+in either exact form (4.8c') or (4.8c'').  There is no global condition
+\(b\mid\Delta\); the integer \(c=\Delta/b\) from (4.8e) occurs only on
+the special subfamily (4.8d).  The exact-rational function
 long_mobius_cutoff_audit records the positive zero-ray margin and the
-unchanged off-diagonal boundary.  It deliberately sets published
-off-diagonal coverage to false: (4.8al) is unproved.
+zero-mode complementary-divisor endpoint separately from the full
+off-diagonal.  It deliberately sets published off-diagonal coverage to
+false: (4.8al) is unproved.
 
 For comparison with this new single-sector route, the remainder of
 Section 4 returns to the earlier \(U=V=T\) Type-II split.
@@ -912,9 +949,9 @@ exponent
 \tag{4.9}
 \]
 
-This is the exact quantity on which reciprocity, the complementary divisor,
-and Kuznetsov must act.  A spectral large sieve used only through coefficient
-\(L^2\) norms sees
+This is the exact quantity on which the full determinant phase, a valid
+completion, and Kuznetsov must act.  A spectral large sieve used only
+through coefficient \(L^2\) norms sees
 
 \[
  \|\mu\mathbf1_{[B_0,2B_0]}\|_2\leq B_0^{1/2},

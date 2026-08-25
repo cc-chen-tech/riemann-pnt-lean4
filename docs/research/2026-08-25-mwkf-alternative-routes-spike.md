@@ -1983,7 +1983,8 @@ specified by Section 4.2 of the Type-I/II note: first use the exact
 \(\mu*c_U\) factorization identity to extract the single-Möbius main
 term and center the remaining product fibers.  The subsequent Gram
 expansion must retain the centered/main cross term before reciprocity,
-complementary divisor, and Kuznetsov.  The currently available
+the full determinant phase, a valid zero/nonzero-mode completion, and
+Kuznetsov.  The currently available
 Cauchy-first ordering followed by cardinality-level separate majorants
 fails by the exact exponent-ledger deficit
 \(T^{(\beta-1)/2+1/500}\), uniformly for \(1\le\beta\le2\).  The new
@@ -2020,11 +2021,17 @@ allows \(U=T^{401/200}\) with no \(V\)-split.  It forces
 over the cardinality of every primitive zero-ray layer.  Divisor bounds
 and the logarithmic number of slope boxes therefore cover the entire
 \(\Delta=0\) contribution unconditionally.  This does not prove the
-theorem: \(ab\asymp T^3\) remains the reciprocal modulus and the nonzero
-complementary divisor is still as long as
-\(T^{901/100}\) even at the shortest endpoint.  The next estimate should
-therefore be formulated for this long-\(a\), short-\(b\) single sector,
-namely LCO in (4.8al) of the Type-I/II note, not for the now avoidable
+theorem: \(ab\asymp T^3\) remains in the reciprocal structure and the
+full nonzero-determinant phase is
+\[
+ e\!\left(\frac{\Delta}{b y_1y_2}\right)
+ e\!\left(-\frac{\Delta\bar b}{y_1y_2}\right).
+\]
+There is no global condition \(b\mid\Delta\).  Only that special
+zero-phase subfamily has \(c=\Delta/b\), whose shortest endpoint is
+\(T^{901/100}\).  The next estimate must therefore treat the complete
+long-\(a\), short-\(b\), nonzero-determinant sector LCO in (4.8al), not
+only its complementary-divisor zero mode and not the now avoidable
 medium-factor Type-II diagonal.
 
 The relevant published comparison points are

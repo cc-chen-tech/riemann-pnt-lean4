@@ -460,7 +460,8 @@ class LongMobiusCutoffAudit:
     v_split_omitted_exactly: bool
     reciprocal_modulus_exponent: Fraction
     reciprocal_conductor_reduced: bool
-    endpoint_complementary_divisor_exponent: Fraction
+    zero_completion_endpoint_c_exponent: Fraction
+    full_off_diagonal_imposes_b_divides_delta: bool
     published_off_diagonal_coverage: bool
 
 
@@ -2029,7 +2030,7 @@ def long_mobius_cutoff_audit(
     worst_diagonal_margin = (
         worst_spectral_target_exponent - identity_diagonal_exponent
     )
-    endpoint_complementary_divisor_exponent = (
+    zero_completion_endpoint_c_exponent = (
         box.ell
         + box.h
         + box.sigma
@@ -2057,9 +2058,10 @@ def long_mobius_cutoff_audit(
         v_split_omitted_exactly=True,
         reciprocal_modulus_exponent=box.rho,
         reciprocal_conductor_reduced=False,
-        endpoint_complementary_divisor_exponent=(
-            endpoint_complementary_divisor_exponent
+        zero_completion_endpoint_c_exponent=(
+            zero_completion_endpoint_c_exponent
         ),
+        full_off_diagonal_imposes_b_divides_delta=False,
         published_off_diagonal_coverage=False,
     )
 
@@ -2646,8 +2648,10 @@ def main() -> None:
         f"{optimized_cutoff.published_off_diagonal_coverage}"
         + " recip="
         f"{_fmt(optimized_cutoff.reciprocal_modulus_exponent)}"
-        + " c_endpoint="
-        f"{_fmt(optimized_cutoff.endpoint_complementary_divisor_exponent)}"
+        + " zero_c_endpoint="
+        f"{_fmt(optimized_cutoff.zero_completion_endpoint_c_exponent)}"
+        + " global_b_divides_delta="
+        f"{optimized_cutoff.full_off_diagonal_imposes_b_divides_delta}"
     )
 
 

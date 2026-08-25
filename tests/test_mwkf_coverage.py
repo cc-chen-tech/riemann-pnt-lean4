@@ -899,7 +899,8 @@ def test_long_mobius_cutoff_removes_only_the_cardinality_diagonal_gap() -> None:
     assert optimized.v_split_omitted_exactly
     assert optimized.reciprocal_modulus_exponent == F(3)
     assert not optimized.reciprocal_conductor_reduced
-    assert optimized.endpoint_complementary_divisor_exponent == F(901, 100)
+    assert optimized.zero_completion_endpoint_c_exponent == F(901, 100)
+    assert optimized.full_off_diagonal_imposes_b_divides_delta is False
     assert not optimized.published_off_diagonal_coverage
 
 
@@ -1014,7 +1015,8 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "1:bmax=2,margin=-251/250,diag=False;"
         "2:bmax=1,margin=-1/250,diag=False;"
         "401/200:bmax=199/200,margin=1/1000,diag=True "
-        "zero_ray=True offdiag=False recip=3 c_endpoint=901/100"
+        "zero_ray=True offdiag=False recip=3 zero_c_endpoint=901/100 "
+        "global_b_divides_delta=False"
     ) in output
 
 

@@ -61,6 +61,17 @@ class ZeroRayPhaseReduction:
     primitive_slope_removed_from_reciprocal_phase: bool
 
 
+@dataclass(frozen=True)
+class CommonBPhaseReciprocity:
+    determinant: int
+    original_phase: Fraction
+    determinant_phase: Fraction
+    smooth_real_phase: Fraction
+    dual_reciprocal_phase: Fraction
+    reciprocal_completed_phase: Fraction
+    b_divides_determinant: bool
+
+
 def proportional_diagonal_coordinates(
     *,
     n1: int,
@@ -305,6 +316,73 @@ def _normalized_modular_phase(
         raise ValueError("phase denominator is not invertible")
     residue = numerator * pow(invert, -1, modulus) % modulus
     return Fraction(residue, modulus)
+
+
+def _fractional_part(value: Fraction) -> Fraction:
+    return Fraction(value.numerator % value.denominator, value.denominator)
+
+
+def common_b_phase_reciprocity(
+    *,
+    n1: int,
+    y1: int,
+    n2: int,
+    y2: int,
+    b: int,
+) -> CommonBPhaseReciprocity:
+    """Rewrite the full common-``b`` phase without imposing ``b|Delta``.
+
+    With ``Delta=n1*y2-n2*y1`` and ``(b,y1*y2)=1``, the phase is
+
+    ``Delta*bar(y1*y2)/b``
+    `` = Delta/(b*y1*y2)-Delta*bar(b)/(y1*y2) (mod 1)``.
+
+    Divisibility by ``b`` is only a special zero mode, not a condition in
+    the original expanded square.
+    """
+    if min(y1, y2, b) < 1:
+        raise ValueError("require positive y1, y2, b")
+    product = y1 * y2
+    if gcd(b, product) != 1:
+        raise ValueError("require b coprime to y1*y2")
+
+    determinant = n1 * y2 - n2 * y1
+    original_phase = _fractional_part(
+        _normalized_modular_phase(
+            numerator=n1,
+            invert=y1,
+            modulus=b,
+        )
+        + _normalized_modular_phase(
+            numerator=-n2,
+            invert=y2,
+            modulus=b,
+        )
+    )
+    determinant_phase = _normalized_modular_phase(
+        numerator=determinant,
+        invert=product,
+        modulus=b,
+    )
+    smooth_real_phase = Fraction(determinant, b * product)
+    dual_reciprocal_phase = _normalized_modular_phase(
+        numerator=-determinant,
+        invert=b,
+        modulus=product,
+    )
+    reciprocal_completed_phase = _fractional_part(
+        smooth_real_phase + dual_reciprocal_phase
+    )
+
+    return CommonBPhaseReciprocity(
+        determinant=determinant,
+        original_phase=original_phase,
+        determinant_phase=determinant_phase,
+        smooth_real_phase=smooth_real_phase,
+        dual_reciprocal_phase=dual_reciprocal_phase,
+        reciprocal_completed_phase=reciprocal_completed_phase,
+        b_divides_determinant=determinant % b == 0,
+    )
 
 
 def zero_ray_phase_reduction(

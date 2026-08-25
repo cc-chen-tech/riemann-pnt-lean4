@@ -142,6 +142,27 @@ def test_zero_ray_reciprocal_phase_only_sees_the_k_factorization() -> None:
         assert audit.primitive_slope_removed_from_reciprocal_phase
 
 
+def test_common_b_phase_keeps_nonzero_determinants_without_divisibility() -> None:
+    """Catch imposing b|Delta before a completion has produced that mode."""
+    adapter = getattr(
+        type_identity,
+        "common_b_phase_reciprocity",
+        None,
+    )
+    assert adapter is not None, "common-b phase reciprocity helper is missing"
+
+    generic = adapter(n1=13, y1=6, n2=17, y2=35, b=11)
+    assert generic.determinant == 353
+    assert not generic.b_divides_determinant
+    assert generic.original_phase == generic.determinant_phase
+    assert generic.original_phase == generic.reciprocal_completed_phase
+
+    zero_completion_mode = adapter(n1=3, y1=6, n2=1, y2=35, b=11)
+    assert zero_completion_mode.determinant == 99
+    assert zero_completion_mode.b_divides_determinant
+    assert zero_completion_mode.original_phase == F(0)
+
+
 def test_squarefree_factorization_gives_exact_common_b_phase() -> None:
     # e(n * bar(s)/(a*b)) splits into characters modulo a and b.
     for a, b, s, n in ((5, 6, 7, 11), (7, 10, 9, -13), (11, 14, 3, 17)):
