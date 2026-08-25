@@ -2222,6 +2222,119 @@ fixed-modulus completion must retain the \(\delta\)- and \(s\)-averages
 inside a genuinely trilinear or dispersion estimate rather than apply
 the current bilinear theorem separately.
 
+### 4.18 Exact Linnik-centering audit: the existing minus one is not the diagonal subtraction
+
+The second option listed after (4.3) needs one further distinction.  For
+fixed \((r,s)\), put
+
+\[
+ Z(\Theta):=-\sum_{\substack{c\ne0\ (s)\\v\ne0\ (s)}}
+                  \Theta_{r,s}(c,v).
+\tag{4.145}
+\]
+
+The zero row and zero column identities imply, with no estimate,
+
+\[
+ \sum_{\substack{c\ne0\ (s)\\v\ne0\ (s)}}
+       \Theta_{r,s}(c,v)=\Theta_{r,s}(0,0),
+ \qquad
+ Z(\Theta)=-\Theta_{r,s}(0,0).
+\tag{4.146}
+\]
+
+Thus the exact completed amplitude is
+
+\[
+ \mathcal L_{r,s}(\Theta)
+ =\sum_{\substack{c\ne0\ (s)\\v\ne0\ (s)}}
+   \Theta_{r,s}(c,v)
+   \left\{e\left(\frac{rcv}{s}\right)-1\right\}.
+\tag{4.147}
+\]
+
+Both terms in (4.147) are linear in \(\Theta\).  In particular, for every
+\(z\in\mathbb C\),
+
+\[
+ Z(z\Theta)=zZ(\Theta),
+ \qquad
+ \mathcal L_{r,s}(z\Theta)=z\mathcal L_{r,s}(\Theta).
+\tag{4.148}
+\]
+
+The Parseval identity diagonal is instead
+
+\[
+ E(\Theta):=
+ sum_{c,v\bmod s}|\Theta_{r,s}(c,v)|^2,
+ \qquad
+ E(z\Theta)=|z|^2E(\Theta).
+\tag{4.149}
+\]
+
+Consequently the minus-one term in (4.147) cannot be identified with an
+explicit subtraction of (4.149): the two quantities have different
+homogeneity.  This is an algebraic obstruction, not an insufficient
+estimate.  The role of the minus one is exactly to remove the additive
+Fourier zero mode.
+
+More generally, a finite Linnik square has the exact expansion
+
+\[
+ \begin{aligned}
+ \mathcal V
+ &:=\sum_\xi\left|\sum_j a_jK_\xi(j)\right|^2
+   =\mathcal D+\mathcal O,\\
+ \mathcal D
+ &:=\sum_j|a_j|^2\sum_\xi|K_\xi(j)|^2,\\
+ \mathcal O
+ &:=\sum_{j\ne k}a_j\overline{a_k}
+       \sum_\xi K_\xi(j)\overline{K_\xi(k)}.
+ \end{aligned}
+\tag{4.150}
+\]
+
+Here \(\mathcal O\) is signed, whereas \(\mathcal V\ge0\).  Subtracting
+\(\mathcal D\) *after* Cauchy--Schwarz and estimating
+\(\mathcal V-\mathcal D=\mathcal O\) does not bound the positive quantity
+on the Cauchy right-hand side: it remains
+\(\mathcal V=\mathcal D+\mathcal O\).  A dispersion proof below the
+identity-diagonal scale must therefore take one of the following two
+precise forms:
+
+1. before Cauchy, replace the amplitude by an exact projected residual
+   whose own identity diagonal already has the required logarithmic
+   saving; or
+2. retain the sign of \(\mathcal O\) and prove the cancellation
+   \[
+     \boxed{\mathcal O=-\mathcal D+
+       O_{B,W}\!\left(\mathcal D(\log(2T))^{-B}\right)}.
+   \tag{4.151}
+   \]
+
+At the hard box,
+
+\[
+ R=T^3,qquad C=V=T^{1/2},qquad RCV=T^4.
+\tag{4.152}
+\]
+
+The normalized Parseval diagonal and the logarithmic local gate therefore
+both have power exponent \(4\), while global aggregation consumes seven
+logarithms.  Hence (4.151), or the amplitude-level alternative, must hold
+with \(B>7\).  Replacing (4.151) by
+\(\mathcal O\ll\mathcal D(\log T)^{-B}\) is insufficient and must be
+rejected: it leaves the full \(\mathcal D\) term.
+
+This audit does not disprove every Linnik-dispersion route.  It rejects
+the naive identification of the existing centered minus one with the
+quadratic diagonal and fixes the exact missing local condition.  No
+published estimate proving (4.151) for the two Möbius weights and the
+coupled kernel has been identified.  The exact-rational record is
+`linnik_dispersion_centering_audit`; it preserves
+`published_coverage=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -472,6 +472,39 @@ def test_averaged_chowla_keeps_an_exact_three_power_hard_box_deficit() -> None:
     )
 
 
+def test_linnik_centering_does_not_identify_a_linear_zero_mode_with_the_quadratic_diagonal() -> None:
+    """Catch using the existing minus-one term as a Parseval subtraction."""
+    adapter = getattr(
+        coverage_audit,
+        "linnik_dispersion_centering_audit",
+        None,
+    )
+    assert adapter is not None, "Linnik-dispersion centering audit is missing"
+
+    audit = adapter(
+        boundary_witnesses()["balanced_max_a"],
+        gate_log_power=F(8),
+    )
+    assert audit.parseval_diagonal_exponent == F(4)
+    assert audit.logarithmic_gate_target_exponent == F(4)
+    assert audit.power_margin == F(0)
+    assert audit.gate_log_power == F(8)
+    assert audit.aggregation_log_loss == F(7)
+    assert audit.net_log_saving == F(1)
+    assert audit.minus_one_homogeneity_degree == F(1)
+    assert audit.parseval_homogeneity_degree == F(2)
+    assert audit.minus_one_removes_fourier_zero_mode
+    assert not audit.minus_one_subtracts_parseval_diagonal
+    assert audit.variance_expansion_retains_signed_off_diagonal
+    assert not audit.diagonal_only_majorant_closes
+    assert audit.separate_quadratic_main_term_required
+    assert not audit.subtracting_diagonal_after_cauchy_sufficient
+    assert audit.signed_off_diagonal_must_cancel_diagonal
+    assert audit.amplitude_level_projection_is_alternative
+    assert audit.pre_cauchy_signed_subtraction_required
+    assert not audit.published_coverage
+
+
 def test_centered_resonance_collar_gains_twice_the_cutoff_slack() -> None:
     """Catch losing the squared resonance width in the centered sum."""
     adapter = getattr(coverage_audit, "centered_resonance_scales", None)
@@ -1241,6 +1274,12 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
     coverage_audit.main()
     output = capsys.readouterr().out
     assert (
+        "balanced_max_a: linnik_centering=diagonal=4 target=4 "
+        "linear_degree=1 energy_degree=2 minus_one_is_diagonal=False "
+        "post_cauchy_subtraction_sufficient=False "
+        "signed_cancellation=True net_log=1 covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -1476,5 +1515,14 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\frac{3501}{1000}",
         "Milićević--Qin--Wu, arXiv:2511.07550v1, Theorem 1.1",
         r"T^{13/2}>T^{9/2}",
+        "### 4.18 Exact Linnik-centering audit",
+        r"Z(z\Theta)=zZ(\Theta)",
+        r"E(z\Theta)=|z|^2E(\Theta)",
+        r"\mathcal V=\mathcal D+\mathcal O",
+        r"\mathcal O=-\mathcal D+",
+        r"RCV=T^4",
+        r"B>7",
+        "linnik_dispersion_centering_audit",
+        "published_coverage=False",
     ):
         assert marker in text

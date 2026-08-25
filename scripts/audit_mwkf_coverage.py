@@ -141,6 +141,28 @@ class AveragedChowlaShiftAudit:
 
 
 @dataclass(frozen=True)
+class LinnikDispersionCenteringAudit:
+    parseval_diagonal_exponent: Fraction
+    logarithmic_gate_target_exponent: Fraction
+    power_margin: Fraction
+    gate_log_power: Fraction
+    aggregation_log_loss: Fraction
+    net_log_saving: Fraction
+    minus_one_homogeneity_degree: Fraction
+    parseval_homogeneity_degree: Fraction
+    minus_one_removes_fourier_zero_mode: bool
+    minus_one_subtracts_parseval_diagonal: bool
+    variance_expansion_retains_signed_off_diagonal: bool
+    diagonal_only_majorant_closes: bool
+    separate_quadratic_main_term_required: bool
+    subtracting_diagonal_after_cauchy_sufficient: bool
+    signed_off_diagonal_must_cancel_diagonal: bool
+    amplitude_level_projection_is_alternative: bool
+    pre_cauchy_signed_subtraction_required: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class CenteredResonanceScales:
     product_frequency: Fraction
     coefficient_first_moment: Fraction
@@ -977,6 +999,64 @@ def averaged_chowla_shift_audit(
             "Matomaki-Radziwill-Tao, arXiv:1503.05121, Theorem 1.6"
         ),
         reasons=tuple(reasons),
+    )
+
+
+def linnik_dispersion_centering_audit(
+    box: ExponentBox,
+    *,
+    gate_log_power: Fraction,
+) -> LinnikDispersionCenteringAudit:
+    """Separate the linear zero-mode centering from a quadratic diagonal.
+
+    In the exact completed sum the term ``e(a*r/s)-1`` removes the
+    additive Fourier zero mode.  Under ``Theta -> z*Theta`` that
+    subtraction is linear in ``z``.  The identity diagonal created by a
+    dispersion square is instead ``sum |Theta|^2`` and is homogeneous of
+    degree two.  Consequently the existing minus-one term cannot be the
+    main-diagonal subtraction in a Linnik variance identity.
+
+    Expanding a genuine variance as ``D + O`` leaves a signed
+    off-diagonal ``O``.  At the hard box the separate Parseval majorant
+    for ``D`` is ``R*C*V = T^4``, exactly the power of the logarithmic
+    gate.  Hence discarding or separately majorizing ``O`` cannot produce
+    the required logarithmic saving.  Nor is a bound for ``V-D=O`` enough
+    after Cauchy: the positive right-hand side is still ``V=D+O``.  A
+    valid route must either project away a model at amplitude level before
+    Cauchy, or prove with signs retained that ``O`` cancels ``D`` to the
+    required logarithmic precision.
+    """
+    if gate_log_power <= AGGREGATION_LOG_LOSS:
+        raise ValueError(
+            "gate log power must exceed the global aggregation loss"
+        )
+
+    completion = farey_completion_scales(box)
+    parseval_diagonal = box.rho + completion.product_frequency
+    logarithmic_gate_target = (
+        completion.normalized_gate_target + TARGET_SAVING
+    )
+    power_margin = logarithmic_gate_target - parseval_diagonal
+
+    return LinnikDispersionCenteringAudit(
+        parseval_diagonal_exponent=parseval_diagonal,
+        logarithmic_gate_target_exponent=logarithmic_gate_target,
+        power_margin=power_margin,
+        gate_log_power=gate_log_power,
+        aggregation_log_loss=AGGREGATION_LOG_LOSS,
+        net_log_saving=gate_log_power - AGGREGATION_LOG_LOSS,
+        minus_one_homogeneity_degree=F(1),
+        parseval_homogeneity_degree=F(2),
+        minus_one_removes_fourier_zero_mode=True,
+        minus_one_subtracts_parseval_diagonal=False,
+        variance_expansion_retains_signed_off_diagonal=True,
+        diagonal_only_majorant_closes=(power_margin > 0),
+        separate_quadratic_main_term_required=True,
+        subtracting_diagonal_after_cauchy_sufficient=False,
+        signed_off_diagonal_must_cancel_diagonal=True,
+        amplitude_level_projection_is_alternative=True,
+        pre_cauchy_signed_subtraction_required=True,
+        published_coverage=False,
     )
 
 
@@ -3246,6 +3326,26 @@ def main() -> None:
         )
 
     hard = boxes["balanced_max_a"]
+    linnik_audit = linnik_dispersion_centering_audit(
+        hard,
+        gate_log_power=F(8),
+    )
+    print(
+        "balanced_max_a: linnik_centering="
+        f"diagonal={_fmt(linnik_audit.parseval_diagonal_exponent)} "
+        "target="
+        f"{_fmt(linnik_audit.logarithmic_gate_target_exponent)} "
+        f"linear_degree={_fmt(linnik_audit.minus_one_homogeneity_degree)} "
+        f"energy_degree={_fmt(linnik_audit.parseval_homogeneity_degree)} "
+        "minus_one_is_diagonal="
+        f"{linnik_audit.minus_one_subtracts_parseval_diagonal} "
+        "post_cauchy_subtraction_sufficient="
+        f"{linnik_audit.subtracting_diagonal_after_cauchy_sufficient} "
+        "signed_cancellation="
+        f"{linnik_audit.signed_off_diagonal_must_cancel_diagonal} "
+        f"net_log={_fmt(linnik_audit.net_log_saving)} "
+        f"covered={linnik_audit.published_coverage}"
+    )
     log_budget = centered_resonance_log_budget(
         hard,
         gate_log_power=F(8),
