@@ -2154,6 +2154,41 @@ def test_bblr_sharp_error_can_save_power_before_its_main_terms_are_cancelled() -
     assert not audit.published_theorem_closes_cell
 
 
+def test_bblr_uncompressed_lemma_keeps_the_half_power_unsigned_deficit() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_hard_unsigned_cell_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR hard unsigned-cell audit is missing"
+
+    bottom = adapter(poisson_gcd_exponent=F(0))
+    assert bottom.outer_a_exponent == bottom.outer_b_exponent == F(0)
+    assert bottom.m1_exponent == bottom.m2_exponent == F(1)
+    assert bottom.n1_exponent == bottom.n2_exponent == F(1)
+    assert bottom.shift_exponent == F(1)
+    assert bottom.lemma_3_1_z_exponent == F(5, 2)
+    assert bottom.x_interval_exponent == F(0)
+    assert bottom.poisson_gcd_count_exponent == F(0)
+    assert bottom.dyadic_layer_exponent == F(5, 2)
+    assert bottom.global_error_exponent == F(5, 2)
+    assert bottom.target_exponent == F(2)
+    assert bottom.power_margin == F(-1, 2)
+    assert bottom.one_mobius_pure_unsigned_coefficient == -1
+    assert bottom.four_mobius_pure_unsigned_coefficient == 1
+    assert not bottom.cellwise_mobius_cancellation_available
+    assert bottom.cross_outer_scale_recombination_required
+    assert not bottom.uncompressed_lemma_improves_proposition_bound
+
+    top = adapter(poisson_gcd_exponent=F(1))
+    assert top.lemma_3_1_z_exponent == F(-1)
+    assert top.x_interval_exponent == F(1)
+    assert top.poisson_gcd_count_exponent == F(1)
+    assert top.dyadic_layer_exponent == F(1)
+    assert top.initial_h_squared_error_exponent == F(2)
+    assert top.global_error_exponent == F(5, 2)
+
+
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     helper = getattr(
         coverage_audit,
@@ -4006,6 +4041,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "subcritical:gamma=4/5,alpha=1/5,P=6/5,s1=1/5,s2=1/5,"
         "S=2/5,M=1/5,X=1,sharp=True,e_ab=11/10,e_watt=23/20,"
         "best=23/20,target=6/5,margin=1/20,main=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: bblr_unsigned_recombination="
+        "one=-1,four=1,outer_recombination=True;"
+        "lemma15:d0:z=5/2,x=0,dcount=0,layer=5/2;"
+        "d1:z=-1,x=1,dcount=1,layer=1;"
+        "global=5/2,target=2,margin=-1/2,improved=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "

@@ -1042,6 +1042,32 @@ class TransitionBBLRQuadraticDivisorAudit:
 
 
 @dataclass(frozen=True)
+class TransitionBBLRHardUnsignedCellAudit:
+    poisson_gcd_exponent: Fraction
+    outer_a_exponent: Fraction
+    outer_b_exponent: Fraction
+    m1_exponent: Fraction
+    m2_exponent: Fraction
+    n1_exponent: Fraction
+    n2_exponent: Fraction
+    shift_exponent: Fraction
+    lemma_3_1_z_exponent: Fraction
+    x_interval_exponent: Fraction
+    poisson_gcd_count_exponent: Fraction
+    dyadic_layer_exponent: Fraction
+    initial_h_squared_error_exponent: Fraction
+    global_error_exponent: Fraction
+    target_exponent: Fraction
+    power_margin: Fraction
+    one_mobius_pure_unsigned_coefficient: int
+    four_mobius_pure_unsigned_coefficient: int
+    cellwise_mobius_cancellation_available: bool
+    cross_outer_scale_recombination_required: bool
+    uncompressed_lemma_improves_proposition_bound: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5163,6 +5189,58 @@ def transition_bblr_quadratic_divisor_audit(
     )
 
 
+def transition_bblr_hard_unsigned_cell_audit(
+    *,
+    poisson_gcd_exponent: Fraction,
+) -> TransitionBBLRHardUnsignedCellAudit:
+    """Retain BBLR Lemma 3.1's scale dependence in the worst hard cell.
+
+    The all-unsigned term in four exact Möbius decompositions has
+    ``A=B=1``, ``M1=M2=N1=N2=T`` and ``H=T``.  In equation (15), on
+    ``d=T^eta``, the bound for ``Z_d`` has exponent
+    ``5/2-(7/2)eta``.  Its x-interval and the number of d in the dyadic
+    layer each have exponent ``eta``.  The layer is therefore
+    ``5/2-(3/2)eta`` and the d=1 layer reproduces Proposition 3.1's
+    ``T^(5/2)`` error exactly.
+    """
+    eta = F(poisson_gcd_exponent)
+    if eta < F(0) or eta > F(1):
+        raise ValueError("Poisson gcd exponent must lie in [0,1]")
+    z_exponent = F(5, 2) - F(7, 2) * eta
+    x_exponent = eta
+    d_count_exponent = eta
+    layer_exponent = z_exponent + x_exponent + d_count_exponent
+    global_error = F(5, 2)
+    target = F(2)
+    return TransitionBBLRHardUnsignedCellAudit(
+        poisson_gcd_exponent=eta,
+        outer_a_exponent=F(0),
+        outer_b_exponent=F(0),
+        m1_exponent=F(1),
+        m2_exponent=F(1),
+        n1_exponent=F(1),
+        n2_exponent=F(1),
+        shift_exponent=F(1),
+        lemma_3_1_z_exponent=z_exponent,
+        x_interval_exponent=x_exponent,
+        poisson_gcd_count_exponent=d_count_exponent,
+        dyadic_layer_exponent=layer_exponent,
+        initial_h_squared_error_exponent=F(2),
+        global_error_exponent=global_error,
+        target_exponent=target,
+        power_margin=target - global_error,
+        one_mobius_pure_unsigned_coefficient=-1,
+        four_mobius_pure_unsigned_coefficient=1,
+        cellwise_mobius_cancellation_available=False,
+        cross_outer_scale_recombination_required=True,
+        uncompressed_lemma_improves_proposition_bound=False,
+        source=(
+            "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
+            "Proposition 3.1 equations (14)--(16)"
+        ),
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -9131,6 +9209,28 @@ def main() -> None:
         "subcritical:gamma=4/5,alpha=1/5,P=6/5,s1=1/5,s2=1/5,"
         "S=2/5,M=1/5,X=1,sharp=True,e_ab=11/10,e_watt=23/20,"
         "best=23/20,target=6/5,margin=1/20,main=False,covered=False"
+    )
+    transition_bblr_unsigned_d0 = transition_bblr_hard_unsigned_cell_audit(
+        poisson_gcd_exponent=F(0),
+    )
+    transition_bblr_unsigned_d1 = transition_bblr_hard_unsigned_cell_audit(
+        poisson_gcd_exponent=F(1),
+    )
+    print(
+        "large_q_transition: bblr_unsigned_recombination="
+        "one=-1,four=1,outer_recombination=True;"
+        f"lemma15:d0:z={_fmt(transition_bblr_unsigned_d0.lemma_3_1_z_exponent)},"
+        f"x={_fmt(transition_bblr_unsigned_d0.x_interval_exponent)},"
+        f"dcount={_fmt(transition_bblr_unsigned_d0.poisson_gcd_count_exponent)},"
+        f"layer={_fmt(transition_bblr_unsigned_d0.dyadic_layer_exponent)};"
+        f"d1:z={_fmt(transition_bblr_unsigned_d1.lemma_3_1_z_exponent)},"
+        f"x={_fmt(transition_bblr_unsigned_d1.x_interval_exponent)},"
+        f"dcount={_fmt(transition_bblr_unsigned_d1.poisson_gcd_count_exponent)},"
+        f"layer={_fmt(transition_bblr_unsigned_d1.dyadic_layer_exponent)};"
+        f"global={_fmt(transition_bblr_unsigned_d0.global_error_exponent)},"
+        f"target={_fmt(transition_bblr_unsigned_d0.target_exponent)},"
+        f"margin={_fmt(transition_bblr_unsigned_d0.power_margin)},"
+        "improved=False"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

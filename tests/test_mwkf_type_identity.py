@@ -122,6 +122,43 @@ def test_type_sector_convolution_extracts_negative_mobius_above_cutoff() -> None
             assert adapter(n=n, cutoff_u=cutoff) == expected
 
 
+def test_pure_unsigned_mobius_sector_is_exactly_minus_one() -> None:
+    """Catch estimating the zero-outer BBLR cell before recombination."""
+    adapter = getattr(
+        type_identity,
+        "mobius_unsigned_sector_recombination",
+        None,
+    )
+    assert adapter is not None, "unsigned-sector recombination helper is missing"
+
+    for n, cutoff in ((30, 5), (210, 10), (2310, 20)):
+        audit = adapter(n=n, cutoff_u=cutoff)
+        assert audit.mobius_value == mobius(n)
+        assert audit.pure_unsigned_outer_product == 1
+        assert audit.pure_unsigned_contribution == -1
+        assert audit.nontrivial_signed_contribution == mobius(n) + 1
+        assert audit.recombined_contribution == mobius(n)
+        assert sum(value for _, value in audit.outer_contributions) == mobius(n)
+        assert audit.recombination_identity_verified
+
+
+def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
+    """The worst BBLR box loses every Möbius sign before global recombination."""
+    adapter = getattr(
+        type_identity,
+        "four_mobius_unsigned_sector_recombination",
+        None,
+    )
+    assert adapter is not None, "four-Möbius recombination helper is missing"
+
+    audit = adapter(values=(30, 6, 10, 14), cutoff_u=5)
+    assert audit.recombined_mobius_product == -1
+    assert audit.pure_unsigned_bblr_box_contribution == 1
+    assert audit.all_other_boxes_contribution == -2
+    assert audit.pure_box_is_unweighted_and_positive
+    assert audit.recombination_identity_verified
+
+
 def test_two_general_zero_ray_sectors_move_mobius_to_primitive_slopes() -> None:
     """Catch claiming residual Möbius cancellation in the common k variable."""
     adapter = getattr(

@@ -67,6 +67,30 @@ class RestrictedZeroRayPairConvolution:
 
 
 @dataclass(frozen=True)
+class MobiusUnsignedSectorRecombination:
+    n: int
+    cutoff_u: int
+    mobius_value: int
+    pure_unsigned_outer_product: int
+    pure_unsigned_contribution: int
+    nontrivial_signed_contribution: int
+    recombined_contribution: int
+    outer_contributions: tuple[tuple[int, int], ...]
+    recombination_identity_verified: bool
+
+
+@dataclass(frozen=True)
+class FourMobiusUnsignedSectorRecombination:
+    values: tuple[int, int, int, int]
+    cutoff_u: int
+    recombined_mobius_product: int
+    pure_unsigned_bblr_box_contribution: int
+    all_other_boxes_contribution: int
+    pure_box_is_unweighted_and_positive: bool
+    recombination_identity_verified: bool
+
+
+@dataclass(frozen=True)
 class ZeroRayPhaseReduction:
     s_u: int
     a_u: int
@@ -543,6 +567,88 @@ def restricted_truncated_mobius_convolution(
         mobius(s) * c_u(n // s, cutoff_u)
         for s in divisors(n)
         if n // s > cutoff_u
+    )
+
+
+def mobius_unsigned_sector_recombination(
+    *,
+    n: int,
+    cutoff_u: int,
+) -> MobiusUnsignedSectorRecombination:
+    """Group the exact Type identity by its signed outer product.
+
+    For ``n>U``, expand
+
+    ``mu(n)=-sum_(d*e*y=n, d*e>U, d<=U) mu(d)mu(y)``.
+
+    BBLR can place ``d*y`` in an arbitrary outer coefficient and the
+    unsigned quotient ``e`` in an inner slot.  The outer-product-one
+    sector is uniquely ``d=y=1`` and therefore contributes ``-1`` for
+    every ``n>U``.  Its cancellation is visible only after all nontrivial
+    outer products have been recombined.
+    """
+    if n <= cutoff_u or cutoff_u < 1:
+        raise ValueError("require n>cutoff_u>=1")
+
+    contributions: dict[int, int] = {}
+    for d in divisors(n):
+        if d > cutoff_u or mobius(d) == 0:
+            continue
+        quotient = n // d
+        for y in divisors(quotient):
+            coefficient = -mobius(d) * mobius(y)
+            if coefficient == 0:
+                continue
+            e = quotient // y
+            if d * e <= cutoff_u:
+                continue
+            outer_product = d * y
+            contributions[outer_product] = (
+                contributions.get(outer_product, 0) + coefficient
+            )
+
+    pure = contributions.get(1, 0)
+    recombined = sum(contributions.values())
+    expected = mobius(n)
+    return MobiusUnsignedSectorRecombination(
+        n=n,
+        cutoff_u=cutoff_u,
+        mobius_value=expected,
+        pure_unsigned_outer_product=1,
+        pure_unsigned_contribution=pure,
+        nontrivial_signed_contribution=recombined - pure,
+        recombined_contribution=recombined,
+        outer_contributions=tuple(sorted(contributions.items())),
+        recombination_identity_verified=(pure == -1 and recombined == expected),
+    )
+
+
+def four_mobius_unsigned_sector_recombination(
+    *,
+    values: tuple[int, int, int, int],
+    cutoff_u: int,
+) -> FourMobiusUnsignedSectorRecombination:
+    """Identify the all-unsigned cell in four simultaneous Type identities."""
+    if len(values) != 4:
+        raise ValueError("require exactly four Möbius variables")
+    one_variable = tuple(
+        mobius_unsigned_sector_recombination(n=n, cutoff_u=cutoff_u)
+        for n in values
+    )
+    recombined_product = 1
+    pure_product = 1
+    for audit in one_variable:
+        recombined_product *= audit.recombined_contribution
+        pure_product *= audit.pure_unsigned_contribution
+    verified = all(audit.recombination_identity_verified for audit in one_variable)
+    return FourMobiusUnsignedSectorRecombination(
+        values=values,
+        cutoff_u=cutoff_u,
+        recombined_mobius_product=recombined_product,
+        pure_unsigned_bblr_box_contribution=pure_product,
+        all_other_boxes_contribution=recombined_product - pure_product,
+        pure_box_is_unweighted_and_positive=(pure_product == 1),
+        recombination_identity_verified=verified,
     )
 
 

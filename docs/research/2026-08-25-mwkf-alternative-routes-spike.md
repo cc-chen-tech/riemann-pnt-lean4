@@ -1823,7 +1823,7 @@ but replacing the \(e\)-coefficient by one is not: the exact support
 still includes
 
 \[
- \mu^2(dbe)=1,qquad (dbe,sq)=1.
+ \mu^2(dbe)=1,\qquad (dbe,sq)=1.
 \tag{4.119}
 \]
 
@@ -6940,7 +6940,7 @@ In particular the common factor carries no residual Möbius sign.  Let
  D/G<|h|\le2D/G,\qquad
  T<r_i=\rho_i+(a,b)_i n\le2T,\\
  w_i=r_i-ks_i\ \text{in its fixed signed dyadic interval},\\
- (r_i,s_i)=1,qquad(q,r_1r_2s_1s_2)=1,
+ (r_i,s_i)=1,\qquad(q,r_1r_2s_1s_2)=1,
 \end{gathered}
 \tag{4.499}
 \]
@@ -8647,11 +8647,120 @@ the cell (4.611) is recorded as uncovered.  Conversely, cancelling those
 main terms would not fix (4.610): the hard-face error itself is already too
 large.
 
-The remaining power theorem can now be stated more sharply.  It must be a
-Möbius-weighted refinement of the joint BBLR quadratic-divisor estimate
-which, on \(\gamma=0\), gains at least \(T^{1/2}\) beyond (4.607), while
-retaining the pre-Cauchy recombination needed to identify its Poisson main
-term.  A separate-side trilinear estimate cannot certify this gain.
+Within the sufficient DCV/square-function route, the remaining power theorem
+can now be stated more sharply.  It must be a Möbius-weighted refinement of
+the joint BBLR quadratic-divisor estimate which, on \(\gamma=0\), gains at
+least \(T^{1/2}\) beyond (4.607), while retaining the recombination needed to
+identify its Poisson main term.  This refinement is not asserted to be a
+necessary consequence of the original pre-Cauchy sum: cancellation among the
+slope family can still avoid the DCV majorant.  A separate-side trilinear
+estimate cannot certify the gain inside the DCV route.
+
+### 4.68 The worst BBLR box is an exact unsigned sector, not a scale artefact
+
+The hard-face deficit in (4.610) could still be misleading if it arose only
+because Proposition 3.1 suppresses the four individual inner scales.  The
+exact Möbius identity and the uncompressed proof of that proposition rule out
+this possibility.
+
+For \(n>U\), group the approved finite identity by the product of its two
+signed atoms.  Define
+
+\[
+ C_U(n;u):=-
+ \sum_{\substack{dey=n\\de>U,\ d\le U\\dy=u}}
+ \mu(d)\mu(y).
+\tag{4.613}
+\]
+
+Then finite reindexing gives
+
+\[
+ \boxed{\mu(n)=\sum_{u\ge1}C_U(n;u).}
+\tag{4.614}
+\]
+
+The term \(u=1\) is unique: it forces \(d=y=1\) and \(e=n\).  Therefore
+
+\[
+ \boxed{C_U(n;1)=-1,
+ \qquad \sum_{u>1}C_U(n;u)=\mu(n)+1.}
+\tag{4.615}
+\]
+
+Apply (4.614) to the four Möbius-bearing entries of the balanced
+quadratic-divisor box.  If those entries are \(n_1,\ldots,n_4\), then
+
+\[
+ \prod_{i=1}^4\mu(n_i)
+ =\sum_{u_1,\ldots,u_4\ge1}
+   \prod_{i=1}^4 C_U(n_i;u_i),
+\tag{4.616}
+\]
+
+whereas the all-unsigned cell is exactly
+
+\[
+ \boxed{\prod_{i=1}^4C_U(n_i;1)=(-1)^4=1.}
+\tag{4.617}
+\]
+
+Thus the BBLR cell \(s_1=s_2=0\) really has a positive unweighted outer
+coefficient.  None of the original four Möbius signs survives inside that
+cell.  They are restored only by summing it together with every nontrivial
+outer-product scale in (4.616).  A triangle inequality between those scales
+irreversibly removes the relevant cancellation.
+
+It remains to test the scale-dependent estimate before BBLR compress it to
+(4.607).  In the all-unsigned hard cell the original variable ranges force
+
+\[
+ A=B=1,\qquad
+ M_1=M_2=N_1=N_2=T,\qquad H=T.
+\tag{4.618}
+\]
+
+This is balanced, not an extreme unbalanced allocation.  On the Poisson gcd
+layer \(d\asymp T^\eta\), equation (15) of BBLR Lemma 3.1 gives
+
+\[
+ Z_{\pm,d}(x)\ll T^{5/2-(7/2)\eta+\varepsilon}.
+\tag{4.619}
+\]
+
+The \(x\)-interval in their equation (14) has exponent \(\eta\), and a
+dyadic \(d\)-layer contains \(T^{\eta+o(1)}\) integers.  Hence its complete
+contribution has exponent
+
+\[
+ \boxed{E_d=\frac52-\frac32\eta.}
+\tag{4.620}
+\]
+
+The maximum occurs at \(d\asymp1\):
+
+\[
+ \max_{0\le\eta\le1}E_d=\frac52.
+\tag{4.621}
+\]
+
+The separate approximation error in equation (14) is \(H^2T^\varepsilon\),
+of exponent two, so it does not change (4.621).  The uncompressed proof
+therefore reproduces exactly the half-power deficit in (4.610); no hidden
+choice of \(M_i,N_i\) improves it.
+
+The finite helpers `mobius_unsigned_sector_recombination` and
+`four_mobius_unsigned_sector_recombination` verify (4.613)--(4.617) on
+integer fixtures.  The adapter
+`transition_bblr_hard_unsigned_cell_audit` records (4.618)--(4.621) with
+`Fraction`.  This is a no-go result only for cellwise use of BBLR.  It is
+not a lower bound for the original signed sum.  The two remaining logical
+options are now disjoint:
+
+1. prove a BBLR-strength joint estimate after summing all outer scales in
+   (4.616), before any triangle inequality; or
+2. return to the pre-Cauchy slope family (4.457), where cancellation among
+   slopes need not pass through the positive DCV square function.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
