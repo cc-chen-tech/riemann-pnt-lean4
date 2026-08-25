@@ -11387,6 +11387,88 @@ open rather than replacing it by the stronger pointwise statement.  In
 particular it records `equal_collapsed_product_face_present=True` and
 `uniform_ratio_frequency_triangle_gate_admissible=False`.
 
+### 4.97 Physical ratio recombination does not annihilate the primitive equal face
+
+The measure-zero caveat after (4.760) leaves open whether performing the
+two ratio integrals first might kill the equal-product face algebraically.
+It does not.  For a physical one-side weight \(\Phi\), Mellin inversion
+returns the finite coefficient
+
+\[
+ \boxed{
+ A_{U,e,\Phi}(c)
+ =\sum_{uj=c}\lambda_{U,e}(u)\Phi(u,j)
+ =-\sum_{dyj=c\atop d\le U<de}
+   \mu(d)\mu(y)\Phi(dy,j).}
+\tag{4.762}
+\]
+
+Before separating the four cross-coprimalities, the coefficient on the
+primitive equal face \(c=d\) is therefore
+
+\[
+ \boxed{
+ \begin{aligned}
+ B_{U,e,e';\Phi,\Phi'}(c;x,y)
+ :=\sum_{u\mid c}\sum_{v\mid c\atop
+       (u,v)=(u,y)=(v,x)=1}
+ &\lambda_{U,e}(u)\lambda_{U,e'}(v)\\
+ &\times\Phi(u,c/u)\overline{\Phi'(v,c/v)}.
+ \end{aligned}}
+\tag{4.763}
+\]
+
+Here \((x,y)=1\) already follows when \(x-y=1\).  Formula (4.763) is
+the direct physical recombination of the allocation tensors, so it does
+not take absolute values in the ratio frequencies.
+
+There is no universal zero in (4.763).  Take
+
+\[
+ U=5,\qquad e=e'=10,\qquad c=35,\qquad (x,y)=(12,11),
+\]
+
+and retain the balanced factor pairs \(u,v\in\{5,7\}\).  Directly from
+(4.745),
+
+\[
+ \lambda_{5,10}(5)=2,\qquad \lambda_{5,10}(7)=1.
+\]
+
+The two surviving primitive pairs are \((u,v)=(5,7),(7,5)\); all three
+cross gcds in (4.763) are one.  With the physical weights equal to one
+on these pairs,
+
+\[
+ \boxed{B_{5,10,10}(35;12,11)=2\cdot1+1\cdot2=4.}
+\tag{4.764}
+\]
+
+This finite witness proves only a structural statement: joint Mellin
+inversion and primitive gcd recombination do not by themselves annihilate
+the Chowla face.  It does not isolate a uniformly smooth asymptotic box
+and is not a lower bound for the original remainder.  Combined with
+(4.760), however, it forbids two common enlargements of the sufficient
+gate: estimating allocation tensors by a triangle inequality, or replacing
+the exact inherited physical kernel by an arbitrary smooth tensor class.
+Any viable dispersion estimate must keep the complete outer-scale sum and
+the specific kernel coefficients together:
+
+\[
+ \boxed{
+ \texttt{primitive_equal_face_coefficient_can_be_nonzero}=\mathrm{True},
+ \qquad
+ \texttt{arbitrary_smooth_weight_enlargement_admissible}=\mathrm{False}.}
+\tag{4.765}
+\]
+
+The helper `primitive_equal_face_divisor_coefficient` evaluates (4.763)
+as a finite integer sum and verifies (4.764).  The adapter
+`physical_joint_ratio_recombination_audit` keeps the centered coupled
+dispersion estimate and the whole signed hard face explicitly unproved;
+it records `primitive_equal_face_coefficient_can_be_nonzero=True` and
+`arbitrary_smooth_weight_enlargement_admissible=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

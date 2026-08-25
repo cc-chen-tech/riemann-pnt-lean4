@@ -2495,6 +2495,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.761}",
         "equal_collapsed_product_face_present=True",
         "uniform_ratio_frequency_triangle_gate_admissible=False",
+        "### 4.97 Physical ratio recombination does not annihilate the primitive equal face",
+        "\\tag{4.762}",
+        "\\tag{4.765}",
+        "primitive_equal_face_coefficient_can_be_nonzero=True",
+        "arbitrary_smooth_weight_enlargement_admissible=False",
     ):
         assert marker in note
 
@@ -2684,6 +2689,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "zero_ratio_mobius=True,chowla=True,ordinary_chowla=False,"
         "log_little_o=True,pointwise_triangle=False,joint_ratio=True,"
         "type_ii=False,whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: physical_joint_ratio_recombination="
+        "finite_kernel=True,equal_face_nonzero=True,witness=4,"
+        "joint_mellin_annihilates=False,arbitrary_weight=False,"
+        "allocation_triangle=False,face_separate=False,"
+        "full_outer_coupling=True,centered_dispersion=False,"
+        "whole_face=False"
     ) in report
 
 
@@ -3738,6 +3751,48 @@ def test_equal_collapsed_product_face_contains_fixed_shift_chowla() -> None:
     assert endpoint.joint_ratio_integral_must_remain_coupled
     assert not endpoint.coupled_ratio_mellin_type_ii_bound_proved
     assert not endpoint.whole_signed_hard_face_covered
+
+
+def test_physical_primitive_equal_face_coefficient_survives_recombination() -> None:
+    helper = getattr(
+        coverage_audit,
+        "primitive_equal_face_divisor_coefficient",
+        None,
+    )
+    assert helper is not None, "physical equal-face coefficient helper is missing"
+    exact = helper(
+        cutoff=5,
+        left_cofactor=10,
+        right_cofactor=10,
+        collapsed_product=35,
+        x=12,
+        y=11,
+        allowed_left_factors=(5, 7),
+        allowed_right_factors=(5, 7),
+    )
+    assert exact["fixed_shift"] == 1
+    assert exact["primitive_terms_only"]
+    assert exact["coefficient"] == 4
+    assert exact["nonzero_primitive_equal_face_coefficient"]
+    assert set(exact["contributing_factor_pairs"]) == {(5, 7), (7, 5)}
+
+    adapter = getattr(
+        coverage_audit,
+        "physical_joint_ratio_recombination_audit",
+        None,
+    )
+    assert adapter is not None, "physical ratio-recombination audit is missing"
+    audit = adapter()
+    assert audit.ratio_mellin_recombines_to_finite_divisor_kernel
+    assert audit.primitive_equal_face_coefficient_can_be_nonzero
+    assert audit.witness_equal_face_coefficient == 4
+    assert not audit.joint_ratio_integration_alone_annihilates_chowla_face
+    assert not audit.arbitrary_smooth_weight_enlargement_admissible
+    assert not audit.allocationwise_triangle_inequality_admissible
+    assert not audit.equal_face_separate_bound_available_unconditionally
+    assert audit.full_outer_scale_and_kernel_sum_must_remain_coupled
+    assert not audit.centered_coupled_dispersion_bound_proved
+    assert not audit.whole_signed_hard_face_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

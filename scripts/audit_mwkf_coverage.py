@@ -1607,6 +1607,20 @@ class CollapsedChowlaFaceAudit:
 
 
 @dataclass(frozen=True)
+class PhysicalJointRatioRecombinationAudit:
+    ratio_mellin_recombines_to_finite_divisor_kernel: bool
+    primitive_equal_face_coefficient_can_be_nonzero: bool
+    witness_equal_face_coefficient: int
+    joint_ratio_integration_alone_annihilates_chowla_face: bool
+    arbitrary_smooth_weight_enlargement_admissible: bool
+    allocationwise_triangle_inequality_admissible: bool
+    equal_face_separate_bound_available_unconditionally: bool
+    full_outer_scale_and_kernel_sum_must_remain_coupled: bool
+    centered_coupled_dispersion_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7990,6 +8004,120 @@ def collapsed_chowla_face_audit(
     )
 
 
+def primitive_equal_face_divisor_coefficient(
+    *,
+    cutoff: int,
+    left_cofactor: int,
+    right_cofactor: int,
+    collapsed_product: int,
+    x: int,
+    y: int,
+    allowed_left_factors: tuple[int, ...],
+    allowed_right_factors: tuple[int, ...],
+) -> dict[str, int | bool | tuple[tuple[int, int], ...]]:
+    """Recombine the two physical divisor kernels on ``c=d``.
+
+    The hidden factors ``u,v`` retain the primitive restrictions
+    ``(u,v)=(u,y)=(v,x)=1``.  The allowed-factor tuples model a fixed
+    pair of smooth dyadic boxes; the complementary dual factors are
+    forced to be ``j=c/u`` and ``k=c/v``.  This finite sum checks
+    whether physical ratio-Mellin inversion itself kills the equal
+    collapsed-product face.
+    """
+    if min(
+        cutoff,
+        left_cofactor,
+        right_cofactor,
+        collapsed_product,
+        x,
+        y,
+    ) <= 0:
+        raise ValueError(
+            "cutoffs, factors, products, and long variables must be positive"
+        )
+
+    def divisors(n: int) -> tuple[int, ...]:
+        return tuple(d for d in range(1, n + 1) if n % d == 0)
+
+    def signed_atom(u: int, cofactor: int) -> int:
+        return -sum(
+            _finite_mobius(d) * _finite_mobius(u // d)
+            for d in divisors(u)
+            if d <= cutoff < d * cofactor
+        )
+
+    left = set(allowed_left_factors)
+    right = set(allowed_right_factors)
+    terms: list[tuple[int, int, int]] = []
+    for u in divisors(collapsed_product):
+        if u not in left:
+            continue
+        for v in divisors(collapsed_product):
+            if v not in right:
+                continue
+            if gcd(u, v) != 1 or gcd(u, y) != 1 or gcd(v, x) != 1:
+                continue
+            value = signed_atom(u, left_cofactor) * signed_atom(
+                v,
+                right_cofactor,
+            )
+            if value:
+                terms.append((u, v, value))
+    coefficient = sum(value for _, _, value in terms)
+    pairs = tuple((u, v) for u, v, _ in terms)
+    return {
+        "fixed_shift": x - y,
+        "coefficient": coefficient,
+        "contributing_factor_pairs": pairs,
+        "primitive_terms_only": all(
+            gcd(u, v) == gcd(u, y) == gcd(v, x) == 1
+            for u, v, _ in terms
+        ),
+        "nonzero_primitive_equal_face_coefficient": coefficient != 0,
+    }
+
+
+def physical_joint_ratio_recombination_audit(
+) -> PhysicalJointRatioRecombinationAudit:
+    """Record the exact physical-kernel obstruction after Mellin inversion.
+
+    Recombining the two ratio integrals restores a finite sum over the
+    hidden divisor factors.  The primitive restrictions couple those
+    factors, but the coupled coefficient need not vanish: the exact
+    fixture ``U=5, e=e'=10, c=35, x=12, y=11`` and balanced factors
+    ``u,v in {5,7}`` has coefficient four.  Thus neither joint Mellin
+    inversion nor primitive gcd recombination universally removes the
+    fixed-shift face.  A proof must use the exact sum over all outer
+    scales and the inherited kernel, rather than enlarge it to arbitrary
+    smooth tensors and estimate allocation cells separately.
+    """
+    witness = primitive_equal_face_divisor_coefficient(
+        cutoff=5,
+        left_cofactor=10,
+        right_cofactor=10,
+        collapsed_product=35,
+        x=12,
+        y=11,
+        allowed_left_factors=(5, 7),
+        allowed_right_factors=(5, 7),
+    )
+    coefficient = int(witness["coefficient"])
+    if coefficient != 4:
+        raise AssertionError("primitive equal-face witness changed")
+    return PhysicalJointRatioRecombinationAudit(
+        ratio_mellin_recombines_to_finite_divisor_kernel=True,
+        primitive_equal_face_coefficient_can_be_nonzero=True,
+        witness_equal_face_coefficient=coefficient,
+        joint_ratio_integration_alone_annihilates_chowla_face=False,
+        arbitrary_smooth_weight_enlargement_admissible=False,
+        allocationwise_triangle_inequality_admissible=False,
+        equal_face_separate_bound_available_unconditionally=False,
+        full_outer_scale_and_kernel_sum_must_remain_coupled=True,
+        centered_coupled_dispersion_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -12736,6 +12864,28 @@ def main() -> None:
         f"joint_ratio={chowla_face.joint_ratio_integral_must_remain_coupled},"
         f"type_ii={chowla_face.coupled_ratio_mellin_type_ii_bound_proved},"
         f"whole_face={chowla_face.whole_signed_hard_face_covered}"
+    )
+    physical_ratio = physical_joint_ratio_recombination_audit()
+    print(
+        "large_q_transition: physical_joint_ratio_recombination="
+        "finite_kernel="
+        f"{physical_ratio.ratio_mellin_recombines_to_finite_divisor_kernel},"
+        "equal_face_nonzero="
+        f"{physical_ratio.primitive_equal_face_coefficient_can_be_nonzero},"
+        f"witness={physical_ratio.witness_equal_face_coefficient},"
+        "joint_mellin_annihilates="
+        f"{physical_ratio.joint_ratio_integration_alone_annihilates_chowla_face},"
+        "arbitrary_weight="
+        f"{physical_ratio.arbitrary_smooth_weight_enlargement_admissible},"
+        "allocation_triangle="
+        f"{physical_ratio.allocationwise_triangle_inequality_admissible},"
+        "face_separate="
+        f"{physical_ratio.equal_face_separate_bound_available_unconditionally},"
+        "full_outer_coupling="
+        f"{physical_ratio.full_outer_scale_and_kernel_sum_must_remain_coupled},"
+        "centered_dispersion="
+        f"{physical_ratio.centered_coupled_dispersion_bound_proved},"
+        f"whole_face={physical_ratio.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
