@@ -13218,6 +13218,88 @@ weighted newform estimate rather than a free projection.  The adapter
 keeps the oldform-annihilation and QCT newform-adapter flags false.
 
 
+### 4.110a Direct Perron cancellation in the leading oldclass cofactor hits a zero-free barrier
+
+The mismatch in Section 4.110 does not preclude analytic cancellation
+in the signed level sum.  It does, however, make it necessary to inspect
+the relevant Dirichlet series before claiming a power saving.  Retain
+only the leading \(\ell=1\) cofactor in the full-level-to-newform formula
+preceding (4.847).  On squarefree levels let
+\(\alpha=\mu*\mu\), so \(\alpha(p)=-2\), and keep the published level
+index \(\nu(p)=p+1\).  If an exceptional spectral parameter
+\(0<\beta\leq7/64\) contributes the favourable level factor
+\(L^{2\beta}\), the leading signed cofactor has Dirichlet series
+
+\[
+ \boxed{
+ D_\beta(w)
+ :=\sum_{L\ {\rm squarefree}}
+ \frac{\alpha(L)L^{2\beta}}{\nu(L)L^w}
+ =\prod_p\left(1-\frac{2p^{2\beta-w}}{p+1}\right).}
+\tag{4.849a}
+\]
+
+Put \(x_p=p^{-(w+1-2\beta)}\).  Prime by prime,
+
+\[
+ \frac{1-2p^{2\beta-w}/(p+1)}{(1-x_p)^2}
+ =1+O\!\left(\frac{|x_p|}{p}+|x_p|^2\right).
+\]
+
+Consequently the exact factorization is
+
+\[
+ \boxed{
+ D_\beta(w)
+ =\frac{H_\beta(w)}{\zeta(w+1-2\beta)^2},
+ \qquad
+ H_\beta(w)\ \text{absolutely convergent for }
+ \Re w>2\beta-\frac12.}
+\tag{4.849b}
+\]
+
+The residual exceptional loss after the optimistic density step in
+Section 4.109 is \(Q^{2\beta}\) when \(Q=T\).  Neutralizing it by the
+leading level sum alone would require, for every fixed smooth dyadic
+weight \(W\),
+
+\[
+ \boxed{
+ \sum_{L\ {\rm squarefree}}
+ \frac{\alpha(L)L^{2\beta}}{\nu(L)}W(L/Q)
+ \ll_{\varepsilon,W}Q^\varepsilon
+ \quad\text{for every }\varepsilon>0.}
+\tag{4.849c}
+\]
+
+A family of bounds (4.849c) makes the dyadic Dirichlet series
+holomorphic in \(\Re w>0\).  Since \(H_\beta\) is analytic and nonzero
+near the right edge, (4.849b) would then force
+
+\[
+ \boxed{
+ \zeta(s)\ne0\quad(\Re s>1-2\beta).
+ \quad\text{At }\beta=\frac7{64}\text{ this is }
+ \Re s>\frac{25}{32}.}
+\tag{4.849d}
+\]
+
+No such fixed zero-free strip is known unconditionally.  The classical
+zero-free region gives subpower decay from the natural
+\(Q^{2\beta}\) scale, not the fixed saving \(Q^{-2\beta}\) required to
+reach exponent zero.
+
+This is deliberately a statement about the direct leading-cofactor
+Perron route, not a rejection of the complete spectral strategy.  The
+prime-power oldclass tail in (4.847), its modified Hecke indices, or a
+signed average over newforms could in principle cancel the poles in
+(4.849b); no such recombination has been proved.  The adapter
+exceptional_oldclass_mobius_perron_audit records the exact endpoint
+\(2\beta=7/32\), the boundary \(2\beta-1/2=-9/32\), and the required
+zero-free line \(25/32\), while keeping all full-tail, newform-average,
+and coverage flags false.
+
+
 ### 4.111 The new (4/5) Möbius additive-twist bound leaves only a (T^{1/5}) model deficit
 
 A genuinely new input became available after the earlier route audit.

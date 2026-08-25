@@ -1635,6 +1635,25 @@ class NewformLevelMobiusProjectorAudit:
 
 
 @dataclass(frozen=True)
+class ExceptionalOldclassMobiusPerronAudit:
+    exceptional_parameter: Fraction
+    natural_level_sum_exponent: Fraction
+    required_level_power_saving: Fraction
+    required_zero_free_real_part: Fraction
+    correction_absolute_convergence_boundary: Fraction
+    squarefree_level_prime_coefficient: Fraction
+    newform_level_index_prime_offset: Fraction
+    leading_cofactor_euler_factor_exact: bool
+    inverse_zeta_square_factor_exact: bool
+    smooth_sum_bound_would_imply_zero_free_strip: bool
+    required_fixed_zero_free_strip_known: bool
+    full_oldclass_tail_recombined: bool
+    averaged_newform_cancellation_proved: bool
+    direct_perron_route_closes_exceptional_gate: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class RoblesFourMobiusMinorArcAudit:
     variable_length_exponent: Fraction
     raw_determinant_exponent: Fraction
@@ -8523,6 +8542,53 @@ def newform_level_mobius_projector_audit(
     )
 
 
+def exceptional_oldclass_mobius_perron_audit(
+    *,
+    exceptional_parameter: Fraction,
+) -> ExceptionalOldclassMobiusPerronAudit:
+    """Audit direct Perron cancellation in the leading oldclass cofactor.
+
+    On squarefree levels the geometric Mobius coefficient is
+    ``alpha=mu*mu``, so ``alpha(p)=-2``.  The leading oldclass/newform
+    level factor is ``1/nu(L)``, with ``nu(p)=p+1``.  If an exceptional
+    transform contributes ``L^(2*v)``, the cofactor Dirichlet series is
+
+    ``prod_p (1 - 2*p^(2*v-w)/(p+1))``
+    `` = zeta(w+1-2*v)^(-2) H_v(w)``.
+
+    The correction product is absolutely convergent for
+    ``Re(w)>2*v-1/2``.  A smooth partial-sum bound saving the full natural
+    power ``Q^(2*v)`` would make this series holomorphic for ``Re(w)>0``;
+    because ``H_v`` is nonzero there near the right edge, this would force
+    zeta to be zero-free for ``Re(s)>1-2*v``.  At ``v=7/64`` this is the
+    unproved strip ``Re(s)>25/32``.  This audits only the leading cofactor:
+    the prime-power oldclass tail and an average over newforms could in
+    principle create additional cancellation, but neither is derived.
+    """
+    v = F(exceptional_parameter)
+    if v <= 0 or v >= F(1, 2):
+        raise ValueError("exceptional_parameter must lie in (0, 1/2)")
+
+    natural = 2 * v
+    return ExceptionalOldclassMobiusPerronAudit(
+        exceptional_parameter=v,
+        natural_level_sum_exponent=natural,
+        required_level_power_saving=natural,
+        required_zero_free_real_part=F(1) - natural,
+        correction_absolute_convergence_boundary=natural - F(1, 2),
+        squarefree_level_prime_coefficient=F(-2),
+        newform_level_index_prime_offset=F(1),
+        leading_cofactor_euler_factor_exact=True,
+        inverse_zeta_square_factor_exact=True,
+        smooth_sum_bound_would_imply_zero_free_strip=True,
+        required_fixed_zero_free_strip_known=False,
+        full_oldclass_tail_recombined=False,
+        averaged_newform_cancellation_proved=False,
+        direct_perron_route_closes_exceptional_gate=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def robles_four_mobius_minor_arc_audit(
     *,
     variable_length_exponent: Fraction,
@@ -14763,6 +14829,37 @@ def main() -> None:
         f"{newform_level.exceptional_oldforms_annihilated_algebraically},"
         f"qct={newform_level.qct_newform_spectral_adapter_derived},"
         f"covered={newform_level.whole_mobius_gate_covered}"
+    )
+    oldclass_perron = exceptional_oldclass_mobius_perron_audit(
+        exceptional_parameter=F(7, 64),
+    )
+    print(
+        "large_q_transition: exceptional_oldclass_mobius_perron="
+        f"nu={_fmt(oldclass_perron.exceptional_parameter)},"
+        "natural="
+        f"{_fmt(oldclass_perron.natural_level_sum_exponent)},"
+        "required_saving="
+        f"{_fmt(oldclass_perron.required_level_power_saving)},"
+        "zero_free="
+        f"{_fmt(oldclass_perron.required_zero_free_real_part)},"
+        "correction_boundary="
+        f"{_fmt(oldclass_perron.correction_absolute_convergence_boundary)},"
+        "alpha_p="
+        f"{_fmt(oldclass_perron.squarefree_level_prime_coefficient)},"
+        "nu_p_offset="
+        f"{_fmt(oldclass_perron.newform_level_index_prime_offset)},"
+        f"euler={oldclass_perron.leading_cofactor_euler_factor_exact},"
+        f"zeta={oldclass_perron.inverse_zeta_square_factor_exact},"
+        "implies_strip="
+        f"{oldclass_perron.smooth_sum_bound_would_imply_zero_free_strip},"
+        "strip_known="
+        f"{oldclass_perron.required_fixed_zero_free_strip_known},"
+        f"tail={oldclass_perron.full_oldclass_tail_recombined},"
+        "newform_average="
+        f"{oldclass_perron.averaged_newform_cancellation_proved},"
+        "perron="
+        f"{oldclass_perron.direct_perron_route_closes_exceptional_gate},"
+        f"covered={oldclass_perron.whole_mobius_gate_covered}"
     )
     robles_minor = robles_four_mobius_minor_arc_audit(
         variable_length_exponent=F(1),

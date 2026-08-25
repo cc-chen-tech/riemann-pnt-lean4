@@ -3944,6 +3944,31 @@ def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
     assert not prime.whole_mobius_gate_covered
 
 
+def test_exceptional_oldclass_leading_mobius_sum_hits_zero_free_barrier() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "exceptional_oldclass_mobius_perron_audit",
+        None,
+    )
+    assert adapter is not None, "exceptional oldclass Perron audit is missing"
+
+    endpoint = adapter(exceptional_parameter=F(7, 64))
+    assert endpoint.natural_level_sum_exponent == F(7, 32)
+    assert endpoint.required_level_power_saving == F(7, 32)
+    assert endpoint.required_zero_free_real_part == F(25, 32)
+    assert endpoint.correction_absolute_convergence_boundary == F(-9, 32)
+    assert endpoint.squarefree_level_prime_coefficient == F(-2)
+    assert endpoint.newform_level_index_prime_offset == F(1)
+    assert endpoint.leading_cofactor_euler_factor_exact
+    assert endpoint.inverse_zeta_square_factor_exact
+    assert endpoint.smooth_sum_bound_would_imply_zero_free_strip
+    assert not endpoint.required_fixed_zero_free_strip_known
+    assert not endpoint.full_oldclass_tail_recombined
+    assert not endpoint.averaged_newform_cancellation_proved
+    assert not endpoint.direct_perron_route_closes_exceptional_gate
+    assert not endpoint.whole_mobius_gate_covered
+
+
 def test_robles_additive_twist_bound_misses_four_mobius_gate_by_one_fifth() -> None:
     adapter = getattr(
         coverage_audit,
