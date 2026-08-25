@@ -13051,11 +13051,12 @@ centered four-variable dispersion estimate.  The adapter
 both the level-Cauchy and physical-kernel proof flags false.
 
 
-### 4.109 Exceptional-eigenvalue density leaves a (T^{7/32}) level-face deficit
+### 4.109 Coupled-conductor density removes the archimedean exceptional loss but leaves the finite-prime Hecke loss
 
-The factor (X^{2\vartheta}) in (4.835) is caused by exceptional
-Laplacian eigenvalues.  It is therefore necessary to test the strongest
-published level-density saving before declaring (4.840) new.
+The factor \(X^{2\vartheta}\) in (4.835) combines an exceptional
+archimedean transform loss with a finite-prime Hecke loss.  These must
+be separated before testing the strongest published level-density
+saving.
 [Humphries, Theorem 1.2](https://arxiv.org/abs/1609.06740), specialized
 to \(\Gamma_0(q)\), trivial character, and no finite-prime condition,
 states that for \(0<\alpha<1/2\),
@@ -13070,75 +13071,97 @@ states that for \(0<\alpha<1/2\),
 \]
 
 For \(q\asymp Q=T^\lambda\), the volume is
-\(q^{1+o(1)}\).  Give (4.841) its most favorable possible use in the
-present problem: divide by one full spectral volume and pretend that the
-remaining QCT Fourier coefficients cost nothing.  Then the normalized
-exceptional count at height \(\nu\) gains (Q^{-4\nu}).  Against the
-Kuznetsov transform factor (X^{2\nu}), this leaves
+\(q^{1+o(1)}\).  The earlier audit at this point used \(X^{2\nu}\)
+for the exceptional Bessel-transform loss.  That drops the numerator
+conductor and is not the specialization of the published proof.
+Blomer--Milićević define
+
+\[
+ \Xi=\frac{\sqrt{mn}}X.
+\]
+
+If \(X=T^\sigma\) and \(mn=T^\tau\), their exact small-parameter
+transform bound is \(\Xi^{-2\nu}\), while their separate pointwise
+finite-prime Hecke estimate costs \((mn)^\vartheta\).  Thus the
+pre-density spectral loss is
 
 \[
  \boxed{
- \sup_{0\leq\nu\leq\vartheta}
- X^{2\nu}Q^{-4\nu}
- =T^{\vartheta\max(2\sigma-4\lambda,0)},
- \qquad X=T^\sigma.}
+ (mn)^\vartheta\Xi^{-2\nu}
+ =T^{\tau\vartheta+(2\sigma-\tau)\nu}.}
 \tag{4.842}
 \]
 
-This already grants more than the theorem literally supplies for the
-joint signed QCT coefficients: (4.841) is a positive counting theorem,
-not a weighted level large sieve.  It is therefore a legitimate
-best-case test of this published input.
-
-At the critical Type-I level face
-
-\[
- \sigma=3,\qquad\lambda=1,\qquad
- \vartheta=\frac7{64},
-\]
-
-formula (4.842) has residual exponent
+Give (4.841) its most favorable volume-normalized use.  The exceptional
+count at height \(\nu\) gains \(Q^{-4\nu}\), so the exact exponent
+ledger becomes
 
 \[
  \boxed{
- (2\cdot3-4\cdot1)\frac7{64}=\frac7{32}.}
+ \tau\vartheta+
+ \sup_{0\leq\nu\leq\vartheta}
+ (2\sigma-\tau-4\lambda)\nu
+ =
+ \tau\vartheta+
+ \vartheta\max(2\sigma-\tau-4\lambda,0).}
 \tag{4.843}
 \]
 
-The full-Ramanujan ideal level-Cauchy base in (4.839) is already exactly
-(T^2).  Restoring (4.843) gives
+This still grants more than Humphries literally supplies for the joint
+QCT coefficients: (4.841) is a positive counting theorem, not a
+weighted spectral large sieve.  It is an exact conductor test of that
+optimistic grant.
+
+At the critical Type-I face
+
+\[
+ \sigma=3,\qquad \tau=5,\qquad \lambda=1,\qquad
+ \vartheta=\frac7{64},
+\]
+
+the archimedean exceptional residual in (4.843) is zero, but the
+finite-prime Hecke loss is
 
 \[
  \boxed{
- E_{\mathrm{density}}=2+\frac7{32}=\frac{71}{32},
- \qquad E_{\mathrm{density}}-2=\frac7{32}.}
+ 5\vartheta=\frac{35}{64}.}
 \tag{4.844}
 \]
 
-There is no choice of level exponent which satisfies both required
-inequalities.  The target bound for the ideal Cauchy base requires
-
-\[
- \lambda\leq2\left(2-\frac32\right)=1,
-\]
-
-whereas neutralizing (4.842) requires
+The full-Ramanujan ideal level-Cauchy base in (4.839) is exactly
+\(T^2\).  Restoring the pointwise finite-prime loss gives
 
 \[
  \boxed{
- \lambda\geq\frac{2\sigma}{4}=\frac32.}
+ E_{\mathrm{density}}
+ =2+\frac{35}{64}=\frac{163}{64},
+ \qquad
+ E_{\mathrm{density}}-2=\frac{35}{64}.}
+\tag{4.844a}
+\]
+
+The level thresholds are now compatible.  The target bound for the
+ideal Cauchy base requires \(\lambda\leq1\), while neutralizing only
+the archimedean exceptional growth requires
+
+\[
+ \boxed{
+ \lambda\geq\frac{2\sigma-\tau}{4}=\frac14.}
 \tag{4.845}
 \]
 
-Thus even the optimistic volume-normalized use of the best audited
-\(\Gamma_0(q)\) exceptional-density exponent cannot close the critical
-level face.  The theorem never sees the signs of the
-\((\mu*\mu)(q)\)-type level coefficient.  Any successful continuation
-must prove cancellation in those signed spectral weights themselves,
-not merely count how many exceptional forms occur.  The adapter
-`humphries_exceptional_level_density_audit` records the incompatible
-thresholds (1) and (3/2), the residual (7/32), and keeps the QCT
-spectral-weight and whole-gate flags false.
+Therefore exceptional eigenvalues are not the numerical obstruction
+on the critical level face once the coupled numerator conductor is
+retained.  The remaining power is exactly the use of the individual
+Kim--Sarnak bound at the finite primes.  A successful continuation
+must average the Hecke entries together with the retained Möbius
+variables and physical kernel, avoiding that pointwise
+\((mn)^\vartheta\) charge.  Humphries alone does not do this and does
+not justify the ideal level Cauchy step.  The adapter
+humphries_exceptional_level_density_audit records the ratio exponent
+\(2\sigma-\tau=1\), the neutral level \(1/4\), the surviving
+\(35/64\), and keeps the QCT spectral-weight and whole-gate flags
+false.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
@@ -13258,10 +13281,10 @@ Consequently the exact factorization is
 \tag{4.849b}
 \]
 
-The residual exceptional loss after the optimistic density step in
-Section 4.109 is \(Q^{2\beta}\) when \(Q=T\).  Neutralizing it by the
-leading level sum alone would require, for every fixed smooth dyadic
-weight \(W\),
+Before the coupled-conductor correction in Section 4.109, one possible
+attempt was to neutralize a putative \(Q^{2\beta}\) loss by the leading
+level sum alone.  That attempt would require, for every fixed smooth
+dyadic weight \(W\),
 
 \[
  \boxed{
@@ -13284,10 +13307,13 @@ near the right edge, (4.849b) would then force
 \tag{4.849d}
 \]
 
-No such fixed zero-free strip is known unconditionally.  The classical
-zero-free region gives subpower decay from the natural
-\(Q^{2\beta}\) scale, not the fixed saving \(Q^{-2\beta}\) required to
-reach exponent zero.
+No such fixed zero-free strip is known unconditionally.  Section 4.109
+shows that this Perron estimate is not the current critical input:
+Humphries density already neutralizes the archimedean exceptional
+factor after the numerator conductor is retained.  The calculation
+remains useful as an exact rejection of direct level-Perron
+cancellation as a substitute for the missing finite-prime Hecke
+average.
 
 This is deliberately a statement about the direct leading-cofactor
 Perron route, not a rejection of the complete spectral strategy.  The

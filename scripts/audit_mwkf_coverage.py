@@ -1595,6 +1595,8 @@ class BlomerMilicevicTypeILevelAudit:
 @dataclass(frozen=True)
 class HumphriesExceptionalLevelDensityAudit:
     kloosterman_modulus_scale_exponent: Fraction
+    numerator_product_scale_exponent: Fraction
+    bessel_ratio_exponent: Fraction
     target_exponent: Fraction
     level_family_exponent: Fraction
     ramanujan_theta: Fraction
@@ -1602,12 +1604,14 @@ class HumphriesExceptionalLevelDensityAudit:
     humphries_count_exponent_at_theta: Fraction
     volume_normalized_count_exponent_at_theta: Fraction
     ideal_ramanujan_level_cauchy_base_exponent: Fraction
+    finite_prime_hecke_loss_exponent: Fraction
     residual_exceptional_loss_exponent: Fraction
     density_enhanced_bound_exponent: Fraction
     density_enhanced_power_deficit: Fraction
     maximum_level_allowed_by_target: Fraction
     level_needed_to_neutralize_exceptional_growth: Fraction
     target_and_density_thresholds_compatible: bool
+    density_numerically_neutralizes_archimedean_exceptional_growth: bool
     linnik_scale_dominates_level_family: bool
     density_theorem_is_positive_counting_input: bool
     mobius_level_signs_used_by_density_theorem: bool
@@ -8451,6 +8455,7 @@ def blomer_milicevic_type_i_level_audit(
 def humphries_exceptional_level_density_audit(
     *,
     modulus_scale_exponent: Fraction,
+    numerator_product_scale_exponent: Fraction,
     target_exponent: Fraction,
     level_family_exponent: Fraction,
     ramanujan_theta: Fraction = F(7, 64),
@@ -8463,25 +8468,28 @@ def humphries_exceptional_level_density_audit(
 
     ``# {f : Im(t_f)>nu} << vol(Gamma_0(q))^(1-4*nu+eps)``.
 
-    After the favorable volume normalization, a level ``q~T^lambda``
-    can therefore replace the worst exceptional factor ``X^(2*nu)``
-    by at best ``X^(2*nu) q^(-4*nu)``.  At ``X=T^sigma`` the residual
-    exponent is ``max(2*sigma-4*lambda,0)*nu``.  This deliberately
-    grants linear use of the positive density estimate and the ideal
-    square-root level cost before checking the QCT spectral weights.
+    The exact Bessel ratio is ``Xi=sqrt(mn)/X``.  If
+    ``X=T^sigma`` and ``mn=T^tau``, an exceptional parameter ``nu``
+    costs ``Xi^(-2*nu)=T^((2*sigma-tau)*nu)``, not ``T^(2*sigma*nu)``.
+    The finite-prime Hecke bound separately costs ``T^(tau*theta)``.
+    After favorable volume normalization, level density changes the
+    archimedean loss to
+    ``max(2*sigma-tau-4*lambda,0)*nu``.
 
-    For sigma=3 and lambda=1 the Ramanujan-base level bound is T^2,
-    but the residual Kim--Sarnak exceptional factor is T^(7/32).
-    Neutralizing it needs lambda>=3/2, whereas the target permits only
-    lambda<=1.  The density theorem takes absolute positive counts and
-    does not use the Möbius signs in the level coefficient.
+    For ``sigma=3``, ``tau=5``, and ``lambda=1``, density numerically
+    removes the archimedean exceptional loss, since the neutral level
+    is only ``1/4``.  It does not remove the finite-prime loss
+    ``T^(35/64)``.  The theorem also takes positive counts and does not
+    by itself justify the QCT spectral weights or the ideal level
+    Cauchy aggregation.
     """
     sigma = F(modulus_scale_exponent)
+    tau = F(numerator_product_scale_exponent)
     target = F(target_exponent)
     level = F(level_family_exponent)
     theta = F(ramanujan_theta)
     slope = F(gamma0_density_slope)
-    if sigma <= 0 or target < 0 or level < 0 or theta < 0:
+    if sigma <= 0 or tau < 0 or target < 0 or level < 0 or theta < 0:
         raise ValueError("scale exponents must be nonnegative and modulus positive")
     if slope <= 0:
         raise ValueError("density slope must be positive")
@@ -8489,14 +8497,18 @@ def humphries_exceptional_level_density_audit(
     count = F(1) - slope * theta
     normalized_count = count - F(1)
     ramanujan_base = sigma / 2 + level / 2
+    bessel_ratio = F(2) * sigma - tau
+    finite_hecke = tau * theta
     residual = _positive_part(
-        (F(2) * sigma - slope * level) * theta
+        (bessel_ratio - slope * level) * theta
     )
-    density_bound = ramanujan_base + residual
+    density_bound = ramanujan_base + finite_hecke + residual
     max_target_level = F(2) * (target - sigma / 2)
-    neutral_level = F(2) * sigma / slope
+    neutral_level = _positive_part(bessel_ratio) / slope
     return HumphriesExceptionalLevelDensityAudit(
         kloosterman_modulus_scale_exponent=sigma,
+        numerator_product_scale_exponent=tau,
+        bessel_ratio_exponent=bessel_ratio,
         target_exponent=target,
         level_family_exponent=level,
         ramanujan_theta=theta,
@@ -8504,6 +8516,7 @@ def humphries_exceptional_level_density_audit(
         humphries_count_exponent_at_theta=count,
         volume_normalized_count_exponent_at_theta=normalized_count,
         ideal_ramanujan_level_cauchy_base_exponent=ramanujan_base,
+        finite_prime_hecke_loss_exponent=finite_hecke,
         residual_exceptional_loss_exponent=residual,
         density_enhanced_bound_exponent=density_bound,
         density_enhanced_power_deficit=_positive_part(
@@ -8513,6 +8526,9 @@ def humphries_exceptional_level_density_audit(
         level_needed_to_neutralize_exceptional_growth=neutral_level,
         target_and_density_thresholds_compatible=(
             neutral_level <= max_target_level
+        ),
+        density_numerically_neutralizes_archimedean_exceptional_growth=(
+            residual == 0
         ),
         linnik_scale_dominates_level_family=(sigma >= level),
         density_theorem_is_positive_counting_input=True,
@@ -14867,6 +14883,7 @@ def main() -> None:
     )
     humphries_density = humphries_exceptional_level_density_audit(
         modulus_scale_exponent=F(3),
+        numerator_product_scale_exponent=F(5),
         target_exponent=F(2),
         level_family_exponent=F(1),
     )
@@ -14874,6 +14891,10 @@ def main() -> None:
         "large_q_transition: humphries_exceptional_level_density="
         "modulus="
         f"{_fmt(humphries_density.kloosterman_modulus_scale_exponent)},"
+        "numerator="
+        f"{_fmt(humphries_density.numerator_product_scale_exponent)},"
+        "bessel_ratio="
+        f"{_fmt(humphries_density.bessel_ratio_exponent)},"
         f"target={_fmt(humphries_density.target_exponent)},"
         f"level={_fmt(humphries_density.level_family_exponent)},"
         f"theta={_fmt(humphries_density.ramanujan_theta)},"
@@ -14884,6 +14905,8 @@ def main() -> None:
         f"{_fmt(humphries_density.volume_normalized_count_exponent_at_theta)},"
         "ramanujan_base="
         f"{_fmt(humphries_density.ideal_ramanujan_level_cauchy_base_exponent)},"
+        "finite_hecke="
+        f"{_fmt(humphries_density.finite_prime_hecke_loss_exponent)},"
         "residual="
         f"{_fmt(humphries_density.residual_exceptional_loss_exponent)},"
         f"total={_fmt(humphries_density.density_enhanced_bound_exponent)},"
@@ -14895,6 +14918,8 @@ def main() -> None:
         f"{_fmt(humphries_density.level_needed_to_neutralize_exceptional_growth)},"
         "compatible="
         f"{humphries_density.target_and_density_thresholds_compatible},"
+        "archimedean_neutral="
+        f"{humphries_density.density_numerically_neutralizes_archimedean_exceptional_growth},"
         "linnik_level="
         f"{humphries_density.linnik_scale_dominates_level_family},"
         "positive="
