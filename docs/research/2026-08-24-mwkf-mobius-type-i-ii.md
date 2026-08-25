@@ -974,6 +974,99 @@ full phase and retain the fixed-\(a\) oscillation.  The adapter
 long_cutoff_h_completion_audit records (4.8am)--(4.8ao) and rejects the
 \(b\)-only completion uniformly.
 
+### 4.4 The remaining Möbius determinant average
+
+Applying Poisson to the **complete** \(h\)-phase returns the exact
+determinant lattice from the global-coupled note:
+
+\[
+ \delta=rv-js,\qquad
+ r,s\asymp T^3,\qquad
+ |v|,|j|\ll T^{1/2},\qquad
+ \delta\asymp T^{5/2}.
+\tag{4.8ap}
+\]
+
+For a fixed nonzero \(\delta\), put
+\[
+ M_1=|v|\asymp T^{1/2},\quad
+ M_2=|j|\asymp T^{1/2},\quad
+ N_1=r\asymp T^3,\quad
+ N_2=s\asymp T^3.
+\]
+The determinant scale in Bettin--Chandee Corollary 1 is
+
+\[
+ \mathcal R=M_1N_2+M_2N_1\asymp T^{7/2}.
+\tag{4.8aq}
+\]
+
+Direct counting of one determinant fiber has exponent
+\[
+ \frac{M_1M_2N_1N_2}{\mathcal R}=T^{7/2}.
+\tag{4.8ar}
+\]
+Even if one optimistically separates the actual coupled kernel into the
+short-variable product required by the corollary, its published error has
+the exponent of
+\[
+ \mathcal R^{3/2}
+ \|\alpha\|_2\|\beta\|_2
+ (N_1N_2)^{7/20}(N_1+N_2)^{1/4},
+\]
+which under (4.8ap) is
+\[
+ \frac32\cdot\frac72+3+\frac7{20}\cdot6+\frac14\cdot3
+ =\frac{111}{10}.
+\tag{4.8as}
+\]
+It is therefore much worse than the direct fixed-shift count in this
+aspect.  Without that optimistic separation, the coupled kernel does not
+directly satisfy the displayed product-weight hypotheses in the first
+place.  Thus the corollary supplies no saving under either reading.
+
+Summing (4.8ar) over the \(T^{5/2}\) shift range gives the cardinality
+exponent \(6\).  The exact global target is
+
+\[
+ \frac{RS}{H}T^{-1/1000}=T^{3499/1000}.
+\tag{4.8at}
+\]
+
+Consequently the surviving arithmetic input must save exactly
+
+\[
+ \boxed{6-\frac{3499}{1000}=\frac{2501}{1000}}
+\tag{4.8au}
+\]
+over the summed determinant-fiber cardinality.  Equivalently, with the
+full transformed kernel and all conditions of (6.2) in the
+global-coupled note retained, the remaining proposition is
+
+\[
+ \boxed{
+ \mathrm{MD}_{2501/1000}:\quad
+ \left|
+ \sum_{\substack{r,s\asymp T^3\\(r,s)=1,\ (q,rs)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)
+ \sum_{\substack{\delta\asymp T^{5/2}\\
+                  |v|,|j|\ll T^{1/2}\\
+                  rv-js=\delta}}
+ \widehat\Psi_h(r,s,\delta,v)
+ \right|
+ \ll_W T^{3499/1000}.}
+\tag{4.8av}
+\]
+
+Here \(\widehat\Psi_h(r,s,\delta,v)\) abbreviates exactly the normalized
+four-variable kernel in (6.2), not a separated coefficient.  Inserting
+the long-cutoff identity into the \(r\)-sum gives the equivalent
+long-\(a\), short-\(b\) LCO formulation, while summing the factorization
+back gives (4.8av).  Thus the cutoff closes the zero determinant but does
+not alter the required nonzero-determinant Möbius saving.  The adapter
+bc_fixed_determinant_audit records (4.8aq)--(4.8au), with published
+coverage and direct-hypothesis flags both false.
+
 For comparison with this new single-sector route, the remainder of
 Section 4 returns to the earlier \(U=V=T\) Type-II split.
 

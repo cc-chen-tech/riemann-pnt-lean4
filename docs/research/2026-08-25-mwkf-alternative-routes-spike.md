@@ -2042,6 +2042,15 @@ factor as smooth would discard a positive-power oscillation and produce
 the false condition \(b\mid\delta\).  A valid LCO estimate must transform
 the complete CRT phase.
 
+After that complete transform, the exact residual is the averaged
+determinant equation \(rv-js=\delta\), with
+\(r,s=T^3\), \(v,j=T^{1/2}\), and \(\delta=T^{5/2}\).  Direct counting is
+\(T^{7/2}\) per shift and \(T^6\) after the shift average.  Literal
+substitution in Bettin--Chandee Corollary 1 gives the much worse
+fixed-shift error \(T^{111/10}\).  The target \(T^{3499/1000}\) therefore
+requires a new Möbius saving of exactly \(T^{2501/1000}\) in the complete
+shift average, recorded as \(\mathrm{MD}_{2501/1000}\) in (4.8av).
+
 The relevant published comparison points are
 [Bettin--Chandee](https://arxiv.org/abs/1502.00769),
 [Bettin--Chandee--Radziwiłł](https://arxiv.org/abs/1411.7764),

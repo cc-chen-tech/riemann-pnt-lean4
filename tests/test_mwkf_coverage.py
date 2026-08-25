@@ -930,6 +930,33 @@ def test_short_b_does_not_license_poisson_before_the_a_phase() -> None:
     assert not smallest_b.b_only_poisson_valid
 
 
+def test_bc_fixed_determinant_corollary_is_worse_than_direct_counting() -> None:
+    """Catch applying the published fixed-shift corollary in its wrong aspect."""
+    adapter = getattr(
+        coverage_audit,
+        "bc_fixed_determinant_audit",
+        None,
+    )
+    assert adapter is not None, "BC fixed-determinant audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    audit = adapter(box)
+    assert audit.short_variable_exponents == (F(1, 2), F(1, 2))
+    assert audit.long_variable_exponents == (F(3), F(3))
+    assert audit.determinant_scale_exponent == F(7, 2)
+    assert audit.fixed_shift_trivial_exponent == F(7, 2)
+    assert audit.bc_corollary_error_exponent == F(111, 10)
+    assert not audit.bc_corollary_beats_trivial
+    assert audit.shift_range_exponent == F(5, 2)
+    assert audit.summed_trivial_exponent == F(6)
+    assert audit.global_target_exponent == F(3499, 1000)
+    assert audit.required_mobius_saving == F(2501, 1000)
+    assert audit.full_shift_average_required
+    assert audit.coupled_kernel_separated_optimistically
+    assert not audit.direct_corollary_hypotheses_verified
+    assert not audit.published_coverage
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -1049,6 +1076,12 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "0:b_surplus=5/2,a_freq=2,valid=False;"
         "199/200:b_surplus=301/200,a_freq=599/200,valid=False "
         "full_surplus=-1/2 proved=False"
+    ) in output
+    assert (
+        "balanced_max_a: bc_fixed_determinant="
+        "error=111/10 fixed_trivial=7/2 summed_trivial=6 "
+        "target=3499/1000 mobius_save=2501/1000 "
+        "direct=False covered=False"
     ) in output
 
 

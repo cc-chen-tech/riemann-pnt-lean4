@@ -478,6 +478,24 @@ class LongCutoffHCompletionAudit:
     published_coverage: bool
 
 
+@dataclass(frozen=True)
+class BCFixedDeterminantAudit:
+    short_variable_exponents: tuple[Fraction, Fraction]
+    long_variable_exponents: tuple[Fraction, Fraction]
+    determinant_scale_exponent: Fraction
+    fixed_shift_trivial_exponent: Fraction
+    bc_corollary_error_exponent: Fraction
+    bc_corollary_beats_trivial: bool
+    shift_range_exponent: Fraction
+    summed_trivial_exponent: Fraction
+    global_target_exponent: Fraction
+    required_mobius_saving: Fraction
+    full_shift_average_required: bool
+    coupled_kernel_separated_optimistically: bool
+    direct_corollary_hypotheses_verified: bool
+    published_coverage: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -2124,6 +2142,75 @@ def long_cutoff_h_completion_audit(
     )
 
 
+def bc_fixed_determinant_audit(box: ExponentBox) -> BCFixedDeterminantAudit:
+    """Insert the hard determinant lattice into BC Corollary 1.
+
+    After full ``h``-Poisson, take the smooth variables to be ``v,j``
+    and the arbitrary coefficient variables to be ``r,s``.  The error
+    exponent is the literal exponent of
+
+    ``R_det^(3/2) ||alpha||_2 ||beta||_2``
+    ``*(N1*N2)^(7/20) (N1+N2)^(1/4)``.
+
+    At the hard box this is worse than the direct fixed-shift count, so
+    the published corollary supplies no part of the required shift-average
+    Möbius saving.
+    """
+    v_exponent = box.sigma - box.h
+    j_exponent = max(box.rho + v_exponent, box.ell) - box.sigma
+    if v_exponent < 0 or j_exponent < 0:
+        raise ValueError("determinant dual variables must have nonnegative size")
+
+    short_variable_exponents = (v_exponent, j_exponent)
+    long_variable_exponents = (box.rho, box.sigma)
+    determinant_scale_exponent = max(
+        v_exponent + box.sigma,
+        j_exponent + box.rho,
+    )
+    total_cardinality_exponent = (
+        v_exponent + j_exponent + box.rho + box.sigma
+    )
+    fixed_shift_trivial_exponent = (
+        total_cardinality_exponent - determinant_scale_exponent
+    )
+    coefficient_l2_exponent = (box.rho + box.sigma) / 2
+    bc_corollary_error_exponent = (
+        F(3, 2) * determinant_scale_exponent
+        + coefficient_l2_exponent
+        + F(7, 20) * (box.rho + box.sigma)
+        + F(1, 4) * max(box.rho, box.sigma)
+    )
+    shift_range_exponent = box.ell
+    summed_trivial_exponent = (
+        fixed_shift_trivial_exponent + shift_range_exponent
+    )
+    global_target_exponent = (
+        box.rho + box.sigma - box.h - F(1, 1000)
+    )
+    required_mobius_saving = _positive_part(
+        summed_trivial_exponent - global_target_exponent
+    )
+
+    return BCFixedDeterminantAudit(
+        short_variable_exponents=short_variable_exponents,
+        long_variable_exponents=long_variable_exponents,
+        determinant_scale_exponent=determinant_scale_exponent,
+        fixed_shift_trivial_exponent=fixed_shift_trivial_exponent,
+        bc_corollary_error_exponent=bc_corollary_error_exponent,
+        bc_corollary_beats_trivial=(
+            bc_corollary_error_exponent < fixed_shift_trivial_exponent
+        ),
+        shift_range_exponent=shift_range_exponent,
+        summed_trivial_exponent=summed_trivial_exponent,
+        global_target_exponent=global_target_exponent,
+        required_mobius_saving=required_mobius_saving,
+        full_shift_average_required=True,
+        coupled_kernel_separated_optimistically=True,
+        direct_corollary_hypotheses_verified=False,
+        published_coverage=False,
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -2733,6 +2820,21 @@ def main() -> None:
         + " full_surplus="
         f"{_fmt(endpoint_h_audit.full_modulus_period_surplus)}"
         + " proved=False"
+    )
+    determinant_audit = bc_fixed_determinant_audit(hard)
+    print(
+        "balanced_max_a: bc_fixed_determinant="
+        f"error={_fmt(determinant_audit.bc_corollary_error_exponent)} "
+        "fixed_trivial="
+        f"{_fmt(determinant_audit.fixed_shift_trivial_exponent)} "
+        "summed_trivial="
+        f"{_fmt(determinant_audit.summed_trivial_exponent)} "
+        f"target={_fmt(determinant_audit.global_target_exponent)} "
+        "mobius_save="
+        f"{_fmt(determinant_audit.required_mobius_saving)} "
+        "direct="
+        f"{determinant_audit.direct_corollary_hypotheses_verified} "
+        f"covered={determinant_audit.published_coverage}"
     )
 
 
