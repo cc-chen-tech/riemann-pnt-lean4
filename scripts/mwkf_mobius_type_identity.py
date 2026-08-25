@@ -8,6 +8,42 @@ from fractions import Fraction
 from math import gcd, isqrt
 
 
+@dataclass(frozen=True)
+class CenteredResonanceCoordinates:
+    j: int
+    w: int
+
+    @property
+    def linear_slope(self) -> int:
+        return self.j + 1
+
+    @property
+    def distance(self) -> int:
+        return abs(self.w)
+
+
+def centered_resonance_coordinates(
+    *,
+    r: int,
+    s: int,
+) -> CenteredResonanceCoordinates:
+    """Write ``r-s=j*s+w`` with the unique ``-s/2 < w <= s/2``.
+
+    The positive representative is selected at an even-modulus tie.  Thus
+    ``r=(j+1)*s+w`` and every integer product frequency satisfies
+    ``a*r == a*w (mod s)`` without evaluating an exponential.
+    """
+    if r <= 0 or s <= 0:
+        raise ValueError("require r,s > 0")
+    difference = r - s
+    w = difference % s
+    if 2 * w > s:
+        w -= s
+    numerator = difference - w
+    assert numerator % s == 0
+    return CenteredResonanceCoordinates(j=numerator // s, w=w)
+
+
 def mobius(n: int) -> int:
     if n < 1:
         raise ValueError("n must be positive")

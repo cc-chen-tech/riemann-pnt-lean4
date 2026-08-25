@@ -1,4 +1,5 @@
 from fractions import Fraction as F
+from math import gcd
 import sys
 from pathlib import Path
 
@@ -6,6 +7,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
+from scripts import mwkf_mobius_type_identity as type_identity
 from scripts.mwkf_mobius_type_identity import (
     bilinear_gauss_via_orthogonality,
     c_u,
@@ -114,6 +116,33 @@ def test_short_signed_shift_window_has_a_unique_j() -> None:
         delta_max=25,
         sign=-1,
     ) == ((10, -20),)
+
+
+def test_balanced_resonance_coordinates_have_only_five_fixed_slopes() -> None:
+    """Catch a non-centered remainder convention or an omitted endpoint slope."""
+    adapter = getattr(type_identity, "centered_resonance_coordinates", None)
+    assert adapter is not None, "centered-resonance coordinates are missing"
+
+    seen: set[int] = set()
+    for r in range(10, 41):
+        for s in range(10, 41):
+            coordinates = adapter(r=r, s=s)
+            assert r - s == coordinates.j * s + coordinates.w
+            assert -s < 2 * coordinates.w <= s
+            assert r == coordinates.linear_slope * s + coordinates.w
+            assert coordinates.distance == abs(coordinates.w)
+            assert -1 <= coordinates.j <= 3
+            if gcd(r, s) == 1:
+                assert gcd(s, coordinates.w) == 1
+                for a in (-7, -1, 1, 5):
+                    assert (a * r - a * coordinates.w) % s == 0
+            seen.add(coordinates.j)
+    assert seen == {-1, 0, 1, 2, 3}
+
+    positive_tie = adapter(r=15, s=10)
+    negative_tie = adapter(r=5, s=10)
+    assert (positive_tie.j, positive_tie.w) == (0, 5)
+    assert (negative_tie.j, negative_tie.w) == (-1, 5)
 
 
 def test_signed_shift_helper_returns_every_solution_in_a_wide_window() -> None:

@@ -728,6 +728,98 @@ claimed improvement omits the reported \(L^2\) factor.  Consequently
 (4.32), with the piecewise savings (4.34), is the smallest remaining
 far-resonance analytic input in this normalization.
 
+### 4.4 Exact reduction to five fixed resonance slopes
+
+There is no need to leave the minimizing integer in (4.17) implicit.
+For every positive \(r,s\), write uniquely
+
+\[
+ r-s=js+w,\qquad -\frac{s}{2}<w\le\frac{s}{2}.
+\tag{4.37}
+\]
+
+At an even-modulus tie the representative \(w=s/2\) is selected.  On an
+admissible term this tie cannot occur for \(s>2\), since
+\((s,w)=1\) but \((s,s/2)=s/2\).  The exact identities are
+
+\[
+ r=(j+1)s+w,\qquad
+ (r,s)=(s,w),\qquad
+ \Delta_s(r-s)=|w|,
+\tag{4.38}
+\]
+
+and, for every integer \(a\),
+
+\[
+ e\left(\frac{a(r-s)}s\right)-1
+ =e\left(\frac{aw}s\right)-1.
+\tag{4.39}
+\]
+
+In the balanced support \(R=S\), the dyadic inequalities imply
+\(1/4\le r/s\le4\).  Since \(-1/2<w/s\le1/2\), (4.37) forces exactly
+
+\[
+ j\in\{-1,0,1,2,3\}.
+\tag{4.40}
+\]
+
+For a shell (4.29), define \(\mathfrak F_{q,j}(D)\) by the completely
+finite sum
+
+\[
+\begin{aligned}
+ \mathfrak F_{q,j}(D)
+ :={}&
+ \sum_{\substack{S/2\le s\le2S,\quad
+                  w\in\mathbb Z,\quad D<|w|\le2D\\
+                  -s/2<w\le s/2\\
+                  R/2\le (j+1)s+w\le2R\\
+                  (s,w)=1\\
+                  (q,s((j+1)s+w))=1\\
+                  qs,\ q((j+1)s+w)\le N}}
+ \mu(s)\mu((j+1)s+w)\\
+ &\quad\times
+ p_N(qs)p_N(q((j+1)s+w))\frac Ss\\
+ &\quad\times
+ \sum_{a\ne0}\Lambda_{(j+1)s+w,s}(a)
+ \left\{e\left(\frac{aw}s\right)-1\right\}.
+\end{aligned}
+\tag{4.41}
+\]
+
+Finite reindexing by (4.37), with no estimate and no discarded endpoint,
+gives
+
+\[
+ \boxed{
+ \mathfrak D_{q,D}^{(2)}
+ =\sum_{j=-1}^{3}\mathfrak F_{q,j}(D).}
+\tag{4.42}
+\]
+
+Thus FRSD\(_B\) is reduced to at most five sums whose two Möbius
+arguments are the fixed linear forms
+
+\[
+ s,\qquad (j+1)s+w,
+ \qquad j+1\in\{0,1,2,3,4\}.
+\tag{4.43}
+\]
+
+Moreover, if \(D<R/4\), the \(j=-1\) sector is empty: (4.38) would give
+\(r=w\), while \(|w|\le2D<R/2\), contradicting the \(r\)-support in
+(4.41).  Hence every submaximal hard-box shell with \(D<R/4\) requires
+only the four slopes \(1,2,3,4\).  The helper
+centered_resonance_coordinates verifies the unique representative, both
+endpoint values of \(j\), the coprimality transfer, and the phase
+congruence over finite integer fixtures.
+
+This is a structural reduction, not the missing cancellation estimate.
+The coefficient in (4.41) still varies jointly with \(s,w,a\), and the
+required shell savings remain exactly those in (4.34).
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
