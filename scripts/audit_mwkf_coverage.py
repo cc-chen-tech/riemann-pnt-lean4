@@ -1547,6 +1547,30 @@ class SignedDualConvolutionAudit:
 
 
 @dataclass(frozen=True)
+class CoupledRatioMellinTypeIIGateAudit:
+    outer_scale_exponent: Fraction
+    long_mobius_variable_exponent: Fraction
+    collapsed_product_variable_exponent: Fraction
+    shift_exponent: Fraction
+    convolution_ambient_exponent: Fraction
+    progression_modulus_exponent: Fraction
+    modulus_level_relative_to_ambient: Fraction
+    raw_shifted_count_exponent: Fraction
+    required_inner_bound_exponent: Fraction
+    required_cancellation_exponent: Fraction
+    two_collapsed_coefficients_square_root_saving: Fraction
+    square_root_power_margin: Fraction
+    modulus_within_bombieri_vinogradov_level: bool
+    fixed_shift_dispersion_suffices_after_shift_sum: bool
+    quotient_mobius_prevents_direct_bv: bool
+    full_shift_average_must_remain_coupled: bool
+    coprimality_prime_allocation_required: bool
+    four_variable_reduction_exact: bool
+    coupled_ratio_mellin_type_ii_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7724,6 +7748,60 @@ def signed_dual_convolution_audit(
     )
 
 
+def coupled_ratio_mellin_type_ii_gate_audit(
+    *,
+    outer_scale_exponent: Fraction,
+) -> CoupledRatioMellinTypeIIGateAudit:
+    """Normalize the collapsed signed determinant model at scale ``s``.
+
+    After the exact finite collapse and ratio-Mellin separation, the
+    determinant has variables ``x,y=T`` and ``c,d=T^s`` with
+    ``x*c-y*d=ell`` and ``ell=T^s``.  Its raw shifted count is
+    ``T^(1+2s)`` and the required bound is ``T^(1+s)``.  Thus the two
+    collapsed coefficient variables must jointly save exactly ``T^s``.
+
+    The congruence modulus ``c=T^s`` lies at level ``s/(1+s)<=1/2``
+    relative to the convolution length ``y*d=T^(1+s)``.  Ordinary
+    Bombieri--Vinogradov still does not apply to the actual form because
+    the quotient ``x=(y*d+ell)/c`` carries another Möbius coefficient,
+    and summing fixed-shift absolute bounds loses the whole ``T^s``
+    shift range.  In the actual primitive layer, ``gcd(X,Y)=1`` still
+    depends on the pre-collapse divisors.  A prime-allocation expansion
+    is required before this four-variable model becomes an exact gate.
+    """
+    s = outer_scale_exponent
+    if s < 0 or s > 1:
+        raise ValueError("outer_scale_exponent must lie in [0, 1]")
+    ambient = F(1) + s
+    raw = F(1) + 2 * s
+    target = ambient
+    required = raw - target
+    square_root = s
+    level = s / ambient
+    return CoupledRatioMellinTypeIIGateAudit(
+        outer_scale_exponent=s,
+        long_mobius_variable_exponent=F(1),
+        collapsed_product_variable_exponent=s,
+        shift_exponent=s,
+        convolution_ambient_exponent=ambient,
+        progression_modulus_exponent=s,
+        modulus_level_relative_to_ambient=level,
+        raw_shifted_count_exponent=raw,
+        required_inner_bound_exponent=target,
+        required_cancellation_exponent=required,
+        two_collapsed_coefficients_square_root_saving=square_root,
+        square_root_power_margin=square_root - required,
+        modulus_within_bombieri_vinogradov_level=(2 * s <= ambient),
+        fixed_shift_dispersion_suffices_after_shift_sum=False,
+        quotient_mobius_prevents_direct_bv=True,
+        full_shift_average_must_remain_coupled=True,
+        coprimality_prime_allocation_required=True,
+        four_variable_reduction_exact=False,
+        coupled_ratio_mellin_type_ii_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -12379,6 +12457,45 @@ def main() -> None:
         f"ratio_mellin={signed_dual.ratio_mellin_family_required},"
         f"published={signed_dual.weighted_collapse_bound_proved},"
         f"whole_face={signed_dual.whole_signed_hard_face_covered}"
+    )
+    ratio_type_ii = coupled_ratio_mellin_type_ii_gate_audit(
+        outer_scale_exponent=F(1),
+    )
+    print(
+        "large_q_transition: coupled_ratio_mellin_type_ii_endpoint="
+        f"s={_fmt(ratio_type_ii.outer_scale_exponent)},"
+        f"long={_fmt(ratio_type_ii.long_mobius_variable_exponent)},"
+        "collapsed="
+        f"{_fmt(ratio_type_ii.collapsed_product_variable_exponent)},"
+        f"shift={_fmt(ratio_type_ii.shift_exponent)},"
+        "ambient="
+        f"{_fmt(ratio_type_ii.convolution_ambient_exponent)},"
+        "modulus="
+        f"{_fmt(ratio_type_ii.progression_modulus_exponent)},"
+        "level="
+        f"{_fmt(ratio_type_ii.modulus_level_relative_to_ambient)},"
+        f"raw={_fmt(ratio_type_ii.raw_shifted_count_exponent)},"
+        "target="
+        f"{_fmt(ratio_type_ii.required_inner_bound_exponent)},"
+        "required="
+        f"{_fmt(ratio_type_ii.required_cancellation_exponent)},"
+        "two_coeff_sqrt="
+        f"{_fmt(ratio_type_ii.two_collapsed_coefficients_square_root_saving)},"
+        f"margin={_fmt(ratio_type_ii.square_root_power_margin)},"
+        "bv_range="
+        f"{ratio_type_ii.modulus_within_bombieri_vinogradov_level},"
+        "fixed_shift="
+        f"{ratio_type_ii.fixed_shift_dispersion_suffices_after_shift_sum},"
+        "quotient_mobius="
+        f"{ratio_type_ii.quotient_mobius_prevents_direct_bv},"
+        "coupled_shift="
+        f"{ratio_type_ii.full_shift_average_must_remain_coupled},"
+        "coprime_allocation="
+        f"{ratio_type_ii.coprimality_prime_allocation_required},"
+        f"four_variable={ratio_type_ii.four_variable_reduction_exact},"
+        "published="
+        f"{ratio_type_ii.coupled_ratio_mellin_type_ii_bound_proved},"
+        f"whole_face={ratio_type_ii.whole_signed_hard_face_covered}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

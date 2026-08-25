@@ -2480,6 +2480,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.748}",
         "signed_dual_product_collapse_exact=True",
         "actual_transformed_weight_product_compatible=False",
+        "### 4.94 The collapsed model isolates a coupled ratio-Mellin Type-II gate",
+        "\\tag{4.749}",
+        "\\tag{4.753}",
+        "quotient_mobius_prevents_direct_bv=True",
+        "coupled_ratio_mellin_type_ii_bound_proved=False",
     ):
         assert marker in note
 
@@ -2647,6 +2652,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "collapse=True,survivor=mobius,cutoff=True,"
         "product_weight=False,ratio_mellin=True,published=False,"
         "whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: coupled_ratio_mellin_type_ii_endpoint="
+        "s=1,long=1,collapsed=1,shift=1,ambient=2,modulus=1,"
+        "level=1/2,raw=3,target=2,required=1,two_coeff_sqrt=1,"
+        "margin=0,bv_range=True,fixed_shift=False,quotient_mobius=True,"
+        "coupled_shift=True,coprime_allocation=True,four_variable=False,"
+        "published=False,whole_face=False"
     ) in report
 
 
@@ -3580,6 +3593,46 @@ def test_signed_atom_and_h_poisson_dual_convolution_collapses_exactly() -> None:
     assert audit.ratio_mellin_family_required
     assert not audit.weighted_collapse_bound_proved
     assert not audit.whole_signed_hard_face_covered
+
+
+def test_coupled_ratio_mellin_gate_has_exact_level_half_endpoint() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "coupled_ratio_mellin_type_ii_gate_audit",
+        None,
+    )
+    assert adapter is not None, "coupled ratio-Mellin Type-II audit is missing"
+
+    interior = adapter(outer_scale_exponent=F(1, 2))
+    assert interior.long_mobius_variable_exponent == F(1)
+    assert interior.collapsed_product_variable_exponent == F(1, 2)
+    assert interior.shift_exponent == F(1, 2)
+    assert interior.convolution_ambient_exponent == F(3, 2)
+    assert interior.progression_modulus_exponent == F(1, 2)
+    assert interior.modulus_level_relative_to_ambient == F(1, 3)
+    assert interior.raw_shifted_count_exponent == F(2)
+    assert interior.required_inner_bound_exponent == F(3, 2)
+    assert interior.required_cancellation_exponent == F(1, 2)
+    assert interior.two_collapsed_coefficients_square_root_saving == F(1, 2)
+    assert interior.square_root_power_margin == F(0)
+    assert interior.modulus_within_bombieri_vinogradov_level
+
+    endpoint = adapter(outer_scale_exponent=F(1))
+    assert endpoint.convolution_ambient_exponent == F(2)
+    assert endpoint.modulus_level_relative_to_ambient == F(1, 2)
+    assert endpoint.raw_shifted_count_exponent == F(3)
+    assert endpoint.required_inner_bound_exponent == F(2)
+    assert endpoint.required_cancellation_exponent == F(1)
+    assert endpoint.two_collapsed_coefficients_square_root_saving == F(1)
+    assert endpoint.square_root_power_margin == F(0)
+    assert endpoint.modulus_within_bombieri_vinogradov_level
+    assert not endpoint.fixed_shift_dispersion_suffices_after_shift_sum
+    assert endpoint.quotient_mobius_prevents_direct_bv
+    assert endpoint.full_shift_average_must_remain_coupled
+    assert endpoint.coprimality_prime_allocation_required
+    assert not endpoint.four_variable_reduction_exact
+    assert not endpoint.coupled_ratio_mellin_type_ii_bound_proved
+    assert not endpoint.whole_signed_hard_face_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

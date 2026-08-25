@@ -11146,6 +11146,91 @@ records `signed_dual_product_collapse_exact=True` and
 pre-Cauchy route—estimate the coupled ratio-Mellin family after the
 finite collapse—but does not yet bound the residual (s\in[1/4,1]).
 
+### 4.94 The collapsed model isolates a coupled ratio-Mellin Type-II gate
+
+For later use, Mellin-separate a smooth (u,j)-weight in its ratio.  The
+exact coefficient replacing (4.746) is
+
+\[
+ \mathcal D_{U,e,\tau}(c)
+ :=-c^{-i\tau}
+ \sum_{d\mid c\atop d\le U<de}\mu(d)d^{2i\tau}
+ \prod_{p\mid c/d}(1-p^{2i\tau}).
+\tag{4.749}
+\]
+
+This follows by inserting (u=dy, j=c/(dy)) and performing the finite
+(y)-divisor sum.  In particular,
+(mathcal D_{U,e,0}(c)=-\mu(c)\mathbf1_{c\le U<ce}) exactly.  Grant for
+the moment that the primitive gcd allocation has been separated without
+loss.  One resulting tensor has the shifted determinant model
+
+\[
+ \sum_{\substack{x,y\asymp T;\ c,d\asymp T^s\\
+                  0<|\ell|\asymp T^s\\xc-yd=\ell}}
+ \mu(x)\mu(y)
+ \mathcal D_{U,e,\tau}(c)
+ \overline{\mathcal D_{U,e',\upsilon}(d)}
+ \Psi_{\tau,\upsilon}
+\tag{4.750}
+\]
+
+integrated against a Schwartz function of ((\tau,\upsilon)).  The
+weight (Psi_{\tau,\upsilon}) is smooth on the displayed dyadic ranges;
+its seminorms grow polynomially in the two Mellin frequencies, which the
+outer Schwartz transform absorbs.  The exact power ledger is
+
+\[
+ \text{raw}=1+2s,qquad
+ \text{target}=1+s,qquad
+ \boxed{\text{required cancellation}=s.}
+\tag{4.751}
+\]
+
+Thus square-root cancellation in the two collapsed (T^s)-coefficient
+variables is exactly critical, with no positive-power margin.  At the
+endpoint this becomes the single explicit estimate
+
+\[
+ \boxed{
+ \int_{\mathbb R^2}\Xi(\tau,\upsilon)
+ \mathfrak V_{1}(\tau,\upsilon)\,d\tau d\upsilon
+ \ll_{B,W}T^2(\log T)^{-B},}
+\tag{4.752}
+\]
+
+uniformly in every inherited cutoff and coprimality allocation.  Here
+(mathfrak V_1) denotes (4.750) at (s=1), with the nonzero-shift and
+Schwartz transform retained; (4.752) is not a theorem proved below.
+
+There is a useful but insufficient level-of-distribution observation.
+Modulo (c), (4.750) has (yd\equiv-\ell\pmod c), and
+
+\[
+ \frac{\log_T c}{\log_T(yd)}=\frac{s}{1+s}\le\frac12.
+\tag{4.753}
+\]
+
+Standard Bombieri--Vinogradov therefore has enough *modulus range*.
+It is not an adapter for (4.750): the quotient
+(x=(yd+\ell)/c) carries the second Möbius weight, and applying a
+fixed-shift discrepancy estimate followed by absolute summation loses
+the entire (T^s) required in (4.751).  Both the quotient Möbius weight
+and the full shift average must remain inside the dispersion argument.
+
+There is one further exactness boundary.  In the primitive BBLR layer the
+condition is ((X,Y)=1) before writing (X=xu, Y=yv).  After the product
+collapse this becomes a prime-allocation condition involving the hidden
+divisors (u,v), not merely ((xc,yd)=1).  Consequently (4.750) is the
+minimal collapsed model, but it is not yet an exact four-variable rewrite
+of every gcd layer.  A successful proof must first expand those prime
+allocations and prove (4.752) uniformly for the resulting finitely
+divisor-weighted family.  The audit therefore records
+`quotient_mobius_prevents_direct_bv=True`,
+`coprimality_prime_allocation_required=True`,
+`four_variable_reduction_exact=False`, and
+`coupled_ratio_mellin_type_ii_bound_proved=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
