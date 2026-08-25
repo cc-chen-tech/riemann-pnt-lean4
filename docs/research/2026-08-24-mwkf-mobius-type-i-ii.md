@@ -230,11 +230,11 @@ truncated-divisor coefficient \(c_U(a)\), and the factorization
 \(h\delta\); it is not an arbitrary-coefficient BCR sum.  Type II has two
 medium factor variables and the independent Möbius weight \(\mu(s)\).
 
-The proposed Type-II chain is
+The Type-II chain surviving the diagonal audit in Section 4.2 is
 
 \[
- \text{Cauchy} \longrightarrow\
- \text{diagonal/non-diagonal expansion}\ \longrightarrow\
+ \text{global product-fiber centering (4.8t)}\ \longrightarrow\
+ \text{signed Gram expansion without a triangle inequality}\ \longrightarrow\
  \text{reciprocity}\ \longrightarrow\
  \text{complementary divisor}\ \longrightarrow\
  \text{Kuznetsov plus spectral large sieve}.
@@ -439,6 +439,248 @@ where the constant 32 follows from the displayed dyadic supports of
 Equations (4.8c)--(4.8f) are the precise complementary-divisor data that a
 Kuznetsov step must consume; neither the \(\Delta=0\) solutions nor the
 nonzero \(c\)-sum may be dropped.
+
+### 4.2 The zero complementary divisor forces a joint dispersion audit
+
+The equation \(\Delta=0\) has an exact primitive-ray parametrization.
+Put \(y_i=s_i a_i>0\).  Since \(n_i\ne0\), the equality
+
+\[
+ n_1y_2=n_2y_1
+\tag{4.8g}
+\]
+
+first forces \(n_1,n_2\) to have the same sign.  Write uniquely
+
+\[
+ |n_1|=gu,\qquad |n_2|=gv,\qquad (u,v)=1.
+\tag{4.8h}
+\]
+
+Then (4.8g) is equivalent to
+
+\[
+ \boxed{s_1a_1=uk,\qquad s_2a_2=vk}
+\tag{4.8i}
+\]
+
+for a unique positive integer \(k\).  Conversely (4.8h)--(4.8i), with a
+common sign for \(n_1,n_2\), imply \(\Delta=0\).  The finite helper
+proportional_diagonal_coordinates checks this parametrization without
+factorization or floating-point arithmetic.
+
+The identical-tuple subcase
+
+\[
+ a_1=a_2,\qquad s_1=s_2,\qquad n_1=n_2
+\tag{4.8j}
+\]
+
+is positive in the formal expansion of \(\mathcal E_b\): the two
+Möbius signs and the two truncated-divisor coefficients become squares.
+If \(B_0=T^\beta\), the cardinality-level \(L^2\) scale of its separate
+majorant is
+
+\[
+ \underbrace{B_0}_{b}
+ \underbrace{A_0}_{a}
+ \underbrace{S}_{s}
+ \underbrace{HL}_{n=h\delta\text{ second moment}}
+ =RSHL=T^{11}.
+\tag{4.8k}
+\]
+
+Only divisor and endpoint logarithms have been suppressed in (4.8k);
+there is no Möbius sign left from which to obtain a fixed power.  By
+contrast, the target SP\(_b\) is
+
+\[
+ \frac{R^2S^2}{B_0}T^{-1/250}
+ =T^{12-\beta-1/250}.
+\tag{4.8l}
+\]
+
+Thus the exponent-ledger ratio between this separate majorant and the
+spectral target is
+
+\[
+ T^{\beta-1+1/250},\qquad 1\le\beta\le2.
+\tag{4.8m}
+\]
+
+Even at \(\beta=1\), this cardinality-level diagonal majorant misses by
+\(T^{1/250}\); at \(\beta=2\) it misses by \(T^{251/250}\).  After the
+outer Cauchy inequality, the corresponding deficit against
+\(RS T^{-1/500}\) is
+
+\[
+ T^{(\beta-1)/2+1/500}.
+\tag{4.8n}
+\]
+
+Consequently the order displayed in (4.3) cannot be closed by “Cauchy,
+apply a cardinality-level \(L^2\) bound to the positive diagonal, then
+apply Kuznetsov to the rest.”  This does not assert a lower bound for an
+arbitrary smooth box, and hence does not rule out every conceivable
+post-Cauchy argument.  It does rule out the currently specified
+separate-majorant implementation.  The replacement audited here is the
+global factorization dispersion identity (4.8t), performed before a
+triangle inequality while retaining the four signed Type-I/II sectors.
+It extracts, rather than discards, an explicit single-Möbius main term.
+Only that term, the centered \(\Delta=0\) remainder, and the
+\(\Delta\ne0\) complementary-divisor sum may be passed to their
+respective estimates.  The exact-rational function
+type_ii_cauchy_diagonal_audit records the exponent ledger
+(4.8k)--(4.8n), not a diagonal lower bound.
+
+There is nevertheless an exact algebraic centering available on the
+primitive subray \(u=v=1\).  Put
+
+\[
+ \mu_{\le U}(d):=\mu(d)\mathbf1_{d\le U}.
+\tag{4.8o}
+\]
+
+Since \(c_U=\mu_{\le U}*1\), associativity of finite Dirichlet
+convolution gives
+
+\[
+ \boxed{\mu*c_U=\mu_{\le U}.}
+\tag{4.8p}
+\]
+
+Equivalently,
+
+\[
+ \sum_{sa=k}\mu(s)c_U(a)
+ =\mu(k)\mathbf1_{k\le U}.
+\tag{4.8q}
+\]
+
+The condition \(a>U\) in the actual Type sector is essential.  For
+\(a\le U\), the definition of \(c_U\) gives
+\(c_U(a)=\mathbf1_{a=1}\).  Removing this sole term from (4.8q) proves
+the exact sector identity
+
+\[
+ \boxed{
+ \sum_{\substack{sa=k\\a>U}}\mu(s)c_U(a)
+ =-\mu(k)\mathbf1_{k>U}.}
+\tag{4.8r}
+\]
+
+Both (4.8q) and (4.8r) remain valid on the original squarefree support:
+there \(k=sa\) is squarefree, and the restrictions coprime to \(bq\)
+depend only on \(k\).  The exhaustive helpers
+full_truncated_mobius_convolution and
+restricted_truncated_mobius_convolution verify the two finite identities
+separately; the displayed convolution proof is general.
+
+Let \(\mathcal V_{q,b,g,k}(s,a)\) denote the sum of the complete
+factor-dependent weight over every signed factorization
+\(h\delta=g\) allowed by the fixed \((H,L)\) box.  Thus it includes the
+original \((h,\delta)\) weight after grouping equal products, the dyadic
+factors, mollifier tapers, smooth real phase, and the
+two reciprocal phases.  More precisely, for an admissible
+\((q,b,s,a)\) with \(sa=k\), set
+
+\[
+ \boxed{
+ \mathcal V_{q,b,g,k}(s,a)
+ :=\sum_{\substack{h\delta=g\\h\sim H,\ \delta\sim L}}
+ \mathcal W_q(a,b,s,h,\delta)
+ e\!\left(-\frac{g}{abs}
+           +\frac{g\overline{sb}}a
+           +\frac{g\overline{sa}}b\right),}
+\tag{4.8s}
+\]
+
+and set it to zero outside the original conditions in (4.4).  The last
+phase depends only on \((g,k,b)\), but it is retained in (4.8s) so that
+the displayed coefficient is exactly the first amplitude whose square
+produces the \(u=v=1\) part of (4.8).
+
+For any anchor \(\mathcal A_{q,b,g}(k)\) which depends on the product
+\(k=sa\) but not on its factorization, (4.8r) gives
+
+\[
+\begin{aligned}
+ &\sum_{\substack{sa=k\\a>U}}
+   \mu(s)c_U(a)\mathcal V_{q,b,g,k}(s,a)\\
+ &\quad=
+ \sum_{\substack{sa=k\\a>U}}
+   \mu(s)c_U(a)
+   \{\mathcal V_{q,b,g,k}(s,a)-
+      \mathcal A_{q,b,g}(k)\}
+ -\mu(k)\mathcal A_{q,b,g}(k),
+ \qquad k>U.
+\end{aligned}
+\tag{4.8t}
+\]
+
+Thus Linnik centering does not annihilate the sector: it extracts an
+explicit single-Möbius main term and leaves a centered factorization
+coefficient.  It must be performed before taking absolute values and
+before localizing individual \((S,A_0)\) factor boxes, since extending a
+dyadic weight by zero makes the anchor term range over the complementary
+factorizations of the same \(k\).
+
+At the balanced box,
+
+\[
+ B_0=T^\beta,\quad A_0=T^{3-\beta},\quad
+ |g|\asymp HL=T^5,\quad k\asymp SA_0=T^{6-\beta}.
+\tag{4.8u}
+\]
+
+The exact zero-ray input replacing a separate identity-diagonal bound is
+therefore the following **joint** Gram inequality.  It is written with a
+product-only anchor satisfying
+\(|\mathcal A_{q,b,g}(k)|\ll_W\mathscr L^C\); the whole expression is
+algebraically independent of the chosen anchor by (4.8t):
+
+\[
+\boxed{
+ \mathrm{ZRG}_{\beta}:\quad
+ \sum_{\substack{b\asymp B_0,\ b>V\\
+                   \mu^2(b)=1,\ (b,q)=1}}
+ \sum_{0<|g|\asymp HL}
+ \sum_{\substack{k\asymp SA_0\\
+                   \mu^2(k)=1,\ (k,bq)=1}}
+ \left|
+  \sum_{\substack{sa=k\\a>U}}
+  \mu(s)c_U(a)
+  \{\mathcal V_{q,b,g,k}(s,a)-
+    \mathcal A_{q,b,g}(k)\}
+  -\mu(k)\mathcal A_{q,b,g}(k)
+ \right|^2
+ \ll_W T^{12-\beta-1/250}.}
+\tag{4.8v}
+\]
+
+If the explicit term
+\(-\mu(k)\mathcal A_{q,b,g}(k)\) in (4.8t) is bounded separately after
+squaring, its Möbius sign is lost.  For an anchor of unit or
+polylogarithmic size on a positive-density part of the box, its
+cardinality-level scale is again
+
+\[
+ B_0\cdot HL\cdot(SA_0)=T^{11}.
+\tag{4.8w}
+\]
+
+Thus the corresponding exponent-ledger margin against (4.8v) is the same
+\(1-\beta-1/250\) as in (4.8m), which is negative throughout
+\(1\le\beta\le2\).  A proof using only that separate cardinality bound
+therefore has to keep the centered coefficient, the explicit Möbius
+main, and their cross term together inside the signed product-fiber Gram
+form, or replace the bound by a genuinely sharper argument.  No
+assertion in this note proves that joint estimate.  The
+exact-rational function
+zero_ray_convolution_centering_audit distinguishes the vanishing full
+convolution (4.8q), the nonzero Type-sector main term (4.8r), and the new
+joint Gram gate (4.8v), and records the repeated \(T^{11}\) obstruction
+(4.8w).
 
 At the balanced witness, write \(B_0=T^\beta\),
 \(1\leq\beta\leq2\).  The right side of SP\(_b\) has the explicit

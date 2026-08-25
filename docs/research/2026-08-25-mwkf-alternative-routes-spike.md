@@ -1978,13 +1978,20 @@ in the unit-slope sector and one half after the all-slope transfer.  A
 successful estimate must use cancellation in the \(q\)- or completion
 frequencies before the cardinal \(q\)-sum.
 
-For item 2, the next genuine power-saving attempt remains pre-Cauchy
-Möbius Type I/II followed by reciprocity, complementary divisor, and
-Kuznetsov.  It must improve the exact residual function above, not the old
-ambient CMT exponent.  Every proposed local theorem should be rejected if
-it creates a positive diagonal before using both Möbius weights, loses
-more than the registered conductor allowance, or replaces the actual
-coefficient by an arbitrary sequence.
+For item 2, the next genuine power-saving attempt is now more narrowly
+specified by Section 4.2 of the Type-I/II note: first use the exact
+\(\mu*c_U\) factorization identity to extract the single-Möbius main
+term and center the remaining product fibers.  The subsequent Gram
+expansion must retain the centered/main cross term before reciprocity,
+complementary divisor, and Kuznetsov.  The currently available
+Cauchy-first ordering followed by cardinality-level separate majorants
+fails by the exact exponent-ledger deficit
+\(T^{(\beta-1)/2+1/500}\), uniformly for \(1\le\beta\le2\).  The new
+estimate must improve the exact residual function above, not the old
+ambient CMT exponent.  Every proposed local theorem should be rejected
+if it creates a positive diagonal before using both Möbius weights,
+loses more than the registered conductor allowance, or replaces the
+actual coefficient by an arbitrary sequence.
 
 The relevant published comparison points are
 [Bettin--Chandee](https://arxiv.org/abs/1502.00769),

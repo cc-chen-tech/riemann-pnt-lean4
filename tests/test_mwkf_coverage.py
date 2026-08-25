@@ -758,6 +758,66 @@ def test_squarefree_linear_completion_stalls_on_long_factor_subboxes() -> None:
     assert not worst.published_coverage
 
 
+def test_type_ii_cauchy_identity_diagonal_exceeds_the_spectral_target() -> None:
+    """Catch bounding the positive identity diagonal after Cauchy in b."""
+    adapter = getattr(
+        coverage_audit,
+        "type_ii_cauchy_diagonal_audit",
+        None,
+    )
+    assert adapter is not None, "Type-II Cauchy diagonal adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(1): (F(2749, 250), F(-1, 250), F(6), F(1, 500)),
+        F(3, 2): (F(2624, 250), F(-63, 125), F(25, 4), F(63, 250)),
+        F(2): (F(2499, 250), F(-251, 250), F(13, 2), F(251, 500)),
+    }
+    for beta, want in expected.items():
+        audit = adapter(box, b_exponent=beta)
+        assert audit.identity_diagonal_exponent == F(11)
+        assert audit.spectral_target_exponent == want[0]
+        assert audit.spectral_target_margin == want[1]
+        assert audit.post_cauchy_diagonal_exponent == want[2]
+        assert audit.post_cauchy_target_deficit == want[3]
+        assert audit.b_exponent_range == (F(1), F(2))
+        assert audit.exact_identity_diagonal_present
+        assert audit.dispersion_subtraction_required
+        assert not audit.separate_diagonal_majorant_closes
+        assert not audit.published_coverage
+
+
+def test_zero_ray_has_exact_global_convolution_centering_but_local_residual() -> None:
+    """Catch declaring the full mu*c_U zero after imposing factor boxes."""
+    adapter = getattr(
+        coverage_audit,
+        "zero_ray_convolution_centering_audit",
+        None,
+    )
+    assert adapter is not None, "zero-ray convolution audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    audit = adapter(box, b_exponent=F(3, 2))
+    assert audit.a_exponent == F(3, 2)
+    assert audit.product_ray_exponent == F(9, 2)
+    assert audit.cutoff_exponent == F(1)
+    assert audit.product_above_cutoff
+    assert audit.full_convolution_vanishes_exactly
+    assert audit.type_sector_convolution_equals_negative_mobius
+    assert not audit.type_sector_convolution_vanishes
+    assert audit.factorization_anchor_may_depend_only_on_product
+    assert audit.factorization_anchor_leaves_explicit_mobius_main
+    assert audit.dyadic_factor_localization_breaks_exact_zero
+    assert audit.fixed_factor_phase_breaks_product_invariance
+    assert audit.joint_gram_gate_required
+    assert audit.joint_gram_target_exponent == F(2624, 250)
+    assert audit.explicit_mobius_main_squared_exponent == F(11)
+    assert audit.explicit_main_target_margin == F(-63, 125)
+    assert not audit.separate_explicit_main_majorant_closes
+    assert audit.joint_cross_term_required
+    assert not audit.published_coverage
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -843,6 +903,18 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "balanced_max_a: squarefree_linear_completion="
         "0:save=1,remain=2;1:save=0,remain=3;"
         "2:save=0,remain=3 covered=False"
+    ) in output
+    assert (
+        "balanced_max_a: type_ii_cauchy_diagonal="
+        "1:margin=-1/250,post_deficit=1/500;"
+        "3/2:margin=-63/125,post_deficit=63/250;"
+        "2:margin=-251/250,post_deficit=251/500 "
+        "subtraction=True"
+    ) in output
+    assert (
+        "balanced_max_a: zero_ray_convolution_centering="
+        "product=9/2 cutoff=1 full_zero=True "
+        "sector_main=-mu main_sq=11 cross=True joint_gate=True"
     ) in output
 
 

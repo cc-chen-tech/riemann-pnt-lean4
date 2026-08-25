@@ -64,6 +64,36 @@ def test_exact_double_mobius_split_has_four_sectors() -> None:
                 assert set(sectors) == {"I/I", "I/II", "II/I", "II/II"}
 
 
+def test_full_truncated_mobius_convolution_vanishes_above_the_cutoff() -> None:
+    """Catch localizing the s*a factorization before its exact centering."""
+    adapter = getattr(
+        type_identity,
+        "full_truncated_mobius_convolution",
+        None,
+    )
+    assert adapter is not None, "truncated Möbius convolution helper is missing"
+
+    for cutoff in range(1, 9):
+        for n in range(1, 80):
+            expected = mobius(n) if n <= cutoff else 0
+            assert adapter(n=n, cutoff_u=cutoff) == expected
+
+
+def test_type_sector_convolution_extracts_negative_mobius_above_cutoff() -> None:
+    """Catch forgetting the a>U restriction in the actual Type sector."""
+    adapter = getattr(
+        type_identity,
+        "restricted_truncated_mobius_convolution",
+        None,
+    )
+    assert adapter is not None, "restricted Möbius convolution helper is missing"
+
+    for cutoff in range(1, 9):
+        for n in range(1, 80):
+            expected = -mobius(n) if n > cutoff else 0
+            assert adapter(n=n, cutoff_u=cutoff) == expected
+
+
 def test_squarefree_factorization_gives_exact_common_b_phase() -> None:
     # e(n * bar(s)/(a*b)) splits into characters modulo a and b.
     for a, b, s, n in ((5, 6, 7, 11), (7, 10, 9, -13), (11, 14, 3, 17)):
@@ -97,6 +127,36 @@ def test_global_determinant_lattice_keeps_all_v_j_solutions_coupled() -> None:
         )
         assert next_j - j == r
         assert next_v - v == s
+
+
+def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:
+    """Catch reversing the two primitive ray coordinates in Delta=0."""
+    adapter = getattr(
+        type_identity,
+        "proportional_diagonal_coordinates",
+        None,
+    )
+    assert adapter is not None, "proportional-diagonal helper is missing"
+
+    positive = adapter(n1=6, y1=14, n2=15, y2=35)
+    assert positive.sign == 1
+    assert positive.common_n_factor == 3
+    assert positive.primitive_n1 == 2
+    assert positive.primitive_n2 == 5
+    assert positive.common_y_factor == 7
+    assert 6 * 35 == 15 * 14
+    assert 14 == positive.primitive_n1 * positive.common_y_factor
+    assert 35 == positive.primitive_n2 * positive.common_y_factor
+
+    negative = adapter(n1=-6, y1=14, n2=-15, y2=35)
+    assert negative.sign == -1
+    assert negative.common_n_factor == 3
+    assert negative.primitive_n1 == 2
+    assert negative.primitive_n2 == 5
+    assert negative.common_y_factor == 7
+
+    with pytest.raises(ValueError, match="not on the zero-complementary ray"):
+        adapter(n1=6, y1=14, n2=15, y2=34)
 
 
 def test_short_signed_shift_window_has_a_unique_j() -> None:

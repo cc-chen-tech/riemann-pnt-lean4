@@ -383,6 +383,48 @@ class SquarefreeLinearCompletionAudit:
     source: str
 
 
+@dataclass(frozen=True)
+class TypeIICauchyDiagonalAudit:
+    b_exponent: Fraction
+    b_exponent_range: tuple[Fraction, Fraction]
+    a_exponent: Fraction
+    modulus_exponent: Fraction
+    numerator_l2_exponent: Fraction
+    identity_diagonal_exponent: Fraction
+    spectral_target_exponent: Fraction
+    spectral_target_margin: Fraction
+    post_cauchy_diagonal_exponent: Fraction
+    post_cauchy_target_exponent: Fraction
+    post_cauchy_target_deficit: Fraction
+    exact_identity_diagonal_present: bool
+    dispersion_subtraction_required: bool
+    separate_diagonal_majorant_closes: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
+class ZeroRayConvolutionCenteringAudit:
+    b_exponent: Fraction
+    a_exponent: Fraction
+    product_ray_exponent: Fraction
+    cutoff_exponent: Fraction
+    product_above_cutoff: bool
+    full_convolution_vanishes_exactly: bool
+    type_sector_convolution_equals_negative_mobius: bool
+    type_sector_convolution_vanishes: bool
+    factorization_anchor_may_depend_only_on_product: bool
+    factorization_anchor_leaves_explicit_mobius_main: bool
+    dyadic_factor_localization_breaks_exact_zero: bool
+    fixed_factor_phase_breaks_product_invariance: bool
+    joint_gram_gate_required: bool
+    joint_gram_target_exponent: Fraction
+    explicit_mobius_main_squared_exponent: Fraction
+    explicit_main_target_margin: Fraction
+    separate_explicit_main_majorant_closes: bool
+    joint_cross_term_required: bool
+    published_coverage: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -1688,6 +1730,155 @@ def squarefree_linear_completion_audit(
     )
 
 
+def type_ii_cauchy_diagonal_audit(
+    box: ExponentBox,
+    *,
+    b_exponent: Fraction,
+) -> TypeIICauchyDiagonalAudit:
+    """Power ledger for the positive identity diagonal after Cauchy in ``b``.
+
+    In the Type-II factorization ``r=a*b``, the permitted exponent range
+    is ``rho/3 <= beta <= 2*rho/3`` and ``a`` has exponent
+    ``rho-beta``.  The exact identical-tuple contribution to
+    ``sum_b |A_b|^2`` has one copy each of ``b,a,s`` and the squared
+    ``h*delta`` coefficient norm.  Its exponent is therefore
+
+    ``beta + (rho-beta) + sigma + (ell+h)``.
+
+    Compare this with the spectral target ``R^2*S^2/B*T^(-1/250)``.
+    The adapter only audits a proof which majorizes that positive
+    diagonal separately; it does not assert a lower bound for the full
+    signed expanded square.
+    """
+    b_exponent_range = (box.rho / 3, 2 * box.rho / 3)
+    if not b_exponent_range[0] <= b_exponent <= b_exponent_range[1]:
+        raise ValueError("b exponent lies outside the Type-II range")
+
+    a_exponent = box.rho - b_exponent
+    numerator_l2_exponent = box.ell + box.h
+    identity_diagonal_exponent = (
+        b_exponent
+        + a_exponent
+        + box.sigma
+        + numerator_l2_exponent
+    )
+    spectral_target_exponent = (
+        2 * box.rho + 2 * box.sigma - b_exponent - F(1, 250)
+    )
+    spectral_target_margin = (
+        spectral_target_exponent - identity_diagonal_exponent
+    )
+    post_cauchy_diagonal_exponent = (
+        b_exponent + identity_diagonal_exponent
+    ) / 2
+    post_cauchy_target_exponent = (
+        box.rho + box.sigma - F(1, 500)
+    )
+    post_cauchy_target_deficit = _positive_part(
+        post_cauchy_diagonal_exponent - post_cauchy_target_exponent
+    )
+    separate_diagonal_majorant_closes = spectral_target_margin > 0
+
+    return TypeIICauchyDiagonalAudit(
+        b_exponent=b_exponent,
+        b_exponent_range=b_exponent_range,
+        a_exponent=a_exponent,
+        modulus_exponent=box.sigma,
+        numerator_l2_exponent=numerator_l2_exponent,
+        identity_diagonal_exponent=identity_diagonal_exponent,
+        spectral_target_exponent=spectral_target_exponent,
+        spectral_target_margin=spectral_target_margin,
+        post_cauchy_diagonal_exponent=(
+            post_cauchy_diagonal_exponent
+        ),
+        post_cauchy_target_exponent=post_cauchy_target_exponent,
+        post_cauchy_target_deficit=post_cauchy_target_deficit,
+        exact_identity_diagonal_present=True,
+        dispersion_subtraction_required=(
+            not separate_diagonal_majorant_closes
+        ),
+        separate_diagonal_majorant_closes=(
+            separate_diagonal_majorant_closes
+        ),
+        published_coverage=False,
+    )
+
+
+def zero_ray_convolution_centering_audit(
+    box: ExponentBox,
+    *,
+    b_exponent: Fraction,
+) -> ZeroRayConvolutionCenteringAudit:
+    """Record the exact ``mu*c_U`` centering on the ``u=v=1`` ray.
+
+    The full convolution is
+    ``sum_(s*a=k) mu(s)c_U(a)=mu(k)1_(k<=U)``.  The actual Type sector
+    restricts ``a>U`` and therefore equals ``-mu(k)`` when ``k>U``.
+    Subtracting an anchor depending only on ``k`` consequently leaves an
+    explicit Möbius main term, plus a centered factorization sum.  The
+    dyadic localization and fixed-factor reciprocal phase depend
+    separately on ``s,a`` and the latter sum still needs an estimate.
+    """
+    b_exponent_range = (box.rho / 3, 2 * box.rho / 3)
+    if not b_exponent_range[0] <= b_exponent <= b_exponent_range[1]:
+        raise ValueError("b exponent lies outside the Type-II range")
+
+    a_exponent = box.rho - b_exponent
+    product_ray_exponent = box.sigma + a_exponent
+    cutoff_exponent = box.rho / 3
+    product_above_cutoff = product_ray_exponent > cutoff_exponent
+    joint_gram_target_exponent = (
+        2 * box.rho + 2 * box.sigma - b_exponent - F(1, 250)
+    )
+    explicit_mobius_main_squared_exponent = (
+        b_exponent
+        + box.ell
+        + box.h
+        + product_ray_exponent
+    )
+    explicit_main_target_margin = (
+        joint_gram_target_exponent
+        - explicit_mobius_main_squared_exponent
+    )
+    separate_explicit_main_majorant_closes = (
+        explicit_main_target_margin > 0
+    )
+
+    return ZeroRayConvolutionCenteringAudit(
+        b_exponent=b_exponent,
+        a_exponent=a_exponent,
+        product_ray_exponent=product_ray_exponent,
+        cutoff_exponent=cutoff_exponent,
+        product_above_cutoff=product_above_cutoff,
+        full_convolution_vanishes_exactly=(
+            product_above_cutoff
+        ),
+        type_sector_convolution_equals_negative_mobius=(
+            product_above_cutoff
+        ),
+        type_sector_convolution_vanishes=False,
+        factorization_anchor_may_depend_only_on_product=True,
+        factorization_anchor_leaves_explicit_mobius_main=True,
+        dyadic_factor_localization_breaks_exact_zero=True,
+        fixed_factor_phase_breaks_product_invariance=True,
+        joint_gram_gate_required=True,
+        joint_gram_target_exponent=(
+            joint_gram_target_exponent
+        ),
+        explicit_mobius_main_squared_exponent=(
+            explicit_mobius_main_squared_exponent
+        ),
+        explicit_main_target_margin=explicit_main_target_margin,
+        separate_explicit_main_majorant_closes=(
+            separate_explicit_main_majorant_closes
+        ),
+        joint_cross_term_required=(
+            not separate_explicit_main_majorant_closes
+        ),
+        published_coverage=False,
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -2188,6 +2379,40 @@ def main() -> None:
         "balanced_max_a: squarefree_linear_completion="
         + ";".join(linear_completion_parts)
         + " covered=False"
+    )
+    diagonal_parts: list[str] = []
+    for b_exponent in (F(1), F(3, 2), F(2)):
+        diagonal_audit = type_ii_cauchy_diagonal_audit(
+            hard,
+            b_exponent=b_exponent,
+        )
+        diagonal_parts.append(
+            f"{_fmt(b_exponent)}:margin="
+            f"{_fmt(diagonal_audit.spectral_target_margin)},"
+            f"post_deficit="
+            f"{_fmt(diagonal_audit.post_cauchy_target_deficit)}"
+        )
+    print(
+        "balanced_max_a: type_ii_cauchy_diagonal="
+        + ";".join(diagonal_parts)
+        + " subtraction=True"
+    )
+    zero_ray_audit = zero_ray_convolution_centering_audit(
+        hard,
+        b_exponent=F(3, 2),
+    )
+    print(
+        "balanced_max_a: zero_ray_convolution_centering="
+        f"product={_fmt(zero_ray_audit.product_ray_exponent)} "
+        f"cutoff={_fmt(zero_ray_audit.cutoff_exponent)} "
+        "full_zero="
+        f"{zero_ray_audit.full_convolution_vanishes_exactly} "
+        "sector_main=-mu main_sq="
+        f"{_fmt(zero_ray_audit.explicit_mobius_main_squared_exponent)} "
+        "cross="
+        f"{zero_ray_audit.joint_cross_term_required} "
+        "joint_gate="
+        f"{zero_ray_audit.joint_gram_gate_required}"
     )
 
 

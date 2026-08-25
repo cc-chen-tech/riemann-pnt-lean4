@@ -22,6 +22,52 @@ class CenteredResonanceCoordinates:
         return abs(self.w)
 
 
+@dataclass(frozen=True)
+class ProportionalDiagonalCoordinates:
+    sign: int
+    common_n_factor: int
+    primitive_n1: int
+    primitive_n2: int
+    common_y_factor: int
+
+
+def proportional_diagonal_coordinates(
+    *,
+    n1: int,
+    y1: int,
+    n2: int,
+    y2: int,
+) -> ProportionalDiagonalCoordinates:
+    """Parameterize exactly the zero complementary-divisor equation.
+
+    For nonzero signed ``n_i`` and positive ``y_i``, the equation
+    ``n1*y2=n2*y1`` forces the signs of ``n1,n2`` to agree.  Writing
+    ``|n1|=g*u`` and ``|n2|=g*v`` with ``(u,v)=1`` then gives uniquely
+    ``y1=u*k`` and ``y2=v*k``.
+    """
+    if n1 == 0 or n2 == 0 or y1 <= 0 or y2 <= 0:
+        raise ValueError("require nonzero n_i and positive y_i")
+    if n1 * y2 != n2 * y1:
+        raise ValueError("not on the zero-complementary ray")
+
+    common_n_factor = gcd(abs(n1), abs(n2))
+    primitive_n1 = abs(n1) // common_n_factor
+    primitive_n2 = abs(n2) // common_n_factor
+    if y1 % primitive_n1 != 0 or y2 % primitive_n2 != 0:
+        raise AssertionError("primitive proportionality divisibility failed")
+    common_y_factor = y1 // primitive_n1
+    if y2 // primitive_n2 != common_y_factor:
+        raise AssertionError("primitive proportionality factor mismatch")
+
+    return ProportionalDiagonalCoordinates(
+        sign=1 if n1 > 0 else -1,
+        common_n_factor=common_n_factor,
+        primitive_n1=primitive_n1,
+        primitive_n2=primitive_n2,
+        common_y_factor=common_y_factor,
+    )
+
+
 def centered_resonance_coordinates(
     *,
     r: int,
@@ -127,6 +173,35 @@ def divisors(n: int) -> tuple[int, ...]:
 
 def c_u(a: int, cutoff_u: int) -> int:
     return sum(mobius(d) for d in divisors(a) if d <= cutoff_u)
+
+
+def full_truncated_mobius_convolution(
+    *,
+    n: int,
+    cutoff_u: int,
+) -> int:
+    """Evaluate ``(mu*c_U)(n)=mu(n) 1_(n<=U)`` as a finite sum."""
+    if n < 1 or cutoff_u < 1:
+        raise ValueError("require n, cutoff_u >= 1")
+    return sum(
+        mobius(s) * c_u(n // s, cutoff_u)
+        for s in divisors(n)
+    )
+
+
+def restricted_truncated_mobius_convolution(
+    *,
+    n: int,
+    cutoff_u: int,
+) -> int:
+    """Evaluate the actual ``a>U`` convolution in one Type sector."""
+    if n < 1 or cutoff_u < 1:
+        raise ValueError("require n, cutoff_u >= 1")
+    return sum(
+        mobius(s) * c_u(n // s, cutoff_u)
+        for s in divisors(n)
+        if n // s > cutoff_u
+    )
 
 
 def split_mobius_identity(
