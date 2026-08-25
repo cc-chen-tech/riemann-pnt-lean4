@@ -9051,6 +9051,109 @@ including the progression-modulus cap \(1/100\), and keeps
 `other_entry_weights_separate=False`, and
 `published_theorem_closes_prime_sector=False`.
 
+### 4.73 Exact exchange symmetry does not square the centered collar
+
+There is an exact symmetry which is invisible if the two orientations are
+estimated separately.  In the notation of (4.4) of the exact-reduction
+note, exchange
+
+\[
+ (d,e,m_1,m_2,\delta,h)
+ \longmapsto(e,d,m_2,m_1,-\delta,-h).
+\tag{4.641}
+\]
+
+The swapped Poisson variable is
+\(y=(xr+\delta)/s\).  Since \(dy=(r/s)dx\), and since \(W\) and
+\(V_t\) are real, direct substitution gives the exact kernel identity
+
+\[
+ \boxed{
+ \mathscr K_{S,R,M,K}(s,r;-\delta,-h)
+ =\frac rs e\!\left(\frac{h\delta}{rs}\right)
+  \overline{\mathscr K_{R,S,K,M}(r,s;\delta,h)}.}
+\tag{4.642}
+\]
+
+Here the order of \(K,M\) is also exchanged.  The reality of \(V_t\)
+follows directly from
+\(\overline{G_t(\bar z)g_t(\bar z)}=G_t(z)g_t(z)\) in its Mellin
+definition.  For \((r,s)=1\), additive reciprocity says
+
+\[
+ \frac{\bar r}{s}+\frac{\bar s}{r}
+ \equiv\frac1{rs}\pmod1.
+\tag{4.643}
+\]
+
+Consequently the swapped arithmetic phase and the correction in (4.642)
+satisfy
+
+\[
+ e\!\left(-\frac{h\delta\bar s}{r}\right)
+ e\!\left(\frac{h\delta}{rs}\right)
+ =e\!\left(\frac{h\delta\bar r}{s}\right).
+\tag{4.644}
+\]
+
+The Jacobian in (4.642) also changes the swapped outside factor exactly:
+
+\[
+ \frac1{\sqrt{rs}\,r}\frac rs
+ =\frac1{\sqrt{rs}\,s}.
+\tag{4.645}
+\]
+
+Thus (4.642)--(4.645) prove that the *full* swapped Poisson summand is
+the complex conjugate of the original summand.  They do not say that the
+one-sided completed coefficient \(\Lambda_{r,s}(a)\) in (15.11) is
+real: the swap changes the modulus from \(s\) to \(r\), and the kernel
+contains both the \(t\)-phase and the Fourier phase.
+
+This distinction decides whether the first-order collar bound can be
+squared.  For an arbitrary completed coefficient \(A=a+ib\), put
+\(u=2\pi x\).  Pairing only by conjugation gives the exact identity
+
+\[
+\begin{aligned}
+ &A(e(x)-1)+\overline A(e(-x)-1)\\
+ &\qquad=2a(\cos u-1)-2b\sin u.
+\end{aligned}
+\tag{4.646}
+\]
+
+Its derivative at \(x=0\) is \(-4\pi b\).  Hence, if \(b\ne0\), no
+bound of the form
+
+\[
+ |A(e(x)-1)+\overline A(e(-x)-1)|
+ \le C_A x^2
+\tag{4.647}
+\]
+
+can hold on a neighbourhood of zero.  The hoped-for quadratic estimate
+would require the extra statement
+
+\[
+ \boxed{\Im\Lambda_{r,s}(a)=0}
+\tag{4.648}
+\]
+
+after a common-modulus identification.  Neither (4.642) nor finite
+Fourier inversion supplies (4.648).  Splitting the reciprocity correction
+symmetrically as a midpoint phase changes the gauge but not the
+\(-2b\sin u\) term in (4.646).
+
+Therefore exchange symmetry proves the exact global reality of the
+off-diagonal but does **not** unconditionally improve the first-order
+near-resonance estimate to a second-order one.  The helpers
+`poisson_exchange_reciprocity_identity` and
+`centered_conjugate_pair_taylor_coefficients` check (4.643)--(4.646) with
+exact rationals; `poisson_exchange_second_order_audit` keeps
+`second_order_collar_unconditional=False`.  This rejects only the
+quadratic-collar inference.  It does not rule out using the same exchange
+identity inside a future nonsplit spectral argument.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

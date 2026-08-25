@@ -2326,6 +2326,83 @@ def test_prime_kloosterman_results_leave_an_explicit_half_power_deficit() -> Non
     assert not audit.published_theorem_closes_prime_sector
 
 
+def test_poisson_exchange_reciprocity_is_exact_but_does_not_force_reality() -> None:
+    helper = getattr(
+        coverage_audit,
+        "poisson_exchange_reciprocity_identity",
+        None,
+    )
+    assert helper is not None, "Poisson exchange-reciprocity helper is missing"
+    for r, s, h, delta in (
+        (5, 7, 3, 2),
+        (11, 13, -4, 9),
+        (17, 19, 8, -5),
+    ):
+        exact = helper(r=r, s=s, h=h, delta=delta)
+        assert exact["primitive_pair"]
+        assert exact["reciprocity_phase_exact"]
+        assert exact["swapped_full_poisson_term_is_conjugate"]
+
+    adapter = getattr(
+        coverage_audit,
+        "poisson_exchange_second_order_audit",
+        None,
+    )
+    assert adapter is not None, "Poisson exchange second-order audit is missing"
+    audit = adapter()
+    assert audit.physical_shifted_sum_swap_is_conjugate
+    assert audit.poisson_modulus_changes_under_swap
+    assert audit.reciprocity_correction_retained
+    assert audit.full_poisson_term_swap_is_conjugate
+    assert not audit.completed_coefficient_forced_real
+    assert audit.imaginary_coefficient_has_linear_centered_term
+    assert audit.second_order_bound_requires_real_coefficient
+    assert not audit.second_order_collar_unconditional
+
+
+def test_centered_conjugate_pair_has_a_linear_imaginary_coefficient_term() -> None:
+    helper = getattr(
+        coverage_audit,
+        "centered_conjugate_pair_taylor_coefficients",
+        None,
+    )
+    assert helper is not None, "centered conjugate-pair helper is missing"
+    generic = helper(real_part=F(2), imaginary_part=F(3))
+    assert generic["constant_coefficient"] == F(0)
+    assert generic["linear_coefficient_in_2pi_x"] == F(-6)
+    assert generic["quadratic_coefficient_in_2pi_x"] == F(-2)
+    assert not generic["second_order_zero"]
+
+    real = helper(real_part=F(2), imaginary_part=F(0))
+    assert real["linear_coefficient_in_2pi_x"] == F(0)
+    assert real["second_order_zero"]
+
+
+def test_exchange_symmetry_audit_is_documented_and_reported(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    note = Path(
+        "docs/research/2026-08-25-mwkf-alternative-routes-spike.md"
+    ).read_text()
+    for marker in (
+        "### 4.73 Exact exchange symmetry does not square the centered collar",
+        "\\tag{4.642}",
+        "\\tag{4.646}",
+        "second_order_collar_unconditional=False",
+    ):
+        assert marker in note
+
+    coverage_audit.main()
+    report = capsys.readouterr().out
+    assert (
+        "large_q_transition: poisson_exchange_second_order="
+        "shift_conjugate=True,modulus_changes=True,"
+        "reciprocity_correction=True,full_conjugate=True,"
+        "coefficient_real=False,linear_imaginary=True,"
+        "real_required=True,second_order=False"
+    ) in report
+
+
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     helper = getattr(
         coverage_audit,

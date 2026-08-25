@@ -1143,6 +1143,18 @@ class TransitionPrimeKloostermanAudit:
 
 
 @dataclass(frozen=True)
+class PoissonExchangeSecondOrderAudit:
+    physical_shifted_sum_swap_is_conjugate: bool
+    poisson_modulus_changes_under_swap: bool
+    reciprocity_correction_retained: bool
+    full_poisson_term_swap_is_conjugate: bool
+    completed_coefficient_forced_real: bool
+    imaginary_coefficient_has_linear_centered_term: bool
+    second_order_bound_requires_real_coefficient: bool
+    second_order_collar_unconditional: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5539,6 +5551,90 @@ def transition_prime_kloosterman_audit(
     )
 
 
+def poisson_exchange_reciprocity_identity(
+    *,
+    r: int,
+    s: int,
+    h: int,
+    delta: int,
+) -> dict[str, object]:
+    """Check the exact phase correction in the swapped Poisson box.
+
+    The original orientation Poisson-sums the variable ``x=m_2`` modulo
+    ``s``.  Swapping ``(d,e,m_1,m_2)`` changes the modulus to ``r`` and,
+    after ``y=(xr+delta)/s``, sends ``(delta,h)`` to
+    ``(-delta,-h)``.  The transformed Fourier kernel contributes
+
+        (r/s) e(h*delta/(r*s)) conjugate(K_{r,s}(delta,h)).
+
+    Additive reciprocity then turns the swapped arithmetic phase into the
+    conjugate of the original one.  This is a statement about the *full*
+    Poisson term; the kernel by itself is not invariant.
+    """
+    if r <= 0 or s <= 0:
+        raise ValueError("Poisson moduli must be positive")
+    primitive = gcd(r, s) == 1
+    if not primitive:
+        raise ValueError("exchange reciprocity requires gcd(r,s)=1")
+    r_inverse_mod_s = pow(r, -1, s)
+    s_inverse_mod_r = pow(s, -1, r)
+    swapped_with_kernel_correction = (
+        -F(h * delta * s_inverse_mod_r, r)
+        + F(h * delta, r * s)
+    )
+    conjugate_original = F(h * delta * r_inverse_mod_s, s)
+    exact = (
+        swapped_with_kernel_correction - conjugate_original
+    ).denominator == 1
+    return {
+        "primitive_pair": primitive,
+        "swapped_arithmetic_phase": -F(h * delta * s_inverse_mod_r, r),
+        "kernel_reciprocity_correction": F(h * delta, r * s),
+        "conjugate_original_phase": conjugate_original,
+        "reciprocity_phase_exact": exact,
+        "swapped_full_poisson_term_is_conjugate": exact,
+    }
+
+
+def centered_conjugate_pair_taylor_coefficients(
+    *,
+    real_part: Fraction,
+    imaginary_part: Fraction,
+) -> dict[str, Fraction | bool]:
+    """Taylor ledger for a centered phase paired only by conjugation.
+
+    With ``A=a+i*b`` and ``u=2*pi*x``, the exact paired expression is
+
+        A (exp(iu)-1) + conjugate(A) (exp(-iu)-1)
+        = 2*a*(cos(u)-1) - 2*b*sin(u).
+
+    Its linear coefficient is therefore ``-2*b``.  Exchange symmetry
+    supplies conjugation but does not force ``b=0``.
+    """
+    a = F(real_part)
+    b = F(imaginary_part)
+    return {
+        "constant_coefficient": F(0),
+        "linear_coefficient_in_2pi_x": -2 * b,
+        "quadratic_coefficient_in_2pi_x": -a,
+        "second_order_zero": b == 0,
+    }
+
+
+def poisson_exchange_second_order_audit() -> PoissonExchangeSecondOrderAudit:
+    """Record why exact exchange symmetry does not square the collar gain."""
+    return PoissonExchangeSecondOrderAudit(
+        physical_shifted_sum_swap_is_conjugate=True,
+        poisson_modulus_changes_under_swap=True,
+        reciprocity_correction_retained=True,
+        full_poisson_term_swap_is_conjugate=True,
+        completed_coefficient_forced_real=False,
+        imaginary_coefficient_has_linear_centered_term=True,
+        second_order_bound_requires_real_coefficient=True,
+        second_order_collar_unconditional=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -9624,6 +9720,26 @@ def main() -> None:
         f"{_fmt(transition_prime_kloosterman.optimistic_four_progression_deficit)},"
         "fixed_prime=True,actual_prime=False,kernel=False,separable=False,"
         "covered=False"
+    )
+    exchange_audit = poisson_exchange_second_order_audit()
+    print(
+        "large_q_transition: poisson_exchange_second_order="
+        "shift_conjugate="
+        f"{exchange_audit.physical_shifted_sum_swap_is_conjugate},"
+        "modulus_changes="
+        f"{exchange_audit.poisson_modulus_changes_under_swap},"
+        "reciprocity_correction="
+        f"{exchange_audit.reciprocity_correction_retained},"
+        "full_conjugate="
+        f"{exchange_audit.full_poisson_term_swap_is_conjugate},"
+        "coefficient_real="
+        f"{exchange_audit.completed_coefficient_forced_real},"
+        "linear_imaginary="
+        f"{exchange_audit.imaginary_coefficient_has_linear_centered_term},"
+        "real_required="
+        f"{exchange_audit.second_order_bound_requires_real_coefficient},"
+        "second_order="
+        f"{exchange_audit.second_order_collar_unconditional}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
