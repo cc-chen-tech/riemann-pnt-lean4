@@ -339,6 +339,23 @@ class LargeQTransitionCompactMellinAudit:
 
 
 @dataclass(frozen=True)
+class TransitionKimAverageShiftedConvolutionAudit:
+    correlation_length_exponent: Fraction
+    shift_average_exponent: Fraction
+    left_short_interval_exponent: Fraction
+    right_short_interval_exponent: Fraction
+    theorem_h_power: Fraction
+    optimistic_theorem_bound_exponent: Fraction
+    fixed_gate_target_exponent: Fraction
+    remaining_power_deficit: Fraction
+    localized_mobius_divisor_coefficient_is_multiplicative: bool
+    uniform_common_mellin_twist_hypothesis_verified: bool
+    theorem_applicable: bool
+    published_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -1839,6 +1856,68 @@ def large_q_transition_compact_mellin_audit(
         fixed_power_gate_saving=critical_saving + TARGET_SAVING,
         compact_mellin_energy_estimate_proved=False,
         unconditional_coverage=False,
+    )
+
+
+def transition_kim_average_shifted_convolution_audit(
+    box: ExponentBox,
+    *,
+    left_short_interval_exponent: Fraction,
+    right_short_interval_exponent: Fraction,
+) -> TransitionKimAverageShiftedConvolutionAudit:
+    """Compare the transition gate with Kim's average-shift theorem.
+
+    Kim's Theorem 1.2 gives ``X*H^(4/(8-b1-b2))`` for multiplicative
+    input functions satisfying the stated short-interval second-moment
+    hypotheses.  The localized Mobius-divisor product coefficient is not
+    multiplicative, and the common Mellin-twisted weight is not one of the
+    theorem's inputs.  Even granting the optimistic values ``b1=b2=1``,
+    the resulting exponent misses the fixed transition gate.
+    """
+    if not _is_large_q_afe_transition_face(box):
+        raise ValueError("box is not on the large-q AFE transition face")
+    for value in (
+        left_short_interval_exponent,
+        right_short_interval_exponent,
+    ):
+        if value <= 0 or value > F(2):
+            raise ValueError(
+                "Kim short-interval exponent must lie in (0,2]"
+            )
+
+    theorem_denominator = (
+        F(8)
+        - left_short_interval_exponent
+        - right_short_interval_exponent
+    )
+    theorem_h_power = F(4) / theorem_denominator
+    correlation_length = box.m + box.rho
+    shift_average = box.ell
+    theorem_bound = (
+        correlation_length + shift_average * theorem_h_power
+    )
+    fixed_target = correlation_length - TARGET_SAVING
+    deficit = _positive_part(theorem_bound - fixed_target)
+    multiplicative = False
+    mellin_uniform = False
+    applicable = multiplicative and mellin_uniform and deficit == 0
+
+    return TransitionKimAverageShiftedConvolutionAudit(
+        correlation_length_exponent=correlation_length,
+        shift_average_exponent=shift_average,
+        left_short_interval_exponent=left_short_interval_exponent,
+        right_short_interval_exponent=right_short_interval_exponent,
+        theorem_h_power=theorem_h_power,
+        optimistic_theorem_bound_exponent=theorem_bound,
+        fixed_gate_target_exponent=fixed_target,
+        remaining_power_deficit=deficit,
+        localized_mobius_divisor_coefficient_is_multiplicative=(
+            multiplicative
+        ),
+        uniform_common_mellin_twist_hypothesis_verified=mellin_uniform,
+        theorem_applicable=applicable,
+        published_coverage=False,
+        source="Kim, arXiv:2509.24152v2, Theorem 1.2",
     )
 
 
@@ -4716,6 +4795,17 @@ def main() -> None:
         "2/3:diag=3,target=2497/750,margin=247/750 "
         "subtraction=False diagonal_closes=True offdiag_gate=True "
         "proved=False covered=False"
+    )
+    transition_kim = transition_kim_average_shifted_convolution_audit(
+        transition_box,
+        left_short_interval_exponent=F(1),
+        right_short_interval_exponent=F(1),
+    )
+    print(
+        "large_q_transition: kim_average_shifted="
+        "X=3/2 H=1/2 b1=1 b2=1 h_power=2/3 bound=11/6 "
+        "target=1499/1000 deficit=1003/3000 multiplicative=False "
+        "mellin_uniform=False applicable=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

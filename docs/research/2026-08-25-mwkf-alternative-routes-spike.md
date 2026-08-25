@@ -4269,6 +4269,78 @@ deterministic audit records the uniform diagonal margin but keeps
 transition_type_ii_nonzero_gram_estimate_proved=False and
 unconditional_coverage=False.
 
+### 4.34 Published average-shift theorem still has a power deficit
+
+Kim, arXiv:2509.24152v2, Theorem 1.2
+([paper](https://arxiv.org/abs/2509.24152v2)), proves the following
+general comparison.  For
+multiplicative functions \(f,g\) satisfying the paper's short-interval
+second-moment hypotheses with exponents \(b_1,b_2\in(0,2]\),
+
+\[
+ \left|\sum_{h\le H}\sum_{X\le n\le2X-h}
+ f(n)\overline{g(n+h)}\right|
+ \ll
+ XH^{4/(8-b_1-b_2)}(\log X)^{O(1)}.
+\tag{4.287}
+\]
+
+The range hypothesis \(X^\varepsilon\ll H\ll X^{1-\varepsilon}\)
+contains the transition values
+
+\[
+ X=T^{3/2},\qquad H=T^{1/2}=X^{1/3}.
+\tag{4.288}
+\]
+
+Grant the optimistic short-interval exponents \(b_1=b_2=1\).  Then the
+power of \(H\) in (4.287) is \(2/3\), and the resulting bound has
+\(T\)-exponent
+
+\[
+ \frac32+\frac12\cdot\frac23=\frac{11}{6}.
+\tag{4.289}
+\]
+
+The fixed transition gate (4.280), before the common normalization, asks
+for exponent
+
+\[
+ \frac32-\frac1{1000}=\frac{1499}{1000}.
+\tag{4.290}
+\]
+
+Thus even this optimistic numerical substitution leaves the positive
+power deficit
+
+\[
+ \boxed{
+ \frac{11}{6}-\frac{1499}{1000}
+ =\frac{1003}{3000}.}
+\tag{4.291}
+\]
+
+There is also a prior hypothesis failure.  The actual local coefficient
+
+\[
+ n\longmapsto D^{[c]}_{q,X,i\tau;R,K}(n)
+\tag{4.292}
+\]
+
+is not multiplicative: the dyadic restrictions on both \(d\) and
+\(n/d\), the logarithmic endpoint factor, and the condition \(c\mid d\)
+all break Euler multiplication.  The common \(\tau\)-integral and height
+phase are likewise not supplied by the theorem.  Therefore the theorem
+fails both structurally and numerically; it is not an adapter for
+(4.286) or (4.280).
+
+The exact-rational function
+transition_kim_average_shifted_convolution_audit records
+localized_mobius_divisor_coefficient_is_multiplicative=False,
+uniform_common_mellin_twist_hypothesis_verified=False, the deficit
+\(1003/3000\), theorem_applicable=False, and
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

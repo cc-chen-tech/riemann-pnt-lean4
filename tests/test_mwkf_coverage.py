@@ -612,6 +612,36 @@ def test_transition_type_ii_diagonal_has_uniform_power_slack() -> None:
     assert not right.published_coverage
 
 
+def test_kim_average_shifted_convolution_still_misses_transition_gate() -> None:
+    """Even optimistic short-interval exponents leave a 1003/3000 gap."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_kim_average_shifted_convolution_audit",
+        None,
+    )
+    assert adapter is not None, "Kim transition adapter is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    audit = adapter(
+        transition_box,
+        left_short_interval_exponent=F(1),
+        right_short_interval_exponent=F(1),
+    )
+
+    assert audit.correlation_length_exponent == F(3, 2)
+    assert audit.shift_average_exponent == F(1, 2)
+    assert audit.theorem_h_power == F(2, 3)
+    assert audit.optimistic_theorem_bound_exponent == F(11, 6)
+    assert audit.fixed_gate_target_exponent == F(1499, 1000)
+    assert audit.remaining_power_deficit == F(1003, 3000)
+    assert not audit.localized_mobius_divisor_coefficient_is_multiplicative
+    assert not audit.uniform_common_mellin_twist_hypothesis_verified
+    assert not audit.theorem_applicable
+    assert not audit.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1920,6 +1950,12 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "proved=False covered=False"
     ) in output
     assert (
+        "large_q_transition: kim_average_shifted="
+        "X=3/2 H=1/2 b1=1 b2=1 h_power=2/3 bound=11/6 "
+        "target=1499/1000 deficit=1003/3000 multiplicative=False "
+        "mellin_uniform=False applicable=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2295,5 +2331,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"4-\beta-\frac1{250}",
         r"\frac{247}{750}",
         "transition_type_ii_nonzero_gram_estimate_proved=False",
+        "### 4.34 Published average-shift theorem still has a power deficit",
+        "arXiv:2509.24152v2, Theorem 1.2",
+        r"\frac{1003}{3000}",
+        "transition_kim_average_shifted_convolution_audit",
     ):
         assert marker in text
