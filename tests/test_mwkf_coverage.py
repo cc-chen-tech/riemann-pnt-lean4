@@ -2229,6 +2229,103 @@ def test_banks_shparlinski_multiple_mobius_bound_does_not_save_a_slope_power() -
     )
 
 
+def test_ramare_squarefree_identity_extracts_each_available_band_prime() -> None:
+    helper = getattr(
+        coverage_audit,
+        "transition_ramare_squarefree_identity",
+        None,
+    )
+    assert helper is not None, "Ramaré squarefree identity helper is missing"
+
+    composite = helper(n=30, prime_lower=2, prime_upper=5)
+    assert composite["mobius_value"] == -1
+    assert composite["band_prime_divisors"] == (2, 3, 5)
+    assert composite["band_prime_divisor_count"] == 3
+    assert composite["cofactor_mobius_sum"] == 3
+    assert composite["ramare_value"] == F(-1)
+    assert composite["identity_exact"]
+
+    prime_outside = helper(n=101, prime_lower=2, prime_upper=11)
+    assert prime_outside["band_prime_divisors"] == ()
+    assert prime_outside["ramare_value"] is None
+    assert not prime_outside["identity_applies"]
+
+    prime_inside = helper(n=101, prime_lower=2, prime_upper=101)
+    assert prime_inside["band_prime_divisors"] == (101,)
+    assert prime_inside["cofactor_mobius_sum"] == 1
+    assert prime_inside["ramare_value"] == F(-1)
+    assert prime_inside["minimum_positive_length_factor_count"] == 1
+    assert prime_inside["identity_exact"]
+
+
+def test_ramare_medium_prime_band_cannot_force_multilinearity() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_ramare_medium_prime_audit",
+        None,
+    )
+    assert adapter is not None, "Ramaré medium-prime audit is missing"
+
+    proper = adapter(
+        entry_exponent=F(1),
+        band_lower_exponent=F(1, 4),
+        band_upper_exponent=F(3, 4),
+    )
+    assert proper.required_line_saving_exponent == F(1)
+    assert proper.prime_exceptional_set_exponent == F(1)
+    assert proper.prime_exceptional_log_density_saving == F(1)
+    assert proper.prime_exceptional_power_density_saving == F(0)
+    assert proper.uncovered_power_deficit == F(1)
+    assert not proper.band_reaches_entry_scale
+    assert proper.proper_band_leaves_prime_sector_exceptional
+    assert not proper.prime_sector_is_in_ramare_sum
+    assert not proper.forces_two_positive_length_factors
+    assert not proper.ramare_decomposition_closes_line_gate
+
+    full = adapter(
+        entry_exponent=F(1),
+        band_lower_exponent=F(1, 4),
+        band_upper_exponent=F(1),
+    )
+    assert full.band_reaches_entry_scale
+    assert full.prime_sector_is_in_ramare_sum
+    assert full.prime_exceptional_set_exponent == F(0)
+    assert full.prime_exceptional_log_density_saving == F(0)
+    assert full.prime_sector_extracted_factor_exponent == F(1)
+    assert full.prime_sector_cofactor_exponent == F(0)
+    assert full.prime_sector_positive_length_factor_count == 1
+    assert not full.proper_band_leaves_prime_sector_exceptional
+    assert not full.forces_two_positive_length_factors
+    assert not full.ramare_decomposition_closes_line_gate
+
+
+def test_prime_kloosterman_results_leave_an_explicit_half_power_deficit() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_prime_kloosterman_audit",
+        None,
+    )
+    assert adapter is not None, "prime-Kloosterman audit is missing"
+    audit = adapter()
+    assert audit.modulus_exponent == F(1)
+    assert audit.prime_interval_exponent == F(1)
+    assert audit.required_saving_exponent == F(1, 2)
+    assert audit.unrestricted_prime_bound_exponent == F(17, 18)
+    assert audit.unrestricted_prime_saving_exponent == F(1, 18)
+    assert audit.progression_prime_bound_exponent == F(191, 192)
+    assert audit.progression_prime_saving_exponent == F(1, 192)
+    assert audit.progression_modulus_cap_exponent == F(1, 100)
+    assert audit.optimistic_four_unrestricted_saving_exponent == F(2, 9)
+    assert audit.optimistic_four_unrestricted_deficit == F(5, 18)
+    assert audit.optimistic_four_progression_saving_exponent == F(1, 48)
+    assert audit.optimistic_four_progression_deficit == F(23, 48)
+    assert audit.published_theorem_has_fixed_prime_modulus
+    assert not audit.actual_determinant_moduli_all_prime
+    assert not audit.standard_single_kloosterman_argument_verified
+    assert not audit.other_entry_weights_separate
+    assert not audit.published_theorem_closes_prime_sector
+
+
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     helper = getattr(
         coverage_audit,
@@ -4106,6 +4203,24 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "margin=-1/2,short_threshold=5/8,short_actual=1/2,"
         "short_margin=-1/8,fix_slopes=True,shift_mu=False,"
         "convolution=True,convolution_power=False,hypotheses=False,"
+        "covered=False"
+    ) in output
+    assert (
+        "large_q_transition: ramare_medium_prime="
+        "proper:alpha=1,lower=1/4,upper=3/4,required=1,"
+        "prime_exception=1,log_density=1,power_density=0,deficit=1,"
+        "reaches=False,exceptional=True,in_sum=False;"
+        "full:upper=1,reaches=True,in_sum=True,prime_factor=1,cofactor=0,"
+        "positive_factors=1,forces_two=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: prime_kloosterman="
+        "q=1,X=1,required=1/2,unrestricted_bound=17/18,"
+        "unrestricted_save=1/18,progression_bound=191/192,"
+        "progression_save=1/192,progression_modulus_cap=1/100,"
+        "four_unrestricted=2/9,unrestricted_deficit=5/18,"
+        "four_progression=1/48,progression_deficit=23/48,"
+        "fixed_prime=True,actual_prime=False,kernel=False,separable=False,"
         "covered=False"
     ) in output
     assert (

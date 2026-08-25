@@ -8906,6 +8906,151 @@ save a fixed half power while summing the bilinear slope family jointly, or
 must exploit the original two-entry Möbius weights before the Gram norm is
 formed.
 
+### 4.71 A Ramaré medium-prime split does not force multilinearity
+
+Another way to preserve Möbius structure is to expose one prime divisor
+before applying a multilinear Kloosterman estimate.  Put
+
+\[
+ A=T^\alpha,\qquad
+ \mathcal P_{\lambda,\nu}(A)
+ :=\{p\text{ prime}:A^\lambda<p\le2A^\nu\},
+ \qquad0<\lambda\le\nu\le1,
+\tag{4.631}
+\]
+
+and let
+
+\[
+ \omega_{\lambda,\nu}(n)
+ :=\sum_{\substack{p\mid n\\p\in\mathcal P_{\lambda,\nu}(A)}}1.
+\tag{4.632}
+\]
+
+On the squarefree support of \(\mu\), whenever
+\(\omega_{\lambda,\nu}(n)>0\), the exact Ramaré identity is
+
+\[
+ \boxed{
+ \mu(n)=-\frac1{\omega_{\lambda,\nu}(n)}
+  \sum_{\substack{p\mid n\\p\in\mathcal P_{\lambda,\nu}(A)}}
+  \mu(n/p).}
+\tag{4.633}
+\]
+
+Indeed every summand on the right of (4.633) is \(-\mu(n)\).  The
+normalizing denominator must be retained; the formula says nothing on the
+sector \(\omega_{\lambda,\nu}(n)=0\).
+
+There is an exact obstruction at both possible upper endpoints.  If
+\(\nu<1\), then for all sufficiently large \(A\), every prime
+\(A<p\le2A\) lies outside the band.  The prime number theorem gives
+
+\[
+ \#\{p:A<p\le2A\}
+ =(1+o(1))\frac A{\log A}=T^{\alpha+o(1)}.
+\tag{4.634}
+\]
+
+Thus the exceptional sector has the full exponent \(\alpha\); it gains
+one logarithm of density and no positive power.  On the determinant-line
+gate (4.500), \(\alpha=1-\gamma\) is exactly the total saving required in
+(4.502), so this density estimate cannot replace that saving.
+
+If instead \(\nu=1\), the dyadic prime sector is included, but for
+\(n=p\asymp A\), (4.633) is only
+
+\[
+ \boxed{\mu(p)=-\mu(1),\qquad p=p\cdot1.}
+\tag{4.635}
+\]
+
+The extracted factor has exponent \(\alpha\), its cofactor has exponent
+zero, and only one factor has positive length.  Consequently a full-band
+Ramaré split still cannot force the two or more positive-length variables
+required by a fixed multilinear theorem.  This is not a lower bound for the
+original signed sum: cancellation in the remaining moving
+\(\mu(r_1)\mu(r_2)\) weights could still succeed.  It rules out only the
+proposed automatic reduction of every denominator Möbius weight to a
+multilinear box.
+
+The finite helper `transition_ramare_squarefree_identity` checks (4.633)
+without floating point.  The adapter
+`transition_ramare_medium_prime_audit` records the proper-band prime
+exception, its zero power-density saving, and the one-positive-factor
+full-band endpoint.  It keeps
+`forces_two_positive_length_factors=False` and
+`ramare_decomposition_closes_line_gate=False`.
+
+### 4.72 Prime-weighted Kloosterman bounds still miss the critical saving
+
+The prime sector left by Section 4.71 has stronger published estimates than
+an arbitrary coefficient sequence, so it must be checked separately.  For a
+fixed prime modulus \(q\), Dunn--Zaharescu quote the unrestricted-prime bound
+
+\[
+ \sum_{p\le X}\mathrm{Kl}_2(p;q)
+ \ll_\varepsilon q^{1/6+\varepsilon}X^{7/9},
+ \qquad1\le X\le q,
+\tag{4.636}
+\]
+
+and prove, for \((u,v)=1\) and \(v\le q^{1/100}\),
+
+\[
+ \sum_{\substack{p\le X\\p\equiv u\pmod v}}
+ \mathrm{Kl}_2(p;q)
+ \ll_\varepsilon q^{11/192+\varepsilon}X^{15/16}.
+\tag{4.637}
+\]
+
+These are Theorems 1.1 and 1.2 of
+[Dunn--Zaharescu](https://arxiv.org/abs/1801.05880).  Give the theorems
+their most favorable possible insertion by taking \(X=q=T\).  Equations
+(4.636)--(4.637) then have exponents
+
+\[
+ \frac16+\frac79=\frac{17}{18},
+ \qquad
+ \frac{11}{192}+\frac{15}{16}=\frac{191}{192},
+\tag{4.638}
+\]
+
+and save respectively \(T^{1/18}\) and \(T^{1/192}\) over the trivial
+prime-interval exponent one.  Even the counterfactual grant of four
+independent applications gives only
+
+\[
+ 4\cdot\frac1{18}=\frac29,
+ \qquad
+ 4\cdot\frac1{192}=\frac1{48}.
+\tag{4.639}
+\]
+
+Against the critical half-power requirement in (4.476), the remaining
+deficits are therefore
+
+\[
+ \boxed{\frac12-\frac29=\frac5{18},
+ \qquad
+ \frac12-\frac1{48}=\frac{23}{48}.}
+\tag{4.640}
+\]
+
+This comparison is deliberately optimistic.  The theorems have one fixed
+prime modulus and one standard Kloosterman argument.  In the actual entry
+gate the determinant modulus moves through composite values, the recovered
+kernel has not been converted to \(\mathrm{Kl}_2(p;q)\), and the other three
+entry weights do not separate.  Hence neither theorem is a direct adapter;
+the positive deficits in (4.640) already reject the route before those
+additional hypothesis failures are charged.
+
+The adapter `transition_prime_kloosterman_audit` records (4.638)--(4.640),
+including the progression-modulus cap \(1/100\), and keeps
+`standard_single_kloosterman_argument_verified=False`,
+`other_entry_weights_separate=False`, and
+`published_theorem_closes_prime_sector=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -1100,6 +1100,49 @@ class TransitionBanksShparlinskiPreCauchyAudit:
 
 
 @dataclass(frozen=True)
+class TransitionRamareMediumPrimeAudit:
+    entry_exponent: Fraction
+    band_lower_exponent: Fraction
+    band_upper_exponent: Fraction
+    required_line_saving_exponent: Fraction
+    prime_exceptional_set_exponent: Fraction
+    prime_exceptional_log_density_saving: Fraction
+    prime_exceptional_power_density_saving: Fraction
+    uncovered_power_deficit: Fraction
+    band_reaches_entry_scale: bool
+    proper_band_leaves_prime_sector_exceptional: bool
+    prime_sector_is_in_ramare_sum: bool
+    prime_sector_extracted_factor_exponent: Fraction
+    prime_sector_cofactor_exponent: Fraction
+    prime_sector_positive_length_factor_count: int
+    forces_two_positive_length_factors: bool
+    ramare_decomposition_closes_line_gate: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class TransitionPrimeKloostermanAudit:
+    modulus_exponent: Fraction
+    prime_interval_exponent: Fraction
+    required_saving_exponent: Fraction
+    unrestricted_prime_bound_exponent: Fraction
+    unrestricted_prime_saving_exponent: Fraction
+    progression_prime_bound_exponent: Fraction
+    progression_prime_saving_exponent: Fraction
+    progression_modulus_cap_exponent: Fraction
+    optimistic_four_unrestricted_saving_exponent: Fraction
+    optimistic_four_unrestricted_deficit: Fraction
+    optimistic_four_progression_saving_exponent: Fraction
+    optimistic_four_progression_deficit: Fraction
+    published_theorem_has_fixed_prime_modulus: bool
+    actual_determinant_moduli_all_prime: bool
+    standard_single_kloosterman_argument_verified: bool
+    other_entry_weights_separate: bool
+    published_theorem_closes_prime_sector: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5345,6 +5388,157 @@ def transition_banks_shparlinski_pre_cauchy_audit(
     )
 
 
+def _is_prime_integer(n: int) -> bool:
+    if n < 2:
+        return False
+    return all(n % divisor for divisor in range(2, isqrt(n) + 1))
+
+
+def transition_ramare_squarefree_identity(
+    *,
+    n: int,
+    prime_lower: int,
+    prime_upper: int,
+) -> dict[str, object]:
+    """Evaluate Ramaré's exact prime extraction on squarefree support.
+
+    If ``omega_P(n)`` counts prime divisors of ``n`` in the selected
+    band and is nonzero, squarefreeness gives
+
+        mu(n) = -omega_P(n)^(-1) sum_(p|n, p in P) mu(n/p).
+
+    The identity is deliberately undefined when the band contains no
+    prime divisor.  That exceptional sector has to be estimated rather
+    than silently discarded.
+    """
+    if n < 1:
+        raise ValueError("n must be positive")
+    if prime_lower < 2 or prime_upper < prime_lower:
+        raise ValueError("invalid prime band")
+    mobius_value = _finite_mobius(n)
+    if mobius_value == 0:
+        raise ValueError("Ramaré extraction is restricted to squarefree n")
+    band_primes = tuple(
+        prime
+        for prime in range(prime_lower, prime_upper + 1)
+        if n % prime == 0 and _is_prime_integer(prime)
+    )
+    omega = len(band_primes)
+    cofactor_sum = sum(_finite_mobius(n // prime) for prime in band_primes)
+    ramare_value = F(-cofactor_sum, omega) if omega else None
+    positive_factor_count = (
+        min(1 + int(n // prime > 1) for prime in band_primes)
+        if band_primes
+        else 0
+    )
+    return {
+        "mobius_value": mobius_value,
+        "band_prime_divisors": band_primes,
+        "band_prime_divisor_count": omega,
+        "cofactor_mobius_sum": cofactor_sum,
+        "ramare_value": ramare_value,
+        "identity_applies": bool(omega),
+        "identity_exact": bool(omega) and ramare_value == mobius_value,
+        "minimum_positive_length_factor_count": positive_factor_count,
+    }
+
+
+def transition_ramare_medium_prime_audit(
+    *,
+    entry_exponent: Fraction,
+    band_lower_exponent: Fraction,
+    band_upper_exponent: Fraction,
+) -> TransitionRamareMediumPrimeAudit:
+    """Test whether a Ramaré prime band forces useful multilinearity.
+
+    For entries of length ``A=T^alpha``, a proper band ending at
+    ``T^nu`` with ``nu<alpha`` misses every prime entry ``p~A``.  The
+    prime number theorem gives ``A/log A`` such entries, so this sector
+    has exponent ``alpha`` and only one logarithm of density saving.
+
+    Extending the band to ``nu=alpha`` includes those primes, but their
+    exact Ramaré term is ``p=p*1``.  It has only one positive-length
+    factor and therefore does not force a multilinear Kloosterman box.
+    """
+    alpha = F(entry_exponent)
+    lower = F(band_lower_exponent)
+    upper = F(band_upper_exponent)
+    if alpha <= 0:
+        raise ValueError("entry exponent must be positive")
+    if lower <= 0 or lower > upper or upper > alpha:
+        raise ValueError("prime-band exponents must satisfy 0<lower<=upper<=entry")
+    reaches = upper == alpha
+    power_saving = F(0)
+    return TransitionRamareMediumPrimeAudit(
+        entry_exponent=alpha,
+        band_lower_exponent=lower,
+        band_upper_exponent=upper,
+        required_line_saving_exponent=alpha,
+        prime_exceptional_set_exponent=F(0) if reaches else alpha,
+        prime_exceptional_log_density_saving=F(0) if reaches else F(1),
+        prime_exceptional_power_density_saving=power_saving,
+        uncovered_power_deficit=alpha - power_saving,
+        band_reaches_entry_scale=reaches,
+        proper_band_leaves_prime_sector_exceptional=not reaches,
+        prime_sector_is_in_ramare_sum=reaches,
+        prime_sector_extracted_factor_exponent=alpha if reaches else F(0),
+        prime_sector_cofactor_exponent=F(0),
+        prime_sector_positive_length_factor_count=1 if reaches else 0,
+        forces_two_positive_length_factors=False,
+        ramare_decomposition_closes_line_gate=False,
+        source="exact Ramaré identity and the prime number theorem",
+    )
+
+
+def transition_prime_kloosterman_audit(
+) -> TransitionPrimeKloostermanAudit:
+    """Compare prime-specific Kloosterman bounds at their best scale.
+
+    Dunn--Zaharescu Theorem 1.1 gives ``q^(1/6) X^(7/9)``
+    for all primes, while Theorem 1.2 gives
+    ``q^(11/192) X^(15/16)`` for primes in a progression whose
+    modulus is at most ``q^(1/100)``.  At the most favorable endpoint
+    ``X=q=T`` these save ``T^(1/18)`` and ``T^(1/192)``.
+
+    Even granting four independent applications, which the actual
+    coupled determinant kernel does not permit, the savings remain
+    below the required half power.  The actual determinant modulus is
+    also moving and can be composite.
+    """
+    modulus = F(1)
+    prime_interval = F(1)
+    required = F(1, 2)
+    unrestricted_bound = F(1, 6) + F(7, 9)
+    progression_bound = F(11, 192) + F(15, 16)
+    unrestricted_saving = F(1) - unrestricted_bound
+    progression_saving = F(1) - progression_bound
+    four_unrestricted = 4 * unrestricted_saving
+    four_progression = 4 * progression_saving
+    return TransitionPrimeKloostermanAudit(
+        modulus_exponent=modulus,
+        prime_interval_exponent=prime_interval,
+        required_saving_exponent=required,
+        unrestricted_prime_bound_exponent=unrestricted_bound,
+        unrestricted_prime_saving_exponent=unrestricted_saving,
+        progression_prime_bound_exponent=progression_bound,
+        progression_prime_saving_exponent=progression_saving,
+        progression_modulus_cap_exponent=F(1, 100),
+        optimistic_four_unrestricted_saving_exponent=four_unrestricted,
+        optimistic_four_unrestricted_deficit=required - four_unrestricted,
+        optimistic_four_progression_saving_exponent=four_progression,
+        optimistic_four_progression_deficit=required - four_progression,
+        published_theorem_has_fixed_prime_modulus=True,
+        actual_determinant_moduli_all_prime=False,
+        standard_single_kloosterman_argument_verified=False,
+        other_entry_weights_separate=False,
+        published_theorem_closes_prime_sector=False,
+        source=(
+            "Dunn--Zaharescu, arXiv:1801.05880, "
+            "Theorems 1.1 and 1.2"
+        ),
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -9368,6 +9562,68 @@ def main() -> None:
         f"{_fmt(transition_banks_shparlinski.short_interval_threshold_margin)},"
         "fix_slopes=True,shift_mu=False,convolution=True,"
         "convolution_power=False,hypotheses=False,covered=False"
+    )
+    transition_ramare_proper = transition_ramare_medium_prime_audit(
+        entry_exponent=F(1),
+        band_lower_exponent=F(1, 4),
+        band_upper_exponent=F(3, 4),
+    )
+    transition_ramare_full = transition_ramare_medium_prime_audit(
+        entry_exponent=F(1),
+        band_lower_exponent=F(1, 4),
+        band_upper_exponent=F(1),
+    )
+    print(
+        "large_q_transition: ramare_medium_prime="
+        f"proper:alpha={_fmt(transition_ramare_proper.entry_exponent)},"
+        f"lower={_fmt(transition_ramare_proper.band_lower_exponent)},"
+        f"upper={_fmt(transition_ramare_proper.band_upper_exponent)},"
+        "required="
+        f"{_fmt(transition_ramare_proper.required_line_saving_exponent)},"
+        "prime_exception="
+        f"{_fmt(transition_ramare_proper.prime_exceptional_set_exponent)},"
+        "log_density="
+        f"{_fmt(transition_ramare_proper.prime_exceptional_log_density_saving)},"
+        "power_density="
+        f"{_fmt(transition_ramare_proper.prime_exceptional_power_density_saving)},"
+        f"deficit={_fmt(transition_ramare_proper.uncovered_power_deficit)},"
+        "reaches=False,exceptional=True,in_sum=False;"
+        f"full:upper={_fmt(transition_ramare_full.band_upper_exponent)},"
+        "reaches=True,in_sum=True,prime_factor="
+        f"{_fmt(transition_ramare_full.prime_sector_extracted_factor_exponent)},"
+        "cofactor="
+        f"{_fmt(transition_ramare_full.prime_sector_cofactor_exponent)},"
+        "positive_factors="
+        f"{transition_ramare_full.prime_sector_positive_length_factor_count},"
+        "forces_two=False,covered=False"
+    )
+    transition_prime_kloosterman = transition_prime_kloosterman_audit()
+    print(
+        "large_q_transition: prime_kloosterman="
+        f"q={_fmt(transition_prime_kloosterman.modulus_exponent)},"
+        f"X={_fmt(transition_prime_kloosterman.prime_interval_exponent)},"
+        "required="
+        f"{_fmt(transition_prime_kloosterman.required_saving_exponent)},"
+        "unrestricted_bound="
+        f"{_fmt(transition_prime_kloosterman.unrestricted_prime_bound_exponent)},"
+        "unrestricted_save="
+        f"{_fmt(transition_prime_kloosterman.unrestricted_prime_saving_exponent)},"
+        "progression_bound="
+        f"{_fmt(transition_prime_kloosterman.progression_prime_bound_exponent)},"
+        "progression_save="
+        f"{_fmt(transition_prime_kloosterman.progression_prime_saving_exponent)},"
+        "progression_modulus_cap="
+        f"{_fmt(transition_prime_kloosterman.progression_modulus_cap_exponent)},"
+        "four_unrestricted="
+        f"{_fmt(transition_prime_kloosterman.optimistic_four_unrestricted_saving_exponent)},"
+        "unrestricted_deficit="
+        f"{_fmt(transition_prime_kloosterman.optimistic_four_unrestricted_deficit)},"
+        "four_progression="
+        f"{_fmt(transition_prime_kloosterman.optimistic_four_progression_saving_exponent)},"
+        "progression_deficit="
+        f"{_fmt(transition_prime_kloosterman.optimistic_four_progression_deficit)},"
+        "fixed_prime=True,actual_prime=False,kernel=False,separable=False,"
+        "covered=False"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
