@@ -2493,6 +2493,107 @@ must save \(T^{s_{\rm line}(\gamma)}\).  This is recorded by
 matching its growing-slope and coupled-weight hypotheses is currently
 registered.
 
+### 4.20 Unimodular two-variable square-root gate and the small-\(g\) residual
+
+The line form (4.156) has more algebraic structure than a general pair
+of affine forms.  Choose Bezout coefficients \(x,y\in\mathbb Z\) with
+
+\[
+ xv_0+yj_0=1.
+\tag{4.165}
+\]
+
+One may take the particular solution in (4.156) to be
+\((r_0,s_0)=(x\delta_0,-y\delta_0)\).  Hence
+
+\[
+ \boxed{
+ \begin{pmatrix}r\\s\end{pmatrix}
+ =\begin{pmatrix}x&j_0\\-y&v_0\end{pmatrix}
+  \begin{pmatrix}\delta_0\\n\end{pmatrix},
+ \qquad
+ \det\begin{pmatrix}x&j_0\\-y&v_0\end{pmatrix}=1.}
+\tag{4.166}
+\]
+
+Thus \((\delta_0,n)\mapsto(r,s)\) is an exact unimodular change of
+integer variables.  This does not separate the coupled transform weight,
+but it identifies the natural two-dimensional square-root benchmark.
+
+On the \(g=T^\gamma\) layer, (4.161) gives
+
+\[
+ \operatorname{vol}_{\delta_0,n}
+ =T^{(5/2-\gamma)+(5/2+\gamma)}=T^5.
+\tag{4.167}
+\]
+
+Accordingly, define the still unproved uniform fixed-slope gate
+
+\[
+\boxed{
+ \mathrm{USR}_{B}(g,j_0,v_0):\quad
+ \left|
+  \sum_{\delta_0,n}
+   \mu(x\delta_0+j_0n)\mu(-y\delta_0+v_0n)
+   \mathcal W_{q,g,j_0,v_0,\delta_0}(n)
+ \right|
+ \ll_{B,W}T^{5/2}(\log(2T))^{-B}.}
+\tag{4.168}
+\]
+
+The outer \(g,j_0,v_0\) cardinality has exponent
+
+\[
+ \gamma+2(1/2-\gamma)=1-\gamma.
+\tag{4.169}
+\]
+
+Therefore cardinal summation of (4.168) gives
+
+\[
+ T^{1-\gamma}T^{5/2}=T^{7/2-\gamma}.
+\tag{4.170}
+\]
+
+Comparison with the exact target \(T^{3499/1000}\) leaves the signed
+margin
+
+\[
+ \boxed{
+ \frac52-left(\frac{2501}{1000}-\gamma\right)
+ =\gamma-\frac1{1000}.}
+\tag{4.171}
+\]
+
+Consequently:
+
+1. for \(\gamma>1/1000\), USR has fixed positive-power slack;
+2. for \(\gamma=1/1000\), USR with a sufficiently large logarithmic
+   saving reaches the gate;
+3. for \(0\le\gamma<1/1000\), the exact remaining saving is
+   \[
+     T^{1/1000-\gamma},
+   \tag{4.172}
+   \]
+   which must come from the primitive-slope average or from a stronger
+   joint estimate.
+
+This is a substantial narrowing of (4.163): a two-dimensional square
+root in the unimodular inner box would settle every but the very small
+common-gcd layer, and that residual asks for at most \(T^{1/1000}\) from
+the two-dimensional primitive-slope family of cardinality
+\(T^{1-2\gamma}\).  However, (4.168) is not a consequence of a standard
+large sieve.  The two Möbius arguments are coordinate functions after
+(4.166), while the thin determinant window and
+\(\widehat\Psi_h\) remain coupled; applying Cauchy to either Möbius
+coordinate recreates its full \(L^2\) diagonal.  No published theorem
+establishing USR uniformly for \(|j_0|,|v_0|\le T^{1/2}\) is registered.
+
+The exact-rational function `determinant_line_square_root_audit` records
+(4.167)--(4.172), marks the square-root estimate unproved, and exposes
+the small-\(g\) residual rather than treating USR as established.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

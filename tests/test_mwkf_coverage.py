@@ -110,6 +110,48 @@ def test_determinant_lines_are_affine_mobius_correlations_with_an_exact_gcd_ledg
         assert not audit.published_coverage
 
 
+def test_two_dimensional_square_root_reduces_the_determinant_residual_to_small_g() -> None:
+    """Record the exact gamma-1/1000 margin of the unimodular line box."""
+    adapter = getattr(
+        coverage_audit,
+        "determinant_line_square_root_audit",
+        None,
+    )
+    assert adapter is not None, "determinant-line square-root audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    zero = adapter(box, gcd_exponent=F(0))
+    assert zero.shift_quotient_exponent == F(5, 2)
+    assert zero.line_parameter_length_exponent == F(5, 2)
+    assert zero.inner_area_exponent == F(5)
+    assert zero.two_dimensional_square_root_saving == F(5, 2)
+    assert zero.required_mobius_saving == F(2501, 1000)
+    assert zero.square_root_margin == F(-1, 1000)
+    assert zero.small_g_residual_saving == F(1, 1000)
+    assert not zero.square_root_has_power_slack
+    assert not zero.critical_layer_needs_only_log_saving
+
+    critical = adapter(box, gcd_exponent=F(1, 1000))
+    assert critical.square_root_margin == F(0)
+    assert critical.small_g_residual_saving == F(0)
+    assert not critical.square_root_has_power_slack
+    assert critical.critical_layer_needs_only_log_saving
+
+    large = adapter(box, gcd_exponent=F(1, 2))
+    assert large.shift_quotient_exponent == F(2)
+    assert large.line_parameter_length_exponent == F(3)
+    assert large.inner_area_exponent == F(5)
+    assert large.required_mobius_saving == F(2001, 1000)
+    assert large.square_root_margin == F(499, 1000)
+    assert large.square_root_has_power_slack
+    assert not large.critical_layer_needs_only_log_saving
+
+    for audit in (zero, critical, large):
+        assert audit.bezout_change_of_variables_is_unimodular
+        assert audit.square_root_bound_proved is False
+        assert audit.published_coverage is False
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1324,6 +1366,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "growing_slopes=False coupled_weight=False covered=False"
     ) in output
     assert (
+        "balanced_max_a: determinant_line_square_root="
+        "0:margin=-1/1000,residual=1/1000;"
+        "1/1000:margin=0,residual=0;"
+        "1/2:margin=499/1000,residual=0 "
+        "unimodular=True proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -1577,5 +1626,12 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\frac{2501}{1000}-\gamma",
         r"\frac{2001}{1000}",
         "determinant_line_mobius_audit",
+        "### 4.20 Unimodular two-variable square-root gate",
+        r"xv_0+yj_0=1",
+        r"\mathrm{USR}_{B}(g,j_0,v_0)",
+        r"T^{7/2-\gamma}",
+        r"\gamma-\frac1{1000}",
+        r"T^{1/1000-\gamma}",
+        "determinant_line_square_root_audit",
     ):
         assert marker in text

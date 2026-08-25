@@ -75,6 +75,23 @@ class DeterminantLineMobiusAudit:
 
 
 @dataclass(frozen=True)
+class DeterminantLineSquareRootAudit:
+    common_gcd_exponent: Fraction
+    shift_quotient_exponent: Fraction
+    line_parameter_length_exponent: Fraction
+    inner_area_exponent: Fraction
+    two_dimensional_square_root_saving: Fraction
+    required_mobius_saving: Fraction
+    square_root_margin: Fraction
+    small_g_residual_saving: Fraction
+    bezout_change_of_variables_is_unimodular: bool
+    square_root_has_power_slack: bool
+    critical_layer_needs_only_log_saving: bool
+    square_root_bound_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -814,6 +831,55 @@ def determinant_line_mobius_audit(
             "Matomaki-Radziwill-Tao, arXiv:1503.05121; "
             "Menon, arXiv:2607.15574"
         ),
+    )
+
+
+def determinant_line_square_root_audit(
+    box: ExponentBox,
+    *,
+    gcd_exponent: Fraction,
+) -> DeterminantLineSquareRootAudit:
+    """Measure a hypothetical joint square root in ``(delta0,n)``.
+
+    Choose Bezout coefficients ``x*v0+y*j0=1``.  On a fixed primitive
+    slope, the determinant line is
+
+    ``r=x*delta0+j0*n``, ``s=-y*delta0+v0*n``.
+
+    The coefficient matrix has determinant one.  Thus the two Möbius
+    arguments are independent integral coordinates, although the exact
+    transformed kernel cuts out a coupled skew region.  A square-root
+    estimate in the whole ``(delta0,n)`` area would save half its
+    exponent.  This function records whether that *unproved* estimate
+    has enough exponent for the determinant-line gate.
+    """
+    line = determinant_line_mobius_audit(
+        box,
+        gcd_exponent=gcd_exponent,
+    )
+    inner_area = (
+        line.shift_quotient_exponent
+        + line.line_parameter_length_exponent
+    )
+    square_root_saving = inner_area / 2
+    margin = square_root_saving - line.required_mobius_saving
+
+    return DeterminantLineSquareRootAudit(
+        common_gcd_exponent=gcd_exponent,
+        shift_quotient_exponent=line.shift_quotient_exponent,
+        line_parameter_length_exponent=(
+            line.line_parameter_length_exponent
+        ),
+        inner_area_exponent=inner_area,
+        two_dimensional_square_root_saving=square_root_saving,
+        required_mobius_saving=line.required_mobius_saving,
+        square_root_margin=margin,
+        small_g_residual_saving=_positive_part(-margin),
+        bezout_change_of_variables_is_unimodular=True,
+        square_root_has_power_slack=(margin > 0),
+        critical_layer_needs_only_log_saving=(margin == 0),
+        square_root_bound_proved=False,
+        published_coverage=False,
     )
 
 
@@ -3465,6 +3531,23 @@ def main() -> None:
         "balanced_max_a: determinant_line_mobius="
         + ";".join(determinant_line_parts)
         + " growing_slopes=False coupled_weight=False covered=False"
+    )
+    determinant_sqrt_parts: list[str] = []
+    for gcd_exponent in (F(0), F(1, 1000), F(1, 2)):
+        sqrt_audit = determinant_line_square_root_audit(
+            hard,
+            gcd_exponent=gcd_exponent,
+        )
+        determinant_sqrt_parts.append(
+            f"{_fmt(gcd_exponent)}:margin="
+            f"{_fmt(sqrt_audit.square_root_margin)},"
+            "residual="
+            f"{_fmt(sqrt_audit.small_g_residual_saving)}"
+        )
+    print(
+        "balanced_max_a: determinant_line_square_root="
+        + ";".join(determinant_sqrt_parts)
+        + " unimodular=True proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
