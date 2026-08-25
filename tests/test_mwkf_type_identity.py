@@ -20,6 +20,7 @@ from scripts.mwkf_mobius_type_identity import (
     determinant_line_coprimality_indicator,
     determinant_line_coprimality_residue,
     determinant_lattice_solution,
+    determinant_slope_square_coordinates,
     mobius,
     poisson_congruence_reparametrization,
     split_mobius_identity,
@@ -245,6 +246,46 @@ def test_determinant_line_coprimality_is_exact_shift_divisor_inversion() -> None
         assert determinant_line_coprimality_indicator(coordinates, n=n) == (
             1 if gcd(abs(r), abs(s)) == 1 else 0
         )
+
+
+def test_slope_square_cross_determinant_recovers_the_common_primitive_slope() -> None:
+    """Verify the exact Cramer formulas in the EDSSF off-diagonal."""
+    for r1, s1, r2, s2, j, v in (
+        (5, 7, 8, 11, 2, 3),
+        (7, 9, 11, 13, -3, 4),
+        (8, 11, 13, 17, 5, -2),
+    ):
+        audit = determinant_slope_square_coordinates(
+            r1=r1,
+            s1=s1,
+            r2=r2,
+            s2=s2,
+            primitive_j=j,
+            primitive_v=v,
+        )
+        assert audit.cross_determinant == r1 * s2 - r2 * s1
+        assert audit.shift1 == r1 * v - s1 * j
+        assert audit.shift2 == r2 * v - s2 * j
+        assert audit.cross_determinant != 0
+        assert audit.recovered_primitive_j == j
+        assert audit.recovered_primitive_v == v
+        assert not audit.zero_determinant_is_identity_diagonal
+
+
+def test_zero_cross_determinant_is_exactly_the_primitive_identity_diagonal() -> None:
+    """Catch retaining proportional but distinct primitive (r,s) pairs."""
+    audit = determinant_slope_square_coordinates(
+        r1=5,
+        s1=7,
+        r2=5,
+        s2=7,
+        primitive_j=2,
+        primitive_v=3,
+    )
+    assert audit.cross_determinant == 0
+    assert audit.zero_determinant_is_identity_diagonal
+    assert audit.recovered_primitive_j is None
+    assert audit.recovered_primitive_v is None
 
 
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:

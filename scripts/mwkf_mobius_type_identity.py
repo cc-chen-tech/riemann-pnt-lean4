@@ -88,6 +88,16 @@ class DeterminantLineCoordinates:
         )
 
 
+@dataclass(frozen=True)
+class DeterminantSlopeSquareCoordinates:
+    shift1: int
+    shift2: int
+    cross_determinant: int
+    recovered_primitive_j: int | None
+    recovered_primitive_v: int | None
+    zero_determinant_is_identity_diagonal: bool
+
+
 def proportional_diagonal_coordinates(
     *,
     n1: int,
@@ -714,6 +724,75 @@ def determinant_line_coprimality_indicator(
         if n % divisor == residue:
             total += coefficient
     return total
+
+
+def determinant_slope_square_coordinates(
+    *,
+    r1: int,
+    s1: int,
+    r2: int,
+    s2: int,
+    primitive_j: int,
+    primitive_v: int,
+) -> DeterminantSlopeSquareCoordinates:
+    """Recover the common slope in the square of a determinant-line sum.
+
+    With ``delta_i=r_i*v-s_i*j`` and
+    ``Delta=r1*s2-r2*s1``, Cramer's rule gives, for ``Delta != 0``,
+
+    ``v=(delta1*s2-delta2*s1)/Delta`` and
+    ``j=(delta1*r2-delta2*r1)/Delta``.
+
+    If ``Delta=0`` and both positive pairs ``(r_i,s_i)`` are primitive,
+    proportionality forces the pairs to be identical.  This is exactly
+    the positive identity diagonal in the slope square function.
+    """
+    if min(r1, s1, r2, s2) < 1:
+        raise ValueError("require positive determinant-row entries")
+    if gcd(r1, s1) != 1 or gcd(r2, s2) != 1:
+        raise ValueError("require primitive determinant-row pairs")
+    if primitive_j == 0 or primitive_v == 0:
+        raise ValueError("require a nonzero primitive slope")
+    if gcd(abs(primitive_j), abs(primitive_v)) != 1:
+        raise ValueError("require coprime primitive slope entries")
+
+    shift1 = r1 * primitive_v - s1 * primitive_j
+    shift2 = r2 * primitive_v - s2 * primitive_j
+    cross_determinant = r1 * s2 - r2 * s1
+    if cross_determinant == 0:
+        if (r1, s1) != (r2, s2):
+            raise AssertionError(
+                "positive primitive proportional pairs must be equal"
+            )
+        return DeterminantSlopeSquareCoordinates(
+            shift1=shift1,
+            shift2=shift2,
+            cross_determinant=0,
+            recovered_primitive_j=None,
+            recovered_primitive_v=None,
+            zero_determinant_is_identity_diagonal=True,
+        )
+
+    v_numerator = shift1 * s2 - shift2 * s1
+    j_numerator = shift1 * r2 - shift2 * r1
+    if (
+        v_numerator % cross_determinant != 0
+        or j_numerator % cross_determinant != 0
+    ):
+        raise AssertionError("Cramer numerators are not integral")
+    recovered_v = v_numerator // cross_determinant
+    recovered_j = j_numerator // cross_determinant
+    if (recovered_j, recovered_v) != (primitive_j, primitive_v):
+        raise AssertionError("Cramer recovery changed the primitive slope")
+
+    return DeterminantSlopeSquareCoordinates(
+        shift1=shift1,
+        shift2=shift2,
+        cross_determinant=cross_determinant,
+        recovered_primitive_j=recovered_j,
+        recovered_primitive_v=recovered_v,
+        zero_determinant_is_identity_diagonal=False,
+    )
 
 
 def _ceil_div(numerator: int, denominator: int) -> int:

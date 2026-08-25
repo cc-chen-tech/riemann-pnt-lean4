@@ -123,21 +123,52 @@ class DeterminantSlopeSquareFunctionAudit:
     g_layer_cardinality_exponent: Fraction
     primitive_slope_pair_exponent: Fraction
     slope_cauchy_cost_exponent: Fraction
-    proposed_square_function_squared_exponent: Fraction
-    proposed_square_function_norm_exponent: Fraction
+    raw_identity_diagonal_exponent: Fraction
+    coarse_square_function_squared_exponent: Fraction
+    coarse_square_function_norm_exponent: Fraction
     aggregated_bound_exponent: Fraction
     logarithmic_gate_target_exponent: Fraction
     power_margin: Fraction
-    gate_log_power: Fraction
-    aggregation_log_loss: Fraction
+    endpoint_taper_amplitude_log_saving: Fraction
+    endpoint_taper_squared_log_saving: Fraction
+    proposed_square_function_squared_log_saving: Fraction
+    aggregated_amplitude_log_saving: Fraction
+    endpoint_aggregation_log_loss: Fraction
     net_log_saving: Fraction
     dh_error_exponent_matches_square_function_power: bool
     one_mobius_dh_scale_available: bool
     fixed_power_deficit_removed_by_logarithmic_gate: bool
     signed_slope_square_function_required: bool
+    endpoint_conditions_verified: bool
+    endpoint_diagonal_scale_compatible: bool
+    arbitrary_log_saving_below_diagonal_requested: bool
+    endpoint_bound_produces_little_o: bool
     second_mobius_coupled_dh_theorem_available: bool
     coupled_transform_weight_hypothesis_verified: bool
     square_function_estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
+class EndpointSlopeOffDiagonalAudit:
+    common_gcd_exponent: Fraction
+    primitive_slope_pair_exponent: Fraction
+    inner_delta_n_area_exponent: Fraction
+    expanded_offdiagonal_cardinality_exponent: Fraction
+    raw_identity_diagonal_exponent: Fraction
+    coarse_endpoint_target_exponent: Fraction
+    required_offdiagonal_saving: Fraction
+    full_square_root_bound_exponent: Fraction
+    full_square_root_target_margin: Fraction
+    fraction_collar_exponent: Fraction
+    cross_determinant_max_exponent: Fraction
+    endpoint_taper_log_saving_in_square: Fraction
+    zero_cross_determinant_is_identity_diagonal: bool
+    nonzero_cross_determinant_recovers_unique_slope: bool
+    full_square_root_has_power_slack: bool
+    signed_four_mobius_offdiagonal_required: bool
+    published_four_mobius_spectral_bound_available: bool
+    offdiagonal_estimate_proved: bool
     published_coverage: bool
 
 
@@ -1012,28 +1043,33 @@ def determinant_slope_square_function_audit(
     box: ExponentBox,
     *,
     gcd_exponent: Fraction,
-    gate_log_power: Fraction,
+    endpoint_taper_factors: Fraction,
+    endpoint_aggregation_log_loss: Fraction,
+    endpoint_conditions_verified: bool,
 ) -> DeterminantSlopeSquareFunctionAudit:
-    """State the no-power-deficit determinant slope square-function gate.
+    """State the endpoint-compatible determinant slope square-function gate.
 
     For fixed dyadic ``g=T^gamma``, let ``S_(g,j0,v0)`` denote the exact
     ``(delta0,n)`` sum in the determinant-line form.  The proposed local
     input is
 
     ``sum_(j0,v0) |S_(g,j0,v0)|^2``
-    `` << T^(2*max(rho,sigma)) log(T)^(-2B)``.
+    `` << T^(2*max(rho,sigma)) log(T)^(-2*endpoint_tapers)``.
 
-    At the hard box its square-function norm is ``T^3 log^(-B)``.
+    The logarithm here comes only from the two mollifier tapers already
+    present in the amplitude.  At ``gamma=0`` the positive identity
+    diagonal has power ``T^6``; asking for arbitrary logarithmic saving
+    below those tapers would be impossible.  With two endpoint tapers the
+    squared diagonal naturally carries ``log(T)^(-4)`` and the
+    square-function norm carries ``log(T)^(-2)``.
+
     Cardinal summation over ``g`` and Cauchy over the primitive slope pair
     cost ``T^gamma`` and ``T^(1/2-gamma)`` respectively, producing exactly
-    ``T^(7/2) log^(-B)``.  This matches the logarithmic global coupled
-    gate, whereas the earlier fixed ``T^(-1/1000)`` gate would leave an
-    artificial ``1/1000`` power deficit.
+    ``T^(7/2) log(T)^(-2)`` at the hard endpoint.  The exact endpoint
+    aggregation loses one logarithm, leaving a little-oh factor.
     """
-    if gate_log_power <= AGGREGATION_LOG_LOSS:
-        raise ValueError(
-            "gate log power must exceed the global aggregation loss"
-        )
+    if endpoint_taper_factors < 0 or endpoint_aggregation_log_loss < 0:
+        raise ValueError("endpoint logarithmic inputs must be nonnegative")
     line = determinant_line_mobius_audit(
         box,
         gcd_exponent=gcd_exponent,
@@ -1049,22 +1085,35 @@ def determinant_slope_square_function_audit(
     slope_cauchy = slope_pair / 2
     square_squared = 2 * variance.sequence_length_exponent
     square_norm = square_squared / 2
+    raw_identity_diagonal = (
+        line.layer_cardinality_exponent - gcd_exponent
+    )
     aggregated = gcd_exponent + slope_cauchy + square_norm
     logarithmic_target = shifted.target
+    squared_taper_saving = 2 * endpoint_taper_factors
+    net_log_saving = (
+        endpoint_taper_factors - endpoint_aggregation_log_loss
+    )
 
     return DeterminantSlopeSquareFunctionAudit(
         common_gcd_exponent=gcd_exponent,
         g_layer_cardinality_exponent=gcd_exponent,
         primitive_slope_pair_exponent=slope_pair,
         slope_cauchy_cost_exponent=slope_cauchy,
-        proposed_square_function_squared_exponent=square_squared,
-        proposed_square_function_norm_exponent=square_norm,
+        raw_identity_diagonal_exponent=raw_identity_diagonal,
+        coarse_square_function_squared_exponent=square_squared,
+        coarse_square_function_norm_exponent=square_norm,
         aggregated_bound_exponent=aggregated,
         logarithmic_gate_target_exponent=logarithmic_target,
         power_margin=logarithmic_target - aggregated,
-        gate_log_power=gate_log_power,
-        aggregation_log_loss=AGGREGATION_LOG_LOSS,
-        net_log_saving=gate_log_power - AGGREGATION_LOG_LOSS,
+        endpoint_taper_amplitude_log_saving=endpoint_taper_factors,
+        endpoint_taper_squared_log_saving=squared_taper_saving,
+        proposed_square_function_squared_log_saving=(
+            squared_taper_saving
+        ),
+        aggregated_amplitude_log_saving=endpoint_taper_factors,
+        endpoint_aggregation_log_loss=endpoint_aggregation_log_loss,
+        net_log_saving=net_log_saving,
         dh_error_exponent_matches_square_function_power=(
             variance.dh_error_exponent == square_squared
         ),
@@ -1078,9 +1127,87 @@ def determinant_slope_square_function_audit(
             and aggregated > shifted.gate_target
         ),
         signed_slope_square_function_required=True,
+        endpoint_conditions_verified=endpoint_conditions_verified,
+        endpoint_diagonal_scale_compatible=(
+            square_squared >= raw_identity_diagonal
+            and squared_taper_saving == 2 * endpoint_taper_factors
+        ),
+        arbitrary_log_saving_below_diagonal_requested=False,
+        endpoint_bound_produces_little_o=(
+            endpoint_conditions_verified and net_log_saving > 0
+        ),
         second_mobius_coupled_dh_theorem_available=False,
         coupled_transform_weight_hypothesis_verified=False,
         square_function_estimate_proved=False,
+        published_coverage=False,
+    )
+
+
+def endpoint_slope_offdiagonal_audit(
+    box: ExponentBox,
+    *,
+    gcd_exponent: Fraction,
+) -> EndpointSlopeOffDiagonalAudit:
+    """Ledger after expanding EDSSF and removing its exact diagonal.
+
+    For one fixed integer ``g=T^gamma``, the primitive slope family has
+    exponent ``p`` and each ``(delta0,n)`` box has exponent ``a``.  The
+    expanded off-diagonal therefore has cardinality ``p+2a``.  The
+    endpoint square-function target is the coarse diagonal power
+    ``2*max(rho,sigma)``; this function records the exact saving required
+    of the signed four-Möbius cross term.
+
+    If two primitive rows share a slope, Cramer's rule recovers that slope
+    from their shifts whenever ``Delta=r1*s2-r2*s1`` is nonzero.  When
+    ``Delta=0``, positivity and primitivity force equality of the two
+    rows, which is precisely the identity diagonal already retained.
+    """
+    line = determinant_line_mobius_audit(
+        box,
+        gcd_exponent=gcd_exponent,
+    )
+    slope_pair = (
+        line.primitive_j_exponent + line.primitive_v_exponent
+    )
+    inner_area = (
+        line.shift_quotient_exponent
+        + line.line_parameter_length_exponent
+    )
+    expanded = slope_pair + 2 * inner_area
+    identity_diagonal = (
+        line.layer_cardinality_exponent - gcd_exponent
+    )
+    target = 2 * max(box.rho, box.sigma)
+    square_root_bound = expanded / 2
+    fraction_collar = (
+        line.shift_quotient_exponent
+        - box.sigma
+        - line.primitive_v_exponent
+    )
+    determinant_max = min(
+        box.rho + box.sigma,
+        2 * box.sigma + fraction_collar,
+    )
+
+    return EndpointSlopeOffDiagonalAudit(
+        common_gcd_exponent=gcd_exponent,
+        primitive_slope_pair_exponent=slope_pair,
+        inner_delta_n_area_exponent=inner_area,
+        expanded_offdiagonal_cardinality_exponent=expanded,
+        raw_identity_diagonal_exponent=identity_diagonal,
+        coarse_endpoint_target_exponent=target,
+        required_offdiagonal_saving=expanded - target,
+        full_square_root_bound_exponent=square_root_bound,
+        full_square_root_target_margin=target - square_root_bound,
+        fraction_collar_exponent=fraction_collar,
+        cross_determinant_max_exponent=determinant_max,
+        endpoint_taper_log_saving_in_square=F(4),
+        zero_cross_determinant_is_identity_diagonal=True,
+        nonzero_cross_determinant_recovers_unique_slope=True,
+        full_square_root_has_power_slack=(square_root_bound < target),
+        signed_four_mobius_offdiagonal_required=True,
+        published_four_mobius_spectral_bound_available=False,
+        offdiagonal_estimate_proved=False,
         published_coverage=False,
     )
 
@@ -3777,20 +3904,46 @@ def main() -> None:
         square_audit = determinant_slope_square_function_audit(
             hard,
             gcd_exponent=gcd_exponent,
-            gate_log_power=F(8),
+            endpoint_taper_factors=F(2),
+            endpoint_aggregation_log_loss=F(1),
+            endpoint_conditions_verified=True,
         )
         slope_square_parts.append(
             f"{_fmt(gcd_exponent)}:slopes="
             f"{_fmt(square_audit.primitive_slope_pair_exponent)},"
             "cauchy="
             f"{_fmt(square_audit.slope_cauchy_cost_exponent)},"
+            "diag="
+            f"{_fmt(square_audit.raw_identity_diagonal_exponent)},"
             "bound="
             f"{_fmt(square_audit.aggregated_bound_exponent)}"
         )
     print(
         "balanced_max_a: determinant_slope_square_function="
         + ";".join(slope_square_parts)
-        + " dh_scale=True power_margin=0 net_log=1 proved=False covered=False"
+        + " endpoint_taper=2 square_log=4 endpoint_loss=1"
+        + " diagonal_ok=True net_log=1 proved=False covered=False"
+    )
+    slope_offdiagonal_parts: list[str] = []
+    for gcd_exponent in (F(0), F(1, 4), F(1, 2)):
+        offdiagonal_audit = endpoint_slope_offdiagonal_audit(
+            hard,
+            gcd_exponent=gcd_exponent,
+        )
+        slope_offdiagonal_parts.append(
+            f"{_fmt(gcd_exponent)}:ambient="
+            f"{_fmt(offdiagonal_audit.expanded_offdiagonal_cardinality_exponent)},"
+            "saving="
+            f"{_fmt(offdiagonal_audit.required_offdiagonal_saving)},"
+            "sqrt_margin="
+            f"{_fmt(offdiagonal_audit.full_square_root_target_margin)},"
+            "delta_max="
+            f"{_fmt(offdiagonal_audit.cross_determinant_max_exponent)}"
+        )
+    print(
+        "balanced_max_a: endpoint_slope_offdiagonal="
+        + ";".join(slope_offdiagonal_parts)
+        + " square_log=4 four_mu=True proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

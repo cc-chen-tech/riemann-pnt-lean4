@@ -194,8 +194,8 @@ def test_published_mobius_progression_variance_has_the_wrong_modulus_range() -> 
     assert not endpoint.published_coverage
 
 
-def test_determinant_slope_square_function_hits_the_logarithmic_gate_exactly() -> None:
-    """Replace the fixed-power USR gate by one signed slope square function."""
+def test_endpoint_determinant_slope_square_function_stays_at_its_positive_diagonal() -> None:
+    """Use endpoint tapers without asking a positive square to beat its diagonal."""
     adapter = getattr(
         coverage_audit,
         "determinant_slope_square_function_audit",
@@ -205,34 +205,78 @@ def test_determinant_slope_square_function_hits_the_logarithmic_gate_exactly() -
     box = boundary_witnesses()["balanced_max_a"]
 
     expected = {
-        F(0): (F(1), F(1, 2)),
-        F(1, 4): (F(1, 2), F(1, 4)),
-        F(1, 2): (F(0), F(0)),
+        F(0): (F(1), F(1, 2), F(6)),
+        F(1, 4): (F(1, 2), F(1, 4), F(11, 2)),
+        F(1, 2): (F(0), F(0), F(5)),
     }
-    for gamma, (slope_pair, cauchy_cost) in expected.items():
+    for gamma, (slope_pair, cauchy_cost, diagonal) in expected.items():
         audit = adapter(
             box,
             gcd_exponent=gamma,
-            gate_log_power=F(8),
+            endpoint_taper_factors=F(2),
+            endpoint_aggregation_log_loss=F(1),
+            endpoint_conditions_verified=True,
         )
         assert audit.g_layer_cardinality_exponent == gamma
         assert audit.primitive_slope_pair_exponent == slope_pair
         assert audit.slope_cauchy_cost_exponent == cauchy_cost
-        assert audit.proposed_square_function_squared_exponent == F(6)
-        assert audit.proposed_square_function_norm_exponent == F(3)
+        assert audit.raw_identity_diagonal_exponent == diagonal
+        assert audit.coarse_square_function_squared_exponent == F(6)
+        assert audit.coarse_square_function_norm_exponent == F(3)
         assert audit.aggregated_bound_exponent == F(7, 2)
         assert audit.logarithmic_gate_target_exponent == F(7, 2)
         assert audit.power_margin == F(0)
-        assert audit.gate_log_power == F(8)
-        assert audit.aggregation_log_loss == F(7)
+        assert audit.endpoint_taper_amplitude_log_saving == F(2)
+        assert audit.endpoint_taper_squared_log_saving == F(4)
+        assert audit.proposed_square_function_squared_log_saving == F(4)
+        assert audit.aggregated_amplitude_log_saving == F(2)
+        assert audit.endpoint_aggregation_log_loss == F(1)
         assert audit.net_log_saving == F(1)
         assert audit.dh_error_exponent_matches_square_function_power
         assert audit.one_mobius_dh_scale_available
         assert audit.fixed_power_deficit_removed_by_logarithmic_gate
         assert audit.signed_slope_square_function_required
+        assert audit.endpoint_conditions_verified
+        assert audit.endpoint_diagonal_scale_compatible
+        assert not audit.arbitrary_log_saving_below_diagonal_requested
+        assert audit.endpoint_bound_produces_little_o
         assert not audit.second_mobius_coupled_dh_theorem_available
         assert not audit.coupled_transform_weight_hypothesis_verified
         assert not audit.square_function_estimate_proved
+        assert not audit.published_coverage
+
+
+def test_endpoint_slope_square_offdiagonal_has_a_half_power_random_margin() -> None:
+    """Reduce EDSSF to one nonzero cross-determinant four-Möbius sum."""
+    adapter = getattr(
+        coverage_audit,
+        "endpoint_slope_offdiagonal_audit",
+        None,
+    )
+    assert adapter is not None, "endpoint slope off-diagonal audit is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(0): (F(11), F(5), F(11, 2), F(1, 2)),
+        F(1, 4): (F(21, 2), F(9, 2), F(21, 4), F(3, 4)),
+        F(1, 2): (F(10), F(4), F(5), F(1)),
+    }
+    for gamma, want in expected.items():
+        audit = adapter(box, gcd_exponent=gamma)
+        assert audit.inner_delta_n_area_exponent == F(5)
+        assert audit.expanded_offdiagonal_cardinality_exponent == want[0]
+        assert audit.coarse_endpoint_target_exponent == F(6)
+        assert audit.required_offdiagonal_saving == want[1]
+        assert audit.full_square_root_bound_exponent == want[2]
+        assert audit.full_square_root_target_margin == want[3]
+        assert audit.cross_determinant_max_exponent == F(5)
+        assert audit.endpoint_taper_log_saving_in_square == F(4)
+        assert audit.zero_cross_determinant_is_identity_diagonal
+        assert audit.nonzero_cross_determinant_recovers_unique_slope
+        assert audit.full_square_root_has_power_slack
+        assert audit.signed_four_mobius_offdiagonal_required
+        assert not audit.published_four_mobius_spectral_bound_available
+        assert not audit.offdiagonal_estimate_proved
         assert not audit.published_coverage
 
 
@@ -1464,10 +1508,18 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
     ) in output
     assert (
         "balanced_max_a: determinant_slope_square_function="
-        "0:slopes=1,cauchy=1/2,bound=7/2;"
-        "1/4:slopes=1/2,cauchy=1/4,bound=7/2;"
-        "1/2:slopes=0,cauchy=0,bound=7/2 "
-        "dh_scale=True power_margin=0 net_log=1 proved=False covered=False"
+        "0:slopes=1,cauchy=1/2,diag=6,bound=7/2;"
+        "1/4:slopes=1/2,cauchy=1/4,diag=11/2,bound=7/2;"
+        "1/2:slopes=0,cauchy=0,diag=5,bound=7/2 "
+        "endpoint_taper=2 square_log=4 endpoint_loss=1 "
+        "diagonal_ok=True net_log=1 proved=False covered=False"
+    ) in output
+    assert (
+        "balanced_max_a: endpoint_slope_offdiagonal="
+        "0:ambient=11,saving=5,sqrt_margin=1/2,delta_max=5;"
+        "1/4:ambient=21/2,saving=9/2,sqrt_margin=3/4,delta_max=5;"
+        "1/2:ambient=10,saving=4,sqrt_margin=1,delta_max=5 "
+        "square_log=4 four_mu=True proved=False covered=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
@@ -1742,13 +1794,28 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "arXiv:1703.06865v2",
         r"1+\gamma",
         "mobius_progression_variance_audit",
-        "### 4.22 Determinant slope square function",
-        r"\mathrm{DSSF}_{B}(g)",
-        r"T^6(\log(2T))^{-2B}",
+        "### 4.22 Endpoint determinant slope square function",
+        r"6-2\gamma",
+        "is impossible",
+        r"\mathrm{EDSSF}(g)",
+        r"T^6(\log(2T))^{-4}",
         r"T^\gamma T^{1/2-\gamma}T^3",
-        r"T^{7/2}(\log(2T))^{-B}",
+        r"T^{7/2}(\log(2T))^{-2}",
         r"\tau_Q(d)",
         "determinant_slope_square_function_audit",
+        "arbitrary_log_saving_below_diagonal_requested=False",
         "square_function_estimate_proved=False",
+        "### 4.23 Cross-determinant expansion of EDSSF",
+        r"\Delta_{12}=r_1s_2-r_2s_1",
+        r"v_0=\frac{\delta_1s_2-\delta_2s_1}{\Delta_{12}}",
+        r"j_0=\frac{\delta_1r_2-\delta_2r_1}{\Delta_{12}}",
+        r"11-2\gamma",
+        r"5-2\gamma",
+        r"\frac12+\gamma",
+        r"|\Delta_{12}|\ll T^5",
+        r"\mathrm{ODSF}(g)",
+        "signed four-Möbius",
+        "endpoint_slope_offdiagonal_audit",
+        "offdiagonal_estimate_proved=False",
     ):
         assert marker in text

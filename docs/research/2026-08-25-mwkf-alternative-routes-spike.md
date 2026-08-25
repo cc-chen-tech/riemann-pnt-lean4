@@ -2719,22 +2719,10 @@ valid small-modulus upper bound is not discarded merely because the
 asymptotic range fails.  It leaves
 `published_coverage=False`.
 
-### 4.22 Determinant slope square function: an exact no-power-deficit gate
+### 4.22 Endpoint determinant slope square function and its positive diagonal
 
-Return to the logarithmic global coupled target rather than the stronger
-fixed \(T^{-1/1000}\) target.  Since
-\(\mathfrak S_q=H\mathfrak C_q\), the hard-box local gate for (6.2) of
-the global-coupled note is
-
-\[
- \boxed{
- |\mathfrak C_q[\widehat\Psi_h]|
- \ll_{B,W}T^{7/2}(\log(2T))^{-B},
- \qquad B>7.}
-\tag{4.184}
-\]
-
-For fixed \(g,j_0,v_0\), define the exact signed inner sum from (4.158)
+The preceding square-function idea needs a diagonal correction.  For
+fixed \(g,j_0,v_0\), retain the exact signed inner sum
 
 \[
 \begin{aligned}
@@ -2745,32 +2733,74 @@ For fixed \(g,j_0,v_0\), define the exact signed inner sum from (4.158)
  \mu(r_n)\mu(s_n)
  \mathcal W_{q,g,j_0,v_0,\delta_0}(n),
 \end{aligned}
+\tag{4.184}
+\]
+
+where \(r_n,s_n\) and \(\mathcal W\) are exactly (4.156)--(4.157),
+including both mollifier tapers.  Expanding the positive square function
+creates the identity diagonal
+
+\[
+ \mathcal D_g
+ :=\sum_{j_0,v_0}\sum_{\delta_0,n}
+ \mu(r_n)^2\mu(s_n)^2
+ |\mathcal W_{q,g,j_0,v_0,\delta_0}(n)|^2.
 \tag{4.185}
 \]
 
-where \(r_n,s_n\) and \(\mathcal W\) are exactly (4.156)--(4.157).  The
-new local proposition is the single slope square-function inequality
+For one fixed integer \(g\asymp T^\gamma\), the number of terms in
+(4.185) has exponent
 
 \[
-\boxed{
- \mathrm{DSSF}_{B}(g):\qquad
- \sum_{\substack{|j_0|\asymp J/g,\ |v_0|\asymp V/g\\
-                   (j_0,v_0)=1}}
- |\mathcal S_{q,g}(j_0,v_0)|^2
- \ll_{B,W}T^6(\log(2T))^{-2B}.}
+ 2(1/2-\gamma)+(5/2-\gamma)+(5/2+\gamma)
+ =6-2\gamma.
 \tag{4.186}
 \]
 
-This proposition has no hidden positive-power deficit.  If
-\(g\asymp G=T^\gamma\), the number of primitive slope pairs has exponent
+In particular, at \(\gamma=0\), a nondegenerate kernel has a genuine
+\(T^6\)-scale positive diagonal.  Therefore the previously proposed
+bound \(T^6(\log T)^{-2B}\) for arbitrary \(B>0\) is impossible.  The
+one-Möbius estimate (4.182) cannot be transferred with arbitrary
+logarithmic saving to this two-Möbius square: its own identity diagonal
+has the smaller scale \(XQ=T^{7/2-\gamma}\), whereas (4.185) already has
+scale (4.186).
+
+The correct hard-endpoint interface uses exactly the taper already
+present in the problem.  Under
 
 \[
- P_G\ll T^{1-2\gamma+o(1)}.
+ \frac N4\le qR\le N,
+ \qquad
+ \frac N4\le qS\le N,
 \tag{4.187}
 \]
 
-Cardinal summation in \(g\), followed by Cauchy only in the *complete
-signed slope family* in (4.186), gives
+(2.12) gives two logarithms in every amplitude and hence four in its
+square.  The admissible endpoint proposition is
+
+\[
+\boxed{
+ \mathrm{EDSSF}(g):\qquad
+ \sum_{\substack{|j_0|\asymp J/g,\ |v_0|\asymp V/g\\
+                   (j_0,v_0)=1}}
+ |\mathcal S_{q,g}(j_0,v_0)|^2
+ \ll_W T^6(\log(2T))^{-4}.}
+\tag{4.188}
+\]
+
+At \(\gamma=0\), (4.188) is exactly the endpoint-weighted diagonal
+scale, not a bound below it.  For \(\gamma>0\), the raw diagonal
+(4.186) has additional power slack.
+
+If \(g\asymp G=T^\gamma\), the number of primitive slope pairs satisfies
+
+\[
+ P_G\ll T^{1-2\gamma+o(1)}.
+\tag{4.189}
+\]
+
+Cardinal summation in \(g\), followed by Cauchy in the complete signed
+slope family, now gives
 
 \[
 \begin{aligned}
@@ -2780,20 +2810,18 @@ signed slope family* in (4.186), gives
  \sup_{g\asymp G}
  \left(\sum_{j_0,v_0}|\mathcal S_{q,g}(j_0,v_0)|^2\right)^{1/2}\\
  &\ll T^\gamma T^{1/2-\gamma}T^3
-       (\log(2T))^{-B}\\
- &=T^{7/2}(\log(2T))^{-B}.
+       (\log(2T))^{-2}\\
+ &=T^{7/2}(\log(2T))^{-2}.
 \end{aligned}
-\tag{4.188}
+\tag{4.190}
 \]
 
-Therefore DSSF implies (4.184) on every \(0\le\gamma\le1/2\), including
-the formerly exceptional small-\(g\) layers.  The exact cancellation of
-\(\gamma\) in (4.188) is why the logarithmic gate, not the auxiliary
-fixed-power gate, is the correct interface.
+The exact endpoint aggregation ledger in Section 4.9 loses one
+logarithm, so (4.190) leaves \((\log T)^{-1}\) and gives \(o(T)\) on the
+hard endpoint.  This conclusion uses (4.187); it is not a general
+nonendpoint gate.
 
-The exponent \(6\) in (4.186) is not guessed.  It is exactly the
-\(X^2\)-error scale in the one-Möbius progression bound (4.182) with
-\(X=T^3\).  For comparison, ordinary character orthogonality gives the
+For comparison, ordinary character orthogonality still gives the useful
 finite identity
 
 \[
@@ -2803,35 +2831,162 @@ finite identity
  &+2\sum_{1\le d<X}\tau_Q(d)
        \sum_{n\le X-d}\mu(n)\mu(n+d),
 \end{aligned}
-\tag{4.189}
+\tag{4.191}
 \]
 
-where
+where \(\tau_Q(d)=\sum_{q\mid d,\ q\le Q}1\).  It explains why the
+one-Möbius theorem reaches the coarse power \(T^6\), but it does not
+prove EDSSF: the latter has two Möbius coordinates in each copy,
+cross-slope pairs, determinant-line residue conditions, and two coupled
+transform kernels.  The remaining endpoint theorem is precisely the
+diagonal-scale estimate (4.188), with no fictitious extra logarithmic
+saving.
+
+The adapter `determinant_slope_square_function_audit` records the raw
+diagonal exponent \(6-2\gamma\), the four squared taper logarithms, the
+one-logarithm endpoint aggregation loss, and the resulting positive net
+logarithm.  It explicitly sets
+`arbitrary_log_saving_below_diagonal_requested=False`, while
+`square_function_estimate_proved=False` and `published_coverage=False`
+remain unchanged.
+
+### 4.23 Cross-determinant expansion of EDSSF
+
+The square in (4.188) can be split without discarding either Möbius
+factor.  For two copies of the inner coordinates in (4.184), put
 
 \[
- \tau_Q(d):=\sum_{\substack{q\mid d\\q\le Q}}1.
-\tag{4.190}
+ \delta_i=r_i v_0-s_i j_0,
+ \qquad
+ \Delta_{12}=r_1s_2-r_2s_1
+ \quad(i=1,2).
+\tag{4.192}
 \]
 
-Thus the small-modulus variance is a diagonal plus a signed,
-truncated-divisor-weighted Chowla average.  The published proof controls
-that one-Möbius square at the scale required by (4.186).  What it does
-*not* control is the square of (4.185): after expansion this contains two
-Möbius coordinates in each copy, the determinant-line residue
-conditions, cross-slope pairs, and two query-dependent coupled kernels.
-Taking absolute values of the second Möbius coordinate or of the
-cross-slope terms loses precisely the signed structure that DSSF needs.
+Here, on one fixed dyadic \(g\asymp T^\gamma\) endpoint box,
 
-The remaining theorem has therefore been narrowed from a fixed-slope
-square-root conjecture with a small power defect to the single
-logarithmic square function (4.186).  Its power and log budgets match a
-published one-Möbius theorem, but the two-Möbius coupled extension is new
-and remains unproved.  The adapter
-`determinant_slope_square_function_audit` checks (4.187)--(4.188) for
-every rational \(\gamma\), records the exact match with the
-Davenport--Halberstam error exponent, and leaves
-`square_function_estimate_proved=False` and
-`published_coverage=False`.
+\[
+ \begin{gathered}
+ |j_0|,|v_0|\asymp T^{1/2-\gamma},
+ \qquad (j_0,v_0)=1,\\
+ |\delta_i|\asymp T^{5/2-\gamma},
+ \qquad |n_i|\ll T^{5/2+\gamma},\\
+ r_i,s_i\asymp T^3,
+ \qquad (r_i,s_i)=1,
+ \qquad (q,r_is_i)=1,
+ \end{gathered}
+\tag{4.193}
+\]
+
+and \((r_i,s_i)\) is the exact affine-line solution attached to
+\((j_0,v_0,\delta_i,n_i)\) in (4.156).  With
+\(\mathcal W_i=\mathcal W_{q,g,j_0,v_0,\delta_i}(n_i)\), finite
+expansion gives the identity
+
+\[
+ \sum_{j_0,v_0}|\mathcal S_{q,g}(j_0,v_0)|^2
+ =\mathcal D_g+\mathcal O_g,
+\tag{4.194}
+\]
+
+where \(\mathcal D_g\) is (4.185) and
+
+\[
+ \mathcal O_g=
+ \sum_{\substack{j_0,v_0,\delta_1,n_1,\delta_2,n_2\\
+                   \text{all conditions in (4.193)}\\
+                   \Delta_{12}\ne0}}
+ \mu(r_1)\mu(s_1)\mu(r_2)\mu(s_2)
+ \mathcal W_1\overline{\mathcal W_2}.
+\tag{4.195}
+\]
+
+There is no omitted proportional off-diagonal in (4.195).  Indeed,
+if \(\Delta_{12}=0\), positivity makes the two primitive pairs
+\((r_i,s_i)\) proportional by a positive rational number, and
+primitivity forces \((r_1,s_1)=(r_2,s_2)\).  For the fixed primitive
+slope, (4.192) then also forces \(\delta_1=\delta_2\), and the affine
+parameterization forces \(n_1=n_2\).  Thus \(\Delta_{12}=0\) is exactly
+the identity diagonal.
+
+For \(\Delta_{12}\ne0\), Cramer's rule gives the exact inverse
+
+\[
+ v_0=\frac{\delta_1s_2-\delta_2s_1}{\Delta_{12}},
+ \qquad
+ j_0=\frac{\delta_1r_2-\delta_2r_1}{\Delta_{12}}.
+\tag{4.196}
+\]
+
+Consequently, after eliminating \((j_0,v_0)\), the nonzero term is a
+signed four-Möbius sum over the two primitive rows and two shifts,
+subject to divisibility of both numerators in (4.196) by
+\(\Delta_{12}\), coprimality of the two recovered quotients, and the
+dyadic range in (4.193).  These are exact arithmetic conditions, not a
+density heuristic.
+
+The fraction collar is also explicit:
+
+\[
+ \frac{r_i}{s_i}-\frac{j_0}{v_0}
+ =\frac{\delta_i}{s_iv_0}\ll T^{-1}.
+\tag{4.197}
+\]
+
+Since \(s_1s_2\asymp T^6\), subtraction of the two instances of
+(4.197) yields
+
+\[
+ 0<|\Delta_{12}|\ll T^5.
+\tag{4.198}
+\]
+
+The primitive-slope box has exponent \(1-2\gamma\), while each
+\((\delta_i,n_i)\)-box has exponent \(5\).  Hence the expanded
+off-diagonal cardinality is
+
+\[
+ (1-2\gamma)+2\cdot5=11-2\gamma.
+\tag{4.199}
+\]
+
+The exact remaining endpoint proposition is therefore
+
+\[
+ \boxed{
+ \mathrm{ODSF}(g):\qquad
+ |\mathcal O_g|\ll_W T^6(\log(2T))^{-4}.}
+\tag{4.200}
+\]
+
+It requires cancellation of exponent
+
+\[
+ (11-2\gamma)-6=5-2\gamma
+\tag{4.201}
+\]
+
+from the ambient four-variable count.  Complete square-root
+cancellation in (4.195) would have exponent
+\((11-2\gamma)/2\), leaving the positive margin
+
+\[
+ 6-\frac{11-2\gamma}{2}=\frac12+\gamma.
+\tag{4.202}
+\]
+
+Equation (4.202) is only an exponent benchmark; no independence or
+square-root theorem is asserted.  The identity diagonal is bounded at
+the endpoint-weighted scale by (4.186)--(4.187), so ODSF would imply
+EDSSF.  No cited result currently supplies (4.200) with its two coupled
+rows, four Möbius factors, divisibility conditions (4.196), and the
+transform weight \(\mathcal W_1\overline{\mathcal W_2}\).
+
+The adapter `endpoint_slope_offdiagonal_audit` records the ambient
+exponent \(11-2\gamma\), the required saving \(5-2\gamma\), the
+cross-determinant range \(|\Delta_{12}|\ll T^5\), and the benchmark
+margin \(1/2+\gamma\).  It leaves
+`offdiagonal_estimate_proved=False` and `published_coverage=False`.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
