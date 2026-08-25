@@ -1731,6 +1731,8 @@ Thus the joint-completion loss is
 Region B consequently covers every admissible box with \(\ell=0\) or
 \(h=0\), including boxes with positive \(a=\ell+h\).  It still misses
 the interior \(\ell,h>0\); the balanced maximal box loses \(T^{5/2}\).
+The finite checker separately enumerates the unit-group fibre
+multiplicities in (8.5a) and the two-sign dyadic gcd sum in (8.5b).
 
 ### 8.3 Region C: Wright's partially fixed denominator
 

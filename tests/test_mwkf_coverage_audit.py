@@ -1,4 +1,5 @@
 from fractions import Fraction as F
+from math import gcd
 import sys
 from pathlib import Path
 
@@ -12,6 +13,8 @@ from scripts.audit_mobius_offdiagonal_coverage import (
     classify_box,
     completion_covers,
     completion_exponents,
+    dyadic_gcd_sum,
+    inverse_product_max_multiplicity,
     joint_completion_covers,
     joint_completion_loss,
     wright_direct_applicability,
@@ -89,3 +92,20 @@ def test_zero_third_length_uses_the_elementary_route_when_bc_fails() -> None:
     box = ExponentBox(F(2), F(1), F(0), F(1), F(0), F(0), F(0))
     assert not bettin_chandee_covers(box)
     assert classify_box(box).route == "B"
+
+
+def test_inverse_product_fibres_are_bounded_by_the_gcd() -> None:
+    for modulus in range(2, 80):
+        for delta in range(1, 2 * modulus + 1):
+            assert inverse_product_max_multiplicity(modulus, delta) <= gcd(
+                modulus, delta
+            )
+
+
+def test_dyadic_gcd_sum_has_the_boundary_safe_divisor_bound() -> None:
+    for modulus in range(1, 100):
+        divisor_count = sum(modulus % d == 0 for d in range(1, modulus + 1))
+        for length in range(1, 40):
+            assert dyadic_gcd_sum(modulus, length) <= (
+                6 * length * divisor_count
+            )

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
+from math import gcd
 
 try:
     from scripts.audit_mwkf_ranges import (
@@ -46,6 +47,30 @@ class CoverageResult:
 
     route: str
     reason: str
+
+
+def inverse_product_max_multiplicity(modulus: int, delta: int) -> int:
+    """Largest fibre of c -> delta*c^{-1} modulo the modulus on units."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    fibres: dict[int, int] = {}
+    for residue in range(modulus):
+        if gcd(residue, modulus) != 1:
+            continue
+        inverse = pow(residue, -1, modulus)
+        image = (delta * inverse) % modulus
+        fibres[image] = fibres.get(image, 0) + 1
+    return max(fibres.values(), default=0)
+
+
+def dyadic_gcd_sum(modulus: int, length: int) -> int:
+    """Exact two-sign gcd sum for L <= |delta| <= 2L."""
+
+    if modulus < 1 or length < 1:
+        raise ValueError("modulus and length must be positive")
+    positive = sum(gcd(delta, modulus) for delta in range(length, 2 * length + 1))
+    return 2 * positive
 
 
 def bettin_chandee_savings(box: ExponentBox) -> BettinChandeeSavings:
