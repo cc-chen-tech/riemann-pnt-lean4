@@ -193,6 +193,23 @@ class EndpointCokernelCharacterAudit:
 
 
 @dataclass(frozen=True)
+class LargeQEndpointUnpoissonAudit:
+    reduced_length_exponent: Fraction
+    shifted_solution_exponent: Fraction
+    height_integral_exponent: Fraction
+    pre_poisson_denominator_exponent: Fraction
+    per_q_contribution_exponent: Fraction
+    q_family_cardinality_exponent: Fraction
+    aggregated_remainder_exponent: Fraction
+    endpoint_taper_log_saving: Fraction
+    net_log_saving: Fraction
+    all_nonzero_h_boxes_regrouped_before_absolute_value: bool
+    poisson_zero_mode_has_same_bound: bool
+    mobius_cancellation_used: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -1285,6 +1302,90 @@ def endpoint_cokernel_character_audit(
         four_mobius_entry_cancellation_still_required=True,
         hybrid_character_entry_estimate_proved=False,
         published_coverage=False,
+    )
+
+
+def _is_large_q_bounded_zeta_endpoint(box: ExponentBox) -> bool:
+    return (
+        box.kappa > 0
+        and box.rho == box.sigma
+        and box.kappa + box.rho == F(3)
+        and box.kappa + box.sigma == F(3)
+        and box.m == box.k == box.ell == F(0)
+        and box.h == box.sigma - box.m
+    )
+
+
+def large_q_endpoint_unpoisson_audit(
+    box: ExponentBox,
+) -> LargeQEndpointUnpoissonAudit:
+    """Close the bounded-zeta large-q endpoint by undoing Poisson.
+
+    This adapter applies to the collective family obtained by summing all
+    nonzero ``h`` boxes before taking an absolute value.  With bounded
+    ``m1,m2,delta``, the pre-Poisson equation
+
+    ``m1*s-m2*r=delta``
+
+    has ``O(R)`` solutions when ``R=S``.  The height integral contributes
+    ``T`` and the original coefficient contributes
+    ``(q*sqrt(R*S))^-1``.  At ``(R,S,q)=(T,T,T^2)`` this is ``T^-1`` per
+    q.  Cardinal q-summation returns power ``T`` and the two endpoint
+    mollifier tapers leave ``log(T)^-2``.  The zero Poisson mode obeys the
+    same absolute bound, so subtraction of that mode is harmless.
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+
+    shifted_solutions = box.rho
+    height_integral = F(1)
+    denominator = box.kappa + (box.rho + box.sigma) / 2
+    per_q = height_integral + shifted_solutions - denominator
+    aggregated = per_q + box.kappa
+    return LargeQEndpointUnpoissonAudit(
+        reduced_length_exponent=box.rho,
+        shifted_solution_exponent=shifted_solutions,
+        height_integral_exponent=height_integral,
+        pre_poisson_denominator_exponent=denominator,
+        per_q_contribution_exponent=per_q,
+        q_family_cardinality_exponent=box.kappa,
+        aggregated_remainder_exponent=aggregated,
+        endpoint_taper_log_saving=F(2),
+        net_log_saving=F(2),
+        all_nonzero_h_boxes_regrouped_before_absolute_value=True,
+        poisson_zero_mode_has_same_bound=True,
+        mobius_cancellation_used=False,
+        unconditional_coverage=(aggregated == F(1)),
+    )
+
+
+def endpoint_unpoisson_adapter(box: ExponentBox) -> RouteResult:
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        return RouteResult(
+            route="endpoint_unpoisson",
+            applicable=False,
+            saving=None,
+            source="exact inverse Poisson regrouping",
+            reason="not_large_q_bounded_zeta_endpoint",
+            conditions=(
+                "both mollifier variables in the endpoint collar",
+                "bounded m1,m2,delta boxes",
+                "regroup every nonzero h box before absolute values",
+            ),
+        )
+    audit = large_q_endpoint_unpoisson_audit(box)
+    return RouteResult(
+        route="endpoint_unpoisson",
+        applicable=audit.unconditional_coverage,
+        saving=F(0),
+        source="exact inverse Poisson and shifted-equation count",
+        reason="covered_by_endpoint_unpoisson",
+        conditions=(
+            "N/4 <= qR,qS <= N",
+            "bounded m1,m2,delta boxes",
+            "sum all nonzero h before absolute values",
+            "retain both endpoint mollifier tapers",
+        ),
     )
 
 
@@ -3854,6 +3955,9 @@ def route_box(box: ExponentBox) -> RouteResult:
     bcr = bcr_adapter(box)
     if bcr.applicable:
         return bcr
+    endpoint_unpoisson = endpoint_unpoisson_adapter(box)
+    if endpoint_unpoisson.applicable:
+        return endpoint_unpoisson
     for adapter in (h_completion_adapter, delta_completion_adapter):
         result = adapter(box)
         if result.applicable:
@@ -4041,6 +4145,21 @@ def main() -> None:
         + ";".join(cokernel_parts)
         + " smith=1,Delta chars=Delta not_Delta2=True"
         + " proved=False covered=False"
+    )
+    large_q_audit = large_q_endpoint_unpoisson_audit(
+        boxes["large_q_endpoint"]
+    )
+    print(
+        "large_q_endpoint: endpoint_unpoisson="
+        f"solutions={_fmt(large_q_audit.shifted_solution_exponent)} "
+        "denominator="
+        f"{_fmt(large_q_audit.pre_poisson_denominator_exponent)} "
+        f"per_q={_fmt(large_q_audit.per_q_contribution_exponent)} "
+        "q_count="
+        f"{_fmt(large_q_audit.q_family_cardinality_exponent)} "
+        "total="
+        f"{_fmt(large_q_audit.aggregated_remainder_exponent)} "
+        "taper_log=2 all_h=True zero_mode=True mobius=False covered=True"
     )
     log_budget = centered_resonance_log_budget(
         hard,

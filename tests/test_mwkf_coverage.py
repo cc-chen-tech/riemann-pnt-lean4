@@ -316,6 +316,37 @@ def test_endpoint_cokernel_has_one_character_dimension_not_two() -> None:
         assert not audit.published_coverage
 
 
+def test_large_q_bounded_zeta_endpoint_is_covered_after_unpoisson() -> None:
+    """Regroup all h before absolute values and spend the two endpoint tapers."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_endpoint_unpoisson_audit",
+        None,
+    )
+    assert adapter is not None, "large-q endpoint un-Poisson audit is missing"
+    box = boundary_witnesses()["large_q_endpoint"]
+    audit = adapter(box)
+
+    assert audit.reduced_length_exponent == F(1)
+    assert audit.shifted_solution_exponent == F(1)
+    assert audit.height_integral_exponent == F(1)
+    assert audit.pre_poisson_denominator_exponent == F(3)
+    assert audit.per_q_contribution_exponent == F(-1)
+    assert audit.q_family_cardinality_exponent == F(2)
+    assert audit.aggregated_remainder_exponent == F(1)
+    assert audit.endpoint_taper_log_saving == F(2)
+    assert audit.net_log_saving == F(2)
+    assert audit.all_nonzero_h_boxes_regrouped_before_absolute_value
+    assert audit.poisson_zero_mode_has_same_bound
+    assert audit.mobius_cancellation_used is False
+    assert audit.unconditional_coverage
+
+    route = route_box(box)
+    assert route.route == "endpoint_unpoisson"
+    assert route.applicable
+    assert route.reason == "covered_by_endpoint_unpoisson"
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1565,6 +1596,11 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "smith=1,Delta chars=Delta not_Delta2=True proved=False covered=False"
     ) in output
     assert (
+        "large_q_endpoint: endpoint_unpoisson="
+        "solutions=1 denominator=3 per_q=-1 q_count=2 total=1 "
+        "taper_log=2 all_h=True zero_mode=True mobius=False covered=True"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -1869,5 +1905,14 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "hybrid character--entry",
         "endpoint_cokernel_character_audit",
         "hybrid_character_entry_estimate_proved=False",
+        "### 4.25 Unconditional large-q bounded-zeta endpoint",
+        r"\mathcal U^{\ne0}_{q;R,S,K,M,L}",
+        r"m_1s-m_2r=\delta",
+        r"O_{K,M,L}(R)",
+        r"\ll_W\frac{T}{q}(\log(2T))^{-2}",
+        r"\sum_{q\asymp T^2}",
+        "covered_by_endpoint_unpoisson",
+        "large_q_endpoint_unpoisson_audit",
+        "unconditional_coverage=True",
     ):
         assert marker in text

@@ -1438,8 +1438,9 @@ for the smooth completion coefficient, and Section 4.12 supplies the
 remaining arithmetic uniformity.  Thus the strict subface (4.88) is
 covered.  Full published coverage remains false because
 \(\beta+\gamma\ge3/2\), the positive-power far shells, and the transform
-tail remain.  All \(q=T^\kappa\), \(\kappa>0\), boxes are positive-power
-cells rather than part of this logarithmic adapter.
+tail remain.  Apart from the bounded-zeta endpoint proved in Section 4.25
+below, \(q=T^\kappa\), \(\kappa>0\), boxes remain positive-power cells
+rather than part of this logarithmic adapter.
 
 ### 4.11 Finite Fourier bounded-variation separation
 
@@ -3105,6 +3106,120 @@ invariant, the \(|\Delta_{12}|\)-element character family, the false
 \(5/2-2\gamma\).  It leaves
 `hybrid_character_entry_estimate_proved=False` and
 `published_coverage=False`.
+
+### 4.25 Unconditional large-q bounded-zeta endpoint
+
+The boundary witness
+
+\[
+ (\rho,\sigma,m,k,\ell,h,\kappa)=(1,1,0,0,0,1,2)
+\tag{4.211}
+\]
+
+does not require the Farey gate if the Poisson frequencies are regrouped
+before taking an absolute value.  This subsection treats the exact
+bounded-zeta family: \(K,M,L\asymp1\), \(R,S\asymp T\),
+\(q\asymp T^2\), and
+
+\[
+ \frac N4\le qR,qS\le N.
+\tag{4.212}
+\]
+
+Let
+
+\[
+ \mathcal U^{\ne0}_{q;R,S,K,M,L}
+ :=\sum_H
+ \mathcal O^{\ne0}_{q;R,S,K,M,L,H},
+\tag{4.213}
+\]
+
+where the sum is over the complete smooth dyadic partition of all
+\(h\ne0\).  It is essential that (4.213) is formed before an absolute
+value.  Exact inverse Poisson summation says that (4.213) is the original
+residue-class sum in \(m_2\), minus its \(h=0\) Poisson mode.
+
+Before Poisson, the variables satisfy
+
+\[
+ m_1s-m_2r=\delta.
+\tag{4.214}
+\]
+
+For fixed bounded \(m_1,m_2,\delta\), put
+\(g=(m_1,m_2)\).  If \(g\nmid\delta\), (4.214) is empty.  Otherwise its
+integer solutions form one affine line with step
+\((m_1/g,m_2/g)\) in \((r,s)\).  In the dyadic rectangle
+\(r\asymp R,s\asymp S\), with \(R\asymp S\), there are therefore
+
+\[
+ O_{K,M,L}(R)
+\tag{4.215}
+\]
+
+solutions, uniformly in \(q\).  The original coefficient is
+\(2/(q\sqrt{rs})\), the bounded \(m_1,m_2\) denominators cost only a
+constant, and the height integral has absolute value \(O_W(T)\).
+Consequently the pre-Poisson sum is
+
+\[
+ \ll_W \frac{T}{q}\,
+ \sup_{r,s}|p_N(qr)p_N(qs)|.
+\tag{4.216}
+\]
+
+The zero Poisson mode has the same bound directly from (4.4): for
+\(h=0\), its kernel is \(O_W(T)\); the factor
+\((q\sqrt{rs}\,s)^{-1}\) and the \(O(RS)\) pairs \((r,s)\) again give
+\(O_W(T/q)\).  Thus subtracting the zero mode in (4.213) introduces no
+larger term.
+
+Under (4.212), each nonzero mollifier coefficient satisfies (2.12).
+Using both endpoint factors in (4.216) gives the unconditional estimate
+
+\[
+ \boxed{
+ |\mathcal U^{\ne0}_{q;R,S,K,M,L}|
+ \ll_W\frac{T}{q}(\log(2T))^{-2}.}
+\tag{4.217}
+\]
+
+Finally,
+
+\[
+ \sum_{q\asymp T^2}\frac1q\ll1,
+\tag{4.218}
+\]
+
+and there are only \(O_{K,M,L}(1)\) bounded-zeta dyadic boxes.  Hence the
+complete family (4.211)--(4.213) contributes
+
+\[
+ O_W\!\left(T(\log(2T))^{-2}\right)=o_W(T).
+\tag{4.219}
+\]
+
+No Möbius cancellation, BCR estimate, or conjectural spectral input is
+used.  The proof uses exact inverse Poisson, the elementary affine-line
+count (4.215), the zero-mode bound, and the two endpoint tapers.  It does
+not bound an individual \(H\)-box by (4.217); only their signed aggregate
+(4.213) has been proved.
+
+The route name is `covered_by_endpoint_unpoisson`.  The adapter
+`large_q_endpoint_unpoisson_audit` records the exponent ledger
+
+\[
+ \underbrace{1}_{t\text{-integral}}
+ +\underbrace{1}_{\text{shifted solutions}}
+ -\underbrace{3}_{q\sqrt{RS}}
+ =-1\quad\text{per }q,
+ \qquad -1+2=1
+\tag{4.220}
+\]
+
+after cardinal summation over \(q\asymp T^2\), together with the two
+remaining logarithms.  It sets `unconditional_coverage=True`.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
