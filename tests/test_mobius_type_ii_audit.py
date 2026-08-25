@@ -13,6 +13,7 @@ from scripts.audit_mobius_type_ii import (
     balanced_dual_low_mode_mobius_exponent,
     balanced_principal_character_mobius_exponent,
     c_coefficient,
+    centered_dual_scales,
     character_large_sieve_unit_gap,
     coprime_indicator_via_mobius,
     dispersion_pointwise_mean_square_gap,
@@ -27,12 +28,18 @@ from scripts.audit_mobius_type_ii import (
     mqw_initial_rectangle_witness,
     mobius_geometric_value,
     nonunit_principal_long_factor_floor,
+    nonunit_principal_equal_mobius_exponent,
+    nonunit_principal_h_boundary_slack,
+    nonunit_principal_is_residual_face,
+    nonunit_principal_trivial_loss,
     pascadi_balanced_gap,
     pascadi_2024_direct_dispersion_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
     reduce_inverse_product_phase,
     ramanujan_sum,
+    reverse_unit_affine_progression_length,
+    reverse_unit_solution_count_gap,
     squarefree_outer_mobius_ramanujan,
     two_sided_mobius_geometric_value,
     wright_factor_covers,
@@ -250,6 +257,114 @@ def test_squarefree_outer_mobius_ramanujan_divisor_identity() -> None:
     assert nonunit_principal_long_factor_floor(
         boundary_witnesses()["balanced_max_a"]
     ) == F(5, 2)
+    balanced = boundary_witnesses()["balanced_max_a"]
+    assert nonunit_principal_h_boundary_slack(balanced) == 0
+    assert nonunit_principal_trivial_loss(balanced) == F(2)
+    assert nonunit_principal_equal_mobius_exponent(balanced) == F(7, 11)
+    assert nonunit_principal_is_residual_face(balanced)
+    assert not nonunit_principal_is_residual_face(
+        boundary_witnesses()["large_q_endpoint"]
+    )
+    assert reverse_unit_solution_count_gap(balanced) == F(5, 2)
+    assert reverse_unit_affine_progression_length(balanced) == F(5, 2)
+
+
+def test_reverse_unit_top_divisor_has_exact_affine_solution_family() -> None:
+    for n in range(1, 9):
+        for k in range(1, 9):
+            g = gcd(n, k)
+            step = (k // g, n // g)
+            for delta in range(-8, 9):
+                solutions = [
+                    (r, s)
+                    for r in range(1, 33)
+                    for s in range(1, 33)
+                    if n * r + delta == k * s
+                ]
+                if delta % g:
+                    assert solutions == []
+                    continue
+                for left, right in zip(solutions, solutions[1:]):
+                    assert (right[0] - left[0], right[1] - left[1]) == step
+
+            a0, b0 = step
+            for residue in range(a0):
+                r0 = next(r for r in range(1, a0 + 1) if b0 * r % a0 == residue)
+                s0 = (b0 * r0 - residue) // a0
+                for shift in range(-4, 5):
+                    assert (
+                        b0 * r0 - a0 * (s0 - shift)
+                        == residue + a0 * shift
+                    )
+
+
+def test_centered_ramanujan_kernel_has_zero_unit_mean() -> None:
+    for modulus in range(2, 48):
+        mu_modulus = naive_mobius(modulus)
+        if mu_modulus == 0:
+            continue
+        modulus_divisors = [
+            d for d in range(1, modulus + 1) if modulus % d == 0
+        ]
+        assert sum(naive_mobius(d) for d in modulus_divisors) == 0
+        assert sum(
+            naive_mobius(modulus // d) for d in modulus_divisors
+        ) == 0
+        phi_modulus = sum(
+            1 for r in range(1, modulus + 1) if gcd(r, modulus) == 1
+        )
+        for delta in range(1, 12):
+            if gcd(delta, modulus) != 1:
+                continue
+            for n in range(-12, 13):
+                centered_sum = sum(
+                    F(
+                        mu_modulus
+                        * ramanujan_sum(
+                            modulus,
+                            n + delta * pow(r, -1, modulus),
+                        )
+                    )
+                    - F(ramanujan_sum(modulus, n), phi_modulus)
+                    for r in range(1, modulus + 1)
+                    if gcd(r, modulus) == 1
+                )
+                assert centered_sum == 0
+
+
+def test_delta_completed_congruence_has_self_dual_affine_family() -> None:
+    for b in range(1, 9):
+        for z in range(1, 9):
+            g = gcd(b, z)
+            step = (z // g, b // g)
+            for v in range(-8, 9):
+                solutions = [
+                    (r, j)
+                    for r in range(1, 33)
+                    for j in range(1, 33)
+                    if b * r - v == z * j
+                ]
+                if v % g:
+                    assert solutions == []
+                    continue
+                for left, right in zip(solutions, solutions[1:]):
+                    assert (right[0] - left[0], right[1] - left[1]) == step
+
+    balanced = boundary_witnesses()["balanced_max_a"]
+    lower = centered_dual_scales(balanced, F(5, 2))
+    upper = centered_dual_scales(balanced, F(3))
+    assert lower.cofactor == F(1, 2)
+    assert lower.frequency == F(2)
+    assert lower.residue == 0
+    assert lower.quotient == F(1, 2)
+    assert lower.progression == F(5, 2)
+    assert lower.slope_penalty == F(1)
+    assert upper.cofactor == 0
+    assert upper.frequency == F(5, 2)
+    assert upper.residue == F(1, 2)
+    assert upper.quotient == F(1, 2)
+    assert upper.progression == F(5, 2)
+    assert upper.slope_penalty == F(1)
 
 
 def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:

@@ -392,6 +392,116 @@ def nonunit_principal_long_factor_floor(box: ExponentBox) -> Fraction:
     return box.sigma - box.m
 
 
+def nonunit_principal_h_boundary_slack(box: ExponentBox) -> Fraction:
+    """Distance from the only non-negligible principal Type-II h-face."""
+
+    if not is_admissible(box):
+        raise ValueError("boundary slack requires an admissible box")
+    return box.sigma - box.m - box.h
+
+
+def nonunit_principal_trivial_loss(box: ExponentBox) -> Fraction:
+    """Loss ``L/M`` after ``wc`` and ``u`` localize to ``M`` and ``H``."""
+
+    if not is_admissible(box):
+        raise ValueError("principal loss requires an admissible box")
+    return max(Fraction(0), box.ell - box.m)
+
+
+def nonunit_principal_equal_mobius_exponent(box: ExponentBox) -> Fraction:
+    """Equal Mertens exponent sufficient for the separated r,u route.
+
+    On the top h-face the two Möbius lengths are ``R`` and ``S/M`` and
+    the remaining loss is ``max(0,L/M)``.  If both sums obey ``X^beta``,
+    this returns the largest beta that would close the local target.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("Möbius exponent requires an admissible box")
+    total_mobius_length = box.rho + box.sigma - box.m
+    if total_mobius_length == 0:
+        return Fraction(1)
+    return Fraction(1) - nonunit_principal_trivial_loss(box) / total_mobius_length
+
+
+def nonunit_principal_is_residual_face(box: ExponentBox) -> bool:
+    """Whether the zero-slack box survives global principal completion."""
+
+    if not is_admissible(box):
+        raise ValueError("residual classification requires an admissible box")
+    return nonunit_principal_h_boundary_slack(box) == 0 and box.ell > box.m
+
+
+def reverse_unit_solution_count_gap(box: ExponentBox) -> Fraction:
+    """Gap left by counting the reverse-Poisson affine solutions.
+
+    The elementary count is ``MKL + MRL``.  After restoring the exact
+    kernel normalization, the centered target asks for a weighted count
+    of exponent ``(rho+sigma+m+k)/2``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("solution-count gap requires an admissible box")
+    count_exponent = max(
+        box.m + box.k + box.ell,
+        box.m + box.rho + box.ell,
+    )
+    normalized_target = (
+        box.rho + box.sigma + box.m + box.k
+    ) / 2
+    return max(Fraction(0), count_exponent - normalized_target)
+
+
+def reverse_unit_affine_progression_length(box: ExponentBox) -> Fraction:
+    """Generic exponent of the r,s solution-parameter interval."""
+
+    if not is_admissible(box):
+        raise ValueError("progression length requires an admissible box")
+    return max(Fraction(0), box.rho - box.k)
+
+
+@dataclass(frozen=True)
+class CenteredDualScales:
+    """Exponent ledger after divisor duality and delta completion."""
+
+    cofactor: Fraction
+    frequency: Fraction
+    residue: Fraction
+    quotient: Fraction
+    progression: Fraction
+    slope_penalty: Fraction
+
+
+def centered_dual_scales(
+    box: ExponentBox,
+    modulus: Fraction,
+) -> CenteredDualScales:
+    """Return the exact scales ``C,V,B,Z,L`` for a divisor modulus ``J``.
+
+    The centered divisor-dual support has ``max(M,L) <= J <= S``.
+    Delta completion gives ``B=J/L`` and ``Z=R/L``; the affine family
+    ``b*r-v=z*j`` has progression length ``L``.  Applying the averaged
+    Chowla theorem termwise costs the square of the larger slope.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("centered dual scales require an admissible box")
+    if not max(box.m, box.ell) <= modulus <= box.sigma:
+        raise ValueError("divisor modulus must satisfy max(M,L) <= J <= S")
+    residue = modulus - box.ell
+    quotient = box.rho - box.ell
+    if quotient < 0:
+        raise ValueError("delta completion requires L <= R")
+    return CenteredDualScales(
+        cofactor=box.sigma - modulus,
+        frequency=modulus - box.m,
+        residue=residue,
+        quotient=quotient,
+        progression=box.ell,
+        slope_penalty=2 * max(residue, quotient),
+    )
+
+
 @dataclass(frozen=True)
 class ReducedInversePhase:
     """Exact gcd reduction of ``e_s(-h*delta*r^{-1})``.
