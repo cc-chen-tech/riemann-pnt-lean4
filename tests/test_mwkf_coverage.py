@@ -204,6 +204,48 @@ def test_centered_e_poisson_recloses_the_original_determinant_gate() -> None:
     assert not result.published_coverage
 
 
+def test_hecke_mobius_euler_factor_is_exact_but_not_a_qct_adapter() -> None:
+    local_factor = getattr(
+        coverage_audit,
+        "hecke_mobius_local_factor",
+        None,
+    )
+    adapter = getattr(
+        coverage_audit,
+        "hecke_mobius_spectral_audit",
+        None,
+    )
+    assert local_factor is not None, "Hecke--Mobius local factor is missing"
+    assert adapter is not None, "Hecke--Mobius spectral audit is missing"
+
+    factor = local_factor(F(3, 2), F(1))
+    assert factor.mobius_factor == (F(1), F(-3, 2))
+    assert factor.inverse_l_factor == (F(1), F(-3, 2), F(1))
+    assert factor.correction_numerator == factor.mobius_factor
+    assert factor.correction_denominator == factor.inverse_l_factor
+    assert factor.correction_minus_one_numerator == (F(0), F(0), F(-1))
+    assert factor.euler_factor_identity_exact
+
+    result = adapter(
+        polynomial_length_exponent=F(3),
+        conductor_exponent_witness=F(1),
+        required_log_saving_power=8,
+    )
+    assert result.polynomial_length_exponent == F(3)
+    assert result.conductor_exponent_witness == F(1)
+    assert result.required_log_saving_power == 8
+    assert result.local_euler_factor_exact
+    assert result.knightly_li_has_one_fixed_hecke_index
+    assert result.linear_superposition_formally_creates_one_mobius_hecke_sum
+    assert not result.qct_geometry_identified_with_generalized_kloosterman_family
+    assert not result.two_mobius_weights_derived_as_hecke_polynomials
+    assert result.classical_polynomial_conductor_saving_only_constant
+    assert result.thorner_polynomial_conductor_saving_tends_to_one
+    assert not result.spectral_conductor_verified
+    assert not result.uniform_zero_free_log_saving_verified
+    assert not result.published_coverage
+
+
 def test_v_equals_j_equals_one_is_an_exact_average_chowla_witness() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     scales = h_poisson_subbox_scales(box, v=F(0), j=F(0))
@@ -1235,6 +1277,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "recloses=True conductor=False covered=False"
     ) in output
     assert (
+        "balanced_max_a: hecke_mobius_spectral="
+        "x=3 conductor_witness=1 B=8 euler=True fixed_index=True "
+        "one_polynomial=True qct_geometry=False two_polynomials=False "
+        "classical_constant=True thorner_to_one=True conductor=False "
+        "zero_free=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: bc_fixed_determinant="
         "error=111/10 fixed_trivial=7/2 summed_trivial=6 "
         "target=3499/1000 mobius_save=2501/1000 "
@@ -1306,5 +1355,12 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "arXiv:1105.1616v1, Theorem 3",
         r"\tau=u+\beta\ge1",
         "published coverage remains false",
+        "### 4.15 Hecke--Möbius Euler product and the missing spectral adapter",
+        r"D_{f,p}(z)=1-\lambda_f(p)p^{-z}",
+        r"\frac{H_f(z)}{L(z,f)}",
+        "Knightly--Li, arXiv:1202.0189, Theorem 7.14",
+        r"\eta_T\log X\ge B\log\log T",
+        "Thorner, arXiv:2608.12257v1, Theorem 1.1",
+        "does not supply the required logarithmic saving",
     ):
         assert marker in text

@@ -1880,6 +1880,99 @@ the route but cannot certify coverage of a favorable subbox.  The
 function squarefree_linear_completion_audit records (4.120)--(4.123)
 and marks the coprimality progressions as uncharged.
 
+### 4.15 Hecke--Möbius Euler product and the missing spectral adapter
+
+Suppose first that an unramified Hecke--Maaß eigenform \(f\) has local
+standard factor
+
+\[
+ L_p(z,f)^{-1}=1-\lambda_f(p)p^{-z}+\omega_f(p)p^{-2z}.
+\tag{4.124}
+\]
+
+The local factor of the formal Möbius--Hecke Dirichlet series is exactly
+
+\[
+ D_{f,p}(z)=1-\lambda_f(p)p^{-z}.
+\tag{4.125}
+\]
+
+Consequently, initially in the half-plane of absolute convergence and
+with the ramified primes recorded separately,
+
+\[
+ D_f(z):=\sum_{n\ge1}\frac{\mu(n)\lambda_f(n)}{n^z}
+ =\frac{H_f(z)}{L(z,f)},
+\qquad
+ H_{f,p}(z)
+ =\frac{1-\lambda_f(p)p^{-z}}
+ {1-\lambda_f(p)p^{-z}+\omega_f(p)p^{-2z}}.
+\tag{4.126}
+\]
+
+In particular,
+
+\[
+ H_{f,p}(z)-1
+ =-\frac{\omega_f(p)p^{-2z}}
+ {1-\lambda_f(p)p^{-z}+\omega_f(p)p^{-2z}}.
+\tag{4.127}
+\]
+
+Thus the Euler-factor identity itself is not the missing step.  The
+exact-rational function `hecke_mobius_local_factor` records
+(4.124)--(4.127).
+
+The geometric-to-spectral passage is missing.  Knightly--Li, arXiv:1202.0189, Theorem 7.14,
+inserts one fixed Hecke index \(n\) into a Kuznetsov formula: the
+cuspidal side contains
+\(\lambda_n(f)a_{m_1}(f)\overline{a_{m_2}(f)}\), while the geometric side
+contains generalized twisted Kloosterman sums
+\(S_{\omega'}(m_2,m_1;n;c)\).  Linearity in \(n\) would formally create
+one Möbius--Hecke polynomial after summing those formulas against
+\(\mu(n)\).  What has not been proved is an identity between that
+geometric family and the QCT kernel in (2.3), or a transform which sends
+both weights \(\mu(r)\mu(s)\) to two such Hecke polynomials.  In the QCT
+kernel \(r,s\) are determinant-matrix entries and moduli, not already
+the two Fourier indices of the classical Kuznetsov formula.
+
+There is a second, independent obstruction.  Let \(X=T^\rho\) be the
+length of a putative Möbius--Hecke polynomial and let a fixed contour
+shift have width \(\eta_T\).  A saving \((\log T)^{-B}\) requires the
+necessary displacement inequality
+
+\[
+ \boxed{\eta_T\log X\ge B\log\log T.}
+\tag{4.128}
+\]
+
+If the spectral analytic conductor has polynomial size
+\(\mathfrak C_f=T^\kappa\), the classical width
+\(\eta_T\asymp1/\log\mathfrak C_f\) gives only
+\(\eta_T\log X\asymp\rho/\kappa\), a constant.  Thorner, arXiv:2608.12257v1, Theorem 1.1,
+proves a uniform but ineffective region of width
+\(c_\varepsilon\mathfrak C_f^{-\varepsilon}\).  For every fixed
+\(\varepsilon>0\) and \(\kappa>0\), this gives
+
+\[
+ \eta_T\log X
+ \ll_{\varepsilon,\rho,\kappa}
+ T^{-\kappa\varepsilon}\log T=o(1),
+\tag{4.129}
+\]
+
+so it does not supply the required logarithmic saving in (4.128) for a
+polynomial-conductor spectral family.  Allowing \(\varepsilon\) to
+depend on \(T\) is not licensed because the theorem's constant depends
+on \(\varepsilon\).  A successful route must therefore derive the
+actual QCT spectral family and then use a family-average cancellation or
+zero-density statement strong enough at its verified conductor; an
+individual zero-free-region substitution is insufficient.
+
+The audit records all three gates separately: local Euler identity true,
+QCT spectral derivation false, and uniform logarithmic saving false.
+Published coverage remains false.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

@@ -554,6 +554,33 @@ class CenteredQuotientPoissonAudit:
 
 
 @dataclass(frozen=True)
+class HeckeMobiusLocalFactor:
+    mobius_factor: tuple[Fraction, ...]
+    inverse_l_factor: tuple[Fraction, ...]
+    correction_numerator: tuple[Fraction, ...]
+    correction_denominator: tuple[Fraction, ...]
+    correction_minus_one_numerator: tuple[Fraction, ...]
+    euler_factor_identity_exact: bool
+
+
+@dataclass(frozen=True)
+class HeckeMobiusSpectralAudit:
+    polynomial_length_exponent: Fraction
+    conductor_exponent_witness: Fraction
+    required_log_saving_power: int
+    local_euler_factor_exact: bool
+    knightly_li_has_one_fixed_hecke_index: bool
+    linear_superposition_formally_creates_one_mobius_hecke_sum: bool
+    qct_geometry_identified_with_generalized_kloosterman_family: bool
+    two_mobius_weights_derived_as_hecke_polynomials: bool
+    classical_polynomial_conductor_saving_only_constant: bool
+    thorner_polynomial_conductor_saving_tends_to_one: bool
+    spectral_conductor_verified: bool
+    uniform_zero_free_log_saving_verified: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class BCFixedDeterminantAudit:
     short_variable_exponents: tuple[Fraction, Fraction]
     long_variable_exponents: tuple[Fraction, Fraction]
@@ -2512,6 +2539,92 @@ def centered_quotient_poisson_audit(
     )
 
 
+def hecke_mobius_local_factor(
+    lambda_p: Fraction,
+    central_character_p: Fraction,
+) -> HeckeMobiusLocalFactor:
+    """Return the exact unramified local Euler-factor bookkeeping.
+
+    With ``x=p^(-z)`` and
+
+    ``L_p(z,f)^(-1)=1-lambda_p*x+central_character_p*x^2``, the
+    squarefree Mobius factor is ``D_p=1-lambda_p*x``.  Therefore
+
+    ``D_p = H_p/L_p`` with
+    ``H_p=(1-lambda_p*x)/(1-lambda_p*x+central_character_p*x^2)``.
+
+    This identity is purely local.  It neither derives a Hecke polynomial
+    from the QCT geometric kernel nor controls the conductor of a spectral
+    family.
+    """
+    lambda_p = F(lambda_p)
+    central_character_p = F(central_character_p)
+    mobius_factor = (F(1), -lambda_p)
+    inverse_l_factor = (F(1), -lambda_p, central_character_p)
+    correction_minus_one_numerator = (
+        F(0),
+        F(0),
+        -central_character_p,
+    )
+    return HeckeMobiusLocalFactor(
+        mobius_factor=mobius_factor,
+        inverse_l_factor=inverse_l_factor,
+        correction_numerator=mobius_factor,
+        correction_denominator=inverse_l_factor,
+        correction_minus_one_numerator=correction_minus_one_numerator,
+        euler_factor_identity_exact=True,
+    )
+
+
+def hecke_mobius_spectral_audit(
+    *,
+    polynomial_length_exponent: Fraction,
+    conductor_exponent_witness: Fraction,
+    required_log_saving_power: int,
+) -> HeckeMobiusSpectralAudit:
+    """Audit the missing passage from QCT geometry to spectral cancellation.
+
+    Knightly--Li Theorem 7.14 places one fixed Hecke-operator index on
+    the spectral side.  Linearity can formally sum that index against
+    Mobius coefficients, but the geometric side is then a family of
+    generalized twisted Kloosterman sums.  No identity with the current
+    QCT determinant kernel, and no simultaneous derivation of both Mobius
+    weights as Hecke polynomials, has been proved.
+
+    The zero-free-region ledger is also decisive.  If ``X=T^rho`` and a
+    spectral conductor has the polynomial witness ``C=T^kappa`` with
+    ``rho,kappa>0``, a classical width ``1/log C`` gives only constant
+    contour displacement ``eta*log X``.  Thorner's 2026 uniform width
+    ``C^(-epsilon)`` gives ``eta*log X -> 0`` for every fixed epsilon.
+    Either is smaller than the necessary ``B*log log T`` displacement.
+    """
+    polynomial_length_exponent = F(polynomial_length_exponent)
+    conductor_exponent_witness = F(conductor_exponent_witness)
+    if polynomial_length_exponent <= 0:
+        raise ValueError("polynomial length exponent must be positive")
+    if conductor_exponent_witness <= 0:
+        raise ValueError("conductor exponent witness must be positive")
+    if required_log_saving_power <= 0:
+        raise ValueError("required logarithmic saving must be positive")
+
+    local = hecke_mobius_local_factor(F(0), F(1))
+    return HeckeMobiusSpectralAudit(
+        polynomial_length_exponent=polynomial_length_exponent,
+        conductor_exponent_witness=conductor_exponent_witness,
+        required_log_saving_power=required_log_saving_power,
+        local_euler_factor_exact=local.euler_factor_identity_exact,
+        knightly_li_has_one_fixed_hecke_index=True,
+        linear_superposition_formally_creates_one_mobius_hecke_sum=True,
+        qct_geometry_identified_with_generalized_kloosterman_family=False,
+        two_mobius_weights_derived_as_hecke_polynomials=False,
+        classical_polynomial_conductor_saving_only_constant=True,
+        thorner_polynomial_conductor_saving_tends_to_one=True,
+        spectral_conductor_verified=False,
+        uniform_zero_free_log_saving_verified=False,
+        published_coverage=False,
+    )
+
+
 def bc_fixed_determinant_audit(box: ExponentBox) -> BCFixedDeterminantAudit:
     """Insert the hard determinant lattice into BC Corollary 1.
 
@@ -3294,6 +3407,36 @@ def main() -> None:
         "conductor="
         f"{centered_poisson_audit.new_conductor_reduction} "
         f"covered={centered_poisson_audit.published_coverage}"
+    )
+    hecke_mobius_audit = hecke_mobius_spectral_audit(
+        polynomial_length_exponent=F(3),
+        conductor_exponent_witness=F(1),
+        required_log_saving_power=8,
+    )
+    print(
+        "balanced_max_a: hecke_mobius_spectral="
+        f"x={_fmt(hecke_mobius_audit.polynomial_length_exponent)} "
+        "conductor_witness="
+        f"{_fmt(hecke_mobius_audit.conductor_exponent_witness)} "
+        f"B={hecke_mobius_audit.required_log_saving_power} "
+        f"euler={hecke_mobius_audit.local_euler_factor_exact} "
+        "fixed_index="
+        f"{hecke_mobius_audit.knightly_li_has_one_fixed_hecke_index} "
+        "one_polynomial="
+        f"{hecke_mobius_audit.linear_superposition_formally_creates_one_mobius_hecke_sum} "
+        "qct_geometry="
+        f"{hecke_mobius_audit.qct_geometry_identified_with_generalized_kloosterman_family} "
+        "two_polynomials="
+        f"{hecke_mobius_audit.two_mobius_weights_derived_as_hecke_polynomials} "
+        "classical_constant="
+        f"{hecke_mobius_audit.classical_polynomial_conductor_saving_only_constant} "
+        "thorner_to_one="
+        f"{hecke_mobius_audit.thorner_polynomial_conductor_saving_tends_to_one} "
+        "conductor="
+        f"{hecke_mobius_audit.spectral_conductor_verified} "
+        "zero_free="
+        f"{hecke_mobius_audit.uniform_zero_free_log_saving_verified} "
+        f"covered={hecke_mobius_audit.published_coverage}"
     )
     determinant_audit = bc_fixed_determinant_audit(hard)
     print(
