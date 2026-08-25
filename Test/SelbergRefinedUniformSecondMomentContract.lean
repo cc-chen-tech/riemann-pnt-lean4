@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergRefinedUniformSecondMoment
+
+namespace HardyTheorem
+
+#check exists_integral_normSq_sliding_selbergCompletedMollifiedF_le_refined_uniform
+#print axioms exists_integral_normSq_sliding_selbergCompletedMollifiedF_le_refined_uniform
+
+end HardyTheorem

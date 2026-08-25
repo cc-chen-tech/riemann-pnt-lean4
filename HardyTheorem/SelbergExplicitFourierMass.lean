@@ -46,7 +46,7 @@ theorem normSq_selbergExplicitInverseFourierKernel_le
         (‖selbergResidueInverseFourierKernel delta X y‖ -
           ‖selbergNonconstantInverseFourierKernel delta X y‖)]
 
-private theorem integrableOn_normSq_selbergResidue_low
+theorem integrableOn_normSq_selbergResidue_low
     {delta L : ℝ} (hdelta : 0 < delta)
     (hdeltaPi : delta < Real.pi / 2) (X : ℕ) :
     IntegrableOn
@@ -63,7 +63,7 @@ private theorem integrableOn_normSq_selbergResidue_low
   dsimp [B]
   ring
 
-private theorem integrableOn_normSq_selbergNonconstant_low
+theorem integrableOn_normSq_selbergNonconstant_low
     {delta : ℝ} (hdelta : 0 < delta) (hdelta1 : delta ≤ 1)
     (hdeltaPi : delta < Real.pi / 2) {G : ℝ} (hG : 1 < G)
     {X : ℕ} (hX : 2 ≤ X) :
@@ -87,7 +87,7 @@ private theorem integrableOn_normSq_selbergNonconstant_low
     (normSq_selbergNonconstantInverseFourierKernel_log
       hdelta hdelta1 hdeltaPi (Real.exp_pos y) X).symm
 
-private theorem integrableOn_normSq_selbergResidue_div_sq_high
+theorem integrableOn_normSq_selbergResidue_div_sq_high
     {delta L : ℝ} (hdelta : 0 < delta)
     (hdeltaPi : delta < Real.pi / 2) (hL : 0 < L) (X : ℕ) :
     IntegrableOn
@@ -121,7 +121,7 @@ private theorem integrableOn_normSq_selbergResidue_div_sq_high
   dsimp [B]
   ring
 
-private theorem integrableOn_normSq_selbergNonconstant_div_sq_high
+theorem integrableOn_normSq_selbergNonconstant_div_sq_high
     {delta : ℝ} (hdelta : 0 < delta) (hdelta1 : delta ≤ 1)
     (hdeltaPi : delta < Real.pi / 2) {G : ℝ} (hG : 1 < G)
     {X : ℕ} (hX : 2 ≤ X) :

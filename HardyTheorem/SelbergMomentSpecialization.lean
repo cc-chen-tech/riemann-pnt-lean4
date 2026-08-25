@@ -17,7 +17,7 @@ mollified function with `delta=1/T`, `X=floor(T^(1/32))`, and
 `H=2*pi/log(X^a)`.
 -/
 
-private theorem normSq_interval_selbergCompletedMollifiedFComplex_eq_sq_abs
+theorem normSq_interval_selbergCompletedMollifiedFComplex_eq_sq_abs
     (delta : ℝ) (X : ℕ) {t H : ℝ} :
     Complex.normSq
         (∫ z in t..t + H,
@@ -34,7 +34,7 @@ private theorem normSq_interval_selbergCompletedMollifiedFComplex_eq_sq_abs
       simpa only [selbergCompletedMollifiedFComplex] using hreal]
   simp
 
-private theorem norm_selbergCompletedMollifiedFComplex_eq_abs
+theorem norm_selbergCompletedMollifiedFComplex_eq_abs
     (delta : ℝ) (X : ℕ) (t : ℝ) :
     ‖selbergCompletedMollifiedFComplex delta X t‖ =
       |selbergCompletedMollifiedF delta X t| := by
