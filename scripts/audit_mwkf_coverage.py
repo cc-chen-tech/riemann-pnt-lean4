@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
-from math import gcd
+from math import gcd, isqrt
 from pathlib import Path
 import sys
 
@@ -953,6 +953,57 @@ class TransitionMobiusHeckeReciprocalLAudit:
     reciprocal_l_negative_moment_proved: bool
     required_half_power_saving_certified: bool
     whole_line_family_covered: bool
+
+
+@dataclass(frozen=True)
+class TransitionEntryWeightedRelativeTraceAudit:
+    required_nonspherical_primes: tuple[int, ...]
+    minimum_global_level: int
+    asymptotic_log_level_scale: Fraction
+    minimum_global_level_is_primorial: bool
+    local_spherical_vector_is_constant_on_primitive_columns: bool
+    primitive_entry_weight_is_not_k_invariant: bool
+    exact_squarefree_weight_needs_depth_two_for_small_primes: bool
+    hecke_index_is_shift_not_entry: bool
+    polynomial_conductor_preserved: bool
+    published_entry_weighted_adapter: bool
+    whole_line_family_covered: bool
+
+
+@dataclass(frozen=True)
+class TransitionSmallPrimeSpectralHybridAudit:
+    fixed_rough_factor_cap: int
+    fixed_cap_cutoff_exponent: Fraction
+    polynomial_level_exponent: Fraction
+    required_saving_exponent: Fraction
+    rough_density_power_saving_exponent: Fraction
+    residual_power_deficit: Fraction
+    logarithmic_cutoff_keeps_polynomial_level: bool
+    logarithmic_cutoff_forces_fixed_factor_count: bool
+    fixed_factor_cutoff_has_superpolynomial_level: bool
+    published_rough_cofactor_half_power_bound: bool
+    whole_line_family_covered: bool
+
+
+@dataclass(frozen=True)
+class TransitionGeneralCutoffLineGateAudit:
+    determinant_exponent: Fraction
+    denominator_gcd_exponent: Fraction
+    cofactor_exponent: Fraction
+    cutoff_ratio: Fraction
+    type_split_ratio: Fraction
+    cutoff_exponent: Fraction
+    type_split_exponent: Fraction
+    left_unsigned_exponent: Fraction
+    right_unsigned_exponent: Fraction
+    signed_square_root_saving: Fraction
+    unsigned_completion_saving: Fraction
+    required_saving: Fraction
+    total_hypothetical_saving: Fraction
+    top_face_power_margin: Fraction
+    cutoff_independent_deficit_identity: bool
+    cutoff_choice_creates_positive_power_slack: bool
+    cell_closed_by_registered_bounds: bool
 
 
 @dataclass(frozen=True)
@@ -4822,6 +4873,160 @@ def transition_mobius_hecke_reciprocal_l_audit(
         reciprocal_l_negative_moment_proved=False,
         required_half_power_saving_certified=False,
         whole_line_family_covered=False,
+    )
+
+
+def transition_entry_weighted_relative_trace_audit(
+    *,
+    prime_bound: int,
+) -> TransitionEntryWeightedRelativeTraceAudit:
+    """Record the conductor cost of exact Möbius matrix-entry weights.
+
+    A spherical local test is constant on primitive columns.  The local
+    factor of ``mu(r)mu(s)`` is not: it is ``+1`` when both entries are
+    units and ``-1`` when exactly one is divisible by ``p``.  Therefore
+    every prime which can divide an entry requires a nonspherical local
+    type of level at least ``p``.  Their global level is bounded below
+    by the corresponding primorial.  Distinguishing valuation one from
+    valuation at least two requires depth two at the smaller primes and
+    can only increase this lower bound.
+    """
+    if prime_bound < 2:
+        raise ValueError("prime_bound must be at least 2")
+    sieve = [True] * (prime_bound + 1)
+    sieve[0] = sieve[1] = False
+    for prime in range(2, isqrt(prime_bound) + 1):
+        if sieve[prime]:
+            for multiple in range(prime * prime, prime_bound + 1, prime):
+                sieve[multiple] = False
+    primes = tuple(index for index, is_prime in enumerate(sieve) if is_prime)
+    primorial = 1
+    for prime in primes:
+        primorial *= prime
+    return TransitionEntryWeightedRelativeTraceAudit(
+        required_nonspherical_primes=primes,
+        minimum_global_level=primorial,
+        asymptotic_log_level_scale=F(1),
+        minimum_global_level_is_primorial=True,
+        local_spherical_vector_is_constant_on_primitive_columns=True,
+        primitive_entry_weight_is_not_k_invariant=True,
+        exact_squarefree_weight_needs_depth_two_for_small_primes=True,
+        hecke_index_is_shift_not_entry=True,
+        polynomial_conductor_preserved=False,
+        published_entry_weighted_adapter=False,
+        whole_line_family_covered=False,
+    )
+
+
+def transition_small_prime_spectral_hybrid_audit(
+    *,
+    fixed_rough_factor_cap: int,
+    polynomial_level_exponent: Fraction,
+) -> TransitionSmallPrimeSpectralHybridAudit:
+    """Compare polynomial local level with a fixed rough factor count.
+
+    A cutoff ``z=C log T`` has primorial ``exp(theta(z))=T^(C+o(1))``
+    but permits ``log T/log z`` rough prime factors.  To force at most
+    ``K`` prime factors in an integer up to ``T`` one needs the boundary
+    ``z=T^(1/(K+1))``; its primorial is
+    ``exp(T^(1/(K+1)+o(1)))`` and is superpolynomial.  Sieve density at
+    the logarithmic cutoff gives no positive power of ``T``.
+    """
+    if fixed_rough_factor_cap < 1:
+        raise ValueError("fixed_rough_factor_cap must be positive")
+    if polynomial_level_exponent <= 0:
+        raise ValueError("polynomial_level_exponent must be positive")
+    required = F(1, 2)
+    rough_power = F(0)
+    return TransitionSmallPrimeSpectralHybridAudit(
+        fixed_rough_factor_cap=fixed_rough_factor_cap,
+        fixed_cap_cutoff_exponent=F(1, fixed_rough_factor_cap + 1),
+        polynomial_level_exponent=polynomial_level_exponent,
+        required_saving_exponent=required,
+        rough_density_power_saving_exponent=rough_power,
+        residual_power_deficit=required - rough_power,
+        logarithmic_cutoff_keeps_polynomial_level=True,
+        logarithmic_cutoff_forces_fixed_factor_count=False,
+        fixed_factor_cutoff_has_superpolynomial_level=True,
+        published_rough_cofactor_half_power_bound=False,
+        whole_line_family_covered=False,
+    )
+
+
+def transition_general_cutoff_line_gate_audit(
+    *,
+    determinant_exponent: Fraction,
+    denominator_gcd_exponent: Fraction,
+    cutoff_ratio: Fraction,
+    type_split_ratio: Fraction,
+    left_cutoff_divisor_exponent: Fraction,
+    left_short_mobius_exponent: Fraction,
+    right_cutoff_divisor_exponent: Fraction,
+    right_short_mobius_exponent: Fraction,
+) -> TransitionGeneralCutoffLineGateAudit:
+    """Audit an arbitrary ``U=A^u, V=A^v`` line-gate cell.
+
+    Each factorization ``a=d*e*y`` has exponent identity
+    ``pi+epsilon+beta=alpha``.  Consequently square roots in all signed
+    and unsigned factor volumes save exactly ``alpha=1-gamma``.  On the
+    top determinant face this equals, but never exceeds, the required
+    saving.  The cutoff only redistributes the same critical volume.
+    """
+    kappa = F(determinant_exponent)
+    gamma = F(denominator_gcd_exponent)
+    u = F(cutoff_ratio)
+    v = F(type_split_ratio)
+    if not (F(0) <= gamma <= kappa <= F(1)):
+        raise ValueError("require 0 <= gamma <= kappa <= 1")
+    if not (F(0) < u < F(1)):
+        raise ValueError("cutoff_ratio must lie in (0,1)")
+    if not (F(0) <= v <= F(1) - u):
+        raise ValueError("type_split_ratio must lie in [0,1-u]")
+    alpha = F(1) - gamma
+    cutoff = u * alpha
+    split = v * alpha
+    left_divisor = F(left_cutoff_divisor_exponent)
+    left_short = F(left_short_mobius_exponent)
+    right_divisor = F(right_cutoff_divisor_exponent)
+    right_short = F(right_short_mobius_exponent)
+    for name, divisor, short in (
+        ("left", left_divisor, left_short),
+        ("right", right_divisor, right_short),
+    ):
+        if not (F(0) <= divisor <= cutoff):
+            raise ValueError(f"{name} divisor lies outside cutoff")
+        if not (F(0) <= short < alpha - cutoff):
+            raise ValueError(f"{name} short factor violates de>U")
+    left_unsigned = alpha - left_divisor - left_short
+    right_unsigned = alpha - right_divisor - right_short
+    signed_saving = (
+        left_divisor + left_short + right_divisor + right_short
+    ) / 2
+    unsigned_saving = (left_unsigned + right_unsigned) / 2
+    required = kappa - gamma
+    total = signed_saving + unsigned_saving
+    margin = total - required
+    return TransitionGeneralCutoffLineGateAudit(
+        determinant_exponent=kappa,
+        denominator_gcd_exponent=gamma,
+        cofactor_exponent=alpha,
+        cutoff_ratio=u,
+        type_split_ratio=v,
+        cutoff_exponent=cutoff,
+        type_split_exponent=split,
+        left_unsigned_exponent=left_unsigned,
+        right_unsigned_exponent=right_unsigned,
+        signed_square_root_saving=signed_saving,
+        unsigned_completion_saving=unsigned_saving,
+        required_saving=required,
+        total_hypothetical_saving=total,
+        top_face_power_margin=margin,
+        cutoff_independent_deficit_identity=(
+            required - signed_saving
+            == unsigned_saving - (F(1) - kappa)
+        ),
+        cutoff_choice_creates_positive_power_slack=(margin > F(1) - kappa),
+        cell_closed_by_registered_bounds=False,
     )
 
 
@@ -8736,6 +8941,44 @@ def main() -> None:
         "mobius_entries_not_indices=True,conditional=True,"
         "kuznetsov=False,negative_moment=False,"
         "half_power=False,covered=False"
+    )
+    transition_entry_relative_trace = (
+        transition_entry_weighted_relative_trace_audit(prime_bound=7)
+    )
+    print(
+        "large_q_transition: entry_weighted_relative_trace="
+        "prime_bound=7,primes=2,3,5,7,level=210,log_level_scale=1,"
+        "primorial=True,spherical_constant=True,entry_noninvariant=True,"
+        "depth2=True,hecke_index_shift=True,polynomial=False,"
+        "published=False,covered=False"
+    )
+    transition_small_prime_hybrid = transition_small_prime_spectral_hybrid_audit(
+        fixed_rough_factor_cap=7,
+        polynomial_level_exponent=F(2),
+    )
+    print(
+        "large_q_transition: small_prime_spectral_hybrid="
+        "factor_cap=7,fixed_cutoff=1/8,level_exponent=2,required=1/2,"
+        "rough_power=0,deficit=1/2,log_cutoff_polynomial=True,"
+        "log_cutoff_fixed_count=False,fixed_count_superpoly=True,"
+        "published=False,covered=False"
+    )
+    transition_general_cutoff = transition_general_cutoff_line_gate_audit(
+        determinant_exponent=F(1),
+        denominator_gcd_exponent=F(1, 2),
+        cutoff_ratio=F(2, 3),
+        type_split_ratio=F(1, 4),
+        left_cutoff_divisor_exponent=F(1, 3),
+        left_short_mobius_exponent=F(1, 7),
+        right_cutoff_divisor_exponent=F(1, 4),
+        right_short_mobius_exponent=F(1, 8),
+    )
+    print(
+        "large_q_transition: general_cutoff_line_gate="
+        "kappa=1,gamma=1/2,alpha=1/2,u=2/3,v=1/4,U=1/3,V=1/8,"
+        "e_left=1/42,e_right=1/8,signed_sqrt=143/336,"
+        "unsigned_sqrt=25/336,required=1/2,total=1/2,margin=0,"
+        "identity=True,cutoff_slack=False,covered=False"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

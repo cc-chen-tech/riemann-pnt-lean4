@@ -8221,6 +8221,267 @@ diagnostic.  It keeps actual_kuznetsov_reduction_derived=False,
 reciprocal_l_negative_moment_proved=False, and
 whole_line_family_covered=False.
 
+### 4.64 Primorial conductor obstruction for an exact entry-weighted trace formula
+
+Section 4.63 leaves open the possibility of placing the two Möbius
+matrix-entry weights directly in the finite test function of a relative
+trace formula.  There is a precise conductor cost for doing this
+without first applying Type-I/II decomposition.
+
+Let \(K_p=GL_2(\mathbb Z_p)\).  It acts transitively on the primitive
+columns
+
+\[
+ \mathcal P_p
+ :=\{(x,y)\in\mathbb Z_p^2:\min(v_p(x),v_p(y))=0\}.
+\tag{4.579}
+\]
+
+On such a column the exact local factor of \(\mu(x)\mu(y)\) is
+
+\[
+ w_p(x,y)=
+ \begin{cases}
+  +1,&v_p(x)=v_p(y)=0,\\
+  -1,&\{v_p(x),v_p(y)\}=\{0,1\},\\
+  0,&\min(v_p(x),v_p(y))=0,\ \max(v_p(x),v_p(y))\ge2.
+ \end{cases}
+\tag{4.580}
+\]
+
+In particular \((1,1)\) and \((1,p)\) lie in the same \(K_p\)-orbit,
+while their weights in (4.580) are \(+1\) and \(-1\).  Therefore no
+spherical local vector can encode (4.580).  A locally constant exact
+test must have level at least \(p\); for \(p^2\le2T\), distinguishing
+the last two rows of (4.580) requires depth at least two and only raises
+the conductor further.
+
+Every prime \(p\le T\) divides some integer in \([T,2T]\).  Hence an
+exact factorizable finite test for both entries throughout their dyadic
+ranges must be nonspherical at every such prime.  If \(Q_T\) is a
+common level of the resulting global test, then
+
+\[
+ \boxed{Q_T\ge\prod_{p\le T}p.}
+\tag{4.581}
+\]
+
+Writing \(\vartheta(T)=\sum_{p\le T}\log p\), the prime number theorem
+gives
+
+\[
+ \boxed{\log Q_T\ge\vartheta(T)=T+o(T),\qquad
+        Q_T\ge\exp((1+o(1))T).}
+\tag{4.582}
+\]
+
+Thus the exact entry-weighted test does not preserve the polynomial
+analytic conductor required by the present exponent ledger.  The
+adelic Kuznetsov formula of Knightly--Li permits finite-place test
+functions, but its standard Hecke insertion is spherical and puts the
+arithmetic weight on the shift index, as already recorded in Section
+4.16; it does not remove (4.581).
+
+This does not exclude a hybrid argument which first uses a finite
+Möbius identity, encodes only a bounded set of local factors
+spectrally, and treats the remaining cofactors by dispersion.  It does
+exclude the proposed one-step exact relative-trace adapter at polynomial
+conductor.  The adapter
+transition_entry_weighted_relative_trace_audit computes the finite
+primorial exactly, records the asymptotic scale (4.582), and keeps
+polynomial_conductor_preserved=False,
+published_entry_weighted_adapter=False, and
+whole_line_family_covered=False.
+
+### 4.65 Small-prime spectral truncation cannot force fixed multilinearity
+
+One can keep the finite-place conductor polynomial by encoding only the
+local factors at primes \(p\le z\).  For a squarefree integer \(n\), put
+
+\[
+ d_z(n):=(n,P(z)),\qquad m_z(n):=n/d_z(n),\qquad
+ P(z):=\prod_{p\le z}p.
+\tag{4.583}
+\]
+
+Then the decomposition
+
+\[
+ \boxed{\mu(n)=\mu(d_z(n))\mu(m_z(n)),\quad
+ d_z(n)\mid P(z),\quad (m_z(n),P(z))=1}
+\tag{4.584}
+\]
+
+is exact and unique on the support of \(\mu\).  Choosing
+\(z=C\log T\) gives
+
+\[
+ P(z)=\exp(\vartheta(C\log T))=T^{C+o(1)},
+\tag{4.585}
+\]
+
+and the number of allocations \(d_z\mid P(z)\) is
+\(2^{\pi(z)}=T^{o(1)}\).  Thus this small-prime part can be retained at
+polynomial conductor and subpower combinatorial cost.
+
+The remaining cofactor is only \(z\)-rough.  Its possible number of
+prime factors is bounded by
+
+\[
+ \Omega(m_z)\le\frac{\log T}{\log z}
+ =\frac{\log T}{\log\log T+O_C(1)},
+\tag{4.586}
+\]
+
+which tends to infinity.  Conversely, to force
+\(\Omega(m_z)\le K\) for a fixed integer \(K\), it is necessary and
+sufficient at the exponent boundary to take
+
+\[
+ \boxed{z>T^{1/(K+1)}.}
+\tag{4.587}
+\]
+
+The corresponding local level then satisfies
+
+\[
+ P(z)=\exp\!\left(T^{1/(K+1)+o(1)}\right),
+\tag{4.588}
+\]
+
+which is superpolynomial.  At the logarithmic cutoff, the usual rough
+density is logarithmic and contributes power-saving exponent zero; it
+does not reduce the critical requirement \(1/2\) from (4.476).
+
+For the Bourgain--Garaev count \(K=7\), the boundary in (4.587) is
+\(z=T^{1/8}\).  Hence the two desired properties
+
+1. polynomial finite-place level, and
+2. a fixed seven-atom rough decomposition,
+
+cannot hold simultaneously in this exact local-test scheme.  The
+adapter transition_small_prime_spectral_hybrid_audit records the
+boundary \(1/(K+1)\), the zero rough-density power saving, and the
+unchanged deficit \(1/2\).  It keeps
+published_rough_cofactor_half_power_bound=False and
+whole_line_family_covered=False.
+
+### 4.66 An arbitrary Möbius cutoff only redistributes the critical volume
+
+It remains to check that the preceding obstruction is not an artefact of
+the particular Vaughan--Heath-Brown cutoff used in Section 4.60.  Write
+
+\[
+ \kappa:=\log_T |\Delta|,\qquad
+ \gamma:=\log_T g,\qquad
+ \alpha:=1-\gamma,
+ \qquad U=A^u,\quad V=A^v,
+\tag{4.589}
+\]
+
+where \(A=T^\alpha\), \(0<u<1\), and \(0\le v\le1-u\).  In either
+entry, every dyadic term obtained from the exact Möbius identity has a
+factorization
+
+\[
+ a_i=d_i e_i y_i,qquad
+ \pi_i:=\log_T d_i,\quad
+ \varepsilon_i:=\log_T e_i,\quad
+ \beta_i:=\log_T y_i,
+\tag{4.590}
+\]
+
+and hence the exact exponent constraint
+
+\[
+ \boxed{\pi_i+\varepsilon_i+\beta_i=\alpha}
+ \qquad(i=1,2).
+\tag{4.591}
+\]
+
+The cutoff conditions merely restrict
+
+\[
+ 0\le\pi_i\le u\alpha,qquad
+ 0\le\beta_i<(1-u)\alpha,qquad
+ \varepsilon_i=\alpha-\pi_i-\beta_i.
+\tag{4.592}
+\]
+
+The additional Type-I/II boundary \(V=A^v\) cuts this polytope at
+\(v\alpha\); it does not change (4.591).  Even under the optimistic
+hypothesis that the signed \(d_i,y_i\) variables supply square-root
+cancellation and that the unsigned \(e_i\) variables can be completed
+with their full square-root volume saving, the two contributions are
+
+\[
+ S_{\rm sign}
+   ={\pi_1+\beta_1+\pi_2+\beta_2\over2},
+ \qquad
+ S_{\rm unsign}
+   ={\varepsilon_1+\varepsilon_2\over2}.
+\tag{4.593}
+\]
+
+Therefore (4.591) gives the cutoff-independent identity
+
+\[
+ \boxed{S_{\rm sign}+S_{\rm unsign}=\alpha=1-\gamma.}
+\tag{4.594}
+\]
+
+The determinant-line estimate requires saving
+
+\[
+ S_{\rm req}=\kappa-\gamma,
+\tag{4.595}
+\]
+
+so the most optimistic power margin allowed by this separate-factor
+ledger is exactly
+
+\[
+ \boxed{S_{\rm sign}+S_{\rm unsign}-S_{\rm req}=1-\kappa.}
+\tag{4.596}
+\]
+
+On the unresolved top face \(\kappa=1\), the margin in (4.596) is zero
+for every admissible rational pair \((u,v)\) and for every dyadic
+factorization satisfying (4.591).  Thus changing \(U\) or \(V\) cannot
+create the fixed positive power saving needed to absorb dyadic,
+polylogarithmic, and \(q\)-summation losses.  This is not a lower bound
+for the original Möbius sum: it is an exact no-slack statement for all
+arguments whose savings are the separate square-root volumes in
+(4.593).  Any successful continuation must exploit joint cancellation
+before those variables are separated (or introduce a genuinely
+stronger input).
+
+For the deterministic witness used by the audit, take
+
+\[
+ (\kappa,\gamma,u,v)=\left(1,{1\over2},{2\over3},{1\over4}\right),
+\quad
+ (\pi_1,\beta_1)=\left({1\over3},{1\over7}\right),
+\quad
+ (\pi_2,\beta_2)=\left({1\over4},{1\over8}\right).
+\tag{4.597}
+\]
+
+Then
+
+\[
+ (\varepsilon_1,\varepsilon_2)=\left({1\over42},{1\over8}\right),
+ \quad S_{\rm sign}={143\over336},
+ \quad S_{\rm unsign}={25\over336},
+ \quad S_{\rm req}={1\over2},
+\tag{4.598}
+\]
+
+and the margin is exactly zero.  The adapter
+transition_general_cutoff_line_gate_audit checks (4.591)--(4.598) with
+`Fraction`, records `cutoff_choice_creates_positive_power_slack=False`,
+and keeps `cell_closed_by_registered_bounds=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

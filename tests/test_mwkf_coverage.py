@@ -2016,6 +2016,80 @@ def test_mobius_hecke_euler_factor_is_a_zeta_and_l_reciprocal() -> None:
     assert audit.balanced_factor_is_conditional_spectral_diagnostic
 
 
+def test_exact_entry_weight_forces_primorial_relative_trace_level() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_entry_weighted_relative_trace_audit",
+        None,
+    )
+    assert adapter is not None, "entry-weighted relative-trace audit is missing"
+    audit = adapter(prime_bound=7)
+    assert audit.required_nonspherical_primes == (2, 3, 5, 7)
+    assert audit.minimum_global_level == 210
+    assert audit.minimum_global_level_is_primorial
+    assert audit.local_spherical_vector_is_constant_on_primitive_columns
+    assert audit.primitive_entry_weight_is_not_k_invariant
+    assert audit.exact_squarefree_weight_needs_depth_two_for_small_primes
+    assert audit.hecke_index_is_shift_not_entry
+    assert audit.asymptotic_log_level_scale == F(1)
+    assert not audit.polynomial_conductor_preserved
+    assert not audit.published_entry_weighted_adapter
+    assert not audit.whole_line_family_covered
+
+
+def test_small_prime_spectral_hybrid_cannot_have_both_fixed_atoms_and_polynomial_level() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_small_prime_spectral_hybrid_audit",
+        None,
+    )
+    assert adapter is not None, "small-prime spectral hybrid audit is missing"
+    audit = adapter(fixed_rough_factor_cap=7, polynomial_level_exponent=F(2))
+    assert audit.fixed_rough_factor_cap == 7
+    assert audit.fixed_cap_cutoff_exponent == F(1, 8)
+    assert audit.polynomial_level_exponent == F(2)
+    assert audit.logarithmic_cutoff_keeps_polynomial_level
+    assert not audit.logarithmic_cutoff_forces_fixed_factor_count
+    assert audit.fixed_factor_cutoff_has_superpolynomial_level
+    assert audit.rough_density_power_saving_exponent == F(0)
+    assert audit.required_saving_exponent == F(1, 2)
+    assert audit.residual_power_deficit == F(1, 2)
+    assert not audit.published_rough_cofactor_half_power_bound
+    assert not audit.whole_line_family_covered
+
+
+def test_general_mobius_cutoff_only_redistributes_the_critical_half_volume() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_general_cutoff_line_gate_audit",
+        None,
+    )
+    assert adapter is not None, "general-cutoff line-gate audit is missing"
+    audit = adapter(
+        determinant_exponent=F(1),
+        denominator_gcd_exponent=F(1, 2),
+        cutoff_ratio=F(2, 3),
+        type_split_ratio=F(1, 4),
+        left_cutoff_divisor_exponent=F(1, 3),
+        left_short_mobius_exponent=F(1, 7),
+        right_cutoff_divisor_exponent=F(1, 4),
+        right_short_mobius_exponent=F(1, 8),
+    )
+    assert audit.cofactor_exponent == F(1, 2)
+    assert audit.cutoff_exponent == F(1, 3)
+    assert audit.type_split_exponent == F(1, 8)
+    assert audit.left_unsigned_exponent == F(1, 42)
+    assert audit.right_unsigned_exponent == F(1, 8)
+    assert audit.signed_square_root_saving == F(143, 336)
+    assert audit.unsigned_completion_saving == F(25, 336)
+    assert audit.required_saving == F(1, 2)
+    assert audit.total_hypothetical_saving == F(1, 2)
+    assert audit.top_face_power_margin == F(0)
+    assert audit.cutoff_independent_deficit_identity
+    assert not audit.cutoff_choice_creates_positive_power_slack
+    assert not audit.cell_closed_by_registered_bounds
+
+
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     helper = getattr(
         coverage_audit,
@@ -3838,6 +3912,27 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "mobius_entries_not_indices=True,conditional=True,"
         "kuznetsov=False,negative_moment=False,"
         "half_power=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: entry_weighted_relative_trace="
+        "prime_bound=7,primes=2,3,5,7,level=210,log_level_scale=1,"
+        "primorial=True,spherical_constant=True,entry_noninvariant=True,"
+        "depth2=True,hecke_index_shift=True,polynomial=False,"
+        "published=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: small_prime_spectral_hybrid="
+        "factor_cap=7,fixed_cutoff=1/8,level_exponent=2,required=1/2,"
+        "rough_power=0,deficit=1/2,log_cutoff_polynomial=True,"
+        "log_cutoff_fixed_count=False,fixed_count_superpoly=True,"
+        "published=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: general_cutoff_line_gate="
+        "kappa=1,gamma=1/2,alpha=1/2,u=2/3,v=1/4,U=1/3,V=1/8,"
+        "e_left=1/42,e_right=1/8,signed_sqrt=143/336,"
+        "unsigned_sqrt=25/336,required=1/2,total=1/2,margin=0,"
+        "identity=True,cutoff_slack=False,covered=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
