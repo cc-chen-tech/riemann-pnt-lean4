@@ -11843,7 +11843,7 @@ top of the natural outer volume \(Z^2=C\).  Choosing the \(B\) in
 
 \[
  \boxed{
- \mathfrak V_{C,G}ll_{B,K,W}TC(\log T)^{-B},
+ \mathfrak V_{C,G}\ll_{B,K,W}TC(\log T)^{-B},
  \qquad 1\leq C/G\leq(\log T)^K.}
 \tag{4.780}
 \]
@@ -11923,7 +11923,7 @@ the following single three-block sum:
  d_1a_0x-d_2b_0y=h}}
  &\lambda_{U,e}(d_1u_0)
  \overline{\lambda_{U,e'}(d_2v_0)}\\[-2mm]
- &\times\mu(x)\mu(y)\,Psi_\eta,
+ &\times\mu(x)\mu(y)\,\Psi_\eta,
  \end{aligned}}
 \tag{4.783}
 \]
@@ -11973,22 +11973,189 @@ proved polylog collar.  Formula (4.785) must save the complete reduced
 unsigned block by coupling it to both Möbius-bearing blocks; estimating
 that block by cardinality leaves exactly \(T^\delta\).
 
-BBLR Proposition 3.1 is not an adapter for (4.785).  If \(\mu(x),\mu(y)\)
-occupy its two arbitrary outer-coefficient slots, then the two
-\(\lambda(d_i u_i)\) sequences remain arithmetic weights in inner slots
-which the theorem requires to be smooth.  Assigning the \(\lambda\)
-sequences to the outer slots leaves the two long Möbius weights in the
-inner slots.  No role assignment retains both arithmetic sequences on
-each determinant side.  This is a hypothesis failure, in addition to
-the exponent comparisons recorded earlier.
+Neither direct role assignment in BBLR Proposition 3.1 is legal.  If
+\(\mu(x),\mu(y)\) occupy its two arbitrary outer-coefficient slots, then
+the two \(\lambda(d_i u_i)\) sequences remain arithmetic weights in inner
+slots; reversing the assignment leaves the two long Möbius weights there.
+There is, however, a legal *convolved* assignment, described in Section
+4.102 below.  Its hypotheses hold, but its two published error terms both
+miss the target by a positive power.  Thus the obstruction is an exponent
+failure after the necessary convolution, not an absolute absence of a
+BBLR adapter.
 
 The adapter `strict_power_gcd_core_audit` implements (4.781)--(4.784)
 with `Fraction` and records
 `unsigned_reduced_block_exponent=delta`,
-`bblr_arbitrary_outer_coefficient_adapter_applies=False`, and
+`bblr_arbitrary_outer_coefficient_adapter_applies=True`, and
 `centered_three_block_type_ii_proved=False`.  Hence (4.785), not the
 fixed-shift Chowla face, is now the unique strict-power local theorem
 left by the collapsed route.
+
+### 4.102 Convolution makes BBLR legal, but Cauchy recreates the raw-scale grouped diagonal
+
+Fix the variables \(u_0,v_0,q\), the finite coprimality allocations, and
+the ratio-Mellin parameters.  On the left define the exact dyadic
+coefficient
+
+\[
+ \alpha_{u_0}(r)
+ :=\sum_{d_1x=r}
+   \lambda_{U,e}(d_1u_0)\mu(x)\Phi_{u_0}(d_1,x),
+ \qquad
+ \beta_{v_0}(t)
+ :=\sum_{d_2y=t}
+   \overline{\lambda_{U,e'}(d_2v_0)}\mu(y)
+   \Phi'_{v_0}(d_2,y).
+\tag{4.786}
+\]
+
+The Mellin variables already retained in \(d\nu(\eta)\) separate every
+remaining product cutoff.  Hence (4.786) is an identity, not an arbitrary
+coefficient enlargement.  Divisor bounds give
+\(|\alpha_{u_0}(r)|+|\beta_{v_0}(t)|\ll\tau_K(rt)\) for a fixed \(K\).
+The determinant in (4.783) becomes
+
+\[
+ \boxed{ra_0-tb_0=h.}
+\tag{4.787}
+\]
+
+Put \(r_*=\max(r_1,r_2)\).  The complete exponent table for this
+assignment is
+
+\[
+ \boxed{
+ \begin{array}{c|ccccc}
+ \text{variable}&r&t&a_0&b_0&h\\ \hline
+ \log_T(\text{length})
+ &1+r_1&1+r_2&\delta-r_1&\delta-r_2&\delta.
+ \end{array}}
+\tag{4.788}
+\]
+
+Both products \(ra_0,tb_0\) have exponent \(1+\delta\).  The variables
+\((u_0,v_0,q)\) left outside (4.787) have total exponent
+
+\[
+ (s/2-r_1)+(s/2-r_2)+\theta=s-\delta=\gamma.
+\]
+
+Thus BBLR Proposition 3.1 now accepts (4.787): the two convolved sequences
+are its arbitrary outer coefficients, and \(a_0,b_0\) are its smooth inner
+variables (with a dummy factor of length one on each side).  Literal
+substitution gives the two inner error exponents
+
+\[
+ \boxed{
+ E_{\rm AB}=\frac52+2\delta+\theta,
+ \qquad
+ E_{\rm Watt}=\frac54+\frac32\delta+\frac12r_* .}
+\tag{4.789}
+\]
+
+The inner target is \(1+\delta\), so the respective deficits are
+
+\[
+ \boxed{
+ E_{\rm AB}-(1+\delta)=\frac32+\delta+\theta,
+ \qquad
+ E_{\rm Watt}-(1+\delta)=
+ \frac14+\frac12\delta+\frac12r_* .}
+\tag{4.790}
+\]
+
+In particular the legal BBLR convolution route covers no strict-power
+cell.
+
+One can instead Poisson-sum \(a_0\) modulo \(t\).  With
+\(M_0=T^{\delta-r_1}\), ordinary Poisson summation gives, for the exact
+smooth two-variable weight \(\mathcal W\),
+
+\[
+ \sum_{a_0\equiv h\bar r\ (\bmod t)}\mathcal W(a_0)
+ =\frac{M_0}{t}\sum_{k\in\mathbb Z}
+ e\!\left(\frac{kh\bar r}{t}\right)
+ \widehat{\mathcal W}_{r,t,h}\!\left(\frac{kM_0}{t}\right).
+\tag{4.791}
+\]
+
+The nonzero dual length is
+\(k=T^{1+\theta}\), the combined numerator \(c=kh\) has exponent
+\(1+\delta+\theta\), and the Poisson normalization is
+\(T^{-1-\theta}\).  Combining \((k,h)\) into one divisor-bounded
+coefficient makes Bettin--Chandee Theorem 1 applicable.  After also
+restoring the outside exponent \(\gamma\), its two total exponents are
+
+\[
+ \boxed{
+ \begin{aligned}
+ E_{\rm BC,1}
+ &=\frac95+s+\frac7{10}(\delta+\theta)+\frac14r_*,\\
+ E_{\rm BC,2}
+ &=\frac{15}{8}+s+\frac78(\delta+\theta)+\frac18r_*.
+ \end{aligned}}
+\tag{4.792}
+\]
+
+Relative to \(1+s\), their deficits are respectively
+
+\[
+ \boxed{
+ \frac45+\frac7{10}(\delta+\theta)+\frac14r_*,
+ \qquad
+ \frac78+\frac78(\delta+\theta)+\frac18r_* .}
+\tag{4.793}
+\]
+
+Thus the one-Poisson Bettin--Chandee route also covers no cell.
+
+Finally, (4.769) removes the *cross* frequency diagonal in the original
+bilinear form.  It does not remove the positive self-diagonal created
+after applying Cauchy to either factor.  Restoring the outside factor
+\(A=T^\delta\) from Fourier inversion, identical tuples in the two
+short-arc norms have exponent
+
+\[
+ \boxed{
+ E_{\rm tuple}=1+\frac{s+3\delta+\theta}{2}.}
+\tag{4.794}
+\]
+
+This is not the full Cauchy diagonal.  The variables \(u_0,v_0\) do not
+enter the additive frequencies \(d_1a_0x,d_2b_0y\).  They therefore
+square coherently inside the grouped Fourier coefficients.  Bounding
+those fibres by their complete lengths adds a total exponent
+\((\gamma-\theta)/2\) beyond (4.794) and gives
+
+\[
+ \boxed{
+ E_{\rm grouped}=1+s+\delta=E_{\rm raw},
+ \qquad E_{\rm grouped}-(1+s)=\delta.}
+\tag{4.794a}
+\]
+
+PNT cancellation in one invisible signed fibre can add logarithmic
+decay, but it cannot supply the missing positive power \(T^\delta\).
+Thus Cauchy returns the complete original deficit on every strict-power
+cell.  At the top vertex
+\((s,\delta,\theta,r_1,r_2)=(1,1,0,1/2,1/2)\), one has
+\(u_0=v_0=q=1\) and \(\lambda=-(\mu*\mu)\).  If the ratio weight is
+temporarily made product-compatible, the complete side convolution is
+
+\[
+ (\mu*\mu)*\mathbf1*\mu=\mu*\mu,
+\tag{4.795}
+\]
+
+because \(\mathbf1*\mu\) is the convolution identity.  Hence this
+vertex is exactly the inverse-zeta-square short-window variance at
+ambient scale \(X=T^2\) and window \(H=T\) from Section 4.87.  The actual
+ratio kernel deforms (4.795) and must remain jointly integrated; it does
+not remove the positive grouped Cauchy diagonal.  Therefore a valid
+continuation must estimate the centered cross spectral form before taking a positive
+square.  The adapter `strict_power_convolution_kloosterman_audit` records
+(4.786)--(4.795), with both published routes false and
+`near_frequency_type_ii_proved=False`.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

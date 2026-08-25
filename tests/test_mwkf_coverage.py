@@ -2517,6 +2517,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.781}",
         "\\tag{4.785}",
         "unsigned_reduced_block_exponent=delta",
+        "### 4.102 Convolution makes BBLR legal, but Cauchy recreates the raw-scale grouped diagonal",
+        "\\tag{4.786}",
+        "\\tag{4.795}",
+        "near_frequency_type_ii_proved=False",
     ):
         assert marker in note
 
@@ -2743,8 +2747,20 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "a0=3/20,b0=1/20,u0=1/4,v0=3/20,unsigned=2/5,"
         "signed=2/5,g=3/5,raw=12/5,target=2,saving=2/5,"
         "feasible=True,deficit_block=True,full_coupling=True,"
-        "two_arithmetic=True,bblr_adapter=False,required=True,"
+        "two_arithmetic=True,bblr_adapter=True,required=True,"
         "proved=False,whole_face=False"
+    ) in report
+    assert (
+        "large_q_transition: strict_power_convolution="
+        "r=5/4,t=27/20,a0=3/20,b0=1/20,side=7/5,outside=3/5,"
+        "bblr_hypotheses=True,bblr_ab=7/2,bblr_watt=81/40,"
+        "bblr_target=7/5,bblr_deficits=21/10/5/8,bblr_covered=False,"
+        "dual=6/5,numerator=8/5,normalization=-6/5,"
+        "bc_hypotheses=True,bc_totals=1323/400/551/160,"
+        "bc_deficits=523/400/231/160,bc_covered=False,"
+        "cross_centered=True,tuple_diagonal=11/5,grouped_diagonal=12/5,"
+        "diagonal_target=2,grouped_deficit=2/5,grouped_raw=True,"
+        "grouped_killed=False,near_type_ii=False"
     ) in report
 
 
@@ -4024,10 +4040,70 @@ def test_strict_power_gcd_core_has_one_exact_deficit_block() -> None:
     assert audit.unsigned_block_equals_full_deficit
     assert audit.all_allocations_and_ratio_integrals_retained
     assert audit.long_and_collapsed_arithmetic_weights_on_each_side
-    assert not audit.bblr_arbitrary_outer_coefficient_adapter_applies
+    assert audit.bblr_arbitrary_outer_coefficient_adapter_applies
     assert audit.centered_three_block_type_ii_required
     assert not audit.centered_three_block_type_ii_proved
     assert not audit.whole_signed_hard_face_covered
+
+
+def test_strict_power_convolution_poisson_and_cauchy_ledgers_are_exact() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "strict_power_convolution_kloosterman_audit",
+        None,
+    )
+    assert adapter is not None, "strict-power convolution audit is missing"
+    audit = adapter(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    assert audit.right_cross_gcd_exponent == F(7, 20)
+    assert audit.left_convolved_outer_exponent == F(5, 4)
+    assert audit.right_convolved_outer_exponent == F(27, 20)
+    assert audit.left_inner_slope_exponent == F(3, 20)
+    assert audit.right_inner_slope_exponent == F(1, 20)
+    assert audit.side_product_exponent == F(7, 5)
+    assert audit.remaining_outer_exponent == F(3, 5)
+    assert audit.bblr_convolution_hypotheses_verified
+    assert audit.bblr_ab_error_exponent == F(7, 2)
+    assert audit.bblr_watt_error_exponent == F(81, 40)
+    assert audit.bblr_inner_target_exponent == F(7, 5)
+    assert audit.bblr_ab_deficit == F(21, 10)
+    assert audit.bblr_watt_deficit == F(5, 8)
+    assert not audit.bblr_convolution_route_covered
+    assert audit.poisson_dual_exponent == F(6, 5)
+    assert audit.poisson_numerator_exponent == F(8, 5)
+    assert audit.poisson_normalization_exponent == F(-6, 5)
+    assert audit.bc_first_total_exponent == F(1323, 400)
+    assert audit.bc_second_total_exponent == F(551, 160)
+    assert audit.bc_first_deficit == F(523, 400)
+    assert audit.bc_second_deficit == F(231, 160)
+    assert not audit.bc_poisson_route_covered
+    assert audit.original_cross_diagonal_removed_by_centering
+    assert audit.cauchy_tuple_diagonal_exponent == F(11, 5)
+    assert audit.cauchy_grouped_diagonal_exponent == F(12, 5)
+    assert audit.cauchy_diagonal_target_exponent == F(2)
+    assert audit.cauchy_grouped_diagonal_deficit == F(2, 5)
+    assert audit.cauchy_grouped_diagonal_is_raw_scale
+    assert not audit.cauchy_grouped_diagonal_killed_by_centering
+    assert not audit.near_frequency_type_ii_proved
+
+    boundary = adapter(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(1),
+        quotient_exponent=F(0),
+        left_cross_gcd_exponent=F(1, 2),
+    )
+    assert boundary.gcd_exponent == 0
+    assert boundary.cauchy_tuple_diagonal_exponent == F(3)
+    assert boundary.cauchy_grouped_diagonal_exponent == F(3)
+    assert boundary.cauchy_diagonal_target_exponent == F(2)
+    assert boundary.cauchy_grouped_diagonal_deficit == F(1)
+    assert boundary.cauchy_grouped_diagonal_is_raw_scale
+    assert not boundary.cauchy_grouped_diagonal_killed_by_centering
+    assert boundary.hard_vertex_inverse_zeta_square_variance
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

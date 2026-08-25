@@ -1710,6 +1710,47 @@ class StrictPowerGcdCoreAudit:
 
 
 @dataclass(frozen=True)
+class StrictPowerConvolutionKloostermanAudit:
+    collapsed_exponent: Fraction
+    cofactor_exponent: Fraction
+    gcd_exponent: Fraction
+    quotient_exponent: Fraction
+    left_cross_gcd_exponent: Fraction
+    right_cross_gcd_exponent: Fraction
+    left_convolved_outer_exponent: Fraction
+    right_convolved_outer_exponent: Fraction
+    left_inner_slope_exponent: Fraction
+    right_inner_slope_exponent: Fraction
+    side_product_exponent: Fraction
+    remaining_outer_exponent: Fraction
+    bblr_convolution_hypotheses_verified: bool
+    bblr_ab_error_exponent: Fraction
+    bblr_watt_error_exponent: Fraction
+    bblr_inner_target_exponent: Fraction
+    bblr_ab_deficit: Fraction
+    bblr_watt_deficit: Fraction
+    bblr_convolution_route_covered: bool
+    poisson_dual_exponent: Fraction
+    poisson_numerator_exponent: Fraction
+    poisson_normalization_exponent: Fraction
+    bc_poisson_hypotheses_verified: bool
+    bc_first_total_exponent: Fraction
+    bc_second_total_exponent: Fraction
+    bc_first_deficit: Fraction
+    bc_second_deficit: Fraction
+    bc_poisson_route_covered: bool
+    original_cross_diagonal_removed_by_centering: bool
+    cauchy_tuple_diagonal_exponent: Fraction
+    cauchy_grouped_diagonal_exponent: Fraction
+    cauchy_diagonal_target_exponent: Fraction
+    cauchy_grouped_diagonal_deficit: Fraction
+    cauchy_grouped_diagonal_is_raw_scale: bool
+    cauchy_grouped_diagonal_killed_by_centering: bool
+    hard_vertex_inverse_zeta_square_variance: bool
+    near_frequency_type_ii_proved: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -8570,10 +8611,169 @@ def strict_power_gcd_core_audit(
         unsigned_block_equals_full_deficit=unsigned == required,
         all_allocations_and_ratio_integrals_retained=True,
         long_and_collapsed_arithmetic_weights_on_each_side=True,
-        bblr_arbitrary_outer_coefficient_adapter_applies=False,
+        bblr_arbitrary_outer_coefficient_adapter_applies=True,
         centered_three_block_type_ii_required=True,
         centered_three_block_type_ii_proved=False,
         whole_signed_hard_face_covered=False,
+    )
+
+
+def strict_power_convolution_kloosterman_audit(
+    *,
+    collapsed_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    quotient_exponent: Fraction,
+    left_cross_gcd_exponent: Fraction,
+) -> StrictPowerConvolutionKloostermanAudit:
+    """Audit the first legal convolution of both arithmetic weights.
+
+    For fixed ``u_0`` put
+
+    ``alpha_r = sum_{d_1*x=r} lambda(d_1*u_0) * mu(x)``
+
+    and define ``beta_s`` symmetrically.  These are divisor bounded, so
+    they are legal arbitrary outer coefficients in BBLR after the exact
+    ratio Mellin separations.  The determinant becomes
+
+    ``r*a_0 - s*b_0 = h``.
+
+    This adapter records the literal BBLR exponents, and then the
+    Bettin--Chandee exponents after Poisson summation in ``a_0``.  It
+    also distinguishes the original cross diagonal, which centering
+    removes, from the positive self diagonal created by Cauchy.
+    """
+    core = strict_power_gcd_core_audit(
+        collapsed_exponent=collapsed_exponent,
+        cofactor_exponent=cofactor_exponent,
+        quotient_exponent=quotient_exponent,
+        left_cross_gcd_exponent=left_cross_gcd_exponent,
+    )
+    s = core.collapsed_exponent
+    delta = core.cofactor_exponent
+    gamma = core.gcd_exponent
+    theta = core.quotient_exponent
+    r1 = core.left_cross_gcd_exponent
+    r2 = core.right_cross_gcd_exponent
+    r_max = max(r1, r2)
+
+    left_outer = 1 + r1
+    right_outer = 1 + r2
+    left_slope = delta - r1
+    right_slope = delta - r2
+    side_product = 1 + delta
+    remaining_outer = gamma
+
+    # BBLR Proposition 3.1.  Here ABMN has exponent 2+2*delta,
+    # H has exponent delta, and AB has exponent 2+delta+theta.
+    bblr_prefactor = F(1, 2) + delta
+    bblr_ab = bblr_prefactor + 2 + delta + theta
+    bblr_watt = (
+        bblr_prefactor
+        + delta / 4
+        + (1 + r_max) / 2
+        + (2 + 2 * delta) / 8
+    )
+    bblr_target = side_product
+    bblr_ab_deficit = bblr_ab - bblr_target
+    bblr_watt_deficit = bblr_watt - bblr_target
+
+    # Poisson in a_0 modulo s.  The dual k has length s/a_0,
+    # hence exponent 1+theta.  Combining k*h gives the BC numerator.
+    poisson_dual = 1 + theta
+    poisson_numerator = 1 + delta + theta
+    poisson_normalization = -1 - theta
+
+    norm_exponent = (
+        left_outer + right_outer + poisson_numerator
+    ) / 2
+    bc_total_product = (
+        left_outer + right_outer + poisson_numerator
+    )
+    bc_first_before_normalization = (
+        norm_exponent
+        + F(7, 20) * bc_total_product
+        + F(1, 4) * (1 + r_max)
+    )
+    bc_second_before_normalization = (
+        norm_exponent
+        + F(3, 8) * bc_total_product
+        + F(1, 8) * (poisson_numerator + 1 + r_max)
+    )
+    bc_first_total = (
+        bc_first_before_normalization
+        + poisson_normalization
+        + remaining_outer
+    )
+    bc_second_total = (
+        bc_second_before_normalization
+        + poisson_normalization
+        + remaining_outer
+    )
+    global_target = 1 + s
+    bc_first_deficit = bc_first_total - global_target
+    bc_second_deficit = bc_second_total - global_target
+
+    # Restoring the outside A from Fourier inversion, identical tuples
+    # alone have the first exponent below.  The u_0 and v_0 variables do
+    # not enter the additive frequency.  They therefore square coherently
+    # inside each grouped Fourier coefficient, taking the full Cauchy
+    # diagonal back to the raw exponent 1+s+delta.
+    cauchy_tuple_diagonal = 1 + (s + 3 * delta + theta) / 2
+    cauchy_grouped_diagonal = core.raw_core_exponent
+    cauchy_target = global_target
+    cauchy_grouped_deficit = cauchy_grouped_diagonal - cauchy_target
+    hard_vertex = (
+        s == 1
+        and delta == 1
+        and theta == 0
+        and r1 == F(1, 2)
+        and r2 == F(1, 2)
+    )
+
+    return StrictPowerConvolutionKloostermanAudit(
+        collapsed_exponent=s,
+        cofactor_exponent=delta,
+        gcd_exponent=gamma,
+        quotient_exponent=theta,
+        left_cross_gcd_exponent=r1,
+        right_cross_gcd_exponent=r2,
+        left_convolved_outer_exponent=left_outer,
+        right_convolved_outer_exponent=right_outer,
+        left_inner_slope_exponent=left_slope,
+        right_inner_slope_exponent=right_slope,
+        side_product_exponent=side_product,
+        remaining_outer_exponent=remaining_outer,
+        bblr_convolution_hypotheses_verified=True,
+        bblr_ab_error_exponent=bblr_ab,
+        bblr_watt_error_exponent=bblr_watt,
+        bblr_inner_target_exponent=bblr_target,
+        bblr_ab_deficit=bblr_ab_deficit,
+        bblr_watt_deficit=bblr_watt_deficit,
+        bblr_convolution_route_covered=(
+            bblr_ab_deficit < 0 and bblr_watt_deficit < 0
+        ),
+        poisson_dual_exponent=poisson_dual,
+        poisson_numerator_exponent=poisson_numerator,
+        poisson_normalization_exponent=poisson_normalization,
+        bc_poisson_hypotheses_verified=True,
+        bc_first_total_exponent=bc_first_total,
+        bc_second_total_exponent=bc_second_total,
+        bc_first_deficit=bc_first_deficit,
+        bc_second_deficit=bc_second_deficit,
+        bc_poisson_route_covered=(
+            bc_first_deficit < 0 and bc_second_deficit < 0
+        ),
+        original_cross_diagonal_removed_by_centering=True,
+        cauchy_tuple_diagonal_exponent=cauchy_tuple_diagonal,
+        cauchy_grouped_diagonal_exponent=cauchy_grouped_diagonal,
+        cauchy_diagonal_target_exponent=cauchy_target,
+        cauchy_grouped_diagonal_deficit=cauchy_grouped_deficit,
+        cauchy_grouped_diagonal_is_raw_scale=(
+            cauchy_grouped_diagonal == core.raw_core_exponent
+        ),
+        cauchy_grouped_diagonal_killed_by_centering=False,
+        hard_vertex_inverse_zeta_square_variance=hard_vertex,
+        near_frequency_type_ii_proved=False,
     )
 
 
@@ -13461,6 +13661,54 @@ def main() -> None:
         f"required={strict_core.centered_three_block_type_ii_required},"
         f"proved={strict_core.centered_three_block_type_ii_proved},"
         f"whole_face={strict_core.whole_signed_hard_face_covered}"
+    )
+    strict_convolution = strict_power_convolution_kloosterman_audit(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: strict_power_convolution="
+        f"r={_fmt(strict_convolution.left_convolved_outer_exponent)},"
+        f"t={_fmt(strict_convolution.right_convolved_outer_exponent)},"
+        f"a0={_fmt(strict_convolution.left_inner_slope_exponent)},"
+        f"b0={_fmt(strict_convolution.right_inner_slope_exponent)},"
+        f"side={_fmt(strict_convolution.side_product_exponent)},"
+        f"outside={_fmt(strict_convolution.remaining_outer_exponent)},"
+        "bblr_hypotheses="
+        f"{strict_convolution.bblr_convolution_hypotheses_verified},"
+        f"bblr_ab={_fmt(strict_convolution.bblr_ab_error_exponent)},"
+        f"bblr_watt={_fmt(strict_convolution.bblr_watt_error_exponent)},"
+        f"bblr_target={_fmt(strict_convolution.bblr_inner_target_exponent)},"
+        f"bblr_deficits={_fmt(strict_convolution.bblr_ab_deficit)}/"
+        f"{_fmt(strict_convolution.bblr_watt_deficit)},"
+        f"bblr_covered={strict_convolution.bblr_convolution_route_covered},"
+        f"dual={_fmt(strict_convolution.poisson_dual_exponent)},"
+        f"numerator={_fmt(strict_convolution.poisson_numerator_exponent)},"
+        f"normalization={_fmt(strict_convolution.poisson_normalization_exponent)},"
+        "bc_hypotheses="
+        f"{strict_convolution.bc_poisson_hypotheses_verified},"
+        f"bc_totals={_fmt(strict_convolution.bc_first_total_exponent)}/"
+        f"{_fmt(strict_convolution.bc_second_total_exponent)},"
+        f"bc_deficits={_fmt(strict_convolution.bc_first_deficit)}/"
+        f"{_fmt(strict_convolution.bc_second_deficit)},"
+        f"bc_covered={strict_convolution.bc_poisson_route_covered},"
+        "cross_centered="
+        f"{strict_convolution.original_cross_diagonal_removed_by_centering},"
+        "tuple_diagonal="
+        f"{_fmt(strict_convolution.cauchy_tuple_diagonal_exponent)},"
+        "grouped_diagonal="
+        f"{_fmt(strict_convolution.cauchy_grouped_diagonal_exponent)},"
+        "diagonal_target="
+        f"{_fmt(strict_convolution.cauchy_diagonal_target_exponent)},"
+        "grouped_deficit="
+        f"{_fmt(strict_convolution.cauchy_grouped_diagonal_deficit)},"
+        "grouped_raw="
+        f"{strict_convolution.cauchy_grouped_diagonal_is_raw_scale},"
+        "grouped_killed="
+        f"{strict_convolution.cauchy_grouped_diagonal_killed_by_centering},"
+        f"near_type_ii={strict_convolution.near_frequency_type_ii_proved}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
