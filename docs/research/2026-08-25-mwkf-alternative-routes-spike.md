@@ -1703,6 +1703,92 @@ The exact-rational function coprimality_restricted_menon_audit records the
 \(\gamma+A_0\), and the strict all-sector margin
 \(3/2-\beta-\gamma\).
 
+### 4.13 Prime-factor trace twists do not pay the far-shell deficit
+
+There is a second way to exploit the Möbius weight before a spectral
+Cauchy inequality, but its published exponent is too small.  Suppose a
+prime \(p\) divides the squarefree modulus \(s\), write \(s=pt\), and fix
+one resonance slope \(r=ks+w\).  The exact CRT identity is
+
+\[
+ \frac{n\bar r}{pt}
+ \equiv
+ \frac{n\overline{rt}}p+
+ \frac{n\overline{rp}}t
+ \pmod1.
+\tag{4.109}
+\]
+
+For \(p\nmid n\), the first factor in the exponential of (4.109), as a
+function of \(r\), is the bounded-conductor nonexceptional rational
+inverse trace weight
+
+\[
+ r\longmapsto e\!\left(-\frac{n\overline{rt}}p\right).
+\tag{4.110}
+\]
+
+On a shell \(|w|\asymp D\), the variable \(r\) lies in an interval of
+length \(D\).  The smoothed Möbius estimate of
+Fouvry--Kowalski--Michel, arXiv:1211.6043v3, Theorem 1.7, states, for
+every \(\eta<1/24\),
+
+\[
+ \sum_r\mu(r)K(r)V(r/D)
+ \ll Q_VD(1+p/D)^{1/6}p^{-\eta}.
+\tag{4.111}
+\]
+
+Write \(D=T^\delta\) and \(p=T^\pi\).  Ignoring the Sobolev factor
+\(Q_V=T^{o(1)}\), the exact one-sided power saving in (4.111) is
+
+\[
+ \boxed{
+ s_{\rm FKM}(\delta,\pi;\eta)
+ =\left(\eta\pi-\frac{(\pi-\delta)_+}{6}\right)_+.}
+\tag{4.112}
+\]
+
+Because \(\eta<1/6\), (4.112) increases up to \(\pi=\delta\) and
+decreases afterwards.  Even granting a prime factor of exactly that
+size and granting an independent application to each Möbius weight, the
+total saving is strictly less than
+
+\[
+ 2\eta\delta<\frac\delta{12}.
+\tag{4.113}
+\]
+
+Subtracting the optimistic supremum (4.113) from the current residual
+function (4.65) leaves
+
+\[
+ \begin{cases}
+  23\delta/12-2,&1<\delta\le2,\\
+  2-\delta/12,&2\le\delta\le5/2,\\
+  11\delta/12-1/2,&5/2\le\delta\le3.
+ \end{cases}
+\tag{4.114}
+\]
+
+In particular the maximal shell still lacks \(T^{9/4+o(1)}\).  With
+the admissible rational choice \(\eta=1/25\), two completely optimistic
+applications save only \(T^{6/25}\), leaving the exact deficit
+
+\[
+ \frac52-\frac6{25}=\frac{113}{50}.
+\tag{4.115}
+\]
+
+This is already a rejection under stronger hypotheses than the actual
+sum satisfies.  A general squarefree \(s\) need not have a prime factor
+in the selected dyadic band; the second factor in (4.109) remains a
+joint cofactor-dependent weight; and frequencies \(p\mid n\) make the
+\(p\)-trace constant.  Thus (4.111) is not itself an adapter for the
+MWKF coefficient.  The exact-rational function
+prime_factor_trace_twist_audit records all three failures as well as
+(4.112)--(4.115).
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

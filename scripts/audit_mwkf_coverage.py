@@ -339,6 +339,28 @@ class ReciprocalClusterLargeSieveScales:
     improves_primitive_bound: bool
 
 
+@dataclass(frozen=True)
+class PrimeFactorTraceTwistAudit:
+    distance: Fraction
+    prime_factor_exponent: Fraction
+    applications: int
+    eta: Fraction
+    fkm_eta_ceiling: Fraction
+    interval_over_modulus_penalty: Fraction
+    one_sided_power_saving: Fraction
+    optimistic_total_power_saving: Fraction
+    current_far_shell_deficit: Fraction
+    optimistic_residual_deficit: Fraction
+    trace_is_nonexceptional: bool
+    prime_modulus_hypothesis: bool
+    nonzero_prime_frequency_uniform: bool
+    uniform_prime_factor_available: bool
+    joint_cofactor_accepted: bool
+    optimistic_gate_covered: bool
+    published_coverage: bool
+    source: str
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -1457,6 +1479,104 @@ def reciprocal_cluster_large_sieve_scales(
     )
 
 
+def prime_factor_trace_twist_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    prime_factor_exponent: Fraction,
+    applications: int,
+    eta: Fraction,
+) -> PrimeFactorTraceTwistAudit:
+    """Optimistic FKM power ledger after extracting a prime modulus factor.
+
+    On a centered shell, ``r = k*s+w`` ranges through an interval of
+    length ``X=T^distance``.  If a prime ``p=T^pi`` divides ``s``, the
+    ``p``-part of ``e(-n*bar(r)/s)`` is a bounded-conductor rational
+    inverse trace weight in ``r`` whenever ``n`` is nonzero modulo ``p``.
+    The smoothed estimate in Fouvry--Kowalski--Michel, Theorem 1.7, is
+
+    ``X * (1+p/X)^(1/6) * p^(-eta)``,  for every ``eta < 1/24``.
+
+    Hence its exact power saving is
+    ``eta*pi - max(0,pi-distance)/6`` when positive.  This adapter grants
+    that saving once or twice optimistically.  It does *not* assert that
+    every squarefree modulus has a prime factor of the requested size,
+    separate the complementary-modulus coefficient, or dispose of the
+    frequencies divisible by ``p``.
+    """
+    if distance < 0 or distance > max(box.rho, box.sigma):
+        raise ValueError("distance exceeds the shifted-variable range")
+    if prime_factor_exponent <= 0 or prime_factor_exponent > box.sigma:
+        raise ValueError("prime factor exponent must lie in (0,sigma]")
+    if applications not in (1, 2):
+        raise ValueError("applications must be one or two")
+    fkm_eta_ceiling = F(1, 24)
+    if eta <= 0 or eta >= fkm_eta_ceiling:
+        raise ValueError("eta must be strictly below 1/24")
+
+    interval_over_modulus_penalty = _positive_part(
+        prime_factor_exponent - distance
+    ) / 6
+    one_sided_power_saving = _positive_part(
+        eta * prime_factor_exponent
+        - interval_over_modulus_penalty
+    )
+    optimistic_total_power_saving = (
+        applications * one_sided_power_saving
+    )
+
+    primitive = primitive_fraction_large_sieve_scales(
+        box,
+        distance=distance,
+    )
+    current_far_shell_deficit = primitive.remaining_power_saving
+    numerator_product_length = box.ell + box.h
+    if (
+        distance <= box.sigma
+        and box.sigma + distance >= numerator_product_length
+    ):
+        reciprocal = reciprocal_cluster_large_sieve_scales(
+            box,
+            distance=distance,
+        )
+        current_far_shell_deficit = min(
+            current_far_shell_deficit,
+            reciprocal.remaining_power_saving,
+        )
+    optimistic_residual_deficit = _positive_part(
+        current_far_shell_deficit - optimistic_total_power_saving
+    )
+    optimistic_gate_covered = optimistic_residual_deficit == 0
+
+    return PrimeFactorTraceTwistAudit(
+        distance=distance,
+        prime_factor_exponent=prime_factor_exponent,
+        applications=applications,
+        eta=eta,
+        fkm_eta_ceiling=fkm_eta_ceiling,
+        interval_over_modulus_penalty=(
+            interval_over_modulus_penalty
+        ),
+        one_sided_power_saving=one_sided_power_saving,
+        optimistic_total_power_saving=(
+            optimistic_total_power_saving
+        ),
+        current_far_shell_deficit=current_far_shell_deficit,
+        optimistic_residual_deficit=optimistic_residual_deficit,
+        trace_is_nonexceptional=True,
+        prime_modulus_hypothesis=True,
+        nonzero_prime_frequency_uniform=False,
+        uniform_prime_factor_available=False,
+        joint_cofactor_accepted=False,
+        optimistic_gate_covered=optimistic_gate_covered,
+        published_coverage=False,
+        source=(
+            "Fouvry--Kowalski--Michel, arXiv:1211.6043v3, "
+            "Theorem 1.7 (Trace weights vs. Mobius)"
+        ),
+    )
+
+
 def bcr_adapter(box: ExponentBox) -> RouteResult:
     """Apply Bettin--Chandee Theorem 1 to separated coefficients.
 
@@ -1920,6 +2040,26 @@ def main() -> None:
     print(
         "balanced_max_a: "
         f"reciprocal_cluster_best_remaining={reciprocal_savings}"
+    )
+    trace_twist_distances = (F(2), F(3))
+    trace_twist_parts: list[str] = []
+    for distance in trace_twist_distances:
+        trace_audit = prime_factor_trace_twist_audit(
+            hard,
+            distance=distance,
+            prime_factor_exponent=distance,
+            applications=2,
+            eta=F(1, 25),
+        )
+        trace_twist_parts.append(
+            f"{_fmt(distance)}:save="
+            f"{_fmt(trace_audit.optimistic_total_power_saving)},"
+            f"remain={_fmt(trace_audit.optimistic_residual_deficit)}"
+        )
+    print(
+        "balanced_max_a: optimistic_prime_trace_twists="
+        + ";".join(trace_twist_parts)
+        + " covered=False"
     )
 
 

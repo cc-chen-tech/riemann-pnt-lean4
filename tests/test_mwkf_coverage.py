@@ -2,6 +2,8 @@ from fractions import Fraction as F
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts import audit_mwkf_coverage as coverage_audit
@@ -657,6 +659,59 @@ def test_reciprocal_clustering_flattens_the_middle_large_shell_deficit() -> None
         assert audit.farey_center_spacing == -2 * distance
 
 
+def test_prime_factor_trace_twists_cannot_pay_the_far_shell_power_deficit() -> None:
+    """Catch extrapolating FKM's small trace saving to the full shell gate."""
+    adapter = getattr(
+        coverage_audit,
+        "prime_factor_trace_twist_audit",
+        None,
+    )
+    assert adapter is not None, "prime-factor trace-twist adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    maximal = adapter(
+        box,
+        distance=F(3),
+        prime_factor_exponent=F(3),
+        applications=2,
+        eta=F(1, 25),
+    )
+    assert maximal.fkm_eta_ceiling == F(1, 24)
+    assert maximal.interval_over_modulus_penalty == F(0)
+    assert maximal.one_sided_power_saving == F(3, 25)
+    assert maximal.optimistic_total_power_saving == F(6, 25)
+    assert maximal.current_far_shell_deficit == F(5, 2)
+    assert maximal.optimistic_residual_deficit == F(113, 50)
+    assert maximal.trace_is_nonexceptional
+    assert maximal.prime_modulus_hypothesis
+    assert not maximal.nonzero_prime_frequency_uniform
+    assert not maximal.uniform_prime_factor_available
+    assert not maximal.joint_cofactor_accepted
+    assert not maximal.optimistic_gate_covered
+    assert not maximal.published_coverage
+
+    middle = adapter(
+        box,
+        distance=F(2),
+        prime_factor_exponent=F(2),
+        applications=2,
+        eta=F(1, 25),
+    )
+    assert middle.one_sided_power_saving == F(2, 25)
+    assert middle.optimistic_total_power_saving == F(4, 25)
+    assert middle.current_far_shell_deficit == F(2)
+    assert middle.optimistic_residual_deficit == F(46, 25)
+
+    with pytest.raises(ValueError, match="eta must be strictly below 1/24"):
+        adapter(
+            box,
+            distance=F(3),
+            prime_factor_exponent=F(3),
+            applications=2,
+            eta=F(1, 24),
+        )
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
@@ -733,6 +788,11 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "balanced_max_a: reciprocal_cluster_best_remaining="
         "2:2,5/2:2,3:5/2"
     ) in output
+    assert (
+        "balanced_max_a: optimistic_prime_trace_twists="
+        "2:save=4/25,remain=46/25;"
+        "3:save=6/25,remain=113/50 covered=False"
+    ) in output
 
 
 def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
@@ -784,6 +844,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"0\le\beta+\gamma<2",
         "fixed-slope square-root transfer",
         "proved from the exponential-sum theorem",
+        "### 4.13 Prime-factor trace twists",
+        "arXiv:1211.6043v3, Theorem 1.7",
+        r"\frac{113}{50}",
         "published coverage remains false",
     ):
         assert marker in text
