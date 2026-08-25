@@ -1813,6 +1813,31 @@ class TypeIAtkinLehnerCuspAudit:
 
 
 @dataclass(frozen=True)
+class EisensteinSecondMomentReciprocityAudit:
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    required_half_level_saving_exponent: Fraction
+    required_endpoint_log_decay: bool
+    inverse_zeta_central_zero_order: int
+    eisenstein_transverse_pole_order: int
+    local_crossing_model: str
+    target_total_degree: int
+    blomer_khan_total_degree: int
+    khan_zeta_dual_family: str
+    hecke_double_dirichlet_identity_exact: bool
+    inverse_zeta_zero_cancels_residues_jointly: bool
+    blomer_khan_is_literal_adapter: bool
+    andersen_kiral_is_literal_adapter: bool
+    khan_prime_gaussian_formula_is_composite_smooth_adapter: bool
+    completed_eisenstein_residue_pairing_required: bool
+    composite_level_local_corrections_required: bool
+    signed_level_family_aggregation_proved: bool
+    type_ii_sectors_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -9338,6 +9363,106 @@ def type_i_atkin_lehner_cusp_audit(
     )
 
 
+def hecke_double_dirichlet_local_identity(
+    *,
+    hecke_prime: Fraction,
+    max_exponent: int,
+) -> dict[str, object]:
+    """Check the unramified local identity coefficient by coefficient.
+
+    If ``lambda[0]=1``, ``lambda[1]=hecke_prime`` and
+    ``lambda[j+1]=lambda[1]*lambda[j]-lambda[j-1]``, then
+
+    ``lambda[a+b] = lambda[a]*lambda[b]-lambda[a-1]*lambda[b-1]``.
+
+    This is precisely the coefficient identity behind
+
+    ``sum lambda(h*d) h^-u d^-v = L(u,f)L(v,f)/zeta(u+v)``.
+
+    The returned finite check is a regression witness; the analytic
+    identity follows from the displayed Hecke recurrence, not from the
+    finite computation.
+    """
+    lam1 = F(hecke_prime)
+    if max_exponent < 0:
+        raise ValueError("max_exponent must be nonnegative")
+    values = [F(1), lam1]
+    for _ in range(2 * max_exponent - 1):
+        values.append(lam1 * values[-1] - values[-2])
+
+    mismatches: list[tuple[int, int, Fraction, Fraction]] = []
+    for a in range(max_exponent + 1):
+        for b in range(max_exponent + 1):
+            correction = F(0) if min(a, b) == 0 else values[a - 1] * values[b - 1]
+            rhs = values[a] * values[b] - correction
+            if values[a + b] != rhs:
+                mismatches.append((a, b, values[a + b], rhs))
+    return {
+        "checked_pairs": (max_exponent + 1) ** 2,
+        "all_coefficients_match": not mismatches,
+        "mismatches": tuple(mismatches),
+    }
+
+
+def eisenstein_second_moment_reciprocity_audit(
+    *,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+) -> EisensteinSecondMomentReciprocityAudit:
+    """Audit published reciprocity formulae against the remaining SLF gate.
+
+    The two ``h,delta`` sums do have the exact primitive-newform Dirichlet
+    series ``L(u,f)L(v,f)/zeta^(Q_f)(u+v)``.  At the central plane the
+    reciprocal zeta factor has a simple zero.  This does *not* eliminate
+    the Eisenstein continuation term coefficientwise: with
+    ``u=1/2+a`` and ``v=1/2+b``, a residue contains the local quotient
+    ``zeta(1+b-a)/zeta(1+a+b)``, whose normal-crossing model is
+    ``(a+b)/(b-a)=x/y``.  It has no path-independent value at the origin.
+
+    Blomer--Khan treats a degree-eight GL(2)x(GL(3)+GL(1)) moment;
+    Andersen--Kiral treats a degree-eight Rankin--Selberg moment with a
+    fixed cuspidal GL(2) form; Khan's zeta formula sends prime Gaussian
+    twists to Dirichlet-character moments.  None is a literal theorem
+    adapter for the composite, smoothly weighted Atkin--Lehner level
+    family here.  A completed residue calculation and ramified composite
+    local corrections are therefore still required.
+    """
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    if min(alpha, beta) < 0:
+        raise ValueError("divisor exponents must be nonnegative")
+    level = alpha + beta
+    identity = hecke_double_dirichlet_local_identity(
+        hecke_prime=F(3, 2),
+        max_exponent=8,
+    )
+    return EisensteinSecondMomentReciprocityAudit(
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        ambient_level_exponent=level,
+        required_half_level_saving_exponent=level / 2,
+        required_endpoint_log_decay=True,
+        inverse_zeta_central_zero_order=1,
+        eisenstein_transverse_pole_order=1,
+        local_crossing_model="x/y",
+        target_total_degree=4,
+        blomer_khan_total_degree=8,
+        khan_zeta_dual_family="Dirichlet characters",
+        hecke_double_dirichlet_identity_exact=bool(
+            identity["all_coefficients_match"]
+        ),
+        inverse_zeta_zero_cancels_residues_jointly=False,
+        blomer_khan_is_literal_adapter=False,
+        andersen_kiral_is_literal_adapter=False,
+        khan_prime_gaussian_formula_is_composite_smooth_adapter=False,
+        completed_eisenstein_residue_pairing_required=True,
+        composite_level_local_corrections_required=True,
+        signed_level_family_aggregation_proved=False,
+        type_ii_sectors_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -16057,6 +16182,49 @@ def main() -> None:
         "finite_gate="
         f"{cusp_adapter.finite_prime_hecke_gate_covered},"
         f"covered={cusp_adapter.whole_mobius_gate_covered}"
+    )
+    second_moment_reciprocity = eisenstein_second_moment_reciprocity_audit(
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: eisenstein_second_moment_reciprocity="
+        "entry_divisor="
+        f"{_fmt(second_moment_reciprocity.entry_divisor_exponent)},"
+        "modulus_divisor="
+        f"{_fmt(second_moment_reciprocity.modulus_divisor_exponent)},"
+        f"level={_fmt(second_moment_reciprocity.ambient_level_exponent)},"
+        "required_half_level="
+        f"{_fmt(second_moment_reciprocity.required_half_level_saving_exponent)},"
+        "endpoint_log="
+        f"{second_moment_reciprocity.required_endpoint_log_decay},"
+        "inverse_zeta_zero="
+        f"{second_moment_reciprocity.inverse_zeta_central_zero_order},"
+        "eisenstein_pole="
+        f"{second_moment_reciprocity.eisenstein_transverse_pole_order},"
+        f"crossing={second_moment_reciprocity.local_crossing_model},"
+        f"target_degree={second_moment_reciprocity.target_total_degree},"
+        "blomer_khan_degree="
+        f"{second_moment_reciprocity.blomer_khan_total_degree},"
+        f"khan_dual={second_moment_reciprocity.khan_zeta_dual_family},"
+        "hecke_identity="
+        f"{second_moment_reciprocity.hecke_double_dirichlet_identity_exact},"
+        "zero_cancels_jointly="
+        f"{second_moment_reciprocity.inverse_zeta_zero_cancels_residues_jointly},"
+        "bk_adapter="
+        f"{second_moment_reciprocity.blomer_khan_is_literal_adapter},"
+        "ak_adapter="
+        f"{second_moment_reciprocity.andersen_kiral_is_literal_adapter},"
+        "khan_adapter="
+        f"{second_moment_reciprocity.khan_prime_gaussian_formula_is_composite_smooth_adapter},"
+        "residue_pairing="
+        f"{second_moment_reciprocity.completed_eisenstein_residue_pairing_required},"
+        "composite_local="
+        f"{second_moment_reciprocity.composite_level_local_corrections_required},"
+        "level_family="
+        f"{second_moment_reciprocity.signed_level_family_aggregation_proved},"
+        f"type_ii={second_moment_reciprocity.type_ii_sectors_restored},"
+        f"covered={second_moment_reciprocity.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

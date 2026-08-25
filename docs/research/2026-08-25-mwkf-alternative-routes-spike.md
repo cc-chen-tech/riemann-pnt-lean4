@@ -13974,7 +13974,8 @@ retained in the smooth endpoint weights.  The determinant condition
 
 The additional \(q\)-coprimality is a finite one-variable divisor layer
 and does not alter the identity below; on the balanced critical face
-\(q=1\).
+\(q=T^{o(1)}\) (indeed, only bounded \(q\) occur in each fixed endpoint
+box).
 
 Put \(n=h\delta\), let \(E\) be the \(e\)-length, and use
 \(\widehat U(\xi)=\int U(x)e(-x\xi)\,dx\).  Poisson summation in the
@@ -14112,6 +14113,117 @@ and normalized zero-power \(m\)-average.  It marks the
 Type-I/Type-I QCT-to-cusp-Kuznetsov identity proved.  It keeps
 SLF\(_{\alpha,\beta}\), every Type-II sector, the finite-prime gate, and
 the whole Möbius gate false.
+
+
+### 4.109h The inverse-zeta zero does not by itself prove level reciprocity
+
+The two retained shift variables do give more structure than an
+arbitrary spectral sequence.  At every unramified prime, write
+
+\[
+ \lambda_f(p^{j+1})
+ =\lambda_f(p)\lambda_f(p^j)-\lambda_f(p^{j-1}).
+\]
+
+Then, coefficient by coefficient,
+
+\[
+ \lambda_f(p^{a+b})
+ =\lambda_f(p^a)\lambda_f(p^b)
+  -\mathbf 1_{a,b\geq1}\lambda_f(p^{a-1})\lambda_f(p^{b-1}),
+\]
+
+and hence, initially for \(\Re u,\Re v>1\),
+
+\[
+ \boxed{
+ \sum_{h,\delta\geq1}
+ \frac{\lambda_f(h\delta)}{h^u\delta^v}
+ =\frac{L(u,f)L(v,f)}{\zeta^{(Q_f)}(u+v)}.}
+\tag{4.845as}
+\]
+
+Here \(\zeta^{(Q_f)}\) omits the Euler factors at primes dividing the
+primitive conductor.  The finite checker
+hecke_double_dirichlet_local_identity verifies the displayed Hecke
+coefficient identity on every requested rectangle; it is a regression
+witness for the algebra, not a substitute for Euler-product
+continuation.
+
+It is tempting to set \(u=v=1/2\) and declare that the pole of
+\(\zeta(u+v)\) kills the spectral family.  This is invalid for the
+continuous spectrum.  For the unramified Eisenstein eigenvalues
+\(\lambda_t(n)\), the corresponding factor is
+
+\[
+ \boxed{
+ D_t(u,v)=
+ \frac{\zeta(u+it)\zeta(u-it)
+       \zeta(v+it)\zeta(v-it)}{\zeta(u+v)}.}
+\tag{4.845at}
+\]
+
+When the \(t\)-contour crosses the pole
+\(t=-i(1-u)\), its residue contains
+\[
+ \frac{\zeta(1+v-u)}{\zeta(u+v)}.
+\]
+Writing \(u=1/2+a\), \(v=1/2+b\), its normal-crossing leading model is
+
+\[
+ \boxed{
+ \frac{\zeta(1+b-a)}{\zeta(1+a+b)}
+ =\frac{a+b}{b-a}\bigl(1+O(|a|+|b|)\bigr).}
+\tag{4.845au}
+\]
+
+Thus the inverse-zeta zero and the transverse Eisenstein pole have the
+same order, and their quotient has no path-independent value at
+\((a,b)=(0,0)\).  Only the *completed sum* of both contour residues,
+the zero frequencies, and the ramified local factors can be continued
+to the central point.  A coefficientwise cancellation claim is false.
+
+Three published reciprocity formulae were compared term by term.
+
+1. [Andersen--Kiral](https://arxiv.org/abs/1801.06089) averages the
+   square of a degree-four Rankin--Selberg \(L(s,g\times f)\), with a
+   fixed cuspidal \(g\), and in its stated level-reciprocity theorem
+   exchanges distinct prime parameters.  Replacing \(g\) by Eisenstein
+   data introduces polar terms absent from their theorem.
+2. [Blomer--Khan](https://arxiv.org/abs/1706.01245) proves reciprocity
+   for \(L(s,f\times F)L(w,f)\).  With the minimal \(GL(3)\)
+   Eisenstein series this is the degree-eight fourth moment
+   \(L(1/2,f)^4\), not the degree-four product in (4.845as); its theorem
+   includes a completed main term assembled from GL(3) residues and
+   Eisenstein-contour residues.
+3. [Khan](https://arxiv.org/abs/2401.01057) directly transforms a zeta
+   twisted second moment, but the stated theorem assumes distinct odd
+   prime twists and a Gaussian archimedean weight, and the dual family
+   is a Dirichlet-character second moment.  It is not a composite-level
+   Atkin--Lehner spectral-family estimate.
+
+Consequently none of these is a literal adapter for
+SLF\(_{\alpha,\beta}\).  On a factor box
+\(A=T^\alpha,B=T^\beta\), the exact missing estimate remains
+
+\[
+ \boxed{
+ \text{completed signed level family}
+ \ \ll_{C,W}\
+ T^{3/2+(\alpha+\beta)/2}(\log T)^{-C},
+ \qquad \alpha+\beta\leq1.}
+\tag{4.845av}
+\]
+
+The completed expression must include the paired Eisenstein residues
+from (4.845at), all ramified factors at \(AB\), and the oldclass cusp
+coefficients.  The right side requires a half-level saving
+\((\alpha+\beta)/2\) over absolute aggregation and arbitrary
+logarithmic decay on \(\alpha+\beta=1\).  Deriving such a composite
+smooth second-moment reciprocity identity is a viable new route; it has
+not yet been proved.  The adapter
+eisenstein_second_moment_reciprocity_audit therefore keeps the signed
+level-family, Type-II, and whole Möbius gates false.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector

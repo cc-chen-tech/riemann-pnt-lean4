@@ -4321,6 +4321,58 @@ def test_type_i_completion_is_an_exact_atkin_lehner_cusp_kuznetsov_orbit() -> No
     assert not hard.whole_mobius_gate_covered
 
 
+def test_eisenstein_second_moment_reciprocity_does_not_yet_prove_slf() -> None:
+    local_identity = getattr(
+        coverage_audit,
+        "hecke_double_dirichlet_local_identity",
+        None,
+    )
+    assert local_identity is not None, "Hecke double-series identity is missing"
+    identity = local_identity(hecke_prime=F(3, 2), max_exponent=8)
+    assert identity["all_coefficients_match"]
+    assert identity["checked_pairs"] == 81
+
+    adapter = getattr(
+        coverage_audit,
+        "eisenstein_second_moment_reciprocity_audit",
+        None,
+    )
+    assert adapter is not None, "Eisenstein second-moment audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109h The inverse-zeta zero does not by itself prove level reciprocity",
+        "\\tag{4.845as}",
+        "\\tag{4.845av}",
+        "eisenstein_second_moment_reciprocity_audit",
+    ):
+        assert marker in note
+
+    hard = adapter(
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    assert hard.ambient_level_exponent == F(1)
+    assert hard.required_half_level_saving_exponent == F(1, 2)
+    assert hard.required_endpoint_log_decay
+    assert hard.hecke_double_dirichlet_identity_exact
+    assert hard.inverse_zeta_central_zero_order == 1
+    assert hard.eisenstein_transverse_pole_order == 1
+    assert hard.local_crossing_model == "x/y"
+    assert not hard.inverse_zeta_zero_cancels_residues_jointly
+    assert hard.blomer_khan_total_degree == 8
+    assert hard.target_total_degree == 4
+    assert not hard.blomer_khan_is_literal_adapter
+    assert not hard.andersen_kiral_is_literal_adapter
+    assert hard.khan_zeta_dual_family == "Dirichlet characters"
+    assert not hard.khan_prime_gaussian_formula_is_composite_smooth_adapter
+    assert hard.completed_eisenstein_residue_pairing_required
+    assert hard.composite_level_local_corrections_required
+    assert not hard.signed_level_family_aggregation_proved
+    assert not hard.type_ii_sectors_restored
+    assert not hard.whole_mobius_gate_covered
+
+
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
     adapter = getattr(
         coverage_audit,
