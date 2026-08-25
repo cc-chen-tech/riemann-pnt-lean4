@@ -1006,6 +1006,28 @@ Direct counting of one determinant fiber has exponent
  \frac{M_1M_2N_1N_2}{\mathcal R}=T^{7/2}.
 \tag{4.8ar}
 \]
+This exponent has an elementary congruence proof.  For fixed nonzero
+\(v,j\), put \(g=(v,j)\).  The equation \(rv-js=\delta\) is soluble only
+if \(g\mid\delta\); when it is, \(s\) occupies one residue class modulo
+\(|v|/g\), and \(r\) is then determined.  Hence the number of
+\((r,s)\)-pairs is
+\[
+ O\!\left(1+\frac{Sg}{|v|}\right).
+\]
+On dyadic \(v\asymp V\), \(j\asymp J\),
+\[
+ \sum_{v\asymp V}\sum_{j\asymp J}\frac{(v,j)}{|v|}
+ \ll J\log(2V),
+\]
+by writing \(d\mid(v,j)\) and summing first over \(v/d,j/d\).
+Consequently one fixed shift has
+\[
+ O\!\left(VJ+SJ\log(2V)\right)
+ \ll T^{7/2}\log T
+\]
+solutions in the hard box.  Thus (4.8ar) is an unconditional
+cardinality bound, not a random-determinant heuristic.
+
 Even if one optimistically separates the actual coupled kernel into the
 short-variable product required by the corollary, its published error has
 the exponent of
