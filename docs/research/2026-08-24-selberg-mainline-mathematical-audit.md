@@ -23,9 +23,10 @@ comparison, and the final `rho`-sum using (S20) have all been formalized.
 Thus S-arith itself is now closed.  S2 is now connected to the exact S1
 kernel with the genuine sliding integral and exact Mathlib Fourier
 normalization.  S3 is now complete, and S4 has both its exact critical-line
-modulus bridge and its genuine `re(s)=2` first-moment main term.  The theorem
-remains incomplete until the S4 horizontal-edge and uniform lower-Stirling
-estimates are proved and the S5/packing interfaces are instantiated.
+modulus bridge, its genuine `re(s)=2` first-moment main term, and its uniform
+horizontal-edge estimate.  The theorem remains incomplete until the S4
+uniform lower-Stirling estimate is proved and the S5/packing interfaces are
+instantiated.
 
 The main conclusion is decisive:
 
@@ -1611,7 +1612,7 @@ The current honest repository status is:
 ```text
 Hardy                         proved
 Hardy--Littlewood c*T         proved
-Selberg c*T*log T             S1--S3 proved; S4 bridge/right edge proved, horizontal/Stirling remain
+Selberg c*T*log T             S1--S3 proved; S4 bridge/right/horizontal proved, Stirling remains
 T^3 linear Möbius moment      separate open long-mollifier problem
 Conrey two fifths             not yet formalized
 ```
@@ -2394,12 +2395,38 @@ actual auxiliary product satisfies, for every real `a,b` and `X>=2`,
 
 Thus the right-edge main-term gate of S4 is closed without a new axiom.
 
-Both horizontal edges cost
-`O(X*T^(1/4)*log(T)^C)` for an absolute fixed `C`, using the
-functional equation/convexity estimate in the strip together with the
-elementary bound for the finite mollifier.  (The earlier shorthand
-`O(X)` for the lower edge would apply only to a bounded-height edge, not to
-the present dyadic rectangle.)  Since `c=1/32`, both are `o(T)`.
+Both horizontal edges admit a simpler bound than the convexity estimate
+previously recorded here.  For `1/2<=sigma<=2`, `T<=|t|<=2*T`, apply the
+already proved uniform first Abel approximation at the real cutoff `x=4*T`:
+
+\[
+ \zeta(s)=\sum_{n\le\lfloor4T\rfloor}n^{-s}
+   +\frac{(4T)^{1-s}}{s-1}+O((4T)^{-\sigma}).
+\]
+
+The finite sum is at most `2*sqrt(floor(4*T))<=4*sqrt(T)`.  The pole term is
+at most `2*sqrt(T)` because `norm(s-1)>=|t|>=T`, and the remainder is
+`O(1)<=O(sqrt(T))`.  Hence, uniformly throughout the whole horizontal
+segment,
+
+\[
+ |\zeta(\sigma+it)|\ll\sqrt T.
+\]
+
+The elementary strip bound `|psi_X(s)|<=2*sqrt(X)` therefore gives
+
+\[
+ \left|\int_{1/2}^2\zeta(\sigma+it)\psi_X(\sigma+it)^2\,d\sigma\right|
+ \ll X\sqrt T.                                      \tag{9.2-H}
+\]
+
+This avoids a new convexity theorem entirely.  Since `X=T^(1/32)`, the
+horizontal cost is `O(T^(17/32))=o(T)`.  (The earlier shorthand `O(X)` for
+the lower edge would apply only to a bounded-height edge, not to the present
+dyadic rectangle.)  This is now formalized as
+`exists_norm_intervalIntegral_selbergFirstMomentAuxiliary_horizontal_le`,
+with the strip zeta and mollifier estimates exposed as separate reusable
+theorems.  Its axiom audit contains only the standard Lean/Mathlib axioms.
 Cauchy's theorem and (9.2) consequently give
 
 \[
@@ -2620,13 +2647,14 @@ rectangle to the auxiliary product `zeta(s) psi(s)^2` directly between
 heights `T/2` and `T`; this
 prevents an invalid subtraction of two unrelated lower bounds.  The right
 edge has main term `iT/2+O(1)`.  Each horizontal edge is
-`O(X*T^(1/4)*log(T)^C)=o(T)` by the convexity bound and the elementary
-mollifier bound.  Uniform Stirling then supplies the factor `T^(-1/4)` on
+`O(X*sqrt(T))=O(T^(17/32))=o(T)` by the uniform first Abel approximation
+and the elementary mollifier bound.  Uniform Stirling then supplies the factor `T^(-1/4)` on
 that dyadic height interval.  The exact critical-line modulus bridge back to
 the reflected completed function is proved in Lean; the right-edge main
 term is now proved in Lean with the explicit remainder `16/log 2`.
-The horizontal-edge estimate and uniform lower Stirling bound are the two
-remaining S4 Lean gates.
+The horizontal-edge estimate is now proved in Lean via the uniform first Abel
+approximation.  The uniform lower Stirling bound is the sole remaining S4
+Lean gate.
 
 ### Sign change and multiplicity
 
@@ -2642,12 +2670,12 @@ each ordinate at most twice.
 
 The Selberg derivation is unconditional at paper level, subject only to the
 standard classical inputs listed below.  This is not yet a repository-level
-theorem: S4 still requires Lean proofs of the two gates just identified,
+theorem: S4 still requires the uniform lower Stirling gate just identified,
 followed by S5 and the final odd-zero assembly.  Its external analytic inputs
 are all established theorems:
 
 * the zero-free line `zeta(1+it) != 0` and a reciprocal bound there;
-* the convexity bound for zeta in `1/2<=sigma<=2`;
+* the uniform first Abel approximation for zeta in `1/2<=sigma<=2`;
 * uniform Stirling estimates for Gamma;
 * Cauchy's theorem, Perron inversion, Gaussian Mellin inversion, and
   Plancherel.
