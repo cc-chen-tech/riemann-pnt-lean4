@@ -1210,6 +1210,20 @@ class MidpointPublishedHermitianAdapterAudit:
 
 
 @dataclass(frozen=True)
+class MidpointUnitaryDivisorAudit:
+    product_variable_exponent: Fraction
+    root_modulus_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    dual_numerator_exponent: Fraction
+    factorization_root_bijection_exact: bool
+    mobius_product_collapses_to_single_mobius: bool
+    root_multiplicity_is_subpower: bool
+    balanced_dyadic_condition_is_root_filter: bool
+    root_trace_coefficient_remains_joint: bool
+    unitary_root_trace_bound_verified: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5968,6 +5982,132 @@ def midpoint_published_hermitian_adapter_audit(
     )
 
 
+def midpoint_unitary_divisor_root_bijection(*, n: int) -> dict[str, object]:
+    """Bijection squarefree factorizations ``n=r*s`` with roots mod ``2*n``.
+
+    For an ordered coprime factorization, the midpoint coefficient
+
+        A = 2*r*inverse(r mod s)-1  (mod 2*n)
+
+    is a square root of one.  Odd prime factors are recovered from the
+    signs of ``A`` modulo each prime.  If ``2|n``, the residue modulo four
+    records whether the factor two lies in ``r`` or ``s``.  Non-squarefree
+    inputs are returned with empty support because their Möbius weight is
+    zero in the application.
+    """
+    if n <= 1:
+        raise ValueError("unitary-divisor product must exceed one")
+
+    remaining = n
+    prime_factors: list[int] = []
+    divisor = 2
+    squarefree = True
+    while divisor * divisor <= remaining:
+        if remaining % divisor:
+            divisor += 1
+            continue
+        remaining //= divisor
+        prime_factors.append(divisor)
+        if remaining % divisor == 0:
+            squarefree = False
+            break
+        divisor += 1
+    if squarefree and remaining > 1:
+        prime_factors.append(remaining)
+    if not squarefree:
+        return {
+            "squarefree": False,
+            "ordered_factorization_count": 0,
+            "root_count": 0,
+            "expected_root_count": 0,
+            "factorizations": (),
+            "roots": (),
+            "factorization_to_root_injective": False,
+            "root_to_factorization_exact": False,
+            "bijection_exact": False,
+        }
+
+    modulus = 2 * n
+    odd_part = n // 2 if n % 2 == 0 else n
+    factorizations: list[dict[str, int | bool]] = []
+    for r in range(1, n + 1):
+        if n % r:
+            continue
+        s = n // r
+        if gcd(r, s) != 1:
+            continue
+        inverse_r_mod_s = pow(r, -1, s)
+        coefficient = (2 * r * inverse_r_mod_s - 1) % modulus
+        recovered_r_odd = gcd(coefficient + 1, odd_part)
+        recovered_s_odd = gcd(coefficient - 1, odd_part)
+        if n % 2:
+            recovered_r = recovered_r_odd
+            recovered_s = recovered_s_odd
+        elif coefficient % 4 == 3:
+            recovered_r = 2 * recovered_r_odd
+            recovered_s = recovered_s_odd
+        else:
+            recovered_r = recovered_r_odd
+            recovered_s = 2 * recovered_s_odd
+        factorizations.append(
+            {
+                "r": r,
+                "s": s,
+                "coefficient": coefficient,
+                "coefficient_squared_is_one": (
+                    coefficient * coefficient % modulus == 1
+                ),
+                "recovered_r": recovered_r,
+                "recovered_s": recovered_s,
+            }
+        )
+    roots = tuple(
+        residue
+        for residue in range(modulus)
+        if residue * residue % modulus == 1
+    )
+    coefficients = tuple(
+        int(item["coefficient"]) for item in factorizations
+    )
+    recovery_exact = all(
+        item["r"] == item["recovered_r"]
+        and item["s"] == item["recovered_s"]
+        for item in factorizations
+    )
+    expected_count = 2 ** len(prime_factors)
+    return {
+        "squarefree": True,
+        "ordered_factorization_count": len(factorizations),
+        "root_count": len(roots),
+        "expected_root_count": expected_count,
+        "factorizations": tuple(factorizations),
+        "roots": roots,
+        "factorization_to_root_injective": len(set(coefficients)) == len(coefficients),
+        "root_to_factorization_exact": recovery_exact and set(coefficients) == set(roots),
+        "bijection_exact": (
+            len(factorizations) == len(roots) == expected_count
+            and recovery_exact
+            and set(coefficients) == set(roots)
+        ),
+    }
+
+
+def midpoint_unitary_divisor_audit() -> MidpointUnitaryDivisorAudit:
+    """Record the balanced-box ledger after ``n=r*s`` reindexing."""
+    return MidpointUnitaryDivisorAudit(
+        product_variable_exponent=F(6),
+        root_modulus_exponent=F(6),
+        physical_numerator_exponent=F(5),
+        dual_numerator_exponent=F(7),
+        factorization_root_bijection_exact=True,
+        mobius_product_collapses_to_single_mobius=True,
+        root_multiplicity_is_subpower=True,
+        balanced_dyadic_condition_is_root_filter=True,
+        root_trace_coefficient_remains_joint=True,
+        unitary_root_trace_bound_verified=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -10150,6 +10290,25 @@ def main() -> None:
         "corrected_improved="
         f"{midpoint_published.corrected_argument_gives_claimed_improvement},"
         f"closes={midpoint_published.withdrawn_claim_closes_midpoint_gate}"
+    )
+    midpoint_unitary = midpoint_unitary_divisor_audit()
+    print(
+        "large_q_transition: midpoint_unitary_divisor="
+        f"n={_fmt(midpoint_unitary.product_variable_exponent)},"
+        f"Q={_fmt(midpoint_unitary.root_modulus_exponent)},"
+        "physical_numerator="
+        f"{_fmt(midpoint_unitary.physical_numerator_exponent)},"
+        f"dual_numerator={_fmt(midpoint_unitary.dual_numerator_exponent)},"
+        "factorization_root_bijection="
+        f"{midpoint_unitary.factorization_root_bijection_exact},"
+        "mobius_collapses="
+        f"{midpoint_unitary.mobius_product_collapses_to_single_mobius},"
+        "root_count_subpower="
+        f"{midpoint_unitary.root_multiplicity_is_subpower},"
+        "balanced_filter="
+        f"{midpoint_unitary.balanced_dyadic_condition_is_root_filter},"
+        f"joint={midpoint_unitary.root_trace_coefficient_remains_joint},"
+        f"published={midpoint_unitary.unitary_root_trace_bound_verified}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

@@ -9502,6 +9502,102 @@ exponents \(6\) and \(23/4\), all three hypothesis failures, and keeps
 problem is not to cite a Hermitian theorem, but to prove a four-variable
 Möbius-weighted extension of (4.665).
 
+### 4.77 Unitary-divisor roots collapse the two Möbius weights
+
+The midpoint coefficient exposes a second exact reindexing.  Put
+
+\[
+ n:=rs,
+ \qquad
+ \mathscr A(n):=\{A\pmod{2n}:A^2\equiv1\pmod{2n}\}.
+\tag{4.669}
+\]
+
+Only squarefree \(n\) contribute.  For such \(n\), the map
+
+\[
+ (r,s)\longmapsto
+ A_{r,s}=2r\bar r_s-1\pmod{2n},
+ \qquad rs=n,quad(r,s)=1,
+\tag{4.670}
+\]
+
+is a bijection from ordered coprime factorizations of \(n\) onto
+\(\mathscr A(n)\).  For odd \(p\mid n\), the inverse map places \(p\)
+in \(r\) when \(A\equiv-1\pmod p\) and in \(s\) when
+\(A\equiv1\pmod p\).  If \(2\mid n\), the residue modulo four resolves
+the otherwise ambiguous prime two: \(A\equiv-1\pmod4\) places it in
+\(r\), while \(A\equiv1\pmod4\) places it in \(s\).  Equivalently, if
+\(n_{\mathrm{odd}}=n/(n,2)\), then
+
+\[
+ r_{\mathrm{odd}}=(A+1,n_{\mathrm{odd}}),
+ \qquad
+ s_{\mathrm{odd}}=(A-1,n_{\mathrm{odd}}),
+ \qquad
+ \#\mathscr A(n)=2^{\omega(n)}.
+\tag{4.671}
+\]
+
+The two Möbius factors now collapse without an estimate:
+
+\[
+ \boxed{\mu(r)\mu(s)=\mu(rs)=\mu(n)}
+ \qquad ((r,s)=1).
+\tag{4.672}
+\]
+
+For \(A\in\mathscr A(n)\), let \(r_A,s_A\) be the factors recovered by
+(4.671), including the modulo-four rule, and let
+\(\mathscr A_{R,S}(n)\) impose \(r_A\asymp R\), \(s_A\asymp S\), the
+endpoint conditions, and \(qr_A,qs_A\le N\).  Formula (4.663) becomes
+the exact finite reindexing
+
+\[
+\begin{aligned}
+ \mathfrak H_q[\Psi]
+ ={}&\sum_{n}\mu(n)
+ \sum_{\substack{A\in\mathscr A_{R,S}(n)\\(q,n)=1}}
+ p_N(qr_A)p_N(qs_A)\frac{RS}{n}\\
+ &\quad\times\sum_{c,v\bmod 2n}
+ \widetilde\Theta_{r_A,s_A}(c,v)
+ \left\{e\!\left(\frac{Acv}{2n}\right)-1\right\}.
+\end{aligned}
+\tag{4.673}
+\]
+
+Here \(RS/4\le n\le4RS\); at the balanced hard box
+\(n\asymp T^6\), the physical numerator \(|h\delta|\) has exponent
+five, and the completed numerator \(|cv|\) has exponent seven.  The root
+multiplicity \(2^{\omega(n)}\le\tau(n)=n^{o(1)}\) has no positive-power
+cost.  Thus (4.673) genuinely replaces two Möbius variables of length
+\(T^3\) by one Möbius variable of length \(T^6\) and a subpower root
+fiber.
+
+This is not yet a one-dimensional Möbius exponential sum to which a
+published theorem applies.  The balanced-root filter is nonmultiplicative,
+and the inner coefficient retains its joint dependence on
+\((n,A,c,v)\); in particular, the Chinese-remainder representative of
+\(A\) couples all prime factors of \(n\).  The exact remaining root-trace
+gate is
+
+\[
+ \boxed{
+ \left|\sum_{n\asymp T^6}\mu(n)
+       \sum_{A\in\mathscr A_{T^3,T^3}(n)}
+       \mathcal G_q(n,A)\right|
+ \ll_{B,W}T^7(\log T)^{-B},}
+\tag{4.674}
+\]
+
+where \(\mathcal G_q(n,A)\) is exactly the weighted \(c,v\)-sum in
+(4.673).  A useful next theorem would have to exploit cancellation in
+\(\mu(n)\) before taking absolute values over the root fiber.  The helper
+`midpoint_unitary_divisor_root_bijection` verifies (4.670)--(4.672),
+including the even-prime branch, on finite integers.  The adapter
+`midpoint_unitary_divisor_audit` records the exponents \(6,6,5,7\) and
+keeps `unitary_root_trace_bound_verified=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

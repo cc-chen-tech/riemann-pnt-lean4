@@ -2403,6 +2403,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "### 4.76 Exact Salié-phase match does not satisfy the published adapter",
         "\\tag{4.666}",
         "withdrawn_claim_closes_midpoint_gate=False",
+        "### 4.77 Unitary-divisor roots collapse the two Möbius weights",
+        "\\tag{4.670}",
+        "\\tag{4.673}",
+        "unitary_root_trace_bound_verified=False",
     ):
         assert marker in note
 
@@ -2436,6 +2440,13 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "bulk_claimed_inner=23/4,bulk_save=1/4,fixed_numerator=False,"
         "separated=False,frequency_average=False,withdrawn=True,"
         "corrected_improved=False,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: midpoint_unitary_divisor="
+        "n=6,Q=6,physical_numerator=5,dual_numerator=7,"
+        "factorization_root_bijection=True,mobius_collapses=True,"
+        "root_count_subpower=True,balanced_filter=True,joint=True,"
+        "published=False"
     ) in report
 
 
@@ -2611,6 +2622,56 @@ def test_withdrawn_hermitian_claim_does_not_cover_midpoint_operator() -> None:
     assert audit.claim_withdrawn_for_missing_l_squared_factor
     assert not audit.corrected_argument_gives_claimed_improvement
     assert not audit.withdrawn_claim_closes_midpoint_gate
+
+
+def test_midpoint_roots_biject_with_ordered_coprime_factorizations() -> None:
+    helper = getattr(
+        coverage_audit,
+        "midpoint_unitary_divisor_root_bijection",
+        None,
+    )
+    assert helper is not None, "unitary-divisor root helper is missing"
+
+    for n, expected_count in ((6, 4), (15, 4), (30, 8), (105, 8), (210, 16)):
+        exact = helper(n=n)
+        assert exact["squarefree"]
+        assert exact["ordered_factorization_count"] == expected_count
+        assert exact["root_count"] == expected_count
+        assert exact["expected_root_count"] == expected_count
+        assert exact["factorization_to_root_injective"]
+        assert exact["root_to_factorization_exact"]
+        assert exact["bijection_exact"]
+        for item in exact["factorizations"]:
+            assert item["r"] * item["s"] == n
+            assert gcd(item["r"], item["s"]) == 1
+            assert item["coefficient_squared_is_one"]
+            assert item["recovered_r"] == item["r"]
+            assert item["recovered_s"] == item["s"]
+
+    nonsquarefree = helper(n=12)
+    assert not nonsquarefree["squarefree"]
+    assert nonsquarefree["ordered_factorization_count"] == 0
+    assert nonsquarefree["root_count"] == 0
+
+
+def test_unitary_divisor_reparametrization_records_the_remaining_gate() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "midpoint_unitary_divisor_audit",
+        None,
+    )
+    assert adapter is not None, "unitary-divisor audit is missing"
+    audit = adapter()
+    assert audit.product_variable_exponent == F(6)
+    assert audit.root_modulus_exponent == F(6)
+    assert audit.physical_numerator_exponent == F(5)
+    assert audit.dual_numerator_exponent == F(7)
+    assert audit.factorization_root_bijection_exact
+    assert audit.mobius_product_collapses_to_single_mobius
+    assert audit.root_multiplicity_is_subpower
+    assert audit.balanced_dyadic_condition_is_root_filter
+    assert audit.root_trace_coefficient_remains_joint
+    assert not audit.unitary_root_trace_bound_verified
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
