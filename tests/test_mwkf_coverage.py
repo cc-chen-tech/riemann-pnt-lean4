@@ -2457,6 +2457,14 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.720}",
         "\\tag{4.725}",
         "shifted_inverse_zeta_variance_proved=False",
+        "### 4.89 Published additive twists of $\\mu*\\mu$ miss the local variance scale",
+        "\\tag{4.726}",
+        "\\tag{4.730}",
+        "brz_direct_pointwise_route_closes_variance_gate=False",
+        "### 4.90 The uniform inverse-zeta variance gate would prove a new zero-free strip",
+        "\\tag{4.731}",
+        "\\tag{4.734}",
+        "inverse_zeta_variance_gate_available_unconditionally=False",
     ):
         assert marker in note
 
@@ -2586,6 +2594,21 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "tau_uniform_sufficient=True,tau_zero_full=True,mangerel=4,"
         "mangerel_deficit=1,mangerel_log=True,tau_hypotheses=False,"
         "published=False,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: brz_mobius_convolution="
+        "ambient=1,window=1/2,critical_q=1/2,term1=16/17,"
+        "term2=11/12,term3=15/16,best=16/17,required=1/2,"
+        "pointwise_deficit=15/34,local_variance=81/34,"
+        "variance_target=3/2,variance_deficit=15/17,"
+        "major_variance=2,major_deficit=1/2,published=True,"
+        "twisted=False,local_l2=False,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: inverse_zeta_zero_free_implication="
+        "ambient=1,window=1/2,variance=3/2,block=3/4,"
+        "abscissa=3/4,x_integral=True,cauchy=True,dyadic=True,"
+        "zero_free=True,original_necessary=False,available=False"
     ) in report
 
 
@@ -3354,6 +3377,55 @@ def test_ratio_mellin_coordinates_restore_multiplicativity_exactly() -> None:
     assert not audit.uniform_tau_mangerel_hypotheses_verified
     assert not audit.shifted_inverse_zeta_variance_proved
     assert not audit.ratio_mellin_route_closes_mobius_gate
+
+
+def test_brz_pointwise_mobius_convolution_bound_misses_local_variance() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "basak_robles_zaharescu_mobius_convolution_audit",
+        None,
+    )
+    assert adapter is not None, "BRZ Möbius-convolution audit is missing"
+    audit = adapter()
+    assert audit.ambient_length_exponent == F(1)
+    assert audit.short_window_exponent == F(1, 2)
+    assert audit.critical_denominator_exponent == F(1, 2)
+    assert audit.first_pointwise_term_exponent == F(16, 17)
+    assert audit.second_pointwise_term_exponent == F(11, 12)
+    assert audit.third_pointwise_term_exponent == F(15, 16)
+    assert audit.best_published_pointwise_exponent == F(16, 17)
+    assert audit.required_pointwise_exponent == F(1, 2)
+    assert audit.pointwise_exponent_deficit == F(15, 34)
+    assert audit.direct_local_arc_variance_exponent == F(81, 34)
+    assert audit.required_local_variance_exponent == F(3, 2)
+    assert audit.local_arc_variance_deficit == F(15, 17)
+    assert audit.major_arc_direct_variance_exponent == F(2)
+    assert audit.major_arc_power_deficit == F(1, 2)
+    assert audit.published_full_mobius_convolution_pointwise_bound
+    assert not audit.published_ratio_twisted_family_bound
+    assert not audit.published_local_l2_bound
+    assert not audit.brz_direct_pointwise_route_closes_variance_gate
+
+
+def test_inverse_zeta_variance_gate_implies_zero_free_three_quarters() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "inverse_zeta_variance_zero_free_audit",
+        None,
+    )
+    assert adapter is not None, "inverse-zeta zero-free audit is missing"
+    audit = adapter()
+    assert audit.ambient_length_exponent == F(1)
+    assert audit.short_window_exponent == F(1, 2)
+    assert audit.variance_bound_exponent == F(3, 2)
+    assert audit.dyadic_coefficient_block_exponent == F(3, 4)
+    assert audit.implied_dyadic_convergence_abscissa == F(3, 4)
+    assert audit.x_integration_identity_exact
+    assert audit.cauchy_schwarz_exponent_exact
+    assert audit.dyadic_continuation_argument_exact
+    assert audit.implies_zeta_zero_free_real_part_gt_three_quarters
+    assert not audit.original_mwkf_asymptotic_requires_this_gate
+    assert not audit.inverse_zeta_variance_gate_available_unconditionally
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:

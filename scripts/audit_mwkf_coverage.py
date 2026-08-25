@@ -1453,6 +1453,43 @@ class RestrictedMobiusRatioMellinAudit:
 
 
 @dataclass(frozen=True)
+class BasakRoblesZaharescuMobiusConvolutionAudit:
+    ambient_length_exponent: Fraction
+    short_window_exponent: Fraction
+    critical_denominator_exponent: Fraction
+    first_pointwise_term_exponent: Fraction
+    second_pointwise_term_exponent: Fraction
+    third_pointwise_term_exponent: Fraction
+    best_published_pointwise_exponent: Fraction
+    required_pointwise_exponent: Fraction
+    pointwise_exponent_deficit: Fraction
+    direct_local_arc_variance_exponent: Fraction
+    required_local_variance_exponent: Fraction
+    local_arc_variance_deficit: Fraction
+    major_arc_direct_variance_exponent: Fraction
+    major_arc_power_deficit: Fraction
+    published_full_mobius_convolution_pointwise_bound: bool
+    published_ratio_twisted_family_bound: bool
+    published_local_l2_bound: bool
+    brz_direct_pointwise_route_closes_variance_gate: bool
+
+
+@dataclass(frozen=True)
+class InverseZetaVarianceZeroFreeAudit:
+    ambient_length_exponent: Fraction
+    short_window_exponent: Fraction
+    variance_bound_exponent: Fraction
+    dyadic_coefficient_block_exponent: Fraction
+    implied_dyadic_convergence_abscissa: Fraction
+    x_integration_identity_exact: bool
+    cauchy_schwarz_exponent_exact: bool
+    dyadic_continuation_argument_exact: bool
+    implies_zeta_zero_free_real_part_gt_three_quarters: bool
+    original_mwkf_asymptotic_requires_this_gate: bool
+    inverse_zeta_variance_gate_available_unconditionally: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -7331,6 +7368,84 @@ def restricted_mobius_ratio_mellin_audit(
     )
 
 
+def basak_robles_zaharescu_mobius_convolution_audit(
+) -> BasakRoblesZaharescuMobiusConvolutionAudit:
+    """Test the published ``mu*mu`` additive-twist bound at ``H=sqrt(X)``.
+
+    Basak--Robles--Zaharescu, Corollary 7.1, gives three terms
+    ``X^(16/17)``, ``X q^(-1/6)``, and ``X^(7/8)q^(1/8)``.
+    The local variance arc has length ``1/H`` and the squared Dirichlet
+    kernel has size ``H^2`` there.  Hence a pointwise exponent ``sigma``
+    contributes exponent ``1/2 + 2 sigma`` when ``H=X^(1/2)``.
+    This adapter tests only the theorem as stated; it does not rule out a
+    new proof-level local-L2 refinement of their Type I/II decomposition.
+    """
+    ambient = F(1)
+    window = F(1, 2)
+    critical_q = F(1, 2)
+    term1 = F(16, 17)
+    term2 = ambient - critical_q * F(1, 6)
+    term3 = F(7, 8) + critical_q * F(1, 8)
+    best = max(term1, term2, term3)
+    required_pointwise = F(1, 2)
+    local_variance = window + F(2) * best
+    target_variance = ambient + window
+    major_variance = F(2)
+    return BasakRoblesZaharescuMobiusConvolutionAudit(
+        ambient_length_exponent=ambient,
+        short_window_exponent=window,
+        critical_denominator_exponent=critical_q,
+        first_pointwise_term_exponent=term1,
+        second_pointwise_term_exponent=term2,
+        third_pointwise_term_exponent=term3,
+        best_published_pointwise_exponent=best,
+        required_pointwise_exponent=required_pointwise,
+        pointwise_exponent_deficit=best - required_pointwise,
+        direct_local_arc_variance_exponent=local_variance,
+        required_local_variance_exponent=target_variance,
+        local_arc_variance_deficit=local_variance - target_variance,
+        major_arc_direct_variance_exponent=major_variance,
+        major_arc_power_deficit=major_variance - target_variance,
+        published_full_mobius_convolution_pointwise_bound=True,
+        published_ratio_twisted_family_bound=False,
+        published_local_l2_bound=False,
+        brz_direct_pointwise_route_closes_variance_gate=False,
+    )
+
+
+def inverse_zeta_variance_zero_free_audit(
+) -> InverseZetaVarianceZeroFreeAudit:
+    """Record the zero-free consequence of the strong sufficient gate.
+
+    Integrating a smoothed short sum over its center ``x`` contributes
+    exactly ``H * integral(phi)`` per coefficient.  Cauchy applied to a
+    variance bound ``X H`` over an ``x``-interval of length ``X`` gives
+    a dyadic coefficient sum of size ``X / sqrt(H)``.  At
+    ``H=sqrt(X)`` this is ``X^(3/4)``.  Smooth dyadic summation, including
+    any fixed vertical twist in the test weight, then continues
+    ``sum (mu*mu)(n)n^(-s)=1/zeta(s)^2`` holomorphically to
+    ``Re(s)>3/4``.  This is a consequence of the sufficient variance
+    gate, not a claimed consequence of the original MWKF asymptotic.
+    """
+    ambient = F(1)
+    window = F(1, 2)
+    variance = ambient + window
+    block = ambient - window / 2
+    return InverseZetaVarianceZeroFreeAudit(
+        ambient_length_exponent=ambient,
+        short_window_exponent=window,
+        variance_bound_exponent=variance,
+        dyadic_coefficient_block_exponent=block,
+        implied_dyadic_convergence_abscissa=block,
+        x_integration_identity_exact=True,
+        cauchy_schwarz_exponent_exact=True,
+        dyadic_continuation_argument_exact=True,
+        implies_zeta_zero_free_real_part_gt_three_quarters=True,
+        original_mwkf_asymptotic_requires_this_gate=False,
+        inverse_zeta_variance_gate_available_unconditionally=False,
+    )
+
+
 def transition_line_finite_fourier_identity(
     *,
     a: int,
@@ -11855,6 +11970,54 @@ def main() -> None:
         f"{ratio_mellin.uniform_tau_mangerel_hypotheses_verified},"
         f"published={ratio_mellin.shifted_inverse_zeta_variance_proved},"
         f"closes={ratio_mellin.ratio_mellin_route_closes_mobius_gate}"
+    )
+    brz = basak_robles_zaharescu_mobius_convolution_audit()
+    print(
+        "large_q_transition: brz_mobius_convolution="
+        f"ambient={_fmt(brz.ambient_length_exponent)},"
+        f"window={_fmt(brz.short_window_exponent)},"
+        f"critical_q={_fmt(brz.critical_denominator_exponent)},"
+        f"term1={_fmt(brz.first_pointwise_term_exponent)},"
+        f"term2={_fmt(brz.second_pointwise_term_exponent)},"
+        f"term3={_fmt(brz.third_pointwise_term_exponent)},"
+        f"best={_fmt(brz.best_published_pointwise_exponent)},"
+        f"required={_fmt(brz.required_pointwise_exponent)},"
+        f"pointwise_deficit={_fmt(brz.pointwise_exponent_deficit)},"
+        "local_variance="
+        f"{_fmt(brz.direct_local_arc_variance_exponent)},"
+        "variance_target="
+        f"{_fmt(brz.required_local_variance_exponent)},"
+        "variance_deficit="
+        f"{_fmt(brz.local_arc_variance_deficit)},"
+        "major_variance="
+        f"{_fmt(brz.major_arc_direct_variance_exponent)},"
+        f"major_deficit={_fmt(brz.major_arc_power_deficit)},"
+        "published="
+        f"{brz.published_full_mobius_convolution_pointwise_bound},"
+        f"twisted={brz.published_ratio_twisted_family_bound},"
+        f"local_l2={brz.published_local_l2_bound},"
+        "closes="
+        f"{brz.brz_direct_pointwise_route_closes_variance_gate}"
+    )
+    zero_free = inverse_zeta_variance_zero_free_audit()
+    print(
+        "large_q_transition: inverse_zeta_zero_free_implication="
+        f"ambient={_fmt(zero_free.ambient_length_exponent)},"
+        f"window={_fmt(zero_free.short_window_exponent)},"
+        f"variance={_fmt(zero_free.variance_bound_exponent)},"
+        "block="
+        f"{_fmt(zero_free.dyadic_coefficient_block_exponent)},"
+        "abscissa="
+        f"{_fmt(zero_free.implied_dyadic_convergence_abscissa)},"
+        f"x_integral={zero_free.x_integration_identity_exact},"
+        f"cauchy={zero_free.cauchy_schwarz_exponent_exact},"
+        f"dyadic={zero_free.dyadic_continuation_argument_exact},"
+        "zero_free="
+        f"{zero_free.implies_zeta_zero_free_real_part_gt_three_quarters},"
+        "original_necessary="
+        f"{zero_free.original_mwkf_asymptotic_requires_this_gate},"
+        "available="
+        f"{zero_free.inverse_zeta_variance_gate_available_unconditionally}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),

@@ -10743,6 +10743,156 @@ The adapter `restricted_mobius_ratio_mellin_audit` records the
 \(X=T^2,H=T\) ledger and keeps
 `shifted_inverse_zeta_variance_proved=False`.
 
+### 4.89 Published additive twists of $\mu*\mu$ miss the local variance scale
+
+[Basak--Robles--Zaharescu, arXiv:2312.17435v2](https://arxiv.org/abs/2312.17435)
+prove a pointwise theorem for the exact
+coefficient at the untwisted endpoint of (4.723).  Their Corollary 7.1
+states that, if \((a,q)=1\) and
+\(\lvert\alpha-a/q\rvert\le q^{-2}\), then
+
+\[
+ \boxed{
+ \sum_{n\le X}(\mu*\mu)(n)e(n\alpha)
+ \ll_\varepsilon X^{16/17+\varepsilon}
+ +\left(Xq^{-1/6}+X^{7/8}q^{1/8}\right)(\log X)^3.}
+\tag{4.726}
+\]
+
+Here and only in this subsection exponents are recorded relative to the
+product length \(X\), rather than to \(T\).  The variance gate has
+\(H=X^{1/2}\).  On the critical part of the local Fourier arc,
+\(\alpha\asymp X^{-1/2}\), one may take \(q\asymp X^{1/2}\), and the
+three powers in (4.726) are exactly
+
+\[
+ \frac{16}{17},\qquad
+ 1-\frac1{12}=\frac{11}{12},\qquad
+ \frac78+\frac1{16}=\frac{15}{16}.
+\tag{4.727}
+\]
+
+Thus the largest term is \(X^{16/17+\varepsilon}\).  A direct
+pointwise treatment of a Fourier arc of length \(H^{-1}\), on which
+the squared short-interval kernel has size at most \(H^2\), gives the
+power ledger
+
+\[
+ H X^{32/17}
+ =X^{1/2+32/17}
+ =X^{81/34},
+ \qquad
+ XH=X^{3/2}=X^{51/34}.
+\tag{4.728}
+\]
+
+Consequently this direct adapter misses the required variance exponent
+by \(15/17\).  Equivalently, a pointwise bound used in this way would
+need exponent at most \(1/2\), whereas (4.726) supplies \(16/17\), a
+pointwise deficit of \(15/34\).  This is a comparison of certified
+upper bounds, not a lower bound for the actual variance.
+
+The major-arc estimate in their Lemma 6.2 does not repair the loss.
+On an arc of length \(X^{-1}\) it gives
+\(X\exp(-c\sqrt{\log X})\) pointwise.  After squaring and multiplying
+by \(H^2=X\), its direct variance ledger is
+
+\[
+ X^{-1}\,H^2\,X^2\exp(-2c\sqrt{\log X})
+ =X^2\exp(-2c\sqrt{\log X}),
+\tag{4.729}
+\]
+
+which retains a positive-power deficit \(X^{1/2-o(1)}\) against
+\(X^{3/2}\).  Moreover, the published result treats \(\mu*\mu\), not
+the uniformly ratio-twisted family \(f_\tau\) in (4.722).
+
+The remaining possible use of their Type I/II proof is therefore not
+pointwise.  It would require a new local mean-square refinement,
+uniformly for the ratio twists,
+
+\[
+ \boxed{
+ \sup_{|\tau|\le(\log X)^A}
+ \int_{|\alpha|\le X^{-1/2}}
+ \left|\sum_{n}f_\tau(n)V_\tau(n/X)e(n\alpha)\right|^2d\alpha
+ \ll_{A,V}X^{1/2}(\log X)^{1+o(1)}.}
+\tag{4.730}
+\]
+
+Corollary 7.1 and the Type II Lemma 2.2 cited in its proof are
+pointwise statements and do not contain (4.730).  The adapter
+`basak_robles_zaharescu_mobius_convolution_audit` records the exact
+three-term specialization, both variance deficits, and keeps
+`brz_direct_pointwise_route_closes_variance_gate=False`.  This rejects
+only direct insertion of the published theorem; a proof-level local
+\(L^2\) refinement remains a separate candidate.
+
+### 4.90 The uniform inverse-zeta variance gate would prove a new zero-free strip
+
+The sufficient condition (4.723), and hence its Fourier form (4.730),
+is substantially stronger than the original restricted four-Möbius
+gate.  This can be seen without any conjectural zero-density input.
+Put \(f=\mu*\mu\), choose \(\phi\) with
+\(\int_{\mathbb R}\phi(u)\,du=1\), and, for fixed real \(t\), set
+
+\[
+ S_{X,t}(x):=
+ \sum_n f(n)n^{-it}V(n/X)
+ \phi\!\left(\frac{n-x}{H}\right),
+ \qquad H=X^{1/2}.
+\tag{4.731}
+\]
+
+The \(x\)-integration is exact term by term:
+
+\[
+ \int_{\mathbb R}S_{X,t}(x)\,dx
+ =H\sum_n f(n)n^{-it}V(n/X).
+\tag{4.732}
+\]
+
+The support in \(x\) has length \(O_V(X)\).  A finite cover by the
+uniform dyadic version of (4.723), followed by Cauchy--Schwarz in
+(4.732), therefore gives
+
+\[
+ \left|\sum_n f(n)n^{-it}V(n/X)\right|
+ \ll H^{-1}X^{1/2}(XH)^{1/2}(\log X)^{O(1)}
+ =X^{3/4}(\log X)^{O(1)}.
+\tag{4.733}
+\]
+
+The same argument permits a fixed smooth factor \((n/X)^{-\sigma}\)
+inside \(V\).  A smooth dyadic partition of unity then bounds the
+\(X\)-block of \(\sum f(n)n^{-s}\) by
+\(X^{3/4-\sigma}(\log X)^{O(1)}\), locally uniformly for fixed
+\(s=\sigma+it\).  Hence the dyadic series converges normally and
+defines a holomorphic continuation to \(\Re s>3/4\).  On
+\(\Re s>1\) it equals its Euler product, so the identity theorem gives
+
+\[
+ \boxed{
+ \sum_{n\ge1}\frac{(\mu*\mu)(n)}{n^s}
+ =\frac1{\zeta(s)^2}
+ \text{ holomorphic for }\Re s>\frac34,
+ \quad\Longrightarrow\quad
+ \zeta(s)\ne0\text{ there}.}
+\tag{4.734}
+\]
+
+Thus proving the uniform single-\(\tau\) variance gate would already
+prove the presently unknown zero-free half-plane
+\(\Re s>3/4\).  This implication does **not** show that the original
+MWKF asymptotic requires that zero-free result: (4.723) was introduced
+only as a sufficient condition after Cauchy in the ratio transform.
+The correct conclusion is to stop strengthening the restricted
+coefficient into separate uniform \(\tau\)-bounds and instead retain
+the joint ratio integral, where cancellation between ratio frequencies
+is still available.  The adapter `inverse_zeta_variance_zero_free_audit`
+records this logical direction and keeps
+`inverse_zeta_variance_gate_available_unconditionally=False`.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
