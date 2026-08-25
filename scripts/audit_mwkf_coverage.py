@@ -188,18 +188,37 @@ class EndpointCriticalAggregationBudget:
     ratio_k_removed: Fraction
     critical_hl_removed: Fraction
     remaining_dyadic_log_loss: Fraction
-    harmonic_q_log_loss: Fraction
+    q_logarithmic_depth: Fraction
+    frequency_logarithmic_depth: Fraction
+    q_aggregation_is_cardinal: bool
     total_log_power_loss: Fraction
     endpoint_log_saving: Fraction
     net_log_power: Fraction
     polyloglog_loss_exponent: Fraction
-    mrt_log_power_margin: Fraction
     critical_face: bool
     extra_log_saving_required: bool
-    mrt_beats_polyloglog: bool
-    would_close_if_joint_weight_admissible: bool
+    absolute_bound_produces_little_o: bool
+
+
+@dataclass(frozen=True)
+class ImprovedAveragedChowlaShellAudit:
+    q_logarithmic_depth: Fraction
+    frequency_logarithmic_depth: Fraction
+    total_logarithmic_depth: Fraction
+    mrt_log_saving: Fraction
+    improved_log_saving: Fraction
+    improved_polyloglog_loss_exponent: Fraction
+    endpoint_absolute_log_margin: Fraction
+    mrt_log_margin: Fraction
+    improved_log_margin: Fraction
+    power_critical_face: bool
+    stationary_face: bool
+    ledger_closes_if_bv_separated: bool
+    fixed_slope_extension_required: bool
+    bv_separation_required: bool
     joint_coefficient_accepted: bool
     published_coverage: bool
+    source: str
 
 
 @dataclass(frozen=True)
@@ -755,32 +774,31 @@ def endpoint_critical_aggregation_budget(
     box: ExponentBox,
     *,
     endpoint_factors: int,
-    mrt_log_saving: Fraction,
+    q_logarithmic_depth: Fraction,
+    frequency_logarithmic_depth: Fraction,
 ) -> EndpointCriticalAggregationBudget:
-    """Count logarithmic losses on the full endpoint-critical family.
+    """Count a bounded logarithmic neighborhood of the hard endpoint.
 
     The crude global ledger has six dyadic parameters ``R,S,K,M,L,H``.
     On this face, the two endpoint constraints determine ``R,S`` for a
     fixed ``q``; ratio balance determines ``K`` from ``M``; and the two
     critical frequency constraints determine ``H,L`` from ``M,R,S``.
     The entire line ``0 <= m <= 1/2`` remains, so the ``M`` dyadic sum is
-    genuine.  Together with the harmonic ``q`` sum this leaves two powers
-    of ``log T``.  Polylogarithmic critical collars for ``H,L`` contribute
-    only ``(log log T)^2``.
-
-    The exponent equalities do not certify the constant endpoint collars
-    or the hypotheses of an averaged-Chowla theorem.  In particular the
-    actual joint ``(s,shift,frequency)`` coefficient is deliberately left
-    unaccepted, so this adapter never turns the optimistic MRT saving into
-    published coverage.
+    genuine.  The centered absolute bound loses a factor ``q`` against
+    the normalized local gate.  Thus after taking absolute values the
+    ``q`` aggregation is cardinal, not harmonic.  If ``q <= L^gamma``
+    and the frequency collar loses ``L^beta``, the two endpoint tapers
+    leave the exact logarithmic margin ``1-gamma-beta`` after the genuine
+    ``M`` dyadic sum.  Critical ``H,L`` collars add only log-log losses.
     """
     if endpoint_factors not in (0, 1, 2):
         raise ValueError("endpoint_factors must be 0, 1, or 2")
-    if mrt_log_saving < 0:
-        raise ValueError("mrt_log_saving must be nonnegative")
+    if q_logarithmic_depth < 0:
+        raise ValueError("q_logarithmic_depth must be nonnegative")
+    if frequency_logarithmic_depth < 0:
+        raise ValueError("frequency_logarithmic_depth must be nonnegative")
 
     raw_dyadic_log_loss = F(6)
-    harmonic_q_log_loss = F(1)
     endpoint_faces = sum(
         exponent == F(3)
         for exponent in (
@@ -801,7 +819,9 @@ def endpoint_critical_aggregation_budget(
         - critical_hl_removed
     )
     total_log_power_loss = (
-        remaining_dyadic_log_loss + harmonic_q_log_loss
+        remaining_dyadic_log_loss
+        + q_logarithmic_depth
+        + frequency_logarithmic_depth
     )
     certified_endpoint_factors = min(endpoint_factors, endpoint_faces)
     endpoint_log_saving = F(certified_endpoint_factors)
@@ -811,6 +831,7 @@ def endpoint_critical_aggregation_budget(
     )
     critical_face = (
         is_admissible(box)
+        and box.kappa == F(0)
         and endpoint_faces == 2
         and endpoint_factors == 2
         and ratio_face
@@ -822,13 +843,8 @@ def endpoint_critical_aggregation_budget(
         and polyloglog_loss_exponent > 0
         and net_log_power <= 0
     )
-    mrt_log_power_margin = net_log_power + mrt_log_saving
-    mrt_beats_polyloglog = (
-        critical_face and mrt_log_power_margin > 0
-    )
-    joint_coefficient_accepted = False
-    would_close_if_joint_weight_admissible = (
-        critical_face and mrt_beats_polyloglog
+    absolute_bound_produces_little_o = (
+        critical_face and net_log_power > 0
     )
     return EndpointCriticalAggregationBudget(
         raw_dyadic_log_loss=raw_dyadic_log_loss,
@@ -836,22 +852,101 @@ def endpoint_critical_aggregation_budget(
         ratio_k_removed=ratio_k_removed,
         critical_hl_removed=critical_hl_removed,
         remaining_dyadic_log_loss=remaining_dyadic_log_loss,
-        harmonic_q_log_loss=harmonic_q_log_loss,
+        q_logarithmic_depth=q_logarithmic_depth,
+        frequency_logarithmic_depth=frequency_logarithmic_depth,
+        q_aggregation_is_cardinal=True,
         total_log_power_loss=total_log_power_loss,
         endpoint_log_saving=endpoint_log_saving,
         net_log_power=net_log_power,
         polyloglog_loss_exponent=polyloglog_loss_exponent,
-        mrt_log_power_margin=mrt_log_power_margin,
         critical_face=critical_face,
         extra_log_saving_required=extra_log_saving_required,
-        mrt_beats_polyloglog=mrt_beats_polyloglog,
-        would_close_if_joint_weight_admissible=(
-            would_close_if_joint_weight_admissible
+        absolute_bound_produces_little_o=(
+            absolute_bound_produces_little_o
         ),
+    )
+
+
+def improved_averaged_chowla_shell_audit(
+    box: ExponentBox,
+    *,
+    q_logarithmic_depth: Fraction,
+    frequency_logarithmic_depth: Fraction,
+) -> ImprovedAveragedChowlaShellAudit:
+    """Compare MRT and Menon on a logarithmic critical subface.
+
+    The endpoint tapers and the genuine ``M`` dyadic sum leave margin one.
+    A cardinal ``q <= L^gamma`` sum and frequency deficit ``L^beta``
+    consume ``gamma+beta``.  MRT adds ``1/3000`` logarithm, whereas
+    Menon's improved averaged-Chowla theorem adds one logarithm with a
+    squared ``log log`` loss.  Hence the latter closes the separated
+    ledger exactly for ``gamma+beta < 2``.
+
+    Menon's stated theorem has unit-slope shifts and no completed MWKF
+    coefficient.  Covering the full centered family additionally needs a
+    fixed-slope Fourier extension and uniform bounded-variation separation
+    of the actual completed kernel.  Neither is certified here.
+    """
+    if q_logarithmic_depth < 0:
+        raise ValueError("q_logarithmic_depth must be nonnegative")
+    if frequency_logarithmic_depth < 0:
+        raise ValueError("frequency_logarithmic_depth must be nonnegative")
+
+    total_logarithmic_depth = (
+        q_logarithmic_depth + frequency_logarithmic_depth
+    )
+    mrt_log_saving = F(1, 3000)
+    improved_log_saving = F(1)
+    improved_polyloglog_loss_exponent = F(2)
+    endpoint_faces = (
+        box.kappa + box.rho == F(3)
+        and box.kappa + box.sigma == F(3)
+    )
+    ratio_face = box.k + box.sigma == box.m + box.rho
+    h_critical = box.h == box.sigma - box.m
+    ell_critical = box.ell == box.m + box.rho - 1
+    power_critical_face = (
+        is_admissible(box)
+        and box.kappa == F(0)
+        and endpoint_faces
+        and ratio_face
+        and h_critical
+        and ell_critical
+    )
+    stationary_face = joint_phase_scales(box).on_stationary_face
+    endpoint_absolute_log_margin = F(1) - total_logarithmic_depth
+    mrt_log_margin = endpoint_absolute_log_margin + mrt_log_saving
+    improved_log_margin = endpoint_absolute_log_margin + improved_log_saving
+    ledger_closes_if_bv_separated = (
+        power_critical_face
+        and stationary_face
+        and improved_log_margin > 0
+    )
+    fixed_slope_extension_required = True
+    bv_separation_required = True
+    joint_coefficient_accepted = False
+    return ImprovedAveragedChowlaShellAudit(
+        q_logarithmic_depth=q_logarithmic_depth,
+        frequency_logarithmic_depth=frequency_logarithmic_depth,
+        total_logarithmic_depth=total_logarithmic_depth,
+        mrt_log_saving=mrt_log_saving,
+        improved_log_saving=improved_log_saving,
+        improved_polyloglog_loss_exponent=(
+            improved_polyloglog_loss_exponent
+        ),
+        endpoint_absolute_log_margin=endpoint_absolute_log_margin,
+        mrt_log_margin=mrt_log_margin,
+        improved_log_margin=improved_log_margin,
+        power_critical_face=power_critical_face,
+        stationary_face=stationary_face,
+        ledger_closes_if_bv_separated=ledger_closes_if_bv_separated,
+        fixed_slope_extension_required=fixed_slope_extension_required,
+        bv_separation_required=bv_separation_required,
         joint_coefficient_accepted=joint_coefficient_accepted,
-        published_coverage=(
-            would_close_if_joint_weight_admissible
-            and joint_coefficient_accepted
+        published_coverage=False,
+        source=(
+            "Menon, arXiv:2607.15574v1, "
+            "Theorem improved_avg_chowla"
         ),
     )
 
@@ -1453,7 +1548,8 @@ def main() -> None:
     endpoint_critical = endpoint_critical_aggregation_budget(
         hard,
         endpoint_factors=2,
-        mrt_log_saving=F(1, 3000),
+        q_logarithmic_depth=F(0),
+        frequency_logarithmic_depth=F(0),
     )
     print(
         "balanced_max_a: "
@@ -1463,9 +1559,33 @@ def main() -> None:
         f"net_log_power={_fmt(endpoint_critical.net_log_power)} "
         "polyloglog_loss="
         f"{_fmt(endpoint_critical.polyloglog_loss_exponent)} "
-        f"mrt_margin={_fmt(endpoint_critical.mrt_log_power_margin)} "
-        "joint_weight="
-        f"{endpoint_critical.joint_coefficient_accepted}"
+        "q_aggregation=cardinal "
+        "absolute_little_o="
+        f"{endpoint_critical.absolute_bound_produces_little_o}"
+    )
+    logarithmic_depths = (F(0), F(3, 2), F(2), F(3))
+    improved_depth_parts: list[str] = []
+    for depth in logarithmic_depths:
+        depth_audit = improved_averaged_chowla_shell_audit(
+            hard,
+            q_logarithmic_depth=depth,
+            frequency_logarithmic_depth=F(0),
+        )
+        improved_depth_parts.append(
+            f"{_fmt(depth)}:{_fmt(depth_audit.improved_log_margin)}"
+        )
+    improved_depth_margins = ",".join(improved_depth_parts)
+    improved_half = improved_averaged_chowla_shell_audit(
+        hard,
+        q_logarithmic_depth=F(3, 2),
+        frequency_logarithmic_depth=F(0),
+    )
+    print(
+        "balanced_max_a: "
+        f"improved_chowla_total_depths={improved_depth_margins} "
+        "conditional_cover_beta_plus_gamma_lt_2="
+        f"{improved_half.ledger_closes_if_bv_separated} "
+        f"joint_weight={improved_half.joint_coefficient_accepted}"
     )
     distances = (F(1), F(3, 2), F(2), F(5, 2), F(3))
     shell_savings = ",".join(

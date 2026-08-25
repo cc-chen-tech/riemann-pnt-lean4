@@ -318,8 +318,8 @@ def test_endpoint_tapers_expand_the_logarithmic_resonance_collar() -> None:
     assert not off_endpoint.produces_little_o
 
 
-def test_endpoint_critical_face_has_only_two_log_t_aggregation_losses() -> None:
-    """Catch reusing the crude seven-log ledger on the critical face."""
+def test_endpoint_critical_face_uses_a_cardinal_q_aggregation() -> None:
+    """Catch treating the q-loss as harmonic after the absolute bound."""
     adapter = getattr(
         coverage_audit,
         "endpoint_critical_aggregation_budget",
@@ -333,34 +333,104 @@ def test_endpoint_critical_face_has_only_two_log_t_aggregation_losses() -> None:
     budget = adapter(
         box,
         endpoint_factors=2,
-        mrt_log_saving=F(1, 3000),
+        q_logarithmic_depth=F(0),
+        frequency_logarithmic_depth=F(0),
     )
     assert budget.raw_dyadic_log_loss == F(6)
     assert budget.endpoint_rs_removed == F(2)
     assert budget.ratio_k_removed == F(1)
     assert budget.critical_hl_removed == F(2)
     assert budget.remaining_dyadic_log_loss == F(1)
-    assert budget.harmonic_q_log_loss == F(1)
-    assert budget.total_log_power_loss == F(2)
+    assert budget.q_logarithmic_depth == F(0)
+    assert budget.frequency_logarithmic_depth == F(0)
+    assert budget.q_aggregation_is_cardinal
+    assert budget.total_log_power_loss == F(1)
     assert budget.endpoint_log_saving == F(2)
-    assert budget.net_log_power == F(0)
+    assert budget.net_log_power == F(1)
     assert budget.polyloglog_loss_exponent == F(2)
-    assert budget.mrt_log_power_margin == F(1, 3000)
     assert budget.critical_face
-    assert budget.extra_log_saving_required
-    assert budget.mrt_beats_polyloglog
-    assert budget.would_close_if_joint_weight_admissible
-    assert not budget.joint_coefficient_accepted
-    assert not budget.published_coverage
+    assert not budget.extra_log_saving_required
+    assert budget.absolute_bound_produces_little_o
+
+    logarithmic_q = adapter(
+        box,
+        endpoint_factors=2,
+        q_logarithmic_depth=F(1),
+        frequency_logarithmic_depth=F(0),
+    )
+    assert logarithmic_q.net_log_power == F(0)
+    assert logarithmic_q.extra_log_saving_required
+    assert not logarithmic_q.absolute_bound_produces_little_o
 
     off_face = adapter(
         boundary_witnesses()["s_long"],
         endpoint_factors=2,
-        mrt_log_saving=F(1, 3000),
+        q_logarithmic_depth=F(0),
+        frequency_logarithmic_depth=F(0),
     )
     assert not off_face.critical_face
-    assert not off_face.would_close_if_joint_weight_admissible
-    assert not off_face.published_coverage
+    assert not off_face.absolute_bound_produces_little_o
+
+    positive_q_power = adapter(
+        boundary_witnesses()["large_q_endpoint"],
+        endpoint_factors=2,
+        q_logarithmic_depth=F(0),
+        frequency_logarithmic_depth=F(0),
+    )
+    assert not positive_q_power.critical_face
+    assert not positive_q_power.absolute_bound_produces_little_o
+
+
+def test_improved_averaged_chowla_reaches_total_log_depth_below_two() -> None:
+    """Catch retaining MRT's 1/3000 exponent after Menon's improvement."""
+    adapter = getattr(
+        coverage_audit,
+        "improved_averaged_chowla_shell_audit",
+        None,
+    )
+    assert adapter is not None, (
+        "improved averaged-Chowla shell adapter is missing"
+    )
+    box = boundary_witnesses()["balanced_max_a"]
+
+    half_depth = adapter(
+        box,
+        q_logarithmic_depth=F(3, 2),
+        frequency_logarithmic_depth=F(0),
+    )
+    assert half_depth.mrt_log_saving == F(1, 3000)
+    assert half_depth.improved_log_saving == F(1)
+    assert half_depth.improved_polyloglog_loss_exponent == F(2)
+    assert half_depth.endpoint_absolute_log_margin == F(-1, 2)
+    assert half_depth.mrt_log_margin == F(-1499, 3000)
+    assert half_depth.improved_log_margin == F(1, 2)
+    assert half_depth.ledger_closes_if_bv_separated
+    assert half_depth.fixed_slope_extension_required
+    assert half_depth.bv_separation_required
+    assert not half_depth.joint_coefficient_accepted
+    assert not half_depth.published_coverage
+    assert half_depth.source == (
+        "Menon, arXiv:2607.15574v1, "
+        "Theorem improved_avg_chowla"
+    )
+
+    boundary = adapter(
+        box,
+        q_logarithmic_depth=F(2),
+        frequency_logarithmic_depth=F(0),
+    )
+    assert boundary.improved_log_margin == F(0)
+    assert not boundary.ledger_closes_if_bv_separated
+    assert not boundary.published_coverage
+
+    beyond = adapter(
+        box,
+        q_logarithmic_depth=F(2),
+        frequency_logarithmic_depth=F(1),
+    )
+    assert beyond.improved_log_margin == F(-1)
+    assert not beyond.ledger_closes_if_bv_separated
+    assert not beyond.published_coverage
 
 
 def test_far_resonance_shell_has_the_exact_piecewise_power_deficit() -> None:
@@ -515,9 +585,14 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "full_collar_global_margin=-5"
     ) in output
     assert (
-        "balanced_max_a: endpoint_critical_log_loss=2 "
-        "endpoint_taper=2 net_log_power=0 polyloglog_loss=2 "
-        "mrt_margin=1/3000 joint_weight=False"
+        "balanced_max_a: endpoint_critical_log_loss=1 "
+        "endpoint_taper=2 net_log_power=1 polyloglog_loss=2 "
+        "q_aggregation=cardinal absolute_little_o=True"
+    ) in output
+    assert (
+        "balanced_max_a: improved_chowla_total_depths="
+        "0:2,3/2:1/2,2:0,3:-1 "
+        "conditional_cover_beta_plus_gamma_lt_2=True joint_weight=False"
     ) in output
     assert (
         "balanced_max_a: centered_far_shell_required_savings="
@@ -577,6 +652,12 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\ell=m+\rho-1",
         r"(\log\log T)^2",
         r"\mathscr L^{-1/3000}",
+        "## 4.10 Improved averaged-Chowla subface",
+        "arXiv:2607.15574v1",
+        r"\frac{(\log\log X)^2}{\log X}",
+        r"0\le\beta+\gamma<2",
+        "fixed-slope Fourier extension",
+        "uniform bounded-variation separation",
         "joint coefficient is not an admissible published MRT coefficient",
         "published coverage remains false",
     ):

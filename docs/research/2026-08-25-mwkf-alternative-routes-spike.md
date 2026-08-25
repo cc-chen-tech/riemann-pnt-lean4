@@ -1228,93 +1228,144 @@ alone.
 ### 4.9 Exact endpoint-critical aggregation ledger
 
 The seven-logarithm ledger in (2.7) is deliberately uniform over the
-whole core.  It is not the sharp ledger on the genuine endpoint-critical
-family.  At power scale that family is cut out by
+whole core.  A sharp count on the full \(D=T\) power barrier must also
+retain the dependence on \(q\).  This corrects the tempting but false
+replacement of the \(q\)-sum by a harmonic logarithm after applying the
+centered absolute bound.
+
+At the pure logarithmic power face one has
 
 \[
- \kappa+\rho=\kappa+\sigma=3,
- \qquad k+\sigma=m+\rho,
- \qquad h=\sigma-m,
- \qquad \ell=m+\rho-1.
+ \kappa=0,qquad \rho=\sigma=3,qquad
+ k+\sigma=m+\rho,qquad
+ h=\sigma-m,qquad \ell=m+\rho-1.
 \tag{4.74}
 \]
 
-For the following count, the corresponding constant-scale hypotheses are
-also required: both inequalities in (4.66), the fixed ratio window (5.7)
-of the exact-audit note, and, for a fixed \(B_0>0\),
+The condition \(\kappa=0\) is essential.  If \(q=T^\kappa\) with
+\(\kappa>0\), then \(R=S=T^{3-\kappa}\), while \(CV=T\), and the
+full collar \(D=T\) has the positive-power deficit \(T^\kappa\).
+
+For the logarithmic refinement put
 
 \[
- \mathscr L^{-B_0}\frac SM\le H
- \le 8\mathscr L^{B_0}\frac SM,
- \qquad
- \mathscr L^{-B_0}\frac{MR}{T}\le L
- \le 8\mathscr L^{B_0}\frac{MR}{T}.
+ x:=\frac{HM}{S},\qquad y:=\frac{TL}{MR},qquad
+ q\le\mathscr L^\gamma,qquad (xy)^{-1}\le\mathscr L^\beta,
+ \qquad \beta,\gamma\ge0.
 \tag{4.75}
 \]
 
-Now count the retained boxes before applying absolute values.  For each
-fixed \(q\), the two endpoint conditions leave \(O(1)\) choices for
-\(R,S\).  Once \(M,R,S\) are fixed, (5.7) leaves \(O(1)\) choices for
-\(K\).  Each interval in (4.75) contains
-\(O_{B_0}(\log\log T)\) dyadic values.  The \(M\)-sum is still genuine:
-when \(R=S\), the whole line
+In addition, impose both exact endpoint conditions (4.66), the fixed
+ratio window (5.7) of the exact-audit note, and polylogarithmic upper and
+lower bounds on \(x,y\).  For each fixed \(q\), the endpoint conditions
+leave \(O(1)\) dyadic choices for \(R,S\).  Ratio balance fixes \(K\)
+from \(M,R,S\), and the logarithmic neighborhoods for \(x,y\) contain
+\(O(\log\log T)\) dyadic choices each.  The \(M\)-sum remains genuine:
+for \(R=S\), the line
 
 \[
- 0\le m=k\le\frac12,
- \qquad h=3-m,
- \qquad \ell=2+m
+ 0\le m=k\le\frac12,qquad h=3-m,qquad \ell=2+m
 \tag{4.76}
 \]
 
-satisfies (4.74), and \(HL\asymp RS/T\) is independent of \(M\).
-Consequently the exact critical-family aggregation is
+satisfies (4.74), and \(HL\asymp xyRS/T\).
+
+The decisive normalization is as follows.  Equations (4.21) and (4.67)
+give
 
 \[
- O_{B_0}\!\left(
-   \underbrace{\mathscr L}_{M\text{-dyadic}}
-   \underbrace{\mathscr L}_{\sum_{q\le N}\mu^2(q)/q}
-   (\log\log T)^2
- \right)
- =O_{B_0}\!\left(\mathscr L^2(\log\log T)^2\right).
+ |\mathfrak D^{(2)}_{q,D=T}|
+ \ll_W (CV)^2T^2\mathscr L^{-2}.
 \tag{4.77}
 \]
 
-Thus the two endpoint tapers in (4.67) cancel exactly the two powers of
-\(\mathscr L\) in (4.77).  On the full \(D=T\) collar, (4.68) therefore
-gives only
-
-\[
- O_{W,B_0}\!\left(T(\log\log T)^2\right),
-\tag{4.78}
-\]
-
-which is still not \(o_W(T)\).  Any fixed additional logarithmic saving
-would close this face.  A precise sufficient local gate is: for some
-fixed \(\eta>0\), uniformly over (4.74)--(4.75),
+Since \(HL/S\asymp xyR/T\), \(CV\asymp T/(xy)\),
+\(qR\asymp T^3\), and the outer normalization is
+\(2T/(qRS)\), one box contributes
 
 \[
  \boxed{
- |\mathfrak D^{(2)}_{q,D=T}|
- \ll_{W,B_0,\eta}RCV\,\mathscr L^{-2-\eta}.}
+ |\mathcal O^{\ne0}_{q;R,S,K,M,L,H}(D=T)|
+ \ll_W T(xy)^{-1}\mathscr L^{-2}
+ \ll_W T\mathscr L^{\beta-2}.}
+\tag{4.78}
+\]
+
+The factor \(1/q\) from the desired local gate has disappeared in
+(4.78).  Consequently the \(q\)-aggregation is cardinal, not harmonic.
+Summing \(q\le\mathscr L^\gamma\), the genuine \(M\)-dyadic family, and
+the two logarithmic frequency collars gives
+
+\[
+ \boxed{
+ \mathcal R_{D=T}(\beta,\gamma)
+ \ll_{W,B_0}
+ T\mathscr L^{\beta+\gamma-1}(\log\log T)^2.}
 \tag{4.79}
 \]
 
-Indeed, (4.77) then gives
-\(O(T\mathscr L^{-\eta}(\log\log T)^2)=o(T)\).
-The optimistic MRT factor \(\mathscr L^{-1/3000}\) from (4.35) would be
-more than sufficient at the level of this exact ledger.  It is not a
-theorem for the sum at hand: the joint coefficient is not an admissible published MRT coefficient,
-because it simultaneously contains the
-\(s\)-dependent smooth kernel, the moving shift, and the completed
-frequency variables.  Hence published coverage remains false.
+Thus the endpoint absolute bound already proves \(o(T)\) on every fixed
+subface \(\beta+\gamma<1\).  At \(\beta+\gamma=1\), the remaining
+\((\log\log T)^2\) prevents little-oh.  The exact-rational function
+endpoint_critical_aggregation_budget records (4.74)--(4.79), including
+the cardinal \(q\)-sum and the strict inequality.
 
-This sharpens, rather than contradicts, (4.72).  The margin \(-5\) is the
-uniform whole-core count; on the critical family the exact power of
-\(\mathscr L\) after the endpoint tapers is zero, with the explicit
-\((\log\log T)^2\) loss in (4.78).  The exact-rational function
-endpoint_critical_aggregation_budget records (4.74)--(4.79), while
-deliberately returning false for joint-coefficient acceptance and
-published coverage.
+### 4.10 Improved averaged-Chowla subface
+
+Menon, arXiv:2607.15574v1, Theorem
+`improved_avg_chowla`, proves for Liouville correlations, with the paper
+explicitly noting the analogous Möbius statement, the error factor
+
+\[
+ \frac{\log\log H}{\log H}
+ +\frac{(\log\log X)^2}{\log X}.
+\tag{4.80}
+\]
+
+For \(H=T\) and \(X\asymp T^3\), (4.80) is
+\(O(\mathscr L^{-1}(\log\mathscr L)^2)\).  This improves the earlier
+\(\mathscr L^{-1/3000}\) factor in (4.35).  If it could be applied to
+the completed centered family before taking absolute values in the
+frequency variables, (4.79) would become
+
+\[
+ \mathcal R_{D=T}^{\rm Menon}(\beta,\gamma)
+ \ll T\mathscr L^{\beta+\gamma-2}
+       (\log\mathscr L)^4,
+\tag{4.81}
+\]
+
+and hence would close every fixed subface
+
+\[
+ \boxed{0\le\beta+\gamma<2.}
+\tag{4.82}
+\]
+
+This is conditional routing, not current coverage.  Menon's stated
+correlation has unit slopes and no MWKF completion weight.  The sectors
+in (4.43) also have slopes \(2,3,4\), so a fixed-slope Fourier extension
+of the published exponential-sum argument must be written out.  More
+importantly, one needs a uniform bounded-variation separation of
+
+\[
+ (s,w)\longmapsto
+ \Theta_{(j+1)s+w,s}(c,v)
+ \left\{e\left(\frac{cvw}{s}\right)-1\right\}
+\tag{4.83}
+\]
+
+whose summed separation norm retains the first-moment scale \((CV)^2\)
+without losing a positive power of \(\mathscr L\).  Coprimality can then
+be Möbius-inverted in \((s,w)\), but that reindexing and the required
+uniform nonpretentious estimate for the resulting \(q,d\)-restricted
+Möbius functions must also be proved.
+
+The function improved_averaged_chowla_shell_audit records the conditional
+margin \(2-\beta-\gamma\).  It keeps both the fixed-slope extension and
+uniform bounded-variation separation as unmet hypotheses, so the joint coefficient is not an admissible published MRT coefficient and published coverage remains false.  The residual logarithmic region is
+\(\beta+\gamma\ge2\); all \(q=T^\kappa\), \(\kappa>0\), boxes remain
+positive-power cells rather than part of this logarithmic adapter.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
