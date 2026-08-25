@@ -1678,10 +1678,59 @@ completion bounds have respective exponent losses
 \tag{8.7}
 \]
 
-Elementary one-factor completion by itself therefore reaches
-CK\(_{\rm ub}(3)\) exactly on the exponent-zero face \(a=0\). It does not
-cover any positive-length \(h\delta\) region. Formula (8.5), rather than a
-claimed square-root cancellation, is the boundary-safe Region-B result.
+Completion with both \(r,s\) fixed therefore reaches
+CK\(_{\rm ub}(3)\) only on the exponent-zero face \(a=0\).  Formula (8.5),
+rather than a claimed square-root cancellation, is the boundary-safe
+fixed-modulus result.  The following additional modulus average sharpens
+Region B.
+
+There is, however, a sharper joint use of completion and the outer reduced
+modulus variable.  Fix \(s,\delta\), put \(g=(\delta,s)\), and sum the
+pointwise geometric bound over \(r\).  Inversion permutes the reduced
+residue classes, while multiplication by \(\delta\) has multiplicity at
+most \(g\) and leaves a grid of spacing \(g/s\).  Therefore
+
+\[
+ \sum_{r\asymp R\atop(r,s)=1}
+ \left|\sum_{h\asymp H}F_{r,s,\delta}(h/H)
+ e\left(-\frac{h\delta\bar r}{s}\right)\right|
+ \ll_{J,\varepsilon}T^\varepsilon(1+R/s)(gH+s).
+\tag{8.5a}
+\]
+
+This includes the resonant case \(s\mid\delta\), where the term \(gH\)
+is necessary.  For a dyadic interval \(L\leq|\delta|\leq2L\), the exact
+divisor identity \((n,s)=\sum_{d\mid(n,s)}\varphi(d)\) gives
+
+\[
+ \sum_{\delta\asymp L}(\delta,s)
+ \ll L\tau(s).
+\tag{8.5b}
+\]
+
+Indeed, only divisors \(d\leq2L\) occur; the count of their multiples in
+the interval is at most \(L/d+1\), and
+\(\sum_{d\mid s,d\leq2L}\varphi(d)\leq2L\tau(s)\).  Since \(H\leq
+sT^\varepsilon\) by (8.6), summing (8.5a) over \(\delta\) and then
+\(s\asymp S\) gives \(O(RSLT^\varepsilon)\) when \(R\geq S\).  When
+\(S>R\), reciprocity swaps \(r,s\); its extra factor
+\(e(-h\delta/(rs))\) merely translates the geometric frequency.  Hence
+the same bound holds in every orientation.  Interchanging \(h,\delta\)
+in this argument is legitimate by the joint seminorm bounds (5.14), and
+gives the second estimate
+
+\[
+ \boxed{
+ |\mathfrak S_q[\Psi]|\ll_\varepsilon
+ RS\min(L,H)T^\varepsilon.}
+\tag{8.5c}
+\]
+
+Thus the joint-completion loss is
+\(\min(\ell,h)\), not merely the three fixed-\((r,s)\) losses in (8.7).
+Region B consequently covers every admissible box with \(\ell=0\) or
+\(h=0\), including boxes with positive \(a=\ell+h\).  It still misses
+the interior \(\ell,h>0\); the balanced maximal box loses \(T^{5/2}\).
 
 ### 8.3 Region C: Wright's partially fixed denominator
 
@@ -1732,29 +1781,30 @@ choosing one of the two exponents.
 
 ### 8.4 Coverage table and residual witnesses
 
-The direct published coverage is exactly:
+The direct published-and-elementary coverage is exactly:
 
 | primary route | exact covered set | result |
 |---|---|---|
 | A: Bettin--Chandee | admissible boxes satisfying both inequalities (8.3) | proved from (8.1) |
-| B: one-factor completion | admissible boxes with \(a=0\) not already assigned to A | proved by (8.4)--(8.7) |
+| B: joint completion | admissible boxes with \(\min(\ell,h)=0\) not already assigned to A | proved by (8.4)--(8.7), sharpened by (8.5a)--(8.5c) |
 | C: Wright direct | no additional boxes | \(R_0=1\) gives BC; \(R_0>1\) requires Region D |
 | D: structured residual | every other admissible box | **unproved** |
 
 The deterministic boundary ledger is:
 
-| witness | \((\rho,\sigma,a)\) | \((\Delta_1,\Delta_2)\) | completion losses | route |
+| witness | \((\rho,\sigma,\ell,h)\) | \((\Delta_1,\Delta_2)\) | joint-completion loss | route |
 |---|---:|---:|---:|---|
-| balanced maximal \(a\) | \((3,3,5)\) | \((-41/10,-37/8)\) | \((5,3,3)\) | D |
-| \(r\)-long | \((3,2,4)\) | \((-17/5,-15/4)\) | \((4,2,2)\) | D |
-| \(s\)-long | \((2,3,4)\) | \((-17/5,-15/4)\) | \((4,3,3)\) | D |
-| large-\(q\) endpoint | \((1,1,1)\) | \((-4/5,-7/8)\) | \((1,1,1)\) | D |
+| balanced maximal \(a\) | \((3,3,5/2,5/2)\) | \((-41/10,-37/8)\) | \(5/2\) | D |
+| \(r\)-long | \((3,2,2,2)\) | \((-17/5,-15/4)\) | \(2\) | D |
+| \(s\)-long | \((2,3,2,2)\) | \((-17/5,-15/4)\) | \(2\) | D |
+| large-\(q\) endpoint | \((1,1,0,1)\) | \((-4/5,-7/8)\) | \(0\) | B |
 
-Hence published arbitrary-coefficient estimates, incomplete completion,
-and the direct fixed-factor theorem do not prove CK\(_{\rm ub}(3)\). The
-remaining work is precisely an estimate that first factorizes one Möbius
-variable while retaining the other Möbius weight, the product
-\(a=h\delta\), and the coupled kernel.
+Hence published arbitrary-coefficient estimates, sharpened joint
+completion, and the direct fixed-factor theorem do not prove
+CK\(_{\rm ub}(3)\) in the interior \(\ell,h>0\). The remaining work is
+precisely an estimate that first factorizes one Möbius variable while
+retaining the other Möbius weight, the product \(a=h\delta\), and the
+coupled kernel.
 
 ## 9. Exact Möbius decomposition and the residual Type-II gate
 
@@ -2270,7 +2320,7 @@ exploit the Möbius weights together with the coupled product
 
 ## 10. What has and has not been proved
 
-**Current classification: published coverage complete; Region D remains
+**Current classification: published/elementary coverage complete; Region D remains
 unproved.**
 
 Proved in this note:
@@ -2313,7 +2363,7 @@ Proved in this note:
 | Effective ranges and coupled-kernel normalization | verified | (5.1)--(5.15), including both nonstationary cutoffs and the exact kernel scale |
 | Comparison of the three candidate gates | verified logical reduction | (6.0)--(6.8); only \({\rm(US)}\Rightarrow{\rm(IS)}\Rightarrow{\rm(CK)}\) is proved |
 | Upper-bound tail outside the power-enlarged core | verified | (6.10)--(6.12), by fixed-order integration by parts depending on \(\varepsilon\) |
-| Published Region A--C coverage | verified | exact inequalities and hypothesis ledger in Section 8 |
+| Published/elementary Region A--C coverage | verified | exact inequalities and hypothesis ledger in Section 8 |
 | Finite Möbius Type-I/II decomposition | verified | exact convolution identity and retained coupled sum in (9.1)--(9.7) |
 | Termwise Wright route after \(s=un\) | verified insufficient | five exact savings (9.10); balanced gap (9.12) |
 | Fixed-modulus Pascadi route | verified insufficient | best full-residue saving \(s^{33/191-o(1)}\); balanced gap (9.21) |

@@ -23,7 +23,7 @@
 ### Task 1: Exact Region-A savings
 
 **Files:**
-- Create: `scripts/audit_mwkf_coverage.py`
+- Create: `scripts/audit_mobius_offdiagonal_coverage.py`
 - Create: `tests/test_mwkf_coverage_audit.py`
 
 **Interfaces:**
@@ -48,7 +48,7 @@ def test_bc_savings_are_the_two_hand_derived_exponents() -> None:
 
 Run: `pytest -q tests/test_mwkf_coverage_audit.py::test_bc_savings_are_the_two_hand_derived_exponents`
 
-Expected: FAIL because `scripts.audit_mwkf_coverage` does not exist.
+Expected: FAIL because `scripts.audit_mobius_offdiagonal_coverage` does not exist.
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -82,7 +82,7 @@ Expected: PASS.
 ### Task 2: Completion and Wright applicability
 
 **Files:**
-- Modify: `scripts/audit_mwkf_coverage.py`
+- Modify: `scripts/audit_mobius_offdiagonal_coverage.py`
 - Modify: `tests/test_mwkf_coverage_audit.py`
 
 **Interfaces:**
@@ -165,7 +165,7 @@ Expected: PASS.
 ### Task 3: Deterministic route classification
 
 **Files:**
-- Modify: `scripts/audit_mwkf_coverage.py`
+- Modify: `scripts/audit_mobius_offdiagonal_coverage.py`
 - Modify: `tests/test_mwkf_coverage_audit.py`
 
 **Interfaces:**
@@ -277,7 +277,7 @@ Expected: all tests PASS.
 
 - [ ] **Step 2: Run the deterministic checkers**
 
-Run: `python3 scripts/audit_mwkf_ranges.py && python3 scripts/audit_mwkf_coverage.py`
+Run: `python3 scripts/audit_mwkf_ranges.py && python3 scripts/audit_mobius_offdiagonal_coverage.py`
 
 Expected: every named boundary box prints a stable route and exact rational BC savings.
 
@@ -298,6 +298,6 @@ Expected: the upper-bound tail is proved, the coupled Region-D gate remains expl
 ```bash
 git add docs/superpowers/plans/2026-08-25-mobius-off-diagonal-published-coverage.md \
   docs/research/2026-08-24-mobius-weighted-off-diagonal.md \
-  scripts/audit_mwkf_coverage.py tests/test_mwkf_coverage_audit.py
+  scripts/audit_mobius_offdiagonal_coverage.py tests/test_mwkf_coverage_audit.py
 git commit -m "docs(research): classify published off-diagonal coverage"
 ```

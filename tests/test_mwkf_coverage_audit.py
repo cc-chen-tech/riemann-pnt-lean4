@@ -5,13 +5,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
-from scripts.audit_mwkf_coverage import (
+from scripts.audit_mobius_offdiagonal_coverage import (
     BettinChandeeSavings,
     bettin_chandee_covers,
     bettin_chandee_savings,
     classify_box,
     completion_covers,
     completion_exponents,
+    joint_completion_covers,
+    joint_completion_loss,
     wright_direct_applicability,
 )
 from scripts.audit_mwkf_ranges import ExponentBox, boundary_witnesses
@@ -47,6 +49,16 @@ def test_completion_records_boundary_and_trivial_losses() -> None:
     assert completion_covers(unit_a)
 
 
+def test_joint_completion_uses_the_shorter_h_delta_factor() -> None:
+    one_delta = boundary_witnesses()["large_q_endpoint"]
+    assert joint_completion_loss(one_delta) == F(0)
+    assert joint_completion_covers(one_delta)
+
+    balanced = boundary_witnesses()["balanced_max_a"]
+    assert joint_completion_loss(balanced) == F(5, 2)
+    assert not joint_completion_covers(balanced)
+
+
 def test_wright_has_no_direct_fixed_factor_in_the_original_s_sum() -> None:
     box = boundary_witnesses()["r_long"]
     result = wright_direct_applicability(box, fixed_denominator_factor=F(0))
@@ -63,14 +75,14 @@ def test_positive_wright_factor_requires_structured_factorization() -> None:
     assert "prior factorization of s" in result.reason
 
 
-def test_residual_witnesses_are_not_reported_as_published_coverage() -> None:
+def test_residual_witnesses_use_the_sharpened_completion_route() -> None:
     results = {
         name: classify_box(box) for name, box in boundary_witnesses().items()
     }
     assert results["balanced_max_a"].route == "D"
     assert results["r_long"].route == "D"
     assert results["s_long"].route == "D"
-    assert results["large_q_endpoint"].route == "D"
+    assert results["large_q_endpoint"].route == "B"
 
 
 def test_zero_third_length_uses_the_elementary_route_when_bc_fails() -> None:

@@ -116,6 +116,7 @@ def test_research_note_has_one_honest_phase_one_classification() -> None:
         "Phase-1 classification: corrected reduction verified",
         "Phase-1 classification: exact reduction remains blocked",
         "Current classification: published coverage complete; Region D remains",
+        "Current classification: published/elementary coverage complete; Region D remains",
     )
     assert sum(label in text for label in labels) == 1
     assert "Accepted local gate after exact audit:" in text
