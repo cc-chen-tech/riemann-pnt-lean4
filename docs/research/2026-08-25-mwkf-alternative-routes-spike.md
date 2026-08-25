@@ -1342,17 +1342,85 @@ and hence would close every fixed subface
 \tag{4.82}
 \]
 
-This is conditional routing, not current coverage.  Menon's stated
-correlation has unit slopes and no MWKF completion weight.  The sectors
-in (4.43) also have slopes \(2,3,4\), so a fixed-slope Fourier extension
-of the published exponential-sum argument must be written out.  More
-importantly, one needs a uniform bounded-variation separation of
+Equation (4.82) is conditional routing for the unit-slope sector, not
+current MWKF coverage.  For the other fixed slopes, a weaker statement
+does follow from Menon's stated exponential-sum theorem by an
+elementary fixed-slope square-root transfer, as follows.
+
+Let
+
+\[
+ E(X,H):=\frac{\log\log H}{\log H}
+ +\frac{(\log\log X)^2}{\log X}.
+\tag{4.83}
+\]
+
+Theorem `improved_exp_sum`, its stated Möbius analogue, the inequality
+\(|Z|^2\le H|Z|\) for an \(H\)-term sum, and the Fourier identity quoted
+in Menon's proof give, for a dyadically supported Möbius sequence \(f\),
+
+\[
+ \sum_{|w|\le H/2}
+ \left|\sum_n f(n)\overline{f(n+w)}\right|^2
+ \ll E(X,H)HX^2.
+\tag{4.84}
+\]
+
+Indeed, if \(A_f(\alpha)\) is the integrated squared short exponential
+sum, then
+\(\sup_\alpha A_f(\alpha)\ll E(X,H)H^2X\) and
+\(\int_{\mathbb T}A_f(\alpha)d\alpha\ll HX\).  Their product bounds the
+fourth-moment side of the Fourier identity, and
+\((2H-|w|)^2\gg H^2\) on \(|w|\le H/2\), proving (4.84).
+
+For a fixed \(k\in\{1,2,3,4\}\), put
+
+\[
+ f_k(n):=\mathbf1_{k\mid n}\,\mu(n/k),\qquad g(n):=\mu(n).
+\tag{4.85}
+\]
+
+Short exponential sums of \(f_k\) reduce, after \(n=km\), to those of
+\(\mu(m)\) on intervals of length \(H/k\); uniformity in the additive
+frequency absorbs the dilation by \(k\).  For
+\(B_w(F,G)=\sum_nF(n)\overline{G(n+w)}\), the exact polarization identity
+
+\[
+ 4B_w(f_k,g)=\sum_{a=0}^3 i^a
+ B_w(f_k+i^ag,f_k+i^ag)
+\tag{4.86}
+\]
+
+and (4.84), applied termwise using the triangle inequality for the two
+short exponential sums, prove
+
+\[
+ \sum_{|w|\le H/2}
+ \left|\sum_s\mu(s)\mu(ks+w)\right|
+ \ll_k E(X,H)^{1/2}HX.
+\tag{4.87}
+\]
+
+Thus the fixed-slope transfer is proved from the exponential-sum theorem,
+but it supplies only
+\(E^{1/2}\ll\mathscr L^{-1/2}\log\mathscr L\).  For all four sectors,
+the conditional range furnished by this black-box transfer is therefore
+
+\[
+ \boxed{0\le\beta+\gamma<\frac32,}
+\tag{4.88}
+\]
+
+while (4.82) remains available for the unit-slope sector alone.
+
+The remaining obstruction is the MWKF completion weight.  One needs a
+uniform bounded-variation separation of
 
 \[
  (s,w)\longmapsto
  \Theta_{(j+1)s+w,s}(c,v)
  \left\{e\left(\frac{cvw}{s}\right)-1\right\}
-\tag{4.83}
+\tag{4.89}
 \]
 
 whose summed separation norm retains the first-moment scale \((CV)^2\)
@@ -1361,10 +1429,12 @@ be Möbius-inverted in \((s,w)\), but that reindexing and the required
 uniform nonpretentious estimate for the resulting \(q,d\)-restricted
 Möbius functions must also be proved.
 
-The function improved_averaged_chowla_shell_audit records the conditional
-margin \(2-\beta-\gamma\).  It keeps both the fixed-slope extension and
-uniform bounded-variation separation as unmet hypotheses, so the joint coefficient is not an admissible published MRT coefficient and published coverage remains false.  The residual logarithmic region is
-\(\beta+\gamma\ge2\); all \(q=T^\kappa\), \(\kappa>0\), boxes remain
+The function improved_averaged_chowla_shell_audit records the unit-slope
+margin \(2-\beta-\gamma\) and the all-sector margin
+\(3/2-\beta-\gamma\).  It marks the fixed-slope square-root transfer as
+proved, but keeps uniform bounded-variation separation as an unmet
+hypothesis, so the joint coefficient is not an admissible published MRT coefficient and published coverage remains false.  The full-family residual logarithmic region is
+\(\beta+\gamma\ge3/2\); all \(q=T^\kappa\), \(\kappa>0\), boxes remain
 positive-power cells rather than part of this logarithmic adapter.
 
 ## 5. Route C: endpoint-to-all-length interpolation

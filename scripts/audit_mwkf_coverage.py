@@ -206,14 +206,18 @@ class ImprovedAveragedChowlaShellAudit:
     frequency_logarithmic_depth: Fraction
     total_logarithmic_depth: Fraction
     mrt_log_saving: Fraction
-    improved_log_saving: Fraction
+    unit_slope_improved_log_saving: Fraction
+    fixed_slope_black_box_log_saving: Fraction
     improved_polyloglog_loss_exponent: Fraction
+    fixed_slope_polyloglog_loss_exponent: Fraction
     endpoint_absolute_log_margin: Fraction
     mrt_log_margin: Fraction
-    improved_log_margin: Fraction
+    unit_slope_log_margin: Fraction
+    all_sector_log_margin: Fraction
     power_critical_face: bool
     stationary_face: bool
     ledger_closes_if_bv_separated: bool
+    fixed_slope_black_box_proved: bool
     fixed_slope_extension_required: bool
     bv_separation_required: bool
     joint_coefficient_accepted: bool
@@ -879,13 +883,16 @@ def improved_averaged_chowla_shell_audit(
     A cardinal ``q <= L^gamma`` sum and frequency deficit ``L^beta``
     consume ``gamma+beta``.  MRT adds ``1/3000`` logarithm, whereas
     Menon's improved averaged-Chowla theorem adds one logarithm with a
-    squared ``log log`` loss.  Hence the latter closes the separated
-    ledger exactly for ``gamma+beta < 2``.
+    squared ``log log`` loss in the unit-slope sector.  For all four MWKF
+    slopes, a polarization and Fourier-identity transfer from Menon's
+    exponential-sum theorem costs a square root, leaving one-half of a
+    logarithm.  Hence the full separated ledger closes for
+    ``gamma+beta < 3/2``.
 
-    Menon's stated theorem has unit-slope shifts and no completed MWKF
-    coefficient.  Covering the full centered family additionally needs a
-    fixed-slope Fourier extension and uniform bounded-variation separation
-    of the actual completed kernel.  Neither is certified here.
+    Menon's stated theorem has no completed MWKF coefficient.  Covering
+    the full centered family still needs uniform bounded-variation
+    separation of the actual completed kernel; that step is not certified
+    here.
     """
     if q_logarithmic_depth < 0:
         raise ValueError("q_logarithmic_depth must be nonnegative")
@@ -896,8 +903,10 @@ def improved_averaged_chowla_shell_audit(
         q_logarithmic_depth + frequency_logarithmic_depth
     )
     mrt_log_saving = F(1, 3000)
-    improved_log_saving = F(1)
+    unit_slope_improved_log_saving = F(1)
+    fixed_slope_black_box_log_saving = F(1, 2)
     improved_polyloglog_loss_exponent = F(2)
+    fixed_slope_polyloglog_loss_exponent = F(1)
     endpoint_faces = (
         box.kappa + box.rho == F(3)
         and box.kappa + box.sigma == F(3)
@@ -916,13 +925,19 @@ def improved_averaged_chowla_shell_audit(
     stationary_face = joint_phase_scales(box).on_stationary_face
     endpoint_absolute_log_margin = F(1) - total_logarithmic_depth
     mrt_log_margin = endpoint_absolute_log_margin + mrt_log_saving
-    improved_log_margin = endpoint_absolute_log_margin + improved_log_saving
+    unit_slope_log_margin = (
+        endpoint_absolute_log_margin + unit_slope_improved_log_saving
+    )
+    all_sector_log_margin = (
+        endpoint_absolute_log_margin + fixed_slope_black_box_log_saving
+    )
     ledger_closes_if_bv_separated = (
         power_critical_face
         and stationary_face
-        and improved_log_margin > 0
+        and all_sector_log_margin > 0
     )
-    fixed_slope_extension_required = True
+    fixed_slope_black_box_proved = True
+    fixed_slope_extension_required = False
     bv_separation_required = True
     joint_coefficient_accepted = False
     return ImprovedAveragedChowlaShellAudit(
@@ -930,23 +945,31 @@ def improved_averaged_chowla_shell_audit(
         frequency_logarithmic_depth=frequency_logarithmic_depth,
         total_logarithmic_depth=total_logarithmic_depth,
         mrt_log_saving=mrt_log_saving,
-        improved_log_saving=improved_log_saving,
+        unit_slope_improved_log_saving=unit_slope_improved_log_saving,
+        fixed_slope_black_box_log_saving=(
+            fixed_slope_black_box_log_saving
+        ),
         improved_polyloglog_loss_exponent=(
             improved_polyloglog_loss_exponent
         ),
+        fixed_slope_polyloglog_loss_exponent=(
+            fixed_slope_polyloglog_loss_exponent
+        ),
         endpoint_absolute_log_margin=endpoint_absolute_log_margin,
         mrt_log_margin=mrt_log_margin,
-        improved_log_margin=improved_log_margin,
+        unit_slope_log_margin=unit_slope_log_margin,
+        all_sector_log_margin=all_sector_log_margin,
         power_critical_face=power_critical_face,
         stationary_face=stationary_face,
         ledger_closes_if_bv_separated=ledger_closes_if_bv_separated,
+        fixed_slope_black_box_proved=fixed_slope_black_box_proved,
         fixed_slope_extension_required=fixed_slope_extension_required,
         bv_separation_required=bv_separation_required,
         joint_coefficient_accepted=joint_coefficient_accepted,
         published_coverage=False,
         source=(
             "Menon, arXiv:2607.15574v1, "
-            "Theorem improved_avg_chowla"
+            "Theorems improved_exp_sum and improved_avg_chowla"
         ),
     )
 
@@ -1563,7 +1586,7 @@ def main() -> None:
         "absolute_little_o="
         f"{endpoint_critical.absolute_bound_produces_little_o}"
     )
-    logarithmic_depths = (F(0), F(3, 2), F(2), F(3))
+    logarithmic_depths = (F(0), F(5, 4), F(3, 2), F(2))
     improved_depth_parts: list[str] = []
     for depth in logarithmic_depths:
         depth_audit = improved_averaged_chowla_shell_audit(
@@ -1572,18 +1595,18 @@ def main() -> None:
             frequency_logarithmic_depth=F(0),
         )
         improved_depth_parts.append(
-            f"{_fmt(depth)}:{_fmt(depth_audit.improved_log_margin)}"
+            f"{_fmt(depth)}:{_fmt(depth_audit.all_sector_log_margin)}"
         )
     improved_depth_margins = ",".join(improved_depth_parts)
     improved_half = improved_averaged_chowla_shell_audit(
         hard,
-        q_logarithmic_depth=F(3, 2),
+        q_logarithmic_depth=F(5, 4),
         frequency_logarithmic_depth=F(0),
     )
     print(
         "balanced_max_a: "
         f"improved_chowla_total_depths={improved_depth_margins} "
-        "conditional_cover_beta_plus_gamma_lt_2="
+        "conditional_all_slopes_beta_plus_gamma_lt_3/2="
         f"{improved_half.ledger_closes_if_bv_separated} "
         f"joint_weight={improved_half.joint_coefficient_accepted}"
     )

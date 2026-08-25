@@ -381,7 +381,7 @@ def test_endpoint_critical_face_uses_a_cardinal_q_aggregation() -> None:
     assert not positive_q_power.absolute_bound_produces_little_o
 
 
-def test_improved_averaged_chowla_reaches_total_log_depth_below_two() -> None:
+def test_fixed_slope_transfer_reaches_total_log_depth_below_three_halves() -> None:
     """Catch retaining MRT's 1/3000 exponent after Menon's improvement."""
     adapter = getattr(
         coverage_audit,
@@ -393,42 +393,48 @@ def test_improved_averaged_chowla_reaches_total_log_depth_below_two() -> None:
     )
     box = boundary_witnesses()["balanced_max_a"]
 
-    half_depth = adapter(
+    transferred = adapter(
         box,
-        q_logarithmic_depth=F(3, 2),
+        q_logarithmic_depth=F(5, 4),
         frequency_logarithmic_depth=F(0),
     )
-    assert half_depth.mrt_log_saving == F(1, 3000)
-    assert half_depth.improved_log_saving == F(1)
-    assert half_depth.improved_polyloglog_loss_exponent == F(2)
-    assert half_depth.endpoint_absolute_log_margin == F(-1, 2)
-    assert half_depth.mrt_log_margin == F(-1499, 3000)
-    assert half_depth.improved_log_margin == F(1, 2)
-    assert half_depth.ledger_closes_if_bv_separated
-    assert half_depth.fixed_slope_extension_required
-    assert half_depth.bv_separation_required
-    assert not half_depth.joint_coefficient_accepted
-    assert not half_depth.published_coverage
-    assert half_depth.source == (
+    assert transferred.mrt_log_saving == F(1, 3000)
+    assert transferred.unit_slope_improved_log_saving == F(1)
+    assert transferred.fixed_slope_black_box_log_saving == F(1, 2)
+    assert transferred.improved_polyloglog_loss_exponent == F(2)
+    assert transferred.fixed_slope_polyloglog_loss_exponent == F(1)
+    assert transferred.endpoint_absolute_log_margin == F(-1, 4)
+    assert transferred.mrt_log_margin == F(-749, 3000)
+    assert transferred.unit_slope_log_margin == F(3, 4)
+    assert transferred.all_sector_log_margin == F(1, 4)
+    assert transferred.ledger_closes_if_bv_separated
+    assert transferred.fixed_slope_black_box_proved
+    assert not transferred.fixed_slope_extension_required
+    assert transferred.bv_separation_required
+    assert not transferred.joint_coefficient_accepted
+    assert not transferred.published_coverage
+    assert transferred.source == (
         "Menon, arXiv:2607.15574v1, "
-        "Theorem improved_avg_chowla"
+        "Theorems improved_exp_sum and improved_avg_chowla"
     )
 
     boundary = adapter(
         box,
-        q_logarithmic_depth=F(2),
+        q_logarithmic_depth=F(3, 2),
         frequency_logarithmic_depth=F(0),
     )
-    assert boundary.improved_log_margin == F(0)
+    assert boundary.unit_slope_log_margin == F(1, 2)
+    assert boundary.all_sector_log_margin == F(0)
     assert not boundary.ledger_closes_if_bv_separated
     assert not boundary.published_coverage
 
     beyond = adapter(
         box,
         q_logarithmic_depth=F(2),
-        frequency_logarithmic_depth=F(1),
+        frequency_logarithmic_depth=F(0),
     )
-    assert beyond.improved_log_margin == F(-1)
+    assert beyond.unit_slope_log_margin == F(0)
+    assert beyond.all_sector_log_margin == F(-1, 2)
     assert not beyond.ledger_closes_if_bv_separated
     assert not beyond.published_coverage
 
@@ -591,8 +597,9 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
     ) in output
     assert (
         "balanced_max_a: improved_chowla_total_depths="
-        "0:2,3/2:1/2,2:0,3:-1 "
-        "conditional_cover_beta_plus_gamma_lt_2=True joint_weight=False"
+        "0:3/2,5/4:1/4,3/2:0,2:-1/2 "
+        "conditional_all_slopes_beta_plus_gamma_lt_3/2=True "
+        "joint_weight=False"
     ) in output
     assert (
         "balanced_max_a: centered_far_shell_required_savings="
@@ -656,7 +663,8 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "arXiv:2607.15574v1",
         r"\frac{(\log\log X)^2}{\log X}",
         r"0\le\beta+\gamma<2",
-        "fixed-slope Fourier extension",
+        "fixed-slope square-root transfer",
+        "proved from the exponential-sum theorem",
         "uniform bounded-variation separation",
         "joint coefficient is not an admissible published MRT coefficient",
         "published coverage remains false",
