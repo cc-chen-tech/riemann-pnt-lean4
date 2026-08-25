@@ -2,8 +2,10 @@
 
 ## Status
 
-This is a paper-first audit.  It does not claim that Selberg's theorem has
-already been reproved in Lean.  The exact Fourier--Mellin step S1 has now been
+This is a paper-first audit followed by a Lean verification.  Selberg's
+positive-proportion theorem has now been reproved in Lean through this
+Fourier--Mellin mainline, independently of `Zeta23`.  The exact
+Fourier--Mellin step S1 has now been
 proved both on paper and in Lean, and the complete finite S13 coefficient
 estimate has now also been formalized.  The full S12 estimate has now been
 proved as well: its quantitative reciprocal-zeta input, coprime Dirichlet
@@ -41,8 +43,9 @@ The modulus/Stirling bridge therefore gives S4a on `[T/2,T]` and `[0,T]`
 with the actual integer cutoff.  The Tonelli sliding transfer S4b is also
 formalized.  Its dyadic form avoids a separate endpoint error: for
 `0 <= H <= T/2`, the interior `[H,T]` already contains `[T/2,T]`.
-The theorem remains incomplete until the S5/packing interfaces are
-instantiated and the final odd-zero theorem is assembled.
+The refined uniform S2 estimate, the S5 positive-measure specialization,
+the backward zero-cover inequality, and the final odd-zero theorem are now
+assembled as well.
 
 The main conclusion is decisive:
 
@@ -50,13 +53,13 @@ The main conclusion is decisive:
   positive-proportion proof;
 * the appropriate mainline is Selberg's original Fourier--Mellin argument,
   as presented in Titchmarsh, §§10.9--10.22;
-* the repository's existing logarithmic-window packing theorem can be reused,
-  but the present one-sided zeta truncation should not be the analytic engine
-  for the two bad-set estimates.
+* the positive-measure conclusion is converted to zero count by the direct
+  backward cover `m(E)<=h*N_odd(T+h)`, while the present one-sided zeta
+  truncation is not used as the analytic engine.
 
-The implementation order is strict: first close each remaining estimate on
-paper with one Fourier normalization, and only then formalize that estimate.
-This rule was used for S1--S2 and remains in force for S3--S4.
+The implementation order was strict: first close each estimate on paper with
+one Fourier normalization, and only then formalize it.  This rule was used
+through S1--S5 and remains in force for the later Conrey work.
 
 ## 1. Why the `T^3` moment is not the Selberg mainline
 
@@ -1591,28 +1594,51 @@ off `E`.  If `L<=integral A`, `integral B<=R`, and
 \]
 
 `StrictCancellationMeasure.lean` derives this directly from a signed
-sliding `L^2` bound and a global absolute sliding `L^2` bound.  The remaining
-S5 work is the eventual fixed-parameter algebra: specialize S2--S3 to
-`delta=1/T`, `X=floor(T^(1/32))`, choose the frequency parameter `a>0`
-small enough that the signed term absorbs at most half of S4b, and use
+sliding `L^2` bound and a global absolute sliding `L^2` bound.  The eventual
+fixed-parameter algebra is now complete: it specializes S2--S3 to
+`delta=1/T`, `X=floor(T^(1/32))`, chooses the frequency parameter `a>0`
+after the uniform S2 coefficient is known, and uses
 `log X >= (log T)/64` eventually.
 
-Every `t in E` forces a sign change in `(t,t+h)`.  Partitioning `(0,T)` into
-intervals of length `h`, and allowing each zero to be charged at most twice,
-gives
+Every `t in E` forces a sign change in `(t,t+h)`.  Equivalently, if the
+detected odd zero has height `gamma`, then `t in (gamma-h,gamma)`.  Covering
+`E` by these backward intervals gives directly
 
 \[
-N_{0,\mathrm{odd}}(T)\gg \frac{T}{h}\gg T\log T.
-
-The current repository packing interface assumes the much stronger bound
-that bad starts occupy at most `T/12`; S5 supplies only `m(E)>=kappa*T` for
-some fixed `kappa>0`.  The final assembly must therefore use the direct
-covering inequality `m(E)<=h*N_odd(T+h)` (or an equivalent positive-measure
-packing lemma), not instantiate that near-full-measure interface verbatim.
+m(E)\le hN_{0,\mathrm{odd}}(T+h),
+\qquad
+N_{0,\mathrm{odd}}(2T)\gg \frac{T}{h}\gg T\log T.
 \]
 
-The last packing step is already represented, in a dyadic version, by
-`HardyTheorem/SelbergPacking.lean`.
+The older repository packing interface assumes the much stronger bound that
+bad starts occupy at most `T/12`; S5 supplies only `m(E)>=kappa*T` for some
+fixed `kappa>0`.  The final assembly therefore uses the sharper direct
+covering argument.  If a strict-cancellation window based at `t` contains an
+odd critical-line zero at height `gamma`, then
+
+\[
+ t\in(\gamma-h,\gamma).
+\]
+
+Consequently all good starts are covered by one interval of length `h` for
+each relevant odd zero, and
+
+\[
+ m(E)\le hN_{0,\mathrm{odd}}(T+h).
+\]
+
+This automatically handles arbitrarily many starts detecting the same zero
+and loses no constant to a disjoint-window selection.  The argument is
+formalized in `SelbergStrictCancellationZeroCover.lean`.  Combining it with
+`m(E)>=kappa*T`, `h<=T/2`, and
+`log X >= (log T)/64` proves
+
+\[
+ C T\log T\le N_{0,\mathrm{odd}}(2T)
+\]
+
+for some `C>0`, followed by the repository's unconditional
+`selberg_odd_zero_proportion_target` and distinct-zero target.
 
 ## 5. What should be reused and what should be retired
 
@@ -1621,7 +1647,7 @@ Reuse:
 * the square-root-zeta local and multiplicative coefficient library;
 * completed-zeta Fourier representation and sign transfer;
 * abstract sliding-integral Fourier/Plancherel lemmas;
-* the good-window sign-change and logarithmic packing bridge.
+* the strict-cancellation sign-change and backward zero-cover bridge.
 
 Do not use as the main Selberg input:
 
@@ -1651,16 +1677,18 @@ The current honest repository status is:
 ```text
 Hardy                         proved
 Hardy--Littlewood c*T         proved
-Selberg c*T*log T             S1--S4 proved; S5 and final odd-zero assembly remain
+Selberg c*T*log T             proved through independent S1--S5 mainline
 T^3 linear Möbius moment      separate open long-mollifier problem
 Conrey two fifths             not yet formalized
 ```
 
-The abstract S5 measure argument, logarithmic packing, and transfer to
-odd-multiplicity critical-line zeros already exist in
-`SelbergGoodWindowMeasure.lean` and `SelbergPacking.lean`.  They still need
-new S2--S4 hypotheses instantiated for `selbergCompletedMollifiedF`; the old
-one-sided-zeta bad-set modules are not those instantiations.
+The completed-mollifier specialization is
+`exists_pos_measure_strictCancellationStarts_selberg`; the final covering
+and counting theorems are
+`measure_strictCancellationStarts_selbergCompleted_le_oddZeroCount_mul`,
+`selberg_odd_zero_proportion_target_proved_mainline`, and
+`selberg_zero_proportion_target_proved_mainline`.  The old one-sided-zeta
+bad-set modules are not used by this proof.
 
 ## 7. Exact derivation of S1
 
@@ -2616,22 +2644,21 @@ function.  Continuity gives a Hardy zero between them, and real analyticity
 shows that some intervening zero has odd multiplicity.  Possible zeros of
 the mollifier itself do not create this conclusion and are not counted.
 
-Partition `(0,T)` into intervals `I_n=(nh,(n+1)h)`.  At least
-`m(E)/h` of these intervals meet `E`.  If `I_n` meets `E`, the corresponding
-odd zero lies in `(nh,(n+2)h)`.  Any zero belongs to at most two such doubled
-intervals, so
+For each `t in E`, let `gamma` be any odd critical-line zero detected in
+`(t,t+h)`.  Then `t in (gamma-h,gamma)`.  Taking the union over the finite
+odd-zero set up to height `T+h` gives
 
 \[
- N_{0,\mathrm{odd}}(T)
- \ge \frac12\frac{m(E)}h+O(1)
- \gg T\log T.
+ E\subseteq\bigcup_\gamma(\gamma-h,\gamma),
+ \qquad
+ m(E)\le hN_{0,\mathrm{odd}}(T+h),
+ \qquad
+ N_{0,\mathrm{odd}}(2T)\gg T\log T.
 \]
 
-This completes the Selberg implication at paper level, conditional only on
-the detailed analytic estimates S1--S4 established in Sections 7--9.  The
-remaining pre-Lean task is an independent audit of those sections, especially
-the slit-domain continuation in (8.6) and the horizontal contour estimate in
-(9.3).
+This completes the Selberg implication without a measurable choice of zero,
+without a disjoint-window extraction, and without a multiplicity-loss
+constant.  The full chain has now also been checked in Lean.
 
 ## 11. Independent dependency and parameter audit
 
@@ -2742,16 +2769,15 @@ value of the signed integral forces both signs.  The gamma and exponential
 factors are positive; the mollifier square is merely nonnegative, but at
 strict-sign sample points it is nonzero.  Hence the two samples transfer to
 opposite signs of Hardy's function.  A sign change of a real analytic
-function crosses an odd-order zero, and the doubled-window packing charges
-each ordinate at most twice.
+function crosses an odd-order zero.  The backward-zero cover assigns one
+length-`h` start interval to each ordinate and therefore handles repeated
+detections without overcounting.
 
 ### Paper-level verdict
 
-The Selberg derivation is unconditional at paper level, subject only to the
-standard classical inputs listed below.  This is not yet a repository-level
-theorem: S1--S4 are now assembled, while S5 and the final odd-zero assembly
-remain.  Its external analytic inputs
-are all established theorems:
+The Selberg derivation is unconditional at paper level and is now a
+repository-level theorem.  S1--S5 and the final odd-zero assembly are all
+formalized.  Its external analytic inputs are all established theorems:
 
 * the zero-free line `zeta(1+it) != 0` and a reciprocal bound there;
 * the uniform first Abel approximation for zeta in `1/2<=sigma<=2`;
@@ -2765,8 +2791,8 @@ Lean formalization is therefore admissible for the Selberg slice and has
 closed S1, S12, S13, S-arith, the full two-sided S2 off-diagonal estimate,
 the signed integrated diagonal asymptotic, the finite S4 contour lower bound,
 and the S4a modulus/Stirling bridge under its exact horizontal-absorption
-hypotheses.  The fixed integer parameter and S4b are now closed as well.
-Only the S5/final odd-zero assembly remains open on the Selberg mainline.
+hypotheses.  The fixed integer parameter, S4b, refined uniform S2, S5, the
+backward zero cover, and both final Selberg targets are closed as well.
 
 The object-level `J` bridge is now also closed through the following exact
 stages.  The physical theta kernel at `log u` equals the original
@@ -2894,10 +2920,10 @@ power bound, its absorption into `delta^(-1/2)`, the pointwise exponential
 envelope, both integrals in (S2-res-low) and (S2-res-high), and the final
 parameter-scale interfaces with the explicit common witness `C=1/a`.
 
-The remaining S2 work is now the assembly step: combine the residue with the
-nonconstant kernel, transport the low/high ranges through `y=2*pi*w`, invoke
-the sliding-window Fourier-energy estimate, and absorb the parameters into
-the target S2 bound.  The exact consistent choice is
+The S2 assembly combines the residue with the nonconstant kernel, transports
+the low/high ranges through `y=2*pi*w`, invokes the sliding-window
+Fourier-energy estimate, and keeps the residue explicit so the nonconstant
+coefficient remains uniform in `a`.  The exact consistent choice is
 
 \[
  H=\frac{2\pi}{L}=\frac{2\pi}{a\log X}.
@@ -2951,11 +2977,11 @@ transform.  The final assembly is now formalized in
 The explicit witness produced by the proof is
 `4*pi*C_low + 16*pi*C_high`; this is exactly the absorption of the two
 terms in `(S2-Plancherel)`.  Thus S2 is closed in Lean.  S3 and S4 are now
-also closed.  The next work is to instantiate S5 and the odd-multiplicity
-packing theorem.
-Thus the Lean development has not yet proved the final Selberg
-positive-proportion theorem, despite the unconditional paper-level route
-above.
+also closed.  The refined S2 keeps the residue contribution explicit and
+uniform in `0<a<=1`; S5 then chooses `a` after its uniform coefficient.
+The backward zero cover completes the odd-multiplicity count.  Thus the Lean
+development now proves the final Selberg positive-proportion theorem through
+the unconditional paper-level route above.
 
 ## 12. Sources checked
 

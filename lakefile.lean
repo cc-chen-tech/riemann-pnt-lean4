@@ -131,6 +131,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.SelbergSlidingSecondMoment,
     `HardyTheorem.SelbergMomentSpecialization,
     `HardyTheorem.SelbergStrictCancellationPositiveMeasure,
+    `HardyTheorem.SelbergStrictCancellationZeroCover,
     `HardyTheorem.SelbergSArithmeticEulerWeight,
     `HardyTheorem.SelbergSArithmeticDivisorExpansion,
     `HardyTheorem.SelbergSArithmeticSummability,
