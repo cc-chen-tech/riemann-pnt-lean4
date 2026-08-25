@@ -20,8 +20,11 @@ reindexing, grouped equation (S17), the two asymmetric S12 applications,
 the S13 finite-product bridge, the resulting bound (S19), the concrete
 four-variable Jordan quadratic identity (S14), the primewise fourth-power
 comparison, and the final `rho`-sum using (S20) have all been formalized.
-Thus S-arith itself is now closed.  The theorem remains incomplete until the
-S2--S4 analytic estimates are connected to the exact S1 kernel.
+Thus S-arith itself is now closed.  S2 is now connected to the exact S1
+kernel with the genuine sliding integral and exact Mathlib Fourier
+normalization.  The theorem remains incomplete until S3--S4 are connected
+to that same completed mollified function and the S5/packing interfaces are
+instantiated.
 
 The main conclusion is decisive:
 
@@ -35,7 +38,7 @@ The main conclusion is decisive:
 
 The implementation order is strict: first close each remaining estimate on
 paper with one Fourier normalization, and only then formalize that estimate.
-This rule was used for S1 and remains in force for S2--S4.
+This rule was used for S1--S2 and remains in force for S3--S4.
 
 ## 1. Why the `T^3` moment is not the Selberg mainline
 
@@ -1371,7 +1374,7 @@ The current honest repository status is:
 ```text
 Hardy                         proved
 Hardy--Littlewood c*T         proved
-Selberg c*T*log T             S1 proved exactly; S2--S4 analytic estimates remain
+Selberg c*T*log T             S1--S2 proved exactly; S3--S4 analytic estimates remain
 T^3 linear Möbius moment      separate open long-mollifier problem
 Conrey two fifths             not yet formalized
 ```
@@ -2517,7 +2520,7 @@ The first assembly layer is now formalized in
 `|R+N|^2 <= 2|R|^2+2|N|^2`, supplies genuine integrability for both pieces
 on the low and weighted-high ranges, and combines their existential
 constants into the full explicit-kernel positive-frequency bounds.  The
-The second layer is also formalized.  The reusable module
+second layer is also formalized.  The reusable module
 `RealFourierEnergySymmetry.lean` proves conjugate reflection for the Fourier
 transform of a real-valued complex function and exact two-sided integral
 splittings.  `SelbergFourierEnergyTransport.lean` then proves
@@ -2536,9 +2539,20 @@ and
 
 These identities are proved for the actual Mathlib `L2` Fourier
 representative by first identifying it almost everywhere with the classical
-transform.  Thus the remaining S2 work is now only the final
-sliding-energy instantiation and parameter absorption.
-Only after that assembly is checked do S3--S5 begin.
+transform.  The final assembly is now formalized in
+`SelbergSlidingSecondMoment.lean`.  With
+`L=log(X^a)` and `H=2*pi/L`, it proves uniformly on every finite interval
+
+\[
+ \int\left|\int_t^{t+H}F(u)\,du\right|^2dt
+ \le C\frac{H\,\delta^{-1/2}}{\log X}.
+\]
+
+The explicit witness produced by the proof is
+`4*pi*C_low + 16*pi*C_high`; this is exactly the absorption of the two
+terms in `(S2-Plancherel)`.  Thus S2 is closed in Lean.  The next work is
+S3, then S4, followed by instantiating S5 and the odd-multiplicity packing
+theorem.
 Thus the Lean development has not yet proved the final Selberg
 positive-proportion theorem, despite the unconditional paper-level route
 above.

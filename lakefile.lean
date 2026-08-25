@@ -120,6 +120,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.SelbergExplicitFourierMass,
     `MathlibAux.RealFourierEnergySymmetry,
     `HardyTheorem.SelbergFourierEnergyTransport,
+    `HardyTheorem.SelbergSlidingSecondMoment,
     `HardyTheorem.SelbergSArithmeticEulerWeight,
     `HardyTheorem.SelbergSArithmeticDivisorExpansion,
     `HardyTheorem.SelbergSArithmeticSummability,

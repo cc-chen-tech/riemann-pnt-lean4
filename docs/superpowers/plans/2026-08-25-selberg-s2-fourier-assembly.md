@@ -65,9 +65,9 @@
 - Consumes: `MathlibAux.integral_normSq_slidingIntegral_le_fourier_low_high` and Tasks 1--2.
 - Produces: the S2 second-moment bound for `selbergCompletedMollifiedFComplex` with `H = 2*pi / log(X^a)`.
 
-- [ ] Write the failing contract and verify RED.
-- [ ] Instantiate the genuine sliding-integral theorem.
-- [ ] Substitute the exact low/high energy bounds.
-- [ ] Use `L = a*log X` and absorb all fixed constants into one uniform witness.
-- [ ] Run source, contract, target-build, placeholder, and diff checks.
+- [x] Write the failing contract and verify RED.
+- [x] Instantiate the genuine sliding-integral theorem.
+- [x] Substitute the exact low/high energy bounds.
+- [x] Use `L = a*log X` and absorb all fixed constants into one uniform witness.
+- [x] Run source, contract, target-build, placeholder, and diff checks.
 - [ ] Commit, push, and update ready-for-review PR #484.
