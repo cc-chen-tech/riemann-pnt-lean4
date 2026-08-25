@@ -5800,6 +5800,105 @@ classical_kuznetsov_adapter_verified=False,
 new_entry_weighted_hecke_estimate_proved=False, and
 published_coverage=False.
 
+### 4.47 Second Möbius factorization and exact double reciprocity
+
+Factor one of the two remaining entry Möbius weights with the same
+cutoff \(U=T^{1/3}\).  For \(|x|>U\),
+
+\[
+ \mu(|x|)
+ =-\sum_{\substack{cd=|x|\\c>U}}c_U(c)\mu(d).
+\tag{4.407}
+\]
+
+Put
+
+\[
+ x=\epsilon cd,\qquad
+ d\asymp T^\eta,\qquad
+ c\asymp T^{1-\eta},\qquad
+ 0\le\eta\le\frac23.
+\tag{4.408}
+\]
+
+The second reciprocity step is especially clean.  The Farey phase and
+the correction retained in (4.402) satisfy the exact identity
+
+\[
+\boxed{
+ e\!\left(
+   \frac{n\overline{x}}W-\frac{n}{xW}
+ \right)
+ =
+ e\!\left(-\frac{\epsilon n\overline W}{cd}\right).}
+\tag{4.409}
+\]
+
+Thus the first Archimedean correction cancels; it is not being
+discarded.  Formula (4.409) produces a denominator \(cd\) with fixed
+factor \(c\), and the formal Wright variables have exponent scales
+
+\[
+ M=W=T^\theta,\qquad
+ N=d=T^\eta,\qquad
+ R_{\mathrm{fix}}=c=T^{1-\eta},\qquad
+ A=n=T.
+\tag{4.410}
+\]
+
+The size hypothesis \(M\le N^2\) becomes
+
+\[
+ \boxed{\theta\le2\eta.}
+\tag{4.411}
+\]
+
+On the top face this already rejects every \(\eta<1/2\).
+
+The actual coefficient is not separated after (4.409).  From (4.403),
+
+\[
+ \boxed{
+ a=\frac{\epsilon W+kcd}{b},}
+\tag{4.412}
+\]
+
+so \(c_U(a)\), the condition \(a\asymp T^{1-\beta}\), the determinant
+shell, and the coupled transform kernel all depend jointly on
+\((W,c,d,b)\).  Fixing \(c\) does not remove that dependence.
+
+Even if these coefficient failures are ignored, the exponent ledger
+does not close.  At the most favorable Type-II endpoint
+\(\eta=2/3\), the fixed-factor adapter, including the outer trivial
+\(c\)-sum, returns saving exponent
+
+\[
+ -1.
+\tag{4.413}
+\]
+
+The factor-box target requires saving \(1/500\), so the optimistic
+deficit is
+
+\[
+ \boxed{\frac1{500}-(-1)=\frac{501}{500}.}
+\tag{4.414}
+\]
+
+Both entry Möbius weights would have to be treated jointly with the
+determinant equation to avoid the two outer fixed-factor losses.
+Applying the published fixed-factor theorem separately is therefore
+neither formally applicable nor exponent-sufficient.
+
+The helper entry_double_reciprocity_identity verifies (4.409) for both
+signs on exact rational fixtures.  The adapter
+transition_entry_mobius_factorization_audit records (4.407)--(4.414),
+including the failed size range, the endpoint deficit, and all three
+joint coefficient dependencies.  It keeps
+actual_wright_coefficient_hypotheses_verified=False,
+two_entry_type_ii_estimate_proved=False, and
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

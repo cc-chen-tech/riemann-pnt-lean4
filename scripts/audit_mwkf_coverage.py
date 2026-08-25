@@ -635,6 +635,29 @@ class TransitionFareyHeckeOrbitAudit:
 
 
 @dataclass(frozen=True)
+class TransitionEntryMobiusFactorizationAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    entry_cutoff_exponent: Fraction
+    entry_long_factor_exponent: Fraction
+    entry_short_factor_exponent: Fraction
+    fixed_denominator_factor_exponent: Fraction
+    wright_size_hypothesis_holds: bool
+    optimistic_wright_saving_exponent: Fraction
+    factor_box_target_saving_exponent: Fraction
+    optimistic_wright_deficit: Fraction
+    mobius_factorization_exact: bool
+    double_reciprocity_cancels_archimedean_term: bool
+    affine_cofactor_remains_joint: bool
+    shift_window_remains_joint: bool
+    coupled_kernel_remains_joint: bool
+    actual_wright_coefficient_hypotheses_verified: bool
+    two_entry_type_ii_estimate_required: bool
+    two_entry_type_ii_estimate_proved: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -3096,6 +3119,98 @@ def transition_farey_hecke_orbit_audit(
         classical_kuznetsov_adapter_verified=False,
         new_entry_weighted_hecke_estimate_required=True,
         new_entry_weighted_hecke_estimate_proved=False,
+        published_coverage=False,
+    )
+
+
+def entry_double_reciprocity_identity(
+    *,
+    c: int,
+    d: int,
+    modulus: int,
+    epsilon: int,
+    n: int,
+) -> bool:
+    """Verify cancellation of the first reciprocity correction."""
+    if min(c, d, modulus) <= 0 or epsilon not in (-1, 1):
+        raise ValueError("positive factors and a sign are required")
+    entry = c * d
+    if gcd(entry, modulus) != 1:
+        raise ValueError("double reciprocity requires coprime entries")
+    farey_phase = (
+        Fraction(
+            epsilon * n * pow(entry, -1, modulus),
+            modulus,
+        )
+        - Fraction(epsilon * n, entry * modulus)
+    )
+    fixed_factor_phase = Fraction(
+        -epsilon * n * pow(modulus, -1, entry),
+        entry,
+    )
+    return (farey_phase - fixed_factor_phase).denominator == 1
+
+
+def transition_entry_mobius_factorization_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+    entry_short_factor_exponent: Fraction,
+) -> TransitionEntryMobiusFactorizationAudit:
+    """Audit a second Type-I/II split on one residue-entry Mobius weight.
+
+    Write abs(x)=c*d with d of exponent eta and c of exponent 1-eta.
+    Double reciprocity turns the Farey phase into one with modulus c*d
+    and fixed factor c.  The optimistic Wright ledger includes the
+    outer trivial c-sum.  The actual affine cofactor and shifted window
+    remain joint, so even a favorable exponent would not by itself be
+    an application.
+    """
+    distance = F(distance)
+    b_exponent = F(b_exponent)
+    eta = F(entry_short_factor_exponent)
+    cutoff = box.sigma / 3
+    if eta < 0 or eta > 2 * box.sigma / 3:
+        raise ValueError("entry short factor lies outside the exact split")
+    long_factor = box.sigma - eta
+    wright_box = ExponentBox(
+        box.sigma,
+        distance,
+        box.m,
+        box.k,
+        box.ell,
+        box.h,
+        box.kappa,
+    )
+    wright = wright_type_i_adapter(
+        wright_box,
+        a_factor=long_factor,
+        b_factor=eta,
+    )
+    assert wright.saving is not None
+    target_saving = F(1, 500)
+    deficit = target_saving - wright.saving
+
+    return TransitionEntryMobiusFactorizationAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        entry_cutoff_exponent=cutoff,
+        entry_long_factor_exponent=long_factor,
+        entry_short_factor_exponent=eta,
+        fixed_denominator_factor_exponent=long_factor,
+        wright_size_hypothesis_holds=distance <= 2 * eta,
+        optimistic_wright_saving_exponent=wright.saving,
+        factor_box_target_saving_exponent=target_saving,
+        optimistic_wright_deficit=deficit,
+        mobius_factorization_exact=True,
+        double_reciprocity_cancels_archimedean_term=True,
+        affine_cofactor_remains_joint=True,
+        shift_window_remains_joint=True,
+        coupled_kernel_remains_joint=True,
+        actual_wright_coefficient_hypotheses_verified=False,
+        two_entry_type_ii_estimate_required=True,
+        two_entry_type_ii_estimate_proved=False,
         published_coverage=False,
     )
 
@@ -6206,6 +6321,30 @@ def main() -> None:
     print(
         "large_q_transition: farey_hecke_maximal="
         "theta=1,beta=2/3,xi=4/3,hecke=2 covered=False"
+    )
+    transition_entry_factor = transition_entry_mobius_factorization_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        entry_short_factor_exponent=F(2, 3),
+    )
+    print(
+        "large_q_transition: entry_mobius_factor="
+        "theta=1,beta=2/3,eta=2/3,c=1/3,d=2/3,"
+        "wright_size=True,wright_saving=-1,target=1/500,"
+        "deficit=501/500 factor=True double_recip=True "
+        "cofactor_joint=True shift_joint=True coupled=True "
+        "hypotheses=False two_entry=True proved=False covered=False"
+    )
+    transition_entry_short = transition_entry_mobius_factorization_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        entry_short_factor_exponent=F(1, 3),
+    )
+    print(
+        "large_q_transition: entry_mobius_short="
+        "theta=1,eta=1/3,wright_size=False covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

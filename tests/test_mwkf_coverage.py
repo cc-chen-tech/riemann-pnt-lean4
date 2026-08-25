@@ -1241,6 +1241,70 @@ def test_transition_farey_hecke_orbit_retains_the_actual_weights() -> None:
     assert maximal.hecke_index_exponent == F(2)
 
 
+def test_transition_entry_mobius_factorization_does_not_reach_wright() -> None:
+    """Double reciprocity is exact, but the fixed-factor bound still loses."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_entry_mobius_factorization_audit",
+        None,
+    )
+    identity = getattr(
+        coverage_audit,
+        "entry_double_reciprocity_identity",
+        None,
+    )
+    assert adapter is not None, "entry Möbius-factor adapter is missing"
+    assert identity is not None, "double-reciprocity helper is missing"
+
+    for c, d, modulus, epsilon, n in (
+        (5, 7, 11, 1, 9),
+        (4, 9, 13, -1, -7),
+    ):
+        assert identity(
+            c=c,
+            d=d,
+            modulus=modulus,
+            epsilon=epsilon,
+            n=n,
+        )
+
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    endpoint = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        entry_short_factor_exponent=F(2, 3),
+    )
+    assert endpoint.entry_cutoff_exponent == F(1, 3)
+    assert endpoint.entry_long_factor_exponent == F(1, 3)
+    assert endpoint.entry_short_factor_exponent == F(2, 3)
+    assert endpoint.fixed_denominator_factor_exponent == F(1, 3)
+    assert endpoint.wright_size_hypothesis_holds
+    assert endpoint.optimistic_wright_saving_exponent == -F(1)
+    assert endpoint.factor_box_target_saving_exponent == F(1, 500)
+    assert endpoint.optimistic_wright_deficit == F(501, 500)
+    assert endpoint.mobius_factorization_exact
+    assert endpoint.double_reciprocity_cancels_archimedean_term
+    assert endpoint.affine_cofactor_remains_joint
+    assert endpoint.shift_window_remains_joint
+    assert endpoint.coupled_kernel_remains_joint
+    assert not endpoint.actual_wright_coefficient_hypotheses_verified
+    assert endpoint.two_entry_type_ii_estimate_required
+    assert not endpoint.two_entry_type_ii_estimate_proved
+    assert not endpoint.published_coverage
+
+    short = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        entry_short_factor_exponent=F(1, 3),
+    )
+    assert not short.wright_size_hypothesis_holds
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2671,6 +2735,18 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "theta=1,beta=2/3,xi=4/3,hecke=2 covered=False"
     ) in output
     assert (
+        "large_q_transition: entry_mobius_factor="
+        "theta=1,beta=2/3,eta=2/3,c=1/3,d=2/3,"
+        "wright_size=True,wright_saving=-1,target=1/500,"
+        "deficit=501/500 factor=True double_recip=True "
+        "cofactor_joint=True shift_joint=True coupled=True "
+        "hypotheses=False two_entry=True proved=False covered=False"
+    ) in output
+    assert (
+        "large_q_transition: entry_mobius_short="
+        "theta=1,eta=1/3,wright_size=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -3100,5 +3176,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"x_1W_2-x_2W_1",
         r"a_i=\frac{\epsilon_i(W_i+kx_i)}b",
         "transition_farey_hecke_orbit_audit",
+        "### 4.47 Second Möbius factorization and exact double reciprocity",
+        r"x=\epsilon cd",
+        r"\frac{501}{500}",
+        "transition_entry_mobius_factorization_audit",
     ):
         assert marker in text
