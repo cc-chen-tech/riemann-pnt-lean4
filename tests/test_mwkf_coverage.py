@@ -2426,6 +2426,8 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "### 4.81 One physical Poisson step gives the exact resonance lattice",
         "\\tag{4.691}",
         "\\tag{4.693}",
+        "\\tag{4.694}",
+        "physical_poisson_route_is_independent=False",
         "outer_mobius_square_root_verified=False",
     ):
         assert marker in note
@@ -2497,7 +2499,8 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "Q=6,h=5/2,delta=5/2,resonance=7/2,lattice=1/2,"
         "pointwise=3,raw=5,physical_save=2,outer_points=6,"
         "outer_target=6,outer_required_save=3,lattice_exact=True,"
-        "poisson_exact=True,joint_derivatives=True,outer_sqrt=False"
+        "poisson_exact=True,joint_derivatives=True,determinant_line=True,"
+        "independent=False,outer_sqrt=False"
     ) in report
 
 
@@ -2967,6 +2970,8 @@ def test_midpoint_physical_poisson_resonance_lattice_is_exact() -> None:
     assert audit.resonance_lattice_bijection_exact
     assert audit.one_variable_poisson_exact
     assert audit.joint_weight_has_uniform_delta_derivatives
+    assert audit.determinant_line_correspondence_exact
+    assert not audit.physical_poisson_route_is_independent
     assert not audit.outer_mobius_square_root_verified
 
 

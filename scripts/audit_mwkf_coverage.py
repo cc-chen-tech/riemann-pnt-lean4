@@ -1300,6 +1300,8 @@ class MidpointPhysicalPoissonAudit:
     resonance_lattice_bijection_exact: bool
     one_variable_poisson_exact: bool
     joint_weight_has_uniform_delta_derivatives: bool
+    determinant_line_correspondence_exact: bool
+    physical_poisson_route_is_independent: bool
     outer_mobius_square_root_verified: bool
 
 
@@ -6553,6 +6555,8 @@ def midpoint_physical_poisson_audit() -> MidpointPhysicalPoissonAudit:
         resonance_lattice_bijection_exact=True,
         one_variable_poisson_exact=True,
         joint_weight_has_uniform_delta_derivatives=True,
+        determinant_line_correspondence_exact=True,
+        physical_poisson_route_is_independent=False,
         outer_mobius_square_root_verified=False,
     )
 
@@ -10860,6 +10864,10 @@ def main() -> None:
         f"poisson_exact={physical_poisson.one_variable_poisson_exact},"
         "joint_derivatives="
         f"{physical_poisson.joint_weight_has_uniform_delta_derivatives},"
+        "determinant_line="
+        f"{physical_poisson.determinant_line_correspondence_exact},"
+        "independent="
+        f"{physical_poisson.physical_poisson_route_is_independent},"
         "outer_sqrt="
         f"{physical_poisson.outer_mobius_square_root_verified}"
     )

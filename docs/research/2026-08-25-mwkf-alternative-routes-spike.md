@@ -9981,14 +9981,44 @@ explicit signed outer gate
 \tag{4.693}
 \]
 
+This is not a new independent square-root conjecture.  On the
+cancellation sector write
+
+\[
+ g=(|a|,|b|),
+ \qquad a=gv_0,
+ \qquad b=-gj_0,
+ \qquad h=g\delta_0,
+ \qquad (j_0,v_0)=1.
+\]
+
+Then the first equation in (4.691) is exactly
+
+\[
+ \boxed{rv_0-sj_0=\delta_0,}
+ \qquad
+ \frac ug=rv_0+sj_0.
+\tag{4.694}
+\]
+
+The first identity in (4.694) is (4.155), with precisely the scales
+\(j_0,v_0\asymp T^{1/2}/g\),
+\(\delta_0\asymp T^{5/2}/g\), and line length
+\(T^{5/2}g\) from (4.161).  Consequently the signed outer estimate
+(4.693) is the physical-Poisson realization of the already isolated
+unimodular square-root family \(\mathrm{USR}_B\) in (4.168).  The
+pointwise \(T^2\) physical saving proves the resonance count but does
+not bypass the two-affine-form Möbius correlation.
+
 Thus the physical oscillation supplies two of the five powers needed
 from the raw \((h,\delta)\)-family, while (4.693) still requires the
 full square-root saving \(T^3\) across the \(T^6\) two-Möbius outer
 points.  No cited published result proves this joint square-root gate.
 The helper `midpoint_involution_resonance_lattice_identity` checks
 (4.691) exactly, `midpoint_physical_poisson_audit` records the exponent
-ledger, and `outer_mobius_square_root_verified=False` remains the proof
-boundary.
+ledger, and records `physical_poisson_route_is_independent=False` and
+`outer_mobius_square_root_verified=False` at the same proof boundary as
+(4.168).
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
