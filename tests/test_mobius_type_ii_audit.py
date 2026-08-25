@@ -15,6 +15,8 @@ from scripts.audit_mobius_type_ii import (
     c_coefficient,
     centered_dual_scales,
     centered_dual_common_mobius_exponent,
+    centered_dual_parseval_covers,
+    centered_dual_parseval_loss,
     character_large_sieve_unit_gap,
     coprime_indicator_via_mobius,
     dispersion_pointwise_mean_square_gap,
@@ -22,12 +24,14 @@ from scripts.audit_mobius_type_ii import (
     direct_fourfold_random_margin,
     elementary_large_sieve_loss,
     global_unit_principal_completion_margin,
+    generalized_centered_dual_scales,
     induced_gauss_outer_mobius_sign,
     inverse_product_phase_mod_one,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
     mobius_geometric_value,
+    migrate_nonprincipal_mobius_sign,
     nonunit_principal_long_factor_floor,
     nonunit_principal_equal_mobius_exponent,
     nonunit_principal_h_boundary_slack,
@@ -47,7 +51,7 @@ from scripts.audit_mobius_type_ii import (
     wright_factor_savings,
     wright_unbalanced_modulus_margin,
 )
-from scripts.audit_mwkf_ranges import boundary_witnesses
+from scripts.audit_mwkf_ranges import ExponentBox, boundary_witnesses
 
 
 def naive_mobius(n: int) -> int:
@@ -385,6 +389,70 @@ def test_centered_and_principal_ramanujan_terms_recombine_exactly() -> None:
                         )
 
 
+def test_generalized_centered_ramanujan_divisor_expansion_is_exact() -> None:
+    for c in range(1, 24):
+        if naive_mobius(c) == 0:
+            continue
+        phi_c = sum(1 for residue in range(1, c + 1) if gcd(residue, c) == 1)
+        divisors_c = [j for j in range(1, c + 1) if c % j == 0]
+        for n in range(-20, 21):
+            for shift in range(1, c + 1):
+                if gcd(shift, c) != 1:
+                    continue
+                centered = (
+                    naive_mobius(c) * ramanujan_sum(c, n + shift)
+                    - F(ramanujan_sum(c, n), phi_c)
+                )
+                divisor_expansion = sum(
+                    j
+                    * (
+                        naive_mobius(j) * int((n + shift) % j == 0)
+                        - F(naive_mobius(c // j), phi_c)
+                        * int(n % j == 0)
+                    )
+                    for j in divisors_c
+                )
+                assert centered == divisor_expansion
+
+
+def test_nonprincipal_mobius_sign_migration_is_a_finite_bijection() -> None:
+    for d in range(1, 14):
+        for e in range(1, 18):
+            for c in range(1, 14):
+                if (
+                    naive_mobius(d * e * c) == 0
+                    or gcd(d, e) != 1
+                    or gcd(d, c) != 1
+                    or gcd(e, c) != 1
+                ):
+                    continue
+                for k in range(1, e + 1):
+                    if e % k != 0:
+                        continue
+                    for delta_reduced in range(1, 16):
+                        if gcd(delta_reduced, c) != 1:
+                            continue
+                        migrated = migrate_nonprincipal_mobius_sign(
+                            d, e, c, delta_reduced, k
+                        )
+                        assert migrated.s == d * e * c
+                        assert migrated.delta == e * delta_reduced
+                        assert migrated.gcd_part == gcd(
+                            migrated.shifted_delta,
+                            migrated.residual_modulus,
+                        )
+                        assert migrated.centered_modulus == (
+                            migrated.residual_modulus // migrated.gcd_part
+                        )
+                        assert migrated.mobius_sign == naive_mobius(
+                            migrated.dilation
+                        )
+                        assert e == migrated.gcd_part * migrated.dilation
+                        assert delta_reduced == (
+                            migrated.shifted_delta // migrated.gcd_part
+                        )
+
+
 def test_delta_completed_congruence_has_self_dual_affine_family() -> None:
     for b in range(1, 9):
         for z in range(1, 9):
@@ -437,6 +505,35 @@ def test_delta_completed_congruence_has_self_dual_affine_family() -> None:
         balanced, F(3)
     ) == F(7, 12)
 
+    low_divisor_face = ExponentBox(
+        rho=F(2),
+        sigma=F(2),
+        m=F(1, 2),
+        k=F(1, 2),
+        ell=F(1, 2),
+        h=F(3, 2),
+        kappa=F(0),
+    )
+    assert centered_dual_parseval_loss(low_divisor_face, F(1, 2)) == 0
+    assert centered_dual_parseval_covers(low_divisor_face, F(1, 2))
+    assert centered_dual_parseval_loss(low_divisor_face, F(1)) == F(1, 2)
+    assert not centered_dual_parseval_covers(low_divisor_face, F(1))
+
+    generalized = generalized_centered_dual_scales(
+        balanced,
+        modulus=F(5, 2),
+        delta_gcd=F(1, 2),
+        mobius_divisor=F(1, 4),
+    )
+    assert generalized.raw_frequency == F(9, 4)
+    assert generalized.product_frequency == F(5, 2)
+    assert generalized.residue == F(1, 2)
+    assert generalized.quotient == F(1)
+    assert generalized.progression == F(2)
+    assert generalized.residue + balanced.rho == (
+        generalized.quotient + F(5, 2)
+    )
+
 
 def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:
     for s in range(1, 41):
@@ -473,10 +570,10 @@ def test_research_note_contains_no_embedded_control_characters() -> None:
     note = (
         Path(__file__).parents[1]
         / "docs/research/2026-08-24-mobius-weighted-off-diagonal.md"
-    ).read_text()
+    ).read_bytes()
     forbidden = {
-        character
-        for character in note
-        if ord(character) < 32 and character not in {"\n", "\t"}
+        byte
+        for byte in note
+        if byte < 32 and byte not in {ord("\n"), ord("\t")}
     }
     assert forbidden == set()

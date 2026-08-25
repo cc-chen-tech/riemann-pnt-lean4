@@ -2727,7 +2727,7 @@ In particular, on the unit gcd stratum the principal-character piece is
 exactly
 
 \[
- \mathfrak P_{m unit}
+ \mathfrak P_{\rm unit}
  =\sum_{c\asymp S\atop \mu(c)^2=1}
    \frac{1}{\varphi(c)}
    \mathcal R_c(\chi_{0,c})
@@ -3551,6 +3551,32 @@ Parseval with only divisor-bounded coefficients gives
 Thus the general-coefficient Fourier route loses exactly the same
 \(V=J/M\) found in Section 9.20.
 
+This also gives a genuine unconditional boundary box which should not be
+left inside the residual gate.  If
+
+\[
+ \boxed{J\leq M T^{O(\eta)},}
+\tag{9.109a}
+\]
+
+then \(V\ll T^{O(\eta)}\), so (9.109) is already
+\(O(X_0T^\varepsilon)\).  At zero slack this is exactly
+\(\jmath=m\).  Since (9.100) requires
+\(\jmath\geq\max(m,\ell)\), this face can occur only when
+\(\ell\leq m\).  Therefore the centered unit nonprincipal spectrum is
+proved on every divisor-dual box with \(J/M=T^{O(\eta)}\); only
+
+\[
+ J/M=T^{\Omega(1)}
+\tag{9.109b}
+\]
+
+can contribute to the polynomial residual.  This does not meet the
+balanced box, where \(J/M\in[T^2,T^{5/2}]\), but it removes the complete
+low-divisor face without a Möbius estimate.  The exact-rational checker
+records the loss \(\jmath-m\) and the forced inequality
+\(\ell\leq m\) when that loss vanishes.
+
 The central arc explains why a separated Euler-product estimate does not
 remove this loss.  Suppose, only for this diagnostic, that the two smooth
 Möbius sums of lengths \(R\) and \(J\) are bounded by
@@ -3663,7 +3689,7 @@ nonprincipal estimate can be stated as the single family
 
 \[
  \boxed{
- \sum_{\substack{d,e,c\ {m pairwise\ coprime}\\dec\asymp S}}
+ \sum_{\substack{d,e,c\ {\rm pairwise\ coprime}\\dec\asymp S}}
  \sum_{r,\delta_1}
  \mu(r)\,\mathfrak N_{d,e,c}(r,\delta_1)
  \mathcal W_{d,e,c}(r,\delta_1)
@@ -3680,10 +3706,10 @@ stratum with one exact centered interface.
 ### 9.24 Exact recombination and the weakest residual interface
 
 It would still be stronger than the original problem to demand separate
-(O(RS T^\varepsilon)) bounds for (9.69) and (9.115).  The subtraction
+\(O(RS T^\varepsilon)\) bounds for (9.69) and (9.115).  The subtraction
 in (9.113) is the local principal projection, so cancellation between it
 and the global principal lattice must remain available.  For fixed
-(d,e,c,r,\delta_1), define that local projection by
+\(d,e,c,r,\delta_1\), define that local projection by
 
 \[
 \boxed{
@@ -3694,7 +3720,7 @@ and the global principal lattice must remain available.  For fixed
 \tag{9.116}
 \]
 
-Here (F) retains its full dependence on the fixed outer variables; only
+Here \(F\) retains its full dependence on the fixed outer variables; only
 the displayed arithmetic factor is independent of the inverse residue.
 Adding (9.116) to (9.113) gives the termwise identity
 
@@ -3710,7 +3736,7 @@ Adding (9.116) to (9.113) gives the termwise identity
 
 Thus the centered and principal pieces recombine exactly to the original
 outer-Möbius-weighted phase after the scaled reverse Poisson transform.
-For (c=1), (9.113) vanishes and (9.116) is the whole expression, as
+For \(c=1\), (9.113) vanishes and (9.116) is the whole expression, as
 required.  Summing (9.116) over the unique gcd decomposition (9.49), and
 then using (9.66)--(9.68), recovers the lattice part (9.69) together with
 its already controlled zero-mode subtraction.  No boundary term is left
@@ -3725,7 +3751,7 @@ Let \(\mathfrak P_{\rm top}\) denote only the residual part of (9.69) on
 
 and let \(\mathfrak N_{\rm all}\) denote (9.115), restricted to boxes not
 already covered by Sections 8 and 9.14.  All complementary principal
-pieces are (O(RS T^\varepsilon)) by (9.63)--(9.73), and the tail is
+pieces are \(O(RS T^\varepsilon)\) by (9.63)--(9.73), and the tail is
 already controlled by (6.12).  Consequently the weakest residual
 statement furnished by the exact reductions in this note is the joint
 gate
@@ -3744,6 +3770,227 @@ complementary pieces have been removed.  It is still unproved.  In
 particular, (9.117) also shows why a formal cancellation of the principal
 subtraction cannot by itself close the problem: using that cancellation
 merely reconstructs the original uncentered coupled kernel.
+
+### 9.25 Divisor duality and self-duality on every gcd stratum
+
+The generalized centered kernel (9.113) admits the same second duality as
+the unit kernel, including the dilation.  Fix one \(k\mid e\), put
+\(E=e/k\), and suppress the common factor
+\(\mu(d)\mu(e)\mu(k)\).  The squarefree divisor formula gives exactly
+
+\[
+\begin{aligned}
+ &E\sum_nF(En)
+ \left\{\mu(c)c_c(n+k\alpha)-\frac{c_c(n)}{\varphi(c)}\right\}\\
+ ={}&E\sum_{j\mid c}j\mu(j)
+       \sum_{n\equiv-k\alpha\ ({\rm mod}\ j)}F(En)\\
+ &-\frac E{\varphi(c)}\sum_{j\mid c}j\mu(c/j)
+       \sum_{n\equiv0\ ({\rm mod}\ j)}F(En).
+\end{aligned}
+\tag{9.120}
+\]
+
+Apply lattice Poisson to \(G(x)=F(Ex)\), for which
+\(\widehat G(\xi)=E^{-1}\widehat F(\xi/E)\).  The outer factor \(E\)
+cancels this Jacobian and yields
+
+\[
+\boxed{
+\begin{aligned}
+ (9.120)={}&\sum_{j\mid c}\mu(j)
+       \sum_{v\in\mathbb Z}e_j(-vk\alpha)
+       \widehat F\left(\frac v{jE}\right)\\
+ &-\frac1{\varphi(c)}\sum_{j\mid c}\mu(c/j)
+       \sum_{v\in\mathbb Z}
+       \widehat F\left(\frac v{jE}\right).
+\end{aligned}}
+\tag{9.121}
+\]
+
+This identity contains an exact cancellation stronger than the ordinary
+zero-frequency cancellation.  For a fixed \(q\in\mathbb Z\), take the
+common physical frequency
+
+\[
+ v=qjE.
+\tag{9.122}
+\]
+
+Its phase is \(e_j(-qjEk\alpha)=e_j(-qje\alpha)=1\), and its two
+coefficients are respectively
+\(\sum_{j\mid c}\mu(j)\) and
+\(\varphi(c)^{-1}\sum_{j\mid c}\mu(c/j)\).  Both vanish for \(c>1\);
+for \(c=1\) the two lines of (9.121) cancel each other.  Hence every
+common frequency (9.122), including \(q=0\), disappears before a
+dyadic \(j\)-localization.  This is the exact nonunit analogue of
+(9.90a).
+
+The remaining Fourier support satisfies
+
+\[
+ 1\leq |v|\ll\frac{jE}{M}T^{O(\eta)},
+ \qquad jE\gg MT^{-O(\eta)}.
+\tag{9.123}
+\]
+
+Now \(\delta=e\delta_1\), so the completed \(\delta_1\)-interval has
+length \(L/e\).  If \(b\) is the signed least residue
+
+\[
+ b\equiv vk\bar r\pmod j,
+\tag{9.124}
+\]
+
+then repeated summation by parts gives
+
+\[
+ |b|\ll\frac{je}{L}T^{O(\eta)},
+ \qquad\boxed{br-kv=zj}.
+\tag{9.125}
+\]
+
+Thus, for \(j\asymp J\), the complete generalized scale ledger is
+
+\[
+\boxed{
+ |v|\ll\frac{Je}{kM},\quad
+ |kv|\ll\widetilde V:=\frac{Je}{M},\quad
+ |b|\ll B_e:=\frac{Je}{L},\quad
+ |z|\ll Z_e:=\frac{Re}{L},\quad
+ |t|\ll\frac Le.}
+\tag{9.126}
+\]
+
+Indeed, for \(g=(b,z)\), the solutions of (9.125) have steps
+\((z/g,b/g)\), so the generic affine interval has length
+\((L/e)g\).  The two convolution products again have the identical
+ambient length
+
+\[
+ X_e=B_eR=Z_eJ=\frac{RJe}{L},
+\tag{9.127}
+\]
+
+and their difference window has length \(\widetilde V=Je/M\).  Therefore
+the general-coefficient Fourier estimate loses exactly \(Je/M\), not an
+unspecified gcd factor.  It unconditionally covers the small corner
+
+\[
+ Je\leq MT^{O(\eta)}.
+\tag{9.128}
+\]
+
+Together with the support condition \(Je/k\gg MT^{-O(\eta)}\), this
+corner forces \(k\leq T^{O(\eta)}\) and both inequalities to be near
+equality.  On the remaining polynomial face, if \(e=T^{\epsilon_e}\),
+the separated central-arc diagnostic becomes
+
+\[
+ \boxed{
+ \beta\leq
+ 1-\frac{\jmath+\epsilon_e-m}{\rho+\jmath}.}
+\tag{9.129}
+\]
+
+At \(e=1\), (9.126)--(9.129) reduce to (9.100), (9.109), and
+(9.110).  Thus every nonprincipal gcd stratum now has the same exact
+self-dual interface.  The polynomial part of (9.129) remains unproved;
+the gain here is that neither the dilation \(e/k\), the shortened
+progression \(L/e\), nor any common Fourier mode remains hidden in
+\(\mathcal W\).
+
+### 9.26 Migration of the Möbius sign to the dilation variable
+
+There is one more exact reindexing which should be made before trying to
+estimate the nonunit family.  In a term of (9.113), set
+
+\[
+ \boxed{
+ E=\frac ek,\qquad \delta'=k\delta_1,\qquad f=kc.}
+\tag{9.130}
+\]
+
+Because \(d,e,c\) are pairwise coprime and squarefree and \(k\mid e\),
+the new factors \(d,E,f\) are pairwise coprime and squarefree.  Moreover
+
+\[
+ \boxed{
+ s=dEf,\qquad \delta=E\delta',\qquad
+ k=(\delta',f),\qquad c=\frac f{(\delta',f)}.}
+\tag{9.131}
+\]
+
+Indeed, \(\delta'=k\delta_1\), \(f=kc\), and
+\((\delta_1,c)=1\), so \((\delta',f)=k\).  Conversely, (9.131)
+recovers
+
+\[
+ e=kE,\qquad \delta_1=\delta'/k,
+\]
+
+and hence (9.130) is a finite bijection, including the endpoint
+\(k=e\).  Most importantly, squarefreeness gives the exact sign
+migration
+
+\[
+ \boxed{\mu(e)\mu(k)=\mu(kE)\mu(k)=\mu(E).}
+\tag{9.132}
+\]
+
+The dilation and the Ramanujan shift simultaneously simplify:
+
+\[
+ \frac ek=E,\qquad k\delta_1=\delta'.
+\tag{9.133}
+\]
+
+Consequently the full nonprincipal family (9.115) can equivalently be
+written, without an absolute value over any of the new factors, in the
+finite shape
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak N_{\rm all}
+ ={}&\sum_{\substack{d,E,f\ {\rm pairwise\ coprime}\\dEf\asymp S}}
+ \mu(d)\mu(E)
+ \sum_{\substack{r\asymp R,\ \delta'\\E\delta'\asymp L}}
+ \mu(r)\,\mathcal W_{d,E,f}(r,\delta')\,E
+ \sum_nF_{r,dEf,E\delta'}(En)\\
+ &\quad\times
+ \left\{
+  \mu(c)c_c(n+\delta'\bar r)
+  -\frac{c_c(n)}{\varphi(c)}
+ \right\},
+ \qquad
+ c=\frac f{(\delta',f)}.
+\end{aligned}}
+\tag{9.134}
+\]
+
+The bracket vanishes when \(c=1\), so the fully resonant endpoint is
+still excluded automatically.  Every Selberg taper, exact gcd condition,
+\(q\)-coprimality, dyadic boundary, and dependence on \(f\) remains in
+\(\mathcal W_{d,E,f}\).
+
+Formula (9.134) changes the analytic interpretation of the nonunit
+problem.  The divisor \(k\) must not be paid for termwise: its Möbius
+sign has become a genuine sign \(\mu(E)\) on the dilation, while
+\(k=(\delta',f)\) is recovered arithmetically.  After applying
+(9.120)--(9.121), the nonunit polynomial family therefore carries at
+least the long signs
+
+\[
+ \mu(r)\mu(E)\mu(j),
+\tag{9.135}
+\]
+
+in addition to the gcd sign \(\mu(d)\).  The unit endpoint \(E=d=1\)
+still has only \(\mu(r)\mu(j)\), so (9.135) does not by itself close the
+balanced unit obstruction.  It does, however, rule out any future proof
+which treats the \(k\mid e\) sum as a divisor-bounded absolute
+coefficient: that would discard an exact Möbius average which is present
+on every nonunit dilation.
 
 ## 10. What has and has not been proved
 
@@ -3813,14 +4060,20 @@ Proved in this note:
   its negative modulus margins on the full balanced \(J\)-interval,
   (9.103)--(9.105).
 * the exact convolution/Fourier-energy form, its general-coefficient
-  \(V\)-loss, and the separated central-arc Mertens thresholds,
-  (9.106)--(9.110).
+  \(V\)-loss, the unconditional \(J/M=T^{O(\eta)}\) boundary coverage,
+  and the separated central-arc Mertens thresholds, (9.106)--(9.110).
 * the global reverse completion of every nonprincipal gcd stratum into
   one dilated centered Ramanujan family, including all \(k\mid e\)
   boundary terms, (9.111)--(9.115).
 * the exact recombination of the centered and principal spectra and the
   weakest remaining joint gate after all proved complements are removed,
   (9.116)--(9.119).
+* the generalized divisor-dual identity, cancellation of every common
+  dilated frequency, and the exact self-dual scale ledger on all gcd
+  strata, (9.120)--(9.129).
+* the finite sign-migration bijection which moves
+  \(\mu(e)\mu(k)\) to \(\mu(E)\) and exposes the three-Möbius nonunit
+  family, (9.130)--(9.135).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -3851,9 +4104,11 @@ Proved in this note:
 | Delta completion of the centered form | exact reduction; self-dual correlation unproved | only \(|b|\lesssim J/L\) survives, but \(br-v=zj\) parametrizes another \(\mu(r)\mu(j)\) affine family of length \(L\); balanced scales are (9.99) |
 | Post-centering published coverage | verified absent on the balanced \(J\)-range | exact scale ledger (9.100); termwise completion loses \(T^{2}\) to \(T^{5/2}\), averaged Chowla has slope loss \(T\), and direct spectral dispersion loses at least \(T^5\) |
 | Wright unbalanced-convolution corollary after centering | verified inapplicable | exact product/modulus map (9.103); both published modulus margins are negative throughout \(5/2\leq\jmath\leq3\), (9.104)--(9.105) |
-| Centered Fourier-energy route | exact reformulation; flatness unproved | Parseval loses \(V=J/M\), (9.109); a separated central-arc estimate needs common Mertens exponent from \(7/11\) down to \(7/12\), (9.110) |
+| Centered Fourier-energy route | low-divisor face proved; remaining flatness unproved | Parseval loses exactly \(V=J/M\), so \(J/M=T^{O(\eta)}\) is covered by (9.109a); on the remaining polynomial face a separated central-arc estimate needs common Mertens exponent from \(7/11\) down to \(7/12\), (9.110) |
 | All nonprincipal gcd strata | exact unified reduction; centered estimate unproved | scaled reverse Poisson (9.111) and mean-zero kernel (9.113)--(9.114); the complete residual family is (9.115), with no characterwise triangle inequality |
 | Recombined residual spectrum | exact identity; joint estimate unproved | principal plus centered kernels recombine termwise in (9.117); the weakest post-reduction gate is the joint sum (9.119), not separate bounds for (9.69) and (9.115) |
+| Generalized centered divisor duality | exact reduction; polynomial window unproved | all common \(v=qj(e/k)\) modes cancel in (9.121)--(9.122); the remaining equation is \(br-kv=zj\), with scales (9.126), Parseval loss \(Je/M\), and unconditional corner (9.128) |
+| Nonunit Möbius sign migration | exact finite bijection; estimate unproved | \(E=e/k,\delta'=k\delta_1,f=kc\) gives \(k=(\delta',f)\) and \(\mu(e)\mu(k)=\mu(E)\), (9.130)--(9.134); after divisor duality the nonunit family retains \(\mu(r)\mu(E)\mu(j)\) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

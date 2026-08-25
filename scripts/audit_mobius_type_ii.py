@@ -472,6 +472,74 @@ class CenteredDualScales:
     slope_penalty: Fraction
 
 
+@dataclass(frozen=True)
+class GeneralizedCenteredDualScales:
+    """Exponent ledger for a nonunit gcd stratum and one ``k|e`` term."""
+
+    raw_frequency: Fraction
+    product_frequency: Fraction
+    residue: Fraction
+    quotient: Fraction
+    progression: Fraction
+
+
+@dataclass(frozen=True)
+class NonprincipalSignMigration:
+    """Exact reparametrization of one ``k|e`` reverse-Poisson term."""
+
+    d: int
+    dilation: int
+    residual_modulus: int
+    shifted_delta: int
+    gcd_part: int
+    centered_modulus: int
+    s: int
+    delta: int
+    mobius_sign: int
+
+
+def migrate_nonprincipal_mobius_sign(
+    d: int,
+    e: int,
+    c: int,
+    delta_reduced: int,
+    k: int,
+) -> NonprincipalSignMigration:
+    """Move ``mu(e)mu(k)`` to the dilation ``E=e/k`` exactly.
+
+    The input models one term of (9.113): ``d,e,c`` are pairwise
+    coprime and squarefree, ``k|e``, and ``(delta_reduced,c)=1``.
+    With ``E=e/k``, ``delta'=k*delta_reduced`` and ``f=k*c``, one has
+    ``k=(delta',f)``, ``s=d*E*f``, ``delta=E*delta'`` and
+    ``mu(e)mu(k)=mu(E)``.
+    """
+
+    if min(d, e, c, k) < 1 or delta_reduced == 0:
+        raise ValueError("positive factors and nonzero reduced delta are required")
+    if mobius(d * e * c) == 0:
+        raise ValueError("d*e*c must be squarefree")
+    if gcd(d, e) != 1 or gcd(d, c) != 1 or gcd(e, c) != 1:
+        raise ValueError("d,e,c must be pairwise coprime")
+    if e % k != 0 or gcd(delta_reduced, c) != 1:
+        raise ValueError("require k|e and gcd(delta_reduced,c)=1")
+    dilation = e // k
+    shifted_delta = k * delta_reduced
+    residual_modulus = k * c
+    if gcd(shifted_delta, residual_modulus) != k:
+        raise AssertionError("the inverse gcd map failed")
+    return NonprincipalSignMigration(
+        d=d,
+        dilation=dilation,
+        residual_modulus=residual_modulus,
+        shifted_delta=shifted_delta,
+        gcd_part=k,
+        centered_modulus=c,
+        s=d * dilation * residual_modulus,
+        delta=dilation * shifted_delta,
+        mobius_sign=mobius(e) * mobius(k),
+    )
+
+
 def centered_dual_scales(
     box: ExponentBox,
     modulus: Fraction,
@@ -532,6 +600,60 @@ def centered_dual_common_mobius_exponent(
     if total_long_length <= 0:
         raise ValueError("central arc requires a positive long length")
     return Fraction(1) - scales.frequency / total_long_length
+
+
+def centered_dual_parseval_loss(
+    box: ExponentBox,
+    modulus: Fraction,
+) -> Fraction:
+    """Power loss of the general-coefficient centered Fourier bound.
+
+    Equation (9.109) has scale ``V*X_0`` against target ``X_0``, where
+    ``V=J/M``.  Hence the exact exponent loss is ``j-m``.  It vanishes
+    precisely on the zero-slack face ``j=m``; the support condition
+    ``j >= max(m, ell)`` then forces ``ell <= m``.
+    """
+
+    return centered_dual_scales(box, modulus).frequency
+
+
+def centered_dual_parseval_covers(
+    box: ExponentBox,
+    modulus: Fraction,
+) -> bool:
+    """Whether Parseval alone closes a zero-slack centered dual box."""
+
+    return centered_dual_parseval_loss(box, modulus) == 0
+
+
+def generalized_centered_dual_scales(
+    box: ExponentBox,
+    modulus: Fraction,
+    delta_gcd: Fraction,
+    mobius_divisor: Fraction,
+) -> GeneralizedCenteredDualScales:
+    """Scales after dualizing a general ``(d,e,c)`` nonprincipal stratum.
+
+    Write ``e=T^delta_gcd``, ``k=T^mobius_divisor`` and ``E=e/k``.
+    The raw dual frequency has length ``J*E/M``.  Delta completion uses
+    ``delta_1`` of length ``L/e`` and the product frequency ``k*v``;
+    the equation is ``b*r-k*v=z*j``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("generalized centered scales require an admissible box")
+    if not Fraction(0) <= mobius_divisor <= delta_gcd <= box.ell:
+        raise ValueError("require 1 <= k <= e <= L on the exponent scale")
+    raw_frequency = modulus + delta_gcd - mobius_divisor - box.m
+    if raw_frequency < 0:
+        raise ValueError("the divisor modulus lies below Fourier support")
+    return GeneralizedCenteredDualScales(
+        raw_frequency=raw_frequency,
+        product_frequency=modulus + delta_gcd - box.m,
+        residue=modulus + delta_gcd - box.ell,
+        quotient=box.rho + delta_gcd - box.ell,
+        progression=box.ell - delta_gcd,
+    )
 
 
 @dataclass(frozen=True)
