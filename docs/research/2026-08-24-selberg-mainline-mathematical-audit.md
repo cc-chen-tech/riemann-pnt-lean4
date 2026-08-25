@@ -35,9 +35,11 @@ lower bound
 
 are now formalized as well, together with their dyadic specialization
 `T/2 - 16/log 2 - 2*C*X*sqrt(T/2)`.  The theorem remains incomplete until
-the fixed-power integer parameter is inserted, the S4 modulus/Stirling
-bridge and S4b sliding transfer are assembled, and the S5/packing interfaces
-are instantiated.
+the fixed-power integer parameter is inserted, the S4b sliding transfer is
+assembled, and the S5/packing interfaces are instantiated.  The S4a
+modulus/Stirling integration is now formalized: once each of the fixed and
+horizontal contour errors is at most `T/8`, it yields the required positive
+constant times `T^(3/4)` lower bound.
 
 The main conclusion is decisive:
 
@@ -2688,10 +2690,13 @@ bounds.  This gives the quantitative dyadic lower bound
  \ge \frac T2-\frac{16}{\log2}-2CX\sqrt{T/2}.
 \]
 
-The remaining S4 work is therefore the fixed-power integer parameter choice,
-the pointwise modulus/Stirling integration that yields S4a, and the
-Tonelli/end-interval transfer yielding S4b; it is not a missing contour or
-analytic edge estimate.
+The pointwise modulus/Stirling integration is now formalized in
+`SelbergFirstMomentLower.lean`.  It first proves the parameter-independent
+implication from a `T/4` contour lower bound to `c*T^(3/4)` absolute completed
+mass, then combines it with the dyadic contour theorem under the two exact
+absorption hypotheses.  The remaining S4 work is therefore the fixed-power
+integer parameter choice and the Tonelli/end-interval transfer yielding S4b;
+it is not a missing contour, Stirling, or analytic edge estimate.
 
 ### Sign change and multiplicity
 
@@ -2721,9 +2726,10 @@ It uses neither RH nor any zero-density hypothesis, Farmer's long-mollifier
 conjecture, `MWKF(3)`, a Bettin--Chandee conjecture, nor the Zeta23 bridge.
 Lean formalization is therefore admissible for the Selberg slice and has
 closed S1, S12, S13, S-arith, the full two-sided S2 off-diagonal estimate,
-the signed integrated diagonal asymptotic, and the finite S4 contour lower
-bound.  The fixed-parameter S4a/S4b and the S5/final odd-zero assembly remain
-open.
+the signed integrated diagonal asymptotic, the finite S4 contour lower bound,
+and the S4a modulus/Stirling bridge under its exact horizontal-absorption
+hypotheses.  The fixed integer parameter, S4b, and the S5/final odd-zero
+assembly remain open.
 
 The object-level `J` bridge is now also closed through the following exact
 stages.  The physical theta kernel at `log u` equals the original
