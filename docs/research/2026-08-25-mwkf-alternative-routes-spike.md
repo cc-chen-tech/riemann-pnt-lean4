@@ -820,6 +820,101 @@ This is a structural reduction, not the missing cancellation estimate.
 The coefficient in (4.41) still varies jointly with \(s,w,a\), and the
 required shell savings remain exactly those in (4.34).
 
+### 4.5 Pre-completion Kloosterman-fraction form
+
+The fixed-slope coordinates simplify the original inverse phase as well.
+From (4.38) and \((s,w)=1\),
+
+\[
+ \overline{(j+1)s+w}\equiv\bar w\pmod s.
+\tag{4.44}
+\]
+
+Use \(\delta_0\) for the original shifted-divisor variable, to distinguish
+it from the distance exponent \(\delta\) in (4.34).  Before either finite
+completion, define
+
+\[
+\begin{aligned}
+ \mathfrak G_{q,j}(D)
+ :={}&
+ \sum_{\substack{S/2\le s\le2S,\quad
+                  w\in\mathbb Z,\quad D<|w|\le2D\\
+                  -s/2<w\le s/2\\
+                  R/2\le (j+1)s+w\le2R\\
+                  (s,w)=1,\quad(q,s((j+1)s+w))=1\\
+                  qs,\ q((j+1)s+w)\le N\\
+                  H/2\le|h|\le2H,\quad
+                  L/2\le|\delta_0|\le2L}}
+ \mu(s)\mu((j+1)s+w)\\
+ &\quad\times p_N(qs)p_N(q((j+1)s+w))\\
+ &\quad\times
+ \Psi((j+1)s+w,s,h,\delta_0)
+ e\left(-\frac{h\delta_0\bar w}{s}\right).
+\end{aligned}
+\tag{4.45}
+\]
+
+Here \(\Psi\) is exactly the coupled smooth box weight in the
+pre-completion core; in particular no factor depending on
+\((s,w,h,\delta_0)\) has been separated or replaced.  Linearity of finite
+completion and (4.44) give the exact identities
+
+\[
+ \mathfrak S_{q,D}[\Psi]
+ =\sum_{j=-1}^{3}\mathfrak G_{q,j}(D),
+ \qquad
+ \mathfrak S_{q,D}[\Psi]
+ =\frac{HL}{S}\mathfrak D_{q,D}^{(2)}.
+\tag{4.46}
+\]
+
+Thus (4.32) is equivalent to
+
+\[
+ \boxed{
+ \left|\sum_{j=-1}^{3}\mathfrak G_{q,j}(D)\right|
+ \ll_{B,W}RS\,\mathscr L^{-B}.}
+\tag{4.47}
+\]
+
+For fixed \(j\), (4.45) has the standard Kloosterman-fraction phase with
+the exact scale assignment
+
+\[
+ M_{\mathrm{inv}}=D,\qquad
+ N_{\mathrm{mod}}=S,\qquad
+ A_{\mathrm{num}}=HL.
+\tag{4.48}
+\]
+
+At the hard box, let \(D=T^\delta\).  Even if the joint coefficient in
+(4.45) is optimistically replaced by separated coefficients, the two
+Bettin--Chandee terms and their deficit against the exponent-six target
+in (4.47) are
+
+\[
+\begin{array}{c|c|c|c}
+ \delta&\mathrm{BC}_1&\mathrm{BC}_2&
+ \max(\mathrm{BC}_1,\mathrm{BC}_2)-6\\ \hline
+ 1&89/10&75/8&27/8\\
+ 3/2&363/40&153/16&57/16\\
+ 2&37/4&39/4&15/4\\
+ 5/2&387/40&163/16&67/16\\
+ 3&101/10&85/8&37/8.
+\end{array}
+\tag{4.49}
+\]
+
+All deficits are positive.  Moreover, the optimistic coefficient
+replacement is not valid: both
+\(\mu((j+1)s+w)\) and \(\Psi((j+1)s+w,s,h,\delta_0)\) couple the inverse
+and modulus variables.  The exact-rational function
+inverse_resonance_bcr_scales records (4.48)--(4.49).  Consequently direct
+Bettin--Chandee treatment covers no far-resonance shell; a successful
+argument must use the two Möbius weights before replacing coefficients by
+their \(L^2\) norms.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

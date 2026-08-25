@@ -188,6 +188,21 @@ class AveragedChowlaShellAudit:
     reasons: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class InverseResonanceBCRScales:
+    distance: Fraction
+    inverse_length: Fraction
+    modulus_length: Fraction
+    numerator_product_length: Fraction
+    term_1: Fraction
+    term_2: Fraction
+    bound: Fraction
+    gate_target: Fraction
+    deficit: Fraction
+    joint_coefficient_accepted: bool
+    published_coverage: bool
+
+
 def _positive_part(value: Fraction) -> Fraction:
     return max(F(0), value)
 
@@ -685,6 +700,60 @@ def averaged_chowla_shell_audit(
             "Matomaki-Radziwill-Tao, arXiv:1503.05121, Theorem 1.6"
         ),
         reasons=tuple(reasons),
+    )
+
+
+def inverse_resonance_bcr_scales(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+) -> InverseResonanceBCRScales:
+    """Optimistic Bettin--Chandee ledger after ``bar(r)=bar(w) mod s``.
+
+    On a resonance shell the inverse variable has length ``D``, the
+    modulus has length ``S``, and grouping the original two short
+    variables gives numerator length ``H*L``.  This calculation grants
+    separated coefficients optimistically; the actual kernel and the
+    Möbius factor ``mu((j+1)s+w)`` remain joint in ``(w,s)``.
+    """
+    if distance < 0 or distance > max(box.rho, box.sigma):
+        raise ValueError("distance exceeds the shifted-variable range")
+    inverse_length = distance
+    modulus_length = box.sigma
+    numerator_product_length = box.ell + box.h
+    total = (
+        inverse_length + modulus_length + numerator_product_length
+    )
+    longest = max(inverse_length, modulus_length)
+    large_numerator = F(1, 2) * _positive_part(
+        numerator_product_length - inverse_length - modulus_length
+    )
+    term_1 = (
+        F(17, 20) * total
+        + F(1, 4) * longest
+        + large_numerator
+    )
+    term_2 = (
+        F(7, 8) * (inverse_length + modulus_length)
+        + numerator_product_length
+        + F(1, 8) * longest
+        + large_numerator
+    )
+    bound = max(term_1, term_2)
+    gate_target = box.rho + box.sigma
+    deficit = bound - gate_target
+    return InverseResonanceBCRScales(
+        distance=distance,
+        inverse_length=inverse_length,
+        modulus_length=modulus_length,
+        numerator_product_length=numerator_product_length,
+        term_1=term_1,
+        term_2=term_2,
+        bound=bound,
+        gate_target=gate_target,
+        deficit=deficit,
+        joint_coefficient_accepted=False,
+        published_coverage=False,
     )
 
 

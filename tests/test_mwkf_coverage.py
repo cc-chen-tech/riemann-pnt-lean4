@@ -300,6 +300,36 @@ def test_far_resonance_shell_has_the_exact_piecewise_power_deficit() -> None:
         assert scales.logarithmic_gate_target == F(4)
 
 
+def test_inverse_resonance_bcr_deficit_worsens_across_the_shells() -> None:
+    """Catch mapping the inverse variable back to length R instead of D."""
+    adapter = getattr(
+        coverage_audit,
+        "inverse_resonance_bcr_scales",
+        None,
+    )
+    assert adapter is not None, "inverse-resonance BCR adapter is missing"
+    box = boundary_witnesses()["balanced_max_a"]
+
+    expected = {
+        F(1): (F(89, 10), F(75, 8), F(27, 8)),
+        F(3, 2): (F(363, 40), F(153, 16), F(57, 16)),
+        F(2): (F(37, 4), F(39, 4), F(15, 4)),
+        F(5, 2): (F(387, 40), F(163, 16), F(67, 16)),
+        F(3): (F(101, 10), F(85, 8), F(37, 8)),
+    }
+    for distance, want in expected.items():
+        audit = adapter(box, distance=distance)
+        assert audit.inverse_length == distance
+        assert audit.modulus_length == F(3)
+        assert audit.numerator_product_length == F(5)
+        assert audit.term_1 == want[0]
+        assert audit.term_2 == want[1]
+        assert audit.deficit == want[2]
+        assert audit.gate_target == F(6)
+        assert not audit.joint_coefficient_accepted
+        assert not audit.published_coverage
+
+
 def test_averaged_chowla_fails_already_on_the_logarithmic_shell_face() -> None:
     """Catch treating MRT's 1/3000 log saving as enough for the B>7 gate."""
     adapter = getattr(
