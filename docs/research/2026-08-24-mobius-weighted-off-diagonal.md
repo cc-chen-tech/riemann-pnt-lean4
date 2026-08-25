@@ -3504,6 +3504,84 @@ residue \(v\); summing it termwise over the present
 Section 9.20.  The newer partially fixed-modulus theorem therefore gives
 no hidden closure after the centered transform.
 
+### 9.22 Fourier-energy form and the central-arc barrier
+
+The self-dual equation also admits a useful additive-energy formulation.
+For one separated smooth piece, define the convolution coefficients
+
+\[
+ A_x=\sum_{br=x}\alpha_b\mu(r),\qquad
+ B_y=\sum_{zj=y}\beta_z\mu(j),
+\tag{9.106}
+\]
+
+with the dyadic and coprimality restrictions retained in the coefficients.
+Both sequences have the same ambient length
+
+\[
+ X_0=BR=ZJ=T^{\rho+\jmath-\ell},
+ \qquad V=J/M=T^{\jmath-m}.
+\tag{9.107}
+\]
+
+After delta completion, a typical difference kernel has the exact Fourier
+form
+
+\[
+\begin{aligned}
+ \sum_{x,y}A_x\overline{B_y}
+ W_0\left(\frac{x-y}{V}\right)
+ =V\int_{\mathbb R}\widehat W_0(V\alpha)
+ \mathcal A(\alpha)\overline{\mathcal B(\alpha)}\,d\alpha,
+\end{aligned}
+\tag{9.108}
+\]
+
+where \(\mathcal A(\alpha)=\sum_xA_xe(\alpha x)\), and similarly for
+\(\mathcal B\).  Periodizing the rapidly decaying multiplier and applying
+Parseval with only divisor-bounded coefficients gives
+
+\[
+ |(9.108)|\ll_arepsilon
+ V\|A\|_2\|B\|_2T^\varepsilon
+ \ll_arepsilon VX_0T^\varepsilon.
+\tag{9.109}
+\]
+
+Thus the general-coefficient Fourier route loses exactly the same
+\(V=J/M\) found in Section 9.20.
+
+The central arc explains why a separated Euler-product estimate does not
+remove this loss.  Suppose, only for this diagnostic, that the two smooth
+Möbius sums of lengths \(R\) and \(J\) are bounded by
+\(R^{\beta+\varepsilon}\) and \(J^{\beta+\varepsilon}\).  On an arc of
+width \(X_0^{-1}\), absolute estimation of (9.108) has scale
+
+\[
+ \frac V{X_0}\,BZ R^\beta J^\beta
+ =VX_0(RJ)^{\beta-1}.
+\]
+
+For this to be at most the target \(X_0T^\varepsilon\), one needs
+
+\[
+ \boxed{
+ \beta\leq1-\frac{\jmath-m}{\rho+\jmath}.}
+\tag{9.110}
+\]
+
+In the balanced maximal box, (9.110) equals \(7/11\) at
+\(\jmath=5/2\) and decreases to \(7/12\) at \(\jmath=3\).  The
+classical zero-free region gives no fixed exponent below 1, so it cannot
+prove this central-arc estimate.
+
+Equation (9.110) is a limitation of the separated absolute Fourier route,
+not a necessary condition for the original coupled kernel.  There are
+exactly two possible ways past it: prove genuinely joint two-Möbius
+Fourier flatness on arcs of width \(1/V\), or exploit a vanishing moment
+of the complete coupled archimedean multiplier before separation.  No
+such flatness or vanishing moment has been established above.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -3571,6 +3649,9 @@ Proved in this note:
 * the exact remapping of Wright's unbalanced-convolution corollary and
   its negative modulus margins on the full balanced \(J\)-interval,
   (9.103)--(9.105).
+* the exact convolution/Fourier-energy form, its general-coefficient
+  \(V\)-loss, and the separated central-arc Mertens thresholds,
+  (9.106)--(9.110).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -3601,6 +3682,7 @@ Proved in this note:
 | Delta completion of the centered form | exact reduction; self-dual correlation unproved | only \(|b|\lesssim J/L\) survives, but \(br-v=zj\) parametrizes another \(\mu(r)\mu(j)\) affine family of length \(L\); balanced scales are (9.99) |
 | Post-centering published coverage | verified absent on the balanced \(J\)-range | exact scale ledger (9.100); termwise completion loses \(T^{2}\) to \(T^{5/2}\), averaged Chowla has slope loss \(T\), and direct spectral dispersion loses at least \(T^5\) |
 | Wright unbalanced-convolution corollary after centering | verified inapplicable | exact product/modulus map (9.103); both published modulus margins are negative throughout \(5/2\leq\jmath\leq3\), (9.104)--(9.105) |
+| Centered Fourier-energy route | exact reformulation; flatness unproved | Parseval loses \(V=J/M\), (9.109); a separated central-arc estimate needs common Mertens exponent from \(7/11\) down to \(7/12\), (9.110) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

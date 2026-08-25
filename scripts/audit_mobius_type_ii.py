@@ -516,6 +516,24 @@ def wright_unbalanced_modulus_margin(
     return allowable_modulus_power * convolution_length - modulus
 
 
+def centered_dual_common_mobius_exponent(
+    box: ExponentBox,
+    modulus: Fraction,
+) -> Fraction:
+    """Common smooth-Mertens exponent sufficient on the central arc.
+
+    The difference window has length ``V=J/M``.  If the two long
+    Möbius sums of lengths ``R`` and ``J`` are each ``X^beta``, the
+    central Fourier arc asks ``V <= (R*J)^(1-beta)``.
+    """
+
+    scales = centered_dual_scales(box, modulus)
+    total_long_length = box.rho + modulus
+    if total_long_length <= 0:
+        raise ValueError("central arc requires a positive long length")
+    return Fraction(1) - scales.frequency / total_long_length
+
+
 @dataclass(frozen=True)
 class ReducedInversePhase:
     """Exact gcd reduction of ``e_s(-h*delta*r^{-1})``.

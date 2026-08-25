@@ -14,6 +14,7 @@ from scripts.audit_mobius_type_ii import (
     balanced_principal_character_mobius_exponent,
     c_coefficient,
     centered_dual_scales,
+    centered_dual_common_mobius_exponent,
     character_large_sieve_unit_gap,
     coprime_indicator_via_mobius,
     dispersion_pointwise_mean_square_gap,
@@ -378,6 +379,12 @@ def test_delta_completed_congruence_has_self_dual_affine_family() -> None:
     assert wright_unbalanced_modulus_margin(
         balanced, F(3), F(45, 89)
     ) == -F(219, 178)
+    assert centered_dual_common_mobius_exponent(
+        balanced, F(5, 2)
+    ) == F(7, 11)
+    assert centered_dual_common_mobius_exponent(
+        balanced, F(3)
+    ) == F(7, 12)
 
 
 def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:
