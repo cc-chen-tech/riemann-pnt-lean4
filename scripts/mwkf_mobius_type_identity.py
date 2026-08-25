@@ -6,6 +6,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from fractions import Fraction
 from math import gcd, isqrt
+from typing import Callable
 
 
 @dataclass(frozen=True)
@@ -32,6 +33,13 @@ class RestrictedMobiusLogSignature:
 class TwistedRestrictedMobiusLogSignature:
     twisted_mobius_mass: Fraction
     negative_log_prime_coefficients: tuple[tuple[int, Fraction], ...]
+
+
+@dataclass(frozen=True)
+class CoprimeDivisorPairIdentity:
+    direct_coprime_sum: Fraction
+    mobius_inverted_sum: Fraction
+    active_common_divisors: tuple[int, ...]
 
 
 @dataclass(frozen=True)
@@ -388,6 +396,78 @@ def q_restricted_twisted_log_signature(
     return TwistedRestrictedMobiusLogSignature(
         twisted_mobius_mass=mass,
         negative_log_prime_coefficients=coefficients,
+    )
+
+
+def coprime_divisor_pair_identity(
+    n_left: int,
+    n_right: int,
+    *,
+    q: int,
+    cutoff: int,
+    left_weight: Callable[[int], Fraction],
+    right_weight: Callable[[int], Fraction],
+) -> CoprimeDivisorPairIdentity:
+    """Verify the common-divisor inversion in the product lift.
+
+    Each one-sided divisor already carries its Möbius coefficient.  The
+    identity inserts ``sum_(c|d_left,d_right) mu(c)`` and retains the
+    q-coprimality and cutoff exactly.
+    """
+    if n_left <= 0 or n_right <= 0 or q <= 0 or cutoff <= 0:
+        raise ValueError("coprime divisor-pair inputs must be positive")
+
+    left_divisors = tuple(
+        d for d in divisors(n_left)
+        if d <= cutoff and gcd(d, q) == 1
+    )
+    right_divisors = tuple(
+        d for d in divisors(n_right)
+        if d <= cutoff and gcd(d, q) == 1
+    )
+    left_coefficients = {
+        d: Fraction(mobius(d)) * Fraction(left_weight(d))
+        for d in left_divisors
+    }
+    right_coefficients = {
+        d: Fraction(mobius(d)) * Fraction(right_weight(d))
+        for d in right_divisors
+    }
+
+    direct = sum(
+        (
+            left_coefficients[d_left]
+            * right_coefficients[d_right]
+        )
+        for d_left in left_divisors
+        for d_right in right_divisors
+        if gcd(d_left, d_right) == 1
+    )
+
+    active: list[int] = []
+    inverted = Fraction(0)
+    for common_divisor in divisors(gcd(n_left, n_right)):
+        if mobius(common_divisor) == 0:
+            continue
+        left_sum = sum(
+            coefficient
+            for divisor, coefficient in left_coefficients.items()
+            if divisor % common_divisor == 0
+        )
+        right_sum = sum(
+            coefficient
+            for divisor, coefficient in right_coefficients.items()
+            if divisor % common_divisor == 0
+        )
+        if left_sum == 0 or right_sum == 0:
+            continue
+        active.append(common_divisor)
+        inverted += mobius(common_divisor) * left_sum * right_sum
+
+    return CoprimeDivisorPairIdentity(
+        direct_coprime_sum=direct,
+        mobius_inverted_sum=inverted,
+        active_common_divisors=tuple(active),
     )
 
 

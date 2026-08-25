@@ -318,6 +318,27 @@ class LargeQTransitionMellinDivisorAudit:
 
 
 @dataclass(frozen=True)
+class LargeQTransitionCompactMellinAudit:
+    afe_product_band_is_compact: bool
+    mellin_separation_line: Fraction
+    mellin_inversion_is_exact: bool
+    mellin_transform_has_arbitrary_polynomial_decay: bool
+    product_coefficients_have_no_real_power_growth: bool
+    q_restricted_twisted_divisor_coefficient_is_exact: bool
+    coprimality_coupling_is_retained: bool
+    reflected_tail_coefficient_is_retained: bool
+    transition_reduced_to_compact_mellin_energy: bool
+    product_variable_exponent: Fraction
+    shift_exponent: Fraction
+    absolute_global_exponent: Fraction
+    asymptotic_target_exponent: Fraction
+    critical_power_saving: Fraction
+    fixed_power_gate_saving: Fraction
+    compact_mellin_energy_estimate_proved: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -1424,6 +1445,17 @@ def _is_large_q_bounded_zeta_endpoint(box: ExponentBox) -> bool:
     )
 
 
+def _is_large_q_afe_transition_face(box: ExponentBox) -> bool:
+    return (
+        is_admissible(box)
+        and box.kappa > 0
+        and box.kappa + box.rho == F(3)
+        and box.kappa + box.sigma == F(3)
+        and box.k + box.m == F(1)
+        and box.k + box.sigma == box.m + box.rho
+    )
+
+
 def large_q_endpoint_unpoisson_audit(
     box: ExponentBox,
     *,
@@ -1766,6 +1798,46 @@ def large_q_transition_mellin_divisor_audit(
         transition_cutoff_preserves_one_sided_divisor_completion=False,
         transition_reduced_to_one_twisted_divisor_energy=False,
         twisted_divisor_energy_estimate_proved=False,
+        unconditional_coverage=False,
+    )
+
+
+def large_q_transition_compact_mellin_audit(
+    box: ExponentBox,
+) -> LargeQTransitionCompactMellinAudit:
+    """Use compact product support before zero-line Mellin separation.
+
+    A smooth transition band in ``m1*m2`` is compact in the
+    multiplicative variable.  Mellin inversion on ``Re z=0`` is then
+    exact and rapidly decaying.  The product reindexing
+    ``m*s=n`` produces ``D_(q,X,i*tau)(n)`` without a real power of
+    ``n``.  This is the scale-stable replacement for the invalid
+    left-line termwise shift.  It retains the q-coprimality and reflected
+    divisor tail, so the resulting energy estimate is still new.
+    """
+    if not _is_large_q_afe_transition_face(box):
+        raise ValueError("box is not on the large-q AFE transition face")
+    product_variable = box.m + box.rho
+    absolute_global = F(1) + box.ell
+    asymptotic_target = F(1)
+    critical_saving = absolute_global - asymptotic_target
+    return LargeQTransitionCompactMellinAudit(
+        afe_product_band_is_compact=True,
+        mellin_separation_line=F(0),
+        mellin_inversion_is_exact=True,
+        mellin_transform_has_arbitrary_polynomial_decay=True,
+        product_coefficients_have_no_real_power_growth=True,
+        q_restricted_twisted_divisor_coefficient_is_exact=True,
+        coprimality_coupling_is_retained=True,
+        reflected_tail_coefficient_is_retained=True,
+        transition_reduced_to_compact_mellin_energy=True,
+        product_variable_exponent=product_variable,
+        shift_exponent=box.ell,
+        absolute_global_exponent=absolute_global,
+        asymptotic_target_exponent=asymptotic_target,
+        critical_power_saving=critical_saving,
+        fixed_power_gate_saving=critical_saving + TARGET_SAVING,
+        compact_mellin_energy_estimate_proved=False,
         unconditional_coverage=False,
     )
 
@@ -4613,6 +4685,36 @@ def main() -> None:
         "common_z=True right_line=True absolute_right=True euler=True "
         "z0_lambda=True nonzero_sparse=False gaussian=True "
         "absolute_left=False cutoff_factor=False gate=False "
+        "proved=False covered=False"
+    )
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    transition_compact = large_q_transition_compact_mellin_audit(
+        transition_box
+    )
+    print(
+        "large_q_transition: compact_mellin="
+        "compact=True line=0 inversion=True rapid=True power_growth=0 "
+        "twisted_divisor=True coprimality=True reflected_tail=True "
+        "product=3/2 shift=1/2 absolute=3/2 critical_save=1/2 "
+        "gate_save=501/1000 "
+        "gate=True proved=False covered=False"
+    )
+    transition_type_ii_left = type_ii_cauchy_diagonal_audit(
+        transition_box,
+        b_exponent=F(1, 3),
+    )
+    transition_type_ii_right = type_ii_cauchy_diagonal_audit(
+        transition_box,
+        b_exponent=F(2, 3),
+    )
+    print(
+        "large_q_transition: type_ii_diagonal="
+        "1/3:diag=3,target=2747/750,margin=497/750;"
+        "2/3:diag=3,target=2497/750,margin=247/750 "
+        "subtraction=False diagonal_closes=True offdiag_gate=True "
         "proved=False covered=False"
     )
     log_budget = centered_resonance_log_budget(

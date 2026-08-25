@@ -28,6 +28,7 @@ from scripts.mwkf_mobius_type_identity import (
     mobius,
     product_lift_coefficients,
     product_lift_shifted_correlation,
+    coprime_divisor_pair_identity,
     q_free_part,
     q_restricted_mobius_log_signature,
     q_restricted_twisted_log_signature,
@@ -431,6 +432,25 @@ def test_q_restricted_twisted_divisor_sum_has_exact_euler_derivative() -> None:
             assert signature.negative_log_prime_coefficients == tuple(
                 expected_logs
             )
+
+
+def test_coprime_product_lift_equals_one_common_divisor_sum() -> None:
+    """Verify the exact c-sum used by the zero-line transition energy."""
+    for q in range(1, 8):
+        for n_left in range(1, 24):
+            for n_right in range(1, 24):
+                cutoff = 11
+                identity = coprime_divisor_pair_identity(
+                    n_left,
+                    n_right,
+                    q=q,
+                    cutoff=cutoff,
+                    left_weight=lambda d: F(d + 1, d + 2),
+                    right_weight=lambda d: F(2 * d + 1, d + 3),
+                )
+                assert identity.direct_coprime_sum == identity.mobius_inverted_sum
+                for common_divisor in identity.active_common_divisors:
+                    assert (n_left - n_right) % common_divisor == 0
 
 
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:

@@ -557,6 +557,61 @@ def test_transition_afe_rejects_nonconvergent_left_line_energy() -> None:
     assert not audit.unconditional_coverage
 
 
+def test_transition_band_has_exact_zero_line_mellin_energy() -> None:
+    """Compact product support permits scale-stable Mellin separation."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_transition_compact_mellin_audit",
+        None,
+    )
+    assert adapter is not None, "compact transition Mellin audit is missing"
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    audit = adapter(transition_box)
+
+    assert audit.afe_product_band_is_compact
+    assert audit.mellin_separation_line == F(0)
+    assert audit.mellin_inversion_is_exact
+    assert audit.mellin_transform_has_arbitrary_polynomial_decay
+    assert audit.product_coefficients_have_no_real_power_growth
+    assert audit.q_restricted_twisted_divisor_coefficient_is_exact
+    assert audit.coprimality_coupling_is_retained
+    assert audit.reflected_tail_coefficient_is_retained
+    assert audit.transition_reduced_to_compact_mellin_energy
+    assert audit.product_variable_exponent == F(3, 2)
+    assert audit.shift_exponent == F(1, 2)
+    assert audit.absolute_global_exponent == F(3, 2)
+    assert audit.asymptotic_target_exponent == F(1)
+    assert audit.critical_power_saving == F(1, 2)
+    assert audit.fixed_power_gate_saving == F(501, 1000)
+    assert not audit.compact_mellin_energy_estimate_proved
+    assert not audit.unconditional_coverage
+
+
+def test_transition_type_ii_diagonal_has_uniform_power_slack() -> None:
+    """Unlike the hard box, the transition Type-II diagonal is harmless."""
+    adapter = getattr(coverage_audit, "type_ii_cauchy_diagonal_audit")
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    left = adapter(transition_box, b_exponent=F(1, 3))
+    right = adapter(transition_box, b_exponent=F(2, 3))
+
+    assert left.identity_diagonal_exponent == F(3)
+    assert right.identity_diagonal_exponent == F(3)
+    assert left.spectral_target_margin == F(497, 750)
+    assert right.spectral_target_margin == F(247, 750)
+    assert left.separate_diagonal_majorant_closes
+    assert right.separate_diagonal_majorant_closes
+    assert not left.dispersion_subtraction_required
+    assert not right.dispersion_subtraction_required
+    assert not left.published_coverage
+    assert not right.published_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1850,6 +1905,21 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "proved=False covered=False"
     ) in output
     assert (
+        "large_q_transition: compact_mellin="
+        "compact=True line=0 inversion=True rapid=True power_growth=0 "
+        "twisted_divisor=True coprimality=True reflected_tail=True "
+        "product=3/2 shift=1/2 absolute=3/2 critical_save=1/2 "
+        "gate_save=501/1000 "
+        "gate=True proved=False covered=False"
+    ) in output
+    assert (
+        "large_q_transition: type_ii_diagonal="
+        "1/3:diag=3,target=2747/750,margin=497/750;"
+        "2/3:diag=3,target=2497/750,margin=247/750 "
+        "subtraction=False diagonal_closes=True offdiag_gate=True "
+        "proved=False covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2215,5 +2285,15 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "large_q_transition_mellin_divisor_audit",
         "transition_reduced_to_one_twisted_divisor_energy=False",
         "twisted_divisor_energy_estimate_proved=False",
+        "### 4.32 Scale-stable transition gate on the zero Mellin line",
+        r"D_{q,X,i\tau}(n)",
+        "coprime_divisor_pair_identity",
+        "large_q_transition_compact_mellin_audit",
+        "transition_reduced_to_compact_mellin_energy=True",
+        "compact_mellin_energy_estimate_proved=False",
+        "### 4.33 Transition Type-II diagonal and the nonzero Gram gate",
+        r"4-\beta-\frac1{250}",
+        r"\frac{247}{750}",
+        "transition_type_ii_nonzero_gram_estimate_proved=False",
     ):
         assert marker in text

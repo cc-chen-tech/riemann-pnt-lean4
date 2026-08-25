@@ -4011,6 +4011,264 @@ coverage is claimed; in particular
 twisted_divisor_energy_estimate_proved=False and
 unconditional_coverage=False.
 
+### 4.32 Scale-stable transition gate on the zero Mellin line
+
+There is a valid replacement for the rejected left-line operation, but
+it must localize the product before Mellin separation.  Let
+\(\chi\in C_c^\infty((1/2,2))\), let \(Y\asymp T\), and put
+
+\[
+ h_{t,Y}(y):=\chi(y)V_t(Yy),
+ \qquad
+ \widetilde h_{t,Y}(\tau)
+ :=\int_0^\infty h_{t,Y}(y)y^{i\tau}\frac{dy}{y}.
+\tag{4.270}
+\]
+
+Ordinary Mellin inversion on the zero line gives the exact identity
+
+\[
+ \chi\!\left(\frac{x}{Y}\right)V_t(x)
+ =\frac1{2\pi}\int_{\mathbb R}
+ \widetilde h_{t,Y}(\tau)Y^{i\tau}x^{-i\tau}\,d\tau.
+\tag{4.271}
+\]
+
+Because \(y\) is confined to a fixed compact interval and \(Y\asymp T\),
+the derivative bound (2.5) implies, for every \(A,j\ge0\),
+
+\[
+ \partial_t^j\widetilde h_{t,Y}(\tau)
+ \ll_{A,j,W}T^{-j}(1+|\tau|)^{-A}.
+\tag{4.272}
+\]
+
+Thus (4.271) has no real power \(n^c\) and its \(\tau\)-tail is
+absolutely summable.
+
+The coprimality condition must not be hidden in a one-sided coefficient.
+For \(c\ge1\), define
+
+\[
+ \boxed{
+D^{[c]}_{q,X,i\tau}(n)
+ :=\frac{n^{-i\tau}}{\log N}
+ \sum_{\substack{d\mid n,\ d\le X,\ (d,q)=1\\c\mid d}}
+ \mu(d)d^{i\tau}\log\frac{X}{d}.}
+\tag{4.273}
+\]
+
+For a local exponent statement the divisor and complementary zeta
+scales must remain visible.  Define the exact dyadic projection
+
+\[
+ \begin{aligned}
+ D^{[c]}_{q,X,i\tau;R,K}(n)
+ :={}&\frac{n^{-i\tau}}{\log N}
+ \sum_{\substack{d\mid n,\ d\le X,\ (d,q)=1\\c\mid d}}
+ \mu(d)d^{i\tau}\log\frac{X}{d}
+ F_R(d)F_K(n/d).
+ \end{aligned}
+\tag{4.273a}
+\]
+
+Since the dyadic partitions are exact and locally finite,
+\(D^{[c]}_{q,X,i\tau}(n)=\sum_{R,K}
+D^{[c]}_{q,X,i\tau;R,K}(n)\).
+
+Möbius inversion of \(\mathbf1_{(r,s)=1}\), followed by
+\(n_1=m_1s\), \(n_2=m_2r\), is finite and gives
+
+\[
+ \begin{aligned}
+ \mathfrak E^{\mathrm{tr}}_{q,Y}
+ (\tau;R,S,K,M)
+ :={}&\sum_{c\ge1}\mu(c)
+ \sum_{0<|\delta|\asymp L}\sum_n
+ \frac{D^{[c]}_{q,X,i\tau;S,K}(n)
+ D^{[c]}_{q,X,i\tau;R,M}(n-\delta)}
+ {\sqrt{n(n-\delta)}}
+ \Omega_{q,t,Y}(n,\delta).
+ \end{aligned}
+\tag{4.274}
+\]
+
+The summand is declared zero unless \(n>0\) and \(n-\delta>0\).
+Here \(X=N/q\), and \(\Omega_{q,t,Y}\) retains the exact height phase
+\(\exp(it\log(n/(n-\delta)))\), the remaining smooth shift cutoff, and
+the original support conditions;
+the product cutoff and AFE weight are already contained in
+\(\widetilde h_{t,Y}\).  Since \(c\mid n,n-\delta\), the
+outer sum in (4.274) automatically has
+
+\[
+ c\mid\delta,\qquad c\le|\delta|.
+\tag{4.275}
+\]
+
+In particular it is finite on every nonzero shift box.  The original
+finite helper coprime_divisor_pair_identity verifies both (4.274) and
+the divisibility (4.275) on exact rational fixtures, with arbitrary
+one-sided divisor weights.  The original
+transition contribution on this product band is exactly
+
+\[
+ \boxed{
+ 2\sum_q\frac{\mu(q)^2}{q}
+ \int_T^{2T}W(t/T)\frac1{2\pi}
+ \int_{\mathbb R}\widetilde h_{t,Y}(\tau)Y^{i\tau}
+ \sum_{R,S,K,M,L}
+ \mathfrak E^{\mathrm{tr}}_{q,Y}
+ (\tau;R,S,K,M)\,d\tau\,dt.}
+\tag{4.276}
+\]
+
+All sums in (4.276) are finite before the absolutely convergent
+\(\tau\)-integral, so the reindexing and inversion require no analytic
+continuation.  Formula (4.273) is the scale-stable meaning of
+\(D_{q,X,i\tau}(n)\); at \(c=1,\tau=0\) it returns the truncated
+restricted-divisor coefficient (4.252), while nonzero \(\tau\) retains
+the twisted Euler factors and the reflected tail.
+
+The exact remaining local proposition is the integrated estimate
+
+\[
+ \sum_{q,Y,L,R,S,K,M}\frac1q
+ \left|\int_T^{2T}\int_{\mathbb R}
+ \widetilde h_{t,Y}(\tau)Y^{i\tau}
+ \mathfrak E^{\mathrm{tr}}_{q,Y}
+ (\tau;R,S,K,M)\,d\tau\,dt\right|
+ =o_W(T),
+\tag{4.277}
+\]
+
+with the dyadic ranges and smooth norms inherited from the exact
+decomposition.  No estimate audited here proves (4.277).  The adapter
+also records the exact transition-face exponent.  At
+
+\[
+ q\asymp T^2,\quad r,s\asymp T,\quad
+ m_1,m_2\asymp T^{1/2},\quad |\delta|\asymp T^{1/2},
+\tag{4.278}
+\]
+
+the product variable has length \(n\asymp T^{3/2}\).  The reciprocal
+affine-line count (4.259) is \(TL/q\) per \(q\), so cardinal summation
+over \(q\asymp T^2\) has absolute exponent
+
+\[
+ 1+\frac12=\frac32.
+\tag{4.279}
+\]
+
+Thus the critical required saving is exactly \(T^{1/2}\), and a
+fixed-power local gate sufficient for the asymptotic is
+
+\[
+ \boxed{
+ \frac1q\left|\int_T^{2T}\int_{\mathbb R}
+ \widetilde h_{t,Y}(\tau)Y^{i\tau}
+ \mathfrak E^{\mathrm{tr}}_{q,Y}
+ (\tau;R,S,K,M)\,d\tau\,dt\right|
+ \ll_{\varepsilon,W}
+ \frac{TL}{q}\,T^{-501/1000+\varepsilon}.}
+\tag{4.280}
+\]
+
+After \(O(T^2)\) choices of \(q\), (4.280) is
+\(T^{999/1000+\varepsilon}=o(T)\) for
+\(0<\varepsilon<1/1000\).  This is a new Möbius-weighted
+\((c,\delta,n)\) energy estimate, not a consequence of Mellin inversion.
+
+The adapter
+large_q_transition_compact_mellin_audit records the exact zero-line
+inversion, arbitrary \(\tau\)-decay, absence of real-power coefficient
+growth, and retention of coprimality and the reflected tail.  It sets
+transition_reduced_to_compact_mellin_energy=True but
+compact_mellin_energy_estimate_proved=False and
+unconditional_coverage=False.
+
+### 4.33 Transition Type-II diagonal and the nonzero Gram gate
+
+The transition box is materially easier than the balanced hard box at
+the first Type-II Cauchy step.  Apply the exact identity (4.5) to
+\(r\asymp T\), and in a Type-II block write
+
+\[
+ r=ab,qquad b\asymp T^\beta,qquad
+ a\asymp T^{1-\beta},qquad
+ \frac13\le\beta\le\frac23.
+\tag{4.281}
+\]
+
+Let \(\mathcal A_b\) denote the complete remaining amplitude, with the
+second Möbius weight, the \((h,\delta)\)-coefficient, the zero-line
+Mellin parameter, all smooth weights, and the exact phases retained.
+Cauchy gives
+
+\[
+ \left|\sum_{b\asymp T^\beta}\mu(b)\mathcal A_b\right|^2
+ \le T^{\beta+o(1)}
+ \sum_{b\asymp T^\beta}|\mathcal A_b|^2.
+\tag{4.282}
+\]
+
+The target for the unsquared core is \(T^{2-1/500+\varepsilon}\).
+Consequently the exact sufficient square target is
+
+\[
+ \boxed{
+ \sum_{b\asymp T^\beta}|\mathcal A_b|^2
+ \ll_{\varepsilon,W}
+ T^{4-\beta-\frac1{250}+\varepsilon}.}
+\tag{4.283}
+\]
+
+The literal identical-tuple contribution to (4.283) contains one copy
+of \(b,a,s\), and the squared \((h,\delta)\)-coefficient norm.  Its
+exponent is
+
+\[
+ \beta+(1-\beta)+1+
+ \left(\frac12+\frac12\right)=3.
+\tag{4.284}
+\]
+
+At the two endpoints of (4.281), the margins of the square target above
+this positive identity diagonal are respectively
+
+\[
+ \left(4-\frac13-\frac1{250}\right)-3
+ =\frac{497}{750},
+ \qquad
+ \left(4-\frac23-\frac1{250}\right)-3
+ =\frac{247}{750}.
+\tag{4.285}
+\]
+
+Thus the identity diagonal may be majorized separately throughout the
+Type-II interval; unlike the hard box, no Linnik subtraction is forced
+at this step.  This does not prove (4.283), because the expanded square
+still has a nonzero Gram/determinant part with the second Möbius weight
+and the complete CRT phase.  The remaining local theorem is precisely
+
+\[
+ \boxed{
+ \sum_{b\asymp T^\beta}
+ |\mathcal A_b|^2_{\mathrm{nonzero\ Gram}}
+ \ll_{\varepsilon,W}
+ T^{4-\beta-\frac1{250}+\varepsilon},
+ \quad \frac13\le\beta\le\frac23.}
+\tag{4.286}
+\]
+
+The generic BCR adapter on this box has saving \(-7/8\), both one-sided
+completion adapters lack a cited coupled-kernel bound, and Wright's
+fixed-factor hypothesis is absent.  Hence none proves (4.286).  The
+deterministic audit records the uniform diagonal margin but keeps
+transition_type_ii_nonzero_gram_estimate_proved=False and
+unconditional_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
