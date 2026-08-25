@@ -13371,6 +13371,118 @@ kernel, published joint-dilate estimate, and whole-gate flags remain
 false.
 
 
+### 4.109c Grouping the dilates and Poisson summing them are exact loops, not savings
+
+The signed form in (4.845e) still has two algebraic options which do not
+square it.  First group the products.  For product-compatible
+coefficients define
+
+\[
+ \boxed{
+ c_{X,V}(n)=
+ \sum_{\substack{v\mid n\\v\asymp V,\ n/v\asymp X}}
+ b_v a_{n/v}\mu(n/v).}
+\tag{4.845k}
+\]
+
+Then (4.845e) is equivalently
+
+\[
+ \boxed{
+ \sum_{n,m}c_{X,V_1}(n)d_{X,V_2}(m)
+ U\!\left(\frac{n-m}{L}\right).}
+\tag{4.845l}
+\]
+
+Because the signed shift support has \(U(0)=0\), the equal-product
+terms \(n=m\) in (4.845l) vanish exactly.  This is the original
+centering; replacing the multiplier by an absolute short-arc norm
+reintroduces the energy of \(c_{X,V}\).
+
+The identity \(\mu*\mathbf1=\varepsilon\) applies only to the complete
+divisor sum
+
+\[
+ \boxed{
+ \sum_{v\mid n}\mu(n/v)=\mathbf1_{n=1}.}
+\tag{4.845m}
+\]
+
+It does not collapse (4.845k).  To see the obstruction without an
+upper-bound heuristic, choose disjoint interior subintervals and primes
+\(p\asymp V\), \(q\asymp X\), with \(X>4V\).  For \(n=pq\), the only
+divisor in the selected \(V\)-window is \(p\), so for unit interior
+weights
+
+\[
+ \boxed{c_{X,V}(pq)=\mu(q)=-1.}
+\tag{4.845n}
+\]
+
+The prime number theorem supplies
+
+\[
+ \boxed{
+ \#\{pq:p\asymp V,\ q\asymp X\}
+ \asymp\frac{XV}{\log X\log V}=T^{x+\nu-o(1)}.}
+\tag{4.845o}
+\]
+
+Thus the grouped coefficient has energy of exponent \(x+\nu=7/2\)
+on an explicit subfamily.  The complete convolution may still act only
+after different divisor windows and boundary pieces are recombined; it
+does not give a fixed power inside the hard dyadic cell.
+
+Second, apply Poisson directly to a smooth dilate weight.  With the same
+Fourier convention as (4.845e),
+
+\[
+ \boxed{
+ \sum_{v\in\mathbb Z}B(v/V)e(\alpha rv)
+ =V\sum_{k\in\mathbb Z}\widehat B\big(V(k-\alpha r)\big).}
+\tag{4.845p}
+\]
+
+On the effective arc \(|\alpha|\ll L^{-1}(\log T)^C\), the relevant
+numerators have size \(k\ll X/L\), and a packet around \(k/r\) has
+width \((VX)^{-1}\).  After the analogous Poisson step in \(j\), two
+packets can overlap only if
+
+\[
+ \left|\frac kr-\frac ls\right|\ll\frac1{VX}.
+\]
+
+Multiplying by \(rs\asymp X^2\) gives
+
+\[
+ \boxed{|ks-lr|\ll X/V.}
+\tag{4.845q}
+\]
+
+At the hard scales \(X=T^3\), \(V=T^{1/2}\), \(L=T^{5/2}\), one has
+
+\[
+ \boxed{
+ X/L=T^{1/2},\qquad (VX)^{-1}=T^{-7/2},
+ \qquad X/V=L=T^{5/2}.}
+\tag{4.845r}
+\]
+
+Therefore double dilate Poisson reconstructs the same critical
+determinant window as (10.3), with the two Fourier transforms exchanged.
+It is an exact coordinate loop, not an additional source of
+cancellation.  The only potentially useful continuation of (4.845l)
+is consequently a *signed* shifted-correlation theorem for the truncated
+convolution coefficients, with all dyadic windows and the physical
+coupled kernel recombined before estimating.
+
+The adapter farey_dilate_convolution_poisson_audit records
+(4.845k)--(4.845r): grouped length \(7/2\), the semiprime energy
+witness \(7/2\), numerator length \(1/2\), packet width \(-7/2\), and
+the recovered determinant window \(5/2\).  It keeps the dyadic
+convolution-saving, physical-kernel, and whole-gate flags false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

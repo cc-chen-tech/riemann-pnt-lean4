@@ -1680,6 +1680,29 @@ class FareyDilatePreCauchyAudit:
 
 
 @dataclass(frozen=True)
+class FareyDilateConvolutionPoissonAudit:
+    mobius_entry_exponent: Fraction
+    dilate_exponent: Fraction
+    shift_window_exponent: Fraction
+    gate_target_exponent: Fraction
+    grouped_product_length_exponent: Fraction
+    semiprime_energy_witness_exponent: Fraction
+    poisson_numerator_exponent: Fraction
+    poisson_packet_width_exponent: Fraction
+    recovered_determinant_window_exponent: Fraction
+    recovered_determinant_window_matches_original: bool
+    complete_divisor_convolution_is_epsilon: bool
+    dyadic_divisor_window_is_complete: bool
+    semiprime_witness_survives_dyadic_grouping: bool
+    original_shift_centering_removes_equal_products: bool
+    positive_cauchy_reintroduces_grouped_energy: bool
+    double_dilate_poisson_returns_original_determinant: bool
+    dyadic_mobius_convolution_supplies_power_saving: bool
+    physical_coupled_kernel_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -8777,6 +8800,75 @@ def farey_dilate_pre_cauchy_audit(
     )
 
 
+def farey_dilate_convolution_poisson_audit(
+    *,
+    mobius_entry_exponent: Fraction,
+    dilate_exponent: Fraction,
+    shift_window_exponent: Fraction,
+    gate_target_exponent: Fraction,
+) -> FareyDilateConvolutionPoissonAudit:
+    """Test the two algebraic escapes from the signed dilate form.
+
+    Grouping ``n=r*v`` replaces the two variables by the truncated
+    divisor coefficient
+
+    ``c(n)=sum_(v|n, v about V, n/v about X) mu(n/v)``.
+
+    The complete divisor sum is ``(1*mu)(n)=1_(n=1)``, but the dyadic
+    divisor window is not complete.  If ``p about V`` and ``q about X``
+    are primes in separated subintervals, then ``n=p*q`` has exactly
+    one eligible divisor and ``c(n)=mu(q)=-1``.  The prime number
+    theorem gives ``T^(x+nu-o(1))`` such witnesses, so grouping alone
+    cannot reduce the coefficient energy by a fixed power.
+
+    Alternatively, Poisson summation in the dilate localizes alpha to
+    packets ``alpha=k/r+O(1/(V*r))``.  On the central Fourier arc
+    ``|alpha| about 1/L``, the numerator has exponent ``x-ell`` and two
+    packets overlap only when
+
+    ``|k/r-l/s| << T^(-x-nu)``.
+
+    Multiplication by ``r*s about T^(2x)`` recovers a determinant window
+    of exponent ``x-nu``.  At the critical relation ``ell=x-nu``, this
+    is exactly the original ``r*l-s*k about L`` condition.  Hence the
+    double Poisson step is a change of coordinates, not a new saving.
+    """
+    x = F(mobius_entry_exponent)
+    nu = F(dilate_exponent)
+    ell = F(shift_window_exponent)
+    gate = F(gate_target_exponent)
+    if min(x, nu, ell, gate) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if x <= nu:
+        raise ValueError("semiprime witness requires separated entry and dilate scales")
+
+    grouped = x + nu
+    determinant = x - nu
+    return FareyDilateConvolutionPoissonAudit(
+        mobius_entry_exponent=x,
+        dilate_exponent=nu,
+        shift_window_exponent=ell,
+        gate_target_exponent=gate,
+        grouped_product_length_exponent=grouped,
+        semiprime_energy_witness_exponent=grouped,
+        poisson_numerator_exponent=_positive_part(x - ell),
+        poisson_packet_width_exponent=-grouped,
+        recovered_determinant_window_exponent=determinant,
+        recovered_determinant_window_matches_original=(determinant == ell),
+        complete_divisor_convolution_is_epsilon=True,
+        dyadic_divisor_window_is_complete=False,
+        semiprime_witness_survives_dyadic_grouping=True,
+        original_shift_centering_removes_equal_products=True,
+        positive_cauchy_reintroduces_grouped_energy=True,
+        double_dilate_poisson_returns_original_determinant=(
+            determinant == ell
+        ),
+        dyadic_mobius_convolution_supplies_power_saving=False,
+        physical_coupled_kernel_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -15267,6 +15359,46 @@ def main() -> None:
         f"{farey_dilate.published_joint_dilate_endpoint_saving_available},"
         f"physical={farey_dilate.physical_coupled_kernel_restored},"
         f"covered={farey_dilate.whole_mobius_gate_covered}"
+    )
+    farey_grouped = farey_dilate_convolution_poisson_audit(
+        mobius_entry_exponent=F(3),
+        dilate_exponent=F(1, 2),
+        shift_window_exponent=F(5, 2),
+        gate_target_exponent=F(3499, 1000),
+    )
+    print(
+        "large_q_transition: farey_dilate_convolution_poisson="
+        f"entry={_fmt(farey_grouped.mobius_entry_exponent)},"
+        f"dilate={_fmt(farey_grouped.dilate_exponent)},"
+        f"shift={_fmt(farey_grouped.shift_window_exponent)},"
+        f"gate={_fmt(farey_grouped.gate_target_exponent)},"
+        "product="
+        f"{_fmt(farey_grouped.grouped_product_length_exponent)},"
+        "semiprime="
+        f"{_fmt(farey_grouped.semiprime_energy_witness_exponent)},"
+        "numerator="
+        f"{_fmt(farey_grouped.poisson_numerator_exponent)},"
+        "packet="
+        f"{_fmt(farey_grouped.poisson_packet_width_exponent)},"
+        "determinant="
+        f"{_fmt(farey_grouped.recovered_determinant_window_exponent)},"
+        "determinant_match="
+        f"{farey_grouped.recovered_determinant_window_matches_original},"
+        "complete_epsilon="
+        f"{farey_grouped.complete_divisor_convolution_is_epsilon},"
+        f"dyadic_complete={farey_grouped.dyadic_divisor_window_is_complete},"
+        "semiprime_survives="
+        f"{farey_grouped.semiprime_witness_survives_dyadic_grouping},"
+        "equal_products_removed="
+        f"{farey_grouped.original_shift_centering_removes_equal_products},"
+        "cauchy_energy="
+        f"{farey_grouped.positive_cauchy_reintroduces_grouped_energy},"
+        "poisson_loop="
+        f"{farey_grouped.double_dilate_poisson_returns_original_determinant},"
+        "convolution_saving="
+        f"{farey_grouped.dyadic_mobius_convolution_supplies_power_saving},"
+        f"physical={farey_grouped.physical_coupled_kernel_restored},"
+        f"covered={farey_grouped.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

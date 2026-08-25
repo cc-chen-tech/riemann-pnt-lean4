@@ -2750,6 +2750,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "extra_saving=True,published=False,physical=False,covered=False"
     ) in report
     assert (
+        "large_q_transition: farey_dilate_convolution_poisson="
+        "entry=3,dilate=1/2,shift=5/2,gate=3499/1000,product=7/2,"
+        "semiprime=7/2,numerator=1/2,packet=-7/2,determinant=5/2,"
+        "determinant_match=True,complete_epsilon=True,dyadic_complete=False,"
+        "semiprime_survives=True,equal_products_removed=True,"
+        "cauchy_energy=True,poisson_loop=True,convolution_saving=False,"
+        "physical=False,covered=False"
+    ) in report
+    assert (
         "large_q_transition: newform_level_mobius_projector="
         "prime=5,index=6,mobius=-2,newform=-1/6,difference=-11/6,"
         "geometric=True,squarefree=True,oldclass_tail=True,"
@@ -4029,6 +4038,47 @@ def test_pre_cauchy_farey_dilate_family_reaches_only_the_zero_margin_endpoint() 
     assert not hard.positive_self_diagonal_removed_by_shift_centering
     assert hard.endpoint_requires_additional_logarithmic_or_power_saving
     assert not hard.published_joint_dilate_endpoint_saving_available
+    assert not hard.physical_coupled_kernel_restored
+    assert not hard.whole_mobius_gate_covered
+
+
+def test_grouped_dilate_convolution_and_double_poisson_return_the_same_gate() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109c Grouping the dilates and Poisson summing them are exact loops, not savings",
+        "\\tag{4.845k}",
+        "\\tag{4.845n}",
+        "\\tag{4.845r}",
+        "farey_dilate_convolution_poisson_audit",
+    ):
+        assert marker in note
+
+    adapter = getattr(
+        coverage_audit,
+        "farey_dilate_convolution_poisson_audit",
+        None,
+    )
+    assert adapter is not None, "dilate convolution--Poisson audit is missing"
+
+    hard = adapter(
+        mobius_entry_exponent=F(3),
+        dilate_exponent=F(1, 2),
+        shift_window_exponent=F(5, 2),
+        gate_target_exponent=F(3499, 1000),
+    )
+    assert hard.grouped_product_length_exponent == F(7, 2)
+    assert hard.semiprime_energy_witness_exponent == F(7, 2)
+    assert hard.poisson_numerator_exponent == F(1, 2)
+    assert hard.poisson_packet_width_exponent == F(-7, 2)
+    assert hard.recovered_determinant_window_exponent == F(5, 2)
+    assert hard.recovered_determinant_window_matches_original
+    assert hard.complete_divisor_convolution_is_epsilon
+    assert not hard.dyadic_divisor_window_is_complete
+    assert hard.semiprime_witness_survives_dyadic_grouping
+    assert hard.original_shift_centering_removes_equal_products
+    assert hard.positive_cauchy_reintroduces_grouped_energy
+    assert hard.double_dilate_poisson_returns_original_determinant
+    assert not hard.dyadic_mobius_convolution_supplies_power_saving
     assert not hard.physical_coupled_kernel_restored
     assert not hard.whole_mobius_gate_covered
 
