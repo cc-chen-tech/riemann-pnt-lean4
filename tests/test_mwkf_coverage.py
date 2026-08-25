@@ -1305,6 +1305,77 @@ def test_transition_entry_mobius_factorization_does_not_reach_wright() -> None:
     assert not short.wright_size_hypothesis_holds
 
 
+def test_transition_cross_gcd_lattice_closes_more_high_determinants() -> None:
+    """The a- and w-gcd product reduces the determinant-value count."""
+    adapter = getattr(
+        coverage_audit,
+        "transition_cross_gcd_lattice_audit",
+        None,
+    )
+    divisibility = getattr(
+        coverage_audit,
+        "factor_cross_gcd_divisibility",
+        None,
+    )
+    assert adapter is not None, "cross-gcd lattice adapter is missing"
+    assert divisibility is not None, "cross-gcd divisibility helper is missing"
+
+    for values in (
+        dict(a1=5, a2=7, s1=11, s2=13, b=3, k=2),
+        dict(a1=8, a2=10, s1=5, s2=7, b=3, k=2),
+    ):
+        exact = divisibility(**values)
+        assert exact["a_w_common_gcd_divides_k"]
+        assert exact["combined_gcd_divides_k_gamma"]
+
+    transition_box = ExponentBox(
+        F(1), F(1), F(1, 2), F(1, 2),
+        F(1, 2), F(1, 2), F(2),
+    )
+    first_residual = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+        a_gcd_exponent=F(1, 100),
+        w_gcd_exponent=F(0),
+    )
+    assert first_residual.reduced_determinant_value_exponent == F(97, 300)
+    assert first_residual.maximum_graph_degree_exponent == F(97, 300)
+    assert first_residual.graph_energy_bound_exponent == F(997, 300)
+    assert first_residual.graph_energy_target_margin == F(3, 500)
+    assert first_residual.coverage_lhs == F(397, 300)
+    assert first_residual.coverage_threshold == F(997, 750)
+    assert first_residual.a_w_common_gcd_is_slope_bounded
+    assert first_residual.combined_gcd_divides_determinant
+    assert first_residual.shell_covered_unconditionally
+    assert not first_residual.published_coverage
+
+    maximal_high_gcd = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        a_gcd_exponent=F(1, 3),
+        w_gcd_exponent=F(3, 4),
+    )
+    assert maximal_high_gcd.reduced_determinant_value_exponent == F(1, 4)
+    assert maximal_high_gcd.graph_energy_target_margin == F(119, 1500)
+    assert maximal_high_gcd.shell_covered_unconditionally
+
+    primitive_maximal = adapter(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        a_gcd_exponent=F(0),
+        w_gcd_exponent=F(0),
+    )
+    assert primitive_maximal.maximum_graph_degree_exponent == F(4, 3)
+    assert primitive_maximal.graph_energy_target_margin == -F(251, 250)
+    assert not primitive_maximal.shell_covered_unconditionally
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -2747,6 +2818,24 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "theta=1,eta=1/3,wright_size=False covered=False"
     ) in output
     assert (
+        "large_q_transition: cross_gcd_lattice="
+        "theta=1,beta=2/3,xi=1/3,alpha=1/100,omega=0,"
+        "reduced=97/300,degree=97/300,bound=997/300,"
+        "target=2497/750,margin=3/500,lhs=397/300,"
+        "threshold=997/750 combined=True fiber=True "
+        "mobius=False covered=True"
+    ) in output
+    assert (
+        "large_q_transition: cross_gcd_maximal="
+        "theta=1,beta=2/3,xi=4/3,alpha=1/3,omega=3/4,"
+        "reduced=1/4,bound=13/4,margin=119/1500 covered=True"
+    ) in output
+    assert (
+        "large_q_transition: cross_gcd_primitive="
+        "theta=1,beta=2/3,xi=4/3,alpha=0,omega=0,"
+        "reduced=4/3,bound=13/3,margin=-251/250 covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -3180,5 +3269,9 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"x=\epsilon cd",
         r"\frac{501}{500}",
         "transition_entry_mobius_factorization_audit",
+        "### 4.48 Combined factor/shift gcd reduction",
+        r"d_w=(w_1,w_2)",
+        r"\theta+(\xi-\alpha-\omega)_+",
+        "transition_cross_gcd_lattice_audit",
     ):
         assert marker in text

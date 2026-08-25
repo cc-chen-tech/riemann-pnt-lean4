@@ -658,6 +658,30 @@ class TransitionEntryMobiusFactorizationAudit:
 
 
 @dataclass(frozen=True)
+class TransitionCrossGcdLatticeAudit:
+    distance: Fraction
+    b_exponent: Fraction
+    determinant_exponent: Fraction
+    a_gcd_exponent: Fraction
+    w_gcd_exponent: Fraction
+    reduced_determinant_value_exponent: Fraction
+    maximum_graph_degree_exponent: Fraction
+    reciprocal_cluster_vertex_energy_exponent: Fraction
+    graph_energy_bound_exponent: Fraction
+    type_ii_square_target_exponent: Fraction
+    graph_energy_target_margin: Fraction
+    coverage_lhs: Fraction
+    coverage_threshold: Fraction
+    a_w_common_gcd_is_slope_bounded: bool
+    combined_gcd_divides_determinant: bool
+    fixed_value_fiber_has_bounded_cardinality: bool
+    product_frequency_cluster_l2_used: bool
+    mobius_cancellation_used: bool
+    shell_covered_unconditionally: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -3211,6 +3235,114 @@ def transition_entry_mobius_factorization_audit(
         actual_wright_coefficient_hypotheses_verified=False,
         two_entry_type_ii_estimate_required=True,
         two_entry_type_ii_estimate_proved=False,
+        published_coverage=False,
+    )
+
+
+def factor_cross_gcd_divisibility(
+    *,
+    a1: int,
+    a2: int,
+    s1: int,
+    s2: int,
+    b: int,
+    k: int,
+) -> dict[str, int | bool]:
+    """Verify the combined a- and w-gcd divisor of k*Gamma."""
+    if min(a1, a2, s1, s2, b) <= 0 or k == 0:
+        raise ValueError("factor variables must be positive and k nonzero")
+    if gcd(a1, s1) != 1 or gcd(a2, s2) != 1:
+        raise ValueError("the factor entries must be primitive")
+    w1 = a1 * b - k * s1
+    w2 = a2 * b - k * s2
+    if w1 == 0 or w2 == 0:
+        raise ValueError("the far-shell shifts must be nonzero")
+    gamma = a1 * s2 - a2 * s1
+    a_gcd = gcd(a1, a2)
+    w_gcd = gcd(abs(w1), abs(w2))
+    common = gcd(a_gcd, w_gcd)
+    combined = a_gcd * w_gcd // common
+    return {
+        "a_gcd": a_gcd,
+        "w_gcd": w_gcd,
+        "a_w_common_gcd": common,
+        "combined_gcd": combined,
+        "gamma": gamma,
+        "a_w_common_gcd_divides_k": k % common == 0,
+        "combined_gcd_divides_k_gamma": (
+            (k * gamma) % combined == 0
+        ),
+    }
+
+
+def transition_cross_gcd_lattice_audit(
+    box: ExponentBox,
+    *,
+    distance: Fraction,
+    b_exponent: Fraction,
+    determinant_exponent: Fraction,
+    a_gcd_exponent: Fraction,
+    w_gcd_exponent: Fraction,
+) -> TransitionCrossGcdLatticeAudit:
+    """Sharpen the primitive cross lattice by both pairwise gcd shells.
+
+    The gcds d_a=(a1,a2) and d_w=(w1,w2) both divide k*Gamma.  Their
+    common gcd divides gcd(a1,w1), hence the fixed slope k.  Up to this
+    bounded content, d_a*d_w divides k*Gamma.  The number of determinant
+    values in a T^xi shell is therefore T^((xi-alpha-omega)_+).
+    Each fixed value still has O_k(1) points in the dyadic rectangle.
+    """
+    distance = F(distance)
+    b_exponent = F(b_exponent)
+    determinant_exponent = F(determinant_exponent)
+    a_gcd_exponent = F(a_gcd_exponent)
+    w_gcd_exponent = F(w_gcd_exponent)
+    factor = transition_far_shell_factor_box_audit(
+        box,
+        distance=distance,
+        b_exponent=b_exponent,
+    )
+    determinant_max = factor.a_exponent + distance
+    if determinant_exponent < 0 or determinant_exponent > determinant_max:
+        raise ValueError("determinant shell exceeds the exact support")
+    if a_gcd_exponent < 0 or a_gcd_exponent > factor.a_exponent:
+        raise ValueError("a-gcd shell exceeds the factor length")
+    if w_gcd_exponent < 0 or w_gcd_exponent > distance:
+        raise ValueError("w-gcd shell exceeds the shift length")
+    if a_gcd_exponent + w_gcd_exponent > determinant_exponent:
+        raise ValueError("combined gcd cannot divide the determinant shell")
+
+    reduced_values = max(
+        F(0),
+        determinant_exponent - a_gcd_exponent - w_gcd_exponent,
+    )
+    vertex_energy = box.rho + box.ell + box.h + distance
+    graph_bound = vertex_energy + reduced_values
+    target = factor.type_ii_square_target_exponent
+    margin = target - graph_bound
+    coverage_lhs = distance + reduced_values
+    coverage_threshold = F(2) - b_exponent - F(1, 250)
+
+    return TransitionCrossGcdLatticeAudit(
+        distance=distance,
+        b_exponent=b_exponent,
+        determinant_exponent=determinant_exponent,
+        a_gcd_exponent=a_gcd_exponent,
+        w_gcd_exponent=w_gcd_exponent,
+        reduced_determinant_value_exponent=reduced_values,
+        maximum_graph_degree_exponent=reduced_values,
+        reciprocal_cluster_vertex_energy_exponent=vertex_energy,
+        graph_energy_bound_exponent=graph_bound,
+        type_ii_square_target_exponent=target,
+        graph_energy_target_margin=margin,
+        coverage_lhs=coverage_lhs,
+        coverage_threshold=coverage_threshold,
+        a_w_common_gcd_is_slope_bounded=True,
+        combined_gcd_divides_determinant=True,
+        fixed_value_fiber_has_bounded_cardinality=True,
+        product_frequency_cluster_l2_used=True,
+        mobius_cancellation_used=False,
+        shell_covered_unconditionally=margin >= 0,
         published_coverage=False,
     )
 
@@ -6345,6 +6477,48 @@ def main() -> None:
     print(
         "large_q_transition: entry_mobius_short="
         "theta=1,eta=1/3,wright_size=False covered=False"
+    )
+    transition_cross_gcd = transition_cross_gcd_lattice_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(1, 3),
+        a_gcd_exponent=F(1, 100),
+        w_gcd_exponent=F(0),
+    )
+    print(
+        "large_q_transition: cross_gcd_lattice="
+        "theta=1,beta=2/3,xi=1/3,alpha=1/100,omega=0,"
+        "reduced=97/300,degree=97/300,bound=997/300,"
+        "target=2497/750,margin=3/500,lhs=397/300,"
+        "threshold=997/750 combined=True fiber=True "
+        "mobius=False covered=True"
+    )
+    transition_cross_gcd_maximal = transition_cross_gcd_lattice_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        a_gcd_exponent=F(1, 3),
+        w_gcd_exponent=F(3, 4),
+    )
+    print(
+        "large_q_transition: cross_gcd_maximal="
+        "theta=1,beta=2/3,xi=4/3,alpha=1/3,omega=3/4,"
+        "reduced=1/4,bound=13/4,margin=119/1500 covered=True"
+    )
+    transition_cross_gcd_primitive = transition_cross_gcd_lattice_audit(
+        transition_box,
+        distance=F(1),
+        b_exponent=F(2, 3),
+        determinant_exponent=F(4, 3),
+        a_gcd_exponent=F(0),
+        w_gcd_exponent=F(0),
+    )
+    print(
+        "large_q_transition: cross_gcd_primitive="
+        "theta=1,beta=2/3,xi=4/3,alpha=0,omega=0,"
+        "reduced=4/3,bound=13/3,margin=-251/250 covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

@@ -5899,6 +5899,124 @@ actual_wright_coefficient_hypotheses_verified=False,
 two_entry_type_ii_estimate_proved=False, and
 published_coverage=False.
 
+### 4.48 Combined factor/shift gcd reduction
+
+The cross-determinant lattice in Section 4.45 has another exact
+divisibility.  Put
+
+\[
+ d_a=(a_1,a_2)\asymp T^\alpha,\qquad
+ d_w=(w_1,w_2)\asymp T^\omega.
+\tag{4.415}
+\]
+
+Both \(d_a\) and \(d_w\) divide the left side of (4.390), hence divide
+\(k\Gamma\).  Their common divisor satisfies
+
+\[
+ (d_a,d_w)\mid(a_1,w_1)\mid k.
+\tag{4.416}
+\]
+
+Since \(k\) is fixed, (4.416) proves
+
+\[
+ \boxed{\frac{d_ad_w}{(d_a,d_w)}\mid k\Gamma}
+\tag{4.417}
+\]
+
+with only bounded content.  In exponent language every nonempty shell
+therefore satisfies
+
+\[
+ 0\le\alpha\le1-\beta,\qquad
+ 0\le\omega\le\theta,\qquad
+ \alpha+\omega\le\xi.
+\tag{4.418}
+\]
+
+For fixed \(d_a,d_w\), the determinant values in a
+\(T^\xi\)-shell are restricted to multiples of their lcm.  There are
+at most
+
+\[
+ T^{\,(\xi-\alpha-\omega)_++\varepsilon}
+\tag{4.419}
+\]
+
+such values.  Section 4.45 gives \(O_k(1)\) points in the dyadic
+rectangle for each value, so the gcd-sensitive graph degree is
+
+\[
+ \boxed{
+ \Delta_{\max}(\alpha,\omega)
+ \ll_{\varepsilon,k}
+ T^{\,(\xi-\alpha-\omega)_++\varepsilon}.}
+\tag{4.420}
+\]
+
+Combining (4.420) with (4.371) proves
+
+\[
+ \boxed{
+ |\mathcal G_{\theta,\beta;\xi,\gamma,\alpha,\omega}|
+ \ll_{\varepsilon,W,k}
+ T^{\,2+\theta+(\xi-\alpha-\omega)_++\varepsilon}.}
+\tag{4.421}
+\]
+
+The new exact coverage condition is
+
+\[
+\boxed{
+ \theta+(\xi-\alpha-\omega)_+
+ \le2-\beta-\frac1{250}.}
+\tag{4.422}
+\]
+
+On the first top residual \((\theta,\beta,\xi)=(1,2/3,1/3)\),
+already \(\alpha+\omega\ge1/250\) makes (4.422) true.  For example,
+\((\alpha,\omega)=(1/100,0)\) gives graph exponent \(997/300\)
+and margin
+
+\[
+ \boxed{\frac3{500}}.
+\tag{4.423}
+\]
+
+On the maximal top determinant \(\xi=4/3\), condition (4.422)
+becomes
+
+\[
+ \boxed{\alpha+\omega\ge\frac{251}{250}.}
+\tag{4.424}
+\]
+
+The witness \((\alpha,\omega)=(1/3,3/4)\) has reduced determinant
+exponent \(1/4\), graph exponent \(13/4\), and margin \(119/1500\).
+The primitive witness \((\alpha,\omega)=(0,0)\) retains graph exponent
+\(13/3\) and deficit \(251/250\).
+
+Thus the surviving high-determinant band must satisfy the strict
+reverse inequality
+
+\[
+ \boxed{
+ \theta+(\xi-\alpha-\omega)_+
+ >2-\beta-\frac1{250},}
+\tag{4.425}
+\]
+
+in addition to the earlier \(a\)- and \(s\)-gcd residual condition.
+It is now concentrated simultaneously near primitive factor pairs and
+primitive shifted pairs.
+
+The helper factor_cross_gcd_divisibility verifies (4.416)--(4.417) on
+exact finite fixtures.  The adapter transition_cross_gcd_lattice_audit
+records (4.415)--(4.425), uses no Möbius cancellation, sets
+shell_covered_unconditionally=True precisely on (4.422), and keeps
+published_coverage=False.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
