@@ -2771,6 +2771,90 @@ finite checker verifies the squarefree sign identity
 \(\mu(fk)\mu(k)=\mu(f)\) and the exact balanced exponent \(1/3\); it does
 not prove the required inter-character cancellation.
 
+### 9.14 Global completion of the unit principal spectrum
+
+The obstruction (9.59) arose after dyadically localizing \(h\) and then
+estimating its principal-character projection.  For the actual Fourier
+coefficients in (4.4), the unit gcd stratum can instead be summed over all
+\(h\ne0\) before taking absolute values.  If \(s>1\), Möbius inversion of
+the coprimality condition and Poisson summation give the exact identity
+
+\[
+\begin{aligned}
+ \sum_{h\ne0\atop(h,s)=1}\widehat F(h/s)
+ &=\sum_{j\mid s}\mu(j)
+   \left\{\sum_{k\in\mathbb Z}\widehat F(jk/s)
+                    -\widehat F(0)\right\}\\
+ &=\boxed{\sum_{j\mid s}\mu(j)\frac{s}{j}
+          \sum_{n\in\mathbb Z}F(ns/j).}
+\end{aligned}
+\tag{9.61}
+\]
+
+The zero-frequency terms cancel exactly because
+\(\sum_{j\mid s}\mu(j)=0\).  This is a coprime reverse-Poisson identity,
+not an estimate and not the ordinary \(h=0\) mode in Section 4.2.  On the
+unit stratum \((h\delta,s)=1\), the principal multiplicative character
+has phase average \(\mu(s)/\varphi(s)\).  Multiplication by the original
+outer \(\mu(s)\) therefore yields
+
+\[
+ \frac1{\varphi(s)}
+ \sum_{j\mid s}\mu(j)\frac{s}{j}
+ \sum_n F_{r,s,\delta}(ns/j).
+\tag{9.62}
+\]
+
+Put \(v=s/j\).  The support \(x\asymp M\) of the function in (4.4)
+forces \(v\ll M\) and \(n\asymp M/v\); both incomplete endpoints are
+included.  The core seminorm bounds (5.14), partial summation in the
+smooth outer variables, and
+\(\sum_{j\mid s}1\ll_\varepsilon s^\varepsilon\) consequently give the
+following bound after summing the unit principal projection globally in
+\(h\):
+
+\[
+ \boxed{
+ |\mathfrak S^{\rm global}_{\rm pr,unit}|
+ \ll_{\varepsilon,W} RLM\,T^\varepsilon.}
+\tag{9.63}
+\]
+
+This intentionally keeps a conservative factor \(M\) for the lattice
+sum in (9.61); normalization by the zero-frequency integral can only
+improve it.  The exponent polytope proves exactly that this is sufficient.
+Indeed, (5.12b)--(5.12c) give
+
+\[
+ \ell+m\leq2m+\rho-1\leq\sigma,
+ \qquad\boxed{LM\leq S.}
+\tag{9.64}
+\]
+
+Thus (9.63) is \(O(RS T^\varepsilon)\), including the balanced maximal
+box where equality holds in (9.64).  Restoring the box prefactor in
+(5.15) gives \(O(T^{1+\varepsilon}/q)\); the dyadic partitions and the
+sum over \(q\) cost only \(T^\varepsilon\).  The already established
+power-tail truncation permits the all-\(h\) completion before returning
+to the retained core.
+
+This proves a strictly weaker replacement for one part of the local CK
+gate: the unit principal spectrum need not, and in the balanced box
+cannot, be bounded characterwise inside every \(H\)-box.  It is removed
+unconditionally by (9.61)--(9.64).  The remaining centered gate consists
+of
+
+1. the complete nonprincipal spectrum on the unit gcd stratum, with its
+   Ramanujan mean subtracted only after (9.61); and
+2. the principal and nonprincipal spectra on the nonunit gcd strata
+   \(d e>1\) from (9.49).
+
+No estimate for those two residual pieces is claimed here.  The finite
+checker verifies the divisor formula for the coprime indicator and the
+polytope margin \(\sigma-\ell-m\geq0\); the analytic identity (9.61)
+follows from finite Möbius inversion followed by the stated Schwartz
+Poisson formula.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -2817,6 +2901,8 @@ Proved in this note:
 * the exact primitive-conductor Gauss factor, cancellation of the cofactor
   Möbius sign, and the principal-character \(1/3\) obstruction diagnostic,
   (9.56)--(9.60).
+* the coprime reverse-Poisson identity and the unconditional global bound
+  for the unit principal spectrum, (9.61)--(9.64).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -2839,6 +2925,7 @@ Proved in this note:
 | Pascadi 2024 spectral dispersion | verified insufficient | direct scale \((RS)^{3/2}A^{1/2}\); balanced gap \(T^{11/2}\), (9.43)--(9.46) |
 | Gcd--character stratification | verified finite identity; termwise routes insufficient | direct margin and exact separation (9.47)--(9.52); large-sieve gap \(T^{5/2}\), (9.53); dual \(2/3\) barrier, (9.54)--(9.55) |
 | Primitive-conductor decomposition | verified finite algebra; standard character moments insufficient | cofactor Möbius sign cancels, (9.56)--(9.58); separate principal term demands the impossible uniform \(1/3\) Mertens scale, (9.59)--(9.60) |
+| Unit principal spectrum | proved globally, not boxwise in \(H\) | coprime reverse Poisson gives \(RLM T^\varepsilon\leq RS T^\varepsilon\), (9.61)--(9.64) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

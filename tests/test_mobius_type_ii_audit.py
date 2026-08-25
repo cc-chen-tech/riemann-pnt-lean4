@@ -14,12 +14,14 @@ from scripts.audit_mobius_type_ii import (
     balanced_principal_character_mobius_exponent,
     c_coefficient,
     character_large_sieve_unit_gap,
+    coprime_indicator_via_mobius,
     dispersion_pointwise_mean_square_gap,
     dispersion_random_benchmark_gap,
     direct_fourfold_random_margin,
     elementary_large_sieve_loss,
-    inverse_product_phase_mod_one,
+    global_unit_principal_completion_margin,
     induced_gauss_outer_mobius_sign,
+    inverse_product_phase_mod_one,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
@@ -208,6 +210,20 @@ def test_induced_gauss_factor_cancels_the_cofactor_mobius_sign() -> None:
             assert induced_gauss_outer_mobius_sign(
                 conductor, cofactor
             ) == naive_mobius(conductor)
+
+
+def test_coprime_projection_and_global_principal_margin_are_exact() -> None:
+    for modulus in range(1, 50):
+        for value in range(-50, 51):
+            assert coprime_indicator_via_mobius(value, modulus) == (
+                1 if gcd(value, modulus) == 1 else 0
+            )
+    witnesses = boundary_witnesses()
+    assert global_unit_principal_completion_margin(
+        witnesses["balanced_max_a"]
+    ) == F(0)
+    for box in witnesses.values():
+        assert global_unit_principal_completion_margin(box) >= 0
 
 
 def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:

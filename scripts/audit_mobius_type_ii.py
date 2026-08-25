@@ -339,6 +339,29 @@ def induced_gauss_outer_mobius_sign(conductor: int, cofactor: int) -> int:
     return mobius(conductor * cofactor) * mobius(cofactor)
 
 
+def coprime_indicator_via_mobius(value: int, modulus: int) -> int:
+    """Exact divisor expansion of ``1_(value,modulus)=1``."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    return sum(mobius(d) for d in divisors(gcd(abs(value), modulus)))
+
+
+def global_unit_principal_completion_margin(box: ExponentBox) -> Fraction:
+    """Margin in ``LM <= S`` for the globally completed unit principal mode.
+
+    Summing the actual Fourier coefficients over all coprime nonzero
+    ``h`` before dyadic absolute values replaces the local ``H`` count by
+    a divisor-bounded reverse-Poisson sum.  A conservative normalized
+    bound is ``R*L*M``; this function records the exponent margin between
+    that scale and ``R*S``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("principal completion margin requires an admissible box")
+    return box.sigma - box.ell - box.m
+
+
 @dataclass(frozen=True)
 class ReducedInversePhase:
     """Exact gcd reduction of ``e_s(-h*delta*r^{-1})``.
