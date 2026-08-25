@@ -1377,6 +1377,129 @@ modulus average.  The function long_cutoff_quotient_bdh_audit records
 (4.8bf)--(4.8bq); its common-weight, geometric-saving, and
 published-coverage flags are all false.
 
+### 4.7 Exact centered \(e\)-Poisson loop
+
+The \(e\)-variable in (4.8bk) is not termwise unweighted.  Since the
+left side of (2.2) is supported on squarefree \(r\), one may first write
+
+\[
+ \mu(r)
+ =-\mu^2(r)
+ \sum_{\substack{ab=r\\a>U}}c_U(a)\mu(b).
+\tag{4.8br}
+\]
+
+After \(a=de\) and expansion of \(c_U\), (4.8br) imposes
+\[
+ \mu^2(bde)=1,\qquad (bde,sq)=1.
+\tag{4.8bs}
+\]
+For fixed squarefree coprime \(b,d\), the exact remaining coefficient is
+\[
+\boxed{
+ \mu^2(e)\mathbf1_{(e,M)=1}
+ =
+ \left(\sum_{k^2\mid e}\mu(k)\right)
+ \left(\sum_{\ell\mid(e,M)}\mu(\ell)\right),
+ \qquad M=bdsq.}
+\tag{4.8bt}
+\]
+Equivalently, the right side is the double sum over
+\(k^2\mid e\), \(\ell\mid e\), and \(\ell\mid M\).  The helper
+restricted_squarefree_expansion verifies (4.8bt) for finite integers.
+
+Put \(g=[k^2,\ell]\), write \(e=gn\), and include every smooth
+\((r,s,c,v)\)-dependent factor in \(W_{c,v}(e)\).  With
+\[
+ \widehat W_{c,v}(\xi)
+ :=\int_{\mathbb R}W_{c,v}(x)e(-\xi x)\,dx,
+ \qquad
+ \alpha=\frac{bdcv}{s},
+\tag{4.8bu}
+\]
+ordinary Poisson summation gives the exact identity
+\[
+\boxed{
+ \sum_{n\in\mathbb Z}W_{c,v}(gn)
+ \{e(\alpha gn)-1\}
+ =
+ \frac1g\sum_{m\in\mathbb Z}
+ \left\{
+ \widehat W_{c,v}\!\left(\frac{m}{g}-\alpha\right)
+ -
+ \widehat W_{c,v}\!\left(\frac{m}{g}\right)
+ \right\}.}
+\tag{4.8bv}
+\]
+
+In particular, the \(m=0\) term is
+\[
+ \frac1g\{\widehat W_{c,v}(-\alpha)-\widehat W_{c,v}(0)\}.
+\tag{4.8bw}
+\]
+When the oscillatory transform decays, (4.8bw) approaches
+\(-g^{-1}\widehat W_{c,v}(0)\); it does not approach zero.  Hence rapid
+decay of the first transform is not rapid decay of the centered
+difference.
+
+Nor does double centering remove this constant separately.  From (4.8bl),
+finite inclusion--exclusion gives
+\[
+\boxed{
+ \sum_{\substack{c\ne0\\v\ne0}}\Theta_{r,s}(c,v)
+ =\Theta_{r,s}(0,0).}
+\tag{4.8bx}
+\]
+Thus the centered minus-one mass over the nonzero frequencies is
+\(-\Theta_{r,s}(0,0)\), not zero.  The finite helper
+double_zero_sum_nonzero_mass checks (4.8bx) and rejects a table unless
+all row and column sums vanish.
+
+If the full \((c,v)\)-sum is retained, the apparent new transform closes
+back to the original kernel.  Insert the lifted formula (4.90) from the
+alternative-routes note:
+\[
+ \Theta_{r,s}(c,v)
+ =\frac1{HL}\sum_{h,\delta}
+ \Phi_{r,s}(h,\delta)
+ e\!\left(-\frac{ch+v\delta}{s}\right).
+\tag{4.8by}
+\]
+Since \((r,s)=1\), summing first in \(c\bmod s\) forces
+\[
+ rv\equiv h\pmod s.
+\tag{4.8bz}
+\]
+The surviving \(v\) is \(h\bar r\bmod s\), and therefore
+\[
+\boxed{
+ \sum_{c,v\bmod s}\Theta_{r,s}(c,v)e\!\left(\frac{rcv}{s}\right)
+ =
+ \frac{s}{HL}\sum_{h,\delta}
+ \Phi_{r,s}(h,\delta)
+ e\!\left(-\frac{h\delta\bar r}{s}\right).}
+\tag{4.8ca}
+\]
+By (15.9), the left side of (4.8ca) is also exactly the centered
+nonzero-frequency sum.  After \(r=bde\), condition (4.8bz) is
+\[
+ bdev-h=js.
+\tag{4.8cb}
+\]
+This is the same determinant/Farey lattice with the two symmetric
+physical variables interchanged.  In the hard box \(H=L=T^{5/2}\), so
+even the scale ledger is unchanged.
+
+Consequently an \(e\)-Poisson step has only two legitimate outcomes:
+expand (4.8bt) and keep every centered transform in (4.8bv), or retain
+the full double Fourier sum and return through (4.8ca) to FTF.  Dropping
+the squarefree coefficient, the \(-\widehat W(0)\) term, or the
+\((c,v)\)-coupling is not a valid estimate.  The function
+centered_quotient_poisson_audit records this exact loop with no new
+conductor reduction and no published coverage.
+
+**centered e-Poisson status: no new conductor.**
+
 For comparison with this new single-sector route, the remainder of
 Section 4 returns to the earlier \(U=V=T\) Type-II split.
 

@@ -395,6 +395,39 @@ def test_double_centering_is_inclusion_exclusion_for_general_weights() -> None:
     ) == F(19 - 17 - 2 + 11)
 
 
+def test_double_zero_sums_leave_theta_00_as_the_nonzero_mass() -> None:
+    adapter = getattr(
+        type_identity,
+        "double_zero_sum_nonzero_mass",
+        None,
+    )
+    assert adapter is not None, "double-zero-sum mass helper is missing"
+
+    theta = (
+        (F(7), F(-2), F(-5)),
+        (F(-3), F(11), F(-8)),
+        (F(-4), F(-9), F(13)),
+    )
+    nonzero_mass, theta_00 = adapter(theta)
+    assert nonzero_mass == theta_00 == F(7)
+    with pytest.raises(ValueError, match="row and column sums"):
+        adapter(((F(1), F(0)), (F(0), F(0))))
+
+
+def test_squarefree_coprimality_expansion_is_exact_before_e_poisson() -> None:
+    adapter = getattr(
+        type_identity,
+        "restricted_squarefree_expansion",
+        None,
+    )
+    assert adapter is not None, "restricted squarefree expansion is missing"
+
+    for e in range(1, 80):
+        for modulus in range(1, 30):
+            expected = int(mobius(e) != 0 and gcd(e, modulus) == 1)
+            assert adapter(e=e, modulus=modulus) == expected
+
+
 def test_long_cutoff_quotient_congruence_reduces_by_the_exact_gcd() -> None:
     adapter = getattr(
         type_identity,
@@ -477,6 +510,12 @@ def test_type_note_names_both_local_inequalities_and_blocker() -> None:
         r"\mathrm{QCT}_{B,V,\mathcal D}",
         r"\frac{1751}{1000}",
         r"\frac{751}{1000}",
+        r"\mu^2(e)\mathbf1_{(e,M)=1}",
+        r"\widehat W_{c,v}\!\left(\frac{m}{g}-\alpha\right)",
+        r"\sum_{\substack{c\ne0\\v\ne0}}\Theta_{r,s}(c,v)",
+        r"=\Theta_{r,s}(0,0)",
+        r"bdev-h=js",
+        "centered e-Poisson status: no new conductor",
         "new spectral proposition status: unproved",
     ):
         assert marker in text

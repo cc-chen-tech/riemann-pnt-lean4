@@ -539,6 +539,21 @@ class PascadiIncompleteKloostermanAudit:
 
 
 @dataclass(frozen=True)
+class CenteredQuotientPoissonAudit:
+    e_cofactor_max_exponent: Fraction
+    squarefree_e_support_required: bool
+    coprimality_e_support_required: bool
+    squarefree_divisor_expansion_exact: bool
+    nonzero_frequency_mass_equals_theta_00: bool
+    centered_minus_one_vanishes_separately: bool
+    unweighted_e_poisson_valid: bool
+    joint_c_v_orthogonality_recloses_original_kernel: bool
+    determinant_gate_unchanged: bool
+    new_conductor_reduction: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
 class BCFixedDeterminantAudit:
     short_variable_exponents: tuple[Fraction, Fraction]
     long_variable_exponents: tuple[Fraction, Fraction]
@@ -2460,6 +2475,43 @@ def pascadi_incomplete_kloosterman_audit(
     )
 
 
+def centered_quotient_poisson_audit(
+    box: ExponentBox,
+) -> CenteredQuotientPoissonAudit:
+    """Audit Poisson summation in the long-cutoff cofactor ``e``.
+
+    The long-cutoff identity may be restricted to squarefree ``r=b*d*e``
+    before expanding its divisor coefficient.  Consequently the exact
+    ``e``-support contains ``mu(e)^2`` and ``(e,b*d*s*q)=1``.  Treating
+    ``e`` as unweighted is therefore invalid until both conditions are
+    expanded by Möbius inversion.
+
+    Double centering also does not kill the constant term separately:
+    zero row and column sums imply that the mass over ``c,v != 0`` is
+    ``Theta(0,0)``.  If the full ``c,v`` transform is retained, finite
+    orthogonality simply reconstructs the original bilinear kernel and
+    hence the same determinant/Farey gate.  This exact loop supplies no
+    conductor reduction by itself.
+    """
+    max_v_exponent = completion_dual_exponent(box.ell, box.sigma)
+    e_cofactor_max_exponent = (
+        box.rho - box.sigma / 2 + max_v_exponent
+    )
+    return CenteredQuotientPoissonAudit(
+        e_cofactor_max_exponent=e_cofactor_max_exponent,
+        squarefree_e_support_required=True,
+        coprimality_e_support_required=True,
+        squarefree_divisor_expansion_exact=True,
+        nonzero_frequency_mass_equals_theta_00=True,
+        centered_minus_one_vanishes_separately=False,
+        unweighted_e_poisson_valid=False,
+        joint_c_v_orthogonality_recloses_original_kernel=True,
+        determinant_gate_unchanged=True,
+        new_conductor_reduction=False,
+        published_coverage=False,
+    )
+
+
 def bc_fixed_determinant_audit(box: ExponentBox) -> BCFixedDeterminantAudit:
     """Insert the hard determinant lattice into BC Corollary 1.
 
@@ -3224,6 +3276,24 @@ def main() -> None:
         "direct="
         f"{pascadi_audit.direct_corollary_hypotheses_verified} "
         f"covered={pascadi_audit.published_coverage}"
+    )
+    centered_poisson_audit = centered_quotient_poisson_audit(hard)
+    print(
+        "balanced_max_a: centered_quotient_poisson="
+        f"emax={_fmt(centered_poisson_audit.e_cofactor_max_exponent)} "
+        "squarefree="
+        f"{centered_poisson_audit.squarefree_e_support_required} "
+        "coprime="
+        f"{centered_poisson_audit.coprimality_e_support_required} "
+        "nonzero_mass=theta00 minus_one="
+        f"{centered_poisson_audit.centered_minus_one_vanishes_separately} "
+        "unweighted="
+        f"{centered_poisson_audit.unweighted_e_poisson_valid} "
+        "recloses="
+        f"{centered_poisson_audit.joint_c_v_orthogonality_recloses_original_kernel} "
+        "conductor="
+        f"{centered_poisson_audit.new_conductor_reduction} "
+        f"covered={centered_poisson_audit.published_coverage}"
     )
     determinant_audit = bc_fixed_determinant_audit(hard)
     print(

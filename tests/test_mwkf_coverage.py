@@ -182,6 +182,28 @@ def test_pascadi_incomplete_kloosterman_regular_term_is_too_large() -> None:
     assert not result.published_coverage
 
 
+def test_centered_e_poisson_recloses_the_original_determinant_gate() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "centered_quotient_poisson_audit",
+        None,
+    )
+    assert adapter is not None, "centered quotient Poisson audit is missing"
+
+    result = adapter(boundary_witnesses()["balanced_max_a"])
+    assert result.e_cofactor_max_exponent == F(2)
+    assert result.squarefree_e_support_required
+    assert result.coprimality_e_support_required
+    assert result.squarefree_divisor_expansion_exact
+    assert result.nonzero_frequency_mass_equals_theta_00
+    assert not result.centered_minus_one_vanishes_separately
+    assert not result.unweighted_e_poisson_valid
+    assert result.joint_c_v_orthogonality_recloses_original_kernel
+    assert result.determinant_gate_unchanged
+    assert not result.new_conductor_reduction
+    assert not result.published_coverage
+
+
 def test_v_equals_j_equals_one_is_an_exact_average_chowla_witness() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     scales = h_poisson_subbox_scales(box, v=F(0), j=F(0))
@@ -1205,6 +1227,12 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "i2_regular=11 i2_exceptional=11 bound=8 "
         "target=3499/1000 deficit=4501/1000 "
         "assumption14=False direct=False covered=False"
+    ) in output
+    assert (
+        "balanced_max_a: centered_quotient_poisson="
+        "emax=2 squarefree=True coprime=True "
+        "nonzero_mass=theta00 minus_one=False unweighted=False "
+        "recloses=True conductor=False covered=False"
     ) in output
     assert (
         "balanced_max_a: bc_fixed_determinant="

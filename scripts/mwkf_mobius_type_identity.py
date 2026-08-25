@@ -756,6 +756,59 @@ def double_centered_completion_via_orthogonality(
     return total / (modulus * modulus)
 
 
+def double_zero_sum_nonzero_mass(
+    values: tuple[tuple[int | Fraction, ...], ...],
+) -> tuple[Fraction, Fraction]:
+    """Identify the constant mass left after double centering.
+
+    If every row and every column of ``Theta`` sums to zero, then
+
+    ``sum_(c != 0, v != 0) Theta(c,v) = Theta(0,0)``.
+
+    Thus the ``-1`` in a centered phase does not vanish by itself; its
+    nonzero-frequency contribution is exactly ``-Theta(0,0)``.  The
+    equality uses the full two-dimensional zero-sum structure.
+    """
+    modulus = len(values)
+    if modulus == 0 or any(len(row) != modulus for row in values):
+        raise ValueError("values must be a nonempty square group table")
+    table = tuple(tuple(Fraction(value) for value in row) for row in values)
+    if any(sum(row, Fraction(0)) != 0 for row in table) or any(
+        sum((table[c][v] for c in range(modulus)), Fraction(0)) != 0
+        for v in range(modulus)
+    ):
+        raise ValueError("row and column sums must vanish")
+    nonzero_mass = sum(
+        (
+            table[c][v]
+            for c in range(1, modulus)
+            for v in range(1, modulus)
+        ),
+        Fraction(0),
+    )
+    return nonzero_mass, table[0][0]
+
+
+def restricted_squarefree_expansion(*, e: int, modulus: int) -> int:
+    """Expand the exact squarefree and coprimality support of ``e``.
+
+    The returned double divisor sum is
+
+    ``sum_(k^2|e) mu(k) * sum_(ell|(e,modulus)) mu(ell)``
+
+    and therefore equals ``mu(e)^2 * 1_(e,modulus)=1``.  This is the
+    expansion required before Poisson summation can turn the remaining
+    cofactor into an unweighted integer variable.
+    """
+    if e <= 0 or modulus <= 0:
+        raise ValueError("e and modulus must be positive")
+    squarefree_sum = sum(
+        mobius(k) for k in divisors(e) if e % (k * k) == 0
+    )
+    coprimality_sum = sum(mobius(ell) for ell in divisors(gcd(e, modulus)))
+    return squarefree_sum * coprimality_sum
+
+
 def long_cutoff_quotient_progression(
     *,
     j: int,
