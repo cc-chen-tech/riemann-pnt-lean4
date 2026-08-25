@@ -44,6 +44,7 @@ from scripts.audit_mobius_type_ii import (
     two_sided_mobius_geometric_value,
     wright_factor_covers,
     wright_factor_savings,
+    wright_unbalanced_modulus_margin,
 )
 from scripts.audit_mwkf_ranges import boundary_witnesses
 
@@ -365,6 +366,18 @@ def test_delta_completed_congruence_has_self_dual_affine_family() -> None:
     assert upper.quotient == F(1, 2)
     assert upper.progression == F(5, 2)
     assert upper.slope_penalty == F(1)
+    assert wright_unbalanced_modulus_margin(
+        balanced, F(5, 2), F(17, 33)
+    ) == -F(21, 22)
+    assert wright_unbalanced_modulus_margin(
+        balanced, F(3), F(17, 33)
+    ) == -F(79, 66)
+    assert wright_unbalanced_modulus_margin(
+        balanced, F(5, 2), F(45, 89)
+    ) == -F(175, 178)
+    assert wright_unbalanced_modulus_margin(
+        balanced, F(3), F(45, 89)
+    ) == -F(219, 178)
 
 
 def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:

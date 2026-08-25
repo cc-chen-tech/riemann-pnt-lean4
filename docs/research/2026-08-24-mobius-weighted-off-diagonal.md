@@ -3460,6 +3460,50 @@ termwise routes covers even a subinterval of the new \(J\)-range.  Any
 improvement must average the two Möbius signs jointly with at least one
 of \(b,z,v,c\); the support reduction alone is not the missing estimate.
 
+### 9.21 Re-audit of Wright's unbalanced-convolution corollary
+
+Equation (9.95) does admit a direct convolution interpretation:
+\(br\equiv v\pmod j\).  For fixed \(v\), the product sequence has total
+length
+
+\[
+ X_0=BR=T^{\rho+\jmath-\ell},qquad
+ Q=J=T^\jmath,qquad N_0=B=T^{\jmath-\ell}.
+\tag{9.103}
+\]
+
+The long coefficient \(\mu(r)\) satisfies the fixed-small-modulus
+Siegel--Walfisz hypothesis required in Wright's convolution application,
+so coefficient type is not the obstruction.  The modulus range is.
+The two advertised modulus regimes require respectively
+
+\[
+ Q\leq X_0^{17/33-\varepsilon},qquad
+ Q\leq X_0^{45/89-\varepsilon}.
+\tag{9.104}
+\]
+
+For the balanced maximal box, \(X_0=T^{\jmath+1/2}\) and
+\(5/2\leq\jmath\leq3\).  The exact endpoint margins
+\(\gamma(\jmath+1/2)-\jmath\) are
+
+\[
+\begin{array}{c|cc}
+ \gamma&\jmath=5/2&\jmath=3\\ \hline
+ 17/33&-21/22&-79/66\\
+ 45/89&-175/178&-219/178.
+\end{array}
+\tag{9.105}
+\]
+
+They are affine and negative at both endpoints, hence negative throughout
+the interval.  Thus the corollary does not apply to any balanced
+post-centering \(J\)-box.  Moreover its discrepancy is stated for a fixed
+residue \(v\); summing it termwise over the present
+\(V=J/M\) residues would retain exactly the loss identified in
+Section 9.20.  The newer partially fixed-modulus theorem therefore gives
+no hidden closure after the centered transform.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -3524,6 +3568,9 @@ Proved in this note:
 * the one-dimensional post-centering scale ledger and the resulting
   no-coverage certificates for completion, averaged Chowla, and direct
   spectral dispersion, (9.100)--(9.102).
+* the exact remapping of Wright's unbalanced-convolution corollary and
+  its negative modulus margins on the full balanced \(J\)-interval,
+  (9.103)--(9.105).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -3553,6 +3600,7 @@ Proved in this note:
 | Centered unit divisor--dual form | exact identity; two-Möbius estimate unproved | mean-zero kernel (9.88); all common modes \(v=qj\) cancel in (9.90a), leaving \(j\gtrsim M\), and delta completion further forces \(j\gtrsim L\) |
 | Delta completion of the centered form | exact reduction; self-dual correlation unproved | only \(|b|\lesssim J/L\) survives, but \(br-v=zj\) parametrizes another \(\mu(r)\mu(j)\) affine family of length \(L\); balanced scales are (9.99) |
 | Post-centering published coverage | verified absent on the balanced \(J\)-range | exact scale ledger (9.100); termwise completion loses \(T^{2}\) to \(T^{5/2}\), averaged Chowla has slope loss \(T\), and direct spectral dispersion loses at least \(T^5\) |
+| Wright unbalanced-convolution corollary after centering | verified inapplicable | exact product/modulus map (9.103); both published modulus margins are negative throughout \(5/2\leq\jmath\leq3\), (9.104)--(9.105) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

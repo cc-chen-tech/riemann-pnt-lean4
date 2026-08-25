@@ -502,6 +502,20 @@ def centered_dual_scales(
     )
 
 
+def wright_unbalanced_modulus_margin(
+    box: ExponentBox,
+    modulus: Fraction,
+    allowable_modulus_power: Fraction,
+) -> Fraction:
+    """Margin in ``J <= (B*R)^gamma`` for Wright's convolution route."""
+
+    centered_dual_scales(box, modulus)
+    if allowable_modulus_power <= 0:
+        raise ValueError("allowable modulus power must be positive")
+    convolution_length = box.rho + modulus - box.ell
+    return allowable_modulus_power * convolution_length - modulus
+
+
 @dataclass(frozen=True)
 class ReducedInversePhase:
     """Exact gcd reduction of ``e_s(-h*delta*r^{-1})``.
