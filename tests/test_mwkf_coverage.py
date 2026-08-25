@@ -2021,8 +2021,8 @@ def test_transition_balanced_mobius_convolution_gate_is_exact() -> None:
     assert balanced.fejer_short_interval_identity_exact
     assert not balanced.balanced_coefficient_is_multiplicative
     assert balanced.exact_mellin_twisted_convolution_available
-    assert not balanced.actual_coprimality_layers_aggregated
-    assert not balanced.actual_coupled_kernel_nuclear_norm_verified
+    assert balanced.actual_coprimality_layers_aggregated
+    assert balanced.actual_coupled_kernel_nuclear_norm_verified
     assert not balanced.published_square_root_variance_proved
     assert not balanced.whole_line_family_covered
 
@@ -2033,6 +2033,72 @@ def test_transition_balanced_mobius_convolution_gate_is_exact() -> None:
     assert top.diagonal_scale_target_exponent == F(2)
     assert top.required_variance_saving_exponent == F(1)
     assert top.optimistic_mangerel_power_deficit == F(1)
+
+
+def test_transition_coprimality_layers_reduce_to_weighted_variance() -> None:
+    identity = getattr(
+        coverage_audit,
+        "transition_line_coprimality_layer_identity",
+        None,
+    )
+    assert identity is not None, "coprimality layer identity is missing"
+    coprime = identity(a=5, b=7, r1=11, r2=13, g=2, q=3)
+    assert coprime["original_indicator"] == 1
+    assert coprime["expanded_indicator"] == 1
+    assert coprime["three_indicator_expansion_exact"]
+
+    noncoprime = identity(a=5, b=10, r1=15, r2=14, g=3, q=7)
+    assert noncoprime["original_indicator"] == 0
+    assert noncoprime["expanded_indicator"] == 0
+    assert noncoprime["three_indicator_expansion_exact"]
+
+    q_blocked = identity(a=5, b=7, r1=11, r2=13, g=2, q=11)
+    assert q_blocked["q_one_variable_factor"] == 0
+    assert q_blocked["original_indicator"] == 0
+    assert q_blocked["expanded_indicator"] == 0
+
+    density = getattr(
+        coverage_audit,
+        "transition_line_coprimality_layer_density",
+        None,
+    )
+    assert density is not None, "coprimality layer density is missing"
+    layer = density(d0=6, d1=10, d2=21, g=35)
+    assert layer["e1"] == 5
+    assert layer["e2"] == 7
+    assert layer["f1"] == 2
+    assert layer["f2"] == 3
+    assert layer["a_modulus"] == 6
+    assert layer["b_modulus"] == 6
+    assert layer["r1_modulus"] == 10
+    assert layer["r2_modulus"] == 21
+    assert layer["density_denominator"] == 7560
+    assert layer["density"] == F(1, 7560)
+    assert layer["factorization_exact"]
+
+    adapter = getattr(
+        coverage_audit,
+        "transition_coprimality_layer_audit",
+        None,
+    )
+    assert adapter is not None, "coprimality layer adapter is missing"
+    audit = adapter(denominator_gcd_exponent=F(1, 2))
+    assert audit.cofactor_length_exponent == F(1, 2)
+    assert audit.exact_three_indicator_expansion
+    assert audit.non_g_prime_p2_coefficient == 3
+    assert audit.non_g_prime_p3_coefficient == 2
+    assert audit.non_g_prime_p4_coefficient == 2
+    assert audit.non_g_absolute_euler_product_converges
+    assert audit.g_prime_loss_is_subpolylogarithmic
+    assert audit.lifted_kernel_dimension == 5
+    assert audit.fourier_derivative_order == 10
+    assert audit.determinant_cutoff_derivative_power_cost == F(0)
+    assert audit.lifted_kernel_fourier_nuclear_norm_verified
+    assert audit.layer_density_aggregation_verified
+    assert audit.required_layer_variance_saving_exponent == F(1, 2)
+    assert not audit.published_layer_variance_proved
+    assert audit.actual_line_family_reduced_to_layered_variance
+    assert not audit.whole_line_family_covered
 
 
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
@@ -4045,5 +4111,11 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\frac1A\int_{\mathbb R}",
         r"\frac1{\zeta(s+i\tau)\zeta(s+i\upsilon)}",
         "transition_balanced_mobius_convolution_audit",
+        "### 4.60 Exact coprimality layers and a bounded lifted-kernel nuclear norm",
+        r"\omega_g(d_0,d_1,d_2)",
+        r"1+\frac3{p^2}+\frac2{p^3}+\frac2{p^4}",
+        r"(1+p^{-1})^2(1+p^{-2})",
+        r"\tag{DCV\(_\gamma\)}",
+        "transition_coprimality_layer_audit",
     ):
         assert marker in text

@@ -7515,20 +7515,175 @@ state the square-root variance (4.540) for the balanced coefficients of
 
 For the actual weight in (4.500), finite Möbius inversion separates
 ((a,b)=1), ((r_1,ga)=1), and ((r_2,gb)=1) into divisor layers, and
-Mellin inversion separates every compact smooth tensor.  What is not yet
-proved is a summable nuclear-norm bound for the complete coupled kernel
-together with a uniform version of (4.540) on all those divisor layers.
-Thus (4.540) is a strictly simpler new local theorem, but not a theorem
-deduced from the cited short-interval literature.
+Mellin inversion separates every compact smooth tensor.  Section 4.60
+proves the summable layer density and the required lifted-kernel nuclear
+norm.  Thus the actual remaining input is a divisor-uniform version of
+(4.540), not merely the separated diagnostic of Section 4.58.
 
 The finite helper transition_balanced_convolution_identity verifies
 (4.536)--(4.537) on exact integer data.  The adapter
 transition_balanced_mobius_convolution_audit records (4.538)--(4.544),
 the four endpoint tapers, and the remaining exponent (1-\gamma).  It
-keeps actual_coprimality_layers_aggregated=False,
-actual_coupled_kernel_nuclear_norm_verified=False,
-published_square_root_variance_proved=False, and
+sets actual_coprimality_layers_aggregated=True and
+actual_coupled_kernel_nuclear_norm_verified=True after Section 4.60, while
+keeping published_square_root_variance_proved=False and
 whole_line_family_covered=False.
+
+### 4.60 Exact coprimality layers and a bounded lifted-kernel nuclear norm
+
+It remains to connect (4.540) to every arithmetic condition and every
+factor of the actual zero-mode weight in (4.500).  This can be done without
+a positive-power loss on the top determinant face.  Assume first that
+((q,g)=1); otherwise the local family is empty.  The complete
+coprimality indicator is exactly
+
+\[
+\boxed{
+\begin{aligned}
+ &\mathbf1_{(a,b)=1}\mathbf1_{(r_1,ga)=1}
+  \mathbf1_{(r_2,gb)=1}\mathbf1_{(q,abr_1r_2)=1}\\
+ &\quad=\mathbf1_{(q,abr_1r_2)=1}
+ \sum_{d_0\mid(a,b)}\mu(d_0)
+ \sum_{d_1\mid(r_1,ga)}\mu(d_1)
+ \sum_{d_2\mid(r_2,gb)}\mu(d_2).
+\end{aligned}}
+\tag{4.545}
+\]
+
+Every sum in (4.545) is finite.  For a nonzero layer put
+
+\[
+ e_i=(d_i,g),\qquad f_i=d_i/e_i\quad(i=1,2).
+\tag{4.546}
+\]
+
+Since (d_i) and (g) are squarefree, ((f_i,g)=1).  The four divisibility
+conditions in this layer are precisely
+
+\[
+ \operatorname{lcm}(d_0,f_1)\mid a,\qquad
+ \operatorname{lcm}(d_0,f_2)\mid b,\qquad
+ d_1\mid r_1,\qquad d_2\mid r_2.
+\tag{4.547}
+\]
+
+Hence its exact four-variable volume density is
+
+\[
+\boxed{
+ \omega_g(d_0,d_1,d_2)
+ :=\frac1{d_1d_2
+  \operatorname{lcm}(d_0,f_1)
+  \operatorname{lcm}(d_0,f_2)}.}
+\tag{4.548}
+\]
+
+This density is absolutely summable.  At a prime (p\nmid g), summing
+over the eight possible memberships of (p) in (d_0,d_1,d_2) gives the
+exact local factor
+
+\[
+ \boxed{1+\frac3{p^2}+\frac2{p^3}+\frac2{p^4}.}
+\tag{4.549}
+\]
+
+At a prime (p\mid g), the corresponding factor is
+
+\[
+ \boxed{(1+p^{-1})^2(1+p^{-2}).}
+\tag{4.550}
+\]
+
+Consequently
+
+\[
+ \sum_{d_0,d_1,d_2}|\mu(d_0)\mu(d_1)\mu(d_2)|
+ \omega_g(d_0,d_1,d_2)
+ \ll \prod_{p\mid g}(1+p^{-1})^2
+ \ll (\log\log(3g))^2.
+\tag{4.551}
+\]
+
+No (T^\varepsilon) placeholder is needed in (4.551).
+
+The kernel must be separated in the right coordinates.  If one first
+substitutes (h=(br_1-ar_2)) and then differentiates the determinant
+cutoff, a normalized transverse derivative can spuriously cost (T).
+Instead lift the exact top-shell weight to the five independent variables
+
+\[
+ \mathbf x=\left(\frac aA,\frac bA,
+                  \frac{r_1}T,\frac{r_2}T,\frac hA\right),
+\tag{4.552}
+\]
+
+using (gh) in every determinant denominator, and impose
+(br_1-ar_2=h) only after the lift.  On the constraint this is exactly the
+original weight.  Off the constraint it is merely a smooth extension and
+does not change the sum.  Since (gA=T), every entry and every numerator
+in the Cramer expressions has its natural normalized scale.  The top-shell
+condition (|h|\asymp A) keeps (1/(gh)) away from zero.  The derivative
+bounds of the original AFE kernel therefore give, for every multi-index
+(\nu),
+
+\[
+ \|\partial_{\mathbf x}^{\nu}\mathscr W_{q,k,g}\|_1
+ \ll_{\nu,W}(\log T)^{C_\nu},
+\tag{4.553}
+\]
+
+with no positive power of (T).
+
+Fourier inversion in the five variables is exact.  Moreover, applying
+(1-\partial_{x_j}^2) in each coordinate gives
+
+\[
+\boxed{
+ \int_{\mathbb R^5}|\widehat{\mathscr W}_{q,k,g}(\boldsymbol\xi)|
+ \,d\boldsymbol\xi
+ \ll
+ \sum_{\epsilon_1,\ldots,\epsilon_5\in\{0,2\}}
+ \|\partial_{x_1}^{\epsilon_1}\cdots
+   \partial_{x_5}^{\epsilon_5}\mathscr W_{q,k,g}\|_1.}
+\tag{4.554}
+\]
+
+Thus derivatives of total order at most ten give a summable tensor nuclear
+norm, at polylogarithmic cost only.
+
+For one Fourier tensor and one divisor layer, let
+(\mathcal E_{q,g,\mathbf d}[U_1,U_2,V_1,V_2,\psi]) denote the right side
+of (4.536), with possibly different one-variable weights on its two sides,
+the four conditions (4.547), and the one-variable (q)-coprimality and
+mollifier supports retained, but with the four endpoint taper sizes
+factored out as in (4.443).  The exact local theorem which now suffices is
+
+\[
+\boxed{
+ \left|\mathcal E_{q,g,\mathbf d}
+   [U_1,U_2,V_1,V_2,\psi]\right|
+ \ll_W AT\,\omega_g(d_0,d_1,d_2)
+ (\log T)^{1+o(1)},}
+\tag{DCV\(_\gamma\)}
+\]
+
+uniformly in (0\le\gamma<1), the Fourier parameters under the integrable
+majorant (4.554), all squarefree divisor layers, and the stated
+one-variable coprimality restrictions.  Equations (4.545)--(4.554) show
+that DCV\(_\gamma), after restoring the four endpoint tapers, implies the
+actual line-family bound (4.504).  The required power saving in one layer
+is still exactly (A=T^{1-\gamma}); no extra power is consumed by kernel
+separation or coprimality aggregation.
+
+The helpers transition_line_coprimality_layer_identity and
+transition_line_coprimality_layer_density verify (4.545)--(4.548) on
+exact integers.  The adapter transition_coprimality_layer_audit records
+the two Euler factors, the five lifted variables, the order-ten Fourier
+majorant, and the zero derivative-power cost.  It sets
+lifted_kernel_fourier_nuclear_norm_verified=True,
+layer_density_aggregation_verified=True, and
+actual_line_family_reduced_to_layered_variance=True.  It keeps
+published_layer_variance_proved=False and whole_line_family_covered=False.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
