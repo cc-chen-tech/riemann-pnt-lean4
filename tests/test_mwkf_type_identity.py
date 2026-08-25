@@ -28,6 +28,8 @@ from scripts.mwkf_mobius_type_identity import (
     mobius,
     product_lift_coefficients,
     product_lift_shifted_correlation,
+    q_free_part,
+    q_restricted_mobius_log_signature,
     poisson_congruence_reparametrization,
     split_mobius_identity,
     signed_shift_solutions,
@@ -380,6 +382,28 @@ def test_product_lift_is_exact_for_the_growing_zeta_shift_family() -> None:
         if delta != 0
     )
     assert lifted == direct
+
+
+def test_q_restricted_full_divisor_sum_is_a_sparse_von_mangoldt_signature() -> None:
+    """The completed endpoint divisor sum sees only the q-free part."""
+    for q in range(1, 25):
+        for n in range(1, 180):
+            free = q_free_part(n, q)
+            signature = q_restricted_mobius_log_signature(n, q)
+            assert signature.mobius_mass == (1 if free == 1 else 0)
+
+            prime_power_base = None
+            for prime in type_identity._distinct_prime_factors(free):
+                remainder = free
+                while remainder % prime == 0:
+                    remainder //= prime
+                if remainder == 1:
+                    prime_power_base = prime
+                    break
+            expected = (
+                () if prime_power_base is None else ((prime_power_base, 1),)
+            )
+            assert signature.negative_log_prime_coefficients == expected
 
 
 def test_zero_complementary_divisor_is_an_exact_proportionality_ray() -> None:

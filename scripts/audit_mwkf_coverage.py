@@ -262,6 +262,27 @@ class LargeQHeightPhaseAudit:
 
 
 @dataclass(frozen=True)
+class LargeQBoundaryReflectionAudit:
+    shift_log_depth: Fraction
+    zeta_log_depth: Fraction
+    full_q_restricted_divisor_identity_is_exact: bool
+    full_mass_supported_on_q_smooth_part: bool
+    full_log_term_supported_on_q_free_prime_powers: bool
+    squarefree_reduced_variable_forces_prime: bool
+    sparse_main_main_has_two_prime_sieve_savings: bool
+    sparse_main_tail_has_one_prime_sieve_saving: bool
+    formal_terms_with_sparse_main_have_sieve_saving: bool
+    dyadic_reduced_scale_prevents_direct_completion: bool
+    afe_weight_prevents_exact_full_divisor_completion: bool
+    cross_scale_aggregation_proved: bool
+    reflected_tail_has_moving_product_threshold: bool
+    reflected_tail_phase_separated_at_boundary: bool
+    formal_remaining_terms: tuple[str, str]
+    reflected_tail_energy_estimate_proved: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -1588,6 +1609,50 @@ def large_q_height_phase_audit(
         strict_phase_separation=separated,
         strict_subface_covered=covered,
         unconditional_coverage=covered,
+    )
+
+
+def large_q_boundary_reflection_audit(
+    box: ExponentBox,
+    *,
+    shift_log_depth: Fraction,
+    zeta_log_depth: Fraction,
+) -> LargeQBoundaryReflectionAudit:
+    """Complete the endpoint divisor sum and isolate the reflected tail.
+
+    The complete divisor sum restricted by ``(d,q)=1`` has mass only
+    when the q-free part is one, and its logarithmic derivative is the
+    von Mangoldt function of that q-free part.  Formally, a retained
+    squarefree reduced variable then forces a prime and upper-bound sieve
+    savings dispose of every term containing the sparse main.  Applying
+    this completion to the actual dyadic kernel still requires summing
+    all reduced-variable scales and removing the coupled AFE weight.
+    Those cross-scale steps are not proved, so the formal reflected-tail
+    residual is not promoted to an actual boundary reduction.
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+    if shift_log_depth < 0 or zeta_log_depth < 0:
+        raise ValueError("logarithmic depths must be nonnegative")
+
+    return LargeQBoundaryReflectionAudit(
+        shift_log_depth=shift_log_depth,
+        zeta_log_depth=zeta_log_depth,
+        full_q_restricted_divisor_identity_is_exact=True,
+        full_mass_supported_on_q_smooth_part=True,
+        full_log_term_supported_on_q_free_prime_powers=True,
+        squarefree_reduced_variable_forces_prime=True,
+        sparse_main_main_has_two_prime_sieve_savings=True,
+        sparse_main_tail_has_one_prime_sieve_saving=True,
+        formal_terms_with_sparse_main_have_sieve_saving=True,
+        dyadic_reduced_scale_prevents_direct_completion=True,
+        afe_weight_prevents_exact_full_divisor_completion=True,
+        cross_scale_aggregation_proved=False,
+        reflected_tail_has_moving_product_threshold=True,
+        reflected_tail_phase_separated_at_boundary=False,
+        formal_remaining_terms=("reflected_tail", "reflected_tail"),
+        reflected_tail_energy_estimate_proved=False,
+        unconditional_coverage=False,
     )
 
 
@@ -4402,6 +4467,18 @@ def main() -> None:
         "shift_log=2 zeta_log=3/2 ratio_log=1/2 pre_phase_log=0 "
         "arbitrary_decay=True retained=True "
         "covered=True boundary=False whole_cell=False"
+    )
+    boundary_reflection = large_q_boundary_reflection_audit(
+        boxes["large_q_endpoint"],
+        shift_log_depth=F(2),
+        zeta_log_depth=F(2),
+    )
+    print(
+        "large_q_endpoint: boundary_reflection="
+        "shift_log=2 zeta_log=2 q_free_prime_power=True prime_forced=True "
+        "main_main=True mixed=True cross_scale=False formal_tail=tail*tail "
+        "tail_phase=False "
+        "covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

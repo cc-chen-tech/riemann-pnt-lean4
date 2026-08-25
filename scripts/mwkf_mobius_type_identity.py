@@ -23,6 +23,12 @@ class CenteredResonanceCoordinates:
 
 
 @dataclass(frozen=True)
+class RestrictedMobiusLogSignature:
+    mobius_mass: int
+    negative_log_prime_coefficients: tuple[tuple[int, int], ...]
+
+
+@dataclass(frozen=True)
 class ProportionalDiagonalCoordinates:
     sign: int
     common_n_factor: int
@@ -291,6 +297,51 @@ def endpoint_weighted_mobius(n: int) -> Fraction:
     if n <= 0:
         raise ValueError("endpoint weighted Mobius input must be positive")
     return Fraction(mobius(n)) * endpoint_q_density(n)
+
+
+def q_free_part(n: int, q: int) -> int:
+    """Remove from ``n`` every prime-power factor supported on ``q``."""
+    if n <= 0 or q <= 0:
+        raise ValueError("q-free-part inputs must be positive")
+    result = n
+    for prime in _distinct_prime_factors(q):
+        while result % prime == 0:
+            result //= prime
+    return result
+
+
+def q_restricted_mobius_log_signature(
+    n: int,
+    q: int,
+) -> RestrictedMobiusLogSignature:
+    """Formal coefficients of the complete q-restricted tapered divisor sum.
+
+    The represented expression is
+
+    ``log(X) * sum mu(d) - sum mu(d) log(d)``, over divisors ``d|n``
+    coprime to ``q``.  Logarithms of distinct primes are retained as exact
+    formal basis elements.
+    """
+    if n <= 0 or q <= 0:
+        raise ValueError("restricted divisor inputs must be positive")
+    restricted = tuple(d for d in divisors(n) if gcd(d, q) == 1)
+    mass = sum(mobius(d) for d in restricted)
+    coefficients: list[tuple[int, int]] = []
+    for prime in _distinct_prime_factors(n):
+        coefficient = 0
+        for divisor in restricted:
+            valuation = 0
+            remainder = divisor
+            while remainder % prime == 0:
+                valuation += 1
+                remainder //= prime
+            coefficient -= mobius(divisor) * valuation
+        if coefficient:
+            coefficients.append((prime, coefficient))
+    return RestrictedMobiusLogSignature(
+        mobius_mass=mass,
+        negative_log_prime_coefficients=tuple(coefficients),
+    )
 
 
 def product_lift_coefficients(

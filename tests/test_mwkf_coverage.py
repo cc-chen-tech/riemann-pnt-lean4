@@ -473,6 +473,37 @@ def test_height_phase_closes_zeta_depth_strictly_below_shift() -> None:
     assert not boundary.unconditional_coverage
 
 
+def test_boundary_completion_forces_prime_main_and_isolates_reflected_tail() -> None:
+    """Complete the endpoint divisor sum before estimating the pi=2 face."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_boundary_reflection_audit",
+        None,
+    )
+    assert adapter is not None, "large-q boundary reflection audit is missing"
+    audit = adapter(
+        boundary_witnesses()["large_q_endpoint"],
+        shift_log_depth=F(2),
+        zeta_log_depth=F(2),
+    )
+
+    assert audit.full_q_restricted_divisor_identity_is_exact
+    assert audit.full_mass_supported_on_q_smooth_part
+    assert audit.full_log_term_supported_on_q_free_prime_powers
+    assert audit.squarefree_reduced_variable_forces_prime
+    assert audit.sparse_main_main_has_two_prime_sieve_savings
+    assert audit.sparse_main_tail_has_one_prime_sieve_saving
+    assert audit.formal_terms_with_sparse_main_have_sieve_saving
+    assert audit.dyadic_reduced_scale_prevents_direct_completion
+    assert audit.afe_weight_prevents_exact_full_divisor_completion
+    assert not audit.cross_scale_aggregation_proved
+    assert audit.reflected_tail_has_moving_product_threshold
+    assert not audit.reflected_tail_phase_separated_at_boundary
+    assert audit.formal_remaining_terms == ("reflected_tail", "reflected_tail")
+    assert not audit.reflected_tail_energy_estimate_proved
+    assert not audit.unconditional_coverage
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -1746,6 +1777,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "covered=True boundary=False whole_cell=False"
     ) in output
     assert (
+        "large_q_endpoint: boundary_reflection="
+        "shift_log=2 zeta_log=2 q_free_prime_power=True prime_forced=True "
+        "main_main=True mixed=True cross_scale=False formal_tail=tail*tail "
+        "tail_phase=False "
+        "covered=False"
+    ) in output
+    assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
         "centered_log_cutoff_log=4 near_bound_log=8 "
         "global_log_margin=1"
@@ -2089,5 +2127,13 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\pi<2",
         "large_q_height_phase_audit",
         "strict_subface_covered=True",
+        "### 4.29 Restricted divisor completion and the reflected-tail boundary",
+        r"n^{(q)}",
+        r"\Lambda(n^{(q)})",
+        "squarefree_reduced_variable_forces_prime=True",
+        "large_q_boundary_reflection_audit",
+        r"\mathfrak C^{\mathrm{tail}\times\mathrm{tail}}_{P,L}",
+        "cross_scale_aggregation_proved=False",
+        "reflected_tail_energy_estimate_proved=False",
     ):
         assert marker in text
