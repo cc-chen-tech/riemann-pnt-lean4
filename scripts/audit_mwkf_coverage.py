@@ -2039,6 +2039,30 @@ class BlomerPascadiHardBoxAudit:
 
 
 @dataclass(frozen=True)
+class DrappeauQuintilinearHardBoxAudit:
+    entry_factor_exponent: Fraction
+    modulus_factor_exponent: Fraction
+    entry_quotient_exponent: Fraction
+    modulus_quotient_exponent: Fraction
+    product_index_exponent: Fraction
+    theorem_entry_factor_exponent: Fraction
+    theorem_modulus_factor_exponent: Fraction
+    coefficient_l2_norm_exponent: Fraction
+    k_squared_term_exponents: tuple[Fraction, Fraction, Fraction]
+    k_exponent: Fraction
+    theorem_bound_exponent: Fraction
+    raw_trivial_bound_exponent: Fraction
+    physical_qct_target_exponent: Fraction
+    best_available_bound_exponent: Fraction
+    remaining_exponent_gap: Fraction
+    exact_phase_and_coprimality_match: bool
+    product_ratio_mellin_tensorization_has_polylog_cost: bool
+    theorem_improves_raw_trivial_bound: bool
+    theorem_composes_with_fixed_entry_pevp: bool
+    mmkls_covered: bool
+
+
+@dataclass(frozen=True)
 class OuterModulusTypeRecombinationAudit:
     original_modulus: int
     cutoff_u: int
@@ -11364,6 +11388,94 @@ def blomer_pascadi_hard_box_audit() -> BlomerPascadiHardBoxAudit:
         direct_mmkls_target_exponent=target,
         remaining_direct_exponent_gap=best - target,
         improves_existing_product_character_bound=False,
+        mmkls_covered=False,
+    )
+
+
+def drappeau_quintilinear_hard_box_audit(
+    *,
+    entry_factor_exponent: Fraction,
+    modulus_factor_exponent: Fraction,
+) -> DrappeauQuintilinearHardBoxAudit:
+    """Substitute a hard Type allocation into Drappeau's quintilinear bound.
+
+    In the balanced physical box write ``r=A*e`` and ``s=B*ell`` with
+    ``A=T^alpha`` and ``B=T^beta``.  Drappeau's Theorem 1 in
+    arXiv:1504.05549 applies to the pre-Poisson phase
+
+    ``e(-h*delta*inverse(A*e)/(B*ell))``
+
+    with theorem variables
+
+    ``C=ell=T^(3-beta), D=e=T^(3-alpha), N=h*delta=T^5,``
+    ``R=A=T^alpha, S=B=T^beta``.
+
+    Exact Mellin inversion in the ratio ``h/delta`` turns the product
+    coefficient into a sequence whose squared energy is ``T^5`` up to
+    logarithms.  The two restricted outer divisor convolutions have
+    squared energies ``T^alpha`` and ``T^beta``.  Thus the coefficient
+    L2 norm has exponent ``(5+alpha+beta)/2``.
+
+    For ``q=1`` Drappeau's theorem has
+
+    ``K^2 = C*S*(R*S+N)*(C+R*D)``
+    ``    + C^2*D*S*sqrt((R*S+N)*R)``
+    ``    + D^2*N*R/S``.
+
+    The returned exponents are a favorable literal substitution: all
+    physical smooth tensors cost only logarithms.  Even so, the theorem
+    misses the raw QCT target ``R_original*S_original=T^6``.  It uses a
+    Cauchy organization prior to the fixed-entry spectral PEVP and its
+    saving cannot be subtracted a second time.
+    """
+    alpha = F(entry_factor_exponent)
+    beta = F(modulus_factor_exponent)
+    if not (F(0) <= alpha <= F(3)) or not (F(0) <= beta <= F(3)):
+        raise ValueError("hard-box factor exponents must lie in [0,3]")
+
+    c_exp = F(3) - beta
+    d_exp = F(3) - alpha
+    n_exp = F(5)
+    r_exp = alpha
+    s_exp = beta
+    level_factor_product = r_exp + s_exp
+    rs_or_n = max(level_factor_product, n_exp)
+    c_or_rd = max(c_exp, r_exp + d_exp)
+    k1 = c_exp + s_exp + rs_or_n + c_or_rd
+    k2 = (
+        2 * c_exp
+        + d_exp
+        + s_exp
+        + (rs_or_n + r_exp) / 2
+    )
+    k3 = 2 * d_exp + n_exp + r_exp - s_exp
+    k_terms = (k1, k2, k3)
+    k_exp = max(k_terms) / 2
+    coefficient_norm = (n_exp + r_exp + s_exp) / 2
+    theorem_bound = coefficient_norm + k_exp
+    trivial = F(11)
+    target = F(6)
+    best = min(theorem_bound, trivial)
+    return DrappeauQuintilinearHardBoxAudit(
+        entry_factor_exponent=alpha,
+        modulus_factor_exponent=beta,
+        entry_quotient_exponent=d_exp,
+        modulus_quotient_exponent=c_exp,
+        product_index_exponent=n_exp,
+        theorem_entry_factor_exponent=r_exp,
+        theorem_modulus_factor_exponent=s_exp,
+        coefficient_l2_norm_exponent=coefficient_norm,
+        k_squared_term_exponents=k_terms,
+        k_exponent=k_exp,
+        theorem_bound_exponent=theorem_bound,
+        raw_trivial_bound_exponent=trivial,
+        physical_qct_target_exponent=target,
+        best_available_bound_exponent=best,
+        remaining_exponent_gap=best - target,
+        exact_phase_and_coprimality_match=True,
+        product_ratio_mellin_tensorization_has_polylog_cost=True,
+        theorem_improves_raw_trivial_bound=(theorem_bound < trivial),
+        theorem_composes_with_fixed_entry_pevp=False,
         mmkls_covered=False,
     )
 
@@ -24447,6 +24559,36 @@ def main() -> None:
         "improves="
         f"{blomer_pascadi.improves_existing_product_character_bound} "
         f"mmkls={blomer_pascadi.mmkls_covered}"
+    )
+    drappeau = drappeau_quintilinear_hard_box_audit(
+        entry_factor_exponent=F(0),
+        modulus_factor_exponent=F(0),
+    )
+    print(
+        "balanced_max_a: drappeau_quintilinear="
+        f"alpha={_fmt(drappeau.entry_factor_exponent)} "
+        f"beta={_fmt(drappeau.modulus_factor_exponent)} "
+        f"C={_fmt(drappeau.modulus_quotient_exponent)} "
+        f"D={_fmt(drappeau.entry_quotient_exponent)} "
+        f"N={_fmt(drappeau.product_index_exponent)} "
+        f"R={_fmt(drappeau.theorem_entry_factor_exponent)} "
+        f"S={_fmt(drappeau.theorem_modulus_factor_exponent)} "
+        f"b_l2={_fmt(drappeau.coefficient_l2_norm_exponent)} "
+        "k2="
+        + ",".join(_fmt(value) for value in drappeau.k_squared_term_exponents)
+        + " "
+        f"k={_fmt(drappeau.k_exponent)} "
+        f"theorem={_fmt(drappeau.theorem_bound_exponent)} "
+        f"trivial={_fmt(drappeau.raw_trivial_bound_exponent)} "
+        f"best={_fmt(drappeau.best_available_bound_exponent)} "
+        f"target={_fmt(drappeau.physical_qct_target_exponent)} "
+        f"gap={_fmt(drappeau.remaining_exponent_gap)} "
+        f"phase={drappeau.exact_phase_and_coprimality_match} "
+        "tensor="
+        f"{drappeau.product_ratio_mellin_tensorization_has_polylog_cost} "
+        f"improves={drappeau.theorem_improves_raw_trivial_bound} "
+        f"compose={drappeau.theorem_composes_with_fixed_entry_pevp} "
+        f"mmkls={drappeau.mmkls_covered}"
     )
     cross_tensor = unramified_cross_index_tensor_norm_audit()
     print(

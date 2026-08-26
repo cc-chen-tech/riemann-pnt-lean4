@@ -19196,6 +19196,140 @@ couples the (s,m,A) averages remains necessary.
 The interface `blomer_pascadi_hard_box_audit` substitutes all five
 terms with exact rational exponents and keeps MMKLS false.
 
+### 4.109zjada Drappeau's quintilinear theorem still precedes the needed joint square
+
+The modulus Type decomposition can also be inserted before Poisson and
+matched literally to [Drappeau's quintilinear Kloosterman theorem,
+Theorem 1](https://arxiv.org/abs/1504.05549).  This is a more favorable
+test than treating the Möbius modulus as an arbitrary coefficient,
+because both unweighted entry quotients remain smooth theorem
+variables.
+
+On the balanced hard box write
+
+\[
+r=Ae,\qquad s=B\ell,\qquad
+A=T^\alpha,\quad B=T^\beta.
+\]
+
+After splitting the sign of \(h\delta\), the physical phase is exactly
+
+\[
+ e\!\left(-h\delta\frac{\overline{Ae}}{B\ell}\right).
+\]
+
+In Drappeau's notation the five scale exponents are therefore
+
+\[
+ \boxed{
+ (\mathcal C,\mathcal D,\mathcal N,\mathcal R,\mathcal S)
+ =\left(T^{3-\beta},T^{3-\alpha},T^5,T^\alpha,T^\beta\right).}
+ \tag{4.845dc_14xq_43}
+\]
+
+The condition
+\((q\mathcal R\mathcal D,\mathcal S\mathcal C)=1\) with \(q=1\)
+is precisely the retained coprimality \((Ae,B\ell)=1\).  Exact Mellin
+inversion in the \(h/\delta\) ratio gives a product-index coefficient
+of squared energy \(T^5(\log T)^C\).  The two restricted outer divisor
+convolutions have squared energies \(T^\alpha(\log T)^C\) and
+\(T^\beta(\log T)^C\).  Hence the coefficient norm exponent is
+
+\[
+ \boxed{E_{\|b\|_2}=\frac{5+\alpha+\beta}{2}.}
+ \tag{4.845dc_14xq_44}
+\]
+
+For \(q=1\), the published theorem has
+
+\[
+ \begin{aligned}
+ K^2={}&\mathcal C\mathcal S(\mathcal R\mathcal S+\mathcal N)
+       (\mathcal C+\mathcal R\mathcal D)\\
+ &+\mathcal C^2\mathcal D\mathcal S
+       \sqrt{(\mathcal R\mathcal S+\mathcal N)\mathcal R}
+ +\mathcal D^2\mathcal N\mathcal R\mathcal S^{-1}.
+ \end{aligned}
+\]
+
+Put \(\lambda=\alpha+\beta\).  Literal substitution gives the three
+\(T\)-exponents in \(K^2\):
+
+\[
+ \boxed{
+ \begin{aligned}
+ k_1&=6+\max(\lambda,5),\\
+ k_2&=9-\beta-\frac\alpha2
+          +\frac12\max(\lambda,5),\\
+ k_3&=11-\lambda.
+ \end{aligned}}
+ \tag{4.845dc_14xq_45}
+\]
+
+Consequently the theorem gives
+
+\[
+ \boxed{
+ E_{\rm Drappeau}(\alpha,\beta)
+ =\frac{5+\lambda}{2}
+  +\frac12\max(k_1,k_2,k_3).}
+ \tag{4.845dc_14xq_46}
+\]
+
+The physical QCT target before Poisson is \(RS=T^6\).  The most
+favorable point of (4.845dc_14xq_46) on
+\(0\leq\alpha,\beta\leq3\) is already
+
+\[
+ \boxed{
+ E_{\rm Drappeau}^{\min}=\frac{33}{4},\qquad
+ E_{\rm Drappeau}^{\min}-6=\frac94.}
+ \tag{4.845dc_14xq_47}
+\]
+
+Here is the exact minimization, rather than a grid check.  If
+\(\lambda\leq5\), then \(k_1=11\).  For
+\(\lambda\geq1/2\), this alone gives
+
+\[
+ E_{\rm Drappeau}\geq 8+\frac\lambda2\geq\frac{33}{4}.
+\]
+
+For \(\lambda\leq1/2\), the second term is
+\(k_2=23/2-\beta-\alpha/2\), whence
+
+\[
+ E_{\rm Drappeau}
+ \geq\frac{5+\lambda}{2}+\frac{k_2}{2}
+ =\frac{33}{4}+\frac\alpha4\geq\frac{33}{4}.
+\]
+
+Finally, if \(\lambda\geq5\), then \(k_1=6+\lambda\) and
+
+\[
+ E_{\rm Drappeau}\geq\frac{11}{2}+\lambda
+ \geq\frac{21}{2}.
+\]
+
+Equality in (4.845dc_14xq_47) occurs, for example, for
+\(\alpha=0\) and \(0\leq\beta\leq1/2\).  Thus the lower bound is
+global on the entire factor square and is attained.
+
+For example, at \(\alpha=\beta=0\), the three \(K^2\) exponents are
+\((11,23/2,11)\).  At the residual Type-II center
+\(\alpha=\beta=5/4\), they are \((11,77/8,17/2)\), and the resulting
+bound exponent is \(37/4\), leaving \(13/4\).
+
+Thus the quintilinear theorem does produce a large saving over raw
+cardinality in the small-factor cells, but it applies before the
+fixed-entry PEVP Cauchy organization.  The two savings cannot be
+subtracted independently.  Even under the favorable exact tensor
+separation above, this route misses the QCT target by at least
+\(T^{9/4}\), so it does not prove MMKLS.  The interface
+`drappeau_quintilinear_hard_box_audit` records (4.845dc_14xq_43)--
+(4.845dc_14xq_47) with exact rational arithmetic and keeps the joint
+outer gate false.
+
 ### 4.109zk Pascadi v2 saves only one quarter power after factor freezing
 
 Pascadi's revised composite-modulus theorem is unusually well matched

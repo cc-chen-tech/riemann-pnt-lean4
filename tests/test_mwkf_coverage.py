@@ -5809,6 +5809,52 @@ def test_cross_orientation_still_needs_an_atkin_lehner_sign_saving(
     ) in output
 
 
+def test_drappeau_quintilinear_bound_does_not_compose_with_outer_pevp(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Substitute the exact hard Type allocation into Drappeau's theorem."""
+    audit = coverage_audit.drappeau_quintilinear_hard_box_audit(
+        entry_factor_exponent=F(0),
+        modulus_factor_exponent=F(0),
+    )
+    assert audit.entry_quotient_exponent == F(3)
+    assert audit.modulus_quotient_exponent == F(3)
+    assert audit.product_index_exponent == F(5)
+    assert audit.coefficient_l2_norm_exponent == F(5, 2)
+    assert audit.k_squared_term_exponents == (F(11), F(23, 2), F(11))
+    assert audit.k_exponent == F(23, 4)
+    assert audit.theorem_bound_exponent == F(33, 4)
+    assert audit.raw_trivial_bound_exponent == F(11)
+    assert audit.physical_qct_target_exponent == F(6)
+    assert audit.best_available_bound_exponent == F(33, 4)
+    assert audit.remaining_exponent_gap == F(9, 4)
+    assert audit.exact_phase_and_coprimality_match
+    assert audit.product_ratio_mellin_tensorization_has_polylog_cost
+    assert audit.theorem_improves_raw_trivial_bound
+    assert not audit.theorem_composes_with_fixed_entry_pevp
+    assert not audit.mmkls_covered
+
+    center = coverage_audit.drappeau_quintilinear_hard_box_audit(
+        entry_factor_exponent=F(5, 4),
+        modulus_factor_exponent=F(5, 4),
+    )
+    assert center.k_squared_term_exponents == (F(11), F(77, 8), F(17, 2))
+    assert center.k_exponent == F(11, 2)
+    assert center.coefficient_l2_norm_exponent == F(15, 4)
+    assert center.theorem_bound_exponent == F(37, 4)
+    assert center.remaining_exponent_gap == F(13, 4)
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: drappeau_quintilinear="
+        "alpha=0 beta=0 C=3 D=3 N=5 R=0 S=0 "
+        "b_l2=5/2 k2=11,23/2,11 k=23/4 theorem=33/4 "
+        "trivial=11 best=33/4 target=6 gap=9/4 "
+        "phase=True tensor=True improves=True compose=False mmkls=False"
+    ) in output
+
+
 def test_squarefree_generalized_gauss_pair_mass_has_no_gcd_power_loss() -> None:
     """Catch paying a positive power when the Poisson index meets the modulus."""
     mass = coverage_audit.squarefree_gauss_pair_fourth_mass(
