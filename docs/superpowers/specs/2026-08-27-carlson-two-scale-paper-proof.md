@@ -393,7 +393,8 @@ Banach-valued Hadamard bound underlying (5.3), together with the exact
 pointwise Gaussian norm normalization in (5.2), is also formalized.  A
 continuous vertical section satisfying either a strict sub-Gaussian square
 bound or a centered polynomial square bound has formally been promoted to
-`L^2(R)` with the exact Gaussian normalization.  The pole-free mollified
+`L^2(R)` with the exact Gaussian normalization, including the exact center
+shift for an arbitrary complex strip parameter.  The pole-free mollified
 error in (5.1) has been defined through the analytic zeta pole unit, proved
 analytic on `Re(s)>0`, identified with the paper formula away from the pole,
 and proved continuous on each such vertical line.  The paper proof leaves

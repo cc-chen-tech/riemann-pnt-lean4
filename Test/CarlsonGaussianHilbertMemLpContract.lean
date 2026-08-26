@@ -31,9 +31,20 @@ example {Delta w x C : ℝ} (hDelta : 0 < Delta) (n : ℕ)
   memLp_carlsonGaussianHilbertSection_of_polynomial_sq_bound
     hDelta n H hHcont hHbound
 
+example {Delta w C : ℝ} {z : ℂ} (hDelta : 0 < Delta) (n : ℕ)
+    (H : ℂ → ℂ)
+    (hHcont : Continuous fun t : ℝ => H (z + I * (t : ℂ)))
+    (hHbound : ∀ t : ℝ,
+      ‖H (z + I * (t : ℂ))‖ ^ 2 ≤
+        C * (1 + |z.im + t - w|) ^ n) :
+    MemLp (carlsonGaussianHilbertSection Delta w H z) 2 volume :=
+  memLp_carlsonGaussianHilbertSection_of_complex_polynomial_sq_bound
+    hDelta n H hHcont hHbound
+
 #print axioms integrable_one_add_abs_pow_mul_exp_neg_mul_sq
 #print axioms memLp_carlsonGaussianHilbertSection_of_exp_sq_bound
 #print axioms memLp_carlsonGaussianHilbertSection_of_polynomial_sq_bound
+#print axioms memLp_carlsonGaussianHilbertSection_of_complex_polynomial_sq_bound
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
