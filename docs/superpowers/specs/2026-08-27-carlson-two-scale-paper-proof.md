@@ -388,13 +388,16 @@ The finite two-scale mollifier/detector, identity (2.1), cancellation (4.1),
 the explicit fixed-right estimate `5/36`, fixed-circle growth,
 unconditional Jensen local zero-mass bound, local divisor factorization,
 good-radius selection, Borel--Caratheodory estimate, and zero-free horizontal
-segment with its exact mass/separation bound are formalized.  The paper proof
-leaves the following concrete Lean lemmas, none of which may be replaced by
-a final-density axiom:
+segment with its exact mass/separation bound are formalized.  The squared
+Banach-valued Hadamard bound underlying (5.3), together with the exact
+pointwise Gaussian norm normalization in (5.2), is also formalized.  The
+paper proof leaves the following concrete Lean lemmas, none of which may be
+replaced by a final-density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. the pole-free `L^2(R)`-valued three-lines lemma (5.3) and the finite
+2. membership, strip analyticity, and boundary norm estimates for the
+   concrete pole-free `L^2(R)`-valued map in (5.2), followed by the finite
    Gaussian covering argument;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
