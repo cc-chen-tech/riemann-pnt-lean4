@@ -7962,6 +7962,72 @@ published_mixed_fourth_moment_proved=False and
 whole_line_family_covered=False.  Thus Section 4.61 changes the analytic
 language of the obstruction, but does not declare M4\(_\gamma\) proved.
 
+#### 4.61.1 Recent fourth-moment papers do not cover the top Möbius gate
+
+The most recent amplified fourth-moment result must be compared with
+(4.562) at the level of the theorem statement, not only by the words
+"fourth moment" and "mollifier".  Theorem 1.1 of
+[Bui--Hall--Subira Jorge](https://arxiv.org/html/2511.14415) evaluates
+
+\[
+ \int |\zeta(1/2+it)|^4 |A(1/2+it)|^4 w(t/T)\,dt,
+ \qquad
+ A(s)=\sum_{n\le T^\vartheta}
+ {d_r(n)P(\log(T^\vartheta/n)/\log T^\vartheta)\over n^s},
+\tag{4.564a}
+\]
+
+under the strict hypothesis
+
+\[
+ \boxed{\vartheta<\frac18.}
+\tag{4.564b}
+\]
+
+The top member (4.562), in contrast, has length exponent \(1\), Möbius
+coefficients, and no factor \(|\zeta|^4\).  Hence the three independent
+interface tests are
+
+\[
+ \underbrace{1<\frac18}_{\text{length: false}},\qquad
+ \underbrace{\mu(n)=d_r(n)P(\cdot)}_{\text{coefficient: false}},\qquad
+ \underbrace{\int|D_\mu|^4=\int|\zeta|^4|A|^4}_{\text{integrand: false}}.
+\tag{4.564c}
+\]
+
+In particular, the length deficit is exactly \(1-1/8=7/8\).  Positivity
+does not repair the third test: an upper bound with the nonnegative weight
+\(|\zeta(1/2+it)|^4\) gives no upper bound for the unweighted integral
+without a uniform positive lower bound for \(|\zeta|\), which is false at
+its zeros.  The 2026 two-piece amplified-moment framework of
+[Durkan--Page](https://arxiv.org/html/2606.27323) likewise uses short
+amplifiers inside zeta moments; its twisted fourth-moment range
+\(\vartheta_k<1/(4k)\) does not supply the pure length-\(T\) Möbius moment.
+
+There is also a recent result with the exact word "Möbius" in its title,
+but it is a different Fourier geometry.  Theorem 4.1 of
+[Verjovsky](https://arxiv.org/html/2607.25002) concerns the additive
+polynomial
+
+\[
+ P_N(x)=N^{-1/2}\sum_{n\le N}\mu(n)e(nx)
+\tag{4.564d}
+\]
+
+on arcs of radius \(c/N\).  It states that subpolynomial growth of all
+finite local moments is equivalent to RH.  It is therefore neither an
+unconditional input nor a theorem about the multiplicative frequencies
+\(n^{-it}\) in (4.562).  It is useful as a depth warning, not as coverage.
+
+The finite adapter
+`published_mobius_fourth_moment_coverage_audit` records the target
+exponents \(1,1,1\), the strict \(1/8\) source ceiling, the exact \(7/8\)
+length deficit, and the two further interface failures in (4.564c).  It
+also records the additive/multiplicative distinction and the RH-equivalent
+status of (4.564d).  Its final field is
+`direct_published_coverage=False`.  This is a finite coverage proposition,
+not a claim that either cited theorem is false or weak in its own setting.
+
 ### 4.62 Exact amplitude ledger for the stronger top fourth-moment route
 
 The sufficient componentwise estimate (4.562) can itself be tested against
@@ -9704,7 +9770,8 @@ where
  r_1=rx,\qquad r_2=ry,\qquad c=bx-ay,\qquad h=rc.
 \]
 
-First combine every supplied label,
+For packet labels which share the same two parent weights \(A,B\), first
+combine every supplied label,
 
 \[
  K_r(c)=\sum_\omega K_{\omega,r}(c),
@@ -9828,6 +9895,58 @@ where \(D_{j,r}\) denotes the corresponding moving common-cofactor
 projection.  The finite helper `bblr_tensor_parent_projection_sides`
 verifies (4.621zadj18) directly and records
 `static_mertens_factors_remain=True`.
+
+There is an important qualification when (4.621zadj15) is passed through
+the Fourier inversion of Section 4.60.  Distinct Fourier labels generally
+have distinct one-variable parent weights.  Write them as
+\(A_\omega,B_\omega\), and define \(L_{\omega,r},R_{\omega,r}\) from
+(4.621zadj14) with those weights.  Then one may not first replace the
+kernels by \(\sum_\omega K_{\omega,r}\).  The correct finite identity is
+
+\[
+\boxed{
+ \mathscr D_{\rm tens}
+ =\sum_{\omega,r}\bar K_{\omega,r}
+    L_{\omega,r}R_{\omega,r}
+  +\sum_\omega \mathscr D^\circ_\omega.}
+\tag{4.621zadj19a}
+\]
+
+Here every \(K^\circ_{\omega,r}=K_{\omega,r}-\bar K_{\omega,r}\) has
+zero cyclic row sum.  Consequently
+
+\[
+ \sum_\omega\bar K_{\omega,r}=0
+ \quad\not\Longrightarrow\quad
+ \sum_\omega\bar K_{\omega,r}
+ L_{\omega,r}R_{\omega,r}=0
+\tag{4.621zadj19b}
+\]
+
+unless the parent projections are common (or a stronger weighted
+cancellation is proved).  This is exactly the distinction between AFE or
+ordering packets which genuinely share parent weights and the continuous
+Fourier tensors whose weights depend on the Fourier parameter.
+
+An exact rational counterexample uses modulus \(7\), the parent rows from
+the preceding fixture, and two labels.  Give the first label parent weight
+\(24\) and kernel mean \(1/7\), and the second parent weight \(48\) and
+kernel mean \(-1/7\).  Then the aggregate unweighted kernel mean is zero,
+but the actual constant mode is
+
+\[
+ \boxed{24\cdot\frac17+48\cdot\left(-\frac17\right)
+ =-\frac{24}{7}\ne0.}
+\tag{4.621zadj19c}
+\]
+
+The helper `bblr_labelled_tensor_zero_mode_sides` verifies
+(4.621zadj19a)--(4.621zadj19c), including the full split
+\(-24=-24/7-144/7\).  It records
+`aggregate_kernel_means_vanish=True` but
+`weighted_constant_mode_vanishes=False`.  Thus the next analytic object is
+not the unweighted mean of the reconstructed kernel: it is the complete
+weighted functional in the first term of (4.621zadj19a).
 
 Equation (4.621zadj19) explains both the gain and the remaining obstruction.
 The moving parents have returned to a gcd/Gram divisor structure, but two

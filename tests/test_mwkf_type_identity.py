@@ -467,6 +467,49 @@ def test_bblr_tensor_parent_projection_factors_static_mertens_sum() -> None:
     assert sides.static_mertens_factors_remain
 
 
+def test_label_dependent_tensor_weights_must_be_centered_before_label_sum() -> None:
+    """Kernel means can cancel while their parent-weighted zero mode does not."""
+    helper = getattr(
+        type_identity,
+        "bblr_labelled_tensor_zero_mode_sides",
+        None,
+    )
+    assert helper is not None, "label-dependent tensor zero-mode master is missing"
+
+    sides = helper(
+        modulus=7,
+        moving_parent_cutoffs=(3, 3),
+        left_parent_weights_by_label={
+            "omega+": {(7, 10): F(2)},
+            "omega-": {(7, 10): F(4)},
+        },
+        right_parent_weights_by_label={
+            "omega+": {(5, 15): F(3)},
+            "omega-": {(5, 15): F(3)},
+        },
+        common_shift_kernels_by_label={
+            "omega+": {(5, -1): F(1)},
+            "omega-": {(5, -1): F(-1)},
+        },
+    )
+
+    assert sides.aggregate_kernel_mean_by_r == ((5, F(0)),)
+    assert sides.aggregate_kernel_means_vanish
+    assert sides.constant_mode_by_label == (
+        ("omega+", F(24, 7)),
+        ("omega-", F(-48, 7)),
+    )
+    assert sides.weighted_constant_mode_contribution == F(-24, 7)
+    assert not sides.weighted_constant_mode_vanishes
+    assert sides.direct_labelled_master_sum == F(-24)
+    assert sides.centered_labelled_master_sum == F(-144, 7)
+    assert sides.recombined_labelled_master_sum == F(-24)
+    assert sides.zero_mode_split_identity_verified
+    assert sides.parent_weights_are_label_dependent
+    assert not sides.kernel_only_mean_cancellation_is_sufficient
+    assert not sides.target_bound_proved
+
+
 def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
     """The worst BBLR box loses every Möbius sign before global recombination."""
     adapter = getattr(

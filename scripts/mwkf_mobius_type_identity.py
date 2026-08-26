@@ -429,6 +429,22 @@ class BBLRTensorParentProjection:
 
 
 @dataclass(frozen=True)
+class BBLRLabelledTensorZeroMode:
+    direct_labelled_master_sum: Fraction
+    aggregate_kernel_mean_by_r: tuple[tuple[int, Fraction], ...]
+    aggregate_kernel_means_vanish: bool
+    constant_mode_by_label: tuple[tuple[str, Fraction], ...]
+    weighted_constant_mode_contribution: Fraction
+    weighted_constant_mode_vanishes: bool
+    centered_labelled_master_sum: Fraction
+    recombined_labelled_master_sum: Fraction
+    zero_mode_split_identity_verified: bool
+    parent_weights_are_label_dependent: bool
+    kernel_only_mean_cancellation_is_sufficient: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
 class FourMobiusUnsignedSectorRecombination:
     values: tuple[int, int, int, int]
     cutoff_u: int
@@ -3812,6 +3828,122 @@ def bblr_tensor_parent_projection_sides(
             tuple(right_direct_rows) == right_factored
         ),
         static_mertens_factors_remain=True,
+    )
+
+
+def bblr_labelled_tensor_zero_mode_sides(
+    *,
+    modulus: int,
+    moving_parent_cutoffs: tuple[int, int],
+    left_parent_weights_by_label: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+    right_parent_weights_by_label: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+    common_shift_kernels_by_label: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+) -> BBLRLabelledTensorZeroMode:
+    """Center a signed tensor superposition with label-dependent parents.
+
+    The helper :func:`bblr_moving_parent_zero_mode_sides` may aggregate
+    packet kernels before centering because its parent weights are shared.
+    A Fourier tensor superposition generally has different one-variable
+    parent weights for each label.  Its constant mode is therefore
+
+    ``sum_label sum_r mean(K_label,r) L_label,r R_label,r``.
+
+    In particular, cancellation of the unweighted aggregate kernel means
+    does not by itself annihilate this parent-weighted constant mode.
+    """
+    label_sets = (
+        set(left_parent_weights_by_label),
+        set(right_parent_weights_by_label),
+        set(common_shift_kernels_by_label),
+    )
+    if not label_sets[0] or any(labels != label_sets[0] for labels in label_sets[1:]):
+        raise ValueError("the same nonempty tensor labels are required")
+
+    labels = tuple(sorted(label_sets[0]))
+    per_label = {
+        label: bblr_moving_parent_zero_mode_sides(
+            modulus=modulus,
+            moving_parent_cutoffs=moving_parent_cutoffs,
+            left_parent_weights=left_parent_weights_by_label[label],
+            right_parent_weights=right_parent_weights_by_label[label],
+            labelled_common_shift_kernels={
+                label: common_shift_kernels_by_label[label]
+            },
+        )
+        for label in labels
+    }
+
+    aggregate_kernel: dict[tuple[int, int], Fraction] = {}
+    for label in labels:
+        for key, value in common_shift_kernels_by_label[label].items():
+            aggregate_kernel[key] = aggregate_kernel.get(key, Fraction(0)) + Fraction(
+                value
+            )
+    kernel_r_values = sorted({common_r for common_r, _ in aggregate_kernel})
+    aggregate_means = tuple(
+        (
+            common_r,
+            sum(
+                (
+                    value
+                    for (kernel_r, _), value in aggregate_kernel.items()
+                    if kernel_r == common_r
+                ),
+                Fraction(0),
+            )
+            / modulus,
+        )
+        for common_r in kernel_r_values
+    )
+    aggregate_means_vanish = all(mean == 0 for _, mean in aggregate_means)
+
+    constant_by_label = tuple(
+        (label, per_label[label].constant_mode_contribution)
+        for label in labels
+    )
+    direct = sum(
+        (per_label[label].direct_parent_master_sum for label in labels),
+        Fraction(0),
+    )
+    constant = sum((value for _, value in constant_by_label), Fraction(0))
+    centered = sum(
+        (per_label[label].centered_parent_master_sum for label in labels),
+        Fraction(0),
+    )
+    recombined = constant + centered
+
+    first_left = left_parent_weights_by_label[labels[0]]
+    first_right = right_parent_weights_by_label[labels[0]]
+    label_dependent = any(
+        left_parent_weights_by_label[label] != first_left
+        or right_parent_weights_by_label[label] != first_right
+        for label in labels[1:]
+    )
+    kernel_only_sufficient = (
+        not aggregate_means_vanish or constant == 0
+    )
+    return BBLRLabelledTensorZeroMode(
+        direct_labelled_master_sum=direct,
+        aggregate_kernel_mean_by_r=aggregate_means,
+        aggregate_kernel_means_vanish=aggregate_means_vanish,
+        constant_mode_by_label=constant_by_label,
+        weighted_constant_mode_contribution=constant,
+        weighted_constant_mode_vanishes=(constant == 0),
+        centered_labelled_master_sum=centered,
+        recombined_labelled_master_sum=recombined,
+        zero_mode_split_identity_verified=(direct == recombined),
+        parent_weights_are_label_dependent=label_dependent,
+        kernel_only_mean_cancellation_is_sufficient=kernel_only_sufficient,
+        target_bound_proved=False,
     )
 
 

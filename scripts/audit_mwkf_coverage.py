@@ -1283,6 +1283,27 @@ class TransitionMobiusDirichletFourthMomentAudit:
 
 
 @dataclass(frozen=True)
+class PublishedMobiusFourthMomentCoverageAudit:
+    target_length_exponent: Fraction
+    target_height_exponent: Fraction
+    target_normalized_moment_exponent: Fraction
+    bhsj_amplifier_length_ceiling: Fraction
+    bhsj_length_power_deficit: Fraction
+    bhsj_length_hypothesis_met: bool
+    bhsj_mobius_coefficient_class_matches: bool
+    bhsj_pure_fourth_moment_integrand_matches: bool
+    bhsj_direct_coverage: bool
+    verjovsky_polynomial_is_additive_fourier: bool
+    verjovsky_polynomial_is_multiplicative_dirichlet: bool
+    verjovsky_local_arc_exponent: Fraction
+    verjovsky_subpolynomial_moment_bound_equivalent_to_rh: bool
+    verjovsky_unconditional_coverage: bool
+    direct_published_coverage: bool
+    bhsj_source: str
+    verjovsky_source: str
+
+
+@dataclass(frozen=True)
 class TransitionMobiusLargeValueAudit:
     amplitude_exponent: Fraction
     unnormalized_fourth_moment_target_exponent: Fraction
@@ -6289,6 +6310,69 @@ def transition_mobius_dirichlet_fourth_moment_audit(
     )
 
 
+def published_mobius_fourth_moment_coverage_audit(
+    *,
+    target_length_exponent: Fraction,
+) -> PublishedMobiusFourthMomentCoverageAudit:
+    """Audit two recent moment results against the top DCV gate.
+
+    The target is the normalized multiplicative Dirichlet polynomial
+
+    ``sum_{n asymp T} mu(n) U(n/T) n^(-1/2-it)``
+
+    at physical height ``T``.  Its required pure fourth moment has exponent
+    one.  Bui--Hall--Subira Jorge Theorem 1.1 instead treats the fourth power
+    of an amplifier inside a zeta fourth moment, with divisor coefficients
+    and strict length hypothesis ``vartheta < 1/8``.  All three interfaces
+    (length, coefficient class, and integrand) must match before it can be
+    counted as direct coverage.
+
+    Verjovsky Theorem 4.1 concerns the additive Fourier polynomial
+    ``N^(-1/2) sum_{n<=N} mu(n)e(nt)`` on arcs of radius ``c/N``.  The
+    subpolynomial local-moment assertion is equivalent to RH there, so it is
+    diagnostic rather than an unconditional estimate for the multiplicative
+    height aspect gate.
+    """
+    target_length = F(target_length_exponent)
+    if target_length < 0:
+        raise ValueError("target length exponent must be nonnegative")
+
+    bhsj_ceiling = F(1, 8)
+    bhsj_length_ok = target_length < bhsj_ceiling
+    bhsj_coefficient_match = False
+    bhsj_integrand_match = False
+    bhsj_coverage = (
+        bhsj_length_ok
+        and bhsj_coefficient_match
+        and bhsj_integrand_match
+    )
+    verjovsky_unconditional = False
+    return PublishedMobiusFourthMomentCoverageAudit(
+        target_length_exponent=target_length,
+        target_height_exponent=F(1),
+        target_normalized_moment_exponent=F(1),
+        bhsj_amplifier_length_ceiling=bhsj_ceiling,
+        bhsj_length_power_deficit=max(F(0), target_length - bhsj_ceiling),
+        bhsj_length_hypothesis_met=bhsj_length_ok,
+        bhsj_mobius_coefficient_class_matches=bhsj_coefficient_match,
+        bhsj_pure_fourth_moment_integrand_matches=bhsj_integrand_match,
+        bhsj_direct_coverage=bhsj_coverage,
+        verjovsky_polynomial_is_additive_fourier=True,
+        verjovsky_polynomial_is_multiplicative_dirichlet=False,
+        verjovsky_local_arc_exponent=F(-1),
+        verjovsky_subpolynomial_moment_bound_equivalent_to_rh=True,
+        verjovsky_unconditional_coverage=verjovsky_unconditional,
+        direct_published_coverage=(bhsj_coverage or verjovsky_unconditional),
+        bhsj_source=(
+            "Bui--Hall--Subira Jorge, arXiv:2511.14415v1, "
+            "Theorem 1.1 and its amplifier definition."
+        ),
+        verjovsky_source=(
+            "Verjovsky, arXiv:2607.25002v1, Theorem 4.1."
+        ),
+    )
+
+
 def transition_mobius_large_value_audit(
     *,
     amplitude_exponent: Fraction,
@@ -9989,6 +10073,20 @@ def main() -> None:
         "scaled_log_inversion=True,zero_compact_exclusion=False,coprimality=True,"
         "dcv_superposition=True,uniform_sufficient=True,"
         "dcv_implies_components=False,published=False,covered=False"
+    )
+    published_fourth_moment = published_mobius_fourth_moment_coverage_audit(
+        target_length_exponent=F(1),
+    )
+    print(
+        "large_q_transition: published_mobius_fourth_moment="
+        f"target_length={_fmt(published_fourth_moment.target_length_exponent)},"
+        f"target_height={_fmt(published_fourth_moment.target_height_exponent)},"
+        "target_moment=1,"
+        "bhsj_ceiling=1/8,bhsj_deficit=7/8,bhsj_length=False,"
+        "bhsj_mobius=False,bhsj_pure_integrand=False,bhsj_covered=False,"
+        "verjovsky_additive=True,verjovsky_multiplicative=False,"
+        "verjovsky_arc=-1,verjovsky_rh_equivalent=True,"
+        "verjovsky_unconditional=False,covered=False"
     )
     transition_large_values = transition_mobius_large_value_audit(
         amplitude_exponent=F(2, 3),

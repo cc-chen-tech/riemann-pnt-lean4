@@ -2662,6 +2662,36 @@ def test_transition_variance_is_a_mixed_mobius_fourth_moment_gate() -> None:
     assert top.symmetric_top_face_is_mobius_fourth_moment
 
 
+def test_recent_amplified_fourth_moments_do_not_cover_the_mobius_gate() -> None:
+    """Require length, coefficient, and integrand compatibility simultaneously."""
+    adapter = getattr(
+        coverage_audit,
+        "published_mobius_fourth_moment_coverage_audit",
+        None,
+    )
+    assert adapter is not None, "published fourth-moment coverage audit is missing"
+
+    audit = adapter(target_length_exponent=F(1))
+    assert audit.target_length_exponent == F(1)
+    assert audit.target_height_exponent == F(1)
+    assert audit.target_normalized_moment_exponent == F(1)
+
+    assert audit.bhsj_amplifier_length_ceiling == F(1, 8)
+    assert audit.bhsj_length_power_deficit == F(7, 8)
+    assert not audit.bhsj_length_hypothesis_met
+    assert not audit.bhsj_mobius_coefficient_class_matches
+    assert not audit.bhsj_pure_fourth_moment_integrand_matches
+    assert not audit.bhsj_direct_coverage
+
+    assert audit.verjovsky_polynomial_is_additive_fourier
+    assert not audit.verjovsky_polynomial_is_multiplicative_dirichlet
+    assert audit.verjovsky_local_arc_exponent == F(-1)
+    assert audit.verjovsky_subpolynomial_moment_bound_equivalent_to_rh
+    assert not audit.verjovsky_unconditional_coverage
+
+    assert not audit.direct_published_coverage
+
+
 def test_generic_large_values_do_not_prove_the_mobius_fourth_moment() -> None:
     """Catch any adapter that spends a logarithmic theorem as a power saving."""
     adapter = getattr(
