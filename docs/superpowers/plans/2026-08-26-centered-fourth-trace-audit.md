@@ -184,4 +184,4 @@
 - [x] Recheck Pascadi's composite-modulus theorem against the new interface and preserve the fixed-modulus insufficiency boundary.
 - [ ] Prove the joint fully-centered four-local estimate and recover the remaining T^(1/8) on the one-mean terms without taking absolute values over the other modulus.
 - [ ] Recombine the nonunit factor strata and coefficient multiplicities to turn the screening ledger into an unconditional coupled-kernel bound.
-- [ ] Review, verify, commit, push, and update the Ready-for-view PR.
+- [x] Review, verify, commit, push, and update the Ready-for-view PR.
