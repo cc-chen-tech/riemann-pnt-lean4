@@ -7,7 +7,7 @@
 > retained.  The corrected Blomer--Milićević conductor-\(p\) calculation
 > in Section 4.109y preserves the required local power saving but disproves
 > the previously stated exact Steinberg cancellation.  Sections
-> Sections 4.109zf--4.109zfgb now close the local spectral route rather
+> 4.109zf--4.109zfgb now close the local spectral route rather
 > than merely audit its exponents.  The displayed polylogarithmic
 > full-level harmonic large sieve (4.845dc_12) is proved by exact
 > Bessel--Mellin separation, sparse Farey--Gallagher, and the separate
@@ -21,10 +21,12 @@
 > incomplete-Eisenstein argument.  Section 4.109zfgb reinserts every
 > sector into the conductor Euler sum and proves PLS and PEVP.  Every
 > AFE/transform shell is now \(o(T)\).  The unconditional asymptotic is
-> not promoted because one compact near-shell cell remains: the exact
-> adapter from the double-small lifted entry divisors
-> \(A=db\), \(B=d'b'\) to the
-> collapsed-gcd outer-PNT coordinates has not been proved.
+> not promoted because fixed-entry PEVP does not pay for the outer sums
+> over the actual integers \(A=db\), \(B=d'b'\).  Section 4.109zi gives
+> the missing outer-cardinality ledger and restores the residual to the
+> full signed outer LISK gate.  In particular, the earlier claim that
+> only the double-small polylogarithmic entry-divisor cell remained was
+> false.
 
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
@@ -42,8 +44,8 @@ Only the second route survives the exponent audit.  The new theorem it
 requires is isolated as PEVP in Section 4.109x.  Sections 4.109y--4.109z
 reduce it to a weighted primitive-conductor large sieve; Sections
 4.109zf--4.109zfgb prove the required uniform polylogarithmic theorem
-and reinsert it.  The remaining open input is the small-entry-divisor
-compact gate stated after (4.845dc_14xm).
+and reinsert it.  The remaining open input is the joint outer-entry
+gate \((\mathrm{OLISK})_q\) in Section 4.109zi.
 
 ## 2. The exact logarithmic target
 
@@ -16222,7 +16224,8 @@ Section 4.109zfgb proves PEVP, so (4.845cx) applies whenever its local
 the polylogarithmic kernel-separation tail or the original AFE tail;
 Section 4.109zg treats those shells.  The interface
 `lifted_outer_qct_aggregation_audit` records the seven-log ledger and
-the remaining small-entry LSEG failure of the compact core.
+the full outer LISK failure of the compact core.  Section 4.109zi
+explains why fixed-entry PEVP does not itself supply that local gate.
 
 
 ### 4.109x The valuation tensor isolates the PEVP square function
@@ -16260,9 +16263,9 @@ Section 4.109ze shows that ordinary positive Cauchy does not legally
 transfer its cross-index local saving.  Sections 4.109zf--4.109zfa audit
 the full-level transform exponent, and Section 4.109zfb gives a direct
 geometric alternative.  Sections 4.109zfd--4.109zfgb subsequently
-complete the finite transfer, the full-level sieve, and PEVP.  The
-compact core then remains open only at the small-entry LSEG gate stated
-after (4.845dc_14xm).
+complete the finite transfer, the full-level sieve, and fixed-entry
+PEVP.  The compact core still requires the outer aggregation audited
+in Section 4.109zi.
 
 
 ### 4.109y Exact-level differencing removes the bad valuation multiplicity
@@ -18010,77 +18013,95 @@ homogeneous and polynomial in the same finite seminorm list, PEVP is
 seminorm-stable and applies to the shell decomposition of Section
 4.109zg.
 
-For later global summation, one more logarithmic bridge is needed.
-Let \(L=\log(2T)\).  PEVP is proved for both exact completion
-orientations: the left theorem has saving \(A^{-1/2}\), and after
-interchanging \((R,A)\) with \((S,B)\), the right theorem has saving
-\(B^{-1/2}\).  Choose one orientation for all spectral components in
-the box, namely the one containing \(\max(A,B)\).  For the fixed PEVP
-loss \(L^{C_J}\), split
+### 4.109zi Fixed-entry PEVP does not aggregate the outer entry divisors
 
-\[
- \max(A,B)\geq L^{2(B_0+C_J+8)}
- \quad\hbox{or}\quad
- A,B<L^{2(B_0+C_J+8)}.
- \tag{4.845dc_14xm}
-\]
-
-In the first range the selected PEVP amplitude is at most
-\(L^{-B_0-C_J-8}\), so that range is complete.  It is tempting to use
-the restricted \((\mu*\mu)\) PNT estimate (4.776)--(4.779) in the
-second range.  That estimate, however, is stated in the collapsed-gcd
-coordinates, where its small parameter is \(C/G\); the lifted
-Kuznetsov coordinate here is the entry divisor \(A=db\).  No exact
-finite reindexing identifying these two polylog collars has yet been
-given.  Treating their common letter \(A\) as an identification would
-be invalid.
-
-The remaining statement can nevertheless be written without an
-unspecified ``adapter''.  For a left completion, retain every signed
-Type allocation and every outer scale before taking an absolute value,
-and put
+The preceding version incorrectly used the fixed-\((A,B)\) factor
+\(A^{-1/2}\), or its right-oriented analogue \(B^{-1/2}\), as though
+no actual-integer sum over \(A,B\) remained.  Equation (4.845by) shows
+that these are genuine outer arithmetic variables.  In dyadic boxes
+\(A\asymp A_0\), \(B\asymp B_0\), the grouped coefficients satisfy
 
 \[
  \boxed{
- \mathfrak G^{L}_{K,q}
- :=\sum_{\substack{A<L^K\\B<L^K}}
-   \frac{\mathfrak S^{\mathrm{lift}}_{q,A,B}}R,
- \qquad
- |\mathfrak G^{L}_{K,q}|
- \ll_{B_0,K,W}S L^{-B_0}.}
- \tag{LSEG}_{K,q}^{L}
+ \sum_{A\asymp A_0}|\alpha_{\mathcal D,\mathcal B}(A)|^2
+ \ll_W A_0L^{C_W},\qquad
+ \sum_{B\asymp B_0}|\beta_{\mathcal D',\mathcal B'}(B)|^2
+ \ll_W B_0L^{C_W}.}
+ \tag{4.845dc_14xm}
 \]
 
-The right-completion gate \((\mathrm{LSEG})^{R}_{K,q}\) is obtained by
-interchanging \((R,A)\) with \((S,B)\).  The sums in
-\((\mathrm{LSEG})_{K,q}^{L,R}\) include the exact endpoint inequalities,
-the factor coefficients \(\mu(d)\mu(b)\), the divisor sum \(j\mid A\),
-all ratio/gcd layers, and the physical kernel
-\(\Omega_{A,B,q}(c,m,h,\delta)\) from (4.845aq_1).  Thus the statement
-does not ask for a bound uniform over arbitrary coefficients, and it
-does not estimate the bounded-\(A\) cells separately.
+Indeed each coefficient is a smoothly weighted restricted divisor
+convolution and is bounded by a fixed divisor function; the standard
+second moment of that divisor function proves (4.845dc_14xm).  No
+inverse power of \(A_0\) or \(B_0\) occurs.
 
-The product-Hecke PNT in (4.845w)--(4.845z) is a candidate input for
-\((\mathrm{LSEG})_{K,q}^{L,R}\), but it gives arbitrary logarithmic
-decay only while its common Möbius divisor has power length relative
-to the primitive conductor.  The current unbalanced-polytope audit
-does not prove that inequality on every cell with \(A,B<L^K\).  Likewise,
-(4.780) proves a polylogarithmic collar for the reduced collapsed slope
-\(C/G\), not for the lifted factor \(A=db\).  These two facts identify
-possible subroutes; neither is being recorded as a proof of LSEG.
+Let \(X_{A,B,D}\) denote the normalized spectral block inside
+\(\mathfrak S^{\rm lift}_{q,A,B}/R\).  For fixed \(B\), left PEVP gives
 
-Consequently PLS and PEVP are proved, all transform/AFE shells are
-available, and the large-entry-divisor compact core is complete.  The
-single remaining residual cell is the compact core with
-\(A,B<L^{2(B_0+C_J+8)}\), for which one must either construct the exact
-adapter to a proved long-variable PNT range or prove
-\((\mathrm{LSEG})_{K,q}^{L,R}\) directly.  PEVP is not being asked to
-create Möbius cancellation after positive Cauchy.
+\[
+ \sum_{D\mid A}|X_{A,B,D}|^2
+ \ll L^{C_J}A_0^{-1}\mathcal N_{A,B}^2.
+\]
 
-The interface primitive_conductor_level_difference_audit now marks the
-custom full-level sieve, weighted PLS, seminorm stability, and PEVP
-proved.  It leaves the whole-mollifier flag false at the
-polylogarithmic entry-divisor compact-core adapter just described.
+Even granting uniform normalized coefficient energy
+\(\mathcal N_{A,B}\leq1\), Cauchy over the actual integers
+\(A\asymp A_0\), followed by the \(B\)-coefficient bound, yields only
+
+\[
+ \boxed{
+ \sum_{\substack{A\asymp A_0\\B\asymp B_0}}
+ |\alpha(A)\beta(B)X_{A,B}|
+ \ll L^{C}A_0^{1/2}B_0.}
+ \tag{4.845dc_14xn-L}
+\]
+
+The right orientation gives \(L^CA_0B_0^{1/2}\).  Choosing the better
+orientation therefore leaves the exact power ledger
+
+\[
+ \boxed{
+ E_{\rm outer}(\alpha,\beta)
+ =\alpha+\beta-\frac12\max(\alpha,\beta),}
+ \qquad A_0=T^\alpha,quad B_0=T^\beta.
+ \tag{4.845dc_14xn}
+\]
+
+This implication is sharp for the information in fixed-entry PEVP:
+take unit outer coefficients and same-phase scalar blocks
+\(X_{A,B}=A_0^{-1/2}\) in the left orientation.  They satisfy the
+individual square bound and attain the order in
+(4.845dc_14xn-L).  Hence the missing factor cannot be recovered by
+raising the logarithmic threshold for \(\max(A,B)\).  In particular,
+the former claim that all large-entry boxes close and only
+\(A,B<L^K\) remain is invalid.
+
+The remaining gate must retain both outer Möbius convolutions inside
+the same signed estimate.  For the left orientation its exact form is
+
+\[
+ \boxed{
+ \left|
+ \sum_{\substack{A,B\geq1\\	ext{all exact endpoint and gcd conditions}}}
+ \alpha(A)\beta(B)
+ \frac{\mathfrak S^{\rm lift}_{q,A,B}}R
+ \right|
+ \ll_{B_0,W} S L^{-B_0}.}
+ \tag{OLISK}_{q}^{L}
+\]
+
+The right gate interchanges \((R,A)\) and \((S,B)\).  It includes the
+divisor sum \(j\mid A\), the ratio/gcd layers, and the physical kernel
+\(\Omega_{A,B,q}\).  It is a joint outer-level PEVP, not a consequence
+of (PEVP)\(_{A,B}\).  The product-Hecke and collapsed-gcd PNT estimates
+remain candidate inputs on subregions, but no exact partition currently
+proves \((\mathrm{OLISK})_q^{L,R}\) on every outer dyadic box.
+
+Consequently the fixed-entry PLS and PEVP theorem and all transform/AFE
+shell estimates remain available, but no large-entry compact-core range
+is yet closed by PEVP alone.  The interface
+`lifted_outer_qct_aggregation_audit` now records the two coefficient
+energies, the residual exponent (4.845dc_14xn), and the full outer LISK
+gate.  It deliberately rejects the former double-small split.
 
 ### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell
 
@@ -18180,7 +18201,7 @@ variables.  Equations (4.845dc_15)--(4.845dc_17), together with the
 now-proved seminorm-stable PEVP, therefore prove
 \(\mathrm{TAIL}_{B,D}=o_W(T)\) and the kernel-transform tail estimate
 unconditionally.  They do not settle the retained compact near shell
-identified after (4.845dc_14xm).
+identified in Section 4.109zi.
 
 The interface \`mwkf_tail_shell_aggregation_audit\` records the exact
 seven-log aggregation and the inequality \(BJ>C_J+D+7\).  Its
@@ -18188,7 +18209,7 @@ AFE-product, time/Poisson, QCT/Bessel, and total-tail closure flags are
 now true; the compact-core flag is separate.
 
 
-### 4.109zh The exact main term leaves only the small-entry compact gate
+### 4.109zh The exact main term leaves the joint outer-entry compact gate
 
 It remains to match the exact-gamma main term (1.1) of the
 off-diagonal audit with the finite LCM asymptotic proved in merged
@@ -18239,14 +18260,14 @@ The exact completed AFE and common-Mellin zero-mode calculation give
  I_{N,W}(T)=T\mathcal Q_{N,T}+\mathcal R_{N,T}
 \]
 with no truncated-AFE error.  The two explicit archimedean corrections
-are \(O_{A,W}(T^{-A})\).  PEVP and Section 4.109zg make every AFE and
-transform shell \(o_W(T)\), and (4.845dc_14xm) closes the part of the
-compact core with a sufficiently large completed entry divisor.
+are \(O_{A,W}(T^{-A})\).  Fixed-entry PEVP and Section 4.109zg make
+every AFE and transform shell \(o_W(T)\).  Section 4.109zi shows that
+this does not aggregate the remaining actual-integer \(A,B\) sums.
 Unconditionally the argument stops at
 \[
  \boxed{\mathcal R_{\lfloor T^3\rfloor,T}=o_W(T)
  \quad\Longleftarrow\quad
- (\mathrm{LSEG})_{K,q}^{L,R}\ \text{for every fixed }K.}
+ (\mathrm{OLISK})_{q}^{L,R}\ \text{uniformly in every outer box}.}
 \]
 Combining this remaining implication with (4.845dc_19) would give
 
@@ -18259,12 +18280,11 @@ Combining this remaining implication with (4.845dc_19) would give
 
 The displayed asymptotic is therefore still unproved for real
 \(W\in C_c^\infty(\mathbb R)\) supported in \([1,2]\).  The final
-coverage certificate has one residual analytic cell: the retained
-compact near shell with both completed entry divisors polylogarithmic,
-equivalently the exact lifted gates
-\((\mathrm{LSEG})_{K,q}^{L,R}\).  The full-level harmonic large sieve,
-weighted primitive-conductor large sieve, PEVP, and all analytic tails
-are no longer residual inputs.
+coverage certificate has one residual analytic gate: the full signed
+outer-entry aggregation \((\mathrm{OLISK})_{q}^{L,R}\), over power-sized
+as well as polylogarithmic entry divisors.  The full-level harmonic
+large sieve, weighted primitive-conductor large sieve, fixed-entry PEVP,
+and all analytic tails are no longer residual inputs.
 
 The interface \`unconditional_long_mollifier_asymptotic_audit\`
 combines the exact AFE, zero mode, PR #478 LCM main term, PEVP,
@@ -18901,7 +18921,8 @@ directly apply because both the rational point and its modulus vary in
 The chronological spike first ended at the pre-Cauchy two-Möbius
 spectral inequality displayed above.  The later exact-level route in
 Sections 4.109g--4.109zh repairs the inverse-scaled Kloosterman orbit
-and reduces the problem to the weighted primitive-conductor PEVP square
-function.  Its proposed polylogarithmic full-level harmonic large sieve
-is not yet proved, so neither the transform-tail closure nor the
-asymptotic (4.845dc_20) is unconditional.
+and proves the fixed-entry weighted primitive-conductor PEVP square
+function.  Section 4.109zi shows that this fixed-entry statement does
+not control the actual outer \(A,B\) sums.  The remaining theorem is the
+joint signed outer-entry gate \((\mathrm{OLISK})_q\); until it is proved,
+the asymptotic (4.845dc_20) is not unconditional.

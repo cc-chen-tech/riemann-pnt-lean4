@@ -1904,9 +1904,17 @@ class LiftedOuterQCTAggregationAudit:
     single_orientation_used_for_all_spectral_components: bool
     power_exponent_exact_valuation_projector_used: bool
     polylog_tensor_projector_gate_proved: bool
+    grouped_outer_coefficients_are_actual_integer_variables: bool
+    left_outer_coefficient_l2_squared_exponent: Fraction
+    right_outer_coefficient_l2_squared_exponent: Fraction
+    unsigned_outer_pair_count_exponent: Fraction
+    best_fixed_entry_pevp_saving_exponent: Fraction
+    residual_outer_aggregation_exponent: Fraction
     symmetric_completion_uses_larger_entry_divisor: bool
+    symmetric_completion_larger_entry_closes_outer_sum: bool
     large_entry_divisor_range_uses_pevp_power: bool
     small_entry_divisor_lifted_gate_stated_exactly: bool
+    full_outer_lisk_gate_stated_exactly: bool
     product_hecke_pnt_uniformly_covers_small_entry_cells: bool
     collapsed_gcd_to_lifted_entry_adapter_exact: bool
     polylog_entry_divisor_range_uses_outer_pnt: bool
@@ -11063,15 +11071,15 @@ def lifted_outer_qct_aggregation_audit(
     The original exact ledger has six dyadic parameters and one harmonic
     q logarithm.  Ratio/gcd and Type-allocation layers remain inside the
     local LISK gate, so they are not charged again after the local bound.
-    PEVP is proved for both exact completion orientations.  Choosing the
-    orientation whose completed factor is ``max(A,B)`` supplies the
-    required saving whenever either entry divisor exceeds a sufficiently
-    large logarithmic power.  The remaining double-small-entry sum is
-    stated exactly as LSEG in the research note.  The
-    product-Hecke PNT has not been shown to retain a power-long common
-    divisor on every unbalanced LSEG cell, and the collapsed-gcd PNT is
-    in a different coordinate.  Therefore the compact core remains open
-    even though the transform and AFE shells close.
+    PEVP is proved for each fixed pair of actual integer entry divisors
+    ``A,B`` and for both completion orientations.  It is not a square
+    function over those outer variables.  In a dyadic pair box the
+    grouped Mobius coefficients have squared L2 exponents ``rho`` and
+    ``sigma``.  Selecting the larger entry therefore saves at most half
+    its exponent, leaving ``rho + sigma - max(rho,sigma)/2`` after the
+    literal outer pair count.  Thus fixed-entry PEVP does not close a
+    large-entry range.  The remaining statement is the full signed outer
+    LISK gate, not a double-small LSEG gate.
     """
     rho = F(left_entry_exponent)
     sigma = F(right_entry_exponent)
@@ -11098,8 +11106,12 @@ def lifted_outer_qct_aggregation_audit(
         fixed_power_margin=F(0),
     )
     polylog_projector = projector.pevp_proved
-    large_divisor_pevp = projector.pevp_proved
-    small_lifted_gate_stated = True
+    outer_pair_count = rho + sigma
+    best_fixed_saving = max(rho, sigma) / 2
+    residual_outer = outer_pair_count - best_fixed_saving
+    large_divisor_pevp = False
+    small_lifted_gate_stated = False
+    full_outer_lisk_stated = True
     product_hecke_small_cells = False
     collapsed_adapter = False
     polylog_divisor_pnt = product_hecke_small_cells or collapsed_adapter
@@ -11136,11 +11148,19 @@ def lifted_outer_qct_aggregation_audit(
             projector.pevp_proved
         ),
         polylog_tensor_projector_gate_proved=polylog_projector,
+        grouped_outer_coefficients_are_actual_integer_variables=True,
+        left_outer_coefficient_l2_squared_exponent=rho,
+        right_outer_coefficient_l2_squared_exponent=sigma,
+        unsigned_outer_pair_count_exponent=outer_pair_count,
+        best_fixed_entry_pevp_saving_exponent=best_fixed_saving,
+        residual_outer_aggregation_exponent=residual_outer,
         symmetric_completion_uses_larger_entry_divisor=True,
+        symmetric_completion_larger_entry_closes_outer_sum=False,
         large_entry_divisor_range_uses_pevp_power=large_divisor_pevp,
         small_entry_divisor_lifted_gate_stated_exactly=(
             small_lifted_gate_stated
         ),
+        full_outer_lisk_gate_stated_exactly=full_outer_lisk_stated,
         product_hecke_pnt_uniformly_covers_small_entry_cells=(
             product_hecke_small_cells
         ),
@@ -12097,11 +12117,10 @@ def unconditional_long_mollifier_asymptotic_audit(
 
     The exact completed AFE and common-Mellin Poisson calculation give
     ``I = T*Q + R`` without a truncated-AFE error.  The merged Selberg
-    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  PEVP and the
-    seminorm-stable shell argument are proved.  The only residual is
-    the exact small-entry lifted compact gate LSEG; neither the
-    product-Hecke PNT nor the collapsed-gcd PNT has yet been adapted
-    to all of its unbalanced cells.
+    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  Fixed-entry PEVP
+    and the seminorm-stable shell argument are proved.  The only
+    residual is the full signed outer-entry gate OLISK: fixed-entry
+    PEVP does not aggregate the actual integer variables ``A,B``.
     """
     projector = primitive_conductor_level_difference_audit(
         level_factor_exponent=F(3),

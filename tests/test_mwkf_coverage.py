@@ -5172,11 +5172,11 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     assert "unconditional asymptotic proved" not in note
     for marker in (
-        "### 4.109zh The exact main term leaves only the small-entry compact gate",
+        "### 4.109zh The exact main term leaves the joint outer-entry compact gate",
         r"\tag{4.845dc_18}",
         r"\tag{4.845dc_19}",
         r"\tag{4.845dc_20}",
-        r"\tag{LSEG}_{K,q}^{L}",
+        r"\tag{OLISK}_{q}^{L}",
         "unconditional_long_mollifier_asymptotic_audit",
         "analytic remainder gate open",
     ):
@@ -5228,10 +5228,13 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     for marker in (
         "### 4.109w The lifted nonzero Poisson core has a seven-log aggregation",
         "### 4.109x The valuation tensor isolates the PEVP square function",
+        "### 4.109zi Fixed-entry PEVP does not aggregate the outer entry divisors",
         r"\tag{4.845cv}",
         r"\tag{4.845cw}",
         r"\tag{4.845cx}",
         r"\tag{4.845cy}",
+        r"\tag{4.845dc_14xn}",
+        r"\tag{OLISK}_{q}",
         r"\tag{PEVP}_{A,B}",
     ):
         assert marker in text
@@ -5255,9 +5258,17 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     assert core.single_orientation_used_for_all_spectral_components
     assert core.power_exponent_exact_valuation_projector_used
     assert core.polylog_tensor_projector_gate_proved
+    assert core.grouped_outer_coefficients_are_actual_integer_variables
+    assert core.left_outer_coefficient_l2_squared_exponent == F(3)
+    assert core.right_outer_coefficient_l2_squared_exponent == F(2)
+    assert core.unsigned_outer_pair_count_exponent == F(5)
+    assert core.best_fixed_entry_pevp_saving_exponent == F(3, 2)
+    assert core.residual_outer_aggregation_exponent == F(7, 2)
     assert core.symmetric_completion_uses_larger_entry_divisor
-    assert core.large_entry_divisor_range_uses_pevp_power
-    assert core.small_entry_divisor_lifted_gate_stated_exactly
+    assert not core.symmetric_completion_larger_entry_closes_outer_sum
+    assert not core.large_entry_divisor_range_uses_pevp_power
+    assert not core.small_entry_divisor_lifted_gate_stated_exactly
+    assert core.full_outer_lisk_gate_stated_exactly
     assert not core.product_hecke_pnt_uniformly_covers_small_entry_cells
     assert not core.collapsed_gcd_to_lifted_entry_adapter_exact
     assert not core.polylog_entry_divisor_range_uses_outer_pnt
