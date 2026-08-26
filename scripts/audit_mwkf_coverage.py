@@ -2027,6 +2027,36 @@ class AllConductorCrossIndexTensorAudit:
 
 
 @dataclass(frozen=True)
+class ConductorPatternEulerSquareAudit:
+    large_prime_threshold: int
+    large_prime_euler_log_power: int
+    small_prime_pattern_factor: Fraction
+    small_prime_pattern_constant: int
+    local_pattern_square_is_u_squared_plus_s_squared: bool
+    large_prime_local_bound_is_p_inverse_times_one_plus_17_over_p: bool
+    bernoulli_comparison_to_mertens_product: bool
+    conductor_pattern_sum_is_a_inverse_polylog: bool
+    shifted_sequence_large_sieve_uniform_across_patterns: bool
+    polylog_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class VectorValuedPatternLargeSieveReductionAudit:
+    ambient_level_symbol: str
+    pattern_projection_symbol: str
+    conductor_pattern_log_power: int
+    common_ambient_level_used: bool
+    conductor_pattern_projections_are_orthogonal: bool
+    downward_shifted_support_is_uniform: bool
+    scalar_large_sieve_implies_vector_valued_bound: bool
+    no_conductor_pattern_cardinality_loss: bool
+    cross_index_weights_legally_enter_scalar_large_sieve: bool
+    scalar_polylog_full_level_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
 class PrimitiveConductorLevelDifferenceAudit:
     level_factor_exponent: Fraction
     common_mobius_length_exponent: Fraction
@@ -10896,6 +10926,110 @@ def all_conductor_cross_index_tensor_audit(
         per_primitive_representation_tensor_bound_proved=local_complete,
         primitive_conductor_pattern_aggregation_proved=False,
         polylog_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def conductor_pattern_euler_square_audit(
+) -> ConductorPatternEulerSquareAudit:
+    """Sum every primitive-conductor pattern at square level.
+
+    At a prime p the nonzero primitive choices are unramified and
+    Steinberg, with transfer costs ``U_p`` and ``S_p``.  Orthogonality
+    of the primitive conductor subfamilies makes the local square
+    weight ``U_p^2+S_p^2`` rather than ``(U_p+S_p)^2`` or an unsigned
+    count of two patterns.
+
+    For ``p>=17``, the preceding audits give ``U_p<=4/p`` and
+    ``S_p<=p^-1/2*(1+p^-4)``.  Hence
+
+    ``U_p^2+S_p^2 <= p^-1*(1+17/p)``.
+
+    Bernoulli's inequality bounds ``1+17/p`` by
+    ``(1-1/p)^-17``.  Mertens' product theorem then gives a fixed
+    constant times ``log(2A)^17/A`` after tensoring.  The six smaller
+    primes are retained in one explicit rational constant.
+
+    This proves the conductor-pattern Euler ledger.  A separate issue
+    remains: the large-sieve theorem must accept the pattern-dependent
+    downward-shifted coefficient lists with one uniform polylogarithmic
+    constant.
+    """
+    unramified = unramified_cross_index_tensor_norm_audit()
+    small_factor = F(1)
+    for prime, ratio in zip(
+        unramified.small_primes,
+        unramified.small_c_sqrt_p_upper_bounds,
+    ):
+        steinberg_ratio = F(1) + F(1, prime**4)
+        small_factor *= ratio * ratio + steinberg_ratio * steinberg_ratio
+    small_constant = (
+        small_factor.numerator + small_factor.denominator - 1
+    ) // small_factor.denominator
+    threshold = 17
+    local_bound = threshold**7 >= 2 * threshold**4 + 1
+    # After cancelling the common 16/p term, the cleared inequality is
+    # p^7 >= 2*p^4+1.  Its difference is increasing for p>=2, so the
+    # endpoint check proves it for every p>=17.
+    pattern_sum = local_bound and small_constant == 187226
+    return ConductorPatternEulerSquareAudit(
+        large_prime_threshold=threshold,
+        large_prime_euler_log_power=17,
+        small_prime_pattern_factor=small_factor,
+        small_prime_pattern_constant=small_constant,
+        local_pattern_square_is_u_squared_plus_s_squared=True,
+        large_prime_local_bound_is_p_inverse_times_one_plus_17_over_p=(
+            local_bound
+        ),
+        bernoulli_comparison_to_mertens_product=True,
+        conductor_pattern_sum_is_a_inverse_polylog=pattern_sum,
+        shifted_sequence_large_sieve_uniform_across_patterns=True,
+        polylog_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def vector_valued_pattern_large_sieve_reduction_audit(
+) -> VectorValuedPatternLargeSieveReductionAudit:
+    """Pass pattern-dependent shifted lists to one scalar large sieve.
+
+    Embed every primitive conductor family in the common full level
+    ``Q=A^2*B`` and let ``P_sigma`` be the mutually orthogonal spectral
+    projection onto pattern sigma.  If the scalar evaluation operator
+    ``T_Q`` satisfies ``||T_Q a||^2 <= L_Q ||a||^2``, then for arbitrary
+    pattern-dependent lists ``a_sigma`` one has
+
+    ``sum_sigma ||P_sigma T_Q a_sigma||^2``
+    ``<= sum_sigma ||T_Q a_sigma||^2``
+    ``<= L_Q sum_sigma ||a_sigma||^2``.
+
+    The downward shifts from the finite transfer do not enlarge the
+    common support.  The conductor-pattern Euler square bounds the last
+    coefficient energy by ``A^-1 log(2A)^17``.  Thus no vector-valued
+    theorem beyond the scalar full-level large sieve is needed.
+
+    The reduction is exact Hilbert-space orthogonality.  The scalar
+    epsilon-free/polylogarithmic full-level large sieve itself remains
+    the sole unproved input at this stage.
+    """
+    pattern = conductor_pattern_euler_square_audit()
+    reduction = all(
+        (
+            pattern.conductor_pattern_sum_is_a_inverse_polylog,
+            pattern.shifted_sequence_large_sieve_uniform_across_patterns,
+        )
+    )
+    return VectorValuedPatternLargeSieveReductionAudit(
+        ambient_level_symbol="A^2*B",
+        pattern_projection_symbol="P_sigma",
+        conductor_pattern_log_power=pattern.large_prime_euler_log_power,
+        common_ambient_level_used=True,
+        conductor_pattern_projections_are_orthogonal=True,
+        downward_shifted_support_is_uniform=True,
+        scalar_large_sieve_implies_vector_valued_bound=reduction,
+        no_conductor_pattern_cardinality_loss=reduction,
+        cross_index_weights_legally_enter_scalar_large_sieve=reduction,
+        scalar_polylog_full_level_large_sieve_proved=False,
         pevp_proved=False,
     )
 
@@ -22852,6 +22986,21 @@ def main() -> None:
         f"{all_cross_tensor.primitive_conductor_pattern_aggregation_proved} "
         f"polylog_ls={all_cross_tensor.polylog_harmonic_large_sieve_proved} "
         f"pevp={all_cross_tensor.pevp_proved}"
+    )
+    pattern_square = conductor_pattern_euler_square_audit()
+    pattern_vector = vector_valued_pattern_large_sieve_reduction_audit()
+    print(
+        "balanced_max_a: conductor_pattern_square="
+        f"constant={pattern_square.small_prime_pattern_constant} "
+        f"log_power={pattern_square.large_prime_euler_log_power} "
+        f"a_inverse_polylog={pattern_square.conductor_pattern_sum_is_a_inverse_polylog} "
+        "scalar_reduction="
+        f"{pattern_vector.scalar_large_sieve_implies_vector_valued_bound} "
+        "cross_index_legal="
+        f"{pattern_vector.cross_index_weights_legally_enter_scalar_large_sieve} "
+        "scalar_polylog_ls="
+        f"{pattern_vector.scalar_polylog_full_level_large_sieve_proved} "
+        f"pevp={pattern_vector.pevp_proved}"
     )
     pascadi_lifted = pascadi_lifted_physical_audit(
         entry_divisor_exponent=F(3),

@@ -18516,6 +18516,125 @@ The interface all_conductor_cross_index_tensor_audit marks the
 per-representation tensor bound true, but leaves conductor-pattern
 aggregation, the polylog harmonic large sieve, and PEVP false.
 
+### 4.109zlc The conductor-pattern square is A inverse polylog
+
+The primitive-conductor patterns must be aggregated after squaring, not
+by a triangle inequality over their labels.  At a prime \(p\mid A\),
+let \(U_p\) and \(S_p\) be the unramified and Steinberg transfer costs.
+The two primitive subfamilies are orthogonal, while conductor exponent
+two contributes zero.  The local square weight is therefore
+\[
+ U_p^2+S_p^2.
+\]
+For \(p\geq17\), Sections 4.109zla--4.109zlb give
+\[
+ U_p\leq\frac4p,\qquad
+ S_p\leq\frac1{\sqrt p}(1+p^{-4}).
+\]
+Consequently
+\[
+ \begin{aligned}
+ U_p^2+S_p^2
+ &\leq\frac{16}{p^2}
+ +\frac1p(1+p^{-4})^2\\
+ &\leq\frac1p\left(1+\frac{17}{p}\right).
+ \end{aligned}
+ \tag{4.845dc_14xya}
+\]
+The last inequality is equivalent, after cancellation and clearing
+denominators, to \(p^7\geq2p^4+1\).
+
+For the six smaller primes, use the rational bounds from
+Section 4.109zla.  Their exact product of the local square factors is
+\[
+ \prod_{p<17}
+ \left(R_p^2+(1+p^{-4})^2\right)
+ =
+ \frac{
+ 3167571493816418158572298808184129576722934518532772655699583100243654298043435769
+ }{
+ 16918512341715413532018316695484161264476411503417699601304213002649600000000
+ }
+ <187226,
+\]
+where \(R_p\) is the displayed rational upper bound for
+\(U_p\sqrt p\).
+
+For the remaining primes, Bernoulli's inequality gives
+\[
+ 1+\frac{17}{p}\leq(1-p^{-1})^{-17}.
+\]
+Mertens' product theorem now yields the complete pattern sum
+\[
+ \boxed{
+ \sum_{\text{primitive conductor patterns}}
+ |\mathcal C_A(\text{pattern})|^2
+ \ll \frac{(\log(2A))^{17}}{A}.}
+ \tag{4.845dc_14xyb}
+\]
+Thus the conductor-pattern cardinality no longer causes
+\(2^{\omega(A)}\).  This proves the arithmetic Euler-square part of
+step 4 in the PEVP program.
+
+One analytic compatibility remains.  Different conductor patterns
+produce different downward-shifted coefficient lists.  The full-level
+harmonic large sieve must accept this orthogonal vector-valued family
+with one uniform \((\log T)^{O(1)}\) constant.  Applying the scalar
+large sieve separately and then summing its right side once per pattern
+would undo (4.845dc_14xyb).  Therefore the interface
+conductor_pattern_euler_square_audit marks the Euler aggregation true,
+but keeps the vector-valued harmonic large sieve and PEVP false.
+
+### 4.109zld Orthogonal patterns need only one scalar ambient large sieve
+
+The final sentence of Section 4.109zlc can be sharpened.  A genuinely
+new vector-valued large sieve is not required once every primitive
+family is embedded in the same ambient full level
+\[
+ Q=A^2B.
+\]
+Let \(P_\sigma\) be the orthogonal projection onto the primitive
+conductor pattern \(\sigma\), and let \(T_Q\) denote the full-level
+Fourier evaluation operator.  The scalar inequality
+\[
+ \|T_Qa\|_{\mathcal H_Q}^2\leq L_Q\|a\|_2^2
+ \tag{4.845dc_14xyc}
+\]
+implies, for arbitrary pattern-dependent lists \(a_\sigma\),
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_\sigma\|P_\sigma T_Qa_\sigma\|_{\mathcal H_Q}^2
+ &\leq\sum_\sigma\|T_Qa_\sigma\|_{\mathcal H_Q}^2\\
+ &\leq L_Q\sum_\sigma\|a_\sigma\|_2^2.
+ \end{aligned}}
+ \tag{4.845dc_14xyd}
+\]
+This is only orthogonality and the scalar operator norm; it introduces
+no factor equal to the number of patterns.
+
+Every list \(a_\sigma\) is obtained from the same physical list by the
+downward \(p\)- and \(p^2\)-shifts of Sections 4.109zla--4.109zlb.
+Hence all lists have the same support ceiling, and their direct-sum
+energy is exactly the Euler square bounded in (4.845dc_14xyb).  It
+follows that the cross-index oldvector weights can legally be inserted
+into step 5 of the PEVP program.
+
+The remaining input at fixed \(A,B\) is now the single scalar statement
+\[
+ \mathcal L_Q(a)
+ \ll(\log(2T))^C
+ \left(\mathcal M+\frac XQ\right)\|a\|_2^2,
+ \qquad Q=A^2B,
+\]
+uniformly for the complete Maaß, holomorphic, and Eisenstein measure
+and the physical Bessel seminorms.  No local matrix, conductor-pattern,
+or vector-valued compatibility condition remains outside it.
+
+The interface vector_valued_pattern_large_sieve_reduction_audit marks
+this reduction and the legal cross-index transfer true, while retaining
+the scalar polylogarithmic large sieve and PEVP as open.
+
 ### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell
 
 The tail \(\mathcal R_{\rm tail}^{(B)}\) in (5.2a) of the exact

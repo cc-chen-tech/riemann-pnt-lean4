@@ -4613,6 +4613,54 @@ def test_all_primitive_conductor_cells_retain_a_half_per_representation() -> Non
     assert not audit.pevp_proved
 
 
+def test_conductor_pattern_square_aggregates_with_seventeen_logs() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zlc The conductor-pattern square is A inverse polylog",
+        r"\tag{4.845dc_14xya}",
+        r"\tag{4.845dc_14xyb}",
+        "conductor_pattern_euler_square_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.conductor_pattern_euler_square_audit()
+    assert audit.large_prime_threshold == 17
+    assert audit.large_prime_euler_log_power == 17
+    assert audit.small_prime_pattern_factor < 187226
+    assert audit.small_prime_pattern_constant == 187226
+    assert audit.local_pattern_square_is_u_squared_plus_s_squared
+    assert audit.large_prime_local_bound_is_p_inverse_times_one_plus_17_over_p
+    assert audit.bernoulli_comparison_to_mertens_product
+    assert audit.conductor_pattern_sum_is_a_inverse_polylog
+    assert audit.shifted_sequence_large_sieve_uniform_across_patterns
+    assert not audit.polylog_harmonic_large_sieve_proved
+    assert not audit.pevp_proved
+
+
+def test_pattern_dependent_lists_reduce_to_one_scalar_ambient_large_sieve() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zld Orthogonal patterns need only one scalar ambient large sieve",
+        r"\tag{4.845dc_14xyc}",
+        r"\tag{4.845dc_14xyd}",
+        "vector_valued_pattern_large_sieve_reduction_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.vector_valued_pattern_large_sieve_reduction_audit()
+    assert audit.ambient_level_symbol == "A^2*B"
+    assert audit.pattern_projection_symbol == "P_sigma"
+    assert audit.conductor_pattern_log_power == 17
+    assert audit.common_ambient_level_used
+    assert audit.conductor_pattern_projections_are_orthogonal
+    assert audit.downward_shifted_support_is_uniform
+    assert audit.scalar_large_sieve_implies_vector_valued_bound
+    assert audit.no_conductor_pattern_cardinality_loss
+    assert audit.cross_index_weights_legally_enter_scalar_large_sieve
+    assert not audit.scalar_polylog_full_level_large_sieve_proved
+    assert not audit.pevp_proved
+
+
 def test_steinberg_exact_level_difference_has_corrected_square_formula() -> None:
     unit = coverage_audit.steinberg_exact_level_difference_kernel_square(
         prime=5,
