@@ -868,6 +868,14 @@ class TransitionPoissonTubeClusterAudit:
     same_cluster_implies_determinant_collar: bool
     determinant_collar_implies_adjacent_clusters: bool
     angular_interaction_has_bounded_cluster_multiplicity: bool
+    critical_sector_is_single_beatty_graph: bool
+    primitive_mobius_product_fold_exact: bool
+    vector_kernel_prevents_scalar_product_collapse: bool
+    additive_fourier_interface_reappears_after_strip_transform: bool
+    additive_local_moment_input_is_unconditional: bool
+    sector_character_parseval_exact: bool
+    sector_principal_mode_absorbable: bool
+    remaining_resonant_gate_has_only_nonzero_sector_characters: bool
     requires_vector_valued_two_mobius_cancellation: bool
     unweighted_farey_equidistribution_matches: bool
     one_mobius_nilsequence_theorem_matches: bool
@@ -887,6 +895,41 @@ class FareySectorPairLedger:
     in_determinant_collar: bool
     same_sector_implies_collar: bool
     collar_implies_adjacent_sectors: bool
+
+
+@dataclass(frozen=True)
+class FareySectorFiberLedger:
+    q: int
+    sector: int
+    denominator: int
+    lower_integer: int
+    upper_integer_exclusive: int
+    beatty_candidate: int
+    members: tuple[int, ...]
+    member_count: int
+    general_count_bound: int
+    unique_when_s_at_most_q: bool
+
+
+@dataclass(frozen=True)
+class FareyPrimitiveProductCoordinateLedger:
+    q: int
+    k: int
+    first_entry: int
+    second_entry: int
+    shifted_numerator: int
+    sector: int
+    product_coordinate: int
+    mobius_first: int
+    mobius_second: int
+    mobius_product_coordinate: int
+    primitive_entry: bool
+    mobius_product_fold_exact: bool
+    sector_product_lower_bound: int
+    scaled_product_coordinate: int
+    sector_product_upper_bound: int
+    sector_product_inequality_exact: bool
+    second_entry_recovered_from_divisor: int
 
 
 @dataclass(frozen=True)
@@ -4810,6 +4853,14 @@ def transition_poisson_tube_cluster_audit(
         same_cluster_implies_determinant_collar=True,
         determinant_collar_implies_adjacent_clusters=True,
         angular_interaction_has_bounded_cluster_multiplicity=True,
+        critical_sector_is_single_beatty_graph=True,
+        primitive_mobius_product_fold_exact=True,
+        vector_kernel_prevents_scalar_product_collapse=True,
+        additive_fourier_interface_reappears_after_strip_transform=True,
+        additive_local_moment_input_is_unconditional=False,
+        sector_character_parseval_exact=True,
+        sector_principal_mode_absorbable=True,
+        remaining_resonant_gate_has_only_nonzero_sector_characters=True,
         requires_vector_valued_two_mobius_cancellation=True,
         unweighted_farey_equidistribution_matches=False,
         one_mobius_nilsequence_theorem_matches=False,
@@ -4869,6 +4920,302 @@ def farey_sector_pair_ledger(
         same_sector_implies_collar=(not same_sector) or collar,
         collar_implies_adjacent_sectors=(not collar) or sector_distance <= 1,
     )
+
+
+def farey_sector_fiber_ledger(
+    *,
+    q: int,
+    b: int,
+    s: int,
+) -> FareySectorFiberLedger:
+    """List one exact angular-sector fiber over a fixed denominator.
+
+    The sector condition is ``b*s <= q*w < (b+1)*s``.  Its integral
+    points form the half-open interval
+
+    ``ceil(b*s/q) <= w < ceil((b+1)*s/q)``.
+
+    Hence the fiber contains at most ``ceil(s/q)`` integers, and at the
+    critical resolution ``s <= q`` it is either empty or the single
+    truncated Beatty value ``ceil(b*s/q)``.
+    """
+    if q <= 0 or s <= 0:
+        raise ValueError("q and s must be positive")
+    if b < 0:
+        raise ValueError("the nonnegative-slope sector must be nonnegative")
+
+    lower = (b * s + q - 1) // q
+    upper = ((b + 1) * s + q - 1) // q
+    members = tuple(range(lower, upper))
+    general_bound = (s + q - 1) // q
+    return FareySectorFiberLedger(
+        q=q,
+        sector=b,
+        denominator=s,
+        lower_integer=lower,
+        upper_integer_exclusive=upper,
+        beatty_candidate=lower,
+        members=members,
+        member_count=len(members),
+        general_count_bound=general_bound,
+        unique_when_s_at_most_q=(s > q) or len(members) <= 1,
+    )
+
+
+def farey_primitive_product_coordinate_ledger(
+    *,
+    q: int,
+    k: int,
+    r: int,
+    s: int,
+) -> FareyPrimitiveProductCoordinateLedger:
+    """Fold one primitive two-Mobius Farey entry into ``n=r*s``.
+
+    Write ``w=r-k*s >= 0`` and ``b=floor(q*w/s)``.  On ``gcd(r,s)=1``
+    multiplicativity gives ``mu(r)mu(s)=mu(r*s)``.  The angular sector
+    is equivalently the exact product-coordinate inequality
+
+    ``(k*q+b)*s^2 <= q*(r*s) < (k*q+b+1)*s^2``.
+
+    This is an entrywise identity only.  It does not collapse the
+    vector-valued wave packet, which still depends separately on ``r``
+    and ``s``.
+    """
+    if q <= 0 or s <= 0 or r <= 0:
+        raise ValueError("q, r, and s must be positive")
+    if k < 0:
+        raise ValueError("k must be nonnegative")
+    w = r - k * s
+    if w < 0:
+        raise ValueError("the shifted numerator w=r-k*s must be nonnegative")
+
+    primitive = gcd(r, s) == 1
+    if not primitive:
+        raise ValueError("the product fold requires a primitive entry")
+    sector = q * w // s
+    product = r * s
+    mu_r = _finite_mobius(r)
+    mu_s = _finite_mobius(s)
+    mu_product = _finite_mobius(product)
+    lower = (k * q + sector) * s * s
+    scaled_product = q * product
+    upper = (k * q + sector + 1) * s * s
+    return FareyPrimitiveProductCoordinateLedger(
+        q=q,
+        k=k,
+        first_entry=s,
+        second_entry=r,
+        shifted_numerator=w,
+        sector=sector,
+        product_coordinate=product,
+        mobius_first=mu_s,
+        mobius_second=mu_r,
+        mobius_product_coordinate=mu_product,
+        primitive_entry=primitive,
+        mobius_product_fold_exact=mu_s * mu_r == mu_product,
+        sector_product_lower_bound=lower,
+        scaled_product_coordinate=scaled_product,
+        sector_product_upper_bound=upper,
+        sector_product_inequality_exact=lower <= scaled_product < upper,
+        second_entry_recovered_from_divisor=product // s,
+    )
+
+
+def banded_sector_gram_sides(
+    *,
+    cluster_vectors: dict[int, tuple[Fraction, ...]],
+    bandwidth: int,
+) -> dict[str, Fraction | int | bool]:
+    """Verify the finite bounded-overlap sector-Gram reduction.
+
+    If cluster vectors ``S_b`` have zero inner product whenever
+    ``abs(b-c)>R``, then Cauchy--Schwarz and ``2ab<=a^2+b^2`` give
+
+    ``||sum_b S_b||^2 <= (2R+1) sum_b ||S_b||^2``.
+
+    The helper evaluates both sides over exact rational vectors.  In the
+    analytic application the vanishing is supplied by compact wave-packet
+    support after widening the angular sectors by a fixed cutoff-dependent
+    bandwidth.
+    """
+    if bandwidth < 0:
+        raise ValueError("bandwidth must be nonnegative")
+    if not cluster_vectors:
+        raise ValueError("at least one cluster vector is required")
+    dimensions = {len(vector) for vector in cluster_vectors.values()}
+    if len(dimensions) != 1:
+        raise ValueError("all cluster vectors must have one dimension")
+
+    def dot(
+        left: tuple[Fraction, ...],
+        right: tuple[Fraction, ...],
+    ) -> Fraction:
+        return sum((F(x) * F(y) for x, y in zip(left, right)), F(0))
+
+    sectors = sorted(cluster_vectors)
+    dimension = dimensions.pop()
+    total_vector = tuple(
+        sum((F(cluster_vectors[b][i]) for b in sectors), F(0))
+        for i in range(dimension)
+    )
+    direct_energy = dot(total_vector, total_vector)
+    expanded_energy = sum(
+        (
+            dot(cluster_vectors[b], cluster_vectors[c])
+            for b in sectors
+            for c in sectors
+        ),
+        F(0),
+    )
+    cluster_square = sum(
+        (dot(cluster_vectors[b], cluster_vectors[b]) for b in sectors),
+        F(0),
+    )
+    far_vanish = all(
+        dot(cluster_vectors[b], cluster_vectors[c]) == 0
+        for b in sectors
+        for c in sectors
+        if abs(b - c) > bandwidth
+    )
+    overlap = 2 * bandwidth + 1
+    upper_bound = overlap * cluster_square
+    return {
+        "far_cluster_inner_products_vanish": far_vanish,
+        "direct_global_energy": direct_energy,
+        "expanded_global_energy": expanded_energy,
+        "energy_expansion_exact": direct_energy == expanded_energy,
+        "cluster_square_function": cluster_square,
+        "bounded_overlap_constant": overlap,
+        "bounded_overlap_upper_bound": upper_bound,
+        "global_energy_bounded_by_cluster_square_function": (
+            far_vanish and direct_energy <= upper_bound
+        ),
+    }
+
+
+def sector_character_parseval_sides(
+    *,
+    entries: tuple[tuple[int, Fraction, tuple[Fraction, ...]], ...],
+    modulus: int,
+) -> dict[str, Fraction | bool]:
+    """Verify exact cyclic Parseval for vector-valued angular sectors.
+
+    Each entry is ``(sector, coefficient, vector)``.  Sectors are embedded
+    without aliasing in ``Z/modulus Z``.  Character orthogonality then gives
+
+    ``sum_b ||S_b||^2 = modulus^-1 sum_a ||sum_e c_e e(a*b_e/M)G_e||^2``.
+
+    The helper evaluates the normalized character side algebraically via
+    the exact congruence indicator, avoiding floating roots of unity.  The
+    principal character is exactly ``modulus^-1`` times the original global
+    Gram ``||sum_e c_e G_e||^2``.
+    """
+    if modulus <= 0:
+        raise ValueError("modulus must be positive")
+    if not entries:
+        raise ValueError("at least one sector entry is required")
+    dimensions = {len(vector) for _, _, vector in entries}
+    if len(dimensions) != 1:
+        raise ValueError("all entry vectors must have one dimension")
+    if any(sector < 0 or sector >= modulus for sector, _, _ in entries):
+        raise ValueError("sector labels must lie in the no-alias interval")
+
+    def dot(
+        left: tuple[Fraction, ...],
+        right: tuple[Fraction, ...],
+    ) -> Fraction:
+        return sum((F(x) * F(y) for x, y in zip(left, right)), F(0))
+
+    dimension = dimensions.pop()
+    sectors = sorted({sector for sector, _, _ in entries})
+    cluster_vectors = {
+        sector: tuple(
+            sum(
+                (
+                    F(coefficient) * F(vector[i])
+                    for entry_sector, coefficient, vector in entries
+                    if entry_sector == sector
+                ),
+                F(0),
+            )
+            for i in range(dimension)
+        )
+        for sector in sectors
+    }
+    cluster_square = sum(
+        (dot(vector, vector) for vector in cluster_vectors.values()),
+        F(0),
+    )
+    normalized_character_energy = sum(
+        (
+            F(coefficient_left)
+            * F(coefficient_right)
+            * dot(vector_left, vector_right)
+            for sector_left, coefficient_left, vector_left in entries
+            for sector_right, coefficient_right, vector_right in entries
+            if (sector_left - sector_right) % modulus == 0
+        ),
+        F(0),
+    )
+    global_vector = tuple(
+        sum(
+            (F(coefficient) * F(vector[i]) for _, coefficient, vector in entries),
+            F(0),
+        )
+        for i in range(dimension)
+    )
+    global_gram = dot(global_vector, global_vector)
+    principal = global_gram / modulus
+    nonprincipal = normalized_character_energy - principal
+    return {
+        "no_sector_aliasing": True,
+        "cluster_square_function": cluster_square,
+        "normalized_all_character_energy": normalized_character_energy,
+        "finite_parseval_exact": cluster_square == normalized_character_energy,
+        "original_global_gram": global_gram,
+        "principal_character_energy": principal,
+        "nonprincipal_character_energy": nonprincipal,
+        "nonprincipal_character_energy_nonnegative": nonprincipal >= 0,
+    }
+
+
+def sector_principal_absorption_audit(
+    *,
+    modulus: int,
+    bandwidth: int,
+) -> dict[str, Fraction | int | bool | None]:
+    """Audit absorption of the sector principal character.
+
+    If banded overlap gives ``E <= L * cluster_square`` and Parseval gives
+    ``cluster_square = E/M + N_nonzero``, then
+
+    ``(1-L/M)E <= L*N_nonzero``.
+
+    For ``M>=2L`` the original Gram therefore satisfies
+    ``E<=2L*N_nonzero``.  No independent estimate of the sector principal
+    character is required; it is a small feedback copy of the quantity on
+    the left.
+    """
+    if modulus <= 0:
+        raise ValueError("modulus must be positive")
+    if bandwidth < 0:
+        raise ValueError("bandwidth must be nonnegative")
+    overlap = 2 * bandwidth + 1
+    feedback = F(overlap, modulus)
+    denominator = F(1) - feedback
+    absorbable = denominator > 0
+    exact_multiplier = F(overlap) / denominator if absorbable else None
+    twice_overlap = F(2 * overlap)
+    return {
+        "bounded_overlap_constant": overlap,
+        "principal_feedback_coefficient": feedback,
+        "absorption_denominator": denominator,
+        "exact_nonprincipal_multiplier": exact_multiplier,
+        "twice_overlap_upper_multiplier": twice_overlap,
+        "modulus_at_least_twice_overlap": modulus >= 2 * overlap,
+        "principal_mode_absorbable": absorbable,
+        "zero_sector_frequency_requires_separate_bound": not absorbable,
+    }
 
 
 def transition_denominator_gcd_line_identity(
@@ -10108,7 +10455,11 @@ def main() -> None:
         "clusters=1,per_cluster=1,coherent_energy=3,sqrt_energy=2,"
         "target=2,margin=0,coefficient=mu(s)*mu(k*s+w),"
         "same_cluster_implies_collar=True,collar_implies_adjacent=True,"
-        "cluster_multiplicity=3,two_mobius=True,"
+        "cluster_multiplicity=3,beatty_fiber=True,mobius_product_fold=True,"
+        "vector_kernel_blocks_scalar_fold=True,additive_fourier=True,"
+        "additive_local_moment_unconditional=False,two_mobius=True,"
+        "sector_parseval=True,sector_principal_absorbed=True,"
+        "remaining_sector_characters=nonzero,"
         f"farey_matches={transition_tube_cluster.unweighted_farey_equidistribution_matches},"
         "nilsequence_matches=False,covered=False"
     )

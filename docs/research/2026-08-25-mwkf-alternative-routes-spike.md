@@ -10090,6 +10090,138 @@ The finite adapter farey_sector_pair_ledger records (4.621zadj16m-n), and
 its exhaustive small-range test checks both implications including sector
 boundaries.
 
+At the critical resolution there is a second exact simplification.  If
+the dyadic upper endpoint is chosen as \(Q\), so \(s\leq Q\), the fiber
+over a fixed sector and denominator is
+
+\[
+ \left\{w\in\mathbb Z:
+   \left\lceil{bs\over Q}\right\rceil
+   \leq w<
+   \left\lceil{(b+1)s\over Q}\right\rceil\right\}.
+\tag{4.621zadj16o}
+\]
+
+Its cardinality is at most \(\lceil s/Q\rceil\leq1\).  Thus one angular
+microcluster is exactly a truncated Beatty graph
+
+\[
+ w=w_b(s):=\left\lceil{bs\over Q}\right\rceil,
+ \qquad bs\leq Qw<(b+1)s,
+\tag{4.621zadj16p}
+\]
+
+not a two-dimensional cloud.  The helper farey_sector_fiber_ledger
+records the half-open endpoints in (4.621zadj16o) and the single-fiber
+claim in (4.621zadj16p).
+
+There is also an entrywise multiplicative fold.  Put \(r=ks+w\).  The
+primitive support already imposes \((r,s)=1\), hence
+
+\[
+ \boxed{\mu(r)\mu(s)=\mu(rs)},\qquad n:=rs,
+\tag{4.621zadj16q}
+\]
+
+and the sector condition is equivalently
+
+\[
+ (kQ+b)s^2\leq Qn<(kQ+b+1)s^2.
+\tag{4.621zadj16r}
+\]
+
+The helper farey_primitive_product_coordinate_ledger verifies
+(4.621zadj16q-r) with the finite Möbius function.  This does **not** turn
+the continuous Gram into a scalar one-Möbius sum: the wave packet and
+the two mollifier tapers still depend separately on \((r,s)\), and one
+squarefree \(n\) may have several admissible divisor splits.  What has
+been removed is only the claim that two independent signs remain at the
+entry coefficient level.
+
+Finally, the inter-cluster bookkeeping costs only a constant.  Let
+
+\[
+ S_b(v,j):=\sum_{e:\,b_Q(e)=b}\alpha_eG_e(v,j).
+\tag{4.621zadj16s}
+\]
+
+On the critical dyadic window \(|v|\asymp_W T^{1/2}\), simultaneous
+support of two packets in (4.621zadj16i) forces their slopes to differ by
+\(O_W(T^{-1})\).  Thus, with a cutoff-dependent fixed widening of the
+sectors, there is an integer \(R=O_W(1)\) such that
+\(\langle S_b,S_c\rangle=0\) for \(|b-c|>R\).  Therefore
+
+\[
+\boxed{
+ \left\|\sum_bS_b\right\|_2^2
+ \leq(2R+1)\sum_b\|S_b\|_2^2.}
+\tag{4.621zadj16t}
+\]
+
+Indeed, expand the left side, retain only \(|b-c|\leq R\), and use
+\(2|\langle S_b,S_c\rangle|\leq\|S_b\|_2^2+\|S_c\|_2^2\).
+The helper banded_sector_gram_sides verifies the expansion and (4.621zadj16t)
+for exact rational vectors.  Hence the one-power problem is genuinely
+intra-cluster: no additional power is hidden in the adjacent-sector cover.
+
+There is now a useful second centering which, unlike the auxiliary kernel
+centering in (4.621zadj16a), is positive Parseval.  Embed all active sector
+labels without aliasing into \(\mathbb Z/M\mathbb Z\), with
+\(M\asymp_W Q\asymp T\), and define
+
+\[
+ \mathcal A_a:=\sum_b e(ab/M)S_b.
+\tag{4.621zadj16u}
+\]
+
+Finite character orthogonality gives the exact vector identity
+
+\[
+ \boxed{
+ \sum_b\|S_b\|_2^2
+ =\frac1M\sum_{a\bmod M}\|\mathcal A_a\|_2^2
+ =\frac{E_{\rm cont}}M
+  +\frac1M\sum_{a\ne0}\|\mathcal A_a\|_2^2.}
+\tag{4.621zadj16v}
+\]
+
+The first term on the right is the original continuous Gram divided by
+\(M\), because \(\mathcal A_0=\sum_bS_b\).  Put
+
+\[
+ \mathcal N_{\ne0}:=\frac1M
+  \sum_{a\ne0}\|\mathcal A_a\|_2^2,
+ \qquad L:=2R+1.
+\tag{4.621zadj16w}
+\]
+
+Combining (4.621zadj16t) and (4.621zadj16v) gives
+
+\[
+ \left(1-\frac LM\right)E_{\rm cont}
+ \leq L\mathcal N_{\ne0}.
+\tag{4.621zadj16x}
+\]
+
+Since \(L=O_W(1)\) and \(M\asymp T\), one may take \(M\geq2L\) and
+absorb the sector principal character:
+
+\[
+ \boxed{E_{\rm cont}\leq2L\mathcal N_{\ne0}.}
+\tag{4.621zadj16y}
+\]
+
+Thus the physical Poisson zero mode does **not** leave a second
+uncontrolled angular zero frequency.  After the exact Gram
+reorganization, its sector-principal copy is a factor \(M^{-1}\) of the
+same unknown energy and moves to the left.  The remaining resonant gate is
+the nonzero angular-character square function in (4.621zadj16w).
+
+The helpers sector_character_parseval_sides and
+sector_principal_absorption_audit verify (4.621zadj16v-x) over exact
+rational vectors.  In the fixture \(M=7,R=1\), the feedback coefficient
+is \(3/7\) and the exact nonprincipal multiplier is \(21/4<6=2L\).
+
 The horocycle/Farey result of
 [Panti](https://arxiv.org/abs/1503.02539) permits piecewise-smooth
 denominator weights and derives macroscopic gap distributions.  It does
@@ -10099,10 +10231,22 @@ orthogonality does not permit the second Möbius factor to move with the
 same cluster.  No audited published result therefore supplies the second
 row of (4.621zadj16k).
 
+Fourier expansion of the strip variable does make additive Möbius
+polynomials reappear: with
+\(x=v/T^{1/2}\), \(y=(kv+j)/T^{1/2}\), the phase separates into a
+product of sums at frequencies \(tx\) and \(-ty\).  This refines the
+earlier interface audit of Verjovsky's additive polynomial, but does not
+change its proof status: the required subpolynomial local moments in that
+paper are equivalent to RH, not an unconditional estimate.  Moreover the
+present \(t\)-integral and vector-valued weights have not been reduced to
+its fixed \(c/N\)-arc functional.
+
 The adapter transition_poisson_tube_cluster_audit records the tube scales,
 the \(T\)-by-\(T\) cluster ledger, the exact coefficient (4.621zadj16l),
 the bounded-neighbor correction (4.621zadj16n), and the zero square-root
-margin.  It keeps
+margin.  It also records the exact Beatty fiber (4.621zadj16p), the
+entrywise product fold (4.621zadj16q), and the surviving vector-kernel
+obstruction.  It keeps
 requires_vector_valued_two_mobius_cancellation true and
 published_coverage false.
 

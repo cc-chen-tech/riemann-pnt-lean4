@@ -1795,6 +1795,14 @@ def test_resonant_gram_is_a_mobius_farey_microcluster_square_function() -> None:
     assert audit.same_cluster_implies_determinant_collar
     assert audit.determinant_collar_implies_adjacent_clusters
     assert audit.angular_interaction_has_bounded_cluster_multiplicity
+    assert audit.critical_sector_is_single_beatty_graph
+    assert audit.primitive_mobius_product_fold_exact
+    assert audit.vector_kernel_prevents_scalar_product_collapse
+    assert audit.additive_fourier_interface_reappears_after_strip_transform
+    assert not audit.additive_local_moment_input_is_unconditional
+    assert audit.sector_character_parseval_exact
+    assert audit.sector_principal_mode_absorbable
+    assert audit.remaining_resonant_gate_has_only_nonzero_sector_characters
     assert audit.requires_vector_valued_two_mobius_cancellation
     assert not audit.unweighted_farey_equidistribution_matches
     assert not audit.one_mobius_nilsequence_theorem_matches
@@ -1817,6 +1825,105 @@ def test_farey_sector_partition_has_an_exact_determinant_collar_ledger() -> None
                             assert pair.sector_distance <= 1
                         assert pair.same_sector_implies_collar
                         assert pair.collar_implies_adjacent_sectors
+
+
+def test_critical_farey_sector_fiber_is_a_single_beatty_graph() -> None:
+    fiber = getattr(coverage_audit, "farey_sector_fiber_ledger", None)
+    assert fiber is not None, "exact Farey sector-fiber ledger is missing"
+
+    for q in range(1, 13):
+        for b in range(0, 13):
+            for s in range(1, q + 1):
+                row = fiber(q=q, b=b, s=s)
+                brute = tuple(
+                    w
+                    for w in range(0, (b + 2) * s + 2)
+                    if b * s <= q * w < (b + 1) * s
+                )
+                assert row.members == brute
+                assert row.member_count <= 1
+                assert row.unique_when_s_at_most_q
+                if row.members:
+                    assert row.members == (row.beatty_candidate,)
+
+
+def test_primitive_two_mobius_entry_folds_to_one_product_coordinate() -> None:
+    fold = getattr(
+        coverage_audit,
+        "farey_primitive_product_coordinate_ledger",
+        None,
+    )
+    assert fold is not None, "primitive product-coordinate ledger is missing"
+
+    for q in range(1, 8):
+        for k in range(1, 5):
+            for s in range(1, 16):
+                for r in range(k * s, (k + 3) * s + 1):
+                    if gcd(r, s) != 1:
+                        continue
+                    row = fold(q=q, k=k, r=r, s=s)
+                    assert row.primitive_entry
+                    assert row.mobius_product_fold_exact
+                    assert row.sector_product_inequality_exact
+                    assert row.product_coordinate == r * s
+                    assert row.second_entry_recovered_from_divisor == r
+
+
+def test_banded_sector_gram_reduces_global_energy_to_cluster_square_function() -> None:
+    sides = getattr(coverage_audit, "banded_sector_gram_sides", None)
+    assert sides is not None, "finite banded sector-Gram helper is missing"
+
+    result = sides(
+        cluster_vectors={
+            0: (F(1), F(1), F(0)),
+            1: (F(0), F(2), F(1)),
+            2: (F(0), F(0), F(3)),
+        },
+        bandwidth=1,
+    )
+    assert result["far_cluster_inner_products_vanish"]
+    assert result["direct_global_energy"] == F(26)
+    assert result["expanded_global_energy"] == F(26)
+    assert result["cluster_square_function"] == F(16)
+    assert result["bounded_overlap_constant"] == 3
+    assert result["bounded_overlap_upper_bound"] == F(48)
+    assert result["global_energy_bounded_by_cluster_square_function"]
+
+
+def test_sector_character_parseval_splits_off_the_original_gram_over_m() -> None:
+    sides = getattr(coverage_audit, "sector_character_parseval_sides", None)
+    assert sides is not None, "finite sector-character Parseval helper is missing"
+
+    result = sides(
+        entries=(
+            (0, F(1), (F(1),)),
+            (0, F(2), (F(1),)),
+            (2, F(3), (F(1),)),
+        ),
+        modulus=7,
+    )
+    assert result["no_sector_aliasing"]
+    assert result["cluster_square_function"] == F(18)
+    assert result["normalized_all_character_energy"] == F(18)
+    assert result["finite_parseval_exact"]
+    assert result["original_global_gram"] == F(36)
+    assert result["principal_character_energy"] == F(36, 7)
+    assert result["nonprincipal_character_energy"] == F(90, 7)
+    assert result["nonprincipal_character_energy_nonnegative"]
+
+
+def test_sector_principal_mode_is_absorbed_into_the_original_gram() -> None:
+    audit = getattr(coverage_audit, "sector_principal_absorption_audit", None)
+    assert audit is not None, "sector-principal absorption audit is missing"
+
+    result = audit(modulus=7, bandwidth=1)
+    assert result["bounded_overlap_constant"] == 3
+    assert result["principal_feedback_coefficient"] == F(3, 7)
+    assert result["absorption_denominator"] == F(4, 7)
+    assert result["exact_nonprincipal_multiplier"] == F(21, 4)
+    assert result["twice_overlap_upper_multiplier"] == F(6)
+    assert result["principal_mode_absorbable"]
+    assert result["zero_sector_frequency_requires_separate_bound"] is False
 
 
 def test_transition_denominator_gcd_line_reduces_to_two_mobius_square_root() -> None:
