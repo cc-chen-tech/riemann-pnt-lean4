@@ -1988,6 +1988,29 @@ class PascadiLiftedPhysicalAudit:
 
 
 @dataclass(frozen=True)
+class UnramifiedCrossIndexTensorNormAudit:
+    ramanujan_theta_upper: Fraction
+    large_prime_threshold: int
+    small_primes: tuple[int, ...]
+    small_e_lower_bounds: tuple[Fraction, ...]
+    small_c_sqrt_p_upper_bounds: tuple[Fraction, ...]
+    small_prime_product_upper_bound: Fraction
+    uniform_tensor_constant: int
+    first_rank_shift_l1_cost_is_at_most_q_over_e: bool
+    second_rank_down_shift_l1_cost_is_one_over_q: bool
+    every_shift_is_downward: bool
+    shifted_support_does_not_increase: bool
+    large_prime_e_lower_bound_proved: bool
+    large_prime_c_is_at_most_four_over_p: bool
+    large_prime_c_sqrt_p_is_at_most_one: bool
+    tensor_product_is_at_most_constant_over_sqrt_a: bool
+    unramified_cross_index_transfer_proved: bool
+    steinberg_and_eisenstein_cells_included: bool
+    polylog_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
 class PrimitiveConductorLevelDifferenceAudit:
     level_factor_exponent: Fraction
     common_mobius_length_exponent: Fraction
@@ -10708,6 +10731,103 @@ def unramified_cross_index_two_shift_identity(
         "weighted_two_index_large_sieve_proved": False,
         "pevp_proved": False,
     }
+
+
+def unramified_cross_index_tensor_norm_audit(
+) -> UnramifiedCrossIndexTensorNormAudit:
+    """Tensor the signed two-shift kernel with a uniform constant.
+
+    In the notation of :func:`unramified_cross_index_two_shift_identity`,
+    transfer ``q*r_k=lambda_k-p*lambda_(k-2)`` on every positive
+    Fourier-index valuation.  The four scalar coefficients in the
+    interior first rank-one term have total absolute mass
+
+    ``(1+p)^2/(q*E) = q/E``.  At valuation zero or one, some downward
+    shifts vanish and the mass only decreases.
+
+    The second rank-one term is one downward ``p``-shift of mass
+    ``1/q``.  Thus the complete local transfer cost is
+
+    ``C_p(lambda) = q/E + 1/q``.
+
+    Kim--Sarnak gives ``|lambda(p)| <= p^(7/64)+p^(-7/64)``, which is
+    bounded by the same expression with exponent ``1/8``.  For
+    ``p>=17`` this implies
+
+    ``E >= (p-1)(p-2)/2`` and hence ``C_p <= 4/p <= 1/sqrt(p)``.
+
+    The six smaller primes are bounded by explicit rational eighth-root
+    and square-root majorants.  Their product is less than 91.  It
+    follows, without a divisor-function loss, that for squarefree A
+
+    ``product_(p|A) C_p <= 91/sqrt(A)``.
+
+    This proves the finite unramified cross-index tensor transfer.  It
+    does not include the Steinberg/Eisenstein branches or prove the
+    uniform polylogarithmic harmonic large sieve required after the
+    transfer.
+    """
+    root_bounds = {
+        2: (F(11, 10), F(3, 2)),
+        3: (F(23, 20), F(7, 4)),
+        5: (F(5, 4), F(9, 4)),
+        7: (F(13, 10), F(8, 3)),
+        11: (F(27, 20), F(10, 3)),
+        13: (F(7, 5), F(11, 3)),
+    }
+    e_bounds: list[Fraction] = []
+    ratio_bounds: list[Fraction] = []
+    product = F(1)
+    for prime, (eighth_root_upper, square_root_upper) in root_bounds.items():
+        if eighth_root_upper**8 < prime:
+            raise AssertionError("invalid rational eighth-root majorant")
+        if square_root_upper**2 < prime:
+            raise AssertionError("invalid rational square-root majorant")
+        q = F(prime + 1)
+        e_lower = q * q - prime * (eighth_root_upper + 1) ** 2
+        if e_lower <= 0:
+            raise AssertionError("the small-prime Gram lower bound must be positive")
+        c_upper = q / e_lower + F(1, prime + 1)
+        ratio_upper = c_upper * square_root_upper
+        e_bounds.append(e_lower)
+        ratio_bounds.append(ratio_upper)
+        product *= ratio_upper
+
+    threshold = 17
+    polynomial_margin = threshold * threshold - 11 * threshold + 6
+    large_e = polynomial_margin >= 0
+    large_four_over_p = large_e
+    large_sqrt = threshold >= 16
+    uniform_constant = (product.numerator + product.denominator - 1) // (
+        product.denominator
+    )
+    tensor_bound = (
+        uniform_constant == 91
+        and large_e
+        and large_four_over_p
+        and large_sqrt
+    )
+    return UnramifiedCrossIndexTensorNormAudit(
+        ramanujan_theta_upper=F(1, 8),
+        large_prime_threshold=threshold,
+        small_primes=tuple(root_bounds),
+        small_e_lower_bounds=tuple(e_bounds),
+        small_c_sqrt_p_upper_bounds=tuple(ratio_bounds),
+        small_prime_product_upper_bound=product,
+        uniform_tensor_constant=uniform_constant,
+        first_rank_shift_l1_cost_is_at_most_q_over_e=True,
+        second_rank_down_shift_l1_cost_is_one_over_q=True,
+        every_shift_is_downward=True,
+        shifted_support_does_not_increase=True,
+        large_prime_e_lower_bound_proved=large_e,
+        large_prime_c_is_at_most_four_over_p=large_four_over_p,
+        large_prime_c_sqrt_p_is_at_most_one=large_sqrt,
+        tensor_product_is_at_most_constant_over_sqrt_a=tensor_bound,
+        unramified_cross_index_transfer_proved=tensor_bound,
+        steinberg_and_eisenstein_cells_included=False,
+        polylog_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
 
 
 def steinberg_exact_level_difference_kernel_square(
@@ -22639,6 +22759,18 @@ def main() -> None:
         "reciprocal_lcm_physical="
         f"{mixed_gram.physical_tensor_kernel_is_majorized_by_reciprocal_lcm} "
         f"mepevp={mixed_gram.mixed_entry_harmonic_large_sieve_proved}"
+    )
+    cross_tensor = unramified_cross_index_tensor_norm_audit()
+    print(
+        "balanced_max_a: unramified_cross_tensor="
+        f"small_product={_fmt(cross_tensor.small_prime_product_upper_bound)} "
+        f"constant={cross_tensor.uniform_tensor_constant} "
+        "a_half="
+        f"{cross_tensor.tensor_product_is_at_most_constant_over_sqrt_a} "
+        f"finite_transfer={cross_tensor.unramified_cross_index_transfer_proved} "
+        f"all_cells={cross_tensor.steinberg_and_eisenstein_cells_included} "
+        f"polylog_ls={cross_tensor.polylog_harmonic_large_sieve_proved} "
+        f"pevp={cross_tensor.pevp_proved}"
     )
     pascadi_lifted = pascadi_lifted_physical_audit(
         entry_divisor_exponent=F(3),

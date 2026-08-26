@@ -18344,6 +18344,125 @@ the published constant is \(C^{o(1)}\), not the uniform
 Pascadi v2 is therefore a genuine fixed-modulus improvement on some
 subcells, but it does not prove PEVP, MEPEVP, or OLISK.
 
+### 4.109zla The signed two-shift transfer tensors with A inverse one half
+
+The positive ambient Gram in (4.845dc_14xp) is not the correct norm
+for the signed finite transfer.  The exact rank-two identity
+(4.845dc_14s)--(4.845dc_14t) gives a smaller tensor norm which can be
+bounded uniformly, without expanding the spectral multiplier
+\(E^{-1}\) into an infinite Hecke series.
+
+Retain the notation
+\[
+ q=p+1,\qquad E=q^2-p\lambda_\pi(p)^2.
+\]
+When both valuations are positive, (4.845dc_14t) turns the first
+rank-one term into
+\[
+ -\frac1{qE}
+ \bigl(\lambda_a-p\lambda_{a-2}\bigr)
+ \bigl(\lambda_b-p\lambda_{b-2}\bigr).
+\]
+All four shifts are downward.  In the interior valuation cells their
+scalar coefficients have total absolute mass
+\[
+ \frac{(1+p)^2}{qE}=\frac qE.
+\]
+If either shifted valuation is negative, that term is zero.  At the
+boundary \(a=0\), one has \(r_0=1,s_0=0\), and the surviving first-rank
+coefficients again have total mass at most \(q/E\).  Thus \(q/E\) is a
+uniform upper bound over every valuation cell, with equality only when
+all four interior shifts are present.
+The second rank-one term is the single downward shift
+\[
+ \frac1q\lambda_{a-1}\lambda_{b-1}.
+\]
+Consequently the complete local transfer cost is
+\[
+ \boxed{
+ C_p(\pi)=\frac{p+1}{(p+1)^2-p\lambda_\pi(p)^2}
+          +\frac1{p+1}.}
+ \tag{4.845dc_14xu}
+\]
+Reindexing by a downward \(p\)- or \(p^2\)-shift is an \(\ell^2\)
+contraction and does not enlarge the Fourier support.
+
+Kim--Sarnak gives
+\[
+ |\lambda_\pi(p)|
+ \leq p^{7/64}+p^{-7/64}
+ \leq p^{1/8}+p^{-1/8}.
+\]
+For \(p\geq17\),
+\[
+ \begin{aligned}
+ E
+ &\geq(p+1)^2-p\bigl(p^{1/4}+2+p^{-1/4}\bigr)\\
+ &\geq\frac{(p-1)(p-2)}2.
+ \end{aligned}
+\]
+Moreover,
+\[
+ \frac{2(p+1)}{(p-1)(p-2)}\leq\frac3p
+ \quad(p\geq11),
+\]
+because the difference after clearing denominators is
+\(p^2-11p+6\).  Hence
+\[
+ C_p(\pi)\leq\frac4p\leq\frac1{\sqrt p}
+ \qquad(p\geq17).
+\]
+
+The six smaller primes require no asymptotic estimate.  Choose rational
+upper bounds \(u_p\geq p^{1/8}\) and \(v_p\geq\sqrt p\):
+\[
+\begin{array}{c|cccccc}
+p&2&3&5&7&11&13\\ \hline
+u_p&11/10&23/20&5/4&13/10&27/20&7/5\\
+v_p&3/2&7/4&9/4&8/3&10/3&11/3.
+\end{array}
+\]
+Since \(p^{-1/8}\leq1\), the rational lower bound
+\[
+ E_p^{\rm lb}=(p+1)^2-p(u_p+1)^2
+\]
+is respectively
+\[
+ \frac9{50},\quad\frac{853}{400},\quad\frac{171}{16},
+ \quad\frac{2697}{100},\quad\frac{33301}{400},
+ \quad\frac{3028}{25}.
+\]
+The corresponding rational upper bounds for \(C_p(\pi)\sqrt p\) are
+\[
+ \frac{51}{2},\quad
+ \frac{50771}{13648},\quad
+ \frac{249}{152},\quad
+ \frac{9097}{8091},\quad
+ \frac{454505}{599418},\quad
+ \frac{10901}{15897}.
+\]
+Their exact product is
+\[
+ \frac{461262226312079925755}{5077491483991002624}<91.
+\]
+Therefore, for every squarefree \(A\),
+\[
+ \boxed{
+ \prod_{p\mid A}C_p(\pi)\leq\frac{91}{\sqrt A}.}
+ \tag{4.845dc_14xv}
+\]
+
+This proves the formerly open **unramified finite cross-index tensor
+transfer** with the exact \(A^{-1/2}\) amplitude required by PEVP.  It
+does not yet prove PEVP: the Steinberg and Eisenstein conductor cells
+must be combined with the same uniform tensor norm, and the resulting
+shifted lists still require the polylogarithmic full-level harmonic
+large sieve.  It also does not address the separate outer \(A,B\)
+aggregation in OLISK.
+
+The interface unramified_cross_index_tensor_norm_audit checks every
+rational small-prime bound and keeps those three later gates false.
+
 ### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell
 
 The tail \(\mathcal R_{\rm tail}^{(B)}\) in (5.2a) of the exact

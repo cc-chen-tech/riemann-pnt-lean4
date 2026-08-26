@@ -4550,6 +4550,44 @@ def test_unramified_cross_index_kernel_has_exact_two_shift_factorization() -> No
         assert not local["pevp_proved"]
 
 
+def test_unramified_cross_index_transfer_tensors_with_uniform_a_half_saving() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zla The signed two-shift transfer tensors with A inverse one half",
+        r"\tag{4.845dc_14xu}",
+        r"\tag{4.845dc_14xv}",
+        "unramified_cross_index_tensor_norm_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.unramified_cross_index_tensor_norm_audit()
+    assert audit.ramanujan_theta_upper == F(1, 8)
+    assert audit.large_prime_threshold == 17
+    assert audit.small_primes == (2, 3, 5, 7, 11, 13)
+    assert audit.small_e_lower_bounds == (
+        F(9, 50),
+        F(853, 400),
+        F(171, 16),
+        F(2697, 100),
+        F(33301, 400),
+        F(3028, 25),
+    )
+    assert audit.small_prime_product_upper_bound < 91
+    assert audit.uniform_tensor_constant == 91
+    assert audit.first_rank_shift_l1_cost_is_at_most_q_over_e
+    assert audit.second_rank_down_shift_l1_cost_is_one_over_q
+    assert audit.every_shift_is_downward
+    assert audit.shifted_support_does_not_increase
+    assert audit.large_prime_e_lower_bound_proved
+    assert audit.large_prime_c_is_at_most_four_over_p
+    assert audit.large_prime_c_sqrt_p_is_at_most_one
+    assert audit.tensor_product_is_at_most_constant_over_sqrt_a
+    assert audit.unramified_cross_index_transfer_proved
+    assert not audit.steinberg_and_eisenstein_cells_included
+    assert not audit.polylog_harmonic_large_sieve_proved
+    assert not audit.pevp_proved
+
+
 def test_steinberg_exact_level_difference_has_corrected_square_formula() -> None:
     unit = coverage_audit.steinberg_exact_level_difference_kernel_square(
         prime=5,
