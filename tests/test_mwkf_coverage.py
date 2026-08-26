@@ -4373,7 +4373,7 @@ def test_eisenstein_second_moment_reciprocity_does_not_yet_prove_slf() -> None:
     assert not hard.whole_mobius_gate_covered
 
 
-def test_product_hecke_large_sieve_closes_type_i_type_i_slf() -> None:
+def test_product_hecke_large_sieve_leaves_eisenstein_type_i_gate() -> None:
     energy = getattr(
         coverage_audit,
         "hecke_multiply_coefficient_energy",
@@ -4397,7 +4397,7 @@ def test_product_hecke_large_sieve_closes_type_i_type_i_slf() -> None:
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109i Product-Hecke large sieve closes the Type-I/Type-I level gate",
+        "### 4.109i Product-Hecke large sieve closes the cuspidal Type-I/Type-I gate",
         "\\tag{4.845aw}",
         "\\tag{4.845az}",
         "product_hecke_spectral_large_sieve_audit",
@@ -4430,7 +4430,9 @@ def test_product_hecke_large_sieve_closes_type_i_type_i_slf() -> None:
     assert balanced.eisenstein_basis_change_is_unitary
     assert balanced.physical_kernel_tensorization_compatible
     assert balanced.small_common_divisor_range_covered
-    assert balanced.type_i_type_i_slf_proved
+    assert balanced.cuspidal_holomorphic_type_i_type_i_slf_proved
+    assert balanced.continuous_ramified_oldvector_gate_open
+    assert not balanced.type_i_type_i_slf_proved
     assert not balanced.type_ii_sectors_restored
     assert not balanced.whole_mobius_gate_covered
 
@@ -4444,7 +4446,8 @@ def test_product_hecke_large_sieve_closes_type_i_type_i_slf() -> None:
     assert unbalanced.aggregated_bound_exponent == F(3, 2)
     assert unbalanced.required_slf_exponent == F(2)
     assert unbalanced.slf_power_margin == F(1, 2)
-    assert unbalanced.type_i_type_i_slf_proved
+    assert unbalanced.cuspidal_holomorphic_type_i_type_i_slf_proved
+    assert not unbalanced.type_i_type_i_slf_proved
 
     bounded = adapter(
         product_variable_exponent=F(5, 2),
@@ -4453,7 +4456,8 @@ def test_product_hecke_large_sieve_closes_type_i_type_i_slf() -> None:
     )
     assert bounded.slf_power_margin == F(0)
     assert bounded.bounded_level_cell_uses_existing_mobius_log_decay
-    assert bounded.type_i_type_i_slf_proved
+    assert bounded.cuspidal_holomorphic_type_i_type_i_slf_proved
+    assert not bounded.type_i_type_i_slf_proved
 
     for a_num in range(9):
         for b_num in range(9 - a_num):
@@ -4465,7 +4469,164 @@ def test_product_hecke_large_sieve_closes_type_i_type_i_slf() -> None:
                 modulus_divisor_exponent=beta,
             )
             assert cell.slf_power_margin == max(alpha, beta) / 2
-            assert cell.type_i_type_i_slf_proved
+            assert cell.cuspidal_holomorphic_type_i_type_i_slf_proved
+            assert not cell.type_i_type_i_slf_proved
+
+
+def test_alternative_routes_note_has_no_ascii_control_characters() -> None:
+    data = ALTERNATIVE_ROUTES_NOTE.read_bytes()
+    forbidden = {
+        byte
+        for byte in data
+        if byte < 32 and byte not in (9, 10, 13)
+    }
+    assert forbidden == set()
+
+
+def test_high_level_product_hecke_sieve_isolates_type_ii_square() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "high_level_product_hecke_spectral_audit",
+        None,
+    )
+    assert adapter is not None, "high-level product-Hecke audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109j The Type-II residual is a closed level square",
+        "\\tag{4.845ba}",
+        "\\tag{4.845bd}",
+        "high_level_product_hecke_spectral_audit",
+    ):
+        assert marker in note
+
+    center = adapter(
+        product_variable_exponent=F(5, 2),
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    assert center.ambient_level_exponent == F(5, 2)
+    assert center.maximum_residual_hecke_length_exponent == F(5, 2)
+    assert center.chosen_poisson_index_exponent == F(5, 4)
+    assert center.large_sieve_excess_exponent == F(5, 4)
+    assert center.aggregated_bound_exponent == F(17, 8)
+    assert center.target_exponent == F(2)
+    assert center.power_deficit == F(1, 8)
+    assert center.maximum_type_ii_deficit == F(1, 8)
+    assert center.maximum_deficit_witness == (F(5, 4), F(5, 4))
+    assert center.type_ii_factor_to_cusp_adapter_exact
+    assert center.product_hecke_large_sieve_applies
+    assert center.inside_closed_type_ii_residual_square
+    assert not center.power_bound_closes_cell
+    assert not center.endpoint_log_decay_required
+    assert not center.type_ii_cell_covered
+    assert not center.whole_type_ii_region_covered
+
+    outside = adapter(
+        product_variable_exponent=F(5, 2),
+        left_level_factor_exponent=F(1),
+        right_level_factor_exponent=F(2),
+    )
+    assert outside.large_sieve_excess_exponent == F(1, 2)
+    assert outside.aggregated_bound_exponent == F(7, 4)
+    assert outside.power_saving_margin == F(1, 4)
+    assert not outside.inside_closed_type_ii_residual_square
+    assert outside.power_bound_closes_cell
+    assert outside.type_ii_cell_covered
+
+    boundary = adapter(
+        product_variable_exponent=F(5, 2),
+        left_level_factor_exponent=F(1),
+        right_level_factor_exponent=F(3, 2),
+    )
+    assert boundary.large_sieve_excess_exponent == F(1)
+    assert boundary.power_deficit == F(0)
+    assert boundary.endpoint_log_decay_required
+    assert not boundary.endpoint_log_decay_proved
+    assert not boundary.type_ii_cell_covered
+
+    for a_num in range(8, 25):
+        for b_num in range(8, 25):
+            alpha = F(a_num, 8)
+            beta = F(b_num, 8)
+            cell = adapter(
+                product_variable_exponent=F(5, 2),
+                left_level_factor_exponent=alpha,
+                right_level_factor_exponent=beta,
+            )
+            expected_residual = (
+                F(1) <= alpha <= F(3, 2)
+                and F(1) <= beta <= F(3, 2)
+            )
+            assert cell.inside_closed_type_ii_residual_square == expected_residual
+            assert cell.type_ii_cell_covered == (not expected_residual)
+
+
+def test_primal_dual_hecke_sieve_leaves_ramified_eisenstein_gate() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "primal_dual_product_hecke_spectral_audit",
+        None,
+    )
+    assert adapter is not None, "primal-dual product-Hecke audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109k Functional-equation duality removes the cuspidal Type-II square",
+        "\\tag{4.845be}",
+        "\\tag{4.845bi}",
+        "primal_dual_product_hecke_spectral_audit",
+    ):
+        assert marker in note
+
+    center = adapter(
+        product_variable_exponent=F(5, 2),
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+        primitive_conductor_exponent=F(5, 2),
+    )
+    assert center.ambient_level_exponent == F(5, 2)
+    assert center.chosen_poisson_index_exponent == F(5, 4)
+    assert center.worst_primitive_conductor_exponent == F(5, 2)
+    assert center.primal_dual_transition_exponent == F(5, 4)
+    assert center.normalized_m_times_sqrt_conductor_exponent == F(0)
+    assert center.optimized_large_sieve_excess_exponent == F(0)
+    assert center.product_spectral_bound_exponent == F(5, 2)
+    assert center.aggregated_bound_exponent == F(3, 2)
+    assert center.target_exponent == F(2)
+    assert center.power_saving_margin == F(1, 2)
+    assert center.primitive_functional_equation_exact
+    assert center.dual_coefficient_energy_matches_primal
+    assert center.gamma_transform_has_polylog_nuclear_norm
+    assert center.oldclass_conductor_split_has_subpower_cost
+    assert center.squarefree_level_forces_trivial_eisenstein_character
+    assert center.eisenstein_unramified_hecke_index_has_divisor_bound
+    assert center.eisenstein_ramified_oldvector_witness_prime == 5
+    assert center.eisenstein_ramified_oldvector_ratio_at_witness == F(3)
+    assert not center.eisenstein_ramified_oldvector_has_divisor_bound
+    assert not center.continuous_spectrum_has_no_positive_m_power
+    assert center.cuspidal_holomorphic_sectors_covered
+    assert not center.all_type_i_ii_sectors_covered
+    assert not center.finite_prime_hecke_gate_covered
+    assert not center.transform_tail_aggregated
+    assert not center.whole_mobius_gate_covered
+
+    for a_num in range(0, 25):
+        for b_num in range(0, 25):
+            alpha = F(a_num, 8)
+            beta = F(b_num, 8)
+            level = alpha + beta
+            cell = adapter(
+                product_variable_exponent=F(5, 2),
+                left_level_factor_exponent=alpha,
+                right_level_factor_exponent=beta,
+                primitive_conductor_exponent=level,
+            )
+            assert cell.normalized_m_times_sqrt_conductor_exponent <= F(0)
+            assert cell.optimized_large_sieve_excess_exponent == F(0)
+            assert cell.aggregated_bound_exponent == F(3, 2)
+            assert cell.cuspidal_holomorphic_sectors_covered
+            assert not cell.all_type_i_ii_sectors_covered
 
 
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:

@@ -14226,139 +14226,139 @@ eisenstein_second_moment_reciprocity_audit therefore keeps the signed
 level-family, Type-II, and whole Möbius gates false.
 
 
-### 4.109i Product-Hecke large sieve closes the Type-I/Type-I level gate
+### 4.109i Product-Hecke large sieve closes the cuspidal Type-I/Type-I gate
 
 The level-reciprocity gate in Sections 4.109g--4.109h is unnecessary
 once the product-index identity (4.845s) is combined with the ordinary
 spectral large sieve *before* the common-divisor variable is estimated.
-This ordering was not covered by the fixed-index calculation
-(4.845b): there the two indices still had length (T^{5/2}), whereas
-here their residual lengths are at most the ambient level.
+This ordering was not covered by the fixed-index calculation (4.845b):
+there the two indices still had length \(T^{5/2}\), whereas here their
+residual lengths are at most the ambient level.
 
-Fix (A=T^alpha,B=T^eta), put (Q=AB), and use reciprocity to
+Fix \(A=T^\alpha\), \(B=T^\beta\), put \(Q=AB\), and use reciprocity to
 complete the quotient on the side with the smaller Type-I divisor.  If
 
-[
- eta=min(alpha,eta),qquad mll T^eta(log T)^C,
-]
+\[
+ \eta=\min(\alpha,\beta),\qquad
+ m\ll T^\eta(\log T)^C,
+\]
 
 then the Atkin--Lehner cusp identity (4.845ao)--(4.845ap) is unchanged,
-with (A,B) interchanged when (eta<alpha).  Let
-(H=T^{5/2}) denote either product-variable length.  In (4.845t), split
-the common divisor (c) at (H/Q).  The small-(c) portion has the
-arbitrary logarithmic decay of (4.845w).  In the remaining portion,
+with \(A,B\) interchanged when \(\beta<\alpha\).  Let \(H=T^{5/2}\)
+denote either product-variable length.  In (4.845t), split the common
+divisor \(c\) at \(H/Q\).  The small-\(c\) portion has the arbitrary
+logarithmic decay of (4.845w).  In the remaining portion,
 
-[
- casymp Cgeq H/Q,qquad Y=H/Cleq Q.
-]
+\[
+ c\asymp C\geq H/Q,\qquad Y=H/C\leq Q.
+\]
 
-For the full Maaß, holomorphic, and Eisenstein spectrum at level (Q),
+For the full Maaß, holomorphic, and Eisenstein spectrum at level \(Q\),
 the spectral large sieve, in the Fourier-coefficient normalization used
 by Kuznetsov, is
 
-[
+\[
  \boxed{
  \int_{\mathscr S_Q(\mathcal T)}
  \left|\sum_{n\asymp Y}a_n\sqrt n\,\rho_{\pi,\infty}(n)\right|^2
  d\pi
- \ll_arepsilon
+ \ll_\varepsilon
  (QY\mathcal T)^\varepsilon
  \left(\mathcal T^2+\frac YQ\right)
  \sum_n|a_n|^2.}
 \tag{4.845aw}
 \]
 
-This is the standard Deshouillers--Iwaniec inequality in exactly the
-form stated as the spectral-large-sieve lemma in
-[Blomer--Milićević](https://arxiv.org/abs/1404.7845).  Here the physical
+This is the Deshouillers--Iwaniec inequality in the form stated as the
+spectral-large-sieve lemma in
+[Blomer--Milićević](https://arxiv.org/abs/1404.7845).  The physical
 Bessel--Mellin tensorization from Section 4.109f restricts
-(mathcal T) to a power of (log T), so the parenthesis in (4.845aw)
-has power exponent (max(0,log_T(Y/Q))=0).
+\(\mathcal T\) to a power of \(\log T\), so the parenthesis in
+(4.845aw) has power exponent \(\max(0,\log_T(Y/Q))=0\).
 
 Multiplication by the Poisson Hecke index does not introduce a
-pointwise Ramanujan factor.  At unramified primes,
+pointwise Ramanujan factor on a primitive cuspidal coefficient list.
+At unramified primes,
 
-[
- lambda_pi(m)lambda_pi(n)
- =\sum_{r\mid(m,n)}lambda_pi(mn/r^2).
-]
+\[
+ \lambda_\pi(m)\lambda_\pi(n)
+ =\sum_{r\mid(m,n)}\lambda_\pi(mn/r^2).
+\]
 
-If (b_k) is the resulting coefficient sequence, then for each fixed
-(rmid m) the map (nmapsto mn/r^2) is injective.  Cauchy over
-(rmid m) gives
+If \(b_k\) is the resulting coefficient sequence, then for each fixed
+\(r\mid m\) the map \(n\mapsto mn/r^2\) is injective.  Cauchy over
+\(r\mid m\) gives
 
-[
- sum_k|b_k|^2leq	au(m)^2sum_n|a_n|^2,qquad
- operatorname{supp}bsubset[1,4mY].
-]
+\[
+ \sum_k|b_k|^2\leq\tau(m)^2\sum_n|a_n|^2,\qquad
+ \operatorname{supp}b\subset[1,4mY].
+\]
 
 The degree-one ramified local factors only delete terms from this
 divisor expansion.  After the finite oldclass shifts from Section
 4.109e, the same estimate holds with a divisor-power loss, hence with
 subpower cost.  Applying (4.845aw) to the multiplied first factor and
 the unmultiplied second factor, then applying Cauchy in the complete
-spectral measure, gives for each fixed common divisor (c)
+spectral measure, gives for each fixed common divisor \(c\)
 
-[
+\[
  \boxed{
  \int_{\mathscr S_Q(\mathcal T)}
- |\rho_pi(1)|^2
- |\lambda_pi(m)A_{\pi,1}(H/c)A_{\pi,2}(H/c)|,d\pi
+ |\rho_\pi(1)|^2
+ |\lambda_\pi(m)A_{\pi,1}(H/c)A_{\pi,2}(H/c)|\,d\pi
  \ll
  T^{o(1)}Y\left(1+\frac{mY}{Q}\right)^{1/2}.}
 \tag{4.845ax}
 \]
 
-There is no positivity loss from the second cusp.  By
+For cusp forms there is no positivity loss from the second cusp.  By
 [Kiral--Young, Lemma 2.5](https://arxiv.org/abs/1710.00914), the full
 oldclass Fourier-coefficient lists at an Atkin--Lehner cusp are a
 signed permutation of their lists at infinity.  For the continuous
 spectrum the Atkin--Lehner operator is unitary, so changing the
 orthonormal Eisenstein basis preserves the squared norm in (4.845aw).
-The total variation of the physical nuclear measure is
-polylogarithmic by (4.845ai).
+This basis change alone does not factor a ramified Eisenstein
+level-oldvector coefficient at index \(mn\); that separate issue is
+audited in Section 4.109k.
+The total variation of the physical nuclear measure is polylogarithmic
+by (4.845ai).
 
-For completeness, the small-common-divisor range uses a different
-ledger.  The individual functional-equation estimate (4.845v) and the
-choice (cleq H/(Q(log T)^B)) give arbitrary logarithmic decay after
-the (c)-sum.  Estimating the remaining (lambda_pi(m)) there by
-Kim--Sarnak costs at most (M^{7/64}).  Relative to the SLF target its
+The small-common-divisor range uses a different ledger.  The individual
+functional-equation estimate (4.845v) and
+\(c\leq H/(Q(\log T)^B)\) give arbitrary logarithmic decay after the
+\(c\)-sum.  Estimating the remaining \(\lambda_\pi(m)\) there by
+Kim--Sarnak costs at most \(M^{7/64}\).  Relative to the SLF target its
 power margin is
 
-[
- rac{alpha+eta}{2}-rac{7}{64}min(alpha,eta)>0
-]
+\[
+ \frac{\alpha+\beta}{2}
+ -\frac{7}{64}\min(\alpha,\beta)>0
+\]
 
 whenever the level has a nonzero power exponent.  If
-(alpha=eta=0), then (M=T^{o(1)}) and the arbitrary logarithmic
-decay absorbs the subpower local factors.  Thus this complementary
-range is also covered; no logarithm is being used to absorb a fixed
-positive power.
+\(\alpha=\beta=0\), then \(M=T^{o(1)}\) and arbitrary logarithmic decay
+absorbs the subpower local factors.  Thus this complementary range is
+also covered; no logarithm is used to absorb a fixed positive power.
 
-Now sum (4.845ax) over (casymp C).  Since (CY=H) and (Yleq Q),
+Now sum (4.845ax) over \(c\asymp C\).  Since \(CY=H\) and \(Y\leq Q\),
 
-[
+\[
  \boxed{
  \sum_{c\asymp C}\int_{\mathscr S_Q}
- |\rho_pi(1)|^2
- |\lambda_pi(m)A_{\pi,1}(H/c)A_{\pi,2}(H/c)|,d\pi
+ |\rho_\pi(1)|^2
+ |\lambda_\pi(m)A_{\pi,1}(H/c)A_{\pi,2}(H/c)|\,d\pi
  \ll T^{o(1)}H\sqrt{1+m}.}
 \tag{4.845ay}
 \]
 
-The Poisson normalization is (M^{-1}) for (mll M=T^eta), so
-averaging (4.845ay) over (m) has the same worst power
-(H M^{1/2}).  The previous pointwise product bound was (HQ).
-Thus the fixed-level saving is
+The Poisson normalization is \(M^{-1}\) for \(m\ll M=T^\eta\), so
+averaging (4.845ay) over \(m\) has the same worst power \(HM^{1/2}\).
+The previous pointwise product bound was \(HQ\).  Thus the fixed-level
+saving is \(Q/M^{1/2}=T^{\alpha+\beta-\eta/2}\).  Subtracting it from
+the absolute level aggregation in
+\(\mathrm{SLF}_{\alpha,\beta}\) gives
 
-[
- Q/M^{1/2}=T^{\alpha+\beta-\eta/2}.
-]
-
-Subtracting this saving from the absolute level aggregation in
-SLF\(_{\alpha,eta}\) gives the exact box ledger
-
-[
+\[
  \boxed{
  \begin{aligned}
  E_{\rm new}&=\frac32+\frac12\min(\alpha,\beta),\\
@@ -14367,22 +14367,248 @@ SLF\(_{\alpha,eta}\) gives the exact box ledger
  &=\frac12\max(\alpha,\beta).
  \end{aligned}}
 \tag{4.845az}
-]
+\]
 
-Every nontrivial power-scale level box therefore has a fixed power
-margin.  When (alpha=eta=0), only bounded/subpower levels occur and
-the arbitrary logarithmic decay already proved in (4.845w)--(4.845z)
-supplies the endpoint decay.  Hence the Type-I/Type-I inequality
-SLF\(_{alpha,eta}) is proved for the full physical kernel, all
-oldclasses, and the continuous spectrum.  The interface
+Every nontrivial power-scale cuspidal Type-I/Type-I box therefore has a
+fixed power margin.  At \(\alpha=\beta=0\), the arbitrary logarithmic
+decay from (4.845w)--(4.845z) supplies the endpoint decay.  The interface
 product_hecke_spectral_large_sieve_audit records the threshold
-(H/Q), the multiplied support (mY), the saving (Q/sqrt m), and
-the margin in (4.845az).
+\(H/Q\), multiplied support \(mY\), saving \(Q/\sqrt m\), and the
+margin in (4.845az).
 
-This closes only the Type-I/Type-I sector.  The Type-II sectors still
-contain two genuinely bilinear Möbius factors after Cauchy and are not
-covered by (4.845aw); consequently the whole Möbius gate and the final
-asymptotic remain unproved.
+This closes the Maaß and holomorphic Type-I/Type-I contribution, not
+the full sector: ramified Eisenstein oldvectors remain open.  The
+Type-II sectors additionally contain two genuinely bilinear Möbius
+factors after Cauchy and require the audit below.
+
+
+### 4.109j The Type-II residual is a closed level square
+
+The same ordering applies to most Type-II boxes.  Expanding the
+truncated divisor coefficient is the finite identity
+
+\[
+ c_U(a)\mu(b)
+ =\sum_{\substack{d\mid a\\d\leq U}}\mu(d)\mu(b).
+\]
+
+For a fixed divisor-allocation box write
+
+\[
+ r=(db)e=Ae,\qquad s=(d'b')\ell=B\ell.
+\tag{4.845ba}
+\]
+
+The variables \(e,\ell\) are unweighted.  Therefore Poisson summation,
+the Kloosterman identity (4.845ao), and the Atkin--Lehner cusp formula
+(4.845ap) apply after the displayed finite allocation.  The distinction
+from Type I is the level range: because \(b,b'>V=T\) and
+\(d,d'\leq U=T\), the Type-II factor polytopes have
+
+\[
+ A=T^\alpha,\qquad B=T^\beta,\qquad
+ 1\leq\alpha,\beta\leq3.
+\]
+
+Put \(Q=AB=T^{\alpha+\beta}\), \(H=T^{5/2}\), and complete the quotient
+on the side with \(\eta=\min(\alpha,\beta)\).  The Poisson index has
+length \(M=T^\eta\).  In the common-divisor decomposition (4.845t), the
+largest residual Hecke-polynomial length is
+
+\[
+ \boxed{Y\leq\min(H,Q)
+ =T^{\min(5/2,\alpha+\beta)}.}
+\tag{4.845bb}
+\]
+
+Applying (4.845aw)--(4.845ay), the only remaining positive-power
+large-sieve factor is the square root of \(1+MY/Q\).  Define
+
+\[
+ x(\alpha,\beta)
+ :=\left(\min(\alpha,\beta)
+ +\min(5/2,\alpha+\beta)-\alpha-\beta\right)_+.
+\]
+
+Replacing the former \(HQ\) product bound by the fixed-level bound and
+restoring the absolute \(A,B\)-box count gives
+
+\[
+ \boxed{
+ E_{\rm PHLS}(\alpha,\beta)
+ =\frac32+\frac{x(\alpha,\beta)}2.}
+\tag{4.845bc}
+\]
+
+The normalized QCT target is exponent \(2\).  Eliminating the two
+minima gives, on \(1\leq\alpha,\beta\leq3\),
+
+\[
+ \boxed{
+ x(\alpha,\beta)\geq1
+ \quad\Longleftrightarrow\quad
+ 1\leq\alpha\leq\frac32,\qquad
+ 1\leq\beta\leq\frac32.}
+\tag{4.845bd}
+\]
+
+Outside this closed square, (4.845bc) has a fixed power saving.  On the
+boundary \(x=1\), no logarithmic saving has yet been retained.  In the
+interior the deficit is \((x-1)/2\), maximized at
+
+\[
+ (\alpha,\beta)=(5/4,5/4),\qquad
+ x=5/4,\qquad E_{\rm PHLS}-2=1/8.
+\]
+
+The interface high_level_product_hecke_spectral_audit implements the
+affine branches with Fraction arithmetic.  This is a primal-only
+ledger: it isolates the exact square left by that estimate and does not
+declare the Type-II or whole Möbius gate closed.
+
+
+### 4.109k Functional-equation duality removes the cuspidal Type-II square
+
+The \(1/8\) residual in Section 4.109j is an artifact of always feeding
+the primal Hecke polynomial to the large sieve for the *cuspidal*
+spectrum.  The completed standard \(\mathrm{GL}(2)\) functional
+equation provides a reciprocal-length polynomial there.
+
+Let \(f\) be a primitive Maaß or holomorphic cusp form of conductor
+\(q_0\mid Q\), and let
+
+\[
+ A_f(Y;W)=\sum_{n\geq1}\lambda_f(n)W(n/Y).
+\]
+
+Mellin inversion on \(\Re s>1\), the exact completed functional
+equation, the change of variable \(w=1-s\), and inverse Mellin
+inversion give
+
+\[
+ \boxed{
+ A_f(Y;W)
+ =\varepsilon_f\frac{Y}{\sqrt{q_0}}
+ \sum_{n\geq1}\overline{\lambda_f(n)}
+ \widetilde W_{t_f}\!\left(\frac{nY}{q_0}\right).}
+\tag{4.845be}
+\]
+
+The contour shift crosses no pole because \(L(s,f)\) is entire.  The
+transform is defined by the exact gamma quotient.  Repeated Stirling,
+together with the spectral truncation in Section 4.109f, gives rapid
+decay outside \(n\ll(q_0/Y)(\log T)^C\).  Its coefficient energy is
+
+\[
+ \left(\frac{Y}{\sqrt{q_0}}\right)^2\frac{q_0}{Y}=Y,
+\]
+
+the same as the primal polynomial.  For fixed Mellin frequency, the
+\(t_f\)-dependent gamma quotient remains in the spectral test weight;
+the Mellin integral has polylogarithmic weighted total variation.
+
+Let \(m\ll M\) be the Poisson Hecke index and retain the ambient-level
+normalization \(Q=AB\).  Applying (4.845aw) after the Hecke relation to
+the primal and dual forms of one polynomial gives respectively
+
+\[
+ \boxed{
+ 1+\frac{mY}{Q},
+ \qquad
+ 1+\frac{mq_0}{YQ}.}
+\tag{4.845bf}
+\]
+
+Use the primal form for \(Y\leq\sqrt{q_0}\) and (4.845be) for
+\(Y>\sqrt{q_0}\).  Uniformly in every common-divisor block,
+
+\[
+ \boxed{
+ \min\!\left(\frac{mY}{Q},\frac{mq_0}{YQ}\right)
+ \leq\frac{m\sqrt{q_0}}Q.}
+\tag{4.845bg}
+\]
+
+Completion was chosen on the shorter level-factor side, so
+
+\[
+ m\leq T^{\min(\alpha,\beta)+o(1)},\qquad
+ q_0\leq Q=T^{\alpha+\beta},
+\]
+
+and therefore
+
+\[
+ \log_T\frac{m\sqrt{q_0}}Q
+ \leq\min(\alpha,\beta)-\frac{\alpha+\beta}{2}\leq0.
+\]
+
+The cuspidal and holomorphic versions of (4.845ax) have no
+positive-power large-sieve excess.  Summing over the common divisor
+gives \(HT^{o(1)}\), and the level-box ledger is
+
+\[
+ \boxed{
+ E_{\rm cusp/holo}=\frac32,\qquad
+ E_{\rm target}=2,\qquad
+ E_{\rm target}-E_{\rm cusp/holo}=\frac12.}
+\tag{4.845bh}
+\]
+
+Oldclasses do not alter this cuspidal inequality.  Split by the
+underlying primitive conductor \(q_0\mid Q\), apply (4.845be) to each
+primitive coefficient list, and insert the finite
+Blomer--Milićević shifts.  The conductor and shift allocations cost
+\(Q^{o(1)}\); their coefficient energies have the divisor-square bound
+used after (4.845aw); and Kiral--Young's signed permutation moves the
+second-cusp norm back to infinity.
+
+The same conclusion does **not** follow for the continuous spectrum.
+Squarefree \(Q\) forces the inducing character in the adelic
+Eisenstein parametrization to be trivial, but level-oldvectors remain.
+The exact coefficient formula in
+[Blomer--Khan, Section 2.2](https://arxiv.org/abs/1706.01245) exposes
+the obstruction.  Specialize it to \(Q=M=p\) prime and suppress factors
+common to all indices.  The remaining local coefficient is
+
+\[
+ F_{p,t}(n)
+ =p^{-1/2}n^{it}
+ \sum_{\delta\mid(p,n)}\delta\mu(p/\delta)
+ \sum_{cf=n/\delta}c^{-2it}.
+\]
+
+Consequently
+
+\[
+ \boxed{
+ F_{p,t}(1)=-p^{-1/2},\qquad
+ F_{p,t}(p)=p^{-1/2}p^{it}(p-1-p^{-2it}),\qquad
+ \left|\frac{F_{p,t_p}(p)}{F_{p,t_p}(1)}\right|=p-2,
+ \quad t_p=\frac{\pi}{\log p}.}
+\tag{4.845bi}
+\]
+
+Thus the ramified oldvector ratio is not \(\tau(p)\)-bounded; it grows
+linearly in \(p\).  The absolute estimate
+\(\rho_{\chi,M,Q}(n,t)\ll_\varepsilon
+((1+|t|)Qn)^\varepsilon(M_1M_2)^{1/2}Q^{-1/2}\)
+from the same source does not repair this step, because it is not a
+bound for the ratio to the first Fourier coefficient and cannot be
+pulled outside the spectral polynomial.  Applying the large sieve
+directly retains support \(mY\), hence retains the square (4.845bd) in
+this part of the spectrum.
+
+The interface primal_dual_product_hecke_spectral_audit therefore
+records the fixed \(1/2\) margin only for Maaß and holomorphic cusp
+forms.  It records the exact prime-oldvector witness \(p=5\), ratio
+\(3\), and keeps the continuous-spectrum, all-sector, finite-prime,
+transform-tail, and whole-Möbius gates false.  The next local theorem
+must prove a ramified Eisenstein dispersion/reciprocity estimate giving
+arbitrary logarithmic decay on the boundary of (4.845bd) and at most
+\(T^{1/8}\) saving at its center.  The complete ratio/gcd allocations,
+dyadic and \(q\)-sums, and all AFE and transform tails also remain to be
+restored before any global asymptotic can be asserted.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector

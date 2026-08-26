@@ -1864,8 +1864,68 @@ class ProductHeckeSpectralLargeSieveAudit:
     physical_kernel_tensorization_compatible: bool
     bounded_level_cell_uses_existing_mobius_log_decay: bool
     small_common_divisor_range_covered: bool
+    cuspidal_holomorphic_type_i_type_i_slf_proved: bool
+    continuous_ramified_oldvector_gate_open: bool
     type_i_type_i_slf_proved: bool
     type_ii_sectors_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class HighLevelProductHeckeSpectralAudit:
+    product_variable_exponent: Fraction
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    maximum_residual_hecke_length_exponent: Fraction
+    chosen_poisson_index_exponent: Fraction
+    large_sieve_excess_exponent: Fraction
+    aggregated_bound_exponent: Fraction
+    target_exponent: Fraction
+    power_saving_margin: Fraction
+    power_deficit: Fraction
+    maximum_type_ii_deficit: Fraction
+    maximum_deficit_witness: tuple[Fraction, Fraction]
+    type_ii_factor_to_cusp_adapter_exact: bool
+    product_hecke_large_sieve_applies: bool
+    inside_closed_type_ii_residual_square: bool
+    power_bound_closes_cell: bool
+    endpoint_log_decay_required: bool
+    endpoint_log_decay_proved: bool
+    type_ii_cell_covered: bool
+    whole_type_ii_region_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PrimalDualProductHeckeSpectralAudit:
+    product_variable_exponent: Fraction
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    chosen_poisson_index_exponent: Fraction
+    worst_primitive_conductor_exponent: Fraction
+    primal_dual_transition_exponent: Fraction
+    normalized_m_times_sqrt_conductor_exponent: Fraction
+    optimized_large_sieve_excess_exponent: Fraction
+    product_spectral_bound_exponent: Fraction
+    aggregated_bound_exponent: Fraction
+    target_exponent: Fraction
+    power_saving_margin: Fraction
+    primitive_functional_equation_exact: bool
+    dual_coefficient_energy_matches_primal: bool
+    gamma_transform_has_polylog_nuclear_norm: bool
+    oldclass_conductor_split_has_subpower_cost: bool
+    squarefree_level_forces_trivial_eisenstein_character: bool
+    eisenstein_unramified_hecke_index_has_divisor_bound: bool
+    eisenstein_ramified_oldvector_witness_prime: int
+    eisenstein_ramified_oldvector_ratio_at_witness: Fraction
+    eisenstein_ramified_oldvector_has_divisor_bound: bool
+    continuous_spectrum_has_no_positive_m_power: bool
+    cuspidal_holomorphic_sectors_covered: bool
+    all_type_i_ii_sectors_covered: bool
+    finite_prime_hecke_gate_covered: bool
+    transform_tail_aggregated: bool
     whole_mobius_gate_covered: bool
 
 
@@ -9544,7 +9604,7 @@ def product_hecke_spectral_large_sieve_audit(
     entry_divisor_exponent: Fraction,
     modulus_divisor_exponent: Fraction,
 ) -> ProductHeckeSpectralLargeSieveAudit:
-    """Close the Type-I/Type-I SLF box by a fixed-level large sieve.
+    """Close the cuspidal Type-I/Type-I box by a fixed-level large sieve.
 
     Put ``Q=A*B=T^(alpha+beta)`` and choose completion on the side with
     smaller Type-I divisor, so the dual Hecke index has length
@@ -9566,9 +9626,13 @@ def product_hecke_spectral_large_sieve_audit(
 
     The already proved Atkin--Lehner oldclass permutation lets both
     positive norms be evaluated at infinity.  On the Eisenstein space
-    the Atkin--Lehner operator is unitary, so the same basis-free L2
-    statement holds.  The physical kernel is a polylogarithmic nuclear
-    superposition and hence does not change any power exponent.
+    the Atkin--Lehner operator is unitary, but this alone does not turn
+    a ramified level-oldvector coefficient at index ``m*n`` into a
+    divisor-bounded scalar times the coefficient at ``n``.  Thus the
+    numerical exponent closes the cuspidal and holomorphic contribution,
+    while the continuous ramified-oldvector gate remains open.  The
+    physical kernel is a polylogarithmic nuclear superposition and hence
+    does not change any power exponent.
     """
     h = F(product_variable_exponent)
     alpha = F(entry_divisor_exponent)
@@ -9623,10 +9687,170 @@ def product_hecke_spectral_large_sieve_audit(
         physical_kernel_tensorization_compatible=True,
         bounded_level_cell_uses_existing_mobius_log_decay=bounded_level,
         small_common_divisor_range_covered=(small_margin > 0 or bounded_level),
-        type_i_type_i_slf_proved=(
+        cuspidal_holomorphic_type_i_type_i_slf_proved=(
             closes and (small_margin > 0 or bounded_level)
         ),
+        continuous_ramified_oldvector_gate_open=True,
+        type_i_type_i_slf_proved=False,
         type_ii_sectors_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def high_level_product_hecke_spectral_audit(
+    *,
+    product_variable_exponent: Fraction,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+) -> HighLevelProductHeckeSpectralAudit:
+    """Route Type-II factor boxes through the fixed-level product sieve.
+
+    Expanding ``c_U(a)`` writes a Type-II entry as ``r=(d*b)*e`` with
+    ``d<=U``, ``b>V`` and an unweighted quotient ``e``.  Thus the exact
+    Atkin--Lehner cusp adapter applies with level factors ``A=d*b`` and
+    ``B=d'*b'``.  Type-II gives ``1<=log_T A,log_T B<=3``.
+
+    Let ``Q=T^level``, ``H=T^h`` and complete on the shorter level-factor
+    side, giving ``m<=T^eta``.  The largest Hecke-polynomial length in
+    the spectral large-sieve range is ``Y<=min(H,Q)``.  Therefore the
+    only positive-power factor left after product-Hecke Cauchy is
+
+    ``T^(excess/2)``, ``excess=(eta+min(h,level)-level)_+``.
+
+    Relative to the normalized QCT base ``3/2``, the cell exponent is
+    ``3/2+excess/2`` and must be strictly below ``2`` (or equal with a
+    separately proved logarithmic saving).  On the exact Type-II range,
+    ``excess>=1`` is equivalent to the closed square
+    ``1<=alpha,beta<=3/2``.  Its largest deficit is ``1/8`` at
+    ``alpha=beta=5/4``.
+    """
+    h = F(product_variable_exponent)
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    if h < 0 or not (F(1) <= alpha <= F(3)) or not (F(1) <= beta <= F(3)):
+        raise ValueError("Type-II level factors must lie in [1,3]")
+    level = alpha + beta
+    residual = min(h, level)
+    eta = min(alpha, beta)
+    excess = _positive_part(eta + residual - level)
+    target = F(2)
+    bound = F(3, 2) + excess / 2
+    margin = _positive_part(target - bound)
+    deficit = _positive_part(bound - target)
+    endpoint = bound == target
+    inside = (
+        F(1) <= alpha <= F(3, 2)
+        and F(1) <= beta <= F(3, 2)
+    )
+    power_closes = bound < target
+    return HighLevelProductHeckeSpectralAudit(
+        product_variable_exponent=h,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        maximum_residual_hecke_length_exponent=residual,
+        chosen_poisson_index_exponent=eta,
+        large_sieve_excess_exponent=excess,
+        aggregated_bound_exponent=bound,
+        target_exponent=target,
+        power_saving_margin=margin,
+        power_deficit=deficit,
+        maximum_type_ii_deficit=F(1, 8),
+        maximum_deficit_witness=(F(5, 4), F(5, 4)),
+        type_ii_factor_to_cusp_adapter_exact=True,
+        product_hecke_large_sieve_applies=True,
+        inside_closed_type_ii_residual_square=inside,
+        power_bound_closes_cell=power_closes,
+        endpoint_log_decay_required=endpoint,
+        endpoint_log_decay_proved=False,
+        type_ii_cell_covered=power_closes,
+        whole_type_ii_region_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def primal_dual_product_hecke_spectral_audit(
+    *,
+    product_variable_exponent: Fraction,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+    primitive_conductor_exponent: Fraction,
+) -> PrimalDualProductHeckeSpectralAudit:
+    """Optimize the Hecke large sieve with the GL(2) functional equation.
+
+    For a primitive cuspidal component of conductor ``q0<=Q`` and a
+    smooth Hecke polynomial of length ``Y``, Mellin inversion plus the
+    completed standard functional equation gives a dual polynomial of
+    length ``q0/Y`` and prefactor ``Y/sqrt(q0)``.  Its coefficient L2
+    energy is therefore again ``Y``.  After multiplication by the
+    Poisson index ``m``, the primal and dual large-sieve excesses are
+
+    ``m*Y/Q`` and ``m*q0/(Y*Q)``.
+
+    Choosing primal for ``Y<=sqrt(q0)`` and dual otherwise bounds their
+    minimum by ``m*sqrt(q0)/Q``.  In every factor sector
+    ``m<=min(A,B)`` and ``q0<=Q=A*B``, so this has no positive power.
+
+    The ambient levels are squarefree on the exact Mobius support, so the
+    continuous spectrum has only the trivial inducing character.  This
+    does *not* make every level-oldvector coefficient multiplicative.
+    At level ``Q=M=p`` the exact Eisenstein coefficient formula has local
+    factor
+
+    ``F(1)=-p^(-1/2)``,
+    ``F(p)=p^(-1/2) p^(it) (p-1-p^(-2it))``.
+
+    Taking ``t=pi/log(p)`` gives ``|F(p)/F(1)|=p-2``.  Hence the
+    unramified divisor bound cannot be pulled through ramified oldvectors,
+    and this audit closes only the cuspidal and holomorphic sectors.
+    """
+    h = F(product_variable_exponent)
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    q0 = F(primitive_conductor_exponent)
+    if min(h, alpha, beta, q0) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    level = alpha + beta
+    if q0 > level:
+        raise ValueError("primitive conductor cannot exceed ambient level")
+    eta = min(alpha, beta)
+    normalized = eta + q0 / 2 - level
+    excess = _positive_part(normalized)
+    base = F(3, 2)
+    bound = base + excess / 2
+    target = F(2)
+    margin = target - bound
+    cusp_closes = excess == 0 and margin > 0
+    witness_prime = 5
+    ramified_ratio = F(witness_prime - 2)
+    return PrimalDualProductHeckeSpectralAudit(
+        product_variable_exponent=h,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        chosen_poisson_index_exponent=eta,
+        worst_primitive_conductor_exponent=q0,
+        primal_dual_transition_exponent=q0 / 2,
+        normalized_m_times_sqrt_conductor_exponent=normalized,
+        optimized_large_sieve_excess_exponent=excess,
+        product_spectral_bound_exponent=h + excess / 2,
+        aggregated_bound_exponent=bound,
+        target_exponent=target,
+        power_saving_margin=margin,
+        primitive_functional_equation_exact=True,
+        dual_coefficient_energy_matches_primal=True,
+        gamma_transform_has_polylog_nuclear_norm=True,
+        oldclass_conductor_split_has_subpower_cost=True,
+        squarefree_level_forces_trivial_eisenstein_character=True,
+        eisenstein_unramified_hecke_index_has_divisor_bound=True,
+        eisenstein_ramified_oldvector_witness_prime=witness_prime,
+        eisenstein_ramified_oldvector_ratio_at_witness=ramified_ratio,
+        eisenstein_ramified_oldvector_has_divisor_bound=False,
+        continuous_spectrum_has_no_positive_m_power=False,
+        cuspidal_holomorphic_sectors_covered=cusp_closes,
+        all_type_i_ii_sectors_covered=False,
+        finite_prime_hecke_gate_covered=False,
+        transform_tail_aggregated=False,
         whole_mobius_gate_covered=False,
     )
 
@@ -16443,9 +16667,111 @@ def main() -> None:
         f"{product_large_sieve.bounded_level_cell_uses_existing_mobius_log_decay},"
         "small_covered="
         f"{product_large_sieve.small_common_divisor_range_covered},"
+        "cusp_holo_type_i_slf="
+        f"{product_large_sieve.cuspidal_holomorphic_type_i_type_i_slf_proved},"
+        "continuous_ramified_gate="
+        f"{product_large_sieve.continuous_ramified_oldvector_gate_open},"
         f"type_i_slf={product_large_sieve.type_i_type_i_slf_proved},"
         f"type_ii={product_large_sieve.type_ii_sectors_restored},"
         f"covered={product_large_sieve.whole_mobius_gate_covered}"
+    )
+    high_level_product = high_level_product_hecke_spectral_audit(
+        product_variable_exponent=F(5, 2),
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: high_level_product_hecke_spectral="
+        f"H={_fmt(high_level_product.product_variable_exponent)},"
+        f"alpha={_fmt(high_level_product.left_level_factor_exponent)},"
+        f"beta={_fmt(high_level_product.right_level_factor_exponent)},"
+        f"level={_fmt(high_level_product.ambient_level_exponent)},"
+        "residual_length="
+        f"{_fmt(high_level_product.maximum_residual_hecke_length_exponent)},"
+        "poisson_index="
+        f"{_fmt(high_level_product.chosen_poisson_index_exponent)},"
+        f"excess={_fmt(high_level_product.large_sieve_excess_exponent)},"
+        f"bound={_fmt(high_level_product.aggregated_bound_exponent)},"
+        f"target={_fmt(high_level_product.target_exponent)},"
+        f"margin={_fmt(high_level_product.power_saving_margin)},"
+        f"deficit={_fmt(high_level_product.power_deficit)},"
+        "max_deficit="
+        f"{_fmt(high_level_product.maximum_type_ii_deficit)},"
+        "witness="
+        f"{_fmt(high_level_product.maximum_deficit_witness[0])}:"
+        f"{_fmt(high_level_product.maximum_deficit_witness[1])},"
+        "cusp_adapter="
+        f"{high_level_product.type_ii_factor_to_cusp_adapter_exact},"
+        "large_sieve="
+        f"{high_level_product.product_hecke_large_sieve_applies},"
+        "residual_square="
+        f"{high_level_product.inside_closed_type_ii_residual_square},"
+        f"power_closes={high_level_product.power_bound_closes_cell},"
+        "endpoint_log="
+        f"{high_level_product.endpoint_log_decay_required},"
+        "log_proved="
+        f"{high_level_product.endpoint_log_decay_proved},"
+        f"cell={high_level_product.type_ii_cell_covered},"
+        f"type_ii={high_level_product.whole_type_ii_region_covered},"
+        f"covered={high_level_product.whole_mobius_gate_covered}"
+    )
+    primal_dual_product = primal_dual_product_hecke_spectral_audit(
+        product_variable_exponent=F(5, 2),
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+        primitive_conductor_exponent=F(5, 2),
+    )
+    print(
+        "large_q_transition: primal_dual_product_hecke_spectral="
+        f"H={_fmt(primal_dual_product.product_variable_exponent)},"
+        f"alpha={_fmt(primal_dual_product.left_level_factor_exponent)},"
+        f"beta={_fmt(primal_dual_product.right_level_factor_exponent)},"
+        f"level={_fmt(primal_dual_product.ambient_level_exponent)},"
+        "poisson_index="
+        f"{_fmt(primal_dual_product.chosen_poisson_index_exponent)},"
+        "conductor="
+        f"{_fmt(primal_dual_product.worst_primitive_conductor_exponent)},"
+        "transition="
+        f"{_fmt(primal_dual_product.primal_dual_transition_exponent)},"
+        "normalized="
+        f"{_fmt(primal_dual_product.normalized_m_times_sqrt_conductor_exponent)},"
+        "excess="
+        f"{_fmt(primal_dual_product.optimized_large_sieve_excess_exponent)},"
+        "product_bound="
+        f"{_fmt(primal_dual_product.product_spectral_bound_exponent)},"
+        "aggregated="
+        f"{_fmt(primal_dual_product.aggregated_bound_exponent)},"
+        f"target={_fmt(primal_dual_product.target_exponent)},"
+        f"margin={_fmt(primal_dual_product.power_saving_margin)},"
+        "functional_equation="
+        f"{primal_dual_product.primitive_functional_equation_exact},"
+        "energy="
+        f"{primal_dual_product.dual_coefficient_energy_matches_primal},"
+        "gamma_nuclear="
+        f"{primal_dual_product.gamma_transform_has_polylog_nuclear_norm},"
+        "oldclass="
+        f"{primal_dual_product.oldclass_conductor_split_has_subpower_cost},"
+        "squarefree_eis="
+        f"{primal_dual_product.squarefree_level_forces_trivial_eisenstein_character},"
+        "eis_unramified_divisor="
+        f"{primal_dual_product.eisenstein_unramified_hecke_index_has_divisor_bound},"
+        "eis_ramified_prime="
+        f"{primal_dual_product.eisenstein_ramified_oldvector_witness_prime},"
+        "eis_ramified_ratio="
+        f"{_fmt(primal_dual_product.eisenstein_ramified_oldvector_ratio_at_witness)},"
+        "eis_ramified_divisor="
+        f"{primal_dual_product.eisenstein_ramified_oldvector_has_divisor_bound},"
+        "continuous="
+        f"{primal_dual_product.continuous_spectrum_has_no_positive_m_power},"
+        "cusp_holo="
+        f"{primal_dual_product.cuspidal_holomorphic_sectors_covered},"
+        "all_sectors="
+        f"{primal_dual_product.all_type_i_ii_sectors_covered},"
+        "finite_gate="
+        f"{primal_dual_product.finite_prime_hecke_gate_covered},"
+        "tails="
+        f"{primal_dual_product.transform_tail_aggregated},"
+        f"covered={primal_dual_product.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(
