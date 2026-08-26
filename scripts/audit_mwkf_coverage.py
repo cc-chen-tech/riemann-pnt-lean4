@@ -2148,6 +2148,41 @@ class SignedTorusSlopeOperatorAudit:
 
 
 @dataclass(frozen=True)
+class TorusFareyMultiplicityAudit:
+    common_gcd_exponent: Fraction
+    physical_coordinate_exponent: Fraction
+    primitive_slope_exponent: Fraction
+    shift_quotient_exponent: Fraction
+    farey_minimum_spacing_exponent: Fraction
+    physical_ratio_window_exponent: Fraction
+    farey_spacing_over_window_margin: Fraction
+    fixed_physical_slope_multiplicity_exponent: Fraction
+    fixed_physical_slope_multiplicity_is_bounded: bool
+    positive_g_layer_is_eventually_unique: bool
+    critical_g_layer_has_only_constant_multiplicity: bool
+    raw_pullback_diagonal_exponent: Fraction
+    squared_taper_log_saving: int
+    operator_energy_target_exponent: Fraction
+    raw_diagonal_over_target_exponent: Fraction
+    operator_l2_target_is_below_raw_diagonal_by_power: bool
+    natural_operator_l2_exponent: Fraction
+    mobius_tensor_l2_exponent: Fraction
+    positive_cauchy_bound_exponent: Fraction
+    physical_layer_target_exponent: Fraction
+    positive_cauchy_deficit_exponent: Fraction
+    deficit_equals_determinant_line_required_saving: bool
+    davenport_uniform_bound_power_saving_exponent: Fraction
+    positive_lp_interpolation_improves_power: bool
+    signed_pairing_gate_name: str
+    signed_pairing_is_exact_determinant_line_layer: bool
+    signed_gate_required_saving_exponent: Fraction
+    signed_pairing_gate_proved: bool
+    cross_slope_recombination_has_power_cardinality: bool
+    positive_l2_route_closes_signed_mobius_gate: bool
+    signed_mobius_tensor_restriction_still_required: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiHardBoxAudit:
     modulus_exponent: Fraction
     left_argument_length_exponent: Fraction
@@ -11980,6 +12015,100 @@ def signed_torus_slope_operator_audit() -> SignedTorusSlopeOperatorAudit:
         signed_mobius_tensor_restriction_still_required=True,
         signed_incomplete_poincare_operator_bound_proved=False,
         mmkls_covered=False,
+    )
+
+
+def torus_farey_multiplicity_audit(
+    *,
+    gcd_exponent: Fraction,
+) -> TorusFareyMultiplicityAudit:
+    """Count primitive slopes contributing to one physical pair.
+
+    On the hard determinant line, write ``g=T^gamma``.  The primitive
+    slopes have ``|j|,|v|=T^(1/2-gamma)``, the shift quotient has size
+    ``D=T^(5/2-gamma)``, and the physical coordinates have size
+    ``R=S=T^3``.  From ``r*v-s*j=delta`` one obtains
+
+    ``j/v = r/s - delta/(s*v)``.
+
+    Hence all contributing primitive fractions lie in an interval of
+    exponent ``D-S-V=-1``.  Distinct reduced fractions of denominator
+    ``V`` have Farey spacing exponent ``-2V=-1+2*gamma``.  Their number
+    is therefore ``O(1+D*V/S)=O(1+T^(-2*gamma))``.  Every positive-power
+    ``g`` layer is eventually unique; the critical ``gamma=0`` layer has
+    only bounded, rather than power-sized, multiplicity.
+
+    This removes the hoped-for power-sized cross-slope family from the
+    positive torus L2 route.  The raw pullback diagonal is the existing
+    EDSSF scale ``T^(6-2*gamma) log(T)^(-4)``, far above the proposed
+    energy target ``T^(499/500)``.  This exponent audit does not assert a
+    lower bound for the particular oscillatory physical kernel, but it
+    shows that slope cardinality alone cannot prove the required norm;
+    the signed two-Mobius tensor restriction remains necessary.
+    """
+    gamma = F(gcd_exponent)
+    if gamma < 0 or gamma > F(1, 2):
+        raise ValueError("gcd exponent must lie in [0, 1/2]")
+
+    physical = F(3)
+    slope = F(1, 2) - gamma
+    shift = F(5, 2) - gamma
+    farey_spacing = -2 * slope
+    ratio_window = shift - physical - slope
+    spacing_margin = farey_spacing - ratio_window
+    multiplicity_exponent = _positive_part(
+        ratio_window - farey_spacing
+    )
+    diagonal = F(6) - 2 * gamma
+    energy_target = F(499, 500)
+    diagonal_gap = diagonal - energy_target
+    operator_l2 = diagonal / 2
+    mobius_l2 = F(3)
+    cauchy = operator_l2 + mobius_l2
+    physical_target = F(3499, 1000)
+    cauchy_deficit = cauchy - physical_target
+    determinant_line_deficit = F(2501, 1000) - gamma
+
+    return TorusFareyMultiplicityAudit(
+        common_gcd_exponent=gamma,
+        physical_coordinate_exponent=physical,
+        primitive_slope_exponent=slope,
+        shift_quotient_exponent=shift,
+        farey_minimum_spacing_exponent=farey_spacing,
+        physical_ratio_window_exponent=ratio_window,
+        farey_spacing_over_window_margin=spacing_margin,
+        fixed_physical_slope_multiplicity_exponent=(
+            multiplicity_exponent
+        ),
+        fixed_physical_slope_multiplicity_is_bounded=(
+            multiplicity_exponent == 0
+        ),
+        positive_g_layer_is_eventually_unique=(gamma > 0),
+        critical_g_layer_has_only_constant_multiplicity=True,
+        raw_pullback_diagonal_exponent=diagonal,
+        squared_taper_log_saving=4,
+        operator_energy_target_exponent=energy_target,
+        raw_diagonal_over_target_exponent=diagonal_gap,
+        operator_l2_target_is_below_raw_diagonal_by_power=(
+            diagonal_gap > 0
+        ),
+        natural_operator_l2_exponent=operator_l2,
+        mobius_tensor_l2_exponent=mobius_l2,
+        positive_cauchy_bound_exponent=cauchy,
+        physical_layer_target_exponent=physical_target,
+        positive_cauchy_deficit_exponent=cauchy_deficit,
+        deficit_equals_determinant_line_required_saving=(
+            cauchy_deficit == determinant_line_deficit
+        ),
+        davenport_uniform_bound_power_saving_exponent=F(0),
+        positive_lp_interpolation_improves_power=False,
+        signed_pairing_gate_name="MTSR_q,g",
+        signed_pairing_is_exact_determinant_line_layer=True,
+        signed_gate_required_saving_exponent=determinant_line_deficit,
+        signed_pairing_gate_proved=False,
+        cross_slope_recombination_has_power_cardinality=False,
+        positive_l2_route_closes_signed_mobius_gate=False,
+        signed_mobius_tensor_restriction_still_required=True,
     )
 
 
@@ -25295,6 +25424,54 @@ def main() -> None:
         "operator="
         f"{torus_operator.signed_incomplete_poincare_operator_bound_proved} "
         f"mmkls={torus_operator.mmkls_covered}"
+    )
+    torus_farey = torus_farey_multiplicity_audit(
+        gcd_exponent=F(0),
+    )
+    print(
+        "balanced_max_a: torus_farey_multiplicity="
+        f"gamma={_fmt(torus_farey.common_gcd_exponent)} "
+        f"slope={_fmt(torus_farey.primitive_slope_exponent)} "
+        f"shift={_fmt(torus_farey.shift_quotient_exponent)} "
+        f"physical={_fmt(torus_farey.physical_coordinate_exponent)} "
+        f"farey={_fmt(torus_farey.farey_minimum_spacing_exponent)} "
+        f"window={_fmt(torus_farey.physical_ratio_window_exponent)} "
+        "margin="
+        f"{_fmt(torus_farey.farey_spacing_over_window_margin)} "
+        "multiplicity="
+        f"{_fmt(torus_farey.fixed_physical_slope_multiplicity_exponent)} "
+        f"bounded={torus_farey.fixed_physical_slope_multiplicity_is_bounded} "
+        f"unique={torus_farey.positive_g_layer_is_eventually_unique} "
+        "critical_constant="
+        f"{torus_farey.critical_g_layer_has_only_constant_multiplicity} "
+        f"diagonal={_fmt(torus_farey.raw_pullback_diagonal_exponent)} "
+        f"taper_log={torus_farey.squared_taper_log_saving} "
+        "energy_target="
+        f"{_fmt(torus_farey.operator_energy_target_exponent)} "
+        f"gap={_fmt(torus_farey.raw_diagonal_over_target_exponent)} "
+        f"operator_l2={_fmt(torus_farey.natural_operator_l2_exponent)} "
+        f"mobius_l2={_fmt(torus_farey.mobius_tensor_l2_exponent)} "
+        f"cauchy={_fmt(torus_farey.positive_cauchy_bound_exponent)} "
+        f"target={_fmt(torus_farey.physical_layer_target_exponent)} "
+        f"deficit={_fmt(torus_farey.positive_cauchy_deficit_exponent)} "
+        "same_line_deficit="
+        f"{torus_farey.deficit_equals_determinant_line_required_saving} "
+        "davenport_power="
+        f"{_fmt(torus_farey.davenport_uniform_bound_power_saving_exponent)} "
+        "lp_improves="
+        f"{torus_farey.positive_lp_interpolation_improves_power} "
+        f"signed_gate={torus_farey.signed_pairing_gate_name} "
+        "exact_layer="
+        f"{torus_farey.signed_pairing_is_exact_determinant_line_layer} "
+        "signed_save="
+        f"{_fmt(torus_farey.signed_gate_required_saving_exponent)} "
+        f"signed_proved={torus_farey.signed_pairing_gate_proved} "
+        "cross_power="
+        f"{torus_farey.cross_slope_recombination_has_power_cardinality} "
+        "positive_l2="
+        f"{torus_farey.positive_l2_route_closes_signed_mobius_gate} "
+        "signed_restriction="
+        f"{torus_farey.signed_mobius_tensor_restriction_still_required}"
     )
     outer_modulus = outer_modulus_type_recombination_audit(
         original_modulus=30,

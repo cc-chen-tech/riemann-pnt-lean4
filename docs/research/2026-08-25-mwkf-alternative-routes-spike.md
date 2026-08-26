@@ -19301,6 +19301,142 @@ cyclotomic coefficients.  It records the required operator exponents
 not necessary, and keeps the signed tensor restriction, operator bound,
 and MMKLS false.
 
+### 4.109zjabc Farey spacing collapses the cross-slope multiplicity
+
+The physical pullback (4.845dc_14xq_19ga) does not retain a
+power-sized slope family at a fixed point.  Write
+\[
+ g=T^\gamma,\qquad
+ V=T^{1/2-\gamma},\qquad
+ D=T^{5/2-\gamma},\qquad
+ r,s\asymp T^3.
+\]
+For a contributing primitive pair \((j,v)\), the determinant equation
+gives
+\[
+ \frac jv=\frac rs-\frac{\delta_0}{sv}.
+ \tag{4.845dc_14xq_19j}
+\]
+Thus every contributing reduced fraction \(j/v\) lies in an interval
+about \(r/s\) of length
+\[
+ \ll \frac{D}{SV}=T^{-1}.
+ \tag{4.845dc_14xq_19k}
+\]
+Two distinct reduced fractions in this dyadic denominator box have
+Farey separation
+\[
+ \left|\frac{j_1}{v_1}-\frac{j_2}{v_2}\right|
+ =\frac{|j_1v_2-j_2v_1|}{|v_1v_2|}
+ \gg \frac1{V^2}=T^{-1+2\gamma}.
+ \tag{4.845dc_14xq_19l}
+\]
+Consequently the number of primitive slopes contributing to one
+physical pair satisfies the exact scale bound
+\[
+ \boxed{
+ \#\{(j,v)\text{ at fixed }(r,s)\}
+ \ll 1+\frac{DV}{S}
+ =1+T^{-2\gamma}\ll1.}
+ \tag{4.845dc_14xq_19m}
+\]
+For every fixed \(\gamma>0\), the interval in
+(4.845dc_14xq_19k) is eventually shorter than the Farey spacing, so a
+sign-fixed dyadic box contains at most one primitive slope.  At
+\(\gamma=0\) there may be more than one, but their number is bounded
+independently of \(T\).  Hence the \(T^{1-2\gamma}\) total slope
+cardinality cannot itself provide a cross-slope power saving inside a
+fixed physical fibre.
+
+Applying \(|z_1+\cdots+z_m|^2\leq
+m(|z_1|^2+\cdots+|z_m|^2)\) with the bounded multiplicity in
+(4.845dc_14xq_19m) gives the rigorous positive estimate
+\[
+ \boxed{
+ \|\mathcal P_g\|_2^2
+ \ll \sum_{M\in\mathcal M_g}\|K_M\|_{\ell^2(\mathbb Z^2)}^2.}
+ \tag{4.845dc_14xq_19ma}
+\]
+This estimate contains no hidden power of the number of slopes.
+
+The positive pullback energy must therefore be compared with the EDSSF
+identity diagonal (4.185).  Its raw power is
+\[
+ E_{\rm diagonal}=6-2\gamma
+ \tag{4.845dc_14xq_19n}
+\]
+with only the four taper logarithms in (4.188), whereas the proposed
+operator energy target in (4.845dc_14xq_19h) is \(499/500\).  The power
+gap is
+\[
+ \boxed{
+ (6-2\gamma)-\frac{499}{500}
+ =\frac{2501}{500}-2\gamma
+ \geq\frac{2001}{500}.}
+ \tag{4.845dc_14xq_19o}
+\]
+Taking square roots shows exactly what the positive torus reformulation
+has and has not gained.  Its natural kernel norm has exponent
+\[
+ \|\mathcal P_g\|_2:\quad 3-\gamma,
+\]
+while the two-Möbius Parseval tensor has exponent \(3\).  Ordinary
+Cauchy therefore gives exponent
+\[
+ \boxed{E_{\rm positive}=6-\gamma.}
+ \tag{4.845dc_14xq_19p}
+\]
+Against the physical target \(3499/1000\), the deficit is
+\[
+ \boxed{
+ (6-\gamma)-\frac{3499}{1000}
+ =\frac{2501}{1000}-\gamma.}
+ \tag{4.845dc_14xq_19q}
+\]
+This is exactly the determinant-line saving requirement
+\(s_{\rm line}(\gamma)\) in (4.163).  The torus change of coordinates
+has preserved the obstruction without worsening it, but positive
+Cauchy has not supplied any part of the missing cancellation.
+
+Interpolating the Parseval norm with Davenport's uniform exponential-sum
+bound cannot change this power ledger.  Davenport supplies arbitrarily
+large logarithmic savings but power-saving exponent zero, and every
+positive \(L^p\) interpolation between the \(L^2\) and \(L^\infty\)
+endpoints is minimized in power at the Parseval endpoint already used
+in (4.845dc_14xq_19p).
+
+The smallest honest Fourier-space statement is therefore the signed
+Möbius-tensor restriction gate
+\[
+ \boxed{
+ (\mathrm{MTSR})_{q,g}:\qquad
+ \left|
+  \int_{\mathbb T^2}
+   A_R(\theta_1)B_S(\theta_2)\mathcal P_g(\theta)\,d\theta
+ \right|
+ \ll_{B,W}T^{3499/1000}(\log T)^{-B}.}
+ \tag{4.845dc_14xq_19r}
+\]
+By (4.845dc_14xq_19f), this is exactly the fixed-\(q,g\)
+determinant-line layer, with required saving
+\(2501/1000-\gamma\).  It is not a consequence of the positive
+operator norm (4.845dc_14xq_19h), and it is not yet proved.
+
+This exponent comparison is not a lower-bound proof for the particular
+oscillatory physical kernel: a bounded number of terms can still cancel
+at isolated fibres.  It does prove that a power saving cannot come from
+the cardinality of a large cross-slope family, because no such family
+exists after the physical pullback.  A full positive \(L^2\) theorem
+would need near-total kernel cancellation far below its raw diagonal
+scale; it is not a replacement for Möbius cancellation.
+
+The interface torus_farey_multiplicity_audit records the window
+exponent \(-1\), Farey exponent \(-1+2\gamma\), bounded multiplicity,
+eventual uniqueness for \(\gamma>0\), the diagonal exponent
+\(6-2\gamma\), and the exact identity between the positive-Cauchy
+deficit and (4.163).  It records Davenport power saving zero and keeps
+the signed tensor restriction and MMKLS open.
+
 ### 4.109zjac Product-index character energy saves locally but does not compose with PEVP
 
 There is a geometric estimate which was lost in the operator-norm bound

@@ -6065,6 +6065,92 @@ def test_unimodular_slope_family_has_exact_torus_operator_gate(
         assert marker in note
 
 
+@pytest.mark.parametrize(
+    (
+        "gamma",
+        "farey_spacing",
+        "uniqueness_margin",
+        "diagonal",
+        "gap",
+        "amplitude_deficit",
+    ),
+    (
+        (F(0), F(-1), F(0), F(6), F(2501, 500), F(2501, 1000)),
+        (F(1, 10), F(-4, 5), F(1, 5), F(29, 5), F(2401, 500), F(2401, 1000)),
+        (F(1, 2), F(0), F(1), F(5), F(2001, 500), F(2001, 1000)),
+    ),
+)
+def test_farey_spacing_leaves_no_power_sized_cross_slope_family(
+    gamma: F,
+    farey_spacing: F,
+    uniqueness_margin: F,
+    diagonal: F,
+    gap: F,
+    amplitude_deficit: F,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A fixed physical pair sees O(1), not T^(1-2 gamma), slopes."""
+    audit = coverage_audit.torus_farey_multiplicity_audit(
+        gcd_exponent=gamma,
+    )
+    assert audit.physical_coordinate_exponent == F(3)
+    assert audit.primitive_slope_exponent == F(1, 2) - gamma
+    assert audit.shift_quotient_exponent == F(5, 2) - gamma
+    assert audit.farey_minimum_spacing_exponent == farey_spacing
+    assert audit.physical_ratio_window_exponent == F(-1)
+    assert audit.farey_spacing_over_window_margin == uniqueness_margin
+    assert audit.fixed_physical_slope_multiplicity_exponent == F(0)
+    assert audit.fixed_physical_slope_multiplicity_is_bounded
+    assert audit.positive_g_layer_is_eventually_unique == (gamma > 0)
+    assert audit.critical_g_layer_has_only_constant_multiplicity
+    assert audit.raw_pullback_diagonal_exponent == diagonal
+    assert audit.squared_taper_log_saving == 4
+    assert audit.operator_energy_target_exponent == F(499, 500)
+    assert audit.raw_diagonal_over_target_exponent == gap
+    assert audit.operator_l2_target_is_below_raw_diagonal_by_power
+    assert audit.natural_operator_l2_exponent == diagonal / 2
+    assert audit.mobius_tensor_l2_exponent == F(3)
+    assert audit.positive_cauchy_bound_exponent == F(3) + diagonal / 2
+    assert audit.physical_layer_target_exponent == F(3499, 1000)
+    assert audit.positive_cauchy_deficit_exponent == amplitude_deficit
+    assert audit.deficit_equals_determinant_line_required_saving
+    assert audit.davenport_uniform_bound_power_saving_exponent == F(0)
+    assert not audit.positive_lp_interpolation_improves_power
+    assert audit.signed_pairing_gate_name == "MTSR_q,g"
+    assert audit.signed_pairing_is_exact_determinant_line_layer
+    assert audit.signed_gate_required_saving_exponent == amplitude_deficit
+    assert not audit.signed_pairing_gate_proved
+    assert not audit.cross_slope_recombination_has_power_cardinality
+    assert not audit.positive_l2_route_closes_signed_mobius_gate
+    assert audit.signed_mobius_tensor_restriction_still_required
+
+    if gamma == F(0):
+        coverage_audit.main()
+        output = capsys.readouterr().out
+        assert (
+            "balanced_max_a: torus_farey_multiplicity="
+            "gamma=0 slope=1/2 shift=5/2 physical=3 "
+            "farey=-1 window=-1 margin=0 multiplicity=0 bounded=True "
+            "unique=False critical_constant=True diagonal=6 taper_log=4 "
+            "energy_target=499/500 gap=2501/500 operator_l2=3 "
+            "mobius_l2=3 cauchy=6 target=3499/1000 deficit=2501/1000 "
+            "same_line_deficit=True davenport_power=0 lp_improves=False "
+            "signed_gate=MTSR_q,g exact_layer=True signed_save=2501/1000 "
+            "signed_proved=False cross_power=False "
+            "positive_l2=False signed_restriction=True"
+        ) in output
+        note = ALTERNATIVE_ROUTES_NOTE.read_text()
+        for marker in (
+            "### 4.109zjabc Farey spacing collapses the cross-slope multiplicity",
+            r"\frac{D}{SV}",
+            r"\frac1{V^2}",
+            r"6-2\gamma",
+            r"(\mathrm{MTSR})_{q,g}",
+            "torus_farey_multiplicity_audit",
+        ):
+            assert marker in note
+
+
 def test_drappeau_quintilinear_bound_does_not_compose_with_outer_pevp(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
