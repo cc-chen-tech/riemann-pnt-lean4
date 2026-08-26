@@ -5831,17 +5831,19 @@ sum.  For squarefree \(q\) and nonzero \(k\),
 \tag{9.220}
 \]
 
-Equations (9.212)--(9.220) are an **exact arithmetic exponent closure of
-the coprime-unit, fully centered primitive family**, not yet a proof of
-CK\(_{\rm ub}(3)\).  To promote this ledger to the global remainder
-bound one must still write the uniform separation of all archimedean
-weights, handle nonunit numerator multipliers before (9.212), and
-recombine those pieces with the principal/axis spectra.  Common-modulus
-strata are treated separately in Sections 9.36--9.37.  The important
-change in proof status is narrower but genuine: the hardest primitive
-raw term now maps to a published varying-level theorem at exactly the
-required exponent; it no longer requires a conjectural new two-modulus
-large sieve on that face.
+Equations (9.212)--(9.220) are an **exact arithmetic exponent closure for
+one fixed scalar-factor stratum of the coprime-unit, fully centered
+primitive family**, not yet a proof of CK\(_{\rm ub}(3)\).  The ledger
+(9.217) does not include the outer sum over the scalar factors
+\(g_a,j\) in (9.187).  Restoring that sum by triangle costs
+\(T^{\gamma_a+\iota}\); at the transition corner this is
+\(T^{1/2}\), so the globally aggregated primitive family is not closed.
+The corrected coverage calculation is given in Section 9.39.  Uniform
+separation of the archimedean weights, nonunit numerator multipliers, and
+recombination with the principal/axis spectra remain additional duties.
+Common-modulus strata are treated separately in Sections 9.36--9.37.
+The valid conclusion is narrower: the fixed-stratum raw term maps to a
+published varying-level theorem at exactly the required exponent.
 
 ### 9.36 Common-modulus collision before the inverse-residue sum
 
@@ -5944,9 +5946,12 @@ For fixed \(t\), the Young ledger is
 \]
 
 The energy entry uses (9.218) with \(g=t\), while the count of
-\(u=m/t\) supplies the second \(t^{-1}\).  Hence the **nonzero-dual CRT
-collision term closes on every common-divisor stratum**, with margin
-\(2\tau\) away from \(t=1\).
+\(u=m/t\) supplies the second \(t^{-1}\).  Hence the **fixed-scalar
+nonzero-dual CRT collision term** has exponent \(9-2\tau\).  This still
+omits the outer scalar-factor sum from (9.187).  At the transition corner
+that sum costs \(T^{1/2}\), so the corrected exponent is
+\(19/2-2\tau\), which closes precisely when \(\tau\geq1/4\); see
+(9.236)--(9.238).
 
 The remaining coprimality splits do not consume this margin.  If
 \(\kappa,\eta,\gamma\) denote respectively the row gcd, outer-numerator
@@ -6037,12 +6042,14 @@ numerator length.  Including \(t,u,v\), the zero-mode arithmetic count
 is at most \(T^{7-\tau+\varepsilon}\), well below the exponent-\(9\)
 threshold.
 
-Consequently the collision, both one-sided marginals, the all-mean
-term, and the zero mode are all arithmetically controlled on the
-**unit-numerator common-modulus family**.  What remains is no longer a
-common-\(t\) large-sieve problem: it is the nonunit numerator
-decomposition and the uniform separation/recombination of the original
-archimedean weights.
+Consequently both one-sided marginals, the all-mean term, and the zero
+mode remain arithmetically controlled after restoring the transition
+scalar cost: their exponents become at most \(9,13/2,15/2-\tau\),
+respectively.  The collision term is controlled only for
+\(\tau\geq1/4\).  The unit-numerator residual is therefore the
+small-common-divisor range \(0\leq\tau<1/4\), together with coherent
+scalar Möbius aggregation and the uniform separation/recombination of
+the original archimedean weights.
 
 ### 9.38 Exact reduction of nonunit numerator multipliers
 
@@ -6123,11 +6130,160 @@ this section does not declare CK\(_{\rm ub}(3)\) proved.  It does remove
 the former algebraic ambiguity about nonunit completion and proves that
 no pointwise Weil factor is created by the deleted prime coordinates.
 
+### 9.39 Restoring the scalar-factor sum: exact transition coverage
+
+The Young ledgers above are statements for fixed
+\(g_a,g_b,j,n\).  The transition corner of (9.187) has
+
+\[
+ \rho=\sigma=3,\qquad h=\ell=\lambda_0=\frac52,
+ \qquad x:=\gamma_a+\iota=\frac12,
+ \qquad \gamma_b=\eta=0.
+\tag{9.235}
+\]
+
+Thus the reduced \(\delta_0\)-length is \(T^{\ell-x}=T^2\).
+Let \(t=T^\tau\) be the common factor of the two oscillatory moduli in
+the dispersion square.  After the collision condition cancels \(t\)
+from numerator and denominator, the exact exponent ledger, now including
+both the dyadic \(t\)-sum and the outer scalar-factor triangle cost, is
+
+\[
+\begin{array}{c|c}
+ \text{quantity}&T\text{-exponent}\\ \hline
+ \text{reduced numerator}&2\\
+ \text{outer oscillatory modulus}&5/2-\tau\\
+ \text{nonzero row}&2-\tau\\
+ \text{rational height}&9/2-2\tau\\
+ \text{coefficient energy}&17/2-2\tau\\
+ \text{row Cauchy}&9/4-\tau\\
+ \text{Young constant}&5-2\tau\\ \hline
+ \text{fixed-stratum Young bound}&9-3\tau\\
+ \text{after the }t\text{-sum}&9-2\tau\\
+ \text{after the scalar-factor sum}&19/2-2\tau.
+\end{array}
+\tag{9.236}
+\]
+
+The dispersion second-moment target is \(RS^2=T^9\), not the local
+first-moment target \(RS=T^6\).  At \(\tau=0\), the raw count, Young
+bound, and target have exponents
+
+\[
+ \boxed{\frac{23}{2},\qquad\frac{19}{2},\qquad9,}
+\tag{9.237}
+\]
+
+so the required saving is \(5/2\), while (9.216) supplies only \(2\).
+More generally,
+
+\[
+ \boxed{
+  E_{\rm Young}^{\rm scalar}(\tau)-9
+   =\frac12-2\tau,
+  \qquad
+  E_{\rm Young}^{\rm scalar}(\tau)\leq9
+   \Longleftrightarrow \tau\geq\frac14.}
+\tag{9.238}
+\]
+
+This is a finite rational coverage proposition: on the admissible
+quarter-power grid \(0\leq\tau\leq2\), the uncovered set is exactly the
+single grid point \(\tau=0\); without discretizing, it is the interval
+\(0\leq\tau<1/4\).  The checker evaluates every entry of (9.236)--(9.238)
+with exact fractions.
+
+The residual can be written before any scalar triangle inequality.  On
+the primitive transition face \(g_b=j=n=1\), put
+\(G=T^{1/2},Q=T^{5/2},D=T^2\).  Since \(r=gq+d\), reduction modulo
+\(q\) gives \(\bar r_q=\bar d_q\).  Up to the already displayed smooth
+weights and exact moving endpoints, every unresolved packet has the
+finite form
+
+\[
+\boxed{
+ \mathfrak P[\Omega]
+ :=\sum_{g\asymp G}\mu(g)
+ \sum_{q\asymp Q\atop(g,q)=1}\mu(q)
+ \sum_{d\in I(gq)\atop(d,gq)=1}\mu(gq+d)
+ \sum_{h\asymp T^{5/2}}
+ \sum_{\delta_0\asymp T^2}
+ \Omega(g,q,d,h,\delta_0)
+ e_q(-h\delta_0\bar d_q),}
+\tag{9.239}
+\]
+
+Here \(I(gq)=(R-gq,2R-gq]\) is the exact moving interval inherited
+from (9.166), and \(\Omega\) denotes the corresponding localized smooth
+weight together with the scalar-stratum coefficients already present in
+(9.187).  Formula (9.239) retains the product \(h\delta_0\) and the
+simultaneous signs \(\mu(g)\mu(q)\mu(gq+d)\).  The phase is independent
+of \(g\) only after \(d\) is fixed; consequently Cauchy in \(g\) asks for
+short two-point Möbius correlations between \(g_1q+d\) and
+\(g_2q+d\), rather than giving free orthogonality.
+
+There is an exact two-cutoff Type-I/II decomposition of the last Möbius
+factor which introduces no remainder.  For integers \(U,V\geq1\) and
+\(r>\max(U,V)\), use \(\mu*\mu*1=\mu\) and split the two divisor
+variables at \(U,V\).  Divisor orthogonality gives
+
+\[
+ \sum_{b\leq U\atop b\mid r}\mu(b)
+ \sum_{c\mid r/b}\mu(c)=0,
+ \qquad
+ \sum_{c\leq V\atop c\mid r}\mu(c)
+ \sum_{b\mid r/c}\mu(b)=0.
+\tag{9.240}
+\]
+
+Subtracting the common short--short rectangle from either equality
+cancels both mixed rectangles in the full convolution and yields
+
+\[
+\boxed{
+ \mu(r)=
+ -\sum_{bc\mid r\atop b\leq U,\ c\leq V}\mu(b)\mu(c)
+ +\sum_{bc\mid r\atop b>U,\ c>V}\mu(b)\mu(c).}
+\tag{9.241}
+\]
+
+Inserting \(r=gq+d\) in (9.239) defines a short--short Type-I packet
+and a long--long Type-II packet, both still carrying
+
+\[
+ \mu(g)\mu(q)\mu(b)\mu(c),\qquad
+ bc\mid gq+d,\qquad
+ \Omega(g,q,d,h,\delta_0)e_q(-h\delta_0\bar d_q).
+\tag{9.242}
+\]
+
+Thus no cross term, endpoint term, or truncation error is hidden in this
+split, and the coupled product \(h\delta_0\) has not been replaced by an
+arbitrary coefficient.  The finite checker verifies (9.241) for unequal
+cutoffs as well as the diagonal choice \(U=V\).  Estimating these two
+packets uniformly in the small-common-factor range remains the analytic
+gate; (9.241) is a reduction, not its proof.
+
+Known one-variable Möbius--trace results do not close (9.239).  Even if
+one optimistically grants a translated prime-modulus version of the
+Fouvry--Kowalski--Michel smoothed estimate at \(D=q^{4/5}\), it saves
+only \(q^{-1/120+o(1)}\): its factor is
+\((q/D)^{1/6}q^{-1/24}=q^{-1/120}\).  The missing scalar cost is
+\(T^{1/2}=q^{1/5}\).  Korolev--Shparlinski reaches intervals longer than
+\(q^{1/2+\varepsilon}\), but only with logarithmic saving, and both
+statements are prime-modulus results whereas (9.239) averages squarefree
+composite \(q\); the actual moving interval is an additional mismatch.
+Hence neither theorem supplies the required power or the composite-modulus
+aggregation.  The remaining analytic task is
+precisely to estimate (9.239) for \(0\leq\tau<1/4\) before taking an
+absolute value over \(g\); no unconditional closure is claimed.
+
 ## 10. What has and has not been proved
 
-**Current classification: the coprime-unit primitive exponent now closes
-through Young's varying-level large sieve; the full Region-D recombination
-remains unproved.**
+**Current classification: Young closes each fixed scalar stratum and the
+globally aggregated transition range \(\tau\geq1/4\); the scalar-Möbius
+packet (9.239) for \(0\leq\tau<1/4\), hence the full Region-D
+recombination, remains unproved.**
 
 Proved in this note:
 
@@ -6244,25 +6400,33 @@ Proved in this note:
   ledger (9.209)--(9.211).
 * the exact numerator-Fourier unit support (9.212), smooth completion
   (9.213), dual reciprocity (9.214), and Young varying-level large-sieve
-  map (9.215)--(9.217); the primitive fully centered raw term saves the
-  required \(T^2\), and the complete three-gcd exponent audit
+  map (9.215)--(9.217); for each fixed scalar stratum the primitive fully
+  centered raw term saves \(T^2\), and the complete three-gcd exponent audit
   (9.218)--(9.219) never exceeds the target exponent \(9\).  The
   squarefree mean factors have the elementary dyadic bound (9.220).
 * the pre-residue numerator transform (9.221), exact four-term
   common-modulus collision formula (9.222), and compatibility divisor
   (9.223); cancelling \(t=(m,n)\) from the Young rational gives the
-  common-stratum ledger (9.226), whose nonzero-dual collision term has
-  total exponent \(9-2\tau\leq9\), and the four-parameter gcd audit
-  remains at most \(9\), (9.227).
+  fixed-scalar common-stratum ledger (9.226), whose nonzero-dual
+  collision term has exponent \(9-2\tau\) before the scalar sum; the
+  four-parameter fixed-stratum gcd audit is (9.227).
 * the exact Ramanujan marginal factorization (9.228), its exponent
   margins (9.229), the recombined zero-mode congruence (9.230), and the
-  finite interval boundary bound (9.231); together these control every
-  unit-numerator common-modulus arithmetic term.
+  finite interval boundary bound (9.231); after restoring the scalar
+  cost these still control all marginal and zero-mode terms, but not the
+  small-common-factor collision.
 * the general nonunit numerator transform (9.232) and ambient CRT
   factorization (9.233); nonunit multipliers reduce to the same centered
   collision on shorter moduli, while the gcd selection and numerator
   restriction exactly balance and the free normalized Ramanujan factor
   costs no power, (9.234).
+* the scalar-factor correction (9.235)--(9.238): after restoring the
+  missing transition scalar sum, Young has exponent \(19/2-2\tau\), so
+  it covers exactly \(\tau\geq1/4\).  The residual packet (9.239) keeps
+  \(h\delta_0\) and all three Möbius signs.  The exact two-cutoff identity
+  (9.240)--(9.242) splits its last sign into short--short Type I and
+  long--long Type II packets without mixed or truncation errors; the
+  direct prime-modulus Möbius--trace ledger is quantitatively insufficient.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -6307,8 +6471,9 @@ Proved in this note:
 | Coprimality-migrated scalar spectrum | exact Type-II bridge; balanced face unproved | expanding \((k,\delta')=1\) gives the triple spectrum (9.187), whose product coefficient is independent of the oscillatory modulus; Bettin--Chandee applies with (9.189), but (9.193) proves a uniform gap of at least \(T^2\), with gap \(T^{67/16}\) at the primitive corner |
 | Centered common-divisor dispersion | exact zero-frequency reduction; nonzero dual estimate unproved | centering the full divisor packet makes the \(k=1\) layer vanish, (9.197); the cross-modulus covariance is zero for coprime moduli and otherwise factors only through \(t=(m,n)\), (9.194)--(9.196); (9.198)--(9.201) isolate the remaining dual Kloosterman frequencies and the \(t_0=Q^2/R=T^2\) transition |
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
-| Young varying-level primitive route | exact arithmetic exponent closure; global recombination unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps the raw term to Young's additive rational large sieve, (9.214)--(9.217), saving exactly \(T^2\).  The \(d,e,g\) strata remain at exponent at most \(9\), (9.218)--(9.219); primitive nonunit multipliers reduce without power loss by (9.232)--(9.234), while uniform archimedean separation remains |
-| Common-modulus unit-numerator family | exact arithmetic exponent closure; analytic recombination unproved | completing before the residue sum gives delta-minus-mean (9.221) and the CRT collision formula (9.222).  Its collision support cancels \(t\) from the Young rational and all gcd strata stay at most \(9\), (9.223)--(9.227).  Ramanujan marginals are below target, (9.228)--(9.229), and the recombined zero mode has only interval-boundary size, (9.230)--(9.231).  Uniform archimedean recombination remains |
+| Young varying-level primitive route | fixed scalar strata close; scalar aggregation residual unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps each fixed-stratum raw term to Young's additive rational large sieve, (9.214)--(9.219), saving \(T^2\).  Restoring the transition scalar sum gives exponent \(19/2\), leaving \(T^{1/2}\), (9.235)--(9.238) |
+| Common-modulus unit-numerator family | closes for \(\tau\geq1/4\); small-common-factor packet unproved | the CRT collision cancels \(t\) from the Young rational, (9.221)--(9.227), but after the scalar sum its exponent is \(19/2-2\tau\).  Ramanujan marginals and the recombined zero mode remain below target, (9.228)--(9.231).  The exact residual is (9.239) for \(0\leq\tau<1/4\) |
+| Scalar Möbius transition packet | exact Type-I/II reduction; joint estimate unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Fixed-prime Möbius--trace estimates give at best the optimistic \(q^{-1/120}\) ledger at \(D=q^{4/5}\), versus the required \(q^{-1/5}\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
@@ -6375,6 +6540,14 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 * M. A. Korolev, *On Kloosterman sums with multiplicative coefficients*,
   Izv. Math. 82:4 (2018), 647--661, DOI 10.1070/IM8633, Theorems 1 and 5;
   audited in Section 9.8.
+* É. Fouvry, E. Kowalski, P. Michel, *Algebraic trace functions over the
+  primes*, Duke Math. J. 163 (2014), 1683--1736, arXiv:1211.6043,
+  Theorem 1.7; its optimistic prime-modulus exponent at the transition
+  length is audited in Section 9.39.
+* M. A. Korolev, I. E. Shparlinski, *Sums of algebraic trace functions
+  twisted by arithmetic functions*, Proc. Steklov Inst. Math. 314
+  (2021), 128--144, arXiv:1804.01337, Theorem 2.1; its saving in the
+  \(p^{1/2+\varepsilon}\) range is logarithmic and prime-modulus only.
 * arXiv:2601.00292 is **withdrawn from this project's admissible analytic
   inputs**: the author record reports a missing \(L^2\) factor (changing the
   relevant loss from \(L^5\) to \(L^7\)), so the advertised improvement is

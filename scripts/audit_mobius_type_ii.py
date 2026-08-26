@@ -163,6 +163,43 @@ def two_sided_mobius_geometric_value(
     ) * mobius_geometric_value(s, cutoff_s, depth_s)
 
 
+def mobius_two_cutoff_hyperbola_value(
+    n: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> int:
+    """Evaluate the exact short-short/long-long split of ``mu(n)``.
+
+    For ``n > max(cutoff_left, cutoff_right)``, the two mixed rectangles
+    in ``sum_{bc | n} mu(b) mu(c)`` vanish by divisor orthogonality.
+    Thus ``mu(n)`` is the long-long rectangle minus the short-short one,
+    with no truncation remainder.
+    """
+
+    if n < 1 or cutoff_left < 1 or cutoff_right < 1:
+        raise ValueError("n and both cutoffs must be positive")
+    if n <= max(cutoff_left, cutoff_right):
+        raise ValueError("n must exceed both cutoffs")
+
+    short_short = 0
+    long_long = 0
+    for left_factor in divisors(n):
+        for right_factor in divisors(n // left_factor):
+            contribution = mobius(left_factor) * mobius(right_factor)
+            if (
+                left_factor <= cutoff_left
+                and right_factor <= cutoff_right
+            ):
+                short_short += contribution
+            elif (
+                left_factor > cutoff_left
+                and right_factor > cutoff_right
+            ):
+                long_long += contribution
+    return long_long - short_short
+
+
 @dataclass(frozen=True)
 class InverseFractionSeparation:
     """Centered numerator certificate for two fixed-numerator fractions.
@@ -1761,6 +1798,25 @@ class YoungCommonFactorLedger:
 
 
 @dataclass(frozen=True)
+class YoungScalarTransitionLedger:
+    """Young ledger after restoring the outer scalar-factor sum."""
+
+    reduced_numerator: Fraction
+    outer_modulus: Fraction
+    row_length: Fraction
+    rational_height: Fraction
+    coefficient_energy: Fraction
+    row_cauchy: Fraction
+    large_sieve_constant: Fraction
+    theorem_bound: Fraction
+    raw_bound: Fraction
+    second_moment_target: Fraction
+    theorem_gap: Fraction
+    required_saving: Fraction
+    theorem_saving: Fraction
+
+
+@dataclass(frozen=True)
 class CommonFactorMarginalLedger:
     """Exponent bounds for the three Ramanujan marginals in the CRT formula."""
 
@@ -1814,6 +1870,101 @@ def young_dual_reciprocity_ledger(
         trivial_bound=trivial_bound,
         saving=saving,
         margin=saving - required_saving,
+    )
+
+
+def young_scalar_transition_ledger(
+    *,
+    r_length: Fraction,
+    total_modulus: Fraction,
+    scalar_fixed: Fraction,
+    oscillatory_modulus: Fraction,
+    h_length: Fraction,
+    delta_length: Fraction,
+    common_factor: Fraction,
+) -> YoungScalarTransitionLedger:
+    """Audit Young after the scalar-gcd factors are summed by triangle.
+
+    This is the transition face of (9.187): the Ramanujan factor is one,
+    the oscillatory modulus has the same exponent as the h-interval, and
+    the fixed scalar factors have total exponent g_a+j.  The reduced
+    delta interval has exponent ell-(g_a+j).  A dispersion step has
+    second-moment target R*S^2, hence exponent rho+2*sigma.
+    """
+
+    values = (
+        r_length,
+        total_modulus,
+        scalar_fixed,
+        oscillatory_modulus,
+        h_length,
+        delta_length,
+        common_factor,
+    )
+    if any(value < 0 for value in values):
+        raise ValueError("all exponent lengths must be nonnegative")
+    if scalar_fixed + oscillatory_modulus != total_modulus:
+        raise ValueError("the fixed and oscillatory factors must form S")
+    if h_length != oscillatory_modulus:
+        raise ValueError("this transition ledger requires H=lambda")
+    reduced_numerator = delta_length - scalar_fixed
+    if reduced_numerator < 0:
+        raise ValueError("the reduced numerator interval is empty")
+    base_row_length = 2 * oscillatory_modulus - r_length
+    if base_row_length < 0:
+        raise ValueError("the nonzero dispersion row is empty")
+    if common_factor > min(
+        oscillatory_modulus,
+        reduced_numerator,
+        base_row_length,
+    ):
+        raise ValueError("the common factor exceeds a reduced length")
+
+    outer_modulus = oscillatory_modulus - common_factor
+    row_length = base_row_length - common_factor
+    rational_height = (
+        reduced_numerator
+        + oscillatory_modulus
+        - 2 * common_factor
+    )
+    coefficient_energy = (
+        oscillatory_modulus
+        + 3 * reduced_numerator
+        - 2 * common_factor
+    )
+    row_cauchy = (outer_modulus + row_length) / 2
+    large_sieve_constant = max(
+        2 * outer_modulus,
+        rational_height,
+    )
+    theorem_bound = (
+        scalar_fixed
+        + common_factor
+        + row_cauchy
+        + (large_sieve_constant + coefficient_energy) / 2
+    )
+    raw_bound = (
+        scalar_fixed
+        + 4 * oscillatory_modulus
+        - 2 * common_factor
+        - r_length
+        + 2 * reduced_numerator
+    )
+    second_moment_target = r_length + 2 * total_modulus
+    return YoungScalarTransitionLedger(
+        reduced_numerator=reduced_numerator,
+        outer_modulus=outer_modulus,
+        row_length=row_length,
+        rational_height=rational_height,
+        coefficient_energy=coefficient_energy,
+        row_cauchy=row_cauchy,
+        large_sieve_constant=large_sieve_constant,
+        theorem_bound=theorem_bound,
+        raw_bound=raw_bound,
+        second_moment_target=second_moment_target,
+        theorem_gap=theorem_bound - second_moment_target,
+        required_saving=raw_bound - second_moment_target,
+        theorem_saving=raw_bound - theorem_bound,
     )
 
 

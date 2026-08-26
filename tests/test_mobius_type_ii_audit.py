@@ -27,6 +27,7 @@ from scripts.audit_mobius_type_ii import (
     YoungCommonFactorLedger,
     YoungDualGcdLedger,
     YoungDualReciprocityLedger,
+    YoungScalarTransitionLedger,
     additive_completion_axis_recombined,
     additive_completion_axis_row,
     additive_completion_axis_union,
@@ -104,6 +105,7 @@ from scripts.audit_mobius_type_ii import (
     linear_convolution_energy_on_multiples_majorant,
     migrate_nonprincipal_mobius_sign,
     mobius_geometric_value,
+    mobius_two_cutoff_hyperbola_value,
     mobius_weighted_centered_double_unit_divisor_spectrum,
     mobius_weighted_double_unit_divisor_spectrum,
     mobius_weighted_double_unit_mean,
@@ -151,6 +153,7 @@ from scripts.audit_mobius_type_ii import (
     young_common_factor_ledger,
     young_dual_reciprocity_gcd_ledger,
     young_dual_reciprocity_ledger,
+    young_scalar_transition_ledger,
 )
 from scripts.audit_mwkf_ranges import ExponentBox, boundary_witnesses
 
@@ -364,6 +367,17 @@ def test_two_sided_finite_mobius_decomposition_preserves_both_signs() -> None:
                 depth_r=depth_r,
                 depth_s=depth_s,
             ) == naive_mobius(r) * naive_mobius(s)
+
+
+def test_two_cutoff_hyperbola_identity_has_no_cross_term_or_remainder() -> None:
+    for cutoff_left in range(1, 8):
+        for cutoff_right in range(1, 8):
+            for n in range(max(cutoff_left, cutoff_right) + 1, 121):
+                assert mobius_two_cutoff_hyperbola_value(
+                    n,
+                    cutoff_left=cutoff_left,
+                    cutoff_right=cutoff_right,
+                ) == naive_mobius(n)
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:
@@ -1840,6 +1854,48 @@ def test_young_additive_rational_sieve_hits_exact_required_saving() -> None:
         saving=F(2),
         margin=F(0),
     )
+
+
+def test_scalar_factor_cost_reopens_the_transition_corner() -> None:
+    assert young_scalar_transition_ledger(
+        r_length=F(3),
+        total_modulus=F(3),
+        scalar_fixed=F(1, 2),
+        oscillatory_modulus=F(5, 2),
+        h_length=F(5, 2),
+        delta_length=F(5, 2),
+        common_factor=F(0),
+    ) == YoungScalarTransitionLedger(
+        reduced_numerator=F(2),
+        outer_modulus=F(5, 2),
+        row_length=F(2),
+        rational_height=F(9, 2),
+        coefficient_energy=F(17, 2),
+        row_cauchy=F(9, 4),
+        large_sieve_constant=F(5),
+        theorem_bound=F(19, 2),
+        raw_bound=F(23, 2),
+        second_moment_target=F(9),
+        theorem_gap=F(1, 2),
+        required_saving=F(5, 2),
+        theorem_saving=F(2),
+    )
+
+
+def test_common_factor_covers_transition_exactly_from_one_quarter() -> None:
+    for common_factor_quarters in range(9):
+        common_factor = F(common_factor_quarters, 4)
+        ledger = young_scalar_transition_ledger(
+            r_length=F(3),
+            total_modulus=F(3),
+            scalar_fixed=F(1, 2),
+            oscillatory_modulus=F(5, 2),
+            h_length=F(5, 2),
+            delta_length=F(5, 2),
+            common_factor=common_factor,
+        )
+        assert ledger.theorem_bound == F(19, 2) - 2 * common_factor
+        assert (ledger.theorem_gap <= 0) == (common_factor >= F(1, 4))
 
 
 def test_centered_inverse_numerator_fourier_is_delta_minus_mean() -> None:
