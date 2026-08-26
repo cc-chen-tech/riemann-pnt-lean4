@@ -1803,6 +1803,10 @@ def test_resonant_gram_is_a_mobius_farey_microcluster_square_function() -> None:
     assert audit.sector_character_parseval_exact
     assert audit.sector_principal_mode_absorbable
     assert audit.remaining_resonant_gate_has_only_nonzero_sector_characters
+    assert audit.single_mobius_log_derivative_exact
+    assert not audit.nonzero_character_automatic_frequency_decay
+    assert audit.pre_cauchy_type_dispersion_required
+    assert not audit.nonzero_character_type_bound_proved
     assert audit.requires_vector_valued_two_mobius_cancellation
     assert not audit.unweighted_farey_equidistribution_matches
     assert not audit.one_mobius_nilsequence_theorem_matches
@@ -1924,6 +1928,63 @@ def test_sector_principal_mode_is_absorbed_into_the_original_gram() -> None:
     assert result["twice_overlap_upper_multiplier"] == F(6)
     assert result["principal_mode_absorbable"]
     assert result["zero_sector_frequency_requires_separate_bound"] is False
+
+
+def test_mobius_log_derivative_identity_is_exact_in_every_prime_coordinate() -> None:
+    identity = getattr(
+        coverage_audit,
+        "mobius_log_derivative_prime_coordinate_identity",
+        None,
+    )
+    assert identity is not None, "finite Möbius log-derivative helper is missing"
+
+    for n in range(1, 151):
+        result = identity(n=n)
+        assert result["prime_coordinate_identity_exact"]
+        assert result["left_prime_log_coefficients"] == result[
+            "right_prime_log_coefficients"
+        ]
+
+
+def test_single_mobius_type_split_retains_the_exact_farey_entry() -> None:
+    identity = getattr(
+        coverage_audit,
+        "farey_single_mobius_type_identity",
+        None,
+    )
+    assert identity is not None, "Farey one-Möbius Type identity is missing"
+
+    result = identity(q=11, b=14, k=2, s=7)
+    assert result["sector_fiber_nonempty"]
+    assert result["w"] == 9
+    assert result["r"] == 23
+    assert result["sector_membership_exact"]
+    assert result["retained_first_mobius"] == -1
+    assert result["prime_coordinate_identity_exact"]
+    assert result["one_mobius_factor_only"]
+    assert result["sector_character_label_retained"] == 14
+
+
+def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
+    coefficients = getattr(
+        coverage_audit,
+        "sector_character_correlation_coefficients",
+        None,
+    )
+    assert coefficients is not None, "sector-character correlation helper is missing"
+
+    result = coefficients(
+        cluster_vectors={
+            0: (F(1), F(0), F(0)),
+            1: (F(0), F(1), F(0)),
+            2: (F(0), F(0), F(1)),
+        }
+    )
+    assert result["correlation_coefficients"] == {0: F(3)}
+    assert result["offzero_correlations_vanish"]
+    assert result["character_energy_is_frequency_independent"]
+    assert result["constant_character_energy"] == F(3)
+    assert not result["nonzero_character_alone_supplies_saving"]
 
 
 def test_transition_denominator_gcd_line_reduces_to_two_mobius_square_root() -> None:

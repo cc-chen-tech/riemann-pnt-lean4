@@ -10222,6 +10222,80 @@ sector_principal_absorption_audit verify (4.621zadj16v-x) over exact
 rational vectors.  In the fixture \(M=7,R=1\), the feedback coefficient
 is \(3/7\) and the exact nonprincipal multiplier is \(21/4<6=2L\).
 
+The first exact Type decomposition can now be made after, rather than
+before, this principal-mode absorption.  In every prime-log coordinate,
+
+\[
+ \boxed{-\mu(r)\log r
+ =\sum_{dm=r}\mu(d)\Lambda(m).}
+\tag{4.621zadj16z}
+\]
+
+Indeed, the coefficient of \(\log p\) on the left is
+\(-\mu(r)v_p(r)\), while that on the right is
+
+\[
+ \sum_{1\leq \nu\leq v_p(r)}\mu(r/p^\nu).
+\tag{4.621zadj16aa}
+\]
+
+These integers agree even when \(r\) is not squarefree.  On the unique
+Beatty fiber \(r_b(s)=ks+w_b(s)\), absorb \(1/\log r_b(s)\) into the
+smooth packet and write it as \(\widetilde G_{b,s}\).  Then every nonzero
+sector character has the exact form
+
+\[
+\boxed{
+ \mathcal A_a
+ =-\sum_b e(ab/M)\sum_s\mu(s)
+   \sum_{dm=r_b(s)}\mu(d)\Lambda(m)
+   \widetilde G_{b,s},
+ \qquad a\ne0.}
+\tag{4.621zadj16ab}
+\]
+
+No Cauchy--Schwarz or absolute value occurs in (4.621zadj16ab).  The
+first Möbius factor \(\mu(s)\), the angular character, the relation
+\(dm=ks+w_b(s)\), both mollifier tapers, and the vector packet are all
+retained.  A dyadic split \(d\asymp D,m\asymp P,DP\asymp T\) now has the
+usual exact alternatives: an extreme Type-I range with one of \(D,P\)
+short, and a balanced Type-II range.  Merely applying (4.621zadj16z)
+does not estimate either range; its purpose is to expose the prime-bearing
+variable before the one global dispersion step.
+
+The helper mobius_log_derivative_prime_coordinate_identity verifies
+(4.621zadj16z-aa) for arbitrary finite integers without floating
+logarithms.  The helper farey_single_mobius_type_identity additionally
+checks the unique sector fiber and records all
+\((d,m,\mu(s),\mu(d),p)\) terms with \(m=p^\nu\).  Neither helper marks
+the nonzero-character Type-I/II estimate as proved.
+
+Nonzero sector frequency must not itself be counted as a saving.  Put
+
+\[
+ C_u:=\sum_b\langle S_{b+u},S_b\rangle .
+\tag{4.621zadj16ac}
+\]
+
+Then the same finite expansion gives
+
+\[
+ \|\mathcal A_a\|_2^2
+ =\sum_{|u|\leq R}e(au/M)C_u.
+\tag{4.621zadj16ad}
+\]
+
+This is a trigonometric polynomial of fixed degree \(R\), not a quantity
+which decays automatically as \(|a|\) grows.  In the finite fixture where
+the nonzero \(S_b\) are mutually orthogonal, \(C_0=\sum_b\|S_b\|_2^2\)
+and every \(C_u\) with \(u\ne0\) vanishes, so
+\(\|\mathcal A_a\|_2^2=C_0\) for **every** character, including all
+\(a\ne0\).  The helper sector_character_correlation_coefficients records
+this exact counterexample.  Hence (4.621zadj16y) removes the principal
+feedback but does not manufacture the remaining power saving; that saving
+must arise inside (4.621zadj16ab), before Cauchy--Schwarz, from the retained
+Möbius/prime-bearing variables.
+
 The horocycle/Farey result of
 [Panti](https://arxiv.org/abs/1503.02539) permits piecewise-smooth
 denominator weights and derives macroscopic gap distributions.  It does

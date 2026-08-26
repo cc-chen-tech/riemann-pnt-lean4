@@ -876,6 +876,10 @@ class TransitionPoissonTubeClusterAudit:
     sector_character_parseval_exact: bool
     sector_principal_mode_absorbable: bool
     remaining_resonant_gate_has_only_nonzero_sector_characters: bool
+    single_mobius_log_derivative_exact: bool
+    nonzero_character_automatic_frequency_decay: bool
+    pre_cauchy_type_dispersion_required: bool
+    nonzero_character_type_bound_proved: bool
     requires_vector_valued_two_mobius_cancellation: bool
     unweighted_farey_equidistribution_matches: bool
     one_mobius_nilsequence_theorem_matches: bool
@@ -4861,6 +4865,10 @@ def transition_poisson_tube_cluster_audit(
         sector_character_parseval_exact=True,
         sector_principal_mode_absorbable=True,
         remaining_resonant_gate_has_only_nonzero_sector_characters=True,
+        single_mobius_log_derivative_exact=True,
+        nonzero_character_automatic_frequency_decay=False,
+        pre_cauchy_type_dispersion_required=True,
+        nonzero_character_type_bound_proved=False,
         requires_vector_valued_two_mobius_cancellation=True,
         unweighted_farey_equidistribution_matches=False,
         one_mobius_nilsequence_theorem_matches=False,
@@ -5176,6 +5184,64 @@ def sector_character_parseval_sides(
         "principal_character_energy": principal,
         "nonprincipal_character_energy": nonprincipal,
         "nonprincipal_character_energy_nonnegative": nonprincipal >= 0,
+    }
+
+
+def sector_character_correlation_coefficients(
+    *,
+    cluster_vectors: dict[int, tuple[Fraction, ...]],
+) -> dict[str, object]:
+    """Expand sector-character energy into cluster-offset correlations.
+
+    For ``A_a=sum_b e(ab/M)S_b`` one has formally
+
+    ``||A_a||^2=sum_u e(au/M) C_u`` with
+    ``C_u=sum_b <S_(b+u),S_b>``.
+
+    Banded packet geometry limits the number of offsets but does not make
+    the resulting fixed-degree trigonometric polynomial decay with ``a``.
+    Orthogonal nonzero cluster vectors give the exact counterexample
+    ``C_0=sum_b||S_b||^2`` and ``C_u=0`` for every ``u!=0``; the character
+    energy is then constant at every frequency.
+    """
+    if not cluster_vectors:
+        raise ValueError("at least one cluster vector is required")
+    dimensions = {len(vector) for vector in cluster_vectors.values()}
+    if len(dimensions) != 1:
+        raise ValueError("all cluster vectors must have one dimension")
+
+    def dot(
+        left: tuple[Fraction, ...],
+        right: tuple[Fraction, ...],
+    ) -> Fraction:
+        return sum((F(x) * F(y) for x, y in zip(left, right)), F(0))
+
+    sectors = sorted(cluster_vectors)
+    offsets = range(min(sectors) - max(sectors), max(sectors) - min(sectors) + 1)
+    correlations = {
+        offset: sum(
+            (
+                dot(cluster_vectors[b + offset], cluster_vectors[b])
+                for b in sectors
+                if b + offset in cluster_vectors
+            ),
+            F(0),
+        )
+        for offset in offsets
+    }
+    correlations = {
+        offset: value
+        for offset, value in correlations.items()
+        if value != 0
+    }
+    offzero_vanish = all(offset == 0 for offset in correlations)
+    constant_energy = correlations.get(0, F(0)) if offzero_vanish else None
+    return {
+        "correlation_coefficients": correlations,
+        "offzero_correlations_vanish": offzero_vanish,
+        "character_energy_is_frequency_independent": offzero_vanish,
+        "constant_character_energy": constant_energy,
+        "nonzero_character_alone_supplies_saving": False,
     }
 
 
@@ -6609,6 +6675,121 @@ def _positive_divisors(n: int) -> tuple[int, ...]:
     if n <= 0:
         raise ValueError("divisor input must be positive")
     return tuple(d for d in range(1, n + 1) if n % d == 0)
+
+
+def _finite_prime_exponents(n: int) -> dict[int, int]:
+    """Return the exact prime-exponent dictionary of a positive integer."""
+    if n <= 0:
+        raise ValueError("factorization input must be positive")
+    exponents: dict[int, int] = {}
+    remaining = n
+    prime = 2
+    while prime * prime <= remaining:
+        while remaining % prime == 0:
+            exponents[prime] = exponents.get(prime, 0) + 1
+            remaining //= prime
+        prime += 1
+    if remaining > 1:
+        exponents[remaining] = exponents.get(remaining, 0) + 1
+    return exponents
+
+
+def mobius_log_derivative_prime_coordinate_identity(
+    *,
+    n: int,
+) -> dict[str, dict[int, int] | bool]:
+    """Verify ``-mu(n)log n=(mu*Lambda)(n)`` without real logs.
+
+    The coefficient of ``log p`` on the left is
+    ``-mu(n)*v_p(n)``.  On the convolution side it is
+
+    ``sum_(1<=j<=v_p(n)) mu(n/p^j)``,
+
+    because ``Lambda(p^j)=log p``.  Comparing these integer coordinates
+    proves the finite identity exactly, including nonsquarefree ``n``.
+    """
+    if n <= 0:
+        raise ValueError("n must be positive")
+    exponents = _finite_prime_exponents(n)
+    mu_n = _finite_mobius(n)
+    left = {
+        prime: -mu_n * exponent
+        for prime, exponent in exponents.items()
+    }
+    right = {
+        prime: sum(
+            _finite_mobius(n // (prime**power))
+            for power in range(1, exponent + 1)
+        )
+        for prime, exponent in exponents.items()
+    }
+    return {
+        "left_prime_log_coefficients": left,
+        "right_prime_log_coefficients": right,
+        "prime_coordinate_identity_exact": left == right,
+    }
+
+
+def farey_single_mobius_type_identity(
+    *,
+    q: int,
+    b: int,
+    k: int,
+    s: int,
+) -> dict[str, object]:
+    """Apply the exact one-Mobius log identity on one Farey fiber.
+
+    At critical resolution ``s<=q`` the sector fiber is empty or contains
+    one ``w``.  For ``r=k*s+w`` the identity becomes
+
+    ``-mu(s)mu(r)log r = sum_(d*m=r) mu(s)mu(d)Lambda(m)``.
+
+    The first Mobius factor, sector label, and exact packet entry are not
+    changed.  Only ``mu(r)`` is decomposed.  The returned Type terms record
+    ``(d,m,mu(s),mu(d),p)`` whenever ``m`` is a power of the prime ``p``.
+    """
+    if k < 0:
+        raise ValueError("k must be nonnegative")
+    fiber = farey_sector_fiber_ledger(q=q, b=b, s=s)
+    if not fiber.members:
+        return {
+            "sector_fiber_nonempty": False,
+            "sector_character_label_retained": b,
+            "one_mobius_factor_only": True,
+        }
+    if len(fiber.members) != 1:
+        raise ValueError("critical Farey Type identity requires s<=q")
+
+    w = fiber.members[0]
+    r = k * s + w
+    log_identity = mobius_log_derivative_prime_coordinate_identity(n=r)
+    type_terms: list[tuple[int, int, int, int, int]] = []
+    mu_s = _finite_mobius(s)
+    for d in _positive_divisors(r):
+        m = r // d
+        m_factors = _finite_prime_exponents(m)
+        if len(m_factors) == 1:
+            prime = next(iter(m_factors))
+            type_terms.append((d, m, mu_s, _finite_mobius(d), prime))
+    return {
+        "sector_fiber_nonempty": True,
+        "w": w,
+        "r": r,
+        "sector_membership_exact": b * s <= q * w < (b + 1) * s,
+        "retained_first_mobius": mu_s,
+        "left_prime_log_coefficients": log_identity[
+            "left_prime_log_coefficients"
+        ],
+        "right_prime_log_coefficients": log_identity[
+            "right_prime_log_coefficients"
+        ],
+        "prime_coordinate_identity_exact": log_identity[
+            "prime_coordinate_identity_exact"
+        ],
+        "type_terms": tuple(type_terms),
+        "one_mobius_factor_only": True,
+        "sector_character_label_retained": b,
+    }
 
 
 def transition_line_coprimality_layer_identity(
@@ -10460,6 +10641,8 @@ def main() -> None:
         "additive_local_moment_unconditional=False,two_mobius=True,"
         "sector_parseval=True,sector_principal_absorbed=True,"
         "remaining_sector_characters=nonzero,"
+        "single_mobius_type_identity=True,automatic_frequency_decay=False,"
+        "pre_cauchy_dispersion=True,type_bound_proved=False,"
         f"farey_matches={transition_tube_cluster.unweighted_farey_equidistribution_matches},"
         "nilsequence_matches=False,covered=False"
     )
