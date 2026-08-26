@@ -88,7 +88,13 @@ theorem boundaryRectIntegral_logDeriv_eq_finite_zero_multiplicity_sum
           ∑ rho ∈ zeros, (z - rho)⁻¹ * (multiplicity rho : ℂ))
         x0 x1 y0 y1 := by
       apply boundaryRectIntegral_congr_of_eqOn_boundary
-      simpa [K] using hboundary
+      intro z hzK hzBoundary
+      apply hboundary z (by simpa [K] using hzK)
+      intro hzInterior
+      apply hzBoundary
+      rw [mem_reProdIm]
+      exact ⟨⟨hzInterior.1, hzInterior.2.1⟩,
+        hzInterior.2.2.1, hzInterior.2.2.2⟩
     _ = (2 * Real.pi * I) *
         ∑ rho ∈ zeros, (multiplicity rho : ℂ) :=
       boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn

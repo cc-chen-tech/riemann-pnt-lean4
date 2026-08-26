@@ -1122,3 +1122,180 @@ with weight `1/2` exactly at `Re s=1/2`.  This completes equation (35) at the
 level needed by Conrey's subsequent Littlewood argument.  Equations
 (37)--(40), the argument partition in (41), and the long mollified mean square
 remain separate gates and are not consequences of (35-global) alone.
+
+## 20. Exact Littlewood rectangle core and the `R/L` count factor
+
+The finite-rectangle part of equation (37) has now been derived before any
+asymptotic boundary estimate.  For an analytic function `F` whose zeros in
+the ordered rectangle
+
+\[
+ [\sigma_0,A]\times[t_0,T]
+\]
+
+are the finite family `Z`, with analytic multiplicities `m(rho)`, the proved
+identity is
+
+\[
+\begin{aligned}
+ 2\pi\sum_{\rho\in Z}(\operatorname{Re}\rho-\sigma_0)m(\rho)
+ &=\int_{t_0}^{T}\log|F(\sigma_0+it)|\,dt
+   -\int_{t_0}^{T}\log|F(A+it)|\,dt\\
+ &\quad+\int_{\sigma_0}^{A}(\sigma-\sigma_0)
+       \operatorname{Im}{F'\over F}(\sigma+it_0)\,d\sigma\\
+ &\quad-\int_{\sigma_0}^{A}(\sigma-\sigma_0)
+       \operatorname{Im}{F'\over F}(\sigma+iT)\,d\sigma\\
+ &\quad+(A-\sigma_0)\int_{t_0}^{T}
+       \operatorname{Re}{F'\over F}(A+it)\,dt.
+\end{aligned}
+\tag{37-exact}
+\]
+
+The proof first applies the weighted argument principle to
+`(s-sigma_0)F'(s)/F(s)`, then integrates by parts on all four sides.  The
+eight corner `log|F|` terms cancel exactly.  This sign audit is important:
+the left vertical logarithmic integral is positive and the right vertical
+one is negative; the bottom horizontal phase is positive and the top one is
+negative.
+
+For any `sigma_c >= sigma_0`, Lean also proves the independent finite-sum
+inequality
+
+\[
+ (\sigma_c-\sigma_0)
+ \sum_{\substack{\rho\in Z\\\operatorname{Re}\rho\ge\sigma_c}}m(\rho)
+ \le
+ \sum_{\rho\in Z}(\operatorname{Re}\rho-\sigma_0)m(\rho).
+\tag{37-gap}
+\]
+
+With Conrey's choices `sigma_c=1/2` and
+`sigma_0=1/2-R/L`, the factor on the left is exactly `R/L`.  Hence the
+later `L/R` in the zero-count bound is now accounted for without an
+asymptotic convention.  Jensen's inequality from Section 12 supplies the
+separate factor `1/2` when the left-edge `log|F|` integral is bounded by a
+second moment.
+
+The implementation is in `PrimeNumberTheorem/LittlewoodRectangle.lean`,
+with the public contract
+`Test/ConreyLittlewoodRectangleContract.lean`.  It also repairs the two
+stale rectangle-membership conversions that had prevented this existing
+argument-principle chain from building.
+
+This does **not** yet assert Conrey's `O(T/L)` boundary estimate.  To obtain
+the displayed inequality in Section 3 for
+`F=V_1B`, the remaining equation-(37) work is now exactly:
+
+1. bound the bottom and top weighted phase integrals;
+2. bound the far-right argument variation and right-edge `log|F|` term;
+3. pass from a boundary-zero-free sequence of heights to every `T` with a
+   controlled endpoint error;
+4. only then combine (37-exact), (37-gap), and the already proved
+   mean-square/Jensen bridge.
+
+The qualitative far-right zero exclusion in item 2 is already available:
+`HardyTheorem/ConreyFarRight.lean` proves that the actual degree-one `V_1`,
+the normalized finite mollifier `B`, and `V_1 B` are nonzero on one common
+right half-plane, uniformly in height.  What is still missing for (37) is
+quantitative decay as the right edge tends to `+infinity` and a uniform
+bound for the two horizontal phase integrals at admissible heights.  Thus the
+next proof should extend the existing far-right module; it should not replace
+the actual product by an abstract zero-free surrogate.
+
+The cited model for those quantitative estimates is Conrey 1983, Section 4.
+Jensen's formula bounds each horizontal argument variation by `O(L)`, while
+the normalized `V` factor and the mollifier must both be `1 + O(L^{-1})` on
+the moving right edge.  The right vertical logarithmic integral is then
+`O(U/L)`, and after the Littlewood gap is divided by `R/L` this becomes the
+required `O(U)` remainder.  For the present global interval one takes `U` of
+size `T`.
+
+There is a constant-scale issue in the printed source which must not be
+copied literally into the formal statement.  The paper prints
+`sigma_1 = log L` and, on the next page,
+
+\[
+  2^{-\sigma_1}\ll L^{-1}.
+\]
+
+With the standard natural logarithm these two assertions are incompatible:
+`2^{-log L}=L^{-log 2}`, which is not `O(L^{-1})`.  The argument is repaired
+without changing its admissible region by taking, for example,
+
+\[
+  \sigma_1=2\log L,
+\]
+
+or more sharply any
+`sigma_1 >= (log L + log C)/log 2` when the preceding tail estimate is
+`C * 2^{-sigma_1}`.  This still has `sigma_1 = O(log L)` and so remains in
+the range `0 <= sigma <= A log L` used by the approximation lemmas, after
+enlarging the fixed constant `A`.  It now gives the required `O(L^{-1})`
+right-edge error exactly.  The same corrected edge also makes a finite
+Dirichlet mollifier tail with coefficients bounded by one `O(L^{-1})`:
+
+\[
+ \sum_{n=2}^{y}|b(n)|n^{-\sigma}
+ \le 2^{-\sigma}+\int_2^\infty x^{-\sigma}\,dx
+ =2^{-\sigma}\left(1+\frac2{\sigma-1}\right)
+ \qquad(\sigma>1).
+\]
+
+Thus `sigma = 2 log L` gives the claimed rate for all sufficiently large
+`L`.  For the repository's Conrey coefficients the corresponding theorem
+must expose the bound for the chosen fixed polynomial `P`; the current
+general interface assumes only `P(1)=1`, which is enough for nonvanishing but
+not for a uniform quantitative tail estimate as `Y` varies.
+
+Reproducing this corrected argument for the repository's exact degree-one
+`V_1 B` requires an explicit normalized approximation theorem on
+`Re s = sigma_1` and the corresponding Jensen horizontal-edge theorem; the
+existing qualitative nonvanishing theorem alone cannot supply either rate.
+
+For the degree-one definition already in the repository, the normalization
+is also explicit.  Uniformly for `t` in a fixed proportional interval such
+as `[T, 2T]` and `sigma = c log L`, the standard right-half-plane series and
+Stirling estimates give
+
+\[
+ \zeta(s)=1+O(2^{-\sigma}),\qquad
+ \zeta'(s)=O(2^{-\sigma}),\qquad
+ \frac1L\frac{H'(s)}{H(s)}=\frac12+O(L^{-1}).
+\]
+
+Consequently
+
+\[
+ V_1(s)=\kappa+O(L^{-1})+O(2^{-\sigma}),\qquad
+ \kappa=g+\frac{g_1}{2}+i g_0.
+\]
+
+The quantitative theorem should therefore assume the nonvanishing of this
+explicit main constant and prove
+`kappa^(-1) V_1(s) = 1 + O(L^(-1))` on the corrected moving edge.  The
+qualitative far-right theorem currently assumes only `g != 0`; that is the
+right hypothesis for eventual zero exclusion, but it does not identify this
+uniform asymptotic main term.  This distinction must be preserved when the
+next Lean interface is introduced.
+
+The horizontal Jensen step already has two reusable, function-agnostic
+components in the repository.  `PrimeNumberTheorem/AnalyticJensen.lean`
+turns a circle-average growth bound and a nonzero center lower bound into an
+inner-disk zero-multiplicity bound.  `MathlibAux/HorizontalArgument.lean`
+proves that one divisor point contributes at most `pi` to the horizontal
+logarithmic-derivative integral.  Thus the new function-specific work is
+precisely:
+
+1. an analytic moving Jensen disk for the regularized actual product;
+2. a polynomial circle-growth bound for `V_1 B`;
+3. the lower bound at the corrected far-right center supplied by the
+   normalized approximation above; and
+4. admissible endpoint heights avoiding the `V_1 B` divisor.
+
+After these are proved, the existing Jensen and horizontal-argument lemmas
+convert them into the two horizontal terms of (37-exact).  No new abstract
+argument-principle surrogate is needed.
+
+Equations (38)--(40), the equation-(41) critical-line partition, and the
+long mollified mean square remain separate.  No `O`-term or published
+spectral estimate is represented by an axiom in this slice.

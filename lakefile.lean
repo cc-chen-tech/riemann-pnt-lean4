@@ -2757,6 +2757,7 @@ lean_lib RiemannPNT where
     `Test.ConreyExplicitCertificateContract,
     `Test.ConreyExplicitIntegralBridgeContract,
     `Test.ConreyLittlewoodMeanSquareContract,
+    `Test.ConreyLittlewoodRectangleContract,
     `Test.ConreySimpleZeroCountContract,
     `Test.ConreyTwoFifthsBridgeContract,
     `Zeta23

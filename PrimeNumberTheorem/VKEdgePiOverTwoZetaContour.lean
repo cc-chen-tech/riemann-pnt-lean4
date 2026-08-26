@@ -116,11 +116,15 @@ theorem exists_weightedExplicitFormula_boundaryRectIntegral_eq_residue_sum
       poles residue hg hH hpolesInterior
   have hboundaryNotPole :
       ∀ z ∈ K,
-        ¬((-1 : ℝ) < z.re ∧ z.re < u + 2 ∧
-          -T < z.im ∧ z.im < T) →
+        z ∉ (Ioo (-1 : ℝ) (u + 2) ×ℂ Ioo (-T) T) →
         z ∉ poles := by
     intro z hzK hzBoundary hzPole
-    exact hzBoundary (hpolesInterior z hzPole)
+    apply hzBoundary
+    rw [mem_reProdIm]
+    exact ⟨⟨(hpolesInterior z hzPole).1,
+      (hpolesInterior z hzPole).2.1⟩,
+      (hpolesInterior z hzPole).2.2.1,
+      (hpolesInterior z hzPole).2.2.2⟩
   have hcontour :
       MathlibAux.boundaryRectIntegral
           (fun z : ℂ =>
@@ -311,11 +315,15 @@ theorem exists_regularizedLogDeriv_boundaryRectIntegral_eq_zero_sum
       poles residueD hG hW hpolesInterior
   have hboundaryNotPole :
       ∀ z ∈ K,
-        ¬((-1 : ℝ) < z.re ∧ z.re < u + 2 ∧
-          -T < z.im ∧ z.im < T) →
+        z ∉ (Ioo (-1 : ℝ) (u + 2) ×ℂ Ioo (-T) T) →
         z ∉ poles := by
     intro z hzK hzBoundary hzPole
-    exact hzBoundary (hpolesInterior z hzPole)
+    apply hzBoundary
+    rw [mem_reProdIm]
+    exact ⟨⟨(hpolesInterior z hzPole).1,
+      (hpolesInterior z hzPole).2.1⟩,
+      (hpolesInterior z hzPole).2.2.1,
+      (hpolesInterior z hzPole).2.2.2⟩
   have hcontour :
       MathlibAux.boundaryRectIntegral
           (fun z : ℂ =>

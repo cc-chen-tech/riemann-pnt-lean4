@@ -125,7 +125,7 @@ theorem boundaryRectIntegral_mul_analyticWeight_eq_residue_sum
           (hdslope p z).differentiableWithinAt.mul_const (residue p))
   have hboundary :
       ∀ z ∈ ([[x0, x1]] ×ℂ [[y0, y1]] : Set ℂ),
-        ¬(x0 < z.re ∧ z.re < x1 ∧ y0 < z.im ∧ z.im < y1) →
+        z ∉ (Ioo x0 x1 ×ℂ Ioo y0 y1) →
         W z * (g z + ∑ p ∈ poles, (z - p)⁻¹ * residue p) =
           G z + ∑ p ∈ poles,
             (z - p)⁻¹ * (W p * residue p) := by
@@ -133,7 +133,10 @@ theorem boundaryRectIntegral_mul_analyticWeight_eq_residue_sum
     have hzp : ∀ p ∈ poles, z ≠ p := by
       intro p hp h
       subst z
-      exact hzboundary (hpoles p hp)
+      apply hzboundary
+      rw [mem_reProdIm]
+      exact ⟨⟨(hpoles p hp).1, (hpoles p hp).2.1⟩,
+        (hpoles p hp).2.2.1, (hpoles p hp).2.2.2⟩
     dsimp [G]
     rw [mul_add, Finset.mul_sum]
     calc

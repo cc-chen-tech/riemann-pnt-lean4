@@ -479,7 +479,14 @@ theorem boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
     apply MathlibAux.boundaryRectIntegral_congr_of_eqOn_boundary
     intro z hz hnot
     have hzU : z ∈ U := by simpa [U] using hz
-    rw [hregularEqBoundary z hzU hnot]
+    have hnot' :
+        ¬(x0 < z.re ∧ z.re < x1 ∧ y0 < z.im ∧ z.im < y1) := by
+      intro hinside
+      apply hnot
+      rw [mem_reProdIm]
+      exact ⟨⟨hinside.1, hinside.2.1⟩,
+        hinside.2.2.1, hinside.2.2.2⟩
+    rw [hregularEqBoundary z hzU hnot']
     dsimp [raw]
     have hsumComm :
         (∑ rho ∈ poles,
@@ -561,6 +568,214 @@ theorem two_pi_mul_zeroMultiplicityWeightedRealSum_eq_four_edges
     simp [Complex.re_sum, Complex.mul_re]
   rw [Complex.mul_im, hsumRe] at him
   simpa using him.symm
+
+/-- Multiplicity mass of the selected zeros on or to the right of a vertical
+line. -/
+noncomputable def zeroMultiplicityMassAtOrRight
+    (poles : Finset ℂ) (multiplicity : ℂ → ℕ) (critical : ℝ) : ℝ :=
+  ∑ rho ∈ poles.filter (fun rho => critical ≤ rho.re),
+    (multiplicity rho : ℝ)
+
+/-- Every zero on or to the right of `critical` contributes at least
+`critical - x0` to the Littlewood weighted divisor sum. -/
+theorem sub_mul_zeroMultiplicityMassAtOrRight_le_weightedRealSum
+    {poles : Finset ℂ} {multiplicity : ℂ → ℕ} {x0 critical : ℝ}
+    (hleft : ∀ rho ∈ poles, x0 ≤ rho.re) :
+    (critical - x0) *
+        zeroMultiplicityMassAtOrRight poles multiplicity critical ≤
+      ∑ rho ∈ poles, (rho.re - x0) * (multiplicity rho : ℝ) := by
+  classical
+  unfold zeroMultiplicityMassAtOrRight
+  rw [Finset.mul_sum]
+  calc
+    (∑ rho ∈ poles.filter (fun rho => critical ≤ rho.re),
+        (critical - x0) * (multiplicity rho : ℝ)) ≤
+        ∑ rho ∈ poles.filter (fun rho => critical ≤ rho.re),
+          (rho.re - x0) * (multiplicity rho : ℝ) := by
+      apply Finset.sum_le_sum
+      intro rho hrho
+      have hcritical : critical ≤ rho.re := (Finset.mem_filter.mp hrho).2
+      exact mul_le_mul_of_nonneg_right
+        (sub_le_sub_right hcritical x0) (Nat.cast_nonneg _)
+    _ ≤ ∑ rho ∈ poles,
+        (rho.re - x0) * (multiplicity rho : ℝ) := by
+      apply Finset.sum_le_sum_of_subset_of_nonneg
+        (Finset.filter_subset (fun rho : ℂ => critical ≤ rho.re) poles)
+      intro rho hrho _
+      exact mul_nonneg (sub_nonneg.mpr (hleft rho hrho)) (Nat.cast_nonneg _)
+
+/-- Exact Littlewood rectangle identity with all corner logarithms cancelled.
+
+The three terms after the two vertical `log ‖f‖` integrals are the bottom,
+top, and far-right argument remainders.  No asymptotic estimate for those
+remainders is built into this theorem. -/
+theorem littlewoodRectangle_zeroMultiplicityWeightedRealSum_eq_logNormEdges
+    {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
+    (_hx : x0 < x1) (_hy : y0 < y1)
+    (poles : Finset ℂ) (multiplicity : ℂ → ℕ)
+    (hf : AnalyticOnNhd ℂ f ([[x0, x1]] ×ℂ [[y0, y1]]))
+    (hzero : ∀ z ∈ ([[x0, x1]] ×ℂ [[y0, y1]] : Set ℂ),
+      f z = 0 ↔ z ∈ poles)
+    (horder : ∀ rho ∈ poles,
+      analyticOrderAt f rho = multiplicity rho)
+    (hpoles : ∀ rho ∈ poles,
+      x0 < rho.re ∧ rho.re < x1 ∧ y0 < rho.im ∧ rho.im < y1) :
+    (2 * Real.pi) *
+        ∑ rho ∈ poles,
+          (rho.re - x0) * (multiplicity rho : ℝ) =
+      (∫ y in y0..y1,
+          Real.log ‖f ((x0 : ℂ) + (y : ℂ) * I)‖) -
+      (∫ y in y0..y1,
+          Real.log ‖f ((x1 : ℂ) + (y : ℂ) * I)‖) +
+      (∫ x in x0..x1,
+          (x - x0) *
+            (logDeriv f ((x : ℂ) + (y0 : ℂ) * I)).im) -
+      (∫ x in x0..x1,
+          (x - x0) *
+            (logDeriv f ((x : ℂ) + (y1 : ℂ) * I)).im) +
+      (x1 - x0) *
+        (∫ y in y0..y1,
+          (logDeriv f ((x1 : ℂ) + (y : ℂ) * I)).re) := by
+  have hbottomA : ∀ x ∈ [[x0, x1]],
+      AnalyticAt ℂ f ((x : ℂ) + (y0 : ℂ) * I) := by
+    intro x hxmem
+    apply hf
+    simpa [mem_reProdIm] using
+      And.intro hxmem (left_mem_uIcc : y0 ∈ [[y0, y1]])
+  have htopA : ∀ x ∈ [[x0, x1]],
+      AnalyticAt ℂ f ((x : ℂ) + (y1 : ℂ) * I) := by
+    intro x hxmem
+    apply hf
+    simpa [mem_reProdIm] using
+      And.intro hxmem (right_mem_uIcc : y1 ∈ [[y0, y1]])
+  have hrightA : ∀ y ∈ [[y0, y1]],
+      AnalyticAt ℂ f ((x1 : ℂ) + I * (y : ℂ)) := by
+    intro y hymem
+    apply hf
+    simpa [mem_reProdIm, mul_comm] using
+      And.intro (right_mem_uIcc : x1 ∈ [[x0, x1]]) hymem
+  have hleftA : ∀ y ∈ [[y0, y1]],
+      AnalyticAt ℂ f ((x0 : ℂ) + I * (y : ℂ)) := by
+    intro y hymem
+    apply hf
+    simpa [mem_reProdIm, mul_comm] using
+      And.intro (left_mem_uIcc : x0 ∈ [[x0, x1]]) hymem
+  have hbottomNe : ∀ x ∈ [[x0, x1]],
+      f ((x : ℂ) + (y0 : ℂ) * I) ≠ 0 := by
+    intro x hxmem hfzero
+    have hzmem : (x : ℂ) + (y0 : ℂ) * I ∈
+        ([[x0, x1]] ×ℂ [[y0, y1]] : Set ℂ) := by
+      simpa [mem_reProdIm] using
+        And.intro hxmem (left_mem_uIcc : y0 ∈ [[y0, y1]])
+    have hp := (hzero _ hzmem).mp hfzero
+    have hlt : y0 < y0 := by simpa using (hpoles _ hp).2.2.1
+    exact (lt_irrefl y0) hlt
+  have htopNe : ∀ x ∈ [[x0, x1]],
+      f ((x : ℂ) + (y1 : ℂ) * I) ≠ 0 := by
+    intro x hxmem hfzero
+    have hzmem : (x : ℂ) + (y1 : ℂ) * I ∈
+        ([[x0, x1]] ×ℂ [[y0, y1]] : Set ℂ) := by
+      simpa [mem_reProdIm] using
+        And.intro hxmem (right_mem_uIcc : y1 ∈ [[y0, y1]])
+    have hp := (hzero _ hzmem).mp hfzero
+    have hlt : y1 < y1 := by simpa using (hpoles _ hp).2.2.2
+    exact (lt_irrefl y1) hlt
+  have hrightNe : ∀ y ∈ [[y0, y1]],
+      f ((x1 : ℂ) + I * (y : ℂ)) ≠ 0 := by
+    intro y hymem hfzero
+    have hzmem : (x1 : ℂ) + I * (y : ℂ) ∈
+        ([[x0, x1]] ×ℂ [[y0, y1]] : Set ℂ) := by
+      simpa [mem_reProdIm, mul_comm] using
+        And.intro (right_mem_uIcc : x1 ∈ [[x0, x1]]) hymem
+    have hp := (hzero _ hzmem).mp hfzero
+    have hlt : x1 < x1 := by simpa using (hpoles _ hp).2.1
+    exact (lt_irrefl x1) hlt
+  have hleftNe : ∀ y ∈ [[y0, y1]],
+      f ((x0 : ℂ) + I * (y : ℂ)) ≠ 0 := by
+    intro y hymem hfzero
+    have hzmem : (x0 : ℂ) + I * (y : ℂ) ∈
+        ([[x0, x1]] ×ℂ [[y0, y1]] : Set ℂ) := by
+      simpa [mem_reProdIm, mul_comm] using
+        And.intro (left_mem_uIcc : x0 ∈ [[x0, x1]]) hymem
+    have hp := (hzero _ hzmem).mp hfzero
+    have hlt : x0 < x0 := by simpa using (hpoles _ hp).1
+    exact (lt_irrefl x0) hlt
+  have hbottomInt : IntervalIntegrable
+      (fun x : ℝ =>
+        (((x : ℂ) + (y0 : ℂ) * I - (x0 : ℂ)) *
+          logDeriv f ((x : ℂ) + (y0 : ℂ) * I)))
+      MeasureTheory.volume x0 x1 := by
+    have hlog := continuousOn_logDeriv_horizontal hbottomA hbottomNe
+    exact ((by fun_prop : Continuous
+      (fun x : ℝ => (x : ℂ) + (y0 : ℂ) * I - (x0 : ℂ))).continuousOn.mul hlog).intervalIntegrable
+  have htopInt : IntervalIntegrable
+      (fun x : ℝ =>
+        (((x : ℂ) + (y1 : ℂ) * I - (x0 : ℂ)) *
+          logDeriv f ((x : ℂ) + (y1 : ℂ) * I)))
+      MeasureTheory.volume x0 x1 := by
+    have hlog := continuousOn_logDeriv_horizontal htopA htopNe
+    exact ((by fun_prop : Continuous
+      (fun x : ℝ => (x : ℂ) + (y1 : ℂ) * I - (x0 : ℂ))).continuousOn.mul hlog).intervalIntegrable
+  have hrightLog : ContinuousOn
+      (fun y : ℝ => logDeriv f ((x1 : ℂ) + I * (y : ℂ))) [[y0, y1]] := by
+    intro y hymem
+    have hmap : ContinuousAt (fun u : ℝ => (x1 : ℂ) + I * (u : ℂ)) y := by
+      fun_prop
+    simpa [Function.comp_def] using
+      ((ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero
+        (hrightA y hymem) (hrightNe y hymem)).continuousAt.comp_of_eq hmap rfl).continuousWithinAt
+  have hleftLog : ContinuousOn
+      (fun y : ℝ => logDeriv f ((x0 : ℂ) + I * (y : ℂ))) [[y0, y1]] := by
+    intro y hymem
+    have hmap : ContinuousAt (fun u : ℝ => (x0 : ℂ) + I * (u : ℂ)) y := by
+      fun_prop
+    simpa [Function.comp_def] using
+      ((ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero
+        (hleftA y hymem) (hleftNe y hymem)).continuousAt.comp_of_eq hmap rfl).continuousWithinAt
+  have hrightInt : IntervalIntegrable
+      (fun y : ℝ =>
+        (((x1 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+          logDeriv f ((x1 : ℂ) + (y : ℂ) * I)))
+      MeasureTheory.volume y0 y1 := by
+    have hweight : Continuous
+        (fun y : ℝ => (x1 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) := by fun_prop
+    have hrightLog' : ContinuousOn
+        (fun y : ℝ => logDeriv f ((x1 : ℂ) + (y : ℂ) * I)) [[y0, y1]] := by
+      simpa only [mul_comm I] using hrightLog
+    exact (hweight.continuousOn.mul hrightLog').intervalIntegrable
+  have hleftInt : IntervalIntegrable
+      (fun y : ℝ =>
+        (((x0 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+          logDeriv f ((x0 : ℂ) + (y : ℂ) * I)))
+      MeasureTheory.volume y0 y1 := by
+    have hweight : Continuous
+        (fun y : ℝ => (x0 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) := by fun_prop
+    have hleftLog' : ContinuousOn
+        (fun y : ℝ => logDeriv f ((x0 : ℂ) + (y : ℂ) * I)) [[y0, y1]] := by
+      simpa only [mul_comm I] using hleftLog
+    exact (hweight.continuousOn.mul hleftLog').intervalIntegrable
+  have hedges := two_pi_mul_zeroMultiplicityWeightedRealSum_eq_four_edges
+    poles multiplicity hf hzero horder hpoles
+    hbottomInt htopInt hrightInt hleftInt
+  have hbottomEq :=
+    intervalIntegral_im_weighted_logDeriv_horizontal_eq_of_analytic
+      (f := f) (anchor := x0) hbottomA hbottomNe
+  have htopEq :=
+    intervalIntegral_im_weighted_logDeriv_horizontal_eq_of_analytic
+      (f := f) (anchor := x0) htopA htopNe
+  have hrightEq :=
+    intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic
+      (f := f) (anchor := x0) hrightA hrightNe
+  have hleftEq :=
+    intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic
+      (f := f) (anchor := x0) hleftA hleftNe
+  have hrightEq' := hrightEq
+  have hleftEq' := hleftEq
+  simp only [mul_comm I] at hrightEq' hleftEq'
+  rw [hbottomEq, htopEq, hrightEq', hleftEq'] at hedges
+  calc
+    _ = _ := hedges
+    _ = _ := by ring
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
