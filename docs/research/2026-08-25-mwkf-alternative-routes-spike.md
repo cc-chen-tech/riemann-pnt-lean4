@@ -11847,18 +11847,31 @@ limiting left-wing exponent
 \]
 
 and its Möbius analogue gives the symmetric prime-modulus right wing.
+For the central prime-modulus band, FKM Theorem 1.17 accepts arbitrary
+dyadic coefficients.  With \(v=\min(u,\sigma-u)\), its saving is
+
+\[
+ \eta_{\rm FKM}^{\rm II}
+ =\min\left(\sigma/4,v/2,\sigma/4-v/2\right).
+ \tag{4.686a}
+\]
+
+This is at most \(\sigma/8\), attained at \(v=\sigma/4\), and it
+degenerates to zero at exact balance \(v=\sigma/2\).
 The exact coverage table is:
 
 | Type range | composite modulus | prime modulus | coupled status |
 |---|---|---|---|
 | \(0\leq u<\sigma/4\) | Korolev, max saving \(\sigma/35\) | FKM, limiting max \(\sigma/24\) | below target |
-| \(\sigma/4\leq u\leq3\sigma/4\) | no matching one-variable theorem | no matching one-variable theorem | bilinear Type II unproved |
+| \(\sigma/4\leq u\leq3\sigma/4\) | no matching bilinear theorem | FKM Theorem 1.17, max \(\sigma/8\), zero at balance | composite and balanced Type II unproved |
 | \(3\sigma/4<u\leq\sigma\) | only logarithmic uniform Möbius trace input | FKM Möbius trace | below target |
 
 At the critical point the required amplitude saving is \(1/2\), so the
-best fixed prime-modulus theorem still leaves \(11/24\), and the uniform
-composite theorem leaves \(33/70\).  The estimates also have no joint
-moment over \(s,\xi,h,\delta\).  Consequently the corrected surviving
+best one-variable prime-modulus theorem still leaves \(11/24\), and the
+uniform composite theorem leaves \(33/70\).  Even the best bilinear
+prime slice leaves \(3/8\), while exact balance leaves the full \(1/2\).
+The estimates also have no joint moment over \(s,\xi,h,\delta\).
+Consequently the corrected surviving
 interface is the pre-Cauchy Hilbert-valued bilinear trace square.  With
 the coefficients \(c_{\xi,j}\) from (4.677), it is
 
@@ -11885,7 +11898,9 @@ composite-modulus aggregation remain unproved.
 The exact helper beatty_afe_type_kloosterman_phase_ledger verifies
 (4.683)--(4.684).  The Korolev and FKM exponent helpers verify
 (4.685)--(4.686), including their strict endpoint and modulus
-restrictions, and keep the full coupled-coverage flag false.
+restrictions.  fkm_prime_modulus_bilinear_type_ii_audit verifies
+(4.686a), including its exact balanced degeneration.  All keep the full
+coupled-coverage flag false.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

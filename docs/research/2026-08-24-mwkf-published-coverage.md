@@ -1146,8 +1146,9 @@ coverage is:
 | composite \(s\), \(0\leq u<\sigma/4\) | Korolev, arXiv:1911.09981, Theorem 1 | at most \(T^{\sigma/35}\) | insufficient |
 | prime \(s\), \(0\leq u<\sigma/4\) | FKM Theorem 1.5 | limiting \(T^{\sigma/24}\) | insufficient |
 | prime \(s\), \(3\sigma/4<u\leq\sigma\) | FKM Theorem 1.7 | limiting \(T^{\sigma/24}\) | insufficient |
+| prime \(s\), \(0<u<\sigma\) | FKM Theorem 1.17 | at most \(T^{\sigma/8}\), zero at balance | insufficient fixed-modulus coverage |
 | composite \(s\), \(3\sigma/4<u\leq\sigma\) | multiplicative trace estimate | logarithmic uniformly | no power coverage |
-| all \(s\), \(\sigma/4\leq u\leq3\sigma/4\) | bilinear Type II required | none applicable | unproved |
+| composite \(s\), \(\sigma/4\leq u\leq3\sigma/4\) | bilinear Type II required | none applicable | unproved |
 
 For reference, Korolev's exact left-wing exponent is
 
@@ -1167,6 +1168,18 @@ whereas the FKM limiting prime-modulus exponent is
  \tag{6.19}
 \]
 
+For the bilinear theorem put \(v=\min(u,\sigma-u)\).  Its exact
+fixed-prime-modulus exponent is
+
+\[
+ \eta_{\rm FKM}^{\rm II}
+ =\min\left(\sigma/4,v/2,\sigma/4-v/2\right).
+ \tag{6.19a}
+\]
+
+It is maximized at \(v=\sigma/4\), where it equals \(\sigma/8\), and
+vanishes at the balanced point \(v=\sigma/2\).
+
 At \(\sigma=1,u=0\), the residual amplitude deficits are therefore
 
 \[
@@ -1175,10 +1188,11 @@ At \(\sigma=1,u=0\), the residual amplitude deficits are therefore
  \tag{6.20}
 \]
 
-Neither theorem provides the joint moment over the squarefree composite
+None of these theorems provides the joint moment over the squarefree composite
 modulus \(s\), the sector frequency \(\xi\), and the factored numerator
 \(h\delta\).  Thus (6.16) corrects the theorem class to be targeted, but
 does not mark any full coupled-kernel row proved.  The executable phase
 and exponent audits are beatty_afe_type_kloosterman_phase_ledger,
 korolev_prime_kloosterman_type_i_audit, and
-fkm_prime_modulus_kloosterman_type_i_audit.
+fkm_prime_modulus_kloosterman_type_i_audit, together with
+fkm_prime_modulus_bilinear_type_ii_audit.

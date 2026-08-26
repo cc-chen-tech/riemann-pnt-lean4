@@ -8389,6 +8389,88 @@ def fkm_prime_modulus_kloosterman_type_i_audit(
     }
 
 
+def fkm_prime_modulus_bilinear_type_ii_audit(
+    *,
+    modulus_exponent: Fraction,
+    first_factor_exponent: Fraction,
+    required_unsquared_saving: Fraction,
+) -> dict[str, object]:
+    """Audit FKM Theorem 1.17 on the prime-modulus product trace.
+
+    For ``K(x)=e_p(B*x+C*inverse(x))`` and arbitrary dyadic
+    coefficient sequences of lengths ``M`` and ``N``, Fouvry--Kowalski--
+    Michel, arXiv:1211.6043v3, Theorem 1.17, gives the relative factor
+
+    ``p^(-1/4)+M^(-1/2)+p^(1/4)N^(-1/2)``.
+
+    Orient the theorem with ``M`` the shorter factor.  If
+    ``p=T^sigma`` and the two product factors have exponents ``v`` and
+    ``sigma-v``, the saving is the minimum of
+
+    ``sigma/4, v/2, sigma/4-v/2``.
+
+    It is positive off the exactly balanced point, reaches ``sigma/8``
+    at ``v=sigma/4``, and degenerates to zero at ``v=sigma/2``.  The
+    one-variable FKM theorems are better very near ``v=0``; their
+    limiting saving is ``sigma/24-v/6`` for ``v<sigma/4``.  Neither
+    fixed-prime-modulus result includes the outer modulus Mobius average
+    or the joint sector and ``h*delta`` moments.
+    """
+
+    sigma = F(modulus_exponent)
+    first = F(first_factor_exponent)
+    required = F(required_unsquared_saving)
+    if sigma <= 0:
+        raise ValueError("modulus_exponent must be positive")
+    if first < 0 or first > sigma:
+        raise ValueError("factor exponent must lie in [0,sigma]")
+    if required < 0:
+        raise ValueError("required saving must be nonnegative")
+
+    short = min(first, sigma - first)
+    long = sigma - short
+    conductor_term = sigma / 4
+    short_term = short / 2
+    long_term = long / 2 - sigma / 4
+    bilinear_saving = min(conductor_term, short_term, long_term)
+    one_variable_saving = (
+        sigma / 24 - short / 6 if short < sigma / 4 else F(0)
+    )
+    best = max(bilinear_saving, one_variable_saving)
+    remaining = max(F(0), required - best)
+    return {
+        "source": (
+            "Fouvry--Kowalski--Michel, arXiv:1211.6043v3, "
+            "Theorem 1.17"
+        ),
+        "modulus_exponent": sigma,
+        "first_factor_exponent": first,
+        "second_factor_exponent": sigma - first,
+        "short_factor_exponent": short,
+        "long_factor_exponent": long,
+        "conductor_term_saving_exponent": conductor_term,
+        "short_factor_term_saving_exponent": short_term,
+        "long_factor_term_saving_exponent": long_term,
+        "bilinear_saving_exponent": bilinear_saving,
+        "one_variable_limiting_saving_exponent": one_variable_saving,
+        "best_published_prime_slice_saving_exponent": best,
+        "required_unsquared_saving": required,
+        "remaining_unsquared_deficit": remaining,
+        "bilinear_bound_is_power_saving": bilinear_saving > 0,
+        "exact_balanced_point_degenerates": short == sigma / 2,
+        "maximum_bilinear_saving_exponent": sigma / 8,
+        "arbitrary_dyadic_coefficients_accepted": True,
+        "product_kloosterman_trace_matches": True,
+        "prime_modulus_required": True,
+        "composite_squarefree_moduli_covered": False,
+        "joint_sector_character_moment_provided": False,
+        "joint_h_delta_moment_provided": False,
+        "outer_mobius_modulus_average_provided": False,
+        "saving_meets_required": best >= required,
+        "fixed_prime_modulus_bound_covers_coupled_gate": False,
+    }
+
+
 def transition_line_coprimality_layer_identity(
     *,
     a: int,

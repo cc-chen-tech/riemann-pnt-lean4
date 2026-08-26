@@ -2648,6 +2648,54 @@ def test_fkm_prime_modulus_trace_saving_is_still_far_below_gate() -> None:
     assert not threshold["power_saving_range_holds"]
 
 
+def test_fkm_bilinear_trace_covers_prime_slice_but_degenerates_at_balance() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fkm_prime_modulus_bilinear_type_ii_audit",
+        None,
+    )
+    assert audit is not None, "FKM bilinear Type-II audit is missing"
+
+    quarter = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 4),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert quarter["short_factor_exponent"] == F(1, 4)
+    assert quarter["long_factor_exponent"] == F(3, 4)
+    assert quarter["bilinear_saving_exponent"] == F(1, 8)
+    assert quarter["remaining_unsquared_deficit"] == F(3, 8)
+    assert quarter["bilinear_bound_is_power_saving"]
+    assert not quarter["fixed_prime_modulus_bound_covers_coupled_gate"]
+
+    eighth = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert eighth["bilinear_saving_exponent"] == F(1, 16)
+    assert eighth["one_variable_limiting_saving_exponent"] == F(1, 48)
+    assert eighth["best_published_prime_slice_saving_exponent"] == F(1, 16)
+
+    crossover = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 16),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert crossover["bilinear_saving_exponent"] == F(1, 32)
+    assert crossover["one_variable_limiting_saving_exponent"] == F(1, 32)
+
+    balanced = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 2),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert balanced["bilinear_saving_exponent"] == F(0)
+    assert balanced["remaining_unsquared_deficit"] == F(1, 2)
+    assert balanced["exact_balanced_point_degenerates"]
+    assert not balanced["bilinear_bound_is_power_saving"]
+
+
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
     coefficients = getattr(
         coverage_audit,
