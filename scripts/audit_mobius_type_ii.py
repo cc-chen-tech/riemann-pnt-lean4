@@ -264,6 +264,29 @@ class SquarefreeScalarGcdStratum:
 
 
 @dataclass(frozen=True)
+class KloostermanFractionTripleLedger:
+    """Exponent ledger for the coprimality-migrated BC interface.
+
+    The theorem bound is Bettin--Chandee Theorem 1 after fixing the
+    signless delta-gcd factor and the Ramanujan cofactor.  The ledger
+    includes their exact coefficient norms, both parenthetical terms,
+    the large-phase penalty, and the remaining fixed-factor L1 cost.
+    """
+
+    product_length: Fraction
+    coefficient_norms: Fraction
+    first_parenthesis: Fraction
+    second_parenthesis: Fraction
+    phase_penalty: Fraction
+    fixed_factor_cost: Fraction
+    theorem_bound: Fraction
+    trivial_bound: Fraction
+    local_target: Fraction
+    theorem_gap: Fraction
+    theorem_saving: Fraction
+
+
+@dataclass(frozen=True)
 class FareyCentralCollisionLedger:
     """Exponent ledger after counting reduced fractions before inverse lifts."""
 
@@ -922,6 +945,215 @@ def squarefree_scalar_stratum_divisor_spectrum(
                     )
                 total += scalar_ramanujan * coefficient * phase
     return prefactor * total
+
+
+def coprimality_migrated_scalar_stratum_spectrum(
+    a_gcd: int,
+    b_gcd: int,
+    reduced_modulus: int,
+    shift: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Triple-divisor spectrum after expanding ``(delta,q)=1``.
+
+    Write ``q=j*l*n`` and ``delta=j*delta0``.  On squarefree ``q`` the
+    outer sign and the coprimality sign satisfy
+
+    ``mu(q) * mu(j) = mu(l*n) * mu(j) = mu(l) * mu(n) * mu(j)``,
+
+    while the sign already present in the double-unit divisor spectrum
+    cancels the ``j`` and ``n`` signs.  The resulting coefficient is
+    ``mu(l)/n`` and the phase has modulus ``l``.  In particular, the
+    product coefficient in ``h*delta0`` is independent of that modulus.
+    This is an exact finite identity, not an analytic estimate.
+    """
+
+    _validate_squarefree_scalar_factors(
+        a_gcd, b_gcd, reduced_modulus, shift
+    )
+    if min(h_length, delta_length) < 1:
+        raise ValueError("the interval lengths must be positive")
+    outer_sign = mobius(a_gcd) * mobius(b_gcd)
+    total = 0j
+    for delta_gcd in divisors(reduced_modulus):
+        remaining = reduced_modulus // delta_gcd
+        for oscillatory_modulus in divisors(remaining):
+            ramanujan_factor = remaining // oscillatory_modulus
+            coefficient = Fraction(
+                outer_sign * mobius(oscillatory_modulus),
+                b_gcd * ramanujan_factor,
+            )
+            delta_endpoint = delta_length // (a_gcd * delta_gcd)
+            for h in range(1, h_length + 1):
+                ramanujan = ramanujan_sum(
+                    b_gcd * ramanujan_factor, h
+                )
+                for delta_reduced in range(1, delta_endpoint + 1):
+                    if oscillatory_modulus == 1:
+                        phase = 1 + 0j
+                    else:
+                        scalar_inverse = pow(
+                            b_gcd, -1, oscillatory_modulus
+                        )
+                        shifted_inverse = pow(
+                            (
+                                shift * ramanujan_factor
+                            )
+                            % oscillatory_modulus,
+                            -1,
+                            oscillatory_modulus,
+                        )
+                        phase = cmath.exp(
+                            2j
+                            * cmath.pi
+                            * (
+                                -scalar_inverse
+                                * h
+                                * delta_reduced
+                                * shifted_inverse
+                                % oscillatory_modulus
+                            )
+                            / oscillatory_modulus
+                        )
+                    total += coefficient * ramanujan * phase
+    return total
+
+
+def scalar_stratum_bettin_chandee_ledger(
+    *,
+    r_length: Fraction,
+    scalar_a_gcd: Fraction,
+    delta_gcd_factor: Fraction,
+    ramanujan_factor: Fraction,
+    oscillatory_modulus: Fraction,
+    h_length: Fraction,
+    delta_length: Fraction,
+    scalar_b_gcd: Fraction,
+) -> KloostermanFractionTripleLedger:
+    """Audit Bettin--Chandee Theorem 1 on the exact triple spectrum.
+
+    All arguments are exponents of ``T``.  The squarefree scalar factors
+    have exponents ``g_a, g_b, j, n, l`` and hence total modulus exponent
+    ``sigma=g_a+g_b+j+n+l``.  After ``delta=j*delta0``, the Kloosterman
+    numerator has product length ``H*L/(g_a*j)``.  Summing the fixed
+    factors termwise costs only ``g_a+j`` because the exact coefficient
+    ``1/(g_b*n)`` cancels the other two counting lengths.
+    """
+
+    values = (
+        r_length,
+        scalar_a_gcd,
+        delta_gcd_factor,
+        ramanujan_factor,
+        oscillatory_modulus,
+        h_length,
+        delta_length,
+        scalar_b_gcd,
+    )
+    if any(value < 0 for value in values):
+        raise ValueError("all exponent lengths must be nonnegative")
+    product_length = (
+        h_length
+        + delta_length
+        - scalar_a_gcd
+        - delta_gcd_factor
+    )
+    if product_length < 0:
+        raise ValueError("the reduced product interval is empty")
+    coefficient_support = (
+        r_length + oscillatory_modulus + product_length
+    )
+    # For m=g_b*n, divisor expansion gives
+    # sum_{h<=H}|c_m(h)|^2 << m*(H+m)*T^eps.  Relative to the raw
+    # product support, the coefficient norm therefore has the following
+    # piecewise cost.  It is m^(1/2) when m<=H and only gets worse when
+    # m>H.
+    ramanujan_scale = scalar_b_gcd + ramanujan_factor
+    ramanujan_norm_cost = (
+        ramanujan_scale
+        + max(h_length, ramanujan_scale)
+        - h_length
+    ) / 2
+    coefficient_norms = coefficient_support / 2 + ramanujan_norm_cost
+    # The phase is e_l(-h*delta0*inverse(r*g_b*n)).  Thus the inverted
+    # Bettin--Chandee variable lives at scale R*g_b*n, although its sparse
+    # coefficient sequence still has only R entries.
+    inverted_variable_scale = (
+        r_length + scalar_b_gcd + ramanujan_factor
+    )
+    theorem_geometry = (
+        inverted_variable_scale
+        + oscillatory_modulus
+        + product_length
+    )
+    longest_outer = max(inverted_variable_scale, oscillatory_modulus)
+    first_parenthesis = (
+        Fraction(7, 20) * theorem_geometry + longest_outer / 4
+    )
+    second_parenthesis = (
+        Fraction(3, 8) * theorem_geometry
+        + (product_length + longest_outer) / 8
+    )
+    phase_penalty = max(
+        Fraction(0),
+        (
+            product_length
+            - inverted_variable_scale
+            - oscillatory_modulus
+        )
+        / 2,
+    )
+    fixed_factor_cost = scalar_a_gcd + delta_gcd_factor
+    theorem_bound = (
+        fixed_factor_cost
+        + coefficient_norms
+        + phase_penalty
+        + max(first_parenthesis, second_parenthesis)
+    )
+    trivial_bound = fixed_factor_cost + coefficient_support
+    sigma = (
+        scalar_a_gcd
+        + scalar_b_gcd
+        + delta_gcd_factor
+        + ramanujan_factor
+        + oscillatory_modulus
+    )
+    local_target = r_length + sigma
+    return KloostermanFractionTripleLedger(
+        product_length=product_length,
+        coefficient_norms=coefficient_norms,
+        first_parenthesis=first_parenthesis,
+        second_parenthesis=second_parenthesis,
+        phase_penalty=phase_penalty,
+        fixed_factor_cost=fixed_factor_cost,
+        theorem_bound=theorem_bound,
+        trivial_bound=trivial_bound,
+        local_target=local_target,
+        theorem_gap=theorem_bound - local_target,
+        theorem_saving=trivial_bound - theorem_bound,
+    )
+
+
+def balanced_scalar_stratum_bettin_chandee_uniform_gap() -> Fraction:
+    """Uniform lower bound for the direct BC gap on the balanced face.
+
+    Put ``x=g_a+j``.  On ``rho=sigma=3`` and ``H=L=T^(5/2)``, the
+    fixed-factor cost plus all three coefficient norms is exactly 11/2.
+    The first Bettin--Chandee parenthesis is at least
+    ``7/20*5+3/4=5/2`` because its geometric exponent is ``11-2*x>=5``
+    and the inverted variable has exponent at least 3.  The local target
+    is 6, so every such direct theorem insertion has gap at least 2.
+    """
+
+    coefficient_and_fixed = Fraction(11, 2)
+    first_parenthesis_floor = Fraction(5, 2)
+    local_target = Fraction(6)
+    return (
+        coefficient_and_fixed
+        + first_parenthesis_floor
+        - local_target
+    )
 
 
 def additive_completion_shifted(

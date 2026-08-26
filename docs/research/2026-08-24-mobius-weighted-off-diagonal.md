@@ -5029,6 +5029,241 @@ Thus (9.185) proves that the proper divisor spectrum is structurally
 simpler, while (9.186) is the exact surviving top-spectrum gate; neither
 is declared bounded here.
 
+### 9.32 Coprimality migration and the first theorem-compatible Type-II form
+
+The condition \((k,\delta')=1\) in (9.185) can be expanded before any
+absolute value.  This does more than remove a side condition: it moves
+the Möbius sign to the modulus which actually carries the inverse phase.
+Insert
+
+\[
+ \mathbf 1_{(k,\delta')=1}
+ =\sum_{j\mid(k,\delta')}\mu(j),
+\]
+
+and write
+
+\[
+ k=j\lambda,\qquad q=j\lambda n,qquad
+ \delta'=j\delta_0.
+\]
+
+All three factors are pairwise coprime because \(q\) is squarefree.  The
+coefficient in (9.185) then satisfies the exact sign identity
+
+\[
+ \frac1q\,k\mu(k)\mu(j)
+ =\frac{\mu(\lambda)}n,
+\]
+
+and reduction of the phase from modulus \(j\lambda\) to \(\lambda\)
+gives
+
+\[
+ e_{j\lambda}\!\left(
+ -\bar g_bh(j\delta_0)\overline{dn}_{j\lambda}
+ \right)
+ =e_\lambda\!\left(
+ -\bar g_bh\delta_0\overline{dn}_\lambda
+ \right).
+\]
+
+Finally, multiplicativity of Ramanujan sums, using \((g_b,n)=1\), gives
+\(c_{g_b}(h)c_n(h)=c_{g_bn}(h)\).  Consequently (9.185) is exactly
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal F_{g_a,g_b,q}(d)
+ ={}&\mu(g_a)\mu(g_b)
+ \sum_{j\lambda n=q}\frac{\mu(\lambda)}{g_bn}
+ \sum_{h\leq H}c_{g_bn}(h)\\
+ &\times\sum_{\delta_0\leq L/(g_aj)}
+ e_\lambda\!\left(
+ -\bar g_{b,\lambda}h\delta_0
+  \overline{dn}_\lambda\right).
+\end{aligned}}
+\tag{9.187}
+\]
+
+The endpoint in (9.187) is
+\(\lfloor L/(g_aj)\rfloor\), the phase at \(\lambda=1\) is one, and no
+coprimality condition on \(\delta_0\) remains.  The finite checker compares
+(9.187) with (9.185) for prime and composite squarefree \(q\), including
+negative phases and every ordered factorization \(j\lambda n=q\).
+
+Formula (9.187) is the first scalar-stratum form for which a published
+Kloosterman-fraction theorem is syntactically applicable without replacing
+a modulus-dependent coefficient by a common majorant.  Indeed, return to
+\(r=s+d\).  Since \(\lambda\mid s\), one has \(d\equiv r\pmod\lambda\),
+and the phase is
+
+\[
+ e_\lambda\!\left(
+ -h\delta_0\overline{r g_bn}_\lambda\right).
+\tag{9.188}
+\]
+
+After fixing \(g_a,g_b,j,n\), the coefficient of the product
+\(h\delta_0\) is independent of the varying inverse modulus \(\lambda\).
+The inverted variable is the sparse sequence
+\(m=r g_bn\asymp Rg_bn\), and its \(L^2\)-norm still has size
+\(R^{1/2}T^\varepsilon\).  Thus Bettin--Chandee Theorem 1 can be inserted
+with
+
+\[
+ M=Rg_bn,\qquad N=\lambda,\qquad
+ A=\frac{HL}{g_aj},
+\tag{9.189}
+\]
+
+but the Ramanujan weight in that product coefficient must be retained.  For
+squarefree \(m=g_bn\), one period has the exact moments
+
+\[
+ \sum_{h\bmod m}|c_m(h)|=2^{\omega(m)}\varphi(m),
+ \qquad
+ \sum_{h\bmod m}|c_m(h)|^2=m\varphi(m).
+\tag{9.189a}
+\]
+
+More generally, divisor expansion gives
+
+\[
+ \sum_{h\leq H}|c_m(h)|^2
+ \ll_\varepsilon m(H+m)T^\varepsilon.
+\tag{9.189b}
+\]
+
+Thus the product-coefficient norm has exponent
+
+\[
+ \frac{p}{2}
+ +\frac{\gamma_b+\eta+
+  \max(h,\gamma_b+\eta)-h}{2}.
+\tag{9.189c}
+\]
+
+On the transition strata \(m\leq H T^{O(\eta)}\), this is
+\(A^{1/2}m^{1/2}T^\varepsilon\), not merely
+\(A^{1/2}T^\varepsilon\); when \(m>H\), (9.189c) is larger.  This is an
+applicability statement, not yet a sufficient estimate.
+
+The exact exponent ledger shows where the theorem stops.  Write the
+exponents of \(g_a,g_b,j,n,\lambda\) as
+\(\gamma_a,\gamma_b,\iota,\eta,\lambda_0\), so their sum is \(\sigma\),
+and put
+
+\[
+ p=h+\ell-\gamma_a-\iota,qquad
+ m_0=\rho+\gamma_b+\eta.
+\]
+
+The three coefficient norms in Theorem 1 therefore have exponent
+\((\rho+\lambda_0)/2\) plus (9.189c).  In the range
+\(\gamma_b+\eta\leq h\), this is
+\((\rho+\lambda_0+p+\gamma_b+\eta)/2\).  Its two parenthetical terms have
+exponents
+
+\[
+\boxed{
+ \frac7{20}(m_0+\lambda_0+p)
+   +\frac14\max(m_0,\lambda_0),
+ \quad
+ \frac38(m_0+\lambda_0+p)
+   +\frac18\{p+\max(m_0,\lambda_0)\}.}
+\tag{9.190}
+\]
+
+There is additionally
+\(\tfrac12\max(0,p-m_0-\lambda_0)\) from the large-phase factor.  The
+termwise sum over the fixed factors costs only
+\(\gamma_a+\iota\): the exact \(1/(g_bn)\) in (9.187) cancels the
+\(g_b,n\) counting lengths.
+
+At the primitive transition corner
+
+\[
+ (\rho,\gamma_a,\gamma_b,\iota,\eta,\lambda_0,h,\ell)
+ =\left(3,\frac12,0,0,0,\frac52,\frac52,\frac52\right),
+\]
+
+one has \(p=9/2\), coefficient-norm exponent \(5\), and the two
+exponents in (9.190) are \(17/4\) and \(75/16\).  Including the
+\(g_a\)-sum gives
+
+\[
+ \boxed{E_{\rm BC}=\frac{163}{16},\qquad
+ E_{\rm trivial}=\frac{21}{2},\qquad
+ E_{\rm target}=6.}
+\tag{9.191}
+\]
+
+Thus the theorem saves exactly \(T^{5/16}\) over this triple-form trivial
+ledger but still misses the local target by \(T^{67/16}\).  The gap is
+larger than the earlier \(T^2\) sharp-frequency diagnostic because
+(9.187) has completed an entire scalar stratum; this comparison must not
+be used as a lower bound for the original block.
+
+In fact the direct theorem covers **no** scalar-factor box on the balanced
+face.  Put \(x=\gamma_a+\iota\).  From
+\(\gamma_a+\gamma_b+\iota+\eta+\lambda_0=3\), the fixed-factor cost plus
+the lower envelope of the fixed-factor cost plus the three coefficient
+norms, including (9.189c), is
+
+\[
+ x+\frac{3+\lambda_0+p+\gamma_b+\eta}{2}
+ =\frac{11}{2};
+\tag{9.192}
+\]
+
+when \(\gamma_b+\eta>h\), the actual left side is larger.
+
+The geometric exponent in the first term of (9.190) is
+\(11-2x\geq5\), while the inverted-variable scale
+\(m_0=3+\gamma_b+\eta\geq3\).  Hence that parenthetical exponent is at
+least
+
+\[
+ \frac7{20}\cdot5+\frac14\cdot3=\frac52.
+\]
+
+The large-phase penalty is nonnegative, so (9.192) proves the uniform
+finite-polytope conclusion
+
+\[
+ \boxed{E_{\rm BC}\geq8=E_{\rm target}+2.}
+\tag{9.193}
+\]
+
+Equality can occur only on a degenerate nonoscillatory boundary of this
+ledger; the primitive oscillatory corner has the larger gap (9.191).
+The exact-rational checker exhausts the quarter-power grid of the factor
+simplex and verifies the analytic lower bound (9.193).  Thus factorizing
+the coprimality condition repairs theorem compatibility but does not hide
+a covered balanced subregion.
+
+The closest trace-function result does not fill the gap.  Korolev and
+Shparlinski prove only a logarithmic saving for a Möbius-twisted bounded-
+conductor trace function in intervals of length at least
+\(p^{1/2+\varepsilon}\), with prime modulus \(p\).  Formula (9.188) has a
+varying squarefree composite modulus and must average the full
+\(h\delta_0\) family as well as the second modulus Möbius sign.  Applying
+that result at fixed \(\lambda,h,\delta_0\), even on prime strata, loses
+all of those lengths and cannot absorb (9.191).  The power-saving
+Fouvry--Kowalski--Michel range and the newer fixed-numerator bilinear
+Kloosterman-fraction bounds have the same structural mismatch when used
+termwise.
+
+Accordingly, (9.187)--(9.191) do not prove the gate.  They replace the
+previous coefficient-dependent top-spectrum statement by a precise
+published-theorem-compatible Type-II interface and prove quantitatively
+that the direct theorem insertion is insufficient.  The primitive face
+\(j=n=1\), \(\lambda=q\) remains self-similar to (9.186); a successful
+argument must take a mixed moment in the product coefficient or preserve
+the simultaneous \(\mu(r)\mu(\lambda)\) average before the fixed-factor
+sum.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -5132,6 +5367,12 @@ Proved in this note:
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
   its proper Ramanujan-divisor layers.
+* the coprimality-migrated triple spectrum (9.187), its exact bridge to a
+  theorem-compatible Kloosterman fraction (9.188)--(9.189), and the
+  Bettin--Chandee exponent audit (9.190)--(9.193); the theorem saves
+  \(T^{5/16}\) but still misses the completed primitive stratum target by
+  \(T^{67/16}\), and its gap is at least \(T^2\) on every balanced
+  scalar-factor box.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -5173,6 +5414,7 @@ Proved in this note:
 | Cross-numerator product-kernel route | unsigned central count proved; signed estimate unproved | exact factorization (9.156), Farey count \(T^{7+\varepsilon}\) in (9.160), noncentral resonance (9.162), and additive completion (9.163); termwise separation of its origin would require the \(2/3\) Mertens exponent (9.164), but Section 9.30 recombines that origin with the axes |
 | Additive-dual shifted-Chowla route | exact finite reduction; joint estimate unproved | \(r=s+d\) gives the moving-endpoint identity (9.166); complete axes recombine the origin in (9.167)--(9.168), so the isolated \(2/3\) Mertens barrier is removed; all near blocks lose at most \(T^2\), one-modulus Parseval loses \(T^{5/2}\), (9.177) records the surviving resonance, (9.178) absorbs every axis boundary, and (9.179) factorizes each squarefree scalar-gcd stratum |
 | Scalar-stratum unit spectrum | exact divisor decomposition; top layer unproved | unit and unrestricted lifts are (9.180)--(9.181); the double-unit sum has divisor spectrum (9.183), outer \(\mu(q)\) migrates to \(\mu(k)\) in (9.184), and (9.185) isolates the inverse-product top layer (9.186) |
+| Coprimality-migrated scalar spectrum | exact Type-II bridge; balanced face unproved | expanding \((k,\delta')=1\) gives the triple spectrum (9.187), whose product coefficient is independent of the oscillatory modulus; Bettin--Chandee applies with (9.189), but (9.193) proves a uniform gap of at least \(T^2\), with gap \(T^{67/16}\) at the primitive corner |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

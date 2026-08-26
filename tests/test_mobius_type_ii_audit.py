@@ -14,6 +14,7 @@ from scripts.audit_mobius_type_ii import (
     CrossInverseFractionCollision,
     FareyCentralCollisionLedger,
     InverseFractionSeparation,
+    KloostermanFractionTripleLedger,
     MQWBlockSavings,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
@@ -32,6 +33,7 @@ from scripts.audit_mobius_type_ii import (
     balanced_dual_low_mode_mobius_exponent,
     balanced_inverse_fraction_spacing_margin,
     balanced_principal_character_mobius_exponent,
+    balanced_scalar_stratum_bettin_chandee_uniform_gap,
     blomer_pascadi_beats_best_trivial,
     blomer_pascadi_best_trivial_margins,
     c_coefficient,
@@ -46,6 +48,7 @@ from scripts.audit_mobius_type_ii import (
     coherent_operator_large_sieve_gap,
     coherent_operator_required_exponent,
     completed_product_phase_reduction,
+    coprimality_migrated_scalar_stratum_spectrum,
     coprime_indicator_via_mobius,
     cross_inverse_fraction_collision,
     direct_fourfold_random_margin,
@@ -88,6 +91,7 @@ from scripts.audit_mobius_type_ii import (
     restricted_unit_fourier_lift_formula,
     reverse_unit_affine_progression_length,
     reverse_unit_solution_count_gap,
+    scalar_stratum_bettin_chandee_ledger,
     squarefree_outer_mobius_ramanujan,
     squarefree_scalar_gcd_stratum,
     squarefree_scalar_stratum_completed_sum,
@@ -1291,6 +1295,129 @@ def test_complete_squarefree_scalar_stratum_has_migrated_divisor_spectrum() -> N
                             delta_length,
                         )
                     ) < 1e-8
+
+
+def test_scalar_stratum_coprimality_migration_has_exact_triple_spectrum() -> None:
+    for a_gcd, b_gcd, reduced_modulus in (
+        (1, 1, 6),
+        (1, 1, 30),
+        (1, 2, 3),
+        (2, 1, 3),
+        (2, 3, 5),
+    ):
+        modulus = a_gcd * b_gcd * reduced_modulus
+        for shift in range(1, modulus):
+            if gcd(shift, modulus) != 1:
+                continue
+            for h_length in range(1, 5):
+                for delta_length in range(1, 6):
+                    assert abs(
+                        squarefree_scalar_stratum_divisor_spectrum(
+                            a_gcd,
+                            b_gcd,
+                            reduced_modulus,
+                            shift,
+                            h_length,
+                            delta_length,
+                        )
+                        - coprimality_migrated_scalar_stratum_spectrum(
+                            a_gcd,
+                            b_gcd,
+                            reduced_modulus,
+                            shift,
+                            h_length,
+                            delta_length,
+                        )
+                    ) < 1e-8
+
+
+def test_bettin_chandee_bridge_still_misses_balanced_primitive_corner() -> None:
+    ledger = scalar_stratum_bettin_chandee_ledger(
+        r_length=F(3),
+        scalar_a_gcd=F(1, 2),
+        delta_gcd_factor=F(0),
+        ramanujan_factor=F(0),
+        oscillatory_modulus=F(5, 2),
+        h_length=F(5, 2),
+        delta_length=F(5, 2),
+        scalar_b_gcd=F(0),
+    )
+    assert ledger == KloostermanFractionTripleLedger(
+        product_length=F(9, 2),
+        coefficient_norms=F(5),
+        first_parenthesis=F(17, 4),
+        second_parenthesis=F(75, 16),
+        phase_penalty=F(0),
+        fixed_factor_cost=F(1, 2),
+        theorem_bound=F(163, 16),
+        trivial_bound=F(21, 2),
+        local_target=F(6),
+        theorem_gap=F(67, 16),
+        theorem_saving=F(5, 16),
+    )
+
+
+def test_ramanujan_weight_is_present_in_nonprimitive_coefficient_norm() -> None:
+    ledger = scalar_stratum_bettin_chandee_ledger(
+        r_length=F(3),
+        scalar_a_gcd=F(1, 2),
+        delta_gcd_factor=F(0),
+        ramanujan_factor=F(1, 2),
+        oscillatory_modulus=F(2),
+        h_length=F(5, 2),
+        delta_length=F(5, 2),
+        scalar_b_gcd=F(0),
+    )
+    # The raw r, lambda and h*delta0 supports contribute 19/4; the
+    # second moment of c_n(h) supplies the remaining n^(1/2)=T^(1/4).
+    assert ledger.coefficient_norms == F(5)
+
+
+def test_squarefree_ramanujan_period_has_exact_first_and_second_moments() -> None:
+    for modulus in range(1, 50):
+        if naive_mobius(modulus) == 0:
+            continue
+        phi = sum(1 for value in range(modulus) if gcd(value, modulus) == 1)
+        prime_count = sum(
+            1
+            for prime in range(2, modulus + 1)
+            if modulus % prime == 0
+            and all(prime % divisor for divisor in range(2, prime))
+        )
+        values = [ramanujan_sum(modulus, h) for h in range(modulus)]
+        assert sum(abs(value) for value in values) == 2**prime_count * phi
+        assert sum(value * value for value in values) == modulus * phi
+
+
+def test_bettin_chandee_covers_no_balanced_scalar_factor_box() -> None:
+    assert balanced_scalar_stratum_bettin_chandee_uniform_gap() == F(2)
+    grid = [F(index, 4) for index in range(13)]
+    for a_gcd in grid:
+        for b_gcd in grid:
+            for delta_gcd in grid:
+                for ramanujan_factor in grid:
+                    oscillatory_modulus = (
+                        F(3)
+                        - a_gcd
+                        - b_gcd
+                        - delta_gcd
+                        - ramanujan_factor
+                    )
+                    if oscillatory_modulus < 0:
+                        continue
+                    if b_gcd + ramanujan_factor > F(5, 2):
+                        continue
+                    ledger = scalar_stratum_bettin_chandee_ledger(
+                        r_length=F(3),
+                        scalar_a_gcd=a_gcd,
+                        delta_gcd_factor=delta_gcd,
+                        ramanujan_factor=ramanujan_factor,
+                        oscillatory_modulus=oscillatory_modulus,
+                        h_length=F(5, 2),
+                        delta_length=F(5, 2),
+                        scalar_b_gcd=b_gcd,
+                    )
+                    assert ledger.theorem_gap >= F(2)
 
 
 def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:

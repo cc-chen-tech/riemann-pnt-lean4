@@ -133,3 +133,19 @@
 - [x] Compose the identities into one boundary-exact formula for every ordered scalar-gcd stratum.
 - [x] Isolate the self-similar top spectrum from the proper Ramanujan-divisor layers without claiming an estimate.
 - [x] Independently review the new identities, then verify and update the Ready-for-view PR.
+
+### Task 9: Migrate delta coprimality to a theorem-compatible Type-II modulus
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the second Möbius migration after expanding `(delta,q)=1`.
+- [x] Prove the exact ordered factorization `q=j*l*n`, `delta=j*delta0`, with coefficient `mu(l)/n` and oscillatory modulus `l`.
+- [x] Return from `d` to `r` and expose a product coefficient independent of the varying inverse modulus.
+- [x] Insert Bettin--Chandee Theorem 1 with its actual sparse inverted-variable scale and compute both parenthetical exponents.
+- [x] Audit the primitive transition corner and retain the exact `67/16` residual theorem gap.
+- [ ] Determine whether a mixed product-coefficient moment or a two-Möbius dispersion estimate closes the primitive `j=n=1` face.
+- [x] Review, verify, and update the Ready-for-view PR only if the new exact bridge survives all finite and exponent checks.
