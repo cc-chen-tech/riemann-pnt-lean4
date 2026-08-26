@@ -32,5 +32,10 @@ example {Y0 Y1 : ℕ} {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
       (s - 1) ^ 2 * twoScaleCarlsonZeroDetector Y0 Y1 s :=
   regularizedTwoScaleCarlsonZeroDetector_eq_sub_one_sq_mul hs0 hs1
 
+example {Y0 Y1 : ℕ} {s : ℂ} (hs : 4 ≤ s.re)
+    (herr : ‖twoScaleMollifiedZetaError Y0 Y1 s‖ ≤ (1 / 3 : ℝ)) :
+    1 ≤ ‖regularizedTwoScaleCarlsonZeroDetector Y0 Y1 s‖ :=
+  one_le_norm_regularizedTwoScaleCarlsonZeroDetector_of_four_le_re hs herr
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

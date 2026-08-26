@@ -223,22 +223,92 @@ large `U`, `|F_U(4+it)|<1`, so the fixed right edge is detector-zero-free.
 The value `R=1000` is used only in interpolation, not as the contour edge.
 
 For completeness, the coefficient-generic horizontal estimate needed here
-is the following standard lemma.  If a finite Dirichlet polynomial `M` has
-support at most `Y`, coefficient one at `n=1`, coefficients bounded by one,
-and `|zeta(s)M(s)-1|<=1/3` on `Re s=4`, then the regularized detector
+is the following lemma.  If a finite Dirichlet polynomial `M` has support at
+most `Y`, coefficient one at `n=1`, coefficients bounded by one, and
+`|zeta(s)M(s)-1|<=1/3` on `Re s=4`, then the regularized detector
 `(s-1)^2(1-(zeta(s)M(s)-1)^2)` has polynomial growth
 `O(Y^2(|t|+3)^10)` in the fixed Jensen disks centered on `Re s=4`.
-Jensen gives `O(log(Y(|t|+3)))` local divisor mass.  A radius-pigeonhole
-argument selects a zero-free horizontal side, and the zero-removed analytic
-factor plus its principal parts give `O((log(Y(|t|+3)))^2)` variation there.
-This proof uses no special formula for the coefficients beyond the four
-hypotheses just listed.  The quantitative `1/3` bound makes the detector
-uniformly bounded away from zero at the Jensen center; mere nonvanishing
-would not suffice for the stated logarithmic majorant.  The lemma is exactly
-the proof already formalized for the
-sharp Mobius mollifier in `CarlsonDetectorGrowth.lean`, with its sole
-mollifier norm estimate replaced by `|M(s)|<=Y` on `Re s>=0` and its
-far-right lower bound replaced by the assumed error bound.  The two-scale
+
+Here are the details, including the normalizations used by the contour.  For
+a height parameter `V>=5`, put
+
+\[
+ c=4+i(V+1/2),\quad R_0=31/8,\quad b=123/32,
+ \quad r_0=15/4.
+\]
+
+The closed `R_0`-disk has `Re s>=1/8` and `|Im s|<=V+5`.  Hence
+`|M(s)|<=Y`.  The standard fixed-strip polynomial bound
+`|zeta(s)|<<(|Im s|+3)^4` therefore gives, for
+
+\[
+ G(s)=(s-1)^2\{1-(\zeta(s)M(s)-1)^2\},
+\]
+
+the uniform outer-circle estimate
+
+\[
+ |G(s)|\le C Y^2(V+14)^{10}.                            \tag{6.2a}
+\]
+
+The expression
+`((s-1)zeta(s))M(s)(2(s-1)-((s-1)zeta(s))M(s))` shows that `G` is
+entire.  At the center, the right-line hypothesis gives
+`|1-F(c)^2|>=8/9`, where `F=zeta M-1`; since `|c-1|^2>1`,
+`|G(c)|>=1`.  Jensen's theorem between radii `b` and `R_0` now bounds the
+complete analytic divisor mass in the `b`-disk by
+
+\[
+ L\le {\log(CY^2(V+14)^{10})\over\log(R_0/b)}
+   \ll \log(Y(V+14)).                                   \tag{6.2b}
+\]
+
+Choose a radius `r in [121/32,122/32]` separated from every modulus
+`|rho-c|` of a zero in the `b`-disk by
+`delta_r >> 1/(L+1)`.  This is the elementary finite-interval pigeonhole
+lemma, applied to at most `L` distinct radii.  Factor, with multiplicity,
+
+\[
+ G(s)=g(s)\prod_{|\rho-c|\le b}(s-\rho)^{m_\rho}.
+\]
+
+Then `g` is analytic and zero-free in the `b`-disk.  On `|s-c|=r`,
+(6.2a) and the radial separation give
+
+\[
+ \log|g(s)|\le \log(CY^2(V+14)^{10})-L\log\delta_r
+   \ll (\log(Y(V+14)))^2.                               \tag{6.2c}
+\]
+
+At the center the same factorization, `|G(c)|>=1`, and
+`|c-rho|<=b` give `log|g(c)|>=-L log b`.  Applying the standard
+Borel--Caratheodory/logarithmic-derivative estimate to an analytic logarithm
+of `g` between the `r`-circle and the `r_0`-disk yields
+
+\[
+ |g'(s)/g(s)|\ll (\log(Y(V+14)))^2\qquad(|s-c|\le r_0). \tag{6.2d}
+\]
+
+Finally choose `v in [V,V+1]` separated from every ordinate of a zero in
+the `b`-disk by `delta_h=1/(4(L+1))`.  The forbidden intervals have total
+length at most `1/2`, so such a `v` exists.  The segment
+`{x+iv: 1/2<=x<=4}` lies in the `r_0`-disk.  It is zero-free, and the
+principal parts satisfy
+
+\[
+ \left|\sum_\rho {m_\rho\over x+iv-\rho}\right|
+ \le L/\delta_h\ll (L+1)^2.                             \tag{6.2e}
+\]
+
+Combining (6.2d) and (6.2e) proves the required uniform
+`O((log(Y(V+14)))^2)` horizontal logarithmic-derivative bound.  Thus the
+argument uses no special formula for the coefficients beyond the four
+hypotheses above.  The quantitative `1/3` bound is essential because it
+supplies `|G(c)|>=1`; mere nonvanishing would not give (6.2b) with a uniform
+logarithmic majorant.  These Jensen, factorization, Borel--Caratheodory, and
+finite-pigeonhole lemmas are already formalized in
+`CarlsonDetectorGrowth.lean`; that file still specializes them to the sharp
+detector, so a generic Lean wrapper remains necessary.  The two-scale
 mollifier satisfies all four hypotheses.
 
 Choose the bottom side in `[U-1,U]` and the top side in `[2U,2U+1]`, so the
@@ -265,7 +335,7 @@ Summing over dyadic shells up to `T` is a convergent geometric sum because
 the same estimate holds for `N(2/3,T)`.  Finally,
 
 \[
- \frac{467}{576}-q_*=rac{409373}{719640000}>0,
+ \frac{467}{576}-q_*=\frac{409373}{719640000}>0,
 \]
 
 so weakening the power slightly and allowing two spare logarithms proves

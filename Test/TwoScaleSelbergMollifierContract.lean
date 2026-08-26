@@ -28,6 +28,11 @@ example {Y0 Y1 n : ℕ} (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
     |twoScaleSelbergCoeff Y0 Y1 n| ≤ 1 :=
   abs_twoScaleSelbergCoeff_le_one hY0 hY01 hn1 hnY1
 
+example {Y0 Y1 : ℕ} (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    {s : ℂ} (hs : 0 ≤ s.re) :
+    ‖twoScaleSelbergMollifier Y0 Y1 s‖ ≤ Y1 :=
+  norm_twoScaleSelbergMollifier_le_natCast hY0 hY01 hs
+
 example {Y0 Y1 : ℕ} (hY0 : 1 ≤ Y0) :
     twoScaleSelbergCoeff Y0 Y1 1 = 1 :=
   twoScaleSelbergCoeff_one hY0
@@ -42,6 +47,14 @@ example {Y0 Y1 n : ℕ} (hY0 : 2 ≤ Y0) (hY01 : Y0 < Y1)
             linearLogSelbergCoeff Y0 n
         else 0) :=
   twoScaleSelbergCoeff_eq_linear_combination hY0 hY01 hn1 hnY1
+
+example {Y0 Y1 : ℕ} (hY0 : 2 ≤ Y0) (hY01 : Y0 < Y1) (s : ℂ) :
+    twoScaleSelbergMollifier Y0 Y1 s =
+      (Real.log Y1 / Real.log ((Y1 : ℝ) / (Y0 : ℝ)) : ℂ) *
+          linearLogSelbergMollifier Y1 s -
+        (Real.log Y0 / Real.log ((Y1 : ℝ) / (Y0 : ℝ)) : ℂ) *
+          linearLogSelbergMollifier Y0 s :=
+  twoScaleSelbergMollifier_eq_linear_combination hY0 hY01 s
 
 example (Y0 Y1 : ℕ) (s : ℂ) :
     AnalyticAt ℂ (twoScaleSelbergMollifier Y0 Y1) s :=

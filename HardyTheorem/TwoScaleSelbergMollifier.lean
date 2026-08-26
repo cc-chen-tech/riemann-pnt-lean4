@@ -56,6 +56,11 @@ noncomputable def linearLogSelbergWeight (Y n : ℕ) : ℝ :=
 noncomputable def linearLogSelbergCoeff (Y n : ℕ) : ℝ :=
   (ArithmeticFunction.moebius n : ℝ) * linearLogSelbergWeight Y n
 
+/-- The standard linearly tapered finite Selberg mollifier. -/
+noncomputable def linearLogSelbergMollifier (Y : ℕ) (s : ℂ) : ℂ :=
+  ∑ n ∈ Finset.Icc 1 Y,
+    (linearLogSelbergCoeff Y n : ℂ) * (1 / (n : ℂ) ^ s)
+
 /-- Every index in the inner range sees weight exactly one. -/
 @[simp] theorem twoScaleSelbergWeight_eq_one
     {Y0 Y1 n : ℕ} (hn : n ≤ Y0) :
@@ -141,6 +146,42 @@ theorem abs_twoScaleSelbergCoeff_le_one
     _ ≤ 1 * 1 := mul_le_mul_of_nonneg_left hw.2 zero_le_one
     _ = 1 := one_mul 1
 
+/-- On the closed right half-plane, the two-scale mollifier has the crude
+support-size bound needed on Carlson's fixed Jensen circles. -/
+theorem norm_twoScaleSelbergMollifier_le_natCast
+    {Y0 Y1 : ℕ} (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    {s : ℂ} (hs : 0 ≤ s.re) :
+    ‖twoScaleSelbergMollifier Y0 Y1 s‖ ≤ Y1 := by
+  unfold twoScaleSelbergMollifier
+  calc
+    ‖∑ n ∈ Finset.Icc 1 Y1,
+        (twoScaleSelbergCoeff Y0 Y1 n : ℂ) *
+          (1 / (n : ℂ) ^ s)‖ ≤
+        ∑ n ∈ Finset.Icc 1 Y1,
+          ‖(twoScaleSelbergCoeff Y0 Y1 n : ℂ) *
+            (1 / (n : ℂ) ^ s)‖ := norm_sum_le _ _
+    _ ≤ ∑ _n ∈ Finset.Icc 1 Y1, (1 : ℝ) := by
+      apply Finset.sum_le_sum
+      intro n hn
+      have hn1 : 1 ≤ n := (Finset.mem_Icc.mp hn).1
+      have hnY1 : n ≤ Y1 := (Finset.mem_Icc.mp hn).2
+      have hnpos : 0 < n := Nat.zero_lt_one.trans_le hn1
+      have hnRpos : (0 : ℝ) < n := by exact_mod_cast hnpos
+      have hnRone : (1 : ℝ) ≤ n := by exact_mod_cast hn1
+      have hcoeff : ‖(twoScaleSelbergCoeff Y0 Y1 n : ℂ)‖ ≤ 1 := by
+        simpa [Complex.norm_real, Real.norm_eq_abs] using
+          abs_twoScaleSelbergCoeff_le_one hY0 hY01 hn1 hnY1
+      have hdenPos : 0 < (n : ℝ) ^ s.re :=
+        Real.rpow_pos_of_pos hnRpos _
+      have hden : 1 ≤ (n : ℝ) ^ s.re :=
+        Real.one_le_rpow hnRone hs
+      have hinv : ‖(1 : ℂ) / (n : ℂ) ^ s‖ ≤ 1 := by
+        rw [norm_div, norm_one, Complex.norm_natCast_cpow_of_pos hnpos]
+        exact (div_le_one hdenPos).2 hden
+      rw [norm_mul]
+      simpa using mul_le_mul hcoeff hinv (norm_nonneg _) zero_le_one
+    _ = Y1 := by simp
+
 /-- The constant Dirichlet coefficient is exactly one. -/
 @[simp] theorem twoScaleSelbergCoeff_one
     {Y0 Y1 : ℕ} (hY0 : 1 ≤ Y0) :
@@ -208,6 +249,60 @@ theorem twoScaleSelbergCoeff_eq_linear_combination
     linearLogSelbergCoeff,
     twoScaleSelbergWeight_eq_linear_combination hY0 hY01 hn1 hnY1]
   split_ifs <;> ring
+
+/-- Polynomial-level form of the exact decomposition into two standard
+linear Selberg tapers. -/
+theorem twoScaleSelbergMollifier_eq_linear_combination
+    {Y0 Y1 : ℕ} (hY0 : 2 ≤ Y0) (hY01 : Y0 < Y1) (s : ℂ) :
+    twoScaleSelbergMollifier Y0 Y1 s =
+      (Real.log Y1 / Real.log ((Y1 : ℝ) / (Y0 : ℝ)) : ℂ) *
+          linearLogSelbergMollifier Y1 s -
+        (Real.log Y0 / Real.log ((Y1 : ℝ) / (Y0 : ℝ)) : ℂ) *
+          linearLogSelbergMollifier Y0 s := by
+  classical
+  let A : ℝ := Real.log Y1 / Real.log ((Y1 : ℝ) / (Y0 : ℝ))
+  let B : ℝ := Real.log Y0 / Real.log ((Y1 : ℝ) / (Y0 : ℝ))
+  let f : ℕ → ℂ := fun n =>
+    (linearLogSelbergCoeff Y0 n : ℂ) * (1 / (n : ℂ) ^ s)
+  have hfilter :
+      (Finset.Icc 1 Y1).filter (fun n => n ≤ Y0) = Finset.Icc 1 Y0 := by
+    ext n
+    simp only [Finset.mem_filter, Finset.mem_Icc]
+    omega
+  have hpad :
+      (∑ n ∈ Finset.Icc 1 Y1,
+          if n ≤ Y0 then (B : ℂ) * f n else 0) =
+        (B : ℂ) * ∑ n ∈ Finset.Icc 1 Y0, f n := by
+    rw [← Finset.sum_filter, hfilter, Finset.mul_sum]
+  unfold twoScaleSelbergMollifier linearLogSelbergMollifier
+  calc
+    (∑ n ∈ Finset.Icc 1 Y1,
+        (twoScaleSelbergCoeff Y0 Y1 n : ℂ) * (1 / (n : ℂ) ^ s)) =
+        ∑ n ∈ Finset.Icc 1 Y1,
+          ((A : ℂ) * (linearLogSelbergCoeff Y1 n : ℂ) *
+              (1 / (n : ℂ) ^ s) -
+            if n ≤ Y0 then (B : ℂ) * f n else 0) := by
+      apply Finset.sum_congr rfl
+      intro n hn
+      have hnmem := Finset.mem_Icc.mp hn
+      rw [twoScaleSelbergCoeff_eq_linear_combination hY0 hY01
+        hnmem.1 hnmem.2]
+      dsimp only [A, B, f]
+      split_ifs <;> push_cast <;> ring
+    _ = (A : ℂ) *
+          (∑ n ∈ Finset.Icc 1 Y1,
+            (linearLogSelbergCoeff Y1 n : ℂ) * (1 / (n : ℂ) ^ s)) -
+        ∑ n ∈ Finset.Icc 1 Y1,
+          (if n ≤ Y0 then (B : ℂ) * f n else 0) := by
+      rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+      apply Finset.sum_congr rfl
+      intro n _hn
+      ring
+    _ = (A : ℂ) *
+          (∑ n ∈ Finset.Icc 1 Y1,
+            (linearLogSelbergCoeff Y1 n : ℂ) * (1 / (n : ℂ) ^ s)) -
+        (B : ℂ) * ∑ n ∈ Finset.Icc 1 Y0, f n := by rw [hpad]
+    _ = _ := by simp [A, B, f]
 
 /-- The finite two-scale mollifier is entire as a function of its complex
 argument. -/

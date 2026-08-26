@@ -146,5 +146,57 @@ theorem regularizedTwoScaleCarlsonZeroDetector_eq_sub_one_sq_mul
     twoScaleCarlsonZeroDetector_factorization]
   ring
 
+/-- A radius-`1/3` bound for the two-scale mollified error separates the
+unregularized detector from zero by `8/9`. -/
+theorem eight_ninths_le_norm_twoScaleCarlsonZeroDetector_of_norm_error_le
+    {Y0 Y1 : ℕ} {s : ℂ}
+    (herr : ‖twoScaleMollifiedZetaError Y0 Y1 s‖ ≤ (1 / 3 : ℝ)) :
+    (8 / 9 : ℝ) ≤ ‖twoScaleCarlsonZeroDetector Y0 Y1 s‖ := by
+  have hreverse :
+      1 - ‖twoScaleMollifiedZetaError Y0 Y1 s‖ ^ 2 ≤
+        ‖twoScaleCarlsonZeroDetector Y0 Y1 s‖ := by
+    unfold twoScaleCarlsonZeroDetector
+    calc
+      1 - ‖twoScaleMollifiedZetaError Y0 Y1 s‖ ^ 2 =
+          ‖(1 : ℂ)‖ - ‖twoScaleMollifiedZetaError Y0 Y1 s ^ 2‖ := by simp
+      _ ≤ ‖(1 : ℂ) - twoScaleMollifiedZetaError Y0 Y1 s ^ 2‖ :=
+        norm_sub_norm_le _ _
+  have herrNonneg : 0 ≤ ‖twoScaleMollifiedZetaError Y0 Y1 s‖ :=
+    norm_nonneg _
+  nlinarith
+
+/-- The quantitative right-edge error bound supplies the Jensen-center
+normalization for the regularized two-scale detector. -/
+theorem one_le_norm_regularizedTwoScaleCarlsonZeroDetector_of_four_le_re
+    {Y0 Y1 : ℕ} {s : ℂ} (hs : 4 ≤ s.re)
+    (herr : ‖twoScaleMollifiedZetaError Y0 Y1 s‖ ≤ (1 / 3 : ℝ)) :
+    1 ≤ ‖regularizedTwoScaleCarlsonZeroDetector Y0 Y1 s‖ := by
+  have hs0 : s ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp at hre
+    linarith
+  have hs1 : s ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp at hre
+    linarith
+  have hsub : 3 ≤ ‖s - 1‖ := by
+    have hre : 3 ≤ |(s - 1).re| := by
+      simp only [Complex.sub_re, Complex.one_re]
+      rw [abs_of_nonneg (by linarith)]
+      linarith
+    exact hre.trans (Complex.abs_re_le_norm (s - 1))
+  have hsubSq : (9 : ℝ) ≤ ‖s - 1‖ ^ 2 := by
+    nlinarith [norm_nonneg (s - 1)]
+  have hdet :=
+    eight_ninths_le_norm_twoScaleCarlsonZeroDetector_of_norm_error_le herr
+  rw [regularizedTwoScaleCarlsonZeroDetector_eq_sub_one_sq_mul hs0 hs1,
+    norm_mul, norm_pow]
+  calc
+    (1 : ℝ) ≤ 9 * (8 / 9 : ℝ) := by norm_num
+    _ ≤ ‖s - 1‖ ^ 2 * ‖twoScaleCarlsonZeroDetector Y0 Y1 s‖ :=
+      mul_le_mul hsubSq hdet (by norm_num) (by positivity)
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem
