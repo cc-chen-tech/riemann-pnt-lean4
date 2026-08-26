@@ -989,3 +989,94 @@ This is not yet the unbounded half-strip count printed in the paper.  Its sole
 remaining equation-(35) step is to prove a uniform far-right zero-free edge
 and choose `A` beyond it.  Littlewood's inequality (37) and all of its edge
 asymptotics remain separate, as does the long mollified mean-square theorem.
+
+## 18. Uniform far-right zero-free design for equation (35)
+
+The right boundary can be removed uniformly in the ordinate; no boundary
+depending on `T` is necessary.  The key observation is a lower bound for the
+real part of the digamma function that is uniform in the imaginary part.
+For `z=x+iy`, `x>0`, Gauss' series has summand
+
+\[
+ d_k(z)=\frac1k-\frac1{z+k}=\frac{z}{k(z+k)},\qquad k\ge1.
+\]
+
+Direct calculation gives
+
+\[
+ \operatorname{Re}d_k(z)
+ =\frac{x(x+k)+y^2}{k((x+k)^2+y^2)}
+ \ge \frac{x}{k(x+k)}.
+\]
+
+Hence every summand has nonnegative real part, and if `x>=N`, the first `N`
+summands contribute at least
+
+\[
+ \sum_{k=1}^N\operatorname{Re}d_k(z)
+ \ge \frac12\sum_{k=1}^N\frac1k=\frac12H_N.
+\]
+
+Since `Re(z^{-1})<=1` for `x>=1`, Gauss' identity implies
+
+\[
+ \operatorname{Re}\psi(z)
+ \ge-\gamma-1+\frac12H_N\qquad(x\ge N).
+\]
+
+The divergence of `H_N` therefore proves
+
+\[
+ \forall M\in\mathbb R\;\exists A\;\forall z\in\mathbb C,
+ \quad A\le\operatorname{Re}z
+ \Longrightarrow M\le\operatorname{Re}\psi(z),
+ \tag{D-right}
+\]
+
+uniformly for all imaginary parts.
+
+Logarithmic differentiation of
+`H(s)=s(s-1)Gamma_R(s)/2` gives, on `Re s>1`,
+
+\[
+ \frac{H'(s)}{H(s)}
+ =\frac1s+\frac1{s-1}-\frac12\log\pi+rac12\psi(s/2).
+\]
+
+The first two rational terms have nonnegative real part.  Thus (D-right)
+shows that `Re(H'/H)` tends uniformly to positive infinity as `Re s` tends
+to infinity.  On the other hand the already-proved Dirichlet-series estimate
+gives, uniformly on `Re s>=3`,
+
+\[
+ \left|\frac{\zeta'(s)}{\zeta(s)}\right|\le2\zeta(2).
+\]
+
+Put `c=g_1/L`.  Since zeta is nonzero on this half-plane,
+
+\[
+ V_1(s)=\zeta(s)\left[g+ig_0+c\left(
+   \frac{\zeta'(s)}{\zeta(s)}+\frac{H'(s)}{H(s)}\right)\right].
+\]
+
+If `c=0`, the bracket is `g+ig_0`, nonzero because `g!=0`.  If `c!=0`,
+choose the digamma threshold so that the real quantity in parentheses exceeds
+`|g|/|c|`.  Its product with the real number `c` then has the sign of `c` and
+magnitude greater than `|g|`; consequently the real part of the bracket
+cannot vanish.  This proves one constant `A_V`, independent of height, beyond
+which `V_1` has no zeros.
+
+For the mollifier, `P(1)=1` makes the constant coefficient exactly one, while
+each of the finitely many terms with `n>=2` satisfies
+
+\[
+ \left|b_n n^{-s}\right|=|b_n|n^{-\operatorname{Re}s}\longrightarrow0
+\]
+
+uniformly in `Im s`.  A finite sum gives a constant `A_B` for which
+`|B(s)-1|<1`, hence `B(s)!=0`, whenever `Re s>=A_B`.  Taking
+`A=max(A_V,A_B)` excludes zeros of both `V_1` and `V_1B` beyond the same
+vertical line.  The bounded divisor counts from Section 17 can then be frozen
+at this `A`, yielding the actual unbounded right-half-strip counts and the
+global half-weighted equation-(35) inequality.  This argument remains wholly
+independent of Zeta23 and of the later long-mollifier mean-square estimate.
