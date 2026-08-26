@@ -11355,6 +11355,98 @@ The finite helper beatty_divisor_fourier_coefficient_sides constructs
 (9.500) over exact rational vectors and verifies the Hilbert
 divisor-Cauchy majorant in (9.501) frequency by frequency.
 
+### 9.75 The centered moving-Beatty projector is the positive one-sided gate
+
+There is a more direct positive sufficient condition than estimating the
+signed nonzero-determinant sum.  Let \(\lambda\) index every retained
+\((h,\delta,\nu,\sigma)\) and Type-factorization label and define
+
+\[
+ \boxed{
+ X_b=\sum_{\substack{s\le Q,\ 0\le w<s,
+                     \\ (ks+w,s)=1\\
+                     \lfloor Qw/s\rfloor=b}}
+ \mu(s)\mu(ks+w)\sum_\lambda G_{s,w,\lambda}.}
+ \tag{9.504}
+\]
+
+This is the complete pre-Cauchy vector, not a scalar surrogate.  The
+finite sector-character projector is
+
+\[
+ \boxed{
+ \mathcal E_{\ne0}
+ =\sum_b\|X_b\|_{\mathcal H}^2
+  -\frac1Q\left\|\sum_bX_b\right\|_{\mathcal H}^2.}
+ \tag{9.505}
+\]
+
+After all internal \(dm=r\) factorizations have been recombined, write
+
+\[
+ \mathcal E_{\ne0}=D_{\Delta=0}+J_{\Delta\ne0},
+ \qquad D_{\Delta=0}\ge0.
+ \tag{9.506}
+\]
+
+Then positivity alone gives the exact one-sided implication
+
+\[
+ \boxed{
+ J_{\Delta\ne0}\le\mathcal E_{\ne0}
+ \le\sum_b\|X_b\|_{\mathcal H}^2.}
+ \tag{9.507}
+\]
+
+It is therefore enough to prove the centered positive estimate
+
+\[
+ \boxed{
+ {\rm BC}^{\rm mov,cent}_{\mathcal H}(2):\qquad
+ \sum_{b<Q}\|X_b\|_{\mathcal H}^2
+ -\frac1Q\left\|\sum_{b<Q}X_b\right\|_{\mathcal H}^2
+ \ll_{\varepsilon,W}T^{2+\varepsilon}.}
+ \tag{9.508}
+\]
+
+The uncentered sector-square bound obtained by deleting the principal
+subtraction is a stronger sufficient condition; it is not called the
+weakest gate here.
+
+In a scalar projection the sector entry is
+
+\[
+ ks+\left\lceil\frac{bs}{Q}\right\rceil
+ =\left\lfloor
+   \left(k+\frac bQ\right)s+\frac{Q-1}{Q}
+  \right\rfloor,
+ \tag{9.509}
+\]
+
+so (9.508) contains a centered power-strength moving-rational-grid Beatty--Chowla
+estimate.  Coherent energy has exponent three and the target exponent is
+two: one needs a full power in energy, or \(T^{1/2}\) before squaring.
+
+Crnčević--Hernández--Rizk--Sereesuchart--Tao,
+[arXiv:2211.15830v4](https://arxiv.org/abs/2211.15830), Theorem B, prove a
+qualitative logarithmic limit only for a fixed positive irrational
+slope.  Teräväinen--Walker,
+[arXiv:2303.12574v1](https://arxiv.org/abs/2303.12574), Theorem 1.2,
+subsumes that result, permits two fixed inhomogeneous Beatty slopes, and
+classifies the fixed rational-ratio Liouville resonance.  Neither result
+gives a power rate uniform over the moving \(Q\)-grid or a Hilbert-valued
+packet square function.  The rational resonance is precisely why
+\(D_{\Delta=0}\) must be extracted before invoking cancellation; it is
+not a bound for \(J_{\Delta\ne0}\).
+
+The helper farey_beatty_chowla_projector_sides verifies (9.504)--(9.507)
+over exact rational vectors, including all supplied packet labels and
+both Möbius coefficients.  The helper beatty_chowla_power_gate_audit
+records the half-power deficit and the fixed- versus moving-slope
+mismatch.  It keeps analytic_square_function_bound_proved and
+covers_one_sided_joint_type_gate false.  Thus (9.508) is a strictly
+clearer positive gate, but remains unproved.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -11479,7 +11571,11 @@ moving two-Möbius packet remains open.
 The exact labelled split (9.485)--(9.487) now retains all four Type-pair
 blocks and every \(h\delta\) packet before separating \(\Delta=0\) from
 \(\Delta\ne0\); only the former is recombined, while the joint signed
-nonzero-determinant estimate remains open.**
+nonzero-determinant estimate remains open.  Equations (9.504)--(9.508)
+replace an absolute estimate of that signed sum by its exact centered
+positive moving-Beatty projector.  This projector still requires one
+power of energy cancellation and no published fixed-slope logarithmic
+Beatty theorem proves its moving-grid Hilbert-valued bound.**
 
 Proved in this note:
 
@@ -11972,7 +12068,7 @@ Proved in this note:
 | Actual zero-mode Fourier projector | exact high-rank identification; banded Möbius energy unproved | The fully recombined equal-index packet is the Fourier Gram (9.457), minus its explicit diagonal (9.458).  On the Gaussian \(1,2,4\) minor, both determinants in (9.462) are nonzero, so the full and diagonal-removed projectors have rank \(3\); every product-density row/column/grand projection has rank at most \(2\), (9.463).  Hence scalar-density centering cannot isolate the whole resonance, and the remaining projector is the long-polynomial gate rather than an LCM diagonal |
 | Determinant-zero primitive slopes | exact same-slope decomposition; within-slope norm unproved | Since every affine slope \((k_0,\ell_0)\) is positive and primitive, determinant zero forces equality of the two slopes, (9.465)--(9.466).  The zero orbit is therefore the sum of same-slope squared norms (9.467), with no cross-slope collisions.  All \(g,h,\delta,\nu,\sigma\) signs remain inside each square, and the bound (9.468) is still open |
 | Label-safe Type-entry determinant | internal zero orbit recombined; nonzero entry determinant unproved | The auxiliary sector character is \(\xi\), not \(a_{\rm AFE}=h\delta\), and all original packet labels remain in the row, (9.469)--(9.471).  A common Beatty sector is one common Euclidean quotient and obeys \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\), (9.472)--(9.477).  All \(dm=r\) cross factorizations must be recombined by the Möbius-log identity (9.478)--(9.481).  This makes the nonprincipal \(\Delta_{\rm Type}=0\) part exactly \((1-M^{-1})D_{\rm cont}\), already at diagonal power, (9.482); the extra power is confined to \(\Delta_{\rm Type}\ne0\), which is not estimated |
-| Moving-Beatty fixed-function and labelled Type split | structured slope sampling proved; scalar packet adapter disproved; exact positive joint Type Gram and bounded product fiber; one-sided nonzero determinant unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot directly encode the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\).  The zero blocks recombine, and (9.489) makes the complete packet an exact projector square.  Therefore only the one-sided joint upper gate \({\rm JNT}_{2}^{+}\), (9.491), is needed after the diagonal estimate.  Reindexing by \(n=rs\) further gives one fixed \(\mu(n)\) and an \(O(1)\) product-sector fiber, (9.494)--(9.497), but the vector weight remains factorization-dependent.  The Sobolev/divisor argument (9.498)--(9.503) proves \(T^\varepsilon\)-loss sampling on the reciprocal grid for every fixed Hilbert family, removing the former generic \(T^{1/2}\) alias deficit; the fixed-family adapter, one-sided gate, and exhaustive packet map remain unproved |
+| Moving-Beatty fixed-function and labelled Type split | structured slope sampling proved; exact centered positive projector isolated; moving-grid Hilbert square unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot directly encode the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\).  The zero blocks recombine, and (9.489) makes the complete packet an exact projector square.  Therefore only the one-sided joint upper gate \({\rm JNT}_{2}^{+}\), (9.491), is needed after the diagonal estimate.  Reindexing by \(n=rs\) further gives one fixed \(\mu(n)\) and an \(O(1)\) product-sector fiber, (9.494)--(9.497), but the vector weight remains factorization-dependent.  The Sobolev/divisor argument (9.498)--(9.503) proves \(T^\varepsilon\)-loss sampling on the reciprocal grid for every fixed Hilbert family.  Finally, (9.504)--(9.508) identify the exact centered positive moving-Beatty projector sufficient for the signed one-sided gate; it still needs one power of energy saving, and the exhaustive packet map remains unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -11996,6 +12092,16 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   4.4; Section 9.74 records the exact fixed-function collision preventing
   its scalar continuous-slope estimate from representing the moving
   two-Möbius packet.
+* D. Crnčević, F. Hernández, K. Rizk, K. Sereesuchart, R. Tao,
+  *On the multiplicative independence between \(n\) and
+  \(\lfloor\alpha n\rfloor\)*, arXiv:2211.15830v4, Theorem B; its
+  fixed-irrational qualitative logarithmic Liouville correlation is
+  compared with (9.508) in Section 9.75.
+* J. Teräväinen, A. Walker, *On a Bohr set analogue of Chowla's
+  conjecture*, arXiv:2303.12574v1, Theorem 1.2; it subsumes the preceding
+  fixed-slope result and classifies fixed rational-ratio resonances, but
+  supplies neither a moving-grid power rate nor the Hilbert packet square
+  in (9.508).
 * F. P. Boca, M. Siskaki, *A note on the pair correlation of Farey
   fractions*, arXiv:2109.12744; used in Section 9.29 only as published
   context for the unsigned determinant count.

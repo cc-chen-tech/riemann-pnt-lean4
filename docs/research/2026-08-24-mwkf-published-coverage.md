@@ -872,7 +872,7 @@ The resulting exact coverage table is:
 | Pascadi v2, Theorem 1.2 | \(T^{1/12}\) on favorable factorable moduli | determinant shell is not uniformly favorable | no |
 | Pascadi v2, Corollary 1.4 | no power when the common divisor is \(q=1\) | primitive determinant shell has no larger common fixed divisor | no |
 | Tao--Teräväinen, [arXiv:2107.02158](https://arxiv.org/abs/2107.02158) | \((\log\log T)^{-c}\) | fixed-complexity linear systems and logarithmic, not half-power, decay | no |
-| Teräväinen--Walker, arXiv:2303.12574 | qualitative logarithmic limit | fixed Beatty data, not a moving rational vector family | no |
+| [Crnčević--Hernández--Rizk--Sereesuchart--Tao, arXiv:2211.15830v4](https://arxiv.org/abs/2211.15830), Theorem B; subsumed by [Teräväinen--Walker, arXiv:2303.12574v1](https://arxiv.org/abs/2303.12574), Theorem 1.2 | qualitative logarithmic limit; the latter also classifies the fixed rational-ratio Liouville resonance | fixed slopes and no power rate, not a moving rational \(Q\)-grid or Hilbert packet family | no |
 | Lichtman, [arXiv:2009.08969v2](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | scalar \(L^1\) shift average, fixed weight, and \(H=X^\theta<X\), not the moving-weight endpoint vector \(L^2\) packet | no |
 | Technau--Zafeiropoulos, [arXiv:1907.06050](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for one fixed arithmetic function in continuous/metric slope; structured Sobolev sampling transfers this to separated reciprocal nodes with \(T^\varepsilon\) loss | the actual coefficient changes with the Beatty preimage, so no fixed length-\(T\) Hilbert family has been derived from the two-Möbius packet | no |
 | Kim, arXiv:2603.23250 | \(<T^{1/600}\) in the entering range | deficit \(T^{299/600}\) and Möbius coefficient hypothesis fails | no |
@@ -1018,3 +1018,57 @@ coefficient is a factorization-dependent vector packet
 \(B_{b,n,s}\), supported on a sparse divisor-selected product sequence.
 None of the scalar Beatty/Farey results audited above accepts that weight
 or proves the required sector square function.
+
+The exact positive sector square can now be stated without the product
+coordinate.  For the complete labelled vector packet set
+
+\[
+ X_b=\sum_{\substack{s\le Q,\ 0\le w<s,
+                     \\ (ks+w,s)=1\\
+                     \lfloor Qw/s\rfloor=b}}
+ \mu(s)\mu(ks+w)\sum_\lambda G_{s,w,\lambda}.
+ \tag{6.9}
+\]
+
+Character orthogonality and the recombined diagonal give
+
+\[
+ \begin{aligned}
+ \mathcal E_{\ne0}
+ &=\sum_b\|X_b\|^2-Q^{-1}\left\|\sum_bX_b\right\|^2,\\
+ \mathcal E_{\ne0}
+ &=D_{\Delta=0}+J_{\Delta\ne0},\qquad D_{\Delta=0}\ge0,
+ \end{aligned}
+ \tag{6.10}
+\]
+
+and hence
+
+\[
+ J_{\Delta\ne0}\le \mathcal E_{\ne0}
+ \le\sum_b\|X_b\|^2.
+ \tag{6.11}
+\]
+
+Consequently the centered positive gate
+
+\[
+ {\rm BC}^{\rm mov,cent}_{\mathcal H}(2):\qquad
+ \sum_{b<Q}\|X_b\|^2
+ -Q^{-1}\left\|\sum_{b<Q}X_b\right\|^2
+ \ll_{\varepsilon,W}T^{2+\varepsilon}
+ \tag{6.12}
+\]
+
+implies the one-sided joint Type gate.  Dropping the nonnegative
+principal subtraction gives a stronger, also sufficient, uncentered
+sector-square estimate.  The scalar specialization of (6.12) is a
+centered moving rational Beatty correlation with slope \(k+b/Q\).  The published
+Crnčević et al. theorem is fixed-irrational and qualitative logarithmic;
+Teräväinen--Walker subsume it and identify fixed rational resonances, but
+still give no uniform power rate.  Thus neither theorem supplies the
+required one-power energy saving (equivalently \(T^{1/2}\) before
+squaring).  The executable helpers
+`farey_beatty_chowla_projector_sides` and
+`beatty_chowla_power_gate_audit` verify (6.9)--(6.11) and the exponent
+ledger, respectively; both keep the analytic coverage flag false.

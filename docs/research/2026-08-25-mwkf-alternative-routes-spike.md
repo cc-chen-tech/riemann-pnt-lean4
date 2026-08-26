@@ -11083,7 +11083,7 @@ is:
 | [Tao--Teräväinen](https://arxiv.org/abs/2107.02158) | quantitative Möbius/\(\Lambda\) Gowers uniformity for fixed-complexity linear systems | \((\log\log T)^{-c}\), power exponent \(0\) | no |
 | [Banks--Shparlinski](https://arxiv.org/abs/0708.1015) | primes in a fixed irrational finite-type Beatty sequence | power error in a one-prime problem | no double Möbius and no moving rational family |
 | [Lichtman](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \(L^1\) average of scalar shifted-prime Möbius sums | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | no moving Farey/AFE weight, no endpoint \(H\asymp X\), and no vector \(L^2\) half-power |
-| [Technau--Zafeiropoulos](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for one fixed arithmetic function in a continuous/metric Beatty slope | continuous Lebesgue slope average reaches the scalar surrogate target | no fixed-\(f\) adapter for the second Möbius weight, no rational \(Q\)-grid sampling, and generic aliasing loses \(T^{1/2}\) in energy |
+| [Technau--Zafeiropoulos](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for one fixed arithmetic function in a continuous/metric Beatty slope | structured Sobolev sampling reaches the rational grid with \(T^\varepsilon\) loss, but no slope-independent Hilbert family has been derived from the second Möbius packet | no |
 | Kim, arXiv:2603.23250 | ternary shifted correlations | saving \(<T^{1/600}\) in the entering range | short by \(T^{299/600}\), Möbius hypothesis also fails |
 
 Thus (4.644) narrows the coefficient class but does not turn a logarithmic
@@ -11580,6 +11580,101 @@ one-sided signed sum of the four \(\Delta\ne0\) blocks must be bounded
 globally, and the exhaustive map from the original coupled remainder to
 the supplied packet family must remain outside any premature triangle
 inequality.
+
+### 4.77 The weakest positive gate is a centered moving Beatty--Chowla square
+
+The positive projector identifies an exact positive version of the
+one-sided gate.  Let
+\(G_{s,w,\lambda}\in\mathcal H\) denote the complete vector attached to
+one primitive entry, where \(\lambda\) ranges over every retained
+\((h,\delta,\nu,\sigma)\) and Type-factorization label.  Put
+
+\[
+ \boxed{
+ X_b=\sum_{\substack{s\le Q,\ 0\le w<s,
+                     \\ (ks+w,s)=1\\
+                     \lfloor Qw/s\rfloor=b}}
+       \mu(s)\mu(ks+w)\sum_\lambda G_{s,w,\lambda}.}
+ \tag{4.670}
+\]
+
+Finite character orthogonality, before any estimate, gives
+
+\[
+ \mathcal E_{\ne0}
+ =\sum_b\|X_b\|_{\mathcal H}^2
+  -\frac1Q\left\|\sum_bX_b\right\|_{\mathcal H}^2.
+ \tag{4.671}
+\]
+
+Let \(D_{\Delta=0}\ge0\) be the recombined self diagonal and let
+\(J_{\Delta\ne0}\) be the signed sum of all four nonzero-determinant
+Type blocks.  Since
+
+\[
+ \mathcal E_{\ne0}=D_{\Delta=0}+J_{\Delta\ne0},
+ \tag{4.672}
+\]
+
+one has the exact one-sided chain
+
+\[
+ \boxed{
+ J_{\Delta\ne0}\le \mathcal E_{\ne0}
+ \le \sum_b\|X_b\|_{\mathcal H}^2.}
+ \tag{4.673}
+\]
+
+Thus the following centered positive square-function gate is sufficient for
+\({\rm JNT}_{2}^{+}\):
+
+\[
+ \boxed{
+ {\rm BC}^{\rm mov,cent}_{\mathcal H}(2):\qquad
+ \sum_{b<Q}\|X_b\|_{\mathcal H}^2
+ -\frac1Q\left\|\sum_{b<Q}X_b\right\|_{\mathcal H}^2
+ \ll_{\varepsilon,W}T^{2+\varepsilon}.}
+ \tag{4.674}
+\]
+
+The uncentered estimate
+\(\sum_b\|X_b\|^2\ll T^{2+\varepsilon}\) is a stronger sufficient
+condition, not the weakest gate.  In a scalar projection, the unique
+entry in sector \(b\) is
+
+\[
+ ks+\left\lceil\frac{bs}{Q}\right\rceil
+ =\left\lfloor
+   \left(k+\frac bQ\right)s+\frac{Q-1}{Q}
+  \right\rfloor,
+ \tag{4.675}
+\]
+
+so (4.674) contains a centered, power-strength, moving-rational-grid version of
+Beatty--Chowla.  Coherent energy has exponent three and the target has
+exponent two; the required saving is one full power in energy, or
+\(T^{1/2}\) before squaring.
+
+[Crnčević--Hernández--Rizk--Sereesuchart--Tao,
+arXiv:2211.15830v4](https://arxiv.org/abs/2211.15830), Theorem B, proves
+only a qualitative logarithmic limit for
+\(\lambda(n)\lambda(\lfloor\alpha n\rfloor)\) at one fixed irrational
+\(\alpha\).  [Teräväinen--Walker,
+arXiv:2303.12574v1](https://arxiv.org/abs/2303.12574), Theorem 1.2,
+subsumes it, treats two fixed inhomogeneous Beatty slopes, and identifies
+the possible rational-ratio resonance.  Neither result supplies a
+uniform power saving as \(Q\), \(b\), and the slope move with \(T\), nor
+the Hilbert-valued vector square in (4.674).  The rational-resonance
+classification supports the ordering used here--extract (4.672) first--
+but it does not estimate the remainder.
+
+The finite helper `farey_beatty_chowla_projector_sides` evaluates
+(4.670)--(4.673) over exact rational vectors and retains every supplied
+packet label and distinguishes the centered projector from the stronger
+uncentered sector square.  The scale helper `beatty_chowla_power_gate_audit` records
+the remaining half-power before squaring and keeps
+`covers_one_sided_joint_type_gate` false.  Therefore (4.674) is now the
+most explicit positive sufficient gate, not a proved estimate.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

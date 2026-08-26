@@ -7658,6 +7658,210 @@ def beatty_divisor_fourier_coefficient_sides(
     }
 
 
+def farey_beatty_chowla_projector_sides(
+    *,
+    q: int,
+    k: int,
+    labelled_entry_vectors: dict[
+        tuple[int, int, str], tuple[Fraction, ...]
+    ],
+    determinant_zero_energy: Fraction,
+) -> dict[str, object]:
+    """Form the exact moving-Beatty Hilbert square function.
+
+    A key ``(s,w,label)`` represents one retained packet vector on the
+    primitive entry ``r=k*s+w``.  The vector enters sector
+    ``b=floor(q*w/s)`` with its full coefficient ``mu(s)*mu(r)``.  Thus
+
+    ``X_b=sum_(floor(q*w/s)=b) mu(s)mu(k*s+w) G_(s,w,label)``.
+
+    Finite character orthogonality gives the nonprincipal projector
+
+    ``sum_b ||X_b||^2 - q^-1 ||sum_b X_b||^2``.
+
+    If the already recombined determinant-zero contribution ``D`` is
+    nonnegative, the signed nonzero-determinant part is ``J=projector-D``
+    and hence ``J<=projector``.  Thus the centered projector bound is the
+    positive one-sided gate; bounding ``sum_b||X_b||^2`` is a stronger
+    sufficient condition.  This helper verifies the finite implication
+    only; it proves no uniform analytic estimate.
+    """
+
+    if q <= 1:
+        raise ValueError("a nonprincipal sector projector requires q>1")
+    if k < 0:
+        raise ValueError("k must be nonnegative")
+    if not labelled_entry_vectors:
+        raise ValueError("at least one labelled entry vector is required")
+    determinant_zero = F(determinant_zero_energy)
+    if determinant_zero < 0:
+        raise ValueError("the determinant-zero energy must be nonnegative")
+
+    dimensions = {len(vector) for vector in labelled_entry_vectors.values()}
+    if dimensions == {0} or len(dimensions) != 1:
+        raise ValueError("all entry vectors need one common positive dimension")
+    dimension = next(iter(dimensions))
+
+    sector_vectors: dict[int, list[Fraction]] = {}
+    labels_by_sector: dict[int, set[str]] = {}
+    coefficient_ledger: list[tuple[int, int, str, int, int, int]] = []
+    for (s, w, label), vector in labelled_entry_vectors.items():
+        if s < 1 or s > q:
+            raise ValueError("critical denominators must lie in [1,q]")
+        if w < 0 or w >= s:
+            raise ValueError("the Beatty numerator must lie in [0,s)")
+        if not label:
+            raise ValueError("every packet label must be nonempty")
+        r = k * s + w
+        if r < 1 or gcd(r, s) != 1:
+            raise ValueError("every supplied Farey entry must be positive and primitive")
+        sector = q * w // s
+        coefficient = _finite_mobius(s) * _finite_mobius(r)
+        target = sector_vectors.setdefault(sector, [F(0)] * dimension)
+        for index, value in enumerate(vector):
+            target[index] += F(coefficient) * F(value)
+        labels_by_sector.setdefault(sector, set()).add(label)
+        coefficient_ledger.append((s, w, label, r, sector, coefficient))
+
+    exact_sector_vectors = tuple(
+        (sector, tuple(vector))
+        for sector, vector in sorted(sector_vectors.items())
+    )
+
+    def norm_square(vector: tuple[Fraction, ...] | list[Fraction]) -> Fraction:
+        return sum((F(value) * F(value) for value in vector), F(0))
+
+    def dot(
+        left: tuple[Fraction, ...],
+        right: tuple[Fraction, ...],
+    ) -> Fraction:
+        return sum(
+            (F(x) * F(y) for x, y in zip(left, right)),
+            F(0),
+        )
+
+    same_sector = sum(
+        (norm_square(vector) for _, vector in exact_sector_vectors),
+        F(0),
+    )
+    total_vector = tuple(
+        sum((vector[index] for _, vector in exact_sector_vectors), F(0))
+        for index in range(dimension)
+    )
+    principal = norm_square(total_vector) / q
+    projector = same_sector - principal
+    orthogonality_pair_expansion = sum(
+        (
+            (F(1) if left_sector == right_sector else F(0)) - F(1, q)
+        )
+        * dot(left_vector, right_vector)
+        for left_sector, left_vector in exact_sector_vectors
+        for right_sector, right_vector in exact_sector_vectors
+    )
+    signed_nonzero = projector - determinant_zero
+    return {
+        "q": q,
+        "k": k,
+        "entry_coefficients": tuple(sorted(coefficient_ledger)),
+        "sector_vectors": exact_sector_vectors,
+        "labels_by_sector": tuple(
+            (sector, tuple(sorted(labels)))
+            for sector, labels in sorted(labels_by_sector.items())
+        ),
+        "same_sector_energy": same_sector,
+        "principal_energy": principal,
+        "nonprincipal_projector_energy": projector,
+        "orthogonality_pair_expansion_energy": orthogonality_pair_expansion,
+        "weakest_positive_gate_energy": projector,
+        "determinant_zero_energy": determinant_zero,
+        "signed_nonzero_determinant_energy": signed_nonzero,
+        "finite_character_parseval_exact": (
+            projector == orthogonality_pair_expansion
+        ),
+        "projector_bounded_by_same_sector_energy": (
+            F(0) <= projector <= same_sector
+        ),
+        "same_sector_gate_is_stronger": projector <= same_sector,
+        "signed_nonzero_bounded_by_projector": signed_nonzero <= projector,
+        "one_sided_nonzero_determinant_bound_implied": (
+            signed_nonzero <= same_sector
+        ),
+        "two_mobius_coefficients_retained": all(
+            coefficient == _finite_mobius(s) * _finite_mobius(k * s + w)
+            for s, w, _, _, _, coefficient in coefficient_ledger
+        ),
+        "all_packet_labels_retained": (
+            sum(len(labels) for labels in labels_by_sector.values())
+            <= len(labelled_entry_vectors)
+            and {
+                label for _, _, label in labelled_entry_vectors
+            }
+            == {
+                label
+                for labels in labels_by_sector.values()
+                for label in labels
+            }
+        ),
+        "analytic_square_function_bound_proved": False,
+    }
+
+
+def beatty_chowla_power_gate_audit(
+    *,
+    entry_length_exponent: Fraction,
+    sector_count_exponent: Fraction,
+    target_energy_exponent: Fraction,
+) -> dict[str, object]:
+    """Compare the exact Beatty square gate with published Chowla results.
+
+    A coherent length-``T^n`` vector in each of ``T^q`` sectors has energy
+    exponent ``q+2n``.  The target therefore requires half of the energy
+    saving before squaring.  Crncevic et al. prove a qualitative
+    logarithmic limit for ``lambda(n)lambda(floor(alpha*n))`` at one fixed
+    irrational alpha.  Teravainen--Walker subsume that result and treat
+    two fixed inhomogeneous Beatty slopes, including their rational
+    resonant classification.  Neither paper gives a uniform power saving
+    on the moving rational Q-grid or a Hilbert-valued packet square
+    function.
+    """
+
+    entry = F(entry_length_exponent)
+    sectors = F(sector_count_exponent)
+    target = F(target_energy_exponent)
+    if min(entry, sectors, target) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    coherent = sectors + 2 * entry
+    required_energy = max(F(0), coherent - target)
+    required_unsquared = required_energy / 2
+    published_power = F(0)
+    return {
+        "sources": (
+            (
+                "Crncevic--Hernandez--Rizk--Sereesuchart--Tao, "
+                "arXiv:2211.15830v4, Theorem B"
+            ),
+            "Teravainen--Walker, arXiv:2303.12574v1, Theorem 1.2",
+        ),
+        "coherent_energy_exponent": coherent,
+        "target_energy_exponent": target,
+        "required_energy_saving_exponent": required_energy,
+        "required_unsquared_saving_exponent": required_unsquared,
+        "published_power_saving_exponent": published_power,
+        "remaining_unsquared_power_deficit": max(
+            F(0), required_unsquared - published_power
+        ),
+        "crncevic_result_is_subsumed_by_teravainen_walker": True,
+        "published_average": "logarithmic qualitative limit",
+        "published_slope_regime": "fixed irrational slope data",
+        "actual_slope_regime": "moving rational Q-grid",
+        "rational_resonance_requires_prior_diagonal_extraction": True,
+        "mobius_pair_power_bound_published": False,
+        "hilbert_packet_square_function_published": False,
+        "uniform_moving_grid_bound_published": False,
+        "covers_one_sided_joint_type_gate": False,
+    }
+
+
 def transition_line_coprimality_layer_identity(
     *,
     a: int,

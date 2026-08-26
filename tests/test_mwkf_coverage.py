@@ -2366,6 +2366,78 @@ def test_beatty_product_frequency_divisor_cauchy_is_exact_for_vectors() -> None:
     assert result["hilbert_vector_identity_exact"]
 
 
+def test_beatty_chowla_projector_retains_all_packet_labels() -> None:
+    sides = getattr(
+        coverage_audit,
+        "farey_beatty_chowla_projector_sides",
+        None,
+    )
+    assert sides is not None, "Beatty-Chowla projector helper is missing"
+
+    result = sides(
+        q=5,
+        k=1,
+        labelled_entry_vectors={
+            (2, 1, "u"): (F(1), F(2)),
+            (5, 2, "v"): (F(3), F(-1)),
+            (5, 1, "u"): (F(2), F(1)),
+            (5, 1, "v"): (F(1), F(-1)),
+        },
+        determinant_zero_energy=F(15),
+    )
+
+    assert result["sector_vectors"] == (
+        (1, (F(-3), F(0))),
+        (2, (F(4), F(1))),
+    )
+    assert result["labels_by_sector"] == (
+        (1, ("u", "v")),
+        (2, ("u", "v")),
+    )
+    assert result["same_sector_energy"] == F(26)
+    assert result["principal_energy"] == F(2, 5)
+    assert result["nonprincipal_projector_energy"] == F(128, 5)
+    assert result["orthogonality_pair_expansion_energy"] == F(128, 5)
+    assert result["weakest_positive_gate_energy"] == F(128, 5)
+    assert result["signed_nonzero_determinant_energy"] == F(53, 5)
+    assert result["finite_character_parseval_exact"]
+    assert result["projector_bounded_by_same_sector_energy"]
+    assert result["same_sector_gate_is_stronger"]
+    assert result["signed_nonzero_bounded_by_projector"]
+    assert result["one_sided_nonzero_determinant_bound_implied"]
+    assert result["two_mobius_coefficients_retained"]
+    assert result["all_packet_labels_retained"]
+    assert not result["analytic_square_function_bound_proved"]
+
+
+def test_published_beatty_chowla_is_short_by_a_half_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "beatty_chowla_power_gate_audit",
+        None,
+    )
+    assert audit is not None, "Beatty-Chowla power-gate audit is missing"
+
+    result = audit(
+        entry_length_exponent=F(1),
+        sector_count_exponent=F(1),
+        target_energy_exponent=F(2),
+    )
+
+    assert result["coherent_energy_exponent"] == F(3)
+    assert result["required_energy_saving_exponent"] == F(1)
+    assert result["required_unsquared_saving_exponent"] == F(1, 2)
+    assert result["published_power_saving_exponent"] == F(0)
+    assert result["remaining_unsquared_power_deficit"] == F(1, 2)
+    assert result["crncevic_result_is_subsumed_by_teravainen_walker"]
+    assert result["published_average"] == "logarithmic qualitative limit"
+    assert result["published_slope_regime"] == "fixed irrational slope data"
+    assert result["actual_slope_regime"] == "moving rational Q-grid"
+    assert not result["mobius_pair_power_bound_published"]
+    assert not result["hilbert_packet_square_function_published"]
+    assert not result["covers_one_sided_joint_type_gate"]
+
+
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
     coefficients = getattr(
         coverage_audit,
