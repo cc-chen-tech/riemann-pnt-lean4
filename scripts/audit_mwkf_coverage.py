@@ -1977,6 +1977,59 @@ class OuterStateInclusionExclusionAudit:
 
 
 @dataclass(frozen=True)
+class TwoOrientationSteinbergMinimaxAudit:
+    prime: int
+    steinberg_entry_correction: Fraction
+    orientation_state_order: tuple[str, str]
+    swapped_orientation_state_order: tuple[str, str]
+    scalar_combination_coefficients_sum_to_one: bool
+    two_state_sum_is_independent_of_combination: bool
+    uniform_max_squared_lower_bound: Fraction
+    required_reciprocal_prime_square_mass: Fraction
+    lower_bound_exceeds_required_mass: bool
+    scalar_two_orientation_average_closes_steinberg: bool
+    nonlocal_cross_outer_state_estimate_still_required: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class SteinbergCrossOrientationSignGateAudit:
+    prime: int
+    steinberg_entry_correction: Fraction
+    cross_quadratic_coefficient_squared: Fraction
+    required_quadratic_coefficient_squared: Fraction
+    squared_deficit_ratio: Fraction
+    cross_coefficient_exceeds_required_coefficient: bool
+    steinberg_sign_over_square_root_is_ramified_hecke_coefficient: bool
+    atkin_lehner_operator_is_unitary: bool
+    unitarity_supplies_the_missing_square_root: bool
+    physical_signed_cross_cusp_trace_required: bool
+    signed_cross_cusp_trace_proved: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class BlomerPascadiHardBoxAudit:
+    modulus_exponent: Fraction
+    left_argument_length_exponent: Fraction
+    right_argument_length_exponent: Fraction
+    argument_length_relative_to_modulus: Fraction
+    published_nontrivial_lower_endpoint: Fraction
+    published_nontrivial_upper_endpoint: Fraction
+    inside_published_nontrivial_interval: bool
+    general_h_term_exponents_in_modulus: tuple[Fraction, ...]
+    general_h_dominant_exponent_in_modulus: Fraction
+    coefficient_norm_product_exponent: Fraction
+    blomer_pascadi_bound_exponent: Fraction
+    classical_fourier_bound_exponent: Fraction
+    best_available_fixed_modulus_bound_exponent: Fraction
+    direct_mmkls_target_exponent: Fraction
+    remaining_direct_exponent_gap: Fraction
+    improves_existing_product_character_bound: bool
+    mmkls_covered: bool
+
+
+@dataclass(frozen=True)
 class OuterModulusTypeRecombinationAudit:
     original_modulus: int
     cutoff_u: int
@@ -11158,6 +11211,152 @@ def steinberg_outer_state_unit_obstruction_audit(
         "two_orientation_or_conductor_average_required": True,
         "outer_lisk_covered": False,
     }
+
+
+def two_orientation_steinberg_minimax_audit(
+    *, prime: int
+) -> TwoOrientationSteinbergMinimaxAudit:
+    """Rule out a scalar average of the two completion orientations.
+
+    In the conductor-one Steinberg cell, one orientation assigns the
+    entry and modulus amplitudes
+
+    ``e=epsilon*C_p/sqrt(p)`` and ``m=-1``
+
+    after the outer Mobius signs.  The swapped orientation interchanges
+    them.  For any real or complex scalar ``lambda``, the two state
+    amplitudes in the combination with coefficients ``lambda`` and
+    ``1-lambda`` have sum ``e+m``.  Therefore their maximum modulus is
+    at least ``|e+m|/2``.  Since ``0<C_p<1`` and ``sqrt(p)>3`` for a
+    prime ``p>=11``, this maximum is strictly larger than ``1/3``.
+    Its square exceeds ``1/9>1/p``.  Thus no scalar averaging of the
+    two equal orientation identities supplies the required reciprocal
+    prime mass simultaneously for both outer states.
+
+    This is not a rejection of a nonlocal square retaining cross terms
+    between distinct outer states and primes; that is exactly the
+    remaining OSLSP input.
+    """
+    p = int(prime)
+    if p < 11 or not _is_prime_integer(p):
+        raise ValueError("prime must be a prime at least eleven")
+    correction = F(1) - F(p + 1, p * p * (p + 2))
+    lower = F(1, 9)
+    target = F(1, p)
+    return TwoOrientationSteinbergMinimaxAudit(
+        prime=p,
+        steinberg_entry_correction=correction,
+        orientation_state_order=("entry", "modulus"),
+        swapped_orientation_state_order=("modulus", "entry"),
+        scalar_combination_coefficients_sum_to_one=True,
+        two_state_sum_is_independent_of_combination=True,
+        uniform_max_squared_lower_bound=lower,
+        required_reciprocal_prime_square_mass=target,
+        lower_bound_exceeds_required_mass=lower > target,
+        scalar_two_orientation_average_closes_steinberg=False,
+        nonlocal_cross_outer_state_estimate_still_required=True,
+        outer_lisk_covered=False,
+    )
+
+
+def steinberg_cross_orientation_sign_gate_audit(
+    *, prime: int
+) -> SteinbergCrossOrientationSignGateAudit:
+    """Isolate the saving still missing after the cross-orientation square.
+
+    With ``e=epsilon*C_p/sqrt(p)`` and ``m=-1``, pairing the first
+    orientation against the swapped one contributes ``e*conj(m)`` or
+    ``m*conj(e)`` to the quadratic form.  Its magnitude is
+    ``C_p/sqrt(p)``.  Because this coefficient already occurs *inside*
+    the squared expression, it must be compared with the required
+    quadratic coefficient ``1/p``, not with ``1/sqrt(p)``.  Squaring
+    only for an exact rational comparison leaves the ratio
+    ``p*C_p^2 > 1``.
+
+    The identity ``epsilon/sqrt(p)=lambda_pi(p)`` identifies the sign
+    with the ramified Hecke coefficient.  Atkin--Lehner unitarity turns
+    the resulting form into a cross-cusp matrix coefficient but does
+    not reduce its operator norm.  An additional signed physical
+    cross-cusp trace estimate is therefore still required.
+    """
+    p = int(prime)
+    if p < 5 or not _is_prime_integer(p):
+        raise ValueError("prime must be a prime at least five")
+    correction = F(1) - F(p + 1, p * p * (p + 2))
+    cross_squared = correction * correction / p
+    required_squared = F(1, p * p)
+    ratio = cross_squared / required_squared
+    return SteinbergCrossOrientationSignGateAudit(
+        prime=p,
+        steinberg_entry_correction=correction,
+        cross_quadratic_coefficient_squared=cross_squared,
+        required_quadratic_coefficient_squared=required_squared,
+        squared_deficit_ratio=ratio,
+        cross_coefficient_exceeds_required_coefficient=(
+            cross_squared > required_squared
+        ),
+        steinberg_sign_over_square_root_is_ramified_hecke_coefficient=True,
+        atkin_lehner_operator_is_unitary=True,
+        unitarity_supplies_the_missing_square_root=False,
+        physical_signed_cross_cusp_trace_required=True,
+        signed_cross_cusp_trace_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
+def blomer_pascadi_hard_box_audit() -> BlomerPascadiHardBoxAudit:
+    """Insert Blomer--Pascadi (2026), Theorem 1.4, in the hard box.
+
+    The physical arguments have lengths ``M=N=T^(5/2)`` at modulus
+    ``c=T^3``, hence ``M=N=c^(5/6)``.  Substitution in every term of
+    their general factor ``H(M,N,c)`` gives the five ``c``-exponents
+
+    ``7/96, 5/192, 7/90, 1/6, -1/90``.
+
+    The dominant positive exponent ``1/6`` makes the published bound
+    ``T^6`` after restoring the coefficient norms.  The classical
+    Fourier/Cauchy estimate is ``T^(11/2)``, exactly the fixed-modulus
+    strength already supplied by the product-character audit.  Thus the
+    new theorem is a genuine improvement near ``c^(1/2)`` but does not
+    improve the ``c^(5/6)`` MMKLS cell.
+    """
+    modulus = F(3)
+    length = F(5, 2)
+    relative = length / modulus
+    lower = F(13, 28)
+    upper = F(7, 12)
+    h_terms = (
+        F(7, 96),
+        F(5, 192),
+        F(7, 90),
+        F(1, 6),
+        F(-1, 90),
+    )
+    dominant = max(h_terms)
+    norm_product = F(5, 2)
+    bp_bound = norm_product + modulus * (F(1) + dominant)
+    fourier_bound = norm_product + max(modulus, length)
+    best = min(bp_bound, fourier_bound)
+    target = F(3)
+    return BlomerPascadiHardBoxAudit(
+        modulus_exponent=modulus,
+        left_argument_length_exponent=length,
+        right_argument_length_exponent=length,
+        argument_length_relative_to_modulus=relative,
+        published_nontrivial_lower_endpoint=lower,
+        published_nontrivial_upper_endpoint=upper,
+        inside_published_nontrivial_interval=(lower < relative < upper),
+        general_h_term_exponents_in_modulus=h_terms,
+        general_h_dominant_exponent_in_modulus=dominant,
+        coefficient_norm_product_exponent=norm_product,
+        blomer_pascadi_bound_exponent=bp_bound,
+        classical_fourier_bound_exponent=fourier_bound,
+        best_available_fixed_modulus_bound_exponent=best,
+        direct_mmkls_target_exponent=target,
+        remaining_direct_exponent_gap=best - target,
+        improves_existing_product_character_bound=False,
+        mmkls_covered=False,
+    )
 
 
 def unramified_cross_index_tensor_norm_audit(
@@ -24086,6 +24285,24 @@ def main() -> None:
         f"{outer_inclusion.recombined_outer_scale_physical_kernel_proved} "
         f"olisk={outer_inclusion.outer_lisk_covered}"
     )
+    cross_orientation = steinberg_cross_orientation_sign_gate_audit(
+        prime=11
+    )
+    print(
+        "balanced_max_a: steinberg_cross_orientation="
+        f"prime={cross_orientation.prime} "
+        "cross_gt_target="
+        f"{cross_orientation.cross_coefficient_exceeds_required_coefficient} "
+        "hecke="
+        f"{cross_orientation.steinberg_sign_over_square_root_is_ramified_hecke_coefficient} "
+        f"unitary={cross_orientation.atkin_lehner_operator_is_unitary} "
+        "unitary_saving="
+        f"{cross_orientation.unitarity_supplies_the_missing_square_root} "
+        "physical_signed="
+        f"{cross_orientation.physical_signed_cross_cusp_trace_required} "
+        f"signed_proved={cross_orientation.signed_cross_cusp_trace_proved} "
+        f"olisk={cross_orientation.outer_lisk_covered}"
+    )
     outer_modulus = outer_modulus_type_recombination_audit(
         original_modulus=30,
         cutoff_u=5,
@@ -24152,6 +24369,31 @@ def main() -> None:
         f"{product_energy.physical_mmkls_weight_normalization_reinserted} "
         f"mmkls={product_energy.product_index_energy_closes_mmkls} "
         f"olisk={product_energy.whole_mobius_gate_covered}"
+    )
+    blomer_pascadi = blomer_pascadi_hard_box_audit()
+    print(
+        "balanced_max_a: blomer_pascadi_2026="
+        f"relative={_fmt(blomer_pascadi.argument_length_relative_to_modulus)} "
+        "range="
+        f"{_fmt(blomer_pascadi.published_nontrivial_lower_endpoint)}:"
+        f"{_fmt(blomer_pascadi.published_nontrivial_upper_endpoint)} "
+        f"inside={blomer_pascadi.inside_published_nontrivial_interval} "
+        "h="
+        + ",".join(
+            _fmt(value)
+            for value in blomer_pascadi.general_h_term_exponents_in_modulus
+        )
+        + " "
+        f"dominant={_fmt(blomer_pascadi.general_h_dominant_exponent_in_modulus)} "
+        f"bp={_fmt(blomer_pascadi.blomer_pascadi_bound_exponent)} "
+        f"fourier={_fmt(blomer_pascadi.classical_fourier_bound_exponent)} "
+        "best="
+        f"{_fmt(blomer_pascadi.best_available_fixed_modulus_bound_exponent)} "
+        f"target={_fmt(blomer_pascadi.direct_mmkls_target_exponent)} "
+        f"gap={_fmt(blomer_pascadi.remaining_direct_exponent_gap)} "
+        "improves="
+        f"{blomer_pascadi.improves_existing_product_character_bound} "
+        f"mmkls={blomer_pascadi.mmkls_covered}"
     )
     cross_tensor = unramified_cross_index_tensor_norm_audit()
     print(

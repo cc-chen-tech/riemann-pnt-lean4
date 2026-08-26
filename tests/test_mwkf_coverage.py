@@ -5702,6 +5702,97 @@ def test_full_type_recombination_returns_the_original_mobius_modulus_weight(
     ) in output
 
 
+def test_two_orientation_scalar_average_cannot_close_steinberg_states() -> None:
+    """Catch treating the left/right completion identities as two savings."""
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaaa Scalar averaging the two orientations leaves a constant Steinberg state",
+        r"\tag{4.845dc_14xq_10a}",
+        r"\tag{4.845dc_14xq_10c}",
+    ):
+        assert marker in note
+    audit = coverage_audit.two_orientation_steinberg_minimax_audit(prime=11)
+    assert audit.prime == 11
+    assert audit.steinberg_entry_correction == F(1561, 1573)
+    assert audit.orientation_state_order == ("entry", "modulus")
+    assert audit.swapped_orientation_state_order == ("modulus", "entry")
+    assert audit.scalar_combination_coefficients_sum_to_one
+    assert audit.two_state_sum_is_independent_of_combination
+    assert audit.uniform_max_squared_lower_bound == F(1, 9)
+    assert audit.required_reciprocal_prime_square_mass == F(1, 11)
+    assert audit.lower_bound_exceeds_required_mass
+    assert not audit.scalar_two_orientation_average_closes_steinberg
+    assert audit.nonlocal_cross_outer_state_estimate_still_required
+    assert not audit.outer_lisk_covered
+
+
+def test_blomer_pascadi_2026_is_inactive_on_the_mmkls_hard_box(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Catch applying a square-root-length theorem at length c^(5/6)."""
+    audit = coverage_audit.blomer_pascadi_hard_box_audit()
+    assert audit.modulus_exponent == F(3)
+    assert audit.left_argument_length_exponent == F(5, 2)
+    assert audit.argument_length_relative_to_modulus == F(5, 6)
+    assert audit.published_nontrivial_upper_endpoint == F(7, 12)
+    assert not audit.inside_published_nontrivial_interval
+    assert audit.general_h_term_exponents_in_modulus == (
+        F(7, 96),
+        F(5, 192),
+        F(7, 90),
+        F(1, 6),
+        F(-1, 90),
+    )
+    assert audit.general_h_dominant_exponent_in_modulus == F(1, 6)
+    assert audit.blomer_pascadi_bound_exponent == F(6)
+    assert audit.classical_fourier_bound_exponent == F(11, 2)
+    assert audit.best_available_fixed_modulus_bound_exponent == F(11, 2)
+    assert audit.direct_mmkls_target_exponent == F(3)
+    assert audit.remaining_direct_exponent_gap == F(5, 2)
+    assert not audit.improves_existing_product_character_bound
+    assert not audit.mmkls_covered
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: blomer_pascadi_2026="
+        "relative=5/6 range=13/28:7/12 inside=False "
+        "h=7/96,5/192,7/90,1/6,-1/90 dominant=1/6 "
+        "bp=6 fourier=11/2 best=11/2 target=3 gap=5/2 "
+        "improves=False mmkls=False"
+    ) in output
+
+
+def test_cross_orientation_still_needs_an_atkin_lehner_sign_saving(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Catch squaring a coefficient that already belongs to a square."""
+    audit = coverage_audit.steinberg_cross_orientation_sign_gate_audit(
+        prime=11
+    )
+    correction = F(1561, 1573)
+    assert audit.steinberg_entry_correction == correction
+    assert audit.cross_quadratic_coefficient_squared == correction**2 / 11
+    assert audit.required_quadratic_coefficient_squared == F(1, 121)
+    assert audit.squared_deficit_ratio == 11 * correction**2
+    assert audit.cross_coefficient_exceeds_required_coefficient
+    assert audit.steinberg_sign_over_square_root_is_ramified_hecke_coefficient
+    assert audit.atkin_lehner_operator_is_unitary
+    assert not audit.unitarity_supplies_the_missing_square_root
+    assert audit.physical_signed_cross_cusp_trace_required
+    assert not audit.signed_cross_cusp_trace_proved
+    assert not audit.outer_lisk_covered
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: steinberg_cross_orientation="
+        "prime=11 cross_gt_target=True hecke=True unitary=True "
+        "unitary_saving=False physical_signed=True "
+        "signed_proved=False olisk=False"
+    ) in output
+
+
 def test_squarefree_generalized_gauss_pair_mass_has_no_gcd_power_loss() -> None:
     """Catch paying a positive power when the Poisson index meets the modulus."""
     mass = coverage_audit.squarefree_gauss_pair_fourth_mass(

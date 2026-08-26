@@ -18483,6 +18483,137 @@ across outer levels or use both completion orientations in one trace
 formula.  Choosing a single orientation and applying its fixed-entry
 PEVP again returns the exponent (4.845dc_14xn).
 
+### 4.109zjaaa Scalar averaging the two orientations leaves a constant Steinberg state
+
+The last sentence has one interpretation which can be decided locally.
+The exchange identity (4.642)--(4.645) proves that the left and right
+completion formulas represent the same original scalar sum.  Hence a
+scalar combination of the two identities has coefficients
+\(\lambda\) and \(1-\lambda\), with \(\lambda\) real or complex.
+
+At a conductor-\(p\) Steinberg prime, after the outer Möbius signs, put
+
+\[
+ e_p=\epsilon_p\frac{C_p}{\sqrt p},\qquad
+ m_p=-1,\qquad
+ C_p=1-\frac{p+1}{p^2(p+2)},\qquad \epsilon_p^2=1.
+ \tag{4.845dc_14xq_10a}
+\]
+
+The first orientation assigns the ordered amplitudes
+\((e_p,m_p)\) to the entry and modulus states, while the swapped
+orientation assigns \((m_p,e_p)\).  The scalar combination therefore
+has the two state amplitudes
+
+\[
+ X_\lambda=\lambda e_p+(1-\lambda)m_p,\qquad
+ Y_\lambda=\lambda m_p+(1-\lambda)e_p.
+ \tag{4.845dc_14xq_10b}
+\]
+
+Their sum is independent of \(\lambda\):
+\(X_\lambda+Y_\lambda=e_p+m_p\).  Thus, for every scalar choice,
+
+\[
+ \begin{aligned}
+ \max\{|X_\lambda|^2,|Y_\lambda|^2\}
+ &\geq\frac14|e_p+m_p|^2\\
+ &\geq\frac14\left(1-\frac1{\sqrt p}\right)^2
+ >\frac19>\frac1p\qquad(p\geq11).
+ \end{aligned}
+ \tag{4.845dc_14xq_10c}
+\]
+
+Therefore neither averaging the two orientations nor choosing a
+different scalar phase between them can supply reciprocal-prime square
+mass simultaneously for both outer states.  This does not rule out a
+nonlocal square which retains cross terms between different outer
+states and different primes.  It proves that such a nonlocal estimate
+is necessary: the phrase “use both orientations” is not itself a local
+closure of the Steinberg residual.
+
+The interface two_orientation_steinberg_minimax_audit checks the exact
+correction \(C_p\), the orientation swap, and the rational witness
+\(1/9>1/p\).  It keeps OSLSP and OLISK false.
+
+### 4.109zjaaab The cross-orientation square isolates an Atkin--Lehner sign gate
+
+There is a different use of the two equal completion formulas: write
+the square of the physical sum as the first orientation times the
+conjugate of the swapped orientation.  At one Steinberg prime the two
+same-state cross coefficients are then
+
+\[
+ e_p\overline{m_p}=m_p\overline{e_p}
+ =-\epsilon_p\frac{C_p}{\sqrt p}.
+ \tag{4.845dc_14xq_10d}
+\]
+
+This removes the constant coefficient left by scalar averaging, but it
+does not yet give the reciprocal-prime coefficient required in the
+quadratic form.  The coefficient in (4.845dc_14xq_10d) already belongs
+to the squared expression, so the comparison is
+
+\[
+ \frac{C_p}{\sqrt p}\quad\hbox{against}\quad\frac1p.
+\]
+
+Squaring only to make the comparison rational gives
+
+\[
+ \boxed{
+ \frac{C_p^2/p}{p^{-2}}=pC_p^2>1\qquad(p\geq5).}
+ \tag{4.845dc_14xq_10e}
+\]
+
+Thus the cross-orientation square still needs one further
+(p^{-1/2}).  Its source, if this route closes, must be the Steinberg
+sign.  In the normalization of Section 4.109zfe,
+
+\[
+ \boxed{\frac{\epsilon_p}{\sqrt p}=\lambda_\pi(p).}
+ \tag{4.845dc_14xq_10f}
+\]
+
+Consequently the sign is not an independent random coefficient: it is
+the ramified Hecke coefficient, equivalently the local Atkin--Lehner
+eigenvalue after the standard normalization.  Moving it to a Fourier
+index turns the spectral bilinear form into a cross-cusp matrix
+coefficient.  Atkin--Lehner is unitary, so ordinary Cauchy and the
+positive harmonic large sieve preserve the same operator norm and give
+no additional (p^{-1/2}).
+
+For a squarefree set of Steinberg primes (A), put
+(epsilon_A=\prod_{p\mid A}\epsilon_p) and
+(C_A=\prod_{p\mid A}C_p).  A sufficient remaining estimate is the
+physical-list inequality
+
+\[
+ \boxed{
+ \left|\int_{\mathscr S_{\rm St}(A)}
+ h(t_\pi)\epsilon_A
+ \mathcal A_\pi\overline{\mathcal B_\pi}\,d\pi\right|
+ \ll
+ \frac{(\log T)^C}{\sqrt A}\,
+ \mathcal L_Q\|a\|_2\|b\|_2.}
+ \tag{ALSG}_{A}
+\]
+
+Here (mathcal A_\pi,mathcal B_\pi) are the two actual shifted
+physical coefficient lists, with their exact valuation, (D)-layer,
+and Bessel/QCT kernel; (ALSG) is not asserted for arbitrary lists.
+Multiplication by the already present (C_A/\sqrt A) would then supply
+the target (A^{-1}), up to the absolutely convergent (C_A) Euler
+correction.
+
+No cited cross-cusp large sieve proves (ALSG): unitarity alone gives the
+same bound without (A^{-1/2}).  Thus the cross-orientation idea has
+been reduced to a strictly smaller signed Atkin--Lehner trace theorem,
+but that theorem remains open and OSLSP is still false.  The interface
+`steinberg_cross_orientation_sign_gate_audit` records the exact
+rational deficit and prevents treating the square of
+(4.845dc_14xq_10d) as a second independent square.
+
 After that exact recombination the remaining squared gate is
 \[
  \boxed{
@@ -18943,6 +19074,85 @@ the published unit fourth-moment input, the physical kernel nuclear
 norm, the nonunit layers, and the principal frequency average true.
 They record the non-composability witness (4.845dc_14xq_35) and keep
 the physical-normalization bridge, MMKLS, OSLSP, and OLISK false.
+
+### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
+
+The July 2026 bilinear Kloosterman theorem of
+[Blomer--Pascadi](https://arxiv.org/abs/2607.24311) applies to arbitrary
+moduli and must therefore be checked against the unit stratum of
+(4.845dc_14xq_20).  If (a,h,delta) are units modulo (s), scaling
+the two Kloosterman arguments gives the exact identity
+
+\[
+ S(a,-h\delta;s)=S(-ah,\delta;s).
+ \tag{4.845dc_14xq_36}
+\]
+
+Thus their Theorem 1.4 applies with
+
+\[
+ c=s=T^3,qquad M=H=T^{5/2},qquad N=L=T^{5/2},qquad
+ M=N=c^{5/6}.
+ \tag{4.845dc_14xq_37}
+\]
+
+This is not the square-root range.  The published balanced theorem is
+nontrivial over the standard two elementary bounds only for
+
+\[
+ c^{13/28+\varepsilon}<N<c^{7/12-\varepsilon},
+ \tag{4.845dc_14xq_38}
+\]
+
+whereas (5/6>7/12).  Direct substitution in every term of the general
+factor (H(M,N,c)) is even more decisive.  The five resulting
+(c)-exponents are
+
+\[
+ \boxed{
+ \frac7{96},\qquad \frac5{192},\qquad \frac7{90},
+ \qquad\frac16,\qquad-\frac1{90}.}
+ \tag{4.845dc_14xq_39}
+\]
+
+The fourth term dominates.  Since
+(|u|_2|v|_2=T^{5/2}=c^{5/6}), the theorem therefore has power
+exponent
+
+\[
+ E_{\rm BP}=\frac52+3\left(1+\frac16\right)=6.
+ \tag{4.845dc_14xq_40}
+\]
+
+The classical Fourier/Cauchy estimate quoted in the same paper is
+
+\[
+ \|u\|_2\|v\|_2(c+N)c^{o(1)},
+\]
+
+and has exponent
+
+\[
+ \boxed{E_{\rm Fourier}=\frac52+3=\frac{11}2.}
+ \tag{4.845dc_14xq_41}
+\]
+
+This is exactly the nonprincipal exponent in
+(4.845dc_14xq_26), not an improvement on it.  Inserting the best of
+the two fixed-modulus estimates directly into MMKLS still leaves
+
+\[
+ \boxed{\frac{11}2-3=\frac52}
+ \tag{4.845dc_14xq_42}
+\]
+
+before the non-composable outer cancellation.  Nonunit gcd layers
+cannot repair this, because the unit stratum already exhibits the
+failure.  Hence the new theorem does not cover MMKLS; a theorem which
+couples the (s,m,A) averages remains necessary.
+
+The interface `blomer_pascadi_hard_box_audit` substitutes all five
+terms with exact rational exponents and keeps MMKLS false.
 
 ### 4.109zk Pascadi v2 saves only one quarter power after factor freezing
 
