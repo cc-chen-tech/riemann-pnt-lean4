@@ -10010,6 +10010,102 @@ endpoint_logarithmic_aggregation_closed,
 continuous_mobius_gram_bound_proved, and
 whole_poisson_zero_mode_covered all false.
 
+The continuous Gram also has a useful wave-packet interpretation.  For
+one primitive entry \(e=(w,s)\), its one-entry factor is supported where
+
+\[
+ |v|\ll_W T^{1/2},\qquad
+ |\delta=wv-js|\ll_W T^{1/2}.
+\tag{4.621zadj16i}
+\]
+
+In the \((v,j)\)-plane this is a tube around
+\(j=(w/s)v\).  Its longitudinal length is \(T^{1/2}\); since
+\(\partial_j\delta=-s\asymp-T\), its transverse width is
+\(T^{-1/2}\).  Therefore its angular resolution is exactly
+
+\[
+ \boxed{T^{-1/2}/T^{1/2}=T^{-1}.}
+\tag{4.621zadj16j}
+\]
+
+There are \(T^{2+o(1)}\) primitive directions \(w/s\) with
+\(w,s\asymp T\).  Resolution (4.621zadj16j) partitions them into
+\(T^{1+o(1)}\) angular clusters, each containing \(T^{1+o(1)}\)
+entries.  Consequently the two possible energy ledgers are
+
+\[
+\begin{array}{c|c}
+\text{cluster behavior}&\text{total exponent}\\ \hline
+\text{coherent}&1+2\cdot1=3,\\
+\text{square-root in each cluster}&1+1=2.
+\end{array}
+\tag{4.621zadj16k}
+\]
+
+The second row is exactly the target and has no spare power.  The
+coefficient inside one cluster is
+
+\[
+ \boxed{\alpha_{s,w}
+   =\mu(s)\mu(ks+w)\,p_N(qs)p_N(q(ks+w))
+   \times\text{the retained smooth factors}.}
+\tag{4.621zadj16l}
+\]
+
+Thus the remaining resonant theorem is a vector-valued two-Möbius Farey
+microcluster square function.  It is not enough to prove cancellation for
+a scalar count in one sector; the one-entry wave packets vary within the
+cluster and their common \(L^2(v,j)\) geometry must be retained.
+
+Here is the exact finite replacement for the informal phrase “same
+cluster”.  For an integer angular resolution \(Q\geq1\), put
+
+\[
+ b_Q(w,s)=\left\lfloor {Qw\over s}\right\rfloor,
+ \qquad
+ \Delta_{12}=w_1s_2-w_2s_1.
+\tag{4.621zadj16m}
+\]
+
+Then elementary cross multiplication gives the two implications
+
+\[
+\begin{aligned}
+ b_Q(w_1,s_1)=b_Q(w_2,s_2)
+   &\Longrightarrow Q|\Delta_{12}|<s_1s_2,\\
+ Q|\Delta_{12}|<s_1s_2
+   &\Longrightarrow
+   |b_Q(w_1,s_1)-b_Q(w_2,s_2)|\leq1.
+\end{aligned}
+\tag{4.621zadj16n}
+\]
+
+Thus “same cluster” is not literally equivalent to the determinant
+collar.  The collar is instead covered exactly by a sector and its two
+neighbors, so the angular interaction graph has multiplicity at most
+three.  Taking \(Q\asymp T\) recovers the scale
+\(|\Delta_{12}|\ll s_1s_2/T\asymp T\) without losing a power of \(T\).
+The finite adapter farey_sector_pair_ledger records (4.621zadj16m-n), and
+its exhaustive small-range test checks both implications including sector
+boundaries.
+
+The horocycle/Farey result of
+[Panti](https://arxiv.org/abs/1503.02539) permits piecewise-smooth
+denominator weights and derives macroscopic gap distributions.  It does
+not state a microscopic \(T^{-1}\)-angular square function with the
+moving product \(\mu(s)\mu(ks+w)\).  Likewise, one-Möbius nilsequence
+orthogonality does not permit the second Möbius factor to move with the
+same cluster.  No audited published result therefore supplies the second
+row of (4.621zadj16k).
+
+The adapter transition_poisson_tube_cluster_audit records the tube scales,
+the \(T\)-by-\(T\) cluster ledger, the exact coefficient (4.621zadj16l),
+the bounded-neighbor correction (4.621zadj16n), and the zero square-root
+margin.  It keeps
+requires_vector_valued_two_mobius_cancellation true and
+published_coverage false.
+
 Section 4.60 already supplies one part of that analytic bridge.  Its
 five-variable Fourier inversion writes the actual lifted zero-mode weight
 as an exact signed superposition of separated tensors, with only a

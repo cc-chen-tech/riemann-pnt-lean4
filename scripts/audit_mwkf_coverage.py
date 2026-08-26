@@ -853,6 +853,43 @@ class TransitionPoissonResonantGramAudit:
 
 
 @dataclass(frozen=True)
+class TransitionPoissonTubeClusterAudit:
+    tube_longitudinal_length_exponent: Fraction
+    tube_transverse_width_exponent: Fraction
+    angular_resolution_exponent: Fraction
+    primitive_direction_family_exponent: Fraction
+    angular_cluster_count_exponent: Fraction
+    entries_per_cluster_exponent: Fraction
+    coherent_cluster_energy_exponent: Fraction
+    square_root_cluster_energy_exponent: Fraction
+    square_function_target_exponent: Fraction
+    square_root_margin_exponent: Fraction
+    cluster_coefficient: str
+    same_cluster_implies_determinant_collar: bool
+    determinant_collar_implies_adjacent_clusters: bool
+    angular_interaction_has_bounded_cluster_multiplicity: bool
+    requires_vector_valued_two_mobius_cancellation: bool
+    unweighted_farey_equidistribution_matches: bool
+    one_mobius_nilsequence_theorem_matches: bool
+    published_coverage: bool
+    farey_source: str
+
+
+@dataclass(frozen=True)
+class FareySectorPairLedger:
+    q: int
+    first_sector: int
+    second_sector: int
+    sector_distance: int
+    signed_determinant: int
+    absolute_determinant: int
+    same_sector: bool
+    in_determinant_collar: bool
+    same_sector_implies_collar: bool
+    collar_implies_adjacent_sectors: bool
+
+
+@dataclass(frozen=True)
 class TransitionDenominatorGcdLineAudit:
     determinant_exponent: Fraction
     denominator_gcd_exponent: Fraction
@@ -4727,6 +4764,110 @@ def transition_poisson_resonant_gram_audit(
         endpoint_logarithmic_aggregation_closed=False,
         continuous_mobius_gram_bound_proved=False,
         whole_poisson_zero_mode_covered=False,
+    )
+
+
+def transition_poisson_tube_cluster_audit(
+) -> TransitionPoissonTubeClusterAudit:
+    """Resolve the continuous resonant Gram into Farey angular clusters.
+
+    A critical one-entry kernel is supported on a tube in the ``(v,j)``
+    plane of longitudinal length ``T^(1/2)`` and transverse width
+    ``T^(-1/2)``.  Its angular resolution is therefore ``T^(-1)``.
+    The primitive directions ``w/s`` with ``w,s asymp T`` form a family of
+    exponent two, so there are ``T`` angular clusters and ``T`` entries in
+    one cluster.  Coherent summation gives energy ``T * T^2=T^3``;
+    square-root cancellation in each vector-valued cluster gives
+    ``T * T=T^2``, exactly the target and with no spare power.
+
+    The entry coefficient is ``mu(s)mu(k*s+w)``.  Smooth or unweighted
+    Farey/horocycle equidistribution does not retain this two-Möbius weight,
+    and one-Möbius nilsequence orthogonality does not allow the second
+    moving Möbius factor.  The audit therefore records geometry, not a
+    published proof of the cluster square function.
+    """
+    longitudinal = F(1, 2)
+    transverse = F(-1, 2)
+    angular_resolution = transverse - longitudinal
+    direction_family = F(2)
+    cluster_count = -angular_resolution
+    entries_per_cluster = direction_family - cluster_count
+    coherent_energy = cluster_count + 2 * entries_per_cluster
+    square_root_energy = cluster_count + entries_per_cluster
+    target = F(2)
+    return TransitionPoissonTubeClusterAudit(
+        tube_longitudinal_length_exponent=longitudinal,
+        tube_transverse_width_exponent=transverse,
+        angular_resolution_exponent=angular_resolution,
+        primitive_direction_family_exponent=direction_family,
+        angular_cluster_count_exponent=cluster_count,
+        entries_per_cluster_exponent=entries_per_cluster,
+        coherent_cluster_energy_exponent=coherent_energy,
+        square_root_cluster_energy_exponent=square_root_energy,
+        square_function_target_exponent=target,
+        square_root_margin_exponent=target - square_root_energy,
+        cluster_coefficient="mu(s)*mu(k*s+w)",
+        same_cluster_implies_determinant_collar=True,
+        determinant_collar_implies_adjacent_clusters=True,
+        angular_interaction_has_bounded_cluster_multiplicity=True,
+        requires_vector_valued_two_mobius_cancellation=True,
+        unweighted_farey_equidistribution_matches=False,
+        one_mobius_nilsequence_theorem_matches=False,
+        published_coverage=False,
+        farey_source=(
+            "Panti, arXiv:1503.02539v2, weighted Farey sequence and "
+            "horocycle equidistribution; smooth denominator weights, not "
+            "the two-Mobius microscopic square function."
+        ),
+    )
+
+
+def farey_sector_pair_ledger(
+    *,
+    q: int,
+    w1: int,
+    s1: int,
+    w2: int,
+    s2: int,
+) -> FareySectorPairLedger:
+    """Give an exact finite sector/determinant implication ledger.
+
+    Put the nonnegative slope ``w/s`` in sector ``floor(q*w/s)``.  If two
+    slopes lie in the same sector, their determinant obeys
+
+    ``q*abs(w1*s2-w2*s1) < s1*s2``.
+
+    Conversely that strict determinant collar makes the two real sector
+    coordinates differ by less than one, so their integer sector labels
+    differ by at most one.  Thus the physical angular collar is covered by
+    same-or-neighbor sectors with multiplicity at most three; it is not
+    identical to the same-sector relation.
+    """
+    if q <= 0:
+        raise ValueError("q must be positive")
+    if s1 <= 0 or s2 <= 0:
+        raise ValueError("sector denominators must be positive")
+    if w1 < 0 or w2 < 0:
+        raise ValueError("sector numerators must be nonnegative")
+
+    first_sector = q * w1 // s1
+    second_sector = q * w2 // s2
+    sector_distance = abs(first_sector - second_sector)
+    determinant = w1 * s2 - w2 * s1
+    absolute_determinant = abs(determinant)
+    same_sector = sector_distance == 0
+    collar = q * absolute_determinant < s1 * s2
+    return FareySectorPairLedger(
+        q=q,
+        first_sector=first_sector,
+        second_sector=second_sector,
+        sector_distance=sector_distance,
+        signed_determinant=determinant,
+        absolute_determinant=absolute_determinant,
+        same_sector=same_sector,
+        in_determinant_collar=collar,
+        same_sector_implies_collar=(not same_sector) or collar,
+        collar_implies_adjacent_sectors=(not collar) or sector_distance <= 1,
     )
 
 
@@ -9959,6 +10100,17 @@ def main() -> None:
         "jacobian=True,offdiag_sign_indefinite=True,recombination=True,"
         "sampling_power_obstruction=False,endpoint_logs=False,"
         "gram_proved=False,whole=False"
+    )
+    transition_tube_cluster = transition_poisson_tube_cluster_audit()
+    print(
+        "large_q_transition: poisson_tube_cluster="
+        "length=1/2,width=-1/2,angular_resolution=-1,directions=2,"
+        "clusters=1,per_cluster=1,coherent_energy=3,sqrt_energy=2,"
+        "target=2,margin=0,coefficient=mu(s)*mu(k*s+w),"
+        "same_cluster_implies_collar=True,collar_implies_adjacent=True,"
+        "cluster_multiplicity=3,two_mobius=True,"
+        f"farey_matches={transition_tube_cluster.unweighted_farey_equidistribution_matches},"
+        "nilsequence_matches=False,covered=False"
     )
     transition_denominator_line = transition_denominator_gcd_line_audit(
         determinant_exponent=F(1),

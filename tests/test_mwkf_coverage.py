@@ -1772,6 +1772,53 @@ def test_poisson_resonant_gram_isolates_the_only_positive_power_deficit() -> Non
     assert not audit.whole_poisson_zero_mode_covered
 
 
+def test_resonant_gram_is_a_mobius_farey_microcluster_square_function() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_poisson_tube_cluster_audit",
+        None,
+    )
+    assert adapter is not None, "Poisson tube-cluster audit is missing"
+
+    audit = adapter()
+    assert audit.tube_longitudinal_length_exponent == F(1, 2)
+    assert audit.tube_transverse_width_exponent == F(-1, 2)
+    assert audit.angular_resolution_exponent == F(-1)
+    assert audit.primitive_direction_family_exponent == F(2)
+    assert audit.angular_cluster_count_exponent == F(1)
+    assert audit.entries_per_cluster_exponent == F(1)
+    assert audit.coherent_cluster_energy_exponent == F(3)
+    assert audit.square_root_cluster_energy_exponent == F(2)
+    assert audit.square_function_target_exponent == F(2)
+    assert audit.square_root_margin_exponent == F(0)
+    assert audit.cluster_coefficient == "mu(s)*mu(k*s+w)"
+    assert audit.same_cluster_implies_determinant_collar
+    assert audit.determinant_collar_implies_adjacent_clusters
+    assert audit.angular_interaction_has_bounded_cluster_multiplicity
+    assert audit.requires_vector_valued_two_mobius_cancellation
+    assert not audit.unweighted_farey_equidistribution_matches
+    assert not audit.one_mobius_nilsequence_theorem_matches
+    assert not audit.published_coverage
+
+
+def test_farey_sector_partition_has_an_exact_determinant_collar_ledger() -> None:
+    ledger = getattr(coverage_audit, "farey_sector_pair_ledger", None)
+    assert ledger is not None, "exact Farey sector-pair ledger is missing"
+
+    for q in range(1, 9):
+        for s1 in range(1, 9):
+            for s2 in range(1, 9):
+                for w1 in range(0, 9):
+                    for w2 in range(0, 9):
+                        pair = ledger(q=q, w1=w1, s1=s1, w2=w2, s2=s2)
+                        if pair.same_sector:
+                            assert q * pair.absolute_determinant < s1 * s2
+                        if q * pair.absolute_determinant < s1 * s2:
+                            assert pair.sector_distance <= 1
+                        assert pair.same_sector_implies_collar
+                        assert pair.collar_implies_adjacent_sectors
+
+
 def test_transition_denominator_gcd_line_reduces_to_two_mobius_square_root() -> None:
     identity = getattr(
         coverage_audit,
