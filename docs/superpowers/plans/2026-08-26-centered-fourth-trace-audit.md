@@ -72,3 +72,18 @@
 - [x] Run the relevant Lean build/check if any Lean source or imported specification changed.
 - [x] Inspect the exact diff and theorem-status language.
 - [x] If the result is materially new, commit, push, and update the existing Ready-for-view PR; otherwise report the negative result without manufacturing a PR update.
+
+### Task 5: Exploit fixed-numerator spacing without weakening the coefficient structure
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing exact-rational tests for the congruence linking two inverse fractions with the same numerator.
+- [x] Prove and exhaustively audit the inverse-linear spacing bound in one balanced dyadic interval.
+- [x] Express the coherent modulus family as an operator and compute the exact large-sieve gap at the balanced maximal box.
+- [x] Record that an arbitrary product-coefficient spectral norm still loses `A^(1/2)` and that a successful route must retain `hδ`.
+- [x] Re-run focused and repository-wide Python verification.
+- [ ] Commit, push, and update the Ready-for-view PR with the new proved spacing lemma and unchanged coupled-kernel boundary.

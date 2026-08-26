@@ -8,10 +8,12 @@ sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mobius_type_ii import (
     BlomerPascadiMargins,
+    InverseFractionSeparation,
     MQWBlockSavings,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
     WrightFactorSavings,
+    balanced_inverse_fraction_spacing_margin,
     balanced_dual_low_mode_mobius_exponent,
     balanced_principal_character_mobius_exponent,
     blomer_pascadi_beats_best_trivial,
@@ -22,6 +24,9 @@ from scripts.audit_mobius_type_ii import (
     centered_dual_parseval_covers,
     centered_dual_parseval_loss,
     character_large_sieve_unit_gap,
+    coherent_operator_large_sieve_exponent,
+    coherent_operator_large_sieve_gap,
+    coherent_operator_required_exponent,
     coprime_indicator_via_mobius,
     dispersion_pointwise_mean_square_gap,
     dispersion_random_benchmark_gap,
@@ -30,6 +35,7 @@ from scripts.audit_mobius_type_ii import (
     global_unit_principal_completion_margin,
     generalized_centered_dual_scales,
     induced_gauss_outer_mobius_sign,
+    inverse_fraction_separation,
     inverse_product_phase_mod_one,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
@@ -239,6 +245,18 @@ def test_elementary_large_sieve_loses_exactly_square_root_of_a() -> None:
     assert elementary_large_sieve_loss(witnesses["r_long"]) == F(2)
     assert elementary_large_sieve_loss(witnesses["s_long"]) == F(2)
     assert elementary_large_sieve_loss(witnesses["large_q_endpoint"]) == F(1, 2)
+
+
+def test_coherent_modulus_operator_ledger_recovers_the_same_exact_loss() -> None:
+    witnesses = boundary_witnesses()
+    balanced = witnesses["balanced_max_a"]
+    assert coherent_operator_required_exponent(balanced) == F(2)
+    assert coherent_operator_large_sieve_exponent(balanced) == F(9, 2)
+    assert coherent_operator_large_sieve_gap(balanced) == F(5, 2)
+    for box in witnesses.values():
+        assert coherent_operator_large_sieve_gap(box) == (
+            elementary_large_sieve_loss(box)
+        )
 
 
 def test_two_sided_finite_mobius_decomposition_preserves_both_signs() -> None:
@@ -621,6 +639,44 @@ def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:
                             reduced.delta_reduced,
                         )
                     )
+
+
+def test_fixed_numerator_inverse_fraction_congruence_is_exact() -> None:
+    certificate = inverse_fraction_separation(r=19, s=11, t=16)
+    assert certificate == InverseFractionSeparation(
+        numerator=-9,
+        denominator=176,
+        distance=F(9, 176),
+        congruence_quotient=-1,
+    )
+    assert (
+        19 * certificate.numerator - (16 - 11)
+        == certificate.congruence_quotient * certificate.denominator
+    )
+
+
+def test_balanced_fixed_numerator_fractions_have_inverse_linear_spacing() -> None:
+    for lower in range(2, 21):
+        for r in range(lower + 1, 2 * lower + 1):
+            for s in range(lower + 1, 2 * lower + 1):
+                for t in range(lower + 1, 2 * lower + 1):
+                    if s == t or gcd(r, s * t) != 1:
+                        continue
+                    certificate = inverse_fraction_separation(r, s, t)
+                    assert certificate.congruence_quotient != 0
+                    assert balanced_inverse_fraction_spacing_margin(
+                        r, s, t, lower=lower
+                    ) >= 0
+
+
+def test_equal_moduli_are_the_only_zero_fixed_numerator_separation() -> None:
+    for modulus in range(2, 30):
+        for r in range(1, 2 * modulus):
+            if gcd(r, modulus) != 1:
+                continue
+            certificate = inverse_fraction_separation(r, modulus, modulus)
+            assert certificate.numerator == 0
+            assert certificate.distance == 0
 
 
 def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:

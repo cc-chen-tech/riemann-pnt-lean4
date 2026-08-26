@@ -4225,6 +4225,138 @@ matrix/projective tests.  These checks validate the reduction boundary;
 they do not prove the coherent cross-modulus estimate or
 CK\(_{\rm ub}(3)\).
 
+### 9.28 Fixed-numerator spacing and the arbitrary-operator barrier
+
+The coherent family (9.147) has more spacing than a generic Farey family
+when the same \(r\) is retained.  Let
+
+\[
+ u\equiv\bar r\pmod s,\quad 0\leq u<s,
+ \qquad
+ v\equiv\bar r\pmod t,\quad 0\leq v<t,
+\]
+
+with \((r,st)=1\).  Choose the signed least residue \(k\) of
+\(ut-vs\pmod{st}\).  Then there is an integer \(\ell\) such that
+
+\[
+ \boxed{
+ \left\|\frac us-\frac vt\right\|_{\mathbb R/\mathbb Z}
+   =\frac{|k|}{st},
+ \qquad
+ rk-(t-s)=\ell st.}
+\tag{9.148}
+\]
+
+The congruence is immediate from
+
+\[
+ ru=1+p s,qquad rv=1+q t,
+\]
+
+since
+
+\[
+ r(ut-vs)=t-s+(p-q)st.
+\]
+
+It has a useful dyadic consequence.  Suppose
+
+\[
+ Y<r,s,t\leq2Y,qquad s\neq t,qquad Y\geq2.
+\tag{9.149}
+\]
+
+If \(\ell=0\) in (9.148), then
+\(|rk|=|t-s|<Y<r\), forcing \(k=0\) and then \(s=t\), a
+contradiction.  Hence \(\ell\neq0\), and
+
+\[
+ |rk|\geq st-|t-s|>Y^2-Y.
+\]
+
+Using \(r\leq2Y\) and \(st\leq4Y^2\) gives the completely elementary
+spacing bound
+
+\[
+ \boxed{
+ \left\|\frac{\bar r_s}{s}-\frac{\bar r_t}{t}\right\|_{\mathbb R/\mathbb Z}
+ \geq\frac1{16Y}.}
+\tag{9.150}
+\]
+
+Thus, for fixed \(r\) in the balanced box, distinct denominator phases
+are separated on the inverse-linear scale \(Y^{-1}\), not the generic
+Farey scale \(Y^{-2}\).  Equivalently, the potentially closest Farey
+collisions cannot occur inside a single balanced fixed-numerator slice.
+The proof is finite, includes composite and non-coprime pairs \((s,t)\),
+and requires only that \(r\) be a unit modulo both.
+
+This observation does not by itself close the sum, because using a large
+sieve on each fixed-\(r\) slice and then applying Cauchy over \(r\)
+still discards the two Möbius interaction.  The exact loss is easiest to
+see at the operator level.  Collapse the product variables temporarily
+to
+
+\[
+ \nu(a)=\sum_{h\delta=a}w(h,\delta)
+\]
+
+and define the coherent matrix
+
+\[
+ \mathcal L(r,a)
+ =\sum_{s\asymp S}\mu(s)W(r,s,a)
+   e\left(-\frac{a\bar r}{s}\right).
+\tag{9.151}
+\]
+
+Then the separated model is \(\langle\mu,\mathcal L\nu\rangle\), with
+input norm exponents \(\rho/2\) and \(a/2\).  An arbitrary-coefficient
+operator estimate reaching the \(RS\) target would therefore require
+
+\[
+ \boxed{
+ \kappa_{\rm req}
+ =\rho+\sigma-\frac{\rho+a}{2}
+ =\frac{\rho+2\sigma-a}{2}.}
+\tag{9.152}
+\]
+
+Factoring \(\mathcal L\) through the \((r,s)\) Farey rows and applying
+the better of the two reciprocal large-sieve orientations gives exactly
+the already proved \(RS\sqrt A\) bound.  After removing the two input
+norms, its operator exponent is
+
+\[
+ \boxed{
+ \kappa_{\rm LS}=\frac\rho2+\sigma,
+ \qquad
+ \kappa_{\rm LS}-\kappa_{\rm req}=\frac a2.}
+\tag{9.153}
+\]
+
+At the balanced maximal point this reads
+
+\[
+ \kappa_{\rm req}=2,qquad
+ \kappa_{\rm LS}=\frac92,qquad
+ \kappa_{\rm LS}-\kappa_{\rm req}=\frac52.
+\tag{9.154}
+\]
+
+Therefore an arbitrary-\(\nu(a)\) coherent spectral-norm theorem is still
+too strong by \(T^{5/2}\).  The fixed-numerator spacing (9.150) is real,
+but a successful mixed-modulus fourth moment must use it while retaining
+the factorization \(a=h\delta\) and both Möbius weights.  In particular,
+the candidate lemma after (9.147) cannot be weakened to a generic
+operator bound for arbitrary product coefficients.
+
+The congruence certificate (9.148), the dyadic margin in (9.150), and the
+exponent ledger (9.152)--(9.154) are checked exactly in
+`scripts/audit_mobius_type_ii.py`; the tests exhaust all admissible
+triples in the small dyadic boxes \(2\leq Y\leq20\).
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -4311,6 +4443,10 @@ Proved in this note:
   margins, integral fourth-trace formula, projective-character identity,
   and the raw-cycle counterexample, (9.136)--(9.146); these identify but
   do not prove the coherent cross-modulus bridge (9.147).
+* the fixed-numerator inverse-linear spacing lemma (9.148)--(9.150) and
+  the exact proof that collapsing \(h\delta\) to arbitrary product
+  coefficients leaves the same \(A^{1/2}\) operator loss,
+  (9.151)--(9.154).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -4348,6 +4484,7 @@ Proved in this note:
 | Nonunit Möbius sign migration | exact finite bijection; estimate unproved | \(E=e/k,\delta'=k\delta_1,f=kc\) gives \(k=(\delta',f)\) and \(\mu(e)\mu(k)=\mu(E)\), (9.130)--(9.134); after divisor duality the nonunit family retains \(\mu(r)\mu(E)\mu(j)\) |
 | Blomer--Pascadi quadratic-character route | exact trace/coverage audit; direct routes insufficient | critical fixed-modulus saving \(c^{-1/32}\), but full-residue margins are negative in (9.140); Pascadi Corollary 7.9 has full-residue loss \(C^{(1+\tau)/6}\), (9.143); exact trace and character identities are (9.144)--(9.146) |
 | Coherent cross-modulus fourth trace | **unproved** | candidate joint interface (9.147) must retain the common \(\mu(r)\) transform, outer \(\mu(s)\), factorized \(h\delta\), scalar-divisor strata, and discriminant energy before taking moduluswise norms |
+| Fixed-numerator inverse fractions | spacing proved; generic operator route insufficient | for \(r,s,t\) in one balanced dyadic interval the exact congruence (9.148) gives spacing at least \(1/(16Y)\), (9.150); after collapsing \(h\delta\), the arbitrary-coefficient operator still loses exactly \(A^{1/2}\), (9.153)--(9.154) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

@@ -124,6 +124,79 @@ def two_sided_mobius_geometric_value(
 
 
 @dataclass(frozen=True)
+class InverseFractionSeparation:
+    """Centered numerator certificate for two fixed-numerator fractions.
+
+    If ``u=inv_s(r)`` and ``v=inv_t(r)``, then ``numerator`` is the
+    signed least residue of ``u*t-v*s`` modulo ``s*t``.  It satisfies
+
+    ``r*numerator-(t-s) = congruence_quotient*s*t``.
+    """
+
+    numerator: int
+    denominator: int
+    distance: Fraction
+    congruence_quotient: int
+
+
+def inverse_fraction_separation(
+    r: int, s: int, t: int
+) -> InverseFractionSeparation:
+    """Exact distance modulo one between ``inv_s(r)/s`` and ``inv_t(r)/t``."""
+
+    if r < 1 or s < 2 or t < 2:
+        raise ValueError("require r >= 1 and s,t >= 2")
+    if gcd(r, s * t) != 1:
+        raise ValueError("r must be invertible modulo both s and t")
+    denominator = s * t
+    raw_numerator = pow(r, -1, s) * t - pow(r, -1, t) * s
+    numerator = raw_numerator % denominator
+    if 2 * numerator > denominator:
+        numerator -= denominator
+    congruence_difference = r * numerator - (t - s)
+    if congruence_difference % denominator != 0:
+        raise AssertionError("inverse-fraction congruence certificate failed")
+    return InverseFractionSeparation(
+        numerator=numerator,
+        denominator=denominator,
+        distance=Fraction(abs(numerator), denominator),
+        congruence_quotient=congruence_difference // denominator,
+    )
+
+
+def balanced_inverse_fraction_spacing_margin(
+    r: int, s: int, t: int, *, lower: int
+) -> Fraction:
+    """Margin over the elementary ``1/(16*lower)`` spacing bound.
+
+    Assume ``lower < r,s,t <= 2*lower``, ``s != t``, and ``r`` is a unit
+    modulo ``s*t``.  If the congruence quotient were zero, then
+    ``r*k=t-s``; the dyadic inequalities force ``k=0`` and hence ``s=t``.
+    Therefore the quotient is nonzero.  It follows that
+
+    ``|r*k| >= s*t-|t-s| > lower^2-lower``
+
+    and hence the distance modulo one is at least ``1/(16*lower)`` for
+    ``lower >= 2``.  The returned nonnegative margin is directly checkable
+    with exact rational arithmetic.
+    """
+
+    if lower < 2:
+        raise ValueError("the dyadic lower endpoint must be at least 2")
+    if not all(lower < value <= 2 * lower for value in (r, s, t)):
+        raise ValueError("r,s,t must lie in the same dyadic interval")
+    if s == t:
+        raise ValueError("the spacing statement requires distinct moduli")
+    certificate = inverse_fraction_separation(r, s, t)
+    if certificate.congruence_quotient == 0:
+        raise AssertionError("distinct balanced moduli cannot be resonant")
+    margin = certificate.distance - Fraction(1, 16 * lower)
+    if margin < 0:
+        raise AssertionError("the certified inverse-fraction spacing failed")
+    return margin
+
+
+@dataclass(frozen=True)
 class WrightFactorSavings:
     first: Fraction
     second: Fraction
@@ -325,6 +398,48 @@ def elementary_large_sieve_loss(box: ExponentBox) -> Fraction:
     if not is_admissible(box):
         raise ValueError("large-sieve loss is defined only on admissible boxes")
     return box.third_length / 2
+
+
+def coherent_operator_required_exponent(box: ExponentBox) -> Fraction:
+    """Operator exponent required after collapsing ``h,delta`` to products.
+
+    Write the coherent cross-modulus kernel as a matrix from the product
+    coefficient ``nu_a`` to the ``r`` sequence.  The input norms have
+    exponents ``a/2`` and ``rho/2``.  To reach the local ``R*S`` target,
+    its operator norm must therefore have exponent
+    ``rho+sigma-(rho+a)/2``.
+
+    This is only a sufficient arbitrary-coefficient interface: replacing
+    the factorized ``h,delta`` family by an arbitrary ``nu_a`` discards
+    structure that a successful proof may need.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("operator exponent is defined only on admissible boxes")
+    return box.rho + box.sigma - (
+        box.rho + box.third_length
+    ) / 2
+
+
+def coherent_operator_large_sieve_exponent(box: ExponentBox) -> Fraction:
+    """Exponent supplied by the two-orientation Farey large sieve.
+
+    Factoring the matrix through the ``(r,s)`` Farey rows gives the
+    existing ``R*S*sqrt(A)`` bilinear bound.  Removing the input norms
+    ``sqrt(R*A)`` leaves operator exponent ``rho/2+sigma``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("operator exponent is defined only on admissible boxes")
+    return box.rho / 2 + box.sigma
+
+
+def coherent_operator_large_sieve_gap(box: ExponentBox) -> Fraction:
+    """Power still missing in the arbitrary product-coefficient operator."""
+
+    return coherent_operator_large_sieve_exponent(
+        box
+    ) - coherent_operator_required_exponent(box)
 
 
 def dispersion_pointwise_mean_square_gap(box: ExponentBox) -> Fraction:
