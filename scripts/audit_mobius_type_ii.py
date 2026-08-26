@@ -3148,6 +3148,30 @@ def equal_zeta_index_gcd_factorization_sides(
     return gcd_side, square_side
 
 
+def equal_index_geometric_gram_rank_ledger(
+    adjacent_correlation: Fraction,
+) -> tuple[Fraction, Fraction, int]:
+    """Exact 3-by-3 rank obstruction for product-density centering.
+
+    For the Gaussian kernel on the geometric indices ``1, 2, 4``, put
+    ``u=exp(-T^2*log(2)^2/2)``.  Adjacent entries equal ``u`` and the
+    distance-two entry equals ``u^4``.  The full determinant is
+    ``(1-u^2)^3*(1+u^2)``; after deleting the diagonal it is ``2*u^6``.
+    Both are nonzero for ``0<u<1``, whereas a row-plus-column-minus-grand
+    projection has rank at most two.
+
+    The rational input is a finite formal proxy for ``u``.  No numerical
+    approximation to the Gaussian is used in the determinant identities.
+    """
+
+    u = Fraction(adjacent_correlation)
+    if not 0 < u < 1:
+        raise ValueError("the adjacent correlation must lie strictly in (0,1)")
+    full_determinant = (1 - u**2) ** 3 * (1 + u**2)
+    off_diagonal_determinant = 2 * u**6
+    return full_determinant, off_diagonal_determinant, 2
+
+
 def formal_mobius_log_divisor_coefficients(n: int) -> dict[int, int]:
     """Coefficients of ``-sum_{d|n} mu(d) log d`` in the ``log p`` basis.
 

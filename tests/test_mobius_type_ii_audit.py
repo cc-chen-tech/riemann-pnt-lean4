@@ -2419,6 +2419,17 @@ def test_equal_zeta_index_gcd_sum_is_a_literal_mollifier_square() -> None:
     assert abs(gcd_side - square_side) < 1e-9
 
 
+def test_equal_index_gaussian_gram_exceeds_row_column_projection_rank() -> None:
+    """On 1,2,4 the full and diagonal-removed kernels both have rank three."""
+    full_determinant, off_diagonal_determinant, projection_rank_cap = (
+        audit.equal_index_geometric_gram_rank_ledger(F(1, 2))
+    )
+
+    assert full_determinant == F(135, 256)
+    assert off_diagonal_determinant == F(1, 32)
+    assert projection_rank_cap == 2
+
+
 def test_selberg_convolution_is_formally_von_mangoldt_below_cutoff() -> None:
     assert audit.formal_mobius_log_divisor_coefficients(1) == {}
     for prime in (2, 3, 5, 7, 11):

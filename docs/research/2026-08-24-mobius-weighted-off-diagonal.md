@@ -10658,6 +10658,122 @@ claim that the determinant-zero term has already recombined correctly with
 \tag{9.455}
 \]
 
+### 9.71 The actual zero-mode projector has rank above product centering
+
+Equations (9.384) and (9.394) determine the canonical aggregate more
+precisely than an arbitrary choice of \(p,q\).  Let \(\Omega(t)\) denote
+the common time/archimedean weight after the complete \(h,\delta\), dyadic,
+and AFE recombination, and use the convention
+
+\[
+ \widehat\Omega(\xi):=\int_{\mathbb R}\Omega(t)e^{it\xi}\,dt.
+\tag{9.456}
+\]
+
+The equal-index factorization (9.384), including its explicit diagonal,
+then gives the finite Fourier Gram
+
+\[
+ \mathcal Z_\Omega+\mathcal D_\Omega
+ =\sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{\sqrt{de}}\,
+   \widehat\Omega\!\left(\log\frac ed\right).
+\tag{9.457}
+\]
+
+Hence the secondary zero packet after subtracting that diagonal is exactly
+
+\[
+ \boxed{
+ \mathcal Z_\Omega
+ =\sum_{\substack{d,e\leq N\\d\ne e}}
+   \frac{a_N(d)a_N(e)}{\sqrt{de}}\,
+   \widehat\Omega\!\left(\log\frac ed\right).}
+\tag{9.458}
+\]
+
+There is no asymptotic, endpoint deletion, or coefficientwise absolute
+value in (9.457)--(9.458).  For the Gaussian specialization
+\(\Omega_T(t)=e^{-t^2/(2T^2)}\),
+
+\[
+ \widehat\Omega_T(\xi)
+ =\sqrt{2\pi}\,T e^{-T^2\xi^2/2}.
+\tag{9.459}
+\]
+
+Remove the common positive factor \(\sqrt{2\pi}T\), restrict to the three
+indices \(1,2,4\), and put
+
+\[
+ u:=e^{-T^2(\log2)^2/2}\in(0,1).
+\tag{9.460}
+\]
+
+The principal Gram and its diagonal-removed kernel are respectively
+
+\[
+ G_T=
+ \begin{pmatrix}
+ 1&u&u^4\\
+ u&1&u\\
+ u^4&u&1
+ \end{pmatrix},
+ \qquad
+ G_T^{\ne}=
+ \begin{pmatrix}
+ 0&u&u^4\\
+ u&0&u\\
+ u^4&u&0
+ \end{pmatrix}.
+\tag{9.461}
+\]
+
+Direct expansion gives
+
+\[
+ \boxed{
+ \det G_T=(1-u^2)^3(1+u^2)>0,
+ \qquad
+ \det G_T^{\ne}=2u^6>0.}
+\tag{9.462}
+\]
+
+Thus both matrices in (9.461) have rank \(3\).  By contrast, every
+row/column/grand projection produced by (9.443)--(9.446) has the form
+
+\[
+ K-K^\circ=\rho\,\mathbf1^t+\mathbf1\,\kappa^t
+             -m\mathbf1\mathbf1^t,
+ \qquad
+ \operatorname{rank}(K-K^\circ)\leq2.
+\tag{9.463}
+\]
+
+Consequently no product-density double centering can move the whole
+aggregate (9.457), or even its diagonal-removed Gaussian specialization
+(9.458), into \(\mathcal M_{\rm res}\).  The canonical resonant object is
+the full time-Fourier projector
+
+\[
+ \Pi_\Omega(d,e):=\widehat\Omega\!\left(\log\frac ed\right),
+\tag{9.464}
+\]
+
+not one constant row or column mode.  This resolves the density ambiguity
+in the following precise sense: the actual principal object is known, but
+it is a high-rank banded operator.  Subtracting it would merely name the
+entire correlation in (9.458) as a secondary term; estimating that term is
+the long-polynomial/short-Mertens gate (9.409)--(9.413), not an elementary
+LCM diagonal.
+
+The calculation does not exclude cancellation with nonzero completion
+frequencies after a still larger global identity.  It does prove that the
+explicit diagonal and any row/column product-density projection alone
+cannot provide that cancellation.  The exact helper
+`equal_index_geometric_gram_rank_ledger` records (9.462): at the rational
+formal value \(u=1/2\), the two determinants are \(135/256\) and \(1/32\),
+while the projection-rank cap is \(2\).
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -10753,7 +10869,13 @@ between \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\).  Finally,
 (9.449)--(9.455) identify the exact \(T^2\) operator saving, equivalently
 \(T^4\) after \(TT^*\), and split the global Gram form into determinant-zero
 and determinant-nonzero orbits.  Neither the resonant evaluation nor the
-nonzero-determinant spectral estimate has been proved.**
+nonzero-determinant spectral estimate has been proved.  Finally,
+(9.456)--(9.464) identify the actual aggregate zero-mode projector as the
+time-Fourier Gram.  Its Gaussian \(1,2,4\) minor, even after diagonal
+removal, has rank \(3\), whereas every row/column/grand projection has
+rank at most \(2\).  Thus product-density centering cannot isolate the
+whole resonance; the surviving high-rank banded Möbius energy remains
+unproved.**
 
 Proved in this note:
 
@@ -10955,6 +11077,14 @@ Proved in this note:
   form.  The determinant-zero and determinant-nonzero pieces recombine
   exactly, but their required resonant and spectral estimates remain
   unproved.
+* the exact aggregate Fourier-projector formula (9.456)--(9.459) and the
+  rank obstruction (9.460)--(9.463).  On the Gaussian indices \(1,2,4\),
+  both the full Gram and its diagonal-removed kernel have nonzero
+  \(3\times3\) determinant, while the resonant projection of any
+  product-density double centering has rank at most \(2\).  This proves
+  that the explicit diagonal plus row/column modes cannot remove the
+  whole zero packet; estimating the remaining banded Möbius energy is
+  still open.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -11218,8 +11348,9 @@ Proved in this note:
 | Guth--Maynard large-value route | exact Fourier-cell audit; long range reduces to classical | The separated equal-index model is the exact energy (9.409), whose time window resolves \(|r-s|\ll X/T\), (9.410).  At \(X=T^3\), each cell contains \(X/T=T^2\) coefficients.  Montgomery--Vaughan gives normalized exponent \(3\) against diagonal exponent \(1\), (9.412).  Guth--Maynard's proof explicitly returns to the classical first term for polynomial length \(N_{\rm GM}\geq T_{\rm GM}\); here \(N_{\rm GM}=T^3>T=T_{\rm GM}\).  Their theorem is coefficient-agnostic and provides no Möbius-specific saving, so (9.413) remains exactly the unavailable banded two-Möbius estimate |
 | Intact-mollifier Perron route | unconditional possible-zero estimate unproved; RH route closes | Perron inversion has no endpoint or truncation error, (9.422)--(9.424).  On the limiting absolute-convergence contour \(c=1/2\), squaring \(N^c\) gives exponent \(4\) at \(N=T^3\), three powers above target, (9.425).  Reaching \(T^{1+\varepsilon}\) unconditionally enters a region where off-critical zeros are not excluded, and any simple-zero residue encountered contains \(1/\zeta'(\rho)\), (9.426).  Under RH the shift to fixed \(c>0\) is pole-free; Bui--Florea's \(k=2\) fourth negative moment plus the classical fourth moment yields (9.432), which closes every fixed \(\theta\), including \(3\), conditionally on RH |
 | Bettin--Gonek long-mollifier converse | exact theorem map; no dyadic \(\theta=3\) zero-free obstruction | Uniform \(T^{1+\varepsilon}\) control for every \(N\leq T^\theta\) on \([0,T]\) excludes zeros right of \(1/2+1/(2\theta)\), while on \([T,2T]\) it excludes only those right of \(1/2+2/\theta\), (9.434).  At \(\theta=3\) the dyadic boundary is \(7/6\), hence vacuous; a nontrivial dyadic consequence starts only at \(\theta>4\).  Their model (9.436) shows a \(T^{-3}\) displacement factor for one fixed off-line zero, but is not an unconditional all-zero upper bound |
-| Secondary-zero boundary master | exact finite recombination; canonical density and resonant evaluation unproved | Equations (9.437)--(9.448) retain every labelled AFE/\(h,\delta\)/dyadic packet before absolute values, both reflected cross terms, the diagonal, and all finite endpoints.  Double centering gives weighted zero row and column sums, but changing the density changes the separate \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\).  Deriving the actual principal mode and deciding LCM bound, cancellation, or secondary main term remain open |
+| Secondary-zero boundary master | exact finite recombination; product-density centering noncanonical | Equations (9.437)--(9.448) retain every labelled AFE/\(h,\delta\)/dyadic packet before absolute values, both reflected cross terms, the diagonal, and all finite endpoints.  Double centering gives weighted zero row and column sums, but changing the density changes the separate \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\).  The actual principal object is identified by the later Fourier-projector row; evaluating its high-rank banded energy remains open |
 | Global centered \(TT^*\) route | exact determinant split; both analytic estimates unproved | The balanced operator needs a relative \(T^2\) saving, or \(T^4\) after squaring, (9.449)--(9.450).  One global Gram expansion splits exactly by \(k_u\ell_v-k_v\ell_u=0\) or not, (9.451)--(9.454).  The zero determinant must recombine with the resonant master; only the nonzero determinant is eligible for a spectral large sieve.  Neither bound in (9.455) is asserted |
+| Actual zero-mode Fourier projector | exact high-rank identification; banded Möbius energy unproved | The fully recombined equal-index packet is the Fourier Gram (9.457), minus its explicit diagonal (9.458).  On the Gaussian \(1,2,4\) minor, both determinants in (9.462) are nonzero, so the full and diagonal-removed projectors have rank \(3\); every product-density row/column/grand projection has rank at most \(2\), (9.463).  Hence scalar-density centering cannot isolate the whole resonance, and the remaining projector is the long-polynomial gate rather than an LCM diagonal |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
