@@ -7,9 +7,12 @@
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
-> | Coupled-kernel local estimate at length \(T^3\) | unproved |
+> | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
+> | Direct published Region A--C coverage | proved/classified in Section 8 |
+> | Residual coupled Region-D estimate at length \(T^3\) | unproved |
 >
-> Thus this note is not a proof of the \(T^3\) long-mollifier asymptotic.
+> Thus this note is not a proof of the \(T^3\) long-mollifier upper bound
+> or asymptotic.
 > A row is promoted from “under audit” only after the displayed convergence,
 > contour-shift, and reindexing arguments have all been supplied.
 
@@ -1387,6 +1390,95 @@ TAIL\(_{B,D}\) prove the precise conditional implication
 
 No separated supremum is used in this implication.
 
+### 6.3 The genuinely weakest gate for the upper-bound target
+
+The original target of this project is the upper bound
+
+\[
+ I_{T^3,W}(T)\ll_{\varepsilon,W}T^{1+\varepsilon},
+\tag{6.10}
+\]
+
+not an asymptotic with an \(o(T)\) remainder.  The fixed saving in
+CK\(_{1/1000}\) is therefore stronger than the weakest sufficient input.
+For (6.10), fix a target \(\varepsilon_0>0\), put
+\(\eta=\varepsilon_0/100\), and replace every factor
+\(\mathscr L^B\) in (5.6) and (5.8) by \(T^\eta\).  Call the result the
+**power-enlarged upper-bound core**.  Its zero-slack inequalities are still
+(5.12b); before suppressing slack they read
+
+\[
+ k+m\leq1+\eta,\qquad
+ \ell\leq m+\rho-1+\eta,\qquad
+ h\leq\sigma-m+\eta,qquad
+ a\leq\rho+\sigma-1+2\eta.
+\tag{6.11}
+\]
+
+This enlargement removes the separate tail conjecture for the upper-bound
+problem.  Indeed, outside the enlarged \(\delta\)-range, (5.8b) gives
+
+\[
+ \bigl(T|\log(1+\delta/(xr))|\bigr)^{-J}\ll_J T^{-J\eta};
+\]
+
+outside the enlarged \(h\)-range, (5.8c) gives
+
+\[
+ \left(\frac{s}{|h|M}\right)^J\ll_JT^{-J\eta}.
+\]
+
+The Mellin decay used for (5.6) gives the same factor outside
+\(KM\leq T^{1+\eta}\).  The absolute majorant (5.8d), including the
+\(t\)-integration, is \(O_W(T^{9/2+\varepsilon_0/4})\).  Since all
+amplitudes are smooth to arbitrary fixed order, choose the fixed integer
+\(J\) so that
+
+\[
+ J\eta>\frac72+\frac{\varepsilon_0}{2}.
+\]
+
+A union bound over the three complements then proves
+
+\[
+ \mathcal R_{\rm tail}^{(\eta)}
+ \ll_{\varepsilon_0,W}T^{1-\varepsilon_0/4}.
+\tag{6.12}
+\]
+
+This does not prove the polylogarithmic tail statement
+TAIL\(_{B,D}\), and hence does not prove an asymptotic.  It does prove all
+tail control required by (6.10).
+
+The accepted weakest local interface for the upper-bound problem is now
+
+> **Upper-bound coupled-kernel gate \(\mathrm{CK}_{\rm ub}(3)\).** For
+> every \(\varepsilon>0\), uniformly in the power-enlarged boxes (6.11)
+> and the actual coupled weights, prove
+> \[
+>  |\mathfrak S_{q;R,S,K,M,L,H}[\Psi]|
+>  \ll_{\varepsilon,W}RS T^\varepsilon.
+> \tag{CK\(_{\rm ub}(3)\)}
+> \]
+
+By (5.15), each core box is then
+\(O_{\varepsilon,W}(T^{1+\varepsilon}/q)\).  There are
+\(O(\mathscr L^6)\) dyadic choices and (6.8) supplies one more logarithm.
+After allocating \(\varepsilon_0/4\) to the local estimate and absorbing
+all seven logarithms, (6.12) gives the exact implication
+
+\[
+ \boxed{
+ \mathrm{CK}_{\rm ub}(3)
+ \quad\Longrightarrow\quad
+ \mathcal R_{T^3,T}\ll_{\varepsilon_0,W}T^{1+\varepsilon_0}.}
+\tag{6.13}
+\]
+
+Thus CK\(_{\rm ub}(3)\), not CK\(_{1/1000}\) plus
+TAIL\(_{B,D}\), is the weakest sufficient gate presently isolated for the
+user's stated upper-bound target.  It remains unproved.
+
 ## 7. Term-by-term correspondence with Bettin--Chandee--Radziwiłł
 
 The notation correspondence is:
@@ -1471,9 +1563,2439 @@ Kloosterman-sum estimate applies. The single polynomial
 \(\mu(n)p_N(n)\mathbf1_{n\leq T^3}\) does not have that factorization, so
 that theorem supplies no box estimate for (6.3).
 
-## 8. What has and has not been proved
+## 8. Exact published-estimate coverage for the upper-bound gate
 
-**Phase-1 classification: exact reduction remains blocked.**
+This section audits Regions A--C against CK\(_{\rm ub}(3)\). It uses the
+separated family only as a sufficient route to the coupled estimate: the
+Fourier--Mellin \(L^1\) loss in (6.5) is polylogarithmic and is absorbed by
+the \(T^\varepsilon\) allowance. Failure of a separated theorem is not a
+counterexample to the coupled gate.
+
+### 8.1 Region A: Bettin--Chandee
+
+Bettin--Chandee, Theorem 1, applies to
+
+\[
+ \mathcal B(X,Y,A)=
+ \sum_{a\asymp A}\sum_{r\asymp X}\sum_{s\asymp Y\atop(r,s)=1}
+ \alpha_r\beta_s\nu_a e\left(-\frac{a\bar r}{s}\right)
+\]
+
+with arbitrary complex coefficients and gives
+
+\[
+ \begin{aligned}
+ |\mathcal B(X,Y,A)|\ll_\varepsilon{}
+ &\|\alpha\|_2\|\beta\|_2\|\nu\|_2
+ \left(1+\frac{A}{XY}\right)^{1/2}\\
+ &\times\left((AXY)^{7/20+\varepsilon}(X+Y)^{1/4}
+ +(AXY)^{3/8+\varepsilon}(AX+AY)^{1/8}\right).
+ \end{aligned}
+\tag{8.1}
+\]
+
+The exact hypothesis ledger in the present application is:
+
+| BC datum | present datum | verification |
+|---|---|---|
+| \(X,Y,A\geq1\), dyadic support | \(R,S,LH\) | (5.4), (5.9) |
+| \((r,s)=1\) | same | (5.1) |
+| nonzero phase parameter | \(\vartheta=-1\) | (5.12) |
+| arbitrary coefficient sequences | the two Möbius weights and \(\nu_{x,y}\) | arbitrary coefficients are allowed |
+| finite \(L^2\) norms | \(\|\alpha\|_2\ll R^{1/2}\), \(\|\beta\|_2\ll S^{1/2}\), \(\|\nu\|_2\ll_\varepsilon A^{1/2+\varepsilon}\) | (6.4) and \(|p_N|\leq1\) |
+| archimedean prefactor | \(1+A/(RS)\ll1+T^{-1+2\eta}\) | (6.11), for fixed \(\eta<1/4\) |
+
+Put \(u=\max(\rho,\sigma)\), \(v=\min(\rho,\sigma)\), and
+\(a=\ell+h\). After inserting the three exact norm bounds, the two terms
+in (8.1) have exponents
+
+\[
+ E_1=\frac{17}{20}(a+\rho+\sigma)+\frac14u,
+ \qquad
+ E_2=\frac78(\rho+\sigma)+a+\frac18u.
+\tag{8.2}
+\]
+
+Consequently Region A covers a box for CK\(_{\rm ub}(3)\) if and only if
+both savings
+
+\[
+ \boxed{
+ \Delta_1=\frac3{20}(\rho+\sigma)-\frac{17}{20}a-\frac14u\geq0,
+ \qquad
+ \Delta_2=\frac18v-a\geq0 }
+\tag{8.3}
+\]
+
+hold, up to the allocated \(O(\eta+\varepsilon)\) slack. These are the
+two exact rational inequalities implemented by the coverage checker.
+
+### 8.2 Region B: completing one factor of \(a=h\delta\)
+
+Fix \(r,s,\delta\). The derivative bounds (5.14), partial summation, and
+the standard smooth geometric-sum estimate give, for \(J>2\),
+
+\[
+ \sum_{h\asymp H}F_{r,s,\delta}(h/H)
+ e\left(-\frac{h\delta\bar r}{s}\right)
+ \ll_{J,\varepsilon}HT^\varepsilon
+ \left(1+H\left\|\frac{\delta\bar r}{s}\right\|\right)^{-J}.
+\tag{8.4}
+\]
+
+Multiplication by \(\bar r\) permutes the residue classes modulo \(s\).
+On a complete residue block,
+
+\[
+ \sum_{b\bmod s}H(1+H\|b/s\|)^{-J}\ll_J H+s.
+\]
+
+Splitting the \(\delta\)-interval into at most \(1+L/s\) such blocks
+retains both the incomplete boundary and the zero residue \(s\mid\delta\):
+
+\[
+ \sum_{\delta\asymp L}\left|
+ \sum_{h\asymp H}F_{r,s,\delta}(h/H)
+ e\left(-\frac{h\delta\bar r}{s}\right)\right|
+ \ll_{J,\varepsilon}T^\varepsilon(1+L/s)(H+s).
+\tag{8.5}
+\]
+
+The symmetric completion in \(\delta\) gives
+\(T^\varepsilon(1+H/s)(L+s)\). The admissible polytope implies
+
+\[
+ h\leq\sigma,\qquad
+ \ell\leq m+\rho-1=k+\sigma-1\leq\sigma.
+\tag{8.6}
+\]
+
+Thus, after removing the outer \(RS\) scale, the trivial bound and the two
+completion bounds have respective exponent losses
+
+\[
+ a,\qquad \sigma,\qquad \sigma.
+\tag{8.7}
+\]
+
+Completion with both \(r,s\) fixed therefore reaches
+CK\(_{\rm ub}(3)\) only on the exponent-zero face \(a=0\).  Formula (8.5),
+rather than a claimed square-root cancellation, is the boundary-safe
+fixed-modulus result.  The following additional modulus average sharpens
+Region B.
+
+There is, however, a sharper joint use of completion and the outer reduced
+modulus variable.  Fix \(s,\delta\), put \(g=(\delta,s)\), and sum the
+pointwise geometric bound over \(r\).  Inversion permutes the reduced
+residue classes, while multiplication by \(\delta\) has multiplicity at
+most \(g\) and leaves a grid of spacing \(g/s\).  Therefore
+
+\[
+ \sum_{r\asymp R\atop(r,s)=1}
+ \left|\sum_{h\asymp H}F_{r,s,\delta}(h/H)
+ e\left(-\frac{h\delta\bar r}{s}\right)\right|
+ \ll_{J,\varepsilon}T^\varepsilon(1+R/s)(gH+s).
+\tag{8.5a}
+\]
+
+This includes the resonant case \(s\mid\delta\), where the term \(gH\)
+is necessary.  For a dyadic interval \(L\leq|\delta|\leq2L\), the exact
+divisor identity \((n,s)=\sum_{d\mid(n,s)}\varphi(d)\) gives
+
+\[
+ \sum_{\delta\asymp L}(\delta,s)
+ \ll L\tau(s).
+\tag{8.5b}
+\]
+
+Indeed, only divisors \(d\leq2L\) occur; the count of their multiples in
+the interval is at most \(L/d+1\), and
+\(\sum_{d\mid s,d\leq2L}\varphi(d)\leq2L\tau(s)\).  Since \(H\leq
+sT^\varepsilon\) by (8.6), summing (8.5a) over \(\delta\) and then
+\(s\asymp S\) gives \(O(RSLT^\varepsilon)\) when \(R\geq S\).  When
+\(S>R\), reciprocity swaps \(r,s\); its extra factor
+\(e(-h\delta/(rs))\) merely translates the geometric frequency.  Hence
+the same bound holds in every orientation.  Interchanging \(h,\delta\)
+in this argument is legitimate by the joint seminorm bounds (5.14), and
+gives the second estimate
+
+\[
+ \boxed{
+ |\mathfrak S_q[\Psi]|\ll_\varepsilon
+ RS\min(L,H)T^\varepsilon.}
+\tag{8.5c}
+\]
+
+Thus the joint-completion loss is
+\(\min(\ell,h)\), not merely the three fixed-\((r,s)\) losses in (8.7).
+Region B consequently covers every admissible box with \(\ell=0\) or
+\(h=0\), including boxes with positive \(a=\ell+h\).  It still misses
+the interior \(\ell,h>0\); the balanced maximal box loses \(T^{5/2}\).
+The finite checker separately enumerates the unit-group fibre
+multiplicities in (8.5a) and the two-sign dyadic gcd sum in (8.5b).
+
+### 8.3 Region C: Wright's partially fixed denominator
+
+Wright, Theorem 2.1, concerns
+
+\[
+ \mathcal B(X,Y,A;R_0)=
+ \sum_{a,r,n\atop(r,nR_0)=1}\alpha_r\beta_n\nu_a
+ e\left(\vartheta\frac{a\bar r}{nR_0}\right),
+\tag{8.8}
+\]
+
+under \(X\ll Y^2\) and \(R_0\ll X^C\) for a fixed large \(C\). Its stated
+bound is
+
+\[
+ \begin{aligned}
+ \mathcal B(X,Y,A;R_0)\ll{}&X^\varepsilon
+ \|\alpha\|_2\|\beta\|_2\|\nu\|_2(AXY)^{1/2}R_0^{1/4}
+ \left(1+\frac{|\vartheta|A}{XY}\right)^{1/4}\\
+ &\times\left(
+ Y^{-1/8}+R_0^{1/8}Y^{1/8}X^{-1/4}
+ +\frac{X^{1/10}}{R_0^{3/20}A^{1/20}Y^{3/20}}
+ +\frac{Y^{3/20}}{A^{3/20}X^{1/5}}
+ +\frac{Y^{3/8}}{X^{1/2}}
+ \right).
+ \end{aligned}
+\tag{8.9}
+\]
+
+There are two independent reasons that (8.9) supplies no direct new box in
+the current sum.
+
+First, before factorizing \(s\), (6.0) has denominator \(s\), so the only
+direct identification is \(R_0=1,n=s\). Wright explicitly states that
+\(R_0=1\) recovers Bettin--Chandee equation (7.2); it is not a new
+fixed-factor saving. Taking \(R_0>1\) requires an exact factorization
+\(s=R_0n\), a rule assigning every \(s\) to such a factor, and the retained
+coefficient \(\mu(R_0n)\). That is a structured Type-I/II operation and is
+assigned to Region D, not to direct Region C.
+
+Second, the arXiv v2 source is internally inconsistent in the third term of
+(8.9): the theorem statement has \(A^{-1/20}\), whereas the last displayed
+line of its proof has \(A^{-3/10}\). No exponent depending on that term is
+used here without a corrected statement. The coverage checker therefore
+records Region C as giving no direct improvement, rather than silently
+choosing one of the two exponents.
+
+### 8.4 Coverage table and residual witnesses
+
+The direct published-and-elementary coverage is exactly:
+
+| primary route | exact covered set | result |
+|---|---|---|
+| A: Bettin--Chandee | admissible boxes satisfying both inequalities (8.3) | proved from (8.1) |
+| B: joint completion | admissible boxes with \(\min(\ell,h)=0\) not already assigned to A | proved by (8.4)--(8.7), sharpened by (8.5a)--(8.5c) |
+| C: Wright direct | no additional boxes | \(R_0=1\) gives BC; \(R_0>1\) requires Region D |
+| D: structured residual | every other admissible box | **unproved** |
+
+The deterministic boundary ledger is:
+
+| witness | \((\rho,\sigma,\ell,h)\) | \((\Delta_1,\Delta_2)\) | joint-completion loss | route |
+|---|---:|---:|---:|---|
+| balanced maximal \(a\) | \((3,3,5/2,5/2)\) | \((-41/10,-37/8)\) | \(5/2\) | D |
+| \(r\)-long | \((3,2,2,2)\) | \((-17/5,-15/4)\) | \(2\) | D |
+| \(s\)-long | \((2,3,2,2)\) | \((-17/5,-15/4)\) | \(2\) | D |
+| large-\(q\) endpoint | \((1,1,0,1)\) | \((-4/5,-7/8)\) | \(0\) | B |
+
+Hence published arbitrary-coefficient estimates, sharpened joint
+completion, and the direct fixed-factor theorem do not prove
+CK\(_{\rm ub}(3)\) in the interior \(\ell,h>0\). The remaining work is
+precisely an estimate that first factorizes one Möbius variable while
+retaining the other Möbius weight, the product \(a=h\delta\), and the
+coupled kernel.
+
+## 9. Exact Möbius decomposition and the residual Type-II gate
+
+This section performs the factorization demanded by Region D. It does not
+claim the resulting Type-II estimate.
+
+### 9.1 A finite convolution identity
+
+For a real cutoff \(U\geq2\), define the finitely supported sequence
+
+\[
+ \mu_U(n)=\mu(n)\mathbf1_{n\leq U},\qquad
+ c_U=\mathbf1*\mu_U-\delta_1,
+\tag{9.1}
+\]
+
+where \(\mathbf1(n)=1\), \(\delta_1(1)=1\), and \(*\) is Dirichlet
+convolution. Since \(\mu*\mathbf1=\delta_1\),
+
+\[
+ \mu*(\delta_1+c_U)
+ =\mu*\mathbf1*\mu_U=\mu_U,
+\]
+
+and hence
+
+\[
+ \mu=\mu_U-\mu*c_U.
+\tag{9.2}
+\]
+
+Iterating (9.2) \(J\) times gives the exact sequence identity
+
+\[
+ \boxed{
+ \mu=\sum_{j=0}^{J-1}(-1)^j\mu_U*c_U^{*j}
+      +(-1)^J\mu*c_U^{*J}.}
+\tag{9.3}
+\]
+
+There is no analytic truncation in (9.3). For \(n\leq U\), every divisor
+of \(n\) is at most \(U\), so
+
+\[
+ c_U(n)=\sum_{d\mid n}\mu(d)-\delta_1(n)=0.
+\tag{9.4}
+\]
+
+It follows that \(c_U^{*J}(n)=0\) for \(n\leq U^J\). Therefore
+
+\[
+ \boxed{
+ \mu(n)=\sum_{j=0}^{J-1}(-1)^j
+ (\mu_U*c_U^{*j})(n)\qquad(n\leq U^J).}
+\tag{9.5}
+\]
+
+The finite checker verifies (9.5) directly on integers and separately
+checks the support gap (9.4). This is a regression check for the algebra,
+not a proof of an exponential-sum estimate.
+
+### 9.2 Substitution without discarding either arithmetic structure
+
+Choose \(U^J\geq2S\) and substitute (9.5) only for the \(s\)-weight in
+(6.0). For each \(j\), put
+
+\[
+ C_{j,U}(n)=c_U^{*j}(n).
+\tag{9.6}
+\]
+
+Before any absolute value, the corresponding contribution is exactly a
+finite linear combination of
+
+\[
+ \begin{aligned}
+ \mathfrak D_{j,q}[\Psi]
+ ={}&\sum_{u\leq U}\mu(u)
+ \sum_{\substack{r,n,h,\delta\\
+                  r\asymp R,\ un\asymp S\\
+                  h\asymp H,\ \delta\asymp L\\
+                  \mu(un)^2=1\\
+                  (r,un)=(q,run)=1}}
+ \mu(r)C_{j,U}(n)\,p_N(qr)p_N(qun)\\
+ &\qquad\times
+ \Psi\left(\frac rR,\frac{un}{S},\frac\delta L,\frac hH\right)
+ e\left(-\frac{h\delta\bar r}{un}\right).
+ \end{aligned}
+\tag{9.7}
+\]
+
+Thus the other Möbius weight \(\mu(r)\), every short Möbius sign
+\(\mu(u)\), the factorization \(a=h\delta\), the coprimality conditions,
+and the coupled kernel all remain present.  The squarefree indicator is
+legitimate term by term: insert \(\mu(s)^2\) before applying (9.5), which
+does not change \(\mu(s)\), and then write \(s=un\).  In particular
+\((u,n)=1\); this condition must not be inferred from the convolution
+without the indicator.  Moreover,
+\(|c_U(n)|\leq\tau(n)\), so for fixed \(J\),
+\(|C_{j,U}(n)|\leq\tau_{O_J(1)}(n)\). This supplies the required
+divisor-bounded \(L^2\) norm after \(u\) is fixed, but it does not justify
+summing absolute values over \(u\).
+
+### 9.3 The termwise fixed-factor route
+
+To audit precisely what is lost by doing just that, dyadically take
+\(u\asymp U_0=T^\tau\) in (9.7), fix \(u\), and apply Wright's theorem with
+
+\[
+ X=R,\qquad Y=S/U_0,\qquad A=LH,\qquad R_0=u.
+\tag{9.8}
+\]
+
+The theorem requires
+
+\[
+ \rho\leq2(\sigma-\tau),\qquad \tau\leq\sigma,
+\tag{9.9}
+\]
+
+besides the polynomial-size fixed-factor condition. The norm product is
+\(T^{(\rho+\sigma-\tau+a)/2+\varepsilon}\). Multiplying by Wright's
+\((AXY)^{1/2}R_0^{1/4}\), and then paying the full
+\(T^\tau\) cost for the termwise \(u\)-sum, gives the common exponent
+\(\rho+\sigma+a+\tau/4\) before the five parenthetical terms in (8.9).
+Subtracting from the target \(\rho+\sigma\) gives the exact savings
+
+\[
+ \begin{aligned}
+ d_1&=\frac{\sigma}{8}-a-\frac{3\tau}{8},\\
+ d_2&=\frac{\rho}{4}-\frac{\sigma}{8}-a-\frac{\tau}{4},\\
+ d_3&=\frac{3\sigma}{20}-\frac{\rho}{10}
+      -\frac{19a}{20}-\frac{\tau}{4},\\
+ d_4&=\frac{\rho}{5}-\frac{3\sigma}{20}
+      -\frac{17a}{20}-\frac{\tau}{10},\\
+ d_5&=\frac{\rho}{2}-\frac{3\sigma}{8}-a+\frac{\tau}{8}.
+ \end{aligned}
+\tag{9.10}
+\]
+
+All five must be nonnegative. In particular,
+
+\[
+ d_1=\frac{\sigma}{8}-a-\frac{3\tau}{8}
+ \leq\frac{\sigma}{8}-a.
+\tag{9.11}
+\]
+
+Thus the fixed factor does not relax the decisive arbitrary-\(a\)
+condition; after termwise summation it makes that condition strictly worse.
+For the balanced maximal box
+
+\[
+ (\rho,\sigma,a)=(3,3,5),\qquad 0\leq\tau\leq\frac32,
+\]
+
+condition (9.9) permits the displayed interval, but
+
+\[
+ d_1=-\frac{37}{8}-\frac{3\tau}{8}<0.
+\tag{9.12}
+\]
+
+Even as \(\tau\to0\), the first Wright term is larger than the local
+\(RS\) target by \(T^{37/8-o(1)}\). This obstruction is independent of
+the discrepant third \(A\)-exponent noted after (8.9).
+
+### 9.4 The residual averaged Type-II statement
+
+The only legitimate next object is (9.7) with the \(u\)-sum still inside.
+After dyadic localization it has the form
+
+\[
+ \boxed{
+ \sum_{u\asymp U_0}\lambda_u
+ \sum_{r,n,h,\delta}
+ \mu(r)\beta_u(n)
+ \Psi\left(\frac rR,\frac{un}{S},\frac\delta L,\frac hH\right)
+ e\left(-\frac{h\delta\bar r}{un}\right),}
+\tag{9.13}
+\]
+
+with the coprimalities from (9.7),
+\(\lambda_u=\mu(u)\), and divisor-bounded \(\beta_u\). A proof of
+CK\(_{\rm ub}(3)\) must bound the sum (9.13) before taking absolute values
+over \(u\), and must also exploit that \(h,\delta\) remain separate.
+Neither Bettin--Chandee Theorem 1 nor Wright Theorem 2.1 contains this
+simultaneous fixed-factor average.
+
+Accordingly, the exact residual gate is:
+
+> **Averaged Möbius Type-II gate.** Prove that the sum (9.13), summed over
+> the finitely many \(j<J\) in (9.5), is
+> \(O_{\varepsilon,W}(RS T^\varepsilon)\) throughout the residual Region D.
+
+This gate is no longer an arbitrary MWKF placeholder: its variables,
+coefficients, factorization identity, coprimalities, and the failure of the
+termwise published estimate are explicit. It remains unproved.
+
+### 9.5 Audit of the August 2026 Pascadi bilinear theorem
+
+Pascadi's Theorem 7.8, published online on 21 August 2026, gives power
+savings for fixed-modulus bilinear forms of classical Kloosterman sums
+
+\[
+ \sum_{m\leq M}\sum_{n\leq N}\alpha_m\beta_n S(am,n;c).
+\tag{9.14}
+\]
+
+This is not the Kloosterman fraction in (9.13). The exact bridge is finite
+Fourier inversion in \(r\bmod s\). For a separated weight, define
+
+\[
+ \widehat\alpha_s(m)=\sum_{r\bmod s}\alpha_s(r)e(-mr/s),
+ \qquad
+ \beta_s(b)=\sum_{a\equiv b\;({\rm mod}\ s)}\nu(a).
+\tag{9.15}
+\]
+
+Then, on the coprime component,
+
+\[
+ \sum_{r\bmod s}^{*}\alpha_s(r)
+ \sum_a\nu(a)e(-a\bar r/s)
+ =\frac1s\sum_{m,b\bmod s}
+ \widehat\alpha_s(m)\beta_s(b)S(m,-b;s).
+\tag{9.16}
+\]
+
+Components with \(g=(m,b,s)>1\) require a further exact gcd decomposition;
+discarding that obligation would be invalid. To test the strongest possible
+direct consequence of the new theorem, it is already enough to audit the
+most favorable full-residue coprime component of (9.16).
+
+At \(M=N=c\), the four factors in Pascadi Theorem 7.8(i) save respectively
+
+\[
+ \frac{13-53\delta}{64},\qquad
+ \frac{1+\delta}{6},\qquad
+ \frac{4+\delta}{12},\qquad
+ \frac{13}{24}
+\tag{9.17}
+\]
+
+powers of \(c\), where \(0\leq\delta\leq1/24\). The optimum of the minimum
+is attained when the first two are equal:
+
+\[
+ \delta=\frac7{191},\qquad
+ \min(9.17)=\frac{33}{191}.
+\tag{9.18}
+\]
+
+In the balanced maximal box, Plancherel and residue aggregation give the
+optimistic norm scales
+
+\[
+ \|\widehat\alpha_s\|_2\ll s,\qquad
+ \|\beta_s\|_2^2
+ \ll_\varepsilon(1+A/s)A\,T^\varepsilon
+ \asymp A^2s^{-1}T^\varepsilon.
+\tag{9.19}
+\]
+
+After the factor \(1/s\) in (9.16), the trivial fixed-\(s\) scale is
+\(As\). Summing \(s\asymp S\) termwise gives \(AS^2\). Thus for
+\(A=T^5\), \(S=T^3\), the best exponent certified by this direct
+Pascadi route is
+
+\[
+ T^{11-99/191+o(1)}.
+\tag{9.20}
+\]
+
+Relative to the required \(RS=T^6\), the residual gap is
+
+\[
+ \boxed{T^{856/191-o(1)}}.
+\tag{9.21}
+\]
+
+The checker verifies (9.17)--(9.21) with exact rational arithmetic.
+Pascadi's result improves the published fixed-modulus diagnostic, but it
+does not average the fraction moduli together with the two Möbius weights
+and does not close (9.13).
+
+### 9.6 Audit of Milićević--Qin--Wu
+
+Theorem 1.1 of Milićević--Qin--Wu concerns the normalized fixed-modulus
+kernel
+
+\[
+ \mathrm{Kl}_2(cmn;q)=q^{-1/2}
+ \sum_{x\bmod q}^{*}e\left(\frac{cmnx+\bar x}{q}\right).
+\]
+
+If the coefficient supports are contained in \([1,M]\) and \([1,N]\),
+and
+
+\[
+ 1\leq M\leq Nq^{1/4},\qquad
+ M^{7/5}N<q^{3/2},\qquad MN\leq q^{5/4},
+\tag{9.22}
+\]
+
+their stated estimate is
+
+\[
+\begin{aligned}
+ \sum_{m\leq M}\sum_{n\leq N}\alpha_m\beta_n
+ \mathrm{Kl}_2(cmn;q)
+ \ll{}&q^\varepsilon\|\alpha\|_2\|\beta\|_2(MN)^{1/2}\\
+ &\times\left(
+ M^{-1/2}q^{1/6}
+ +M^{-3/25}N^{-3/10}q^{1/5}
+ +(MN)^{-3/16}q^{11/64}
+ \right).
+\end{aligned}
+\tag{9.23}
+\]
+
+For \(M=q^x,N=q^y\), the three exact savings over the norm-scale
+baseline are
+
+\[
+ d_1=\frac x2-\frac16,\qquad
+ d_2=\frac{3x}{25}+\frac{3y}{10}-\frac15,\qquad
+ d_3=\frac{3(x+y)}{16}-\frac{11}{64}.
+\tag{9.24}
+\]
+
+The last condition in (9.22) forces \(d_3\leq1/16\).  The boundary point
+\(x=y=5/8\) has
+
+\[
+ (d_1,d_2,d_3)=\left(\frac7{48},\frac1{16},\frac1{16}\right),
+\tag{9.25}
+\]
+
+so \(1/16\) is the exact supremal saving on the theorem's admissible
+initial rectangles; it is approached with an arbitrarily small inward
+shift because the middle condition in (9.22) is strict.
+
+This does not produce a partition of the full-residue sum (9.16).
+On the coprime \(b\)-component,
+\(S(m,-b;s)=s^{1/2}\mathrm{Kl}_2(-bm;s)\), but the Fourier variables
+there range through representatives of size \(s\).  Thus the top box has
+\(M=N=s\), which violates \(MN\leq s^{5/4}\).  Cutting
+\([1,s]\) into additively translated intervals does not repair the
+hypothesis: translating either variable changes the product kernel
+\(\mathrm{Kl}_2(-bm;s)\), while (9.23) is an initial-support theorem, not
+an arbitrary short-interval theorem.  Consequently this result gives no
+direct bound for the full Fourier bridge and no new Region-D box.  The
+checker verifies (9.24)--(9.25) using exact fractions.
+
+### 9.7 Exact reverse-Poisson identity
+
+It remains natural to ask whether summing the separated \(h\)-oscillation
+first creates a shorter shifted relation.  For fixed \(r,s,\delta\), let
+\(F_{r,s,\delta}(x)\) denote the complete smooth integrand in (4.4), before
+the factor \(e(-hx/s)\), extended by zero to the real line.  With the
+Fourier convention (4.3b), Poisson summation gives the exact identity
+
+\[
+\begin{aligned}
+ &\sum_{h\ne0}e\left(-\frac{h\delta\bar r}{s}\right)
+ \widehat F_{r,s,\delta}(h/s)\\
+ &\quad=s\sum_{m\equiv-\delta\bar r\;({\rm mod}\ s)}
+ F_{r,s,\delta}(m)-\widehat F_{r,s,\delta}(0).
+\end{aligned}
+\tag{9.26}
+\]
+
+The congruence on the right is exactly (4.3a); putting
+\(m_1=(mr+\delta)/s\) recovers \(m_1s-mr=\delta\).  Thus reverse Poisson
+does not create an additional short variable or an independent congruence:
+it returns the original shifted-divisor sum and subtracts the already
+isolated zero mode.  Formula (9.26) is useful as a normalization check, but
+it supplies no cancellation toward (9.13).  Any successful next step must
+therefore estimate the averaged Möbius Type-II sum before either the
+\(u\)-average or the coupled \((h,\delta)\)-kernel is discarded.
+
+### 9.8 Direct Möbius--inverse-phase estimates
+
+There are published estimates tailored to one of the two Möbius weights.
+Korolev writes
+
+\[
+ S_q(x;f)=\sum_{n\leq x\atop(n,q)=1}
+ f(n)e_q(an^*+bn).
+\tag{9.27}
+\]
+
+For every sufficiently large integer \(q\), in particular for composite
+\(q\), Theorem 1 gives, when
+\(q^{1/2+\varepsilon_0}\ll x\leq q\),
+
+\[
+ |S_q(x;f)|\leq
+ 562x\frac{\log\log q}{\varepsilon_0\log q}
+\tag{9.28}
+\]
+
+for every multiplicative \(|f|\leq1\).  Theorem 5 gives the stronger
+\(xq^{-c\varepsilon_0^4}\) for \(f=\mu\), but only when \(q\) is prime.
+
+On the ordered half \(r\leq s\), apply the most favorable composite
+estimate (9.28) to the \(r\)-sum with \(q=s\), \(x\asymp R\), and
+\(a=-h\delta\), temporarily assuming \((h\delta,s)=1\) and that partial
+summation has absorbed the smooth weight.  On the other half, the exact
+reciprocity formula
+\(\bar r/s+\bar s/r\equiv1/(rs)\pmod1\) swaps \(r,s\); its extra smooth
+factor \(e(-h\delta/(rs))\) is retained in the kernel.  Thus the prefix
+condition \(x\leq q\) is respected on both ordered halves.  In the
+balanced box \(R=S=T^3\), the result replaces one trivial length only by
+
+\[
+ R\frac{\log\log S}{\log S}.
+\tag{9.29}
+\]
+
+After summing \(s\) and the \(A=LH=T^5\) pairs \((h,\delta)\), this is
+still
+
+\[
+ RSA\frac{\log\log S}{\log S}
+ =T^{11}\frac{\log\log T}{\log T},
+\tag{9.30}
+\]
+
+against the local target \(RS=T^6\).  Thus the power gap remains exactly
+\(T^{5-o(1)}\).  The omitted components \((h\delta,s)>1\) require an exact
+gcd split and must be added; a componentwise upper-bound argument cannot
+use them to supply the missing power.  The prime-modulus
+theorem does not apply to the squarefree composite moduli carrying
+\(\mu(s)\), and discarding those moduli would discard the original sum.
+
+Hence the strongest directly matching one-variable theorem does not close
+even a positive-length portion of the maximal \(a\)-range.  A viable use of
+Möbius cancellation has to be simultaneous with the outer modulus or
+\((h,\delta)\) averages, precisely as required in (9.13).
+
+### 9.9 A two-orientation elementary Farey large-sieve bound
+
+For completeness, one can improve the elementary completion diagnostic
+without using Möbius cancellation.  After the separation justified in
+Section 6.1, consider
+
+\[
+ \mathfrak T=
+ \sum_{a\asymp A}\nu_a
+ \sum_{r\asymp R}\sum_{s\asymp S\atop(r,s)=1}
+ \alpha_r\beta_s e\left(-\frac{a\bar r}{s}\right).
+\tag{9.31}
+\]
+
+For \((c,s)=1\), aggregate the repeated residue classes as
+
+\[
+ \gamma_{c,s}=\beta_s
+ \sum_{r\asymp R\atop\bar r\equiv c\;({\rm mod}\ s)}\alpha_r.
+\tag{9.32}
+\]
+
+The distinct reduced fractions \(c/s\), with \(s\asymp S\), are separated
+by \(\gg S^{-2}\).  The additive large sieve and Cauchy--Schwarz give
+
+\[
+ |\mathfrak T|ll
+ (A+S^2)^{1/2}\|\nu\|_2
+ \left(\sum_{s,c}|\gamma_{c,s}|^2\right)^{1/2}.
+\tag{9.33}
+\]
+
+Each residue class contains \(O(1+R/S)\) integers in the \(r\)-interval,
+including its two incomplete endpoints.  Hence
+
+\[
+ \sum_{s,c}|\gamma_{c,s}|^2
+ \ll(1+R/S)\|\alpha\|_2^2\|\beta\|_2^2,
+\tag{9.34}
+\]
+
+and therefore
+
+\[
+ |\mathfrak T|ll_\varepsilon
+ (A+S^2)^{1/2}(1+R/S)^{1/2}(RSA)^{1/2}T^\varepsilon.
+\tag{9.35}
+\]
+
+Reciprocity supplies (9.35) with \(R,S\) interchanged.  The additional
+factor \(e(-a/(rs))\) has derivatives controlled by
+\(A/(RS)\ll T^{-1+\eta}\), so the same Fourier--Mellin separation costs
+only \(T^\varepsilon\).
+
+The polytope itself gives the exact simplification.  From
+\(\rho-\sigma=k-m\) and \(k+m\leq1\),
+\(|\rho-\sigma|\leq1\); combined with
+\(a\leq\rho+\sigma-1\), this yields
+\(a\leq2\min(\rho,\sigma)\), or
+\(A\leq\min(R^2,S^2)T^\varepsilon\).  Choose the original orientation
+when \(R\geq S\) and the reciprocal orientation when \(S\geq R\).  Then
+
+\[
+ \boxed{|\mathfrak T|\ll_\varepsilon RS\,A^{1/2}T^\varepsilon.}
+\tag{9.36}
+\]
+
+Thus this two-orientation elementary large-sieve route loses exactly
+\(T^{a/2}\) over the local target.  It covers the face \(a=0\), but no
+positive \(a\)-box; at \((\rho,\sigma,a)=(3,3,5)\) its remaining gap is
+\(T^{5/2+\varepsilon}\).  The exact-rational checker records this loss.
+This sharper elementary diagnostic still confirms that this route cannot
+provide the missing ingredient, which must
+exploit the Möbius weights together with the coupled product
+\(a=h\delta\), not merely Farey spacing or Euler products.
+
+### 9.10 Two-sided finite Möbius decomposition and a dispersion interface
+
+The one-sided sum (9.13) still treats \(\mu(r)\) as a single long
+coefficient.  Fix depths \(I,J\geq1\), and apply (9.5) independently with
+cutoffs \(V,U\), chosen so that
+
+\[
+ V^I\geq2R,\qquad U^J\geq2S,
+\]
+
+and put \(C_{i,V}=c_V^{*i}\), \(C_{j,U}=c_U^{*j}\).  Before expanding,
+insert the harmless squarefree indicators \(\mu(r)^2\mu(s)^2\).  The
+original coupled sum is then exactly
+
+\[
+ \boxed{
+ \mathfrak S_q[\Psi]
+ =\sum_{i<I}\sum_{j<J}(-1)^{i+j}
+ \mathfrak E_{i,j,q}[\Psi],}
+\tag{9.37}
+\]
+
+where
+
+\[
+\begin{aligned}
+ \mathfrak E_{i,j,q}[\Psi]
+ ={}&\sum_{v\leq V}\sum_{u\leq U}\mu(v)\mu(u)
+ \sum_{\substack{w,n,h,\delta\\
+                  vw\asymp R,\ un\asymp S\\
+                  h\asymp H,\ \delta\asymp L\\
+                  \mu(vw)^2=\mu(un)^2=1\\
+                  (vw,un)=(q,vwun)=1}}
+ C_{i,V}(w)C_{j,U}(n)\\
+ &\quad\times p_N(qvw)p_N(qun)
+ \Psi\left(\frac{vw}{R},\frac{un}{S},
+           \frac{\delta}{L},\frac hH\right)
+ e\left(-\frac{h\delta\overline{vw}}{un}\right).
+\end{aligned}
+\tag{9.38}
+\]
+
+This is a finite identity, not a Vaughan-identity asymptotic.  The
+squarefree indicators imply
+
+\[
+ (v,w)=(u,n)=1,
+\]
+
+and the remaining coprimality in (9.38) makes the four factors across the
+two sides pairwise coprime.  Consequently CRT gives the termwise identity
+
+\[
+ e_{un}\!\left(-a\overline{vw}\right)
+ =
+ e_u\!\left(-a\,\bar n\,\bar v\,\bar w\right)
+ e_n\!\left(-a\,\bar u\,\bar v\,\bar w\right),
+ \qquad a=h\delta.
+\tag{9.39}
+\]
+
+All inverses in the first factor are taken modulo \(u\), and those in the
+second modulo \(n\).  Formula (9.39) shows both the gain and the
+obstruction of the double decomposition: two short Möbius averages are
+now explicit, but neither is an independent coefficient because each
+inverse phase still contains the variables from the other side.
+
+There is a precise dispersion interface for the remaining cancellation.
+Let
+
+\[
+ Z=\min(L,H),\qquad Y=\max(L,H),
+\]
+
+write \(z\) for the shorter of \(\delta,h\), and \(y\) for the other
+variable.  After dyadically localizing \(u,v\), let
+\(\mathcal B_{i,j;u,v}(z)\) denote the inner \(w,n,y\)-sum in (9.38) for
+fixed \(u,v\); the displayed \(u,v\) sums below remain inside the absolute
+value.  Cauchy--Schwarz shows
+that the following mean-square statement is sufficient:
+
+\[
+ \boxed{
+ \sum_{z\asymp Z}
+ \left|
+ \sum_{u\asymp U_0}\sum_{v\asymp V_0}
+ \mu(u)\mu(v)\mathcal B_{i,j;u,v}(z)
+ \right|^2
+ \ll_{\varepsilon,W}
+ \frac{R^2S^2}{Z}\,T^\varepsilon.}
+\tag{9.40}
+\]
+
+Indeed, multiplication by \(Z^{1/2}\) after Cauchy gives
+\(RS T^\varepsilon\); the fixed numbers of \(i,j\) and the logarithmically
+many \(u,v\) boxes are absorbed into \(T^\varepsilon\).  Thus (9.40) for
+all two-sided pieces implies CK\(_{\rm ub}(3)\) on the residual
+\(\ell,h>0\) region.
+
+The scale comparison is now explicit.  Joint completion gives only the
+pointwise bound \(RS T^\varepsilon\) for each \(z\), hence the left side of
+(9.40) is currently bounded by
+
+\[
+ ZR^2S^2T^\varepsilon,
+\tag{9.41}
+\]
+
+which misses (9.40) by \(Z^2=T^{2\min(\ell,h)}\).  A random-term
+square-root benchmark for the expanded \(w,n,y\)-sum is
+\(ZRSY\); compared with the target in (9.40), it would still require the
+additional power
+
+\[
+ T^{\max(0,\,2\min(\ell,h)+\max(\ell,h)-\rho-\sigma)}.
+\tag{9.42}
+\]
+
+For the balanced maximal box, (9.41) misses by \(T^5\), while the
+random-term benchmark (9.42) misses by \(T^{3/2}\).  Neither estimate is
+claimed here.  Equations (9.37)--(9.40) identify one exact sufficient
+mean-square theorem that a dispersion, spectral, or trace-function
+argument could prove while retaining both Möbius averages and the product
+\(h\delta\).  It is not asserted to be the weakest possible interface.
+The finite checker verifies the two-sided convolution identity on every
+integer pair in its test range; it does not certify (9.40).
+
+### 9.11 Pascadi's 2024 spectral-dispersion corollary
+
+Pascadi's Corollary 18 gives an incomplete Kloosterman bound with
+simultaneous averages over variables \(r_{\rm P},s_{\rm P},n_{\rm P},
+c_{\rm P},d_{\rm P}\):
+
+\[
+ \sum_{r_{\rm P},s_{\rm P}}w_{r_{\rm P},s_{\rm P}}
+ \sum_{n_{\rm P}}a_{n_{\rm P},r_{\rm P},s_{\rm P}}
+ \sum_{c_{\rm P},d_{\rm P}}
+ \Phi\,e\left(\pm n_{\rm P}
+ \frac{\overline{r_{\rm P}d_{\rm P}}}
+ {s_{\rm P}c_{\rm P}}\right).
+\tag{9.43}
+\]
+
+There is a direct, fully legitimate specialization to (6.3).  Split the
+two signs of \(a\), take
+
+\[
+ R_{\rm P}=R,\quad S_{\rm P}=S,\quad N_{\rm P}=A,\quad
+ C_{\rm P}=D_{\rm P}=1,
+\tag{9.44}
+\]
+
+choose the smooth \(c_{\rm P},d_{\rm P}\) cutoffs to contain only the
+integer 1, put \(a_{n_{\rm P},r_{\rm P},s_{\rm P}}=\nu(n_{\rm P})\),
+and absorb the Möbius and Selberg weights into \(w_{r_{\rm P},s_{\rm P}}\).
+The arbitrary-sequence large sieve hypothesis is available with
+\(Y_{N_{\rm P}}=1\) and
+\(A_{N_{\rm P},r_{\rm P},s_{\rm P}}\ll A^{1/2+\varepsilon}\).
+
+Under (9.44), the corollary gives
+
+\[
+ |\mathfrak T_q|
+ \ll_\varepsilon
+ (RSA)^{1/2}
+ \left\{
+ AR+S(1+R)(RS+A)
+ \right\}^{1/2}T^\varepsilon.
+\tag{9.45}
+\]
+
+The admissible relation \(A\ll RS/T\) makes the expression in braces
+\(\asymp R^2S^2\), up to endpoint constants and \(T^\varepsilon\).
+Consequently the resulting scale is
+
+\[
+ |\mathfrak T_q|
+ \ll_\varepsilon (RS)^{3/2}A^{1/2}T^\varepsilon,
+\tag{9.46}
+\]
+
+whose loss over the local target has exponent
+\((\rho+\sigma+a)/2\).  It is \(11/2\) in the balanced maximal box.
+The frequency-concentration parameter in Pascadi's theorem modifies the
+exceptional-spectrum multiplier, but the regular-spectrum term
+\(S(1+R)(RS+A)\) already dominates here.  Thus even a stronger value of
+that parameter does not create a covered box through this direct
+specialization.
+
+One can instead try to map \(v,w,u,n\) from (9.38) to
+\(r_{\rm P},d_{\rm P},s_{\rm P},c_{\rm P}\).  That is not a direct
+application of Corollary 18 because the \(c_{\rm P},d_{\rm P}\) variables
+then carry the rough coefficients \(C_{i,V}(w)C_{j,U}(n)\), whereas the
+corollary permits smooth weights there.  Removing those coefficients by
+absolute values would discard the two-sided Type-II structure.  The
+spectral-dispersion result is therefore recorded as a valid but
+insufficient direct route, not as a proof of (9.40).
+
+### 9.12 The direct fourfold scale and an exact gcd--character stratification
+
+The mean-square interface (9.40) pays Cauchy--Schwarz in the shorter of
+\(h,\delta\) before exploiting cancellation in the full sum.  This can be
+substantially stronger than the original coupled-kernel target.  The
+formal square-root scale of the uncut fourfold sum is
+
+\[
+ (RSLH)^{1/2}=(RSA)^{1/2}.
+\tag{9.47}
+\]
+
+Since every retained box satisfies \(A\ll RS/T\),
+
+\[
+ \frac{RS}{(RSA)^{1/2}}
+ =\left(\frac{RS}{A}\right)^{1/2}
+ \gg T^{1/2-O(\eta)}.
+\tag{9.48}
+\]
+
+Thus a genuine square-root estimate for the original \(r,s,h,\delta\)
+sum would have a half-power margin everywhere in the polytope.  At the
+balanced maximal box its diagnostic scale is \(T^{11/2}\), below the
+\(T^6\) local target.  This is only a scale calculation; it does not
+assert random cancellation.  It does show that the additional
+\(T^{3/2}\) demanded by the random benchmark for (9.40) is a loss of that
+particular Cauchy interface, not an intrinsic requirement of (6.0).
+
+There is an exact way to expose all resonances before applying any
+inequality.  Because \(\mu(s)\ne0\), \(s\) is squarefree.  For each term put
+
+\[
+ d=(|h|,s),\qquad e=(|\delta|,s/d),\qquad
+ c=\frac{s}{de},\qquad h=dh_1,\quad \delta=e\delta_1.
+\tag{9.49}
+\]
+
+Then \(d,e,c\) are pairwise coprime,
+\((h_1,ec)=(\delta_1,c)=1\), and reduction of the inverse modulo every
+divisor of \(s\) gives the termwise identity
+
+\[
+ \boxed{
+ e_s(-h\delta\bar r)
+ =e_c(-h_1\delta_1\bar r).}
+\tag{9.50}
+\]
+
+Here the right side is \(1\) when \(c=1\).  For \(c>1\), define
+\(\tau_c(\chi)=\sum_{x\bmod c}\chi(x)e_c(x)\).  Multiplicative
+orthogonality on \((\mathbb Z/c\mathbb Z)^\times\) now separates the
+three variables exactly:
+
+\[
+ \boxed{
+ e_c(-h_1\delta_1\bar r)
+ =\frac1{\varphi(c)}\sum_{\chi\ ({\rm mod}\ c)}
+ \tau_c(\chi)\,\overline{\chi(-1)}
+ \overline{\chi(h_1)}\overline{\chi(\delta_1)}\chi(r).}
+\tag{9.51}
+\]
+
+After the already justified Fourier--Mellin separation (6.5), each
+piece of (6.0) is therefore a finite linear combination of expressions
+of the exact shape
+
+\[
+ \sum_{\substack{d,e,c\\dec\asymp S}}
+ \frac{\mu(d)\mu(e)\mu(c)}{\varphi(c)}
+ \sum_{\chi\ ({\rm mod}\ c)}\tau_c(\chi)\overline{\chi(-1)}
+ \mathcal R_{d,e,c}(\chi)
+ \mathcal H_{d,e,c}(\bar\chi)
+ \mathcal D_{d,e,c}(\bar\chi),
+\tag{9.52}
+\]
+
+with the pairwise coprimalities and the two exact-gcd conditions from
+(9.49) retained in the three factors.  In particular, the fully resonant
+part is precisely \(c=1\); it must be estimated together with the
+\(\mu(d)\mu(e)\) divisor signs rather than hidden inside an absolute gcd
+bound.  For \(c>1\), (9.52) replaces the additive inverse-product phase
+by a hybrid character problem in which \(h_1,\delta_1,r\) are genuinely
+separated and the modulus average still carries \(\mu(c)\tau_c(\chi)\).
+
+The ordinary multiplicative large sieve does not close this interface.
+Already on the unit stratum \(d=e=1\), use
+\(|\tau_c(\chi)|\leq c^{1/2}\), the character large sieve for the
+\(r\)-second moment, and the same inequality applied to the Dirichlet
+convolution of each short sequence with itself for the \(h\)- and
+\(\delta\)-fourth moments.  Since \(H,L\ll S T^\varepsilon\), Hölder gives
+
+\[
+ |\mathfrak S_{\rm unit}|
+ \ll_\varepsilon
+ S^{1/2}\bigl((S^2+R)R\bigr)^{1/2}A^{1/2}T^\varepsilon.
+\tag{9.53}
+\]
+
+Reciprocity supplies (9.53) with \(R,S\) interchanged.  In the balanced
+maximal box the right side is \(T^{17/2+\varepsilon}\), still
+\(T^{5/2}\) above the \(T^6\) target.  Thus termwise character moments
+recover no more than the previously visible balanced joint-completion
+scale.
+
+Dualizing the two long character sums explains why a termwise refinement
+also stops at a genuine zeta-zero barrier.  For a primitive character and
+the Fourier convention of Section 4, character Poisson summation is
+
+\[
+ \sum_n\bar\chi(n)W(n/X)
+ =\frac{X}{c}\tau_c(\bar\chi)
+   \sum_m\chi(m)\widehat W(mX/c).
+\tag{9.54}
+\]
+
+Apply (9.54) with \(X=H,L\).  The dual lengths are \(c/H,c/L\), and
+\(\tau_c(\chi)\tau_c(\bar\chi)=\chi(-1)c\).  After the conductor
+decomposition for imprimitive characters, the lowest nonzero dual mode
+contains a smooth multiple of
+
+\[
+ \frac{A}{S}
+ \sum_{r\asymp R}\sum_{c\asymp S}
+ \mu(r)\mu(c)e(\pm r/c).
+\tag{9.55}
+\]
+
+This is a diagnostic component, not a lower bound for the full sum:
+different conductors, dual frequencies, and gcd strata can still cancel.
+If (9.55) is estimated separately in the balanced maximal box, however,
+its double Möbius sum must be \(O(T^{4+\varepsilon})\).  Since
+\(R=S=T^3\) and \(e(\pm r/c)\) is a smooth function of the compact ratio
+\(r/c\), Mellin separation would require the power bound
+\(\sum_{n\asymp X}\mu(n)n^{it}\ll X^{2/3+\varepsilon}\) for each factor.
+The classical zero-free region supplies only a subexponential saving from
+\(X\), not the required power.  Thus dualizing term by term reaches the
+same \(2/3\) zero-free boundary that appears in the long-mollifier
+literature; it cannot be used as an unconditional proof.
+
+The new, strictly more faithful interface is therefore to prove (9.52)
+before taking absolute values over the gcd strata, conductors, characters,
+or moduli.  In particular, one cannot assume that the product
+\(\mu(c)\tau_c(\chi)\) itself supplies a Möbius modulus average; the exact
+conductor calculation below shows that it generally does not.  The finite checker
+verifies (9.49)--(9.50) for all squarefree moduli and variables in its
+test range and records both the exact exponent gap in (9.53) and the
+\(2/3\) exponent forced by the separated lowest mode.  Formula (9.51) is
+the standard finite character orthogonality identity, not an analytic
+estimate.
+
+This difficulty is consistent with the known status of long mollifiers.
+The mollifier here is exactly the linear mollifier used in Farmer's
+all-\(\theta\) conjecture.  Bettin--Gonek show that the stronger hypothesis
+\(I_N(0,T)\ll_\varepsilon T^{1+\varepsilon}\), uniformly for every
+\(N\le T^\theta\), would exclude zeros with
+\(\Re s>1/2+1/(2\theta)\); at \(\theta=3\) that is the zero-free half-plane
+\(\Re s>2/3\).  Their dyadic-interval theorem has the weaker boundary
+\(1/2+2/\theta\), which is trivial at \(\theta=3\), so it does not turn the
+specific present target into a quasi-Riemann-hypothesis claim.  It does,
+however, confirm that a polynomial-length \(T^{1+\varepsilon}\) mollified
+upper bound belongs to the open long-mollifier problem and is not a
+routine consequence of the classical large sieve or an Euler product.
+
+### 9.13 Exact conductor decomposition and mandatory inter-character cancellation
+
+The factor \(\mu(c)\tau_c(\chi)\) in (9.52) does not retain a Möbius
+sign on every modulus variable.  Write the squarefree modulus as
+\(c=fk\), with \((f,k)=1\), and let the character modulo \(c\) be induced
+by the primitive character \(\chi^*\) modulo \(f\).  CRT and the
+Ramanujan sum over the \(k\)-component give the exact formula
+
+\[
+ \boxed{
+ \tau_c(\chi)=\mu(k)\chi^*(k)\tau_f(\chi^*).}
+\tag{9.56}
+\]
+
+Because \(c\) is squarefree,
+\(\mu(c)=\mu(f)\mu(k)\).  Consequently
+
+\[
+ \boxed{
+ \frac{\mu(c)\tau_c(\chi)}{\varphi(c)}
+ =\frac{\mu(f)\tau_f(\chi^*)}{\varphi(f)}
+  \frac{\chi^*(k)}{\varphi(k)}.}
+\tag{9.57}
+\]
+
+The cofactor \(k\) carries no Möbius sign.  At conductor \(f=1\), the
+induced character is the principal character \(\chi_{0,c}\), and
+\(\tau_c(\chi_{0,c})=\mu(c)\).  Hence
+
+\[
+ \boxed{
+ \frac{\mu(c)\tau_c(\chi_{0,c})}{\varphi(c)}
+ =\frac1{\varphi(c)}.}
+\tag{9.58}
+\]
+
+In particular, on the unit gcd stratum the principal-character piece is
+exactly
+
+\[
+ \mathfrak P_{\rm unit}
+ =\sum_{c\asymp S\atop \mu(c)^2=1}
+   \frac{1}{\varphi(c)}
+   \mathcal R_c(\chi_{0,c})
+   \mathcal H_c(\chi_{0,c})
+   \mathcal D_c(\chi_{0,c}),
+\tag{9.59}
+\]
+
+with all coprimality cutoffs and smooth weights retained.  Its diagnostic
+size is \(A\) times a smooth Möbius sum of length \(R\): the factor
+\(1/\varphi(c)\) cancels the number of moduli only after the two principal
+short sums contribute size \(HL=A\).  In the balanced maximal box,
+estimating (9.59) separately at the \(RS=T^6\) target would require
+
+\[
+ \sum_{r\asymp T^3}\mu(r)W(r/T^3)
+ \ll T^{1+\varepsilon}
+ =(T^3)^{1/3+\varepsilon}.
+\tag{9.60}
+\]
+
+Such a bound cannot hold uniformly for a dyadic partition of smooth
+weights: it would continue \(1/\zeta(s)\) through the critical-line zeros.
+Therefore the direct principal-character estimate cannot be closed even
+by assuming a standard square-root Mertens bound.  A successful character
+method must either extract additional cancellation from the exact
+coprimality average in (9.59), or cancel its excess against the
+nonprincipal characters in the complete sum (9.51).  This gives the
+following strict constraint on the standard moment route:
+
+> **No termwise standard character-moment closure.**  Applying the
+> triangle inequality between the principal and nonprincipal characters,
+> then replacing their coprimality sums by the standard character-moment
+> bounds, cannot prove CK\(_{\rm ub}(3)\) on the balanced maximal box.
+
+Equations (9.56)--(9.60) replace the earlier hope for independent
+\(\mu(c)\tau_c(\chi)\) cancellation by the correct requirement: a
+centered character or spectral transform must preserve cancellation
+between the Ramanujan mean and the entire nonprincipal spectrum.  The
+finite checker verifies the squarefree sign identity
+\(\mu(fk)\mu(k)=\mu(f)\) and the exact balanced exponent \(1/3\); it does
+not prove the required inter-character cancellation.
+
+### 9.14 Global completion of the unit principal spectrum
+
+The obstruction (9.59) arose after dyadically localizing \(h\) and then
+estimating its principal-character projection.  For the actual Fourier
+coefficients in (4.4), the unit gcd stratum can instead be summed over all
+\(h\ne0\) before taking absolute values.  If \(s>1\), Möbius inversion of
+the coprimality condition and Poisson summation give the exact identity
+
+\[
+\begin{aligned}
+ \sum_{h\ne0\atop(h,s)=1}\widehat F(h/s)
+ &=\sum_{j\mid s}\mu(j)
+   \left\{\sum_{k\in\mathbb Z}\widehat F(jk/s)
+                    -\widehat F(0)\right\}\\
+ &=\boxed{\sum_{j\mid s}\mu(j)\frac{s}{j}
+          \sum_{n\in\mathbb Z}F(ns/j).}
+\end{aligned}
+\tag{9.61}
+\]
+
+The zero-frequency terms cancel exactly because
+\(\sum_{j\mid s}\mu(j)=0\).  This is a coprime reverse-Poisson identity,
+not an estimate and not the ordinary \(h=0\) mode in Section 4.2.  On the
+unit stratum \((h\delta,s)=1\), the principal multiplicative character
+has phase average \(\mu(s)/\varphi(s)\).  Multiplication by the original
+outer \(\mu(s)\) therefore yields
+
+\[
+ \frac1{\varphi(s)}
+ \sum_{j\mid s}\mu(j)\frac{s}{j}
+ \sum_n F_{r,s,\delta}(ns/j).
+\tag{9.62}
+\]
+
+Put \(v=s/j\).  The support \(x\asymp M\) of the function in (4.4)
+forces \(v\ll M\) and \(n\asymp M/v\); both incomplete endpoints are
+included.  The core seminorm bounds (5.14), partial summation in the
+smooth outer variables, and
+\(\sum_{j\mid s}1\ll_\varepsilon s^\varepsilon\) consequently give the
+following bound after summing the unit principal projection globally in
+\(h\):
+
+\[
+ \boxed{
+ |\mathfrak S^{\rm global}_{\rm pr,unit}|
+ \ll_{\varepsilon,W} RLM\,T^\varepsilon.}
+\tag{9.63}
+\]
+
+This intentionally keeps a conservative factor \(M\) for the lattice
+sum in (9.61); normalization by the zero-frequency integral can only
+improve it.  The exponent polytope proves exactly that this is sufficient.
+Indeed, (5.12b)--(5.12c) give
+
+\[
+ \ell+m\leq2m+\rho-1\leq\sigma,
+ \qquad\boxed{LM\leq S.}
+\tag{9.64}
+\]
+
+Thus (9.63) is \(O(RS T^\varepsilon)\), including the balanced maximal
+box where equality holds in (9.64).  Restoring the box prefactor in
+(5.15) gives \(O(T^{1+\varepsilon}/q)\); the dyadic partitions and the
+sum over \(q\) cost only \(T^\varepsilon\).  The already established
+power-tail truncation permits the all-\(h\) completion before returning
+to the retained core.
+
+This proves a strictly weaker replacement for one part of the local CK
+gate: the unit principal spectrum need not, and in the balanced box
+cannot, be bounded characterwise inside every \(H\)-box.  It is removed
+unconditionally by (9.61)--(9.64).  The remaining centered gate consists
+of
+
+1. the complete nonprincipal spectrum on the unit gcd stratum, with its
+   Ramanujan mean subtracted only after (9.61); and
+2. the principal and nonprincipal spectra on the nonunit gcd strata
+   \(d e>1\) from (9.49).
+
+No estimate for those two residual pieces is claimed here.  The finite
+checker verifies the divisor formula for the coprime indicator and the
+polytope margin \(\sigma-\ell-m\geq0\); the analytic identity (9.61)
+follows from finite Möbius inversion followed by the stated Schwartz
+Poisson formula.
+
+### 9.15 Ramanujan projection of all nonunit principal strata
+
+The complete principal projection can be written without choosing a gcd
+stratum.  For every integer \(a\), averaging over the inverse unit group
+gives
+
+\[
+ \frac1{\varphi(s)}\sum_{r\bmod s}^{*}e_s(-a\bar r)
+ =\frac{c_s(a)}{\varphi(s)},
+\tag{9.65}
+\]
+
+where \(c_s(a)\) is the Ramanujan sum.  Since the outer Möbius weight
+forces \(s\) to be squarefree, its divisor formula becomes
+
+\[
+ \boxed{
+ \mu(s)c_s(a)
+ =\sum_{j\mid(s,a)}j\mu(j).}
+\tag{9.66}
+\]
+
+This identity simultaneously contains the unit principal spectrum from
+Section 9.14 and every nonunit principal gcd stratum.
+
+Fix \(s,\delta\), and in a term of (9.66) put
+\(w=(j,\delta)\), \(u=j/w\), and \(s=uwc\).  Then the factorization is
+unique, \(w\mid\delta\), \((u,\delta)=1\), and
+\(j\mid h\delta\) is equivalent to \(u\mid h\).  Writing \(h=uk\),
+ordinary reverse Poisson gives
+
+\[
+ \boxed{
+ \sum_{k\ne0}\widehat F(uk/s)
+ =wc\sum_{n\in\mathbb Z}F(nwc)-\widehat F(0).}
+\tag{9.67}
+\]
+
+The zero-frequency subtractions recombine exactly.  Indeed,
+
+\[
+ \sum_{j\mid s}j\mu(j)=\mu(s)\varphi(s),
+\tag{9.68}
+\]
+
+so the total subtraction in the principal projection is
+\(-\mu(s)\widehat F(0)\), the principal copy of the already extracted
+Poisson zero mode.  It is therefore controlled by the LCM main form and
+its archimedean error from Sections 4.2--4.3; it is not a new Region-D
+remainder.
+
+The lattice part of (9.67) is an exact residual Type-II sum.  Suppressing
+only the already displayed smooth outer factors, it has the finite shape
+
+\[
+\begin{aligned}
+ \mathfrak P_{\rm latt}
+ ={}&\sum_{\substack{u,w,c\geq1\\uwc\asymp S}}
+ \frac{uw\,\mu(u)\mu(w)}{\varphi(uwc)}
+ \sum_{\substack{r\asymp R,\ \delta=w\delta_1\\
+                  (r,uwc)=(u,\delta)=1}}
+ \mu(r)\,\mathcal W(r,uwc,\delta)\\
+ &\qquad\times
+ \left\{wc\sum_{n\in\mathbb Z}
+ F_{r,uwc,\delta}(nwc)\right\}.
+\end{aligned}
+\tag{9.69}
+\]
+
+Every endpoint, sign of \(\delta\), Selberg taper, and \(q\)-coprimality
+condition is retained inside \(\mathcal W\).  No absolute value has been
+taken over \(u,w,c,r,\delta_1\).  The support \(x\asymp M\) forces
+\(wc\ll M T^\eta\).  Moreover \(u\mid h\) and the retained Fourier range
+give \(u\ll H T^\eta\).  Since \(uwc\asymp S\),
+
+\[
+ \frac{S}{HT^\eta}\ll wc\ll MT^\eta,
+ \qquad
+ \frac{S}{MT^\eta}\ll u\ll HT^\eta.
+\tag{9.70}
+\]
+
+But admissibility already gives \(HM\ll ST^\eta\).  Hence (9.70) is
+empty by rapid Fourier decay unless
+
+\[
+ \boxed{
+ HM=S T^{O(\eta)},\qquad
+ wc=M T^{O(\eta)},\qquad
+ u=H T^{O(\eta)}.}
+\tag{9.71}
+\]
+
+Thus the nonunit principal remainder is not an arbitrary character sum:
+it is a long--short Type-II form with the two required Möbius weights
+\(\mu(r)\mu(u)\), an additional short sign \(\mu(w)\), and no inverse
+phase left.  It is supported only on the top Fourier face
+\(h=\sigma-m\), up to the declared \(O(\eta)\) slack.  In the balanced
+maximal box,
+
+\[
+ wc=T^{1/2+O(\eta)},\qquad
+ u=T^{5/2+O(\eta)}.
+\tag{9.72}
+\]
+
+At this support, the elementary length count in (9.69) loses only
+\(L/M\) over the \(RS\) target.  Its exponent is
+
+\[
+ |\mathfrak P_{\rm latt}|_{\rm trivial}
+ \ll_{\varepsilon,W}RS\frac{L}{M}T^\varepsilon,
+\]
+
+and hence its exponent loss is
+
+\[
+ \boxed{\max(0,\ell-m),}
+\tag{9.73}
+\]
+
+equal to \(2\) in the balanced box.  Consequently the full nonunit
+principal spectrum is already proved outside the face
+\(h=\sigma-m+O(\eta)\), and it is also proved on that face whenever
+\(\ell\leq m\).  Its only residual polytope is therefore
+
+\[
+ h=\sigma-m+O(\eta),\qquad \ell>m.
+\]
+
+If the two separated smooth Möbius
+sums of lengths \(R\) and \(S/M\) were both bounded by \(X^\beta\), the
+largest common exponent sufficient for (9.69) would be
+
+\[
+ \beta\leq
+ 1-\frac{\max(0,\ell-m)}{\rho+\sigma-m};
+ \qquad \beta\leq\frac7{11}
+ \quad\hbox{in the balanced box}.
+\tag{9.74}
+\]
+
+The classical zero-free region supplies only subexponential savings from
+the trivial exponent \(1\), not the fixed \(7/11\) power.  Consequently
+Mellin-separating the \(r,u\) sums is not an unconditional closure; their
+cancellation must remain coupled to the centered nonprincipal spectrum.
+Thus (9.69) remains unproved, but it is supported on a single parameter
+face and has an exact residual loss rather than an arbitrary Region-D
+gap.  The finite checker verifies (9.66), the face slack
+\(\sigma-m-h\), the loss (9.73), and the exact \(7/11\) diagnostic in
+(9.74).
+
+### 9.16 Reverse completion of the unit spectrum and the affine-correlation gate
+
+The remaining unit nonprincipal spectrum also has an exact global
+description.  Keep the Fourier convention
+\(\widehat F(y)=\int_{\mathbb R}F(x)e(-xy)\,dx\), fix \(s>1\), and assume
+\((\delta,s)=1\).  Splitting \(h\) into reduced residue classes modulo
+\(s\), followed by shifted Poisson summation, gives
+
+\[
+ \boxed{
+ \sum_{h\in\mathbb Z\atop(h,s)=1}
+ e_s(-h\delta\bar r)\widehat F(h/s)
+ =\sum_{n\in\mathbb Z}F(n)c_s(n+\delta\bar r).}
+\tag{9.75}
+\]
+
+The plus sign is forced by the stated Fourier convention:
+\(\sum_{j\in\mathbb Z}\widehat F(j+b/s)
+=\sum_nF(n)e_s(-bn)\).  Thus (9.75) reconstructs the original residue
+class \(n\equiv-\delta\bar r\pmod s\).  The endpoint \(s=1\) is a finite
+degenerate modulus and is kept separately; it creates no long box.
+
+Use
+
+\[
+ c_s(x)=\sum_{d\mid(s,x)}d\,\mu(s/d).
+\tag{9.76}
+\]
+
+The highest-divisor term \(d=s\) in (9.76) is
+\(s\mathbf1_{s\mid x}\).  After multiplication by the outer
+\(\mu(s)\), it produces the exact congruence
+
+\[
+ n+\delta\bar r\equiv0\pmod s
+ \quad\Longleftrightarrow\quad
+ rn+\delta=ks
+\tag{9.77}
+\]
+
+for an integer \(k\asymp K\).  Equivalently, after the explicit rename
+\(\Delta=-\delta\), the equation is \(rn-ks=\Delta\).  For fixed
+\(n,k,\Delta\), put \(g=(n,k)\).  Solutions exist only if
+\(g\mid\Delta\); if \((r_0,s_0)\) is one solution, every integral
+solution is
+
+\[
+ \boxed{
+ r=r_0+\frac{k}{g}t,\qquad
+ s=s_0+\frac{n}{g}t,\qquad t\in\mathbb Z.}
+\tag{9.78}
+\]
+
+The dyadic restrictions cut (9.78) to an interval
+\(I_{n,k,\Delta}\) of length
+\(O(1+Rg/K)=O(1+Sg/M)\); both incomplete endpoints are included.  Hence
+the highest-divisor term is a weighted average of the binary affine
+Möbius correlations
+
+\[
+ \sum_{t\in I_{n,k,\Delta}}
+ \mu\left(r_0+\frac{k}{g}t\right)
+ \mu\left(s_0+\frac{n}{g}t\right)
+ \mathcal W_{n,k,\Delta}(t).
+\tag{9.79}
+\]
+
+This is still a finite identity: \(n,k,\Delta,t\) range over bounded
+sets fixed by the dyadic cutoffs, and the original Selberg tapers,
+coprimalities, signs, exact logarithmic phase, and endpoint weights are
+all retained in \(\mathcal W\).
+
+The normalization can be read directly from (4.4)--(4.5).  In the
+highest-divisor term the factor \(s\) in (9.76) cancels the Poisson
+factor \(1/s\).  On (9.77), the remaining square-root denominator is
+\(\sqrt{rsnk}\), while the \(t\)-integral has scale \(T\).  Therefore a
+sufficient weighted affine-correlation estimate is
+
+\[
+ \boxed{
+ |\mathcal C_\mu(R,S,M,K,L)|
+ \ll_{\varepsilon,W}(RSMK)^{1/2}T^\varepsilon,}
+\tag{9.80}
+\]
+
+where \(\mathcal C_\mu\) denotes the complete signed sum in
+(9.79), before the factor \(T/(q\sqrt{RSMK})\) is restored.  Formula
+(9.80) would give \(O(T^{1+\varepsilon}/q)\) for this Ramanujan component.
+
+For comparison, an elementary solution count gives
+
+\[
+ \begin{aligned}
+ \#\mathcal C
+ &\ll_\varepsilon
+ \sum_{n\asymp M}\sum_{k\asymp K}
+ \left(\frac Lg+1\right)
+ \left(1+\frac{Rg}{K}\right)T^\varepsilon\\
+ &\ll_\varepsilon (MKL+MRL)T^\varepsilon
+ \ll_\varepsilon RS T^\varepsilon.
+ \end{aligned}
+\tag{9.81}
+\]
+
+Here the last line uses the finite divisor count
+\(\sum_{n\asymp M,k\asymp K}(n,k)\ll MK T^\varepsilon\), together with
+\(MK\ll T\), \(L\ll MR/T\), and \(LM\ll S\) from (9.64).  No
+cancellation is used in (9.81).
+
+At exponent level, the gap between (9.81) and (9.80) is
+
+\[
+ \boxed{
+ \max\left(0,
+ \max(m+k+\ell,\,m+\rho+\ell)
+ -\frac{\rho+\sigma+m+k}{2}\right).}
+\tag{9.82}
+\]
+
+It equals \(5/2\) in the balanced maximal box.  The generic affine
+parameter interval there also has length exponent
+\(\rho-k=5/2\).  Thus a termwise treatment of (9.79) would need, on
+average over \(n,k,\Delta\), essentially the entire length of the
+binary Möbius progression as cancellation.  This is an averaged
+two-linear-forms Chowla-type estimate with coefficients and endpoints
+varying through the full dyadic family; no theorem cited in Sections
+8--9 supplies (9.80).
+
+The highest-divisor term is a diagnostic sufficient subproblem, not a
+claim that it must be bounded separately.  The lower divisors in (9.76),
+the globally completed principal mean (9.61)--(9.64), and (9.79) may
+cancel only when kept together.  Accordingly the genuinely weakest
+remaining unit gate is the centered full Ramanujan-weighted sum obtained
+from (9.75) after subtracting the proved global principal contribution.
+Equations (9.77)--(9.82) show exactly why isolating its top congruence by
+the triangle inequality reaches an unproved averaged affine Möbius
+correlation rather than an unconditional closure.
+
+### 9.17 Exact audit of averaged Chowla on the affine family
+
+The averaged Chowla theorem of Matomäki--Radziwiłł--Tao does apply to a
+specific absolute-value relaxation of (9.79), so its quantitative effect
+can be evaluated exactly.  In (9.78) write
+
+\[
+ a_0=k/g,\qquad b_0=n/g,\qquad D=\Delta/g,
+ \qquad (a_0,b_0)=1.
+\tag{9.83}
+\]
+
+Fix a residue class \(D_0\pmod {a_0}\), choose \(r_0\) with
+\(b_0r_0\equiv D_0\pmod {a_0}\), and put
+\(s_0=(b_0r_0-D_0)/a_0\).  Then the family
+\(D=D_0+a_0j\) is represented exactly by
+
+\[
+ b_0r_0-a_0(s_0-j)=D_0+a_0j.
+\tag{9.84}
+\]
+
+Thus, after translating the \(t\)-interval and applying partial
+summation to the smooth weights, varying \(\Delta\) in one residue class
+is an additive-shift average of two linear-form Möbius correlations.
+There are \(a_0\) residue classes, each containing
+\(H_0\asymp L/(ga_0)=L/k\) shifts, and the \(t\)-length is
+\(X_0\asymp R/a_0\).
+
+Theorem 1.6 of Matomäki--Radziwiłł--Tao bounds such a shift average by
+
+\[
+ \ll A_0^2
+ \left(
+ e^{-\mathcal M/80}
+ +\frac{\log\log H_0}{\log H_0}
+ +\frac1{\log^{1/3000}X_0}
+ \right)H_0X_0,
+ \qquad A_0=\max(a_0,b_0),
+\tag{9.85}
+\]
+
+under its stated size conditions.  The theorem applies directly with
+\(g_1=g_2=\mu\), since \(\mu\) is 1-bounded and multiplicative; its
+pretentiousness input has the same prime values as Liouville.  This does
+not improve the displayed rate.  The factor \(A_0^2\) is part of the
+theorem, not a suppressed constant.
+
+In the balanced maximal box, generically
+
+\[
+ A_0=T^{1/2+o(1)},\qquad
+ H_0=T^{2+o(1)},\qquad
+ X_0=T^{5/2+o(1)}.
+\tag{9.86}
+\]
+
+Consequently (9.85) is worse than the trivial shift average by the
+factor \(T^{1-o(1)}\).  Even deleting \(A_0^2\) hypothetically would
+leave only a logarithmic saving, whereas (9.80) requires the power
+\(T^{5/2}\) at this box.  The exceptional-shift refinement in the same
+paper gives a power saving only in the number of exceptional shifts
+while retaining a weak individual correlation bound; it likewise does
+not reach (9.80).
+
+This is a genuine applicability calculation rather than a keyword
+comparison: (9.84) supplies the exact bridge to the published theorem,
+and (9.85)--(9.86) show that its quantitative output covers no part of
+the balanced polynomial-slope face.  The centered full Ramanujan sum
+could still exploit cancellation lost by the absolute values in
+(9.85), but that would require a new coupled estimate.
+
+### 9.18 The centered divisor--dual identity
+
+There is a weaker exact interface which does not isolate the
+highest-divisor term.  Averaging (9.75) over \(r\bmod s\) first gives the
+finite identity
+
+\[
+ \sum_{r\bmod s}^{*}c_s(n+\delta\bar r)
+ =\mu(s)c_s(n),\qquad (\delta,s)=1.
+\tag{9.87}
+\]
+
+Indeed, expand the left side as a sum over \(h\bmod s\) with
+\((h,s)=1\); the inner \(r\)-sum is
+\(c_s(h\delta)=\mu(s)\).  Consequently the exact centered kernel after
+the outer \(\mu(s)\) is
+
+\[
+ \boxed{
+ \mathscr C_s(n,r,\delta)
+ =\mu(s)c_s(n+\delta\bar r)-\frac{c_s(n)}{\varphi(s)},
+ \qquad
+ \sum_{r\bmod s}^{*}\mathscr C_s(n,r,\delta)=0.}
+\tag{9.88}
+\]
+
+The second term in (9.88) is exactly the globally completed principal
+projection from (9.61)--(9.64), now written after the reverse transform.
+Thus no boxwise principal/nonprincipal triangle inequality has been
+inserted.
+
+Next apply (9.76) before summing \(n\).  For \(j\mid s\), lattice Poisson
+with residue \(-\delta\bar r\pmod j\) gives
+
+\[
+ j\sum_{n\equiv-\delta\bar r\ ({\rm mod}\ j)}F(n)
+ =\sum_{v\in\mathbb Z}e_j(-v\delta\bar r)\widehat F(v/j).
+\tag{9.89}
+\]
+
+Both continuous zero frequencies cancel exactly.  More precisely, for
+\(s>1\),
+
+\[
+\boxed{
+\begin{aligned}
+ \sum_nF(n)\mathscr C_s(n,r,\delta)
+ ={}&\sum_{j\mid s}\mu(j)
+       \sum_{v\ne0}e_j(-v\delta\bar r)\widehat F(v/j)\\
+ &-\frac1{\varphi(s)}
+   \sum_{j\mid s}\mu(s/j)
+       \sum_{v\ne0}\widehat F(v/j).
+\end{aligned}}
+\tag{9.90}
+\]
+
+The \(v=0\) coefficient in the first line is
+\(\sum_{j\mid s}\mu(j)=0\), and in the second it is
+\(\varphi(s)^{-1}\sum_{j\mid s}\mu(s/j)=0\).  These are exact finite
+divisor cancellations; no decay estimate is used.
+
+In fact every common integral dual frequency cancels before localizing
+\(j\).  For fixed \(q\in\mathbb Z\), the terms \(v=qj\) have phase 1
+and Fourier argument \(v/j=q\), so their coefficients are respectively
+
+\[
+ \widehat F(q)\sum_{j\mid s}\mu(j)=0,
+ \qquad
+ \frac{\widehat F(q)}{\varphi(s)}
+ \sum_{j\mid s}\mu(s/j)=0.
+\tag{9.90a}
+\]
+
+Thus the remaining divisor-dual sum may be restricted to \(j\nmid v\).
+This removes the otherwise exceptional nonoscillating modes when
+\(M\asymp1\).
+
+The core seminorms imply that a nonzero term in (9.90) is rapidly small
+unless
+
+\[
+ j\gg MT^{-O(\eta)},\qquad
+ 1\leq |v|\ll \frac jM T^{O(\eta)}.
+\tag{9.91}
+\]
+
+Writing \(s=jc\), the full lower-divisor family is therefore confined to
+
+\[
+ c\ll\frac SM T^{O(\eta)}.
+\tag{9.92}
+\]
+
+The top affine correlation of Section 9.16 is the endpoint \(c=1\),
+whereas every \(c>1\) lower Ramanujan divisor remains in the same signed
+sum.  Notice again that the cofactor \(c\) has no Möbius sign: the only
+long signs in the first line of (9.90) are \(\mu(r)\mu(j)\).  Hence
+(9.90) is not closed by an Euler-product estimate, but it is strictly
+weaker than (9.80) because it preserves cancellation among every divisor
+and the proved principal subtraction.
+
+This centered divisor--dual sum is the current sharpest residual unit
+gate.  A proof would require a two-Möbius dispersion estimate, averaged
+simultaneously over \(j,c,v,\delta\), at the exact support (9.91)--(9.92).
+The identity itself is unconditional and directly formalizable; the
+estimate is not proved here.
+
+### 9.19 Delta completion and the self-dual affine obstruction
+
+The first line of (9.90) still retains the product phase
+\(e_j(-v\delta\bar r)\), so one should next exploit the full smooth
+\(\delta\)-sum rather than replace it by its length.  Localize
+\(j\asymp J\).  Poisson summation, or repeated summation by parts with
+the core seminorms, shows that the signed least residue \(b\) defined by
+
+\[
+ b\equiv v\bar r\pmod j,qquad |b|\leq j/2,
+\tag{9.93}
+\]
+
+is negligible unless
+
+\[
+ |b|\ll \frac JL T^{O(\eta)}.
+\tag{9.94}
+\]
+
+The exact logarithmic phase is part of the smooth \(\delta\)-weight.
+Its normalized derivatives are \(T^{O(\eta)}\), so it enlarges the dual
+window only by the displayed slack in (9.94).  All dual endpoints and
+the two signs are included.  By (9.90a), the surviving residue \(b\) is
+nonzero; hence (9.94) also forces \(J\gg LT^{-O(\eta)}\).
+
+Multiplying (9.93) by \(r\) gives an integer \(z\) such that
+
+\[
+ \boxed{br-v=zj.}
+\tag{9.95}
+\]
+
+On the effective support (9.91), the four new lengths are
+
+\[
+ |b|\ll B:=J/L,qquad |v|\ll V:=J/M,qquad
+ |z|\ll Z:=R/L,qquad j\asymp J.
+\tag{9.96}
+\]
+
+For fixed \(b,z,v\), put \(g=(b,z)\).  Equation (9.95) has solutions
+only if \(g\mid v\), and every solution is
+
+\[
+ \boxed{
+ r=r_0+\frac zg t,qquad
+ j=j_0+\frac bg t,qquad t\in\mathbb Z.}
+\tag{9.97}
+\]
+
+The dyadic restrictions cut (9.97) to length
+
+\[
+ O\left(1+\min\left(\frac{Rg}{Z},\frac{Jg}{B}\right)\right)
+ =O(1+Lg),
+\tag{9.98}
+\]
+
+with the equality interpreted up to the fixed dyadic and
+\(T^{O(\eta)}\) slack.  The Möbius signs along this progression are
+exactly \(\mu(r)\mu(j)\); the cofactor \(c=s/j\) remains signless.
+
+At the balanced endpoint \(J=S=T^3\),
+
+\[
+ B=Z=T^{1/2},\qquad V=L=T^{5/2},
+\tag{9.99}
+\]
+
+and a generic progression (9.97) again has length \(T^{5/2}\).  Thus
+smooth \(\delta\)-completion supplies the full \(L\)-saving, but the
+remaining congruence reconstitutes the same polynomial-slope binary
+Möbius correlation as (9.79), with the roles of the short variables
+dualized.  Applying the averaged-Chowla relaxation of Section 9.17 to
+(9.97) again gives only logarithmic cancellation and incurs a generic
+\(T\) slope loss.
+
+This self-duality rules out the proposed elementary closure
+``reverse \(n\), then complete \(\delta\)''.  It does not rule out a
+joint dispersion argument which keeps \(b,z,v,j,c\) inside one signed
+mean square; such an argument is precisely the remaining analytic
+problem.
+
+### 9.20 One-dimensional coverage certificate after centering
+
+Write \(J=T^{\jmath}\).  Equations (9.91)--(9.98) reduce every scale in
+the centered unit problem to
+
+\[
+ \max(m,\ell)\leq\jmath\leq\sigma,qquad
+ \begin{array}{c|ccccc}
+  \text{variable}&c&v&b&z&t\text{-interval}\\ \hline
+  \text{exponent}&\sigma-\jmath&\jmath-m&
+  \jmath-\ell&\rho-\ell&\ell.
+ \end{array}
+\tag{9.100}
+\]
+
+This is checked by exact rational arithmetic.  It gives three immediate
+coverage certificates.
+
+First, completing \(\delta\) and then counting the surviving \(v\)'s
+loses exactly \(T^{\jmath-m}\).  Second, applying the averaged-Chowla
+theorem termwise to (9.97) carries the polynomial-slope factor
+
+\[
+ T^{2\max(\jmath-\ell,\,\rho-\ell)}.
+\tag{9.101}
+\]
+
+Third, the direct spectral-dispersion specialization (9.45)--(9.46), now
+with modulus length \(J\) and product length
+\(A'=VL=T^{\jmath-m+\ell}\), loses over the \(RJ\) target the exponent
+
+\[
+ \frac{\rho+\jmath+(\jmath-m+\ell)}2.
+\tag{9.102}
+\]
+
+The signless cofactor sum of length \(C=S/J\) multiplies both the bound
+and its target and therefore does not change (9.102).
+
+For the balanced maximal box,
+\(\jmath\in[5/2,3]\).  Across this entire interval,
+
+\[
+ \jmath-m\in[2,5/2],\qquad
+ 2\max(\jmath-\ell,\rho-\ell)=1,
+\]
+
+and (9.102) ranges from \(5\) to \(11/2\).  Hence none of the three
+termwise routes covers even a subinterval of the new \(J\)-range.  Any
+improvement must average the two Möbius signs jointly with at least one
+of \(b,z,v,c\); the support reduction alone is not the missing estimate.
+
+### 9.21 Re-audit of Wright's unbalanced-convolution corollary
+
+Equation (9.95) does admit a direct convolution interpretation:
+\(br\equiv v\pmod j\).  For fixed \(v\), the product sequence has total
+length
+
+\[
+ X_0=BR=T^{\rho+\jmath-\ell},qquad
+ Q=J=T^\jmath,qquad N_0=B=T^{\jmath-\ell}.
+\tag{9.103}
+\]
+
+The long coefficient \(\mu(r)\) satisfies the fixed-small-modulus
+Siegel--Walfisz hypothesis required in Wright's convolution application,
+so coefficient type is not the obstruction.  The modulus range is.
+The two advertised modulus regimes require respectively
+
+\[
+ Q\leq X_0^{17/33-\varepsilon},qquad
+ Q\leq X_0^{45/89-\varepsilon}.
+\tag{9.104}
+\]
+
+For the balanced maximal box, \(X_0=T^{\jmath+1/2}\) and
+\(5/2\leq\jmath\leq3\).  The exact endpoint margins
+\(\gamma(\jmath+1/2)-\jmath\) are
+
+\[
+\begin{array}{c|cc}
+ \gamma&\jmath=5/2&\jmath=3\\ \hline
+ 17/33&-21/22&-79/66\\
+ 45/89&-175/178&-219/178.
+\end{array}
+\tag{9.105}
+\]
+
+They are affine and negative at both endpoints, hence negative throughout
+the interval.  Thus the corollary does not apply to any balanced
+post-centering \(J\)-box.  Moreover its discrepancy is stated for a fixed
+residue \(v\); summing it termwise over the present
+\(V=J/M\) residues would retain exactly the loss identified in
+Section 9.20.  The newer partially fixed-modulus theorem therefore gives
+no hidden closure after the centered transform.
+
+### 9.22 Fourier-energy form and the central-arc barrier
+
+The self-dual equation also admits a useful additive-energy formulation.
+For one separated smooth piece, define the convolution coefficients
+
+\[
+ A_x=\sum_{br=x}\alpha_b\mu(r),\qquad
+ B_y=\sum_{zj=y}\beta_z\mu(j),
+\tag{9.106}
+\]
+
+with the dyadic and coprimality restrictions retained in the coefficients.
+Both sequences have the same ambient length
+
+\[
+ X_0=BR=ZJ=T^{\rho+\jmath-\ell},
+ \qquad V=J/M=T^{\jmath-m}.
+\tag{9.107}
+\]
+
+After delta completion, a typical difference kernel has the exact Fourier
+form
+
+\[
+\begin{aligned}
+ \sum_{x,y}A_x\overline{B_y}
+ W_0\left(\frac{x-y}{V}\right)
+ =V\int_{\mathbb R}\widehat W_0(V\alpha)
+ \mathcal A(\alpha)\overline{\mathcal B(\alpha)}\,d\alpha,
+\end{aligned}
+\tag{9.108}
+\]
+
+where \(\mathcal A(\alpha)=\sum_xA_xe(\alpha x)\), and similarly for
+\(\mathcal B\).  Periodizing the rapidly decaying multiplier and applying
+Parseval with only divisor-bounded coefficients gives
+
+\[
+ |(9.108)|\ll_\varepsilon
+ V\|A\|_2\|B\|_2T^\varepsilon
+ \ll_\varepsilon VX_0T^\varepsilon.
+\tag{9.109}
+\]
+
+Thus the general-coefficient Fourier route loses exactly the same
+\(V=J/M\) found in Section 9.20.
+
+This also gives a genuine unconditional boundary box which should not be
+left inside the residual gate.  If
+
+\[
+ \boxed{J\leq M T^{O(\eta)},}
+\tag{9.109a}
+\]
+
+then \(V\ll T^{O(\eta)}\), so (9.109) is already
+\(O(X_0T^\varepsilon)\).  At zero slack this is exactly
+\(\jmath=m\).  Since (9.100) requires
+\(\jmath\geq\max(m,\ell)\), this face can occur only when
+\(\ell\leq m\).  Therefore the centered unit nonprincipal spectrum is
+proved on every divisor-dual box with \(J/M=T^{O(\eta)}\); only
+
+\[
+ J/M=T^{\Omega(1)}
+\tag{9.109b}
+\]
+
+can contribute to the polynomial residual.  This does not meet the
+balanced box, where \(J/M\in[T^2,T^{5/2}]\), but it removes the complete
+low-divisor face without a Möbius estimate.  The exact-rational checker
+records the loss \(\jmath-m\) and the forced inequality
+\(\ell\leq m\) when that loss vanishes.
+
+The central arc explains why a separated Euler-product estimate does not
+remove this loss.  Suppose, only for this diagnostic, that the two smooth
+Möbius sums of lengths \(R\) and \(J\) are bounded by
+\(R^{\beta+\varepsilon}\) and \(J^{\beta+\varepsilon}\).  On an arc of
+width \(X_0^{-1}\), absolute estimation of (9.108) has scale
+
+\[
+ \frac V{X_0}\,BZ R^\beta J^\beta
+ =VX_0(RJ)^{\beta-1}.
+\]
+
+For this to be at most the target \(X_0T^\varepsilon\), one needs
+
+\[
+ \boxed{
+ \beta\leq1-\frac{\jmath-m}{\rho+\jmath}.}
+\tag{9.110}
+\]
+
+In the balanced maximal box, (9.110) equals \(7/11\) at
+\(\jmath=5/2\) and decreases to \(7/12\) at \(\jmath=3\).  The
+classical zero-free region gives no fixed exponent below 1, so it cannot
+prove this central-arc estimate.
+
+Equation (9.110) is a limitation of the separated absolute Fourier route,
+not a necessary condition for the original coupled kernel.  There are
+exactly two possible ways past it: prove genuinely joint two-Möbius
+Fourier flatness on arcs of width \(1/V\), or exploit a vanishing moment
+of the complete coupled archimedean multiplier before separation.  No
+such flatness or vanishing moment has been established above.
+
+### 9.23 Global reverse completion of every nonprincipal gcd stratum
+
+The unit centered identity extends exactly to the full gcd decomposition
+(9.49).  Fix pairwise coprime squarefree \(d,e,c\), put
+\(s=dec\), \(h=dh_1\), \(\delta=e\delta_1\), and set
+\(\alpha=\delta_1\bar r\pmod c\).  Then
+\((h_1,ec)=1\) and \((\alpha,c)=1\).  Since
+\(dh_1/s=h_1/(ec)\), finite Möbius inversion of the condition
+\((h_1,e)=1\), followed by shifted Poisson summation, gives
+
+\[
+\begin{aligned}
+ &\sum_{h_1\in\mathbb Z\atop(h_1,ec)=1}
+ e_c(-h_1\alpha)\widehat F(h_1/(ec))\\
+ &\quad=\sum_{k\mid e}\mu(k)
+ \sum_{y\in\mathbb Z\atop(y,c)=1}
+ e_c(-ky\alpha)\widehat F\left(\frac{ky}{ec}\right)\\
+ &\quad=\boxed{
+ \sum_{k\mid e}\mu(k)\frac ek
+ \sum_{n\in\mathbb Z}F((e/k)n)c_c(n+k\alpha).}
+\end{aligned}
+\tag{9.111}
+\]
+
+The sign in the last Ramanujan sum again follows from the Fourier
+convention: for \(E=e/k\),
+
+\[
+ \sum_{\ell\in\mathbb Z}
+ \widehat F((\ell+b/c)/E)
+ =E\sum_nF(En)e_c(-nb).
+\tag{9.112}
+\]
+
+Formula (9.111) retains every divisor \(k\mid e\), both incomplete
+endpoints, and the dilation \(e/k\); none may be absorbed into a generic
+divisor-bounded coefficient before estimating the gcd strata jointly.
+
+The principal character modulo \(c\) has phase average
+\(\mu(c)/\varphi(c)\).  Multiplying (9.111) by the original
+\(\mu(s)=\mu(d)\mu(e)\mu(c)\) and subtracting this principal mean yields
+the exact nonprincipal kernel
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak N_{d,e,c}(r,\delta_1)
+ ={}&\mu(d)\mu(e)
+ \sum_{k\mid e}\mu(k)\frac ek
+ \sum_nF((e/k)n)\\
+ &\times\left\{
+ \mu(c)c_c(n+k\delta_1\bar r)
+ -\frac{c_c(n)}{\varphi(c)}\right\}.
+\end{aligned}}
+\tag{9.113}
+\]
+
+For every \(k\mid e\), the shift \(k\delta_1\) is a unit modulo \(c\).
+Therefore (9.87) gives
+
+\[
+ \boxed{
+ \sum_{r\bmod c}^{*}
+ \left\{\mu(c)c_c(n+k\delta_1\bar r)
+ -\frac{c_c(n)}{\varphi(c)}\right\}=0.}
+\tag{9.114}
+\]
+
+When \(c=1\), the bracket in (9.113) is identically zero, exactly as it
+must be: the fully resonant stratum has no nonprincipal character.  The
+possible omitted \(h_1=0\) endpoint when \(e=c=1\) belongs to the already
+extracted Poisson zero mode and disappears from (9.113) as well.
+
+Thus there is no third, unrelated ``nonunit nonprincipal character
+gate''.  Every nonprincipal gcd stratum is a dilated centered Ramanujan
+kernel of the same type as (9.88), with the additional exact signs
+\(\mu(d)\mu(e)\mu(k)\) and lattice scale \(e/k\).  The remaining full
+nonprincipal estimate can be stated as the single family
+
+\[
+ \boxed{
+ \sum_{\substack{d,e,c\ {\rm pairwise\ coprime}\\dec\asymp S}}
+ \sum_{r,\delta_1}
+ \mu(r)\,\mathfrak N_{d,e,c}(r,\delta_1)
+ \mathcal W_{d,e,c}(r,\delta_1)
+ \ll_{\varepsilon,W}RS T^\varepsilon.}
+\tag{9.115}
+\]
+
+All original Selberg tapers, \(q\)-coprimalities, dyadic endpoints, and
+coupled archimedean factors remain in \(\mathcal W\).  Equation (9.115)
+is still unproved, but it is strictly more faithful than estimating the
+characters in (9.52) separately and it now covers every nonprincipal gcd
+stratum with one exact centered interface.
+
+### 9.24 Exact recombination and the weakest residual interface
+
+It would still be stronger than the original problem to demand separate
+\(O(RS T^\varepsilon)\) bounds for (9.69) and (9.115).  The subtraction
+in (9.113) is the local principal projection, so cancellation between it
+and the global principal lattice must remain available.  For fixed
+\(d,e,c,r,\delta_1\), define that local projection by
+
+\[
+\boxed{
+ \mathfrak P_{d,e,c}(r,\delta_1)
+ =\mu(d)\mu(e)
+ \sum_{k\mid e}\mu(k)\frac ek
+ \sum_nF((e/k)n)\frac{c_c(n)}{\varphi(c)}.}
+\tag{9.116}
+\]
+
+Here \(F\) retains its full dependence on the fixed outer variables; only
+the displayed arithmetic factor is independent of the inverse residue.
+Adding (9.116) to (9.113) gives the termwise identity
+
+\[
+\boxed{
+ \mathfrak N_{d,e,c}(r,\delta_1)
+ +\mathfrak P_{d,e,c}(r,\delta_1)
+ =\mu(d)\mu(e)\mu(c)
+ \sum_{k\mid e}\mu(k)\frac ek
+ \sum_nF((e/k)n)c_c(n+k\delta_1\bar r).}
+\tag{9.117}
+\]
+
+Thus the centered and principal pieces recombine exactly to the original
+outer-Möbius-weighted phase after the scaled reverse Poisson transform.
+For \(c=1\), (9.113) vanishes and (9.116) is the whole expression, as
+required.  Summing (9.116) over the unique gcd decomposition (9.49), and
+then using (9.66)--(9.68), recovers the lattice part (9.69) together with
+its already controlled zero-mode subtraction.  No boundary term is left
+between the two descriptions.
+
+Let \(\mathfrak P_{\rm top}\) denote only the residual part of (9.69) on
+
+\[
+ HM=S T^{O(\eta)},\qquad \ell>m,
+\tag{9.118}
+\]
+
+and let \(\mathfrak N_{\rm all}\) denote (9.115), restricted to boxes not
+already covered by Sections 8 and 9.14.  All complementary principal
+pieces are \(O(RS T^\varepsilon)\) by (9.63)--(9.73), and the tail is
+already controlled by (6.12).  Consequently the weakest residual
+statement furnished by the exact reductions in this note is the joint
+gate
+
+\[
+\boxed{
+ \left|\mathfrak P_{\rm top}+\mathfrak N_{\rm all}\right|
+ \ll_{\varepsilon,W}RS T^\varepsilon.}
+\tag{9.119}
+\]
+
+Equation (9.119) is strictly weaker than proving (9.69) and (9.115)
+separately, and strictly more explicit than CK\(_{\rm ub}(3)\): every
+summand is given by (9.69), (9.111), and (9.113), while all proved
+complementary pieces have been removed.  It is still unproved.  In
+particular, (9.117) also shows why a formal cancellation of the principal
+subtraction cannot by itself close the problem: using that cancellation
+merely reconstructs the original uncentered coupled kernel.
+
+### 9.25 Divisor duality and self-duality on every gcd stratum
+
+The generalized centered kernel (9.113) admits the same second duality as
+the unit kernel, including the dilation.  Fix one \(k\mid e\), put
+\(E=e/k\), and suppress the common factor
+\(\mu(d)\mu(e)\mu(k)\).  The squarefree divisor formula gives exactly
+
+\[
+\begin{aligned}
+ &E\sum_nF(En)
+ \left\{\mu(c)c_c(n+k\alpha)-\frac{c_c(n)}{\varphi(c)}\right\}\\
+ ={}&E\sum_{j\mid c}j\mu(j)
+       \sum_{n\equiv-k\alpha\ ({\rm mod}\ j)}F(En)\\
+ &-\frac E{\varphi(c)}\sum_{j\mid c}j\mu(c/j)
+       \sum_{n\equiv0\ ({\rm mod}\ j)}F(En).
+\end{aligned}
+\tag{9.120}
+\]
+
+Apply lattice Poisson to \(G(x)=F(Ex)\), for which
+\(\widehat G(\xi)=E^{-1}\widehat F(\xi/E)\).  The outer factor \(E\)
+cancels this Jacobian and yields
+
+\[
+\boxed{
+\begin{aligned}
+ (9.120)={}&\sum_{j\mid c}\mu(j)
+       \sum_{v\in\mathbb Z}e_j(-vk\alpha)
+       \widehat F\left(\frac v{jE}\right)\\
+ &-\frac1{\varphi(c)}\sum_{j\mid c}\mu(c/j)
+       \sum_{v\in\mathbb Z}
+       \widehat F\left(\frac v{jE}\right).
+\end{aligned}}
+\tag{9.121}
+\]
+
+This identity contains an exact cancellation stronger than the ordinary
+zero-frequency cancellation.  For a fixed \(q\in\mathbb Z\), take the
+common physical frequency
+
+\[
+ v=qjE.
+\tag{9.122}
+\]
+
+Its phase is \(e_j(-qjEk\alpha)=e_j(-qje\alpha)=1\), and its two
+coefficients are respectively
+\(\sum_{j\mid c}\mu(j)\) and
+\(\varphi(c)^{-1}\sum_{j\mid c}\mu(c/j)\).  Both vanish for \(c>1\);
+for \(c=1\) the two lines of (9.121) cancel each other.  Hence every
+common frequency (9.122), including \(q=0\), disappears before a
+dyadic \(j\)-localization.  This is the exact nonunit analogue of
+(9.90a).
+
+The remaining Fourier support satisfies
+
+\[
+ 1\leq |v|\ll\frac{jE}{M}T^{O(\eta)},
+ \qquad jE\gg MT^{-O(\eta)}.
+\tag{9.123}
+\]
+
+Now \(\delta=e\delta_1\), so the completed \(\delta_1\)-interval has
+length \(L/e\).  If \(b\) is the signed least residue
+
+\[
+ b\equiv vk\bar r\pmod j,
+\tag{9.124}
+\]
+
+then repeated summation by parts gives
+
+\[
+ |b|\ll\frac{je}{L}T^{O(\eta)},
+ \qquad\boxed{br-kv=zj}.
+\tag{9.125}
+\]
+
+Thus, for \(j\asymp J\), the complete generalized scale ledger is
+
+\[
+\boxed{
+ |v|\ll\frac{Je}{kM},\quad
+ |kv|\ll\widetilde V:=\frac{Je}{M},\quad
+ |b|\ll B_e:=\frac{Je}{L},\quad
+ |z|\ll Z_e:=\frac{Re}{L},\quad
+ |t|\ll\frac Le.}
+\tag{9.126}
+\]
+
+Indeed, for \(g=(b,z)\), the solutions of (9.125) have steps
+\((z/g,b/g)\), so the generic affine interval has length
+\((L/e)g\).  The two convolution products again have the identical
+ambient length
+
+\[
+ X_e=B_eR=Z_eJ=\frac{RJe}{L},
+\tag{9.127}
+\]
+
+and their difference window has length \(\widetilde V=Je/M\).  Therefore
+the general-coefficient Fourier estimate loses exactly \(Je/M\), not an
+unspecified gcd factor.  It unconditionally covers the small corner
+
+\[
+ Je\leq MT^{O(\eta)}.
+\tag{9.128}
+\]
+
+Together with the support condition \(Je/k\gg MT^{-O(\eta)}\), this
+corner forces \(k\leq T^{O(\eta)}\) and both inequalities to be near
+equality.  On the remaining polynomial face, if \(e=T^{\epsilon_e}\),
+the separated central-arc diagnostic becomes
+
+\[
+ \boxed{
+ \beta\leq
+ 1-\frac{\jmath+\epsilon_e-m}{\rho+\jmath}.}
+\tag{9.129}
+\]
+
+At \(e=1\), (9.126)--(9.129) reduce to (9.100), (9.109), and
+(9.110).  Thus every nonprincipal gcd stratum now has the same exact
+self-dual interface.  The polynomial part of (9.129) remains unproved;
+the gain here is that neither the dilation \(e/k\), the shortened
+progression \(L/e\), nor any common Fourier mode remains hidden in
+\(\mathcal W\).
+
+### 9.26 Migration of the Möbius sign to the dilation variable
+
+There is one more exact reindexing which should be made before trying to
+estimate the nonunit family.  In a term of (9.113), set
+
+\[
+ \boxed{
+ E=\frac ek,\qquad \delta'=k\delta_1,\qquad f=kc.}
+\tag{9.130}
+\]
+
+Because \(d,e,c\) are pairwise coprime and squarefree and \(k\mid e\),
+the new factors \(d,E,f\) are pairwise coprime and squarefree.  Moreover
+
+\[
+ \boxed{
+ s=dEf,\qquad \delta=E\delta',\qquad
+ k=(\delta',f),\qquad c=\frac f{(\delta',f)}.}
+\tag{9.131}
+\]
+
+Indeed, \(\delta'=k\delta_1\), \(f=kc\), and
+\((\delta_1,c)=1\), so \((\delta',f)=k\).  Conversely, (9.131)
+recovers
+
+\[
+ e=kE,\qquad \delta_1=\delta'/k,
+\]
+
+and hence (9.130) is a finite bijection, including the endpoint
+\(k=e\).  Most importantly, squarefreeness gives the exact sign
+migration
+
+\[
+ \boxed{\mu(e)\mu(k)=\mu(kE)\mu(k)=\mu(E).}
+\tag{9.132}
+\]
+
+The dilation and the Ramanujan shift simultaneously simplify:
+
+\[
+ \frac ek=E,\qquad k\delta_1=\delta'.
+\tag{9.133}
+\]
+
+Consequently the full nonprincipal family (9.115) can equivalently be
+written, without an absolute value over any of the new factors, in the
+finite shape
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak N_{\rm all}
+ ={}&\sum_{\substack{d,E,f\ {\rm pairwise\ coprime}\\dEf\asymp S}}
+ \mu(d)\mu(E)
+ \sum_{\substack{r\asymp R,\ \delta'\\E\delta'\asymp L}}
+ \mu(r)\,\mathcal W_{d,E,f}(r,\delta')\,E
+ \sum_nF_{r,dEf,E\delta'}(En)\\
+ &\quad\times
+ \left\{
+  \mu(c)c_c(n+\delta'\bar r)
+  -\frac{c_c(n)}{\varphi(c)}
+ \right\},
+ \qquad
+ c=\frac f{(\delta',f)}.
+\end{aligned}}
+\tag{9.134}
+\]
+
+The bracket vanishes when \(c=1\), so the fully resonant endpoint is
+still excluded automatically.  Every Selberg taper, exact gcd condition,
+\(q\)-coprimality, dyadic boundary, and dependence on \(f\) remains in
+\(\mathcal W_{d,E,f}\).
+
+Formula (9.134) changes the analytic interpretation of the nonunit
+problem.  The divisor \(k\) must not be paid for termwise: its Möbius
+sign has become a genuine sign \(\mu(E)\) on the dilation, while
+\(k=(\delta',f)\) is recovered arithmetically.  After applying
+(9.120)--(9.121), the nonunit polynomial family therefore carries at
+least the long signs
+
+\[
+ \mu(r)\mu(E)\mu(j),
+\tag{9.135}
+\]
+
+in addition to the gcd sign \(\mu(d)\).  The unit endpoint \(E=d=1\)
+still has only \(\mu(r)\mu(j)\), so (9.135) does not by itself close the
+balanced unit obstruction.  It does, however, rule out any future proof
+which treats the \(k\mid e\) sum as a divisor-bounded absolute
+coefficient: that would discard an exact Möbius average which is present
+on every nonunit dilation.
+
+## 10. What has and has not been proved
+
+**Current classification: published/elementary coverage complete; Region D remains
+unproved.**
 
 Proved in this note:
 
@@ -1490,6 +4012,68 @@ Proved in this note:
   \(\mathrm{CK}_{1/1000}+\mathrm{TAIL}_{B,D}
   \Rightarrow\mathcal R_{T^3,T}=o_W(T)\),
   (6.7)--(6.9).
+* the power-enlarged upper-bound tail estimate (6.12) and the weakest
+  sufficient implication
+  \(\mathrm{CK}_{\rm ub}(3)\Rightarrow
+  \mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}\), (6.13);
+* the exact Region A--C coverage classification, (8.1)--(8.9).
+* the finite Möbius identity (9.3)--(9.5), its exact substitution (9.7),
+  and the five-term proof that termwise fixed-factor summation does not
+  cover the residual boxes, (9.8)--(9.12).
+* the exact applicability audit of Pascadi Theorem 7.8 and its remaining
+  balanced exponent gap, (9.14)--(9.21).
+* the exact Milićević--Qin--Wu applicability obstruction and the
+  reverse-Poisson identity, (9.22)--(9.26).
+* the direct Möbius--inverse-phase audit, including its balanced
+  \(T^{5-o(1)}\) residual gap, (9.27)--(9.30).
+* the boundary-safe elementary Farey large-sieve estimate and its exact
+  \(A^{1/2}\) loss, (9.31)--(9.36).
+* the two-sided finite Möbius decomposition, its CRT phase, and the exact
+  dispersion interface, (9.37)--(9.42).
+* the direct specialization of Pascadi's spectral-dispersion corollary
+  and its \(T^{11/2}\) balanced gap, (9.43)--(9.46).
+* the direct fourfold scale comparison, exact gcd--character phase
+  stratification, and the standard character-large-sieve obstruction,
+  including the dual lowest-mode zero-free barrier, (9.47)--(9.55).
+* the exact primitive-conductor Gauss factor, cancellation of the cofactor
+  Möbius sign, and the principal-character \(1/3\) obstruction diagnostic,
+  (9.56)--(9.60).
+* the coprime reverse-Poisson identity and the unconditional global bound
+  for the unit principal spectrum, (9.61)--(9.64).
+* the full Ramanujan projection, its exact zero-mode recombination, and
+  the residual top-face long--short principal Type-II form,
+  (9.65)--(9.74).
+* the exact reverse completion of the unit spectrum, its highest-divisor
+  affine parametrization, and the normalized binary Möbius correlation
+  diagnostic, (9.75)--(9.82).
+* the exact applicability map for averaged Chowla and its remaining
+  polynomial-slope obstruction, (9.83)--(9.86).
+* the centered Ramanujan mean-zero identity, exact divisor--dual
+  cancellation of all common integral dual frequencies, and its confined
+  cofactor support, (9.87)--(9.92).
+* the delta-completion window and exact self-dual affine
+  parametrization, (9.93)--(9.99).
+* the one-dimensional post-centering scale ledger and the resulting
+  no-coverage certificates for completion, averaged Chowla, and direct
+  spectral dispersion, (9.100)--(9.102).
+* the exact remapping of Wright's unbalanced-convolution corollary and
+  its negative modulus margins on the full balanced \(J\)-interval,
+  (9.103)--(9.105).
+* the exact convolution/Fourier-energy form, its general-coefficient
+  \(V\)-loss, the unconditional \(J/M=T^{O(\eta)}\) boundary coverage,
+  and the separated central-arc Mertens thresholds, (9.106)--(9.110).
+* the global reverse completion of every nonprincipal gcd stratum into
+  one dilated centered Ramanujan family, including all \(k\mid e\)
+  boundary terms, (9.111)--(9.115).
+* the exact recombination of the centered and principal spectra and the
+  weakest remaining joint gate after all proved complements are removed,
+  (9.116)--(9.119).
+* the generalized divisor-dual identity, cancellation of every common
+  dilated frequency, and the exact self-dual scale ledger on all gcd
+  strata, (9.120)--(9.129).
+* the finite sign-migration bijection which moves
+  \(\mu(e)\mu(k)\) to \(\mu(E)\) and exposes the three-Möbius nonunit
+  family, (9.130)--(9.135).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -1498,32 +4082,70 @@ Proved in this note:
 | Poisson zero/nonzero-mode decomposition | verified after correction | (4.1)--(4.8); the omitted sine quotient is restored in (4.5i)--(4.6c), and the complete correction bound is (4.7c.0)--(4.7c) |
 | Effective ranges and coupled-kernel normalization | verified | (5.1)--(5.15), including both nonstationary cutoffs and the exact kernel scale |
 | Comparison of the three candidate gates | verified logical reduction | (6.0)--(6.8); only \({\rm(US)}\Rightarrow{\rm(IS)}\Rightarrow{\rm(CK)}\) is proved |
-| Coupled-kernel estimate \(\operatorname{MWKF}_{\rm ck}(3)\) | **unproved** | stated, not derived, in (6.9) |
-| Global remainder bound | **conditional** | the complete implication from the unproved gate is (6.10)--(6.13), with \(\mathcal C_{T^3,W}(T)\) added separately |
+| Upper-bound tail outside the power-enlarged core | verified | (6.10)--(6.12), by fixed-order integration by parts depending on \(\varepsilon\) |
+| Published/elementary Region A--C coverage | verified | exact inequalities and hypothesis ledger in Section 8 |
+| Finite Möbius Type-I/II decomposition | verified | exact convolution identity and retained coupled sum in (9.1)--(9.7) |
+| Termwise Wright route after \(s=un\) | verified insufficient | five exact savings (9.10); balanced gap (9.12) |
+| Fixed-modulus Pascadi route | verified insufficient | best full-residue saving \(s^{33/191-o(1)}\); balanced gap (9.21) |
+| Milićević--Qin--Wu route | verified inapplicable to the full Fourier box | top box violates \(MN\leq s^{5/4}\); (9.22)--(9.25) |
+| Reverse Poisson | verified exact but tautological | returns the shifted-divisor congruence and zero-mode subtraction, (9.26) |
+| One-variable Möbius inverse-phase route | verified insufficient | arbitrary composite moduli give only logarithmic saving; balanced power gap \(T^{5-o(1)}\), (9.27)--(9.30) |
+| Elementary Farey large sieve | verified insufficient | uniform bound \(RS A^{1/2}T^\varepsilon\); balanced gap \(T^{5/2+\varepsilon}\), (9.31)--(9.36) |
+| Two-sided Möbius decomposition | verified finite identity | both short Möbius averages and \(h\delta\) retained, (9.37)--(9.39) |
+| Möbius dispersion estimate | **unproved** | sufficient mean-square gate (9.40); present pointwise gap (9.41) |
+| Pascadi 2024 spectral dispersion | verified insufficient | direct scale \((RS)^{3/2}A^{1/2}\); balanced gap \(T^{11/2}\), (9.43)--(9.46) |
+| Gcd--character stratification | verified finite identity; termwise routes insufficient | direct margin and exact separation (9.47)--(9.52); large-sieve gap \(T^{5/2}\), (9.53); dual \(2/3\) barrier, (9.54)--(9.55) |
+| Primitive-conductor decomposition | verified finite algebra; standard character moments insufficient | cofactor Möbius sign cancels, (9.56)--(9.58); separate principal term demands the impossible uniform \(1/3\) Mertens scale, (9.59)--(9.60) |
+| Unit principal spectrum | proved globally, not boxwise in \(H\) | coprime reverse Poisson gives \(RLM T^\varepsilon\leq RS T^\varepsilon\), (9.61)--(9.64) |
+| Nonunit principal spectrum | exact reduction; residual Type II unproved | zero frequency returns to the LCM mode; residual lies on \(HM\asymp S\), has \(wc\asymp M\), signs \(\mu(r)\mu(u)\mu(w)\), and balanced loss \(T^2\), (9.65)--(9.74) |
+| Unit nonprincipal spectrum | exact reverse completion; centered gate unproved | (9.75) gives the full Ramanujan-weighted lattice sum; its highest-divisor component is the affine binary Möbius correlation (9.79), with balanced normalized gap \(T^{5/2}\), (9.80)--(9.82) |
+| Averaged Chowla on the affine family | verified applicable but insufficient | residue-class map (9.84); the published \(A_0^2\) loss is \(T\) at generic balanced slopes and the remaining cancellation is only logarithmic, (9.85)--(9.86) |
+| Centered unit divisor--dual form | exact identity; two-Möbius estimate unproved | mean-zero kernel (9.88); all common modes \(v=qj\) cancel in (9.90a), leaving \(j\gtrsim M\), and delta completion further forces \(j\gtrsim L\) |
+| Delta completion of the centered form | exact reduction; self-dual correlation unproved | only \(|b|\lesssim J/L\) survives, but \(br-v=zj\) parametrizes another \(\mu(r)\mu(j)\) affine family of length \(L\); balanced scales are (9.99) |
+| Post-centering published coverage | verified absent on the balanced \(J\)-range | exact scale ledger (9.100); termwise completion loses \(T^{2}\) to \(T^{5/2}\), averaged Chowla has slope loss \(T\), and direct spectral dispersion loses at least \(T^5\) |
+| Wright unbalanced-convolution corollary after centering | verified inapplicable | exact product/modulus map (9.103); both published modulus margins are negative throughout \(5/2\leq\jmath\leq3\), (9.104)--(9.105) |
+| Centered Fourier-energy route | low-divisor face proved; remaining flatness unproved | Parseval loses exactly \(V=J/M\), so \(J/M=T^{O(\eta)}\) is covered by (9.109a); on the remaining polynomial face a separated central-arc estimate needs common Mertens exponent from \(7/11\) down to \(7/12\), (9.110) |
+| All nonprincipal gcd strata | exact unified reduction; centered estimate unproved | scaled reverse Poisson (9.111) and mean-zero kernel (9.113)--(9.114); the complete residual family is (9.115), with no characterwise triangle inequality |
+| Recombined residual spectrum | exact identity; joint estimate unproved | principal plus centered kernels recombine termwise in (9.117); the weakest post-reduction gate is the joint sum (9.119), not separate bounds for (9.69) and (9.115) |
+| Generalized centered divisor duality | exact reduction; polynomial window unproved | all common \(v=qj(e/k)\) modes cancel in (9.121)--(9.122); the remaining equation is \(br-kv=zj\), with scales (9.126), Parseval loss \(Je/M\), and unconditional corner (9.128) |
+| Nonunit Möbius sign migration | exact finite bijection; estimate unproved | \(E=e/k,\delta'=k\delta_1,f=kc\) gives \(k=(\delta',f)\) and \(\mu(e)\mu(k)=\mu(E)\), (9.130)--(9.134); after divisor duality the nonunit family retains \(\mu(r)\mu(E)\mu(j)\) |
+| Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
+| Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
+| Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
 
-* CK\(_{1/1000}\), the accepted coupled-kernel gate;
-* TAIL\(_{B,D}\), the Möbius-sensitive aggregation outside the
-  polylogarithmic core;
-* complete coverage of its parameter polytope by published estimates;
-* the residual Möbius Type I/II estimate;
-* the unconditional \(T^3\) long-mollifier asymptotic.
+* CK\(_{\rm ub}(3)\), the accepted weakest upper-bound gate;
+* the averaged Möbius Type-II estimate (9.13);
+* the unconditional \(T^3\) long-mollifier upper bound;
+* separately, CK\(_{1/1000}\) and TAIL\(_{B,D}\) for an asymptotic.
 
-Thus Phase 1 verifies the infinite exact decomposition but remains blocked
-at the finite polylogarithmic reduction demanded for the final theorem.
-Treating either CK\(_{1/1000}\) or TAIL\(_{B,D}\) as an already available
-consequence of BCR would be incorrect.
+Thus the tail obstruction in the polylogarithmic asymptotic setup is not an
+obstruction to the stated \(O(T^{1+\varepsilon})\) goal. That goal remains
+blocked only at the residual coupled Region-D estimate. Treating this
+estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 
-## 9. Primary references
+## 11. Primary references
 
 * S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of
   the Riemann zeta function with Dirichlet polynomials*, arXiv:1411.7764,
   especially Proposition 1 and Sections 3.1--3.4.
 * S. Bettin, V. Chandee, *Trilinear forms with Kloosterman fractions*,
-  arXiv:1502.00769, Theorem 1, as a Region-A input for the next coverage
-  slice; no claim of full-polytope coverage is made here.
-* T. Wright, *A note on trilinear forms with partially fixed denominator*,
-  arXiv:2604.25177v2, as a future fixed-factor Region-C input; its hypotheses
-  have not yet been mapped over the whole polytope.
+  arXiv:1502.00769, Theorem 1 and equation (7.2), used in Section 8.1.
+* T. Wright, *Trilinear Kloosterman fractions I: partially fixed moduli and
+  unbalanced convolutions*, arXiv:2604.25177v2, Theorem 2.1, audited but not
+  used for a new box in Section 8.3.
+* A. Pascadi, *Non-Abelian Amplification and Bilinear Forms with
+  Kloosterman Sums*, Geom. Funct. Anal. (online 21 August 2026),
+  DOI 10.1007/s00039-026-00746-0, especially Theorem 7.8; audited in
+  Section 9.5.
+* A. Pascadi, *Large sieve inequalities for exceptional Maass forms and
+  the greatest prime factor of \(n^2+1\)*, arXiv:2404.04239,
+  Corollary 18; specialized in Section 9.11.
+* D. Milićević, X. Qin, X. Wu, *Bilinear forms with Kloosterman sums and
+  moments of twisted L-functions*, arXiv:2511.07550, Theorem 1.1; audited
+  in Section 9.6.
+* M. A. Korolev, *On Kloosterman sums with multiplicative coefficients*,
+  Izv. Math. 82:4 (2018), 647--661, DOI 10.1070/IM8633, Theorems 1 and 5;
+  audited in Section 9.8.
 * arXiv:2601.00292 is **withdrawn from this project's admissible analytic
   inputs**: the author record reports a missing \(L^2\) factor (changing the
   relevant loss from \(L^5\) to \(L^7\)), so the advertised improvement is
@@ -1531,7 +4153,15 @@ consequence of BCR would be incorrect.
 * M. Radziwiłł, *Limitations to mollifying \(\zeta(s)\)*,
   arXiv:1207.6583, for Farmer's all-\(\theta\) long-mollifier conjecture and
   the nontrivial role of the off-diagonal.
+* S. Bettin, S. M. Gonek, *The \(\theta=\infty\) conjecture implies the
+  Riemann hypothesis*, arXiv:1604.02740, Theorems 1 and 2; used in
+  Section 9.12 only to classify the strength of polynomial-length
+  mollified upper bounds, not as an estimate for the present remainder.
 * K. Pratt, N. Robles, *Perturbed moments and a longer mollifier for
   critical zeros of \(\zeta\)*, arXiv:1706.04593, for later exploitation of
   Möbius/convolution structure up to lengths below \(T^{4/7}\) or
   \(T^{6/11}\), still far from \(T^3\).
+* K. Matomäki, M. Radziwiłł, T. Tao, *An averaged form of Chowla's
+  conjecture*, Algebra Number Theory 9 (2015), 2167--2196,
+  arXiv:1503.05121v3, Theorem 1.6 and Remark 5.2; mapped exactly to the
+  affine family in Section 9.17.
