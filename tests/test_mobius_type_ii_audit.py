@@ -3,8 +3,11 @@ from fractions import Fraction as F
 from math import gcd
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
+import scripts.audit_mobius_type_ii as audit
 from scripts.audit_mobius_type_ii import (
     AdditiveDualBlockLedger,
     AdditiveShiftedChowlaLedger,
@@ -22,13 +25,16 @@ from scripts.audit_mobius_type_ii import (
     CompletedProductPhaseReduction,
     CrossInverseFractionCollision,
     FareyCentralCollisionLedger,
+    HighReducedDenominatorLedger,
     InverseFractionSeparation,
     KloostermanFractionTripleLedger,
     MobiusCharacterMeanSquareLedger,
     MQWBlockSavings,
+    MultipleMobiusAdditiveLedger,
     NearDeterminantBCLedger,
     NearDeterminantCoordinates,
     NearDeterminantDualCoordinates,
+    NonzeroReducedDenominatorLedger,
     PartiallyFixedModulusLedger,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
@@ -44,6 +50,7 @@ from scripts.audit_mobius_type_ii import (
     TransitionNumeratorDualCoordinates,
     TwoCutoffCenteredSplit,
     TwoCutoffProductCoefficient,
+    VinogradovDenominatorCoverageLedger,
     WrightFactorSavings,
     YoungCommonFactorLedger,
     YoungDualGcdLedger,
@@ -124,6 +131,7 @@ from scripts.audit_mobius_type_ii import (
     farey_near_collision_divisor_bound,
     generalized_centered_dual_scales,
     global_unit_principal_completion_margin,
+    high_reduced_denominator_ledger,
     induced_gauss_outer_mobius_sign,
     inverse_fraction_separation,
     inverse_lift_mobius_weight,
@@ -136,6 +144,8 @@ from scripts.audit_mobius_type_ii import (
     mobius_geometric_value,
     mobius_principal_density_value,
     mobius_two_cutoff_centered_divisor_split,
+    mobius_two_cutoff_density_complement_ramanujan_coefficients,
+    mobius_two_cutoff_density_complement_ramanujan_value,
     mobius_two_cutoff_density_period_average,
     mobius_two_cutoff_hyperbola_value,
     mobius_two_cutoff_product_coefficient,
@@ -146,6 +156,7 @@ from scripts.audit_mobius_type_ii import (
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
+    multiple_mobius_additive_ledger,
     near_determinant_bettin_chandee_ledger,
     near_determinant_complete_delta_product_formula,
     near_determinant_complete_delta_product_sum,
@@ -160,6 +171,7 @@ from scripts.audit_mobius_type_ii import (
     nonunit_principal_is_residual_face,
     nonunit_principal_long_factor_floor,
     nonunit_principal_trivial_loss,
+    nonzero_reduced_denominator_ledger,
     partially_fixed_modulus_ledger,
     pascadi_2024_direct_dispersion_gap,
     pascadi_averaged_moduli_margins,
@@ -205,6 +217,7 @@ from scripts.audit_mobius_type_ii import (
     two_sided_mobius_geometric_value,
     unrestricted_fourier_lift,
     unrestricted_fourier_lift_formula,
+    vinogradov_denominator_coverage_ledger,
     weighted_farey_collision_sum,
     weighted_inverse_collision_sum,
     weighted_inverse_product_box_sum,
@@ -625,6 +638,361 @@ def test_central_major_arc_needs_a_fixed_mertens_power() -> None:
         quotient_relative_saving=F(0),
         shifted_relative_saving=F(1, 6),
     ).gap == 0
+
+
+def test_vinogradov_rational_coverage_only_touches_the_shift_arc_endpoint() -> None:
+    direct_shift = vinogradov_denominator_coverage_ledger(
+        polynomial_length=F(3),
+        required_relative_saving=F(1, 6),
+        actual_denominator_floor=F(2),
+        actual_denominator_ceiling=F(3),
+    )
+    assert direct_shift == VinogradovDenominatorCoverageLedger(
+        polynomial_length=F(3),
+        required_relative_saving=F(1, 6),
+        type_i_bound=F(12, 5),
+        target_bound=F(5, 2),
+        theorem_denominator_floor=F(1),
+        theorem_denominator_ceiling=F(2),
+        actual_denominator_floor=F(2),
+        actual_denominator_ceiling=F(3),
+        overlap_floor=F(2),
+        overlap_ceiling=F(2),
+        has_positive_width_overlap=False,
+    )
+
+    # After fixing g=T^(1/2), the q-polynomial has length T^(5/2),
+    # frequency alpha*g, and reciprocal-denominator range
+    # T^(3/2)..T^(5/2).  Saving the missing T^(1/2) from q alone
+    # requires relative exponent 1/5, again leaving only one endpoint.
+    quotient_factor = vinogradov_denominator_coverage_ledger(
+        polynomial_length=F(5, 2),
+        required_relative_saving=F(1, 5),
+        actual_denominator_floor=F(3, 2),
+        actual_denominator_ceiling=F(5, 2),
+    )
+    assert quotient_factor.overlap_floor == F(3, 2)
+    assert quotient_factor.overlap_ceiling == F(3, 2)
+    assert not quotient_factor.has_positive_width_overlap
+
+
+def test_vinogradov_type_i_floor_forbids_more_than_one_fifth_saving() -> None:
+    too_much = vinogradov_denominator_coverage_ledger(
+        polynomial_length=F(1),
+        required_relative_saving=F(1, 4),
+        actual_denominator_floor=F(0),
+        actual_denominator_ceiling=F(1),
+    )
+    assert too_much.type_i_bound == F(4, 5)
+    assert too_much.target_bound == F(3, 4)
+    assert not too_much.has_positive_width_overlap
+
+
+def test_density_plus_complement_has_an_exact_finite_ramanujan_expansion() -> None:
+    for density_cutoff in range(1, 10):
+        cutoff = int(density_cutoff**0.5)
+        if cutoff * cutoff > density_cutoff:
+            cutoff -= 1
+        max_argument = 3 * density_cutoff + 7
+        coefficients = (
+            mobius_two_cutoff_density_complement_ramanujan_coefficients(
+                max_argument=max_argument,
+                density_cutoff=density_cutoff,
+                cutoff_left=cutoff,
+                cutoff_right=cutoff,
+            )
+        )
+        assert len(coefficients) == max_argument + 1
+        for n in range(1, max_argument + 1):
+            assert (
+                mobius_two_cutoff_density_complement_ramanujan_value(
+                    n,
+                    max_argument=max_argument,
+                    density_cutoff=density_cutoff,
+                    cutoff_left=cutoff,
+                    cutoff_right=cutoff,
+                )
+                == coefficients[1]
+                + sum(
+                    coefficients[modulus] * ramanujan_sum(modulus, n)
+                    for modulus in range(2, max_argument + 1)
+                )
+            )
+
+
+def test_all_nonzero_reduced_denominators_through_d_close_after_decay() -> None:
+    endpoint = nonzero_reduced_denominator_ledger(
+        outer_length=F(3),
+        shift_length=F(2),
+        denominator_length=F(2),
+        fourier_decay_order=1,
+        target=F(9, 2),
+    )
+    assert endpoint == NonzeroReducedDenominatorLedger(
+        coefficient_weight=F(-2),
+        outer_energy=F(3),
+        shift_energy=F(2),
+        outer_large_sieve_constant=F(4),
+        shift_large_sieve_constant=F(4),
+        fourier_decay=F(0),
+        bound=F(9, 2),
+        target=F(9, 2),
+        margin=F(0),
+    )
+    for denominator_quarters in range(1, 9):
+        ledger = nonzero_reduced_denominator_ledger(
+            outer_length=F(3),
+            shift_length=F(2),
+            denominator_length=F(denominator_quarters, 4),
+            fourier_decay_order=1,
+            target=F(9, 2),
+        )
+        assert ledger.bound <= ledger.target
+
+
+def test_high_denominator_ambient_top_face_has_fixed_product() -> None:
+    assert high_reduced_denominator_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        reduced_denominator=F(5, 2),
+    ) == HighReducedDenominatorLedger(
+        reduced_denominator=F(5, 2),
+        reduced_numerator=F(1, 2),
+        complementary_cofactor=F(1, 2),
+        lifted_numerator=F(1),
+    )
+    for denominator_quarters in range(8, 13):
+        ledger = high_reduced_denominator_ledger(
+            ambient_length=F(3),
+            shift_length=F(2),
+            reduced_denominator=F(denominator_quarters, 4),
+        )
+        assert ledger.reduced_numerator + ledger.complementary_cofactor == F(1)
+        assert ledger.lifted_numerator == F(1)
+
+
+def test_high_edge_polytope_tracks_the_complementary_quotient() -> None:
+    midpoint = audit.high_edge_polytope_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        complementary_quotient=F(1, 2),
+        reduced_denominator=F(9, 4),
+        target=F(9, 2),
+    )
+    assert midpoint.product_length == F(5, 2)
+    assert midpoint.ramanujan_cofactor == F(1, 4)
+    assert midpoint.reduced_numerator == F(1, 4)
+    assert midpoint.full_modulus_numerator == F(1, 2)
+    assert midpoint.large_sieve_bound == F(19, 4)
+    assert midpoint.large_sieve_gap == F(1, 4)
+    assert midpoint.square_root_hybrid_saving == F(1, 4)
+    assert midpoint.square_root_hybrid_margin == F(0)
+
+    upper_wing = audit.high_edge_polytope_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        complementary_quotient=F(1, 2),
+        reduced_denominator=F(5, 2),
+        target=F(9, 2),
+    )
+    assert upper_wing.ramanujan_cofactor == F(0)
+    assert upper_wing.reduced_numerator == F(1, 2)
+    assert upper_wing.square_root_hybrid_margin == F(-1, 4)
+
+
+def test_reduced_high_modes_regroup_into_unique_full_modulus_frequencies() -> None:
+    lifts = audit.high_reduced_frequency_lifts(
+        modulus=12,
+        denominator_cutoff=3,
+    )
+    assert tuple(lift.full_numerator for lift in lifts) == (
+        1,
+        2,
+        3,
+        5,
+        7,
+        9,
+        10,
+        11,
+    )
+    for lift in lifts:
+        assert lift.reduced_denominator * lift.cofactor == 12
+        assert lift.primitive_numerator * lift.cofactor == lift.full_numerator
+        assert gcd(lift.primitive_numerator, lift.reduced_denominator) == 1
+        assert 12 // gcd(lift.full_numerator, 12) > 3
+
+    for modulus in range(2, 31):
+        for cutoff in range(1, modulus + 1):
+            lifted = audit.high_reduced_frequency_lifts(
+                modulus=modulus,
+                denominator_cutoff=cutoff,
+            )
+            actual = tuple(item.full_numerator for item in lifted)
+            expected = tuple(
+                numerator
+                for numerator in range(1, modulus)
+                if modulus // gcd(numerator, modulus) > cutoff
+            )
+            assert actual == expected
+            assert len(actual) == len(set(actual))
+
+
+def test_published_one_factor_proxies_do_not_cover_the_high_edge() -> None:
+    convolution = audit.mobius_convolution_rational_proxy_ledger(
+        product_length=F(5, 2),
+        denominator_length=F(9, 4),
+        required_saving=F(1, 4),
+    )
+    assert convolution.denominator_term_saving == F(9, 16)
+    assert convolution.interior_term_saving == F(5, 14)
+    assert convolution.upper_denominator_term_saving == F(1, 16)
+    assert convolution.available_saving == F(1, 16)
+    assert convolution.margin == F(-3, 16)
+    assert not convolution.structurally_applicable
+
+    monomial = audit.reciprocal_monomial_coverage_ledger(
+        full_modulus_numerator=F(1, 2),
+        phase_variation=F(1),
+    )
+    assert monomial.required_saving == F(1)
+    assert monomial.published_saving_cap == F(1, 2)
+    assert monomial.margin == F(-1, 2)
+    assert not monomial.covered
+
+
+def test_dual_product_type_ii_tracks_circle_width_and_k_gcd() -> None:
+    outer_coprime = audit.coupled_product_circle_ledger(
+        complementary_left=F(1),
+        complementary_right=F(2),
+        quotient_length=F(0),
+        circle_denominator=F(2),
+        quotient_gcd=F(0),
+        target=F(9, 2),
+    )
+    assert outer_coprime.complementary_product == F(3)
+    assert outer_coprime.complementary_type_ii_constant == F(2)
+    assert outer_coprime.shifted_type_ii_constant == F(5, 2)
+    assert outer_coprime.circle_kernel_mass == F(0)
+    assert outer_coprime.pointwise_bound == F(21, 4)
+    assert outer_coprime.cauchy_bound == F(5)
+    assert outer_coprime.best_bound == F(5)
+    assert outer_coprime.margin == F(-1, 2)
+    assert not outer_coprime.covered
+
+    gcd_boundary = audit.coupled_product_circle_ledger(
+        complementary_left=F(1),
+        complementary_right=F(3, 2),
+        quotient_length=F(1, 2),
+        circle_denominator=F(5, 2),
+        quotient_gcd=F(1, 2),
+        target=F(9, 2),
+    )
+    assert gcd_boundary.complementary_product == F(5, 2)
+    assert gcd_boundary.complementary_type_ii_constant == F(2)
+    assert gcd_boundary.shifted_type_ii_constant == F(5, 2)
+    assert gcd_boundary.circle_kernel_mass == F(-1, 2)
+    assert gcd_boundary.pointwise_bound == F(9, 2)
+    assert gcd_boundary.cauchy_bound == F(19, 4)
+    assert gcd_boundary.best_bound == F(9, 2)
+    assert gcd_boundary.margin == F(0)
+    assert gcd_boundary.covered
+
+    high_gcd = audit.coupled_product_circle_ledger(
+        complementary_left=F(1),
+        complementary_right=F(1),
+        quotient_length=F(1),
+        circle_denominator=F(5, 2),
+        quotient_gcd=F(1),
+        target=F(9, 2),
+    )
+    assert high_gcd.best_bound == F(4)
+    assert high_gcd.margin == F(1, 2)
+    assert high_gcd.covered
+
+    for quotient_quarters in range(5):
+        quotient = F(quotient_quarters, 4)
+        for left_quarters in range(4, 9 - quotient_quarters):
+            left = F(left_quarters, 4)
+            right = F(3) - quotient - left
+            if right < 1:
+                continue
+            for denominator_quarters in range(8, 13):
+                coprime = audit.coupled_product_circle_ledger(
+                    complementary_left=left,
+                    complementary_right=right,
+                    quotient_length=quotient,
+                    circle_denominator=F(denominator_quarters, 4),
+                    quotient_gcd=F(0),
+                    target=F(9, 2),
+                )
+                assert coprime.best_bound == F(5)
+                assert coprime.margin == F(-1, 2)
+                assert not coprime.covered
+
+
+def test_shifted_divisor_proxies_separate_exponents_from_hypotheses() -> None:
+    ledger = audit.shifted_divisor_proxy_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        exceptional_exponent=F(7, 64),
+        target=F(9, 2),
+    )
+    assert ledger.fixed_shift_error == F(167, 64)
+    assert ledger.summed_fixed_shift_error == F(295, 64)
+    assert ledger.summed_fixed_shift_margin == F(-7, 64)
+    assert ledger.selberg_endpoint == F(9, 2)
+    assert ledger.averaged_shift_square_error == F(4)
+    assert ledger.averaged_shift_moment_error == F(17, 4)
+    assert ledger.averaged_shift_error == F(17, 4)
+    assert ledger.averaged_shift_margin == F(1, 4)
+    assert ledger.raw_zero_mode == F(5)
+    assert ledger.zero_mode_required_saving == F(1, 2)
+    assert not ledger.standard_divisor_coefficients
+    assert not ledger.zero_mode_algebraically_vanishing
+    assert not ledger.covered
+
+
+def test_three_by_two_product_packet_is_exact_shifted_convolution() -> None:
+    direct, correlation = audit.shifted_product_packet_sides(
+        b_weights=((1, 1), (2, -1)),
+        c_weights=((1, 1),),
+        k_weights=((1, 1), (3, 2)),
+        g_weights=((1, 1),),
+        q_weights=((1, 1), (2, -1)),
+        shift_weights=((-1, 4), (0, 5), (1, 6), (2, 7), (5, 8)),
+    )
+    assert direct == -14
+    assert correlation == -14
+
+
+def test_three_by_two_zero_mode_factors_without_algebraic_vanishing() -> None:
+    direct, factored = audit.shifted_product_zero_mode_sides(
+        b_weights=((1, 2), (2, -3)),
+        c_weights=((1, 4),),
+        k_weights=((1, -2),),
+        g_weights=((1, 3),),
+        q_weights=((1, 5),),
+        shift_weights=((0, -7),),
+    )
+    assert direct == -840
+    assert factored == -840
+
+
+def test_multiple_mobius_additive_theorem_stays_at_t6_after_k_sum() -> None:
+    for quotient_quarters in range(5):
+        ledger = multiple_mobius_additive_ledger(
+            ambient_length=F(3),
+            shift_length=F(2),
+            complementary_quotient=F(quotient_quarters, 4),
+            target=F(9, 2),
+        )
+        assert ledger == MultipleMobiusAdditiveLedger(
+            product_length=F(3) - F(quotient_quarters, 4),
+            fixed_quotient_bound=F(6) - F(quotient_quarters, 4),
+            summed_bound=F(6),
+            target=F(9, 2),
+            gap=F(3, 2),
+        )
 
 
 def test_postcompletion_cutoff_can_reach_three_quarter_per_divisor() -> None:
@@ -1913,6 +2281,158 @@ def test_additive_completion_matches_direct_evaluation_numerically() -> None:
                     assert abs(direct - completed) < 1e-9
 
 
+def test_additive_completion_accepts_arbitrary_signed_finite_weights() -> None:
+    h_weights = {-2: 1 + 2j, 1: -0.5j, 3: 2 - 0.25j}
+    delta_weights = {-3: 0.75, -1: 1j, 2: -1 + 0.5j}
+    for modulus in range(2, 12):
+        for r in range(1, 2 * modulus):
+            if gcd(r, modulus) != 1:
+                continue
+            direct, completed = audit.weighted_additive_product_completion_sides(
+                r, modulus, h_weights, delta_weights
+            )
+            assert abs(direct - completed) < 1e-9
+
+
+def test_reciprocity_then_short_modulus_completion_is_exact() -> None:
+    weights = {
+        (-2, -1): 1 + 0.25j,
+        (-1, 3): -0.5j,
+        (2, -3): 0.75 - 1j,
+        (4, 2): -2 + 0.5j,
+    }
+    for modulus in range(3, 13):
+        for shift in range(2, modulus):
+            if gcd(shift, modulus) != 1:
+                continue
+            direct, completed = audit.shift_modulus_completion_sides(
+                modulus, shift, weights
+            )
+            assert abs(direct - completed) < 1e-9
+
+
+def test_fejer_shift_correlation_is_exact_sliding_interval_energy() -> None:
+    coefficients = (1 + 2j, -0.5j, 3 - 0.25j, -2, 0.75 + 1j)
+    for window in range(1, 9):
+        correlation, sliding_energy = audit.sliding_interval_energy_sides(
+            coefficients, window
+        )
+        assert abs(correlation - sliding_energy) < 1e-9
+
+
+def test_short_modulus_zero_frequency_is_the_equal_zeta_index_slice() -> None:
+    for r in range(1, 15):
+        for s in range(1, 15):
+            for m_one in range(1, 8):
+                for m_two in range(1, 8):
+                    left, right = audit.equal_zeta_index_shift_sides(
+                        r, s, m_one, m_two
+                    )
+                    assert left == right
+                    shift = r - s
+                    delta = m_one * s - m_two * r
+                    assert (delta == -shift * m_two) == (m_one == m_two)
+
+
+def test_balanced_short_shift_support_forces_equal_zeta_indices() -> None:
+    s_lower = 20
+    m_upper = 3
+    shift_upper = 2
+    delta_upper = 3
+    assert s_lower > delta_upper + m_upper * shift_upper
+
+    witnessed = 0
+    for s in range(s_lower, s_lower + 6):
+        for m_one in range(1, m_upper + 1):
+            for m_two in range(1, m_upper + 1):
+                for shift in range(-shift_upper, shift_upper + 1):
+                    if s + shift < 1:
+                        continue
+                    delta = m_one * s - m_two * (s + shift)
+                    if abs(delta) > delta_upper:
+                        continue
+                    actual_delta, equal_indices, forced_shift = (
+                        audit.balanced_short_shift_forces_equal_zeta_index(
+                            m_one=m_one,
+                            m_two=m_two,
+                            s=s,
+                            shift=shift,
+                            s_lower=s_lower,
+                            m_upper=m_upper,
+                            shift_upper=shift_upper,
+                            delta_upper=delta_upper,
+                        )
+                    )
+                    assert actual_delta == delta
+                    assert equal_indices
+                    assert forced_shift
+                    witnessed += 1
+    assert witnessed > 0
+
+    with pytest.raises(ValueError, match="integer-gap hypothesis"):
+        audit.balanced_short_shift_forces_equal_zeta_index(
+            m_one=1,
+            m_two=1,
+            s=9,
+            shift=0,
+            s_lower=9,
+            m_upper=m_upper,
+            shift_upper=shift_upper,
+            delta_upper=delta_upper,
+        )
+
+
+def test_equal_index_inverse_phase_is_exactly_linear() -> None:
+    for s in range(1, 16):
+        for shift in range(-s + 1, s + 3):
+            if gcd(s + shift, s) != 1:
+                continue
+            for h in (-7, -1, 0, 2, 9):
+                for m in range(1, 7):
+                    original, linear = audit.equal_index_inverse_phase_sides(
+                        s=s,
+                        shift=shift,
+                        h=h,
+                        m=m,
+                    )
+                    assert original == linear
+
+
+def test_equal_zeta_index_gcd_sum_is_a_literal_mollifier_square() -> None:
+    coefficients = {
+        1: 1 + 0j,
+        2: -0.75 + 0.5j,
+        3: 0.25 - 1j,
+        6: -1.5j,
+        10: 0.125 + 0.75j,
+    }
+    twists = {
+        1: 1 + 0j,
+        2: 0.5 + 0.25j,
+        3: -0.75j,
+        6: -1 + 0.125j,
+        10: 0.375 - 0.5j,
+    }
+    gcd_side, square_side = audit.equal_zeta_index_gcd_factorization_sides(
+        coefficients, twists
+    )
+    assert abs(gcd_side - square_side) < 1e-9
+
+
+def test_selberg_convolution_is_formally_von_mangoldt_below_cutoff() -> None:
+    assert audit.formal_mobius_log_divisor_coefficients(1) == {}
+    for prime in (2, 3, 5, 7, 11):
+        for exponent in range(1, 5):
+            assert audit.formal_mobius_log_divisor_coefficients(
+                prime**exponent
+            ) == {prime: 1}
+
+    for n in (6, 10, 12, 18, 30, 45, 60, 210):
+        coefficients = audit.formal_mobius_log_divisor_coefficients(n)
+        assert len(coefficients) >= 2
+        assert set(coefficients.values()) == {0}
+
+
 def test_additive_completion_zero_mode_hits_the_two_thirds_barrier() -> None:
     assert additive_completion_zero_mode(11, 7, 5) == F(35, 11)
     balanced = boundary_witnesses()["balanced_max_a"]
@@ -2023,6 +2543,86 @@ def test_balanced_short_dual_block_is_an_x_two_thirds_shift_gate() -> None:
         ).one_modulus_l2
         is None
     )
+
+
+def test_actual_smooth_kernel_has_only_short_additive_dual_support() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    ledger = audit.smooth_additive_dual_support_ledger(box)
+
+    # The modulated h-transform is centred at |s*x|~M, while its width
+    # is s/H.  The delta-transform is centred at s*T/(M*R), with width
+    # s/L.  All four scales are T^(1/2), not the full modulus T^3.
+    assert ledger.h_center == F(1, 2)
+    assert ledger.h_width == F(1, 2)
+    assert ledger.h_frequency == F(1, 2)
+    assert ledger.delta_center == F(1, 2)
+    assert ledger.delta_width == F(1, 2)
+    assert ledger.delta_frequency == F(1, 2)
+    assert ledger.product_frequency == F(1)
+
+    # Smooth completion therefore leaves precisely the already identified
+    # |r-s|<=T^2 block.  It removes the sharp full-residue audit, but it
+    # does not supply the missing T^2 cancellation.
+    assert ledger.completion_amplitude == F(2)
+    assert ledger.near_shift == F(2)
+    assert ledger.near_trivial == F(8)
+    assert ledger.local_target == F(6)
+    assert ledger.required_saving == F(2)
+
+    # Relative to the modulus s=T^3, each dual interval has exponent 1/6.
+    # Blomer--Pascadi Theorem 1.1 is power-saving only on the interior of
+    # [13/28, 7/12], so none of its three terms covers this short block.
+    assert ledger.fixed_modulus_nu == F(1, 6)
+    assert ledger.blomer_pascadi_margins == BlomerPascadiMargins(
+        first=-F(25, 96),
+        second=-F(19, 96),
+        third=-F(1, 18),
+    )
+    assert not ledger.blomer_pascadi_covered
+
+
+def test_shift_modulus_completion_removes_oscillation_but_not_chowla_gap() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    ledger = audit.shift_modulus_completion_ledger(box, F(2))
+
+    assert ledger.shift_modulus == F(2)
+    assert ledger.h_period_excess == F(1, 2)
+    assert ledger.delta_period_excess == F(1, 2)
+    assert ledger.h_dual_frequency == 0
+    assert ledger.delta_dual_frequency == 0
+    assert ledger.zero_mode_amplitude == F(3)
+    assert ledger.outer_pair_count == F(5)
+    assert ledger.total_trivial == F(8)
+    assert ledger.local_target == F(6)
+    assert ledger.required_pair_saving == F(2)
+    assert ledger.short_interval_ratio == F(2, 3)
+    assert not ledger.published_power_covered
+
+
+def test_sc_two_thirds_is_optimal_short_mertens_mean_square() -> None:
+    ledger = audit.short_mertens_energy_ledger(F(3), F(2))
+    assert ledger.long_length == F(3)
+    assert ledger.window_length == F(2)
+    assert ledger.number_of_windows == F(3)
+    assert ledger.trivial_energy == F(7)
+    assert ledger.diagonal_energy == F(5)
+    assert ledger.required_energy_saving == F(2)
+    assert ledger.normalized_correlation_target == F(3)
+    assert not ledger.published_optimal_mean_square_covered
+
+
+def test_long_polynomial_large_values_leave_the_same_coherence_loss() -> None:
+    ledger = audit.long_polynomial_mean_value_ledger(F(3), F(1))
+    assert ledger.polynomial_length == F(3)
+    assert ledger.time_length == F(1)
+    assert ledger.coefficients_per_resolution_cell == F(2)
+    assert ledger.unnormalized_diagonal == F(4)
+    assert ledger.unnormalized_classical == F(6)
+    assert ledger.normalized_diagonal == F(1)
+    assert ledger.normalized_classical == F(3)
+    assert ledger.required_coefficient_saving == F(2)
+    assert ledger.guth_maynard_reduces_to_classical
+    assert not ledger.published_mobius_specific_saving
 
 
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:

@@ -3,10 +3,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from fractions import Fraction
 from math import gcd, isqrt
-from typing import Callable
 
 
 @dataclass(frozen=True)
@@ -388,6 +388,327 @@ def q_restricted_mobius_log_signature(
         mobius_mass=mass,
         negative_log_prime_coefficients=tuple(coefficients),
     )
+
+
+def truncated_selberg_divisor_sides(
+    n: int,
+    *,
+    cutoff: int,
+    normalization: Fraction,
+    prime_log_weights: dict[int, Fraction],
+) -> tuple[Fraction, Fraction, Fraction]:
+    """Finite forms of the truncated tapered Möbius divisor identity.
+
+    ``prime_log_weights`` defines a completely additive formal logarithm;
+    an unspecified prime ``p`` has weight ``p``.  The three returned values
+    are respectively the truncated divisor sum, the completed full divisor
+    sum minus its ``d > cutoff`` tail, and the same tail after ``d=n/k``.
+    """
+    if n <= 0 or cutoff <= 0:
+        raise ValueError("Selberg divisor inputs must be positive")
+    normalization = Fraction(normalization)
+    if normalization == 0:
+        raise ValueError("Selberg normalization must be nonzero")
+
+    def formal_log(value: int) -> Fraction:
+        result = Fraction(0)
+        remainder = value
+        for prime in _distinct_prime_factors(value):
+            valuation = 0
+            while remainder % prime == 0:
+                valuation += 1
+                remainder //= prime
+            result += valuation * prime_log_weights.get(prime, Fraction(prime))
+        return result
+
+    def taper(divisor: int) -> Fraction:
+        return Fraction(1) - formal_log(divisor) / normalization
+
+    direct = sum(
+        (Fraction(mobius(divisor)) * taper(divisor) for divisor in divisors(n)
+         if divisor <= cutoff),
+        Fraction(0),
+    )
+    prime_factors = _distinct_prime_factors(n)
+    generalized_von_mangoldt = (
+        formal_log(prime_factors[0]) if len(prime_factors) == 1 else Fraction(0)
+    )
+    full = (
+        (Fraction(1) if n == 1 else Fraction(0))
+        + generalized_von_mangoldt / normalization
+    )
+    completed = full - sum(
+        (Fraction(mobius(divisor)) * taper(divisor) for divisor in divisors(n)
+         if divisor > cutoff),
+        Fraction(0),
+    )
+    reflected = full - sum(
+        (
+            Fraction(mobius(n // cofactor)) * taper(n // cofactor)
+            for cofactor in divisors(n)
+            if cofactor * cutoff < n
+        ),
+        Fraction(0),
+    )
+    return direct, completed, reflected
+
+
+def zeta_mollifier_pairing_sides(
+    *,
+    mollifier_weights: tuple[tuple[int, Fraction], ...],
+    zeta_indices: tuple[int, ...],
+    completely_multiplicative_weight: Callable[[int], Fraction],
+    shift_weights: dict[int, Fraction],
+) -> tuple[Fraction, Fraction]:
+    """Compare the four-variable packet with its two product coefficients.
+
+    The callback is required to be completely multiplicative on the finite
+    inputs.  The paired coefficient at ``x`` is computed independently as
+    ``chi(x) * sum_{d|x, x/d in M} a_d / chi(d)``.
+    """
+    if any(value <= 0 for value, _ in mollifier_weights):
+        raise ValueError("mollifier indices must be positive")
+    if any(value <= 0 for value in zeta_indices):
+        raise ValueError("zeta indices must be positive")
+
+    direct = Fraction(0)
+    for d, d_weight in mollifier_weights:
+        for e, e_weight in mollifier_weights:
+            for m in zeta_indices:
+                for n in zeta_indices:
+                    direct += (
+                        d_weight
+                        * e_weight
+                        * completely_multiplicative_weight(m)
+                        * completely_multiplicative_weight(n)
+                        * shift_weights.get(m * e - n * d, Fraction(0))
+                    )
+
+    products = {
+        divisor * zeta_index
+        for divisor, _ in mollifier_weights
+        for zeta_index in zeta_indices
+    }
+    product_coefficients: dict[int, Fraction] = {}
+    zeta_support = set(zeta_indices)
+    for product in products:
+        coefficient = Fraction(0)
+        for divisor, divisor_weight in mollifier_weights:
+            divisor_twist = Fraction(completely_multiplicative_weight(divisor))
+            if divisor_twist == 0:
+                raise ValueError("multiplicative weights must be nonzero")
+            if product % divisor == 0 and product // divisor in zeta_support:
+                coefficient += divisor_weight / divisor_twist
+        product_coefficients[product] = (
+            Fraction(completely_multiplicative_weight(product)) * coefficient
+        )
+
+    paired = sum(
+        (
+            left_weight
+            * right_weight
+            * shift_weights.get(left - right, Fraction(0))
+            for left, left_weight in product_coefficients.items()
+            for right, right_weight in product_coefficients.items()
+        ),
+        Fraction(0),
+    )
+    return direct, paired
+
+
+def common_mellin_product_constraint_sides(
+    *,
+    mollifier_weights: tuple[tuple[int, Fraction], ...],
+    zeta_weights: tuple[tuple[int, Fraction], ...],
+    completely_multiplicative_weight: Callable[[int], Fraction],
+    mellin_mode_weights: tuple[tuple[int, Fraction], ...],
+    product_pair_weights: dict[tuple[int, int], Fraction] | None = None,
+) -> tuple[Fraction, Fraction]:
+    """Recombine one common Mellin mode through both product variables.
+
+    For a mode ``k``, put
+
+    ``B_k(x)=sum_(d*n=x) a_d z_n chi(d)^k``.
+
+    Complete multiplicativity makes
+
+    ``B_k(x) B_k(y) chi(x*y)^(-k)``
+
+    depend on the original zeta variables only through ``chi(n*m)^(-k)``.
+    Thus one common Mellin parameter reconstructs the zeta-index product;
+    it is not two independent orthogonality variables for the divisors.
+    An optional arbitrary pair weight on ``(x, y)`` is retained verbatim.
+    """
+
+    if any(index < 1 for index, _ in mollifier_weights):
+        raise ValueError("mollifier indices must be positive")
+    if any(index < 1 for index, _ in zeta_weights):
+        raise ValueError("zeta indices must be positive")
+
+    def pair_weight(left_product: int, right_product: int) -> Fraction:
+        if product_pair_weights is None:
+            return Fraction(1)
+        return product_pair_weights.get(
+            (left_product, right_product), Fraction(0)
+        )
+
+    direct = Fraction(0)
+    for divisor, divisor_weight in mollifier_weights:
+        for other_divisor, other_divisor_weight in mollifier_weights:
+            for zeta_index, zeta_weight in zeta_weights:
+                for other_zeta_index, other_zeta_weight in zeta_weights:
+                    zeta_product_weight = Fraction(
+                        completely_multiplicative_weight(
+                            zeta_index * other_zeta_index
+                        )
+                    )
+                    if zeta_product_weight == 0:
+                        raise ValueError(
+                            "multiplicative weights must be nonzero"
+                        )
+                    for mode, mode_weight in mellin_mode_weights:
+                        direct += (
+                            divisor_weight
+                            * other_divisor_weight
+                            * zeta_weight
+                            * other_zeta_weight
+                            * mode_weight
+                            * zeta_product_weight ** (-mode)
+                            * pair_weight(
+                                divisor * zeta_index,
+                                other_divisor * other_zeta_index,
+                            )
+                        )
+
+    paired = Fraction(0)
+    for mode, mode_weight in mellin_mode_weights:
+        product_coefficients: dict[int, Fraction] = {}
+        for divisor, divisor_weight in mollifier_weights:
+            divisor_twist = Fraction(
+                completely_multiplicative_weight(divisor)
+            )
+            if divisor_twist == 0:
+                raise ValueError("multiplicative weights must be nonzero")
+            for zeta_index, zeta_weight in zeta_weights:
+                product = divisor * zeta_index
+                product_coefficients[product] = (
+                    product_coefficients.get(product, Fraction(0))
+                    + divisor_weight
+                    * zeta_weight
+                    * divisor_twist**mode
+                )
+        for left_product, left_weight in product_coefficients.items():
+            for right_product, right_weight in product_coefficients.items():
+                product_twist = Fraction(
+                    completely_multiplicative_weight(
+                        left_product * right_product
+                    )
+                )
+                if product_twist == 0:
+                    raise ValueError(
+                        "multiplicative weights must be nonzero"
+                    )
+                paired += (
+                    mode_weight
+                    * left_weight
+                    * right_weight
+                    * product_twist ** (-mode)
+                    * pair_weight(left_product, right_product)
+                )
+    return direct, paired
+
+
+def centered_selberg_product_boundary_sides(
+    *,
+    mollifier_weights: tuple[tuple[int, Fraction], ...],
+    product_cutoff: int,
+    completely_multiplicative_weight: Callable[[int], Fraction],
+    density: Fraction,
+) -> tuple[Fraction, Fraction, Fraction]:
+    """Center a finite zeta--mollifier convolution with every boundary kept.
+
+    Put B(n)=sum_(d|n) a_d on n<=X.  Complete multiplicativity gives
+
+    sum_(n<=X) (B(n)-beta) chi(n)
+      = (sum_d a_d chi(d)-beta) sum_(m<=X) chi(m) - boundary,
+
+    where boundary is the moving product tail
+
+    sum_d a_d chi(d) sum_(X/d < m <= X) chi(m).
+
+    At the pole density beta=sum_d a_d chi(d), the separated bulk
+    vanishes but the whole centered finite sum is the negative boundary.
+    This catches the invalid step of treating density centering as deletion
+    of the reflected AFE/product edge.
+    """
+
+    if product_cutoff < 1:
+        raise ValueError("the product cutoff must be positive")
+    if any(index < 1 for index, _ in mollifier_weights):
+        raise ValueError("mollifier indices must be positive")
+
+    weights: dict[int, Fraction] = {}
+    for index, weight in mollifier_weights:
+        weights[index] = weights.get(index, Fraction(0)) + weight
+    weights = {
+        index: weight for index, weight in weights.items() if weight != 0
+    }
+    product_coefficients = {
+        product: sum(
+            (
+                weight
+                for divisor, weight in weights.items()
+                if product % divisor == 0
+            ),
+            Fraction(0),
+        )
+        for product in range(1, product_cutoff + 1)
+    }
+    direct = sum(
+        (
+            (product_coefficients[product] - density)
+            * completely_multiplicative_weight(product)
+            for product in range(1, product_cutoff + 1)
+        ),
+        Fraction(0),
+    )
+
+    zeta_prefix = sum(
+        (
+            completely_multiplicative_weight(index)
+            for index in range(1, product_cutoff + 1)
+        ),
+        Fraction(0),
+    )
+    mollifier_transform = sum(
+        (
+            weight * completely_multiplicative_weight(divisor)
+            for divisor, weight in weights.items()
+        ),
+        Fraction(0),
+    )
+    boundary = sum(
+        (
+            weight
+            * completely_multiplicative_weight(divisor)
+            * sum(
+                (
+                    completely_multiplicative_weight(cofactor)
+                    for cofactor in range(
+                        product_cutoff // divisor + 1,
+                        product_cutoff + 1,
+                    )
+                ),
+                Fraction(0),
+            )
+            for divisor, weight in weights.items()
+        ),
+        Fraction(0),
+    )
+    recombined = (
+        (mollifier_transform - density) * zeta_prefix - boundary
+    )
+    return direct, recombined, boundary
 
 
 def q_restricted_twisted_log_signature(

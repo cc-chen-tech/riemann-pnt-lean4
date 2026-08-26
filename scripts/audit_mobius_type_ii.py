@@ -8,10 +8,11 @@ It does not prove the residual averaged Type-II oscillatory estimate.
 from __future__ import annotations
 
 import cmath
+from collections.abc import Mapping
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import lru_cache
-from math import gcd, lcm
+from math import gcd, lcm, sqrt
 
 try:
     from scripts.audit_mwkf_ranges import (
@@ -339,6 +340,113 @@ def mobius_two_cutoff_density_period_average(
     return Fraction(direct_total, len(allowed_residues)), density
 
 
+def mobius_two_cutoff_density_complement_ramanujan_coefficients(
+    *,
+    max_argument: int,
+    density_cutoff: int,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> tuple[Fraction, ...]:
+    """Finite Ramanujan coefficients of density plus large divisors.
+
+    Put ``lambda(m)`` for the grouped two-cutoff coefficient.  For
+    ``r>1`` the coefficient is
+
+    ``C_r = sum_{D<m<=Y, r|m} lambda(m)/m``.
+
+    At ``r=1`` the low-product density is added, so
+
+    ``C_1 = sum_{m<=Y} lambda(m)/m``.
+
+    The index-zero entry is a sentinel.  The identity
+    ``sum_{r|m} c_r(n) = m * 1_{m|n}`` then reconstructs the density
+    plus every complementary divisor exactly for ``n<=Y``.
+    """
+
+    if min(
+        max_argument,
+        density_cutoff,
+        cutoff_left,
+        cutoff_right,
+    ) < 1:
+        raise ValueError("all inputs must be positive")
+    if density_cutoff > max_argument:
+        raise ValueError("the density cutoff cannot exceed Y")
+
+    product_coefficients = tuple(
+        Fraction(
+            mobius_two_cutoff_product_value(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ),
+            product,
+        )
+        for product in range(max_argument + 1)
+        if product > 0
+    )
+    coefficients = [Fraction(0) for _ in range(max_argument + 1)]
+    coefficients[1] = sum(product_coefficients)
+    for reduced_denominator in range(2, max_argument + 1):
+        coefficients[reduced_denominator] = sum(
+            product_coefficients[product - 1]
+            for product in range(
+                reduced_denominator,
+                max_argument + 1,
+                reduced_denominator,
+            )
+            if product > density_cutoff
+        )
+    return tuple(coefficients)
+
+
+def mobius_two_cutoff_density_complement_ramanujan_value(
+    n: int,
+    *,
+    max_argument: int,
+    density_cutoff: int,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> Fraction:
+    """Direct density-plus-complementary value used by the expansion."""
+
+    if n < 1 or n > max_argument:
+        raise ValueError("require 1 <= n <= max_argument")
+    coefficients = (
+        mobius_two_cutoff_density_complement_ramanujan_coefficients(
+            max_argument=max_argument,
+            density_cutoff=density_cutoff,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+    )
+    density = sum(
+        Fraction(
+            mobius_two_cutoff_product_value(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ),
+            product,
+        )
+        for product in range(1, density_cutoff + 1)
+    )
+    complementary = sum(
+        mobius_two_cutoff_product_value(
+            product,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        for product in range(density_cutoff + 1, max_argument + 1)
+        if n % product == 0
+    )
+    # Keep the coefficient construction live in this direct evaluator;
+    # it also validates all cutoffs before the literal finite sum.
+    if len(coefficients) != max_argument + 1:
+        raise AssertionError("coefficient vector has the wrong length")
+    return density + complementary
+
+
 def mobius_two_cutoff_centered_divisor_split(
     n: int,
     *,
@@ -644,6 +752,657 @@ def central_major_arc_mertens_ledger(
         available_saving=available_saving,
         conditional_bound=conditional_bound,
         gap=conditional_bound - target,
+    )
+
+
+def vinogradov_denominator_coverage_ledger(
+    *,
+    polynomial_length: Fraction,
+    required_relative_saving: Fraction,
+    actual_denominator_floor: Fraction,
+    actual_denominator_ceiling: Fraction,
+) -> VinogradovDenominatorCoverageLedger:
+    """Coverage of a rational-approximation Möbius exponential bound.
+
+    If ``X=T^x`` and ``alpha`` has a reduced approximation of
+    denominator ``T^r``, Vaughan's two-fifths split gives the three
+    exponent terms
+
+    ``4x/5``, ``x-r/2``, and ``x/2+r/2``.
+
+    Requiring a relative saving ``eta`` therefore restricts the
+    denominator exponent to
+
+    ``2*x*eta <= r <= x*(1-2*eta)``
+
+    and also requires ``eta <= 1/5`` because of the Type-I floor.  The
+    returned overlap is closed; ``has_positive_width_overlap`` is false
+    when the theorem and application meet at only one endpoint.
+    """
+
+    lengths = (
+        polynomial_length,
+        actual_denominator_floor,
+        actual_denominator_ceiling,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if not 0 <= required_relative_saving <= 1:
+        raise ValueError("the relative saving must lie in [0,1]")
+    if actual_denominator_floor > actual_denominator_ceiling:
+        raise ValueError("the denominator interval must be ordered")
+
+    type_i_bound = Fraction(4, 5) * polynomial_length
+    target_bound = polynomial_length * (1 - required_relative_saving)
+    theorem_floor = (
+        2 * polynomial_length * required_relative_saving
+    )
+    theorem_ceiling = polynomial_length * (
+        1 - 2 * required_relative_saving
+    )
+    overlap_floor = max(actual_denominator_floor, theorem_floor)
+    overlap_ceiling = min(actual_denominator_ceiling, theorem_ceiling)
+    type_i_compatible = type_i_bound <= target_bound
+    return VinogradovDenominatorCoverageLedger(
+        polynomial_length=polynomial_length,
+        required_relative_saving=required_relative_saving,
+        type_i_bound=type_i_bound,
+        target_bound=target_bound,
+        theorem_denominator_floor=theorem_floor,
+        theorem_denominator_ceiling=theorem_ceiling,
+        actual_denominator_floor=actual_denominator_floor,
+        actual_denominator_ceiling=actual_denominator_ceiling,
+        overlap_floor=overlap_floor,
+        overlap_ceiling=overlap_ceiling,
+        has_positive_width_overlap=(
+            type_i_compatible and overlap_floor < overlap_ceiling
+        ),
+    )
+
+
+def nonzero_reduced_denominator_ledger(
+    *,
+    outer_length: Fraction,
+    shift_length: Fraction,
+    denominator_length: Fraction,
+    fourier_decay_order: int,
+    target: Fraction,
+) -> NonzeroReducedDenominatorLedger:
+    """Large-sieve ledger for ``2 <= r <= D`` Ramanujan modes.
+
+    On ``r~R`` the finite coefficient satisfies
+    ``|C_r| << T^epsilon/R``.  Cauchy and the additive large sieve give
+    the two constants ``S+R^2`` and ``D+R^2``.  Since every primitive
+    numerator is nonzero, the smooth shift transform additionally gains
+    ``(R/D)^A``.  The zero numerator at ``r=1`` is excluded.
+    """
+
+    lengths = (
+        outer_length,
+        shift_length,
+        denominator_length,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if denominator_length > shift_length:
+        raise ValueError("this ledger is for nonzero modes with R<=D")
+    if fourier_decay_order < 0:
+        raise ValueError("the Fourier decay order must be nonnegative")
+
+    outer_large_sieve = max(outer_length, 2 * denominator_length)
+    shift_large_sieve = max(shift_length, 2 * denominator_length)
+    fourier_decay = fourier_decay_order * (
+        denominator_length - shift_length
+    )
+    bound = (
+        -denominator_length
+        + outer_length / 2
+        + shift_length / 2
+        + outer_large_sieve / 2
+        + shift_large_sieve / 2
+        + fourier_decay
+    )
+    return NonzeroReducedDenominatorLedger(
+        coefficient_weight=-denominator_length,
+        outer_energy=outer_length,
+        shift_energy=shift_length,
+        outer_large_sieve_constant=outer_large_sieve,
+        shift_large_sieve_constant=shift_large_sieve,
+        fourier_decay=fourier_decay,
+        bound=bound,
+        target=target,
+        margin=target - bound,
+    )
+
+
+def high_reduced_denominator_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    reduced_denominator: Fraction,
+) -> HighReducedDenominatorLedger:
+    """Ambient top-face geometry of the ``r>D`` small-numerator modes.
+
+    Write a complementary product as ``m=r*v``.  Smooth shift
+    completion restricts a primitive reduced numerator ``u`` to
+    ``u <= r/D``.  This legacy ledger puts ``m`` on its maximal face
+    ``m=S``, so ``v<=S/r`` and the lifted full-modulus numerator
+    ``a_R=u*v`` has length ``S/D``.  For an individual quotient block
+    ``m=S/k``, use :func:`high_edge_polytope_ledger`; the exact sum of
+    the two short exponents is then ``log_T(S/(kD))``.
+    """
+
+    lengths = (ambient_length, shift_length, reduced_denominator)
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if not shift_length <= reduced_denominator <= ambient_length:
+        raise ValueError("require D <= r <= S on the exponent scale")
+    reduced_numerator = reduced_denominator - shift_length
+    complementary_cofactor = ambient_length - reduced_denominator
+    return HighReducedDenominatorLedger(
+        reduced_denominator=reduced_denominator,
+        reduced_numerator=reduced_numerator,
+        complementary_cofactor=complementary_cofactor,
+        lifted_numerator=(
+            reduced_numerator + complementary_cofactor
+        ),
+    )
+
+
+def high_edge_polytope_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    complementary_quotient: Fraction,
+    reduced_denominator: Fraction,
+    target: Fraction,
+) -> HighEdgePolytopeLedger:
+    """Quotient-aware geometry and elementary high-edge gap.
+
+    The complementary product has length ``S/k`` rather than always
+    length ``S``.  If ``m=r*v`` and the small reduced numerator has
+    length ``r/D``, then the two exponents add to ``m/D``.  The
+    additive large sieve without Fourier decay is recorded exactly,
+    as is the hypothetical saving from square-root cancellation in
+    both of these artificial gcd coordinates.
+    """
+
+    lengths = (
+        ambient_length,
+        shift_length,
+        complementary_quotient,
+        reduced_denominator,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    product_length = ambient_length - complementary_quotient
+    if product_length < shift_length:
+        raise ValueError("the complementary product must exceed D")
+    if not shift_length <= reduced_denominator <= product_length:
+        raise ValueError("require D <= r <= m on the exponent scale")
+
+    ramanujan_cofactor = product_length - reduced_denominator
+    reduced_numerator = reduced_denominator - shift_length
+    full_modulus_numerator = product_length - shift_length
+    outer_large_sieve = max(ambient_length, 2 * reduced_denominator)
+    shift_large_sieve = max(shift_length, 2 * reduced_denominator)
+    large_sieve_bound = (
+        -reduced_denominator
+        + ambient_length / 2
+        + shift_length / 2
+        + outer_large_sieve / 2
+        + shift_large_sieve / 2
+    )
+    large_sieve_gap = large_sieve_bound - target
+    square_root_hybrid_saving = (
+        ramanujan_cofactor + reduced_numerator
+    ) / 2
+    return HighEdgePolytopeLedger(
+        complementary_quotient=complementary_quotient,
+        product_length=product_length,
+        reduced_denominator=reduced_denominator,
+        ramanujan_cofactor=ramanujan_cofactor,
+        reduced_numerator=reduced_numerator,
+        full_modulus_numerator=full_modulus_numerator,
+        large_sieve_bound=large_sieve_bound,
+        target=target,
+        large_sieve_gap=large_sieve_gap,
+        square_root_hybrid_saving=square_root_hybrid_saving,
+        square_root_hybrid_margin=(
+            square_root_hybrid_saving - large_sieve_gap
+        ),
+    )
+
+
+def high_reduced_frequency_lifts(
+    *,
+    modulus: int,
+    denominator_cutoff: int,
+) -> tuple[ReducedFrequencyLift, ...]:
+    """Regroup reduced Ramanujan modes by their full-modulus numerator.
+
+    For ``r|m``, put ``v=m/r`` and lift a primitive ``u mod r`` to
+    ``a_R=u*v mod m``.  This is a bijection onto the nonzero residues
+    whose reduced denominator ``m/gcd(a_R,m)`` exceeds the cutoff.
+    """
+
+    if modulus < 1 or denominator_cutoff < 1:
+        raise ValueError("the modulus and cutoff must be positive")
+    lifts = tuple(
+        ReducedFrequencyLift(
+            reduced_denominator=reduced_denominator,
+            primitive_numerator=primitive_numerator,
+            cofactor=modulus // reduced_denominator,
+            full_numerator=(
+                primitive_numerator * (modulus // reduced_denominator)
+            ),
+        )
+        for reduced_denominator in divisors(modulus)
+        if reduced_denominator > denominator_cutoff
+        for primitive_numerator in range(1, reduced_denominator)
+        if gcd(primitive_numerator, reduced_denominator) == 1
+    )
+    return tuple(sorted(lifts, key=lambda lift: lift.full_numerator))
+
+
+def mobius_convolution_rational_proxy_ledger(
+    *,
+    product_length: Fraction,
+    denominator_length: Fraction,
+    required_saving: Fraction,
+) -> MobiusConvolutionRationalProxyLedger:
+    """Dong--Robles--Zaharescu--Zeindler ``mu*mu`` proxy.
+
+    Their three terms save ``q^(1/4)``, ``X^(1/7)``, and
+    ``(X/q)^(1/4)`` relative to length ``X``.  The minimum is the
+    available uniform saving.  It is only a proxy here: selecting
+    ``r|bc`` makes the phase at ``u/r`` resonant, so the complete
+    convolution theorem does not estimate the actual coefficient.
+    """
+
+    lengths = (product_length, denominator_length, required_saving)
+    if min(lengths) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if denominator_length > product_length:
+        raise ValueError("the rational denominator cannot exceed X")
+    denominator_term_saving = denominator_length / 4
+    interior_term_saving = product_length / 7
+    upper_denominator_term_saving = (
+        product_length - denominator_length
+    ) / 4
+    available_saving = min(
+        denominator_term_saving,
+        interior_term_saving,
+        upper_denominator_term_saving,
+    )
+    return MobiusConvolutionRationalProxyLedger(
+        product_length=product_length,
+        denominator_length=denominator_length,
+        denominator_term_saving=denominator_term_saving,
+        interior_term_saving=interior_term_saving,
+        upper_denominator_term_saving=upper_denominator_term_saving,
+        available_saving=available_saving,
+        required_saving=required_saving,
+        margin=available_saving - required_saving,
+        structurally_applicable=False,
+    )
+
+
+def reciprocal_monomial_coverage_ledger(
+    *,
+    full_modulus_numerator: Fraction,
+    phase_variation: Fraction,
+) -> ReciprocalMonomialCoverageLedger:
+    """Best possible margin from the published monomial-sum shape.
+
+    On the theta-three edge the raw scalar form needs the fixed
+    half-power plus the complete numerator length.  Robert--Sargos and
+    Fouvry--Iwaniec contain an ``X^(-1/2)`` term, so their displayed
+    arbitrary-coefficient bounds can guarantee at most half the phase
+    variation, even before coefficient-norm losses are restored.
+    """
+
+    if min(full_modulus_numerator, phase_variation) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    required_saving = full_modulus_numerator + Fraction(1, 2)
+    published_saving_cap = phase_variation / 2
+    margin = published_saving_cap - required_saving
+    return ReciprocalMonomialCoverageLedger(
+        full_modulus_numerator=full_modulus_numerator,
+        phase_variation=phase_variation,
+        required_saving=required_saving,
+        published_saving_cap=published_saving_cap,
+        margin=margin,
+        covered=(margin >= 0),
+    )
+
+
+def coupled_product_circle_ledger(
+    *,
+    complementary_left: Fraction,
+    complementary_right: Fraction,
+    quotient_length: Fraction,
+    circle_denominator: Fraction,
+    quotient_gcd: Fraction,
+    target: Fraction,
+) -> CoupledProductCircleLedger:
+    """Precompletion dual-product Type-II bound at theta three.
+
+    After exact numerator completion and the long--long Möbius split,
+    the determinant equation is ``b*c*k-g*q=d``.  On a circle band
+    ``|alpha|=T^(-a)``, DRZZ Lemma 4.2 applies separately to the
+    ``b*c`` polynomial at frequency ``alpha*k`` and to the ``g*q``
+    polynomial at frequency ``-alpha``.  If
+    ``(k,q_alpha)=T^tau``, multiplication by ``k`` reduces the rational
+    denominator and introduces the exact Diophantine loss
+    ``max(0,kappa-2*tau)``.  This ledger includes the size of that gcd
+    stratum and the L1 mass ``T^(2-a)`` of the smooth d-kernel.
+
+    The comparison Cauchy bound keeps the product coefficient intact;
+    restricting ``k`` to the gcd stratum lowers its L2 energy by
+    ``T^(-tau/2)``.  Neither entry uses unproved Möbius cancellation.
+    """
+
+    lengths = (
+        complementary_left,
+        complementary_right,
+        quotient_length,
+        circle_denominator,
+        quotient_gcd,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    ambient_length = Fraction(3)
+    shift_length = Fraction(2)
+    complementary_product = (
+        complementary_left + complementary_right
+    )
+    if complementary_product + quotient_length != ambient_length:
+        raise ValueError("require beta+gamma+kappa=3")
+    if min(complementary_left, complementary_right) < 1:
+        raise ValueError("the endpoint Type-II factors must be at least T")
+    if not shift_length <= circle_denominator <= ambient_length:
+        raise ValueError("the near-zero circle denominator lies in [2,3]")
+    if quotient_gcd > min(quotient_length, circle_denominator):
+        raise ValueError("the gcd exponent cannot exceed kappa or a")
+
+    effective_denominator = circle_denominator - quotient_gcd
+    approximation_loss = max(
+        Fraction(0), quotient_length - 2 * quotient_gcd
+    )
+    complementary_type_ii_constant = max(
+        complementary_product
+        - effective_denominator
+        + approximation_loss,
+        complementary_left,
+        complementary_right,
+        effective_denominator,
+    )
+    shifted_type_ii_constant = max(
+        ambient_length - circle_denominator,
+        Fraction(1, 2),
+        Fraction(5, 2),
+        circle_denominator,
+    )
+    quotient_stratum = quotient_length - quotient_gcd
+    circle_kernel_mass = shift_length - circle_denominator
+    pointwise_bound = (
+        quotient_stratum
+        + (
+            complementary_product
+            + complementary_type_ii_constant
+        )
+        / 2
+        + (ambient_length + shifted_type_ii_constant) / 2
+        + circle_kernel_mass
+    )
+    cauchy_bound = (
+        (ambient_length - quotient_gcd) / 2
+        + ambient_length / 2
+        + shift_length
+    )
+    best_bound = min(pointwise_bound, cauchy_bound)
+    margin = target - best_bound
+    return CoupledProductCircleLedger(
+        complementary_left=complementary_left,
+        complementary_right=complementary_right,
+        quotient_length=quotient_length,
+        complementary_product=complementary_product,
+        circle_denominator=circle_denominator,
+        quotient_gcd=quotient_gcd,
+        effective_denominator=effective_denominator,
+        approximation_loss=approximation_loss,
+        complementary_type_ii_constant=(
+            complementary_type_ii_constant
+        ),
+        shifted_type_ii_constant=shifted_type_ii_constant,
+        quotient_stratum=quotient_stratum,
+        circle_kernel_mass=circle_kernel_mass,
+        pointwise_bound=pointwise_bound,
+        cauchy_bound=cauchy_bound,
+        best_bound=best_bound,
+        target=target,
+        margin=margin,
+        covered=(margin >= 0),
+    )
+
+
+def shifted_divisor_proxy_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    exceptional_exponent: Fraction,
+    target: Fraction,
+) -> ShiftedDivisorProxyLedger:
+    """Audit the closest published ``d_3``--``d_2`` shift estimates.
+
+    Topacogullari's fixed-shift error is
+    ``X^(5/6+theta/3)``.  Summing a shift block of length ``D`` adds
+    its full exponent.  The first-moment theorem of Baier--Browning--
+    Marasingha--Zhao instead has errors ``D^2`` and
+    ``D^(1/2) X^(13/12)``.  These formulas are exponent proxies only:
+    the packet here has dyadically truncated Möbius convolutions rather
+    than the standard divisor coefficients required by those theorems.
+
+    The raw zero-frequency contribution has scale ``D*X`` and does not
+    vanish as a finite identity, so numerical error-term coverage alone
+    cannot close the packet.
+    """
+
+    lengths = (
+        ambient_length,
+        shift_length,
+        exceptional_exponent,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all exponents must be nonnegative")
+
+    fixed_shift_error = ambient_length * (
+        Fraction(5, 6) + exceptional_exponent / 3
+    )
+    summed_fixed_shift_error = shift_length + fixed_shift_error
+    selberg_endpoint = shift_length + 5 * ambient_length / 6
+    averaged_shift_square_error = 2 * shift_length
+    averaged_shift_moment_error = (
+        shift_length / 2 + 13 * ambient_length / 12
+    )
+    averaged_shift_error = max(
+        averaged_shift_square_error,
+        averaged_shift_moment_error,
+    )
+    raw_zero_mode = ambient_length + shift_length
+    standard_divisor_coefficients = False
+    zero_mode_algebraically_vanishing = False
+    return ShiftedDivisorProxyLedger(
+        fixed_shift_error=fixed_shift_error,
+        summed_fixed_shift_error=summed_fixed_shift_error,
+        summed_fixed_shift_margin=target - summed_fixed_shift_error,
+        selberg_endpoint=selberg_endpoint,
+        averaged_shift_square_error=averaged_shift_square_error,
+        averaged_shift_moment_error=averaged_shift_moment_error,
+        averaged_shift_error=averaged_shift_error,
+        averaged_shift_margin=target - averaged_shift_error,
+        raw_zero_mode=raw_zero_mode,
+        zero_mode_required_saving=raw_zero_mode - target,
+        standard_divisor_coefficients=standard_divisor_coefficients,
+        zero_mode_algebraically_vanishing=(
+            zero_mode_algebraically_vanishing
+        ),
+        covered=(
+            averaged_shift_error <= target
+            and standard_divisor_coefficients
+            and zero_mode_algebraically_vanishing
+        ),
+    )
+
+
+def shifted_product_packet_sides(
+    *,
+    b_weights: tuple[tuple[int, int], ...],
+    c_weights: tuple[tuple[int, int], ...],
+    k_weights: tuple[tuple[int, int], ...],
+    g_weights: tuple[tuple[int, int], ...],
+    q_weights: tuple[tuple[int, int], ...],
+    shift_weights: tuple[tuple[int, int], ...],
+) -> tuple[int, int]:
+    """Return both sides of the finite ``3 by 2`` shift identity.
+
+    Extending the shift weight by zero outside its listed support gives
+
+    ``sum b*c*k*g*q*z(b*c*k-g*q)``
+    ``= sum_d z(d) sum_n A(n) C(n-d)``,
+
+    where ``A`` is the three-factor product convolution and ``C`` the
+    two-factor product convolution.  The integer weights can include
+    Möbius signs and arbitrary finite smooth-weight samples.
+    """
+
+    factor_families = (
+        b_weights,
+        c_weights,
+        k_weights,
+        g_weights,
+        q_weights,
+    )
+    if any(index < 1 for family in factor_families for index, _ in family):
+        raise ValueError("product indices must be positive")
+    if len({shift for shift, _ in shift_weights}) != len(shift_weights):
+        raise ValueError("shift indices must be unique")
+    shift_map = dict(shift_weights)
+
+    direct = sum(
+        b_weight
+        * c_weight
+        * k_weight
+        * g_weight
+        * q_weight
+        * shift_map.get(b * c * k - g * q, 0)
+        for b, b_weight in b_weights
+        for c, c_weight in c_weights
+        for k, k_weight in k_weights
+        for g, g_weight in g_weights
+        for q, q_weight in q_weights
+    )
+
+    left: dict[int, int] = {}
+    for b, b_weight in b_weights:
+        for c, c_weight in c_weights:
+            for k, k_weight in k_weights:
+                product = b * c * k
+                left[product] = left.get(product, 0) + (
+                    b_weight * c_weight * k_weight
+                )
+    right: dict[int, int] = {}
+    for g, g_weight in g_weights:
+        for q, q_weight in q_weights:
+            product = g * q
+            right[product] = right.get(product, 0) + g_weight * q_weight
+
+    correlation = sum(
+        shift_weight
+        * left_weight
+        * right.get(product - shift, 0)
+        for shift, shift_weight in shift_weights
+        for product, left_weight in left.items()
+    )
+    return direct, correlation
+
+
+def shifted_product_zero_mode_sides(
+    *,
+    b_weights: tuple[tuple[int, int], ...],
+    c_weights: tuple[tuple[int, int], ...],
+    k_weights: tuple[tuple[int, int], ...],
+    g_weights: tuple[tuple[int, int], ...],
+    q_weights: tuple[tuple[int, int], ...],
+    shift_weights: tuple[tuple[int, int], ...],
+) -> tuple[int, int]:
+    """Return expanded and factored zero modes of the product packet."""
+
+    direct = sum(
+        b_weight
+        * c_weight
+        * k_weight
+        * g_weight
+        * q_weight
+        * shift_weight
+        for _, b_weight in b_weights
+        for _, c_weight in c_weights
+        for _, k_weight in k_weights
+        for _, g_weight in g_weights
+        for _, q_weight in q_weights
+        for _, shift_weight in shift_weights
+    )
+    factored = (
+        sum(weight for _, weight in b_weights)
+        * sum(weight for _, weight in c_weights)
+        * sum(weight for _, weight in k_weights)
+        * sum(weight for _, weight in g_weights)
+        * sum(weight for _, weight in q_weights)
+        * sum(weight for _, weight in shift_weights)
+    )
+    return direct, factored
+
+
+def multiple_mobius_additive_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    complementary_quotient: Fraction,
+    target: Fraction,
+) -> MultipleMobiusAdditiveLedger:
+    """Nearest Banks--Shparlinski scale after fixing ``k``.
+
+    In ``k*m-d-s=0`` the product variable has length ``S/k``.  Their
+    short-interval theorem, with ``d`` in the weighted variable so its
+    extra Möbius factor can be removed on squarefree coprime layers,
+    gives ``(M+D)S`` schematically for fixed ``k``.  On exponent scale
+    this is ``max(M,D)+S``; summing the dyadic k-block adds ``k``.
+    """
+
+    lengths = (
+        ambient_length,
+        shift_length,
+        complementary_quotient,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    product_length = ambient_length - complementary_quotient
+    if product_length < 0:
+        raise ValueError("the complementary quotient cannot exceed S")
+    fixed_bound = max(product_length, shift_length) + ambient_length
+    summed_bound = fixed_bound + complementary_quotient
+    return MultipleMobiusAdditiveLedger(
+        product_length=product_length,
+        fixed_quotient_bound=fixed_bound,
+        summed_bound=summed_bound,
+        target=target,
+        gap=summed_bound - target,
     )
 
 
@@ -2087,6 +2846,343 @@ def additive_product_completion(
     ) / modulus
 
 
+def weighted_additive_product_completion_sides(
+    r: int,
+    modulus: int,
+    h_weights: Mapping[int, complex],
+    delta_weights: Mapping[int, complex],
+) -> tuple[complex, complex]:
+    """Both sides of smooth finite completion (9.366).
+
+    The dictionaries may have arbitrary signed integer support and
+    arbitrary complex values.  This is the boundary-free finite identity
+    underlying the modulated smooth transforms; decay of those transforms
+    is a separate analytic statement.
+    """
+
+    if min(r, modulus) < 1:
+        raise ValueError("r and modulus must be positive")
+    if gcd(r, modulus) != 1:
+        raise ValueError("r must be invertible modulo the modulus")
+
+    inverse = pow(r, -1, modulus)
+    direct = sum(
+        h_weight
+        * delta_weight
+        * cmath.exp(
+            -2j
+            * cmath.pi
+            * ((inverse * h * delta) % modulus)
+            / modulus
+        )
+        for h, h_weight in h_weights.items()
+        for delta, delta_weight in delta_weights.items()
+    )
+    h_fourier = [
+        sum(
+            weight
+            * cmath.exp(-2j * cmath.pi * a * h / modulus)
+            for h, weight in h_weights.items()
+        )
+        for a in range(modulus)
+    ]
+    delta_fourier = [
+        sum(
+            weight
+            * cmath.exp(-2j * cmath.pi * b * delta / modulus)
+            for delta, weight in delta_weights.items()
+        )
+        for b in range(modulus)
+    ]
+    completed = sum(
+        h_fourier[a]
+        * delta_fourier[b]
+        * cmath.exp(
+            2j * cmath.pi * ((r * a * b) % modulus) / modulus
+        )
+        for a in range(modulus)
+        for b in range(modulus)
+    ) / modulus
+    return direct, completed
+
+
+def shift_modulus_completion_sides(
+    modulus: int,
+    shift: int,
+    weights: Mapping[tuple[int, int], complex],
+) -> tuple[complex, complex]:
+    """Both sides of reciprocity followed by completion modulo ``shift``.
+
+    For ``(shift, modulus)=1``, additive reciprocity changes
+    ``e_modulus(-inv(shift)*h*delta)`` into
+    ``e_shift(inv(modulus)*h*delta) * e(-h*delta/(shift*modulus))``.
+    Completing the first factor modulo ``shift`` gives a product phase
+    ``e_shift(-modulus*k*ell)``.  The arbitrary pair weight is retained
+    in the exact archimedean Fourier coefficient.
+    """
+
+    if min(modulus, shift) < 1:
+        raise ValueError("modulus and shift must be positive")
+    if gcd(modulus, shift) != 1:
+        raise ValueError("modulus and shift must be coprime")
+
+    shift_inverse = pow(shift, -1, modulus)
+    direct = sum(
+        weight
+        * cmath.exp(
+            -2j
+            * cmath.pi
+            * ((shift_inverse * h * delta) % modulus)
+            / modulus
+        )
+        for (h, delta), weight in weights.items()
+    )
+    reciprocal_weights = {
+        (h, delta): weight
+        * cmath.exp(
+            -2j * cmath.pi * h * delta / (shift * modulus)
+        )
+        for (h, delta), weight in weights.items()
+    }
+    pair_fourier = [
+        [
+            sum(
+                weight
+                * cmath.exp(
+                    -2j
+                    * cmath.pi
+                    * (k * h + ell * delta)
+                    / shift
+                )
+                for (h, delta), weight in reciprocal_weights.items()
+            )
+            for ell in range(shift)
+        ]
+        for k in range(shift)
+    ]
+    completed = sum(
+        pair_fourier[k][ell]
+        * cmath.exp(
+            -2j
+            * cmath.pi
+            * ((modulus * k * ell) % shift)
+            / shift
+        )
+        for k in range(shift)
+        for ell in range(shift)
+    ) / shift
+    return direct, completed
+
+
+def sliding_interval_energy_sides(
+    coefficients: tuple[complex, ...],
+    window: int,
+) -> tuple[complex, float]:
+    """Both sides of the finite Fejer/sliding-window identity.
+
+    The sequence is extended by zero outside its literal finite support.
+    Every ordered pair at distance less than ``window`` occurs in exactly
+    ``window-distance`` sliding intervals.  This retains all boundary
+    terms and permits arbitrary complex coefficients.
+    """
+
+    if window < 1:
+        raise ValueError("the sliding window must be positive")
+    correlation = sum(
+        coefficient
+        * coefficients[right].conjugate()
+        * (window - abs(left - right))
+        for left, coefficient in enumerate(coefficients)
+        for right in range(len(coefficients))
+        if abs(left - right) < window
+    )
+    sliding_energy = sum(
+        abs(
+            sum(
+                coefficients[index]
+                for index in range(start, start + window)
+                if 0 <= index < len(coefficients)
+            )
+        )
+        ** 2
+        for start in range(-window + 1, len(coefficients))
+    )
+    return correlation, sliding_energy
+
+
+def equal_zeta_index_shift_sides(
+    r: int,
+    s: int,
+    m_one: int,
+    m_two: int,
+) -> tuple[int, int]:
+    """Both sides of the exact equal-zeta-index shift identity.
+
+    Put ``d=r-s`` and ``delta=m_one*s-m_two*r`` as in (4.3).  Then
+
+    ``delta + d*m_two = s*(m_one-m_two)``.
+
+    In particular, because ``s>0``, the short-modulus zero-frequency
+    condition ``delta=-d*m_two`` is equivalent to ``m_one=m_two``.
+    No limiting argument or endpoint deletion occurs in this identity.
+    """
+
+    if min(r, s, m_one, m_two) < 1:
+        raise ValueError("all index variables must be positive")
+    shift = r - s
+    delta = m_one * s - m_two * r
+    return delta + shift * m_two, s * (m_one - m_two)
+
+
+def balanced_short_shift_forces_equal_zeta_index(
+    *,
+    m_one: int,
+    m_two: int,
+    s: int,
+    shift: int,
+    s_lower: int,
+    m_upper: int,
+    shift_upper: int,
+    delta_upper: int,
+) -> tuple[int, bool, bool]:
+    """Certify the integer-gap forcing m_one=m_two.
+
+    Write r=s+shift and delta=m_one*s-m_two*r.  On the supplied support,
+
+    abs(m_one-m_two)*s <= delta_upper + m_upper*shift_upper.
+
+    If the right side is strictly below s_lower<=s, integrality forces
+    equality of the two zeta indices and then delta=-m_two*shift.  All
+    endpoint inequalities are checked rather than inferred from exponent
+    notation.
+    """
+
+    if min(m_one, m_two, s, s_lower, m_upper) < 1:
+        raise ValueError("indices and positive support bounds must be positive")
+    if min(shift_upper, delta_upper) < 0:
+        raise ValueError("absolute support bounds must be nonnegative")
+    if s + shift < 1:
+        raise ValueError("the shifted reduced variable must stay positive")
+    if s < s_lower or m_two > m_upper:
+        raise ValueError("the variables lie outside the supplied support")
+    if abs(shift) > shift_upper:
+        raise ValueError("the shift lies outside the supplied support")
+    if s_lower <= delta_upper + m_upper * shift_upper:
+        raise ValueError("the integer-gap hypothesis is not strict")
+
+    delta = m_one * s - m_two * (s + shift)
+    if abs(delta) > delta_upper:
+        raise ValueError("delta lies outside the supplied support")
+    return delta, m_one == m_two, delta == -m_two * shift
+
+
+def equal_index_inverse_phase_sides(
+    *,
+    s: int,
+    shift: int,
+    h: int,
+    m: int,
+) -> tuple[Fraction, Fraction]:
+    """Linearize the inverse phase after the equal-index forcing.
+
+    With r=s+shift, delta=-m*shift, and (r,s)=1,
+
+    -h*delta*inv_s(r)/s = h*m/s (mod 1).
+
+    Since r=shift (mod s), this is simply
+    shift*inv_s(r)=1 (mod s).  Signed shifts and frequencies are retained.
+    """
+
+    if min(s, m) < 1:
+        raise ValueError("s and m must be positive")
+    r = s + shift
+    if r < 1:
+        raise ValueError("the shifted reduced variable must stay positive")
+    if gcd(r, s) != 1:
+        raise ValueError("the inverse phase requires coprime reduced variables")
+    delta = -m * shift
+    inverse = pow(r, -1, s) if s > 1 else 0
+    original = Fraction(-h * delta * inverse, s) % 1
+    linear = Fraction(h * m, s) % 1
+    return original, linear
+
+
+def equal_zeta_index_gcd_factorization_sides(
+    coefficients: Mapping[int, complex],
+    twists: Mapping[int, complex],
+) -> tuple[complex, float]:
+    """Finite gcd decomposition of the equal-zeta-index mollifier square.
+
+    The twists may be arbitrary.  In the analytic application take
+    ``twists[n]=n**(-it)``.  Then the coprime ``q,r,s`` side has phase
+    ``(s/r)**it`` and coefficient ``1/(q*sqrt(r*s))``.  Unique gcd
+    factorization ``d=q*r, e=q*s`` gives the literal squared modulus on
+    the other side.
+    """
+
+    support = tuple(sorted(coefficients))
+    if any(index < 1 for index in support):
+        raise ValueError("coefficient support must consist of positive integers")
+    if set(support) != set(twists):
+        raise ValueError("coefficients and twists must have identical support")
+
+    gcd_side = 0j
+    for left in support:
+        for right in support:
+            common = gcd(left, right)
+            r = left // common
+            s = right // common
+            gcd_side += (
+                coefficients[left]
+                * coefficients[right].conjugate()
+                * twists[left]
+                * twists[right].conjugate()
+                / (common * sqrt(r * s))
+            )
+    square_side = abs(
+        sum(
+            coefficients[index] * twists[index] / sqrt(index)
+            for index in support
+        )
+    ) ** 2
+    return gcd_side, square_side
+
+
+def formal_mobius_log_divisor_coefficients(n: int) -> dict[int, int]:
+    """Coefficients of ``-sum_{d|n} mu(d) log d`` in the ``log p`` basis.
+
+    The returned dictionary contains every prime divisor of ``n``.  It
+    equals ``{p: 1}`` when ``n`` is a positive power of one prime, and all
+    its values are zero when ``n`` has at least two distinct prime factors.
+    Thus it is an exact finite, logarithm-free form of
+
+    ``-sum_{d|n} mu(d) log d = Lambda(n)``.
+    """
+
+    if n < 1:
+        raise ValueError("n must be positive")
+    prime_divisors: list[int] = []
+    remaining = n
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            prime_divisors.append(prime)
+            while remaining % prime == 0:
+                remaining //= prime
+        prime += 1
+    if remaining > 1:
+        prime_divisors.append(remaining)
+
+    return {
+        prime: -sum(
+            mobius(divisor)
+            for divisor in divisors(n)
+            if divisor % prime == 0
+        )
+        for prime in prime_divisors
+    }
+
+
 def additive_dual_shift_phase(
     r: int, modulus: int, a: int, b: int
 ) -> AdditiveDualShiftPhase:
@@ -3409,6 +4505,156 @@ class CentralMajorArcMertensLedger:
     required_saving: Fraction
     available_saving: Fraction
     conditional_bound: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class VinogradovDenominatorCoverageLedger:
+    """Rational-denominator interval for a fixed Möbius power saving."""
+
+    polynomial_length: Fraction
+    required_relative_saving: Fraction
+    type_i_bound: Fraction
+    target_bound: Fraction
+    theorem_denominator_floor: Fraction
+    theorem_denominator_ceiling: Fraction
+    actual_denominator_floor: Fraction
+    actual_denominator_ceiling: Fraction
+    overlap_floor: Fraction
+    overlap_ceiling: Fraction
+    has_positive_width_overlap: bool
+
+
+@dataclass(frozen=True)
+class NonzeroReducedDenominatorLedger:
+    """Bound for one nonzero reduced-denominator block through R=D."""
+
+    coefficient_weight: Fraction
+    outer_energy: Fraction
+    shift_energy: Fraction
+    outer_large_sieve_constant: Fraction
+    shift_large_sieve_constant: Fraction
+    fourier_decay: Fraction
+    bound: Fraction
+    target: Fraction
+    margin: Fraction
+
+
+@dataclass(frozen=True)
+class HighReducedDenominatorLedger:
+    """Small numerator/cofactor geometry above the shift length."""
+
+    reduced_denominator: Fraction
+    reduced_numerator: Fraction
+    complementary_cofactor: Fraction
+    lifted_numerator: Fraction
+
+
+@dataclass(frozen=True)
+class HighEdgePolytopeLedger:
+    """Quotient-aware high-denominator exponent ledger."""
+
+    complementary_quotient: Fraction
+    product_length: Fraction
+    reduced_denominator: Fraction
+    ramanujan_cofactor: Fraction
+    reduced_numerator: Fraction
+    full_modulus_numerator: Fraction
+    large_sieve_bound: Fraction
+    target: Fraction
+    large_sieve_gap: Fraction
+    square_root_hybrid_saving: Fraction
+    square_root_hybrid_margin: Fraction
+
+
+@dataclass(frozen=True)
+class ReducedFrequencyLift:
+    """One primitive reduced frequency lifted to a full modulus."""
+
+    reduced_denominator: int
+    primitive_numerator: int
+    cofactor: int
+    full_numerator: int
+
+
+@dataclass(frozen=True)
+class MobiusConvolutionRationalProxyLedger:
+    """Published ``mu*mu`` rational-phase savings versus the edge gap."""
+
+    product_length: Fraction
+    denominator_length: Fraction
+    denominator_term_saving: Fraction
+    interior_term_saving: Fraction
+    upper_denominator_term_saving: Fraction
+    available_saving: Fraction
+    required_saving: Fraction
+    margin: Fraction
+    structurally_applicable: bool
+
+
+@dataclass(frozen=True)
+class ReciprocalMonomialCoverageLedger:
+    """Published monomial-sum half-power cap versus required saving."""
+
+    full_modulus_numerator: Fraction
+    phase_variation: Fraction
+    required_saving: Fraction
+    published_saving_cap: Fraction
+    margin: Fraction
+    covered: bool
+
+
+@dataclass(frozen=True)
+class CoupledProductCircleLedger:
+    """Two published product bounds on one precompletion circle band."""
+
+    complementary_left: Fraction
+    complementary_right: Fraction
+    quotient_length: Fraction
+    complementary_product: Fraction
+    circle_denominator: Fraction
+    quotient_gcd: Fraction
+    effective_denominator: Fraction
+    approximation_loss: Fraction
+    complementary_type_ii_constant: Fraction
+    shifted_type_ii_constant: Fraction
+    quotient_stratum: Fraction
+    circle_kernel_mass: Fraction
+    pointwise_bound: Fraction
+    cauchy_bound: Fraction
+    best_bound: Fraction
+    target: Fraction
+    margin: Fraction
+    covered: bool
+
+
+@dataclass(frozen=True)
+class ShiftedDivisorProxyLedger:
+    """Published divisor-shift exponents versus the Möbius packet."""
+
+    fixed_shift_error: Fraction
+    summed_fixed_shift_error: Fraction
+    summed_fixed_shift_margin: Fraction
+    selberg_endpoint: Fraction
+    averaged_shift_square_error: Fraction
+    averaged_shift_moment_error: Fraction
+    averaged_shift_error: Fraction
+    averaged_shift_margin: Fraction
+    raw_zero_mode: Fraction
+    zero_mode_required_saving: Fraction
+    standard_divisor_coefficients: bool
+    zero_mode_algebraically_vanishing: bool
+    covered: bool
+
+
+@dataclass(frozen=True)
+class MultipleMobiusAdditiveLedger:
+    """Exponent mismatch for the nearest additive three-variable theorem."""
+
+    product_length: Fraction
+    fixed_quotient_bound: Fraction
+    summed_bound: Fraction
+    target: Fraction
     gap: Fraction
 
 
@@ -5126,6 +6372,88 @@ class BlomerPascadiMargins:
 
 
 @dataclass(frozen=True)
+class SmoothAdditiveDualSupportLedger:
+    """Dual-support ledger for the actual modulated smooth kernel.
+
+    The two centres come from ``s*x`` and ``s*T/(M*R)``; the two widths
+    come from smooth completion at ``s/H`` and ``s/L``.  The effective
+    frequencies are the larger centre/width scales.  The ledger records
+    only exact exponent arithmetic and published-theorem applicability;
+    it does not assert the remaining double-Mobius cancellation.
+    """
+
+    h_center: Fraction
+    h_width: Fraction
+    h_frequency: Fraction
+    delta_center: Fraction
+    delta_width: Fraction
+    delta_frequency: Fraction
+    product_frequency: Fraction
+    completion_amplitude: Fraction
+    near_shift: Fraction
+    near_trivial: Fraction
+    local_target: Fraction
+    required_saving: Fraction
+    fixed_modulus_nu: Fraction | None
+    blomer_pascadi_margins: BlomerPascadiMargins | None
+    blomer_pascadi_covered: bool
+
+
+@dataclass(frozen=True)
+class ShiftModulusCompletionLedger:
+    """Balanced exponents after reciprocity and completion modulo the shift.
+
+    When ``H,L`` exceed the shift modulus, smooth completion has only its
+    zero dual mode up to arbitrary-power tails.  The resulting explicit
+    kernel removes the inverse oscillation but leaves a two-Mobius shifted
+    correlation.  ``required_pair_saving`` is not asserted.
+    """
+
+    shift_modulus: Fraction
+    h_period_excess: Fraction
+    delta_period_excess: Fraction
+    h_dual_frequency: Fraction
+    delta_dual_frequency: Fraction
+    zero_mode_amplitude: Fraction
+    outer_pair_count: Fraction
+    total_trivial: Fraction
+    local_target: Fraction
+    required_pair_saving: Fraction
+    short_interval_ratio: Fraction
+    published_power_covered: bool
+
+
+@dataclass(frozen=True)
+class ShortMertensEnergyLedger:
+    """Exponent ledger for the Fejer-weighted short Mertens energy."""
+
+    long_length: Fraction
+    window_length: Fraction
+    number_of_windows: Fraction
+    trivial_energy: Fraction
+    diagonal_energy: Fraction
+    required_energy_saving: Fraction
+    normalized_correlation_target: Fraction
+    published_optimal_mean_square_covered: bool
+
+
+@dataclass(frozen=True)
+class LongPolynomialMeanValueLedger:
+    """Resolution-cell ledger for a polynomial longer than the time window."""
+
+    polynomial_length: Fraction
+    time_length: Fraction
+    coefficients_per_resolution_cell: Fraction
+    unnormalized_diagonal: Fraction
+    unnormalized_classical: Fraction
+    normalized_diagonal: Fraction
+    normalized_classical: Fraction
+    required_coefficient_saving: Fraction
+    guth_maynard_reduces_to_classical: bool
+    published_mobius_specific_saving: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -5228,6 +6556,212 @@ def blomer_pascadi_beats_best_trivial(nu: Fraction) -> bool:
     """Whether every term has a strict power saving at length ``c^nu``."""
 
     return min(blomer_pascadi_best_trivial_margins(nu).values()) > 0
+
+
+def smooth_additive_dual_support_ledger(
+    box: ExponentBox,
+) -> SmoothAdditiveDualSupportLedger:
+    """Return the smooth two-dimensional completion support ledger.
+
+    In the separated kernel (6.2), the ``h`` transform is centred at
+    ``|s*x|`` with ``x~M/S`` and has width ``s/H``.  Its two exponents
+    are therefore ``m`` and ``sigma-h``.  The ``delta`` transform is
+    centred at ``s*T/(M*R)`` and has width ``s/L``.  Smooth summation by
+    parts makes the complement of these centred windows smaller than
+    every fixed power; this function records the surviving window.
+
+    When the two effective lengths agree, their common exponent relative
+    to the modulus is also checked against Blomer--Pascadi, Theorem 1.1.
+    A positive theorem margin would only establish scale compatibility,
+    not coefficient compatibility.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("smooth additive-dual support needs an admissible box")
+    if box.rho != box.sigma:
+        raise ValueError("this ledger is for the overlapping face R=S")
+
+    zero = Fraction(0)
+    h_center = max(zero, box.m)
+    h_width = max(zero, box.sigma - box.h)
+    h_frequency = max(h_center, h_width)
+    delta_center = max(
+        zero, box.sigma + 1 - box.m - box.rho
+    )
+    delta_width = max(zero, box.sigma - box.ell)
+    delta_frequency = max(delta_center, delta_width)
+    if max(h_frequency, delta_frequency) > box.sigma:
+        raise ValueError("the centred dual window wraps around the modulus")
+
+    product_frequency = h_frequency + delta_frequency
+    completion_amplitude = box.third_length - box.sigma
+    if completion_amplitude < 0:
+        raise ValueError("the smooth transition amplitude must be nonnegative")
+    near_shift = max(zero, box.sigma - product_frequency)
+    near_trivial = (
+        completion_amplitude
+        + product_frequency
+        + box.sigma
+        + near_shift
+    )
+    local_target = box.rho + box.sigma
+
+    fixed_modulus_nu = None
+    margins = None
+    covered = False
+    if h_frequency == delta_frequency and box.sigma > 0:
+        fixed_modulus_nu = h_frequency / box.sigma
+        margins = blomer_pascadi_best_trivial_margins(
+            fixed_modulus_nu
+        )
+        covered = min(margins.values()) > 0
+
+    return SmoothAdditiveDualSupportLedger(
+        h_center=h_center,
+        h_width=h_width,
+        h_frequency=h_frequency,
+        delta_center=delta_center,
+        delta_width=delta_width,
+        delta_frequency=delta_frequency,
+        product_frequency=product_frequency,
+        completion_amplitude=completion_amplitude,
+        near_shift=near_shift,
+        near_trivial=near_trivial,
+        local_target=local_target,
+        required_saving=max(zero, near_trivial - local_target),
+        fixed_modulus_nu=fixed_modulus_nu,
+        blomer_pascadi_margins=margins,
+        blomer_pascadi_covered=covered,
+    )
+
+
+def shift_modulus_completion_ledger(
+    box: ExponentBox,
+    shift_modulus: Fraction,
+) -> ShiftModulusCompletionLedger:
+    """Return the reciprocal short-modulus exponent ledger.
+
+    The balanced near block has ``d=T^shift_modulus``.  Reciprocity
+    changes the inverse phase from modulus ``s`` to modulus ``d``.
+    Smooth completion then has dual lengths ``d/H`` and ``d/L``.  If
+    both are below one, only the zero dual frequency survives up to
+    arbitrary-power decay, with amplitude ``H*L/d``.
+
+    The Matomaki--Teravainen all-short-interval theorem applies at the
+    resulting length ratio ``d/s=2/3`` but gives logarithmic, not fixed
+    power, cancellation.  The last field records that coverage boundary.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("shift-modulus completion needs an admissible box")
+    if box.rho != box.sigma:
+        raise ValueError("this ledger is for the overlapping face R=S")
+    if shift_modulus <= 0 or shift_modulus > box.sigma:
+        raise ValueError("the shift modulus must lie between 1 and S")
+
+    zero = Fraction(0)
+    h_period_excess = box.h - shift_modulus
+    delta_period_excess = box.ell - shift_modulus
+    if min(h_period_excess, delta_period_excess) < 0:
+        raise ValueError("both smooth variables must exceed the shift modulus")
+    h_dual_frequency = max(zero, shift_modulus - box.h)
+    delta_dual_frequency = max(zero, shift_modulus - box.ell)
+    zero_mode_amplitude = box.third_length - shift_modulus
+    outer_pair_count = box.sigma + shift_modulus
+    total_trivial = zero_mode_amplitude + outer_pair_count
+    local_target = box.rho + box.sigma
+    return ShiftModulusCompletionLedger(
+        shift_modulus=shift_modulus,
+        h_period_excess=h_period_excess,
+        delta_period_excess=delta_period_excess,
+        h_dual_frequency=h_dual_frequency,
+        delta_dual_frequency=delta_dual_frequency,
+        zero_mode_amplitude=zero_mode_amplitude,
+        outer_pair_count=outer_pair_count,
+        total_trivial=total_trivial,
+        local_target=local_target,
+        required_pair_saving=max(zero, total_trivial - local_target),
+        short_interval_ratio=shift_modulus / box.sigma,
+        published_power_covered=False,
+    )
+
+
+def short_mertens_energy_ledger(
+    long_length: Fraction,
+    window_length: Fraction,
+) -> ShortMertensEnergyLedger:
+    """Return the exact Fejer-weighted short-sum exponent ledger.
+
+    There are ``T^long_length`` sliding windows.  Bounding every sum of
+    ``T^window_length`` coefficients trivially gives energy exponent
+    ``long+2*window``.  Square-root-sized short sums give the diagonal
+    exponent ``long+window``.  Dividing the Fejer identity by the window
+    makes that optimal energy exactly the ``T^long_length`` correlation
+    target required by ``SC_(window/long)``.
+    """
+
+    if long_length <= 0:
+        raise ValueError("the long length must be positive")
+    if window_length <= 0 or window_length > long_length:
+        raise ValueError("the window must lie between 1 and the long length")
+    trivial_energy = long_length + 2 * window_length
+    diagonal_energy = long_length + window_length
+    return ShortMertensEnergyLedger(
+        long_length=long_length,
+        window_length=window_length,
+        number_of_windows=long_length,
+        trivial_energy=trivial_energy,
+        diagonal_energy=diagonal_energy,
+        required_energy_saving=trivial_energy - diagonal_energy,
+        normalized_correlation_target=diagonal_energy - window_length,
+        published_optimal_mean_square_covered=False,
+    )
+
+
+def long_polynomial_mean_value_ledger(
+    polynomial_length: Fraction,
+    time_length: Fraction,
+) -> LongPolynomialMeanValueLedger:
+    """Return the long-polynomial coherence and mean-value exponents.
+
+    For ``D(t)=sum_(n~X) b_n n**it`` with 1-bounded coefficients, the
+    diagonal scale over a time interval of length ``T`` is ``T*X``.
+    The classical mean-value theorem has scale ``(T+X)*X``.  Dividing
+    by ``X`` models the coefficients ``b_n/sqrt(n)`` on one dyadic block.
+
+    Guth--Maynard explicitly reduce their large-value theorem to the
+    classical first term when ``X>=T``.  No published coefficient-specific
+    Mobius saving is inserted into this finite exponent ledger.
+    """
+
+    if polynomial_length <= 0 or time_length <= 0:
+        raise ValueError("the polynomial and time lengths must be positive")
+    zero = Fraction(0)
+    unnormalized_diagonal = polynomial_length + time_length
+    unnormalized_classical = max(
+        unnormalized_diagonal,
+        2 * polynomial_length,
+    )
+    normalized_diagonal = unnormalized_diagonal - polynomial_length
+    normalized_classical = unnormalized_classical - polynomial_length
+    return LongPolynomialMeanValueLedger(
+        polynomial_length=polynomial_length,
+        time_length=time_length,
+        coefficients_per_resolution_cell=max(
+            zero, polynomial_length - time_length
+        ),
+        unnormalized_diagonal=unnormalized_diagonal,
+        unnormalized_classical=unnormalized_classical,
+        normalized_diagonal=normalized_diagonal,
+        normalized_classical=normalized_classical,
+        required_coefficient_saving=(
+            normalized_classical - normalized_diagonal
+        ),
+        guth_maynard_reduces_to_classical=(
+            polynomial_length >= time_length
+        ),
+        published_mobius_specific_saving=False,
+    )
 
 
 @dataclass(frozen=True)
