@@ -10414,7 +10414,7 @@ Fix a finite product box \(1\leq x,y\leq X\).  Let
 \tag{9.437}
 \]
 
-be the complete finite packet family retained at that stage: \(\sigma\)
+be a supplied finite packet family at that stage: \(\sigma\)
 is the AFE direction, \(h\ne0\) is the original shifted-divisor frequency,
 \(\delta\in\mathbb Z\) is the unrestricted additive shift, and \(\nu\)
 records every dyadic scale.  Write \(W_\pi(x,y)\) for the original smooth
@@ -10549,7 +10549,8 @@ Equations (9.441)--(9.447) give the finite exact master identity
 \tag{9.448}
 \]
 
-This is the first required milestone, but not yet an estimate.  Arbitrary
+This is the finite algebraic part of the first required milestone, but not
+yet its complete analytic instantiation or an estimate.  Arbitrary
 probability weights \(p,q\) give an algebraically valid centering; the next
 analytic task is to derive the *actual* principal density from the fully
 recombined AFE packet and then decide which of the following occurs:
@@ -10568,7 +10569,11 @@ changes \(p,q\) and proves that \(\mathcal M_{\rm res}\) and
 \(\mathcal R_{\rm cent}\) separately change while their sum (9.448) does
 not.  Thus an arbitrary centering cannot be advertised as the canonical
 principal-mode extraction; deriving the AFE density is a genuine analytic
-step.
+step.  Moreover, the helper accepts the kernels \(W_\pi\) as data: it does
+not construct the analytic adapter from (4.5), through every later
+completion and reflection, to a proved exhaustive \(\mathfrak P_X\).
+Equation (4.5) remains the complete uncompleted \(h,\delta\) master; the
+packet-by-packet adapter into (9.437)--(9.440) is still to be written.
 
 ### 9.70 The centered operator gate and the global TT* split
 
@@ -10635,10 +10640,13 @@ Thus (9.452) has the exact, pre-estimate split
 \tag{9.454}
 \]
 
-The \(\det=0\) parallel-slope orbit is resonant.  It must be computed
-together with \(\mathcal M_{\rm res}\), the explicit diagonal, and both
-reflected cross terms; it is not legitimate to discard it by centering
-alone.  Only \(\mathfrak G_{\det\ne0}\) is a candidate for reciprocity,
+The \(\det=0\) parallel-slope orbit is resonant.  Its estimate must use
+the same exact reflection data as \(\mathcal M_{\rm res}\), the explicit
+diagonal, and both reflected cross terms; it is not legitimate to discard
+it by centering alone.  These terms are not literally added:
+\(\mathcal M_{\rm res}\) is a pre-Cauchy bilinear term, whereas
+\(\mathfrak G_{\det=0}\) is part of the squared \(TT^*\) norm of
+\(\mathcal R_{\rm cent}\).  Only \(\mathfrak G_{\det\ne0}\) is a candidate for reciprocity,
 Poisson/Voronoi completion, Kuznetsov, or a Deshouillers--Iwaniec type
 spectral large sieve.  This ordering also explains why decomposing one
 Möbius factor can help only *inside* the global dispersion: decomposing a
@@ -10647,12 +10655,12 @@ fixed affine line first returns the unavailable pointwise Chowla problem.
 The helper `coupled_ttstar_determinant_split_sides` verifies (9.452)--(9.454)
 as a finite matrix identity.  It supplies no spectral estimate and makes no
 claim that the determinant-zero term has already recombined correctly with
-(9.447).  Those are precisely the two remaining analytic gates:
+(9.447).  The three correctly normalized remaining tasks are:
 
 \[
  \boxed{
- \text{evaluate }\mathcal M_{\rm res}+\mathfrak G_{\det=0},
- \quad
+ \text{evaluate }\mathcal M_{\rm res}\text{ before Cauchy},\quad
+ \text{bound }\mathfrak G_{\det=0}\text{ in the }TT^*\text{ norm},\quad
  \text{then prove the }T^4\text{ TT* saving on }
  \mathfrak G_{\det\ne0}.}
 \tag{9.455}
@@ -10774,6 +10782,66 @@ cannot provide that cancellation.  The exact helper
 formal value \(u=1/2\), the two determinants are \(135/256\) and \(1/32\),
 while the projection-rank cap is \(2\).
 
+### 9.72 Determinant zero means equal primitive slope
+
+The determinant-zero term in (9.454) simplifies further on the actual
+affine-line support.  Every row comes from
+
+\[
+ k=gk_0,\qquad \ell=g\ell_0,\qquad
+ k_0,\ell_0\geq1,\qquad (k_0,\ell_0)=1.
+\tag{9.465}
+\]
+
+Hence, for two rows \(u,v\),
+
+\[
+ k_u\ell_v=k_v\ell_u
+ \quad\Longrightarrow\quad
+ (k_u,\ell_u)=(k_v,\ell_v).
+\tag{9.466}
+\]
+
+Indeed, coprimality of \(k_u,\ell_u\) first gives \(k_u\mid k_v\);
+interchanging \(u,v\) gives \(k_v\mid k_u\), so the positive \(k\)'s
+are equal, and then so are the \(\ell\)'s.  Therefore the zero-determinant
+Gram term is exactly
+
+\[
+ \boxed{
+ \mathfrak G_{\det=0}(a)=\sum_{(k,\ell)=1}
+ \sum_t\left|
+   \sum_{\substack{u:\,(k_u,\ell_u)=(k,\ell)}}
+   a_u\mathcal T_{u,t}
+ \right|^2.}
+\tag{9.467}
+\]
+
+There are no collisions between distinct primitive slopes in (9.467).
+The term is positive semidefinite, but it is not diagonal in the remaining
+\(g,h,\delta,\nu,\sigma\) labels: those rows must still be recombined
+*inside* the square for each fixed \((k,\ell)\).  Thus determinant zero
+cannot cancel against another slope after \(TT^*\); any reduction must
+come from the AFE signs, \(h\)-average, common-factor average, or an exact
+same-slope identity before the square is estimated.
+
+This changes the resonant subproblem in (9.455) to the sharper finite gate
+
+\[
+ \boxed{
+ \sum_{(k,\ell)=1}
+ \left\|\sum_{u:\,\operatorname{slope}(u)=(k,\ell)}
+ a_u\mathcal T_{u,\bullet}\right\|_2^2
+ \quad\text{with all outer signs retained}.}
+\tag{9.468}
+\]
+
+The helper `coupled_ttstar_determinant_split_sides` now rejects
+nonprimitive or nonpositive slopes.  Its finite test includes two distinct
+rows with the same primitive slope and verifies that these, and only these,
+enter the determinant-zero cross block.  Formula (9.468) is an exact
+reduction, not a bound.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -10860,12 +10928,13 @@ status.  Bettin--Gonek's converse calibration (9.433)--(9.436) does not make
 the dyadic target RH-hard: at \(\theta=3\) its zero-free boundary is the
 vacuous \(7/6\).  It instead shows that a viable unconditional residue
 argument must retain the height displacement lost by a global negative
-moment.  The new finite master (9.437)--(9.448) now keeps every labelled
-secondary-zero packet, both reflected cross terms, and the explicit
+moment.  The new finite master schema (9.437)--(9.448) keeps every supplied
+labelled secondary-zero packet, both reflected cross terms, and the explicit
 diagonal before centering, while excluding the original \(h=0\) mode
 already settled in (4.6).  Its decomposition is exact but depends on the
 as-yet-underived principal density: changing that density moves mass
-between \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\).  Finally,
+between \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\); the
+exhaustive analytic adapter from (4.5) is also not yet constructed.  Finally,
 (9.449)--(9.455) identify the exact \(T^2\) operator saving, equivalently
 \(T^4\) after \(TT^*\), and split the global Gram form into determinant-zero
 and determinant-nonzero orbits.  Neither the resonant evaluation nor the
@@ -10875,7 +10944,10 @@ time-Fourier Gram.  Its Gaussian \(1,2,4\) minor, even after diagonal
 removal, has rank \(3\), whereas every row/column/grand projection has
 rank at most \(2\).  Thus product-density centering cannot isolate the
 whole resonance; the surviving high-rank banded Möbius energy remains
-unproved.**
+unproved.  The primitive-slope lemma (9.465)--(9.468) also proves that
+the determinant-zero Gram orbit contains only equal \((k_0,\ell_0)\);
+it is a sum of same-slope squared norms, with no cross-slope resonances.
+Its remaining outer-parameter cancellation is unproved.**
 
 Proved in this note:
 
@@ -11063,14 +11135,15 @@ Proved in this note:
   only \(\Re\rho>7/6\) and is vacuous.  Their model (9.436) exhibits the
   dyadic \(T^{-3}\) displacement factor; it is not an unconditional
   all-zero expansion or an upper bound.
-* the boundary-exact secondary-zero master (9.437)--(9.448), including
-  labelled AFE directions, all retained \(h,\delta\) and dyadic packets,
+* the boundary-exact secondary-zero master schema (9.437)--(9.448), for
+  supplied labelled AFE directions, \(h,\delta\), and dyadic packets,
   both nonsymmetric reflected cross terms, the explicit diagonal, and
   the weighted zero-row/zero-column centered kernel.  The finite identity
   has no endpoint error and rejects the already counted original \(h=0\)
   mode.  It also proves that arbitrary choices of the centering density
   change the separate resonant and centered terms, so no canonical
-  principal mode or estimate is claimed.
+  principal mode or estimate is claimed.  Constructing the exhaustive
+  analytic packet adapter from (4.5) is not part of this proved schema.
 * the centered \(2\to2\) exponent ledger and the global finite \(TT^*\)
   determinant split (9.449)--(9.455).  Raw exponent \(5\) to target
   exponent \(3\) requires \(T^2\) before squaring and \(T^4\) in the Gram
@@ -11085,6 +11158,11 @@ Proved in this note:
   that the explicit diagonal plus row/column modes cannot remove the
   whole zero packet; estimating the remaining banded Möbius energy is
   still open.
+* the primitive-slope determinant-zero reduction (9.465)--(9.468).
+  For positive coprime slope pairs, determinant zero is equivalent to
+  equality of the two slopes, so the whole zero orbit is a sum of
+  same-slope squared norms.  Cross terms in \(g,h,\delta,\nu,\sigma\)
+  remain inside each square and are not estimated here.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -11348,9 +11426,10 @@ Proved in this note:
 | Guth--Maynard large-value route | exact Fourier-cell audit; long range reduces to classical | The separated equal-index model is the exact energy (9.409), whose time window resolves \(|r-s|\ll X/T\), (9.410).  At \(X=T^3\), each cell contains \(X/T=T^2\) coefficients.  Montgomery--Vaughan gives normalized exponent \(3\) against diagonal exponent \(1\), (9.412).  Guth--Maynard's proof explicitly returns to the classical first term for polynomial length \(N_{\rm GM}\geq T_{\rm GM}\); here \(N_{\rm GM}=T^3>T=T_{\rm GM}\).  Their theorem is coefficient-agnostic and provides no Möbius-specific saving, so (9.413) remains exactly the unavailable banded two-Möbius estimate |
 | Intact-mollifier Perron route | unconditional possible-zero estimate unproved; RH route closes | Perron inversion has no endpoint or truncation error, (9.422)--(9.424).  On the limiting absolute-convergence contour \(c=1/2\), squaring \(N^c\) gives exponent \(4\) at \(N=T^3\), three powers above target, (9.425).  Reaching \(T^{1+\varepsilon}\) unconditionally enters a region where off-critical zeros are not excluded, and any simple-zero residue encountered contains \(1/\zeta'(\rho)\), (9.426).  Under RH the shift to fixed \(c>0\) is pole-free; Bui--Florea's \(k=2\) fourth negative moment plus the classical fourth moment yields (9.432), which closes every fixed \(\theta\), including \(3\), conditionally on RH |
 | Bettin--Gonek long-mollifier converse | exact theorem map; no dyadic \(\theta=3\) zero-free obstruction | Uniform \(T^{1+\varepsilon}\) control for every \(N\leq T^\theta\) on \([0,T]\) excludes zeros right of \(1/2+1/(2\theta)\), while on \([T,2T]\) it excludes only those right of \(1/2+2/\theta\), (9.434).  At \(\theta=3\) the dyadic boundary is \(7/6\), hence vacuous; a nontrivial dyadic consequence starts only at \(\theta>4\).  Their model (9.436) shows a \(T^{-3}\) displacement factor for one fixed off-line zero, but is not an unconditional all-zero upper bound |
-| Secondary-zero boundary master | exact finite recombination; product-density centering noncanonical | Equations (9.437)--(9.448) retain every labelled AFE/\(h,\delta\)/dyadic packet before absolute values, both reflected cross terms, the diagonal, and all finite endpoints.  Double centering gives weighted zero row and column sums, but changing the density changes the separate \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\).  The actual principal object is identified by the later Fourier-projector row; evaluating its high-rank banded energy remains open |
-| Global centered \(TT^*\) route | exact determinant split; both analytic estimates unproved | The balanced operator needs a relative \(T^2\) saving, or \(T^4\) after squaring, (9.449)--(9.450).  One global Gram expansion splits exactly by \(k_u\ell_v-k_v\ell_u=0\) or not, (9.451)--(9.454).  The zero determinant must recombine with the resonant master; only the nonzero determinant is eligible for a spectral large sieve.  Neither bound in (9.455) is asserted |
+| Secondary-zero boundary master | exact finite schema; analytic packet adapter and estimate unproved | For every supplied labelled AFE/\(h,\delta\)/dyadic packet family, (9.437)--(9.448) retain both reflected cross terms, the diagonal, and all finite endpoints before absolute values.  Double centering gives weighted zero row and column sums, but changing the density changes the separate \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\).  The helper does not yet derive an exhaustive packet family from (4.5); the actual principal object is identified by the later Fourier-projector row, whose banded energy remains open |
+| Global centered \(TT^*\) route | exact determinant split; both analytic estimates unproved | The balanced operator needs a relative \(T^2\) saving, or \(T^4\) after squaring, (9.449)--(9.450).  One global Gram expansion splits exactly by \(k_u\ell_v-k_v\ell_u=0\) or not, (9.451)--(9.454).  The zero determinant must be bounded using the same reflection data as the pre-Cauchy resonant master, but the two are not literally added; only the nonzero determinant is eligible for a spectral large sieve.  None of the three tasks in (9.455) is asserted |
 | Actual zero-mode Fourier projector | exact high-rank identification; banded Möbius energy unproved | The fully recombined equal-index packet is the Fourier Gram (9.457), minus its explicit diagonal (9.458).  On the Gaussian \(1,2,4\) minor, both determinants in (9.462) are nonzero, so the full and diagonal-removed projectors have rank \(3\); every product-density row/column/grand projection has rank at most \(2\), (9.463).  Hence scalar-density centering cannot isolate the whole resonance, and the remaining projector is the long-polynomial gate rather than an LCM diagonal |
+| Determinant-zero primitive slopes | exact same-slope decomposition; within-slope norm unproved | Since every affine slope \((k_0,\ell_0)\) is positive and primitive, determinant zero forces equality of the two slopes, (9.465)--(9.466).  The zero orbit is therefore the sum of same-slope squared norms (9.467), with no cross-slope collisions.  All \(g,h,\delta,\nu,\sigma\) signs remain inside each square, and the bound (9.468) is still open |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

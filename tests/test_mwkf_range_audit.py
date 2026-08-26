@@ -117,9 +117,14 @@ def test_research_note_exposes_global_secondary_zero_master_and_ttstar_split() -
         "### 9.70 The centered operator gate and the global TT* split",
         "\\det(u,v)=k_u\\ell_v-k_v\\ell_u",
         "required_ttstar_saving_exponent=4",
+        "These terms are not literally added:",
+        "not construct the analytic adapter from (4.5)",
         "### 9.71 The actual zero-mode projector has rank above product centering",
         "\\det G_T=(1-u^2)^3(1+u^2)",
         "\\operatorname{rank}(K-K^\\circ)\\leq2",
+        "### 9.72 Determinant zero means equal primitive slope",
+        "(k_u,\\ell_u)=(k_v,\\ell_v)",
+        "\\mathfrak G_{\\det=0}(a)=\\sum_{(k,\\ell)=1}",
     ):
         assert marker in text
 

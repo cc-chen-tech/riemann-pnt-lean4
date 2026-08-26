@@ -1171,6 +1171,13 @@ def coupled_ttstar_determinant_split_sides(
 
     if not rows or not columns:
         raise ValueError("the coupled operator must have rows and columns")
+    if any(
+        row.short_slope_k <= 0
+        or row.short_slope_l <= 0
+        or gcd(row.short_slope_k, row.short_slope_l) != 1
+        for row in rows
+    ):
+        raise ValueError("every affine slope must be a positive primitive pair")
     row_labels = tuple(row.label for row in rows)
     if len(set(row_labels)) != len(row_labels):
         raise ValueError("coupled operator row labels must be unique")

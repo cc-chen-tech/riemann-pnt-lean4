@@ -753,7 +753,7 @@ def test_coupled_ttstar_splits_parallel_and_nonparallel_slopes_exactly() -> None
     split = type_identity.coupled_ttstar_determinant_split_sides(
         rows=(
             type_identity.CoupledOperatorRow("u", 1, 1),
-            type_identity.CoupledOperatorRow("v", 2, 2),
+            type_identity.CoupledOperatorRow("v", 1, 1),
             type_identity.CoupledOperatorRow("w", 1, 2),
         ),
         columns=("t0", "t1"),
@@ -781,6 +781,16 @@ def test_coupled_ttstar_splits_parallel_and_nonparallel_slopes_exactly() -> None
         ("v", "v"),
         ("w", "w"),
     )
+
+
+def test_coupled_ttstar_rejects_nonprimitive_affine_slopes() -> None:
+    with pytest.raises(ValueError, match="positive primitive"):
+        type_identity.coupled_ttstar_determinant_split_sides(
+            rows=(type_identity.CoupledOperatorRow("bad", 2, 2),),
+            columns=("t",),
+            operator_entries={("bad", "t"): F(1)},
+            row_coefficients={"bad": F(1)},
+        )
 
 
 def test_zeta_variables_pair_exactly_with_their_mollifier_divisors() -> None:
