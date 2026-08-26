@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Formalize Carlson's mollifier-length no-go, the endpoint-saving optimization, the explicit `5/64` exponent ledger, and a single-layer forcing theorem with separate forcing and density exponents, while isolating the still-unformalized Deshouillers--Iwaniec spectral input.
+**Goal:** Formalize Carlson's mollifier-length no-go, the endpoint-saving optimization, the explicit two-scale `5/64` exponent ledger, and a single-layer forcing theorem with separate forcing and density exponents, while isolating the still-unformalized Conrey--Deshouillers--Iwaniec normalization and L2 interpolation input.
 
 **Architecture:** Pure real-linear minimax algebra lives in one small module. Exact DI parameter arithmetic lives in a second module and proves only rational inequalities. A generalized density certificate and forcing contradiction live above the existing zero-density count interfaces. The published analytic estimate enters only through an explicit proposition-valued certificate whose unconditional constructor is a separate final task.
 
@@ -67,9 +67,8 @@
 - Create: `Test/CarlsonTwoThirdsDIExponentContract.lean`
 
 **Interfaces:**
-- exact constants `diLengthExponent`, `diRightBoundary`, `diEpsilon`, `diInterpolationWeight`, `diInterpolatedExponent`, `diTargetExponent`, `diDelta`
-- `di_critical_mixed_term_lt_one`
-- `di_critical_long_term_lt_one`
+- exact constants `diCoreExponent`, `diOuterExponent`, `diRightBoundary`, `diEpsilon`, `diInterpolationWeight`, `diInterpolatedExponent`, `diTargetExponent`, `diDelta`
+- `di_twoScale_length_range`
 - `di_interpolated_exponent_eq`
 - `di_interpolated_exponent_lt_target`
 - `di_lower_endpoint_lt_target`
@@ -147,19 +146,22 @@ this deterministic upstream failure; no new Carlson target failed.
 - Create: `Test/CarlsonDILocalDensityContract.lean`
 
 **Interfaces:**
-- Gaussian-window boundary L2 hypotheses with `Delta=U/log U`
+- a generic mollifier coefficient interface and a real mollified-error mean-square input
+- Gaussian-window boundary L2 hypotheses
 - L2 three-lines interpolation for the regularized detector
 - local zero count bound in one Gaussian window
 - `O(log U)` window cover of `[U,2U]`
 - dyadic summation to `ZeroDensityEventualMajorant (2/3) (467/576) 6`
 
 - [ ] State the exact L2 three-lines theorem using existing Fourier/Plancherel infrastructure and prove it without adding a hypothesis that already contains the conclusion.
-- [ ] Connect existing arbitrary-height horizontal-contour selection to the Gaussian local count.
+- [x] Extract the existing fixed-right contour theorem with the *actual* mollified-error integral on the left, before the classical sharp endpoint is substituted.
+- [ ] Generalize the detector from the repository's sharp Mobius cutoff to a finite coefficient family with constant coefficient one.
+- [ ] Connect the fixed-right contour selection to the Gaussian/global L2 count.
 - [ ] Prove the finite window cover and dyadic summation, keeping every logarithmic loss explicit.
 - [ ] Assemble the proved components into `CarlsonDIImprovedDensityCertificate`.
 - [ ] Run focused contracts and axiom audit.
 
-### Task 8: Deshouillers--Iwaniec spectral input
+### Task 8: Two-scale Conrey--Deshouillers--Iwaniec input
 
 **Files:**
 - Create: `PrimeNumberTheorem/DeshouillersIwaniecMollifiedMeanSquare.lean`
@@ -167,12 +169,14 @@ this deterministic upstream failure; no new Carlson target failed.
 - Modify: `PrimeNumberTheorem/CarlsonDILocalDensity.lean`
 
 **Interfaces:**
-- exact sharp Möbius mollifier normalization
-- the three terms `T`, `T^(1/2) X^(7/8)`, and `X^(5/3)` with `T^epsilon`
+- exact core exponent `57/100` and outer exponent `571/1000`
+- the plateau/taper weight, with exact reciprocal cancellation through the core
+- its identity as a fixed linear combination of two linear Selberg mollifiers
+- Conrey Theorem 2 for each Selberg component, normalized to the required height weight
 - a constructor for the critical-boundary input used by the local-density assembly
 
-- [ ] Formalize every finite Dirichlet-polynomial expansion and diagonal term needed by DI Theorem 4.
-- [ ] Formalize the Kloosterman/Kuznetsov large-sieve input with all smooth weights, ranges, and epsilon losses explicit.
-- [ ] Assemble the published theorem in the repository normalization and test the `x=57/100` specialization.
+- [ ] Formalize the two-scale weight identity and the exact vanishing of the coefficients of `zeta M - 1` through `T^(57/100)`.
+- [ ] Formalize Conrey's published `theta < 4/7` mean square, including the slight horizontal shift and smooth height weight; the underlying Kloosterman/Kuznetsov input must not be hidden in an axiom.
+- [ ] Combine the two component bounds by the elementary square inequality and test the `57/100 < 571/1000 < 4/7` specialization.
 - [ ] Only after this constructor and Task 7 compile, expose the unconditional `N(2/3,T)=O(T^(467/576)(log T)^6)` theorem.
 - [ ] Run full `lake build`, repository tests, axiom allowlist, and `git diff --check` with exit code `0`.

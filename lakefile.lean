@@ -467,6 +467,8 @@ lean_lib RiemannPNT where
     `Test.CarlsonLengthMinimaxContract,
     `PrimeNumberTheorem.CarlsonTwoThirdsDIExponent,
     `Test.CarlsonTwoThirdsDIExponentContract,
+    `PrimeNumberTheorem.CarlsonMeanSquareContourBridge,
+    `Test.CarlsonMeanSquareContourBridgeContract,
     `PrimeNumberTheorem.ZeroDensityExponentCertificate,
     `Test.ZeroDensityExponentCertificateContract,
     `PrimeNumberTheorem.SingleLayerForcingSeparatedDensity,

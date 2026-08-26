@@ -1,7 +1,7 @@
 import PrimeNumberTheorem.CarlsonLengthMinimax
 
 /-!
-# Exact exponent ledger for the Deshouillers--Iwaniec Carlson route
+# Exact exponent ledger for a two-scale Deshouillers--Iwaniec Carlson route
 
 This file contains rational arithmetic only.  In particular, it does not
 assert the Deshouillers--Iwaniec mollified mean-square estimate or the
@@ -12,8 +12,13 @@ namespace PrimeNumberTheorem
 
 noncomputable section
 
-/-- The mollifier-length exponent used for the explicit DI specialization. -/
-def diLengthExponent : ℝ := 57 / 100
+/-- The exponent of the exact Mobius core.  Exact reciprocal cancellation up
+to this length is what supplies power decay on the far-right boundary. -/
+def diCoreExponent : ℝ := 57 / 100
+
+/-- The exponent of the tapered outer mollifier.  It is strictly below the
+published Conrey--Deshouillers--Iwaniec `4/7` range. -/
+def diOuterExponent : ℝ := 571 / 1000
 
 /-- The far-right boundary in the L2 three-lines interpolation. -/
 def diRightBoundary : ℝ := 1000
@@ -39,18 +44,12 @@ theorem di_interpolation_weight_eq :
     diInterpolationWeight = 1 / 5997 := by
   norm_num [diInterpolationWeight, diRightBoundary]
 
-/-- The mixed DI term `T^(1/2) X^(7/8)` is power-smaller than `T` at
-`x = 57/100`. -/
-theorem di_critical_mixed_term_lt_one :
-    1 / 2 + (7 / 8) * diLengthExponent = 799 / 800 ∧
-      1 / 2 + (7 / 8) * diLengthExponent < 1 := by
-  norm_num [diLengthExponent]
-
-/-- The DI term `X^(5/3)` is also power-smaller than `T`. -/
-theorem di_critical_long_term_lt_one :
-    (5 / 3) * diLengthExponent = 19 / 20 ∧
-      (5 / 3) * diLengthExponent < 1 := by
-  norm_num [diLengthExponent]
+/-- The core is shorter than the outer taper, and the outer taper lies in the
+published `theta < 4/7` range.  This arithmetic statement does not assert that
+the published theorem already covers the required two-scale weight. -/
+theorem di_twoScale_length_range :
+    diCoreExponent < diOuterExponent ∧ diOuterExponent < 4 / 7 := by
+  norm_num [diCoreExponent, diOuterExponent]
 
 theorem di_interpolated_exponent_eq :
     diInterpolatedExponent = 12146849 / 14992500 := by
@@ -62,14 +61,14 @@ theorem di_interpolated_exponent_lt_target :
       diInterpolatedExponent < diTargetExponent := by
   norm_num [diTargetExponent, diInterpolatedExponent]
 
-/-- The unchanged positive lower endpoint at `x = 57/100` remains below the
-chosen target exponent. -/
+/-- The far-right interpolation exponent controlled by the exact core remains
+below the chosen target exponent. -/
 theorem di_lower_endpoint_lt_target :
-    carlsonLowerEndpointExponent (2 / 3) diLengthExponent = 81 / 100 ∧
+    carlsonLowerEndpointExponent (2 / 3) diCoreExponent = 81 / 100 ∧
       diTargetExponent -
-          carlsonLowerEndpointExponent (2 / 3) diLengthExponent = 11 / 14400 ∧
-      carlsonLowerEndpointExponent (2 / 3) diLengthExponent < diTargetExponent := by
-  norm_num [carlsonLowerEndpointExponent, diLengthExponent, diTargetExponent]
+          carlsonLowerEndpointExponent (2 / 3) diCoreExponent = 11 / 14400 ∧
+      carlsonLowerEndpointExponent (2 / 3) diCoreExponent < diTargetExponent := by
+  norm_num [carlsonLowerEndpointExponent, diCoreExponent, diTargetExponent]
 
 theorem di_target_eq_carlson_sub_delta :
     diTargetExponent = 8 / 9 - diDelta := by

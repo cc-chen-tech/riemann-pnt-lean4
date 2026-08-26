@@ -2,20 +2,17 @@ import PrimeNumberTheorem.CarlsonTwoThirdsDIExponent
 
 namespace PrimeNumberTheorem
 
-example : diLengthExponent = 57 / 100 := rfl
+example : diCoreExponent = 57 / 100 := rfl
+
+example : diOuterExponent = 571 / 1000 := rfl
 example : diRightBoundary = 1000 := rfl
 example : diEpsilon = 1 / 10000 := rfl
 
 example : diInterpolationWeight = 1 / 5997 :=
   di_interpolation_weight_eq
 
-example : 1 / 2 + (7 / 8) * diLengthExponent = 799 / 800 ∧
-    1 / 2 + (7 / 8) * diLengthExponent < 1 :=
-  di_critical_mixed_term_lt_one
-
-example : (5 / 3) * diLengthExponent = 19 / 20 ∧
-    (5 / 3) * diLengthExponent < 1 :=
-  di_critical_long_term_lt_one
+example : diCoreExponent < diOuterExponent ∧ diOuterExponent < 4 / 7 :=
+  di_twoScale_length_range
 
 example : diInterpolatedExponent = 12146849 / 14992500 :=
   di_interpolated_exponent_eq
@@ -25,10 +22,10 @@ example : diTargetExponent - diInterpolatedExponent =
   di_interpolated_exponent_lt_target
 
 example :
-    carlsonLowerEndpointExponent (2 / 3) diLengthExponent = 81 / 100 ∧
+    carlsonLowerEndpointExponent (2 / 3) diCoreExponent = 81 / 100 ∧
       diTargetExponent -
-          carlsonLowerEndpointExponent (2 / 3) diLengthExponent = 11 / 14400 ∧
-      carlsonLowerEndpointExponent (2 / 3) diLengthExponent < diTargetExponent :=
+          carlsonLowerEndpointExponent (2 / 3) diCoreExponent = 11 / 14400 ∧
+      carlsonLowerEndpointExponent (2 / 3) diCoreExponent < diTargetExponent :=
   di_lower_endpoint_lt_target
 
 example : diTargetExponent = 8 / 9 - diDelta :=
@@ -48,8 +45,7 @@ example :
   di_direct_gap_at_fourteen_seventeenths
 
 #print axioms di_interpolation_weight_eq
-#print axioms di_critical_mixed_term_lt_one
-#print axioms di_critical_long_term_lt_one
+#print axioms di_twoScale_length_range
 #print axioms di_interpolated_exponent_eq
 #print axioms di_interpolated_exponent_lt_target
 #print axioms di_lower_endpoint_lt_target
