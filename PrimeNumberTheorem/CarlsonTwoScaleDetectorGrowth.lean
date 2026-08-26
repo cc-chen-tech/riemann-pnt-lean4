@@ -882,5 +882,298 @@ theorem exists_regularizedTwoScaleCarlsonZeroDetector_fixedJensenFactor_center_l
     detector, c, b] at hfactor hsum hcenterLog ⊢
   linarith
 
+/-- Jensen logarithmic majorant for the complete two-scale detector divisor
+mass on the factorization disk. -/
+noncomputable def regularizedTwoScaleCarlsonFactorZeroLogMajorant
+    (C : ℝ) (Y0 Y1 : ℕ) (T : ℝ) : ℝ :=
+  Real.log (C * (Y1 : ℝ) ^ 2 * (T + 14) ^ 10) /
+    Real.log ((31 / 8 : ℝ) / (123 / 32 : ℝ))
+
+/-- Explicit upper bound for the logarithmic variation of the extracted
+factor, assuming `L` bounds the complete inner divisor mass. -/
+noncomputable def regularizedTwoScaleCarlsonFactorLogVariationMajorant
+    (C : ℝ) (Y0 Y1 : ℕ) (T L : ℝ) : ℝ :=
+  Real.log (C * (Y1 : ℝ) ^ 2 * (T + 14) ^ 10) +
+    (-Real.log (1 / (128 * (L + 1))) +
+      Real.log (123 / 32 : ℝ)) * L
+
+/-- A mass upper bound gives a concrete lower bound for the radial
+good-circle separation. -/
+theorem regularizedTwoScaleCarlsonFactorDiskSeparation_lower_of_mass_le
+    {Y0 Y1 : ℕ} {T L : ℝ}
+    (hmass : regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T ≤ L) :
+    0 < 1 / (128 * (L + 1)) ∧
+      1 / (128 * (L + 1)) ≤
+        regularizedTwoScaleCarlsonFactorDiskSeparation Y0 Y1 T := by
+  classical
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let b : ℝ := 123 / 32
+  let detector : ℂ → ℂ :=
+    regularizedTwoScaleCarlsonZeroDetector Y0 Y1
+  let D := MeromorphicOn.divisor detector (Metric.closedBall c b)
+  let zeros := regularizedTwoScaleCarlsonFactorDiskZeroSupport Y0 Y1 T
+  let radialCard : ℝ := (((zeros.image (dist c)).card : ℕ) : ℝ)
+  have hanalytic : AnalyticOnNhd ℂ detector (Metric.closedBall c b) := by
+    apply
+      (analyticOnNhd_regularizedTwoScaleCarlsonZeroDetector_fixedJensenOuterDisk
+        Y0 Y1 T).mono
+    exact Metric.closedBall_subset_closedBall (by norm_num [b])
+  have hDnonneg : 0 ≤ D := hanalytic.divisor_nonneg
+  have hmassNonneg :
+      0 ≤ regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T := by
+    change 0 ≤ ∑ᶠ u, (D u : ℝ)
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hDnonneg u
+  have hLnonneg : 0 ≤ L := hmassNonneg.trans hmass
+  have hsupportMass : (zeros.card : ℝ) ≤
+      regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T := by
+    have h := card_divisor_support_le_finsum_mass hanalytic
+    simpa [zeros, D, detector, c, b,
+      regularizedTwoScaleCarlsonFactorDiskZeroSupport,
+      regularizedTwoScaleCarlsonInnerFactorDiskZeroMass] using h
+  have hradialNat : (zeros.image (dist c)).card ≤ zeros.card :=
+    Finset.card_image_le
+  have hradialSupport : radialCard ≤ (zeros.card : ℝ) := by
+    dsimp [radialCard]
+    exact_mod_cast hradialNat
+  have hradialL : radialCard ≤ L :=
+    hradialSupport.trans (hsupportMass.trans hmass)
+  have hsmallDenPos : 0 < 128 * (radialCard + 1) := by positivity
+  have hlargeDenPos : 0 < 128 * (L + 1) := by positivity
+  have hdenLe : 128 * (radialCard + 1) ≤ 128 * (L + 1) := by
+    nlinarith
+  have hrecip : 1 / (128 * (L + 1)) ≤
+      1 / (128 * (radialCard + 1)) :=
+    one_div_le_one_div_of_le hsmallDenPos hdenLe
+  have hsepEq :
+      regularizedTwoScaleCarlsonFactorDiskSeparation Y0 Y1 T =
+        1 / (128 * (radialCard + 1)) := by
+    dsimp only [regularizedTwoScaleCarlsonFactorDiskSeparation, zeros, c]
+    change ((122 / 32 : ℝ) - 121 / 32) /
+        (4 * (radialCard + 1)) = 1 / (128 * (radialCard + 1))
+    have hk : radialCard + 1 ≠ 0 := ne_of_gt (by positivity)
+    field_simp [hk]
+    ring
+  refine ⟨one_div_pos.mpr hlargeDenPos, ?_⟩
+  rw [hsepEq]
+  exact hrecip
+
+/-- Replacing the actual divisor mass and radial separation by a common mass
+majorant gives a fully explicit logarithmic-variation bound. -/
+theorem regularizedTwoScaleCarlsonFactorLogVariation_le_of_mass_le
+    {C T L : ℝ} {Y0 Y1 : ℕ}
+    (hmass : regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T ≤ L) :
+    regularizedTwoScaleCarlsonFactorCircleLogUpper C Y0 Y1 T -
+        regularizedTwoScaleCarlsonFactorCenterLogLower Y0 Y1 T ≤
+      regularizedTwoScaleCarlsonFactorLogVariationMajorant C Y0 Y1 T L := by
+  let m := regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T
+  let sep := regularizedTwoScaleCarlsonFactorDiskSeparation Y0 Y1 T
+  let delta : ℝ := 1 / (128 * (L + 1))
+  have hsep :=
+    regularizedTwoScaleCarlsonFactorDiskSeparation_lower_of_mass_le hmass
+  have hmNonneg : 0 ≤ m := by
+    let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+    let b : ℝ := 123 / 32
+    let detector : ℂ → ℂ :=
+      regularizedTwoScaleCarlsonZeroDetector Y0 Y1
+    let D := MeromorphicOn.divisor detector (Metric.closedBall c b)
+    have hanalytic : AnalyticOnNhd ℂ detector
+        (Metric.closedBall c b) := by
+      apply
+        (analyticOnNhd_regularizedTwoScaleCarlsonZeroDetector_fixedJensenOuterDisk
+          Y0 Y1 T).mono
+      exact Metric.closedBall_subset_closedBall (by norm_num [b])
+    have hDnonneg : 0 ≤ D := hanalytic.divisor_nonneg
+    change 0 ≤ ∑ᶠ u, (D u : ℝ)
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hDnonneg u
+  have hLNonneg : 0 ≤ L := hmNonneg.trans hmass
+  have hdeltaPos : 0 < delta := by simpa [delta] using hsep.1
+  have hdeltaSep : delta ≤ sep := by simpa [delta, sep] using hsep.2
+  have hlogDeltaSep : Real.log delta ≤ Real.log sep :=
+    Real.log_le_log hdeltaPos hdeltaSep
+  have hdeltaLeOne : delta ≤ 1 := by
+    dsimp [delta]
+    have hden : 1 ≤ 128 * (L + 1) := by nlinarith
+    calc
+      1 / (128 * (L + 1)) ≤ 1 / 1 :=
+        one_div_le_one_div_of_le (by norm_num) hden
+      _ = 1 := by norm_num
+  have hlogDeltaNonpos : Real.log delta ≤ 0 :=
+    Real.log_nonpos hdeltaPos.le hdeltaLeOne
+  have hlogBNonneg : 0 ≤ Real.log (123 / 32 : ℝ) :=
+    Real.log_nonneg (by norm_num)
+  have hcoeffLe :
+      -Real.log sep + Real.log (123 / 32 : ℝ) ≤
+        -Real.log delta + Real.log (123 / 32 : ℝ) := by
+    linarith
+  have hcoeffNonneg :
+      0 ≤ -Real.log delta + Real.log (123 / 32 : ℝ) := by
+    linarith
+  have hweighted :
+      (-Real.log sep + Real.log (123 / 32 : ℝ)) * m ≤
+        (-Real.log delta + Real.log (123 / 32 : ℝ)) * L := by
+    exact (mul_le_mul_of_nonneg_right hcoeffLe hmNonneg).trans
+      (mul_le_mul_of_nonneg_left hmass hcoeffNonneg)
+  dsimp [regularizedTwoScaleCarlsonFactorCircleLogUpper,
+    regularizedTwoScaleCarlsonFactorCenterLogLower,
+    regularizedTwoScaleCarlsonFactorLogVariationMajorant,
+    m, sep, delta]
+  linarith
+
+/-- The horizontal estimate with the principal part expressed using any
+available upper bound for the complete inner divisor mass. -/
+theorem
+    exists_regularizedTwoScaleCarlson_horizontal_logDeriv_le_of_factorDiskMass_le :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ {Y0 Y1 : ℕ}, 2 ≤ Y0 → Y0 < Y1 →
+      ∀ {sigma T L : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+        regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T ≤ L →
+        ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedTwoScaleCarlsonZeroDetector Y0 Y1
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedTwoScaleCarlsonZeroDetector Y0 Y1)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              4 * max
+                  (regularizedTwoScaleCarlsonFactorCircleLogUpper C Y0 Y1 T -
+                    regularizedTwoScaleCarlsonFactorCenterLogLower Y0 Y1 T) 1 *
+                (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+              L / (1 / (4 * (L + 1))) := by
+  rcases
+      exists_regularizedTwoScaleCarlson_horizontal_logDeriv_le_factorDisk with
+    ⟨C, hC, hhorizontal⟩
+  refine ⟨C, hC, ?_⟩
+  intro Y0 Y1 hY0 hY01 sigma T L hsigma hT hmass
+  rcases hhorizontal hY0 hY01 hsigma hT with
+    ⟨r, hr, t, ht, hne, hbound⟩
+  have hsep :=
+    regularizedTwoScaleCarlsonFactorHorizontalSeparation_lower_of_mass_le hmass
+  have hmassNonneg :
+      0 ≤ regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T := by
+    let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+    let b : ℝ := 123 / 32
+    let detector : ℂ → ℂ :=
+      regularizedTwoScaleCarlsonZeroDetector Y0 Y1
+    let D := MeromorphicOn.divisor detector (Metric.closedBall c b)
+    have hanalytic : AnalyticOnNhd ℂ detector
+        (Metric.closedBall c b) := by
+      apply
+        (analyticOnNhd_regularizedTwoScaleCarlsonZeroDetector_fixedJensenOuterDisk
+          Y0 Y1 T).mono
+      exact Metric.closedBall_subset_closedBall (by norm_num [b])
+    have hDnonneg : 0 ≤ D := hanalytic.divisor_nonneg
+    change 0 ≤ ∑ᶠ u, (D u : ℝ)
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hDnonneg u
+  have hprincipal :
+      regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T /
+          regularizedTwoScaleCarlsonFactorHorizontalSeparation Y0 Y1 T ≤
+        L / (1 / (4 * (L + 1))) := by
+    calc
+      regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T /
+          regularizedTwoScaleCarlsonFactorHorizontalSeparation Y0 Y1 T ≤
+          regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T /
+            (1 / (4 * (L + 1))) :=
+        div_le_div_of_nonneg_left hmassNonneg hsep.1 hsep.2
+      _ ≤ L / (1 / (4 * (L + 1))) :=
+        div_le_div_of_nonneg_right hmass hsep.1.le
+  refine ⟨r, hr, t, ht, hne, ?_⟩
+  intro x hx
+  exact (hbound x hx).trans (add_le_add_right hprincipal _)
+
+/-- The horizontal bound with both factor variation and principal part
+expressed only through an assumed divisor-mass majorant. -/
+theorem
+    exists_regularizedTwoScaleCarlson_horizontal_logDeriv_le_of_factorDiskMass_le_explicit :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ {Y0 Y1 : ℕ}, 2 ≤ Y0 → Y0 < Y1 →
+      ∀ {sigma T L : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+        regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T ≤ L →
+        ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedTwoScaleCarlsonZeroDetector Y0 Y1
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedTwoScaleCarlsonZeroDetector Y0 Y1)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              4 * max
+                  (regularizedTwoScaleCarlsonFactorLogVariationMajorant
+                    C Y0 Y1 T L) 1 *
+                (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+              L / (1 / (4 * (L + 1))) := by
+  rcases
+      exists_regularizedTwoScaleCarlson_horizontal_logDeriv_le_of_factorDiskMass_le with
+    ⟨C, hC, hhorizontal⟩
+  refine ⟨C, hC, ?_⟩
+  intro Y0 Y1 hY0 hY01 sigma T L hsigma hT hmass
+  rcases hhorizontal hY0 hY01 hsigma hT hmass with
+    ⟨r, hr, t, ht, hne, hbound⟩
+  have hvariation :=
+    regularizedTwoScaleCarlsonFactorLogVariation_le_of_mass_le
+      (C := C) hmass
+  have hgapPos : 0 < r - 15 / 4 := by linarith [hr.1]
+  have hregular :
+      4 * max
+          (regularizedTwoScaleCarlsonFactorCircleLogUpper C Y0 Y1 T -
+            regularizedTwoScaleCarlsonFactorCenterLogLower Y0 Y1 T) 1 *
+          (r + 15 / 4) / (r - 15 / 4) ^ 2 ≤
+        4 * max
+          (regularizedTwoScaleCarlsonFactorLogVariationMajorant
+            C Y0 Y1 T L) 1 *
+          (r + 15 / 4) / (r - 15 / 4) ^ 2 := by
+    have hmax := max_le_max_right (1 : ℝ) hvariation
+    have hnum : 0 ≤ r + 15 / 4 := by linarith [hr.1]
+    have hinv : 0 ≤ ((r - 15 / 4) ^ 2)⁻¹ := by positivity
+    have hfour := mul_le_mul_of_nonneg_left hmax (by norm_num : (0 : ℝ) ≤ 4)
+    have hnumerator := mul_le_mul_of_nonneg_right hfour hnum
+    simpa [div_eq_mul_inv] using
+      (mul_le_mul_of_nonneg_right hnumerator hinv)
+  refine ⟨r, hr, t, ht, hne, ?_⟩
+  intro x hx
+  exact (hbound x hx).trans (add_le_add_left hregular _)
+
+/-- Completely zero-data-independent horizontal logarithmic-derivative
+bound obtained by substituting the unconditional Jensen mass majorant. -/
+theorem exists_regularizedTwoScaleCarlson_horizontal_logDeriv_le_logPolynomial :
+    ∃ C₁ C₂ : ℝ, 1 ≤ C₁ ∧ 1 ≤ C₂ ∧
+      ∀ {Y0 Y1 : ℕ}, 2 ≤ Y0 → Y0 < Y1 →
+      ∀ {sigma T : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+        ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedTwoScaleCarlsonZeroDetector Y0 Y1
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedTwoScaleCarlsonZeroDetector Y0 Y1)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              4 * max
+                  (regularizedTwoScaleCarlsonFactorLogVariationMajorant
+                    C₁ Y0 Y1 T
+                    (regularizedTwoScaleCarlsonFactorZeroLogMajorant
+                      C₂ Y0 Y1 T)) 1 *
+                (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+              regularizedTwoScaleCarlsonFactorZeroLogMajorant C₂ Y0 Y1 T /
+                (1 / (4 *
+                  (regularizedTwoScaleCarlsonFactorZeroLogMajorant
+                    C₂ Y0 Y1 T + 1))) := by
+  rcases
+      exists_regularizedTwoScaleCarlson_horizontal_logDeriv_le_of_factorDiskMass_le_explicit with
+    ⟨C₁, hC₁, hhorizontal⟩
+  rcases
+      exists_regularizedTwoScaleCarlsonInnerFactorDiskZeroMass_le_logPolynomial with
+    ⟨C₂, hC₂, hmass⟩
+  refine ⟨C₁, C₂, hC₁, hC₂, ?_⟩
+  intro Y0 Y1 hY0 hY01 sigma T hsigma hT
+  apply hhorizontal hY0 hY01 hsigma hT
+  simpa [regularizedTwoScaleCarlsonFactorZeroLogMajorant] using
+    hmass hY0 hY01 hT
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

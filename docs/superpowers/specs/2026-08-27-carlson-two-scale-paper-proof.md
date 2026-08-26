@@ -319,10 +319,10 @@ wrapper is now also formalized: it identifies finite zero support, performs
 the radial and height pigeonhole selections, extracts the analytic nonzero
 factor with its principal-part identity, applies the quantitative
 Borel--Caratheodory estimate, and produces a zero-free horizontal segment
-with the exact bound "factor term plus mass divided by separation".  What
-remains in this local layer is the mechanical substitution of the Jensen
-mass majorant into both separations to expose the advertised logarithmic
-polynomial bound.
+with the exact bound "factor term plus mass divided by separation".  The
+Jensen mass majorant is now substituted into both the radial and horizontal
+separations as well, exposing a zero-data-independent explicit logarithmic-
+polynomial majorant.  Thus the post-Jensen local horizontal layer is closed.
 
 Choose the bottom side in `[U-1,U]` and the top side in `[2U,2U+1]`, so the
 rectangle contains every zero with ordinate in `[U,2U]`.  Apply Littlewood's
@@ -396,13 +396,10 @@ a final-density axiom:
    specialization, including its uniformity in the local center;
 2. the pole-free `L^2(R)`-valued three-lines lemma (5.3) and the finite
    Gaussian covering argument;
-3. substitution of the Jensen mass majorant into the two separation scales,
-   yielding the explicit logarithmic-polynomial horizontal majorant stated
-   in Section 6;
-4. the dyadic assembly of those inputs into the unconditional
+3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
 
-Until all four remaining items are proved in Lean without new mathematical
+Until all three remaining items are proved in Lean without new mathematical
 axioms, the repository-level improved density certificate remains conditional even
 though the paper proof above is unconditional modulo the cited published
 Conrey theorem.

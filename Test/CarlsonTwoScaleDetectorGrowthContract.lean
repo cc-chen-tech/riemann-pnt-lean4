@@ -152,5 +152,29 @@ example :
                 regularizedTwoScaleCarlsonFactorHorizontalSeparation Y0 Y1 T :=
   exists_regularizedTwoScaleCarlson_horizontal_logDeriv_le_factorDisk
 
+example :
+    ∃ C₁ C₂ : ℝ, 1 ≤ C₁ ∧ 1 ≤ C₂ ∧
+      ∀ {Y0 Y1 : ℕ}, 2 ≤ Y0 → Y0 < Y1 →
+      ∀ {sigma T : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+        ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedTwoScaleCarlsonZeroDetector Y0 Y1
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedTwoScaleCarlsonZeroDetector Y0 Y1)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              4 * max
+                  (regularizedTwoScaleCarlsonFactorLogVariationMajorant
+                    C₁ Y0 Y1 T
+                    (regularizedTwoScaleCarlsonFactorZeroLogMajorant
+                      C₂ Y0 Y1 T)) 1 *
+                (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+              regularizedTwoScaleCarlsonFactorZeroLogMajorant C₂ Y0 Y1 T /
+                (1 / (4 *
+                  (regularizedTwoScaleCarlsonFactorZeroLogMajorant
+                    C₂ Y0 Y1 T + 1))) :=
+  exists_regularizedTwoScaleCarlson_horizontal_logDeriv_le_logPolynomial
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem
