@@ -10106,6 +10106,22 @@ leaves the two long Möbius factors in (9.421).  Existing averaged-Chowla
 inputs provide qualitative or logarithmic cancellation, not the fixed
 power required here.
 
+The newer all-interval higher-uniformity theorem does enter the length
+range but not the required strength or coefficient class.  Matomäki,
+Shao, Tao, and Teräväinen prove Möbius--nilsequence discorrelation
+\(\ll_A H(\log X)^{-A}\) for
+\(H\geq X^{5/8+\varepsilon}\); see
+[Higher uniformity I, Theorem 1.1](https://arxiv.org/abs/2204.03754).
+The weighted-Chowla window has \(D=X^{2/3}\), and the shortest affine
+\(t\)-interval in (9.421) has exponent \(5/6\) relative to the long
+variable, so both pass the theorem's **length** threshold.  But the
+second Möbius factor in (9.421) is not a fixed nilsequence.  Even if one
+optimistically replaced the whole two-Möbius average by the theorem's
+logarithmic factor, the pair exponent would remain
+\(XD=T^{5-o(1)}\), whereas \({\rm SC}_{2/3}\) requires
+\(T^{3+\varepsilon}\).  Arbitrarily high fixed logarithmic savings do
+not supply the missing relative power \(T^{-2}\).
+
 The finite helpers `balanced_selberg_reflection_sides`,
 `reflected_pair_kernel_energy_sides`,
 `reflected_boundary_pair_kernel_sides`, and
