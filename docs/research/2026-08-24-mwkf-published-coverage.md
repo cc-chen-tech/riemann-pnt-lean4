@@ -622,8 +622,8 @@ and similarly on the (s)-side.  Each side is partitioned as follows.
 | exponent relation | Type subcell status |
 |---|---|
 | (pi>u) or (pi+d<u) | asymptotically empty |
-| (pi+d=u) | sharp boundary; still residual |
-| (pi\le u<pi+d) with strict exponent gap | `strict_far`; the sharp indicator is eventually constant on the dyadic box |
+| (pi=u) or (pi+d=u) | sharp boundary; still residual |
+| (pi<u<pi+d), both with strict exponent gap | `strict_far`; both sharp indicators are eventually constant on the dyadic box |
 
 Only the last row removes the coefficient--smooth-variable coupling without
 a Mellin truncation or boundary error.  There the original dyadic kernel is

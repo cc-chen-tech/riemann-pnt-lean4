@@ -532,7 +532,10 @@ def _type_hyperbola_relation(
     )
     if product_exponent < cutoff_exponent:
         return "empty"
-    if product_exponent == cutoff_exponent:
+    if (
+        truncated_divisor_exponent == cutoff_exponent
+        or product_exponent == cutoff_exponent
+    ):
         return "boundary"
     return "strict_far"
 
@@ -551,8 +554,8 @@ def drappeau_type_subcell_audit(
     """Certify strict Type subcells where the sharp hyperbola disappears.
 
     In one exact Möbius factorization write ``n=d*e*b`` with
-    ``d <= U < d*e``.  On a dyadic exponent cell, ``pi+epsilon>u`` by a
-    fixed amount makes the second inequality identically true for all
+    ``d <= U < d*e``.  On a dyadic exponent cell, the two strict gaps
+    ``pi<u<pi+epsilon`` make both inequalities identically true for all
     sufficiently large ``T``.  The smooth quotient ``e`` may then be the
     Drappeau ``c`` or ``d`` variable, while ``d*b`` and both Möbius atoms
     stay in the arbitrary coefficient.  Equality is deliberately retained

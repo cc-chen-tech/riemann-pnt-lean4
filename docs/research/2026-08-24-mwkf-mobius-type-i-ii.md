@@ -1572,10 +1572,11 @@ coefficient.  The reciprocal phase and coprimality condition are literal
 identities, so neither Möbius side nor the product frequency is separated.
 
 The sharp condition (d_re_r>U_r) is harmless only on a dyadic exponent
-cell with
+cell with the two strict inequalities
 
 \[
- \log_T d_r+\log_T e_r>\log_T U_r
+ \log_T d_r<\log_T U_r
+ <\log_T d_r+\log_T e_r
 \]
 
 by a fixed positive amount, and likewise on the (s)-side.  Equality is a

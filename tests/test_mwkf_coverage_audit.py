@@ -321,6 +321,33 @@ def test_drappeau_boundary_type_subcell_stays_residual() -> None:
     assert not audit.published_coverage
 
 
+def test_drappeau_truncated_divisor_cutoff_equality_is_a_boundary() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "drappeau_type_subcell_audit",
+        None,
+    )
+    assert adapter is not None, "refined Drappeau Type audit is missing"
+
+    short_product = ExponentBox(
+        F(3), F(3), F(1, 2), F(1, 2), F(1, 4), F(1, 4), F(0)
+    )
+    audit = adapter(
+        short_product,
+        r_truncated_divisor_exponent=F(1),
+        r_smooth_quotient_exponent=F(1),
+        s_truncated_divisor_exponent=F(0),
+        s_smooth_quotient_exponent=F(5, 2),
+        r_cutoff_exponent=F(1),
+        s_cutoff_exponent=F(1),
+    )
+
+    assert audit.r_hyperbola_relation == "boundary"
+    assert audit.s_hyperbola_relation == "strict_far"
+    assert not audit.sharp_hyperbola_adapter_verified
+    assert not audit.published_coverage
+
+
 def test_drappeau_type_subcell_detects_empty_hyperbola_scale() -> None:
     adapter = getattr(
         coverage_audit,
