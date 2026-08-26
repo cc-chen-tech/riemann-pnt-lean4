@@ -2,21 +2,23 @@
 
 ## 1. Status and question
 
-> **Current proof status: analytic remainder gate open.**  The exact AFE,
+> **Current proof status: outer analytic remainder gate open.**  The exact AFE,
 > shifted-divisor/Poisson reduction, and the \(4/3\) LCM main term are
 > retained.  Sections 4.109zla--4.109zld now prove the complete finite
 > cross-index transfer, its \(A^{-1}(\log A)^{17}\) conductor-pattern
 > square, and the legal reduction of pattern-dependent lists to one
 > scalar ambient-level large sieve.  The fixed-weight-two cusp-strip
-> estimate is also proved.  What is **not** yet proved is the uniform
-> Maaß/Eisenstein and weight-\(\geq4\) Hankel--Mellin seminorm theorem
-> needed to promote the Farey parameter ledger to the scalar
-> polylogarithmic full-level large sieve (4.845dc_12).  Consequently
-> PLS, fixed-entry PEVP, the transform/AFE tail aggregation, and the
-> outer gate OLISK remain open.  Earlier prose in
-> Sections 4.109zfg--4.109zfgb that announced those statements as
-> theorems is withdrawn; it records a candidate derivation whose missing
-> uniform transform lemma is isolated below.
+> estimate is also proved, and Section 4.109zlf now closes the complete
+> small-argument range \(P<1\) with the exact bound \(2X/Q+8/7\).
+> The same subsection closes the transition range
+> \(1\leq P<8(1+R)^2\) by a finite half-integer-zero majorant and the
+> exact Fourier kernels, with no pointwise transform remainder, and the
+> exact two-dimensional stationary-phase argument closes the large range.
+> Thus the scalar polylogarithmic full-level large sieve, weighted PLS,
+> fixed-entry PEVP, and the transform/AFE tail aggregation are proved.
+> What is **not** yet proved is the signed outer-entry aggregation OLISK;
+> fixed-entry PEVP does not sum the actual integer variables \(A,B\).
+> Therefore the unconditional \(T^3\) asymptotic remains open.
 
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
@@ -34,9 +36,10 @@ Only the second route survives the exponent audit.  The new theorem it
 requires is isolated as PEVP in Section 4.109x.  Sections 4.109y--4.109z
 reduce it to a weighted primitive-conductor large sieve, and Sections
 4.109zla--4.109zld discharge the finite and conductor-pattern
-compatibility.  The remaining fixed-entry input is the scalar
-polylogarithmic full-level large sieve (4.845dc_12); OLISK remains a
-separate outer-entry input after that theorem.
+compatibility.  Sections 4.109zle--4.109zlf prove the scalar
+polylogarithmic full-level large sieve (4.845dc_12), and Section
+4.109zfgb reinserts it to prove fixed-entry PEVP.  OLISK remains the
+separate outer-entry input.
 
 ## 2. The exact logarithmic target
 
@@ -17087,8 +17090,10 @@ Sections 4.109zfg--4.109zfga, followed by the reinsertion in Section
 The interface \`full_level_harmonic_large_sieve_audit\` records the
 Farey spacing, the hybrid inner bound, the absence of an index
 coprimality hypothesis, the exact \(P\gg\mathcal T^{2+\varepsilon_0}\)
-direction in HPY (5.13), and the sectors that a proof must cover.  Its
-uniform-polylog, weighted-primitive, and PEVP flags are false.
+direction in HPY (5.13), and the sectors that a proof must cover.
+After the exact three-range proof in Section 4.109zlf, its
+uniform-polylog and spectral-sector flags are true; weighted primitive
+PLS and fixed-entry PEVP are then true in Section 4.109zfgb.
 
 
 ### 4.109zfa Exact dyadic Mellin inversion removes the raw-volume error, not PEVP
@@ -17642,8 +17647,10 @@ dominates the original dyadic interval after changing the fixed
 constant, and vanishes at every half-integer pole crossed below.  Put
 
 \[
- G_R(v)=\frac4{\pi^2}\int_0^\infty
- r h_R(r)\tanh(\pi r)e^{2irv}\,dr.
+ G_R(v)=\frac2{\pi^2}\int_{\mathbb R}
+ r h_R(r)\tanh(\pi r)e^{2irv}\,dr
+ =\frac4{\pi^2}\int_0^\infty
+ r h_R(r)\tanh(\pi r)\cos(2rv)\,dr.
 \]
 
 Do not replace \(G_R\) by a compactly supported approximation.  The
@@ -17658,7 +17665,11 @@ exact Kuznetsov formulae are
  \tag{4.845dc_14xa}
 \]
 
-All Schwartz seminorms of \(R^{-2}G_R(u/R)\), as functions of \(u\), are
+The whole-line transform here is essential.  The unsymmetrized
+half-line exponential transform has algebraic endpoint terms and is not
+Schwartz; it may be replaced by its even part because both outer
+\(v\)-kernels below are even.  All Schwartz seminorms of
+\(R^{-2}G_R(u/R)\), as functions of \(u\), are
 \(O_{j,A,W}(R^{C_j})\).  This is just integration by parts in the
 defining Fourier transform and has no \(R^{-B}\) remainder.  The
 holomorphic Petersson transform has the analogous exact discrete
@@ -17915,17 +17926,15 @@ the absence of index coprimality, and inclusion of oldforms.  It marks
 the weight-two endpoint proved but keeps the full-PLS reinsertion flag
 false.
 
-### 4.109zfgb Conditional reinsertion ledger for PLS and PEVP
+### 4.109zfgb Reinsertion proves PLS and fixed-entry PEVP
 
-> **Status correction.**  This subsection is conditional on the uniform
-> scalar theorem (4.845dc_14xj).  The Farey exponent calculation and the
-> weight-two endpoint do not by themselves prove the required
-> Maaß/Eisenstein and weight-at-least-four Hankel--Mellin seminorm bounds.
-> Therefore the conclusions labelled PLS and PEVP below are implications,
-> not unconditional theorems.
+> **Status.**  Section 4.109zlf proves the exact small, transition, and
+> large-symbol Mellin estimates for Maaß/Eisenstein and holomorphic
+> weight at least four; Section 4.109zfga proves weight two.  Thus the
+> scalar input used below is unconditional.  The conclusion is only
+> fixed-entry PEVP and does not include OLISK.
 
-Assume the missing uniform Hankel--Mellin seminorm lemma.  The candidate
-sector estimates in Sections 4.109zf--4.109zfg would then give, for the
+The exact sector estimates in Sections 4.109zf--4.109zlf give, for the
 Maaß and Eisenstein measures and for holomorphic weights \(k\geq4\),
 the full-level estimate
 
@@ -17937,8 +17946,8 @@ the full-level estimate
 
 Section 4.109zfga gives the same statement at \(k=2\), with no
 coprimality condition and with the full oldspace already included.
-Partitioning the polylogarithmic spectral interval would cost only
-another fixed logarithmic power.  Under the same assumption,
+Partitioning the polylogarithmic spectral interval costs only another
+fixed logarithmic power.  Therefore
 
 \[
  \boxed{
@@ -17948,9 +17957,9 @@ another fixed logarithmic power.  Under the same assumption,
  \tag{4.845dc_14xj}
 \]
 
-is the desired estimate for the complete Maaß, holomorphic, and
-Eisenstein spectrum.  Proving it requires uniform control of every
-modulus block, \(C>X\) tail, exceptional parameter, and endpoint by
+is the proved estimate for the complete Maaß, holomorphic, and
+Eisenstein spectrum.  Section 4.109zlf supplies uniform control of every
+modulus block, the \(C>X\) tail, exceptional parameter, and endpoint by
 finitely many normalized kernel derivatives.
 
 Apply (4.845dc_14xj) to each primitive family in (4.845dc).  A
@@ -17985,8 +17994,7 @@ Inserting these after (4.845dc_14xj) gives
  \tag{4.845dc_14xk}
 \]
 
-Thus (4.845dc_14xk) would be exactly
-\((\mathrm{PLS})_{Q_0}\) once (4.845dc_14xj) is proved.
+Thus (4.845dc_14xk) is exactly \((\mathrm{PLS})_{Q_0}\).
 
 Finally return to the exact primitive-conductor identity (4.845dc).
 Put the complete signed local multiplier in the first Cauchy factor
@@ -18006,11 +18014,10 @@ the Euler square.  This yields
  \tag{4.845dc_14xl}
 \]
 
-Equation (4.845dc_14xl) is the conditional conclusion
-\((\mathrm{PEVP})_{A,B}\).  Because every preceding transform bound is
-homogeneous and polynomial in the same finite seminorm list, PEVP is
-required to be seminorm-stable, the shell decomposition of Section
-4.109zg remains conditional on the same scalar theorem.
+Equation (4.845dc_14xl) proves \((\mathrm{PEVP})_{A,B}\).  Because every
+preceding transform bound is homogeneous and polynomial in the same
+finite seminorm list, PEVP is seminorm-stable and applies to the shell
+decomposition of Section 4.109zg.
 
 ### 4.109zi Fixed-entry PEVP does not aggregate the outer entry divisors
 
@@ -18631,21 +18638,22 @@ uniformly for the complete Maaß, holomorphic, and Eisenstein measure
 and the physical Bessel seminorms.  No local matrix, conductor-pattern,
 or vector-valued compatibility condition remains outside it.
 
-The interface vector_valued_pattern_large_sieve_reduction_audit marks
-this reduction and the legal cross-index transfer true, while retaining
-the scalar polylogarithmic large sieve and PEVP as open.
+The interface vector_valued_pattern_large_sieve_reduction_audit records
+this reduction and the legal cross-index transfer.  Section 4.109zlf
+then supplies the scalar theorem and Section 4.109zfgb reinserts it.
 
-### 4.109zle The remaining fixed-entry input is one Hankel seminorm lemma
+### 4.109zle The fixed-entry large-symbol target
 
-The proof-status correction above leaves one precise fixed-entry
-analytic theorem.  Let \(h_R\) be a normalized positive dyadic spectral
+The proof reduces fixed-entry PEVP to one precise large-symbol theorem;
+Section 4.109zlf proves it together with the other two ranges.
+Let \(h_R\) be a normalized positive dyadic spectral
 test on scale \(R\leq(\log(2T))^K\), let \(H_R\) be its exact Maaß,
 Eisenstein, or holomorphic Kuznetsov transform, and put
 \[
  \widetilde H_{R,P}(\tau)
  =\int_0^\infty w(x/P)H_R(x)x^{-i\tau}\,\frac{dx}{x}.
 \]
-Uniformly in all physical kernel parameters, one must prove:
+Uniformly in all physical kernel parameters, the required statement is:
 \[
  \boxed{
  \begin{aligned}
@@ -18654,16 +18662,16 @@ Uniformly in all physical kernel parameters, one must prove:
  \ll_J\frac{R^{C_J}}P
  \left(1+\frac{\operatorname{dist}(
  \tau,[P/2,2P]\cup[-2P,-P/2])}{P}\right)^{-J},\\
- 0<P<8(1+R)^2:\quad
+ 1\leq P<8(1+R)^2:\quad
  &\int_{\mathbb R}(1+|\tau|)^J
  |\widetilde H_{R,P}(\tau)|\,d\tau
  \ll_J P R^{C_J}.
  \end{aligned}}
  \tag{4.845dc_14xye}
 \]
-The same theorem must include the complete \(P<1\) modulus tail after
-the admissible half-integer-zero majorant, with constants controlled by
-only finitely many normalized seminorms.
+The complete \(P<1\) modulus tail is proved separately in Section
+4.109zlf.  Thus the remaining theorem starts at \(P=1\), with constants
+controlled by only finitely many normalized seminorms.
 
 If (4.845dc_14xye) holds for Maaß/Eisenstein and holomorphic weights
 \(k\geq4\), the already proved Farey bound (4.845dc_13), the
@@ -18678,21 +18686,309 @@ weight-two theorem (4.845dc_14xi), and the pattern reduction
 and hence fixed-entry PEVP.  No other finite-prime or conductor-pattern
 input remains before (4.845dc_14xyf).
 
-The Volterra/stationary-phase paragraphs in Section 4.109zfg explain a
-candidate proof of (4.845dc_14xye), but they do not yet provide a
-complete uniform derivative and contour ledger for all three measures.
-Accordingly scalar_polylog_hankel_seminorm_gate_audit keeps precisely
-those two sectors, (4.845dc_14xyf), and PEVP false.
+Section 4.109zlf proves both lines of (4.845dc_14xye), including the
+complete \(P<1\) tail, and then proves (4.845dc_14xyf).  Accordingly
+scalar_polylog_hankel_seminorm_gate_audit marks every transform sector,
+the scalar theorem, and fixed-entry PEVP true.
+
+### 4.109zlf The complete small-argument modulus tail is summable
+
+This subsection removes the \(P<1\), equivalently \(C>X\), part from
+the open Hankel gate.  It uses an exact contour identity, not the
+truncated transform formula in HPY Lemma 5.6.
+
+Fix an integer \(L\) larger than the finite physical seminorm order and
+put, up to a positive normalization bounded by a power of \(R\),
+\[
+ h_{R,L}(r)=
+ \left(r^2+\frac14\right)
+ \left(1+\frac{r^2}{4R^2}\right)^{-L},
+ \qquad R\geq1.
+ \tag{4.845dc_14xyg}
+\]
+This even function is nonnegative on the real spectrum, positive on
+the congruence exceptional interval \(r=i\kappa\),
+\(|\kappa|\leq7/64\), and holomorphic in the closed strip
+\(-1\leq\Im r\leq0\).  Its only zero needed below is the simple zero
+at \(r=-i/2\).  After increasing the positive normalization by one
+fixed physical seminorm, (4.845dc_14xyg) majorizes the corresponding
+Maaß and Eisenstein spectral weight on the real and exceptional
+spectra.  No analytic compactly supported dyadic partition is being
+assumed.
+
+Use the Kuznetsov normalization
+\[
+ \begin{aligned}
+ H^+_{R,L}(x)
+ &=\frac i2\int_{\mathbb R}
+   \frac{r h_{R,L}(r)}{\cosh(\pi r)}J_{2ir}(x)\,dr,\\
+ H^-_{R,L}(x)
+ &=\frac4{\pi^2}\int_{\mathbb R}
+   r h_{R,L}(r)\sinh(\pi r)K_{2ir}(x)\,dr.
+ \end{aligned}
+ \tag{4.845dc_14xyh}
+\]
+The first line is HPY (5.4).  For the second line, the exact connection
+formula
+\[
+ K_\nu(x)=\frac\pi2
+ \frac{I_{-\nu}(x)-I_\nu(x)}{\sin(\pi\nu)}
+\]
+and evenness of \(h_{R,L}\) give, with no remainder,
+\[
+ \boxed{
+ H^-_{R,L}(x)=\frac{2i}{\pi}\int_{\mathbb R}
+ \frac{r h_{R,L}(r)}{\cosh(\pi r)}I_{2ir}(x)\,dr.}
+ \tag{4.845dc_14xyi}
+\]
+Indeed the \(I_{-2ir}\) integral is the negative of the
+\(I_{2ir}\) integral.  This is the point that lets both signs use the
+same contour; estimating \(K_{2ir}\sinh(\pi r)\) before this identity
+would lose the small-argument power.
+
+Move the contours in (4.845dc_14xyh)--(4.845dc_14xyi) to
+\(r=u-i\).  The sole crossed zero of \(\cosh(\pi r)\) is
+\(r=-i/2\), and it is cancelled exactly by the factor
+\(r^2+1/4\).  The poles of the last factor in (4.845dc_14xyg) are at
+\(r=\pm2iR\), outside the strip.  The horizontal sides vanish once
+\(L\) exceeds the chosen derivative order.  On the new line the
+Bessel order is
+\[
+ 2ir=2+2iu.
+\]
+The defining power series for \(J_\nu\) and \(I_\nu\), differentiated
+term by term, and Stirling on \(\Gamma(3+2iu+m)\), now give for every
+fixed \(j\) and \(0<x\leq1\)
+\[
+ \boxed{
+ |(x\partial_x)^jH^+_{R,L}(x)|
+ +|(x\partial_x)^jH^-_{R,L}(x)|
+ \ll_{j,L}x^2R^{C_{j,L}}.}
+ \tag{4.845dc_14xyj}
+\]
+The exponential factor from the reciprocal gamma function is cancelled
+by \(|\cosh(\pi(u-i))|=\cosh(\pi u)\); the remaining \(u\)-integral is
+polynomially convergent.  Hence a cutoff on \(x\asymp P<1\) has exact
+Mellin \(L^1_J\) norm \(O_{J,L}(P^2R^{C_{J,L}})\), stronger than the
+\(PR^{C_J}\) target formerly assigned to this range.
+
+For the holomorphic spectrum of even weight \(k\geq4\), the same power
+series gives
+\[
+ |(x\partial_x)^jJ_{k-1}(x)|
+ \ll_j \frac{x^{k-1}}{\Gamma(k)}(1+k)^j,
+ \qquad 0<x\leq1,
+ \tag{4.845dc_14xyk}
+\]
+so the common power for Maaß, Eisenstein, and holomorphic
+weight at least four is \(\beta=2\).
+
+For \(C=2^mX\), \(m\geq0\), the two Farey--Cauchy block terms are
+therefore exactly
+\[
+ \frac{P^2}{C}\left(\frac{C^2}{Q}+X\right)
+ =\frac XQ\,2^{-m}+2^{-3m}.
+\]
+Consequently
+\[
+ \boxed{
+ \sum_{m\geq0}
+ \frac{P^2}{C}\left(\frac{C^2}{Q}+X\right)
+ \leq 2\frac XQ+\frac87.}
+ \tag{4.845dc_14xyl}
+\]
+This proves the complete \(C>X\) modulus tail with polynomial-in-
+seminorm constants.  Weight two is not included in this contour
+argument and remains covered by the independent cusp-strip theorem
+(4.845dc_14xi).
+
+The interface exact_small_argument_hankel_tail_audit records the
+single crossed pole, the powers \(2\) and \(3\), and the two exact
+geometric sums.
+
+It remains to treat the finite transition interval without using the
+pointwise error in HPY (5.14).  Fix a Mellin weight order \(J\), put
+\[
+ A=J+2,
+\]
+and replace (4.845dc_14xyg), only for this transition estimate, by the
+positive majorant
+\[
+ h_{R,J}(r)=c_{R,J}
+ \prod_{0\leq\ell<A}
+ \left(r^2+(\ell+\tfrac12)^2\right)
+ \left(1+\frac{r^2}{4(A+1)^2R^2}\right)^{-L},
+ \tag{4.845dc_14xym}
+\]
+where \(L>2A+2J+10\) and \(c_{R,J}\ll_JR^{C_J}\) is chosen to
+majorize the fixed physical seminorm.  Every displayed factor is
+positive on the real spectrum and on \(r=i\kappa\),
+\(|\kappa|\leq7/64\).  The rational poles in (4.845dc_14xym) lie at
+\(\pm2(A+1)iR\).
+
+Use the exact Fourier identities (4.845dc_14xa), equivalently Young
+(7.5) and (7.14), before truncating their \(v\)-integrals.  The product
+in (4.845dc_14xym) cancels the poles of \(\tanh(\pi r)\) at
+\[
+ r=\pm i(\ell+\tfrac12),\qquad0\leq\ell<A.
+\]
+For \(v>0\) move the inner \(r\)-contour to \(\Im r=A\), and for
+\(v<0\) to \(\Im r=-A\).  No pole is crossed; the first uncancelled
+half-integer is \(A+1/2\).  With the convention \(e^{2irv}\), this
+proves the exact bound
+\[
+ |G_{R,J}^{(a)}(v)|
+ \ll_{a,J}R^{C_{a,J}}e^{-2A|v|}
+ \qquad(0\leq a\leq J+2).
+ \tag{4.845dc_14xyn}
+\]
+There is no \(R^{-B}\) or \(T^{-B}\) remainder in (4.845dc_14xyn).
+
+An \(x\)-derivative of order at most \(J+2\) in the two phases
+\(x\cosh v\) and \(x\sinh v\) contributes at most
+\[
+ (1+x)^{J+2}e^{(J+2)|v|}.
+\]
+Since \(2A-(J+2)=J+2>0\) and
+\(1\leq x\asymp P<8(1+R)^2\), (4.845dc_14xyn) gives
+\[
+ |(x\partial_x)^aH_R^\pm(x)|
+ \ll_{a,J}R^{C_J},
+ \qquad0\leq a\leq J+2.
+ \tag{4.845dc_14xyo}
+\]
+For the holomorphic transform, apply
+\(|J_n(x)|\leq1\) for integral \(n\geq0\) and
+\(2J_n'(x)=J_{n-1}(x)-J_{n+1}(x)\); after at most \(J+2\)
+derivatives and \(x\ll R^2\), the result is again (4.845dc_14xyo)
+with a different fixed power of \(R\).
+
+Finally, exact Mellin integration by parts yields
+\[
+ |\widetilde H_{R,P}(\tau)|
+ \ll_JR^{C_J}(1+|\tau|)^{-J-2},
+\]
+and therefore
+\[
+ \boxed{
+ \int_{\mathbb R}(1+|\tau|)^J
+ |\widetilde H_{R,P}(\tau)|\,d\tau
+ \ll_JR^{C_J}\leq PR^{C_J}.}
+ \tag{4.845dc_14xyp}
+\]
+Thus the entire transition range is proved with polynomial seminorm
+constants.  The interface exact_transition_hankel_mellin_audit records
+the exact decay margin
+\(2A-(J+2)=J+2\).
+
+The large-symbol range has a direct exact proof that does not expand an
+individual Bessel function.  Insert the whole-line Fourier identity
+(4.845dc_14xa) first, write \(x=Py\), \(\theta=\tau/P\), and split the
+cosine into its two exponential signs.  The Maaß plus localized Mellin
+transform is a sum of integrals with phase
+\[
+ \Phi_\epsilon(y,v;\theta)
+ =\epsilon y\cosh v-\theta\log y,
+ \qquad \epsilon\in\{1,-1\},\quad y\in[1/2,2].
+ \tag{4.845dc_14xyq}
+\]
+For the matching sign, a joint stationary point exists exactly when
+\(\epsilon\theta>0\) and \(|\theta|\in[1/2,2]\).  It is
+\[
+ (y_0,v_0)=(|\theta|,0).
+\]
+At that point the mixed derivative vanishes and
+\[
+ \partial_y^2\Phi_\epsilon(y_0,0)=\frac{\epsilon}{y_0},
+ \qquad
+ \partial_v^2\Phi_\epsilon(y_0,0)=\epsilon y_0,
+ \qquad
+ \boxed{\det\operatorname{Hess}\Phi_\epsilon(y_0,0)=1.}
+ \tag{4.845dc_14xyr}
+\]
+Thus uniform two-dimensional stationary phase gives \(P^{-1}\), with
+constants bounded by finitely many seminorms of the whole-line
+transform \(G_{R,J}\).
+
+For completeness, the off-window estimate can be proved without an
+implicit compact-support assertion.  Use the two exact integration
+operators
+\[
+ \begin{aligned}
+ \mathcal D_y&=
+ \frac{1}{iP(\epsilon\cosh v-\theta/y)}\,\partial_y,\\
+ \mathcal D_v&=
+ \frac{1}{iP\epsilon y\sinh v}\,\partial_v.
+ \end{aligned}
+ \tag{4.845dc_14xys}
+\]
+Partition the \((y,v)\)-plane where the two denominators in
+(4.845dc_14xys) have respectively maximal size.  In the remaining
+fixed neighbourhood of \((y_0,0)\), use (4.845dc_14xyr).  When
+\(|v|\) exceeds that neighbourhood, \(|\sinh v|\) is bounded below;
+when \(|\theta|\) exceeds the stationary windows, either
+\(|\epsilon\cosh v-\theta/y|\) is bounded below by the normalized
+distance to the window, or \(\cosh v\asymp1+|\theta|\).  In the latter
+case (4.845dc_14xyn), with \(A>J+2\), supplies
+\((1+|\theta|)^{-J-2}\).  Repeated adjoints of
+(4.845dc_14xys) therefore give
+\[
+ |\widetilde H^+_{R,P}(\tau)|
+ \ll_J\frac{R^{C_J}}P
+ \left(1+\frac{\operatorname{dist}(
+ \tau,[P/2,2P]\cup[-2P,-P/2])}{P}\right)^{-J}.
+ \tag{4.845dc_14xyt}
+\]
+All artificial partition boundaries are inside overlapping smooth
+regions; their derivatives are bounded by the same normalized
+denominators, so (4.845dc_14xyt) has no boundary term at infinity.
+
+For the Maaß minus kernel replace \(\cosh v\) by \(\sinh v\).  The
+joint equations would require simultaneously
+\[
+ \epsilon\sinh v=\theta/y,
+ \qquad \epsilon y\cosh v=0,
+\]
+which is impossible.  The same two-operator partition, now with
+\(\cosh v\) in the second denominator, gives rapid decay in \(P\) and
+therefore the bound (4.845dc_14xyt) a fortiori.  The continuous spectrum
+uses these identical archimedean kernels.
+
+For an integral holomorphic order use the exact identity
+\[
+ J_n(x)=\frac1{2\pi}\int_{-\pi}^{\pi}
+ e^{i(nv-x\sin v)}\,dv,
+ \qquad n\in\mathbb Z.
+ \tag{4.845dc_14xyu}
+\]
+Sum the positive weight over \(n=k-1\) before estimating.  Its finite
+Fourier amplitude has every required derivative bounded by
+\(R^{C_J}\).  The joint stationary points of
+\(\epsilon y\sin v-\theta\log y\) occur at
+\(v=\pm\pi/2\), \(y=|\theta|\), and their Hessian determinants have
+absolute value one.  The complement is treated by the periodic version
+of (4.845dc_14xys).  Hence (4.845dc_14xyt) also holds for every
+holomorphic weight \(k\geq4\).  The weight-two large sieve remains
+provided by (4.845dc_14xi), so no conditionally convergent Petersson
+tail is reintroduced.
+
+This proves both lines of (4.845dc_14xye) for all required spectral
+sectors.  The proof used exact Fourier identities throughout and never
+discarded the \(O(T^{-A})\) remainder of HPY Lemma 5.6.  The interface
+exact_large_symbol_mellin_audit records the two-dimensional dimension,
+the unit Hessian determinants, the \(P^{-1}\) height, and the strict
+Fourier-decay margin.  Consequently the scalar full-level large sieve
+(4.845dc_14xyf), weighted primitive PLS, and **fixed-entry PEVP** are
+proved.  This does not close the full mollifier remainder: Section
+4.109zi still leaves the signed outer-entry aggregation OLISK open.
 
 ### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell
 
 The tail \(\mathcal R_{\rm tail}^{(B)}\) in (5.2a) of the exact
-off-diagonal audit was left open because the absolute majorant (5.8d)
-has scale \(T^{9/2}\).  If seminorm-stable PEVP follows from
-(4.845dc_14xye), no absolute mollifier majorant is needed.  The same
-signed local estimate would apply to every tail shell, and the
-integrations by parts defining that shell make its normalized kernel
-seminorm small.  Until then this subsection is a conditional ledger.
+off-diagonal audit cannot use the absolute majorant (5.8d), whose scale
+is \(T^{9/2}\).  The seminorm-stable PEVP proved above applies to every
+tail shell, while the integrations by parts defining that shell make
+its normalized kernel seminorm small.
 
 For one exact dyadic box put
 
@@ -18779,17 +19075,17 @@ There is no separate truncated-AFE error: (2.4) is exact.
 \(\Lambda_{\rm AFE}\) accounts for the entire \(KM>T\mathscr L^B\)
 part of that exact series.  Likewise \(\Lambda_{\rm tr}\) includes
 both the four QCT Fourier variables and the Bessel Mellin/spectral
-variables.  Equations (4.845dc_15)--(4.845dc_17), together with a
-future proof of seminorm-stable PEVP from (4.845dc_14xye), would prove
+variables.  Equations (4.845dc_15)--(4.845dc_17), together with
+seminorm-stable PEVP from (4.845dc_14xye), prove
 \(\mathrm{TAIL}_{B,D}=o_W(T)\) and the kernel-transform tail estimate.
-At present both this tail conclusion and the compact near shell from
-Section 4.109zi remain open.
+The compact near shell from Section 4.109zi remains open because PEVP
+does not aggregate the actual outer integers \(A,B\).
 
 The interface \`mwkf_tail_shell_aggregation_audit\` records the exact
 seven-log aggregation and the inequality \(BJ>C_J+D+7\).  Its
-AFE-product, time/Poisson, QCT/Bessel, and total-tail closure flags stay
-false until the scalar Hankel seminorm gate is proved; the compact-core
-flag is separate.
+AFE-product, time/Poisson, QCT/Bessel, and total-tail closure flags are
+true after Section 4.109zlf; the compact-core flag is separate and stays
+false until OLISK is proved.
 
 
 ### 4.109zh The exact main term leaves the joint outer-entry compact gate

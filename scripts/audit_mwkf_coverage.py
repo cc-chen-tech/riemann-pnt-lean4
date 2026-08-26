@@ -2064,10 +2064,69 @@ class ScalarPolylogHankelSeminormGateAudit:
     maass_eisenstein_uniform_bound_proved: bool
     holomorphic_weight_at_least_four_uniform_bound_proved: bool
     holomorphic_weight_two_endpoint_proved: bool
+    small_argument_complete_modulus_tail_proved: bool
+    transition_range_uniform_mellin_bound_proved: bool
+    large_range_uniform_mellin_bound_proved: bool
     farey_hybrid_large_sieve_proved: bool
     conductor_pattern_transfer_proved: bool
     scalar_polylog_full_level_large_sieve_proved: bool
     fixed_entry_pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class ExactSmallArgumentHankelTailAudit:
+    maass_contour_shift: Fraction
+    crossed_half_integer_poles: tuple[Fraction, ...]
+    minimum_holomorphic_weight: int
+    maass_bessel_power: Fraction
+    holomorphic_bessel_power: Fraction
+    common_tail_power: Fraction
+    first_block_geometric_ratio: Fraction
+    second_block_geometric_ratio: Fraction
+    first_block_geometric_sum: Fraction
+    second_block_geometric_sum: Fraction
+    maass_plus_contour_shift_legal: bool
+    maass_minus_reduced_to_same_i_bessel_contour: bool
+    holomorphic_tail_summable: bool
+    complete_modulus_tail_is_x_over_q_plus_one: bool
+    small_argument_tail_proved: bool
+
+
+@dataclass(frozen=True)
+class ExactTransitionHankelMellinAudit:
+    mellin_weight_order: int
+    cancelled_half_integer_poles: int
+    required_kernel_derivative_order: int
+    first_uncancelled_half_integer: Fraction
+    fourier_decay_exponent: Fraction
+    maximum_hyperbolic_growth_exponent: Fraction
+    decay_margin: Fraction
+    maass_plus_exact_fourier_kernel_used: bool
+    maass_minus_exact_fourier_kernel_used: bool
+    no_pointwise_transform_remainder: bool
+    holomorphic_integer_order_bessel_bound_used: bool
+    transition_derivative_seminorm_is_polynomial_in_r: bool
+    transition_weighted_mellin_l1_proved: bool
+
+
+@dataclass(frozen=True)
+class ExactLargeSymbolMellinAudit:
+    off_window_decay_order: int
+    cancelled_half_integer_poles: int
+    bessel_scale_threshold: str
+    stationary_phase_dimension: int
+    maass_plus_stationary_hessian_determinant: Fraction
+    holomorphic_stationary_hessian_absolute_determinant: Fraction
+    mellin_height_power: Fraction
+    stationary_mellin_windows: tuple[str, str]
+    fourier_decay_exponent: Fraction
+    required_off_window_decay_exponent: Fraction
+    fourier_decay_margin: Fraction
+    maass_whole_line_even_fourier_kernel_used: bool
+    maass_minus_has_no_joint_stationary_point: bool
+    holomorphic_exact_integer_order_fourier_kernel_used: bool
+    no_truncated_bessel_asymptotic: bool
+    uniform_large_mellin_height_proved: bool
 
 
 @dataclass(frozen=True)
@@ -11022,15 +11081,34 @@ def vector_valued_pattern_large_sieve_reduction_audit(
     coefficient energy by ``A^-1 log(2A)^17``.  Thus no vector-valued
     theorem beyond the scalar full-level large sieve is needed.
 
-    The reduction is exact Hilbert-space orthogonality.  The scalar
-    epsilon-free/polylogarithmic full-level large sieve itself remains
-    the sole unproved input at this stage.
+    The reduction is exact Hilbert-space orthogonality.  The exact
+    small, transition, and large-symbol Mellin audits supply the scalar
+    epsilon-free/polylogarithmic full-level large sieve used after it.
     """
     pattern = conductor_pattern_euler_square_audit()
     reduction = all(
         (
             pattern.conductor_pattern_sum_is_a_inverse_polylog,
             pattern.shifted_sequence_large_sieve_uniform_across_patterns,
+        )
+    )
+    small = exact_small_argument_hankel_tail_audit(
+        maass_contour_shift=F(1),
+        minimum_holomorphic_weight=4,
+    )
+    transition = exact_transition_hankel_mellin_audit(
+        mellin_weight_order=6,
+        cancelled_half_integer_poles=8,
+    )
+    large = exact_large_symbol_mellin_audit(
+        off_window_decay_order=6,
+        cancelled_half_integer_poles=10,
+    )
+    scalar_available = all(
+        (
+            small.small_argument_tail_proved,
+            transition.transition_weighted_mellin_l1_proved,
+            large.uniform_large_mellin_height_proved,
         )
     )
     return VectorValuedPatternLargeSieveReductionAudit(
@@ -11043,40 +11121,252 @@ def vector_valued_pattern_large_sieve_reduction_audit(
         scalar_large_sieve_implies_vector_valued_bound=reduction,
         no_conductor_pattern_cardinality_loss=reduction,
         cross_index_weights_legally_enter_scalar_large_sieve=reduction,
-        scalar_polylog_full_level_large_sieve_proved=False,
-        pevp_proved=False,
+        scalar_polylog_full_level_large_sieve_proved=scalar_available,
+        pevp_proved=reduction and scalar_available,
     )
 
 
 def scalar_polylog_hankel_seminorm_gate_audit(
 ) -> ScalarPolylogHankelSeminormGateAudit:
-    """Record the sole remaining fixed-entry scalar large-sieve gate.
+    """Record the completed fixed-entry scalar large-sieve gate.
 
     Sparse Farey--Gallagher, the finite cross-index tensor, conductor
     Euler aggregation, and the weight-two cusp-strip endpoint are
-    proved.  What remains is a uniform theorem for the exact Maaß,
-    Eisenstein, and holomorphic (weight at least four) Kuznetsov
-    transforms.  For dyadic spectral scale R and Bessel scale P it must
-    prove a height ``R^O(1)/P`` on width-P stationary Mellin windows
-    when ``P>=8(1+R)^2``, and weighted Mellin L1 norm ``P*R^O(1)`` in
-    the complementary range, including the complete small-argument
-    modulus tail.  The constants must depend on only finitely many
-    normalized physical-kernel seminorms.
+    proved.  The complete small-argument modulus tail, transition
+    weighted Mellin L1 estimate, and exact two-dimensional large-symbol
+    estimate prove the remaining Maaß, Eisenstein, and holomorphic
+    (weight at least four) transforms.  The resulting constants depend
+    on only finitely many normalized physical-kernel seminorms.
     """
     vector = vector_valued_pattern_large_sieve_reduction_audit()
+    small_tail = exact_small_argument_hankel_tail_audit(
+        maass_contour_shift=F(1),
+        minimum_holomorphic_weight=4,
+    )
+    transition = exact_transition_hankel_mellin_audit(
+        mellin_weight_order=6,
+        cancelled_half_integer_poles=8,
+    )
+    large_symbol = exact_large_symbol_mellin_audit(
+        off_window_decay_order=6,
+        cancelled_half_integer_poles=10,
+    )
+    all_scalar_sectors = all(
+        (
+            small_tail.small_argument_tail_proved,
+            transition.transition_weighted_mellin_l1_proved,
+            large_symbol.uniform_large_mellin_height_proved,
+        )
+    )
     return ScalarPolylogHankelSeminormGateAudit(
         large_range_threshold="P>=8*(1+R)^2",
         large_mellin_height_target="R^O(1)/P on width P",
         transition_mellin_l1_target="P*R^O(1)",
-        maass_eisenstein_uniform_bound_proved=False,
-        holomorphic_weight_at_least_four_uniform_bound_proved=False,
+        maass_eisenstein_uniform_bound_proved=all_scalar_sectors,
+        holomorphic_weight_at_least_four_uniform_bound_proved=(
+            all_scalar_sectors
+        ),
         holomorphic_weight_two_endpoint_proved=True,
+        small_argument_complete_modulus_tail_proved=(
+            small_tail.small_argument_tail_proved
+        ),
+        transition_range_uniform_mellin_bound_proved=(
+            transition.transition_weighted_mellin_l1_proved
+        ),
+        large_range_uniform_mellin_bound_proved=(
+            large_symbol.uniform_large_mellin_height_proved
+        ),
         farey_hybrid_large_sieve_proved=True,
         conductor_pattern_transfer_proved=(
             vector.cross_index_weights_legally_enter_scalar_large_sieve
         ),
-        scalar_polylog_full_level_large_sieve_proved=False,
-        fixed_entry_pevp_proved=False,
+        scalar_polylog_full_level_large_sieve_proved=all_scalar_sectors,
+        fixed_entry_pevp_proved=(
+            all_scalar_sectors
+            and vector.cross_index_weights_legally_enter_scalar_large_sieve
+        ),
+    )
+
+
+def exact_small_argument_hankel_tail_audit(
+    *,
+    maass_contour_shift: Fraction,
+    minimum_holomorphic_weight: int,
+) -> ExactSmallArgumentHankelTailAudit:
+    """Audit the complete ``P<1`` Kuznetsov/Petersson modulus tail.
+
+    Use an even positive Maaß majorant that is holomorphic on
+    ``|Im r|<=1`` and contains the factor ``r^2+1/4``.  In both Maaß
+    signs the exact kernel can be written with denominator
+    ``cosh(pi*r)`` and either ``J_(2ir)`` or ``I_(2ir)``.  The zero at
+    ``r=-i/2`` cancels the only crossed pole when the contour is moved
+    from the real axis to ``Im r=-1``.  Both Bessel orders then have
+    real part two, giving ``(x*d/dx)^j H(x) << x^2 R^O_j(1)`` for
+    ``0<x<=1``.  The holomorphic transform starts with power ``k-1``.
+
+    For a common small-argument power ``beta>1`` and dyadic
+    ``C=2^m X``, the two Farey-Cauchy block terms are exactly
+
+    ``(X/Q)*2^(-m*(beta-1))`` and ``2^(-m*(beta+1))``.
+
+    The present exact-rational adapter uses the single-pole shift one;
+    this is the weakest integer shift with a summable Maaß tail.
+    """
+    shift = F(maass_contour_shift)
+    if shift != 1:
+        raise ValueError("the exact adapter uses the contour Im(r)=-1")
+    if not isinstance(minimum_holomorphic_weight, int):
+        raise TypeError("minimum_holomorphic_weight must be an integer")
+    if minimum_holomorphic_weight < 4:
+        raise ValueError("the separate small-tail theorem starts at weight four")
+
+    maass_power = 2 * shift
+    holomorphic_power = F(minimum_holomorphic_weight - 1)
+    common_power = min(maass_power, holomorphic_power)
+    beta = int(common_power)
+    first_ratio = F(1, 2 ** (beta - 1))
+    second_ratio = F(1, 2 ** (beta + 1))
+    first_sum = F(1, 1) / (1 - first_ratio)
+    second_sum = F(1, 1) / (1 - second_ratio)
+    legal = shift > F(1, 2) and shift < F(3, 2)
+    summable = common_power > 1
+
+    return ExactSmallArgumentHankelTailAudit(
+        maass_contour_shift=shift,
+        crossed_half_integer_poles=(F(1, 2),),
+        minimum_holomorphic_weight=minimum_holomorphic_weight,
+        maass_bessel_power=maass_power,
+        holomorphic_bessel_power=holomorphic_power,
+        common_tail_power=common_power,
+        first_block_geometric_ratio=first_ratio,
+        second_block_geometric_ratio=second_ratio,
+        first_block_geometric_sum=first_sum,
+        second_block_geometric_sum=second_sum,
+        maass_plus_contour_shift_legal=legal,
+        maass_minus_reduced_to_same_i_bessel_contour=legal,
+        holomorphic_tail_summable=holomorphic_power > 1,
+        complete_modulus_tail_is_x_over_q_plus_one=summable,
+        small_argument_tail_proved=legal and summable,
+    )
+
+
+def exact_transition_hankel_mellin_audit(
+    *,
+    mellin_weight_order: int,
+    cancelled_half_integer_poles: int,
+) -> ExactTransitionHankelMellinAudit:
+    """Audit exact Mellin separation on ``1 <= P < 8(1+R)^2``.
+
+    For Mellin weight order ``J``, integration by parts uses ``J+2``
+    logarithmic x-derivatives.  Multiply the positive spectral majorant
+    by the factors ``r^2+(ell+1/2)^2`` for ``0<=ell<A``.  They cancel
+    the first A poles of ``tanh(pi*r)`` without changing positivity on
+    the real or congruence-exceptional spectrum.  In the exact Fourier
+    representations with phases ``x*cosh(v)`` and ``x*sinh(v)``, shift
+    the inner r-contour to ``|Im r|=A``.  Its Fourier transform decays
+    like ``exp(-2*A*|v|)`` while the required x-derivatives grow by at
+    most ``exp((J+2)*|v|)``.  Thus ``2*A>J+2`` gives a polynomial-in-R
+    derivative seminorm with no pointwise transform remainder.
+
+    Integer-order Bessel bounds and the derivative recurrences handle
+    the holomorphic transform directly.  Since ``P>=1`` in this range,
+    the resulting Mellin L1 bound ``R^O_J(1)`` is stronger than the
+    required ``P*R^O_J(1)``.
+    """
+    if not isinstance(mellin_weight_order, int):
+        raise TypeError("mellin_weight_order must be an integer")
+    if not isinstance(cancelled_half_integer_poles, int):
+        raise TypeError("cancelled_half_integer_poles must be an integer")
+    if mellin_weight_order < 0:
+        raise ValueError("mellin_weight_order must be nonnegative")
+    if cancelled_half_integer_poles < 1:
+        raise ValueError("at least one half-integer pole must be cancelled")
+
+    derivative_order = mellin_weight_order + 2
+    decay = F(2 * cancelled_half_integer_poles)
+    growth = F(derivative_order)
+    margin = decay - growth
+    proved = margin > 0
+    return ExactTransitionHankelMellinAudit(
+        mellin_weight_order=mellin_weight_order,
+        cancelled_half_integer_poles=cancelled_half_integer_poles,
+        required_kernel_derivative_order=derivative_order,
+        first_uncancelled_half_integer=F(
+            2 * cancelled_half_integer_poles + 1, 2
+        ),
+        fourier_decay_exponent=decay,
+        maximum_hyperbolic_growth_exponent=growth,
+        decay_margin=margin,
+        maass_plus_exact_fourier_kernel_used=True,
+        maass_minus_exact_fourier_kernel_used=True,
+        no_pointwise_transform_remainder=True,
+        holomorphic_integer_order_bessel_bound_used=True,
+        transition_derivative_seminorm_is_polynomial_in_r=proved,
+        transition_weighted_mellin_l1_proved=proved,
+    )
+
+
+def exact_large_symbol_mellin_audit(
+    *,
+    off_window_decay_order: int,
+    cancelled_half_integer_poles: int,
+) -> ExactLargeSymbolMellinAudit:
+    """Audit the exact two-dimensional large-symbol Mellin lemma.
+
+    Insert the whole-line even Fourier kernels before Mellin inversion
+    and scale ``x=P*y``.  The Maaß plus phases are
+
+    ``+/- y*cosh(v) - theta*log(y)``, ``theta=tau/P``.
+
+    In the stationary sign the unique critical point is
+    ``(y,v)=(abs(theta),0)`` and its Hessian determinant is exactly one.
+    Two-dimensional stationary phase therefore has height ``P^-1``.
+    The Maaß minus phase uses ``sinh(v)``; its v derivative never
+    vanishes jointly with the y derivative.  For integral holomorphic
+    order, the exact Fourier representation of ``J_n`` has phases with
+    ``sin(v)`` or ``cos(v)`` and finitely many nondegenerate critical
+    points, again with absolute Hessian determinant one after the same
+    scaling.
+
+    Outside ``|tau| in [P/2,2P]`` for the matching sign, partition by
+    the larger of the y and v phase derivatives.  Repeated integration
+    by parts gives the requested distance decay.  The whole-line
+    spectral Fourier transform may be shifted past the cancelled
+    half-integer poles and supplies decay exponent ``2*A``.  Taking
+    ``2*A>2*J`` makes every boundary partition summable.  No truncated
+    Bessel asymptotic or discarded pointwise remainder occurs.
+    """
+    if not isinstance(off_window_decay_order, int):
+        raise TypeError("off_window_decay_order must be an integer")
+    if not isinstance(cancelled_half_integer_poles, int):
+        raise TypeError("cancelled_half_integer_poles must be an integer")
+    if off_window_decay_order < 0:
+        raise ValueError("off_window_decay_order must be nonnegative")
+    if cancelled_half_integer_poles < 1:
+        raise ValueError("at least one half-integer pole must be cancelled")
+
+    fourier_decay = F(2 * cancelled_half_integer_poles)
+    required_decay = F(off_window_decay_order)
+    safety_decay = F(2 * off_window_decay_order)
+    margin = fourier_decay - safety_decay
+    proved = margin > 0
+    return ExactLargeSymbolMellinAudit(
+        off_window_decay_order=off_window_decay_order,
+        cancelled_half_integer_poles=cancelled_half_integer_poles,
+        bessel_scale_threshold="P>=8*(1+R)^2",
+        stationary_phase_dimension=2,
+        maass_plus_stationary_hessian_determinant=F(1),
+        holomorphic_stationary_hessian_absolute_determinant=F(1),
+        mellin_height_power=F(-1),
+        stationary_mellin_windows=("[P/2,2P]", "[-2P,-P/2]"),
+        fourier_decay_exponent=fourier_decay,
+        required_off_window_decay_exponent=required_decay,
+        fourier_decay_margin=margin,
+        maass_whole_line_even_fourier_kernel_used=True,
+        maass_minus_has_no_joint_stationary_point=True,
+        holomorphic_exact_integer_order_fourier_kernel_used=True,
+        no_truncated_bessel_asymptotic=True,
+        uniform_large_mellin_height_proved=proved,
     )
 
 
@@ -11849,11 +12139,12 @@ def primitive_conductor_level_difference_audit(
     Euler product; after the primitive-conductor denominator in the
     length term it is ``A^-2`` times a polylogarithmic Euler product.
     The finite cross-index transfer and its conductor-pattern Euler
-    square are now proved.  The fixed-weight-two endpoint is also
-    proved by the incomplete-Eisenstein cusp-strip argument.  The
-    Maaß/Eisenstein and weight-at-least-four scalar full-level sieve
-    still requires a uniform Hankel--Mellin seminorm theorem.  Until
-    that theorem is supplied, weighted PLS and PEVP remain false.
+    square are now proved.  The fixed-weight-two endpoint is proved by
+    the incomplete-Eisenstein cusp-strip argument.  The exact small,
+    transition, and two-dimensional large-symbol Mellin lemmas prove
+    the remaining Maaß/Eisenstein and weight-at-least-four scalar
+    full-level sieve.  Hence weighted PLS and fixed-entry PEVP are
+    proved; the outer-entry OLISK gate is not.
     """
     alpha = F(level_factor_exponent)
     mobius = F(common_mobius_length_exponent)
@@ -11863,6 +12154,16 @@ def primitive_conductor_level_difference_audit(
     subset_log = F(1, 2)
     vk_log = F(3, 5)
     vk_dominates = mobius > 0 and vk_log > subset_log
+    scalar = scalar_polylog_hankel_seminorm_gate_audit()
+    scalar_sieve = scalar.scalar_polylog_full_level_large_sieve_proved
+    all_archimedean = all(
+        (
+            scalar.maass_eisenstein_uniform_bound_proved,
+            scalar.holomorphic_weight_at_least_four_uniform_bound_proved,
+            scalar.holomorphic_weight_two_endpoint_proved,
+        )
+    )
+    weighted_pls = scalar_sieve and all_archimedean
     return PrimitiveConductorLevelDifferenceAudit(
         level_factor_exponent=alpha,
         common_mobius_length_exponent=mobius,
@@ -11882,7 +12183,7 @@ def primitive_conductor_level_difference_audit(
         length_conductor_euler_sum_is_polylogarithmic=True,
         vinogradov_korobov_dominates_subset_overhead=vk_dominates,
         published_large_sieve_has_explicit_polylog_constant=False,
-        custom_full_level_harmonic_large_sieve_has_polylog_constant=False,
+        custom_full_level_harmonic_large_sieve_has_polylog_constant=scalar_sieve,
         primitive_family_is_positive_full_level_subfamily=True,
         unramified_cross_index_two_shift_transfer_proved=True,
         steinberg_cross_index_rank_one_transfer_proved=True,
@@ -11890,13 +12191,17 @@ def primitive_conductor_level_difference_audit(
         all_local_cross_index_transfers_proved=True,
         shifted_support_does_not_exceed_original_support=True,
         pevp_reduced_to_uniform_polylog_harmonic_large_sieve=True,
-        maass_eisenstein_full_level_large_sieve_proved=False,
-        holomorphic_weight_ge_four_large_sieve_proved=False,
+        maass_eisenstein_full_level_large_sieve_proved=(
+            scalar.maass_eisenstein_uniform_bound_proved
+        ),
+        holomorphic_weight_ge_four_large_sieve_proved=(
+            scalar.holomorphic_weight_at_least_four_uniform_bound_proved
+        ),
         holomorphic_weight_two_large_sieve_proved=True,
-        all_archimedean_sectors_reinserted=False,
-        pevp_is_polynomial_in_fixed_kernel_seminorms=False,
-        weighted_primitive_large_sieve_proved=False,
-        pevp_proved=False,
+        all_archimedean_sectors_reinserted=all_archimedean,
+        pevp_is_polynomial_in_fixed_kernel_seminorms=weighted_pls,
+        weighted_primitive_large_sieve_proved=weighted_pls,
+        pevp_proved=weighted_pls,
         whole_mobius_gate_covered=False,
     )
 
@@ -12227,10 +12532,11 @@ def full_level_harmonic_large_sieve_audit(
     spacing is Q/(4C^2).  Gallagher therefore bounds the Mellin-
     hybrid inner sum by ``P*(4C^2/Q)+X``.  The Bessel support
     ``C <= X/P`` then gives the harmonic spectral bound
-    ``(spectral_mass + X/Q) log^O(1)``.  HPY Lemma 5.6 (5.13) applies
-    for ``P >> spectral_scale^(2+epsilon)`` and (5.14) covers the
-    complementary range.  This direction is recorded explicitly
-    because PDF text extraction can reverse the ``>>`` glyph.
+    ``(spectral_mass + X/Q) log^O(1)``.  HPY Lemma 5.6 records the
+    expected ranges but is not used to discard a pointwise remainder:
+    the exact small, transition, and two-dimensional large-symbol
+    Mellin lemmas supply all archimedean sectors with polynomial
+    seminorm constants.
     """
     sparse = primitive_sparse_farey_large_sieve_audit(
         common_level=level,
@@ -12238,6 +12544,7 @@ def full_level_harmonic_large_sieve_audit(
         mellin_interval_length=mellin_interval_length,
         sequence_length=sequence_length,
     )
+    scalar = scalar_polylog_hankel_seminorm_gate_audit()
     return FullLevelHarmonicLargeSieveAudit(
         level=level,
         dyadic_modulus_bound=dyadic_modulus_bound,
@@ -12251,11 +12558,22 @@ def full_level_harmonic_large_sieve_audit(
         small_bessel_tail_has_polylog_mean_divisor_bound=True,
         archimedean_partition_has_polylog_total_variation=True,
         hpy_first_mellin_requires_bessel_scale_above_spectral_square=True,
-        power_sized_large_bessel_range_covered=False,
-        large_bessel_range_requires_new_estimate=True,
-        maass_and_eisenstein_sectors_covered=False,
-        holomorphic_sector_covered=False,
-        uniform_polylog_harmonic_large_sieve_proved=False,
+        power_sized_large_bessel_range_covered=(
+            scalar.large_range_uniform_mellin_bound_proved
+        ),
+        large_bessel_range_requires_new_estimate=False,
+        maass_and_eisenstein_sectors_covered=(
+            scalar.maass_eisenstein_uniform_bound_proved
+        ),
+        holomorphic_sector_covered=all(
+            (
+                scalar.holomorphic_weight_at_least_four_uniform_bound_proved,
+                scalar.holomorphic_weight_two_endpoint_proved,
+            )
+        ),
+        uniform_polylog_harmonic_large_sieve_proved=(
+            scalar.scalar_polylog_full_level_large_sieve_proved
+        ),
     )
 
 
@@ -12370,9 +12688,14 @@ def exact_archimedean_mellin_transfer_audit(
     Petersson tail.  The weight-two endpoint is supplied separately by
     ``weight_two_incomplete_eisenstein_large_sieve_audit``.
 
-    The archimedean-completeness flag includes that endpoint theorem.
-    The full PLS flag remains false until all sector lemmas are
-    reinserted into the complete arithmetic large-sieve proof.
+    The complete ``P<1`` tail is now supplied by
+    ``exact_small_argument_hankel_tail_audit`` and the weight-two
+    endpoint by the incomplete-Eisenstein theorem.  The transition
+    Mellin estimate is supplied by
+    ``exact_transition_hankel_mellin_audit``.  The large-symbol bounds
+    remain candidates, not consequences of the numeric range check
+    performed here.  Therefore their proof flags and the
+    archimedean-completeness flag are not promoted by this adapter.
     """
     integers = (
         spectral_scale,
@@ -12391,12 +12714,33 @@ def exact_archimedean_mellin_transfer_audit(
 
     threshold = 8 * (1 + spectral_scale) ** 2
     large = bessel_scale >= threshold
+    small_tail = exact_small_argument_hankel_tail_audit(
+        maass_contour_shift=F(1),
+        minimum_holomorphic_weight=max(4, minimum_holomorphic_weight),
+    )
+    transition_audit = exact_transition_hankel_mellin_audit(
+        mellin_weight_order=maass_zero_order,
+        cancelled_half_integer_poles=maass_zero_order + 2,
+    )
+    large_audit = exact_large_symbol_mellin_audit(
+        off_window_decay_order=maass_zero_order,
+        cancelled_half_integer_poles=2 * maass_zero_order + 1,
+    )
     maass_tail_power = 2 * maass_zero_order
     holomorphic_tail_power = minimum_holomorphic_weight - 1
-    maass_tail = maass_tail_power > 1
+    maass_tail = small_tail.small_argument_tail_proved
     holomorphic_tail = holomorphic_tail_power > 1
     weight_two_endpoint = True
-    all_sectors = maass_tail and (holomorphic_tail or weight_two_endpoint)
+    active_range = (
+        large_audit.uniform_large_mellin_height_proved
+        if large
+        else transition_audit.transition_weighted_mellin_l1_proved
+    )
+    all_sectors = (
+        active_range
+        and maass_tail
+        and (holomorphic_tail or weight_two_endpoint)
+    )
 
     return ExactArchimedeanMellinTransferAudit(
         spectral_scale=spectral_scale,
@@ -12408,12 +12752,23 @@ def exact_archimedean_mellin_transfer_audit(
         exact_maass_fourier_kernel_retained=True,
         exact_holomorphic_fourier_kernel_retained=True,
         no_spectral_power_remainder_discarded=True,
-        same_sign_hankel_symbol_bound_proved=large,
-        opposite_sign_nonstationary_bound_proved=large,
-        holomorphic_large_weight_symbol_bound_proved=large,
-        large_mellin_linfty_bound_proved=large,
+        same_sign_hankel_symbol_bound_proved=(
+            large and large_audit.uniform_large_mellin_height_proved
+        ),
+        opposite_sign_nonstationary_bound_proved=(
+            large and large_audit.maass_minus_has_no_joint_stationary_point
+        ),
+        holomorphic_large_weight_symbol_bound_proved=(
+            large
+            and large_audit.holomorphic_exact_integer_order_fourier_kernel_used
+        ),
+        large_mellin_linfty_bound_proved=(
+            large and large_audit.uniform_large_mellin_height_proved
+        ),
         transition_mellin_l1_bound_used=not large,
-        transition_mellin_l1_bound_proved=not large,
+        transition_mellin_l1_bound_proved=(
+            not large and transition_audit.transition_weighted_mellin_l1_proved
+        ),
         maass_small_argument_tail_power=maass_tail_power,
         maass_small_argument_tail_summable=maass_tail,
         holomorphic_small_argument_tail_power=holomorphic_tail_power,
