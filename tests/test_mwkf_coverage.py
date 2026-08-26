@@ -2462,6 +2462,47 @@ def test_generic_large_values_do_not_prove_the_mobius_fourth_moment() -> None:
     assert not high.whole_line_family_covered
 
 
+def test_kim_2026_ternary_bound_is_too_weak_and_excludes_mobius() -> None:
+    ledger = coverage_audit.transition_kim_ternary_correlation_audit(
+        ambient_length_exponent=F(3),
+        shift_length_exponent=F(2),
+        target_exponent=F(9, 2),
+    )
+
+    assert ledger.relative_shift_exponent == F(2, 3)
+    assert ledger.theorem_alpha_zero_shift_floor == F(1, 2)
+    assert ledger.theorem_buffer_multiplier == 100
+    assert ledger.theorem_epsilon_ceiling == F(1, 600)
+    assert ledger.ambient_sum_exponent == F(5)
+    assert ledger.required_saving_exponent == F(1, 2)
+    assert ledger.theorem_saving_ceiling == F(1, 600)
+    assert ledger.residual_power_deficit == F(299, 600)
+    assert ledger.mobius_dirichlet_series_is_reciprocal_l
+    assert not ledger.mobius_holomorphic_halfplane_hypothesis
+    assert not ledger.mobius_critical_line_second_moment_hypothesis
+    assert not ledger.dyadic_convolution_is_one_multiplicative_function
+    assert not ledger.theorem_applies_to_actual_packet
+    assert not ledger.whole_line_family_covered
+
+
+def test_doyle_2026_length_enters_but_moment_and_coefficient_do_not() -> None:
+    ledger = coverage_audit.transition_doyle_kfree_moment_audit(
+        product_center_exponent=F(2),
+        short_interval_exponent=F(1),
+    )
+
+    assert ledger.relative_interval_exponent == F(1, 2)
+    assert ledger.k_two_middle_part_exponent == F(105, 317)
+    assert ledger.mobius_l1_threshold_exponent == F(315, 634)
+    assert ledger.length_margin_exponent == F(1, 317)
+    assert ledger.theorem_is_l1_lower_bound
+    assert not ledger.theorem_is_variance_upper_bound
+    assert ledger.middle_coefficient_uses_square_divisors
+    assert not ledger.middle_coefficient_matches_balanced_two_mobius_convolution
+    assert not ledger.theorem_applies_to_actual_packet
+    assert not ledger.whole_line_family_covered
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -4548,5 +4589,11 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\frac{K_f(s)}{\zeta(2s)L(s,f)}",
         r"L(s+i\tau,f)L(s+i\upsilon,f)",
         "transition_mobius_hecke_reciprocal_l_audit",
+        "### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range",
+        r"\frac{299}{600}",
+        "transition_kim_ternary_correlation_audit",
+        "### 4.70 Doyle's 2026 short k-free theorem crosses the length line",
+        r"\frac12-\frac{315}{634}=\frac1{317}",
+        "transition_doyle_kfree_moment_audit",
         ):
         assert marker in text

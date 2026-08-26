@@ -1186,6 +1186,45 @@ class TransitionMobiusLargeValueAudit:
 
 
 @dataclass(frozen=True)
+class TransitionKimTernaryCorrelationAudit:
+    ambient_length_exponent: Fraction
+    shift_length_exponent: Fraction
+    target_exponent: Fraction
+    relative_shift_exponent: Fraction
+    theorem_alpha_zero_shift_floor: Fraction
+    theorem_buffer_multiplier: int
+    theorem_epsilon_ceiling: Fraction
+    ambient_sum_exponent: Fraction
+    required_saving_exponent: Fraction
+    theorem_saving_ceiling: Fraction
+    residual_power_deficit: Fraction
+    mobius_dirichlet_series_is_reciprocal_l: bool
+    mobius_holomorphic_halfplane_hypothesis: bool
+    mobius_critical_line_second_moment_hypothesis: bool
+    dyadic_convolution_is_one_multiplicative_function: bool
+    theorem_applies_to_actual_packet: bool
+    whole_line_family_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class TransitionDoyleKFreeMomentAudit:
+    product_center_exponent: Fraction
+    short_interval_exponent: Fraction
+    relative_interval_exponent: Fraction
+    k_two_middle_part_exponent: Fraction
+    mobius_l1_threshold_exponent: Fraction
+    length_margin_exponent: Fraction
+    theorem_is_l1_lower_bound: bool
+    theorem_is_variance_upper_bound: bool
+    middle_coefficient_uses_square_divisors: bool
+    middle_coefficient_matches_balanced_two_mobius_convolution: bool
+    theorem_applies_to_actual_packet: bool
+    whole_line_family_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -5776,6 +5815,106 @@ def transition_mobius_large_value_audit(
     )
 
 
+def transition_kim_ternary_correlation_audit(
+    *,
+    ambient_length_exponent: Fraction,
+    shift_length_exponent: Fraction,
+    target_exponent: Fraction,
+) -> TransitionKimTernaryCorrelationAudit:
+    """Audit Kim 2026 Theorem 1.6 on the balanced shifted packet.
+
+    In the theorem's ``alpha=0`` case, a shift ``H=X**eta`` must satisfy
+    ``eta > 1/2 + 100*epsilon`` and the error saves ``H**(epsilon/2)``.
+    The returned epsilon and saving are unattained ceilings because the
+    theorem has a strict buffer.  Independently, a Möbius coefficient has
+    associated series ``1/L(s,chi)`` and fails the theorem's holomorphy and
+    critical-line second-moment hypotheses.  The actual dyadic convolutions
+    also are not one fixed multiplicative function.
+    """
+
+    x = F(ambient_length_exponent)
+    h = F(shift_length_exponent)
+    target = F(target_exponent)
+    if x <= 0 or h <= 0 or h >= x:
+        raise ValueError("require positive shift exponent below ambient length")
+    ambient = x + h
+    if target > ambient:
+        raise ValueError("target cannot exceed the ambient sum exponent")
+    eta = h / x
+    floor = F(1, 2)
+    buffer = 100
+    epsilon_ceiling = max(F(0), (eta - floor) / buffer)
+    saving_ceiling = h * epsilon_ceiling / 2
+    required = ambient - target
+    residual = max(F(0), required - saving_ceiling)
+    return TransitionKimTernaryCorrelationAudit(
+        ambient_length_exponent=x,
+        shift_length_exponent=h,
+        target_exponent=target,
+        relative_shift_exponent=eta,
+        theorem_alpha_zero_shift_floor=floor,
+        theorem_buffer_multiplier=buffer,
+        theorem_epsilon_ceiling=epsilon_ceiling,
+        ambient_sum_exponent=ambient,
+        required_saving_exponent=required,
+        theorem_saving_ceiling=saving_ceiling,
+        residual_power_deficit=residual,
+        mobius_dirichlet_series_is_reciprocal_l=True,
+        mobius_holomorphic_halfplane_hypothesis=False,
+        mobius_critical_line_second_moment_hypothesis=False,
+        dyadic_convolution_is_one_multiplicative_function=False,
+        theorem_applies_to_actual_packet=False,
+        whole_line_family_covered=False,
+        source=(
+            "Jiseong Kim, arXiv:2603.23250v2, Definition 1.1 and "
+            "Theorem 1.6."
+        ),
+    )
+
+
+def transition_doyle_kfree_moment_audit(
+    *,
+    product_center_exponent: Fraction,
+    short_interval_exponent: Fraction,
+) -> TransitionDoyleKFreeMomentAudit:
+    """Audit Doyle 2026 on the balanced short-interval variance gate.
+
+    Doyle's ``k=2`` middle-part exponent is ``105/317``.  Theorem 1.7
+    therefore gives its Möbius ``L1`` *lower* bound for intervals longer
+    than ``N**(315/634+epsilon)``.  This enters the balanced interval
+    ``K=N**(1/2)``, but neither its conclusion nor its square-divisor
+    coefficient is the upper variance estimate for the two-Möbius
+    convolution required by the actual packet.
+    """
+
+    x = F(product_center_exponent)
+    k = F(short_interval_exponent)
+    if x <= 0 or k <= 0 or k > x:
+        raise ValueError("require a positive short interval no longer than its center")
+    relative = k / x
+    delta_two = F(105, 317)
+    threshold = F(3, 2) * delta_two
+    margin = max(F(0), relative - threshold)
+    return TransitionDoyleKFreeMomentAudit(
+        product_center_exponent=x,
+        short_interval_exponent=k,
+        relative_interval_exponent=relative,
+        k_two_middle_part_exponent=delta_two,
+        mobius_l1_threshold_exponent=threshold,
+        length_margin_exponent=margin,
+        theorem_is_l1_lower_bound=True,
+        theorem_is_variance_upper_bound=False,
+        middle_coefficient_uses_square_divisors=True,
+        middle_coefficient_matches_balanced_two_mobius_convolution=False,
+        theorem_applies_to_actual_packet=False,
+        whole_line_family_covered=False,
+        source=(
+            "Ben Doyle, arXiv:2608.16679v1, Lemma 1.2, Theorem 1.7, "
+            "and Corollary 1.8."
+        ),
+    )
+
+
 def h_poisson_subbox_scales(
     box: ExponentBox,
     *,
@@ -9288,6 +9427,39 @@ def main() -> None:
         "gm_moment=18/5,best=10/3,deficit=1/3,menon_power=0,"
         "pointwise_threshold=3/4,mobius_theorem=False,"
         "signed_dcv_requires_components=False,covered=False"
+    )
+    kim_ternary = transition_kim_ternary_correlation_audit(
+        ambient_length_exponent=F(3),
+        shift_length_exponent=F(2),
+        target_exponent=F(9, 2),
+    )
+    print(
+        "large_q_transition: kim_2026_ternary="
+        f"X={_fmt(kim_ternary.ambient_length_exponent)},"
+        f"H={_fmt(kim_ternary.shift_length_exponent)},"
+        f"eta={_fmt(kim_ternary.relative_shift_exponent)},"
+        f"epsilon_ceiling={_fmt(kim_ternary.theorem_epsilon_ceiling)},"
+        f"ambient={_fmt(kim_ternary.ambient_sum_exponent)},"
+        f"required={_fmt(kim_ternary.required_saving_exponent)},"
+        f"saving_ceiling={_fmt(kim_ternary.theorem_saving_ceiling)},"
+        f"deficit={_fmt(kim_ternary.residual_power_deficit)},"
+        "reciprocal_l=True,holomorphic=False,critical_l2=False,"
+        "dyadic_multiplicative=False,applicable=False,covered=False"
+    )
+    doyle_kfree = transition_doyle_kfree_moment_audit(
+        product_center_exponent=F(2),
+        short_interval_exponent=F(1),
+    )
+    print(
+        "large_q_transition: doyle_2026_kfree="
+        f"N={_fmt(doyle_kfree.product_center_exponent)},"
+        f"K={_fmt(doyle_kfree.short_interval_exponent)},"
+        f"relative={_fmt(doyle_kfree.relative_interval_exponent)},"
+        f"delta2={_fmt(doyle_kfree.k_two_middle_part_exponent)},"
+        f"l1_threshold={_fmt(doyle_kfree.mobius_l1_threshold_exponent)},"
+        f"length_margin={_fmt(doyle_kfree.length_margin_exponent)},"
+        "l1_lower=True,variance_upper=False,square_divisors=True,"
+        "balanced_two_mobius=False,applicable=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,

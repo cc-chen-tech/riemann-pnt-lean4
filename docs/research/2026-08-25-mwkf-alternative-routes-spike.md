@@ -8762,6 +8762,150 @@ options are now disjoint:
 2. return to the pre-Cauchy slope family (4.457), where cancellation among
    slopes need not pass through the positive DCV square function.
 
+### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range but not the gate
+
+The recent circle-method theorem of
+[Jiseong Kim, Theorem 1.6](https://arxiv.org/abs/2603.23250) has a Fejér
+shift average close to the exact correlation shape in (9.353) of the
+Type-I/II note.  It is therefore necessary to audit both its power and its
+coefficient class rather than dismiss it from the title alone.
+
+Use (X_0=T^3) and (H_0=T^2=X_0^{2/3}).  In the theorem's
+(alpha=0) case, its range and error have the form
+
+\[
+ H_0\gg X_0^{1/2+100\varepsilon_K},
+ \qquad
+ E_K\ll X_0H_0^{1-\varepsilon_K/2}.
+\tag{4.622}
+\]
+
+The range in (4.622) forces the strict ceiling
+
+\[
+ \varepsilon_K<\frac{2/3-1/2}{100}=\frac1{600}.
+\tag{4.623}
+\]
+
+Measured in the present (T)-exponents, the ambient shifted sum has
+exponent (3+2=5), while the coupled target is (9/2).  Even at the
+unattained endpoint of (4.623), Kim's error saves only
+
+\[
+ \frac{2\varepsilon_K}{2}<\frac1{600},
+ \qquad
+ \boxed{
+ \frac12-\frac1{600}=\frac{299}{600}}
+\tag{4.624}
+\]
+
+of the required half-power.  Thus its numerical strength is insufficient
+even before checking hypotheses.
+
+The coefficient obstruction is independent and decisive.  Definition 1.1
+requires the associated twists (L(f,\chi,s)) to be holomorphic in
+(Re s>1/2) and to satisfy a critical-line second moment.  For Möbius,
+up to the standard imprimitive Euler factors,
+
+\[
+ L(\mu,\chi,s)=\sum_{n\ge1}\frac{\mu(n)\chi(n)}{n^s}
+ =\frac1{L(s,\chi)}.
+\tag{4.625}
+\]
+
+Zeros of (L(s,\chi)) produce poles in the required open half-plane
+unconditionally.  Assuming GRH moves them to the boundary but does not
+create the demanded critical-line (L^2) integral: the square of a simple
+reciprocal pole is not locally integrable.  Kim's separate discussion of a
+GRH bound for Möbius exponential sums is not an assertion that Möbius lies
+in the class of Definition 1.1.
+
+Finally, the dyadically weighted coefficients in (9.352) are not one fixed
+multiplicative function.  Full outer-scale recombination can recover a
+Möbius coefficient, but that returns exactly the reciprocal-(L) failure
+in (4.625).  Consequently
+
+\[
+ \boxed{
+ \text{Kim 2026: shift length enters; power and coefficient hypotheses fail.}}
+\tag{4.626}
+\]
+
+The adapter `transition_kim_ternary_correlation_audit` records
+(4.622)--(4.624) with exact fractions and keeps separate false flags for
+holomorphy, the critical-line second moment, the dyadic multiplicative
+coefficient, theorem applicability, and coupled-gate coverage.  This is a
+new published-estimate row, not a replacement gate.
+
+### 4.70 Doyle's 2026 short k-free theorem crosses the length line in the wrong direction
+
+The top balanced-variance cell (4.540) has product centre (N=T^2) and
+short interval (K=T=N^{1/2}).  Ben Doyle's new
+[Lemma 1.2, Theorem 1.7, and Corollary 1.8](https://arxiv.org/abs/2608.16679)
+therefore deserve a literal endpoint check.  For (k=2), the middle-part
+exponent in that paper is
+
+\[
+ \delta_2=\frac{105}{317},
+ \qquad
+ \frac32\delta_2=\frac{315}{634}
+ =0.496845\ldots .
+\tag{4.627}
+\]
+
+Thus its Möbius corollary applies for
+(K\gg N^{315/634+\varepsilon}).  The interval exponent in (4.540)
+does enter this range, by the exact margin
+
+\[
+ \boxed{\frac12-\frac{315}{634}=\frac1{317}.}
+\tag{4.628}
+\]
+
+This is genuine length coverage, but not analytic coverage of the gate.
+The Möbius conclusion of Theorem 1.7 is the lower bound
+
+\[
+ \int_0^1\left|\sum_{N-K<n\le N}\mu(n)e(n\alpha)\right|d\alpha
+ \gg K^{1/6},
+\tag{4.629}
+\]
+
+whereas (4.540) requires an **upper** short-interval (L^2) variance for
+the balanced convolution (c_{U,V}).  Reversing (4.629) is impossible.
+The estimate which drives Doyle's theorem also concerns the different
+middle coefficient
+
+\[
+ c_n(y,z)=\sum_{\substack{y<d\le z\\d^2\mid n}}\mu(d),
+\tag{4.630}
+\]
+
+with one Möbius weight on square divisors.  It is not the two-Möbius
+product-divisor coefficient
+
+\[
+ c_{U,V}(n)=\sum_{ar=n}\mu(a)\mu(r)U(a/T)V(r/T)
+\tag{4.631}
+\]
+
+in (4.535).  Therefore neither Lemma 1.2 nor the Möbius (L^1) corollary
+can be substituted into (4.540):
+
+\[
+ \boxed{
+ \text{Doyle 2026: the length threshold enters by }N^{1/317},
+ \text{ but conclusion and coefficient both mismatch.}}
+\tag{4.632}
+\]
+
+The exact adapter `transition_doyle_kfree_moment_audit` records the
+fractions in (4.627)--(4.628), the lower-versus-upper direction, and the
+square-divisor-versus-balanced-convolution distinction.  It keeps
+`theorem_applies_to_actual_packet=False` and
+`whole_line_family_covered=False`.  This closes another tempting 2026
+paper route without weakening the residual gate.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
