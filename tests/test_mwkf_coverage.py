@@ -2792,11 +2792,15 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "large_q_transition: type_i_atkin_lehner_cusp="
         "entry=3,modulus=3,product=5,entry_divisor=1/2,"
         "modulus_divisor=1/2,quotient=5/2,dual=1/2,level=1,"
-        "cusp_modulus=13/4,bessel_numerator=11/2,bessel_ratio=1,"
-        "poisson_norm=-1/2,dual_l1=0,unweighted=True,"
-        "coprime_divisors=True,allowed_moduli=True,kloosterman=True,"
+        "rejected_cusp_modulus=13/4,lifted_modulus=7/2,"
+        "bessel_numerator=6,bessel_ratio=1,"
+        "poisson_norm=-1/2,lifted_prefactor=3,dual_l1=0,unweighted=True,"
+        "coprime_divisors=True,allowed_moduli=True,kloosterman=False,"
+        "inverse_obstruction=True,crt_lift=True,ramanujan_nonzero=True,"
+        "coprime_level_family=True,"
         "newform_sign=True,oldclass_permuted=True,zero_eisenstein=True,"
-        "dual_no_power=True,physical=True,qct_adapter=True,"
+        "raw_dual_l1=True,dual_no_power=False,physical=True,qct_adapter=False,"
+        "standard_qct_adapter=True,"
         "level_family=False,type_ii=False,finite_gate=False,covered=False"
     ) in report
     assert (
@@ -4255,7 +4259,7 @@ def test_physical_qct_bessel_kernel_has_zero_power_product_bandwidth() -> None:
     assert not hard.whole_mobius_gate_covered
 
 
-def test_type_i_completion_is_an_exact_atkin_lehner_cusp_kuznetsov_orbit() -> None:
+def test_type_i_completion_has_inverse_scaled_kloosterman_obstruction() -> None:
     identity = getattr(
         coverage_audit,
         "type_i_atkin_lehner_cusp_identity",
@@ -4272,7 +4276,7 @@ def test_type_i_completion_is_an_exact_atkin_lehner_cusp_kuznetsov_orbit() -> No
     assert exact["modulus_is_allowed_for_cusp_pair"]
     assert exact["entry_scaling_permutes_reduced_residues"]
     assert exact["poisson_residue_multisets_match"]
-    assert exact["ordinary_kloosterman_matches_atkin_lehner_cusp_sum"]
+    assert not exact["ordinary_kloosterman_matches_atkin_lehner_cusp_sum"]
 
     adapter = getattr(
         coverage_audit,
@@ -4283,7 +4287,7 @@ def test_type_i_completion_is_an_exact_atkin_lehner_cusp_kuznetsov_orbit() -> No
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109g Type-I completion is exactly an Atkin--Lehner cusp Kuznetsov orbit",
+        "### 4.109g Type-I completion leaves an inverse-scaled Kloosterman index",
         "\\tag{4.845an}",
         "\\tag{4.845ar}",
         "type_i_atkin_lehner_cusp_audit",
@@ -4300,25 +4304,108 @@ def test_type_i_completion_is_an_exact_atkin_lehner_cusp_kuznetsov_orbit() -> No
     assert hard.entry_quotient_exponent == F(5, 2)
     assert hard.poisson_dual_index_exponent == F(1, 2)
     assert hard.ambient_level_exponent == F(1)
-    assert hard.cusp_modulus_exponent == F(13, 4)
-    assert hard.bessel_numerator_product_exponent == F(11, 2)
+    assert hard.standard_lifted_modulus_exponent == F(7, 2)
+    assert hard.bessel_numerator_product_exponent == F(6)
     assert hard.bessel_ratio_inverse_square_exponent == F(1)
     assert hard.poisson_normalization_exponent == F(-1, 2)
+    assert hard.poisson_prefactor_after_modulus_lift_exponent == F(3)
     assert hard.normalized_dual_hecke_l1_exponent == F(0)
     assert hard.type_i_identity_leaves_unweighted_quotient
     assert hard.entry_and_modulus_divisors_are_coprime
     assert hard.kiral_young_allowed_moduli_match_exactly
-    assert hard.kiral_young_kloosterman_formula_matches_exactly
+    assert not hard.kiral_young_kloosterman_formula_matches_exactly
+    assert hard.inverse_scaled_kloosterman_obstruction_present
+    assert hard.crt_product_modulus_lift_exact
+    assert hard.squarefree_ramanujan_denominator_nonzero
+    assert hard.coprimality_inclusion_exclusion_is_standard_level_family
     assert hard.atkin_lehner_newform_coefficients_match_up_to_sign
     assert hard.atkin_lehner_oldclass_coefficient_lists_are_permuted
     assert hard.zero_dual_mode_is_eisenstein_only
-    assert hard.nonzero_dual_hecke_average_has_no_positive_power_cost
+    assert hard.raw_poisson_dual_l1_normalization_is_zero_power
+    assert not hard.nonzero_dual_hecke_average_has_no_positive_power_cost
     assert hard.physical_qct_bessel_kernel_restored
-    assert hard.type_i_type_i_qct_to_cusp_kuznetsov_derived
+    assert hard.type_i_type_i_qct_to_standard_kuznetsov_derived
+    assert not hard.type_i_type_i_qct_to_cusp_kuznetsov_derived
     assert not hard.signed_level_family_aggregation_proved
     assert not hard.type_ii_sectors_restored
     assert not hard.finite_prime_hecke_gate_covered
     assert not hard.whole_mobius_gate_covered
+
+
+def test_type_i_cusp_adapter_rejects_inverse_scaling_counterexample() -> None:
+    """Catch the false replacement of inverse(A) by A in the KY index."""
+    identity = coverage_audit.type_i_atkin_lehner_cusp_identity(
+        entry_divisor=2,
+        modulus_divisor=1,
+        modulus=5,
+        dual_index=1,
+        product_index=1,
+    )
+    assert identity["poisson_first_index_mod_modulus"] == 3
+    assert identity["kiral_young_first_index_mod_modulus"] == 2
+    assert not identity["ordinary_kloosterman_matches_atkin_lehner_cusp_sum"]
+
+
+def test_inverse_scaled_kloosterman_has_exact_squarefree_modulus_lift() -> None:
+    lift = coverage_audit.inverse_scaled_kloosterman_modulus_lift_identity(
+        entry_divisor=2,
+        modulus=5,
+        dual_index=1,
+        product_index=1,
+    )
+    assert lift["lifted_modulus"] == 10
+    assert lift["ramanujan_factor"] == -1
+    assert lift["ramanujan_factor_is_nonzero"]
+    assert lift["crt_phase_multisets_match"]
+    assert lift["lifted_kloosterman_equals_ramanujan_times_physical"]
+    assert lift["poisson_prefactor_after_lift_numerator_multiplier"] == 2
+
+
+def test_lifted_kuznetsov_cell_isolates_exact_level_projector_saving() -> None:
+    cell = coverage_audit.lifted_kuznetsov_level_cell_audit(
+        entry_scale_exponent=F(3),
+        modulus_scale_exponent=F(3),
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+        coprimality_divisor_exponent=F(0),
+        product_index_exponent=F(5),
+    )
+    assert cell.poisson_dual_index_exponent == F(1, 2)
+    assert cell.standard_lifted_modulus_exponent == F(7, 2)
+    assert cell.lifted_second_index_exponent == F(11, 2)
+    assert cell.bessel_numerator_product_exponent == F(6)
+    assert cell.bessel_ratio_inverse_square_exponent == F(1)
+    assert cell.poisson_lift_outer_prefactor_exponent == F(3)
+    assert cell.actual_spectral_level_exponent == F(1)
+    assert cell.sparse_support_square_excess_exponent == F(1, 2)
+    assert cell.required_local_projector_amplitude_saving_exponent == F(1, 4)
+    assert cell.active_bessel_ratio_matches_original_qct_ratio
+    assert cell.crt_modulus_lift_is_exact_standard_kuznetsov_orbit
+    assert not cell.exact_valuation_level_projector_bound_proved
+
+    top = coverage_audit.lifted_kuznetsov_level_cell_audit(
+        entry_scale_exponent=F(3),
+        modulus_scale_exponent=F(3),
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+        coprimality_divisor_exponent=F(1, 2),
+        product_index_exponent=F(5),
+    )
+    assert top.actual_spectral_level_exponent == F(3, 2)
+    assert top.sparse_support_square_excess_exponent == F(0)
+    assert top.required_local_projector_amplitude_saving_exponent == F(0)
+
+
+def test_unramified_prime_oldspace_cross_factor_has_exact_p_saving() -> None:
+    local = coverage_audit.unramified_prime_oldspace_cross_factor_identity(
+        prime=5,
+        hecke_prime=F(3, 2),
+    )
+    assert local["oldclass_gram_denominator"] == F(11, 16)
+    assert local["unsimplified_cross_factor"] == F(4, 11)
+    assert local["simplified_cross_factor"] == F(4, 11)
+    assert local["symbolic_simplification_exact"]
+    assert local["generic_oldspace_cross_has_one_p_factor"]
 
 
 def test_eisenstein_second_moment_reciprocity_does_not_yet_prove_slf() -> None:
@@ -5110,7 +5197,7 @@ def test_unbalanced_completion_orientations_cover_normalized_spectral_excess() -
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109v Reciprocity closes the unbalanced normalized spectral excess",
+        "### 4.109v Reciprocity conditionally closes the normalized factor-model excess",
         "\\tag{4.845cq}",
         "\\tag{4.845cs}",
         "unbalanced_completion_orientation_audit",
@@ -5137,7 +5224,10 @@ def test_unbalanced_completion_orientations_cover_normalized_spectral_excess() -
     assert audit.cuspidal_chosen_poisson_exponent == F(1, 2)
     assert audit.cuspidal_primal_dual_normalized_excess_exponent == F(-3, 4)
     assert audit.cuspidal_holomorphic_normalized_excess_closes
-    assert audit.all_normalized_spectral_factor_cells_covered
+    assert audit.conditional_standard_kuznetsov_factor_model_covered
+    assert audit.inverse_scaled_kloosterman_adapter_derived
+    assert not audit.lifted_non_squarefree_level_family_covered
+    assert not audit.all_normalized_spectral_factor_cells_covered
     assert not audit.outer_qct_unbalanced_normalization_derived
     assert not audit.polylogarithmic_transform_tail_aggregated
     assert not audit.whole_mobius_gate_covered
@@ -5176,7 +5266,10 @@ def test_unbalanced_completion_orientations_cover_normalized_spectral_excess() -
                         )
                         assert cell.continuous_some_orientation_closes
                         assert cell.cuspidal_holomorphic_normalized_excess_closes
-                        assert cell.all_normalized_spectral_factor_cells_covered
+                        assert cell.conditional_standard_kuznetsov_factor_model_covered
+                        assert cell.inverse_scaled_kloosterman_adapter_derived
+                        assert not cell.lifted_non_squarefree_level_family_covered
+                        assert not cell.all_normalized_spectral_factor_cells_covered
 
 
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:

@@ -13951,10 +13951,9 @@ Accordingly the finite-prime Hecke gate and the whole Möbius gate remain
 unproved.
 
 
-### 4.109g Type-I completion is exactly an Atkin--Lehner cusp Kuznetsov orbit
+### 4.109g Type-I completion leaves an inverse-scaled Kloosterman index
 
-The geometric adapter left false in Section 4.109f does exist for the
-Type-I/Type-I sector.  Apply the finite Möbius identity (4.833) to the
+Apply the finite Möbius identity (4.833) to the
 two entry weights.  In one fixed factor box write
 
 \[
@@ -14007,8 +14006,9 @@ which is the Kloosterman sum in (4.845ao).  No estimate and no
 completion of a Möbius-weighted variable occurs here: the quotient is
 unweighted because the full finite Type-I identity is retained.
 
-Now use [Kiral--Young, Proposition 2.6 and Lemma
-2.5](https://arxiv.org/abs/1710.00914).  In their notation take
+At this point the previously claimed geometric adapter fails.  Use
+[Kiral--Young, Proposition 2.6](https://arxiv.org/abs/1710.00914).  In
+their notation take
 \[
  N=BA,\qquad r=B,\qquad s_{\mathrm{KY}}=A.
 \]
@@ -14017,22 +14017,87 @@ The allowed moduli for the cusp pair
 \[
  B\mid s,\qquad(s,A)=1,
 \]
-and their explicit formula is
+Their explicit formula is
 
 \[
  \boxed{
  S_{\infty,1/B}^{(AB)}
    (m,-n;s\sqrt A)
- =S(\overline A m,-n;s).}
+ =S(A m,-n;s),}
 \tag{4.845ap}
 \]
 
-Thus (4.845ao) is literally a Kuznetsov Kloosterman orbit between an
-Atkin--Lehner cusp and infinity at level \(AB\).  This is not the
-inadmissible superposition over the determinant Hecke index rejected in
-Section 4.16.
+whereas the exact Poisson residue sum in (4.845ao) is
 
-The scale ledger also contains an exact cancellation.  At the balanced
+\[
+ \boxed{S(\overline A m,-n;s).}
+\tag{4.845ap'}
+\]
+
+The two first indices are not interchangeable.  For example, with
+\(A=2,s=5,m=n=1\), one has \(\overline A=3\pmod5\) and
+
+\[
+ \boxed{
+ S(3,-1;5)=-(1+\sqrt5),\qquad
+ S(2,-1;5)=\sqrt5-1.}
+\tag{4.845ap''}
+\]
+
+Thus the allowed-modulus condition matches, but the physical Poisson
+sum is not the Kiral--Young cusp Kloosterman orbit.  The former audit
+checked only the permutation \(e\mapsto Ae\pmod s\) and then hard-coded
+the last equality; (4.845ap'') is a finite counterexample to that step.
+The inverse-scaled family is nevertheless reducible by a different
+exact identity.  CRT multiplicativity gives
+
+\[
+ \boxed{
+ S(m,-An;As)
+ =c_A(m)S(\overline A m,-n;s),}
+\tag{4.845ap_1}
+\]
+
+because its local factor modulo \(A\) is
+\(S(m\bar s,0;A)=c_A(m\bar s)=c_A(m)\).  On the exact Möbius support,
+\(A\mid r\) is squarefree.  If \(g=(A,m)\), then
+
+\[
+ \boxed{
+ c_A(m)=\mu(A/g)\frac{\varphi(A)}{\varphi(A/g)}\ne0,
+ \qquad |c_A(m)|^{-1}\leq1.}
+\tag{4.845ap_2}
+\]
+
+Therefore the inverse-scaled family
+
+\[
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac1s S(\overline A m,-n;s)F_{A,B,m,n}(s/S)
+\tag{ISK}_{A,B}
+\]
+
+has the exact standard-orbit expansion
+
+\[
+ \boxed{
+ \mathrm{ISK}_{A,B}
+ =\frac{A}{c_A(m)}
+ \sum_{j\mid A}\mu(j)
+ \sum_{ABj\mid c}\frac1c
+ S(m,-An;c)F_{A,B,m,n}(c/(AS)).}
+\tag{4.845ap_3}
+\]
+
+Indeed \(c=As\) and
+\(\mathbf1_{(s,A)=1}=\sum_{j\mid A,\ j\mid s}\mu(j)\).  Thus each
+inner sum in (4.845ap_3) is an infinity--infinity Kuznetsov orbit at
+level \(ABj\); no division by a possibly zero local factor occurs.
+This is the correct geometric repair of (4.845ap), but it introduces
+the non-squarefree level family \(ABj\) with \(j\mid A\), whose exponent
+can be as large as \(2\alpha+\beta\).
+
+The repaired orbit has an exact scale cancellation.  At the balanced
 QCT box let
 \[
  R=S=T^3,\qquad |h\delta|=T^5,\qquad
@@ -14046,24 +14111,150 @@ Then
  \text{quantity}&\log_T(\text{scale})\\ \hline
  E=R/A&3-\alpha\\
  m\text{ after Poisson}=S/E&\alpha\\
- AB\text{ (spectral level)}&\alpha+\beta\\
- s\sqrt A\text{ (cusp modulus)}&3+\alpha/2\\
- |m h\delta|\text{ (Bessel numerator product)}&5+\alpha.
+ ABj\text{ (spectral level), }j=T^\gamma&\alpha+\beta+\gamma\\
+ As\text{ (standard modulus)}&3+\alpha\\
+ |mA h\delta|\text{ (Bessel numerator product)}&5+2\alpha\\
+ EA\text{ (outer Poisson--lift factor)}&3.
  \end{array}}
 \tag{4.845aq}
 \]
 
-In particular the exceptional Bessel exponent remains
+In particular the exceptional Bessel exponent is
 \[
- 2(3+\alpha/2)-(5+\alpha)=1.
+ 2(3+\alpha)-(5+2\alpha)=1.
 \]
-The cusp width adds exactly the same \(\alpha\) to the squared modulus
-as completion adds to the numerator product.  Hence the coupled
-conductor calculation (4.842)--(4.845) is unchanged.
+More generally it is \(\rho+\sigma-(h+\ell)\), independent of
+\(\alpha\).  Also \(E=R/A\) makes \(EA=R\) exactly.  The inverse
+Ramanujan factor has absolute value at most one.
 
-The new Fourier index also has no residual finite-prime power cost.
-The completion factor and Rankin--Selberg give, for every primitive
-newform component,
+For a fixed finite Type-I allocation, let
+\(\Omega_{A,B,q}(c,m,h,\delta)\) denote the retained smooth weight after
+the literal substitutions
+
+\[
+ s=c/A,\qquad E=R/A,\qquad
+ \widehat U(mE/s)=\widehat U(mR/c).
+\]
+
+It includes the original endpoint inequalities, mollifier tapers,
+ratio/gcd cutoffs, and the four-variable kernel; no variable has been
+estimated.  Equations (4.845ao) and (4.845ap_3) give the exact nonzero
+mode component
+
+\[
+ \boxed{
+ \mathfrak S^{\mathrm{lift}}_{q,A,B}
+ =R\sum_{j\mid A}\mu(j)
+ \sum_{\substack{m\ne0\\h,\delta\ne0}}
+ \frac1{c_A(m)}
+ \sum_{ABj\mid c}\frac{S(m,-Ah\delta;c)}c
+ \Omega_{A,B,q}(c,m,h,\delta).}
+\tag{4.845aq_1}
+\]
+
+Thus the original coupled-kernel target is now one signed family of
+standard Kloosterman sums; on the complete Type allocation it is enough
+to prove
+
+\[
+ \boxed{
+ \left|\sum_{A,B}\frac{\mathfrak S^{\mathrm{lift}}_{q,A,B}}R\right|
+ \ll_{C,W}S(\log T)^{-C},\qquad C>7.}
+\tag{LISK}_{q}
+\]
+
+This is equivalent to the required
+\(|\mathfrak S_q[\Psi]|\ll RS(\log T)^{-C}\) for that allocation;
+the zero Poisson mode remains in the separately audited main-term
+calculation.
+
+The exact new local loss is visible before any conjectural estimate.
+Write \(j=T^\gamma\), \(0\leq\gamma\leq\alpha\), and let a residual
+Hecke polynomial have physical length \(Y\).  The second Fourier
+sequence is supported on indices \(Ay\), so the ordinary spectral large
+sieve contains
+
+\[
+ \frac{AY}{ABj}=\frac{Y}{Bj}
+\]
+
+instead of the base-level factor \(Y/(AB)\).  The excess in the squared
+estimate and the required amplitude saving are exactly
+
+\[
+ \boxed{
+ x_{\mathrm{EVP}}(\alpha,\gamma)=\alpha-\gamma,
+ \qquad s_{\mathrm{EVP}}(\alpha,\gamma)
+ =\frac{\alpha-\gamma}{2}.}
+\tag{4.845aq_2}
+\]
+
+The worst cell \(j=1\) requires \(A^{-1/2}\) in amplitude; the endpoint
+\(j=A\) requires no extra saving.  This factor is already visible in
+the geometric identity (4.845ap_1): after division by \(c_A(m)\), the
+Weil scale is \(s^{1/2}\), not \((As)^{1/2}\).  Since the cancellation
+is between levels, the accepted local gate must retain the full divisor
+sum and the cross pairing between the dense Poisson index and the
+sparse product index.  With identical Bessel test at every level, the
+required bilinear statement is
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\left|\sum_{j\mid A}\mu(j)
+ \int_{\mathscr S_{ABj}(\mathcal T)}
+ \left(\sum_{m\asymp M}\frac{b_m}{c_A(m)}\sqrt m\,
+ \overline{\rho_\pi(m)}\right)
+ \left(\sum_{y\asymp Y}a_y\sqrt{Ay}\,
+ \rho_{\pi}(Ay)\right)d\pi\right|\\
+ &\qquad\ll_\varepsilon
+ (ABMYT)^\varepsilon
+ \left(\mathcal T^2+\frac{M}{AB}\right)^{1/2}
+ \left(\mathcal T^2+\frac{Y}{AB}\right)^{1/2}
+ \left(\sum_m|b_m|^2\sum_y|a_y|^2\right)^{1/2}.
+ \end{aligned}}
+\tag{EVP}_{A,B}
+\]
+
+The measure includes Maaß, holomorphic, and continuous spectra with the
+standard Kuznetsov normalizations.  No published theorem has yet been
+matched to this signed exact-valuation projector, so
+\(\mathrm{EVP}_{A,B}\) is the current local obstruction, not a proved
+lemma.  The adapter lifted_kuznetsov_level_cell_audit records
+(4.845aq_2) with exact rational arithmetic.
+
+One generic cuspidal local cell can be closed exactly.  Let \(p\mid A\),
+let \(f\) be primitive and unramified at \(p\), and assume
+\(p\nmid my\).  Put \(\lambda=\lambda_f(p)\) and
+
+\[
+ D_p=1-\frac{p|\lambda|^2}{(p+1)^2}.
+\]
+
+The Blomer--Milićević orthonormal oldclass formula gives squared
+normalization \(p/D_p\) for the \(b=p\) vector.  Adding its cross term
+to the \(b=1\) term at indices \(m,py\) gives the exact algebraic
+simplification
+
+\[
+ \boxed{
+ \lambda+\frac p{D_p}
+ \left(-\frac{\lambda}{p+1}\right)
+ \left(1-\frac{|\lambda|^2}{p+1}\right)
+ =\frac{\lambda}{(p+1)D_p}.}
+\tag{4.845aq_3}
+\]
+
+Since \(|\lambda_f(p)|\leq2p^{7/64}\), the right side is
+\(O(p^{-57/64})\), strictly stronger than the required
+\(p^{-1/2}\).  The identity is checked independently by
+unramified_prime_oldspace_cross_factor_identity.  It does not yet prove
+\(\mathrm{EVP}_{A,B}\): the cells with \(p\mid my\), the extra
+level-\(p^2\) oldvectors when \(p\mid j\), and the complete Eisenstein
+oldspace must still be combined before multiplying over \(p\mid A\).
+
+Before spectral transformation, the raw Poisson normalization and its
+dual length still cancel:
 
 \[
  \boxed{
@@ -14074,45 +14265,26 @@ newform component,
 \tag{4.845ar}
 \]
 
-The \(m=0\) term has no cuspidal Fourier coefficient and belongs to the
-separate Eisenstein calculation.  For \(m\ne0\), (4.845ar) uses only
+For \(m\ne0\), (4.845ar) uses only
 \(\sum_{m\asymp M}|\lambda_f(m)|\ll M(Q_fM)^{o(1)}\); it never invokes
-the pointwise \(m^\vartheta\) bound.  Kiral--Young's Atkin--Lehner
-normalization identifies primitive newform Fourier coefficients at the
-two cusps up to the Atkin--Lehner sign.  Their oldclass lemma says that
-the complete lists of shifted-form Fourier coefficients at the two
-cusps are permuted up to signs.  Therefore Sections 4.109d--4.109f
-apply componentwise with the physical kernel and all oldclasses
-retained.
+the pointwise \(m^\vartheta\) bound.  This raw identity alone does not
+normalize the spectral side of (4.845ap_3): the Bessel transform, the
+Fourier-coefficient normalization at level \(ABj\), and the sum over
+\(j\mid A\) must be retained together.  In particular the former
+\(\mathrm{SLF}_{\alpha,\beta}\) target, derived under the false
+level-\(AB\) cusp adapter, is no longer an accepted physical gate.  The
+current exact gates are \(\mathrm{LISK}_q\) and
+\(\mathrm{EVP}_{A,B}\); their outer aggregation must be recomputed only
+after the latter is proved.
 
-What remains in this sector is now only the signed varying-level
-aggregation.  If \(\mathcal K_{A,B}\) denotes the exact cusp-Kuznetsov
-spectral component after (4.845ao)--(4.845ar), including every endpoint
-condition and the physical nuclear measure, the still-unproved critical
-inequality is
-
-\[
- \left|
- \sum_{\substack{d,b,d',b'\\A=db,\ B=d'b'\\(A,B)=1}}
- \mu(d)\mu(b)\mu(d')\mu(b')\,
- \mathcal K_{A,B}
- \right|
- \ll_{C,W}
- T^{3/2+(\alpha+\beta)/2}(\log T)^{-C}.
-\tag{SLF\(_{\alpha,\beta}\)}
-\]
-
-At \(\alpha+\beta=1\), this is the \(T^2(\log T)^{-C}\) endpoint in
-(4.840).  Absolute level summation has exponent
-\(3/2+\alpha+\beta\), so SLF requires the exact half-level saving
-\((\alpha+\beta)/2\), plus arbitrary logarithmic decay at equality.
-
-The adapter type_i_atkin_lehner_cusp_audit records the quotient and
-dual scales, level \(AB\), cusp-width shift, invariant Bessel ratio,
-and normalized zero-power \(m\)-average.  It marks the
-Type-I/Type-I QCT-to-cusp-Kuznetsov identity proved.  It keeps
-SLF\(_{\alpha,\beta}\), every Type-II sector, the finite-prime gate, and
-the whole Möbius gate false.
+The adapter type_i_atkin_lehner_cusp_audit records both the rejected
+Kiral--Young match and the exact CRT product-modulus repair.  It marks
+the physical Type-I/Type-I reduction to a finite standard Kuznetsov
+level family true, but keeps the old cusp-pair identity false.  All
+later factor-model estimates in Sections 4.109i--4.109v used level
+\(AB\), so they remain conditional until they are rechecked uniformly
+for \(ABj\), the ramified second index \(An\), and the outer factor
+\(R/c_A(m)\).
 
 
 ### 4.109h The inverse-zeta zero does not by itself prove level reciprocity
@@ -15603,7 +15775,7 @@ normalization, choice of orientation, and \(q\)-dependent tails must be
 rederived before (4.845cp) can be promoted to global coverage.
 
 
-### 4.109v Reciprocity closes the unbalanced normalized spectral excess
+### 4.109v Reciprocity conditionally closes the normalized factor-model excess
 
 The two completion orientations can be compared before choosing either
 one.  For \(R=T^\rho\), \(S=T^\sigma\), their Poisson exponents are
@@ -15684,18 +15856,22 @@ positive primal/dual excess.  Otherwise
  \min(p_L,p_R)+\frac{\log_Tq_0}{2}-\lambda\leq0.
 \]
 
-Thus every original entry-scale asymmetry, every factor allocation, and
-every pair of product lengths has no positive *normalized spectral
-factor excess*: Maaß, holomorphic, and nonzero continuous components
-all have a valid completion orientation.  The interface
+Thus, **conditional on controlling the exact lifted**
+\(ABj\) **family by** \(\mathrm{EVP}_{A,B}\), every
+original entry-scale asymmetry, every factor allocation, and every pair
+of product lengths has no positive normalized factor-model excess:
+Maaß, holomorphic, and nonzero continuous components all have a valid
+completion orientation.  The interface
 unbalanced_completion_orientation_audit records (4.845cq)--(4.845cs)
 with exact rational arithmetic.
 
-This still does not assert the long-mollifier asymptotic.  The common
-outer spectral base was derived only at \(R=S=T^3\); its cancellation
-against \(2T/(qRS)\), the ratio/gcd allocations, the dyadic \(q\)-sum,
-and all polylogarithmic transform tails have not yet been recomputed
-uniformly.  Those are the remaining global obligations.
+It marks the conditional base-level factor model and the inverse-scaled
+geometric adapter true, but marks the lifted non-squarefree level family
+and physical all-cell coverage false.  Even after EVP is resolved, the
+common outer spectral base was derived
+only at \(R=S=T^3\); its cancellation against \(2T/(qRS)\), the
+ratio/gcd allocations, the dyadic \(q\)-sum, and all polylogarithmic
+transform tails must still be recomputed uniformly.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector

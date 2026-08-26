@@ -8,9 +8,10 @@ claim that the corresponding theorem is false.
 
 from __future__ import annotations
 
+from cmath import exp
 from dataclasses import dataclass
 from fractions import Fraction
-from math import comb, gcd, isqrt
+from math import comb, gcd, isqrt, pi
 from pathlib import Path
 import sys
 
@@ -1792,23 +1793,56 @@ class TypeIAtkinLehnerCuspAudit:
     poisson_dual_index_exponent: Fraction
     ambient_level_exponent: Fraction
     cusp_modulus_exponent: Fraction
+    standard_lifted_modulus_exponent: Fraction
     bessel_numerator_product_exponent: Fraction
     bessel_ratio_inverse_square_exponent: Fraction
     poisson_normalization_exponent: Fraction
+    poisson_prefactor_after_modulus_lift_exponent: Fraction
     normalized_dual_hecke_l1_exponent: Fraction
     type_i_identity_leaves_unweighted_quotient: bool
     entry_and_modulus_divisors_are_coprime: bool
     kiral_young_allowed_moduli_match_exactly: bool
     kiral_young_kloosterman_formula_matches_exactly: bool
+    inverse_scaled_kloosterman_obstruction_present: bool
+    crt_product_modulus_lift_exact: bool
+    squarefree_ramanujan_denominator_nonzero: bool
+    coprimality_inclusion_exclusion_is_standard_level_family: bool
     atkin_lehner_newform_coefficients_match_up_to_sign: bool
     atkin_lehner_oldclass_coefficient_lists_are_permuted: bool
     zero_dual_mode_is_eisenstein_only: bool
+    raw_poisson_dual_l1_normalization_is_zero_power: bool
     nonzero_dual_hecke_average_has_no_positive_power_cost: bool
     physical_qct_bessel_kernel_restored: bool
+    type_i_type_i_qct_to_standard_kuznetsov_derived: bool
     type_i_type_i_qct_to_cusp_kuznetsov_derived: bool
     signed_level_family_aggregation_proved: bool
     type_ii_sectors_restored: bool
     finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class LiftedKuznetsovLevelCellAudit:
+    entry_scale_exponent: Fraction
+    modulus_scale_exponent: Fraction
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    coprimality_divisor_exponent: Fraction
+    product_index_exponent: Fraction
+    poisson_dual_index_exponent: Fraction
+    standard_lifted_modulus_exponent: Fraction
+    lifted_second_index_exponent: Fraction
+    bessel_numerator_product_exponent: Fraction
+    bessel_ratio_inverse_square_exponent: Fraction
+    original_qct_ratio_inverse_square_exponent: Fraction
+    poisson_lift_outer_prefactor_exponent: Fraction
+    actual_spectral_level_exponent: Fraction
+    sparse_support_square_excess_exponent: Fraction
+    required_local_projector_amplitude_saving_exponent: Fraction
+    active_bessel_ratio_matches_original_qct_ratio: bool
+    crt_modulus_lift_is_exact_standard_kuznetsov_orbit: bool
+    exact_valuation_level_projector_bound_proved: bool
+    outer_qct_normalization_aggregated: bool
     whole_mobius_gate_covered: bool
 
 
@@ -2183,6 +2217,9 @@ class UnbalancedCompletionOrientationAudit:
     cuspidal_chosen_poisson_exponent: Fraction
     cuspidal_primal_dual_normalized_excess_exponent: Fraction
     cuspidal_holomorphic_normalized_excess_closes: bool
+    conditional_standard_kuznetsov_factor_model_covered: bool
+    inverse_scaled_kloosterman_adapter_derived: bool
+    lifted_non_squarefree_level_family_covered: bool
     all_normalized_spectral_factor_cells_covered: bool
     outer_qct_unbalanced_normalization_derived: bool
     polylogarithmic_transform_tail_aggregated: bool
@@ -9621,9 +9658,11 @@ def type_i_atkin_lehner_cusp_identity(
 
     The permutation ``x=A*e (mod s)`` turns this exactly into
     ``S(inverse(A)*m,-n;s)``.  If ``B|s`` and ``(s,A)=1``, Kiral--Young's
-    Atkin--Lehner cusp formula at level ``A*B`` identifies this ordinary
-    Kloosterman sum with the cusp-pair sum for ``(infinity,1/B)`` and
-    cusp modulus ``s*sqrt(A)``.
+    Atkin--Lehner cusp formula at level ``A*B`` instead gives
+    ``S(A*m,-n;s)`` for ``(infinity,1/B)`` and cusp modulus
+    ``s*sqrt(A)``.  The returned comparison evaluates the two finite
+    Kloosterman sums; it is not hard-coded from the allowed-modulus
+    condition.
     """
     A = int(entry_divisor)
     B = int(modulus_divisor)
@@ -9637,6 +9676,8 @@ def type_i_atkin_lehner_cusp_identity(
 
     units = tuple(x for x in range(s) if gcd(x, s) == 1)
     inverse_A = pow(A, -1, s)
+    poisson_first_index = inverse_A * m % s
+    kiral_young_first_index = A * m % s
     left = sorted(
         (m * e - n * pow((A * e) % s, -1, s)) % s
         for e in units
@@ -9646,6 +9687,14 @@ def type_i_atkin_lehner_cusp_identity(
         for x in units
     )
     mapped_units = tuple(sorted((A * e) % s for e in units))
+    poisson_kloosterman = sum(
+        exp(2j * pi * ((poisson_first_index * x - n * pow(x, -1, s)) % s) / s)
+        for x in units
+    )
+    kiral_young_kloosterman = sum(
+        exp(2j * pi * ((kiral_young_first_index * x - n * pow(x, -1, s)) % s) / s)
+        for x in units
+    )
     return {
         "level": A * B,
         "cusp_pair": ("infinity", f"1/{B}"),
@@ -9658,7 +9707,225 @@ def type_i_atkin_lehner_cusp_identity(
             mapped_units == tuple(sorted(units))
         ),
         "poisson_residue_multisets_match": (left == right),
-        "ordinary_kloosterman_matches_atkin_lehner_cusp_sum": True,
+        "poisson_first_index_mod_modulus": poisson_first_index,
+        "kiral_young_first_index_mod_modulus": kiral_young_first_index,
+        "ordinary_kloosterman_matches_atkin_lehner_cusp_sum": (
+            abs(poisson_kloosterman - kiral_young_kloosterman) <= 1e-10
+        ),
+    }
+
+
+def inverse_scaled_kloosterman_modulus_lift_identity(
+    *,
+    entry_divisor: int,
+    modulus: int,
+    dual_index: int,
+    product_index: int,
+) -> dict[str, object]:
+    """Lift the inverse-scaled first index to the product modulus.
+
+    For ``(A,s)=1``, CRT multiplicativity gives
+
+    ``S(m,-A*n;A*s) = c_A(m) S(inverse(A)*m,-n;s)``.
+
+    The local factor is a Ramanujan sum because the second lifted index
+    is divisible by ``A``.  When ``A`` is squarefree, ``c_A(m)`` never
+    vanishes, so the physical sum is a standard Kloosterman sum modulo
+    ``A*s`` divided by a nonzero integer of absolute value at least one.
+    """
+    A = int(entry_divisor)
+    s = int(modulus)
+    m = int(dual_index)
+    n = int(product_index)
+    if min(A, s) <= 0:
+        raise ValueError("entry divisor and modulus must be positive")
+    if gcd(A, s) != 1:
+        raise ValueError("modulus lift requires (A,s)=1")
+
+    def mobius(value: int) -> int:
+        result = 1
+        remaining = value
+        prime = 2
+        while prime * prime <= remaining:
+            if remaining % prime == 0:
+                remaining //= prime
+                result = -result
+                if remaining % prime == 0:
+                    return 0
+                while remaining % prime == 0:
+                    remaining //= prime
+            prime += 1
+        if remaining > 1:
+            result = -result
+        return result
+
+    common = gcd(A, m)
+    quotient = A // common
+    ramanujan = mobius(quotient) * _euler_phi(A) // _euler_phi(quotient)
+    squarefree = mobius(A) != 0
+
+    def kloosterman(first: int, second: int, mod: int) -> complex:
+        return sum(
+            exp(
+                2j
+                * pi
+                * ((first * x + second * pow(x, -1, mod)) % mod)
+                / mod
+            )
+            for x in range(mod)
+            if gcd(x, mod) == 1
+        )
+
+    physical = kloosterman(pow(A, -1, s) * m, -n, s)
+    lifted = kloosterman(m, -A * n, A * s)
+    lifted_modulus = A * s
+    lifted_phases = sorted(
+        (m * z - A * n * pow(z, -1, lifted_modulus)) % lifted_modulus
+        for z in range(lifted_modulus)
+        if gcd(z, lifted_modulus) == 1
+    )
+    product_phases = sorted(
+        (
+            s * m * u
+            + A * (pow(A, -1, s) * m * x - n * pow(x, -1, s))
+        )
+        % lifted_modulus
+        for u in range(A)
+        if gcd(u, A) == 1
+        for x in range(s)
+        if gcd(x, s) == 1
+    )
+    return {
+        "entry_divisor_is_squarefree": squarefree,
+        "lifted_modulus": lifted_modulus,
+        "ramanujan_factor": ramanujan,
+        "ramanujan_factor_is_nonzero": ramanujan != 0,
+        "crt_phase_multisets_match": lifted_phases == product_phases,
+        "lifted_kloosterman_equals_ramanujan_times_physical": (
+            abs(lifted - ramanujan * physical) <= 1e-10
+        ),
+        "poisson_prefactor_after_lift_numerator_multiplier": A,
+    }
+
+
+def lifted_kuznetsov_level_cell_audit(
+    *,
+    entry_scale_exponent: Fraction,
+    modulus_scale_exponent: Fraction,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+    coprimality_divisor_exponent: Fraction,
+    product_index_exponent: Fraction,
+) -> LiftedKuznetsovLevelCellAudit:
+    """Audit one CRT-lifted standard Kuznetsov level cell.
+
+    Write ``R=T^rho``, ``S=T^sigma``, ``A=T^alpha``,
+    ``B=T^beta``, and ``j=T^gamma`` with ``j|A``.  The product-modulus
+    identity sends the physical modulus ``s`` to ``c=A*s``, the second
+    Fourier index ``n`` to ``A*n``, and the standard spectral level to
+    ``A*B*j``.  On an active nonzero Poisson range,
+
+    ``m = T^(sigma+alpha-rho)``.
+
+    Hence the Bessel inverse-square ratio is unchanged.  The ordinary
+    spectral large sieve applied to a sequence supported at ``A*y``
+    loses, relative to the old base-level model, the exact square
+    exponent ``max(0,alpha-gamma)``.  Closing the physical cell therefore
+    requires half that exponent in amplitude from the exact-valuation
+    level projector.  This adapter records that local theorem as open.
+    """
+    rho = F(entry_scale_exponent)
+    sigma = F(modulus_scale_exponent)
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    gamma = F(coprimality_divisor_exponent)
+    product = F(product_index_exponent)
+    if min(rho, sigma, alpha, beta, gamma, product) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if alpha > rho or beta > sigma:
+        raise ValueError("level factors cannot exceed entry scales")
+    if gamma > alpha:
+        raise ValueError("coprimality divisor must divide the A-scale")
+
+    raw_dual = sigma + alpha - rho
+    dual = _positive_part(raw_dual)
+    modulus = sigma + alpha
+    second_index = alpha + product
+    numerator = dual + second_index
+    ratio = 2 * modulus - numerator
+    original_ratio = rho + sigma - product
+    outer_prefactor = rho - alpha + alpha
+    level = alpha + beta + gamma
+    square_excess = _positive_part(alpha - gamma)
+    amplitude_saving = square_excess / 2
+    return LiftedKuznetsovLevelCellAudit(
+        entry_scale_exponent=rho,
+        modulus_scale_exponent=sigma,
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        coprimality_divisor_exponent=gamma,
+        product_index_exponent=product,
+        poisson_dual_index_exponent=dual,
+        standard_lifted_modulus_exponent=modulus,
+        lifted_second_index_exponent=second_index,
+        bessel_numerator_product_exponent=numerator,
+        bessel_ratio_inverse_square_exponent=ratio,
+        original_qct_ratio_inverse_square_exponent=original_ratio,
+        poisson_lift_outer_prefactor_exponent=outer_prefactor,
+        actual_spectral_level_exponent=level,
+        sparse_support_square_excess_exponent=square_excess,
+        required_local_projector_amplitude_saving_exponent=amplitude_saving,
+        active_bessel_ratio_matches_original_qct_ratio=(
+            raw_dual >= 0 and ratio == original_ratio
+        ),
+        crt_modulus_lift_is_exact_standard_kuznetsov_orbit=True,
+        exact_valuation_level_projector_bound_proved=(square_excess == 0),
+        outer_qct_normalization_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def unramified_prime_oldspace_cross_factor_identity(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+) -> dict[str, object]:
+    """Simplify the level-p unramified oldspace cross coefficient.
+
+    In the Blomer--Milicevic orthonormal basis, the ``b=p`` vector has
+    squared normalization ``p/D`` with
+
+    ``D=1-p*lambda(p)^2/(p+1)^2``.
+
+    For indices ``p not| m*y`` and second index ``p*y``, adding the
+    ``b=1`` and ``b=p`` cross products changes the raw local factor
+    ``lambda(p)`` into ``lambda(p)/((p+1)D)``.  The computation here is
+    exact rational algebra; the analytic use still has to retain the
+    ambient Fourier normalization and the ramified/gcd cells.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    denominator = F(1) - F(p) * lam * lam / F((p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    normalization_squared = F(p) / denominator
+    unsimplified = lam + normalization_squared * (
+        -lam / F(p + 1)
+    ) * (F(1) - lam * lam / F(p + 1))
+    simplified = lam / (F(p + 1) * denominator)
+    return {
+        "prime": p,
+        "hecke_prime": lam,
+        "oldclass_gram_denominator": denominator,
+        "oldclass_normalization_squared": normalization_squared,
+        "unsimplified_cross_factor": unsimplified,
+        "simplified_cross_factor": simplified,
+        "symbolic_simplification_exact": unsimplified == simplified,
+        "generic_oldspace_cross_has_one_p_factor": (
+            simplified * F(p + 1) * denominator == lam
+        ),
     }
 
 
@@ -9670,7 +9937,7 @@ def type_i_atkin_lehner_cusp_audit(
     entry_divisor_exponent: Fraction,
     modulus_divisor_exponent: Fraction,
 ) -> TypeIAtkinLehnerCuspAudit:
-    """Audit the exact Type-I/Type-I QCT-to-cusp Kuznetsov adapter.
+    """Audit the failed Type-I/Type-I QCT-to-cusp candidate adapter.
 
     Let ``r=A*e`` and force ``B|s`` by the Type-I expansions of the two
     entry Mobius weights.  The quotient e is unweighted before optional
@@ -9679,17 +9946,21 @@ def type_i_atkin_lehner_cusp_audit(
     so Rankin--Selberg L1 summation of the new Fourier index costs zero
     powers after normalization.
 
-    Kiral--Young realizes the resulting
-    ``S(inverse(A)*m,-h*delta;s)`` as the Kloosterman sum between the
-    cusps infinity and 1/B at level A*B, with cusp modulus s*sqrt(A).
-    The Bessel ratio exponent is consequently independent of A: the
-    extra A in the squared cusp modulus is exactly the extra dual-index
-    length.  Atkin--Lehner newform coefficients agree up to sign, and
-    the oldclass coefficient lists are permuted up to signs.
+    The exact Poisson sum has first Kloosterman index
+    ``inverse(A)*m (mod s)``.  Kiral--Young Proposition 2.6 instead
+    supplies ``A*m (mod s)`` for the cusp pair infinity, 1/B at level
+    A*B.  These indices, and the corresponding Kloosterman sums, need
+    not agree.  Thus the displayed cusp modulus and Bessel scales are
+    only the scales of the rejected candidate adapter; they do not
+    establish a spectral identity for the physical QCT sum.  The repair
+    is CRT multiplicativity at the product modulus:
 
-    This closes only the Type-I/Type-I geometric adapter.  The signed
-    varying-level aggregation and every Type-II sector remain separate
-    analytic inputs.
+    ``S(m,-A*n;A*s)=c_A(m)S(inverse(A)*m,-n;s)``.
+
+    The exact Mobius support makes ``A`` squarefree, hence the Ramanujan
+    factor ``c_A(m)`` is nonzero.  The remaining condition ``(s,A)=1``
+    is finite inclusion-exclusion over ``j|A`` and produces standard
+    infinity-cusp Kuznetsov level families with ``A*B*j | A*s``.
     """
     rho = F(entry_scale_exponent)
     sigma = F(modulus_scale_exponent)
@@ -9707,9 +9978,11 @@ def type_i_atkin_lehner_cusp_audit(
         raise ValueError("nonzero Poisson dual is subunit on this box")
     level = alpha + beta
     cusp_modulus = sigma + alpha / 2
-    bessel_numerator = numerator + dual
-    bessel_ratio = 2 * cusp_modulus - bessel_numerator
+    standard_modulus = sigma + alpha
+    bessel_numerator = numerator + dual + alpha
+    bessel_ratio = 2 * standard_modulus - bessel_numerator
     completion = quotient - sigma
+    lifted_prefactor = quotient + alpha
     normalized_dual = completion + dual
     return TypeIAtkinLehnerCuspAudit(
         entry_scale_exponent=rho,
@@ -9721,22 +9994,28 @@ def type_i_atkin_lehner_cusp_audit(
         poisson_dual_index_exponent=dual,
         ambient_level_exponent=level,
         cusp_modulus_exponent=cusp_modulus,
+        standard_lifted_modulus_exponent=standard_modulus,
         bessel_numerator_product_exponent=bessel_numerator,
         bessel_ratio_inverse_square_exponent=bessel_ratio,
         poisson_normalization_exponent=completion,
+        poisson_prefactor_after_modulus_lift_exponent=lifted_prefactor,
         normalized_dual_hecke_l1_exponent=normalized_dual,
         type_i_identity_leaves_unweighted_quotient=True,
         entry_and_modulus_divisors_are_coprime=True,
         kiral_young_allowed_moduli_match_exactly=True,
-        kiral_young_kloosterman_formula_matches_exactly=True,
+        kiral_young_kloosterman_formula_matches_exactly=False,
+        inverse_scaled_kloosterman_obstruction_present=True,
+        crt_product_modulus_lift_exact=True,
+        squarefree_ramanujan_denominator_nonzero=True,
+        coprimality_inclusion_exclusion_is_standard_level_family=True,
         atkin_lehner_newform_coefficients_match_up_to_sign=True,
         atkin_lehner_oldclass_coefficient_lists_are_permuted=True,
         zero_dual_mode_is_eisenstein_only=True,
-        nonzero_dual_hecke_average_has_no_positive_power_cost=(
-            normalized_dual == 0
-        ),
+        raw_poisson_dual_l1_normalization_is_zero_power=(normalized_dual == 0),
+        nonzero_dual_hecke_average_has_no_positive_power_cost=False,
         physical_qct_bessel_kernel_restored=True,
-        type_i_type_i_qct_to_cusp_kuznetsov_derived=True,
+        type_i_type_i_qct_to_standard_kuznetsov_derived=True,
+        type_i_type_i_qct_to_cusp_kuznetsov_derived=False,
         signed_level_family_aggregation_proved=False,
         type_ii_sectors_restored=False,
         finite_prime_hecke_gate_covered=False,
@@ -10975,8 +11254,13 @@ def unbalanced_completion_orientation_audit(
     its own level factor.  Cuspidal and holomorphic components choose
     the smaller Poisson exponent; it is at most ``lambda/2``.
 
-    This is a normalized spectral-factor statement.  The unequal-entry
-    outer QCT normalization and transform tails remain separate.
+    This is a conditional normalized spectral-factor statement inside
+    a base-level standard Kuznetsov component.  The inverse-scaled
+    first index has an exact CRT product-modulus adapter, but that
+    adapter produces levels ``A*B*j`` for ``j|A`` and the ramified
+    second index ``A*h*delta``.  Those non-squarefree level cells are
+    not covered by this base-level calculation.  The unequal-entry
+    outer QCT normalization and transform tails also remain separate.
     """
     rho = F(left_entry_exponent)
     sigma = F(right_entry_exponent)
@@ -11049,9 +11333,12 @@ def unbalanced_completion_orientation_audit(
         cuspidal_chosen_poisson_exponent=cusp_poisson,
         cuspidal_primal_dual_normalized_excess_exponent=cusp_normalized,
         cuspidal_holomorphic_normalized_excess_closes=cusp_closes,
-        all_normalized_spectral_factor_cells_covered=(
+        conditional_standard_kuznetsov_factor_model_covered=(
             conservation and continuous_closes and cusp_closes
         ),
+        inverse_scaled_kloosterman_adapter_derived=True,
+        lifted_non_squarefree_level_family_covered=False,
+        all_normalized_spectral_factor_cells_covered=False,
         outer_qct_unbalanced_normalization_derived=False,
         polylogarithmic_transform_tail_aggregated=False,
         whole_mobius_gate_covered=False,
@@ -17831,13 +18118,17 @@ def main() -> None:
         f"quotient={_fmt(cusp_adapter.entry_quotient_exponent)},"
         f"dual={_fmt(cusp_adapter.poisson_dual_index_exponent)},"
         f"level={_fmt(cusp_adapter.ambient_level_exponent)},"
-        f"cusp_modulus={_fmt(cusp_adapter.cusp_modulus_exponent)},"
+        f"rejected_cusp_modulus={_fmt(cusp_adapter.cusp_modulus_exponent)},"
+        "lifted_modulus="
+        f"{_fmt(cusp_adapter.standard_lifted_modulus_exponent)},"
         "bessel_numerator="
         f"{_fmt(cusp_adapter.bessel_numerator_product_exponent)},"
         "bessel_ratio="
         f"{_fmt(cusp_adapter.bessel_ratio_inverse_square_exponent)},"
         "poisson_norm="
         f"{_fmt(cusp_adapter.poisson_normalization_exponent)},"
+        "lifted_prefactor="
+        f"{_fmt(cusp_adapter.poisson_prefactor_after_modulus_lift_exponent)},"
         "dual_l1="
         f"{_fmt(cusp_adapter.normalized_dual_hecke_l1_exponent)},"
         "unweighted="
@@ -17848,18 +18139,29 @@ def main() -> None:
         f"{cusp_adapter.kiral_young_allowed_moduli_match_exactly},"
         "kloosterman="
         f"{cusp_adapter.kiral_young_kloosterman_formula_matches_exactly},"
+        "inverse_obstruction="
+        f"{cusp_adapter.inverse_scaled_kloosterman_obstruction_present},"
+        f"crt_lift={cusp_adapter.crt_product_modulus_lift_exact},"
+        "ramanujan_nonzero="
+        f"{cusp_adapter.squarefree_ramanujan_denominator_nonzero},"
+        "coprime_level_family="
+        f"{cusp_adapter.coprimality_inclusion_exclusion_is_standard_level_family},"
         "newform_sign="
         f"{cusp_adapter.atkin_lehner_newform_coefficients_match_up_to_sign},"
         "oldclass_permuted="
         f"{cusp_adapter.atkin_lehner_oldclass_coefficient_lists_are_permuted},"
         "zero_eisenstein="
         f"{cusp_adapter.zero_dual_mode_is_eisenstein_only},"
+        "raw_dual_l1="
+        f"{cusp_adapter.raw_poisson_dual_l1_normalization_is_zero_power},"
         "dual_no_power="
         f"{cusp_adapter.nonzero_dual_hecke_average_has_no_positive_power_cost},"
         "physical="
         f"{cusp_adapter.physical_qct_bessel_kernel_restored},"
         "qct_adapter="
         f"{cusp_adapter.type_i_type_i_qct_to_cusp_kuznetsov_derived},"
+        "standard_qct_adapter="
+        f"{cusp_adapter.type_i_type_i_qct_to_standard_kuznetsov_derived},"
         "level_family="
         f"{cusp_adapter.signed_level_family_aggregation_proved},"
         f"type_ii={cusp_adapter.type_ii_sectors_restored},"
@@ -18528,6 +18830,12 @@ def main() -> None:
         f"{_fmt(unbalanced_orientation.cuspidal_primal_dual_normalized_excess_exponent)},"
         "cusp="
         f"{unbalanced_orientation.cuspidal_holomorphic_normalized_excess_closes},"
+        "conditional_factor_model="
+        f"{unbalanced_orientation.conditional_standard_kuznetsov_factor_model_covered},"
+        "inverse_adapter="
+        f"{unbalanced_orientation.inverse_scaled_kloosterman_adapter_derived},"
+        "lifted_levels="
+        f"{unbalanced_orientation.lifted_non_squarefree_level_family_covered},"
         "spectral_all="
         f"{unbalanced_orientation.all_normalized_spectral_factor_cells_covered},"
         "outer_base="
