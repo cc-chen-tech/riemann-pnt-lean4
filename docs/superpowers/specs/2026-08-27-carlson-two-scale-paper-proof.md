@@ -314,10 +314,15 @@ formalized in `CarlsonTwoScaleFarRight.lean` and
 `CarlsonTwoScaleDetectorGrowth.lean`; divisor locality also identifies
 this outer-Jensen mass with the complete divisor on the inner factorization
 disk, and the corresponding nonvanishing analytic factor with its center
-divisor-mass lower bound has been extracted.  The remaining generic Lean wrapper
-starts after Jensen: it must factor the local divisor, perform the radial
-and height pigeonhole selections, and transfer the Borel--Caratheodory
-bound to the horizontal logarithmic derivative.
+divisor-mass lower bound has been extracted.  The two-scale post-Jensen
+wrapper is now also formalized: it identifies finite zero support, performs
+the radial and height pigeonhole selections, extracts the analytic nonzero
+factor with its principal-part identity, applies the quantitative
+Borel--Caratheodory estimate, and produces a zero-free horizontal segment
+with the exact bound "factor term plus mass divided by separation".  What
+remains in this local layer is the mechanical substitution of the Jensen
+mass majorant into both separations to expose the advertised logarithmic
+polynomial bound.
 
 Choose the bottom side in `[U-1,U]` and the top side in `[2U,2U+1]`, so the
 rectangle contains every zero with ordinate in `[U,2U]`.  Apply Littlewood's
@@ -380,8 +385,10 @@ route, not a claim that the saving is uniform in the mollifier length.
 ## 8. Lean translation boundary
 
 The finite two-scale mollifier/detector, identity (2.1), cancellation (4.1),
-the explicit fixed-right estimate `5/36`, fixed-circle growth, and
-unconditional Jensen local zero-mass bound are formalized.  The paper proof
+the explicit fixed-right estimate `5/36`, fixed-circle growth,
+unconditional Jensen local zero-mass bound, local divisor factorization,
+good-radius selection, Borel--Caratheodory estimate, and zero-free horizontal
+segment with its exact mass/separation bound are formalized.  The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final-density axiom:
 
@@ -389,9 +396,9 @@ a final-density axiom:
    specialization, including its uniformity in the local center;
 2. the pole-free `L^2(R)`-valued three-lines lemma (5.3) and the finite
    Gaussian covering argument;
-3. the post-Jensen coefficient-generic factorization,
-   Borel--Caratheodory, height-selection, and horizontal contour transfer
-   stated in Section 6;
+3. substitution of the Jensen mass majorant into the two separation scales,
+   yielding the explicit logarithmic-polynomial horizontal majorant stated
+   in Section 6;
 4. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
 
