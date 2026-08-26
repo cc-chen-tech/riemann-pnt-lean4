@@ -2517,6 +2517,25 @@ class ShortCofactorMobiusIntervalAudit:
 
 
 @dataclass(frozen=True)
+class OrientedMMKLSGlobalTransportAudit:
+    cofactor_cutoff_exponent: Fraction
+    oriented_boundary_cells: tuple[
+        tuple[str, str, Fraction, Fraction, bool], ...
+    ]
+    published_threshold: Fraction
+    three_power_scale_boundary_witnesses_covered: bool
+    bounded_zeta_endpoint_shift_log_depth: Fraction
+    bounded_zeta_endpoint_covered: bool
+    critical_polylog_shift_log_depth: Fraction
+    critical_product_lift_identity_exact: bool
+    critical_centered_product_energy_proved: bool
+    remaining_gate: str
+    all_parameter_cells_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class PascadiLiftedPhysicalAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -16799,6 +16818,88 @@ def short_cofactor_mobius_interval_audit(
     )
 
 
+def oriented_mmkls_global_transport_audit(
+    *, cofactor_cutoff_exponent: Fraction
+) -> OrientedMMKLSGlobalTransportAudit:
+    """Transport the cofactor interval test across the four boundary boxes.
+
+    Choose as Ramanujan/Kloosterman modulus the longer of ``R`` and ``S``.
+    If ``u=max(rho,sigma)``, ``v=min(rho,sigma)``, and
+    ``a=ell+h``, the raw complementary-divisor interval ratio is
+
+      theta=(a-v)/u.
+
+    After ``e<=T^eta`` it becomes
+
+      theta_eta=(a-v-eta)/(u-eta).
+
+    The balanced and two maximally unbalanced power witnesses all give
+    15/23 at eta=1/8.  The large-q exponent witness gives zero; its
+    genuinely bounded-zeta member is already covered by exact inverse
+    Poisson at shift-log depth zero, while the critical depth-two,
+    growing-zeta member remains the centered product-energy gate.
+
+    This adapter deliberately certifies boundary transport only.  It
+    does not infer complete polytope coverage from four witnesses.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    if eta <= 0 or eta >= 1:
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    threshold = F(7, 12)
+    rows: list[tuple[str, str, Fraction, Fraction, bool]] = []
+    for name in (
+        "balanced_max_a",
+        "r_long",
+        "s_long",
+        "large_q_endpoint",
+    ):
+        box = boundary_witnesses()[name]
+        u = max(box.rho, box.sigma)
+        v = min(box.rho, box.sigma)
+        a = box.ell + box.h
+        orientation = "left" if box.sigma >= box.rho else "right"
+        raw = max(F(0), (a - v) / u) if u > 0 else F(0)
+        adjusted = (
+            max(F(0), (a - v - eta) / (u - eta))
+            if u > eta
+            else F(0)
+        )
+        rows.append((name, orientation, raw, adjusted, adjusted > threshold))
+
+    endpoint_box = boundary_witnesses()["large_q_endpoint"]
+    endpoint = large_q_endpoint_unpoisson_audit(
+        endpoint_box,
+        shift_log_depth=F(0),
+    )
+    critical = large_q_growing_zeta_product_lift_audit(
+        endpoint_box,
+        shift_log_depth=F(2),
+    )
+    power_witnesses = all(row[4] for row in rows[:3])
+    return OrientedMMKLSGlobalTransportAudit(
+        cofactor_cutoff_exponent=eta,
+        oriented_boundary_cells=tuple(rows),
+        published_threshold=threshold,
+        three_power_scale_boundary_witnesses_covered=power_witnesses,
+        bounded_zeta_endpoint_shift_log_depth=F(0),
+        bounded_zeta_endpoint_covered=endpoint.unconditional_coverage,
+        critical_polylog_shift_log_depth=F(2),
+        critical_product_lift_identity_exact=(
+            critical.product_lift_identity_is_exact
+        ),
+        critical_centered_product_energy_proved=(
+            critical.centered_product_energy_estimate_proved
+        ),
+        remaining_gate="large_q_centered_product_energy_lambda_2",
+        all_parameter_cells_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "oriented complementary-divisor exponents and exact large-q "
+            "inverse-Poisson/product-lift audits"
+        ),
+    )
+
+
 def eisenstein_common_ramification_average_audit(
     *,
     frequency_length: int,
@@ -27000,6 +27101,35 @@ def main() -> None:
         f"all_boxes={short_cofactor.all_dyadic_boxes_aggregated} "
         "asymptotic="
         f"{short_cofactor.full_long_mollifier_asymptotic_proved}"
+    )
+    transport = oriented_mmkls_global_transport_audit(
+        cofactor_cutoff_exponent=F(1, 8)
+    )
+    print(
+        "mwkf_transport: cells="
+        + ",".join(
+            f"{name}:{orientation}:{_fmt(raw)}:{_fmt(adjusted)}:{covered}"
+            for name, orientation, raw, adjusted, covered in (
+                transport.oriented_boundary_cells
+            )
+        )
+        + " "
+        f"threshold={_fmt(transport.published_threshold)} "
+        "power_witnesses="
+        f"{transport.three_power_scale_boundary_witnesses_covered} "
+        "endpoint_depth="
+        f"{_fmt(transport.bounded_zeta_endpoint_shift_log_depth)} "
+        f"endpoint={transport.bounded_zeta_endpoint_covered} "
+        "critical_depth="
+        f"{_fmt(transport.critical_polylog_shift_log_depth)} "
+        "product_lift="
+        f"{transport.critical_product_lift_identity_exact} "
+        "centered="
+        f"{transport.critical_centered_product_energy_proved} "
+        f"remaining={transport.remaining_gate} "
+        f"all_cells={transport.all_parameter_cells_covered} "
+        "asymptotic="
+        f"{transport.full_long_mollifier_asymptotic_proved}"
     )
     blomer_pascadi = blomer_pascadi_hard_box_audit()
     print(

@@ -6835,6 +6835,58 @@ def test_short_cofactor_is_a_published_short_interval_mobius_cell(
         assert marker in note
 
 
+def test_oriented_cofactor_transport_leaves_only_the_polylog_large_q_gate(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Exchange R,S before the interval theorem and retain lambda=2."""
+    adapter = getattr(
+        coverage_audit,
+        "oriented_mmkls_global_transport_audit",
+        None,
+    )
+    assert adapter is not None, "oriented MMKLS transport audit is missing"
+    audit = adapter(cofactor_cutoff_exponent=F(1, 8))
+    assert audit.oriented_boundary_cells == (
+        ("balanced_max_a", "left", F(2, 3), F(15, 23), True),
+        ("r_long", "right", F(2, 3), F(15, 23), True),
+        ("s_long", "left", F(2, 3), F(15, 23), True),
+        ("large_q_endpoint", "left", F(0), F(0), False),
+    )
+    assert audit.published_threshold == F(7, 12)
+    assert audit.three_power_scale_boundary_witnesses_covered
+    assert audit.bounded_zeta_endpoint_shift_log_depth == F(0)
+    assert audit.bounded_zeta_endpoint_covered
+    assert audit.critical_polylog_shift_log_depth == F(2)
+    assert audit.critical_product_lift_identity_exact
+    assert not audit.critical_centered_product_energy_proved
+    assert audit.remaining_gate == "large_q_centered_product_energy_lambda_2"
+    assert not audit.all_parameter_cells_covered
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_transport: cells="
+        "balanced_max_a:left:2/3:15/23:True,"
+        "r_long:right:2/3:15/23:True,"
+        "s_long:left:2/3:15/23:True,"
+        "large_q_endpoint:left:0:0:False threshold=7/12 "
+        "power_witnesses=True endpoint_depth=0 endpoint=True "
+        "critical_depth=2 product_lift=True centered=False "
+        "remaining=large_q_centered_product_energy_lambda_2 "
+        "all_cells=False asymptotic=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced Orientation transports the new bound to the maximal power faces",
+        r"\Theta_{\rm SI}(R,S,H,L)",
+        r"\frac{15}{23}",
+        r"\mathfrak C_{P,L}[\Omega]",
+        "oriented_mmkls_global_transport_audit",
+    ):
+        assert marker in note
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

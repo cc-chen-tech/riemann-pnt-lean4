@@ -20774,6 +20774,90 @@ short_cofactor_mobius_interval_audit records the exact threshold margin,
 both Q-smooth tails, the density-error saving, and keeps the global
 aggregation and final-asymptotic flags false.
 
+### 4.109zjaced Orientation transports the new bound to the maximal power faces
+
+The preceding calculation is not intrinsically balanced.  Before
+double Poisson, choose the longer of the two mollifier variables as the
+Ramanujan modulus.  Put
+
+\[
+ u=\max(\rho,\sigma),\qquad
+ v=\min(\rho,\sigma),\qquad
+ a=\ell+h.
+\]
+
+The modulus has scale \(D=T^u/e\).  The complementary-divisor interval
+comes from the Poisson variable attached to the shorter original entry
+and has minimum scale \(T^{a-v}/e\).  Hence the exact oriented ratio is
+
+\[
+ \boxed{
+ \Theta_{\rm SI}(R,S,H,L)
+ :=\frac{a-v}{u},
+ \qquad
+ \Theta_{\rm SI}^{(\eta)}
+ :=\frac{a-v-\eta}{u-\eta}}
+ \tag{4.845dc_14xq_35w30}
+\]
+
+when the short cofactor is cut at \(e\le T^\eta\).  At \(\eta=1/8\),
+the four designated boundary witnesses give
+
+\[
+ \begin{array}{c|c|c|c}
+ \text{box}&\text{orientation}&\Theta_{\rm SI}
+ &\Theta_{\rm SI}^{(1/8)}\\ \hline
+ \text{balanced\_max\_a}&L&2/3&15/23\\
+ r\text{\_long}&R&2/3&15/23\\
+ s\text{\_long}&L&2/3&15/23\\
+ \text{large\_q\_endpoint}&L&0&0
+ \end{array}
+ \tag{4.845dc_14xq_35w31}
+\]
+
+Thus the same strict \(15/23>7/12\) argument covers the balanced and
+both maximally unbalanced power-scale witnesses after the indicated
+exchange.  It does not cover the large-\(q\) exponent-zero shift cell.
+
+That last row has two different logarithmic strata which must not be
+conflated.  For genuinely bounded \(K,M,L\), Section 4.25 already proves
+by exact inverse Poisson
+
+\[
+ \mathcal U^{\ne0}_{q;R,S,K,M,L}
+ \ll \frac Tq(\log T)^{-2},
+\]
+
+and hence an \(o(T)\) aggregate.  At critical shift depth
+\(L=(\log T)^2\) with growing polylogarithmic zeta scale, however, the
+remaining exact statement is still (4.239):
+
+\[
+ \boxed{
+ \mathfrak C_{P,L}[\Omega]
+ =o_W(TL).}
+ \tag{4.845dc_14xq_35w32}
+\]
+
+The product lift producing \(\mathfrak C_{P,L}[\Omega]\) is exact, but
+no estimate proved in this audit supplies its centered little-oh
+uniformly at logarithmic depth two.  Consequently the new hard-box
+argument removes the three maximal power witnesses and preserves the
+bounded large-\(q\) theorem, but it does not yet certify the whole
+parameter polytope or the final asymptotic.  The sole named residual in
+this transport audit is
+
+\[
+\boxed{\mathrm{LCPE}_2:\quad
+ \mathfrak C_{P,(\log T)^2}[\Omega]=o_W(T(\log T)^2).}
+ \tag{4.845dc_14xq_35w33}
+\]
+
+The interface oriented_mmkls_global_transport_audit computes all four
+ratios in (4.845dc_14xq_35w31), reuses the proved bounded endpoint and
+the exact critical product lift, and keeps both full-polytope coverage
+and the final asymptotic false.
+
 ### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
 
 The July 2026 bilinear Kloosterman theorem of
