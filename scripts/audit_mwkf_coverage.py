@@ -7852,7 +7852,10 @@ def beatty_chowla_power_gate_audit(
         ),
         "crncevic_result_is_subsumed_by_teravainen_walker": True,
         "published_average": "logarithmic qualitative limit",
-        "published_slope_regime": "fixed irrational slope data",
+        "published_slope_regime": (
+            "fixed slopes: irrational cancellation and rational resonance "
+            "classification"
+        ),
         "actual_slope_regime": "moving rational Q-grid",
         "rational_resonance_requires_prior_diagonal_extraction": True,
         "mobius_pair_power_bound_published": False,

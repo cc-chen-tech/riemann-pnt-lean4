@@ -2431,7 +2431,9 @@ def test_published_beatty_chowla_is_short_by_a_half_power() -> None:
     assert result["remaining_unsquared_power_deficit"] == F(1, 2)
     assert result["crncevic_result_is_subsumed_by_teravainen_walker"]
     assert result["published_average"] == "logarithmic qualitative limit"
-    assert result["published_slope_regime"] == "fixed irrational slope data"
+    assert result["published_slope_regime"] == (
+        "fixed slopes: irrational cancellation and rational resonance classification"
+    )
     assert result["actual_slope_regime"] == "moving rational Q-grid"
     assert not result["mobius_pair_power_bound_published"]
     assert not result["hilbert_packet_square_function_published"]
