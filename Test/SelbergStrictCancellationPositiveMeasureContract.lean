@@ -1,0 +1,12 @@
+import HardyTheorem.SelbergStrictCancellationPositiveMeasure
+
+namespace HardyTheorem
+
+#check selbergStrictCancellationExponent
+#check eventually_twenty_selbergFirstMomentCutoff_fourth_le_eighth_sqrt
+#check exists_pos_measure_strictCancellationStarts_selberg
+
+#print axioms eventually_twenty_selbergFirstMomentCutoff_fourth_le_eighth_sqrt
+#print axioms exists_pos_measure_strictCancellationStarts_selberg
+
+end HardyTheorem

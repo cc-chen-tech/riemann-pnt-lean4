@@ -1,0 +1,24 @@
+import HardyTheorem.SelbergDiagonalArithmeticMain
+
+namespace HardyTheorem
+
+#check selbergDiagonalSZeroCoefficient
+#check selbergDiagonalSThetaCoefficient
+#check selbergDiagonalArithmeticMain
+#check exists_norm_selbergDiagonalArithmeticMain_le
+#check selbergDiagonalGaussianParameter
+#check selbergDiagonalGaussianParameter_pos
+#check selbergDiagonalGaussianParameter_rpow_neg_half
+#check selbergDiagonalGaussianParameter_rpow_theta_half
+#check selbergDiagonalTitchMain_gaussianParameter_eq
+#check selbergDiagonalRatio_rpow_eq_cpow_factors
+#check selbergDiagonalMollifierProduct
+#check selbergDiagonalPhysicalMainTerm
+#check selbergDiagonalPhysicalMainTerm_eq
+#check selbergDiagonalPhysicalMainPairTerm
+#check selbergDiagonalPhysicalMainPairTerm_eq
+#check selbergDiagonalPhysicalMainSum
+#check selbergDiagonalPhysicalMainSum_eq_arithmeticMain
+#check exists_norm_selbergDiagonalPhysicalMainSum_le
+
+end HardyTheorem

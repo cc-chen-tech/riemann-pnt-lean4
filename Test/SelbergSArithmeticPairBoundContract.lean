@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSArithmeticPairBound
+
+#check HardyTheorem.selbergGroupedPairScale
+#check HardyTheorem.selbergGroupedLocalMajorant_mul_zero_eq
+#check HardyTheorem.exists_norm_selbergArithmeticPairSum_le

@@ -1,0 +1,13 @@
+import HardyTheorem.SelbergDiagonalTermSubstitution
+
+open MeasureTheory Set
+
+namespace HardyTheorem
+
+#check selbergDiagonalOriginalIntegrand
+#check selbergDiagonalScale
+#check selbergDiagonalOriginalIntegrand_eq_scaled
+#check selbergDiagonalScale_rpow_split
+#check integral_selbergDiagonalOriginalIntegrand_Ioi
+
+end HardyTheorem

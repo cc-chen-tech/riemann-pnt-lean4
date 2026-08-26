@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergTaperPerronBridge
+
+#check HardyTheorem.selbergSqrtZetaTaperedCoeff_eq_perronCutoff
+#check HardyTheorem.perronLogCutoff_mul_div_eq_localCutoff
+#check HardyTheorem.selbergTaperedShiftedTerm_split

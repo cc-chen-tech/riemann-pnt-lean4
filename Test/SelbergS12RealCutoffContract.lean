@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergS12RealCutoff
+
+#check HardyTheorem.selbergS12WeightedCoprimeSumReal
+#check HardyTheorem.normalized_integral_selbergS12PerronIntegrand_eq_weightedSumReal
+#check HardyTheorem.exists_norm_selbergS12WeightedCoprimeSumReal_s12_le
+#check HardyTheorem.exists_norm_selbergS12WeightedCoprimeSumReal_context_le

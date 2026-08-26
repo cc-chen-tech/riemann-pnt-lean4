@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSlidingSecondMoment
+
+open HardyTheorem
+
+#check exists_integral_normSq_sliding_selbergCompletedMollifiedF_le

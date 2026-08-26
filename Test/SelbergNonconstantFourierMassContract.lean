@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergNonconstantFourierMass
+
+open HardyTheorem
+
+#check integral_comp_exp_Ioc
+#check integral_normSq_selbergNonconstantInverseFourierKernel_Ioc_log
+#check integral_normSq_selbergNonconstantInverseFourierKernel_div_sq_Ioi_log
+#check exists_integral_normSq_selbergNonconstantInverseFourierKernel_low_le
+#check exists_integral_normSq_selbergNonconstantInverseFourierKernel_high_le

@@ -1,0 +1,10 @@
+import HardyTheorem.SelbergSqrtZetaInverseMajorant
+
+open scoped ArithmeticFunction
+
+#check HardyTheorem.selbergSqrtZetaInverseCoeff
+#check HardyTheorem.selbergSqrtZetaInverseLocalCoeff_nonneg
+#check HardyTheorem.abs_selbergSqrtZetaLocalCoeff_le_inverseLocalCoeff
+#check HardyTheorem.selbergSqrtZetaInverseCoeff_nonneg
+#check HardyTheorem.abs_selbergSqrtZetaCoeff_le_inverseCoeff
+#check HardyTheorem.selbergSqrtZetaInverseCoeff_mul_self

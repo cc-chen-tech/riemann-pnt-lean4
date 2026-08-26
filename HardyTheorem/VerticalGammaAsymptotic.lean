@@ -1426,4 +1426,347 @@ theorem exists_norm_integral_Ioi_zero_verticalStirlingBernoulliKernel_le_inv :
     _ ≤ 4 * A / t + A / t := add_le_add hlow htail
     _ = 5 * A / t := by ring
 
+/-! ## A lower vertical Stirling bound
+
+For Selberg's first moment we only need the correct polynomial and
+exponential scale from below, not the exact Stirling constant.  We integrate
+the differentiated Stirling formula already proved above.  The primitive of
+the first two terms is `(z - 1/2) * log z - z`; all remaining terms are
+integrable as `O(t⁻²)` on `[1, ∞)`.
+-/
+
+private noncomputable def verticalStirlingMainPrimitive (t : ℝ) : ℂ :=
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2
+  (z - 1 / 2) * Complex.log z - z
+
+private theorem hasDerivAt_verticalStirlingMainPrimitive (t : ℝ) :
+    HasDerivAt verticalStirlingMainPrimitive
+      (I * (Complex.log ((1 / 4 : ℂ) + I * t / 2) -
+        (2 * ((1 / 4 : ℂ) + I * t / 2))⁻¹) / 2) t := by
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2
+  have hz : z ≠ 0 := by
+    intro hzero
+    have hre := congrArg Complex.re hzero
+    norm_num [z] at hre
+  let W : ℂ → ℂ := fun w => (1 / 4 : ℂ) + I * w / 2
+  have hW : HasDerivAt W (I / 2) (t : ℂ) := by
+    simpa [W] using
+      (((hasDerivAt_id (t : ℂ)).const_mul I).div_const 2).const_add (1 / 4 : ℂ)
+  have hzderiv : HasDerivAt (fun x : ℝ => (1 / 4 : ℂ) + I * x / 2)
+      (I / 2) t := by
+    simpa [W] using hW.comp_ofReal
+  have hslit : z ∈ Complex.slitPlane := by
+    rw [Complex.mem_slitPlane_iff]
+    left
+    norm_num [z]
+  have hlog : HasDerivAt
+      (fun x : ℝ => Complex.log ((1 / 4 : ℂ) + I * x / 2))
+      (z⁻¹ * (I / 2)) t := by
+    simpa [Function.comp_def, W, z] using
+      ((Complex.hasDerivAt_log hslit).comp (t : ℂ) hW).comp_ofReal
+  have hcalc := ((hzderiv.sub_const (1 / 2 : ℂ)).mul hlog).sub hzderiv
+  have hderiv :
+      (I / 2) * Complex.log z + (z - 1 / 2) * (z⁻¹ * (I / 2)) - I / 2 =
+        I * (Complex.log z - (2 * z)⁻¹) / 2 := by
+    field_simp [hz]
+    ring
+  change HasDerivAt
+    (fun x : ℝ =>
+      (((1 / 4 : ℂ) + I * x / 2) - 1 / 2) *
+          Complex.log ((1 / 4 : ℂ) + I * x / 2) -
+        ((1 / 4 : ℂ) + I * x / 2)) _ t
+  rw [← hderiv]
+  exact hcalc
+
+private noncomputable def verticalStirlingErrorVelocity (t : ℝ) : ℂ :=
+  gammaQuarterLogDerivative t -
+    I * (Complex.log ((1 / 4 : ℂ) + I * t / 2) -
+      (2 * ((1 / 4 : ℂ) + I * t / 2))⁻¹) / 2
+
+private theorem continuous_verticalStirlingErrorVelocity :
+    Continuous verticalStirlingErrorVelocity := by
+  rw [continuous_iff_continuousAt]
+  intro t
+  let z : ℝ → ℂ := fun x => (1 / 4 : ℂ) + I * x / 2
+  have hzre : 0 < (z t).re := by norm_num [z]
+  have hzslit : z t ∈ Complex.slitPlane := by
+    rw [Complex.mem_slitPlane_iff]
+    left
+    norm_num [z]
+  have hzcont : ContinuousAt z t := by
+    dsimp [z]
+    fun_prop
+  have hdig := (continuousAt_digamma_of_pos_re hzre).comp hzcont
+  have hlog := (Complex.hasDerivAt_log hzslit).continuousAt.comp hzcont
+  have hz0 : z t ≠ 0 := Complex.slitPlane_ne_zero hzslit
+  have hinv : ContinuousAt (fun x : ℝ => (2 * z x)⁻¹) t := by
+    exact (continuousAt_const.mul hzcont).inv₀ (mul_ne_zero (by norm_num) hz0)
+  change ContinuousAt
+    (fun x : ℝ => I * Complex.digamma (z x) / 2 -
+      I * (Complex.log (z x) - (2 * z x)⁻¹) / 2) t
+  exact ((continuousAt_const.mul hdig).div_const 2).sub
+    ((continuousAt_const.mul (hlog.sub hinv)).div_const 2)
+
+private theorem exists_norm_verticalStirlingErrorVelocity_le_inv_sq :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, 1 ≤ t →
+      ‖verticalStirlingErrorVelocity t‖ ≤ C / t ^ 2 := by
+  obtain ⟨C, hC, hrem⟩ :=
+    exists_norm_integral_Ioi_verticalDigammaBernoulliKernel_le_inv_sq
+  refine ⟨1 + C, by positivity, ?_⟩
+  intro t ht
+  have ht0 : 0 < t := zero_lt_one.trans_le ht
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2
+  let R : ℂ := ∫ u in Set.Ioi (0 : ℝ), verticalDigammaBernoulliKernel t u
+  have hzre : 0 < z.re := by
+    norm_num [z]
+  have hdig0 := digamma_eq_stirling_with_periodizedBernoulli hzre
+  have hdig : Complex.digamma z =
+      Complex.log z - (2 * z)⁻¹ - (12 * z ^ 2)⁻¹ + R := by
+    simpa [z, R, verticalDigammaBernoulliKernel] using hdig0
+  have hR : ‖R‖ ≤ C / t ^ 2 := by
+    exact hrem t ht
+  have hzim : t / 2 ≤ ‖z‖ := by
+    have h := Complex.abs_im_le_norm z
+    have hzeq : z.im = t / 2 := by simp [z]
+    rw [hzeq, abs_of_pos (half_pos ht0)] at h
+    exact h
+  have hzinv : ‖((12 : ℂ) * z ^ 2)⁻¹‖ ≤ 1 / t ^ 2 := by
+    have hznorm0 : 0 < ‖z‖ := lt_of_lt_of_le (half_pos ht0) hzim
+    have htSq : 0 < t ^ 2 := sq_pos_of_pos ht0
+    have hden : t ^ 2 ≤ 12 * ‖z‖ ^ 2 := by
+      nlinarith [sq_nonneg (‖z‖ - t / 2)]
+    calc
+      ‖((12 : ℂ) * z ^ 2)⁻¹‖ = 1 / (12 * ‖z‖ ^ 2) := by
+        rw [norm_inv, norm_mul, norm_ofNat, norm_pow]
+        norm_num
+      _ ≤ 1 / t ^ 2 := one_div_le_one_div_of_le htSq hden
+  have herr : verticalStirlingErrorVelocity t =
+      I * (-((12 : ℂ) * z ^ 2)⁻¹ + R) / 2 := by
+    rw [verticalStirlingErrorVelocity, gammaQuarterLogDerivative]
+    change I * Complex.digamma z / 2 -
+      I * (Complex.log z - (2 * z)⁻¹) / 2 = _
+    rw [hdig]
+    ring
+  rw [herr]
+  calc
+    ‖I * (-((12 : ℂ) * z ^ 2)⁻¹ + R) / 2‖ =
+        ‖-((12 : ℂ) * z ^ 2)⁻¹ + R‖ / 2 := by
+      rw [norm_div, norm_mul, norm_I]
+      norm_num
+    _ ≤
+        (‖((12 : ℂ) * z ^ 2)⁻¹‖ + ‖R‖) / 2 := by
+      exact div_le_div_of_nonneg_right
+        (by simpa only [norm_neg] using
+          norm_add_le (-((12 : ℂ) * z ^ 2)⁻¹) R) (by norm_num)
+    _ ≤ ((1 / t ^ 2) + C / t ^ 2) / 2 := by gcongr
+    _ ≤ (1 + C) / t ^ 2 := by
+      have htSq0 : 0 < t ^ 2 := sq_pos_of_pos ht0
+      field_simp [htSq0.ne']
+      nlinarith [hC]
+
+private theorem gammaQuarterLogIntegral_eq_stirlingMain_add_error
+    {t : ℝ} (ht : 1 ≤ t) :
+    gammaQuarterLogIntegral t =
+      verticalStirlingMainPrimitive t - verticalStirlingMainPrimitive 1 +
+        ∫ x in (1 : ℝ)..t, verticalStirlingErrorVelocity x := by
+  let M : ℝ → ℂ := fun x =>
+    I * (Complex.log ((1 / 4 : ℂ) + I * x / 2) -
+      (2 * ((1 / 4 : ℂ) + I * x / 2))⁻¹) / 2
+  have hMderiv : ∀ x ∈ Set.uIcc (1 : ℝ) t,
+      HasDerivAt verticalStirlingMainPrimitive (M x) x := by
+    intro x _hx
+    exact hasDerivAt_verticalStirlingMainPrimitive x
+  have herrInt : IntervalIntegrable verticalStirlingErrorVelocity volume 1 t :=
+    continuous_verticalStirlingErrorVelocity.intervalIntegrable _ _
+  have hgammaInt : IntervalIntegrable gammaQuarterLogDerivative volume 1 t :=
+    continuous_gammaQuarterLogDerivative.intervalIntegrable _ _
+  have hMInt : IntervalIntegrable M volume 1 t := by
+    refine (hgammaInt.sub herrInt).congr ?_
+    intro x _hx
+    dsimp [M, verticalStirlingErrorVelocity]
+    ring
+  have hMint := intervalIntegral.integral_eq_sub_of_hasDerivAt hMderiv hMInt
+  rw [gammaQuarterLogIntegral]
+  calc
+    (∫ x in (1 : ℝ)..t, gammaQuarterLogDerivative x) =
+        ∫ x in (1 : ℝ)..t, (M x + verticalStirlingErrorVelocity x) := by
+      apply intervalIntegral.integral_congr
+      intro x _hx
+      dsimp [M, verticalStirlingErrorVelocity]
+      ring
+    _ = (∫ x in (1 : ℝ)..t, M x) +
+        ∫ x in (1 : ℝ)..t, verticalStirlingErrorVelocity x := by
+      exact intervalIntegral.integral_add hMInt herrInt
+    _ = verticalStirlingMainPrimitive t - verticalStirlingMainPrimitive 1 +
+        ∫ x in (1 : ℝ)..t, verticalStirlingErrorVelocity x := by rw [hMint]
+
+private theorem exists_norm_integral_verticalStirlingErrorVelocity_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, 1 ≤ t →
+      ‖∫ x in (1 : ℝ)..t, verticalStirlingErrorVelocity x‖ ≤ C := by
+  obtain ⟨C, hC, herr⟩ := exists_norm_verticalStirlingErrorVelocity_le_inv_sq
+  refine ⟨C, hC, ?_⟩
+  intro t ht
+  let g : ℝ → ℝ := fun x => C / x ^ 2
+  have hgcont : ContinuousOn g (Set.uIcc (1 : ℝ) t) := by
+    intro x hx
+    have hx1 : 1 ≤ x := by
+      rw [Set.uIcc_of_le ht] at hx
+      exact hx.1
+    have hx0 : x ≠ 0 := ne_of_gt (zero_lt_one.trans_le hx1)
+    exact (continuousAt_const.div (continuousAt_id.pow 2) (pow_ne_zero 2 hx0)).continuousWithinAt
+  have hgint : IntervalIntegrable g volume 1 t := hgcont.intervalIntegrable
+  have hnorm := intervalIntegral.norm_integral_le_of_norm_le ht
+    (f := verticalStirlingErrorVelocity) (g := g)
+    (by
+      filter_upwards with x hx
+      simpa [g] using herr x hx.1.le) hgint
+  have hgderiv : ∀ x ∈ Set.uIcc (1 : ℝ) t,
+      HasDerivAt (fun y : ℝ => -C * y⁻¹) (g x) x := by
+    intro x hx
+    have hx1 : 1 ≤ x := by
+      rw [Set.uIcc_of_le ht] at hx
+      exact hx.1
+    have hx0 : x ≠ 0 := ne_of_gt (zero_lt_one.trans_le hx1)
+    have heq : -C * (-(x ^ 2)⁻¹) = g x := by
+      dsimp [g]
+      ring
+    rw [← heq]
+    exact (hasDerivAt_inv hx0).const_mul (-C)
+  have hgvalue := intervalIntegral.integral_eq_sub_of_hasDerivAt hgderiv hgint
+  calc
+    ‖∫ x in (1 : ℝ)..t, verticalStirlingErrorVelocity x‖ ≤
+        ∫ x in (1 : ℝ)..t, g x := hnorm
+    _ = -C * t⁻¹ - (-C * (1 : ℝ)⁻¹) := hgvalue
+    _ = C - C / t := by ring
+    _ ≤ C := by
+      have ht0 : 0 < t := zero_lt_one.trans_le ht
+      have : 0 ≤ C / t := div_nonneg hC ht0.le
+      exact sub_le_self C this
+
+private theorem verticalStirlingMainPrimitive_re_lower
+    {t : ℝ} (ht : 1 ≤ t) :
+    -Real.pi * t / 4 - Real.log t / 4 - 1 / 4 ≤
+      (verticalStirlingMainPrimitive t).re := by
+  have ht0 : 0 < t := zero_lt_one.trans_le ht
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2
+  have hzre : z.re = 1 / 4 := by simp [z]
+  have hzim : z.im = t / 2 := by simp [z]
+  have hznormSq : ‖z‖ ^ 2 = (1 / 16 : ℝ) + t ^ 2 / 4 := by
+    rw [Complex.sq_norm]
+    simp [Complex.normSq_apply, z]
+    ring
+  have hznorm0 : 0 < ‖z‖ := by
+    apply norm_pos_iff.mpr
+    intro hz0
+    have hre := congrArg Complex.re hz0
+    norm_num [z] at hre
+  have hznormLe : ‖z‖ ≤ t := by
+    have hnorm0 := norm_nonneg z
+    nlinarith [sq_nonneg (t - ‖z‖)]
+  have hlogLe : Real.log ‖z‖ ≤ Real.log t :=
+    Real.strictMonoOn_log.monotoneOn (by exact hznorm0) (by exact ht0) hznormLe
+  have hargLe : Complex.arg z ≤ Real.pi / 2 := by
+    apply le_of_lt
+    rw [Complex.arg_lt_pi_div_two_iff]
+    exact Or.inl (by rw [hzre]; norm_num)
+  have hargMul : (t / 2) * Complex.arg z ≤ (t / 2) * (Real.pi / 2) :=
+    mul_le_mul_of_nonneg_left hargLe (div_nonneg ht0.le (by norm_num))
+  have hformula : (verticalStirlingMainPrimitive t).re =
+      -(1 / 4 : ℝ) * Real.log ‖z‖ -
+        (t / 2) * Complex.arg z - 1 / 4 := by
+    simp [verticalStirlingMainPrimitive, z, Complex.mul_re,
+      Complex.log_re, Complex.log_im]
+    ring
+  rw [hformula]
+  linarith
+
+private theorem exists_gammaQuarterLogIntegral_re_lower :
+    ∃ D : ℝ, 0 ≤ D ∧ ∀ t : ℝ, 1 ≤ t →
+      -Real.pi * t / 4 - Real.log t / 4 - D ≤
+        (gammaQuarterLogIntegral t).re := by
+  obtain ⟨C, hC, herr⟩ :=
+    exists_norm_integral_verticalStirlingErrorVelocity_le
+  let q1 : ℝ := (verticalStirlingMainPrimitive 1).re
+  refine ⟨|q1| + C + 1 / 4, by positivity, ?_⟩
+  intro t ht
+  let E : ℂ := ∫ x in (1 : ℝ)..t, verticalStirlingErrorVelocity x
+  have hdecomp := gammaQuarterLogIntegral_eq_stirlingMain_add_error ht
+  have hmain := verticalStirlingMainPrimitive_re_lower ht
+  have hEnorm : ‖E‖ ≤ C := by exact herr t ht
+  have hEre : -C ≤ E.re := by
+    have hre := Complex.abs_re_le_norm E
+    have habs : |E.re| ≤ C := hre.trans hEnorm
+    exact (abs_le.mp habs).1
+  have hq1 : q1 ≤ |q1| := le_abs_self q1
+  have hreDecomp : (gammaQuarterLogIntegral t).re =
+      (verticalStirlingMainPrimitive t).re - q1 + E.re := by
+    rw [hdecomp]
+    simp [q1, E]
+  rw [hreDecomp]
+  linarith
+
+/-- A uniform lower vertical Stirling bound at the archimedean factor needed
+in Selberg's first moment.  The exact Stirling constant is deliberately not
+identified: a fixed positive constant with the sharp polynomial and
+exponential scales is sufficient. -/
+theorem exists_pos_rpow_neg_quarter_mul_exp_le_norm_GammaR :
+    ∃ c : ℝ, 0 < c ∧ ∀ t : ℝ, 1 ≤ t →
+      c * t ^ (-(1 / 4 : ℝ)) * Real.exp (-Real.pi * t / 4) ≤
+        ‖Gammaℝ ((1 / 2 : ℂ) + I * t)‖ := by
+  obtain ⟨D, hD, hlogLower⟩ := exists_gammaQuarterLogIntegral_re_lower
+  let G1 : ℝ := ‖gammaQuarterVertical 1‖
+  let c : ℝ := Real.pi ^ (-(1 / 4 : ℝ)) * G1 * Real.exp (-D)
+  have hG1 : 0 < G1 := by
+    dsimp [G1, gammaQuarterVertical]
+    exact norm_pos_iff.mpr (Complex.Gamma_ne_zero_of_re_pos (by norm_num))
+  have hc : 0 < c := by
+    dsimp [c]
+    positivity
+  refine ⟨c, hc, ?_⟩
+  intro t ht
+  have ht0 : 0 < t := zero_lt_one.trans_le ht
+  have hgamma := gammaQuarterVertical_eq_base_mul_exp_logIntegral ht
+  have hgammaNorm : ‖gammaQuarterVertical t‖ =
+      G1 * Real.exp (gammaQuarterLogIntegral t).re := by
+    rw [hgamma, norm_mul, Complex.norm_exp]
+  have hexp := Real.exp_le_exp.mpr (hlogLower t ht)
+  have hraw :
+      G1 * Real.exp (-Real.pi * t / 4 - Real.log t / 4 - D) ≤
+        ‖gammaQuarterVertical t‖ := by
+    rw [hgammaNorm]
+    exact mul_le_mul_of_nonneg_left hexp hG1.le
+  have hGammaRNorm : ‖Gammaℝ ((1 / 2 : ℂ) + I * t)‖ =
+      Real.pi ^ (-(1 / 4 : ℝ)) * ‖gammaQuarterVertical t‖ := by
+    rw [Gammaℝ_def, norm_mul,
+      Complex.norm_cpow_eq_rpow_re_of_pos Real.pi_pos]
+    have hexponent : (-((1 / 2 : ℂ) + I * t) / 2).re =
+        -(1 / 4 : ℝ) := by simp; ring
+    rw [hexponent]
+    change Real.pi ^ (-(1 / 4 : ℝ)) *
+        ‖Complex.Gamma (((1 / 2 : ℂ) + I * t) / 2)‖ =
+      Real.pi ^ (-(1 / 4 : ℝ)) * ‖gammaQuarterVertical t‖
+    have harg : (((1 / 2 : ℂ) + I * t) / 2) =
+        (1 / 4 : ℂ) + I * t / 2 := by ring
+    rw [harg]
+    rfl
+  rw [hGammaRNorm]
+  have hscaled := mul_le_mul_of_nonneg_left hraw
+    (Real.rpow_nonneg Real.pi_pos.le (-(1 / 4 : ℝ)))
+  calc
+    c * t ^ (-(1 / 4 : ℝ)) * Real.exp (-Real.pi * t / 4) =
+        Real.pi ^ (-(1 / 4 : ℝ)) *
+          (G1 * Real.exp (-Real.pi * t / 4 - Real.log t / 4 - D)) := by
+      dsimp [c]
+      rw [Real.rpow_def_of_pos ht0]
+      rw [show
+        Real.pi ^ (-(1 / 4 : ℝ)) * G1 * Real.exp (-D) *
+              Real.exp (Real.log t * -(1 / 4 : ℝ)) * Real.exp (-Real.pi * t / 4) =
+          Real.pi ^ (-(1 / 4 : ℝ)) * (G1 *
+            (Real.exp (-D) * Real.exp (Real.log t * -(1 / 4 : ℝ)) *
+              Real.exp (-Real.pi * t / 4))) by ring]
+      rw [← Real.exp_add, ← Real.exp_add]
+      congr 2
+      ring
+    _ ≤ Real.pi ^ (-(1 / 4 : ℝ)) * ‖gammaQuarterVertical t‖ := hscaled
+
 end HardyTheorem

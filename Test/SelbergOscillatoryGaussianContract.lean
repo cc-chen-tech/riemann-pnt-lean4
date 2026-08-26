@@ -1,0 +1,15 @@
+import HardyTheorem.SelbergOscillatoryGaussian
+
+namespace HardyTheorem
+
+#check selbergOscillatoryGaussian
+#check norm_selbergOscillatoryGaussian
+#check norm_intervalIntegral_selbergOscillatoryGaussian_damped_le
+#check norm_intervalIntegral_selbergOscillatoryGaussian_le
+#check integrableOn_selbergOscillatoryGaussian_Ioi
+#check norm_integral_Ioi_selbergOscillatoryGaussian_damped_le
+#check norm_integral_Ioi_selbergOscillatoryGaussian_le
+#check norm_integral_Ioi_selbergOscillatoryGaussian_damped_le_titchmarsh
+#check norm_integral_Ioi_selbergOscillatoryGaussian_le_titchmarsh
+
+end HardyTheorem

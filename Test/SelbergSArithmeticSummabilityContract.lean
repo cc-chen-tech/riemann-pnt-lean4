@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergSArithmeticSummability
+
+open scoped BigOperators
+
+#check HardyTheorem.selbergTauNineNat_apply_prime
+#check HardyTheorem.selbergTauNineNat_apply_of_squarefree
+#check HardyTheorem.selbergNineCoeff_div_eq_tauNine_div_sq
+#check HardyTheorem.summable_selbergNineSquarefreeDivisorCoeff_div
+#check HardyTheorem.exists_selbergNineSquarefreeDivisorCoeff_partialSum_le

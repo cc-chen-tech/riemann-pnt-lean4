@@ -1,0 +1,14 @@
+import HardyTheorem.SelbergMomentSpecialization
+
+open Complex MeasureTheory Set
+open scoped Interval
+
+namespace HardyTheorem
+
+#check integrable_sq_slidingAbsoluteMass_selbergCompletedMollifiedF
+#check exists_fixed_parameter_selberg_moment_bounds
+
+#print axioms integrable_sq_slidingAbsoluteMass_selbergCompletedMollifiedF
+#print axioms exists_fixed_parameter_selberg_moment_bounds
+
+end HardyTheorem

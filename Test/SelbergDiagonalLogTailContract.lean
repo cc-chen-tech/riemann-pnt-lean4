@@ -1,0 +1,16 @@
+import HardyTheorem.SelbergDiagonalLogTail
+
+open MeasureTheory Set
+
+namespace HardyTheorem
+
+#check selbergDiagonalLogTail
+#check selbergDiagonalLogTailMajorant
+#check selbergDiagonalLogPrimitive
+#check selbergDiagonalLogTail_le_majorant
+#check integral_selbergDiagonalLogTailMajorant_Ioi
+#check integral_selbergDiagonalLogTail_Ioi_le
+#check integral_selbergDiagonalLogTail_Ioi_le_log
+#check log_tail_argument_le_eta
+
+end HardyTheorem

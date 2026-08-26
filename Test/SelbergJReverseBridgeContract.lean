@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergJReverseBridge
+
+open HardyTheorem
+
+#check selbergPhysicalPairIntegrand_eq_conj_swap
+#check selbergPhysicalOffDiagonalPairContribution_eq_conj_swap
+#check selbergJReverseDoubleSeries
+#check selbergJReverseDoubleSeries_eq_conj_forwardDoubleSeries_swap
+#check selbergJReversePart_eq_physicalReverseOffDiagonalSum

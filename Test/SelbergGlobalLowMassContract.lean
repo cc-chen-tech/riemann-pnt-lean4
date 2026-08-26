@@ -1,0 +1,11 @@
+import HardyTheorem.SelbergGlobalLowMass
+
+open Complex MeasureTheory Set
+
+namespace HardyTheorem
+
+#check exists_integral_normSq_selbergPhysicalThetaKernel_delta_low_le
+
+#print axioms exists_integral_normSq_selbergPhysicalThetaKernel_delta_low_le
+
+end HardyTheorem

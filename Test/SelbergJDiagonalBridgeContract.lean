@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergJDiagonalBridge
+
+open HardyTheorem
+
+#check selbergJDiagonalNestedOriginalSum
+#check selbergJDiagonalPart_eq_nestedOriginalSum
+#check selbergJDiagonalNestedOriginalSum_eq_physicalOriginalSum
+#check selbergJDiagonalPart_eq_physicalOriginalSum
