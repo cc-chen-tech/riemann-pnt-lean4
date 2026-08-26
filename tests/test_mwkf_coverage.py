@@ -4737,6 +4737,43 @@ def test_pole_subtracted_eisenstein_functional_equation_isolates_residues() -> N
     assert not hard.whole_mobius_gate_covered
 
 
+def test_ramanujan_zero_mode_has_exact_inverse_zeta_euler_factor() -> None:
+    local = getattr(
+        coverage_audit,
+        "ramanujan_prime_power_generating_polynomial",
+        None,
+    )
+    audit_adapter = getattr(
+        coverage_audit,
+        "ramanujan_zero_mode_euler_audit",
+        None,
+    )
+    assert local is not None
+    assert audit_adapter is not None
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109o The Ramanujan zero mode carries the inverse-zeta factor",
+        "\\tag{4.845bt}",
+        "\\tag{4.845bv}",
+        "ramanujan_zero_mode_euler_audit",
+    ):
+        assert marker in note
+
+    assert local(prime=5, valuation=0) == {0: 1, 1: -1}
+    assert local(prime=5, valuation=1) == {0: 1, 1: 4, 2: -5}
+    assert local(prime=5, valuation=2) == {0: 1, 1: 4, 2: 20, 3: -25}
+
+    audit = audit_adapter(prime=5, valuation=2)
+    assert audit.ramanujan_prime_power_coefficients_exact
+    assert audit.local_generating_identity_exact
+    assert audit.global_dirichlet_series_identity_exact
+    assert audit.inverse_zeta_zero_order_at_one == 1
+    assert audit.archimedean_zero_mode_residue_normalization_matched is False
+    assert audit.completed_zero_mode_residue_pairing_proved is False
+    assert audit.continuous_spectrum_gate_covered is False
+
+
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
     adapter = getattr(
         coverage_audit,

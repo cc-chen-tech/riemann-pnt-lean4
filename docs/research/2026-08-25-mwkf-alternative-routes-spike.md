@@ -14874,6 +14874,59 @@ It leaves zero-mode/residue pairing, the full continuous-spectrum gate,
 and the whole Möbius gate false.
 
 
+### 4.109o The Ramanujan zero mode carries the inverse-zeta factor
+
+The finite Euler factor required by the missing residue pairing is
+already explicit on the geometric side.  For \(v=v_p(n)\), the
+prime-power Ramanujan sums satisfy
+
+\[
+ c_{p^k}(n)=
+ \begin{cases}
+ 1,&k=0,\\
+ p^k-p^{k-1},&1\leq k\leq v,\\
+ -p^v,&k=v+1,\\
+ 0,&k\geq v+2.
+ \end{cases}
+\tag{4.845bt}
+\]
+
+Therefore their local generating function is the finite identity
+
+\[
+ \boxed{
+ \sum_{k\geq0}c_{p^k}(n)X^k
+ =(1-X)\sum_{j=0}^{v}p^jX^j.}
+\tag{4.845bu}
+\]
+
+Multiplying (4.845bu) over primes, or directly inserting
+\(c_q(n)=\sum_{d\mid(q,n)}d\mu(q/d)\) and interchanging absolutely
+convergent sums, gives for \(\Re w>1\)
+
+\[
+ \boxed{
+ \sum_{q\geq1}\frac{c_q(n)}{q^w}
+ =\frac{\sigma_{1-w}(n)}{\zeta(w)}.}
+\tag{4.845bv}
+\]
+
+At \(w=1+2z\), the zero-mode Dirichlet series is
+\(\sigma_{-2z}(n)/\zeta(1+2z)\).  It has a simple inverse-zeta zero at
+\(z=0\), exactly the finite Euler mechanism appearing in the
+normal-crossing model (4.845au).  This proves the finite-prime identity;
+it does not prove cancellation of the completed residues.  The latter
+also requires the exact Atkin--Lehner cusp normalization, the
+archimedean Bessel--Mellin transform, the sign with which the
+\(m=0\) term was separated, and the ramified restrictions
+\(B\mid q,(q,A)=1\).
+
+The interface ramanujan_zero_mode_euler_audit checks (4.845bt) and
+(4.845bu) coefficient by coefficient and records (4.845bv).  It keeps
+the archimedean normalization, completed zero-mode/residue pairing,
+continuous-spectrum gate, and whole Möbius gate false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

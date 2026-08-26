@@ -1985,6 +1985,21 @@ class PoleSubtractedEisensteinFunctionalEquationAudit:
 
 
 @dataclass(frozen=True)
+class RamanujanZeroModeEulerAudit:
+    prime: int
+    valuation: int
+    local_generating_polynomial: dict[int, int]
+    ramanujan_prime_power_coefficients_exact: bool
+    local_generating_identity_exact: bool
+    global_dirichlet_series_identity_exact: bool
+    inverse_zeta_zero_order_at_one: int
+    archimedean_zero_mode_residue_normalization_matched: bool
+    completed_zero_mode_residue_pairing_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -10163,6 +10178,69 @@ def pole_subtracted_eisenstein_functional_equation_audit(
     )
 
 
+def ramanujan_prime_power_generating_polynomial(
+    *,
+    prime: int,
+    valuation: int,
+) -> dict[int, int]:
+    """Return coefficients of ``(1-X) sum_(j<=v) p^j X^j``."""
+    if prime < 2 or valuation < 0:
+        raise ValueError("prime and valuation must be positive/nonnegative")
+    output = {0: 1}
+    for exponent in range(1, valuation + 1):
+        output[exponent] = prime**exponent - prime ** (exponent - 1)
+    output[valuation + 1] = -(prime**valuation)
+    return output
+
+
+def ramanujan_zero_mode_euler_audit(
+    *,
+    prime: int,
+    valuation: int,
+) -> RamanujanZeroModeEulerAudit:
+    """Record the exact inverse-zeta Euler factor of the zero mode.
+
+    For ``v=v_p(n)``, the Ramanujan sums satisfy
+
+    ``sum_(k>=0) c_(p^k)(n) X^k=(1-X)sum_(j=0)^v p^j X^j``.
+
+    Multiplication over primes gives
+
+    ``sum_c c_c(n)c^(-w)=sigma_(1-w)(n)/zeta(w)``.
+
+    This identifies the finite Euler factor required by the completed
+    Eisenstein residue pairing.  It does not match the physical Mellin
+    transform, cusp normalization, or sign of that pairing.
+    """
+    polynomial = ramanujan_prime_power_generating_polynomial(
+        prime=prime,
+        valuation=valuation,
+    )
+    expected = {}
+    for exponent in range(0, valuation + 2):
+        modulus = prime**exponent
+        n = prime**valuation
+        coefficient = sum(
+            divisor * (-1 if modulus // divisor == prime else 1)
+            for divisor in _positive_divisors(gcd(modulus, n))
+            if modulus // divisor in (1, prime)
+        )
+        expected[exponent] = coefficient
+    return RamanujanZeroModeEulerAudit(
+        prime=prime,
+        valuation=valuation,
+        local_generating_polynomial=polynomial,
+        ramanujan_prime_power_coefficients_exact=(polynomial == expected),
+        local_generating_identity_exact=(polynomial == expected),
+        global_dirichlet_series_identity_exact=(polynomial == expected),
+        inverse_zeta_zero_order_at_one=1,
+        archimedean_zero_mode_residue_normalization_matched=False,
+        completed_zero_mode_residue_pairing_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -17169,6 +17247,29 @@ def main() -> None:
         "continuous="
         f"{pole_subtracted.continuous_spectrum_gate_covered},"
         f"covered={pole_subtracted.whole_mobius_gate_covered}"
+    )
+    ramanujan_zero_mode = ramanujan_zero_mode_euler_audit(
+        prime=5,
+        valuation=2,
+    )
+    print(
+        "large_q_transition: ramanujan_zero_mode_euler="
+        f"prime={ramanujan_zero_mode.prime},"
+        f"valuation={ramanujan_zero_mode.valuation},"
+        f"polynomial={ramanujan_zero_mode.local_generating_polynomial},"
+        "coefficients="
+        f"{ramanujan_zero_mode.ramanujan_prime_power_coefficients_exact},"
+        f"local={ramanujan_zero_mode.local_generating_identity_exact},"
+        f"global={ramanujan_zero_mode.global_dirichlet_series_identity_exact},"
+        "zero_order="
+        f"{ramanujan_zero_mode.inverse_zeta_zero_order_at_one},"
+        "archimedean="
+        f"{ramanujan_zero_mode.archimedean_zero_mode_residue_normalization_matched},"
+        "pairing="
+        f"{ramanujan_zero_mode.completed_zero_mode_residue_pairing_proved},"
+        "continuous="
+        f"{ramanujan_zero_mode.continuous_spectrum_gate_covered},"
+        f"covered={ramanujan_zero_mode.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(
