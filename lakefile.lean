@@ -477,6 +477,8 @@ lean_lib RiemannPNT where
     `Test.CarlsonGaussianHilbertMemLpContract,
     `PrimeNumberTheorem.CarlsonPoleFreeMollifiedError,
     `Test.CarlsonPoleFreeMollifiedErrorContract,
+    `PrimeNumberTheorem.CarlsonPoleFreeMollifiedErrorGrowth,
+    `Test.CarlsonPoleFreeMollifiedErrorGrowthContract,
     `HardyTheorem.TwoScaleSelbergMollifier,
     `Test.TwoScaleSelbergMollifierContract,
     `PrimeNumberTheorem.CarlsonTwoScaleDetector,

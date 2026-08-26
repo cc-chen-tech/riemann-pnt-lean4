@@ -397,13 +397,15 @@ bound or a centered polynomial square bound has formally been promoted to
 shift for an arbitrary complex strip parameter.  The pole-free mollified
 error in (5.1) has been defined through the analytic zeta pole unit, proved
 analytic on `Re(s)>0`, identified with the paper formula away from the pole,
-and proved continuous on each such vertical line.  The paper proof leaves
-the following concrete Lean lemmas, none of which may be replaced by a final
-density axiom:
+and proved continuous on each such vertical line.  Its norm is formally
+uniformly bounded on the compact rectangle `1/2 <= Re(s) <= 4`,
+`|Im(s)| <= 1`.  The paper proof leaves the following concrete Lean lemmas,
+none of which may be replaced by a final density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. the concrete pole-free function's polynomial-growth instance for that
+2. the complementary high-height polynomial bound for the concrete
+   pole-free function (and its combination with the compact bound) for that
    `L^2(R)` membership interface, its `L^2(R)`-valued strip analyticity and
    boundary norm estimates, followed by the finite Gaussian covering
    argument;
