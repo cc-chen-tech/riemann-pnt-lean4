@@ -7082,6 +7082,135 @@ def farey_global_type_scale_ledger(
     }
 
 
+def farey_type_i_unit_divisor_shifted_prime_reassembly(
+    *,
+    q: int,
+    sector_character: int,
+    denominators: tuple[int, ...],
+    h: int,
+    delta: int,
+    packet_label: str,
+) -> dict[str, object]:
+    """Reindex the most favorable Type-I subpacket by its prime shift.
+
+    This selects the ``d=1`` terms on nonzero mollifier support from the
+    unit-slope packet ``p=s+w``.  Regrouping by ``w`` gives the exact
+    shifted-prime coordinate ``mu(s)=mu(p-w)``.  The Farey sector label
+    remains ``floor(q*w/(p-w))`` and can therefore vary with ``p`` even
+    after the shift ``w`` is fixed.  No estimate is asserted.
+    """
+
+    partition = farey_global_mobius_type_partition(
+        q=q,
+        k=1,
+        sector_character=sector_character,
+        denominators=denominators,
+        h=h,
+        delta=delta,
+        short_cutoff=1,
+        packet_label=packet_label,
+    )
+    terms = tuple(
+        term
+        for term in partition["type_i_terms"]
+        if term["type_divisor"] == 1
+        and term["prime_power"] == term["numerator"]
+        and term["denominator_mobius"] != 0
+        and _finite_mobius(int(term["numerator"])) != 0
+    )
+    entries = tuple(
+        (
+            int(term["sector"]),
+            int(term["denominator"]),
+            int(term["shifted_numerator"]),
+            int(term["prime"]),
+            int(term["denominator_mobius"]),
+        )
+        for term in terms
+    )
+    left_coordinates = {
+        (b, s, w, prime): mu_s for b, s, w, prime, mu_s in entries
+    }
+    shifted_coordinates = {
+        (q * w // (prime - w), prime - w, w, prime): _finite_mobius(
+            prime - w
+        )
+        for _, _, w, prime, _ in entries
+    }
+    sector_labels_by_shift: dict[int, set[int]] = {}
+    for b, _, w, _, _ in entries:
+        sector_labels_by_shift.setdefault(w, set()).add(b)
+    sector_phase_varies = any(
+        len(labels) > 1 for labels in sector_labels_by_shift.values()
+    )
+    afe_weight_moves_with_entry = bool(entries)
+    return {
+        "unit_divisor_entries": entries,
+        "shifted_prime_reassembly_exact": (
+            left_coordinates == shifted_coordinates
+        ),
+        "prime_equals_denominator_plus_shift": all(
+            prime == s + w for _, s, w, prime, _ in entries
+        ),
+        "mobius_is_negative_prime_shift_exact": all(
+            mu_s == _finite_mobius(prime - w)
+            for _, _, w, prime, mu_s in entries
+        ),
+        "product_frequency": h * delta,
+        "packet_label_retained": partition["packet_label_retained"],
+        "sector_character_retained": sector_character,
+        "shift_one_sector_labels": tuple(
+            sorted(sector_labels_by_shift.get(1, set()))
+        ),
+        "sector_phase_varies_after_fixing_shift": sector_phase_varies,
+        "afe_weight_depends_on_shift_and_prime": afe_weight_moves_with_entry,
+        "lichtman_fixed_weight_hypothesis_matched": (
+            not sector_phase_varies and not afe_weight_moves_with_entry
+        ),
+        "type_i_estimate_proved": False,
+    }
+
+
+def lichtman_shifted_prime_type_i_coverage_audit(
+    *,
+    prime_length_exponent: Fraction,
+    shift_length_exponent: Fraction,
+    required_unsquared_saving_exponent: Fraction,
+) -> dict[str, object]:
+    """Compare Lichtman's shifted-prime average with the Type-I gate.
+
+    Lichtman, Theorem 1.1 (arXiv:2009.08969v2), averages absolute values
+    over shifts.  In the polynomial regime it saves a power of ``log X``
+    (up to ``1/3-delta``), not a positive power of ``X``.  The present
+    packet also has a shift-dependent Farey/AFE weight and needs a vector
+    cluster square estimate.  This ledger records those theorem-level
+    mismatches without treating them as a disproof of a stronger result.
+    """
+
+    x = F(prime_length_exponent)
+    shift = F(shift_length_exponent)
+    required = F(required_unsquared_saving_exponent)
+    if x <= 0 or shift <= 0:
+        raise ValueError("prime and shift length exponents must be positive")
+    if required < 0:
+        raise ValueError("the required saving exponent must be nonnegative")
+    published_power = F(0)
+    return {
+        "source": "Lichtman, arXiv:2009.08969v2, Theorem 1.1 and Lemma 6.1",
+        "published_average_norm": "L1 over shifts",
+        "required_average_norm": "vector cluster L2",
+        "published_saving_kind": "logarithmic",
+        "published_log_saving_exponent_supremum": F(1, 3),
+        "published_power_saving_exponent": published_power,
+        "required_unsquared_saving_exponent": required,
+        "remaining_power_deficit": max(F(0), required - published_power),
+        "strict_shift_range_h_less_x": shift < x,
+        "fixed_weight_across_shifts": False,
+        "norm_hypothesis_matched": False,
+        "covers_type_i_gate": False,
+    }
+
+
 def transition_line_coprimality_layer_identity(
     *,
     a: int,
@@ -10899,6 +11028,59 @@ def main() -> None:
         "kernel=False,separable=False,fixed_modulus=False,"
         "pascadi_uniform=True,primitive_q_one=True,"
         "pascadi_average_power=False,covered=False"
+    )
+    unit_divisor_shifted_prime = (
+        farey_type_i_unit_divisor_shifted_prime_reassembly(
+            q=11,
+            sector_character=3,
+            denominators=tuple(range(2, 12)),
+            h=2,
+            delta=-3,
+            packet_label="afe-plus",
+        )
+    )
+    print(
+        "large_q_transition: unit_divisor_shifted_prime="
+        f"entries={len(unit_divisor_shifted_prime['unit_divisor_entries'])},"
+        "exact="
+        f"{unit_divisor_shifted_prime['shifted_prime_reassembly_exact']},"
+        "shift_identity="
+        f"{unit_divisor_shifted_prime['mobius_is_negative_prime_shift_exact']},"
+        "shift_one_sectors="
+        + ",".join(
+            str(label)
+            for label in unit_divisor_shifted_prime[
+                "shift_one_sector_labels"
+            ]
+        )
+        + ",phase_varies="
+        f"{unit_divisor_shifted_prime['sector_phase_varies_after_fixing_shift']},"
+        "fixed_weight="
+        f"{unit_divisor_shifted_prime['lichtman_fixed_weight_hypothesis_matched']},"
+        "proved="
+        f"{unit_divisor_shifted_prime['type_i_estimate_proved']}"
+    )
+    lichtman_type_i = lichtman_shifted_prime_type_i_coverage_audit(
+        prime_length_exponent=F(1),
+        shift_length_exponent=F(1),
+        required_unsquared_saving_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: lichtman_type_i="
+        "norm=L1_over_shifts,required=vector_cluster_L2,"
+        "log_sup="
+        f"{_fmt(lichtman_type_i['published_log_saving_exponent_supremum'])},"
+        "power="
+        f"{_fmt(lichtman_type_i['published_power_saving_exponent'])},"
+        "deficit="
+        f"{_fmt(lichtman_type_i['remaining_power_deficit'])},"
+        "H_lt_X="
+        f"{lichtman_type_i['strict_shift_range_h_less_x']},"
+        "fixed_weight="
+        f"{lichtman_type_i['fixed_weight_across_shifts']},"
+        "norm_match="
+        f"{lichtman_type_i['norm_hypothesis_matched']},"
+        f"covered={lichtman_type_i['covers_type_i_gate']}"
     )
     transition_delta_lattice = transition_delta_lattice_poisson_audit(
         determinant_exponent=F(1),

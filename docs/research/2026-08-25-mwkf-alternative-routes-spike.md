@@ -11049,6 +11049,7 @@ is:
 | Teräväinen--Walker, arXiv:2303.12574 | two multiplicative functions on fixed Beatty data | qualitative logarithmic limit | no |
 | [Tao--Teräväinen](https://arxiv.org/abs/2107.02158) | quantitative Möbius/\(\Lambda\) Gowers uniformity for fixed-complexity linear systems | \((\log\log T)^{-c}\), power exponent \(0\) | no |
 | [Banks--Shparlinski](https://arxiv.org/abs/0708.1015) | primes in a fixed irrational finite-type Beatty sequence | power error in a one-prime problem | no double Möbius and no moving rational family |
+| [Lichtman](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \(L^1\) average of scalar shifted-prime Möbius sums | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | no moving Farey/AFE weight, no endpoint \(H\asymp X\), and no vector \(L^2\) half-power |
 | Kim, arXiv:2603.23250 | ternary shifted correlations | saving \(<T^{1/600}\) in the entering range | short by \(T^{299/600}\), Möbius hypothesis also fails |
 
 Thus (4.644) narrows the coefficient class but does not turn a logarithmic
@@ -11066,6 +11067,80 @@ specialization (4.644) supplies the required half-power cancellation.
 The companion `farey_global_type_scale_ledger` records the four factor
 ranges and the exact energy/amplitude deficits in (4.645); both Type-bound
 flags remain false.
+
+### 4.74 The unit-divisor Type-I face is a moving-weight shifted-prime sum
+
+The most favorable Type-I subpacket is \(d=1\).  It is worth isolating it
+because it is the one place where the shifted-prime literature looks
+closest to the actual coefficient.  On squarefree support the prime factor
+identity gives \(p=ks+w\).  For the unit-slope face \(k=1\), (4.641) becomes
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal A^{\mathrm{I},d=1}_{\xi,k=1}
+ ={}-&\sum_w\sum_{\substack{p:\ s=p-w\\0\le w<s\\p\ {\rm prime}}}
+ e\!\left(
+   \frac{\xi\lfloor Qw/(p-w)\rfloor}{Q}
+  \right)\mu(p-w)\log p\\
+ &\hspace{36mm}\times
+ \widetilde G_{p-w,w;h,\delta,\nu,\sigma}.
+ \end{aligned}}
+ \tag{4.646}
+\]
+
+Thus the Möbius coordinate is exactly a negative shifted-prime coordinate.
+This is a genuine exact reduction, but it is not the scalar family in
+Lichtman's theorem.  Even if one grants an analogous negative-shift
+variant, the coefficient multiplying \(\mu(p-w)\) in (4.646) still
+depends jointly on \(p\) and \(w\): both
+
+\[
+ b_Q(w,p-w)=\left\lfloor\frac{Qw}{p-w}\right\rfloor
+ \quad\hbox{and}\quad
+ \widetilde G_{p-w,w;h,\delta,\nu,\sigma}
+ \tag{4.647}
+\]
+
+move with the shift.  In particular, fixing \(w\) does not fix the Farey
+phase.  The finite witness \(Q=11,w=1\) contains
+
+\[
+ (s,p,b_Q)=(2,3,5),(6,7,1),(10,11,1).
+ \tag{4.648}
+\]
+
+Lichtman, arXiv:2009.08969v2, Theorem 1.1 proves, for
+\(H=X^\theta\), \(0<\theta<1\),
+
+\[
+ \sum_{h\le H}\left|\sum_{p\le X}\mu(p+h)\right|
+ \ll_{\theta,\delta}
+ \frac{H\pi(X)}{(\log X)^{1/3-\delta}}.
+ \tag{4.649}
+\]
+
+Its Lemma 6.1 permits a moderate coefficient \(G(n)\), but that \(G\) is
+fixed before averaging over \(h\).  It does not permit the moving
+\(G_w(n)\) in (4.647).  Three independent theorem-level mismatches remain:
+
+1. (4.649) is an \(L^1\) average over scalar shifts, whereas (4.645) is a
+   vector cluster \(L^2\) estimate retaining \(\xi,Q,h,\delta\) and packet
+   labels;
+2. the full Type-I packet has \(w\asymp p\asymp T\), while the quantitative
+   polynomial statement assumes \(H=X^\theta<X\) with fixed
+   \(0<\theta<1\);
+3. the saving in (4.649) is logarithmic, hence has power exponent \(0\),
+   leaving the entire \(T^{1/2}\) unsquared deficit in (4.645).
+
+Consequently even the \(d=1,k=1\) face is not covered by the published
+shifted-prime theorem.  This is stronger than the generic observation that
+fixed-shift cancellation is open: it identifies the exact favorable
+reindexing and shows why the required global weight cannot be discarded.
+The helpers farey_type_i_unit_divisor_shifted_prime_reassembly and
+lichtman_shifted_prime_type_i_coverage_audit verify (4.646)--(4.648) and
+record the norm, range, and half-power deficit.  Their Type-I coverage flags
+remain false.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

@@ -873,6 +873,7 @@ The resulting exact coverage table is:
 | Pascadi v2, Corollary 1.4 | no power when the common divisor is \(q=1\) | primitive determinant shell has no larger common fixed divisor | no |
 | Tao--Teräväinen, [arXiv:2107.02158](https://arxiv.org/abs/2107.02158) | \((\log\log T)^{-c}\) | fixed-complexity linear systems and logarithmic, not half-power, decay | no |
 | Teräväinen--Walker, arXiv:2303.12574 | qualitative logarithmic limit | fixed Beatty data, not a moving rational vector family | no |
+| Lichtman, [arXiv:2009.08969v2](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | scalar \(L^1\) shift average, fixed weight, and \(H=X^\theta<X\), not the moving-weight endpoint vector \(L^2\) packet | no |
 | Kim, arXiv:2603.23250 | \(<T^{1/600}\) in the entering range | deficit \(T^{299/600}\) and Möbius coefficient hypothesis fails | no |
 
 For Pascadi Corollary 1.4, substituting
@@ -890,3 +891,26 @@ Kloosterman rows.  The Beatty and ternary-correlation rows are recorded by
 their separate adapters in the alternative-routes audit.
 Their analytic coverage flags remain false.  Hence the two base Region-D
 cells and the full \(\theta=3\) off-diagonal gate remain open.
+
+The closest Type-I subpacket can be made still more explicit.  On the
+\(d=1,k=1\) face, \(p=s+w\), so regrouping by \(w\) gives exactly
+
+\[
+ -\sum_w\sum_p
+ e\!\left(\frac{\xi\lfloor Qw/(p-w)\rfloor}{Q}\right)
+ \mu(p-w)\log p\,
+ \widetilde G_{p-w,w;h,\delta,\nu,\sigma}.
+ \tag{6.4}
+\]
+
+This is a shifted-prime Möbius coordinate with a moving Farey/AFE weight,
+not Lichtman's scalar family.  The finite witness \(Q=11,w=1\) has sector
+labels \(5,1,1\) at \((s,p)=(2,3),(6,7),(10,11)\), so the phase varies even
+after the shift is fixed.  Moreover the full range reaches \(w\asymp p\),
+whereas Lichtman's quantitative polynomial statement has
+\(H=X^\theta<X\), and its logarithmic saving leaves the required
+\(T^{1/2}\) deficit unchanged.  The executable adapters
+farey_type_i_unit_divisor_shifted_prime_reassembly and
+lichtman_shifted_prime_type_i_coverage_audit record this exact
+reindexing and the three independent mismatches; neither asserts a Type-I
+estimate.

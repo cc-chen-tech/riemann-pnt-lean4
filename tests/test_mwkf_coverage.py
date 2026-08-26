@@ -2087,6 +2087,74 @@ def test_global_farey_type_scale_ledger_exposes_each_half_power_gate() -> None:
     assert not result["combined_gate_proved"]
 
 
+def test_unit_divisor_type_i_reassembles_as_moving_weight_shifted_primes() -> None:
+    reassemble = getattr(
+        coverage_audit,
+        "farey_type_i_unit_divisor_shifted_prime_reassembly",
+        None,
+    )
+    assert reassemble is not None, "unit-divisor shifted-prime adapter is missing"
+
+    result = reassemble(
+        q=11,
+        sector_character=3,
+        denominators=tuple(range(2, 12)),
+        h=2,
+        delta=-3,
+        packet_label="afe-plus",
+    )
+
+    assert result["unit_divisor_entries"] == (
+        (5, 2, 1, 3, -1),
+        (7, 3, 2, 5, -1),
+        (4, 5, 2, 7, -1),
+        (1, 6, 1, 7, 1),
+        (9, 6, 5, 11, 1),
+        (6, 7, 4, 11, -1),
+        (9, 7, 6, 13, -1),
+        (1, 10, 1, 11, 1),
+        (3, 10, 3, 13, 1),
+        (7, 10, 7, 17, 1),
+        (9, 10, 9, 19, 1),
+        (2, 11, 2, 13, -1),
+        (6, 11, 6, 17, -1),
+        (8, 11, 8, 19, -1),
+    )
+    assert result["shifted_prime_reassembly_exact"]
+    assert result["prime_equals_denominator_plus_shift"]
+    assert result["mobius_is_negative_prime_shift_exact"]
+    assert result["product_frequency"] == -6
+    assert result["packet_label_retained"] == "afe-plus"
+    assert result["shift_one_sector_labels"] == (1, 5)
+    assert result["sector_phase_varies_after_fixing_shift"]
+    assert not result["lichtman_fixed_weight_hypothesis_matched"]
+
+
+def test_lichtman_shifted_prime_bound_is_logarithmic_and_misses_type_i_gate() -> None:
+    audit = getattr(
+        coverage_audit,
+        "lichtman_shifted_prime_type_i_coverage_audit",
+        None,
+    )
+    assert audit is not None, "Lichtman Type-I coverage audit is missing"
+
+    result = audit(
+        prime_length_exponent=F(1),
+        shift_length_exponent=F(1),
+        required_unsquared_saving_exponent=F(1, 2),
+    )
+
+    assert result["published_average_norm"] == "L1 over shifts"
+    assert result["required_average_norm"] == "vector cluster L2"
+    assert result["published_saving_kind"] == "logarithmic"
+    assert result["published_power_saving_exponent"] == F(0)
+    assert result["remaining_power_deficit"] == F(1, 2)
+    assert not result["strict_shift_range_h_less_x"]
+    assert not result["fixed_weight_across_shifts"]
+    assert not result["norm_hypothesis_matched"]
+    assert not result["covers_type_i_gate"]
+
+
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
     coefficients = getattr(
         coverage_audit,
@@ -4742,6 +4810,18 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "lemma15:d0:z=5/2,x=0,dcount=0,layer=5/2;"
         "d1:z=-1,x=1,dcount=1,layer=1;"
         "global=5/2,target=2,margin=-1/2,improved=False"
+    ) in output
+    assert (
+        "large_q_transition: unit_divisor_shifted_prime="
+        "entries=14,exact=True,shift_identity=True,"
+        "shift_one_sectors=1,5,phase_varies=True,"
+        "fixed_weight=False,proved=False"
+    ) in output
+    assert (
+        "large_q_transition: lichtman_type_i="
+        "norm=L1_over_shifts,required=vector_cluster_L2,"
+        "log_sup=1/3,power=0,deficit=1/2,H_lt_X=False,"
+        "fixed_weight=False,norm_match=False,covered=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
