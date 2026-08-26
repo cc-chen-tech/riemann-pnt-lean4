@@ -6723,6 +6723,118 @@ def test_ramanujan_resonance_is_split_before_the_reciprocal_radical_gate(
         assert marker in note
 
 
+def test_reciprocal_radical_fibres_close_the_long_cofactor_main(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Use the sparse Euler product and exact n=m+Akl multiplicity."""
+    adapter = getattr(
+        coverage_audit,
+        "reciprocal_radical_fibre_audit",
+        None,
+    )
+    assert adapter is not None, "reciprocal-radical fibre audit is missing"
+    audit = adapter(moment_abscissa=F(1, 16))
+    assert audit.moment_abscissa == F(1, 16)
+    assert audit.outer_entry_max_exponent == F(3)
+    assert audit.ramanujan_argument_max_exponent == F(4)
+    assert audit.first_dual_length_exponent == F(1, 2)
+    assert audit.second_dual_length_exponent == F(1, 2)
+    assert audit.reciprocal_radical_dirichlet_series_exact
+    assert audit.primes_dividing_outer_entry_cost_subpower
+    assert audit.nonaxis_fibre_is_divisor_bounded
+    assert audit.axis_fibre_exponent == F(1, 2)
+    assert audit.nonaxis_bound_exponent == F(1, 4)
+    assert audit.axis_bound_exponent == F(11, 16)
+    assert audit.long_cofactor_target_exponent == F(1)
+    assert audit.power_saving_margin == F(5, 16)
+    assert audit.outer_divisor_weight_costs_only_polylog
+    assert audit.long_cofactor_density_main_covered
+    assert not audit.squarefree_density_error_aggregated
+    assert not audit.short_cofactor_cell_covered
+    assert not audit.full_mmkls_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: reciprocal_radical_fibre="
+        "epsilon=1/16 Amax=3 nmax=4 dual=1/2,1/2 "
+        "euler=True A_primes_subpower=True nonaxis_divisor=True "
+        "axis_fibre=1/2 nonaxis=1/4 axis=11/16 target=1 "
+        "saving=5/16 outer_polylog=True long_main=True "
+        "density_error=False short_cofactor=False mmkls=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaceb Reciprocal-radical fibres close the long-cofactor main",
+        r"\mathcal B_A(z)",
+        r"n=m+Akl",
+        r"T^{11/16+o(1)}",
+        r"T^{-5/16+o(1)}",
+        "reciprocal_radical_fibre_audit",
+    ):
+        assert marker in note
+
+
+def test_short_cofactor_is_a_published_short_interval_mobius_cell(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Complementary divisors stay strictly above Ramachandra's 7/12."""
+    adapter = getattr(
+        coverage_audit,
+        "short_cofactor_mobius_interval_audit",
+        None,
+    )
+    assert adapter is not None, "short-cofactor Möbius audit is missing"
+    audit = adapter(
+        cofactor_cutoff_exponent=F(1, 8),
+        qsmooth_split_relative_exponent=F(1, 10),
+    )
+    assert audit.cofactor_cutoff_exponent == F(1, 8)
+    assert audit.modulus_variable_min_exponent == F(23, 8)
+    assert audit.mobius_interval_min_exponent == F(15, 8)
+    assert audit.raw_short_interval_ratio == F(15, 23)
+    assert audit.qsmooth_convolution_identity_exact
+    assert audit.qsmooth_split_relative_exponent == F(1, 10)
+    assert audit.rescaled_short_interval_ratio == F(127, 207)
+    assert audit.published_quantitative_threshold == F(7, 12)
+    assert audit.threshold_margin == F(25, 828)
+    assert audit.small_qsmooth_factor_uses_published_mobius_bound
+    assert audit.large_qsmooth_reciprocal_tail_has_power_saving
+    assert audit.large_qsmooth_count_tail_has_power_saving
+    assert audit.smooth_physical_weight_allows_partial_summation
+    assert audit.long_density_error_first_exponent == F(15, 16)
+    assert audit.long_density_error_second_exponent == F(13, 16)
+    assert audit.long_density_error_saving == F(1, 16)
+    assert audit.long_density_error_aggregated
+    assert audit.short_cofactor_cell_covered
+    assert audit.balanced_hard_box_mmkls_covered
+    assert not audit.all_dyadic_boxes_aggregated
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: short_cofactor_mobius="
+        "eta=1/8 Dmin=23/8 Hmin=15/8 theta=15/23 "
+        "convolution=True rho=1/10 theta_rescaled=127/207 "
+        "threshold=7/12 margin=25/828 published=True "
+        "large_reciprocal=True large_count=True smooth=True "
+        "density=15/16,13/16 density_saving=1/16 "
+        "density_closed=True short_closed=True hard_mmkls=True "
+        "all_boxes=False asymptotic=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjacec The short cofactor is above the published Möbius interval threshold",
+        r"\frac{15}{23}>\frac7{12}",
+        r"\frac{127}{207}>\frac7{12}",
+        r"\mu(d)\mathbf 1_{(d,Q)=1}",
+        r"T^{15/16+o(1)}",
+        "short_cofactor_mobius_interval_audit",
+    ):
+        assert marker in note
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

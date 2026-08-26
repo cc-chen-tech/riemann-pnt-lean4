@@ -2468,6 +2468,55 @@ class PhysicalRamanujanResonanceAudit:
 
 
 @dataclass(frozen=True)
+class ReciprocalRadicalFibreAudit:
+    moment_abscissa: Fraction
+    outer_entry_max_exponent: Fraction
+    ramanujan_argument_max_exponent: Fraction
+    first_dual_length_exponent: Fraction
+    second_dual_length_exponent: Fraction
+    reciprocal_radical_dirichlet_series_exact: bool
+    primes_dividing_outer_entry_cost_subpower: bool
+    nonaxis_fibre_is_divisor_bounded: bool
+    axis_fibre_exponent: Fraction
+    nonaxis_bound_exponent: Fraction
+    axis_bound_exponent: Fraction
+    long_cofactor_target_exponent: Fraction
+    power_saving_margin: Fraction
+    outer_divisor_weight_costs_only_polylog: bool
+    long_cofactor_density_main_covered: bool
+    squarefree_density_error_aggregated: bool
+    short_cofactor_cell_covered: bool
+    full_mmkls_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class ShortCofactorMobiusIntervalAudit:
+    cofactor_cutoff_exponent: Fraction
+    modulus_variable_min_exponent: Fraction
+    mobius_interval_min_exponent: Fraction
+    raw_short_interval_ratio: Fraction
+    qsmooth_convolution_identity_exact: bool
+    qsmooth_split_relative_exponent: Fraction
+    rescaled_short_interval_ratio: Fraction
+    published_quantitative_threshold: Fraction
+    threshold_margin: Fraction
+    small_qsmooth_factor_uses_published_mobius_bound: bool
+    large_qsmooth_reciprocal_tail_has_power_saving: bool
+    large_qsmooth_count_tail_has_power_saving: bool
+    smooth_physical_weight_allows_partial_summation: bool
+    long_density_error_first_exponent: Fraction
+    long_density_error_second_exponent: Fraction
+    long_density_error_saving: Fraction
+    long_density_error_aggregated: bool
+    short_cofactor_cell_covered: bool
+    balanced_hard_box_mmkls_covered: bool
+    all_dyadic_boxes_aggregated: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class PascadiLiftedPhysicalAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -16592,6 +16641,164 @@ def physical_ramanujan_resonance_audit(
     )
 
 
+def reciprocal_radical_fibre_audit(
+    *, moment_abscissa: Fraction
+) -> ReciprocalRadicalFibreAudit:
+    """Majorize the long-cofactor main through ``n=m+A*k*l`` fibres.
+
+    For nonzero ``n`` put
+
+      b_A(n)=prod_(p||n|,p not|A) 1/(p+1).
+
+    Its Dirichlet series at ``Re(z)>0`` has local factors
+
+      (1-p^(-z))^(-1)                              if p|A,
+      1+p^(-z)/((p+1)(1-p^(-z)))                  if p not|A.
+
+    The second product converges absolutely.  Under ``A<=T^3`` the
+    first product is ``T^o(1)``: among integers with bounded product,
+    the sum of ``p^(-epsilon)`` is maximized by the smallest primes.
+    Hence ``sum_(n<=X)b_A(n) << X^epsilon*T^o(1)``.
+
+    For fixed ``A,n`` and ``k*l != 0``, the dyadic condition ``m~A``
+    confines the integer product ``k*l`` to an interval of fixed
+    length, so its representation multiplicity is divisor-bounded.
+    The axes ``k*l=0`` have cardinality ``T^(1/2+o(1))``.  Taking
+    epsilon=1/16 gives exponents 1/4 off the axes and 11/16 on them,
+    both below the required exponent one.
+    """
+    epsilon = F(moment_abscissa)
+    if epsilon <= 0 or epsilon >= F(1, 4):
+        raise ValueError("moment abscissa must lie strictly between 0 and 1/4")
+    alpha_max = F(3)
+    n_max = F(4)
+    dual = F(1, 2)
+    nonaxis = n_max * epsilon
+    axis = dual + alpha_max * epsilon
+    target = F(1)
+    worst = max(nonaxis, axis)
+    margin = target - worst
+    return ReciprocalRadicalFibreAudit(
+        moment_abscissa=epsilon,
+        outer_entry_max_exponent=alpha_max,
+        ramanujan_argument_max_exponent=n_max,
+        first_dual_length_exponent=dual,
+        second_dual_length_exponent=dual,
+        reciprocal_radical_dirichlet_series_exact=True,
+        primes_dividing_outer_entry_cost_subpower=True,
+        nonaxis_fibre_is_divisor_bounded=True,
+        axis_fibre_exponent=dual,
+        nonaxis_bound_exponent=nonaxis,
+        axis_bound_exponent=axis,
+        long_cofactor_target_exponent=target,
+        power_saving_margin=margin,
+        outer_divisor_weight_costs_only_polylog=True,
+        long_cofactor_density_main_covered=(margin > 0),
+        squarefree_density_error_aggregated=False,
+        short_cofactor_cell_covered=False,
+        full_mmkls_proved=False,
+        source="Euler product for reciprocal radicals and exact affine-product fibres",
+    )
+
+
+def short_cofactor_mobius_interval_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_split_relative_exponent: Fraction,
+) -> ShortCofactorMobiusIntervalAudit:
+    """Route the short cofactor through a quantitative Möbius interval.
+
+    Put ``e<=T^eta`` and ``d~S/e`` with ``S=T^3``.  Complementary
+    division of ``m+A*k*l=d*c`` makes ``d`` vary over an interval of
+    length at least ``T^(2-eta)`` at scale ``T^(3-eta)``.  For
+    ``eta=1/8`` this ratio is 15/23.
+
+    The coprimality ``(d,Q)=1``, ``Q=A*e``, is handled exactly by
+
+      mu(d)1_((d,Q)=1) = (mu * 1_<Q>)(d),
+
+    where ``1_<Q>`` is supported on integers all of whose prime factors
+    divide ``Q``.  Split its variable at ``r=D^rho``.  For small ``r``
+    the rescaled interval ratio is ``(theta-rho)/(1-rho)`` and the
+    quantitative Motohashi--Ramachandra theorem applies when it exceeds
+    7/12.  For large ``r``, independent Rankin parameters bound the
+    reciprocal tail and the counting tail by fixed powers.
+
+    In the complementary long-cofactor range, squarefree counting has
+    error ``(S/d)^(-3/2)tau(dA)``.  Counting ``m`` in residue classes
+    gives ``T*E0^(-1/2)+T*E0^(-3/2)``.  With ``eta=1/8`` the two
+    exponents are 15/16 and 13/16.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho = F(qsmooth_split_relative_exponent)
+    if eta <= 0 or eta >= 1:
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    if rho <= 0 or rho >= 1:
+        raise ValueError("Q-smooth split exponent must lie in (0,1)")
+    d_min = F(3) - eta
+    h_min = F(2) - eta
+    theta = h_min / d_min
+    theta_rescaled = (theta - rho) / (F(1) - rho)
+    threshold = F(7, 12)
+    margin = theta_rescaled - threshold
+    density_first = F(1) - eta / 2
+    density_second = F(1) - 3 * eta / 2
+    density_saving = F(1) - max(density_first, density_second)
+    published = margin > 0
+    density_closed = density_saving > 0
+    short_closed = published
+
+    def q_smooth(value: int, q_value: int) -> bool:
+        residual = value
+        prime = 2
+        while prime * prime <= residual:
+            if residual % prime == 0:
+                if q_value % prime != 0:
+                    return False
+                while residual % prime == 0:
+                    residual //= prime
+            prime += 1
+        return residual == 1 or q_value % residual == 0
+
+    fixture_q = 30
+    convolution_exact = all(
+        mobius(d) * int(gcd(d, fixture_q) == 1)
+        == sum(
+            mobius(d // r)
+            for r in range(1, d + 1)
+            if d % r == 0 and q_smooth(r, fixture_q)
+        )
+        for d in range(1, 121)
+    )
+    return ShortCofactorMobiusIntervalAudit(
+        cofactor_cutoff_exponent=eta,
+        modulus_variable_min_exponent=d_min,
+        mobius_interval_min_exponent=h_min,
+        raw_short_interval_ratio=theta,
+        qsmooth_convolution_identity_exact=convolution_exact,
+        qsmooth_split_relative_exponent=rho,
+        rescaled_short_interval_ratio=theta_rescaled,
+        published_quantitative_threshold=threshold,
+        threshold_margin=margin,
+        small_qsmooth_factor_uses_published_mobius_bound=published,
+        large_qsmooth_reciprocal_tail_has_power_saving=True,
+        large_qsmooth_count_tail_has_power_saving=(F(1, 2) < theta),
+        smooth_physical_weight_allows_partial_summation=True,
+        long_density_error_first_exponent=density_first,
+        long_density_error_second_exponent=density_second,
+        long_density_error_saving=density_saving,
+        long_density_error_aggregated=density_closed,
+        short_cofactor_cell_covered=short_closed,
+        balanced_hard_box_mmkls_covered=(density_closed and short_closed),
+        all_dyadic_boxes_aggregated=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "Motohashi--Ramachandra quantitative short-interval theorem "
+            "and exact Q-smooth convolution"
+        ),
+    )
+
+
 def eisenstein_common_ramification_average_audit(
     *,
     frequency_length: int,
@@ -26717,6 +26924,82 @@ def main() -> None:
         f"resonance_closed={resonance.resonance_cell_closed} "
         f"nonzero_gate={resonance.nonzero_short_dual_gate_proved} "
         f"mmkls={resonance.full_mmkls_proved}"
+    )
+    reciprocal_fibre = reciprocal_radical_fibre_audit(
+        moment_abscissa=F(1, 16)
+    )
+    print(
+        "balanced_max_a: reciprocal_radical_fibre="
+        f"epsilon={_fmt(reciprocal_fibre.moment_abscissa)} "
+        f"Amax={_fmt(reciprocal_fibre.outer_entry_max_exponent)} "
+        "nmax="
+        f"{_fmt(reciprocal_fibre.ramanujan_argument_max_exponent)} "
+        "dual="
+        f"{_fmt(reciprocal_fibre.first_dual_length_exponent)},"
+        f"{_fmt(reciprocal_fibre.second_dual_length_exponent)} "
+        "euler="
+        f"{reciprocal_fibre.reciprocal_radical_dirichlet_series_exact} "
+        "A_primes_subpower="
+        f"{reciprocal_fibre.primes_dividing_outer_entry_cost_subpower} "
+        "nonaxis_divisor="
+        f"{reciprocal_fibre.nonaxis_fibre_is_divisor_bounded} "
+        f"axis_fibre={_fmt(reciprocal_fibre.axis_fibre_exponent)} "
+        f"nonaxis={_fmt(reciprocal_fibre.nonaxis_bound_exponent)} "
+        f"axis={_fmt(reciprocal_fibre.axis_bound_exponent)} "
+        "target="
+        f"{_fmt(reciprocal_fibre.long_cofactor_target_exponent)} "
+        f"saving={_fmt(reciprocal_fibre.power_saving_margin)} "
+        "outer_polylog="
+        f"{reciprocal_fibre.outer_divisor_weight_costs_only_polylog} "
+        "long_main="
+        f"{reciprocal_fibre.long_cofactor_density_main_covered} "
+        "density_error="
+        f"{reciprocal_fibre.squarefree_density_error_aggregated} "
+        "short_cofactor="
+        f"{reciprocal_fibre.short_cofactor_cell_covered} "
+        f"mmkls={reciprocal_fibre.full_mmkls_proved}"
+    )
+    short_cofactor = short_cofactor_mobius_interval_audit(
+        cofactor_cutoff_exponent=F(1, 8),
+        qsmooth_split_relative_exponent=F(1, 10),
+    )
+    print(
+        "balanced_max_a: short_cofactor_mobius="
+        f"eta={_fmt(short_cofactor.cofactor_cutoff_exponent)} "
+        "Dmin="
+        f"{_fmt(short_cofactor.modulus_variable_min_exponent)} "
+        "Hmin="
+        f"{_fmt(short_cofactor.mobius_interval_min_exponent)} "
+        f"theta={_fmt(short_cofactor.raw_short_interval_ratio)} "
+        "convolution="
+        f"{short_cofactor.qsmooth_convolution_identity_exact} "
+        "rho="
+        f"{_fmt(short_cofactor.qsmooth_split_relative_exponent)} "
+        "theta_rescaled="
+        f"{_fmt(short_cofactor.rescaled_short_interval_ratio)} "
+        "threshold="
+        f"{_fmt(short_cofactor.published_quantitative_threshold)} "
+        f"margin={_fmt(short_cofactor.threshold_margin)} "
+        "published="
+        f"{short_cofactor.small_qsmooth_factor_uses_published_mobius_bound} "
+        "large_reciprocal="
+        f"{short_cofactor.large_qsmooth_reciprocal_tail_has_power_saving} "
+        "large_count="
+        f"{short_cofactor.large_qsmooth_count_tail_has_power_saving} "
+        "smooth="
+        f"{short_cofactor.smooth_physical_weight_allows_partial_summation} "
+        "density="
+        f"{_fmt(short_cofactor.long_density_error_first_exponent)},"
+        f"{_fmt(short_cofactor.long_density_error_second_exponent)} "
+        "density_saving="
+        f"{_fmt(short_cofactor.long_density_error_saving)} "
+        f"density_closed={short_cofactor.long_density_error_aggregated} "
+        f"short_closed={short_cofactor.short_cofactor_cell_covered} "
+        "hard_mmkls="
+        f"{short_cofactor.balanced_hard_box_mmkls_covered} "
+        f"all_boxes={short_cofactor.all_dyadic_boxes_aggregated} "
+        "asymptotic="
+        f"{short_cofactor.full_long_mollifier_asymptotic_proved}"
     )
     blomer_pascadi = blomer_pascadi_hard_box_audit()
     print(

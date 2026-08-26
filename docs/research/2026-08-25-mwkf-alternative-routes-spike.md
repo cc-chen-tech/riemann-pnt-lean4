@@ -20464,6 +20464,316 @@ prove MMKLS.  The interface physical_ramanujan_resonance_audit records
 the exact zero fixture, the inverse-zeta factor, the divisor-bounded
 resonance multiplicity, and those remaining false flags.
 
+### 4.109zjaceb Reciprocal-radical fibres close the long-cofactor main
+
+The positive weight in the nonzero gate is much sparser than its
+pointwise bound one.  For \(n\ne0\), recall
+
+\[
+ b_A(n)=\prod_{\substack{p\mid |n|\\p\nmid A}}\frac1{p+1}.
+\]
+
+For \(\Re z>0\), its Dirichlet series is the exact Euler product
+
+\[
+ \boxed{
+ \mathcal B_A(z):=\sum_{n\ge1}\frac{b_A(n)}{n^z}
+ =\prod_{p\mid A}(1-p^{-z})^{-1}
+  \prod_{p\nmid A}
+  \left(1+\frac{p^{-z}}{(p+1)(1-p^{-z})}\right).}
+ \tag{4.845dc_14xq_35w8}
+\]
+
+The second product converges absolutely in this half-plane.  Fix
+\(0<\epsilon<1/4\).  Subject to \(A\le T^3\), the first product is
+maximized, up to an absolute constant, by using the smallest possible
+prime divisors.  The prime number theorem and partial summation give
+
+\[
+ \begin{aligned}
+ \log\prod_{p\mid A}(1-p^{-\epsilon})^{-1}
+ &\ll_\epsilon \sum_{\substack{p\le C\log(3A)}}p^{-\epsilon}\\
+ &\ll_\epsilon
+ \frac{(\log(3A))^{1-\epsilon}}{\log\log(3A)}.
+ \end{aligned}
+ \tag{4.845dc_14xq_35w9}
+\]
+
+It follows directly from positivity in (4.845dc_14xq_35w8) that,
+uniformly for \(X\ge2\),
+
+\[
+ \boxed{
+ \sum_{1\le |n|\le X}b_A(n)
+ \ll_\epsilon X^\epsilon
+ \exp\!\left(
+ C_\epsilon\frac{(\log(3A))^{1-\epsilon}}
+ {\log\log(3A)}\right)
+ =X^\epsilon T^{o(1)}.}
+ \tag{4.845dc_14xq_35w10}
+\]
+
+Now use the affine-product coordinate itself, rather than summing the
+two dual variables trivially.  For fixed \(A,n\), the relation
+
+\[
+ n=m+Akl,
+ \qquad m\in[c_1A,c_2A]
+ \tag{4.845dc_14xq_35w11}
+\]
+
+places the integer \(kl\) in an interval of the fixed length
+\(c_2-c_1+O(1)\).  Away from the axes \(kl=0\), every integer in that
+interval has at most \(2\tau(|kl|)=T^{o(1)}\) ordered signed
+factorizations with
+\(|k|,|l|\ll T^{1/2}(\log T)^C\).  Thus the nonaxis fibre of
+(4.845dc_14xq_35w11) is divisor-bounded.  Moreover
+
+\[
+ |n|\ll A T(\log T)^C\le T^{4+o(1)}.
+\]
+
+Choose \(\epsilon=1/16\) in (4.845dc_14xq_35w10).  After taking the
+polylogarithmic supremum of the physical Fourier weight, the complete
+nonaxis \((m,k,l)\)-sum for each fixed \(A\) is
+
+\[
+ \boxed{\ll T^{4/16+o(1)}=T^{1/4+o(1)}.}
+ \tag{4.845dc_14xq_35w12}
+\]
+
+On the axes, the number of pairs with \(kl=0\) is
+\(O(T^{1/2}(\log T)^C)\), while \(n=m\ll A\le T^3\).  The same moment
+bound gives
+
+\[
+ \boxed{
+ T^{1/2+o(1)}\sum_{m\asymp A}b_A(m)
+ \ll T^{1/2+3/16+o(1)}
+ =T^{11/16+o(1)}.}
+ \tag{4.845dc_14xq_35w13}
+\]
+
+The fully recombined outer coefficient is \(\mu(A)\) times a fixed
+divisor-bounded smooth allocation weight.  Even without using its sign,
+
+\[
+ \sum_{A\asymp T^\alpha}\frac{|\alpha(A)|}{A}
+ \ll (\log T)^C.
+ \tag{4.845dc_14xq_35w14}
+\]
+
+Equations (4.845dc_14xq_35w12)--(4.845dc_14xq_35w14), together with the
+separately closed zero argument from the preceding subsection, prove
+
+\[
+ \boxed{
+ (\mathrm{SDRG})_\alpha^{\rm long\ main}
+ \ll T^{11/16+o(1)}
+ =T\,T^{-5/16+o(1)}}
+ \tag{4.845dc_14xq_35w15}
+\]
+
+uniformly for \(0\le\alpha\le3\).  This supplies more than the required
+arbitrary logarithmic saving and closes the entire long-cofactor density
+main by a positive majorant; no new spectral large sieve is needed for
+this piece.
+
+The conclusion is deliberately limited to the main term in
+(4.845dc_14xq_35v).  Uniform aggregation of \(\mathcal E_{d,A}\) and the
+short-cofactor range, including the prime/top-conductor cell, remains
+open.  The interface reciprocal_radical_fibre_audit records the
+Euler product, the two exact fibre exponents, the \(5/16\) saving, and
+keeps precisely those remaining flags false.
+
+### 4.109zjacec The short cofactor is above the published Möbius interval threshold
+
+It remains to treat the error in (4.845dc_14xq_35v) and the range where
+the cofactor \(e\) is short.  Fix the exact cutoff
+
+\[
+ E_0=T^{1/8}.
+ \tag{4.845dc_14xq_35w16}
+\]
+
+First, squarefree inclusion--exclusion and partial summation give the
+uniform smooth estimate
+
+\[
+ \mathcal E_{d,A}
+ \ll_J \tau(dA)\left(\frac Sd\right)^{-3/2}
+ \sum_{j\le J}\|W^{(j)}\|_\infty.
+ \tag{4.845dc_14xq_35w17}
+\]
+
+Indeed, insert \(\mu^2(e)=\sum_{a^2\mid e}\mu(a)\), count the remaining
+integer with the coprimality condition by finite inclusion--exclusion,
+and sum \(a\le(S/d)^{1/2}\).  In the long range \(S/d\ge E_0\), count
+the solutions to \(d\mid m+Akl\), \(m\asymp A\), by \(O(A/d+1)\).
+Summing (4.845dc_14xq_35w17) first over \(m\), then over the
+\(T^{1+o(1)}\) dual pairs, \(d\le S/E_0\), and the normalized outer
+coefficient gives the two exact contributions
+
+\[
+ \begin{aligned}
+ T S^{-3/2}A_0\sum_{d\le S/E_0}d^{-1/2}
+ &\ll T\frac{A_0}{S}E_0^{-1/2},\\
+ T S^{-3/2}\sum_{d\le S/E_0}d^{1/2}
+ &\ll T E_0^{-3/2},
+ \end{aligned}
+ \tag{4.845dc_14xq_35w18}
+\]
+
+where \(A_0\le S=T^3\).  Thus the density error is
+
+\[
+ \boxed{\ll T^{15/16+o(1)}+T^{13/16+o(1)},}
+ \tag{4.845dc_14xq_35w19}
+\]
+
+with a fixed saving \(T^{-1/16}\) against the short-dual target.
+
+Now take \(e\le E_0\), so \(d\asymp D:=S/e\ge T^{23/8}\).  For a
+nonzero complementary divisor \(c\), rewrite the exact divisibility
+condition as
+
+\[
+ m+Akl=dc.
+ \tag{4.845dc_14xq_35w20}
+\]
+
+For fixed \(A,k,l,c,e\), the condition \(m\asymp A\) restricts \(d\)
+to one interval of length
+
+\[
+ H\asymp\min\left(D,\frac A{|c|}\right).
+\]
+
+The support bound \(|kl|\ll T(\log T)^C\) implies
+
+\[
+ |c|\ll\frac{AT(\log T)^C}{D},
+ \qquad
+ H\gg\frac DT(\log T)^{-C}
+ \ge T^{15/8}(\log T)^{-C}.
+ \tag{4.845dc_14xq_35w21}
+\]
+
+Ignoring logarithmic slack, the worst relative interval exponent is
+
+\[
+ \boxed{
+ \frac{\log_T H}{\log_T D}
+ \ge\frac{2-1/8}{3-1/8}
+ =\frac{15}{23}>\frac7{12}.}
+ \tag{4.845dc_14xq_35w22}
+\]
+
+The coprimality \((d,Ae)=1\) must not be hidden inside a nonuniform
+theorem constant.  Put \(Q=Ae\), and let
+\(\mathbf1_{\langle Q\rangle}(r)\) be one when every prime divisor of
+\(r\) divides \(Q\).  Euler factors give the exact convolution identity
+
+\[
+ \boxed{
+ \mu(d)\mathbf 1_{(d,Q)=1}
+ =\sum_{r\mid d}\mathbf1_{\langle Q\rangle}(r)\mu(d/r)
+ =(\mu*\mathbf1_{\langle Q\rangle})(d).}
+ \tag{4.845dc_14xq_35w23}
+\]
+
+Split \(r\) at \(R=D^{1/10}\).  For \(r\le R\), the ordinary Möbius
+variable \(u=d/r\) has interval ratio at least
+
+\[
+ \boxed{
+ \frac{15/23-1/10}{1-1/10}
+ =\frac{127}{207}>\frac7{12},
+ \qquad
+ \frac{127}{207}-\frac7{12}=\frac{25}{828}.}
+ \tag{4.845dc_14xq_35w24}
+\]
+
+The quantitative Motohashi--Ramachandra theorem therefore applies with
+a fixed margin.  In the form recalled in Section 2.1 of
+[Matomäki--Teräväinen](https://arxiv.org/abs/1911.09076), for every fixed
+\(\theta>7/12\),
+
+\[
+ \sum_{x<n\le x+H}\mu(n)
+ \ll H\exp\!\left[-c_\theta
+ \left(\frac{\log x}{\log\log x}\right)^{1/3}\right],
+ \qquad H\ge x^\theta.
+ \tag{4.845dc_14xq_35w25}
+\]
+
+Smooth partial summation is legal here: after (4.845dc_14xq_35w20),
+the physical kernel has derivatives \(H^{-j}(\log T)^{C_j}\) in the
+\(d\)-interval.  The exponential decay in (4.845dc_14xq_35w25) absorbs
+every QCT seminorm, dyadic, and harmonic \(q\)-sum logarithm.
+
+For completeness, the large \(Q\)-smooth factors require no theorem.
+For any fixed \(0<\delta_1<1\),
+
+\[
+ \sum_{\substack{r>R\\p\mid r\Rightarrow p\mid Q}}\frac1r
+ \le R^{-\delta_1}
+ \prod_{p\mid Q}(1-p^{-(1-\delta_1)})^{-1}
+ =D^{-\delta_1/10+o(1)}.
+ \tag{4.845dc_14xq_35w26}
+\]
+
+The endpoint error from replacing an interval count by \(H/r+1\) is
+controlled independently: with \(\delta_2=1/2<15/23\),
+
+\[
+ \#\{r\le2D:p\mid r\Rightarrow p\mid Q\}
+ \le(2D)^{\delta_2}
+ \prod_{p\mid Q}(1-p^{-\delta_2})^{-1}
+ =D^{1/2+o(1)}.
+ \tag{4.845dc_14xq_35w27}
+\]
+
+Its contribution after the physical \(d^{-1}\) factor is
+\(D^{-1/2+o(1)}\), smaller than the baseline
+\(H/D\ge D^{-8/23-o(1)}\).  Both finite Euler products in
+(4.845dc_14xq_35w26)--(4.845dc_14xq_35w27) are \(D^{o(1)}\) uniformly
+for \(Q\le T^{25/8}\), by the same smallest-prime extremal estimate as
+in (4.845dc_14xq_35w9).
+
+Finally sum the short intervals with their original weights.  For fixed
+\(A,e,k,l\),
+
+\[
+ \sum_c\frac HD
+ \ll\frac AD\sum_{1\le |c|\ll AT/D}\frac1{|c|}
+ \ll\frac AD(\log T)^C.
+ \tag{4.845dc_14xq_35w28}
+\]
+
+After multiplication by \(e^{-2}\), the dual volume \(T^{1+o(1)}\),
+and the outer factor \(A^{-1}\), summing \(A\asymp A_0\le S\) gives
+
+\[
+ \frac{A_0T}{S}\sum_{e\le E_0}\frac1e(\log T)^C
+ \le T(\log T)^C.
+ \tag{4.845dc_14xq_35w29}
+\]
+
+Inserting (4.845dc_14xq_35w25)--(4.845dc_14xq_35w27) upgrades this to
+\(T(\log T)^{-B}\) for every fixed \(B\).  Hence the short-cofactor
+cell, including \(e=1\) and the prime/top-conductor sector, is covered
+on the balanced hard box.
+
+Together with (4.845dc_14xq_35w15) and (4.845dc_14xq_35w19), this proves
+the balanced hard-box MMKLS inequality.  It does **not yet** assert the
+global asymptotic: the argument must be transported through every
+retained unbalanced box and the existing \(q\)- and transform-tail
+ledger before the sole residual cell may be deleted.  The interface
+short_cofactor_mobius_interval_audit records the exact threshold margin,
+both Q-smooth tails, the density-error saving, and keeps the global
+aggregation and final-asymptotic flags false.
+
 ### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
 
 The July 2026 bilinear Kloosterman theorem of
