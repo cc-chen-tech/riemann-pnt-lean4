@@ -874,6 +874,7 @@ The resulting exact coverage table is:
 | Tao--Teräväinen, [arXiv:2107.02158](https://arxiv.org/abs/2107.02158) | \((\log\log T)^{-c}\) | fixed-complexity linear systems and logarithmic, not half-power, decay | no |
 | Teräväinen--Walker, arXiv:2303.12574 | qualitative logarithmic limit | fixed Beatty data, not a moving rational vector family | no |
 | Lichtman, [arXiv:2009.08969v2](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | scalar \(L^1\) shift average, fixed weight, and \(H=X^\theta<X\), not the moving-weight endpoint vector \(L^2\) packet | no |
+| Technau--Zafeiropoulos, [arXiv:1907.06050](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error in continuous/metric slope | rational \(Q\)-grid is not covered, a second index Möbius is absent, and generic sampling aliases cost \(T^{1/2}\) in energy | no |
 | Kim, arXiv:2603.23250 | \(<T^{1/600}\) in the entering range | deficit \(T^{299/600}\) and Möbius coefficient hypothesis fails | no |
 
 For Pascadi Corollary 1.4, substituting
@@ -914,3 +915,46 @@ farey_type_i_unit_divisor_shifted_prime_reassembly and
 lichtman_shifted_prime_type_i_coverage_audit record this exact
 reindexing and the three independent mismatches; neither asserts a Type-I
 estimate.
+
+Technau--Zafeiropoulos gives a closer \(L^2\) comparison.  Its continuous
+metric estimate has coefficient energy \(\|f\|_2^2\), so \(Q\asymp T\)
+copies would have the desired total exponent two.  But the finite
+trigonometric polynomial used to expose Beatty membership has bandwidth
+\(K\asymp T^{3/2}\).  On a uniform \(Q\)-grid,
+
+\[
+ \frac1Q\sum_{b\bmod Q}\left|\sum_kc_ke(kb/Q)\right|^2
+ =
+ \sum_{\rho\bmod Q}\left|\sum_{k\equiv\rho\;(\bmod Q)}c_k\right|^2.
+ \tag{6.5}
+\]
+
+Generic Cauchy costs the largest alias multiplicity
+\(1+K/Q\asymp T^{1/2}\); the corresponding separated-node large sieve has
+the same power on the actual reciprocal slope grid.  Consequently the
+continuous exponent \(2\) becomes the generic sampled exponent \(5/2\).
+The exact finite witness \(Q=5\), \(c_1=c_6=c_{11}=1\) has continuous
+energy \(3\) and normalized grid energy \(9\), so the alias factor is not
+an artifact of the inequality for arbitrary coefficients.
+
+The new narrower analytic target is therefore cancellation inside the
+nonzero alias classes:
+
+\[
+ \sum_{\rho\bmod Q}
+ \left\|\sum_{k\equiv\rho\;(\bmod Q)}
+ c_{k;h,\delta,\nu,\sigma}\right\|_2^2
+ \ll T^\varepsilon\sum_k
+ \|c_{k;h,\delta,\nu,\sigma}\|_2^2.
+ \tag{6.6}
+\]
+
+This must retain both Möbius factors and all \(h\delta\) packets.
+Technau--Zafeiropoulos treats one fixed coefficient function and a
+continuous Lebesgue slope average; it proves neither the rational-grid
+sampling step nor (6.6).  The helpers
+trigonometric_grid_aliasing_sides and
+technau_zafeiropoulos_grid_coverage_audit record the exact alias identity
+and the resulting half-power deficit.  The exact Fourier-coefficient map
+from the original Type packet to (6.6) is also still missing.  Their
+coverage flag remains false.

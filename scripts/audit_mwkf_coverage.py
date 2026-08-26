@@ -7211,6 +7211,129 @@ def lichtman_shifted_prime_type_i_coverage_audit(
     }
 
 
+def trigonometric_grid_aliasing_sides(
+    *,
+    q: int,
+    coefficients: dict[int, Fraction],
+) -> dict[str, object]:
+    """Expand normalized Q-grid energy into exact Fourier alias classes.
+
+    For ``F(b)=sum_k c_k e(k*b/q)``, character orthogonality gives
+
+    ``q^-1 sum_b |F(b)|^2 = sum_(k1=k2 mod q) c_k1*c_k2``.
+
+    The right side is the sum of squared coefficient sums in every residue
+    class.  Its zero-alias part is the continuous Fourier energy; all
+    distinct frequencies differing by a nonzero multiple of ``q`` form the
+    alias cross term.  Coefficients are exact rationals, so no numerical
+    roots of unity are used.
+    """
+
+    if q <= 0:
+        raise ValueError("q must be positive")
+    if not coefficients:
+        raise ValueError("at least one Fourier coefficient is required")
+    exact = {
+        int(frequency): F(value)
+        for frequency, value in coefficients.items()
+    }
+    residue_groups: dict[int, list[tuple[int, Fraction]]] = {}
+    for frequency, coefficient in exact.items():
+        residue_groups.setdefault(frequency % q, []).append(
+            (frequency, coefficient)
+        )
+    for group in residue_groups.values():
+        group.sort()
+
+    continuous = sum((value * value for value in exact.values()), F(0))
+    residue_sums = tuple(
+        (
+            residue,
+            sum((value for _, value in group), F(0)),
+        )
+        for residue, group in sorted(residue_groups.items())
+    )
+    discrete = sum((value * value for _, value in residue_sums), F(0))
+    expanded = sum(
+        (
+            left_value * right_value
+            for group in residue_groups.values()
+            for _, left_value in group
+            for _, right_value in group
+        ),
+        F(0),
+    )
+    max_multiplicity = max(len(group) for group in residue_groups.values())
+    cauchy_majorant = max_multiplicity * continuous
+    return {
+        "modulus": q,
+        "continuous_fourier_energy": continuous,
+        "residue_class_sums": residue_sums,
+        "zero_alias_diagonal_energy": continuous,
+        "nonzero_alias_cross_energy": expanded - continuous,
+        "discrete_grid_energy": discrete,
+        "expanded_collision_energy": expanded,
+        "discrete_parseval_identity_verified": discrete == expanded,
+        "max_alias_multiplicity": max_multiplicity,
+        "cauchy_alias_majorant": cauchy_majorant,
+        "alias_majorant_verified": discrete <= cauchy_majorant,
+    }
+
+
+def technau_zafeiropoulos_grid_coverage_audit(
+    *,
+    value_length_exponent: Fraction,
+    fourier_truncation_exponent: Fraction,
+    slope_grid_exponent: Fraction,
+    coefficient_l2_energy_exponent: Fraction,
+    target_energy_exponent: Fraction,
+) -> dict[str, object]:
+    """Audit continuous metric Beatty L2 against the rational slope grid.
+
+    The classical finite polynomial displayed as (3.1) in
+    Technau--Zafeiropoulos has frequencies ``k=m*j`` with ``m<=X`` and
+    ``|j|<=sqrt(X)``.  Sampling a bandwidth ``K`` polynomial on only ``Q``
+    rational slopes permits ``K/Q`` frequencies in one alias class.  This
+    ledger records the generic sampling loss; it does not claim that every
+    structured coefficient saturates that loss.
+    """
+
+    x = F(value_length_exponent)
+    truncation = F(fourier_truncation_exponent)
+    grid = F(slope_grid_exponent)
+    coefficient_energy = F(coefficient_l2_energy_exponent)
+    target = F(target_energy_exponent)
+    if min(x, truncation, grid, coefficient_energy, target) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    bandwidth = x + truncation
+    alias_multiplicity = max(F(0), bandwidth - grid)
+    continuous_total = grid + coefficient_energy
+    generic_sampled = continuous_total + alias_multiplicity
+    return {
+        "source": (
+            "Technau--Zafeiropoulos, arXiv:1907.06050, "
+            "Theorem 2.1, Corollary 4.4, and equation (3.1)"
+        ),
+        "trigonometric_bandwidth_exponent": bandwidth,
+        "slope_grid_exponent": grid,
+        "alias_multiplicity_exponent": alias_multiplicity,
+        "continuous_slope_total_energy_exponent": continuous_total,
+        "generic_sampled_energy_exponent": generic_sampled,
+        "target_energy_exponent": target,
+        "remaining_energy_deficit": max(F(0), generic_sampled - target),
+        "published_slope_average": "continuous Lebesgue",
+        "actual_slope_average": "Q-point rational grid",
+        "continuous_metric_l2_reaches_target": continuous_total <= target,
+        "second_index_mobius_supported": False,
+        "afe_product_frequency_interlaces_sector_grid": False,
+        "type_packet_fourier_adapter_constructed": False,
+        "structured_nonzero_alias_cancellation_required": (
+            alias_multiplicity > 0
+        ),
+        "covers_coupled_type_gate": False,
+    }
+
+
 def transition_line_coprimality_layer_identity(
     *,
     a: int,
@@ -11081,6 +11204,38 @@ def main() -> None:
         "norm_match="
         f"{lichtman_type_i['norm_hypothesis_matched']},"
         f"covered={lichtman_type_i['covers_type_i_gate']}"
+    )
+    beatty_grid_alias = technau_zafeiropoulos_grid_coverage_audit(
+        value_length_exponent=F(1),
+        fourier_truncation_exponent=F(1, 2),
+        slope_grid_exponent=F(1),
+        coefficient_l2_energy_exponent=F(1),
+        target_energy_exponent=F(2),
+    )
+    print(
+        "large_q_transition: beatty_grid_alias="
+        "bandwidth="
+        f"{_fmt(beatty_grid_alias['trigonometric_bandwidth_exponent'])},"
+        f"grid={_fmt(beatty_grid_alias['slope_grid_exponent'])},"
+        "alias="
+        f"{_fmt(beatty_grid_alias['alias_multiplicity_exponent'])},"
+        "continuous="
+        f"{_fmt(beatty_grid_alias['continuous_slope_total_energy_exponent'])},"
+        "sampled="
+        f"{_fmt(beatty_grid_alias['generic_sampled_energy_exponent'])},"
+        f"target={_fmt(beatty_grid_alias['target_energy_exponent'])},"
+        "deficit="
+        f"{_fmt(beatty_grid_alias['remaining_energy_deficit'])},"
+        "continuous_metric="
+        f"{beatty_grid_alias['continuous_metric_l2_reaches_target']},"
+        f"second_mu={beatty_grid_alias['second_index_mobius_supported']},"
+        "afe_interlaces="
+        f"{beatty_grid_alias['afe_product_frequency_interlaces_sector_grid']},"
+        "adapter="
+        f"{beatty_grid_alias['type_packet_fourier_adapter_constructed']},"
+        "alias_gate="
+        f"{beatty_grid_alias['structured_nonzero_alias_cancellation_required']},"
+        f"covered={beatty_grid_alias['covers_coupled_type_gate']}"
     )
     transition_delta_lattice = transition_delta_lattice_poisson_audit(
         determinant_exponent=F(1),

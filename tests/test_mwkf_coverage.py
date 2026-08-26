@@ -2155,6 +2155,61 @@ def test_lichtman_shifted_prime_bound_is_logarithmic_and_misses_type_i_gate() ->
     assert not result["covers_type_i_gate"]
 
 
+def test_rational_slope_sampling_expands_into_exact_alias_classes() -> None:
+    alias = getattr(
+        coverage_audit,
+        "trigonometric_grid_aliasing_sides",
+        None,
+    )
+    assert alias is not None, "trigonometric grid alias ledger is missing"
+
+    result = alias(
+        q=5,
+        coefficients={1: F(1), 6: F(1), 11: F(1)},
+    )
+
+    assert result["continuous_fourier_energy"] == F(3)
+    assert result["residue_class_sums"] == ((1, F(3)),)
+    assert result["zero_alias_diagonal_energy"] == F(3)
+    assert result["nonzero_alias_cross_energy"] == F(6)
+    assert result["discrete_grid_energy"] == F(9)
+    assert result["expanded_collision_energy"] == F(9)
+    assert result["discrete_parseval_identity_verified"]
+    assert result["max_alias_multiplicity"] == 3
+    assert result["cauchy_alias_majorant"] == F(9)
+    assert result["alias_majorant_verified"]
+
+
+def test_metric_beatty_sampling_recreates_the_hard_face_half_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "technau_zafeiropoulos_grid_coverage_audit",
+        None,
+    )
+    assert audit is not None, "metric Beatty grid coverage audit is missing"
+
+    result = audit(
+        value_length_exponent=F(1),
+        fourier_truncation_exponent=F(1, 2),
+        slope_grid_exponent=F(1),
+        coefficient_l2_energy_exponent=F(1),
+        target_energy_exponent=F(2),
+    )
+
+    assert result["trigonometric_bandwidth_exponent"] == F(3, 2)
+    assert result["alias_multiplicity_exponent"] == F(1, 2)
+    assert result["continuous_slope_total_energy_exponent"] == F(2)
+    assert result["generic_sampled_energy_exponent"] == F(5, 2)
+    assert result["remaining_energy_deficit"] == F(1, 2)
+    assert result["published_slope_average"] == "continuous Lebesgue"
+    assert result["actual_slope_average"] == "Q-point rational grid"
+    assert not result["second_index_mobius_supported"]
+    assert not result["afe_product_frequency_interlaces_sector_grid"]
+    assert not result["type_packet_fourier_adapter_constructed"]
+    assert result["structured_nonzero_alias_cancellation_required"]
+    assert not result["covers_coupled_type_gate"]
+
+
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
     coefficients = getattr(
         coverage_audit,
@@ -4822,6 +4877,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "norm=L1_over_shifts,required=vector_cluster_L2,"
         "log_sup=1/3,power=0,deficit=1/2,H_lt_X=False,"
         "fixed_weight=False,norm_match=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: beatty_grid_alias="
+        "bandwidth=3/2,grid=1,alias=1/2,continuous=2,"
+        "sampled=5/2,target=2,deficit=1/2,continuous_metric=True,"
+        "second_mu=False,afe_interlaces=False,adapter=False,"
+        "alias_gate=True,covered=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "

@@ -11050,6 +11050,7 @@ is:
 | [Tao--Teräväinen](https://arxiv.org/abs/2107.02158) | quantitative Möbius/\(\Lambda\) Gowers uniformity for fixed-complexity linear systems | \((\log\log T)^{-c}\), power exponent \(0\) | no |
 | [Banks--Shparlinski](https://arxiv.org/abs/0708.1015) | primes in a fixed irrational finite-type Beatty sequence | power error in a one-prime problem | no double Möbius and no moving rational family |
 | [Lichtman](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \(L^1\) average of scalar shifted-prime Möbius sums | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | no moving Farey/AFE weight, no endpoint \(H\asymp X\), and no vector \(L^2\) half-power |
+| [Technau--Zafeiropoulos](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for a continuous/metric Beatty slope | continuous Lebesgue slope average reaches the scalar target | no rational \(Q\)-grid sampling, no second index Möbius, and generic aliasing loses \(T^{1/2}\) in energy |
 | Kim, arXiv:2603.23250 | ternary shifted correlations | saving \(<T^{1/600}\) in the entering range | short by \(T^{299/600}\), Möbius hypothesis also fails |
 
 Thus (4.644) narrows the coefficient class but does not turn a logarithmic
@@ -11141,6 +11142,111 @@ The helpers farey_type_i_unit_divisor_shifted_prime_reassembly and
 lichtman_shifted_prime_type_i_coverage_audit verify (4.646)--(4.648) and
 record the norm, range, and half-power deficit.  Their Type-I coverage flags
 remain false.
+
+### 4.75 Continuous metric Beatty \(L^2\) reaches the target, but rational-grid aliasing restores the half-power
+
+Technau--Zafeiropoulos, arXiv:1907.06050, Theorem 2.1 and Corollary
+4.4 give a genuinely square-root-sized discrepancy for one arithmetic
+function on a Beatty set.  In the notation of their paper the underlying
+continuous estimate is
+
+\[
+ \int_0^1
+ \max_{x\le X}\left|\Sigma_{\lambda^{-1}}^{(\ell)}(f,x)\right|^2
+ d\lambda
+ \ll (\log\log X)^2\|f\|_{2,X}^2.
+ \tag{4.650}
+\]
+
+For bounded or prime-logarithmic coefficients, the power exponent on the
+right is one.  Multiplying by \(Q\asymp X\) slope samples would therefore
+give total energy exponent two, exactly the target in (4.645).  This is the
+first audited Beatty theorem whose continuous \(L^2\) strength is
+numerically sufficient.
+
+The conclusion, however, is a Lebesgue slope average, not a theorem on the
+moving rational grid.  The classical finite trigonometric polynomial
+displayed as equation (3.1) in that paper has frequencies
+
+\[
+ k=mj,\qquad m\le X+1,\qquad |j|\le\sqrt X,
+ \qquad |k|\ll X^{3/2}.
+ \tag{4.651}
+\]
+
+The sampling obstruction is exact on a uniform \(Q\)-grid.  For
+\(F(t)=\sum_k c_ke(kt)\), character orthogonality gives
+
+\[
+ \boxed{
+ \frac1Q\sum_{b\bmod Q}|F(b/Q)|^2
+ =\sum_{\rho\bmod Q}
+   \left|\sum_{k\equiv\rho\;(\bmod Q)}c_k\right|^2
+ =\sum_k|c_k|^2+
+   \sum_{\substack{k_1\ne k_2\\Q\mid k_1-k_2}}
+   c_{k_1}\overline{c_{k_2}}.}
+ \tag{4.652}
+\]
+
+If an alias class contains at most \(L_Q\) frequencies, Cauchy gives
+
+\[
+ \frac1Q\sum_{b\bmod Q}|F(b/Q)|^2
+ \le L_Q\sum_k|c_k|^2,\qquad
+ L_Q\ll1+\frac{X^{3/2}}Q.
+ \tag{4.653}
+\]
+
+This factor is sharp for unrestricted coefficients: with
+\(Q=5\), \(c_1=c_6=c_{11}=1\), the continuous energy is \(3\) and the
+normalized grid energy is \(9\).  The actual reciprocal nodes
+\(\lambda_b=(1+b/Q)^{-1}\) on the unit-slope face are nonuniform but
+\(Q^{-1}\)-separated on a fixed compact interval; the standard
+trigonometric large sieve gives
+the same generic factor \(1+X^{3/2}/Q\).  Thus, at \(X=Q=T\),
+
+\[
+ \boxed{
+ E_{\rm continuous}=T^{2+o(1)},\qquad
+ E_{\rm sampled}^{\rm generic}=T^{5/2+o(1)},\qquad
+ \text{deficit}=T^{1/2}.}
+ \tag{4.654}
+\]
+
+This reproduces the hard-face exponent \(5/2\) from a new direction.  It
+does not prove that the actual coefficients saturate the generic sampling
+bound.  Instead it identifies the precise improvement a successful
+metric-Beatty route would need:
+
+\[
+ \boxed{
+ \sum_{\rho\bmod Q}
+ \left\|\sum_{k\equiv\rho\;(\bmod Q)}
+ c_{k;h,\delta,\nu,\sigma}\right\|_2^2
+ \ll_{\varepsilon,W}T^\varepsilon
+ \sum_k\|c_{k;h,\delta,\nu,\sigma}\|_2^2.}
+ \tag{4.655}
+\]
+
+All Type sectors and outer packet labels must be summed before (4.655).
+The original \(a_{\rm AFE}=h\delta\) and the auxiliary sector character
+\(\xi\) are distinct variables in (4.621zadj16u); \(h\delta\) therefore
+cannot be counted as an extra interlacing of the rational slope grid
+without a new derived identity.  Moreover (4.650) has one coefficient
+function on Beatty values, whereas the actual packet retains the second
+index Möbius factor and a vector wave packet.
+
+The finite helper trigonometric_grid_aliasing_sides verifies (4.652)--(4.653)
+over exact rational coefficients.  The scale adapter
+technau_zafeiropoulos_grid_coverage_audit records bandwidth \(3/2\), grid
+exponent one, the alias exponent \(1/2\), continuous exponent two, sampled
+exponent \(5/2\), the two coefficient/packet mismatches, and the missing
+Type-packet Fourier adapter.  It keeps
+the coverage flag false.  The exact map from the original Type packet to the
+Fourier coefficients in (4.655) has not been constructed.  Formula (4.655)
+is therefore a narrower
+candidate pre-Cauchy nonzero-alias target, not a proved or already-derived
+replacement for the coupled-kernel gate.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
