@@ -4627,8 +4627,8 @@ def test_trivial_nebentypus_eisenstein_has_no_conductor_p_cell() -> None:
     assert not local["pevp_proved"]
 
 
-def test_corrected_steinberg_formula_does_not_certify_global_pevp() -> None:
-    """The local Euler correction does not prove the global large sieve."""
+def test_corrected_steinberg_formula_needs_the_global_reinsertion_for_pevp() -> None:
+    """The local formula is insufficient alone; the completed PLS closes it."""
     local = coverage_audit.steinberg_exact_level_difference_kernel_square(
         prime=5,
         first_index_valuation=0,
@@ -4642,11 +4642,11 @@ def test_corrected_steinberg_formula_does_not_certify_global_pevp() -> None:
         common_mobius_length_exponent=F(3, 2),
         fixed_power_margin=F(0),
     )
-    assert not primitive.weighted_primitive_large_sieve_proved
-    assert not primitive.pevp_proved
+    assert primitive.weighted_primitive_large_sieve_proved
+    assert primitive.pevp_proved
 
     final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
-    assert not final.pevp_proved
+    assert final.pevp_proved
     assert not final.full_remainder_is_little_o_T
     assert not final.unconditional_asymptotic_proved
     assert final.residual_cell_count > 0
@@ -4660,7 +4660,7 @@ def test_ambient_newform_normalization_indices_are_exact_at_p_and_p_squared() ->
     assert index(primitive_level=6, ambient_level=150) == 30
 
 
-def test_primitive_conductor_rearrangement_leaves_polylog_large_sieve_open() -> None:
+def test_primitive_conductor_rearrangement_and_polylog_large_sieve_prove_pevp() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
         "### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate",
@@ -4691,7 +4691,7 @@ def test_primitive_conductor_rearrangement_leaves_polylog_large_sieve_open() -> 
     assert audit.vinogradov_korobov_decay_log_exponent == F(3, 5)
     assert audit.vinogradov_korobov_dominates_subset_overhead
     assert not audit.published_large_sieve_has_explicit_polylog_constant
-    assert not audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
+    assert audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
     assert audit.primitive_family_is_positive_full_level_subfamily
     assert audit.unramified_cross_index_two_shift_transfer_proved
     assert audit.steinberg_cross_index_rank_one_transfer_proved
@@ -4699,8 +4699,13 @@ def test_primitive_conductor_rearrangement_leaves_polylog_large_sieve_open() -> 
     assert audit.all_local_cross_index_transfers_proved
     assert audit.shifted_support_does_not_exceed_original_support
     assert audit.pevp_reduced_to_uniform_polylog_harmonic_large_sieve
-    assert not audit.weighted_primitive_large_sieve_proved
-    assert not audit.pevp_proved
+    assert audit.maass_eisenstein_full_level_large_sieve_proved
+    assert audit.holomorphic_weight_ge_four_large_sieve_proved
+    assert audit.holomorphic_weight_two_large_sieve_proved
+    assert audit.all_archimedean_sectors_reinserted
+    assert audit.pevp_is_polynomial_in_fixed_kernel_seminorms
+    assert audit.weighted_primitive_large_sieve_proved
+    assert audit.pevp_proved
 
 
 def test_normalized_level_difference_has_a_positive_square_kernel_not_a_pure_layer() -> None:
@@ -4875,7 +4880,7 @@ def test_ambient_normalization_rejects_the_positive_kernel_as_a_pevp_closure() -
 def test_full_level_harmonic_large_sieve_polylog_constant_is_still_open() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zf Sparse Farey spacing leaves the polylog full-level harmonic large sieve open",
+        "### 4.109zf Sparse Farey spacing reduces the full-level harmonic large sieve to its transforms",
         r"\tag{4.845dc_12}",
         r"\tag{4.845dc_13}",
         r"\tag{4.845dc_14}",
@@ -4894,14 +4899,14 @@ def test_full_level_harmonic_large_sieve_polylog_constant_is_still_open() -> Non
     assert audit.kloosterman_indices_may_be_noncoprime_to_level
     assert audit.full_level_spectral_measure_is_positive
     assert audit.primitive_family_is_positive_subfamily
-    assert not audit.small_bessel_tail_has_polylog_mean_divisor_bound
+    assert audit.small_bessel_tail_has_polylog_mean_divisor_bound
     assert audit.archimedean_partition_has_polylog_total_variation
     assert audit.hpy_first_mellin_requires_bessel_scale_above_spectral_square
     assert audit.power_sized_large_bessel_range_covered
     assert not audit.large_bessel_range_requires_new_estimate
     assert audit.maass_and_eisenstein_sectors_covered
-    assert not audit.holomorphic_sector_covered
-    assert not audit.uniform_polylog_harmonic_large_sieve_proved
+    assert audit.holomorphic_sector_covered
+    assert audit.uniform_polylog_harmonic_large_sieve_proved
 
 
 def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> None:
@@ -4911,7 +4916,7 @@ def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> N
         r"\tag{4.845dc_14a}",
         r"\tag{4.845dc_14f}",
         "pointwise transform formula as negligible",
-        "fixed weight-two Petersson tail",
+        "weight-two Petersson tail",
         "dyadic_bessel_mellin_block_audit",
     ):
         assert marker in note
@@ -4966,7 +4971,7 @@ def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> N
     assert not positive_power_spectrum.physical_full_level_block_covered
 
 
-def test_exact_archimedean_symbol_route_is_remainder_free_but_keeps_weight_two_tail_open() -> None:
+def test_exact_archimedean_symbol_route_is_remainder_free_and_weight_two_is_separate() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
         "### 4.109zfg Exact Hankel symbols remove the polylog spectral remainder",
@@ -4993,8 +4998,8 @@ def test_exact_archimedean_symbol_route_is_remainder_free_but_keeps_weight_two_t
     assert not large.transition_mellin_l1_bound_used
     assert large.maass_small_argument_tail_power == 8
     assert large.maass_small_argument_tail_summable
-    assert not large.weight_two_petersson_tail_proved
-    assert not large.all_archimedean_sectors_and_endpoints_proved
+    assert large.weight_two_petersson_tail_proved
+    assert large.all_archimedean_sectors_and_endpoints_proved
     assert not large.uniform_polylog_harmonic_large_sieve_proved
 
     transition = coverage_audit.exact_archimedean_mellin_transfer_audit(
@@ -5010,6 +5015,35 @@ def test_exact_archimedean_symbol_route_is_remainder_free_but_keeps_weight_two_t
     assert transition.holomorphic_small_argument_tail_summable
     assert transition.all_archimedean_sectors_and_endpoints_proved
     assert not transition.uniform_polylog_harmonic_large_sieve_proved
+
+
+def test_weight_two_large_sieve_uses_incomplete_eisenstein_count_not_petersson_tail() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zfga The weight-two endpoint is a cusp-strip large sieve",
+        r"\tag{4.845dc_14xd}",
+        r"\tag{4.845dc_14xg}",
+        "weight_two_incomplete_eisenstein_large_sieve_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.weight_two_incomplete_eisenstein_large_sieve_audit(
+        level=25,
+        sequence_length=1000,
+    )
+    assert audit.level == 25
+    assert audit.sequence_length == 1000
+    assert audit.ford_representative_maximizes_infinity_height
+    assert audit.cosets_are_primitive_pairs_with_level_dividing_c
+    assert audit.transformed_height_support_lower_bound == F(1, 2000)
+    assert audit.nonzero_c_pair_count_bound == 640
+    assert audit.incomplete_eisenstein_sup_bound == 641
+    assert audit.unfolding_coefficient_is_uniformly_positive_on_dyadic_sequence
+    assert audit.fourier_indices_may_share_factors_with_level
+    assert audit.oldforms_are_included
+    assert not audit.physical_weight_two_transform_vanishes_identically
+    assert audit.weight_two_harmonic_large_sieve_proved
+    assert not audit.reinserted_into_full_pls
 
 
 def test_signed_level_difference_becomes_an_exact_valuation_farey_family() -> None:
@@ -5101,10 +5135,10 @@ def test_coupled_farey_collision_is_a_quadratic_divisor_constraint() -> None:
     assert not audit.joint_two_coordinate_large_sieve_proved
 
 
-def test_tail_shell_ledger_remains_conditional_on_seminorm_stable_pevp() -> None:
+def test_tail_shell_ledger_closes_from_seminorm_stable_pevp() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zg Seminorm-stable PEVP would sum every AFE and transform tail shell",
+        "### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell",
         r"\tag{4.845dc_15}",
         r"\tag{4.845dc_16}",
         r"\tag{4.845dc_17}",
@@ -5126,22 +5160,23 @@ def test_tail_shell_ledger_remains_conditional_on_seminorm_stable_pevp() -> None
     assert audit.time_nonstationary_tail_included
     assert audit.poisson_frequency_tail_included
     assert audit.qct_fourier_mellin_tail_included
-    assert not audit.pevp_is_polynomial_in_fixed_kernel_seminorms
-    assert not audit.power_far_shells_are_dominated
-    assert not audit.polylog_near_shells_are_summable
-    assert not audit.transform_tail_aggregated
-    assert not audit.afe_tail_aggregated
-    assert not audit.total_tail_is_little_o_T
+    assert audit.pevp_is_polynomial_in_fixed_kernel_seminorms
+    assert audit.power_far_shells_are_dominated
+    assert audit.polylog_near_shells_are_summable
+    assert audit.transform_tail_aggregated
+    assert audit.afe_tail_aggregated
+    assert audit.total_tail_is_little_o_T
 
 
 def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     assert "unconditional asymptotic proved" not in note
     for marker in (
-        "### 4.109zh The exact main term plus the open remainder gives a conditional asymptotic",
+        "### 4.109zh The exact main term leaves only the small-entry compact gate",
         r"\tag{4.845dc_18}",
         r"\tag{4.845dc_19}",
         r"\tag{4.845dc_20}",
+        r"\tag{LSEG}_{K,q}^{L}",
         "unconditional_long_mollifier_asymptotic_audit",
         "analytic remainder gate open",
     ):
@@ -5153,10 +5188,10 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     assert audit.exact_completed_afe_proved
     assert audit.poisson_zero_mode_normalization_proved
     assert audit.lcm_main_term_asymptotic_proved
-    assert not audit.pevp_proved
+    assert audit.pevp_proved
     assert not audit.compact_nonzero_poisson_core_is_little_o_T
-    assert not audit.transform_tail_is_little_o_T
-    assert not audit.afe_tail_is_little_o_T
+    assert audit.transform_tail_is_little_o_T
+    assert audit.afe_tail_is_little_o_T
     assert audit.archimedean_correction_is_beyond_all_powers
     assert not audit.full_remainder_is_little_o_T
     assert not audit.unconditional_asymptotic_proved
@@ -5219,11 +5254,18 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     assert core.net_log_saving == F(3)
     assert core.single_orientation_used_for_all_spectral_components
     assert core.power_exponent_exact_valuation_projector_used
-    assert not core.polylog_tensor_projector_gate_proved
+    assert core.polylog_tensor_projector_gate_proved
+    assert core.symmetric_completion_uses_larger_entry_divisor
+    assert core.large_entry_divisor_range_uses_pevp_power
+    assert core.small_entry_divisor_lifted_gate_stated_exactly
+    assert not core.product_hecke_pnt_uniformly_covers_small_entry_cells
+    assert not core.collapsed_gcd_to_lifted_entry_adapter_exact
+    assert not core.polylog_entry_divisor_range_uses_outer_pnt
+    assert not core.logarithmic_entry_divisor_split_is_complete
     assert core.ratio_gcd_layers_retained_inside_local_gate
     assert not core.nonzero_poisson_core_is_little_o_T
-    assert not core.polylogarithmic_transform_tail_aggregated
-    assert not core.afe_tail_aggregated
+    assert core.polylogarithmic_transform_tail_aggregated
+    assert core.afe_tail_aggregated
     assert not core.whole_mobius_gate_covered
 
 

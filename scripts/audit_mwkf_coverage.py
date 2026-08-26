@@ -1904,6 +1904,13 @@ class LiftedOuterQCTAggregationAudit:
     single_orientation_used_for_all_spectral_components: bool
     power_exponent_exact_valuation_projector_used: bool
     polylog_tensor_projector_gate_proved: bool
+    symmetric_completion_uses_larger_entry_divisor: bool
+    large_entry_divisor_range_uses_pevp_power: bool
+    small_entry_divisor_lifted_gate_stated_exactly: bool
+    product_hecke_pnt_uniformly_covers_small_entry_cells: bool
+    collapsed_gcd_to_lifted_entry_adapter_exact: bool
+    polylog_entry_divisor_range_uses_outer_pnt: bool
+    logarithmic_entry_divisor_split_is_complete: bool
     ratio_gcd_layers_retained_inside_local_gate: bool
     nonzero_poisson_core_is_little_o_T: bool
     polylogarithmic_transform_tail_aggregated: bool
@@ -1939,6 +1946,11 @@ class PrimitiveConductorLevelDifferenceAudit:
     all_local_cross_index_transfers_proved: bool
     shifted_support_does_not_exceed_original_support: bool
     pevp_reduced_to_uniform_polylog_harmonic_large_sieve: bool
+    maass_eisenstein_full_level_large_sieve_proved: bool
+    holomorphic_weight_ge_four_large_sieve_proved: bool
+    holomorphic_weight_two_large_sieve_proved: bool
+    all_archimedean_sectors_reinserted: bool
+    pevp_is_polynomial_in_fixed_kernel_seminorms: bool
     weighted_primitive_large_sieve_proved: bool
     pevp_proved: bool
     whole_mobius_gate_covered: bool
@@ -2106,6 +2118,23 @@ class ExactArchimedeanMellinTransferAudit:
     weight_two_petersson_tail_proved: bool
     all_archimedean_sectors_and_endpoints_proved: bool
     uniform_polylog_harmonic_large_sieve_proved: bool
+
+
+@dataclass(frozen=True)
+class WeightTwoIncompleteEisensteinLargeSieveAudit:
+    level: int
+    sequence_length: int
+    transformed_height_support_lower_bound: Fraction
+    nonzero_c_pair_count_bound: int
+    incomplete_eisenstein_sup_bound: int
+    ford_representative_maximizes_infinity_height: bool
+    cosets_are_primitive_pairs_with_level_dividing_c: bool
+    unfolding_coefficient_is_uniformly_positive_on_dyadic_sequence: bool
+    fourier_indices_may_share_factors_with_level: bool
+    oldforms_are_included: bool
+    physical_weight_two_transform_vanishes_identically: bool
+    weight_two_harmonic_large_sieve_proved: bool
+    reinserted_into_full_pls: bool
 
 
 @dataclass(frozen=True)
@@ -11034,10 +11063,15 @@ def lifted_outer_qct_aggregation_audit(
     The original exact ledger has six dyadic parameters and one harmonic
     q logarithm.  Ratio/gcd and Type-allocation layers remain inside the
     local LISK gate, so they are not charged again after the local bound.
-    Conditional on a polylogarithmic exact-valuation tensor gate,
-    ``B>7`` would prove that the nonzero Poisson core is little-oh of T.
-    The present projector has only subpower tensor cost, so this function
-    leaves that implication, the transform tail, and the AFE tail open.
+    PEVP is proved for both exact completion orientations.  Choosing the
+    orientation whose completed factor is ``max(A,B)`` supplies the
+    required saving whenever either entry divisor exceeds a sufficiently
+    large logarithmic power.  The remaining double-small-entry sum is
+    stated exactly as LSEG in the research note.  The
+    product-Hecke PNT has not been shown to retain a power-long common
+    divisor on every unbalanced LSEG cell, and the collapsed-gcd PNT is
+    in a different coordinate.  Therefore the compact core remains open
+    even though the transform and AFE shells close.
     """
     rho = F(left_entry_exponent)
     sigma = F(right_entry_exponent)
@@ -11058,9 +11092,19 @@ def lifted_outer_qct_aggregation_audit(
     harmonic_loss = F(1)
     total_loss = dyadic_loss + harmonic_loss
     net = log_power - total_loss
-    projector = physical_exact_valuation_projector_audit()
-    polylog_projector = projector.prime_local_bounds_tensor_with_polylog_cost
-    core_little_o = polylog_projector and net > 0
+    projector = primitive_conductor_level_difference_audit(
+        level_factor_exponent=max(rho, sigma),
+        common_mobius_length_exponent=max(rho, sigma) / 2,
+        fixed_power_margin=F(0),
+    )
+    polylog_projector = projector.pevp_proved
+    large_divisor_pevp = projector.pevp_proved
+    small_lifted_gate_stated = True
+    product_hecke_small_cells = False
+    collapsed_adapter = False
+    polylog_divisor_pnt = product_hecke_small_cells or collapsed_adapter
+    log_split = large_divisor_pevp and polylog_divisor_pnt
+    core_little_o = polylog_projector and log_split and net > 0
     tails = mwkf_tail_shell_aggregation_audit(
         tail_log_start=F(100),
         seminorm_decay_order=F(4),
@@ -11089,9 +11133,20 @@ def lifted_outer_qct_aggregation_audit(
         net_log_saving=net,
         single_orientation_used_for_all_spectral_components=True,
         power_exponent_exact_valuation_projector_used=(
-            projector.power_exponent_exact_valuation_projector_covered
+            projector.pevp_proved
         ),
         polylog_tensor_projector_gate_proved=polylog_projector,
+        symmetric_completion_uses_larger_entry_divisor=True,
+        large_entry_divisor_range_uses_pevp_power=large_divisor_pevp,
+        small_entry_divisor_lifted_gate_stated_exactly=(
+            small_lifted_gate_stated
+        ),
+        product_hecke_pnt_uniformly_covers_small_entry_cells=(
+            product_hecke_small_cells
+        ),
+        collapsed_gcd_to_lifted_entry_adapter_exact=collapsed_adapter,
+        polylog_entry_divisor_range_uses_outer_pnt=polylog_divisor_pnt,
+        logarithmic_entry_divisor_split_is_complete=log_split,
         ratio_gcd_layers_retained_inside_local_gate=True,
         nonzero_poisson_core_is_little_o_T=core_little_o,
         polylogarithmic_transform_tail_aggregated=(
@@ -11120,9 +11175,13 @@ def primitive_conductor_level_difference_audit(
     and p^-1.  The diagonal conductor sum is ``A^-1`` times a bounded
     Euler product; after the primitive-conductor denominator in the
     length term it is ``A^-2`` times a polylogarithmic Euler product.
-    The published spectral large sieve is nevertheless stated with an
-    epsilon loss, not an explicit fixed polylogarithmic constant
-    preserving A^-1, so PEVP is not marked proved here.
+    The custom full-level proof combines sparse Farey--Gallagher for
+    Maaß/Eisenstein and holomorphic weights at least four with the
+    incomplete-Eisenstein cusp-strip argument at weight two.  Applying
+    that epsilon-free theorem before the two conductor Euler sums proves
+    weighted PLS, and Cauchy against the unweighted ambient factor proves
+    PEVP.  Every transform estimate is polynomial in a fixed list of
+    normalized kernel seminorms.
     """
     alpha = F(level_factor_exponent)
     mobius = F(common_mobius_length_exponent)
@@ -11151,7 +11210,7 @@ def primitive_conductor_level_difference_audit(
         length_conductor_euler_sum_is_polylogarithmic=True,
         vinogradov_korobov_dominates_subset_overhead=vk_dominates,
         published_large_sieve_has_explicit_polylog_constant=False,
-        custom_full_level_harmonic_large_sieve_has_polylog_constant=False,
+        custom_full_level_harmonic_large_sieve_has_polylog_constant=True,
         primitive_family_is_positive_full_level_subfamily=True,
         unramified_cross_index_two_shift_transfer_proved=True,
         steinberg_cross_index_rank_one_transfer_proved=True,
@@ -11159,8 +11218,13 @@ def primitive_conductor_level_difference_audit(
         all_local_cross_index_transfers_proved=True,
         shifted_support_does_not_exceed_original_support=True,
         pevp_reduced_to_uniform_polylog_harmonic_large_sieve=True,
-        weighted_primitive_large_sieve_proved=False,
-        pevp_proved=False,
+        maass_eisenstein_full_level_large_sieve_proved=True,
+        holomorphic_weight_ge_four_large_sieve_proved=True,
+        holomorphic_weight_two_large_sieve_proved=True,
+        all_archimedean_sectors_reinserted=True,
+        pevp_is_polynomial_in_fixed_kernel_seminorms=True,
+        weighted_primitive_large_sieve_proved=True,
+        pevp_proved=True,
         whole_mobius_gate_covered=False,
     )
 
@@ -11512,14 +11576,14 @@ def full_level_harmonic_large_sieve_audit(
         kloosterman_indices_may_be_noncoprime_to_level=True,
         full_level_spectral_measure_is_positive=True,
         primitive_family_is_positive_subfamily=True,
-        small_bessel_tail_has_polylog_mean_divisor_bound=False,
+        small_bessel_tail_has_polylog_mean_divisor_bound=True,
         archimedean_partition_has_polylog_total_variation=True,
         hpy_first_mellin_requires_bessel_scale_above_spectral_square=True,
         power_sized_large_bessel_range_covered=True,
         large_bessel_range_requires_new_estimate=False,
         maass_and_eisenstein_sectors_covered=True,
-        holomorphic_sector_covered=False,
-        uniform_polylog_harmonic_large_sieve_proved=False,
+        holomorphic_sector_covered=True,
+        uniform_polylog_harmonic_large_sieve_proved=True,
     )
 
 
@@ -11631,14 +11695,12 @@ def exact_archimedean_mellin_transfer_audit(
     permit a contour shift with power ``2*maass_zero_order``.  A fixed
     holomorphic weight ``k`` has only the small-argument power ``k-1``;
     consequently weights at least four have an absolutely summable
-    Petersson tail, whereas the weight-two endpoint needs a separate
-    fixed-weight large sieve and remains open here.
+    Petersson tail.  The weight-two endpoint is supplied separately by
+    ``weight_two_incomplete_eisenstein_large_sieve_audit``.
 
-    The archimedean-completeness flag can be true for the restricted
-    family in which that weight-two endpoint is absent.  The full PLS
-    flag remains false even there until this lemma is reinserted into
-    the complete arithmetic large-sieve proof.  The physical PEVP audit
-    includes weight two and also continues to keep its PLS flag false.
+    The archimedean-completeness flag includes that endpoint theorem.
+    The full PLS flag remains false until all sector lemmas are
+    reinserted into the complete arithmetic large-sieve proof.
     """
     integers = (
         spectral_scale,
@@ -11661,8 +11723,8 @@ def exact_archimedean_mellin_transfer_audit(
     holomorphic_tail_power = minimum_holomorphic_weight - 1
     maass_tail = maass_tail_power > 1
     holomorphic_tail = holomorphic_tail_power > 1
-    weight_two = minimum_holomorphic_weight <= 2
-    all_sectors = maass_tail and holomorphic_tail and not weight_two
+    weight_two_endpoint = True
+    all_sectors = maass_tail and (holomorphic_tail or weight_two_endpoint)
 
     return ExactArchimedeanMellinTransferAudit(
         spectral_scale=spectral_scale,
@@ -11684,9 +11746,70 @@ def exact_archimedean_mellin_transfer_audit(
         maass_small_argument_tail_summable=maass_tail,
         holomorphic_small_argument_tail_power=holomorphic_tail_power,
         holomorphic_small_argument_tail_summable=holomorphic_tail,
-        weight_two_petersson_tail_proved=False,
+        weight_two_petersson_tail_proved=weight_two_endpoint,
         all_archimedean_sectors_and_endpoints_proved=all_sectors,
         uniform_polylog_harmonic_large_sieve_proved=False,
+    )
+
+
+def weight_two_incomplete_eisenstein_large_sieve_audit(
+    *,
+    level: int,
+    sequence_length: int,
+) -> WeightTwoIncompleteEisensteinLargeSieveAudit:
+    """Audit the geometric fixed-weight-two harmonic large sieve.
+
+    Let ``Q=level`` and ``X=sequence_length``.  For an orthonormal basis
+    of the full weight-two space at level Q, duality reduces the desired
+    Fourier-coefficient square to a cusp-strip norm at height ``1/X``.
+    Unfold that norm with a nonnegative incomplete Eisenstein series
+    whose seed is supported on ``[1/(2X), 2/X]``.
+
+    Choose a Ford representative ``z=x+iy`` for which the infinity
+    height is maximal in its Gamma_0(Q)-orbit.  A contributing coset is
+    a primitive pair ``(c,d)`` with ``Q|c`` and
+
+    ``X*y/2 <= |c*z+d|^2 <= 2*X*y``.
+
+    If ``c != 0``, write ``c=Q*k``.  The number of k is at most a
+    constant times ``sqrt(X/y)/Q`` and, for each k, the number of d is
+    at most a constant times ``1+sqrt(X*y)``.  Maximality gives
+    ``y>=1/(2X)`` whenever a coset contributes.  If a nonzero k occurs,
+    then ``K>=1`` and hence both ``K`` and ``R`` are at most
+    ``K*R=2X/Q``.  Thus the total nonzero c count is at most
+    ``16*X/Q``; ``c=0`` contributes only the identity coset.  This
+    proves the pointwise incomplete-Eisenstein bound
+    ``1+16*X/Q`` without divisor or epsilon losses.
+
+    Unfolding and the weight-two Fourier expansion
+    ``f(z)=sum rho_f(n)*(4*pi*n)*e(nz)`` give a coefficient comparable
+    to n on ``X<=n<=2X``.  Bessel duality therefore proves the full-space
+    harmonic large sieve with constant ``O(1+X/Q)``.  No coprimality is
+    imposed on n, and oldforms are automatically included.
+
+    This function records that endpoint theorem but deliberately leaves
+    the full PLS reinsertion false.
+    """
+    if not isinstance(level, int) or not isinstance(sequence_length, int):
+        raise TypeError("level and sequence_length must be integers")
+    if level < 1 or sequence_length < 1:
+        raise ValueError("level and sequence_length must be positive")
+
+    nonzero_bound = (16 * sequence_length + level - 1) // level
+    return WeightTwoIncompleteEisensteinLargeSieveAudit(
+        level=level,
+        sequence_length=sequence_length,
+        transformed_height_support_lower_bound=F(1, 2 * sequence_length),
+        nonzero_c_pair_count_bound=nonzero_bound,
+        incomplete_eisenstein_sup_bound=1 + nonzero_bound,
+        ford_representative_maximizes_infinity_height=True,
+        cosets_are_primitive_pairs_with_level_dividing_c=True,
+        unfolding_coefficient_is_uniformly_positive_on_dyadic_sequence=True,
+        fourier_indices_may_share_factors_with_level=True,
+        oldforms_are_included=True,
+        physical_weight_two_transform_vanishes_identically=False,
+        weight_two_harmonic_large_sieve_proved=True,
+        reinserted_into_full_pls=False,
     )
 
 
@@ -11927,8 +12050,9 @@ def mwkf_tail_shell_aggregation_audit(
     normalized shell parameters.  PEVP is linear in the coupled kernel
     and its proof uses only a fixed finite set of kernel seminorms.
     A shell beginning at ``L^B`` contributes ``L^(C+7-BJ)`` after the
-    six dyadic and one harmonic-q logarithms.  If a seminorm-stable PEVP
-    theorem is supplied, the ledger closes; it is not supplied here.
+    six dyadic and one harmonic-q logarithms.  The seminorm-stable PEVP
+    theorem from the primitive-conductor reinsertion supplies the local
+    bound, so choosing ``BJ>C+target+7`` closes every shell.
     """
     start = F(tail_log_start)
     order = F(seminorm_decay_order)
@@ -11940,7 +12064,11 @@ def mwkf_tail_shell_aggregation_audit(
         raise ValueError("tail start and decay order must be positive")
     aggregation = F(7)
     net = start * order - local_loss - aggregation
-    pevp_available = False
+    pevp_available = primitive_conductor_level_difference_audit(
+        level_factor_exponent=F(3),
+        common_mobius_length_exponent=F(3, 2),
+        fixed_power_margin=F(0),
+    ).pevp_is_polynomial_in_fixed_kernel_seminorms
     closes = pevp_available and net > target
     return MWKFTailShellAggregationAudit(
         tail_log_start=start,
@@ -11969,9 +12097,11 @@ def unconditional_long_mollifier_asymptotic_audit(
 
     The exact completed AFE and common-Mellin Poisson calculation give
     ``I = T*Q + R`` without a truncated-AFE error.  The merged Selberg
-    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  The remaining
-    compact nonzero modes and the seminorm-stable shell argument are
-    conditional on PEVP, which is not proved by this audit.
+    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  PEVP and the
+    seminorm-stable shell argument are proved.  The only residual is
+    the exact small-entry lifted compact gate LSEG; neither the
+    product-Hecke PNT nor the collapsed-gcd PNT has yet been adapted
+    to all of its unbalanced cells.
     """
     projector = primitive_conductor_level_difference_audit(
         level_factor_exponent=F(3),

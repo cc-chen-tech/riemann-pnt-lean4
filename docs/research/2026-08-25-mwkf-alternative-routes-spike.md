@@ -7,17 +7,24 @@
 > retained.  The corrected Blomer--Milićević conductor-\(p\) calculation
 > in Section 4.109y preserves the required local power saving but disproves
 > the previously stated exact Steinberg cancellation.  Sections
-> 4.109zf--4.109zh are a conditional closure: the displayed
-> polylogarithmic full-level harmonic large sieve (4.845dc_12) has not been
-> proved from HPY Lemma 5.6.  Consequently PEVP, the tail aggregation, and
-> the unconditional \(T^3\) asymptotic remain unproved, with one residual
-> analytic cell.  Sections 4.109zfd--4.109zff now give the complete
+> Sections 4.109zf--4.109zfgb now close the local spectral route rather
+> than merely audit its exponents.  The displayed polylogarithmic
+> full-level harmonic large sieve (4.845dc_12) is proved by exact
+> Bessel--Mellin separation, sparse Farey--Gallagher, and the separate
+> weight-two cusp-strip argument.  Its primitive-conductor reinsertion
+> proves PLS and PEVP.  Sections 4.109zfd--4.109zff give the complete
 > finite cross-index transfer: two shifts for unramified data, one for
 > Steinberg data, and zero for ramified trivial-nebentypus Eisenstein
 > data.  Section 4.109zfg proves the remainder-free large and transition
-> Bessel--Mellin ranges and every Maaß/Eisenstein tail.  The remaining
-> archimedean input is the fixed weight-two Petersson tail; PLS and PEVP
-> are still false until that endpoint is controlled.
+> Bessel--Mellin ranges and every Maaß/Eisenstein tail, and Section
+> 4.109zfga proves the fixed weight-two endpoint by a cusp-strip
+> incomplete-Eisenstein argument.  Section 4.109zfgb reinserts every
+> sector into the conductor Euler sum and proves PLS and PEVP.  Every
+> AFE/transform shell is now \(o(T)\).  The unconditional asymptotic is
+> not promoted because one compact near-shell cell remains: the exact
+> adapter from the double-small lifted entry divisors
+> \(A=db\), \(B=d'b'\) to the
+> collapsed-gcd outer-PNT coordinates has not been proved.
 
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
@@ -33,9 +40,10 @@ The three routes audited here are:
 
 Only the second route survives the exponent audit.  The new theorem it
 requires is isolated as PEVP in Section 4.109x.  Sections 4.109y--4.109z
-reduce it to a weighted primitive-conductor large sieve; Section 4.109zf
-records an attempted proof whose uniform polylogarithmic conclusion is
-still an open input.
+reduce it to a weighted primitive-conductor large sieve; Sections
+4.109zf--4.109zfgb prove the required uniform polylogarithmic theorem
+and reinsert it.  The remaining open input is the small-entry-divisor
+compact gate stated after (4.845dc_14xm).
 
 ## 2. The exact logarithmic target
 
@@ -16164,9 +16172,9 @@ the AFE tail remain separate obligations.
 
 ### 4.109w The lifted nonzero Poisson core has a seven-log aggregation
 
-Write \(L=\log(2T)\).  Conditional on PEVP\(_{A,B}\), stated in Section
-4.109x and still open after Section 4.109zf, the local lifted estimates
-retain every ratio,
+Write \(L=\log(2T)\).  Before the proof in Section 4.109zfgb, this
+aggregation was conditional on PEVP\(_{A,B}\), stated in Section 4.109x.
+The local lifted estimates retain every ratio,
 gcd, exact-valuation, and Type-I/II allocation inside their coupled
 weight; none of these indices is summed a second time after the local
 gate.  For a left completion, the exact CRT lift has prefactor \(R\),
@@ -16209,12 +16217,12 @@ nonzero Poisson core satisfies
 \tag{4.845cx}
 \]
 
-Conditional on PEVP, this proves the compactly retained nonzero-mode
-core is \(o(T)\).  Formula (4.845cx) does not absorb the polylogarithmic kernel-separation
-tail or the original AFE tail.  The interface
-`lifted_outer_qct_aggregation_audit` therefore records the seven-log
-ledger, the conditional polylog tensor gate, and the still-open
-nonzero-core conclusion.
+Section 4.109zfgb proves PEVP, so (4.845cx) applies whenever its local
+\(L^{-B}\) hypothesis is supplied.  Formula (4.845cx) does not absorb
+the polylogarithmic kernel-separation tail or the original AFE tail;
+Section 4.109zg treats those shells.  The interface
+`lifted_outer_qct_aggregation_audit` records the seven-log ledger and
+the remaining small-entry LSEG failure of the compact core.
 
 
 ### 4.109x The valuation tensor isolates the PEVP square function
@@ -16251,8 +16259,10 @@ Sections 4.109y--4.109z give the formal primitive-conductor ledger, but
 Section 4.109ze shows that ordinary positive Cauchy does not legally
 transfer its cross-index local saving.  Sections 4.109zf--4.109zfa audit
 the full-level transform exponent, and Section 4.109zfb gives a direct
-geometric alternative.  None currently proves PEVP; therefore
-(4.845cv)--(4.845cx) remain conditional for the compact core.
+geometric alternative.  Sections 4.109zfd--4.109zfgb subsequently
+complete the finite transfer, the full-level sieve, and PEVP.  The
+compact core then remains open only at the small-entry LSEG gate stated
+after (4.845dc_14xm).
 
 
 ### 4.109y Exact-level differencing removes the bad valuation multiplicity
@@ -16514,17 +16524,17 @@ required constant.  Section 4.109zf gives the sparse-Farey reduction
 for the full-level harmonic square, while Section 4.109zfa records an
 exact dyadic Mellin exponent calculation.  Section 4.109zfg supplies
 uniform transform constants for the Maaß, Eisenstein, and holomorphic
-weight-at-least-four measures.  The fixed weight-two Petersson tail
-remains unproved.
+weight-at-least-four measures.  Section 4.109zfga proves the remaining
+fixed weight-two estimate without opening its Petersson tail.
 
 The interface `primitive_conductor_level_difference_audit` records the
 exact regrouping, the pre-density unramified exponent \(1\), the
 post-density unramified exponent \(3/2\), the Steinberg exponent
 \(1/2\), the required square exponent \(1\), and the polylogarithmic
-diagonal and length conductor Euler sums.  It keeps the epsilon-free
-full-level theorem, \((\mathrm{PLS})_{Q_0}\), and PEVP flags false,
-while recording that the finite cross-index transfer and the reduction
-of PEVP to PLS are proved.
+diagonal and length conductor Euler sums.  Sections
+4.109zfg--4.109zfgb now supply and reinsert the missing epsilon-free
+full-level theorem, so its \((\mathrm{PLS})_{Q_0}\) and PEVP flags are
+true; the outer aggregation remains separate.
 
 
 ### 4.109za The normalized level difference squares to a positive two-layer kernel
@@ -16953,15 +16963,15 @@ rejects the positive-square kernel as a PEVP closure and leaves PEVP
 false.
 
 
-### 4.109zf Sparse Farey spacing leaves the polylog full-level harmonic large sieve open
+### 4.109zf Sparse Farey spacing reduces the full-level harmonic large sieve to its transforms
 
 The failure in Section 4.109ze does not by itself invalidate the
 primitive-conductor Cauchy decomposition (4.845dc), but its weights must
 use the corrected Steinberg trace rather than an exact cross-index
 cancellation.  The remaining required input is to replace the published
 \((Q_0Y\mathcal T)^\varepsilon\) spectral large sieve by the following
-uniform polylogarithmic harmonic one.  It is a **target inequality**, not
-a theorem proved in this note.
+uniform polylogarithmic harmonic one.  At this stage it is a target
+inequality; Sections 4.109zfg--4.109zfgb prove and reinsert it.
 
 For a positive Maaß/Eisenstein Kuznetsov test of spectral mass
 \(\mathcal M\), define the standard full-level harmonic square
@@ -17074,7 +17084,10 @@ the endpoint and small-argument transforms, the continuous and
 holomorphic measures, and the uniform constants must be carried through
 without the published \((Q_0X\mathcal T)^\varepsilon\) loss.  HPY Lemma
 5.6 supplies transform formulae with an epsilon-bearing theorem context;
-it does not state (4.845dc_12).  Thus PLS and PEVP remain open.
+it does not state (4.845dc_12).  Thus the Farey calculation alone does
+not prove PLS or PEVP.  The exact transform and endpoint work in
+Sections 4.109zfg--4.109zfga, followed by the reinsertion in Section
+4.109zfgb, closes both statements.
 
 The interface \`full_level_harmonic_large_sieve_audit\` records the
 Farey spacing, the hybrid inner bound, the absence of an index
@@ -17196,8 +17209,8 @@ partitions.  The finite signed cross-index transfer is no longer a
 second open obligation: Sections 4.109zfd--4.109zff move it to fixed
 downward Fourier shifts before positive Cauchy.  Thus the corrected
 stationary-phase/seminorm theorem is the remaining PLS input at this
-point of the argument.  Section 4.109zfg proves all of it except the
-fixed weight-two Petersson tail.
+point of the argument.  Sections 4.109zfg--4.109zfga prove all of its
+archimedean sectors; their full conductor-weighted reinsertion remains.
 
 The interface \`dyadic_bessel_mellin_block_audit\` checks
 (4.845dc_14c)--(4.845dc_14f) in exact rational power exponents.  It
@@ -17764,28 +17777,319 @@ Summing dyadically over \(C>X\) gives
 holomorphic weight \(k\geq4\) are complete with polylogarithmic
 seminorm constants.
 
-The remaining endpoint is the **weight-two Petersson tail**.  There
+At this stage the remaining endpoint is the **weight-two Petersson tail**.
+There
 \(\beta=k-1=1\), so the first displayed term equals \(X/Q\) on every
 dyadic block and the absolute tail does not converge.  Its conditional
 Kloosterman cancellation is not supplied by the Farey square above.
 One must either prove the fixed-weight-\(2\) harmonic large sieve with
 an explicit polylogarithmic constant or arrange a trace formula in
-which this endpoint is absent.  Until that is done, the full
-holomorphic PLS, PEVP, and the unconditional asymptotic remain open.
+which this endpoint is absent.  The next subsection takes the first
+option by a positive cusp-strip argument.
 
 The interface exact_archimedean_mellin_transfer_audit records the
-remainder-free large and transition ranges, the contour-shift powers,
-and this single weight-two endpoint.  It sets the full physical
-large-sieve flag false when weight two is included.
+remainder-free large and transition ranges and the contour-shift
+powers.  Its weight-two field is supplied by the endpoint theorem in
+the next subsection; the full PLS reinsertion remains separate.
 
-### 4.109zg Seminorm-stable PEVP would sum every AFE and transform tail shell
+### 4.109zfga The weight-two endpoint is a cusp-strip large sieve
+
+The physical transform does not annihilate weight two.  With \(G_n\)
+as in (4.845aj), the holomorphic Kuznetsov transform at \(k=2\) is
+
+\[
+ \boxed{
+ \begin{aligned}
+ \dot G_n(2)
+ &=-4\int_0^\infty G_n(x)J_1(x)\frac{dx}{x}\\
+ &=-4(q_1X)^{1/2}\int_0^\infty
+ f_\infty(y)y^{-1/2}
+ J_1\!\left(\frac{4\pi\sqrt n}{Xy}\right)dy .
+ \end{aligned}}
+ \tag{4.845dc_14xd}
+\]
+
+This is obtained by the literal substitution
+\(y=4\pi\sqrt n/(xX)\).  There is no Mellin zero or parity factor in
+(4.845dc_14xd).  For example, a nonnegative \(f_\infty\) supported
+where the Bessel argument lies before the first positive zero of
+\(J_1\) makes the integral strictly nonzero.  Thus deleting the
+weight-two term would be an additional assumption.
+
+It is nevertheless possible to prove the required fixed-weight large
+sieve without estimating the conditionally convergent Petersson tail.
+Let \(\mathcal B_2(Q)\) be an orthonormal basis of the full weight-two
+space at level \(Q\), including oldforms, in the normalization
+
+\[
+ f(z)=\sum_{n\geq1}\rho_f(n)(4\pi n)e(nz).
+\]
+
+Fix a nonnegative smooth \(\eta\), supported in \([1/2,2]\) and
+positive on a fixed subinterval, and form the incomplete Eisenstein
+series
+
+\[
+ E_{Q,X}(z)
+ :=\sum_{\gamma\in\Gamma_\infty\backslash\Gamma_0(Q)}
+ \eta\!\left(X\Im(\gamma z)\right).
+ \tag{4.845dc_14xe}
+\]
+
+Choose in each orbit a Ford representative \(z=x+iy\) for which \(y\)
+is maximal.  A contributing coset is represented by a primitive pair
+\((c,d)\), with \(Q\mid c\), satisfying
+
+\[
+ \frac{Xy}{2}\leq |cz+d|^2\leq2Xy.
+ \tag{4.845dc_14xf}
+\]
+
+If any coset contributes, maximality gives \(y\geq1/(2X)\).  The
+\(c=0\) cell is the identity coset.  For \(c\ne0\), write \(c=Qk\).
+Put
+
+\[
+ R=(2Xy)^{1/2},\qquad
+ K=\frac{R}{Qy}=\frac1Q\left(\frac{2X}{y}\right)^{1/2}.
+\]
+
+Equation (4.845dc_14xf) forces \(|k|\leq K\), and for each \(k\) the
+integer \(d\) lies in an interval of length at most \(2R\).  If
+\(K<1\), no nonzero \(k\) occurs.  Otherwise
+
+\[
+ KR=\frac{2X}{Q},\qquad
+ K\leq\frac{2X}{Q},\qquad
+ R\leq KR=\frac{2X}{Q}
+\]
+
+by \(y\geq1/(2X)\) and \(K\geq1\).  Ignoring primitivity only enlarges
+the count, so
+
+\[
+ \boxed{
+ 0\leq E_{Q,X}(z)\ll_\eta1+\frac XQ}
+ \tag{4.845dc_14xg}
+\]
+
+uniformly on the quotient, with an absolute admissible counting
+constant \(16\).  No divisor bound, coprimality condition on the
+Fourier index, or \(Q^\varepsilon\) factor has entered.
+
+Now let \(F=\sum_{f\in\mathcal B_2(Q)}c_ff\).  Positivity, unfolding,
+and orthonormality give
+
+\[
+ \begin{aligned}
+ &\int_{\Gamma_0(Q)\backslash\mathbb H}
+ y^2|F(z)|^2E_{Q,X}(z)\,\frac{dx\,dy}{y^2}\\
+ &\quad=(4\pi)^2\sum_{n\geq1}n^2
+ \left|\sum_fc_f\rho_f(n)\right|^2
+ \int_0^\infty\eta(Xy)e^{-4\pi ny}\,dy\\
+ &\quad\leq\|E_{Q,X}\|_\infty\sum_f|c_f|^2.
+ \end{aligned}
+ \tag{4.845dc_14xh}
+\]
+
+For \(X\leq n\leq2X\), the last \(y\)-integral is \(X^{-1}\) times a
+fixed positive integral, so its coefficient in (4.845dc_14xh) is at
+least \(c_\eta n\).  Duality therefore proves the endpoint theorem
+
+\[
+ \boxed{
+ \sum_{f\in\mathcal B_2(Q)}
+ \left|\sum_{X\leq n\leq2X}
+ a_n\sqrt n\,\rho_f(n)\right|^2
+ \ll_\eta\left(1+\frac XQ\right)\sum_n|a_n|^2.}
+ \tag{4.845dc_14xi}
+\]
+
+This is the exact normalization required by (4.845dc_12), since
+\(\Gamma(2)=1\).  It treats the full level space, arbitrary Fourier
+indices, and all oldforms simultaneously.  In particular, the
+weight-two obstruction identified in Section 4.109zfg is now removed.
+The next remaining task is bookkeeping rather than a new
+archimedean estimate: insert (4.845dc_14xi), together with the other
+sectors from Section 4.109zfg, into the complete PLS conductor Euler
+sum before promoting PLS or PEVP.
+
+The interface weight_two_incomplete_eisenstein_large_sieve_audit
+records the Ford-domain count, the unfolded coefficient lower bound,
+the absence of index coprimality, and inclusion of oldforms.  It marks
+the weight-two endpoint proved but keeps the full-PLS reinsertion flag
+false.
+
+### 4.109zfgb Reinsertion proves PLS and PEVP
+
+We now combine the sector estimates before summing primitive
+conductors.  Sections 4.109zf--4.109zfg prove, for the Maaß and
+Eisenstein measures and for holomorphic weights \(k\geq4\), the
+full-level estimate
+
+\[
+ \mathcal L_Q(a)
+ \ll_{J,W}(\log(2T))^{C_J}
+ \left(\mathcal M+\frac XQ\right)\|a\|_2^2.
+\]
+
+Section 4.109zfga gives the same statement at \(k=2\), with no
+coprimality condition and with the full oldspace already included.
+Partitioning the polylogarithmic spectral interval costs only another
+fixed logarithmic power.  Consequently
+
+\[
+ \boxed{
+ \mathcal L_Q(a)
+ \ll_{J,W}(\log(2T))^{C_J}
+ \left(\mathcal M+\frac XQ\right)\|a\|_2^2}
+ \tag{4.845dc_14xj}
+\]
+
+holds for the complete Maaß, holomorphic, and Eisenstein spectrum.
+Every modulus block, \(C>X\) tail, exceptional parameter, and endpoint
+is included.  The proof uses finitely many normalized kernel
+derivatives, so \(C_J\) is polynomial in a fixed seminorm list.
+
+Apply (4.845dc_14xj) to each primitive family in (4.845dc).  A
+primitive family is a positive subfamily of the full level-\(Q_0\)
+square.  The two downward \(p^2\)-shifts in (4.845dc_14t) do not enlarge
+support.  Weighted Cauchy over their two rank choices uses their actual
+\(p^{-3/2}\) amplitudes; hence it produces the already displayed
+convergent conductor Euler product, not \(2^{\omega(A)}\).  The
+Steinberg component has one unshifted list, and the ramified continuous
+component is zero.
+
+The two exact conductor sums from Section 4.109z are
+
+\[
+ \sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)\ll A^{-1},
+ \qquad
+ \sum_{Q_0\mid A^2B}\frac{w_A^{(2)}(Q_0)}{Q_0}
+ \ll\frac{(\log\log(3A))^{C}}{A^2B}.
+\]
+
+Inserting these after (4.845dc_14xj) gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)
+ \int_{\mathscr S^*(Q_0)}
+ \left|\sum_{y\asymp Y}a_y\sqrt y\,\rho_\pi(y)\right|^2d\pi\\
+ &\qquad\ll_{J,W}\frac{(\log(2T))^{C_J}}A
+ \left(\mathcal T^2+\frac{Y}{AB}\right)\|a\|_2^2.
+ \end{aligned}}
+ \tag{4.845dc_14xk}
+\]
+
+Thus (4.845dc_14xk) is exactly
+\((\mathrm{PLS})_{Q_0}\), now as a theorem rather than a target.
+
+Finally return to the exact primitive-conductor identity (4.845dc).
+Put the complete signed local multiplier in the first Cauchy factor
+and the unweighted ambient polynomial in the second.  Apply
+(4.845dc_14xk) to the first and (4.845dc_14xj) at level \(AB\) to the
+second.  The exact valuation condition \(D=(A,h\delta)\) has already
+been included in \(w_A^{(2)}\); no extra divisor sum remains outside
+the Euler square.  This yields
+
+\[
+ \boxed{
+ \sum_{D\mid A}\left|
+   \sum_{j\mid A}\mu(j)\mathscr B_{A,B,D,j}[b,a]
+ \right|^2
+ \ll_{J,W}\frac{(\log(2T))^{C_J}}A
+ \|b\|_2^2\|a\|_2^2.}
+ \tag{4.845dc_14xl}
+\]
+
+Equation (4.845dc_14xl) proves
+\((\mathrm{PEVP})_{A,B}\).  Because every preceding transform bound is
+homogeneous and polynomial in the same finite seminorm list, PEVP is
+seminorm-stable and applies to the shell decomposition of Section
+4.109zg.
+
+For later global summation, one more logarithmic bridge is needed.
+Let \(L=\log(2T)\).  PEVP is proved for both exact completion
+orientations: the left theorem has saving \(A^{-1/2}\), and after
+interchanging \((R,A)\) with \((S,B)\), the right theorem has saving
+\(B^{-1/2}\).  Choose one orientation for all spectral components in
+the box, namely the one containing \(\max(A,B)\).  For the fixed PEVP
+loss \(L^{C_J}\), split
+
+\[
+ \max(A,B)\geq L^{2(B_0+C_J+8)}
+ \quad\hbox{or}\quad
+ A,B<L^{2(B_0+C_J+8)}.
+ \tag{4.845dc_14xm}
+\]
+
+In the first range the selected PEVP amplitude is at most
+\(L^{-B_0-C_J-8}\), so that range is complete.  It is tempting to use
+the restricted \((\mu*\mu)\) PNT estimate (4.776)--(4.779) in the
+second range.  That estimate, however, is stated in the collapsed-gcd
+coordinates, where its small parameter is \(C/G\); the lifted
+Kuznetsov coordinate here is the entry divisor \(A=db\).  No exact
+finite reindexing identifying these two polylog collars has yet been
+given.  Treating their common letter \(A\) as an identification would
+be invalid.
+
+The remaining statement can nevertheless be written without an
+unspecified ``adapter''.  For a left completion, retain every signed
+Type allocation and every outer scale before taking an absolute value,
+and put
+
+\[
+ \boxed{
+ \mathfrak G^{L}_{K,q}
+ :=\sum_{\substack{A<L^K\\B<L^K}}
+   \frac{\mathfrak S^{\mathrm{lift}}_{q,A,B}}R,
+ \qquad
+ |\mathfrak G^{L}_{K,q}|
+ \ll_{B_0,K,W}S L^{-B_0}.}
+ \tag{LSEG}_{K,q}^{L}
+\]
+
+The right-completion gate \((\mathrm{LSEG})^{R}_{K,q}\) is obtained by
+interchanging \((R,A)\) with \((S,B)\).  The sums in
+\((\mathrm{LSEG})_{K,q}^{L,R}\) include the exact endpoint inequalities,
+the factor coefficients \(\mu(d)\mu(b)\), the divisor sum \(j\mid A\),
+all ratio/gcd layers, and the physical kernel
+\(\Omega_{A,B,q}(c,m,h,\delta)\) from (4.845aq_1).  Thus the statement
+does not ask for a bound uniform over arbitrary coefficients, and it
+does not estimate the bounded-\(A\) cells separately.
+
+The product-Hecke PNT in (4.845w)--(4.845z) is a candidate input for
+\((\mathrm{LSEG})_{K,q}^{L,R}\), but it gives arbitrary logarithmic
+decay only while its common Möbius divisor has power length relative
+to the primitive conductor.  The current unbalanced-polytope audit
+does not prove that inequality on every cell with \(A,B<L^K\).  Likewise,
+(4.780) proves a polylogarithmic collar for the reduced collapsed slope
+\(C/G\), not for the lifted factor \(A=db\).  These two facts identify
+possible subroutes; neither is being recorded as a proof of LSEG.
+
+Consequently PLS and PEVP are proved, all transform/AFE shells are
+available, and the large-entry-divisor compact core is complete.  The
+single remaining residual cell is the compact core with
+\(A,B<L^{2(B_0+C_J+8)}\), for which one must either construct the exact
+adapter to a proved long-variable PNT range or prove
+\((\mathrm{LSEG})_{K,q}^{L,R}\) directly.  PEVP is not being asked to
+create Möbius cancellation after positive Cauchy.
+
+The interface primitive_conductor_level_difference_audit now marks the
+custom full-level sieve, weighted PLS, seminorm stability, and PEVP
+proved.  It leaves the whole-mollifier flag false at the
+polylogarithmic entry-divisor compact-core adapter just described.
+
+### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell
 
 The tail \(\mathcal R_{\rm tail}^{(B)}\) in (5.2a) of the exact
 off-diagonal audit was left open because the absolute majorant (5.8d)
-has scale \(T^{9/2}\).  Conditional on PEVP, no absolute mollifier majorant is
-needed.  The same signed local estimate would apply to every tail shell,
-and the integrations by parts defining that shell make its normalized
-kernel seminorm small.
+has scale \(T^{9/2}\).  Since PEVP is now proved, no absolute mollifier
+majorant is needed.  The same signed local estimate applies to every
+tail shell, and the integrations by parts defining that shell make its
+normalized kernel seminorm small.
 
 For one exact dyadic box put
 
@@ -17822,7 +18126,7 @@ union of the four tails assigns every box to its first active
 parameter and gives one factor \(\lambda_\star^{-J}\).  This avoids
 the incorrect product bound when only one parameter is large.
 
-The proposed proof of PEVP in Sections 4.109y--4.109zf uses Fourier inversion,
+The proof of PEVP in Sections 4.109y--4.109zfgb uses Fourier inversion,
 Mellin inversion, Gallagher's inequality, and finite local oldclass
 identities.  For a fixed requested logarithmic saving, only finitely
 many derivatives occur.  It is therefore homogeneous and polynomial
@@ -17872,19 +18176,19 @@ There is no separate truncated-AFE error: (2.4) is exact.
 \(\Lambda_{\rm AFE}\) accounts for the entire \(KM>T\mathscr L^B\)
 part of that exact series.  Likewise \(\Lambda_{\rm tr}\) includes
 both the four QCT Fourier variables and the Bessel Mellin/spectral
-variables.  Equations (4.845dc_15)--(4.845dc_17) therefore prove the
-implication from seminorm-stable PEVP to \(\mathrm{TAIL}_{B,D}\) and the
-kernel-transform tail estimate.  Since PEVP remains open, they do not
-unconditionally prove that the complete nonzero Poisson remainder is
-\(o_W(T)\).
+variables.  Equations (4.845dc_15)--(4.845dc_17), together with the
+now-proved seminorm-stable PEVP, therefore prove
+\(\mathrm{TAIL}_{B,D}=o_W(T)\) and the kernel-transform tail estimate
+unconditionally.  They do not settle the retained compact near shell
+identified after (4.845dc_14xm).
 
 The interface \`mwkf_tail_shell_aggregation_audit\` records the exact
-seven-log aggregation and the inequality \(BJ>C_J+D+7\), while keeping
-the AFE-product, time/Poisson, QCT/Bessel, and total-tail closure flags
-false until PEVP is available.
+seven-log aggregation and the inequality \(BJ>C_J+D+7\).  Its
+AFE-product, time/Poisson, QCT/Bessel, and total-tail closure flags are
+now true; the compact-core flag is separate.
 
 
-### 4.109zh The exact main term plus the open remainder gives a conditional asymptotic
+### 4.109zh The exact main term leaves only the small-entry compact gate
 
 It remains to match the exact-gamma main term (1.1) of the
 off-diagonal audit with the finite LCM asymptotic proved in merged
@@ -17935,14 +18239,16 @@ The exact completed AFE and common-Mellin zero-mode calculation give
  I_{N,W}(T)=T\mathcal Q_{N,T}+\mathcal R_{N,T}
 \]
 with no truncated-AFE error.  The two explicit archimedean corrections
-are \(O_{A,W}(T^{-A})\).  Conditional on PEVP, Sections 4.109w and
-4.109zg would make the compact core and every remaining shell
-\(o_W(T)\).  Unconditionally the argument stops at
+are \(O_{A,W}(T^{-A})\).  PEVP and Section 4.109zg make every AFE and
+transform shell \(o_W(T)\), and (4.845dc_14xm) closes the part of the
+compact core with a sufficiently large completed entry divisor.
+Unconditionally the argument stops at
 \[
  \boxed{\mathcal R_{\lfloor T^3\rfloor,T}=o_W(T)
- \quad\Longleftarrow\quad (\mathrm{PEVP})_{A,B}.}
+ \quad\Longleftarrow\quad
+ (\mathrm{LSEG})_{K,q}^{L,R}\ \text{for every fixed }K.}
 \]
-Combining this conditional implication with (4.845dc_19) would give
+Combining this remaining implication with (4.845dc_19) would give
 
 \[
  \boxed{
@@ -17951,14 +18257,18 @@ Combining this conditional implication with (4.845dc_19) would give
  \tag{4.845dc_20}
 \]
 
-The displayed asymptotic is therefore still conditional for real
+The displayed asymptotic is therefore still unproved for real
 \(W\in C_c^\infty(\mathbb R)\) supported in \([1,2]\).  The final
-coverage certificate has one residual analytic cell: the uniform
-polylogarithmic weighted primitive-conductor large sieve/PEVP gate.
+coverage certificate has one residual analytic cell: the retained
+compact near shell with both completed entry divisors polylogarithmic,
+equivalently the exact lifted gates
+\((\mathrm{LSEG})_{K,q}^{L,R}\).  The full-level harmonic large sieve,
+weighted primitive-conductor large sieve, PEVP, and all analytic tails
+are no longer residual inputs.
 
 The interface \`unconditional_long_mollifier_asymptotic_audit\`
 combines the exact AFE, zero mode, PR #478 LCM main term, PEVP,
-seven-log compact aggregation, and the conditional tail-shell ledger.
+seven-log compact aggregation, and the proved tail-shell ledger.
 Its proof status is:
 
 > **analytic remainder gate open**
