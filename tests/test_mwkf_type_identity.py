@@ -509,6 +509,37 @@ def test_zeta_variables_pair_exactly_with_their_mollifier_divisors() -> None:
     assert paired == F(8088)
 
 
+def test_common_mellin_mode_recombines_only_the_zeta_index_product() -> None:
+    """Catch treating the one Mellin mode as two independent averages."""
+    direct, paired = type_identity.common_mellin_product_constraint_sides(
+        mollifier_weights=((1, F(2)), (2, F(-1))),
+        zeta_weights=((1, F(3)), (3, F(5))),
+        completely_multiplicative_weight=F,
+        mellin_mode_weights=((0, F(7)), (1, F(11)), (-1, F(13))),
+    )
+    assert direct == F(44_096, 9)
+    assert paired == F(44_096, 9)
+
+
+def test_common_mellin_recombination_retains_the_product_pair_kernel() -> None:
+    """Catch dropping the shifted x,y kernel during Mellin recombination."""
+    pair_weights = {
+        (1, 1): F(5),
+        (1, 2): F(7),
+        (2, 1): F(11),
+        (2, 2): F(13),
+    }
+    direct, paired = type_identity.common_mellin_product_constraint_sides(
+        mollifier_weights=((1, F(1)),),
+        zeta_weights=((1, F(2)), (2, F(3))),
+        completely_multiplicative_weight=F,
+        mellin_mode_weights=((0, F(1)), (1, F(2))),
+        product_pair_weights=pair_weights,
+    )
+    assert direct == F(903, 2)
+    assert paired == F(903, 2)
+
+
 def test_centering_moves_the_complete_pole_mass_to_the_product_boundary() -> None:
     mollifier_weights = (
         (1, F(2)),

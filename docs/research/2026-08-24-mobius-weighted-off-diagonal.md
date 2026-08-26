@@ -9731,6 +9731,121 @@ equal_index_inverse_phase_sides verify (9.396)--(9.400) on arbitrary
 finite integer inputs, including signed shifts and frequencies, the
 strict support endpoint, and the modulus-one convention.
 
+### 9.63 Keeping the common Mellin integral is an exact AFE loop
+
+The compact-Mellin gate (9.392) took an absolute value before integrating
+in \(\tau\).  Retaining that integral is genuinely weaker, but one must
+check whether its common spectral parameter supplies a new
+orthogonality.  A finite identity shows that it does not do so by itself.
+
+Write
+
+\[
+ a_N(d):=\mu(d)\left(1-\frac{\log d}{\log N}\right)1_{d\leq N}
+\]
+
+and, for finite product cutoffs, expand the two factors in (9.361):
+
+\[
+\begin{aligned}
+ &B_{N,i\tau}(x)B_{N,i\tau}(y)(xy)^{-i\tau}\\
+ &\quad=
+ \sum_{\substack{d\mid x\\e\mid y}}
+ a_N(d)a_N(e)
+ \left(\frac{de}{xy}\right)^{i\tau}\\
+ &\quad=
+ \sum_{\substack{x=dn\\y=em}}
+ a_N(d)a_N(e)(nm)^{-i\tau}.
+\end{aligned}
+\tag{9.403}
+\]
+
+Thus both mollifier twists cancel against the *single* factor
+\((xy)^{-i\tau}\).  If \(\Omega\) is a Schwartz function and
+
+\[
+ \widehat\Omega(u):=\int_{\mathbb R}\Omega(\tau)e^{-i\tau u}\,d\tau,
+\]
+
+finite termwise integration gives
+
+\[
+\boxed{
+\begin{aligned}
+ &\int_{\mathbb R}\Omega(\tau)
+ B_{N,i\tau}(x)B_{N,i\tau}(y)(xy)^{-i\tau}\,d\tau\\
+ &\qquad=
+ \sum_{\substack{x=dn\\y=em}}
+ a_N(d)a_N(e)\widehat\Omega(\log(nm)).
+\end{aligned}}
+\tag{9.404}
+\]
+
+There is one Fourier constraint in (9.404), on the product \(nm\).
+There are not two constraints on \(d,e\), nor a condition \(d=e\) or
+\(n=m\).  Repeated divisor representations of \(x\) and \(y\) are
+retained on both sides.
+
+For the actual AFE contour, first split the \(z=0\) residue from the
+remaining vertical integral and insert finite cutoffs.  The boundary
+value of the gamma/Mellin factor is an \(\Omega_t(\tau)\) of the form
+used in (9.404), with the usual limiting interpretation at the split
+residue.  Mellin inversion then says exactly
+
+\[
+ \widehat\Omega_t(\log(nm))=V_t(nm)
+\tag{9.405}
+\]
+
+with the residue contribution included according to (2.3).  Consequently
+the two surviving finite conditions are
+
+\[
+ x=dn,\qquad y=em,\qquad y-x=\Delta,\qquad nm\asymp T,
+\tag{9.406}
+\]
+
+which are precisely the original shifted-divisor and AFE product
+conditions (3.3)--(3.7).  On the balanced transition
+\(n,m\asymp T^{1/2}\), the normalized phase
+\(\log(nm/T)\) is of bounded size; it contains no parameter on which
+integration by parts yields a fixed power.
+
+This gives an exact logical comparison.  If the \(\tau\)-integral is
+kept coupled to the shifted correlation, triangle inequality shows that
+the resulting statement is weaker than \({\rm CME}_3\).  But (9.403)--
+(9.406) reverse it to the original balanced AFE packet, so it is not an
+independently proved replacement gate.  Any saving obtained while
+retaining \(\tau\) must simultaneously exploit the two Möbius signs,
+the shift equation, and the common product constraint; “Mellin
+orthogonality” alone contributes no power.
+
+The helper common_mellin_product_constraint_sides is the finite Laurent
+model of (9.403).  For arbitrary rational mollifier and zeta weights,
+an arbitrary pair kernel \(W(x,y)\), arbitrary positive and negative
+common Mellin modes, and an arbitrary nonzero completely multiplicative
+rational model \(\chi\), it checks
+
+\[
+\begin{aligned}
+ &\sum_{d,e,n,m}a_da_ez_nz_mW(dn,em)
+   \sum_k c_k\chi(nm)^{-k}\\
+ &\quad=
+ \sum_kc_k\sum_{x,y}W(x,y)
+ \frac{
+  \left(\sum_{dn=x}a_dz_n\chi(d)^k\right)
+  \left(\sum_{em=y}a_ez_m\chi(e)^k\right)}
+ {\chi(xy)^k}.
+\end{aligned}
+\tag{9.407}
+\]
+
+This is a directly formalizable finite-sum proposition.  Its tests use
+both positive and negative modes, a nonsymmetric product-pair kernel,
+and hand-computed rational values, so deleting the common
+\((xy)^{-k}\) factor, dropping the shifted kernel, or replacing \(nm\)
+by a divisor product is detected.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -9790,7 +9905,12 @@ Its inverse phase is \(e_s(hm)\), so neither a second zeta-index average
 nor shift oscillation can provide the missing power.  This applies only
 after complete \(h\)-recombination, or to the exact divisibility
 subpacket (9.402); it does not delete the complementary terms in one
-fixed post-Poisson frequency box.**
+fixed post-Poisson frequency box.  Finally, (9.403)--(9.407) show that
+retaining the common compact-Mellin integral before absolute values is
+weaker than \({\rm CME}_3\) but supplies only the original
+\(m_1m_2\asymp T\) AFE constraint.  It is an exact loop back to the
+balanced shifted-divisor packet, not a proved source of a power
+saving.**
 
 Proved in this note:
 
@@ -9934,6 +10054,13 @@ Proved in this note:
   apply termwise to the continuous \(x\)-integral in a fixed \(h\)-box,
   so it narrows the obstruction to the equal-index two-Möbius band but
   does not prove its required \(T^2\) cancellation.
+* the exact common-Mellin recombination (9.403)--(9.407).  Before taking
+  an absolute value, both divisor twists cancel against the single
+  product factor \((xy)^{-i\tau}\), leaving only the Fourier constraint
+  on the original zeta-index product \(nm\).  The actual AFE kernel
+  reconstructs \(V_t(nm)\), so this strictly weaker formulation loops
+  back to the original shifted-divisor geometry and does not provide
+  an independent orthogonality or power saving.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -10193,6 +10320,7 @@ Proved in this note:
 | Compact-Mellin density centering | exact pole cancellation and finite boundary; diagonal-sized correlation unproved | The generating series is (9.388), and subtracting \(\beta_N(z)\) cancels its \(w=1\) pole in (9.389).  For every finite product cutoff, (9.390) shows that the entire moving edge remains; at \(w=1\) it is the whole centered prefix.  On the transition \(X=T^{7/2},H=X/T\), convexity cancels the contour gain exactly, (9.391).  Goldston--Gonek requires the same coefficient correlations as input, and the Conrey--Keating divisor Type II framework does not apply to the inverse Möbius coefficient.  The precise sufficient replacement \({\rm CME}_3\), (9.392), needs the full \(H=T^{5/2}\) diagonal saving and is unproved |
 | Compact-Mellin \(L^2\) route | exact finite Fourier identity; standard mean values circular | The Gaussian identity (9.394) localizes the product polynomial to \(|m-n|\ll X/T\), (9.395), with the same-\(z\) bilinear coefficients from (9.361).  Cauchy asks for the \(L^2\) norm of that same length-\(X\) polynomial.  Opening \(B_{N,z}\) returns the original zeta--mollifier product chunk, while Montgomery--Vaughan has the long term \(X\sum|c_n|^2\), losing exactly \(X/T=T^{5/2}\).  Goldston--Gonek replaces the loss only after assuming the coefficient correlations on the right side, so no standard mean-square theorem proves \({\rm CME}_3\) |
 | Balanced short-shift integer lattice | exact equal-index forcing; banded two-Möbius estimate unproved | Under the literal endpoint condition \(S/2>2L+4MD\), (9.396)--(9.399) force every original solution to have \(m_1=m_2=m\) and \(\delta=-m(r-s)\).  On this divisibility slice the retained product is \(h\delta=-hm(r-s)\) and the inverse phase is exactly \(e_s(hm)\), (9.400), with critical scale \(HM/S=T^{o(1)}\).  Formula (9.402) is the exact post-Poisson subpacket.  A fixed \(h\)-box also contains a complementary continuous-\(x\) packet which cancels only after full Poisson inversion; hence the result removes the prospective shift oscillation and extra zeta-index average, but does not prove the remaining \(T^2\) two-Möbius saving |
+| Coupled compact-Mellin integral | exact finite recombination; no independent power saving | Keeping \(\tau\) before absolute values is formally weaker than \({\rm CME}_3\), but (9.403)--(9.404) show that the single common mode cancels both mollifier twists and leaves only \((nm)^{-i\tau}\).  The actual contour reconstructs \(V_t(nm)\), (9.405), hence the original conditions \(y-x=\Delta\) and \(nm\asymp T\), (9.406).  It supplies neither two divisor orthogonalities nor an equal-divisor condition; the finite Laurent identity is (9.407).  Any gain must therefore use this product constraint jointly with the shift and both Möbius signs |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

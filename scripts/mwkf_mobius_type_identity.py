@@ -516,6 +516,108 @@ def zeta_mollifier_pairing_sides(
     return direct, paired
 
 
+def common_mellin_product_constraint_sides(
+    *,
+    mollifier_weights: tuple[tuple[int, Fraction], ...],
+    zeta_weights: tuple[tuple[int, Fraction], ...],
+    completely_multiplicative_weight: Callable[[int], Fraction],
+    mellin_mode_weights: tuple[tuple[int, Fraction], ...],
+    product_pair_weights: dict[tuple[int, int], Fraction] | None = None,
+) -> tuple[Fraction, Fraction]:
+    """Recombine one common Mellin mode through both product variables.
+
+    For a mode ``k``, put
+
+    ``B_k(x)=sum_(d*n=x) a_d z_n chi(d)^k``.
+
+    Complete multiplicativity makes
+
+    ``B_k(x) B_k(y) chi(x*y)^(-k)``
+
+    depend on the original zeta variables only through ``chi(n*m)^(-k)``.
+    Thus one common Mellin parameter reconstructs the zeta-index product;
+    it is not two independent orthogonality variables for the divisors.
+    An optional arbitrary pair weight on ``(x, y)`` is retained verbatim.
+    """
+
+    if any(index < 1 for index, _ in mollifier_weights):
+        raise ValueError("mollifier indices must be positive")
+    if any(index < 1 for index, _ in zeta_weights):
+        raise ValueError("zeta indices must be positive")
+
+    def pair_weight(left_product: int, right_product: int) -> Fraction:
+        if product_pair_weights is None:
+            return Fraction(1)
+        return product_pair_weights.get(
+            (left_product, right_product), Fraction(0)
+        )
+
+    direct = Fraction(0)
+    for divisor, divisor_weight in mollifier_weights:
+        for other_divisor, other_divisor_weight in mollifier_weights:
+            for zeta_index, zeta_weight in zeta_weights:
+                for other_zeta_index, other_zeta_weight in zeta_weights:
+                    zeta_product_weight = Fraction(
+                        completely_multiplicative_weight(
+                            zeta_index * other_zeta_index
+                        )
+                    )
+                    if zeta_product_weight == 0:
+                        raise ValueError(
+                            "multiplicative weights must be nonzero"
+                        )
+                    for mode, mode_weight in mellin_mode_weights:
+                        direct += (
+                            divisor_weight
+                            * other_divisor_weight
+                            * zeta_weight
+                            * other_zeta_weight
+                            * mode_weight
+                            * zeta_product_weight ** (-mode)
+                            * pair_weight(
+                                divisor * zeta_index,
+                                other_divisor * other_zeta_index,
+                            )
+                        )
+
+    paired = Fraction(0)
+    for mode, mode_weight in mellin_mode_weights:
+        product_coefficients: dict[int, Fraction] = {}
+        for divisor, divisor_weight in mollifier_weights:
+            divisor_twist = Fraction(
+                completely_multiplicative_weight(divisor)
+            )
+            if divisor_twist == 0:
+                raise ValueError("multiplicative weights must be nonzero")
+            for zeta_index, zeta_weight in zeta_weights:
+                product = divisor * zeta_index
+                product_coefficients[product] = (
+                    product_coefficients.get(product, Fraction(0))
+                    + divisor_weight
+                    * zeta_weight
+                    * divisor_twist**mode
+                )
+        for left_product, left_weight in product_coefficients.items():
+            for right_product, right_weight in product_coefficients.items():
+                product_twist = Fraction(
+                    completely_multiplicative_weight(
+                        left_product * right_product
+                    )
+                )
+                if product_twist == 0:
+                    raise ValueError(
+                        "multiplicative weights must be nonzero"
+                    )
+                paired += (
+                    mode_weight
+                    * left_weight
+                    * right_weight
+                    * product_twist ** (-mode)
+                    * pair_weight(left_product, right_product)
+                )
+    return direct, paired
+
+
 def centered_selberg_product_boundary_sides(
     *,
     mollifier_weights: tuple[tuple[int, Fraction], ...],
