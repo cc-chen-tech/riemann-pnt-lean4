@@ -6454,6 +6454,31 @@ class LongPolynomialMeanValueLedger:
 
 
 @dataclass(frozen=True)
+class PerronZetaRatioLedger:
+    """Power ledger for the Perron representation of a tapered mollifier.
+
+    On the critical line the absolutely convergent Dirichlet-series
+    representation starts at the limiting contour ``Re(w)=1/2``.  Squaring
+    ``N**w`` costs ``N**(2*Re(w))`` in the moment.  Moving far enough left to
+    remove that power crosses poles of ``1/zeta(s+w)`` produced by zeta zeros;
+    this ledger records the resulting proof obligation but does not assert it.
+    """
+
+    cutoff_exponent: Fraction
+    time_exponent: Fraction
+    contour_real_part: Fraction
+    absolute_series_contour_floor: Fraction
+    contour_square_cost: Fraction
+    direct_moment_bound: Fraction
+    target_moment_bound: Fraction
+    direct_gap: Fraction
+    target_contour_ceiling: Fraction
+    shift_enters_possible_zero_region: bool
+    potential_residue_has_inverse_zeta_derivative: bool
+    unconditional_negative_moment_input: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -6761,6 +6786,61 @@ def long_polynomial_mean_value_ledger(
             polynomial_length >= time_length
         ),
         published_mobius_specific_saving=False,
+    )
+
+
+def perron_zeta_ratio_ledger(
+    cutoff_exponent: Fraction,
+    time_exponent: Fraction,
+    contour_real_part: Fraction,
+    allowed_power_loss: Fraction = Fraction(0),
+) -> PerronZetaRatioLedger:
+    """Return the exact power loss in the critical-line Perron route.
+
+    Write ``N=T**cutoff_exponent`` and integrate on ``Re(w)=c``.  The
+    absolutely convergent Dirichlet-series contour has limiting value
+    ``c=1/2`` (the actual Perron line is strictly to its right).  A direct
+    second-moment bound therefore has exponent
+
+    ``time_exponent + 2*cutoff_exponent*c``.
+
+    To stay within ``allowed_power_loss`` of the target time exponent one
+    needs ``c <= allowed_power_loss/(2*cutoff_exponent)``.  When this lies
+    left of ``1/2``, a contour shift enters a region where off-critical-line
+    zeta zeros are not unconditionally excluded.  Any simple-zero residue
+    encountered contains ``1/zeta'(rho)``; no unconditional input controlling
+    the required full family of inverse derivatives is encoded.
+    """
+
+    if cutoff_exponent <= 0 or time_exponent <= 0:
+        raise ValueError("the cutoff and time exponents must be positive")
+    if allowed_power_loss < 0:
+        raise ValueError("the allowed power loss must be nonnegative")
+    absolute_series_contour_floor = Fraction(1, 2)
+    if contour_real_part < absolute_series_contour_floor:
+        raise ValueError(
+            "the direct Dirichlet-series contour must be at least its "
+            "critical-line limiting value 1/2"
+        )
+    contour_square_cost = 2 * cutoff_exponent * contour_real_part
+    direct_moment_bound = time_exponent + contour_square_cost
+    target_moment_bound = time_exponent + allowed_power_loss
+    target_contour_ceiling = allowed_power_loss / (2 * cutoff_exponent)
+    return PerronZetaRatioLedger(
+        cutoff_exponent=cutoff_exponent,
+        time_exponent=time_exponent,
+        contour_real_part=contour_real_part,
+        absolute_series_contour_floor=absolute_series_contour_floor,
+        contour_square_cost=contour_square_cost,
+        direct_moment_bound=direct_moment_bound,
+        target_moment_bound=target_moment_bound,
+        direct_gap=direct_moment_bound - target_moment_bound,
+        target_contour_ceiling=target_contour_ceiling,
+        shift_enters_possible_zero_region=(
+            target_contour_ceiling < absolute_series_contour_floor
+        ),
+        potential_residue_has_inverse_zeta_derivative=True,
+        unconditional_negative_moment_input=False,
     )
 
 

@@ -2625,6 +2625,24 @@ def test_long_polynomial_large_values_leave_the_same_coherence_loss() -> None:
     assert not ledger.published_mobius_specific_saving
 
 
+def test_perron_ratio_route_must_control_possible_zero_residues() -> None:
+    ledger = audit.perron_zeta_ratio_ledger(
+        cutoff_exponent=F(3),
+        time_exponent=F(1),
+        contour_real_part=F(1, 2),
+    )
+
+    assert ledger.absolute_series_contour_floor == F(1, 2)
+    assert ledger.contour_square_cost == F(3)
+    assert ledger.direct_moment_bound == F(4)
+    assert ledger.target_moment_bound == F(1)
+    assert ledger.direct_gap == F(3)
+    assert ledger.target_contour_ceiling == F(0)
+    assert ledger.shift_enters_possible_zero_region
+    assert ledger.potential_residue_has_inverse_zeta_derivative
+    assert not ledger.unconditional_negative_moment_input
+
+
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     transition = additive_dual_block_ledger(box, F(1, 2), F(1, 2))
