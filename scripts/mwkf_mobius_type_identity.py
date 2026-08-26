@@ -341,6 +341,20 @@ class MobiusUnsignedSectorRecombination:
 
 
 @dataclass(frozen=True)
+class BBLRCoefficientStageSeparationWitness:
+    cutoff_u: int
+    shared_outer_product: int
+    left_parent: int
+    right_parent: int
+    left_outer_contribution: int
+    right_outer_contribution: int
+    same_outer_product: bool
+    parent_dependent_outer_weight: bool
+    direct_outer_index_only_adapter_refuted: bool
+    packet_exhaustive_parent_aware_adapter_still_open: bool
+
+
+@dataclass(frozen=True)
 class FourMobiusUnsignedSectorRecombination:
     values: tuple[int, int, int, int]
     cutoff_u: int
@@ -3004,6 +3018,61 @@ def mobius_unsigned_sector_recombination(
         recombined_contribution=recombined,
         outer_contributions=tuple(sorted(contributions.items())),
         recombination_identity_verified=(pure == -1 and recombined == expected),
+    )
+
+
+def bblr_coefficient_stage_separation_witness(
+    *,
+    cutoff_u: int,
+    shared_outer_product: int,
+    left_parent: int,
+    right_parent: int,
+) -> BBLRCoefficientStageSeparationWitness:
+    """Refute a parent-free identification of one BBLR Type coefficient.
+
+    The grouped Type coefficient ``C_U(n;u)`` retains both its parent
+    variable ``n`` and its unsigned inner quotient even after the signed
+    atoms have been grouped by their outer product ``u``.  If two admissible
+    parents give different coefficients at the same ``u``, there can be no
+    pointwise adapter that replaces ``C_U(n;u)`` by a function of ``u``
+    alone.  The witness does not rule out a larger adapter that retains the
+    parent, all Type sectors, and every analytic packet label.
+    """
+
+    if min(cutoff_u, shared_outer_product, left_parent, right_parent) < 1:
+        raise ValueError("cutoff, outer product, and parents must be positive")
+    if left_parent <= cutoff_u or right_parent <= cutoff_u:
+        raise ValueError("both parent variables must exceed the Type cutoff")
+
+    left = dict(
+        mobius_unsigned_sector_recombination(
+            n=left_parent,
+            cutoff_u=cutoff_u,
+        ).outer_contributions
+    )
+    right = dict(
+        mobius_unsigned_sector_recombination(
+            n=right_parent,
+            cutoff_u=cutoff_u,
+        ).outer_contributions
+    )
+    if shared_outer_product not in left or shared_outer_product not in right:
+        raise ValueError("the shared outer product must occur for both parents")
+
+    left_contribution = left[shared_outer_product]
+    right_contribution = right[shared_outer_product]
+    parent_dependent = left_contribution != right_contribution
+    return BBLRCoefficientStageSeparationWitness(
+        cutoff_u=cutoff_u,
+        shared_outer_product=shared_outer_product,
+        left_parent=left_parent,
+        right_parent=right_parent,
+        left_outer_contribution=left_contribution,
+        right_outer_contribution=right_contribution,
+        same_outer_product=True,
+        parent_dependent_outer_weight=parent_dependent,
+        direct_outer_index_only_adapter_refuted=parent_dependent,
+        packet_exhaustive_parent_aware_adapter_still_open=True,
     )
 
 

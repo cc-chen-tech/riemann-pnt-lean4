@@ -270,6 +270,30 @@ def test_pure_unsigned_mobius_sector_is_exactly_minus_one() -> None:
         assert audit.recombination_identity_verified
 
 
+def test_bblr_outer_product_weight_is_not_a_parent_free_coefficient() -> None:
+    """The same BBLR outer index retains its parent/inner-factor history."""
+    adapter = getattr(
+        type_identity,
+        "bblr_coefficient_stage_separation_witness",
+        None,
+    )
+    assert adapter is not None, "BBLR coefficient-stage witness is missing"
+
+    audit = adapter(
+        cutoff_u=3,
+        shared_outer_product=2,
+        left_parent=6,
+        right_parent=10,
+    )
+
+    assert audit.left_outer_contribution == 1
+    assert audit.right_outer_contribution == 2
+    assert audit.same_outer_product
+    assert audit.parent_dependent_outer_weight
+    assert audit.direct_outer_index_only_adapter_refuted
+    assert audit.packet_exhaustive_parent_aware_adapter_still_open
+
+
 def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
     """The worst BBLR box loses every Möbius sign before global recombination."""
     adapter = getattr(

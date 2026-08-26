@@ -9463,6 +9463,38 @@ exact formal-prime-vector identities in the independent coefficient-first
 audit.  It supplies no assertion about the BBLR product coefficients and
 introduces no new asymptotic assertion.
 
+In fact, a stronger negative statement is finite and exact: there is no
+**parent-free, outer-index-only** identification at the Type stage.  Recall
+the grouped coefficient from (4.613),
+
+\[
+ C_U(n;u)=-\!\sum_{\substack{dey=n\\de>U,\ d\le U\\dy=u}}
+              \mu(d)\mu(y).
+\]
+
+For the same cutoff \(U=3\) and the same outer product \(u=2\), direct
+enumeration gives
+
+\[
+ \boxed{C_3(6;2)=1,\qquad C_3(10;2)=2.}
+\tag{4.621zadj1}
+\]
+
+Indeed, for \(n=6\) only \((d,e,y)=(2,3,1)\) survives, whereas for
+\(n=10\) both \((1,5,2)\) and \((2,5,1)\) survive.  Consequently there is
+no function \(F_U(u)\) satisfying \(C_U(n;u)=F_U(u)\) for every admissible
+parent \(n\).  Since \(c_{X,N}(u)\) is a function of \(u\) (for fixed
+\(X,N\)) alone, it cannot be inserted pointwise in place of
+\(C_U(n;u)\).
+
+This does not rule out a larger analytic adapter.  It proves that any valid
+one must retain the parent variable, the unsigned inner quotient, every
+Type sector, and the AFE/order packet labels until the full recombination.
+The finite helper `bblr_coefficient_stage_separation_witness` verifies
+(4.621zadj1) and records both
+`direct_outer_index_only_adapter_refuted=True` and
+`packet_exhaustive_parent_aware_adapter_still_open=True`.
+
 The dangerous additive principal mode can nevertheless be isolated
 without estimating it.  Embed one finite product box in
 \(\mathbb Z/\mathfrak Q\mathbb Z\), with \(\mathfrak Q\) larger than
