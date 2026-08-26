@@ -1076,7 +1076,49 @@ each of the finitely many terms with `n>=2` satisfies
 uniformly in `Im s`.  A finite sum gives a constant `A_B` for which
 `|B(s)-1|<1`, hence `B(s)!=0`, whenever `Re s>=A_B`.  Taking
 `A=max(A_V,A_B)` excludes zeros of both `V_1` and `V_1B` beyond the same
-vertical line.  The bounded divisor counts from Section 17 can then be frozen
-at this `A`, yielding the actual unbounded right-half-strip counts and the
-global half-weighted equation-(35) inequality.  This argument remains wholly
-independent of Zeta23 and of the later long-mollifier mean-square estimate.
+vertical line.  This argument remains wholly independent of Zeta23 and of the
+later long-mollifier mean-square estimate.
+
+## 19. Stabilized global equation (35)
+
+The uniform right edge is now used to close the exact count interface rather
+than merely recorded as an asymptotic fact.  Fix Conrey's hypotheses
+`g!=0`, `Y>=2`, and `P(1)=1`, and choose one common edge `A_35` satisfying
+
+\[
+ V_1(s)\ne0,\qquad V_1(s)B(s,P)\ne0
+ \quad\text{whenever }\operatorname{Re}s\ge A_{35}.
+\]
+
+Define the two half-strip zero finsets by evaluating the compact-rectangle
+divisors from Section 17 at `A=A_35`.  The far-right theorem removes the
+apparently retained upper bound and gives the exact membership statements
+
+\[
+\begin{aligned}
+ s\in Z_{V_1}(T)
+ &\Longleftrightarrow
+ \tfrac12\le\operatorname{Re}s,\quad
+ 0<\operatorname{Im}s\le T,\quad V_1(s)=0,\\
+ s\in Z_{V_1B}(T)
+ &\Longleftrightarrow
+ \tfrac12\le\operatorname{Re}s,\quad
+ 0<\operatorname{Im}s\le T,\quad V_1(s)B(s,P)=0.
+\end{aligned}
+\]
+
+Thus these are finite representations of the actual unbounded half-strip
+zero families, not counts whose mathematical statement still depends on an
+auxiliary right boundary.  Using the union of the two finsets to identify the
+critical-line boundary and the actual analytic orders as multiplicities, the
+finite-rectangle inequality from Section 17 specializes to
+
+\[
+ N^*_{V_1}(T)\le N^*_{V_1B}(T),
+ \tag{35-global}
+\]
+
+with weight `1/2` exactly at `Re s=1/2`.  This completes equation (35) at the
+level needed by Conrey's subsequent Littlewood argument.  Equations
+(37)--(40), the argument partition in (41), and the long mollified mean square
+remain separate gates and are not consequences of (35-global) alone.
