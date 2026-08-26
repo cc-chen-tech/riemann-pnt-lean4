@@ -416,6 +416,19 @@ class BBLRMovingParentZeroMode:
 
 
 @dataclass(frozen=True)
+class BBLRTensorParentProjection:
+    left_static_mobius_sum: Fraction
+    right_static_mobius_sum: Fraction
+    left_moving_projection_by_r: tuple[tuple[int, Fraction], ...]
+    right_moving_projection_by_r: tuple[tuple[int, Fraction], ...]
+    left_direct_parent_projection_by_r: tuple[tuple[int, Fraction], ...]
+    right_direct_parent_projection_by_r: tuple[tuple[int, Fraction], ...]
+    left_factorization_verified: bool
+    right_factorization_verified: bool
+    static_mertens_factors_remain: bool
+
+
+@dataclass(frozen=True)
 class FourMobiusUnsignedSectorRecombination:
     values: tuple[int, int, int, int]
     cutoff_u: int
@@ -3653,6 +3666,152 @@ def bblr_moving_parent_zero_mode_sides(
         zero_mode_split_identity_verified=(direct == recombined),
         analytic_afe_ordering_kernel_exhaustive=False,
         target_bound_proved=False,
+    )
+
+
+def bblr_tensor_parent_projection_sides(
+    *,
+    common_r_values: tuple[int, ...],
+    moving_parent_cutoffs: tuple[int, int],
+    left_static_weights: dict[int, Fraction],
+    left_moving_weights: dict[int, Fraction],
+    right_static_weights: dict[int, Fraction],
+    right_moving_weights: dict[int, Fraction],
+) -> BBLRTensorParentProjection:
+    """Factor a separated parent tensor into static and moving projections.
+
+    For a tensor weight ``A(b,r1)=U(b)V(r1)``, the left projection in
+    (4.621zadj14) is the product of the one-variable smooth Mertens sum in
+    ``b`` and the common-cofactor Type projection in ``r1``.  The same holds
+    on the right.  This finite identity records that the Type diagonalization
+    does not remove the two static Möbius sums.
+    """
+
+    if not common_r_values or min(common_r_values) < 1:
+        raise ValueError("positive common-r layers are required")
+    if len(set(common_r_values)) != len(common_r_values):
+        raise ValueError("common-r layers must be distinct")
+    if len(moving_parent_cutoffs) != 2 or min(moving_parent_cutoffs) < 1:
+        raise ValueError("two positive moving-parent cutoffs are required")
+    families = (
+        left_static_weights,
+        left_moving_weights,
+        right_static_weights,
+        right_moving_weights,
+    )
+    if any(not family for family in families):
+        raise ValueError("all four tensor weight families are required")
+    if any(index < 1 for family in families for index in family):
+        raise ValueError("tensor parent indices must be positive")
+    if any(parent <= moving_parent_cutoffs[0] for parent in left_moving_weights):
+        raise ValueError("left moving parents must exceed their Type cutoff")
+    if any(parent <= moving_parent_cutoffs[1] for parent in right_moving_weights):
+        raise ValueError("right moving parents must exceed their Type cutoff")
+
+    left_static = sum(
+        (Fraction(weight) * mobius(parent) for parent, weight in left_static_weights.items()),
+        Fraction(0),
+    )
+    right_static = sum(
+        (
+            Fraction(weight) * mobius(parent)
+            for parent, weight in right_static_weights.items()
+        ),
+        Fraction(0),
+    )
+    left_coefficients = {
+        parent: dict(
+            mobius_unsigned_sector_recombination(
+                n=parent,
+                cutoff_u=moving_parent_cutoffs[0],
+            ).outer_contributions
+        )
+        for parent in left_moving_weights
+    }
+    right_coefficients = {
+        parent: dict(
+            mobius_unsigned_sector_recombination(
+                n=parent,
+                cutoff_u=moving_parent_cutoffs[1],
+            ).outer_contributions
+        )
+        for parent in right_moving_weights
+    }
+
+    left_moving_rows: list[tuple[int, Fraction]] = []
+    right_moving_rows: list[tuple[int, Fraction]] = []
+    left_direct_rows: list[tuple[int, Fraction]] = []
+    right_direct_rows: list[tuple[int, Fraction]] = []
+    for common_r in sorted(common_r_values):
+        left_moving = sum(
+            (
+                Fraction(weight)
+                * left_coefficients[parent].get(parent // common_r, 0)
+            )
+            for parent, weight in left_moving_weights.items()
+            if parent % common_r == 0
+        )
+        right_moving = sum(
+            (
+                Fraction(weight)
+                * right_coefficients[parent].get(parent // common_r, 0)
+            )
+            for parent, weight in right_moving_weights.items()
+            if parent % common_r == 0
+        )
+        left_direct = sum(
+            (
+                Fraction(static_weight)
+                * mobius(static_parent)
+                * Fraction(moving_weight)
+                * left_coefficients[moving_parent].get(
+                    moving_parent // common_r,
+                    0,
+                )
+            )
+            for static_parent, static_weight in left_static_weights.items()
+            for moving_parent, moving_weight in left_moving_weights.items()
+            if moving_parent % common_r == 0
+        )
+        right_direct = sum(
+            (
+                Fraction(static_weight)
+                * mobius(static_parent)
+                * Fraction(moving_weight)
+                * right_coefficients[moving_parent].get(
+                    moving_parent // common_r,
+                    0,
+                )
+            )
+            for static_parent, static_weight in right_static_weights.items()
+            for moving_parent, moving_weight in right_moving_weights.items()
+            if moving_parent % common_r == 0
+        )
+        left_moving_rows.append((common_r, left_moving))
+        right_moving_rows.append((common_r, right_moving))
+        left_direct_rows.append((common_r, left_direct))
+        right_direct_rows.append((common_r, right_direct))
+
+    left_factored = tuple(
+        (common_r, left_static * value)
+        for common_r, value in left_moving_rows
+    )
+    right_factored = tuple(
+        (common_r, right_static * value)
+        for common_r, value in right_moving_rows
+    )
+    return BBLRTensorParentProjection(
+        left_static_mobius_sum=left_static,
+        right_static_mobius_sum=right_static,
+        left_moving_projection_by_r=tuple(left_moving_rows),
+        right_moving_projection_by_r=tuple(right_moving_rows),
+        left_direct_parent_projection_by_r=tuple(left_direct_rows),
+        right_direct_parent_projection_by_r=tuple(right_direct_rows),
+        left_factorization_verified=(tuple(left_direct_rows) == left_factored),
+        right_factorization_verified=(
+            tuple(right_direct_rows) == right_factored
+        ),
+        static_mertens_factors_remain=True,
     )
 
 

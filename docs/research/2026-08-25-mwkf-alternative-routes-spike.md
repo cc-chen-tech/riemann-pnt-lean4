@@ -9786,6 +9786,61 @@ The finite helper `bblr_moving_parent_zero_mode_sides` verifies
 the actual signed AFE/order/reflection kernel and its means \(\bar K_r\)
 have not yet been derived.
 
+Section 4.60 already supplies one part of that analytic bridge.  Its
+five-variable Fourier inversion writes the actual lifted zero-mode weight
+as an exact signed superposition of separated tensors, with only a
+polylogarithmic nuclear norm.  On one such tensor,
+
+\[
+ A(b,r_1)=U(b)V_1(r_1),\qquad
+ B(a,r_2)=\widetilde U(a)V_2(r_2).
+\tag{4.621zadj17}
+\]
+
+Consequently the parent projections in (4.621zadj14) factor exactly:
+
+\[
+\boxed{
+\begin{aligned}
+ L_r&=
+ \left(\sum_b\mu(b)U(b)\right)
+ \left(\sum_{r\mid r_1}V_1(r_1)
+ C_{U_1}\!\left(r_1;\frac{r_1}{r}\right)\right),\\
+ R_r&=
+ \left(\sum_a\mu(a)\widetilde U(a)\right)
+ \left(\sum_{r\mid r_2}V_2(r_2)
+ C_{U_2}\!\left(r_2;\frac{r_2}{r}\right)\right).
+\end{aligned}}
+\tag{4.621zadj18}
+\]
+
+Thus the constant part of one separated tensor is
+
+\[
+\boxed{
+ \left(\sum_b\mu(b)U(b)\right)
+ \left(\sum_a\mu(a)\widetilde U(a)\right)
+ \sum_r\bar K_rD_{1,r}D_{2,r},}
+\tag{4.621zadj19}
+\]
+
+where \(D_{j,r}\) denotes the corresponding moving common-cofactor
+projection.  The finite helper `bblr_tensor_parent_projection_sides`
+verifies (4.621zadj18) directly and records
+`static_mertens_factors_remain=True`.
+
+Equation (4.621zadj19) explains both the gain and the remaining obstruction.
+The moving parents have returned to a gcd/Gram divisor structure, but two
+one-variable smooth Mertens factors remain.  On the top face they have
+length \(A=T\).  Bounding every Fourier tensor and ordering separately
+would therefore require the fixed half-power product saving already
+isolated in (4.533); classical zero-free-region estimates provide
+subpower/logarithmic decay, not that power.  This is a no-go statement for
+termwise absolute values, not for the original signed superposition:
+cancellation among Fourier tensors, AFE directions, orderings, or the
+means \(\bar K_r\) may still remove the constant component before those
+Mertens factors are majorized.
+
 The remaining adapter boundary is now narrower.  BBLR introduces dyadic
 weights that depend separately on its synthetic outer and inner slots.  To
 apply (4.621zadj6) to the analytic principal term, one must first sum the

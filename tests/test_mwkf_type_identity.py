@@ -439,6 +439,34 @@ def test_bblr_moving_parent_master_extracts_zero_mode_after_packet_sum() -> None
     assert not sides.target_bound_proved
 
 
+def test_bblr_tensor_parent_projection_factors_static_mertens_sum() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_tensor_parent_projection_sides",
+        None,
+    )
+    assert helper is not None, "BBLR tensor parent projection is missing"
+
+    sides = helper(
+        common_r_values=(5,),
+        moving_parent_cutoffs=(3, 3),
+        left_static_weights={7: F(2), 11: F(-1)},
+        left_moving_weights={10: F(3)},
+        right_static_weights={5: F(4)},
+        right_moving_weights={15: F(2)},
+    )
+
+    assert sides.left_static_mobius_sum == F(-1)
+    assert sides.right_static_mobius_sum == F(-4)
+    assert sides.left_moving_projection_by_r == ((5, F(6)),)
+    assert sides.right_moving_projection_by_r == ((5, F(4)),)
+    assert sides.left_direct_parent_projection_by_r == ((5, F(-6)),)
+    assert sides.right_direct_parent_projection_by_r == ((5, F(-16)),)
+    assert sides.left_factorization_verified
+    assert sides.right_factorization_verified
+    assert sides.static_mertens_factors_remain
+
+
 def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
     """The worst BBLR box loses every Möbius sign before global recombination."""
     adapter = getattr(
