@@ -760,3 +760,323 @@ This closes the local simple-zero implication needed in equation (42).  It
 does not yet count the relevant argument crossings: the Littlewood
 rectangle/argument-variation inequality and the long mollified mean-square
 estimate, including the Deshouillers--Iwaniec spectral input, remain open.
+
+## 14. Zero-free argument-crossing engine implemented
+
+The topological crossing mechanism on the left-hand side of Conrey's equation
+(41) is now isolated in `MathlibAux/ArgumentCrossing.lean`, with its public
+contract in `Test/ArgumentCrossingContract.lean`.
+
+For a continuous nonvanishing curve
+
+\[
+  \gamma:[0,1]\longrightarrow \mathbb C^\times,
+\]
+
+the construction lifts `gamma` through the covering map
+`Complex.exp : C -> C^x`, normalized by `log (gamma 0)`.  Thus it supplies a
+continuous logarithm `Lambda` satisfying
+
+\[
+  e^{\Lambda(t)}=\gamma(t),\qquad
+  \Lambda(0)=\log\gamma(0).
+\]
+
+If a level `pi/2 + k pi` lies between the two endpoint imaginary parts, the
+intermediate value theorem gives a time `t_k` with
+
+\[
+  \operatorname{Im}\Lambda(t_k)=\frac\pi2+k\pi,
+  \qquad \operatorname{Re}\gamma(t_k)=0.
+\]
+
+For every finite set of such integers, Lean also chooses these crossing times
+simultaneously and proves that `k -> t_k` is injective.  The injectivity step is
+essential: it turns distinct lifted argument levels into genuinely distinct
+real-part crossings, rather than merely repeated existence claims.
+
+The admissible levels are now packaged as the exact integer interval
+
+\[
+  K(\alpha,\beta)=
+  \left\{k\in\mathbb Z:
+    \alpha\le \frac\pi2+k\pi\le\beta\right\}.
+\]
+
+Floor/ceiling arithmetic gives the unconditional quantitative estimate
+
+\[
+  \frac{\beta-\alpha}{\pi}-1\le \#K(\alpha,\beta).
+\]
+
+No monotonicity assumption `alpha <= beta` is required: when the net argument
+change is negative, the left-hand side is already negative and the empty
+crossing family is valid.  Consequently every zero-free component contributes
+its signed argument change divided by `pi`, with exactly one endpoint-rounding
+loss.  This is the form that can be summed after partitioning at the zeros of
+`eta`.
+
+This is an unconditional zero-free-interval theorem.  It does not yet prove
+the full inequality (41): to apply it to `eta` one must partition the critical
+line at the finitely many zeros of `eta`, reconcile the lifts on the resulting
+zero-free components, and account for the loss `N_{0,eta}(T)`.  The rectangle
+argument estimate and the long mollified mean-square/spectral estimate also
+remain open.
+
+## 15. Equation-(40) half-weighted multiplicity algebra implemented
+
+The finite multiplicity algebra in the last inequality of Conrey's equation
+(40) is now formalized in `MathlibAux/HalfWeightedMultiplicity.lean`, with its
+public contract in `Test/HalfWeightedMultiplicityContract.lean`.
+
+For a finite zero family `S`, a distinguished boundary, and analytic
+multiplicities `m(rho)`, define the half-weighted mass by giving boundary zeros
+weight `m(rho)/2` and all other zeros weight `m(rho)`.  Lean proves the exact
+identity
+
+\[
+  2N^*(S)=2N(S)-N_{\partial}(S).
+\]
+
+It also proves monotonicity under enlargement of the zero family together with
+pointwise growth of multiplicities.  Finally, if the boundary multiplicity
+mass of the `V_1` zeros is at most the boundary mass of the product zeros, the
+formalized inequality is
+
+\[
+  -2N(V_1B)+N_{0,V_1}
+  \le -2N^*(V_1B),
+\]
+
+which is exactly the direction needed between the second and third lines of
+(40).  The coefficient `1/2`, analytic multiplicities, and the inequality
+direction are all exposed in the contract.
+
+This closes only the finite counting algebra.  The next layer must define the
+actual `V_1` and `B` zero families on Conrey's rectangle, prove the product-zero
+and multiplicity inclusions, and connect their full count to the existing
+Littlewood weighted rectangle identity.  The asymptotic edge estimates remain
+separate.
+
+## 16. The actual degree-one `V_1` factor implemented
+
+The analytic object occurring before Conrey's mollifier is now defined in
+`HardyTheorem/ConreyDegreeOneV1.lean`, with its public contract in
+`Test/ConreyDegreeOneV1Contract.lean`.  With
+
+\[
+  H(s)=\frac12s(s-1)\Gamma_{\mathbb R}(s)
+\]
+
+and the degree-one choice from Section 13, the definition is
+
+\[
+  V_1(s)=(g+i g_0)\zeta(s)
+    +\frac{g_1}{L}\left(\zeta'(s)+\frac{H'(s)}{H(s)}\zeta(s)\right).
+\]
+
+Lean proves, throughout the open critical strip `0 < re s < 1`, that `H` is
+analytic and nonzero and that
+
+\[
+  \xi(s)=H(s)\zeta(s),\qquad
+  \eta(s)=H(s)V_1(s).
+\]
+
+The nonvanishing of `H` then gives both the pointwise equivalence
+
+\[
+  \eta(s)=0\quad\Longleftrightarrow\quad V_1(s)=0
+\]
+
+and equality of their analytic orders at `s`.  Thus the zero family denoted by
+`N_{0,V_1}` in equation (40) is now connected exactly, including
+multiplicity, to the `eta` whose critical-line crossings feed equation (41).
+
+This factorization is the analytic input used by the finite-rectangle count in
+Section 17.  The connection from that bounded count to the Littlewood weighted
+rectangle identity remains to be constructed.  The horizontal and left-edge
+asymptotics and the long mollified mean-square estimate also remain open.
+
+## 17. Conrey's actual mollifier and the local equation-(35) inclusion
+
+The definitions in equations (1) and (33) have now been checked directly
+against the primary source and implemented in
+`HardyTheorem/ConreyMollifierProduct.lean`, with their public contract in
+`Test/ConreyMollifierProductContract.lean`.  For a cutoff `Y`, shift `sigma0`,
+and normalized polynomial `P`, the coefficient and mollifier are
+
+\[
+ b(n,P)=\mu(n)P\!\left(\frac{\log(Y/n)}{\log Y}\right),
+ \qquad
+ B(s,P)=\sum_{n\le Y}
+   \frac{b(n,P)n^{\sigma_0-1/2}}{n^s}.
+\]
+
+For `Y >= 2` and `P(1)=1`, Lean proves that the `n=1` coefficient is exactly
+one.  The finite Dirichlet polynomial `B` is entire, tends to one on the
+positive real axis, is not identically zero, and therefore has finite analytic
+order at every point.
+
+The earlier analyticity result for `V_1` has also been extended from the open
+critical strip to the full domain needed by the paper:
+
+\[
+  \operatorname{Re}s>0,\qquad s\ne1.
+\]
+
+In particular it applies throughout Conrey's zero-counting half-strip
+`sigma >= 1/2`, `t > 0`; the pole location `s=1` is excluded automatically by
+positive height.  Defining the actual product
+
+\[
+  (V_1B)(s)=V_1(s)B(s,P),
+\]
+
+Lean proves pointwise that every zero of `V_1` remains a zero of `V_1B`.  At
+every point where `V_1` has finite analytic order, it proves the
+multiplicity-sensitive form
+
+\[
+  \operatorname{ord}_s V_1
+    \le \operatorname{ord}_s(V_1B),
+\]
+
+using the exact product-order identity and the now-proved finiteness of the
+mollifier order.  This is the local analytic content of equation (35), not a
+cardinality-only surrogate.
+
+The finite-order premise has now also been discharged for Conrey's
+nondegenerate degree-one choice.  In
+`HardyTheorem/ConreyDegreeOneNontrivial.lean`, with its contract in
+`Test/ConreyDegreeOneNontrivialContract.lean`, Lean first proves that `eta` is
+entire.  If `g != 0`, choose a positive good height `T` and put
+`s=1/2+iT`.  The good-height condition makes `zeta(s)` nonzero, hence
+`xi(s)` is nonzero; critical-line symmetry makes `xi(s)` real, and therefore
+
+\[
+  \operatorname{Re}\eta(s)=g\,\xi(s)\ne0.
+\]
+
+Thus `eta` is not identically zero and has finite analytic order everywhere.
+The factorization `eta=H V_1` and nonvanishing of `H`, now proved throughout
+`Re s > 0`, `s != 1`, transfer finite order to `V_1`.  Consequently the local
+equation-(35) multiplicity inequality above is available from the actual
+coefficient hypothesis `g != 0`, with no auxiliary `V_1` finite-order
+assumption.
+
+The first global step is now complete in
+`HardyTheorem/ConreyMollifierRectangleCount.lean`, with its contract in
+`Test/ConreyMollifierRectangleCountContract.lean`.  On the compact rectangle
+
+\[
+  1/2\le \operatorname{Re}s\le A,\qquad 0\le \operatorname{Im}s\le T,
+\]
+
+Lean uses the entire functions `eta` and `eta B` to obtain finite divisor
+supports without inserting a lower cutoff that would obscure the point
+`s=1`.  On positive height their zeros are exactly those of the actual
+functions `V_1` and `V_1B`.  After filtering to `0<t<=T`, the two finite zero
+families are counted with their actual analytic multiplicities and weight
+`1/2` precisely on `Re s=1/2`.  Summing the local product-order inequality
+therefore proves the bounded equation-(35) inequality
+
+\[
+  N^*_{V_1}(A,T)\le N^*_{V_1B}(A,T).
+\]
+
+This is not yet the unbounded half-strip count printed in the paper.  Its sole
+remaining equation-(35) step is to prove a uniform far-right zero-free edge
+and choose `A` beyond it.  Littlewood's inequality (37) and all of its edge
+asymptotics remain separate, as does the long mollified mean-square theorem.
+
+## 18. Uniform far-right zero-free design for equation (35)
+
+The right boundary can be removed uniformly in the ordinate; no boundary
+depending on `T` is necessary.  The key observation is a lower bound for the
+real part of the digamma function that is uniform in the imaginary part.
+For `z=x+iy`, `x>0`, Gauss' series has summand
+
+\[
+ d_k(z)=\frac1k-\frac1{z+k}=\frac{z}{k(z+k)},\qquad k\ge1.
+\]
+
+Direct calculation gives
+
+\[
+ \operatorname{Re}d_k(z)
+ =\frac{x(x+k)+y^2}{k((x+k)^2+y^2)}
+ \ge \frac{x}{k(x+k)}.
+\]
+
+Hence every summand has nonnegative real part, and if `x>=N`, the first `N`
+summands contribute at least
+
+\[
+ \sum_{k=1}^N\operatorname{Re}d_k(z)
+ \ge \frac12\sum_{k=1}^N\frac1k=\frac12H_N.
+\]
+
+Since `Re(z^{-1})<=1` for `x>=1`, Gauss' identity implies
+
+\[
+ \operatorname{Re}\psi(z)
+ \ge-\gamma-1+\frac12H_N\qquad(x\ge N).
+\]
+
+The divergence of `H_N` therefore proves
+
+\[
+ \forall M\in\mathbb R\;\exists A\;\forall z\in\mathbb C,
+ \quad A\le\operatorname{Re}z
+ \Longrightarrow M\le\operatorname{Re}\psi(z),
+ \tag{D-right}
+\]
+
+uniformly for all imaginary parts.
+
+Logarithmic differentiation of
+`H(s)=s(s-1)Gamma_R(s)/2` gives, on `Re s>1`,
+
+\[
+ \frac{H'(s)}{H(s)}
+ =\frac1s+\frac1{s-1}-\frac12\log\pi+rac12\psi(s/2).
+\]
+
+The first two rational terms have nonnegative real part.  Thus (D-right)
+shows that `Re(H'/H)` tends uniformly to positive infinity as `Re s` tends
+to infinity.  On the other hand the already-proved Dirichlet-series estimate
+gives, uniformly on `Re s>=3`,
+
+\[
+ \left|\frac{\zeta'(s)}{\zeta(s)}\right|\le2\zeta(2).
+\]
+
+Put `c=g_1/L`.  Since zeta is nonzero on this half-plane,
+
+\[
+ V_1(s)=\zeta(s)\left[g+ig_0+c\left(
+   \frac{\zeta'(s)}{\zeta(s)}+\frac{H'(s)}{H(s)}\right)\right].
+\]
+
+If `c=0`, the bracket is `g+ig_0`, nonzero because `g!=0`.  If `c!=0`,
+choose the digamma threshold so that the real quantity in parentheses exceeds
+`|g|/|c|`.  Its product with the real number `c` then has the sign of `c` and
+magnitude greater than `|g|`; consequently the real part of the bracket
+cannot vanish.  This proves one constant `A_V`, independent of height, beyond
+which `V_1` has no zeros.
+
+For the mollifier, `P(1)=1` makes the constant coefficient exactly one, while
+each of the finitely many terms with `n>=2` satisfies
+
+\[
+ \left|b_n n^{-s}\right|=|b_n|n^{-\operatorname{Re}s}\longrightarrow0
+\]
+
+uniformly in `Im s`.  A finite sum gives a constant `A_B` for which
+`|B(s)-1|<1`, hence `B(s)!=0`, whenever `Re s>=A_B`.  Taking
+`A=max(A_V,A_B)` excludes zeros of both `V_1` and `V_1B` beyond the same
+vertical line.  The bounded divisor counts from Section 17 can then be frozen
+at this `A`, yielding the actual unbounded right-half-strip counts and the
+global half-weighted equation-(35) inequality.  This argument remains wholly
+independent of Zeta23 and of the later long-mollifier mean-square estimate.
