@@ -11673,7 +11673,7 @@ The exact one-factor coverage table is therefore:
 | prime \(s\), \(0\leq u<\sigma/4\) | FKM prime trace theorem | supremum \(T^{\sigma/24}\) | quantitatively insufficient and covers no composite-modulus aggregate |
 | prime \(s\), \(3\sigma/4<u\leq\sigma\) | FKM Möbius trace theorem | supremum \(T^{\sigma/24}\) | same mismatch after fixing the short prime factor |
 | prime \(s\), \(0<u<\sigma\) | FKM bilinear trace Theorem 1.17 | at most \(T^{\sigma/8}\), zero at \(u=\sigma/2\) | fixed-prime sub-slices only; still below the half-power |
-| prime \(s\), \(u=\sigma/2\) | FKMS 2026 rank-one inverse-pole route | \(T^{\sigma/224}\) if the unstated stratification adapter is proved | route only, not entered as published coverage; no outer moment |
+| prime \(s\), \(u=\sigma/2\) | formal substitution in FKMS 2026 gallant formula | \(T^{\sigma/224}\) only under a gallant-strength rank-one moment bound | direct equal-shift pole collisions violate that moment count; not a valid coverage row |
 | composite \(s\), \(3\sigma/4<u\leq\sigma\) | Korolev multiplicative-coefficient theorem | logarithmic in the uniform composite case | no power coverage |
 | composite \(s\), \(\sigma/4\leq u\leq3\sigma/4\) | genuinely bilinear trace Type II | no applicable composite-modulus theorem | **unproved central band** |
 
@@ -11695,8 +11695,9 @@ coupling which the target is required to exploit.
 
 Even the best registered fixed-prime bilinear point \(v=\sigma/4\)
 leaves \(1/2-1/8=3/8\), and the older proved estimate at exact balance
-leaves the full \(1/2\).  Section 9.78 records a newer rank-one route
-with prospective saving \(1/224\), but not a stated applicable theorem.
+leaves the full \(1/2\).  Section 9.78 records why the apparent
+rank-one \(1/224\) substitution is obstructed by a larger Type-II
+exceptional family and therefore is not a currently valid route.
 
 Hence (9.517) changes the correct analytic interface but does not prove
 the gate.  After removing the boundary already controlled in (9.515),
@@ -11723,10 +11724,9 @@ blocks; none has been removed before the final square.  Formula (9.525)
 is the exact Fourier form of the continuous part of the supplied
 centered sector gate, not a scalar surrogate and not yet an exhaustive
 adapter from every packet in (4.5).  The composite-modulus middle band
-is its irreducible Type-II part; the exact balanced prime slice has only
-the unproved rank-one adapter described in Section 9.78.  The outer
-wings are not independently disposable because their published savings
-do not pay the global half-power.
+and the exact balanced prime slice form its irreducible Type-II part.
+The outer wings are not independently disposable because their
+published savings do not pay the global half-power.
 
 The finite helper beatty_afe_type_kloosterman_phase_ledger verifies
 (9.517)--(9.519), including the equivalence of the unit conditions.  The
@@ -11805,27 +11805,75 @@ theorems cannot be inserted without a new operator estimate for
 \(A(h)\).  Taking absolute values in \(h\) discards exactly the
 two-Möbius coupling sought by (9.525).
 
-There is a newer possible improvement on the *prime* balanced slice,
-but it is not yet a published coverage row.  The quantitative Type-II
-estimate in Fouvry--Kowalski--Michel--Sawin Theorem 1.3(2) is stated for
-gallant sheaves.  Their definition forces rank at least two, whereas
+There is an apparent newer improvement on the *prime* balanced slice,
+but a direct exceptional-locus audit shows that it is not presently a
+valid route.  The quantitative Type-II estimate in
+Fouvry--Kowalski--Michel--Sawin Theorem 1.3(2) is stated for gallant
+sheaves.  Their definition forces rank at least two, whereas
 \(x\mapsto e_q(Bx+C/x)\) is a rank-one Artin--Schreier trace.  Therefore
-Theorem 1.3(2) does not directly apply.  Section 9.11 of that paper says
-that the method also handles rank-one functions
-\(\chi(f(x))\psi(g(x))\), and specifically says that an inverse pole such
-as \(g=1/X\) gives the required combinatorial exceptional locus.  It
-does not state or prove the resulting quantitative rank-one theorem;
-the application-specific pole-collision and degree bounds are left to
-the reader.
+Theorem 1.3(2) does not directly apply.  Section 9.11 discusses
+rank-one functions \(\chi(f(x))\psi(g(x))\) and explains why an inverse
+pole such as \(g=1/X\) controls the first one-variable moment family.  It
+does not state a quantitative rank-one Type-II theorem or verify the
+second exceptional family required by Proposition 5.3(2).
 
-The prospective exponent is nevertheless completely explicit.  If
-that missing rank-one stratification adapter is established, Theorem
-1.3(2)'s factor at \(M=N=q^{1/2}\) is
+That distinction is substantive.  In the second moment family, let
+\(m\) denote the moment order, put
+\(\epsilon_j=1\) for \(1\leq j\leq m\) and
+\(\epsilon_j=-1\) for \(m<j\leq2m\), and write the two dilation arrays
+as \(a_j,b_j\).  The Type-II restriction is \(a_j\ne b_j\) for every
+\(j\).  On the locus where all translations equal one common value
+\(r_j=r\), the complete one-variable phase is
+
+\[
+ F(v)=B(v+r)L+\frac{C}{v+r}R,
+ \quad
+ L=\sum_{j=1}^{2m}\epsilon_j(a_j-b_j),
+ \quad
+ R=\sum_{j=1}^{2m}\epsilon_j(a_j^{-1}-b_j^{-1}).
+ \tag{9.530}
+\]
+
+Hence the open subvariety
+
+\[
+ \mathcal E_m:\quad L=R=0,\qquad a_jb_j(a_j-b_j)\ne0
+ \tag{9.531}
+\]
+
+has constant phase at every \(v\ne-r\), and the one-variable sum has
+size \(q-1\).  It has \(4m\) dilation variables and the common shift
+\(r\), cut out by only two equations.  At every rank-two Jacobian point,
+
+\[
+ \boxed{\dim\mathcal E_m\geq4m-1>3m\qquad(m\geq2).}
+ \tag{9.532}
+\]
+
+The gallant proof of Proposition 5.3(2) needs only
+\(O(q^{3m})\) exceptional parameter tuples, corresponding to dimension
+at most \(3m\).  The excess in (9.532) is \(m-1\).  This is not merely a
+dimension heuristic: for \(q=11,m=2\),
+
+\[
+ (a_1,a_2,a_3,a_4)=(1,1,1,1),\qquad
+ (b_1,b_2,b_3,b_4)=(2,9,3,8)
+ \tag{9.533}
+\]
+
+satisfies every pointwise exclusion, has \(L=R=0\), and the two
+defining equations have Jacobian rank two.  Thus its local family has
+dimension seven, while the gallant count permits only six.  The direct
+rank-one Type-II pole stratification fails; a different argument would
+have to exploit or subtract this whole collision family.
+
+For calibration only, blindly substituting the gallant formula at
+\(M=N=q^{1/2}\) gives
 
 \[
  \left(q^{-1/2}
  +q^{(-1/4+7/(4\ell))/\ell}\right)^{1/2}.
- \tag{9.530}
+ \tag{9.534}
 \]
 
 For integers \(\ell>7\), its second term saves
@@ -11835,25 +11883,327 @@ For integers \(\ell>7\), its second term saves
  \boxed{\eta_{\rm FKMS,route}(1,14)=\frac1{224}},
  \qquad
  \frac12-\frac1{224}=\frac{111}{224}.
- \tag{9.531}
+ \tag{9.535}
 \]
 
-Thus this route would remove the exact zero in the older FKM prime
-balanced row, but it would still be far below the required half-power,
-would remain pointwise in one prime modulus, and would supply none of
-the joint \(s,\xi,h\delta\) moment.  Until the rank-one exceptional
-varieties are proved with the uniform degree bounds required by the
-abstract reduction, the route exponent is not entered in the
-proved-coverage column.  The composite central band remains unproved in
-every case.
+Because (9.532) invalidates the moment input used to derive this formula,
+\(1/224\) is a formal substitution, not a currently valid route
+exponent.  Even if a new treatment recovered it, it would remain far
+below the required half-power, pointwise in one prime modulus, and
+would supply none of the joint \(s,\xi,h\delta\) moment.  It is therefore
+not entered in the proved-coverage column.  The prime balanced slice and
+the composite central band remain unproved in every case.
 
 The finite helper product_trace_additive_completion_audit verifies
 (9.526)--(9.529), including both Parseval identities and an arbitrary
 finite bilinear coefficient packet.  The helper
-fkms_rank_one_prime_type_ii_route_audit verifies (9.530)--(9.531) over
-exact rational exponents and records separately that the published
-gallant theorem does not directly apply and that the rank-one adapter is
-not proved here.
+fkms_rank_one_type_ii_collision_witness verifies (9.530)--(9.533),
+including the rank-two finite Jacobian witness.  The helper
+fkms_rank_one_prime_type_ii_route_audit verifies the formal calibration
+(9.534)--(9.535), computes the collision excess
+\(\lceil\ell/3\rceil-1\), and keeps both the direct route and the
+proved-coverage flags false.
+
+### 9.79 Squarefree CRT transfer and its sharp cofactor cost
+
+The outer coefficient \(\mu(s)\) restricts the active moduli to
+squarefree \(s\), so a prime-factor transfer should be audited before
+declaring the composite middle band irreducible.  Let \(s=qr\) with
+\((q,r)=1\), write \(\bar r_q\) for the inverse of \(r\bmod q\) and
+\(\bar q_r\) for the inverse of \(q\bmod r\), and put
+
+\[
+ K_s(x)=e_s(Bx+C\bar x),
+ \quad
+ K_q^{(r)}(x)=e_q\!\left(\bar r_q(Bx+C\bar x)\right),
+ \quad
+ K_r^{(q)}(x)=e_r\!\left(\bar q_r(Bx+C\bar x)\right).
+\]
+
+CRT gives the exact product, with no completion or loss,
+
+\[
+ \boxed{K_{qr}(x)=K_q^{(r)}(x)K_r^{(q)}(x).}
+ \tag{9.536}
+\]
+
+For the unit group modulo \(r\), define
+
+\[
+ \widehat K_r(\chi)
+ =\sum_{u\in(\mathbb Z/r\mathbb Z)^\times}
+ K_r^{(q)}(u)\overline{\chi(u)}.
+\]
+
+Multiplicative Fourier inversion then separates the cofactor in every
+product Type-II form:
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{d,p}\alpha_d\beta_pK_{qr}(dp)
+  =\frac1{\varphi(r)}\sum_{\chi\bmod r}\widehat K_r(\chi)
+  \sum_{d,p}&\alpha_d\chi(d)\,\beta_p\chi(p)\\
+  &\times K_q^{(r)}(dp).
+ \end{aligned}}
+ \tag{9.537}
+\]
+
+In the application, \(B=\alpha\) and \(C=-h\delta\).  Thus (9.537)
+retains \(h\delta\), the outer sign \(\mu(qr)\), and the Type sign
+\(\mu(d)\); it only twists the two coefficient arrays by the same
+multiplicative character.
+
+The exact Parseval cost is
+
+\[
+ \sum_{\chi\bmod r}|\widehat K_r(\chi)|^2
+ =\varphi(r)\sum_{u\in(\mathbb Z/r\mathbb Z)^\times}|K_r^{(q)}(u)|^2
+ =\varphi(r)^2.
+ \tag{9.538}
+\]
+
+Consequently triangle plus Cauchy in the character variable has the
+sharp coefficient-independent ceiling
+
+\[
+ \boxed{
+ \frac1{\varphi(r)}\sum_{\chi\bmod r}|\widehat K_r(\chi)|
+ \leq\varphi(r)^{1/2}.}
+ \tag{9.539}
+\]
+
+Suppose optimistically that a fixed-prime Type-II theorem accepts every
+twisted coefficient array in (9.537) and saves \(q^{-\kappa}\).  Equations
+(9.537)--(9.539) transfer only the factor
+
+\[
+ r^{1/2}q^{-\kappa}.
+ \tag{9.540}
+\]
+
+Writing \(q=T^\lambda,r=T^{\sigma-\lambda}\), the transferred saving is
+
+\[
+ \eta_{\rm CRT}(\sigma,\lambda;\kappa)
+ =\max\!\left(0,\kappa\lambda-\frac{\sigma-\lambda}{2}\right),
+ \qquad
+ \lambda>\frac{\sigma}{1+2\kappa}
+ \tag{9.541}
+\]
+
+for a strict power gain.  The strongest registered FKM fixed-prime
+bilinear exponent is only \(\kappa=1/8\).  Even ignoring all of its
+length restrictions, CRT transfer therefore requires
+
+\[
+ \lambda>\frac45\sigma.
+\]
+
+At the illustrative point \(\sigma=1,\lambda=9/10\),
+
+\[
+ \boxed{\eta_{\rm CRT}(9/10)=\frac{9}{80}-\frac1{20}
+ =\frac1{16}},
+ \qquad
+ \frac12-\eta_{\rm CRT}=\frac7{16}.
+ \tag{9.542}
+\]
+
+As \(\lambda\to\sigma\), the gain never exceeds \(1/8\).  Hence this
+exact CRT transfer can certify a small pointwise saving only on an
+extreme large-prime-factor subface, and does not close any part of the
+half-power coupled gate.  It also supplies no outer \(s\)-average, no
+sector-character moment, and no joint \(h\delta\) moment.  Avoiding the
+\(r^{1/2}\) cost in (9.539) requires keeping the character family inside
+the global square before Cauchy; that is a new coupled operator estimate,
+not a consequence of the fixed-prime theorem.
+
+This is already the optimum over the whole squarefree factorization
+polytope.  If \(s=\prod_iq_i\) and \(q_i=T^{\lambda_i}\), then choosing
+the best one prime factor gives
+
+\[
+ \boxed{
+ \max_i\left(\kappa\lambda_i-\frac{\sigma-\lambda_i}{2}\right)_+
+ \leq\sup_{0\leq\lambda\leq\sigma}
+ \left(\kappa\lambda-\frac{\sigma-\lambda}{2}\right)_+
+ =\kappa\sigma.}
+ \tag{9.542a}
+\]
+
+For every nontrivial finite factorization the last boundary value is
+strictly unattained.  Thus \(\kappa=1/8\) cannot reach a half-power even
+in the limiting one-large-prime corner, and balanced factorizations
+give no power saving at all.
+
+The finite helper squarefree_product_trace_crt_character_audit verifies
+(9.536)--(9.539), including the CRT phases, character reconstruction,
+bilinear identity, and Parseval norm for an arbitrary squarefree
+cofactor \(r\), not only for one prime cofactor.  It constructs the full
+product character group
+
+\[
+ \widehat{U(r)}=\prod_{p\mid r}\widehat{\mathbb F_p^\times}.
+\]
+
+The exact-rational helper
+squarefree_prime_factor_transfer_audit verifies (9.540)--(9.542) and
+the helper squarefree_prime_factor_polytope_audit verifies (9.542a);
+both keep every global coupled-moment flag false.
+
+### 9.80 Exact rank-one resonance subtraction
+
+The equal-shift family in (9.530)--(9.533) is not an isolated accident.
+For the present product trace, every constant-phase parameter tuple can
+be classified explicitly.  This gives a more useful next interface than
+trying to force the kernel into the gallant theorem.
+
+Let \(q\) be prime, let \(B,C\in\mathbb F_q^\times\), and keep the signs
+\(\epsilon_j=1\) for \(j\leq m\) and \(\epsilon_j=-1\) for \(j>m\).
+For \(2m\) shifts \(r_j\) and two dilation arrays \(a_j,b_j\in
+\mathbb F_q^\times\), with \(a_j\ne b_j\), put
+
+\[
+ A_j=\epsilon_j(a_j-b_j),\qquad
+ R_j=\epsilon_j(a_j^{-1}-b_j^{-1}),
+ \tag{9.543}
+\]
+
+and, for every distinct shift \(\rho\), put
+
+\[
+ L=\sum_{j=1}^{2m}A_j,
+ \qquad R(\rho)=\sum_{j:r_j=\rho}R_j.
+ \tag{9.544}
+\]
+
+The complete one-variable phase occurring after the Type-II moment
+exchange has the exact partial-fraction expansion
+
+\[
+ \boxed{
+ F(v)=BLv+B\sum_jA_jr_j
+       +C\sum_{\rho}\frac{R(\rho)}{v+\rho}.}
+ \tag{9.545}
+\]
+
+It follows immediately, as an identity of rational functions, that
+
+\[
+ \boxed{F\text{ is constant}\quad\Longleftrightarrow\quad
+ L=0\ \text{ and }\ R(\rho)=0\text{ for every }\rho.}
+ \tag{9.546}
+\]
+
+The phrase “as an identity of rational functions” is essential.  For a
+small prime, too few nonpole points may make a nonconstant rational
+function take the same value at every available \(\mathbb F_q\)-point.
+That finite-value alias is not a resonant component and is absorbed by
+the fixed-\(m\) constant in (9.548); it must not be used to redefine
+(9.546).
+
+If \(k=|\{r_j\}|\), the corresponding complete nonpole sum is therefore
+not merely large but exactly
+
+\[
+ \boxed{
+ \sum_{v\ne-r_j}e_q(F(v))
+ =(q-k)e_q\!\left(B\sum_jA_jr_j\right).}
+ \tag{9.547}
+\]
+
+After subtracting (9.547), every remaining phase is nonconstant.  If
+some \(R(\rho)\ne0\), it has a genuine simple pole and hence cannot be
+of Artin--Schreier form \(G^q-G+\mathrm{constant}\); if all residues
+vanish but \(L\ne0\), the remaining phase is nonconstant linear.  The
+standard Weil bound consequently gives, uniformly for fixed \(m\),
+
+\[
+ \sum_{v\ne-r_j}e_q(F(v))
+ -\mathbf 1_{\rm res}(q-k)e_q\!\left(B\sum_jA_jr_j\right)
+ \ll_m q^{1/2}.
+ \tag{9.548}
+\]
+
+Thus the square-root estimate itself is not the missing rank-one
+input.  The missing input is an estimate for the explicit resonant
+projector in (9.546)--(9.547).
+
+The size of that projector explains exactly why the ordinary FKMS
+Hölder route cannot simply absorb it.  Fix a partition of the \(2m\)
+indices into \(k\) equal-shift blocks.  A singleton block is impossible
+under \(a_j\ne b_j\), since then its single \(R_j\) is nonzero.  On every
+remaining nonempty partition stratum there are \(4m+k\) dilation and
+shift variables, and (9.546) imposes \(k+1\) equations.  Hence
+
+\[
+ \boxed{\dim\mathcal E_{m,\mathcal P}\geq4m-1,}
+ \tag{9.549}
+\]
+
+independently of the partition.  The equal-shift example was only the
+\(k=1\) stratum; for \(q=11,m=2\), the two-block choice
+
+\[
+ (r_1,r_2,r_3,r_4)=(0,0,1,1),\quad
+ (a_1,a_2,a_3,a_4)=(1,1,1,1),\quad
+ (b_1,b_2,b_3,b_4)=(2,8,2,8)
+ \tag{9.550}
+\]
+
+also satisfies (9.546), every Type-II exclusion, and has the exact
+nine-term value (9.547).  At \(m=\lceil\ell/3\rceil\), the positive
+moment proof allows only dimension \(3m\); (9.549) exceeds it by
+\(m-1\).  Equivalently, a term-counting proof would need an additional
+factor \(q^{m-1}\) from the resonant family.
+
+This identifies the precise place where the application-specific signs
+must enter.  In the published arbitrary-coefficient proof, the
+incidence weight \(\nu(r,s_1,s_2)\) is replaced by its absolute value
+before Hölder, so (9.547) contributes positively and no Möbius
+cancellation remains.  For the mollifier one must instead retain
+
+\[
+ \mu(qr)\,\mu(d),\qquad A=h\delta,qquad
+ (\xi,j),\quad\text{and all dyadic/reflected packet labels}
+ \tag{9.551}
+\]
+
+through the resonant projection.  After also applying the exact CRT
+identity (9.537), the remaining analytic task has two parts:
+
+1. prove the required signed \(q^{m-1}\) cancellation for the explicit
+   equations (9.546), jointly over \(q,r,\chi,h,\delta\) and the outer
+   packets;
+2. keep the nonresonant remainder (9.548) and the cofactor characters
+   inside the same global square, so that the pointwise
+   \(\varphi(r)^{1/2}\) loss in (9.539) is never paid.
+
+Call this pair of estimates the **resonance-subtracted coupled
+character gate**, \(\operatorname{RSCCG}_3\).  It is narrower than asking
+for a new arbitrary-kernel Type-II theorem: its principal piece is the
+explicit finite projector (9.546)--(9.547), and its centered piece
+already has the one-variable square-root bound (9.548).  It is not yet
+proved, and an exhaustive adapter from every packet of (9.525) is still
+required before one may assert
+\(\operatorname{RSCCG}_3\Rightarrow\operatorname{CK}_{\rm ub}(3)\).
+What has been proved here is the exact algebraic split and the fact that
+all constant-phase failure in this Type-II moment family is concentrated
+on the stated resonant projector.  Other steps of a full rank-one
+analytic adapter, including the deepest diagonal stratum, are not
+asserted here.
+
+The finite helper rank_one_type_ii_resonance_audit checks
+(9.543)--(9.547) on supplied finite data, including a two-shift resonant
+example and exact subtraction of its nonpole main term.  It reports the
+rational-function criterion separately from constancy of the sampled
+finite values, with a \(q=5\) alias regression.  The general bound
+(9.548) is the standard Weil input, not a floating-point test result.
+The helper
+rank_one_type_ii_resonance_partition_audit verifies the dimension ledger
+(9.549) for every supplied shift partition and rejects singleton blocks
+under the Type-II exclusion.
 
 ## 10. What has and has not been proved
 
@@ -12509,7 +12859,9 @@ Proved in this note:
 | Label-safe Type-entry determinant | internal zero orbit recombined; nonzero entry determinant unproved | The auxiliary sector character is \(\xi\), not \(a_{\rm AFE}=h\delta\), and all original packet labels remain in the row, (9.469)--(9.471).  A common Beatty sector is one common Euclidean quotient and obeys \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\), (9.472)--(9.477).  All \(dm=r\) cross factorizations must be recombined by the Möbius-log identity (9.478)--(9.481).  This makes the nonprincipal \(\Delta_{\rm Type}=0\) part exactly \((1-M^{-1})D_{\rm cont}\), already at diagonal power, (9.482); the extra power is confined to \(\Delta_{\rm Type}\ne0\), which is not estimated |
 | Moving-Beatty fixed-function and labelled Type split | structured slope sampling proved; exact centered positive projector isolated; moving-grid Hilbert square unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot directly encode the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\).  The zero blocks recombine, and (9.489) makes the complete packet an exact projector square.  Therefore only the one-sided joint upper gate \({\rm JNT}_{2}^{+}\), (9.491), is needed after the diagonal estimate.  Reindexing by \(n=rs\) further gives one fixed \(\mu(n)\) and an \(O(1)\) product-sector fiber, (9.494)--(9.497), but the vector weight remains factorization-dependent.  The Sobolev/divisor argument (9.498)--(9.503) proves \(T^\varepsilon\)-loss sampling on the reciprocal grid for every fixed Hilbert family.  Finally, (9.504)--(9.508) identify the exact centered positive moving-Beatty projector sufficient for the signed one-sided gate; it still needs one power of energy saving, and the exhaustive packet map remains unproved |
 | Primitive Beatty Fourier boundary | exact half-jump closure; continuous Type spectrum unproved | The exact sector-step expansion (9.510)--(9.512) has harmonics \(a=\xi+jQ\) and a half-jump term.  On primitive entries the boundary condition is equivalent to \(s\mid Q\), and (9.513)--(9.515) give a bijection with the \(Q\) sectors.  After label recombination the centered boundary is bounded by the known continuous diagonal.  The continuous harmonics retain both Möbius factors and the full \(h\delta\) labels through the phase \(e(adp/s)\), but standard additive large sieve still loses one energy power by (9.516) |
-| Sector--AFE Kloosterman Type polytope | exact combined phase and published prime-slice coverage; composite central band unproved | Recombining before absolute values gives \(e_s(\alpha dp-h\delta\bar d\bar p)\), (9.517), and the unit condition is exactly \((\alpha h\delta,s)=1\), (9.519).  For \(d=T^u,s=T^\sigma\), Korolev covers the composite-modulus left wing with saving at most \(\sigma/35\); the FKM one-variable prime rows give \(\sigma/24\).  FKM Theorem 1.17 applies bilinearly at fixed prime modulus, saving at most \(\sigma/8\) but zero at \(u=\sigma/2\).  The exact completion (9.526)--(9.529) has one fixed Kloosterman argument and Cauchy--Parseval returns the trivial scale, so the recent complete-Kloosterman bilinear theorems do not directly fit.  FKMS Section 9.11 suggests a rank-one inverse-pole route which, if its unstated stratification adapter were proved, would save \(1/224\) at prime balance; it is not a registered theorem row.  All inputs remain below the critical half-power and provide no joint \(s,\xi,h\delta\) moment.  The composite central band and the full coupled Type-II gate remain unproved, (9.520)--(9.531) |
+| Sector--AFE Kloosterman Type polytope | exact combined phase and published prime-slice coverage; composite central band unproved | Recombining before absolute values gives \(e_s(\alpha dp-h\delta\bar d\bar p)\), (9.517), and the unit condition is exactly \((\alpha h\delta,s)=1\), (9.519).  For \(d=T^u,s=T^\sigma\), Korolev covers the composite-modulus left wing with saving at most \(\sigma/35\); the FKM one-variable prime rows give \(\sigma/24\).  FKM Theorem 1.17 applies bilinearly at fixed prime modulus, saving at most \(\sigma/8\) but zero at \(u=\sigma/2\).  The exact completion (9.526)--(9.529) has one fixed Kloosterman argument and Cauchy--Parseval returns the trivial scale, so the recent complete-Kloosterman bilinear theorems do not directly fit.  The apparent FKMS rank-one \(1/224\) substitution is also invalid: the equal-shift constant-phase family has dimension \(4m-1>3m\), (9.530)--(9.533), so the required Type-II moment count fails.  All inputs remain below the critical half-power and provide no joint \(s,\xi,h\delta\) moment.  The prime balanced slice, composite central band, and full coupled Type-II gate remain unproved, (9.520)--(9.535) |
+| Squarefree CRT prime-factor transfer | exact factorization and sharp pointwise cofactor cost; coupled character average unproved | For \(s=qr\), (9.536)--(9.539) factor the product trace and separate the cofactor by multiplicative characters while retaining \(\mu(s)\mu(d)\) and \(h\delta\).  A prime bound saving \(q^{-\kappa}\) pays the unavoidable coefficient-independent cost \(r^{1/2}\), so a power remains only for \(\lambda>\sigma/(1+2\kappa)\), (9.541).  Even the optimistic registered \(\kappa=1/8\) requires a prime factor larger than \(s^{4/5}\), gives only \(1/16\) at \(q=s^{9/10}\), and never reaches the required half-power.  Eliminating the \(r^{1/2}\) loss requires a new global character square-function before Cauchy, not a fixed-prime theorem, (9.540)--(9.542) |
+| Rank-one Type-II resonance subtraction | exact classification and centered square-root bound; signed resonant projector unproved | The partial fractions (9.543)--(9.546) classify every constant phase by one global linear equation and one reciprocal-residue equation per equal-shift block.  Its nonpole value is explicit, (9.547), and subtracting it leaves a standard Weil square-root sum, (9.548).  Every admissible partition has resonant dimension at least \(4m-1\), so the positive FKMS moment exceeds its \(3m\) allowance by \(m-1\), (9.549).  The remaining \(\operatorname{RSCCG}_3\) must retain \(\mu(qr)\mu(d)\), \(h\delta\), all characters, and all packet labels before Hölder; neither that signed resonant estimate nor the exhaustive implication to \(\operatorname{CK}_{\rm ub}(3)\) is proved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -12656,9 +13008,10 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 * É. Fouvry, E. Kowalski, P. Michel, W. Sawin, *Bilinear forms with trace
   functions*, arXiv:2511.09459v3, Theorem 1.3 and Section 9.11.  The
   quantitative theorem is stated for rank-at-least-two gallant sheaves;
-  the rank-one inverse-pole discussion supplies a route, not a stated
-  theorem for the present kernel.  This boundary and the conditional
-  \(1/224\) route exponent are audited in Section 9.78.
+  the rank-one inverse-pole discussion does not verify the second
+  Type-II exceptional family for the present kernel.  Section 9.78 gives
+  an exact dimension obstruction and retains \(1/224\) only as a formal,
+  invalidated gallant-formula calibration.
 * M. A. Korolev, I. E. Shparlinski, *Sums of algebraic trace functions
   twisted by arithmetic functions*, Proc. Steklov Inst. Math. 314
   (2021), 128--144, arXiv:1804.01337, Theorem 2.1; its saving in the

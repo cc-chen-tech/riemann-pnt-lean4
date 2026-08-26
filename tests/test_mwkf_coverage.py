@@ -2725,7 +2725,7 @@ def test_product_trace_additive_completion_is_exact_and_parseval_is_trivial() ->
     assert result["parseval_supplies_power_saving"] is False
 
 
-def test_fkms_2026_rank_one_balanced_slice_is_a_route_not_a_registered_bound() -> None:
+def test_fkms_2026_rank_one_balanced_formula_has_a_type_ii_collision_obstruction() -> None:
     audit = getattr(
         coverage_audit,
         "fkms_rank_one_prime_type_ii_route_audit",
@@ -2741,10 +2741,16 @@ def test_fkms_2026_rank_one_balanced_slice_is_a_route_not_a_registered_bound() -
     )
 
     assert balanced["published_gallant_theorem_directly_applies"] is False
-    assert balanced["paper_states_rank_one_inverse_pole_method_goes_through"]
+    assert balanced["paper_discusses_rank_one_inverse_pole_method"]
     assert balanced["rank_one_stratification_adapter_proved_here"] is False
-    assert balanced["conditional_route_saving_exponent"] == F(1, 224)
-    assert balanced["remaining_unsquared_deficit_if_adapter_proved"] == F(111, 224)
+    assert balanced["formal_gallant_formula_saving_exponent"] == F(1, 224)
+    assert balanced["direct_rank_one_route_saving_exponent"] == F(0)
+    assert balanced["gallant_moment_order"] == 5
+    assert balanced["required_type_ii_exceptional_dimension"] == 15
+    assert balanced["equal_shift_collision_dimension_lower_bound"] == 19
+    assert balanced["equal_shift_collision_dimension_excess"] == 4
+    assert balanced["direct_pole_stratification_supports_formula"] is False
+    assert balanced["remaining_unsquared_deficit_after_registered_bounds"] == F(1, 2)
     assert balanced["registered_prime_slice_saving_exponent"] == F(0)
     assert balanced["fixed_prime_modulus_bound_covers_coupled_gate"] is False
 
@@ -2754,10 +2760,300 @@ def test_fkms_2026_rank_one_balanced_slice_is_a_route_not_a_registered_bound() -
             first_factor_exponent=F(1, 2),
             moment_parameter=ell,
             required_unsquared_saving=F(1, 2),
-        )["conditional_route_saving_exponent"]
+        )["formal_gallant_formula_saving_exponent"]
         for ell in range(8, 31)
     }
     assert max(candidate_savings, key=candidate_savings.get) == 14
+
+
+def test_rank_one_type_ii_equal_shift_collision_is_an_exact_constant_phase() -> None:
+    witness = getattr(
+        coverage_audit,
+        "fkms_rank_one_type_ii_collision_witness",
+        None,
+    )
+    assert witness is not None, "rank-one Type-II collision witness is missing"
+
+    result = witness(
+        modulus=11,
+        direct_coefficient=1,
+        inverse_coefficient=1,
+        common_shift=4,
+        first_dilations=(1, 1, 1, 1),
+        second_dilations=(2, 9, 3, 8),
+    )
+
+    assert result["moment_order"] == 2
+    assert result["pointwise_type_ii_exclusion_holds"]
+    assert result["linear_coefficient_vanishes"]
+    assert result["pole_residue_vanishes"]
+    assert result["phase_is_zero_off_common_pole"]
+    assert result["zero_phase_count"] == 10
+    assert result["one_variable_sum"] == 10 + 0j
+    assert result["jacobian_rank"] == 2
+    assert result["collision_family_dimension_lower_bound"] == 7
+    assert result["gallant_required_exceptional_dimension"] == 6
+    assert result["dimension_excess"] == 1
+    assert result["standard_type_ii_moment_exception_count_can_hold"] is False
+
+    nonresonant = witness(
+        modulus=11,
+        direct_coefficient=2,
+        inverse_coefficient=1,
+        common_shift=4,
+        first_dilations=(1, 1, 1, 1),
+        second_dilations=(2, 9, 3, 7),
+    )
+    assert not nonresonant["phase_is_zero_off_common_pole"]
+    assert nonresonant["one_variable_sum"] != nonresonant["zero_phase_count"]
+
+
+def test_squarefree_product_trace_crt_character_split_is_exact() -> None:
+    audit = getattr(
+        coverage_audit,
+        "squarefree_product_trace_crt_character_audit",
+        None,
+    )
+    assert audit is not None, "squarefree CRT-character audit is missing"
+
+    result = audit(
+        prime_modulus=5,
+        squarefree_cofactor=7,
+        direct_coefficient=2,
+        inverse_coefficient=3,
+        residue=11,
+        left_coefficients={1: 1, 2: -1, 3: 1},
+        right_coefficients={1: 1, 2: 1, 4: -1},
+    )
+
+    assert result["squarefree_two_prime_modulus"] == 35
+    assert result["crt_direct_phase_exact"]
+    assert result["crt_inverse_phase_exact"]
+    assert result["product_trace_factorization_exact"]
+    assert result["cofactor_character_reconstruction_exact"]
+    assert result["bilinear_character_split_exact"]
+    assert result["cofactor_character_parseval_exact"]
+    assert result["normalized_character_l1_bound_holds"]
+    assert result["both_mobius_weights_retained"]
+    assert result["h_delta_factor_retained"]
+
+    iterated = audit(
+        prime_modulus=5,
+        squarefree_cofactor=21,
+        direct_coefficient=2,
+        inverse_coefficient=1,
+        residue=11,
+        left_coefficients={1: 1, 2: -1},
+        right_coefficients={1: 1, 4: 1},
+    )
+    assert iterated["squarefree_modulus"] == 105
+    assert iterated["cofactor_prime_factors"] == (3, 7)
+    assert iterated["cofactor_character_count"] == 12
+    assert iterated["product_trace_factorization_exact"]
+    assert iterated["cofactor_character_reconstruction_exact"]
+    assert iterated["bilinear_character_split_exact"]
+    assert iterated["cofactor_character_parseval_exact"]
+
+    even_cofactor = audit(
+        prime_modulus=5,
+        squarefree_cofactor=6,
+        direct_coefficient=1,
+        inverse_coefficient=2,
+        residue=7,
+        left_coefficients={1: 1, 2: -1, 5: 1},
+        right_coefficients={1: 1, 3: -1, 7: 1},
+    )
+    assert even_cofactor["squarefree_modulus"] == 30
+    assert even_cofactor["cofactor_prime_factors"] == (2, 3)
+    assert even_cofactor["cofactor_character_count"] == 2
+    assert even_cofactor["product_trace_factorization_exact"]
+    assert even_cofactor["cofactor_character_reconstruction_exact"]
+    assert even_cofactor["bilinear_character_split_exact"]
+    assert even_cofactor["cofactor_character_parseval_exact"]
+
+
+def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
+    audit = getattr(
+        coverage_audit,
+        "rank_one_type_ii_resonance_audit",
+        None,
+    )
+    assert audit is not None, "rank-one resonance audit is missing"
+
+    resonant = audit(
+        modulus=11,
+        direct_coefficient=2,
+        inverse_coefficient=3,
+        shifts=(0, 0, 1, 1),
+        first_dilations=(1, 1, 1, 1),
+        second_dilations=(2, 8, 2, 8),
+    )
+    assert resonant["pointwise_type_ii_exclusion_holds"]
+    assert resonant["distinct_shifts"] == (0, 1)
+    assert resonant["reciprocal_residues_by_shift"] == {0: 0, 1: 0}
+    assert resonant["linear_slope_mod_modulus"] == 0
+    assert resonant["resonance_conditions_hold"]
+    assert resonant["rational_function_is_constant"]
+    assert resonant["rational_function_resonance_classification_exact"]
+    assert resonant["finite_nonpole_values_are_constant"]
+    assert not resonant["finite_value_aliasing_detected"]
+    assert resonant["nonpole_term_count"] == 9
+    assert resonant["resonant_main_exact"]
+    assert resonant["centered_sum_vanishes_on_resonance"]
+
+    nonresonant = audit(
+        modulus=11,
+        direct_coefficient=2,
+        inverse_coefficient=3,
+        shifts=(0, 0, 1, 1),
+        first_dilations=(1, 1, 1, 1),
+        second_dilations=(2, 8, 2, 7),
+    )
+    assert not nonresonant["resonance_conditions_hold"]
+    assert not nonresonant["rational_function_is_constant"]
+    assert not nonresonant["finite_nonpole_values_are_constant"]
+    assert nonresonant["rational_function_resonance_classification_exact"]
+    assert nonresonant["resonant_main"] == 0j
+    assert nonresonant["square_root_bound_for_nonresonance_requires_weil"]
+
+    small_prime_alias = audit(
+        modulus=5,
+        direct_coefficient=1,
+        inverse_coefficient=1,
+        shifts=(0, 1),
+        first_dilations=(1, 1),
+        second_dilations=(2, 4),
+    )
+    assert not small_prime_alias["resonance_conditions_hold"]
+    assert not small_prime_alias["rational_function_is_constant"]
+    assert small_prime_alias["finite_nonpole_values_are_constant"]
+    assert small_prime_alias["finite_value_aliasing_detected"]
+    assert small_prime_alias["rational_function_resonance_classification_exact"]
+
+    with pytest.raises(ValueError, match="phase coefficients"):
+        audit(
+            modulus=11,
+            direct_coefficient=0,
+            inverse_coefficient=3,
+            shifts=(0, 0),
+            first_dilations=(1, 1),
+            second_dilations=(2, 8),
+        )
+
+
+def test_all_type_ii_resonance_partitions_have_the_same_dimension_barrier() -> None:
+    audit = getattr(
+        coverage_audit,
+        "rank_one_type_ii_resonance_partition_audit",
+        None,
+    )
+    assert audit is not None, "rank-one resonance partition audit is missing"
+
+    for blocks in ((4,), (2, 2)):
+        result = audit(moment_order=2, shift_block_sizes=blocks)
+        assert result["compatible_with_pointwise_type_ii"]
+        assert result["resonance_dimension_lower_bound"] == 7
+        assert result["gallant_required_exceptional_dimension"] == 6
+        assert result["dimension_excess"] == 1
+        assert not result["standard_type_ii_exception_count_can_hold"]
+        assert result["resonant_term_requires_separate_global_estimate"]
+
+    singleton = audit(moment_order=2, shift_block_sizes=(1, 3))
+    assert singleton["has_singleton_block"]
+    assert not singleton["compatible_with_pointwise_type_ii"]
+    assert not singleton["active_admissible_resonant_stratum"]
+    assert singleton["standard_type_ii_exception_count_can_hold"]
+    assert not singleton["resonant_term_requires_separate_global_estimate"]
+
+
+def test_prime_factor_transfer_cost_covers_only_an_extreme_large_prime_subface() -> None:
+    audit = getattr(
+        coverage_audit,
+        "squarefree_prime_factor_transfer_audit",
+        None,
+    )
+    assert audit is not None, "prime-factor transfer audit is missing"
+
+    threshold = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponent=F(4, 5),
+        prime_relative_saving_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert threshold["prime_bound_saving_in_T_exponent"] == F(1, 10)
+    assert threshold["cofactor_character_l1_cost_exponent"] == F(1, 10)
+    assert threshold["net_transfer_saving_exponent"] == F(0)
+    assert threshold["strict_power_saving_after_transfer"] is False
+
+    extreme = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponent=F(9, 10),
+        prime_relative_saving_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert extreme["net_transfer_saving_exponent"] == F(1, 16)
+    assert extreme["large_prime_threshold_exponent"] == F(4, 5)
+    assert extreme["strict_power_saving_after_transfer"]
+    assert extreme["remaining_unsquared_deficit"] == F(7, 16)
+    assert extreme["transfer_closes_coupled_gate"] is False
+    assert extreme["outer_modulus_average_provided"] is False
+
+    hypothetical = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponent=F(9, 10),
+        prime_relative_saving_exponent=F(1),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert hypothetical["pointwise_transfer_meets_required_saving"]
+    assert not hypothetical["transfer_closes_coupled_gate"]
+    assert not hypothetical["outer_modulus_average_provided"]
+    assert not hypothetical["joint_sector_character_moment_provided"]
+    assert not hypothetical["joint_h_delta_moment_provided"]
+
+
+def test_prime_factor_transfer_is_optimized_over_the_squarefree_polytope() -> None:
+    audit = getattr(
+        coverage_audit,
+        "squarefree_prime_factor_polytope_audit",
+        None,
+    )
+    assert audit is not None, "squarefree prime-factor polytope audit is missing"
+
+    balanced = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponents=(F(1, 2), F(1, 2)),
+        prime_relative_saving_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert balanced["signed_transfer_savings"] == (F(-3, 16), F(-3, 16))
+    assert balanced["best_net_transfer_saving"] == 0
+    assert balanced["continuous_polytope_supremum"] == F(1, 8)
+    assert not balanced["continuous_pointwise_supremum_meets_required_saving"]
+    assert not balanced["selected_pointwise_factor_meets_required_saving"]
+    assert not balanced["transfer_closes_coupled_gate"]
+
+    extreme = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponents=(F(9, 10), F(1, 10)),
+        prime_relative_saving_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert extreme["best_prime_factor_index"] == 0
+    assert extreme["best_prime_factor_exponent"] == F(9, 10)
+    assert extreme["best_net_transfer_saving"] == F(1, 16)
+    assert extreme["finite_nontrivial_factorization_is_below_supremum"]
+    assert extreme["remaining_unsquared_deficit"] == F(7, 16)
+    assert extreme["outer_modulus_average_provided"] is False
+
+    hypothetical = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponents=(F(9, 10), F(1, 10)),
+        prime_relative_saving_exponent=F(1),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert hypothetical["continuous_pointwise_supremum_meets_required_saving"]
+    assert hypothetical["selected_pointwise_factor_meets_required_saving"]
+    assert not hypothetical["transfer_closes_coupled_gate"]
 
 
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:

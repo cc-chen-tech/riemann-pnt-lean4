@@ -12,6 +12,7 @@ import cmath
 import sys
 from dataclasses import dataclass
 from fractions import Fraction
+from itertools import product
 from math import gcd, isqrt
 from pathlib import Path
 
@@ -8607,10 +8608,15 @@ def fkms_rank_one_prime_type_ii_route_audit(
     ``g=1/X`` goes through, but it leaves the application-specific
     diagonal-variety verification to the reader.
 
-    This helper records the saving that Theorem 1.3 would give after
-    that missing rank-one adapter is proved.  It intentionally registers
-    zero published saving until the pole-collision stratification is
-    supplied; a route note is not promoted to a theorem.
+    This helper records the saving that Theorem 1.3 would give after a
+    gallant-strength rank-one adapter.  Direct pole counting does not
+    supply such an adapter: at moment order ``m=ceil(l/3)``, the locus
+    on which all ``2m`` shifts coincide and both the linear coefficient
+    and total reciprocal residue vanish has dimension at least
+    ``4m-1``.  The gallant proof needs an exceptional set of dimension
+    at most ``3m``.  Thus for ``m>=2`` the formal exponent is not even a
+    currently valid rank-one route; a new treatment of this collision
+    family would be required.
     """
 
     sigma = F(modulus_exponent)
@@ -8635,12 +8641,16 @@ def fkms_rank_one_prime_type_ii_route_audit(
     second_bracket_saving = (
         sigma - 3 * sigma / 4 - 7 * sigma / (4 * ell)
     ) / (2 * ell)
-    conditional = (
+    formal_saving = (
         max(F(0), min(first_bracket_saving, second_bracket_saving))
         if exponent_range
         else F(0)
     )
-    remaining = max(F(0), required - conditional)
+    moment_order = (ell + 2) // 3
+    required_exceptional_dimension = 3 * moment_order
+    collision_dimension = 4 * moment_order - 1
+    collision_excess = max(0, collision_dimension - required_exceptional_dimension)
+    direct_route_saving = formal_saving if collision_excess == 0 else F(0)
     return {
         "source": (
             "Fouvry--Kowalski--Michel--Sawin, arXiv:2511.09459v3, "
@@ -8655,14 +8665,26 @@ def fkms_rank_one_prime_type_ii_route_audit(
         "published_upper_short_factor_exponent": upper,
         "first_bracket_saving_exponent": first_bracket_saving,
         "second_bracket_saving_exponent": second_bracket_saving,
-        "conditional_route_saving_exponent": conditional,
+        "formal_gallant_formula_saving_exponent": formal_saving,
+        "direct_rank_one_route_saving_exponent": direct_route_saving,
         "required_unsquared_saving": required,
-        "remaining_unsquared_deficit_if_adapter_proved": remaining,
+        "remaining_unsquared_deficit_under_formal_formula": max(
+            F(0), required - formal_saving
+        ),
+        "remaining_unsquared_deficit_after_registered_bounds": required,
+        "gallant_moment_order": moment_order,
+        "required_type_ii_exceptional_dimension": (
+            required_exceptional_dimension
+        ),
+        "equal_shift_collision_dimension_lower_bound": collision_dimension,
+        "equal_shift_collision_dimension_excess": collision_excess,
+        "direct_pole_stratification_supports_formula": collision_excess == 0,
         "published_gallant_theorem_directly_applies": False,
         "gallant_definition_forces_rank_at_least_two": True,
         "kernel_is_rank_one_artin_schreier": True,
         "kernel_has_inverse_pole": True,
-        "paper_states_rank_one_inverse_pole_method_goes_through": True,
+        "paper_discusses_rank_one_inverse_pole_method": True,
+        "paper_states_quantitative_rank_one_type_ii_theorem": False,
         "rank_one_stratification_adapter_proved_in_source": False,
         "rank_one_stratification_adapter_proved_here": False,
         "registered_prime_slice_saving_exponent": F(0),
@@ -8672,6 +8694,669 @@ def fkms_rank_one_prime_type_ii_route_audit(
         "joint_h_delta_moment_provided": False,
         "outer_mobius_modulus_average_provided": False,
         "fixed_prime_modulus_bound_covers_coupled_gate": False,
+    }
+
+
+def fkms_rank_one_type_ii_collision_witness(
+    *,
+    modulus: int,
+    direct_coefficient: int,
+    inverse_coefficient: int,
+    common_shift: int,
+    first_dilations: tuple[int, ...],
+    second_dilations: tuple[int, ...],
+) -> dict[str, object]:
+    """Give an exact finite obstruction to the naive rank-one Type II moment.
+
+    For signs ``(+,...,+,-,...,-)`` and all translations equal to ``r``,
+    the Type-II one-variable phase for
+
+    ``K(x)=e_q(B*x+C*inverse(x))``
+
+    is
+
+    ``B*(v+r)*sum eps_j(a_j-b_j)``
+    ``+ C*inverse(v+r)*sum eps_j(inverse(a_j)-inverse(b_j))``.
+
+    If the two displayed coefficients vanish, every non-pole summand is
+    one even though ``a_j != b_j`` pointwise.  The two equations cut a
+    family of local dimension ``4m-1`` including the common translation;
+    the gallant Type-II moment argument allows only ``3m`` exceptional
+    dimensions.
+    """
+
+    q = int(modulus)
+    if q < 3 or any(q % p == 0 for p in range(2, isqrt(q) + 1)):
+        raise ValueError("modulus must be an odd prime")
+    if len(first_dilations) != len(second_dilations):
+        raise ValueError("dilation families must have equal length")
+    if len(first_dilations) == 0 or len(first_dilations) % 2:
+        raise ValueError("each dilation family must have positive even length")
+
+    first = tuple(value % q for value in first_dilations)
+    second = tuple(value % q for value in second_dilations)
+    if any(value == 0 for value in first + second):
+        raise ValueError("all dilations must be units")
+    moment_order = len(first) // 2
+    signs = (1,) * moment_order + (-1,) * moment_order
+    linear = sum(
+        sign * (a - b)
+        for sign, a, b in zip(signs, first, second)
+    ) % q
+    residue = sum(
+        sign * (pow(a, -1, q) - pow(b, -1, q))
+        for sign, a, b in zip(signs, first, second)
+    ) % q
+
+    phase_values = {}
+    pole = (-common_shift) % q
+    for variable in range(q):
+        if variable == pole:
+            continue
+        shifted = (variable + common_shift) % q
+        phase_values[variable] = (
+            direct_coefficient * shifted * linear
+            + inverse_coefficient * pow(shifted, -1, q) * residue
+        ) % q
+
+    row_linear = tuple(sign % q for sign in signs) + tuple(
+        (-sign) % q for sign in signs
+    )
+    row_residue = tuple(
+        (-sign * pow(a, -2, q)) % q
+        for sign, a in zip(signs, first)
+    ) + tuple(
+        (sign * pow(b, -2, q)) % q
+        for sign, b in zip(signs, second)
+    )
+    if all(value == 0 for value in row_linear + row_residue):
+        jacobian_rank = 0
+    elif any(
+        (row_linear[i] * row_residue[j] - row_linear[j] * row_residue[i])
+        % q
+        for i in range(len(row_linear))
+        for j in range(i + 1, len(row_linear))
+    ):
+        jacobian_rank = 2
+    else:
+        jacobian_rank = 1
+
+    collision_dimension = 4 * moment_order + 1 - jacobian_rank
+    required_dimension = 3 * moment_order
+    root = cmath.exp(2j * cmath.pi / q)
+    return {
+        "modulus": q,
+        "moment_order": moment_order,
+        "signs": signs,
+        "pointwise_type_ii_exclusion_holds": all(
+            a != b for a, b in zip(first, second)
+        ),
+        "linear_coefficient_mod_modulus": linear,
+        "reciprocal_pole_residue_mod_modulus": residue,
+        "linear_coefficient_vanishes": linear == 0,
+        "pole_residue_vanishes": residue == 0,
+        "phase_is_zero_off_common_pole": all(
+            value == 0 for value in phase_values.values()
+        ),
+        "zero_phase_count": sum(
+            1 if value == 0 else 0 for value in phase_values.values()
+        ),
+        "one_variable_sum": sum(
+            root**value for value in phase_values.values()
+        ),
+        "jacobian_rank": jacobian_rank,
+        "collision_family_dimension_lower_bound": collision_dimension,
+        "gallant_required_exceptional_dimension": required_dimension,
+        "dimension_excess": collision_dimension - required_dimension,
+        "standard_type_ii_moment_exception_count_can_hold": (
+            collision_dimension <= required_dimension
+        ),
+    }
+
+
+def rank_one_type_ii_resonance_audit(
+    *,
+    modulus: int,
+    direct_coefficient: int,
+    inverse_coefficient: int,
+    shifts: tuple[int, ...],
+    first_dilations: tuple[int, ...],
+    second_dilations: tuple[int, ...],
+) -> dict[str, object]:
+    """Classify the constant-phase part of a rank-one Type-II moment.
+
+    Put ``eps=(1,...,1,-1,...,-1)`` and
+
+    ``A_j=eps_j*(a_j-b_j)``,
+    ``R_j=eps_j*(inverse(a_j)-inverse(b_j))``.
+
+    The complete one-variable phase is constant away from its poles if
+    and only if ``sum A_j=0`` and, for every distinct shift ``rho``,
+    ``sum_(r_j=rho) R_j=0``.  On that locus its exact contribution is
+
+    ``(q-number_of_distinct_poles)*e_q(B*sum A_j*r_j)``.
+
+    This is the resonant term that must be removed before a square-root
+    estimate can be applied to the remaining rational phase.
+    """
+
+    q = int(modulus)
+    if q < 3 or any(q % p == 0 for p in range(2, isqrt(q) + 1)):
+        raise ValueError("modulus must be an odd prime")
+    if direct_coefficient % q == 0 or inverse_coefficient % q == 0:
+        raise ValueError("both phase coefficients must be units modulo q")
+    if not (
+        len(shifts) == len(first_dilations) == len(second_dilations)
+    ):
+        raise ValueError("shift and dilation families must have equal length")
+    if len(shifts) == 0 or len(shifts) % 2:
+        raise ValueError("families must have positive even length")
+
+    first = tuple(value % q for value in first_dilations)
+    second = tuple(value % q for value in second_dilations)
+    reduced_shifts = tuple(value % q for value in shifts)
+    if any(value == 0 for value in first + second):
+        raise ValueError("all dilations must be units")
+
+    moment_order = len(shifts) // 2
+    signs = (1,) * moment_order + (-1,) * moment_order
+    linear_terms = tuple(
+        sign * (a - b) % q
+        for sign, a, b in zip(signs, first, second)
+    )
+    reciprocal_terms = tuple(
+        sign * (pow(a, -1, q) - pow(b, -1, q)) % q
+        for sign, a, b in zip(signs, first, second)
+    )
+    distinct_shifts = tuple(sorted(set(reduced_shifts)))
+    residues_by_shift = {
+        shift: sum(
+            reciprocal_terms[index]
+            for index, value in enumerate(reduced_shifts)
+            if value == shift
+        )
+        % q
+        for shift in distinct_shifts
+    }
+    linear_slope = sum(linear_terms) % q
+    constant_phase = sum(
+        coefficient * shift
+        for coefficient, shift in zip(linear_terms, reduced_shifts)
+    ) % q
+    resonance_conditions_hold = (
+        linear_slope == 0
+        and all(residue == 0 for residue in residues_by_shift.values())
+    )
+
+    phases: dict[int, int] = {}
+    poles = {(-shift) % q for shift in distinct_shifts}
+    for variable in range(q):
+        if variable in poles:
+            continue
+        phase = direct_coefficient * sum(
+            coefficient * (variable + shift)
+            for coefficient, shift in zip(linear_terms, reduced_shifts)
+        )
+        phase += inverse_coefficient * sum(
+            coefficient * pow((variable + shift) % q, -1, q)
+            for coefficient, shift in zip(
+                reciprocal_terms, reduced_shifts
+            )
+        )
+        phases[variable] = phase % q
+
+    root = cmath.exp(2j * cmath.pi / q)
+    complete_sum = sum(root**phase for phase in phases.values())
+    resonant_main = (
+        len(phases) * root ** (direct_coefficient * constant_phase % q)
+        if resonance_conditions_hold
+        else 0j
+    )
+    centered_sum = complete_sum - resonant_main
+    finite_values_are_constant = len(set(phases.values())) == 1
+    tolerance = 1e-9
+    return {
+        "modulus": q,
+        "moment_order": moment_order,
+        "signs": signs,
+        "pointwise_type_ii_exclusion_holds": all(
+            a != b for a, b in zip(first, second)
+        ),
+        "distinct_shifts": distinct_shifts,
+        "distinct_pole_count": len(poles),
+        "linear_slope_mod_modulus": linear_slope,
+        "reciprocal_residues_by_shift": residues_by_shift,
+        "constant_phase_mod_modulus": (
+            direct_coefficient * constant_phase % q
+        ),
+        "resonance_conditions_hold": resonance_conditions_hold,
+        "rational_function_is_constant": resonance_conditions_hold,
+        "rational_function_resonance_classification_exact": True,
+        "finite_nonpole_values_are_constant": finite_values_are_constant,
+        "finite_value_aliasing_detected": (
+            finite_values_are_constant and not resonance_conditions_hold
+        ),
+        "nonpole_term_count": len(phases),
+        "complete_sum": complete_sum,
+        "resonant_main": resonant_main,
+        "centered_sum": centered_sum,
+        "resonant_main_exact": (
+            abs(complete_sum - resonant_main) < tolerance
+            if resonance_conditions_hold
+            else True
+        ),
+        "centered_sum_vanishes_on_resonance": (
+            abs(centered_sum) < tolerance
+            if resonance_conditions_hold
+            else False
+        ),
+        "square_root_bound_for_nonresonance_requires_weil": True,
+    }
+
+
+def rank_one_type_ii_resonance_partition_audit(
+    *,
+    moment_order: int,
+    shift_block_sizes: tuple[int, ...],
+) -> dict[str, object]:
+    """Audit the dimension of every constant-phase shift partition.
+
+    On a stratum with ``k`` distinct shifts, the resonance equations are
+    one global linear-slope equation and one reciprocal-residue equation
+    per shift block.  There are ``4m+k`` dilation/shift variables, hence
+    every nonempty component has dimension at least ``4m-1``.  A
+    singleton block is incompatible with the pointwise Type-II
+    condition ``a_j != b_j``.
+    """
+
+    m = int(moment_order)
+    blocks = tuple(int(size) for size in shift_block_sizes)
+    if m < 1 or not blocks or any(size < 1 for size in blocks):
+        raise ValueError("moment order and block sizes must be positive")
+    if sum(blocks) != 2 * m:
+        raise ValueError("shift block sizes must sum to 2*m")
+
+    block_count = len(blocks)
+    ambient_dimension = 4 * m + block_count
+    resonance_equation_count = block_count + 1
+    dimension_lower_bound = ambient_dimension - resonance_equation_count
+    required_dimension = 3 * m
+    compatible = all(size >= 2 for size in blocks)
+    return {
+        "moment_order": m,
+        "shift_block_sizes": blocks,
+        "shift_block_count": block_count,
+        "has_singleton_block": any(size == 1 for size in blocks),
+        "compatible_with_pointwise_type_ii": compatible,
+        "active_admissible_resonant_stratum": compatible,
+        "ambient_stratum_dimension": ambient_dimension,
+        "resonance_equation_count": resonance_equation_count,
+        "resonance_dimension_lower_bound": dimension_lower_bound,
+        "gallant_required_exceptional_dimension": required_dimension,
+        "dimension_excess": dimension_lower_bound - required_dimension,
+        "standard_type_ii_exception_count_can_hold": (
+            not compatible or dimension_lower_bound <= required_dimension
+        ),
+        "resonant_term_requires_separate_global_estimate": (
+            compatible and dimension_lower_bound > required_dimension
+        ),
+    }
+
+
+def squarefree_product_trace_crt_character_audit(
+    *,
+    prime_modulus: int,
+    squarefree_cofactor: int,
+    direct_coefficient: int,
+    inverse_coefficient: int,
+    residue: int,
+    left_coefficients: dict[int, complex],
+    right_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Verify CRT and cofactor-character splitting for ``s=q*r``.
+
+    For a prime ``q`` and a coprime squarefree ``r``, with
+    ``K_s(x)=e_s(Bx+C/x)``, CRT gives
+
+    ``K_s(x)=K_q^(r)(x) K_r^(q)(x)``.
+
+    Multiplicative Fourier inversion on
+    ``U(r) = product_(p|r) F_p^*`` then separates the cofactor trace in
+    a bilinear product:
+
+    ``B_s=phi(r)^(-1) sum_chi Khat_r(chi)``
+    ``      * sum_(d,p) alpha_d chi(d) beta_p chi(p) K_q^(r)(dp)``.
+
+    This keeps both coefficient families intact.  Parseval also records
+    the unavoidable generic triangle/Cauchy cost
+    ``phi(r)^(-1) sum |Khat_r| <= sqrt(phi(r))``.
+    """
+
+    q = int(prime_modulus)
+    r = int(squarefree_cofactor)
+
+    def is_prime(value: int) -> bool:
+        return value >= 2 and not any(
+            value % divisor == 0
+            for divisor in range(2, isqrt(value) + 1)
+        )
+
+    r_factorization = _finite_prime_exponents(r) if r > 1 else {}
+    if not is_prime(q):
+        raise ValueError("q must be prime")
+    if (
+        r <= 1
+        or any(exponent != 1 for exponent in r_factorization.values())
+        or gcd(q, r) != 1
+    ):
+        raise ValueError("r must be a squarefree cofactor coprime to q")
+    if not left_coefficients or not right_coefficients:
+        raise ValueError("both coefficient families must be nonempty")
+
+    s = q * r
+    if gcd(residue, s) != 1:
+        raise ValueError("residue must be a unit modulo q*r")
+    b = direct_coefficient % s
+    c = inverse_coefficient % s
+    inv_r_q = pow(r, -1, q)
+    inv_q_r = pow(q, -1, r)
+    x_s = residue % s
+    x_inverse_s = pow(x_s, -1, s)
+
+    direct_q = inv_r_q * b * (x_s % q) % q
+    direct_r = inv_q_r * b * (x_s % r) % r
+    inverse_q = inv_r_q * c * pow(x_s % q, -1, q) % q
+    inverse_r = inv_q_r * c * pow(x_s % r, -1, r) % r
+    direct_recombined = (r * direct_q + q * direct_r) % s
+    inverse_recombined = (r * inverse_q + q * inverse_r) % s
+
+    root_s = cmath.exp(2j * cmath.pi / s)
+
+    def product_trace(value: int, modulus: int, twist: int = 1) -> complex:
+        reduced = value % modulus
+        if gcd(reduced, modulus) != 1:
+            return 0j
+        phase = twist * (
+            direct_coefficient * reduced
+            + inverse_coefficient * pow(reduced, -1, modulus)
+        ) % modulus
+        root = cmath.exp(2j * cmath.pi / modulus)
+        return root**phase
+
+    full_value = root_s ** (
+        (b * x_s + c * x_inverse_s) % s
+    )
+    q_value = product_trace(x_s, q, inv_r_q)
+    r_value = product_trace(x_s, r, inv_q_r)
+
+    cofactor_primes = tuple(sorted(r_factorization))
+    primitive_roots: dict[int, int] = {}
+    discrete_logs: dict[int, dict[int, int]] = {}
+    character_roots: dict[int, complex] = {}
+    for prime in cofactor_primes:
+        order = prime - 1
+        if prime == 2:
+            generator = 1
+        else:
+            order_prime_factors = tuple(_finite_prime_exponents(order))
+            generator = next(
+                candidate
+                for candidate in range(2, prime)
+                if all(
+                    pow(candidate, order // divisor, prime) != 1
+                    for divisor in order_prime_factors
+                )
+            )
+        primitive_roots[prime] = generator
+        local_logs: dict[int, int] = {}
+        current = 1
+        for exponent in range(order):
+            local_logs[current] = exponent
+            current = current * generator % prime
+        discrete_logs[prime] = local_logs
+        character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+    character_indices = tuple(
+        product(*(range(prime - 1) for prime in cofactor_primes))
+    )
+    unit_residues = tuple(
+        value for value in range(1, r) if gcd(value, r) == 1
+    )
+    character_count = len(character_indices)
+
+    def character(index: tuple[int, ...], value: int) -> complex:
+        if gcd(value, r) != 1:
+            return 0j
+        result = 1 + 0j
+        for component, prime in zip(index, cofactor_primes):
+            exponent = discrete_logs[prime][value % prime]
+            result *= character_roots[prime] ** (
+                (component * exponent) % (prime - 1)
+            )
+        return result
+
+    cofactor_kernel = {
+        value: product_trace(value, r, inv_q_r)
+        for value in unit_residues
+    }
+    fourier = [
+        sum(
+            cofactor_kernel[value] * character(index, value).conjugate()
+            for value in unit_residues
+        )
+        for index in character_indices
+    ]
+    reconstructed = {
+        value: sum(
+            coefficient * character(index, value)
+            for coefficient, index in zip(fourier, character_indices)
+        )
+        / character_count
+        for value in unit_residues
+    }
+
+    atoms = [
+        (d, p, complex(alpha) * complex(beta))
+        for d, alpha in left_coefficients.items()
+        for p, beta in right_coefficients.items()
+    ]
+    direct_bilinear = sum(
+        weight * product_trace(d * p, s)
+        for d, p, weight in atoms
+    )
+    split_bilinear = sum(
+        coefficient
+        * sum(
+            weight
+            * character(index, d)
+            * character(index, p)
+            * product_trace(d * p, q, inv_r_q)
+            for d, p, weight in atoms
+        )
+        for coefficient, index in zip(fourier, character_indices)
+    ) / character_count
+
+    fourier_energy = sum(abs(value) ** 2 for value in fourier)
+    kernel_energy = character_count * sum(
+        abs(value) ** 2 for value in cofactor_kernel.values()
+    )
+    normalized_l1 = sum(abs(value) for value in fourier) / character_count
+    tolerance = 1e-9
+    return {
+        "squarefree_modulus": s,
+        "squarefree_two_prime_modulus": s,
+        "cofactor_prime_factors": cofactor_primes,
+        "inverse_cofactor_mod_prime": inv_r_q,
+        "inverse_prime_mod_cofactor": inv_q_r,
+        "crt_direct_phase_exact": direct_recombined == b * x_s % s,
+        "crt_inverse_phase_exact": (
+            inverse_recombined == c * x_inverse_s % s
+        ),
+        "product_trace_factorization_exact": (
+            abs(full_value - q_value * r_value) < tolerance
+        ),
+        "cofactor_primitive_roots": primitive_roots,
+        "cofactor_primitive_root": (
+            primitive_roots[cofactor_primes[0]]
+            if len(cofactor_primes) == 1
+            else None
+        ),
+        "cofactor_character_count": character_count,
+        "cofactor_character_reconstruction_exact": max(
+            abs(reconstructed[value] - cofactor_kernel[value])
+            for value in unit_residues
+        )
+        < tolerance,
+        "bilinear_character_split_exact": (
+            abs(direct_bilinear - split_bilinear) < tolerance
+        ),
+        "cofactor_character_parseval_exact": (
+            abs(fourier_energy - kernel_energy) < tolerance
+        ),
+        "normalized_character_l1": normalized_l1,
+        "normalized_character_l1_bound": character_count**0.5,
+        "normalized_character_l1_bound_holds": (
+            normalized_l1 <= character_count**0.5 + tolerance
+        ),
+        "both_mobius_weights_retained": True,
+        "retained_mobius_factors": ("mu(q*r)", "mu(d)"),
+        "h_delta_factor_retained": True,
+        "crt_iteration_covers_squarefree_cofactor": True,
+    }
+
+
+def squarefree_prime_factor_transfer_audit(
+    *,
+    modulus_exponent: Fraction,
+    prime_factor_exponent: Fraction,
+    prime_relative_saving_exponent: Fraction,
+    required_unsquared_saving: Fraction,
+) -> dict[str, object]:
+    """Audit the cost of transferring a prime trace bound through CRT.
+
+    If ``s=q*r``, a prime-modulus theorem saving ``q^(-kappa)``
+    contributes ``T^(-lambda*kappa)`` when ``q=T^lambda``.  Separating
+    the cofactor kernel by multiplicative Fourier inversion costs at
+    most ``phi(r)^(1/2)``, i.e. ``T^((sigma-lambda)/2)``.  The transfer
+    therefore saves a power only when
+
+    ``lambda > sigma/(1+2*kappa)``.
+
+    This is a pointwise diagnostic only; it provides no outer modulus,
+    sector, or ``h*delta`` moment.
+    """
+
+    sigma = F(modulus_exponent)
+    prime = F(prime_factor_exponent)
+    kappa = F(prime_relative_saving_exponent)
+    required = F(required_unsquared_saving)
+    if sigma <= 0:
+        raise ValueError("modulus_exponent must be positive")
+    if prime < 0 or prime > sigma:
+        raise ValueError("prime factor exponent must lie in [0,sigma]")
+    if kappa < 0 or required < 0:
+        raise ValueError("saving exponents must be nonnegative")
+
+    prime_saving = prime * kappa
+    cofactor_cost = (sigma - prime) / 2
+    signed_net = prime_saving - cofactor_cost
+    net = max(F(0), signed_net)
+    threshold = sigma / (1 + 2 * kappa) if kappa > 0 else sigma
+    return {
+        "modulus_exponent": sigma,
+        "prime_factor_exponent": prime,
+        "cofactor_exponent": sigma - prime,
+        "prime_relative_saving_exponent": kappa,
+        "prime_bound_saving_in_T_exponent": prime_saving,
+        "cofactor_character_l1_cost_exponent": cofactor_cost,
+        "signed_net_transfer_saving_exponent": signed_net,
+        "net_transfer_saving_exponent": net,
+        "large_prime_threshold_exponent": threshold,
+        "strict_power_saving_after_transfer": signed_net > 0,
+        "required_unsquared_saving": required,
+        "remaining_unsquared_deficit": max(F(0), required - net),
+        "pointwise_transfer_meets_required_saving": net >= required,
+        "transfer_closes_coupled_gate": False,
+        "multiplicative_character_twist_preserves_l2_coefficients": True,
+        "both_mobius_weights_retained": True,
+        "h_delta_factor_retained": True,
+        "outer_modulus_average_provided": False,
+        "joint_sector_character_moment_provided": False,
+        "joint_h_delta_moment_provided": False,
+    }
+
+
+def squarefree_prime_factor_polytope_audit(
+    *,
+    modulus_exponent: Fraction,
+    prime_factor_exponents: tuple[Fraction, ...],
+    prime_relative_saving_exponent: Fraction,
+    required_unsquared_saving: Fraction,
+) -> dict[str, object]:
+    """Optimize one-prime CRT transfer over a squarefree factorization.
+
+    Each factor ``q_i=T^(lambda_i)`` can be selected as the prime
+    modulus and the product of the other factors as its cofactor.  This
+    helper evaluates every such choice using
+
+    ``kappa*lambda_i-(sigma-lambda_i)/2``
+
+    and records the best pointwise transfer.  On the continuous
+    polytope ``sum lambda_i=sigma``, the supremum is only
+    ``kappa*sigma``, approached when one prime factor carries the whole
+    modulus.  Thus a fixed-prime theorem with ``kappa<1/2`` cannot by
+    itself supply a half-power global saving even in that limiting
+    corner.
+    """
+
+    sigma = F(modulus_exponent)
+    factors = tuple(F(value) for value in prime_factor_exponents)
+    kappa = F(prime_relative_saving_exponent)
+    required = F(required_unsquared_saving)
+    if sigma <= 0 or not factors or any(value <= 0 for value in factors):
+        raise ValueError("modulus and prime-factor exponents must be positive")
+    if sum(factors, F(0)) != sigma:
+        raise ValueError("prime-factor exponents must sum to the modulus exponent")
+    if kappa < 0 or required < 0:
+        raise ValueError("saving exponents must be nonnegative")
+
+    signed_savings = tuple(
+        kappa * value - (sigma - value) / 2 for value in factors
+    )
+    net_savings = tuple(max(F(0), value) for value in signed_savings)
+    best_index = max(range(len(factors)), key=net_savings.__getitem__)
+    best_net = net_savings[best_index]
+    continuous_supremum = kappa * sigma
+    return {
+        "modulus_exponent": sigma,
+        "prime_factor_exponents": factors,
+        "prime_relative_saving_exponent": kappa,
+        "signed_transfer_savings": signed_savings,
+        "net_transfer_savings": net_savings,
+        "best_prime_factor_index": best_index,
+        "best_prime_factor_exponent": factors[best_index],
+        "best_net_transfer_saving": best_net,
+        "continuous_polytope_supremum": continuous_supremum,
+        "finite_nontrivial_factorization_is_below_supremum": (
+            best_net < continuous_supremum if len(factors) > 1 else False
+        ),
+        "required_unsquared_saving": required,
+        "remaining_unsquared_deficit": max(F(0), required - best_net),
+        "continuous_pointwise_supremum_meets_required_saving": (
+            continuous_supremum >= required
+        ),
+        "selected_pointwise_factor_meets_required_saving": (
+            best_net >= required
+        ),
+        "transfer_closes_coupled_gate": False,
+        "only_extreme_large_prime_subface_can_save_power": all(
+            signed <= 0
+            for exponent, signed in zip(factors, signed_savings)
+            if exponent <= sigma / (1 + 2 * kappa)
+        ),
+        "outer_modulus_average_provided": False,
+        "joint_character_moment_provided": False,
+        "joint_h_delta_moment_provided": False,
     }
 
 
