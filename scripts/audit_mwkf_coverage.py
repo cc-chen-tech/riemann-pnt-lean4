@@ -1933,6 +1933,12 @@ class PrimitiveConductorLevelDifferenceAudit:
     published_large_sieve_has_explicit_polylog_constant: bool
     custom_full_level_harmonic_large_sieve_has_polylog_constant: bool
     primitive_family_is_positive_full_level_subfamily: bool
+    unramified_cross_index_two_shift_transfer_proved: bool
+    steinberg_cross_index_rank_one_transfer_proved: bool
+    continuous_local_cross_index_transfer_proved: bool
+    all_local_cross_index_transfers_proved: bool
+    shifted_support_does_not_exceed_original_support: bool
+    pevp_reduced_to_uniform_polylog_harmonic_large_sieve: bool
     weighted_primitive_large_sieve_proved: bool
     pevp_proved: bool
     whole_mobius_gate_covered: bool
@@ -2061,6 +2067,11 @@ class DyadicBesselMellinBlockAudit:
     small_block_first_exponent: Fraction
     small_block_second_exponent: Fraction
     target_exponent: Fraction
+    large_mellin_effective_width_exponent: Fraction
+    large_mellin_linfty_prefactor_exponent: Fraction
+    large_mellin_l1_exponent: Fraction
+    large_mellin_l1_is_not_prefactor_exponent: bool
+    hybrid_gallagher_uses_mellin_linfty_weight: bool
     pointwise_hpy_remainder_raw_exponent: Fraction
     pointwise_hpy_remainder_discarded_before_large_sieve: bool
     exact_dyadic_mellin_inversion_used: bool
@@ -2068,6 +2079,7 @@ class DyadicBesselMellinBlockAudit:
     maass_and_eisenstein_block_covered: bool
     holomorphic_block_covered: bool
     physical_full_level_block_covered: bool
+    uniform_stationary_phase_seminorm_bound_proved: bool
 
 
 @dataclass(frozen=True)
@@ -10635,6 +10647,172 @@ def steinberg_exact_level_difference_kernel_square(
     }
 
 
+def steinberg_cross_index_rank_one_identity(*, prime: int) -> dict[str, object]:
+    """Factor the conductor-p signed level kernel before Cauchy.
+
+    For a Steinberg representation, write ``lambda(p)=epsilon/sqrt(p)``.
+    At ambient level ``p^2`` the Blomer--Milicevic ``g=p`` oldvector is
+
+    ``r_p^-1/2 * (f|p - epsilon/(p+1) f)``,
+
+    where ``r_p=p*(p+2)/(p+1)^2``.  Comparing the level-p newvector
+    trace with ``1/p`` times the complete ambient oldclass gives a
+    rank-one cross-index kernel.  After division by the physical
+    Ramanujan factor at the first index, its multiplier is
+
+    ``-C_0`` when that index is a p-adic unit and ``-C_1`` otherwise,
+
+    with ``C_0=1-(p+1)/(p^2*(p+2))`` and
+    ``C_1=1+1/(p^2*(p+2)*(p-1))``.  The second-index factor is always
+    the primitive coefficient ``lambda(p^b)``.  This is the signed
+    version of the squared formula audited above.
+    """
+    p = int(prime)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+
+    q = F(p + 1)
+    gram = F(p * (p + 2), (p + 1) ** 2)
+    shifted_numerator = F(p * (p + 1) - 1)
+    unit_positive_oldvector_ratio = -shifted_numerator / (q * q * gram)
+    positive_positive_oldvector_ratio = (
+        shifted_numerator * shifted_numerator / (q * q * gram)
+    )
+    unit_raw_trace_ratio = F(1) - F(1, p) * (
+        F(1) + unit_positive_oldvector_ratio
+    )
+    positive_raw_trace_ratio = F(1) - F(1, p) * (
+        F(1) + positive_positive_oldvector_ratio
+    )
+    unit_multiplier = -unit_raw_trace_ratio
+    positive_multiplier = positive_raw_trace_ratio / F(p - 1)
+    expected_unit = -(F(1) - F(p + 1, p * p * (p + 2)))
+    expected_positive = -(
+        F(1) + F(1, p * p * (p + 2) * (p - 1))
+    )
+
+    unit_square_audit = steinberg_exact_level_difference_kernel_square(
+        prime=p,
+        first_index_valuation=0,
+        second_index_valuation=1,
+    )
+    positive_square_audit = steinberg_exact_level_difference_kernel_square(
+        prime=p,
+        first_index_valuation=1,
+        second_index_valuation=1,
+    )
+    unit_square = unit_multiplier * unit_multiplier
+    positive_square = positive_multiplier * positive_multiplier
+    square_cross_check = (
+        unit_square_audit["ramanujan_normalized_kernel_square"]
+        == F(1, p) * unit_square
+        and positive_square_audit["ramanujan_normalized_kernel_square"]
+        == F(1, p * p) * positive_square
+    )
+    correction_denominator = p * p * (p + 2) * (p - 1)
+
+    return {
+        "prime": p,
+        "oldclass_gram_factor": gram,
+        "unit_positive_ambient_oldvector_cross_ratio": (
+            unit_positive_oldvector_ratio
+        ),
+        "positive_positive_ambient_oldvector_cross_ratio": (
+            positive_positive_oldvector_ratio
+        ),
+        "unit_first_rank_one_multiplier": unit_multiplier,
+        "positive_first_rank_one_multiplier": positive_multiplier,
+        "unit_first_multiplier_square": unit_square,
+        "positive_first_multiplier_square": positive_square,
+        "rank_one_factorization_exact": (
+            unit_multiplier == expected_unit
+            and positive_multiplier == expected_positive
+            and square_cross_check
+        ),
+        "positive_multiplier_euler_correction_denominator": (
+            correction_denominator
+        ),
+        "positive_multiplier_euler_correction_order_at_least_four": (
+            correction_denominator >= p**4
+        ),
+        "steinberg_conductor_square_mass": F(1, p) * unit_square,
+        "steinberg_conductor_square_mass_is_p_inverse_times_bounded_euler": (
+            unit_square <= F(1)
+            and positive_square <= (F(1) + F(1, p**4)) ** 2
+        ),
+        "cross_index_dependence_is_one_primitive_fourier_shift": True,
+        "ordinary_ambient_positive_cauchy_used": False,
+        "ramified_eisenstein_transfer_proved": False,
+        "weighted_harmonic_large_sieve_proved": False,
+        "pevp_proved": False,
+    }
+
+
+def trivial_nebentypus_eisenstein_conductor_audit(
+    *,
+    prime: int,
+    primitive_character_conductor_exponent: int,
+    positive_index_valuation: int,
+) -> dict[str, object]:
+    """Audit the local primitive Eisenstein data at a prime dividing A.
+
+    Young's Eisenstein newforms ``E_{chi_1,chi_2}`` have level
+    ``q_1*q_2`` and nebentypus ``chi_1*conjugate(chi_2)``.  With trivial
+    nebentypus and primitive inducing characters, ``chi_1=chi_2`` and
+    hence ``q_1=q_2``.  The local GL(2) conductor exponent is therefore
+    twice the primitive character conductor exponent, so the exponent-one
+    cell is absent.
+
+    If that character is ramified at p, Young's Fourier coefficient
+
+    ``sum_{ab=p^k} chi(a)*conjugate(chi(b))*(b/a)^it``
+
+    vanishes for every ``k>=1``: in every factorization at least one of
+    ``a,b`` is divisible by p.  Thus the conductor-p-squared primitive
+    datum contributes zero at the physical positive second valuation.
+    The conductor-zero datum is exactly the unramified rank-two case.
+    """
+    p = int(prime)
+    exponent = int(primitive_character_conductor_exponent)
+    valuation = int(positive_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if exponent not in {0, 1}:
+        raise ValueError("ambient exponent at p^2 permits character exponent 0 or 1")
+    if valuation < 1:
+        raise ValueError("physical second-index valuation must be positive")
+
+    gl2_exponent = 2 * exponent
+    ramified = exponent == 1
+    coefficient: Fraction | None = F(0) if ramified else None
+    kernel: Fraction | None = F(0) if ramified else None
+    possible_gl2_exponents = (0, 2)
+
+    return {
+        "prime": p,
+        "first_character_conductor_exponent": exponent,
+        "second_character_conductor_exponent": exponent,
+        "primitive_gl2_conductor_exponent": gl2_exponent,
+        "possible_gl2_conductor_exponents_below_p_squared": (
+            possible_gl2_exponents
+        ),
+        "conductor_exponent_one_absent": 1 not in possible_gl2_exponents,
+        "positive_index_valuation": valuation,
+        "positive_valuation_hecke_coefficient": coefficient,
+        "ramified_conductor_two_cross_index_kernel": kernel,
+        "unramified_conductor_zero_uses_rank_two_transfer": not ramified,
+        "ramified_conductor_two_positive_valuation_vanishes": ramified,
+        "young_newdata_level_and_nebentypus_used": True,
+        "continuous_local_cross_index_transfer_proved": True,
+        "uniform_polylog_harmonic_large_sieve_proved": False,
+        "pevp_proved": False,
+        "source": (
+            "Young, arXiv:1710.03624, Eisenstein newform discussion and "
+            "Fourier coefficient formula"
+        ),
+    }
+
+
 def conductor_p_raised_oldspace_cross_identity(
     *,
     prime: int,
@@ -10949,6 +11127,12 @@ def primitive_conductor_level_difference_audit(
         published_large_sieve_has_explicit_polylog_constant=False,
         custom_full_level_harmonic_large_sieve_has_polylog_constant=False,
         primitive_family_is_positive_full_level_subfamily=True,
+        unramified_cross_index_two_shift_transfer_proved=True,
+        steinberg_cross_index_rank_one_transfer_proved=True,
+        continuous_local_cross_index_transfer_proved=True,
+        all_local_cross_index_transfers_proved=True,
+        shifted_support_does_not_exceed_original_support=True,
+        pevp_reduced_to_uniform_polylog_harmonic_large_sieve=True,
         weighted_primitive_large_sieve_proved=False,
         pevp_proved=False,
         whole_mobius_gate_covered=False,
@@ -11330,7 +11514,9 @@ def dyadic_bessel_mellin_block_audit(
     by the raw double coefficient volume.
 
     In the large-Bessel range ``P>R^2``, stationary phase contributes
-    ``R^2/P`` and Gallagher gives the two exponents
+    an L-infinity Mellin height ``R^2/P`` on an interval of length P.
+    Its L1 norm is therefore ``R^2``, not ``R^2/P``.  Gallagher must be
+    applied before integrating that interval; it gives the two exponents
     ``2r+c-q`` and ``2r``.  In the complementary range, repeated
     exact Mellin integration gives the exponents ``x-q`` and
     ``2(x-c)``.  The latter ledger proves the physical case used here,
@@ -11380,6 +11566,11 @@ def dyadic_bessel_mellin_block_audit(
         small_block_first_exponent=small_first,
         small_block_second_exponent=small_second,
         target_exponent=target,
+        large_mellin_effective_width_exponent=max(F(0), p),
+        large_mellin_linfty_prefactor_exponent=2 * r - p,
+        large_mellin_l1_exponent=2 * r,
+        large_mellin_l1_is_not_prefactor_exponent=(p != 0),
+        hybrid_gallagher_uses_mellin_linfty_weight=True,
         pointwise_hpy_remainder_raw_exponent=2 * x - c,
         pointwise_hpy_remainder_discarded_before_large_sieve=False,
         exact_dyadic_mellin_inversion_used=True,
@@ -11387,6 +11578,7 @@ def dyadic_bessel_mellin_block_audit(
         maass_and_eisenstein_block_covered=maass_eisenstein,
         holomorphic_block_covered=holomorphic,
         physical_full_level_block_covered=physical,
+        uniform_stationary_phase_seminorm_bound_proved=False,
     )
 
 

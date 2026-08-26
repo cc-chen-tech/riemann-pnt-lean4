@@ -11,10 +11,11 @@
 > polylogarithmic full-level harmonic large sieve (4.845dc_12) has not been
 > proved from HPY Lemma 5.6.  Consequently PEVP, the tail aggregation, and
 > the unconditional \(T^3\) asymptotic remain unproved, with one residual
-> analytic cell.  Section 4.109zfd now gives an exact two-shift
-> factorization of the unramified cross-index kernel; this removes that
-> finite local transfer ambiguity but does not supply the required global
-> weighted two-index large sieve.
+> analytic cell.  Sections 4.109zfd--4.109zff now give the complete
+> finite cross-index transfer: two shifts for unramified data, one for
+> Steinberg data, and zero for ramified trivial-nebentypus Eisenstein
+> data.  The remaining input is the uniform-polylog harmonic large sieve
+> with all Bessel-transform seminorms, not a further local projector.
 
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
@@ -16497,18 +16498,29 @@ may use the Kuznetsov formula again, but every divisor factor must be
 summed in mean; replacing it by a pointwise \(n^\varepsilon\) bound is
 not sufficient.
 
-At this point the published large sieve does not supply the required
-constant.  Section 4.109zf gives the sparse-Farey reduction for the
-full-level harmonic square, while Section 4.109zfa records an exact
-dyadic Mellin exponent calculation.  Uniform transform constants and
-the signed cross-index primitive-conductor passage remain unproved.
+Sections 4.109zfd--4.109zff now complete the signed cross-index
+primitive-conductor passage.  Every unramified rank factor is a
+downward \(p^2\)-shift, so its support is no longer than the original
+coefficient support; the Steinberg factor uses the original primitive
+coefficient list; and the ramified continuous factor is zero.  The
+coefficient-weighted conductor aggregation is exactly the two Euler
+ledgers above.  Thus PEVP has been reduced to the uniform-polylog
+harmonic large sieve \((\mathrm{PLS})_{Q_0}\).
+
+At this point the published large sieve still does not supply the
+required constant.  Section 4.109zf gives the sparse-Farey reduction
+for the full-level harmonic square, while Section 4.109zfa records an
+exact dyadic Mellin exponent calculation.  Uniform transform constants
+for the Maaß, holomorphic, and Eisenstein measures remain unproved.
 
 The interface `primitive_conductor_level_difference_audit` records the
 exact regrouping, the pre-density unramified exponent \(1\), the
 post-density unramified exponent \(3/2\), the Steinberg exponent
 \(1/2\), the required square exponent \(1\), and the polylogarithmic
 diagonal and length conductor Euler sums.  It keeps the epsilon-free
-full-level theorem, \((\mathrm{PLS})_{Q_0}\), and PEVP flags false.
+full-level theorem, \((\mathrm{PLS})_{Q_0}\), and PEVP flags false,
+while recording that the finite cross-index transfer and the reduction
+of PEVP to PLS are proved.
 
 
 ### 4.109za The normalized level difference squares to a positive two-layer kernel
@@ -17097,16 +17109,30 @@ define, without truncation,
  \widetilde H_{R,P}(\tau)x^{i\tau}\,d\tau.
  \tag{4.845dc_14a}
 \]
-Thus every Mellin tail remains inside the Gallagher integral.  The
-exact stationary-phase estimate required in the range \(P>R^2\) is
+Thus every Mellin tail remains inside the Gallagher integral.  There
+is a normalization correction to the previously proposed estimate.
+HPY (5.13) has Mellin interval length \(P\) and prefactor \(R^2/P\);
+therefore \(R^2/P\) is an \(L^\infty\) height, not an \(L^1\) norm.
+The exact stationary-phase estimate required in the range \(P>R^2\)
+is, for every fixed \(J\),
 \[
- \int_{\mathbb R}|\widetilde H_{R,P}(\tau)|\,d\tau
- \ll_{J,W}\frac{R^2}{P}(\log(2T))^{C_J},
+ \boxed{
+ \sup_{\tau\in\mathbb R}
+ \left(1+\frac{\bigl||\tau|-P\bigr|}{P}\right)^J
+ |\widetilde H_{R,P}(\tau)|
+ \ll_{J,W}\frac{R^2}{P}(\log(2T))^{C_J},}
  \tag{4.845dc_14b}
 \]
-with rapid weighted decay away from \(|\tau|\asymp P\).  Combining
-(4.845dc_14b), the outer \(C^{-1}\), and (4.845dc_13) gives the exact
-block ledger
+with the evident finite union of sign/stationary-phase windows near
+\(|\tau|\asymp P\).  In particular,
+\[
+ \int_{\mathbb R}|\widetilde H_{R,P}(\tau)|\,d\tau
+ \ll_{J,W}R^2(\log(2T))^{C_J},
+\]
+not \(R^2/P\).  One must insert the \(L^\infty\) bound in
+(4.845dc_14b) before applying Gallagher over the whole length-\(P\)
+Mellin interval.  Combining it with the outer \(C^{-1}\) and
+(4.845dc_13) gives the exact block ledger
 \[
  \frac1C\frac{R^2}{P}
  \left(\frac{PC^2}{Q}+X\right)
@@ -17132,7 +17158,7 @@ range, Gallagher gives
 \[
  \frac PC\left(\frac{C^2}{Q}+X\right)
  =\frac XQ+P^2
- \ll (\log(2T))^{C}left(1+\frac XQ\right).
+ \ll (\log(2T))^{C}\left(1+\frac XQ\right).
  \tag{4.845dc_14e}
 \]
 The same estimate sums the infinite \(C>X\) tail geometrically after
@@ -17159,20 +17185,20 @@ same target when \(x-c\leq0\).  Hence no positive-power residual cell
 remains in this dyadic transform ledger.
 
 This calculation is deliberately narrower than (4.845dc_12).  To turn
-it into that theorem one must still prove (4.845dc_14b)--(4.845dc_14d)
-with uniform seminorm constants for the Maaß, Eisenstein, and
-holomorphic transforms and justify all endpoint partitions.  More
-importantly, even a completed positive full-level theorem cannot by
-itself recover the local \(p^{-1}\) PEVP mass: Section 4.109ze proves
-that positive Cauchy changes it to \(p-1\).  The signed cross-level,
-cross-index oldvector multiplier must therefore survive the
-primitive-conductor regrouping and enter a weighted two-index harmonic
-large sieve.  Both obligations remain open.
+it into that theorem one must still prove the corrected
+(4.845dc_14b)--(4.845dc_14d) with uniform seminorm constants for the
+Maaß, Eisenstein, and holomorphic transforms and justify all endpoint
+partitions.  The finite signed cross-index transfer is no longer a
+second open obligation: Sections 4.109zfd--4.109zff move it to fixed
+downward Fourier shifts before positive Cauchy.  Thus the corrected
+stationary-phase/seminorm theorem is the single remaining PLS input.
 
 The interface \`dyadic_bessel_mellin_block_audit\` checks
 (4.845dc_14c)--(4.845dc_14f) in exact rational power exponents.  It
 records exact Mellin inversion and Gallagher routing of the remainder,
-but it does not set either the uniform full-level theorem or PEVP flag.
+distinguishes the \(R^2/P\) Mellin \(L^\infty\) height from its
+\(R^2\) \(L^1\) norm, and does not set either the uniform full-level
+theorem or PEVP flag.
 
 
 ### 4.109zfb Direct geometric differencing preserves the two Fourier indices
@@ -17435,19 +17461,153 @@ is still representation-dependent; it must remain in the spectral test
 weight (or be expanded with a uniformly summable local multiplier), so
 this identity does not silently invoke an unweighted large sieve.
 
-This calculation closes only the unramified **finite transfer**.  A
-global proof must still tensor the two choices over \(p\mid A\), sum
-primitive-conductor choices in square mean, retain the Steinberg and
-ramified Eisenstein pieces, and prove the uniform polylogarithmic
-two-index harmonic large sieve for the resulting shifted sequences.
-Taking absolute values over the \(2^{\omega(A)}\) rank choices would
-merely create a new subpower loss, so neither PLS nor PEVP is asserted
-here.
+This calculation closes only the unramified **finite transfer**.  The
+rank choices must be summed with their \(p^{-3/2}\) physical amplitude
+weights; an equal-weight triangle inequality would create a spurious
+\(2^{\omega(A)}\) loss.  Sections 4.109zfe--4.109zff treat the other
+primitive conductor cases, and Section 4.109z then aggregates the
+coefficient-weighted choices in the conductor Euler square.  Neither
+PLS nor PEVP is asserted at this local stage.
 
 The interface \`unramified_cross_index_two_shift_identity\` checks
 (4.845dc_14s)--(4.845dc_14t) with exact rational Hecke data, records the
 nonzero rank-two determinant, and keeps the weighted large-sieve and
 PEVP flags false.
+
+
+### 4.109zfe The Steinberg cross-index kernel is rank one
+
+The primitive-conductor-\(p\) cell can also be transferred before
+positive Cauchy.  This time the signed kernel is rank one.  Write
+
+\[
+ \lambda_p=\epsilon p^{-1/2},\qquad \epsilon^2=1,
+ \qquad q=p+1,
+ \qquad r_p=\frac{p(p+2)}{q^2}.
+\]
+
+Blomer--Milićević's exact \(g=1,p\) basis at ambient level \(p^2\)
+has second vector
+
+\[
+ f^{(p)}=r_p^{-1/2}
+ \left(f|_p-\frac{\epsilon}{q}f\right).
+\]
+
+In normalized Fourier coefficients, put
+\(\lambda_k=\lambda_\pi(p^k)\).  For every \(b\geq1\), the oldvector
+cross products relative to \(\lambda_b\), respectively to
+\(\lambda_a\lambda_b\), are
+
+\[
+ \boxed{
+ \frac{U_p(0)U_p(b)}{\lambda_b}
+ =-\frac{pq-1}{q^2r_p},\qquad
+ \frac{U_p(a)U_p(b)}{\lambda_a\lambda_b}
+ =\frac{(pq-1)^2}{q^2r_p}\quad(a\geq1).}
+ \tag{4.845dc_14u}
+\]
+
+The level-\(p^2\) trace has the ambient normalization \(p^{-1}\).
+Subtract it from the level-\(p\) trace and only then divide by
+\(c_p(1)=-1\) or \(c_p(p^a)=p-1\).  Direct rational simplification
+gives
+
+\[
+ \boxed{
+ \frac{\mathcal K_p^{(1)}(a,b)}{c_p(p^a)}
+ =\begin{cases}
+ -C_{p,0}\lambda_b,&a=0,\\[1mm]
+ -C_{p,+}\lambda_a\lambda_b,&a\geq1,
+ \end{cases}
+ \quad
+ \begin{aligned}
+ C_{p,0}&=1-\frac{p+1}{p^2(p+2)},\\
+ C_{p,+}&=1+\frac1{p^2(p+2)(p-1)}.
+ \end{aligned}}
+ \tag{4.845dc_14v}
+\]
+
+Squaring (4.845dc_14v) reproduces exactly the two corrected formulae
+in Section 4.109y.  More importantly, the sign and the two Fourier
+indices are retained: on either exact first-valuation cell there is
+only one primitive coefficient list.  The positive-valuation Euler
+correction is \(1+O(p^{-4})\), while the worst unit/valuation-one
+square mass is
+
+\[
+ p^{-1}C_{p,0}^2\leq p^{-1}.
+\]
+
+Hence the Steinberg conductor choice contributes the required local
+square weight \(p^{-1}\) times an absolutely convergent Euler factor;
+it does not require a new signed two-index large sieve.  Together with
+Section 4.109zfd, this closes the finite cross-index transfer for the
+cuspidal and holomorphic primitive-conductor exponents zero and one;
+exponent two already vanishes at the positive second valuation.
+
+The continuous spectrum is not covered by the Steinberg computation,
+but it also has no conductor-\(p\) primitive datum in the present
+trivial-nebentypus family.  Section 4.109zff checks its even-conductor
+alternative directly from Young's newdata parametrization.
+
+The interface steinberg_cross_index_rank_one_identity verifies
+(4.845dc_14u)--(4.845dc_14v), cross-checks their squares against
+steinberg_exact_level_difference_kernel_square, and leaves the
+continuous-spectrum handoff, weighted-large-sieve, and PEVP flags false.
+
+
+### 4.109zff Trivial-nebentypus Eisenstein conductors are locally even
+
+Young's primitive Eisenstein newdata are the pairs
+\(E_{\chi_1,\chi_2}\), with \(\chi_i\) primitive of conductor \(q_i\),
+level \(q_1q_2\), and nebentypus
+\(\chi_1\overline{\chi_2}\).  In the classical Kuznetsov family used
+here the nebentypus is trivial.  Hence the two primitive characters are
+equal, in particular their local conductor exponents agree.  At every
+prime,
+
+\[
+ \boxed{
+ a_p(E_{\chi,\chi})=a_p(\chi)+a_p(\chi)=2a_p(\chi).}
+ \tag{4.845dc_14w}
+\]
+
+Inside the ambient exponent-two family at a prime \(p\mid A\), the
+only primitive continuous conductor exponents are therefore zero and
+two.  The exponent-one cell, which would have required a continuous
+analogue of the Steinberg calculation, is absent.
+
+For the exponent-two cell, \(\chi\) is ramified at \(p\).  Young's
+Fourier coefficient formula specializes, for \(k\geq1\), to
+
+\[
+ \boxed{
+ \lambda_{\chi,\chi}(p^k,\tfrac12+it)
+ =\sum_{i=0}^{k}
+   \chi(p^i)\overline{\chi(p^{k-i})}
+   p^{it(k-2i)}=0.}
+ \tag{4.845dc_14x}
+\]
+
+Indeed, in every factorization \(p^k=p^ip^{k-i}\), at least one
+character is evaluated on a multiple of \(p\).  Since the physical
+second Fourier index has \(v_p(Ah\delta)\geq1\), the primitive
+conductor-two cross-index kernel vanishes.  The conductor-zero datum is
+unramified and is exactly the rank-two transfer of Section 4.109zfd.
+
+Consequently the finite cross-index transfer is now complete for the
+Maaß, holomorphic, and continuous primitive data at every \(p\mid A\):
+unramified data give two fixed shifts, Steinberg data give one shift,
+and conductor exponent two gives zero.  This is a local algebraic
+statement.  It does not prove the uniform polylogarithmic harmonic
+large sieve, nor does it justify the global Bessel-transform and
+spectral-measure constants.
+
+The interface trivial_nebentypus_eisenstein_conductor_audit records
+the even conductor alternatives and the positive-valuation zero,
+marks the continuous local transfer proved, and leaves the global
+large-sieve and PEVP flags false.
 
 
 ### 4.109zg Seminorm-stable PEVP would sum every AFE and transform tail shell

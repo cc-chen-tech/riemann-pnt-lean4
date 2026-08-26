@@ -4575,6 +4575,58 @@ def test_steinberg_exact_level_difference_has_corrected_square_formula() -> None
     assert not both["previous_target_equality_exact"]
 
 
+def test_steinberg_cross_index_kernel_is_exact_rank_one() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zfe The Steinberg cross-index kernel is rank one",
+        r"\tag{4.845dc_14u}",
+        r"\tag{4.845dc_14v}",
+        "steinberg_cross_index_rank_one_identity",
+    ):
+        assert marker in note
+
+    local = coverage_audit.steinberg_cross_index_rank_one_identity(prime=5)
+    assert local["oldclass_gram_factor"] == F(35, 36)
+    assert local["unit_positive_ambient_oldvector_cross_ratio"] == F(-29, 35)
+    assert local["positive_positive_ambient_oldvector_cross_ratio"] == F(841, 35)
+    assert local["unit_first_rank_one_multiplier"] == F(-169, 175)
+    assert local["positive_first_rank_one_multiplier"] == F(-701, 700)
+    assert local["unit_first_multiplier_square"] == F(28561, 30625)
+    assert local["positive_first_multiplier_square"] == F(491401, 490000)
+    assert local["rank_one_factorization_exact"]
+    assert local["positive_multiplier_euler_correction_order_at_least_four"]
+    assert local["steinberg_conductor_square_mass_is_p_inverse_times_bounded_euler"]
+    assert not local["ramified_eisenstein_transfer_proved"]
+    assert not local["weighted_harmonic_large_sieve_proved"]
+    assert not local["pevp_proved"]
+
+
+def test_trivial_nebentypus_eisenstein_has_no_conductor_p_cell() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zff Trivial-nebentypus Eisenstein conductors are locally even",
+        r"\tag{4.845dc_14w}",
+        r"\tag{4.845dc_14x}",
+        "trivial_nebentypus_eisenstein_conductor_audit",
+    ):
+        assert marker in note
+
+    local = coverage_audit.trivial_nebentypus_eisenstein_conductor_audit(
+        prime=5,
+        primitive_character_conductor_exponent=1,
+        positive_index_valuation=3,
+    )
+    assert local["first_character_conductor_exponent"] == 1
+    assert local["second_character_conductor_exponent"] == 1
+    assert local["primitive_gl2_conductor_exponent"] == 2
+    assert local["conductor_exponent_one_absent"]
+    assert local["positive_valuation_hecke_coefficient"] == F(0)
+    assert local["ramified_conductor_two_cross_index_kernel"] == F(0)
+    assert local["continuous_local_cross_index_transfer_proved"]
+    assert not local["uniform_polylog_harmonic_large_sieve_proved"]
+    assert not local["pevp_proved"]
+
+
 def test_corrected_steinberg_formula_does_not_certify_global_pevp() -> None:
     """The local Euler correction does not prove the global large sieve."""
     local = coverage_audit.steinberg_exact_level_difference_kernel_square(
@@ -4641,6 +4693,12 @@ def test_primitive_conductor_rearrangement_leaves_polylog_large_sieve_open() -> 
     assert not audit.published_large_sieve_has_explicit_polylog_constant
     assert not audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
     assert audit.primitive_family_is_positive_full_level_subfamily
+    assert audit.unramified_cross_index_two_shift_transfer_proved
+    assert audit.steinberg_cross_index_rank_one_transfer_proved
+    assert audit.continuous_local_cross_index_transfer_proved
+    assert audit.all_local_cross_index_transfers_proved
+    assert audit.shifted_support_does_not_exceed_original_support
+    assert audit.pevp_reduced_to_uniform_polylog_harmonic_large_sieve
     assert not audit.weighted_primitive_large_sieve_proved
     assert not audit.pevp_proved
 
@@ -4853,7 +4911,7 @@ def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> N
         r"\tag{4.845dc_14a}",
         r"\tag{4.845dc_14f}",
         "pointwise transform formula as negligible",
-        "Both obligations remain open.",
+        "the single remaining PLS input",
         "dyadic_bessel_mellin_block_audit",
     ):
         assert marker in note
@@ -4874,6 +4932,20 @@ def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> N
         assert block.maass_and_eisenstein_block_covered
         assert block.holomorphic_block_covered
         assert block.physical_full_level_block_covered
+        assert block.hybrid_gallagher_uses_mellin_linfty_weight
+        assert not block.uniform_stationary_phase_seminorm_bound_proved
+
+    large = block_audit(
+        sequence_length_exponent=F(5),
+        level_exponent=F(3),
+        modulus_exponent=F(0),
+        spectral_scale_exponent=F(0),
+    )
+    assert large.large_bessel_range
+    assert large.large_mellin_effective_width_exponent == F(5)
+    assert large.large_mellin_linfty_prefactor_exponent == F(-5)
+    assert large.large_mellin_l1_exponent == F(0)
+    assert large.large_mellin_l1_is_not_prefactor_exponent
 
     boundary = block_audit(
         sequence_length_exponent=F(5),
