@@ -5369,6 +5369,413 @@ class TypeScaleBounds:
     type_ii_b_max: Fraction
 
 
+@dataclass(frozen=True)
+class FareyTypeTTStarEuclideanLedger:
+    q: int
+    k: int
+    r1: int
+    r2: int
+    w1: int
+    w2: int
+    b1: int
+    b2: int
+    quotient1: int
+    quotient2: int
+    remainder1: int
+    remainder2: int
+    determinant: int
+    same_sector: bool
+    same_original_euclidean_quotient: bool
+    sector_quotient_equivalence_verified: bool
+    primitive_entries: bool
+    zero_determinant_forces_equal_primitive_entries: bool
+    general_remainder_identity_verified: bool
+    common_sector_remainder_identity_verified: bool
+    determinant_collar_verified: bool
+    nonzero_determinant_forces_q_below_denominator_product: bool
+
+
+@dataclass(frozen=True)
+class MobiusLogTypeTerm:
+    d: int
+    m: int
+    prime: int
+    coefficient: int
+
+
+@dataclass(frozen=True)
+class MobiusLogTypeDiagonalRecombination:
+    n: int
+    s: int
+    primitive_entry: bool
+    terms: tuple[MobiusLogTypeTerm, ...]
+    summed_prime_vector: tuple[tuple[int, int], ...]
+    target_prime_vector: tuple[tuple[int, int], ...]
+    factorization_cross_terms: tuple[
+        tuple[int, int, int, int, int, int, int], ...
+    ]
+    full_cross_outer_product: tuple[tuple[int, int, int], ...]
+    target_outer_product: tuple[tuple[int, int, int], ...]
+    recombination_identity_verified: bool
+    cross_factorizations_retained_before_cauchy: bool
+
+
+@dataclass(frozen=True)
+class LabelledAfeTypePacket:
+    packet_id: str
+    h: int
+    delta: int
+    dyadic_label: str
+    afe_direction: str
+    n: int
+    s: int
+    amplitude: Fraction
+    vector: tuple[Fraction, ...]
+
+
+@dataclass(frozen=True)
+class LabelledTypeZeroDeterminantRecombination:
+    packet_ids: tuple[str, ...]
+    product_frequencies: tuple[int, ...]
+    packet_label_ledger: tuple[tuple[str, int, int, str, str], ...]
+    expanded_type_determinant_zero_energy: Fraction
+    recombined_original_entry_energy: Fraction
+    all_original_packet_labels_retained: bool
+    all_entries_primitive: bool
+    internal_type_factorizations_recombined: bool
+    distinct_outer_packets_still_cross_inside_entry: bool
+    global_same_slope_gate_proved: bool
+
+
+def farey_type_ttstar_euclidean_ledger(
+    *,
+    q: int,
+    k: int,
+    d1: int,
+    m1: int,
+    s1: int,
+    d2: int,
+    m2: int,
+    s2: int,
+) -> FareyTypeTTStarEuclideanLedger:
+    """Record the exact common-sector determinant after one Type split.
+
+    Put ``r_i=d_i*m_i`` and ``w_i=r_i-k*s_i``.  Since ``k*q`` is an
+    integer, the Beatty sector and the Euclidean quotient of the original
+    primitive numerator satisfy
+
+    ``floor(q*w_i/s_i) = floor(q*r_i/s_i) - k*q``.
+
+    If the two sectors agree, their original quotients agree.  Writing
+    ``q*r_i=B*s_i+rho_i`` then gives the exact, cancellation-bearing
+    identity
+
+    ``q*(r1*s2-r2*s1)=rho1*s2-rho2*s1``.
+
+    No ``h`` or ``delta`` label is removed here: this is only the integer
+    skeleton inside a row of the global pre-Cauchy master.
+    """
+    if q <= 0 or k < 0 or min(d1, m1, s1, d2, m2, s2) <= 0:
+        raise ValueError("q,d_i,m_i,s_i must be positive and k nonnegative")
+    r1 = d1 * m1
+    r2 = d2 * m2
+    w1 = r1 - k * s1
+    w2 = r2 - k * s2
+    if w1 < 0 or w2 < 0:
+        raise ValueError("Type numerators w_i=d_i*m_i-k*s_i must be nonnegative")
+
+    b1, b2 = q * w1 // s1, q * w2 // s2
+    quotient1, remainder1 = divmod(q * r1, s1)
+    quotient2, remainder2 = divmod(q * r2, s2)
+    determinant = r1 * s2 - r2 * s1
+    same_sector = b1 == b2
+    same_quotient = quotient1 == quotient2
+    primitive_entries = gcd(r1, s1) == 1 and gcd(r2, s2) == 1
+    general_rhs = (
+        (quotient1 - quotient2) * s1 * s2
+        + remainder1 * s2
+        - remainder2 * s1
+    )
+    general_identity = q * determinant == general_rhs
+    common_identity = (not same_sector) or (
+        same_quotient
+        and q * determinant == remainder1 * s2 - remainder2 * s1
+    )
+    collar = (not same_sector) or abs(q * determinant) < s1 * s2
+    nonzero_range = (
+        (not same_sector)
+        or determinant == 0
+        or q < s1 * s2
+    )
+    return FareyTypeTTStarEuclideanLedger(
+        q=q,
+        k=k,
+        r1=r1,
+        r2=r2,
+        w1=w1,
+        w2=w2,
+        b1=b1,
+        b2=b2,
+        quotient1=quotient1,
+        quotient2=quotient2,
+        remainder1=remainder1,
+        remainder2=remainder2,
+        determinant=determinant,
+        same_sector=same_sector,
+        same_original_euclidean_quotient=same_quotient,
+        sector_quotient_equivalence_verified=(same_sector == same_quotient),
+        primitive_entries=primitive_entries,
+        zero_determinant_forces_equal_primitive_entries=(
+            (not primitive_entries)
+            or determinant != 0
+            or (r1, s1) == (r2, s2)
+        ),
+        general_remainder_identity_verified=general_identity,
+        common_sector_remainder_identity_verified=common_identity,
+        determinant_collar_verified=collar,
+        nonzero_determinant_forces_q_below_denominator_product=nonzero_range,
+    )
+
+
+def mobius_log_type_diagonal_recombination(
+    *, n: int, s: int
+) -> MobiusLogTypeDiagonalRecombination:
+    """Recombine every prime-power Type factorization on a fixed entry.
+
+    The formal prime coordinate of
+
+    ``mu(s) * sum_(d*m=n) mu(d) Lambda(m)``
+
+    is summed over *all* ``m=p^j`` before any Cauchy--Schwarz step.  It is
+    exactly ``-mu(s)*mu(n)*v_p(n)``.  Expanding the square first therefore
+    requires every cross-factorization pair; their full outer product is
+    the outer product of the recombined prime vector.  This remains true
+    for nonsquarefree ``n``, where individual Type terms can cancel.
+    """
+    if n <= 0 or s <= 0:
+        raise ValueError("n and s must be positive")
+    primes = _distinct_prime_factors(n)
+    terms: list[MobiusLogTypeTerm] = []
+    valuations: dict[int, int] = {}
+    for prime in primes:
+        valuation = 0
+        prime_power = 1
+        remainder = n
+        while remainder % prime == 0:
+            valuation += 1
+            prime_power *= prime
+            remainder //= prime
+            terms.append(
+                MobiusLogTypeTerm(
+                    d=n // prime_power,
+                    m=prime_power,
+                    prime=prime,
+                    coefficient=mobius(s) * mobius(n // prime_power),
+                )
+            )
+        valuations[prime] = valuation
+
+    summed = tuple(
+        (
+            prime,
+            sum(term.coefficient for term in terms if term.prime == prime),
+        )
+        for prime in primes
+    )
+    target = tuple(
+        (prime, -mobius(s) * mobius(n) * valuations[prime])
+        for prime in primes
+    )
+    cross_terms = tuple(
+        (
+            left.d,
+            left.m,
+            left.prime,
+            right.d,
+            right.m,
+            right.prime,
+            left.coefficient * right.coefficient,
+        )
+        for left in terms
+        for right in terms
+    )
+    full_outer = tuple(
+        (
+            left_prime,
+            right_prime,
+            sum(
+                coefficient
+                for _, _, term_left_prime, _, _, term_right_prime, coefficient
+                in cross_terms
+                if term_left_prime == left_prime
+                and term_right_prime == right_prime
+            ),
+        )
+        for left_prime in primes
+        for right_prime in primes
+    )
+    target_by_prime = dict(target)
+    target_outer = tuple(
+        (
+            left_prime,
+            right_prime,
+            target_by_prime[left_prime] * target_by_prime[right_prime],
+        )
+        for left_prime in primes
+        for right_prime in primes
+    )
+    return MobiusLogTypeDiagonalRecombination(
+        n=n,
+        s=s,
+        primitive_entry=gcd(n, s) == 1,
+        terms=tuple(terms),
+        summed_prime_vector=summed,
+        target_prime_vector=target,
+        factorization_cross_terms=cross_terms,
+        full_cross_outer_product=full_outer,
+        target_outer_product=target_outer,
+        recombination_identity_verified=(summed == target),
+        cross_factorizations_retained_before_cauchy=(
+            len(cross_terms) == len(terms) * len(terms)
+        ),
+    )
+
+
+def labelled_type_zero_determinant_recombination(
+    *,
+    packets: tuple[LabelledAfeTypePacket, ...],
+    prime_log_weights: dict[int, Fraction],
+) -> LabelledTypeZeroDeterminantRecombination:
+    """Recombine the Type-internal zero determinant with AFE labels intact.
+
+    Every packet retains its h, delta, dyadic, and AFE-direction data, its
+    signed amplitude, and its vector wave packet.  The Type-expanded Gram is
+    summed only when n1*s2-n2*s1=0.  Primitive entries then agree, but
+    distinct outer AFE packets on that entry continue to cross inside the
+    square.
+
+    The helper proves only that all d*m=n factorizations recombine to the
+    original Mobius-log coefficient.  It deliberately does not claim the
+    separate global same-slope estimate in the analytic master.
+    """
+    if not packets:
+        raise ValueError("at least one labelled packet is required")
+    if len({packet.packet_id for packet in packets}) != len(packets):
+        raise ValueError("packet ids must be distinct")
+    dimensions = {len(packet.vector) for packet in packets}
+    if dimensions == {0} or len(dimensions) != 1:
+        raise ValueError("packet vectors must have one positive dimension")
+    if any(
+        packet.h == 0
+        or packet.n <= 0
+        or packet.s <= 0
+        or gcd(packet.n, packet.s) != 1
+        for packet in packets
+    ):
+        raise ValueError("require h nonzero and positive primitive entries")
+
+    required_primes = {
+        prime
+        for packet in packets
+        for prime in _distinct_prime_factors(packet.n)
+    }
+    missing = tuple(
+        prime for prime in sorted(required_primes) if prime not in prime_log_weights
+    )
+    if missing:
+        raise ValueError(f"missing formal prime-log weights: {missing}")
+
+    ledgers = {
+        packet.packet_id: mobius_log_type_diagonal_recombination(
+            n=packet.n, s=packet.s
+        )
+        for packet in packets
+    }
+
+    def dot(left: tuple[Fraction, ...], right: tuple[Fraction, ...]) -> Fraction:
+        return sum(
+            (Fraction(x) * Fraction(y) for x, y in zip(left, right)),
+            Fraction(0),
+        )
+
+    expanded = Fraction(0)
+    recombined = Fraction(0)
+    for left in packets:
+        for right in packets:
+            if left.n * right.s != right.n * left.s:
+                continue
+            wave_pair = (
+                Fraction(left.amplitude)
+                * Fraction(right.amplitude)
+                * dot(left.vector, right.vector)
+            )
+            left_ledger = ledgers[left.packet_id]
+            right_ledger = ledgers[right.packet_id]
+            expanded_coefficient = sum(
+                (
+                    left_term.coefficient
+                    * prime_log_weights[left_term.prime]
+                    * right_term.coefficient
+                    * prime_log_weights[right_term.prime]
+                    for left_term in left_ledger.terms
+                    for right_term in right_ledger.terms
+                ),
+                Fraction(0),
+            )
+            left_target = sum(
+                (
+                    coefficient * prime_log_weights[prime]
+                    for prime, coefficient in left_ledger.target_prime_vector
+                ),
+                Fraction(0),
+            )
+            right_target = sum(
+                (
+                    coefficient * prime_log_weights[prime]
+                    for prime, coefficient in right_ledger.target_prime_vector
+                ),
+                Fraction(0),
+            )
+            expanded += wave_pair * expanded_coefficient
+            recombined += wave_pair * left_target * right_target
+
+    distinct_outer_cross = any(
+        left.packet_id != right.packet_id
+        and left.n == right.n
+        and left.s == right.s
+        for left in packets
+        for right in packets
+    )
+    packet_ids = tuple(packet.packet_id for packet in packets)
+    product_frequencies = tuple(packet.h * packet.delta for packet in packets)
+    packet_label_ledger = tuple(
+        (
+            packet.packet_id,
+            packet.h,
+            packet.delta,
+            packet.dyadic_label,
+            packet.afe_direction,
+        )
+        for packet in packets
+    )
+    return LabelledTypeZeroDeterminantRecombination(
+        packet_ids=packet_ids,
+        product_frequencies=product_frequencies,
+        packet_label_ledger=packet_label_ledger,
+        expanded_type_determinant_zero_energy=expanded,
+        recombined_original_entry_energy=recombined,
+        all_original_packet_labels_retained=(
+            len(packet_ids) == len(packets)
+            and len(product_frequencies) == len(packets)
+            and len(packet_label_ledger) == len(packets)
+        ),
+        all_entries_primitive=True,
+        internal_type_factorizations_recombined=(expanded == recombined),
+        distinct_outer_packets_still_cross_inside_entry=distinct_outer_cross,
+        global_same_slope_gate_proved=False,
+    )
+
+
 def type_scale_bounds(
     rho: Fraction,
     *,

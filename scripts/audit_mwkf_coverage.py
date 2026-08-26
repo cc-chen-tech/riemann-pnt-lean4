@@ -5105,18 +5105,23 @@ def sector_character_parseval_sides(
     *,
     entries: tuple[tuple[int, Fraction, tuple[Fraction, ...]], ...],
     modulus: int,
+    original_entry_ids: tuple[str, ...] | None = None,
 ) -> dict[str, Fraction | bool]:
     """Verify exact cyclic Parseval for vector-valued angular sectors.
 
     Each entry is ``(sector, coefficient, vector)``.  Sectors are embedded
     without aliasing in ``Z/modulus Z``.  Character orthogonality then gives
 
-    ``sum_b ||S_b||^2 = modulus^-1 sum_a ||sum_e c_e e(a*b_e/M)G_e||^2``.
+    ``sum_b ||S_b||^2 = modulus^-1 sum_xi ||sum_e c_e e(xi*b_e/M)G_e||^2``.
 
     The helper evaluates the normalized character side algebraically via
     the exact congruence indicator, avoiding floating roots of unity.  The
     principal character is exactly ``modulus^-1`` times the original global
     Gram ``||sum_e c_e G_e||^2``.
+
+    If ``original_entry_ids`` is supplied, packets with one original entry
+    id are recombined before its self diagonal is formed.  All packets in
+    one such group must lie in the same sector.
     """
     if modulus <= 0:
         raise ValueError("modulus must be positive")
@@ -5127,6 +5132,11 @@ def sector_character_parseval_sides(
         raise ValueError("all entry vectors must have one dimension")
     if any(sector < 0 or sector >= modulus for sector, _, _ in entries):
         raise ValueError("sector labels must lie in the no-alias interval")
+    if (
+        original_entry_ids is not None
+        and len(original_entry_ids) != len(entries)
+    ):
+        raise ValueError("original entry ids must match the entry list")
 
     def dot(
         left: tuple[Fraction, ...],
@@ -5175,6 +5185,47 @@ def sector_character_parseval_sides(
     global_gram = dot(global_vector, global_vector)
     principal = global_gram / modulus
     nonprincipal = normalized_character_energy - principal
+    entry_ids = (
+        original_entry_ids
+        if original_entry_ids is not None
+        else tuple(str(index) for index in range(len(entries)))
+    )
+    if any(
+        len(
+            {
+                sector
+                for entry_id, (sector, _, _) in zip(entry_ids, entries)
+                if entry_id == target_id
+            }
+        )
+        != 1
+        for target_id in set(entry_ids)
+    ):
+        raise ValueError("one original entry id must lie in one sector")
+    grouped_entry_vectors = {
+        target_id: tuple(
+            sum(
+                (
+                    F(coefficient) * F(vector[i])
+                    for entry_id, (_, coefficient, vector) in zip(
+                        entry_ids, entries
+                    )
+                    if entry_id == target_id
+                ),
+                F(0),
+            )
+            for i in range(dimension)
+        )
+        for target_id in set(entry_ids)
+    }
+    entry_self_diagonal = sum(
+        (dot(vector, vector) for vector in grouped_entry_vectors.values()),
+        F(0),
+    )
+    nonprincipal_entry_diagonal = (
+        F(modulus - 1, modulus) * entry_self_diagonal
+    )
+    nonprincipal_offdiagonal = nonprincipal - nonprincipal_entry_diagonal
     return {
         "no_sector_aliasing": True,
         "cluster_square_function": cluster_square,
@@ -5184,6 +5235,15 @@ def sector_character_parseval_sides(
         "principal_character_energy": principal,
         "nonprincipal_character_energy": nonprincipal,
         "nonprincipal_character_energy_nonnegative": nonprincipal >= 0,
+        "entry_self_diagonal_energy": entry_self_diagonal,
+        "nonprincipal_entry_diagonal_energy": nonprincipal_entry_diagonal,
+        "nonprincipal_offdiagonal_energy": nonprincipal_offdiagonal,
+        "nonprincipal_diagonal_split_exact": (
+            nonprincipal
+            == nonprincipal_entry_diagonal + nonprincipal_offdiagonal
+        ),
+        "sector_character_is_trivial_on_entry_diagonal": True,
+        "original_entry_groups_recombined": original_entry_ids is not None,
     }
 
 
@@ -5193,9 +5253,11 @@ def sector_character_correlation_coefficients(
 ) -> dict[str, object]:
     """Expand sector-character energy into cluster-offset correlations.
 
-    For ``A_a=sum_b e(ab/M)S_b`` one has formally
+    The character variable is denoted xi so it is not confused with the
+    original AFE product a_AFE=h*delta.  For
+    ``A_xi=sum_b e(xi*b/M)S_b`` one has formally
 
-    ``||A_a||^2=sum_u e(au/M) C_u`` with
+    ``||A_xi||^2=sum_u e(xi*u/M) C_u`` with
     ``C_u=sum_b <S_(b+u),S_b>``.
 
     Banded packet geometry limits the number of offsets but does not make

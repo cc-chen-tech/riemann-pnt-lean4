@@ -10842,6 +10842,202 @@ rows with the same primitive slope and verifies that these, and only these,
 enter the determinant-zero cross block.  Formula (9.468) is an exact
 reduction, not a bound.
 
+### 9.73 Type expansion does not diagonalize a resonant orbit
+
+There are two unrelated letters which must not be conflated in the next
+dispersion step.  The product carried by the original AFE packet is
+
+\[
+ a_{\mathrm{AFE}}=h\delta,
+\tag{9.469}
+\]
+
+whereas a Fourier character introduced to separate \(M\) Farey/Beatty
+sectors will be denoted
+
+\[
+ \xi\in\mathbb Z/M\mathbb Z.
+\tag{9.470}
+\]
+
+In particular, \(\xi\) is not a replacement for \(h\delta\).  In the global
+master (9.451), the row label still contains
+\((h,\delta,\nu,\sigma)\), and the AFE weight, sign, and phase remain inside
+\(\mathcal T_{u,t}\).  If one Möbius factor is decomposed, the enlarged row
+may be recorded schematically as
+
+\[
+ u_{\rm Type}=(g,k,\ell,h,\delta,\nu,\sigma;d,m,s,b,\xi).
+\tag{9.471}
+\]
+
+No sum over \(h\) or \(\delta\), and no absolute value over the corresponding
+packets, is taken in the identities below.
+
+Here is the exact integer skeleton of a common-sector \(TT^*\) pair.  Its
+Farey/Type-entry determinant is different from the global row-slope
+determinant \(\det(u,v)\) in (9.453).  Put
+
+\[
+ r_i=d_im_i,\qquad w_i=r_i-ks_i\geq0,\qquad
+ b_i=\left\lfloor\frac{Qw_i}{s_i}\right\rfloor.
+\tag{9.472}
+\]
+
+Euclidean division of the *original* numerator gives
+
+\[
+ Qr_i=B_is_i+\rho_i,\qquad
+ B_i=\left\lfloor\frac{Qr_i}{s_i}\right\rfloor,\qquad
+ 0\leq\rho_i<s_i.
+\tag{9.473}
+\]
+
+Because \(kQ\) is an integer,
+
+\[
+ b_i=B_i-kQ.
+\tag{9.474}
+\]
+
+Consequently \(b_1=b_2\) if and only if \(B_1=B_2\).  For
+
+\[
+ \Delta_{\rm Type}=r_1s_2-r_2s_1=w_1s_2-w_2s_1
+\tag{9.475}
+\]
+
+one has, before imposing a common sector,
+
+\[
+ Q\Delta_{\rm Type}
+ =(B_1-B_2)s_1s_2+\rho_1s_2-\rho_2s_1.
+\tag{9.476}
+\]
+
+Thus the common-sector pair satisfies the sharper exact identity
+
+\[
+ \boxed{Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1,
+ \qquad |Q\Delta_{\rm Type}|<s_1s_2.}
+\tag{9.477}
+\]
+
+If the two \((r_i,s_i)\) are primitive, \(\Delta_{\rm Type}=0\) forces
+\((r_1,s_1)=(r_2,s_2)\).  This still does **not** force
+\((d_1,m_1)=(d_2,m_2)\): for example \(r_1=r_2=10\) contains the two
+prime-power Type factorizations \((d,m)=(5,2)\) and \((2,5)\).  These are
+genuine cross terms inside the same resonant orbit.
+
+They must be recombined before Cauchy--Schwarz.  Coordinatewise in the
+formal basis \(\{\log p\}\), the exact identity
+
+\[
+ -\mu(n)\log n=\sum_{dm=n}\mu(d)\Lambda(m)
+\tag{9.478}
+\]
+
+is
+
+\[
+ \sum_{j=1}^{v_p(n)}\mu(n/p^j)=-\mu(n)v_p(n).
+\tag{9.479}
+\]
+
+After retaining the other Möbius sign, its prime-coordinate vector is
+
+\[
+ \boxed{
+ \sum_{j=1}^{v_p(n)}\mu(s)\mu(n/p^j)
+ =-\mu(s)\mu(n)v_p(n).}
+\tag{9.480}
+\]
+
+Therefore the full \(TT^*\) cross-factorization matrix is the outer
+product of the *summed* vectors in (9.480), including all
+\((j_1,j_2)\) cross terms.  Applying Cauchy separately to the Type blocks
+would replace this exact outer product by a larger blockwise majorant and,
+for nonsquarefree \(n\), would even destroy cancellations such as the two
+\(p=2\) terms for \(n=12\).
+
+The finite helper farey_type_ttstar_euclidean_ledger checks
+(9.472)--(9.477), including the same-sector example
+\((Q,k;r_1,s_1;r_2,s_2)=(11,1;10,7;13,9)\), for which
+\(b_1=b_2=4\), \((\rho_1,\rho_2)=(5,8)\), and
+\(\Delta_{\rm Type}=-1\).
+The helper mobius_log_type_diagonal_recombination checks
+(9.478)--(9.480) in every prime coordinate and expands the complete outer
+product before comparing it with the recombined target.  These are finite
+exact propositions suitable for later formalization.
+
+More explicitly, let \(\lambda=(h,\delta,\nu,\sigma,\ldots)\) denote all
+outer packet labels.  On the balanced support \(n>1\), absorb
+\((\log n)^{-1}\) into the corresponding vector packet and denote the
+result by \(\widetilde V_{\lambda,n,s}\).  On primitive entries, the complete
+\(\Delta_{\rm Type}=0\) contribution after expanding one Möbius factor is
+exactly
+
+\[
+\begin{aligned}
+ \mathfrak G^{\rm Type}_{0}
+ &=
+ \sum_{(n,s)=1}
+ \left\|
+   \sum_{\lambda:\,\operatorname{entry}(\lambda)=(n,s)}
+   c_\lambda\,
+   \mu(s)\!\sum_{dm=n}\mu(d)\Lambda(m)\,
+   \widetilde V_{\lambda,n,s}
+ \right\|_2^2\\
+ &=
+ \sum_{(n,s)=1}
+ \left\|
+   \sum_{\lambda:\,\operatorname{entry}(\lambda)=(n,s)}
+   c_\lambda[-\mu(s)\mu(n)\log n]\,
+   \widetilde V_{\lambda,n,s}
+ \right\|_2^2.
+\end{aligned}
+\tag{9.481}
+\]
+
+Thus the Type-internal diagonal has no separate factorization loss.  But
+the \(\lambda_1\ne\lambda_2\) cross terms on one original entry remain
+inside (9.481).  The finite helper
+labelled_type_zero_determinant_recombination verifies (9.481) with signed
+rational vector packets while recording every \(h\delta\).  Formula
+(9.481) does not prove or remove the global same-slope gate (9.468);
+it only restores that gate to the original-entry coefficient before it is
+estimated.
+
+There is nevertheless one genuine reduction of the remaining sector
+square function.  If \(D_{\rm cont}:=\sum_e|\alpha_e|^2\|G_e\|_2^2\)
+is its original-entry self diagonal, nonprincipal sector orthogonality
+gives
+
+\[
+ \boxed{\mathcal N_{\ne0}=\left(1-\frac1M\right)D_{\rm cont}+\mathcal N_{\ne0}^{\rm off}.}
+\tag{9.482}
+\]
+
+The character is trivial on \(e=f\).  By primitivity and (9.481), the
+\(\Delta_{\rm Type}=0\) part of a one-factor Type expansion is exactly
+the first term in (9.482), not a new factorization diagonal.  In the
+continuous wave-packet normalization its exponent is already the target
+diagonal exponent \(2\).  Hence the extra one-power obstruction in that
+sector model lies entirely in
+\(\mathcal N_{\ne0}^{\rm off}\), where
+\(\Delta_{\rm Type}\ne0\).  This statement does not estimate the
+offdiagonal term and does not identify it with the different global
+nonzero-slope determinant in (9.454).
+
+No Type-I/II estimate is proved by these identities.  They remove one
+invalid route: determinant zero cannot be bounded factorization by
+factorization.  The remaining analytic tasks are (i) the
+\(\Delta_{\rm Type}\ne0\) sector-offdiagonal estimate, (ii) a global
+same-slope estimate after recombining all Type factorizations and all
+original \((h,\delta,\nu,\sigma)\) packets inside the square, and
+(iii) the \(T^4\) global \(TT^*\) saving for the nonzero row-slope
+determinant, with \(\xi\ne0\) used only as an auxiliary sector character.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -10947,7 +11143,15 @@ whole resonance; the surviving high-rank banded Möbius energy remains
 unproved.  The primitive-slope lemma (9.465)--(9.468) also proves that
 the determinant-zero Gram orbit contains only equal \((k_0,\ell_0)\);
 it is a sum of same-slope squared norms, with no cross-slope resonances.
-Its remaining outer-parameter cancellation is unproved.**
+Its remaining outer-parameter cancellation is unproved.  The subsequent
+Type ledger (9.469)--(9.482) distinguishes the auxiliary sector character
+\(\xi\) from \(a_{\rm AFE}=h\delta\), proves the exact common-sector
+Euclidean remainder identity, and recombines every internal \(dm=r\)
+cross factorization before Cauchy.  The Type-entry determinant-zero part
+is exactly the original self diagonal and has no positive-power deficit;
+the sector model's extra power is confined to
+\(\Delta_{\rm Type}\ne0\).  This does not close either that offdiagonal
+estimate or the separate global same-slope gate.**
 
 Proved in this note:
 
@@ -11163,6 +11367,15 @@ Proved in this note:
   equality of the two slopes, so the whole zero orbit is a sum of
   same-slope squared norms.  Cross terms in \(g,h,\delta,\nu,\sigma\)
   remain inside each square and are not estimated here.
+* the label-safe one-factor Type ledger (9.469)--(9.482).  It keeps
+  \(a_{\rm AFE}=h\delta\) distinct from the auxiliary sector character,
+  proves \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\) on a common
+  Euclidean quotient, and recombines all prime-power Type
+  cross-factorizations to the original Möbius-log coefficient.  The
+  nonprincipal Type-entry diagonal is exactly
+  \((1-M^{-1})D_{\rm cont}\); only its
+  \(\Delta_{\rm Type}\ne0\) complement can carry the extra power.
+  Neither that complement nor the global same-slope estimate is proved.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -11430,6 +11643,7 @@ Proved in this note:
 | Global centered \(TT^*\) route | exact determinant split; both analytic estimates unproved | The balanced operator needs a relative \(T^2\) saving, or \(T^4\) after squaring, (9.449)--(9.450).  One global Gram expansion splits exactly by \(k_u\ell_v-k_v\ell_u=0\) or not, (9.451)--(9.454).  The zero determinant must be bounded using the same reflection data as the pre-Cauchy resonant master, but the two are not literally added; only the nonzero determinant is eligible for a spectral large sieve.  None of the three tasks in (9.455) is asserted |
 | Actual zero-mode Fourier projector | exact high-rank identification; banded Möbius energy unproved | The fully recombined equal-index packet is the Fourier Gram (9.457), minus its explicit diagonal (9.458).  On the Gaussian \(1,2,4\) minor, both determinants in (9.462) are nonzero, so the full and diagonal-removed projectors have rank \(3\); every product-density row/column/grand projection has rank at most \(2\), (9.463).  Hence scalar-density centering cannot isolate the whole resonance, and the remaining projector is the long-polynomial gate rather than an LCM diagonal |
 | Determinant-zero primitive slopes | exact same-slope decomposition; within-slope norm unproved | Since every affine slope \((k_0,\ell_0)\) is positive and primitive, determinant zero forces equality of the two slopes, (9.465)--(9.466).  The zero orbit is therefore the sum of same-slope squared norms (9.467), with no cross-slope collisions.  All \(g,h,\delta,\nu,\sigma\) signs remain inside each square, and the bound (9.468) is still open |
+| Label-safe Type-entry determinant | internal zero orbit recombined; nonzero entry determinant unproved | The auxiliary sector character is \(\xi\), not \(a_{\rm AFE}=h\delta\), and all original packet labels remain in the row, (9.469)--(9.471).  A common Beatty sector is one common Euclidean quotient and obeys \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\), (9.472)--(9.477).  All \(dm=r\) cross factorizations must be recombined by the Möbius-log identity (9.478)--(9.481).  This makes the nonprincipal \(\Delta_{\rm Type}=0\) part exactly \((1-M^{-1})D_{\rm cont}\), already at diagonal power, (9.482); the extra power is confined to \(\Delta_{\rm Type}\ne0\), which is not estimated |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

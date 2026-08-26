@@ -1914,6 +1914,28 @@ def test_sector_character_parseval_splits_off_the_original_gram_over_m() -> None
     assert result["principal_character_energy"] == F(36, 7)
     assert result["nonprincipal_character_energy"] == F(90, 7)
     assert result["nonprincipal_character_energy_nonnegative"]
+    assert result["entry_self_diagonal_energy"] == F(14)
+    assert result["nonprincipal_entry_diagonal_energy"] == F(12)
+    assert result["nonprincipal_offdiagonal_energy"] == F(6, 7)
+    assert result["nonprincipal_diagonal_split_exact"]
+    assert result["sector_character_is_trivial_on_entry_diagonal"]
+
+
+def test_sector_diagonal_recombines_outer_packets_with_one_original_entry_id() -> None:
+    result = coverage_audit.sector_character_parseval_sides(
+        entries=(
+            (0, F(1), (F(1),)),
+            (0, F(2), (F(1),)),
+            (2, F(3), (F(1),)),
+        ),
+        modulus=7,
+        original_entry_ids=("entry-0", "entry-0", "entry-2"),
+    )
+    assert result["original_entry_groups_recombined"]
+    assert result["entry_self_diagonal_energy"] == F(18)
+    assert result["nonprincipal_entry_diagonal_energy"] == F(108, 7)
+    assert result["nonprincipal_offdiagonal_energy"] == -F(18, 7)
+    assert result["nonprincipal_diagonal_split_exact"]
 
 
 def test_sector_principal_mode_is_absorbed_into_the_original_gram() -> None:
@@ -5124,6 +5146,13 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"(1+p^{-1})^2(1+p^{-2})",
         r"\tag{DCV\(_\gamma\)}",
         "transition_coprimality_layer_audit",
+        r"a_{\rm AFE}:=h\delta",
+        r"\mathcal A_\xi:=\sum_b e(\xi b/M)S_b",
+        r"\mathcal N_{\ne0}"
+        r"=\left(1-\frac1M\right)D_{\rm cont}"
+        r"+\mathcal N_{\ne0}^{\rm off}",
+        "sector_character_is_trivial_on_entry_diagonal",
+        r"\sum_{\xi\ne0}\|\mathcal A_\xi\|_2^2",
         "### 4.63 Exact Möbius--Hecke Euler factor and the reciprocal-\\(L\\) spectral gate",
         r"\frac{K_f(s)}{\zeta(2s)L(s,f)}",
         r"L(s+i\tau,f)L(s+i\upsilon,f)",

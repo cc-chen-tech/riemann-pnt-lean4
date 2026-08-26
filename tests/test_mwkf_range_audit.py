@@ -125,6 +125,22 @@ def test_research_note_exposes_global_secondary_zero_master_and_ttstar_split() -
         "### 9.72 Determinant zero means equal primitive slope",
         "(k_u,\\ell_u)=(k_v,\\ell_v)",
         "\\mathfrak G_{\\det=0}(a)=\\sum_{(k,\\ell)=1}",
+        "### 9.73 Type expansion does not diagonalize a resonant orbit",
+        "a_{\\mathrm{AFE}}=h\\delta",
+        "\\xi\\in\\mathbb Z/M\\mathbb Z",
+        "\\Delta_{\\rm Type}=r_1s_2-r_2s_1",
+        "Q\\Delta_{\\rm Type}=\\rho_1s_2-\\rho_2s_1",
+        "-\\mu(s)\\mu(n)v_p(n)",
+        "farey_type_ttstar_euclidean_ledger",
+        "mobius_log_type_diagonal_recombination",
+        "labelled_type_zero_determinant_recombination",
+        "\\mathfrak G^{\\rm Type}_{0}",
+        "\\mathcal N_{\\ne0}"
+        "=\\left(1-\\frac1M\\right)D_{\\rm cont}"
+        "+\\mathcal N_{\\ne0}^{\\rm off}",
+        "\\Delta_{\\rm Type}\\ne0",
+        "does not prove or remove the global same-slope gate",
+        "No Type-I/II estimate is proved by these identities",
     ):
         assert marker in text
 

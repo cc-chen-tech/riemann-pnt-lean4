@@ -1978,6 +1978,175 @@ def test_long_cutoff_quotient_progression_rejects_zero_or_negative_factors() -> 
         adapter(j=1, delta=1, b=0, d=1, v=1)
 
 
+def test_farey_type_ttstar_common_sector_has_exact_euclidean_determinant() -> None:
+    adapter = getattr(
+        type_identity,
+        "farey_type_ttstar_euclidean_ledger",
+        None,
+    )
+    assert adapter is not None, "Farey Type TT* Euclidean ledger is missing"
+
+    # q=11 and k=1.  The original primitive entries are (10,7) and
+    # (13,9); both have Beatty sector b=4, but their determinant is -1.
+    ledger = adapter(
+        q=11,
+        k=1,
+        d1=2,
+        m1=5,
+        s1=7,
+        d2=13,
+        m2=1,
+        s2=9,
+    )
+    assert (ledger.r1, ledger.w1, ledger.b1) == (10, 3, 4)
+    assert (ledger.r2, ledger.w2, ledger.b2) == (13, 4, 4)
+    assert (ledger.quotient1, ledger.remainder1) == (15, 5)
+    assert (ledger.quotient2, ledger.remainder2) == (15, 8)
+    assert ledger.b1 == ledger.quotient1 - 11
+    assert ledger.b2 == ledger.quotient2 - 11
+    assert ledger.same_sector
+    assert ledger.same_original_euclidean_quotient
+    assert ledger.sector_quotient_equivalence_verified
+    assert ledger.determinant == -1
+    assert 11 * ledger.determinant == 5 * 9 - 8 * 7
+    assert ledger.general_remainder_identity_verified
+    assert ledger.common_sector_remainder_identity_verified
+    assert ledger.determinant_collar_verified
+    assert ledger.nonzero_determinant_forces_q_below_denominator_product
+
+
+def test_farey_type_euclidean_ledger_is_exhaustive_on_small_positive_data() -> None:
+    adapter = type_identity.farey_type_ttstar_euclidean_ledger
+    for q in range(1, 6):
+        for k in range(3):
+            for s1 in range(1, 6):
+                for s2 in range(1, 6):
+                    for w1 in range(6):
+                        for w2 in range(6):
+                            r1, r2 = k * s1 + w1, k * s2 + w2
+                            if r1 == 0 or r2 == 0:
+                                continue
+                            ledger = adapter(
+                                q=q,
+                                k=k,
+                                d1=r1,
+                                m1=1,
+                                s1=s1,
+                                d2=r2,
+                                m2=1,
+                                s2=s2,
+                            )
+                            assert ledger.sector_quotient_equivalence_verified
+                            assert ledger.general_remainder_identity_verified
+                            assert ledger.common_sector_remainder_identity_verified
+                            assert ledger.determinant_collar_verified
+                            assert (
+                                ledger.nonzero_determinant_forces_q_below_denominator_product
+                            )
+                            if ledger.primitive_entries and ledger.determinant == 0:
+                                assert (ledger.r1, s1) == (ledger.r2, s2)
+                                assert (
+                                    ledger.zero_determinant_forces_equal_primitive_entries
+                                )
+
+
+def test_type_determinant_zero_recombines_cross_factorizations_before_cauchy() -> None:
+    adapter = getattr(
+        type_identity,
+        "mobius_log_type_diagonal_recombination",
+        None,
+    )
+    assert adapter is not None, "Möbius-log Type diagonal ledger is missing"
+
+    ledger = adapter(n=10, s=7)
+    assert ledger.primitive_entry
+    assert {(term.d, term.m) for term in ledger.terms} == {(5, 2), (2, 5)}
+    assert ledger.summed_prime_vector == ((2, 1), (5, 1))
+    assert ledger.target_prime_vector == ((2, 1), (5, 1))
+    assert ledger.full_cross_outer_product == (
+        (2, 2, 1),
+        (2, 5, 1),
+        (5, 2, 1),
+        (5, 5, 1),
+    )
+    assert ledger.target_outer_product == ledger.full_cross_outer_product
+    assert ledger.recombination_identity_verified
+    assert ledger.cross_factorizations_retained_before_cauchy
+
+    # The prime-log identity is coordinatewise and remains exact when n is
+    # nonsquarefree: its two p=2 factorizations cancel for n=12.
+    nonsquarefree = adapter(n=12, s=5)
+    assert nonsquarefree.summed_prime_vector == ((2, 0), (3, 0))
+    assert nonsquarefree.target_prime_vector == ((2, 0), (3, 0))
+    assert nonsquarefree.recombination_identity_verified
+
+
+def test_labelled_type_zero_determinant_recombines_but_keeps_h_delta_packets() -> None:
+    packet_type = getattr(type_identity, "LabelledAfeTypePacket", None)
+    adapter = getattr(
+        type_identity,
+        "labelled_type_zero_determinant_recombination",
+        None,
+    )
+    assert packet_type is not None, "labelled AFE Type packet is missing"
+    assert adapter is not None, "labelled Type determinant-zero helper is missing"
+
+    packets = (
+        packet_type(
+            packet_id="plus-h",
+            h=2,
+            delta=3,
+            dyadic_label="nu-1",
+            afe_direction="+",
+            n=10,
+            s=7,
+            amplitude=F(2),
+            vector=(F(1), F(2)),
+        ),
+        packet_type(
+            packet_id="minus-h",
+            h=-1,
+            delta=5,
+            dyadic_label="nu-2",
+            afe_direction="-",
+            n=10,
+            s=7,
+            amplitude=F(-3),
+            vector=(F(2), F(-1)),
+        ),
+        packet_type(
+            packet_id="other-entry",
+            h=4,
+            delta=-2,
+            dyadic_label="nu-3",
+            afe_direction="+",
+            n=13,
+            s=9,
+            amplitude=F(5),
+            vector=(F(3), F(1)),
+        ),
+    )
+    ledger = adapter(
+        packets=packets,
+        prime_log_weights={2: F(2), 5: F(7), 13: F(11)},
+    )
+    assert ledger.packet_ids == ("plus-h", "minus-h", "other-entry")
+    assert ledger.product_frequencies == (6, -5, -8)
+    assert ledger.packet_label_ledger == (
+        ("plus-h", 2, 3, "nu-1", "+"),
+        ("minus-h", -1, 5, "nu-2", "-"),
+        ("other-entry", 4, -2, "nu-3", "+"),
+    )
+    assert ledger.all_original_packet_labels_retained
+    assert ledger.all_entries_primitive
+    assert ledger.expanded_type_determinant_zero_energy == (
+        ledger.recombined_original_entry_energy
+    )
+    assert ledger.internal_type_factorizations_recombined
+    assert ledger.distinct_outer_packets_still_cross_inside_entry
+    assert not ledger.global_same_slope_gate_proved
+
+
 def test_one_third_split_has_exact_balanced_scales() -> None:
     scales = type_scale_bounds(F(3), u=F(1, 3), v=F(1, 3))
     assert scales.u_exp == F(1)

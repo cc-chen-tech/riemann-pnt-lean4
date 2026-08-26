@@ -10170,7 +10170,17 @@ labels without aliasing into \(\mathbb Z/M\mathbb Z\), with
 \(M\asymp_W Q\asymp T\), and define
 
 \[
- \mathcal A_a:=\sum_b e(ab/M)S_b.
+ a_{\rm AFE}:=h\delta,\qquad
+ \xi\in\mathbb Z/M\mathbb Z.
+\]
+
+These are different variables: the first is the original product frequency,
+while \(\xi\) is only the auxiliary sector character.  In particular the
+packet labels \(h,\delta\) and their signs remain inside \(S_b\).  With this
+notation define
+
+\[
+ \mathcal A_\xi:=\sum_b e(\xi b/M)S_b.
 \tag{4.621zadj16u}
 \]
 
@@ -10179,9 +10189,9 @@ Finite character orthogonality gives the exact vector identity
 \[
  \boxed{
  \sum_b\|S_b\|_2^2
- =\frac1M\sum_{a\bmod M}\|\mathcal A_a\|_2^2
+ =\frac1M\sum_{\xi\bmod M}\|\mathcal A_\xi\|_2^2
  =\frac{E_{\rm cont}}M
-  +\frac1M\sum_{a\ne0}\|\mathcal A_a\|_2^2.}
+  +\frac1M\sum_{\xi\ne0}\|\mathcal A_\xi\|_2^2.}
 \tag{4.621zadj16v}
 \]
 
@@ -10190,10 +10200,49 @@ The first term on the right is the original continuous Gram divided by
 
 \[
  \mathcal N_{\ne0}:=\frac1M
-  \sum_{a\ne0}\|\mathcal A_a\|_2^2,
+  \sum_{\xi\ne0}\|\mathcal A_\xi\|_2^2,
  \qquad L:=2R+1.
 \tag{4.621zadj16w}
 \]
+
+Character orthogonality also splits the entry self diagonal exactly.  From
+\[
+ \frac1M\sum_{\xi\ne0}e(\xi(b_e-b_f)/M)
+ =\mathbf1_{b_e=b_f}-\frac1M
+\]
+one obtains
+\[
+ \boxed{\mathcal N_{\ne0}=\left(1-\frac1M\right)D_{\rm cont}+\mathcal N_{\ne0}^{\rm off},}
+\tag{4.621zadj16w-diag}
+\]
+where
+\[
+ \mathcal N_{\ne0}^{\rm off}
+ :=\sum_{e\ne f}\alpha_e\overline{\alpha_f}
+ \left(\mathbf1_{b_e=b_f}-\frac1M\right)
+ \langle G_e,G_f\rangle.
+\tag{4.621zadj16w-off}
+\]
+Thus sector_character_is_trivial_on_entry_diagonal: every character phase
+cancels when \(e=f\), and the nonprincipal average retains the factor
+\(1-1/M\).  This is useful rather than harmful because (4.621zadj16g)
+already places \(D_{\rm cont}\) at the target exponent \(2\).  After the
+one-factor Type expansion, the primitive
+\(\Delta_{\rm Type}=r_1s_2-r_2s_1=0\) terms in the enlarged factorization
+recombine exactly to this same original-entry diagonal by (4.621zadj16z).
+They are not a new Type-II diagonal loss.
+
+When supplied the original_entry_ids, the finite helper
+sector_character_parseval_sides first recombines all outer packets on one
+original \((r,s)\) entry and then records the three quantities in
+(4.621zadj16w-diag).  The labelled helper
+labelled_type_zero_determinant_recombination retains every
+\((h,\delta,\nu,\sigma)\) packet while recombining all \(dm=r\) cross
+factorizations.  The latter identity does not estimate the different
+outer packets on one entry.  It proves only that the remaining
+positive-power Type obstruction lies in the \(e\ne f\), equivalently
+\(\Delta_{\rm Type}\ne0\), part after the original-entry packets have been
+recombined.
 
 Combining (4.621zadj16t) and (4.621zadj16v) gives
 
@@ -10246,16 +10295,17 @@ sector character has the exact form
 
 \[
 \boxed{
- \mathcal A_a
- =-\sum_b e(ab/M)\sum_s\mu(s)
+ \mathcal A_\xi
+ =-\sum_b e(\xi b/M)\sum_s\mu(s)
    \sum_{dm=r_b(s)}\mu(d)\Lambda(m)
    \widetilde G_{b,s},
- \qquad a\ne0.}
+ \qquad \xi\ne0.}
 \tag{4.621zadj16ab}
 \]
 
 No Cauchy--Schwarz or absolute value occurs in (4.621zadj16ab).  The
-first Möbius factor \(\mu(s)\), the angular character, the relation
+first Möbius factor \(\mu(s)\), the angular character \(\xi\), the original
+\(a_{\rm AFE}=h\delta\) packet labels, the relation
 \(dm=ks+w_b(s)\), both mollifier tapers, and the vector packet are all
 retained.  A dyadic split \(d\asymp D,m\asymp P,DP\asymp T\) now has the
 usual exact alternatives: an extreme Type-I range with one of \(D,P\)
@@ -10280,8 +10330,8 @@ Nonzero sector frequency must not itself be counted as a saving.  Put
 Then the same finite expansion gives
 
 \[
- \|\mathcal A_a\|_2^2
- =\sum_{|u|\leq R}e(au/M)C_u.
+ \|\mathcal A_\xi\|_2^2
+ =\sum_{|u|\leq R}e(\xi u/M)C_u.
 \tag{4.621zadj16ad}
 \]
 
@@ -10289,8 +10339,8 @@ This is a trigonometric polynomial of fixed degree \(R\), not a quantity
 which decays automatically as \(|a|\) grows.  In the finite fixture where
 the nonzero \(S_b\) are mutually orthogonal, \(C_0=\sum_b\|S_b\|_2^2\)
 and every \(C_u\) with \(u\ne0\) vanishes, so
-\(\|\mathcal A_a\|_2^2=C_0\) for **every** character, including all
-\(a\ne0\).  The helper sector_character_correlation_coefficients records
+\(\|\mathcal A_\xi\|_2^2=C_0\) for **every** character, including all
+\(\xi\ne0\).  The helper sector_character_correlation_coefficients records
 this exact counterexample.  Hence (4.621zadj16y) removes the principal
 feedback but does not manufacture the remaining power saving; that saving
 must arise inside (4.621zadj16ab), before Cauchy--Schwarz, from the retained
