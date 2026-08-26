@@ -675,3 +675,51 @@ analytic theorem.  Consequently the code now cleanly separates:
   \quad\Longrightarrow\quad
   \text{genuine Conrey target}.
 \]
+
+## 12. Constant-exact Littlewood mean-square bridge implemented
+
+The next proved slice is the arithmetic--geometric mean step that Conrey uses
+after obtaining the mollified second moment.  It is now formalized generically
+in `MathlibAux/LogMeanSquare.lean` and specialized to complex boundary
+functions in `HardyTheorem/ConreyLittlewoodMeanSquare.lean`.
+
+If `F : R -> C` is continuous and nonzero on `[a,b]`, with `a<b`, Lean checks
+
+\[
+  2\int_a^b \log|F(t)|\,dt
+  \le (b-a)\log\!\left(
+    \frac{1}{b-a}\int_a^b |F(t)|^2\,dt
+  \right).
+\]
+
+The proof preserves the constant exactly.  For a positive continuous real
+function `f`, it applies Jensen's inequality to `exp` and the interval average,
+then takes logarithms.  Specializing to `f(t)=|F(t)|^2` gives the factor `2`.
+Consequently, an input bound
+
+\[
+  \int_a^b |F(t)|^2\,dt \le C(b-a), \qquad C>0,
+\]
+
+implies
+
+\[
+  2\int_a^b \log|F(t)|\,dt \le (b-a)\log C
+\]
+
+with no auxiliary multiplicative loss.  The contract
+`Test/ConreyLittlewoodMeanSquareContract.lean` checks both public statements;
+its axiom audit reports only Mathlib's standard `propext`,
+`Classical.choice`, and `Quot.sound`.
+
+This closes only the Jensen/AGM arrow
+
+\[
+  \text{mollified mean-square upper bound}
+  \Longrightarrow
+  \text{left-edge logarithmic integral upper bound}.
+\]
+
+The long mollified mean-square estimate itself, its Mobius arithmetic, and the
+Deshouillers--Iwaniec/Kuznetsov spectral input remain open.  No theorem in this
+slice assumes any of those statements.

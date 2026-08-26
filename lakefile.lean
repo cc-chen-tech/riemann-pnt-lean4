@@ -15,6 +15,7 @@ lean_lib RiemannPNT where
     `HardyTheorem,
     `HardyTheorem.ConreyExplicitCertificate,
     `HardyTheorem.ConreyExplicitIntegralBridge,
+    `HardyTheorem.ConreyLittlewoodMeanSquare,
     `HardyTheorem.ConreySimpleZeroCount,
     `HardyTheorem.ConreyTwoFifthsBridge,
     `HardyTheorem.SelbergCompletedMollified,
@@ -2736,6 +2737,7 @@ lean_lib RiemannPNT where
     `Test.Zeta23SelbergBridgeContract,
     `Test.Zeta23SelbergBridgeAxiomAudit,
     `Test.ConreyExplicitIntegralBridgeContract,
+    `Test.ConreyLittlewoodMeanSquareContract,
     `Test.ConreySimpleZeroCountContract,
     `Test.ConreyTwoFifthsBridgeContract,
     `Zeta23
