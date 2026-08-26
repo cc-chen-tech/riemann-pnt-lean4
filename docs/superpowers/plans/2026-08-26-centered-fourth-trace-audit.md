@@ -166,4 +166,4 @@
 - [x] Identify the exact primitive transition `t0=Q^2/R=T^2` and the `T^2` large-gcd pair sparsity.
 - [x] Map the coprime Fourier tensor to Blomer--Pascadi Theorem 5.5 and audit the exact `11/45` and `13/90` fixed-modulus losses.
 - [ ] Bound the nonzero dual mixed moment while retaining `mu(u)mu(v)` and both product factorizations.
-- [ ] Review, verify, and update the Ready-for-view PR only after the new centered interface survives full checks.
+- [x] Review, verify, and update the Ready-for-view PR only after the new centered interface survives full checks.
