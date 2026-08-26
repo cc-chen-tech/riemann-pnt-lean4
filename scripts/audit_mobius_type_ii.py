@@ -339,6 +339,113 @@ def mobius_two_cutoff_density_period_average(
     return Fraction(direct_total, len(allowed_residues)), density
 
 
+def mobius_two_cutoff_density_complement_ramanujan_coefficients(
+    *,
+    max_argument: int,
+    density_cutoff: int,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> tuple[Fraction, ...]:
+    """Finite Ramanujan coefficients of density plus large divisors.
+
+    Put ``lambda(m)`` for the grouped two-cutoff coefficient.  For
+    ``r>1`` the coefficient is
+
+    ``C_r = sum_{D<m<=Y, r|m} lambda(m)/m``.
+
+    At ``r=1`` the low-product density is added, so
+
+    ``C_1 = sum_{m<=Y} lambda(m)/m``.
+
+    The index-zero entry is a sentinel.  The identity
+    ``sum_{r|m} c_r(n) = m * 1_{m|n}`` then reconstructs the density
+    plus every complementary divisor exactly for ``n<=Y``.
+    """
+
+    if min(
+        max_argument,
+        density_cutoff,
+        cutoff_left,
+        cutoff_right,
+    ) < 1:
+        raise ValueError("all inputs must be positive")
+    if density_cutoff > max_argument:
+        raise ValueError("the density cutoff cannot exceed Y")
+
+    product_coefficients = tuple(
+        Fraction(
+            mobius_two_cutoff_product_value(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ),
+            product,
+        )
+        for product in range(max_argument + 1)
+        if product > 0
+    )
+    coefficients = [Fraction(0) for _ in range(max_argument + 1)]
+    coefficients[1] = sum(product_coefficients)
+    for reduced_denominator in range(2, max_argument + 1):
+        coefficients[reduced_denominator] = sum(
+            product_coefficients[product - 1]
+            for product in range(
+                reduced_denominator,
+                max_argument + 1,
+                reduced_denominator,
+            )
+            if product > density_cutoff
+        )
+    return tuple(coefficients)
+
+
+def mobius_two_cutoff_density_complement_ramanujan_value(
+    n: int,
+    *,
+    max_argument: int,
+    density_cutoff: int,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> Fraction:
+    """Direct density-plus-complementary value used by the expansion."""
+
+    if n < 1 or n > max_argument:
+        raise ValueError("require 1 <= n <= max_argument")
+    coefficients = (
+        mobius_two_cutoff_density_complement_ramanujan_coefficients(
+            max_argument=max_argument,
+            density_cutoff=density_cutoff,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+    )
+    density = sum(
+        Fraction(
+            mobius_two_cutoff_product_value(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ),
+            product,
+        )
+        for product in range(1, density_cutoff + 1)
+    )
+    complementary = sum(
+        mobius_two_cutoff_product_value(
+            product,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        for product in range(density_cutoff + 1, max_argument + 1)
+        if n % product == 0
+    )
+    # Keep the coefficient construction live in this direct evaluator;
+    # it also validates all cutoffs before the literal finite sum.
+    if len(coefficients) != max_argument + 1:
+        raise AssertionError("coefficient vector has the wrong length")
+    return density + complementary
+
+
 def mobius_two_cutoff_centered_divisor_split(
     n: int,
     *,
@@ -709,6 +816,132 @@ def vinogradov_denominator_coverage_ledger(
         has_positive_width_overlap=(
             type_i_compatible and overlap_floor < overlap_ceiling
         ),
+    )
+
+
+def nonzero_reduced_denominator_ledger(
+    *,
+    outer_length: Fraction,
+    shift_length: Fraction,
+    denominator_length: Fraction,
+    fourier_decay_order: int,
+    target: Fraction,
+) -> NonzeroReducedDenominatorLedger:
+    """Large-sieve ledger for ``2 <= r <= D`` Ramanujan modes.
+
+    On ``r~R`` the finite coefficient satisfies
+    ``|C_r| << T^epsilon/R``.  Cauchy and the additive large sieve give
+    the two constants ``S+R^2`` and ``D+R^2``.  Since every primitive
+    numerator is nonzero, the smooth shift transform additionally gains
+    ``(R/D)^A``.  The zero numerator at ``r=1`` is excluded.
+    """
+
+    lengths = (
+        outer_length,
+        shift_length,
+        denominator_length,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if denominator_length > shift_length:
+        raise ValueError("this ledger is for nonzero modes with R<=D")
+    if fourier_decay_order < 0:
+        raise ValueError("the Fourier decay order must be nonnegative")
+
+    outer_large_sieve = max(outer_length, 2 * denominator_length)
+    shift_large_sieve = max(shift_length, 2 * denominator_length)
+    fourier_decay = fourier_decay_order * (
+        denominator_length - shift_length
+    )
+    bound = (
+        -denominator_length
+        + outer_length / 2
+        + shift_length / 2
+        + outer_large_sieve / 2
+        + shift_large_sieve / 2
+        + fourier_decay
+    )
+    return NonzeroReducedDenominatorLedger(
+        coefficient_weight=-denominator_length,
+        outer_energy=outer_length,
+        shift_energy=shift_length,
+        outer_large_sieve_constant=outer_large_sieve,
+        shift_large_sieve_constant=shift_large_sieve,
+        fourier_decay=fourier_decay,
+        bound=bound,
+        target=target,
+        margin=target - bound,
+    )
+
+
+def high_reduced_denominator_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    reduced_denominator: Fraction,
+) -> HighReducedDenominatorLedger:
+    """Geometry of the surviving ``r>D`` small-numerator modes.
+
+    Write a complementary product as ``m=r*ell``.  Smooth shift
+    completion restricts a primitive reduced numerator ``u`` to
+    ``u <= r/D``.  Since ``m<=S``, ``ell<=S/r``.  Lifting back to the
+    original modulus gives numerator ``h=u*ell`` of length ``S/D``;
+    the two short exponents therefore have constant sum.
+    """
+
+    lengths = (ambient_length, shift_length, reduced_denominator)
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if not shift_length <= reduced_denominator <= ambient_length:
+        raise ValueError("require D <= r <= S on the exponent scale")
+    reduced_numerator = reduced_denominator - shift_length
+    complementary_cofactor = ambient_length - reduced_denominator
+    return HighReducedDenominatorLedger(
+        reduced_denominator=reduced_denominator,
+        reduced_numerator=reduced_numerator,
+        complementary_cofactor=complementary_cofactor,
+        lifted_numerator=(
+            reduced_numerator + complementary_cofactor
+        ),
+    )
+
+
+def multiple_mobius_additive_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    complementary_quotient: Fraction,
+    target: Fraction,
+) -> MultipleMobiusAdditiveLedger:
+    """Nearest Banks--Shparlinski scale after fixing ``k``.
+
+    In ``k*m-d-s=0`` the product variable has length ``S/k``.  Their
+    short-interval theorem, with ``d`` in the weighted variable so its
+    extra Möbius factor can be removed on squarefree coprime layers,
+    gives ``(M+D)S`` schematically for fixed ``k``.  On exponent scale
+    this is ``max(M,D)+S``; summing the dyadic k-block adds ``k``.
+    """
+
+    lengths = (
+        ambient_length,
+        shift_length,
+        complementary_quotient,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    product_length = ambient_length - complementary_quotient
+    if product_length < 0:
+        raise ValueError("the complementary quotient cannot exceed S")
+    fixed_bound = max(product_length, shift_length) + ambient_length
+    summed_bound = fixed_bound + complementary_quotient
+    return MultipleMobiusAdditiveLedger(
+        product_length=product_length,
+        fixed_quotient_bound=fixed_bound,
+        summed_bound=summed_bound,
+        target=target,
+        gap=summed_bound - target,
     )
 
 
@@ -3492,6 +3725,42 @@ class VinogradovDenominatorCoverageLedger:
     overlap_floor: Fraction
     overlap_ceiling: Fraction
     has_positive_width_overlap: bool
+
+
+@dataclass(frozen=True)
+class NonzeroReducedDenominatorLedger:
+    """Bound for one nonzero reduced-denominator block through R=D."""
+
+    coefficient_weight: Fraction
+    outer_energy: Fraction
+    shift_energy: Fraction
+    outer_large_sieve_constant: Fraction
+    shift_large_sieve_constant: Fraction
+    fourier_decay: Fraction
+    bound: Fraction
+    target: Fraction
+    margin: Fraction
+
+
+@dataclass(frozen=True)
+class HighReducedDenominatorLedger:
+    """Small numerator/cofactor geometry above the shift length."""
+
+    reduced_denominator: Fraction
+    reduced_numerator: Fraction
+    complementary_cofactor: Fraction
+    lifted_numerator: Fraction
+
+
+@dataclass(frozen=True)
+class MultipleMobiusAdditiveLedger:
+    """Exponent mismatch for the nearest additive three-variable theorem."""
+
+    product_length: Fraction
+    fixed_quotient_bound: Fraction
+    summed_bound: Fraction
+    target: Fraction
+    gap: Fraction
 
 
 @dataclass(frozen=True)

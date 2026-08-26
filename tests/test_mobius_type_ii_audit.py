@@ -22,13 +22,16 @@ from scripts.audit_mobius_type_ii import (
     CompletedProductPhaseReduction,
     CrossInverseFractionCollision,
     FareyCentralCollisionLedger,
+    HighReducedDenominatorLedger,
     InverseFractionSeparation,
     KloostermanFractionTripleLedger,
     MobiusCharacterMeanSquareLedger,
     MQWBlockSavings,
+    MultipleMobiusAdditiveLedger,
     NearDeterminantBCLedger,
     NearDeterminantCoordinates,
     NearDeterminantDualCoordinates,
+    NonzeroReducedDenominatorLedger,
     PartiallyFixedModulusLedger,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
@@ -125,6 +128,7 @@ from scripts.audit_mobius_type_ii import (
     farey_near_collision_divisor_bound,
     generalized_centered_dual_scales,
     global_unit_principal_completion_margin,
+    high_reduced_denominator_ledger,
     induced_gauss_outer_mobius_sign,
     inverse_fraction_separation,
     inverse_lift_mobius_weight,
@@ -137,6 +141,8 @@ from scripts.audit_mobius_type_ii import (
     mobius_geometric_value,
     mobius_principal_density_value,
     mobius_two_cutoff_centered_divisor_split,
+    mobius_two_cutoff_density_complement_ramanujan_coefficients,
+    mobius_two_cutoff_density_complement_ramanujan_value,
     mobius_two_cutoff_density_period_average,
     mobius_two_cutoff_hyperbola_value,
     mobius_two_cutoff_product_coefficient,
@@ -147,6 +153,7 @@ from scripts.audit_mobius_type_ii import (
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
+    multiple_mobius_additive_ledger,
     near_determinant_bettin_chandee_ledger,
     near_determinant_complete_delta_product_formula,
     near_determinant_complete_delta_product_sum,
@@ -161,6 +168,7 @@ from scripts.audit_mobius_type_ii import (
     nonunit_principal_is_residual_face,
     nonunit_principal_long_factor_floor,
     nonunit_principal_trivial_loss,
+    nonzero_reduced_denominator_ledger,
     partially_fixed_modulus_ledger,
     pascadi_2024_direct_dispersion_gap,
     pascadi_averaged_moduli_margins,
@@ -675,6 +683,106 @@ def test_vinogradov_type_i_floor_forbids_more_than_one_fifth_saving() -> None:
     assert too_much.type_i_bound == F(4, 5)
     assert too_much.target_bound == F(3, 4)
     assert not too_much.has_positive_width_overlap
+
+
+def test_density_plus_complement_has_an_exact_finite_ramanujan_expansion() -> None:
+    for density_cutoff in range(1, 10):
+        cutoff = int(density_cutoff**0.5)
+        if cutoff * cutoff > density_cutoff:
+            cutoff -= 1
+        max_argument = 3 * density_cutoff + 7
+        coefficients = (
+            mobius_two_cutoff_density_complement_ramanujan_coefficients(
+                max_argument=max_argument,
+                density_cutoff=density_cutoff,
+                cutoff_left=cutoff,
+                cutoff_right=cutoff,
+            )
+        )
+        assert len(coefficients) == max_argument + 1
+        for n in range(1, max_argument + 1):
+            assert (
+                mobius_two_cutoff_density_complement_ramanujan_value(
+                    n,
+                    max_argument=max_argument,
+                    density_cutoff=density_cutoff,
+                    cutoff_left=cutoff,
+                    cutoff_right=cutoff,
+                )
+                == coefficients[1]
+                + sum(
+                    coefficients[modulus] * ramanujan_sum(modulus, n)
+                    for modulus in range(2, max_argument + 1)
+                )
+            )
+
+
+def test_all_nonzero_reduced_denominators_through_d_close_after_decay() -> None:
+    endpoint = nonzero_reduced_denominator_ledger(
+        outer_length=F(3),
+        shift_length=F(2),
+        denominator_length=F(2),
+        fourier_decay_order=1,
+        target=F(9, 2),
+    )
+    assert endpoint == NonzeroReducedDenominatorLedger(
+        coefficient_weight=F(-2),
+        outer_energy=F(3),
+        shift_energy=F(2),
+        outer_large_sieve_constant=F(4),
+        shift_large_sieve_constant=F(4),
+        fourier_decay=F(0),
+        bound=F(9, 2),
+        target=F(9, 2),
+        margin=F(0),
+    )
+    for denominator_quarters in range(1, 9):
+        ledger = nonzero_reduced_denominator_ledger(
+            outer_length=F(3),
+            shift_length=F(2),
+            denominator_length=F(denominator_quarters, 4),
+            fourier_decay_order=1,
+            target=F(9, 2),
+        )
+        assert ledger.bound <= ledger.target
+
+
+def test_high_denominator_small_numerator_and_cofactor_have_fixed_product() -> None:
+    assert high_reduced_denominator_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        reduced_denominator=F(5, 2),
+    ) == HighReducedDenominatorLedger(
+        reduced_denominator=F(5, 2),
+        reduced_numerator=F(1, 2),
+        complementary_cofactor=F(1, 2),
+        lifted_numerator=F(1),
+    )
+    for denominator_quarters in range(8, 13):
+        ledger = high_reduced_denominator_ledger(
+            ambient_length=F(3),
+            shift_length=F(2),
+            reduced_denominator=F(denominator_quarters, 4),
+        )
+        assert ledger.reduced_numerator + ledger.complementary_cofactor == F(1)
+        assert ledger.lifted_numerator == F(1)
+
+
+def test_multiple_mobius_additive_theorem_stays_at_t6_after_k_sum() -> None:
+    for quotient_quarters in range(5):
+        ledger = multiple_mobius_additive_ledger(
+            ambient_length=F(3),
+            shift_length=F(2),
+            complementary_quotient=F(quotient_quarters, 4),
+            target=F(9, 2),
+        )
+        assert ledger == MultipleMobiusAdditiveLedger(
+            product_length=F(3) - F(quotient_quarters, 4),
+            fixed_quotient_bound=F(6) - F(quotient_quarters, 4),
+            summed_bound=F(6),
+            target=F(9, 2),
+            gap=F(3, 2),
+        )
 
 
 def test_postcompletion_cutoff_can_reach_three_quarter_per_divisor() -> None:
