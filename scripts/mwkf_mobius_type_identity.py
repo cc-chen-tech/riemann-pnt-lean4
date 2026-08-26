@@ -169,6 +169,25 @@ class BBLRPhaseGroupTTStar:
 
 
 @dataclass(frozen=True)
+class BBLRNearDiagonalResonanceCertificate:
+    modulus_y: int
+    gap_c: int
+    reciprocal_x: int
+    inverse_x_mod_y: int
+    phase_center_residue: int
+    resonant_h_values: tuple[int, ...]
+    phase_residues: tuple[int, ...]
+    centered_phase_turns: tuple[Fraction, ...]
+    max_absolute_centered_phase_turns: Fraction
+    all_near_diagonal_congruences_verified: bool
+    packet_lies_in_positive_real_half_plane: bool
+    term_count: int
+    absolute_majorant_real_part_lower_bound: Fraction
+    local_h_l_completion_alone_reaches_gate: bool
+    xy_or_outer_coefficient_average_still_required: bool
+
+
+@dataclass(frozen=True)
 class CenteredOperatorSavingLedger:
     raw_sum_exponent: Fraction
     target_sum_exponent: Fraction
@@ -1120,6 +1139,94 @@ def bblr_reciprocal_phase_collision_audit(
             collision
             and (left_original != right_original or left_poisson != right_poisson)
         ),
+    )
+
+
+def bblr_near_diagonal_resonance_certificate(
+    *,
+    modulus_y: int,
+    gap_c: int,
+    residue_min: int,
+    residue_max: int,
+    frequency_min: int,
+    frequency_max: int,
+    phase_center_residue: int,
+) -> BBLRNearDiagonalResonanceCertificate:
+    """Certify the near-diagonal slow packet in BBLR equation (14).
+
+    Put ``X=Y+c`` with ``(c,Y)=1``.  For ``h=c*r<Y`` one has the exact
+    congruence
+
+    ``h*inverse(X) == r (mod Y)``.
+
+    The additional factor ``e(l*x)`` in equation (14) can be centered at
+    ``x=r0/Y``.  The combined phase on a row ``r`` is then represented by
+    ``l*(r0-r)/Y``.  If every such turn has absolute value at most ``1/6``,
+    each unit-coefficient term has real part at least ``1/2``.  The returned
+    lower bound concerns this resonant absolute-value packet only; it is not
+    a lower bound for the signed Möbius sum.
+    """
+
+    values = (
+        modulus_y,
+        gap_c,
+        residue_min,
+        residue_max,
+        frequency_min,
+        frequency_max,
+        phase_center_residue,
+    )
+    if min(values) <= 0:
+        raise ValueError("BBLR near-diagonal parameters must be positive")
+    if residue_min > residue_max or frequency_min > frequency_max:
+        raise ValueError("BBLR resonance intervals must be ordered")
+    if not residue_min <= phase_center_residue <= residue_max:
+        raise ValueError("the phase center must lie in the residue interval")
+    if gcd(gap_c, modulus_y) != 1:
+        raise ValueError("the near-diagonal gap must be coprime to Y")
+
+    reciprocal_x = modulus_y + gap_c
+    inverse_x = pow(reciprocal_x, -1, modulus_y)
+    residues = tuple(range(residue_min, residue_max + 1))
+    frequencies = tuple(range(frequency_min, frequency_max + 1))
+    h_values = tuple(gap_c * residue for residue in residues)
+    if max(h_values) >= modulus_y:
+        raise ValueError("require every resonant h=c*r to be below Y")
+
+    phase_residues = tuple(
+        (h_value * inverse_x) % modulus_y for h_value in h_values
+    )
+    congruences_verified = phase_residues == residues
+    centered_turns = tuple(
+        Fraction(
+            frequency * (phase_center_residue - residue),
+            modulus_y,
+        )
+        for residue in residues
+        for frequency in frequencies
+    )
+    max_absolute_turn = max(abs(turn) for turn in centered_turns)
+    coherent = congruences_verified and max_absolute_turn <= Fraction(1, 6)
+    term_count = len(centered_turns)
+    real_part_lower_bound = (
+        Fraction(term_count, 2) if coherent else Fraction(0)
+    )
+    return BBLRNearDiagonalResonanceCertificate(
+        modulus_y=modulus_y,
+        gap_c=gap_c,
+        reciprocal_x=reciprocal_x,
+        inverse_x_mod_y=inverse_x,
+        phase_center_residue=phase_center_residue,
+        resonant_h_values=h_values,
+        phase_residues=phase_residues,
+        centered_phase_turns=centered_turns,
+        max_absolute_centered_phase_turns=max_absolute_turn,
+        all_near_diagonal_congruences_verified=congruences_verified,
+        packet_lies_in_positive_real_half_plane=coherent,
+        term_count=term_count,
+        absolute_majorant_real_part_lower_bound=real_part_lower_bound,
+        local_h_l_completion_alone_reaches_gate=False,
+        xy_or_outer_coefficient_average_still_required=True,
     )
 
 

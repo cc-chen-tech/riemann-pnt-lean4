@@ -920,6 +920,36 @@ def test_bblr_ttstar_keeps_signed_cross_terms_inside_each_phase_class() -> None:
     assert not sides.absolute_value_phase_classes_reach_target_proved
 
 
+def test_bblr_near_diagonal_rows_form_a_large_slow_phase_packet() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_near_diagonal_resonance_certificate",
+        None,
+    )
+    assert helper is not None, "BBLR near-diagonal resonance helper is missing"
+
+    certificate = helper(
+        modulus_y=1009,
+        gap_c=10,
+        residue_min=9,
+        residue_max=11,
+        frequency_min=80,
+        frequency_max=100,
+        phase_center_residue=10,
+    )
+
+    assert certificate.reciprocal_x == 1019
+    assert certificate.inverse_x_mod_y == 101
+    assert certificate.resonant_h_values == (90, 100, 110)
+    assert certificate.phase_residues == (9, 10, 11)
+    assert certificate.all_near_diagonal_congruences_verified
+    assert certificate.max_absolute_centered_phase_turns == F(100, 1009)
+    assert certificate.packet_lies_in_positive_real_half_plane
+    assert certificate.term_count == 63
+    assert certificate.absolute_majorant_real_part_lower_bound == F(63, 2)
+    assert not certificate.local_h_l_completion_alone_reaches_gate
+
+
 def test_zero_frequency_master_rejects_the_already_counted_original_zero_mode() -> None:
     """The h=0 term belongs to (4.6), not the secondary completion master."""
     with pytest.raises(ValueError, match="original h=0"):

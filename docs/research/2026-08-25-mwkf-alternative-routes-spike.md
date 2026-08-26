@@ -9240,6 +9240,108 @@ bound the signed phase classes in (4.621w).  Consequently
 `both_reciprocal_phases_preserved=True` is a finite algebraic invariant,
 not the required \(T^{\lambda/2}\) analytic saving.
 
+#### 4.68.4 Joint \((h,l)\)-completion alone has an exact near-diagonal resonance
+
+It is natural to try to recover the full \(L\)-saving in (4.621x) by
+estimating the two BBLR variables \(h,l\) jointly.  Equation (14) of BBLR
+does contain their joint phase
+
+\[
+ e\!\left(-hl\frac{\bar X}{Y}\right)e(lx).
+\tag{4.621z}
+\]
+
+However, this local two-variable step cannot be uniform in \(X,Y\).  Put
+
+\[
+ X=Y+c,\qquad (c,Y)=1,\qquad h=cr<Y.
+\]
+
+Since \(X\equiv c\pmod Y\), one has the exact congruence
+
+\[
+ \boxed{h\bar X\equiv cr\bar c\equiv r\pmod Y.}
+\tag{4.621za}
+\]
+
+Choose a central residue \(r_0\) and evaluate the continuous BBLR variable
+at \(x=r_0/Y\).  The combined phase in (4.621z) is then represented by
+
+\[
+ \frac{l(r_0-r)}{Y}.
+\tag{4.621zb}
+\]
+
+On the signed hard scale take
+
+\[
+ Y\asymp T^{3/2},\qquad c\asymp T^{1/2},\qquad
+ r,r_0\asymp T^{1/2},\qquad h=cr\asymp T,\qquad l\asymp T.
+\]
+
+The BBLR integration scale is exactly \(x\asymp T^{-1}\), matching
+\(r_0/Y\).  Restricting to
+\(|r-r_0|\le Y/(12L)\) leaves \(\asymp T^{1/2}\) values of \(r\), and
+for every \(l\le L\asymp T\),
+
+\[
+ \left|\frac{l(r_0-r)}Y\right|\le\frac1{12}.
+\]
+
+All these unit-coefficient phases therefore have real part at least
+\(1/2\).  The resulting coherent local packet has size
+
+\[
+ \boxed{T^{1/2}\cdot T=T^{3/2}.}
+\tag{4.621zc}
+\]
+
+Thus a local absolute-value treatment of \((h,l)\) saves only
+\(T^{1/2}\) from the raw \(HL=T^2\), whereas the hard cell needs the full
+\(T\)-saving.  The same missing \(T^{1/2}\) survives.  Any successful
+argument must average this near-diagonal incidence over \(X,Y\), retain
+the Möbius outer coefficients, or prove cancellation between the signed
+phase classes before taking absolute values.
+
+This is not a lower bound for the original signed remainder: its other
+\(X,Y\) rows and Möbius coefficients may cancel the packet.  It is a
+no-go certificate only for a uniform local \((h,l)\)-completion bound.
+The finite helper `bblr_near_diagonal_resonance_certificate` verifies
+(4.621za)--(4.621zb), the coherent phase arc, and its half-plane lower
+bound with exact rational arithmetic.
+
+This resonance also gives a sharper model for the next analytic input.
+With \(Q=Y\asymp T^{3/2}\) and \(C=c\asymp T^{1/2}=Q^{1/3}\), the
+outer-coefficient portion has the shifted shape
+
+\[
+ \mathfrak C_d(Q,C)
+ =\sum_{c\asymp C}\sum_{Y\asymp Q}
+   A_d(Y+c)B_d(Y)\Omega_d(c,Y).
+\tag{4.621zd}
+\]
+
+After the coherent \((h,l)\)-packet has spent only half of the required
+saving, the missing factor is \(C=Q^{1/3}\).  Thus the optimistic model
+target is
+
+\[
+ \boxed{\mathfrak C_d(Q,C)\ll Q^{1+\varepsilon}}
+ \qquad(C=Q^{1/3}),
+\tag{4.621ze}
+\]
+
+against the absolute size \(CQ=Q^{4/3}\).  This is not yet an exact
+replacement gate because the BBLR stage map, all \(d\)-weights and all
+Type sectors still have to be recombined.  It does explain why ordinary
+averaged Chowla does not finish the argument: even for literal Möbius
+coefficients, the quantitative decay in
+[Matomäki--Radziwiłł--Tao, Theorem 1.6](https://arxiv.org/abs/1503.05121)
+is logarithmic (roughly \(\log\log C/\log C\)), not the power
+\(C^{-1}=Q^{-1/3}\) required by (4.621ze).  Moreover the actual
+\(A_d,B_d\) in (4.621j) are divisor-convolved outer coefficients, so that
+the theorem is not directly applicable even at its stated strength.
+
 ### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range but not the gate
 
 The recent circle-method theorem of
