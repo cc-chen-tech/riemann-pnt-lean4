@@ -71,4 +71,4 @@
 - [x] Run the full Python test suite through `uv`.
 - [x] Run the relevant Lean build/check if any Lean source or imported specification changed.
 - [x] Inspect the exact diff and theorem-status language.
-- [ ] If the result is materially new, commit, push, and update the existing Ready-for-view PR; otherwise report the negative result without manufacturing a PR update.
+- [x] If the result is materially new, commit, push, and update the existing Ready-for-view PR; otherwise report the negative result without manufacturing a PR update.
