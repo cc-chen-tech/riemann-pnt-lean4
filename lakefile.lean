@@ -469,6 +469,8 @@ lean_lib RiemannPNT where
     `Test.CarlsonTwoThirdsDIExponentContract,
     `PrimeNumberTheorem.CarlsonMeanSquareContourBridge,
     `Test.CarlsonMeanSquareContourBridgeContract,
+    `MathlibAux.HadamardThreeLinesSquared,
+    `Test.HadamardThreeLinesSquaredContract,
     `HardyTheorem.TwoScaleSelbergMollifier,
     `Test.TwoScaleSelbergMollifierContract,
     `PrimeNumberTheorem.CarlsonTwoScaleDetector,
