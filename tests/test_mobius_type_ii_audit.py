@@ -37,6 +37,8 @@ from scripts.audit_mobius_type_ii import (
     additive_dual_shift_phase,
     additive_product_completion,
     additive_shifted_chowla_ledger,
+    ambient_centered_residue_collision_fourier,
+    ambient_centered_residue_collision_fourier_formula,
     balanced_dual_low_mode_mobius_exponent,
     balanced_inverse_fraction_spacing_margin,
     balanced_principal_character_mobius_exponent,
@@ -1843,8 +1845,6 @@ def test_young_additive_rational_sieve_hits_exact_required_saving() -> None:
 def test_centered_inverse_numerator_fourier_is_delta_minus_mean() -> None:
     for modulus in range(1, 13):
         for multiplier in range(modulus):
-            if gcd(multiplier, modulus) != 1:
-                continue
             for residue in range(modulus):
                 if gcd(residue, modulus) != 1:
                     continue
@@ -1896,6 +1896,45 @@ def test_common_modulus_centered_residue_collision_has_crt_formula() -> None:
                                 left_residue,
                                 right_residue,
                                 frequency,
+                            )
+                            assert abs(direct - formula) < 1e-8
+
+
+def test_nonunit_reduced_collision_only_adds_a_free_ramanujan_factor() -> None:
+    for ambient_modulus in range(1, 21):
+        if naive_mobius(ambient_modulus) == 0:
+            continue
+        ambient_divisors = [
+            divisor
+            for divisor in range(1, ambient_modulus + 1)
+            if ambient_modulus % divisor == 0
+        ]
+        for left_modulus in ambient_divisors:
+            for right_modulus in ambient_divisors:
+                for left_residue in range(left_modulus):
+                    if gcd(left_residue, left_modulus) != 1:
+                        continue
+                    for right_residue in range(right_modulus):
+                        if gcd(right_residue, right_modulus) != 1:
+                            continue
+                        for frequency in range(-3, 4):
+                            direct = ambient_centered_residue_collision_fourier(
+                                ambient_modulus,
+                                left_modulus,
+                                right_modulus,
+                                left_residue,
+                                right_residue,
+                                frequency,
+                            )
+                            formula = (
+                                ambient_centered_residue_collision_fourier_formula(
+                                    ambient_modulus,
+                                    left_modulus,
+                                    right_modulus,
+                                    left_residue,
+                                    right_residue,
+                                    frequency,
+                                )
                             )
                             assert abs(direct - formula) < 1e-8
 

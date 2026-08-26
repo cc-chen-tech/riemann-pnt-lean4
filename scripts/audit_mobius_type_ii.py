@@ -1324,8 +1324,6 @@ def centered_inverse_numerator_fourier(
 
     if modulus < 1:
         raise ValueError("the modulus must be positive")
-    if gcd(numerator_multiplier, modulus) != 1:
-        raise ValueError("the numerator multiplier must be a unit")
     if gcd(inverse_residue, modulus) != 1:
         raise ValueError("the inverse residue must be a unit")
     residue_inverse = (
@@ -1367,25 +1365,34 @@ def centered_inverse_numerator_fourier_formula(
     inverse_residue: int,
     dual_frequency: int,
 ) -> complex:
-    """Exact unit-supported delta-minus-mean numerator transform."""
+    """Exact reduced-modulus delta-minus-mean numerator transform."""
 
     if modulus < 1:
         raise ValueError("the modulus must be positive")
-    if gcd(numerator_multiplier, modulus) != 1:
-        raise ValueError("the numerator multiplier must be a unit")
     if gcd(inverse_residue, modulus) != 1:
         raise ValueError("the inverse residue must be a unit")
-    if gcd(dual_frequency, modulus) != 1:
+    multiplier_gcd = gcd(numerator_multiplier, modulus)
+    reduced_modulus = modulus // multiplier_gcd
+    if (
+        dual_frequency % multiplier_gcd != 0
+        or gcd(dual_frequency // multiplier_gcd, reduced_modulus) != 1
+    ):
         return 0j
+    reduced_dual = dual_frequency // multiplier_gcd
+    reduced_multiplier = numerator_multiplier // multiplier_gcd
     dual_inverse = (
         0
-        if modulus == 1
-        else pow(dual_frequency % modulus, -1, modulus)
+        if reduced_modulus == 1
+        else pow(reduced_dual % reduced_modulus, -1, reduced_modulus)
     )
-    selected_residue = numerator_multiplier * dual_inverse % modulus
-    point_mass = int(inverse_residue % modulus == selected_residue)
+    selected_residue = (
+        reduced_multiplier * dual_inverse % reduced_modulus
+    )
+    point_mass = int(
+        inverse_residue % reduced_modulus == selected_residue
+    )
     return modulus * (
-        point_mass - Fraction(1, _euler_phi(modulus))
+        point_mass - Fraction(1, _euler_phi(reduced_modulus))
     )
 
 
@@ -1518,6 +1525,90 @@ def centered_residue_collision_fourier_formula(
             _euler_phi(left_modulus)
             * _euler_phi(right_modulus)
         )
+    )
+
+
+def ambient_centered_residue_collision_fourier(
+    ambient_modulus: int,
+    left_modulus: int,
+    right_modulus: int,
+    left_residue: int,
+    right_residue: int,
+    frequency: int,
+) -> complex:
+    """Direct centered collision lifted to a larger unit-group modulus."""
+
+    if min(ambient_modulus, left_modulus, right_modulus) < 1:
+        raise ValueError("moduli must be positive")
+    if (
+        ambient_modulus % left_modulus != 0
+        or ambient_modulus % right_modulus != 0
+    ):
+        raise ValueError("both collision moduli must divide the ambient modulus")
+    if gcd(left_residue, left_modulus) != 1:
+        raise ValueError("the left residue must be a unit")
+    if gcd(right_residue, right_modulus) != 1:
+        raise ValueError("the right residue must be a unit")
+    left_mean = Fraction(1, _euler_phi(left_modulus))
+    right_mean = Fraction(1, _euler_phi(right_modulus))
+    return sum(
+        (
+            int(residue % left_modulus == left_residue % left_modulus)
+            - float(left_mean)
+        )
+        * (
+            int(residue % right_modulus == right_residue % right_modulus)
+            - float(right_mean)
+        )
+        * cmath.exp(
+            -2j * cmath.pi * frequency * residue / ambient_modulus
+        )
+        for residue in range(ambient_modulus)
+        if gcd(residue, ambient_modulus) == 1
+    )
+
+
+def ambient_centered_residue_collision_fourier_formula(
+    ambient_modulus: int,
+    left_modulus: int,
+    right_modulus: int,
+    left_residue: int,
+    right_residue: int,
+    frequency: int,
+) -> complex:
+    """Free Ramanujan factor times the reduced CRT collision."""
+
+    if min(ambient_modulus, left_modulus, right_modulus) < 1:
+        raise ValueError("moduli must be positive")
+    if (
+        ambient_modulus % left_modulus != 0
+        or ambient_modulus % right_modulus != 0
+    ):
+        raise ValueError("both collision moduli must divide the ambient modulus")
+    core_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    free_modulus = ambient_modulus // core_modulus
+    if core_modulus * free_modulus != ambient_modulus:
+        raise ValueError("the collision lcm must divide the ambient modulus")
+    if gcd(core_modulus, free_modulus) != 1:
+        raise ValueError("the free and collision moduli must be coprime")
+    core_frequency = (
+        0
+        if core_modulus == 1
+        else frequency * pow(free_modulus, -1, core_modulus)
+    )
+    return ramanujan_sum(
+        free_modulus,
+        frequency,
+    ) * centered_residue_collision_fourier_formula(
+        left_modulus,
+        right_modulus,
+        left_residue,
+        right_residue,
+        core_frequency,
     )
 
 

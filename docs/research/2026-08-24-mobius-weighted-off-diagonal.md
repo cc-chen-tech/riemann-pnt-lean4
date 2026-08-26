@@ -6044,6 +6044,85 @@ common-\(t\) large-sieve problem: it is the nonunit numerator
 decomposition and the uniform separation/recombination of the original
 archimedean weights.
 
+### 9.38 Exact reduction of nonunit numerator multipliers
+
+The unit hypothesis in (9.221) can be removed exactly.  Let
+\(g=(\delta,q)\), \(c=q/g\).  Opening the inverse phase and the
+Ramanujan mean before summing \(h\) gives
+
+\[
+\boxed{
+\begin{aligned}
+ &\sum_{h\bmod q}\mathscr E_{q,\delta h}(x)e_q(-\ell h)\\
+ &\quad=q\,1_{g\mid\ell}\,1_{(\ell/g,c)=1}
+ \left(
+ 1_{x\equiv(\delta/g)\overline{\ell/g}\ ({\rm mod}\ c)}
+ -\frac1{\varphi(c)}
+ \right).
+\end{aligned}}
+\tag{9.232}
+\]
+
+Thus the dual support forces \((\ell,q)=g\), and the surviving kernel is
+the same centered point mass as (9.221), now on the reduced modulus
+\(c=q/g\).  The extreme case \(c=1\) vanishes identically.
+
+There is also no hidden Kloosterman loss when this reduced point mass is
+summed over the original unit group.  Let \(c,d\mid Q\),
+\(h=[c,d]\), \(Q=hw\), and assume \((h,w)=1\), as holds for divisors of
+a squarefree ambient modulus.  If
+
+\[
+ \Sigma_Q(k)
+ :=\sum_{x\bmod Q}^{*}\mathscr D_{c,r}(x)
+                    \mathscr D_{d,s}(x)e_Q(-kx),
+\]
+
+then CRT gives
+
+\[
+\boxed{
+ \frac{\Sigma_Q(k)}Q
+ =\frac{c_w(k)}w\,
+  \frac1h
+  \sum_{x\bmod h}^{*}\mathscr D_{c,r}(x)
+                    \mathscr D_{d,s}(x)
+                    e_h(-k\bar w_hx).}
+\tag{9.233}
+\]
+
+The deleted ambient coordinates therefore contribute only a normalized
+Ramanujan factor, with \(|c_w(k)|/w\leq1\); the core on the right is
+exactly the reduced collision (9.222).
+
+For a dyadic gcd \(g=T^\xi\), restricting \(\delta\) to multiples of
+\(g\) saves \(T^\xi\), while summing the possible \(g\)-values costs at
+most \(T^\xi\).  Hence the finite gcd bookkeeping is neutral, the
+normalized free factor in (9.233) costs no power, and every oscillatory
+modulus in the core is shortened:
+
+\[
+ \boxed{
+  \text{gcd selection }T^\xi
+  \times\text{ numerator restriction }T^{-\xi}
+  \times\left|\frac{c_w(k)}w\right|
+  \leq1.}
+\tag{9.234}
+\]
+
+At the primitive numerator scale \(H\asymp q\), smooth completion has
+\(|\ell|\leq T^\varepsilon\).  The support condition in (9.232) then
+forces \(g\leq T^\varepsilon\), so all primitive nonunit multipliers
+reduce to Sections 9.35--9.37 without a power loss.
+
+For shorter numerator intervals, (9.232)--(9.234) are an exact reduced
+interface rather than a complete global estimate: the reduced moduli,
+the possibly longer quotient dual rows, and the original archimedean
+weights must still be dyadically separated together.  In particular,
+this section does not declare CK\(_{\rm ub}(3)\) proved.  It does remove
+the former algebraic ambiguity about nonunit completion and proves that
+no pointwise Weil factor is created by the deleted prime coordinates.
+
 ## 10. What has and has not been proved
 
 **Current classification: the coprime-unit primitive exponent now closes
@@ -6179,6 +6258,11 @@ Proved in this note:
   margins (9.229), the recombined zero-mode congruence (9.230), and the
   finite interval boundary bound (9.231); together these control every
   unit-numerator common-modulus arithmetic term.
+* the general nonunit numerator transform (9.232) and ambient CRT
+  factorization (9.233); nonunit multipliers reduce to the same centered
+  collision on shorter moduli, while the gcd selection and numerator
+  restriction exactly balance and the free normalized Ramanujan factor
+  costs no power, (9.234).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -6223,8 +6307,9 @@ Proved in this note:
 | Coprimality-migrated scalar spectrum | exact Type-II bridge; balanced face unproved | expanding \((k,\delta')=1\) gives the triple spectrum (9.187), whose product coefficient is independent of the oscillatory modulus; Bettin--Chandee applies with (9.189), but (9.193) proves a uniform gap of at least \(T^2\), with gap \(T^{67/16}\) at the primitive corner |
 | Centered common-divisor dispersion | exact zero-frequency reduction; nonzero dual estimate unproved | centering the full divisor packet makes the \(k=1\) layer vanish, (9.197); the cross-modulus covariance is zero for coprime moduli and otherwise factors only through \(t=(m,n)\), (9.194)--(9.196); (9.198)--(9.201) isolate the remaining dual Kloosterman frequencies and the \(t_0=Q^2/R=T^2\) transition |
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
-| Young varying-level primitive route | exact arithmetic exponent closure; global recombination unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps the raw term to Young's additive rational large sieve, (9.214)--(9.217), saving exactly \(T^2\).  The \(d,e,g\) strata remain at exponent at most \(9\), (9.218)--(9.219); uniform archimedean separation and nonunit numerator multipliers are not yet recombined |
-| Common-modulus unit-numerator family | exact arithmetic exponent closure; analytic recombination unproved | completing before the residue sum gives delta-minus-mean (9.221) and the CRT collision formula (9.222).  Its collision support cancels \(t\) from the Young rational and all gcd strata stay at most \(9\), (9.223)--(9.227).  Ramanujan marginals are below target, (9.228)--(9.229), and the recombined zero mode has only interval-boundary size, (9.230)--(9.231).  Nonunit multipliers and uniform archimedean recombination remain |
+| Young varying-level primitive route | exact arithmetic exponent closure; global recombination unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps the raw term to Young's additive rational large sieve, (9.214)--(9.217), saving exactly \(T^2\).  The \(d,e,g\) strata remain at exponent at most \(9\), (9.218)--(9.219); primitive nonunit multipliers reduce without power loss by (9.232)--(9.234), while uniform archimedean separation remains |
+| Common-modulus unit-numerator family | exact arithmetic exponent closure; analytic recombination unproved | completing before the residue sum gives delta-minus-mean (9.221) and the CRT collision formula (9.222).  Its collision support cancels \(t\) from the Young rational and all gcd strata stay at most \(9\), (9.223)--(9.227).  Ramanujan marginals are below target, (9.228)--(9.229), and the recombined zero mode has only interval-boundary size, (9.230)--(9.231).  Uniform archimedean recombination remains |
+| Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
