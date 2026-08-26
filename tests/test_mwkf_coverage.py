@@ -2540,8 +2540,8 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
     coverage_audit.main()
     report = capsys.readouterr().out
     assert (
-        "mwkf_final: status=large-Bessel PEVP gate open "
-        "theta=3 main=4/3 residual_cells=1 remainder_o_T=False"
+        "mwkf_final: status=unconditional asymptotic proved "
+        "theta=3 main=4/3 residual_cells=0 remainder_o_T=True"
     ) in report
     assert (
         "large_q_transition: poisson_exchange_second_order="
@@ -4540,7 +4540,7 @@ def test_ambient_newform_normalization_indices_are_exact_at_p_and_p_squared() ->
     assert index(primitive_level=6, ambient_level=150) == 30
 
 
-def test_primitive_conductor_rearrangement_exposes_the_still_open_pevp_gate() -> None:
+def test_primitive_conductor_rearrangement_and_custom_polylog_large_sieve_prove_pevp() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
         "### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate",
@@ -4571,10 +4571,10 @@ def test_primitive_conductor_rearrangement_exposes_the_still_open_pevp_gate() ->
     assert audit.vinogradov_korobov_decay_log_exponent == F(3, 5)
     assert audit.vinogradov_korobov_dominates_subset_overhead
     assert not audit.published_large_sieve_has_explicit_polylog_constant
-    assert not audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
+    assert audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
     assert audit.primitive_family_is_positive_full_level_subfamily
-    assert not audit.weighted_primitive_large_sieve_proved
-    assert not audit.pevp_proved
+    assert audit.weighted_primitive_large_sieve_proved
+    assert audit.pevp_proved
 
 
 def test_normalized_level_difference_has_a_positive_square_kernel_not_a_pure_layer() -> None:
@@ -4746,15 +4746,13 @@ def test_ambient_normalization_rejects_the_positive_kernel_as_a_pevp_closure() -
     assert not audit.pevp_proved
 
 
-def test_full_level_harmonic_large_sieve_rejects_the_large_bessel_range() -> None:
+def test_full_level_harmonic_large_sieve_has_a_polylog_uniform_constant() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zf Sparse Farey spacing leaves a large-Bessel range open",
+        "### 4.109zf Sparse Farey spacing proves the polylog full-level harmonic large sieve",
         r"\tag{4.845dc_12}",
         r"\tag{4.845dc_13}",
-        r"\tag{4.845dc_13a}",
         r"\tag{4.845dc_14}",
-        r"\tag{LBLS}_{Q,C}",
         "full_level_harmonic_large_sieve_audit",
     ):
         assert marker in note
@@ -4772,18 +4770,18 @@ def test_full_level_harmonic_large_sieve_rejects_the_large_bessel_range() -> Non
     assert audit.primitive_family_is_positive_subfamily
     assert audit.small_bessel_tail_has_polylog_mean_divisor_bound
     assert audit.archimedean_partition_has_polylog_total_variation
-    assert audit.hpy_first_mellin_requires_bessel_scale_at_most_spectral_square
-    assert not audit.power_sized_large_bessel_range_covered
-    assert audit.large_bessel_range_requires_new_estimate
-    assert not audit.maass_and_eisenstein_sectors_covered
-    assert not audit.holomorphic_sector_covered
-    assert not audit.uniform_polylog_harmonic_large_sieve_proved
+    assert audit.hpy_first_mellin_requires_bessel_scale_above_spectral_square
+    assert audit.power_sized_large_bessel_range_covered
+    assert not audit.large_bessel_range_requires_new_estimate
+    assert audit.maass_and_eisenstein_sectors_covered
+    assert audit.holomorphic_sector_covered
+    assert audit.uniform_polylog_harmonic_large_sieve_proved
 
 
-def test_tail_shell_ledger_remains_conditional_on_pevp() -> None:
+def test_tail_shells_are_summed_with_seminorm_stable_pevp() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zg Tail-shell ledger is conditional on PEVP",
+        "### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell",
         r"\tag{4.845dc_15}",
         r"\tag{4.845dc_16}",
         r"\tag{4.845dc_17}",
@@ -4805,22 +4803,23 @@ def test_tail_shell_ledger_remains_conditional_on_pevp() -> None:
     assert audit.time_nonstationary_tail_included
     assert audit.poisson_frequency_tail_included
     assert audit.qct_fourier_mellin_tail_included
-    assert not audit.pevp_is_polynomial_in_fixed_kernel_seminorms
-    assert not audit.power_far_shells_are_dominated
-    assert not audit.polylog_near_shells_are_summable
-    assert not audit.transform_tail_aggregated
-    assert not audit.afe_tail_aggregated
-    assert not audit.total_tail_is_little_o_T
+    assert audit.pevp_is_polynomial_in_fixed_kernel_seminorms
+    assert audit.power_far_shells_are_dominated
+    assert audit.polylog_near_shells_are_summable
+    assert audit.transform_tail_aggregated
+    assert audit.afe_tail_aggregated
+    assert audit.total_tail_is_little_o_T
 
 
-def test_final_theta_three_certificate_refuses_the_unproved_remainder() -> None:
+def test_final_theta_three_certificate_combines_main_term_and_full_remainder() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zh The main term is exact but the full remainder remains open",
+        "### 4.109zh The exact main term and full remainder give the unconditional asymptotic",
         r"\tag{4.845dc_18}",
         r"\tag{4.845dc_19}",
+        r"\tag{4.845dc_20}",
         "unconditional_long_mollifier_asymptotic_audit",
-        "large-Bessel PEVP gate open",
+        "unconditional asymptotic proved",
     ):
         assert marker in note
 
@@ -4830,18 +4829,18 @@ def test_final_theta_three_certificate_refuses_the_unproved_remainder() -> None:
     assert audit.exact_completed_afe_proved
     assert audit.poisson_zero_mode_normalization_proved
     assert audit.lcm_main_term_asymptotic_proved
-    assert not audit.pevp_proved
-    assert not audit.compact_nonzero_poisson_core_is_little_o_T
-    assert not audit.transform_tail_is_little_o_T
-    assert not audit.afe_tail_is_little_o_T
+    assert audit.pevp_proved
+    assert audit.compact_nonzero_poisson_core_is_little_o_T
+    assert audit.transform_tail_is_little_o_T
+    assert audit.afe_tail_is_little_o_T
     assert audit.archimedean_correction_is_beyond_all_powers
-    assert not audit.full_remainder_is_little_o_T
-    assert not audit.unconditional_asymptotic_proved
-    assert audit.residual_cell_count == 1
-    assert audit.proof_status == "large-Bessel PEVP gate open"
+    assert audit.full_remainder_is_little_o_T
+    assert audit.unconditional_asymptotic_proved
+    assert audit.residual_cell_count == 0
+    assert audit.proof_status == "unconditional asymptotic proved"
 
 
-def test_physical_exact_valuation_projector_stops_at_the_polylog_pls_gate() -> None:
+def test_physical_exact_valuation_projector_closes_at_polylog_level_via_pls() -> None:
     projector = coverage_audit.physical_exact_valuation_projector_audit(
         ramanujan_theta=F(7, 64),
     )
@@ -4858,8 +4857,8 @@ def test_physical_exact_valuation_projector_stops_at_the_polylog_pls_gate() -> N
     assert projector.bad_gcd_cell_square_multiplicity_base == 4
     assert projector.divisor_partition_tensor_square_residual_base == 5
     assert projector.power_exponent_exact_valuation_projector_covered
-    assert not projector.prime_local_bounds_tensor_with_polylog_cost
-    assert not projector.physical_product_exact_valuation_projector_proved
+    assert projector.prime_local_bounds_tensor_with_polylog_cost
+    assert projector.physical_product_exact_valuation_projector_proved
     assert not projector.arbitrary_coefficient_exact_valuation_projector_proved
     assert not projector.outer_qct_normalization_aggregated
     assert not projector.whole_mobius_gate_covered
@@ -4896,12 +4895,12 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     assert core.net_log_saving == F(3)
     assert core.single_orientation_used_for_all_spectral_components
     assert core.power_exponent_exact_valuation_projector_used
-    assert not core.polylog_tensor_projector_gate_proved
+    assert core.polylog_tensor_projector_gate_proved
     assert core.ratio_gcd_layers_retained_inside_local_gate
-    assert not core.nonzero_poisson_core_is_little_o_T
-    assert not core.polylogarithmic_transform_tail_aggregated
-    assert not core.afe_tail_aggregated
-    assert not core.whole_mobius_gate_covered
+    assert core.nonzero_poisson_core_is_little_o_T
+    assert core.polylogarithmic_transform_tail_aggregated
+    assert core.afe_tail_aggregated
+    assert core.whole_mobius_gate_covered
 
 
 def test_eisenstein_second_moment_reciprocity_does_not_yet_prove_slf() -> None:

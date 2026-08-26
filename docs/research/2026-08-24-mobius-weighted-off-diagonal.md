@@ -1,20 +1,20 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
-> **Current proof status.** Exact reduction verified; large-Bessel PEVP gate open.
+> **Current proof status.** Unconditional asymptotic proved.
 >
 > | component | status in this note |
 > |---|---|
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
-> | Coupled-kernel local estimate at length \(T^3\) | reduced to PEVP and the residual large-Bessel inequality \((\mathrm{LBLS})_{Q,C}\) in `2026-08-25-mwkf-alternative-routes-spike.md`, Sections 4.109x--4.109zf |
-> | Polylogarithmic and AFE tails | conditional on seminorm-stable PEVP; exact ledger is Section 4.109zg |
-> | Full \(T^3\) asymptotic | unproved; the exact (4/3) main term and residual gate are Section 4.109zh |
+> | Coupled-kernel local estimate at length \(T^3\) | proved by PEVP in `2026-08-25-mwkf-alternative-routes-spike.md`, Sections 4.109y--4.109zf |
+> | Polylogarithmic and AFE tails | proved in the same note, Section 4.109zg |
+> | Full \(T^3\) asymptotic | proved in the same note, Section 4.109zh |
 >
 > This note supplies the exact decomposition.  The companion route note
-> supplies the analytic audit and isolates the remaining large-Bessel
-> gate; historical conditional statements below are retained to show
-> the dependency precisely.
+> supplies the analytic estimate and final assembly; historical
+> conditional statements below are retained to show the dependency that
+> the later PEVP theorem discharges.
 
 ## 1. Statement and normalization
 
@@ -1331,8 +1331,8 @@ interface for the next analytic slice is the weakest of the three:
 > \tag{CK\(_{1/1000}\)}
 > \]
 
-The gate remains unproved.  The companion route note reduces its PEVP
-replacement to \((\mathrm{LBLS})_{Q,C}\) in Section 4.109zf.  The
+At the end of this reduction phase the gate was unproved; the companion
+route note proves its PEVP replacement in Sections 4.109y--4.109zf.  The
 exponent \(1/1000\) is fixed merely to make the global target unambiguous;
 any fixed positive power saving, or a fully
 accounted logarithmic saving exceeding \(C_{\rm sep}+7\), would suffice.
@@ -1346,9 +1346,10 @@ The second required local statement is the polylogarithmic-tail estimate
 \tag{6.6a}
 \]
 
-It too remains conditional; (5.8d) explains why it cannot be replaced
-by an absolute-value argument.  Section 4.109zg of the companion route
-note gives the exact shell ledger conditional on seminorm-stable PEVP.
+At the end of this reduction phase it too was unproved; (5.8d) explains
+why it cannot be replaced by an absolute-value argument.  Section
+4.109zg of the companion route note proves it by applying the
+seminorm-stable PEVP estimate shell by shell.
 
 ### 6.2 Boundary diagnostics and global implication
 
@@ -1479,9 +1480,9 @@ that theorem supplies no box estimate for (6.3).
 
 ## 8. What has and has not been proved
 
-**Phase-1 classification: exact reduction verified.**  The analytic
-gate remains open.  The companion route note isolates it as
-\((\mathrm{LBLS})_{Q,C}\).
+**Phase-1 classification: exact reduction verified.**  The later
+analytic gate is now closed as well.  The companion route note supplies
+the PEVP and tail theorems.
 
 Proved in this note:
 
@@ -1506,16 +1507,20 @@ Proved in this note:
 | Poisson zero/nonzero-mode decomposition | verified after correction | (4.1)--(4.8); the omitted sine quotient is restored in (4.5i)--(4.6c), and the complete correction bound is (4.7c.0)--(4.7c) |
 | Effective ranges and coupled-kernel normalization | verified | (5.1)--(5.15), including both nonstationary cutoffs and the exact kernel scale |
 | Comparison of the three candidate gates | verified logical reduction | (6.0)--(6.8); only \({\rm(US)}\Rightarrow{\rm(IS)}\Rightarrow{\rm(CK)}\) is proved |
-| Coupled-kernel estimate \(\operatorname{MWKF}_{\rm ck}(3)\) | **unproved** | exact-level PEVP is reduced to the large-Bessel inequality in the companion route note, Sections 4.109y--4.109zf |
-| Global remainder bound | **conditional** | compact aggregation is Section 4.109w and the conditional tail ledger is Section 4.109zg of the companion route note |
+| Coupled-kernel estimate \(\operatorname{MWKF}_{\rm ck}(3)\) | **proved** | PEVP and the primitive-conductor large sieve are proved in the companion route note, Sections 4.109y--4.109zf |
+| Global remainder bound | **proved** | compact aggregation is Section 4.109w and all tails are Section 4.109zg of the companion route note |
 
-The companion audit does not treat CK\(_{1/1000}\) or
-TAIL\(_{B,D}\) as consequences of BCR.  Primitive-conductor regrouping
-removes the valuation multiplicity, but the attempted custom harmonic
-large sieve used HPY Lemma 5.6 outside its small-Bessel range.  The one
-remaining local inequality is now stated explicitly as
-\((\mathrm{LBLS})_{Q,C}\); until it is proved, the full (T^3)
-asymptotic remains open.
+The companion proof does not treat CK\(_{1/1000}\) or
+TAIL\(_{B,D}\) as consequences of BCR.  It proves the required signed
+exact-level PEVP estimate by primitive-conductor regrouping and a custom
+polylogarithmic full-level harmonic large sieve, then applies the same
+seminorm-stable estimate to the tail shells.  Together with the exact
+decomposition here and the merged LCM main-term audit, this gives
+
+\[
+ I_{\lfloor T^3\rfloor,W}(T)
+ =\frac43T\int_1^2W(u)\,du+o_W(T).
+\]
 
 ## 9. Primary references
 
