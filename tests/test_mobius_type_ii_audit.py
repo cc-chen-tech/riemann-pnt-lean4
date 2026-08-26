@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
+import scripts.audit_mobius_type_ii as audit
 from scripts.audit_mobius_type_ii import (
     AdditiveDualBlockLedger,
     AdditiveShiftedChowlaLedger,
@@ -747,7 +748,7 @@ def test_all_nonzero_reduced_denominators_through_d_close_after_decay() -> None:
         assert ledger.bound <= ledger.target
 
 
-def test_high_denominator_small_numerator_and_cofactor_have_fixed_product() -> None:
+def test_high_denominator_ambient_top_face_has_fixed_product() -> None:
     assert high_reduced_denominator_ledger(
         ambient_length=F(3),
         shift_length=F(2),
@@ -766,6 +767,95 @@ def test_high_denominator_small_numerator_and_cofactor_have_fixed_product() -> N
         )
         assert ledger.reduced_numerator + ledger.complementary_cofactor == F(1)
         assert ledger.lifted_numerator == F(1)
+
+
+def test_high_edge_polytope_tracks_the_complementary_quotient() -> None:
+    midpoint = audit.high_edge_polytope_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        complementary_quotient=F(1, 2),
+        reduced_denominator=F(9, 4),
+        target=F(9, 2),
+    )
+    assert midpoint.product_length == F(5, 2)
+    assert midpoint.ramanujan_cofactor == F(1, 4)
+    assert midpoint.reduced_numerator == F(1, 4)
+    assert midpoint.full_modulus_numerator == F(1, 2)
+    assert midpoint.large_sieve_bound == F(19, 4)
+    assert midpoint.large_sieve_gap == F(1, 4)
+    assert midpoint.square_root_hybrid_saving == F(1, 4)
+    assert midpoint.square_root_hybrid_margin == F(0)
+
+    upper_wing = audit.high_edge_polytope_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        complementary_quotient=F(1, 2),
+        reduced_denominator=F(5, 2),
+        target=F(9, 2),
+    )
+    assert upper_wing.ramanujan_cofactor == F(0)
+    assert upper_wing.reduced_numerator == F(1, 2)
+    assert upper_wing.square_root_hybrid_margin == F(-1, 4)
+
+
+def test_reduced_high_modes_regroup_into_unique_full_modulus_frequencies() -> None:
+    lifts = audit.high_reduced_frequency_lifts(
+        modulus=12,
+        denominator_cutoff=3,
+    )
+    assert tuple(lift.full_numerator for lift in lifts) == (
+        1,
+        2,
+        3,
+        5,
+        7,
+        9,
+        10,
+        11,
+    )
+    for lift in lifts:
+        assert lift.reduced_denominator * lift.cofactor == 12
+        assert lift.primitive_numerator * lift.cofactor == lift.full_numerator
+        assert gcd(lift.primitive_numerator, lift.reduced_denominator) == 1
+        assert 12 // gcd(lift.full_numerator, 12) > 3
+
+    for modulus in range(2, 31):
+        for cutoff in range(1, modulus + 1):
+            lifted = audit.high_reduced_frequency_lifts(
+                modulus=modulus,
+                denominator_cutoff=cutoff,
+            )
+            actual = tuple(item.full_numerator for item in lifted)
+            expected = tuple(
+                numerator
+                for numerator in range(1, modulus)
+                if modulus // gcd(numerator, modulus) > cutoff
+            )
+            assert actual == expected
+            assert len(actual) == len(set(actual))
+
+
+def test_published_one_factor_proxies_do_not_cover_the_high_edge() -> None:
+    convolution = audit.mobius_convolution_rational_proxy_ledger(
+        product_length=F(5, 2),
+        denominator_length=F(9, 4),
+        required_saving=F(1, 4),
+    )
+    assert convolution.denominator_term_saving == F(9, 16)
+    assert convolution.interior_term_saving == F(5, 14)
+    assert convolution.upper_denominator_term_saving == F(1, 16)
+    assert convolution.available_saving == F(1, 16)
+    assert convolution.margin == F(-3, 16)
+    assert not convolution.structurally_applicable
+
+    monomial = audit.reciprocal_monomial_coverage_ledger(
+        full_modulus_numerator=F(1, 2),
+        phase_variation=F(1),
+    )
+    assert monomial.required_saving == F(1)
+    assert monomial.published_saving_cap == F(1, 2)
+    assert monomial.margin == F(-1, 2)
+    assert not monomial.covered
 
 
 def test_multiple_mobius_additive_theorem_stays_at_t6_after_k_sum() -> None:

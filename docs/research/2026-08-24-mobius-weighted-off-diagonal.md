@@ -8149,25 +8149,36 @@ sufficient gate because every intermediate reduced denominator has
 already been discharged.
 
 The high-denominator geometry retains the double Möbius structure
-exactly.  Write \(m=r\ell\) in (9.328) and lift the reduced numerator
-to \(h=u\ell\).  Then
+exactly.  Write \(m=rv\) in (9.328) and lift the reduced numerator to
+the full-modulus frequency \(a_{\rm R}=uv\).  Then
 
 \[
- \frac ur=\frac hm,\qquad (h,m)=\ell,\qquad
- |u|\ll\frac rD,\qquad \ell\leq\frac Yr,\qquad
- |h|\ll\frac YD.
+ \frac ur=\frac {a_{\rm R}}m,\qquad (a_{\rm R},m)=v,\qquad
+ |u|\ll\frac rD,\qquad v=\frac mr,\qquad
+ |a_{\rm R}|\ll\frac mD.
 \tag{9.335}
 \]
 
-At \(Y=S=T^3,D=T^2,r=T^\rho\), this is the self-dual exponent identity
+To retain the complementary quotient, put
+\(k=T^\kappa,m=bc=T^{3-\kappa},r=T^\rho\), and write
+\(v=T^\lambda,u=T^\nu\).  The exact exponent polytope is
 
 \[
 \boxed{
- \operatorname{len}(u)=\rho-2,\qquad
- \operatorname{len}(\ell)=3-\rho,\qquad
- \operatorname{len}(h)=(\rho-2)+(3-\rho)=1.}
+ \rho+\lambda=3-\kappa,\qquad
+ \nu=\rho-2,\qquad
+ \nu+\lambda=1-\kappa,\qquad
+ \operatorname{len}(a_{\rm R})=1-\kappa.}
 \tag{9.336}
 \]
+
+Thus the previously tempting constant sum \(1\) is only the top face
+\(\kappa=0\), not the quotient-aware identity on every dyadic block.
+Also \(a_{\rm R}\) is **not** the original AFE numerator
+\(a_{\rm AFE}=h_0\delta_0\) retained in (9.239)--(9.246).  Poisson
+completion in (9.278)--(9.280) has already absorbed that numerator into
+the bounded dual weight.  The notation must not identify these two
+different factorizations.
 
 Moreover, at the square-root cutoff (9.319),
 \[
@@ -8180,18 +8191,19 @@ literally
 
 \[
 \sum_{b,c>T}\frac{\mu(b)\mu(c)}{bc}
-\sum_{\substack{\ell\mid bc\\bc/\ell>D}}
-\sum_{\substack{u\bmod bc/\ell\\(u,bc/\ell)=1\\
- |u|\ll bc/(\ell D)}}
- F\!\left(\frac{u\ell}{bc}\right)
- H\!\left(\frac{u\ell}{bc}\right),
+\sum_{\substack{v\mid bc\\bc/v>D}}
+\sum_{\substack{u\bmod bc/v\\(u,bc/v)=1\\
+ |u|\ll bc/(vD)}}
+ F\!\left(\frac{uv}{bc}\right)
+ H\!\left(\frac{uv}{bc}\right),
 \tag{9.337}
 \]
 
 with dyadic endpoints and separated weights restored.  Thus the
 surviving wing is a genuine two-Möbius product-modulus form with a
-factored lifted numerator \(h=u\ell\leq T^{1+\varepsilon}\), coupled to
-the zero mode in the first line of (9.334).
+factored Ramanujan frequency \(a_{\rm R}=uv\), of quotient-aware length
+\(T^{1-\kappa+\varepsilon}\), coupled to the zero mode in the first line
+of (9.334).
 
 Banks--Shparlinski's 2025 multiple-Möbius theorem does not close
 (9.337).  Their general theorem treats a three-variable **additive**
@@ -8214,6 +8226,138 @@ which is \(T^{3/2}\) above the target.  See
 unproved; but all nonzero denominators through \(D\) are no longer part
 of the gate.
 
+### 9.52 Quotient-aware high-edge coverage audit
+
+The reduced cofactor and numerator are gcd strata of one full
+frequency, not two independent averaging variables.  For each fixed
+integer \(m\), the map
+
+\[
+ (r,u)\longmapsto a_{\rm R}=u\frac mr\pmod m
+\]
+
+is a boundary-exact bijection
+
+\[
+\boxed{
+ \coprod_{\substack{r\mid m\\r>D}}(\mathbb Z/r\mathbb Z)^\times
+ \;\longleftrightarrow\;
+ \left\{a_{\rm R}\bmod m:
+ a_{\rm R}\ne0,\ \frac m{(a_{\rm R},m)}>D\right\}.}
+\tag{9.338}
+\]
+
+Indeed, the inverse sends \(a_{\rm R}\) to
+\(v=(a_{\rm R},m),r=m/v,u=a_{\rm R}/v\).  Consequently the complete
+high spectrum may be regrouped, with no limiting process or discarded
+boundary, as
+
+\[
+\boxed{
+ \sum_{m>D}\frac{\lambda_{U,V}(m)}m
+ \sum_{\substack{a_{\rm R}\bmod m\\a_{\rm R}\ne0\\
+                  m/(a_{\rm R},m)>D}}
+ F(a_{\rm R}/m)H(a_{\rm R}/m).}
+\tag{9.339}
+\]
+
+The smooth cutoff restricts
+\(|a_{\rm R}|\ll mD^{-1}T^\varepsilon\); away from its equality
+boundary the reduced-denominator condition in (9.339) is then
+automatic.
+
+The elementary large-sieve loss on a dyadic reduced denominator
+\(r=T^\rho>D=T^2\) is exact.  With no Fourier decay, (9.332) has exponent
+
+\[
+\boxed{
+ E_{\rm edge}^{\rm LS}(\rho)
+ =-\rho+\frac32+1
+  +\frac12\max(3,2\rho)+\frac12\max(2,2\rho)
+ =\rho+\frac52.}
+\tag{9.340}
+\]
+
+Relative to the target \(9/2\), its gap is therefore
+
+\[
+\boxed{E_{\rm edge}^{\rm LS}-\frac92=\rho-2=\nu.}
+\tag{9.341}
+\]
+
+Even the optimistic heuristic of independent square-root cancellation
+in \(u\) and \(v\) supplies only
+
+\[
+ \frac{\nu+\lambda}{2}=\frac{1-\kappa}{2}.
+\]
+
+It covers (9.341) precisely when
+
+\[
+\boxed{
+ \nu\leq\lambda
+ \quad\Longleftrightarrow\quad
+ \rho\leq\frac{5-\kappa}{2}.}
+\tag{9.342}
+\]
+
+Thus two hypothetical square roots cover at most the lower half of the
+high wing.  The upper half \(\nu>\lambda\) requires more, and (9.338)
+explains why treating \(u,v\) as independent cancellation directions
+overcounts the available structure.
+
+The following published-estimate coverage table records the remaining
+mismatches.  A negative margin is a quantitative failure; “resonant”
+means that the theorem does not estimate the selected coefficient even
+if its displayed exponent were large enough.
+
+| Input | Available saving on \(m=T^{3-\kappa},r=T^\rho\) | Required / coverage | Status |
+|---|---:|---:|---|
+| elementary reduced Farey large sieve | \(0\) beyond (9.340) | \(\nu=\rho-2\) | misses every positive-width high block |
+| hypothetical \(u\)- and \(v\)-square roots | \((1-\kappa)/2\) | covers iff \(\nu\leq\lambda\) | diagnostic only; not a theorem |
+| Dong--Robles--Zaharescu--Zeindler, Thm. 1.6 | \(\min(\rho/4,(3-\kappa)/7,\lambda/4)\) for an unrestricted \(\mu*\mu\) rational sum | at least \(\nu\) | quantitatively insufficient near \(\lambda=0\), and structurally resonant |
+| Robert--Sargos / Fouvry--Iwaniec monomial forms | displayed \(X_{\rm phase}^{-1/2}=T^{-1/2}\) cap, since \(X_{\rm phase}=S/D=T\) | raw scalar normalization needs \(T^{-(3/2-\kappa)}\) | only the degenerate boundary \(\kappa=1\), no positive-width wing |
+
+For the third row, the obstruction is exact: the high-edge coefficient
+selects \(r\mid bc\), hence at the rational phase \(u/r\)
+
+\[
+ e\!\left(\frac{u\,bc}{r}\right)=1.
+\tag{9.343}
+\]
+
+The cancellation in the unrestricted \(\mu*\mu\) exponential sum may
+come from products outside this resonant divisibility subsequence, so
+Theorem 1.6 of Dong--Robles--Zaharescu--Zeindler cannot be inserted into
+(9.337).  Their arbitrary-\(g*h\) Type-II lemma has the same mismatch:
+it controls a product phase, whereas the actual selected product phase
+is identically one.
+
+For the last row, expanding \(F(a_{\rm R}/m)H(a_{\rm R}/m)\) and fixing
+\(n=s+d\) gives \(e(a_{\rm R}n/(bc))\).  On the support
+\(a_{\rm R}\asymp bc/D\), \(n\asymp S\), its phase variation is exactly
+
+\[
+ X_{\rm phase}\asymp\frac{n a_{\rm R}}{bc}\asymp\frac SD=T.
+\tag{9.344}
+\]
+
+The \(X^{-1/2}\) term in the published arbitrary-coefficient
+three- and four-dimensional monomial estimates therefore caps their
+uniform saving at one half-power.  Restoring the convolution weight and
+the full numerator length does not fill the \(3/2-\kappa\) scalar gap.
+
+This leaves two honest routes.  Postcompletion, one needs cancellation
+across the **single full numerator** in (9.339), strong enough to recover
+its entire \(T^{1-\kappa}\) length and compatible with the zero mode.
+Precompletion, the exact packet (9.239)--(9.246) is the route that truly
+retains \(a_{\rm AFE}=h_0\delta_0\) together with
+\(\mu(g)\mu(q)\mu(b)\mu(c)\), the incidence \(bc\mid gq+d\), and the
+inverse phase.  Neither route is proved here.  The executable finite
+ledger checks (9.336), (9.338), (9.340)--(9.342), and the quantitative
+rows of the table exactly.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -8227,7 +8371,8 @@ density-plus-complementary gate (9.310), equivalently the squarefree
 parity-breaking bilinear gate (9.315).  The finite Ramanujan
 diagonalization further closes every nonzero reduced denominator
 \(2\leq r\leq D\); the strictly weaker zero/high edge gate (9.334),
-with its two-Möbius factored-numerator form (9.337), remains unproved.**
+with its quotient-aware two-Möbius form (9.337)--(9.344), remains
+unproved.**
 
 Proved in this note:
 
@@ -8490,12 +8635,16 @@ Proved in this note:
   (9.332)--(9.333), proving every nonzero reduced denominator
   \(2\leq r\leq D\) within target.  The exact residual is only the
   coupled zero/high edge form (9.334).  For \(r>D\), writing
-  \(m=r\ell\) and \(h=u\ell\) gives the fixed exponent identity
-  \((\rho-2)+(3-\rho)=1\), (9.335)--(9.336), and retains the two
-  long Möbius weights in the literal product-modulus form (9.337).
-  Banks--Shparlinski's additive three-variable theorem has scale
-  \(T^6\) after its necessary fixed-\(k\) applications and therefore
-  does not close this final edge pair.
+  \(m=rv\) and \(a_{\rm R}=uv\) gives the quotient-aware identity
+  \((\rho-2)+(3-\kappa-\rho)=1-\kappa\), (9.335)--(9.336), and retains
+  the two long Möbius weights in (9.337).  The exact gcd-stratum
+  regrouping is (9.338)--(9.339); the elementary high-edge gap is
+  \(\nu=\rho-2\), (9.340)--(9.341).  Two hypothetical square roots
+  cover only \(\nu\leq\lambda\), while the audited published
+  convolution and monomial estimates do not cover a positive-width
+  remainder, (9.342)--(9.344).  The original
+  \(a_{\rm AFE}=h_0\delta_0\) remains instead in the precompletion packet
+  (9.239)--(9.246).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -8554,7 +8703,7 @@ Proved in this note:
 | Post-completion scalar recombination | exact two-Möbius form; published average only logarithmic | (9.290)--(9.291) merge \(\mu(g)\mu(q)\) into \(\mu(s)\) and put every separated scalar weight into \(\omega_{G,Q}(s)\).  Its divisor-bounded \(L^2\) norm (9.292), together with the exact gcd-divisor split, fits Lichtman's arbitrary-coefficient Fourier lemma componentwise.  The resulting bound has power exponent \(SD=T^5\), not the target \(S^{3/2}=T^{9/2}\), (9.293)--(9.294); no third independent Möbius sign remains |
 | Central Type-I/II density prefix | exact square-root split; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that bound; on squarefree support (9.311)--(9.313) maps the residual to the FI boundary (9.314), whose bilinear axiom is assumed rather than proved.  The endpoint \(U=V=\lfloor\sqrt D\rfloor\) makes \(m\leq D\) pure Type I and \(m>D\) pure Type II, (9.319)--(9.320), leaving \(\beta,\gamma\geq1,\kappa\leq1\), (9.321).  Fixing either long factor misses the \(5/8\) theorem by \(2/3\), (9.322), so the joint gate (9.315) remains essential |
 | Additive Vinogradov circle route | exact denominator coverage; no positive-width overlap | The explicit rational-approximation bound is (9.323), and a relative saving \(X^{-\eta}\) is available only on (9.324).  The direct length-\(S\) polynomial and the fixed-\(g\), length-\(Q\) polynomial each meet their actual near-zero denominator interval at one endpoint only, (9.325)--(9.326).  A single complementary factor would need length at least \(T^{5/2}\), (9.327), while (9.321) gives at most \(T^2,T^2,T\).  Recent almost-all Möbius Fourier uniformity remains logarithmic, so the coupled major-arc gate is still unproved |
-| Density/complement Ramanujan spectrum | exact middle-spectrum closure; zero/high edge pair unproved | The finite coefficients and reconstruction are (9.328)--(9.331), with \(C_r\ll T^\varepsilon/r\).  Summation by parts plus the additive large sieve proves all \(2\leq r\leq D\), with exact exponent (9.333).  The weaker residual gate is (9.334): the combined \(r=1\) mode plus \(r>D\) small numerators.  Lifting \(m=r\ell,h=u\ell\) gives \(h\leq T^{1+\varepsilon}\) and preserves the two Möbius factors exactly, (9.335)--(9.337).  The nearest Banks--Shparlinski additive specialization has scale \(K(M+D)S\asymp T^6\), still \(T^{3/2}\) above target |
+| Density/complement Ramanujan spectrum | exact middle-spectrum closure; quotient-aware zero/high edge pair unproved | The finite coefficients and reconstruction are (9.328)--(9.331), with \(C_r\ll T^\varepsilon/r\).  Summation by parts plus the additive large sieve proves all \(2\leq r\leq D\), with exact exponent (9.333).  The weaker residual gate is (9.334): the combined \(r=1\) mode plus \(r>D\) small numerators.  On \(m=T^{3-\kappa}=rv\), lifting to \(a_{\rm R}=uv\) gives \(\nu+\lambda=1-\kappa\), not a constant \(1\), (9.335)--(9.337).  The finite bijection (9.338)--(9.339) shows \(u,v\) are gcd strata of one numerator.  The elementary gap is \(\nu\); two hypothetical square roots cover only \(\nu\leq\lambda\).  DRZZ is resonant on \(r\mid bc\), while the Robert--Sargos/Fouvry--Iwaniec monomial shapes cap at one half-power, so neither closes a positive-width residual, (9.340)--(9.344) |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -8614,6 +8763,20 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   records the mismatch between its additive three-variable,
   logarithmic-cancellation framework and the product-modulus
   zero/high edge pair (9.334)--(9.337).
+* A. Dong, N. Robles, A. Zaharescu, D. Zeindler, *Exponential sums
+  twisted by general arithmetic functions*, arXiv:2412.20101,
+  Theorem 1.6 and Lemma 4.2; Section 9.52 records both the quantitative
+  \(\min(\rho/4,(3-\kappa)/7,\lambda/4)\) proxy and the decisive
+  resonance \(e(u\,bc/r)=1\) on the selected support \(r\mid bc\).
+* O. Robert, P. Sargos, *Three-dimensional exponential sums with
+  monomials*, J. Reine Angew. Math. 2006, 1--20,
+  DOI 10.1515/crelle.2006.012; É. Fouvry, H. Iwaniec, *Exponential sums
+  with monomials*, J. Number Theory 33 (1989), 311--333,
+  DOI 10.1016/0022-314X(89)90067-X.  Their arbitrary-coefficient
+  monomial-sum shapes and \(X^{-1/2}\) terms are audited at the
+  quotient-aware phase scale \(X=S/D=T\) in Section 9.52.  J. Pliego,
+  arXiv:2211.02096, Theorem 3, is used only as an accessible restatement
+  of the Robert--Sargos estimate, not as a stronger input.
 * J. Friedlander, H. Iwaniec, *Asymptotic sieve for primes*, Ann. of
   Math. 148 (1998), 1041--1065, arXiv:math/9811186, especially
   hypotheses (B), (B1)--(B3); Section 9.48 maps the complementary

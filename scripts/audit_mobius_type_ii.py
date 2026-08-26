@@ -881,13 +881,15 @@ def high_reduced_denominator_ledger(
     shift_length: Fraction,
     reduced_denominator: Fraction,
 ) -> HighReducedDenominatorLedger:
-    """Geometry of the surviving ``r>D`` small-numerator modes.
+    """Ambient top-face geometry of the ``r>D`` small-numerator modes.
 
-    Write a complementary product as ``m=r*ell``.  Smooth shift
+    Write a complementary product as ``m=r*v``.  Smooth shift
     completion restricts a primitive reduced numerator ``u`` to
-    ``u <= r/D``.  Since ``m<=S``, ``ell<=S/r``.  Lifting back to the
-    original modulus gives numerator ``h=u*ell`` of length ``S/D``;
-    the two short exponents therefore have constant sum.
+    ``u <= r/D``.  This legacy ledger puts ``m`` on its maximal face
+    ``m=S``, so ``v<=S/r`` and the lifted full-modulus numerator
+    ``a_R=u*v`` has length ``S/D``.  For an individual quotient block
+    ``m=S/k``, use :func:`high_edge_polytope_ledger`; the exact sum of
+    the two short exponents is then ``log_T(S/(kD))``.
     """
 
     lengths = (ambient_length, shift_length, reduced_denominator)
@@ -904,6 +906,175 @@ def high_reduced_denominator_ledger(
         lifted_numerator=(
             reduced_numerator + complementary_cofactor
         ),
+    )
+
+
+def high_edge_polytope_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    complementary_quotient: Fraction,
+    reduced_denominator: Fraction,
+    target: Fraction,
+) -> HighEdgePolytopeLedger:
+    """Quotient-aware geometry and elementary high-edge gap.
+
+    The complementary product has length ``S/k`` rather than always
+    length ``S``.  If ``m=r*v`` and the small reduced numerator has
+    length ``r/D``, then the two exponents add to ``m/D``.  The
+    additive large sieve without Fourier decay is recorded exactly,
+    as is the hypothetical saving from square-root cancellation in
+    both of these artificial gcd coordinates.
+    """
+
+    lengths = (
+        ambient_length,
+        shift_length,
+        complementary_quotient,
+        reduced_denominator,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    product_length = ambient_length - complementary_quotient
+    if product_length < shift_length:
+        raise ValueError("the complementary product must exceed D")
+    if not shift_length <= reduced_denominator <= product_length:
+        raise ValueError("require D <= r <= m on the exponent scale")
+
+    ramanujan_cofactor = product_length - reduced_denominator
+    reduced_numerator = reduced_denominator - shift_length
+    full_modulus_numerator = product_length - shift_length
+    outer_large_sieve = max(ambient_length, 2 * reduced_denominator)
+    shift_large_sieve = max(shift_length, 2 * reduced_denominator)
+    large_sieve_bound = (
+        -reduced_denominator
+        + ambient_length / 2
+        + shift_length / 2
+        + outer_large_sieve / 2
+        + shift_large_sieve / 2
+    )
+    large_sieve_gap = large_sieve_bound - target
+    square_root_hybrid_saving = (
+        ramanujan_cofactor + reduced_numerator
+    ) / 2
+    return HighEdgePolytopeLedger(
+        complementary_quotient=complementary_quotient,
+        product_length=product_length,
+        reduced_denominator=reduced_denominator,
+        ramanujan_cofactor=ramanujan_cofactor,
+        reduced_numerator=reduced_numerator,
+        full_modulus_numerator=full_modulus_numerator,
+        large_sieve_bound=large_sieve_bound,
+        target=target,
+        large_sieve_gap=large_sieve_gap,
+        square_root_hybrid_saving=square_root_hybrid_saving,
+        square_root_hybrid_margin=(
+            square_root_hybrid_saving - large_sieve_gap
+        ),
+    )
+
+
+def high_reduced_frequency_lifts(
+    *,
+    modulus: int,
+    denominator_cutoff: int,
+) -> tuple[ReducedFrequencyLift, ...]:
+    """Regroup reduced Ramanujan modes by their full-modulus numerator.
+
+    For ``r|m``, put ``v=m/r`` and lift a primitive ``u mod r`` to
+    ``a_R=u*v mod m``.  This is a bijection onto the nonzero residues
+    whose reduced denominator ``m/gcd(a_R,m)`` exceeds the cutoff.
+    """
+
+    if modulus < 1 or denominator_cutoff < 1:
+        raise ValueError("the modulus and cutoff must be positive")
+    lifts = tuple(
+        ReducedFrequencyLift(
+            reduced_denominator=reduced_denominator,
+            primitive_numerator=primitive_numerator,
+            cofactor=modulus // reduced_denominator,
+            full_numerator=(
+                primitive_numerator * (modulus // reduced_denominator)
+            ),
+        )
+        for reduced_denominator in divisors(modulus)
+        if reduced_denominator > denominator_cutoff
+        for primitive_numerator in range(1, reduced_denominator)
+        if gcd(primitive_numerator, reduced_denominator) == 1
+    )
+    return tuple(sorted(lifts, key=lambda lift: lift.full_numerator))
+
+
+def mobius_convolution_rational_proxy_ledger(
+    *,
+    product_length: Fraction,
+    denominator_length: Fraction,
+    required_saving: Fraction,
+) -> MobiusConvolutionRationalProxyLedger:
+    """Dong--Robles--Zaharescu--Zeindler ``mu*mu`` proxy.
+
+    Their three terms save ``q^(1/4)``, ``X^(1/7)``, and
+    ``(X/q)^(1/4)`` relative to length ``X``.  The minimum is the
+    available uniform saving.  It is only a proxy here: selecting
+    ``r|bc`` makes the phase at ``u/r`` resonant, so the complete
+    convolution theorem does not estimate the actual coefficient.
+    """
+
+    lengths = (product_length, denominator_length, required_saving)
+    if min(lengths) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if denominator_length > product_length:
+        raise ValueError("the rational denominator cannot exceed X")
+    denominator_term_saving = denominator_length / 4
+    interior_term_saving = product_length / 7
+    upper_denominator_term_saving = (
+        product_length - denominator_length
+    ) / 4
+    available_saving = min(
+        denominator_term_saving,
+        interior_term_saving,
+        upper_denominator_term_saving,
+    )
+    return MobiusConvolutionRationalProxyLedger(
+        product_length=product_length,
+        denominator_length=denominator_length,
+        denominator_term_saving=denominator_term_saving,
+        interior_term_saving=interior_term_saving,
+        upper_denominator_term_saving=upper_denominator_term_saving,
+        available_saving=available_saving,
+        required_saving=required_saving,
+        margin=available_saving - required_saving,
+        structurally_applicable=False,
+    )
+
+
+def reciprocal_monomial_coverage_ledger(
+    *,
+    full_modulus_numerator: Fraction,
+    phase_variation: Fraction,
+) -> ReciprocalMonomialCoverageLedger:
+    """Best possible margin from the published monomial-sum shape.
+
+    On the theta-three edge the raw scalar form needs the fixed
+    half-power plus the complete numerator length.  Robert--Sargos and
+    Fouvry--Iwaniec contain an ``X^(-1/2)`` term, so their displayed
+    arbitrary-coefficient bounds can guarantee at most half the phase
+    variation, even before coefficient-norm losses are restored.
+    """
+
+    if min(full_modulus_numerator, phase_variation) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    required_saving = full_modulus_numerator + Fraction(1, 2)
+    published_saving_cap = phase_variation / 2
+    margin = published_saving_cap - required_saving
+    return ReciprocalMonomialCoverageLedger(
+        full_modulus_numerator=full_modulus_numerator,
+        phase_variation=phase_variation,
+        required_saving=required_saving,
+        published_saving_cap=published_saving_cap,
+        margin=margin,
+        covered=(margin >= 0),
     )
 
 
@@ -3750,6 +3921,60 @@ class HighReducedDenominatorLedger:
     reduced_numerator: Fraction
     complementary_cofactor: Fraction
     lifted_numerator: Fraction
+
+
+@dataclass(frozen=True)
+class HighEdgePolytopeLedger:
+    """Quotient-aware high-denominator exponent ledger."""
+
+    complementary_quotient: Fraction
+    product_length: Fraction
+    reduced_denominator: Fraction
+    ramanujan_cofactor: Fraction
+    reduced_numerator: Fraction
+    full_modulus_numerator: Fraction
+    large_sieve_bound: Fraction
+    target: Fraction
+    large_sieve_gap: Fraction
+    square_root_hybrid_saving: Fraction
+    square_root_hybrid_margin: Fraction
+
+
+@dataclass(frozen=True)
+class ReducedFrequencyLift:
+    """One primitive reduced frequency lifted to a full modulus."""
+
+    reduced_denominator: int
+    primitive_numerator: int
+    cofactor: int
+    full_numerator: int
+
+
+@dataclass(frozen=True)
+class MobiusConvolutionRationalProxyLedger:
+    """Published ``mu*mu`` rational-phase savings versus the edge gap."""
+
+    product_length: Fraction
+    denominator_length: Fraction
+    denominator_term_saving: Fraction
+    interior_term_saving: Fraction
+    upper_denominator_term_saving: Fraction
+    available_saving: Fraction
+    required_saving: Fraction
+    margin: Fraction
+    structurally_applicable: bool
+
+
+@dataclass(frozen=True)
+class ReciprocalMonomialCoverageLedger:
+    """Published monomial-sum half-power cap versus required saving."""
+
+    full_modulus_numerator: Fraction
+    phase_variation: Fraction
+    required_saving: Fraction
+    published_saving_cap: Fraction
+    margin: Fraction
+    covered: bool
 
 
 @dataclass(frozen=True)
