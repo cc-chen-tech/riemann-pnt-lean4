@@ -20,6 +20,7 @@ from scripts.audit_mobius_type_ii import (
     InverseFractionSeparation,
     KloostermanFractionTripleLedger,
     MQWBlockSavings,
+    NearDeterminantBCLedger,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
     ScalarTypeIICutoffLedger,
@@ -113,6 +114,7 @@ from scripts.audit_mobius_type_ii import (
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
+    near_determinant_bettin_chandee_ledger,
     nonunit_principal_equal_mobius_exponent,
     nonunit_principal_h_boundary_slack,
     nonunit_principal_is_residual_face,
@@ -475,6 +477,34 @@ def test_symmetric_type_ii_cutoff_creates_long_long_near_determinant() -> None:
         fixed_divisor_quotient_window=F(3, 2),
         rational_distance=F(-1),
     )
+
+
+def test_bettin_chandee_misses_near_determinant_even_with_free_scalar_sum() -> None:
+    perfect_scalar = near_determinant_bettin_chandee_ledger(
+        long_numerator=F(3),
+        long_modulus=F(5, 2),
+        product_length=F(9, 2),
+        scalar_coefficient_cost=F(0),
+        target=F(9),
+    )
+    assert perfect_scalar == NearDeterminantBCLedger(
+        coefficient_norm=F(5),
+        first_parenthetical=F(17, 4),
+        second_parenthetical=F(75, 16),
+        large_phase_penalty=F(0),
+        theorem_bound=F(37, 4),
+        target=F(9),
+        gap=F(1, 4),
+    )
+    trivial_scalar = near_determinant_bettin_chandee_ledger(
+        long_numerator=F(3),
+        long_modulus=F(5, 2),
+        product_length=F(9, 2),
+        scalar_coefficient_cost=F(1, 2),
+        target=F(9),
+    )
+    assert trivial_scalar.theorem_bound == F(39, 4)
+    assert trivial_scalar.gap == F(3, 4)
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

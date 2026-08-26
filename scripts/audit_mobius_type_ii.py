@@ -395,6 +395,61 @@ def scalar_type_ii_cutoff_ledger(
     )
 
 
+def near_determinant_bettin_chandee_ledger(
+    *,
+    long_numerator: Fraction,
+    long_modulus: Fraction,
+    product_length: Fraction,
+    scalar_coefficient_cost: Fraction,
+    target: Fraction,
+) -> NearDeterminantBCLedger:
+    """Audit BC after the near-window weight is Fourier-separated.
+
+    The long numerator coefficient, modulus coefficient, and product
+    coefficient are charged by their square-root counting norms.  The
+    optional scalar cost records what remains in the modulus coefficient.
+    """
+
+    if min(
+        long_numerator,
+        long_modulus,
+        product_length,
+        scalar_coefficient_cost,
+        target,
+    ) < 0:
+        raise ValueError("all exponent lengths must be nonnegative")
+    geometric_sum = long_numerator + long_modulus + product_length
+    longest_variable = max(long_numerator, long_modulus)
+    coefficient_norm = (
+        geometric_sum / 2 + scalar_coefficient_cost
+    )
+    first_parenthetical = (
+        Fraction(7, 20) * geometric_sum + longest_variable / 4
+    )
+    second_parenthetical = (
+        Fraction(3, 8) * geometric_sum
+        + (product_length + longest_variable) / 8
+    )
+    large_phase_penalty = max(
+        Fraction(0),
+        (product_length - long_numerator - long_modulus) / 2,
+    )
+    theorem_bound = (
+        coefficient_norm
+        + min(first_parenthetical, second_parenthetical)
+        + large_phase_penalty
+    )
+    return NearDeterminantBCLedger(
+        coefficient_norm=coefficient_norm,
+        first_parenthetical=first_parenthetical,
+        second_parenthetical=second_parenthetical,
+        large_phase_penalty=large_phase_penalty,
+        theorem_bound=theorem_bound,
+        target=target,
+        gap=theorem_bound - target,
+    )
+
+
 @dataclass(frozen=True)
 class InverseFractionSeparation:
     """Centered numerator certificate for two fixed-numerator fractions.
@@ -2020,6 +2075,19 @@ class ScalarTypeIICutoffLedger:
     quotient_ceiling: Fraction
     fixed_divisor_quotient_window: Fraction
     rational_distance: Fraction
+
+
+@dataclass(frozen=True)
+class NearDeterminantBCLedger:
+    """Bettin--Chandee audit after separating the near determinant."""
+
+    coefficient_norm: Fraction
+    first_parenthetical: Fraction
+    second_parenthetical: Fraction
+    large_phase_penalty: Fraction
+    theorem_bound: Fraction
+    target: Fraction
+    gap: Fraction
 
 
 @dataclass(frozen=True)

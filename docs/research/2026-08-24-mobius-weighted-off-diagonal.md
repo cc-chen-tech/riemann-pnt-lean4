@@ -6417,6 +6417,43 @@ but does not state a variable-\(k\) average.  Hence the fixed-\(k\)
 factor cannot be identified with the sum over \(g\), and
 \(Q^2k+N\) is not a published bound for (9.250).
 
+Nor does Fourier-separating the near window and then applying
+Bettin--Chandee close (9.245).  The most favorable resulting trilinear
+scales are
+
+\[
+ M=T^3,qquad N=T^{5/2},qquad A=T^{9/2}.
+\tag{9.252}
+\]
+
+If \(T^\xi\) is the residual cost in the scalar part of the modulus
+coefficient, the three coefficient norms have total exponent
+\(5+\xi\).  The two parenthetical exponents in Bettin--Chandee Theorem 1
+are, exactly,
+
+\[
+ \frac7{20}(3+5/2+9/2)+\frac14\max(3,5/2)=\frac{17}{4},
+ \qquad
+ \frac38(3+5/2+9/2)
+  +\frac18(9/2+3)=\frac{75}{16},
+\tag{9.253}
+\]
+
+and the large-phase penalty vanishes.  Consequently this route gives
+
+\[
+ \boxed{E_{\rm BC}^{\rm near}=\frac{37}{4}+\xi.}
+\tag{9.254}
+\]
+
+Even granting the unrealistically favorable \(\xi=0\), this is
+\(T^{1/4}\) above the second-moment target \(T^9\); the trivial scalar
+norm \(\xi=1/2\) leaves \(T^{3/4}\).  Thus a successful use of the near
+determinant must put the restriction \(|bck-gq|\leq T^2\) inside the
+operator estimate.  Merely Fourier-separating it into admissible
+coefficients and invoking the published trilinear fraction theorem loses
+its density and cannot close the gate.
+
 Known one-variable Möbius--trace results do not close (9.239) or its
 recombined form (9.250).  Even if
 one optimistically grants a translated prime-modulus version of the
@@ -6585,6 +6622,8 @@ Proved in this note:
   Absolute Type I retains at least the full scalar cost, (9.243)--(9.244),
   while (9.245)--(9.246) identify the balanced long--long packet as a
   near-determinant family with long variables \(k,q\asymp T^{5/2}\).
+  Fourier separation followed by Bettin--Chandee still misses the target
+  by at least \(T^{1/4}\), even with a free scalar sum, (9.252)--(9.254).
 * the exact scalar recombination (9.247)--(9.250): the two scalar signs
   combine back to \(\mu(s)\), the phase lifts from \(q=s/g\) to \(s\),
   and the scalar family becomes the divisor-incidence multiplicity
@@ -6638,7 +6677,7 @@ Proved in this note:
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
 | Young varying-level primitive route | fixed scalar strata close; scalar aggregation residual unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps each fixed-stratum raw term to Young's additive rational large sieve, (9.214)--(9.219), saving \(T^2\).  Restoring the transition scalar sum gives exponent \(19/2\), leaving \(T^{1/2}\), (9.235)--(9.238) |
 | Common-modulus unit-numerator family | closes for \(\tau\geq1/4\); small-common-factor packet unproved | the CRT collision cancels \(t\) from the Young rational, (9.221)--(9.227), but after the scalar sum its exponent is \(19/2-2\tau\).  Ramanujan marginals and the recombined zero mode remain below target, (9.228)--(9.231).  The exact residual is (9.239) for \(0\leq\tau<1/4\) |
-| Scalar Möbius transition packet | exact Type-I/II reduction; joint estimate unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Fixed-prime Möbius--trace estimates save at best the optimistic \(q^{-1/120}\), versus required \(q^{-1/5}\) |
+| Scalar Möbius transition packet | exact Type-I/II reduction; joint estimate unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Direct Bettin--Chandee remains \(T^{1/4}\) high even with free scalar cancellation, (9.252)--(9.254); fixed-prime Möbius--trace estimates save at best the optimistic \(q^{-1/120}\), versus required \(q^{-1/5}\) |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
