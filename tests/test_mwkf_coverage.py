@@ -4914,6 +4914,41 @@ def test_signed_level_difference_becomes_an_exact_valuation_farey_family() -> No
     assert not excluded.exact_valuation_cell_active
 
 
+def test_coupled_farey_collision_is_a_quadratic_divisor_constraint() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zfc Absolute two-coordinate spacing is exactly the old quadratic-divisor majorant",
+        r"\tag{4.845dc_14o}",
+        r"\tag{4.845dc_14q}",
+        r"\tag{4.845dc_14r}",
+        "same DCV/quadratic-divisor",
+        "coupled_farey_collision_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.coupled_farey_collision_audit(
+        scaling_level=5,
+        first_denominator=7,
+        first_numerator=2,
+        second_denominator=11,
+        second_numerator=3,
+    )
+    assert audit.first_inverse_numerator == 2
+    assert audit.second_inverse_numerator == 8
+    assert audit.first_determinant_coordinate == 1
+    assert audit.second_determinant_coordinate == -34
+    assert audit.first_quadratic_divisor_integer == -49
+    assert audit.second_quadratic_divisor_integer == -121
+    assert audit.first_denominator_divides_first_quadratic_integer
+    assert audit.second_denominator_divides_second_quadratic_integer
+    assert audit.denominators_are_coprime
+    assert audit.coordinate_pairs_unique_for_fixed_determinants
+    assert audit.absolute_collision_count_becomes_quadratic_divisor_majorant
+    assert audit.absolute_majorant_discards_mobius_signs
+    assert not audit.new_saving_beyond_bblr_proved
+    assert not audit.joint_two_coordinate_large_sieve_proved
+
+
 def test_tail_shell_ledger_remains_conditional_on_seminorm_stable_pevp() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

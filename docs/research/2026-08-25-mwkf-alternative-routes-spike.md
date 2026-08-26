@@ -17295,6 +17295,73 @@ before Cauchy.  It deliberately leaves the joint two-coordinate bound
 and PEVP flags false.
 
 
+### 4.109zfc Absolute two-coordinate spacing is exactly the old quadratic-divisor majorant
+
+It remains to test whether ordinary multidimensional large-sieve
+spacing proves the joint bound suggested by (4.845dc_14n).  Represent
+one phase point by
+\[
+ z(d,x)=\left(\frac{x}{d},\frac{y}{d}\right),
+ qquad
+ y\equiv-(Ax)^{-1}\pmod d,quad (Ax,d)=1.
+ \tag{4.845dc_14o}
+\]
+For two points \((d_i,x_i,y_i)\), define the two determinant
+coordinates
+\[
+ k=x_1d_2-x_2d_1,
+ \qquad
+ \ell=y_1d_2-y_2d_1.
+ \tag{4.845dc_14p}
+\]
+The congruences \(Ax_iy_i\equiv-1\pmod {d_i}\) give, by direct
+expansion,
+\[
+ \boxed{
+ d_1\mid Ak\ell+d_2^2,
+ \qquad
+ d_2\mid Ak\ell+d_1^2.}
+ \tag{4.845dc_14q}
+\]
+For example, \(A=5\), \((d_1,x_1)=(7,2)\), and
+\((d_2,x_2)=(11,3)\) give \((y_1,y_2)=(2,8)\),
+\((k,\ell)=(1,-34)\), and the two divisible integers
+\(-49\) and \(-121\).
+
+When \((d_1,d_2)=1\), fixed \((d_1,d_2,k)\) determines the pair
+\((x_1,x_2)\) uniquely in the reduced residue ranges, and the same is
+true of \((y_1,y_2)\) for fixed \(\ell\).  Conversely, after fixing
+\((k,\ell,d_2)\), the first denominator must be a divisor of
+\(Ak\ell+d_2^2\).  Therefore an absolute local-density estimate for
+the two-dimensional point set is a quadratic-divisor majorant of the
+form
+\[
+ \sum_{k,\ell,d_2}
+ \sum_{d_1\mid Ak\ell+d_2^2}1,
+ \tag{4.845dc_14r}
+\]
+with the non-coprime layers obtained by the already recorded gcd
+extraction.
+
+This is not a new source of the missing saving.  Taking absolute values
+in (4.845dc_14r) removes the two Möbius signs before the divisor
+estimate.  After dyadic reindexing it is the same DCV/quadratic-divisor
+route audited in Sections 4.55--4.68.  On its hard face, the published
+BBLR error exponent is \(5/2\) against target \(2\), hence the same
+\(T^{1/2}\) deficit in (4.609)--(4.610).
+
+Consequently the direct geometric route improves the *location* of the
+gate but does not close it by ordinary spacing: the Ramanujan fibre is
+summed exactly, and then the Möbius signs must remain inside the joint
+\((k,\ell,d_1,d_2)\)-sum.  The admissible next input is a signed
+two-coordinate large sieve or the pre-Cauchy slope square function
+(4.465), not the positive collision count (4.845dc_14r).
+
+The interface \`coupled_farey_collision_audit\` checks
+(4.845dc_14o)--(4.845dc_14q) on exact integer data and explicitly keeps
+both the beyond-BBLR and joint-large-sieve flags false.
+
+
 ### 4.109zg Seminorm-stable PEVP would sum every AFE and transform tail shell
 
 The tail \(\mathcal R_{\rm tail}^{(B)}\) in (5.2a) of the exact

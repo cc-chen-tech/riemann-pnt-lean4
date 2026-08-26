@@ -2099,6 +2099,29 @@ class ExactLevelGeometricFiberAudit:
 
 
 @dataclass(frozen=True)
+class CoupledFareyCollisionAudit:
+    scaling_level: int
+    first_denominator: int
+    first_numerator: int
+    second_denominator: int
+    second_numerator: int
+    first_inverse_numerator: int
+    second_inverse_numerator: int
+    first_determinant_coordinate: int
+    second_determinant_coordinate: int
+    first_quadratic_divisor_integer: int
+    second_quadratic_divisor_integer: int
+    first_denominator_divides_first_quadratic_integer: bool
+    second_denominator_divides_second_quadratic_integer: bool
+    denominators_are_coprime: bool
+    coordinate_pairs_unique_for_fixed_determinants: bool
+    absolute_collision_count_becomes_quadratic_divisor_majorant: bool
+    absolute_majorant_discards_mobius_signs: bool
+    new_saving_beyond_bblr_proved: bool
+    joint_two_coordinate_large_sieve_proved: bool
+
+
+@dataclass(frozen=True)
 class MWKFTailShellAggregationAudit:
     tail_log_start: Fraction
     seminorm_decay_order: Fraction
@@ -11411,6 +11434,85 @@ def exact_level_geometric_fiber_audit(
         ),
         joint_two_coordinate_bound_still_required=True,
         pevp_proved=False,
+    )
+
+
+def coupled_farey_collision_audit(
+    *,
+    scaling_level: int,
+    first_denominator: int,
+    first_numerator: int,
+    second_denominator: int,
+    second_numerator: int,
+) -> CoupledFareyCollisionAudit:
+    """Convert a two-coordinate Farey collision to divisor equations.
+
+    For a point with denominator ``d`` and first numerator ``x``, put
+    ``y = -(A*x)^(-1) mod d``.  Thus ``A*x*y == -1 (mod d)`` and the
+    two phase coordinates are ``x/d`` and ``y/d``.  For two points set
+
+    ``k = x1*d2-x2*d1`` and ``l = y1*d2-y2*d1``.
+
+    Direct expansion gives
+
+    ``d1 | A*k*l+d2^2`` and ``d2 | A*k*l+d1^2``.
+
+    Hence an absolute local-density proof is a quadratic-divisor
+    majorant.  This exact change of variables does not preserve the
+    Möbius cancellation needed to improve the audited BBLR hard face.
+    """
+    values = (
+        scaling_level,
+        first_denominator,
+        first_numerator,
+        second_denominator,
+        second_numerator,
+    )
+    if not all(isinstance(value, int) for value in values):
+        raise TypeError("all inputs must be integers")
+    if scaling_level < 1 or min(first_denominator, second_denominator) < 2:
+        raise ValueError("level must be positive and denominators at least two")
+    a = scaling_level
+    d1 = first_denominator
+    d2 = second_denominator
+    x1 = first_numerator % d1
+    x2 = second_numerator % d2
+    if gcd(a, d1 * d2) != 1:
+        raise ValueError("scaling level must be coprime to both denominators")
+    if gcd(x1, d1) != 1 or gcd(x2, d2) != 1:
+        raise ValueError("each numerator must be a unit modulo its denominator")
+
+    y1 = (-pow((a * x1) % d1, -1, d1)) % d1
+    y2 = (-pow((a * x2) % d2, -1, d2)) % d2
+    determinant_x = x1 * d2 - x2 * d1
+    determinant_y = y1 * d2 - y2 * d1
+    quadratic_1 = a * determinant_x * determinant_y + d2 * d2
+    quadratic_2 = a * determinant_x * determinant_y + d1 * d1
+    coprime_denominators = gcd(d1, d2) == 1
+    return CoupledFareyCollisionAudit(
+        scaling_level=a,
+        first_denominator=d1,
+        first_numerator=x1,
+        second_denominator=d2,
+        second_numerator=x2,
+        first_inverse_numerator=y1,
+        second_inverse_numerator=y2,
+        first_determinant_coordinate=determinant_x,
+        second_determinant_coordinate=determinant_y,
+        first_quadratic_divisor_integer=quadratic_1,
+        second_quadratic_divisor_integer=quadratic_2,
+        first_denominator_divides_first_quadratic_integer=(
+            quadratic_1 % d1 == 0
+        ),
+        second_denominator_divides_second_quadratic_integer=(
+            quadratic_2 % d2 == 0
+        ),
+        denominators_are_coprime=coprime_denominators,
+        coordinate_pairs_unique_for_fixed_determinants=coprime_denominators,
+        absolute_collision_count_becomes_quadratic_divisor_majorant=True,
+        absolute_majorant_discards_mobius_signs=True,
+        new_saving_beyond_bblr_proved=False,
+        joint_two_coordinate_large_sieve_proved=False,
     )
 
 
