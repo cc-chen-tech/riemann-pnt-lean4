@@ -27,6 +27,23 @@ class CoefficientFirstScales:
 
 
 @dataclass(frozen=True)
+class PartialDiagonalCoefficientFirstAudit:
+    mollifier_exponent: Fraction
+    zeta_cutoff_exponent: Fraction
+    product_exponent: Fraction
+    complete_von_mangoldt_region: Fraction
+    available_divisor_min_exponent: Fraction
+    available_divisor_max_exponent: Fraction
+    omitted_small_divisor_ceiling_exponent: Fraction
+    product_below_mollifier_cutoff: bool
+    finite_zeta_cofactor_boundary_active: bool
+    mollifier_upper_boundary_active: bool
+    pure_von_mangoldt_replacement_valid: bool
+    large_mobius_divisor_tail_retained: bool
+    boundary_correction_required: bool
+
+
+@dataclass(frozen=True)
 class ZeroRouteAudit:
     zero_residue_amplification: Fraction
     origin_interval_zero_free_boundary: Fraction
@@ -56,6 +73,58 @@ def coefficient_first_scales(
         ),
         product_support=mollifier_exponent + zeta_cutoff_exponent,
         euler_maclaurin_pole=zeta_cutoff_exponent / 2 - 1,
+    )
+
+
+def partial_diagonal_coefficient_first_audit(
+    *,
+    mollifier_exponent: Fraction,
+    zeta_cutoff_exponent: Fraction,
+    product_exponent: Fraction,
+) -> PartialDiagonalCoefficientFirstAudit:
+    """Locate a partial-diagonal product inside the finite convolution.
+
+    For ``u=T^p``, ``N=T^n`` and a finite zeta factor ``m<=T^x``, a
+    factorization ``u=d*m`` is visible only when
+
+    ``p-x <= log_T(d) <= min(p,n)``.
+
+    Thus products above the complete range ``min(n,x)`` retain a truncated
+    Möbius divisor tail rather than the pure ``Lambda(u)/log(N)``
+    coefficient.  This is an exponent ledger only; endpoint constants stay
+    in the exact finite divisor conditions.
+    """
+
+    n_exp = Fraction(mollifier_exponent)
+    x_exp = Fraction(zeta_cutoff_exponent)
+    p_exp = Fraction(product_exponent)
+    if min(n_exp, x_exp, p_exp) < 0:
+        raise ValueError("coefficient-first exponents must be nonnegative")
+    if p_exp > n_exp + x_exp:
+        raise ValueError("the product lies outside the finite convolution support")
+
+    complete_region = min(n_exp, x_exp)
+    available_min = max(Fraction(0), p_exp - x_exp)
+    available_max = min(p_exp, n_exp)
+    pure_lambda = p_exp <= complete_region
+    finite_zeta_boundary = p_exp > x_exp
+    mollifier_boundary = p_exp > n_exp
+    return PartialDiagonalCoefficientFirstAudit(
+        mollifier_exponent=n_exp,
+        zeta_cutoff_exponent=x_exp,
+        product_exponent=p_exp,
+        complete_von_mangoldt_region=complete_region,
+        available_divisor_min_exponent=available_min,
+        available_divisor_max_exponent=available_max,
+        omitted_small_divisor_ceiling_exponent=available_min,
+        product_below_mollifier_cutoff=(p_exp <= n_exp),
+        finite_zeta_cofactor_boundary_active=finite_zeta_boundary,
+        mollifier_upper_boundary_active=mollifier_boundary,
+        pure_von_mangoldt_replacement_valid=pure_lambda,
+        large_mobius_divisor_tail_retained=(
+            finite_zeta_boundary and available_min < available_max
+        ),
+        boundary_correction_required=(not pure_lambda),
     )
 
 

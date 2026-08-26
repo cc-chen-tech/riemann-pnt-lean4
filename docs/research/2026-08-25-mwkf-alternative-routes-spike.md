@@ -9347,6 +9347,156 @@ averaged Chowla discards this stronger origin.
 The finite helper `bblr_principal_incidence_solution_line` verifies
 (4.621zac) and the short-support implication (4.621zad) exactly.
 
+The partial diagonal can now be pulled completely back through the two
+BBLR signs before the approximation in equation (14).  Define the exact
+product coefficients
+
+\[
+ \mathcal A(u)=\sum_{am_1=u}\alpha_a
+   W_1\!\left(\frac{m_1}{M_1}\right),\qquad
+ \mathcal B(v)=\sum_{bn_1=v}\beta_b
+   W_3\!\left(\frac{n_1}{N_1}\right).
+\tag{4.621zade}
+\]
+
+On \(m_2=n_2=r\), the plus sign is \(u>v\), the minus sign is
+\(u<v\), and in both cases the positive original shift is
+\(h=r|u-v|\).  Therefore the two signs recombine exactly as
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr S_{\rm pd,+}+\mathscr S_{\rm pd,-}
+  ={}&\sum_{r\ge1}W_2\!\left(\frac r{M_2}\right)
+                    W_4\!\left(\frac r{N_2}\right)\\
+    &\times\sum_{u\ne v}\mathcal A(u)\mathcal B(v)
+       W_0\!\left(\frac{r|u-v|}{H}\right).
+ \end{aligned}}
+\tag{4.621zadf}
+\]
+
+The omitted \(u=v\) line is exactly the original \(h=0\) diagonal,
+which is already accounted for before the off-diagonal BBLR problem.
+There is no Poisson truncation or equation-(14) weight-replacement error
+in (4.621zadf), because it is an identity inside the original
+\(\mathcal S_\pm\).
+
+At the hard scale, (4.621zadf) has
+\(u,v\asymp T^{3/2}\), \(r\asymp T^{1/2}\), and hence the weight forces
+
+\[
+ |u-v|\asymp H/r\asymp T^{1/2}.
+\tag{4.621zadg}
+\]
+
+Thus the principal mode is now an explicit additive-band bilinear form,
+not an unspecified reciprocal-phase packet.  This alone does not make it
+a reciprocal-LCM form or prove a power saving: the next exact task is to
+sum its labelled copies over all AFE directions and BBLR orderings and
+compare the resulting kernel with the registered diagonal and reflected
+boundary.
+
+The finite helper `bblr_partial_diagonal_correlation_sides` verifies
+(4.621zade)--(4.621zadf), keeps the common second factor \(r\), partitions
+every unequal product pair into exactly one sign, and records both
+`analytic_afe_packet_exhaustive=False` and
+`partial_diagonal_target_bound_proved=False`.
+
+One must not now replace \(\mathcal A,\mathcal B\) by pure von-Mangoldt
+coefficients.  After all zeta dyadic partitions are recombined, one side
+has the finite coefficient
+
+\[
+ c_{X,N}(u)=
+ \sum_{\substack{d\mid u\\d\le N,\ u/d\le X}}
+ \mu(d)\left(1-\frac{\log d}{\log N}\right).
+\tag{4.621zadh}
+\]
+
+The complete identity \(c_{X,N}(u)=\Lambda(u)/\log N\) is guaranteed
+only for \(u\le\min(X,N)\).  In the present hard cell,
+
+\[
+ N=T^3,\qquad X=T^{1/2},\qquad u\asymp T^{3/2},
+\]
+
+so the finite-zeta boundary is active.  The condition \(u/d\le X\)
+forces the actually present mollifier divisors into
+
+\[
+ \boxed{T\ \lesssim d\lesssim T^{3/2},}
+\tag{4.621zadi}
+\]
+
+while the omitted part of the complete divisor convolution has
+\(d<T\).  There is no upper mollifier-cutoff defect here because
+\(u<N\).  Equivalently, the exact coefficient-first identity is
+
+\[
+ (\log N)c_{X,N}(u)
+ =\Lambda(u)+
+  \sum_{\substack{d\mid u\\u/d>X}}
+     \mu(d)\log\frac dN,
+\tag{4.621zadj}
+\]
+
+and the second term cannot be dropped at \(u\asymp T^{3/2}\).
+Consequently the principal additive-band form retains a large-divisor
+Möbius tail on both sides; the apparent complete \(\Lambda\)-collapse is
+not available from the standard one-sided AFE.
+
+The exponent helper `partial_diagonal_coefficient_first_audit` records
+the complete range \(1/2\), the available divisor interval \([1,3/2]\),
+and `pure_von_mangoldt_replacement_valid=False`.  This agrees with the
+exact formal-prime-vector identities in the coefficient-first audit and
+introduces no new asymptotic assertion.
+
+The dangerous additive principal mode can nevertheless be isolated
+without estimating it.  Embed one finite product box in
+\(\mathbb Z/\mathfrak Q\mathbb Z\), with \(\mathfrak Q\) larger than
+twice the product cutoff so that signed shifts do not alias, and extend
+the diagonal-excluded shift
+kernel by \(K(0)=0\), and first sum every labelled AFE direction and BBLR
+ordering with its sign.  Put
+
+\[
+ \bar K=\frac1{\mathfrak Q}\sum_{c\bmod\mathfrak Q}K(c),
+ \qquad K^\circ(c)=K(c)-\bar K.
+\tag{4.621zadk}
+\]
+
+Then \(\sum_cK^\circ(c)=0\) and exact cyclic reindexing gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{u,v}\mathcal A(u)\mathcal B(v)K(u-v)
+ ={}&\bar K
+   \left(\sum_u\mathcal A(u)\right)
+   \left(\sum_v\mathcal B(v)\right)\\
+ &+\sum_{u,v}\mathcal A(u)\mathcal B(v)K^\circ(u-v).
+ \end{aligned}}
+\tag{4.621zadl}
+\]
+
+Thus the partial diagonal has its own explicit constant Fourier mode and
+a genuinely zero-mean additive remainder.  The next analytic stage has a
+sharp trichotomy:
+
+1. the fully derived AFE/ordering kernel satisfies \(\bar K=0\);
+2. the first term of (4.621zadl) cancels a registered diagonal or boundary
+   term;
+3. it is a secondary main term that must be retained and bounded or added
+   to the asymptotic.
+
+No one of these alternatives is assumed.  In particular, centering each
+ordering separately would be invalid because their constant modes may
+cancel only after the signed packet sum.
+
+The finite helper `additive_band_zero_mode_sides` verifies (4.621zadk)--
+(4.621zadl) with exact rationals, retains every supplied packet label, and
+keeps `analytic_afe_ordering_kernel_derived=False`.
+
 The BBLR integration scale is exactly \(x\asymp T^{-1}\), matching
 \(r_0/Y\).  Restricting to
 \(|r-r_0|\le Y/(12L)\) leaves \(\asymp T^{1/2}\) values of \(r\), and

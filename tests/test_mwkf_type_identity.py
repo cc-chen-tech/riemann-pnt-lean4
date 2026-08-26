@@ -998,6 +998,69 @@ def test_bblr_principal_gap_is_a_partial_diagonal_solution_line() -> None:
     assert not translated.partial_diagonal_m2_equals_n2_equals_r
 
 
+def test_bblr_partial_diagonal_reindexes_as_additive_band_correlation() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_partial_diagonal_correlation_sides",
+        None,
+    )
+    assert helper is not None, "BBLR partial-diagonal correlation is missing"
+
+    sides = helper(
+        left_outer_weights={1: F(2), 2: F(-1)},
+        left_inner_weights={3: F(4)},
+        right_outer_weights={1: F(3)},
+        right_inner_weights={2: F(5), 3: F(1), 9: F(2)},
+        left_second_weights={1: F(2), 2: F(1)},
+        right_second_weights={1: F(3), 2: F(-1)},
+        shift_weights={h: F(1) for h in (1, 2, 3, 4, 6, 8, 12)},
+    )
+
+    assert sides.direct_plus_sum == F(240)
+    assert sides.direct_minus_sum == F(120)
+    assert sides.direct_combined_sum == F(360)
+    assert sides.product_pair_correlation_sum == F(360)
+    assert sides.factorized_to_product_pair_identity_verified
+    assert sides.plus_minus_exhaust_every_unequal_product_pair
+    assert sides.common_second_factor_retained
+    assert sides.equal_product_diagonal_excluded
+    assert not sides.analytic_afe_packet_exhaustive
+    assert not sides.partial_diagonal_target_bound_proved
+
+
+def test_additive_band_extracts_its_constant_fourier_mode_exactly() -> None:
+    helper = getattr(
+        type_identity,
+        "additive_band_zero_mode_sides",
+        None,
+    )
+    assert helper is not None, "additive-band zero-mode helper is missing"
+
+    sides = helper(
+        modulus=5,
+        left_coefficients={0: F(2), 1: F(-1), 3: F(4)},
+        right_coefficients={0: F(3), 2: F(5)},
+        labelled_shift_kernels={
+            "main/order-1": {1: F(2), 2: F(-1)},
+            "dual/order-2": {1: F(-1), 3: F(4)},
+        },
+    )
+
+    assert sides.direct_band_sum == F(105)
+    assert sides.combined_kernel_mean == F(4, 5)
+    assert sides.constant_mode_contribution == F(32)
+    assert sides.centered_band_sum == F(73)
+    assert sides.recombined_band_sum == F(105)
+    assert sides.centered_kernel_shift_sum == F(0)
+    assert sides.zero_mode_extraction_identity_verified
+    assert sides.packet_labels_retained == (
+        "dual/order-2",
+        "main/order-1",
+    )
+    assert not sides.combined_packet_zero_mode_vanishes
+    assert not sides.analytic_afe_ordering_kernel_derived
+
+
 def test_bblr_master_partitions_exactly_by_outer_product_gap() -> None:
     helper = getattr(
         type_identity,

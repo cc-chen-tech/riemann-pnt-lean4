@@ -10,6 +10,7 @@ from scripts.mwkf_coefficient_first import (
     formal_log,
     formal_von_mangoldt,
     missing_convolution_divisors,
+    partial_diagonal_coefficient_first_audit,
     scaled_boundary_correction,
     scaled_truncated_product_coefficient,
     scaled_zeta_mollifier_coefficient,
@@ -73,6 +74,25 @@ def test_standard_zeta_afe_only_has_a_half_power_complete_region() -> None:
     assert scales.complete_lambda_region == F(1, 2)
     assert scales.product_support == F(7, 2)
     assert scales.euler_maclaurin_pole == F(-3, 4)
+
+
+def test_hard_partial_diagonal_is_a_large_mobius_divisor_tail() -> None:
+    audit = partial_diagonal_coefficient_first_audit(
+        mollifier_exponent=F(3),
+        zeta_cutoff_exponent=F(1, 2),
+        product_exponent=F(3, 2),
+    )
+
+    assert audit.complete_von_mangoldt_region == F(1, 2)
+    assert audit.available_divisor_min_exponent == F(1)
+    assert audit.available_divisor_max_exponent == F(3, 2)
+    assert audit.omitted_small_divisor_ceiling_exponent == F(1)
+    assert audit.product_below_mollifier_cutoff
+    assert audit.finite_zeta_cofactor_boundary_active
+    assert not audit.mollifier_upper_boundary_active
+    assert not audit.pure_von_mangoldt_replacement_valid
+    assert audit.large_mobius_divisor_tail_retained
+    assert audit.boundary_correction_required
 
 
 def test_truncating_zeta_at_the_mollifier_length_has_a_large_pole_term() -> None:

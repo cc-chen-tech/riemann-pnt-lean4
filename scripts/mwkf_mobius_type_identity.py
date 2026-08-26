@@ -215,6 +215,40 @@ class BBLRPrincipalIncidenceSolutionLine:
 
 
 @dataclass(frozen=True)
+class BBLRPartialDiagonalCorrelation:
+    direct_plus_sum: Fraction
+    direct_minus_sum: Fraction
+    direct_combined_sum: Fraction
+    product_pair_correlation_sum: Fraction
+    active_product_pair_rows: tuple[
+        tuple[str, int, int, int, int, Fraction], ...
+    ]
+    factorized_to_product_pair_identity_verified: bool
+    plus_minus_exhaust_every_unequal_product_pair: bool
+    common_second_factor_retained: bool
+    equal_product_diagonal_excluded: bool
+    analytic_afe_packet_exhaustive: bool
+    partial_diagonal_target_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class AdditiveBandZeroMode:
+    modulus: int
+    direct_band_sum: Fraction
+    combined_kernel_mean: Fraction
+    constant_mode_contribution: Fraction
+    centered_band_sum: Fraction
+    recombined_band_sum: Fraction
+    centered_kernel_shift_sum: Fraction
+    combined_kernel_entries: tuple[tuple[int, Fraction], ...]
+    centered_kernel_entries: tuple[tuple[int, Fraction], ...]
+    packet_labels_retained: tuple[str, ...]
+    zero_mode_extraction_identity_verified: bool
+    combined_packet_zero_mode_vanishes: bool
+    analytic_afe_ordering_kernel_derived: bool
+
+
+@dataclass(frozen=True)
 class BBLRNearDiagonalOuterCorrelation:
     direct_sum: Fraction
     reindexed_sum: Fraction
@@ -1398,6 +1432,251 @@ def bblr_principal_incidence_solution_line(
             short_support and left_parameter == 0
         ),
         partial_diagonal_m2_equals_n2_equals_r=partial_diagonal,
+    )
+
+
+def bblr_partial_diagonal_correlation_sides(
+    *,
+    left_outer_weights: dict[int, Fraction],
+    left_inner_weights: dict[int, Fraction],
+    right_outer_weights: dict[int, Fraction],
+    right_inner_weights: dict[int, Fraction],
+    left_second_weights: dict[int, Fraction],
+    right_second_weights: dict[int, Fraction],
+    shift_weights: dict[int, Fraction],
+) -> BBLRPartialDiagonalCorrelation:
+    """Reindex both BBLR signs on the exact partial diagonal ``m2=n2``.
+
+    Write ``u=a*m1`` and ``v=b*n1``.  On the common second factor ``r``,
+    the original shifted equation has positive shift
+    ``h=r*abs(u-v)``.  The plus orientation is ``u>v`` and the minus
+    orientation is ``u<v``.  Summing both therefore gives the exact
+    additive-band product-pair correlation
+
+    ``sum_r R2(r)R4(r) sum_{u!=v} A(u)B(v)W0(r*abs(u-v))``.
+
+    The helper performs only finite reindexing.  It neither constructs an
+    exhaustive analytic AFE packet nor estimates the resulting band form.
+    """
+
+    families = (
+        left_outer_weights,
+        left_inner_weights,
+        right_outer_weights,
+        right_inner_weights,
+        left_second_weights,
+        right_second_weights,
+        shift_weights,
+    )
+    if any(not family for family in families):
+        raise ValueError("all BBLR partial-diagonal weight families are required")
+    if any(index <= 0 for family in families for index in family):
+        raise ValueError("BBLR partial-diagonal indices must be positive")
+
+    common_second_indices = tuple(
+        sorted(set(left_second_weights) & set(right_second_weights))
+    )
+    if not common_second_indices:
+        raise ValueError("the two second-factor supports must intersect")
+
+    direct_plus = Fraction(0)
+    direct_minus = Fraction(0)
+    for left_outer, left_outer_weight in left_outer_weights.items():
+        for left_inner, left_inner_weight in left_inner_weights.items():
+            left_product = left_outer * left_inner
+            left_weight = Fraction(left_outer_weight) * Fraction(
+                left_inner_weight
+            )
+            for right_outer, right_outer_weight in right_outer_weights.items():
+                for right_inner, right_inner_weight in right_inner_weights.items():
+                    right_product = right_outer * right_inner
+                    if left_product == right_product:
+                        continue
+                    right_weight = Fraction(right_outer_weight) * Fraction(
+                        right_inner_weight
+                    )
+                    orientation = left_product > right_product
+                    for common_second in common_second_indices:
+                        shift = (
+                            abs(left_product - right_product) * common_second
+                        )
+                        contribution = (
+                            left_weight
+                            * right_weight
+                            * Fraction(left_second_weights[common_second])
+                            * Fraction(right_second_weights[common_second])
+                            * Fraction(shift_weights.get(shift, Fraction(0)))
+                        )
+                        if orientation:
+                            direct_plus += contribution
+                        else:
+                            direct_minus += contribution
+
+    left_products: dict[int, Fraction] = {}
+    for outer, outer_weight in left_outer_weights.items():
+        for inner, inner_weight in left_inner_weights.items():
+            product = outer * inner
+            left_products[product] = left_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    right_products: dict[int, Fraction] = {}
+    for outer, outer_weight in right_outer_weights.items():
+        for inner, inner_weight in right_inner_weights.items():
+            product = outer * inner
+            right_products[product] = right_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    correlation = Fraction(0)
+    active_rows: list[tuple[str, int, int, int, int, Fraction]] = []
+    for left_product, left_weight in sorted(left_products.items()):
+        for right_product, right_weight in sorted(right_products.items()):
+            if left_product == right_product:
+                continue
+            orientation = "plus" if left_product > right_product else "minus"
+            for common_second in common_second_indices:
+                shift = abs(left_product - right_product) * common_second
+                contribution = (
+                    left_weight
+                    * right_weight
+                    * Fraction(left_second_weights[common_second])
+                    * Fraction(right_second_weights[common_second])
+                    * Fraction(shift_weights.get(shift, Fraction(0)))
+                )
+                correlation += contribution
+                if contribution:
+                    active_rows.append(
+                        (
+                            orientation,
+                            left_product,
+                            right_product,
+                            common_second,
+                            shift,
+                            contribution,
+                        )
+                    )
+
+    direct_combined = direct_plus + direct_minus
+    return BBLRPartialDiagonalCorrelation(
+        direct_plus_sum=direct_plus,
+        direct_minus_sum=direct_minus,
+        direct_combined_sum=direct_combined,
+        product_pair_correlation_sum=correlation,
+        active_product_pair_rows=tuple(active_rows),
+        factorized_to_product_pair_identity_verified=(
+            direct_combined == correlation
+        ),
+        plus_minus_exhaust_every_unequal_product_pair=True,
+        common_second_factor_retained=True,
+        equal_product_diagonal_excluded=True,
+        analytic_afe_packet_exhaustive=False,
+        partial_diagonal_target_bound_proved=False,
+    )
+
+
+def additive_band_zero_mode_sides(
+    *,
+    modulus: int,
+    left_coefficients: dict[int, Fraction],
+    right_coefficients: dict[int, Fraction],
+    labelled_shift_kernels: dict[str, dict[int, Fraction]],
+) -> AdditiveBandZeroMode:
+    """Extract the constant Fourier mode of a labelled cyclic band kernel.
+
+    All packet kernels are summed with their signs before centering.  For
+    ``Kbar=Q^(-1)*sum_c K(c)`` the finite identity is
+
+    ``sum A(u)B(v)K(u-v)``
+    ``= Kbar*sum(A)*sum(B) + sum A(u)B(v)*(K(u-v)-Kbar)``.
+
+    The centered kernel has exact zero shift sum.  Whether the actual AFE
+    and BBLR ordering packets have zero combined mean remains an analytic
+    stage-map question and is deliberately not inferred here.
+    """
+
+    if modulus <= 1:
+        raise ValueError("the additive-band modulus must exceed one")
+    if not left_coefficients or not right_coefficients:
+        raise ValueError("both additive-band coefficient families are required")
+    if not labelled_shift_kernels:
+        raise ValueError("at least one labelled shift kernel is required")
+    if any(not label for label in labelled_shift_kernels):
+        raise ValueError("every additive-band packet must be labelled")
+    if any(
+        not 0 <= index < modulus
+        for family in (left_coefficients, right_coefficients)
+        for index in family
+    ):
+        raise ValueError("coefficient indices must be residues modulo Q")
+    if any(
+        not 0 <= residue < modulus
+        for kernel in labelled_shift_kernels.values()
+        for residue in kernel
+    ):
+        raise ValueError("shift-kernel indices must be residues modulo Q")
+
+    combined = {residue: Fraction(0) for residue in range(modulus)}
+    for kernel in labelled_shift_kernels.values():
+        for residue, weight in kernel.items():
+            combined[residue] += Fraction(weight)
+
+    left = {
+        residue: Fraction(weight)
+        for residue, weight in left_coefficients.items()
+    }
+    right = {
+        residue: Fraction(weight)
+        for residue, weight in right_coefficients.items()
+    }
+    direct = sum(
+        (
+            left_weight
+            * right_weight
+            * combined[(left_residue - right_residue) % modulus]
+            for left_residue, left_weight in left.items()
+            for right_residue, right_weight in right.items()
+        ),
+        Fraction(0),
+    )
+    kernel_mean = sum(combined.values(), Fraction(0)) / modulus
+    centered = {
+        residue: weight - kernel_mean
+        for residue, weight in combined.items()
+    }
+    constant_mode = (
+        kernel_mean
+        * sum(left.values(), Fraction(0))
+        * sum(right.values(), Fraction(0))
+    )
+    centered_band = sum(
+        (
+            left_weight
+            * right_weight
+            * centered[(left_residue - right_residue) % modulus]
+            for left_residue, left_weight in left.items()
+            for right_residue, right_weight in right.items()
+        ),
+        Fraction(0),
+    )
+    recombined = constant_mode + centered_band
+    centered_shift_sum = sum(centered.values(), Fraction(0))
+    return AdditiveBandZeroMode(
+        modulus=modulus,
+        direct_band_sum=direct,
+        combined_kernel_mean=kernel_mean,
+        constant_mode_contribution=constant_mode,
+        centered_band_sum=centered_band,
+        recombined_band_sum=recombined,
+        centered_kernel_shift_sum=centered_shift_sum,
+        combined_kernel_entries=tuple(sorted(combined.items())),
+        centered_kernel_entries=tuple(sorted(centered.items())),
+        packet_labels_retained=tuple(sorted(labelled_shift_kernels)),
+        zero_mode_extraction_identity_verified=(
+            direct == recombined and centered_shift_sum == 0
+        ),
+        combined_packet_zero_mode_vanishes=(kernel_mean == 0),
+        analytic_afe_ordering_kernel_derived=False,
     )
 
 
