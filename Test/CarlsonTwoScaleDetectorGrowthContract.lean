@@ -26,5 +26,14 @@ example :
             Real.log ((31 / 8 : ℝ) / (123 / 32 : ℝ)) :=
   exists_regularizedTwoScaleCarlsonFactorDiskZeroMass_le_logPolynomial
 
+example :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ {Y0 Y1 : ℕ}, 2 ≤ Y0 → Y0 < Y1 →
+      ∀ {T : ℝ}, 5 ≤ T →
+        regularizedTwoScaleCarlsonFactorDiskZeroMass Y0 Y1 T ≤
+          Real.log (C * (Y1 : ℝ) ^ 2 * (T + 14) ^ 10) /
+            Real.log ((31 / 8 : ℝ) / (123 / 32 : ℝ)) :=
+  exists_regularizedTwoScaleCarlsonFactorDiskZeroMass_le_logPolynomial_of_two_le_inner
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

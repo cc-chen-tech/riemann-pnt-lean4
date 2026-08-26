@@ -307,9 +307,14 @@ hypotheses above.  The quantitative `1/3` bound is essential because it
 supplies `|G(c)|>=1`; mere nonvanishing would not give (6.2b) with a uniform
 logarithmic majorant.  These Jensen, factorization, Borel--Caratheodory, and
 finite-pigeonhole lemmas are already formalized in
-`CarlsonDetectorGrowth.lean`; that file still specializes them to the sharp
-detector, so a generic Lean wrapper remains necessary.  The two-scale
-mollifier satisfies all four hypotheses.
+`CarlsonDetectorGrowth.lean`.  The two-scale support bound, the explicit
+far-right estimate `|F(4+it)|<=5/36<1/3`, the fixed-circle growth bound,
+and the resulting unconditional Jensen divisor-mass bound are now
+formalized in `CarlsonTwoScaleFarRight.lean` and
+`CarlsonTwoScaleDetectorGrowth.lean`.  The remaining generic Lean wrapper
+starts after Jensen: it must factor the local divisor, perform the radial
+and height pigeonhole selections, and transfer the Borel--Caratheodory
+bound to the horizontal logarithmic derivative.
 
 Choose the bottom side in `[U-1,U]` and the top side in `[2U,2U+1]`, so the
 rectangle contains every zero with ordinate in `[U,2U]`.  Apply Littlewood's
@@ -371,21 +376,24 @@ route, not a claim that the saving is uniform in the mollifier length.
 
 ## 8. Lean translation boundary
 
-The paper proof reduces the remaining formal work to the following concrete
-lemmas, none of which may be replaced by a final-density axiom:
+The finite two-scale mollifier/detector, identity (2.1), cancellation (4.1),
+the explicit fixed-right estimate `5/36`, fixed-circle growth, and
+unconditional Jensen local zero-mass bound are formalized.  The paper proof
+leaves the following concrete Lean lemmas, none of which may be replaced by
+a final-density axiom:
 
-1. a finite coefficient-family mollifier and detector, with the two-scale
-   identity (2.1) and coefficient cancellation (4.1);
-2. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
+1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-3. the pole-free `L^2(R)`-valued three-lines lemma (5.3) and the finite
+2. the pole-free `L^2(R)`-valued three-lines lemma (5.3) and the finite
    Gaussian covering argument;
-4. the coefficient-generic fixed-right Carlson contour lemma stated in
-   Section 6.
+3. the post-Jensen coefficient-generic factorization,
+   Borel--Caratheodory, height-selection, and horizontal contour transfer
+   stated in Section 6;
+4. the dyadic assembly of those inputs into the unconditional
+   `N(2/3,T)` certificate and its connection to the forcing chain.
 
-The arithmetic and exponent identities are already formalized.  Until all
-four analytic items are proved in Lean without new mathematical axioms, the
-repository-level improved density certificate remains conditional even
+Until all four remaining items are proved in Lean without new mathematical
+axioms, the repository-level improved density certificate remains conditional even
 though the paper proof above is unconditional modulo the cited published
 Conrey theorem.
 
