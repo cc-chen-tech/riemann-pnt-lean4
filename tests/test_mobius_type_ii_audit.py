@@ -34,6 +34,7 @@ from scripts.audit_mobius_type_ii import (
     ShiftedPrimeMobiusCoordinates,
     ShiftedPrimeMobiusLedger,
     SquarefreeScalarGcdStratum,
+    TransitionArchimedeanScaleLedger,
     TransitionNumeratorCompletionLedger,
     TransitionNumeratorDualCoordinates,
     WrightFactorSavings,
@@ -178,6 +179,7 @@ from scripts.audit_mobius_type_ii import (
     squarefree_scalar_gcd_stratum,
     squarefree_scalar_stratum_completed_sum,
     squarefree_scalar_stratum_divisor_spectrum,
+    transition_archimedean_scale_ledger,
     transition_numerator_completion_ledger,
     transition_numerator_dual_coordinates,
     two_sided_centered_kloosterman_crt_terms,
@@ -964,6 +966,27 @@ def test_centered_transition_diagonal_is_not_a_vanishing_d_major_arc() -> None:
                 length,
             ) == F(length) - F(length * length, modulus - 1)
     assert centered_transition_diagonal_mass(11, 3) == F(21, 10)
+
+
+def test_actual_transition_archimedean_kernel_has_only_bounded_frequencies() -> None:
+    assert transition_archimedean_scale_ledger(
+        r=F(3),
+        s=F(3),
+        first_zeta=F(1, 2),
+        second_zeta=F(1, 2),
+        determinant=F(5, 2),
+        numerator=F(5, 2),
+        scalar=F(1, 2),
+        reduced_determinant=F(2),
+        reduced_modulus=F(5, 2),
+    ) == TransitionArchimedeanScaleLedger(
+        logarithmic_phase=F(0),
+        numerator_fourier_center=F(0),
+        afe_argument=F(0),
+        zeta_balance=F(0),
+        scalar_dilation=F(0),
+        poisson_sample=F(0),
+    )
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

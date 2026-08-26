@@ -7212,6 +7212,71 @@ central major arc.  A classical minor-arc estimate cannot be applied to
 the whole packet unless an additional, weight-specific vanishing identity
 is proved; none follows from the exact centering.
 
+### 9.45 The actual archimedean weight has no power-frequency reserve
+
+It remains logically possible that the particular weight inherited from
+the AFE has an accidental zero moment even though the centered finite
+algebra does not force one.  The exact normalization (5.13a)--(5.13b)
+shows, however, that no such saving can come from nonstationary phase or
+integration by parts at the transition corner.  There
+
+\[
+ R=S=T^3,\qquad M=K=T^{1/2},\qquad L=H=T^{5/2},
+\]
+
+and every dimensionless parameter in the original coupled kernel has
+power exponent zero:
+
+\[
+\boxed{
+ T\lambda_0=\frac{TL}{MR}\asymp1,\qquad
+ \omega_0=\frac{HM}{S}\asymp1,\qquad
+ \chi_0=\frac{M^2R}{ST}\asymp1,\qquad
+ \frac{KS}{MR}\asymp1.}
+\tag{9.287}
+\]
+
+The scalar transition and the new Poisson sample are on the same fixed
+scale.  With \(g=T^{1/2}\), \(D=T^2\), \(L=gD\), and
+\(q=H=T^{5/2}\), one also has
+
+\[
+\boxed{
+ \frac{g\delta_0}{L}\asymp1,
+ \qquad \frac Hq\asymp1,
+ \qquad
+ \frac{g(\ell d)}L
+ =\ell\frac gG\frac dD=O(T^\varepsilon).}
+\tag{9.288}
+\]
+
+Consequently \(\Xi_\ell\) is a bounded-frequency Fourier coefficient of
+a fixed-scale smooth function of \(d/D\), up to the already allowed
+\(T^\varepsilon\) seminorms.  Repeated integration by parts therefore
+produces no negative power of \(T\).  The executable ledger evaluates the
+six exponents in (9.287)--(9.288) exactly and obtains zero in every entry.
+
+The zeros of \(G_t(z)\) at \(z=\pm1/2\) do not alter this conclusion.
+They are zeros in the AFE Mellin variable and were used to remove the
+boundary pole in the **zero Poisson mode** in Section 4.  They are not
+zeros of the bounded nonzero \(h\)-Fourier coefficient in (9.278), and
+they do not imply a zero \(d\)-Fourier coefficient.  A weight-specific
+escape would therefore require a new exact identity such as
+
+\[
+\boxed{
+ \mathcal Z_\ell(g,q)
+ :=\int_{\mathbb R}\Xi_\ell(g,q,Dx)\,dx=0,}
+\tag{9.289}
+\]
+
+after all dyadic pieces and principal/centered corrections are recombined.
+No such identity is proved here, and even (9.289) alone would address only
+the additive origin, not every small-denominator major arc.  Thus the
+actual archimedean scale rules out a power saving by analytic
+nonstationarity; the surviving half-power must come from an exact global
+recombination not yet found or from arithmetic cancellation in (9.282).
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -7422,6 +7487,12 @@ Proved in this note:
   \(D-D^2/(q-1)\), (9.285).  Hence the background is exactly
   \(T^{1/2}\) smaller at the transition, (9.286), and the original
   centering supplies no universal \(d\)-major-arc vanishing identity.
+* the actual-weight transition scale (9.287)--(9.288): all six
+  dimensionless archimedean and Poisson frequencies have exponent zero.
+  Hence integration by parts has no power reserve, the AFE Mellin zeros
+  do not imply a shift-Fourier zero, and a weight-specific escape would
+  require the new exact global moment identity (9.289), which remains
+  unproved and would not by itself remove all rational major arcs.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7476,6 +7547,7 @@ Proved in this note:
 | Averaged Möbius on shifted primes | stripped signed projection covered only logarithmically | \(h=Y-d,n=s+d-Y\) maps the scalar correlation to Lichtman's shift average with fixed \(G(n)=\Lambda(n+Y)\); endpoints cost \(Y^2=T^4\), but the theorem's main bound remains \(XY/(\log X)^{1/3-\delta}=T^{5-o(1)}\), leaving the full \(T^{1/2}\) power gap and excluding the actual shift-dependent inverse/product kernel, (9.277) |
 | Transition numerator completion | exact three-variable reduction; weighted averaged-Chowla power gate unproved | Poisson in \(h\) gives (9.278); \(q>\delta_0+|\ell d|\) forces \(\delta_0=\ell d\), (9.279), so the inverse/product kernel disappears and only bounded dual modes of (9.280) remain.  The ledger is \(23/2-2=19/2\), still \(1/2\) above target, (9.281), equivalently the core (9.282) needs \(S^{-1/6}\).  The nonzero \(h\)-dual mode does not delete the distinct \(d\)-major arcs |
 | Centering after transition completion | exact short-box obstruction; no major-arc deletion | the centered numerator transform is the point-minus-uniform identity (9.283).  Its aligned short-box mass is (9.284), equal to \(D-D^2/(q-1)\) for prime \(q>D\), so the uniform background is a factor \(D/q=T^{-1/2}\) below the dilation point mass, (9.285)--(9.286).  This disproves an automatic vanishing-moment route but is not a lower bound for the actual signed smooth packet; published averaged/short-interval Möbius bounds remain logarithmic at the required power scale |
+| Actual archimedean zero-moment route | scale audit exact; special identity unproved | in the balanced transition every parameter \(TL/(MR),HM/S,M^2R/(ST),KS/(MR),gD/L,H/q\) has exponent zero, (9.287)--(9.288).  Thus the completed weight is sampled at bounded frequency and integration by parts gives no power.  The AFE zeros at Mellin \(z=\pm1/2\) do not force the proposed \(d\)-moment (9.289), and even that moment would remove only the additive origin |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

@@ -748,6 +748,50 @@ def shifted_prime_mobius_coordinates(
     )
 
 
+def transition_archimedean_scale_ledger(
+    *,
+    r: Fraction,
+    s: Fraction,
+    first_zeta: Fraction,
+    second_zeta: Fraction,
+    determinant: Fraction,
+    numerator: Fraction,
+    scalar: Fraction,
+    reduced_determinant: Fraction,
+    reduced_modulus: Fraction,
+) -> TransitionArchimedeanScaleLedger:
+    """Evaluate every dimensionless frequency in the actual kernel (5.13b).
+
+    The fields are respectively the exponents of ``T*lambda0``,
+    ``omega0``, ``chi0``, ``KS/(MR)``, ``g*delta0/L``, and ``H/q``.
+    Zero in every field means that numerator completion samples a
+    bounded Fourier coefficient of a fixed-scale weight; there is no
+    residual power of ``T`` available for integration by parts.
+    """
+
+    values = (
+        r,
+        s,
+        first_zeta,
+        second_zeta,
+        determinant,
+        numerator,
+        scalar,
+        reduced_determinant,
+        reduced_modulus,
+    )
+    if any(value < 0 for value in values):
+        raise ValueError("all scale exponents must be nonnegative")
+    return TransitionArchimedeanScaleLedger(
+        logarithmic_phase=1 + determinant - first_zeta - r,
+        numerator_fourier_center=numerator + first_zeta - s,
+        afe_argument=2 * first_zeta + r - s - 1,
+        zeta_balance=second_zeta + s - first_zeta - r,
+        scalar_dilation=scalar + reduced_determinant - determinant,
+        poisson_sample=numerator - reduced_modulus,
+    )
+
+
 def transition_numerator_completion_ledger(
     *,
     raw_bound: Fraction,
@@ -2851,6 +2895,18 @@ class ShiftedPrimeMobiusCoordinates:
 
     mobius_shift: int
     translated_base: int
+
+
+@dataclass(frozen=True)
+class TransitionArchimedeanScaleLedger:
+    """Power exponents of the actual balanced transition kernel."""
+
+    logarithmic_phase: Fraction
+    numerator_fourier_center: Fraction
+    afe_argument: Fraction
+    zeta_balance: Fraction
+    scalar_dilation: Fraction
+    poisson_sample: Fraction
 
 
 @dataclass(frozen=True)
