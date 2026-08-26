@@ -1652,8 +1652,14 @@ def test_published_kloosterman_bounds_miss_the_transition_entry_gate() -> None:
     assert audit.bp_uniform_deficit == F(15, 32)
     assert audit.mqw_uniform_saving_exponent == F(1, 100)
     assert audit.mqw_uniform_deficit == F(49, 100)
+    assert audit.pascadi_uniform_saving_exponent == F(1, 700)
+    assert audit.pascadi_uniform_deficit == F(349, 700)
+    assert audit.pascadi_one_bounded_saving_exponent == F(1, 276)
+    assert audit.pascadi_one_bounded_deficit == F(137, 276)
     assert audit.pascadi_factorable_saving_exponent == F(1, 12)
     assert audit.pascadi_factorable_deficit == F(5, 12)
+    assert audit.pascadi_averaged_common_divisor_exponent == F(0)
+    assert audit.pascadi_averaged_modulus_saving_exponent == F(0)
     assert audit.optimistic_four_bp_applications_saving_exponent == F(1, 8)
     assert audit.optimistic_four_bp_deficit == F(3, 8)
     assert audit.bp_square_root_length_condition_holds
@@ -1661,7 +1667,9 @@ def test_published_kloosterman_bounds_miss_the_transition_entry_gate() -> None:
     assert not audit.standard_kloosterman_kernel_verified
     assert not audit.coefficients_separate_from_matrix_entries
     assert not audit.fixed_modulus_before_entry_sum_verified
-    assert not audit.pascadi_uniform_for_all_moduli
+    assert audit.pascadi_uniform_for_all_moduli
+    assert audit.primitive_determinant_common_divisor_is_one
+    assert not audit.pascadi_averaged_modulus_power_saving
     assert not audit.published_coverage
 
 
@@ -1985,6 +1993,98 @@ def test_single_mobius_type_split_retains_the_exact_farey_entry() -> None:
     assert result["prime_coordinate_identity_exact"]
     assert result["one_mobius_factor_only"]
     assert result["sector_character_label_retained"] == 14
+
+
+def test_global_farey_type_packet_retains_every_sector_and_both_mobius_weights() -> None:
+    partition = getattr(
+        coverage_audit,
+        "farey_global_mobius_type_partition",
+        None,
+    )
+    assert partition is not None, "global Farey Type partition is missing"
+
+    result = partition(
+        q=5,
+        k=1,
+        sector_character=2,
+        denominators=(3, 5),
+        h=2,
+        delta=-3,
+        short_cutoff=2,
+        packet_label="afe-plus",
+    )
+
+    assert result["primitive_entries"] == (
+        (1, 3, 1, 4),
+        (3, 3, 2, 5),
+        (1, 5, 1, 6),
+        (2, 5, 2, 7),
+        (3, 5, 3, 8),
+        (4, 5, 4, 9),
+    )
+    assert result["product_frequency"] == -6
+    assert result["nonzero_sector_character_retained"]
+    assert result["packet_label_retained"] == "afe-plus"
+    assert result["all_sector_fibers_reassemble_primitive_wedge"]
+    assert result["left_prime_coordinates"] == result[
+        "right_prime_coordinates"
+    ]
+    assert result["global_log_identity_exact"]
+    assert result["squarefree_left_prime_coordinates"] == result[
+        "squarefree_right_prime_coordinates"
+    ]
+    assert result["squarefree_supported_global_identity_exact"]
+    assert result["type_i_term_count"] == 10
+    assert result["type_ii_term_count"] == 1
+    assert result["all_type_terms_partitioned_without_remainder"]
+    assert result["nonzero_mollifier_support_term_count"] == 4
+    assert result["prime_power_is_prime_on_nonzero_mollifier_support"]
+
+    type_ii = result["type_ii_terms"][0]
+    assert type_ii == {
+        "packet_label": "afe-plus",
+        "sector_character": 2,
+        "sector": 4,
+        "denominator": 5,
+        "shifted_numerator": 4,
+        "numerator": 9,
+        "type_divisor": 3,
+        "prime_power": 3,
+        "denominator_mobius": -1,
+        "divisor_mobius": -1,
+        "prime": 3,
+        "h": 2,
+        "delta": -3,
+        "product_frequency": -6,
+        "type_class": "II",
+    }
+    assert result["two_mobius_weights_retained_in_every_type_term"]
+    assert not result["type_estimate_proved"]
+
+
+def test_global_farey_type_scale_ledger_exposes_each_half_power_gate() -> None:
+    ledger = getattr(
+        coverage_audit,
+        "farey_global_type_scale_ledger",
+        None,
+    )
+    assert ledger is not None, "global Farey Type scale ledger is missing"
+
+    result = ledger(numerator_exponent=F(1), cutoff_exponent=F(1, 3))
+    assert result["type_i_short_factor_range"] == (F(0), F(1, 3))
+    assert result["type_i_long_factor_range"] == (F(2, 3), F(1))
+    assert result["type_ii_divisor_range"] == (F(1, 3), F(2, 3))
+    assert result["type_ii_prime_range"] == (F(1, 3), F(2, 3))
+    assert result["coherent_cluster_energy_exponent"] == F(3)
+    assert result["square_function_target_exponent"] == F(2)
+    assert result["required_energy_saving_exponent"] == F(1)
+    assert result["required_unsquared_saving_exponent"] == F(1, 2)
+    assert result["product_frequency_retained"] == "h*delta"
+    assert result["two_mobius_weights_retained"] == "mu(s)*mu(d)"
+    assert result["type_ii_prime_bearing_on_squarefree_support"]
+    assert not result["type_i_bound_proved"]
+    assert not result["type_ii_bound_proved"]
+    assert not result["combined_gate_proved"]
 
 
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
@@ -4570,10 +4670,14 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "large_q_transition: published_kloosterman_entry="
         "modulus=1,interval=1/2,required=1/2,"
         "bp=1/32,bp_deficit=15/32,mqw=1/100,mqw_deficit=49/100,"
-        "pascadi=1/12,pascadi_deficit=5/12,four_bp=1/8,"
+        "pascadi_uniform=1/700,pascadi_uniform_deficit=349/700,"
+        "pascadi_one_bounded=1/276,pascadi_one_bounded_deficit=137/276,"
+        "pascadi_factorable=1/12,pascadi_factorable_deficit=5/12,"
+        "pascadi_average_q=0,pascadi_average_save=0,four_bp=1/8,"
         "four_bp_deficit=3/8,sqrt_range=True,arbitrary=True,"
         "kernel=False,separable=False,fixed_modulus=False,"
-        "pascadi_uniform=False,covered=False"
+        "pascadi_uniform=True,primitive_q_one=True,"
+        "pascadi_average_power=False,covered=False"
     ) in output
     assert (
         "large_q_transition: bourgain_garaev_multilinear="

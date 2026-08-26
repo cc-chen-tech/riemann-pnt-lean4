@@ -823,3 +823,70 @@ The finite Gauss kernel is
 \(\sum_{x,y}e((cx+vy-\bar rxy)/s)=s e(rcv/s)\).  This gives the same CMT
 target and a finite coefficient \(\Lambda_{r,s}(a)\) after \(a=cv\); it
 does not add a published estimate.
+
+## 6. Published coverage after global sector Type reassembly
+
+The residual transition face admits an exact finer partition before any
+absolute value.  For the critical sector resolution \(s\le Q\), all
+nonempty sectors reassemble to
+
+\[
+ \bigsqcup_{0\le b<Q}
+ \{w:bs\le Qw<(b+1)s\}=\{0,1,\ldots,s-1\}.
+\tag{6.1}
+\]
+
+After retaining a nonzero sector character \(0<\xi<Q\), the one-factor
+log identity gives
+
+\[
+ \mathcal A_\xi
+ =-\sum_{s,w}e\!\left(
+   \frac{\xi\lfloor Qw/s\rfloor}{Q}
+  \right)
+  \mu(s)\mu^2(ks+w)
+  \sum_{dm=ks+w}\mu(d)\Lambda(m)
+  \widetilde G_{s,w;h,\delta,\nu,\sigma}.
+\tag{6.2}
+\]
+
+Thus the original \(a_{\rm AFE}=h\delta\), the two Möbius factors
+\(\mu(s)\mu(d)\), and every packet label remain coupled.  On squarefree
+support, \(m=p\) is prime.  At cutoff \(U=T^{1/3}\), the Type-II range is
+
+\[
+ T^{1/3}<d,p\ll T^{2/3},
+ \tag{6.3}
+\]
+
+and the Type-I range has one factor at most \(T^{1/3}\).  Both separate
+square-function estimates still require \(T^{1/2}\) before squaring.
+
+The resulting exact coverage table is:
+
+| published input | theorem-level gain | parameter/hypothesis mismatch | covers the Type gate? |
+|---|---:|---|---|
+| Blomer--Pascadi, arXiv:2607.24311v1 | \(T^{1/32}\) | standard fixed-modulus Kloosterman kernel not derived from the entry packet | no |
+| Milićević--Qin--Wu, arXiv:2511.07550v1 | \(T^{1/100}\) | same kernel and coefficient-separation failure | no |
+| Pascadi, [arXiv:2511.08445v2](https://arxiv.org/abs/2511.08445), Theorem 1.1 | \(T^{1/700}\), or \(T^{1/276}\) with one 1-bounded side | uniform in the modulus, but the entry-dependent coefficient adapter is absent | no |
+| Pascadi v2, Theorem 1.2 | \(T^{1/12}\) on favorable factorable moduli | determinant shell is not uniformly favorable | no |
+| Pascadi v2, Corollary 1.4 | no power when the common divisor is \(q=1\) | primitive determinant shell has no larger common fixed divisor | no |
+| Tao--Teräväinen, [arXiv:2107.02158](https://arxiv.org/abs/2107.02158) | \((\log\log T)^{-c}\) | fixed-complexity linear systems and logarithmic, not half-power, decay | no |
+| Teräväinen--Walker, arXiv:2303.12574 | qualitative logarithmic limit | fixed Beatty data, not a moving rational vector family | no |
+| Kim, arXiv:2603.23250 | \(<T^{1/600}\) in the entering range | deficit \(T^{299/600}\) and Möbius coefficient hypothesis fails | no |
+
+For Pascadi Corollary 1.4, substituting
+\(q=d=d'=e=f=1\) gives the constant factor \(2^{-1/6}\), so its
+modulus average cannot be counted as a power saving.  This corrects the
+older v1 statement: Pascadi v2 is uniform for all fixed moduli, but its
+uniform saving and its modulus-average corollary still do not close the
+coupled packet.
+
+The executable helpers `farey_global_mobius_type_partition`,
+`farey_global_type_scale_ledger`, and
+`transition_published_kloosterman_entry_audit` record (6.1)--(6.3), the
+two half-power deficits, and the updated fixed/averaged-modulus
+Kloosterman rows.  The Beatty and ternary-correlation rows are recorded by
+their separate adapters in the alternative-routes audit.
+Their analytic coverage flags remain false.  Hence the two base Region-D
+cells and the full \(\theta=3\) off-diagonal gate remain open.

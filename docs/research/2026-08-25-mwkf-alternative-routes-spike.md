@@ -6711,15 +6711,53 @@ has uniform square-root-range saving \(T^{1/100-o(1)}\).  Its deficit is
 \]
 
 Pascadi,
-[arXiv:2511.08445v1](https://arxiv.org/abs/2511.08445), obtains the
-larger saving \(T^{1/12-o(1)}\) for products of two primes of comparable
-size.  This is not uniform over the determinant moduli in (4.471), and
-even on that favorable family the deficit remains
+[arXiv:2511.08445v2](https://arxiv.org/abs/2511.08445), Theorem 1.1,
+now gives a uniform all-modulus saving \(T^{1/700-o(1)}\) for arbitrary
+sequences in the square-root range.  If one coefficient sequence is
+1-bounded, its second assertion improves this to \(T^{1/276-o(1)}\).
+The corresponding optimistic deficits are
+
+\[
+ \boxed{
+  \frac12-\frac1{700}=\frac{349}{700},
+  \qquad
+  \frac12-\frac1{276}=\frac{137}{276}.}
+\tag{4.481a}
+\]
+
+Theorem 1.2 obtains the larger saving \(T^{1/12-o(1)}\) for favorable
+factorable moduli, including products of two primes of comparable size.
+Even on that favorable family the deficit remains
 
 \[
  \boxed{\frac12-\frac1{12}=\frac5{12}.}
 \tag{4.482}
 \]
+
+The same v2 paper contains an averaged-modulus result, Corollary 1.4.
+It does not supply the missing outer determinant average here.  The top
+primitive determinant shell imposes no common divisor of all moduli beyond
+\(q=1\).  Substituting \(q=d=d'=e=f=1\) into that corollary gives the
+factor
+
+\[
+ \left(
+  \frac{1}{\min(C,1)+\min(1,C)}
+ \right)^{1/6}=2^{-1/6},
+\tag{4.482a}
+\]
+
+which is constant and therefore supplies no power saving in \(C\asymp T\).
+The exact published-exponent ledger on the critical shell is consequently
+
+| input | theorem-level saving | deficit from (4.476) | actual adapter |
+|---|---:|---:|---|
+| Blomer--Pascadi, uniform | \(1/32\) | \(15/32\) | kernel not separated |
+| Milićević--Qin--Wu, uniform | \(1/100\) | \(49/100\) | kernel not separated |
+| Pascadi v2, arbitrary sequences | \(1/700\) | \(349/700\) | uniform in the modulus, kernel not separated |
+| Pascadi v2, one side 1-bounded | \(1/276\) | \(137/276\) | 1-bounded packet hypothesis not verified |
+| Pascadi v2, favorable factorable modulus | \(1/12\) | \(5/12\) | not uniform on the determinant shell |
+| Pascadi v2, Corollary 1.4 with common \(q=1\) | \(0\) | \(1/2\) | genuine modulus average but no power saving |
 
 These comparisons already grant more than the present kernel justifies.
 In (4.472), the modulus \(\Delta\), the two recovered Cramer
@@ -6746,7 +6784,8 @@ can turn these published exponents into (4.473); a genuinely stronger
 use of the simultaneous Möbius structure is necessary.
 
 The adapter transition_published_kloosterman_entry_audit records
-(4.477)--(4.483), including the optimistic hypothesis failures.  It
+(4.477)--(4.483), including the v2 uniform and averaged-modulus fields
+and the optimistic hypothesis failures.  It
 keeps standard_kloosterman_kernel_verified=False,
 coefficients_separate_from_matrix_entries=False,
 fixed_modulus_before_entry_sum_verified=False, and
@@ -10903,6 +10942,130 @@ Neither theorem accepts the moving rational two-Möbius vector family
 (4.637).  The remaining plausible quantitative target is therefore an
 average over \(b\), \(Q\), and nonzero \(\Delta_{\rm Type}\), not a
 pointwise invocation of an existing Beatty theorem.
+
+### 4.73 Global sector reassembly before the one-factor Type split
+
+The critical condition \(s\le Q\) gives more than a pointwise Beatty
+description.  Put
+
+\[
+ b_Q(w,s):=\left\lfloor\frac{Qw}{s}\right\rfloor.
+\tag{4.639}
+\]
+
+Then the nonempty fibers in (4.621zadj16p) form the exact disjoint union
+
+\[
+ \boxed{
+ \bigsqcup_{0\le b<Q}
+ \{w\in\mathbb Z:bs\le Qw<(b+1)s\}
+ =\{0,1,\ldots,s-1\}.}
+\tag{4.640}
+\]
+
+Indeed, consecutive values of \(Qw/s\) differ by at least one, so every
+fiber contains at most one integer, while \(b_Q(w,s)\) assigns each
+\(0\le w<s\) to exactly one sector.  Restricting to primitive entries
+simply adds \((w,s)=1\), since \((ks+w,s)=(w,s)\).
+
+Consequently the complete nonprincipal Type packet can be reassembled
+before evaluating its character:
+
+\[
+\boxed{
+ \begin{aligned}
+ \mathcal A_\xi
+ ={}-&\sum_s\sum_{\substack{0\le w<s\\(w,s)=1}}
+ e\!\left(\frac{\xi b_Q(w,s)}Q\right)
+ \mu(s)\mu^2(ks+w)\\
+ &\times\sum_{dm=ks+w}\mu(d)\Lambda(m)
+ \widetilde G_{s,w;h,\delta,\nu,\sigma},
+ \qquad 0<\xi<Q.
+ \end{aligned}}
+\tag{4.641}
+\]
+
+This is (4.621zadj16ab) after summing all sectors and inserting the
+harmless original squarefree-support indicator, not a new estimate.
+It is nevertheless the correct pre-Cauchy Type identity: the phase label
+\(b_Q(w,s)\), both Möbius weights \(\mu(s)\mu(d)\), the prime-bearing
+factor \(\Lambda(m)\), the original \(a_{\rm AFE}=h\delta\), and every
+vector packet label remain in the same summand.
+
+For a cutoff \(U\ge1\), define Type I by \(\min(d,m)\le U\) and Type II
+by \(d,m>U\).  This is an exact partition:
+
+\[
+ \mathcal A_\xi=\mathcal A_\xi^{\rm I}
+                  +\mathcal A_\xi^{\rm II},
+ \qquad \mathcal E_{\rm Type}=0.
+\tag{4.642}
+\]
+
+On \(dm\asymp T\), the choice \(U=T^{1/3}\) puts every Type-II factor in
+
+\[
+ T^{1/3}<d,m\ll T^{2/3}.
+\tag{4.643}
+\]
+
+There is an additional simplification on the actual mollifier support.
+Since \(\mu(ks+w)\ne0\), the numerator is squarefree.  Therefore a divisor
+\(m\mid ks+w\) with \(\Lambda(m)\ne0\) is a prime, not a higher prime
+power.  The genuine central packet is thus
+
+\[
+ \boxed{
+ \mu(s)\mu(d)\log p,qquad dp=ks+w,qquad
+ T^{1/3}<d,p\ll T^{2/3},}
+\tag{4.644}
+\]
+
+with the sector character and \(h\delta\) packet still attached.  Hence
+the remaining Type-II problem is a vector-valued
+Möbius--Möbius--prime dispersion estimate.  Replacing it by arbitrary
+three-variable coefficients discards precisely the structure exposed by
+the one-factor identity.
+
+In the transition normalization there are \(T\) angular clusters and
+\(T\) entries per cluster.  Coherent energy therefore has exponent three,
+whereas the required square function has exponent two.  A sufficient
+separate pair of estimates is
+
+\[
+ \boxed{
+ \frac1Q\sum_{0<\xi<Q}\|\mathcal A_\xi^{X}\|_2^2
+ \ll_{\varepsilon,W}T^{2+\varepsilon},
+ \qquad X\in\{\mathrm I,\mathrm {II}\}.}
+\tag{4.645}
+\]
+
+Each row of (4.645) must save one full power in energy, equivalently
+\(T^{1/2}\) before squaring.  The exact post-Type published-coverage table
+is:
+
+| input | matching structure | quantitative saving | coverage of (4.645) |
+|---|---|---:|---|
+| Teräväinen--Walker, arXiv:2303.12574 | two multiplicative functions on fixed Beatty data | qualitative logarithmic limit | no |
+| [Tao--Teräväinen](https://arxiv.org/abs/2107.02158) | quantitative Möbius/\(\Lambda\) Gowers uniformity for fixed-complexity linear systems | \((\log\log T)^{-c}\), power exponent \(0\) | no |
+| [Banks--Shparlinski](https://arxiv.org/abs/0708.1015) | primes in a fixed irrational finite-type Beatty sequence | power error in a one-prime problem | no double Möbius and no moving rational family |
+| Kim, arXiv:2603.23250 | ternary shifted correlations | saving \(<T^{1/600}\) in the entering range | short by \(T^{299/600}\), Möbius hypothesis also fails |
+
+Thus (4.644) narrows the coefficient class but does not turn a logarithmic
+uniformity theorem into the half-power required by (4.645).  The remaining
+analytic target is a joint average over \(\xi,Q\) and the nonzero Type
+determinant, with both Möbius signs left inside the operator.
+
+The finite helper `farey_global_mobius_type_partition` verifies
+(4.640)--(4.642) simultaneously for all supplied denominators.  It checks
+the log identity prime-coordinate by prime-coordinate, records the exact
+Type-I and Type-II term lists, and carries the nonzero character,
+\(h,\delta,h\delta\), and packet label on every term.  Its
+`type_estimate_proved` field remains false: neither (4.643) nor the prime
+specialization (4.644) supplies the required half-power cancellation.
+The companion `farey_global_type_scale_ledger` records the four factor
+ranges and the exact energy/amplitude deficits in (4.645); both Type-bound
+flags remain false.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

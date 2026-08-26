@@ -790,8 +790,14 @@ class TransitionPublishedKloostermanEntryAudit:
     bp_uniform_deficit: Fraction
     mqw_uniform_saving_exponent: Fraction
     mqw_uniform_deficit: Fraction
+    pascadi_uniform_saving_exponent: Fraction
+    pascadi_uniform_deficit: Fraction
+    pascadi_one_bounded_saving_exponent: Fraction
+    pascadi_one_bounded_deficit: Fraction
     pascadi_factorable_saving_exponent: Fraction
     pascadi_factorable_deficit: Fraction
+    pascadi_averaged_common_divisor_exponent: Fraction
+    pascadi_averaged_modulus_saving_exponent: Fraction
     optimistic_four_bp_applications_saving_exponent: Fraction
     optimistic_four_bp_deficit: Fraction
     bp_square_root_length_condition_holds: bool
@@ -800,6 +806,8 @@ class TransitionPublishedKloostermanEntryAudit:
     coefficients_separate_from_matrix_entries: bool
     fixed_modulus_before_entry_sum_verified: bool
     pascadi_uniform_for_all_moduli: bool
+    primitive_determinant_common_divisor_is_one: bool
+    pascadi_averaged_modulus_power_saving: bool
     published_coverage: bool
     bp_source: str
     mqw_source: str
@@ -4589,9 +4597,12 @@ def transition_published_kloosterman_entry_audit(
     recovered shift intervals have length ``N=T^(1/2)``.  Blomer--
     Pascadi Theorem 1.1 saves ``c^(1/32)`` uniformly for arbitrary
     coefficient sequences in this square-root range.  Milicevic--Qin--
-    Wu Theorem 1.1 saves ``c^(1/100)`` uniformly.  Pascadi's earlier
-    non-abelian result can save ``c^(1/12)`` for favorable composite
-    moduli but is not uniform near primes.
+    Wu Theorem 1.1 saves ``c^(1/100)`` uniformly.  Pascadi v2 Theorem
+    1.1 saves ``c^(1/700)`` for all moduli, or ``c^(1/276)`` when one
+    sequence is 1-bounded; Theorem 1.2 can save ``c^(1/12)`` for
+    favorable composite moduli.  Corollary 1.4 gives no power saving on
+    the primitive determinant shell because its only common fixed divisor
+    is ``q=1``.
 
     The transition square still needs ``T^(1/2)`` after the cokernel
     character square root.  Moreover its recovered kernel and weights
@@ -4604,7 +4615,11 @@ def transition_published_kloosterman_entry_audit(
     required = F(1, 2)
     bp = F(1, 32)
     mqw = F(1, 100)
-    pascadi = F(1, 12)
+    pascadi_uniform = F(1, 700)
+    pascadi_one_bounded = F(1, 276)
+    pascadi_factorable = F(1, 12)
+    averaged_common_divisor = F(0)
+    averaged_modulus_saving = F(0)
     four_bp = 4 * bp
     return TransitionPublishedKloostermanEntryAudit(
         modulus_exponent=modulus,
@@ -4614,8 +4629,14 @@ def transition_published_kloosterman_entry_audit(
         bp_uniform_deficit=required - bp,
         mqw_uniform_saving_exponent=mqw,
         mqw_uniform_deficit=required - mqw,
-        pascadi_factorable_saving_exponent=pascadi,
-        pascadi_factorable_deficit=required - pascadi,
+        pascadi_uniform_saving_exponent=pascadi_uniform,
+        pascadi_uniform_deficit=required - pascadi_uniform,
+        pascadi_one_bounded_saving_exponent=pascadi_one_bounded,
+        pascadi_one_bounded_deficit=required - pascadi_one_bounded,
+        pascadi_factorable_saving_exponent=pascadi_factorable,
+        pascadi_factorable_deficit=required - pascadi_factorable,
+        pascadi_averaged_common_divisor_exponent=averaged_common_divisor,
+        pascadi_averaged_modulus_saving_exponent=averaged_modulus_saving,
         optimistic_four_bp_applications_saving_exponent=four_bp,
         optimistic_four_bp_deficit=required - four_bp,
         bp_square_root_length_condition_holds=(2 * interval == modulus),
@@ -4623,7 +4644,9 @@ def transition_published_kloosterman_entry_audit(
         standard_kloosterman_kernel_verified=False,
         coefficients_separate_from_matrix_entries=False,
         fixed_modulus_before_entry_sum_verified=False,
-        pascadi_uniform_for_all_moduli=False,
+        pascadi_uniform_for_all_moduli=True,
+        primitive_determinant_common_divisor_is_one=True,
+        pascadi_averaged_modulus_power_saving=False,
         published_coverage=False,
         bp_source=(
             "Blomer--Pascadi, arXiv:2607.24311v1, Theorem 1.1"
@@ -4632,7 +4655,8 @@ def transition_published_kloosterman_entry_audit(
             "Milicevic--Qin--Wu, arXiv:2511.07550v1, Theorem 1.1"
         ),
         pascadi_source=(
-            "Pascadi, arXiv:2511.08445v1, square-root range"
+            "Pascadi, arXiv:2511.08445v2, Theorems 1.1--1.2 and "
+            "Corollary 1.4"
         ),
     )
 
@@ -6851,6 +6875,210 @@ def farey_single_mobius_type_identity(
         "type_terms": tuple(type_terms),
         "one_mobius_factor_only": True,
         "sector_character_label_retained": b,
+    }
+
+
+def farey_global_mobius_type_partition(
+    *,
+    q: int,
+    k: int,
+    sector_character: int,
+    denominators: tuple[int, ...],
+    h: int,
+    delta: int,
+    short_cutoff: int,
+    packet_label: str,
+) -> dict[str, object]:
+    """Reassemble all critical Farey sectors before one-Mobius Type splitting.
+
+    For every supplied ``s<=q``, the nonempty sector fibers biject with the
+    primitive wedge ``0<=w<s``.  On ``r=k*s+w`` the prime-coordinate identity
+
+    ``-mu(s)mu(r)log(r) = sum_(d*m=r) mu(s)mu(d)Lambda(m)``
+
+    is accumulated by sector before any character evaluation.  Each prime
+    power term is Type I when ``min(d,m)<=short_cutoff`` and Type II otherwise.
+    The partition is finite and exact; it deliberately proves no estimate.
+    """
+
+    if q <= 1:
+        raise ValueError("a nonzero sector character requires q>1")
+    if k < 0:
+        raise ValueError("k must be nonnegative")
+    if not 0 < sector_character < q:
+        raise ValueError("sector_character must be nonzero modulo q")
+    if short_cutoff < 1:
+        raise ValueError("short_cutoff must be positive")
+    if not denominators:
+        raise ValueError("at least one denominator is required")
+    if any(s < 1 or s > q for s in denominators):
+        raise ValueError("critical Farey denominators must lie in [1,q]")
+
+    entries: list[tuple[int, int, int, int]] = []
+    type_i_terms: list[dict[str, object]] = []
+    type_ii_terms: list[dict[str, object]] = []
+    left: dict[tuple[int, int], int] = {}
+    right: dict[tuple[int, int], int] = {}
+    squarefree_left: dict[tuple[int, int], int] = {}
+    squarefree_right: dict[tuple[int, int], int] = {}
+    product_frequency = h * delta
+
+    for s in denominators:
+        for b in range(q):
+            fiber = farey_sector_fiber_ledger(q=q, b=b, s=s)
+            for w in fiber.members:
+                r = k * s + w
+                if r < 1 or gcd(r, s) != 1:
+                    continue
+                entries.append((b, s, w, r))
+                mu_s = _finite_mobius(s)
+                mu_r = _finite_mobius(r)
+                for prime, exponent in _finite_prime_exponents(r).items():
+                    key = (b, prime)
+                    left[key] = left.get(key, 0) - mu_s * mu_r * exponent
+                    if mu_r != 0:
+                        squarefree_left[key] = (
+                            squarefree_left.get(key, 0)
+                            - mu_s * mu_r * exponent
+                        )
+                    for power in range(1, exponent + 1):
+                        prime_power = prime**power
+                        type_divisor = r // prime_power
+                        mu_d = _finite_mobius(type_divisor)
+                        right[key] = right.get(key, 0) + mu_s * mu_d
+                        if mu_r != 0:
+                            squarefree_right[key] = (
+                                squarefree_right.get(key, 0) + mu_s * mu_d
+                            )
+                        type_class = (
+                            "I"
+                            if min(type_divisor, prime_power) <= short_cutoff
+                            else "II"
+                        )
+                        term = {
+                            "packet_label": packet_label,
+                            "sector_character": sector_character,
+                            "sector": b,
+                            "denominator": s,
+                            "shifted_numerator": w,
+                            "numerator": r,
+                            "type_divisor": type_divisor,
+                            "prime_power": prime_power,
+                            "denominator_mobius": mu_s,
+                            "divisor_mobius": mu_d,
+                            "prime": prime,
+                            "h": h,
+                            "delta": delta,
+                            "product_frequency": product_frequency,
+                            "type_class": type_class,
+                        }
+                        if type_class == "I":
+                            type_i_terms.append(term)
+                        else:
+                            type_ii_terms.append(term)
+
+    entries.sort(key=lambda entry: (entry[1], entry[2], entry[0]))
+    expected_entries = sorted(
+        (
+            (
+                q * w // s,
+                s,
+                w,
+                k * s + w,
+            )
+            for s in denominators
+            for w in range(s)
+            if k * s + w >= 1 and gcd(k * s + w, s) == 1
+        ),
+        key=lambda entry: (entry[1], entry[2], entry[0]),
+    )
+    all_terms = type_i_terms + type_ii_terms
+    nonzero_mollifier_terms = tuple(
+        term
+        for term in all_terms
+        if term["denominator_mobius"] != 0
+        and _finite_mobius(int(term["numerator"])) != 0
+    )
+    return {
+        "primitive_entries": tuple(entries),
+        "product_frequency": product_frequency,
+        "nonzero_sector_character_retained": 0 < sector_character < q,
+        "packet_label_retained": packet_label,
+        "all_sector_fibers_reassemble_primitive_wedge": (
+            entries == expected_entries
+        ),
+        "left_prime_coordinates": left,
+        "right_prime_coordinates": right,
+        "global_log_identity_exact": left == right,
+        "squarefree_left_prime_coordinates": squarefree_left,
+        "squarefree_right_prime_coordinates": squarefree_right,
+        "squarefree_supported_global_identity_exact": (
+            squarefree_left == squarefree_right
+        ),
+        "type_i_terms": tuple(type_i_terms),
+        "type_ii_terms": tuple(type_ii_terms),
+        "type_i_term_count": len(type_i_terms),
+        "type_ii_term_count": len(type_ii_terms),
+        "all_type_terms_partitioned_without_remainder": (
+            len(all_terms) == sum(
+                exponent
+                for _, _, _, r in entries
+                for exponent in _finite_prime_exponents(r).values()
+            )
+        ),
+        "nonzero_mollifier_support_term_count": len(nonzero_mollifier_terms),
+        "prime_power_is_prime_on_nonzero_mollifier_support": all(
+            term["prime_power"] == term["prime"]
+            for term in nonzero_mollifier_terms
+        ),
+        "two_mobius_weights_retained_in_every_type_term": all(
+            "denominator_mobius" in term and "divisor_mobius" in term
+            for term in all_terms
+        ),
+        "type_estimate_proved": False,
+    }
+
+
+def farey_global_type_scale_ledger(
+    *,
+    numerator_exponent: Fraction,
+    cutoff_exponent: Fraction,
+) -> dict[str, object]:
+    """Record the critical Type-I/II ranges and their remaining saving.
+
+    The transition cluster family has exponent one, with exponent one
+    entries per cluster.  Coherent energy therefore has exponent three,
+    while the target square function has exponent two.  Splitting the
+    exact packet does not by itself reduce either sector's worst-case
+    cardinality, so a separate estimate must save one power in energy,
+    equivalently one half-power before squaring.
+    """
+
+    n = F(numerator_exponent)
+    u = F(cutoff_exponent)
+    if n <= 0:
+        raise ValueError("the numerator exponent must be positive")
+    if u <= 0 or 2 * u >= n:
+        raise ValueError("the cutoff must lie strictly between 0 and n/2")
+
+    coherent_energy = F(3)
+    target_energy = F(2)
+    required_energy = coherent_energy - target_energy
+    return {
+        "type_i_short_factor_range": (F(0), u),
+        "type_i_long_factor_range": (n - u, n),
+        "type_ii_divisor_range": (u, n - u),
+        "type_ii_prime_range": (u, n - u),
+        "coherent_cluster_energy_exponent": coherent_energy,
+        "square_function_target_exponent": target_energy,
+        "required_energy_saving_exponent": required_energy,
+        "required_unsquared_saving_exponent": required_energy / 2,
+        "product_frequency_retained": "h*delta",
+        "two_mobius_weights_retained": "mu(s)*mu(d)",
+        "type_ii_prime_bearing_on_squarefree_support": True,
+        "type_i_bound_proved": False,
+        "type_ii_bound_proved": False,
+        "combined_gate_proved": False,
     }
 
 
@@ -10663,10 +10891,14 @@ def main() -> None:
         "large_q_transition: published_kloosterman_entry="
         "modulus=1,interval=1/2,required=1/2,"
         "bp=1/32,bp_deficit=15/32,mqw=1/100,mqw_deficit=49/100,"
-        "pascadi=1/12,pascadi_deficit=5/12,four_bp=1/8,"
+        "pascadi_uniform=1/700,pascadi_uniform_deficit=349/700,"
+        "pascadi_one_bounded=1/276,pascadi_one_bounded_deficit=137/276,"
+        "pascadi_factorable=1/12,pascadi_factorable_deficit=5/12,"
+        "pascadi_average_q=0,pascadi_average_save=0,four_bp=1/8,"
         "four_bp_deficit=3/8,sqrt_range=True,arbitrary=True,"
         "kernel=False,separable=False,fixed_modulus=False,"
-        "pascadi_uniform=False,covered=False"
+        "pascadi_uniform=True,primitive_q_one=True,"
+        "pascadi_average_power=False,covered=False"
     )
     transition_delta_lattice = transition_delta_lattice_poisson_audit(
         determinant_exponent=F(1),
