@@ -5835,12 +5835,13 @@ Equations (9.212)--(9.220) are an **exact arithmetic exponent closure of
 the coprime-unit, fully centered primitive family**, not yet a proof of
 CK\(_{\rm ub}(3)\).  To promote this ledger to the global remainder
 bound one must still write the uniform separation of all archimedean
-weights, restore the common modulus divisor \(t=(m,n)>1\), handle
-nonunit numerator multipliers before (9.212), and recombine those pieces
-with the principal/axis spectra.  The important change in proof status
-is narrower but genuine: the hardest primitive raw term now maps to a
-published varying-level theorem at exactly the required exponent; it no
-longer requires a conjectural new two-modulus large sieve on that face.
+weights, handle nonunit numerator multipliers before (9.212), and
+recombine those pieces with the principal/axis spectra.  Common-modulus
+strata are treated separately in Sections 9.36--9.37.  The important
+change in proof status is narrower but genuine: the hardest primitive
+raw term now maps to a published varying-level theorem at exactly the
+required exponent; it no longer requires a conjectural new two-modulus
+large sieve on that face.
 
 ### 9.36 Common-modulus collision before the inverse-residue sum
 
@@ -5963,10 +5964,85 @@ summing \(t\) is
 The two branches are
 \(9-2\tau-\kappa-\eta/2\) and
 \(35/4-2\tau-\gamma\).  The three Ramanujan marginal terms in
-(9.222), the \(k=0\) covariance (9.195), and the nonunit numerator
-multipliers are not silently included in this conclusion.  They remain
-to be recombined with the principal/axis spectrum; for \(\tau>2\),
-smooth dual decay leaves precisely that zero-mode problem.
+(9.222) and the \(k=0\) covariance are evaluated next.  Nonunit
+numerator multipliers are not silently included in this conclusion.
+
+### 9.37 Ramanujan marginals and the common-modulus zero mode
+
+The three noncollision terms in (9.222) are strictly easier after their
+squarefree factors are kept intact.  Since \(t,u,v\) are pairwise
+coprime,
+
+\[
+ \frac{c_v(k)}{\varphi(n)}
+ =\frac1{\varphi(t)}\frac{c_v(k)}{\varphi(v)},\qquad
+ \frac{c_Q(k)}{\varphi(m)\varphi(n)}
+ =\frac{c_t(k)}{\varphi(t)^2}
+  \frac{c_u(k)}{\varphi(u)}
+  \frac{c_v(k)}{\varphi(v)}.
+\tag{9.228}
+\]
+
+Apply (9.220) to every normalized Ramanujan factor before taking the
+remaining absolute values.  For \(t=T^\tau\), \(0\leq\tau\leq2\), a
+one-sided marginal leaves only one cofactor modulus, the \(k\)-row, and
+the two numerator intervals; the factor \(1/\varphi(t)\) pays for the
+dyadic \(t\)-sum.  The all-mean term removes both cofactor-modulus sums.
+Their exponent ledger is
+
+\[
+\boxed{
+ \mathcal M_{\rm one}(\tau)=\frac{17}{2}-2\tau\leq\frac{17}{2},
+ \qquad
+ \mathcal M_{\rm all}(\tau)=6-\tau\leq6.}
+\tag{9.229}
+\]
+
+Both are below the target exponent \(9\), with margins at least
+\(1/2\) and \(3\), respectively.  No cancellation of a Möbius sum is
+used here.
+
+At \(k=0\), the four terms of (9.222) must be recombined before
+estimation.  Since \(c_j(0)=\varphi(j)\), they collapse exactly to
+
+\[
+ \sum_{x\bmod Q}^{*}\mathscr D_{m,r}(x)\mathscr D_{n,s}(x)
+ =1_{r\equiv s\ ({\rm mod}\ t)}-\frac1{\varphi(t)}.
+\tag{9.230}
+\]
+
+With the numerator residues selected by (9.221), this is
+\(1_{t\mid M\delta+L\delta'}-1/\varphi(t)\), on
+\((\delta\delta',t)=1\).  The centering removes every complete period.
+More precisely, for positive interval lengths \(D_1,D_2\) and
+\((LM,t)=1\),
+
+\[
+\boxed{
+ \left|
+ \sum_{\substack{\delta\leq D_1,\ \delta'\leq D_2\\
+                  (\delta\delta',t)=1}}
+ \left(1_{t\mid M\delta+L\delta'}-\frac1{\varphi(t)}\right)
+ \right|
+ \leq \#\{\delta\leq D_1:(\delta,t)=1\}\leq D_1.}
+\tag{9.231}
+\]
+
+For each fixed unit \(\delta\bmod t\), the target is one unit residue
+class of \(\delta'\); the counts of any two residue classes in an
+interval differ by at most one, which proves (9.231).  Shifted intervals
+obey the same bound, and separated smooth weights follow by partial
+summation.  At \(D_1,D_2\asymp T^2\), (9.231) saves one full \(T^2\)
+numerator length.  Including \(t,u,v\), the zero-mode arithmetic count
+is at most \(T^{7-\tau+\varepsilon}\), well below the exponent-\(9\)
+threshold.
+
+Consequently the collision, both one-sided marginals, the all-mean
+term, and the zero mode are all arithmetically controlled on the
+**unit-numerator common-modulus family**.  What remains is no longer a
+common-\(t\) large-sieve problem: it is the nonunit numerator
+decomposition and the uniform separation/recombination of the original
+archimedean weights.
 
 ## 10. What has and has not been proved
 
@@ -6099,6 +6175,10 @@ Proved in this note:
   common-stratum ledger (9.226), whose nonzero-dual collision term has
   total exponent \(9-2\tau\leq9\), and the four-parameter gcd audit
   remains at most \(9\), (9.227).
+* the exact Ramanujan marginal factorization (9.228), its exponent
+  margins (9.229), the recombined zero-mode congruence (9.230), and the
+  finite interval boundary bound (9.231); together these control every
+  unit-numerator common-modulus arithmetic term.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -6144,7 +6224,7 @@ Proved in this note:
 | Centered common-divisor dispersion | exact zero-frequency reduction; nonzero dual estimate unproved | centering the full divisor packet makes the \(k=1\) layer vanish, (9.197); the cross-modulus covariance is zero for coprime moduli and otherwise factors only through \(t=(m,n)\), (9.194)--(9.196); (9.198)--(9.201) isolate the remaining dual Kloosterman frequencies and the \(t_0=Q^2/R=T^2\) transition |
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
 | Young varying-level primitive route | exact arithmetic exponent closure; global recombination unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps the raw term to Young's additive rational large sieve, (9.214)--(9.217), saving exactly \(T^2\).  The \(d,e,g\) strata remain at exponent at most \(9\), (9.218)--(9.219); uniform archimedean separation and nonunit numerator multipliers are not yet recombined |
-| Common-modulus nonzero-dual collision | exact arithmetic exponent closure; zero/marginal recombination unproved | completing before the residue sum gives delta-minus-mean (9.221) and the CRT collision formula (9.222).  Its support forces \(t\mid M\delta+L\delta'\), so the same \(t\) cancels from the Young rational, (9.223)--(9.225), and the summed exponent is \(9-2\tau\leq9\), (9.226).  All additional gcd strata remain at most \(9\), (9.227); the three Ramanujan marginals, \(k=0\) covariance, and nonunit multipliers remain |
+| Common-modulus unit-numerator family | exact arithmetic exponent closure; analytic recombination unproved | completing before the residue sum gives delta-minus-mean (9.221) and the CRT collision formula (9.222).  Its collision support cancels \(t\) from the Young rational and all gcd strata stay at most \(9\), (9.223)--(9.227).  Ramanujan marginals are below target, (9.228)--(9.229), and the recombined zero mode has only interval-boundary size, (9.230)--(9.231).  Nonunit multipliers and uniform archimedean recombination remain |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

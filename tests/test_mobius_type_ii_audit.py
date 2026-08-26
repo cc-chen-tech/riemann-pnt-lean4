@@ -13,6 +13,7 @@ from scripts.audit_mobius_type_ii import (
     CenteredCrtUnitMeanLedger,
     CenteredKloostermanCrtTerms,
     CentralCollisionLedger,
+    CommonFactorMarginalLedger,
     CompletedProductPhaseReduction,
     CrossInverseFractionCollision,
     FareyCentralCollisionLedger,
@@ -62,12 +63,16 @@ from scripts.audit_mobius_type_ii import (
     centered_kloosterman_transform,
     centered_residue_collision_fourier,
     centered_residue_collision_fourier_formula,
+    centered_residue_collision_zero_formula,
+    centered_unit_congruence_boundary_majorant,
+    centered_unit_congruence_sum,
     central_collision_ledger,
     central_cross_inverse_collision_margins,
     character_large_sieve_unit_gap,
     coherent_operator_large_sieve_exponent,
     coherent_operator_large_sieve_gap,
     coherent_operator_required_exponent,
+    common_factor_marginal_ledger,
     completed_product_phase_reduction,
     coprimality_migrated_scalar_stratum_spectrum,
     coprime_centered_inverse_cross_fourier_factorization,
@@ -1895,6 +1900,64 @@ def test_common_modulus_centered_residue_collision_has_crt_formula() -> None:
                             assert abs(direct - formula) < 1e-8
 
 
+def test_common_modulus_zero_mode_is_a_centered_t_congruence() -> None:
+    for common_factor in range(1, 10):
+        for left_cofactor in range(1, 6):
+            for right_cofactor in range(1, 6):
+                if (
+                    gcd(common_factor, left_cofactor) != 1
+                    or gcd(common_factor, right_cofactor) != 1
+                    or gcd(left_cofactor, right_cofactor) != 1
+                ):
+                    continue
+                left_modulus = common_factor * left_cofactor
+                right_modulus = common_factor * right_cofactor
+                for left_residue in range(left_modulus):
+                    if gcd(left_residue, left_modulus) != 1:
+                        continue
+                    for right_residue in range(right_modulus):
+                        if gcd(right_residue, right_modulus) != 1:
+                            continue
+                        formula = centered_residue_collision_fourier_formula(
+                            left_modulus,
+                            right_modulus,
+                            left_residue,
+                            right_residue,
+                            0,
+                        )
+                        zero_formula = centered_residue_collision_zero_formula(
+                            common_factor,
+                            left_residue,
+                            right_residue,
+                        )
+                        assert abs(formula - float(zero_formula)) < 1e-8
+
+
+def test_centered_unit_congruence_has_only_interval_boundary_error() -> None:
+    for modulus in range(1, 25):
+        for left_length in range(1, 18):
+            for right_length in range(1, 18):
+                for left_multiplier in range(1, min(modulus + 1, 6)):
+                    if gcd(left_multiplier, modulus) != 1:
+                        continue
+                    for right_multiplier in range(1, min(modulus + 1, 6)):
+                        if gcd(right_multiplier, modulus) != 1:
+                            continue
+                        centered_sum = centered_unit_congruence_sum(
+                            modulus,
+                            left_length,
+                            right_length,
+                            left_multiplier,
+                            right_multiplier,
+                        )
+                        assert abs(centered_sum) <= (
+                            centered_unit_congruence_boundary_majorant(
+                                modulus,
+                                left_length,
+                            )
+                        )
+
+
 def test_young_dual_gcd_strata_never_exceed_the_target() -> None:
     assert young_dual_reciprocity_gcd_ledger(F(0), F(0)) == (
         YoungDualGcdLedger(
@@ -1972,6 +2035,24 @@ def test_young_common_factor_collision_gains_two_powers_of_t() -> None:
                         F(rational_gcd_quarters, 4),
                     )
                     assert stratified.summed_bound <= stratified.target
+
+
+def test_common_factor_ramanujan_marginals_are_below_target() -> None:
+    assert common_factor_marginal_ledger(F(0)) == (
+        CommonFactorMarginalLedger(
+            one_sided_bound=F(17, 2),
+            all_mean_bound=F(6),
+            target=F(9),
+            one_sided_margin=F(1, 2),
+            all_mean_margin=F(3),
+        )
+    )
+    for common_factor_quarters in range(9):
+        ledger = common_factor_marginal_ledger(
+            F(common_factor_quarters, 4)
+        )
+        assert ledger.one_sided_bound <= ledger.target
+        assert ledger.all_mean_bound <= ledger.target
 
 
 def test_linear_convolution_energy_loses_a_rational_gcd_factor() -> None:

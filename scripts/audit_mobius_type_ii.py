@@ -1521,6 +1521,81 @@ def centered_residue_collision_fourier_formula(
     )
 
 
+def centered_residue_collision_zero_formula(
+    common_factor: int,
+    left_residue: int,
+    right_residue: int,
+) -> Fraction:
+    """Zero mode of the CRT collision: one congruence minus its unit mean."""
+
+    if common_factor < 1:
+        raise ValueError("the common factor must be positive")
+    if gcd(left_residue, common_factor) != 1:
+        raise ValueError("the left residue must be a unit")
+    if gcd(right_residue, common_factor) != 1:
+        raise ValueError("the right residue must be a unit")
+    return Fraction(
+        int((left_residue - right_residue) % common_factor == 0),
+    ) - Fraction(1, _euler_phi(common_factor))
+
+
+def centered_unit_congruence_sum(
+    modulus: int,
+    left_length: int,
+    right_length: int,
+    left_multiplier: int,
+    right_multiplier: int,
+) -> Fraction:
+    """Finite centered unit congruence on two initial intervals."""
+
+    if min(
+        modulus,
+        left_length,
+        right_length,
+        left_multiplier,
+        right_multiplier,
+    ) < 1:
+        raise ValueError("modulus, lengths, and multipliers must be positive")
+    if gcd(left_multiplier, modulus) != 1:
+        raise ValueError("the left multiplier must be a unit")
+    if gcd(right_multiplier, modulus) != 1:
+        raise ValueError("the right multiplier must be a unit")
+    unit_mean = Fraction(1, _euler_phi(modulus))
+    return sum(
+        (
+            Fraction(
+                int(
+                    (
+                        left_multiplier * left_value
+                        + right_multiplier * right_value
+                    )
+                    % modulus
+                    == 0
+                )
+            )
+            - unit_mean
+        )
+        for left_value in range(1, left_length + 1)
+        if gcd(left_value, modulus) == 1
+        for right_value in range(1, right_length + 1)
+        if gcd(right_value, modulus) == 1
+    )
+
+
+def centered_unit_congruence_boundary_majorant(
+    modulus: int,
+    left_length: int,
+) -> int:
+    """One-boundary-error-per-left-unit majorant for the centered sum."""
+
+    if modulus < 1 or left_length < 1:
+        raise ValueError("the modulus and interval length must be positive")
+    return sum(
+        gcd(left_value, modulus) == 1
+        for left_value in range(1, left_length + 1)
+    )
+
+
 @dataclass(frozen=True)
 class CenteredKloostermanCrtTerms:
     """The three non-principal terms in a two-factor CRT expansion."""
@@ -1594,6 +1669,17 @@ class YoungCommonFactorLedger:
     margin: Fraction
 
 
+@dataclass(frozen=True)
+class CommonFactorMarginalLedger:
+    """Exponent bounds for the three Ramanujan marginals in the CRT formula."""
+
+    one_sided_bound: Fraction
+    all_mean_bound: Fraction
+    target: Fraction
+    one_sided_margin: Fraction
+    all_mean_margin: Fraction
+
+
 def young_dual_reciprocity_ledger(
     outer_modulus: Fraction,
     row_length: Fraction,
@@ -1637,6 +1723,32 @@ def young_dual_reciprocity_ledger(
         trivial_bound=trivial_bound,
         saving=saving,
         margin=saving - required_saving,
+    )
+
+
+def common_factor_marginal_ledger(
+    common_factor: Fraction,
+) -> CommonFactorMarginalLedger:
+    """Audit the Ramanujan marginals after summing normalized means.
+
+    A one-sided marginal sums one normalized Ramanujan factor over its
+    free cofactor modulus and leaves 1/phi(t).  The dyadic t-sum absorbs
+    that factor, so only u, the nonzero row, and the two numerator
+    intervals remain.  The all-mean term sums normalized Ramanujan
+    factors over t, u, and v, leaving only the row and numerator boxes.
+    """
+
+    if common_factor < 0 or common_factor > 2:
+        raise ValueError("the common factor must lie in the nonzero dual range")
+    one_sided_bound = Fraction(17, 2) - 2 * common_factor
+    all_mean_bound = Fraction(6) - common_factor
+    target = Fraction(9)
+    return CommonFactorMarginalLedger(
+        one_sided_bound=one_sided_bound,
+        all_mean_bound=all_mean_bound,
+        target=target,
+        one_sided_margin=target - one_sided_bound,
+        all_mean_margin=target - all_mean_bound,
     )
 
 
