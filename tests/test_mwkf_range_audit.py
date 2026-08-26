@@ -1,5 +1,5 @@
-from fractions import Fraction as F
 import sys
+from fractions import Fraction as F
 from pathlib import Path
 
 import pytest
@@ -13,7 +13,6 @@ from scripts.audit_mwkf_ranges import (
     derived_bounds,
     is_admissible,
 )
-
 
 NOTE = Path("docs/research/2026-08-24-mobius-weighted-off-diagonal.md")
 
@@ -117,6 +116,7 @@ def test_research_note_has_one_honest_phase_one_classification() -> None:
         "Phase-1 classification: exact reduction remains blocked",
         "Current classification: published coverage complete; Region D remains",
         "Current classification: published/elementary coverage complete; Region D remains",
+        "Current classification: Young closes each fixed scalar stratum",
     )
     assert sum(label in text for label in labels) == 1
     assert "Accepted local gate after exact audit:" in text

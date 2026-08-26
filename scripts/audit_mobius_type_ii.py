@@ -11,7 +11,7 @@ import cmath
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import lru_cache
-from math import gcd
+from math import gcd, lcm
 
 try:
     from scripts.audit_mwkf_ranges import (
@@ -38,6 +38,45 @@ def divisors(n: int) -> tuple[int, ...]:
                 large.append(n // d)
         d += 1
     return tuple(small + list(reversed(large)))
+
+
+def _euler_phi(n: int) -> int:
+    if n < 1:
+        raise ValueError("modulus must be positive")
+    result = n
+    remaining = n
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            result -= result // prime
+            while remaining % prime == 0:
+                remaining //= prime
+        prime += 1
+    if remaining > 1:
+        result -= result // remaining
+    return result
+
+
+def _kloosterman_sum(
+    modulus: int, inverse_coefficient: int, linear_coefficient: int
+) -> complex:
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    if modulus == 1:
+        return 1 + 0j
+    return sum(
+        cmath.exp(
+            2j
+            * cmath.pi
+            * (
+                inverse_coefficient * pow(residue, -1, modulus)
+                + linear_coefficient * residue
+            )
+            / modulus
+        )
+        for residue in range(modulus)
+        if gcd(residue, modulus) == 1
+    )
 
 
 @lru_cache(maxsize=None)
@@ -124,6 +163,1458 @@ def two_sided_mobius_geometric_value(
     ) * mobius_geometric_value(s, cutoff_s, depth_s)
 
 
+def mobius_two_cutoff_hyperbola_value(
+    n: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> int:
+    """Evaluate the exact short-short/long-long split of ``mu(n)``.
+
+    For ``n > max(cutoff_left, cutoff_right)``, the two mixed rectangles
+    in ``sum_{bc | n} mu(b) mu(c)`` vanish by divisor orthogonality.
+    Thus ``mu(n)`` is the long-long rectangle minus the short-short one,
+    with no truncation remainder.
+    """
+
+    if n < 1 or cutoff_left < 1 or cutoff_right < 1:
+        raise ValueError("n and both cutoffs must be positive")
+    if n <= max(cutoff_left, cutoff_right):
+        raise ValueError("n must exceed both cutoffs")
+
+    short_short = 0
+    long_long = 0
+    for left_factor in divisors(n):
+        for right_factor in divisors(n // left_factor):
+            contribution = mobius(left_factor) * mobius(right_factor)
+            if (
+                left_factor <= cutoff_left
+                and right_factor <= cutoff_right
+            ):
+                short_short += contribution
+            elif (
+                left_factor > cutoff_left
+                and right_factor > cutoff_right
+            ):
+                long_long += contribution
+    return long_long - short_short
+
+
+def mobius_two_cutoff_product_coefficient(
+    product: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> TwoCutoffProductCoefficient:
+    """Group the exact two-cutoff identity by the product ``m=bc``.
+
+    The short-short field already includes its minus sign from the
+    hyperbola identity.  Thus ``combined`` is the coefficient
+    ``lambda_{U,V}(m)`` for which ``mu(n)=sum_{m|n} lambda_{U,V}(m)``
+    whenever ``n>max(U,V)``.
+    """
+
+    if product < 1 or cutoff_left < 1 or cutoff_right < 1:
+        raise ValueError("the product and both cutoffs must be positive")
+    short_short = 0
+    long_long = 0
+    for left_factor in divisors(product):
+        right_factor = product // left_factor
+        contribution = mobius(left_factor) * mobius(right_factor)
+        if left_factor <= cutoff_left and right_factor <= cutoff_right:
+            short_short -= contribution
+        elif left_factor > cutoff_left and right_factor > cutoff_right:
+            long_long += contribution
+    return TwoCutoffProductCoefficient(
+        short_short=short_short,
+        long_long=long_long,
+        combined=short_short + long_long,
+    )
+
+
+def mobius_two_cutoff_product_value(
+    product: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> int:
+    """Return the grouped coefficient ``lambda_{U,V}(product)``."""
+
+    return mobius_two_cutoff_product_coefficient(
+        product,
+        cutoff_left=cutoff_left,
+        cutoff_right=cutoff_right,
+    ).combined
+
+
+def squarefree_high_product_multiplicity(
+    product: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> int:
+    """Count the long-long factorizations of a squarefree product.
+
+    When ``product>U*V``, the short-short coefficient vanishes.  Every
+    factor pair of a squarefree product is coprime, so each surviving
+    Möbius product has the common sign ``mu(product)``.
+    """
+
+    if min(product, cutoff_left, cutoff_right) < 1:
+        raise ValueError("the product and cutoffs must be positive")
+    if mobius(product) == 0:
+        raise ValueError("the high-product sign identity is squarefree")
+    return sum(
+        left_factor > cutoff_left
+        and product // left_factor > cutoff_right
+        for left_factor in divisors(product)
+    )
+
+
+def squarefree_complementary_sign_recombination(
+    shifted_argument: int,
+    product_divisor: int,
+) -> tuple[int, int]:
+    """Move ``mu(m)`` to ``mu(mk)mu(k)`` when ``mk`` is squarefree."""
+
+    if min(shifted_argument, product_divisor) < 1:
+        raise ValueError("the shifted argument and divisor must be positive")
+    if shifted_argument % product_divisor != 0:
+        raise ValueError("the product divisor must divide the shifted argument")
+    if mobius(shifted_argument) == 0:
+        raise ValueError("the shifted argument must be squarefree")
+    quotient = shifted_argument // product_divisor
+    direct = mobius(product_divisor)
+    recombined = mobius(shifted_argument) * mobius(quotient)
+    return direct, recombined
+
+
+def mobius_two_cutoff_density_period_average(
+    scalar: int,
+    *,
+    product_limit: int,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> tuple[Fraction, Fraction]:
+    """Check the exact finite principal density through ``m<=M``.
+
+    Average over one common period, restricted to residues coprime to
+    ``scalar``.  A congruence ``m | scalar+d`` has relative density
+    ``1/m`` precisely when ``(m,scalar)=1`` and otherwise has no allowed
+    residue.  The returned pair is the direct period average and this
+    finite density prefix; no limiting interchange is used.
+    """
+
+    if min(scalar, product_limit, cutoff_left, cutoff_right) < 1:
+        raise ValueError("all inputs must be positive")
+    product_period = 1
+    for product in range(1, product_limit + 1):
+        product_period = lcm(product_period, product)
+    period = lcm(product_period, scalar)
+    allowed_residues = tuple(
+        shift for shift in range(period) if gcd(shift, scalar) == 1
+    )
+    direct_total = sum(
+        mobius_two_cutoff_product_value(
+            product,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        for shift in allowed_residues
+        for product in range(1, product_limit + 1)
+        if (scalar + shift) % product == 0
+    )
+    density = sum(
+        Fraction(
+            mobius_two_cutoff_product_value(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ),
+            product,
+        )
+        for product in range(1, product_limit + 1)
+        if gcd(product, scalar) == 1
+    )
+    return Fraction(direct_total, len(allowed_residues)), density
+
+
+def mobius_two_cutoff_centered_divisor_split(
+    n: int,
+    *,
+    product_cutoff: int,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> TwoCutoffCenteredSplit:
+    """Split ``mu(n)`` into density, centered, and large divisors.
+
+    This is the exact pointwise version of subtracting the unrestricted
+    principal density only for ``m<=M``.  Nondivisor density terms
+    cancel inside the centered field, so no auxiliary scalar or
+    coprimality hypothesis is needed.
+    """
+
+    if min(n, product_cutoff, cutoff_left, cutoff_right) < 1:
+        raise ValueError("all inputs must be positive")
+    if n <= max(cutoff_left, cutoff_right):
+        raise ValueError("n must exceed both two-cutoff parameters")
+    density = sum(
+        Fraction(
+            mobius_two_cutoff_product_value(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ),
+            product,
+        )
+        for product in range(1, product_cutoff + 1)
+    )
+    centered = sum(
+        mobius_two_cutoff_product_value(
+            product,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        * (
+            Fraction(1 if n % product == 0 else 0)
+            - Fraction(1, product)
+        )
+        for product in range(1, product_cutoff + 1)
+    )
+    complementary = sum(
+        mobius_two_cutoff_product_value(
+            product,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        for product in divisors(n)
+        if product > product_cutoff
+    )
+    total = density + centered + complementary
+    return TwoCutoffCenteredSplit(
+        density=density,
+        centered=centered,
+        complementary=Fraction(complementary),
+        total=total,
+    )
+
+
+def mobius_principal_density_value(
+    n: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> Fraction:
+    """Principal-character density in the two-cutoff Möbius split."""
+
+    if n < 1 or cutoff_left < 1 or cutoff_right < 1:
+        raise ValueError("n and both cutoffs must be positive")
+    if n <= max(cutoff_left, cutoff_right):
+        raise ValueError("n must exceed both cutoffs")
+
+    short_short = Fraction(0)
+    long_long = Fraction(0)
+    for left_factor in divisors(n):
+        for right_factor in divisors(n // left_factor):
+            product = left_factor * right_factor
+            contribution = Fraction(
+                mobius(left_factor) * mobius(right_factor),
+                _euler_phi(product),
+            )
+            if (
+                left_factor <= cutoff_left
+                and right_factor <= cutoff_right
+            ):
+                short_short += contribution
+            elif (
+                left_factor > cutoff_left
+                and right_factor > cutoff_right
+            ):
+                long_long += contribution
+    return long_long - short_short
+
+
+def _validate_scalar_factor_family(
+    modulus: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> None:
+    if modulus < 2 or interval_length < 1:
+        raise ValueError("the modulus and interval length must be positive")
+    if mobius(modulus) == 0:
+        raise ValueError("the primitive scalar identity requires squarefree s")
+    if any(factor < 1 or modulus % factor != 0 for factor in scalar_factors):
+        raise ValueError("every scalar factor must divide s")
+    if len(set(scalar_factors)) != len(scalar_factors):
+        raise ValueError("the scalar-factor family must not contain duplicates")
+
+
+def _validate_primitive_scalar_inputs(
+    modulus: int,
+    shift: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> None:
+    _validate_scalar_factor_family(
+        modulus,
+        interval_length,
+        scalar_factors,
+    )
+    if gcd(shift, modulus) != 1:
+        raise ValueError("the shift must be a unit modulo s")
+
+
+def _inverse_additive_phase(
+    modulus: int,
+    numerator: int,
+    shift: int,
+) -> complex:
+    if modulus == 1:
+        return 1 + 0j
+    residue = numerator * pow(shift, -1, modulus) % modulus
+    return cmath.exp(2j * cmath.pi * residue / modulus)
+
+
+def primitive_scalar_direct_value(
+    modulus: int,
+    shift: int,
+    frequency: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> complex:
+    """Sum fixed primitive scalar strata with their reduced moduli."""
+
+    _validate_primitive_scalar_inputs(
+        modulus,
+        shift,
+        interval_length,
+        scalar_factors,
+    )
+    total = 0j
+    for scalar_factor in scalar_factors:
+        reduced_modulus = modulus // scalar_factor
+        sign = mobius(scalar_factor) * mobius(reduced_modulus)
+        total += sign * sum(
+            _inverse_additive_phase(
+                reduced_modulus,
+                -frequency * reduced_numerator,
+                shift,
+            )
+            for reduced_numerator in range(
+                1,
+                interval_length // scalar_factor + 1,
+            )
+        )
+    return total
+
+
+def primitive_scalar_recombined_value(
+    modulus: int,
+    shift: int,
+    frequency: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> complex:
+    """Recombine ``s=gq, m=g*delta`` before estimating the scalar sum."""
+
+    _validate_primitive_scalar_inputs(
+        modulus,
+        shift,
+        interval_length,
+        scalar_factors,
+    )
+    return mobius(modulus) * sum(
+        _inverse_additive_phase(
+            modulus,
+            -frequency * scalar_factor * reduced_numerator,
+            shift,
+        )
+        for scalar_factor in scalar_factors
+        for reduced_numerator in range(
+            1,
+            interval_length // scalar_factor + 1,
+        )
+    )
+
+
+def scalar_incidence_energy(
+    modulus: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> int:
+    """Direct second moment of the scalar divisor-incidence count."""
+
+    _validate_scalar_factor_family(
+        modulus,
+        interval_length,
+        scalar_factors,
+    )
+    return sum(
+        sum(multiple % factor == 0 for factor in scalar_factors) ** 2
+        for multiple in range(1, interval_length + 1)
+    )
+
+
+def scalar_incidence_pair_energy_formula(
+    modulus: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> int:
+    """LCM-pair formula for the scalar divisor-incidence energy."""
+
+    _validate_scalar_factor_family(
+        modulus,
+        interval_length,
+        scalar_factors,
+    )
+    return sum(
+        interval_length
+        // (left_factor * right_factor // gcd(left_factor, right_factor))
+        for left_factor in scalar_factors
+        for right_factor in scalar_factors
+    )
+
+
+def scalar_type_i_absolute_exponent(
+    scalar_length: Fraction,
+    left_cutoff: Fraction,
+    right_cutoff: Fraction,
+) -> Fraction:
+    """Power cost of the absolute short-short congruence count."""
+
+    if min(scalar_length, left_cutoff, right_cutoff) < 0:
+        raise ValueError("all cutoff exponents must be nonnegative")
+    return max(scalar_length, left_cutoff + right_cutoff)
+
+
+def central_major_arc_mertens_ledger(
+    *,
+    scalar_length: Fraction,
+    quotient_length: Fraction,
+    shifted_length: Fraction,
+    shift_average: Fraction,
+    target: Fraction,
+    scalar_relative_saving: Fraction,
+    quotient_relative_saving: Fraction,
+    shifted_relative_saving: Fraction,
+) -> CentralMajorArcMertensLedger:
+    """Audit a factorwise Mertens bound on the additive central arc.
+
+    The first Möbius polynomial factors at zero frequency into lengths
+    ``G`` and ``Q``; the shifted Möbius polynomial has length ``S``.
+    A central arc of width the reciprocal of the longer polynomial gives
+    the raw exponent below.  Relative savings ``eta`` mean a bound
+    ``X^(1-eta)`` for the corresponding polynomial, uniformly across
+    that arc by partial summation.
+    """
+
+    lengths = (
+        scalar_length,
+        quotient_length,
+        shifted_length,
+        shift_average,
+        target,
+    )
+    savings = (
+        scalar_relative_saving,
+        quotient_relative_saving,
+        shifted_relative_saving,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if any(saving < 0 or saving > 1 for saving in savings):
+        raise ValueError("relative savings must lie in [0,1]")
+    first_polynomial = scalar_length + quotient_length
+    central_arc_width = max(first_polynomial, shifted_length)
+    raw_bound = (
+        first_polynomial
+        + shifted_length
+        + shift_average
+        - central_arc_width
+    )
+    available_saving = (
+        scalar_length * scalar_relative_saving
+        + quotient_length * quotient_relative_saving
+        + shifted_length * shifted_relative_saving
+    )
+    conditional_bound = raw_bound - available_saving
+    return CentralMajorArcMertensLedger(
+        raw_bound=raw_bound,
+        required_saving=raw_bound - target,
+        available_saving=available_saving,
+        conditional_bound=conditional_bound,
+        gap=conditional_bound - target,
+    )
+
+
+def postcompletion_cutoff_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    outer_length: Fraction,
+    left_cutoff: Fraction,
+    right_cutoff: Fraction,
+    fourier_decay_order: int,
+    target: Fraction,
+) -> PostcompletionCutoffLedger:
+    """Cutoff geometry after completing the transition numerator.
+
+    For ``m=bc<D``, smooth Poisson summation in the shift variable makes
+    the nonzero frequency tail ``(m/D)^(A-1)``.  The sharp endpoint cost
+    is retained separately.  The long-long complementary divisor
+    ``k=n/m`` has the two displayed ceilings.
+    """
+
+    lengths = (
+        ambient_length,
+        shift_length,
+        outer_length,
+        left_cutoff,
+        right_cutoff,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if fourier_decay_order < 1:
+        raise ValueError("the Fourier decay order must be positive")
+    divisor_product = left_cutoff + right_cutoff
+    if divisor_product > shift_length:
+        raise ValueError("this Poisson ledger requires bc no longer than D")
+    quotient_ceiling = ambient_length - divisor_product
+    if quotient_ceiling < 0 or ambient_length < shift_length:
+        raise ValueError("the ambient interval must contain the shift range")
+    sharp_boundary = outer_length + divisor_product
+    smooth_tail = (
+        sharp_boundary
+        + (fourier_decay_order - 1)
+        * (divisor_product - shift_length)
+    )
+    return PostcompletionCutoffLedger(
+        divisor_product_floor=divisor_product,
+        quotient_ceiling=quotient_ceiling,
+        fixed_product_quotient_window=max(
+            Fraction(0), shift_length - divisor_product
+        ),
+        high_product_quotient_ceiling=ambient_length - shift_length,
+        sharp_type_i_boundary=sharp_boundary,
+        smooth_type_i_tail=smooth_tail,
+        sharp_margin=target - sharp_boundary,
+        smooth_margin=target - smooth_tail,
+    )
+
+
+def centered_low_modulus_large_sieve_ledger(
+    *,
+    modulus_length: Fraction,
+    outer_length: Fraction,
+    shift_length: Fraction,
+    fourier_decay_order: int,
+    target: Fraction,
+) -> CenteredLowModulusLargeSieveLedger:
+    """Additive-large-sieve bound for a centered ``m<=D`` block.
+
+    The coefficient and outer L2 energies have exponents ``M`` and
+    ``S``.  Fractions ``k/m`` contribute the classical ``S+M^2`` large
+    sieve constant, while smooth Poisson modes gain
+    ``(M/D)^(A-1)``.
+    """
+
+    lengths = (modulus_length, outer_length, shift_length, target)
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if modulus_length > shift_length:
+        raise ValueError("the centered low-modulus block requires M<=D")
+    if fourier_decay_order < 1:
+        raise ValueError("the Fourier decay order must be positive")
+    large_sieve_constant = max(outer_length, 2 * modulus_length)
+    fourier_decay = (
+        fourier_decay_order - 1
+    ) * (modulus_length - shift_length)
+    bound = (
+        modulus_length / 2
+        + outer_length / 2
+        + large_sieve_constant / 2
+        + fourier_decay
+    )
+    return CenteredLowModulusLargeSieveLedger(
+        coefficient_energy=modulus_length,
+        outer_energy=outer_length,
+        large_sieve_constant=large_sieve_constant,
+        fourier_decay=fourier_decay,
+        bound=bound,
+        target=target,
+        margin=target - bound,
+    )
+
+
+def asymptotic_sieve_transition_ledger(
+    *,
+    ambient_length: Fraction,
+    distribution_level: Fraction,
+    complementary_quotient: Fraction,
+    short_divisor_cutoff: Fraction,
+) -> AsymptoticSieveTransitionLedger:
+    """Map the complementary divisor face to FI's sieve parameters.
+
+    This ledger checks only the exponent syntax of Friedlander--Iwaniec
+    conditions (B1)--(B3).  Their bilinear condition (B) is an input
+    axiom, not a conclusion of the asymptotic sieve theorem.
+    """
+
+    lengths = (
+        ambient_length,
+        distribution_level,
+        complementary_quotient,
+        short_divisor_cutoff,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if distribution_level > ambient_length:
+        raise ValueError("the distribution level cannot exceed x")
+    square_root_level = distribution_level / 2
+    square_root_ambient = ambient_length / 2
+    b3_ceiling = ambient_length - distribution_level
+    return AsymptoticSieveTransitionLedger(
+        square_root_level=square_root_level,
+        square_root_ambient=square_root_ambient,
+        complementary_quotient=complementary_quotient,
+        b3_coefficient_ceiling=b3_ceiling,
+        short_divisor_cutoff=short_divisor_cutoff,
+        quotient_at_lower_endpoint=(
+            complementary_quotient == square_root_level
+        ),
+        cutoff_inside_b3_ceiling=(short_divisor_cutoff <= b3_ceiling),
+    )
+
+
+def complementary_one_factor_coverage_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    other_long_factor_floor: Fraction,
+    theorem_short_interval_ratio: Fraction,
+) -> ComplementaryOneFactorCoverageLedger:
+    """Test a one-factor all-interval theorem on the complementary face."""
+
+    lengths = (ambient_length, shift_length, other_long_factor_floor)
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if not 0 <= theorem_short_interval_ratio < 1:
+        raise ValueError("the short-interval ratio must lie in [0,1)")
+    if shift_length > ambient_length:
+        raise ValueError("the shift cannot exceed the ambient length")
+    maximum_factor = ambient_length - other_long_factor_floor
+    # Fixing the other factor and the complementary quotient leaves a
+    # Mobius interval of T-exponent beta-(ambient-shift).  Requiring this
+    # to be at least beta*theta gives beta >= (ambient-shift)/(1-theta).
+    required_factor = (
+        ambient_length - shift_length
+    ) / (1 - theorem_short_interval_ratio)
+    return ComplementaryOneFactorCoverageLedger(
+        maximum_factor_length=maximum_factor,
+        required_factor_length=required_factor,
+        coverage_gap=required_factor - maximum_factor,
+        covered=(maximum_factor >= required_factor),
+    )
+
+
+def scalar_type_ii_cutoff_ledger(
+    *,
+    r_length: Fraction,
+    reduced_modulus: Fraction,
+    scalar_length: Fraction,
+    shift_length: Fraction,
+    left_cutoff: Fraction,
+    right_cutoff: Fraction,
+) -> ScalarTypeIICutoffLedger:
+    """Exponent geometry after ``r=bc*k`` in the long-long packet."""
+
+    if min(
+        r_length,
+        reduced_modulus,
+        scalar_length,
+        shift_length,
+        left_cutoff,
+        right_cutoff,
+    ) < 0:
+        raise ValueError("all exponent lengths must be nonnegative")
+    divisor_product_floor = left_cutoff + right_cutoff
+    quotient_ceiling = r_length - divisor_product_floor
+    if quotient_ceiling < 0:
+        raise ValueError("the divisor product cannot exceed r")
+    return ScalarTypeIICutoffLedger(
+        divisor_product_floor=divisor_product_floor,
+        divisor_product_vs_scalar=(
+            divisor_product_floor - scalar_length
+        ),
+        quotient_ceiling=quotient_ceiling,
+        fixed_divisor_quotient_window=max(
+            Fraction(0),
+            shift_length - divisor_product_floor,
+        ),
+        rational_distance=(
+            shift_length
+            - divisor_product_floor
+            - reduced_modulus
+        ),
+    )
+
+
+def near_determinant_bettin_chandee_ledger(
+    *,
+    long_numerator: Fraction,
+    long_modulus: Fraction,
+    product_length: Fraction,
+    scalar_coefficient_cost: Fraction,
+    target: Fraction,
+) -> NearDeterminantBCLedger:
+    """Audit BC after the near-window weight is Fourier-separated.
+
+    The long numerator coefficient, modulus coefficient, and product
+    coefficient are charged by their square-root counting norms.  The
+    optional scalar cost records what remains in the modulus coefficient.
+    """
+
+    if min(
+        long_numerator,
+        long_modulus,
+        product_length,
+        scalar_coefficient_cost,
+        target,
+    ) < 0:
+        raise ValueError("all exponent lengths must be nonnegative")
+    geometric_sum = long_numerator + long_modulus + product_length
+    longest_variable = max(long_numerator, long_modulus)
+    coefficient_norm = (
+        geometric_sum / 2 + scalar_coefficient_cost
+    )
+    first_parenthetical = (
+        Fraction(7, 20) * geometric_sum + longest_variable / 4
+    )
+    second_parenthetical = (
+        Fraction(3, 8) * geometric_sum
+        + (product_length + longest_variable) / 8
+    )
+    large_phase_penalty = max(
+        Fraction(0),
+        (product_length - long_numerator - long_modulus) / 2,
+    )
+    theorem_bound = (
+        coefficient_norm
+        + min(first_parenthetical, second_parenthetical)
+        + large_phase_penalty
+    )
+    return NearDeterminantBCLedger(
+        coefficient_norm=coefficient_norm,
+        first_parenthetical=first_parenthetical,
+        second_parenthetical=second_parenthetical,
+        large_phase_penalty=large_phase_penalty,
+        theorem_bound=theorem_bound,
+        target=target,
+        gap=theorem_bound - target,
+    )
+
+
+def partially_fixed_modulus_ledger(
+    *,
+    long_modulus: Fraction,
+    quotient: Fraction,
+    fixed_divisor: Fraction,
+    product_numerator: Fraction,
+    short_factor_triangle: Fraction,
+    target: Fraction,
+) -> PartiallyFixedModulusLedger:
+    """Audit Wright's 2026 partially fixed-modulus theorem.
+
+    Reciprocity maps ``e_q(-A*inverse(B*k))`` to the theorem with
+    ``M=q``, ``N=k`` and fixed denominator factor ``R=B``.  The near
+    determinant has already been Fourier-separated in this ledger, so
+    its density is unavailable.  The third term uses the weaker
+    ``A^(-1/20)`` printed in the theorem statement; the proof displays
+    a stronger power, but that discrepancy does not select the maximum.
+    """
+
+    values = (
+        long_modulus,
+        quotient,
+        fixed_divisor,
+        product_numerator,
+        short_factor_triangle,
+        target,
+    )
+    if min(values) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+
+    coefficient_norm = (
+        long_modulus + quotient + product_numerator
+    ) / 2
+    geometric_factor = coefficient_norm
+    fixed_factor = fixed_divisor / 4
+    first_term = -quotient / 8
+    second_term = (
+        fixed_divisor / 8 + quotient / 8 - long_modulus / 4
+    )
+    third_term = (
+        long_modulus / 10
+        - 3 * fixed_divisor / 20
+        - product_numerator / 20
+        - 3 * quotient / 20
+    )
+    fourth_term = (
+        3 * quotient / 20
+        - 3 * product_numerator / 20
+        - long_modulus / 5
+    )
+    fifth_term = 3 * quotient / 8 - long_modulus / 2
+    fixed_block_bound = (
+        coefficient_norm
+        + geometric_factor
+        + fixed_factor
+        + max(first_term, second_term, third_term, fourth_term, fifth_term)
+    )
+    global_bound = fixed_block_bound + short_factor_triangle
+    return PartiallyFixedModulusLedger(
+        coefficient_norm=coefficient_norm,
+        geometric_factor=geometric_factor,
+        fixed_factor=fixed_factor,
+        first_term=first_term,
+        second_term=second_term,
+        third_term=third_term,
+        fourth_term=fourth_term,
+        fifth_term=fifth_term,
+        fixed_block_bound=fixed_block_bound,
+        global_bound=global_bound,
+        target=target,
+        gap=global_bound - target,
+    )
+
+
+def mobius_character_mean_square_ledger(
+    *,
+    progression_modulus: Fraction,
+    scalar_length: Fraction,
+    long_length: Fraction,
+    required_saving: Fraction,
+) -> MobiusCharacterMeanSquareLedger:
+    """Screen the character route on the affine endpoint packet.
+
+    The progression density removes the count of moduli B before
+    cancellation, so Bombieri--Vinogradov supplies logarithmic but no
+    power saving.  After the principal and induced spectra have been
+    separated, the displayed character energies are the optimistic
+    primitive-character large-sieve exponents with dyadic 1/B
+    normalization.
+    """
+
+    values = (
+        progression_modulus,
+        scalar_length,
+        long_length,
+        required_saving,
+    )
+    if min(values) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+
+    raw_progression_bound = (
+        progression_modulus
+        + scalar_length
+        + max(Fraction(0), long_length - progression_modulus)
+    )
+    bombieri_vinogradov_bound = scalar_length + long_length
+    short_character_energy = (
+        -progression_modulus
+        + max(2 * progression_modulus, scalar_length)
+        + scalar_length
+    )
+    long_character_energy = (
+        -progression_modulus
+        + max(2 * progression_modulus, long_length)
+        + long_length
+    )
+    ordinary_large_sieve_bound = (
+        short_character_energy + long_character_energy
+    ) / 2
+    required_bound = raw_progression_bound - required_saving
+    ordinary_saving = raw_progression_bound - ordinary_large_sieve_bound
+    required_long_character_energy = (
+        2 * required_bound - short_character_energy
+    )
+    return MobiusCharacterMeanSquareLedger(
+        raw_progression_bound=raw_progression_bound,
+        bombieri_vinogradov_bound=bombieri_vinogradov_bound,
+        short_character_energy=short_character_energy,
+        long_character_energy=long_character_energy,
+        ordinary_large_sieve_bound=ordinary_large_sieve_bound,
+        required_bound=required_bound,
+        ordinary_saving=ordinary_saving,
+        required_saving=required_saving,
+        gap=ordinary_large_sieve_bound - required_bound,
+        required_long_character_energy=required_long_character_energy,
+    )
+
+
+def prime_kloosterman_average_ledger(
+    *,
+    modulus: Fraction,
+    prime_length: Fraction,
+    required_saving: Fraction,
+) -> PrimeKloostermanLedger:
+    """Audit Irving's averaged Kloosterman-over-primes theorem."""
+
+    if min(modulus, prime_length, required_saving) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    if not 2 * modulus / 3 <= prime_length <= 3 * modulus / 2:
+        raise ValueError("the theorem requires Q^(2/3) <= x <= Q^(3/2)")
+
+    first_term = 5 * modulus / 4 + 5 * prime_length / 8
+    second_term = modulus + 9 * prime_length / 10
+    third_term = 7 * modulus / 6 + 13 * prime_length / 18
+    theorem_bound = max(first_term, second_term, third_term)
+    trivial_bound = modulus + prime_length
+    theorem_saving = trivial_bound - theorem_bound
+    return PrimeKloostermanLedger(
+        first_term=first_term,
+        second_term=second_term,
+        third_term=third_term,
+        theorem_bound=theorem_bound,
+        trivial_bound=trivial_bound,
+        theorem_saving=theorem_saving,
+        required_saving=required_saving,
+        gap=required_saving - theorem_saving,
+    )
+
+
+def prime_slice_variance_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    scalar_length: Fraction,
+) -> PrimeSliceVarianceLedger:
+    """Audit Selberg variance and the density term on the prime slice.
+
+    The interval has ambient scale ``x = T^ambient_length`` and length
+    ``y = T^shift_length``.  The transition needs the scalar saving
+    ``T^scalar_length``.  The unconditional Selberg-integral input used
+    here is ``J(x, y/x) << x*y^2``; the RH diagnostic is ``J << x*y``.
+    """
+
+    if ambient_length <= 0:
+        raise ValueError("the ambient exponent must be positive")
+    if min(shift_length, scalar_length) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    if shift_length > ambient_length:
+        raise ValueError("the short interval cannot exceed the ambient scale")
+    if scalar_length > ambient_length:
+        raise ValueError("the requested scalar saving exceeds the ambient scale")
+
+    relative_interval = shift_length - ambient_length
+    trivial_bound = ambient_length + shift_length
+    target_bound = trivial_bound - scalar_length
+    unconditional_variance = ambient_length + 2 * shift_length
+    unconditional_cauchy_bound = (
+        ambient_length + unconditional_variance
+    ) / 2
+    rh_variance = ambient_length + shift_length
+    rh_cauchy_bound = (ambient_length + rh_variance) / 2
+    density_required_mertens = target_bound - shift_length
+    return PrimeSliceVarianceLedger(
+        relative_interval=relative_interval,
+        trivial_bound=trivial_bound,
+        target_bound=target_bound,
+        unconditional_variance=unconditional_variance,
+        unconditional_cauchy_bound=unconditional_cauchy_bound,
+        unconditional_gap=unconditional_cauchy_bound - target_bound,
+        rh_variance=rh_variance,
+        rh_cauchy_bound=rh_cauchy_bound,
+        rh_margin=target_bound - rh_cauchy_bound,
+        density_required_mertens=density_required_mertens,
+        density_required_ratio=density_required_mertens / ambient_length,
+        density_required_saving=ambient_length - density_required_mertens,
+    )
+
+
+def shifted_prime_mobius_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    scalar_length: Fraction,
+) -> ShiftedPrimeMobiusLedger:
+    """Audit a logarithmic averaged shifted-prime Möbius estimate."""
+
+    if min(ambient_length, shift_length, scalar_length) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    if shift_length > ambient_length:
+        raise ValueError("the shift range cannot exceed the ambient scale")
+
+    raw_bound = ambient_length + shift_length
+    target_bound = raw_bound - scalar_length
+    published_power_bound = raw_bound
+    published_power_saving = raw_bound - published_power_bound
+    return ShiftedPrimeMobiusLedger(
+        raw_bound=raw_bound,
+        published_power_bound=published_power_bound,
+        target_bound=target_bound,
+        published_power_saving=published_power_saving,
+        required_power_saving=scalar_length,
+        gap=published_power_bound - target_bound,
+    )
+
+
+def shifted_prime_mobius_coordinates(
+    *,
+    base: int,
+    shift: int,
+    shift_range: int,
+) -> ShiftedPrimeMobiusCoordinates:
+    """Map mu(s) * Lambda(s+d) to mu(n+h) * G(n)."""
+
+    if shift_range < 1 or not 1 <= shift <= shift_range:
+        raise ValueError("the shift must lie in the positive shift range")
+    if base <= shift_range:
+        raise ValueError("the base must exceed the shift range")
+    return ShiftedPrimeMobiusCoordinates(
+        mobius_shift=shift_range - shift,
+        translated_base=base + shift - shift_range,
+    )
+
+
+def transition_archimedean_scale_ledger(
+    *,
+    r: Fraction,
+    s: Fraction,
+    first_zeta: Fraction,
+    second_zeta: Fraction,
+    determinant: Fraction,
+    numerator: Fraction,
+    scalar: Fraction,
+    reduced_determinant: Fraction,
+    reduced_modulus: Fraction,
+) -> TransitionArchimedeanScaleLedger:
+    """Evaluate every dimensionless frequency in the actual kernel (5.13b).
+
+    The fields are respectively the exponents of ``T*lambda0``,
+    ``omega0``, ``chi0``, ``KS/(MR)``, ``g*delta0/L``, and ``H/q``.
+    Zero in every field means that numerator completion samples a
+    bounded Fourier coefficient of a fixed-scale weight; there is no
+    residual power of ``T`` available for integration by parts.
+    """
+
+    values = (
+        r,
+        s,
+        first_zeta,
+        second_zeta,
+        determinant,
+        numerator,
+        scalar,
+        reduced_determinant,
+        reduced_modulus,
+    )
+    if any(value < 0 for value in values):
+        raise ValueError("all scale exponents must be nonnegative")
+    return TransitionArchimedeanScaleLedger(
+        logarithmic_phase=1 + determinant - first_zeta - r,
+        numerator_fourier_center=numerator + first_zeta - s,
+        afe_argument=2 * first_zeta + r - s - 1,
+        zeta_balance=second_zeta + s - first_zeta - r,
+        scalar_dilation=scalar + reduced_determinant - determinant,
+        poisson_sample=numerator - reduced_modulus,
+    )
+
+
+def transition_numerator_completion_ledger(
+    *,
+    raw_bound: Fraction,
+    numerator_length: Fraction,
+    modulus: Fraction,
+    numerator_sum_length: Fraction,
+    target: Fraction,
+) -> TransitionNumeratorCompletionLedger:
+    """Audit Poisson completion in the transition numerator variable."""
+
+    if min(
+        raw_bound,
+        numerator_length,
+        modulus,
+        numerator_sum_length,
+        target,
+    ) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    dual_length = max(modulus - numerator_sum_length, Fraction(0))
+    numerator_saving = numerator_length - dual_length
+    completed_bound = raw_bound - numerator_saving
+    return TransitionNumeratorCompletionLedger(
+        dual_length=dual_length,
+        numerator_saving=numerator_saving,
+        completed_bound=completed_bound,
+        target=target,
+        gap=completed_bound - target,
+    )
+
+
+def transition_numerator_dual_coordinates(
+    *,
+    modulus: int,
+    determinant: int,
+    numerator: int,
+    dual_frequency: int,
+) -> TransitionNumeratorDualCoordinates:
+    """Resolve delta congruent to ell*d modulo q in the separated range."""
+
+    if modulus < 1 or numerator < 1 or determinant == 0 or dual_frequency == 0:
+        raise ValueError("the modulus and numerator must be positive and modes nonzero")
+    if gcd(determinant, modulus) != 1:
+        raise ValueError("the determinant must be a unit modulo the modulus")
+    dilation = dual_frequency * determinant
+    if modulus <= numerator + abs(dilation):
+        raise ValueError("the modulus must separate the two integer representatives")
+    if (dilation - numerator) % modulus != 0:
+        raise ValueError("the dual congruence is not satisfied")
+    if dilation != numerator:
+        raise AssertionError("separation and congruence must force exact equality")
+    return TransitionNumeratorDualCoordinates(
+        dual_frequency=dual_frequency,
+        determinant=determinant,
+        numerator=numerator,
+    )
+
+
+def centered_transition_completion_ledger(
+    *,
+    modulus: Fraction,
+    determinant_length: Fraction,
+) -> CenteredTransitionCompletionLedger:
+    """Compare the point mass and uniform mean after centered completion.
+
+    The normalized numerator transform is
+    ``1_{delta = ell*d (mod q)} - 1/phi(q)``.  On two intervals of
+    exponent ``D<q``, the aligned point mass has exponent ``D`` while
+    the uniform background has exponent ``2D-q``.  Their ratio is the
+    exact missing scalar exponent ``q-D``.
+    """
+
+    if determinant_length < 0 or modulus <= determinant_length:
+        raise ValueError("require nonnegative D exponent strictly below q")
+    uniform_background = 2 * determinant_length - modulus
+    return CenteredTransitionCompletionLedger(
+        point_mass=determinant_length,
+        uniform_background=uniform_background,
+        point_over_background=modulus - determinant_length,
+    )
+
+
+def centered_transition_diagonal_mass(
+    modulus: int,
+    interval_length: int,
+) -> Fraction:
+    """Exact centered mass on ``delta=d`` inside a short initial box.
+
+    For ``D<q`` the congruence ``delta=d (mod q)`` is literal equality.
+    If ``U`` is the number of units up to ``D``, the completed centered
+    kernel therefore has mass ``U-U^2/phi(q)``.  In particular it need
+    not have zero additive-shift mean after restriction to the short box.
+    """
+
+    if modulus < 2 or not 1 <= interval_length < modulus:
+        raise ValueError("require q>=2 and 1<=D<q")
+    unit_count = sum(
+        gcd(value, modulus) == 1
+        for value in range(1, interval_length + 1)
+    )
+    return Fraction(unit_count) - Fraction(
+        unit_count * unit_count,
+        _euler_phi(modulus),
+    )
+
+
+def completed_transition_scalar_weighted_sum(
+    *,
+    modulus: int,
+    shift: int,
+    scalar_weights: tuple[tuple[int, complex], ...],
+) -> tuple[complex, complex]:
+    """Recombine all scalar signs after the transition phase disappears.
+
+    For squarefree ``s`` and every ``g|s``, squarefreeness gives
+    ``mu(g)*mu(s/g)=mu(s)``.  Thus arbitrary scalar-dependent weights
+    form one divisor-incidence coefficient; they do not retain an
+    independent Möbius sign.  The returned pair is the direct sum and
+    its recombined form.
+    """
+
+    if modulus < 2 or mobius(modulus) == 0:
+        raise ValueError("the completed scalar identity requires squarefree s")
+    if modulus + shift < 1 or gcd(shift, modulus) != 1:
+        raise ValueError("the shifted argument must be positive and coprime to s")
+    scalar_factors = tuple(factor for factor, _weight in scalar_weights)
+    if any(
+        factor < 1 or modulus % factor != 0
+        for factor in scalar_factors
+    ):
+        raise ValueError("every scalar factor must divide s")
+    if len(set(scalar_factors)) != len(scalar_factors):
+        raise ValueError("the scalar factors must be distinct")
+    shifted_sign = mobius(modulus + shift)
+    direct = sum(
+        mobius(factor)
+        * mobius(modulus // factor)
+        * shifted_sign
+        * weight
+        for factor, weight in scalar_weights
+    )
+    recombined = (
+        mobius(modulus)
+        * shifted_sign
+        * sum(weight for _factor, weight in scalar_weights)
+    )
+    return direct, recombined
+
+
+def near_determinant_coordinates(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    parameter: int,
+) -> NearDeterminantCoordinates:
+    """Parametrize all positive solutions of ``B*k-g*q=d``."""
+
+    if min(divisor_product, scalar_factor, determinant) < 1:
+        raise ValueError("the factors and determinant must be positive")
+    if divisor_product == 1:
+        raise ValueError("the audited transition divisor product exceeds one")
+    if parameter < 0:
+        raise ValueError("the affine parameter must be nonnegative")
+    if gcd(divisor_product, scalar_factor) != 1:
+        raise ValueError("B and g must be coprime")
+    if gcd(determinant, divisor_product * scalar_factor) != 1:
+        raise ValueError("d must be coprime to B*g")
+
+    base_modulus = (
+        -determinant * pow(scalar_factor, -1, divisor_product)
+    ) % divisor_product
+    if base_modulus == 0:
+        raise AssertionError("coprimality forces a nonzero base modulus")
+    base_quotient = (
+        determinant + scalar_factor * base_modulus
+    ) // divisor_product
+    return NearDeterminantCoordinates(
+        base_modulus=base_modulus,
+        base_quotient=base_quotient,
+        modulus=base_modulus + divisor_product * parameter,
+        quotient=base_quotient + scalar_factor * parameter,
+    )
+
+
+def near_determinant_dual_coordinates(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    parameter: int,
+    dual_frequency: int,
+    dual_quotient: int,
+) -> NearDeterminantDualCoordinates:
+    """Add the exact delta-Poisson lattice h+n*q=j*d."""
+
+    coordinates = near_determinant_coordinates(
+        divisor_product,
+        scalar_factor,
+        determinant,
+        parameter,
+    )
+    numerator = (
+        dual_quotient * determinant
+        - dual_frequency * coordinates.modulus
+    )
+    return NearDeterminantDualCoordinates(
+        modulus=coordinates.modulus,
+        determinant_quotient=coordinates.quotient,
+        numerator=numerator,
+        dual_quotient=dual_quotient,
+    )
+
+
+def near_determinant_complete_reciprocal_sum(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    numerator: int,
+) -> complex:
+    """Complete reciprocal core along one determinant solution line."""
+
+    total = 0j
+    for parameter in range(determinant):
+        coordinates = near_determinant_coordinates(
+            divisor_product,
+            scalar_factor,
+            determinant,
+            parameter,
+        )
+        if gcd(coordinates.modulus, determinant) == 1:
+            total += _inverse_additive_phase(
+                determinant,
+                numerator,
+                coordinates.modulus,
+            )
+    return total
+
+
+def near_determinant_reciprocal_parseval_sides(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    weights: tuple[complex, ...],
+) -> tuple[float, float]:
+    """Both sides of Parseval for the complete affine reciprocal transform.
+
+    Only parameters for which ``q=q0+B*t`` is a unit modulo ``d`` occur.
+    Since ``B`` is a unit modulo ``d``, these ``q`` values are distinct,
+    and inversion permutes their reduced residue classes.
+    """
+
+    if len(weights) != determinant:
+        raise ValueError("one coefficient is required for each residue parameter")
+    transforms: list[complex] = []
+    retained_energy = 0.0
+    for numerator in range(determinant):
+        value = 0j
+        for parameter, weight in enumerate(weights):
+            modulus = near_determinant_coordinates(
+                divisor_product,
+                scalar_factor,
+                determinant,
+                parameter,
+            ).modulus
+            if gcd(modulus, determinant) != 1:
+                continue
+            value += weight * _inverse_additive_phase(
+                determinant, numerator, modulus
+            )
+            if numerator == 0:
+                retained_energy += abs(weight) ** 2
+        transforms.append(value)
+    return (
+        sum(abs(value) ** 2 for value in transforms),
+        determinant * retained_energy,
+    )
+
+
+def near_determinant_complete_delta_product_sum(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    h_length: int,
+    delta_length: int,
+    weights: tuple[complex, ...],
+) -> complex:
+    """Direct complete-delta product box on the affine solution line."""
+
+    if min(h_length, delta_length) < 1:
+        raise ValueError("product-box lengths must be positive")
+    if delta_length % determinant != 0:
+        raise ValueError("the delta interval must contain complete d-periods")
+    if len(weights) != determinant:
+        raise ValueError("one coefficient is required for each residue parameter")
+    total = 0j
+    for parameter, weight in enumerate(weights):
+        modulus = near_determinant_coordinates(
+            divisor_product,
+            scalar_factor,
+            determinant,
+            parameter,
+        ).modulus
+        if gcd(modulus, determinant) != 1:
+            continue
+        inverse = pow(modulus, -1, determinant)
+        total += weight * sum(
+            cmath.exp(
+                2j
+                * cmath.pi
+                * ((h * delta * inverse) % determinant)
+                / determinant
+            )
+            for h in range(1, h_length + 1)
+            for delta in range(1, delta_length + 1)
+        )
+    return total
+
+
+def near_determinant_complete_delta_product_formula(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    h_length: int,
+    delta_length: int,
+    weights: tuple[complex, ...],
+) -> complex:
+    """Collapsed value of the complete-delta product box.
+
+    Every reciprocal frequency is a unit modulo ``d``.  A complete
+    ``delta``-period therefore vanishes unless ``d`` divides ``h``.
+    """
+
+    if min(h_length, delta_length) < 1:
+        raise ValueError("product-box lengths must be positive")
+    if delta_length % determinant != 0:
+        raise ValueError("the delta interval must contain complete d-periods")
+    if len(weights) != determinant:
+        raise ValueError("one coefficient is required for each residue parameter")
+    retained = 0j
+    for parameter, weight in enumerate(weights):
+        modulus = near_determinant_coordinates(
+            divisor_product,
+            scalar_factor,
+            determinant,
+            parameter,
+        ).modulus
+        if gcd(modulus, determinant) == 1:
+            retained += weight
+    return delta_length * (h_length // determinant) * retained
+
+
+def near_determinant_reciprocity_phase(
+    modulus: int,
+    determinant: int,
+    numerator: int,
+) -> complex:
+    """Original inverse phase modulo the long modulus q."""
+
+    if min(modulus, determinant) < 2:
+        raise ValueError("both moduli must exceed one")
+    if gcd(modulus, determinant) != 1:
+        raise ValueError("q and d must be coprime")
+    return cmath.exp(
+        -2j
+        * cmath.pi
+        * numerator
+        * pow(determinant, -1, modulus)
+        / modulus
+    )
+
+
+def near_determinant_reciprocity_phase_formula(
+    modulus: int,
+    determinant: int,
+    numerator: int,
+) -> complex:
+    """Reciprocal phase modulo d, retaining the exact smooth factor."""
+
+    if min(modulus, determinant) < 2:
+        raise ValueError("both moduli must exceed one")
+    if gcd(modulus, determinant) != 1:
+        raise ValueError("q and d must be coprime")
+    reciprocal = cmath.exp(
+        2j
+        * cmath.pi
+        * numerator
+        * pow(modulus, -1, determinant)
+        / determinant
+    )
+    archimedean = cmath.exp(
+        -2j * cmath.pi * numerator / (determinant * modulus)
+    )
+    return reciprocal * archimedean
+
+
 @dataclass(frozen=True)
 class InverseFractionSeparation:
     """Centered numerator certificate for two fixed-numerator fractions.
@@ -190,6 +1681,100 @@ class CentralCollisionLedger:
     divisor_parameter_count: Fraction
     random_collision_count: Fraction
     counting_gap: Fraction
+
+
+@dataclass(frozen=True)
+class AdditiveDualShiftPhase:
+    """Exact change from the completed numerator ``r`` to ``d=r-s``."""
+
+    shift: int
+    original: Fraction
+    shifted: Fraction
+
+
+@dataclass(frozen=True)
+class AdditiveShiftedChowlaLedger:
+    """Power ledger for the lowest nonzero additive-dual block.
+
+    This ledger applies on the overlapping balanced face ``R=S``.  The
+    natural Fourier lengths are ``s/H`` and ``s/L``.  Their product sets
+    the near-diagonal window ``|r-s| <= s/((s/H)(s/L))``.  No cancellation
+    is asserted: ``required_saving`` is precisely the power still needed
+    after this finite change of coordinates.
+    """
+
+    h_frequency: Fraction
+    delta_frequency: Fraction
+    product_frequency: Fraction
+    completion_amplitude: Fraction
+    near_shift: Fraction
+    near_trivial: Fraction
+    local_target: Fraction
+    required_saving: Fraction
+    one_modulus_l2: Fraction | None
+    one_modulus_l2_gap: Fraction | None
+
+
+@dataclass(frozen=True)
+class AdditiveDualBlockLedger:
+    """Exponent ledger for one centered nonzero Fourier rectangle."""
+
+    h_frequency: Fraction
+    delta_frequency: Fraction
+    h_fourier_amplitude: Fraction
+    delta_fourier_amplitude: Fraction
+    product_frequency: Fraction
+    completion_amplitude: Fraction
+    near_shift: Fraction
+    near_trivial: Fraction
+    local_target: Fraction
+    required_saving: Fraction
+    one_modulus_l2: Fraction | None
+    one_modulus_l2_gap: Fraction | None
+
+
+@dataclass(frozen=True)
+class CompletedProductPhaseReduction:
+    """Reduced fraction data for the shifted phase ``d*a*b/s``."""
+
+    scalar_gcd: int
+    reduced_numerator: int
+    reduced_denominator: int
+
+
+@dataclass(frozen=True)
+class SquarefreeScalarGcdStratum:
+    """Ordered scalar-gcd splitting of a squarefree modulus."""
+
+    a_gcd: int
+    b_gcd: int
+    reduced_modulus: int
+    a_reduced: int
+    b_reduced: int
+    mobius_sign: int
+
+
+@dataclass(frozen=True)
+class KloostermanFractionTripleLedger:
+    """Exponent ledger for the coprimality-migrated BC interface.
+
+    The theorem bound is Bettin--Chandee Theorem 1 after fixing the
+    signless delta-gcd factor and the Ramanujan cofactor.  The ledger
+    includes their exact coefficient norms, both parenthetical terms,
+    the large-phase penalty, and the remaining fixed-factor L1 cost.
+    """
+
+    product_length: Fraction
+    coefficient_norms: Fraction
+    first_parenthesis: Fraction
+    second_parenthesis: Fraction
+    phase_penalty: Fraction
+    fixed_factor_cost: Fraction
+    theorem_bound: Fraction
+    trivial_bound: Fraction
+    local_target: Fraction
+    theorem_gap: Fraction
+    theorem_saving: Fraction
 
 
 @dataclass(frozen=True)
@@ -362,6 +1947,35 @@ def rectangular_product_multiplicities(
     return result
 
 
+def rectangular_product_residue_energy(
+    h_length: int, delta_length: int, modulus: int
+) -> int:
+    """Exact energy after folding ``h*delta`` into residues modulo ``d``."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    residue_multiplicities = [0] * modulus
+    for product, multiplicity in rectangular_product_multiplicities(
+        h_length, delta_length
+    ).items():
+        residue_multiplicities[product % modulus] += multiplicity
+    return sum(value * value for value in residue_multiplicities)
+
+
+def rectangular_product_residue_energy_majorant(
+    h_length: int, delta_length: int, modulus: int
+) -> int:
+    """Boundary-exact Cauchy majorant for product residue energy."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    multiplicities = rectangular_product_multiplicities(h_length, delta_length)
+    product_ceiling = (
+        h_length * delta_length + modulus - 1
+    ) // modulus
+    return product_ceiling * sum(value * value for value in multiplicities.values())
+
+
 def rectangular_product_kernel(
     h_length: int, delta_length: int, phase: Fraction
 ) -> complex:
@@ -373,6 +1987,58 @@ def rectangular_product_kernel(
         cmath.exp(2j * cmath.pi * float((h * delta * phase) % 1))
         for h in range(1, h_length + 1)
         for delta in range(1, delta_length + 1)
+    )
+
+
+def linear_convolution_energy_on_multiples(
+    left_length: int,
+    right_length: int,
+    left_multiplier: int,
+    right_multiplier: int,
+    divisor: int,
+) -> int:
+    """Energy of ``L*x+M*y`` restricted to values divisible by ``g``."""
+
+    if min(
+        left_length,
+        right_length,
+        left_multiplier,
+        right_multiplier,
+        divisor,
+    ) < 1:
+        raise ValueError("lengths, multipliers, and divisor must be positive")
+    multiplicities: dict[int, int] = {}
+    for left_value in range(1, left_length + 1):
+        for right_value in range(1, right_length + 1):
+            total = (
+                left_multiplier * left_value
+                + right_multiplier * right_value
+            )
+            if total % divisor == 0:
+                multiplicities[total] = multiplicities.get(total, 0) + 1
+    return sum(multiplicity * multiplicity for multiplicity in multiplicities.values())
+
+
+def linear_convolution_energy_on_multiples_majorant(
+    left_length: int,
+    right_length: int,
+    divisor: int,
+) -> int:
+    """Finite ``D^3/g`` majorant when the right multiplier is a unit mod g.
+
+    For each left input, one residue class of right inputs survives modulo
+    ``g``.  There are at most ``ceil(right_length/g)`` such inputs, while
+    every exact convolution value has multiplicity at most the shorter
+    interval length.
+    """
+
+    if min(left_length, right_length, divisor) < 1:
+        raise ValueError("lengths and divisor must be positive")
+    right_residue_count = (right_length - 1) // divisor + 1
+    return (
+        min(left_length, right_length)
+        * left_length
+        * right_residue_count
     )
 
 
@@ -421,6 +2087,2606 @@ def additive_product_completion(
     ) / modulus
 
 
+def additive_dual_shift_phase(
+    r: int, modulus: int, a: int, b: int
+) -> AdditiveDualShiftPhase:
+    """Return ``e_s(rab)=e_s((r-s)ab)`` as an exact rational phase.
+
+    In the completed inverse kernel the modulus is the original variable
+    ``s``.  Writing ``d=r-s`` therefore turns the outer signs into the
+    shifted pair ``mu(s)mu(s+d)`` without a boundary approximation.
+    """
+
+    if min(r, modulus) < 1 or min(a, b) < 0:
+        raise ValueError("require positive r,s and nonnegative residues")
+    shift = r - modulus
+    original = Fraction(r * a * b, modulus) % 1
+    shifted = Fraction(shift * a * b, modulus) % 1
+    if original != shifted:
+        raise AssertionError("subtracting the modulus changed the phase")
+    return AdditiveDualShiftPhase(
+        shift=shift,
+        original=original,
+        shifted=shifted,
+    )
+
+
+def completed_product_phase_reduction(
+    shift: int, modulus: int, a: int, b: int
+) -> CompletedProductPhaseReduction:
+    """Reduce ``d*a*b/s`` when ``(d,s)=1`` without losing gcd strata.
+
+    The only denominator drop comes from ``g=(a*b,s)``.  Thus the exact
+    reduced denominator is ``s/g``; in a no-wrap block ``|a*b|<s`` it is
+    at least ``s/|a*b|``.  This is the scalar-divisor interface that a
+    far-arc estimate must retain.
+    """
+
+    if modulus < 1 or a == 0 or b == 0:
+        raise ValueError("require a positive modulus and nonzero frequencies")
+    if gcd(shift, modulus) != 1:
+        raise ValueError("the shifted numerator must be a unit modulo s")
+    scalar_gcd = gcd(abs(a * b), modulus)
+    reduced_denominator = modulus // scalar_gcd
+    reduced_numerator = (
+        shift * (a * b // scalar_gcd)
+    ) % reduced_denominator
+    if gcd(reduced_numerator, reduced_denominator) != 1:
+        raise AssertionError("the completed phase was not fully reduced")
+    return CompletedProductPhaseReduction(
+        scalar_gcd=scalar_gcd,
+        reduced_numerator=reduced_numerator,
+        reduced_denominator=reduced_denominator,
+    )
+
+
+def squarefree_scalar_gcd_stratum(
+    modulus: int, a: int, b: int
+) -> SquarefreeScalarGcdStratum:
+    """Factor the scalar divisor stratum without double-counting primes.
+
+    Put ``g_a=(a,s)``, ``g_b=(b,s/g_a)`` and ``q=s/(g_a*g_b)``.
+    If ``s`` is squarefree then these three factors are pairwise coprime,
+    ``g_a*g_b=(a*b,s)``, and
+
+    ``a*b/s = (a/g_a)*(b/g_b)/q``.
+
+    The outer sign also factors as ``mu(s)=mu(g_a)mu(g_b)mu(q)``.
+    """
+
+    if modulus < 1 or a == 0 or b == 0:
+        raise ValueError("require a positive modulus and nonzero frequencies")
+    if mobius(modulus) == 0:
+        raise ValueError("the scalar-gcd splitting requires squarefree s")
+    a_gcd = gcd(abs(a), modulus)
+    remaining = modulus // a_gcd
+    b_gcd = gcd(abs(b), remaining)
+    reduced_modulus = remaining // b_gcd
+    a_reduced = a // a_gcd
+    b_reduced = b // b_gcd
+    if a_gcd * b_gcd != gcd(abs(a * b), modulus):
+        raise AssertionError("ordered gcd factors missed a scalar prime")
+    if gcd(a_reduced * b_reduced, reduced_modulus) != 1:
+        raise AssertionError("the reduced product is not a unit")
+    mobius_sign = (
+        mobius(a_gcd) * mobius(b_gcd) * mobius(reduced_modulus)
+    )
+    if mobius_sign != mobius(modulus):
+        raise AssertionError("the squarefree Möbius sign did not factor")
+    return SquarefreeScalarGcdStratum(
+        a_gcd=a_gcd,
+        b_gcd=b_gcd,
+        reduced_modulus=reduced_modulus,
+        a_reduced=a_reduced,
+        b_reduced=b_reduced,
+        mobius_sign=mobius_sign,
+    )
+
+
+def restricted_unit_fourier_lift(
+    scalar: int, reduced_modulus: int, residue: int, length: int
+) -> complex:
+    """Direct unit-restricted lift of an interval transform from q to gq."""
+
+    if min(scalar, reduced_modulus, length) < 1:
+        raise ValueError("the lift parameters must be positive")
+    if gcd(scalar, reduced_modulus) != 1:
+        raise ValueError("the scalar and reduced modulus must be coprime")
+    if gcd(residue, reduced_modulus) != 1:
+        raise ValueError("the base residue must be a unit modulo q")
+    modulus = scalar * reduced_modulus
+    return sum(
+        _finite_interval_fourier(length, lift, modulus)
+        for lift in (
+            residue + multiple * reduced_modulus
+            for multiple in range(scalar)
+        )
+        if gcd(lift, modulus) == 1
+    )
+
+
+def restricted_unit_fourier_lift_formula(
+    scalar: int, reduced_modulus: int, residue: int, length: int
+) -> complex:
+    """Ramanujan formula for :func:`restricted_unit_fourier_lift`."""
+
+    if min(scalar, reduced_modulus, length) < 1:
+        raise ValueError("the lift parameters must be positive")
+    if gcd(scalar, reduced_modulus) != 1:
+        raise ValueError("the scalar and reduced modulus must be coprime")
+    if gcd(residue, reduced_modulus) != 1:
+        raise ValueError("the base residue must be a unit modulo q")
+    if reduced_modulus == 1:
+        inverse_scalar = 0
+    else:
+        inverse_scalar = pow(scalar, -1, reduced_modulus)
+    return sum(
+        ramanujan_sum(scalar, value)
+        * cmath.exp(
+            2j
+            * cmath.pi
+            * ((-inverse_scalar * residue * value) % reduced_modulus)
+            / reduced_modulus
+        )
+        for value in range(1, length + 1)
+    )
+
+
+def unrestricted_fourier_lift(
+    scalar: int, reduced_modulus: int, residue: int, length: int
+) -> complex:
+    """Direct unrestricted lift of an interval transform from q to gq."""
+
+    if min(scalar, reduced_modulus, length) < 1:
+        raise ValueError("the lift parameters must be positive")
+    if gcd(scalar, reduced_modulus) != 1:
+        raise ValueError("the scalar and reduced modulus must be coprime")
+    modulus = scalar * reduced_modulus
+    return sum(
+        _finite_interval_fourier(
+            length,
+            residue + multiple * reduced_modulus,
+            modulus,
+        )
+        for multiple in range(scalar)
+    )
+
+
+def unrestricted_fourier_lift_formula(
+    scalar: int, reduced_modulus: int, residue: int, length: int
+) -> complex:
+    """Orthogonality formula for :func:`unrestricted_fourier_lift`."""
+
+    if min(scalar, reduced_modulus, length) < 1:
+        raise ValueError("the lift parameters must be positive")
+    if gcd(scalar, reduced_modulus) != 1:
+        raise ValueError("the scalar and reduced modulus must be coprime")
+    return scalar * _finite_interval_fourier(
+        length // scalar,
+        residue,
+        reduced_modulus,
+    )
+
+
+def double_unit_bilinear_sum(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+    bilinear_coefficient: int,
+) -> complex:
+    """Direct complete sum over two units modulo a squarefree modulus."""
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the double-unit sum requires squarefree q")
+    if gcd(bilinear_coefficient, modulus) != 1:
+        raise ValueError("the bilinear coefficient must be a unit modulo q")
+    return sum(
+        cmath.exp(
+            2j
+            * cmath.pi
+            * (
+                (
+                    bilinear_coefficient * u * v
+                    - a_coefficient * u
+                    - b_coefficient * v
+                )
+                % modulus
+            )
+            / modulus
+        )
+        for u in range(modulus)
+        if gcd(u, modulus) == 1
+        for v in range(modulus)
+        if gcd(v, modulus) == 1
+    )
+
+
+def double_unit_divisor_spectrum(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+    bilinear_coefficient: int,
+) -> complex:
+    """Exact divisor spectrum of the complete double-unit bilinear sum.
+
+    For squarefree ``q`` and ``(d,q)=1``, Chinese remaindering the local
+    prime identity
+
+    ``sum_{u,v != 0 mod p} e_p(d*u*v-A*u-B*v)``
+    ``= p*e_p(-A*B/d)-c_p(A)``
+
+    gives, after noting that the local stationary unit exists only when
+    ``p`` does not divide ``B``,
+
+    ``sum_{k|q, (k,B)=1} k*mu(q/k)*c_{q/k}(A)``
+    ``  * e_k(-A*B*inv_k(d*(q/k)))``.
+
+    The ``k=1`` phase is interpreted as one.
+    """
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the divisor spectrum requires squarefree q")
+    if gcd(bilinear_coefficient, modulus) != 1:
+        raise ValueError("the bilinear coefficient must be a unit modulo q")
+    total = 0j
+    for divisor_modulus in divisors(modulus):
+        if gcd(divisor_modulus, b_coefficient) != 1:
+            continue
+        cofactor = modulus // divisor_modulus
+        coefficient = (
+            divisor_modulus
+            * mobius(cofactor)
+            * ramanujan_sum(cofactor, a_coefficient)
+        )
+        if divisor_modulus == 1:
+            phase = 1 + 0j
+        else:
+            inverse = pow(
+                (bilinear_coefficient * cofactor) % divisor_modulus,
+                -1,
+                divisor_modulus,
+            )
+            phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    (-a_coefficient * b_coefficient * inverse)
+                    % divisor_modulus
+                )
+                / divisor_modulus
+            )
+        total += coefficient * phase
+    return total
+
+
+def mobius_weighted_double_unit_divisor_spectrum(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+    bilinear_coefficient: int,
+) -> complex:
+    """Divisor spectrum after migrating the outer squarefree ``mu(q)``.
+
+    Writing ``q=k*n``, squarefreeness gives
+    ``mu(q)*mu(n)=mu(k)``.  Thus the cofactor Möbius sign disappears and
+    the surviving sign is attached to the oscillatory divisor modulus.
+    """
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the weighted spectrum requires squarefree q")
+    if gcd(bilinear_coefficient, modulus) != 1:
+        raise ValueError("the bilinear coefficient must be a unit modulo q")
+    total = 0j
+    for divisor_modulus in divisors(modulus):
+        if gcd(divisor_modulus, b_coefficient) != 1:
+            continue
+        cofactor = modulus // divisor_modulus
+        coefficient = (
+            divisor_modulus
+            * mobius(divisor_modulus)
+            * ramanujan_sum(cofactor, a_coefficient)
+        )
+        if divisor_modulus == 1:
+            phase = 1 + 0j
+        else:
+            inverse = pow(
+                (bilinear_coefficient * cofactor) % divisor_modulus,
+                -1,
+                divisor_modulus,
+            )
+            phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    (-a_coefficient * b_coefficient * inverse)
+                    % divisor_modulus
+                )
+                / divisor_modulus
+            )
+        total += coefficient * phase
+    return total
+
+
+def centered_inverse_cross_correlation(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+) -> complex:
+    """Direct centered inverse-phase covariance on the common unit group."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    left_mean = Fraction(
+        ramanujan_sum(left_modulus, left_numerator),
+        _euler_phi(left_modulus),
+    )
+    right_mean = Fraction(
+        ramanujan_sum(right_modulus, right_numerator),
+        _euler_phi(right_modulus),
+    )
+    total = 0j
+    for residue in range(common_modulus):
+        if gcd(residue, common_modulus) != 1:
+            continue
+        if left_modulus == 1:
+            left_phase = 1 + 0j
+        else:
+            left_phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    left_numerator
+                    * pow(residue, -1, left_modulus)
+                    % left_modulus
+                )
+                / left_modulus
+            )
+        if right_modulus == 1:
+            right_phase = 1 + 0j
+        else:
+            right_phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    right_numerator
+                    * pow(residue, -1, right_modulus)
+                    % right_modulus
+                )
+                / right_modulus
+            )
+        total += (left_phase - float(left_mean)) * (
+            right_phase - float(right_mean)
+        ).conjugate()
+    return total
+
+
+def centered_inverse_cross_correlation_formula(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+) -> Fraction:
+    """Closed Ramanujan formula for the centered inverse covariance."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    combined_frequency = (
+        left_numerator * (common_modulus // left_modulus)
+        - right_numerator * (common_modulus // right_modulus)
+    )
+    return Fraction(ramanujan_sum(common_modulus, combined_frequency)) - Fraction(
+        _euler_phi(common_modulus)
+        * ramanujan_sum(left_modulus, left_numerator)
+        * ramanujan_sum(right_modulus, right_numerator),
+        _euler_phi(left_modulus) * _euler_phi(right_modulus),
+    )
+
+
+def centered_inverse_cross_correlation_gcd_formula(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+) -> Fraction:
+    """Squarefree common-divisor form of the centered covariance."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    if mobius(left_modulus) == 0 or mobius(right_modulus) == 0:
+        raise ValueError("the gcd formula requires squarefree moduli")
+    common_divisor = gcd(left_modulus, right_modulus)
+    left_cofactor = left_modulus // common_divisor
+    right_cofactor = right_modulus // common_divisor
+    common_covariance = Fraction(
+        ramanujan_sum(
+            common_divisor,
+            left_numerator * right_cofactor
+            - right_numerator * left_cofactor,
+        )
+    ) - Fraction(
+        ramanujan_sum(common_divisor, left_numerator)
+        * ramanujan_sum(common_divisor, right_numerator),
+        _euler_phi(common_divisor),
+    )
+    return (
+        ramanujan_sum(left_cofactor, left_numerator)
+        * ramanujan_sum(right_cofactor, right_numerator)
+        * common_covariance
+    )
+
+
+def mobius_weighted_double_unit_mean(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+) -> Fraction:
+    """Unit average of the outer-Möbius-weighted double-unit spectrum."""
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the double-unit mean requires squarefree q")
+    return Fraction(
+        ramanujan_sum(modulus, a_coefficient)
+        * ramanujan_sum(modulus, b_coefficient),
+        _euler_phi(modulus),
+    )
+
+
+def mobius_weighted_centered_double_unit_divisor_spectrum(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+    bilinear_coefficient: int,
+) -> complex:
+    """Centered divisor layers of the weighted double-unit spectrum."""
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the centered spectrum requires squarefree q")
+    if gcd(bilinear_coefficient, modulus) != 1:
+        raise ValueError("the bilinear coefficient must be a unit modulo q")
+    total = 0j
+    for divisor_modulus in divisors(modulus):
+        if gcd(divisor_modulus, b_coefficient) != 1:
+            continue
+        cofactor = modulus // divisor_modulus
+        coefficient = (
+            divisor_modulus
+            * mobius(divisor_modulus)
+            * ramanujan_sum(cofactor, a_coefficient)
+        )
+        if divisor_modulus == 1:
+            phase = 1 + 0j
+        else:
+            inverse = pow(
+                (bilinear_coefficient * cofactor) % divisor_modulus,
+                -1,
+                divisor_modulus,
+            )
+            phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    (-a_coefficient * b_coefficient * inverse)
+                    % divisor_modulus
+                )
+                / divisor_modulus
+            )
+        layer_mean = Fraction(
+            ramanujan_sum(divisor_modulus, a_coefficient),
+            _euler_phi(divisor_modulus),
+        )
+        total += coefficient * (phase - float(layer_mean))
+    return total
+
+
+def centered_inverse_cross_fourier(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+    frequency: int,
+) -> complex:
+    """Direct Fourier coefficient of a centered inverse-phase product."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    left_mean = Fraction(
+        ramanujan_sum(left_modulus, left_numerator),
+        _euler_phi(left_modulus),
+    )
+    right_mean = Fraction(
+        ramanujan_sum(right_modulus, right_numerator),
+        _euler_phi(right_modulus),
+    )
+    total = 0j
+    for residue in range(common_modulus):
+        if gcd(residue, common_modulus) != 1:
+            continue
+        if left_modulus == 1:
+            left_phase = 1 + 0j
+        else:
+            left_phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    left_numerator
+                    * pow(residue, -1, left_modulus)
+                    % left_modulus
+                )
+                / left_modulus
+            )
+        if right_modulus == 1:
+            right_phase = 1 + 0j
+        else:
+            right_phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    right_numerator
+                    * pow(residue, -1, right_modulus)
+                    % right_modulus
+                )
+                / right_modulus
+            )
+        centered_product = (left_phase - float(left_mean)) * (
+            right_phase - float(right_mean)
+        ).conjugate()
+        additive_phase = cmath.exp(
+            -2j * cmath.pi * (frequency * residue % common_modulus)
+            / common_modulus
+        )
+        total += centered_product * additive_phase
+    return total
+
+
+def centered_inverse_cross_fourier_formula(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+    frequency: int,
+) -> complex:
+    """Four-Kloosterman formula for the centered cross coefficient."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    left_lift = left_numerator * (common_modulus // left_modulus)
+    right_lift = right_numerator * (common_modulus // right_modulus)
+    left_mean = Fraction(
+        ramanujan_sum(left_modulus, left_numerator),
+        _euler_phi(left_modulus),
+    )
+    right_mean = Fraction(
+        ramanujan_sum(right_modulus, right_numerator),
+        _euler_phi(right_modulus),
+    )
+    return (
+        _kloosterman_sum(
+            common_modulus,
+            left_lift - right_lift,
+            -frequency,
+        )
+        - float(right_mean)
+        * _kloosterman_sum(common_modulus, left_lift, -frequency)
+        - float(left_mean)
+        * _kloosterman_sum(common_modulus, -right_lift, -frequency)
+        + float(left_mean * right_mean)
+        * ramanujan_sum(common_modulus, frequency)
+    )
+
+
+def large_common_divisor_pair_bound(
+    dyadic_scale: int, threshold: int
+) -> int:
+    """Finite union bound for dyadic pairs with a large common divisor."""
+
+    if dyadic_scale < 1:
+        raise ValueError("dyadic scale must be positive")
+    if threshold < 2:
+        raise ValueError("threshold must be at least two")
+    return sum(
+        (2 * dyadic_scale // common_divisor) ** 2
+        for common_divisor in range(
+            threshold,
+            2 * dyadic_scale + 1,
+        )
+    )
+
+
+def centered_kloosterman_transform(
+    modulus: int, inverse_numerator: int, linear_frequency: int
+) -> complex:
+    """Fourier transform of one centered inverse phase."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    inverse_mean = Fraction(
+        ramanujan_sum(modulus, inverse_numerator),
+        _euler_phi(modulus),
+    )
+    return _kloosterman_sum(
+        modulus,
+        inverse_numerator,
+        linear_frequency,
+    ) - float(inverse_mean) * ramanujan_sum(
+        modulus,
+        linear_frequency,
+    )
+
+
+def centered_kloosterman_numerator_fourier(
+    modulus: int,
+    numerator_multiplier: int,
+    linear_frequency: int,
+    dual_frequency: int,
+) -> complex:
+    """Direct finite Fourier transform in the inverse numerator."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    return sum(
+        centered_kloosterman_transform(
+            modulus,
+            numerator_multiplier * numerator,
+            linear_frequency,
+        )
+        * cmath.exp(
+            -2j * cmath.pi * dual_frequency * numerator / modulus
+        )
+        for numerator in range(modulus)
+    )
+
+
+def centered_kloosterman_numerator_fourier_formula(
+    modulus: int,
+    numerator_multiplier: int,
+    linear_frequency: int,
+    dual_frequency: int,
+) -> complex:
+    """Closed numerator-Fourier formula with exact unit support."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    if gcd(dual_frequency, modulus) != 1:
+        return 0j
+    if modulus == 1:
+        phase = 1 + 0j
+    else:
+        dual_inverse = pow(dual_frequency % modulus, -1, modulus)
+        phase = cmath.exp(
+            2j
+            * cmath.pi
+            * (
+                linear_frequency
+                * numerator_multiplier
+                * dual_inverse
+                % modulus
+            )
+            / modulus
+        )
+    linear_mean = Fraction(
+        ramanujan_sum(modulus, linear_frequency),
+        _euler_phi(modulus),
+    )
+    return modulus * (phase - float(linear_mean))
+
+
+def centered_inverse_numerator_fourier(
+    modulus: int,
+    numerator_multiplier: int,
+    inverse_residue: int,
+    dual_frequency: int,
+) -> complex:
+    """Fourier transform in the numerator before the inverse-residue sum."""
+
+    if modulus < 1:
+        raise ValueError("the modulus must be positive")
+    if gcd(inverse_residue, modulus) != 1:
+        raise ValueError("the inverse residue must be a unit")
+    residue_inverse = (
+        0
+        if modulus == 1
+        else pow(inverse_residue % modulus, -1, modulus)
+    )
+    return sum(
+        (
+            cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    numerator_multiplier * numerator * residue_inverse
+                    % modulus
+                )
+                / modulus
+            )
+            - float(
+                Fraction(
+                    ramanujan_sum(
+                        modulus,
+                        numerator_multiplier * numerator,
+                    ),
+                    _euler_phi(modulus),
+                )
+            )
+        )
+        * cmath.exp(
+            -2j * cmath.pi * dual_frequency * numerator / modulus
+        )
+        for numerator in range(modulus)
+    )
+
+
+def centered_inverse_numerator_fourier_formula(
+    modulus: int,
+    numerator_multiplier: int,
+    inverse_residue: int,
+    dual_frequency: int,
+) -> complex:
+    """Exact reduced-modulus delta-minus-mean numerator transform."""
+
+    if modulus < 1:
+        raise ValueError("the modulus must be positive")
+    if gcd(inverse_residue, modulus) != 1:
+        raise ValueError("the inverse residue must be a unit")
+    multiplier_gcd = gcd(numerator_multiplier, modulus)
+    reduced_modulus = modulus // multiplier_gcd
+    if (
+        dual_frequency % multiplier_gcd != 0
+        or gcd(dual_frequency // multiplier_gcd, reduced_modulus) != 1
+    ):
+        return 0j
+    reduced_dual = dual_frequency // multiplier_gcd
+    reduced_multiplier = numerator_multiplier // multiplier_gcd
+    dual_inverse = (
+        0
+        if reduced_modulus == 1
+        else pow(reduced_dual % reduced_modulus, -1, reduced_modulus)
+    )
+    selected_residue = (
+        reduced_multiplier * dual_inverse % reduced_modulus
+    )
+    point_mass = int(
+        inverse_residue % reduced_modulus == selected_residue
+    )
+    return modulus * (
+        point_mass - Fraction(1, _euler_phi(reduced_modulus))
+    )
+
+
+def centered_residue_collision_fourier(
+    left_modulus: int,
+    right_modulus: int,
+    left_residue: int,
+    right_residue: int,
+    frequency: int,
+) -> complex:
+    """Direct Fourier transform of two centered residue point masses."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    if gcd(left_residue, left_modulus) != 1:
+        raise ValueError("the left residue must be a unit")
+    if gcd(right_residue, right_modulus) != 1:
+        raise ValueError("the right residue must be a unit")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    left_mean = Fraction(1, _euler_phi(left_modulus))
+    right_mean = Fraction(1, _euler_phi(right_modulus))
+    return sum(
+        (
+            int(residue % left_modulus == left_residue % left_modulus)
+            - float(left_mean)
+        )
+        * (
+            int(residue % right_modulus == right_residue % right_modulus)
+            - float(right_mean)
+        )
+        * cmath.exp(
+            -2j * cmath.pi * frequency * residue / common_modulus
+        )
+        for residue in range(common_modulus)
+        if gcd(residue, common_modulus) == 1
+    )
+
+
+def centered_residue_collision_fourier_formula(
+    left_modulus: int,
+    right_modulus: int,
+    left_residue: int,
+    right_residue: int,
+    frequency: int,
+) -> complex:
+    """CRT collision, two Ramanujan marginals, and their common mean."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    if gcd(left_residue, left_modulus) != 1:
+        raise ValueError("the left residue must be a unit")
+    if gcd(right_residue, right_modulus) != 1:
+        raise ValueError("the right residue must be a unit")
+    common_factor = gcd(left_modulus, right_modulus)
+    left_cofactor = left_modulus // common_factor
+    right_cofactor = right_modulus // common_factor
+    if (
+        gcd(common_factor, left_cofactor) != 1
+        or gcd(common_factor, right_cofactor) != 1
+        or gcd(left_cofactor, right_cofactor) != 1
+    ):
+        raise ValueError("the common factor and cofactors must be pairwise coprime")
+    common_modulus = common_factor * left_cofactor * right_cofactor
+
+    collision = 0j
+    if (left_residue - right_residue) % common_factor == 0:
+        cofactor_inverse = (
+            0
+            if right_cofactor == 1
+            else pow(left_cofactor, -1, right_cofactor)
+        )
+        lift = (
+            (right_residue - left_residue)
+            // common_factor
+            * cofactor_inverse
+        ) % right_cofactor
+        collision_residue = (
+            left_residue + left_modulus * lift
+        ) % common_modulus
+        collision = cmath.exp(
+            -2j
+            * cmath.pi
+            * frequency
+            * collision_residue
+            / common_modulus
+        )
+
+    left_inverse = (
+        0
+        if left_modulus == 1
+        else pow(right_cofactor, -1, left_modulus)
+    )
+    left_marginal = ramanujan_sum(
+        right_cofactor,
+        frequency,
+    ) * cmath.exp(
+        -2j
+        * cmath.pi
+        * (
+            frequency * left_residue * left_inverse % left_modulus
+        )
+        / left_modulus
+    )
+    right_inverse = (
+        0
+        if right_modulus == 1
+        else pow(left_cofactor, -1, right_modulus)
+    )
+    right_marginal = ramanujan_sum(
+        left_cofactor,
+        frequency,
+    ) * cmath.exp(
+        -2j
+        * cmath.pi
+        * (
+            frequency * right_residue * right_inverse % right_modulus
+        )
+        / right_modulus
+    )
+    return (
+        collision
+        - left_marginal / _euler_phi(right_modulus)
+        - right_marginal / _euler_phi(left_modulus)
+        + ramanujan_sum(common_modulus, frequency)
+        / (
+            _euler_phi(left_modulus)
+            * _euler_phi(right_modulus)
+        )
+    )
+
+
+def ambient_centered_residue_collision_fourier(
+    ambient_modulus: int,
+    left_modulus: int,
+    right_modulus: int,
+    left_residue: int,
+    right_residue: int,
+    frequency: int,
+) -> complex:
+    """Direct centered collision lifted to a larger unit-group modulus."""
+
+    if min(ambient_modulus, left_modulus, right_modulus) < 1:
+        raise ValueError("moduli must be positive")
+    if (
+        ambient_modulus % left_modulus != 0
+        or ambient_modulus % right_modulus != 0
+    ):
+        raise ValueError("both collision moduli must divide the ambient modulus")
+    if gcd(left_residue, left_modulus) != 1:
+        raise ValueError("the left residue must be a unit")
+    if gcd(right_residue, right_modulus) != 1:
+        raise ValueError("the right residue must be a unit")
+    left_mean = Fraction(1, _euler_phi(left_modulus))
+    right_mean = Fraction(1, _euler_phi(right_modulus))
+    return sum(
+        (
+            int(residue % left_modulus == left_residue % left_modulus)
+            - float(left_mean)
+        )
+        * (
+            int(residue % right_modulus == right_residue % right_modulus)
+            - float(right_mean)
+        )
+        * cmath.exp(
+            -2j * cmath.pi * frequency * residue / ambient_modulus
+        )
+        for residue in range(ambient_modulus)
+        if gcd(residue, ambient_modulus) == 1
+    )
+
+
+def ambient_centered_residue_collision_fourier_formula(
+    ambient_modulus: int,
+    left_modulus: int,
+    right_modulus: int,
+    left_residue: int,
+    right_residue: int,
+    frequency: int,
+) -> complex:
+    """Free Ramanujan factor times the reduced CRT collision."""
+
+    if min(ambient_modulus, left_modulus, right_modulus) < 1:
+        raise ValueError("moduli must be positive")
+    if (
+        ambient_modulus % left_modulus != 0
+        or ambient_modulus % right_modulus != 0
+    ):
+        raise ValueError("both collision moduli must divide the ambient modulus")
+    core_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    free_modulus = ambient_modulus // core_modulus
+    if core_modulus * free_modulus != ambient_modulus:
+        raise ValueError("the collision lcm must divide the ambient modulus")
+    if gcd(core_modulus, free_modulus) != 1:
+        raise ValueError("the free and collision moduli must be coprime")
+    core_frequency = (
+        0
+        if core_modulus == 1
+        else frequency * pow(free_modulus, -1, core_modulus)
+    )
+    return ramanujan_sum(
+        free_modulus,
+        frequency,
+    ) * centered_residue_collision_fourier_formula(
+        left_modulus,
+        right_modulus,
+        left_residue,
+        right_residue,
+        core_frequency,
+    )
+
+
+def centered_residue_collision_zero_formula(
+    common_factor: int,
+    left_residue: int,
+    right_residue: int,
+) -> Fraction:
+    """Zero mode of the CRT collision: one congruence minus its unit mean."""
+
+    if common_factor < 1:
+        raise ValueError("the common factor must be positive")
+    if gcd(left_residue, common_factor) != 1:
+        raise ValueError("the left residue must be a unit")
+    if gcd(right_residue, common_factor) != 1:
+        raise ValueError("the right residue must be a unit")
+    return Fraction(
+        int((left_residue - right_residue) % common_factor == 0),
+    ) - Fraction(1, _euler_phi(common_factor))
+
+
+def centered_unit_congruence_sum(
+    modulus: int,
+    left_length: int,
+    right_length: int,
+    left_multiplier: int,
+    right_multiplier: int,
+) -> Fraction:
+    """Finite centered unit congruence on two initial intervals."""
+
+    if min(
+        modulus,
+        left_length,
+        right_length,
+        left_multiplier,
+        right_multiplier,
+    ) < 1:
+        raise ValueError("modulus, lengths, and multipliers must be positive")
+    if gcd(left_multiplier, modulus) != 1:
+        raise ValueError("the left multiplier must be a unit")
+    if gcd(right_multiplier, modulus) != 1:
+        raise ValueError("the right multiplier must be a unit")
+    unit_mean = Fraction(1, _euler_phi(modulus))
+    return sum(
+        (
+            Fraction(
+                int(
+                    (
+                        left_multiplier * left_value
+                        + right_multiplier * right_value
+                    )
+                    % modulus
+                    == 0
+                )
+            )
+            - unit_mean
+        )
+        for left_value in range(1, left_length + 1)
+        if gcd(left_value, modulus) == 1
+        for right_value in range(1, right_length + 1)
+        if gcd(right_value, modulus) == 1
+    )
+
+
+def centered_unit_congruence_boundary_majorant(
+    modulus: int,
+    left_length: int,
+) -> int:
+    """One-boundary-error-per-left-unit majorant for the centered sum."""
+
+    if modulus < 1 or left_length < 1:
+        raise ValueError("the modulus and interval length must be positive")
+    return sum(
+        gcd(left_value, modulus) == 1
+        for left_value in range(1, left_length + 1)
+    )
+
+
+@dataclass(frozen=True)
+class CenteredKloostermanCrtTerms:
+    """The three non-principal terms in a two-factor CRT expansion."""
+
+    both_centered: complex
+    left_centered_right_mean: complex
+    left_mean_right_centered: complex
+
+    @property
+    def summands(self) -> tuple[complex, complex, complex]:
+        return (
+            self.both_centered,
+            self.left_centered_right_mean,
+            self.left_mean_right_centered,
+        )
+
+    @property
+    def total(self) -> complex:
+        return sum(self.summands)
+
+
+@dataclass(frozen=True)
+class CenteredCrtUnitMeanLedger:
+    """Pointwise saving from local principal means on the unit face."""
+
+    saving_per_mean: Fraction
+    one_mean_gap: Fraction
+    two_mean_margin: Fraction
+
+
+@dataclass(frozen=True)
+class YoungDualReciprocityLedger:
+    """Exponent ledger for Young's additive varying-level large sieve."""
+
+    rational_height: Fraction
+    large_sieve_constant: Fraction
+    coefficient_energy: Fraction
+    row_cauchy: Fraction
+    theorem_bound: Fraction
+    trivial_bound: Fraction
+    saving: Fraction
+    margin: Fraction
+
+
+@dataclass(frozen=True)
+class YoungDualGcdLedger:
+    """Young-sieve exponent ledger after numerator/modulus gcd extraction."""
+
+    reduced_outer_modulus: Fraction
+    reduced_row_length: Fraction
+    rational_height: Fraction
+    large_sieve_constant: Fraction
+    coefficient_energy: Fraction
+    theorem_bound: Fraction
+    target: Fraction
+    margin: Fraction
+
+
+@dataclass(frozen=True)
+class YoungCommonFactorLedger:
+    """Young-sieve ledger after an exact common-modulus CRT collision."""
+
+    outer_modulus: Fraction
+    row_length: Fraction
+    rational_height: Fraction
+    coefficient_energy: Fraction
+    large_sieve_constant: Fraction
+    fixed_common_factor_bound: Fraction
+    summed_bound: Fraction
+    target: Fraction
+    margin: Fraction
+
+
+@dataclass(frozen=True)
+class YoungScalarTransitionLedger:
+    """Young ledger after restoring the outer scalar-factor sum."""
+
+    reduced_numerator: Fraction
+    outer_modulus: Fraction
+    row_length: Fraction
+    rational_height: Fraction
+    coefficient_energy: Fraction
+    row_cauchy: Fraction
+    large_sieve_constant: Fraction
+    theorem_bound: Fraction
+    raw_bound: Fraction
+    second_moment_target: Fraction
+    theorem_gap: Fraction
+    required_saving: Fraction
+    theorem_saving: Fraction
+
+
+@dataclass(frozen=True)
+class ScalarTypeIICutoffLedger:
+    """Balanced short-short/long-long cutoff geometry."""
+
+    divisor_product_floor: Fraction
+    divisor_product_vs_scalar: Fraction
+    quotient_ceiling: Fraction
+    fixed_divisor_quotient_window: Fraction
+    rational_distance: Fraction
+
+
+@dataclass(frozen=True)
+class NearDeterminantBCLedger:
+    """Bettin--Chandee audit after separating the near determinant."""
+
+    coefficient_norm: Fraction
+    first_parenthetical: Fraction
+    second_parenthetical: Fraction
+    large_phase_penalty: Fraction
+    theorem_bound: Fraction
+    target: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class MobiusCharacterMeanSquareLedger:
+    """Primitive-character screening after the affine delta completion."""
+
+    raw_progression_bound: Fraction
+    bombieri_vinogradov_bound: Fraction
+    short_character_energy: Fraction
+    long_character_energy: Fraction
+    ordinary_large_sieve_bound: Fraction
+    required_bound: Fraction
+    ordinary_saving: Fraction
+    required_saving: Fraction
+    gap: Fraction
+    required_long_character_energy: Fraction
+
+
+@dataclass(frozen=True)
+class PartiallyFixedModulusLedger:
+    """Wright's fixed-denominator-factor theorem on the separated packet."""
+
+    coefficient_norm: Fraction
+    geometric_factor: Fraction
+    fixed_factor: Fraction
+    first_term: Fraction
+    second_term: Fraction
+    third_term: Fraction
+    fourth_term: Fraction
+    fifth_term: Fraction
+    fixed_block_bound: Fraction
+    global_bound: Fraction
+    target: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class PrimeKloostermanLedger:
+    """Averaged Kloosterman-over-primes exponent comparison."""
+
+    first_term: Fraction
+    second_term: Fraction
+    third_term: Fraction
+    theorem_bound: Fraction
+    trivial_bound: Fraction
+    theorem_saving: Fraction
+    required_saving: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class PrimeSliceVarianceLedger:
+    """Selberg-integral and zero-frequency exponent comparison."""
+
+    relative_interval: Fraction
+    trivial_bound: Fraction
+    target_bound: Fraction
+    unconditional_variance: Fraction
+    unconditional_cauchy_bound: Fraction
+    unconditional_gap: Fraction
+    rh_variance: Fraction
+    rh_cauchy_bound: Fraction
+    rh_margin: Fraction
+    density_required_mertens: Fraction
+    density_required_ratio: Fraction
+    density_required_saving: Fraction
+
+
+@dataclass(frozen=True)
+class ShiftedPrimeMobiusLedger:
+    """Power-exponent audit for an averaged shifted-prime theorem."""
+
+    raw_bound: Fraction
+    published_power_bound: Fraction
+    target_bound: Fraction
+    published_power_saving: Fraction
+    required_power_saving: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class ShiftedPrimeMobiusCoordinates:
+    """Coordinates satisfying n+h=s and n+Y=s+d."""
+
+    mobius_shift: int
+    translated_base: int
+
+
+@dataclass(frozen=True)
+class TransitionArchimedeanScaleLedger:
+    """Power exponents of the actual balanced transition kernel."""
+
+    logarithmic_phase: Fraction
+    numerator_fourier_center: Fraction
+    afe_argument: Fraction
+    zeta_balance: Fraction
+    scalar_dilation: Fraction
+    poisson_sample: Fraction
+
+
+@dataclass(frozen=True)
+class TwoCutoffProductCoefficient:
+    """Short, long, and combined coefficients at one product ``m=bc``."""
+
+    short_short: int
+    long_long: int
+    combined: int
+
+
+@dataclass(frozen=True)
+class TwoCutoffCenteredSplit:
+    """Exact density/centered/complementary decomposition at one n."""
+
+    density: Fraction
+    centered: Fraction
+    complementary: Fraction
+    total: Fraction
+
+
+@dataclass(frozen=True)
+class CentralMajorArcMertensLedger:
+    """Conditional fixed-power ledger for the additive central arc."""
+
+    raw_bound: Fraction
+    required_saving: Fraction
+    available_saving: Fraction
+    conditional_bound: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class PostcompletionCutoffLedger:
+    """Type-I completion and complementary-divisor exponent geometry."""
+
+    divisor_product_floor: Fraction
+    quotient_ceiling: Fraction
+    fixed_product_quotient_window: Fraction
+    high_product_quotient_ceiling: Fraction
+    sharp_type_i_boundary: Fraction
+    smooth_type_i_tail: Fraction
+    sharp_margin: Fraction
+    smooth_margin: Fraction
+
+
+@dataclass(frozen=True)
+class CenteredLowModulusLargeSieveLedger:
+    """Exponent ledger for centered low product moduli."""
+
+    coefficient_energy: Fraction
+    outer_energy: Fraction
+    large_sieve_constant: Fraction
+    fourier_decay: Fraction
+    bound: Fraction
+    target: Fraction
+    margin: Fraction
+
+
+@dataclass(frozen=True)
+class AsymptoticSieveTransitionLedger:
+    """Exponent syntax of the FI parity-breaking bilinear axiom."""
+
+    square_root_level: Fraction
+    square_root_ambient: Fraction
+    complementary_quotient: Fraction
+    b3_coefficient_ceiling: Fraction
+    short_divisor_cutoff: Fraction
+    quotient_at_lower_endpoint: bool
+    cutoff_inside_b3_ceiling: bool
+
+
+@dataclass(frozen=True)
+class ComplementaryOneFactorCoverageLedger:
+    """Coverage of a complementary factor by an all-interval theorem."""
+
+    maximum_factor_length: Fraction
+    required_factor_length: Fraction
+    coverage_gap: Fraction
+    covered: bool
+
+
+@dataclass(frozen=True)
+class TransitionNumeratorCompletionLedger:
+    """Exponent ledger after Poisson completion in h."""
+
+    dual_length: Fraction
+    numerator_saving: Fraction
+    completed_bound: Fraction
+    target: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class TransitionNumeratorDualCoordinates:
+    """Exact relation delta = ell*d forced by the transition scales."""
+
+    dual_frequency: int
+    determinant: int
+    numerator: int
+
+
+@dataclass(frozen=True)
+class CenteredTransitionCompletionLedger:
+    """Short-box imbalance of the centered numerator transform."""
+
+    point_mass: Fraction
+    uniform_background: Fraction
+    point_over_background: Fraction
+
+
+@dataclass(frozen=True)
+class NearDeterminantCoordinates:
+    """One point on the affine line ``B*k-g*q=d``."""
+
+    base_modulus: int
+    base_quotient: int
+    modulus: int
+    quotient: int
+
+
+@dataclass(frozen=True)
+class NearDeterminantDualCoordinates:
+    """One point satisfying both B*k-g*q=d and h+n*q=j*d."""
+
+    modulus: int
+    determinant_quotient: int
+    numerator: int
+    dual_quotient: int
+
+
+@dataclass(frozen=True)
+class CommonFactorMarginalLedger:
+    """Exponent bounds for the three Ramanujan marginals in the CRT formula."""
+
+    one_sided_bound: Fraction
+    all_mean_bound: Fraction
+    target: Fraction
+    one_sided_margin: Fraction
+    all_mean_margin: Fraction
+
+
+def young_dual_reciprocity_ledger(
+    outer_modulus: Fraction,
+    row_length: Fraction,
+    numerator_length: Fraction,
+    denominator_length: Fraction,
+    required_saving: Fraction,
+) -> YoungDualReciprocityLedger:
+    """Audit the unit-dual reciprocity route in exact T-exponents.
+
+    The additive convolution of two numerator intervals of exponent
+    ``numerator_length`` has second moment of exponent three times that
+    length.  The denominator family contributes one further counting
+    exponent.  Young's large-sieve constant is ``Q^2 + N``.
+    """
+
+    if min(
+        outer_modulus,
+        row_length,
+        numerator_length,
+        denominator_length,
+        required_saving,
+    ) < 0:
+        raise ValueError("exponents must be nonnegative")
+    rational_height = numerator_length + denominator_length
+    large_sieve_constant = max(2 * outer_modulus, rational_height)
+    coefficient_energy = denominator_length + 3 * numerator_length
+    row_cauchy = (outer_modulus + row_length) / 2
+    theorem_bound = row_cauchy + (
+        large_sieve_constant + coefficient_energy
+    ) / 2
+    trivial_bound = (
+        2 * outer_modulus + row_length + 2 * numerator_length
+    )
+    saving = trivial_bound - theorem_bound
+    return YoungDualReciprocityLedger(
+        rational_height=rational_height,
+        large_sieve_constant=large_sieve_constant,
+        coefficient_energy=coefficient_energy,
+        row_cauchy=row_cauchy,
+        theorem_bound=theorem_bound,
+        trivial_bound=trivial_bound,
+        saving=saving,
+        margin=saving - required_saving,
+    )
+
+
+def young_scalar_transition_ledger(
+    *,
+    r_length: Fraction,
+    total_modulus: Fraction,
+    scalar_fixed: Fraction,
+    oscillatory_modulus: Fraction,
+    h_length: Fraction,
+    delta_length: Fraction,
+    common_factor: Fraction,
+) -> YoungScalarTransitionLedger:
+    """Audit Young after the scalar-gcd factors are summed by triangle.
+
+    This is the transition face of (9.187): the Ramanujan factor is one,
+    the oscillatory modulus has the same exponent as the h-interval, and
+    the fixed scalar factors have total exponent g_a+j.  The reduced
+    delta interval has exponent ell-(g_a+j).  A dispersion step has
+    second-moment target R*S^2, hence exponent rho+2*sigma.
+    """
+
+    values = (
+        r_length,
+        total_modulus,
+        scalar_fixed,
+        oscillatory_modulus,
+        h_length,
+        delta_length,
+        common_factor,
+    )
+    if any(value < 0 for value in values):
+        raise ValueError("all exponent lengths must be nonnegative")
+    if scalar_fixed + oscillatory_modulus != total_modulus:
+        raise ValueError("the fixed and oscillatory factors must form S")
+    if h_length != oscillatory_modulus:
+        raise ValueError("this transition ledger requires H=lambda")
+    reduced_numerator = delta_length - scalar_fixed
+    if reduced_numerator < 0:
+        raise ValueError("the reduced numerator interval is empty")
+    base_row_length = 2 * oscillatory_modulus - r_length
+    if base_row_length < 0:
+        raise ValueError("the nonzero dispersion row is empty")
+    if common_factor > min(
+        oscillatory_modulus,
+        reduced_numerator,
+        base_row_length,
+    ):
+        raise ValueError("the common factor exceeds a reduced length")
+
+    outer_modulus = oscillatory_modulus - common_factor
+    row_length = base_row_length - common_factor
+    rational_height = (
+        reduced_numerator
+        + oscillatory_modulus
+        - 2 * common_factor
+    )
+    coefficient_energy = (
+        oscillatory_modulus
+        + 3 * reduced_numerator
+        - 2 * common_factor
+    )
+    row_cauchy = (outer_modulus + row_length) / 2
+    large_sieve_constant = max(
+        2 * outer_modulus,
+        rational_height,
+    )
+    theorem_bound = (
+        scalar_fixed
+        + common_factor
+        + row_cauchy
+        + (large_sieve_constant + coefficient_energy) / 2
+    )
+    raw_bound = (
+        scalar_fixed
+        + 4 * oscillatory_modulus
+        - 2 * common_factor
+        - r_length
+        + 2 * reduced_numerator
+    )
+    second_moment_target = r_length + 2 * total_modulus
+    return YoungScalarTransitionLedger(
+        reduced_numerator=reduced_numerator,
+        outer_modulus=outer_modulus,
+        row_length=row_length,
+        rational_height=rational_height,
+        coefficient_energy=coefficient_energy,
+        row_cauchy=row_cauchy,
+        large_sieve_constant=large_sieve_constant,
+        theorem_bound=theorem_bound,
+        raw_bound=raw_bound,
+        second_moment_target=second_moment_target,
+        theorem_gap=theorem_bound - second_moment_target,
+        required_saving=raw_bound - second_moment_target,
+        theorem_saving=raw_bound - theorem_bound,
+    )
+
+
+def common_factor_marginal_ledger(
+    common_factor: Fraction,
+) -> CommonFactorMarginalLedger:
+    """Audit the Ramanujan marginals after summing normalized means.
+
+    A one-sided marginal sums one normalized Ramanujan factor over its
+    free cofactor modulus and leaves 1/phi(t).  The dyadic t-sum absorbs
+    that factor, so only u, the nonzero row, and the two numerator
+    intervals remain.  The all-mean term sums normalized Ramanujan
+    factors over t, u, and v, leaving only the row and numerator boxes.
+    """
+
+    if common_factor < 0 or common_factor > 2:
+        raise ValueError("the common factor must lie in the nonzero dual range")
+    one_sided_bound = Fraction(17, 2) - 2 * common_factor
+    all_mean_bound = Fraction(6) - common_factor
+    target = Fraction(9)
+    return CommonFactorMarginalLedger(
+        one_sided_bound=one_sided_bound,
+        all_mean_bound=all_mean_bound,
+        target=target,
+        one_sided_margin=target - one_sided_bound,
+        all_mean_margin=target - all_mean_bound,
+    )
+
+
+def young_common_factor_ledger(
+    common_factor: Fraction,
+    row_gcd: Fraction = Fraction(0),
+    numerator_gcd: Fraction = Fraction(0),
+    rational_gcd: Fraction = Fraction(0),
+) -> YoungCommonFactorLedger:
+    """Audit nonzero dual modes with a common modulus of the given exponent.
+
+    Write m=t*u and n=t*v.  Numerator completion makes the two centered
+    residue point masses compatible only when t divides
+    M*delta + L*delta'.  The same t then cancels from the rational
+    numerator and denominator in Young's additive large sieve.  For a
+    fixed t this lowers both the convolution energy and the denominator
+    count, while summing the dyadic t-box costs one copy of its exponent.
+    The other three arguments extract the same row, outer-numerator, and
+    lowest-rational gcd strata as in young_dual_reciprocity_gcd_ledger.
+    """
+
+    if common_factor < 0:
+        raise ValueError("the common-factor exponent must be nonnegative")
+    if common_factor > 2:
+        raise ValueError("this ledger is for the nonzero dual range t <= T^2")
+    if row_gcd < 0 or numerator_gcd < 0 or rational_gcd < 0:
+        raise ValueError("gcd exponents must be nonnegative")
+    numerator_length = Fraction(2) - common_factor
+    outer_length = Fraction(5, 2) - common_factor
+    if row_gcd > numerator_length:
+        raise ValueError("the row gcd cannot exceed the row length")
+    if row_gcd + numerator_gcd > outer_length:
+        raise ValueError("the outer gcds cannot exceed the modulus")
+    if numerator_gcd + rational_gcd > numerator_length:
+        raise ValueError("the rational gcd cannot exceed the numerator")
+
+    outer_modulus = outer_length - row_gcd - numerator_gcd
+    row_length = numerator_length - row_gcd
+    rational_height = (
+        Fraction(9, 2)
+        - 2 * common_factor
+        - numerator_gcd
+        - 2 * rational_gcd
+    )
+    coefficient_energy = (
+        Fraction(17, 2) - 2 * common_factor - 2 * rational_gcd
+    )
+    large_sieve_constant = max(
+        2 * outer_modulus,
+        rational_height,
+    )
+    row_cauchy = (outer_modulus + row_length) / 2
+    extracted_factor_count = row_gcd + numerator_gcd + rational_gcd
+    fixed_common_factor_bound = (
+        extracted_factor_count
+        + row_cauchy
+        + (large_sieve_constant + coefficient_energy) / 2
+    )
+    summed_bound = fixed_common_factor_bound + common_factor
+    target = Fraction(9)
+    return YoungCommonFactorLedger(
+        outer_modulus=outer_modulus,
+        row_length=row_length,
+        rational_height=rational_height,
+        coefficient_energy=coefficient_energy,
+        large_sieve_constant=large_sieve_constant,
+        fixed_common_factor_bound=fixed_common_factor_bound,
+        summed_bound=summed_bound,
+        target=target,
+        margin=target - summed_bound,
+    )
+
+
+def young_dual_reciprocity_gcd_ledger(
+    row_gcd: Fraction,
+    numerator_gcd: Fraction,
+    rational_gcd: Fraction = Fraction(0),
+) -> YoungDualGcdLedger:
+    """Audit every gcd stratum of the primitive Young-sieve application.
+
+    Here ``row_gcd`` is the exponent of ``d = (k, q)`` and
+    ``numerator_gcd`` is the exponent of ``e = (A, q / d)``, and
+    ``rational_gcd`` is the exponent of ``g = (A/e, u)`` needed to put
+    the rational numerator and denominator in lowest terms.  Extracting
+    these factors leaves outer modulus exponent ``5/2-d-e``, row length
+    ``2-d``, and rational height ``9/2-e-2g``.
+
+    On a fixed ``g``-stratum, the denominator count loses ``g`` and the
+    additive-convolution energy on numerators divisible by ``g`` loses
+    another ``g``: the elementary bound is ``D^3/g``.  Thus the original
+    coefficient-energy exponent ``17/2`` becomes ``17/2-2g``.  We charge
+    ``d+e+g`` for selecting all extracted factors, a conservative finite
+    exponent audit in which the two ``g`` savings exactly pay for the
+    added ``g``-sum.
+    """
+
+    if row_gcd < 0 or numerator_gcd < 0 or rational_gcd < 0:
+        raise ValueError("gcd exponents must be nonnegative")
+    if row_gcd > 2:
+        raise ValueError("the row gcd cannot exceed the row length")
+    if row_gcd + numerator_gcd > Fraction(5, 2):
+        raise ValueError("the extracted gcds cannot exceed the modulus")
+    if numerator_gcd > 2:
+        raise ValueError("the numerator gcd cannot exceed its length")
+    if numerator_gcd + rational_gcd > 2:
+        raise ValueError("the rational gcd cannot exceed the numerator")
+
+    reduced_outer_modulus = Fraction(5, 2) - row_gcd - numerator_gcd
+    reduced_row_length = Fraction(2) - row_gcd
+    rational_height = (
+        Fraction(9, 2) - numerator_gcd - 2 * rational_gcd
+    )
+    large_sieve_constant = max(
+        2 * reduced_outer_modulus,
+        rational_height,
+    )
+    row_cauchy = (reduced_outer_modulus + reduced_row_length) / 2
+    coefficient_energy = Fraction(17, 2) - 2 * rational_gcd
+    extracted_factor_count = row_gcd + numerator_gcd + rational_gcd
+    theorem_bound = (
+        extracted_factor_count
+        + row_cauchy
+        + (large_sieve_constant + coefficient_energy) / 2
+    )
+    target = Fraction(9)
+    return YoungDualGcdLedger(
+        reduced_outer_modulus=reduced_outer_modulus,
+        reduced_row_length=reduced_row_length,
+        rational_height=rational_height,
+        large_sieve_constant=large_sieve_constant,
+        coefficient_energy=coefficient_energy,
+        theorem_bound=theorem_bound,
+        target=target,
+        margin=target - theorem_bound,
+    )
+
+
+def centered_crt_unit_mean_ledger(
+    local_factor_exponent: Fraction,
+    required_saving: Fraction,
+) -> CenteredCrtUnitMeanLedger:
+    """Compare local mean suppression with a required global saving.
+
+    For unit Kloosterman arguments, a local centered transform has Weil
+    size ``q^(1/2+o(1))`` while its principal mean has size
+    ``q^(-1+o(1))``.  Replacing one centered local factor by its mean
+    therefore saves ``q^(3/2-o(1))``.
+    """
+
+    if local_factor_exponent < 0 or required_saving < 0:
+        raise ValueError("exponents must be nonnegative")
+    saving_per_mean = Fraction(3, 2) * local_factor_exponent
+    return CenteredCrtUnitMeanLedger(
+        saving_per_mean=saving_per_mean,
+        one_mean_gap=max(Fraction(0), required_saving - saving_per_mean),
+        two_mean_margin=max(
+            Fraction(0), 2 * saving_per_mean - required_saving
+        ),
+    )
+
+
+def dual_unit_reciprocity_phase(
+    left_modulus: int,
+    right_modulus: int,
+    left_dual: int,
+    right_dual: int,
+    frequency: int,
+    left_numerator: int,
+    right_numerator: int,
+) -> complex:
+    """Original pair of cross-inverse phases on positive dual modes."""
+
+    if min(left_modulus, right_modulus, left_dual, right_dual) < 1:
+        raise ValueError("moduli and dual frequencies must be positive")
+    if gcd(left_modulus, right_modulus * left_dual) != 1:
+        raise ValueError("the left cross inverse must exist")
+    if gcd(right_modulus, left_modulus * right_dual) != 1:
+        raise ValueError("the right cross inverse must exist")
+    left_inverse = pow(
+        (right_modulus * left_dual) % left_modulus,
+        -1,
+        left_modulus,
+    )
+    right_inverse = pow(
+        (left_modulus * right_dual) % right_modulus,
+        -1,
+        right_modulus,
+    )
+    return cmath.exp(
+        2j
+        * cmath.pi
+        * (-frequency * left_numerator * left_inverse)
+        / left_modulus
+    ) * cmath.exp(
+        2j
+        * cmath.pi
+        * (frequency * right_numerator * right_inverse)
+        / right_modulus
+    )
+
+
+def dual_unit_reciprocity_phase_formula(
+    left_modulus: int,
+    right_modulus: int,
+    left_dual: int,
+    right_dual: int,
+    frequency: int,
+    left_numerator: int,
+    right_numerator: int,
+) -> complex:
+    """One rational character, one fixed twist, and a small real phase."""
+
+    if min(left_modulus, right_modulus, left_dual, right_dual) < 1:
+        raise ValueError("moduli and dual frequencies must be positive")
+    combined_modulus = right_modulus * left_dual * right_dual
+    if gcd(left_modulus, combined_modulus) != 1:
+        raise ValueError("the combined rational denominator must be a unit")
+    if gcd(right_dual, right_modulus) != 1:
+        raise ValueError("the right dual frequency must be a unit")
+    right_dual_inverse = pow(
+        right_dual % right_modulus,
+        -1,
+        right_modulus,
+    )
+    fixed_twist = (
+        right_dual * right_dual_inverse - 1
+    ) // right_modulus
+    left_inverse = pow(
+        left_modulus % combined_modulus,
+        -1,
+        combined_modulus,
+    )
+    combined_numerator = (
+        right_dual * left_numerator
+        + left_dual * right_numerator
+    )
+    main_phase = cmath.exp(
+        2j
+        * cmath.pi
+        * (
+            frequency * combined_numerator * left_inverse
+            % combined_modulus
+        )
+        / combined_modulus
+    )
+    if right_dual == 1:
+        twist_phase = 1 + 0j
+    else:
+        inverse_mod_fixed = pow(
+            left_modulus % right_dual,
+            -1,
+            right_dual,
+        )
+        twist_phase = cmath.exp(
+            2j
+            * cmath.pi
+            * (
+                frequency
+                * fixed_twist
+                * right_numerator
+                * inverse_mod_fixed
+                % right_dual
+            )
+            / right_dual
+        )
+    real_correction = cmath.exp(
+        -2j
+        * cmath.pi
+        * frequency
+        * left_numerator
+        / (left_modulus * right_modulus * left_dual)
+    )
+    return main_phase * twist_phase * real_correction
+
+
+def centered_kloosterman_crt_terms(
+    left_factor: int,
+    right_factor: int,
+    inverse_numerator: int,
+    linear_frequency: int,
+) -> CenteredKloostermanCrtTerms:
+    """Factor a centered transform over two coprime CRT factors.
+
+    If ``m = left_factor * right_factor``, the raw Kloosterman sum is
+    the product of its two local sums.  Subtracting the product of the
+    two local means leaves exactly three terms: centered-centered and
+    the two centered-mean cross terms.  In particular there is no
+    all-principal term.
+    """
+
+    if left_factor < 1 or right_factor < 1:
+        raise ValueError("CRT factors must be positive")
+    if gcd(left_factor, right_factor) != 1:
+        raise ValueError("CRT factors must be coprime")
+
+    right_inverse_mod_left = (
+        0
+        if left_factor == 1
+        else pow(right_factor, -1, left_factor)
+    )
+    left_inverse_mod_right = (
+        0
+        if right_factor == 1
+        else pow(left_factor, -1, right_factor)
+    )
+    left_inverse_numerator = (
+        inverse_numerator * right_inverse_mod_left
+    )
+    left_linear_frequency = (
+        linear_frequency * right_inverse_mod_left
+    )
+    right_inverse_numerator = (
+        inverse_numerator * left_inverse_mod_right
+    )
+    right_linear_frequency = (
+        linear_frequency * left_inverse_mod_right
+    )
+
+    left_centered = centered_kloosterman_transform(
+        left_factor,
+        left_inverse_numerator,
+        left_linear_frequency,
+    )
+    right_centered = centered_kloosterman_transform(
+        right_factor,
+        right_inverse_numerator,
+        right_linear_frequency,
+    )
+    left_mean = Fraction(
+        ramanujan_sum(left_factor, inverse_numerator)
+        * ramanujan_sum(left_factor, linear_frequency),
+        _euler_phi(left_factor),
+    )
+    right_mean = Fraction(
+        ramanujan_sum(right_factor, inverse_numerator)
+        * ramanujan_sum(right_factor, linear_frequency),
+        _euler_phi(right_factor),
+    )
+    return CenteredKloostermanCrtTerms(
+        both_centered=left_centered * right_centered,
+        left_centered_right_mean=left_centered * float(right_mean),
+        left_mean_right_centered=float(left_mean) * right_centered,
+    )
+
+
+def factorized_centered_kloosterman_numerator_fourier(
+    left_factor: int,
+    right_factor: int,
+    numerator_multiplier: int,
+    linear_frequency: int,
+    dual_frequency: int,
+) -> complex:
+    """Direct numerator Fourier transform of the fully centered CRT term."""
+
+    modulus = left_factor * right_factor
+    if left_factor < 1 or right_factor < 1:
+        raise ValueError("CRT factors must be positive")
+    if gcd(left_factor, right_factor) != 1:
+        raise ValueError("CRT factors must be coprime")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    right_inverse_mod_left = (
+        0
+        if left_factor == 1
+        else pow(right_factor, -1, left_factor)
+    )
+    left_inverse_mod_right = (
+        0
+        if right_factor == 1
+        else pow(left_factor, -1, right_factor)
+    )
+    return sum(
+        centered_kloosterman_transform(
+            left_factor,
+            numerator_multiplier * numerator * right_inverse_mod_left,
+            linear_frequency * right_inverse_mod_left,
+        )
+        * centered_kloosterman_transform(
+            right_factor,
+            numerator_multiplier * numerator * left_inverse_mod_right,
+            linear_frequency * left_inverse_mod_right,
+        )
+        * cmath.exp(
+            -2j * cmath.pi * dual_frequency * numerator / modulus
+        )
+        for numerator in range(modulus)
+    )
+
+
+def factorized_centered_kloosterman_numerator_fourier_formula(
+    left_factor: int,
+    right_factor: int,
+    numerator_multiplier: int,
+    linear_frequency: int,
+    dual_frequency: int,
+) -> complex:
+    """CRT product formula for the fully centered numerator transform."""
+
+    modulus = left_factor * right_factor
+    if left_factor < 1 or right_factor < 1:
+        raise ValueError("CRT factors must be positive")
+    if gcd(left_factor, right_factor) != 1:
+        raise ValueError("CRT factors must be coprime")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    right_inverse_mod_left = (
+        0
+        if left_factor == 1
+        else pow(right_factor, -1, left_factor)
+    )
+    left_inverse_mod_right = (
+        0
+        if right_factor == 1
+        else pow(left_factor, -1, right_factor)
+    )
+    left_transform = centered_kloosterman_numerator_fourier_formula(
+        left_factor,
+        numerator_multiplier * right_inverse_mod_left,
+        linear_frequency * right_inverse_mod_left,
+        dual_frequency * right_inverse_mod_left,
+    )
+    right_transform = centered_kloosterman_numerator_fourier_formula(
+        right_factor,
+        numerator_multiplier * left_inverse_mod_right,
+        linear_frequency * left_inverse_mod_right,
+        dual_frequency * left_inverse_mod_right,
+    )
+    return left_transform * right_transform
+
+
+def coprime_centered_inverse_cross_fourier_factorization(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+    frequency: int,
+) -> complex:
+    """CRT tensor factorization of a coprime centered cross coefficient."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    if gcd(left_modulus, right_modulus) != 1:
+        raise ValueError("the tensor factorization requires coprime moduli")
+    if left_modulus == 1:
+        right_inverse_mod_left = 0
+    else:
+        right_inverse_mod_left = pow(
+            right_modulus,
+            -1,
+            left_modulus,
+        )
+    if right_modulus == 1:
+        left_inverse_mod_right = 0
+    else:
+        left_inverse_mod_right = pow(
+            left_modulus,
+            -1,
+            right_modulus,
+        )
+    return centered_kloosterman_transform(
+        left_modulus,
+        left_numerator,
+        -frequency * right_inverse_mod_left,
+    ) * centered_kloosterman_transform(
+        right_modulus,
+        -right_numerator,
+        -frequency * left_inverse_mod_right,
+    )
+
+
+def two_sided_centered_kloosterman_crt_terms(
+    left_short_factor: int,
+    left_long_factor: int,
+    left_numerator: int,
+    right_short_factor: int,
+    right_long_factor: int,
+    right_numerator: int,
+    frequency: int,
+) -> tuple[complex, ...]:
+    """Nine-term Type-I/II expansion of a coprime centered tensor."""
+
+    left_modulus = left_short_factor * left_long_factor
+    right_modulus = right_short_factor * right_long_factor
+    if min(
+        left_short_factor,
+        left_long_factor,
+        right_short_factor,
+        right_long_factor,
+    ) < 1:
+        raise ValueError("CRT factors must be positive")
+    if gcd(left_short_factor, left_long_factor) != 1:
+        raise ValueError("left CRT factors must be coprime")
+    if gcd(right_short_factor, right_long_factor) != 1:
+        raise ValueError("right CRT factors must be coprime")
+    if gcd(left_modulus, right_modulus) != 1:
+        raise ValueError("left and right moduli must be coprime")
+
+    right_inverse_mod_left = (
+        0
+        if left_modulus == 1
+        else pow(right_modulus, -1, left_modulus)
+    )
+    left_inverse_mod_right = (
+        0
+        if right_modulus == 1
+        else pow(left_modulus, -1, right_modulus)
+    )
+    left_terms = centered_kloosterman_crt_terms(
+        left_short_factor,
+        left_long_factor,
+        left_numerator,
+        -frequency * right_inverse_mod_left,
+    )
+    right_terms = centered_kloosterman_crt_terms(
+        right_short_factor,
+        right_long_factor,
+        -right_numerator,
+        -frequency * left_inverse_mod_right,
+    )
+    return tuple(
+        left_term * right_term
+        for left_term in left_terms.summands
+        for right_term in right_terms.summands
+    )
+
+
+def _validate_squarefree_scalar_factors(
+    a_gcd: int, b_gcd: int, reduced_modulus: int, shift: int
+) -> int:
+    if min(a_gcd, b_gcd, reduced_modulus) < 1:
+        raise ValueError("the scalar factors must be positive")
+    modulus = a_gcd * b_gcd * reduced_modulus
+    if mobius(modulus) == 0:
+        raise ValueError("the three scalar factors must have squarefree product")
+    if reduced_modulus == 1:
+        raise ValueError("the off-axis divisor spectrum is stated for q>1")
+    if gcd(shift, modulus) != 1:
+        raise ValueError("the shift must be a unit modulo s")
+    return modulus
+
+
+def squarefree_scalar_stratum_completed_sum(
+    a_gcd: int,
+    b_gcd: int,
+    reduced_modulus: int,
+    shift: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Direct Möbius-weighted completed sum on one ordered gcd stratum."""
+
+    modulus = _validate_squarefree_scalar_factors(
+        a_gcd, b_gcd, reduced_modulus, shift
+    )
+    if min(h_length, delta_length) < 1:
+        raise ValueError("the interval lengths must be positive")
+    total = sum(
+        _finite_interval_fourier(h_length, a, modulus)
+        * _finite_interval_fourier(delta_length, b, modulus)
+        * cmath.exp(
+            2j
+            * cmath.pi
+            * ((shift * a * b) % modulus)
+            / modulus
+        )
+        for a in range(modulus)
+        if gcd(a, modulus) == a_gcd
+        for b in range(modulus)
+        if gcd(b, modulus // a_gcd) == b_gcd
+    )
+    return Fraction(mobius(modulus), modulus) * total
+
+
+def squarefree_scalar_stratum_divisor_spectrum(
+    a_gcd: int,
+    b_gcd: int,
+    reduced_modulus: int,
+    shift: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Exact migrated divisor spectrum of one ordered scalar stratum.
+
+    This composes the two lift identities with the Möbius-weighted
+    double-unit spectrum.  It is a finite equality, not an estimate.
+    """
+
+    _validate_squarefree_scalar_factors(
+        a_gcd, b_gcd, reduced_modulus, shift
+    )
+    if min(h_length, delta_length) < 1:
+        raise ValueError("the interval lengths must be positive")
+    prefactor = Fraction(
+        mobius(a_gcd) * mobius(b_gcd),
+        b_gcd * reduced_modulus,
+    )
+    total = 0j
+    for h in range(1, h_length + 1):
+        scalar_ramanujan = ramanujan_sum(b_gcd, h)
+        for delta_reduced in range(1, delta_length // a_gcd + 1):
+            for divisor_modulus in divisors(reduced_modulus):
+                if gcd(divisor_modulus, delta_reduced) != 1:
+                    continue
+                cofactor = reduced_modulus // divisor_modulus
+                coefficient = (
+                    divisor_modulus
+                    * mobius(divisor_modulus)
+                    * ramanujan_sum(cofactor, h)
+                )
+                if divisor_modulus == 1:
+                    phase = 1 + 0j
+                else:
+                    inverse = pow(
+                        (shift * cofactor) % divisor_modulus,
+                        -1,
+                        divisor_modulus,
+                    )
+                    scalar_inverse = pow(
+                        b_gcd, -1, divisor_modulus
+                    )
+                    phase = cmath.exp(
+                        2j
+                        * cmath.pi
+                        * (
+                            (
+                                -scalar_inverse
+                                * h
+                                * delta_reduced
+                                * inverse
+                            )
+                            % divisor_modulus
+                        )
+                        / divisor_modulus
+                    )
+                total += scalar_ramanujan * coefficient * phase
+    return prefactor * total
+
+
+def coprimality_migrated_scalar_stratum_spectrum(
+    a_gcd: int,
+    b_gcd: int,
+    reduced_modulus: int,
+    shift: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Triple-divisor spectrum after expanding ``(delta,q)=1``.
+
+    Write ``q=j*l*n`` and ``delta=j*delta0``.  On squarefree ``q`` the
+    outer sign and the coprimality sign satisfy
+
+    ``mu(q) * mu(j) = mu(l*n) * mu(j) = mu(l) * mu(n) * mu(j)``,
+
+    while the sign already present in the double-unit divisor spectrum
+    cancels the ``j`` and ``n`` signs.  The resulting coefficient is
+    ``mu(l)/n`` and the phase has modulus ``l``.  In particular, the
+    product coefficient in ``h*delta0`` is independent of that modulus.
+    This is an exact finite identity, not an analytic estimate.
+    """
+
+    _validate_squarefree_scalar_factors(
+        a_gcd, b_gcd, reduced_modulus, shift
+    )
+    if min(h_length, delta_length) < 1:
+        raise ValueError("the interval lengths must be positive")
+    outer_sign = mobius(a_gcd) * mobius(b_gcd)
+    total = 0j
+    for delta_gcd in divisors(reduced_modulus):
+        remaining = reduced_modulus // delta_gcd
+        for oscillatory_modulus in divisors(remaining):
+            ramanujan_factor = remaining // oscillatory_modulus
+            coefficient = Fraction(
+                outer_sign * mobius(oscillatory_modulus),
+                b_gcd * ramanujan_factor,
+            )
+            delta_endpoint = delta_length // (a_gcd * delta_gcd)
+            for h in range(1, h_length + 1):
+                ramanujan = ramanujan_sum(
+                    b_gcd * ramanujan_factor, h
+                )
+                for delta_reduced in range(1, delta_endpoint + 1):
+                    if oscillatory_modulus == 1:
+                        phase = 1 + 0j
+                    else:
+                        scalar_inverse = pow(
+                            b_gcd, -1, oscillatory_modulus
+                        )
+                        shifted_inverse = pow(
+                            (
+                                shift * ramanujan_factor
+                            )
+                            % oscillatory_modulus,
+                            -1,
+                            oscillatory_modulus,
+                        )
+                        phase = cmath.exp(
+                            2j
+                            * cmath.pi
+                            * (
+                                -scalar_inverse
+                                * h
+                                * delta_reduced
+                                * shifted_inverse
+                                % oscillatory_modulus
+                            )
+                            / oscillatory_modulus
+                        )
+                    total += coefficient * ramanujan * phase
+    return total
+
+
+def scalar_stratum_bettin_chandee_ledger(
+    *,
+    r_length: Fraction,
+    scalar_a_gcd: Fraction,
+    delta_gcd_factor: Fraction,
+    ramanujan_factor: Fraction,
+    oscillatory_modulus: Fraction,
+    h_length: Fraction,
+    delta_length: Fraction,
+    scalar_b_gcd: Fraction,
+) -> KloostermanFractionTripleLedger:
+    """Audit Bettin--Chandee Theorem 1 on the exact triple spectrum.
+
+    All arguments are exponents of ``T``.  The squarefree scalar factors
+    have exponents ``g_a, g_b, j, n, l`` and hence total modulus exponent
+    ``sigma=g_a+g_b+j+n+l``.  After ``delta=j*delta0``, the Kloosterman
+    numerator has product length ``H*L/(g_a*j)``.  Summing the fixed
+    factors termwise costs only ``g_a+j`` because the exact coefficient
+    ``1/(g_b*n)`` cancels the other two counting lengths.
+    """
+
+    values = (
+        r_length,
+        scalar_a_gcd,
+        delta_gcd_factor,
+        ramanujan_factor,
+        oscillatory_modulus,
+        h_length,
+        delta_length,
+        scalar_b_gcd,
+    )
+    if any(value < 0 for value in values):
+        raise ValueError("all exponent lengths must be nonnegative")
+    product_length = (
+        h_length
+        + delta_length
+        - scalar_a_gcd
+        - delta_gcd_factor
+    )
+    if product_length < 0:
+        raise ValueError("the reduced product interval is empty")
+    coefficient_support = (
+        r_length + oscillatory_modulus + product_length
+    )
+    # For m=g_b*n, divisor expansion gives
+    # sum_{h<=H}|c_m(h)|^2 << m*(H+m)*T^eps.  Relative to the raw
+    # product support, the coefficient norm therefore has the following
+    # piecewise cost.  It is m^(1/2) when m<=H and only gets worse when
+    # m>H.
+    ramanujan_scale = scalar_b_gcd + ramanujan_factor
+    ramanujan_norm_cost = (
+        ramanujan_scale
+        + max(h_length, ramanujan_scale)
+        - h_length
+    ) / 2
+    coefficient_norms = coefficient_support / 2 + ramanujan_norm_cost
+    # The phase is e_l(-h*delta0*inverse(r*g_b*n)).  Thus the inverted
+    # Bettin--Chandee variable lives at scale R*g_b*n, although its sparse
+    # coefficient sequence still has only R entries.
+    inverted_variable_scale = (
+        r_length + scalar_b_gcd + ramanujan_factor
+    )
+    theorem_geometry = (
+        inverted_variable_scale
+        + oscillatory_modulus
+        + product_length
+    )
+    longest_outer = max(inverted_variable_scale, oscillatory_modulus)
+    first_parenthesis = (
+        Fraction(7, 20) * theorem_geometry + longest_outer / 4
+    )
+    second_parenthesis = (
+        Fraction(3, 8) * theorem_geometry
+        + (product_length + longest_outer) / 8
+    )
+    phase_penalty = max(
+        Fraction(0),
+        (
+            product_length
+            - inverted_variable_scale
+            - oscillatory_modulus
+        )
+        / 2,
+    )
+    fixed_factor_cost = scalar_a_gcd + delta_gcd_factor
+    theorem_bound = (
+        fixed_factor_cost
+        + coefficient_norms
+        + phase_penalty
+        + max(first_parenthesis, second_parenthesis)
+    )
+    trivial_bound = fixed_factor_cost + coefficient_support
+    sigma = (
+        scalar_a_gcd
+        + scalar_b_gcd
+        + delta_gcd_factor
+        + ramanujan_factor
+        + oscillatory_modulus
+    )
+    local_target = r_length + sigma
+    return KloostermanFractionTripleLedger(
+        product_length=product_length,
+        coefficient_norms=coefficient_norms,
+        first_parenthesis=first_parenthesis,
+        second_parenthesis=second_parenthesis,
+        phase_penalty=phase_penalty,
+        fixed_factor_cost=fixed_factor_cost,
+        theorem_bound=theorem_bound,
+        trivial_bound=trivial_bound,
+        local_target=local_target,
+        theorem_gap=theorem_bound - local_target,
+        theorem_saving=trivial_bound - theorem_bound,
+    )
+
+
+def balanced_scalar_stratum_bettin_chandee_uniform_gap() -> Fraction:
+    """Uniform lower bound for the direct BC gap on the balanced face.
+
+    Put ``x=g_a+j``.  On ``rho=sigma=3`` and ``H=L=T^(5/2)``, the
+    fixed-factor cost plus all three coefficient norms is exactly 11/2.
+    The first Bettin--Chandee parenthesis is at least
+    ``7/20*5+3/4=5/2`` because its geometric exponent is ``11-2*x>=5``
+    and the inverted variable has exponent at least 3.  The local target
+    is 6, so every such direct theorem insertion has gap at least 2.
+    """
+
+    coefficient_and_fixed = Fraction(11, 2)
+    first_parenthesis_floor = Fraction(5, 2)
+    local_target = Fraction(6)
+    return (
+        coefficient_and_fixed
+        + first_parenthesis_floor
+        - local_target
+    )
+
+
+def additive_completion_shifted(
+    r: int, modulus: int, h_length: int, delta_length: int
+) -> complex:
+    """Evaluate (9.163) after the exact substitution ``d=r-s``.
+
+    This is deliberately a second finite implementation rather than an
+    alias for :func:`additive_product_completion`; the exhaustive tests
+    check the shifted-Chowla coordinate change independently.
+    """
+
+    if min(r, modulus, h_length, delta_length) < 1:
+        raise ValueError("all completion parameters must be positive")
+    if gcd(r, modulus) != 1:
+        raise ValueError("r must be invertible modulo the modulus")
+    h_fourier = [
+        _finite_interval_fourier(h_length, a, modulus)
+        for a in range(modulus)
+    ]
+    delta_fourier = [
+        _finite_interval_fourier(delta_length, b, modulus)
+        for b in range(modulus)
+    ]
+    shift = r - modulus
+    return sum(
+        h_fourier[a]
+        * delta_fourier[b]
+        * cmath.exp(
+            2j * cmath.pi * ((shift * a * b) % modulus) / modulus
+        )
+        for a in range(modulus)
+        for b in range(modulus)
+    ) / modulus
+
+
+def weighted_inverse_product_box_sum(
+    lower_r: int,
+    lower_s: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Direct left side of (9.166) with ``W=1`` on finite dyadic boxes."""
+
+    if min(lower_r, lower_s, h_length, delta_length) < 1:
+        raise ValueError("all box parameters must be positive")
+    return sum(
+        mobius(r)
+        * mobius(s)
+        * rectangular_product_kernel(
+            h_length,
+            delta_length,
+            Fraction(-pow(r, -1, s), s),
+        )
+        for s in range(lower_s + 1, 2 * lower_s + 1)
+        for r in range(lower_r + 1, 2 * lower_r + 1)
+        if gcd(r, s) == 1
+    )
+
+
+def weighted_shifted_completion_box_sum(
+    lower_r: int,
+    lower_s: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Right side of (9.166), retaining its moving ``d`` endpoints."""
+
+    if min(lower_r, lower_s, h_length, delta_length) < 1:
+        raise ValueError("all box parameters must be positive")
+    total = 0j
+    for s in range(lower_s + 1, 2 * lower_s + 1):
+        for shift in range(lower_r - s + 1, 2 * lower_r - s + 1):
+            if gcd(shift, s) != 1:
+                continue
+            r = s + shift
+            total += (
+                mobius(r)
+                * mobius(s)
+                * additive_completion_shifted(
+                    r, s, h_length, delta_length
+                )
+            )
+    return total
+
+
+def additive_completion_axis_row(
+    modulus: int, h_length: int, delta_length: int
+) -> int:
+    """Exact contribution of the complete row ``a=0`` in (9.163).
+
+    Orthogonality gives
+    ``sum_b 1_L_hat(b;s) = s*floor(L/s)``.  Hence the row, including
+    the factor ``1/s``, equals ``H*floor(L/s)`` and vanishes when ``L<s``.
+    """
+
+    if min(modulus, h_length, delta_length) < 1:
+        raise ValueError("all axis parameters must be positive")
+    return h_length * (delta_length // modulus)
+
+
+def additive_completion_axis_recombined(
+    shift: int,
+    modulus: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Sum the complete ``b`` axis into an exact residue incidence.
+
+    Orthogonality in ``b`` turns (9.163) into
+
+    ``sum_a 1_H_hat(a;s) * #{delta<=L: delta == d*a (mod s)}``.
+
+    When ``L<s`` the count is an indicator.  This identity keeps the
+    ``b=0`` point with the nonzero ``b`` frequencies that cancel it.
+    """
+
+    if min(modulus, h_length, delta_length) < 1:
+        raise ValueError("all recombination parameters must be positive")
+    if gcd(shift, modulus) != 1:
+        raise ValueError("the shift must be invertible modulo the modulus")
+    total = 0j
+    for a in range(modulus):
+        residue = (shift * a) % modulus
+        if residue == 0:
+            count = delta_length // modulus
+        elif residue > delta_length:
+            count = 0
+        else:
+            count = 1 + (delta_length - residue) // modulus
+        total += _finite_interval_fourier(
+            h_length, a, modulus
+        ) * count
+    return total
+
+
+def additive_completion_axis_union(
+    modulus: int, h_length: int, delta_length: int
+) -> Fraction:
+    """Exact contribution of ``a=0 or b=0`` in additive completion.
+
+    The intersection ``(a,b)=(0,0)`` has contribution ``HL/s`` and is
+    subtracted once.  In particular, when ``H,L<s`` the union is
+    ``-HL/s`` even though each complete axis separately sums to zero.
+    This records the cancellation that is lost by isolating the origin.
+    """
+
+    if min(modulus, h_length, delta_length) < 1:
+        raise ValueError("all axis parameters must be positive")
+    return (
+        h_length * (delta_length // modulus)
+        + delta_length * (h_length // modulus)
+        - Fraction(h_length * delta_length, modulus)
+    )
+
+
 def additive_completion_zero_mode(
     modulus: int, h_length: int, delta_length: int
 ) -> Fraction:
@@ -453,6 +4719,139 @@ def additive_completion_zero_mode_mobius_exponent(
     return (
         box.rho + 2 * box.sigma - box.third_length
     ) / (box.rho + box.sigma)
+
+
+def additive_shifted_chowla_ledger(
+    box: ExponentBox,
+) -> AdditiveShiftedChowlaLedger:
+    """Return the exact lowest-dual-block exponent ledger.
+
+    On the balanced face, put ``A=s/H`` and ``B=s/L``.  A smoothed
+    completion localizes its lowest nonzero dual block at these scales;
+    for the sharp finite completion this function is only the ledger for
+    that block, not a claim that the complementary frequencies are small.
+    The product frequency has exponent ``C=A*B`` and the phase
+    ``e_s((r-s)ab)`` stops varying when ``|r-s| <= s/C``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("shifted-Chowla ledger requires an admissible box")
+    if box.rho != box.sigma:
+        raise ValueError("this ledger is for the overlapping face R=S")
+    if box.h > box.sigma or box.ell > box.sigma:
+        raise ValueError("completion lengths must not exceed the modulus")
+    h_frequency = box.sigma - box.h
+    delta_frequency = box.sigma - box.ell
+    product_frequency = h_frequency + delta_frequency
+    completion_amplitude = box.third_length - box.sigma
+    if completion_amplitude < 0:
+        raise ValueError("the lowest-block amplitude must be nonnegative")
+    near_shift = max(Fraction(0), box.sigma - product_frequency)
+    near_trivial = (
+        completion_amplitude
+        + product_frequency
+        + box.sigma
+        + near_shift
+    )
+    local_target = box.rho + box.sigma
+    one_modulus_l2 = None
+    one_modulus_l2_gap = None
+    if product_frequency < box.sigma:
+        one_modulus_l2 = (
+            box.sigma
+            + box.h
+            + box.ell
+            + product_frequency / 2
+        )
+        one_modulus_l2_gap = max(
+            Fraction(0), one_modulus_l2 - local_target
+        )
+    return AdditiveShiftedChowlaLedger(
+        h_frequency=h_frequency,
+        delta_frequency=delta_frequency,
+        product_frequency=product_frequency,
+        completion_amplitude=completion_amplitude,
+        near_shift=near_shift,
+        near_trivial=near_trivial,
+        local_target=local_target,
+        required_saving=max(Fraction(0), near_trivial - local_target),
+        one_modulus_l2=one_modulus_l2,
+        one_modulus_l2_gap=one_modulus_l2_gap,
+    )
+
+
+def additive_dual_block_ledger(
+    box: ExponentBox,
+    h_frequency: Fraction,
+    delta_frequency: Fraction,
+) -> AdditiveDualBlockLedger:
+    """Ledger for centered frequencies ``|a|~T^alpha, |b|~T^beta``.
+
+    The sharp Fourier bound (9.169) gives amplitudes
+    ``min(h, sigma-alpha)`` and ``min(ell, sigma-beta)``.  On the
+    circular near arc the shift length is
+    ``T^max(0,sigma-alpha-beta)``.  The function records the resulting
+    trivial exponent and does not estimate the complementary far arc.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("dual-block ledger requires an admissible box")
+    if box.rho != box.sigma:
+        raise ValueError("this ledger is for the overlapping face R=S")
+    if not Fraction(0) <= h_frequency <= box.sigma:
+        raise ValueError("the h frequency must lie in [1,s] on exponent scale")
+    if not Fraction(0) <= delta_frequency <= box.sigma:
+        raise ValueError(
+            "the delta frequency must lie in [1,s] on exponent scale"
+        )
+    h_fourier_amplitude = min(box.h, box.sigma - h_frequency)
+    delta_fourier_amplitude = min(
+        box.ell, box.sigma - delta_frequency
+    )
+    product_frequency = h_frequency + delta_frequency
+    completion_amplitude = (
+        h_fourier_amplitude
+        + delta_fourier_amplitude
+        - box.sigma
+    )
+    near_shift = max(Fraction(0), box.sigma - product_frequency)
+    near_trivial = (
+        completion_amplitude
+        + product_frequency
+        + box.sigma
+        + near_shift
+    )
+    local_target = box.rho + box.sigma
+    one_modulus_l2 = None
+    one_modulus_l2_gap = None
+    if product_frequency < box.sigma:
+        # Here AB=o(s), so congruent centered products have only O(1)
+        # possible integer differences by multiples of s.  Divisor energy
+        # then gives the displayed T^epsilon loss.  At AB>=s modular-
+        # hyperbola multiplicities need a separate argument.
+        one_modulus_l2 = (
+            box.sigma
+            + h_fourier_amplitude
+            + delta_fourier_amplitude
+            + product_frequency / 2
+        )
+        one_modulus_l2_gap = max(
+            Fraction(0), one_modulus_l2 - local_target
+        )
+    return AdditiveDualBlockLedger(
+        h_frequency=h_frequency,
+        delta_frequency=delta_frequency,
+        h_fourier_amplitude=h_fourier_amplitude,
+        delta_fourier_amplitude=delta_fourier_amplitude,
+        product_frequency=product_frequency,
+        completion_amplitude=completion_amplitude,
+        near_shift=near_shift,
+        near_trivial=near_trivial,
+        local_target=local_target,
+        required_saving=max(Fraction(0), near_trivial - local_target),
+        one_modulus_l2=one_modulus_l2,
+        one_modulus_l2_gap=one_modulus_l2_gap,
+    )
 
 
 def reduced_inverse_fraction_denominator(
@@ -724,6 +5123,80 @@ class BlomerPascadiMargins:
 
     def values(self) -> tuple[Fraction, ...]:
         return (self.first, self.second, self.third)
+
+
+@dataclass(frozen=True)
+class BlomerPascadiUnbalancedLedger:
+    """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
+
+    first_term: Fraction
+    second_term: Fraction
+    third_term: Fraction
+    fourth_term: Fraction
+    fifth_term: Fraction
+    saving_factor: Fraction
+    best_trivial_factor: Fraction
+    theorem_factor: Fraction
+    theorem_gap: Fraction
+
+
+def blomer_pascadi_unbalanced_ledger(
+    left_length: Fraction,
+    right_length: Fraction,
+) -> BlomerPascadiUnbalancedLedger:
+    """Audit Theorem 5.5 for interval lengths ``c^left`` and ``c^right``."""
+
+    if not (
+        0 <= left_length <= 1
+        and 0 <= right_length <= 1
+    ):
+        raise ValueError("Theorem 5.5 requires both lengths between 1 and c")
+    first_term = (
+        left_length / 8
+        + (
+            max(Fraction(1), left_length + right_length)
+            + max(Fraction(1), 2 * right_length)
+        )
+        / 16
+        - Fraction(1, 4)
+        + min(1 - left_length, Fraction(1, 2)) / 16
+    )
+    second_term = max(
+        2 * right_length - 2,
+        right_length / 2
+        + left_length
+        + max(Fraction(1), 2 * right_length)
+        - Fraction(5, 2),
+    ) / 16
+    third_term = max(left_length, right_length) / 3 - Fraction(1, 5)
+    fourth_term = max(
+        left_length / 2 + right_length / 6,
+        left_length / 6 + right_length / 2,
+    ) - Fraction(7, 18)
+    fifth_term = max(left_length, right_length) / 15 - Fraction(1, 15)
+    saving_factor = max(
+        first_term,
+        second_term,
+        third_term,
+        fourth_term,
+        fifth_term,
+    )
+    best_trivial_factor = min(
+        Fraction(1),
+        (1 + left_length + right_length) / 2,
+    )
+    theorem_factor = 1 + saving_factor
+    return BlomerPascadiUnbalancedLedger(
+        first_term=first_term,
+        second_term=second_term,
+        third_term=third_term,
+        fourth_term=fourth_term,
+        fifth_term=fifth_term,
+        saving_factor=saving_factor,
+        best_trivial_factor=best_trivial_factor,
+        theorem_factor=theorem_factor,
+        theorem_gap=theorem_factor - best_trivial_factor,
+    )
 
 
 def blomer_pascadi_best_trivial_margins(
@@ -1065,6 +5538,58 @@ def ramanujan_sum(n: int, frequency: int) -> int:
     return sum(
         d * mobius(n // d) for d in divisors(gcd(n, abs(frequency)))
     )
+
+
+def squarefree_normalized_ramanujan_mean_formula(
+    modulus: int, frequency: int
+) -> Fraction:
+    """Exact ``c_q(k)/phi(q)`` from the cofactor coprime to ``k``."""
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the modulus must be positive and squarefree")
+    coprime_cofactor = modulus // gcd(modulus, abs(frequency))
+    return Fraction(
+        mobius(coprime_cofactor),
+        _euler_phi(coprime_cofactor),
+    )
+
+
+def ramanujan_mean_dyadic_sum(scale: int, frequency: int) -> Fraction:
+    """Absolute normalized Ramanujan means on one squarefree dyadic box."""
+
+    if scale < 1 or frequency == 0:
+        raise ValueError("the scale must be positive and frequency nonzero")
+    return sum(
+        (
+            abs(
+                squarefree_normalized_ramanujan_mean_formula(
+                    modulus,
+                    frequency,
+                )
+            )
+            for modulus in range(scale + 1, 2 * scale + 1)
+            if mobius(modulus) != 0
+        ),
+        start=Fraction(0),
+    )
+
+
+def ramanujan_mean_dyadic_divisor_majorant(
+    scale: int, frequency: int
+) -> Fraction:
+    """Finite divisor/Euler-sum majorant for the dyadic mean family."""
+
+    if scale < 1 or frequency == 0:
+        raise ValueError("the scale must be positive and frequency nonzero")
+    squarefree_euler_sum = sum(
+        (
+            Fraction(1, _euler_phi(cofactor))
+            for cofactor in range(1, 2 * scale + 1)
+            if mobius(cofactor) != 0
+        ),
+        start=Fraction(0),
+    )
+    return len(divisors(abs(frequency))) * squarefree_euler_sum
 
 
 def squarefree_outer_mobius_ramanujan(n: int, frequency: int) -> int:

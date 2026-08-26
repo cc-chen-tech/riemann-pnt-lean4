@@ -102,3 +102,86 @@
 - [x] Test whether the resulting equation has a usable Type I/II factorization retaining all four Möbius weights.
 - [x] Map the remaining estimate against primary literature without importing a withdrawn or mismatched theorem.
 - [x] Run focused and repository-wide verification; update the Ready-for-view PR only for a materially new exact reduction or proved estimate.
+
+### Task 7: Audit the additive-dual shifted-Chowla face
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the exact substitutions `r=s+d` and `e_s(rab)=e_s(dab)`.
+- [x] Recombine the additive origin with both coordinate axes and record every `H,L<s` boundary term.
+- [x] Isolate the balanced lowest-dual block and compute its exact `X^(2/3)` shift window and `T^2` saving requirement.
+- [x] Check primary averaged-Chowla sources, including the current logarithmically weighted result, against the precise Cesaro and shift-range requirements.
+- [x] Split the complementary dual blocks and rational-resonance strata without discarding the `a=h*delta` factorization.
+- [ ] State and attack the remaining gcd-stratified far-arc two-Möbius estimate on the exact finite interface.
+- [x] Run focused and repository-wide verification; update the Ready-for-view PR only after the exact finite proposition and proof boundary are reviewed.
+
+### Task 8: Complete the unit spectrum on every scalar-gcd stratum
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Prove the restricted and unrestricted Fourier-lift identities from modulus `q` to `gq`.
+- [x] Evaluate the complete double-unit bilinear sum prime by prime and retain the necessary `(k,B)=1` condition.
+- [x] Migrate the outer squarefree `mu(q)` sign to the divisor modulus `mu(k)`.
+- [x] Compose the identities into one boundary-exact formula for every ordered scalar-gcd stratum.
+- [x] Isolate the self-similar top spectrum from the proper Ramanujan-divisor layers without claiming an estimate.
+- [x] Independently review the new identities, then verify and update the Ready-for-view PR.
+
+### Task 9: Migrate delta coprimality to a theorem-compatible Type-II modulus
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the second Möbius migration after expanding `(delta,q)=1`.
+- [x] Prove the exact ordered factorization `q=j*l*n`, `delta=j*delta0`, with coefficient `mu(l)/n` and oscillatory modulus `l`.
+- [x] Return from `d` to `r` and expose a product coefficient independent of the varying inverse modulus.
+- [x] Insert Bettin--Chandee Theorem 1 with its actual sparse inverted-variable scale and compute both parenthetical exponents.
+- [x] Audit the primitive transition corner and retain the exact `67/16` residual theorem gap.
+- [ ] Determine whether a mixed product-coefficient moment or a two-Möbius dispersion estimate closes the primitive `j=n=1` face.
+- [x] Review, verify, and update the Ready-for-view PR only if the new exact bridge survives all finite and exponent checks.
+
+### Task 10: Center the primitive packet before cross-modulus dispersion
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the unit-group-centered inverse-phase covariance.
+- [x] Prove its exact LCM-modulus Ramanujan formula and squarefree common-divisor collapse.
+- [x] Prove that coprime oscillatory moduli are exactly orthogonal while both cofactor Möbius signs remain.
+- [x] Center the complete double-unit divisor packet before separating its top and proper layers.
+- [x] Derive and audit every nonzero Fourier coefficient as a four-Kloosterman combination.
+- [x] Identify the exact primitive transition `t0=Q^2/R=T^2` and the `T^2` large-gcd pair sparsity.
+- [x] Map the coprime Fourier tensor to Blomer--Pascadi Theorem 5.5 and audit the exact `11/45` and `13/90` fixed-modulus losses.
+- [ ] Bound the nonzero dual mixed moment while retaining `mu(u)mu(v)` and both product factorizations.
+- [x] Review, verify, and update the Ready-for-view PR only after the new centered interface survives full checks.
+
+### Task 11: Split each centered modulus before the Type-II norm
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the three-term CRT factorization of one centered Kloosterman transform.
+- [x] Prove that the all-principal local product cancels and exhaustively verify the identity on small coprime factors.
+- [x] Apply the factorization to both coprime Möbius moduli and verify the exact nine-term tensor against the original finite Fourier coefficient.
+- [x] Retain the four split Möbius signs and record that every term has a centered local factor on each side.
+- [x] Audit the balanced unit-face mean suppression: one mean saves T^(15/8-o(1)), two save T^(15/4-o(1)).
+- [x] Recheck Pascadi's composite-modulus theorem against the new interface and preserve the fixed-modulus insufficiency boundary.
+- [ ] Prove the joint fully-centered four-local estimate and recover the remaining T^(1/8) on the one-mean terms without taking absolute values over the other modulus.
+- [ ] Recombine the nonunit factor strata and coefficient multiplicities to turn the screening ledger into an unconditional coupled-kernel bound.
+- [x] Review, verify, commit, push, and update the Ready-for-view PR.
