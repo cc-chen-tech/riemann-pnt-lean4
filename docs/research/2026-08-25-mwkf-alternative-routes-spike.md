@@ -14611,13 +14611,13 @@ dyadic and \(q\)-sums, and all AFE and transform tails also remain to be
 restored before any global asymptotic can be asserted.
 
 
-### 4.109l The Eisenstein oldspace projector localizes the loss
+### 4.109l The same-cusp Eisenstein projector localizes the loss
 
 The individual oldvector witness (4.845bi) does not by itself show that
-the complete Eisenstein contribution is large.  Kuznetsov sums an
-orthonormal basis of the entire oldspace with one common transform, so
-the oldvector label must be summed before taking absolute values.
-At squarefree level this sum factorizes prime by prime.
+a same-cusp Eisenstein kernel is large.  If both Fourier coefficient
+lists are evaluated at infinity, the oldvector label can be summed
+before taking absolute values, and at squarefree level this diagonal
+oldspace projector factorizes prime by prime.
 
 Continue with \(Q=p\) prime and put \(X=p^{-2it}\).  In the notation of
 the exact Blomer--Khan coefficient formula, the two local oldvector
@@ -14686,26 +14686,28 @@ inverse-\(L\) normalization into \(T^\varepsilon\), yields
 \tag{4.845bm}
 \]
 
-This is the correct replacement for the false attempt to bound every
-ramified oldvector ratio separately.  It reduces the
-continuous-spectrum problem to common ramification: after the Poisson
-and product-index variables are restored, one must sum the exact weight
-\((m,h\delta,Q)\), retaining the Möbius signs and the paired Eisenstein
-residues.  No such global gcd aggregation is asserted here.
+This is the correct same-cusp replacement for the false attempt to
+bound every ramified oldvector ratio separately.  It is **not** yet the
+physical Kuznetsov projector in (4.845ap): that formula pairs infinity
+with the Atkin--Lehner cusp \(1/B\).  The physical kernel contains the
+Atkin--Lehner matrix between the two coefficient lists.  Unitarity
+preserves their separate squared norms but does not identify this
+cross-cusp matrix coefficient with (4.845bk).
 
 The interface eisenstein_oldspace_projector_audit evaluates
 (4.845bk) as an exact Laurent polynomial.  At \(p=5\) it records the
 individual ratio \(3\), the mixed projector
 \((1+X^{-1})/25\), and the common-ramification projector.  It marks the
-prime-by-prime projector factorization and the gcd-over-level majorant
-proved, while leaving the gcd aggregation, continuous-spectrum gate,
-and whole Möbius gate false.
+prime-by-prime same-cusp factorization and its gcd-over-level majorant
+proved, while leaving the Atkin--Lehner cross-cusp projector, physical
+gcd aggregation, continuous-spectrum gate, and whole Möbius gate false.
 
 
-### 4.109m The Poisson average absorbs common ramification
+### 4.109m The Poisson average absorbs common ramification in the same-cusp model
 
-The gcd in (4.845bm) costs no positive power after the normalized
-nonzero Poisson-frequency average.  Put \(g=(n,Q)\).  The elementary
+The gcd in the same-cusp majorant (4.845bm) costs no positive power
+after the normalized nonzero Poisson-frequency average.  Put
+\(g=(n,Q)\).  The elementary
 divisor identity
 
 \[
@@ -14741,10 +14743,10 @@ each nonempty divisor class.  Hence
 \]
 
 The same conclusion holds for every fixed smooth dyadic Poisson weight,
-with its sup norm multiplying the right side.  Thus retaining the full
-oldspace projector and then averaging the Poisson frequency removes the
-only positive-power ramified local loss.  This is an absolute estimate;
-it does not spend Möbius cancellation.
+with its sup norm multiplying the right side.  Thus the same-cusp
+projector's common-ramification factor has zero power cost.  This does
+not apply (4.845bo) to the physical cross-cusp projector; its local
+Atkin--Lehner matrix has not yet been inserted.
 
 What remains in the continuous spectrum is archimedean rather than
 finite-prime: Mellin inversion of
@@ -14757,9 +14759,10 @@ not proved here.
 
 The interface eisenstein_common_ramification_average_audit checks
 (4.845bn) by exact finite totient expansion and records the explicit
-\(3M\tau(g)\) upper bound.  It marks the normalized Poisson gcd
-aggregation proved, while leaving completed residue pairing, the
-continuous-spectrum gate, and the whole Möbius gate false.
+\(3M\tau(g)\) upper bound.  It marks only the same-cusp normalized
+Poisson gcd aggregation proved, while leaving the physical cross-cusp
+aggregation, completed residue pairing, continuous-spectrum gate, and
+whole Möbius gate false.
 
 
 ### 4.109n Pole subtraction dualizes the Eisenstein polynomial
@@ -14853,11 +14856,11 @@ has a finite limit.  From
 \tag{4.845bs}
 \]
 
-Thus the pole-subtracted polynomial has the same reciprocal-length
-advantage as the cuspidal polynomial.  Combined with the exact
-oldspace projector (4.845bk) and normalized gcd average (4.845bo), this
-closes the *local nonresidual polynomial estimate* without a positive
-power loss.
+Thus the pole-subtracted unramified polynomial has the same
+reciprocal-length advantage as the cuspidal polynomial.  Equations
+(4.845bk) and (4.845bo) audit only its same-cusp ramified model.  Until
+the physical Atkin--Lehner cross-oldspace matrix is inserted, they do
+not close the local nonresidual continuous contribution.
 
 It does not yet close the continuous spectrum.  The residue
 \(R_t(Y;W)\) depends on the actual physical Mellin tensor, both
@@ -14869,9 +14872,10 @@ That exact zero-mode/residue identity has not been proved.
 The interface
 pole_subtracted_eisenstein_functional_equation_audit records the
 reciprocal exponent \(2\tau-y\), the finite central collision with
-coefficients \(1\) and \(2\gamma\), and the local nonresidual closure.
-It leaves zero-mode/residue pairing, the full continuous-spectrum gate,
-and the whole Möbius gate false.
+coefficients \(1\) and \(2\gamma\), and the exact unramified
+pole-subtracted transform.  It leaves the cross-cusp oldspace adapter,
+local nonresidual closure, zero-mode/residue pairing, full
+continuous-spectrum gate, and whole Möbius gate false.
 
 
 ### 4.109o The Ramanujan zero mode carries the inverse-zeta factor
@@ -14925,6 +14929,81 @@ The interface ramanujan_zero_mode_euler_audit checks (4.845bt) and
 (4.845bu) coefficient by coefficient and records (4.845bv).  It keeps
 the archimedean normalization, completed zero-mode/residue pairing,
 continuous-spectrum gate, and whole Möbius gate false.
+
+
+### 4.109p The physical cross-cusp projector retains a half-level deficit
+
+The physical prime-level projector can be computed directly from
+[Kiral--Young's explicit Eisenstein coefficient
+formula](https://arxiv.org/abs/1710.00914), rather than inferred from
+unitarity.  Take \(N=p\), \(u=1/2+it\), and use the two cusps
+\(\infty\) and \(0\).  Specializing their theorem for the Eisenstein
+series attached to each of these cusps gives, up to the common
+archimedean Fourier normalization,
+
+\[
+ \boxed{
+ \begin{aligned}
+ D_p(n,u)
+ &=p^{-2u}c_p(n)
+   \frac{\sigma_{1-2u}(n)}{\zeta(2u)},\\
+ O_p(n,u)
+ &=p^{-u}
+   \frac{\sigma^{(p)}_{1-2u}(n)}
+   {\zeta(2u)(1-p^{-2u})}.
+ \end{aligned}}
+\tag{4.845bw}
+\]
+
+Here \(D_p\) is the coefficient at the same cusp, \(O_p\) is the
+coefficient at the opposite cusp, and
+\(\sigma^{(p)}_\alpha(n)=\sum_{d\mid n,(d,p)=1}d^\alpha\).
+The cross-cusp continuous projector occurring in (4.845ap) is therefore
+
+\[
+ D_p(m,u)\overline{O_p(n,u)}
+ +O_p(m,u)\overline{D_p(n,u)}.
+\]
+
+The local size is already visible at \(t=0\), after removing the common
+\(\zeta(1)^{-1}\) zero by analytic continuation.  For
+\(v_p(m)=0\) and \(v_p(n)=1\),
+\[
+ D_p(m,1/2)=-\frac1p,\qquad
+ D_p(n,1/2)=\frac{2(p-1)}p,\qquad
+ |O_p(\,\cdot\,,1/2)|^2=\frac{p}{(p-1)^2}.
+\]
+Consequently
+
+\[
+ \boxed{
+ \left|
+ D_p(m,1/2)\overline{O_p(n,1/2)}
+ +O_p(m,1/2)\overline{D_p(n,1/2)}
+ \right|^2
+ =\frac{(2p-3)^2}{p(p-1)^2}
+ \asymp\frac1p.}
+\tag{4.845bx}
+\]
+
+Thus the physical projector has amplitude \(p^{-1/2}\), not the
+\(p^{-1}\) suggested by the rejected same-cusp candidate.  Over the
+Atkin--Lehner factor \(A\), the comparison loses exactly \(A^{1/2}\).
+Whether the remaining physical normalizations, the two residue
+polynomials, and the \(A,B\)-box counts absorb this loss must be decided
+by a new global residue ledger; neither a basis change nor the
+same-cusp Poisson gcd average decides it.
+
+The interface prime_level_eisenstein_cross_cusp_audit records the exact
+prime-five values
+\[
+ D_0=-1/5,\qquad D_1=8/5,\qquad |O|^2=5/16,\qquad
+ |\mathcal P_{\infty,0}|^2=49/80.
+\]
+It marks the Kiral--Young specialization and physical cross projector
+identified, rejects the same-cusp candidate, and keeps the global
+residue-level ledger, continuous-spectrum gate, and whole Möbius gate
+false.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector

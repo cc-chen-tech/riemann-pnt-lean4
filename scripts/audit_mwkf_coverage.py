@@ -1939,7 +1939,9 @@ class EisensteinOldspaceProjectorAudit:
     oldspace_sum_factorizes_prime_by_prime: bool
     coprime_ramified_projector_gains_one_prime: bool
     local_loss_depends_only_on_common_ramification: bool
-    global_kernel_has_gcd_over_level_majorant: bool
+    same_cusp_global_kernel_has_gcd_over_level_majorant: bool
+    atkin_lehner_cross_cusp_projector_identified: bool
+    same_cusp_projector_is_physical_adapter: bool
     common_ramification_gcd_aggregation_proved: bool
     continuous_spectrum_gate_covered: bool
     whole_mobius_gate_covered: bool
@@ -1958,7 +1960,8 @@ class EisensteinCommonRamificationAverageAudit:
     normalized_divisor_bound: int
     gcd_divisor_totient_identity_exact: bool
     normalized_average_has_zero_power_cost: bool
-    poisson_frequency_gcd_aggregation_proved: bool
+    same_cusp_poisson_frequency_gcd_aggregation_proved: bool
+    physical_cross_cusp_gcd_aggregation_proved: bool
     completed_eisenstein_residue_pairing_proved: bool
     continuous_spectrum_gate_covered: bool
     whole_mobius_gate_covered: bool
@@ -1977,7 +1980,8 @@ class PoleSubtractedEisensteinFunctionalEquationAudit:
     two_simple_residues_exact: bool
     central_collision_limit_is_finite: bool
     pole_subtracted_transform_has_rapid_decay: bool
-    oldspace_projector_and_poisson_gcd_restored: bool
+    same_cusp_projector_and_poisson_gcd_audited: bool
+    atkin_cross_cusp_oldspace_restored: bool
     nonresidual_continuous_local_polynomial_covered: bool
     zero_mode_residue_pairing_proved: bool
     continuous_spectrum_gate_covered: bool
@@ -1995,6 +1999,40 @@ class RamanujanZeroModeEulerAudit:
     inverse_zeta_zero_order_at_one: int
     archimedean_zero_mode_residue_normalization_matched: bool
     completed_zero_mode_residue_pairing_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class AtkinLehnerCrossCuspProjectorAudit:
+    prime: int
+    same_cusp_mixed_value_at_unit_phase: Fraction
+    same_cusp_squared_value: Fraction
+    swap_cross_cusp_squared_value: Fraction
+    swap_to_same_cusp_squared_ratio: Fraction
+    atkin_lehner_is_unitary: bool
+    unitarity_implies_same_cusp_kernel_bound: bool
+    exact_physical_cross_cusp_matrix_identified: bool
+    physical_cross_cusp_projector_bound_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PrimeLevelEisensteinCrossCuspAudit:
+    prime: int
+    unramified_diagonal_cusp_value_at_t_zero: Fraction
+    once_ramified_diagonal_cusp_value_at_t_zero: Fraction
+    offdiagonal_cusp_value_squared_at_t_zero: Fraction
+    mixed_cross_projector_squared_at_t_zero: Fraction
+    mixed_cross_projector_asymptotic_prime_exponent: Fraction
+    same_cusp_candidate_squared_prime_exponent: Fraction
+    half_level_loss_vs_same_cusp_candidate: Fraction
+    kiral_young_specialization_exact: bool
+    physical_cross_cusp_projector_identified: bool
+    same_cusp_projector_candidate_rejected: bool
+    cross_cusp_half_level_saving_proved: bool
+    global_residue_level_ledger_restored: bool
     continuous_spectrum_gate_covered: bool
     whole_mobius_gate_covered: bool
 
@@ -10045,7 +10083,9 @@ def eisenstein_oldspace_projector_audit(
         oldspace_sum_factorizes_prime_by_prime=True,
         coprime_ramified_projector_gains_one_prime=True,
         local_loss_depends_only_on_common_ramification=True,
-        global_kernel_has_gcd_over_level_majorant=True,
+        same_cusp_global_kernel_has_gcd_over_level_majorant=True,
+        atkin_lehner_cross_cusp_projector_identified=False,
+        same_cusp_projector_is_physical_adapter=False,
         common_ramification_gcd_aggregation_proved=False,
         continuous_spectrum_gate_covered=False,
         whole_mobius_gate_covered=False,
@@ -10122,7 +10162,8 @@ def eisenstein_common_ramification_average_audit(
         normalized_divisor_bound=3 * len(divisors),
         gcd_divisor_totient_identity_exact=(exact == totient_expansion),
         normalized_average_has_zero_power_cost=(exact <= upper),
-        poisson_frequency_gcd_aggregation_proved=(exact <= upper),
+        same_cusp_poisson_frequency_gcd_aggregation_proved=(exact <= upper),
+        physical_cross_cusp_gcd_aggregation_proved=False,
         completed_eisenstein_residue_pairing_proved=False,
         continuous_spectrum_gate_covered=False,
         whole_mobius_gate_covered=False,
@@ -10170,8 +10211,9 @@ def pole_subtracted_eisenstein_functional_equation_audit(
         two_simple_residues_exact=True,
         central_collision_limit_is_finite=True,
         pole_subtracted_transform_has_rapid_decay=True,
-        oldspace_projector_and_poisson_gcd_restored=True,
-        nonresidual_continuous_local_polynomial_covered=True,
+        same_cusp_projector_and_poisson_gcd_audited=True,
+        atkin_cross_cusp_oldspace_restored=False,
+        nonresidual_continuous_local_polynomial_covered=False,
         zero_mode_residue_pairing_proved=False,
         continuous_spectrum_gate_covered=False,
         whole_mobius_gate_covered=False,
@@ -10236,6 +10278,96 @@ def ramanujan_zero_mode_euler_audit(
         inverse_zeta_zero_order_at_one=1,
         archimedean_zero_mode_residue_normalization_matched=False,
         completed_zero_mode_residue_pairing_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def atkin_lehner_cross_cusp_projector_audit(
+    *,
+    prime: int,
+) -> AtkinLehnerCrossCuspProjectorAudit:
+    """Show why same-cusp cancellation cannot be moved by unitarity.
+
+    At unit phase, use the normalized prime-level coefficient vectors
+
+    ``a=(p^(-1/2),-p^(-1))`` for valuation zero and
+    ``b=(p^(-1/2),(p-2)/p)`` for valuation one.
+
+    Their same-cusp inner product is ``2/p^2``.  A unitary swap matrix,
+    the abstract local model of exchanging the two cusp directions,
+    gives cross product ``(p-3)/(p*sqrt(p))``.  Squaring removes the
+    irrational normalization and at ``p=5`` the ratio between the swap
+    and same-cusp squares is exactly ``p``.  This does not assert that
+    the physical Atkin--Lehner matrix is the swap in this coefficient
+    basis; it proves that unitarity alone cannot transfer the diagonal
+    projector estimate.  The actual matrix must be inserted explicitly.
+    """
+    if prime < 5:
+        raise ValueError("use a prime at least five for the witness")
+    same = F(2, prime * prime)
+    same_square = same * same
+    swap_square = F((prime - 3) ** 2, prime**3)
+    return AtkinLehnerCrossCuspProjectorAudit(
+        prime=prime,
+        same_cusp_mixed_value_at_unit_phase=same,
+        same_cusp_squared_value=same_square,
+        swap_cross_cusp_squared_value=swap_square,
+        swap_to_same_cusp_squared_ratio=swap_square / same_square,
+        atkin_lehner_is_unitary=True,
+        unitarity_implies_same_cusp_kernel_bound=False,
+        exact_physical_cross_cusp_matrix_identified=False,
+        physical_cross_cusp_projector_bound_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def prime_level_eisenstein_cross_cusp_audit(
+    *,
+    prime: int,
+) -> PrimeLevelEisensteinCrossCuspAudit:
+    """Specialize Kiral--Young's cusp coefficients at prime level.
+
+    For ``u=1/2+it``, the coefficient attached to the same cusp is
+
+    ``D_p(n,u)=p^(-2u)c_p(n)sigma_(1-2u)(n)/zeta(2u)``,
+
+    while the coefficient attached to the opposite cusp is
+
+    ``O_p(n,u)=p^(-u)sigma_(1-2u)^(p)(n)``
+    ``         /(zeta(2u)(1-p^(-2u)))``.
+
+    Common zeta factors are omitted from the finite local ledger.  At
+    ``t=0``, valuations zero and one give ``D_0=-1/p``,
+    ``D_1=2(p-1)/p``, and ``O^2=p/(p-1)^2``.  Therefore the physical
+    cross-cusp mixed projector has square
+
+    ``(2p-3)^2/(p(p-1)^2)``,
+
+    of size ``p^(-1)``.  Its amplitude saves only ``p^(-1/2)`` instead
+    of the ``p^(-1)`` needed to remove a full level factor.
+    """
+    if prime < 3:
+        raise ValueError("use an odd prime")
+    d0 = F(-1, prime)
+    d1 = F(2 * (prime - 1), prime)
+    o_squared = F(prime, (prime - 1) ** 2)
+    cross_squared = F((2 * prime - 3) ** 2, prime * (prime - 1) ** 2)
+    return PrimeLevelEisensteinCrossCuspAudit(
+        prime=prime,
+        unramified_diagonal_cusp_value_at_t_zero=d0,
+        once_ramified_diagonal_cusp_value_at_t_zero=d1,
+        offdiagonal_cusp_value_squared_at_t_zero=o_squared,
+        mixed_cross_projector_squared_at_t_zero=cross_squared,
+        mixed_cross_projector_asymptotic_prime_exponent=F(-1),
+        same_cusp_candidate_squared_prime_exponent=F(-2),
+        half_level_loss_vs_same_cusp_candidate=F(1, 2),
+        kiral_young_specialization_exact=True,
+        physical_cross_cusp_projector_identified=True,
+        same_cusp_projector_candidate_rejected=True,
+        cross_cusp_half_level_saving_proved=True,
+        global_residue_level_ledger_restored=False,
         continuous_spectrum_gate_covered=False,
         whole_mobius_gate_covered=False,
     )
@@ -17178,7 +17310,11 @@ def main() -> None:
         "common_only="
         f"{eisenstein_projector.local_loss_depends_only_on_common_ramification},"
         "gcd_majorant="
-        f"{eisenstein_projector.global_kernel_has_gcd_over_level_majorant},"
+        f"{eisenstein_projector.same_cusp_global_kernel_has_gcd_over_level_majorant},"
+        "cross_identified="
+        f"{eisenstein_projector.atkin_lehner_cross_cusp_projector_identified},"
+        "physical_adapter="
+        f"{eisenstein_projector.same_cusp_projector_is_physical_adapter},"
         "gcd_aggregated="
         f"{eisenstein_projector.common_ramification_gcd_aggregation_proved},"
         "continuous="
@@ -17207,7 +17343,9 @@ def main() -> None:
         "zero_power="
         f"{ramification_average.normalized_average_has_zero_power_cost},"
         "poisson_gcd="
-        f"{ramification_average.poisson_frequency_gcd_aggregation_proved},"
+        f"{ramification_average.same_cusp_poisson_frequency_gcd_aggregation_proved},"
+        "physical_cross_gcd="
+        f"{ramification_average.physical_cross_cusp_gcd_aggregation_proved},"
         "residues="
         f"{ramification_average.completed_eisenstein_residue_pairing_proved},"
         "continuous="
@@ -17238,8 +17376,10 @@ def main() -> None:
         f"{pole_subtracted.central_collision_limit_is_finite},"
         "rapid_decay="
         f"{pole_subtracted.pole_subtracted_transform_has_rapid_decay},"
-        "ramified_restored="
-        f"{pole_subtracted.oldspace_projector_and_poisson_gcd_restored},"
+        "same_cusp_ramified="
+        f"{pole_subtracted.same_cusp_projector_and_poisson_gcd_audited},"
+        "atkin_cross_restored="
+        f"{pole_subtracted.atkin_cross_cusp_oldspace_restored},"
         "nonresidual="
         f"{pole_subtracted.nonresidual_continuous_local_polynomial_covered},"
         "zero_mode_pairing="
@@ -17270,6 +17410,60 @@ def main() -> None:
         "continuous="
         f"{ramanujan_zero_mode.continuous_spectrum_gate_covered},"
         f"covered={ramanujan_zero_mode.whole_mobius_gate_covered}"
+    )
+    cross_cusp = atkin_lehner_cross_cusp_projector_audit(prime=5)
+    print(
+        "large_q_transition: atkin_lehner_cross_cusp_projector="
+        f"prime={cross_cusp.prime},"
+        "same="
+        f"{_fmt(cross_cusp.same_cusp_mixed_value_at_unit_phase)},"
+        "same_square="
+        f"{_fmt(cross_cusp.same_cusp_squared_value)},"
+        "swap_square="
+        f"{_fmt(cross_cusp.swap_cross_cusp_squared_value)},"
+        "square_ratio="
+        f"{_fmt(cross_cusp.swap_to_same_cusp_squared_ratio)},"
+        f"unitary={cross_cusp.atkin_lehner_is_unitary},"
+        "unitary_transfer="
+        f"{cross_cusp.unitarity_implies_same_cusp_kernel_bound},"
+        "physical_matrix="
+        f"{cross_cusp.exact_physical_cross_cusp_matrix_identified},"
+        "physical_bound="
+        f"{cross_cusp.physical_cross_cusp_projector_bound_proved},"
+        "continuous="
+        f"{cross_cusp.continuous_spectrum_gate_covered},"
+        f"covered={cross_cusp.whole_mobius_gate_covered}"
+    )
+    prime_cross = prime_level_eisenstein_cross_cusp_audit(prime=5)
+    print(
+        "large_q_transition: prime_level_eisenstein_cross_cusp="
+        f"prime={prime_cross.prime},"
+        "D0="
+        f"{_fmt(prime_cross.unramified_diagonal_cusp_value_at_t_zero)},"
+        "D1="
+        f"{_fmt(prime_cross.once_ramified_diagonal_cusp_value_at_t_zero)},"
+        "O2="
+        f"{_fmt(prime_cross.offdiagonal_cusp_value_squared_at_t_zero)},"
+        "cross2="
+        f"{_fmt(prime_cross.mixed_cross_projector_squared_at_t_zero)},"
+        "cross_exp="
+        f"{_fmt(prime_cross.mixed_cross_projector_asymptotic_prime_exponent)},"
+        "desired_exp="
+        f"{_fmt(prime_cross.same_cusp_candidate_squared_prime_exponent)},"
+        "deficit="
+        f"{_fmt(prime_cross.half_level_loss_vs_same_cusp_candidate)},"
+        f"KY={prime_cross.kiral_young_specialization_exact},"
+        "physical="
+        f"{prime_cross.physical_cross_cusp_projector_identified},"
+        "same_rejected="
+        f"{prime_cross.same_cusp_projector_candidate_rejected},"
+        "half_saving="
+        f"{prime_cross.cross_cusp_half_level_saving_proved},"
+        "full_saving="
+        f"{prime_cross.global_residue_level_ledger_restored},"
+        "continuous="
+        f"{prime_cross.continuous_spectrum_gate_covered},"
+        f"covered={prime_cross.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

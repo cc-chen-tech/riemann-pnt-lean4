@@ -4639,7 +4639,7 @@ def test_eisenstein_oldspace_projector_localizes_loss_to_common_ramification() -
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109l The Eisenstein oldspace projector localizes the loss",
+        "### 4.109l The same-cusp Eisenstein projector localizes the loss",
         "\\tag{4.845bj}",
         "\\tag{4.845bm}",
         "eisenstein_oldspace_projector_audit",
@@ -4661,7 +4661,9 @@ def test_eisenstein_oldspace_projector_localizes_loss_to_common_ramification() -
     assert audit.oldspace_sum_factorizes_prime_by_prime
     assert audit.coprime_ramified_projector_gains_one_prime
     assert audit.local_loss_depends_only_on_common_ramification
-    assert audit.global_kernel_has_gcd_over_level_majorant
+    assert audit.same_cusp_global_kernel_has_gcd_over_level_majorant
+    assert not audit.atkin_lehner_cross_cusp_projector_identified
+    assert not audit.same_cusp_projector_is_physical_adapter
     assert not audit.common_ramification_gcd_aggregation_proved
     assert not audit.continuous_spectrum_gate_covered
     assert not audit.whole_mobius_gate_covered
@@ -4677,7 +4679,7 @@ def test_common_ramification_gcd_has_zero_power_poisson_average() -> None:
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109m The Poisson average absorbs common ramification",
+        "### 4.109m The Poisson average absorbs common ramification in the same-cusp model",
         "\\tag{4.845bn}",
         "\\tag{4.845bo}",
         "eisenstein_common_ramification_average_audit",
@@ -4695,7 +4697,8 @@ def test_common_ramification_gcd_has_zero_power_poisson_average() -> None:
                 assert audit.gcd_divisor_totient_identity_exact
                 assert audit.exact_frequency_gcd_sum <= audit.divisor_bound_upper_bound
                 assert audit.normalized_average_has_zero_power_cost
-                assert audit.poisson_frequency_gcd_aggregation_proved
+                assert audit.same_cusp_poisson_frequency_gcd_aggregation_proved
+                assert not audit.physical_cross_cusp_gcd_aggregation_proved
                 assert not audit.completed_eisenstein_residue_pairing_proved
                 assert not audit.continuous_spectrum_gate_covered
 
@@ -4730,8 +4733,9 @@ def test_pole_subtracted_eisenstein_functional_equation_isolates_residues() -> N
     assert hard.central_collision_log_y_coefficient == F(1)
     assert hard.central_collision_euler_gamma_coefficient == F(2)
     assert hard.pole_subtracted_transform_has_rapid_decay
-    assert hard.oldspace_projector_and_poisson_gcd_restored
-    assert hard.nonresidual_continuous_local_polynomial_covered
+    assert hard.same_cusp_projector_and_poisson_gcd_audited
+    assert not hard.atkin_cross_cusp_oldspace_restored
+    assert not hard.nonresidual_continuous_local_polynomial_covered
     assert not hard.zero_mode_residue_pairing_proved
     assert not hard.continuous_spectrum_gate_covered
     assert not hard.whole_mobius_gate_covered
@@ -4772,6 +4776,39 @@ def test_ramanujan_zero_mode_has_exact_inverse_zeta_euler_factor() -> None:
     assert audit.archimedean_zero_mode_residue_normalization_matched is False
     assert audit.completed_zero_mode_residue_pairing_proved is False
     assert audit.continuous_spectrum_gate_covered is False
+
+
+def test_prime_level_eisenstein_cross_cusp_keeps_half_level_deficit() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "prime_level_eisenstein_cross_cusp_audit",
+        None,
+    )
+    assert adapter is not None, "prime cross-cusp audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109p The physical cross-cusp projector retains a half-level deficit",
+        "\\tag{4.845bw}",
+        "\\tag{4.845bx}",
+        "prime_level_eisenstein_cross_cusp_audit",
+    ):
+        assert marker in note
+
+    audit = adapter(prime=5)
+    assert audit.unramified_diagonal_cusp_value_at_t_zero == F(-1, 5)
+    assert audit.once_ramified_diagonal_cusp_value_at_t_zero == F(8, 5)
+    assert audit.offdiagonal_cusp_value_squared_at_t_zero == F(5, 16)
+    assert audit.mixed_cross_projector_squared_at_t_zero == F(49, 80)
+    assert audit.mixed_cross_projector_asymptotic_prime_exponent == F(-1)
+    assert audit.same_cusp_candidate_squared_prime_exponent == F(-2)
+    assert audit.half_level_loss_vs_same_cusp_candidate == F(1, 2)
+    assert audit.kiral_young_specialization_exact
+    assert audit.physical_cross_cusp_projector_identified
+    assert audit.same_cusp_projector_candidate_rejected
+    assert audit.cross_cusp_half_level_saving_proved
+    assert not audit.global_residue_level_ledger_restored
+    assert not audit.continuous_spectrum_gate_covered
 
 
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
