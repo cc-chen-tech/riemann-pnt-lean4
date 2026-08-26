@@ -1,6 +1,6 @@
+import sys
 from fractions import Fraction as F
 from math import gcd
-import sys
 from pathlib import Path
 
 import pytest
@@ -8,41 +8,42 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts import mwkf_mobius_type_identity as type_identity
-from scripts.mwkf_mobius_type_identity import (
-    bilinear_gauss_via_orthogonality,
-    c_u,
-    centered_completion_via_orthogonality,
-    centered_product_frequency_coefficients,
-    double_centered_completion_via_orthogonality,
-    crt_reciprocity_numerators,
-    double_split_mobius_identity,
-    determinant_cokernel_coordinates,
-    determinant_line_coordinates,
-    determinant_line_coprimality_indicator,
-    determinant_line_coprimality_residue,
-    determinant_lattice_solution,
-    determinant_slope_square_coordinates,
-    endpoint_density_convolution_coefficient,
-    endpoint_q_density,
-    endpoint_weighted_mobius,
-    mobius,
-    product_lift_coefficients,
-    product_lift_shifted_correlation,
-    coprime_divisor_pair_identity,
-    q_free_part,
-    q_restricted_mobius_log_signature,
-    q_restricted_twisted_log_signature,
-    poisson_congruence_reparametrization,
-    split_mobius_identity,
-    signed_shift_solutions,
-    type_scale_bounds,
-)
 from scripts.audit_mwkf_coverage import (
     wright_denominator_factor_adapter,
     wright_type_i_adapter,
 )
 from scripts.audit_mwkf_ranges import boundary_witnesses
-
+from scripts.mwkf_mobius_type_identity import (
+    bilinear_gauss_via_orthogonality,
+    c_u,
+    centered_completion_via_orthogonality,
+    centered_product_frequency_coefficients,
+    coprime_divisor_pair_identity,
+    crt_reciprocity_numerators,
+    determinant_cokernel_coordinates,
+    determinant_lattice_solution,
+    determinant_line_coordinates,
+    determinant_line_coprimality_indicator,
+    determinant_line_coprimality_residue,
+    determinant_slope_square_coordinates,
+    double_centered_completion_via_orthogonality,
+    double_split_mobius_identity,
+    endpoint_density_convolution_coefficient,
+    endpoint_q_density,
+    endpoint_weighted_mobius,
+    mobius,
+    poisson_congruence_reparametrization,
+    product_lift_coefficients,
+    product_lift_shifted_correlation,
+    q_free_part,
+    q_restricted_mobius_log_signature,
+    q_restricted_twisted_log_signature,
+    signed_shift_solutions,
+    split_mobius_identity,
+    truncated_selberg_divisor_sides,
+    type_scale_bounds,
+    zeta_mollifier_pairing_sides,
+)
 
 TYPE_NOTE = Path("docs/research/2026-08-24-mwkf-mobius-type-i-ii.md")
 
@@ -457,6 +458,54 @@ def test_q_restricted_full_divisor_sum_is_a_sparse_von_mangoldt_signature() -> N
                 () if prime_power_base is None else ((prime_power_base, 1),)
             )
             assert signature.negative_log_prime_coefficients == expected
+
+
+def test_truncated_selberg_divisor_sum_reflects_only_through_small_cofactors() -> None:
+    """Catch dropping the d>N complement when pairing zeta with the mollifier."""
+    prime_log_weights = {2: F(2), 3: F(5), 5: F(7), 7: F(11)}
+    for cutoff in range(2, 18):
+        for n in range(1, 120):
+            direct, completed, reflected = truncated_selberg_divisor_sides(
+                n,
+                cutoff=cutoff,
+                normalization=F(13),
+                prime_log_weights=prime_log_weights,
+            )
+            assert direct == completed
+            assert direct == reflected
+
+            if n <= cutoff:
+                expected = F(1) if n == 1 else F(0)
+                for prime in type_identity._distinct_prime_factors(n):
+                    remainder = n
+                    while remainder % prime == 0:
+                        remainder //= prime
+                    if remainder == 1:
+                        expected = prime_log_weights.get(prime, F(prime)) / 13
+                        break
+                assert direct == expected
+
+
+def test_zeta_variables_pair_exactly_with_their_mollifier_divisors() -> None:
+    """Catch retaining four variables after the exact x=nd, y=me regrouping."""
+    direct, paired = zeta_mollifier_pairing_sides(
+        mollifier_weights=((1, F(2)), (2, F(-1))),
+        zeta_indices=(1, 3),
+        completely_multiplicative_weight=lambda value: F(value * value),
+        shift_weights={
+            -5: F(7),
+            -4: F(11),
+            -2: F(13),
+            -1: F(17),
+            0: F(19),
+            1: F(23),
+            2: F(29),
+            4: F(31),
+            5: F(37),
+        },
+    )
+    assert direct == F(8088)
+    assert paired == F(8088)
 
 
 def test_q_restricted_twisted_divisor_sum_has_exact_euler_derivative() -> None:

@@ -8726,6 +8726,158 @@ prove the coupled-kernel gate.  The executable
 returns `covered = False` here because neither coefficient applicability
 nor algebraic central-mode vanishing is available.
 
+### 9.55 Pairing each zeta variable with its mollifier before completion
+
+There is one further exact regrouping which is invisible after the
+common-gcd and Type-II decompositions.  It is tempting to use
+
+\[
+ \sum_{d\mid n}\mu(d)
+ \left(1-\frac{\log d}{\log N}\right)
+ =1_{n=1}+\frac{\Lambda(n)}{\log N}.
+ \tag{9.359}
+\]
+
+Applied directly to (9.280), this is invalid: the factors
+\(p_N(qr),p_N(qs)\) are weights on the free variables, not divisor
+sums over the shifted argument.  Before expanding the two copies of
+\(\zeta M_N\), however, a divisor sum really is present.
+
+Put
+
+\[
+ B_{N,z}(x):=
+ \sum_{\substack{d\mid x\\d\leq N}}
+ \mu(d)\left(1-\frac{\log d}{\log N}\right)d^z.
+ \tag{9.360}
+\]
+
+On the initial absolutely convergent AFE line, set \(x=nd\) and
+\(y=me\).  Since
+
+\[
+ \frac{(mn)^{-z}}{\sqrt{demn}}
+ =\frac{d^ze^z}{(xy)^{1/2+z}},
+ \qquad
+ \left(\frac{me}{nd}\right)^{it}=\left(\frac yx\right)^{it},
+\]
+
+the entire four-variable arithmetic sum in (2.6) has the exact product
+form
+
+\[
+\boxed{
+ \sum_{x,y\geq1}
+ \frac{B_{N,z}(x)B_{N,z}(y)}{(xy)^{1/2+z}}
+ \left(\frac yx\right)^{it}.}
+ \tag{9.361}
+\]
+
+There is no endpoint error in (9.361).  For finite truncations it is
+just the bijective regrouping \((d,n)\mapsto x=dn\) and
+\((e,m)\mapsto y=em\); on the original \({\rm Re}\,z=2\) line the
+finite \(d,e\)-sums and the two zeta sums are absolutely convergent.
+The helper `zeta_mollifier_pairing_sides` verifies the corresponding
+finite identity for arbitrary finite weights and an arbitrary nonzero
+completely multiplicative Mellin model.
+
+The zero Mellin frequency has a boundary-exact prime-plus-cofactor
+description.  For every \(x\geq1\), completing the divisor sum and then
+writing \(d=x/k\) in the omitted part gives
+
+\[
+\boxed{
+\begin{aligned}
+ B_{N,0}(x)
+ ={}&1_{x=1}+\frac{\Lambda(x)}{\log N}\\
+ &-\sum_{\substack{k\mid x\\kN<x}}
+ \mu(x/k)\left(1-\frac{\log(x/k)}{\log N}\right).
+\end{aligned}}
+\tag{9.362}
+\]
+
+Thus \(B_{N,0}(x)=1_{x=1}+\Lambda(x)/\log N\) literally for
+\(x\leq N\).  More generally, if \(x\leq NK\), every reflected
+cofactor in (9.362) satisfies \(k<K\), with the strict endpoint
+\(kN<x\) retained.  On squarefree \(x\), (9.362) may equivalently be
+written
+
+\[
+ B_{N,0}(x)
+ =1_{x=1}+\frac{\Lambda(x)}{\log N}
+ -\mu(x)\sum_{\substack{k\mid x\\kN<x}}
+ \mu(k)\left(1-\frac{\log x-\log k}{\log N}\right).
+ \tag{9.363}
+\]
+
+The helper `truncated_selberg_divisor_sides` checks (9.362) with an
+arbitrary completely additive formal logarithm, including every moving
+floor boundary.  In the balanced AFE product range the reflected
+cofactor is at most the zeta-variable scale \(T^{1/2+\varepsilon}\).
+Consequently (9.361)--(9.363) replace the four visible Möbius factors by
+a von-Mangoldt part and an explicitly short reflected tail at the
+Mellin origin.  This is a genuine alternative to treating the four
+signs as independent.
+
+The origin is not the whole AFE integral.  If
+
+\[
+ P_x(z):=\prod_{p\mid x}(1-p^z),
+\]
+
+then the completed, untruncated coefficient is
+
+\[
+ \sum_{d\mid x}\mu(d)d^z
+ \left(1-\frac{\log d}{\log N}\right)
+ =P_x(z)-\frac{P_x'(z)}{\log N}.
+ \tag{9.364}
+\]
+
+At \(z=0\), the order of vanishing of \(P_x\) leaves only prime
+powers, which is (9.359).  At \(z=i\tau\ne0\), products with arbitrarily
+many distinct prime factors are generically present.  The Gaussian AFE
+factor localizes \(\tau\) to bounded size, not to a shrinking
+neighborhood of zero, so Taylor expansion at \(z=0\) has no power
+reserve.  Nor may one move the already reindexed long shifted energy
+to a left Mellin line term by term: after such a move (9.361) is no
+longer absolutely convergent.  A compact transition partition permits
+Mellin inversion on \({\rm Re}\,z=0\), but it retains the entire family
+\(B_{N,i\tau}\), including both reflected tails and their common
+\(\tau\)-coupling.
+
+This yields a sharper route boundary:
+
+* the Selberg divisor identity **does** cross the original
+  \(|\zeta M_N|^2\) expansion through (9.361);
+* it does **not** cross the already completed packet (9.280) by a
+  termwise substitution;
+* the \(z=0\) slice reduces exactly to primes plus cofactors of length at
+  most \(T^{1/2+\varepsilon}\) in the balanced transition;
+* an unconditional proof still needs a uniform shifted estimate for the
+  compact family \(B_{N,i\tau}\), or a new contour argument which
+  recombines the transition before losing absolute convergence.
+
+This caution is consistent with Radziwill's long-mollifier analysis:
+the off-diagonal contribution is genuinely non-negligible, and under RH
+is connected to Montgomery pair correlation; see
+[arXiv:1207.6583](https://arxiv.org/abs/1207.6583).  That result does not
+contradict an \(O(T^{1+\varepsilon})\) upper bound, but it rules out
+treating the long-mollifier off-diagonal as an algebraically vanishing
+error.  Bettin--Gonek give a useful precision on the logical strength.
+For moments on \([0,T]\), their Theorem 1 says that the same upper bound
+for every \(N\leq T^\theta\) excludes zeros in
+\(\Re s>1/2+1/(2\theta)\), which at \(\theta=3\) would be the unknown
+half-plane \(\Re s>2/3\).  The present moment is instead localized to
+\([T,2T]\).  Their Theorem 2 gives only
+\(\Re s>1/2+2/\theta\) in that setting, which is nontrivial only for
+\(\theta>4\) and is vacuous at \(\theta=3\); see
+[arXiv:1604.02740](https://arxiv.org/abs/1604.02740).  Thus their result
+does not imply that the current local \(\theta=3\) target proves a new
+zero-free region, while it does show why one must keep the window
+normalization exact.  Equations (9.361)--(9.364) provide a new exact
+coefficient-transfer interface, not a proof of the coupled-kernel gate.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -9097,6 +9249,7 @@ Proved in this note:
 | Density/complement Ramanujan spectrum | exact middle-spectrum closure; quotient-aware zero/high edge pair unproved | The finite coefficients and reconstruction are (9.328)--(9.331), with \(C_r\ll T^\varepsilon/r\).  Summation by parts plus the additive large sieve proves all \(2\leq r\leq D\), with exact exponent (9.333).  The weaker residual gate is (9.334): the combined \(r=1\) mode plus \(r>D\) small numerators.  On \(m=T^{3-\kappa}=rv\), lifting to \(a_{\rm R}=uv\) gives \(\nu+\lambda=1-\kappa\), not a constant \(1\), (9.335)--(9.337).  The finite bijection (9.338)--(9.339) shows \(u,v\) are gcd strata of one numerator.  The elementary gap is \(\nu\); two hypothetical square roots cover only \(\nu\leq\lambda\).  DRZZ is resonant on \(r\mid bc\), while the Robert--Sargos/Fouvry--Iwaniec monomial shapes cap at one half-power, so neither closes a positive-width residual, (9.340)--(9.344) |
 | Precompletion dual-product Type II | exact published coverage polytope; dominant coprime stratum unproved | Starting from the four-Möbius packet retaining \(h\delta_0\), exact numerator completion produces (9.345), whose circle transform factors into the \(bc\) and \(gq\) product polynomials.  DRZZ Lemma 4.2 is applicable here.  Equations (9.347)--(9.349) include the reduced denominator after \((k,q_\alpha)=T^{\tau_k}\), the approximation loss \((\kappa-2\tau_k)_+\), circle-band mass, and the competing Cauchy bound.  Some high-gcd strata satisfy the target, but for every \(\tau_k=0\) box the optimum is exactly exponent \(5\), leaving \(1/2\), (9.350).  Hence the postcompletion resonance is not the only obstruction |
 | Coprime $3\times2$ shifted convolution | exact finite reduction and published proxy exponents; actual main/error pair unproved | (9.353) is the finite correlation of a dyadic three-factor Möbius convolution with a dyadic two-factor one.  Topacogullari's fixed-shift standard $d_3$--$d$ error sums to exponent $9/2+7/64$, while the Baier--Browning--Marasingha--Zhao signed $d_3$--$d_3$ first moment has exponent $17/4$.  Neither theorem accepts the coefficients (9.352).  The natural central cell (9.358), not one resampling-dependent zero point, has raw exponent $5$ and needs the invariant half-power; hence the weaker actual interface still requires both singular-cell recombination and a centered coefficient-transfer estimate |
+| Precompletion $\zeta$--mollifier pairing | exact two-product-variable reduction; compact twisted coefficient family unproved | Pairing $x=nd,y=me$ on the initial AFE line gives (9.361) with the truncated coefficients $B_{N,z}$.  At $z=0$, (9.362)--(9.363) are exactly von Mangoldt plus a reflected cofactor shorter than $T^{1/2+\varepsilon}$ on the balanced transition.  But the actual compact Mellin family contains every $B_{N,i\tau}$; (9.364) shows that nonzero bounded $\tau$ restores arbitrary many-prime support.  Moving the reindexed long energy to a left line is not absolutely convergent, so the prime slice alone is not the full gate |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
