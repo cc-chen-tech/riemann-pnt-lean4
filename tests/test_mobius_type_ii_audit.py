@@ -21,6 +21,7 @@ from scripts.audit_mobius_type_ii import (
     KloostermanFractionTripleLedger,
     MQWBlockSavings,
     NearDeterminantBCLedger,
+    NearDeterminantCoordinates,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
     ScalarTypeIICutoffLedger,
@@ -115,6 +116,10 @@ from scripts.audit_mobius_type_ii import (
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
     near_determinant_bettin_chandee_ledger,
+    near_determinant_complete_reciprocal_sum,
+    near_determinant_coordinates,
+    near_determinant_reciprocity_phase,
+    near_determinant_reciprocity_phase_formula,
     nonunit_principal_equal_mobius_exponent,
     nonunit_principal_h_boundary_slack,
     nonunit_principal_is_residual_face,
@@ -505,6 +510,106 @@ def test_bettin_chandee_misses_near_determinant_even_with_free_scalar_sum() -> N
     )
     assert trivial_scalar.theorem_bound == F(39, 4)
     assert trivial_scalar.gap == F(3, 4)
+
+
+def test_near_determinant_has_one_affine_solution_line() -> None:
+    for divisor_product in range(2, 13):
+        for scalar_factor in range(1, 10):
+            if gcd(divisor_product, scalar_factor) != 1:
+                continue
+            for determinant in range(1, 10):
+                if gcd(determinant, divisor_product * scalar_factor) != 1:
+                    continue
+                base = near_determinant_coordinates(
+                    divisor_product,
+                    scalar_factor,
+                    determinant,
+                    0,
+                )
+                assert base == NearDeterminantCoordinates(
+                    base_modulus=base.base_modulus,
+                    base_quotient=base.base_quotient,
+                    modulus=base.base_modulus,
+                    quotient=base.base_quotient,
+                )
+                for parameter in range(7):
+                    coordinates = near_determinant_coordinates(
+                        divisor_product,
+                        scalar_factor,
+                        determinant,
+                        parameter,
+                    )
+                    assert (
+                        divisor_product * coordinates.quotient
+                        - scalar_factor * coordinates.modulus
+                        == determinant
+                    )
+                    assert coordinates.modulus == (
+                        base.base_modulus + divisor_product * parameter
+                    )
+                    assert coordinates.quotient == (
+                        base.base_quotient + scalar_factor * parameter
+                    )
+
+
+def test_near_determinant_parameter_is_complete_mod_d_and_reciprocal() -> None:
+    for divisor_product in range(2, 11):
+        for scalar_factor in range(1, 8):
+            if gcd(divisor_product, scalar_factor) != 1:
+                continue
+            for determinant in range(2, 12):
+                if gcd(determinant, divisor_product * scalar_factor) != 1:
+                    continue
+                residues = {
+                    near_determinant_coordinates(
+                        divisor_product,
+                        scalar_factor,
+                        determinant,
+                        parameter,
+                    ).modulus
+                    % determinant
+                    for parameter in range(determinant)
+                }
+                assert residues == set(range(determinant))
+                for parameter in range(determinant):
+                    modulus = near_determinant_coordinates(
+                        divisor_product,
+                        scalar_factor,
+                        determinant,
+                        parameter,
+                    ).modulus
+                    if modulus < 2 or gcd(modulus, determinant) != 1:
+                        continue
+                    for numerator in range(-3, 4):
+                        direct = near_determinant_reciprocity_phase(
+                            modulus,
+                            determinant,
+                            numerator,
+                        )
+                        formula = near_determinant_reciprocity_phase_formula(
+                            modulus,
+                            determinant,
+                            numerator,
+                        )
+                        assert abs(direct - formula) < 1e-8
+
+
+def test_complete_near_determinant_reciprocal_core_is_ramanujan() -> None:
+    for divisor_product in range(2, 11):
+        for scalar_factor in range(1, 8):
+            if gcd(divisor_product, scalar_factor) != 1:
+                continue
+            for determinant in range(2, 12):
+                if gcd(determinant, divisor_product * scalar_factor) != 1:
+                    continue
+                for numerator in range(-4, 5):
+                    complete = near_determinant_complete_reciprocal_sum(
+                        divisor_product,
+                        scalar_factor,
+                        determinant,
+                        numerator,
+                    )
+                    assert abs(complete - ramanujan_sum(determinant, numerator)) < 1e-8
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

@@ -450,6 +450,110 @@ def near_determinant_bettin_chandee_ledger(
     )
 
 
+def near_determinant_coordinates(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    parameter: int,
+) -> NearDeterminantCoordinates:
+    """Parametrize all positive solutions of ``B*k-g*q=d``."""
+
+    if min(divisor_product, scalar_factor, determinant) < 1:
+        raise ValueError("the factors and determinant must be positive")
+    if divisor_product == 1:
+        raise ValueError("the audited transition divisor product exceeds one")
+    if parameter < 0:
+        raise ValueError("the affine parameter must be nonnegative")
+    if gcd(divisor_product, scalar_factor) != 1:
+        raise ValueError("B and g must be coprime")
+    if gcd(determinant, divisor_product * scalar_factor) != 1:
+        raise ValueError("d must be coprime to B*g")
+
+    base_modulus = (
+        -determinant * pow(scalar_factor, -1, divisor_product)
+    ) % divisor_product
+    if base_modulus == 0:
+        raise AssertionError("coprimality forces a nonzero base modulus")
+    base_quotient = (
+        determinant + scalar_factor * base_modulus
+    ) // divisor_product
+    return NearDeterminantCoordinates(
+        base_modulus=base_modulus,
+        base_quotient=base_quotient,
+        modulus=base_modulus + divisor_product * parameter,
+        quotient=base_quotient + scalar_factor * parameter,
+    )
+
+
+def near_determinant_complete_reciprocal_sum(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    numerator: int,
+) -> complex:
+    """Complete reciprocal core along one determinant solution line."""
+
+    total = 0j
+    for parameter in range(determinant):
+        coordinates = near_determinant_coordinates(
+            divisor_product,
+            scalar_factor,
+            determinant,
+            parameter,
+        )
+        if gcd(coordinates.modulus, determinant) == 1:
+            total += _inverse_additive_phase(
+                determinant,
+                numerator,
+                coordinates.modulus,
+            )
+    return total
+
+
+def near_determinant_reciprocity_phase(
+    modulus: int,
+    determinant: int,
+    numerator: int,
+) -> complex:
+    """Original inverse phase modulo the long modulus q."""
+
+    if min(modulus, determinant) < 2:
+        raise ValueError("both moduli must exceed one")
+    if gcd(modulus, determinant) != 1:
+        raise ValueError("q and d must be coprime")
+    return cmath.exp(
+        -2j
+        * cmath.pi
+        * numerator
+        * pow(determinant, -1, modulus)
+        / modulus
+    )
+
+
+def near_determinant_reciprocity_phase_formula(
+    modulus: int,
+    determinant: int,
+    numerator: int,
+) -> complex:
+    """Reciprocal phase modulo d, retaining the exact smooth factor."""
+
+    if min(modulus, determinant) < 2:
+        raise ValueError("both moduli must exceed one")
+    if gcd(modulus, determinant) != 1:
+        raise ValueError("q and d must be coprime")
+    reciprocal = cmath.exp(
+        2j
+        * cmath.pi
+        * numerator
+        * pow(modulus, -1, determinant)
+        / determinant
+    )
+    archimedean = cmath.exp(
+        -2j * cmath.pi * numerator / (determinant * modulus)
+    )
+    return reciprocal * archimedean
+
+
 @dataclass(frozen=True)
 class InverseFractionSeparation:
     """Centered numerator certificate for two fixed-numerator fractions.
@@ -2088,6 +2192,16 @@ class NearDeterminantBCLedger:
     theorem_bound: Fraction
     target: Fraction
     gap: Fraction
+
+
+@dataclass(frozen=True)
+class NearDeterminantCoordinates:
+    """One point on the affine line ``B*k-g*q=d``."""
+
+    base_modulus: int
+    base_quotient: int
+    modulus: int
+    quotient: int
 
 
 @dataclass(frozen=True)

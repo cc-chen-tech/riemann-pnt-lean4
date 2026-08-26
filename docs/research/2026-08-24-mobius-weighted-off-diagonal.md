@@ -6454,6 +6454,64 @@ operator estimate.  Merely Fourier-separating it into admissible
 coefficients and invoking the published trilinear fraction theorem loses
 its density and cannot close the gate.
 
+The determinant restriction itself has a further exact affine
+parametrization.  Put \(B=bc\) and assume \((B,g)=1\).  Choose the unique
+\(q_0\in\{1,\ldots,B-1\}\) satisfying
+\(gq_0\equiv-d\pmod B\), and set
+\(k_0=(d+gq_0)/B\).  Then every positive solution of
+\(Bk-gq=d\) lies on
+
+\[
+ \boxed{q=q_0+Bt,\qquad k=k_0+gt.}
+\tag{9.255}
+\]
+
+At the balanced cutoff, the \(t\)-interval has length
+\(Q/B=T^2\), the same exponent as \(|d|\).  Moreover \((B,d)=1\), so
+\(t\mapsto q_0+Bt\pmod d\) permutes all residues modulo \(d\).  Additive
+reciprocity gives, with the exact archimedean factor retained,
+
+\[
+ \boxed{
+ e_q(-A\bar d_q)=e_d(A\bar q_d)e(-A/(dq)).}
+\tag{9.256}
+\]
+
+Consequently the unweighted complete reciprocal core is elementary:
+
+\[
+ \boxed{
+ \sum_{t\bmod d\atop(q_0+Bt,d)=1}
+ e_d\!\left(A\overline{q_0+Bt}_d\right)=c_d(A).}
+\tag{9.257}
+\]
+
+The checker verifies (9.255)--(9.257), including negative \(A\), for
+all coprime small \(B,g,d\) in its deterministic range.  Thus the
+unweighted near-determinant core is not an unknown Weil-size sum.  The
+actual residual is the affine Möbius--inverse packet
+
+\[
+\boxed{
+ \sum_{t\asymp d}
+ \mu(q_0+Bt)
+ W_{B,g,d,A}(t)
+ e_d\!\left(A\overline{q_0+Bt}_d\right),}
+\tag{9.258}
+\]
+
+where \(B=T^{1/2}\), \(d=T^2\), and
+\(q_0+Bt\asymp T^{5/2}\); the smooth factor in (9.256) is part of
+\(W\).  This is strictly more structured than a generic two-modulus
+coupled kernel.  It is not covered by the one-variable trace theorems
+above: \(t\mapsto\mu(q_0+Bt)\) is not a multiplicative coefficient.
+Equivalently, detecting \(q\equiv q_0\pmod B\) converts (9.258) to
+inverse-plus-linear phases modulo \(Bd\asymp T^{5/2}\), where the
+matching composite-modulus theorem in Section 9.8 supplies only
+logarithmic saving.  A successful estimate must average (9.258) over
+\(B,g,d\) and the product coefficient \(A=h\delta_0\), rather than apply
+that theorem termwise.
+
 Known one-variable Möbius--trace results do not close (9.239) or its
 recombined form (9.250).  Even if
 one optimistically grants a translated prime-modulus version of the
@@ -6473,9 +6531,9 @@ absolute value over \(g\); no unconditional closure is claimed.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
-Type-I/II packet (9.242) and divisor-incidence packet (9.250) for
-\(0\leq\tau<1/4\), hence the full Region-D recombination, remain
-unproved.**
+Type-I/II packet (9.242), divisor-incidence packet (9.250), and affine
+Möbius--inverse packet (9.258) for \(0\leq\tau<1/4\), hence the full
+Region-D recombination, remain unproved.**
 
 Proved in this note:
 
@@ -6624,6 +6682,9 @@ Proved in this note:
   near-determinant family with long variables \(k,q\asymp T^{5/2}\).
   Fourier separation followed by Bettin--Chandee still misses the target
   by at least \(T^{1/4}\), even with a free scalar sum, (9.252)--(9.254).
+  The determinant solutions and reciprocal phase reduce further to the
+  affine packet (9.258), while its unweighted complete core is exactly
+  the Ramanujan sum (9.257).
 * the exact scalar recombination (9.247)--(9.250): the two scalar signs
   combine back to \(\mu(s)\), the phase lifts from \(q=s/g\) to \(s\),
   and the scalar family becomes the divisor-incidence multiplicity
@@ -6677,7 +6738,7 @@ Proved in this note:
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
 | Young varying-level primitive route | fixed scalar strata close; scalar aggregation residual unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps each fixed-stratum raw term to Young's additive rational large sieve, (9.214)--(9.219), saving \(T^2\).  Restoring the transition scalar sum gives exponent \(19/2\), leaving \(T^{1/2}\), (9.235)--(9.238) |
 | Common-modulus unit-numerator family | closes for \(\tau\geq1/4\); small-common-factor packet unproved | the CRT collision cancels \(t\) from the Young rational, (9.221)--(9.227), but after the scalar sum its exponent is \(19/2-2\tau\).  Ramanujan marginals and the recombined zero mode remain below target, (9.228)--(9.231).  The exact residual is (9.239) for \(0\leq\tau<1/4\) |
-| Scalar Möbius transition packet | exact Type-I/II reduction; joint estimate unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Direct Bettin--Chandee remains \(T^{1/4}\) high even with free scalar cancellation, (9.252)--(9.254); fixed-prime Möbius--trace estimates save at best the optimistic \(q^{-1/120}\), versus required \(q^{-1/5}\) |
+| Scalar Möbius transition packet | exact Type-I/II and affine reduction; joint estimate unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Direct Bettin--Chandee remains \(T^{1/4}\) high even with free scalar cancellation, (9.252)--(9.254).  Affine parametrization and reciprocity give (9.255)--(9.258); the unweighted complete core is \(c_d(A)\), but the affine Möbius-weighted average remains unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
