@@ -82,7 +82,7 @@ def partial_diagonal_coefficient_first_audit(
     zeta_cutoff_exponent: Fraction,
     product_exponent: Fraction,
 ) -> PartialDiagonalCoefficientFirstAudit:
-    """Locate a partial-diagonal product inside the finite convolution.
+    """Audit one product exponent inside the finite zeta convolution.
 
     For ``u=T^p``, ``N=T^n`` and a finite zeta factor ``m<=T^x``, a
     factorization ``u=d*m`` is visible only when
@@ -92,7 +92,9 @@ def partial_diagonal_coefficient_first_audit(
     Thus products above the complete range ``min(n,x)`` retain a truncated
     Möbius divisor tail rather than the pure ``Lambda(u)/log(N)``
     coefficient.  This is an exponent ledger only; endpoint constants stay
-    in the exact finite divisor conditions.
+    in the exact finite divisor conditions.  In particular, it does not
+    identify a synthetic BBLR product coefficient with this finite
+    ``zeta * M_N`` coefficient.
     """
 
     n_exp = Fraction(mollifier_exponent)

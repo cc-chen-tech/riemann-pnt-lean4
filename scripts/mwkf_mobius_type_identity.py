@@ -228,6 +228,7 @@ class BBLRPartialDiagonalCorrelation:
     common_second_factor_retained: bool
     equal_product_diagonal_excluded: bool
     analytic_afe_packet_exhaustive: bool
+    original_zeta_mollifier_coefficient_adapter_proved: bool
     partial_diagonal_target_bound_proved: bool
 
 
@@ -1457,6 +1458,9 @@ def bblr_partial_diagonal_correlation_sides(
 
     The helper performs only finite reindexing.  It neither constructs an
     exhaustive analytic AFE packet nor estimates the resulting band form.
+    Its outer and inner factors are the synthetic BBLR slots produced after
+    the Type decomposition; it does not identify their product coefficients
+    with the original finite ``zeta * M_N`` coefficients.
     """
 
     families = (
@@ -1571,6 +1575,7 @@ def bblr_partial_diagonal_correlation_sides(
         common_second_factor_retained=True,
         equal_product_diagonal_excluded=True,
         analytic_afe_packet_exhaustive=False,
+        original_zeta_mollifier_coefficient_adapter_proved=False,
         partial_diagonal_target_bound_proved=False,
     )
 

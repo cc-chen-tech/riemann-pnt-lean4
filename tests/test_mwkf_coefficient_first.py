@@ -76,7 +76,7 @@ def test_standard_zeta_afe_only_has_a_half_power_complete_region() -> None:
     assert scales.euler_maclaurin_pole == F(-3, 4)
 
 
-def test_hard_partial_diagonal_is_a_large_mobius_divisor_tail() -> None:
+def test_independent_hard_product_has_a_large_mobius_divisor_tail() -> None:
     audit = partial_diagonal_coefficient_first_audit(
         mollifier_exponent=F(3),
         zeta_cutoff_exponent=F(1, 2),

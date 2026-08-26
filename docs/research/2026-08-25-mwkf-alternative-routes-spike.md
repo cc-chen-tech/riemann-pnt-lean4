@@ -9400,11 +9400,15 @@ The finite helper `bblr_partial_diagonal_correlation_sides` verifies
 (4.621zade)--(4.621zadf), keeps the common second factor \(r\), partitions
 every unequal product pair into exactly one sign, and records both
 `analytic_afe_packet_exhaustive=False` and
+`original_zeta_mollifier_coefficient_adapter_proved=False`.  The last
+flag is essential: the BBLR variables in (4.621zade) are the synthetic
+outer/inner slots produced by (4.601), not yet the original factors in a
+finite \(\zeta_XM_N\) convolution.  The helper also records
 `partial_diagonal_target_bound_proved=False`.
 
-One must not now replace \(\mathcal A,\mathcal B\) by pure von-Mangoldt
-coefficients.  After all zeta dyadic partitions are recombined, one side
-has the finite coefficient
+There is a useful but **separate** coefficient-first comparison.  If one
+starts directly from the truncated product \(\zeta_XM_N\), its finite
+coefficient is
 
 \[
  c_{X,N}(u)=
@@ -9414,14 +9418,16 @@ has the finite coefficient
 \]
 
 The complete identity \(c_{X,N}(u)=\Lambda(u)/\log N\) is guaranteed
-only for \(u\le\min(X,N)\).  In the present hard cell,
+only for \(u\le\min(X,N)\).  If an analytic adapter were to identify a
+BBLR product at exponent \(3/2\) with this standard one-sided AFE
+coefficient, then
 
 \[
  N=T^3,\qquad X=T^{1/2},\qquad u\asymp T^{3/2},
 \]
 
-so the finite-zeta boundary is active.  The condition \(u/d\le X\)
-forces the actually present mollifier divisors into
+and the finite-zeta boundary would be active.  The condition \(u/d\le X\)
+would force the actually present mollifier divisors into
 
 \[
  \boxed{T\ \lesssim d\lesssim T^{3/2},}
@@ -9440,15 +9446,21 @@ while the omitted part of the complete divisor convolution has
 \tag{4.621zadj}
 \]
 
-and the second term cannot be dropped at \(u\asymp T^{3/2}\).
-Consequently the principal additive-band form retains a large-divisor
-Möbius tail on both sides; the apparent complete \(\Lambda\)-collapse is
-not available from the standard one-sided AFE.
+and the second term cannot be dropped at \(u\asymp T^{3/2}\) in that
+coefficient-first model.  This proves that the standard one-sided AFE
+coefficient at that exponent is a large-divisor Möbius tail rather than a
+pure \(\Lambda\)-coefficient.  It does **not** prove that either
+\(\mathcal A\) or \(\mathcal B\) in (4.621zade) equals \(c_{X,N}\): in
+(4.601), the signed atoms were convolved into arbitrary BBLR outer
+coefficients and the remaining unsigned cofactors occupied the inner
+slots.  Recovering \(c_{X,N}\) therefore requires an explicit,
+packet-exhaustive stage adapter that has not been constructed.
 
 The exponent helper `partial_diagonal_coefficient_first_audit` records
 the complete range \(1/2\), the available divisor interval \([1,3/2]\),
 and `pure_von_mangoldt_replacement_valid=False`.  This agrees with the
-exact formal-prime-vector identities in the coefficient-first audit and
+exact formal-prime-vector identities in the independent coefficient-first
+audit.  It supplies no assertion about the BBLR product coefficients and
 introduces no new asymptotic assertion.
 
 The dangerous additive principal mode can nevertheless be isolated

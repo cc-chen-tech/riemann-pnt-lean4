@@ -1025,6 +1025,7 @@ def test_bblr_partial_diagonal_reindexes_as_additive_band_correlation() -> None:
     assert sides.common_second_factor_retained
     assert sides.equal_product_diagonal_excluded
     assert not sides.analytic_afe_packet_exhaustive
+    assert not sides.original_zeta_mollifier_coefficient_adapter_proved
     assert not sides.partial_diagonal_target_bound_proved
 
 
