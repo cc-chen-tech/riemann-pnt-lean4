@@ -93,6 +93,7 @@ from scripts.audit_mobius_type_ii import (
     coherent_operator_required_exponent,
     common_factor_marginal_ledger,
     completed_product_phase_reduction,
+    completed_transition_scalar_weighted_sum,
     coprimality_migrated_scalar_stratum_spectrum,
     coprime_centered_inverse_cross_fourier_factorization,
     coprime_indicator_via_mobius,
@@ -987,6 +988,29 @@ def test_actual_transition_archimedean_kernel_has_only_bounded_frequencies() -> 
         scalar_dilation=F(0),
         poisson_sample=F(0),
     )
+
+
+def test_completed_transition_scalar_signs_recombine_to_one_mobius_weight() -> None:
+    for modulus in range(2, 61):
+        if naive_mobius(modulus) == 0:
+            continue
+        factors = tuple(
+            factor
+            for factor in range(1, modulus + 1)
+            if modulus % factor == 0
+        )
+        weighted_factors = tuple(
+            (factor, complex(factor, -1)) for factor in factors
+        )
+        for shift in range(-5, 6):
+            if modulus + shift < 1 or gcd(shift, modulus) != 1:
+                continue
+            direct, recombined = completed_transition_scalar_weighted_sum(
+                modulus=modulus,
+                shift=shift,
+                scalar_weights=weighted_factors,
+            )
+            assert direct == recombined
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

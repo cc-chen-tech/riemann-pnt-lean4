@@ -7277,6 +7277,104 @@ actual archimedean scale rules out a power saving by analytic
 nonstationarity; the surviving half-power must come from an exact global
 recombination not yet found or from arithmetic cancellation in (9.282).
 
+### 9.46 Recombining the scalar sign after numerator completion
+
+Once the inverse phase and the \(\delta_0\)-sum have disappeared, the
+short scalar sign is no longer an independent source of cancellation.
+For one separated component of \(\Xi_\ell\), write its \((g,q,d)\)-weight
+as \(X_g(g)X_q(q)X_d(d)\), and define
+
+\[
+ \boxed{
+ \omega_{G,Q}(s)
+ :=\sum_{g\mid s\atop g\asymp G,\ s/g\asymp Q}
+ X_g(g)X_q(s/g).}
+\tag{9.290}
+\]
+
+The coprimality already in (9.280) and squarefreeness give, term by term,
+
+\[
+ \mu(g)\mu(q)=\mu(gq)=\mu(s).
+\]
+
+Therefore the completed scalar core has the boundary-exact identity
+
+\[
+\boxed{
+\begin{aligned}
+ &\sum_{g\asymp G}\mu(g)X_g(g)
+  \sum_{q\asymp Q\atop(g,q)=1}\mu(q)X_q(q)
+  \sum_{d\in I(gq)\atop(d,gq)=1}
+       \mu(gq+d)X_d(d)\\
+ &\qquad=
+ \sum_{s\asymp S}\mu(s)\omega_{G,Q}(s)
+ \sum_{d\in I(s)\atop(d,s)=1}\mu(s+d)X_d(d).
+\end{aligned}}
+\tag{9.291}
+\]
+
+No endpoint was changed: \(I(s)=(R-s,2R-s]\) is the same moving interval.
+The executable checker proves the finite weighted sign identity for every
+squarefree \(s\leq60\), arbitrary complex weights on any selected divisor
+family, and positive or negative unit shifts.  In particular, a later
+triangle inequality over \(g\) cannot be justified as “using the third
+Möbius sign”; after completion that sign has merged into \(\mu(s)\).
+
+The new coefficient has the elementary norm
+
+\[
+ |\omega_{G,Q}(s)|\ll\tau(s),\qquad
+ \sum_{s\asymp S}|\mu(s)\omega_{G,Q}(s)|^2
+ \ll_A S(\log S)^A
+\tag{9.292}
+\]
+
+for some fixed \(A\), uniformly for bounded separated weights.  Thus the
+right side of (9.291), after the exact expansion
+\(1_{(s,d)=1}=\sum_{j\mid(s,d)}\mu(j)\), is a sum of
+arbitrary-coefficient shifted Möbius forms in Lichtman's Fourier lemma and
+Theorem 6.2.  On the \(j\)-layer write \(s=jn,d=jh\); its raw density is
+\(SD/j^2\), so summing the divisor layers costs no power, and the fixed
+coefficient is the corresponding restriction of
+\(G(s)=\mu(s)\omega_{G,Q}(s)\).  The moving smooth endpoints can be
+restricted to common intervals with total boundary cost
+\(D^2S^\varepsilon=T^{4+\varepsilon}\), as in Section 9.42; alternatively
+they may be retained by partial summation.
+
+This exact compatibility does not provide a power.  Lichtman's Lemma 2.1
+has the schematic consequence
+
+\[
+\boxed{
+ \sum_{|d|\leq D}
+ \left|\sum_{s\asymp S}G(s)\mu(s+d)\right|
+ \ll D^{1/2}
+ \left\{F_G(S)\,\mathcal U_\mu(S,D)\right\}^{1/2},}
+\tag{9.293}
+\]
+
+where \(F_G(S)=\sum_{s\leq2S}|G(s)|^2\) and
+\(\mathcal U_\mu\) is the short-interval Fourier-uniformity integral.
+The published estimates make (9.293) smaller than \(SD\) by logarithmic
+or qualitative factors, subject in Theorem 6.2 to its displayed
+exceptional-set term.  Even granting arbitrary fixed log-power decay,
+its \(T\)-power ledger remains
+
+\[
+ \boxed{SD=T^5,\qquad
+  \text{target }S^{3/2}=T^{9/2},\qquad
+  \text{gap }T^{1/2}=S^{1/6}.}
+\tag{9.294}
+\]
+
+For the unseparated actual \(\Xi_\ell\), smooth separation replaces
+\(\omega_{G,Q}(s)X_d(d)\) by an integral of such components and incurs
+its recorded \(L^1\) separation norm; this cannot turn logarithmic decay
+into (9.294)'s fixed power.  Hence (9.291) is a useful positive theorem
+match and a negative power audit: the residual is a two-Möbius weighted
+averaged-Chowla problem, not a three-independent-sign problem.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -7493,6 +7591,13 @@ Proved in this note:
   do not imply a shift-Fourier zero, and a weight-specific escape would
   require the new exact global moment identity (9.289), which remains
   unproved and would not by itself remove all rational major arcs.
+* the post-completion scalar-sign recombination (9.290)--(9.291): all
+  scalar-dependent weights become one divisor-incidence coefficient on
+  \(s=gq\), while \(\mu(g)\mu(q)=\mu(s)\).  Its \(L^2\) norm is
+  divisor-bounded, (9.292), so Lichtman's arbitrary-coefficient Fourier
+  lemma matches each separated and coprimality-divisor component exactly;
+  its power ledger remains \(SD=T^5\), leaving \(T^{1/2}\),
+  (9.293)--(9.294).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7548,6 +7653,7 @@ Proved in this note:
 | Transition numerator completion | exact three-variable reduction; weighted averaged-Chowla power gate unproved | Poisson in \(h\) gives (9.278); \(q>\delta_0+|\ell d|\) forces \(\delta_0=\ell d\), (9.279), so the inverse/product kernel disappears and only bounded dual modes of (9.280) remain.  The ledger is \(23/2-2=19/2\), still \(1/2\) above target, (9.281), equivalently the core (9.282) needs \(S^{-1/6}\).  The nonzero \(h\)-dual mode does not delete the distinct \(d\)-major arcs |
 | Centering after transition completion | exact short-box obstruction; no major-arc deletion | the centered numerator transform is the point-minus-uniform identity (9.283).  Its aligned short-box mass is (9.284), equal to \(D-D^2/(q-1)\) for prime \(q>D\), so the uniform background is a factor \(D/q=T^{-1/2}\) below the dilation point mass, (9.285)--(9.286).  This disproves an automatic vanishing-moment route but is not a lower bound for the actual signed smooth packet; published averaged/short-interval Möbius bounds remain logarithmic at the required power scale |
 | Actual archimedean zero-moment route | scale audit exact; special identity unproved | in the balanced transition every parameter \(TL/(MR),HM/S,M^2R/(ST),KS/(MR),gD/L,H/q\) has exponent zero, (9.287)--(9.288).  Thus the completed weight is sampled at bounded frequency and integration by parts gives no power.  The AFE zeros at Mellin \(z=\pm1/2\) do not force the proposed \(d\)-moment (9.289), and even that moment would remove only the additive origin |
+| Post-completion scalar recombination | exact two-Möbius form; published average only logarithmic | (9.290)--(9.291) merge \(\mu(g)\mu(q)\) into \(\mu(s)\) and put every separated scalar weight into \(\omega_{G,Q}(s)\).  Its divisor-bounded \(L^2\) norm (9.292), together with the exact gcd-divisor split, fits Lichtman's arbitrary-coefficient Fourier lemma componentwise.  The resulting bound has power exponent \(SD=T^5\), not the target \(S^{3/2}=T^{9/2}\), (9.293)--(9.294); no third independent Möbius sign remains |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

@@ -897,6 +897,49 @@ def centered_transition_diagonal_mass(
     )
 
 
+def completed_transition_scalar_weighted_sum(
+    *,
+    modulus: int,
+    shift: int,
+    scalar_weights: tuple[tuple[int, complex], ...],
+) -> tuple[complex, complex]:
+    """Recombine all scalar signs after the transition phase disappears.
+
+    For squarefree ``s`` and every ``g|s``, squarefreeness gives
+    ``mu(g)*mu(s/g)=mu(s)``.  Thus arbitrary scalar-dependent weights
+    form one divisor-incidence coefficient; they do not retain an
+    independent Möbius sign.  The returned pair is the direct sum and
+    its recombined form.
+    """
+
+    if modulus < 2 or mobius(modulus) == 0:
+        raise ValueError("the completed scalar identity requires squarefree s")
+    if modulus + shift < 1 or gcd(shift, modulus) != 1:
+        raise ValueError("the shifted argument must be positive and coprime to s")
+    scalar_factors = tuple(factor for factor, _weight in scalar_weights)
+    if any(
+        factor < 1 or modulus % factor != 0
+        for factor in scalar_factors
+    ):
+        raise ValueError("every scalar factor must divide s")
+    if len(set(scalar_factors)) != len(scalar_factors):
+        raise ValueError("the scalar factors must be distinct")
+    shifted_sign = mobius(modulus + shift)
+    direct = sum(
+        mobius(factor)
+        * mobius(modulus // factor)
+        * shifted_sign
+        * weight
+        for factor, weight in scalar_weights
+    )
+    recombined = (
+        mobius(modulus)
+        * shifted_sign
+        * sum(weight for _factor, weight in scalar_weights)
+    )
+    return direct, recombined
+
+
 def near_determinant_coordinates(
     divisor_product: int,
     scalar_factor: int,
