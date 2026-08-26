@@ -3034,6 +3034,79 @@ def equal_zeta_index_shift_sides(
     return delta + shift * m_two, s * (m_one - m_two)
 
 
+def balanced_short_shift_forces_equal_zeta_index(
+    *,
+    m_one: int,
+    m_two: int,
+    s: int,
+    shift: int,
+    s_lower: int,
+    m_upper: int,
+    shift_upper: int,
+    delta_upper: int,
+) -> tuple[int, bool, bool]:
+    """Certify the integer-gap forcing m_one=m_two.
+
+    Write r=s+shift and delta=m_one*s-m_two*r.  On the supplied support,
+
+    abs(m_one-m_two)*s <= delta_upper + m_upper*shift_upper.
+
+    If the right side is strictly below s_lower<=s, integrality forces
+    equality of the two zeta indices and then delta=-m_two*shift.  All
+    endpoint inequalities are checked rather than inferred from exponent
+    notation.
+    """
+
+    if min(m_one, m_two, s, s_lower, m_upper) < 1:
+        raise ValueError("indices and positive support bounds must be positive")
+    if min(shift_upper, delta_upper) < 0:
+        raise ValueError("absolute support bounds must be nonnegative")
+    if s + shift < 1:
+        raise ValueError("the shifted reduced variable must stay positive")
+    if s < s_lower or m_two > m_upper:
+        raise ValueError("the variables lie outside the supplied support")
+    if abs(shift) > shift_upper:
+        raise ValueError("the shift lies outside the supplied support")
+    if s_lower <= delta_upper + m_upper * shift_upper:
+        raise ValueError("the integer-gap hypothesis is not strict")
+
+    delta = m_one * s - m_two * (s + shift)
+    if abs(delta) > delta_upper:
+        raise ValueError("delta lies outside the supplied support")
+    return delta, m_one == m_two, delta == -m_two * shift
+
+
+def equal_index_inverse_phase_sides(
+    *,
+    s: int,
+    shift: int,
+    h: int,
+    m: int,
+) -> tuple[Fraction, Fraction]:
+    """Linearize the inverse phase after the equal-index forcing.
+
+    With r=s+shift, delta=-m*shift, and (r,s)=1,
+
+    -h*delta*inv_s(r)/s = h*m/s (mod 1).
+
+    Since r=shift (mod s), this is simply
+    shift*inv_s(r)=1 (mod s).  Signed shifts and frequencies are retained.
+    """
+
+    if min(s, m) < 1:
+        raise ValueError("s and m must be positive")
+    r = s + shift
+    if r < 1:
+        raise ValueError("the shifted reduced variable must stay positive")
+    if gcd(r, s) != 1:
+        raise ValueError("the inverse phase requires coprime reduced variables")
+    delta = -m * shift
+    inverse = pow(r, -1, s) if s > 1 else 0
+    original = Fraction(-h * delta * inverse, s) % 1
+    linear = Fraction(h * m, s) % 1
+    return original, linear
+
+
 def equal_zeta_index_gcd_factorization_sides(
     coefficients: Mapping[int, complex],
     twists: Mapping[int, complex],

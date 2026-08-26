@@ -3,6 +3,8 @@ from fractions import Fraction as F
 from math import gcd
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 import scripts.audit_mobius_type_ii as audit
@@ -2330,6 +2332,70 @@ def test_short_modulus_zero_frequency_is_the_equal_zeta_index_slice() -> None:
                     shift = r - s
                     delta = m_one * s - m_two * r
                     assert (delta == -shift * m_two) == (m_one == m_two)
+
+
+def test_balanced_short_shift_support_forces_equal_zeta_indices() -> None:
+    s_lower = 20
+    m_upper = 3
+    shift_upper = 2
+    delta_upper = 3
+    assert s_lower > delta_upper + m_upper * shift_upper
+
+    witnessed = 0
+    for s in range(s_lower, s_lower + 6):
+        for m_one in range(1, m_upper + 1):
+            for m_two in range(1, m_upper + 1):
+                for shift in range(-shift_upper, shift_upper + 1):
+                    if s + shift < 1:
+                        continue
+                    delta = m_one * s - m_two * (s + shift)
+                    if abs(delta) > delta_upper:
+                        continue
+                    actual_delta, equal_indices, forced_shift = (
+                        audit.balanced_short_shift_forces_equal_zeta_index(
+                            m_one=m_one,
+                            m_two=m_two,
+                            s=s,
+                            shift=shift,
+                            s_lower=s_lower,
+                            m_upper=m_upper,
+                            shift_upper=shift_upper,
+                            delta_upper=delta_upper,
+                        )
+                    )
+                    assert actual_delta == delta
+                    assert equal_indices
+                    assert forced_shift
+                    witnessed += 1
+    assert witnessed > 0
+
+    with pytest.raises(ValueError, match="integer-gap hypothesis"):
+        audit.balanced_short_shift_forces_equal_zeta_index(
+            m_one=1,
+            m_two=1,
+            s=9,
+            shift=0,
+            s_lower=9,
+            m_upper=m_upper,
+            shift_upper=shift_upper,
+            delta_upper=delta_upper,
+        )
+
+
+def test_equal_index_inverse_phase_is_exactly_linear() -> None:
+    for s in range(1, 16):
+        for shift in range(-s + 1, s + 3):
+            if gcd(s + shift, s) != 1:
+                continue
+            for h in (-7, -1, 0, 2, 9):
+                for m in range(1, 7):
+                    original, linear = audit.equal_index_inverse_phase_sides(
+                        s=s,
+                        shift=shift,
+                        h=h,
+                        m=m,
+                    )
+                    assert original == linear
 
 
 def test_equal_zeta_index_gcd_sum_is_a_literal_mollifier_square() -> None:

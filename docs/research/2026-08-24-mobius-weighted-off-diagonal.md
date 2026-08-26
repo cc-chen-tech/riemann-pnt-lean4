@@ -9606,6 +9606,131 @@ bilinear argument which keeps both Möbius signs and \(h\delta\).  They
 do rule out claiming that a standard zeta mean square, applied after
 compact-Mellin centering, proves \({\rm CME}_3\).
 
+### 9.62 Integer-gap rigidity on the pre-Poisson short-shift lattice
+
+There is an exact refinement of the equal-index identity (9.383) on the
+decisive short-shift support.  It is useful only if the distinction
+between the original integer lattice and one fixed post-Poisson
+frequency box is retained.
+
+Put \(r=s+d\) in the original equation \(m_1s-m_2r=\delta\).  Suppose a
+finite support satisfies
+
+\[
+ s\geq s_0,\qquad m_2\leq M_0,\qquad |d|\leq D_0,\qquad
+ |\delta|\leq L_0,\qquad s_0>L_0+M_0D_0.
+\tag{9.396}
+\]
+
+Then (9.383) gives the endpoint-exact inequality
+
+\[
+ |m_1-m_2|s=|\delta+m_2d|
+ \leq L_0+M_0D_0<s_0\leq s.
+\tag{9.397}
+\]
+
+Because \(m_1-m_2\) is an integer, (9.397) forces
+
+\[
+ \boxed{m_1=m_2=:m,\qquad \delta=-md.}
+\tag{9.398}
+\]
+
+The strict inequality in (9.396) is essential; equality at the endpoint
+does not force the integer gap to vanish.  In the dyadic notation used
+above, \(s\geq S/2\), \(m_2\leq2M\), \(|d|\leq2D\), and
+\(|\delta|\leq2L\), so the literal sufficient condition is
+
+\[
+ \frac S2>2L+4MD.
+\tag{9.399}
+\]
+
+At the balanced short-shift corner,
+
+\[
+ S=T^3,\qquad M=T^{1/2+o(1)},\qquad
+ D=T^{2+o(1)},\qquad L=T^{5/2+o(1)},
+\]
+
+(9.399) holds for all sufficiently large \(T\).  This includes the
+fixed polylogarithmic enlargements in (5.3)--(5.8), because their right
+side is \(T^{5/2}\log^{O_B(1)}T=o(T^3)\).  Thus every *original integer
+solution* which contributes to this short-\(d\) support has equal zeta
+indices.  Boxes with disjoint \(K\)- and \(M\)-supports are consequently
+empty after the complete Poisson spectrum is recombined.
+
+On the equal-index slice the inverse phase and the retained product
+linearize without approximation.  Since \((r,s)=1\) and \(r=s+d\), one
+has \((d,s)=1\) and \(d\bar r\equiv1\pmod s\).  Therefore
+
+\[
+ \boxed{
+ e_s(-h\delta\bar r)
+ =e_s(hmd\bar r)=e_s(hm),\qquad h\delta=-hmd.}
+\tag{9.400}
+\]
+
+In particular, this slice has no oscillation in the shift \(d\).  Nor
+does the remaining \(h,m\)-phase have a hidden power parameter:
+
+\[
+ \frac{HM}{S}=T^{5/2+1/2-3+o(1)}=T^{o(1)}.
+\tag{9.401}
+\]
+
+After unit-scale normalization it is a bounded-frequency phase
+\(e(cuv)\), so integration by parts cannot supply a fixed power of
+\(T\).  To state precisely what may be linearized after Poisson, let
+\(G_L,G_H\) denote the actual signed dyadic cutoff functions in
+\(\delta,h\), extended by zero.
+For one fixed \(q,R,S,K,M,L,H\) box, define its equal-index
+divisibility subpacket by
+
+\[
+\begin{aligned}
+ \mathcal E^{=}_{q;R,S,K,M,L,H}
+ :={}&\frac2q
+ \sum_{\substack{s,d\in\mathbb Z\\s\geq1,\ s+d\geq1\\(s,d)=1}}
+ \frac{a_N(q(s+d))a_N(qs)F_R(s+d)F_S(s)}
+      {\sqrt{s(s+d)}\,s}\\
+ &\times
+ \sum_{m\geq1}\sum_{h\in\mathbb Z}
+ G_L(-md)G_H(h)e_s(hm)\,
+ \mathscr K_{R,S,K,M}(s+d,s;-md,h).
+\end{aligned}
+\tag{9.402}
+\]
+
+All zero extensions in \(a_N,F_R,F_S,\mathscr K\) remain in force, so
+(9.402) has no suppressed endpoint term.  It is an exact subpacket of
+(4.5), with \(h\delta=-hmd\) retained, not a new estimate and not yet
+the whole post-Poisson box.
+
+The scope restriction is decisive.  In (4.5), after Poisson summation,
+\(x\) is continuous and \(m_1=(xr+\delta)/s\) need not be an integer.
+Consequently a fixed \(h\)-box still contains terms with
+\(\delta\ne-md\); (9.397) cannot be applied to those terms separately.
+Only summing the complete \(h\)-spectrum restores the original residue
+class, at which point (9.398) applies and the complementary
+\(\delta\ne-md\) packet cancels exactly by Poisson inversion.  This is
+consistent with the fixed-\(H\) Fourier-width warning after (9.384).
+
+Hence the new finite fact does not prove \({\rm SC}_{2/3}\),
+\({\rm MS}_{2/3}\), or \({\rm CME}_3\).  It sharpens the location of the
+obstruction: after complete \(h\)-recombination the balanced short-shift
+face is a band-limited equal-zeta-index form with the naked pair
+\(\mu(s)\mu(s+d)\); if one remains post-Poisson, the same obstruction is
+split between (9.402) and its exactly cancelling frequency complement.
+There is neither an extra \(m_1,m_2\) average nor a \(d\)-Kloosterman
+phase available for the missing \(T^2\) saving.
+
+The helpers balanced_short_shift_forces_equal_zeta_index and
+equal_index_inverse_phase_sides verify (9.396)--(9.400) on arbitrary
+finite integer inputs, including signed shifts and frequencies, the
+strict support endpoint, and the modulus-one convention.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -9658,7 +9783,14 @@ compact-Mellin gate \({\rm CME}_3\), (9.392), is also unproved.
 The exact Gaussian bilinear identity (9.393)--(9.395) further shows
 that applying a standard Mellin \(L^2\) estimate returns the same
 length-\(T^{7/2}\) product polynomial; Montgomery--Vaughan loses the
-entire \(X/T=T^{5/2}\) window factor.**
+entire \(X/T=T^{5/2}\) window factor.  The integer-gap refinement
+(9.396)--(9.402) now proves that every original lattice point on the
+balanced short-\(d\) support has \(m_1=m_2\) and \(\delta=-m(r-s)\).
+Its inverse phase is \(e_s(hm)\), so neither a second zeta-index average
+nor shift oscillation can provide the missing power.  This applies only
+after complete \(h\)-recombination, or to the exact divisibility
+subpacket (9.402); it does not delete the complementary terms in one
+fixed post-Poisson frequency box.**
 
 Proved in this note:
 
@@ -9794,6 +9926,14 @@ Proved in this note:
   \(X/T=T^{5/2}\), exactly the factor required by \({\rm CME}_3\).
   Thus standard Mellin \(L^2\) is circular here, not a proved weaker
   gate.
+* the endpoint-exact integer-gap lemma (9.396)--(9.399) on the original
+  short-shift lattice and the inverse-phase linearization (9.400).
+  At the balanced scale it forces \(m_1=m_2\), \(\delta=-m(r-s)\), and
+  retains \(h\delta=-hm(r-s)\), while \(HM/S=T^{o(1)}\).  The exact
+  post-Poisson divisibility subpacket is (9.402).  The lemma does not
+  apply termwise to the continuous \(x\)-integral in a fixed \(h\)-box,
+  so it narrows the obstruction to the equal-index two-Möbius band but
+  does not prove its required \(T^2\) cancellation.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -10052,6 +10192,7 @@ Proved in this note:
 | Short-modulus zero-frequency recombination | complete aggregate identified; fixed balanced weight still unproved | Only after summing the full \(h,\delta\) dyadic partitions does Fourier inversion give the continuous \(m_1=m_2\) condition (9.380)--(9.383).  Summing gcd strata gives the literal square (9.384), minus the explicit \(r=s\) diagonal.  A fixed balanced box has Fourier width \(S/H\asymp M\), so it is not a point mass and no converse from its actual weight to \({\rm MS}_{2/3}\) is claimed.  The identified alternative is a uniform shifted-energy theorem for the full compact family \(B_{N,i\tau}\), not merely its prime-supported \(\tau=0\) slice |
 | Compact-Mellin density centering | exact pole cancellation and finite boundary; diagonal-sized correlation unproved | The generating series is (9.388), and subtracting \(\beta_N(z)\) cancels its \(w=1\) pole in (9.389).  For every finite product cutoff, (9.390) shows that the entire moving edge remains; at \(w=1\) it is the whole centered prefix.  On the transition \(X=T^{7/2},H=X/T\), convexity cancels the contour gain exactly, (9.391).  Goldston--Gonek requires the same coefficient correlations as input, and the Conrey--Keating divisor Type II framework does not apply to the inverse Möbius coefficient.  The precise sufficient replacement \({\rm CME}_3\), (9.392), needs the full \(H=T^{5/2}\) diagonal saving and is unproved |
 | Compact-Mellin \(L^2\) route | exact finite Fourier identity; standard mean values circular | The Gaussian identity (9.394) localizes the product polynomial to \(|m-n|\ll X/T\), (9.395), with the same-\(z\) bilinear coefficients from (9.361).  Cauchy asks for the \(L^2\) norm of that same length-\(X\) polynomial.  Opening \(B_{N,z}\) returns the original zeta--mollifier product chunk, while Montgomery--Vaughan has the long term \(X\sum|c_n|^2\), losing exactly \(X/T=T^{5/2}\).  Goldston--Gonek replaces the loss only after assuming the coefficient correlations on the right side, so no standard mean-square theorem proves \({\rm CME}_3\) |
+| Balanced short-shift integer lattice | exact equal-index forcing; banded two-Möbius estimate unproved | Under the literal endpoint condition \(S/2>2L+4MD\), (9.396)--(9.399) force every original solution to have \(m_1=m_2=m\) and \(\delta=-m(r-s)\).  On this divisibility slice the retained product is \(h\delta=-hm(r-s)\) and the inverse phase is exactly \(e_s(hm)\), (9.400), with critical scale \(HM/S=T^{o(1)}\).  Formula (9.402) is the exact post-Poisson subpacket.  A fixed \(h\)-box also contains a complementary continuous-\(x\) packet which cancels only after full Poisson inversion; hence the result removes the prospective shift oscillation and extra zeta-index average, but does not prove the remaining \(T^2\) two-Möbius saving |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
