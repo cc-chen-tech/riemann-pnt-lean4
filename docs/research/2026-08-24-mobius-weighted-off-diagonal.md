@@ -3992,6 +3992,239 @@ which treats the \(k\mid e\) sum as a divisor-bounded absolute
 coefficient: that would discard an exact Möbius average which is present
 on every nonunit dilation.
 
+### 9.27 The centered fourth-trace route and its exact published boundary
+
+A subsequent paper of Blomer--Pascadi gives a new fourth-moment route for
+fixed-modulus bilinear forms in Kloosterman sums.  Since this route is
+based on a quadratic character of an \({\rm SL}_2\) trace discriminant,
+it is a natural candidate for the centered families above.  Its direct
+applicability and the extra bridge required here can both be audited
+exactly.
+
+For two intervals of the same length \(N=c^\nu\), their Theorem 1.1 is
+
+\[
+ \|\alpha\|\|\beta\|c^{1+o(1)}
+ \left(
+  \frac{N^{1/8}}{c^{3/32}}
+  +\frac{N^{5/16}}{c^{3/16}}
+  +\frac{N^{2/3}}{c^{7/18}}
+ \right).
+\tag{9.136}
+\]
+
+The three exponents of \(c\) in (9.136) are
+
+\[
+ \frac{29}{32}+\frac\nu8,\qquad
+ \frac{13}{16}+\frac{5\nu}{16},\qquad
+ \frac{11}{18}+\frac{2\nu}{3}.
+\tag{9.137}
+\]
+
+Against the better of Weil and complete Cauchy, whose exponent is
+\(b(\nu)=\min(1,\nu+1/2)\), the exact margins are therefore
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak b_1(\nu)&=b(\nu)-\frac{29}{32}-\frac\nu8,\\
+ \mathfrak b_2(\nu)&=b(\nu)-\frac{13}{16}-\frac{5\nu}{16},\\
+ \mathfrak b_3(\nu)&=b(\nu)-\frac{11}{18}-\frac{2\nu}{3}.
+ \end{aligned}}
+\tag{9.138}
+\]
+
+At the critical length \(\nu=1/2\), these are
+
+\[
+ (\mathfrak b_1,\mathfrak b_2,\mathfrak b_3)
+ =\left(\frac1{32},\frac1{32},\frac1{18}\right).
+\tag{9.139}
+\]
+
+The first and third margins vanish at \(13/28\) and \(7/12\),
+respectively, reproducing the published nontrivial interval.  On the
+full-residue box forced by the direct Fourier bridge (9.15), however,
+\(\nu=1\) and
+
+\[
+ (\mathfrak b_1,\mathfrak b_2,\mathfrak b_3)
+ =\left(-\frac1{32},-\frac18,-\frac5{18}\right).
+\tag{9.140}
+\]
+
+Thus the new fixed-modulus theorem is strictly nontrivial at square-root
+length, but still does not estimate the full Fourier box arising from
+(9.13).
+
+There is also a closer published result which averages over the modulus.
+Normalize Pascadi's Corollary 7.9 by
+
+\[
+ M=N=C^\nu,\qquad q=C^\kappa,\qquad d=C^\tau,
+ \qquad 0\leq\tau\leq\kappa\leq1.
+\tag{9.141}
+\]
+
+When the fixed divisor \(q\) is squarefree, its factorization in that
+corollary has \(d'=1\) and square-divisor parameter \(f=d\).  The exact
+power margins in the two alternatives inside the published minimum are
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak p_1(\nu,\kappa,\tau)
+  &=-\frac16\max\{\tau+4\nu-3,\ \tau+2\nu-2,\ -\tau\},\\
+ \mathfrak p_2(\nu,\kappa,\tau)
+  &=-\frac16\max\{\tau+4\nu-\kappa-2,
+                    \ \tau+2\nu-\kappa-1,
+                    \ \kappa-\tau-1\}.
+ \end{aligned}}
+\tag{9.142}
+\]
+
+Positive means that the parenthetical factor saves a power.  For the
+favorable critical choice
+
+\[
+ \nu=\frac12,\qquad \kappa=1,\qquad \tau=\frac12,
+\]
+
+both margins equal \(1/12\).  But at full residue length \(\nu=1\),
+
+\[
+ \boxed{
+ \max(\mathfrak p_1,\mathfrak p_2)
+ =-\frac{1+\tau}{6}<0
+ \qquad(0\leq\tau\leq\kappa\leq1).}
+\tag{9.143}
+\]
+
+Consequently even the modulus-averaged corollary worsens, rather than
+improves, the full-residue Fourier estimate.  It permits coefficients
+depending on the modulus only under common pointwise majorants.  The
+actual transforms \(\widehat\alpha_s\) and \(\beta_s\) in (9.15) have
+good individual Parseval norms, but taking a common pointwise majorant
+discards exactly that information.  Hence Corollary 7.9 is not a hidden
+averaged bridge for (9.13).
+
+The algebra behind the new fourth-moment method is nevertheless relevant.
+Let
+
+\[
+ T=\begin{pmatrix}1&1\\0&1\end{pmatrix},\qquad
+ S=\begin{pmatrix}0&-1\\1&0\end{pmatrix},
+\]
+
+and let \(A_0\) be an integral representative of the inverse of the
+Kloosterman multiplier.  For
+
+\[
+ g=T^{A_0h_1}ST^{h_2}ST^{A_0h_3}ST^{h_4}S
+\]
+
+direct multiplication gives the exact identity
+
+\[
+ \boxed{
+ \operatorname{Tr}(g)
+ =A_0^2h_1h_2h_3h_4
+  -A_0(h_1+h_3)(h_2+h_4)+2,\qquad
+ \Delta(g)=\operatorname{Tr}(g)^2-4.}
+\tag{9.144}
+\]
+
+For a prime \(p\), the special representation character used in the
+paper is
+
+\[
+ \boxed{
+ \chi_p^\circ(g)=
+ \begin{cases}
+ p,&g\equiv\pm I\pmod p,\\
+ \left(\dfrac{\Delta(g)}p\right),&g\not\equiv\pm I\pmod p.
+ \end{cases}}
+\tag{9.145}
+\]
+
+Equivalently, \(1+\chi_p^\circ(g)\) is the number of fixed points of
+\(g\) on \(\mathbb P^1(\mathbb F_p)\).  This representation-theoretic
+identity must not be replaced by a raw inverse-cycle count.  Indeed, for
+
+\[
+ p=5,qquad(h_1,h_2,h_3,h_4)=(1,1,1,2),
+\]
+
+one has \(\operatorname{Tr}(g)=-2\), \(\Delta(g)=0\), and one projective
+fixed point, but the cyclic system
+
+\[
+ x_j+\bar x_{j-1}=h_j,\qquad x_j\in\mathbb F_5^\times,
+\]
+
+has no solution.  The missing fixed orbit meets \(0\) or the point at
+infinity.  Thus the informal phrase ``typically one plus a Legendre
+symbol'' cannot serve as a finite identity.  The rigorous route is
+(9.145), together with every scalar congruence stratum
+\(g\equiv\gamma I\pmod d\), \(\gamma^2=1\), in Proposition 3.4 and the
+explicit error family
+
+\[
+ h_1h_2h_3=0\quad\hbox{or}\quad h_1+h_3=0
+\tag{9.146}
+\]
+
+from Proposition 3.6.
+
+This leaves a sharply identified possible adaptation, rather than a
+proved estimate.  For separated smooth pieces, (9.15) writes the
+relevant family in the coherent form
+
+\[
+ \boxed{
+ \sum_{s\asymp S}\frac{\mu(s)}s
+ \left\langle\widehat\alpha_s,K_s\beta_s\right\rangle,
+ \quad
+ K_s(m,b)=S(m,-b;s),}
+\tag{9.147}
+\]
+
+where \(\widehat\alpha_s\) is generated by the same \(\mu(r)\)-weighted
+\(r\)-sequence for every \(s\), and \(\beta_s(b)\) is generated by the
+same factorized \((h,\delta)\)-sequence through
+\(h\delta\equiv b\pmod s\).  Applying a spectral norm separately for
+each \(s\) destroys this coherence and the outer \(\mu(s)\) average.
+Taking Cauchy before separating moduli instead creates cross-modulus
+fourth cycles, while (9.145) is presently a single-modulus character
+identity.
+
+The precise missing lemma for this route is therefore a **coherent
+cross-modulus fourth-trace estimate** which:
+
+1. converts those mixed cycles to a common quadratic-character family;
+2. retains the scalar-divisor strata and the degenerates in (9.146);
+3. bounds the common discriminant multiplicity energy with the strength
+   required by the \(RS\) target; and
+4. keeps both outer Möbius weights and the factorization \(h\delta\)
+   before any absolute value over the Type-II fixed factor.
+
+No such published lemma was found, and it is not proved here.  The latest
+averaged-Chowla improvement of Menon does not substitute for it: its
+saving is
+\(O(\log\log H/\log H+(\log\log X)^2/\log X)\), and the paper itself
+identifies \(1/\log H\) as the effective ceiling of that method.  Such a
+logarithmic gain cannot absorb any of the positive power deficits in
+(9.85), (9.100), or (9.143).
+
+All finite statements in (9.138), (9.142), and (9.144)--(9.146) are
+checked by
+`scripts/audit_mobius_type_ii.py` and
+`scripts/audit_centered_fourth_trace.py`, including exhaustive small-box
+matrix/projective tests.  These checks validate the reduction boundary;
+they do not prove the coherent cross-modulus estimate or
+CK\(_{\rm ub}(3)\).
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -4074,6 +4307,10 @@ Proved in this note:
 * the finite sign-migration bijection which moves
   \(\mu(e)\mu(k)\) to \(\mu(E)\) and exposes the three-Möbius nonunit
   family, (9.130)--(9.135).
+* the exact Blomer--Pascadi length margins, Pascadi modulus-average
+  margins, integral fourth-trace formula, projective-character identity,
+  and the raw-cycle counterexample, (9.136)--(9.146); these identify but
+  do not prove the coherent cross-modulus bridge (9.147).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -4109,6 +4346,8 @@ Proved in this note:
 | Recombined residual spectrum | exact identity; joint estimate unproved | principal plus centered kernels recombine termwise in (9.117); the weakest post-reduction gate is the joint sum (9.119), not separate bounds for (9.69) and (9.115) |
 | Generalized centered divisor duality | exact reduction; polynomial window unproved | all common \(v=qj(e/k)\) modes cancel in (9.121)--(9.122); the remaining equation is \(br-kv=zj\), with scales (9.126), Parseval loss \(Je/M\), and unconditional corner (9.128) |
 | Nonunit Möbius sign migration | exact finite bijection; estimate unproved | \(E=e/k,\delta'=k\delta_1,f=kc\) gives \(k=(\delta',f)\) and \(\mu(e)\mu(k)=\mu(E)\), (9.130)--(9.134); after divisor duality the nonunit family retains \(\mu(r)\mu(E)\mu(j)\) |
+| Blomer--Pascadi quadratic-character route | exact trace/coverage audit; direct routes insufficient | critical fixed-modulus saving \(c^{-1/32}\), but full-residue margins are negative in (9.140); Pascadi Corollary 7.9 has full-residue loss \(C^{(1+\tau)/6}\), (9.143); exact trace and character identities are (9.144)--(9.146) |
+| Coherent cross-modulus fourth trace | **unproved** | candidate joint interface (9.147) must retain the common \(\mu(r)\) transform, outer \(\mu(s)\), factorized \(h\delta\), scalar-divisor strata, and discriminant energy before taking moduluswise norms |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
@@ -4135,8 +4374,14 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   used for a new box in Section 8.3.
 * A. Pascadi, *Non-Abelian Amplification and Bilinear Forms with
   Kloosterman Sums*, Geom. Funct. Anal. (online 21 August 2026),
-  DOI 10.1007/s00039-026-00746-0, especially Theorem 7.8; audited in
-  Section 9.5.
+  DOI 10.1007/s00039-026-00746-0, especially Theorem 7.8 and Corollary
+  7.9; audited in Sections 9.5 and 9.27.
+* V. Blomer, A. Pascadi, *Bilinear forms with Kloosterman sums via
+  quadratic characters*, arXiv:2607.24311v1, especially Theorem 1.1,
+  Lemma 3.3, and Propositions 3.4 and 3.6; audited in Section 9.27.
+* A. Menon, *Improved bounds for multiplicative functions in almost all
+  short intervals*, arXiv:2607.15574v1, especially Theorems 1.4 and 1.5;
+  its logarithmic averaged-Chowla ceiling is audited in Section 9.27.
 * A. Pascadi, *Large sieve inequalities for exceptional Maass forms and
   the greatest prime factor of \(n^2+1\)*, arXiv:2404.04239,
   Corollary 18; specialized in Section 9.11.

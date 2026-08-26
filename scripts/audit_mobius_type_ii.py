@@ -155,6 +155,105 @@ class PascadiFullResidueSavings:
 
 
 @dataclass(frozen=True)
+class BlomerPascadiMargins:
+    """Margins of the three published terms over the best trivial bound.
+
+    The interval length is ``N=c^nu``.  Positive entries mean that the
+    corresponding term in Blomer--Pascadi, Theorem 1.1, saves a power of
+    the modulus over ``min(c, N*sqrt(c))`` (with coefficient norms omitted
+    on both sides).
+    """
+
+    first: Fraction
+    second: Fraction
+    third: Fraction
+
+    def values(self) -> tuple[Fraction, ...]:
+        return (self.first, self.second, self.third)
+
+
+def blomer_pascadi_best_trivial_margins(
+    nu: Fraction,
+) -> BlomerPascadiMargins:
+    """Return exact margins in Blomer--Pascadi, Theorem 1.1.
+
+    After writing ``N=c^nu``, the three terms in the theorem have modulus
+    exponents
+
+    ``29/32+nu/8``, ``13/16+5nu/16``, and ``11/18+2nu/3``.
+
+    The elementary comparison is ``min(c, N*sqrt(c))``.  This ledger is
+    an applicability check only; it does not identify the theorem's
+    coefficients with the Möbius coupled kernel.
+    """
+
+    if nu < 0:
+        raise ValueError("the interval-length exponent must be nonnegative")
+    best_trivial = min(Fraction(1), nu + Fraction(1, 2))
+    return BlomerPascadiMargins(
+        first=best_trivial - (Fraction(29, 32) + nu / 8),
+        second=best_trivial - (Fraction(13, 16) + 5 * nu / 16),
+        third=best_trivial - (Fraction(11, 18) + 2 * nu / 3),
+    )
+
+
+def blomer_pascadi_beats_best_trivial(nu: Fraction) -> bool:
+    """Whether every term has a strict power saving at length ``c^nu``."""
+
+    return min(blomer_pascadi_best_trivial_margins(nu).values()) > 0
+
+
+@dataclass(frozen=True)
+class PascadiModuliMargins:
+    """Power savings in Pascadi, Corollary 7.9, for equal intervals.
+
+    The two entries correspond to the two alternatives inside the minimum.
+    Positive is a saving in the parenthetical factor; negative is a loss.
+    """
+
+    first: Fraction
+    second: Fraction
+
+    @property
+    def best(self) -> Fraction:
+        return max(self.first, self.second)
+
+
+def pascadi_averaged_moduli_margins(
+    *, length: Fraction, fixed_modulus: Fraction, amplifier: Fraction
+) -> PascadiModuliMargins:
+    """Exact equal-length exponent ledger for Pascadi, Corollary 7.9.
+
+    Write ``M=N=C^length``, ``q=C^fixed_modulus`` and
+    ``d=C^amplifier``.  For square-free ``q=de`` one has ``d'=1`` and
+    the largest square divisor parameter in the corollary is ``f=d``.
+    The returned values are minus one sixth of the largest exponent in
+    each of the two alternatives.  This checks only the theorem's
+    parenthetical gain; coefficient norms and the Fourier factor remain
+    outside this diagnostic.
+    """
+
+    if not (0 <= length <= 1):
+        raise ValueError("the interval exponent must lie in [0, 1]")
+    if not (0 <= amplifier <= fixed_modulus <= 1):
+        raise ValueError("require 0 <= amplifier <= fixed_modulus <= 1")
+    first_terms = (
+        amplifier + 4 * length - 3,
+        amplifier + 2 * length - 2,
+        -amplifier,
+    )
+    second_terms = (
+        amplifier + 4 * length - fixed_modulus - 2,
+        amplifier + 2 * length - fixed_modulus - 1,
+        fixed_modulus - amplifier - 1,
+    )
+    return PascadiModuliMargins(
+        first=-max(first_terms) / 6,
+        second=-max(second_terms) / 6,
+    )
+
+
+@dataclass(frozen=True)
 class MQWBlockSavings:
     """Savings in Milićević--Qin--Wu Theorem 1.1.
 

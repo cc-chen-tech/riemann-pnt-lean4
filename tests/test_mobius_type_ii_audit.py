@@ -7,11 +7,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mobius_type_ii import (
+    BlomerPascadiMargins,
     MQWBlockSavings,
     PascadiFullResidueSavings,
+    PascadiModuliMargins,
     WrightFactorSavings,
     balanced_dual_low_mode_mobius_exponent,
     balanced_principal_character_mobius_exponent,
+    blomer_pascadi_beats_best_trivial,
+    blomer_pascadi_best_trivial_margins,
     c_coefficient,
     centered_dual_scales,
     centered_dual_common_mobius_exponent,
@@ -38,6 +42,7 @@ from scripts.audit_mobius_type_ii import (
     nonunit_principal_is_residual_face,
     nonunit_principal_trivial_loss,
     pascadi_balanced_gap,
+    pascadi_averaged_moduli_margins,
     pascadi_2024_direct_dispersion_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
@@ -139,6 +144,63 @@ def test_pascadi_full_residue_optimum_is_the_exact_intersection() -> None:
         fourth=F(13, 24),
     )
     assert min(savings.values()) == F(33, 191)
+
+
+def test_blomer_pascadi_has_literal_critical_length_savings() -> None:
+    assert blomer_pascadi_best_trivial_margins(F(1, 2)) == (
+        BlomerPascadiMargins(
+            first=F(1, 32),
+            second=F(1, 32),
+            third=F(1, 18),
+        )
+    )
+    assert blomer_pascadi_beats_best_trivial(F(1, 2))
+
+
+def test_blomer_pascadi_published_nontrivial_endpoints_are_exact() -> None:
+    lower = blomer_pascadi_best_trivial_margins(F(13, 28))
+    upper = blomer_pascadi_best_trivial_margins(F(7, 12))
+    assert lower.first == 0
+    assert upper.third == 0
+    assert not blomer_pascadi_beats_best_trivial(F(13, 28))
+    assert not blomer_pascadi_beats_best_trivial(F(7, 12))
+    assert blomer_pascadi_beats_best_trivial(F(13, 28) + F(1, 10_000))
+    assert blomer_pascadi_beats_best_trivial(F(7, 12) - F(1, 10_000))
+
+
+def test_blomer_pascadi_does_not_cover_the_full_residue_scale() -> None:
+    margins = blomer_pascadi_best_trivial_margins(F(1))
+    assert margins == BlomerPascadiMargins(
+        first=-F(1, 32),
+        second=-F(1, 8),
+        third=-F(5, 18),
+    )
+    assert not blomer_pascadi_beats_best_trivial(F(1))
+
+
+def test_pascadi_averaged_moduli_corollary_covers_only_short_fourier_boxes() -> None:
+    critical = pascadi_averaged_moduli_margins(
+        length=F(1, 2), fixed_modulus=F(1), amplifier=F(1, 2)
+    )
+    assert critical == PascadiModuliMargins(first=F(1, 12), second=F(1, 12))
+    assert critical.best == F(1, 12)
+
+    no_fixed_modulus = pascadi_averaged_moduli_margins(
+        length=F(1, 2), fixed_modulus=F(0), amplifier=F(0)
+    )
+    assert no_fixed_modulus.best == 0
+
+
+def test_pascadi_averaged_moduli_corollary_worsens_full_residue_boxes() -> None:
+    for fixed_modulus in (F(0), F(1, 4), F(1, 2), F(1)):
+        for amplifier in (F(0), fixed_modulus / 2, fixed_modulus):
+            margins = pascadi_averaged_moduli_margins(
+                length=F(1),
+                fixed_modulus=fixed_modulus,
+                amplifier=amplifier,
+            )
+            assert margins.best == -(1 + amplifier) / 6
+            assert margins.best < 0
 
 
 def test_pascadi_still_leaves_the_balanced_local_gap() -> None:
