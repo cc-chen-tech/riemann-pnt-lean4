@@ -928,6 +928,54 @@ def test_dual_product_type_ii_tracks_circle_width_and_k_gcd() -> None:
                 assert not coprime.covered
 
 
+def test_shifted_divisor_proxies_separate_exponents_from_hypotheses() -> None:
+    ledger = audit.shifted_divisor_proxy_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        exceptional_exponent=F(7, 64),
+        target=F(9, 2),
+    )
+    assert ledger.fixed_shift_error == F(167, 64)
+    assert ledger.summed_fixed_shift_error == F(295, 64)
+    assert ledger.summed_fixed_shift_margin == F(-7, 64)
+    assert ledger.selberg_endpoint == F(9, 2)
+    assert ledger.averaged_shift_square_error == F(4)
+    assert ledger.averaged_shift_moment_error == F(17, 4)
+    assert ledger.averaged_shift_error == F(17, 4)
+    assert ledger.averaged_shift_margin == F(1, 4)
+    assert ledger.raw_zero_mode == F(5)
+    assert ledger.zero_mode_required_saving == F(1, 2)
+    assert not ledger.standard_divisor_coefficients
+    assert not ledger.zero_mode_algebraically_vanishing
+    assert not ledger.covered
+
+
+def test_three_by_two_product_packet_is_exact_shifted_convolution() -> None:
+    direct, correlation = audit.shifted_product_packet_sides(
+        b_weights=((1, 1), (2, -1)),
+        c_weights=((1, 1),),
+        k_weights=((1, 1), (3, 2)),
+        g_weights=((1, 1),),
+        q_weights=((1, 1), (2, -1)),
+        shift_weights=((-1, 4), (0, 5), (1, 6), (2, 7), (5, 8)),
+    )
+    assert direct == -14
+    assert correlation == -14
+
+
+def test_three_by_two_zero_mode_factors_without_algebraic_vanishing() -> None:
+    direct, factored = audit.shifted_product_zero_mode_sides(
+        b_weights=((1, 2), (2, -3)),
+        c_weights=((1, 4),),
+        k_weights=((1, -2),),
+        g_weights=((1, 3),),
+        q_weights=((1, 5),),
+        shift_weights=((0, -7),),
+    )
+    assert direct == -840
+    assert factored == -840
+
+
 def test_multiple_mobius_additive_theorem_stays_at_t6_after_k_sum() -> None:
     for quotient_quarters in range(5):
         ledger = multiple_mobius_additive_ledger(

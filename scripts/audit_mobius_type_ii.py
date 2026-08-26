@@ -1189,6 +1189,184 @@ def coupled_product_circle_ledger(
     )
 
 
+def shifted_divisor_proxy_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    exceptional_exponent: Fraction,
+    target: Fraction,
+) -> ShiftedDivisorProxyLedger:
+    """Audit the closest published ``d_3``--``d_2`` shift estimates.
+
+    Topacogullari's fixed-shift error is
+    ``X^(5/6+theta/3)``.  Summing a shift block of length ``D`` adds
+    its full exponent.  The first-moment theorem of Baier--Browning--
+    Marasingha--Zhao instead has errors ``D^2`` and
+    ``D^(1/2) X^(13/12)``.  These formulas are exponent proxies only:
+    the packet here has dyadically truncated Möbius convolutions rather
+    than the standard divisor coefficients required by those theorems.
+
+    The raw zero-frequency contribution has scale ``D*X`` and does not
+    vanish as a finite identity, so numerical error-term coverage alone
+    cannot close the packet.
+    """
+
+    lengths = (
+        ambient_length,
+        shift_length,
+        exceptional_exponent,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all exponents must be nonnegative")
+
+    fixed_shift_error = ambient_length * (
+        Fraction(5, 6) + exceptional_exponent / 3
+    )
+    summed_fixed_shift_error = shift_length + fixed_shift_error
+    selberg_endpoint = shift_length + 5 * ambient_length / 6
+    averaged_shift_square_error = 2 * shift_length
+    averaged_shift_moment_error = (
+        shift_length / 2 + 13 * ambient_length / 12
+    )
+    averaged_shift_error = max(
+        averaged_shift_square_error,
+        averaged_shift_moment_error,
+    )
+    raw_zero_mode = ambient_length + shift_length
+    standard_divisor_coefficients = False
+    zero_mode_algebraically_vanishing = False
+    return ShiftedDivisorProxyLedger(
+        fixed_shift_error=fixed_shift_error,
+        summed_fixed_shift_error=summed_fixed_shift_error,
+        summed_fixed_shift_margin=target - summed_fixed_shift_error,
+        selberg_endpoint=selberg_endpoint,
+        averaged_shift_square_error=averaged_shift_square_error,
+        averaged_shift_moment_error=averaged_shift_moment_error,
+        averaged_shift_error=averaged_shift_error,
+        averaged_shift_margin=target - averaged_shift_error,
+        raw_zero_mode=raw_zero_mode,
+        zero_mode_required_saving=raw_zero_mode - target,
+        standard_divisor_coefficients=standard_divisor_coefficients,
+        zero_mode_algebraically_vanishing=(
+            zero_mode_algebraically_vanishing
+        ),
+        covered=(
+            averaged_shift_error <= target
+            and standard_divisor_coefficients
+            and zero_mode_algebraically_vanishing
+        ),
+    )
+
+
+def shifted_product_packet_sides(
+    *,
+    b_weights: tuple[tuple[int, int], ...],
+    c_weights: tuple[tuple[int, int], ...],
+    k_weights: tuple[tuple[int, int], ...],
+    g_weights: tuple[tuple[int, int], ...],
+    q_weights: tuple[tuple[int, int], ...],
+    shift_weights: tuple[tuple[int, int], ...],
+) -> tuple[int, int]:
+    """Return both sides of the finite ``3 by 2`` shift identity.
+
+    Extending the shift weight by zero outside its listed support gives
+
+    ``sum b*c*k*g*q*z(b*c*k-g*q)``
+    ``= sum_d z(d) sum_n A(n) C(n-d)``,
+
+    where ``A`` is the three-factor product convolution and ``C`` the
+    two-factor product convolution.  The integer weights can include
+    Möbius signs and arbitrary finite smooth-weight samples.
+    """
+
+    factor_families = (
+        b_weights,
+        c_weights,
+        k_weights,
+        g_weights,
+        q_weights,
+    )
+    if any(index < 1 for family in factor_families for index, _ in family):
+        raise ValueError("product indices must be positive")
+    if len({shift for shift, _ in shift_weights}) != len(shift_weights):
+        raise ValueError("shift indices must be unique")
+    shift_map = dict(shift_weights)
+
+    direct = sum(
+        b_weight
+        * c_weight
+        * k_weight
+        * g_weight
+        * q_weight
+        * shift_map.get(b * c * k - g * q, 0)
+        for b, b_weight in b_weights
+        for c, c_weight in c_weights
+        for k, k_weight in k_weights
+        for g, g_weight in g_weights
+        for q, q_weight in q_weights
+    )
+
+    left: dict[int, int] = {}
+    for b, b_weight in b_weights:
+        for c, c_weight in c_weights:
+            for k, k_weight in k_weights:
+                product = b * c * k
+                left[product] = left.get(product, 0) + (
+                    b_weight * c_weight * k_weight
+                )
+    right: dict[int, int] = {}
+    for g, g_weight in g_weights:
+        for q, q_weight in q_weights:
+            product = g * q
+            right[product] = right.get(product, 0) + g_weight * q_weight
+
+    correlation = sum(
+        shift_weight
+        * left_weight
+        * right.get(product - shift, 0)
+        for shift, shift_weight in shift_weights
+        for product, left_weight in left.items()
+    )
+    return direct, correlation
+
+
+def shifted_product_zero_mode_sides(
+    *,
+    b_weights: tuple[tuple[int, int], ...],
+    c_weights: tuple[tuple[int, int], ...],
+    k_weights: tuple[tuple[int, int], ...],
+    g_weights: tuple[tuple[int, int], ...],
+    q_weights: tuple[tuple[int, int], ...],
+    shift_weights: tuple[tuple[int, int], ...],
+) -> tuple[int, int]:
+    """Return expanded and factored zero modes of the product packet."""
+
+    direct = sum(
+        b_weight
+        * c_weight
+        * k_weight
+        * g_weight
+        * q_weight
+        * shift_weight
+        for _, b_weight in b_weights
+        for _, c_weight in c_weights
+        for _, k_weight in k_weights
+        for _, g_weight in g_weights
+        for _, q_weight in q_weights
+        for _, shift_weight in shift_weights
+    )
+    factored = (
+        sum(weight for _, weight in b_weights)
+        * sum(weight for _, weight in c_weights)
+        * sum(weight for _, weight in k_weights)
+        * sum(weight for _, weight in g_weights)
+        * sum(weight for _, weight in q_weights)
+        * sum(weight for _, weight in shift_weights)
+    )
+    return direct, factored
+
+
 def multiple_mobius_additive_ledger(
     *,
     ambient_length: Fraction,
@@ -4109,6 +4287,25 @@ class CoupledProductCircleLedger:
     best_bound: Fraction
     target: Fraction
     margin: Fraction
+    covered: bool
+
+
+@dataclass(frozen=True)
+class ShiftedDivisorProxyLedger:
+    """Published divisor-shift exponents versus the Möbius packet."""
+
+    fixed_shift_error: Fraction
+    summed_fixed_shift_error: Fraction
+    summed_fixed_shift_margin: Fraction
+    selberg_endpoint: Fraction
+    averaged_shift_square_error: Fraction
+    averaged_shift_moment_error: Fraction
+    averaged_shift_error: Fraction
+    averaged_shift_margin: Fraction
+    raw_zero_mode: Fraction
+    zero_mode_required_saving: Fraction
+    standard_divisor_coefficients: bool
+    zero_mode_algebraically_vanishing: bool
     covered: bool
 
 
