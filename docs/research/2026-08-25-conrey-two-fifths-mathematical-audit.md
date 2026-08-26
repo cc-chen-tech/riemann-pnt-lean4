@@ -857,3 +857,44 @@ actual `V_1` and `B` zero families on Conrey's rectangle, prove the product-zero
 and multiplicity inclusions, and connect their full count to the existing
 Littlewood weighted rectangle identity.  The asymptotic edge estimates remain
 separate.
+
+## 16. The actual degree-one `V_1` factor implemented
+
+The analytic object occurring before Conrey's mollifier is now defined in
+`HardyTheorem/ConreyDegreeOneV1.lean`, with its public contract in
+`Test/ConreyDegreeOneV1Contract.lean`.  With
+
+\[
+  H(s)=\frac12s(s-1)\Gamma_{\mathbb R}(s)
+\]
+
+and the degree-one choice from Section 13, the definition is
+
+\[
+  V_1(s)=(g+i g_0)\zeta(s)
+    +\frac{g_1}{L}\left(\zeta'(s)+\frac{H'(s)}{H(s)}\zeta(s)\right).
+\]
+
+Lean proves, throughout the open critical strip `0 < re s < 1`, that `H` is
+analytic and nonzero and that
+
+\[
+  \xi(s)=H(s)\zeta(s),\qquad
+  \eta(s)=H(s)V_1(s).
+\]
+
+The nonvanishing of `H` then gives both the pointwise equivalence
+
+\[
+  \eta(s)=0\quad\Longleftrightarrow\quad V_1(s)=0
+\]
+
+and equality of their analytic orders at `s`.  Thus the zero family denoted by
+`N_{0,V_1}` in equation (40) is now connected exactly, including
+multiplicity, to the `eta` whose critical-line crossings feed equation (41).
+
+This is an analytic factorization result, not yet the rectangle count.  The
+actual mollifier `B`, the zero family of the product `V_1 B`, the boundary
+multiplicity inclusion, and the connection to the Littlewood weighted
+rectangle identity remain to be constructed.  The horizontal and left-edge
+asymptotics and the long mollified mean-square estimate also remain open.
