@@ -6056,7 +6056,7 @@ def test_unimodular_slope_family_has_exact_torus_operator_gate(
     for marker in (
         "### 4.109zjabb Exact torus matrix coefficient retains cross-slope phases",
         r"\widehat{\widetilde K_M}(\xi)=\widehat K_M(M^{\mathsf T}\xi)",
-        r"\left|\sum_{M\in\mathcal M_g}K_M(M^{-1}z)\right|^2",
+        r"\left|\sum_{M\in\mathscr C}K_M(M^{-1}z)\right|^2",
         "actual two-Möbius Fourier tensor",
         r"j_2v_1-v_2j_1",
         r"T^{499/1000}",
@@ -6076,8 +6076,8 @@ def test_unimodular_slope_family_has_exact_torus_operator_gate(
     ),
     (
         (F(0), F(-1), F(0), F(6), F(2501, 500), F(2501, 1000)),
-        (F(1, 10), F(-4, 5), F(1, 5), F(29, 5), F(2401, 500), F(2401, 1000)),
-        (F(1, 2), F(0), F(1), F(5), F(2001, 500), F(2001, 1000)),
+        (F(1, 10), F(-4, 5), F(1, 5), F(29, 5), F(2501, 500), F(2401, 1000)),
+        (F(1, 2), F(0), F(1), F(5), F(2501, 500), F(2001, 1000)),
     ),
 )
 def test_farey_spacing_leaves_no_power_sized_cross_slope_family(
@@ -6104,19 +6104,28 @@ def test_farey_spacing_leaves_no_power_sized_cross_slope_family(
     assert audit.positive_g_layer_is_eventually_unique == (gamma > 0)
     assert audit.critical_g_layer_has_only_constant_multiplicity
     assert audit.raw_pullback_diagonal_exponent == diagonal
+    assert audit.dyadic_g_count_exponent == gamma
+    assert audit.dyadic_g_physical_multiplicity_exponent == gamma
+    assert audit.aggregated_pullback_energy_exponent == F(6)
     assert audit.squared_taper_log_saving == 4
     assert audit.operator_energy_target_exponent == F(499, 500)
-    assert audit.raw_diagonal_over_target_exponent == gap
-    assert audit.operator_l2_target_is_below_raw_diagonal_by_power
-    assert audit.natural_operator_l2_exponent == diagonal / 2
+    assert audit.aggregated_energy_over_target_exponent == gap
+    assert audit.operator_l2_target_is_below_aggregated_energy_by_power
+    assert audit.fixed_g_natural_operator_l2_exponent == diagonal / 2
     assert audit.mobius_tensor_l2_exponent == F(3)
-    assert audit.positive_cauchy_bound_exponent == F(3) + diagonal / 2
+    assert audit.fixed_g_raw_cardinality_exponent == diagonal
+    assert audit.fixed_g_positive_cauchy_bound_exponent == F(3) + diagonal / 2
+    assert audit.fixed_g_cauchy_excess_over_trivial_exponent == gamma
+    assert audit.aggregated_positive_cauchy_bound_exponent == F(6)
     assert audit.physical_layer_target_exponent == F(3499, 1000)
-    assert audit.positive_cauchy_deficit_exponent == amplitude_deficit
+    assert audit.aggregated_positive_cauchy_deficit_exponent == F(2501, 1000)
+    assert audit.best_positive_bound_exponent == F(6) - gamma
+    assert audit.best_positive_deficit_exponent == amplitude_deficit
+    assert audit.best_positive_bound_is_raw_cardinality == (gamma > 0)
     assert audit.deficit_equals_determinant_line_required_saving
     assert audit.davenport_uniform_bound_power_saving_exponent == F(0)
     assert not audit.positive_lp_interpolation_improves_power
-    assert audit.signed_pairing_gate_name == "MTSR_q,g"
+    assert audit.signed_pairing_gate_name == "MTSR_q,G"
     assert audit.signed_pairing_is_exact_determinant_line_layer
     assert audit.signed_gate_required_saving_exponent == amplitude_deficit
     assert not audit.signed_pairing_gate_proved
@@ -6131,11 +6140,15 @@ def test_farey_spacing_leaves_no_power_sized_cross_slope_family(
             "balanced_max_a: torus_farey_multiplicity="
             "gamma=0 slope=1/2 shift=5/2 physical=3 "
             "farey=-1 window=-1 margin=0 multiplicity=0 bounded=True "
-            "unique=False critical_constant=True diagonal=6 taper_log=4 "
-            "energy_target=499/500 gap=2501/500 operator_l2=3 "
-            "mobius_l2=3 cauchy=6 target=3499/1000 deficit=2501/1000 "
+            "unique=False critical_constant=True fixed_diagonal=6 "
+            "g_count=0 g_multiplicity=0 aggregate_energy=6 taper_log=4 "
+            "energy_target=499/500 gap=2501/500 fixed_operator_l2=3 "
+            "mobius_l2=3 fixed_raw=6 fixed_cauchy=6 cauchy_excess=0 "
+            "aggregate_cauchy=6 target=3499/1000 "
+            "aggregate_deficit=2501/1000 best_positive=6 "
+            "best_deficit=2501/1000 best_is_raw=False "
             "same_line_deficit=True davenport_power=0 lp_improves=False "
-            "signed_gate=MTSR_q,g exact_layer=True signed_save=2501/1000 "
+            "signed_gate=MTSR_q,G exact_layer=True signed_save=2501/1000 "
             "signed_proved=False cross_power=False "
             "positive_l2=False signed_restriction=True"
         ) in output
@@ -6145,7 +6158,7 @@ def test_farey_spacing_leaves_no_power_sized_cross_slope_family(
             r"\frac{D}{SV}",
             r"\frac1{V^2}",
             r"6-2\gamma",
-            r"(\mathrm{MTSR})_{q,g}",
+            r"(\mathrm{MTSR})_{q,G}",
             "torus_farey_multiplicity_audit",
         ):
             assert marker in note

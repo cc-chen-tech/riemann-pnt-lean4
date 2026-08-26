@@ -19216,11 +19216,12 @@ give the exact finite identity
 All coprimality projectors, physical cutoffs, and transform phases are
 part of \(K_M\).  In particular, (4.845dc_14xq_19f) does not replace the
 second Möbius factor by a nilsequence and does not square one slope at a
-time.  Define the phase-coherent operator
+time.  For any finite collection \(\mathscr C\) of primitive-slope
+kernels, define the phase-coherent operator
 
 \[
- \mathcal P_g(\theta):=
- \sum_{M\in\mathcal M_g}\widehat K_M(-M^{\mathsf T}\theta).
+ \mathcal P_{\mathscr C}(\theta):=
+ \sum_{M\in\mathscr C}\widehat K_M(-M^{\mathsf T}\theta).
  \tag{4.845dc_14xq_19g}
 \]
 
@@ -19231,9 +19232,9 @@ physical identity
 
 \[
  \boxed{
- \|\mathcal P_g\|_2^2
+ \|\mathcal P_{\mathscr C}\|_2^2
  =\sum_{z\in\mathbb Z^2}
-   \left|\sum_{M\in\mathcal M_g}K_M(M^{-1}z)\right|^2.}
+   \left|\sum_{M\in\mathscr C}K_M(M^{-1}z)\right|^2.}
  \tag{4.845dc_14xq_19ga}
 \]
 
@@ -19248,12 +19249,14 @@ Parseval gives
  \le (RS)^{1/2}\le T^3.
 \]
 
-Consequently the following is a precise sufficient local gate for the
-\(T^{3499/1000}\) physical layer:
+At the power-critical \(\gamma=0\) layer, the dyadic \(g\)-family has
+power cardinality zero.  Taking \(\mathscr C\) to be that complete
+critical collection, the following is a precise sufficient local gate
+for the \(T^{3499/1000}\) physical layer:
 
 \[
  \boxed{
- \|\mathcal P_g\|_{L^2(\mathbb T^2)}
+ \|\mathcal P_{\mathscr C}\|_{L^2(\mathbb T^2)}
  \ll_{B,W}T^{499/1000}(\log T)^{-B}.}
  \tag{4.845dc_14xq_19h}
 \]
@@ -19263,8 +19266,8 @@ sufficient Cauchy gate, not an equivalence or a proved estimate.  In
 particular, the step
 
 \[
- |\langle A_R\otimes B_S,\mathcal P_g\rangle|
- \leq \|A_R\otimes B_S\|_2\|\mathcal P_g\|_2
+ |\langle A_R\otimes B_S,\mathcal P_{\mathscr C}\rangle|
+ \leq \|A_R\otimes B_S\|_2\|\mathcal P_{\mathscr C}\|_2
  \tag{4.845dc_14xq_19hb}
 \]
 
@@ -19290,7 +19293,7 @@ then the cross-slope correlation is transported by
 Thus the primitive-slope determinant survives exactly inside the one
 global square.  The remaining task is now an explicit correlation bound
 for the diagonal, near-parallel, and separated determinant shells of
-\(\mathcal P_g\).  Taking a triangle inequality in \(M\) would erase this
+\(\mathcal P_{\mathscr C}\).  Taking a triangle inequality in \(M\) would erase this
 structure and return the old positive diagonal.
 
 The interface `signed_torus_slope_operator_audit` checks Bezout shear
@@ -19348,55 +19351,66 @@ independently of \(T\).  Hence the \(T^{1-2\gamma}\) total slope
 cardinality cannot itself provide a cross-slope power saving inside a
 fixed physical fibre.
 
-Applying \(|z_1+\cdots+z_m|^2\leq
-m(|z_1|^2+\cdots+|z_m|^2)\) with the bounded multiplicity in
-(4.845dc_14xq_19m) gives the rigorous positive estimate
+The \(T^{3499/1000}\) target belongs to the complete dyadic
+\(G\)-layer, not to one integer \(g\).  Write \(g_0\) for a fixed
+integer and define
 \[
- \boxed{
- \|\mathcal P_g\|_2^2
- \ll \sum_{M\in\mathcal M_g}\|K_M\|_{\ell^2(\mathbb Z^2)}^2.}
+ \mathcal P_G:=\sum_{G<g_0\leq2G}\mathcal P_{g_0},
+ \qquad G=T^\gamma.
  \tag{4.845dc_14xq_19ma}
 \]
-This estimate contains no hidden power of the number of slopes.
-
-The positive pullback energy must therefore be compared with the EDSSF
-identity diagonal (4.185).  Its raw power is
+For fixed \(g_0\), applying
+\(|z_1+\cdots+z_m|^2\leq
+m(|z_1|^2+\cdots+|z_m|^2)\) with (4.845dc_14xq_19m)
+gives
 \[
- E_{\rm diagonal}=6-2\gamma
- \tag{4.845dc_14xq_19n}
+ \|\mathcal P_{g_0}\|_2^2
+ \ll \sum_{M\in\mathcal M_{g_0}}
+       \|K_M\|_{\ell^2(\mathbb Z^2)}^2.
+ \tag{4.845dc_14xq_19mb}
 \]
-with only the four taper logarithms in (4.188), whereas the proposed
-operator energy target in (4.845dc_14xq_19h) is \(499/500\).  The power
-gap is
+The fixed-\(g_0\) EDSSF diagonal has exponent \(6-2\gamma\).
+There are \(T^\gamma\) integers \(g_0\) in the dyadic layer, and a
+fixed physical pair can occur for at most \(T^{\gamma+o(1)}\) of them.
+Consequently
 \[
  \boxed{
- (6-2\gamma)-\frac{499}{500}
- =\frac{2501}{500}-2\gamma
- \geq\frac{2001}{500}.}
+ \|\mathcal P_G\|_2^2
+ \ll T^{\gamma+o(1)}
+ \sum_{G<g_0\leq2G}\sum_{M\in\mathcal M_{g_0}}
+       \|K_M\|_{\ell^2(\mathbb Z^2)}^2
+ \ll T^{6+o(1)}(\log T)^{-4}.}
+ \tag{4.845dc_14xq_19n}
+\]
+Thus the aggregated positive energy exponent is \(6\), independent of
+\(\gamma\).  Against the proposed energy target \(499/500\), its gap is
+\[
+ \boxed{6-\frac{499}{500}=\frac{2501}{500}.}
  \tag{4.845dc_14xq_19o}
 \]
-Taking square roots shows exactly what the positive torus reformulation
-has and has not gained.  Its natural kernel norm has exponent
+
+For one integer \(g_0\), the natural kernel norm has exponent
+\(3-\gamma\), while the two-Möbius Parseval tensor has exponent \(3\).
+Fixed-\(g_0\) Cauchy therefore gives \(6-\gamma\), which is already
+worse by \(T^\gamma\) than the raw fixed-\(g_0\) cardinality
+\(T^{6-2\gamma}\).  Summing over the \(T^\gamma\) integers \(g_0\)
+gives the aggregated Cauchy exponent
 \[
- \|\mathcal P_g\|_2:\quad 3-\gamma,
-\]
-while the two-Möbius Parseval tensor has exponent \(3\).  Ordinary
-Cauchy therefore gives exponent
-\[
- \boxed{E_{\rm positive}=6-\gamma.}
+ \boxed{E_{\rm Cauchy}=6.}
  \tag{4.845dc_14xq_19p}
 \]
-Against the physical target \(3499/1000\), the deficit is
+Direct absolute counting of the complete \(G\)-layer is better when
+\(\gamma>0\): it has exponent \(6-\gamma\).  Hence the best available
+positive bound has deficit
 \[
  \boxed{
  (6-\gamma)-\frac{3499}{1000}
- =\frac{2501}{1000}-\gamma.}
+ =\frac{2501}{1000}-\gamma,}
  \tag{4.845dc_14xq_19q}
 \]
-This is exactly the determinant-line saving requirement
-\(s_{\rm line}(\gamma)\) in (4.163).  The torus change of coordinates
-has preserved the obstruction without worsening it, but positive
-Cauchy has not supplied any part of the missing cancellation.
+exactly the determinant-line saving requirement
+\(s_{\rm line}(\gamma)\) in (4.163).  Positive Cauchy itself has the
+larger, \(\gamma\)-independent deficit \(2501/1000\).
 
 Interpolating the Parseval norm with Davenport's uniform exponential-sum
 bound cannot change this power ledger.  Davenport supplies arbitrarily
@@ -19409,15 +19423,15 @@ The smallest honest Fourier-space statement is therefore the signed
 Möbius-tensor restriction gate
 \[
  \boxed{
- (\mathrm{MTSR})_{q,g}:\qquad
+ (\mathrm{MTSR})_{q,G}:\qquad
  \left|
   \int_{\mathbb T^2}
-   A_R(\theta_1)B_S(\theta_2)\mathcal P_g(\theta)\,d\theta
+   A_R(\theta_1)B_S(\theta_2)\mathcal P_G(\theta)\,d\theta
  \right|
  \ll_{B,W}T^{3499/1000}(\log T)^{-B}.}
  \tag{4.845dc_14xq_19r}
 \]
-By (4.845dc_14xq_19f), this is exactly the fixed-\(q,g\)
+By (4.845dc_14xq_19f), this is exactly the fixed-\(q\), dyadic-\(G\)
 determinant-line layer, with required saving
 \(2501/1000-\gamma\).  It is not a consequence of the positive
 operator norm (4.845dc_14xq_19h), and it is not yet proved.
@@ -19425,15 +19439,19 @@ operator norm (4.845dc_14xq_19h), and it is not yet proved.
 This exponent comparison is not a lower-bound proof for the particular
 oscillatory physical kernel: a bounded number of terms can still cancel
 at isolated fibres.  It does prove that a power saving cannot come from
-the cardinality of a large cross-slope family, because no such family
-exists after the physical pullback.  A full positive \(L^2\) theorem
-would need near-total kernel cancellation far below its raw diagonal
-scale; it is not a replacement for Möbius cancellation.
+the primitive-slope cardinality at fixed \(g_0\), because that
+multiplicity is bounded.  Aggregating the \(T^\gamma\) possible
+integers \(g_0\) inside a positive square loses exactly that same
+\(T^\gamma\), so it is worse than direct cardinality.  A full positive
+\(L^2\) theorem would need near-total kernel cancellation far below its
+aggregated energy scale; it is not a replacement for Möbius
+cancellation.
 
 The interface torus_farey_multiplicity_audit records the window
 exponent \(-1\), Farey exponent \(-1+2\gamma\), bounded multiplicity,
 eventual uniqueness for \(\gamma>0\), the diagonal exponent
-\(6-2\gamma\), and the exact identity between the positive-Cauchy
+\(6-2\gamma\), the aggregated positive-Cauchy deficit \(2501/1000\),
+and the exact identity between the best positive (raw-cardinality)
 deficit and (4.163).  It records Davenport power saving zero and keeps
 the signed tensor restriction and MMKLS open.
 

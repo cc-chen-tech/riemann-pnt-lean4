@@ -2161,15 +2161,24 @@ class TorusFareyMultiplicityAudit:
     positive_g_layer_is_eventually_unique: bool
     critical_g_layer_has_only_constant_multiplicity: bool
     raw_pullback_diagonal_exponent: Fraction
+    dyadic_g_count_exponent: Fraction
+    dyadic_g_physical_multiplicity_exponent: Fraction
+    aggregated_pullback_energy_exponent: Fraction
     squared_taper_log_saving: int
     operator_energy_target_exponent: Fraction
-    raw_diagonal_over_target_exponent: Fraction
-    operator_l2_target_is_below_raw_diagonal_by_power: bool
-    natural_operator_l2_exponent: Fraction
+    aggregated_energy_over_target_exponent: Fraction
+    operator_l2_target_is_below_aggregated_energy_by_power: bool
+    fixed_g_natural_operator_l2_exponent: Fraction
     mobius_tensor_l2_exponent: Fraction
-    positive_cauchy_bound_exponent: Fraction
+    fixed_g_raw_cardinality_exponent: Fraction
+    fixed_g_positive_cauchy_bound_exponent: Fraction
+    fixed_g_cauchy_excess_over_trivial_exponent: Fraction
+    aggregated_positive_cauchy_bound_exponent: Fraction
     physical_layer_target_exponent: Fraction
-    positive_cauchy_deficit_exponent: Fraction
+    aggregated_positive_cauchy_deficit_exponent: Fraction
+    best_positive_bound_exponent: Fraction
+    best_positive_deficit_exponent: Fraction
+    best_positive_bound_is_raw_cardinality: bool
     deficit_equals_determinant_line_required_saving: bool
     davenport_uniform_bound_power_saving_exponent: Fraction
     positive_lp_interpolation_improves_power: bool
@@ -12038,13 +12047,16 @@ def torus_farey_multiplicity_audit(
     ``g`` layer is eventually unique; the critical ``gamma=0`` layer has
     only bounded, rather than power-sized, multiplicity.
 
-    This removes the hoped-for power-sized cross-slope family from the
-    positive torus L2 route.  The raw pullback diagonal is the existing
-    EDSSF scale ``T^(6-2*gamma) log(T)^(-4)``, far above the proposed
-    energy target ``T^(499/500)``.  This exponent audit does not assert a
-    lower bound for the particular oscillatory physical kernel, but it
-    shows that slope cardinality alone cannot prove the required norm;
-    the signed two-Mobius tensor restriction remains necessary.
+    This removes the hoped-for power-sized primitive-slope family from
+    the positive torus L2 route.  For one integer ``g``, the raw pullback
+    diagonal is the EDSSF scale ``T^(6-2*gamma) log(T)^(-4)``.  The full
+    dyadic ``G`` layer contains ``T^gamma`` integers, and a physical pair
+    can occur for ``T^gamma`` of them, so the aggregated positive energy
+    bound returns to exponent six.  Positive Cauchy is then worse than
+    direct cardinality by ``T^gamma`` when ``gamma>0``.  This exponent
+    audit does not assert a lower bound for the particular oscillatory
+    kernel, but it shows that positive norms cannot prove the required
+    saving; the signed two-Mobius tensor restriction remains necessary.
     """
     gamma = F(gcd_exponent)
     if gamma < 0 or gamma > F(1, 2):
@@ -12060,13 +12072,21 @@ def torus_farey_multiplicity_audit(
         ratio_window - farey_spacing
     )
     diagonal = F(6) - 2 * gamma
+    g_count = gamma
+    g_multiplicity = gamma
+    aggregated_energy = diagonal + g_count + g_multiplicity
     energy_target = F(499, 500)
-    diagonal_gap = diagonal - energy_target
-    operator_l2 = diagonal / 2
+    energy_gap = aggregated_energy - energy_target
+    fixed_operator_l2 = diagonal / 2
     mobius_l2 = F(3)
-    cauchy = operator_l2 + mobius_l2
+    fixed_cauchy = fixed_operator_l2 + mobius_l2
+    fixed_cauchy_excess = fixed_cauchy - diagonal
+    aggregated_cauchy = fixed_cauchy + g_count
     physical_target = F(3499, 1000)
-    cauchy_deficit = cauchy - physical_target
+    aggregated_cauchy_deficit = aggregated_cauchy - physical_target
+    layer_cardinality = F(6) - gamma
+    best_positive = min(layer_cardinality, aggregated_cauchy)
+    best_positive_deficit = best_positive - physical_target
     determinant_line_deficit = F(2501, 1000) - gamma
 
     return TorusFareyMultiplicityAudit(
@@ -12086,23 +12106,36 @@ def torus_farey_multiplicity_audit(
         positive_g_layer_is_eventually_unique=(gamma > 0),
         critical_g_layer_has_only_constant_multiplicity=True,
         raw_pullback_diagonal_exponent=diagonal,
+        dyadic_g_count_exponent=g_count,
+        dyadic_g_physical_multiplicity_exponent=g_multiplicity,
+        aggregated_pullback_energy_exponent=aggregated_energy,
         squared_taper_log_saving=4,
         operator_energy_target_exponent=energy_target,
-        raw_diagonal_over_target_exponent=diagonal_gap,
-        operator_l2_target_is_below_raw_diagonal_by_power=(
-            diagonal_gap > 0
+        aggregated_energy_over_target_exponent=energy_gap,
+        operator_l2_target_is_below_aggregated_energy_by_power=(
+            energy_gap > 0
         ),
-        natural_operator_l2_exponent=operator_l2,
+        fixed_g_natural_operator_l2_exponent=fixed_operator_l2,
         mobius_tensor_l2_exponent=mobius_l2,
-        positive_cauchy_bound_exponent=cauchy,
+        fixed_g_raw_cardinality_exponent=diagonal,
+        fixed_g_positive_cauchy_bound_exponent=fixed_cauchy,
+        fixed_g_cauchy_excess_over_trivial_exponent=(
+            fixed_cauchy_excess
+        ),
+        aggregated_positive_cauchy_bound_exponent=aggregated_cauchy,
         physical_layer_target_exponent=physical_target,
-        positive_cauchy_deficit_exponent=cauchy_deficit,
+        aggregated_positive_cauchy_deficit_exponent=(
+            aggregated_cauchy_deficit
+        ),
+        best_positive_bound_exponent=best_positive,
+        best_positive_deficit_exponent=best_positive_deficit,
+        best_positive_bound_is_raw_cardinality=(gamma > 0),
         deficit_equals_determinant_line_required_saving=(
-            cauchy_deficit == determinant_line_deficit
+            best_positive_deficit == determinant_line_deficit
         ),
         davenport_uniform_bound_power_saving_exponent=F(0),
         positive_lp_interpolation_improves_power=False,
-        signed_pairing_gate_name="MTSR_q,g",
+        signed_pairing_gate_name="MTSR_q,G",
         signed_pairing_is_exact_determinant_line_layer=True,
         signed_gate_required_saving_exponent=determinant_line_deficit,
         signed_pairing_gate_proved=False,
@@ -25444,16 +25477,35 @@ def main() -> None:
         f"unique={torus_farey.positive_g_layer_is_eventually_unique} "
         "critical_constant="
         f"{torus_farey.critical_g_layer_has_only_constant_multiplicity} "
-        f"diagonal={_fmt(torus_farey.raw_pullback_diagonal_exponent)} "
+        "fixed_diagonal="
+        f"{_fmt(torus_farey.raw_pullback_diagonal_exponent)} "
+        f"g_count={_fmt(torus_farey.dyadic_g_count_exponent)} "
+        "g_multiplicity="
+        f"{_fmt(torus_farey.dyadic_g_physical_multiplicity_exponent)} "
+        "aggregate_energy="
+        f"{_fmt(torus_farey.aggregated_pullback_energy_exponent)} "
         f"taper_log={torus_farey.squared_taper_log_saving} "
         "energy_target="
         f"{_fmt(torus_farey.operator_energy_target_exponent)} "
-        f"gap={_fmt(torus_farey.raw_diagonal_over_target_exponent)} "
-        f"operator_l2={_fmt(torus_farey.natural_operator_l2_exponent)} "
+        f"gap={_fmt(torus_farey.aggregated_energy_over_target_exponent)} "
+        "fixed_operator_l2="
+        f"{_fmt(torus_farey.fixed_g_natural_operator_l2_exponent)} "
         f"mobius_l2={_fmt(torus_farey.mobius_tensor_l2_exponent)} "
-        f"cauchy={_fmt(torus_farey.positive_cauchy_bound_exponent)} "
+        f"fixed_raw={_fmt(torus_farey.fixed_g_raw_cardinality_exponent)} "
+        "fixed_cauchy="
+        f"{_fmt(torus_farey.fixed_g_positive_cauchy_bound_exponent)} "
+        "cauchy_excess="
+        f"{_fmt(torus_farey.fixed_g_cauchy_excess_over_trivial_exponent)} "
+        "aggregate_cauchy="
+        f"{_fmt(torus_farey.aggregated_positive_cauchy_bound_exponent)} "
         f"target={_fmt(torus_farey.physical_layer_target_exponent)} "
-        f"deficit={_fmt(torus_farey.positive_cauchy_deficit_exponent)} "
+        "aggregate_deficit="
+        f"{_fmt(torus_farey.aggregated_positive_cauchy_deficit_exponent)} "
+        "best_positive="
+        f"{_fmt(torus_farey.best_positive_bound_exponent)} "
+        f"best_deficit={_fmt(torus_farey.best_positive_deficit_exponent)} "
+        "best_is_raw="
+        f"{torus_farey.best_positive_bound_is_raw_cardinality} "
         "same_line_deficit="
         f"{torus_farey.deficit_equals_determinant_line_required_saving} "
         "davenport_power="
