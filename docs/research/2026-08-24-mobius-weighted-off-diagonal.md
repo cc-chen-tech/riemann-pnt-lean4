@@ -11104,10 +11104,11 @@ object is the *joint* sum of the four \(\Delta\ne0\) blocks, not four
 separate absolute-value bounds.
 
 Because the recombined original-entry diagonal already has exponent two,
-the weakest sufficient local estimate for the supplied sector packet is
+a convenient sufficient local estimate for the supplied sector packet is
 
 \[
  \boxed{
+ \mathrm{JNT}_{2}^{\rm abs}:\qquad
  \left|\sum_{X,Y\in\{\mathrm I,\mathrm{II}\}}
  \mathcal N_{X,Y}^{\Delta\ne0}\right|
  \ll_{\varepsilon,W}T^{2+\varepsilon}.}
@@ -11119,12 +11120,159 @@ blockwise absolute-value estimates.  It becomes a replacement for the
 corresponding sector portion of the coupled-kernel gate only after the
 analytic packet-exhaustion map has been proved.
 
+There is a further exact weakening.  After the internal Type
+factorizations have recombined, put
+
+\[
+ X_b:=\sum_{P:\,b(P)=b}c_P A_P\widetilde V_P,
+ \qquad
+ A_P=-\mu(s_P)\mu(n_P)\log n_P.
+\]
+
+The complete nonprincipal character kernel is an orthogonal projector,
+so its signed energy is the square sum
+
+\[
+ \boxed{
+ \mathcal N_{\ne0}^{\rm Type}
+ =\sum_{b=0}^{M-1}\|X_b\|_2^2
+   -\frac1M\left\|\sum_{b=0}^{M-1}X_b\right\|_2^2
+ =\frac1M\sum_{0\leq b<c<M}\|X_b-X_c\|_2^2\geq0.}
+ \tag{9.489}
+\]
+
+Write
+
+\[
+ D:=\sum_{X,Y}\mathcal N_{X,Y}^{\Delta=0},
+ \qquad
+ J:=\sum_{X,Y}\mathcal N_{X,Y}^{\Delta\ne0}.
+ \tag{9.490}
+\]
+
+Then (9.487) and (9.489) give
+\(\mathcal N_{\ne0}^{\rm Type}=D+J\geq0\).  Consequently, once the
+already diagonal-sized estimate \(D\leq C_0T^{2+\varepsilon}\) is
+available, the genuinely weakest signed estimate needed for an upper
+bound on this complete sector energy is
+
+\[
+ \boxed{
+ \mathrm{JNT}_{2}^{+}:\qquad
+ J\leq C_1T^{2+\varepsilon}.}
+ \tag{9.491}
+\]
+
+Indeed,
+
+\[
+ \boxed{
+ \left|\mathcal N_{\ne0}^{\rm Type}\right|
+ =\mathcal N_{\ne0}^{\rm Type}
+ =D+J\leq(C_0+C_1)T^{2+\varepsilon}.}
+ \tag{9.492}
+\]
+
+Thus \({\rm JNT}_{2}^{+}\) is strictly weaker than
+\({\rm JNT}_{2}^{\rm abs}\): it asks only for an upper bound on the
+joint nonzero-determinant sum, not a lower bound.  The positivity used in
+(9.492) belongs to the *complete* nonprincipal projector energy; it does
+not assert \(J\geq0\), nor may it be applied after discarding any Type or
+outer-packet cross term.
+
+There is also no unused orthogonality hidden merely in the retained label
+\(a_{\rm AFE}=h\delta\).  Before the Type split, exact character
+orthogonality in the \(h\)-residue class gives
+
+\[
+ \boxed{
+ \sum_{h\bmod s}e_s\!\left(h(v-\delta\bar w)\right)
+ =s\,\mathbf1_{wv\equiv\delta\;({\rm mod}\ s)}
+ =s\sum_{j\in\mathbb Z}\mathbf1_{wv-js=\delta}.}
+ \tag{9.493}
+\]
+
+Equation (9.493) is the residue-class skeleton of the full \(h\)-Poisson
+identity (4.450) in the alternative-routes note.  It shows exactly where
+the product phase is spent: after dualization it is the determinant-line
+incidence, not a remaining oscillator capable of supplying another
+half-power.  The smooth transformed weight still retains \(\delta\) and
+all outer labels, so this observation neither separates the packet nor
+estimates \({\rm JNT}_{2}^{+}\).  The finite helper
+h_product_phase_character_orthogonality verifies (9.493) and explicitly
+records that no automatic power saving follows.
+
+The scalar coefficient obstruction (9.484) can nevertheless be removed
+at a different coordinate level.  On primitive support put \(n=rs\),
+\(r=ks+w\), and \(A=kQ+b\).  Then
+
+\[
+ \mu(r)\mu(s)=\mu(n),
+ \qquad
+ As^2\leq Qn<(A+1)s^2.
+ \tag{9.494}
+\]
+
+For fixed \((n,b)\), the possible integer denominators therefore lie in
+
+\[
+ \boxed{
+ \sqrt{\frac{Qn}{A+1}}<s\leq\sqrt{\frac{Qn}{A}}.}
+ \tag{9.495}
+\]
+
+This fiber has bounded multiplicity on the critical face by a purely
+integer argument.  If \(s_1<s_2\) both satisfy (9.494), then
+
+\[
+ A(s_2-s_1)(s_1+s_2)<s_1^2.
+\]
+
+Hence, under the critical scale hypothesis \(s\leq CA\),
+
+\[
+ \boxed{s_2-s_1<\frac{s_1}{A}\leq C,\qquad
+ \#\{s:(9.494)\}\leq C.}
+ \tag{9.496}
+\]
+
+In particular \(s\leq A\) makes the integer fiber unique.  Thus the
+complete sector vector can be reindexed exactly as
+
+\[
+ \boxed{
+ X_b=\sum_n\mu(n)
+ \sum_{\substack{s\mid n,\ (s,n/s)=1\\
+                 As^2\leq Qn<(A+1)s^2}}
+ B_{b,n,s},}
+ \tag{9.497}
+\]
+
+with only \(O(1)\) inner terms at the critical scale.  Every original
+\((h,\delta,\nu,\sigma)\) label remains inside \(B_{b,n,s}\).
+This is a genuine fixed scalar Möbius coefficient \(\mu(n)\), so the
+moving-slope collision (9.484) no longer applies to that coefficient.
+It is not yet a one-Möbius theorem adapter: \(B_{b,n,s}\) still depends
+on the divisor \(s\), both endpoint tapers, and the vector-valued tube.
+Neither bounded multiplicity nor the fold \(\mu(r)\mu(s)=\mu(n)\) proves
+square-root cancellation in the sparse product sequence.
+
 The helpers farey_scalar_beatty_fixed_coefficient_collision and
 labelled_type_nonprincipal_determinant_split verify (9.483)--(9.487) with
 exact integer/rational data.  The latter fixture retains three distinct
 AFE packets, product frequencies \(6,-5,-8\), all Type-pair blocks, and
-nonzero determinants \(\pm5\).  It does not prove the global
-nonzero-determinant estimate or the exhaustive analytic packet map.
+nonzero determinants \(\pm5\).  It also verifies (9.489): both sides are
+\(6327/5\).  The helper joint_nonprincipal_one_sided_upper_bound verifies
+the finite implication (9.490)--(9.492).  With
+\(D=16587/5\), \(J=-2052\), and \(C_1T^{2+\varepsilon}=0\) in the
+fixture, the one-sided hypothesis holds while \(|J|\leq0\) fails, giving
+an exact strictness witness.  Neither helper proves the uniform analytic
+\({\rm JNT}_{2}^{+}\) estimate or the exhaustive analytic packet map.
+The helper farey_product_sector_fiber_ledger verifies
+(9.494)--(9.497), including the cardinality bound and the fixed
+\(\mu(n)\) coefficient, while keeping
+vector_weight_still_factorization_dependent true and
+cancellation_estimate_proved false.
 
 ## 10. What has and has not been proved
 
@@ -11738,7 +11886,7 @@ Proved in this note:
 | Actual zero-mode Fourier projector | exact high-rank identification; banded Möbius energy unproved | The fully recombined equal-index packet is the Fourier Gram (9.457), minus its explicit diagonal (9.458).  On the Gaussian \(1,2,4\) minor, both determinants in (9.462) are nonzero, so the full and diagonal-removed projectors have rank \(3\); every product-density row/column/grand projection has rank at most \(2\), (9.463).  Hence scalar-density centering cannot isolate the whole resonance, and the remaining projector is the long-polynomial gate rather than an LCM diagonal |
 | Determinant-zero primitive slopes | exact same-slope decomposition; within-slope norm unproved | Since every affine slope \((k_0,\ell_0)\) is positive and primitive, determinant zero forces equality of the two slopes, (9.465)--(9.466).  The zero orbit is therefore the sum of same-slope squared norms (9.467), with no cross-slope collisions.  All \(g,h,\delta,\nu,\sigma\) signs remain inside each square, and the bound (9.468) is still open |
 | Label-safe Type-entry determinant | internal zero orbit recombined; nonzero entry determinant unproved | The auxiliary sector character is \(\xi\), not \(a_{\rm AFE}=h\delta\), and all original packet labels remain in the row, (9.469)--(9.471).  A common Beatty sector is one common Euclidean quotient and obeys \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\), (9.472)--(9.477).  All \(dm=r\) cross factorizations must be recombined by the Möbius-log identity (9.478)--(9.481).  This makes the nonprincipal \(\Delta_{\rm Type}=0\) part exactly \((1-M^{-1})D_{\rm cont}\), already at diagonal power, (9.482); the extra power is confined to \(\Delta_{\rm Type}\ne0\), which is not estimated |
-| Moving-Beatty fixed-function and labelled Type split | scalar adapter disproved; exact joint Type Gram; nonzero determinant unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot be sampled into the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\); the zero blocks recombine, but their joint signed nonzero counterpart remains the gate |
+| Moving-Beatty fixed-function and labelled Type split | scalar adapter disproved; exact positive joint Type Gram and bounded product fiber; one-sided nonzero determinant unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot be sampled into the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\).  The zero blocks recombine, and (9.489) makes the complete packet an exact projector square.  Therefore only the one-sided joint upper gate \({\rm JNT}_{2}^{+}\), (9.491), is needed after the diagonal estimate.  Reindexing by \(n=rs\) further gives one fixed \(\mu(n)\) and an \(O(1)\) product-sector fiber, (9.494)--(9.497), but the vector weight remains factorization-dependent; the one-sided gate and exhaustive adapter remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

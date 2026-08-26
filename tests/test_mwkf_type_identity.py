@@ -2249,6 +2249,7 @@ def test_labelled_nonprincipal_type_energy_splits_before_cauchy() -> None:
     assert ledger.zero_determinant_expanded_energy == F(16587, 5)
     assert ledger.nonzero_determinant_energy == F(-2052)
     assert ledger.expanded_nonprincipal_energy == F(6327, 5)
+    assert ledger.nonprincipal_projector_square_energy == F(6327, 5)
     assert ledger.expanded_nonprincipal_energy == (
         ledger.zero_determinant_expanded_energy
         + ledger.nonzero_determinant_energy
@@ -2265,7 +2266,63 @@ def test_labelled_nonprincipal_type_energy_splits_before_cauchy() -> None:
     assert ledger.type_i_ii_partition_exact
     assert ledger.determinant_split_exact
     assert ledger.zero_determinant_recombined_before_cauchy
+    assert ledger.nonprincipal_projector_square_identity_exact
+    assert ledger.expanded_nonprincipal_energy_nonnegative
     assert not ledger.global_nonzero_determinant_gate_proved
+
+    certify = getattr(
+        type_identity,
+        "joint_nonprincipal_one_sided_upper_bound",
+        None,
+    )
+    assert certify is not None, "one-sided joint gate certificate is missing"
+    certificate = certify(
+        split=ledger,
+        zero_determinant_upper_bound=F(16587, 5),
+        nonzero_determinant_upper_bound=F(0),
+    )
+    assert certificate.expanded_nonprincipal_energy == F(6327, 5)
+    assert certificate.zero_determinant_energy == F(16587, 5)
+    assert certificate.nonzero_determinant_energy == F(-2052)
+    assert certificate.resulting_absolute_upper_bound == F(16587, 5)
+    assert certificate.determinant_split_exact
+    assert certificate.full_nonprincipal_energy_nonnegative
+    assert certificate.zero_determinant_bound_holds
+    assert certificate.one_sided_nonzero_bound_holds
+    assert not certificate.absolute_nonzero_bound_holds
+    assert certificate.absolute_full_energy_bound_certified
+    assert certificate.strict_weakening_witness
+    assert not certificate.analytic_one_sided_gate_proved
+
+
+def test_one_sided_joint_gate_rejects_negative_upper_bounds() -> None:
+    packet_type = type_identity.LabelledAfeTypePacket
+    ledger = type_identity.labelled_type_nonprincipal_determinant_split(
+        packets=(
+            packet_type(
+                packet_id="single-entry",
+                h=1,
+                delta=1,
+                dyadic_label="nu",
+                afe_direction="+",
+                n=6,
+                s=5,
+                amplitude=F(1),
+                vector=(F(1),),
+            ),
+        ),
+        angular_resolution=5,
+        slope_integer_part=1,
+        character_modulus=5,
+        type_cutoff=1,
+        prime_log_weights={2: F(2), 3: F(3)},
+    )
+    with pytest.raises(ValueError, match="upper bounds must be nonnegative"):
+        type_identity.joint_nonprincipal_one_sided_upper_bound(
+            split=ledger,
+            zero_determinant_upper_bound=F(-1),
+            nonzero_determinant_upper_bound=F(0),
+        )
 
 
 def test_one_third_split_has_exact_balanced_scales() -> None:

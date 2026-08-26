@@ -1533,6 +1533,44 @@ def test_transition_h_poisson_line_is_unimodular_in_the_two_mobius_entries() -> 
     assert result["mobius_entry_change_is_unimodular"]
 
 
+def test_h_product_phase_becomes_the_exact_determinant_line_constraint() -> None:
+    audit = getattr(
+        coverage_audit,
+        "h_product_phase_character_orthogonality",
+        None,
+    )
+    assert audit is not None, "h-product phase orthogonality audit is missing"
+
+    for s in range(1, 13):
+        for w in range(-12, 13):
+            if gcd(w, s) != 1:
+                continue
+            for delta in range(-7, 8):
+                for dual_v in range(-7, 8):
+                    row = audit(s=s, w=w, delta=delta, dual_v=dual_v)
+                    lattice = (w * dual_v - delta) % s == 0
+                    assert row[
+                        "character_condition_equals_lattice_constraint"
+                    ]
+                    assert (row["complete_character_sum"] == s) == lattice
+                    if lattice:
+                        dual_j = row["dual_j"]
+                        assert dual_j is not None
+                        assert w * dual_v - dual_j * s == delta
+                    else:
+                        assert row["dual_j"] is None
+                    assert row[
+                        "product_phase_converted_to_lattice_constraint"
+                    ]
+                    assert row[
+                        "h_variable_eliminated_by_character_orthogonality"
+                    ]
+                    assert not row["residual_hdelta_oscillation_available"]
+                    assert not row[
+                        "automatic_power_saving_from_product_frequency"
+                    ]
+
+
 def test_transition_h_poisson_line_gate_has_one_power_critical_layer() -> None:
     """After h-Poisson, inner area T and only theta=1,g=1 is critical."""
     adapter = getattr(
@@ -1879,6 +1917,55 @@ def test_primitive_two_mobius_entry_folds_to_one_product_coordinate() -> None:
                     assert row.sector_product_inequality_exact
                     assert row.product_coordinate == r * s
                     assert row.second_entry_recovered_from_divisor == r
+
+
+def test_product_sector_fiber_has_critical_bounded_multiplicity() -> None:
+    fiber = getattr(
+        coverage_audit,
+        "farey_product_sector_fiber_ledger",
+        None,
+    )
+    assert fiber is not None, "product-sector fiber ledger is missing"
+
+    critical = fiber(
+        q=10,
+        k=1,
+        b=4,
+        n=117,
+        critical_ratio_bound=1,
+    )
+    assert critical.sector_scale == 14
+    assert critical.integer_interval_members == (9,)
+    assert critical.primitive_divisor_members == ((9, 13, 4),)
+    assert critical.critical_scale_hypothesis
+    assert critical.pairwise_diameter_inequality_exact
+    assert critical.integer_fiber_cardinality_bound == 1
+    assert critical.bounded_multiplicity_certified
+    assert critical.product_mobius_coefficient_fixed_across_primitive_fiber
+    assert critical.vector_weight_still_factorization_dependent
+    assert not critical.cancellation_estimate_proved
+
+    wider = fiber(
+        q=1,
+        k=1,
+        b=0,
+        n=420,
+        critical_ratio_bound=20,
+    )
+    assert wider.integer_interval_members == (15, 16, 17, 18, 19, 20)
+    assert wider.primitive_divisor_members == ((15, 28, 13), (20, 21, 1))
+    assert wider.bounded_multiplicity_certified
+    assert wider.product_mobius_coefficient_fixed_across_primitive_fiber
+
+    failed_scale = fiber(
+        q=1,
+        k=1,
+        b=0,
+        n=420,
+        critical_ratio_bound=5,
+    )
+    assert not failed_scale.critical_scale_hypothesis
+    assert not failed_scale.bounded_multiplicity_certified
 
 
 def test_banded_sector_gram_reduces_global_energy_to_cluster_square_function() -> None:

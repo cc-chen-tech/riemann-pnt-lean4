@@ -5472,11 +5472,32 @@ class LabelledTypeNonprincipalDeterminantSplit:
     zero_determinant_recombined_energy: Fraction
     nonzero_determinant_energy: Fraction
     nonzero_determinants: tuple[int, ...]
+    nonprincipal_projector_square_energy: Fraction
     all_original_packet_labels_retained: bool
     type_i_ii_partition_exact: bool
     determinant_split_exact: bool
     zero_determinant_recombined_before_cauchy: bool
+    nonprincipal_projector_square_identity_exact: bool
+    expanded_nonprincipal_energy_nonnegative: bool
     global_nonzero_determinant_gate_proved: bool
+
+
+@dataclass(frozen=True)
+class JointNonprincipalOneSidedUpperBound:
+    expanded_nonprincipal_energy: Fraction
+    zero_determinant_energy: Fraction
+    nonzero_determinant_energy: Fraction
+    zero_determinant_upper_bound: Fraction
+    nonzero_determinant_upper_bound: Fraction
+    resulting_absolute_upper_bound: Fraction
+    determinant_split_exact: bool
+    full_nonprincipal_energy_nonnegative: bool
+    zero_determinant_bound_holds: bool
+    one_sided_nonzero_bound_holds: bool
+    absolute_nonzero_bound_holds: bool
+    absolute_full_energy_bound_certified: bool
+    strict_weakening_witness: bool
+    analytic_one_sided_gate_proved: bool
 
 
 def farey_type_ttstar_euclidean_ledger(
@@ -6013,6 +6034,7 @@ def labelled_type_nonprincipal_determinant_split(
                         nonzero_determinants.add(determinant)
 
     zero_recombined = Fraction(0)
+    packet_targets: dict[str, Fraction] = {}
     for left in packets:
         for right in packets:
             if left.n * right.s != right.n * left.s:
@@ -6046,6 +6068,51 @@ def labelled_type_nonprincipal_determinant_split(
             zero_recombined += (
                 wave_pair * character_kernel * left_target * right_target
             )
+            packet_targets[left.packet_id] = left_target
+            packet_targets[right.packet_id] = right_target
+
+    # The full nonprincipal kernel is the orthogonal projector away from
+    # the constant character.  Include empty sectors explicitly and write
+    # its energy as an exact average of pairwise vector squares:
+    #
+    #   sum_b ||X_b||^2 - (1/M)||sum_b X_b||^2
+    #     = (1/M) sum_{b<c} ||X_b-X_c||^2.
+    #
+    # This positivity belongs to the complete signed Type sum; it does not
+    # give a sign to the determinant-nonzero summand by itself.
+    vector_dimension = next(iter(dimensions))
+    sector_vectors = [
+        [Fraction(0) for _ in range(vector_dimension)]
+        for _ in range(character_modulus)
+    ]
+    for packet in packets:
+        target = packet_targets.get(packet.packet_id)
+        if target is None:
+            target = sum(
+                (
+                    coefficient * Fraction(prime_log_weights[prime])
+                    for prime, coefficient
+                    in ledgers[packet.packet_id].target_prime_vector
+                ),
+                Fraction(0),
+            )
+        packet_scale = Fraction(packet.amplitude) * target
+        sector_vector = sector_vectors[sectors[packet.packet_id]]
+        for coordinate, value in enumerate(packet.vector):
+            sector_vector[coordinate] += packet_scale * Fraction(value)
+
+    projector_square_energy = Fraction(0)
+    for left_sector in range(character_modulus):
+        for right_sector in range(left_sector + 1, character_modulus):
+            projector_square_energy += sum(
+                (
+                    (sector_vectors[left_sector][coordinate]
+                     - sector_vectors[right_sector][coordinate]) ** 2
+                    for coordinate in range(vector_dimension)
+                ),
+                Fraction(0),
+            )
+    projector_square_energy /= character_modulus
 
     packet_ids = tuple(packet.packet_id for packet in packets)
     product_frequencies = tuple(packet.h * packet.delta for packet in packets)
@@ -6071,6 +6138,7 @@ def labelled_type_nonprincipal_determinant_split(
         zero_determinant_recombined_energy=zero_recombined,
         nonzero_determinant_energy=nonzero,
         nonzero_determinants=tuple(sorted(nonzero_determinants)),
+        nonprincipal_projector_square_energy=projector_square_energy,
         all_original_packet_labels_retained=(
             len(packet_ids) == len(packets)
             and len(product_frequencies) == len(packets)
@@ -6084,7 +6152,81 @@ def labelled_type_nonprincipal_determinant_split(
         zero_determinant_recombined_before_cauchy=(
             zero_expanded == zero_recombined
         ),
+        nonprincipal_projector_square_identity_exact=(
+            expanded == projector_square_energy
+        ),
+        expanded_nonprincipal_energy_nonnegative=(
+            projector_square_energy >= 0
+            and expanded == projector_square_energy
+        ),
         global_nonzero_determinant_gate_proved=False,
+    )
+
+
+def joint_nonprincipal_one_sided_upper_bound(
+    *,
+    split: LabelledTypeNonprincipalDeterminantSplit,
+    zero_determinant_upper_bound: Fraction,
+    nonzero_determinant_upper_bound: Fraction,
+) -> JointNonprincipalOneSidedUpperBound:
+    """Certify the weakest signed upper bound after determinant recombination.
+
+    Write the complete nonprincipal projector energy as ``E=D+J``, where
+    ``D`` is the recombined determinant-zero energy and ``J`` is the joint
+    signed sum of all four determinant-nonzero Type blocks.  Since ``E`` is
+    a projector square, the hypotheses
+
+    ``D <= B_D`` and ``J <= B_J``
+
+    imply ``abs(E)=E <= B_D+B_J``.  No bound for ``abs(J)`` is needed.
+    This is an exact finite implication only; it does not prove either
+    analytic bound uniformly over the AFE packet family.
+    """
+    zero_bound = Fraction(zero_determinant_upper_bound)
+    nonzero_bound = Fraction(nonzero_determinant_upper_bound)
+    if zero_bound < 0 or nonzero_bound < 0:
+        raise ValueError("upper bounds must be nonnegative")
+
+    total = split.expanded_nonprincipal_energy
+    diagonal = split.zero_determinant_recombined_energy
+    joint_nonzero = split.nonzero_determinant_energy
+    determinant_split_exact = (
+        split.determinant_split_exact
+        and total == diagonal + joint_nonzero
+    )
+    full_nonnegative = (
+        split.nonprincipal_projector_square_identity_exact
+        and split.expanded_nonprincipal_energy_nonnegative
+        and total >= 0
+    )
+    diagonal_bound_holds = diagonal <= zero_bound
+    one_sided_holds = joint_nonzero <= nonzero_bound
+    absolute_nonzero_holds = abs(joint_nonzero) <= nonzero_bound
+    resulting_bound = zero_bound + nonzero_bound
+    absolute_total_certified = (
+        determinant_split_exact
+        and full_nonnegative
+        and diagonal_bound_holds
+        and one_sided_holds
+        and abs(total) <= resulting_bound
+    )
+    return JointNonprincipalOneSidedUpperBound(
+        expanded_nonprincipal_energy=total,
+        zero_determinant_energy=diagonal,
+        nonzero_determinant_energy=joint_nonzero,
+        zero_determinant_upper_bound=zero_bound,
+        nonzero_determinant_upper_bound=nonzero_bound,
+        resulting_absolute_upper_bound=resulting_bound,
+        determinant_split_exact=determinant_split_exact,
+        full_nonprincipal_energy_nonnegative=full_nonnegative,
+        zero_determinant_bound_holds=diagonal_bound_holds,
+        one_sided_nonzero_bound_holds=one_sided_holds,
+        absolute_nonzero_bound_holds=absolute_nonzero_holds,
+        absolute_full_energy_bound_certified=absolute_total_certified,
+        strict_weakening_witness=(
+            one_sided_holds and not absolute_nonzero_holds
+        ),
+        analytic_one_sided_gate_proved=False,
     )
 
 

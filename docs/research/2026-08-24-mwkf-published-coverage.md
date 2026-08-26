@@ -973,3 +973,24 @@ farey_scalar_beatty_fixed_coefficient_collision verifies the independent
 finite fixed-\(f\) obstruction.  The exact Fourier-coefficient map from
 the original Type packet to (6.6) is still missing.  Their coverage flag
 remains false.
+
+The later labelled Type split gives a strictly weaker target than an
+absolute nonzero-determinant estimate.  For the complete nonprincipal
+sector packet, character orthogonality gives the positive projector square
+(9.489).  After the determinant-zero diagonal is bounded, it is enough to
+prove the one-sided joint inequality \({\rm JNT}_{2}^{+}\), (9.491), for
+the signed sum of all four nonzero-determinant Type blocks.  This removes
+the unnecessary lower bound on that signed sum, but no published theorem
+in the coverage table proves the required uniform upper bound or supplies
+the exhaustive packet adapter.
+
+Reindexing a primitive entry by \(n=rs\) removes the separate moving
+coefficient signs: \(\mu(r)\mu(s)=\mu(n)\).  For fixed product and sector,
+the possible \(s\) lie in (9.495), and the critical relation
+\(s\leq C(kQ+b)\) bounds their multiplicity by \(C=O(1)\), (9.496).
+This repairs the scalar fixed-coefficient mismatch at the arithmetic
+coefficient level.  It does not repair the theorem mismatch: the retained
+coefficient is a factorization-dependent vector packet
+\(B_{b,n,s}\), supported on a sparse divisor-selected product sequence.
+None of the scalar Beatty/Farey results audited above accepts that weight
+or proves the required sector square function.

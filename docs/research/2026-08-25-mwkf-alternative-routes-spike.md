@@ -6308,6 +6308,39 @@ The sum over \(v,j\) in (4.450) is infinite and exact; the derivative
 bounds of \(\Psi_{q,k}\) give arbitrary-power decay outside the dual
 boxes below.
 
+The role of the original AFE product \(a=h\delta\) can be audited before
+any scale estimate.  On one complete \(h\)-residue class, the dual mode
+\(v\) gives
+
+\[
+ \boxed{
+ \sum_{h\bmod s}e_s\!\left(h(v-\delta\bar w)\right)
+ =s\,\mathbf1_{v\equiv\delta\bar w\;({\rm mod}\ s)}.}
+ \tag{4.450a}
+\]
+
+Because \(w\) is a unit modulo \(s\), the surviving condition is exactly
+
+\[
+ \boxed{
+ v\equiv\delta\bar w\pmod s
+ \quad\Longleftrightarrow\quad
+ wv-js=\delta\text{ for one }j\in\mathbb Z.}
+ \tag{4.450b}
+\]
+
+Thus retaining \(h\delta\) before Poisson is essential for deriving the
+correct incidence relation, but after dualization the \(h\)-variable has
+been eliminated: there is no second residual \(h\delta\)-oscillator on
+the same dual mode.  The Fourier transform
+\(\widehat\phi_{s,w,\delta}(Hv/s)\) still carries the smooth
+\(\delta\)-dependence and every outer packet label, so (4.450a)--(4.450b)
+do not decouple the kernel or prove cancellation.  They rule out only the
+double counting of an automatic half-power from the already-spent product
+phase.  The helper h_product_phase_character_orthogonality verifies this
+equivalence over exact finite residue data and keeps
+automatic_power_saving_from_product_frequency false.
+
 On the boundary dual box the variables have the scales
 
 \[
@@ -11340,12 +11373,12 @@ two differently labelled packets on \((n,s)=(30,19)\), a second entry
 nonzero determinants \(\pm5\).  It records every \(h\delta\) and keeps
 global_nonzero_determinant_gate_proved false.
 
-Since the original-entry diagonal already has exponent two, the weakest
+Since the original-entry diagonal already has exponent two, a convenient
 sufficient estimate for this supplied sector packet is the *joint* gate
 
 \[
  \boxed{
- \mathrm{JNT}_2:\qquad
+ \mathrm{JNT}_{2}^{\rm abs}:\qquad
  \left|\sum_{X,Y\in\{\mathrm I,\mathrm{II}\}}
  \mathcal N_{X,Y}^{\Delta\ne0}\right|
  \ll_{\varepsilon,W}T^{2+\varepsilon}.}
@@ -11358,12 +11391,117 @@ are \(171/5,-342/5,-342/5,1368\), while their nonzero-determinant part is
 the signed value \(-2052\).  Taking absolute values blockwise would erase
 precisely the cross-sector cancellation retained by (4.661).
 
+The full nonprincipal sum has more structure than its determinant-nonzero
+part.  If
+
+\[
+ X_b=\sum_{P:\,b(P)=b}c_PA_P\widetilde V_P,
+ \qquad A_P=-\mu(s_P)\mu(n_P)\log n_P,
+\]
+
+then the character projector gives the exact square identity
+
+\[
+ \boxed{
+ \mathcal N_{\ne0}^{\rm Type}
+ =\sum_b\|X_b\|_2^2-\frac1M\left\|\sum_bX_b\right\|_2^2
+ =\frac1M\sum_{0\leq b<c<M}\|X_b-X_c\|_2^2\geq0.}
+ \tag{4.662}
+\]
+
+Put
+
+\[
+ D=\sum_{X,Y}\mathcal N_{X,Y}^{\Delta=0},
+ \qquad
+ J=\sum_{X,Y}\mathcal N_{X,Y}^{\Delta\ne0}.
+ \tag{4.663}
+\]
+
+Since \(\mathcal N_{\ne0}^{\rm Type}=D+J\geq0\), the strictly weaker
+one-sided gate
+
+\[
+ \boxed{
+ \mathrm{JNT}_{2}^{+}:\qquad
+ J\leq C_1T^{2+\varepsilon}}
+ \tag{4.664}
+\]
+
+is sufficient after the diagonal estimate
+\(D\leq C_0T^{2+\varepsilon}\), because
+
+\[
+ \boxed{
+ |\mathcal N_{\ne0}^{\rm Type}|
+ =D+J\leq(C_0+C_1)T^{2+\varepsilon}.}
+ \tag{4.665}
+\]
+
+This does not assign a sign to \(J\).  Positivity is used only after every
+Type and outer-packet cross term has been restored in the complete
+projector energy.  The exact fixture has \(D=16587/5\), \(J=-2052\), and
+total \(6327/5\); hence the upper bound \(J\leq0\) holds although
+\(|J|\leq0\) does not.  The helper
+joint_nonprincipal_one_sided_upper_bound certifies this finite strictness
+witness and keeps analytic_one_sided_gate_proved false.
+
+There is also an exact product-coordinate compression which avoids the
+fixed-scalar collision (4.657) without pretending that the vector weight
+has become scalar.  On primitive support set \(n=rs\), \(r=ks+w\), and
+\(A=kQ+b\).  Then
+
+\[
+ \boxed{
+ \mu(r)\mu(s)=\mu(n),\qquad
+ As^2\leq Qn<(A+1)s^2,}
+ \tag{4.666}
+\]
+
+so for fixed \((n,b)\)
+
+\[
+ \sqrt{\frac{Qn}{A+1}}<s\leq\sqrt{\frac{Qn}{A}}.
+ \tag{4.667}
+\]
+
+If all points on the critical box satisfy \(s\leq CA\), two distinct
+points \(s_1<s_2\) obey
+
+\[
+ A(s_2-s_1)(s_1+s_2)<s_1^2,
+ \qquad s_2-s_1<C.
+ \tag{4.668}
+\]
+
+Thus there are at most \(C=O_W(1)\) possible denominators, and the packet
+has the exact form
+
+\[
+ \boxed{
+ X_b=\sum_n\mu(n)
+ \sum_{\substack{s\mid n,\ (s,n/s)=1\\
+                 As^2\leq Qn<(A+1)s^2}}
+ B_{b,n,s}.}
+ \tag{4.669}
+\]
+
+This supplies one fixed scalar arithmetic coefficient \(\mu(n)\) across
+the moving slopes and a bounded inner fiber.  However,
+\(B_{b,n,s}\) retains the factorization-dependent vector tube, both
+tapers, and all \(h\delta\) packet labels.  Therefore (4.669) is a
+narrower coefficient class, not an application of a published scalar
+Beatty theorem and not a cancellation estimate.  The helper
+farey_product_sector_fiber_ledger verifies (4.666)--(4.669) over exact
+integer data and keeps cancellation_estimate_proved false.
+
 This is the correct finite adapter after the sector packet has been
 supplied.  It is stronger and more faithful than the scalar alias target
-(4.655), but it is still not the analytic estimate: the signed sum of the
-four \(\Delta\ne0\) blocks must be bounded globally, and the exhaustive
-map from the original coupled remainder to the supplied packet family must
-remain outside any premature triangle inequality.
+(4.655), but it is still not the analytic estimate: even the weaker
+one-sided signed sum of the four \(\Delta\ne0\) blocks must be bounded
+globally, and the exhaustive map from the original coupled remainder to
+the supplied packet family must remain outside any premature triangle
+inequality.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

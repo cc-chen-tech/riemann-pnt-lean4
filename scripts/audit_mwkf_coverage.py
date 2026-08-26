@@ -945,6 +945,25 @@ class FareyPrimitiveProductCoordinateLedger:
 
 
 @dataclass(frozen=True)
+class FareyProductSectorFiberLedger:
+    q: int
+    k: int
+    sector: int
+    product_coordinate: int
+    sector_scale: int
+    integer_interval_members: tuple[int, ...]
+    primitive_divisor_members: tuple[tuple[int, int, int], ...]
+    critical_ratio_bound: int
+    critical_scale_hypothesis: bool
+    pairwise_diameter_inequality_exact: bool
+    integer_fiber_cardinality_bound: int
+    bounded_multiplicity_certified: bool
+    product_mobius_coefficient_fixed_across_primitive_fiber: bool
+    vector_weight_still_factorization_dependent: bool
+    cancellation_estimate_proved: bool
+
+
+@dataclass(frozen=True)
 class TransitionDenominatorGcdLineAudit:
     determinant_exponent: Fraction
     denominator_gcd_exponent: Fraction
@@ -4399,6 +4418,58 @@ def transition_h_poisson_line_identity(
     }
 
 
+def h_product_phase_character_orthogonality(
+    *,
+    s: int,
+    w: int,
+    delta: int,
+    dual_v: int,
+) -> dict[str, int | str | bool | None]:
+    """Audit exactly what remains of ``a=h*delta`` after h-dualization.
+
+    The additive phase in the complete ``h`` residue class is
+
+    ``e_s(h*(dual_v-delta*inverse(w)))``.
+
+    Character orthogonality makes its complete sum equal to ``s`` exactly
+    when ``dual_v == delta*inverse(w) (mod s)``, and zero otherwise.  Since
+    ``w`` is a unit, this is equivalent to the determinant-line incidence
+
+    ``w*dual_v-j*s=delta``.
+
+    Thus the original product-frequency phase is converted into a lattice
+    constraint.  No residual ``h*delta`` oscillator survives on one dual
+    mode.  The smooth Fourier weight may still couple all outer labels, so
+    this finite identity proves no cancellation estimate.
+    """
+    if s <= 0:
+        raise ValueError("the phase modulus must be positive")
+    if gcd(w, s) != 1:
+        raise ValueError("w must be a unit modulo s")
+
+    w_inverse = pow(w, -1, s)
+    phase_residue = (dual_v - delta * w_inverse) % s
+    lattice_numerator = w * dual_v - delta
+    lattice_constraint = lattice_numerator % s == 0
+    character_sum = s if phase_residue == 0 else 0
+    return {
+        "modulus": s,
+        "w_inverse": w_inverse,
+        "combined_character_residue": phase_residue,
+        "complete_character_sum": character_sum,
+        "lattice_numerator": lattice_numerator,
+        "dual_j": lattice_numerator // s if lattice_constraint else None,
+        "character_condition_equals_lattice_constraint": (
+            (phase_residue == 0) == lattice_constraint
+        ),
+        "afe_product_frequency_before_dualization": "h*delta",
+        "product_phase_converted_to_lattice_constraint": True,
+        "h_variable_eliminated_by_character_orthogonality": True,
+        "residual_hdelta_oscillation_available": False,
+        "automatic_power_saving_from_product_frequency": False,
+    }
+
+
 def transition_h_poisson_line_audit(
     *,
     distance: Fraction,
@@ -5050,6 +5121,95 @@ def farey_primitive_product_coordinate_ledger(
         sector_product_upper_bound=upper,
         sector_product_inequality_exact=lower <= scaled_product < upper,
         second_entry_recovered_from_divisor=product // s,
+    )
+
+
+def farey_product_sector_fiber_ledger(
+    *,
+    q: int,
+    k: int,
+    b: int,
+    n: int,
+    critical_ratio_bound: int,
+) -> FareyProductSectorFiberLedger:
+    """Bound a fixed product-sector denominator fiber exactly.
+
+    Put A=k*q+b.  The product-coordinate sector condition is
+
+    A*s^2 <= q*n < (A+1)*s^2.
+
+    If every such point satisfies s <= C*A, two points s1<s2 obey
+
+    A*(s2-s1)*(s1+s2) < s1^2,
+
+    and therefore s2-s1<C.  The fiber then contains at most C integers.
+    Primitive divisor points additionally require s|n and gcd(s,n/s)=1;
+    on them mu(s)mu(n/s)=mu(n).  The wave packet still depends on the
+    chosen factorization, so this finite fold proves no cancellation.
+    """
+    if q <= 0 or n <= 0:
+        raise ValueError("q and n must be positive")
+    if k < 0 or b < 0:
+        raise ValueError("k and the sector must be nonnegative")
+    if critical_ratio_bound < 1:
+        raise ValueError("the critical ratio bound must be positive")
+    sector_scale = k * q + b
+    if sector_scale <= 0:
+        raise ValueError("the zero product-sector scale is degenerate")
+
+    upper_search = isqrt((q * n) // sector_scale)
+    members = tuple(
+        s
+        for s in range(1, upper_search + 1)
+        if sector_scale * s * s <= q * n
+        < (sector_scale + 1) * s * s
+    )
+    primitive_members: list[tuple[int, int, int]] = []
+    for s in members:
+        if n % s != 0:
+            continue
+        r = n // s
+        w = r - k * s
+        if w < 0 or gcd(r, s) != 1:
+            continue
+        if q * w // s != b:
+            raise AssertionError("product-sector and angular-sector labels disagree")
+        primitive_members.append((s, r, w))
+
+    scale_hypothesis = all(
+        s <= critical_ratio_bound * sector_scale for s in members
+    )
+    pairwise_exact = all(
+        sector_scale * (s2 - s1) * (s1 + s2) < s1 * s1
+        for left_index, s1 in enumerate(members)
+        for s2 in members[left_index + 1 :]
+    )
+    cardinality_bound = critical_ratio_bound
+    bounded = (
+        scale_hypothesis
+        and pairwise_exact
+        and len(members) <= cardinality_bound
+    )
+    fixed_mobius = all(
+        _finite_mobius(s) * _finite_mobius(r) == _finite_mobius(n)
+        for s, r, _ in primitive_members
+    )
+    return FareyProductSectorFiberLedger(
+        q=q,
+        k=k,
+        sector=b,
+        product_coordinate=n,
+        sector_scale=sector_scale,
+        integer_interval_members=members,
+        primitive_divisor_members=tuple(primitive_members),
+        critical_ratio_bound=critical_ratio_bound,
+        critical_scale_hypothesis=scale_hypothesis,
+        pairwise_diameter_inequality_exact=pairwise_exact,
+        integer_fiber_cardinality_bound=cardinality_bound,
+        bounded_multiplicity_certified=bounded,
+        product_mobius_coefficient_fixed_across_primitive_fiber=fixed_mobius,
+        vector_weight_still_factorization_dependent=True,
+        cancellation_estimate_proved=False,
     )
 
 
