@@ -27,6 +27,7 @@ from scripts.audit_mobius_type_ii import (
     PartiallyFixedModulusLedger,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
+    PrimeKloostermanLedger,
     ScalarTypeIICutoffLedger,
     SquarefreeScalarGcdStratum,
     WrightFactorSavings,
@@ -140,6 +141,7 @@ from scripts.audit_mobius_type_ii import (
     pascadi_balanced_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
+    prime_kloosterman_average_ledger,
     primitive_scalar_direct_value,
     primitive_scalar_recombined_value,
     ramanujan_mean_dyadic_divisor_majorant,
@@ -804,6 +806,37 @@ def test_principal_density_has_an_unavoidable_prime_slice() -> None:
                 cutoff_left=cutoff_left,
                 cutoff_right=cutoff_right,
             ) == F(-1)
+
+
+def test_kloosterman_over_primes_does_not_fill_scalar_half_power() -> None:
+    assert prime_kloosterman_average_ledger(
+        modulus=F(5, 2),
+        prime_length=F(3),
+        required_saving=F(1, 2),
+    ) == PrimeKloostermanLedger(
+        first_term=F(5),
+        second_term=F(26, 5),
+        third_term=F(61, 12),
+        theorem_bound=F(26, 5),
+        trivial_bound=F(11, 2),
+        theorem_saving=F(3, 10),
+        required_saving=F(1, 2),
+        gap=F(1, 5),
+    )
+    assert prime_kloosterman_average_ledger(
+        modulus=F(5, 2),
+        prime_length=F(2),
+        required_saving=F(1, 2),
+    ) == PrimeKloostermanLedger(
+        first_term=F(35, 8),
+        second_term=F(43, 10),
+        third_term=F(157, 36),
+        theorem_bound=F(35, 8),
+        trivial_bound=F(9, 2),
+        theorem_saving=F(1, 8),
+        required_saving=F(1, 2),
+        gap=F(3, 8),
+    )
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

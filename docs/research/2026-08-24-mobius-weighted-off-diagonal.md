@@ -6803,6 +6803,49 @@ character separation.  The checker verifies (9.272) exactly as a
 rational number and verifies \(\mathcal P_{U,V}(p)=-1\) for every tested
 prime above unequal cutoffs.
 
+The inverse phase does remain on the prime slice, so estimates for
+Kloosterman sums over primes are a more relevant published input than an
+absolute sieve.  If \(r=s+d\) is prime, then \(d\equiv r\pmod q\), and
+
+\[
+ e_q(-h\delta_0\bar d_q)=e_q(-h\delta_0\bar r_q).
+\]
+
+Irving's Theorem 1 bounds
+\(\sum_{q\asymp Q}\max_a|\sum_{p\asymp x}e_q(a\bar p)|\) by the sum of
+three terms with exponents
+
+\[
+ \frac54Q+\frac58x,\qquad
+ Q+\frac9{10}x,\qquad
+ \frac76Q+\frac{13}{18}x,
+\]
+
+in exponent notation, for \(Q^{2/3}\leq x\leq Q^{3/2}\).  On the
+present full dyadic scales \(Q=T^{5/2},x=T^3\), this gives
+
+\[
+\boxed{
+ \max\!\left(5,\frac{26}{5},\frac{61}{12}\right)
+ =\frac{26}{5},\qquad
+ E_{\rm trivial}=\frac{11}{2}.}
+\tag{9.273}
+\]
+
+Thus even the full-prime-interval theorem saves only \(3/10\), short of
+the missing scalar \(1/2\) by \(1/5\).  The actual moving
+\(d\)-window has length \(T^2\) around height \(T^3\), whereas the
+theorem uses \(p\asymp x\).  Even granting an unproved translated
+short-interval version and optimistically substituting \(x=T^2\), its
+three exponents are \(35/8,43/10,157/36\); the saving over \(9/2\) is
+only \(1/8\).  Finally, the theorem takes a maximum over one fixed
+numerator \(a\), not a joint \(h\delta_0\)-moment.  Summing the product
+numerators termwise would discard all of their energy.  Hence the
+published prime-Kloosterman estimate does not control the \(B=1\) prime
+slice, even before that additional product loss.  The executable ledger
+checks every fraction in (9.273) and in the optimistic short-window
+substitution.
+
 Known one-variable Möbius--trace results do not close (9.239) or its
 recombined form (9.250).  Even if
 one optimistically grants a translated prime-modulus version of the
@@ -7000,6 +7043,9 @@ Proved in this note:
 * the exact principal-density coefficient (9.272).  Its value is
   \(-1\) on every prime above the two cutoffs, ruling out a separate
   pointwise Selberg-sieve/Euler-product power saving.
+* the direct Kloosterman-over-primes audit (9.273).  Irving's published
+  full-interval estimate saves \(T^{3/10}\), below the required
+  \(T^{1/2}\), and it has no joint product-numerator moment.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7049,6 +7095,7 @@ Proved in this note:
 | Scalar Möbius transition packet | exact Type-I/II and affine reduction; smooth endpoint modes unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Affine parametrization gives (9.255)--(9.258), Parseval is (9.259), and complete \(\delta\)-periods collapse exactly to an affine Mertens sum in (9.261)--(9.262).  Direct Bettin--Chandee and Wright applications remain above target, (9.252)--(9.254) and (9.263)--(9.266); the jointly averaged smooth incomplete-period modes remain unproved |
 | Affine endpoint character route | exact dual lattice; ordinary mean squares insufficient | smooth \(\delta\)-Poisson gives \(|n|\ll T^\varepsilon\) and \(h+nq=jd\), (9.267)--(9.268).  Character orthogonality is (9.269); Bombieri--Vinogradov gives no power beyond progression density, and the primitive large sieve leaves a \(T^{1/4}\) gap, (9.270).  The intermediate long-character moment (9.271) would fill the screening ledger but is unproved and does not by itself discharge the coupled smooth weights |
 | Principal Type-I/II density | exact finite obstruction to separate elementary closure | the rational coefficient is (9.272), and equals \(-1\) for every prime \(p>\max(U,V)\).  Thus a pointwise Selberg-sieve/Euler-product estimate of the separated principal spectrum cannot give a power saving; phase and Möbius recombination remain necessary |
+| Prime Kloosterman slice | published theorem applicable only after enlarging the moving interval; quantitatively insufficient | on \(Q=T^{5/2},x=T^3\), Irving's three exponents give \(26/5\) versus trivial \(11/2\), a saving \(3/10<1/2\), (9.273).  The actual prime interval has length \(T^2\) at height \(T^3\), and the theorem has no joint \(h\delta_0\)-moment |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -7082,6 +7129,9 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 * I. D. Shkredov, *Modular hyperbolas and bilinear forms of Kloosterman
   sums*, arXiv:1905.00291; its fixed-prime-field incidence setting is
   recorded in the Section 9.29 applicability audit.
+* A. J. Irving, *Average Bounds for Kloosterman Sums Over Primes*,
+  arXiv:1301.6372, Theorem 1; the \(B=1\) prime-slice exponents and its
+  moving-short-interval mismatch are audited in Section 9.40.
 * M. Z. Garaev, I. E. Shparlinski, *On the distribution of modular
   inverses from short intervals*, arXiv:2304.07953; the lower-bound
   examples rule out assuming a uniform one-variable inverse-sum power

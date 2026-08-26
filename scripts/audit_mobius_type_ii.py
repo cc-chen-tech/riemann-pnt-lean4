@@ -623,6 +623,37 @@ def mobius_character_mean_square_ledger(
     )
 
 
+def prime_kloosterman_average_ledger(
+    *,
+    modulus: Fraction,
+    prime_length: Fraction,
+    required_saving: Fraction,
+) -> PrimeKloostermanLedger:
+    """Audit Irving's averaged Kloosterman-over-primes theorem."""
+
+    if min(modulus, prime_length, required_saving) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    if not 2 * modulus / 3 <= prime_length <= 3 * modulus / 2:
+        raise ValueError("the theorem requires Q^(2/3) <= x <= Q^(3/2)")
+
+    first_term = 5 * modulus / 4 + 5 * prime_length / 8
+    second_term = modulus + 9 * prime_length / 10
+    third_term = 7 * modulus / 6 + 13 * prime_length / 18
+    theorem_bound = max(first_term, second_term, third_term)
+    trivial_bound = modulus + prime_length
+    theorem_saving = trivial_bound - theorem_bound
+    return PrimeKloostermanLedger(
+        first_term=first_term,
+        second_term=second_term,
+        third_term=third_term,
+        theorem_bound=theorem_bound,
+        trivial_bound=trivial_bound,
+        theorem_saving=theorem_saving,
+        required_saving=required_saving,
+        gap=required_saving - theorem_saving,
+    )
+
+
 def near_determinant_coordinates(
     divisor_product: int,
     scalar_factor: int,
@@ -2568,6 +2599,20 @@ class PartiallyFixedModulusLedger:
     fixed_block_bound: Fraction
     global_bound: Fraction
     target: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class PrimeKloostermanLedger:
+    """Averaged Kloosterman-over-primes exponent comparison."""
+
+    first_term: Fraction
+    second_term: Fraction
+    third_term: Fraction
+    theorem_bound: Fraction
+    trivial_bound: Fraction
+    theorem_saving: Fraction
+    required_saving: Fraction
     gap: Fraction
 
 
