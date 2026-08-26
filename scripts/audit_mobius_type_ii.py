@@ -2974,6 +2974,42 @@ def shift_modulus_completion_sides(
     return direct, completed
 
 
+def sliding_interval_energy_sides(
+    coefficients: tuple[complex, ...],
+    window: int,
+) -> tuple[complex, float]:
+    """Both sides of the finite Fejer/sliding-window identity.
+
+    The sequence is extended by zero outside its literal finite support.
+    Every ordered pair at distance less than ``window`` occurs in exactly
+    ``window-distance`` sliding intervals.  This retains all boundary
+    terms and permits arbitrary complex coefficients.
+    """
+
+    if window < 1:
+        raise ValueError("the sliding window must be positive")
+    correlation = sum(
+        coefficient
+        * coefficients[right].conjugate()
+        * (window - abs(left - right))
+        for left, coefficient in enumerate(coefficients)
+        for right in range(len(coefficients))
+        if abs(left - right) < window
+    )
+    sliding_energy = sum(
+        abs(
+            sum(
+                coefficients[index]
+                for index in range(start, start + window)
+                if 0 <= index < len(coefficients)
+            )
+        )
+        ** 2
+        for start in range(-window + 1, len(coefficients))
+    )
+    return correlation, sliding_energy
+
+
 def additive_dual_shift_phase(
     r: int, modulus: int, a: int, b: int
 ) -> AdditiveDualShiftPhase:
@@ -6215,6 +6251,20 @@ class ShiftModulusCompletionLedger:
 
 
 @dataclass(frozen=True)
+class ShortMertensEnergyLedger:
+    """Exponent ledger for the Fejer-weighted short Mertens energy."""
+
+    long_length: Fraction
+    window_length: Fraction
+    number_of_windows: Fraction
+    trivial_energy: Fraction
+    diagonal_energy: Fraction
+    required_energy_saving: Fraction
+    normalized_correlation_target: Fraction
+    published_optimal_mean_square_covered: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -6444,6 +6494,38 @@ def shift_modulus_completion_ledger(
         required_pair_saving=max(zero, total_trivial - local_target),
         short_interval_ratio=shift_modulus / box.sigma,
         published_power_covered=False,
+    )
+
+
+def short_mertens_energy_ledger(
+    long_length: Fraction,
+    window_length: Fraction,
+) -> ShortMertensEnergyLedger:
+    """Return the exact Fejer-weighted short-sum exponent ledger.
+
+    There are ``T^long_length`` sliding windows.  Bounding every sum of
+    ``T^window_length`` coefficients trivially gives energy exponent
+    ``long+2*window``.  Square-root-sized short sums give the diagonal
+    exponent ``long+window``.  Dividing the Fejer identity by the window
+    makes that optimal energy exactly the ``T^long_length`` correlation
+    target required by ``SC_(window/long)``.
+    """
+
+    if long_length <= 0:
+        raise ValueError("the long length must be positive")
+    if window_length <= 0 or window_length > long_length:
+        raise ValueError("the window must lie between 1 and the long length")
+    trivial_energy = long_length + 2 * window_length
+    diagonal_energy = long_length + window_length
+    return ShortMertensEnergyLedger(
+        long_length=long_length,
+        window_length=window_length,
+        number_of_windows=long_length,
+        trivial_energy=trivial_energy,
+        diagonal_energy=diagonal_energy,
+        required_energy_saving=trivial_energy - diagonal_energy,
+        normalized_correlation_target=diagonal_energy - window_length,
+        published_optimal_mean_square_covered=False,
     )
 
 

@@ -2309,6 +2309,15 @@ def test_reciprocity_then_short_modulus_completion_is_exact() -> None:
             assert abs(direct - completed) < 1e-9
 
 
+def test_fejer_shift_correlation_is_exact_sliding_interval_energy() -> None:
+    coefficients = (1 + 2j, -0.5j, 3 - 0.25j, -2, 0.75 + 1j)
+    for window in range(1, 9):
+        correlation, sliding_energy = audit.sliding_interval_energy_sides(
+            coefficients, window
+        )
+        assert abs(correlation - sliding_energy) < 1e-9
+
+
 def test_additive_completion_zero_mode_hits_the_two_thirds_barrier() -> None:
     assert additive_completion_zero_mode(11, 7, 5) == F(35, 11)
     balanced = boundary_witnesses()["balanced_max_a"]
@@ -2473,6 +2482,18 @@ def test_shift_modulus_completion_removes_oscillation_but_not_chowla_gap() -> No
     assert ledger.required_pair_saving == F(2)
     assert ledger.short_interval_ratio == F(2, 3)
     assert not ledger.published_power_covered
+
+
+def test_sc_two_thirds_is_optimal_short_mertens_mean_square() -> None:
+    ledger = audit.short_mertens_energy_ledger(F(3), F(2))
+    assert ledger.long_length == F(3)
+    assert ledger.window_length == F(2)
+    assert ledger.number_of_windows == F(3)
+    assert ledger.trivial_energy == F(7)
+    assert ledger.diagonal_energy == F(5)
+    assert ledger.required_energy_saving == F(2)
+    assert ledger.normalized_correlation_target == F(3)
+    assert not ledger.published_optimal_mean_square_covered
 
 
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:
