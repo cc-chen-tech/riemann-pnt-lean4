@@ -723,3 +723,40 @@ This closes only the Jensen/AGM arrow
 The long mollified mean-square estimate itself, its Mobius arithmetic, and the
 Deshouillers--Iwaniec/Kuznetsov spectral input remain open.  No theorem in this
 slice assumes any of those statements.
+
+## 13. Degree-one eta simple-zero implication implemented
+
+Conrey's equation (42) is now formalized in
+`HardyTheorem/ConreyDegreeOneEta.lean`, with an independent public contract in
+`Test/ConreyDegreeOneEtaContract.lean`.
+
+The definition encodes the degree-one parity conditions directly:
+
+\[
+  \eta(s)=g\xi(s)+i g_0\xi(s)+(g_1/L)\xi'(s),
+  \qquad g,g_0,g_1,L\in\mathbb R.
+\]
+
+Using the functional equation and conjugation symmetry, Lean proves on
+`s=1/2+it` that `xi(s)` is real and `xi'(s)` is purely imaginary.  It then
+checks the exact identity
+
+\[
+  \operatorname{Re}\eta(\tfrac12+it)
+    =g\operatorname{Re}\xi(\tfrac12+it).
+\]
+
+Therefore, if `g` is nonzero, `Re eta(s)=0`, and `eta(s)` itself is nonzero,
+then `xi(s)=0` while `xi'(s)` is nonzero.  The analytic-order theorem gives
+order one for completed zeta, and the existing critical-strip factorization
+transfers both the zero and its order to `riemannZeta`.  The result is exactly
+
+\[
+  \zeta(\tfrac12+it)=0,
+  \qquad \operatorname{ord}_{1/2+it}\zeta=1.
+\]
+
+This closes the local simple-zero implication needed in equation (42).  It
+does not yet count the relevant argument crossings: the Littlewood
+rectangle/argument-variation inequality and the long mollified mean-square
+estimate, including the Deshouillers--Iwaniec spectral input, remain open.
