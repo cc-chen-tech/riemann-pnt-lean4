@@ -12,7 +12,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import lru_cache
-from math import gcd, lcm
+from math import gcd, lcm, sqrt
 
 try:
     from scripts.audit_mwkf_ranges import (
@@ -3008,6 +3008,106 @@ def sliding_interval_energy_sides(
         for start in range(-window + 1, len(coefficients))
     )
     return correlation, sliding_energy
+
+
+def equal_zeta_index_shift_sides(
+    r: int,
+    s: int,
+    m_one: int,
+    m_two: int,
+) -> tuple[int, int]:
+    """Both sides of the exact equal-zeta-index shift identity.
+
+    Put ``d=r-s`` and ``delta=m_one*s-m_two*r`` as in (4.3).  Then
+
+    ``delta + d*m_two = s*(m_one-m_two)``.
+
+    In particular, because ``s>0``, the short-modulus zero-frequency
+    condition ``delta=-d*m_two`` is equivalent to ``m_one=m_two``.
+    No limiting argument or endpoint deletion occurs in this identity.
+    """
+
+    if min(r, s, m_one, m_two) < 1:
+        raise ValueError("all index variables must be positive")
+    shift = r - s
+    delta = m_one * s - m_two * r
+    return delta + shift * m_two, s * (m_one - m_two)
+
+
+def equal_zeta_index_gcd_factorization_sides(
+    coefficients: Mapping[int, complex],
+    twists: Mapping[int, complex],
+) -> tuple[complex, float]:
+    """Finite gcd decomposition of the equal-zeta-index mollifier square.
+
+    The twists may be arbitrary.  In the analytic application take
+    ``twists[n]=n**(-it)``.  Then the coprime ``q,r,s`` side has phase
+    ``(s/r)**it`` and coefficient ``1/(q*sqrt(r*s))``.  Unique gcd
+    factorization ``d=q*r, e=q*s`` gives the literal squared modulus on
+    the other side.
+    """
+
+    support = tuple(sorted(coefficients))
+    if any(index < 1 for index in support):
+        raise ValueError("coefficient support must consist of positive integers")
+    if set(support) != set(twists):
+        raise ValueError("coefficients and twists must have identical support")
+
+    gcd_side = 0j
+    for left in support:
+        for right in support:
+            common = gcd(left, right)
+            r = left // common
+            s = right // common
+            gcd_side += (
+                coefficients[left]
+                * coefficients[right].conjugate()
+                * twists[left]
+                * twists[right].conjugate()
+                / (common * sqrt(r * s))
+            )
+    square_side = abs(
+        sum(
+            coefficients[index] * twists[index] / sqrt(index)
+            for index in support
+        )
+    ) ** 2
+    return gcd_side, square_side
+
+
+def formal_mobius_log_divisor_coefficients(n: int) -> dict[int, int]:
+    """Coefficients of ``-sum_{d|n} mu(d) log d`` in the ``log p`` basis.
+
+    The returned dictionary contains every prime divisor of ``n``.  It
+    equals ``{p: 1}`` when ``n`` is a positive power of one prime, and all
+    its values are zero when ``n`` has at least two distinct prime factors.
+    Thus it is an exact finite, logarithm-free form of
+
+    ``-sum_{d|n} mu(d) log d = Lambda(n)``.
+    """
+
+    if n < 1:
+        raise ValueError("n must be positive")
+    prime_divisors: list[int] = []
+    remaining = n
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            prime_divisors.append(prime)
+            while remaining % prime == 0:
+                remaining //= prime
+        prime += 1
+    if remaining > 1:
+        prime_divisors.append(remaining)
+
+    return {
+        prime: -sum(
+            mobius(divisor)
+            for divisor in divisors(n)
+            if divisor % prime == 0
+        )
+        for prime in prime_divisors
+    }
 
 
 def additive_dual_shift_phase(

@@ -9233,6 +9233,160 @@ length-\(X^{2/3}\) intervals.  This finite identity also explains why
 elementary Selberg sieve cannot close the last face: doing so would
 cross the parity barrier at the optimal mean-square scale.
 
+### 9.59 The short-modulus zero mode is the equal-zeta-variable continuum
+
+There is one last possible ambiguity in the preceding reduction.  The
+zero frequency in (9.376) was created only after completing in \(h\) and
+\(\delta\) modulo \(d=r-s\).  It could therefore conceivably be an
+artifact which cancels the original \(h=0\) Poisson main term after all
+dyadic pieces are recombined.  Keeping the pre-Poisson \(x\)-integral
+settles this point exactly.
+
+For \(d=r-s\ne0\), let \(\mathscr F_{r,s,\delta}(x)\) be the complete
+integrand in (4.4) before the factor \(e(-hx/s)\), including the
+\(t\)-integral.  First sum the complete smooth dyadic partitions in
+\(h\) and \(\delta\), including the scales whose original integer
+supports are empty.  Their zero dual coefficients then have the
+continuous aggregate
+
+\[
+ \frac1{|d|}\int_{\mathbb R}\int_{\mathbb R}
+ e\left(-\frac{h\delta}{ds}\right)
+ \left\{\int_{\mathbb R}
+ \mathscr F_{r,s,\delta}(x)e(-hx/s)\,dx\right\}
+ dh\,d\delta .
+\tag{9.380}
+\]
+
+All cutoffs may first be kept compact.  This order is essential: for one
+fixed \(H\), the factor \(F_H(h)\) remains in (9.380), and Fourier
+inversion gives a bump rather than a Dirac mass.  Only the complete
+\(\sum_HF_H(h)=1\) aggregate gives
+
+\[
+ \int_{\mathbb R}e\left(-h\left(\frac xs+
+                 \frac{\delta}{ds}\right)\right)dh
+ =s\,\delta_0\left(x+\frac\delta d\right).
+\tag{9.381}
+\]
+
+Thus (9.380) samples \(x=-\delta/d>0\).  At that point
+
+\[
+ \frac{xr+\delta}{s}=x,
+ \qquad
+ \exp\left(it\log\left(1+\frac\delta{xr}\right)\right)
+ =\left(\frac sr\right)^{it}.
+\tag{9.382}
+\]
+
+The same condition is visible without distributions.  If
+\(\delta=m_1s-m_2r\), then
+
+\[
+ \boxed{\delta+(r-s)m_2=s(m_1-m_2).}
+\tag{9.383}
+\]
+
+Consequently \(\delta=-(r-s)m_2\) is equivalent to \(m_1=m_2\).
+Equation (9.381) is its continuous, post-Poisson version; it must not be
+misstated as the original discrete \(m_1=m_2\) subsum, or as a
+termwise identity for one \(H,L\)-box.  The nonzero dual frequencies
+restore both the lattice and the empty-scale cancellation outside the
+smooth regime in which (9.376) makes them negligible.
+
+Now sum the zero coefficients before taking absolute values over all
+outer gcd and dyadic partitions.  The factor \(s\) in (9.381) cancels
+the \(s^{-1}\) in (4.5), while the change
+\(\delta=-dx\) cancels \(|d|^{-1}\).  The arithmetic factor is therefore
+
+\[
+ \sum_{\substack{q,r,s\ge1\\(r,s)=1}}
+ \frac{a_N(qr)a_N(qs)}{q\sqrt{rs}}
+ \left(\frac sr\right)^{it}
+ =\left|\sum_{n\leq N}\frac{a_N(n)}{n^{1/2+it}}\right|^2.
+\tag{9.384}
+\]
+
+This is just the unique decomposition
+\(q=(n_1,n_2),r=n_1/q,s=n_2/q\); it has no truncation error.  Since the
+short-modulus completion has \(r\ne s\), its aggregate zero packet is
+the right side of (9.384) minus the explicit diagonal
+\(\sum_{n\leq N}a_N(n)^2/n\), multiplied by the common continuous
+archimedean \(x\)-integral.
+
+The balanced \(H=L=T^{5/2}\), \(|r-s|=T^2\) packet is only one
+dyadic constituent of that aggregate.  Indeed \(HM/S\asymp1\), so its
+fixed-\(H\) Fourier bump has \(x\)-width \(S/H\asymp M\), not a
+power-smaller approximation to a point.  Thus (9.384) identifies the
+globally recombined zero coefficients, but it neither replaces the
+actual balanced weight \(\mathcal J_{s,d}\) by a Fejér kernel nor proves
+that \({\rm MS}_{2/3}\) is necessary for every admitted weight.
+
+This rules out identifying the two zero modes term by term.  The
+original \(h=0\) mode is a zero frequency in the first Poisson
+summation and combines with the AFE diagonal to give the LCM form in
+(4.6).  The zero frequency in (9.380) is instead a major-arc component
+of the off-diagonal long-mollifier square.  It is not identically zero;
+after adding its explicit \(r=s\) diagonal it is a literal squared
+modulus at the fully aggregated level.  A cancellation involving other
+dyadic zero and nonzero frequencies is not excluded; it would have to be
+proved by a global regrouping and is not an identity inside the single
+balanced box (9.372)--(9.376).
+
+The only exact regrouping presently known which crosses that boundary is
+(9.361).  At Mellin frequency zero it uses
+
+\[
+ \sum_{d\mid n}\mu(d)
+ \left(1-\frac{\log d}{\log N}\right)
+ =1_{n=1}+\frac{\Lambda(n)}{\log N},
+\tag{9.385}
+\]
+
+but the actual compact AFE contour contains the entire family
+\(B_{N,i\tau}\), for which the many-prime terms in (9.364) return.  Hence
+a genuinely weaker replacement for \({\rm MS}_{2/3}\) would be a uniform
+shifted-energy estimate for \(B_{N,i\tau}\), including the reflected
+cofactor boundary in (9.362), followed by contour recombination before
+absolute convergence is lost.  The prime-power identity at
+\(\tau=0\) alone is insufficient.
+
+This boundary agrees with the established long-mollifier literature.
+Farmer conjectures the mollified second-moment asymptotic for every fixed
+\(\theta>0\), while the classical unconditional asymptotic for the
+Conrey mollifier reaches only \(\theta<4/7\); see
+[Farmer](https://doi.org/10.1112/S0025579300013723) and the summary in
+[Bettin--Gonek, Section 1](https://arxiv.org/abs/1604.02740).  Radziwill
+also proves that the long-mollifier off-diagonal is genuinely
+non-negligible and relates it, under RH, to pair correlation; see
+[arXiv:1207.6583](https://arxiv.org/abs/1207.6583).  These results do not
+disprove the desired \(O(T^{1+\varepsilon})\) bound at \(\theta=3\), but
+they show that it is a conjectural long-mollifier estimate rather than a
+missing elementary completion lemma.
+
+The executable helpers equal_zeta_index_shift_sides and
+equal_zeta_index_gcd_factorization_sides verify (9.383)--(9.384) for
+arbitrary finite complex coefficients and twists.  The helper
+formal_mobius_log_divisor_coefficients verifies (9.385) in the free
+\(\log p\) basis, so no floating-point logarithmic relation is being used.
+Together they give a directly formalizable finite interface:
+
+\[
+ \boxed{
+ \sum_{\rm all\ dyadic\ shift\ zero\ coefficients}
+ =
+ {\rm continuous\ equal\!-\!index\ mollifier\ square}
+ -
+ {\rm explicit\ diagonal}.}
+\tag{9.386}
+\]
+
+Equation (9.386) is exact.  Separately, the balanced constituent is
+bounded by \({\rm SC}_{2/3}\), and the Fejér specialization of that gate
+is supplied by \({\rm MS}_{2/3}\).  No converse or final mean-square
+estimate is asserted.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -9268,7 +9422,15 @@ and averaged-Chowla estimates give only logarithmic savings there, so
 this final \(T^2\) pair saving remains unproved.  The boundary-exact
 Fejér identity (9.378) identifies the same saving with the optimal
 diagonal-sized short-Mertens mean square
-\({\rm MS}_{2/3}\), also unavailable unconditionally.**
+\({\rm MS}_{2/3}\), also unavailable unconditionally.  Finally,
+(9.380)--(9.386) identify the short-modulus zero frequency, before any
+estimate and after summing every dyadic zero coefficient, with the
+continuous \(m_1=m_2\) locus and its outer arithmetic factor with the
+literal long-mollifier square.  This aggregate is not the original
+Poisson \(h=0\) mode.  A fixed balanced box is only one broad Fourier
+constituent, so global cancellation is not excluded; the identified
+escape is the precompletion \(B_{N,i\tau}\) regrouping in (9.361), whose
+uniform compact-\(\tau\) shifted energy is unproved.**
 
 Proved in this note:
 
@@ -9380,6 +9542,15 @@ Proved in this note:
   exponent ledger.  It identifies the \(T^2\) deficit with the gap
   between trivial \(XD^2=T^7\) and optimal diagonal-sized
   short-Mertens energy \(XD=T^5\); it does not assert the latter bound.
+* the exact equal-zeta-variable identity (9.380)--(9.383), the gcd
+  factorization of its aggregate zero coefficient into the
+  long-mollifier square (9.384), and the finite formal
+  von-Mangoldt identity (9.385).  These prove that the complete
+  shift-zero aggregate is a continuous equal-index long-mollifier
+  square, not a second copy of the original \(h=0\) LCM mode.  A fixed
+  balanced box retains a broad Fourier cutoff; these identities do not
+  prove \({\rm MS}_{2/3}\), its necessity for every weight, or the
+  uniform \(B_{N,i\tau}\) replacement.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -9635,6 +9806,7 @@ Proved in this note:
 | Precompletion dual-product Type II | exact published coverage polytope; dominant coprime stratum unproved | Starting from the four-Möbius packet retaining \(h\delta_0\), exact numerator completion produces (9.345), whose circle transform factors into the \(bc\) and \(gq\) product polynomials.  DRZZ Lemma 4.2 is applicable here.  Equations (9.347)--(9.349) include the reduced denominator after \((k,q_\alpha)=T^{\tau_k}\), the approximation loss \((\kappa-2\tau_k)_+\), circle-band mass, and the competing Cauchy bound.  Some high-gcd strata satisfy the target, but for every \(\tau_k=0\) box the optimum is exactly exponent \(5\), leaving \(1/2\), (9.350).  Hence the postcompletion resonance is not the only obstruction |
 | Coprime $3\times2$ shifted convolution | exact finite reduction and published proxy exponents; actual main/error pair unproved | (9.353) is the finite correlation of a dyadic three-factor Möbius convolution with a dyadic two-factor one.  Topacogullari's fixed-shift standard $d_3$--$d$ error sums to exponent $9/2+7/64$, while the Baier--Browning--Marasingha--Zhao signed $d_3$--$d_3$ first moment has exponent $17/4$.  Neither theorem accepts the coefficients (9.352).  The natural central cell (9.358), not one resampling-dependent zero point, has raw exponent $5$ and needs the invariant half-power; hence the weaker actual interface still requires both singular-cell recombination and a centered coefficient-transfer estimate |
 | Precompletion $\zeta$--mollifier pairing | exact two-product-variable reduction; compact twisted coefficient family unproved | Pairing $x=nd,y=me$ on the initial AFE line gives (9.361) with the truncated coefficients $B_{N,z}$.  At $z=0$, (9.362)--(9.363) are exactly von Mangoldt plus a reflected cofactor shorter than $T^{1/2+\varepsilon}$ on the balanced transition.  But the actual compact Mellin family contains every $B_{N,i\tau}$; (9.364) shows that nonzero bounded $\tau$ restores arbitrary many-prime support.  Moving the reindexed long energy to a left line is not absolutely convergent, so the prime slice alone is not the full gate |
+| Short-modulus zero-frequency recombination | complete aggregate identified; fixed balanced weight still unproved | Only after summing the full \(h,\delta\) dyadic partitions does Fourier inversion give the continuous \(m_1=m_2\) condition (9.380)--(9.383).  Summing gcd strata gives the literal square (9.384), minus the explicit \(r=s\) diagonal.  A fixed balanced box has Fourier width \(S/H\asymp M\), so it is not a point mass and no converse from its actual weight to \({\rm MS}_{2/3}\) is claimed.  The identified alternative is a uniform shifted-energy theorem for the full compact family \(B_{N,i\tau}\), not merely its prime-supported \(\tau=0\) slice |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

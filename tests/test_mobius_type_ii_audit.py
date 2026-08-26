@@ -2318,6 +2318,55 @@ def test_fejer_shift_correlation_is_exact_sliding_interval_energy() -> None:
         assert abs(correlation - sliding_energy) < 1e-9
 
 
+def test_short_modulus_zero_frequency_is_the_equal_zeta_index_slice() -> None:
+    for r in range(1, 15):
+        for s in range(1, 15):
+            for m_one in range(1, 8):
+                for m_two in range(1, 8):
+                    left, right = audit.equal_zeta_index_shift_sides(
+                        r, s, m_one, m_two
+                    )
+                    assert left == right
+                    shift = r - s
+                    delta = m_one * s - m_two * r
+                    assert (delta == -shift * m_two) == (m_one == m_two)
+
+
+def test_equal_zeta_index_gcd_sum_is_a_literal_mollifier_square() -> None:
+    coefficients = {
+        1: 1 + 0j,
+        2: -0.75 + 0.5j,
+        3: 0.25 - 1j,
+        6: -1.5j,
+        10: 0.125 + 0.75j,
+    }
+    twists = {
+        1: 1 + 0j,
+        2: 0.5 + 0.25j,
+        3: -0.75j,
+        6: -1 + 0.125j,
+        10: 0.375 - 0.5j,
+    }
+    gcd_side, square_side = audit.equal_zeta_index_gcd_factorization_sides(
+        coefficients, twists
+    )
+    assert abs(gcd_side - square_side) < 1e-9
+
+
+def test_selberg_convolution_is_formally_von_mangoldt_below_cutoff() -> None:
+    assert audit.formal_mobius_log_divisor_coefficients(1) == {}
+    for prime in (2, 3, 5, 7, 11):
+        for exponent in range(1, 5):
+            assert audit.formal_mobius_log_divisor_coefficients(
+                prime**exponent
+            ) == {prime: 1}
+
+    for n in (6, 10, 12, 18, 30, 45, 60, 210):
+        coefficients = audit.formal_mobius_log_divisor_coefficients(n)
+        assert len(coefficients) >= 2
+        assert set(coefficients.values()) == {0}
+
+
 def test_additive_completion_zero_mode_hits_the_two_thirds_barrier() -> None:
     assert additive_completion_zero_mode(11, 7, 5) == F(35, 11)
     balanced = boundary_witnesses()["balanced_max_a"]
