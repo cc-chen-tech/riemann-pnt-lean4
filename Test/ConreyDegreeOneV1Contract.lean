@@ -26,6 +26,13 @@ example {g g0 g1 L : ℝ} {s : ℂ}
 
 example {g g0 g1 L : ℝ} {s : ℂ}
     (hs0 : 0 < s.re) (hs1 : s ≠ 1) :
+    conreyDegreeOneEta g g0 g1 L s = 0 ↔
+      conreyDegreeOneV1 g g0 g1 L s = 0 :=
+  conreyDegreeOneEta_eq_zero_iff_conreyDegreeOneV1_eq_zero_of_re_pos_of_ne_one
+    hs0 hs1
+
+example {g g0 g1 L : ℝ} {s : ℂ}
+    (hs0 : 0 < s.re) (hs1 : s ≠ 1) :
     analyticOrderAt (conreyDegreeOneEta g g0 g1 L) s =
       analyticOrderAt (conreyDegreeOneV1 g g0 g1 L) s :=
   analyticOrderAt_conreyDegreeOneEta_eq_conreyDegreeOneV1_of_re_pos_of_ne_one
@@ -62,6 +69,7 @@ example {g g0 g1 L : ℝ} {s : ℂ}
 #print axioms analyticAt_conreyDegreeOneV1_of_re_pos_of_ne_one
 #print axioms completedZeta_eq_conreyH_mul_riemannZeta_of_re_pos_of_ne_one
 #print axioms conreyDegreeOneEta_eq_conreyH_mul_conreyDegreeOneV1_of_re_pos_of_ne_one
+#print axioms conreyDegreeOneEta_eq_zero_iff_conreyDegreeOneV1_eq_zero_of_re_pos_of_ne_one
 #print axioms analyticOrderAt_conreyDegreeOneEta_eq_conreyDegreeOneV1_of_re_pos_of_ne_one
 #print axioms conreyDegreeOneEta_eq_conreyH_mul_conreyDegreeOneV1
 #print axioms conreyDegreeOneEta_eq_zero_iff_conreyDegreeOneV1_eq_zero

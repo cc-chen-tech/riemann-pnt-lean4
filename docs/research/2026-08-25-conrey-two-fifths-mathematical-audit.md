@@ -893,12 +893,10 @@ and equality of their analytic orders at `s`.  Thus the zero family denoted by
 `N_{0,V_1}` in equation (40) is now connected exactly, including
 multiplicity, to the `eta` whose critical-line crossings feed equation (41).
 
-This is an analytic factorization result, not yet the rectangle count.
-Section 17 constructs the actual mollifier `B` and the local product
-multiplicity inclusion.  The finite zero family of `V_1 B`, its half-weighted
-boundary count, and the connection to the Littlewood weighted rectangle
-identity remain to be constructed.  The horizontal and left-edge asymptotics
-and the long mollified mean-square estimate also remain open.
+This factorization is the analytic input used by the finite-rectangle count in
+Section 17.  The connection from that bounded count to the Littlewood weighted
+rectangle identity remains to be constructed.  The horizontal and left-edge
+asymptotics and the long mollified mean-square estimate also remain open.
 
 ## 17. Conrey's actual mollifier and the local equation-(35) inclusion
 
@@ -967,9 +965,27 @@ equation-(35) multiplicity inequality above is available from the actual
 coefficient hypothesis `g != 0`, with no auxiliary `V_1` finite-order
 assumption.
 
-The global half-weighted inequality `N^*_{V_1}(T) <= N^*_{V_1B}(T)` still
-requires two explicit steps: construct the finite zero divisors on bounded
-right-half rectangles, and remove the auxiliary far-right edge by proving that
-no zeros remain beyond it.  Only after those steps may the pointwise inclusion
-be summed.  Littlewood's inequality (37) and all of its edge asymptotics remain
-separate, as does the long mollified mean-square theorem.
+The first global step is now complete in
+`HardyTheorem/ConreyMollifierRectangleCount.lean`, with its contract in
+`Test/ConreyMollifierRectangleCountContract.lean`.  On the compact rectangle
+
+\[
+  1/2\le \operatorname{Re}s\le A,\qquad 0\le \operatorname{Im}s\le T,
+\]
+
+Lean uses the entire functions `eta` and `eta B` to obtain finite divisor
+supports without inserting a lower cutoff that would obscure the point
+`s=1`.  On positive height their zeros are exactly those of the actual
+functions `V_1` and `V_1B`.  After filtering to `0<t<=T`, the two finite zero
+families are counted with their actual analytic multiplicities and weight
+`1/2` precisely on `Re s=1/2`.  Summing the local product-order inequality
+therefore proves the bounded equation-(35) inequality
+
+\[
+  N^*_{V_1}(A,T)\le N^*_{V_1B}(A,T).
+\]
+
+This is not yet the unbounded half-strip count printed in the paper.  Its sole
+remaining equation-(35) step is to prove a uniform far-right zero-free edge
+and choose `A` beyond it.  Littlewood's inequality (37) and all of its edge
+asymptotics remain separate, as does the long mollified mean-square theorem.

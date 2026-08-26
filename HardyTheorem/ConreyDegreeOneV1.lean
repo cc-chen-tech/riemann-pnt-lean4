@@ -157,6 +157,15 @@ theorem conreyDegreeOneEta_eq_zero_iff_conreyDegreeOneV1_eq_zero
     mul_eq_zero]
   exact or_iff_right (conreyH_ne_zero_of_mem_criticalStrip hs0 hs1)
 
+theorem conreyDegreeOneEta_eq_zero_iff_conreyDegreeOneV1_eq_zero_of_re_pos_of_ne_one
+    {g g0 g1 L : ℝ} {s : ℂ}
+    (hs0 : 0 < s.re) (hs1 : s ≠ 1) :
+    conreyDegreeOneEta g g0 g1 L s = 0 ↔
+      conreyDegreeOneV1 g g0 g1 L s = 0 := by
+  rw [conreyDegreeOneEta_eq_conreyH_mul_conreyDegreeOneV1_of_re_pos_of_ne_one
+    hs0 hs1, mul_eq_zero]
+  exact or_iff_right (conreyH_ne_zero_of_re_pos_of_ne_one hs0 hs1)
+
 theorem analyticAt_conreyDegreeOneV1_of_re_pos_of_ne_one
     {g g0 g1 L : ℝ} {s : ℂ}
     (hs0 : 0 < s.re) (hs1 : s ≠ 1) :
