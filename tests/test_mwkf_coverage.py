@@ -5809,6 +5809,49 @@ def test_cross_orientation_still_needs_an_atkin_lehner_sign_saving(
     ) in output
 
 
+def test_atkin_lehner_symmetric_difference_recovers_reciprocal_lcm(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The signed cross-cusp factor is exactly the missing outer kernel."""
+    audit = coverage_audit.atkin_lehner_symmetric_difference_kernel_audit(
+        left_outer_entry=30,
+        right_outer_entry=42,
+        ambient_squarefree_level=2310,
+    )
+    assert audit.common_outer_part == 6
+    assert audit.symmetric_difference_part == 35
+    assert audit.outer_entry_lcm == 210
+    assert audit.complementary_cross_cusp_level == 66
+    assert audit.symmetric_difference_is_exact_atkin_lehner_divisor
+    assert audit.cross_cusp_modulus_scale == "c*sqrt(Q)"
+    assert audit.cross_cusp_modulus_square_ratio_to_same_cusp == F(1, 35)
+    assert audit.cross_cusp_divisibility_ratio_to_same_cusp == F(1, 35)
+    assert audit.farey_spacing_ratio_to_same_cusp == F(1)
+    assert audit.cross_cusp_denominator_coefficient_square == F(1, 35)
+    assert audit.prior_cross_orientation_coefficient_square == F(1, 1260)
+    assert audit.combined_coefficient_square == F(1, 44100)
+    assert audit.reciprocal_lcm_coefficient_square == F(1, 44100)
+    assert audit.combined_coefficient_is_reciprocal_lcm
+    assert audit.bounded_steinberg_euler_factors_are_separate
+    assert audit.nontrivial_signed_trace_has_no_diagonal
+    assert audit.cross_cusp_farey_large_sieve_has_same_constant
+    assert audit.atkin_lehner_oldvector_permutation_preserves_l2
+    assert not audit.physical_outer_kernel_reinserted
+    assert not audit.outer_lisk_covered
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: atkin_lehner_symmetric_difference="
+        "left=30 right=42 level=2310 common=6 Q=35 lcm=210 M=66 "
+        "modulus=c*sqrt(Q) c2_ratio=1/35 divisibility_ratio=1/35 "
+        "spacing_ratio=1 cross_square=1/35 prior_square=1/1260 "
+        "combined_square=1/44100 lcm_square=1/44100 exact=True "
+        "lcm_kernel=True no_diagonal=True farey=True oldvectors=True "
+        "physical=False olisk=False"
+    ) in output
+
+
 def test_drappeau_quintilinear_bound_does_not_compose_with_outer_pevp(
     capsys: pytest.CaptureFixture[str],
 ) -> None:

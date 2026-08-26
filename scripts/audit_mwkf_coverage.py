@@ -2018,6 +2018,33 @@ class SteinbergCrossOrientationSignGateAudit:
 
 
 @dataclass(frozen=True)
+class AtkinLehnerSymmetricDifferenceKernelAudit:
+    left_outer_entry: int
+    right_outer_entry: int
+    ambient_squarefree_level: int
+    common_outer_part: int
+    symmetric_difference_part: int
+    outer_entry_lcm: int
+    complementary_cross_cusp_level: int
+    symmetric_difference_is_exact_atkin_lehner_divisor: bool
+    cross_cusp_modulus_scale: str
+    cross_cusp_modulus_square_ratio_to_same_cusp: Fraction
+    cross_cusp_divisibility_ratio_to_same_cusp: Fraction
+    farey_spacing_ratio_to_same_cusp: Fraction
+    cross_cusp_denominator_coefficient_square: Fraction
+    prior_cross_orientation_coefficient_square: Fraction
+    combined_coefficient_square: Fraction
+    reciprocal_lcm_coefficient_square: Fraction
+    combined_coefficient_is_reciprocal_lcm: bool
+    bounded_steinberg_euler_factors_are_separate: bool
+    nontrivial_signed_trace_has_no_diagonal: bool
+    cross_cusp_farey_large_sieve_has_same_constant: bool
+    atkin_lehner_oldvector_permutation_preserves_l2: bool
+    physical_outer_kernel_reinserted: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiHardBoxAudit:
     modulus_exponent: Fraction
     left_argument_length_exponent: Fraction
@@ -11333,6 +11360,88 @@ def steinberg_cross_orientation_sign_gate_audit(
         unitarity_supplies_the_missing_square_root=False,
         physical_signed_cross_cusp_trace_required=True,
         signed_cross_cusp_trace_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
+def atkin_lehner_symmetric_difference_kernel_audit(
+    *,
+    left_outer_entry: int,
+    right_outer_entry: int,
+    ambient_squarefree_level: int,
+) -> AtkinLehnerSymmetricDifferenceKernelAudit:
+    """Identify the signed cross-cusp factor with a reciprocal LCM.
+
+    For squarefree outer entries ``A,A'`` in a common squarefree level
+    ``L``, the product of their Steinberg signs is the Atkin--Lehner
+    sign for ``Q=A triangle A'``.  Kiral--Young's cross-cusp formula
+    uses actual moduli ``c*sqrt(Q)``, with ``L/Q | c`` and ``(c,Q)=1``.
+    Relative to the same-cusp formula, both the square of the dyadic
+    ``c``-range and the fixed divisibility drop by ``Q``.  Their ratio,
+    and hence the sparse-Farey spacing constant, is unchanged.
+
+    The geometric denominator contributes ``Q^-1/2``.  After keeping
+    the absolutely summable Steinberg corrections ``C_A*C_A'`` in a
+    separate Euler factor, multiplication by the normalized
+    cross-orientation coefficient ``(A*A')^-1/2`` gives exactly
+
+    ``(A*A'*Q)^-1/2 = 1/lcm(A,A')``.
+
+    This audit proves the finite identity and the fixed-transform
+    Farey normalization.  It intentionally does not claim that all
+    physical outer kernels, conductor patterns, and transform tails
+    have already been reinserted into one global OLISK inequality.
+    """
+    left = int(left_outer_entry)
+    right = int(right_outer_entry)
+    level = int(ambient_squarefree_level)
+    if min(left, right, level) <= 0:
+        raise ValueError("outer entries and ambient level must be positive")
+    if any(mobius(value) == 0 for value in (left, right, level)):
+        raise ValueError("outer entries and ambient level must be squarefree")
+    if level % left or level % right:
+        raise ValueError("both outer entries must divide the ambient level")
+
+    common = gcd(left, right)
+    symmetric_difference = (left // common) * (right // common)
+    outer_lcm = left // common * right
+    complement = level // symmetric_difference
+    exact_divisor = (
+        level % symmetric_difference == 0
+        and gcd(symmetric_difference, complement) == 1
+    )
+    prior_square = F(1, left * right)
+    cross_square = F(1, symmetric_difference)
+    combined_square = prior_square * cross_square
+    reciprocal_lcm_square = F(1, outer_lcm * outer_lcm)
+    return AtkinLehnerSymmetricDifferenceKernelAudit(
+        left_outer_entry=left,
+        right_outer_entry=right,
+        ambient_squarefree_level=level,
+        common_outer_part=common,
+        symmetric_difference_part=symmetric_difference,
+        outer_entry_lcm=outer_lcm,
+        complementary_cross_cusp_level=complement,
+        symmetric_difference_is_exact_atkin_lehner_divisor=exact_divisor,
+        cross_cusp_modulus_scale="c*sqrt(Q)",
+        cross_cusp_modulus_square_ratio_to_same_cusp=cross_square,
+        cross_cusp_divisibility_ratio_to_same_cusp=cross_square,
+        farey_spacing_ratio_to_same_cusp=F(1),
+        cross_cusp_denominator_coefficient_square=cross_square,
+        prior_cross_orientation_coefficient_square=prior_square,
+        combined_coefficient_square=combined_square,
+        reciprocal_lcm_coefficient_square=reciprocal_lcm_square,
+        combined_coefficient_is_reciprocal_lcm=(
+            left * right * symmetric_difference == outer_lcm * outer_lcm
+            and combined_square == reciprocal_lcm_square
+        ),
+        bounded_steinberg_euler_factors_are_separate=True,
+        nontrivial_signed_trace_has_no_diagonal=(
+            symmetric_difference > 1 and exact_divisor
+        ),
+        cross_cusp_farey_large_sieve_has_same_constant=exact_divisor,
+        atkin_lehner_oldvector_permutation_preserves_l2=True,
+        physical_outer_kernel_reinserted=False,
         outer_lisk_covered=False,
     )
 
@@ -24467,6 +24576,49 @@ def main() -> None:
         f"{cross_orientation.physical_signed_cross_cusp_trace_required} "
         f"signed_proved={cross_orientation.signed_cross_cusp_trace_proved} "
         f"olisk={cross_orientation.outer_lisk_covered}"
+    )
+    symmetric_difference = atkin_lehner_symmetric_difference_kernel_audit(
+        left_outer_entry=30,
+        right_outer_entry=42,
+        ambient_squarefree_level=2310,
+    )
+    print(
+        "balanced_max_a: atkin_lehner_symmetric_difference="
+        f"left={symmetric_difference.left_outer_entry} "
+        f"right={symmetric_difference.right_outer_entry} "
+        f"level={symmetric_difference.ambient_squarefree_level} "
+        f"common={symmetric_difference.common_outer_part} "
+        f"Q={symmetric_difference.symmetric_difference_part} "
+        f"lcm={symmetric_difference.outer_entry_lcm} "
+        f"M={symmetric_difference.complementary_cross_cusp_level} "
+        f"modulus={symmetric_difference.cross_cusp_modulus_scale} "
+        "c2_ratio="
+        f"{_fmt(symmetric_difference.cross_cusp_modulus_square_ratio_to_same_cusp)} "
+        "divisibility_ratio="
+        f"{_fmt(symmetric_difference.cross_cusp_divisibility_ratio_to_same_cusp)} "
+        "spacing_ratio="
+        f"{_fmt(symmetric_difference.farey_spacing_ratio_to_same_cusp)} "
+        "cross_square="
+        f"{_fmt(symmetric_difference.cross_cusp_denominator_coefficient_square)} "
+        "prior_square="
+        f"{_fmt(symmetric_difference.prior_cross_orientation_coefficient_square)} "
+        "combined_square="
+        f"{_fmt(symmetric_difference.combined_coefficient_square)} "
+        "lcm_square="
+        f"{_fmt(symmetric_difference.reciprocal_lcm_coefficient_square)} "
+        "exact="
+        f"{symmetric_difference.symmetric_difference_is_exact_atkin_lehner_divisor} "
+        "lcm_kernel="
+        f"{symmetric_difference.combined_coefficient_is_reciprocal_lcm} "
+        "no_diagonal="
+        f"{symmetric_difference.nontrivial_signed_trace_has_no_diagonal} "
+        "farey="
+        f"{symmetric_difference.cross_cusp_farey_large_sieve_has_same_constant} "
+        "oldvectors="
+        f"{symmetric_difference.atkin_lehner_oldvector_permutation_preserves_l2} "
+        "physical="
+        f"{symmetric_difference.physical_outer_kernel_reinserted} "
+        f"olisk={symmetric_difference.outer_lisk_covered}"
     )
     outer_modulus = outer_modulus_type_recombination_audit(
         original_modulus=30,

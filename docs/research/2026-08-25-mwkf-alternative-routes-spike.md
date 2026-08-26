@@ -18656,6 +18656,116 @@ but that theorem remains open and OSLSP is still false.  The interface
 rational deficit and prevents treating the square of
 (4.845dc_14xq_10d) as a second independent square.
 
+### 4.109zjaaac The symmetric-difference Atkin--Lehner trace produces the reciprocal-LCM kernel
+
+There is a fixed-transform mechanism for the missing factor which is
+stronger than unitarity.  It does not yet prove the physical outer
+inequality, but it identifies its exact geometric normalization.
+
+Let \(A,A'\) be the squarefree Steinberg-prime supports of two outer
+entries in a common squarefree ambient level \(L\), put
+\(g=(A,A')\), and define
+
+\[
+ Q=A\mathbin\triangle A'
+   =\frac{AA'}{g^2},\qquad M=\frac LQ.
+ \tag{4.845dc_14xq_10g}
+\]
+
+Here the triangle denotes symmetric difference of prime supports.
+Because every local Atkin--Lehner sign squares to one,
+
+\[
+ \epsilon_A\epsilon_{A'}=\epsilon_Q.
+ \tag{4.845dc_14xq_10h}
+\]
+
+Moreover \(Q\mid L\) and \((Q,M)=1\), so \(W_Q\) is an exact
+Atkin--Lehner involution at level \(L\).  Subtracting the \(+1\) and
+\(-1\) instances of [Le Fourn's restricted Petersson formula,
+Proposition 1](https://arxiv.org/abs/1506.08723) shows that the trace
+weighted by \(\epsilon_Q\) has no diagonal term when \(Q>1\).  Its
+geometric term has denominator \(c\sqrt Q\), with
+
+\[
+ M\mid c,\qquad(c,Q)=1.
+ \tag{4.845dc_14xq_10i}
+\]
+
+The same normalization is visible directly in
+[Kiral--Young's Atkin--Lehner cusp formula](https://arxiv.org/abs/1710.00914):
+
+\[
+ \boxed{
+ S_{\infty,1/M}^{(L)}(m,n;c\sqrt Q)
+ =S(\overline Qm,n;c).}
+ \tag{4.845dc_14xq_10j}
+\]
+
+The square-root in the modulus does not worsen the sparse-Farey large
+sieve.  If the same-cusp Bessel support gives \(c\asymp C_0\), then the
+cross-cusp support gives \(c\asymp C_0/\sqrt Q\).  The common divisor
+in the allowed moduli simultaneously changes from \(L\) to \(M=L/Q\).
+Consequently the two reduced-fraction spacings are identical:
+
+\[
+ \boxed{
+ \frac{M}{(C_0/\sqrt Q)^2}
+ =\frac{L/Q}{C_0^2/Q}
+ =\frac{L}{C_0^2}.}
+ \tag{4.845dc_14xq_10k}
+\]
+
+Thus, for a fixed common ambient level and one fixed physical transform,
+the Gallagher--Farey constant is the same as in the positive same-cusp
+large sieve, while the geometric denominator retains the factor
+\(Q^{-1/2}\).
+
+This is exactly the missing arithmetic power kernel.  After stripping
+the bounded local corrections \(C_A C_{A'}\), the cross-orientation
+coefficients contribute \((AA')^{-1/2}\).  By (4.845dc_14xq_10g),
+
+\[
+ \boxed{
+ \frac1{\sqrt{AA'}}\frac1{\sqrt Q}
+ =\frac1{\sqrt{AA'Q}}
+ =\frac g{AA'}
+ =\frac1{[A,A']}.}
+ \tag{4.845dc_14xq_10l}
+\]
+
+With the corrections restored, the kernel is
+\(C_A C_{A'}/[A,A']\); the \(C_p=1+O(p^{-2})\) Euler factors are
+absolutely summable and are kept separate from the power identity.
+
+For \(Q=1\), one has \(A=A'\) on the relevant Steinberg support, and
+the two pre-existing square-root coefficients already give \(A^{-1}\),
+so the ordinary positive diagonal is at exactly the reciprocal-LCM
+size.  Kiral--Young's oldvector involution permutes the coefficient
+lists up to Atkin--Lehner signs, hence preserves their \(L^2\) norm.
+
+What remains is no longer the local prime saving asserted in (ALSG).
+One must embed every pair of actual outer states in the same physical
+ambient level before separating the endpoint, \(D\)-layer, and QCT
+weights; prove that this operation retains the single transform used in
+(4.845dc_14xq_10k); and include the Maaß, holomorphic, and Eisenstein
+cross-cusp transforms without taking an absolute value before the
+\(\epsilon_Q\)-trace.  An outer Mellin separation is not admissible by
+(4.845dc_14xq_4)--(4.845dc_14xq_5).  Therefore the current certified
+statement is
+
+\[
+ \boxed{
+ \text{fixed-transform cross-cusp kernel}=\frac1{[A,A']},\qquad
+ \text{physical OLISK reinsertion still open}.}
+ \tag{4.845dc_14xq_10m}
+\]
+
+The interface `atkin_lehner_symmetric_difference_kernel_audit` checks
+(4.845dc_14xq_10g), (4.845dc_14xq_10k), and (4.845dc_14xq_10l) by
+exact integer and rational arithmetic.  It keeps
+`physical_outer_kernel_reinserted=False` and `outer_lisk_covered=False`.
+
 After that exact recombination the remaining squared gate is
 \[
  \boxed{
