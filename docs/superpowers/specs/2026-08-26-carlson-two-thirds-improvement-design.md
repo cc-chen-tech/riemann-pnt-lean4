@@ -176,10 +176,13 @@ Dirichlet's polynomials and the Riemann zeta-function II*, Acta Arith. 43
 \]
 
 这是第 2 类 Carlson 型改进；它不是引用 Ingham 的 `3/4` 定理替换整个证明。
-当前尚未闭合的解析门不是 DI 的 `4/7` 临界均方本身，而是：(i) 把 Conrey
-带平滑高度权、略左移临界线的原文归一化精确转成上述两个尺度；(ii) 对这个
-`T`-依赖 detector 完成 L2 三线与仓库 Littlewood contour 的统一常数追踪。
-在这两项写成逐行可核查引理前，`467/576` 仍是待装配结论，不是已完成定理。
+纸面归一化现已闭合：Conrey 原文 Theorem 2 的印刷条件允许 `R=0`，取
+`Q=1,P(u)=u` 后 `sigma_0=1/2,V=zeta`；原文 (50) 对
+`Delta=U^(1-eta)`、`U<=w<=2U` 一致。逐局部窗做 pole-free Hilbert-L2 三线，
+再以 `O(U/Delta)` 个窗覆盖 dyadic 壳，窗口数与局部均方中的 `Delta` 正好相消。
+完整推导见 `2026-08-27-carlson-two-scale-paper-proof.md`。因此纸面结论已是已发表
+Conrey/DI 输入之上的无条件 Carlson 型定理；尚未闭合的是把这些解析步骤全部
+翻译进 Lean，而不是数学上的未证明谱估计。
 
 ### 4.3 保留 Möbius 符号的 dispersion / Kuznetsov
 
@@ -190,9 +193,10 @@ Region-D 命题仍未证明，不能用它替代这里的两尺度分解。
 
 ### 4.4 局部高度窗口
 
-Gaussian 权可直接覆盖一个 `T` 量级的高度段；若改用宽度 `Delta=U/log U`
-的局部窗，则需要 `O(log U)` 个窗口覆盖 `[U,2U]`。两种做法都只产生对数
-损失，故 `delta_L=delta_U=0`；局部化本身不是幂次改进。
+使用 Conrey (50) 的规定宽度 `Delta=U^(1-eta)`，每个局部窗的临界边界均方
+为 `O(Delta)`，覆盖 `[U,2U]` 需要 `O(U/Delta)` 个窗；两因子相消，最终仍是
+长度 `U`。因此局部化本身不给额外幂次节省，也不造成 `U^eta` 损失。这里不能
+用单个宽度 `U` 的 Gaussian 再只引用 `[0,U]` 全局均方，否则尾部没有被控制。
 
 ### 4.5 高阶矩 / large values
 
@@ -212,10 +216,10 @@ Hölder 会同时改变阈值与测度因子，不能直接记作固定 `delta_U
 |---|---|---|---|---|---|
 | 仅重调尖截断长度 | 原 `E_L,E_U` | 无 | `delta_L=delta_U=0` | 两条正端点在 `x=1/3` 相交 | 完全覆盖，且已证 no-go |
 | 单段 Selberg 权 | `mu(n)P(log(Y/n)/log Y)` | 临界均方 | 单独使用时为 `0` | 固定小 `n` 的权不等于 `1`，远右边界只剩对数衰减 | Conrey `theta<4/7` 覆盖临界均方，但不足以改幂次 |
-| 两尺度 plateau/taper | 本节 `a=57/100,b=571/1000` | 改变整个 L2 插值几何 | 候选 `delta=5/64`，不是固定 `delta_L,delta_U` | 临界正对角保留 `T`；核心以下卷积系数严格为零 | 两个单段均方分别已发表；两尺度归一化和 Carlson 装配待逐行闭合 |
+| 两尺度 plateau/taper | 本节 `a=57/100,b=571/1000`；逐窗 Conrey (50) + pole-free Hilbert 三线 | 改变整个 L2 插值几何 | `delta=5/64` | 临界正对角保留 `Delta`；核心以下卷积系数严格为零 | Conrey/DI 已发表；纸面归一化与 Carlson 装配已闭合，Lean 解析翻译待完成 |
 | 高阶矩/large values | 需给 detector 的分布式 `2k` 阶命题 | 未定 | 当前 `0` | 仅 Hölder 不产生所需固定节省 | 未找到直接覆盖 |
 | 尖截断 Möbius dispersion | 需直接控制当前 sharp 权的非对角 | 上端/临界均方 | 当前 `0` | 正对角不可消；必须从非对角取得节省 | DI/Conrey 不直接覆盖 sharp 权 |
-| 局部高度窗口 | Gaussian 或 `U/log U` 窗 | 只减 smoothing/horizontal 损失 | `0` | 覆盖窗数至少贡献常数/对数，不给幂次 | 标准技术覆盖 |
+| 局部高度窗口 | Conrey (50), `Delta=U^(1-eta)` | 无损传递局部均方 | `0` | `O(U/Delta)` 个窗与每窗 `Delta` 相消 | Conrey 原文一致局部式覆盖 |
 | forcing 特殊零族 | 需特殊族计数定理 | 终端 density | 当前 `0` | 必须验证该族确实小于全部零点 | 未找到已发表覆盖 |
 
 这里两尺度路线不能代入第 3 节的固定端点节省公式：它让“外层长度控制临界
@@ -258,7 +262,8 @@ Hölder 会同时改变阈值与测度因子，不能直接记作固定 `delta_U
 - 分离 `q_F` 与 `q_D` 的 single-layer contradiction；
 - 从一个实际 density certificate 到 `14/17` 排除链的条件装配。
 
-无条件改进零密度 theorem 只有在以下解析门全部构造后才允许出现：
+Lean 中的无条件改进零密度 theorem 只有在以下已闭合纸面步骤全部形式化后才
+允许出现：
 
 1. 两尺度 Selberg mollifier 的 Conrey/DI 归一化 certificate；
 2. Gaussian/windowed L2 三线传递；

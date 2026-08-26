@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.SingleLayerForcingSeparatedDensity
 import PrimeNumberTheorem.CarlsonMeanSquareContourBridge
+import HardyTheorem.TwoScaleSelbergMollifier
 
 #print axioms PrimeNumberTheorem.carlson_endpoint_max_ge_optimum
 #print axioms PrimeNumberTheorem.carlson_endpoint_max_eq_optimum_iff
@@ -13,3 +14,9 @@ import PrimeNumberTheorem.CarlsonMeanSquareContourBridge
 #print axioms PrimeNumberTheorem.singleLayerForcing_DI_contradiction
 #print axioms PrimeNumberTheorem.no_nontrivial_zero_re_gt_14_over_17_of_forcing_and_DI
 #print axioms PrimeNumberTheorem.CarlsonZeroDensity.exists_regularizedCarlson_fixedRight_count_le_mollifiedMeanSquare_add_explicit_boundary_of_leftWindow_constantRight
+#print axioms HardyTheorem.twoScaleSelbergWeight_eq_one
+#print axioms HardyTheorem.twoScaleSelbergCoeff_eq_moebius
+#print axioms HardyTheorem.twoScaleMollifiedZetaCoeff_eq_zero
+#print axioms HardyTheorem.twoScaleSelbergWeight_mem_Icc
+#print axioms HardyTheorem.abs_twoScaleSelbergCoeff_le_one
+#print axioms HardyTheorem.twoScaleSelbergCoeff_one
