@@ -2503,6 +2503,22 @@ def test_doyle_2026_length_enters_but_moment_and_coefficient_do_not() -> None:
     assert not ledger.whole_line_family_covered
 
 
+def test_shi_2026_bessel_phase_transition_misses_the_degenerate_orbit() -> None:
+    ledger = coverage_audit.transition_shi_bessel_kuznetsov_audit(
+        first_fourier_index=0,
+        second_fourier_index=-1,
+    )
+
+    assert ledger.exact_orbit_first_fourier_index == 0
+    assert ledger.exact_orbit_second_fourier_index == -1
+    assert ledger.bessel_argument_is_zero
+    assert ledger.paper_requires_positive_dyadic_bessel_argument
+    assert not ledger.paper_linear_twist_identified_in_actual_orbit
+    assert not ledger.classical_nondegenerate_kuznetsov_adapter_verified
+    assert not ledger.subcritical_rapid_decay_applies
+    assert not ledger.whole_line_family_covered
+
+
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
     """The small divisor sector reaches, but must not cross, level 1/2."""
     adapter = getattr(
@@ -4595,5 +4611,8 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "### 4.70 Doyle's 2026 short k-free theorem crosses the length line",
         r"\frac12-\frac{315}{634}=\frac1{317}",
         "transition_doyle_kfree_moment_audit",
+        "### 4.71 The 2026 Bessel-Kuznetsov phase transition misses",
+        r"x_{\rm Bes}=0",
+        "transition_shi_bessel_kuznetsov_audit",
         ):
         assert marker in text

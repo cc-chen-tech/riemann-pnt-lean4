@@ -8906,6 +8906,68 @@ square-divisor-versus-balanced-convolution distinction.  It keeps
 `whole_line_family_covered=False`.  This closes another tempting 2026
 paper route without weakening the residual gate.
 
+### 4.71 The 2026 Bessel-Kuznetsov phase transition misses the exact degenerate orbit
+
+Yuhang Shi's recent
+[Theorem 1.1](https://arxiv.org/abs/2608.13232) studies the classical
+Bessel--Kuznetsov transform of
+(phi(x)=W(x)e(alpha x)), with (W) supported on a positive dyadic
+interval ([X,2X]).  It proves rapid spectral decay for
+(alpha\leq1/(2pi)) and a localized stationary main term above that
+threshold.  This is potentially relevant only after checking the actual
+Bessel argument of the determinant orbit.
+
+For the ordinary nondegenerate Kloosterman term (S(m_2,m_1;c)), that
+argument is proportional to
+
+\[
+ x_{\rm Bes}=\frac{4\pi\sqrt{|m_1m_2|}}{c}.
+\tag{4.633}
+\]
+
+But the exact substitution in (4.134) is
+
+\[
+ (m_2,m_1;c)=(0,-h;s),
+ \qquad
+ S(m_2,m_1;c)=S(0,-h;\delta;s).
+\tag{4.634}
+\]
+
+Therefore
+
+\[
+ \boxed{x_{\rm Bes}=0.}
+\tag{4.635}
+\]
+
+This is the degenerate Ramanujan/Eisenstein orbit, not a positive-dyadic
+Bessel transform.  Consequently there is no actual (alpha) to compare
+with (1/(2pi)), and the subcritical rapid-decay conclusion cannot be
+inserted into (4.132).
+
+After Cauchy and a second completion, some determinant formulas contain
+two nonzero formal Fourier indices.  That does not rescue this application:
+Sections 4.15--4.16 and 4.46 already record that no classical
+nondegenerate Kuznetsov transform from the entry-weighted QCT kernel has
+been derived, and the two Möbius weights remain on matrix entries rather
+than the standard Fourier indices.  Thus
+
+\[
+ \boxed{
+ \text{Shi 2026: a useful transform theorem, but the exact orbit has }
+ x_{\rm Bes}=0.}
+\tag{4.636}
+\]
+
+The adapter `transition_shi_bessel_kuznetsov_audit` records both Fourier
+indices, the zero argument, the missing linear-twist identification, and
+the missing nondegenerate adapter.  It keeps
+`subcritical_rapid_decay_applies=False` and
+`whole_line_family_covered=False`.  A different relative trace formula
+could still create a nondegenerate transform, but proving that formula is
+itself part of the unresolved coupled-kernel problem.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

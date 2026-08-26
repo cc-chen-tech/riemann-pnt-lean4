@@ -1225,6 +1225,19 @@ class TransitionDoyleKFreeMomentAudit:
 
 
 @dataclass(frozen=True)
+class TransitionShiBesselKuznetsovAudit:
+    exact_orbit_first_fourier_index: int
+    exact_orbit_second_fourier_index: int
+    bessel_argument_is_zero: bool
+    paper_requires_positive_dyadic_bessel_argument: bool
+    paper_linear_twist_identified_in_actual_orbit: bool
+    classical_nondegenerate_kuznetsov_adapter_verified: bool
+    subcritical_rapid_decay_applies: bool
+    whole_line_family_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonSubboxScales:
     v: Fraction
     j: Fraction
@@ -5915,6 +5928,48 @@ def transition_doyle_kfree_moment_audit(
     )
 
 
+def transition_shi_bessel_kuznetsov_audit(
+    *,
+    first_fourier_index: int,
+    second_fourier_index: int,
+) -> TransitionShiBesselKuznetsovAudit:
+    """Audit Shi 2026 against the exact determinant Kloosterman orbit.
+
+    The classical nondegenerate Kuznetsov Bessel argument is proportional
+    to ``sqrt(abs(m1*m2))/c``.  The exact orbit found in Section 4.16 is
+    ``S(0,-h;delta;s)``, hence that argument is zero.  Shi's phase-transition
+    theorem instead assumes a smooth weight on a positive dyadic Bessel-
+    argument interval and a separately identified linear twist.  It cannot
+    be applied to this degenerate Ramanujan/Eisenstein orbit.
+    """
+
+    m2 = int(first_fourier_index)
+    m1 = int(second_fourier_index)
+    if m1 == 0 and m2 == 0:
+        raise ValueError("at least one Fourier index must be nonzero")
+    argument_is_zero = m1 * m2 == 0
+    actual_linear_twist_identified = False
+    nondegenerate_adapter = False
+    applies = (
+        not argument_is_zero
+        and actual_linear_twist_identified
+        and nondegenerate_adapter
+    )
+    return TransitionShiBesselKuznetsovAudit(
+        exact_orbit_first_fourier_index=m2,
+        exact_orbit_second_fourier_index=m1,
+        bessel_argument_is_zero=argument_is_zero,
+        paper_requires_positive_dyadic_bessel_argument=True,
+        paper_linear_twist_identified_in_actual_orbit=(
+            actual_linear_twist_identified
+        ),
+        classical_nondegenerate_kuznetsov_adapter_verified=nondegenerate_adapter,
+        subcritical_rapid_decay_applies=applies,
+        whole_line_family_covered=False,
+        source="Yuhang Shi, arXiv:2608.13232v1, Theorem 1.1.",
+    )
+
+
 def h_poisson_subbox_scales(
     box: ExponentBox,
     *,
@@ -9460,6 +9515,18 @@ def main() -> None:
         f"length_margin={_fmt(doyle_kfree.length_margin_exponent)},"
         "l1_lower=True,variance_upper=False,square_divisors=True,"
         "balanced_two_mobius=False,applicable=False,covered=False"
+    )
+    shi_bessel = transition_shi_bessel_kuznetsov_audit(
+        first_fourier_index=0,
+        second_fourier_index=-1,
+    )
+    print(
+        "large_q_transition: shi_2026_bessel_kuznetsov="
+        f"m2={shi_bessel.exact_orbit_first_fourier_index},"
+        f"m1={shi_bessel.exact_orbit_second_fourier_index},"
+        "bessel_argument_zero=True,positive_dyadic_required=True,"
+        "actual_linear_twist=False,nondegenerate_adapter=False,"
+        "subcritical_decay=False,covered=False"
     )
     log_budget = centered_resonance_log_budget(
         hard,
