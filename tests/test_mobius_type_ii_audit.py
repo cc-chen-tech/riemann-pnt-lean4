@@ -19,9 +19,11 @@ from scripts.audit_mobius_type_ii import (
     FareyCentralCollisionLedger,
     InverseFractionSeparation,
     KloostermanFractionTripleLedger,
+    MobiusCharacterMeanSquareLedger,
     MQWBlockSavings,
     NearDeterminantBCLedger,
     NearDeterminantCoordinates,
+    NearDeterminantDualCoordinates,
     PartiallyFixedModulusLedger,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
@@ -108,6 +110,7 @@ from scripts.audit_mobius_type_ii import (
     linear_convolution_energy_on_multiples,
     linear_convolution_energy_on_multiples_majorant,
     migrate_nonprincipal_mobius_sign,
+    mobius_character_mean_square_ledger,
     mobius_geometric_value,
     mobius_two_cutoff_hyperbola_value,
     mobius_weighted_centered_double_unit_divisor_spectrum,
@@ -121,6 +124,7 @@ from scripts.audit_mobius_type_ii import (
     near_determinant_complete_delta_product_sum,
     near_determinant_complete_reciprocal_sum,
     near_determinant_coordinates,
+    near_determinant_dual_coordinates,
     near_determinant_reciprocal_parseval_sides,
     near_determinant_reciprocity_phase,
     near_determinant_reciprocity_phase_formula,
@@ -717,6 +721,75 @@ def test_partially_fixed_modulus_theorem_still_loses_near_window_density() -> No
         global_bound=F(83, 8),
         target=F(9),
         gap=F(11, 8),
+    )
+
+
+def test_delta_poisson_dual_modes_share_one_affine_lattice() -> None:
+    for divisor_product in range(2, 11):
+        for scalar_factor in range(1, 8):
+            if gcd(divisor_product, scalar_factor) != 1:
+                continue
+            for determinant in range(2, 12):
+                if gcd(determinant, divisor_product * scalar_factor) != 1:
+                    continue
+                for parameter in range(6):
+                    for dual_frequency in range(-3, 4):
+                        for dual_quotient in range(-2, 4):
+                            determinant_coordinates = near_determinant_coordinates(
+                                divisor_product,
+                                scalar_factor,
+                                determinant,
+                                parameter,
+                            )
+                            dual = near_determinant_dual_coordinates(
+                                divisor_product,
+                                scalar_factor,
+                                determinant,
+                                parameter,
+                                dual_frequency,
+                                dual_quotient,
+                            )
+                            assert dual == NearDeterminantDualCoordinates(
+                                modulus=determinant_coordinates.modulus,
+                                determinant_quotient=(
+                                    determinant_coordinates.quotient
+                                ),
+                                numerator=(
+                                    dual_quotient * determinant
+                                    - dual_frequency
+                                    * determinant_coordinates.modulus
+                                ),
+                                dual_quotient=dual_quotient,
+                            )
+                            assert (
+                                divisor_product * dual.determinant_quotient
+                                - scalar_factor * dual.modulus
+                                == determinant
+                            )
+                            assert (
+                                dual.numerator
+                                + dual_frequency * dual.modulus
+                                == dual.dual_quotient * determinant
+                            )
+
+
+def test_ordinary_character_large_sieve_leaves_quarter_power_gap() -> None:
+    assert mobius_character_mean_square_ledger(
+        progression_modulus=F(1, 2),
+        scalar_length=F(1, 2),
+        long_length=F(5, 2),
+        required_saving=F(1, 2),
+    ) == MobiusCharacterMeanSquareLedger(
+        raw_progression_bound=F(3),
+        bombieri_vinogradov_bound=F(3),
+        short_character_energy=F(1),
+        long_character_energy=F(9, 2),
+        ordinary_large_sieve_bound=F(11, 4),
+        required_bound=F(5, 2),
+        ordinary_saving=F(1, 4),
+        required_saving=F(1, 2),
+        gap=F(1, 4),
+        required_long_character_energy=F(4),
     )
 
 

@@ -524,6 +524,70 @@ def partially_fixed_modulus_ledger(
     )
 
 
+def mobius_character_mean_square_ledger(
+    *,
+    progression_modulus: Fraction,
+    scalar_length: Fraction,
+    long_length: Fraction,
+    required_saving: Fraction,
+) -> MobiusCharacterMeanSquareLedger:
+    """Screen the character route on the affine endpoint packet.
+
+    The progression density removes the count of moduli B before
+    cancellation, so Bombieri--Vinogradov supplies logarithmic but no
+    power saving.  After the principal and induced spectra have been
+    separated, the displayed character energies are the optimistic
+    primitive-character large-sieve exponents with dyadic 1/B
+    normalization.
+    """
+
+    values = (
+        progression_modulus,
+        scalar_length,
+        long_length,
+        required_saving,
+    )
+    if min(values) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+
+    raw_progression_bound = (
+        progression_modulus
+        + scalar_length
+        + max(Fraction(0), long_length - progression_modulus)
+    )
+    bombieri_vinogradov_bound = scalar_length + long_length
+    short_character_energy = (
+        -progression_modulus
+        + max(2 * progression_modulus, scalar_length)
+        + scalar_length
+    )
+    long_character_energy = (
+        -progression_modulus
+        + max(2 * progression_modulus, long_length)
+        + long_length
+    )
+    ordinary_large_sieve_bound = (
+        short_character_energy + long_character_energy
+    ) / 2
+    required_bound = raw_progression_bound - required_saving
+    ordinary_saving = raw_progression_bound - ordinary_large_sieve_bound
+    required_long_character_energy = (
+        2 * required_bound - short_character_energy
+    )
+    return MobiusCharacterMeanSquareLedger(
+        raw_progression_bound=raw_progression_bound,
+        bombieri_vinogradov_bound=bombieri_vinogradov_bound,
+        short_character_energy=short_character_energy,
+        long_character_energy=long_character_energy,
+        ordinary_large_sieve_bound=ordinary_large_sieve_bound,
+        required_bound=required_bound,
+        ordinary_saving=ordinary_saving,
+        required_saving=required_saving,
+        gap=ordinary_large_sieve_bound - required_bound,
+        required_long_character_energy=required_long_character_energy,
+    )
+
+
 def near_determinant_coordinates(
     divisor_product: int,
     scalar_factor: int,
@@ -556,6 +620,34 @@ def near_determinant_coordinates(
         base_quotient=base_quotient,
         modulus=base_modulus + divisor_product * parameter,
         quotient=base_quotient + scalar_factor * parameter,
+    )
+
+
+def near_determinant_dual_coordinates(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    parameter: int,
+    dual_frequency: int,
+    dual_quotient: int,
+) -> NearDeterminantDualCoordinates:
+    """Add the exact delta-Poisson lattice h+n*q=j*d."""
+
+    coordinates = near_determinant_coordinates(
+        divisor_product,
+        scalar_factor,
+        determinant,
+        parameter,
+    )
+    numerator = (
+        dual_quotient * determinant
+        - dual_frequency * coordinates.modulus
+    )
+    return NearDeterminantDualCoordinates(
+        modulus=coordinates.modulus,
+        determinant_quotient=coordinates.quotient,
+        numerator=numerator,
+        dual_quotient=dual_quotient,
     )
 
 
@@ -2411,6 +2503,22 @@ class NearDeterminantBCLedger:
 
 
 @dataclass(frozen=True)
+class MobiusCharacterMeanSquareLedger:
+    """Primitive-character screening after the affine delta completion."""
+
+    raw_progression_bound: Fraction
+    bombieri_vinogradov_bound: Fraction
+    short_character_energy: Fraction
+    long_character_energy: Fraction
+    ordinary_large_sieve_bound: Fraction
+    required_bound: Fraction
+    ordinary_saving: Fraction
+    required_saving: Fraction
+    gap: Fraction
+    required_long_character_energy: Fraction
+
+
+@dataclass(frozen=True)
 class PartiallyFixedModulusLedger:
     """Wright's fixed-denominator-factor theorem on the separated packet."""
 
@@ -2436,6 +2544,16 @@ class NearDeterminantCoordinates:
     base_quotient: int
     modulus: int
     quotient: int
+
+
+@dataclass(frozen=True)
+class NearDeterminantDualCoordinates:
+    """One point satisfying both B*k-g*q=d and h+n*q=j*d."""
+
+    modulus: int
+    determinant_quotient: int
+    numerator: int
+    dual_quotient: int
 
 
 @dataclass(frozen=True)
