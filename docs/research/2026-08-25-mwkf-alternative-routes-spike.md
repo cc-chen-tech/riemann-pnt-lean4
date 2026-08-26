@@ -15211,6 +15211,161 @@ residue terms, the continuous local gate, global ratio/gcd
 aggregation, and the whole Möbius gate false.
 
 
+### 4.109s The L2 ramification density closes the nonzero continuous square
+
+The \(L^1\) candidate in Section 4.109r is stronger than the spectral
+argument needs and uses the wrong natural measure for the product
+index.  The primal large sieve requires a coefficient-energy estimate.
+It can be proved before the pole subtraction (4.845bq), so no
+residue/dual decomposition is needed for the nonzero Poisson modes.
+
+For independent unrestricted integers \(h,\delta\), the exact
+valuation distribution of their product is
+
+\[
+ \Pr(v_p(h\delta)=k)
+ =(k+1)\left(1-\frac1p\right)^2p^{-k}.
+\]
+Using (4.845cb) and
+\[
+ \sum_{k\geq0}(k+1)^3x^k
+ =\frac{1+4x+x^2}{(1-x)^4},
+\]
+one obtains the uniform second-moment bound
+
+\[
+ \boxed{
+ \mathbb E_{p,h,\delta}|D_p(h\delta,1/2+it)|^2
+ \leq
+ \frac{2(4p^2-2p+1)}{p^3}
+ \asymp\frac8p.}
+\tag{4.845ce}
+\]
+
+At the standard Kuznetsov first index, (4.845ac) gives
+\((m,Q)=1\), so for \(p\mid Q\)
+\[
+ |D_p(m,1/2+it)|^2=p^{-2}.
+\]
+If a preliminary gcd cell has not yet imposed this coprimality, the
+same calculation with a third unrestricted integer gives the same
+power below.  Combining (4.845ce), (4.845cb), and
+\(|a+b|^2\leq2|a|^2+2|b|^2\) yields
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\mathbb E_{p,h,\delta}
+ \left|
+ D_p(m)\overline{O_p(h\delta)}
+ +O_p(m)\overline{D_p(h\delta)}
+ \right|^2\\
+ &\qquad\leq
+ \frac{2p}{(p-1)^2}
+ \left\{\frac1{p^2}
+ \frac{2(4p^2-2p+1)}{p^3}\right\}
+ \ll p^{-2}.
+ \end{aligned}}
+\tag{4.845cf}
+\]
+
+For \(p=5\), the product-index diagonal moment is \(182/125\);
+the unramified first-index square is \(1/25\); and the right side of
+(4.845cf) is exactly \(187/200\).  The pointwise physical bound
+(4.845bx) has square size \(p^{-1}\).  Thus (4.845cf) restores one
+factor \(p^{-1}\) in coefficient energy, or \(p^{-1/2}\) in the
+spectral norm.
+
+It remains to justify multiplication over all primes of the shorter
+Atkin--Lehner factor.  This is an elementary weighted CRT estimate,
+not an independence assumption.  Let \(A\) be squarefree and let
+\(\mathcal P_A(m,h\delta;t)\) be the product of the local physical
+cross factors at \(p\mid A\).  The four-variable QCT Fourier
+decomposition (4.845ah) gives separate smooth one-variable weights in
+\(h\) and \(\delta\), and (4.845aj) only adds Mellin twists.  Expanding
+the local ramification indicators and counting
+\(d\mid h\delta\) by the \(2^{\omega(d)}\) assignments of primes of
+\(d\) to \(h\) or \(\delta\) gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \frac1{HL}
+ \sum_{h,\delta}
+ |W_1(h/H)W_2(\delta/L)|
+ |\mathcal P_A(m,h\delta;t)|^2
+ \ll_{\varepsilon,W_1,W_2}
+ (AHL)^\varepsilon
+ \left(
+ A^{-2}+\frac1{AH}+\frac1{AL}+\frac1{HL}
+ \right).
+ \end{aligned}}
+\tag{4.845cg}
+\]
+
+To see the boundary terms explicitly, for every squarefree \(d\mid A\)
+use
+\[
+ \mathbf1_{d\mid h\delta}
+ \leq
+ \sum_{\substack{ab=d\\(a,b)=1}}
+ \mathbf1_{a\mid h}\mathbf1_{b\mid\delta}.
+\]
+For each assignment,
+\[
+ \frac1{HL}
+ \#\{h\asymp H,\delta\asymp L:a\mid h,\ b\mid\delta\}
+ \ll
+ \frac1{ab}+\frac1{aL}+\frac1{bH}+\frac1{HL}.
+\]
+The valuation powers in (4.845ce), all double-divisibility terms, and
+all choices of the product-Hecke common divisor contribute only
+\(\tau(A)^C=(AHL)^{o(1)}\).  This proves (4.845cg) with the actual
+smooth tensor weights.  On the residual square,
+\[
+ 1\leq\alpha,\beta\leq\frac32,\qquad
+ A=T^{\eta},\quad
+ \eta=\min(\alpha,\beta),\qquad H=L=T^{5/2},
+\]
+so every boundary term in (4.845cg) is bounded by
+\(A^{-2}T^{o(1)}\).
+
+At primes in the complementary level factor the two physical cusps
+are locally the same; their contribution is the Poisson-gcd
+majorant (4.845bo).  At primes of the shorter factor they are the
+cross pair just estimated.  Kiral--Young's squarefree cusp
+factorization tensors these local statements, while the finite
+product-Hecke common-divisor allocations cost \(T^{o(1)}\).
+Consequently the primal continuous exponent (4.845bc) improves to
+
+\[
+ \boxed{
+ E_{\rm cont}^{\ne0}(\alpha,\beta)
+ =\frac32+\frac{x(\alpha,\beta)}2
+  -\frac{\min(\alpha,\beta)}2
+ \leq\frac32<2.}
+\tag{4.845ch}
+\]
+
+At the center this is
+\[
+ \frac{17}{8}-\frac58=\frac32.
+\]
+Thus every nonzero-Poisson-mode continuous box in the residual square
+has the fixed margin \(1/2\); outside the square it was already covered
+by (4.845bc).  This argument bypasses the completed-residue trilinear
+gate of Section 4.109q rather than proving that stronger signed
+statement.
+
+The interface eisenstein_cross_cusp_l2_density_audit records the exact
+prime-five moments, the \(5/8\) center saving, the final exponent
+\(3/2\), QCT weight separation, the finite common-divisor allocations,
+and the weighted CRT boundary estimate.  It marks the physical
+cross-cusp **nonzero-mode** continuous residual square covered.  It
+keeps the Poisson-zero-mode/completed-residue pairing, global
+ratio/gcd and dyadic aggregation, and the whole Möbius gate false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

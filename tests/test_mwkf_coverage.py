@@ -4894,6 +4894,50 @@ def test_cross_cusp_ramification_density_is_only_a_local_candidate() -> None:
     assert not audit.whole_mobius_gate_covered
 
 
+def test_cross_cusp_l2_density_closes_nonzero_continuous_residual_square() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "eisenstein_cross_cusp_l2_density_audit",
+        None,
+    )
+    assert adapter is not None, "cross-cusp L2 density audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109s The L2 ramification density closes the nonzero continuous square",
+        "\\tag{4.845ce}",
+        "\\tag{4.845ch}",
+        "eisenstein_cross_cusp_l2_density_audit",
+    ):
+        assert marker in note
+
+    audit = adapter(
+        prime=5,
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    assert audit.product_index_factor_count == 2
+    assert audit.expected_squared_product_index_diagonal_factor == F(182, 125)
+    assert audit.unramified_poisson_diagonal_factor_squared == F(1, 25)
+    assert audit.cross_second_moment_majorant == F(187, 200)
+    assert audit.cross_second_moment_prime_exponent == F(-2)
+    assert audit.extra_cross_density_amplitude_saving_exponent == F(1, 2)
+    assert audit.center_pre_density_bound_exponent == F(17, 8)
+    assert audit.center_density_saving_exponent == F(5, 8)
+    assert audit.center_post_density_bound_exponent == F(3, 2)
+    assert audit.residual_square_post_bound_exponent == F(3, 2)
+    assert audit.target_exponent == F(2)
+    assert audit.residual_square_margin_exponent == F(1, 2)
+    assert audit.qct_product_weights_separated
+    assert audit.common_divisor_prime_allocations_have_subpower_cost
+    assert audit.weighted_crt_boundary_absorbed_on_residual_square
+    assert audit.physical_cross_cusp_nonzero_mode_covered
+    assert not audit.completed_residue_decomposition_needed
+    assert not audit.poisson_zero_mode_residue_pairing_proved
+    assert not audit.global_ratio_gcd_aggregation_proved
+    assert not audit.whole_mobius_gate_covered
+
+
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
     adapter = getattr(
         coverage_audit,

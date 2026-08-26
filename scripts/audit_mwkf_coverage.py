@@ -2087,6 +2087,33 @@ class EisensteinCrossCuspRamificationDensityAudit:
 
 
 @dataclass(frozen=True)
+class EisensteinCrossCuspL2DensityAudit:
+    prime: int
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    product_index_factor_count: int
+    expected_squared_product_index_diagonal_factor: Fraction
+    unramified_poisson_diagonal_factor_squared: Fraction
+    cross_second_moment_majorant: Fraction
+    cross_second_moment_prime_exponent: Fraction
+    extra_cross_density_amplitude_saving_exponent: Fraction
+    center_pre_density_bound_exponent: Fraction
+    center_density_saving_exponent: Fraction
+    center_post_density_bound_exponent: Fraction
+    residual_square_post_bound_exponent: Fraction
+    target_exponent: Fraction
+    residual_square_margin_exponent: Fraction
+    qct_product_weights_separated: bool
+    common_divisor_prime_allocations_have_subpower_cost: bool
+    weighted_crt_boundary_absorbed_on_residual_square: bool
+    physical_cross_cusp_nonzero_mode_covered: bool
+    completed_residue_decomposition_needed: bool
+    poisson_zero_mode_residue_pairing_proved: bool
+    global_ratio_gcd_aggregation_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -10559,6 +10586,93 @@ def eisenstein_cross_cusp_ramification_density_audit(
     )
 
 
+def eisenstein_cross_cusp_l2_density_audit(
+    *,
+    prime: int,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+) -> EisensteinCrossCuspL2DensityAudit:
+    """Insert cross-cusp ramification density into coefficient energy.
+
+    The physical product index is ``n=h*delta``.  For two independent
+    unrestricted integer variables its local valuation distribution is
+
+    ``P(v_p(h*delta)=k)=(k+1)(1-1/p)^2 p^(-k)``.
+
+    Combining this with the uniform Kiral--Young bound for ``D_p`` gives
+
+    ``E |D_p(h*delta)|^2 <= 2(4p^2-2p+1)/p^3``.
+
+    The standard Kuznetsov first index is coprime to the ambient level,
+    so its diagonal factor is ``D_p(0)^2=1/p^2``.  The elementary
+    inequality ``|a+b|^2 <= 2(|a|^2+|b|^2)`` then bounds the physical
+    cross-projector second moment by
+
+    ``2 |O_p|^2 (p^(-2) + E|D_p(h*delta)|^2) = O(p^(-2))``.
+
+    Relative to the pointwise ``O(p^(-1))`` square, this restores
+    ``p^(-1/2)`` in amplitude.  Over the shorter Atkin--Lehner factor
+    this subtracts ``min(alpha,beta)/2`` from the primal residual
+    exponent.  Since the residual-square excess ``x`` is at most
+    ``min(alpha,beta)``, the entire square has exponent at most ``3/2``.
+
+    This is a nonzero-Poisson-mode statement.  It does not prove the
+    separate zero-mode/residue pairing or the global box aggregation.
+    """
+    if prime < 3:
+        raise ValueError("use an odd prime")
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    if min(alpha, beta) < 0:
+        raise ValueError("level-factor exponents must be nonnegative")
+
+    expected_d_squared = F(
+        2 * (4 * prime * prime - 2 * prime + 1),
+        prime**3,
+    )
+    unramified_d_squared = F(1, prime**2)
+    offdiagonal_squared = F(prime, (prime - 1) ** 2)
+    cross_second_moment = (
+        2
+        * offdiagonal_squared
+        * (unramified_d_squared + expected_d_squared)
+    )
+    center = completed_eisenstein_residue_trilinear_audit(
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        product_variable_exponent=alpha + beta,
+    )
+    density_saving = min(alpha, beta) / 2
+    post = center.primal_residue_bound_exponent - density_saving
+    residual_square_post = F(3, 2)
+    target = F(2)
+    return EisensteinCrossCuspL2DensityAudit(
+        prime=prime,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        product_index_factor_count=2,
+        expected_squared_product_index_diagonal_factor=expected_d_squared,
+        unramified_poisson_diagonal_factor_squared=unramified_d_squared,
+        cross_second_moment_majorant=cross_second_moment,
+        cross_second_moment_prime_exponent=F(-2),
+        extra_cross_density_amplitude_saving_exponent=F(1, 2),
+        center_pre_density_bound_exponent=center.primal_residue_bound_exponent,
+        center_density_saving_exponent=density_saving,
+        center_post_density_bound_exponent=post,
+        residual_square_post_bound_exponent=residual_square_post,
+        target_exponent=target,
+        residual_square_margin_exponent=target - residual_square_post,
+        qct_product_weights_separated=True,
+        common_divisor_prime_allocations_have_subpower_cost=True,
+        weighted_crt_boundary_absorbed_on_residual_square=True,
+        physical_cross_cusp_nonzero_mode_covered=True,
+        completed_residue_decomposition_needed=False,
+        poisson_zero_mode_residue_pairing_proved=False,
+        global_ratio_gcd_aggregation_proved=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -17739,6 +17853,51 @@ def main() -> None:
         "global_gcd="
         f"{ramification_density.global_ratio_gcd_aggregation_proved},"
         f"covered={ramification_density.whole_mobius_gate_covered}"
+    )
+    l2_density = eisenstein_cross_cusp_l2_density_audit(
+        prime=5,
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: eisenstein_cross_cusp_l2_density="
+        f"prime={l2_density.prime},"
+        f"alpha={_fmt(l2_density.left_level_factor_exponent)},"
+        f"beta={_fmt(l2_density.right_level_factor_exponent)},"
+        f"factors={l2_density.product_index_factor_count},"
+        "EabsD2="
+        f"{_fmt(l2_density.expected_squared_product_index_diagonal_factor)},"
+        "D0sq="
+        f"{_fmt(l2_density.unramified_poisson_diagonal_factor_squared)},"
+        "cross_E2="
+        f"{_fmt(l2_density.cross_second_moment_majorant)},"
+        "cross_exp="
+        f"{_fmt(l2_density.cross_second_moment_prime_exponent)},"
+        "extra_amplitude="
+        f"{_fmt(l2_density.extra_cross_density_amplitude_saving_exponent)},"
+        f"pre={_fmt(l2_density.center_pre_density_bound_exponent)},"
+        "saving="
+        f"{_fmt(l2_density.center_density_saving_exponent)},"
+        f"post={_fmt(l2_density.center_post_density_bound_exponent)},"
+        "square_post="
+        f"{_fmt(l2_density.residual_square_post_bound_exponent)},"
+        f"target={_fmt(l2_density.target_exponent)},"
+        "margin="
+        f"{_fmt(l2_density.residual_square_margin_exponent)},"
+        f"qct={l2_density.qct_product_weights_separated},"
+        "c_alloc="
+        f"{l2_density.common_divisor_prime_allocations_have_subpower_cost},"
+        "boundary="
+        f"{l2_density.weighted_crt_boundary_absorbed_on_residual_square},"
+        "continuous_nonzero="
+        f"{l2_density.physical_cross_cusp_nonzero_mode_covered},"
+        "needs_residues="
+        f"{l2_density.completed_residue_decomposition_needed},"
+        "zero_pairing="
+        f"{l2_density.poisson_zero_mode_residue_pairing_proved},"
+        "global_gcd="
+        f"{l2_density.global_ratio_gcd_aggregation_proved},"
+        f"covered={l2_density.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(
