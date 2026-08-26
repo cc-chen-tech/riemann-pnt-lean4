@@ -1109,6 +1109,7 @@ class TransitionBBLRHCompletionSubcellAudit:
     h_or_modulus_exponent: Fraction
     nonzero_l_base_cutoff_exponent: Fraction
     summed_frequency_gcd_exponent: Fraction
+    chosen_orientation_hypothesis_verified: bool
     nonzero_frequency_family_empty: bool
     global_nonzero_frequency_exponent: Fraction
     target_exponent: Fraction
@@ -1147,6 +1148,25 @@ class TransitionBBLRZeroMainTermAudit:
     main_term_is_independent_of_shift_orientation: bool
     shift_orientations_cancel_internally: bool
     registered_zero_master_identification_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class TransitionBBLRSymmetricHCompletionAudit:
+    left_prefix_exponent: Fraction
+    right_prefix_exponent: Fraction
+    smaller_prefix_exponent: Fraction
+    side_product_exponent: Fraction
+    shift_exponent: Fraction
+    cutoff_hyperplane_excess: Fraction
+    smaller_prefix_shortfall: Fraction
+    chosen_orientation: str
+    nonzero_frequency_family_empty: bool
+    symmetric_nonzero_frequency_exponent: Fraction
+    target_exponent: Fraction
+    power_margin: Fraction
+    boundary_coverage_conditions_hold: bool
+    nonzero_frequency_cell_covered: bool
     source: str
 
 
@@ -5508,7 +5528,7 @@ def transition_bblr_h_completion_subcell_audit(
 ) -> TransitionBBLRHCompletionSubcellAudit:
     """Exact nonzero-frequency coverage test after completing h first.
 
-    In BBLR equation (14), put
+    In the BBLR orientation ``B*N1<=A*M1``, put
 
     ``X=a*m1/d`` and ``Y=b*n1/d``.
 
@@ -5560,10 +5580,11 @@ def transition_bblr_h_completion_subcell_audit(
     h_or_modulus = max(h, y)
     l_cutoff = a + m1 - n2
     frequency_gcd = max(F(0), l_cutoff)
+    orientation_verified = y <= x
     family_empty = l_cutoff < 0
     bound = m2 + ratio + h_or_modulus + frequency_gcd
     target = left_product
-    covered = family_empty or bound <= target
+    covered = orientation_verified and (family_empty or bound <= target)
     return TransitionBBLRHCompletionSubcellAudit(
         outer_a_exponent=a,
         outer_b_exponent=b,
@@ -5580,6 +5601,7 @@ def transition_bblr_h_completion_subcell_audit(
         h_or_modulus_exponent=h_or_modulus,
         nonzero_l_base_cutoff_exponent=l_cutoff,
         summed_frequency_gcd_exponent=frequency_gcd,
+        chosen_orientation_hypothesis_verified=orientation_verified,
         nonzero_frequency_family_empty=family_empty,
         global_nonzero_frequency_exponent=bound,
         target_exponent=target,
@@ -5645,6 +5667,80 @@ def transition_bblr_zero_main_term_audit(
         source=(
             "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
             "Proposition 3.1 l=0 main term"
+        ),
+    )
+
+
+def transition_bblr_symmetric_h_completion_audit(
+    *,
+    outer_a_exponent: Fraction,
+    outer_b_exponent: Fraction,
+    m1_exponent: Fraction,
+    m2_exponent: Fraction,
+    n1_exponent: Fraction,
+    n2_exponent: Fraction,
+    shift_exponent: Fraction,
+) -> TransitionBBLRSymmetricHCompletionAudit:
+    """Take the better of the two symmetric BBLR h-completions.
+
+    Put ``x=a+m1``, ``y=b+n1`` and let both side products equal ``P``.
+    Proposition 3.1 swaps the two sides before assuming ``y<=x``.  In
+    that orientation the h-first bound simplifies to
+
+    ``P + max(0,alpha-y) + max(0,x+y-P)``.
+
+    Taking the better orientation therefore replaces y by ``min(x,y)``.
+    Below ``x+y=P`` the nonzero l-family is empty; on the boundary the
+    exact coverage condition is ``min(x,y)>=alpha``; above it this
+    completion retains the positive excess ``x+y-P``.
+    """
+
+    a = F(outer_a_exponent)
+    b = F(outer_b_exponent)
+    m1 = F(m1_exponent)
+    m2 = F(m2_exponent)
+    n1 = F(n1_exponent)
+    n2 = F(n2_exponent)
+    shift = F(shift_exponent)
+    if min(a, b, m1, m2, n1, n2, shift) < 0:
+        raise ValueError("BBLR subcell exponents must be nonnegative")
+    if m1 > m2 or n1 > n2:
+        raise ValueError("require the BBLR orderings M1<=M2 and N1<=N2")
+    product = a + m1 + m2
+    if product != b + n1 + n2:
+        raise ValueError("the two BBLR side products must balance")
+
+    x = a + m1
+    y = b + n1
+    smaller = min(x, y)
+    excess = x + y - product
+    shortfall = max(F(0), shift - smaller)
+    frequency_excess = max(F(0), excess)
+    bound = product + shortfall + frequency_excess
+    family_empty = excess < 0
+    covered = family_empty or bound <= product
+    return TransitionBBLRSymmetricHCompletionAudit(
+        left_prefix_exponent=x,
+        right_prefix_exponent=y,
+        smaller_prefix_exponent=smaller,
+        side_product_exponent=product,
+        shift_exponent=shift,
+        cutoff_hyperplane_excess=excess,
+        smaller_prefix_shortfall=shortfall,
+        chosen_orientation=(
+            "left_to_right" if x >= y else "right_to_left"
+        ),
+        nonzero_frequency_family_empty=family_empty,
+        symmetric_nonzero_frequency_exponent=bound,
+        target_exponent=product,
+        power_margin=product - bound,
+        boundary_coverage_conditions_hold=(
+            excess == 0 and smaller >= shift
+        ),
+        nonzero_frequency_cell_covered=covered,
+        source=(
+            "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
+            "Proposition 3.1 equation (14), better symmetric orientation"
         ),
     )
 

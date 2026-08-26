@@ -8858,8 +8858,10 @@ BBLR exponents as
 with (a+\mu_1+\mu_2=b+\nu_1+\nu_2=P).  Reindex
 (X=am_1/d), (Y=bn_1/d); the factorization multiplicities are divisor
 bounded, so all Möbius atoms may remain in the two arbitrary outer
-coefficients.  Completing (h), summing the (X)-residues and then applying
-(4.621e) to the complete (l)-average gives the nonzero-frequency exponent
+coefficients.  In the BBLR orientation (BN_1\le AM_1), equivalently
+(b+\nu_1\le a+\mu_1) at exponent level, completing (h), summing the
+(X)-residues and then applying (4.621e) to the complete (l)-average gives
+the nonzero-frequency exponent
 
 \[
  \boxed{
@@ -8878,25 +8880,54 @@ cutoff.  Otherwise the subcell is covered whenever
 \tag{4.621i}
 \]
 
-This coverage region has an exact elementary description.  Set
-(x=a+\mu_1) and (y=b+\nu_1).  Balance gives (\nu_2=P-y), so the
-cutoff exponent is
+To recover the full symmetric proposition one must also allow the two
+sides to be exchanged.  Set (x=a+\mu_1) and (y=b+\nu_1).  Balance gives
+(\nu_2=P-y), so the cutoff exponent is
 
 \[
- a+\mu_1-\nu_2=x+y-P.
+a+\mu_1-\nu_2=x+y-P.
 \]
 
-Consequently:
+The better of the two orientations simplifies exactly to
+
+\[
+ \boxed{
+ E_{h\text{-comp}}^{\rm sym}
+ =P+(\alpha-\min(x,y))_+ +(x+y-P)_+.}
+\tag{4.621s}
+\]
+
+Consequently the complete coverage classification is:
 
 1. if (x+y<P), the nonzero-frequency family is empty;
-2. if (x+y=P), (4.621i) holds exactly when (x\ge y\ge\alpha);
+2. if (x+y=P), one of the two orientations reaches the target exactly
+   when (\min(x,y)\ge\alpha);
 3. if (x+y>P), the completion bound is strictly above (P).
 
 Thus the remaining nonzero-frequency Type cells are not diffuse: they are
-the supercritical half-polytope (x+y>P), together with the reversed or
-too-small-(y) portion of the boundary (x+y=P).  No assertion is made that
-failure of this particular completion bound is a lower bound for the
-original signed sum.
+the supercritical half-polytope (x+y>P), together with the
+too-small-prefix portion (\min(x,y)<\alpha) of the boundary.  The former
+"reversed ordering" residual was an artefact of fixing one orientation.
+No assertion is made that failure of this particular completion bound is
+a lower bound for the original signed sum.
+
+Formula (4.621s) also locates the remaining power exactly.  On the
+supercritical subregion where (\min(x,y)\ge\alpha), the whole deficit is
+
+\[
+ E_{h\text{-comp}}^{\rm sym}-P=x+y-P,
+\]
+
+which is precisely the exponent of the surviving nonzero (l)-frequency
+range.  In the symmetric signed hard cell (x=y=3/2), (P=2), this is one
+full power: (L=T) and the bound is (T^3) against target (T^2).  A generic
+square-root treatment of the (l)-family would recover only (T^{1/2}) and
+would recreate the old half-power deficit.  Closing this region therefore
+requires the complete (l)-range saving from its joint interaction with the
+two outer coefficient families, or an exact recombination that removes the
+range before absolute values.  On the remaining boundary portion
+(x+y=P), the deficit is instead the short shift/modulus mismatch
+(\alpha-\min(x,y)).
 
 For (4.618), (4.621h) is exactly (2).  For example, the signed cell
 (a=b=1), (mu_i=\nu_i=1/2), (alpha=1) instead gives (3), so the
@@ -8912,6 +8943,8 @@ closed without any Möbius estimate.
 
 The adapters `transition_bblr_hard_h_completion_audit` and
 `transition_bblr_h_completion_subcell_audit` record (4.621a)--(4.621i).
+The adapter `transition_bblr_symmetric_h_completion_audit` records the
+left/right minimum (4.621s).
 The helpers `inverse_multiplier_unit_fibre_max` and
 `frequency_gcd_sum_identity` check the exact fibre and frequency-average
 identities on finite moduli.

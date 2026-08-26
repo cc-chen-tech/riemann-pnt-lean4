@@ -2284,6 +2284,7 @@ def test_bblr_h_completion_gives_an_exact_type_subcell_coverage_test() -> None:
     assert unsigned.h_or_modulus_exponent == F(1)
     assert unsigned.nonzero_l_base_cutoff_exponent == F(0)
     assert unsigned.summed_frequency_gcd_exponent == F(0)
+    assert unsigned.chosen_orientation_hypothesis_verified
     assert not unsigned.nonzero_frequency_family_empty
     assert unsigned.global_nonzero_frequency_exponent == F(2)
     assert unsigned.target_exponent == F(2)
@@ -2308,6 +2309,7 @@ def test_bblr_h_completion_gives_an_exact_type_subcell_coverage_test() -> None:
     assert signed.h_or_modulus_exponent == F(3, 2)
     assert signed.nonzero_l_base_cutoff_exponent == F(1)
     assert signed.summed_frequency_gcd_exponent == F(1)
+    assert signed.chosen_orientation_hypothesis_verified
     assert signed.global_nonzero_frequency_exponent == F(3)
     assert signed.target_exponent == F(2)
     assert signed.power_margin == F(-1)
@@ -2325,7 +2327,8 @@ def test_bblr_h_completion_gives_an_exact_type_subcell_coverage_test() -> None:
     assert empty.nonzero_l_base_cutoff_exponent == F(-1, 4)
     assert empty.summed_frequency_gcd_exponent == F(0)
     assert empty.nonzero_frequency_family_empty
-    assert empty.nonzero_frequency_cell_covered
+    assert not empty.chosen_orientation_hypothesis_verified
+    assert not empty.nonzero_frequency_cell_covered
 
 
 def test_bblr_zero_main_term_has_exactly_one_shift_length_gap() -> None:
@@ -2359,6 +2362,47 @@ def test_bblr_zero_main_term_has_exactly_one_shift_length_gap() -> None:
     assert positive_gcd.fixed_gcd_exponent == F(7, 3)
     assert positive_gcd.dyadic_gcd_layer_exponent == F(8, 3)
     assert positive_gcd.global_raw_main_term_exponent == F(3)
+
+
+def test_bblr_h_completion_uses_the_better_left_right_orientation() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_symmetric_h_completion_audit",
+        None,
+    )
+    assert adapter is not None, "symmetric BBLR h-completion audit is missing"
+
+    reversed_boundary = adapter(
+        outer_a_exponent=F(0),
+        outer_b_exponent=F(1, 2),
+        m1_exponent=F(1, 2),
+        m2_exponent=F(1),
+        n1_exponent=F(1, 2),
+        n2_exponent=F(1, 2),
+        shift_exponent=F(1, 2),
+    )
+    assert reversed_boundary.left_prefix_exponent == F(1, 2)
+    assert reversed_boundary.right_prefix_exponent == F(1)
+    assert reversed_boundary.smaller_prefix_exponent == F(1, 2)
+    assert reversed_boundary.cutoff_hyperplane_excess == F(0)
+    assert reversed_boundary.chosen_orientation == "right_to_left"
+    assert reversed_boundary.symmetric_nonzero_frequency_exponent == F(3, 2)
+    assert reversed_boundary.target_exponent == F(3, 2)
+    assert reversed_boundary.nonzero_frequency_cell_covered
+
+    supercritical = adapter(
+        outer_a_exponent=F(1),
+        outer_b_exponent=F(1),
+        m1_exponent=F(1, 2),
+        m2_exponent=F(1, 2),
+        n1_exponent=F(1, 2),
+        n2_exponent=F(1, 2),
+        shift_exponent=F(1),
+    )
+    assert supercritical.cutoff_hyperplane_excess == F(1)
+    assert supercritical.symmetric_nonzero_frequency_exponent == F(3)
+    assert supercritical.target_exponent == F(2)
+    assert not supercritical.nonzero_frequency_cell_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
