@@ -2540,6 +2540,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
     coverage_audit.main()
     report = capsys.readouterr().out
     assert (
+        "mwkf_final: status=large-Bessel PEVP gate open "
+        "theta=3 main=4/3 residual_cells=1 remainder_o_T=False"
+    ) in report
+    assert (
         "large_q_transition: poisson_exchange_second_order="
         "shift_conjugate=True,modulus_changes=True,"
         "reciprocity_correction=True,full_conjugate=True,"
@@ -4536,7 +4540,7 @@ def test_ambient_newform_normalization_indices_are_exact_at_p_and_p_squared() ->
     assert index(primitive_level=6, ambient_level=150) == 30
 
 
-def test_primitive_conductor_rearrangement_is_exact_but_polylog_large_sieve_is_open() -> None:
+def test_primitive_conductor_rearrangement_exposes_the_still_open_pevp_gate() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
         "### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate",
@@ -4567,10 +4571,277 @@ def test_primitive_conductor_rearrangement_is_exact_but_polylog_large_sieve_is_o
     assert audit.vinogradov_korobov_decay_log_exponent == F(3, 5)
     assert audit.vinogradov_korobov_dominates_subset_overhead
     assert not audit.published_large_sieve_has_explicit_polylog_constant
+    assert not audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
+    assert audit.primitive_family_is_positive_full_level_subfamily
+    assert not audit.weighted_primitive_large_sieve_proved
     assert not audit.pevp_proved
 
 
-def test_physical_exact_valuation_projector_closes_only_at_power_exponent_level() -> None:
+def test_normalized_level_difference_has_a_positive_square_kernel_not_a_pure_layer() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109za The normalized level difference squares to a positive two-layer kernel",
+        r"\tag{4.845dc_1}",
+        r"\tag{4.845dc_2}",
+        r"\tag{4.845dc_3}",
+        "normalized_level_difference_pbk_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.normalized_level_difference_pbk_audit(prime=5)
+    assert audit.prime == 5
+    assert audit.level_p_index == 6
+    assert audit.level_p_squared_index == 30
+    assert audit.ambient_oldspace_eigenvalue == F(2, 15)
+    assert audit.exact_layer_eigenvalue == F(-1, 30)
+    assert audit.squared_ambient_oldspace_weight == F(4, 225)
+    assert audit.squared_exact_layer_weight == F(1, 900)
+    assert audit.squared_kernel_identity_mass == F(2, 15)
+    assert audit.modulus_valuation_one_kloosterman_coefficient == F(1, 10)
+    assert audit.modulus_valuation_at_least_two_kloosterman_coefficient == F(2, 15)
+    assert audit.primitive_character_valuation_one_ftb_ratio == F(15, 16)
+    assert audit.primitive_character_higher_valuation_ftb_ratio == F(5, 4)
+    assert audit.principal_character_valuation_one_ftb_ratio == F(3, 16)
+    assert audit.local_geometric_conductor_exponent == 1
+    assert audit.exact_layer_geometric_conductor_exponent == 1
+    assert audit.normalized_difference_is_not_pure_exact_layer
+    assert audit.squared_kernel_is_positive_orthogonal_layer_sum
+    assert audit.local_ftb_euler_factor_is_p_over_p_minus_one
+    assert audit.global_ftb_product_is_polylogarithmic
+    assert not audit.hpy_named_spectral_assumption_applies
+    assert not audit.epsilon_free_positive_kernel_large_sieve_proved
+    assert not audit.pevp_proved
+
+    dyadic = coverage_audit.normalized_level_difference_pbk_audit(prime=2)
+    assert dyadic.modulus_valuation_one_kloosterman_coefficient == 0
+    assert dyadic.local_geometric_conductor_exponent == 2
+    assert dyadic.exact_layer_geometric_conductor_exponent == 1
+
+
+def test_common_level_primitive_farey_family_has_epsilon_free_sparse_spacing() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zb Primitive character orthogonality removes the ramified-modulus count",
+        r"\tag{4.845dc_4}",
+        r"\tag{4.845dc_5}",
+        "primitive_sparse_farey_large_sieve_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.primitive_sparse_farey_large_sieve_audit(
+        common_level=30,
+        dyadic_modulus_bound=300,
+        mellin_interval_length=7,
+        sequence_length=1000,
+    )
+    assert audit.minimum_spacing == F(1, 12000)
+    assert audit.inverse_spacing_bound == 12000
+    assert audit.hybrid_large_sieve_bound == 85000
+    assert audit.crt_fraction_is_reduced
+    assert audit.distinct_fraction_spacing_proved
+    assert audit.primitive_gauss_orthogonality_is_exact
+    assert audit.ramified_modulus_count_removed
+    assert audit.fixed_common_level_gain_is_epsilon_free
+    assert not audit.noncoprime_index_cells_covered
+    assert not audit.positive_kernel_harmonic_large_sieve_proved
+    assert not audit.pevp_proved
+
+
+def test_noncoprime_prime_power_kloosterman_cells_have_an_exact_finite_recursion() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zc Noncoprime Kloosterman cells reduce by exact valuation recursion",
+        r"\tag{4.845dc_6}",
+        r"\tag{4.845dc_7}",
+        "prime_power_kloosterman_valuation_reduction",
+    ):
+        assert marker in note
+
+    reduce = coverage_audit.prime_power_kloosterman_valuation_reduction
+    assert reduce(prime=5, modulus_exponent=1, left_valuation=2, right_valuation=2) == {
+        "kind": "trivial_phase",
+        "integer_multiplier": 4,
+        "reduced_modulus_exponent": 0,
+        "vanishes": False,
+    }
+    assert reduce(prime=5, modulus_exponent=2, left_valuation=2, right_valuation=2) == {
+        "kind": "trivial_phase",
+        "integer_multiplier": 20,
+        "reduced_modulus_exponent": 0,
+        "vanishes": False,
+    }
+    assert reduce(prime=5, modulus_exponent=4, left_valuation=2, right_valuation=2) == {
+        "kind": "unit_unit_reduction",
+        "integer_multiplier": 25,
+        "reduced_modulus_exponent": 2,
+        "vanishes": False,
+    }
+    assert reduce(prime=5, modulus_exponent=2, left_valuation=1, right_valuation=3) == {
+        "kind": "unequal_ramanujan_boundary",
+        "integer_multiplier": -5,
+        "reduced_modulus_exponent": 1,
+        "vanishes": False,
+    }
+    assert reduce(prime=5, modulus_exponent=3, left_valuation=1, right_valuation=3)[
+        "vanishes"
+    ]
+
+    audit = coverage_audit.physical_noncoprime_valuation_audit(prime=5)
+    assert audit.ramanujan_inverse_square_natural_mean == F(13, 16)
+    assert audit.common_positive_valuation_collision_mass == F(1, 24)
+    assert audit.same_valuation_tail_reduces_to_primitive_farey_family
+    assert audit.unequal_valuation_tail_vanishes_after_boundary_modulus
+    assert audit.local_main_density_euler_correction_is_absolutely_summable
+    assert not audit.smooth_short_interval_boundary_aggregated
+    assert not audit.positive_kernel_harmonic_large_sieve_proved
+    assert not audit.pevp_proved
+
+
+def test_valuation_boundary_divisor_convolution_has_a_uniform_euler_mean() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zd The valuation boundary is a bounded divisor-convolution mean",
+        r"\tag{4.845dc_8}",
+        r"\tag{4.845dc_9}",
+        "valuation_boundary_euler_majorant_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.valuation_boundary_euler_majorant_audit(
+        ramified_primes=(2, 3, 5),
+    )
+    assert audit.local_collision_coefficients == (F(2), F(3, 4), F(5, 16))
+    assert audit.main_euler_product == F(2277, 512)
+    assert audit.smooth_interval_mean_bound == F(2277, 256)
+    assert audit.divisor_convolution_identity_exact
+    assert audit.boundary_term_absorbed_by_one_over_d
+    assert audit.euler_product_uniformly_bounded
+    assert audit.smooth_short_interval_boundary_aggregated
+    assert not audit.positive_kernel_harmonic_large_sieve_proved
+    assert not audit.pevp_proved
+
+
+def test_ambient_normalization_rejects_the_positive_kernel_as_a_pevp_closure() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109ze Ambient normalization reverses the raw positive-kernel saving",
+        r"\tag{4.845dc_10}",
+        r"\tag{4.845dc_11}",
+        "ambient_normalized_positive_kernel_cauchy_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.ambient_normalized_positive_kernel_cauchy_audit(prime=5)
+    assert audit.ambient_level_index == 30
+    assert audit.relative_ambient_oldspace_eigenvalue == 4
+    assert audit.relative_exact_layer_eigenvalue == -1
+    assert audit.ambient_normalized_squared_mass == 4
+    assert audit.required_pevp_squared_mass == F(1, 5)
+    assert audit.squared_mass_deficit_ratio == 20
+    assert audit.common_ambient_measure_inserted_exactly
+    assert audit.raw_plancherel_mass_is_not_the_pevp_normalization
+    assert audit.index_rescaling_does_not_repair_diagonal_mass
+    assert audit.cross_index_oldvector_cancellation_still_required
+    assert not audit.positive_square_kernel_closes_pevp
+    assert not audit.pevp_proved
+
+
+def test_full_level_harmonic_large_sieve_rejects_the_large_bessel_range() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zf Sparse Farey spacing leaves a large-Bessel range open",
+        r"\tag{4.845dc_12}",
+        r"\tag{4.845dc_13}",
+        r"\tag{4.845dc_13a}",
+        r"\tag{4.845dc_14}",
+        r"\tag{LBLS}_{Q,C}",
+        "full_level_harmonic_large_sieve_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.full_level_harmonic_large_sieve_audit(
+        level=30,
+        dyadic_modulus_bound=300,
+        mellin_interval_length=7,
+        sequence_length=1000,
+    )
+    assert audit.minimum_farey_spacing == F(1, 12000)
+    assert audit.hybrid_dyadic_inner_bound == 85000
+    assert audit.kloosterman_indices_may_be_noncoprime_to_level
+    assert audit.full_level_spectral_measure_is_positive
+    assert audit.primitive_family_is_positive_subfamily
+    assert audit.small_bessel_tail_has_polylog_mean_divisor_bound
+    assert audit.archimedean_partition_has_polylog_total_variation
+    assert audit.hpy_first_mellin_requires_bessel_scale_at_most_spectral_square
+    assert not audit.power_sized_large_bessel_range_covered
+    assert audit.large_bessel_range_requires_new_estimate
+    assert not audit.maass_and_eisenstein_sectors_covered
+    assert not audit.holomorphic_sector_covered
+    assert not audit.uniform_polylog_harmonic_large_sieve_proved
+
+
+def test_tail_shell_ledger_remains_conditional_on_pevp() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zg Tail-shell ledger is conditional on PEVP",
+        r"\tag{4.845dc_15}",
+        r"\tag{4.845dc_16}",
+        r"\tag{4.845dc_17}",
+        "mwkf_tail_shell_aggregation_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.mwkf_tail_shell_aggregation_audit(
+        tail_log_start=F(100),
+        seminorm_decay_order=F(4),
+        local_seminorm_log_loss=F(20),
+        target_log_saving=F(20),
+    )
+    assert audit.dyadic_and_harmonic_q_log_loss == F(7)
+    assert audit.net_tail_log_saving == F(373)
+    assert audit.net_tail_log_saving > audit.target_log_saving
+    assert audit.exact_afe_has_no_truncation_error
+    assert audit.afe_product_tail_included
+    assert audit.time_nonstationary_tail_included
+    assert audit.poisson_frequency_tail_included
+    assert audit.qct_fourier_mellin_tail_included
+    assert not audit.pevp_is_polynomial_in_fixed_kernel_seminorms
+    assert not audit.power_far_shells_are_dominated
+    assert not audit.polylog_near_shells_are_summable
+    assert not audit.transform_tail_aggregated
+    assert not audit.afe_tail_aggregated
+    assert not audit.total_tail_is_little_o_T
+
+
+def test_final_theta_three_certificate_refuses_the_unproved_remainder() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zh The main term is exact but the full remainder remains open",
+        r"\tag{4.845dc_18}",
+        r"\tag{4.845dc_19}",
+        "unconditional_long_mollifier_asymptotic_audit",
+        "large-Bessel PEVP gate open",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
+    assert audit.mollifier_length_exponent == 3
+    assert audit.main_term_constant == F(4, 3)
+    assert audit.exact_completed_afe_proved
+    assert audit.poisson_zero_mode_normalization_proved
+    assert audit.lcm_main_term_asymptotic_proved
+    assert not audit.pevp_proved
+    assert not audit.compact_nonzero_poisson_core_is_little_o_T
+    assert not audit.transform_tail_is_little_o_T
+    assert not audit.afe_tail_is_little_o_T
+    assert audit.archimedean_correction_is_beyond_all_powers
+    assert not audit.full_remainder_is_little_o_T
+    assert not audit.unconditional_asymptotic_proved
+    assert audit.residual_cell_count == 1
+    assert audit.proof_status == "large-Bessel PEVP gate open"
+
+
+def test_physical_exact_valuation_projector_stops_at_the_polylog_pls_gate() -> None:
     projector = coverage_audit.physical_exact_valuation_projector_audit(
         ramanujan_theta=F(7, 64),
     )
@@ -4597,8 +4868,8 @@ def test_physical_exact_valuation_projector_closes_only_at_power_exponent_level(
 def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     text = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109w The lifted nonzero Poisson core has a conditional seven-log aggregation",
-        "### 4.109x The current valuation tensor leaves a non-polylogarithmic residual",
+        "### 4.109w The lifted nonzero Poisson core has a seven-log aggregation",
+        "### 4.109x The valuation tensor isolates the PEVP square function",
         r"\tag{4.845cv}",
         r"\tag{4.845cw}",
         r"\tag{4.845cx}",

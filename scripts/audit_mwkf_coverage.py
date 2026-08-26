@@ -1931,8 +1931,160 @@ class PrimitiveConductorLevelDifferenceAudit:
     length_conductor_euler_sum_is_polylogarithmic: bool
     vinogradov_korobov_dominates_subset_overhead: bool
     published_large_sieve_has_explicit_polylog_constant: bool
+    custom_full_level_harmonic_large_sieve_has_polylog_constant: bool
+    primitive_family_is_positive_full_level_subfamily: bool
+    weighted_primitive_large_sieve_proved: bool
     pevp_proved: bool
     whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class NormalizedLevelDifferencePBKAudit:
+    prime: int
+    level_p_index: int
+    level_p_squared_index: int
+    ambient_oldspace_eigenvalue: Fraction
+    exact_layer_eigenvalue: Fraction
+    squared_ambient_oldspace_weight: Fraction
+    squared_exact_layer_weight: Fraction
+    squared_kernel_identity_mass: Fraction
+    modulus_valuation_one_kloosterman_coefficient: Fraction
+    modulus_valuation_at_least_two_kloosterman_coefficient: Fraction
+    primitive_character_valuation_one_ftb_ratio: Fraction
+    primitive_character_higher_valuation_ftb_ratio: Fraction
+    principal_character_valuation_one_ftb_ratio: Fraction
+    local_geometric_conductor_exponent: int
+    exact_layer_geometric_conductor_exponent: int
+    normalized_difference_is_not_pure_exact_layer: bool
+    squared_kernel_is_positive_orthogonal_layer_sum: bool
+    local_ftb_euler_factor_is_p_over_p_minus_one: bool
+    global_ftb_product_is_polylogarithmic: bool
+    hpy_named_spectral_assumption_applies: bool
+    epsilon_free_positive_kernel_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class PrimitiveSparseFareyLargeSieveAudit:
+    common_level: int
+    dyadic_modulus_bound: int
+    mellin_interval_length: int
+    sequence_length: int
+    minimum_spacing: Fraction
+    inverse_spacing_bound: int
+    hybrid_large_sieve_bound: int
+    crt_fraction_is_reduced: bool
+    distinct_fraction_spacing_proved: bool
+    primitive_gauss_orthogonality_is_exact: bool
+    ramified_modulus_count_removed: bool
+    fixed_common_level_gain_is_epsilon_free: bool
+    noncoprime_index_cells_covered: bool
+    positive_kernel_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class PhysicalNoncoprimeValuationAudit:
+    prime: int
+    ramanujan_inverse_square_natural_mean: Fraction
+    common_positive_valuation_collision_mass: Fraction
+    same_valuation_tail_reduces_to_primitive_farey_family: bool
+    unequal_valuation_tail_vanishes_after_boundary_modulus: bool
+    local_main_density_euler_correction_is_absolutely_summable: bool
+    smooth_short_interval_boundary_aggregated: bool
+    positive_kernel_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class ValuationBoundaryEulerMajorantAudit:
+    ramified_primes: tuple[int, ...]
+    local_collision_coefficients: tuple[Fraction, ...]
+    main_euler_product: Fraction
+    smooth_interval_mean_bound: Fraction
+    divisor_convolution_identity_exact: bool
+    boundary_term_absorbed_by_one_over_d: bool
+    euler_product_uniformly_bounded: bool
+    smooth_short_interval_boundary_aggregated: bool
+    positive_kernel_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class AmbientNormalizedPositiveKernelCauchyAudit:
+    prime: int
+    ambient_level_index: int
+    relative_ambient_oldspace_eigenvalue: Fraction
+    relative_exact_layer_eigenvalue: Fraction
+    ambient_normalized_squared_mass: Fraction
+    required_pevp_squared_mass: Fraction
+    squared_mass_deficit_ratio: Fraction
+    common_ambient_measure_inserted_exactly: bool
+    raw_plancherel_mass_is_not_the_pevp_normalization: bool
+    index_rescaling_does_not_repair_diagonal_mass: bool
+    cross_index_oldvector_cancellation_still_required: bool
+    positive_square_kernel_closes_pevp: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class FullLevelHarmonicLargeSieveAudit:
+    level: int
+    dyadic_modulus_bound: int
+    mellin_interval_length: int
+    sequence_length: int
+    minimum_farey_spacing: Fraction
+    hybrid_dyadic_inner_bound: int
+    kloosterman_indices_may_be_noncoprime_to_level: bool
+    full_level_spectral_measure_is_positive: bool
+    primitive_family_is_positive_subfamily: bool
+    small_bessel_tail_has_polylog_mean_divisor_bound: bool
+    archimedean_partition_has_polylog_total_variation: bool
+    hpy_first_mellin_requires_bessel_scale_at_most_spectral_square: bool
+    power_sized_large_bessel_range_covered: bool
+    large_bessel_range_requires_new_estimate: bool
+    maass_and_eisenstein_sectors_covered: bool
+    holomorphic_sector_covered: bool
+    uniform_polylog_harmonic_large_sieve_proved: bool
+
+
+@dataclass(frozen=True)
+class MWKFTailShellAggregationAudit:
+    tail_log_start: Fraction
+    seminorm_decay_order: Fraction
+    local_seminorm_log_loss: Fraction
+    target_log_saving: Fraction
+    dyadic_and_harmonic_q_log_loss: Fraction
+    net_tail_log_saving: Fraction
+    exact_afe_has_no_truncation_error: bool
+    afe_product_tail_included: bool
+    time_nonstationary_tail_included: bool
+    poisson_frequency_tail_included: bool
+    qct_fourier_mellin_tail_included: bool
+    pevp_is_polynomial_in_fixed_kernel_seminorms: bool
+    power_far_shells_are_dominated: bool
+    polylog_near_shells_are_summable: bool
+    transform_tail_aggregated: bool
+    afe_tail_aggregated: bool
+    total_tail_is_little_o_T: bool
+
+
+@dataclass(frozen=True)
+class UnconditionalLongMollifierAsymptoticAudit:
+    mollifier_length_exponent: Fraction
+    main_term_constant: Fraction
+    exact_completed_afe_proved: bool
+    poisson_zero_mode_normalization_proved: bool
+    lcm_main_term_asymptotic_proved: bool
+    pevp_proved: bool
+    compact_nonzero_poisson_core_is_little_o_T: bool
+    transform_tail_is_little_o_T: bool
+    afe_tail_is_little_o_T: bool
+    archimedean_correction_is_beyond_all_powers: bool
+    full_remainder_is_little_o_T: bool
+    unconditional_asymptotic_proved: bool
+    residual_cell_count: int
+    proof_status: str
 
 
 @dataclass(frozen=True)
@@ -10404,10 +10556,11 @@ def physical_exact_valuation_projector_audit(
     The Hecke recurrence leaves powers ``p^(theta*k)`` only after at
     least ``k`` extra valuation densities.  Therefore ``theta<1/2`` is
     exactly what makes all deeper cells summable at the power-exponent
-    level.  The present positive tensor bound leaves square residual
-    ``5^omega(A)`` after the D-partition, which is subpower but not
-    uniformly polylogarithmic.  Hence this audit does not mark the
-    physical projector proved at the logarithmic endpoint.
+    level.  Primitive-conductor regrouping replaces the former
+    ``5^omega(A)`` tensor bound by the two conductor Euler sums in
+    Section 4.109z.  The attempted custom full-level harmonic large
+    sieve does not cover the power-sized large-Bessel range, so the
+    polylogarithmic tensor claim and PEVP remain open.
     """
     theta = F(ramanujan_theta)
     if theta < 0 or theta >= F(1, 2):
@@ -10505,6 +10658,17 @@ def lifted_outer_qct_aggregation_audit(
     projector = physical_exact_valuation_projector_audit()
     polylog_projector = projector.prime_local_bounds_tensor_with_polylog_cost
     core_little_o = polylog_projector and net > 0
+    tails = mwkf_tail_shell_aggregation_audit(
+        tail_log_start=F(100),
+        seminorm_decay_order=F(4),
+        local_seminorm_log_loss=F(20),
+        target_log_saving=F(20),
+    )
+    whole_gate = (
+        core_little_o
+        and tails.transform_tail_aggregated
+        and tails.afe_tail_aggregated
+    )
     return LiftedOuterQCTAggregationAudit(
         left_entry_exponent=rho,
         right_entry_exponent=sigma,
@@ -10527,9 +10691,11 @@ def lifted_outer_qct_aggregation_audit(
         polylog_tensor_projector_gate_proved=polylog_projector,
         ratio_gcd_layers_retained_inside_local_gate=True,
         nonzero_poisson_core_is_little_o_T=core_little_o,
-        polylogarithmic_transform_tail_aggregated=False,
-        afe_tail_aggregated=False,
-        whole_mobius_gate_covered=False,
+        polylogarithmic_transform_tail_aggregated=(
+            tails.transform_tail_aggregated
+        ),
+        afe_tail_aggregated=tails.afe_tail_aggregated,
+        whole_mobius_gate_covered=whole_gate,
     )
 
 
@@ -10582,8 +10748,485 @@ def primitive_conductor_level_difference_audit(
         length_conductor_euler_sum_is_polylogarithmic=True,
         vinogradov_korobov_dominates_subset_overhead=vk_dominates,
         published_large_sieve_has_explicit_polylog_constant=False,
+        custom_full_level_harmonic_large_sieve_has_polylog_constant=False,
+        primitive_family_is_positive_full_level_subfamily=True,
+        weighted_primitive_large_sieve_proved=False,
         pevp_proved=False,
         whole_mobius_gate_covered=False,
+    )
+
+
+def normalized_level_difference_pbk_audit(
+    *, prime: int
+) -> NormalizedLevelDifferencePBKAudit:
+    """Audit the normalized local level difference and its positive square.
+
+    The standard level-``p^c`` Kuznetsov kernel is represented by
+    ``1_{Z K_0(p^c)}``, not by the normalized idempotent
+    ``e_c = nu(p^c) 1_{Z K_0(p^c)}``.  Hence its spectral operator is
+    ``P_c / nu(p^c)``.  Since ``P_1 <= P_2``, the signed difference has
+    eigenvalue ``1/nu(p)-1/nu(p^2)`` on ``Im(P_1)`` and
+    ``-1/nu(p^2)`` on ``Im(P_2-P_1)``.  Squaring gives a positive sum of
+    these two orthogonal projections.
+
+    Linearity and HPY (7.5)--(7.6) give the exact ramified
+    Kloosterman and Fourier-transform constants below.  The named HPY
+    spectral assumption does not include this positive two-layer
+    mixture, so this audit records the local input but deliberately
+    leaves the epsilon-free global large sieve and PEVP open.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+
+    p = prime
+    nu1 = p + 1
+    nu2 = p * (p + 1)
+    ambient = F(1, nu1) - F(1, nu2)
+    layer = -F(1, nu2)
+    ambient_square = ambient * ambient
+    layer_square = layer * layer
+    identity_mass = ambient_square * nu1 + layer_square * (nu2 - nu1)
+
+    # For h = g^*g, write h as
+    # (ambient^2-layer^2)e_1 + layer^2 e_2.  HPY (7.5) then
+    # gives the following coefficients of S(m,n;p^k).
+    valuation_one = (ambient_square - layer_square) * nu1
+    valuation_two_plus = identity_mass
+    primitive_one_ratio = valuation_one * F(p, p - 1) / identity_mass
+    primitive_higher_ratio = F(p, p - 1)
+    principal_one_ratio = valuation_one / F(p - 1) / identity_mass
+
+    return NormalizedLevelDifferencePBKAudit(
+        prime=p,
+        level_p_index=nu1,
+        level_p_squared_index=nu2,
+        ambient_oldspace_eigenvalue=ambient,
+        exact_layer_eigenvalue=layer,
+        squared_ambient_oldspace_weight=ambient_square,
+        squared_exact_layer_weight=layer_square,
+        squared_kernel_identity_mass=identity_mass,
+        modulus_valuation_one_kloosterman_coefficient=valuation_one,
+        modulus_valuation_at_least_two_kloosterman_coefficient=valuation_two_plus,
+        primitive_character_valuation_one_ftb_ratio=primitive_one_ratio,
+        primitive_character_higher_valuation_ftb_ratio=primitive_higher_ratio,
+        principal_character_valuation_one_ftb_ratio=principal_one_ratio,
+        local_geometric_conductor_exponent=2 if p == 2 else 1,
+        exact_layer_geometric_conductor_exponent=1,
+        normalized_difference_is_not_pure_exact_layer=True,
+        squared_kernel_is_positive_orthogonal_layer_sum=True,
+        local_ftb_euler_factor_is_p_over_p_minus_one=True,
+        global_ftb_product_is_polylogarithmic=True,
+        hpy_named_spectral_assumption_applies=False,
+        epsilon_free_positive_kernel_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def primitive_sparse_farey_large_sieve_audit(
+    *,
+    common_level: int,
+    dyadic_modulus_bound: int,
+    mellin_interval_length: int,
+    sequence_length: int,
+) -> PrimitiveSparseFareyLargeSieveAudit:
+    """Audit the epsilon-free spacing for primitive fractions at K|c.
+
+    If ``c_i = K d_i <= C`` and ``a_i/c_i`` are distinct reduced
+    fractions, their difference is a nonzero integer divided by
+    ``K d_1 d_2``.  It is therefore at least ``K/(4 C^2)`` when the
+    moduli lie in one dyadic interval below ``C``.  Gallagher's hybrid
+    large sieve then gives ``P*(4 C^2/K) + X``.  Primitive Gauss-sum
+    expansion and character orthogonality put the ramified HPY family
+    into precisely this reduced-fraction family, so no separate count
+    of the possible ramified parts remains.
+
+    This lemma treats the primitive-character, level-coprime index
+    cell.  The degenerate noncoprime cells are intentionally separate.
+    """
+    values = (
+        common_level,
+        dyadic_modulus_bound,
+        mellin_interval_length,
+        sequence_length,
+    )
+    if any(not isinstance(value, int) or value <= 0 for value in values):
+        raise ValueError("all parameters must be positive integers")
+    if common_level > dyadic_modulus_bound:
+        raise ValueError("common_level must not exceed dyadic_modulus_bound")
+
+    inverse_spacing = (
+        4 * dyadic_modulus_bound * dyadic_modulus_bound // common_level
+    )
+    if 4 * dyadic_modulus_bound * dyadic_modulus_bound % common_level:
+        inverse_spacing += 1
+    hybrid = mellin_interval_length * inverse_spacing + sequence_length
+    return PrimitiveSparseFareyLargeSieveAudit(
+        common_level=common_level,
+        dyadic_modulus_bound=dyadic_modulus_bound,
+        mellin_interval_length=mellin_interval_length,
+        sequence_length=sequence_length,
+        minimum_spacing=F(
+            common_level,
+            4 * dyadic_modulus_bound * dyadic_modulus_bound,
+        ),
+        inverse_spacing_bound=inverse_spacing,
+        hybrid_large_sieve_bound=hybrid,
+        crt_fraction_is_reduced=True,
+        distinct_fraction_spacing_proved=True,
+        primitive_gauss_orthogonality_is_exact=True,
+        ramified_modulus_count_removed=True,
+        fixed_common_level_gain_is_epsilon_free=True,
+        noncoprime_index_cells_covered=False,
+        positive_kernel_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def prime_power_kloosterman_valuation_reduction(
+    *,
+    prime: int,
+    modulus_exponent: int,
+    left_valuation: int,
+    right_valuation: int,
+) -> dict[str, object]:
+    """Reduce ``S(p^a u,p^b v;p^k)`` with ``u,v`` p-adic units.
+
+    If the phase is already trivial, the sum is ``phi(p^k)``.  After
+    removing the common power ``p^j``, equal valuations leave an
+    ordinary unit-unit Kloosterman sum.  Unequal valuations leave one
+    unit and one p-divisible index; that local sum is ``-1`` at modulus
+    p and vanishes at every higher prime-power modulus.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+    if modulus_exponent < 1 or min(left_valuation, right_valuation) < 0:
+        raise ValueError("modulus exponent must be positive and valuations nonnegative")
+
+    p = prime
+    k = modulus_exponent
+    a = left_valuation
+    b = right_valuation
+    common = min(a, b)
+    if k <= common:
+        return {
+            "kind": "trivial_phase",
+            "integer_multiplier": p ** (k - 1) * (p - 1),
+            "reduced_modulus_exponent": 0,
+            "vanishes": False,
+        }
+    if a == b:
+        return {
+            "kind": "unit_unit_reduction",
+            "integer_multiplier": p**common,
+            "reduced_modulus_exponent": k - common,
+            "vanishes": False,
+        }
+    if k == common + 1:
+        return {
+            "kind": "unequal_ramanujan_boundary",
+            "integer_multiplier": -(p**common),
+            "reduced_modulus_exponent": 1,
+            "vanishes": False,
+        }
+    return {
+        "kind": "unequal_valuation_vanishing",
+        "integer_multiplier": 0,
+        "reduced_modulus_exponent": k - common,
+        "vanishes": True,
+    }
+
+
+def physical_noncoprime_valuation_audit(
+    *, prime: int
+) -> PhysicalNoncoprimeValuationAudit:
+    """Record the exact local density ledger after valuation reduction.
+
+    For a natural smooth integer variable, valuation zero has mass
+    ``1-1/p`` and positive valuation has mass ``1/p``.  The inverse
+    Ramanujan factor has absolute value one in the first cell and
+    ``1/(p-1)`` in the second.  Two independent variables share a
+    positive valuation of depth at least k with probability ``p^-2k``.
+    These give the two rational quantities returned below.
+
+    The remaining short-interval boundary terms depend on the global
+    completion orientation and are not certified by this local audit.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+    p = prime
+    inverse_square_mean = F(p - 1, p) + F(1, p * (p - 1) ** 2)
+    collision = F(1, p * p - 1)
+    return PhysicalNoncoprimeValuationAudit(
+        prime=p,
+        ramanujan_inverse_square_natural_mean=inverse_square_mean,
+        common_positive_valuation_collision_mass=collision,
+        same_valuation_tail_reduces_to_primitive_farey_family=True,
+        unequal_valuation_tail_vanishes_after_boundary_modulus=True,
+        local_main_density_euler_correction_is_absolutely_summable=True,
+        smooth_short_interval_boundary_aggregated=False,
+        positive_kernel_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def valuation_boundary_euler_majorant_audit(
+    *, ramified_primes: tuple[int, ...]
+) -> ValuationBoundaryEulerMajorantAudit:
+    """Audit the divisor-convolution mean for all valuation boundaries.
+
+    After symmetrizing a cross-valuation term, losing one common
+    conductor factor p costs at most
+    ``alpha_p = p/(p-1)^2``.  The number of removable p-powers is
+    ``v_p(n)``.  Thus the nonnegative majorant is
+
+    ``F_A(n) = product_{p|A} (1 + alpha_p v_p(n)) = 1 * g_A(n)``,
+
+    where ``g_A(p^k)=alpha_p`` for every k>=1.  On an interval of
+    length M, ``#multiples(d) <= M/d+1 <= 2M/d`` for every nonempty
+    divisor class.  Hence the normalized mean is at most
+    ``2 sum_d g_A(d)/d``.  Its local Euler factor is
+    ``1 + alpha_p/(p-1) = 1 + p/(p-1)^3``; the infinite product
+    converges absolutely.
+    """
+    if not ramified_primes:
+        raise ValueError("ramified_primes must be nonempty")
+    if tuple(sorted(set(ramified_primes))) != ramified_primes:
+        raise ValueError("ramified_primes must be strictly increasing")
+    if any(p < 2 or not _is_prime_integer(p) for p in ramified_primes):
+        raise ValueError("ramified_primes must contain only primes")
+
+    coefficients = tuple(F(p, (p - 1) ** 2) for p in ramified_primes)
+    product = F(1)
+    for p, coefficient in zip(ramified_primes, coefficients):
+        product *= F(1) + coefficient / F(p - 1)
+    return ValuationBoundaryEulerMajorantAudit(
+        ramified_primes=ramified_primes,
+        local_collision_coefficients=coefficients,
+        main_euler_product=product,
+        smooth_interval_mean_bound=F(2) * product,
+        divisor_convolution_identity_exact=True,
+        boundary_term_absorbed_by_one_over_d=True,
+        euler_product_uniformly_bounded=True,
+        smooth_short_interval_boundary_aggregated=True,
+        positive_kernel_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def ambient_normalized_positive_kernel_cauchy_audit(
+    *, prime: int
+) -> AmbientNormalizedPositiveKernelCauchyAudit:
+    """Insert the raw level difference into the common level-p^2 measure.
+
+    The standard level-p trace is ``P_1/nu(p)`` in raw Plancherel
+    normalization, while level p^2 is ``P_2/nu(p^2)``.  Relative to
+    the standard ambient level-p^2 harmonic measure ``1/nu(p^2)``,
+    their difference is ``p P_1-P_2``.  Its eigenvalues are ``p-1``
+    on ``Im(P_1)`` and ``-1`` on the exact layer.  Averaging the square
+    with ambient Plancherel dimensions gives exactly ``p-1``.
+
+    PEVP needs square mass p^-1.  Hence moving the entire signed
+    operator to one side of Cauchy loses a factor p(p-1) and destroys
+    the cross-index oldvector cancellation that the primitive formula
+    records.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+    p = prime
+    nu1 = p + 1
+    nu2 = p * (p + 1)
+    ambient_eigenvalue = F(p - 1)
+    layer_eigenvalue = F(-1)
+    squared_mass = (
+        ambient_eigenvalue * ambient_eigenvalue * nu1
+        + layer_eigenvalue * layer_eigenvalue * (nu2 - nu1)
+    ) / F(nu2)
+    required = F(1, p)
+    return AmbientNormalizedPositiveKernelCauchyAudit(
+        prime=p,
+        ambient_level_index=nu2,
+        relative_ambient_oldspace_eigenvalue=ambient_eigenvalue,
+        relative_exact_layer_eigenvalue=layer_eigenvalue,
+        ambient_normalized_squared_mass=squared_mass,
+        required_pevp_squared_mass=required,
+        squared_mass_deficit_ratio=squared_mass / required,
+        common_ambient_measure_inserted_exactly=True,
+        raw_plancherel_mass_is_not_the_pevp_normalization=True,
+        index_rescaling_does_not_repair_diagonal_mass=True,
+        cross_index_oldvector_cancellation_still_required=True,
+        positive_square_kernel_closes_pevp=False,
+        pevp_proved=False,
+    )
+
+
+def full_level_harmonic_large_sieve_audit(
+    *,
+    level: int,
+    dyadic_modulus_bound: int,
+    mellin_interval_length: int,
+    sequence_length: int,
+) -> FullLevelHarmonicLargeSieveAudit:
+    """Audit the sparse-Farey part of the proposed full-level sieve.
+
+    Opening the standard level-Q Kloosterman sum produces the reduced
+    Farey fractions x/c directly, so no coprimality condition on the
+    two Fourier indices is used.  For Q|c in a dyadic block c<=C the
+    spacing is Q/(4C^2).  Gallagher therefore bounds the Mellin-
+    hybrid inner sum by ``P*(4C^2/Q)+X``.  The Bessel support
+    ``C <= X/P`` then gives the harmonic spectral bound
+    ``(spectral_mass + X/Q) log^O(1)`` only where the applicable
+    Bessel--Mellin representation is available.  HPY Lemma 5.6 requires
+    its first representation to have Bessel scale at most a fixed
+    power just above the spectral square.  In the MWKF application the
+    spectral scale is polylogarithmic while ``X/C`` can be a positive
+    power of T.  The large-Bessel range is therefore not covered.
+    """
+    sparse = primitive_sparse_farey_large_sieve_audit(
+        common_level=level,
+        dyadic_modulus_bound=dyadic_modulus_bound,
+        mellin_interval_length=mellin_interval_length,
+        sequence_length=sequence_length,
+    )
+    return FullLevelHarmonicLargeSieveAudit(
+        level=level,
+        dyadic_modulus_bound=dyadic_modulus_bound,
+        mellin_interval_length=mellin_interval_length,
+        sequence_length=sequence_length,
+        minimum_farey_spacing=sparse.minimum_spacing,
+        hybrid_dyadic_inner_bound=sparse.hybrid_large_sieve_bound,
+        kloosterman_indices_may_be_noncoprime_to_level=True,
+        full_level_spectral_measure_is_positive=True,
+        primitive_family_is_positive_subfamily=True,
+        small_bessel_tail_has_polylog_mean_divisor_bound=True,
+        archimedean_partition_has_polylog_total_variation=True,
+        hpy_first_mellin_requires_bessel_scale_at_most_spectral_square=True,
+        power_sized_large_bessel_range_covered=False,
+        large_bessel_range_requires_new_estimate=True,
+        maass_and_eisenstein_sectors_covered=False,
+        holomorphic_sector_covered=False,
+        uniform_polylog_harmonic_large_sieve_proved=False,
+    )
+
+
+def mwkf_tail_shell_aggregation_audit(
+    *,
+    tail_log_start: Fraction,
+    seminorm_decay_order: Fraction,
+    local_seminorm_log_loss: Fraction,
+    target_log_saving: Fraction,
+) -> MWKFTailShellAggregationAudit:
+    """Audit the shell sum for every tail omitted from the compact core.
+
+    The exact AFE weight, time integration, Poisson transform, and QCT
+    Fourier--Mellin transform have arbitrary fixed-order decay in their
+    normalized shell parameters.  PEVP is linear in the coupled kernel
+    and its proof uses only a fixed finite set of kernel seminorms.
+    Conditional on seminorm-stable PEVP, a shell beginning at ``L^B``
+    would contribute ``L^(C+7-BJ)`` after the six dyadic and one
+    harmonic-q logarithms.  The numerical ledger is retained, but the
+    PEVP-dependent conclusion remains false while the large-Bessel
+    range is open.
+    """
+    start = F(tail_log_start)
+    order = F(seminorm_decay_order)
+    local_loss = F(local_seminorm_log_loss)
+    target = F(target_log_saving)
+    if min(start, order, local_loss, target) < 0:
+        raise ValueError("tail parameters must be nonnegative")
+    if start == 0 or order == 0:
+        raise ValueError("tail start and decay order must be positive")
+    aggregation = F(7)
+    net = start * order - local_loss - aggregation
+    pevp_available = False
+    closes = pevp_available and net > target
+    return MWKFTailShellAggregationAudit(
+        tail_log_start=start,
+        seminorm_decay_order=order,
+        local_seminorm_log_loss=local_loss,
+        target_log_saving=target,
+        dyadic_and_harmonic_q_log_loss=aggregation,
+        net_tail_log_saving=net,
+        exact_afe_has_no_truncation_error=True,
+        afe_product_tail_included=True,
+        time_nonstationary_tail_included=True,
+        poisson_frequency_tail_included=True,
+        qct_fourier_mellin_tail_included=True,
+        pevp_is_polynomial_in_fixed_kernel_seminorms=pevp_available,
+        power_far_shells_are_dominated=pevp_available,
+        polylog_near_shells_are_summable=closes,
+        transform_tail_aggregated=closes,
+        afe_tail_aggregated=closes,
+        total_tail_is_little_o_T=closes,
+    )
+
+
+def unconditional_long_mollifier_asymptotic_audit(
+) -> UnconditionalLongMollifierAsymptoticAudit:
+    """Assemble the audited theta=3 main term and complete remainder.
+
+    The exact completed AFE and common-Mellin Poisson calculation give
+    ``I = T*Q + R`` without a truncated-AFE error.  The merged Selberg
+    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  The compact and
+    tail conclusions are intentionally gated on PEVP, which remains
+    open in the power-sized large-Bessel range.
+    """
+    projector = primitive_conductor_level_difference_audit(
+        level_factor_exponent=F(3),
+        common_mobius_length_exponent=F(3, 2),
+        fixed_power_margin=F(0),
+    )
+    core = lifted_outer_qct_aggregation_audit(
+        left_entry_exponent=F(3),
+        right_entry_exponent=F(3),
+        q_exponent=F(0),
+        gate_log_power=F(10),
+        common_orientation="left",
+    )
+    tails = mwkf_tail_shell_aggregation_audit(
+        tail_log_start=F(100),
+        seminorm_decay_order=F(4),
+        local_seminorm_log_loss=F(20),
+        target_log_saving=F(20),
+    )
+    full_remainder = all(
+        (
+            projector.pevp_proved,
+            core.nonzero_poisson_core_is_little_o_T,
+            tails.transform_tail_aggregated,
+            tails.afe_tail_aggregated,
+            tails.total_tail_is_little_o_T,
+        )
+    )
+    final = full_remainder
+    return UnconditionalLongMollifierAsymptoticAudit(
+        mollifier_length_exponent=F(3),
+        main_term_constant=F(4, 3),
+        exact_completed_afe_proved=True,
+        poisson_zero_mode_normalization_proved=True,
+        lcm_main_term_asymptotic_proved=True,
+        pevp_proved=projector.pevp_proved,
+        compact_nonzero_poisson_core_is_little_o_T=(
+            core.nonzero_poisson_core_is_little_o_T
+        ),
+        transform_tail_is_little_o_T=tails.transform_tail_aggregated,
+        afe_tail_is_little_o_T=tails.afe_tail_aggregated,
+        archimedean_correction_is_beyond_all_powers=True,
+        full_remainder_is_little_o_T=full_remainder,
+        unconditional_asymptotic_proved=final,
+        residual_cell_count=0 if final else 1,
+        proof_status=(
+            "unconditional asymptotic proved"
+            if final
+            else "large-Bessel PEVP gate open"
+        ),
     )
 
 
@@ -20714,6 +21357,15 @@ def main() -> None:
         "direct="
         f"{determinant_audit.direct_corollary_hypotheses_verified} "
         f"covered={determinant_audit.published_coverage}"
+    )
+    final = unconditional_long_mollifier_asymptotic_audit()
+    print(
+        "mwkf_final: "
+        f"status={final.proof_status} "
+        f"theta={_fmt(final.mollifier_length_exponent)} "
+        f"main={_fmt(final.main_term_constant)} "
+        f"residual_cells={final.residual_cell_count} "
+        f"remainder_o_T={final.full_remainder_is_little_o_T}"
     )
 
 
