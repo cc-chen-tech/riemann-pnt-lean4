@@ -1078,6 +1078,117 @@ def reciprocal_monomial_coverage_ledger(
     )
 
 
+def coupled_product_circle_ledger(
+    *,
+    complementary_left: Fraction,
+    complementary_right: Fraction,
+    quotient_length: Fraction,
+    circle_denominator: Fraction,
+    quotient_gcd: Fraction,
+    target: Fraction,
+) -> CoupledProductCircleLedger:
+    """Precompletion dual-product Type-II bound at theta three.
+
+    After exact numerator completion and the long--long Möbius split,
+    the determinant equation is ``b*c*k-g*q=d``.  On a circle band
+    ``|alpha|=T^(-a)``, DRZZ Lemma 4.2 applies separately to the
+    ``b*c`` polynomial at frequency ``alpha*k`` and to the ``g*q``
+    polynomial at frequency ``-alpha``.  If
+    ``(k,q_alpha)=T^tau``, multiplication by ``k`` reduces the rational
+    denominator and introduces the exact Diophantine loss
+    ``max(0,kappa-2*tau)``.  This ledger includes the size of that gcd
+    stratum and the L1 mass ``T^(2-a)`` of the smooth d-kernel.
+
+    The comparison Cauchy bound keeps the product coefficient intact;
+    restricting ``k`` to the gcd stratum lowers its L2 energy by
+    ``T^(-tau/2)``.  Neither entry uses unproved Möbius cancellation.
+    """
+
+    lengths = (
+        complementary_left,
+        complementary_right,
+        quotient_length,
+        circle_denominator,
+        quotient_gcd,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    ambient_length = Fraction(3)
+    shift_length = Fraction(2)
+    complementary_product = (
+        complementary_left + complementary_right
+    )
+    if complementary_product + quotient_length != ambient_length:
+        raise ValueError("require beta+gamma+kappa=3")
+    if min(complementary_left, complementary_right) < 1:
+        raise ValueError("the endpoint Type-II factors must be at least T")
+    if not shift_length <= circle_denominator <= ambient_length:
+        raise ValueError("the near-zero circle denominator lies in [2,3]")
+    if quotient_gcd > min(quotient_length, circle_denominator):
+        raise ValueError("the gcd exponent cannot exceed kappa or a")
+
+    effective_denominator = circle_denominator - quotient_gcd
+    approximation_loss = max(
+        Fraction(0), quotient_length - 2 * quotient_gcd
+    )
+    complementary_type_ii_constant = max(
+        complementary_product
+        - effective_denominator
+        + approximation_loss,
+        complementary_left,
+        complementary_right,
+        effective_denominator,
+    )
+    shifted_type_ii_constant = max(
+        ambient_length - circle_denominator,
+        Fraction(1, 2),
+        Fraction(5, 2),
+        circle_denominator,
+    )
+    quotient_stratum = quotient_length - quotient_gcd
+    circle_kernel_mass = shift_length - circle_denominator
+    pointwise_bound = (
+        quotient_stratum
+        + (
+            complementary_product
+            + complementary_type_ii_constant
+        )
+        / 2
+        + (ambient_length + shifted_type_ii_constant) / 2
+        + circle_kernel_mass
+    )
+    cauchy_bound = (
+        (ambient_length - quotient_gcd) / 2
+        + ambient_length / 2
+        + shift_length
+    )
+    best_bound = min(pointwise_bound, cauchy_bound)
+    margin = target - best_bound
+    return CoupledProductCircleLedger(
+        complementary_left=complementary_left,
+        complementary_right=complementary_right,
+        quotient_length=quotient_length,
+        complementary_product=complementary_product,
+        circle_denominator=circle_denominator,
+        quotient_gcd=quotient_gcd,
+        effective_denominator=effective_denominator,
+        approximation_loss=approximation_loss,
+        complementary_type_ii_constant=(
+            complementary_type_ii_constant
+        ),
+        shifted_type_ii_constant=shifted_type_ii_constant,
+        quotient_stratum=quotient_stratum,
+        circle_kernel_mass=circle_kernel_mass,
+        pointwise_bound=pointwise_bound,
+        cauchy_bound=cauchy_bound,
+        best_bound=best_bound,
+        target=target,
+        margin=margin,
+        covered=(margin >= 0),
+    )
+
+
 def multiple_mobius_additive_ledger(
     *,
     ambient_length: Fraction,
@@ -3973,6 +4084,30 @@ class ReciprocalMonomialCoverageLedger:
     phase_variation: Fraction
     required_saving: Fraction
     published_saving_cap: Fraction
+    margin: Fraction
+    covered: bool
+
+
+@dataclass(frozen=True)
+class CoupledProductCircleLedger:
+    """Two published product bounds on one precompletion circle band."""
+
+    complementary_left: Fraction
+    complementary_right: Fraction
+    quotient_length: Fraction
+    complementary_product: Fraction
+    circle_denominator: Fraction
+    quotient_gcd: Fraction
+    effective_denominator: Fraction
+    approximation_loss: Fraction
+    complementary_type_ii_constant: Fraction
+    shifted_type_ii_constant: Fraction
+    quotient_stratum: Fraction
+    circle_kernel_mass: Fraction
+    pointwise_bound: Fraction
+    cauchy_bound: Fraction
+    best_bound: Fraction
+    target: Fraction
     margin: Fraction
     covered: bool
 

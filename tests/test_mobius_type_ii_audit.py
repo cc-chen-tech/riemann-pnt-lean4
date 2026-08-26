@@ -858,6 +858,76 @@ def test_published_one_factor_proxies_do_not_cover_the_high_edge() -> None:
     assert not monomial.covered
 
 
+def test_dual_product_type_ii_tracks_circle_width_and_k_gcd() -> None:
+    outer_coprime = audit.coupled_product_circle_ledger(
+        complementary_left=F(1),
+        complementary_right=F(2),
+        quotient_length=F(0),
+        circle_denominator=F(2),
+        quotient_gcd=F(0),
+        target=F(9, 2),
+    )
+    assert outer_coprime.complementary_product == F(3)
+    assert outer_coprime.complementary_type_ii_constant == F(2)
+    assert outer_coprime.shifted_type_ii_constant == F(5, 2)
+    assert outer_coprime.circle_kernel_mass == F(0)
+    assert outer_coprime.pointwise_bound == F(21, 4)
+    assert outer_coprime.cauchy_bound == F(5)
+    assert outer_coprime.best_bound == F(5)
+    assert outer_coprime.margin == F(-1, 2)
+    assert not outer_coprime.covered
+
+    gcd_boundary = audit.coupled_product_circle_ledger(
+        complementary_left=F(1),
+        complementary_right=F(3, 2),
+        quotient_length=F(1, 2),
+        circle_denominator=F(5, 2),
+        quotient_gcd=F(1, 2),
+        target=F(9, 2),
+    )
+    assert gcd_boundary.complementary_product == F(5, 2)
+    assert gcd_boundary.complementary_type_ii_constant == F(2)
+    assert gcd_boundary.shifted_type_ii_constant == F(5, 2)
+    assert gcd_boundary.circle_kernel_mass == F(-1, 2)
+    assert gcd_boundary.pointwise_bound == F(9, 2)
+    assert gcd_boundary.cauchy_bound == F(19, 4)
+    assert gcd_boundary.best_bound == F(9, 2)
+    assert gcd_boundary.margin == F(0)
+    assert gcd_boundary.covered
+
+    high_gcd = audit.coupled_product_circle_ledger(
+        complementary_left=F(1),
+        complementary_right=F(1),
+        quotient_length=F(1),
+        circle_denominator=F(5, 2),
+        quotient_gcd=F(1),
+        target=F(9, 2),
+    )
+    assert high_gcd.best_bound == F(4)
+    assert high_gcd.margin == F(1, 2)
+    assert high_gcd.covered
+
+    for quotient_quarters in range(5):
+        quotient = F(quotient_quarters, 4)
+        for left_quarters in range(4, 9 - quotient_quarters):
+            left = F(left_quarters, 4)
+            right = F(3) - quotient - left
+            if right < 1:
+                continue
+            for denominator_quarters in range(8, 13):
+                coprime = audit.coupled_product_circle_ledger(
+                    complementary_left=left,
+                    complementary_right=right,
+                    quotient_length=quotient,
+                    circle_denominator=F(denominator_quarters, 4),
+                    quotient_gcd=F(0),
+                    target=F(9, 2),
+                )
+                assert coprime.best_bound == F(5)
+                assert coprime.margin == F(-1, 2)
+                assert not coprime.covered
+
+
 def test_multiple_mobius_additive_theorem_stays_at_t6_after_k_sum() -> None:
     for quotient_quarters in range(5):
         ledger = multiple_mobius_additive_ledger(

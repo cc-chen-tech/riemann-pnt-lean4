@@ -8358,6 +8358,188 @@ inverse phase.  Neither route is proved here.  The executable finite
 ledger checks (9.336), (9.338), (9.340)--(9.342), and the quantitative
 rows of the table exactly.
 
+### 9.53 Dual product Type II before the Ramanujan resonance
+
+The resonance objection in (9.343) is specific to the postcompletion
+Ramanujan spectrum.  Before selecting \(r\mid bc\), the generalized
+Type-II estimate of Dong--Robles--Zaharescu--Zeindler is genuinely
+applicable to both product polynomials.  A complete exponent audit shows
+that this does not close the gate, but it gives a sharper and
+structurally correct no-coverage statement.
+
+Start with the long--long packet (9.242), which still retains the
+original numerator \(a_{\rm AFE}=h\delta_0\) and all four signs
+\(\mu(b)\mu(c)\mu(g)\mu(q)\).  Write \(gq+d=bck\), and only then apply
+the exact \(h\)-completion (9.278)--(9.280).  The product numerator forces
+\(\delta_0=\ell d\), with \(0<|\ell|\ll T^\varepsilon\), and one
+separated dual mode is a smooth version of
+
+\[
+\boxed{
+ H\sum_{b,c>T}\mu(b)\mu(c)
+ \sum_k\sum_{g\asymp T^{1/2}}\mu(g)
+ \sum_{q\asymp T^{5/2}}\mu(q)\,
+ X_d(bck-gq).}
+\tag{9.345}
+\]
+
+No Möbius factor was discarded in reaching (9.345); the disappearance
+of \(h\delta_0\) is the exact consequence of using that product
+structure in Poisson, rather than replacing it by an arbitrary
+coefficient.  Additive Fourier inversion factors (9.345) into the
+\((b,c)\)-product polynomial at frequency \(\alpha k\), the
+\((g,q)\)-product polynomial at frequency \(-\alpha\), and the smooth
+\(d\)-transform.
+
+Put
+
+\[
+ b=T^\beta,\quad c=T^\gamma,\quad k=T^\kappa,\qquad
+ \beta+\gamma+\kappa=3,\quad\beta,\gamma\geq1,
+\tag{9.346}
+\]
+
+and consider the band
+\(|\alpha|\asymp T^{-\mathfrak a}\),
+\(2\leq\mathfrak a\leq3\).
+Choose the rational approximation with denominator
+\(q_\alpha\asymp T^{\mathfrak a}\): taking the nearest integer to
+\(1/|\alpha|\), with numerator \(\operatorname{sgn}(\alpha)\), gives
+an \(O(q_\alpha^{-2})\) error uniformly on the band.  Write
+
+\[
+ (k,q_\alpha)=T^{\tau_k},\qquad
+ 0\leq\tau_k\leq\kappa,\qquad x:=\beta+\gamma=3-\kappa.
+\]
+
+Multiplication by \(k\) changes the reduced denominator to
+\(T^{\mathfrak a-\tau_k}\).  The approximation parameter in DRZZ
+Lemma 4.2 has
+exponent
+
+\[
+ u_{\tau_k}=(\kappa-2\tau_k)_+.
+\]
+
+The two exact Type-II constants are therefore
+
+\[
+\boxed{
+\begin{aligned}
+ M_{bc}
+  &=\max\{x-\mathfrak a+\tau_k+u_{\tau_k},\ \beta,\ \gamma,\
+           \mathfrak a-\tau_k\},\\
+ M_{gq}
+  &=\max\{3-\mathfrak a,\tfrac12,\tfrac52,\mathfrak a\}
+   =\max\{\tfrac52,\mathfrak a\}.
+\end{aligned}}
+\tag{9.347}
+\]
+
+Lemma 4.2, including the coefficient norms, gives exponents
+\((x+M_{bc})/2\) and \((3+M_{gq})/2\), respectively.  The number of
+\(k\)'s in the gcd stratum has exponent \(\kappa-\tau_k\), while the
+\(L^1\)-mass of the \(d\)-transform on this circle band is
+\(T^{2-\mathfrak a}\).  Hence the complete pointwise-band exponent is
+
+\[
+\boxed{
+ E_{\rm prod}(\beta,\gamma,\kappa,\mathfrak a,\tau_k)
+ =\kappa-\tau_k+\frac{x+M_{bc}}2
+  +\frac{3+M_{gq}}2+2-\mathfrak a.}
+\tag{9.348}
+\]
+
+Keeping the \(bck\)-coefficient intact and using Cauchy--Parseval instead
+gives
+
+\[
+\boxed{E_{\rm CS}(\tau_k)=5-\frac{\tau_k}{2}.}
+\tag{9.349}
+\]
+
+The valid published/elementary bound on this stratum is the minimum of
+(9.348) and (9.349).  Some large-gcd strata are now genuinely covered.
+For example,
+
+\[
+ (\beta,\gamma,\kappa,\mathfrak a,\tau_k)
+ =\left(1,\frac32,\frac12,\frac52,\frac12\right)
+\]
+
+has \(E_{\rm prod}=9/2\), and
+\((1,1,1,5/2,1)\) has \(E_{\rm prod}=4\).
+
+The dominant coprime stratum is completely different.  If \(\tau_k=0\),
+then \(M_{bc}\geq\mathfrak a\),
+\(M_{gq}=\max(5/2,\mathfrak a)\).  For
+\(2\leq\mathfrak a\leq5/2\),
+
+\[
+ E_{\rm prod}
+ \geq \frac{25}{4}+\frac{\kappa-\mathfrak a}{2}
+ \geq5+\frac\kappa2,
+\]
+
+and for \(5/2\leq\mathfrak a\leq3\),
+
+\[
+ E_{\rm prod}\geq5+\frac\kappa2.
+\]
+
+Together with \(E_{\rm CS}(0)=5\), this proves the uniform identity
+
+\[
+\boxed{
+ \min(E_{\rm prod},E_{\rm CS})=5
+ \quad(\tau_k=0),\qquad
+ 5-\frac92=\frac12.}
+\tag{9.350}
+\]
+
+The 2026 log-free Möbius estimate of Srivastav also reaches the central
+major arc, but does not change (9.350).  Taking its rational
+approximation \(0/1\), the parameter on either product side is
+\[
+ \delta_\alpha\asymp |\alpha|\,T^3
+ =T^{3-\mathfrak a}.
+\]
+Whenever the theorem's range
+\(\delta_\alpha\leq X^{1/5+\varepsilon}\) is satisfied, it saves at
+most \(\delta_\alpha^{1/2}=T^{(3-\mathfrak a)/2}\) on that side.
+Even granting this saving independently on both the \(bc\) and \(gq\)
+sides gives \(T^{3-\mathfrak a}\), whereas the raw circle-band bound
+needs \(T^{7/2-\mathfrak a}\).  The difference is again exactly
+\(T^{1/2}\).  Thus the new log-free major-arc technology improves
+logarithmic losses and constants, but not the missing power in this
+coupled product geometry; see
+[arXiv:2505.07803](https://arxiv.org/abs/2505.07803), Theorem 1.
+
+Equality occurs on the admissible polytope, so (9.350) is not an
+artifact of a loose case split.  Thus the dual application of the
+published Type-II lemma recovers determinant density on the appropriate
+bands and deletes some high-gcd strata, but it supplies **no power
+saving at all beyond Cauchy on the coprime \(k\)-stratum**.  Since that
+stratum has no polynomial density loss,
+
+\[
+ \#\{k\asymp K:(k,q_\alpha)=1\}
+ =K\frac{\varphi(q_\alpha)}{q_\alpha}
+  +O(\tau(q_\alpha))
+ =K\,T^{-o(1)}
+\tag{9.351}
+\]
+
+on every positive-length \(K\)-block; the bounded \(K\)-blocks contain
+literal coprime terms.  Thus the full \(k\)-block remains unproved.
+
+The weaker residual gate may now exclude every stratum for which
+\(\min(E_{\rm prod},E_{\rm CS})\leq9/2\), but it must retain in
+particular all \(\tau_k=0\) boxes.  This is a strict reduction, not a
+closure.  The executable rational ledger verifies (9.347)--(9.350),
+including the approximation loss \(u_{\tau_k}\), circle-band mass, high-gcd
+boundary examples, and the entire quarter-power coprime grid.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -8372,7 +8554,10 @@ parity-breaking bilinear gate (9.315).  The finite Ramanujan
 diagonalization further closes every nonzero reduced denominator
 \(2\leq r\leq D\); the strictly weaker zero/high edge gate (9.334),
 with its quotient-aware two-Möbius form (9.337)--(9.344), remains
-unproved.**
+unproved.  The precompletion dual-product audit (9.345)--(9.351)
+removes some high-gcd circle strata but leaves every dominant
+\((k,q_\alpha)=1\), or \(\tau_k=0\), box at exponent \(5\), still one half-power above
+target.**
 
 Proved in this note:
 
@@ -8645,6 +8830,15 @@ Proved in this note:
   remainder, (9.342)--(9.344).  The original
   \(a_{\rm AFE}=h_0\delta_0\) remains instead in the precompletion packet
   (9.239)--(9.246).
+* the precompletion dual-product circle audit (9.345)--(9.351):
+  applying the exact numerator completion only after the four-Möbius
+  Type-II split gives the factored determinant polynomial (9.345).
+  DRZZ Lemma 4.2 applies separately to \(bc\) at frequency \(\alpha k\)
+  and \(gq\) at frequency \(-\alpha\).  The quotient-gcd,
+  Diophantine-loss, circle-width, and coefficient-norm ledger is
+  (9.347)--(9.349).  It proves some large-gcd strata, but on every
+  coprime stratum its best bound is exactly \(T^{5+\varepsilon}\),
+  leaving the original \(T^{1/2}\) gap, (9.350).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -8704,6 +8898,7 @@ Proved in this note:
 | Central Type-I/II density prefix | exact square-root split; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that bound; on squarefree support (9.311)--(9.313) maps the residual to the FI boundary (9.314), whose bilinear axiom is assumed rather than proved.  The endpoint \(U=V=\lfloor\sqrt D\rfloor\) makes \(m\leq D\) pure Type I and \(m>D\) pure Type II, (9.319)--(9.320), leaving \(\beta,\gamma\geq1,\kappa\leq1\), (9.321).  Fixing either long factor misses the \(5/8\) theorem by \(2/3\), (9.322), so the joint gate (9.315) remains essential |
 | Additive Vinogradov circle route | exact denominator coverage; no positive-width overlap | The explicit rational-approximation bound is (9.323), and a relative saving \(X^{-\eta}\) is available only on (9.324).  The direct length-\(S\) polynomial and the fixed-\(g\), length-\(Q\) polynomial each meet their actual near-zero denominator interval at one endpoint only, (9.325)--(9.326).  A single complementary factor would need length at least \(T^{5/2}\), (9.327), while (9.321) gives at most \(T^2,T^2,T\).  Recent almost-all Möbius Fourier uniformity remains logarithmic, so the coupled major-arc gate is still unproved |
 | Density/complement Ramanujan spectrum | exact middle-spectrum closure; quotient-aware zero/high edge pair unproved | The finite coefficients and reconstruction are (9.328)--(9.331), with \(C_r\ll T^\varepsilon/r\).  Summation by parts plus the additive large sieve proves all \(2\leq r\leq D\), with exact exponent (9.333).  The weaker residual gate is (9.334): the combined \(r=1\) mode plus \(r>D\) small numerators.  On \(m=T^{3-\kappa}=rv\), lifting to \(a_{\rm R}=uv\) gives \(\nu+\lambda=1-\kappa\), not a constant \(1\), (9.335)--(9.337).  The finite bijection (9.338)--(9.339) shows \(u,v\) are gcd strata of one numerator.  The elementary gap is \(\nu\); two hypothetical square roots cover only \(\nu\leq\lambda\).  DRZZ is resonant on \(r\mid bc\), while the Robert--Sargos/Fouvry--Iwaniec monomial shapes cap at one half-power, so neither closes a positive-width residual, (9.340)--(9.344) |
+| Precompletion dual-product Type II | exact published coverage polytope; dominant coprime stratum unproved | Starting from the four-Möbius packet retaining \(h\delta_0\), exact numerator completion produces (9.345), whose circle transform factors into the \(bc\) and \(gq\) product polynomials.  DRZZ Lemma 4.2 is applicable here.  Equations (9.347)--(9.349) include the reduced denominator after \((k,q_\alpha)=T^{\tau_k}\), the approximation loss \((\kappa-2\tau_k)_+\), circle-band mass, and the competing Cauchy bound.  Some high-gcd strata satisfy the target, but for every \(\tau_k=0\) box the optimum is exactly exponent \(5\), leaving \(1/2\), (9.350).  Hence the postcompletion resonance is not the only obstruction |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -8767,7 +8962,14 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   twisted by general arithmetic functions*, arXiv:2412.20101,
   Theorem 1.6 and Lemma 4.2; Section 9.52 records both the quantitative
   \(\min(\rho/4,(3-\kappa)/7,\lambda/4)\) proxy and the decisive
-  resonance \(e(u\,bc/r)=1\) on the selected support \(r\mid bc\).
+  resonance \(e(u\,bc/r)=1\) on the selected support \(r\mid bc\);
+  Section 9.53 applies Lemma 4.2 before that selection to both product
+  polynomials and records the exact remaining coprime half-power gap.
+* P. Srivastav, *Log-free bounds on exponential sums over primes*,
+  arXiv:2505.07803v2, Theorem 1; its Möbius estimate with the \(0/1\)
+  central-major-arc approximation is audited in Section 9.53.  The two
+  available \(\delta_\alpha^{1/2}\) savings remain a factor
+  \(T^{1/2}\) short of the coupled circle-band target.
 * O. Robert, P. Sargos, *Three-dimensional exponential sums with
   monomials*, J. Reine Angew. Math. 2006, 1--20,
   DOI 10.1515/crelle.2006.012; É. Fouvry, H. Iwaniec, *Exponential sums
