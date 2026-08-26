@@ -471,6 +471,8 @@ lean_lib RiemannPNT where
     `Test.CarlsonMeanSquareContourBridgeContract,
     `HardyTheorem.TwoScaleSelbergMollifier,
     `Test.TwoScaleSelbergMollifierContract,
+    `PrimeNumberTheorem.CarlsonTwoScaleDetector,
+    `Test.CarlsonTwoScaleDetectorContract,
     `PrimeNumberTheorem.ZeroDensityExponentCertificate,
     `Test.ZeroDensityExponentCertificateContract,
     `PrimeNumberTheorem.SingleLayerForcingSeparatedDensity,
