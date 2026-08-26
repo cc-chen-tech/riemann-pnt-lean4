@@ -2664,6 +2664,19 @@ def test_rh_negative_moment_perron_route_has_theta_three_power_margin() -> None:
     assert not ledger.unconditional_power_covered
 
 
+def test_bettin_gonek_dyadic_theta_three_consequence_is_vacuous() -> None:
+    ledger = audit.long_mollifier_zero_free_ledger(F(3))
+
+    assert ledger.cutoff_exponent == F(3)
+    assert ledger.initial_interval_zero_free_boundary == F(2, 3)
+    assert ledger.dyadic_interval_zero_free_boundary == F(7, 6)
+    assert ledger.initial_interval_nontrivial
+    assert not ledger.dyadic_interval_nontrivial
+    assert ledger.dyadic_nontrivial_cutoff_threshold == F(4)
+    assert ledger.requires_uniformity_in_all_shorter_cutoffs
+    assert ledger.theta_infinity_limit == F(1, 2)
+
+
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     transition = additive_dual_block_ledger(box, F(1, 2), F(1, 2))

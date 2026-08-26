@@ -10318,6 +10318,86 @@ verifies the rational power calculation: for target epsilon \(1/100\) and
 power margin \(1/200\).  Its unconditional-coverage flag is deliberately
 false.
 
+### 9.68 The known zero-free consequence is vacuous at dyadic \(\theta=3\)
+
+There is a precise published calibration of how close the desired estimate
+is to RH.  Bettin--Gonek use the same tapered mollifier and write
+
+\[
+ I_N(T_1,T_2):=
+ \int_{T_1}^{T_2}|M_N(1/2+it)|^2|\zeta(1/2+it)|^2dt.
+\tag{9.433}
+\]
+
+Their
+[Theorems 1 and 2](https://arxiv.org/abs/1604.02740) prove the following
+one-way implications.  If, for every \(\varepsilon>0\), the bound
+\(I_N\ll_\varepsilon T^{1+\varepsilon}\) holds **uniformly for every**
+\(2\leq N\leq T^\theta\), then
+
+\[
+ \begin{array}{rcl}
+ I_N(0,T)\ll T^{1+\varepsilon}
+ &\Longrightarrow&
+ \zeta(\rho)\ne0\quad\text{for }
+ \Re\rho>\dfrac12+\dfrac1{2\theta},\\[2mm]
+ I_N(T,2T)\ll T^{1+\varepsilon}
+ &\Longrightarrow&
+ \zeta(\rho)\ne0\quad\text{for }
+ \Re\rho>\dfrac12+\dfrac2\theta.
+ \end{array}
+\tag{9.434}
+\]
+
+The interval is decisive.  At \(\theta=3\), (9.434) becomes
+
+\[
+ [0,T]:\quad \Re\rho\leq\frac23,
+ \qquad
+ [T,2T]:\quad \Re\rho\leq\frac76.
+\tag{9.435}
+\]
+
+The second conclusion is outside the critical strip and is therefore
+vacuous.  In fact the dyadic consequence becomes nontrivial only when
+\(\theta>4\).  Thus Bettin--Gonek do **not** show that the present dyadic
+\(\theta=3\) target implies RH or even a new zero-free region.  Their
+\(\theta=\infty\) consequence implies RH only because the boundary in
+(9.434) tends to \(1/2\) as arbitrarily long mollifiers are admitted.
+
+Their single-fixed-off-line-zero model also displays the dyadic displacement
+that the crude fixed-line Perron estimate loses.  Under the hypothetical
+configuration stated in their introduction, a simple
+\(\rho_0=\beta_0+i\gamma_0\), \(\beta_0>1/2\), contributes
+
+\[
+ \begin{aligned}
+ I_N(T,2T)
+ ={}&c_1\frac{N^{2\beta_0-1}}{T^3}
+       \frac{\log T}{\log^2N}
+ \left(1+\Re\!\left(
+ N^{2i\gamma_0}\frac{|\zeta'(\rho_0)|^2}{\zeta'(\rho_0)^2}
+ \right)+o(1)\right)\\
+ &+O\!\left(T^{1+\varepsilon}
+       +\frac{N^{\beta_0-1/2+\varepsilon}}T\right).
+ \end{aligned}
+\tag{9.436}
+\]
+
+Formula (9.436) is a model under their explicit zero-configuration
+assumption, not an unconditional expansion over all zeros.  Its
+\(T^{-3}\) factor nevertheless identifies a concrete requirement for a
+useful residue treatment: retain the separation between the fixed zero
+height and the dyadic observation window.  Replacing the shifted ratio by a
+global negative moment discards precisely this geometry.
+
+The exact helper `long_mollifier_zero_free_ledger` records (9.434).  At
+\(\theta=3\) it returns \(2/3\) for \([0,T]\), \(7/6\) for \([T,2T]\),
+and marks only the first as nontrivial.  This neither proves the desired
+upper bound nor makes the Perron zero residues harmless; it rules out the
+incorrect meta-objection that the dyadic \(\theta=3\) estimate is already
+known to imply RH.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -10400,7 +10480,11 @@ reciprocal-zeta poles whose simple-zero residues contain uncontrolled
 positive \(w\)-lines, and Bui--Florea's fixed-shift fourth negative moment
 closes the full \(\theta=3\) mollified second moment by (9.427)--(9.432).
 This last closure is conditional on RH and does not change the unconditional
-status.**
+status.  Bettin--Gonek's converse calibration (9.433)--(9.436) does not make
+the dyadic target RH-hard: at \(\theta=3\) its zero-free boundary is the
+vacuous \(7/6\).  It instead shows that a viable unconditional residue
+argument must retain the height displacement lost by a global negative
+moment.**
 
 Proved in this note:
 
@@ -10582,6 +10666,12 @@ Proved in this note:
   \(\ll_{\varepsilon,\theta}T^{1+\varepsilon}\) for every fixed \(\theta\),
   including \(\theta=3\).  This is a conditional theorem and supplies no
   unconditional control of off-critical zeros.
+* the exact Bettin--Gonek zero-free consequence ledger (9.433)--(9.435).
+  Uniform long-mollifier control on \([0,T]\) at \(\theta=3\) would exclude
+  \(\Re\rho>2/3\), but the actual dyadic \([T,2T]\) implication excludes
+  only \(\Re\rho>7/6\) and is vacuous.  Their model (9.436) exhibits the
+  dyadic \(T^{-3}\) displacement factor; it is not an unconditional
+  all-zero expansion or an upper bound.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -10844,6 +10934,7 @@ Proved in this note:
 | Coupled compact-Mellin integral | exact finite recombination; no independent power saving | Keeping \(\tau\) before absolute values is formally weaker than \({\rm CME}_3\), but (9.403)--(9.404) show that the single common mode cancels both mollifier twists and leaves only \((nm)^{-i\tau}\).  The actual contour reconstructs \(V_t(nm)\), (9.405), hence the original conditions \(y-x=\Delta\) and \(nm\asymp T\), (9.406).  It supplies neither two divisor orthogonalities nor an equal-divisor condition; the finite Laurent identity is (9.407).  Any gain must therefore use this product constraint jointly with the shift and both Möbius signs |
 | Guth--Maynard large-value route | exact Fourier-cell audit; long range reduces to classical | The separated equal-index model is the exact energy (9.409), whose time window resolves \(|r-s|\ll X/T\), (9.410).  At \(X=T^3\), each cell contains \(X/T=T^2\) coefficients.  Montgomery--Vaughan gives normalized exponent \(3\) against diagonal exponent \(1\), (9.412).  Guth--Maynard's proof explicitly returns to the classical first term for polynomial length \(N_{\rm GM}\geq T_{\rm GM}\); here \(N_{\rm GM}=T^3>T=T_{\rm GM}\).  Their theorem is coefficient-agnostic and provides no Möbius-specific saving, so (9.413) remains exactly the unavailable banded two-Möbius estimate |
 | Intact-mollifier Perron route | unconditional possible-zero estimate unproved; RH route closes | Perron inversion has no endpoint or truncation error, (9.422)--(9.424).  On the limiting absolute-convergence contour \(c=1/2\), squaring \(N^c\) gives exponent \(4\) at \(N=T^3\), three powers above target, (9.425).  Reaching \(T^{1+\varepsilon}\) unconditionally enters a region where off-critical zeros are not excluded, and any simple-zero residue encountered contains \(1/\zeta'(\rho)\), (9.426).  Under RH the shift to fixed \(c>0\) is pole-free; Bui--Florea's \(k=2\) fourth negative moment plus the classical fourth moment yields (9.432), which closes every fixed \(\theta\), including \(3\), conditionally on RH |
+| Bettin--Gonek long-mollifier converse | exact theorem map; no dyadic \(\theta=3\) zero-free obstruction | Uniform \(T^{1+\varepsilon}\) control for every \(N\leq T^\theta\) on \([0,T]\) excludes zeros right of \(1/2+1/(2\theta)\), while on \([T,2T]\) it excludes only those right of \(1/2+2/\theta\), (9.434).  At \(\theta=3\) the dyadic boundary is \(7/6\), hence vacuous; a nontrivial dyadic consequence starts only at \(\theta>4\).  Their model (9.436) shows a \(T^{-3}\) displacement factor for one fixed off-line zero, but is not an unconditional all-zero upper bound |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

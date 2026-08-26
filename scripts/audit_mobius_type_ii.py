@@ -6500,6 +6500,20 @@ class RhPerronNegativeMomentLedger:
 
 
 @dataclass(frozen=True)
+class LongMollifierZeroFreeLedger:
+    """Bettin--Gonek zero-free consequences of a long-mollifier bound."""
+
+    cutoff_exponent: Fraction
+    initial_interval_zero_free_boundary: Fraction
+    dyadic_interval_zero_free_boundary: Fraction
+    initial_interval_nontrivial: bool
+    dyadic_interval_nontrivial: bool
+    dyadic_nontrivial_cutoff_threshold: Fraction
+    requires_uniformity_in_all_shorter_cutoffs: bool
+    theta_infinity_limit: Fraction
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -6907,6 +6921,36 @@ def rh_perron_negative_moment_ledger(
         rh_required=True,
         conditional_power_covered=(power_margin > 0),
         unconditional_power_covered=False,
+    )
+
+
+def long_mollifier_zero_free_ledger(
+    cutoff_exponent: Fraction,
+) -> LongMollifierZeroFreeLedger:
+    """Return the zero-free boundaries in Bettin--Gonek Theorems 1--2.
+
+    Their hypothesis is the ``T**(1+epsilon)`` mollified second-moment bound
+    uniformly for every cutoff ``2 <= N <= T**theta``.  On ``[0,T]`` it
+    excludes zeros to the right of ``1/2+1/(2*theta)``.  On ``[T,2T]`` the
+    boundary is the weaker ``1/2+2/theta``, which enters the critical strip
+    only for ``theta>4``.  These are consequences of the desired bound, not
+    estimates proving it.
+    """
+
+    if cutoff_exponent <= 0:
+        raise ValueError("the cutoff exponent must be positive")
+    half = Fraction(1, 2)
+    initial_boundary = half + Fraction(1, 2) / cutoff_exponent
+    dyadic_boundary = half + Fraction(2) / cutoff_exponent
+    return LongMollifierZeroFreeLedger(
+        cutoff_exponent=cutoff_exponent,
+        initial_interval_zero_free_boundary=initial_boundary,
+        dyadic_interval_zero_free_boundary=dyadic_boundary,
+        initial_interval_nontrivial=(initial_boundary < 1),
+        dyadic_interval_nontrivial=(dyadic_boundary < 1),
+        dyadic_nontrivial_cutoff_threshold=Fraction(4),
+        requires_uniformity_in_all_shorter_cutoffs=True,
+        theta_infinity_limit=half,
     )
 
 
