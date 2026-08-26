@@ -5166,5 +5166,10 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         "### 4.71 The 2026 Bessel-Kuznetsov phase transition misses",
         r"x_{\rm Bes}=0",
         "transition_shi_bessel_kuznetsov_audit",
+        "### 4.72 Beatty two-point Chowla is qualitative and fixed-slope",
+        "arXiv:2303.12574",
+        r"\frac{\alpha_2}{\alpha_1}=k+\frac bQ\in\mathbb Q",
+        "logarithmic limit, not a uniform power-saving estimate",
+        "moving rational slope family",
         ):
         assert marker in text

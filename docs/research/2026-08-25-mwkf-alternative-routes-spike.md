@@ -10848,6 +10848,62 @@ the missing nondegenerate adapter.  It keeps
 could still create a nondegenerate transform, but proving that formula is
 itself part of the unresolved coupled-kernel problem.
 
+### 4.72 Beatty two-point Chowla is qualitative and fixed-slope
+
+The exact Beatty fiber (4.621zadj16p) makes the closest published
+multiplicative-correlation theorem easy to identify.  A scalar projection
+of one cluster contains
+
+\[
+ c_{b,Q,k}(s)
+ =\mu(s)\mu\!\left(
+   \left\lfloor
+    \left(k+\frac bQ\right)s+\frac{Q-1}{Q}
+   \right\rfloor\right),
+ \qquad
+ \frac{\alpha_2}{\alpha_1}=k+\frac bQ\in\mathbb Q.
+\tag{4.637}
+\]
+
+Teräväinen--Walker's
+[two-point theorem](https://arxiv.org/abs/2303.12574),
+arXiv:2303.12574, is genuinely
+structurally relevant.  It proves logarithmically averaged independence
+for fixed Beatty slopes in the irrational-ratio case and describes a
+possible nonzero resonant locus in the rational-ratio Liouville case.
+The latter feature is consistent with first extracting the exact
+\(\Delta_{\rm Type}=0\) term in (4.621zadj16w-diag), rather than assuming
+that every Beatty correlation is centered.
+
+It does not provide the estimate needed here.  Formula (4.637) is a
+moving rational slope family with \(Q\asymp T\) and \(b\) ranging over
+\(\asymp T\) sectors.  The theorem gives only a qualitative conclusion:
+logarithmic limit, not a uniform power-saving estimate.  It neither
+supplies the natural
+dyadic bound
+
+\[
+ \left|\sum_{s\asymp T}c_{b,Q,k}(s)W_{b,Q}(s)\right|
+ \ll T^{1/2+\varepsilon}
+\tag{4.638}
+\]
+
+uniformly in \((b,Q)\), nor its stronger vector-valued cluster-square
+version with all \(h,\delta,\nu,\sigma\) packets.  Its proof also allows
+fixed Bohr data before the limit; the complexity here grows with \(T\).
+Thus it validates the resonant/offdiagonal ordering but does not cover
+the \(\Delta_{\rm Type}\ne0\) gate.
+
+The older multiplicative-function theorem of
+[Güloğlu--Nevans](https://arxiv.org/abs/0801.2796) assumes a fixed
+irrational slope of finite type, while
+[Technau's Kloosterman--Beatty theorem](https://arxiv.org/abs/1808.00413)
+estimates inverse additive phases on a fixed irrational Beatty set.
+Neither theorem accepts the moving rational two-Möbius vector family
+(4.637).  The remaining plausible quantitative target is therefore an
+average over \(b\), \(Q\), and nonzero \(\Delta_{\rm Type}\), not a
+pointwise invocation of an existing Beatty theorem.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define
