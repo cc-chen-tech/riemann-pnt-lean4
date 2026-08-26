@@ -9147,7 +9147,7 @@ recombines inside (A_d(X)) and (B_d(Y)) before any absolute value.  Both
 coupled products remain visible:
 
 \[
- a_0:=h\delta,qquad b_0:=hl,qquad
+ a_0:=h\delta,\qquad b_0:=hl,\qquad
  \phi(d,X,Y;h,l):=-\frac{b_0\bar X}{Y}\pmod1.
 \tag{4.621u}
 \]
@@ -9212,6 +9212,33 @@ fixture in which distinct product frequencies collide and the signed cross
 term reduces the positive identity diagonal.  The exponent adapter
 `transition_bblr_phase_group_saving_audit` records (4.621x) and keeps
 `required_phase_class_cancellation_proved=False`.
+
+There is now also an exact row-level adapter from this labelled object to
+the existing four-sector double-Möbius split.  For coprime \(r,s\), every
+nonzero term in each of the \(I/I,I/II,II/I,II/II\) sectors retains both
+
+\[
+ a_0=h\delta,
+ \quad e\!\left(-\frac{a_0\bar r}{s}\right),
+ \qquad
+ b_0=hl,
+ \quad e\!\left(-\frac{b_0\bar r}{s}\right),
+\tag{4.621y}
+\]
+
+as well as the exact factorizations of both Möbius variables.  Summing all
+four sector coefficients still gives \(\mu(r)\mu(s)\); neither product is
+replaced by an independent coefficient before recombination.  The finite
+helper `coupled_product_double_mobius_certificate`, with its optional
+nonzero `poisson_frequency`, verifies this statement exactly.
+
+Equation (4.621y) is deliberately weaker than the missing analytic gate.
+It proves that the Type split itself need not destroy either reciprocal
+phase, but it does **not** identify the row variables \(r,s\) with every
+completed BBLR \(X,Y\) row, prove exhaustiveness of that stage map, or
+bound the signed phase classes in (4.621w).  Consequently
+`both_reciprocal_phases_preserved=True` is a finite algebraic invariant,
+not the required \(T^{\lambda/2}\) analytic saving.
 
 ### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range but not the gate
 

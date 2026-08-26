@@ -125,7 +125,12 @@ def test_coupled_double_split_preserves_product_phase_and_two_mobius_sides() -> 
     }
     assert certificate.product_frequency == -15
     assert certificate.phase_mod_one == F(39, 77)
+    assert certificate.poisson_frequency is None
+    assert certificate.poisson_product is None
+    assert certificate.poisson_phase_mod_one is None
     assert certificate.product_frequency_preserved
+    assert certificate.poisson_product_preserved
+    assert certificate.both_reciprocal_phases_preserved
     assert certificate.two_mobius_sides_preserved
     assert certificate.recombination_identity_verified
 
@@ -139,6 +144,48 @@ def test_coupled_double_split_preserves_product_phase_and_two_mobius_sides() -> 
             * term.r_short_mobius_value
             * term.s_truncated_coefficient
             * term.s_short_mobius_value
+        )
+
+
+def test_coupled_double_split_can_retain_the_second_bblr_product_phase() -> None:
+    certificate = type_identity.coupled_product_double_mobius_certificate(
+        r=30,
+        s=77,
+        h=3,
+        delta=-5,
+        poisson_frequency=7,
+        r_cutoff_u=3,
+        r_cutoff_v=5,
+        s_cutoff_u=4,
+        s_cutoff_v=6,
+    )
+
+    assert certificate.product_frequency == -15
+    assert certificate.poisson_frequency == 7
+    assert certificate.poisson_product == 21
+    assert certificate.poisson_phase_mod_one == F(1, 11)
+    assert certificate.phase_mod_one == F(39, 77)
+    assert certificate.product_frequency_preserved
+    assert certificate.poisson_product_preserved
+    assert certificate.both_reciprocal_phases_preserved
+    for term in certificate.terms:
+        assert term.product_frequency == -15
+        assert term.phase_mod_one == F(39, 77)
+        assert term.poisson_frequency == 7
+        assert term.poisson_product == 21
+        assert term.poisson_phase_mod_one == F(1, 11)
+
+    with pytest.raises(ValueError, match="requires l nonzero"):
+        type_identity.coupled_product_double_mobius_certificate(
+            r=30,
+            s=77,
+            h=3,
+            delta=-5,
+            poisson_frequency=0,
+            r_cutoff_u=3,
+            r_cutoff_v=5,
+            s_cutoff_u=4,
+            s_cutoff_v=6,
         )
 
 

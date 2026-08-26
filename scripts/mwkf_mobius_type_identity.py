@@ -265,6 +265,9 @@ class CoupledMobiusSectorTerm:
     coefficient: int
     product_frequency: int
     phase_mod_one: Fraction
+    poisson_frequency: int | None
+    poisson_product: int | None
+    poisson_phase_mod_one: Fraction | None
 
 
 @dataclass(frozen=True)
@@ -273,10 +276,15 @@ class CoupledProductDoubleMobiusCertificate:
     s: int
     product_frequency: int
     phase_mod_one: Fraction
+    poisson_frequency: int | None
+    poisson_product: int | None
+    poisson_phase_mod_one: Fraction | None
     direct_mobius_product: int
     sector_sums: tuple[tuple[str, int], ...]
     terms: tuple[CoupledMobiusSectorTerm, ...]
     product_frequency_preserved: bool
+    poisson_product_preserved: bool
+    both_reciprocal_phases_preserved: bool
     two_mobius_sides_preserved: bool
     recombination_identity_verified: bool
 
@@ -2806,13 +2814,17 @@ def coupled_product_double_mobius_certificate(
     r_cutoff_v: int,
     s_cutoff_u: int,
     s_cutoff_v: int,
+    poisson_frequency: int | None = None,
 ) -> CoupledProductDoubleMobiusCertificate:
-    """Expand both Möbius weights without separating the product phase.
+    """Expand both Möbius weights without separating either product phase.
 
     The exact one-variable identity is applied independently to ``r`` and
     ``s``.  Every resulting Type-I/II term retains the same original phase
 
-    ``e(-h*delta*bar(r)/s)``.
+    ``e(-h*delta*bar(r)/s)``.  If a nonzero Poisson frequency ``l`` is
+    supplied, every term also retains the completed BBLR phase
+
+    ``e(-h*l*bar(r)/s)``.
 
     Thus this is a finite reindexing certificate, not an estimate and not a
     replacement of the product frequency by an arbitrary third coefficient.
@@ -2830,6 +2842,8 @@ def coupled_product_double_mobius_certificate(
         raise ValueError("both Möbius variables must exceed their U cutoffs")
     if h == 0 or delta == 0:
         raise ValueError("the residual coupled cell requires h*delta nonzero")
+    if poisson_frequency == 0:
+        raise ValueError("the nonzero-frequency certificate requires l nonzero")
     if gcd(r, s) != 1:
         raise ValueError("the reciprocal phase requires coprime r and s")
 
@@ -2838,6 +2852,18 @@ def coupled_product_double_mobius_certificate(
         numerator=-product_frequency,
         invert=r,
         modulus=s,
+    )
+    poisson_product = (
+        None if poisson_frequency is None else h * poisson_frequency
+    )
+    poisson_phase_mod_one = (
+        None
+        if poisson_product is None
+        else _normalized_modular_phase(
+            numerator=-poisson_product,
+            invert=r,
+            modulus=s,
+        )
     )
     sector_sums = {
         "I/I": 0,
@@ -2894,6 +2920,9 @@ def coupled_product_double_mobius_certificate(
                     coefficient=coefficient,
                     product_frequency=product_frequency,
                     phase_mod_one=phase_mod_one,
+                    poisson_frequency=poisson_frequency,
+                    poisson_product=poisson_product,
+                    poisson_phase_mod_one=poisson_phase_mod_one,
                 )
             )
 
@@ -2902,6 +2931,12 @@ def coupled_product_double_mobius_certificate(
     product_preserved = all(
         term.product_frequency == product_frequency
         and term.phase_mod_one == phase_mod_one
+        for term in terms
+    )
+    poisson_preserved = all(
+        term.poisson_frequency == poisson_frequency
+        and term.poisson_product == poisson_product
+        and term.poisson_phase_mod_one == poisson_phase_mod_one
         for term in terms
     )
     two_sides_preserved = all(
@@ -2921,10 +2956,17 @@ def coupled_product_double_mobius_certificate(
         s=s,
         product_frequency=product_frequency,
         phase_mod_one=phase_mod_one,
+        poisson_frequency=poisson_frequency,
+        poisson_product=poisson_product,
+        poisson_phase_mod_one=poisson_phase_mod_one,
         direct_mobius_product=direct,
         sector_sums=tuple(sector_sums.items()),
         terms=tuple(terms),
         product_frequency_preserved=product_preserved,
+        poisson_product_preserved=poisson_preserved,
+        both_reciprocal_phases_preserved=(
+            product_preserved and poisson_preserved
+        ),
         two_mobius_sides_preserved=two_sides_preserved,
         recombination_identity_verified=(recombined == direct),
     )
