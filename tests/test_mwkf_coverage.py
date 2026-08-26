@@ -1747,6 +1747,31 @@ def test_transition_delta_lattice_zero_mode_needs_one_power_on_every_shell() -> 
     assert largest_divisor.primitive_divisor_layers_do_not_worsen
 
 
+def test_poisson_resonant_gram_isolates_the_only_positive_power_deficit() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_poisson_resonant_gram_audit",
+        None,
+    )
+    assert adapter is not None, "Poisson resonant-Gram audit is missing"
+
+    audit = adapter()
+    assert audit.discrete_identity_diagonal_exponent == F(2)
+    assert audit.continuous_self_gram_exponent == F(2)
+    assert audit.sampling_correction_bound_exponent == F(2)
+    assert audit.sampling_correction_power_deficit == F(0)
+    assert audit.continuous_full_gram_trivial_exponent == F(3)
+    assert audit.square_function_target_exponent == F(2)
+    assert audit.required_continuous_gram_saving_exponent == F(1)
+    assert audit.poisson_covolume_cancels_jacobian
+    assert audit.offdiagonal_zero_mode_is_sign_indefinite
+    assert audit.resonant_recombination_exact
+    assert audit.sampling_correction_has_no_positive_power_obstruction
+    assert not audit.endpoint_logarithmic_aggregation_closed
+    assert not audit.continuous_mobius_gram_bound_proved
+    assert not audit.whole_poisson_zero_mode_covered
+
+
 def test_transition_denominator_gcd_line_reduces_to_two_mobius_square_root() -> None:
     identity = getattr(
         coverage_audit,

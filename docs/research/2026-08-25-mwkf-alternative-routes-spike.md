@@ -9853,6 +9853,163 @@ The finite helper `bblr_moving_parent_zero_mode_sides` verifies
 the actual signed AFE/order/reflection kernel and its means \(\bar K_r\)
 have not yet been derived.
 
+There is a second qualification: the split (4.621zadj15) is a cyclic
+centering identity, not yet the canonical zero dual frequency of
+(4.488).  The no-alias modulus is only constrained by
+\(\mathfrak Q>2\max|c|\), and
+
+\[
+ \bar K_r^{(\mathfrak Q)}
+ =\frac1{\mathfrak Q}\sum_c K_r(c)
+\tag{4.621zadj16a}
+\]
+
+depends on that auxiliary choice.  For the same rational fixture,
+\(\mathfrak Q=7\) and \(\mathfrak Q=11\) give respectively
+
+\[
+\begin{array}{c|c|c|c}
+\mathfrak Q&\mathscr D_{\rm mov}
+ &\text{constant summand}&\text{centered summand}\\ \hline
+7&24&120/7&48/7\\
+11&24&120/11&144/11.
+\end{array}
+\tag{4.621zadj16b}
+\]
+
+Both rows recombine exactly, but their constant summands differ.  Thus one
+cannot make the analytic principal term small merely by enlarging
+\(\mathfrak Q\): the centered term changes by the compensating amount.
+More importantly, (4.621zadj16a) cannot be identified with
+\(\widehat F_B(0)/|\Delta|\) from (4.489) without an additional,
+canonical adapter inherited from the original Poisson variables.
+
+The finite witness bblr_cyclic_centering_modulus_dependence_witness
+verifies (4.621zadj16b) and records both
+constant_summand_depends_on_auxiliary_modulus as true and
+cyclic_constant_identified_with_poisson_zero_mode as false.  Hence the
+first analytic priority remains the direct evaluation of the physical
+Poisson \(m=0\) functional; cyclic row centering is reserved for the
+subsequent dispersion identity.
+
+That physical functional has a canonical Gram reorganization.  For
+\(\Delta\ne0\), set
+
+\[
+ G_B(z):=F_B(Bz),\qquad z=(v,j).
+\]
+
+Since \(|\det B|=|\Delta|\), ordinary change of variables gives
+
+\[
+\boxed{
+ \frac1{|\Delta|}\widehat F_B(0)
+ =\frac1{|\Delta|}\int_{\mathbb R^2}F_B(x)\,dx
+ =\int_{\mathbb R^2}G_B(v,j)\,dv\,dj.}
+\tag{4.621zadj16c}
+\]
+
+Thus the determinant denominator in the zero dual frequency is exactly
+the Jacobian; it is not an additional small factor after the original
+\((v,j)\) coordinates are restored.  Index one entry of the expanded
+square by \(e=(r,s,w)\), retain its full Möbius/taper coefficient
+\(\alpha_e\), and denote its one-entry continuous kernel by \(G_e(v,j)\).
+For distinct entries the primitive positive support from (4.468) makes
+\(\Delta=0\) equivalent to the already registered identity pair.  Hence
+the offdiagonal Poisson zero mode is
+
+\[
+\boxed{
+ Z^{\rm off}_0
+ =c_W(T)\sum_{e\ne f}\alpha_e\overline{\alpha_f}
+   \langle G_e,G_f\rangle
+ =c_W(T)\bigl(E_{\rm cont}-D_{\rm cont}\bigr),}
+\tag{4.621zadj16d}
+\]
+
+where
+
+\[
+ E_{\rm cont}:=\int_{\mathbb R^2}
+   \left|\sum_e\alpha_eG_e(v,j)\right|^2\,dv\,dj,
+ \qquad
+ D_{\rm cont}:=\sum_e|\alpha_e|^2\|G_e\|_2^2.
+\tag{4.621zadj16e}
+\]
+
+The distinction between \(D_{\rm cont}\) and the original discrete
+identity diagonal \(D_{\rm disc}\) is essential: the matrix \(B\) is
+singular on an identity pair, so (4.488) was never applied there.
+Combining the quantities only after both have been defined gives the exact
+resonant ledger
+
+\[
+\boxed{
+ D_{\rm disc}+Z^{\rm off}_0
+ =c_W(T)E_{\rm cont}
+  +\underbrace{\bigl(D_{\rm disc}-c_W(T)D_{\rm cont}\bigr)}
+   _{\mathcal E_{\rm samp}}.}
+\tag{4.621zadj16f}
+\]
+
+Therefore the possible residual main term has two parts: a global
+continuous Gram energy, still carrying all entry Möbius signs before the
+square, and a diagonal sampling correction \(\mathcal E_{\rm samp}\).
+Neither term has yet been bounded at the target scale, and no equality
+between the continuous and discrete diagonals is assumed.
+
+The finite helper bblr_poisson_zero_gram_sides verifies the algebra in
+(4.621zadj16d)--(4.621zadj16f).  With primitive coefficient \(5/6\),
+continuous energy \(21\), continuous self diagonal \(85\), and discrete
+diagonal \(90\), its two sides are both \(110/3\), while the offdiagonal
+zero term is \(-160/3\) and the sampling correction is \(115/6\).  This
+also proves at finite level that the offdiagonal zero mode alone is
+sign-indefinite; positivity belongs to \(E_{\rm cont}\), before the
+continuous self diagonal is removed.
+
+The power ledger of (4.621zadj16f) is now asymmetric in a useful way.
+The discrete identity diagonal is the diagonal-scale term already counted
+in (4.465), so its exponent is two.  For one continuous self pair, use
+\((v,\delta=wv-js)\) as coordinates.  Since \(s\asymp T\),
+
+\[
+ dv\,dj=\frac1s\,dv\,d\delta,
+ \qquad |v|,|\delta|\ll_W T^{1/2},
+\]
+
+and the normalized continuous area has exponent zero.  Summing the
+\(T^2\) entry family gives
+
+\[
+\boxed{
+ \log_T D_{\rm disc}=2,\qquad
+ \log_T D_{\rm cont}=2,\qquad
+ \log_T E_{\rm cont}^{\rm trivial}=3.}
+\tag{4.621zadj16g}
+\]
+
+Consequently
+
+\[
+\boxed{
+ \text{sampling-correction power deficit}=0,\qquad
+ \text{required coupled-Gram saving}=3-2=1.}
+\tag{4.621zadj16h}
+\]
+
+Thus \(\mathcal E_{\rm samp}\) introduces no new positive-power
+obstruction.  Its endpoint logarithmic aggregation still has to be checked,
+so this statement is not yet an \(o(T^2)\) estimate.  The whole missing
+power remains concentrated in \(E_{\rm cont}\), where the Möbius signs
+remain inside the continuous sum before squaring.
+
+The adapter transition_poisson_resonant_gram_audit records
+(4.621zadj16g)--(4.621zadj16h), sets
+sampling_correction_has_no_positive_power_obstruction to true, but keeps
+endpoint_logarithmic_aggregation_closed,
+continuous_mobius_gram_bound_proved, and
+whole_poisson_zero_mode_covered all false.
+
 Section 4.60 already supplies one part of that analytic bridge.  Its
 five-variable Fourier inversion writes the actual lifted zero-mode weight
 as an exact signed superposition of separated tensors, with only a

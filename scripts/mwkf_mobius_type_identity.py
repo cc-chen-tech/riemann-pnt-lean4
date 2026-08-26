@@ -416,6 +416,42 @@ class BBLRMovingParentZeroMode:
 
 
 @dataclass(frozen=True)
+class BBLRCyclicCenteringModulusWitness:
+    moduli: tuple[int, ...]
+    direct_parent_master_sums: tuple[Fraction, ...]
+    cyclic_kernel_means_by_modulus: tuple[
+        tuple[int, tuple[tuple[int, Fraction], ...]],
+        ...,
+    ]
+    constant_contributions: tuple[Fraction, ...]
+    centered_contributions: tuple[Fraction, ...]
+    every_split_recombines: bool
+    constant_summand_depends_on_auxiliary_modulus: bool
+    cyclic_constant_identified_with_poisson_zero_mode: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRPoissonZeroGram:
+    primitive_zero_coefficient: Fraction
+    continuous_gram_energy: Fraction
+    pairwise_gram_quadratic: Fraction
+    continuous_self_gram_diagonal: Fraction
+    continuous_offdiagonal_zero_mode: Fraction
+    weighted_offdiagonal_zero_mode: Fraction
+    discrete_identity_diagonal: Fraction
+    diagonal_sampling_correction: Fraction
+    discrete_diagonal_plus_zero_mode: Fraction
+    recombined_resonant_main_term: Fraction
+    pairwise_gram_identity_verified: bool
+    resonant_main_recombination_verified: bool
+    canonical_zero_mode_is_gram_before_diagonal_removal: bool
+    offdiagonal_zero_mode_is_sign_indefinite: bool
+    continuous_self_gram_identified_with_discrete_diagonal: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
 class BBLRTensorParentProjection:
     left_static_mobius_sum: Fraction
     right_static_mobius_sum: Fraction
@@ -3681,6 +3717,190 @@ def bblr_moving_parent_zero_mode_sides(
         packet_sum_precedes_centering=True,
         zero_mode_split_identity_verified=(direct == recombined),
         analytic_afe_ordering_kernel_exhaustive=False,
+        target_bound_proved=False,
+    )
+
+
+def bblr_cyclic_centering_modulus_dependence_witness(
+    *,
+    moduli: tuple[int, ...],
+    moving_parent_cutoffs: tuple[int, int],
+    left_parent_weights: dict[tuple[int, int], Fraction],
+    right_parent_weights: dict[tuple[int, int], Fraction],
+    labelled_common_shift_kernels: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+) -> BBLRCyclicCenteringModulusWitness:
+    """Compare the same cyclic split under distinct no-alias moduli.
+
+    The direct finite parent sum is independent of the auxiliary cyclic
+    embedding.  Its constant and centered summands need not be.  This
+    prevents the cyclic constant summand from being identified, without a
+    separate adapter, with the canonical zero dual frequency in the
+    two-dimensional Poisson formula.
+    """
+    if len(moduli) < 2 or len(set(moduli)) != len(moduli):
+        raise ValueError("at least two distinct cyclic moduli are required")
+    splits = tuple(
+        bblr_moving_parent_zero_mode_sides(
+            modulus=modulus,
+            moving_parent_cutoffs=moving_parent_cutoffs,
+            left_parent_weights=left_parent_weights,
+            right_parent_weights=right_parent_weights,
+            labelled_common_shift_kernels=labelled_common_shift_kernels,
+        )
+        for modulus in moduli
+    )
+    direct = tuple(split.direct_parent_master_sum for split in splits)
+    constants = tuple(split.constant_mode_contribution for split in splits)
+    centered = tuple(split.centered_parent_master_sum for split in splits)
+    return BBLRCyclicCenteringModulusWitness(
+        moduli=moduli,
+        direct_parent_master_sums=direct,
+        cyclic_kernel_means_by_modulus=tuple(
+            (modulus, split.combined_kernel_mean_by_r)
+            for modulus, split in zip(moduli, splits, strict=True)
+        ),
+        constant_contributions=constants,
+        centered_contributions=centered,
+        every_split_recombines=all(
+            split.zero_mode_split_identity_verified for split in splits
+        ),
+        constant_summand_depends_on_auxiliary_modulus=(
+            len(set(constants)) > 1
+        ),
+        cyclic_constant_identified_with_poisson_zero_mode=False,
+        target_bound_proved=False,
+    )
+
+
+def bblr_poisson_zero_gram_sides(
+    *,
+    primitive_zero_coefficient: Fraction,
+    discrete_identity_diagonal: Fraction,
+    sample_weights: dict[str, Fraction],
+    entry_values: dict[tuple[str, str], Fraction],
+    entry_coefficients: dict[str, Fraction],
+) -> BBLRPoissonZeroGram:
+    """Recombine the canonical zero dual frequency before diagonal removal.
+
+    This is the exact finite Gram analogue of adjoining the *continuous*
+    self-pair terms to the offdiagonal zero frequency in (4.488).  The
+    resulting complete continuous mode is a nonnegative Gram energy.
+    The original identity diagonal is discrete and is supplied separately:
+
+    ``D_disc + c0 * Z_off = c0 * E_cont + (D_disc - c0 * D_cont)``.
+
+    Thus the continuous self Gram must not be silently identified with the
+    registered discrete diagonal; their difference is a sampling correction.
+    """
+    if not sample_weights or any(
+        Fraction(weight) < 0 for weight in sample_weights.values()
+    ):
+        raise ValueError("nonnegative sample weights are required")
+    if len(entry_coefficients) < 2:
+        raise ValueError("at least two entry rows are required")
+    c_zero = Fraction(primitive_zero_coefficient)
+    discrete_diagonal = Fraction(discrete_identity_diagonal)
+    if any(
+        entry not in entry_coefficients or sample not in sample_weights
+        for entry, sample in entry_values
+    ):
+        raise ValueError("entry value lies outside the declared supports")
+
+    entries = tuple(sorted(entry_coefficients))
+    samples = tuple(sorted(sample_weights))
+    coefficients = {
+        entry: Fraction(entry_coefficients[entry]) for entry in entries
+    }
+    values = {
+        (entry, sample): Fraction(entry_values.get((entry, sample), 0))
+        for entry in entries
+        for sample in samples
+    }
+    weights = {
+        sample: Fraction(sample_weights[sample]) for sample in samples
+    }
+
+    direct = sum(
+        (
+            weights[sample]
+            * sum(
+                (
+                    coefficients[entry] * values[(entry, sample)]
+                    for entry in entries
+                ),
+                Fraction(0),
+            )
+            ** 2
+            for sample in samples
+        ),
+        Fraction(0),
+    )
+    gram = {
+        (left, right): sum(
+            (
+                weights[sample]
+                * values[(left, sample)]
+                * values[(right, sample)]
+                for sample in samples
+            ),
+            Fraction(0),
+        )
+        for left in entries
+        for right in entries
+    }
+    pairwise = sum(
+        (
+            coefficients[left]
+            * coefficients[right]
+            * gram[(left, right)]
+            for left in entries
+            for right in entries
+        ),
+        Fraction(0),
+    )
+    diagonal = sum(
+        (
+            coefficients[entry] ** 2 * gram[(entry, entry)]
+            for entry in entries
+        ),
+        Fraction(0),
+    )
+    offdiagonal = sum(
+        (
+            coefficients[left]
+            * coefficients[right]
+            * gram[(left, right)]
+            for left in entries
+            for right in entries
+            if left != right
+        ),
+        Fraction(0),
+    )
+    weighted_offdiagonal = c_zero * offdiagonal
+    sampling_correction = discrete_diagonal - c_zero * diagonal
+    diagonal_plus_zero = discrete_diagonal + weighted_offdiagonal
+    resonant_main = c_zero * direct + sampling_correction
+    return BBLRPoissonZeroGram(
+        primitive_zero_coefficient=c_zero,
+        continuous_gram_energy=direct,
+        pairwise_gram_quadratic=pairwise,
+        continuous_self_gram_diagonal=diagonal,
+        continuous_offdiagonal_zero_mode=offdiagonal,
+        weighted_offdiagonal_zero_mode=weighted_offdiagonal,
+        discrete_identity_diagonal=discrete_diagonal,
+        diagonal_sampling_correction=sampling_correction,
+        discrete_diagonal_plus_zero_mode=diagonal_plus_zero,
+        recombined_resonant_main_term=resonant_main,
+        pairwise_gram_identity_verified=(direct == pairwise),
+        resonant_main_recombination_verified=(
+            diagonal_plus_zero == resonant_main
+        ),
+        canonical_zero_mode_is_gram_before_diagonal_removal=True,
+        offdiagonal_zero_mode_is_sign_indefinite=True,
+        continuous_self_gram_identified_with_discrete_diagonal=False,
         target_bound_proved=False,
     )
 

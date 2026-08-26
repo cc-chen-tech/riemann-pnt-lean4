@@ -439,6 +439,76 @@ def test_bblr_moving_parent_master_extracts_zero_mode_after_packet_sum() -> None
     assert not sides.target_bound_proved
 
 
+def test_cyclic_parent_centering_is_not_the_canonical_poisson_zero_mode() -> None:
+    """Changing the auxiliary no-alias modulus changes the constant summand."""
+    helper = getattr(
+        type_identity,
+        "bblr_cyclic_centering_modulus_dependence_witness",
+        None,
+    )
+    assert helper is not None, "cyclic-centering modulus witness is missing"
+
+    witness = helper(
+        moduli=(7, 11),
+        moving_parent_cutoffs=(3, 3),
+        left_parent_weights={(7, 10): F(2)},
+        right_parent_weights={(5, 15): F(3)},
+        labelled_common_shift_kernels={
+            "dual/order-2": {(5, -1): F(-1), (5, 1): F(4)},
+            "main/order-1": {(5, -1): F(2)},
+        },
+    )
+
+    assert witness.moduli == (7, 11)
+    assert witness.direct_parent_master_sums == (F(24), F(24))
+    assert witness.cyclic_kernel_means_by_modulus == (
+        (7, ((5, F(5, 7)),)),
+        (11, ((5, F(5, 11)),)),
+    )
+    assert witness.constant_contributions == (F(120, 7), F(120, 11))
+    assert witness.centered_contributions == (F(48, 7), F(144, 11))
+    assert witness.every_split_recombines
+    assert witness.constant_summand_depends_on_auxiliary_modulus
+    assert not witness.cyclic_constant_identified_with_poisson_zero_mode
+    assert not witness.target_bound_proved
+
+
+def test_poisson_zero_mode_and_discrete_diagonal_form_resonant_main_term() -> None:
+    """Keep the continuous self diagonal distinct from the discrete one."""
+    helper = getattr(type_identity, "bblr_poisson_zero_gram_sides", None)
+    assert helper is not None, "canonical Poisson zero-mode Gram is missing"
+
+    sides = helper(
+        primitive_zero_coefficient=F(5, 6),
+        discrete_identity_diagonal=F(90),
+        sample_weights={"z0": F(2), "z1": F(3)},
+        entry_values={
+            ("u", "z0"): F(1),
+            ("u", "z1"): F(2),
+            ("v", "z0"): F(-1),
+            ("v", "z1"): F(3),
+        },
+        entry_coefficients={"u": F(2), "v": F(-1)},
+    )
+
+    assert sides.primitive_zero_coefficient == F(5, 6)
+    assert sides.continuous_gram_energy == F(21)
+    assert sides.pairwise_gram_quadratic == F(21)
+    assert sides.continuous_self_gram_diagonal == F(85)
+    assert sides.continuous_offdiagonal_zero_mode == F(-64)
+    assert sides.weighted_offdiagonal_zero_mode == F(-160, 3)
+    assert sides.discrete_identity_diagonal == F(90)
+    assert sides.diagonal_sampling_correction == F(115, 6)
+    assert sides.discrete_diagonal_plus_zero_mode == F(110, 3)
+    assert sides.recombined_resonant_main_term == F(110, 3)
+    assert sides.pairwise_gram_identity_verified
+    assert sides.resonant_main_recombination_verified
+    assert sides.canonical_zero_mode_is_gram_before_diagonal_removal
+    assert sides.offdiagonal_zero_mode_is_sign_indefinite
+    assert not sides.continuous_self_gram_identified_with_discrete_diagonal
+    assert not sides.target_bound_proved
+
+
 def test_bblr_tensor_parent_projection_factors_static_mertens_sum() -> None:
     helper = getattr(
         type_identity,

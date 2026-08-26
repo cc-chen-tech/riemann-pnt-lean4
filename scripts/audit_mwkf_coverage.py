@@ -835,6 +835,24 @@ class TransitionDeltaLatticePoissonAudit:
 
 
 @dataclass(frozen=True)
+class TransitionPoissonResonantGramAudit:
+    discrete_identity_diagonal_exponent: Fraction
+    continuous_self_gram_exponent: Fraction
+    sampling_correction_bound_exponent: Fraction
+    sampling_correction_power_deficit: Fraction
+    continuous_full_gram_trivial_exponent: Fraction
+    square_function_target_exponent: Fraction
+    required_continuous_gram_saving_exponent: Fraction
+    poisson_covolume_cancels_jacobian: bool
+    offdiagonal_zero_mode_is_sign_indefinite: bool
+    resonant_recombination_exact: bool
+    sampling_correction_has_no_positive_power_obstruction: bool
+    endpoint_logarithmic_aggregation_closed: bool
+    continuous_mobius_gram_bound_proved: bool
+    whole_poisson_zero_mode_covered: bool
+
+
+@dataclass(frozen=True)
 class TransitionDenominatorGcdLineAudit:
     determinant_exponent: Fraction
     denominator_gcd_exponent: Fraction
@@ -4664,6 +4682,51 @@ def transition_delta_lattice_poisson_audit(
         zero_mode_weight_separates_in_the_entries=False,
         zero_mode_mobius_variance_proved=False,
         whole_delta_lattice_covered=False,
+    )
+
+
+def transition_poisson_resonant_gram_audit(
+) -> TransitionPoissonResonantGramAudit:
+    """Separate the canonical zero mode from its diagonal sampling error.
+
+    For an offdiagonal entry pair, writing ``G_B(z)=F_B(Bz)`` cancels
+    the Poisson covolume ``abs(det B)^(-1)`` against the change-of-variable
+    Jacobian.  Adding and subtracting the *continuous* self pairs gives
+
+    ``D_disc + Z0_off = c0*E_cont + (D_disc-c0*D_cont)``.
+
+    The already registered discrete identity diagonal has exponent two.
+    The continuous self diagonal has the same exponent: in one entry the
+    coordinates ``(v,delta=w*v-s*j)`` have Jacobian ``s asymp T`` and the
+    two support lengths are ``T^(1/2)``, so their normalized area has
+    exponent zero; summing the entry family costs exponent two.  Hence the
+    sampling correction has no positive-power deficit (its endpoint
+    logarithms are not closed here).  The full continuous Gram retains the
+    absolute zero-mode exponent three from the delta-lattice audit and
+    still needs one power of coupled Möbius cancellation.
+    """
+    target = F(2)
+    discrete_diagonal = F(2)
+    continuous_self = F(2)
+    sampling_bound = max(discrete_diagonal, continuous_self)
+    continuous_full = F(3)
+    return TransitionPoissonResonantGramAudit(
+        discrete_identity_diagonal_exponent=discrete_diagonal,
+        continuous_self_gram_exponent=continuous_self,
+        sampling_correction_bound_exponent=sampling_bound,
+        sampling_correction_power_deficit=max(F(0), sampling_bound - target),
+        continuous_full_gram_trivial_exponent=continuous_full,
+        square_function_target_exponent=target,
+        required_continuous_gram_saving_exponent=continuous_full - target,
+        poisson_covolume_cancels_jacobian=True,
+        offdiagonal_zero_mode_is_sign_indefinite=True,
+        resonant_recombination_exact=True,
+        sampling_correction_has_no_positive_power_obstruction=(
+            sampling_bound <= target
+        ),
+        endpoint_logarithmic_aggregation_closed=False,
+        continuous_mobius_gram_bound_proved=False,
+        whole_poisson_zero_mode_covered=False,
     )
 
 
@@ -9885,6 +9948,17 @@ def main() -> None:
         "active_long=1/2,active_transverse=0,primitive_exact=True,"
         "primitive_layers_worse=False,zero_separable=False,"
         "zero_proved=False,whole=False"
+    )
+    transition_resonant_gram = transition_poisson_resonant_gram_audit()
+    print(
+        "large_q_transition: poisson_resonant_gram="
+        f"discrete_diag={_fmt(transition_resonant_gram.discrete_identity_diagonal_exponent)},"
+        f"continuous_diag={_fmt(transition_resonant_gram.continuous_self_gram_exponent)},"
+        f"sampling={_fmt(transition_resonant_gram.sampling_correction_bound_exponent)},"
+        "sampling_deficit=0,continuous_gram=3,target=2,required=1,"
+        "jacobian=True,offdiag_sign_indefinite=True,recombination=True,"
+        "sampling_power_obstruction=False,endpoint_logs=False,"
+        "gram_proved=False,whole=False"
     )
     transition_denominator_line = transition_denominator_gcd_line_audit(
         determinant_exponent=F(1),
