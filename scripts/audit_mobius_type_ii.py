@@ -748,6 +748,63 @@ def shifted_prime_mobius_coordinates(
     )
 
 
+def transition_numerator_completion_ledger(
+    *,
+    raw_bound: Fraction,
+    numerator_length: Fraction,
+    modulus: Fraction,
+    numerator_sum_length: Fraction,
+    target: Fraction,
+) -> TransitionNumeratorCompletionLedger:
+    """Audit Poisson completion in the transition numerator variable."""
+
+    if min(
+        raw_bound,
+        numerator_length,
+        modulus,
+        numerator_sum_length,
+        target,
+    ) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    dual_length = max(modulus - numerator_sum_length, Fraction(0))
+    numerator_saving = numerator_length - dual_length
+    completed_bound = raw_bound - numerator_saving
+    return TransitionNumeratorCompletionLedger(
+        dual_length=dual_length,
+        numerator_saving=numerator_saving,
+        completed_bound=completed_bound,
+        target=target,
+        gap=completed_bound - target,
+    )
+
+
+def transition_numerator_dual_coordinates(
+    *,
+    modulus: int,
+    determinant: int,
+    numerator: int,
+    dual_frequency: int,
+) -> TransitionNumeratorDualCoordinates:
+    """Resolve delta congruent to ell*d modulo q in the separated range."""
+
+    if modulus < 1 or numerator < 1 or determinant == 0 or dual_frequency == 0:
+        raise ValueError("the modulus and numerator must be positive and modes nonzero")
+    if gcd(determinant, modulus) != 1:
+        raise ValueError("the determinant must be a unit modulo the modulus")
+    dilation = dual_frequency * determinant
+    if modulus <= numerator + abs(dilation):
+        raise ValueError("the modulus must separate the two integer representatives")
+    if (dilation - numerator) % modulus != 0:
+        raise ValueError("the dual congruence is not satisfied")
+    if dilation != numerator:
+        raise AssertionError("separation and congruence must force exact equality")
+    return TransitionNumeratorDualCoordinates(
+        dual_frequency=dual_frequency,
+        determinant=determinant,
+        numerator=numerator,
+    )
+
+
 def near_determinant_coordinates(
     divisor_product: int,
     scalar_factor: int,
@@ -2746,6 +2803,26 @@ class ShiftedPrimeMobiusCoordinates:
 
     mobius_shift: int
     translated_base: int
+
+
+@dataclass(frozen=True)
+class TransitionNumeratorCompletionLedger:
+    """Exponent ledger after Poisson completion in h."""
+
+    dual_length: Fraction
+    numerator_saving: Fraction
+    completed_bound: Fraction
+    target: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class TransitionNumeratorDualCoordinates:
+    """Exact relation delta = ell*d forced by the transition scales."""
+
+    dual_frequency: int
+    determinant: int
+    numerator: int
 
 
 @dataclass(frozen=True)

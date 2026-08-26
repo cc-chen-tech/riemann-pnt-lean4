@@ -6968,6 +6968,131 @@ as an arbitrary \(G_d(n)\) into the published statement.  Hence
 projection and a no-coverage certificate for the transition gate, not
 an estimate for (9.239).
 
+### 9.43 Completing the transition numerator before separating Möbius
+
+The product numerator in (9.239) can be removed exactly at the
+transition scale.  For fixed \(g,q,d,\delta_0\), put
+
+\[
+ W_{g,q,d,\delta_0}(x)
+ :=\Omega(g,q,d,Hx,\delta_0),
+\]
+
+including in \(W\) every already retained archimedean factor depending
+on \(h\).  With
+\(\widehat W(\xi)=\int_{\mathbb R}W(x)e(-\xi x)\,dx\), ordinary Poisson
+summation gives the boundary-exact identity
+
+\[
+\boxed{
+ \sum_{h\in\mathbb Z}
+ \Omega(g,q,d,h,\delta_0)e_q(-h\delta_0\bar d_q)
+ =
+ H\sum_{\ell\in\mathbb Z\atop
+        \ell\equiv\delta_0\bar d_q\ ({\rm mod}\ q)}
+ \widehat W_{g,q,d,\delta_0}\!\left(\frac{H\ell}{q}\right).}
+\tag{9.278}
+\]
+
+The localized weights are uniformly inert in \(h/H\), including the
+factor \(e(-h\delta_0/(dq))\), whose logarithmic derivative is \(O(1)\)
+at the transition.  Repeated integration by parts therefore restricts
+(9.278), with an arbitrary power error, to
+
+\[
+ |\ell|\ll T^\varepsilon q/H\ll T^\varepsilon.
+\]
+
+The congruence in (9.278) is
+\(\delta_0\equiv\ell d\pmod q\).  Since
+\(\delta_0,|d|\asymp T^2\), \(q\asymp T^{5/2}\), and
+\(|\ell|\ll T^\varepsilon\), choosing the truncation exponent below
+\(1/2\) gives
+\[
+ q>\delta_0+|\ell d|.
+\]
+There is then only one integer representative:
+
+\[
+\boxed{\delta_0=\ell d.}
+\tag{9.279}
+\]
+
+This includes both signs of \(d\): \(\ell\) has the sign which makes
+\(\ell d>0\).  The finite checker verifies the general lemma that
+\(\delta_0\equiv\ell d\pmod q\) and
+\(q>\delta_0+|\ell d|\) force (9.279), for positive \(\delta_0,q\)
+and either sign of the nonzero unit \(d\).
+
+Substitution in (9.239) eliminates the \(\delta_0\)-sum:
+
+\[
+\boxed{
+ \mathfrak P[\Omega]
+ =
+ H\sum_{0<|\ell|\ll T^\varepsilon}
+ \sum_{g\asymp G}\mu(g)
+ \sum_{q\asymp Q\atop(g,q)=1}\mu(q)
+ \sum_{d\in I(gq)\atop(d,gq)=1}
+ \mu(gq+d)\,\Xi_\ell(g,q,d)
+ +O_A(T^{-A}),}
+\tag{9.280}
+\]
+
+after increasing \(A\) to absorb the polynomial number of original
+terms.  Here \(\Xi_\ell\) is the Fourier-transformed inert weight with
+the exact condition that \(\ell d\) lies in the original
+\(\delta_0\)-interval.  No inverse phase or arbitrary product
+coefficient remains.
+
+The exponent ledger agrees exactly with, and explains, the scalar-aware
+Young endpoint.  The raw exponent is \(23/2\); deleting the
+\(\delta_0\)-length saves \(2\), while \(q/H\) has exponent zero:
+
+\[
+\boxed{
+ \frac{23}{2}-2=\frac{19}{2},
+ \qquad
+ \frac{19}{2}-9=\frac12.}
+\tag{9.281}
+\]
+
+Thus completing \(h\) recovers Young's full two-power saving but does
+not by itself recover the remaining scalar half-power.  After removing
+the common factors already accounted for in (9.281), a sufficient
+three-variable core estimate is
+
+\[
+\boxed{
+ \sum_{g\asymp T^{1/2}}\mu(g)
+ \sum_{q\asymp T^{5/2}}\mu(q)
+ \sum_{d\asymp T^2}\mu(gq+d)\Xi_\ell(g,q,d)
+ \ll_\varepsilon T^{9/2+\varepsilon}}
+\tag{9.282}
+\]
+
+uniformly for the separated inert weights and bounded dual modes in
+(9.280).  Its absolute exponent is \(5\), so (9.282) asks for exactly
+\(T^{1/2}\).  With \(s=gq\), \(S=T^3\), and \(D=S^{2/3}\), its
+separated model is a divisor-incidence weighted averaged-Chowla bound
+of size \(S^{3/2+\varepsilon}\), rather than the
+\(S^{5/3-o(1)}\) scale supplied by published logarithmic-cancellation
+theorems.  Equivalently, the required relative saving is
+\(S^{-1/6}=T^{-1/2}\).
+
+There are two different Fourier variables here.  The nonzero
+\(\ell\) in (9.278) is dual to the product numerator \(h\).  The circle
+variable \(\alpha\) used to analyze the remaining \(d\)-shift
+correlation is dual to \(d\).  Formula (9.279) does not force that
+\(\alpha\) lies on minor arcs, and the \(\alpha=0\) component of the
+weighted correlation is generally still present.  Consequently the
+classical \(S^{4/5+\varepsilon}\) minor-arc bound for a Möbius
+exponential sum, although numerically stronger than the required
+\(S^{5/6+\varepsilon}\), cannot yet be applied to the whole of
+(9.282).  A valid closure must prove that the original principal/axis
+recombination cancels those \(d\)-major arcs, or estimate them jointly
+with the structured divisor-incidence coefficient.
+
 Known one-variable Möbius--trace results do not close (9.239) or its
 recombined form (9.250).  Even if
 one optimistically grants a translated prime-modulus version of the
@@ -7179,6 +7304,13 @@ Proved in this note:
   endpoint cost \(T^{4+o(1)}\), but gives only logarithmic cancellation
   at power exponent \(5\); it also does not admit the shift-dependent
   inverse/product kernel.
+* the transition numerator completion (9.278)--(9.282).  Poisson in
+  \(h\) forces the exact dilation \(\delta_0=\ell d\), with only
+  \(T^\varepsilon\) dual modes, and removes the inverse/product phase.
+  The resulting three-variable weighted averaged-Chowla core still
+  requires the exact relative saving \(S^{-1/6}=T^{-1/2}\).  Nonzero
+  numerator-dual frequency does not remove the separate shift-major
+  arcs.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7231,6 +7363,7 @@ Proved in this note:
 | Prime Kloosterman slice | published theorem applicable only after enlarging the moving interval; quantitatively insufficient | on \(Q=T^{5/2},x=T^3\), Irving's three exponents give \(26/5\) versus trivial \(11/2\), a saving \(3/10<1/2\), (9.273).  The actual prime interval has length \(T^2\) at height \(T^3\), and the theorem has no joint \(h\delta_0\)-moment |
 | Prime-slice Selberg variance | unconditional scalar projection insufficient; RH diagnostic only | at \(X=T^3,Y=T^2\), the unconditional \(J(X,Y/X)\ll XY^2T^\varepsilon\) gives exponent \(5\) after Cauchy, still \(1/2\) above target, (9.274).  RH-scale variance would give exponent \(4\), (9.275), but the density term separately requires the unproved \(X^{5/6+\varepsilon}\) Mertens bound (9.276); the Ramanujan zero mode (9.230) is not this density mode |
 | Averaged Möbius on shifted primes | stripped signed projection covered only logarithmically | \(h=Y-d,n=s+d-Y\) maps the scalar correlation to Lichtman's shift average with fixed \(G(n)=\Lambda(n+Y)\); endpoints cost \(Y^2=T^4\), but the theorem's main bound remains \(XY/(\log X)^{1/3-\delta}=T^{5-o(1)}\), leaving the full \(T^{1/2}\) power gap and excluding the actual shift-dependent inverse/product kernel, (9.277) |
+| Transition numerator completion | exact three-variable reduction; weighted averaged-Chowla power gate unproved | Poisson in \(h\) gives (9.278); \(q>\delta_0+|\ell d|\) forces \(\delta_0=\ell d\), (9.279), so the inverse/product kernel disappears and only bounded dual modes of (9.280) remain.  The ledger is \(23/2-2=19/2\), still \(1/2\) above target, (9.281), equivalently the core (9.282) needs \(S^{-1/6}\).  The nonzero \(h\)-dual mode does not delete the distinct \(d\)-major arcs |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

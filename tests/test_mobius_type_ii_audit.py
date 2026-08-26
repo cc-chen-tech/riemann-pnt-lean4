@@ -33,6 +33,8 @@ from scripts.audit_mobius_type_ii import (
     ShiftedPrimeMobiusCoordinates,
     ShiftedPrimeMobiusLedger,
     SquarefreeScalarGcdStratum,
+    TransitionNumeratorCompletionLedger,
+    TransitionNumeratorDualCoordinates,
     WrightFactorSavings,
     YoungCommonFactorLedger,
     YoungDualGcdLedger,
@@ -173,6 +175,8 @@ from scripts.audit_mobius_type_ii import (
     squarefree_scalar_gcd_stratum,
     squarefree_scalar_stratum_completed_sum,
     squarefree_scalar_stratum_divisor_spectrum,
+    transition_numerator_completion_ledger,
+    transition_numerator_dual_coordinates,
     two_sided_centered_kloosterman_crt_terms,
     two_sided_mobius_geometric_value,
     unrestricted_fourier_lift,
@@ -896,6 +900,43 @@ def test_shifted_prime_mobius_change_of_variables_is_exact() -> None:
                 )
                 assert coordinates.translated_base + coordinates.mobius_shift == base
                 assert coordinates.translated_base + shift_range == base + shift
+
+
+def test_transition_numerator_completion_keeps_exact_scalar_half_gap() -> None:
+    assert transition_numerator_completion_ledger(
+        raw_bound=F(23, 2),
+        numerator_length=F(2),
+        modulus=F(5, 2),
+        numerator_sum_length=F(5, 2),
+        target=F(9),
+    ) == TransitionNumeratorCompletionLedger(
+        dual_length=F(0),
+        numerator_saving=F(2),
+        completed_bound=F(19, 2),
+        target=F(9),
+        gap=F(1, 2),
+    )
+
+
+def test_transition_numerator_dual_congruence_forces_exact_dilation() -> None:
+    for determinant in tuple(range(-8, 0)) + tuple(range(1, 9)):
+        for dual_frequency in tuple(range(-5, 0)) + tuple(range(1, 6)):
+            numerator = dual_frequency * determinant
+            if numerator <= 0:
+                continue
+            modulus = 2 * numerator + 1
+            if gcd(determinant, modulus) != 1:
+                continue
+            assert transition_numerator_dual_coordinates(
+                modulus=modulus,
+                determinant=determinant,
+                numerator=numerator,
+                dual_frequency=dual_frequency,
+            ) == TransitionNumeratorDualCoordinates(
+                dual_frequency=dual_frequency,
+                determinant=determinant,
+                numerator=numerator,
+            )
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:
