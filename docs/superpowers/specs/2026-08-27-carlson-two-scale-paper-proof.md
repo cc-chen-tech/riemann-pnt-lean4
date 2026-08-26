@@ -311,7 +311,9 @@ finite-pigeonhole lemmas are already formalized in
 far-right estimate `|F(4+it)|<=5/36<1/3`, the fixed-circle growth bound,
 and the resulting unconditional Jensen divisor-mass bound are now
 formalized in `CarlsonTwoScaleFarRight.lean` and
-`CarlsonTwoScaleDetectorGrowth.lean`.  The remaining generic Lean wrapper
+`CarlsonTwoScaleDetectorGrowth.lean`; divisor locality also identifies
+this outer-Jensen mass with the complete divisor on the inner factorization
+disk.  The remaining generic Lean wrapper
 starts after Jensen: it must factor the local divisor, perform the radial
 and height pigeonhole selections, and transfer the Borel--Caratheodory
 bound to the horizontal logarithmic derivative.

@@ -357,5 +357,40 @@ theorem norm_twoScaleMollifiedZetaError_le_one_div_three_of_four_le_re
   (norm_twoScaleMollifiedZetaError_le_five_div_thirty_six_of_four_le_re
     hY0 hY01 hs).trans (by norm_num)
 
+/-- The regularized two-scale detector is not locally identically zero at
+any point of the right half-plane.  A quantitative nonzero value at s=4 is
+propagated through the connected analytic domain. -/
+theorem analyticOrderAt_regularizedTwoScaleCarlsonZeroDetector_ne_top
+    {Y0 Y1 : ℕ} (hY0 : 2 ≤ Y0) (hY01 : Y0 < Y1)
+    {s : ℂ} (hs : 0 < s.re) :
+    analyticOrderAt
+        (regularizedTwoScaleCarlsonZeroDetector Y0 Y1) s ≠ ⊤ := by
+  let U : Set ℂ := {z : ℂ | 0 < z.re}
+  let x : ℂ := 4
+  have hanalytic : AnalyticOnNhd ℂ
+      (regularizedTwoScaleCarlsonZeroDetector Y0 Y1) U :=
+    analyticOnNhd_regularizedTwoScaleCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl Y0 Y1
+  have hxU : x ∈ U := by simp [x, U]
+  have hsU : s ∈ U := by simpa [U] using hs
+  have hxnorm :
+      1 ≤ ‖regularizedTwoScaleCarlsonZeroDetector Y0 Y1 x‖ := by
+    apply one_le_norm_regularizedTwoScaleCarlsonZeroDetector_of_four_le_re
+    · simp [x]
+    · apply norm_twoScaleMollifiedZetaError_le_one_div_three_of_four_le_re
+        hY0 hY01
+      simp [x]
+  have hxne : regularizedTwoScaleCarlsonZeroDetector Y0 Y1 x ≠ 0 := by
+    intro hzero
+    rw [hzero, norm_zero] at hxnorm
+    norm_num at hxnorm
+  have hxorder :
+      analyticOrderAt
+        (regularizedTwoScaleCarlsonZeroDetector Y0 Y1) x ≠ ⊤ := by
+    rw [(hanalytic x hxU).analyticOrderAt_eq_zero.mpr hxne]
+    exact ENat.natCast_ne_top 0
+  exact hanalytic.analyticOrderAt_ne_top_of_isPreconnected
+    (convex_halfSpace_re_gt 0).isPreconnected hxU hsU hxorder
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

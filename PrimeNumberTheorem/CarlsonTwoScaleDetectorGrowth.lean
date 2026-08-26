@@ -201,5 +201,47 @@ theorem exists_regularizedTwoScaleCarlsonFactorDiskZeroMass_le_logPolynomial_of_
     hY0 hY01
   simp
 
+/-- The complete divisor mass computed on the factorization disk itself. -/
+noncomputable def regularizedTwoScaleCarlsonInnerFactorDiskZeroMass
+    (Y0 Y1 : ℕ) (T : ℝ) : ℝ :=
+  ∑ᶠ u,
+    (MeromorphicOn.divisor
+      (regularizedTwoScaleCarlsonZeroDetector Y0 Y1)
+      (Metric.closedBall
+        ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) u : ℝ)
+
+/-- Divisor locality identifies the inner-disk factorization mass with the
+outer Jensen divisor restricted to that same disk. -/
+theorem regularizedTwoScaleCarlsonInnerFactorDiskZeroMass_eq :
+    regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T =
+      regularizedTwoScaleCarlsonFactorDiskZeroMass Y0 Y1 T := by
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  have hanalytic :=
+    analyticOnNhd_regularizedTwoScaleCarlsonZeroDetector_fixedJensenOuterDisk
+      Y0 Y1 T
+  have hlocal := finsum_divisor_closedBall_eq_finsum_mem_of_le
+    (f := regularizedTwoScaleCarlsonZeroDetector Y0 Y1)
+    (c := c) (b := (123 / 32 : ℝ)) (R := (31 / 8 : ℝ))
+    (by norm_num) hanalytic.meromorphicOn
+  simpa [regularizedTwoScaleCarlsonInnerFactorDiskZeroMass,
+    regularizedTwoScaleCarlsonFactorDiskZeroMass, c] using hlocal
+
+/-- Hence the complete inner factorization divisor mass inherits the
+unconditional Jensen logarithmic majorant. -/
+theorem exists_regularizedTwoScaleCarlsonInnerFactorDiskZeroMass_le_logPolynomial :
+    ∃ C : ℝ, 1 ≤ C ∧
+      ∀ {Y0 Y1 : ℕ}, 2 ≤ Y0 → Y0 < Y1 →
+      ∀ {T : ℝ}, 5 ≤ T →
+        regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T ≤
+          Real.log (C * (Y1 : ℝ) ^ 2 * (T + 14) ^ 10) /
+            Real.log ((31 / 8 : ℝ) / (123 / 32 : ℝ)) := by
+  rcases
+      exists_regularizedTwoScaleCarlsonFactorDiskZeroMass_le_logPolynomial_of_two_le_inner with
+    ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro Y0 Y1 hY0 hY01 T hT
+  rw [regularizedTwoScaleCarlsonInnerFactorDiskZeroMass_eq]
+  exact hbound hY0 hY01 hT
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem
