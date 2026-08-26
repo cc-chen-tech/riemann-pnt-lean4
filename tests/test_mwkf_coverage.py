@@ -6034,6 +6034,63 @@ def test_mixed_cross_state_is_exactly_the_left_mobius_modulus_gate(
         assert marker in note
 
 
+def test_korolev_reciprocity_matches_the_unit_mmkls_kernel_but_has_no_endpoint_power_saving(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The direct Möbius--Kloosterman theorem loses its power at x=q."""
+    adapter = getattr(
+        coverage_audit,
+        "mmkls_korolev_reciprocity_audit",
+        None,
+    )
+    assert adapter is not None, "MMKLS--Korolev reciprocity audit is missing"
+    audit = adapter()
+    assert audit.modulus_exponent == F(3)
+    assert audit.interval_exponent == F(3)
+    assert audit.product_index_exponent == F(5)
+    assert audit.additive_reciprocity_identity_exact
+    assert audit.exchange_orientation_reduces_to_variable_below_modulus
+    assert audit.reciprocity_correction_derivative_exponent == F(-4)
+    assert audit.reciprocity_correction_normalized_derivative_exponent == F(-1)
+    assert audit.reciprocity_correction_is_smooth
+    assert audit.korolev_phase_matches_on_unit_product_index_stratum
+    assert not audit.unit_product_index_hypothesis_is_uniform
+    assert audit.composite_modulus_theorem_applies
+    assert audit.endpoint_first_relative_exponent == F(-3, 2)
+    assert audit.endpoint_second_relative_exponent == F(0)
+    assert audit.endpoint_dominant_relative_exponent == F(0)
+    assert audit.published_composite_saving_exponent == F(0)
+    assert audit.required_mmkls_saving_exponent == F(1, 2)
+    assert audit.remaining_power_deficit == F(1, 2)
+    assert audit.general_theorem_supplies_only_logarithmic_saving
+    assert audit.prime_power_saving_does_not_certify_required_exponent
+    assert not audit.prime_theorem_covers_moving_composite_moduli
+    assert not audit.published_theorem_closes_mmkls
+    assert audit.source == (
+        "Korolev, arXiv:1610.09171v1, equations (2)--(3) and Theorems 1, 5"
+    )
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: mmkls_korolev_reciprocity="
+        "q=3 x=3 a=5 reciprocal=True ordered=True derivative=-4 "
+        "normalized=-1 smooth=True unit_match=True unit_uniform=False "
+        "composite=True endpoint_terms=-3/2,0 dominant=0 "
+        "published=0 required=1/2 deficit=1/2 log_only=True "
+        "prime_explicit=False composite_prime=False mmkls=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjabd Direct Möbius--Kloosterman reciprocity has no endpoint power saving",
+        r"e\!\left(-\frac{h\delta\bar r}{s}\right)",
+        r"q^{-1/2}(\log x)^{5/2}",
+        r"q^{1/5}x^{-1/5}(\log x)^{13/5}",
+        "mmkls_korolev_reciprocity_audit",
+    ):
+        assert marker in note
+
+
 def test_higher_uniformity_theorem_misses_the_critical_affine_endpoint(
     capsys: pytest.CaptureFixture[str],
 ) -> None:

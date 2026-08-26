@@ -19221,6 +19221,98 @@ The interfaces `outer_modulus_divisor_incidence_energy` and
 finite Type recombination, the zero outer-scale power loss, and the
 hard-face \(1/2\) deficit.  They keep MMKLS, OSLSP, and OLISK false.
 
+### 4.109zjabd Direct Möbius--Kloosterman reciprocity has no endpoint power saving
+
+There is a direct published-kernel match before the Poisson completion
+in (4.845ao), but it does not close the power gap.  Return to one
+recombined original box and fix \(r,h,\delta\).  The exchange identity
+(4.642)--(4.645) permits the two orientations to be paired and the hard
+range to be partitioned at \(s<r\).  The diagonal is empty here because
+\((r,s)=1\) and \(r,s>1\).  Additive reciprocity gives the exact identity
+
+\[
+ \boxed{
+ e\!\left(-\frac{h\delta\bar r}{s}\right)
+ =e_r\!\left(h\delta\bar s\right)
+  e\!\left(-\frac{h\delta}{rs}\right),
+ \qquad (r,s)=1.}
+ \tag{4.845dc_14xq_17a}
+\]
+
+The last factor is part of the smooth physical amplitude, not a second
+modular phase.  In the balanced box, with
+
+\[
+ r\asymp s\asymp T^3,\qquad |h\delta|\asymp T^5,
+\]
+
+its first \(s\)-derivative has scale
+
+\[
+ \frac{|h\delta|}{rs^2}=T^{-4},
+ \qquad
+ S\frac{|h\delta|}{rs^2}=T^{-1}.
+ \tag{4.845dc_14xq_17b}
+\]
+
+Higher normalized derivatives are bounded as well.  Therefore partial
+summation absorbs (4.845dc_14xq_17b), the mollifier taper, and every
+separated physical smooth factor without a positive power loss.  On the
+unit stratum \((h\delta,r)=1\), the remaining \(s\)-sum is exactly the
+kernel in [Korolev, equation (1)](https://arxiv.org/abs/1610.09171):
+
+\[
+ S_r(x;\mu)
+ =\sum_{n\le x}^{\prime}\mu(n)e_r(an^*+bn),
+ \qquad (a,b)=(h\delta,0).
+ \tag{4.845dc_14xq_17c}
+\]
+
+The orientation \(s<r\) ensures \(x\le r\); in a balanced dyadic box
+all partial-summation endpoints also satisfy
+\(x\gg r^{1/2}\log r\).  Thus the general-composite-modulus results have
+the correct geometric phase and interval.  They do not have the required
+power.  The older Möbius estimate quoted as Korolev's equation (2) is
+
+\[
+ |S_q(x;\mu)|
+ \ll x\tau(q)\left(
+ q^{-1/2}(\log x)^{5/2}
+ +q^{1/5}x^{-1/5}(\log x)^{13/5}\right).
+ \tag{4.845dc_14xq_17d}
+\]
+
+At the physical endpoint \(x=q=T^3\), the two relative \(T\)-exponents
+are respectively
+
+\[
+ -\frac32,\qquad \frac35-\frac35=0.
+ \tag{4.845dc_14xq_17e}
+\]
+
+Hence the second term in (4.845dc_14xq_17d) supplies no power saving.
+Korolev's Theorem 1 gives instead
+
+\[
+ |S_q(x;f)|\le
+ \frac{562x\log\log q}{\varepsilon\log q}
+\]
+
+for general integer \(q\), which is logarithmic.  His Theorem 5 gives
+\(xq^{-c\varepsilon^4}\) only for prime \(q\), with an unspecified
+absolute \(c>0\).  The hard face would require at least \(q^{-1/6}\)
+because \(q=T^3\) and the missing factor is \(T^{-1/2}\).  The theorem
+neither certifies \(c\varepsilon^4\ge1/6\) nor covers the moving composite
+moduli in the physical sum.  Moreover, (4.845dc_14xq_17c) does not cover
+the retained nonunit layers \((h\delta,r)>1\).
+
+Thus direct reciprocity is an exact adapter on the unit layer, but the
+published composite theorem leaves the full \(T^{1/2}\) deficit and the
+prime theorem is not a uniform replacement.  It does not prove MMKLS,
+OSLSP, or OLISK.  The interface `mmkls_korolev_reciprocity_audit`
+checks (4.845dc_14xq_17a)--(4.845dc_14xq_17e) by exact rational
+arithmetic and retains all three proof flags as false.
+
 ### 4.109zjaba Higher short-interval uniformity loses the progression density
 
 The 2026 version of

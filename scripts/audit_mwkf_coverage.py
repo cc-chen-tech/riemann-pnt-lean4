@@ -2127,6 +2127,32 @@ class MixedCrossStateMMKLSAudit:
 
 
 @dataclass(frozen=True)
+class MMKLSKorolevReciprocityAudit:
+    modulus_exponent: Fraction
+    interval_exponent: Fraction
+    product_index_exponent: Fraction
+    additive_reciprocity_identity_exact: bool
+    exchange_orientation_reduces_to_variable_below_modulus: bool
+    reciprocity_correction_derivative_exponent: Fraction
+    reciprocity_correction_normalized_derivative_exponent: Fraction
+    reciprocity_correction_is_smooth: bool
+    korolev_phase_matches_on_unit_product_index_stratum: bool
+    unit_product_index_hypothesis_is_uniform: bool
+    composite_modulus_theorem_applies: bool
+    endpoint_first_relative_exponent: Fraction
+    endpoint_second_relative_exponent: Fraction
+    endpoint_dominant_relative_exponent: Fraction
+    published_composite_saving_exponent: Fraction
+    required_mmkls_saving_exponent: Fraction
+    remaining_power_deficit: Fraction
+    general_theorem_supplies_only_logarithmic_saving: bool
+    prime_power_saving_does_not_certify_required_exponent: bool
+    prime_theorem_covers_moving_composite_moduli: bool
+    published_theorem_closes_mmkls: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class CriticalAffineMobiusUniformityAudit:
     ambient_integer_exponent: Fraction
     affine_progression_span_exponent: Fraction
@@ -11940,6 +11966,80 @@ def mixed_cross_state_mmkls_audit(
         isolated_mixed_cell_bound_is_sufficient_not_necessary=True,
         mixed_cell_mmkls_proved=False,
         full_outer_gate_proved=False,
+    )
+
+
+def mmkls_korolev_reciprocity_audit() -> MMKLSKorolevReciprocityAudit:
+    """Test Korolev's Möbius--Kloosterman bounds on the MMKLS hard box.
+
+    On the exchange-symmetric half ``s < r``, additive reciprocity changes
+
+    ``e(-h*delta*inverse(r mod s)/s)``
+
+    into ``e_r(h*delta*inverse(s mod r)) * e(-h*delta/(r*s))``.
+    The second factor is a smooth amplitude: at the hard scales its
+    derivative in ``s`` is ``T^-4`` and its derivative normalized to an
+    interval of length ``T^3`` is ``T^-1``.  Thus, on ``(h*delta,r)=1``,
+    the first factor is exactly the phase in Korolev's sum with modulus
+    ``r``, inverse coefficient ``h*delta``, and linear coefficient zero.
+
+    Korolev's equation (2) has relative factors
+    ``q^-1/2`` and ``q^(1/5)*x^(-1/5)`` (apart from logarithms).  At the
+    physical endpoint ``x=q=T^3`` these have T-exponents ``-3/2`` and
+    zero, so the latter term removes every power saving.  Theorems 1--3
+    for general integer moduli give only logarithmic savings.  Theorem 5
+    gives ``q^(-c*epsilon^4)`` only for prime q, with no explicit lower
+    bound on c that would certify the required T^(1/2) saving, and the
+    physical modulus is not restricted to primes.  Nonunit
+    ``(h*delta,r)`` strata are an additional unmatched hypothesis.
+    """
+    modulus = F(3)
+    interval = F(3)
+    product_index = F(5)
+
+    # Exact rational fixture for
+    # -a*rbar/s = a*sbar/r - a/(r*s) (mod 1).
+    r, s, a = 5, 7, 3
+    left = -F(a * pow(r, -1, s), s)
+    right = F(a * pow(s, -1, r), r) - F(a, r * s)
+    reciprocal_exact = (left - right).denominator == 1
+
+    derivative = product_index - modulus - 2 * interval
+    normalized_derivative = derivative + interval
+    first_endpoint = -modulus / 2
+    second_endpoint = modulus / 5 - interval / 5
+    dominant_endpoint = max(first_endpoint, second_endpoint)
+    required = F(1, 2)
+    published_power_saving = max(F(0), -dominant_endpoint)
+
+    return MMKLSKorolevReciprocityAudit(
+        modulus_exponent=modulus,
+        interval_exponent=interval,
+        product_index_exponent=product_index,
+        additive_reciprocity_identity_exact=reciprocal_exact,
+        exchange_orientation_reduces_to_variable_below_modulus=True,
+        reciprocity_correction_derivative_exponent=derivative,
+        reciprocity_correction_normalized_derivative_exponent=(
+            normalized_derivative
+        ),
+        reciprocity_correction_is_smooth=(normalized_derivative <= 0),
+        korolev_phase_matches_on_unit_product_index_stratum=True,
+        unit_product_index_hypothesis_is_uniform=False,
+        composite_modulus_theorem_applies=True,
+        endpoint_first_relative_exponent=first_endpoint,
+        endpoint_second_relative_exponent=second_endpoint,
+        endpoint_dominant_relative_exponent=dominant_endpoint,
+        published_composite_saving_exponent=published_power_saving,
+        required_mmkls_saving_exponent=required,
+        remaining_power_deficit=required - published_power_saving,
+        general_theorem_supplies_only_logarithmic_saving=True,
+        prime_power_saving_does_not_certify_required_exponent=True,
+        prime_theorem_covers_moving_composite_moduli=False,
+        published_theorem_closes_mmkls=False,
+        source=(
+            "Korolev, arXiv:1610.09171v1, equations (2)--(3) "
+            "and Theorems 1, 5"
+        ),
     )
 
 
@@ -25623,6 +25723,45 @@ def main() -> None:
         f"{mixed_cross_mmkls.isolated_mixed_cell_bound_is_sufficient_not_necessary} "
         f"mmkls={mixed_cross_mmkls.mixed_cell_mmkls_proved} "
         f"outer={mixed_cross_mmkls.full_outer_gate_proved}"
+    )
+    korolev_reciprocity = mmkls_korolev_reciprocity_audit()
+    print(
+        "balanced_max_a: mmkls_korolev_reciprocity="
+        f"q={_fmt(korolev_reciprocity.modulus_exponent)} "
+        f"x={_fmt(korolev_reciprocity.interval_exponent)} "
+        f"a={_fmt(korolev_reciprocity.product_index_exponent)} "
+        "reciprocal="
+        f"{korolev_reciprocity.additive_reciprocity_identity_exact} "
+        "ordered="
+        f"{korolev_reciprocity.exchange_orientation_reduces_to_variable_below_modulus} "
+        "derivative="
+        f"{_fmt(korolev_reciprocity.reciprocity_correction_derivative_exponent)} "
+        "normalized="
+        f"{_fmt(korolev_reciprocity.reciprocity_correction_normalized_derivative_exponent)} "
+        f"smooth={korolev_reciprocity.reciprocity_correction_is_smooth} "
+        "unit_match="
+        f"{korolev_reciprocity.korolev_phase_matches_on_unit_product_index_stratum} "
+        "unit_uniform="
+        f"{korolev_reciprocity.unit_product_index_hypothesis_is_uniform} "
+        "composite="
+        f"{korolev_reciprocity.composite_modulus_theorem_applies} "
+        "endpoint_terms="
+        f"{_fmt(korolev_reciprocity.endpoint_first_relative_exponent)},"
+        f"{_fmt(korolev_reciprocity.endpoint_second_relative_exponent)} "
+        "dominant="
+        f"{_fmt(korolev_reciprocity.endpoint_dominant_relative_exponent)} "
+        "published="
+        f"{_fmt(korolev_reciprocity.published_composite_saving_exponent)} "
+        "required="
+        f"{_fmt(korolev_reciprocity.required_mmkls_saving_exponent)} "
+        f"deficit={_fmt(korolev_reciprocity.remaining_power_deficit)} "
+        "log_only="
+        f"{korolev_reciprocity.general_theorem_supplies_only_logarithmic_saving} "
+        "prime_explicit="
+        f"{not korolev_reciprocity.prime_power_saving_does_not_certify_required_exponent} "
+        "composite_prime="
+        f"{korolev_reciprocity.prime_theorem_covers_moving_composite_moduli} "
+        f"mmkls={korolev_reciprocity.published_theorem_closes_mmkls}"
     )
     affine_uniformity = critical_affine_mobius_uniformity_audit()
     print(
