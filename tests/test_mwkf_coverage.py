@@ -2696,6 +2696,70 @@ def test_fkm_bilinear_trace_covers_prime_slice_but_degenerates_at_balance() -> N
     assert not balanced["bilinear_bound_is_power_saving"]
 
 
+def test_product_trace_additive_completion_is_exact_and_parseval_is_trivial() -> None:
+    audit = getattr(
+        coverage_audit,
+        "product_trace_additive_completion_audit",
+        None,
+    )
+    assert audit is not None, "product-trace completion audit is missing"
+
+    result = audit(
+        modulus=11,
+        direct_coefficient=2,
+        inverse_coefficient=3,
+        left_coefficients={1: 1, 2: -1, 3: 1},
+        right_coefficients={1: 1, 2: 1, 4: -1},
+    )
+
+    assert result["unit_coefficients"]
+    assert result["forward_transform_is_kloosterman_sum"]
+    assert result["inverse_completion_exact"]
+    assert result["completed_bilinear_identity_exact"]
+    assert result["kloosterman_parseval_exact"]
+    assert result["additive_bilinear_parseval_exact"]
+    assert result["completion_normalization_denominator"] == 11
+    assert result["completed_frequency_count"] == 11
+    assert result["second_kloosterman_argument_is_fixed"]
+    assert result["pascadi_short_two_argument_adapter_available"] is False
+    assert result["parseval_supplies_power_saving"] is False
+
+
+def test_fkms_2026_rank_one_balanced_slice_is_a_route_not_a_registered_bound() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fkms_rank_one_prime_type_ii_route_audit",
+        None,
+    )
+    assert audit is not None, "FKMS rank-one route audit is missing"
+
+    balanced = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 2),
+        moment_parameter=14,
+        required_unsquared_saving=F(1, 2),
+    )
+
+    assert balanced["published_gallant_theorem_directly_applies"] is False
+    assert balanced["paper_states_rank_one_inverse_pole_method_goes_through"]
+    assert balanced["rank_one_stratification_adapter_proved_here"] is False
+    assert balanced["conditional_route_saving_exponent"] == F(1, 224)
+    assert balanced["remaining_unsquared_deficit_if_adapter_proved"] == F(111, 224)
+    assert balanced["registered_prime_slice_saving_exponent"] == F(0)
+    assert balanced["fixed_prime_modulus_bound_covers_coupled_gate"] is False
+
+    candidate_savings = {
+        ell: audit(
+            modulus_exponent=F(1),
+            first_factor_exponent=F(1, 2),
+            moment_parameter=ell,
+            required_unsquared_saving=F(1, 2),
+        )["conditional_route_saving_exponent"]
+        for ell in range(8, 31)
+    }
+    assert max(candidate_savings, key=candidate_savings.get) == 14
+
+
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
     coefficients = getattr(
         coverage_audit,

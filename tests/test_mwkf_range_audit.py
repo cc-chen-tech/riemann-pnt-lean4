@@ -145,6 +145,21 @@ def test_research_note_exposes_global_secondary_zero_master_and_ttstar_split() -
         assert marker in text
 
 
+def test_research_note_records_product_trace_completion_and_rank_one_boundary() -> None:
+    text = NOTE.read_text()
+    for marker in (
+        "### 9.78 Product-trace completion and the rank-one theorem boundary",
+        r"\widehat K(h)=S(B-h,C;q)",
+        r"=\frac1q\sum_{h\bmod q}S(B-h,C;q)A(h)",
+        "Cauchy--Parseval gives no power saving",
+        "Theorem 1.3(2) does not directly apply",
+        r"\eta_{\rm FKMS,route}(1,14)=\frac1{224}",
+        "proved-coverage column",
+        "composite central band remains unproved",
+    ):
+        assert marker in text
+
+
 def test_research_note_has_one_honest_phase_one_classification() -> None:
     text = NOTE.read_text()
     labels = (

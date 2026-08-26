@@ -8,11 +8,12 @@ claim that the corresponding theorem is false.
 
 from __future__ import annotations
 
+import cmath
+import sys
 from dataclasses import dataclass
 from fractions import Fraction
 from math import gcd, isqrt
 from pathlib import Path
-import sys
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
@@ -8467,6 +8468,209 @@ def fkm_prime_modulus_bilinear_type_ii_audit(
         "joint_h_delta_moment_provided": False,
         "outer_mobius_modulus_average_provided": False,
         "saving_meets_required": best >= required,
+        "fixed_prime_modulus_bound_covers_coupled_gate": False,
+    }
+
+
+def product_trace_additive_completion_audit(
+    *,
+    modulus: int,
+    direct_coefficient: int,
+    inverse_coefficient: int,
+    left_coefficients: dict[int, complex],
+    right_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Verify the exact additive completion of a product trace kernel.
+
+    Put ``K(x)=e_q(B*x+C*inverse(x))`` on the units and zero elsewhere.
+    With the unnormalised additive Fourier transform,
+
+    ``Khat(h)=S(B-h,C;q)`` and
+    ``K(x)=q^(-1) sum_h Khat(h)e_q(h*x)``.
+
+    The routine also opens a finite bilinear form and both Parseval
+    identities.  They show precisely why completing to classical
+    Kloosterman sums does not itself save a power: the second
+    Kloosterman argument is fixed, the new frequency has full length
+    ``q``, and Cauchy--Parseval merely returns the original arbitrary-
+    coefficient energy.
+    """
+
+    q = int(modulus)
+    if q < 2:
+        raise ValueError("modulus must be at least two")
+    if not left_coefficients or not right_coefficients:
+        raise ValueError("both coefficient families must be nonempty")
+
+    b = direct_coefficient % q
+    c = inverse_coefficient % q
+    root = cmath.exp(2j * cmath.pi / q)
+    units = tuple(x for x in range(q) if gcd(x, q) == 1)
+    kernel = [0j] * q
+    for x in units:
+        kernel[x] = root ** ((b * x + c * pow(x, -1, q)) % q)
+
+    transform = []
+    expected_kloosterman = []
+    for h in range(q):
+        transform.append(
+            sum(kernel[x] * root ** ((-h * x) % q) for x in range(q))
+        )
+        expected_kloosterman.append(
+            sum(
+                root
+                ** (((b - h) * x + c * pow(x, -1, q)) % q)
+                for x in units
+            )
+        )
+
+    reconstructed = [
+        sum(transform[h] * root ** ((h * x) % q) for h in range(q)) / q
+        for x in range(q)
+    ]
+    tolerance = 1e-9
+
+    atoms = [
+        (d * p % q, complex(alpha) * complex(beta))
+        for d, alpha in left_coefficients.items()
+        for p, beta in right_coefficients.items()
+    ]
+    direct_bilinear = sum(weight * kernel[x] for x, weight in atoms)
+    additive_transform = [
+        sum(weight * root ** ((h * x) % q) for x, weight in atoms)
+        for h in range(q)
+    ]
+    completed_bilinear = sum(
+        transform[h] * additive_transform[h] for h in range(q)
+    ) / q
+
+    kloosterman_energy = sum(abs(value) ** 2 for value in transform)
+    kernel_energy = q * sum(abs(value) ** 2 for value in kernel)
+    additive_energy = sum(abs(value) ** 2 for value in additive_transform)
+    incidence_energy = q * sum(
+        weight_i * weight_j.conjugate()
+        for x_i, weight_i in atoms
+        for x_j, weight_j in atoms
+        if x_i == x_j
+    )
+
+    return {
+        "modulus": q,
+        "direct_coefficient_mod_modulus": b,
+        "inverse_coefficient_mod_modulus": c,
+        "unit_coefficients": gcd(b * c, q) == 1,
+        "unit_residue_count": len(units),
+        "forward_transform_is_kloosterman_sum": max(
+            abs(actual - expected)
+            for actual, expected in zip(transform, expected_kloosterman)
+        )
+        < tolerance,
+        "inverse_completion_exact": max(
+            abs(actual - expected)
+            for actual, expected in zip(reconstructed, kernel)
+        )
+        < tolerance,
+        "completed_bilinear_identity_exact": (
+            abs(direct_bilinear - completed_bilinear) < tolerance
+        ),
+        "kloosterman_parseval_exact": (
+            abs(kloosterman_energy - kernel_energy) < tolerance
+        ),
+        "additive_bilinear_parseval_exact": (
+            abs(additive_energy - incidence_energy) < tolerance
+        ),
+        "completion_normalization_denominator": q,
+        "completed_frequency_count": q,
+        "second_kloosterman_argument_is_fixed": True,
+        "first_kloosterman_argument_runs_over_complete_residue_system": True,
+        "additive_coefficient_is_product_bilinear_transform": True,
+        "pascadi_short_two_argument_adapter_available": False,
+        "termwise_weil_completion_worse_than_trivial_at_balance": True,
+        "parseval_supplies_power_saving": False,
+        "joint_mobius_signs_retained_before_completion": True,
+    }
+
+
+def fkms_rank_one_prime_type_ii_route_audit(
+    *,
+    modulus_exponent: Fraction,
+    first_factor_exponent: Fraction,
+    moment_parameter: int,
+    required_unsquared_saving: Fraction,
+) -> dict[str, object]:
+    """Separate the 2026 FKMS rank-one route from a proved theorem row.
+
+    FKMS, arXiv:2511.09459v3, Theorem 1.3(2), proves a quantitative
+    Type-II estimate for *gallant* sheaves, hence for rank at least two.
+    Section 9.11 says that the same method can handle rank-one kernels
+    ``chi(f(x))*psi(g(x))`` and explicitly says the inverse-pole case
+    ``g=1/X`` goes through, but it leaves the application-specific
+    diagonal-variety verification to the reader.
+
+    This helper records the saving that Theorem 1.3 would give after
+    that missing rank-one adapter is proved.  It intentionally registers
+    zero published saving until the pole-collision stratification is
+    supplied; a route note is not promoted to a theorem.
+    """
+
+    sigma = F(modulus_exponent)
+    first = F(first_factor_exponent)
+    required = F(required_unsquared_saving)
+    ell = int(moment_parameter)
+    if sigma <= 0:
+        raise ValueError("modulus_exponent must be positive")
+    if first < 0 or first > sigma:
+        raise ValueError("factor exponent must lie in [0,sigma]")
+    if ell < 2:
+        raise ValueError("moment_parameter must be at least two")
+    if required < 0:
+        raise ValueError("required saving must be nonnegative")
+
+    short = min(first, sigma - first)
+    long = sigma - short
+    lower = 3 * sigma / (2 * ell)
+    upper = sigma / 2 + 3 * sigma / (4 * ell)
+    exponent_range = short > lower and short <= upper and long <= sigma
+    first_bracket_saving = long / 2
+    second_bracket_saving = (
+        sigma - 3 * sigma / 4 - 7 * sigma / (4 * ell)
+    ) / (2 * ell)
+    conditional = (
+        max(F(0), min(first_bracket_saving, second_bracket_saving))
+        if exponent_range
+        else F(0)
+    )
+    remaining = max(F(0), required - conditional)
+    return {
+        "source": (
+            "Fouvry--Kowalski--Michel--Sawin, arXiv:2511.09459v3, "
+            "Theorem 1.3(2) and Section 9.11"
+        ),
+        "modulus_exponent": sigma,
+        "short_factor_exponent": short,
+        "long_factor_exponent": long,
+        "moment_parameter": ell,
+        "published_exponent_range_would_hold": exponent_range,
+        "published_lower_short_factor_exponent": lower,
+        "published_upper_short_factor_exponent": upper,
+        "first_bracket_saving_exponent": first_bracket_saving,
+        "second_bracket_saving_exponent": second_bracket_saving,
+        "conditional_route_saving_exponent": conditional,
+        "required_unsquared_saving": required,
+        "remaining_unsquared_deficit_if_adapter_proved": remaining,
+        "published_gallant_theorem_directly_applies": False,
+        "gallant_definition_forces_rank_at_least_two": True,
+        "kernel_is_rank_one_artin_schreier": True,
+        "kernel_has_inverse_pole": True,
+        "paper_states_rank_one_inverse_pole_method_goes_through": True,
+        "rank_one_stratification_adapter_proved_in_source": False,
+        "rank_one_stratification_adapter_proved_here": False,
+        "registered_prime_slice_saving_exponent": F(0),
+        "prime_modulus_required": True,
+        "composite_squarefree_moduli_covered": False,
+        "joint_sector_character_moment_provided": False,
+        "joint_h_delta_moment_provided": False,
+        "outer_mobius_modulus_average_provided": False,
         "fixed_prime_modulus_bound_covers_coupled_gate": False,
     }
 
