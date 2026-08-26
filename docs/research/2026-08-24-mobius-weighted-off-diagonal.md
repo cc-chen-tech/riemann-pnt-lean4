@@ -9011,6 +9011,145 @@ is a centred short-spectrum estimate for (9.370), uniform in the moving
 smooth weights, which saves \(T^2\) while preserving
 \(\mu(s+d)\mu(s)\) and the factorization \(ab\).
 
+### 9.57 Reciprocity collapses the short dual block to weighted Chowla
+
+There is a second completion adapted specifically to the near range
+\(|d|=|r-s|\leq T^{2+O(\eta)}\).  It no longer uses the long modulus
+\(s\).  Split the signs of \(d\), and first take \(d>0\).  Since
+\((d,s)=1\), additive reciprocity gives
+
+\[
+\boxed{
+ e_s(-\bar d_s h\delta)
+ =e_d(\bar s_d h\delta)e\left(-\frac{h\delta}{ds}\right).}
+\tag{9.372}
+\]
+
+Put all smooth factors, including the exact final factor in (9.372),
+into
+
+\[
+ F_{s,d}(h,\delta)
+ :=U(h/H)V(\delta/L)
+ e\left(-hx+\frac{\delta y}{2\pi}-\frac{h\delta}{ds}\right),
+\tag{9.373}
+\]
+
+and write its ordinary two-dimensional Fourier transform as
+\(\widehat F_{s,d}(\xi,\eta)\).  Decomposing \(h,\delta\) into residue
+classes modulo \(d\), applying Poisson summation on each class, and using
+
+\[
+ \sum_{u,v\bmod d}
+ e_d(\bar s_d uv+ku+\ell v)
+ =d\,e_d(-sk\ell)
+\]
+
+gives the exact identity
+
+\[
+\boxed{
+ \sum_{h,\delta\in\mathbb Z}
+ F_{s,d}(h,\delta)e_d(\bar s_d h\delta)
+ =\frac1d\sum_{k,\ell\in\mathbb Z}
+ \widehat F_{s,d}(k/d,\ell/d)e_d(-sk\ell).}
+\tag{9.374}
+\]
+
+The finite helper shift_modulus_completion_sides verifies the residue
+orthogonality underlying (9.372)--(9.374) for arbitrary signed finite
+support and arbitrary complex pair weights.  Thus neither separability
+of \(F\) nor deletion of the mixed archimedean phase is being assumed.
+
+On the balanced near block,
+
+\[
+ s\asymp T^3,\qquad d\asymp T^2,\qquad H=L=T^{5/2}.
+\]
+
+The mixed phase is still smooth on the original scales, since
+\(HL/(ds)\asymp1\).  Repeated integration by parts therefore gives
+
+\[
+ |\widehat F_{s,d}(k/d,\ell/d)|
+ \ll_{A,W}HL
+ \left(1+\frac{H|k|}{d}\right)^{-A}
+ \left(1+\frac{L|\ell|}{d}\right)^{-A}.
+\tag{9.375}
+\]
+
+Now \(H/d=L/d=T^{1/2}\).  Hence every nonzero \(k\) or \(\ell\) is
+arbitrary-power small, and (9.374) becomes
+
+\[
+\boxed{
+ \sum_{h,\delta}F_{s,d}(h,\delta)e_d(\bar s_dh\delta)
+ =\frac1d\widehat F_{s,d}(0,0)
+ +O_{A,W}\left(\frac{HL}{d}T^{-A}\right).}
+\tag{9.376}
+\]
+
+The negative-\(d\) half has the identical conclusion after changing the
+reciprocal signs.  Polynomially many outer parameters are absorbed by
+increasing \(A\).  Thus the entire smooth lowest-dual block has no
+remaining Kloosterman spectrum: it is an explicit archimedean zero mode
+coupled to the two outer Möbius signs.
+
+Normalize
+
+\[
+ \mathcal J_{s,d}:=(HL)^{-1}\widehat F_{s,d}(0,0).
+\]
+
+This is a bounded smooth function of the dyadic normalized variables,
+with all moving endpoints retained in the outer weight.  At kernel
+level, (9.376) reduces the balanced obstruction to
+
+\[
+\boxed{
+ HL\sum_{\substack{s\asymp X,\ d\asymp D\\(s,d)=1}}
+ \frac{\mu(s)\mu(s+d)}d\,\mathcal W(s/X,d/D)\mathcal J_{s,d},
+ \qquad X=T^3,\quad D=T^2.}
+\tag{9.377}
+\]
+
+Since \(HL/D=T^3\), reaching the local \(T^6\) target from (9.377)
+requires the genuinely weaker arithmetic gate
+
+\[
+\boxed{
+ \sum_{\substack{s\asymp X,\ d\asymp D\\(s,d)=1}}
+ \mu(s)\mu(s+d)\mathcal W_0(s/X,d/D)
+ \ll_\varepsilon T^{3+\varepsilon}
+ =XD\,T^{-2+\varepsilon}.}
+\tag{SC\(_{2/3}\)}
+\]
+
+Here \(\mathcal W_0\) ranges only over the bounded smooth family
+produced by (9.373), rather than arbitrary coefficients.  The
+shift_modulus_completion_ledger records exponents \(3\) for the zero-mode
+amplitude, \(5\) for the \((s,d)\)-pair count, \(8\) trivially versus
+target \(6\), and hence the exact missing pair saving \(T^2\).
+
+This reduction explains both the opportunity and the barrier.  Theorem
+1.1 of
+[Matomäki--Teräväinen](https://arxiv.org/abs/1911.09076) applies
+uniformly to a twisted Möbius sum on every interval of length
+\(D=X^{2/3}\), but gives only a logarithmic relative saving.  The
+averaged Chowla theorem likewise gives roughly logarithmic decay even
+after averaging the shifts.  Either input leaves (9.377) at
+\(T^{8-o(1)}\), not \(T^{6+\varepsilon}\).  Thus
+\({\rm SC}_{2/3}\) is not proved by the cited literature.
+
+Equations (9.372)--(9.377) nevertheless replace the coupled-kernel gate
+on the decisive smooth face by a strictly simpler statement: no inverse
+phase, no long-modulus dual spectrum, and no arbitrary \(a,b\)
+coefficients remain.  The unresolved content is a fixed-power
+two-dimensional Möbius correlation for shifts of length \(X^{2/3}\).
+Proving \({\rm SC}_{2/3}\), or proving that the particular integral
+family \(\mathcal J_{s,d}\) has an additional vanishing moment, would
+close this balanced face.  Neither conclusion is asserted here.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -9038,7 +9177,12 @@ sharp full-residue and far-frequency spectra: the remaining balanced
 gate is the single \(a,b\ll T^{1/2+O(\eta)}\),
 \(|r-s|\ll T^{2+O(\eta)}\) block with both Möbius signs retained.  It
 still needs a \(T^2\) saving and is not covered by the cited
-Blomer--Pascadi theorem.**
+Blomer--Pascadi theorem.  Reciprocity and completion modulo
+\(d=r-s\) then remove even this short Kloosterman spectrum,
+(9.372)--(9.377), reducing the decisive face to the weighted
+two-dimensional Chowla gate \({\rm SC}_{2/3}\).  Published all-interval
+and averaged-Chowla estimates give only logarithmic savings there, so
+this final \(T^2\) pair saving remains unproved.**
 
 Proved in this note:
 
@@ -9140,6 +9284,12 @@ Proved in this note:
   obstruction to the short \(s^{1/6}\times s^{1/6}\) dual block.  The
   exact Blomer--Pascadi margins are all negative there, so the required
   double-Möbius \(T^2\) saving remains unproved.
+* additive reciprocity followed by smooth completion modulo the shift,
+  (9.372)--(9.376), and the resulting explicit weighted-Chowla form
+  (9.377).  All nonzero short-modulus dual modes are arbitrary-power
+  small because \(H,L>d\).  The remaining \({\rm SC}_{2/3}\) gate is
+  strictly simpler but still asks for an unavailable fixed \(T^2\)
+  saving in the two-Möbius pair sum.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from

@@ -2906,6 +2906,74 @@ def weighted_additive_product_completion_sides(
     return direct, completed
 
 
+def shift_modulus_completion_sides(
+    modulus: int,
+    shift: int,
+    weights: Mapping[tuple[int, int], complex],
+) -> tuple[complex, complex]:
+    """Both sides of reciprocity followed by completion modulo ``shift``.
+
+    For ``(shift, modulus)=1``, additive reciprocity changes
+    ``e_modulus(-inv(shift)*h*delta)`` into
+    ``e_shift(inv(modulus)*h*delta) * e(-h*delta/(shift*modulus))``.
+    Completing the first factor modulo ``shift`` gives a product phase
+    ``e_shift(-modulus*k*ell)``.  The arbitrary pair weight is retained
+    in the exact archimedean Fourier coefficient.
+    """
+
+    if min(modulus, shift) < 1:
+        raise ValueError("modulus and shift must be positive")
+    if gcd(modulus, shift) != 1:
+        raise ValueError("modulus and shift must be coprime")
+
+    shift_inverse = pow(shift, -1, modulus)
+    direct = sum(
+        weight
+        * cmath.exp(
+            -2j
+            * cmath.pi
+            * ((shift_inverse * h * delta) % modulus)
+            / modulus
+        )
+        for (h, delta), weight in weights.items()
+    )
+    reciprocal_weights = {
+        (h, delta): weight
+        * cmath.exp(
+            -2j * cmath.pi * h * delta / (shift * modulus)
+        )
+        for (h, delta), weight in weights.items()
+    }
+    pair_fourier = [
+        [
+            sum(
+                weight
+                * cmath.exp(
+                    -2j
+                    * cmath.pi
+                    * (k * h + ell * delta)
+                    / shift
+                )
+                for (h, delta), weight in reciprocal_weights.items()
+            )
+            for ell in range(shift)
+        ]
+        for k in range(shift)
+    ]
+    completed = sum(
+        pair_fourier[k][ell]
+        * cmath.exp(
+            -2j
+            * cmath.pi
+            * ((modulus * k * ell) % shift)
+            / shift
+        )
+        for k in range(shift)
+        for ell in range(shift)
+    ) / shift
+    return direct, completed
+
+
 def additive_dual_shift_phase(
     r: int, modulus: int, a: int, b: int
 ) -> AdditiveDualShiftPhase:
@@ -6123,6 +6191,30 @@ class SmoothAdditiveDualSupportLedger:
 
 
 @dataclass(frozen=True)
+class ShiftModulusCompletionLedger:
+    """Balanced exponents after reciprocity and completion modulo the shift.
+
+    When ``H,L`` exceed the shift modulus, smooth completion has only its
+    zero dual mode up to arbitrary-power tails.  The resulting explicit
+    kernel removes the inverse oscillation but leaves a two-Mobius shifted
+    correlation.  ``required_pair_saving`` is not asserted.
+    """
+
+    shift_modulus: Fraction
+    h_period_excess: Fraction
+    delta_period_excess: Fraction
+    h_dual_frequency: Fraction
+    delta_dual_frequency: Fraction
+    zero_mode_amplitude: Fraction
+    outer_pair_count: Fraction
+    total_trivial: Fraction
+    local_target: Fraction
+    required_pair_saving: Fraction
+    short_interval_ratio: Fraction
+    published_power_covered: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -6301,6 +6393,57 @@ def smooth_additive_dual_support_ledger(
         fixed_modulus_nu=fixed_modulus_nu,
         blomer_pascadi_margins=margins,
         blomer_pascadi_covered=covered,
+    )
+
+
+def shift_modulus_completion_ledger(
+    box: ExponentBox,
+    shift_modulus: Fraction,
+) -> ShiftModulusCompletionLedger:
+    """Return the reciprocal short-modulus exponent ledger.
+
+    The balanced near block has ``d=T^shift_modulus``.  Reciprocity
+    changes the inverse phase from modulus ``s`` to modulus ``d``.
+    Smooth completion then has dual lengths ``d/H`` and ``d/L``.  If
+    both are below one, only the zero dual frequency survives up to
+    arbitrary-power decay, with amplitude ``H*L/d``.
+
+    The Matomaki--Teravainen all-short-interval theorem applies at the
+    resulting length ratio ``d/s=2/3`` but gives logarithmic, not fixed
+    power, cancellation.  The last field records that coverage boundary.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("shift-modulus completion needs an admissible box")
+    if box.rho != box.sigma:
+        raise ValueError("this ledger is for the overlapping face R=S")
+    if shift_modulus <= 0 or shift_modulus > box.sigma:
+        raise ValueError("the shift modulus must lie between 1 and S")
+
+    zero = Fraction(0)
+    h_period_excess = box.h - shift_modulus
+    delta_period_excess = box.ell - shift_modulus
+    if min(h_period_excess, delta_period_excess) < 0:
+        raise ValueError("both smooth variables must exceed the shift modulus")
+    h_dual_frequency = max(zero, shift_modulus - box.h)
+    delta_dual_frequency = max(zero, shift_modulus - box.ell)
+    zero_mode_amplitude = box.third_length - shift_modulus
+    outer_pair_count = box.sigma + shift_modulus
+    total_trivial = zero_mode_amplitude + outer_pair_count
+    local_target = box.rho + box.sigma
+    return ShiftModulusCompletionLedger(
+        shift_modulus=shift_modulus,
+        h_period_excess=h_period_excess,
+        delta_period_excess=delta_period_excess,
+        h_dual_frequency=h_dual_frequency,
+        delta_dual_frequency=delta_dual_frequency,
+        zero_mode_amplitude=zero_mode_amplitude,
+        outer_pair_count=outer_pair_count,
+        total_trivial=total_trivial,
+        local_target=local_target,
+        required_pair_saving=max(zero, total_trivial - local_target),
+        short_interval_ratio=shift_modulus / box.sigma,
+        published_power_covered=False,
     )
 
 

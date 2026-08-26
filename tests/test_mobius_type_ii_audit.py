@@ -2292,6 +2292,23 @@ def test_additive_completion_accepts_arbitrary_signed_finite_weights() -> None:
             assert abs(direct - completed) < 1e-9
 
 
+def test_reciprocity_then_short_modulus_completion_is_exact() -> None:
+    weights = {
+        (-2, -1): 1 + 0.25j,
+        (-1, 3): -0.5j,
+        (2, -3): 0.75 - 1j,
+        (4, 2): -2 + 0.5j,
+    }
+    for modulus in range(3, 13):
+        for shift in range(2, modulus):
+            if gcd(shift, modulus) != 1:
+                continue
+            direct, completed = audit.shift_modulus_completion_sides(
+                modulus, shift, weights
+            )
+            assert abs(direct - completed) < 1e-9
+
+
 def test_additive_completion_zero_mode_hits_the_two_thirds_barrier() -> None:
     assert additive_completion_zero_mode(11, 7, 5) == F(35, 11)
     balanced = boundary_witnesses()["balanced_max_a"]
@@ -2438,6 +2455,24 @@ def test_actual_smooth_kernel_has_only_short_additive_dual_support() -> None:
         third=-F(1, 18),
     )
     assert not ledger.blomer_pascadi_covered
+
+
+def test_shift_modulus_completion_removes_oscillation_but_not_chowla_gap() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    ledger = audit.shift_modulus_completion_ledger(box, F(2))
+
+    assert ledger.shift_modulus == F(2)
+    assert ledger.h_period_excess == F(1, 2)
+    assert ledger.delta_period_excess == F(1, 2)
+    assert ledger.h_dual_frequency == 0
+    assert ledger.delta_dual_frequency == 0
+    assert ledger.zero_mode_amplitude == F(3)
+    assert ledger.outer_pair_count == F(5)
+    assert ledger.total_trivial == F(8)
+    assert ledger.local_target == F(6)
+    assert ledger.required_pair_saving == F(2)
+    assert ledger.short_interval_ratio == F(2, 3)
+    assert not ledger.published_power_covered
 
 
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:
