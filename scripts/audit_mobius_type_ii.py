@@ -450,6 +450,80 @@ def near_determinant_bettin_chandee_ledger(
     )
 
 
+def partially_fixed_modulus_ledger(
+    *,
+    long_modulus: Fraction,
+    quotient: Fraction,
+    fixed_divisor: Fraction,
+    product_numerator: Fraction,
+    short_factor_triangle: Fraction,
+    target: Fraction,
+) -> PartiallyFixedModulusLedger:
+    """Audit Wright's 2026 partially fixed-modulus theorem.
+
+    Reciprocity maps ``e_q(-A*inverse(B*k))`` to the theorem with
+    ``M=q``, ``N=k`` and fixed denominator factor ``R=B``.  The near
+    determinant has already been Fourier-separated in this ledger, so
+    its density is unavailable.  The third term uses the weaker
+    ``A^(-1/20)`` printed in the theorem statement; the proof displays
+    a stronger power, but that discrepancy does not select the maximum.
+    """
+
+    values = (
+        long_modulus,
+        quotient,
+        fixed_divisor,
+        product_numerator,
+        short_factor_triangle,
+        target,
+    )
+    if min(values) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+
+    coefficient_norm = (
+        long_modulus + quotient + product_numerator
+    ) / 2
+    geometric_factor = coefficient_norm
+    fixed_factor = fixed_divisor / 4
+    first_term = -quotient / 8
+    second_term = (
+        fixed_divisor / 8 + quotient / 8 - long_modulus / 4
+    )
+    third_term = (
+        long_modulus / 10
+        - 3 * fixed_divisor / 20
+        - product_numerator / 20
+        - 3 * quotient / 20
+    )
+    fourth_term = (
+        3 * quotient / 20
+        - 3 * product_numerator / 20
+        - long_modulus / 5
+    )
+    fifth_term = 3 * quotient / 8 - long_modulus / 2
+    fixed_block_bound = (
+        coefficient_norm
+        + geometric_factor
+        + fixed_factor
+        + max(first_term, second_term, third_term, fourth_term, fifth_term)
+    )
+    global_bound = fixed_block_bound + short_factor_triangle
+    return PartiallyFixedModulusLedger(
+        coefficient_norm=coefficient_norm,
+        geometric_factor=geometric_factor,
+        fixed_factor=fixed_factor,
+        first_term=first_term,
+        second_term=second_term,
+        third_term=third_term,
+        fourth_term=fourth_term,
+        fifth_term=fifth_term,
+        fixed_block_bound=fixed_block_bound,
+        global_bound=global_bound,
+        target=target,
+        gap=global_bound - target,
+    )
+
+
 def near_determinant_coordinates(
     divisor_product: int,
     scalar_factor: int,
@@ -508,6 +582,119 @@ def near_determinant_complete_reciprocal_sum(
                 coordinates.modulus,
             )
     return total
+
+
+def near_determinant_reciprocal_parseval_sides(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    weights: tuple[complex, ...],
+) -> tuple[float, float]:
+    """Both sides of Parseval for the complete affine reciprocal transform.
+
+    Only parameters for which ``q=q0+B*t`` is a unit modulo ``d`` occur.
+    Since ``B`` is a unit modulo ``d``, these ``q`` values are distinct,
+    and inversion permutes their reduced residue classes.
+    """
+
+    if len(weights) != determinant:
+        raise ValueError("one coefficient is required for each residue parameter")
+    transforms: list[complex] = []
+    retained_energy = 0.0
+    for numerator in range(determinant):
+        value = 0j
+        for parameter, weight in enumerate(weights):
+            modulus = near_determinant_coordinates(
+                divisor_product,
+                scalar_factor,
+                determinant,
+                parameter,
+            ).modulus
+            if gcd(modulus, determinant) != 1:
+                continue
+            value += weight * _inverse_additive_phase(
+                determinant, numerator, modulus
+            )
+            if numerator == 0:
+                retained_energy += abs(weight) ** 2
+        transforms.append(value)
+    return (
+        sum(abs(value) ** 2 for value in transforms),
+        determinant * retained_energy,
+    )
+
+
+def near_determinant_complete_delta_product_sum(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    h_length: int,
+    delta_length: int,
+    weights: tuple[complex, ...],
+) -> complex:
+    """Direct complete-delta product box on the affine solution line."""
+
+    if min(h_length, delta_length) < 1:
+        raise ValueError("product-box lengths must be positive")
+    if delta_length % determinant != 0:
+        raise ValueError("the delta interval must contain complete d-periods")
+    if len(weights) != determinant:
+        raise ValueError("one coefficient is required for each residue parameter")
+    total = 0j
+    for parameter, weight in enumerate(weights):
+        modulus = near_determinant_coordinates(
+            divisor_product,
+            scalar_factor,
+            determinant,
+            parameter,
+        ).modulus
+        if gcd(modulus, determinant) != 1:
+            continue
+        inverse = pow(modulus, -1, determinant)
+        total += weight * sum(
+            cmath.exp(
+                2j
+                * cmath.pi
+                * ((h * delta * inverse) % determinant)
+                / determinant
+            )
+            for h in range(1, h_length + 1)
+            for delta in range(1, delta_length + 1)
+        )
+    return total
+
+
+def near_determinant_complete_delta_product_formula(
+    divisor_product: int,
+    scalar_factor: int,
+    determinant: int,
+    h_length: int,
+    delta_length: int,
+    weights: tuple[complex, ...],
+) -> complex:
+    """Collapsed value of the complete-delta product box.
+
+    Every reciprocal frequency is a unit modulo ``d``.  A complete
+    ``delta``-period therefore vanishes unless ``d`` divides ``h``.
+    """
+
+    if min(h_length, delta_length) < 1:
+        raise ValueError("product-box lengths must be positive")
+    if delta_length % determinant != 0:
+        raise ValueError("the delta interval must contain complete d-periods")
+    if len(weights) != determinant:
+        raise ValueError("one coefficient is required for each residue parameter")
+    retained = 0j
+    for parameter, weight in enumerate(weights):
+        modulus = near_determinant_coordinates(
+            divisor_product,
+            scalar_factor,
+            determinant,
+            parameter,
+        ).modulus
+        if gcd(modulus, determinant) == 1:
+            retained += weight
+    return delta_length * (h_length // determinant) * retained
 
 
 def near_determinant_reciprocity_phase(
@@ -884,6 +1071,35 @@ def rectangular_product_multiplicities(
             product = h * delta
             result[product] = result.get(product, 0) + 1
     return result
+
+
+def rectangular_product_residue_energy(
+    h_length: int, delta_length: int, modulus: int
+) -> int:
+    """Exact energy after folding ``h*delta`` into residues modulo ``d``."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    residue_multiplicities = [0] * modulus
+    for product, multiplicity in rectangular_product_multiplicities(
+        h_length, delta_length
+    ).items():
+        residue_multiplicities[product % modulus] += multiplicity
+    return sum(value * value for value in residue_multiplicities)
+
+
+def rectangular_product_residue_energy_majorant(
+    h_length: int, delta_length: int, modulus: int
+) -> int:
+    """Boundary-exact Cauchy majorant for product residue energy."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    multiplicities = rectangular_product_multiplicities(h_length, delta_length)
+    product_ceiling = (
+        h_length * delta_length + modulus - 1
+    ) // modulus
+    return product_ceiling * sum(value * value for value in multiplicities.values())
 
 
 def rectangular_product_kernel(
@@ -2190,6 +2406,24 @@ class NearDeterminantBCLedger:
     second_parenthetical: Fraction
     large_phase_penalty: Fraction
     theorem_bound: Fraction
+    target: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class PartiallyFixedModulusLedger:
+    """Wright's fixed-denominator-factor theorem on the separated packet."""
+
+    coefficient_norm: Fraction
+    geometric_factor: Fraction
+    fixed_factor: Fraction
+    first_term: Fraction
+    second_term: Fraction
+    third_term: Fraction
+    fourth_term: Fraction
+    fifth_term: Fraction
+    fixed_block_bound: Fraction
+    global_bound: Fraction
     target: Fraction
     gap: Fraction
 

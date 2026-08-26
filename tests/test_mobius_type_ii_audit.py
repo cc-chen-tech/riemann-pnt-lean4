@@ -22,6 +22,7 @@ from scripts.audit_mobius_type_ii import (
     MQWBlockSavings,
     NearDeterminantBCLedger,
     NearDeterminantCoordinates,
+    PartiallyFixedModulusLedger,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
     ScalarTypeIICutoffLedger,
@@ -116,8 +117,11 @@ from scripts.audit_mobius_type_ii import (
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
     near_determinant_bettin_chandee_ledger,
+    near_determinant_complete_delta_product_formula,
+    near_determinant_complete_delta_product_sum,
     near_determinant_complete_reciprocal_sum,
     near_determinant_coordinates,
+    near_determinant_reciprocal_parseval_sides,
     near_determinant_reciprocity_phase,
     near_determinant_reciprocity_phase_formula,
     nonunit_principal_equal_mobius_exponent,
@@ -125,6 +129,7 @@ from scripts.audit_mobius_type_ii import (
     nonunit_principal_is_residual_face,
     nonunit_principal_long_factor_floor,
     nonunit_principal_trivial_loss,
+    partially_fixed_modulus_ledger,
     pascadi_2024_direct_dispersion_gap,
     pascadi_averaged_moduli_margins,
     pascadi_balanced_gap,
@@ -137,6 +142,8 @@ from scripts.audit_mobius_type_ii import (
     ramanujan_sum,
     rectangular_product_kernel,
     rectangular_product_multiplicities,
+    rectangular_product_residue_energy,
+    rectangular_product_residue_energy_majorant,
     reduce_inverse_product_phase,
     reduced_inverse_fraction_denominator,
     restricted_unit_fourier_lift,
@@ -610,6 +617,107 @@ def test_complete_near_determinant_reciprocal_core_is_ramanujan() -> None:
                         numerator,
                     )
                     assert abs(complete - ramanujan_sum(determinant, numerator)) < 1e-8
+
+
+def test_near_determinant_reciprocal_transform_has_exact_parseval_energy() -> None:
+    for divisor_product in range(2, 9):
+        for scalar_factor in range(1, 7):
+            if gcd(divisor_product, scalar_factor) != 1:
+                continue
+            for determinant in range(2, 11):
+                if gcd(determinant, divisor_product * scalar_factor) != 1:
+                    continue
+                weights = tuple(
+                    complex(parameter - 2, (parameter * parameter + 1) % 5 - 2)
+                    for parameter in range(determinant)
+                )
+                transform_energy, coefficient_energy = (
+                    near_determinant_reciprocal_parseval_sides(
+                        divisor_product,
+                        scalar_factor,
+                        determinant,
+                        weights,
+                    )
+                )
+                assert abs(transform_energy - coefficient_energy) < 1e-7
+
+
+def test_product_residue_energy_keeps_exact_boundaries() -> None:
+    for h_length in range(1, 10):
+        for delta_length in range(1, 9):
+            multiplicities = rectangular_product_multiplicities(
+                h_length, delta_length
+            )
+            product_energy = sum(value * value for value in multiplicities.values())
+            for modulus in range(2, 10):
+                residue_energy = rectangular_product_residue_energy(
+                    h_length, delta_length, modulus
+                )
+                majorant = rectangular_product_residue_energy_majorant(
+                    h_length, delta_length, modulus
+                )
+                assert residue_energy <= majorant
+                assert majorant == (
+                    (h_length * delta_length + modulus - 1) // modulus
+                ) * product_energy
+
+
+def test_complete_delta_box_uses_only_unit_frequency_and_collapses() -> None:
+    for divisor_product in range(2, 9):
+        for scalar_factor in range(1, 7):
+            if gcd(divisor_product, scalar_factor) != 1:
+                continue
+            for determinant in range(2, 11):
+                if gcd(determinant, divisor_product * scalar_factor) != 1:
+                    continue
+                weights = tuple(
+                    complex((3 * parameter + 1) % 7 - 3, parameter % 3 - 1)
+                    for parameter in range(determinant)
+                )
+                for h_length in range(1, 2 * determinant + 3):
+                    for periods in (1, 2):
+                        delta_length = periods * determinant
+                        direct = near_determinant_complete_delta_product_sum(
+                            divisor_product,
+                            scalar_factor,
+                            determinant,
+                            h_length,
+                            delta_length,
+                            weights,
+                        )
+                        formula = near_determinant_complete_delta_product_formula(
+                            divisor_product,
+                            scalar_factor,
+                            determinant,
+                            h_length,
+                            delta_length,
+                            weights,
+                        )
+                        assert abs(direct - formula) < 1e-7
+
+
+def test_partially_fixed_modulus_theorem_still_loses_near_window_density() -> None:
+    assert partially_fixed_modulus_ledger(
+        long_modulus=F(5, 2),
+        quotient=F(5, 2),
+        fixed_divisor=F(1, 2),
+        product_numerator=F(9, 2),
+        short_factor_triangle=F(1),
+        target=F(9),
+    ) == PartiallyFixedModulusLedger(
+        coefficient_norm=F(19, 4),
+        geometric_factor=F(19, 4),
+        fixed_factor=F(1, 8),
+        first_term=F(-5, 16),
+        second_term=F(-1, 4),
+        third_term=F(-17, 40),
+        fourth_term=F(-4, 5),
+        fifth_term=F(-5, 16),
+        fixed_block_bound=F(75, 8),
+        global_bound=F(83, 8),
+        target=F(9),
+        gap=F(11, 8),
+    )
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

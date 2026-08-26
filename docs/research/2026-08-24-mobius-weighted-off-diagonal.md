@@ -6512,6 +6512,141 @@ logarithmic saving.  A successful estimate must average (9.258) over
 \(B,g,d\) and the product coefficient \(A=h\delta_0\), rather than apply
 that theorem termwise.
 
+### 9.40 Complete affine periods and the partially fixed-modulus theorem
+
+There is an exact Parseval identity behind (9.258), but it must be used
+with the product structure rather than with an arbitrary numerator
+sequence.  For coefficients (x_t), put
+
+\[
+ F_{B,g,d}(a)=
+ \sum_{t\bmod d\atop(q_0+Bt,d)=1}
+ x_t e_d\!\left(a\overline{q_0+Bt}_d\right).
+\]
+
+Since (t\mapsto q_0+Bt\pmod d) is a permutation and inversion is a
+permutation of the reduced residue classes,
+
+\[
+ \boxed{
+ \sum_{a\bmod d}|F_{B,g,d}(a)|^2
+ =d\sum_{t\bmod d\atop(q_0+Bt,d)=1}|x_t|^2.}
+\tag{9.259}
+\]
+
+This keeps every nonunit boundary exactly: coefficients for which
+((q_0+Bt,d)>1) occur on neither side.  The checker verifies (9.259)
+for arbitrary deterministic complex coefficient vectors in its finite
+range.
+
+For comparison, let
+
+\[
+ \rho_{H,L}(n)=\#\{(h,\delta):h\leq H,\delta\leq L,h\delta=n\},
+ \qquad
+ \Gamma_d(a)=\sum_{n\equiv a\pmod d}\rho_{H,L}(n).
+\]
+
+Cauchy inside each residue class gives the boundary-exact finite
+majorant
+
+\[
+ \boxed{
+ \sum_{a\bmod d}\Gamma_d(a)^2
+ \leq
+ \left\lceil\frac{HL}{d}\right\rceil
+ \sum_{n\leq HL}\rho_{H,L}(n)^2.}
+\tag{9.260}
+\]
+
+At (H=T^{5/2},L=d=T^2), the right side has exponent (7), up to
+divisor powers.  Combining (9.259) and (9.260) by Cauchy gives exponent
+((7+4)/2=11/2) for a fixed (B,g,d).  This is a valid local bound,
+but summing it over (B,g,d) independently throws away the determinant
+geometry and does not prove the (T^9) dispersion target.
+
+The large component in (9.260) is in fact orthogonal to the reciprocal
+transform.  More precisely, every frequency
+(\overline{q_0+Bt}_d) in (9.259) is a unit.  If (d\mid L), complete
+(\delta)-periods therefore give, for every ((u,d)=1),
+
+\[
+ \boxed{
+ \sum_{h\leq H}\sum_{\delta\leq L}e_d(hu\delta)
+ =L\left\lfloor\frac Hd\right\rfloor.}
+\tag{9.261}
+\]
+
+Consequently the complete-period portion of the affine packet collapses
+without an inequality:
+
+\[
+ \boxed{
+ \sum_{t\bmod d\atop(q_0+Bt,d)=1}x_t
+ \sum_{h\leq H}\sum_{\delta\leq L}
+ e_d\!\left(h\delta\overline{q_0+Bt}_d\right)
+ =L\left\lfloor\frac Hd\right\rfloor
+ \sum_{t\bmod d\atop(q_0+Bt,d)=1}x_t.}
+\tag{9.262}
+\]
+
+Thus the complete-period core is an affine-progression Mertens sum, not
+a generic Möbius--trace sum.  Prefix differences give the same exact
+statement for unweighted translated intervals.  In the actual packet,
+however, the dyadic endpoints and the smooth factor
+(e(-h\delta/(dq))) leave incomplete periods.  Smooth completion in
+(\delta) replaces those periods by bounded dual modes satisfying
+(h\equiv nq\pmod d); controlling these endpoint modes simultaneously
+over (B,g,d) is still required.  Equations (9.259)--(9.262) isolate
+that requirement and do not assert cancellation in an affine Möbius
+progression.
+
+A new theorem of Wright on trilinear Kloosterman fractions with a fixed
+factor in the denominator is close enough to warrant a literal exponent
+audit.  Reciprocity gives
+
+\[
+ e_q(-A\overline{Bk}_q)
+ =e_{Bk}(A\bar q_{Bk})e(-A/(Bkq)),
+\tag{9.263}
+\]
+
+so after Fourier-separating the near-determinant window his theorem has
+
+\[
+ M=Q=T^{5/2},\qquad N=K=T^{5/2},\qquad
+ R=B=T^{1/2},\qquad A=T^{9/2}.
+\tag{9.264}
+\]
+
+The three coefficient norms and the factor ((AMN)^{1/2}) both have
+exponent (19/4), while (R^{1/4}) contributes (1/8).  The five
+terms in the parenthesis in the stated theorem have exponents
+
+\[
+ -\frac5{16},\quad-\frac14,\quad-\frac{17}{40},
+ \quad-\frac45,\quad-\frac5{16}.
+\tag{9.265}
+\]
+
+Here the third entry uses the weaker (A^{-1/20}) printed in the theorem
+statement; a stronger power appears later in its proof, but the maximum
+in (9.265) is unchanged.  The fixed-(B,g) block is therefore
+
+\[
+ \frac{19}{4}+\frac{19}{4}+\frac18-\frac14=\frac{75}{8}.
+\tag{9.266}
+\]
+
+The theorem contains no average over the two remaining (T^{1/2})
+short coordinates.  Direct triangle summation over (B) and (g)
+raises (9.266) to (83/8), which is (11/8) above the second-moment
+target (9).  Hence the partially fixed-modulus theorem does not close
+(9.245) after the near window has been separated.  Its mechanism may
+still be relevant inside a future joint (B,g) operator, but that
+operator is not part of the published statement.  The executable ledger
+checks every fraction in (9.264)--(9.266).
+
 Known one-variable Möbius--trace results do not close (9.239) or its
 recombined form (9.250).  Even if
 one optimistically grants a translated prime-modulus version of the
@@ -6692,6 +6827,15 @@ Proved in this note:
   full-modulus incidence large-sieve estimate remains unproved.  Its
   exact LCM-pair energy is (9.251), saving the scalar half-power in the
   coefficient moment.
+* the complete affine reciprocal Parseval identity (9.259), the
+  boundary-exact product-residue energy majorant (9.260), and the unit-mode
+  complete-period collapse (9.261)--(9.262).  These reduce the complete
+  δ-period core to an affine Mertens sum; the smooth incomplete-period
+  modes remain unproved.
+* the direct application audit of Wright's partially fixed denominator
+  theorem after reciprocity, (9.263)--(9.266).  Its best parenthetical
+  saving is (T^{1/4}); after direct (B,g) summation it has exponent
+  (83/8), still (11/8) above the dispersion target.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -6738,7 +6882,7 @@ Proved in this note:
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
 | Young varying-level primitive route | fixed scalar strata close; scalar aggregation residual unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps each fixed-stratum raw term to Young's additive rational large sieve, (9.214)--(9.219), saving \(T^2\).  Restoring the transition scalar sum gives exponent \(19/2\), leaving \(T^{1/2}\), (9.235)--(9.238) |
 | Common-modulus unit-numerator family | closes for \(\tau\geq1/4\); small-common-factor packet unproved | the CRT collision cancels \(t\) from the Young rational, (9.221)--(9.227), but after the scalar sum its exponent is \(19/2-2\tau\).  Ramanujan marginals and the recombined zero mode remain below target, (9.228)--(9.231).  The exact residual is (9.239) for \(0\leq\tau<1/4\) |
-| Scalar Möbius transition packet | exact Type-I/II and affine reduction; joint estimate unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Direct Bettin--Chandee remains \(T^{1/4}\) high even with free scalar cancellation, (9.252)--(9.254).  Affine parametrization and reciprocity give (9.255)--(9.258); the unweighted complete core is \(c_d(A)\), but the affine Möbius-weighted average remains unproved |
+| Scalar Möbius transition packet | exact Type-I/II and affine reduction; smooth endpoint modes unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Affine parametrization gives (9.255)--(9.258), Parseval is (9.259), and complete \(\delta\)-periods collapse exactly to an affine Mertens sum in (9.261)--(9.262).  Direct Bettin--Chandee and Wright applications remain above target, (9.252)--(9.254) and (9.263)--(9.266); the jointly averaged smooth incomplete-period modes remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
