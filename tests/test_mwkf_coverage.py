@@ -4629,6 +4629,114 @@ def test_primal_dual_hecke_sieve_leaves_ramified_eisenstein_gate() -> None:
             assert not cell.all_type_i_ii_sectors_covered
 
 
+def test_eisenstein_oldspace_projector_localizes_loss_to_common_ramification() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "eisenstein_oldspace_projector_audit",
+        None,
+    )
+    assert adapter is not None, "Eisenstein oldspace projector audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109l The Eisenstein oldspace projector localizes the loss",
+        "\\tag{4.845bj}",
+        "\\tag{4.845bm}",
+        "eisenstein_oldspace_projector_audit",
+    ):
+        assert marker in note
+
+    audit = adapter(prime=5)
+    assert audit.individual_ramified_ratio_at_witness == F(3)
+    assert audit.coprime_coprime_projector == {0: F(6, 25)}
+    assert audit.coprime_once_ramified_projector == {
+        -1: F(1, 25),
+        0: F(1, 25),
+    }
+    assert audit.once_ramified_once_ramified_projector == {
+        -1: F(-4, 25),
+        0: F(22, 25),
+        1: F(-4, 25),
+    }
+    assert audit.oldspace_sum_factorizes_prime_by_prime
+    assert audit.coprime_ramified_projector_gains_one_prime
+    assert audit.local_loss_depends_only_on_common_ramification
+    assert audit.global_kernel_has_gcd_over_level_majorant
+    assert not audit.common_ramification_gcd_aggregation_proved
+    assert not audit.continuous_spectrum_gate_covered
+    assert not audit.whole_mobius_gate_covered
+
+
+def test_common_ramification_gcd_has_zero_power_poisson_average() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "eisenstein_common_ramification_average_audit",
+        None,
+    )
+    assert adapter is not None, "common-ramification average audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109m The Poisson average absorbs common ramification",
+        "\\tag{4.845bn}",
+        "\\tag{4.845bo}",
+        "eisenstein_common_ramification_average_audit",
+    ):
+        assert marker in note
+
+    for frequency_length in range(1, 25):
+        for index in range(1, 31):
+            for level in range(1, 31):
+                audit = adapter(
+                    frequency_length=frequency_length,
+                    second_index=index,
+                    ambient_level=level,
+                )
+                assert audit.gcd_divisor_totient_identity_exact
+                assert audit.exact_frequency_gcd_sum <= audit.divisor_bound_upper_bound
+                assert audit.normalized_average_has_zero_power_cost
+                assert audit.poisson_frequency_gcd_aggregation_proved
+                assert not audit.completed_eisenstein_residue_pairing_proved
+                assert not audit.continuous_spectrum_gate_covered
+
+
+def test_pole_subtracted_eisenstein_functional_equation_isolates_residues() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "pole_subtracted_eisenstein_functional_equation_audit",
+        None,
+    )
+    assert adapter is not None, "pole-subtracted Eisenstein audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109n Pole subtraction dualizes the Eisenstein polynomial",
+        "\\tag{4.845bp}",
+        "\\tag{4.845bs}",
+        "pole_subtracted_eisenstein_functional_equation_audit",
+    ):
+        assert marker in note
+
+    hard = adapter(
+        primal_length_exponent=F(5, 4),
+        spectral_bandwidth_exponent=F(0),
+    )
+    assert hard.archimedean_conductor_exponent == F(0)
+    assert hard.dual_length_exponent == F(-5, 4)
+    assert hard.effective_dual_length_exponent == F(0)
+    assert hard.completed_zeta_product_functional_equation_exact
+    assert hard.two_simple_residues_exact
+    assert hard.central_collision_limit_is_finite
+    assert hard.central_collision_log_y_coefficient == F(1)
+    assert hard.central_collision_euler_gamma_coefficient == F(2)
+    assert hard.pole_subtracted_transform_has_rapid_decay
+    assert hard.oldspace_projector_and_poisson_gcd_restored
+    assert hard.nonresidual_continuous_local_polynomial_covered
+    assert not hard.zero_mode_residue_pairing_proved
+    assert not hard.continuous_spectrum_gate_covered
+    assert not hard.whole_mobius_gate_covered
+
+
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
     adapter = getattr(
         coverage_audit,

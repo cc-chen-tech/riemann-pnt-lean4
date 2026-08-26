@@ -14611,6 +14611,269 @@ dyadic and \(q\)-sums, and all AFE and transform tails also remain to be
 restored before any global asymptotic can be asserted.
 
 
+### 4.109l The Eisenstein oldspace projector localizes the loss
+
+The individual oldvector witness (4.845bi) does not by itself show that
+the complete Eisenstein contribution is large.  Kuznetsov sums an
+orthonormal basis of the entire oldspace with one common transform, so
+the oldvector label must be summed before taking absolute values.
+At squarefree level this sum factorizes prime by prime.
+
+Continue with \(Q=p\) prime and put \(X=p^{-2it}\).  In the notation of
+the exact Blomer--Khan coefficient formula, the two local oldvector
+coefficient polynomials, after removing the scattering and phase
+factors common to both oldvectors, are \(1\) and
+
+\[
+ \boxed{
+ B_{p,k}(X)
+ :=p\sum_{0\leq j<k}X^j-\sum_{0\leq j\leq k}X^j
+ =(p-1)\sum_{0\leq j<k}X^j-X^k,}
+\tag{4.845bj}
+\]
+
+where \(k=v_p(n)\); the first sum is empty for \(k=0\), so
+\(B_{p,0}=-1\).  The squarefree normalization
+\(\widetilde{\mathfrak n}(M)\) is independent of whether \(M=1\) or
+\(M=p\).  Hence the sum of the two normalized oldvector products at
+valuations \(k,\ell\) is exactly the Laurent polynomial
+
+\[
+ \boxed{
+ \mathcal P_{p,t}(k,\ell)
+ =\frac1p+\frac1{p^2}
+ B_{p,k}(X)B_{p,\ell}(X^{-1}).}
+\tag{4.845bk}
+\]
+
+For the first three valuation pairs this gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal P_{p,t}(0,0)
+   &=\frac{p+1}{p^2},\\
+ \mathcal P_{p,t}(0,1)
+   &=\frac{1+X^{-1}}{p^2},\\
+ \mathcal P_{p,t}(1,1)
+   &=\frac{p^2-p+2-(p-1)(X+X^{-1})}{p^2}.
+ \end{aligned}}
+\tag{4.845bl}
+\]
+
+Thus the \(p-2\) growth of one shifted vector cancels after the
+oldspace sum whenever exactly one Fourier index is divisible by \(p\):
+the projector then gains a full factor \(p^{-1}\) over its natural
+\(p^{-1}\) scale.  A positive local loss can survive only when both
+indices are ramified.
+
+For arbitrary \(k,\ell\), (4.845bj) and \(|X|=1\) give
+\[
+ |B_{p,k}(X)|\leq (p-1)k+1.
+\]
+If \(\min(k,\ell)=0\), substitution into (4.845bk) is
+\(O((k+\ell+2)/p)\); if \(k,\ell\geq1\), it is
+\(O((k+1)(\ell+1))\).  Multiplying the local bounds for squarefree
+\(Q\), and absorbing the valuation divisor factors and the common
+inverse-\(L\) normalization into \(T^\varepsilon\), yields
+
+\[
+ \boxed{
+ \left|\mathcal P_{Q,t}(m,n)\right|
+ \ll_\varepsilon
+ (Qmn(1+|t|))^\varepsilon
+ \frac{(m,n,Q)}{Q}.}
+\tag{4.845bm}
+\]
+
+This is the correct replacement for the false attempt to bound every
+ramified oldvector ratio separately.  It reduces the
+continuous-spectrum problem to common ramification: after the Poisson
+and product-index variables are restored, one must sum the exact weight
+\((m,h\delta,Q)\), retaining the Möbius signs and the paired Eisenstein
+residues.  No such global gcd aggregation is asserted here.
+
+The interface eisenstein_oldspace_projector_audit evaluates
+(4.845bk) as an exact Laurent polynomial.  At \(p=5\) it records the
+individual ratio \(3\), the mixed projector
+\((1+X^{-1})/25\), and the common-ramification projector.  It marks the
+prime-by-prime projector factorization and the gcd-over-level majorant
+proved, while leaving the gcd aggregation, continuous-spectrum gate,
+and whole Möbius gate false.
+
+
+### 4.109m The Poisson average absorbs common ramification
+
+The gcd in (4.845bm) costs no positive power after the normalized
+nonzero Poisson-frequency average.  Put \(g=(n,Q)\).  The elementary
+divisor identity
+
+\[
+ \boxed{
+ (m,g)=\sum_{d\mid(m,g)}\varphi(d)}
+\tag{4.845bn}
+\]
+
+is exact.  Therefore, for every integer \(M\geq1\),
+
+\[
+ \begin{aligned}
+ \sum_{M<m\leq2M}(m,g)
+ &=\sum_{d\mid g}\varphi(d)
+   \#\{M<m\leq2M:d\mid m\}\\
+ &\leq
+ \sum_{\substack{d\mid g\\d\leq2M}}
+ \varphi(d)\left(\frac Md+1\right)\\
+ &\leq 3M\tau(g).
+ \end{aligned}
+\]
+
+In the last line, \(\varphi(d)\leq d\) and \(d\leq2M\) are applied to
+each nonempty divisor class.  Hence
+
+\[
+ \boxed{
+ \frac1M\sum_{M<m\leq2M}
+ \frac{(m,n,Q)}Q
+ \leq\frac{3\tau((n,Q))}{Q}
+ \ll_\varepsilon \frac{(nQ)^\varepsilon}{Q}.}
+\tag{4.845bo}
+\]
+
+The same conclusion holds for every fixed smooth dyadic Poisson weight,
+with its sup norm multiplying the right side.  Thus retaining the full
+oldspace projector and then averaging the Poisson frequency removes the
+only positive-power ramified local loss.  This is an absolute estimate;
+it does not spend Möbius cancellation.
+
+What remains in the continuous spectrum is archimedean rather than
+finite-prime: Mellin inversion of
+\(\zeta(s+it)\zeta(s-it)\) crosses the two poles
+\(s=1\pm it\).  The resulting residues must be combined with the
+Poisson zero mode and the paired residues already isolated in
+(4.845at)--(4.845au).  Only after that completed expression is formed
+may the reciprocal-length transform be used.  This residue pairing is
+not proved here.
+
+The interface eisenstein_common_ramification_average_audit checks
+(4.845bn) by exact finite totient expansion and records the explicit
+\(3M\tau(g)\) upper bound.  It marks the normalized Poisson gcd
+aggregation proved, while leaving completed residue pairing, the
+continuous-spectrum gate, and the whole Möbius gate false.
+
+
+### 4.109n Pole subtraction dualizes the Eisenstein polynomial
+
+After Sections 4.109l--4.109m, the remaining distinction between a
+cuspidal functional equation and the continuous spectrum is explicit:
+the Eisenstein Dirichlet series has poles.  They can be isolated before
+dualization.
+
+For
+\[
+ \widehat W(s)=\int_0^\infty W(x)x^{s-1}\,dx,\qquad
+ \lambda_t(n)=\sum_{ab=n}(a/b)^{it},
+\]
+put
+\[
+ A_t(Y;W)=\sum_{n\geq1}\lambda_t(n)W(n/Y).
+\]
+The completed product
+
+\[
+ \boxed{
+ \Xi_t(s):=\pi^{-s}
+ \Gamma\!\left(\frac{s+it}{2}\right)
+ \Gamma\!\left(\frac{s-it}{2}\right)
+ \zeta(s+it)\zeta(s-it),
+ \qquad
+ \Xi_t(s)=\Xi_t(1-s)}
+\tag{4.845bp}
+\]
+
+is an exact consequence of the two completed zeta functional
+equations.  Mellin inversion on \(\Re s>1\), followed by a shift to
+\(\Re s<0\), crosses the poles \(s=1-it\) and \(s=1+it\).  Thus, for
+\(t\ne0\),
+
+\[
+ \boxed{
+ \begin{aligned}
+ A_t(Y;W)
+ &=R_t(Y;W)+D_t(Y;W),\\
+ R_t(Y;W)
+ &=\zeta(1-2it)Y^{1-it}\widehat W(1-it)\\
+ &\quad+\zeta(1+2it)Y^{1+it}\widehat W(1+it).
+ \end{aligned}}
+\tag{4.845bq}
+\]
+
+To state the remaining integral exactly, define
+
+\[
+ G_t(s)
+ :=\pi^{2s-1}
+ \frac{
+ \Gamma((1-s-it)/2)\Gamma((1-s+it)/2)}
+ {\Gamma((s+it)/2)\Gamma((s-it)/2)}
+\]
+
+and
+
+\[
+ \boxed{
+ \begin{aligned}
+ D_t(Y;W)
+ &=Y\sum_{n\geq1}\lambda_t(n)\widetilde W_t(nY),\\
+ \widetilde W_t(x)
+ &:=\frac1{2\pi i}\int_{(1+c)}
+ G_t(1-w)\widehat W(1-w)x^{-w}\,dw
+ \qquad(c>0).
+ \end{aligned}}
+\tag{4.845br}
+\]
+
+The derivation is first performed with finite vertical truncations;
+absolute convergence there justifies Fubini.  Stirling and the rapid
+decay of \(\widehat W\) remove the truncations.  Repeated contour shifts
+show that \(\widetilde W_t(x)\) is rapidly decreasing once
+\(x\gg(1+|t|)^2(\log T)^C\).  Hence a primal length \(Y\) has reciprocal
+length \((1+|t|)^2/Y\).  In the physical spectral window
+\(|t|\leq(\log T)^C\), this has exponent \(-\log_TY\), truncated at zero.
+
+At \(t=0\) the two poles in (4.845bq) collide, but their symmetric sum
+has a finite limit.  From
+\(\zeta(1+z)=z^{-1}+\gamma+O(z)\), one obtains
+
+\[
+ \boxed{
+ \lim_{t\to0}R_t(Y;W)
+ =Y\int_0^\infty
+ W(x)\bigl(\log(Yx)+2\gamma\bigr)\,dx.}
+\tag{4.845bs}
+\]
+
+Thus the pole-subtracted polynomial has the same reciprocal-length
+advantage as the cuspidal polynomial.  Combined with the exact
+oldspace projector (4.845bk) and normalized gcd average (4.845bo), this
+closes the *local nonresidual polynomial estimate* without a positive
+power loss.
+
+It does not yet close the continuous spectrum.  The residue
+\(R_t(Y;W)\) depends on the actual physical Mellin tensor, both
+Atkin--Lehner cusps, and the finite ramified allocations.  It must be
+added to the \(m=0\) term from (4.845ao) and to the paired contour
+residues of (4.845at), and only the completed sum may be simplified.
+That exact zero-mode/residue identity has not been proved.
+
+The interface
+pole_subtracted_eisenstein_functional_equation_audit records the
+reciprocal exponent \(2\tau-y\), the finite central collision with
+coefficients \(1\) and \(2\gamma\), and the local nonresidual closure.
+It leaves zero-mode/residue pairing, the full continuous-spectrum gate,
+and the whole Möbius gate false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

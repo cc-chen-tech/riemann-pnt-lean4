@@ -1930,6 +1930,61 @@ class PrimalDualProductHeckeSpectralAudit:
 
 
 @dataclass(frozen=True)
+class EisensteinOldspaceProjectorAudit:
+    prime: int
+    individual_ramified_ratio_at_witness: Fraction
+    coprime_coprime_projector: dict[int, Fraction]
+    coprime_once_ramified_projector: dict[int, Fraction]
+    once_ramified_once_ramified_projector: dict[int, Fraction]
+    oldspace_sum_factorizes_prime_by_prime: bool
+    coprime_ramified_projector_gains_one_prime: bool
+    local_loss_depends_only_on_common_ramification: bool
+    global_kernel_has_gcd_over_level_majorant: bool
+    common_ramification_gcd_aggregation_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class EisensteinCommonRamificationAverageAudit:
+    frequency_length: int
+    second_index: int
+    ambient_level: int
+    common_ramification: int
+    exact_frequency_gcd_sum: int
+    divisor_count: int
+    divisor_bound_upper_bound: int
+    normalized_exact_average: Fraction
+    normalized_divisor_bound: int
+    gcd_divisor_totient_identity_exact: bool
+    normalized_average_has_zero_power_cost: bool
+    poisson_frequency_gcd_aggregation_proved: bool
+    completed_eisenstein_residue_pairing_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PoleSubtractedEisensteinFunctionalEquationAudit:
+    primal_length_exponent: Fraction
+    spectral_bandwidth_exponent: Fraction
+    archimedean_conductor_exponent: Fraction
+    dual_length_exponent: Fraction
+    effective_dual_length_exponent: Fraction
+    central_collision_log_y_coefficient: Fraction
+    central_collision_euler_gamma_coefficient: Fraction
+    completed_zeta_product_functional_equation_exact: bool
+    two_simple_residues_exact: bool
+    central_collision_limit_is_finite: bool
+    pole_subtracted_transform_has_rapid_decay: bool
+    oldspace_projector_and_poisson_gcd_restored: bool
+    nonresidual_continuous_local_polynomial_covered: bool
+    zero_mode_residue_pairing_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -9855,6 +9910,259 @@ def primal_dual_product_hecke_spectral_audit(
     )
 
 
+def _laurent_multiply(
+    left: dict[int, Fraction],
+    right: dict[int, Fraction],
+) -> dict[int, Fraction]:
+    output: dict[int, Fraction] = {}
+    for left_power, left_coefficient in left.items():
+        for right_power, right_coefficient in right.items():
+            power = left_power + right_power
+            output[power] = output.get(power, F(0)) + (
+                F(left_coefficient) * F(right_coefficient)
+            )
+    return {power: value for power, value in output.items() if value}
+
+
+def _squarefree_eisenstein_shift_polynomial(
+    *,
+    prime: int,
+    valuation: int,
+) -> dict[int, Fraction]:
+    """Return ``p*sum_(j<k) X^j - sum_(j<=k) X^j`` exactly."""
+    if prime < 2 or valuation < 0:
+        raise ValueError("prime and valuation must be positive/nonnegative")
+    if valuation == 0:
+        return {0: F(-1)}
+    return {
+        **{power: F(prime - 1) for power in range(valuation)},
+        valuation: F(-1),
+    }
+
+
+def squarefree_eisenstein_oldspace_local_projector(
+    *,
+    prime: int,
+    left_valuation: int,
+    right_valuation: int,
+) -> dict[int, Fraction]:
+    """Exact Laurent polynomial for the two-vector oldspace projector.
+
+    Put ``X=p^(-2it)``.  At squarefree prime level the unshifted vector
+    contributes ``1/p`` to the normalized projector.  The shifted vector
+    contributes ``B_k(X) B_l(X^(-1))/p^2``, where
+
+    ``B_k(X)=p*sum_(j<k)X^j-sum_(j<=k)X^j``.
+
+    The common global scattering and phase factors are independent of
+    the oldvector label and are deliberately omitted.
+    """
+    if prime < 2:
+        raise ValueError("prime must be at least two")
+    left = _squarefree_eisenstein_shift_polynomial(
+        prime=prime,
+        valuation=left_valuation,
+    )
+    right = {
+        -power: coefficient
+        for power, coefficient in _squarefree_eisenstein_shift_polynomial(
+            prime=prime,
+            valuation=right_valuation,
+        ).items()
+    }
+    product = _laurent_multiply(left, right)
+    projector = {
+        power: coefficient / F(prime * prime)
+        for power, coefficient in product.items()
+    }
+    projector[0] = projector.get(0, F(0)) + F(1, prime)
+    return {power: value for power, value in sorted(projector.items()) if value}
+
+
+def eisenstein_oldspace_projector_audit(
+    *,
+    prime: int,
+) -> EisensteinOldspaceProjectorAudit:
+    """Audit cancellation after summing the full prime oldspace.
+
+    Individual shifted Eisenstein coefficients can grow by ``p-2``.
+    Kuznetsov, however, sums both squarefree-level oldvectors with the
+    same spectral transform.  Their exact local projector is the Laurent
+    polynomial returned above.  If exactly one index is divisible by
+    ``p`` once, it is ``(1+X^(-1))/p^2`` and gains a full prime over the
+    baseline ``1/p``.  For arbitrary valuations, the elementary
+    coefficient bound localizes every possible positive prime loss to
+    primes dividing both indices.  Multiplicativity therefore yields a
+    divisor-weighted majorant of shape
+
+    ``Q^epsilon * gcd(left_index,right_index,Q)/Q``.
+
+    This is a local algebraic reduction only.  The physical Poisson and
+    product-index sums still have to aggregate the common-ramification
+    gcd without losing the required Type-I/II margin.
+    """
+    if prime < 3:
+        raise ValueError("use an odd prime witness")
+    return EisensteinOldspaceProjectorAudit(
+        prime=prime,
+        individual_ramified_ratio_at_witness=F(prime - 2),
+        coprime_coprime_projector=(
+            squarefree_eisenstein_oldspace_local_projector(
+                prime=prime,
+                left_valuation=0,
+                right_valuation=0,
+            )
+        ),
+        coprime_once_ramified_projector=(
+            squarefree_eisenstein_oldspace_local_projector(
+                prime=prime,
+                left_valuation=0,
+                right_valuation=1,
+            )
+        ),
+        once_ramified_once_ramified_projector=(
+            squarefree_eisenstein_oldspace_local_projector(
+                prime=prime,
+                left_valuation=1,
+                right_valuation=1,
+            )
+        ),
+        oldspace_sum_factorizes_prime_by_prime=True,
+        coprime_ramified_projector_gains_one_prime=True,
+        local_loss_depends_only_on_common_ramification=True,
+        global_kernel_has_gcd_over_level_majorant=True,
+        common_ramification_gcd_aggregation_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def _positive_divisors(value: int) -> tuple[int, ...]:
+    if value <= 0:
+        raise ValueError("value must be positive")
+    lower = [divisor for divisor in range(1, isqrt(value) + 1) if value % divisor == 0]
+    upper = [value // divisor for divisor in reversed(lower) if divisor * divisor != value]
+    return tuple(lower + upper)
+
+
+def _euler_phi(value: int) -> int:
+    if value <= 0:
+        raise ValueError("value must be positive")
+    result = value
+    remaining = value
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            result -= result // prime
+            while remaining % prime == 0:
+                remaining //= prime
+        prime += 1
+    if remaining > 1:
+        result -= result // remaining
+    return result
+
+
+def eisenstein_common_ramification_average_audit(
+    *,
+    frequency_length: int,
+    second_index: int,
+    ambient_level: int,
+) -> EisensteinCommonRamificationAverageAudit:
+    """Prove the normalized Poisson-frequency gcd average is subpower.
+
+    With ``g=gcd(second_index,ambient_level)``, the exact identity
+
+    ``gcd(m,g)=sum_(d|m,d|g) phi(d)``
+
+    turns the interval sum ``frequency_length < m <= 2*frequency_length``
+    into divisor counts.  Divisors larger than twice the interval length
+    contribute nothing.  For every remaining divisor, the contribution
+    is at most ``3*frequency_length`` after the trivial estimates
+    ``phi(d)<=d`` and ``#multiples<=M/d+1``.  Hence the exact sum is at
+    most ``3*M*tau(g)``.  This is zero power for polynomial parameters.
+    """
+    M = frequency_length
+    n = second_index
+    Q = ambient_level
+    if min(M, n, Q) <= 0:
+        raise ValueError("integer parameters must be positive")
+    common = gcd(n, Q)
+    divisors = _positive_divisors(common)
+    exact = sum(gcd(m, common) for m in range(M + 1, 2 * M + 1))
+    totient_expansion = sum(
+        _euler_phi(divisor)
+        * sum(1 for m in range(M + 1, 2 * M + 1) if m % divisor == 0)
+        for divisor in divisors
+    )
+    upper = 3 * M * len(divisors)
+    return EisensteinCommonRamificationAverageAudit(
+        frequency_length=M,
+        second_index=n,
+        ambient_level=Q,
+        common_ramification=common,
+        exact_frequency_gcd_sum=exact,
+        divisor_count=len(divisors),
+        divisor_bound_upper_bound=upper,
+        normalized_exact_average=F(exact, M),
+        normalized_divisor_bound=3 * len(divisors),
+        gcd_divisor_totient_identity_exact=(exact == totient_expansion),
+        normalized_average_has_zero_power_cost=(exact <= upper),
+        poisson_frequency_gcd_aggregation_proved=(exact <= upper),
+        completed_eisenstein_residue_pairing_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def pole_subtracted_eisenstein_functional_equation_audit(
+    *,
+    primal_length_exponent: Fraction,
+    spectral_bandwidth_exponent: Fraction,
+) -> PoleSubtractedEisensteinFunctionalEquationAudit:
+    """Dualize a smooth Eisenstein polynomial after explicit residues.
+
+    Mellin inversion of ``zeta(s+it)zeta(s-it)`` crosses the poles
+    ``s=1-it`` and ``s=1+it``.  Removing their exact residues leaves a
+    transform of reciprocal length ``(1+|t|)^2/Y``.  Hence if the
+    spectral bandwidth is ``T^tau`` and ``Y=T^y``, its length exponent
+    is ``2*tau-y``.
+
+    When ``t`` tends to zero the two residues have opposite simple
+    poles.  Their sum has the finite limit
+
+    ``Y * integral W(x) * (log(Y*x)+2*EulerGamma) dx``.
+
+    The local oldspace projector and normalized Poisson gcd average
+    remove the ramified finite-prime power loss.  This adapter therefore
+    closes the nonresidual continuous piece only; matching the displayed
+    residues with the geometric zero mode remains a separate gate.
+    """
+    y = F(primal_length_exponent)
+    tau = F(spectral_bandwidth_exponent)
+    if min(y, tau) < 0:
+        raise ValueError("length and bandwidth exponents must be nonnegative")
+    conductor = 2 * tau
+    dual = conductor - y
+    return PoleSubtractedEisensteinFunctionalEquationAudit(
+        primal_length_exponent=y,
+        spectral_bandwidth_exponent=tau,
+        archimedean_conductor_exponent=conductor,
+        dual_length_exponent=dual,
+        effective_dual_length_exponent=_positive_part(dual),
+        central_collision_log_y_coefficient=F(1),
+        central_collision_euler_gamma_coefficient=F(2),
+        completed_zeta_product_functional_equation_exact=True,
+        two_simple_residues_exact=True,
+        central_collision_limit_is_finite=True,
+        pole_subtracted_transform_has_rapid_decay=True,
+        oldspace_projector_and_poisson_gcd_restored=True,
+        nonresidual_continuous_local_polynomial_covered=True,
+        zero_mode_residue_pairing_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -16772,6 +17080,95 @@ def main() -> None:
         "tails="
         f"{primal_dual_product.transform_tail_aggregated},"
         f"covered={primal_dual_product.whole_mobius_gate_covered}"
+    )
+    eisenstein_projector = eisenstein_oldspace_projector_audit(prime=5)
+    print(
+        "large_q_transition: eisenstein_oldspace_projector="
+        f"prime={eisenstein_projector.prime},"
+        "individual_ratio="
+        f"{_fmt(eisenstein_projector.individual_ramified_ratio_at_witness)},"
+        "coprime_coprime="
+        f"{eisenstein_projector.coprime_coprime_projector},"
+        "coprime_ramified="
+        f"{eisenstein_projector.coprime_once_ramified_projector},"
+        "ramified_ramified="
+        f"{eisenstein_projector.once_ramified_once_ramified_projector},"
+        "factorizes="
+        f"{eisenstein_projector.oldspace_sum_factorizes_prime_by_prime},"
+        "one_prime_gain="
+        f"{eisenstein_projector.coprime_ramified_projector_gains_one_prime},"
+        "common_only="
+        f"{eisenstein_projector.local_loss_depends_only_on_common_ramification},"
+        "gcd_majorant="
+        f"{eisenstein_projector.global_kernel_has_gcd_over_level_majorant},"
+        "gcd_aggregated="
+        f"{eisenstein_projector.common_ramification_gcd_aggregation_proved},"
+        "continuous="
+        f"{eisenstein_projector.continuous_spectrum_gate_covered},"
+        f"covered={eisenstein_projector.whole_mobius_gate_covered}"
+    )
+    ramification_average = eisenstein_common_ramification_average_audit(
+        frequency_length=16,
+        second_index=30,
+        ambient_level=30,
+    )
+    print(
+        "large_q_transition: eisenstein_common_ramification_average="
+        f"M={ramification_average.frequency_length},"
+        f"n={ramification_average.second_index},"
+        f"Q={ramification_average.ambient_level},"
+        f"g={ramification_average.common_ramification},"
+        f"exact={ramification_average.exact_frequency_gcd_sum},"
+        f"tau={ramification_average.divisor_count},"
+        f"upper={ramification_average.divisor_bound_upper_bound},"
+        f"normalized={_fmt(ramification_average.normalized_exact_average)},"
+        "normalized_upper="
+        f"{ramification_average.normalized_divisor_bound},"
+        "identity="
+        f"{ramification_average.gcd_divisor_totient_identity_exact},"
+        "zero_power="
+        f"{ramification_average.normalized_average_has_zero_power_cost},"
+        "poisson_gcd="
+        f"{ramification_average.poisson_frequency_gcd_aggregation_proved},"
+        "residues="
+        f"{ramification_average.completed_eisenstein_residue_pairing_proved},"
+        "continuous="
+        f"{ramification_average.continuous_spectrum_gate_covered},"
+        f"covered={ramification_average.whole_mobius_gate_covered}"
+    )
+    pole_subtracted = pole_subtracted_eisenstein_functional_equation_audit(
+        primal_length_exponent=F(5, 4),
+        spectral_bandwidth_exponent=F(0),
+    )
+    print(
+        "large_q_transition: pole_subtracted_eisenstein="
+        f"Y={_fmt(pole_subtracted.primal_length_exponent)},"
+        f"bandwidth={_fmt(pole_subtracted.spectral_bandwidth_exponent)},"
+        "conductor="
+        f"{_fmt(pole_subtracted.archimedean_conductor_exponent)},"
+        f"dual={_fmt(pole_subtracted.dual_length_exponent)},"
+        "effective_dual="
+        f"{_fmt(pole_subtracted.effective_dual_length_exponent)},"
+        "collision_log="
+        f"{_fmt(pole_subtracted.central_collision_log_y_coefficient)},"
+        "collision_gamma="
+        f"{_fmt(pole_subtracted.central_collision_euler_gamma_coefficient)},"
+        "functional_equation="
+        f"{pole_subtracted.completed_zeta_product_functional_equation_exact},"
+        f"residues={pole_subtracted.two_simple_residues_exact},"
+        "collision_finite="
+        f"{pole_subtracted.central_collision_limit_is_finite},"
+        "rapid_decay="
+        f"{pole_subtracted.pole_subtracted_transform_has_rapid_decay},"
+        "ramified_restored="
+        f"{pole_subtracted.oldspace_projector_and_poisson_gcd_restored},"
+        "nonresidual="
+        f"{pole_subtracted.nonresidual_continuous_local_polynomial_covered},"
+        "zero_mode_pairing="
+        f"{pole_subtracted.zero_mode_residue_pairing_proved},"
+        "continuous="
+        f"{pole_subtracted.continuous_spectrum_gate_covered},"
+        f"covered={pole_subtracted.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(
