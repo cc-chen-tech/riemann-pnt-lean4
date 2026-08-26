@@ -86,4 +86,4 @@
 - [x] Express the coherent modulus family as an operator and compute the exact large-sieve gap at the balanced maximal box.
 - [x] Record that an arbitrary product-coefficient spectral norm still loses `A^(1/2)` and that a successful route must retain `hδ`.
 - [x] Re-run focused and repository-wide Python verification.
-- [ ] Commit, push, and update the Ready-for-view PR with the new proved spacing lemma and unchanged coupled-kernel boundary.
+- [x] Commit, push, and update the Ready-for-view PR with the new proved spacing lemma and unchanged coupled-kernel boundary.
