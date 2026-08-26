@@ -7780,6 +7780,44 @@ the actual signed additive-convolution sequence \(A\), at
 The published asymptotic sieve names this kind of input but does not
 prove it.
 
+The strongest all-interval Möbius theorem cited in Section 9.44 does not
+cover even one long factor of (9.315).  Write
+\[
+ b=T^\beta,\qquad c=T^\gamma,\qquad k=T^\kappa.
+\]
+The complementary polytope is
+\[
+\boxed{
+ \beta+\gamma+\kappa=3,\qquad
+ \beta,\gamma\geq\frac34,\qquad 0\leq\kappa\leq1.}
+\tag{9.316}
+\]
+After fixing \(c,k\), varying \(d\) gives the \(b\)-variable an interval
+of exponent
+\[
+\boxed{
+ \frac{D}{ck}=T^{\,2-\gamma-\kappa}=T^{\beta-1}.}
+\tag{9.317}
+\]
+The published \(5/8\) threshold would require
+\[
+ \beta-1\geq\frac58\beta
+ \quad\Longleftrightarrow\quad
+ \beta\geq\frac83.
+\]
+But (9.316) gives \(\beta\leq3-\gamma\leq9/4\).  Therefore
+\[
+\boxed{
+ \beta_{\rm required}-\beta_{\rm maximum}
+ =\frac83-\frac94=\frac5{12}>0,}
+\tag{9.318}
+\]
+and the one-factor coverage set is empty; the same argument applies to
+\(c\).  The exact-rational checker verifies this gap.  Hence (9.315)
+must exploit a joint \(b,c,k\) average (or an equivalent global
+recombination); it cannot be reduced to a published all-interval estimate
+for one Möbius factor.
+
 Nor does (9.303) prove that such a Mertens estimate is necessary: the
 actual coupled kernel could still cancel between the low-modulus prefix,
 the long--long modes \(m\gtrsim D\), and different separated
@@ -8040,7 +8078,9 @@ Proved in this note:
   \(\mu(m)=\mu(mk)\mu(k)\).  The exact FI parameter map is (9.314);
   their parity-breaking estimate (B) is an assumption, not a theorem
   applicable here.  The remaining gate is equivalently the signed
-  asymptotic-sieve bilinear form (9.315).
+  asymptotic-sieve bilinear form (9.315).  Fixing either long factor
+  leaves an interval below the published \(5/8\) threshold by the exact
+  exponent gap \(5/12\), (9.316)--(9.318).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -8097,7 +8137,7 @@ Proved in this note:
 | Centering after transition completion | exact short-box obstruction; no major-arc deletion | the centered numerator transform is the point-minus-uniform identity (9.283).  Its aligned short-box mass is (9.284), equal to \(D-D^2/(q-1)\) for prime \(q>D\), so the uniform background is a factor \(D/q=T^{-1/2}\) below the dilation point mass, (9.285)--(9.286).  This disproves an automatic vanishing-moment route but is not a lower bound for the actual signed smooth packet; published averaged/short-interval Möbius bounds remain logarithmic at the required power scale |
 | Actual archimedean zero-moment route | scale audit exact; special identity unproved | in the balanced transition every parameter \(TL/(MR),HM/S,M^2R/(ST),KS/(MR),gD/L,H/q\) has exponent zero, (9.287)--(9.288).  Thus the completed weight is sampled at bounded frequency and integration by parts gives no power.  The AFE zeros at Mellin \(z=\pm1/2\) do not force the proposed \(d\)-moment (9.289), and even that moment would remove only the additive origin |
 | Post-completion scalar recombination | exact two-Möbius form; published average only logarithmic | (9.290)--(9.291) merge \(\mu(g)\mu(q)\) into \(\mu(s)\) and put every separated scalar weight into \(\omega_{G,Q}(s)\).  Its divisor-bounded \(L^2\) norm (9.292), together with the exact gcd-divisor split, fits Lichtman's arbitrary-coefficient Fourier lemma componentwise.  The resulting bound has power exponent \(SD=T^5\), not the target \(S^{3/2}=T^{9/2}\), (9.293)--(9.294); no third independent Möbius sign remains |
-| Central Type-I/II density prefix | exact finite regrouping and improved cutoff; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  Type-I nonzero modes are below target, (9.300)--(9.303), and \(U=V=T^{3/4}\) shortens the geometry, (9.304)--(9.306).  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that centered bound; on squarefree support the exact sign migration (9.311)--(9.313) maps the residual to the FI boundary (9.314).  FI assumes rather than proves the needed bilinear axiom, leaving precisely (9.315) unproved |
+| Central Type-I/II density prefix | exact finite regrouping and improved cutoff; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  Type-I nonzero modes are below target, (9.300)--(9.303), and \(U=V=T^{3/4}\) shortens the geometry, (9.304)--(9.306).  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that centered bound; on squarefree support the exact sign migration (9.311)--(9.313) maps the residual to the FI boundary (9.314).  FI assumes rather than proves the needed bilinear axiom, leaving (9.315) unproved.  Fixing either long Möbius factor misses the published \(5/8\) interval threshold by \(5/12\), (9.316)--(9.318), so joint averaging is essential |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

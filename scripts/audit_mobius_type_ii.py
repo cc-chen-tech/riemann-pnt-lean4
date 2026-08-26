@@ -787,6 +787,37 @@ def asymptotic_sieve_transition_ledger(
     )
 
 
+def complementary_one_factor_coverage_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    other_long_factor_floor: Fraction,
+    theorem_short_interval_ratio: Fraction,
+) -> ComplementaryOneFactorCoverageLedger:
+    """Test a one-factor all-interval theorem on the complementary face."""
+
+    lengths = (ambient_length, shift_length, other_long_factor_floor)
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if not 0 <= theorem_short_interval_ratio < 1:
+        raise ValueError("the short-interval ratio must lie in [0,1)")
+    if shift_length > ambient_length:
+        raise ValueError("the shift cannot exceed the ambient length")
+    maximum_factor = ambient_length - other_long_factor_floor
+    # Fixing the other factor and the complementary quotient leaves a
+    # Mobius interval of T-exponent beta-(ambient-shift).  Requiring this
+    # to be at least beta*theta gives beta >= (ambient-shift)/(1-theta).
+    required_factor = (
+        ambient_length - shift_length
+    ) / (1 - theorem_short_interval_ratio)
+    return ComplementaryOneFactorCoverageLedger(
+        maximum_factor_length=maximum_factor,
+        required_factor_length=required_factor,
+        coverage_gap=required_factor - maximum_factor,
+        covered=(maximum_factor >= required_factor),
+    )
+
+
 def scalar_type_ii_cutoff_ledger(
     *,
     r_length: Fraction,
@@ -3419,6 +3450,16 @@ class AsymptoticSieveTransitionLedger:
     short_divisor_cutoff: Fraction
     quotient_at_lower_endpoint: bool
     cutoff_inside_b3_ceiling: bool
+
+
+@dataclass(frozen=True)
+class ComplementaryOneFactorCoverageLedger:
+    """Coverage of a complementary factor by an all-interval theorem."""
+
+    maximum_factor_length: Fraction
+    required_factor_length: Fraction
+    coverage_gap: Fraction
+    covered: bool
 
 
 @dataclass(frozen=True)

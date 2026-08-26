@@ -18,6 +18,7 @@ from scripts.audit_mobius_type_ii import (
     CentralCollisionLedger,
     CentralMajorArcMertensLedger,
     CommonFactorMarginalLedger,
+    ComplementaryOneFactorCoverageLedger,
     CompletedProductPhaseReduction,
     CrossInverseFractionCollision,
     FareyCentralCollisionLedger,
@@ -101,6 +102,7 @@ from scripts.audit_mobius_type_ii import (
     coherent_operator_large_sieve_gap,
     coherent_operator_required_exponent,
     common_factor_marginal_ledger,
+    complementary_one_factor_coverage_ledger,
     completed_product_phase_reduction,
     completed_transition_scalar_weighted_sum,
     coprimality_migrated_scalar_stratum_spectrum,
@@ -562,6 +564,20 @@ def test_asymptotic_sieve_map_hits_the_parity_breaking_endpoint() -> None:
         short_divisor_cutoff=F(3, 4),
         quotient_at_lower_endpoint=True,
         cutoff_inside_b3_ceiling=True,
+    )
+
+
+def test_all_interval_mobius_has_no_complementary_factor_box() -> None:
+    assert complementary_one_factor_coverage_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        other_long_factor_floor=F(3, 4),
+        theorem_short_interval_ratio=F(5, 8),
+    ) == ComplementaryOneFactorCoverageLedger(
+        maximum_factor_length=F(9, 4),
+        required_factor_length=F(8, 3),
+        coverage_gap=F(5, 12),
+        covered=False,
     )
 
 
