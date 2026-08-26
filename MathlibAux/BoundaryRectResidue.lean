@@ -5,54 +5,6 @@ open scoped BigOperators Interval
 
 namespace MathlibAux
 
-/-- Boundary-rectangle integrals agree when the integrands agree on all four
-edges of an ordered axis-parallel rectangle. -/
-lemma boundaryRectIntegral_congr_of_eqOn_boundary
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    {f g : ℂ → E} {x0 x1 y0 y1 : ℝ}
-    (hfg : ∀ z ∈ ([[x0, x1]] ×ℂ [[y0, y1]] : Set ℂ),
-      ¬(x0 < z.re ∧ z.re < x1 ∧ y0 < z.im ∧ z.im < y1) → f z = g z) :
-    boundaryRectIntegral f x0 x1 y0 y1 =
-      boundaryRectIntegral g x0 x1 y0 y1 := by
-  have hbottom :
-      (∫ x : ℝ in x0..x1, f (x + y0 * I)) =
-        ∫ x : ℝ in x0..x1, g (x + y0 * I) := by
-    apply intervalIntegral.integral_congr
-    intro x hxmem
-    apply hfg
-    · simpa [mem_reProdIm] using
-        And.intro hxmem (left_mem_uIcc : y0 ∈ [[y0, y1]])
-    · simp
-  have htop :
-      (∫ x : ℝ in x0..x1, f (x + y1 * I)) =
-        ∫ x : ℝ in x0..x1, g (x + y1 * I) := by
-    apply intervalIntegral.integral_congr
-    intro x hxmem
-    apply hfg
-    · simpa [mem_reProdIm] using
-        And.intro hxmem (right_mem_uIcc : y1 ∈ [[y0, y1]])
-    · simp
-  have hright :
-      (∫ y : ℝ in y0..y1, f ((x1 : ℂ) + y * I)) =
-        ∫ y : ℝ in y0..y1, g ((x1 : ℂ) + y * I) := by
-    apply intervalIntegral.integral_congr
-    intro y hymem
-    apply hfg
-    · simpa [mem_reProdIm] using
-        And.intro (right_mem_uIcc : x1 ∈ [[x0, x1]]) hymem
-    · simp
-  have hleft :
-      (∫ y : ℝ in y0..y1, f ((x0 : ℂ) + y * I)) =
-        ∫ y : ℝ in y0..y1, g ((x0 : ℂ) + y * I) := by
-    apply intervalIntegral.integral_congr
-    intro y hymem
-    apply hfg
-    · simpa [mem_reProdIm] using
-        And.intro (left_mem_uIcc : x0 ∈ [[x0, x1]]) hymem
-    · simp
-  unfold boundaryRectIntegral
-  rw [hbottom, htop, hright, hleft]
-
 /-- The boundary integral of `1 / (z-p)` on an arbitrary axis-parallel
 rectangle is `2πi` when `p` is strictly inside. -/
 theorem boundaryRectIntegral_sub_inv_of_mem
@@ -521,7 +473,11 @@ theorem boundaryRectIntegral_eq_finite_simple_pole_weighted_residue_sum_of_diffe
         have hzp : z ≠ p := by
           intro h
           subst z
-          exact hnotInterior (hpoles p hp)
+          have hpp := hpoles p hp
+          apply hnotInterior
+          simpa [mem_reProdIm] using
+            And.intro (And.intro hpp.1 hpp.2.1)
+              (And.intro hpp.2.2.1 hpp.2.2.2)
         field_simp [sub_ne_zero.mpr hzp]
         ring
       _ = (z - anchor) * g z + ∑ p ∈ poles, residue p +
