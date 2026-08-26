@@ -2545,7 +2545,12 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
     report = capsys.readouterr().out
     assert (
         "mwkf_final: status=analytic remainder gate open "
-        "theta=3 main=4/3 residual_cells=1 remainder_o_T=False"
+        "theta=3 main=4/3 residual_top_level_gates=1 "
+        "residual_semantics=top_level_gate_count_not_literal_cell_count "
+        "top_level=OLISK_q^{L,R} "
+        "alternative_unverified=balanced_zero_slack_u_in_[2,12/5],"
+        "large_q_centered_product_energy_lambda_2 "
+        "all_dyadic_cells=False remainder_o_T=False"
     ) in report
     assert (
         "large_q_transition: poisson_exchange_second_order="
@@ -5490,6 +5495,15 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     assert not audit.full_remainder_is_little_o_T
     assert not audit.unconditional_asymptotic_proved
     assert audit.residual_cell_count == 1
+    assert audit.residual_count_semantics == (
+        "top_level_gate_count_not_literal_cell_count"
+    )
+    assert audit.residual_top_level_gates == ("OLISK_q^{L,R}",)
+    assert audit.alternative_route_unverified_gates == (
+        "balanced_zero_slack_u_in_[2,12/5]",
+        "large_q_centered_product_energy_lambda_2",
+    )
+    assert not audit.all_dyadic_parameter_cells_enumerated
     assert audit.proof_status == "analytic remainder gate open"
 
 
@@ -6835,10 +6849,10 @@ def test_short_cofactor_is_a_published_short_interval_mobius_cell(
         assert marker in note
 
 
-def test_oriented_cofactor_transport_leaves_only_the_polylog_large_q_gate(
+def test_oriented_cofactor_transport_records_four_boundary_witnesses(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """Exchange R,S before the interval theorem and retain lambda=2."""
+    """Exchange R,S on four witnesses without inferring polytope coverage."""
     adapter = getattr(
         coverage_audit,
         "oriented_mmkls_global_transport_audit",
@@ -6883,6 +6897,53 @@ def test_oriented_cofactor_transport_leaves_only_the_polylog_large_q_gate(
         r"\frac{15}{23}",
         r"\mathfrak C_{P,L}[\Omega]",
         "oriented_mmkls_global_transport_audit",
+    ):
+        assert marker in note
+
+
+def test_oriented_cofactor_witnesses_do_not_cover_the_zero_slack_polytope() -> None:
+    """The balanced u-family has a strict power-scale residual interval."""
+    adapter = getattr(
+        coverage_audit,
+        "oriented_mmkls_polytope_gap_audit",
+        None,
+    )
+    assert adapter is not None, "oriented MMKLS polytope-gap audit is missing"
+    audit = adapter(cofactor_cutoff_exponent=F(1, 8))
+    assert audit.family_parameter_interval == (F(2), F(3))
+    assert audit.family_is_admissible
+    assert audit.family_saturates_both_mollifier_lengths
+    assert audit.family_saturates_shift_and_frequency_caps
+    assert audit.raw_ratio_formula == "(u-1)/u"
+    assert audit.adjusted_ratio_formula == "(u-1-eta)/(u-eta)"
+    assert audit.published_threshold == F(7, 12)
+    assert audit.no_cutoff_strict_coverage_lower_endpoint == F(12, 5)
+    assert audit.fixed_cutoff_strict_coverage_lower_endpoint == F(101, 40)
+    assert audit.exact_witnesses == (
+        (F(2), F(1, 2), F(7, 15), False),
+        (F(12, 5), F(7, 12), F(51, 91), False),
+        (F(5, 2), F(3, 5), F(11, 19), False),
+        (F(8, 3), F(5, 8), F(37, 61), True),
+        (F(3), F(2, 3), F(15, 23), True),
+    )
+    assert audit.power_scale_residual_interval == (F(2), F(12, 5))
+    assert audit.current_fixed_cutoff_gap_interval == (F(2), F(101, 40))
+    assert audit.published_route_covers_structural_residual is False
+    assert audit.four_boundary_witnesses_imply_full_polytope_coverage is False
+    assert audit.sole_lcpe_residual_claim_is_valid is False
+    assert audit.remaining_gates == (
+        "balanced_zero_slack_u_in_[2,12/5]",
+        "large_q_centered_product_energy_lambda_2",
+    )
+    assert not audit.all_parameter_cells_covered
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced0 Four witnesses do not cover the parameter polytope",
+        r"u\in\left[2,\frac{12}{5}\right]",
+        r"\frac{u-1}{u}\le\frac7{12}",
+        "oriented_mmkls_polytope_gap_audit",
     ):
         assert marker in note
 

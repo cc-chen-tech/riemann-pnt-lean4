@@ -20769,7 +20769,7 @@ Together with (4.845dc_14xq_35w15) and (4.845dc_14xq_35w19), this proves
 the balanced hard-box MMKLS inequality.  It does **not yet** assert the
 global asymptotic: the argument must be transported through every
 retained unbalanced box and the existing \(q\)- and transform-tail
-ledger before the sole residual cell may be deleted.  The interface
+ledger before any global residual claim may be made.  The interface
 short_cofactor_mobius_interval_audit records the exact threshold margin,
 both Q-smooth tails, the density-error saving, and keeps the global
 aggregation and final-asymptotic flags false.
@@ -20844,8 +20844,8 @@ no estimate proved in this audit supplies its centered little-oh
 uniformly at logarithmic depth two.  Consequently the new hard-box
 argument removes the three maximal power witnesses and preserves the
 bounded large-\(q\) theorem, but it does not yet certify the whole
-parameter polytope or the final asymptotic.  The sole named residual in
-this transport audit is
+parameter polytope or the final asymptotic.  The endpoint residual
+identified by these four witnesses is
 
 \[
 \boxed{\mathrm{LCPE}_2:\quad
@@ -20857,6 +20857,97 @@ The interface oriented_mmkls_global_transport_audit computes all four
 ratios in (4.845dc_14xq_35w31), reuses the proved bounded endpoint and
 the exact critical product lift, and keeps both full-polytope coverage
 and the final asymptotic false.
+
+### 4.109zjaced0 Four witnesses do not cover the parameter polytope
+
+The last qualification is essential.  There is a continuous admissible
+zero-slack family which is not one of the four witnesses in
+(4.845dc_14xq_35w31).  For (2\le u\le3), put
+
+\[
+ \boxed{
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(u,u,\frac12,\frac12,
+ u-\frac12,u-\frac12,3-u\right).}
+\tag{4.845dc_14xq_35w33a}
+\]
+
+Every constraint is saturated in the dangerous direction:
+
+\[
+ \kappa+\rho=\kappa+\sigma=3,
+ \quad k+m=1,
+ \quad \ell=m+\rho-1,
+ \quad h=\sigma-m,
+ \quad \ell+h=\rho+\sigma-1.
+\tag{4.845dc_14xq_35w33b}
+\]
+
+Since this family is balanced, (a=2u-1) and (v=u).  Therefore
+
+\[
+ \boxed{
+ \Theta_{\rm SI}=\frac{u-1}{u},
+ \qquad
+ \Theta_{\rm SI}^{(\eta)}
+ =\frac{u-1-\eta}{u-\eta}.}
+\tag{4.845dc_14xq_35w33c}
+\]
+
+The quantitative Möbius interval theorem requires a strict ratio above
+(7/12).  Even in the limit (eta\downarrow0), one has
+
+\[
+ \boxed{
+ u\in\left[2,\frac{12}{5}\right]
+ \quad\Longrightarrow\quad
+ \frac{u-1}{u}\le\frac7{12}.}
+\tag{4.845dc_14xq_35w33d}
+\]
+
+Thus this entire power-scale interval is outside the published
+short-cofactor route.  With the fixed choice (eta=1/8), strict
+coverage starts only at
+
+\[
+ u>\frac{12}{5}+\frac18=\frac{101}{40}.
+\tag{4.845dc_14xq_35w33e}
+\]
+
+For example, the exact ratios are
+
+\[
+ \begin{array}{c|c|c|c}
+ u&\Theta_{\rm SI}&\Theta_{\rm SI}^{(1/8)}
+ &\Theta_{\rm SI}^{(1/8)}>7/12\\ \hline
+ 2&1/2&7/15&\text{no}\\
+ 12/5&7/12&51/91&\text{no}\\
+ 5/2&3/5&11/19&\text{no}\\
+ 8/3&5/8&37/61&\text{yes}\\
+ 3&2/3&15/23&\text{yes}.
+ \end{array}
+\tag{4.845dc_14xq_35w33f}
+\]
+
+The current BCR, completion, and fixed-factor adapters also reject the
+two structural witnesses (u=2) and (u=12/5).  Consequently
+(\mathrm{LCPE}_2) is **not** the sole residual of the global transport.
+At minimum the present route has the two disjoint gates
+
+\[
+ \boxed{
+ \text{balanced zero-slack }2\le u\le12/5,
+ \qquad \mathrm{LCPE}_2.}
+\tag{4.845dc_14xq_35w33g}
+\]
+
+This is a correction to the earlier four-witness interpretation, not a
+new analytic estimate.  The interface
+oriented_mmkls_polytope_gap_audit verifies every equality in
+(4.845dc_14xq_35w33a)--(4.845dc_14xq_35w33f) with exact rational
+arithmetic and explicitly sets
+four_boundary_witnesses_imply_full_polytope_coverage and
+sole_lcpe_residual_claim_is_valid to false.
 
 ### 4.109zjaced1 The critical product energy has one polylog-slope affine core
 
@@ -22222,7 +22313,7 @@ Combining this remaining implication with (4.845dc_19) would give
 
 The displayed asymptotic is therefore still unproved for real
 \(W\in C_c^\infty(\mathbb R)\) supported in \([1,2]\).  The final
-coverage certificate has one residual analytic gate: the
+coverage certificate has one **top-level** residual analytic gate: the
 Möbius-weighted-modulus two-index large sieve
 \((\mathrm{MMKLS})_{q}^{L,R}\), equivalently the recombined outer-level
 square \((\mathrm{OSLSP})_q^{L,R}\) and hence the full signed outer-entry
@@ -22230,6 +22321,15 @@ aggregation \((\mathrm{OLISK})_{q}^{L,R}\), over power-sized as well as
 polylogarithmic entry divisors.  The full-level harmonic
 large sieve, weighted primitive-conductor large sieve, fixed-entry PEVP,
 and all analytic tails are no longer residual inputs.
+
+The word "one" here counts the aggregate implication
+\((\mathrm{OLISK})_q^{L,R}\); it is not a claim that every dyadic
+parameter cell has been enumerated and only one literal cell remains.
+For the double-Poisson/short-cofactor attempt, Section 4.109zjaced0
+exhibits the still-uncovered power family
+\(2\le u\le12/5\), while Sections 4.109zjaced1--4.109zjaced2 retain the
+separate logarithmic endpoint \(\mathrm{LCPE}_2\).  Either a direct proof
+of the top-level gate or proofs of all such subgates are still required.
 
 The interface \`unconditional_long_mollifier_asymptotic_audit\`
 combines the exact AFE, zero mode, PR #478 LCM main term, PEVP,

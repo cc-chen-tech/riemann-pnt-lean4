@@ -2538,6 +2538,32 @@ class OrientedMMKLSGlobalTransportAudit:
 
 
 @dataclass(frozen=True)
+class OrientedMMKLSPolytopeGapAudit:
+    cofactor_cutoff_exponent: Fraction
+    family_parameter_interval: tuple[Fraction, Fraction]
+    family_is_admissible: bool
+    family_saturates_both_mollifier_lengths: bool
+    family_saturates_shift_and_frequency_caps: bool
+    raw_ratio_formula: str
+    adjusted_ratio_formula: str
+    published_threshold: Fraction
+    no_cutoff_strict_coverage_lower_endpoint: Fraction
+    fixed_cutoff_strict_coverage_lower_endpoint: Fraction
+    exact_witnesses: tuple[
+        tuple[Fraction, Fraction, Fraction, bool], ...
+    ]
+    power_scale_residual_interval: tuple[Fraction, Fraction]
+    current_fixed_cutoff_gap_interval: tuple[Fraction, Fraction]
+    published_route_covers_structural_residual: bool
+    four_boundary_witnesses_imply_full_polytope_coverage: bool
+    sole_lcpe_residual_claim_is_valid: bool
+    remaining_gates: tuple[str, ...]
+    all_parameter_cells_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class LargeQAffineChowlaGcdSplitAudit:
     product_scale: int
     shift_scale: int
@@ -3074,6 +3100,10 @@ class UnconditionalLongMollifierAsymptoticAudit:
     full_remainder_is_little_o_T: bool
     unconditional_asymptotic_proved: bool
     residual_cell_count: int
+    residual_count_semantics: str
+    residual_top_level_gates: tuple[str, ...]
+    alternative_route_unverified_gates: tuple[str, ...]
+    all_dyadic_parameter_cells_enumerated: bool
     proof_status: str
 
 
@@ -15193,6 +15223,13 @@ def unconditional_long_mollifier_asymptotic_audit(
         )
     )
     final = full_remainder
+    transport_gap = oriented_mmkls_polytope_gap_audit(
+        cofactor_cutoff_exponent=F(1, 8)
+    )
+    residual_top_level = () if final else ("OLISK_q^{L,R}",)
+    alternative_unverified = (
+        () if final else transport_gap.remaining_gates
+    )
     return UnconditionalLongMollifierAsymptoticAudit(
         mollifier_length_exponent=F(3),
         main_term_constant=F(4, 3),
@@ -15208,7 +15245,11 @@ def unconditional_long_mollifier_asymptotic_audit(
         archimedean_correction_is_beyond_all_powers=True,
         full_remainder_is_little_o_T=full_remainder,
         unconditional_asymptotic_proved=final,
-        residual_cell_count=0 if final else 1,
+        residual_cell_count=len(residual_top_level),
+        residual_count_semantics="top_level_gate_count_not_literal_cell_count",
+        residual_top_level_gates=residual_top_level,
+        alternative_route_unverified_gates=alternative_unverified,
+        all_dyadic_parameter_cells_enumerated=False,
         proof_status=(
             "unconditional asymptotic proved"
             if final
@@ -16867,6 +16908,102 @@ def short_cofactor_mobius_interval_audit(
         source=(
             "Motohashi--Ramachandra quantitative short-interval theorem "
             "and exact Q-smooth convolution"
+        ),
+    )
+
+
+def oriented_mmkls_polytope_gap_audit(
+    *, cofactor_cutoff_exponent: Fraction
+) -> OrientedMMKLSPolytopeGapAudit:
+    """Exhibit an admissible zero-slack family missed by four witnesses.
+
+    For ``2<=u<=3`` put
+
+      ``(rho,sigma,m,k,ell,h,kappa)``
+      ``=(u,u,1/2,1/2,u-1/2,u-1/2,3-u)``.
+
+    This family saturates ``kappa+rho=kappa+sigma=3``, both individual
+    shift/frequency caps, and ``ell+h=rho+sigma-1``.  The oriented
+    complementary-divisor ratio is ``(u-1)/u``.  Even with cutoff eta
+    tending to zero, the published strict threshold ``7/12`` is missed
+    throughout ``2<=u<=12/5``.  With a fixed cutoff eta, strict coverage
+    begins only above ``12/5+eta``.
+
+    Thus the four designated boundary witnesses cannot certify the
+    continuous exponent polytope.  This is an explicit upstream residual
+    in addition to the logarithmic large-q endpoint.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    if eta <= 0 or eta >= F(1):
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    threshold = F(7, 12)
+
+    def family_box(u: Fraction) -> ExponentBox:
+        return ExponentBox(
+            rho=u,
+            sigma=u,
+            m=F(1, 2),
+            k=F(1, 2),
+            ell=u - F(1, 2),
+            h=u - F(1, 2),
+            kappa=F(3) - u,
+        )
+
+    witness_parameters = (F(2), F(12, 5), F(5, 2), F(8, 3), F(3))
+    witnesses = []
+    for u in witness_parameters:
+        raw = (u - 1) / u
+        adjusted = (u - 1 - eta) / (u - eta)
+        witnesses.append((u, raw, adjusted, adjusted > threshold))
+
+    boxes = tuple(family_box(u) for u in witness_parameters)
+    family_admissible = all(is_admissible(box) for box in boxes)
+    mollifier_saturated = all(
+        box.kappa + box.rho == 3 and box.kappa + box.sigma == 3
+        for box in boxes
+    )
+    caps_saturated = all(
+        box.ell == box.m + box.rho - 1
+        and box.h == box.sigma - box.m
+        and box.ell + box.h == box.rho + box.sigma - 1
+        for box in boxes
+    )
+    structural_residual_routes = tuple(
+        route_box(family_box(u)) for u in (F(2), F(12, 5))
+    )
+    published_covers_structural = any(
+        route.applicable for route in structural_residual_routes
+    )
+    no_cutoff_endpoint = F(12, 5)
+    fixed_cutoff_endpoint = no_cutoff_endpoint + eta
+    return OrientedMMKLSPolytopeGapAudit(
+        cofactor_cutoff_exponent=eta,
+        family_parameter_interval=(F(2), F(3)),
+        family_is_admissible=family_admissible,
+        family_saturates_both_mollifier_lengths=mollifier_saturated,
+        family_saturates_shift_and_frequency_caps=caps_saturated,
+        raw_ratio_formula="(u-1)/u",
+        adjusted_ratio_formula="(u-1-eta)/(u-eta)",
+        published_threshold=threshold,
+        no_cutoff_strict_coverage_lower_endpoint=no_cutoff_endpoint,
+        fixed_cutoff_strict_coverage_lower_endpoint=fixed_cutoff_endpoint,
+        exact_witnesses=tuple(witnesses),
+        power_scale_residual_interval=(F(2), no_cutoff_endpoint),
+        current_fixed_cutoff_gap_interval=(F(2), fixed_cutoff_endpoint),
+        published_route_covers_structural_residual=(
+            published_covers_structural
+        ),
+        four_boundary_witnesses_imply_full_polytope_coverage=False,
+        sole_lcpe_residual_claim_is_valid=False,
+        remaining_gates=(
+            "balanced_zero_slack_u_in_[2,12/5]",
+            "large_q_centered_product_energy_lambda_2",
+        ),
+        all_parameter_cells_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact admissibility algebra and the strict 7/12 "
+            "Motohashi--Ramachandra threshold"
         ),
     )
 
@@ -27348,6 +27485,40 @@ def main() -> None:
         "asymptotic="
         f"{transport.full_long_mollifier_asymptotic_proved}"
     )
+    transport_gap = oriented_mmkls_polytope_gap_audit(
+        cofactor_cutoff_exponent=F(1, 8)
+    )
+    print(
+        "mwkf_transport_gap: family=balanced_zero_slack "
+        "u="
+        f"{_fmt(transport_gap.family_parameter_interval[0])}:"
+        f"{_fmt(transport_gap.family_parameter_interval[1])} "
+        f"admissible={transport_gap.family_is_admissible} "
+        "saturates_mollifier="
+        f"{transport_gap.family_saturates_both_mollifier_lengths} "
+        "saturates_caps="
+        f"{transport_gap.family_saturates_shift_and_frequency_caps} "
+        f"threshold={_fmt(transport_gap.published_threshold)} "
+        "structural_endpoint="
+        f"{_fmt(transport_gap.no_cutoff_strict_coverage_lower_endpoint)} "
+        "fixed_endpoint="
+        f"{_fmt(transport_gap.fixed_cutoff_strict_coverage_lower_endpoint)} "
+        "witnesses="
+        + ",".join(
+            f"{_fmt(u)}:{_fmt(raw)}:{_fmt(adjusted)}:{covered}"
+            for u, raw, adjusted, covered in transport_gap.exact_witnesses
+        )
+        + " "
+        "published_structural="
+        f"{transport_gap.published_route_covers_structural_residual} "
+        "four_imply_polytope="
+        f"{transport_gap.four_boundary_witnesses_imply_full_polytope_coverage} "
+        f"sole_lcpe={transport_gap.sole_lcpe_residual_claim_is_valid} "
+        f"remaining={','.join(transport_gap.remaining_gates)} "
+        f"all_cells={transport_gap.all_parameter_cells_covered} "
+        "asymptotic="
+        f"{transport_gap.full_long_mollifier_asymptotic_proved}"
+    )
     valuation = large_q_product_lift_valuation_audit(prime_fixture=2)
     print(
         "large_q_endpoint: product_lift_valuation="
@@ -27503,7 +27674,13 @@ def main() -> None:
         f"status={final.proof_status} "
         f"theta={_fmt(final.mollifier_length_exponent)} "
         f"main={_fmt(final.main_term_constant)} "
-        f"residual_cells={final.residual_cell_count} "
+        f"residual_top_level_gates={final.residual_cell_count} "
+        f"residual_semantics={final.residual_count_semantics} "
+        f"top_level={','.join(final.residual_top_level_gates)} "
+        "alternative_unverified="
+        f"{','.join(final.alternative_route_unverified_gates)} "
+        "all_dyadic_cells="
+        f"{final.all_dyadic_parameter_cells_enumerated} "
         f"remainder_o_T={final.full_remainder_is_little_o_T}"
     )
 

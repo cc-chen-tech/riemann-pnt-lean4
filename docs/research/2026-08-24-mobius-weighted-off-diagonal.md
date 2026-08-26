@@ -10,7 +10,7 @@
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
 > | Coupled-kernel local estimate at length \(T^3\) | open: reduced to weighted primitive-conductor PEVP in `2026-08-25-mwkf-alternative-routes-spike.md`, Sections 4.109y--4.109zf |
 > | Polylogarithmic and AFE tails | conditional on seminorm-stable PEVP; Section 4.109zg |
-> | Full \(T^3\) asymptotic | unproved; one residual analytic cell remains |
+> | Full \(T^3\) asymptotic | unproved; one aggregate outer gate remains, with multiple unverified parameter subregions |
 >
 > This note supplies the exact decomposition.  The companion route note
 > audits the candidate analytic estimate and conditional final assembly;
