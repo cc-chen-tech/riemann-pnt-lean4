@@ -201,6 +201,20 @@ class BBLRGapResonanceCoordinates:
 
 
 @dataclass(frozen=True)
+class BBLRPrincipalIncidenceSolutionLine:
+    x: int
+    y: int
+    r: int
+    m2: int
+    n2: int
+    shift_h: int
+    line_parameter_t: int
+    solution_line_identity_verified: bool
+    short_inner_support_forces_t_zero: bool
+    partial_diagonal_m2_equals_n2_equals_r: bool
+
+
+@dataclass(frozen=True)
 class BBLRNearDiagonalOuterCorrelation:
     direct_sum: Fraction
     reindexed_sum: Fraction
@@ -1327,6 +1341,63 @@ def bblr_gap_resonance_coordinates(
             residue * gap - h == determinant_index * y
         ),
         principal_near_diagonal_incidence=(determinant_index == 0),
+    )
+
+
+def bblr_principal_incidence_solution_line(
+    *,
+    x: int,
+    y: int,
+    r: int,
+    m2: int,
+    n2: int,
+) -> BBLRPrincipalIncidenceSolutionLine:
+    """Parametrize the original shifted equation on the principal row.
+
+    In the plus orientation, the principal gap incidence has
+    ``h=(X-Y)*r``.  If the original BBLR equation
+
+    ``X*m2-Y*n2=h``
+
+    also holds, then ``X*(m2-r)=Y*(n2-r)``.  Coprimality gives the exact
+    integer line ``m2=r+Y*t``, ``n2=r+X*t``.  In particular, support
+    shorter than both reciprocal coordinates forces ``t=0`` and hence
+    the partial diagonal ``m2=n2=r``.
+    """
+
+    if min(x, y, r, m2, n2) <= 0 or x <= y:
+        raise ValueError("require positive ordered BBLR variables X>Y")
+    if gcd(x, y) != 1:
+        raise ValueError("BBLR principal coordinates must be coprime")
+
+    shift = (x - y) * r
+    if x * m2 - y * n2 != shift:
+        raise ValueError("the supplied inner variables miss the principal shift")
+    if (m2 - r) % y or (n2 - r) % x:
+        raise AssertionError("coprimality must produce an integral solution line")
+    left_parameter = (m2 - r) // y
+    right_parameter = (n2 - r) // x
+    if left_parameter != right_parameter:
+        raise AssertionError("the two principal line parameters must agree")
+    short_support = abs(m2 - r) < y and abs(n2 - r) < x
+    partial_diagonal = m2 == r and n2 == r
+    return BBLRPrincipalIncidenceSolutionLine(
+        x=x,
+        y=y,
+        r=r,
+        m2=m2,
+        n2=n2,
+        shift_h=shift,
+        line_parameter_t=left_parameter,
+        solution_line_identity_verified=(
+            m2 == r + y * left_parameter
+            and n2 == r + x * left_parameter
+            and x * m2 - y * n2 == shift
+        ),
+        short_inner_support_forces_t_zero=(
+            short_support and left_parameter == 0
+        ),
+        partial_diagonal_m2_equals_n2_equals_r=partial_diagonal,
     )
 
 

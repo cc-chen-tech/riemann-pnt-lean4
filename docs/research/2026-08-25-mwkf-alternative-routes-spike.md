@@ -9301,6 +9301,52 @@ then gives
 At \(H=L=T\) and \(Y=T^{3/2}\), (4.621zab) is precisely
 \(c=T^{1/2}\).
 
+More importantly, the principal incidence is not a generic shifted
+outer-correlation row.  Before Poisson summation, the plus-oriented BBLR
+equation divided by \(d=(am_1,bn_1)\) is
+
+\[
+ Xm_2-Yn_2=h.
+\]
+
+On \(k=0\), equations (4.621za)--(4.621zaa) give
+
+\[
+ Xm_2-Yn_2=(X-Y)r,
+\]
+
+and hence
+
+\[
+ X(m_2-r)=Y(n_2-r).
+\]
+
+Because \((X,Y)=1\), this has the exact integer parametrization
+
+\[
+ \boxed{m_2=r+Yt,\qquad n_2=r+Xt,\qquad t\in\mathbb Z.}
+\tag{4.621zac}
+\]
+
+In the signed hard cell, \(X,Y\asymp T^{3/2}\) while
+\(m_2,n_2,r\asymp T^{1/2}\).  The dyadic support therefore gives
+\(|m_2-r|<Y\) and \(|n_2-r|<X\) for large \(T\), so (4.621zac) forces
+
+\[
+ \boxed{t=0,\qquad m_2=n_2=r.}
+\tag{4.621zad}
+\]
+
+Thus the principal slow packet is exactly a partial diagonal of the
+original shifted equation.  The opposite sign/order is obtained by the
+corresponding left/right swap.  It should first be extracted as an
+explicit resonant term and recombined with the other BBLR orderings, AFE
+direction and registered boundary terms; treating it immediately by
+averaged Chowla discards this stronger origin.
+
+The finite helper `bblr_principal_incidence_solution_line` verifies
+(4.621zac) and the short-support implication (4.621zad) exactly.
+
 The BBLR integration scale is exactly \(x\asymp T^{-1}\), matching
 \(r_0/Y\).  Restricting to
 \(|r-r_0|\le Y/(12L)\) leaves \(\asymp T^{1/2}\) values of \(r\), and
@@ -9383,9 +9429,10 @@ majorized.  This is the finite version of “extract the resonant main arc,
 then estimate the centered remainder”; neither resulting analytic bound is
 being assumed.
 
-After the coherent \((h,l)\)-packet has spent only half of the required
-saving, the missing factor is \(C=Q^{1/3}\).  Thus the optimistic model
-target is
+If the partial diagonal in (4.621zad) is majorized instead of explicitly
+recombined, then after the coherent \((h,l)\)-packet has spent only half
+of the required saving, the missing factor is \(C=Q^{1/3}\).  The
+resulting conservative model target is
 
 \[
  \boxed{\mathfrak C_d(Q,C)\ll Q^{1+\varepsilon}}
@@ -9393,7 +9440,9 @@ target is
 \tag{4.621ze}
 \]
 
-against the absolute size \(CQ=Q^{4/3}\).  This is not yet an exact
+against the absolute size \(CQ=Q^{4/3}\).  Equation (4.621ze) is therefore
+a fallback sufficient bound, not the preferred treatment of \(k=0\).
+It is not yet an exact
 replacement gate because the BBLR stage map, all \(d\)-weights and all
 Type sectors still have to be recombined.  It does explain why ordinary
 averaged Chowla does not finish the argument: even for literal Möbius

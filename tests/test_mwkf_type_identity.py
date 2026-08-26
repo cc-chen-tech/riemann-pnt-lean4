@@ -975,6 +975,29 @@ def test_bblr_inverse_phase_has_exact_gap_determinant_coordinates() -> None:
     assert not nonprincipal.principal_near_diagonal_incidence
 
 
+def test_bblr_principal_gap_is_a_partial_diagonal_solution_line() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_principal_incidence_solution_line",
+        None,
+    )
+    assert helper is not None, "BBLR principal solution-line helper is missing"
+
+    diagonal = helper(x=11, y=7, r=5, m2=5, n2=5)
+    assert diagonal.shift_h == 20
+    assert diagonal.line_parameter_t == 0
+    assert diagonal.solution_line_identity_verified
+    assert diagonal.short_inner_support_forces_t_zero
+    assert diagonal.partial_diagonal_m2_equals_n2_equals_r
+
+    translated = helper(x=11, y=7, r=5, m2=19, n2=27)
+    assert translated.shift_h == 20
+    assert translated.line_parameter_t == 2
+    assert translated.solution_line_identity_verified
+    assert not translated.short_inner_support_forces_t_zero
+    assert not translated.partial_diagonal_m2_equals_n2_equals_r
+
+
 def test_bblr_master_partitions_exactly_by_outer_product_gap() -> None:
     helper = getattr(
         type_identity,
