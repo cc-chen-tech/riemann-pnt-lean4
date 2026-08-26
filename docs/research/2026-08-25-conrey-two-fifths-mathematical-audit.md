@@ -822,3 +822,38 @@ line at the finitely many zeros of `eta`, reconcile the lifts on the resulting
 zero-free components, and account for the loss `N_{0,eta}(T)`.  The rectangle
 argument estimate and the long mollified mean-square/spectral estimate also
 remain open.
+
+## 15. Equation-(40) half-weighted multiplicity algebra implemented
+
+The finite multiplicity algebra in the last inequality of Conrey's equation
+(40) is now formalized in `MathlibAux/HalfWeightedMultiplicity.lean`, with its
+public contract in `Test/HalfWeightedMultiplicityContract.lean`.
+
+For a finite zero family `S`, a distinguished boundary, and analytic
+multiplicities `m(rho)`, define the half-weighted mass by giving boundary zeros
+weight `m(rho)/2` and all other zeros weight `m(rho)`.  Lean proves the exact
+identity
+
+\[
+  2N^*(S)=2N(S)-N_{\partial}(S).
+\]
+
+It also proves monotonicity under enlargement of the zero family together with
+pointwise growth of multiplicities.  Finally, if the boundary multiplicity
+mass of the `V_1` zeros is at most the boundary mass of the product zeros, the
+formalized inequality is
+
+\[
+  -2N(V_1B)+N_{0,V_1}
+  \le -2N^*(V_1B),
+\]
+
+which is exactly the direction needed between the second and third lines of
+(40).  The coefficient `1/2`, analytic multiplicities, and the inequality
+direction are all exposed in the contract.
+
+This closes only the finite counting algebra.  The next layer must define the
+actual `V_1` and `B` zero families on Conrey's rectangle, prove the product-zero
+and multiplicity inclusions, and connect their full count to the existing
+Littlewood weighted rectangle identity.  The asymptotic edge estimates remain
+separate.
