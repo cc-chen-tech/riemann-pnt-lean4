@@ -8680,11 +8680,39 @@ sums gives no fixed power.  This is a no-go statement for separating the
 packet's main term; it is not a lower bound for the original coupled
 kernel, whose dyadic pieces and other frequencies may still recombine.
 
+The individual cyclic zero summand is not itself a sampling-invariant
+object: choosing a much larger $M$ makes its factor $1/M$ smaller and
+places proportionally more sample points in the same neighborhood of the
+origin.  The invariant analytic obligation is therefore the complete
+natural central cell
+
+\[
+ \boxed{\mathfrak C_X
+ :=\int_{\|\alpha\|_{\mathbb R/\mathbb Z}\leq c/X}
+ \mathcal A(\alpha)\mathcal C(-\alpha)
+ \mathcal Z(-\alpha)\,d\alpha
+ \ll X^{3/2+\varepsilon}.}
+\tag{9.358}
+\]
+
+Absolute masses give $XD=X^{5/3}$, so (9.358) asks for the invariant
+relative saving $X^{-1/6}=T^{-1/2}$.  Formula (9.357) is the exact
+constant-value diagnostic inside that cell, not a claim that one
+measure-zero point contributes to the continuous integral.  The July
+2026 refinement of short-interval and averaged-Chowla bounds by Menon
+improves the secondary logarithmic term to essentially the
+$1/\log H$ limit of the Matomaki--Radziwill method, but still supplies
+no fixed power; see
+[arXiv:2607.15574](https://arxiv.org/abs/2607.15574), Theorems 1.4--1.5.
+It also applies to pointwise multiplicative Liouville/Möbius weights, not
+directly to both factor-restricted convolutions in (9.352).
+
 Consequently the honest weaker interface exposed by the shifted-
 convolution route has two parts:
 
-1. evaluate and recombine the actual Möbius-weighted singular/zero term
-   represented by (9.357), rather than importing the \(d_3\) main term;
+1. evaluate and recombine the actual Möbius-weighted singular/central
+   cell represented by (9.357)--(9.358), rather than importing the
+   \(d_3\) main term;
 2. prove the centered averaged \(3\times2\) convolution error at exponent
    \(T^{9/2+\varepsilon}\).
 
@@ -8694,9 +8722,9 @@ already numerically inside target.  For the actual coefficient pair
 the undifferentiated coprime half-power deficit by an exact main-term
 obligation and a centered coefficient-transfer obligation, but does not
 prove the coupled-kernel gate.  The executable
-`shifted_divisor_proxy_ledger` records (9.355)--(9.357) and deliberately
-returns `covered = False` unless both coefficient applicability and
-zero-mode vanishing are available.
+`shifted_divisor_proxy_ledger` records (9.355)--(9.358) and deliberately
+returns `covered = False` here because neither coefficient applicability
+nor algebraic central-mode vanishing is available.
 
 ## 10. What has and has not been proved
 
@@ -8716,7 +8744,7 @@ unproved.  The precompletion dual-product audit (9.345)--(9.351)
 removes some high-gcd circle strata but leaves every dominant
 \((k,q_\alpha)=1\), or \(\tau_k=0\), box at exponent \(5\), still one half-power above
 target.  The exact $3\times2$ shifted-convolution identity
-(9.352)--(9.357) shows that published standard-divisor shift errors are
+(9.352)--(9.358) shows that published standard-divisor shift errors are
 numerically strong enough only after replacing the actual coefficients;
 for the dyadic Möbius convolutions, both the nonvanishing zero/singular
 term and the centered coefficient-transfer estimate remain unproved.**
@@ -9003,7 +9031,8 @@ Proved in this note:
   leaving the original \(T^{1/2}\) gap, (9.350).
 * the boundary-exact $3\times2$ shifted-convolution identity
   (9.352)--(9.353), its standard-divisor proxy exponents
-  (9.354)--(9.356), and the exact zero-frequency factorization (9.357).
+  (9.354)--(9.356), the exact cyclic zero-frequency factorization
+  (9.357), and its sampling-invariant natural central-cell form (9.358).
   These separate a numerically covered standard $d_3$-shift error from
   two still-unproved actual-coefficient obligations: recombination of the
   Möbius singular term and the centered dyadic convolution estimate.
@@ -9067,7 +9096,7 @@ Proved in this note:
 | Additive Vinogradov circle route | exact denominator coverage; no positive-width overlap | The explicit rational-approximation bound is (9.323), and a relative saving \(X^{-\eta}\) is available only on (9.324).  The direct length-\(S\) polynomial and the fixed-\(g\), length-\(Q\) polynomial each meet their actual near-zero denominator interval at one endpoint only, (9.325)--(9.326).  A single complementary factor would need length at least \(T^{5/2}\), (9.327), while (9.321) gives at most \(T^2,T^2,T\).  Recent almost-all Möbius Fourier uniformity remains logarithmic, so the coupled major-arc gate is still unproved |
 | Density/complement Ramanujan spectrum | exact middle-spectrum closure; quotient-aware zero/high edge pair unproved | The finite coefficients and reconstruction are (9.328)--(9.331), with \(C_r\ll T^\varepsilon/r\).  Summation by parts plus the additive large sieve proves all \(2\leq r\leq D\), with exact exponent (9.333).  The weaker residual gate is (9.334): the combined \(r=1\) mode plus \(r>D\) small numerators.  On \(m=T^{3-\kappa}=rv\), lifting to \(a_{\rm R}=uv\) gives \(\nu+\lambda=1-\kappa\), not a constant \(1\), (9.335)--(9.337).  The finite bijection (9.338)--(9.339) shows \(u,v\) are gcd strata of one numerator.  The elementary gap is \(\nu\); two hypothetical square roots cover only \(\nu\leq\lambda\).  DRZZ is resonant on \(r\mid bc\), while the Robert--Sargos/Fouvry--Iwaniec monomial shapes cap at one half-power, so neither closes a positive-width residual, (9.340)--(9.344) |
 | Precompletion dual-product Type II | exact published coverage polytope; dominant coprime stratum unproved | Starting from the four-Möbius packet retaining \(h\delta_0\), exact numerator completion produces (9.345), whose circle transform factors into the \(bc\) and \(gq\) product polynomials.  DRZZ Lemma 4.2 is applicable here.  Equations (9.347)--(9.349) include the reduced denominator after \((k,q_\alpha)=T^{\tau_k}\), the approximation loss \((\kappa-2\tau_k)_+\), circle-band mass, and the competing Cauchy bound.  Some high-gcd strata satisfy the target, but for every \(\tau_k=0\) box the optimum is exactly exponent \(5\), leaving \(1/2\), (9.350).  Hence the postcompletion resonance is not the only obstruction |
-| Coprime $3\times2$ shifted convolution | exact finite reduction and published proxy exponents; actual main/error pair unproved | (9.353) is the finite correlation of a dyadic three-factor Möbius convolution with a dyadic two-factor one.  Topacogullari's fixed-shift standard $d_3$--$d$ error sums to exponent $9/2+7/64$, while the Baier--Browning--Marasingha--Zhao signed $d_3$--$d_3$ first moment has exponent $17/4$.  Neither theorem accepts the coefficients (9.352).  The zero mode factors as (9.357), is not algebraically zero, and has raw exponent $5$, so the weaker actual interface still needs both singular-term recombination and a centered coefficient-transfer estimate |
+| Coprime $3\times2$ shifted convolution | exact finite reduction and published proxy exponents; actual main/error pair unproved | (9.353) is the finite correlation of a dyadic three-factor Möbius convolution with a dyadic two-factor one.  Topacogullari's fixed-shift standard $d_3$--$d$ error sums to exponent $9/2+7/64$, while the Baier--Browning--Marasingha--Zhao signed $d_3$--$d_3$ first moment has exponent $17/4$.  Neither theorem accepts the coefficients (9.352).  The natural central cell (9.358), not one resampling-dependent zero point, has raw exponent $5$ and needs the invariant half-power; hence the weaker actual interface still requires both singular-cell recombination and a centered coefficient-transfer estimate |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
