@@ -23,6 +23,8 @@ from scripts.audit_mobius_type_ii import (
     PascadiModuliMargins,
     SquarefreeScalarGcdStratum,
     WrightFactorSavings,
+    YoungDualGcdLedger,
+    YoungDualReciprocityLedger,
     additive_completion_axis_recombined,
     additive_completion_axis_row,
     additive_completion_axis_union,
@@ -52,6 +54,8 @@ from scripts.audit_mobius_type_ii import (
     centered_inverse_cross_fourier,
     centered_inverse_cross_fourier_formula,
     centered_kloosterman_crt_terms,
+    centered_kloosterman_numerator_fourier,
+    centered_kloosterman_numerator_fourier_formula,
     centered_kloosterman_transform,
     central_collision_ledger,
     central_cross_inverse_collision_margins,
@@ -69,7 +73,11 @@ from scripts.audit_mobius_type_ii import (
     dispersion_random_benchmark_gap,
     double_unit_bilinear_sum,
     double_unit_divisor_spectrum,
+    dual_unit_reciprocity_phase,
+    dual_unit_reciprocity_phase_formula,
     elementary_large_sieve_loss,
+    factorized_centered_kloosterman_numerator_fourier,
+    factorized_centered_kloosterman_numerator_fourier_formula,
     farey_central_collision_ledger,
     farey_near_collision_count,
     farey_near_collision_divisor_bound,
@@ -80,6 +88,8 @@ from scripts.audit_mobius_type_ii import (
     inverse_lift_mobius_weight,
     inverse_product_phase_mod_one,
     large_common_divisor_pair_bound,
+    linear_convolution_energy_on_multiples,
+    linear_convolution_energy_on_multiples_majorant,
     migrate_nonprincipal_mobius_sign,
     mobius_geometric_value,
     mobius_weighted_centered_double_unit_divisor_spectrum,
@@ -98,6 +108,8 @@ from scripts.audit_mobius_type_ii import (
     pascadi_balanced_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
+    ramanujan_mean_dyadic_divisor_majorant,
+    ramanujan_mean_dyadic_sum,
     ramanujan_sum,
     rectangular_product_kernel,
     rectangular_product_multiplicities,
@@ -108,6 +120,7 @@ from scripts.audit_mobius_type_ii import (
     reverse_unit_affine_progression_length,
     reverse_unit_solution_count_gap,
     scalar_stratum_bettin_chandee_ledger,
+    squarefree_normalized_ramanujan_mean_formula,
     squarefree_outer_mobius_ramanujan,
     squarefree_scalar_gcd_stratum,
     squarefree_scalar_stratum_completed_sum,
@@ -123,6 +136,8 @@ from scripts.audit_mobius_type_ii import (
     wright_factor_covers,
     wright_factor_savings,
     wright_unbalanced_modulus_margin,
+    young_dual_reciprocity_gcd_ledger,
+    young_dual_reciprocity_ledger,
 )
 from scripts.audit_mwkf_ranges import ExponentBox, boundary_witnesses
 
@@ -1683,6 +1698,223 @@ def test_centered_kloosterman_transform_has_three_term_crt_expansion() -> None:
                             linear_frequency,
                         )
                     ) < 1e-8
+
+
+def test_centered_numerator_fourier_has_unit_support_and_literal_value() -> None:
+    value = centered_kloosterman_numerator_fourier_formula(5, 2, 1, 1)
+    assert abs(value.real - (-2.7950849718747373)) < 1e-10
+    assert abs(value.imag - 2.938926261462366) < 1e-10
+    assert abs(
+        centered_kloosterman_numerator_fourier_formula(5, 2, 1, 0)
+    ) < 1e-10
+    composite = centered_kloosterman_numerator_fourier_formula(6, 5, 1, 5)
+    assert abs(composite.real) < 1e-10
+    assert abs(composite.imag - 5.196152422706632) < 1e-10
+
+
+def test_centered_numerator_fourier_formula_matches_complete_sum() -> None:
+    for modulus in range(1, 13):
+        for multiplier in range(1, modulus + 1):
+            if gcd(multiplier, modulus) != 1:
+                continue
+            for linear_frequency in range(-2, 3):
+                for dual_frequency in range(-2, modulus + 2):
+                    direct = centered_kloosterman_numerator_fourier(
+                        modulus,
+                        multiplier,
+                        linear_frequency,
+                        dual_frequency,
+                    )
+                    formula = centered_kloosterman_numerator_fourier_formula(
+                        modulus,
+                        multiplier,
+                        linear_frequency,
+                        dual_frequency,
+                    )
+                    assert abs(direct - formula) < 1e-8
+                    if gcd(dual_frequency, modulus) != 1:
+                        assert abs(formula) < 1e-8
+
+
+def test_factorwise_centered_numerator_fourier_has_only_unit_modes() -> None:
+    for left_factor in range(1, 7):
+        for right_factor in range(1, 7):
+            modulus = left_factor * right_factor
+            if gcd(left_factor, right_factor) != 1:
+                continue
+            for multiplier in range(1, modulus + 1):
+                if gcd(multiplier, modulus) != 1:
+                    continue
+                for linear_frequency in range(-1, 3):
+                    for dual_frequency in range(-1, modulus + 1):
+                        direct = (
+                            factorized_centered_kloosterman_numerator_fourier(
+                                left_factor,
+                                right_factor,
+                                multiplier,
+                                linear_frequency,
+                                dual_frequency,
+                            )
+                        )
+                        formula = (
+                            factorized_centered_kloosterman_numerator_fourier_formula(
+                                left_factor,
+                                right_factor,
+                                multiplier,
+                                linear_frequency,
+                                dual_frequency,
+                            )
+                        )
+                        assert abs(direct - formula) < 1e-8
+                        if gcd(dual_frequency, modulus) != 1:
+                            assert abs(formula) < 1e-8
+
+
+def test_dual_unit_reciprocity_combines_both_modular_phases() -> None:
+    for left_modulus in range(2, 13):
+        for right_modulus in range(2, 13):
+            if gcd(left_modulus, right_modulus) != 1:
+                continue
+            for left_dual in range(1, 5):
+                for right_dual in range(1, 5):
+                    if (
+                        gcd(left_dual, right_dual) != 1
+                        or gcd(
+                            left_modulus * right_modulus,
+                            left_dual * right_dual,
+                        )
+                        != 1
+                    ):
+                        continue
+                    for frequency in range(1, 3):
+                        for left_numerator in range(1, 3):
+                            for right_numerator in range(1, 3):
+                                direct = dual_unit_reciprocity_phase(
+                                    left_modulus,
+                                    right_modulus,
+                                    left_dual,
+                                    right_dual,
+                                    frequency,
+                                    left_numerator,
+                                    right_numerator,
+                                )
+                                formula = dual_unit_reciprocity_phase_formula(
+                                    left_modulus,
+                                    right_modulus,
+                                    left_dual,
+                                    right_dual,
+                                    frequency,
+                                    left_numerator,
+                                    right_numerator,
+                                )
+                                assert abs(direct - formula) < 1e-8
+
+
+def test_young_additive_rational_sieve_hits_exact_required_saving() -> None:
+    assert young_dual_reciprocity_ledger(
+        outer_modulus=F(5, 2),
+        row_length=F(2),
+        numerator_length=F(2),
+        denominator_length=F(5, 2),
+        required_saving=F(2),
+    ) == YoungDualReciprocityLedger(
+        rational_height=F(9, 2),
+        large_sieve_constant=F(5),
+        coefficient_energy=F(17, 2),
+        row_cauchy=F(9, 4),
+        theorem_bound=F(9),
+        trivial_bound=F(11),
+        saving=F(2),
+        margin=F(0),
+    )
+
+
+def test_young_dual_gcd_strata_never_exceed_the_target() -> None:
+    assert young_dual_reciprocity_gcd_ledger(F(0), F(0)) == (
+        YoungDualGcdLedger(
+            reduced_outer_modulus=F(5, 2),
+            reduced_row_length=F(2),
+            rational_height=F(9, 2),
+            large_sieve_constant=F(5),
+            coefficient_energy=F(17, 2),
+            theorem_bound=F(9),
+            target=F(9),
+            margin=F(0),
+        )
+    )
+    assert young_dual_reciprocity_gcd_ledger(F(1, 2), F(0)).margin == F(
+        1, 4
+    )
+    assert young_dual_reciprocity_gcd_ledger(F(0), F(1, 2)).margin == F(
+        1, 4
+    )
+    assert young_dual_reciprocity_gcd_ledger(
+        F(0), F(0), F(1, 2)
+    ).margin == F(0)
+    for kappa_quarters in range(9):
+        for eta_quarters in range(9):
+            if kappa_quarters + eta_quarters > 10:
+                continue
+            for rational_gcd_quarters in range(9 - eta_quarters):
+                ledger = young_dual_reciprocity_gcd_ledger(
+                    F(kappa_quarters, 4),
+                    F(eta_quarters, 4),
+                    F(rational_gcd_quarters, 4),
+                )
+                assert ledger.theorem_bound <= ledger.target
+
+
+def test_linear_convolution_energy_loses_a_rational_gcd_factor() -> None:
+    for left_length in range(1, 9):
+        for right_length in range(1, 9):
+            for left_multiplier in range(1, 5):
+                for right_multiplier in range(1, 5):
+                    for divisor in range(1, right_length + 1):
+                        if gcd(right_multiplier, divisor) != 1:
+                            continue
+                        assert linear_convolution_energy_on_multiples(
+                            left_length,
+                            right_length,
+                            left_multiplier,
+                            right_multiplier,
+                            divisor,
+                        ) <= linear_convolution_energy_on_multiples_majorant(
+                            left_length,
+                            right_length,
+                            divisor,
+                        )
+
+
+def test_squarefree_ramanujan_means_collapse_to_the_coprime_cofactor() -> None:
+    for modulus in range(1, 80):
+        if naive_mobius(modulus) == 0:
+            continue
+        for frequency in range(-20, 21):
+            ramanujan_sum = sum(
+                divisor * naive_mobius(modulus // divisor)
+                for divisor in range(1, modulus + 1)
+                if modulus % divisor == 0 and frequency % divisor == 0
+            )
+            actual = F(
+                ramanujan_sum,
+                sum(1 for residue in range(modulus) if gcd(residue, modulus) == 1),
+            )
+            assert actual == squarefree_normalized_ramanujan_mean_formula(
+                modulus,
+                frequency,
+            )
+
+
+def test_dyadic_ramanujan_mean_sum_has_finite_divisor_majorant() -> None:
+    for scale in range(1, 25):
+        for frequency in range(1, 40):
+            assert ramanujan_mean_dyadic_sum(
+                scale,
+                frequency,
+            ) <= ramanujan_mean_dyadic_divisor_majorant(
+                scale,
+                frequency,
+            )
 
 
 def test_two_sided_centered_crt_tensor_has_exactly_nine_terms() -> None:

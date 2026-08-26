@@ -509,6 +509,58 @@ def rectangular_product_kernel(
     )
 
 
+def linear_convolution_energy_on_multiples(
+    left_length: int,
+    right_length: int,
+    left_multiplier: int,
+    right_multiplier: int,
+    divisor: int,
+) -> int:
+    """Energy of ``L*x+M*y`` restricted to values divisible by ``g``."""
+
+    if min(
+        left_length,
+        right_length,
+        left_multiplier,
+        right_multiplier,
+        divisor,
+    ) < 1:
+        raise ValueError("lengths, multipliers, and divisor must be positive")
+    multiplicities: dict[int, int] = {}
+    for left_value in range(1, left_length + 1):
+        for right_value in range(1, right_length + 1):
+            total = (
+                left_multiplier * left_value
+                + right_multiplier * right_value
+            )
+            if total % divisor == 0:
+                multiplicities[total] = multiplicities.get(total, 0) + 1
+    return sum(multiplicity * multiplicity for multiplicity in multiplicities.values())
+
+
+def linear_convolution_energy_on_multiples_majorant(
+    left_length: int,
+    right_length: int,
+    divisor: int,
+) -> int:
+    """Finite ``D^3/g`` majorant when the right multiplier is a unit mod g.
+
+    For each left input, one residue class of right inputs survives modulo
+    ``g``.  There are at most ``ceil(right_length/g)`` such inputs, while
+    every exact convolution value has multiplicity at most the shorter
+    interval length.
+    """
+
+    if min(left_length, right_length, divisor) < 1:
+        raise ValueError("lengths and divisor must be positive")
+    right_residue_count = (right_length - 1) // divisor + 1
+    return (
+        min(left_length, right_length)
+        * left_length
+        * right_residue_count
+    )
+
+
 def _finite_interval_fourier(length: int, frequency: int, modulus: int) -> complex:
     return sum(
         cmath.exp(-2j * cmath.pi * frequency * value / modulus)
@@ -1201,6 +1253,67 @@ def centered_kloosterman_transform(
     )
 
 
+def centered_kloosterman_numerator_fourier(
+    modulus: int,
+    numerator_multiplier: int,
+    linear_frequency: int,
+    dual_frequency: int,
+) -> complex:
+    """Direct finite Fourier transform in the inverse numerator."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    return sum(
+        centered_kloosterman_transform(
+            modulus,
+            numerator_multiplier * numerator,
+            linear_frequency,
+        )
+        * cmath.exp(
+            -2j * cmath.pi * dual_frequency * numerator / modulus
+        )
+        for numerator in range(modulus)
+    )
+
+
+def centered_kloosterman_numerator_fourier_formula(
+    modulus: int,
+    numerator_multiplier: int,
+    linear_frequency: int,
+    dual_frequency: int,
+) -> complex:
+    """Closed numerator-Fourier formula with exact unit support."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    if gcd(dual_frequency, modulus) != 1:
+        return 0j
+    if modulus == 1:
+        phase = 1 + 0j
+    else:
+        dual_inverse = pow(dual_frequency % modulus, -1, modulus)
+        phase = cmath.exp(
+            2j
+            * cmath.pi
+            * (
+                linear_frequency
+                * numerator_multiplier
+                * dual_inverse
+                % modulus
+            )
+            / modulus
+        )
+    linear_mean = Fraction(
+        ramanujan_sum(modulus, linear_frequency),
+        _euler_phi(modulus),
+    )
+    return modulus * (phase - float(linear_mean))
+
+
 @dataclass(frozen=True)
 class CenteredKloostermanCrtTerms:
     """The three non-principal terms in a two-factor CRT expansion."""
@@ -1231,6 +1344,144 @@ class CenteredCrtUnitMeanLedger:
     two_mean_margin: Fraction
 
 
+@dataclass(frozen=True)
+class YoungDualReciprocityLedger:
+    """Exponent ledger for Young's additive varying-level large sieve."""
+
+    rational_height: Fraction
+    large_sieve_constant: Fraction
+    coefficient_energy: Fraction
+    row_cauchy: Fraction
+    theorem_bound: Fraction
+    trivial_bound: Fraction
+    saving: Fraction
+    margin: Fraction
+
+
+@dataclass(frozen=True)
+class YoungDualGcdLedger:
+    """Young-sieve exponent ledger after numerator/modulus gcd extraction."""
+
+    reduced_outer_modulus: Fraction
+    reduced_row_length: Fraction
+    rational_height: Fraction
+    large_sieve_constant: Fraction
+    coefficient_energy: Fraction
+    theorem_bound: Fraction
+    target: Fraction
+    margin: Fraction
+
+
+def young_dual_reciprocity_ledger(
+    outer_modulus: Fraction,
+    row_length: Fraction,
+    numerator_length: Fraction,
+    denominator_length: Fraction,
+    required_saving: Fraction,
+) -> YoungDualReciprocityLedger:
+    """Audit the unit-dual reciprocity route in exact T-exponents.
+
+    The additive convolution of two numerator intervals of exponent
+    ``numerator_length`` has second moment of exponent three times that
+    length.  The denominator family contributes one further counting
+    exponent.  Young's large-sieve constant is ``Q^2 + N``.
+    """
+
+    if min(
+        outer_modulus,
+        row_length,
+        numerator_length,
+        denominator_length,
+        required_saving,
+    ) < 0:
+        raise ValueError("exponents must be nonnegative")
+    rational_height = numerator_length + denominator_length
+    large_sieve_constant = max(2 * outer_modulus, rational_height)
+    coefficient_energy = denominator_length + 3 * numerator_length
+    row_cauchy = (outer_modulus + row_length) / 2
+    theorem_bound = row_cauchy + (
+        large_sieve_constant + coefficient_energy
+    ) / 2
+    trivial_bound = (
+        2 * outer_modulus + row_length + 2 * numerator_length
+    )
+    saving = trivial_bound - theorem_bound
+    return YoungDualReciprocityLedger(
+        rational_height=rational_height,
+        large_sieve_constant=large_sieve_constant,
+        coefficient_energy=coefficient_energy,
+        row_cauchy=row_cauchy,
+        theorem_bound=theorem_bound,
+        trivial_bound=trivial_bound,
+        saving=saving,
+        margin=saving - required_saving,
+    )
+
+
+def young_dual_reciprocity_gcd_ledger(
+    row_gcd: Fraction,
+    numerator_gcd: Fraction,
+    rational_gcd: Fraction = Fraction(0),
+) -> YoungDualGcdLedger:
+    """Audit every gcd stratum of the primitive Young-sieve application.
+
+    Here ``row_gcd`` is the exponent of ``d = (k, q)`` and
+    ``numerator_gcd`` is the exponent of ``e = (A, q / d)``, and
+    ``rational_gcd`` is the exponent of ``g = (A/e, u)`` needed to put
+    the rational numerator and denominator in lowest terms.  Extracting
+    these factors leaves outer modulus exponent ``5/2-d-e``, row length
+    ``2-d``, and rational height ``9/2-e-2g``.
+
+    On a fixed ``g``-stratum, the denominator count loses ``g`` and the
+    additive-convolution energy on numerators divisible by ``g`` loses
+    another ``g``: the elementary bound is ``D^3/g``.  Thus the original
+    coefficient-energy exponent ``17/2`` becomes ``17/2-2g``.  We charge
+    ``d+e+g`` for selecting all extracted factors, a conservative finite
+    exponent audit in which the two ``g`` savings exactly pay for the
+    added ``g``-sum.
+    """
+
+    if row_gcd < 0 or numerator_gcd < 0 or rational_gcd < 0:
+        raise ValueError("gcd exponents must be nonnegative")
+    if row_gcd > 2:
+        raise ValueError("the row gcd cannot exceed the row length")
+    if row_gcd + numerator_gcd > Fraction(5, 2):
+        raise ValueError("the extracted gcds cannot exceed the modulus")
+    if numerator_gcd > 2:
+        raise ValueError("the numerator gcd cannot exceed its length")
+    if numerator_gcd + rational_gcd > 2:
+        raise ValueError("the rational gcd cannot exceed the numerator")
+
+    reduced_outer_modulus = Fraction(5, 2) - row_gcd - numerator_gcd
+    reduced_row_length = Fraction(2) - row_gcd
+    rational_height = (
+        Fraction(9, 2) - numerator_gcd - 2 * rational_gcd
+    )
+    large_sieve_constant = max(
+        2 * reduced_outer_modulus,
+        rational_height,
+    )
+    row_cauchy = (reduced_outer_modulus + reduced_row_length) / 2
+    coefficient_energy = Fraction(17, 2) - 2 * rational_gcd
+    extracted_factor_count = row_gcd + numerator_gcd + rational_gcd
+    theorem_bound = (
+        extracted_factor_count
+        + row_cauchy
+        + (large_sieve_constant + coefficient_energy) / 2
+    )
+    target = Fraction(9)
+    return YoungDualGcdLedger(
+        reduced_outer_modulus=reduced_outer_modulus,
+        reduced_row_length=reduced_row_length,
+        rational_height=rational_height,
+        large_sieve_constant=large_sieve_constant,
+        coefficient_energy=coefficient_energy,
+        theorem_bound=theorem_bound,
+        target=target,
+        margin=target - theorem_bound,
+    )
+
+
 def centered_crt_unit_mean_ledger(
     local_factor_exponent: Fraction,
     required_saving: Fraction,
@@ -1253,6 +1504,120 @@ def centered_crt_unit_mean_ledger(
             Fraction(0), 2 * saving_per_mean - required_saving
         ),
     )
+
+
+def dual_unit_reciprocity_phase(
+    left_modulus: int,
+    right_modulus: int,
+    left_dual: int,
+    right_dual: int,
+    frequency: int,
+    left_numerator: int,
+    right_numerator: int,
+) -> complex:
+    """Original pair of cross-inverse phases on positive dual modes."""
+
+    if min(left_modulus, right_modulus, left_dual, right_dual) < 1:
+        raise ValueError("moduli and dual frequencies must be positive")
+    if gcd(left_modulus, right_modulus * left_dual) != 1:
+        raise ValueError("the left cross inverse must exist")
+    if gcd(right_modulus, left_modulus * right_dual) != 1:
+        raise ValueError("the right cross inverse must exist")
+    left_inverse = pow(
+        (right_modulus * left_dual) % left_modulus,
+        -1,
+        left_modulus,
+    )
+    right_inverse = pow(
+        (left_modulus * right_dual) % right_modulus,
+        -1,
+        right_modulus,
+    )
+    return cmath.exp(
+        2j
+        * cmath.pi
+        * (-frequency * left_numerator * left_inverse)
+        / left_modulus
+    ) * cmath.exp(
+        2j
+        * cmath.pi
+        * (frequency * right_numerator * right_inverse)
+        / right_modulus
+    )
+
+
+def dual_unit_reciprocity_phase_formula(
+    left_modulus: int,
+    right_modulus: int,
+    left_dual: int,
+    right_dual: int,
+    frequency: int,
+    left_numerator: int,
+    right_numerator: int,
+) -> complex:
+    """One rational character, one fixed twist, and a small real phase."""
+
+    if min(left_modulus, right_modulus, left_dual, right_dual) < 1:
+        raise ValueError("moduli and dual frequencies must be positive")
+    combined_modulus = right_modulus * left_dual * right_dual
+    if gcd(left_modulus, combined_modulus) != 1:
+        raise ValueError("the combined rational denominator must be a unit")
+    if gcd(right_dual, right_modulus) != 1:
+        raise ValueError("the right dual frequency must be a unit")
+    right_dual_inverse = pow(
+        right_dual % right_modulus,
+        -1,
+        right_modulus,
+    )
+    fixed_twist = (
+        right_dual * right_dual_inverse - 1
+    ) // right_modulus
+    left_inverse = pow(
+        left_modulus % combined_modulus,
+        -1,
+        combined_modulus,
+    )
+    combined_numerator = (
+        right_dual * left_numerator
+        + left_dual * right_numerator
+    )
+    main_phase = cmath.exp(
+        2j
+        * cmath.pi
+        * (
+            frequency * combined_numerator * left_inverse
+            % combined_modulus
+        )
+        / combined_modulus
+    )
+    if right_dual == 1:
+        twist_phase = 1 + 0j
+    else:
+        inverse_mod_fixed = pow(
+            left_modulus % right_dual,
+            -1,
+            right_dual,
+        )
+        twist_phase = cmath.exp(
+            2j
+            * cmath.pi
+            * (
+                frequency
+                * fixed_twist
+                * right_numerator
+                * inverse_mod_fixed
+                % right_dual
+            )
+            / right_dual
+        )
+    real_correction = cmath.exp(
+        -2j
+        * cmath.pi
+        * frequency
+        * left_numerator
+        / (left_modulus * right_modulus * left_dual)
+    )
+    return main_phase * twist_phase * real_correction
 
 
 def centered_kloosterman_crt_terms(
@@ -1323,6 +1688,91 @@ def centered_kloosterman_crt_terms(
         left_centered_right_mean=left_centered * float(right_mean),
         left_mean_right_centered=float(left_mean) * right_centered,
     )
+
+
+def factorized_centered_kloosterman_numerator_fourier(
+    left_factor: int,
+    right_factor: int,
+    numerator_multiplier: int,
+    linear_frequency: int,
+    dual_frequency: int,
+) -> complex:
+    """Direct numerator Fourier transform of the fully centered CRT term."""
+
+    modulus = left_factor * right_factor
+    if left_factor < 1 or right_factor < 1:
+        raise ValueError("CRT factors must be positive")
+    if gcd(left_factor, right_factor) != 1:
+        raise ValueError("CRT factors must be coprime")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    right_inverse_mod_left = (
+        0
+        if left_factor == 1
+        else pow(right_factor, -1, left_factor)
+    )
+    left_inverse_mod_right = (
+        0
+        if right_factor == 1
+        else pow(left_factor, -1, right_factor)
+    )
+    return sum(
+        centered_kloosterman_transform(
+            left_factor,
+            numerator_multiplier * numerator * right_inverse_mod_left,
+            linear_frequency * right_inverse_mod_left,
+        )
+        * centered_kloosterman_transform(
+            right_factor,
+            numerator_multiplier * numerator * left_inverse_mod_right,
+            linear_frequency * left_inverse_mod_right,
+        )
+        * cmath.exp(
+            -2j * cmath.pi * dual_frequency * numerator / modulus
+        )
+        for numerator in range(modulus)
+    )
+
+
+def factorized_centered_kloosterman_numerator_fourier_formula(
+    left_factor: int,
+    right_factor: int,
+    numerator_multiplier: int,
+    linear_frequency: int,
+    dual_frequency: int,
+) -> complex:
+    """CRT product formula for the fully centered numerator transform."""
+
+    modulus = left_factor * right_factor
+    if left_factor < 1 or right_factor < 1:
+        raise ValueError("CRT factors must be positive")
+    if gcd(left_factor, right_factor) != 1:
+        raise ValueError("CRT factors must be coprime")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    right_inverse_mod_left = (
+        0
+        if left_factor == 1
+        else pow(right_factor, -1, left_factor)
+    )
+    left_inverse_mod_right = (
+        0
+        if right_factor == 1
+        else pow(left_factor, -1, right_factor)
+    )
+    left_transform = centered_kloosterman_numerator_fourier_formula(
+        left_factor,
+        numerator_multiplier * right_inverse_mod_left,
+        linear_frequency * right_inverse_mod_left,
+        dual_frequency * right_inverse_mod_left,
+    )
+    right_transform = centered_kloosterman_numerator_fourier_formula(
+        right_factor,
+        numerator_multiplier * left_inverse_mod_right,
+        linear_frequency * left_inverse_mod_right,
+        dual_frequency * left_inverse_mod_right,
+    )
+    return left_transform * right_transform
 
 
 def coprime_centered_inverse_cross_fourier_factorization(
@@ -2747,6 +3197,58 @@ def ramanujan_sum(n: int, frequency: int) -> int:
     return sum(
         d * mobius(n // d) for d in divisors(gcd(n, abs(frequency)))
     )
+
+
+def squarefree_normalized_ramanujan_mean_formula(
+    modulus: int, frequency: int
+) -> Fraction:
+    """Exact ``c_q(k)/phi(q)`` from the cofactor coprime to ``k``."""
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the modulus must be positive and squarefree")
+    coprime_cofactor = modulus // gcd(modulus, abs(frequency))
+    return Fraction(
+        mobius(coprime_cofactor),
+        _euler_phi(coprime_cofactor),
+    )
+
+
+def ramanujan_mean_dyadic_sum(scale: int, frequency: int) -> Fraction:
+    """Absolute normalized Ramanujan means on one squarefree dyadic box."""
+
+    if scale < 1 or frequency == 0:
+        raise ValueError("the scale must be positive and frequency nonzero")
+    return sum(
+        (
+            abs(
+                squarefree_normalized_ramanujan_mean_formula(
+                    modulus,
+                    frequency,
+                )
+            )
+            for modulus in range(scale + 1, 2 * scale + 1)
+            if mobius(modulus) != 0
+        ),
+        start=Fraction(0),
+    )
+
+
+def ramanujan_mean_dyadic_divisor_majorant(
+    scale: int, frequency: int
+) -> Fraction:
+    """Finite divisor/Euler-sum majorant for the dyadic mean family."""
+
+    if scale < 1 or frequency == 0:
+        raise ValueError("the scale must be positive and frequency nonzero")
+    squarefree_euler_sum = sum(
+        (
+            Fraction(1, _euler_phi(cofactor))
+            for cofactor in range(1, 2 * scale + 1)
+            if mobius(cofactor) != 0
+        ),
+        start=Fraction(0),
+    )
+    return len(divisors(abs(frequency))) * squarefree_euler_sum
 
 
 def squarefree_outer_mobius_ramanujan(n: int, frequency: int) -> int:

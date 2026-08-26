@@ -5657,10 +5657,196 @@ nine-term reduction and the unit-mean screening (9.205)--(9.211); the
 joint estimate for the fully centered and one-mean families remains
 unproved.
 
+### 9.35 Numerator completion and Young's varying-level rational large sieve
+
+The obstruction at the end of Section 9.34 changes after completing the
+*numerator* of each centered local transform.  Let \((\gamma,q)=1\), and
+use the Fourier convention \(e_q(x)=e(x/q)\).  Directly opening the
+Kloosterman sum and the Ramanujan mean gives the finite identity
+
+\[
+\boxed{
+ \sum_{h\bmod q}\mathscr K_{q,\gamma h}(z)e_q(-\ell h)
+ =q\,1_{(\ell,q)=1}
+ \left(e_q(z\gamma\bar\ell)-\frac{c_q(z)}{\varphi(q)}\right).}
+\tag{9.212}
+\]
+
+In particular, the zero numerator-dual mode and **every nonunit dual
+mode vanish exactly**.  If \(q=ab\), \((a,b)=1\), and only the fully
+centered term in (9.206) is retained, CRT factors the left side of
+(9.212) into the product of the two corresponding local transforms.
+It is therefore supported precisely on \((\ell,ab)=1\).  This statement
+is valid for arbitrary coprime positive \(a,b\), not only for primes or
+balanced factors.
+
+For a smooth numerator interval, Poisson summation in residue classes
+now reads, up to replacing \(\ell\) by \(-\ell\),
+
+\[
+ \sum_{h\in\mathbb Z}W(h/H)\mathscr K_{q,\gamma h}(z)
+ =\frac Hq\sum_{\ell\in\mathbb Z}
+ \widehat W(H\ell/q)
+ \sum_{r\bmod q}\mathscr K_{q,\gamma r}(z)e_q(-\ell r).
+\tag{9.213}
+\]
+
+At the primitive corner \(H\asymp q\), rapid decay restricts the dual
+sum to \(O(T^\varepsilon)\) values of \(\ell\), and (9.212) keeps only
+the units.  Thus the axes and scalar-gcd dual strata which survived the
+*uncentered* completion in Sections 9.29--9.30 do not occur in the
+fully centered numerator completion.
+
+Complete both sides of (9.198b), write the two nonzero dual frequencies
+as \(L,M>0\) after splitting signs, and keep the primitive unit face.
+For \((u,vLM)=1\), \((M,v)=1\), put
+
+\[
+ j_M:=\frac{M\bar M_v-1}{v}.
+\]
+
+Elementary additive reciprocity gives the exact phase identity
+
+\[
+\boxed{
+ e_u(-k\delta\overline{vL}_u)
+ e_v(k\delta'\overline{uM}_v)
+ =e_{vLM}\!\left(k(M\delta+L\delta')\bar u_{vLM}\right)
+  e_M\!\left(kj_M\delta'\bar u_M\right)
+  e\!\left(-\frac{k\delta}{uvL}\right).}
+\tag{9.214}
+\]
+
+The second factor has fixed modulus \(M=T^{O(\varepsilon)}\), so residue
+class separation costs only \(T^\varepsilon\).  The last phase has
+argument \(T^{-1+O(\varepsilon)}\) at
+\(k,\delta,\delta'\asymp T^2\) and
+\(u,v\asymp T^{5/2}\), and may be retained in the smooth coefficient.
+The first factor is the varying-level rational character needed below,
+with
+
+\[
+ q=vLM,\qquad t=k,\qquad
+ A=M\delta+L\delta',\qquad b=u.
+\tag{9.215}
+\]
+
+Young's additive large sieve (Theorem 1.2 of the reference in Section
+11) states
+
+\[
+ \max_{\|\alpha\|_2=1}\sum_{q\sim Q}\sum_{t\bmod q}^{*}
+ \left|\sum_{ab\sim N\atop (a,b)=1,(ab,q)=1}
+ \alpha_{a,b}e_q(ta\bar b)\right|^2
+ \ll_\varepsilon (Q^2+N)^{1+\varepsilon}.
+\tag{9.216}
+\]
+
+Unlike the fixed-modulus inputs audited above, (9.216) averages the
+outer modulus and the complete unit row simultaneously.  A shorter
+\(k\)-interval is inserted by extending its row coefficient by zero.
+After dyadically separating the sign and size of \(A\), the primitive
+scales in (9.215) give the exact exponent ledger
+
+\[
+\begin{array}{c|c}
+ \text{quantity}&T\text{-exponent}\\ \hline
+ Q=vLM&5/2\\
+ N=|A|u&9/2\\
+ Q^2+N&5\\
+ \sum_{A,u}|\alpha_{A,u}|^2
+   \ \leq\ U\sum_A r_{L,M}(A)^2&17/2\\
+ \text{Cauchy over the actual }(v,k)\text{ rows}&9/4\\ \hline
+ \text{Young bound}&9\\
+ \text{raw five-variable count}&11\\
+ \text{saving}&2.
+\end{array}
+\tag{9.217}
+\]
+
+Here \(r_{L,M}(A)=\#\{(\delta,\delta'):M\delta+L\delta'=A\}\), and
+\(\sum_A r_{L,M}(A)^2\ll T^{6+\varepsilon}\) is the elementary additive
+convolution energy bound for two intervals of length \(T^2\).  Hence
+(9.216) supplies exactly the \(T^2\) saving missing in (9.172), with no
+power margin.  The exceptional slice \(A=0\) has only \(O(T^{2+\varepsilon})\)
+pairs \((\delta,\delta')\), rather than \(T^4\), and has the same saving
+before the large sieve is used.
+
+All coprimality conditions in (9.216) must be enforced, rather than
+hidden in \(T^\varepsilon\).  For squarefree main moduli, set
+
+\[
+ d=(k,q),\qquad e=(A,q/d),\qquad g=(A/e,u),
+\]
+
+and write their dyadic exponents as \(\kappa,\eta,\gamma\).  After
+cancelling \(d,e\) from the additive character and \(g\) from the
+rational number, the reduced outer modulus, row length, rational height,
+and coefficient energy have exponents
+
+\[
+ \frac52-\kappa-\eta,\qquad
+ 2-\kappa,\qquad
+ \frac92-\eta-2\gamma,\qquad
+ \frac{17}{2}-2\gamma.
+\]
+
+The last entry uses the finite congruence estimate
+
+\[
+ \sum_{A\equiv0\ (g)}r_{L,M}(A)^2
+ \ll T^\varepsilon\frac{D^3}{g},\qquad D=T^2,
+\tag{9.218}
+\]
+
+after separating the \(T^{O(\varepsilon)}\) common factors of \(g\) with
+\(LM\).  One factor \(g^{-1}\) comes from (9.218), and the other from
+restricting \(u\) to multiples of \(g\).  Even charging
+\(T^{\kappa+\eta+\gamma}\) for selecting \(d,e,g\), the resulting bound
+has exponent
+
+\[
+ \mathcal Y(\kappa,\eta,\gamma)
+ =\frac{13}{2}+\frac\eta2+
+  \frac12\max\!\left(5-2\kappa-2\eta,
+                      \frac92-\eta-2\gamma\right)
+ \leq9.
+\tag{9.219}
+\]
+
+Indeed, the first branch is \(9-\kappa-\eta/2\), while the second is at
+most \(35/4\).  Thus none of these three gcd decompositions worsens the
+critical \(T^9\) threshold.
+
+The mean-containing terms in (9.207) also have an elementary modulus
+sum.  For squarefree \(q\) and nonzero \(k\),
+
+\[
+ \frac{c_q(k)}{\varphi(q)}
+ =\frac{\mu(q/(q,k))}{\varphi(q/(q,k))},\qquad
+ \sum_{Q<q\leq2Q}\frac{|c_q(k)|}{\varphi(q)}
+ \leq\tau(k)\sum_{e\leq2Q\atop e\ {\rm squarefree}}
+       \frac1{\varphi(e)}
+ \ll_\varepsilon T^\varepsilon.
+\tag{9.220}
+\]
+
+Equations (9.212)--(9.220) are an **exact arithmetic exponent closure of
+the coprime-unit, fully centered primitive family**, not yet a proof of
+CK\(_{\rm ub}(3)\).  To promote this ledger to the global remainder
+bound one must still write the uniform separation of all archimedean
+weights, restore the common modulus divisor \(t=(m,n)>1\), handle
+nonunit numerator multipliers before (9.212), and recombine those pieces
+with the principal/axis spectra.  The important change in proof status
+is narrower but genuine: the hardest primitive raw term now maps to a
+published varying-level theorem at exactly the required exponent; it no
+longer requires a conjectural new two-modulus large sieve on that face.
+
 ## 10. What has and has not been proved
 
-**Current classification: published/elementary coverage complete; Region D remains
-unproved.**
+**Current classification: the coprime-unit primitive exponent now closes
+through Young's varying-level large sieve; the full Region-D recombination
+remains unproved.**
 
 Proved in this note:
 
@@ -5774,8 +5960,13 @@ Proved in this note:
 * the factorwise centered CRT identity (9.205)--(9.208), which splits the
   coprime double-Möbius tensor into nine terms with no all-principal
   factor on either side, and the exact balanced unit-mean screening
-  ledger (9.209)--(9.211); the fully centered and one-mean joint moments
-  remain unproved.
+  ledger (9.209)--(9.211).
+* the exact numerator-Fourier unit support (9.212), smooth completion
+  (9.213), dual reciprocity (9.214), and Young varying-level large-sieve
+  map (9.215)--(9.217); the primitive fully centered raw term saves the
+  required \(T^2\), and the complete three-gcd exponent audit
+  (9.218)--(9.219) never exceeds the target exponent \(9\).  The
+  squarefree mean factors have the elementary dyadic bound (9.220).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -5820,6 +6011,7 @@ Proved in this note:
 | Coprimality-migrated scalar spectrum | exact Type-II bridge; balanced face unproved | expanding \((k,\delta')=1\) gives the triple spectrum (9.187), whose product coefficient is independent of the oscillatory modulus; Bettin--Chandee applies with (9.189), but (9.193) proves a uniform gap of at least \(T^2\), with gap \(T^{67/16}\) at the primitive corner |
 | Centered common-divisor dispersion | exact zero-frequency reduction; nonzero dual estimate unproved | centering the full divisor packet makes the \(k=1\) layer vanish, (9.197); the cross-modulus covariance is zero for coprime moduli and otherwise factors only through \(t=(m,n)\), (9.194)--(9.196); (9.198)--(9.201) isolate the remaining dual Kloosterman frequencies and the \(t_0=Q^2/R=T^2\) transition |
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
+| Young varying-level primitive route | exact arithmetic exponent closure; global recombination unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps the raw term to Young's additive rational large sieve, (9.214)--(9.217), saving exactly \(T^2\).  The \(d,e,g\) strata remain at exponent at most \(9\), (9.218)--(9.219), but common \(t=(m,n)>1\), nonunit numerator multipliers, and uniform archimedean separation are not yet recombined |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
@@ -5860,6 +6052,9 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   especially Proposition 1 and Sections 3.1--3.4.
 * S. Bettin, V. Chandee, *Trilinear forms with Kloosterman fractions*,
   arXiv:1502.00769, Theorem 1 and equation (7.2), used in Section 8.1.
+* M. P. Young, *The large sieve for self-dual Eisenstein series of varying
+  levels*, arXiv:2208.03358, Theorem 1.2; its additive rational large
+  sieve is mapped to the primitive centered dual family in Section 9.35.
 * T. Wright, *Trilinear Kloosterman fractions I: partially fixed moduli and
   unbalanced convolutions*, arXiv:2604.25177v2, Theorem 2.1, audited but not
   used for a new box in Section 8.3.
