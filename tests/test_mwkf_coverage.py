@@ -4812,6 +4812,108 @@ def test_full_level_harmonic_large_sieve_polylog_constant_is_still_open() -> Non
     assert not audit.uniform_polylog_harmonic_large_sieve_proved
 
 
+def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zfa Exact dyadic Mellin inversion removes the raw-volume error, not PEVP",
+        r"\tag{4.845dc_14a}",
+        r"\tag{4.845dc_14f}",
+        "pointwise transform formula as negligible",
+        "Both obligations remain open.",
+        "dyadic_bessel_mellin_block_audit",
+    ):
+        assert marker in note
+
+    block_audit = coverage_audit.dyadic_bessel_mellin_block_audit
+
+    for modulus_exponent in (F(0), F(4), F(5), F(6)):
+        block = block_audit(
+            sequence_length_exponent=F(5),
+            level_exponent=F(3),
+            modulus_exponent=modulus_exponent,
+            spectral_scale_exponent=F(0),
+        )
+        assert block.target_exponent == F(2)
+        assert not block.pointwise_hpy_remainder_discarded_before_large_sieve
+        assert block.exact_dyadic_mellin_inversion_used
+        assert block.mellin_remainder_routed_through_gallagher
+        assert block.maass_and_eisenstein_block_covered
+        assert block.holomorphic_block_covered
+        assert block.physical_full_level_block_covered
+
+    boundary = block_audit(
+        sequence_length_exponent=F(5),
+        level_exponent=F(3),
+        modulus_exponent=F(5),
+        spectral_scale_exponent=F(0),
+    )
+    assert not boundary.large_bessel_range
+    assert boundary.small_block_first_exponent == F(2)
+    assert boundary.small_block_second_exponent == F(0)
+
+    positive_power_spectrum = block_audit(
+        sequence_length_exponent=F(5),
+        level_exponent=F(3),
+        modulus_exponent=F(5),
+        spectral_scale_exponent=F(1, 10),
+    )
+    assert not positive_power_spectrum.physical_full_level_block_covered
+
+
+def test_signed_level_difference_becomes_an_exact_valuation_farey_family() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zfb Direct geometric differencing preserves the two Fourier indices",
+        r"\tag{4.845dc_14g}",
+        r"\tag{4.845dc_14k}",
+        r"\tag{4.845dc_14m}",
+        r"\tag{4.845dc_14n}",
+        "joint two-coordinate Gallagher/dispersion",
+        "PEVP flags false",
+        "exact_level_geometric_fiber_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.exact_level_geometric_fiber_audit(
+        mobius_level=30,
+        fixed_level=7,
+        cofactor=11,
+        first_fourier_index=7,
+        dyadic_modulus_bound=5000,
+    )
+    assert audit.modulus == 2310
+    assert audit.signed_level_divisor_coefficient == 1
+    assert audit.exact_valuation_cell_active
+    assert audit.reduced_second_denominator == 77
+    assert audit.unit_reduction_fiber_size == 8
+    assert audit.first_farey_spacing == F(210, 4 * 5000 * 5000)
+    assert audit.second_farey_spacing == F(6300, 4 * 5000 * 5000)
+    assert audit.fiber_weighted_second_inverse_spacing <= (
+        audit.first_inverse_spacing
+    )
+    assert audit.two_geometric_spacing_terms_share_level_AB
+    assert audit.ramanujan_fiber_sum == -1
+    assert audit.ramanujan_denominator_nonzero
+    assert audit.crt_fiber_character_is_a_unit_permutation
+    assert audit.ramanujan_denominator_cancels_before_cauchy
+    assert audit.inverse_scaled_kloosterman_family_restored_exactly
+    assert audit.reciprocity_retains_two_coupled_phase_coordinates
+    assert audit.cross_index_phase_retained_before_cauchy
+    assert audit.premature_length_term_removed_by_ramanujan_cancellation
+    assert audit.joint_two_coordinate_bound_still_required
+    assert not audit.pevp_proved
+
+    excluded = coverage_audit.exact_level_geometric_fiber_audit(
+        mobius_level=30,
+        fixed_level=7,
+        cofactor=55,
+        first_fourier_index=7,
+        dyadic_modulus_bound=5000,
+    )
+    assert excluded.signed_level_divisor_coefficient == 0
+    assert not excluded.exact_valuation_cell_active
+
+
 def test_tail_shell_ledger_remains_conditional_on_seminorm_stable_pevp() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

@@ -2049,6 +2049,56 @@ class FullLevelHarmonicLargeSieveAudit:
 
 
 @dataclass(frozen=True)
+class DyadicBesselMellinBlockAudit:
+    sequence_length_exponent: Fraction
+    level_exponent: Fraction
+    modulus_exponent: Fraction
+    spectral_scale_exponent: Fraction
+    bessel_ratio_exponent: Fraction
+    large_bessel_range: bool
+    large_block_first_exponent: Fraction
+    large_block_second_exponent: Fraction
+    small_block_first_exponent: Fraction
+    small_block_second_exponent: Fraction
+    target_exponent: Fraction
+    pointwise_hpy_remainder_raw_exponent: Fraction
+    pointwise_hpy_remainder_discarded_before_large_sieve: bool
+    exact_dyadic_mellin_inversion_used: bool
+    mellin_remainder_routed_through_gallagher: bool
+    maass_and_eisenstein_block_covered: bool
+    holomorphic_block_covered: bool
+    physical_full_level_block_covered: bool
+
+
+@dataclass(frozen=True)
+class ExactLevelGeometricFiberAudit:
+    mobius_level: int
+    fixed_level: int
+    cofactor: int
+    first_fourier_index: int
+    modulus: int
+    signed_level_divisor_coefficient: int
+    exact_valuation_cell_active: bool
+    reduced_second_denominator: int
+    unit_reduction_fiber_size: int
+    first_farey_spacing: Fraction
+    second_farey_spacing: Fraction
+    first_inverse_spacing: Fraction
+    fiber_weighted_second_inverse_spacing: Fraction
+    two_geometric_spacing_terms_share_level_AB: bool
+    ramanujan_fiber_sum: int
+    ramanujan_denominator_nonzero: bool
+    crt_fiber_character_is_a_unit_permutation: bool
+    ramanujan_denominator_cancels_before_cauchy: bool
+    inverse_scaled_kloosterman_family_restored_exactly: bool
+    reciprocity_retains_two_coupled_phase_coordinates: bool
+    cross_index_phase_retained_before_cauchy: bool
+    premature_length_term_removed_by_ramanujan_cancellation: bool
+    joint_two_coordinate_bound_still_required: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
 class MWKFTailShellAggregationAudit:
     tail_log_start: Fraction
     seminorm_decay_order: Fraction
@@ -11140,6 +11190,227 @@ def full_level_harmonic_large_sieve_audit(
         maass_and_eisenstein_sectors_covered=True,
         holomorphic_sector_covered=True,
         uniform_polylog_harmonic_large_sieve_proved=False,
+    )
+
+
+def dyadic_bessel_mellin_block_audit(
+    *,
+    sequence_length_exponent: Fraction,
+    level_exponent: Fraction,
+    modulus_exponent: Fraction,
+    spectral_scale_exponent: Fraction,
+) -> DyadicBesselMellinBlockAudit:
+    """Audit the exact-Mellin exponent ledger for one Bessel block.
+
+    Write ``X=T^x``, ``Q=T^q``, ``C=T^c``, and let a dyadic
+    spectral window have scale ``R=T^r``.  The Bessel ratio is
+    ``P=X/C=T^(x-c)``.  Exact Mellin inversion is used before the
+    Gallagher estimate; in particular the pointwise error in an
+    asymptotic formula for the Bessel transform is never multiplied
+    by the raw double coefficient volume.
+
+    In the large-Bessel range ``P>R^2``, stationary phase contributes
+    ``R^2/P`` and Gallagher gives the two exponents
+    ``2r+c-q`` and ``2r``.  In the complementary range, repeated
+    exact Mellin integration gives the exponents ``x-q`` and
+    ``2(x-c)``.  The latter ledger proves the physical case used here,
+    where every spectral scale is polylogarithmic (``r=0``); it does
+    not claim a power-sized spectral theorem.
+    """
+    values = (
+        sequence_length_exponent,
+        level_exponent,
+        modulus_exponent,
+        spectral_scale_exponent,
+    )
+    if not all(isinstance(value, Fraction) for value in values):
+        raise TypeError("all exponents must be Fraction instances")
+    if any(value < 0 for value in values):
+        raise ValueError("all exponents must be nonnegative")
+
+    x = sequence_length_exponent
+    q = level_exponent
+    c = modulus_exponent
+    r = spectral_scale_exponent
+    p = x - c
+    large = p > 2 * r
+    large_first = 2 * r + c - q
+    large_second = 2 * r
+    small_first = x - q
+    small_second = 2 * p
+    target = max(F(0), 2 * r, x - q)
+    if large:
+        maass_eisenstein = max(large_first, large_second) <= target
+    else:
+        maass_eisenstein = (
+            r == 0 and max(F(0), small_first, small_second) <= target
+        )
+    holomorphic = r == 0 and maass_eisenstein
+    physical = r == 0 and maass_eisenstein and holomorphic
+
+    return DyadicBesselMellinBlockAudit(
+        sequence_length_exponent=x,
+        level_exponent=q,
+        modulus_exponent=c,
+        spectral_scale_exponent=r,
+        bessel_ratio_exponent=p,
+        large_bessel_range=large,
+        large_block_first_exponent=large_first,
+        large_block_second_exponent=large_second,
+        small_block_first_exponent=small_first,
+        small_block_second_exponent=small_second,
+        target_exponent=target,
+        pointwise_hpy_remainder_raw_exponent=2 * x - c,
+        pointwise_hpy_remainder_discarded_before_large_sieve=False,
+        exact_dyadic_mellin_inversion_used=True,
+        mellin_remainder_routed_through_gallagher=True,
+        maass_and_eisenstein_block_covered=maass_eisenstein,
+        holomorphic_block_covered=holomorphic,
+        physical_full_level_block_covered=physical,
+    )
+
+
+def exact_level_geometric_fiber_audit(
+    *,
+    mobius_level: int,
+    fixed_level: int,
+    cofactor: int,
+    first_fourier_index: int,
+    dyadic_modulus_bound: int,
+) -> ExactLevelGeometricFiberAudit:
+    """Audit the geometric form of a squarefree signed level family.
+
+    Let ``A`` be squarefree, ``(A,B)=1``, and write ``c=ABk``.  The
+    coefficient of the modulus ``c`` in
+
+    ``sum_{j|A} mu(j) 1_{ABj|c}``
+
+    is ``sum_{j|(A,k)} mu(j)=1_{(A,k)=1}``.  On an active cell the
+    second Kloosterman phase ``e(A*n*xbar/c)`` has denominator
+    ``c/A=Bk``.  Reduction of units from modulus ``c`` to ``c/A`` has
+    exactly ``phi(A)`` elements in every fibre.  Its improved Farey
+    spacing is therefore only partly spent on multiplicity:
+
+    ``phi(A) * 4*C^2/(A^2*B) <= 4*C^2/(A*B)``.
+
+    This keeps the two Fourier indices correlated and identifies a
+    geometric route around the invalid positive spectral Cauchy step.
+    It does not settle the coefficient-length term or PEVP.
+    """
+    integers = (
+        mobius_level,
+        fixed_level,
+        cofactor,
+        first_fourier_index,
+        dyadic_modulus_bound,
+    )
+    if not all(isinstance(value, int) for value in integers):
+        raise TypeError("all inputs must be integers")
+    if min(integers) < 1:
+        raise ValueError("all inputs must be positive")
+    a = mobius_level
+    b = fixed_level
+    k = cofactor
+    m = first_fourier_index
+    if gcd(a, b) != 1:
+        raise ValueError("mobius_level and fixed_level must be coprime")
+
+    def prime_factors(value: int) -> tuple[int, ...]:
+        factors: list[int] = []
+        remaining = value
+        prime = 2
+        while prime * prime <= remaining:
+            if remaining % prime == 0:
+                factors.append(prime)
+                remaining //= prime
+                if remaining % prime == 0:
+                    raise ValueError("mobius_level must be squarefree")
+                while remaining % prime == 0:
+                    remaining //= prime
+            prime += 1
+        if remaining > 1:
+            factors.append(remaining)
+        return tuple(factors)
+
+    factors = prime_factors(a)
+
+    def euler_phi(value: int) -> int:
+        result = value
+        remaining = value
+        prime = 2
+        while prime * prime <= remaining:
+            if remaining % prime == 0:
+                result -= result // prime
+                while remaining % prime == 0:
+                    remaining //= prime
+            prime += 1
+        if remaining > 1:
+            result -= result // remaining
+        return result
+
+    common = gcd(a, k)
+    signed = 1 if common == 1 else 0
+    active = signed == 1
+    modulus = a * b * k
+    reduced = b * k
+    fibre = euler_phi(modulus) // euler_phi(reduced)
+    c_bound = dyadic_modulus_bound
+    first_spacing = F(a * b, 4 * c_bound * c_bound)
+    second_spacing = F(a * a * b, 4 * c_bound * c_bound)
+    first_inverse = 1 / first_spacing
+    weighted_second_inverse = F(fibre, 1) / second_spacing
+    ramanujan_gcd = gcd(a, m)
+    complementary_prime_count = sum(
+        1 for prime in factors if ramanujan_gcd % prime != 0
+    )
+    ramanujan_mu = -1 if complementary_prime_count % 2 else 1
+    ramanujan = (
+        ramanujan_mu * euler_phi(a) // euler_phi(a // ramanujan_gcd)
+    )
+    inverse_d_mod_a = pow(reduced, -1, a) if a > 1 and active else 0
+    original_residues = sorted((m * unit) % a for unit in range(a) if gcd(unit, a) == 1)
+    twisted_residues = sorted(
+        (m * unit * inverse_d_mod_a) % a
+        for unit in range(a)
+        if gcd(unit, a) == 1
+    ) if active and a > 1 else original_residues
+    fibre_character_permutation = active and original_residues == twisted_residues
+    spacing_aligned = (
+        active
+        and fibre == euler_phi(a)
+        and weighted_second_inverse <= first_inverse
+    )
+    return ExactLevelGeometricFiberAudit(
+        mobius_level=a,
+        fixed_level=b,
+        cofactor=k,
+        first_fourier_index=m,
+        modulus=modulus,
+        signed_level_divisor_coefficient=signed,
+        exact_valuation_cell_active=active,
+        reduced_second_denominator=reduced,
+        unit_reduction_fiber_size=fibre,
+        first_farey_spacing=first_spacing,
+        second_farey_spacing=second_spacing,
+        first_inverse_spacing=first_inverse,
+        fiber_weighted_second_inverse_spacing=weighted_second_inverse,
+        two_geometric_spacing_terms_share_level_AB=spacing_aligned,
+        ramanujan_fiber_sum=ramanujan,
+        ramanujan_denominator_nonzero=ramanujan != 0,
+        crt_fiber_character_is_a_unit_permutation=fibre_character_permutation,
+        ramanujan_denominator_cancels_before_cauchy=(
+            active and ramanujan != 0 and fibre_character_permutation
+        ),
+        inverse_scaled_kloosterman_family_restored_exactly=(
+            active and ramanujan != 0 and fibre_character_permutation
+        ),
+        reciprocity_retains_two_coupled_phase_coordinates=active,
+        cross_index_phase_retained_before_cauchy=active,
+        premature_length_term_removed_by_ramanujan_cancellation=(
+            active and ramanujan != 0 and fibre_character_permutation
+        ),
+        joint_two_coordinate_bound_still_required=True,
+        pevp_proved=False,
     )
 
 

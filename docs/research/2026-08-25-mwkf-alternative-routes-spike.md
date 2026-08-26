@@ -16149,15 +16149,18 @@ with exact rational arithmetic.
 It marks the base-level factor model, the inverse-scaled geometric
 adapter, the exact-valuation level family, and normalized
 *power-exponent* all-cell coverage true.  The polylogarithmic tensor
-estimate isolated in Section 4.109x is proved in Section 4.109zf.
-Polylogarithmic transform tails and the AFE tail remain separate
-obligations.
+estimate isolated in Section 4.109x is reduced in Section 4.109zf to a
+uniform physical harmonic-large-sieve target.  Section 4.109zfa closes
+its dyadic power-exponent ledger, but not the uniform transform theorem
+or the signed cross-index PEVP gate.  Polylogarithmic transform tails and
+the AFE tail remain separate obligations.
 
 
 ### 4.109w The lifted nonzero Poisson core has a seven-log aggregation
 
-Write \(L=\log(2T)\).  PEVP\(_{A,B}\), stated in Section 4.109x and
-proved in Section 4.109zf, gives local lifted estimates retaining every ratio,
+Write \(L=\log(2T)\).  Conditional on PEVP\(_{A,B}\), stated in Section
+4.109x and still open after Section 4.109zf, the local lifted estimates
+retain every ratio,
 gcd, exact-valuation, and Type-I/II allocation inside their coupled
 weight; none of these indices is summed a second time after the local
 gate.  For a left completion, the exact CRT lift has prefactor \(R\),
@@ -16200,12 +16203,12 @@ nonzero Poisson core satisfies
 \tag{4.845cx}
 \]
 
-This proves the compactly retained nonzero-mode core is \(o(T)\).
-Formula (4.845cx) does not absorb the polylogarithmic kernel-separation
+Conditional on PEVP, this proves the compactly retained nonzero-mode
+core is \(o(T)\).  Formula (4.845cx) does not absorb the polylogarithmic kernel-separation
 tail or the original AFE tail.  The interface
 `lifted_outer_qct_aggregation_audit` therefore records the seven-log
-ledger, the proved polylog tensor gate, and the nonzero-core
-conclusion.
+ledger, the conditional polylog tensor gate, and the still-open
+nonzero-core conclusion.
 
 
 ### 4.109x The valuation tensor isolates the PEVP square function
@@ -16238,10 +16241,12 @@ same right side with \(5^{\omega(A)}\) in place of
 \((\log(2T))^C\).  The primorial calculation following (4.845cy) shows
 that this is not a polylogarithmic substitute.  Thus PEVP\(_{A,B}\)
 is the precise Möbius-weighted exact-valuation square-function gate.
-Sections 4.109y--4.109z retain the signed operator and reduce it to
-\((\mathrm{PLS})_{Q_0}\); Section 4.109zf proves that weighted large
-sieve with a polylogarithmic constant.  Consequently
-(4.845cv)--(4.845cx) are unconditional for the compact core.
+Sections 4.109y--4.109z give the formal primitive-conductor ledger, but
+Section 4.109ze shows that ordinary positive Cauchy does not legally
+transfer its cross-index local saving.  Sections 4.109zf--4.109zfa audit
+the full-level transform exponent, and Section 4.109zfb gives a direct
+geometric alternative.  None currently proves PEVP; therefore
+(4.845cv)--(4.845cx) remain conditional for the compact core.
 
 
 ### 4.109y Exact-level differencing removes the bad valuation multiplicity
@@ -16490,18 +16495,17 @@ summed in mean; replacing it by a pointwise \(n^\varepsilon\) bound is
 not sufficient.
 
 At this point the published large sieve does not supply the required
-constant.  Section 4.109zf supplies a separate proof by dominating
-each positive primitive family with the full-level harmonic square
-and applying the sparse-Farey large sieve.
+constant.  Section 4.109zf gives the sparse-Farey reduction for the
+full-level harmonic square, while Section 4.109zfa records an exact
+dyadic Mellin exponent calculation.  Uniform transform constants and
+the signed cross-index primitive-conductor passage remain unproved.
 
 The interface `primitive_conductor_level_difference_audit` records the
 exact regrouping, the pre-density unramified exponent \(1\), the
 post-density unramified exponent \(3/2\), the Steinberg exponent
 \(1/2\), the required square exponent \(1\), and the polylogarithmic
 diagonal and length conductor Euler sums.  It keeps the epsilon-free
-claim false for the *published* theorem but records the custom
-full-level polylogarithmic theorem, \((\mathrm{PLS})_{Q_0}\), and PEVP
-proved by Section 4.109zf.
+full-level theorem, \((\mathrm{PLS})_{Q_0}\), and PEVP flags false.
 
 
 ### 4.109za The normalized level difference squares to a positive two-layer kernel
@@ -17058,6 +17062,237 @@ Farey spacing, the hybrid inner bound, the absence of an index
 coprimality hypothesis, the exact \(P\gg\mathcal T^{2+\varepsilon_0}\)
 direction in HPY (5.13), and the sectors that a proof must cover.  Its
 uniform-polylog, weighted-primitive, and PEVP flags are false.
+
+
+### 4.109zfa Exact dyadic Mellin inversion removes the raw-volume error, not PEVP
+
+There is a gap in treating the \(O(\mathcal T^{-A})\) remainder in the
+published pointwise transform formula as negligible here.  In the
+physical problem \(\mathcal T\leq(\log(2T))^{K}\), whereas the two
+coefficient variables have power length.  Discarding that remainder
+before the long bilinear sum can multiply it by a positive power of
+\(T\).  No choice of fixed \(A\) then proves a power saving.  The
+remainder must pass through the same large sieve as the main transform.
+
+Partition the real spectrum into a fixed low window and dyadic windows
+\(R<t\leq2R\), where
+\[
+ 1\leq R\leq(\log(2T))^K.
+\]
+For the exact Kuznetsov transform \(H_R\), a modulus block \(c\asymp C\),
+and
+\[
+ P=\frac XC,
+\]
+define, without truncation,
+\[
+ \widetilde H_{R,P}(\tau)
+ :=\int_0^\infty w(x/P)H_R(x)x^{-i\tau}\,\frac{dx}{x},
+ \qquad
+ w(x/P)H_R(x)
+ =\frac1{2\pi}\int_{\mathbb R}
+ \widetilde H_{R,P}(\tau)x^{i\tau}\,d\tau.
+ \tag{4.845dc_14a}
+\]
+Thus every Mellin tail remains inside the Gallagher integral.  The
+exact stationary-phase estimate required in the range \(P>R^2\) is
+\[
+ \int_{\mathbb R}|\widetilde H_{R,P}(\tau)|\,d\tau
+ \ll_{J,W}\frac{R^2}{P}(\log(2T))^{C_J},
+ \tag{4.845dc_14b}
+\]
+with rapid weighted decay away from \(|\tau|\asymp P\).  Combining
+(4.845dc_14b), the outer \(C^{-1}\), and (4.845dc_13) gives the exact
+block ledger
+\[
+ \frac1C\frac{R^2}{P}
+ \left(\frac{PC^2}{Q}+X\right)
+ =R^2\left(\frac CQ+1\right)
+ \leq \frac XQ+R^2,
+ \tag{4.845dc_14c}
+\]
+because \(C<X/R^2\) in this range.
+
+For \(P\leq R^2\), the corresponding estimate required from
+differentiation under the defining Bessel integral and exact Mellin
+integration by parts is, for every fixed \(J\),
+\[
+ \int_{\mathbb R}(1+|\tau|)^J
+ |\widetilde H_{R,P}(\tau)|\,d\tau
+ \ll_{J,W}P\,R^{C_J}.
+ \tag{4.845dc_14d}
+\]
+The factor \(P\) is the small-argument factor in HPY (5.14); the
+identity here is used before any pointwise truncation.  Since \(R\) and
+\(P\) are polylogarithmic throughout this complementary physical
+range, Gallagher gives
+\[
+ \frac PC\left(\frac{C^2}{Q}+X\right)
+ =\frac XQ+P^2
+ \ll (\log(2T))^{C}left(1+\frac XQ\right).
+ \tag{4.845dc_14e}
+\]
+The same estimate sums the infinite \(C>X\) tail geometrically after
+retaining the small-argument factor.  The fixed low spectral window is
+included in (4.845dc_14d).
+
+In power-exponent notation
+\[
+ X=T^x,\quad Q=T^q,\quad C=T^c,\quad R=T^r,
+ \quad P=T^{x-c},
+\]
+(4.845dc_14c) has exponents
+\[
+ 2r+c-q,\qquad 2r,
+\]
+and (4.845dc_14e) has exponents
+\[
+ x-q,\qquad 2(x-c).
+ \tag{4.845dc_14f}
+\]
+For the physical value \(r=0\), the first pair is bounded by
+\(\max(0,x-q)\) when \(x-c>0\), and the second pair is bounded by the
+same target when \(x-c\leq0\).  Hence no positive-power residual cell
+remains in this dyadic transform ledger.
+
+This calculation is deliberately narrower than (4.845dc_12).  To turn
+it into that theorem one must still prove (4.845dc_14b)--(4.845dc_14d)
+with uniform seminorm constants for the Maaß, Eisenstein, and
+holomorphic transforms and justify all endpoint partitions.  More
+importantly, even a completed positive full-level theorem cannot by
+itself recover the local \(p^{-1}\) PEVP mass: Section 4.109ze proves
+that positive Cauchy changes it to \(p-1\).  The signed cross-level,
+cross-index oldvector multiplier must therefore survive the
+primitive-conductor regrouping and enter a weighted two-index harmonic
+large sieve.  Both obligations remain open.
+
+The interface \`dyadic_bessel_mellin_block_audit\` checks
+(4.845dc_14c)--(4.845dc_14f) in exact rational power exponents.  It
+records exact Mellin inversion and Gallagher routing of the remainder,
+but it does not set either the uniform full-level theorem or PEVP flag.
+
+
+### 4.109zfb Direct geometric differencing preserves the two Fourier indices
+
+The primitive-conductor route is not the only way to retain the signed
+level family.  It is safer to perform the finite \(j\)-sum on the
+geometric side of Kuznetsov before Cauchy.  Assume first that \(A\) is
+squarefree and \((A,B)=1\).  Writing a Kloosterman modulus as
+\(c=ABk\), its coefficient is exactly
+\[
+ \sum_{j\mid A}\mu(j)\mathbf 1_{ABj\mid c}
+ =\sum_{j\mid(A,k)}\mu(j)
+ =\mathbf 1_{(A,k)=1}.
+ \tag{4.845dc_14g}
+\]
+Thus the signed spectral level difference becomes the unsigned but
+exact-valuation geometric family
+\[
+ c=ABk,qquad (k,A)=1.
+ \tag{4.845dc_14h}
+\]
+No level is squared, and no oldvector cross term has been discarded.
+
+For one such modulus the two Kloosterman phases are
+\[
+ e\left(\frac{mx}{c}\right),
+ \qquad
+ e\left(\frac{An\bar x}{c}\right)
+ =e\left(\frac{n\bar x}{c/A}\right).
+ \tag{4.845dc_14i}
+\]
+On a block \(c\leq C\), the first reduced Farey family has spacing at
+least
+\[
+ \delta_1=\frac{AB}{4C^2}.
+\]
+The second denominator is \(d=c/A=Bk\leq C/A\), so its reduced
+fractions have spacing
+\[
+ \delta_2=\frac{A^2B}{4C^2}.
+\]
+Reduction of units
+\((\mathbb Z/c\mathbb Z)^\times\to
+(\mathbb Z/d\mathbb Z)^\times\) is surjective and every fibre has
+exactly
+\[
+ \frac{\varphi(c)}{\varphi(d)}=\varphi(A)
+\]
+elements.  Consequently its fibre-weighted inverse spacing satisfies
+\[
+ \boxed{
+ \varphi(A)\delta_2^{-1}
+ =\frac{4\varphi(A)C^2}{A^2B}
+ \leq\frac{4C^2}{AB}=\delta_1^{-1}.}
+ \tag{4.845dc_14j}
+\]
+
+If the two coefficient lengths are \(M\) and \(X\), a premature
+separate Cauchy after (4.845dc_14i) would give
+\[
+ \begin{aligned}
+ \mathcal L_1&\ll
+ \left(\frac{PC^2}{AB}+M\right)\|b\|_2^2,\\
+ \mathcal L_2&\ll
+ \left(\frac{PC^2}{AB}+\varphi(A)X\right)\|a\|_2^2.
+ \end{aligned}
+ \tag{4.845dc_14k}
+\]
+The two oscillatory spacing terms have the same effective level
+\(AB\).  This is precisely the information lost by inserting the level
+difference into one positive ambient spectral square, where Section
+4.109ze produced the mass \(p-1\) instead of \(p^{-1}\).
+
+But (4.845dc_14k) is still too early a Cauchy inequality.  Write the
+unit \(x\bmod Ad\) in CRT coordinates
+\(u=x\bmod A\), \(v=x\bmod d\).  Then, with bars taken in the indicated
+moduli,
+\[
+ e\left(\frac{mx-An\bar x}{Ad}\right)
+ =e\left(\frac{mu\bar d}{A}\right)
+  e\left(\frac{mv\bar A-n\bar v}{d}\right).
+ \tag{4.845dc_14l}
+\]
+Since multiplication by \(\bar d\) permutes the units modulo \(A\),
+the complete \(u\)-fibre is exactly
+\[
+ \sum_{u\bmod A}^{*}e\left(\frac{mu\bar d}{A}\right)=c_A(m).
+\]
+It cancels the physical factor \(1/c_A(m)\) before any inequality.  In
+the normalization of (4.845ap_3), this gives the exact identity
+\[
+ \boxed{
+ \frac{A}{c_A(m)}\frac1{Ad}S(m,-An;Ad)
+ =\frac1dS(\bar A m,-n;d),
+ \qquad (d,A)=1.}
+ \tag{4.845dc_14m}
+\]
+Thus the \(\varphi(A)X\) term in (4.845dc_14k) is not an unavoidable
+physical deficit: it is the exact cost of discarding the fibre
+character before it cancels.
+
+The remaining obstruction is now sharper.  Additive reciprocity gives
+\[
+ e\left(\frac{mv\bar A}{d}\right)
+ =e\left(-\frac{mv\bar d}{A}\right)
+  e\left(\frac{mv}{Ad}\right).
+ \tag{4.845dc_14n}
+\]
+The first factor is a fixed-denominator residue character, while the
+last factor and \(e(-n\bar v/d)\) form two coupled Farey coordinates.
+Applying separate positive Cauchy again loses their correlation.  The
+next theorem is therefore a joint two-coordinate Gallagher/dispersion
+bound for (4.845dc_14n), with the exact condition
+\(D=(A,h\delta)\) retained.  This is the geometric form of the
+pre-Cauchy unimodular slope family; it bypasses primitive newform,
+oldform, and Eisenstein conductor bookkeeping but does not yet prove
+PEVP.
+
+The interface \`exact_level_geometric_fiber_audit\` verifies
+(4.845dc_14g)--(4.845dc_14n), including the unit-fibre cardinality, both
+Farey spacings, the Ramanujan fibre permutation, and its cancellation
+before Cauchy.  It deliberately leaves the joint two-coordinate bound
+and PEVP flags false.
 
 
 ### 4.109zg Seminorm-stable PEVP would sum every AFE and transform tail shell
