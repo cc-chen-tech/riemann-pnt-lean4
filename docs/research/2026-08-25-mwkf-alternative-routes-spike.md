@@ -9254,14 +9254,24 @@ does contain their joint phase
 However, this local two-variable step cannot be uniform in \(X,Y\).  Put
 
 \[
- X=Y+c,\qquad (c,Y)=1,\qquad h=cr<Y.
+ X=Y+c,\qquad (c,Y)=1,
 \]
 
-Since \(X\equiv c\pmod Y\), one has the exact congruence
+and, for any \(0<h<Y\), define
+\(r=[h\bar X]_Y\in\{0,\ldots,Y-1\}\).  Since
+\(X\equiv c\pmod Y\), multiplication by \(X\) gives the exact integer
+coordinate
 
 \[
- \boxed{h\bar X\equiv cr\bar c\equiv r\pmod Y.}
+ \boxed{rc-h=kY,\qquad k\in\mathbb Z.}
 \tag{4.621za}
+\]
+
+Thus the principal incidence \(k=0\) is exactly \(h=cr\), and on it
+
+\[
+ h\bar X=cr\bar c\equiv r\pmod Y.
+\tag{4.621zaa}
 \]
 
 Choose a central residue \(r_0\) and evaluate the continuous BBLR variable
@@ -9278,6 +9288,18 @@ On the signed hard scale take
  Y\asymp T^{3/2},\qquad c\asymp T^{1/2},\qquad
  r,r_0\asymp T^{1/2},\qquad h=cr\asymp T,\qquad l\asymp T.
 \]
+
+These are forced scales, not a free example.  Slow \(l\)-phase requires
+\(r\asymp xY\asymp Y/L\), while the principal equation \(h=cr\)
+then gives
+
+\[
+ \boxed{c\asymp\frac{H}{r}\asymp\frac{HL}{Y}.}
+\tag{4.621zab}
+\]
+
+At \(H=L=T\) and \(Y=T^{3/2}\), (4.621zab) is precisely
+\(c=T^{1/2}\).
 
 The BBLR integration scale is exactly \(x\asymp T^{-1}\), matching
 \(r_0/Y\).  Restricting to
@@ -9307,8 +9329,10 @@ This is not a lower bound for the original signed remainder: its other
 \(X,Y\) rows and Möbius coefficients may cancel the packet.  It is a
 no-go certificate only for a uniform local \((h,l)\)-completion bound.
 The finite helper `bblr_near_diagonal_resonance_certificate` verifies
-(4.621za)--(4.621zb), the coherent phase arc, and its half-plane lower
-bound with exact rational arithmetic.
+(4.621zaa)--(4.621zb), the coherent phase arc, and its half-plane lower
+bound with exact rational arithmetic.  The helper
+`bblr_gap_resonance_coordinates` verifies the full inverse-free split
+(4.621za) and records whether \(k=0\) or \(k\ne0\).
 
 This resonance also gives a sharper model for the next analytic input.
 With \(Q=Y\asymp T^{3/2}\) and \(C=c\asymp T^{1/2}=Q^{1/3}\), the
@@ -9320,6 +9344,44 @@ outer-coefficient portion has the shifted shape
    A_d(Y+c)B_d(Y)\Omega_d(c,Y).
 \tag{4.621zd}
 \]
+
+For every supplied finite labelled BBLR packet, this is now an exact
+partition rather than a schematic change of variables.  First convolve all
+left and right Type factorizations into \(A_d(X)\) and \(B_d(Y)\), and only
+then split by \(c=X-Y\).  For any fixed positive window
+\(C_1\le c\le C_2\), finite reindexing gives
+
+\[
+ \mathscr S_{\rm BBLR}^{\ne0}
+ =\mathscr S_{C_1\le X-Y\le C_2}
+  +\mathscr S_{X=Y}
+  +\mathscr S_{\rm complement},
+\tag{4.621zda}
+\]
+
+where
+
+\[
+ \mathscr S_{C_1\le X-Y\le C_2}
+ =\sum_d\sum_{C_1\le c\le C_2}\sum_Y
+   A_d(Y+c)B_d(Y)
+   \sum_{h,\delta}\sum_{l\ne0}
+   \mathscr W(d,Y+c,Y;h,\delta,l).
+\tag{4.621zdb}
+\]
+
+No absolute value occurs between the Type sectors, and all
+\(h,\delta,l,h\delta,hl\) labels are retained.  The finite helper
+`bblr_near_diagonal_outer_correlation_sides` verifies
+(4.621zda)--(4.621zdb) exactly.  Its status field
+`original_coupled_kernel_stage_exhaustive=False` remains essential:
+the identity is exhaustive for the supplied packet, not yet for the
+original analytic remainder.  Inside the positive gap window the same
+helper also partitions exactly into the principal incidence \(k=0\) and
+the nonprincipal determinant family \(k\ne0\), before either family is
+majorized.  This is the finite version of “extract the resonant main arc,
+then estimate the centered remainder”; neither resulting analytic bound is
+being assumed.
 
 After the coherent \((h,l)\)-packet has spent only half of the required
 saving, the missing factor is \(C=Q^{1/3}\).  Thus the optimistic model

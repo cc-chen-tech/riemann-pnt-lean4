@@ -188,6 +188,38 @@ class BBLRNearDiagonalResonanceCertificate:
 
 
 @dataclass(frozen=True)
+class BBLRGapResonanceCoordinates:
+    x: int
+    y: int
+    h: int
+    gap_c: int
+    inverse_x_mod_y: int
+    phase_residue_r: int
+    determinant_index_k: int
+    gap_determinant_identity_verified: bool
+    principal_near_diagonal_incidence: bool
+
+
+@dataclass(frozen=True)
+class BBLRNearDiagonalOuterCorrelation:
+    direct_sum: Fraction
+    reindexed_sum: Fraction
+    positive_near_diagonal_sum: Fraction
+    positive_principal_incidence_sum: Fraction
+    positive_nonprincipal_incidence_sum: Fraction
+    zero_gap_sum: Fraction
+    negative_or_far_gap_sum: Fraction
+    positive_near_diagonal_entries: tuple[
+        tuple[int, int, int, int, int, int, int, Fraction], ...
+    ]
+    full_gap_partition_identity_verified: bool
+    principal_incidence_partition_verified: bool
+    type_factorizations_recombined_before_gap_partition: bool
+    all_h_delta_l_labels_preserved: bool
+    original_coupled_kernel_stage_exhaustive: bool
+
+
+@dataclass(frozen=True)
 class CenteredOperatorSavingLedger:
     raw_sum_exponent: Fraction
     target_sum_exponent: Fraction
@@ -1053,6 +1085,118 @@ def bblr_nonzero_frequency_reindex_sides(
     )
 
 
+def bblr_near_diagonal_outer_correlation_sides(
+    *,
+    left_outer_weights: dict[int, Fraction],
+    left_inner_weights: dict[int, Fraction],
+    right_outer_weights: dict[int, Fraction],
+    right_inner_weights: dict[int, Fraction],
+    labelled_kernels: dict[tuple[int, int, int, int, int, int], Fraction],
+    positive_gap_min: int,
+    positive_gap_max: int,
+) -> BBLRNearDiagonalOuterCorrelation:
+    """Partition a supplied BBLR packet by the exact product gap ``X-Y``.
+
+    The four factor families are first convolved into the product
+    coefficients at ``d*X`` and ``d*Y``, exactly as in
+    :func:`bblr_nonzero_frequency_reindex_sides`.  Only then is the labelled
+    packet split into a positive near-diagonal window, the zero gap, and its
+    complement.  Thus the operation models (4.621zd) without taking an
+    absolute value between Type sectors.
+
+    This finite partition is exhaustive for the supplied packet.  It does
+    not prove that the supplied labels exhaust the original analytic
+    coupled kernel.
+    """
+
+    if positive_gap_min <= 0 or positive_gap_min > positive_gap_max:
+        raise ValueError("require an ordered strictly positive gap window")
+    base = bblr_nonzero_frequency_reindex_sides(
+        left_outer_weights=left_outer_weights,
+        left_inner_weights=left_inner_weights,
+        right_outer_weights=right_outer_weights,
+        right_inner_weights=right_inner_weights,
+        labelled_kernels=labelled_kernels,
+    )
+
+    left_products: dict[int, Fraction] = {}
+    for outer, outer_weight in left_outer_weights.items():
+        for inner, inner_weight in left_inner_weights.items():
+            product = outer * inner
+            left_products[product] = left_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    right_products: dict[int, Fraction] = {}
+    for outer, outer_weight in right_outer_weights.items():
+        for inner, inner_weight in right_inner_weights.items():
+            product = outer * inner
+            right_products[product] = right_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    positive = Fraction(0)
+    principal = Fraction(0)
+    nonprincipal = Fraction(0)
+    zero = Fraction(0)
+    complement = Fraction(0)
+    positive_entries: list[
+        tuple[int, int, int, int, int, int, int, Fraction]
+    ] = []
+    for (d, x, y, h, delta, frequency), kernel_weight in sorted(
+        labelled_kernels.items()
+    ):
+        contribution = (
+            left_products.get(d * x, Fraction(0))
+            * right_products.get(d * y, Fraction(0))
+            * Fraction(kernel_weight)
+        )
+        gap = x - y
+        if positive_gap_min <= gap <= positive_gap_max:
+            positive += contribution
+            inverse_x = 0 if y == 1 else pow(x, -1, y)
+            residue = (h * inverse_x) % y
+            determinant_numerator = residue * gap - h
+            if determinant_numerator % y:
+                raise AssertionError(
+                    "the BBLR gap determinant index must be integral"
+                )
+            if determinant_numerator // y == 0:
+                principal += contribution
+            else:
+                nonprincipal += contribution
+            if contribution:
+                positive_entries.append(
+                    (d, gap, y, x, h, delta, frequency, contribution)
+                )
+        elif gap == 0:
+            zero += contribution
+        else:
+            complement += contribution
+
+    return BBLRNearDiagonalOuterCorrelation(
+        direct_sum=base.direct_sum,
+        reindexed_sum=base.reindexed_sum,
+        positive_near_diagonal_sum=positive,
+        positive_principal_incidence_sum=principal,
+        positive_nonprincipal_incidence_sum=nonprincipal,
+        zero_gap_sum=zero,
+        negative_or_far_gap_sum=complement,
+        positive_near_diagonal_entries=tuple(positive_entries),
+        full_gap_partition_identity_verified=(
+            positive + zero + complement
+            == base.reindexed_sum
+            == base.direct_sum
+        ),
+        principal_incidence_partition_verified=(
+            principal + nonprincipal == positive
+        ),
+        type_factorizations_recombined_before_gap_partition=True,
+        all_h_delta_l_labels_preserved=True,
+        original_coupled_kernel_stage_exhaustive=False,
+    )
+
+
 def bblr_reciprocal_phase_collision_audit(
     *,
     left_x: int,
@@ -1139,6 +1283,50 @@ def bblr_reciprocal_phase_collision_audit(
             collision
             and (left_original != right_original or left_poisson != right_poisson)
         ),
+    )
+
+
+def bblr_gap_resonance_coordinates(
+    *,
+    x: int,
+    y: int,
+    h: int,
+) -> BBLRGapResonanceCoordinates:
+    """Remove the inverse from one ordered BBLR phase row exactly.
+
+    For ``X=Y+c`` and ``r=h*inverse(X) (mod Y)``, multiplication by
+    ``X`` gives ``h=r*c-k*Y`` for one integer ``k``.  Equivalently,
+    ``r*c-h=k*Y``.  The principal near-diagonal incidence is exactly
+    ``k=0``, hence ``h=r*c``; all other inverse-phase rows retain the
+    explicit nonzero determinant index.
+    """
+
+    if y <= 1 or x <= y:
+        raise ValueError("require ordered positive BBLR coordinates X>Y>1")
+    if not 0 < h < y:
+        raise ValueError("require a positive BBLR shift h below Y")
+    if gcd(x, y) != 1:
+        raise ValueError("BBLR reciprocal coordinates must be coprime")
+
+    gap = x - y
+    inverse_x = pow(x, -1, y)
+    residue = (h * inverse_x) % y
+    determinant_numerator = residue * gap - h
+    if determinant_numerator % y:
+        raise AssertionError("the inverse-to-gap determinant must be integral")
+    determinant_index = determinant_numerator // y
+    return BBLRGapResonanceCoordinates(
+        x=x,
+        y=y,
+        h=h,
+        gap_c=gap,
+        inverse_x_mod_y=inverse_x,
+        phase_residue_r=residue,
+        determinant_index_k=determinant_index,
+        gap_determinant_identity_verified=(
+            residue * gap - h == determinant_index * y
+        ),
+        principal_near_diagonal_incidence=(determinant_index == 0),
     )
 
 

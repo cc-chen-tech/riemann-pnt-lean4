@@ -950,6 +950,72 @@ def test_bblr_near_diagonal_rows_form_a_large_slow_phase_packet() -> None:
     assert not certificate.local_h_l_completion_alone_reaches_gate
 
 
+def test_bblr_inverse_phase_has_exact_gap_determinant_coordinates() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_gap_resonance_coordinates",
+        None,
+    )
+    assert helper is not None, "BBLR gap-resonance coordinates are missing"
+
+    principal = helper(x=1019, y=1009, h=100)
+    assert principal.gap_c == 10
+    assert principal.inverse_x_mod_y == 101
+    assert principal.phase_residue_r == 10
+    assert principal.determinant_index_k == 0
+    assert principal.gap_determinant_identity_verified
+    assert principal.principal_near_diagonal_incidence
+
+    nonprincipal = helper(x=111, y=101, h=91)
+    assert nonprincipal.gap_c == 10
+    assert nonprincipal.inverse_x_mod_y == 91
+    assert nonprincipal.phase_residue_r == 100
+    assert nonprincipal.determinant_index_k == 9
+    assert nonprincipal.gap_determinant_identity_verified
+    assert not nonprincipal.principal_near_diagonal_incidence
+
+
+def test_bblr_master_partitions_exactly_by_outer_product_gap() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_near_diagonal_outer_correlation_sides",
+        None,
+    )
+    assert helper is not None, "BBLR near-diagonal outer adapter is missing"
+
+    sides = helper(
+        left_outer_weights={1: F(2), 2: F(-1)},
+        left_inner_weights={3: F(4), 6: F(1)},
+        right_outer_weights={1: F(3)},
+        right_inner_weights={2: F(5), 3: F(1), 5: F(-1)},
+        labelled_kernels={
+            (1, 3, 2, 2, 3, 1): F(7),
+            (2, 3, 1, 2, 3, 1): F(11),
+            (1, 3, 5, 2, 3, 1): F(13),
+            (3, 1, 1, 2, 3, 1): F(17),
+        },
+        positive_gap_min=1,
+        positive_gap_max=2,
+    )
+
+    assert sides.direct_sum == F(606)
+    assert sides.reindexed_sum == F(606)
+    assert sides.positive_near_diagonal_sum == F(510)
+    assert sides.positive_principal_incidence_sum == F(0)
+    assert sides.positive_nonprincipal_incidence_sum == F(510)
+    assert sides.zero_gap_sum == F(408)
+    assert sides.negative_or_far_gap_sum == F(-312)
+    assert sides.positive_near_diagonal_entries == (
+        (1, 1, 2, 3, 2, 3, 1, F(840)),
+        (2, 2, 1, 3, 2, 3, 1, F(-330)),
+    )
+    assert sides.full_gap_partition_identity_verified
+    assert sides.principal_incidence_partition_verified
+    assert sides.type_factorizations_recombined_before_gap_partition
+    assert sides.all_h_delta_l_labels_preserved
+    assert not sides.original_coupled_kernel_stage_exhaustive
+
+
 def test_zero_frequency_master_rejects_the_already_counted_original_zero_mode() -> None:
     """The h=0 term belongs to (4.6), not the secondary completion master."""
     with pytest.raises(ValueError, match="original h=0"):
