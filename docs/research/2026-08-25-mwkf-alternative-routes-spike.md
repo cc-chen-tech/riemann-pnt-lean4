@@ -18837,6 +18837,65 @@ unproved.  A successful trace estimate must cancel the \(B\)-to-\(A\)
 and \(A\)-to-\(B\) cells jointly with other conductor patterns; a
 same-state Atkin--Lehner trace alone cannot close the gate.
 
+### 4.109zjaaaca The constant mixed cell is the geometric MMKLS family
+
+The matrix calculation can be connected to the final geometric gate
+without another spectral heuristic.  In (4.845dc_14xq_10n), the only
+constant term is the \(B\)-on-the-left, \(A\)-on-the-right cell, and its
+coefficient is exactly one.  Put \(c=As\) in the lifted left
+orientation.  For squarefree \((A,B)=1\), finite inclusion--exclusion
+gives
+
+\[
+ \boxed{
+ \sum_{j\mid A}\mu(j)\mathbf 1_{ABj\mid As}
+ =\mathbf 1_{B\mid s}
+   \sum_{j\mid(A,s/B)}\mu(j)
+ =\mathbf 1_{B\mid s}\mathbf 1_{(A,s)=1}.}
+ \tag{4.845dc_14xq_10r}
+\]
+
+The last equality uses \((A,B)=1\).  On this support, the exact CRT
+identity (4.845dc_14m) cancels the Ramanujan fibre before any
+inequality:
+
+\[
+ \boxed{
+ \frac{A}{c_A(m)}\frac1{As}S(m,-An;As)
+ =\frac1sS(\overline A m,-n;s).}
+ \tag{4.845dc_14xq_10s}
+\]
+
+Now interchange the finite \(B\mid s\) incidence as in
+(4.845dc_14xq_11).  Restoring every Type-I/II allocation uses the exact
+identity (4.845dc_14xq_16), so the modulus coefficient is \(\mu(s)\).
+Consequently the constant mixed cell is precisely the left-oriented
+family \((\mathrm{MMKLS})_q^L\); the transposed cell is
+\((\mathrm{MMKLS})_q^R\).  There is no intermediate arbitrary outer
+coefficient.
+
+This statement is deliberately one-directional at the level of
+estimates.  A bound for the isolated mixed cell is sufficient, but it
+is not a necessary consequence of the original moment: the physical
+sum may cancel it against other conductor patterns before an absolute
+value is taken.  Thus (4.845dc_14xq_10r)--(4.845dc_14xq_10s) identify
+the smallest honest target but do not license a lower bound or a
+cellwise triangle inequality.
+
+The interface `mixed_cross_state_mmkls_audit` checks
+(4.845dc_14xq_10r) on an exact squarefree fixture, checks the full CRT
+phase multiset in (4.845dc_14xq_10s), and reuses the finite Type
+recombination certificate.  It records the hard exponents
+
+\[
+ (s,m,h,\delta)=(3,3,5/2,5/2),\qquad
+ E_{\rm arbitrary}=5/2,\quad E_{\rm target}=2,
+ \quad E_{\rm missing}=1/2,
+ \tag{4.845dc_14xq_10t}
+\]
+
+while keeping MMKLS and the full outer gate false.
+
 After that exact recombination the remaining squared gate is
 \[
  \boxed{
@@ -19045,6 +19104,56 @@ The interfaces `outer_modulus_divisor_incidence_energy` and
 `outer_modulus_type_recombination_audit` check (4.845dc_14xq_13), the
 finite Type recombination, the zero outer-scale power loss, and the
 hard-face \(1/2\) deficit.  They keep MMKLS, OSLSP, and OLISK false.
+
+### 4.109zjaba Higher short-interval uniformity loses the progression density
+
+The 2026 version of
+[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Theorem 1.1(i)](https://arxiv.org/abs/2411.05770)
+must also be compared with the pre-Cauchy affine line before declaring
+the half-power gate new.  On the balanced hard face, after extracting
+the primitive \(h\)-Poisson slopes, the two Möbius arguments have the
+form
+
+\[
+ r=r_0+j_0n,\qquad s=s_0+v_0n,\qquad
+ |j_0|,|v_0|\asymp T^{1/2},\qquad |n|\asymp T^{5/2}.
+ \tag{4.845dc_14xq_19a}
+\]
+
+Thus \(r,s\asymp X=T^3\).  Each affine progression has
+\(T^{5/2}\) points, step \(T^{1/2}\), and containing interval length
+\(H=T^3=X\).  The published lower hypothesis
+\(H\ge X^{1/3+\varepsilon}\) is satisfied with a large power margin, but
+Theorem 1.1 also assumes the strict upper endpoint
+\(H\le X^{1-\varepsilon}\).  Thus it does not literally apply to this
+containing interval.  Partitioning into admissible shorter intervals does
+not repair the next problem: the maximal-progression norm is bounded by
+\(H(\log X)^{-C}\), not by the number \(H/T^{1/2}\) of points in the
+progression.  Literal substitution therefore gives
+
+\[
+ \boxed{
+ E_{\rm MRSTT}=3,\qquad E_{\rm trivial\ progression}=5/2,
+ \qquad E_{\rm excess}=1/2.}
+ \tag{4.845dc_14xq_19b}
+\]
+
+So this theorem is weaker than the trivial count on the sparse critical
+line by exactly the power missing from MMKLS.  There are two further
+hypothesis mismatches.  Its conclusion holds only outside an exceptional
+set of starting points, and no argument places the structured physical
+starting points outside that set.  It also controls one Möbius function against a
+fixed-complexity nilsequence, whereas the other factor
+\(\mu(s_0+v_0n)\) is another growing-step affine Möbius sequence, not
+such a nilsequence.  Even an optimistic removal of that mismatch would
+only supply logarithmic discorrelation, not the required \(T^{1/2}\).
+
+The interface `critical_affine_mobius_uniformity_audit` records the
+four exact exponents \(3,3,5/2,1/2\), verifies the lower interval threshold,
+rejects the strict upper endpoint and exceptional-set transfer, and rejects
+the maximal-progression normalization and second-affine-factor hypotheses.  This rules out a
+direct application of the published theorem; it does not rule out a
+new density-sensitive two-affine Möbius estimate.
 
 ### 4.109zjac Product-index character energy saves locally but does not compose with PEVP
 

@@ -5905,6 +5905,109 @@ def test_full_steinberg_cross_orientation_has_an_unsigned_cross_state(
     ) in output
 
 
+def test_mixed_cross_state_is_exactly_the_left_mobius_modulus_gate(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The fatal constant cell maps to MMKLS before any positive square."""
+    audit = coverage_audit.mixed_cross_state_mmkls_audit(
+        entry_divisor=30,
+        modulus_divisor=7,
+        physical_modulus=77,
+    )
+    assert audit.state_order == ("absent", "modulus", "entry")
+    assert audit.mixed_cross_state == ("modulus", "entry")
+    assert audit.mixed_cross_state_coefficient == F(1)
+    assert audit.level_difference_sum == 1
+    assert audit.level_difference_equals_exact_coprimality
+    assert audit.standard_lift_modulus == 2310
+    assert audit.ramanujan_fibre_cancels_before_inequality
+    assert audit.outer_divisor_incidence_recombines_to_mobius_modulus
+    assert audit.left_mixed_cell_is_mmkls
+    assert audit.transpose_mixed_cell_is_right_mmkls
+    assert audit.hard_scales == (F(3), F(3), F(5, 2), F(5, 2))
+    assert audit.arbitrary_coefficient_exponent == F(5, 2)
+    assert audit.target_exponent == F(2)
+    assert audit.required_joint_saving_exponent == F(1, 2)
+    assert audit.fixed_entry_pevp_is_insufficient
+    assert audit.isolated_mixed_cell_bound_is_sufficient_not_necessary
+    assert not audit.mixed_cell_mmkls_proved
+    assert not audit.full_outer_gate_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: mixed_cross_state_mmkls="
+        "A=30 B=7 s=77 level_diff=1 exact_coprime=True "
+        "lift=2310 fibre_cancel=True left=MMKLS_L right=MMKLS_R "
+        "scales=3,3,5/2,5/2 arbitrary=5/2 target=2 gap=1/2 "
+        "pevp_sufficient=False isolated_sufficient=True "
+        "mmkls=False outer=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaaaca The constant mixed cell is the geometric MMKLS family",
+        r"\sum_{j\mid A}\mu(j)\mathbf 1_{ABj\mid As}",
+        r"\frac{A}{c_A(m)}\frac1{As}S(m,-An;As)",
+        "the smallest honest target",
+        "mixed_cross_state_mmkls_audit",
+    ):
+        assert marker in note
+
+
+def test_higher_uniformity_theorem_misses_the_critical_affine_endpoint(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """MRSTT's maximal AP norm loses the density of the critical line."""
+    audit = coverage_audit.critical_affine_mobius_uniformity_audit()
+    assert audit.ambient_integer_exponent == F(3)
+    assert audit.affine_progression_span_exponent == F(3)
+    assert audit.progression_point_count_exponent == F(5, 2)
+    assert audit.progression_step_exponent == F(1, 2)
+    assert audit.published_threshold_relative_to_ambient == F(1, 3)
+    assert audit.endpoint_power_margin == F(2)
+    assert audit.theorem_requires_positive_epsilon_margin
+    assert audit.lower_interval_length_hypothesis_verified
+    assert not audit.strict_upper_interval_length_hypothesis_verified
+    assert not audit.interval_length_hypothesis_verified
+    assert audit.almost_all_start_points_only
+    assert not audit.structured_start_points_absorb_exceptional_set
+    assert audit.maximal_progression_norm_is_available_only_above_threshold
+    assert audit.published_maximal_bound_exponent == F(3)
+    assert audit.trivial_progression_count_exponent == F(5, 2)
+    assert audit.published_bound_excess_exponent == F(1, 2)
+    assert not audit.second_affine_mobius_is_fixed_complexity_nilsequence
+    assert audit.published_saving_is_logarithmic
+    assert audit.required_joint_power_saving_exponent == F(1, 2)
+    assert not audit.published_theorem_closes_critical_slope_family
+    assert not audit.mmkls_covered
+    assert audit.source == (
+        "Matomaki--Radziwill--Shao--Tao--Teravainen, "
+        "arXiv:2411.05770v2, Theorem 1.1(i)"
+    )
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: critical_affine_mobius_uniformity="
+        "X=3 span=3 points=5/2 step=1/2 threshold=1/3 "
+        "margin=2 epsilon_required=True lower_interval=True "
+        "strict_upper=False interval=False almost_all=True "
+        "exception_absorbed=False maximal=True "
+        "published=3 trivial=5/2 excess=1/2 "
+        "second_nilsequence=False log_only=True required=1/2 "
+        "critical=False mmkls=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaba Higher short-interval uniformity loses the progression density",
+        r"|j_0|,|v_0|\asymp T^{1/2}",
+        r"E_{\rm MRSTT}=3",
+        "weaker than the trivial count on the sparse critical",
+        "critical_affine_mobius_uniformity_audit",
+    ):
+        assert marker in note
+
+
 def test_drappeau_quintilinear_bound_does_not_compose_with_outer_pevp(
     capsys: pytest.CaptureFixture[str],
 ) -> None:

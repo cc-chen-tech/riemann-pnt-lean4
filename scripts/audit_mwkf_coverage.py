@@ -2067,6 +2067,57 @@ class SteinbergFullCrossOrientationMatrixAudit:
 
 
 @dataclass(frozen=True)
+class MixedCrossStateMMKLSAudit:
+    entry_divisor: int
+    modulus_divisor: int
+    physical_modulus: int
+    state_order: tuple[str, str, str]
+    mixed_cross_state: tuple[str, str]
+    mixed_cross_state_coefficient: Fraction
+    level_difference_sum: int
+    level_difference_equals_exact_coprimality: bool
+    standard_lift_modulus: int
+    ramanujan_fibre_cancels_before_inequality: bool
+    outer_divisor_incidence_recombines_to_mobius_modulus: bool
+    left_mixed_cell_is_mmkls: bool
+    transpose_mixed_cell_is_right_mmkls: bool
+    hard_scales: tuple[Fraction, Fraction, Fraction, Fraction]
+    arbitrary_coefficient_exponent: Fraction
+    target_exponent: Fraction
+    required_joint_saving_exponent: Fraction
+    fixed_entry_pevp_is_insufficient: bool
+    isolated_mixed_cell_bound_is_sufficient_not_necessary: bool
+    mixed_cell_mmkls_proved: bool
+    full_outer_gate_proved: bool
+
+
+@dataclass(frozen=True)
+class CriticalAffineMobiusUniformityAudit:
+    ambient_integer_exponent: Fraction
+    affine_progression_span_exponent: Fraction
+    progression_point_count_exponent: Fraction
+    progression_step_exponent: Fraction
+    published_threshold_relative_to_ambient: Fraction
+    endpoint_power_margin: Fraction
+    theorem_requires_positive_epsilon_margin: bool
+    lower_interval_length_hypothesis_verified: bool
+    strict_upper_interval_length_hypothesis_verified: bool
+    interval_length_hypothesis_verified: bool
+    almost_all_start_points_only: bool
+    structured_start_points_absorb_exceptional_set: bool
+    maximal_progression_norm_is_available_only_above_threshold: bool
+    published_maximal_bound_exponent: Fraction
+    trivial_progression_count_exponent: Fraction
+    published_bound_excess_exponent: Fraction
+    second_affine_mobius_is_fixed_complexity_nilsequence: bool
+    published_saving_is_logarithmic: bool
+    required_joint_power_saving_exponent: Fraction
+    published_theorem_closes_critical_slope_family: bool
+    mmkls_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class BlomerPascadiHardBoxAudit:
     modulus_exponent: Fraction
     left_argument_length_exponent: Fraction
@@ -11535,6 +11586,163 @@ def steinberg_full_cross_orientation_matrix_audit(
         full_three_state_cross_orientation_closes_steinberg=False,
         physical_outer_kernel_reinserted=False,
         outer_lisk_covered=False,
+    )
+
+
+def mixed_cross_state_mmkls_audit(
+    *,
+    entry_divisor: int,
+    modulus_divisor: int,
+    physical_modulus: int,
+) -> MixedCrossStateMMKLSAudit:
+    """Map the fatal Steinberg mixed cell to the geometric MMKLS gate.
+
+    In the cross-orientation matrix the constant term occurs only in the
+    ``modulus``-on-the-left, ``entry``-on-the-right cell and has coefficient
+    one.  For squarefree coprime outer divisors ``A,B`` and ``c=A*s``, the
+    lifted level difference in that cell is the finite identity
+
+    ``sum_{j|A} mu(j) 1_{A*B*j|c} = 1_{B|s} 1_{(A,s)=1}``.
+
+    The second equality uses ``(A,B)=1``.  CRT then cancels the Ramanujan
+    fibre in the standard modulus lift before an inequality is applied.
+    Interchanging the remaining ``B|s`` incidence and restoring all exact
+    Type allocations returns the original coefficient ``mu(s)``.  Hence
+    this one constant cell is precisely the left geometric MMKLS family;
+    the transpose cell is the right family.
+
+    This is an exact map of a residual cell, not a global equivalence: the
+    original signed sum may still cancel this cell against other conductor
+    patterns.  Bounding the isolated cell is sufficient but not necessary.
+    """
+    A = int(entry_divisor)
+    B = int(modulus_divisor)
+    s = int(physical_modulus)
+    if min(A, B, s) <= 0:
+        raise ValueError(
+            "entry divisor, modulus divisor, and modulus must be positive"
+        )
+    if mobius(A) == 0 or mobius(B) == 0:
+        raise ValueError("outer divisors must be squarefree")
+    if gcd(A, B) != 1:
+        raise ValueError("outer divisors must be coprime")
+    if s % B != 0 or gcd(A, s) != 1:
+        raise ValueError("physical cell requires B|s and (A,s)=1")
+
+    c = A * s
+    level_difference = sum(
+        mobius(j)
+        for j in range(1, A + 1)
+        if A % j == 0 and c % (A * B * j) == 0
+    )
+    exact_coprimality = int(s % B == 0 and gcd(A, s) == 1)
+    lift = inverse_scaled_kloosterman_modulus_lift_identity(
+        entry_divisor=A,
+        modulus=s,
+        dual_index=1,
+        product_index=1,
+    )
+    recombination = outer_modulus_type_recombination_audit(
+        original_modulus=s,
+        cutoff_u=min(5, s - 1),
+        cutoff_v=min(4, s - 1),
+        physical_modulus_exponent=F(3),
+    )
+    arbitrary = F(5, 2)
+    target = F(2)
+    return MixedCrossStateMMKLSAudit(
+        entry_divisor=A,
+        modulus_divisor=B,
+        physical_modulus=s,
+        state_order=("absent", "modulus", "entry"),
+        mixed_cross_state=("modulus", "entry"),
+        mixed_cross_state_coefficient=F(1),
+        level_difference_sum=level_difference,
+        level_difference_equals_exact_coprimality=(
+            level_difference == exact_coprimality
+        ),
+        standard_lift_modulus=int(lift["lifted_modulus"]),
+        ramanujan_fibre_cancels_before_inequality=(
+            bool(lift["ramanujan_factor_is_nonzero"])
+            and bool(lift["crt_phase_multisets_match"])
+            and bool(lift["lifted_kloosterman_equals_ramanujan_times_physical"])
+        ),
+        outer_divisor_incidence_recombines_to_mobius_modulus=(
+            recombination.all_type_allocations_recombine_exactly
+            and recombination.recombined_modulus_weight == mobius(s)
+        ),
+        left_mixed_cell_is_mmkls=True,
+        transpose_mixed_cell_is_right_mmkls=True,
+        hard_scales=(F(3), F(3), F(5, 2), F(5, 2)),
+        arbitrary_coefficient_exponent=arbitrary,
+        target_exponent=target,
+        required_joint_saving_exponent=arbitrary - target,
+        fixed_entry_pevp_is_insufficient=True,
+        isolated_mixed_cell_bound_is_sufficient_not_necessary=True,
+        mixed_cell_mmkls_proved=False,
+        full_outer_gate_proved=False,
+    )
+
+
+def critical_affine_mobius_uniformity_audit(
+) -> CriticalAffineMobiusUniformityAudit:
+    """Test current short-interval uniformity on the critical slope line.
+
+    On the unique critical pre-Cauchy layer, the two affine Mobius values
+    are sampled at ambient size ``X=T^3``.  The line parameter has
+    ``T^(5/2)`` values and each affine step is ``T^(1/2)``, so the containing
+    progression spans ``H=T^3=X``.  This satisfies the lower condition
+    ``H >= X^(1/3+epsilon)`` in Theorem 1.1(i) of MRSTT, but violates its
+    strict upper condition ``H <= X^(1-epsilon)``.  Partitioning into
+    admissible shorter intervals still leaves the density loss below and
+    does not turn an almost-all-starting-points theorem into a uniform
+    statement on the structured physical starting points.
+
+    Its maximal-progression norm is nevertheless normalized by the length
+    ``H`` of the containing interval, not by the number ``H/q`` of points in
+    a progression of step ``q``.  It therefore gives ``T^3/log^A T`` here,
+    while the literal progression has only ``T^(5/2)`` points.  The theorem
+    is worse than the trivial progression count by exactly ``T^(1/2)``.
+
+    There are two independent mismatches.  The theorem supplies logarithmic
+    discorrelation, while the physical layer needs a half-power saving; and
+    the second affine Mobius factor is not a fixed-complexity nilsequence
+    multiplying the first.  Thus the theorem may cover slack subfaces but
+    does not close the critical slope family or MMKLS.
+    """
+    ambient = F(3)
+    span = F(3)
+    points = F(5, 2)
+    step = F(1, 2)
+    relative_threshold = F(1, 3)
+    threshold = ambient * relative_threshold
+    margin = span - threshold
+    return CriticalAffineMobiusUniformityAudit(
+        ambient_integer_exponent=ambient,
+        affine_progression_span_exponent=span,
+        progression_point_count_exponent=points,
+        progression_step_exponent=step,
+        published_threshold_relative_to_ambient=relative_threshold,
+        endpoint_power_margin=margin,
+        theorem_requires_positive_epsilon_margin=True,
+        lower_interval_length_hypothesis_verified=True,
+        strict_upper_interval_length_hypothesis_verified=False,
+        interval_length_hypothesis_verified=False,
+        almost_all_start_points_only=True,
+        structured_start_points_absorb_exceptional_set=False,
+        maximal_progression_norm_is_available_only_above_threshold=True,
+        published_maximal_bound_exponent=span,
+        trivial_progression_count_exponent=points,
+        published_bound_excess_exponent=span - points,
+        second_affine_mobius_is_fixed_complexity_nilsequence=False,
+        published_saving_is_logarithmic=True,
+        required_joint_power_saving_exponent=F(1, 2),
+        published_theorem_closes_critical_slope_family=False,
+        mmkls_covered=False,
+        source=(
+            "Matomaki--Radziwill--Shao--Tao--Teravainen, "
+            "arXiv:2411.05770v2, Theorem 1.1(i)"
+        ),
     )
 
 
@@ -24748,6 +24956,72 @@ def main() -> None:
         "physical="
         f"{full_cross_orientation.physical_outer_kernel_reinserted} "
         f"olisk={full_cross_orientation.outer_lisk_covered}"
+    )
+    mixed_cross_mmkls = mixed_cross_state_mmkls_audit(
+        entry_divisor=30,
+        modulus_divisor=7,
+        physical_modulus=77,
+    )
+    print(
+        "balanced_max_a: mixed_cross_state_mmkls="
+        f"A={mixed_cross_mmkls.entry_divisor} "
+        f"B={mixed_cross_mmkls.modulus_divisor} "
+        f"s={mixed_cross_mmkls.physical_modulus} "
+        f"level_diff={mixed_cross_mmkls.level_difference_sum} "
+        "exact_coprime="
+        f"{mixed_cross_mmkls.level_difference_equals_exact_coprimality} "
+        f"lift={mixed_cross_mmkls.standard_lift_modulus} "
+        "fibre_cancel="
+        f"{mixed_cross_mmkls.ramanujan_fibre_cancels_before_inequality} "
+        "left=MMKLS_L right=MMKLS_R scales="
+        + ",".join(_fmt(value) for value in mixed_cross_mmkls.hard_scales)
+        + " "
+        f"arbitrary={_fmt(mixed_cross_mmkls.arbitrary_coefficient_exponent)} "
+        f"target={_fmt(mixed_cross_mmkls.target_exponent)} "
+        f"gap={_fmt(mixed_cross_mmkls.required_joint_saving_exponent)} "
+        "pevp_sufficient="
+        f"{not mixed_cross_mmkls.fixed_entry_pevp_is_insufficient} "
+        "isolated_sufficient="
+        f"{mixed_cross_mmkls.isolated_mixed_cell_bound_is_sufficient_not_necessary} "
+        f"mmkls={mixed_cross_mmkls.mixed_cell_mmkls_proved} "
+        f"outer={mixed_cross_mmkls.full_outer_gate_proved}"
+    )
+    affine_uniformity = critical_affine_mobius_uniformity_audit()
+    print(
+        "balanced_max_a: critical_affine_mobius_uniformity="
+        f"X={_fmt(affine_uniformity.ambient_integer_exponent)} "
+        f"span={_fmt(affine_uniformity.affine_progression_span_exponent)} "
+        f"points={_fmt(affine_uniformity.progression_point_count_exponent)} "
+        f"step={_fmt(affine_uniformity.progression_step_exponent)} "
+        "threshold="
+        f"{_fmt(affine_uniformity.published_threshold_relative_to_ambient)} "
+        f"margin={_fmt(affine_uniformity.endpoint_power_margin)} "
+        "epsilon_required="
+        f"{affine_uniformity.theorem_requires_positive_epsilon_margin} "
+        "lower_interval="
+        f"{affine_uniformity.lower_interval_length_hypothesis_verified} "
+        "strict_upper="
+        f"{affine_uniformity.strict_upper_interval_length_hypothesis_verified} "
+        f"interval={affine_uniformity.interval_length_hypothesis_verified} "
+        f"almost_all={affine_uniformity.almost_all_start_points_only} "
+        "exception_absorbed="
+        f"{affine_uniformity.structured_start_points_absorb_exceptional_set} "
+        "maximal="
+        f"{affine_uniformity.maximal_progression_norm_is_available_only_above_threshold} "
+        "published="
+        f"{_fmt(affine_uniformity.published_maximal_bound_exponent)} "
+        "trivial="
+        f"{_fmt(affine_uniformity.trivial_progression_count_exponent)} "
+        "excess="
+        f"{_fmt(affine_uniformity.published_bound_excess_exponent)} "
+        "second_nilsequence="
+        f"{affine_uniformity.second_affine_mobius_is_fixed_complexity_nilsequence} "
+        f"log_only={affine_uniformity.published_saving_is_logarithmic} "
+        "required="
+        f"{_fmt(affine_uniformity.required_joint_power_saving_exponent)} "
+        "critical="
+        f"{affine_uniformity.published_theorem_closes_critical_slope_family} "
+        f"mmkls={affine_uniformity.mmkls_covered}"
     )
     outer_modulus = outer_modulus_type_recombination_audit(
         original_modulus=30,
