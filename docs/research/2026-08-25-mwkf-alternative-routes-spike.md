@@ -11676,6 +11676,122 @@ the remaining half-power before squaring and keeps
 `covers_one_sided_joint_type_gate` false.  Therefore (4.674) is now the
 most explicit positive sufficient gate, not a proved estimate.
 
+### 4.78 Exact sector Fourier completion closes every jump boundary
+
+The remaining Type packet has an exact additive completion which must be
+used with its endpoint convention intact.  For \(0<\xi<Q\), define the
+right-continuous step function
+
+\[
+ F_{\xi,Q}(x):=e\!\left(\frac{\xi\lfloor Qx\rfloor}{Q}\right),
+ \qquad 0\le x<1.
+ \tag{4.676}
+\]
+
+Its zero Fourier coefficient vanishes.  Every other coefficient vanishes
+unless \(a\equiv\xi\pmod Q\), and for \(a=\xi+jQ\)
+
+\[
+ \boxed{
+ c_{\xi,j}
+ =\frac{Q(1-e(-\xi/Q))}{2\pi i(\xi+jQ)}.}
+ \tag{4.677}
+\]
+
+At continuity points the Fourier series with these coefficients is
+pointwise exact.  At a jump the Fourier series returns the midpoint, so
+the exact right-continuous identity is
+
+\[
+ \boxed{
+ F_{\xi,Q}(x)
+ =\sum_{j\in\mathbb Z}c_{\xi,j}e((\xi+jQ)x)
+ +\frac{1-e(-\xi/Q)}2e(\xi x)
+  \mathbf1_{Qx\in\mathbb Z}.}
+ \tag{4.678}
+\]
+
+Now put \(x=w/s\) and apply the one-factor Type relation
+\(dp=ks+w\).  Since \(a=\xi+jQ\) and \(ak\in\mathbb Z\), every continuous
+harmonic has the exact phase
+
+\[
+ \boxed{
+ e\!\left(a\frac ws\right)
+ =e\!\left(a\frac{dp}{s}\right).}
+ \tag{4.679}
+\]
+
+This is a direct linear fraction, not a Kloosterman inverse.  Both
+Möbius coefficients and every \(h,\delta,\nu,\sigma\) label remain in
+the accompanying vector coefficient.
+
+The correction in (4.678) is completely harmless after primitivity, for
+an exact reason.  Set
+
+\[
+ \mathcal B_Q:=\{(s,w):1\le s\le Q, 0\le w<s,
+                  (ks+w,s)=1, s\mid Qw\}.
+\]
+
+Since \((ks+w,s)=(w,s)\), reduction of \(b/Q\) gives the bijection
+
+\[
+ \boxed{
+ b\longmapsto
+ \left(\frac{Q}{(b,Q)},\frac b{(b,Q)}\right),qquad
+ \{0,\ldots,Q-1\}\simeq\mathcal B_Q.}
+ \tag{4.680}
+\]
+
+In particular \(|\mathcal B_Q|=\sum_{s\mid Q}\varphi(s)=Q\), and every
+sector contains exactly one primitive jump entry.  If all outer labels
+on that original entry are first recombined into \(Y_b\), then
+
+\[
+ 0\le
+ \sum_b\|Y_b\|^2-Q^{-1}\left\|\sum_bY_b\right\|^2
+ \le\sum_b\|Y_b\|^2=D_{\partial}\le D_{\rm cont}.
+ \tag{4.681}
+\]
+
+The scalar jump multiplier in (4.678) has modulus at most one.  Since
+\(D_{\rm cont}\ll T^{2+\varepsilon}\) is already the settled diagonal,
+the entire Fourier-boundary layer is within target.  Thus the analytic
+gate may be restricted to \(s\nmid Qw\); no endpoint error is hidden in
+the infinite harmonic expansion.
+
+For the continuous Type-I spectrum, however, an ordinary additive large
+sieve still does not close the estimate.  Write
+\(s\asymp T^\sigma\), \(Q\asymp T^q\),
+\(d\asymp T^\delta\), and \(p\asymp T^{\sigma-\delta}\).  Even after
+optimistically separating a common prime coefficient family, Cauchy in
+\(s\) followed by the Farey large sieve gives, for one fixed \(d\),
+
+\[
+ T^{\sigma-q}
+ \bigl(T^{\sigma-\delta}+T^{2\sigma}\bigr)
+ T^{\sigma-\delta}.
+ \tag{4.682}
+\]
+
+At the critical face \(\sigma=q=1\), this has exponent \(3-\delta\).
+Even perfect orthogonality among the \(T^\delta\) divisors leaves exponent
+three; Cauchy in \(d\) gives \(3+\delta\).  The target exponent is two.
+Hence termwise sector-Fourier completion plus the standard additive large
+sieve still misses one power in energy, or \(T^{1/2}\) before squaring.
+Cancellation must remain joint in the divisor/Möbius or determinant
+variables, and possibly between Fourier harmonics.
+
+The helpers `beatty_sector_fourier_type_phase_ledger` and
+`primitive_beatty_fourier_boundary_sides` verify (4.679)--(4.681) over
+exact integer and rational-vector data.  The latter independently
+enumerates both sides of (4.680), recombines repeated packet labels on an
+original entry, and proves equality of its sector energy with the
+diagonal sub-sum.  The scale helper
+`beatty_type_i_additive_large_sieve_audit` records (4.682) and keeps
+`standard_additive_large_sieve_covers_type_i` false.
+
 ## 5. Route C: endpoint-to-all-length interpolation
 
 This route fails algebraically.  Put \(Y=\log X\) and define

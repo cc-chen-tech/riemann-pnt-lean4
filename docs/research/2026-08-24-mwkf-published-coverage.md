@@ -1072,3 +1072,48 @@ squaring).  The executable helpers
 `farey_beatty_chowla_projector_sides` and
 `beatty_chowla_power_gate_audit` verify (6.9)--(6.11) and the exponent
 ledger, respectively; both keep the analytic coverage flag false.
+
+There is one newly closed subrow inside this gate.  For
+\(F_{\xi,Q}(x)=e(\xi\lfloor Qx\rfloor/Q)\), Fourier integration gives
+
+\[
+ F_{\xi,Q}(x)
+ =\sum_{j\in\mathbb Z}
+ \frac{Q(1-e(-\xi/Q))}{2\pi i(\xi+jQ)}
+ e((\xi+jQ)x)
+ +\frac{1-e(-\xi/Q)}2e(\xi x)
+  \mathbf1_{Qx\in\mathbb Z}.
+ \tag{6.13}
+\]
+
+On \(x=w/s\), primitivity turns the jump condition into \(s\mid Q\),
+and reduction of the fractions \(b/Q\) gives
+
+\[
+ \{0,\ldots,Q-1\}\longleftrightarrow
+ \{(s,w):(w,s)=1, s\mid Qw},qquad
+ b\mapsto\left(Q/(b,Q),b/(b,Q)\right).
+ \tag{6.14}
+\]
+
+Thus every sector contains exactly one primitive boundary entry and the
+boundary projector is bounded by its recombined original-entry diagonal,
+already \(O(T^{2+\varepsilon})\).  This closes all endpoint corrections
+in (6.13).
+
+Away from the boundary, \(dp=ks+w\) changes each harmonic exactly into
+
+\[
+ e((\xi+jQ)w/s)=e((\xi+jQ)dp/s).
+ \tag{6.15}
+\]
+
+This linear-fraction form still does not make the standard additive large
+sieve sufficient.  At \(s,Q\asymp T\), \(d\asymp T^\delta\), its
+optimistic fixed-\(d\) energy is \(T^{3-\delta}\); even orthogonal summation
+over the \(T^\delta\) divisors leaves \(T^3\), one power above the target.
+The exact boundary helper, phase ledger, and scale audit are
+`primitive_beatty_fourier_boundary_sides`,
+`beatty_sector_fourier_type_phase_ledger`, and
+`beatty_type_i_additive_large_sieve_audit`.  Only the boundary row is
+marked proved; the continuous joint Type-I/II spectrum remains open.

@@ -2440,6 +2440,106 @@ def test_published_beatty_chowla_is_short_by_a_half_power() -> None:
     assert not result["covers_one_sided_joint_type_gate"]
 
 
+def test_primitive_beatty_fourier_boundary_is_one_entry_per_sector() -> None:
+    sides = getattr(
+        coverage_audit,
+        "primitive_beatty_fourier_boundary_sides",
+        None,
+    )
+    assert sides is not None, "primitive Beatty Fourier boundary helper is missing"
+
+    result = sides(
+        q=6,
+        k=1,
+        labelled_entry_vectors={
+            (1, 0, "a"): (F(1), F(0)),
+            (1, 0, "b"): (F(0), F(1)),
+            (2, 1, "c"): (F(2), F(0)),
+            (3, 1, "d"): (F(0), F(3)),
+            (5, 1, "nonboundary"): (F(20), F(20)),
+        },
+    )
+
+    assert result["canonical_boundary_entries"] == (
+        (0, 1, 0),
+        (1, 6, 1),
+        (2, 3, 1),
+        (3, 2, 1),
+        (4, 3, 2),
+        (5, 6, 5),
+    )
+    assert result["primitive_boundary_entry_count"] == 6
+    assert result["sector_count"] == 6
+    assert result["one_primitive_boundary_entry_per_sector"]
+    assert result["boundary_iff_denominator_divides_q"]
+    assert result["totient_divisor_sum_identity"]
+    assert result["supplied_boundary_sector_vectors"] == (
+        (0, (F(1), F(1))),
+        (2, (F(0), F(3))),
+        (3, (F(2), F(0))),
+    )
+    assert result["recombined_boundary_entry_diagonal_energy"] == F(15)
+    assert result["boundary_same_sector_energy"] == F(15)
+    assert result["boundary_nonprincipal_projector_energy"] == F(65, 6)
+    assert result["boundary_energy_bounded_by_recombined_diagonal"]
+    assert result["all_supplied_boundary_labels_recombined_by_entry"]
+
+
+def test_sector_fourier_harmonic_becomes_type_linear_fraction_phase() -> None:
+    ledger = getattr(
+        coverage_audit,
+        "beatty_sector_fourier_type_phase_ledger",
+        None,
+    )
+    assert ledger is not None, "Beatty Fourier Type-phase ledger is missing"
+
+    result = ledger(
+        q=7,
+        sector_character=3,
+        harmonic=-2,
+        k=1,
+        s=5,
+        w=2,
+        type_divisor=1,
+        prime_power=7,
+    )
+
+    assert result["fourier_frequency"] == -11
+    assert result["frequency_mod_q"] == 3
+    assert result["type_relation_exact"]
+    assert result["integer_slope_part_drops_out"]
+    assert result["type_linear_fraction_phase_exact"]
+    assert not result["at_fourier_jump_boundary"]
+    assert not result["boundary_correction_required"]
+
+
+def test_type_i_additive_large_sieve_still_loses_one_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "beatty_type_i_additive_large_sieve_audit",
+        None,
+    )
+    assert audit is not None, "Beatty Type-I additive-large-sieve audit is missing"
+
+    result = audit(
+        divisor_exponent=F(1, 3),
+        denominator_exponent=F(1),
+        sector_modulus_exponent=F(1),
+        target_energy_exponent=F(2),
+    )
+
+    assert result["prime_bearing_length_exponent"] == F(2, 3)
+    assert result["farey_large_sieve_constant_exponent"] == F(2)
+    assert result["fixed_divisor_energy_exponent"] == F(8, 3)
+    assert result["optimistic_dyadic_divisor_orthogonality_energy_exponent"] == F(3)
+    assert result["cauchy_over_divisors_energy_exponent"] == F(10, 3)
+    assert result["remaining_energy_deficit_even_with_divisor_orthogonality"] == F(1)
+    assert result["remaining_unsquared_deficit"] == F(1, 2)
+    assert result["sector_average_normalization_cancels_denominator_cauchy_count"]
+    assert result["requires_joint_mobius_or_determinant_dispersion"]
+    assert not result["standard_additive_large_sieve_covers_type_i"]
+
+
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
     coefficients = getattr(
         coverage_audit,

@@ -11447,6 +11447,107 @@ mismatch.  It keeps analytic_square_function_bound_proved and
 covers_one_sided_joint_type_gate false.  Thus (9.508) is a strictly
 clearer positive gate, but remains unproved.
 
+### 9.76 Exact sector Fourier completion and the closed primitive boundary
+
+For \(0<\xi<Q\), let
+
+\[
+ F_{\xi,Q}(x)=e\!\left(\frac{\xi\lfloor Qx\rfloor}{Q}\right),
+ \qquad 0\le x<1,
+ \tag{9.510}
+\]
+
+with the right-continuous convention inherited from the sector
+definition.  Direct integration over the \(Q\) step intervals gives
+zero mean and, for \(a=\xi+jQ\),
+
+\[
+ \widehat F_{\xi,Q}(a)
+ =\frac{Q(1-e(-\xi/Q))}{2\pi ia};
+ \tag{9.511}
+\]
+
+all other Fourier coefficients vanish.  Restoring the half-jump omitted
+by pointwise Fourier convergence yields the exact identity
+
+\[
+ \boxed{
+ F_{\xi,Q}(x)
+ =\sum_{j\in\mathbb Z}
+ \frac{Q(1-e(-\xi/Q))}{2\pi i(\xi+jQ)}
+ e((\xi+jQ)x)
+ +\frac{1-e(-\xi/Q)}2e(\xi x)
+  \mathbf1_{Qx\in\mathbb Z}.}
+ \tag{9.512}
+\]
+
+For a Type entry \(dp=ks+w\), every continuous harmonic
+\(a=\xi+jQ\) satisfies
+
+\[
+ \boxed{e(aw/s)=e(adp/s),}
+ \tag{9.513}
+\]
+
+because \(ak\) is integral.  Thus the completed phase is a direct linear
+fraction.  No \(h,\delta\) label or Möbius coefficient is used up in
+this identity.
+
+The jump correction is an exactly diagonal-sized family.  Indeed,
+\((ks+w,s)=(w,s)=1\), so \(s\mid Qw\) forces \(s\mid Q\).  More precisely,
+
+\[
+ \boxed{
+ b\mapsto
+ \left(\frac Q{(b,Q)},\frac b{(b,Q)}\right)
+ }
+ \tag{9.514}
+\]
+
+is a bijection from \(0\le b<Q\) to the primitive pairs
+\(1\le s\le Q,0\le w<s,s\mid Qw\).  Hence there are exactly
+\(\sum_{s\mid Q}\varphi(s)=Q\) boundary entries and one in each sector.
+After recombining all labels on an original entry, their vectors \(Y_b\)
+satisfy
+
+\[
+ 0\le
+ \sum_b\|Y_b\|^2-Q^{-1}\left\|\sum_bY_b\right\|^2
+ \le\sum_b\|Y_b\|^2=D_{\partial}\le D_{\rm cont}.
+ \tag{9.515}
+\]
+
+The half-jump scalar in (9.512) has modulus at most one, and
+\(D_{\rm cont}\ll T^{2+\varepsilon}\) was already established.  Therefore
+every Fourier endpoint is within target; the remaining analytic problem
+may be restricted to \(s\nmid Qw\).
+
+This completion does not make a standard Type-I estimate sufficient.
+If \(s\asymp T^\sigma,Q\asymp T^q,d\asymp T^\delta\), then
+\(p\asymp T^{\sigma-\delta}\).  Even under an optimistic separation of
+the prime coefficient, Cauchy in \(s\) and the additive Farey large sieve
+give the fixed-\(d\) exponent
+
+\[
+ (\sigma-q)+\max(\sigma-\delta,2\sigma)
+ +(\sigma-\delta).
+ \tag{9.516}
+\]
+
+At \(\sigma=q=1\) this is \(3-\delta\).  Perfect orthogonality over the
+\(T^\delta\) divisors still gives exponent three, while the target is two;
+ordinary divisor Cauchy gives \(3+\delta\).  Thus termwise harmonic
+completion plus the standard additive large sieve retains the full
+one-power energy deficit.  A successful estimate must use joint
+Möbius/divisor or determinant dispersion before these Cauchy steps.
+
+The finite helpers primitive_beatty_fourier_boundary_sides and
+beatty_sector_fourier_type_phase_ledger verify (9.513)--(9.515), including
+the exact sector bijection and recombination of multiple packet labels.
+The exponent helper beatty_type_i_additive_large_sieve_audit verifies
+(9.516).  It deliberately keeps the continuous Type-I/II coverage flag
+false; only the Fourier-boundary row has now been closed.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -11575,7 +11676,12 @@ nonzero-determinant estimate remains open.  Equations (9.504)--(9.508)
 replace an absolute estimate of that signed sum by its exact centered
 positive moving-Beatty projector.  This projector still requires one
 power of energy cancellation and no published fixed-slope logarithmic
-Beatty theorem proves its moving-grid Hilbert-valued bound.**
+Beatty theorem proves its moving-grid Hilbert-valued bound.  The exact
+sector Fourier formula (9.510)--(9.515) now closes every primitive
+half-jump boundary by a one-entry-per-sector bijection.  The remaining
+continuous harmonics have the direct Type phase \(e(adp/s)\), but the
+standard additive-large-sieve ledger (9.516) is still one full power of
+energy above target.**
 
 Proved in this note:
 
@@ -11800,6 +11906,14 @@ Proved in this note:
   \((1-M^{-1})D_{\rm cont}\); only its
   \(\Delta_{\rm Type}\ne0\) complement can carry the extra power.
   Neither that complement nor the global same-slope estimate is proved.
+* the exact sector-step Fourier completion (9.510)--(9.516).  The
+  primitive jump set is in bijection with the \(Q\) Beatty sectors, so
+  after recombining all labels its centered boundary contribution is
+  bounded by the already-controlled continuous diagonal.  Every
+  nonboundary harmonic becomes the retained-label Type phase
+  \(e(adp/s)\).  Standard additive large sieve applied after Cauchy still
+  has energy exponent \(3\) at the balanced face instead of the target
+  \(2\), so the continuous Type-I/II estimate remains unproved.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -12069,6 +12183,7 @@ Proved in this note:
 | Determinant-zero primitive slopes | exact same-slope decomposition; within-slope norm unproved | Since every affine slope \((k_0,\ell_0)\) is positive and primitive, determinant zero forces equality of the two slopes, (9.465)--(9.466).  The zero orbit is therefore the sum of same-slope squared norms (9.467), with no cross-slope collisions.  All \(g,h,\delta,\nu,\sigma\) signs remain inside each square, and the bound (9.468) is still open |
 | Label-safe Type-entry determinant | internal zero orbit recombined; nonzero entry determinant unproved | The auxiliary sector character is \(\xi\), not \(a_{\rm AFE}=h\delta\), and all original packet labels remain in the row, (9.469)--(9.471).  A common Beatty sector is one common Euclidean quotient and obeys \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\), (9.472)--(9.477).  All \(dm=r\) cross factorizations must be recombined by the Möbius-log identity (9.478)--(9.481).  This makes the nonprincipal \(\Delta_{\rm Type}=0\) part exactly \((1-M^{-1})D_{\rm cont}\), already at diagonal power, (9.482); the extra power is confined to \(\Delta_{\rm Type}\ne0\), which is not estimated |
 | Moving-Beatty fixed-function and labelled Type split | structured slope sampling proved; exact centered positive projector isolated; moving-grid Hilbert square unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot directly encode the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\).  The zero blocks recombine, and (9.489) makes the complete packet an exact projector square.  Therefore only the one-sided joint upper gate \({\rm JNT}_{2}^{+}\), (9.491), is needed after the diagonal estimate.  Reindexing by \(n=rs\) further gives one fixed \(\mu(n)\) and an \(O(1)\) product-sector fiber, (9.494)--(9.497), but the vector weight remains factorization-dependent.  The Sobolev/divisor argument (9.498)--(9.503) proves \(T^\varepsilon\)-loss sampling on the reciprocal grid for every fixed Hilbert family.  Finally, (9.504)--(9.508) identify the exact centered positive moving-Beatty projector sufficient for the signed one-sided gate; it still needs one power of energy saving, and the exhaustive packet map remains unproved |
+| Primitive Beatty Fourier boundary | exact half-jump closure; continuous Type spectrum unproved | The exact sector-step expansion (9.510)--(9.512) has harmonics \(a=\xi+jQ\) and a half-jump term.  On primitive entries the boundary condition is equivalent to \(s\mid Q\), and (9.513)--(9.515) give a bijection with the \(Q\) sectors.  After label recombination the centered boundary is bounded by the known continuous diagonal.  The continuous harmonics retain both Möbius factors and the full \(h\delta\) labels through the phase \(e(adp/s)\), but standard additive large sieve still loses one energy power by (9.516) |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

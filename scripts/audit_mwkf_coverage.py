@@ -7865,6 +7865,283 @@ def beatty_chowla_power_gate_audit(
     }
 
 
+def primitive_beatty_fourier_boundary_sides(
+    *,
+    q: int,
+    k: int,
+    labelled_entry_vectors: dict[
+        tuple[int, int, str], tuple[Fraction, ...]
+    ],
+) -> dict[str, object]:
+    """Isolate the jump boundary in the sector-step Fourier series.
+
+    The step function ``e_q(xi*floor(q*x))`` is discontinuous exactly at
+    ``q*x`` integral.  On a primitive Farey entry ``x=w/s`` this means
+
+    ``s | q*w`` and ``gcd(w,s)=1``, hence ``s | q``.
+
+    More precisely, primitive boundary entries are the reduced fractions
+    of ``b/q`` for ``0<=b<q``.  The map
+
+    ``b -> (s,w)=(q/gcd(b,q), b/gcd(b,q))``
+
+    is a bijection, including ``b=0 -> (1,0)``.  Thus every sector has
+    exactly one primitive jump entry.  Once all outer labels on an
+    original entry are recombined, its same-sector energy is literally
+    the corresponding diagonal sub-sum; no Mobius cancellation or
+    Cauchy loss is needed.  Supplied vectors are understood to include
+    whatever scalar jump and packet coefficients the application uses.
+    """
+
+    if q <= 0:
+        raise ValueError("q must be positive")
+    if k < 0:
+        raise ValueError("k must be nonnegative")
+    if not labelled_entry_vectors:
+        raise ValueError("at least one labelled entry vector is required")
+    dimensions = {len(vector) for vector in labelled_entry_vectors.values()}
+    if dimensions == {0} or len(dimensions) != 1:
+        raise ValueError("all entry vectors need one common positive dimension")
+    dimension = next(iter(dimensions))
+
+    canonical: list[tuple[int, int, int]] = []
+    for sector in range(q):
+        common = gcd(sector, q)
+        s = q // common
+        w = sector // common
+        canonical.append((sector, s, w))
+
+    enumerated = tuple(
+        sorted(
+            (q * w // s, s, w)
+            for s in range(1, q + 1)
+            for w in range(s)
+            if gcd(k * s + w, s) == 1 and (q * w) % s == 0
+        )
+    )
+    canonical_entries = tuple(canonical)
+    primitive_equivalence = all(
+        ((q * w) % s == 0) == (q % s == 0)
+        for s in range(1, q + 1)
+        for w in range(s)
+        if gcd(k * s + w, s) == 1
+    )
+    divisors = tuple(s for s in range(1, q + 1) if q % s == 0)
+    totient_sum = sum(
+        sum(1 for w in range(s) if gcd(w, s) == 1)
+        for s in divisors
+    )
+
+    combined_by_entry: dict[tuple[int, int], list[Fraction]] = {}
+    labels_by_entry: dict[tuple[int, int], set[str]] = {}
+    supplied_boundary_label_count = 0
+    for (s, w, label), vector in labelled_entry_vectors.items():
+        if s < 1 or s > q or w < 0 or w >= s:
+            raise ValueError("entry coordinates must satisfy 1<=s<=q and 0<=w<s")
+        if not label:
+            raise ValueError("every packet label must be nonempty")
+        if gcd(k * s + w, s) != 1:
+            raise ValueError("every supplied Farey entry must be primitive")
+        if (q * w) % s != 0:
+            continue
+        supplied_boundary_label_count += 1
+        key = (s, w)
+        target = combined_by_entry.setdefault(key, [F(0)] * dimension)
+        for index, value in enumerate(vector):
+            target[index] += F(value)
+        labels_by_entry.setdefault(key, set()).add(label)
+
+    def norm_square(vector: tuple[Fraction, ...] | list[Fraction]) -> Fraction:
+        return sum((F(value) * F(value) for value in vector), F(0))
+
+    supplied_sector_vectors = tuple(
+        sorted(
+            (q * w // s, tuple(vector))
+            for (s, w), vector in combined_by_entry.items()
+        )
+    )
+    diagonal = sum(
+        (norm_square(vector) for vector in combined_by_entry.values()),
+        F(0),
+    )
+    same_sector = sum(
+        (norm_square(vector) for _, vector in supplied_sector_vectors),
+        F(0),
+    )
+    total_vector = tuple(
+        sum((vector[index] for _, vector in supplied_sector_vectors), F(0))
+        for index in range(dimension)
+    )
+    principal = norm_square(total_vector) / q
+    projector = same_sector - principal
+    return {
+        "q": q,
+        "k": k,
+        "canonical_boundary_entries": canonical_entries,
+        "enumerated_boundary_entries": enumerated,
+        "primitive_boundary_entry_count": len(enumerated),
+        "sector_count": q,
+        "one_primitive_boundary_entry_per_sector": (
+            enumerated == canonical_entries
+        ),
+        "boundary_iff_denominator_divides_q": primitive_equivalence,
+        "totient_divisor_sum": totient_sum,
+        "totient_divisor_sum_identity": totient_sum == q,
+        "supplied_boundary_sector_vectors": supplied_sector_vectors,
+        "recombined_boundary_entry_diagonal_energy": diagonal,
+        "boundary_same_sector_energy": same_sector,
+        "boundary_principal_energy": principal,
+        "boundary_nonprincipal_projector_energy": projector,
+        "boundary_energy_bounded_by_recombined_diagonal": (
+            F(0) <= projector <= same_sector == diagonal
+        ),
+        "all_supplied_boundary_labels_recombined_by_entry": (
+            sum(len(labels) for labels in labels_by_entry.values())
+            == supplied_boundary_label_count
+        ),
+        "analytic_boundary_layer_reduces_to_known_diagonal": True,
+    }
+
+
+def beatty_sector_fourier_type_phase_ledger(
+    *,
+    q: int,
+    sector_character: int,
+    harmonic: int,
+    k: int,
+    s: int,
+    w: int,
+    type_divisor: int,
+    prime_power: int,
+) -> dict[str, object]:
+    """Record the exact sector Fourier frequency after one Type split.
+
+    Away from jumps, the ``xi`` sector step has Fourier frequencies
+    ``a=xi+j*q``.  If ``d*p=k*s+w``, integrality of ``a*k`` gives
+
+    ``e(a*w/s)=e(a*d*p/s)``.
+
+    This is a direct linear fraction, not an inverse phase.  At a jump
+    ``q*w/s`` integral, the half-jump correction must be retained; the
+    separate primitive-boundary helper shows that layer is diagonal-sized.
+    """
+
+    if q <= 1 or not 0 < sector_character < q:
+        raise ValueError("sector_character must be nonzero modulo q")
+    if k < 0 or s <= 0 or w < 0 or w >= s:
+        raise ValueError("require k>=0, s>0, and 0<=w<s")
+    if type_divisor <= 0 or prime_power <= 0:
+        raise ValueError("Type factors must be positive")
+
+    frequency = sector_character + harmonic * q
+    numerator = k * s + w
+    type_relation = type_divisor * prime_power == numerator
+    primitive = gcd(numerator, s) == 1
+    boundary = (q * w) % s == 0
+    phase_difference = frequency * (w - type_divisor * prime_power)
+    return {
+        "q": q,
+        "sector_character": sector_character,
+        "harmonic": harmonic,
+        "fourier_frequency": frequency,
+        "frequency_mod_q": frequency % q,
+        "numerator": numerator,
+        "type_relation_exact": type_relation,
+        "primitive_entry": primitive,
+        "integer_slope_part_drops_out": (frequency * k * s) % s == 0,
+        "type_linear_fraction_phase_exact": (
+            type_relation and phase_difference % s == 0
+        ),
+        "at_fourier_jump_boundary": boundary,
+        "boundary_correction_required": boundary,
+        "primitive_boundary_forces_denominator_divides_q": (
+            not (primitive and boundary) or q % s == 0
+        ),
+        "fourier_coefficient_formula": (
+            "q*(1-e(-sector_character/q))"
+            "/(2*pi*i*(sector_character+harmonic*q))"
+        ),
+        "zero_fourier_mode_absent": frequency != 0,
+    }
+
+
+def beatty_type_i_additive_large_sieve_audit(
+    *,
+    divisor_exponent: Fraction,
+    denominator_exponent: Fraction,
+    sector_modulus_exponent: Fraction,
+    target_energy_exponent: Fraction,
+) -> dict[str, object]:
+    """Audit the standard additive large sieve after sector completion.
+
+    On ``d*p=k*s+w`` with ``s=T^sigma`` and ``d=T^delta``, the
+    prime-bearing length is ``P=T^(sigma-delta)``.  For one fixed ``d``,
+    Cauchy in ``s`` followed by the additive large sieve on the Farey
+    points ``a*d/s`` gives
+
+    ``T^(sigma-q) * (P+S^2) * ||beta||_2^2``.
+
+    The first factor is the denominator Cauchy count divided by the
+    sector-character normalization ``Q``.  At ``sigma=q=1`` it cancels,
+    but ``S^2`` still makes the fixed-d energy ``T^(3-delta)``.  Even
+    granting perfect orthogonality among the ``T^delta`` divisors leaves
+    exponent three.  Ordinary Cauchy in ``d`` is worse.  This ledger is
+    optimistic: it assumes the packet has already been separated into a
+    common prime coefficient family.  Hence failure here rules out the
+    standard large sieve as a closure, but is not a lower bound for every
+    possible joint dispersion argument.
+    """
+
+    delta = F(divisor_exponent)
+    sigma = F(denominator_exponent)
+    q_scale = F(sector_modulus_exponent)
+    target = F(target_energy_exponent)
+    if min(delta, sigma, q_scale, target) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    if delta > sigma:
+        raise ValueError("the Type divisor cannot exceed the numerator scale")
+
+    prime_length = sigma - delta
+    large_sieve_constant = max(prime_length, 2 * sigma)
+    prime_coefficient_energy = prime_length
+    denominator_cauchy_minus_average = sigma - q_scale
+    fixed_divisor = (
+        denominator_cauchy_minus_average
+        + large_sieve_constant
+        + prime_coefficient_energy
+    )
+    optimistic_divisor_orthogonality = fixed_divisor + delta
+    divisor_cauchy = fixed_divisor + 2 * delta
+    remaining = max(F(0), optimistic_divisor_orthogonality - target)
+    return {
+        "divisor_exponent": delta,
+        "denominator_exponent": sigma,
+        "sector_modulus_exponent": q_scale,
+        "prime_bearing_length_exponent": prime_length,
+        "farey_large_sieve_constant_exponent": large_sieve_constant,
+        "prime_coefficient_l2_energy_exponent": prime_coefficient_energy,
+        "denominator_cauchy_minus_sector_average_exponent": (
+            denominator_cauchy_minus_average
+        ),
+        "fixed_divisor_energy_exponent": fixed_divisor,
+        "optimistic_dyadic_divisor_orthogonality_energy_exponent": (
+            optimistic_divisor_orthogonality
+        ),
+        "cauchy_over_divisors_energy_exponent": divisor_cauchy,
+        "target_energy_exponent": target,
+        "remaining_energy_deficit_even_with_divisor_orthogonality": remaining,
+        "remaining_unsquared_deficit": remaining / 2,
+        "sector_average_normalization_cancels_denominator_cauchy_count": (
+            sigma == q_scale
+        ),
+        "common_prime_coefficient_family_assumed_optimistically": True,
+        "requires_joint_mobius_or_determinant_dispersion": remaining > 0,
+        "standard_additive_large_sieve_covers_type_i": (
+            optimistic_divisor_orthogonality <= target
+        ),
+    }
+
+
 def transition_line_coprimality_layer_identity(
     *,
     a: int,
