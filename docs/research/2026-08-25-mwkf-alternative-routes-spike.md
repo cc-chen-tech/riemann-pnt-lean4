@@ -18,6 +18,14 @@
 > fixed-entry PEVP, and the transform/AFE tail aggregation are proved.
 > What is **not** yet proved is the signed outer-entry aggregation OLISK;
 > fixed-entry PEVP does not sum the actual integer variables \(A,B\).
+> Section 4.109zja now shows that recombining the three outer local
+> states with Möbius vector \((1,-1,-1)\) changes their nonempty-union
+> physical mass from \(8p-5\) to \(-1\), but the reciprocal-LCM target
+> is \(p^{-1}\).  It also gives a half-turn Mellin witness showing that
+> dyadic outer-scale separation destroys this cancellation.  Thus the
+> exact residual is the recombined signed outer-level square
+> \((\mathrm{OSLSP})_q^{L,R}\), which still lacks one analytic prime
+> factor and implies OLISK if proved.
 > Therefore the unconditional \(T^3\) asymptotic remains open.
 
 This document starts from the exact symmetric completion in
@@ -18109,9 +18117,10 @@ of (PEVP)\(_{A,B}\).  The product-Hecke and collapsed-gcd PNT estimates
 remain candidate inputs on subregions, but no exact partition currently
 proves \((\mathrm{OLISK})_q^{L,R}\) on every outer dyadic box.
 
-Conditionally on the scalar gate (4.845dc_14xye), fixed-entry PLS,
-PEVP, and the transform/AFE shell estimates would become available;
-even then, no large-entry compact-core range is closed by PEVP alone.
+The scalar gate (4.845dc_14xye), fixed-entry PLS, PEVP, and the
+transform/AFE shell estimates are proved in Sections
+4.109zlf--4.109zfgb.  Nevertheless no large-entry compact-core range is
+closed by PEVP alone.
 The interface
 `lifted_outer_qct_aggregation_audit` now records the two coefficient
 energies, the residual exponent (4.845dc_14xn), and the full outer LISK
@@ -18252,6 +18261,247 @@ constant.
 The interface mixed_entry_projection_gram_audit therefore marks the
 local tensor and arithmetic aggregation true, but keeps MEPEVP and the
 whole outer LISK gate false.
+
+### 4.109zja Full outer-state inclusion-exclusion saves one local prime, but not two
+
+The pairwise majorant in Section 4.109zj does not yet use the fact that
+the two present outer states have the same Möbius sign.  On squarefree
+coprime support,
+\[
+ \mu(d)\mu(b)=\mu(A),\qquad
+ \mu(d')\mu(b')=\mu(B).
+\]
+At one prime the three outer states \(0,B,A\) therefore have signed
+coefficient vector
+\[
+ \mathbf m=(1,-1,-1).
+\]
+Let \(M_p\) be the physical matrix in (4.845dc_14xp).  In a pair of
+outer entries condition on \(p\mid[AB,A'B']\), so that the
+\((0,0)\)-cell is excluded.  Direct multiplication gives
+\[
+ \begin{aligned}
+ \mathbf m^{\mathsf T}M_p\mathbf m
+ &=p^2+p-1,\\
+ (M_p)_{0,0}&=p(p+1),\\
+ \boxed{\displaystyle
+ \sum_{\substack{\epsilon,\epsilon'\in\{0,B,A\}\\
+                 (\epsilon,\epsilon')\ne(0,0)}}
+ m_\epsilon m_{\epsilon'}(M_p)_{\epsilon,\epsilon'}
+ =-1.}
+ \tag{4.845dc_14xq_1}
+ \end{aligned}
+\]
+The unsigned mass of the same eight cells is
+\[
+ 2p+2(p-1)+p+2(p-1)+(p-1)=8p-5.
+ \tag{4.845dc_14xq_2}
+\]
+Thus recombining all three outer states before taking an absolute value
+does recover one complete prime power: a kernel of generic size \(p\)
+becomes a constant.  This cancellation is absent from pairwise MEPEVP.
+
+It does **not** yet give the reciprocal-LCM kernel.  The physical target
+at this prime is \(p^{-1}\), so (4.845dc_14xq_1) still misses the exact
+factor
+\[
+ \frac{|-1|}{p^{-1}}=p.
+ \tag{4.845dc_14xq_3}
+\]
+This is the same horizontal exact-level factor visible in
+[HPY, Remark after Theorem 1.22](https://arxiv.org/abs/2411.05672):
+for the local exact-conductor test \(f_{=c}\), the geometric conductor
+is \(p^{c-1}\), whereas \(f_{=c}(1)\asymp p^c\).  The positive
+pure-tensor large sieve therefore cannot supply (4.845dc_14xq_3).
+
+There is also a precise obstruction to inserting an outer Mellin
+separation before (4.845dc_14xq_1).  Give the \(A\)- and \(B\)-states
+unit phases \(x,y\) on the left and \(x',y'\) on the right.  The
+nonempty-union kernel becomes
+\[
+ \begin{aligned}
+ K_p(x,y;x',y')
+={}&p\{y\overline{y'}-y-\overline{y'}\}\\
+ &+(p-1)\{x\overline{x'}+x\overline{y'}
+       +y\overline{x'}-x-\overline{x'}\}.
+ \tag{4.845dc_14xq_4}
+ \end{aligned}
+\]
+At \(x=y=x'=y'=1\), this is \(-1\).  At the common half-turn
+\(x=y=x'=y'=-1\), the Möbius state vector becomes \((1,1,1)\) and
+\[
+ \boxed{K_p(-1,-1;-1,-1)=8p-5.}
+ \tag{4.845dc_14xq_5}
+\]
+Consequently arbitrary dyadic Mellin twists destroy the local
+inclusion-exclusion.  The outer dyadic boxes cannot be estimated
+separately and then recombined; all artificial Type allocations and
+outer scales must first be returned to the common physical kernel.
+
+The two-Fourier-index formula supplies a candidate for the still
+missing factor \(p\).  In the unramified primitive cell write
+\[
+ q=p+1,\qquad
+ D=1-\frac{p\lambda_\pi(p)^2}{q^2},
+\]
+and retain \(P_p\) and \(\mathcal K_p^{(0)}\) from
+(4.845cz).  If
+\[
+ a=v_p(m),\qquad b=v_p(h\delta),
+\]
+then the \(B\)-state has level-\(p\) trace
+\(P_p(a,b)/q\), while the \(A\)-state has second valuation \(b+1\)
+and Ramanujan-normalized trace
+\(\mathcal K_p^{(0)}(a,b+1)/c_p(p^a)\).  Inserting the two outer
+Möbius signs before Cauchy gives the exact combined perturbation
+\[
+ \boxed{
+ \mathcal U_p(a,b)
+ =-\frac{P_p(a,b)}q
+  -\frac{\mathcal K_p^{(0)}(a,b+1)}{c_p(p^a)}.}
+ \tag{4.845dc_14xq_6}
+\]
+At the unit-valuation cell the oldclass terms simplify completely:
+\[
+ \boxed{
+ \mathcal U_p(0,0)
+ =-\frac{q-\lambda_\pi(p)}{q^2D}.}
+ \tag{4.845dc_14xq_7}
+\]
+For example, at \(p=5\) and \(\lambda_\pi(p)=3/2\), the
+\(B\)-state is \(8/33\), the normalized \(A\)-state is
+\(-2/33\), and their signed sum is
+\[
+ -\frac8{33}-\left(-\frac2{33}\right)=-\frac2{11}.
+\]
+Thus \(p|\mathcal U_p(0,0)|=10/11\): the cross-index term supplies
+exactly the reciprocal-prime scale which the projection-only
+calculation (4.845dc_14xq_3) lacked.
+
+The same power survives every unramified valuation.  Put
+\[
+ \begin{aligned}
+ u_k&=\lambda_{k-1}-\lambda_1\lambda_k/q,\\
+ r_k&=\lambda_k-p\lambda_1\lambda_{k-1}/q,\\
+ s_k&=\lambda_{k-1},
+ \end{aligned}
+\]
+with negative subscripts zero.  Equations (4.845cz) and
+(4.845dc_14t) give the four-rank identity
+\[
+ \mathcal U_p(a,b)
+ =-\frac{\lambda_a\lambda_b}{q}
+  -\frac{p}{qD}u_au_b
+  +\frac{q}{q^2D}r_ar_{b+1}
+  -\frac1q s_as_{b+1}.
+ \tag{4.845dc_14xq_8}
+\]
+For \(\theta=7/64\), the standard local Hecke bounds and
+\(qr_k=\lambda_k-p\lambda_{k-2}\) imply
+\[
+ \begin{aligned}
+ |u_0|&\ll p^{-1+\theta},&
+ |u_k|&\ll(k+1)p^{(k-1)\theta}\quad(k\geq1),\\
+ |r_0|&=1,&
+ |r_1|&\ll p^{-1+\theta},&
+ |r_k|&\ll(k+1)p^{(k-2)\theta}\quad(k\geq2).
+ \end{aligned}
+\]
+After the common exact-valuation weight \(p^{-(a+b)/2}\), the four
+prime exponents in (4.845dc_14xq_8) are respectively
+\[
+ \begin{aligned}
+ e_1&=-1-(a+b)(1/2-\theta),\\
+ e_2&=-(a+b)/2+u(a)+u(b),\\
+ e_3&=-1-(a+b)/2+r(a)+r(b+1),\\
+ e_4&=-1-(a+b)/2+(a-1+b)\theta\quad(a\geq1),
+ \end{aligned}
+\]
+where
+\[
+ u(0)=-1+\theta,\quad u(k)=(k-1)\theta\ (k\geq1),
+\]
+and
+\[
+ r(0)=0,\quad r(1)=-1+\theta,\quad
+ r(k)=(k-2)\theta\ (k\geq2).
+\]
+Each \(e_i\leq-1\).  Hence
+\[
+ \boxed{
+ p^{-(a+b)/2}|\mathcal U_p(a,b)|
+ \ll(a+1)(b+2)p^{-1}}
+ \tag{4.845dc_14xq_9}
+\]
+uniformly in the unramified cell; the finitely many small-prime
+denominators are controlled by the rational bounds already used in
+Section 4.109zla.
+
+Equations (4.845dc_14xq_6)--(4.845dc_14xq_9) are not yet a proof of
+OLISK.  Before tensoring them one must verify from the unreduced
+physical sum that the \(A\)- and \(B\)-state square-root
+normalizations are exactly the common \(p^{-(a+b)/2}\) used above,
+rather than dyadic constants extracted on different boxes.  One must
+then prove the analogous combined identity for the Steinberg and
+Eisenstein conductor cells.  Primitive conductor exponent two still
+vanishes at positive \(A\)-valuation, but the conductor-one \(B\)-state
+has to be combined with the signed \(A\)-state before its harmonic
+measure is estimated.  These are finite local calculations followed by
+one global recombination theorem, not consequences of fixed-entry
+PEVP.
+
+The first Steinberg calculation shows that simple recombination is not
+enough.  Let
+\[
+ C_p=1-\frac{p+1}{p^2(p+2)}.
+\]
+For a conductor-\(p\) primitive representation, the unit-index
+\(B\)-state has normalized amplitude \(1\).  Section 4.109zfe gives
+the corresponding signed \(A\)-state amplitude
+\(-\epsilon_pC_p/\sqrt p\), where
+\(\epsilon_p\in\{-1,1\}\) is the Steinberg sign.  After the two outer
+Möbius signs, the best possible local cancellation is therefore
+\[
+ \boxed{
+ \left|-1+\epsilon_p\frac{C_p}{\sqrt p}\right|^2
+ \geq\left(1-\frac1{\sqrt p}\right)^2
+ >\frac14\qquad(p\geq5).}
+ \tag{4.845dc_14xq_10}
+\]
+The reciprocal-prime square target is \(p^{-1}\leq1/5\).  Thus the
+modulus-side Steinberg conductor-one state is a genuine residual; the
+unramified identity (4.845dc_14xq_9) cannot close OLISK prime by prime.
+The remaining analytic theorem must average this conductor-one state
+across outer levels or use both completion orientations in one trace
+formula.  Choosing a single orientation and applying its fixed-entry
+PEVP again returns the exponent (4.845dc_14xn).
+
+After that exact recombination the remaining squared gate is
+\[
+ \boxed{
+ \sum_{A,B,A',B'}
+ \alpha(A)\beta(B)\overline{\alpha(A')\beta(B')}
+ \mathcal G_{\rm phys}(A,B;A',B')
+ \ll_{B_0,W} S^2L^{-2B_0}.}
+ \tag{OSLSP}_{q}^{L}
+\]
+All endpoint, gcd, ratio, \(j\mid A\), and physical Bessel conditions
+are retained in \(\mathcal G_{\rm phys}\).  Unlike MEPEVP, this gate
+keeps the signed sum over the three local outer states before applying
+the harmonic large sieve.  Equations (4.845dc_14xq_1)--(4.845dc_14xq_5)
+prove that this ordering recovers exactly one of the two ambient prime
+powers and that a second, genuinely analytic prime saving is still
+required.  They do not prove \((\mathrm{OSLSP})_q^L\) or OLISK.
+
+The interfaces outer_state_inclusion_exclusion_audit,
+unramified_outer_state_cross_index_kernel, and
+unramified_outer_state_weighted_exponent_audit check the two matrix
+identities, the half-turn witness, the unit-cell cross-index formula,
+and every valuation exponent.  The interface
+steinberg_outer_state_unit_obstruction_audit records
+(4.845dc_14xq_10).  They keep physical-normalization,
+two-orientation/conductor-average, recombined-outer-kernel, and OLISK
+coverage false.
 
 ### 4.109zk Pascadi v2 saves only one quarter power after factor freezing
 
@@ -19160,8 +19410,10 @@ Combining this remaining implication with (4.845dc_19) would give
 The displayed asymptotic is therefore still unproved for real
 \(W\in C_c^\infty(\mathbb R)\) supported in \([1,2]\).  The final
 coverage certificate has one residual analytic gate: the full signed
-outer-entry aggregation \((\mathrm{OLISK})_{q}^{L,R}\), over power-sized
-as well as polylogarithmic entry divisors.  The full-level harmonic
+outer-entry aggregation \((\mathrm{OLISK})_{q}^{L,R}\), equivalently
+the recombined outer-level square \((\mathrm{OSLSP})_q^{L,R}\) from
+Section 4.109zja, over power-sized as well as polylogarithmic entry
+divisors.  The full-level harmonic
 large sieve, weighted primitive-conductor large sieve, fixed-entry PEVP,
 and all analytic tails are no longer residual inputs.
 

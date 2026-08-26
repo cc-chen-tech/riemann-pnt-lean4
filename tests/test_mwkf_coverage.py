@@ -5524,6 +5524,111 @@ def test_mixed_entry_projection_gram_reverses_after_ambient_normalization() -> N
     assert energy["identity_verified"]
 
 
+def test_outer_state_inclusion_exclusion_saves_one_local_prime_only_at_unit_twist(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    audit = coverage_audit.outer_state_inclusion_exclusion_audit(prime=5)
+    assert audit.state_order == ("none", "modulus", "entry")
+    assert audit.mobius_state_vector == (1, -1, -1)
+    assert audit.physical_ambient_gram_matrix == (
+        (F(30), F(5), F(4)),
+        (F(5), F(5), F(4)),
+        (F(4), F(4), F(4)),
+    )
+    assert audit.unsigned_nonempty_union_mass == 35
+    assert audit.full_signed_gram_mass == 29
+    assert audit.absent_absent_mass == 30
+    assert audit.signed_nonempty_union_mass == -1
+    assert audit.raw_signed_nonempty_union_mass == F(-1, 30)
+    assert audit.equal_half_turn_twist_vector == (1, 1, 1)
+    assert audit.equal_half_turn_twisted_nonempty_union_mass == 35
+    assert audit.unit_twist_cancellation_saves_one_prime_power
+    assert audit.required_reciprocal_prime_mass == F(1, 5)
+    assert audit.remaining_reciprocal_prime_ratio == 5
+    assert not audit.unit_twist_reaches_reciprocal_prime_mass
+    assert not audit.dyadic_mellin_twist_preserves_unit_cancellation
+    assert audit.recombination_before_outer_scale_separation_is_necessary
+    assert not audit.recombined_outer_scale_physical_kernel_proved
+    assert not audit.outer_lisk_covered
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: outer_state_inclusion="
+        "unsigned_union=35 signed_union=-1 raw_union=-1/30 "
+        "half_turn=35 target=1/5 remaining=5 "
+        "mellin_preserves=False recombined=False olisk=False"
+    ) in output
+
+
+def test_unramified_outer_state_cross_index_supplies_the_remaining_unit_prime() -> None:
+    local = coverage_audit.unramified_outer_state_cross_index_kernel(
+        prime=5,
+        hecke_prime=F(3, 2),
+        first_index_valuation=0,
+        base_second_index_valuation=0,
+    )
+    assert local["oldclass_gram_denominator"] == F(11, 16)
+    assert local["modulus_state_level_p_trace_kernel"] == F(8, 33)
+    assert local["entry_state_ramanujan_normalized_kernel"] == F(-2, 33)
+    assert local["mobius_signed_present_state_kernel"] == F(-2, 11)
+    assert local["unit_valuation_closed_formula"] == F(-2, 11)
+    assert local["unit_valuation_formula_exact"]
+    assert local["prime_scaled_unit_kernel"] == F(-10, 11)
+    assert local["unit_kernel_has_inverse_prime_scale"]
+    assert not local["physical_square_root_state_normalizations_aligned"]
+    assert not local["all_valuation_cells_proved"]
+    assert not local["steinberg_and_eisenstein_cells_proved"]
+    assert not local["outer_scale_recombination_proved"]
+    assert not local["outer_lisk_covered"]
+
+
+@pytest.mark.parametrize(
+    ("a", "b", "expected_max"),
+    (
+        (0, 0, F(-1)),
+        (0, 1, F(-89, 64)),
+        (1, 0, F(-89, 64)),
+        (1, 1, F(-1)),
+        (2, 3, F(-139, 64)),
+    ),
+)
+def test_unramified_outer_state_weighted_valuation_exponent_is_at_most_minus_one(
+    a: int,
+    b: int,
+    expected_max: F,
+) -> None:
+    audit = coverage_audit.unramified_outer_state_weighted_exponent_audit(
+        ramanujan_theta=F(7, 64),
+        first_index_valuation=a,
+        base_second_index_valuation=b,
+    )
+    assert audit["maximum_weighted_prime_exponent"] == expected_max
+    assert audit["maximum_weighted_prime_exponent"] <= -1
+    assert audit["all_four_rank_terms_have_inverse_prime_saving"]
+    assert not audit["physical_state_normalizations_aligned"]
+    assert not audit["all_conductor_cells_proved"]
+    assert not audit["outer_lisk_covered"]
+
+
+def test_steinberg_modulus_state_blocks_simple_outer_recombination() -> None:
+    audit = coverage_audit.steinberg_outer_state_unit_obstruction_audit(
+        prime=5,
+    )
+    correction = F(1) - F(6, 25 * 7)
+    assert audit["entry_state_euler_correction"] == correction
+    assert audit["modulus_state_unit_amplitude"] == 1
+    assert audit["entry_state_unit_amplitude_square"] == correction**2 / 5
+    assert audit["combined_square_constant_term"] == 1 + correction**2 / 5
+    assert audit["combined_inverse_sqrt_prime_coefficient"] == -2 * correction
+    assert audit["uniform_combined_square_lower_bound"] == F(1, 4)
+    assert audit["required_reciprocal_prime_square_mass"] == F(1, 5)
+    assert audit["lower_bound_exceeds_reciprocal_prime_target"]
+    assert not audit["simple_outer_state_recombination_closes_steinberg"]
+    assert audit["two_orientation_or_conductor_average_required"]
+    assert not audit["outer_lisk_covered"]
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

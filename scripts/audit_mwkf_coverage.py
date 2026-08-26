@@ -1950,6 +1950,29 @@ class MixedEntryProjectionGramAudit:
 
 
 @dataclass(frozen=True)
+class OuterStateInclusionExclusionAudit:
+    prime: int
+    state_order: tuple[str, str, str]
+    mobius_state_vector: tuple[int, int, int]
+    physical_ambient_gram_matrix: tuple[tuple[Fraction, ...], ...]
+    unsigned_nonempty_union_mass: Fraction
+    full_signed_gram_mass: Fraction
+    absent_absent_mass: Fraction
+    signed_nonempty_union_mass: Fraction
+    raw_signed_nonempty_union_mass: Fraction
+    equal_half_turn_twist_vector: tuple[int, int, int]
+    equal_half_turn_twisted_nonempty_union_mass: Fraction
+    unit_twist_cancellation_saves_one_prime_power: bool
+    required_reciprocal_prime_mass: Fraction
+    remaining_reciprocal_prime_ratio: Fraction
+    unit_twist_reaches_reciprocal_prime_mass: bool
+    dyadic_mellin_twist_preserves_unit_cancellation: bool
+    recombination_before_outer_scale_separation_is_necessary: bool
+    recombined_outer_scale_physical_kernel_proved: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
 class PascadiLiftedPhysicalAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -10755,6 +10778,179 @@ def unramified_exact_level_difference_kernel(
     }
 
 
+def unramified_outer_state_cross_index_kernel(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    first_index_valuation: int,
+    base_second_index_valuation: int,
+) -> dict[str, object]:
+    """Combine the two present outer states before local Cauchy.
+
+    At a prime in the modulus state B, the local trace is the full
+    level-p oldclass kernel at Fourier valuations (a,b), divided by
+    p+1.  At a prime in the entry state A, the second Fourier valuation
+    is b+1 and the signed level-p minus level-p-squared kernel is divided
+    by the physical Ramanujan factor.  Both present states carry one
+    outer Mobius sign.  Their combined local perturbation of the absent
+    state is therefore
+
+      - level_p_trace(a,b) - normalized_level_difference(a,b+1).
+
+    For a=b=0 this is exactly
+
+      -(p+1-lambda(p)) / ((p+1)^2 * D),
+      D = 1 - p*lambda(p)^2/(p+1)^2.
+
+    This is the candidate reciprocal-prime factor which is invisible
+    after a positive projection Gram.  The function proves only the
+    finite unramified identity; aligning the two physical state
+    normalizations and recombining all outer scales remain open.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    a = int(first_index_valuation)
+    b = int(base_second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if a < 0 or b < 0:
+        raise ValueError("index valuations must be nonnegative")
+
+    values = [F(1), lam]
+    while len(values) <= max(a, b):
+        values.append(lam * values[-1] - values[-2])
+
+    def hecke(index: int) -> Fraction:
+        return F(0) if index < 0 else values[index]
+
+    q = F(p + 1)
+    denominator = F(1) - F(p) * lam * lam / (q * q)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    level_p_oldclass = hecke(a) * hecke(b) + F(p) / denominator * (
+        hecke(a - 1) - lam * hecke(a) / q
+    ) * (
+        hecke(b - 1) - lam * hecke(b) / q
+    )
+    modulus_trace = level_p_oldclass / q
+    entry = unramified_exact_level_difference_kernel(
+        prime=p,
+        hecke_prime=lam,
+        first_index_valuation=a,
+        second_index_valuation=b + 1,
+    )["ramanujan_normalized_kernel"]
+    signed_present = -modulus_trace - F(entry)
+    unit_formula = (
+        -(q - lam) / (q * q * denominator)
+        if a == 0 and b == 0
+        else None
+    )
+    return {
+        "prime": p,
+        "hecke_prime": lam,
+        "first_index_valuation": a,
+        "base_second_index_valuation": b,
+        "oldclass_gram_denominator": denominator,
+        "modulus_state_level_p_trace_kernel": modulus_trace,
+        "entry_state_ramanujan_normalized_kernel": entry,
+        "mobius_signed_present_state_kernel": signed_present,
+        "unit_valuation_closed_formula": unit_formula,
+        "unit_valuation_formula_exact": (
+            unit_formula is not None and signed_present == unit_formula
+        ),
+        "prime_scaled_unit_kernel": (
+            F(p) * signed_present if unit_formula is not None else None
+        ),
+        "unit_kernel_has_inverse_prime_scale": (
+            unit_formula is not None
+            and abs(F(p) * signed_present) <= 1
+        ),
+        "physical_square_root_state_normalizations_aligned": False,
+        "all_valuation_cells_proved": False,
+        "steinberg_and_eisenstein_cells_proved": False,
+        "outer_scale_recombination_proved": False,
+        "outer_lisk_covered": False,
+    }
+
+
+def unramified_outer_state_weighted_exponent_audit(
+    *,
+    ramanujan_theta: Fraction,
+    first_index_valuation: int,
+    base_second_index_valuation: int,
+) -> dict[str, object]:
+    """Audit every rank term after the common valuation weights.
+
+    Write the combined unramified present-state kernel as the sum of
+    four rank terms: the direct level-p trace, its oldvector correction,
+    the first rank of the signed entry difference, and the second rank
+    of that difference.  The common physical valuation weight is
+    p^(-(a+b)/2).  The elementary Hecke bounds are
+
+      lambda_k << (k+1) p^(k*theta),
+      u_0 << p^(-1+theta),  u_k << (k+1)p^((k-1)*theta),
+      r_0 = 1, r_1 << p^(-1+theta),
+      r_k << (k+1)p^((k-2)*theta) for k>=2.
+
+    The returned exponents omit polynomial factors in a,b.  Their
+    maximum is at most -1 whenever theta<1/2.  This is only the
+    unramified local power ledger; it does not align the exact physical
+    state weights or include the other conductor cells.
+    """
+    theta = F(ramanujan_theta)
+    a = int(first_index_valuation)
+    b = int(base_second_index_valuation)
+    if not (F(0) <= theta < F(1, 2)):
+        raise ValueError("ramanujan_theta must lie in [0,1/2)")
+    if a < 0 or b < 0:
+        raise ValueError("index valuations must be nonnegative")
+
+    half_weight = -F(a + b, 2)
+    direct = -F(1) - F(a + b) * (F(1, 2) - theta)
+
+    def u_exponent(index: int) -> Fraction:
+        return -F(1) + theta if index == 0 else F(index - 1) * theta
+
+    def r_exponent(index: int) -> Fraction:
+        if index == 0:
+            return F(0)
+        if index == 1:
+            return -F(1) + theta
+        return F(index - 2) * theta
+
+    oldvector = half_weight + u_exponent(a) + u_exponent(b)
+    first_rank = (
+        -F(1) + half_weight + r_exponent(a) + r_exponent(b + 1)
+    )
+    second_rank = (
+        None
+        if a == 0
+        else (
+            -F(1)
+            + half_weight
+            + F(a - 1 + b) * theta
+        )
+    )
+    exponents = [direct, oldvector, first_rank]
+    if second_rank is not None:
+        exponents.append(second_rank)
+    maximum = max(exponents)
+    return {
+        "ramanujan_theta": theta,
+        "first_index_valuation": a,
+        "base_second_index_valuation": b,
+        "direct_trace_weighted_prime_exponent": direct,
+        "oldvector_weighted_prime_exponent": oldvector,
+        "entry_first_rank_weighted_prime_exponent": first_rank,
+        "entry_second_rank_weighted_prime_exponent": second_rank,
+        "maximum_weighted_prime_exponent": maximum,
+        "all_four_rank_terms_have_inverse_prime_saving": maximum <= -1,
+        "physical_state_normalizations_aligned": False,
+        "all_conductor_cells_proved": False,
+        "outer_lisk_covered": False,
+    }
+
+
 def unramified_cross_index_two_shift_identity(
     *,
     prime: int,
@@ -10849,6 +11045,52 @@ def unramified_cross_index_two_shift_identity(
         "ordinary_ambient_positive_cauchy_used": False,
         "weighted_two_index_large_sieve_proved": False,
         "pevp_proved": False,
+    }
+
+
+def steinberg_outer_state_unit_obstruction_audit(
+    *, prime: int
+) -> dict[str, object]:
+    """Show that the conductor-one modulus state survives recombination.
+
+    For a primitive Steinberg representation, the unit Fourier
+    coefficient in the modulus state B has amplitude one after the
+    common harmonic normalization.  The signed entry state A has
+    amplitude -epsilon*C_p/sqrt(p) before its outer Mobius sign, where
+
+      C_p = 1 - (p+1)/(p^2*(p+2)).
+
+    Thus the best sign gives combined amplitude
+    -1 + C_p/sqrt(p).  For p>=5, 0<C_p<1 and
+    1/sqrt(p)<1/2, so its square is at least 1/4.  This exceeds
+    the reciprocal-prime target 1/p and proves that the unramified
+    outer-state cancellation cannot be promoted to all conductor cells
+    by a simple local state sum.
+    """
+    p = int(prime)
+    if (
+        p < 5
+        or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1))
+    ):
+        raise ValueError("prime must be a prime at least five")
+    correction = F(1) - F(p + 1, p * p * (p + 2))
+    lower = F(1, 4)
+    target = F(1, p)
+    return {
+        "prime": p,
+        "entry_state_euler_correction": correction,
+        "modulus_state_unit_amplitude": F(1),
+        "entry_state_unit_amplitude_square": correction * correction / p,
+        "combined_square_constant_term": (
+            F(1) + correction * correction / p
+        ),
+        "combined_inverse_sqrt_prime_coefficient": -2 * correction,
+        "uniform_combined_square_lower_bound": lower,
+        "required_reciprocal_prime_square_mass": target,
+        "lower_bound_exceeds_reciprocal_prime_target": lower > target,
+        "simple_outer_state_recombination_closes_steinberg": False,
+        "two_orientation_or_conductor_average_required": True,
+        "outer_lisk_covered": False,
     }
 
 
@@ -11962,6 +12204,92 @@ def mixed_entry_projection_gram_audit(
         reciprocal_lcm_quadratic_form_is_polylogarithmic=True,
         physical_mixed_cross_index_transfer_proved=False,
         mixed_entry_harmonic_large_sieve_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
+def outer_state_inclusion_exclusion_audit(
+    *, prime: int
+) -> OuterStateInclusionExclusionAudit:
+    """Compute the signed nonempty-union sum of all outer local states.
+
+    The physical common-level Gram matrix has state order
+    (none, modulus, entry).  On squarefree coprime support the two
+    present states both carry one Mobius sign, so the local vector before
+    outer scale separation is (1,-1,-1).  The absent-absent cell is
+    excluded after conditioning that the prime belongs to the union of
+    the two outer entries.
+
+    The resulting eight-cell sum is exactly -1 although its unsigned
+    mass is 8*p-5.  This recovers one local prime power relative to a
+    generic phase twist, but it still has physical mass one rather than
+    the reciprocal-prime mass 1/p needed by the reciprocal-LCM
+    majorant.  Moreover the common half-turn twist changes the state
+    vector to (1,1,1) and attains the full unsigned mass.  Hence a
+    Mellin separation of the outer scales destroys the exact
+    inclusion-exclusion; the original outer scales must be recombined
+    before this cancellation can be used.
+    """
+    local = mixed_entry_projection_gram_audit(prime=prime)
+    matrix = local.physical_ambient_gram_matrix
+
+    def gram_value(
+        left: tuple[int, int, int],
+        right: tuple[int, int, int],
+    ) -> Fraction:
+        return sum(
+            (
+                F(left[row]) * matrix[row][column] * F(right[column])
+                for row in range(3)
+                for column in range(3)
+            ),
+            F(0),
+        )
+
+    mobius = (1, -1, -1)
+    half_turn = (1, 1, 1)
+    absent = matrix[0][0]
+    full_signed = gram_value(mobius, mobius)
+    signed_union = full_signed - absent
+    unsigned_union = sum(
+        (
+            matrix[row][column]
+            for row in range(3)
+            for column in range(3)
+            if (row, column) != (0, 0)
+        ),
+        F(0),
+    )
+    half_turn_union = gram_value(half_turn, half_turn) - absent
+    required = F(1, prime)
+    return OuterStateInclusionExclusionAudit(
+        prime=prime,
+        state_order=local.state_order,
+        mobius_state_vector=mobius,
+        physical_ambient_gram_matrix=matrix,
+        unsigned_nonempty_union_mass=unsigned_union,
+        full_signed_gram_mass=full_signed,
+        absent_absent_mass=absent,
+        signed_nonempty_union_mass=signed_union,
+        raw_signed_nonempty_union_mass=(
+            signed_union / local.ambient_normalization_multiplier
+        ),
+        equal_half_turn_twist_vector=half_turn,
+        equal_half_turn_twisted_nonempty_union_mass=half_turn_union,
+        unit_twist_cancellation_saves_one_prime_power=(
+            signed_union == -1
+            and unsigned_union == 8 * prime - 5
+        ),
+        required_reciprocal_prime_mass=required,
+        remaining_reciprocal_prime_ratio=abs(signed_union) / required,
+        unit_twist_reaches_reciprocal_prime_mass=(
+            abs(signed_union) <= required
+        ),
+        dyadic_mellin_twist_preserves_unit_cancellation=(
+            half_turn_union == signed_union
+        ),
+        recombination_before_outer_scale_separation_is_necessary=True,
+        recombined_outer_scale_physical_kernel_proved=False,
         outer_lisk_covered=False,
     )
 
@@ -23363,6 +23691,26 @@ def main() -> None:
         "reciprocal_lcm_physical="
         f"{mixed_gram.physical_tensor_kernel_is_majorized_by_reciprocal_lcm} "
         f"mepevp={mixed_gram.mixed_entry_harmonic_large_sieve_proved}"
+    )
+    outer_inclusion = outer_state_inclusion_exclusion_audit(prime=5)
+    print(
+        "balanced_max_a: outer_state_inclusion="
+        "unsigned_union="
+        f"{_fmt(outer_inclusion.unsigned_nonempty_union_mass)} "
+        "signed_union="
+        f"{_fmt(outer_inclusion.signed_nonempty_union_mass)} "
+        f"raw_union={_fmt(outer_inclusion.raw_signed_nonempty_union_mass)} "
+        "half_turn="
+        f"{_fmt(outer_inclusion.equal_half_turn_twisted_nonempty_union_mass)} "
+        "target="
+        f"{_fmt(outer_inclusion.required_reciprocal_prime_mass)} "
+        "remaining="
+        f"{_fmt(outer_inclusion.remaining_reciprocal_prime_ratio)} "
+        "mellin_preserves="
+        f"{outer_inclusion.dyadic_mellin_twist_preserves_unit_cancellation} "
+        "recombined="
+        f"{outer_inclusion.recombined_outer_scale_physical_kernel_proved} "
+        f"olisk={outer_inclusion.outer_lisk_covered}"
     )
     cross_tensor = unramified_cross_index_tensor_norm_audit()
     print(
