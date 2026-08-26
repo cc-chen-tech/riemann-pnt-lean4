@@ -16334,6 +16334,111 @@ uniformly through the primitive-conductor sum.  Until that global
 rearrangement is written, the polylog tensor flag remains false.
 
 
+### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate
+
+The remaining global rearrangement can be written without an
+asymptotic sign.  For \(Q_0\mid Q\), set
+\[
+ \iota_Q(Q_0):=[\Gamma_0(Q_0):\Gamma_0(Q)]
+ =\frac Q{Q_0}
+  \prod_{\substack{p\mid Q/Q_0\\p\nmid Q_0}}\left(1+\frac1p\right).
+\]
+Let \(\pi\) be primitive of conductor \(Q_0\), let \(g\mid Q/Q_0\),
+and use the general Blomer--Milićević coefficients \(\xi_{\pi,g}(d)\).
+In normalized Fourier coefficients put
+\[
+ U_{\pi,g}(n):=sum_{d\mid g}\xi_{\pi,g}(d)\sqrt d\,
+                 \lambda_\pi(n/d),
+ \qquad \lambda_\pi(x)=0\quad(x\notin\mathbb N).
+\]
+For one fixed Kuznetsov Bessel test \(\Phi\), the cuspidal part of the
+full level trace is exactly
+
+\[
+ \boxed{
+ \Delta_Q^{\rm cusp}(m,n;\Phi)
+ =\sum_{Q_0\mid Q}\ \sum_{\pi\in\mathcal B^*(Q_0)}
+  \frac{|\rho_\pi(1)|^2\Phi(t_\pi)}{\iota_Q(Q_0)}
+  \sum_{g\mid Q/Q_0}U_{\pi,g}(m)
+       \overline{U_{\pi,g}(n)}.}
+\tag{4.845db}
+\]
+
+The same identity holds for holomorphic forms.  Young's orthogonal
+Eisenstein newdata decomposition and his Section 8.5 oldclass basis
+give the identical formula for the continuous part, with the primitive
+sum replaced by its finite character-pair sum and real spectral
+integral.  Compact spectral localization and the ordinary large sieve
+make the displayed integrals absolutely convergent.
+
+Now put \(Q=ABj\), where \(j\mid A\), and retain the same \(\Phi\) for
+every \(j\).  All divisor sums are finite, so (4.845db) gives the exact
+reordering
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{j\mid A}\mu(j)\Delta_{ABj}(m,An;\Phi)
+ ={}&\sum_{Q_0\mid A^2B}\ \int_{\mathscr S^*(Q_0)}
+ |\rho_\pi(1)|^2\Phi(t_\pi)\\
+ &\times\sum_{\substack{j\mid A\\Q_0\mid ABj}}
+ \frac{\mu(j)}{\iota_{ABj}(Q_0)}
+ \sum_{g\mid ABj/Q_0}U_{\pi,g}(m)
+       \overline{U_{\pi,g}(An)}\,d\pi .
+ \end{aligned}}
+\tag{4.845dc}
+\]
+
+At each \(p\mid A\), the inner two sums in (4.845dc) are exactly the
+three conductor cases of Section 4.109y.  After the valuation norms,
+their amplitude weights satisfy
+\[
+ w_p(0)\ll p^{-1},\qquad
+ w_p(1)\leq p^{-1/2},\qquad
+ w_p(2)=0.
+\]
+Thus absolute aggregation of primitive-conductor choices costs at most
+\[
+ A^{-1/2}\prod_{p\mid A}(1+O(p^{-1/2}))
+ =A^{-1/2}
+  \exp\!\left(O\!\left(
+  \frac{\sqrt{\log(2A)}}{\log\log(3A)}\right)\right).
+\]
+For a common Möbius variable of length \(T^\delta\), \(\delta>0\),
+the Vinogradov--Korobov factor has exponential logarithmic order
+\(3/5\), and therefore dominates this order-\(1/2\) conductor-subset
+overhead.
+
+One loss is still not explicit enough.  The cited spectral large sieve
+is stated with \((Q_0Y\mathcal T)^\varepsilon\).  At a zero-power
+margin, a fixed \(\varepsilon\)-loss cannot be absorbed by the
+Vinogradov--Korobov factor.  What is needed is the weighted,
+epsilon-free form
+
+\[
+ \boxed{
+ \sum_{Q_0\mid A^2B}w_A(Q_0)
+ \int_{\mathscr S^*(Q_0)}
+ \left|\sum_{y\asymp Y}a_y\sqrt y\,\rho_\pi(y)\right|^2d\pi
+ \ll_{C,W}(\log(2T))^C
+ \left(\mathcal T^2+\frac{Y}{AB}\right)
+ \sum_y|a_y|^2,}
+\tag{PLS}_{Q_0}
+\]
+
+where \(w_A(Q_0)\) is the product of the three displayed local weights
+and includes the exact ambient normalizations in (4.845dc).  A proof
+may use the Kuznetsov formula again, but every divisor factor must be
+summed in mean; replacing it by a pointwise \(n^\varepsilon\) bound is
+not sufficient.
+
+The interface `primitive_conductor_level_difference_audit` records the
+exact regrouping, the local exponents \(1\) and \(1/2\), and the
+comparison \(3/5>1/2\).  It keeps the epsilon-free large-sieve and PEVP
+flags false.  Consequently (PLS)\(_{Q_0}\), rather than the already
+removed \(5^{\omega(A)}\), is now the precise compact-core obstruction.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

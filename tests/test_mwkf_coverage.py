@@ -4528,6 +4528,43 @@ def test_steinberg_exact_level_difference_has_closed_square_formula() -> None:
     assert both["closed_formula_exact"]
 
 
+def test_ambient_newform_normalization_indices_are_exact_at_p_and_p_squared() -> None:
+    index = coverage_audit.gamma0_subgroup_index_ratio
+    assert index(primitive_level=1, ambient_level=5) == 6
+    assert index(primitive_level=1, ambient_level=25) == 30
+    assert index(primitive_level=5, ambient_level=25) == 5
+    assert index(primitive_level=6, ambient_level=150) == 30
+
+
+def test_primitive_conductor_rearrangement_is_exact_but_polylog_large_sieve_is_open() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate",
+        r"\tag{4.845db}",
+        r"\tag{4.845dc}",
+        r"\tag{PLS}_{Q_0}",
+        "primitive_conductor_level_difference_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.primitive_conductor_level_difference_audit(
+        level_factor_exponent=F(3),
+        common_mobius_length_exponent=F(3, 2),
+        fixed_power_margin=F(0),
+    )
+    assert audit.ambient_normalization_formula_exact
+    assert audit.same_bessel_test_retained_at_every_level
+    assert audit.finite_level_and_primitive_conductor_sums_interchanged_exactly
+    assert audit.unramified_local_amplitude_saving_exponent == F(1)
+    assert audit.steinberg_local_amplitude_saving_exponent == F(1, 2)
+    assert audit.conductor_two_positive_valuation_vanishes
+    assert audit.primitive_subset_overhead_log_exponent == F(1, 2)
+    assert audit.vinogradov_korobov_decay_log_exponent == F(3, 5)
+    assert audit.vinogradov_korobov_dominates_subset_overhead
+    assert not audit.published_large_sieve_has_explicit_polylog_constant
+    assert not audit.pevp_proved
+
+
 def test_physical_exact_valuation_projector_closes_only_at_power_exponent_level() -> None:
     projector = coverage_audit.physical_exact_valuation_projector_audit(
         ramanujan_theta=F(7, 64),

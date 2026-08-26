@@ -1912,6 +1912,25 @@ class LiftedOuterQCTAggregationAudit:
 
 
 @dataclass(frozen=True)
+class PrimitiveConductorLevelDifferenceAudit:
+    level_factor_exponent: Fraction
+    common_mobius_length_exponent: Fraction
+    fixed_power_margin: Fraction
+    unramified_local_amplitude_saving_exponent: Fraction
+    steinberg_local_amplitude_saving_exponent: Fraction
+    primitive_subset_overhead_log_exponent: Fraction
+    vinogradov_korobov_decay_log_exponent: Fraction
+    ambient_normalization_formula_exact: bool
+    same_bessel_test_retained_at_every_level: bool
+    finite_level_and_primitive_conductor_sums_interchanged_exactly: bool
+    conductor_two_positive_valuation_vanishes: bool
+    vinogradov_korobov_dominates_subset_overhead: bool
+    published_large_sieve_has_explicit_polylog_constant: bool
+    pevp_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class EisensteinSecondMomentReciprocityAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -9998,6 +10017,47 @@ def unramified_prime_oldspace_cross_factor_identity(
     }
 
 
+def gamma0_subgroup_index_ratio(
+    *,
+    primitive_level: int,
+    ambient_level: int,
+) -> int:
+    """Return ``[Gamma_0(Q0):Gamma_0(Q)]`` for ``Q0|Q``.
+
+    The exact index is
+
+    ``(Q/Q0) * product_{p | Q/Q0, p not| Q0} (1+1/p)``.
+
+    This is the square normalization relating a primitive form normalized
+    at level Q0 to the same form normalized in the ambient level Q.
+    """
+    q0 = int(primitive_level)
+    q = int(ambient_level)
+    if q0 < 1 or q < 1 or q % q0:
+        raise ValueError("primitive_level must be a positive divisor of ambient_level")
+    quotient = q // q0
+    remaining = quotient
+    primes: list[int] = []
+    divisor = 2
+    while divisor * divisor <= remaining:
+        if remaining % divisor == 0:
+            primes.append(divisor)
+            while remaining % divisor == 0:
+                remaining //= divisor
+        divisor += 1
+    if remaining > 1:
+        primes.append(remaining)
+    numerator = quotient
+    denominator = 1
+    for prime in primes:
+        if q0 % prime:
+            numerator *= prime + 1
+            denominator *= prime
+    if numerator % denominator:
+        raise AssertionError("Gamma_0 index formula must be integral")
+    return numerator // denominator
+
+
 def unramified_oldspace_cross_prime_power_identity(
     *,
     prime: int,
@@ -10464,6 +10524,51 @@ def lifted_outer_qct_aggregation_audit(
         nonzero_poisson_core_is_little_o_T=core_little_o,
         polylogarithmic_transform_tail_aggregated=False,
         afe_tail_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def primitive_conductor_level_difference_audit(
+    *,
+    level_factor_exponent: Fraction,
+    common_mobius_length_exponent: Fraction,
+    fixed_power_margin: Fraction,
+) -> PrimitiveConductorLevelDifferenceAudit:
+    """Audit the exact newform rearrangement behind PEVP.
+
+    The finite level difference is expanded in the general
+    Blomer--Milicevic oldclass basis and then grouped by primitive
+    conductor.  Exact ambient normalization and a level-independent
+    Bessel test make that regrouping algebraic.  Local conductor choices
+    leave at worst ``exp(O(sqrt(log A)/loglog A))`` overhead, whereas a
+    positive-power Mobius variable has Vinogradov--Korobov decay with
+    logarithmic exponent 3/5.  The published spectral large sieve is
+    nevertheless stated with an epsilon loss, not an explicit fixed
+    polylogarithmic constant, so PEVP is not marked proved here.
+    """
+    alpha = F(level_factor_exponent)
+    mobius = F(common_mobius_length_exponent)
+    margin = F(fixed_power_margin)
+    if min(alpha, mobius, margin) < 0:
+        raise ValueError("exponents must be nonnegative")
+    subset_log = F(1, 2)
+    vk_log = F(3, 5)
+    vk_dominates = mobius > 0 and vk_log > subset_log
+    return PrimitiveConductorLevelDifferenceAudit(
+        level_factor_exponent=alpha,
+        common_mobius_length_exponent=mobius,
+        fixed_power_margin=margin,
+        unramified_local_amplitude_saving_exponent=F(1),
+        steinberg_local_amplitude_saving_exponent=F(1, 2),
+        primitive_subset_overhead_log_exponent=subset_log,
+        vinogradov_korobov_decay_log_exponent=vk_log,
+        ambient_normalization_formula_exact=True,
+        same_bessel_test_retained_at_every_level=True,
+        finite_level_and_primitive_conductor_sums_interchanged_exactly=True,
+        conductor_two_positive_valuation_vanishes=True,
+        vinogradov_korobov_dominates_subset_overhead=vk_dominates,
+        published_large_sieve_has_explicit_polylog_constant=False,
+        pevp_proved=False,
         whole_mobius_gate_covered=False,
     )
 
