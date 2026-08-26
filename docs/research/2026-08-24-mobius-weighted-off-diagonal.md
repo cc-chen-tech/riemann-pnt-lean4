@@ -7877,6 +7877,134 @@ cancellation is impossible; and the unresolved central mechanism is a
 finite weighted density-prefix cancellation or a genuinely coupled
 Type-II cancellation, not an omitted endpoint term.
 
+### 9.50 Rational-denominator coverage of the additive circle variable
+
+There is a useful fixed-power estimate on genuine minor arcs, but its
+parameter interval does not enter the missing near-zero packet with
+positive width.  This can be checked without hiding any logarithmic
+loss in the exponent notation.  Let
+
+\[
+ M_X(\alpha):=\sum_{n\leq X}\mu(n)e(\alpha n),\qquad
+ X=T^x,\qquad q=T^r,
+\]
+
+and suppose \((a,q)=1\) and
+
+\[
+ \left|\alpha-\frac aq\right|\leq q^{-2}.
+\]
+
+The Vaughan decomposition with both splitting parameters equal to
+\(X^{2/5}\), together with the standard Type-I and Type-II exponential
+sum lemmas, gives
+
+\[
+\boxed{
+ |M_X(\alpha)|
+ \ll_\varepsilon
+ T^{4x/5+\varepsilon}
+ +T^{x-r/2+\varepsilon}
+ +T^{x/2+r/2+\varepsilon}.}
+\tag{9.323}
+\]
+
+This is Proposition 4 in Cha--Kim's explicit account of the Vinogradov
+bound, with the logarithms absorbed into \(T^\varepsilon\); see
+[arXiv:2504.06726](https://arxiv.org/abs/2504.06726).  Their displayed
+Type-I and Type-II estimates are respectively
+\((X^{4/5}+X/q+q)X^\varepsilon\) and
+\((X^{3/5}+X/q+q)^{1/2}X^{1/2+\varepsilon}\), which give (9.323).
+Dyadic or fixed smooth subintervals follow by subtraction and partial
+summation.
+
+If the required relative saving is \(X^{-\eta}\), all three terms in
+(9.323) are within \(X^{1-\eta+\varepsilon}\) exactly when
+
+\[
+\boxed{
+ \eta\leq\frac15,
+ \qquad 2x\eta\leq r\leq x(1-2\eta).}
+\tag{9.324}
+\]
+
+The first inequality is the immovable \(X^{4/5}\) Type-I floor.  The
+other two come from the reciprocal-denominator and denominator terms.
+The executable exact-rational ledger records both the closed theorem
+interval and its intersection with the denominators occurring below;
+meeting at one endpoint is deliberately not counted as positive-width
+coverage.
+
+For the direct shifted Möbius polynomial in (9.282), the smooth
+\(d\)-transform restricts the relevant circle variable to
+\(|\alpha|\lesssim D^{-1}=T^{-2}\), while the central scale is
+\(S^{-1}=T^{-3}\).  On a dyadic band
+\(|\alpha|\asymp T^{-a}\), \(2\leq a\leq3\), the reciprocal rational
+approximation has denominator exponent \(r=a\).  The length is \(x=3\),
+and (9.303) requires \(\eta_S=1/6\).  Hence
+
+\[
+\boxed{
+ r_{\rm theorem}\in[1,2],\qquad
+ r_{\rm actual}\in[2,3],\qquad
+ r_{\rm theorem}\cap r_{\rm actual}=\{2\}.}
+\tag{9.325}
+\]
+
+Thus the classical fixed-power bound touches only the outer endpoint
+\(|\alpha|\asymp D^{-1}\); it controls no dyadic annulus inside the
+near-zero packet.
+
+One might instead fix \(g\asymp T^{1/2}\) and apply (9.323) to the
+\(q\asymp T^{5/2}\) polynomial.  Its frequency is
+\(\alpha g\asymp T^{-(a-1/2)}\), so its reciprocal denominator has
+\(r\in[3/2,5/2]\).  Saving the whole missing \(T^{1/2}\) from this
+factor requires the maximal relative saving \(\eta_Q=1/5\).  Formula
+(9.324) again gives only an endpoint:
+
+\[
+\boxed{
+ r_{\rm theorem}\in[1,3/2],\qquad
+ r_{\rm actual}\in[3/2,5/2],\qquad
+ r_{\rm theorem}\cap r_{\rm actual}=\{3/2\}.}
+\tag{9.326}
+\]
+
+There is an even quicker no-coverage test for the complementary
+\((b,c,k)\)-polytope (9.321).  A single Möbius factor of length
+\(T^\xi\) can save at most \(T^{\xi/5}\) through (9.323), whereas the
+packet needs \(T^{1/2}\).  Therefore a one-factor Vinogradov argument
+requires
+
+\[
+\boxed{\xi\geq\frac52.}
+\tag{9.327}
+\]
+
+But (9.321) has \(\beta,\gamma\leq2\) and \(\kappa\leq1\).  Hence none
+of the three complementary factors can supply the missing power alone.
+The original \(q\)-factor has exactly \(\xi=5/2\), but (9.326) shows
+that it saturates the power only at the outer endpoint.
+
+The 2026 almost-all short-interval theorem of
+Matomäki--Radziwiłł--Shao--Tao--Teräväinen does not change this power
+ledger.  For Möbius against polynomial phases it proves arbitrary
+logarithmic saving outside an exceptional set, not \(X^{-c}\); see
+[Corollary 1.2(i)](https://link.springer.com/article/10.1007/s00222-026-01408-6).
+The same paper obtains fixed-power discorrelation for divisor-function
+coefficients, and explicitly distinguishes that case from
+\(f\in\{\Lambda,\mu\}\).  Consequently neither Davenport uniformity,
+the explicit Vinogradov minor-arc estimate, nor the newest almost-all
+Fourier theorem proves (9.315).
+
+The surviving circle-method interface is therefore more precise than
+"control the minor arcs": it is the **positive-width near-zero/small-
+denominator major-arc packet**, with the density prefix and the
+long--long complementary modes kept together.  Any successful proof
+must use joint \(b,c,k\) cancellation, an exact vanishing moment of the
+actual combined multiplier, or a new fixed-power Möbius estimate on
+that major-arc packet.  No such theorem is asserted here.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -8131,6 +8259,17 @@ Proved in this note:
   asymptotic-sieve bilinear form (9.315).  At the final square-root
   cutoff, fixing either long factor misses the published \(5/8\)
   threshold by the exact exponent gap \(2/3\), (9.316)--(9.322).
+* the additive rational-denominator coverage ledger (9.323)--(9.327):
+  Vaughan's \(X^{2/5}\) split covers a relative saving \(X^{-\eta}\)
+  only for \(\eta\leq1/5\) and denominator exponent
+  \(2x\eta\leq r\leq x(1-2\eta)\).  For the length-\(S\) shifted
+  polynomial and the length-\(Q\) quotient polynomial, that interval
+  meets the actual near-zero denominator range at only one outer
+  endpoint.  It has no positive-width overlap.  On the complementary
+  polytope every individual factor has length below the \(T^{5/2}\)
+  minimum needed to save \(T^{1/2}\).  The remaining circle interface
+  is therefore the coupled small-denominator major-arc packet, not a
+  classical one-factor minor-arc estimate.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -8188,6 +8327,7 @@ Proved in this note:
 | Actual archimedean zero-moment route | scale audit exact; special identity unproved | in the balanced transition every parameter \(TL/(MR),HM/S,M^2R/(ST),KS/(MR),gD/L,H/q\) has exponent zero, (9.287)--(9.288).  Thus the completed weight is sampled at bounded frequency and integration by parts gives no power.  The AFE zeros at Mellin \(z=\pm1/2\) do not force the proposed \(d\)-moment (9.289), and even that moment would remove only the additive origin |
 | Post-completion scalar recombination | exact two-Möbius form; published average only logarithmic | (9.290)--(9.291) merge \(\mu(g)\mu(q)\) into \(\mu(s)\) and put every separated scalar weight into \(\omega_{G,Q}(s)\).  Its divisor-bounded \(L^2\) norm (9.292), together with the exact gcd-divisor split, fits Lichtman's arbitrary-coefficient Fourier lemma componentwise.  The resulting bound has power exponent \(SD=T^5\), not the target \(S^{3/2}=T^{9/2}\), (9.293)--(9.294); no third independent Möbius sign remains |
 | Central Type-I/II density prefix | exact square-root split; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that bound; on squarefree support (9.311)--(9.313) maps the residual to the FI boundary (9.314), whose bilinear axiom is assumed rather than proved.  The endpoint \(U=V=\lfloor\sqrt D\rfloor\) makes \(m\leq D\) pure Type I and \(m>D\) pure Type II, (9.319)--(9.320), leaving \(\beta,\gamma\geq1,\kappa\leq1\), (9.321).  Fixing either long factor misses the \(5/8\) theorem by \(2/3\), (9.322), so the joint gate (9.315) remains essential |
+| Additive Vinogradov circle route | exact denominator coverage; no positive-width overlap | The explicit rational-approximation bound is (9.323), and a relative saving \(X^{-\eta}\) is available only on (9.324).  The direct length-\(S\) polynomial and the fixed-\(g\), length-\(Q\) polynomial each meet their actual near-zero denominator interval at one endpoint only, (9.325)--(9.326).  A single complementary factor would need length at least \(T^{5/2}\), (9.327), while (9.321) gives at most \(T^2,T^2,T\).  Recent almost-all Möbius Fourier uniformity remains logarithmic, so the coupled major-arc gate is still unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -8232,6 +8372,16 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   Q. J. Math. 73 (2022), 729--757, arXiv:2009.08969v2, especially
   Theorems 1.3 and 6.2; mapped to the stripped signed prime projection
   in Section 9.42.
+* B. Cha, D. H. Kim, *On the Vinogradov bound by the Diophantine type*,
+  arXiv:2504.06726, especially the Vaughan decomposition and the
+  displayed Type-I/Type-II bounds in Proposition 4; specialized to the
+  exact denominator coverage interval (9.323)--(9.327).
+* K. Matomäki, M. Radziwiłł, X. Shao, T. Tao, J. Teräväinen,
+  *Higher uniformity of arithmetic functions in short intervals II.
+  Almost all intervals*, Invent. Math. 244 (2026), 967--1091,
+  Corollary 1.2(i) and the Type-II discussion; Section 9.50 records that
+  the Möbius saving is logarithmic whereas the fixed-power statements
+  concern divisor-function coefficients.
 * J. Friedlander, H. Iwaniec, *Asymptotic sieve for primes*, Ann. of
   Math. 148 (1998), 1041--1065, arXiv:math/9811186, especially
   hypotheses (B), (B1)--(B3); Section 9.48 maps the complementary

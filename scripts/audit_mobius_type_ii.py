@@ -647,6 +647,71 @@ def central_major_arc_mertens_ledger(
     )
 
 
+def vinogradov_denominator_coverage_ledger(
+    *,
+    polynomial_length: Fraction,
+    required_relative_saving: Fraction,
+    actual_denominator_floor: Fraction,
+    actual_denominator_ceiling: Fraction,
+) -> VinogradovDenominatorCoverageLedger:
+    """Coverage of a rational-approximation Möbius exponential bound.
+
+    If ``X=T^x`` and ``alpha`` has a reduced approximation of
+    denominator ``T^r``, Vaughan's two-fifths split gives the three
+    exponent terms
+
+    ``4x/5``, ``x-r/2``, and ``x/2+r/2``.
+
+    Requiring a relative saving ``eta`` therefore restricts the
+    denominator exponent to
+
+    ``2*x*eta <= r <= x*(1-2*eta)``
+
+    and also requires ``eta <= 1/5`` because of the Type-I floor.  The
+    returned overlap is closed; ``has_positive_width_overlap`` is false
+    when the theorem and application meet at only one endpoint.
+    """
+
+    lengths = (
+        polynomial_length,
+        actual_denominator_floor,
+        actual_denominator_ceiling,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if not 0 <= required_relative_saving <= 1:
+        raise ValueError("the relative saving must lie in [0,1]")
+    if actual_denominator_floor > actual_denominator_ceiling:
+        raise ValueError("the denominator interval must be ordered")
+
+    type_i_bound = Fraction(4, 5) * polynomial_length
+    target_bound = polynomial_length * (1 - required_relative_saving)
+    theorem_floor = (
+        2 * polynomial_length * required_relative_saving
+    )
+    theorem_ceiling = polynomial_length * (
+        1 - 2 * required_relative_saving
+    )
+    overlap_floor = max(actual_denominator_floor, theorem_floor)
+    overlap_ceiling = min(actual_denominator_ceiling, theorem_ceiling)
+    type_i_compatible = type_i_bound <= target_bound
+    return VinogradovDenominatorCoverageLedger(
+        polynomial_length=polynomial_length,
+        required_relative_saving=required_relative_saving,
+        type_i_bound=type_i_bound,
+        target_bound=target_bound,
+        theorem_denominator_floor=theorem_floor,
+        theorem_denominator_ceiling=theorem_ceiling,
+        actual_denominator_floor=actual_denominator_floor,
+        actual_denominator_ceiling=actual_denominator_ceiling,
+        overlap_floor=overlap_floor,
+        overlap_ceiling=overlap_ceiling,
+        has_positive_width_overlap=(
+            type_i_compatible and overlap_floor < overlap_ceiling
+        ),
+    )
+
+
 def postcompletion_cutoff_ledger(
     *,
     ambient_length: Fraction,
@@ -3410,6 +3475,23 @@ class CentralMajorArcMertensLedger:
     available_saving: Fraction
     conditional_bound: Fraction
     gap: Fraction
+
+
+@dataclass(frozen=True)
+class VinogradovDenominatorCoverageLedger:
+    """Rational-denominator interval for a fixed Möbius power saving."""
+
+    polynomial_length: Fraction
+    required_relative_saving: Fraction
+    type_i_bound: Fraction
+    target_bound: Fraction
+    theorem_denominator_floor: Fraction
+    theorem_denominator_ceiling: Fraction
+    actual_denominator_floor: Fraction
+    actual_denominator_ceiling: Fraction
+    overlap_floor: Fraction
+    overlap_ceiling: Fraction
+    has_positive_width_overlap: bool
 
 
 @dataclass(frozen=True)

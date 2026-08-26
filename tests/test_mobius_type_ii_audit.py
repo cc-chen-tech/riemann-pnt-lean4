@@ -44,6 +44,7 @@ from scripts.audit_mobius_type_ii import (
     TransitionNumeratorDualCoordinates,
     TwoCutoffCenteredSplit,
     TwoCutoffProductCoefficient,
+    VinogradovDenominatorCoverageLedger,
     WrightFactorSavings,
     YoungCommonFactorLedger,
     YoungDualGcdLedger,
@@ -205,6 +206,7 @@ from scripts.audit_mobius_type_ii import (
     two_sided_mobius_geometric_value,
     unrestricted_fourier_lift,
     unrestricted_fourier_lift_formula,
+    vinogradov_denominator_coverage_ledger,
     weighted_farey_collision_sum,
     weighted_inverse_collision_sum,
     weighted_inverse_product_box_sum,
@@ -625,6 +627,54 @@ def test_central_major_arc_needs_a_fixed_mertens_power() -> None:
         quotient_relative_saving=F(0),
         shifted_relative_saving=F(1, 6),
     ).gap == 0
+
+
+def test_vinogradov_rational_coverage_only_touches_the_shift_arc_endpoint() -> None:
+    direct_shift = vinogradov_denominator_coverage_ledger(
+        polynomial_length=F(3),
+        required_relative_saving=F(1, 6),
+        actual_denominator_floor=F(2),
+        actual_denominator_ceiling=F(3),
+    )
+    assert direct_shift == VinogradovDenominatorCoverageLedger(
+        polynomial_length=F(3),
+        required_relative_saving=F(1, 6),
+        type_i_bound=F(12, 5),
+        target_bound=F(5, 2),
+        theorem_denominator_floor=F(1),
+        theorem_denominator_ceiling=F(2),
+        actual_denominator_floor=F(2),
+        actual_denominator_ceiling=F(3),
+        overlap_floor=F(2),
+        overlap_ceiling=F(2),
+        has_positive_width_overlap=False,
+    )
+
+    # After fixing g=T^(1/2), the q-polynomial has length T^(5/2),
+    # frequency alpha*g, and reciprocal-denominator range
+    # T^(3/2)..T^(5/2).  Saving the missing T^(1/2) from q alone
+    # requires relative exponent 1/5, again leaving only one endpoint.
+    quotient_factor = vinogradov_denominator_coverage_ledger(
+        polynomial_length=F(5, 2),
+        required_relative_saving=F(1, 5),
+        actual_denominator_floor=F(3, 2),
+        actual_denominator_ceiling=F(5, 2),
+    )
+    assert quotient_factor.overlap_floor == F(3, 2)
+    assert quotient_factor.overlap_ceiling == F(3, 2)
+    assert not quotient_factor.has_positive_width_overlap
+
+
+def test_vinogradov_type_i_floor_forbids_more_than_one_fifth_saving() -> None:
+    too_much = vinogradov_denominator_coverage_ledger(
+        polynomial_length=F(1),
+        required_relative_saving=F(1, 4),
+        actual_denominator_floor=F(0),
+        actual_denominator_ceiling=F(1),
+    )
+    assert too_much.type_i_bound == F(4, 5)
+    assert too_much.target_bound == F(3, 4)
+    assert not too_much.has_positive_width_overlap
 
 
 def test_postcompletion_cutoff_can_reach_three_quarter_per_divisor() -> None:
