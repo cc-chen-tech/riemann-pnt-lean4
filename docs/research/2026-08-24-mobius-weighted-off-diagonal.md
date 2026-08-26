@@ -11257,6 +11257,79 @@ on the divisor \(s\), both endpoint tapers, and the vector-valued tube.
 Neither bounded multiplicity nor the fold \(\mu(r)\mu(s)=\mu(n)\) proves
 square-root cancellation in the sparse product sequence.
 
+The rational slope grid itself is no longer an additional power
+obstruction.  The generic bandwidth estimate (4.652)--(4.654) in the
+alternative-routes note ignores the actual Beatty Fourier coefficients.
+For a fixed Hilbert-valued family they have the form
+
+\[
+ F(\lambda)=\sum_{m\leq X}g_m
+ \sum_{1\leq |j|\leq J}c_j e(mj\lambda),
+ \qquad |c_j|\ll |j|^{-1},\qquad J=X^{1/2}.
+ \tag{9.498}
+\]
+
+For \(h\)-separated nodes and \(\sigma>1/2\), scaled Sobolev sampling
+gives
+
+\[
+ \boxed{
+ h\sum_\beta\|F(\lambda_\beta)\|_{\mathcal H}^2
+ \ll_\sigma \|F\|_2^2
+ +h^{2\sigma}\bigl\||D|^\sigma F\bigr\|_2^2.}
+ \tag{9.499}
+\]
+
+If
+
+\[
+ a_k=\sum_{mj=k}g_mc_j,
+ \tag{9.500}
+\]
+
+then divisor Cauchy and \(|c_j|\ll |j|^{-1}\) imply
+
+\[
+ \begin{aligned}
+ \sum_k\|a_k\|_{\mathcal H}^2
+ &\ll_\eta (XJ)^\eta\sum_m\|g_m\|_{\mathcal H}^2,\\
+ \sum_k|k|^{2\sigma}\|a_k\|_{\mathcal H}^2
+ &\ll_\eta (XJ)^\eta
+ \sum_m m^{2\sigma}\|g_m\|_{\mathcal H}^2
+ \sum_{j\leq J}j^{2\sigma-2}.
+ \end{aligned}
+ \tag{9.501}
+\]
+
+At \(X=Q=T\), \(h\asymp Q^{-1}\), choose
+\(\sigma=1/2+\eta\).  Since
+
+\[
+ h^{2\sigma}X^{2\sigma}\asymp1,\qquad
+ \sum_{j\leq T^{1/2}}j^{2\sigma-2}\ll_\eta T^\eta,
+ \tag{9.502}
+\]
+
+the nonuniform reciprocal grid satisfies the proved estimate
+
+\[
+ \boxed{
+ \sum_{\beta\leq Q}\|F(\lambda_\beta)\|_{\mathcal H}^2
+ \ll_\varepsilon T^{1+\varepsilon}
+ \sum_{m\leq T}\|g_m\|_{\mathcal H}^2.}
+ \tag{9.503}
+\]
+
+Therefore a fixed coefficient family with diagonal energy \(T^{1+o(1)}\)
+has sampled energy \(T^{2+\varepsilon}\); the former generic
+\(T^{1/2}\) alias loss is not present.  This closes the *sampling* row of
+the metric-Beatty coverage audit.  It does not close the packet row:
+the actual coefficient at a Beatty value changes with its denominator
+preimage, while the product-coordinate repair (9.497) has ambient
+coefficient energy \(T^{2+o(1)}\) and factorization-dependent vectors.
+Constructing a length-\(T\), slope-independent Hilbert family from the
+global Type I/II packet remains unproved.
+
 The helpers farey_scalar_beatty_fixed_coefficient_collision and
 labelled_type_nonprincipal_determinant_split verify (9.483)--(9.487) with
 exact integer/rational data.  The latter fixture retains three distinct
@@ -11273,6 +11346,14 @@ The helper farey_product_sector_fiber_ledger verifies
 \(\mu(n)\) coefficient, while keeping
 vector_weight_still_factorization_dependent true and
 cancellation_estimate_proved false.
+The adapter structured_beatty_sobolev_sampling_audit verifies the exponent
+ledger in (9.498)--(9.503), including arbitrary separated nodes and
+Hilbert-valued fixed coefficients.  It keeps
+actual_packet_fixed_across_slopes and
+moving_two_mobius_vector_adapter_constructed false.
+The finite helper beatty_divisor_fourier_coefficient_sides constructs
+(9.500) over exact rational vectors and verifies the Hilbert
+divisor-Cauchy majorant in (9.501) frequency by frequency.
 
 ## 10. What has and has not been proved
 
@@ -11390,6 +11471,11 @@ the sector model's extra power is confined to
 estimate or the separate global same-slope gate.  The fixed-function
 collision (9.483)--(9.484) additionally rules out applying the published
 scalar metric-Beatty \(L^2\) theorem across the moving sector family.
+The structured Sobolev transfer (9.498)--(9.503) now proves that separated
+reciprocal-grid sampling itself costs only \(T^\varepsilon\) for a fixed
+Hilbert coefficient family; hence sampling is no longer listed as a
+separate half-power obstruction.  Deriving that fixed family from the
+moving two-Möbius packet remains open.
 The exact labelled split (9.485)--(9.487) now retains all four Type-pair
 blocks and every \(h\delta\) packet before separating \(\Delta=0\) from
 \(\Delta\ne0\); only the former is recombined, while the joint signed
@@ -11886,7 +11972,7 @@ Proved in this note:
 | Actual zero-mode Fourier projector | exact high-rank identification; banded Möbius energy unproved | The fully recombined equal-index packet is the Fourier Gram (9.457), minus its explicit diagonal (9.458).  On the Gaussian \(1,2,4\) minor, both determinants in (9.462) are nonzero, so the full and diagonal-removed projectors have rank \(3\); every product-density row/column/grand projection has rank at most \(2\), (9.463).  Hence scalar-density centering cannot isolate the whole resonance, and the remaining projector is the long-polynomial gate rather than an LCM diagonal |
 | Determinant-zero primitive slopes | exact same-slope decomposition; within-slope norm unproved | Since every affine slope \((k_0,\ell_0)\) is positive and primitive, determinant zero forces equality of the two slopes, (9.465)--(9.466).  The zero orbit is therefore the sum of same-slope squared norms (9.467), with no cross-slope collisions.  All \(g,h,\delta,\nu,\sigma\) signs remain inside each square, and the bound (9.468) is still open |
 | Label-safe Type-entry determinant | internal zero orbit recombined; nonzero entry determinant unproved | The auxiliary sector character is \(\xi\), not \(a_{\rm AFE}=h\delta\), and all original packet labels remain in the row, (9.469)--(9.471).  A common Beatty sector is one common Euclidean quotient and obeys \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\), (9.472)--(9.477).  All \(dm=r\) cross factorizations must be recombined by the Möbius-log identity (9.478)--(9.481).  This makes the nonprincipal \(\Delta_{\rm Type}=0\) part exactly \((1-M^{-1})D_{\rm cont}\), already at diagonal power, (9.482); the extra power is confined to \(\Delta_{\rm Type}\ne0\), which is not estimated |
-| Moving-Beatty fixed-function and labelled Type split | scalar adapter disproved; exact positive joint Type Gram and bounded product fiber; one-sided nonzero determinant unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot be sampled into the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\).  The zero blocks recombine, and (9.489) makes the complete packet an exact projector square.  Therefore only the one-sided joint upper gate \({\rm JNT}_{2}^{+}\), (9.491), is needed after the diagonal estimate.  Reindexing by \(n=rs\) further gives one fixed \(\mu(n)\) and an \(O(1)\) product-sector fiber, (9.494)--(9.497), but the vector weight remains factorization-dependent; the one-sided gate and exhaustive adapter remain unproved |
+| Moving-Beatty fixed-function and labelled Type split | structured slope sampling proved; scalar packet adapter disproved; exact positive joint Type Gram and bounded product fiber; one-sided nonzero determinant unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot directly encode the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\).  The zero blocks recombine, and (9.489) makes the complete packet an exact projector square.  Therefore only the one-sided joint upper gate \({\rm JNT}_{2}^{+}\), (9.491), is needed after the diagonal estimate.  Reindexing by \(n=rs\) further gives one fixed \(\mu(n)\) and an \(O(1)\) product-sector fiber, (9.494)--(9.497), but the vector weight remains factorization-dependent.  The Sobolev/divisor argument (9.498)--(9.503) proves \(T^\varepsilon\)-loss sampling on the reciprocal grid for every fixed Hilbert family, removing the former generic \(T^{1/2}\) alias deficit; the fixed-family adapter, one-sided gate, and exhaustive packet map remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

@@ -11176,7 +11176,7 @@ lichtman_shifted_prime_type_i_coverage_audit verify (4.646)--(4.648) and
 record the norm, range, and half-power deficit.  Their Type-I coverage flags
 remain false.
 
-### 4.75 The scalar metric-Beatty surrogate reaches the exponent, but fixed-\(f\) and sampling both fail
+### 4.75 The scalar metric-Beatty surrogate: fixed-\(f\) fails, but structured sampling loses no power
 
 Technau--Zafeiropoulos, arXiv:1907.06050, Theorem 2.1 and Corollary
 4.4 give a genuinely square-root-sized discrepancy for one *fixed*
@@ -11268,11 +11268,82 @@ the same generic factor \(1+X^{3/2}/Q\).  Thus, at \(X=Q=T\),
  \tag{4.654}
 \]
 
-Conditional on first replacing the actual packet by a fixed scalar
-coefficient, this reproduces the hard-face exponent \(5/2\) from a new
-direction.  It does not prove that the actual coefficients saturate the
-generic sampling bound.  Instead it identifies the precise improvement a
-successful metric-Beatty route would need:
+This is only the arbitrary-bandwidth audit.  It must not be charged to the
+Technau--Zafeiropoulos polynomial, whose Fourier coefficients have the
+special divisor-convolution form
+
+\[
+ F(\lambda)=\sum_{m\leq X}g_m
+ \sum_{1\leq |j|\leq J}c_j e(mj\lambda),
+ \qquad |c_j|\ll |j|^{-1},\qquad J=X^{1/2}.
+ \tag{4.654a}
+\]
+
+This structure removes the apparent half-power even on the nonuniform
+reciprocal grid.  Let \(\mathcal H\) be a Hilbert space and let
+\(\lambda_1,\ldots,\lambda_Q\) be \(h\)-separated in a fixed compact
+interval.  For every \(\sigma>1/2\), the scaled Sobolev sampling
+inequality gives
+
+\[
+ \boxed{
+ h\sum_{\beta\leq Q}\|F(\lambda_\beta)\|_{\mathcal H}^{2}
+ \ll_\sigma
+ \|F\|_{L^2(\mathbb T;\mathcal H)}^2
+ +h^{2\sigma}
+ \bigl\||D|^\sigma F\bigr\|_{L^2(\mathbb T;\mathcal H)}^2.}
+ \tag{4.654b}
+\]
+
+Writing
+
+\[
+ a_k=\sum_{\substack{mj=k\\m\leq X,\ |j|\leq J}}g_m c_j,
+ \tag{4.654c}
+\]
+
+divisor Cauchy, valid componentwise in \(\mathcal H\), gives for every
+\(\eta>0\)
+
+\[
+ \begin{aligned}
+ \sum_k\|a_k\|_{\mathcal H}^2
+ &\ll_\eta (XJ)^\eta\sum_m\|g_m\|_{\mathcal H}^2,\\
+ \sum_k |k|^{2\sigma}\|a_k\|_{\mathcal H}^2
+ &\ll_\eta (XJ)^\eta
+ \sum_m m^{2\sigma}\|g_m\|_{\mathcal H}^2
+ \sum_{1\leq |j|\leq J}|j|^{2\sigma-2}.
+ \end{aligned}
+ \tag{4.654d}
+\]
+
+At the critical scales \(X=Q=T\), \(h\asymp T^{-1}\), and
+\(J=T^{1/2}\), take \(\sigma=1/2+\eta\).  Then
+
+\[
+ h^{2\sigma}X^{2\sigma}\asymp1,\qquad
+ \sum_{j\leq J}j^{2\sigma-2}\ll_\eta J^{2\eta}
+ =T^\eta.
+\]
+
+Equations (4.654b)--(4.654d) prove
+
+\[
+ \boxed{
+ \sum_{\beta\leq Q}\|F(\lambda_\beta)\|_{\mathcal H}^{2}
+ \ll_{\varepsilon}T^{1+\varepsilon}
+ \sum_{m\leq T}\|g_m\|_{\mathcal H}^{2}.}
+ \tag{4.654e}
+\]
+
+Thus when \(\sum_m\|g_m\|^2=T^{1+o(1)}\), the sampled total energy is
+\(T^{2+\varepsilon}\), exactly the target.  The reciprocal nodes
+\(\lambda_b=(1+b/Q)^{-1}\) are \(Q^{-1}\)-separated on the relevant
+compact interval, so no uniform-grid orthogonality is needed.  The
+generic \(T^{1/2}\) line in (4.654) is therefore not an obstruction for
+a *fixed Hilbert-valued coefficient family* of the form (4.654a).
+
+For reference, a direct arbitrary-alias treatment would instead ask for
 
 \[
  \boxed{
@@ -11284,7 +11355,9 @@ successful metric-Beatty route would need:
  \tag{4.655}
 \]
 
-All Type sectors and outer packet labels must be summed before (4.655).
+All Type sectors and outer packet labels would have to be summed before
+(4.655), but (4.654e) shows that this extra alias conjecture is unnecessary
+once a valid fixed-coefficient Fourier adapter has been constructed.
 The original \(a_{\rm AFE}=h\delta\) and the auxiliary sector character
 \(\xi\) are distinct variables in (4.621zadj16u); \(h\delta\) therefore
 cannot be counted as an extra interlacing of the rational slope grid
@@ -11295,14 +11368,19 @@ index Möbius factor and a vector wave packet.
 The finite helper farey_scalar_beatty_fixed_coefficient_collision verifies
 (4.650a)--(4.650b).  The helper trigonometric_grid_aliasing_sides verifies
 (4.652)--(4.653) over exact rational coefficients.  The scale adapter
-technau_zafeiropoulos_grid_coverage_audit records bandwidth \(3/2\), grid
-exponent one, the alias exponent \(1/2\), continuous exponent two, sampled
-exponent \(5/2\), the two coefficient/packet mismatches, and the missing
-Type-packet Fourier adapter.  It keeps
-the coverage flag false.  The exact map from the original Type packet to
-the Fourier coefficients in (4.655) has not been constructed.  Formula
-(4.655) is therefore a narrower candidate pre-Cauchy nonzero-alias target,
-not a proved or already-derived replacement for the coupled-kernel gate.
+technau_zafeiropoulos_grid_coverage_audit records the generic bandwidth
+audit.  The corrected adapter
+structured_beatty_sobolev_sampling_audit records (4.654a)--(4.654e),
+supports nonuniform separated nodes and fixed Hilbert coefficients, and
+sets generic_bandwidth_alias_loss_is_necessary false.  Both adapters keep
+the coupled-gate coverage flag false: the exact map from the moving
+two-Möbius Type packet to one fixed \(g_m\) family has not been
+constructed.  The only surviving theorem mismatch in this route is now
+the coefficient/packet adapter, not rational-grid sampling.
+The finite helper beatty_divisor_fourier_coefficient_sides constructs
+\(a_k=\sum_{mj=k}g_mc_j\) over exact rational vectors and verifies the
+frequency-by-frequency Hilbert divisor-Cauchy majorant used in
+(4.654d).
 
 ### 4.76 Exact nonprincipal Type Gram with all cross sectors retained
 

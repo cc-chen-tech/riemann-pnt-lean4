@@ -2299,6 +2299,73 @@ def test_metric_beatty_sampling_recreates_the_hard_face_half_power() -> None:
     assert not result["covers_coupled_type_gate"]
 
 
+def test_structured_beatty_coefficients_remove_generic_grid_power_loss() -> None:
+    audit = getattr(
+        coverage_audit,
+        "structured_beatty_sobolev_sampling_audit",
+        None,
+    )
+    assert audit is not None, "structured Beatty sampling audit is missing"
+
+    result = audit(
+        value_length_exponent=F(1),
+        fourier_truncation_exponent=F(1, 2),
+        slope_grid_exponent=F(1),
+        coefficient_l2_energy_exponent=F(1),
+        target_energy_exponent=F(2),
+        epsilon=F(1, 100),
+    )
+
+    assert result["sobolev_order"] == F(201, 400)
+    assert result["sobolev_slack"] == F(1, 400)
+    assert result["value_grid_length_mismatch_exponent"] == F(0)
+    assert result["length_mismatch_loss_exponent"] == F(0)
+    assert result["harmonic_decay_loss_exponent"] == F(1, 400)
+    assert result["divisor_convolution_loss_budget"] == F(1, 400)
+    assert result["normalized_sampling_loss_exponent"] == F(1, 200)
+    assert result["structured_sampled_energy_exponent"] == F(401, 200)
+    assert result["target_energy_with_epsilon_exponent"] == F(201, 100)
+    assert not result["generic_bandwidth_alias_loss_is_necessary"]
+    assert result["nonuniform_separated_nodes_supported"]
+    assert result["hilbert_valued_fixed_coefficients_supported"]
+    assert result["structured_sampling_reaches_target"]
+    assert not result["actual_packet_fixed_across_slopes"]
+    assert not result["moving_two_mobius_vector_adapter_constructed"]
+    assert not result["covers_coupled_type_gate"]
+
+
+def test_beatty_product_frequency_divisor_cauchy_is_exact_for_vectors() -> None:
+    sides = getattr(
+        coverage_audit,
+        "beatty_divisor_fourier_coefficient_sides",
+        None,
+    )
+    assert sides is not None, "Beatty divisor-Fourier helper is missing"
+
+    result = sides(
+        coefficient_vectors={
+            1: (F(1), F(2)),
+            2: (F(-1), F(1)),
+        },
+        harmonic_weights={
+            1: F(1),
+            2: F(1, 2),
+        },
+    )
+
+    assert result["fourier_coefficients"] == (
+        (1, (F(1), F(2))),
+        (2, (F(-1, 2), F(2))),
+        (4, (F(-1, 2), F(1, 2))),
+    )
+    assert result["frequency_power"] == 0
+    assert result["weighted_fourier_energy"] == F(39, 4)
+    assert result["divisor_cauchy_majorant"] == F(12)
+    assert result["max_product_representations"] == 2
+    assert result["divisor_cauchy_bound_verified"]
+    assert result["hilbert_vector_identity_exact"]
+
+
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
     coefficients = getattr(
         coverage_audit,

@@ -7500,6 +7500,164 @@ def technau_zafeiropoulos_grid_coverage_audit(
     }
 
 
+def structured_beatty_sobolev_sampling_audit(
+    *,
+    value_length_exponent: Fraction,
+    fourier_truncation_exponent: Fraction,
+    slope_grid_exponent: Fraction,
+    coefficient_l2_energy_exponent: Fraction,
+    target_energy_exponent: Fraction,
+    epsilon: Fraction,
+) -> dict[str, object]:
+    """Exploit the divisor-convolution Fourier coefficients before sampling.
+
+    The Beatty polynomial is not an arbitrary bandwidth-XJ polynomial:
+
+    a_k = sum_(m*j=k) g_m*c_j,  with  |c_j| << 1/|j|.
+
+    For h-separated nodes, the Hilbert-valued Sobolev sampling inequality
+    at order sigma>1/2 bounds the normalized sampled energy by
+
+    ||F||_2^2 + h^(2*sigma)|| |D|^sigma F||_2^2.
+
+    Divisor Cauchy and |c_j|<=1/j give, up to a T^eta divisor loss,
+
+    h^(2*sigma)|| |D|^sigma F||_2^2
+      << T^(2*sigma*(X-grid))
+         J^(2*sigma-1) sum_m ||g_m||^2.
+
+    At X=grid and J=T^(1/2), choose sigma=1/2+epsilon/4.
+    The grid then costs only T^epsilon, even for nonuniform separated
+    nodes.  This removes the generic bandwidth alias loss for a fixed
+    Hilbert coefficient family.  It does not make the actual moving
+    two-Mobius packet fixed across slopes.
+    """
+    x = F(value_length_exponent)
+    truncation = F(fourier_truncation_exponent)
+    grid = F(slope_grid_exponent)
+    coefficient_energy = F(coefficient_l2_energy_exponent)
+    target = F(target_energy_exponent)
+    eps = F(epsilon)
+    if min(x, truncation, grid, coefficient_energy, target) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    if eps <= 0:
+        raise ValueError("epsilon must be positive")
+
+    sobolev_slack = eps / 4
+    sobolev_order = F(1, 2) + sobolev_slack
+    positive_length_mismatch = max(F(0), x - grid)
+    length_mismatch_loss = 2 * sobolev_order * positive_length_mismatch
+    harmonic_decay_loss = truncation * (2 * sobolev_order - 1)
+    divisor_convolution_loss = eps / 4
+    normalized_sample_loss = (
+        length_mismatch_loss
+        + harmonic_decay_loss
+        + divisor_convolution_loss
+    )
+    structured_sampled = (
+        grid + coefficient_energy + normalized_sample_loss
+    )
+    target_with_epsilon = target + eps
+    return {
+        "source": (
+            "Technau--Zafeiropoulos arXiv:1907.06050 equation (3.1), "
+            "plus Hilbert Sobolev sampling and divisor Cauchy"
+        ),
+        "fourier_coefficient_shape": "a_k=sum_(m*j=k) g_m*c_j",
+        "harmonic_coefficient_decay": "|c_j|<=C/|j|",
+        "sobolev_order": sobolev_order,
+        "sobolev_slack": sobolev_slack,
+        "value_grid_length_mismatch_exponent": positive_length_mismatch,
+        "length_mismatch_loss_exponent": length_mismatch_loss,
+        "harmonic_decay_loss_exponent": harmonic_decay_loss,
+        "divisor_convolution_loss_budget": divisor_convolution_loss,
+        "normalized_sampling_loss_exponent": normalized_sample_loss,
+        "structured_sampled_energy_exponent": structured_sampled,
+        "target_energy_with_epsilon_exponent": target_with_epsilon,
+        "generic_bandwidth_alias_loss_is_necessary": False,
+        "nonuniform_separated_nodes_supported": True,
+        "hilbert_valued_fixed_coefficients_supported": True,
+        "structured_sampling_reaches_target": (
+            structured_sampled <= target_with_epsilon
+        ),
+        "actual_packet_fixed_across_slopes": False,
+        "moving_two_mobius_vector_adapter_constructed": False,
+        "covers_coupled_type_gate": False,
+    }
+
+
+def beatty_divisor_fourier_coefficient_sides(
+    *,
+    coefficient_vectors: dict[int, tuple[Fraction, ...]],
+    harmonic_weights: dict[int, Fraction],
+    frequency_power: int = 0,
+) -> dict[str, object]:
+    """Verify finite Hilbert divisor Cauchy for product frequencies.
+
+    For positive value indices m and nonzero harmonics j, form
+
+    a_k = sum_(m*j=k) g_m*c_j.
+
+    At each k, Hilbert-space Cauchy bounds the square norm of the sum by
+    the number of represented divisors times the sum of termwise square
+    norms.  Multiplication by the nonnegative integer weight |k|^p keeps
+    the inequality exact over rational vectors.
+    """
+    if not coefficient_vectors or not harmonic_weights:
+        raise ValueError("coefficient vectors and harmonic weights are required")
+    if frequency_power < 0:
+        raise ValueError("the frequency power must be nonnegative")
+    if any(index <= 0 for index in coefficient_vectors):
+        raise ValueError("value indices must be positive")
+    if 0 in harmonic_weights:
+        raise ValueError("the zero harmonic is not part of the discrepancy")
+    dimensions = {len(vector) for vector in coefficient_vectors.values()}
+    if dimensions == {0} or len(dimensions) != 1:
+        raise ValueError("all coefficient vectors need one positive dimension")
+    dimension = next(iter(dimensions))
+
+    terms_by_frequency: dict[int, list[tuple[Fraction, ...]]] = {}
+    for m, vector in coefficient_vectors.items():
+        for j, weight in harmonic_weights.items():
+            term = tuple(F(weight) * F(value) for value in vector)
+            terms_by_frequency.setdefault(m * j, []).append(term)
+
+    coefficients: list[tuple[int, tuple[Fraction, ...]]] = []
+    energy = F(0)
+    cauchy_majorant = F(0)
+    max_representations = 0
+    for frequency, terms in sorted(terms_by_frequency.items()):
+        coefficient = tuple(
+            sum((term[coordinate] for term in terms), F(0))
+            for coordinate in range(dimension)
+        )
+        coefficients.append((frequency, coefficient))
+        frequency_weight = F(abs(frequency) ** frequency_power)
+        energy += frequency_weight * sum(
+            (value * value for value in coefficient),
+            F(0),
+        )
+        representation_count = len(terms)
+        max_representations = max(max_representations, representation_count)
+        cauchy_majorant += frequency_weight * representation_count * sum(
+            (
+                sum((value * value for value in term), F(0))
+                for term in terms
+            ),
+            F(0),
+        )
+
+    return {
+        "fourier_coefficients": tuple(coefficients),
+        "frequency_power": frequency_power,
+        "weighted_fourier_energy": energy,
+        "divisor_cauchy_majorant": cauchy_majorant,
+        "max_product_representations": max_representations,
+        "divisor_cauchy_bound_verified": energy <= cauchy_majorant,
+        "hilbert_vector_identity_exact": True,
+    }
+
+
 def transition_line_coprimality_layer_identity(
     *,
     a: int,

@@ -874,7 +874,7 @@ The resulting exact coverage table is:
 | Tao--Teräväinen, [arXiv:2107.02158](https://arxiv.org/abs/2107.02158) | \((\log\log T)^{-c}\) | fixed-complexity linear systems and logarithmic, not half-power, decay | no |
 | Teräväinen--Walker, arXiv:2303.12574 | qualitative logarithmic limit | fixed Beatty data, not a moving rational vector family | no |
 | Lichtman, [arXiv:2009.08969v2](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | scalar \(L^1\) shift average, fixed weight, and \(H=X^\theta<X\), not the moving-weight endpoint vector \(L^2\) packet | no |
-| Technau--Zafeiropoulos, [arXiv:1907.06050](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for one fixed arithmetic function in continuous/metric slope | the actual coefficient changes with the Beatty preimage, the rational \(Q\)-grid is not covered, and generic sampling aliases cost \(T^{1/2}\) in energy | no |
+| Technau--Zafeiropoulos, [arXiv:1907.06050](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for one fixed arithmetic function in continuous/metric slope; structured Sobolev sampling transfers this to separated reciprocal nodes with \(T^\varepsilon\) loss | the actual coefficient changes with the Beatty preimage, so no fixed length-\(T\) Hilbert family has been derived from the two-Möbius packet | no |
 | Kim, arXiv:2603.23250 | \(<T^{1/600}\) in the entering range | deficit \(T^{299/600}\) and Möbius coefficient hypothesis fails | no |
 
 For Pascadi Corollary 1.4, substituting
@@ -948,8 +948,31 @@ The exact finite witness \(Q=5\), \(c_1=c_6=c_{11}=1\) has continuous
 energy \(3\) and normalized grid energy \(9\), so the alias factor is not
 an artifact of the inequality for arbitrary coefficients.
 
-The new narrower analytic target is therefore cancellation inside the
-nonzero alias classes:
+The actual Beatty polynomial is not arbitrary: its coefficients satisfy
+
+\[
+ F(\lambda)=\sum_{m\leq X}g_m
+ \sum_{1\leq |j|\leq X^{1/2}}c_j e(mj\lambda),
+ \qquad |c_j|\ll |j|^{-1}.
+ \tag{6.6}
+\]
+
+For \(h\)-separated nodes, Hilbert-valued \(H^{1/2+\eta}\) sampling,
+followed by divisor Cauchy on the product frequency \(mj\), proves
+
+\[
+ h\sum_\beta\|F(\lambda_\beta)\|^2
+ \ll_\varepsilon T^\varepsilon\sum_{m\leq T}\|g_m\|^2
+ \qquad(X=Q=T,\ h\asymp Q^{-1}).
+ \tag{6.7}
+\]
+
+The proof is (9.498)--(9.503).  It uses
+\(\sum_{j\leq T^{1/2}}j^{-1+2\eta}\ll_\eta T^\eta\), so it supports the
+actual nonuniform reciprocal nodes and introduces no positive power.
+Thus the generic alias factor above is not an obstruction for a fixed
+Hilbert coefficient family.  A direct arbitrary-alias treatment would
+have asked for
 
 \[
  \sum_{\rho\bmod Q}
@@ -957,22 +980,23 @@ nonzero alias classes:
  c_{k;h,\delta,\nu,\sigma}\right\|_2^2
  \ll T^\varepsilon\sum_k
  \|c_{k;h,\delta,\nu,\sigma}\|_2^2.
- \tag{6.6}
+ \tag{6.8}
 \]
 
-This must retain both Möbius factors and all \(h\delta\) packets.  It is
-only an optimistic scalar-sampling target: even proving it would still
-require a valid fixed-coefficient or vector-valued adapter.
-Technau--Zafeiropoulos treats one fixed coefficient function and a
-continuous Lebesgue slope average; it proves neither the rational-grid
-sampling step nor (6.6).  The helpers
+The structured sampling lemma makes (6.8) unnecessary once a valid
+fixed-coefficient adapter exists.  Technau--Zafeiropoulos still treats one
+fixed coefficient function, whereas the actual second Möbius factor and
+vector packet change with the Beatty preimage.  The helpers
 trigonometric_grid_aliasing_sides and
 technau_zafeiropoulos_grid_coverage_audit record the exact alias identity
-and the resulting half-power deficit.  The helper
+and generic half-power diagnostic.  The corrected helper
+structured_beatty_sobolev_sampling_audit proves the \(T^\varepsilon\)
+structured transfer.  The helper
+beatty_divisor_fourier_coefficient_sides verifies its finite
+product-frequency Hilbert-Cauchy step over exact rational vectors.  The helper
 farey_scalar_beatty_fixed_coefficient_collision verifies the independent
-finite fixed-\(f\) obstruction.  The exact Fourier-coefficient map from
-the original Type packet to (6.6) is still missing.  Their coverage flag
-remains false.
+finite fixed-\(f\) obstruction.  The exact fixed-family map from the
+original Type packet is still missing, so the coverage flag remains false.
 
 The later labelled Type split gives a strictly weaker target than an
 absolute nonzero-determinant estimate.  For the complete nonprincipal
