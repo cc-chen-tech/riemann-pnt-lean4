@@ -4590,6 +4590,313 @@ numerically to explicit tolerances; their exact status comes from the
 displayed finite Fourier derivation, not from floating-point computation.
 None of these checks proves the signed estimate or CK\(_{\rm ub}(3)\).
 
+### 9.30 Exact shifted-Chowla coordinates after additive completion
+
+There is one further cancellation hidden by the last paragraph of
+Section 9.29.  It does not prove the coupled-kernel estimate, but it removes
+the isolated additive origin as a logically necessary sub-gate.  Let
+
+\[
+ d=r-s.
+\]
+
+Because the outer sum already has \((r,s)=1\), this substitution has the
+exact consequences
+
+\[
+ (d,s)=1,\qquad \bar r_s=\bar d_s,
+ \qquad e_s(rab)=e_s(dab).
+\tag{9.165}
+\]
+
+In particular, for an arbitrary finite coefficient \(W(r,s)\), (9.163)
+gives the boundary-exact identity
+
+\[
+\boxed{
+\begin{aligned}
+ &\sum_{S<s\leq2S}\sum_{\substack{R<r\leq2R\\(r,s)=1}}
+ \mu(r)\mu(s)W(r,s)
+ \sum_{h\leq H}\sum_{\delta\leq L}e_s(-\bar r_s h\delta)\\
+ &=\sum_{S<s\leq2S}
+ \sum_{\substack{R-s<d\leq2R-s\\(d,s)=1}}
+ \mu(s+d)\mu(s)W(s+d,s)\frac1s
+ \sum_{a,b\bmod s}
+ \widehat{1_H}(a;s)\widehat{1_L}(b;s)e_s(dab).
+\end{aligned}}
+\tag{9.166}
+\]
+
+Thus there is no replacement of the moving endpoint by \(|d|\leq R\),
+and no discarded \(d=0\) term.  The displayed inequalities
+\(R-s<d\leq2R-s\) are the complete boundary terms.  In the ranges used
+here \(s>1\), so \((d,s)=1\) already excludes \(d=0\).
+
+The additive origin must not be separated from its axes.  Orthogonality
+gives the exact finite formulas
+
+\[
+ \sum_{b\bmod s}\widehat{1_L}(b;s)
+ =s\left\lfloor\frac Ls\right\rfloor,
+ \qquad
+ \sum_{a\bmod s}\widehat{1_H}(a;s)
+ =s\left\lfloor\frac Hs\right\rfloor.
+\tag{9.167}
+\]
+
+Consequently the complete row \(a=0\), including the factor \(1/s\),
+is \(H\lfloor L/s\rfloor\), the complete column \(b=0\) is
+\(L\lfloor H/s\rfloor\), and their union is
+
+\[
+\boxed{
+ H\left\lfloor\frac Ls\right\rfloor
+ +L\left\lfloor\frac Hs\right\rfloor-\frac{HL}{s}.}
+\tag{9.168}
+\]
+
+On the balanced maximal box \(H,L<s\).  Each complete axis therefore
+vanishes exactly, while their union equals \(-HL/s\).  Equivalently, the
+positive origin \(HL/s\) cancels against the nonzero points on either
+complete axis.  One may delete one complete zero axis, but not both axes:
+their common origin would then be subtracted twice.  Hence the exponent
+\(2/3\) in (9.164) is only the cost of an invalidly premature pointwise
+separation.  It is not a remaining standalone Mertens hypothesis.  The
+off-axis frequencies and one axis must still be estimated jointly.
+
+For a nonzero residue let \(a^*\in(-s/2,s/2]\) be its centered
+representative.  The sharp interval transform satisfies
+
+\[
+ \left|\widehat{1_H}(a;s)\right|
+ \leq\min\left(H,\frac{s}{2|a^*|}\right),
+ \qquad a\ne0,
+\tag{9.169}
+\]
+
+and likewise for \(L\).  Dyadically partitioning the centered residues is
+an exact partition of the finite sum; (9.169), however, does **not** make
+the complementary sharp-frequency blocks power-negligible.  The lowest
+nonzero transition block has
+
+\[
+ A_0=\frac{s}{H},\qquad B_0=\frac{s}{L},\qquad C_0=A_0B_0.
+\tag{9.170}
+\]
+
+At
+
+\[
+ S=R=T^3,\qquad H=L=T^{5/2},
+\]
+
+these are \(A_0=B_0=T^{1/2}\) and \(C_0=T\).  In (9.166) the phase in
+this block changes by order one at the circular shift scale
+
+\[
+ D_0=\frac{S}{C_0}=T^2=X^{2/3},\qquad X:=T^3.
+\tag{9.171}
+\]
+
+The exact exponent ledger for this block is
+
+\[
+ \underbrace{T^2}_{HL/S}
+ \underbrace{T}_{A_0B_0}
+ \underbrace{T^3}_{s}
+ \underbrace{T^2}_{|d|\ \mathrm{near}}
+ =T^8.
+\tag{9.172}
+\]
+
+The normalized local target is \(RS=T^6\), so this lowest dual block
+requires a genuine \(T^2=X^{2/3}\) saving.  Formula (9.172) is a trivial
+upper ledger, not a lower bound.  It also does not claim that the sharp
+completion is supported only on (9.170); every complementary dyadic block
+and both circular boundary arcs remain in the exact partition.
+
+The complementary **near** blocks can also be classified without a
+conjectural estimate.  Write \(|a^*|\asymp T^\alpha\),
+\(|b^*|\asymp T^\beta\), and put
+
+\[
+ U_H(\alpha)=\min(h,\sigma-\alpha),\qquad
+ U_L(\beta)=\min(\ell,\sigma-\beta).
+\]
+
+The sharp Fourier bound and the circular window
+\(D=S/(AB)\) give the exact exponent ledger
+
+\[
+\boxed{
+ E_{\rm near}(\alpha,\beta)
+ =U_H(\alpha)+U_L(\beta)+\alpha+\beta
+  +\max(0,\sigma-\alpha-\beta).}
+\tag{9.173}
+\]
+
+For the balanced maximal box \(h=\ell=5/2\), \(\sigma=3\).  If
+\(\alpha+\beta\leq3\), then
+
+\[
+ E_{\rm near}=U_H(\alpha)+U_L(\beta)+3\leq8;
+\]
+
+if \(\alpha+\beta\geq3\), then
+
+\[
+ E_{\rm near}
+ =(U_H(\alpha)+\alpha)+(U_L(\beta)+\beta)\leq6.
+\tag{9.174}
+\]
+
+Thus no nonzero near block has a larger deficit than the \(T^2\) deficit
+in (9.172), and every block with \(AB\geq S\) reaches the local target by
+the trivial near-window count.  This closes the near-block exponent
+polytope; it does not estimate the far arcs.
+
+There is an exact one-modulus Parseval identity on those remaining blocks:
+
+\[
+ \sum_{d\bmod s}\left|
+  \frac1s\sum_{a\in\mathcal A}\sum_{b\in\mathcal B}
+  x_a y_b e_s(dab)\right|^2
+ =\frac1s\sum_{c\bmod s}\left|
+  \sum_{\substack{a\in\mathcal A,b\in\mathcal B\\ab\equiv c\pmod s}}
+  x_a y_b\right|^2.
+\tag{9.175}
+\]
+
+When \(AB=o(s)\), centered-product congruences have only \(O(1)\)
+possible lifts to integer equalities; divisor energy bounds the right side
+up to \(T^\varepsilon\).  Still on the face \(R=S\), Cauchy in \(d\),
+followed by absolute summation over \(s\), then has exponent
+
+\[
+ E_{L^2}=\sigma+U_H(\alpha)+U_L(\beta)
+             +\frac{\alpha+\beta}{2}.
+\tag{9.176}
+\]
+
+At \((\alpha,\beta)=(1/2,1/2)\), this is \(17/2\), still
+\(5/2\) above the target \(6\).  For \(AB\geq s\), even the simple
+integer-divisor reduction of (9.175) is unavailable because modular
+hyperbola multiplicities enter.  Hence one-modulus Parseval does not
+handle the far complement: a cross-modulus or two-Möbius step is still
+mathematically necessary.
+
+The rational-resonance strata in the no-wrap blocks are equally explicit.
+Since \((d,s)=1\), put \(g=(ab,s)\).  Then
+
+\[
+\boxed{
+ \frac{dab}{s}
+ =\frac{d(ab/g)}{s/g},\qquad
+ \left(d\frac{ab}{g},\frac{s}{g}\right)=1,
+ \qquad q_{\rm red}=\frac{s}{(ab,s)}.}
+\tag{9.177}
+\]
+
+If \(0<|ab|<s\), this gives only the finite lower bound
+\(q_{\rm red}\geq s/|ab|\).  It does **not** exclude transition-block
+resonance.  For example,
+
+\[
+ s=62,\quad d=-1,\quad a=b=2,\quad H=L=31
+\]
+
+has \((d,s)=1\), \(|ab|<s\), \(s/H=s/L=2\), but
+
+\[
+ q_{\rm red}=31,\qquad
+ \mathcal K_{31,31}(-4/62)=\mathcal K_{31,31}(-2/31)=31.
+\]
+
+Thus the scalar gcd \((ab,s)\) creates genuine rational strata even in a
+no-wrap transition block.  Formula (9.177) parameterizes those strata; it
+does not remove them.  The near part of blocks with \(AB\geq S\) is
+covered by (9.174), but the far arcs and all resonant scalar-gcd strata
+still require a gcd-stratified modular-hyperbola estimate.
+
+There is an exact way to retain the axis cancellation when desired.  For
+\(L<s\), summing the whole \(b\)-coordinate first gives
+
+\[
+ \frac1s\sum_{b\bmod s}\widehat{1_L}(b;s)e_s(dab)
+ =\mathbf 1_{\{1,\ldots,L\}}([da]_s),
+\]
+
+and hence
+
+\[
+\boxed{
+ \frac1s\sum_{a,b\bmod s}
+ \widehat{1_H}(a;s)\widehat{1_L}(b;s)e_s(dab)
+ =\sum_{a\bmod s}\widehat{1_H}(a;s)
+  \mathbf 1_{\{1,\ldots,L\}}([da]_s).}
+\tag{9.178}
+\]
+
+The \(a=0\) term on the right is zero, so (9.178) includes all origin/axis
+boundary terms with no remainder.  It is useful for checking a proposed
+axis treatment, but summing out \(b\) also discards the product
+factorization needed by the intended Type-I/II route; it is not itself an
+estimate.
+
+Because the outer factor \(\mu(s)\) restricts to squarefree \(s\), the
+scalar gcd in (9.177) has a canonical ordered factorization.  Put
+
+\[
+ g_a=(a,s),\qquad g_b=\left(b,\frac{s}{g_a}\right),
+ \qquad q=\frac{s}{g_ag_b},\qquad
+ a'=\frac a{g_a},\quad b'=\frac b{g_b}.
+\]
+
+Then \(g_a,g_b,q\) are pairwise coprime and
+
+\[
+\boxed{
+ (ab,s)=g_ag_b,\qquad
+ \frac{dab}{s}=\frac{da'b'}q,\qquad
+ (a'b',q)=1,\qquad
+ \mu(s)=\mu(g_a)\mu(g_b)\mu(q).}
+\tag{9.179}
+\]
+
+This is a genuine Type-I/II coordinate system for the resonant strata,
+not merely a denominator label.  For the family
+\(s=gq\), \(a=b=g\), \((g,q)=1\), it gives
+\(g_a=g\), \(g_b=1\), \(a'=1\), \(b'=g\), so the transition resonance
+has a short scalar factor \(g\asymp T^{1/2}\) and a long reduced modulus
+\(q\asymp T^{5/2}\).  The remaining estimate must average
+\(\mu(s+d)\mu(g_a)\mu(g_b)\mu(q)e_q(da'b')\) with the transformed
+Fourier weights and moving \(d\)-endpoints.  Neither the one-modulus
+Parseval bound nor the cited fixed-ring estimates perform this joint
+average.
+
+This identifies a precise published-theorem mismatch.  Even before the
+additional \(e_s(dab)\) weight is addressed, the averaged Chowla theorem
+of Matomäki--Radziwiłł--Tao supplies decay only of rough size
+\(\log\log D/\log D\), not the \(X^{2/3}\) power demanded by (9.172).
+Tao--Teräväinen's unweighted two-point conclusion is for almost all outer
+scales and is qualitative, so it cannot give a uniform bound for every
+\(T\).  Guo's August 2026 result has a fixed power-of-log saving only for the
+**logarithmically weighted** two-point correlation and shifts in a fixed
+polylogarithmic range; its statement explicitly does not prove ordinary
+Cesàro two-point Chowla, and its shift range does not reach
+\(D=X^{2/3}\).  Lichtman's theorem concerns Möbius on shifted primes, not
+the binary weight \(\mu(s)\mu(s+d)\).
+
+Accordingly, the finite sum in (9.166), with (9.167)--(9.179) retained
+before absolute values, is the new exact interface.  The next unresolved
+step is to prove a joint estimate for its nonzero dyadic blocks, splitting
+the circular near arcs \(\|d/s\|\leq C^{-1}\) from the complementary
+full-denominator strata while retaining both Möbius weights and the
+factorization \(ab\).  Since \((d,s)=1\), every phase \(d/s\) has full
+denominator \(s\); nevertheless, taking absolute values over \(d\), or
+replacing the \(ab\)-coefficients by arbitrary coefficients, returns the
+previous large-sieve loss.  No such joint power estimate is proved here.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -4684,6 +4991,11 @@ Proved in this note:
   exponent, exact rational-denominator strata, product-kernel resonance,
   and two-dimensional additive completion, (9.155)--(9.164); these
   narrow but do not prove the signed cross-modulus gate.
+* the exact additive-dual shifted-Chowla coordinates and moving endpoints,
+  the complete axis/origin recombination, and the lowest-block
+  \(X^{2/3}\)-shift power ledger, (9.165)--(9.179); these remove the
+  separately bounded zero mode, close the near-block exponent polytope,
+  and prove that one-modulus Parseval still misses the target.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -4722,7 +5034,8 @@ Proved in this note:
 | Blomer--Pascadi quadratic-character route | exact trace/coverage audit; direct routes insufficient | critical fixed-modulus saving \(c^{-1/32}\), but full-residue margins are negative in (9.140); Pascadi Corollary 7.9 has full-residue loss \(C^{(1+\tau)/6}\), (9.143); exact trace and character identities are (9.144)--(9.146) |
 | Coherent cross-modulus fourth trace | **unproved** | candidate joint interface (9.147) must retain the common \(\mu(r)\) transform, outer \(\mu(s)\), factorized \(h\delta\), scalar-divisor strata, and discriminant energy before taking moduluswise norms |
 | Fixed-numerator inverse fractions | spacing proved; generic operator route insufficient | for \(r,s,t\) in one balanced dyadic interval the exact congruence (9.148) gives spacing at least \(1/(16Y)\), (9.150); after collapsing \(h\delta\), the arbitrary-coefficient operator still loses exactly \(A^{1/2}\), (9.153)--(9.154) |
-| Cross-numerator product-kernel route | unsigned central count proved; signed estimate unproved | exact factorization (9.156), Farey count \(T^{7+\varepsilon}\) in (9.160), noncentral resonance (9.162), and additive completion (9.163); separating its zero mode again requires the \(2/3\) Mertens exponent (9.164) |
+| Cross-numerator product-kernel route | unsigned central count proved; signed estimate unproved | exact factorization (9.156), Farey count \(T^{7+\varepsilon}\) in (9.160), noncentral resonance (9.162), and additive completion (9.163); termwise separation of its origin would require the \(2/3\) Mertens exponent (9.164), but Section 9.30 recombines that origin with the axes |
+| Additive-dual shifted-Chowla route | exact finite reduction; joint estimate unproved | \(r=s+d\) gives the moving-endpoint identity (9.166); complete axes recombine the origin in (9.167)--(9.168), so the isolated \(2/3\) Mertens barrier is removed; all near blocks lose at most \(T^2\), one-modulus Parseval loses \(T^{5/2}\), (9.177) records the surviving resonance, (9.178) absorbs every axis boundary, and (9.179) factorizes each squarefree scalar-gcd stratum |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
@@ -4804,3 +5117,11 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   conjecture*, Algebra Number Theory 9 (2015), 2167--2196,
   arXiv:1503.05121v3, Theorem 1.6 and Remark 5.2; mapped exactly to the
   affine family in Section 9.17.
+* T. Tao, J. Teräväinen, *The structure of correlations of multiplicative
+  functions at almost all scales, with applications to the Chowla and
+  Elliott conjectures*, arXiv:1809.02518v2; its almost-all-scales boundary
+  is recorded in Section 9.30.
+* J. Guo, *Logarithmic Chowla Correlations Uniformly over Fixed
+  Polylogarithmic Shift Ranges*, arXiv:2608.23500v2; this very recent
+  logarithmically weighted result is used only for the no-coverage audit
+  in Section 9.30.

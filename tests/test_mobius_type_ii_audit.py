@@ -6,18 +6,29 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mobius_type_ii import (
+    AdditiveDualBlockLedger,
+    AdditiveShiftedChowlaLedger,
     BlomerPascadiMargins,
     CentralCollisionLedger,
+    CompletedProductPhaseReduction,
     CrossInverseFractionCollision,
     FareyCentralCollisionLedger,
     InverseFractionSeparation,
     MQWBlockSavings,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
+    SquarefreeScalarGcdStratum,
     WrightFactorSavings,
+    additive_completion_axis_recombined,
+    additive_completion_axis_row,
+    additive_completion_axis_union,
+    additive_completion_shifted,
     additive_completion_zero_mode,
     additive_completion_zero_mode_mobius_exponent,
+    additive_dual_block_ledger,
+    additive_dual_shift_phase,
     additive_product_completion,
+    additive_shifted_chowla_ledger,
     balanced_dual_low_mode_mobius_exponent,
     balanced_inverse_fraction_spacing_margin,
     balanced_principal_character_mobius_exponent,
@@ -34,6 +45,7 @@ from scripts.audit_mobius_type_ii import (
     coherent_operator_large_sieve_exponent,
     coherent_operator_large_sieve_gap,
     coherent_operator_required_exponent,
+    completed_product_phase_reduction,
     coprime_indicator_via_mobius,
     cross_inverse_fraction_collision,
     direct_fourfold_random_margin,
@@ -72,9 +84,12 @@ from scripts.audit_mobius_type_ii import (
     reverse_unit_affine_progression_length,
     reverse_unit_solution_count_gap,
     squarefree_outer_mobius_ramanujan,
+    squarefree_scalar_gcd_stratum,
     two_sided_mobius_geometric_value,
     weighted_farey_collision_sum,
     weighted_inverse_collision_sum,
+    weighted_inverse_product_box_sum,
+    weighted_shifted_completion_box_sum,
     wright_factor_covers,
     wright_factor_savings,
     wright_unbalanced_modulus_margin,
@@ -948,6 +963,223 @@ def test_additive_completion_zero_mode_hits_the_two_thirds_barrier() -> None:
     assert additive_completion_zero_mode(11, 7, 5) == F(35, 11)
     balanced = boundary_witnesses()["balanced_max_a"]
     assert additive_completion_zero_mode_mobius_exponent(balanced) == F(2, 3)
+
+
+def test_additive_completion_is_exactly_a_shifted_chowla_phase() -> None:
+    for modulus in range(2, 13):
+        for r in range(1, 2 * modulus):
+            if gcd(r, modulus) != 1:
+                continue
+            for a in range(modulus):
+                for b in range(modulus):
+                    phase = additive_dual_shift_phase(r, modulus, a, b)
+                    assert phase.original == phase.shifted
+                    assert phase.shift == r - modulus
+            for h_length in range(1, 5):
+                for delta_length in range(1, 5):
+                    assert abs(
+                        additive_product_completion(
+                            r, modulus, h_length, delta_length
+                        )
+                        - additive_completion_shifted(
+                            r, modulus, h_length, delta_length
+                        )
+                    ) < 1e-9
+
+
+def test_weighted_box_has_exact_moving_shift_endpoints() -> None:
+    for lower_r in range(2, 6):
+        for lower_s in range(2, 6):
+            for h_length in range(1, 4):
+                for delta_length in range(1, 4):
+                    assert abs(
+                        weighted_inverse_product_box_sum(
+                            lower_r, lower_s, h_length, delta_length
+                        )
+                        - weighted_shifted_completion_box_sum(
+                            lower_r, lower_s, h_length, delta_length
+                        )
+                    ) < 1e-8
+
+
+def test_additive_completion_axes_recombine_zero_mode_exactly() -> None:
+    for modulus in range(2, 17):
+        for h_length in range(1, 2 * modulus + 1):
+            for delta_length in range(1, 2 * modulus + 1):
+                assert additive_completion_axis_row(
+                    modulus, h_length, delta_length
+                ) == h_length * (delta_length // modulus)
+                assert additive_completion_axis_union(
+                    modulus, h_length, delta_length
+                ) == (
+                    h_length * (delta_length // modulus)
+                    + delta_length * (h_length // modulus)
+                    - F(h_length * delta_length, modulus)
+                )
+    # In the balanced range H,L<s each complete axis is zero, so the
+    # isolated (0,0) term is cancelled by the nonzero points on either axis.
+    assert additive_completion_axis_row(11, 7, 5) == 0
+    assert additive_completion_axis_union(11, 7, 5) == -F(35, 11)
+
+
+def test_one_complete_axis_recombines_to_exact_residue_incidence() -> None:
+    for modulus in range(2, 14):
+        for shift in range(-modulus + 1, modulus):
+            if gcd(shift, modulus) != 1:
+                continue
+            r = modulus + shift
+            if r < 1:
+                continue
+            for h_length in range(1, 5):
+                for delta_length in range(1, 5):
+                    assert abs(
+                        additive_completion_axis_recombined(
+                            shift,
+                            modulus,
+                            h_length,
+                            delta_length,
+                        )
+                        - additive_completion_shifted(
+                            r, modulus, h_length, delta_length
+                        )
+                    ) < 1e-9
+
+
+def test_balanced_short_dual_block_is_an_x_two_thirds_shift_gate() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert additive_shifted_chowla_ledger(box) == AdditiveShiftedChowlaLedger(
+        h_frequency=F(1, 2),
+        delta_frequency=F(1, 2),
+        product_frequency=F(1),
+        completion_amplitude=F(2),
+        near_shift=F(2),
+        near_trivial=F(8),
+        local_target=F(6),
+        required_saving=F(2),
+        one_modulus_l2=F(17, 2),
+        one_modulus_l2_gap=F(5, 2),
+    )
+    # With X=T^3 the critical shift length T^2 is X^(2/3).
+    assert additive_shifted_chowla_ledger(box).near_shift / box.sigma == F(
+        2, 3
+    )
+    assert (
+        additive_shifted_chowla_ledger(
+            boundary_witnesses()["large_q_endpoint"]
+        ).one_modulus_l2
+        is None
+    )
+
+
+def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    transition = additive_dual_block_ledger(box, F(1, 2), F(1, 2))
+    assert transition == AdditiveDualBlockLedger(
+        h_frequency=F(1, 2),
+        delta_frequency=F(1, 2),
+        h_fourier_amplitude=F(5, 2),
+        delta_fourier_amplitude=F(5, 2),
+        product_frequency=F(1),
+        completion_amplitude=F(2),
+        near_shift=F(2),
+        near_trivial=F(8),
+        local_target=F(6),
+        required_saving=F(2),
+        one_modulus_l2=F(17, 2),
+        one_modulus_l2_gap=F(5, 2),
+    )
+    gaps = []
+    for h_quarters in range(13):
+        for delta_quarters in range(13):
+            block = additive_dual_block_ledger(
+                box, F(h_quarters, 4), F(delta_quarters, 4)
+            )
+            gaps.append(block.required_saving)
+            assert block.required_saving <= 2
+            if block.product_frequency >= box.sigma:
+                assert block.required_saving == 0
+    assert max(gaps) == 2
+
+
+def test_shifted_product_phase_has_exact_scalar_gcd_denominator() -> None:
+    for modulus in range(2, 30):
+        for shift in range(-modulus + 1, modulus):
+            if gcd(shift, modulus) != 1:
+                continue
+            for a in range(-6, 7):
+                for b in range(-6, 7):
+                    if a == 0 or b == 0:
+                        continue
+                    reduction = completed_product_phase_reduction(
+                        shift, modulus, a, b
+                    )
+                    common = gcd(abs(a * b), modulus)
+                    assert reduction == CompletedProductPhaseReduction(
+                        scalar_gcd=common,
+                        reduced_numerator=(
+                            shift * (a * b // common)
+                        )
+                        % (modulus // common),
+                        reduced_denominator=modulus // common,
+                    )
+                    assert gcd(
+                        reduction.reduced_numerator,
+                        reduction.reduced_denominator,
+                    ) == 1
+                    if abs(a * b) < modulus:
+                        assert reduction.reduced_denominator * abs(
+                            a * b
+                        ) >= modulus
+
+
+def test_scalar_gcd_does_not_remove_transition_block_resonance() -> None:
+    reduction = completed_product_phase_reduction(-1, 62, 2, 2)
+    assert reduction == CompletedProductPhaseReduction(
+        scalar_gcd=2,
+        reduced_numerator=29,
+        reduced_denominator=31,
+    )
+    # The completed phase is -4/62=-2/31 and H=L=31, so (9.162)
+    # survives inside a no-wrap transition block.
+    assert abs(rectangular_product_kernel(31, 31, F(-2, 31)) - 31) < 1e-8
+
+
+def test_squarefree_scalar_gcd_stratum_preserves_phase_and_mobius_sign() -> None:
+    for modulus in range(2, 50):
+        if naive_mobius(modulus) == 0:
+            continue
+        for a in range(-8, 9):
+            for b in range(-8, 9):
+                if a == 0 or b == 0:
+                    continue
+                stratum = squarefree_scalar_gcd_stratum(modulus, a, b)
+                assert stratum == SquarefreeScalarGcdStratum(
+                    a_gcd=gcd(abs(a), modulus),
+                    b_gcd=gcd(
+                        abs(b), modulus // gcd(abs(a), modulus)
+                    ),
+                    reduced_modulus=stratum.reduced_modulus,
+                    a_reduced=a // gcd(abs(a), modulus),
+                    b_reduced=b // stratum.b_gcd,
+                    mobius_sign=naive_mobius(modulus),
+                )
+                assert stratum.a_gcd * stratum.b_gcd * (
+                    stratum.reduced_modulus
+                ) == modulus
+                assert gcd(stratum.a_reduced, stratum.reduced_modulus) == 1
+                assert gcd(stratum.b_reduced, stratum.reduced_modulus) == 1
+                assert stratum.a_gcd * stratum.b_gcd == gcd(
+                    abs(a * b), modulus
+                )
+                assert stratum.mobius_sign == (
+                    naive_mobius(stratum.a_gcd)
+                    * naive_mobius(stratum.b_gcd)
+                    * naive_mobius(stratum.reduced_modulus)
+                )
+                assert F(a * b, modulus) % 1 == F(
+                    stratum.a_reduced * stratum.b_reduced,
+                    stratum.reduced_modulus,
+                ) % 1
 
 
 def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:

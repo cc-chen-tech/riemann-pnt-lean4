@@ -102,3 +102,19 @@
 - [x] Test whether the resulting equation has a usable Type I/II factorization retaining all four Möbius weights.
 - [x] Map the remaining estimate against primary literature without importing a withdrawn or mismatched theorem.
 - [x] Run focused and repository-wide verification; update the Ready-for-view PR only for a materially new exact reduction or proved estimate.
+
+### Task 7: Audit the additive-dual shifted-Chowla face
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the exact substitutions `r=s+d` and `e_s(rab)=e_s(dab)`.
+- [x] Recombine the additive origin with both coordinate axes and record every `H,L<s` boundary term.
+- [x] Isolate the balanced lowest-dual block and compute its exact `X^(2/3)` shift window and `T^2` saving requirement.
+- [x] Check primary averaged-Chowla sources, including the current logarithmically weighted result, against the precise Cesaro and shift-range requirements.
+- [x] Split the complementary dual blocks and rational-resonance strata without discarding the `a=h*delta` factorization.
+- [ ] State and attack the remaining gcd-stratified far-arc two-Möbius estimate on the exact finite interface.
+- [x] Run focused and repository-wide verification; update the Ready-for-view PR only after the exact finite proposition and proof boundary are reviewed.

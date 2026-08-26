@@ -193,6 +193,77 @@ class CentralCollisionLedger:
 
 
 @dataclass(frozen=True)
+class AdditiveDualShiftPhase:
+    """Exact change from the completed numerator ``r`` to ``d=r-s``."""
+
+    shift: int
+    original: Fraction
+    shifted: Fraction
+
+
+@dataclass(frozen=True)
+class AdditiveShiftedChowlaLedger:
+    """Power ledger for the lowest nonzero additive-dual block.
+
+    This ledger applies on the overlapping balanced face ``R=S``.  The
+    natural Fourier lengths are ``s/H`` and ``s/L``.  Their product sets
+    the near-diagonal window ``|r-s| <= s/((s/H)(s/L))``.  No cancellation
+    is asserted: ``required_saving`` is precisely the power still needed
+    after this finite change of coordinates.
+    """
+
+    h_frequency: Fraction
+    delta_frequency: Fraction
+    product_frequency: Fraction
+    completion_amplitude: Fraction
+    near_shift: Fraction
+    near_trivial: Fraction
+    local_target: Fraction
+    required_saving: Fraction
+    one_modulus_l2: Fraction | None
+    one_modulus_l2_gap: Fraction | None
+
+
+@dataclass(frozen=True)
+class AdditiveDualBlockLedger:
+    """Exponent ledger for one centered nonzero Fourier rectangle."""
+
+    h_frequency: Fraction
+    delta_frequency: Fraction
+    h_fourier_amplitude: Fraction
+    delta_fourier_amplitude: Fraction
+    product_frequency: Fraction
+    completion_amplitude: Fraction
+    near_shift: Fraction
+    near_trivial: Fraction
+    local_target: Fraction
+    required_saving: Fraction
+    one_modulus_l2: Fraction | None
+    one_modulus_l2_gap: Fraction | None
+
+
+@dataclass(frozen=True)
+class CompletedProductPhaseReduction:
+    """Reduced fraction data for the shifted phase ``d*a*b/s``."""
+
+    scalar_gcd: int
+    reduced_numerator: int
+    reduced_denominator: int
+
+
+@dataclass(frozen=True)
+class SquarefreeScalarGcdStratum:
+    """Ordered scalar-gcd splitting of a squarefree modulus."""
+
+    a_gcd: int
+    b_gcd: int
+    reduced_modulus: int
+    a_reduced: int
+    b_reduced: int
+    mobius_sign: int
+
+
+@dataclass(frozen=True)
 class FareyCentralCollisionLedger:
     """Exponent ledger after counting reduced fractions before inverse lifts."""
 
@@ -421,6 +492,256 @@ def additive_product_completion(
     ) / modulus
 
 
+def additive_dual_shift_phase(
+    r: int, modulus: int, a: int, b: int
+) -> AdditiveDualShiftPhase:
+    """Return ``e_s(rab)=e_s((r-s)ab)`` as an exact rational phase.
+
+    In the completed inverse kernel the modulus is the original variable
+    ``s``.  Writing ``d=r-s`` therefore turns the outer signs into the
+    shifted pair ``mu(s)mu(s+d)`` without a boundary approximation.
+    """
+
+    if min(r, modulus) < 1 or min(a, b) < 0:
+        raise ValueError("require positive r,s and nonnegative residues")
+    shift = r - modulus
+    original = Fraction(r * a * b, modulus) % 1
+    shifted = Fraction(shift * a * b, modulus) % 1
+    if original != shifted:
+        raise AssertionError("subtracting the modulus changed the phase")
+    return AdditiveDualShiftPhase(
+        shift=shift,
+        original=original,
+        shifted=shifted,
+    )
+
+
+def completed_product_phase_reduction(
+    shift: int, modulus: int, a: int, b: int
+) -> CompletedProductPhaseReduction:
+    """Reduce ``d*a*b/s`` when ``(d,s)=1`` without losing gcd strata.
+
+    The only denominator drop comes from ``g=(a*b,s)``.  Thus the exact
+    reduced denominator is ``s/g``; in a no-wrap block ``|a*b|<s`` it is
+    at least ``s/|a*b|``.  This is the scalar-divisor interface that a
+    far-arc estimate must retain.
+    """
+
+    if modulus < 1 or a == 0 or b == 0:
+        raise ValueError("require a positive modulus and nonzero frequencies")
+    if gcd(shift, modulus) != 1:
+        raise ValueError("the shifted numerator must be a unit modulo s")
+    scalar_gcd = gcd(abs(a * b), modulus)
+    reduced_denominator = modulus // scalar_gcd
+    reduced_numerator = (
+        shift * (a * b // scalar_gcd)
+    ) % reduced_denominator
+    if gcd(reduced_numerator, reduced_denominator) != 1:
+        raise AssertionError("the completed phase was not fully reduced")
+    return CompletedProductPhaseReduction(
+        scalar_gcd=scalar_gcd,
+        reduced_numerator=reduced_numerator,
+        reduced_denominator=reduced_denominator,
+    )
+
+
+def squarefree_scalar_gcd_stratum(
+    modulus: int, a: int, b: int
+) -> SquarefreeScalarGcdStratum:
+    """Factor the scalar divisor stratum without double-counting primes.
+
+    Put ``g_a=(a,s)``, ``g_b=(b,s/g_a)`` and ``q=s/(g_a*g_b)``.
+    If ``s`` is squarefree then these three factors are pairwise coprime,
+    ``g_a*g_b=(a*b,s)``, and
+
+    ``a*b/s = (a/g_a)*(b/g_b)/q``.
+
+    The outer sign also factors as ``mu(s)=mu(g_a)mu(g_b)mu(q)``.
+    """
+
+    if modulus < 1 or a == 0 or b == 0:
+        raise ValueError("require a positive modulus and nonzero frequencies")
+    if mobius(modulus) == 0:
+        raise ValueError("the scalar-gcd splitting requires squarefree s")
+    a_gcd = gcd(abs(a), modulus)
+    remaining = modulus // a_gcd
+    b_gcd = gcd(abs(b), remaining)
+    reduced_modulus = remaining // b_gcd
+    a_reduced = a // a_gcd
+    b_reduced = b // b_gcd
+    if a_gcd * b_gcd != gcd(abs(a * b), modulus):
+        raise AssertionError("ordered gcd factors missed a scalar prime")
+    if gcd(a_reduced * b_reduced, reduced_modulus) != 1:
+        raise AssertionError("the reduced product is not a unit")
+    mobius_sign = (
+        mobius(a_gcd) * mobius(b_gcd) * mobius(reduced_modulus)
+    )
+    if mobius_sign != mobius(modulus):
+        raise AssertionError("the squarefree Möbius sign did not factor")
+    return SquarefreeScalarGcdStratum(
+        a_gcd=a_gcd,
+        b_gcd=b_gcd,
+        reduced_modulus=reduced_modulus,
+        a_reduced=a_reduced,
+        b_reduced=b_reduced,
+        mobius_sign=mobius_sign,
+    )
+
+
+def additive_completion_shifted(
+    r: int, modulus: int, h_length: int, delta_length: int
+) -> complex:
+    """Evaluate (9.163) after the exact substitution ``d=r-s``.
+
+    This is deliberately a second finite implementation rather than an
+    alias for :func:`additive_product_completion`; the exhaustive tests
+    check the shifted-Chowla coordinate change independently.
+    """
+
+    if min(r, modulus, h_length, delta_length) < 1:
+        raise ValueError("all completion parameters must be positive")
+    if gcd(r, modulus) != 1:
+        raise ValueError("r must be invertible modulo the modulus")
+    h_fourier = [
+        _finite_interval_fourier(h_length, a, modulus)
+        for a in range(modulus)
+    ]
+    delta_fourier = [
+        _finite_interval_fourier(delta_length, b, modulus)
+        for b in range(modulus)
+    ]
+    shift = r - modulus
+    return sum(
+        h_fourier[a]
+        * delta_fourier[b]
+        * cmath.exp(
+            2j * cmath.pi * ((shift * a * b) % modulus) / modulus
+        )
+        for a in range(modulus)
+        for b in range(modulus)
+    ) / modulus
+
+
+def weighted_inverse_product_box_sum(
+    lower_r: int,
+    lower_s: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Direct left side of (9.166) with ``W=1`` on finite dyadic boxes."""
+
+    if min(lower_r, lower_s, h_length, delta_length) < 1:
+        raise ValueError("all box parameters must be positive")
+    return sum(
+        mobius(r)
+        * mobius(s)
+        * rectangular_product_kernel(
+            h_length,
+            delta_length,
+            Fraction(-pow(r, -1, s), s),
+        )
+        for s in range(lower_s + 1, 2 * lower_s + 1)
+        for r in range(lower_r + 1, 2 * lower_r + 1)
+        if gcd(r, s) == 1
+    )
+
+
+def weighted_shifted_completion_box_sum(
+    lower_r: int,
+    lower_s: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Right side of (9.166), retaining its moving ``d`` endpoints."""
+
+    if min(lower_r, lower_s, h_length, delta_length) < 1:
+        raise ValueError("all box parameters must be positive")
+    total = 0j
+    for s in range(lower_s + 1, 2 * lower_s + 1):
+        for shift in range(lower_r - s + 1, 2 * lower_r - s + 1):
+            if gcd(shift, s) != 1:
+                continue
+            r = s + shift
+            total += (
+                mobius(r)
+                * mobius(s)
+                * additive_completion_shifted(
+                    r, s, h_length, delta_length
+                )
+            )
+    return total
+
+
+def additive_completion_axis_row(
+    modulus: int, h_length: int, delta_length: int
+) -> int:
+    """Exact contribution of the complete row ``a=0`` in (9.163).
+
+    Orthogonality gives
+    ``sum_b 1_L_hat(b;s) = s*floor(L/s)``.  Hence the row, including
+    the factor ``1/s``, equals ``H*floor(L/s)`` and vanishes when ``L<s``.
+    """
+
+    if min(modulus, h_length, delta_length) < 1:
+        raise ValueError("all axis parameters must be positive")
+    return h_length * (delta_length // modulus)
+
+
+def additive_completion_axis_recombined(
+    shift: int,
+    modulus: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Sum the complete ``b`` axis into an exact residue incidence.
+
+    Orthogonality in ``b`` turns (9.163) into
+
+    ``sum_a 1_H_hat(a;s) * #{delta<=L: delta == d*a (mod s)}``.
+
+    When ``L<s`` the count is an indicator.  This identity keeps the
+    ``b=0`` point with the nonzero ``b`` frequencies that cancel it.
+    """
+
+    if min(modulus, h_length, delta_length) < 1:
+        raise ValueError("all recombination parameters must be positive")
+    if gcd(shift, modulus) != 1:
+        raise ValueError("the shift must be invertible modulo the modulus")
+    total = 0j
+    for a in range(modulus):
+        residue = (shift * a) % modulus
+        if residue == 0:
+            count = delta_length // modulus
+        elif residue > delta_length:
+            count = 0
+        else:
+            count = 1 + (delta_length - residue) // modulus
+        total += _finite_interval_fourier(
+            h_length, a, modulus
+        ) * count
+    return total
+
+
+def additive_completion_axis_union(
+    modulus: int, h_length: int, delta_length: int
+) -> Fraction:
+    """Exact contribution of ``a=0 or b=0`` in additive completion.
+
+    The intersection ``(a,b)=(0,0)`` has contribution ``HL/s`` and is
+    subtracted once.  In particular, when ``H,L<s`` the union is
+    ``-HL/s`` even though each complete axis separately sums to zero.
+    This records the cancellation that is lost by isolating the origin.
+    """
+
+    if min(modulus, h_length, delta_length) < 1:
+        raise ValueError("all axis parameters must be positive")
+    return (
+        h_length * (delta_length // modulus)
+        + delta_length * (h_length // modulus)
+        - Fraction(h_length * delta_length, modulus)
+    )
+
+
 def additive_completion_zero_mode(
     modulus: int, h_length: int, delta_length: int
 ) -> Fraction:
@@ -453,6 +774,139 @@ def additive_completion_zero_mode_mobius_exponent(
     return (
         box.rho + 2 * box.sigma - box.third_length
     ) / (box.rho + box.sigma)
+
+
+def additive_shifted_chowla_ledger(
+    box: ExponentBox,
+) -> AdditiveShiftedChowlaLedger:
+    """Return the exact lowest-dual-block exponent ledger.
+
+    On the balanced face, put ``A=s/H`` and ``B=s/L``.  A smoothed
+    completion localizes its lowest nonzero dual block at these scales;
+    for the sharp finite completion this function is only the ledger for
+    that block, not a claim that the complementary frequencies are small.
+    The product frequency has exponent ``C=A*B`` and the phase
+    ``e_s((r-s)ab)`` stops varying when ``|r-s| <= s/C``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("shifted-Chowla ledger requires an admissible box")
+    if box.rho != box.sigma:
+        raise ValueError("this ledger is for the overlapping face R=S")
+    if box.h > box.sigma or box.ell > box.sigma:
+        raise ValueError("completion lengths must not exceed the modulus")
+    h_frequency = box.sigma - box.h
+    delta_frequency = box.sigma - box.ell
+    product_frequency = h_frequency + delta_frequency
+    completion_amplitude = box.third_length - box.sigma
+    if completion_amplitude < 0:
+        raise ValueError("the lowest-block amplitude must be nonnegative")
+    near_shift = max(Fraction(0), box.sigma - product_frequency)
+    near_trivial = (
+        completion_amplitude
+        + product_frequency
+        + box.sigma
+        + near_shift
+    )
+    local_target = box.rho + box.sigma
+    one_modulus_l2 = None
+    one_modulus_l2_gap = None
+    if product_frequency < box.sigma:
+        one_modulus_l2 = (
+            box.sigma
+            + box.h
+            + box.ell
+            + product_frequency / 2
+        )
+        one_modulus_l2_gap = max(
+            Fraction(0), one_modulus_l2 - local_target
+        )
+    return AdditiveShiftedChowlaLedger(
+        h_frequency=h_frequency,
+        delta_frequency=delta_frequency,
+        product_frequency=product_frequency,
+        completion_amplitude=completion_amplitude,
+        near_shift=near_shift,
+        near_trivial=near_trivial,
+        local_target=local_target,
+        required_saving=max(Fraction(0), near_trivial - local_target),
+        one_modulus_l2=one_modulus_l2,
+        one_modulus_l2_gap=one_modulus_l2_gap,
+    )
+
+
+def additive_dual_block_ledger(
+    box: ExponentBox,
+    h_frequency: Fraction,
+    delta_frequency: Fraction,
+) -> AdditiveDualBlockLedger:
+    """Ledger for centered frequencies ``|a|~T^alpha, |b|~T^beta``.
+
+    The sharp Fourier bound (9.169) gives amplitudes
+    ``min(h, sigma-alpha)`` and ``min(ell, sigma-beta)``.  On the
+    circular near arc the shift length is
+    ``T^max(0,sigma-alpha-beta)``.  The function records the resulting
+    trivial exponent and does not estimate the complementary far arc.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("dual-block ledger requires an admissible box")
+    if box.rho != box.sigma:
+        raise ValueError("this ledger is for the overlapping face R=S")
+    if not Fraction(0) <= h_frequency <= box.sigma:
+        raise ValueError("the h frequency must lie in [1,s] on exponent scale")
+    if not Fraction(0) <= delta_frequency <= box.sigma:
+        raise ValueError(
+            "the delta frequency must lie in [1,s] on exponent scale"
+        )
+    h_fourier_amplitude = min(box.h, box.sigma - h_frequency)
+    delta_fourier_amplitude = min(
+        box.ell, box.sigma - delta_frequency
+    )
+    product_frequency = h_frequency + delta_frequency
+    completion_amplitude = (
+        h_fourier_amplitude
+        + delta_fourier_amplitude
+        - box.sigma
+    )
+    near_shift = max(Fraction(0), box.sigma - product_frequency)
+    near_trivial = (
+        completion_amplitude
+        + product_frequency
+        + box.sigma
+        + near_shift
+    )
+    local_target = box.rho + box.sigma
+    one_modulus_l2 = None
+    one_modulus_l2_gap = None
+    if product_frequency < box.sigma:
+        # Here AB=o(s), so congruent centered products have only O(1)
+        # possible integer differences by multiples of s.  Divisor energy
+        # then gives the displayed T^epsilon loss.  At AB>=s modular-
+        # hyperbola multiplicities need a separate argument.
+        one_modulus_l2 = (
+            box.sigma
+            + h_fourier_amplitude
+            + delta_fourier_amplitude
+            + product_frequency / 2
+        )
+        one_modulus_l2_gap = max(
+            Fraction(0), one_modulus_l2 - local_target
+        )
+    return AdditiveDualBlockLedger(
+        h_frequency=h_frequency,
+        delta_frequency=delta_frequency,
+        h_fourier_amplitude=h_fourier_amplitude,
+        delta_fourier_amplitude=delta_fourier_amplitude,
+        product_frequency=product_frequency,
+        completion_amplitude=completion_amplitude,
+        near_shift=near_shift,
+        near_trivial=near_trivial,
+        local_target=local_target,
+        required_saving=max(Fraction(0), near_trivial - local_target),
+        one_modulus_l2=one_modulus_l2,
+        one_modulus_l2_gap=one_modulus_l2_gap,
+    )
 
 
 def reduced_inverse_fraction_denominator(
