@@ -1917,6 +1917,7 @@ class PrimitiveConductorLevelDifferenceAudit:
     common_mobius_length_exponent: Fraction
     fixed_power_margin: Fraction
     unramified_local_amplitude_saving_exponent: Fraction
+    unramified_after_density_amplitude_saving_exponent: Fraction
     steinberg_local_amplitude_saving_exponent: Fraction
     required_projector_square_saving_exponent: Fraction
     primitive_subset_overhead_log_exponent: Fraction
@@ -1926,6 +1927,8 @@ class PrimitiveConductorLevelDifferenceAudit:
     finite_level_and_primitive_conductor_sums_interchanged_exactly: bool
     conductor_two_positive_valuation_vanishes: bool
     signed_square_conductor_overhead_is_polylogarithmic: bool
+    diagonal_conductor_euler_sum_is_polylogarithmic: bool
+    length_conductor_euler_sum_is_polylogarithmic: bool
     vinogradov_korobov_dominates_subset_overhead: bool
     published_large_sieve_has_explicit_polylog_constant: bool
     pevp_proved: bool
@@ -10541,14 +10544,16 @@ def primitive_conductor_level_difference_audit(
     The finite level difference is expanded in the general
     Blomer--Milicevic oldclass basis and then grouped by primitive
     conductor.  Exact ambient normalization and a level-independent
-    Bessel test make that regrouping algebraic.  A premature amplitude
-    triangle inequality leaves ``exp(O(sqrt(log A)/loglog A))``, but
-    keeping the signed local operator in one Cauchy square changes the
-    local weights to p^-2 and p^-1.  Their conductor-subset sum is
-    ``A^-1`` times a polylogarithmic Euler product.  The published
-    spectral large sieve is nevertheless stated with an epsilon loss,
-    not an explicit fixed polylogarithmic constant preserving A^-1, so
-    PEVP is not marked proved here.
+    Bessel test make that regrouping algebraic.  After the exact-
+    valuation density, the amplitude weights are p^-3/2 in the
+    unramified case and p^-1/2 in the Steinberg case.  Keeping the
+    signed local operator in one Cauchy square therefore gives p^-3
+    and p^-1.  The diagonal conductor sum is ``A^-1`` times a bounded
+    Euler product; after the primitive-conductor denominator in the
+    length term it is ``A^-2`` times a polylogarithmic Euler product.
+    The published spectral large sieve is nevertheless stated with an
+    epsilon loss, not an explicit fixed polylogarithmic constant
+    preserving A^-1, so PEVP is not marked proved here.
     """
     alpha = F(level_factor_exponent)
     mobius = F(common_mobius_length_exponent)
@@ -10563,6 +10568,7 @@ def primitive_conductor_level_difference_audit(
         common_mobius_length_exponent=mobius,
         fixed_power_margin=margin,
         unramified_local_amplitude_saving_exponent=F(1),
+        unramified_after_density_amplitude_saving_exponent=F(3, 2),
         steinberg_local_amplitude_saving_exponent=F(1, 2),
         required_projector_square_saving_exponent=F(1),
         primitive_subset_overhead_log_exponent=subset_log,
@@ -10572,6 +10578,8 @@ def primitive_conductor_level_difference_audit(
         finite_level_and_primitive_conductor_sums_interchanged_exactly=True,
         conductor_two_positive_valuation_vanishes=True,
         signed_square_conductor_overhead_is_polylogarithmic=True,
+        diagonal_conductor_euler_sum_is_polylogarithmic=True,
+        length_conductor_euler_sum_is_polylogarithmic=True,
         vinogradov_korobov_dominates_subset_overhead=vk_dominates,
         published_large_sieve_has_explicit_polylog_constant=False,
         pevp_proved=False,

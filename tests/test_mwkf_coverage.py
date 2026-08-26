@@ -4556,11 +4556,14 @@ def test_primitive_conductor_rearrangement_is_exact_but_polylog_large_sieve_is_o
     assert audit.same_bessel_test_retained_at_every_level
     assert audit.finite_level_and_primitive_conductor_sums_interchanged_exactly
     assert audit.unramified_local_amplitude_saving_exponent == F(1)
+    assert audit.unramified_after_density_amplitude_saving_exponent == F(3, 2)
     assert audit.steinberg_local_amplitude_saving_exponent == F(1, 2)
     assert audit.required_projector_square_saving_exponent == F(1)
     assert audit.conductor_two_positive_valuation_vanishes
     assert audit.primitive_subset_overhead_log_exponent == F(1, 2)
     assert audit.signed_square_conductor_overhead_is_polylogarithmic
+    assert audit.diagonal_conductor_euler_sum_is_polylogarithmic
+    assert audit.length_conductor_euler_sum_is_polylogarithmic
     assert audit.vinogradov_korobov_decay_log_exponent == F(3, 5)
     assert audit.vinogradov_korobov_dominates_subset_overhead
     assert not audit.published_large_sieve_has_explicit_polylog_constant

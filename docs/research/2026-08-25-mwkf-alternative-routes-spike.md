@@ -16285,14 +16285,19 @@ For \(a\geq1\), insert the three terms in \(U_{p^2}\) and use
 
 The exact-valuation coefficient norms contribute
 \(p^{-a/2}\) from the Poisson index and \(p^{-(b-1)/2}\) from the
-physical product index.  Thus the first line of (4.845da) has total
-exponent at most \(-1\), while the second has exponent
+physical product index.  In the first line of (4.845da), \(b=1\) has
+exponent \(-2+\theta<-3/2\), while for \(b\geq2\) the exponent is
+\[
+ -1+(b-2)\theta-\frac{b-1}{2}\leq-\frac32.
+\]
+The second line has exponent
 \[
  -1+(a+b-2)\theta-\frac{a+b-1}{2}\leq-\frac32
  \qquad(\theta<1/2).
 \]
-There is therefore a fixed half-prime margin over the required
-\(p^{-1/2}\), rather than the equality which produced
+Thus every unramified conductor choice has amplitude saving at least
+\(p^{-3/2}\), a full prime beyond the required \(p^{-1/2}\), rather
+than the equality which produced
 \(4^{\omega(D)}\).
 
 For primitive conductor exponent one, the local representation is
@@ -16312,26 +16317,24 @@ Eisenstein oldspace obeys (4.845cz)--(4.845da) with \(\theta=0\), and
 the conductor-\(p^2\) character pair again vanishes at positive
 valuation.
 
-After summing primitive-conductor choices, the remaining local overhead
-is at worst
+After summing primitive-conductor choices at the amplitude level, the
+unramified and Steinberg weights just computed give
 \[
- \prod_{p\mid A}(1+O(p^{-1/2}))
- \leq\exp\!\left(O\!\left(
-       \frac{\sqrt{\log(2A)}}{\log\log(3A)}\right)\right).
+ A^{-1/2}\prod_{p\mid A}(1+O(p^{-1}))
+ \ll A^{-1/2}(\log\log(3A))^{O(1)}.
 \]
-This is smaller than the Vinogradov--Korobov Möbius saving already
-retained in (4.845y) whenever the common Möbius variable has a fixed
-positive power length.  On the zero-exponent face, \(A\) is only
-polylogarithmic and the same overhead is absorbed by arbitrary
-logarithmic decay.
+Thus primitive-conductor aggregation itself is polylogarithmic; no
+Vinogradov--Korobov comparison is needed for this step.  The stronger
+squared ledger, including the two terms in the primitive large sieve,
+is recorded after the exact regrouping below.
 
 The functions `unramified_exact_level_difference_kernel` and
 `steinberg_exact_level_difference_kernel_square` check the two finite
 local formulae.  To promote this improvement to PEVP\(_{A,B}\), the
 newform decomposition must still be rearranged with the same Bessel
-test at every level and the Vinogradov--Korobov factor must be retained
-uniformly through the primitive-conductor sum.  Until that global
-rearrangement is written, the polylog tensor flag remains false.
+test at every level and the resulting primitive spectral moments must
+be bounded without an \(\varepsilon\)-loss.  Until that global estimate
+is proved, the polylog tensor flag remains false.
 
 
 ### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate
@@ -16347,7 +16350,7 @@ Let \(\pi\) be primitive of conductor \(Q_0\), let \(g\mid Q/Q_0\),
 and use the general Blomer--Milićević coefficients \(\xi_{\pi,g}(d)\).
 In normalized Fourier coefficients put
 \[
- U_{\pi,g}(n):=sum_{d\mid g}\xi_{\pi,g}(d)\sqrt d\,
+ U_{\pi,g}(n):=\sum_{d\mid g}\xi_{\pi,g}(d)\sqrt d\,
                  \lambda_\pi(n/d),
  \qquad \lambda_\pi(x)=0\quad(x\notin\mathbb N).
 \]
@@ -16393,42 +16396,46 @@ At each \(p\mid A\), the inner two sums in (4.845dc) are exactly the
 three conductor cases of Section 4.109y.  After the valuation norms,
 their amplitude weights satisfy
 \[
- w_p(0)\ll p^{-1},\qquad
+ w_p(0)\ll p^{-3/2},\qquad
  w_p(1)\leq p^{-1/2},\qquad
  w_p(2)=0.
 \]
-Absolute aggregation at the amplitude level would cost
+Consequently even absolute aggregation at the amplitude level costs
+only
 \[
- A^{-1/2}\prod_{p\mid A}(1+O(p^{-1/2}))
- =A^{-1/2}
-  \exp\!\left(O\!\left(
-  \frac{\sqrt{\log(2A)}}{\log\log(3A)}\right)\right).
+ A^{-1/2}\prod_{p\mid A}(1+O(p^{-1}))
+ \ll A^{-1/2}(\log\log(3A))^{O(1)}.
 \]
-For a common Möbius variable of length \(T^\delta\), \(\delta>0\),
-the Vinogradov--Korobov factor has exponential logarithmic order
-\(3/5\), and therefore dominates this order-\(1/2\) conductor-subset
-overhead.
+There is no subexponential conductor-subset overhead and no
+Vinogradov--Korobov input is needed in this ledger.
 
 PEVP does not take that triangle inequality: it keeps the signed local
 operator inside a square.  Put the complete exact-level multiplier on
 one side of Cauchy and the unweighted ambient spectral polynomial on
 the other.  The conductor weights in the first square are then
 \[
- w_p^{(2)}(0)\ll p^{-2},\qquad
+ w_p^{(2)}(0)\ll p^{-3},\qquad
  w_p^{(2)}(1)\leq p^{-1},\qquad
  w_p^{(2)}(2)=0.
 \]
-Consequently their complete conductor-subset sum already satisfies
+Consequently the diagonal part of their complete conductor-subset sum
+already satisfies
 \[
  \sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)
- \ll \frac1A\prod_{p\mid A}(1+O(p^{-1}))
- \ll \frac{(\log\log(3A))^{O(1)}}A.
+ \ll \frac1A\prod_{p\mid A}(1+O(p^{-2}))
+ \ll \frac1A.
 \]
-Thus the signed-square conductor aggregation is polylogarithmic and
-supplies the required square saving \(A^{-1}\) without using VK.  The
-VK comparison above remains available for the rejected amplitude-level
-triangle inequality, but it is not needed in the accepted square
-ledger.
+In the length term of the primitive large sieve, division by the
+primitive conductor contributes one further \(p^{-1}\) when the local
+conductor exponent is one.  Its two nonzero choices are therefore
+\(O(p^{-3})\) and \(p^{-2}\), whence
+\[
+ \sum_{Q_0\mid A^2B}\frac{w_A^{(2)}(Q_0)}{Q_0}
+ \ll \frac1{A^2B}\prod_{p\mid A}(1+O(p^{-1}))
+ \ll \frac{(\log\log(3A))^{O(1)}}{A^2B}.
+\]
+Thus both conductor Euler sums are polylogarithmic and the diagonal
+one supplies the required square saving \(A^{-1}\) without using VK.
 
 One loss is still not explicit enough.  The cited spectral large sieve
 is stated with \((Q_0Y\mathcal T)^\varepsilon\).  At a zero-power
@@ -16456,12 +16463,13 @@ summed in mean; replacing it by a pointwise \(n^\varepsilon\) bound is
 not sufficient.
 
 The interface `primitive_conductor_level_difference_audit` records the
-exact regrouping, the local amplitude exponents \(1\) and \(1/2\), the
-required square exponent \(1\), and the polylogarithmic signed-square
-conductor sum.  It keeps the epsilon-free large-sieve and PEVP flags
-false.  Consequently (PLS)\(_{Q_0}\), rather than either
-\(5^{\omega(A)}\) or the conductor-subset count, is now the precise
-compact-core obstruction.
+exact regrouping, the pre-density unramified exponent \(1\), the
+post-density unramified exponent \(3/2\), the Steinberg exponent
+\(1/2\), the required square exponent \(1\), and the polylogarithmic
+diagonal and length conductor Euler sums.  It keeps the epsilon-free
+large-sieve and PEVP flags false.  Consequently (PLS)\(_{Q_0}\),
+rather than either \(5^{\omega(A)}\) or the conductor-subset count, is
+now the precise compact-core obstruction.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
