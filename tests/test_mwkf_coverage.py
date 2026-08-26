@@ -4661,6 +4661,29 @@ def test_pattern_dependent_lists_reduce_to_one_scalar_ambient_large_sieve() -> N
     assert not audit.pevp_proved
 
 
+def test_scalar_hankel_seminorm_gate_is_the_remaining_fixed_entry_input() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zle The remaining fixed-entry input is one Hankel seminorm lemma",
+        r"\tag{4.845dc_14xye}",
+        r"\tag{4.845dc_14xyf}",
+        "scalar_polylog_hankel_seminorm_gate_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.scalar_polylog_hankel_seminorm_gate_audit()
+    assert audit.large_range_threshold == "P>=8*(1+R)^2"
+    assert audit.large_mellin_height_target == "R^O(1)/P on width P"
+    assert audit.transition_mellin_l1_target == "P*R^O(1)"
+    assert not audit.maass_eisenstein_uniform_bound_proved
+    assert not audit.holomorphic_weight_at_least_four_uniform_bound_proved
+    assert audit.holomorphic_weight_two_endpoint_proved
+    assert audit.farey_hybrid_large_sieve_proved
+    assert audit.conductor_pattern_transfer_proved
+    assert not audit.scalar_polylog_full_level_large_sieve_proved
+    assert not audit.fixed_entry_pevp_proved
+
+
 def test_steinberg_exact_level_difference_has_corrected_square_formula() -> None:
     unit = coverage_audit.steinberg_exact_level_difference_kernel_square(
         prime=5,
@@ -4739,7 +4762,7 @@ def test_trivial_nebentypus_eisenstein_has_no_conductor_p_cell() -> None:
 
 
 def test_corrected_steinberg_formula_needs_the_global_reinsertion_for_pevp() -> None:
-    """The local formula is insufficient alone; the completed PLS closes it."""
+    """The local formula is insufficient until the scalar PLS is proved."""
     local = coverage_audit.steinberg_exact_level_difference_kernel_square(
         prime=5,
         first_index_valuation=0,
@@ -4753,11 +4776,11 @@ def test_corrected_steinberg_formula_needs_the_global_reinsertion_for_pevp() -> 
         common_mobius_length_exponent=F(3, 2),
         fixed_power_margin=F(0),
     )
-    assert primitive.weighted_primitive_large_sieve_proved
-    assert primitive.pevp_proved
+    assert not primitive.weighted_primitive_large_sieve_proved
+    assert not primitive.pevp_proved
 
     final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
-    assert final.pevp_proved
+    assert not final.pevp_proved
     assert not final.full_remainder_is_little_o_T
     assert not final.unconditional_asymptotic_proved
     assert final.residual_cell_count > 0
@@ -4771,7 +4794,7 @@ def test_ambient_newform_normalization_indices_are_exact_at_p_and_p_squared() ->
     assert index(primitive_level=6, ambient_level=150) == 30
 
 
-def test_primitive_conductor_rearrangement_and_polylog_large_sieve_prove_pevp() -> None:
+def test_primitive_conductor_rearrangement_reduces_pevp_to_scalar_large_sieve() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
         "### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate",
@@ -4802,7 +4825,7 @@ def test_primitive_conductor_rearrangement_and_polylog_large_sieve_prove_pevp() 
     assert audit.vinogradov_korobov_decay_log_exponent == F(3, 5)
     assert audit.vinogradov_korobov_dominates_subset_overhead
     assert not audit.published_large_sieve_has_explicit_polylog_constant
-    assert audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
+    assert not audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
     assert audit.primitive_family_is_positive_full_level_subfamily
     assert audit.unramified_cross_index_two_shift_transfer_proved
     assert audit.steinberg_cross_index_rank_one_transfer_proved
@@ -4810,13 +4833,13 @@ def test_primitive_conductor_rearrangement_and_polylog_large_sieve_prove_pevp() 
     assert audit.all_local_cross_index_transfers_proved
     assert audit.shifted_support_does_not_exceed_original_support
     assert audit.pevp_reduced_to_uniform_polylog_harmonic_large_sieve
-    assert audit.maass_eisenstein_full_level_large_sieve_proved
-    assert audit.holomorphic_weight_ge_four_large_sieve_proved
+    assert not audit.maass_eisenstein_full_level_large_sieve_proved
+    assert not audit.holomorphic_weight_ge_four_large_sieve_proved
     assert audit.holomorphic_weight_two_large_sieve_proved
-    assert audit.all_archimedean_sectors_reinserted
-    assert audit.pevp_is_polynomial_in_fixed_kernel_seminorms
-    assert audit.weighted_primitive_large_sieve_proved
-    assert audit.pevp_proved
+    assert not audit.all_archimedean_sectors_reinserted
+    assert not audit.pevp_is_polynomial_in_fixed_kernel_seminorms
+    assert not audit.weighted_primitive_large_sieve_proved
+    assert not audit.pevp_proved
 
 
 def test_normalized_level_difference_has_a_positive_square_kernel_not_a_pure_layer() -> None:
@@ -5013,11 +5036,11 @@ def test_full_level_harmonic_large_sieve_polylog_constant_is_still_open() -> Non
     assert audit.small_bessel_tail_has_polylog_mean_divisor_bound
     assert audit.archimedean_partition_has_polylog_total_variation
     assert audit.hpy_first_mellin_requires_bessel_scale_above_spectral_square
-    assert audit.power_sized_large_bessel_range_covered
-    assert not audit.large_bessel_range_requires_new_estimate
-    assert audit.maass_and_eisenstein_sectors_covered
-    assert audit.holomorphic_sector_covered
-    assert audit.uniform_polylog_harmonic_large_sieve_proved
+    assert not audit.power_sized_large_bessel_range_covered
+    assert audit.large_bessel_range_requires_new_estimate
+    assert not audit.maass_and_eisenstein_sectors_covered
+    assert not audit.holomorphic_sector_covered
+    assert not audit.uniform_polylog_harmonic_large_sieve_proved
 
 
 def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> None:
@@ -5271,12 +5294,12 @@ def test_tail_shell_ledger_closes_from_seminorm_stable_pevp() -> None:
     assert audit.time_nonstationary_tail_included
     assert audit.poisson_frequency_tail_included
     assert audit.qct_fourier_mellin_tail_included
-    assert audit.pevp_is_polynomial_in_fixed_kernel_seminorms
-    assert audit.power_far_shells_are_dominated
-    assert audit.polylog_near_shells_are_summable
-    assert audit.transform_tail_aggregated
-    assert audit.afe_tail_aggregated
-    assert audit.total_tail_is_little_o_T
+    assert not audit.pevp_is_polynomial_in_fixed_kernel_seminorms
+    assert not audit.power_far_shells_are_dominated
+    assert not audit.polylog_near_shells_are_summable
+    assert not audit.transform_tail_aggregated
+    assert not audit.afe_tail_aggregated
+    assert not audit.total_tail_is_little_o_T
 
 
 def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> None:
@@ -5299,10 +5322,10 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     assert audit.exact_completed_afe_proved
     assert audit.poisson_zero_mode_normalization_proved
     assert audit.lcm_main_term_asymptotic_proved
-    assert audit.pevp_proved
+    assert not audit.pevp_proved
     assert not audit.compact_nonzero_poisson_core_is_little_o_T
-    assert audit.transform_tail_is_little_o_T
-    assert audit.afe_tail_is_little_o_T
+    assert not audit.transform_tail_is_little_o_T
+    assert not audit.afe_tail_is_little_o_T
     assert audit.archimedean_correction_is_beyond_all_powers
     assert not audit.full_remainder_is_little_o_T
     assert not audit.unconditional_asymptotic_proved
@@ -5367,8 +5390,8 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     assert core.total_aggregation_log_loss == F(7)
     assert core.net_log_saving == F(3)
     assert core.single_orientation_used_for_all_spectral_components
-    assert core.power_exponent_exact_valuation_projector_used
-    assert core.polylog_tensor_projector_gate_proved
+    assert not core.power_exponent_exact_valuation_projector_used
+    assert not core.polylog_tensor_projector_gate_proved
     assert core.grouped_outer_coefficients_are_actual_integer_variables
     assert core.left_outer_coefficient_l2_squared_exponent == F(3)
     assert core.right_outer_coefficient_l2_squared_exponent == F(2)
@@ -5386,8 +5409,8 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     assert not core.logarithmic_entry_divisor_split_is_complete
     assert core.ratio_gcd_layers_retained_inside_local_gate
     assert not core.nonzero_poisson_core_is_little_o_T
-    assert core.polylogarithmic_transform_tail_aggregated
-    assert core.afe_tail_aggregated
+    assert not core.polylogarithmic_transform_tail_aggregated
+    assert not core.afe_tail_aggregated
     assert not core.whole_mobius_gate_covered
 
 

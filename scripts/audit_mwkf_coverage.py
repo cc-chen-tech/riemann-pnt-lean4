@@ -2057,6 +2057,20 @@ class VectorValuedPatternLargeSieveReductionAudit:
 
 
 @dataclass(frozen=True)
+class ScalarPolylogHankelSeminormGateAudit:
+    large_range_threshold: str
+    large_mellin_height_target: str
+    transition_mellin_l1_target: str
+    maass_eisenstein_uniform_bound_proved: bool
+    holomorphic_weight_at_least_four_uniform_bound_proved: bool
+    holomorphic_weight_two_endpoint_proved: bool
+    farey_hybrid_large_sieve_proved: bool
+    conductor_pattern_transfer_proved: bool
+    scalar_polylog_full_level_large_sieve_proved: bool
+    fixed_entry_pevp_proved: bool
+
+
+@dataclass(frozen=True)
 class PrimitiveConductorLevelDifferenceAudit:
     level_factor_exponent: Fraction
     common_mobius_length_exponent: Fraction
@@ -11034,6 +11048,38 @@ def vector_valued_pattern_large_sieve_reduction_audit(
     )
 
 
+def scalar_polylog_hankel_seminorm_gate_audit(
+) -> ScalarPolylogHankelSeminormGateAudit:
+    """Record the sole remaining fixed-entry scalar large-sieve gate.
+
+    Sparse Farey--Gallagher, the finite cross-index tensor, conductor
+    Euler aggregation, and the weight-two cusp-strip endpoint are
+    proved.  What remains is a uniform theorem for the exact Maaß,
+    Eisenstein, and holomorphic (weight at least four) Kuznetsov
+    transforms.  For dyadic spectral scale R and Bessel scale P it must
+    prove a height ``R^O(1)/P`` on width-P stationary Mellin windows
+    when ``P>=8(1+R)^2``, and weighted Mellin L1 norm ``P*R^O(1)`` in
+    the complementary range, including the complete small-argument
+    modulus tail.  The constants must depend on only finitely many
+    normalized physical-kernel seminorms.
+    """
+    vector = vector_valued_pattern_large_sieve_reduction_audit()
+    return ScalarPolylogHankelSeminormGateAudit(
+        large_range_threshold="P>=8*(1+R)^2",
+        large_mellin_height_target="R^O(1)/P on width P",
+        transition_mellin_l1_target="P*R^O(1)",
+        maass_eisenstein_uniform_bound_proved=False,
+        holomorphic_weight_at_least_four_uniform_bound_proved=False,
+        holomorphic_weight_two_endpoint_proved=True,
+        farey_hybrid_large_sieve_proved=True,
+        conductor_pattern_transfer_proved=(
+            vector.cross_index_weights_legally_enter_scalar_large_sieve
+        ),
+        scalar_polylog_full_level_large_sieve_proved=False,
+        fixed_entry_pevp_proved=False,
+    )
+
+
 def steinberg_exact_level_difference_kernel_square(
     *,
     prime: int,
@@ -11802,13 +11848,12 @@ def primitive_conductor_level_difference_audit(
     and p^-1.  The diagonal conductor sum is ``A^-1`` times a bounded
     Euler product; after the primitive-conductor denominator in the
     length term it is ``A^-2`` times a polylogarithmic Euler product.
-    The custom full-level proof combines sparse Farey--Gallagher for
-    Maaß/Eisenstein and holomorphic weights at least four with the
-    incomplete-Eisenstein cusp-strip argument at weight two.  Applying
-    that epsilon-free theorem before the two conductor Euler sums proves
-    weighted PLS, and Cauchy against the unweighted ambient factor proves
-    PEVP.  Every transform estimate is polynomial in a fixed list of
-    normalized kernel seminorms.
+    The finite cross-index transfer and its conductor-pattern Euler
+    square are now proved.  The fixed-weight-two endpoint is also
+    proved by the incomplete-Eisenstein cusp-strip argument.  The
+    Maaß/Eisenstein and weight-at-least-four scalar full-level sieve
+    still requires a uniform Hankel--Mellin seminorm theorem.  Until
+    that theorem is supplied, weighted PLS and PEVP remain false.
     """
     alpha = F(level_factor_exponent)
     mobius = F(common_mobius_length_exponent)
@@ -11837,7 +11882,7 @@ def primitive_conductor_level_difference_audit(
         length_conductor_euler_sum_is_polylogarithmic=True,
         vinogradov_korobov_dominates_subset_overhead=vk_dominates,
         published_large_sieve_has_explicit_polylog_constant=False,
-        custom_full_level_harmonic_large_sieve_has_polylog_constant=True,
+        custom_full_level_harmonic_large_sieve_has_polylog_constant=False,
         primitive_family_is_positive_full_level_subfamily=True,
         unramified_cross_index_two_shift_transfer_proved=True,
         steinberg_cross_index_rank_one_transfer_proved=True,
@@ -11845,13 +11890,13 @@ def primitive_conductor_level_difference_audit(
         all_local_cross_index_transfers_proved=True,
         shifted_support_does_not_exceed_original_support=True,
         pevp_reduced_to_uniform_polylog_harmonic_large_sieve=True,
-        maass_eisenstein_full_level_large_sieve_proved=True,
-        holomorphic_weight_ge_four_large_sieve_proved=True,
+        maass_eisenstein_full_level_large_sieve_proved=False,
+        holomorphic_weight_ge_four_large_sieve_proved=False,
         holomorphic_weight_two_large_sieve_proved=True,
-        all_archimedean_sectors_reinserted=True,
-        pevp_is_polynomial_in_fixed_kernel_seminorms=True,
-        weighted_primitive_large_sieve_proved=True,
-        pevp_proved=True,
+        all_archimedean_sectors_reinserted=False,
+        pevp_is_polynomial_in_fixed_kernel_seminorms=False,
+        weighted_primitive_large_sieve_proved=False,
+        pevp_proved=False,
         whole_mobius_gate_covered=False,
     )
 
@@ -12206,11 +12251,11 @@ def full_level_harmonic_large_sieve_audit(
         small_bessel_tail_has_polylog_mean_divisor_bound=True,
         archimedean_partition_has_polylog_total_variation=True,
         hpy_first_mellin_requires_bessel_scale_above_spectral_square=True,
-        power_sized_large_bessel_range_covered=True,
-        large_bessel_range_requires_new_estimate=False,
-        maass_and_eisenstein_sectors_covered=True,
-        holomorphic_sector_covered=True,
-        uniform_polylog_harmonic_large_sieve_proved=True,
+        power_sized_large_bessel_range_covered=False,
+        large_bessel_range_requires_new_estimate=True,
+        maass_and_eisenstein_sectors_covered=False,
+        holomorphic_sector_covered=False,
+        uniform_polylog_harmonic_large_sieve_proved=False,
     )
 
 
@@ -23001,6 +23046,19 @@ def main() -> None:
         "scalar_polylog_ls="
         f"{pattern_vector.scalar_polylog_full_level_large_sieve_proved} "
         f"pevp={pattern_vector.pevp_proved}"
+    )
+    hankel_gate = scalar_polylog_hankel_seminorm_gate_audit()
+    print(
+        "balanced_max_a: scalar_hankel_gate="
+        f"maass_eis={hankel_gate.maass_eisenstein_uniform_bound_proved} "
+        "hol_ge4="
+        f"{hankel_gate.holomorphic_weight_at_least_four_uniform_bound_proved} "
+        f"weight2={hankel_gate.holomorphic_weight_two_endpoint_proved} "
+        f"farey={hankel_gate.farey_hybrid_large_sieve_proved} "
+        f"pattern={hankel_gate.conductor_pattern_transfer_proved} "
+        "scalar_polylog="
+        f"{hankel_gate.scalar_polylog_full_level_large_sieve_proved} "
+        f"pevp={hankel_gate.fixed_entry_pevp_proved}"
     )
     pascadi_lifted = pascadi_lifted_physical_audit(
         entry_divisor_exponent=F(3),
