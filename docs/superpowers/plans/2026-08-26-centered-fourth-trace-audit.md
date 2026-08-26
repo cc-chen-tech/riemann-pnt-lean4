@@ -149,3 +149,21 @@
 - [x] Audit the primitive transition corner and retain the exact `67/16` residual theorem gap.
 - [ ] Determine whether a mixed product-coefficient moment or a two-Möbius dispersion estimate closes the primitive `j=n=1` face.
 - [x] Review, verify, and update the Ready-for-view PR only if the new exact bridge survives all finite and exponent checks.
+
+### Task 10: Center the primitive packet before cross-modulus dispersion
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the unit-group-centered inverse-phase covariance.
+- [x] Prove its exact LCM-modulus Ramanujan formula and squarefree common-divisor collapse.
+- [x] Prove that coprime oscillatory moduli are exactly orthogonal while both cofactor Möbius signs remain.
+- [x] Center the complete double-unit divisor packet before separating its top and proper layers.
+- [x] Derive and audit every nonzero Fourier coefficient as a four-Kloosterman combination.
+- [x] Identify the exact primitive transition `t0=Q^2/R=T^2` and the `T^2` large-gcd pair sparsity.
+- [x] Map the coprime Fourier tensor to Blomer--Pascadi Theorem 5.5 and audit the exact `11/45` and `13/90` fixed-modulus losses.
+- [ ] Bound the nonzero dual mixed moment while retaining `mu(u)mu(v)` and both product factorizations.
+- [ ] Review, verify, and update the Ready-for-view PR only after the new centered interface survives full checks.

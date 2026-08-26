@@ -9,6 +9,7 @@ from scripts.audit_mobius_type_ii import (
     AdditiveDualBlockLedger,
     AdditiveShiftedChowlaLedger,
     BlomerPascadiMargins,
+    BlomerPascadiUnbalancedLedger,
     CentralCollisionLedger,
     CompletedProductPhaseReduction,
     CrossInverseFractionCollision,
@@ -36,11 +37,18 @@ from scripts.audit_mobius_type_ii import (
     balanced_scalar_stratum_bettin_chandee_uniform_gap,
     blomer_pascadi_beats_best_trivial,
     blomer_pascadi_best_trivial_margins,
+    blomer_pascadi_unbalanced_ledger,
     c_coefficient,
     centered_dual_common_mobius_exponent,
     centered_dual_parseval_covers,
     centered_dual_parseval_loss,
     centered_dual_scales,
+    centered_inverse_cross_correlation,
+    centered_inverse_cross_correlation_formula,
+    centered_inverse_cross_correlation_gcd_formula,
+    centered_inverse_cross_fourier,
+    centered_inverse_cross_fourier_formula,
+    centered_kloosterman_transform,
     central_collision_ledger,
     central_cross_inverse_collision_margins,
     character_large_sieve_unit_gap,
@@ -49,6 +57,7 @@ from scripts.audit_mobius_type_ii import (
     coherent_operator_required_exponent,
     completed_product_phase_reduction,
     coprimality_migrated_scalar_stratum_spectrum,
+    coprime_centered_inverse_cross_fourier_factorization,
     coprime_indicator_via_mobius,
     cross_inverse_fraction_collision,
     direct_fourfold_random_margin,
@@ -66,9 +75,12 @@ from scripts.audit_mobius_type_ii import (
     inverse_fraction_separation,
     inverse_lift_mobius_weight,
     inverse_product_phase_mod_one,
+    large_common_divisor_pair_bound,
     migrate_nonprincipal_mobius_sign,
     mobius_geometric_value,
+    mobius_weighted_centered_double_unit_divisor_spectrum,
     mobius_weighted_double_unit_divisor_spectrum,
+    mobius_weighted_double_unit_mean,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
@@ -1418,6 +1430,249 @@ def test_bettin_chandee_covers_no_balanced_scalar_factor_box() -> None:
                         scalar_b_gcd=b_gcd,
                     )
                     assert ledger.theorem_gap >= F(2)
+
+
+def test_centered_inverse_cross_correlation_has_exact_lcm_formula() -> None:
+    # For equal prime moduli and equal unit numerators the centered
+    # variance is c_3(0)-c_3(1)^2/phi(3)=2-1/2=3/2.
+    assert centered_inverse_cross_correlation_formula(3, 1, 3, 1) == F(3, 2)
+    assert abs(centered_inverse_cross_correlation(3, 1, 3, 1) - 1.5) < 1e-9
+
+    for left_modulus in range(1, 31):
+        if naive_mobius(left_modulus) == 0:
+            continue
+        for right_modulus in range(1, 31):
+            if naive_mobius(right_modulus) == 0:
+                continue
+            for left_numerator in range(-2, 4):
+                for right_numerator in range(-2, 4):
+                    direct = centered_inverse_cross_correlation(
+                        left_modulus,
+                        left_numerator,
+                        right_modulus,
+                        right_numerator,
+                    )
+                    closed = centered_inverse_cross_correlation_formula(
+                        left_modulus,
+                        left_numerator,
+                        right_modulus,
+                        right_numerator,
+                    )
+                    assert abs(direct - float(closed)) < 1e-8
+
+
+def test_centered_inverse_cross_correlation_collapses_to_common_divisor() -> None:
+    # CRT independence makes the covariance vanish identically when the
+    # two squarefree oscillatory moduli are coprime.
+    assert centered_inverse_cross_correlation_gcd_formula(6, 1, 35, 2) == 0
+    # m=3*2, n=3*5, A=B=1 leaves the common-modulus variance 3/2.
+    assert centered_inverse_cross_correlation_gcd_formula(6, 1, 15, 1) == F(3, 2)
+
+    for left_modulus in range(1, 43):
+        if naive_mobius(left_modulus) == 0:
+            continue
+        for right_modulus in range(1, 43):
+            if naive_mobius(right_modulus) == 0:
+                continue
+            for left_numerator in range(-2, 4):
+                for right_numerator in range(-2, 4):
+                    assert centered_inverse_cross_correlation_gcd_formula(
+                        left_modulus,
+                        left_numerator,
+                        right_modulus,
+                        right_numerator,
+                    ) == centered_inverse_cross_correlation_formula(
+                        left_modulus,
+                        left_numerator,
+                        right_modulus,
+                        right_numerator,
+                    )
+
+
+def test_double_unit_spectrum_mean_is_centered_before_layer_bounds() -> None:
+    for modulus in (2, 3, 5, 6, 10, 30):
+        for a_coefficient in range(-2, 4):
+            for b_coefficient in range(-2, 4):
+                expected = mobius_weighted_double_unit_mean(
+                    modulus,
+                    a_coefficient,
+                    b_coefficient,
+                )
+                direct = sum(
+                    naive_mobius(modulus)
+                    * double_unit_bilinear_sum(
+                        modulus,
+                        a_coefficient,
+                        b_coefficient,
+                        bilinear_coefficient,
+                    )
+                    for bilinear_coefficient in range(modulus)
+                    if gcd(bilinear_coefficient, modulus) == 1
+                )
+                phi_modulus = sum(
+                    1 for residue in range(modulus) if gcd(residue, modulus) == 1
+                )
+                assert abs(direct - phi_modulus * float(expected)) < 1e-8
+
+                centered = sum(
+                    mobius_weighted_double_unit_divisor_spectrum(
+                        modulus,
+                        a_coefficient,
+                        b_coefficient,
+                        bilinear_coefficient,
+                    )
+                    - expected
+                    for bilinear_coefficient in range(modulus)
+                    if gcd(bilinear_coefficient, modulus) == 1
+                )
+                assert abs(centered) < 1e-8
+
+
+def test_centered_double_unit_divisor_spectrum_centers_each_layer() -> None:
+    for modulus in (2, 3, 5, 6, 10, 30):
+        for a_coefficient in range(-2, 4):
+            for b_coefficient in range(-2, 4):
+                mean = mobius_weighted_double_unit_mean(
+                    modulus,
+                    a_coefficient,
+                    b_coefficient,
+                )
+                for bilinear_coefficient in range(modulus):
+                    if gcd(bilinear_coefficient, modulus) != 1:
+                        continue
+                    assert abs(
+                        mobius_weighted_centered_double_unit_divisor_spectrum(
+                            modulus,
+                            a_coefficient,
+                            b_coefficient,
+                            bilinear_coefficient,
+                        )
+                        - (
+                            mobius_weighted_double_unit_divisor_spectrum(
+                                modulus,
+                                a_coefficient,
+                                b_coefficient,
+                                bilinear_coefficient,
+                            )
+                            - mean
+                        )
+                    ) < 1e-8
+
+
+def test_centered_inverse_cross_fourier_is_four_kloosterman_combination() -> None:
+    for left_modulus in range(1, 19):
+        if naive_mobius(left_modulus) == 0:
+            continue
+        for right_modulus in range(1, 19):
+            if naive_mobius(right_modulus) == 0:
+                continue
+            for left_numerator in range(-1, 3):
+                for right_numerator in range(-1, 3):
+                    for frequency in range(-2, 3):
+                        direct = centered_inverse_cross_fourier(
+                            left_modulus,
+                            left_numerator,
+                            right_modulus,
+                            right_numerator,
+                            frequency,
+                        )
+                        closed = centered_inverse_cross_fourier_formula(
+                            left_modulus,
+                            left_numerator,
+                            right_modulus,
+                            right_numerator,
+                            frequency,
+                        )
+                        assert abs(direct - closed) < 1e-8
+                    assert abs(
+                        centered_inverse_cross_fourier_formula(
+                            left_modulus,
+                            left_numerator,
+                            right_modulus,
+                            right_numerator,
+                            0,
+                        )
+                        - float(
+                            centered_inverse_cross_correlation_formula(
+                                left_modulus,
+                                left_numerator,
+                                right_modulus,
+                                right_numerator,
+                            )
+                        )
+                    ) < 1e-8
+
+
+def test_large_common_divisor_pairs_have_exact_union_bound() -> None:
+    for dyadic_scale in range(2, 31):
+        values = range(dyadic_scale + 1, 2 * dyadic_scale + 1)
+        for threshold in range(2, 2 * dyadic_scale + 2):
+            actual = sum(
+                1
+                for left_modulus in values
+                for right_modulus in values
+                if gcd(left_modulus, right_modulus) >= threshold
+            )
+            upper = large_common_divisor_pair_bound(
+                dyadic_scale,
+                threshold,
+            )
+            assert actual <= upper
+            assert F(upper) <= F(
+                4 * dyadic_scale * dyadic_scale,
+                threshold - 1,
+            )
+
+
+def test_coprime_centered_cross_fourier_tensor_factorization() -> None:
+    assert abs(centered_kloosterman_transform(1, 7, -3)) < 1e-9
+    for left_modulus in range(1, 24):
+        if naive_mobius(left_modulus) == 0:
+            continue
+        for right_modulus in range(1, 24):
+            if (
+                naive_mobius(right_modulus) == 0
+                or gcd(left_modulus, right_modulus) != 1
+            ):
+                continue
+            for left_numerator in range(-1, 3):
+                for right_numerator in range(-1, 3):
+                    for frequency in range(-2, 3):
+                        assert abs(
+                            coprime_centered_inverse_cross_fourier_factorization(
+                                left_modulus,
+                                left_numerator,
+                                right_modulus,
+                                right_numerator,
+                                frequency,
+                            )
+                            - centered_inverse_cross_fourier_formula(
+                                left_modulus,
+                                left_numerator,
+                                right_modulus,
+                                right_numerator,
+                                frequency,
+                            )
+                        ) < 1e-8
+
+
+def test_blomer_pascadi_unbalanced_tensor_insertions_are_still_trivial() -> None:
+    long_short = blomer_pascadi_unbalanced_ledger(F(4, 5), F(1))
+    assert long_short == BlomerPascadiUnbalancedLedger(
+        first_term=F(1, 10),
+        second_term=F(1, 20),
+        third_term=F(2, 15),
+        fourth_term=F(11, 45),
+        fifth_term=F(0),
+        saving_factor=F(11, 45),
+        best_trivial_factor=F(1),
+        theorem_factor=F(56, 45),
+        theorem_gap=F(11, 45),
+    )
+    short_short = blomer_pascadi_unbalanced_ledger(F(4, 5), F(4, 5))
+    assert short_short.saving_factor == F(13, 90)
+    assert short_short.best_trivial_factor == F(1)
+    assert short_short.theorem_gap == F(13, 90)
 
 
 def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:

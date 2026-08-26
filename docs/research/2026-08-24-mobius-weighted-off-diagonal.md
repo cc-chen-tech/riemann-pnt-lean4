@@ -5264,6 +5264,259 @@ argument must take a mixed moment in the product coefficient or preserve
 the simultaneous \(\mu(r)\mu(\lambda)\) average before the fixed-factor
 sum.
 
+### 9.33 Centered common-divisor dispersion on the primitive face
+
+The top layer in (9.186) must not be separated from the proper divisor
+layers before its unit-group mean is removed.  For a positive modulus
+\(m\), an integer \(A\), and \(x\in(\mathbb Z/m\mathbb Z)^\times\), put
+
+\[
+ \mathscr E_{m,A}(x)
+ :=e_m(A\bar x_m)-\frac{c_m(A)}{\varphi(m)}.
+\]
+
+Let \(m,n\) be squarefree and \(L=[m,n]\).  Inversion permutes the unit
+group modulo \(L\), so direct expansion gives the exact cross-modulus
+covariance
+
+\[
+\boxed{
+ \sum_{x\bmod L}^{*}
+ \mathscr E_{m,A}(x)\overline{\mathscr E_{n,B}(x)}
+ =c_L\!\left(A\frac Lm-B\frac Ln\right)
+ -\frac{\varphi(L)c_m(A)c_n(B)}{\varphi(m)\varphi(n)}.}
+\tag{9.194}
+\]
+
+This expression has a stronger squarefree factorization than a generic
+LCM-modulus correlation.  Write
+
+\[
+ t=(m,n),\qquad m=tu,\qquad n=tv.
+\]
+
+Then \(t,u,v\) are pairwise coprime and (9.194) becomes
+
+\[
+\boxed{
+ c_u(A)c_v(B)
+ \left\{
+  c_t(Av-Bu)-\frac{c_t(A)c_t(B)}{\varphi(t)}
+ \right\}.}
+\tag{9.195}
+\]
+
+In particular, the covariance is **identically zero when \((m,n)=1\)**,
+for every pair \(A,B\), not merely after an estimate.  Moreover
+
+\[
+ \mu(m)\mu(n)=\mu(tu)\mu(tv)=\mu(u)\mu(v),
+\tag{9.196}
+\]
+
+so the two modulus signs survive on the coprime cofactors rather than
+being lost in the common divisor.  Summing (9.194) over
+\(A=h\delta\) and \(B=h'\delta'\) therefore proves exact orthogonality
+of the complete centered product kernels whenever their oscillatory
+moduli are coprime.  This is the first cross-modulus identity in the
+audit which simultaneously retains the product coefficients and both
+modulus Möbius signs.
+
+The same centering occurs before the divisor layers of (9.184) are
+estimated.  Averaging the complete double-unit sum over its bilinear
+coefficient gives
+
+\[
+ \frac1{\varphi(q)}\sum_{d\bmod q}^{*}\mu(q)U_q(A,B;d)
+ =\frac{c_q(A)c_q(B)}{\varphi(q)}.
+\]
+
+Consequently (9.184) has the exact centered form
+
+\[
+\boxed{
+\begin{aligned}
+ &\mu(q)U_q(A,B;d)-\frac{c_q(A)c_q(B)}{\varphi(q)}\\
+ &\quad=\sum_{\substack{k\mid q\\(k,B)=1}}
+ k\mu(k)c_{q/k}(A)
+ \left\{
+ e_k\!\left(-AB\,\overline{d(q/k)}_k\right)
+ -\frac{c_k(A)}{\varphi(k)}
+ \right\}.
+\end{aligned}}
+\tag{9.197}
+\]
+
+The \(k=1\) bracket vanishes exactly.  Thus the nonoscillatory divisor
+layer is not a separate contribution after centering, and the mean of
+the top \(k=q\) layer cancels jointly with the proper layers **down to**
+the explicit mean \(c_q(A)c_q(B)/\varphi(q)\), not to zero.  That
+remaining mean is not discarded: it must stay recombined with the
+principal/axis family as in Sections 9.24 and 9.30.  The dispersion below
+acts only on the centered remainder in (9.197).  Bounding (9.186) by
+itself discards this cancellation and asks for a strictly stronger
+theorem than the centered scalar-stratum problem.
+
+There is also an exact nonzero-frequency interface.  Define
+
+\[
+ \widehat{\mathscr C}_{m,n;A,B}(v)
+ :=\sum_{x\bmod L}^{*}
+ \mathscr E_{m,A}(x)\overline{\mathscr E_{n,B}(x)}e_L(-vx)
+\]
+
+and write \(S_L(a,b)=\sum_{x\bmod L}^{*}e_L(a\bar x+bx)\),
+\(a_m=c_m(A)/\varphi(m)\), and
+\(b_n=c_n(B)/\varphi(n)\).  Direct expansion gives
+
+\[
+\boxed{
+\begin{aligned}
+ \widehat{\mathscr C}_{m,n;A,B}(v)
+ ={}&S_L\!\left(A\frac Lm-B\frac Ln,-v\right)
+ -b_nS_L\!\left(A\frac Lm,-v\right)\\
+ &-a_mS_L\!\left(-B\frac Ln,-v\right)
+ +a_mb_n c_L(v).
+\end{aligned}}
+\tag{9.198}
+\]
+
+At \(v=0\), (9.198) is exactly (9.194); for \(v\ne0\) it is a
+centered linear combination of four classical Kloosterman sums, not an
+arbitrary inverse-product coefficient.
+
+There is an additional tensor factorization on the coprime face.  Define
+the one-modulus centered transform
+
+\[
+ \mathscr K_{m,A}(b)
+ :=S_m(A,b)-\frac{c_m(A)c_m(b)}{\varphi(m)}.
+\tag{9.198a}
+\]
+
+If \((m,n)=1\), Chinese remaindering separates the two unit coordinates
+in every Fourier mode and gives
+
+\[
+\boxed{
+ \widehat{\mathscr C}_{m,n;A,B}(v)
+ =\mathscr K_{m,A}(-v\bar n_m)
+  \mathscr K_{n,-B}(-v\bar m_n).}
+\tag{9.198b}
+\]
+
+Both factors in (9.198b) vanish at \(v=0\), recovering the coprime
+orthogonality in (9.195).  For \(v\ne0\), (9.198b) keeps the left and
+right product coefficients separate and keeps the two Möbius weights
+available for a Type-II treatment.  Expanding this product termwise
+returns the four terms in (9.198), so no estimate or missing correction
+is hidden in the tensor notation.
+
+With the Fourier convention of Section 9.16, a smooth physical \(r\)-sum
+satisfies the exact Poisson identity
+
+\[
+\boxed{
+ \sum_{r\in\mathbb Z}W(r/R)
+ \mathscr E_{m,A}(r)\overline{\mathscr E_{n,B}(r)}
+ =\frac RL\sum_{v\in\mathbb Z}
+ \widehat W(vR/L)\widehat{\mathscr C}_{m,n;A,B}(-v),}
+\tag{9.199}
+\]
+
+where the centered factors are extended by zero off the units.  Hence
+all incomplete endpoints are contained in the nonzero dual frequencies;
+there is no silently completed sharp interval.
+
+For \(m,n\asymp Q\) and \(t=(m,n)\), the dual length in (9.199) is
+
+\[
+ \frac LR\asymp\frac{Q^2}{tR}.
+\tag{9.200}
+\]
+
+The physical/dual transition is therefore \(t_0=Q^2/R\).  At the
+primitive transition corner \(Q=T^{5/2}\), \(R=T^3\), this is
+\(t_0=T^2\).  The large-common-divisor pairs have the finite bound
+
+\[
+ \#\{m,n\in(Q,2Q]:(m,n)\geq D\}
+ \leq\sum_{d\geq D}\left\lfloor\frac{2Q}{d}\right\rfloor^2
+ \ll\frac{Q^2}{D},
+\tag{9.201}
+\]
+
+so at \(D=t_0\) their pair count is \(T^3\), a \(T^2\) sparsity
+relative to all \(Q^2=T^5\) pairs.  This matches the smallest balanced
+deficit (9.172) at the level of modulus-pair counting, but is not by
+itself a bound for the weighted kernel.
+
+Equations (9.194)--(9.201) replace the former undifferentiated primitive
+face by two exact tasks.  For \(t\geq t_0\), one must combine the proved
+large-gcd sparsity with the centered product-coefficient moments.  For
+\(t<t_0\), one must estimate the nonzero dual Kloosterman combination
+(9.198), of length \(Q^2/(tR)\), while retaining
+\(\mu(u)\mu(v)\) and both factorizations \(A=h\delta\),
+\(B=h'\delta'\).  The zero dual frequency and every coprime-modulus
+covariance are now evaluated exactly; the nonzero dual estimate remains
+unproved and is the next analytic gate.
+
+The fixed-modulus theorems located in the literature do not directly
+bound this last tensor.  Blomer--Pascadi Theorem 1.1 averages two
+independent argument intervals for one fixed modulus.  In (9.198b), both
+moduli vary, while the linear arguments are the cross-inverses
+\(-v\bar n_m\) and \(-v\bar m_n\), and \(A,B\) retain divisor-product
+coefficients.  Kerr--Shparlinski--Wu--Xi likewise work with a fixed prime
+field or a fixed Kloosterman modulus in their Type-II inputs.  Applying
+either result after fixing \(m,n,A,B\) uses only a pointwise Weil-type
+bound and discards \(\mu(m)\mu(n)\).  Formula (9.198b), rather than four
+separate applications, is therefore the theorem-compatible object a new
+two-modulus trace or dispersion estimate must control.
+
+Even the most favorable direct insertion into the new tensor is
+quantitatively insufficient.  When \((\delta,m)=1\), symmetry and a
+unit change of variable give
+
+\[
+ S_m(h\delta,-v\bar n_m)
+ =S_m(-v\delta\bar n_m,h).
+\tag{9.202}
+\]
+
+Thus, after fixing \(\delta,m,n\), Blomer--Pascadi Theorem 5.5 is
+syntactically applicable to the \((v,h)\)-sum, with the other tensor
+factor absorbed into the arbitrary \(v\)-coefficient.  At the coprime
+primitive corner its interval exponents relative to the fixed modulus
+\(m\) are
+
+\[
+ |v|=m^{4/5},\qquad |h|=m.
+\]
+
+Substitution into every term of their function \(H(M,N,c)\) gives
+
+\[
+ H(m^{4/5},m,m)=m^{11/45+o(1)}.
+\tag{9.203}
+\]
+
+The best complete-Cauchy factor is already \(m\), whereas Theorem 5.5
+produces \(m^{1+11/45+o(1)}\); this is a loss
+\(m^{11/45}=T^{11/18}\).  On the still more favorable unit-\(h\) face,
+using the two short variables \((v,\delta)=(m^{4/5},m^{4/5})\) gives
+
+\[
+ H(m^{4/5},m^{4/5},m)=m^{13/90+o(1)},
+\tag{9.204}
+\]
+
+again a loss over complete Cauchy, now \(T^{13/36}\).  These are exact
+rational substitutions into Theorem 5.5, not heuristic comparisons.
+They prove that applying the fixed-modulus theorem to only one factor of
+(9.198b) cannot close the primitive face.  Any successful use of the
+Kloosterman tensor must take a joint moment over both varying moduli (or
+exploit the two Möbius signs) before paying either factor's operator norm.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -5373,6 +5626,11 @@ Proved in this note:
   \(T^{5/16}\) but still misses the completed primitive stratum target by
   \(T^{67/16}\), and its gap is at least \(T^2\) on every balanced
   scalar-factor box.
+* the centered common-divisor covariance (9.194)--(9.196), centered
+  scalar-divisor packet (9.197), and exact dual Kloosterman interface
+  (9.198)--(9.201); coprime oscillatory moduli are exactly orthogonal and
+  the zero dual mode collapses to their common divisor, while the
+  nonzero dual mixed moment remains unproved.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -5415,6 +5673,7 @@ Proved in this note:
 | Additive-dual shifted-Chowla route | exact finite reduction; joint estimate unproved | \(r=s+d\) gives the moving-endpoint identity (9.166); complete axes recombine the origin in (9.167)--(9.168), so the isolated \(2/3\) Mertens barrier is removed; all near blocks lose at most \(T^2\), one-modulus Parseval loses \(T^{5/2}\), (9.177) records the surviving resonance, (9.178) absorbs every axis boundary, and (9.179) factorizes each squarefree scalar-gcd stratum |
 | Scalar-stratum unit spectrum | exact divisor decomposition; top layer unproved | unit and unrestricted lifts are (9.180)--(9.181); the double-unit sum has divisor spectrum (9.183), outer \(\mu(q)\) migrates to \(\mu(k)\) in (9.184), and (9.185) isolates the inverse-product top layer (9.186) |
 | Coprimality-migrated scalar spectrum | exact Type-II bridge; balanced face unproved | expanding \((k,\delta')=1\) gives the triple spectrum (9.187), whose product coefficient is independent of the oscillatory modulus; Bettin--Chandee applies with (9.189), but (9.193) proves a uniform gap of at least \(T^2\), with gap \(T^{67/16}\) at the primitive corner |
+| Centered common-divisor dispersion | exact zero-frequency reduction; nonzero dual estimate unproved | centering the full divisor packet makes the \(k=1\) layer vanish, (9.197); the cross-modulus covariance is zero for coprime moduli and otherwise factors only through \(t=(m,n)\), (9.194)--(9.196); (9.198)--(9.201) isolate the remaining dual Kloosterman frequencies and the \(t_0=Q^2/R=T^2\) transition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

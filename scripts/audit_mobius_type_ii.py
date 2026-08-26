@@ -40,6 +40,45 @@ def divisors(n: int) -> tuple[int, ...]:
     return tuple(small + list(reversed(large)))
 
 
+def _euler_phi(n: int) -> int:
+    if n < 1:
+        raise ValueError("modulus must be positive")
+    result = n
+    remaining = n
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            result -= result // prime
+            while remaining % prime == 0:
+                remaining //= prime
+        prime += 1
+    if remaining > 1:
+        result -= result // remaining
+    return result
+
+
+def _kloosterman_sum(
+    modulus: int, inverse_coefficient: int, linear_coefficient: int
+) -> complex:
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    if modulus == 1:
+        return 1 + 0j
+    return sum(
+        cmath.exp(
+            2j
+            * cmath.pi
+            * (
+                inverse_coefficient * pow(residue, -1, modulus)
+                + linear_coefficient * residue
+            )
+            / modulus
+        )
+        for residue in range(modulus)
+        if gcd(residue, modulus) == 1
+    )
+
+
 @lru_cache(maxsize=None)
 def mobius(n: int) -> int:
     if n < 1:
@@ -833,6 +872,373 @@ def mobius_weighted_double_unit_divisor_spectrum(
             )
         total += coefficient * phase
     return total
+
+
+def centered_inverse_cross_correlation(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+) -> complex:
+    """Direct centered inverse-phase covariance on the common unit group."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    left_mean = Fraction(
+        ramanujan_sum(left_modulus, left_numerator),
+        _euler_phi(left_modulus),
+    )
+    right_mean = Fraction(
+        ramanujan_sum(right_modulus, right_numerator),
+        _euler_phi(right_modulus),
+    )
+    total = 0j
+    for residue in range(common_modulus):
+        if gcd(residue, common_modulus) != 1:
+            continue
+        if left_modulus == 1:
+            left_phase = 1 + 0j
+        else:
+            left_phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    left_numerator
+                    * pow(residue, -1, left_modulus)
+                    % left_modulus
+                )
+                / left_modulus
+            )
+        if right_modulus == 1:
+            right_phase = 1 + 0j
+        else:
+            right_phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    right_numerator
+                    * pow(residue, -1, right_modulus)
+                    % right_modulus
+                )
+                / right_modulus
+            )
+        total += (left_phase - float(left_mean)) * (
+            right_phase - float(right_mean)
+        ).conjugate()
+    return total
+
+
+def centered_inverse_cross_correlation_formula(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+) -> Fraction:
+    """Closed Ramanujan formula for the centered inverse covariance."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    combined_frequency = (
+        left_numerator * (common_modulus // left_modulus)
+        - right_numerator * (common_modulus // right_modulus)
+    )
+    return Fraction(ramanujan_sum(common_modulus, combined_frequency)) - Fraction(
+        _euler_phi(common_modulus)
+        * ramanujan_sum(left_modulus, left_numerator)
+        * ramanujan_sum(right_modulus, right_numerator),
+        _euler_phi(left_modulus) * _euler_phi(right_modulus),
+    )
+
+
+def centered_inverse_cross_correlation_gcd_formula(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+) -> Fraction:
+    """Squarefree common-divisor form of the centered covariance."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    if mobius(left_modulus) == 0 or mobius(right_modulus) == 0:
+        raise ValueError("the gcd formula requires squarefree moduli")
+    common_divisor = gcd(left_modulus, right_modulus)
+    left_cofactor = left_modulus // common_divisor
+    right_cofactor = right_modulus // common_divisor
+    common_covariance = Fraction(
+        ramanujan_sum(
+            common_divisor,
+            left_numerator * right_cofactor
+            - right_numerator * left_cofactor,
+        )
+    ) - Fraction(
+        ramanujan_sum(common_divisor, left_numerator)
+        * ramanujan_sum(common_divisor, right_numerator),
+        _euler_phi(common_divisor),
+    )
+    return (
+        ramanujan_sum(left_cofactor, left_numerator)
+        * ramanujan_sum(right_cofactor, right_numerator)
+        * common_covariance
+    )
+
+
+def mobius_weighted_double_unit_mean(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+) -> Fraction:
+    """Unit average of the outer-Möbius-weighted double-unit spectrum."""
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the double-unit mean requires squarefree q")
+    return Fraction(
+        ramanujan_sum(modulus, a_coefficient)
+        * ramanujan_sum(modulus, b_coefficient),
+        _euler_phi(modulus),
+    )
+
+
+def mobius_weighted_centered_double_unit_divisor_spectrum(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+    bilinear_coefficient: int,
+) -> complex:
+    """Centered divisor layers of the weighted double-unit spectrum."""
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the centered spectrum requires squarefree q")
+    if gcd(bilinear_coefficient, modulus) != 1:
+        raise ValueError("the bilinear coefficient must be a unit modulo q")
+    total = 0j
+    for divisor_modulus in divisors(modulus):
+        if gcd(divisor_modulus, b_coefficient) != 1:
+            continue
+        cofactor = modulus // divisor_modulus
+        coefficient = (
+            divisor_modulus
+            * mobius(divisor_modulus)
+            * ramanujan_sum(cofactor, a_coefficient)
+        )
+        if divisor_modulus == 1:
+            phase = 1 + 0j
+        else:
+            inverse = pow(
+                (bilinear_coefficient * cofactor) % divisor_modulus,
+                -1,
+                divisor_modulus,
+            )
+            phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    (-a_coefficient * b_coefficient * inverse)
+                    % divisor_modulus
+                )
+                / divisor_modulus
+            )
+        layer_mean = Fraction(
+            ramanujan_sum(divisor_modulus, a_coefficient),
+            _euler_phi(divisor_modulus),
+        )
+        total += coefficient * (phase - float(layer_mean))
+    return total
+
+
+def centered_inverse_cross_fourier(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+    frequency: int,
+) -> complex:
+    """Direct Fourier coefficient of a centered inverse-phase product."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    left_mean = Fraction(
+        ramanujan_sum(left_modulus, left_numerator),
+        _euler_phi(left_modulus),
+    )
+    right_mean = Fraction(
+        ramanujan_sum(right_modulus, right_numerator),
+        _euler_phi(right_modulus),
+    )
+    total = 0j
+    for residue in range(common_modulus):
+        if gcd(residue, common_modulus) != 1:
+            continue
+        if left_modulus == 1:
+            left_phase = 1 + 0j
+        else:
+            left_phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    left_numerator
+                    * pow(residue, -1, left_modulus)
+                    % left_modulus
+                )
+                / left_modulus
+            )
+        if right_modulus == 1:
+            right_phase = 1 + 0j
+        else:
+            right_phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    right_numerator
+                    * pow(residue, -1, right_modulus)
+                    % right_modulus
+                )
+                / right_modulus
+            )
+        centered_product = (left_phase - float(left_mean)) * (
+            right_phase - float(right_mean)
+        ).conjugate()
+        additive_phase = cmath.exp(
+            -2j * cmath.pi * (frequency * residue % common_modulus)
+            / common_modulus
+        )
+        total += centered_product * additive_phase
+    return total
+
+
+def centered_inverse_cross_fourier_formula(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+    frequency: int,
+) -> complex:
+    """Four-Kloosterman formula for the centered cross coefficient."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    left_lift = left_numerator * (common_modulus // left_modulus)
+    right_lift = right_numerator * (common_modulus // right_modulus)
+    left_mean = Fraction(
+        ramanujan_sum(left_modulus, left_numerator),
+        _euler_phi(left_modulus),
+    )
+    right_mean = Fraction(
+        ramanujan_sum(right_modulus, right_numerator),
+        _euler_phi(right_modulus),
+    )
+    return (
+        _kloosterman_sum(
+            common_modulus,
+            left_lift - right_lift,
+            -frequency,
+        )
+        - float(right_mean)
+        * _kloosterman_sum(common_modulus, left_lift, -frequency)
+        - float(left_mean)
+        * _kloosterman_sum(common_modulus, -right_lift, -frequency)
+        + float(left_mean * right_mean)
+        * ramanujan_sum(common_modulus, frequency)
+    )
+
+
+def large_common_divisor_pair_bound(
+    dyadic_scale: int, threshold: int
+) -> int:
+    """Finite union bound for dyadic pairs with a large common divisor."""
+
+    if dyadic_scale < 1:
+        raise ValueError("dyadic scale must be positive")
+    if threshold < 2:
+        raise ValueError("threshold must be at least two")
+    return sum(
+        (2 * dyadic_scale // common_divisor) ** 2
+        for common_divisor in range(
+            threshold,
+            2 * dyadic_scale + 1,
+        )
+    )
+
+
+def centered_kloosterman_transform(
+    modulus: int, inverse_numerator: int, linear_frequency: int
+) -> complex:
+    """Fourier transform of one centered inverse phase."""
+
+    if modulus < 1:
+        raise ValueError("modulus must be positive")
+    inverse_mean = Fraction(
+        ramanujan_sum(modulus, inverse_numerator),
+        _euler_phi(modulus),
+    )
+    return _kloosterman_sum(
+        modulus,
+        inverse_numerator,
+        linear_frequency,
+    ) - float(inverse_mean) * ramanujan_sum(
+        modulus,
+        linear_frequency,
+    )
+
+
+def coprime_centered_inverse_cross_fourier_factorization(
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+    frequency: int,
+) -> complex:
+    """CRT tensor factorization of a coprime centered cross coefficient."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    if gcd(left_modulus, right_modulus) != 1:
+        raise ValueError("the tensor factorization requires coprime moduli")
+    if left_modulus == 1:
+        right_inverse_mod_left = 0
+    else:
+        right_inverse_mod_left = pow(
+            right_modulus,
+            -1,
+            left_modulus,
+        )
+    if right_modulus == 1:
+        left_inverse_mod_right = 0
+    else:
+        left_inverse_mod_right = pow(
+            left_modulus,
+            -1,
+            right_modulus,
+        )
+    return centered_kloosterman_transform(
+        left_modulus,
+        left_numerator,
+        -frequency * right_inverse_mod_left,
+    ) * centered_kloosterman_transform(
+        right_modulus,
+        -right_numerator,
+        -frequency * left_inverse_mod_right,
+    )
 
 
 def _validate_squarefree_scalar_factors(
@@ -1746,6 +2152,80 @@ class BlomerPascadiMargins:
 
     def values(self) -> tuple[Fraction, ...]:
         return (self.first, self.second, self.third)
+
+
+@dataclass(frozen=True)
+class BlomerPascadiUnbalancedLedger:
+    """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
+
+    first_term: Fraction
+    second_term: Fraction
+    third_term: Fraction
+    fourth_term: Fraction
+    fifth_term: Fraction
+    saving_factor: Fraction
+    best_trivial_factor: Fraction
+    theorem_factor: Fraction
+    theorem_gap: Fraction
+
+
+def blomer_pascadi_unbalanced_ledger(
+    left_length: Fraction,
+    right_length: Fraction,
+) -> BlomerPascadiUnbalancedLedger:
+    """Audit Theorem 5.5 for interval lengths ``c^left`` and ``c^right``."""
+
+    if not (
+        0 <= left_length <= 1
+        and 0 <= right_length <= 1
+    ):
+        raise ValueError("Theorem 5.5 requires both lengths between 1 and c")
+    first_term = (
+        left_length / 8
+        + (
+            max(Fraction(1), left_length + right_length)
+            + max(Fraction(1), 2 * right_length)
+        )
+        / 16
+        - Fraction(1, 4)
+        + min(1 - left_length, Fraction(1, 2)) / 16
+    )
+    second_term = max(
+        2 * right_length - 2,
+        right_length / 2
+        + left_length
+        + max(Fraction(1), 2 * right_length)
+        - Fraction(5, 2),
+    ) / 16
+    third_term = max(left_length, right_length) / 3 - Fraction(1, 5)
+    fourth_term = max(
+        left_length / 2 + right_length / 6,
+        left_length / 6 + right_length / 2,
+    ) - Fraction(7, 18)
+    fifth_term = max(left_length, right_length) / 15 - Fraction(1, 15)
+    saving_factor = max(
+        first_term,
+        second_term,
+        third_term,
+        fourth_term,
+        fifth_term,
+    )
+    best_trivial_factor = min(
+        Fraction(1),
+        (1 + left_length + right_length) / 2,
+    )
+    theorem_factor = 1 + saving_factor
+    return BlomerPascadiUnbalancedLedger(
+        first_term=first_term,
+        second_term=second_term,
+        third_term=third_term,
+        fourth_term=fourth_term,
+        fifth_term=fifth_term,
+        saving_factor=saving_factor,
+        best_trivial_factor=best_trivial_factor,
+        theorem_factor=theorem_factor,
+        theorem_gap=theorem_factor - best_trivial_factor,
+    )
 
 
 def blomer_pascadi_best_trivial_margins(
