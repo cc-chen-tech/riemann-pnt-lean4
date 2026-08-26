@@ -8,6 +8,7 @@ It does not prove the residual averaged Type-II oscillatory estimate.
 from __future__ import annotations
 
 import cmath
+from collections.abc import Mapping
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import lru_cache
@@ -2843,6 +2844,66 @@ def additive_product_completion(
         for a in range(modulus)
         for b in range(modulus)
     ) / modulus
+
+
+def weighted_additive_product_completion_sides(
+    r: int,
+    modulus: int,
+    h_weights: Mapping[int, complex],
+    delta_weights: Mapping[int, complex],
+) -> tuple[complex, complex]:
+    """Both sides of smooth finite completion (9.366).
+
+    The dictionaries may have arbitrary signed integer support and
+    arbitrary complex values.  This is the boundary-free finite identity
+    underlying the modulated smooth transforms; decay of those transforms
+    is a separate analytic statement.
+    """
+
+    if min(r, modulus) < 1:
+        raise ValueError("r and modulus must be positive")
+    if gcd(r, modulus) != 1:
+        raise ValueError("r must be invertible modulo the modulus")
+
+    inverse = pow(r, -1, modulus)
+    direct = sum(
+        h_weight
+        * delta_weight
+        * cmath.exp(
+            -2j
+            * cmath.pi
+            * ((inverse * h * delta) % modulus)
+            / modulus
+        )
+        for h, h_weight in h_weights.items()
+        for delta, delta_weight in delta_weights.items()
+    )
+    h_fourier = [
+        sum(
+            weight
+            * cmath.exp(-2j * cmath.pi * a * h / modulus)
+            for h, weight in h_weights.items()
+        )
+        for a in range(modulus)
+    ]
+    delta_fourier = [
+        sum(
+            weight
+            * cmath.exp(-2j * cmath.pi * b * delta / modulus)
+            for delta, weight in delta_weights.items()
+        )
+        for b in range(modulus)
+    ]
+    completed = sum(
+        h_fourier[a]
+        * delta_fourier[b]
+        * cmath.exp(
+            2j * cmath.pi * ((r * a * b) % modulus) / modulus
+        )
+        for a in range(modulus)
+        for b in range(modulus)
+    ) / modulus
+    return direct, completed
 
 
 def additive_dual_shift_phase(
@@ -6034,6 +6095,34 @@ class BlomerPascadiMargins:
 
 
 @dataclass(frozen=True)
+class SmoothAdditiveDualSupportLedger:
+    """Dual-support ledger for the actual modulated smooth kernel.
+
+    The two centres come from ``s*x`` and ``s*T/(M*R)``; the two widths
+    come from smooth completion at ``s/H`` and ``s/L``.  The effective
+    frequencies are the larger centre/width scales.  The ledger records
+    only exact exponent arithmetic and published-theorem applicability;
+    it does not assert the remaining double-Mobius cancellation.
+    """
+
+    h_center: Fraction
+    h_width: Fraction
+    h_frequency: Fraction
+    delta_center: Fraction
+    delta_width: Fraction
+    delta_frequency: Fraction
+    product_frequency: Fraction
+    completion_amplitude: Fraction
+    near_shift: Fraction
+    near_trivial: Fraction
+    local_target: Fraction
+    required_saving: Fraction
+    fixed_modulus_nu: Fraction | None
+    blomer_pascadi_margins: BlomerPascadiMargins | None
+    blomer_pascadi_covered: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -6136,6 +6225,83 @@ def blomer_pascadi_beats_best_trivial(nu: Fraction) -> bool:
     """Whether every term has a strict power saving at length ``c^nu``."""
 
     return min(blomer_pascadi_best_trivial_margins(nu).values()) > 0
+
+
+def smooth_additive_dual_support_ledger(
+    box: ExponentBox,
+) -> SmoothAdditiveDualSupportLedger:
+    """Return the smooth two-dimensional completion support ledger.
+
+    In the separated kernel (6.2), the ``h`` transform is centred at
+    ``|s*x|`` with ``x~M/S`` and has width ``s/H``.  Its two exponents
+    are therefore ``m`` and ``sigma-h``.  The ``delta`` transform is
+    centred at ``s*T/(M*R)`` and has width ``s/L``.  Smooth summation by
+    parts makes the complement of these centred windows smaller than
+    every fixed power; this function records the surviving window.
+
+    When the two effective lengths agree, their common exponent relative
+    to the modulus is also checked against Blomer--Pascadi, Theorem 1.1.
+    A positive theorem margin would only establish scale compatibility,
+    not coefficient compatibility.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("smooth additive-dual support needs an admissible box")
+    if box.rho != box.sigma:
+        raise ValueError("this ledger is for the overlapping face R=S")
+
+    zero = Fraction(0)
+    h_center = max(zero, box.m)
+    h_width = max(zero, box.sigma - box.h)
+    h_frequency = max(h_center, h_width)
+    delta_center = max(
+        zero, box.sigma + 1 - box.m - box.rho
+    )
+    delta_width = max(zero, box.sigma - box.ell)
+    delta_frequency = max(delta_center, delta_width)
+    if max(h_frequency, delta_frequency) > box.sigma:
+        raise ValueError("the centred dual window wraps around the modulus")
+
+    product_frequency = h_frequency + delta_frequency
+    completion_amplitude = box.third_length - box.sigma
+    if completion_amplitude < 0:
+        raise ValueError("the smooth transition amplitude must be nonnegative")
+    near_shift = max(zero, box.sigma - product_frequency)
+    near_trivial = (
+        completion_amplitude
+        + product_frequency
+        + box.sigma
+        + near_shift
+    )
+    local_target = box.rho + box.sigma
+
+    fixed_modulus_nu = None
+    margins = None
+    covered = False
+    if h_frequency == delta_frequency and box.sigma > 0:
+        fixed_modulus_nu = h_frequency / box.sigma
+        margins = blomer_pascadi_best_trivial_margins(
+            fixed_modulus_nu
+        )
+        covered = min(margins.values()) > 0
+
+    return SmoothAdditiveDualSupportLedger(
+        h_center=h_center,
+        h_width=h_width,
+        h_frequency=h_frequency,
+        delta_center=delta_center,
+        delta_width=delta_width,
+        delta_frequency=delta_frequency,
+        product_frequency=product_frequency,
+        completion_amplitude=completion_amplitude,
+        near_shift=near_shift,
+        near_trivial=near_trivial,
+        local_target=local_target,
+        required_saving=max(zero, near_trivial - local_target),
+        fixed_modulus_nu=fixed_modulus_nu,
+        blomer_pascadi_margins=margins,
+        blomer_pascadi_covered=covered,
+    )
 
 
 @dataclass(frozen=True)

@@ -2279,6 +2279,19 @@ def test_additive_completion_matches_direct_evaluation_numerically() -> None:
                     assert abs(direct - completed) < 1e-9
 
 
+def test_additive_completion_accepts_arbitrary_signed_finite_weights() -> None:
+    h_weights = {-2: 1 + 2j, 1: -0.5j, 3: 2 - 0.25j}
+    delta_weights = {-3: 0.75, -1: 1j, 2: -1 + 0.5j}
+    for modulus in range(2, 12):
+        for r in range(1, 2 * modulus):
+            if gcd(r, modulus) != 1:
+                continue
+            direct, completed = audit.weighted_additive_product_completion_sides(
+                r, modulus, h_weights, delta_weights
+            )
+            assert abs(direct - completed) < 1e-9
+
+
 def test_additive_completion_zero_mode_hits_the_two_thirds_barrier() -> None:
     assert additive_completion_zero_mode(11, 7, 5) == F(35, 11)
     balanced = boundary_witnesses()["balanced_max_a"]
@@ -2389,6 +2402,42 @@ def test_balanced_short_dual_block_is_an_x_two_thirds_shift_gate() -> None:
         ).one_modulus_l2
         is None
     )
+
+
+def test_actual_smooth_kernel_has_only_short_additive_dual_support() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    ledger = audit.smooth_additive_dual_support_ledger(box)
+
+    # The modulated h-transform is centred at |s*x|~M, while its width
+    # is s/H.  The delta-transform is centred at s*T/(M*R), with width
+    # s/L.  All four scales are T^(1/2), not the full modulus T^3.
+    assert ledger.h_center == F(1, 2)
+    assert ledger.h_width == F(1, 2)
+    assert ledger.h_frequency == F(1, 2)
+    assert ledger.delta_center == F(1, 2)
+    assert ledger.delta_width == F(1, 2)
+    assert ledger.delta_frequency == F(1, 2)
+    assert ledger.product_frequency == F(1)
+
+    # Smooth completion therefore leaves precisely the already identified
+    # |r-s|<=T^2 block.  It removes the sharp full-residue audit, but it
+    # does not supply the missing T^2 cancellation.
+    assert ledger.completion_amplitude == F(2)
+    assert ledger.near_shift == F(2)
+    assert ledger.near_trivial == F(8)
+    assert ledger.local_target == F(6)
+    assert ledger.required_saving == F(2)
+
+    # Relative to the modulus s=T^3, each dual interval has exponent 1/6.
+    # Blomer--Pascadi Theorem 1.1 is power-saving only on the interior of
+    # [13/28, 7/12], so none of its three terms covers this short block.
+    assert ledger.fixed_modulus_nu == F(1, 6)
+    assert ledger.blomer_pascadi_margins == BlomerPascadiMargins(
+        first=-F(25, 96),
+        second=-F(19, 96),
+        third=-F(1, 18),
+    )
+    assert not ledger.blomer_pascadi_covered
 
 
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:

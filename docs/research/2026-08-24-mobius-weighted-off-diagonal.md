@@ -8878,6 +8878,139 @@ zero-free region, while it does show why one must keep the window
 normalization exact.  Equations (9.361)--(9.364) provide a new exact
 coefficient-transfer interface, not a proof of the coupled-kernel gate.
 
+### 9.56 Smooth double completion removes the artificial full-residue spectrum
+
+The sharp-interval audit in Sections 9.29--9.30 deliberately retained
+all residues because the transforms of \(1_{[1,H]}\) and \(1_{[1,L]}\)
+have long \(1/\|a/s\|\) tails.  The actual kernel in (6.2) is different:
+both factors are smooth and already carry their Fourier modulations.
+For \(a,b\bmod s\), define
+
+\[
+\begin{aligned}
+ \widehat U_{x,s}(a)
+ &:=\sum_{h\in\mathbb Z}U(h/H)e(-hx)e_s(-ah),\\
+ \widehat V_{y,s}(b)
+ &:=\sum_{\delta\in\mathbb Z}V(\delta/L)
+       e\left(\frac{\delta y}{2\pi}\right)e_s(-b\delta).
+\end{aligned}
+\tag{9.365}
+\]
+
+The same finite orthogonality calculation as (9.163), now with these
+weights, gives the exact identity
+
+\[
+\boxed{
+ \sum_{h,\delta\in\mathbb Z}U(h/H)V(\delta/L)
+ e\left(-hx+\frac{\delta y}{2\pi}\right)
+ e_s(-\bar r h\delta)
+ =\frac1s\sum_{a,b\bmod s}
+ \widehat U_{x,s}(a)\widehat V_{y,s}(b)e_s(rab).}
+\tag{9.366}
+\]
+
+There is no endpoint error in (9.366).  Repeated discrete summation by
+parts, with \(\|\cdot\|\) denoting distance to the nearest integer, gives
+for every fixed \(A>0\)
+
+\[
+\begin{aligned}
+ |\widehat U_{x,s}(a)|
+ &\ll_{A,U}H\{1+H\|x+a/s\|\}^{-A},\\
+ |\widehat V_{y,s}(b)|
+ &\ll_{A,V}L\{1+L\|b/s-y/(2\pi)\|\}^{-A}.
+\end{aligned}
+\tag{9.367}
+\]
+
+Thus the first transform is centred at \(a\equiv-sx\pmod s\), with
+width \(s/H\), and the second at \(b\equiv sy/(2\pi)\pmod s\), with
+width \(s/L\).  Combining this with the actual centre ranges (6.1), the
+two effective dual exponents are
+
+\[
+ \alpha=\max\{m,\sigma-h,0\},\qquad
+ \beta=\max\{\sigma+1-m-\rho,\sigma-\ell,0\}.
+\tag{9.368}
+\]
+
+The factors \(T^{O(\eta)}\) only enlarge these windows by a subpower.
+Outside them, (9.367) may be used with arbitrarily large \(A\); after
+summing the polynomially many dyadic and arithmetic parameters, the
+discarded dual tail is \(O_{B,W}(T^{-B})\) for every fixed \(B\).
+This is rapid decay, not literal compact support.  In particular, the
+full-residue \(\nu=1\) rows of the sharp audit are not an obstruction for
+the actual separated smooth kernel.
+
+At the balanced transition corner
+
+\[
+ R=S=T^3,\qquad M=T^{1/2},\qquad H=L=T^{5/2},
+\]
+
+(9.368) gives
+
+\[
+ |a|,|b|\ll T^{1/2+O(\eta)},\qquad |ab|\ll T^{1+O(\eta)}.
+\tag{9.369}
+\]
+
+Writing \(r=s+d\) in (9.366) changes the inner phase to
+\(e_s(dab)\), without separating either outer sign:
+
+\[
+ \mu(s+d)\mu(s)\,
+ \frac1s\sum_{a,b\bmod s}
+ \widehat U_{x,s}(a)\widehat V_{y,s}(b)e_s(dab).
+\tag{9.370}
+\]
+
+Consequently the only smooth dual block left at this corner is exactly
+the lowest block already identified in (9.173)--(9.178).  Its circular
+near range is
+
+\[
+ |d|\ll\frac{s}{|ab|}=T^{2+O(\eta)}=X^{2/3+O(\eta)},
+ \qquad X=T^3.
+\tag{9.371}
+\]
+
+The exponent ledger is unchanged where it matters: \(HL/s=T^2\), the
+\((a,b)\)-count is \(T\), the \(s\)-count is \(T^3\), and the near
+\(d\)-count is \(T^2\).  Hence the trivial exponent is \(8\), against the
+local target \(RS=T^6\); a genuine \(T^2\) saving is still required.
+
+The published-estimate coverage table now becomes strictly smaller:
+
+| input | actual normalized length | exact outcome |
+|---|---:|---|
+| sharp full residue | \(\nu=1\) | removed from the actual smooth kernel by (9.367) |
+| Blomer--Pascadi, Theorem 1.1 | \(\nu=(1/2)/3=1/6\) | margins \((-25/96,-19/96,-1/18)\); no power saving |
+| one-modulus Parseval | two lengths \(T^{1/2}\) | exponent \(17/2\), gap \(5/2\) |
+| averaged Chowla/Möbius correlation | shift \(X^{2/3}\) | logarithmic savings only; the ledger needs \(X^{2/3}=T^2\) |
+
+For the second row, substituting \(N=c^\nu\) in
+[Blomer--Pascadi, Theorem 1.1](https://arxiv.org/abs/2607.24311)
+gives theorem exponents
+\(29/32+\nu/8\), \(13/16+5\nu/16\), and
+\(11/18+2\nu/3\), while the best elementary exponent at \(\nu=1/6\)
+is \(2/3\).  Their published nontrivial interval
+\(13/28<\nu<7/12\) therefore does not reach the smooth dual length.
+This is already an optimistic scale comparison: (9.370) also retains
+the moving shift, the product \(ab\), and both Möbius signs, so theorem
+compatibility would require additional work even inside that interval.
+
+The executable `weighted_additive_product_completion_sides` checks
+(9.366) for arbitrary signed finite supports and arbitrary complex
+weights.  The executable `smooth_additive_dual_support_ledger` records
+(9.368)--(9.371) and the three exact Blomer--Pascadi margins.  The useful
+advance is therefore a reduction of the gate, not its proof: arbitrary
+full-residue and far-frequency estimates are unnecessary.  What remains
+is a centred short-spectrum estimate for (9.370), uniform in the moving
+smooth weights, which saves \(T^2\) while preserving
+\(\mu(s+d)\mu(s)\) and the factorization \(ab\).
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -8899,7 +9032,13 @@ target.  The exact $3\times2$ shifted-convolution identity
 (9.352)--(9.358) shows that published standard-divisor shift errors are
 numerically strong enough only after replacing the actual coefficients;
 for the dyadic Möbius convolutions, both the nonvanishing zero/singular
-term and the centered coefficient-transfer estimate remain unproved.**
+term and the centered coefficient-transfer estimate remain unproved.
+For the actual smooth separated kernel, (9.365)--(9.371) remove the
+sharp full-residue and far-frequency spectra: the remaining balanced
+gate is the single \(a,b\ll T^{1/2+O(\eta)}\),
+\(|r-s|\ll T^{2+O(\eta)}\) block with both Möbius signs retained.  It
+still needs a \(T^2\) saving and is not covered by the cited
+Blomer--Pascadi theorem.**
 
 Proved in this note:
 
@@ -8995,6 +9134,12 @@ Proved in this note:
   \(X^{2/3}\)-shift power ledger, (9.165)--(9.179); these remove the
   separately bounded zero mode, close the near-block exponent polytope,
   and prove that one-modulus Parseval still misses the target.
+* the exact smooth modulated double completion, rapid dual-tail estimate,
+  and actual support exponents (9.365)--(9.371); these prove that the
+  sharp full-residue spectrum is unnecessary and reduce the balanced
+  obstruction to the short \(s^{1/6}\times s^{1/6}\) dual block.  The
+  exact Blomer--Pascadi margins are all negative there, so the required
+  double-Möbius \(T^2\) saving remains unproved.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
