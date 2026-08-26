@@ -4478,7 +4478,7 @@ def test_level_p_squared_extra_oldvector_cancels_the_level_p_remainder() -> None
         assert local["extra_oldvector_cancellation_exact"]
 
 
-def test_physical_exact_valuation_projector_closes_but_arbitrary_evp_stays_open() -> None:
+def test_physical_exact_valuation_projector_closes_only_at_power_exponent_level() -> None:
     projector = coverage_audit.physical_exact_valuation_projector_audit(
         ramanujan_theta=F(7, 64),
     )
@@ -4492,7 +4492,11 @@ def test_physical_exact_valuation_projector_closes_but_arbitrary_evp_stays_open(
     assert projector.level_p_squared_extra_oldvector_closes
     assert projector.continuous_local_cases_close
     assert projector.prime_local_bounds_tensor_with_subpower_cost
-    assert projector.physical_product_exact_valuation_projector_proved
+    assert projector.bad_gcd_cell_square_multiplicity_base == 4
+    assert projector.divisor_partition_tensor_square_residual_base == 5
+    assert projector.power_exponent_exact_valuation_projector_covered
+    assert not projector.prime_local_bounds_tensor_with_polylog_cost
+    assert not projector.physical_product_exact_valuation_projector_proved
     assert not projector.arbitrary_coefficient_exact_valuation_projector_proved
     assert not projector.outer_qct_normalization_aggregated
     assert not projector.whole_mobius_gate_covered
@@ -4501,10 +4505,13 @@ def test_physical_exact_valuation_projector_closes_but_arbitrary_evp_stays_open(
 def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     text = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109w The lifted nonzero Poisson core aggregates with seven logarithms",
+        "### 4.109w The lifted nonzero Poisson core has a conditional seven-log aggregation",
+        "### 4.109x The current valuation tensor leaves a non-polylogarithmic residual",
         r"\tag{4.845cv}",
         r"\tag{4.845cw}",
         r"\tag{4.845cx}",
+        r"\tag{4.845cy}",
+        r"\tag{PEVP}_{A,B}",
     ):
         assert marker in text
 
@@ -4525,9 +4532,10 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     assert core.total_aggregation_log_loss == F(7)
     assert core.net_log_saving == F(3)
     assert core.single_orientation_used_for_all_spectral_components
-    assert core.physical_exact_valuation_projector_used
+    assert core.power_exponent_exact_valuation_projector_used
+    assert not core.polylog_tensor_projector_gate_proved
     assert core.ratio_gcd_layers_retained_inside_local_gate
-    assert core.nonzero_poisson_core_is_little_o_T
+    assert not core.nonzero_poisson_core_is_little_o_T
     assert not core.polylogarithmic_transform_tail_aggregated
     assert not core.afe_tail_aggregated
     assert not core.whole_mobius_gate_covered

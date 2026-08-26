@@ -1875,6 +1875,10 @@ class PhysicalExactValuationProjectorAudit:
     level_p_squared_extra_oldvector_closes: bool
     continuous_local_cases_close: bool
     prime_local_bounds_tensor_with_subpower_cost: bool
+    bad_gcd_cell_square_multiplicity_base: int
+    divisor_partition_tensor_square_residual_base: int
+    prime_local_bounds_tensor_with_polylog_cost: bool
+    power_exponent_exact_valuation_projector_covered: bool
     physical_product_exact_valuation_projector_proved: bool
     arbitrary_coefficient_exact_valuation_projector_proved: bool
     outer_qct_normalization_aggregated: bool
@@ -1898,7 +1902,8 @@ class LiftedOuterQCTAggregationAudit:
     total_aggregation_log_loss: Fraction
     net_log_saving: Fraction
     single_orientation_used_for_all_spectral_components: bool
-    physical_exact_valuation_projector_used: bool
+    power_exponent_exact_valuation_projector_used: bool
+    polylog_tensor_projector_gate_proved: bool
     ratio_gcd_layers_retained_inside_local_gate: bool
     nonzero_poisson_core_is_little_o_T: bool
     polylogarithmic_transform_tail_aggregated: bool
@@ -10223,10 +10228,11 @@ def physical_exact_valuation_projector_audit(
 
     The Hecke recurrence leaves powers ``p^(theta*k)`` only after at
     least ``k`` extra valuation densities.  Therefore ``theta<1/2`` is
-    exactly what makes all deeper cells summable.  The finite local
-    alternatives tensor over squarefree ``A`` with divisor-power cost.
-    This proves the projector only for the physical divisor-convolution
-    coefficients, not for arbitrary coefficient sequences.
+    exactly what makes all deeper cells summable at the power-exponent
+    level.  The present positive tensor bound leaves square residual
+    ``5^omega(A)`` after the D-partition, which is subpower but not
+    uniformly polylogarithmic.  Hence this audit does not mark the
+    physical projector proved at the logarithmic endpoint.
     """
     theta = F(ramanujan_theta)
     if theta < 0 or theta >= F(1, 2):
@@ -10241,7 +10247,7 @@ def physical_exact_valuation_projector_audit(
     extra_oldvector = theta < F(1, 2)
     continuous = True
     tensors = theta < F(1, 2)
-    physical = all(
+    power_covered = all(
         (
             generic_closes,
             raised_cancels,
@@ -10267,7 +10273,11 @@ def physical_exact_valuation_projector_audit(
         level_p_squared_extra_oldvector_closes=extra_oldvector,
         continuous_local_cases_close=continuous,
         prime_local_bounds_tensor_with_subpower_cost=tensors,
-        physical_product_exact_valuation_projector_proved=physical,
+        bad_gcd_cell_square_multiplicity_base=4,
+        divisor_partition_tensor_square_residual_base=5,
+        prime_local_bounds_tensor_with_polylog_cost=False,
+        power_exponent_exact_valuation_projector_covered=power_covered,
+        physical_product_exact_valuation_projector_proved=False,
         arbitrary_coefficient_exact_valuation_projector_proved=False,
         outer_qct_normalization_aggregated=False,
         whole_mobius_gate_covered=False,
@@ -10282,7 +10292,7 @@ def lifted_outer_qct_aggregation_audit(
     gate_log_power: Fraction,
     common_orientation: str,
 ) -> LiftedOuterQCTAggregationAudit:
-    """Aggregate the CRT-lifted nonzero Poisson core to ``o(T)``.
+    """Audit the conditional outer aggregation of the lifted core.
 
     A left completion has exact prefactor ``R`` after the product-modulus
     lift and needs an inner bound of size ``S log^-B``; right completion
@@ -10293,9 +10303,10 @@ def lifted_outer_qct_aggregation_audit(
     The original exact ledger has six dyadic parameters and one harmonic
     q logarithm.  Ratio/gcd and Type-allocation layers remain inside the
     local LISK gate, so they are not charged again after the local bound.
-    ``B>7`` therefore proves that the nonzero Poisson core is little-oh
-    of T.  This function deliberately leaves both the transform tail and
-    the original AFE tail open.
+    Conditional on a polylogarithmic exact-valuation tensor gate,
+    ``B>7`` would prove that the nonzero Poisson core is little-oh of T.
+    The present projector has only subpower tensor cost, so this function
+    leaves that implication, the transform tail, and the AFE tail open.
     """
     rho = F(left_entry_exponent)
     sigma = F(right_entry_exponent)
@@ -10317,10 +10328,8 @@ def lifted_outer_qct_aggregation_audit(
     total_loss = dyadic_loss + harmonic_loss
     net = log_power - total_loss
     projector = physical_exact_valuation_projector_audit()
-    core_little_o = (
-        projector.physical_product_exact_valuation_projector_proved
-        and net > 0
-    )
+    polylog_projector = projector.prime_local_bounds_tensor_with_polylog_cost
+    core_little_o = polylog_projector and net > 0
     return LiftedOuterQCTAggregationAudit(
         left_entry_exponent=rho,
         right_entry_exponent=sigma,
@@ -10337,9 +10346,10 @@ def lifted_outer_qct_aggregation_audit(
         total_aggregation_log_loss=total_loss,
         net_log_saving=net,
         single_orientation_used_for_all_spectral_components=True,
-        physical_exact_valuation_projector_used=(
-            projector.physical_product_exact_valuation_projector_proved
+        power_exponent_exact_valuation_projector_used=(
+            projector.power_exponent_exact_valuation_projector_covered
         ),
+        polylog_tensor_projector_gate_proved=polylog_projector,
         ratio_gcd_layers_retained_inside_local_gate=True,
         nonzero_poisson_core_is_little_o_T=core_little_o,
         polylogarithmic_transform_tail_aggregated=False,
@@ -11741,7 +11751,7 @@ def unbalanced_completion_orientation_audit(
         conservation and continuous_closes and cusp_closes and single_orientation
     )
     lifted_levels = (
-        lifted_projector.physical_product_exact_valuation_projector_proved
+        lifted_projector.power_exponent_exact_valuation_projector_covered
     )
     return UnbalancedCompletionOrientationAudit(
         left_entry_exponent=rho,

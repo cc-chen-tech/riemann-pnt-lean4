@@ -14430,16 +14430,44 @@ Eisenstein oldvectors the unramified coefficients satisfy
 positive p-valuation is zero, so the same bounds hold with
 \(7/64=0\).
 
-The local alternatives multiply over squarefree \(A\); their finite
-case count and the factors \(4^{\omega(D)}\) are \(A^{o(1)}\).  Thus the
-physical divisor-convolution version of the exact-valuation projector
-is proved with the required \(A^{-1/2+o(1)}\) amplitude factor.  The
-arbitrary-sequence statement \(\mathrm{EVP}_{A,B}\) remains unproved
-and is not used.  The adapters
+The local alternatives multiply over squarefree \(A\), and they prove
+the required power exponent \(A^{-1/2+o(1)}\).  That statement is not
+yet strong enough for the logarithmic endpoint.  Indeed, on a fixed
+bad-gcd cell the square-density estimate contributes
+\(D^{-1}4^{\omega(D)}\), while the generic primes contribute the
+square saving \((A/D)^{-1}\).  Summing the present positive majorants
+over \(D\mid A\) gives exactly
+
+\[
+ \boxed{
+ \sum_{D\mid A}
+  \frac{4^{\omega(D)}}D\frac D A
+  =\frac{5^{\omega(A)}}A.}
+\tag{4.845cy}
+\]
+
+The amplitude residual \(5^{\omega(A)/2}\) is \(A^{o(1)}\), but it is
+not bounded by a fixed power of \(\log T\) uniformly for \(A\leq T^3\).
+For the primorial \(A_y=\prod_{p\leq y}p\), the prime number theorem
+gives
+\[
+ \log 5^{\omega(A_y)/2}\sim\frac{\log5}{2}\frac y{\log y},
+ \qquad
+ \log(\log A_y)^C\sim C\log y,
+\]
+so the former exceeds the latter for every fixed \(C\).
+
+Therefore the physical divisor-convolution exact-valuation projector is
+covered only at the power-exponent level.  A proof still has to retain
+orthogonality or Möbius cancellation across the \(D\)-cells and replace
+(4.845cy) by a polylogarithmic square bound.  The arbitrary-sequence
+statement \(\mathrm{EVP}_{A,B}\) remains unproved as well.  The adapters
 unramified_oldspace_cross_prime_power_identity and
 physical_exact_valuation_projector_audit record (4.845aq_7) and this
-case split; lifted_projector_gcd_partition_audit separately records the
-power identity (4.845aq_6).
+case split; the latter now distinguishes power-exponent coverage from
+the unproved polylogarithmic tensor gate.  The adapter
+lifted_projector_gcd_partition_audit separately records the power
+identity (4.845aq_6).
 
 Before spectral transformation, the raw Poisson normalization and its
 dual length still cancel:
@@ -14461,17 +14489,19 @@ Fourier-coefficient normalization at level \(ABj\), and the sum over
 \(j\mid A\) must be retained together.  In particular the former
 \(\mathrm{SLF}_{\alpha,\beta}\) target, derived under the false
 level-\(AB\) cusp adapter, is no longer an accepted physical gate.  The
-physical exact-valuation projector is now available, so the remaining
-gate in this sector is the outer \(\mathrm{LISK}_q\) aggregation with
-all ratio/gcd and \(q\)-layers restored.
+power-exponent exact-valuation calculation is now available.  The
+remaining gate in this sector is the polylogarithmic tensor inequality
+PEVP\(_{A,B}\), followed by the outer \(\mathrm{LISK}_q\) aggregation
+with all ratio/gcd and \(q\)-layers restored.
 
 The adapter type_i_atkin_lehner_cusp_audit records both the rejected
 Kiral--Young match and the exact CRT product-modulus repair.  It marks
 the physical Type-I/Type-I reduction to a finite standard Kuznetsov
 level family true, but keeps the old cusp-pair identity false.  The
-physical projector above restores the base-level large-sieve scale
-uniformly for \(ABj\) and the ramified second index \(An\); Section
-4.109v combines it with the orientation inequalities.  The outer factor
+local calculation above restores the base-level large-sieve *power
+exponent* uniformly for \(ABj\) and the ramified second index \(An\);
+Section 4.109v combines it with the orientation inequalities.  The
+polylogarithmic tensor bound, outer factor
 \(R/c_A(m)\), ratio/gcd layers, and \(q\)-aggregation remain separate.
 
 
@@ -16084,8 +16114,8 @@ a contradiction.  Hence the right continuous excess is zero, and
 \tag{4.845cu}
 \]
 
-Combining the physical exact-valuation projector from Section 4.109g
-with this orientation argument, every
+Combining the power-exponent exact-valuation calculation from Section
+4.109g with this orientation argument, every
 original entry-scale asymmetry, every factor allocation, and every pair
 of product lengths has no positive normalized factor-model excess:
 Maaß, holomorphic, and nonzero continuous components all have a valid
@@ -16094,15 +16124,18 @@ unbalanced_completion_orientation_audit records (4.845cq)--(4.845cs)
 with exact rational arithmetic.
 
 It marks the base-level factor model, the inverse-scaled geometric
-adapter, the physical exact-valuation level family, and normalized
-spectral all-cell coverage true.  Section 4.109w now performs the outer
-normalization uniformly.  Polylogarithmic transform tails and the AFE
-tail remain separate obligations.
+adapter, the exact-valuation level family, and normalized
+*power-exponent* all-cell coverage true.  It does not prove the
+polylogarithmic tensor estimate isolated in Section 4.109x.  Section
+4.109w records the outer normalization conditionally on that estimate;
+polylogarithmic transform tails and the AFE tail are further separate
+obligations.
 
 
-### 4.109w The lifted nonzero Poisson core aggregates with seven logarithms
+### 4.109w The lifted nonzero Poisson core has a conditional seven-log aggregation
 
-Write \(L=\log(2T)\).  The local lifted estimates retain every ratio,
+Write \(L=\log(2T)\).  Assume PEVP\(_{A,B}\), stated in Section
+4.109x.  The resulting local lifted estimates retain every ratio,
 gcd, exact-valuation, and Type-I/II allocation inside their coupled
 weight; none of these indices is summed a second time after the local
 gate.  For a left completion, the exact CRT lift has prefactor \(R\),
@@ -16120,7 +16153,8 @@ local gates are
 \]
 
 Here \(C\) is a fixed finite collection of normalized kernel
-seminorms.  The common-orientation assertion (4.845cu) chooses one of
+seminorms.  Under PEVP\(_{A,B}\), the common-orientation assertion
+(4.845cu) chooses one of
 these two gates for all Maaß, holomorphic, and nonzero Eisenstein
 components in the same geometric box.  In either orientation it gives
 the identical reconstructed bound
@@ -16144,12 +16178,47 @@ nonzero Poisson core satisfies
 \tag{4.845cx}
 \]
 
-This is only the compactly retained nonzero-mode core.  Formula
-(4.845cx) does not absorb the polylogarithmic kernel-separation tail or
-the original AFE tail.  The interface
-`lifted_outer_qct_aggregation_audit` therefore marks precisely the
-nonzero Poisson core true and leaves both tail flags, and hence the
-whole Möbius gate, false.
+This is a conditional implication concerning only the compactly
+retained nonzero-mode core.  Formula (4.845cx) does not prove
+PEVP\(_{A,B}\), nor does it absorb the polylogarithmic
+kernel-separation tail or the original AFE tail.  The interface
+`lifted_outer_qct_aggregation_audit` therefore records the seven-log
+ledger but keeps the polylog tensor gate, the nonzero-core conclusion,
+both tail flags, and the whole Möbius gate false.
+
+
+### 4.109x The current valuation tensor leaves a non-polylogarithmic residual
+
+Let \(\mathscr B_{A,B,D,j}[b,a]\) denote one exact-valuation spectral
+bilinear form after the CRT lift, with \(D=(A,h\delta)\), level
+\(ABj\), and all physical smooth weights retained.  The local
+identities above prove the required exponent, but the logarithmic
+endpoint needs the stronger square-function inequality
+
+\[
+ \boxed{
+ \sum_{D\mid A}\left|
+   \sum_{j\mid A}\mu(j)\mathscr B_{A,B,D,j}[b,a]
+ \right|^2
+ \ll_{C,W}\frac{(\log(2T))^C}{A}
+ \left(\sum_m|b_m|^2\right)
+ \left(\sum_{h,\delta}|a_{h,\delta}|^2\right).}
+\tag{PEVP}_{A,B}
+\]
+
+The Fourier normalizations and spectral measure are those of
+(EVP)\(_{A,B}\); the coefficient \(a_{h,\delta}\) includes the physical
+product weight and the exact condition \(D=(A,h\delta)\).  Unlike
+arbitrary EVP, PEVP asks only for this physical product coefficient,
+but it keeps the signed \(j\)-sum inside the square.
+
+The estimates currently proved cell by cell give (4.845cy), namely the
+same right side with \(5^{\omega(A)}\) in place of
+\((\log(2T))^C\).  The primorial calculation following (4.845cy) shows
+that this is not a polylogarithmic substitute.  Thus PEVP\(_{A,B}\) is
+the remaining Möbius-weighted exact-valuation square-function gate.
+Proving it would make (4.845cv)--(4.845cx) unconditional for the compact
+core; it would still leave the transform and AFE tails.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
