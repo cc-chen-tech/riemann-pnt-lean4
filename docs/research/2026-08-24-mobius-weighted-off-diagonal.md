@@ -6846,6 +6846,128 @@ slice, even before that additional product loss.  The executable ledger
 checks every fraction in (9.273) and in the optimistic short-window
 substitution.
 
+### 9.41 Selberg variance does not remove the prime-density mode
+
+There is a tempting further reduction on the \(B=1\) prime slice: replace
+the prime weight by its centered version
+\(\Lambda(s+d)-1\), and estimate its short-interval variance before the
+outer \(s\)-sum.  This must not be confused with the exact Ramanujan
+centering in (9.228)--(9.231).  That earlier identity centers residue
+classes in the numerator variables modulo \(t\); it contains no identity
+which replaces \(\Lambda(s+d)\) by \(\Lambda(s+d)-1\).
+
+The most favorable scalar exponent audit already shows the limitation.
+Put \(X=T^3\), \(Y=T^2\), and \(\vartheta=Y/X=T^{-1}\).  If the outer
+coefficients have second moment \(O(XT^\varepsilon)\), Cauchy reduces the
+centered scalar model to the multiplicative Selberg integral
+
+\[
+ J(X,\vartheta)
+ =\int_X^{2X}
+ \left|\psi(t+\vartheta t)-\psi(t)-\vartheta t\right|^2dt.
+\]
+
+The unconditional input recorded by Languasco--Perelli--Zaccagnini in
+this range is, up to logarithms or a little-\(o\) improvement,
+\(J(X,\vartheta)\ll X^3\vartheta^2=XY^2\).  Hence
+
+\[
+ \boxed{
+  J(X,Y/X)\ll T^{7+\varepsilon},\qquad
+  X^{1/2}J(X,Y/X)^{1/2}\ll T^{5+\varepsilon}.}
+\tag{9.274}
+\]
+
+The right side is exactly the trivial \(XY=T^5\) exponent and remains
+\(T^{1/2}\) above the required \(T^{9/2+\varepsilon}\).  Thus the
+unconditional almost-all short-interval theorem supplies no power saving
+for this transition.  It is not legitimate to insert the conjectural
+variance \(J\ll XYT^\varepsilon\).  Selberg's RH estimate does have that
+power scale (with logarithms), and would give only the diagnostic
+
+\[
+ \boxed{J(X,Y/X)\ll_{\rm RH}T^{5+\varepsilon},\qquad
+ X^{1/2}J^{1/2}\ll_{\rm RH}T^{4+\varepsilon},}
+\tag{9.275}
+\]
+
+which lies \(T^{1/2}\) below the target but is not an unconditional input.
+The actual packet also retains inverse phases and product-numerator
+weights, so (9.274) is an optimistic screening calculation, not an
+estimate for the full prime slice.
+
+Centering also creates a separate density term.  Even in the stripped
+unweighted projection it is
+
+\[
+ Y\sum_{s\asymp X}\mu(s)W(s/X).
+\]
+
+To place this below \(T^{9/2+\varepsilon}\) requires
+
+\[
+ \boxed{
+  \sum_{s\asymp T^3}\mu(s)W(s/T^3)
+  \ll T^{5/2+\varepsilon}=X^{5/6+\varepsilon}.}
+\tag{9.276}
+\]
+
+This is a fixed \(T^{1/2}\) Mertens power saving.  The standard
+zero-free region gives no fixed power, and the actual divisor-incidence
+coefficient in (9.250) is more structured rather than absent.  No term
+in (9.228)--(9.231) cancels (9.276): those formulas concern a different
+additive zero mode.  Consequently a prime-density centering argument
+must either prove an exact recombination with another original axis term
+before separation, or retain the outer Möbius sum and the inverse/product
+phase jointly.  Merely quoting an almost-all primes-in-short-intervals
+theorem does not weaken the current coupled gate.  The executable ledger
+checks every exponent and the exact required Mertens ratio \(5/6\).
+
+### 9.42 Direct averaged Möbius-on-shifted-primes theorem
+
+Lichtman's averaged shifted-prime theorem is closer to the signed scalar
+projection than the Selberg-variance route because it treats the Möbius
+and prime weights jointly.  Up to endpoint strips, the change of variables
+
+\[
+ h=Y-d,\qquad n=s+d-Y
+\]
+
+maps
+\(\mu(s)\Lambda(s+d)\) to
+\(\mu(n+h)G(n)\) with the single shift-independent coefficient
+\(G(n)=\Lambda(n+Y)\).  Its second moment is
+\(\sum_{n\asymp X}|G(n)|^2\ll X\log X\), so the theorem's moderate-growth
+hypothesis is satisfied.  Restricting all shifts to a common \(n\)-interval
+loses endpoint strips of total size \(O(Y^2\log X)=T^{4+o(1)}\), already
+below the \(T^{9/2+\varepsilon}\) target.
+
+For \(Y=X^{2/3}\), the quantitative specialization with one Möbius and
+one von Mangoldt factor gives, for every fixed \(\delta>0\),
+
+\[
+\boxed{
+ \sum_{d\leq Y}
+ \left|\sum_{s\asymp X}\mu(s)\Lambda(s+d)\right|
+ \ll_\delta
+ \frac{XY}{(\log X)^{1/3-\delta}}
+ +O(Y^2\log X).}
+\tag{9.277}
+\]
+
+Thus (9.277) proves genuine cancellation and avoids separating the
+density term (9.276), but its \(T\)-power exponent is still
+\(3+2=5\).  It supplies no fixed power saving, whereas the scalar
+transition requires \(T^{1/2}\), so the exact remaining power gap is
+\(1/2\).  More importantly, the theorem requires the coefficient
+\(G(n)\) to be fixed across the shift average.  The actual packet has a
+\(d\)-dependent reciprocal phase, the joint product numerator
+\(h\delta_0\), and divisor-incidence weights.  These cannot be inserted
+as an arbitrary \(G_d(n)\) into the published statement.  Hence
+(9.277) is a rigorous coverage result for the stripped signed prime
+projection and a no-coverage certificate for the transition gate, not
+an estimate for (9.239).
+
 Known one-variable Möbius--trace results do not close (9.239) or its
 recombined form (9.250).  Even if
 one optimistically grants a translated prime-modulus version of the
@@ -7046,6 +7168,17 @@ Proved in this note:
 * the direct Kloosterman-over-primes audit (9.273).  Irving's published
   full-interval estimate saves \(T^{3/10}\), below the required
   \(T^{1/2}\), and it has no joint product-numerator moment.
+* the prime-slice Selberg-integral audit (9.274)--(9.276).  The
+  unconditional variance exponent \(7\) returns the trivial exponent
+  \(5\) after Cauchy; the RH-scale variance would cover the centered
+  fluctuation, but the separately created density mode already asks for
+  the unproved Mertens exponent \(5/6\).  Ramanujan centering does not
+  cancel this distinct prime-density mode.
+* the direct averaged shifted-prime map (9.277).  Lichtman's theorem
+  handles the stripped signed \(\mu(s)\Lambda(s+d)\) projection, with
+  endpoint cost \(T^{4+o(1)}\), but gives only logarithmic cancellation
+  at power exponent \(5\); it also does not admit the shift-dependent
+  inverse/product kernel.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7096,6 +7229,8 @@ Proved in this note:
 | Affine endpoint character route | exact dual lattice; ordinary mean squares insufficient | smooth \(\delta\)-Poisson gives \(|n|\ll T^\varepsilon\) and \(h+nq=jd\), (9.267)--(9.268).  Character orthogonality is (9.269); Bombieri--Vinogradov gives no power beyond progression density, and the primitive large sieve leaves a \(T^{1/4}\) gap, (9.270).  The intermediate long-character moment (9.271) would fill the screening ledger but is unproved and does not by itself discharge the coupled smooth weights |
 | Principal Type-I/II density | exact finite obstruction to separate elementary closure | the rational coefficient is (9.272), and equals \(-1\) for every prime \(p>\max(U,V)\).  Thus a pointwise Selberg-sieve/Euler-product estimate of the separated principal spectrum cannot give a power saving; phase and Möbius recombination remain necessary |
 | Prime Kloosterman slice | published theorem applicable only after enlarging the moving interval; quantitatively insufficient | on \(Q=T^{5/2},x=T^3\), Irving's three exponents give \(26/5\) versus trivial \(11/2\), a saving \(3/10<1/2\), (9.273).  The actual prime interval has length \(T^2\) at height \(T^3\), and the theorem has no joint \(h\delta_0\)-moment |
+| Prime-slice Selberg variance | unconditional scalar projection insufficient; RH diagnostic only | at \(X=T^3,Y=T^2\), the unconditional \(J(X,Y/X)\ll XY^2T^\varepsilon\) gives exponent \(5\) after Cauchy, still \(1/2\) above target, (9.274).  RH-scale variance would give exponent \(4\), (9.275), but the density term separately requires the unproved \(X^{5/6+\varepsilon}\) Mertens bound (9.276); the Ramanujan zero mode (9.230) is not this density mode |
+| Averaged Möbius on shifted primes | stripped signed projection covered only logarithmically | \(h=Y-d,n=s+d-Y\) maps the scalar correlation to Lichtman's shift average with fixed \(G(n)=\Lambda(n+Y)\); endpoints cost \(Y^2=T^4\), but the theorem's main bound remains \(XY/(\log X)^{1/3-\delta}=T^{5-o(1)}\), leaving the full \(T^{1/2}\) power gap and excluding the actual shift-dependent inverse/product kernel, (9.277) |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -7132,6 +7267,14 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 * A. J. Irving, *Average Bounds for Kloosterman Sums Over Primes*,
   arXiv:1301.6372, Theorem 1; the \(B=1\) prime-slice exponents and its
   moving-short-interval mismatch are audited in Section 9.40.
+* A. Languasco, A. Perelli, A. Zaccagnini, *An extension of the pair
+  correlation conjecture and applications*, arXiv:1603.02952, Section 2;
+  its unconditional and RH Selberg-integral scales are audited in
+  Section 9.41.
+* J. D. Lichtman, *Averages of the Möbius function on shifted primes*,
+  Q. J. Math. 73 (2022), 729--757, arXiv:2009.08969v2, especially
+  Theorems 1.3 and 6.2; mapped to the stripped signed prime projection
+  in Section 9.42.
 * M. Z. Garaev, I. E. Shparlinski, *On the distribution of modular
   inverses from short intervals*, arXiv:2304.07953; the lower-bound
   examples rule out assuming a uniform one-variable inverse-sum power

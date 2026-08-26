@@ -28,7 +28,10 @@ from scripts.audit_mobius_type_ii import (
     PascadiFullResidueSavings,
     PascadiModuliMargins,
     PrimeKloostermanLedger,
+    PrimeSliceVarianceLedger,
     ScalarTypeIICutoffLedger,
+    ShiftedPrimeMobiusCoordinates,
+    ShiftedPrimeMobiusLedger,
     SquarefreeScalarGcdStratum,
     WrightFactorSavings,
     YoungCommonFactorLedger,
@@ -142,6 +145,7 @@ from scripts.audit_mobius_type_ii import (
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
     prime_kloosterman_average_ledger,
+    prime_slice_variance_ledger,
     primitive_scalar_direct_value,
     primitive_scalar_recombined_value,
     ramanujan_mean_dyadic_divisor_majorant,
@@ -162,6 +166,8 @@ from scripts.audit_mobius_type_ii import (
     scalar_stratum_bettin_chandee_ledger,
     scalar_type_i_absolute_exponent,
     scalar_type_ii_cutoff_ledger,
+    shifted_prime_mobius_coordinates,
+    shifted_prime_mobius_ledger,
     squarefree_normalized_ramanujan_mean_formula,
     squarefree_outer_mobius_ramanujan,
     squarefree_scalar_gcd_stratum,
@@ -837,6 +843,59 @@ def test_kloosterman_over_primes_does_not_fill_scalar_half_power() -> None:
         required_saving=F(1, 2),
         gap=F(3, 8),
     )
+
+
+def test_prime_slice_selberg_variance_and_density_barriers_are_exact() -> None:
+    assert prime_slice_variance_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        scalar_length=F(1, 2),
+    ) == PrimeSliceVarianceLedger(
+        relative_interval=F(-1),
+        trivial_bound=F(5),
+        target_bound=F(9, 2),
+        unconditional_variance=F(7),
+        unconditional_cauchy_bound=F(5),
+        unconditional_gap=F(1, 2),
+        rh_variance=F(5),
+        rh_cauchy_bound=F(4),
+        rh_margin=F(1, 2),
+        density_required_mertens=F(5, 2),
+        density_required_ratio=F(5, 6),
+        density_required_saving=F(1, 2),
+    )
+
+
+def test_published_shifted_prime_mobius_average_has_no_power_saving() -> None:
+    assert shifted_prime_mobius_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        scalar_length=F(1, 2),
+    ) == ShiftedPrimeMobiusLedger(
+        raw_bound=F(5),
+        published_power_bound=F(5),
+        target_bound=F(9, 2),
+        published_power_saving=F(0),
+        required_power_saving=F(1, 2),
+        gap=F(1, 2),
+    )
+
+
+def test_shifted_prime_mobius_change_of_variables_is_exact() -> None:
+    for shift_range in range(1, 9):
+        for shift in range(1, shift_range + 1):
+            for base in range(shift_range + 1, 2 * shift_range + 8):
+                coordinates = shifted_prime_mobius_coordinates(
+                    base=base,
+                    shift=shift,
+                    shift_range=shift_range,
+                )
+                assert coordinates == ShiftedPrimeMobiusCoordinates(
+                    mobius_shift=shift_range - shift,
+                    translated_base=base + shift - shift_range,
+                )
+                assert coordinates.translated_base + coordinates.mobius_shift == base
+                assert coordinates.translated_base + shift_range == base + shift
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

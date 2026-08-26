@@ -654,6 +654,100 @@ def prime_kloosterman_average_ledger(
     )
 
 
+def prime_slice_variance_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    scalar_length: Fraction,
+) -> PrimeSliceVarianceLedger:
+    """Audit Selberg variance and the density term on the prime slice.
+
+    The interval has ambient scale ``x = T^ambient_length`` and length
+    ``y = T^shift_length``.  The transition needs the scalar saving
+    ``T^scalar_length``.  The unconditional Selberg-integral input used
+    here is ``J(x, y/x) << x*y^2``; the RH diagnostic is ``J << x*y``.
+    """
+
+    if ambient_length <= 0:
+        raise ValueError("the ambient exponent must be positive")
+    if min(shift_length, scalar_length) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    if shift_length > ambient_length:
+        raise ValueError("the short interval cannot exceed the ambient scale")
+    if scalar_length > ambient_length:
+        raise ValueError("the requested scalar saving exceeds the ambient scale")
+
+    relative_interval = shift_length - ambient_length
+    trivial_bound = ambient_length + shift_length
+    target_bound = trivial_bound - scalar_length
+    unconditional_variance = ambient_length + 2 * shift_length
+    unconditional_cauchy_bound = (
+        ambient_length + unconditional_variance
+    ) / 2
+    rh_variance = ambient_length + shift_length
+    rh_cauchy_bound = (ambient_length + rh_variance) / 2
+    density_required_mertens = target_bound - shift_length
+    return PrimeSliceVarianceLedger(
+        relative_interval=relative_interval,
+        trivial_bound=trivial_bound,
+        target_bound=target_bound,
+        unconditional_variance=unconditional_variance,
+        unconditional_cauchy_bound=unconditional_cauchy_bound,
+        unconditional_gap=unconditional_cauchy_bound - target_bound,
+        rh_variance=rh_variance,
+        rh_cauchy_bound=rh_cauchy_bound,
+        rh_margin=target_bound - rh_cauchy_bound,
+        density_required_mertens=density_required_mertens,
+        density_required_ratio=density_required_mertens / ambient_length,
+        density_required_saving=ambient_length - density_required_mertens,
+    )
+
+
+def shifted_prime_mobius_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    scalar_length: Fraction,
+) -> ShiftedPrimeMobiusLedger:
+    """Audit a logarithmic averaged shifted-prime Möbius estimate."""
+
+    if min(ambient_length, shift_length, scalar_length) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    if shift_length > ambient_length:
+        raise ValueError("the shift range cannot exceed the ambient scale")
+
+    raw_bound = ambient_length + shift_length
+    target_bound = raw_bound - scalar_length
+    published_power_bound = raw_bound
+    published_power_saving = raw_bound - published_power_bound
+    return ShiftedPrimeMobiusLedger(
+        raw_bound=raw_bound,
+        published_power_bound=published_power_bound,
+        target_bound=target_bound,
+        published_power_saving=published_power_saving,
+        required_power_saving=scalar_length,
+        gap=published_power_bound - target_bound,
+    )
+
+
+def shifted_prime_mobius_coordinates(
+    *,
+    base: int,
+    shift: int,
+    shift_range: int,
+) -> ShiftedPrimeMobiusCoordinates:
+    """Map mu(s) * Lambda(s+d) to mu(n+h) * G(n)."""
+
+    if shift_range < 1 or not 1 <= shift <= shift_range:
+        raise ValueError("the shift must lie in the positive shift range")
+    if base <= shift_range:
+        raise ValueError("the base must exceed the shift range")
+    return ShiftedPrimeMobiusCoordinates(
+        mobius_shift=shift_range - shift,
+        translated_base=base + shift - shift_range,
+    )
+
+
 def near_determinant_coordinates(
     divisor_product: int,
     scalar_factor: int,
@@ -2614,6 +2708,44 @@ class PrimeKloostermanLedger:
     theorem_saving: Fraction
     required_saving: Fraction
     gap: Fraction
+
+
+@dataclass(frozen=True)
+class PrimeSliceVarianceLedger:
+    """Selberg-integral and zero-frequency exponent comparison."""
+
+    relative_interval: Fraction
+    trivial_bound: Fraction
+    target_bound: Fraction
+    unconditional_variance: Fraction
+    unconditional_cauchy_bound: Fraction
+    unconditional_gap: Fraction
+    rh_variance: Fraction
+    rh_cauchy_bound: Fraction
+    rh_margin: Fraction
+    density_required_mertens: Fraction
+    density_required_ratio: Fraction
+    density_required_saving: Fraction
+
+
+@dataclass(frozen=True)
+class ShiftedPrimeMobiusLedger:
+    """Power-exponent audit for an averaged shifted-prime theorem."""
+
+    raw_bound: Fraction
+    published_power_bound: Fraction
+    target_bound: Fraction
+    published_power_saving: Fraction
+    required_power_saving: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class ShiftedPrimeMobiusCoordinates:
+    """Coordinates satisfying n+h=s and n+Y=s+d."""
+
+    mobius_shift: int
+    translated_base: int
 
 
 @dataclass(frozen=True)
