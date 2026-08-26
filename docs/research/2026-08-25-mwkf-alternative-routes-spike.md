@@ -18692,6 +18692,159 @@ The interfaces `outer_modulus_divisor_incidence_energy` and
 finite Type recombination, the zero outer-scale power loss, and the
 hard-face \(1/2\) deficit.  They keep MMKLS, OSLSP, and OLISK false.
 
+### 4.109zjac The unit product-index stratum saves a full power
+
+There is a geometric estimate which was lost in the operator-norm bound
+(4.143d)--(4.143e).  Keep one separated physical tensor from
+(4.845ah)--(4.845ai), fix \(A,s,m\), and first restrict to
+\((h\delta,s)=1\).  Write \(a=\overline A m\), and put
+
+\[
+ H_\chi=\sum_{h\asymp H}u_h\chi(h),\qquad
+ L_\chi=\sum_{\delta\asymp L}v_\delta\chi(\delta).
+\]
+
+The Dirichlet characters vanish on nonunits, so the displayed sums
+already impose \((h\delta,s)=1\).  With
+
+\[
+ G_s(\chi,n):=\sum_{x\bmod s}^{*}\chi(x)e(nx/s),
+\]
+
+Fourier inversion on \((\mathbb Z/s\mathbb Z)^\times\), followed by
+\(y\mapsto\bar y\), gives the finite exact identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ F_s(a)&:=\sum_{h,\delta}u_hv_\delta S(a,-h\delta;s)\\
+ &=\frac1{\varphi(s)}\sum_{\chi\bmod s}
+ \chi(-1)G_s(\bar\chi,1)G_s(\bar\chi,a)H_\chi L_\chi.
+ \end{aligned}}
+ \tag{4.845dc_14xq_20}
+\]
+
+This ordering is essential.  Squaring the product-residue count before
+removing its uniform unit-residue vector retains the main term
+\(|H_0L_0|^2/\varphi(s)\) and gives (4.143e).  In (4.845dc_14xq_20) the
+principal character is evaluated explicitly:
+
+\[
+ \boxed{F_s^{(0)}(a)
+ =\frac{\mu(s)c_s(a)}{\varphi(s)}H_{\chi_0}L_{\chi_0}}
+ \qquad(s\ \hbox{squarefree}).
+ \tag{4.845dc_14xq_21}
+\]
+
+In particular, if \((a,s)=1\), its coefficient is exactly
+\(1/\varphi(s)\), not the square root of the product-residue main term.
+
+The nonprincipal part has a uniform generalized-Gauss bound, including
+arbitrary \((a,s)\).  Sort every character by its primitive conductor.
+Lemma 1 of
+[Cochrane--Shi](https://www.math.ksu.edu/~cochrane/research/xyequvmodm.pdf)
+gives the following exact local factor for squarefree \(s\):
+
+\[
+ \boxed{
+ \sum_{\chi\bmod s}
+ |G_s(\bar\chi,1)G_s(\bar\chi,a)|^2
+ =\prod_{p\mid s}
+ \begin{cases}
+  1+(p-2)p^2,&p\nmid a,\\
+  (p-1)^2,&p\mid a.
+ \end{cases}}
+ \tag{4.845dc_14xq_22}
+\]
+
+Every local factor in (4.845dc_14xq_22) is at most \(p^2(p-1)\).
+Consequently the left side is at most
+\(s^2\varphi(s)\), with no power of \((a,s)\).
+
+Theorem 1 of the same paper states, uniformly for every shifted integer
+interval \(I\),
+
+\[
+ \frac1{\varphi(s)}\sum_{\chi\ne\chi_0}
+ \left|\sum_{n\in I}\chi(n)\right|^4
+ \ll
+ K(s)|I|^2,
+ \quad
+ K(s)=8^{\omega(s)}\tau(s)(\log s)^3(\log\log s)^7.
+ \tag{4.845dc_14xq_23}
+\]
+
+Four-variable partial summation applies (4.845dc_14xq_23) to the
+separated smooth weights with a fixed polynomial in their one-variable
+seminorms.  Cauchy first between the two character polynomials and then
+between the Gauss and character factors in (4.845dc_14xq_20) gives
+
+\[
+ \boxed{|F_s^{(\ne0)}(a)|
+ \ll sK(s)^{1/2}(HL)^{1/2}.}
+ \tag{4.845dc_14xq_24}
+\]
+
+On squarefree support \(K(s)^{1/2}\) is
+\(4^{\omega(s)}(\log s)^{3/2}(\log\log s)^{7/2}\).  Its harmonic
+average costs only logarithms, since
+
+\[
+ \sum_{s\le X}\frac{\mu^2(s)4^{\omega(s)}}s
+ \le\prod_{p\le X}\left(1+\frac4p\right)
+ \ll(\log(2X))^4.
+ \tag{4.845dc_14xq_25}
+\]
+
+At the hard scales \(s=T^3\), \(H=L=T^{5/2}\), the three literal
+exponents for one fixed \(s,m,A\) are
+
+\[
+ \boxed{
+ E_{\rm Weil}=\frac{13}2,\qquad
+ E_{\rm nonprincipal}=\frac{11}2,\qquad
+ E_{\rm principal}=2.}
+ \tag{4.845dc_14xq_26}
+\]
+
+Thus the proved unit stratum saves \(T^1\), leaving a formal margin
+\(T^{1/2}\) over the deficit in (4.845dc_14xq_19).  This is stronger
+than the quarter-power obtained by freezing one factor in Section
+4.109zk.
+
+Equation (4.845dc_14xq_26) is not yet inserted as a bound for MMKLS.
+The physical sum also contains the disjoint strata
+
+\[
+ d_1=(h,s),\qquad d_2=(\delta,s),\qquad
+ g=[d_1,d_2],\qquad c=s/g,
+ \tag{4.845dc_14xq_27}
+\]
+
+for which CRT gives
+
+\[
+ \boxed{S(a,-h\delta;s)
+ =c_g(a)S(a\bar g,-h\delta/g;c).}
+ \tag{4.845dc_14xq_28}
+\]
+
+The reduced product is a unit modulo \(c\), but exact gcd rather than
+mere divisibility introduces two further finite inclusion--exclusion
+layers at primes dividing \(g/d_1\) and \(g/d_2\).  In addition, the
+principal term in (4.845dc_14xq_21) contains \(c_s(a)\) when
+\((a,s)>1\).  Before promoting (4.845dc_14xq_24), one must sum these
+layers with the physical \(A^{-1}\), the \(m\asymp A\) average, the
+\(D=(A,h\delta)\) layer, and every ratio/gcd restriction still inside
+\(\Psi_{A,q}\).  No such aggregation is asserted in this subsection.
+
+The helpers squarefree_gauss_pair_fourth_mass and
+product_index_character_energy_audit check (4.845dc_14xq_22), the
+three exponents in (4.845dc_14xq_26), and the remaining half-power
+margin.  They mark the published unit fourth-moment input and the
+physical kernel nuclear norm true, while keeping the nonunit,
+principal-average, MMKLS, OSLSP, and OLISK flags false.
+
 ### 4.109zk Pascadi v2 saves only one quarter power after factor freezing
 
 Pascadi's revised composite-modulus theorem is unusually well matched

@@ -2007,6 +2007,30 @@ class OuterModulusTypeRecombinationAudit:
 
 
 @dataclass(frozen=True)
+class ProductIndexCharacterEnergyAudit:
+    modulus_exponent: Fraction
+    first_product_length_exponent: Fraction
+    second_product_length_exponent: Fraction
+    trivial_weil_product_sum_exponent: Fraction
+    nonprincipal_character_bound_exponent: Fraction
+    principal_character_bound_exponent: Fraction
+    unit_layer_saving_exponent: Fraction
+    required_hard_face_saving_exponent: Fraction
+    unit_layer_saving_margin: Fraction
+    product_intervals_are_shorter_than_modulus: bool
+    cochrane_shi_fourth_moment_applies_to_unit_intervals: bool
+    smooth_weight_partial_summation_has_zero_power_cost: bool
+    generalized_gauss_pair_mass_has_zero_power_cost: bool
+    squarefree_local_factor_harmonic_mean_is_polylogarithmic: bool
+    physical_product_kernel_nuclear_norm_available: bool
+    nonunit_product_gcd_layers_aggregated: bool
+    principal_ramanujan_frequency_average_aggregated: bool
+    product_index_energy_closes_mmkls: bool
+    whole_mobius_gate_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class PascadiLiftedPhysicalAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -14368,6 +14392,129 @@ def outer_modulus_type_recombination_audit(
     )
 
 
+def squarefree_gauss_pair_fourth_mass(
+    *,
+    modulus: int,
+    frequency: int,
+) -> dict[str, object]:
+    """Evaluate the conductor-weighted pair of generalized Gauss sums.
+
+    Let ``chi`` run through all characters modulo a squarefree ``s`` and
+    write ``G_s(chi,n)=sum_(x mod s)^* chi(x)e(nx/s)``.  Sorting characters
+    by primitive conductor gives the exact local factor
+
+    ``1+(p-2)p^2`` when ``p`` does not divide ``n``, and ``(p-1)^2`` when
+    ``p`` divides ``n``, for
+
+    ``sum_chi |G_s(chi,1) G_s(conj(chi),n)|^2``.
+
+    Each local factor is at most ``p^2(p-1)``.  Thus the full mass is at
+    most ``s^2*phi(s)`` uniformly in ``gcd(n,s)``; no divisor of the
+    Poisson frequency costs a positive power.
+    """
+    s = int(modulus)
+    n = int(frequency)
+    if s <= 0:
+        raise ValueError("modulus must be positive")
+    remaining = s
+    factors: list[int] = []
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            remaining //= prime
+            if remaining % prime == 0:
+                raise ValueError("modulus must be squarefree")
+            factors.append(prime)
+        prime += 1
+    if remaining > 1:
+        factors.append(remaining)
+    local_factors = tuple(
+        (
+            prime,
+            (prime - 1) ** 2
+            if n % prime == 0
+            else 1 + (prime - 2) * prime**2,
+        )
+        for prime in factors
+    )
+    exact = 1
+    for _, local in local_factors:
+        exact *= local
+    upper = s * s * _euler_phi(s)
+    return {
+        "prime_factors": tuple(factors),
+        "local_factors": local_factors,
+        "exact_pair_fourth_mass": exact,
+        "universal_upper_bound": upper,
+        "pair_fourth_mass_has_no_frequency_gcd_power_loss": exact <= upper,
+    }
+
+
+def product_index_character_energy_audit(
+    *,
+    modulus_exponent: Fraction,
+    first_product_length_exponent: Fraction,
+    second_product_length_exponent: Fraction,
+    required_saving_exponent: Fraction,
+) -> ProductIndexCharacterEnergyAudit:
+    """Audit the unit-product character-energy route to the hard MMKLS box.
+
+    For unit ``h,delta`` expand both additive phases in
+
+    ``sum_(h,delta) a_h b_delta S(m,-h*delta;s)``
+
+    into characters modulo squarefree ``s``.  Cochrane--Shi's shifted
+    fourth moment, followed by Cauchy between the two intervals, bounds
+    the nonprincipal part by ``s*sqrt(H*L)`` up to the square root of
+    their explicit divisor/log factor.  The principal character is
+    evaluated rather than squared and has size ``H*L/phi(s)`` when the
+    first Kloosterman index is a unit.  The generalized Gauss-pair mass
+    above shows that the nonprincipal estimate is uniform in that first
+    index.
+
+    This adapter records only the proved unit stratum.  The physical sum
+    also contains variables sharing primes with ``s`` and a principal
+    Ramanujan factor ``c_s(m)``.  Their exact divisor aggregation is left
+    false, so the full MMKLS gate is not promoted here.
+    """
+    sigma = F(modulus_exponent)
+    h = F(first_product_length_exponent)
+    ell = F(second_product_length_exponent)
+    required = F(required_saving_exponent)
+    if min(sigma, h, ell, required) < 0:
+        raise ValueError("exponents must be nonnegative")
+    trivial = h + ell + sigma / 2
+    nonprincipal = sigma + (h + ell) / 2
+    principal = h + ell - sigma
+    saving = trivial - nonprincipal
+    margin = saving - required
+    return ProductIndexCharacterEnergyAudit(
+        modulus_exponent=sigma,
+        first_product_length_exponent=h,
+        second_product_length_exponent=ell,
+        trivial_weil_product_sum_exponent=trivial,
+        nonprincipal_character_bound_exponent=nonprincipal,
+        principal_character_bound_exponent=principal,
+        unit_layer_saving_exponent=saving,
+        required_hard_face_saving_exponent=required,
+        unit_layer_saving_margin=margin,
+        product_intervals_are_shorter_than_modulus=max(h, ell) < sigma,
+        cochrane_shi_fourth_moment_applies_to_unit_intervals=max(h, ell) < sigma,
+        smooth_weight_partial_summation_has_zero_power_cost=True,
+        generalized_gauss_pair_mass_has_zero_power_cost=True,
+        squarefree_local_factor_harmonic_mean_is_polylogarithmic=True,
+        physical_product_kernel_nuclear_norm_available=True,
+        nonunit_product_gcd_layers_aggregated=False,
+        principal_ramanujan_frequency_average_aggregated=False,
+        product_index_energy_closes_mmkls=False,
+        whole_mobius_gate_covered=False,
+        source=(
+            "Cochrane--Shi, The congruence x1x2=x3x4 (mod m), "
+            "Theorem 1 and Lemma 1"
+        ),
+    )
+
+
 def eisenstein_common_ramification_average_audit(
     *,
     frequency_length: int,
@@ -23909,6 +24056,33 @@ def main() -> None:
         f"{outer_modulus.mobius_modulus_harmonic_large_sieve_proved} "
         f"oslsp={outer_modulus.steinberg_conductor_average_proved} "
         f"olisk={outer_modulus.outer_lisk_covered}"
+    )
+    product_energy = product_index_character_energy_audit(
+        modulus_exponent=F(3),
+        first_product_length_exponent=F(5, 2),
+        second_product_length_exponent=F(5, 2),
+        required_saving_exponent=F(1, 2),
+    )
+    print(
+        "balanced_max_a: product_index_energy="
+        "trivial="
+        f"{_fmt(product_energy.trivial_weil_product_sum_exponent)} "
+        "nonprincipal="
+        f"{_fmt(product_energy.nonprincipal_character_bound_exponent)} "
+        "principal="
+        f"{_fmt(product_energy.principal_character_bound_exponent)} "
+        f"saving={_fmt(product_energy.unit_layer_saving_exponent)} "
+        "required="
+        f"{_fmt(product_energy.required_hard_face_saving_exponent)} "
+        f"margin={_fmt(product_energy.unit_layer_saving_margin)} "
+        "gauss_gcd="
+        f"{product_energy.generalized_gauss_pair_mass_has_zero_power_cost} "
+        "nonunit="
+        f"{product_energy.nonunit_product_gcd_layers_aggregated} "
+        "principal_avg="
+        f"{product_energy.principal_ramanujan_frequency_average_aggregated} "
+        f"mmkls={product_energy.product_index_energy_closes_mmkls} "
+        f"olisk={product_energy.whole_mobius_gate_covered}"
     )
     cross_tensor = unramified_cross_index_tensor_norm_audit()
     print(

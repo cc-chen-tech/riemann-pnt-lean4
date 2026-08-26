@@ -5702,6 +5702,65 @@ def test_full_type_recombination_returns_the_original_mobius_modulus_weight(
     ) in output
 
 
+def test_squarefree_generalized_gauss_pair_mass_has_no_gcd_power_loss() -> None:
+    """Catch paying a positive power when the Poisson index meets the modulus."""
+    mass = coverage_audit.squarefree_gauss_pair_fourth_mass(
+        modulus=30,
+        frequency=14,
+    )
+    assert mass["prime_factors"] == (2, 3, 5)
+    assert mass["local_factors"] == ((2, 1), (3, 10), (5, 76))
+    assert mass["exact_pair_fourth_mass"] == 760
+    assert mass["universal_upper_bound"] == 7200
+    assert mass["pair_fourth_mass_has_no_frequency_gcd_power_loss"]
+
+
+def test_product_index_character_energy_has_a_half_power_hard_margin(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Record the proved unit layer without promoting the nonunit aggregation."""
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjac The unit product-index stratum saves a full power",
+        r"\tag{4.845dc_14xq_20}",
+        r"\tag{4.845dc_14xq_22}",
+        r"\tag{4.845dc_14xq_24}",
+        r"\tag{4.845dc_14xq_26}",
+        r"\tag{4.845dc_14xq_28}",
+        "Cochrane--Shi",
+    ):
+        assert marker in note
+    audit = coverage_audit.product_index_character_energy_audit(
+        modulus_exponent=F(3),
+        first_product_length_exponent=F(5, 2),
+        second_product_length_exponent=F(5, 2),
+        required_saving_exponent=F(1, 2),
+    )
+    assert audit.trivial_weil_product_sum_exponent == F(13, 2)
+    assert audit.nonprincipal_character_bound_exponent == F(11, 2)
+    assert audit.principal_character_bound_exponent == F(2)
+    assert audit.unit_layer_saving_exponent == 1
+    assert audit.required_hard_face_saving_exponent == F(1, 2)
+    assert audit.unit_layer_saving_margin == F(1, 2)
+    assert audit.cochrane_shi_fourth_moment_applies_to_unit_intervals
+    assert audit.smooth_weight_partial_summation_has_zero_power_cost
+    assert audit.generalized_gauss_pair_mass_has_zero_power_cost
+    assert audit.physical_product_kernel_nuclear_norm_available
+    assert not audit.nonunit_product_gcd_layers_aggregated
+    assert not audit.principal_ramanujan_frequency_average_aggregated
+    assert not audit.product_index_energy_closes_mmkls
+    assert not audit.whole_mobius_gate_covered
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: product_index_energy="
+        "trivial=13/2 nonprincipal=11/2 principal=2 saving=1 "
+        "required=1/2 margin=1/2 gauss_gcd=True nonunit=False "
+        "principal_avg=False mmkls=False olisk=False"
+    ) in output
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
