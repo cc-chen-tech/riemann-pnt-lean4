@@ -11,7 +11,7 @@ import cmath
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import lru_cache
-from math import gcd
+from math import gcd, lcm
 
 try:
     from scripts.audit_mwkf_ranges import (
@@ -200,6 +200,163 @@ def mobius_two_cutoff_hyperbola_value(
     return long_long - short_short
 
 
+def mobius_two_cutoff_product_coefficient(
+    product: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> TwoCutoffProductCoefficient:
+    """Group the exact two-cutoff identity by the product ``m=bc``.
+
+    The short-short field already includes its minus sign from the
+    hyperbola identity.  Thus ``combined`` is the coefficient
+    ``lambda_{U,V}(m)`` for which ``mu(n)=sum_{m|n} lambda_{U,V}(m)``
+    whenever ``n>max(U,V)``.
+    """
+
+    if product < 1 or cutoff_left < 1 or cutoff_right < 1:
+        raise ValueError("the product and both cutoffs must be positive")
+    short_short = 0
+    long_long = 0
+    for left_factor in divisors(product):
+        right_factor = product // left_factor
+        contribution = mobius(left_factor) * mobius(right_factor)
+        if left_factor <= cutoff_left and right_factor <= cutoff_right:
+            short_short -= contribution
+        elif left_factor > cutoff_left and right_factor > cutoff_right:
+            long_long += contribution
+    return TwoCutoffProductCoefficient(
+        short_short=short_short,
+        long_long=long_long,
+        combined=short_short + long_long,
+    )
+
+
+def mobius_two_cutoff_product_value(
+    product: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> int:
+    """Return the grouped coefficient ``lambda_{U,V}(product)``."""
+
+    return mobius_two_cutoff_product_coefficient(
+        product,
+        cutoff_left=cutoff_left,
+        cutoff_right=cutoff_right,
+    ).combined
+
+
+def mobius_two_cutoff_density_period_average(
+    scalar: int,
+    *,
+    product_limit: int,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> tuple[Fraction, Fraction]:
+    """Check the exact finite principal density through ``m<=M``.
+
+    Average over one common period, restricted to residues coprime to
+    ``scalar``.  A congruence ``m | scalar+d`` has relative density
+    ``1/m`` precisely when ``(m,scalar)=1`` and otherwise has no allowed
+    residue.  The returned pair is the direct period average and this
+    finite density prefix; no limiting interchange is used.
+    """
+
+    if min(scalar, product_limit, cutoff_left, cutoff_right) < 1:
+        raise ValueError("all inputs must be positive")
+    product_period = 1
+    for product in range(1, product_limit + 1):
+        product_period = lcm(product_period, product)
+    period = lcm(product_period, scalar)
+    allowed_residues = tuple(
+        shift for shift in range(period) if gcd(shift, scalar) == 1
+    )
+    direct_total = sum(
+        mobius_two_cutoff_product_value(
+            product,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        for shift in allowed_residues
+        for product in range(1, product_limit + 1)
+        if (scalar + shift) % product == 0
+    )
+    density = sum(
+        Fraction(
+            mobius_two_cutoff_product_value(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ),
+            product,
+        )
+        for product in range(1, product_limit + 1)
+        if gcd(product, scalar) == 1
+    )
+    return Fraction(direct_total, len(allowed_residues)), density
+
+
+def mobius_two_cutoff_centered_divisor_split(
+    n: int,
+    *,
+    product_cutoff: int,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> TwoCutoffCenteredSplit:
+    """Split ``mu(n)`` into density, centered, and large divisors.
+
+    This is the exact pointwise version of subtracting the unrestricted
+    principal density only for ``m<=M``.  Nondivisor density terms
+    cancel inside the centered field, so no auxiliary scalar or
+    coprimality hypothesis is needed.
+    """
+
+    if min(n, product_cutoff, cutoff_left, cutoff_right) < 1:
+        raise ValueError("all inputs must be positive")
+    if n <= max(cutoff_left, cutoff_right):
+        raise ValueError("n must exceed both two-cutoff parameters")
+    density = sum(
+        Fraction(
+            mobius_two_cutoff_product_value(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ),
+            product,
+        )
+        for product in range(1, product_cutoff + 1)
+    )
+    centered = sum(
+        mobius_two_cutoff_product_value(
+            product,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        * (
+            Fraction(1 if n % product == 0 else 0)
+            - Fraction(1, product)
+        )
+        for product in range(1, product_cutoff + 1)
+    )
+    complementary = sum(
+        mobius_two_cutoff_product_value(
+            product,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        for product in divisors(n)
+        if product > product_cutoff
+    )
+    total = density + centered + complementary
+    return TwoCutoffCenteredSplit(
+        density=density,
+        centered=centered,
+        complementary=Fraction(complementary),
+        total=total,
+    )
+
+
 def mobius_principal_density_value(
     n: int,
     *,
@@ -386,6 +543,166 @@ def scalar_type_i_absolute_exponent(
     if min(scalar_length, left_cutoff, right_cutoff) < 0:
         raise ValueError("all cutoff exponents must be nonnegative")
     return max(scalar_length, left_cutoff + right_cutoff)
+
+
+def central_major_arc_mertens_ledger(
+    *,
+    scalar_length: Fraction,
+    quotient_length: Fraction,
+    shifted_length: Fraction,
+    shift_average: Fraction,
+    target: Fraction,
+    scalar_relative_saving: Fraction,
+    quotient_relative_saving: Fraction,
+    shifted_relative_saving: Fraction,
+) -> CentralMajorArcMertensLedger:
+    """Audit a factorwise Mertens bound on the additive central arc.
+
+    The first Möbius polynomial factors at zero frequency into lengths
+    ``G`` and ``Q``; the shifted Möbius polynomial has length ``S``.
+    A central arc of width the reciprocal of the longer polynomial gives
+    the raw exponent below.  Relative savings ``eta`` mean a bound
+    ``X^(1-eta)`` for the corresponding polynomial, uniformly across
+    that arc by partial summation.
+    """
+
+    lengths = (
+        scalar_length,
+        quotient_length,
+        shifted_length,
+        shift_average,
+        target,
+    )
+    savings = (
+        scalar_relative_saving,
+        quotient_relative_saving,
+        shifted_relative_saving,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if any(saving < 0 or saving > 1 for saving in savings):
+        raise ValueError("relative savings must lie in [0,1]")
+    first_polynomial = scalar_length + quotient_length
+    central_arc_width = max(first_polynomial, shifted_length)
+    raw_bound = (
+        first_polynomial
+        + shifted_length
+        + shift_average
+        - central_arc_width
+    )
+    available_saving = (
+        scalar_length * scalar_relative_saving
+        + quotient_length * quotient_relative_saving
+        + shifted_length * shifted_relative_saving
+    )
+    conditional_bound = raw_bound - available_saving
+    return CentralMajorArcMertensLedger(
+        raw_bound=raw_bound,
+        required_saving=raw_bound - target,
+        available_saving=available_saving,
+        conditional_bound=conditional_bound,
+        gap=conditional_bound - target,
+    )
+
+
+def postcompletion_cutoff_ledger(
+    *,
+    ambient_length: Fraction,
+    shift_length: Fraction,
+    outer_length: Fraction,
+    left_cutoff: Fraction,
+    right_cutoff: Fraction,
+    fourier_decay_order: int,
+    target: Fraction,
+) -> PostcompletionCutoffLedger:
+    """Cutoff geometry after completing the transition numerator.
+
+    For ``m=bc<D``, smooth Poisson summation in the shift variable makes
+    the nonzero frequency tail ``(m/D)^(A-1)``.  The sharp endpoint cost
+    is retained separately.  The long-long complementary divisor
+    ``k=n/m`` has the two displayed ceilings.
+    """
+
+    lengths = (
+        ambient_length,
+        shift_length,
+        outer_length,
+        left_cutoff,
+        right_cutoff,
+        target,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if fourier_decay_order < 1:
+        raise ValueError("the Fourier decay order must be positive")
+    divisor_product = left_cutoff + right_cutoff
+    if divisor_product > shift_length:
+        raise ValueError("this Poisson ledger requires bc no longer than D")
+    quotient_ceiling = ambient_length - divisor_product
+    if quotient_ceiling < 0 or ambient_length < shift_length:
+        raise ValueError("the ambient interval must contain the shift range")
+    sharp_boundary = outer_length + divisor_product
+    smooth_tail = (
+        sharp_boundary
+        + (fourier_decay_order - 1)
+        * (divisor_product - shift_length)
+    )
+    return PostcompletionCutoffLedger(
+        divisor_product_floor=divisor_product,
+        quotient_ceiling=quotient_ceiling,
+        fixed_product_quotient_window=max(
+            Fraction(0), shift_length - divisor_product
+        ),
+        high_product_quotient_ceiling=ambient_length - shift_length,
+        sharp_type_i_boundary=sharp_boundary,
+        smooth_type_i_tail=smooth_tail,
+        sharp_margin=target - sharp_boundary,
+        smooth_margin=target - smooth_tail,
+    )
+
+
+def centered_low_modulus_large_sieve_ledger(
+    *,
+    modulus_length: Fraction,
+    outer_length: Fraction,
+    shift_length: Fraction,
+    fourier_decay_order: int,
+    target: Fraction,
+) -> CenteredLowModulusLargeSieveLedger:
+    """Additive-large-sieve bound for a centered ``m<=D`` block.
+
+    The coefficient and outer L2 energies have exponents ``M`` and
+    ``S``.  Fractions ``k/m`` contribute the classical ``S+M^2`` large
+    sieve constant, while smooth Poisson modes gain
+    ``(M/D)^(A-1)``.
+    """
+
+    lengths = (modulus_length, outer_length, shift_length, target)
+    if min(lengths) < 0:
+        raise ValueError("all length exponents must be nonnegative")
+    if modulus_length > shift_length:
+        raise ValueError("the centered low-modulus block requires M<=D")
+    if fourier_decay_order < 1:
+        raise ValueError("the Fourier decay order must be positive")
+    large_sieve_constant = max(outer_length, 2 * modulus_length)
+    fourier_decay = (
+        fourier_decay_order - 1
+    ) * (modulus_length - shift_length)
+    bound = (
+        modulus_length / 2
+        + outer_length / 2
+        + large_sieve_constant / 2
+        + fourier_decay
+    )
+    return CenteredLowModulusLargeSieveLedger(
+        coefficient_energy=modulus_length,
+        outer_energy=outer_length,
+        large_sieve_constant=large_sieve_constant,
+        fourier_decay=fourier_decay,
+        bound=bound,
+        target=target,
+        margin=target - bound,
+    )
 
 
 def scalar_type_ii_cutoff_ledger(
@@ -2950,6 +3267,63 @@ class TransitionArchimedeanScaleLedger:
     zeta_balance: Fraction
     scalar_dilation: Fraction
     poisson_sample: Fraction
+
+
+@dataclass(frozen=True)
+class TwoCutoffProductCoefficient:
+    """Short, long, and combined coefficients at one product ``m=bc``."""
+
+    short_short: int
+    long_long: int
+    combined: int
+
+
+@dataclass(frozen=True)
+class TwoCutoffCenteredSplit:
+    """Exact density/centered/complementary decomposition at one n."""
+
+    density: Fraction
+    centered: Fraction
+    complementary: Fraction
+    total: Fraction
+
+
+@dataclass(frozen=True)
+class CentralMajorArcMertensLedger:
+    """Conditional fixed-power ledger for the additive central arc."""
+
+    raw_bound: Fraction
+    required_saving: Fraction
+    available_saving: Fraction
+    conditional_bound: Fraction
+    gap: Fraction
+
+
+@dataclass(frozen=True)
+class PostcompletionCutoffLedger:
+    """Type-I completion and complementary-divisor exponent geometry."""
+
+    divisor_product_floor: Fraction
+    quotient_ceiling: Fraction
+    fixed_product_quotient_window: Fraction
+    high_product_quotient_ceiling: Fraction
+    sharp_type_i_boundary: Fraction
+    smooth_type_i_tail: Fraction
+    sharp_margin: Fraction
+    smooth_margin: Fraction
+
+
+@dataclass(frozen=True)
+class CenteredLowModulusLargeSieveLedger:
+    """Exponent ledger for centered low product moduli."""
+
+    coefficient_energy: Fraction
+    outer_energy: Fraction
+    large_sieve_constant: Fraction
+    fourier_decay: Fraction
+    bound: Fraction
+    target: Fraction
+    margin: Fraction
 
 
 @dataclass(frozen=True)

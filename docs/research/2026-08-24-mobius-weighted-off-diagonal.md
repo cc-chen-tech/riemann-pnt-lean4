@@ -7375,13 +7375,336 @@ into (9.294)'s fixed power.  Hence (9.291) is a useful positive theorem
 match and a negative power audit: the residual is a two-Möbius weighted
 averaged-Chowla problem, not a three-independent-sign problem.
 
+### 9.47 The central major arc after the exact Type-I/II split
+
+The zero frequency in the short--short packet can be compared with the
+long--long packet without replacing the two-cutoff identity by a formal
+infinite convolution.  Group (9.241) by the product \(m=bc\), and put
+
+\[
+ \boxed{
+ \lambda_{U,V}(m)
+ :=\sum_{bc=m}\mu(b)\mu(c)
+ \left(1_{b>U,\ c>V}-1_{b\leq U,\ c\leq V}\right).}
+ \tag{9.295}
+\]
+
+Writing \(\mu_{\leq U}(n)=\mu(n)1_{n\leq U}\), the global
+boundary-exact convolution identity is
+
+\[
+ \boxed{
+ \sum_{m\mid n}\lambda_{U,V}(m)
+ =\mu(n)-\mu_{\leq U}(n)-\mu_{\leq V}(n).}
+ \tag{9.296}
+\]
+
+Indeed, in convolution notation
+\(\lambda_{U,V}=\mu*\mu-\mu*\mu_{\leq V}
+-\mu_{\leq U}*\mu\), and convolving with \(1\) proves (9.296).
+In particular, its left side equals \(\mu(n)\) for every
+\(n>\max(U,V)\), exactly as in (9.241), with no truncation error.  It
+also shows why the two zero frequencies cannot be cancelled term by
+term.  If \(\lambda^{\rm I}\) and
+\(\lambda^{\rm II}\) denote the negative short--short and positive
+long--long parts, respectively, then
+
+\[
+ \boxed{
+ \lambda^{\rm II}_{U,V}(m)=0
+ \quad(m<(U+1)(V+1)),\qquad
+ \lambda^{\rm I}_{U,V}(1)=\lambda_{U,V}(1)=-1.}
+ \tag{9.297}
+\]
+
+In particular, for a prime \(p>\max(U,V)\), its value
+\(\mu(p)=-1\) in (9.296) comes entirely from \(m=1\); the long--long
+rectangle has no matching modulus.  Any cancellation of this density
+must therefore aggregate different product moduli rather than pair equal
+frequencies.
+
+There is a completely finite statement of the aggregate density.  Fix
+\(s,M\geq1\), let \(P=[s,1,2,\ldots,M]\), and normalize by the unit
+residues in one period.  Chinese remaindering gives
+
+\[
+\boxed{
+ \frac{1}{\#\{0\leq d<P:(d,s)=1\}}
+ \sum_{\substack{0\leq d<P\\(d,s)=1}}
+ \sum_{\substack{m\leq M\\m\mid s+d}}\lambda_{U,V}(m)
+ =\sum_{\substack{m\leq M\\(m,s)=1}}
+   \frac{\lambda_{U,V}(m)}m.}
+\tag{9.298}
+\]
+
+Indeed, when \((m,s)>1\), the congruence \(d\equiv-s\pmod m\)
+contains no unit modulo \(s\); when \((m,s)=1\), it occupies exactly a
+\(1/m\)-fraction of the unit residues.  The checker verifies (9.295)--
+(9.298) with exact integers and rational numbers.  Thus the relevant
+principal coefficient is the finite prefix on the right of (9.298), not
+the unsupported substitution \(1/\zeta(1)=0\).
+
+The latter substitution does explain the formal source of a possible
+global cancellation.  For \({\rm Re}\,z>1\), set
+\(M(z)=\sum_{n\geq1}\mu(n)n^{-z}=1/\zeta(z)\) and
+\(M_U(z)=\sum_{n\leq U}\mu(n)n^{-z}\).  Absolute convergence gives
+
+\[
+\boxed{
+ \sum_{m\geq1}\frac{\lambda_{U,V}(m)}{m^z}
+ =(M-M_U)(M-M_V)-M_UM_V
+ =M^2-M(M_U+M_V).}
+\tag{9.299}
+\]
+
+Consequently this Dirichlet series tends to zero as \(z\to1^+\).
+This is only Abelian cancellation across the whole product family.  It
+does not give a fixed-power estimate for the finite, coprimality-twisted
+prefix in (9.298); the classical zero-free region supplies only a
+subpower relative saving after Perron inversion.
+
+For the balanced short--short range the nonzero completion modes are
+already harmless.  If \(m=bc\leq UV\), \((m,s)=1\), and \(W\) is a
+fixed smooth cutoff, Poisson summation gives
+
+\[
+ \sum_d W(d/D)1_{m\mid s+d}
+ =\frac Dm\widehat W(0)
+  +\frac Dm\sum_{k\ne0}e_m(-ks)\widehat W(kD/m).
+ \tag{9.300}
+\]
+
+The second term is \(\ll_A(m/D)^{A-1}\).  Even with a sharp interval,
+the \(O(1)\) error summed over \(s,b,c\) has balanced exponent
+\(3+1/4+1/4=7/2\), below the first-moment target \(9/2\).  The only
+short--short term at the missing scale is therefore its zero frequency,
+
+\[
+\boxed{
+ -D\widehat W(0)
+ \sum_s\mu(s)\omega_{G,Q}(s)B_U(s)B_V(s),\qquad
+ B_U(s):=\sum_{\substack{b\leq U\\(b,s)=1}}\frac{\mu(b)}b.}
+\tag{9.301}
+\]
+
+For a separated scalar component, expanding \(s=gq\) makes (9.301)
+equally explicit:
+
+\[
+ -D\widehat W(0)
+ \sum_{b\leq U,c\leq V}\frac{\mu(b)\mu(c)}{bc}
+ \left(\sum_{\substack{g\asymp G\\(g,bc)=1}}
+       \mu(g)X_g(g)\right)
+ \left(\sum_{\substack{q\asymp Q\\(q,bc)=1}}
+       \mu(q)X_q(q)\right).
+ \tag{9.302}
+\]
+
+Thus a factorwise Mertens argument would need a genuine power, not just
+the prime number theorem.  More generally, on the additive central arc
+\(|\alpha|\ll S^{-1}\), suppose the \(G,Q,S\) Möbius polynomials have
+relative power savings \(\eta_G,\eta_Q,\eta_S\), respectively.  Two
+partial summations preserve those savings for separated smooth weights,
+and the exact balanced exponent is
+
+\[
+\boxed{
+ E_{\rm central}
+ =5-\left(\tfrac12\eta_G+\tfrac52\eta_Q+3\eta_S\right),
+ \qquad
+ E_{\rm central}\leq\tfrac92
+ \Longleftrightarrow
+ \tfrac12\eta_G+\tfrac52\eta_Q+3\eta_S\geq\tfrac12.}
+\tag{9.303}
+\]
+
+The executable ledger checks (9.303) with exact fractions; for example,
+a saving \(\eta_S=1/6\) in the length-\(S\) polynomial alone is exactly
+the threshold.  Known unconditional zero-free-region bounds correspond
+to no fixed positive \(\eta\), so this route does not prove the gate.
+
+There is nevertheless a genuine improvement in the remaining Type-II
+geometry.  The cutoff \(U=V=T^{1/4}\) in (9.245) was balanced before
+the \(h\)-completion.  After (9.280), Type I is completed in the
+length-\(D=T^2\) variable \(d\), so much larger cutoffs are legal.  If
+\(U=T^u,V=T^v\), put \(c=u+v<2\).  Summing the nonzero term in
+(9.300) absolutely, with Fourier decay order \(A\), has exponent
+
+\[
+\boxed{
+ E_{\rm I}^{\ne0}(A)
+ =3+c+(A-1)(c-2),\qquad
+ E_{\rm I}^{\rm sharp}=3+c.}
+\tag{9.304}
+\]
+
+Thus every fixed \(c<2\) is closed by taking \(A\) large enough.  The
+boundary-preserving choice
+
+\[
+\boxed{U=V=T^{3/4},\qquad c=\frac32}
+\tag{9.305}
+\]
+
+already gives \(E_{\rm I}^{\rm sharp}=9/2\), while \(A=2\) gives the
+smooth nonzero-mode exponent \(4\).  It leaves the zero frequency
+(9.301) unchanged, but shortens the long--long packet.  Writing
+\(n=s+d=Bk\), \(B=bc\), its exact exponent geometry becomes
+
+\[
+\boxed{
+ B>T^{3/2},\qquad k\ll T^{3/2},\qquad
+ \#\{k:Bk\in s+[D,2D]\}\ll T^{1/2}+1;
+ \quad B>D\Longrightarrow k\ll T.}
+\tag{9.306}
+\]
+
+The third statement is for fixed \(B,s\); all floor endpoints are
+retained by the literal interval \(Bk\in s+[D,2D]\).  Hence the
+post-completion residual has a symmetric product/quotient face
+\((B,k)=(T^{3/2},T^{3/2})\), and its high-product face has a
+complementary quotient of length only \(T\).  This is strictly shorter
+than (9.245)'s \(B=T^{1/2},k=T^{5/2}\) face.  It is a useful new
+starting point for a bilinear dispersion estimate, but it does not
+cancel (9.301) or prove the central major arc.
+
+The product regrouping permits one more unconditional step.  Put
+\[
+ \Lambda_{U,V}(D)
+ :=\sum_{m\leq D}\frac{\lambda_{U,V}(m)}m.
+\]
+For every \(n=s+d>\max(U,V)\), (9.296) gives the pointwise finite
+decomposition
+
+\[
+\boxed{
+\begin{aligned}
+ \mu(s+d)
+ ={}&\Lambda_{U,V}(D)\\
+ &+\sum_{m\leq D}\lambda_{U,V}(m)
+       \left(1_{m\mid s+d}-\frac1m\right)\\
+ &+\sum_{\substack{m>D\\m\mid s+d}}\lambda_{U,V}(m).
+\end{aligned}}
+\tag{9.307}
+\]
+
+The middle line is unconditionally within the target.  To see this,
+first omit the coprimality notation and let \(a_s\) and \(\lambda_m\)
+be arbitrary coefficients on dyadic intervals of lengths \(S\) and
+\(M\leq D\).  Poisson summation followed, for each nonzero \(k\), by
+the additive large sieve for the \(1/(4M^2)\)-spaced points \(k/m\)
+gives
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal C_M
+ :={}&\sum_{m\asymp M}\lambda_m\sum_{s\asymp S}a_s
+ \sum_dW(d/D)\left(1_{m\mid s+d}-\frac1m\right),\\
+ |\mathcal C_M|
+ \ll_{A,\varepsilon,W}{}&
+ \left(\frac MD\right)^{A-1}
+ \|\lambda\|_2\|a\|_2
+ (S+M^2)^{1/2}T^\varepsilon .
+\end{aligned}}
+\tag{9.308}
+\]
+
+For completeness, one first uses the spacing argument for
+\(|k|<M/2\); the remaining \(k\)'s are absorbed by arbitrary Schwartz
+decay.  The sum over \(k\ne0\), including the factor \(D/m\), is
+\(\ll_A(M/D)^{A-1}\).  Fixed \(k\) causes no coincident fractions on
+one dyadic \(m\)-interval.
+
+In the present application,
+\(|\lambda_{U,V}(m)|\leq\tau(m)\), hence
+\(\|\lambda\|_2\ll M^{1/2}T^\varepsilon\), while (9.292) gives
+\(\|a\|_2\ll S^{1/2}T^\varepsilon\) for
+\(a_s=\mu(s)\omega_{G,Q}(s)\).  If \(M=T^\beta\), \(S=T^3\),
+\(D=T^2\), and \(A=2\), the exact exponent in (9.308) is
+
+\[
+\boxed{
+ E_{\rm centred}(\beta)
+ =\frac\beta2+\frac32
+  +\frac12\max(3,2\beta)+(\beta-2)
+ \leq\frac92\qquad(0\leq\beta\leq2).}
+\tag{9.309}
+\]
+
+Equality occurs only at \(M=D=T^2\); at the new product floor
+\(M=T^{3/2}\), the exponent is \(13/4\).
+
+The original restriction \((d,s)=1\) is handled before applying
+(9.307).  Expand it as \(\sum_{j\mid(d,s)}\mu(j)\), put
+\(s=jn,d=jh\), and use squarefreeness: on the surviving support,
+\[
+ \mu(s)\mu(s+d)
+ =\mu(jn)\mu(j(n+h))=\mu(n)\mu(n+h).
+\]
+The inclusion coefficient \(\mu(j)\) remains outside and has modulus
+at most one.
+The \(j\)-layer has lengths \(S_j=S/j,D_j=D/j\); take
+\(U_j=V_j=D_j^{3/8}\) and apply (9.307) to \(\mu(n+h)\) with
+centering cutoff \(D_j\).  At its endpoint
+\(M=D_j\), (9.308) has exponent \(9/2-2\tau\) for
+\(j=T^\tau\leq T\), and at most \(4-3\tau/2\) for \(\tau\geq1\).
+Thus the dyadic \(j\)-sum costs no power.  The auxiliary conditions
+\((j,n(n+h))=1\) have ordinary divisor expansions and only
+\(T^\varepsilon\) energy cost.  Moving endpoints cost
+\(D^2T^\varepsilon=T^{4+\varepsilon}\), as in Section 9.42.
+Consequently every centered low-product block on every gcd layer is
+proved to be \(O(T^{9/2+\varepsilon})\).
+
+After this step, the completed scalar core has the strictly weaker
+remaining interface
+
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak G_{\rm dens+comp}
+ :=\sum_{\substack{s\asymp S\\d\in I(s)\\(d,s)=1}}
+ &\mu(s)\omega_{G,Q}(s)X_d(d)\\
+ &\times\left\{
+ \Lambda_{U,V}(D)
+ +\sum_{\substack{m>D\\m\mid s+d}}\lambda_{U,V}(m)
+ \right\}
+ \ll_\varepsilon T^{9/2+\varepsilon}.
+\end{aligned}}
+\tag{9.310}
+\]
+
+Formula (9.310) displays the primitive \(j=1\) layer; the exact gate
+also sums its scaled \(j\)-analogues with \(D_j=D/j\).  Here
+\(U=V=T^{3/4}\) on the primitive layer, and separated smooth factors
+in \(s,d\) may be restored with their recorded \(T^\varepsilon\) norm.
+In the second term write \(s+d=mk\); then \(m>D=T^2\) forces
+\(k\ll S/D=T\).
+The density and complementary-divisor pieces are deliberately kept
+together, since (9.299) shows that their cancellation is global rather
+than equal-modulus algebra.  Estimate (9.310) remains unproved, but it
+is narrower than (9.282): all Type-I nonzero modes and all centered
+low-product Type-II modes have now been removed unconditionally.
+
+Nor does (9.303) prove that such a Mertens estimate is necessary: the
+actual coupled kernel could still cancel between the low-modulus prefix,
+the long--long modes \(m\gtrsim D\), and different separated
+archimedean components.  What (9.295)--(9.303) prove is the narrower
+boundary: Type-I nonzero frequencies are closed; equal-modulus algebraic
+cancellation is impossible; and the unresolved central mechanism is a
+finite weighted density-prefix cancellation or a genuinely coupled
+Type-II cancellation, not an omitted endpoint term.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
 Type-I/II packet (9.242), divisor-incidence packet (9.250), and affine
 Möbius--inverse packet (9.258) for \(0\leq\tau<1/4\), hence the full
-Region-D recombination, remain unproved.**
+Region-D recombination, remain unproved.  After transition completion,
+all Type-I nonzero modes and all centered low-product modes are now
+proved within target; their exact remaining projection is the joint
+density-plus-complementary gate (9.310), still unproved.**
 
 Proved in this note:
 
@@ -7598,6 +7921,24 @@ Proved in this note:
   lemma matches each separated and coprimality-divisor component exactly;
   its power ledger remains \(SD=T^5\), leaving \(T^{1/2}\),
   (9.293)--(9.294).
+* the product-modulus regrouping (9.295)--(9.298): the exact Type-I/II
+  coefficient reconstructs \(\mu(n)\), its long--long part starts only at
+  \((U+1)(V+1)\), and its finite complete-period mean is the explicit
+  coprimality-twisted density prefix.  The Abelian factorization (9.299)
+  cancels only after the full product family is aggregated.  Smooth
+  Type-I nonzero modes and even sharp endpoint errors are below target,
+  (9.300), leaving precisely (9.301); a factorwise central-arc route
+  needs the fixed-power inequality (9.303), which is not supplied by the
+  classical zero-free region.  Post-completion one may enlarge the
+  cutoffs to \(U=V=T^{3/4}\), closing all Type-I nonzero modes and
+  shortening the long--long face to \(B>T^{3/2}\), \(k\ll T^{3/2}\),
+  (9.304)--(9.306).
+* the exact density/centered/complementary split (9.307).  Additive
+  large sieve closes every centered low-product block, with the uniform
+  bound (9.308) and exact exponent (9.309); the gcd layers scale by
+  \(S_j=S/j,D_j=D/j\) and cost no power.  The transition obstruction is
+  therefore reduced to the joint density plus \(m>D_j\) complementary
+  divisor gate (9.310), whose quotient always has length at most \(T\).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7654,6 +7995,7 @@ Proved in this note:
 | Centering after transition completion | exact short-box obstruction; no major-arc deletion | the centered numerator transform is the point-minus-uniform identity (9.283).  Its aligned short-box mass is (9.284), equal to \(D-D^2/(q-1)\) for prime \(q>D\), so the uniform background is a factor \(D/q=T^{-1/2}\) below the dilation point mass, (9.285)--(9.286).  This disproves an automatic vanishing-moment route but is not a lower bound for the actual signed smooth packet; published averaged/short-interval Möbius bounds remain logarithmic at the required power scale |
 | Actual archimedean zero-moment route | scale audit exact; special identity unproved | in the balanced transition every parameter \(TL/(MR),HM/S,M^2R/(ST),KS/(MR),gD/L,H/q\) has exponent zero, (9.287)--(9.288).  Thus the completed weight is sampled at bounded frequency and integration by parts gives no power.  The AFE zeros at Mellin \(z=\pm1/2\) do not force the proposed \(d\)-moment (9.289), and even that moment would remove only the additive origin |
 | Post-completion scalar recombination | exact two-Möbius form; published average only logarithmic | (9.290)--(9.291) merge \(\mu(g)\mu(q)\) into \(\mu(s)\) and put every separated scalar weight into \(\omega_{G,Q}(s)\).  Its divisor-bounded \(L^2\) norm (9.292), together with the exact gcd-divisor split, fits Lichtman's arbitrary-coefficient Fourier lemma componentwise.  The resulting bound has power exponent \(SD=T^5\), not the target \(S^{3/2}=T^{9/2}\), (9.293)--(9.294); no third independent Möbius sign remains |
+| Central Type-I/II density prefix | exact finite regrouping and improved cutoff; density-plus-complementary gate unproved | (9.295)--(9.298) group the split by \(m=bc\), prove that long--long has no equal-modulus partner for the Type-I origin, and identify the exact finite principal prefix.  Its Dirichlet series has only Abelian cancellation, (9.299).  Type-I nonzero completion modes and sharp boundaries are below target, (9.300), while the surviving zero frequency is (9.301)--(9.302).  Any factorwise Mertens route must satisfy (9.303).  After completion \(U=V=T^{3/4}\) shortens the geometry, (9.304)--(9.306).  The exact split (9.307) plus additive large sieve (9.308)--(9.309) unconditionally removes every centered low-product block; only the joint density and \(m>D_j\), \(k\ll T\) complementary-divisor gate (9.310) remains |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

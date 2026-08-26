@@ -12,8 +12,10 @@ from scripts.audit_mobius_type_ii import (
     BlomerPascadiUnbalancedLedger,
     CenteredCrtUnitMeanLedger,
     CenteredKloostermanCrtTerms,
+    CenteredLowModulusLargeSieveLedger,
     CenteredTransitionCompletionLedger,
     CentralCollisionLedger,
+    CentralMajorArcMertensLedger,
     CommonFactorMarginalLedger,
     CompletedProductPhaseReduction,
     CrossInverseFractionCollision,
@@ -28,6 +30,7 @@ from scripts.audit_mobius_type_ii import (
     PartiallyFixedModulusLedger,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
+    PostcompletionCutoffLedger,
     PrimeKloostermanLedger,
     PrimeSliceVarianceLedger,
     ScalarTypeIICutoffLedger,
@@ -37,6 +40,8 @@ from scripts.audit_mobius_type_ii import (
     TransitionArchimedeanScaleLedger,
     TransitionNumeratorCompletionLedger,
     TransitionNumeratorDualCoordinates,
+    TwoCutoffCenteredSplit,
+    TwoCutoffProductCoefficient,
     WrightFactorSavings,
     YoungCommonFactorLedger,
     YoungDualGcdLedger,
@@ -78,6 +83,7 @@ from scripts.audit_mobius_type_ii import (
     centered_kloosterman_numerator_fourier,
     centered_kloosterman_numerator_fourier_formula,
     centered_kloosterman_transform,
+    centered_low_modulus_large_sieve_ledger,
     centered_residue_collision_fourier,
     centered_residue_collision_fourier_formula,
     centered_residue_collision_zero_formula,
@@ -87,6 +93,7 @@ from scripts.audit_mobius_type_ii import (
     centered_unit_congruence_sum,
     central_collision_ledger,
     central_cross_inverse_collision_margins,
+    central_major_arc_mertens_ledger,
     character_large_sieve_unit_gap,
     coherent_operator_large_sieve_exponent,
     coherent_operator_large_sieve_gap,
@@ -124,7 +131,11 @@ from scripts.audit_mobius_type_ii import (
     mobius_character_mean_square_ledger,
     mobius_geometric_value,
     mobius_principal_density_value,
+    mobius_two_cutoff_centered_divisor_split,
+    mobius_two_cutoff_density_period_average,
     mobius_two_cutoff_hyperbola_value,
+    mobius_two_cutoff_product_coefficient,
+    mobius_two_cutoff_product_value,
     mobius_weighted_centered_double_unit_divisor_spectrum,
     mobius_weighted_double_unit_divisor_spectrum,
     mobius_weighted_double_unit_mean,
@@ -151,6 +162,7 @@ from scripts.audit_mobius_type_ii import (
     pascadi_balanced_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
+    postcompletion_cutoff_ledger,
     prime_kloosterman_average_ledger,
     prime_slice_variance_ledger,
     primitive_scalar_direct_value,
@@ -422,6 +434,158 @@ def test_two_cutoff_hyperbola_identity_has_no_cross_term_or_remainder() -> None:
                     cutoff_left=cutoff_left,
                     cutoff_right=cutoff_right,
                 ) == naive_mobius(n)
+
+
+def test_two_cutoff_product_coefficients_obey_global_convolution_identity() -> None:
+    for cutoff_left in range(1, 6):
+        for cutoff_right in range(1, 6):
+            for n in range(1, 81):
+                assert sum(
+                    mobius_two_cutoff_product_value(
+                        product,
+                        cutoff_left=cutoff_left,
+                        cutoff_right=cutoff_right,
+                    )
+                    for product in range(1, n + 1)
+                    if n % product == 0
+                ) == naive_mobius(n) * (
+                    1
+                    - int(n <= cutoff_left)
+                    - int(n <= cutoff_right)
+                )
+
+
+def test_long_long_density_starts_after_the_short_short_origin() -> None:
+    for cutoff_left, cutoff_right in ((1, 1), (2, 5), (7, 3), (11, 13)):
+        origin = mobius_two_cutoff_product_coefficient(
+            1,
+            cutoff_left=cutoff_left,
+            cutoff_right=cutoff_right,
+        )
+        assert origin == TwoCutoffProductCoefficient(
+            short_short=-1,
+            long_long=0,
+            combined=-1,
+        )
+        for product in range(1, (cutoff_left + 1) * (cutoff_right + 1)):
+            assert mobius_two_cutoff_product_coefficient(
+                product,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ).long_long == 0
+
+
+def test_finite_complete_period_is_exactly_the_density_prefix() -> None:
+    for cutoff_left, cutoff_right in ((1, 1), (2, 3), (4, 2)):
+        for scalar in range(1, 8):
+            for product_limit in range(1, 9):
+                direct, density = mobius_two_cutoff_density_period_average(
+                    scalar,
+                    product_limit=product_limit,
+                    cutoff_left=cutoff_left,
+                    cutoff_right=cutoff_right,
+                )
+                assert direct == density
+
+
+def test_centered_low_product_and_complementary_divisor_split_is_exact() -> None:
+    for cutoff_left, cutoff_right in ((1, 1), (2, 3), (4, 2)):
+        for n in range(max(cutoff_left, cutoff_right) + 1, 61):
+            for product_cutoff in (1, 3, 7, 15):
+                split = mobius_two_cutoff_centered_divisor_split(
+                    n,
+                    product_cutoff=product_cutoff,
+                    cutoff_left=cutoff_left,
+                    cutoff_right=cutoff_right,
+                )
+                assert split == TwoCutoffCenteredSplit(
+                    density=split.density,
+                    centered=split.centered,
+                    complementary=split.complementary,
+                    total=F(naive_mobius(n)),
+                )
+                assert (
+                    split.density
+                    + split.centered
+                    + split.complementary
+                    == naive_mobius(n)
+                )
+
+
+def test_central_major_arc_needs_a_fixed_mertens_power() -> None:
+    balanced = central_major_arc_mertens_ledger(
+        scalar_length=F(1, 2),
+        quotient_length=F(5, 2),
+        shifted_length=F(3),
+        shift_average=F(2),
+        target=F(9, 2),
+        scalar_relative_saving=F(0),
+        quotient_relative_saving=F(0),
+        shifted_relative_saving=F(0),
+    )
+    assert balanced == CentralMajorArcMertensLedger(
+        raw_bound=F(5),
+        required_saving=F(1, 2),
+        available_saving=F(0),
+        conditional_bound=F(5),
+        gap=F(1, 2),
+    )
+    assert central_major_arc_mertens_ledger(
+        scalar_length=F(1, 2),
+        quotient_length=F(5, 2),
+        shifted_length=F(3),
+        shift_average=F(2),
+        target=F(9, 2),
+        scalar_relative_saving=F(0),
+        quotient_relative_saving=F(0),
+        shifted_relative_saving=F(1, 6),
+    ).gap == 0
+
+
+def test_postcompletion_cutoff_can_reach_three_quarter_per_divisor() -> None:
+    assert postcompletion_cutoff_ledger(
+        ambient_length=F(3),
+        shift_length=F(2),
+        outer_length=F(3),
+        left_cutoff=F(3, 4),
+        right_cutoff=F(3, 4),
+        fourier_decay_order=2,
+        target=F(9, 2),
+    ) == PostcompletionCutoffLedger(
+        divisor_product_floor=F(3, 2),
+        quotient_ceiling=F(3, 2),
+        fixed_product_quotient_window=F(1, 2),
+        high_product_quotient_ceiling=F(1),
+        sharp_type_i_boundary=F(9, 2),
+        smooth_type_i_tail=F(4),
+        sharp_margin=F(0),
+        smooth_margin=F(1, 2),
+    )
+
+
+def test_centered_low_moduli_close_at_the_large_sieve_endpoint() -> None:
+    assert centered_low_modulus_large_sieve_ledger(
+        modulus_length=F(2),
+        outer_length=F(3),
+        shift_length=F(2),
+        fourier_decay_order=2,
+        target=F(9, 2),
+    ) == CenteredLowModulusLargeSieveLedger(
+        coefficient_energy=F(2),
+        outer_energy=F(3),
+        large_sieve_constant=F(4),
+        fourier_decay=F(0),
+        bound=F(9, 2),
+        target=F(9, 2),
+        margin=F(0),
+    )
+    assert centered_low_modulus_large_sieve_ledger(
+        modulus_length=F(3, 2),
+        outer_length=F(3),
+        shift_length=F(2),
+        fourier_decay_order=2,
+        target=F(9, 2),
+    ).bound == F(13, 4)
 
 
 def test_primitive_scalar_layers_recombine_into_sparse_full_modulus() -> None:
