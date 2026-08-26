@@ -393,15 +393,18 @@ Banach-valued Hadamard bound underlying (5.3), together with the exact
 pointwise Gaussian norm normalization in (5.2), is also formalized.  A
 continuous vertical section satisfying either a strict sub-Gaussian square
 bound or a centered polynomial square bound has formally been promoted to
-`L^2(R)` with the exact Gaussian normalization.  The paper proof leaves the
-following concrete Lean lemmas, none of which may be replaced by a
-final-density axiom:
+`L^2(R)` with the exact Gaussian normalization.  The pole-free mollified
+error in (5.1) has been defined through the analytic zeta pole unit, proved
+analytic on `Re(s)>0`, identified with the paper formula away from the pole,
+and proved continuous on each such vertical line.  The paper proof leaves
+the following concrete Lean lemmas, none of which may be replaced by a final
+density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. the concrete pole-free function's continuity and polynomial-growth
-   instances for that `L^2(R)` membership interface, its strip analyticity
-   and boundary norm estimates, followed by the finite Gaussian covering
+2. the concrete pole-free function's polynomial-growth instance for that
+   `L^2(R)` membership interface, its `L^2(R)`-valued strip analyticity and
+   boundary norm estimates, followed by the finite Gaussian covering
    argument;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
