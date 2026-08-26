@@ -399,6 +399,23 @@ class BBLRPartialDiagonalSlotCoprimality:
 
 
 @dataclass(frozen=True)
+class BBLRMovingParentZeroMode:
+    modulus: int
+    direct_parent_master_sum: Fraction
+    combined_kernel_mean_by_r: tuple[tuple[int, Fraction], ...]
+    constant_mode_contribution: Fraction
+    centered_parent_master_sum: Fraction
+    recombined_parent_master_sum: Fraction
+    centered_kernel_shift_sum_by_r: tuple[tuple[int, Fraction], ...]
+    packet_labels_retained: tuple[str, ...]
+    common_r_divides_original_shift_verified: bool
+    packet_sum_precedes_centering: bool
+    zero_mode_split_identity_verified: bool
+    analytic_afe_ordering_kernel_exhaustive: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
 class FourMobiusUnsignedSectorRecombination:
     values: tuple[int, int, int, int]
     cutoff_u: int
@@ -3445,6 +3462,197 @@ def bblr_partial_diagonal_slot_coprimality(
         only_moving_pair_can_support_nontrivial_common_cofactor=(
             first_three_unit
         ),
+    )
+
+
+def bblr_moving_parent_zero_mode_sides(
+    *,
+    modulus: int,
+    moving_parent_cutoffs: tuple[int, int],
+    left_parent_weights: dict[tuple[int, int], Fraction],
+    right_parent_weights: dict[tuple[int, int], Fraction],
+    labelled_common_shift_kernels: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+) -> BBLRMovingParentZeroMode:
+    """Center the surviving moving/moving parent kernel after packet sum.
+
+    A left parent row is ``(b,r1)`` and a right row is ``(a,r2)``.  For a
+    common Type quotient ``r``, write ``r1=r*x`` and ``r2=r*y``; the original
+    determinant shift is ``h=r*(b*x-a*y)``.  Every supplied packet kernel is
+    first summed as a function of ``(r,c)`` with ``c=b*x-a*y``.  Only then is
+    its constant cyclic mode removed separately on each ``r`` layer.
+
+    The modulus must be large enough that every supplied or active signed
+    ``c`` has absolute value less than half the modulus.  The zero shift is
+    extended by zero, so the already-counted original diagonal cancels
+    between the constant and centered pieces.
+    """
+
+    if modulus < 3:
+        raise ValueError("the cyclic modulus must be at least three")
+    if len(moving_parent_cutoffs) != 2 or min(moving_parent_cutoffs) < 1:
+        raise ValueError("two positive moving-parent cutoffs are required")
+    if not left_parent_weights or not right_parent_weights:
+        raise ValueError("both moving-parent weight families are required")
+    if not labelled_common_shift_kernels:
+        raise ValueError("at least one labelled common-shift kernel is required")
+    if any(
+        min(static_parent, moving_parent) < 1
+        for family in (left_parent_weights, right_parent_weights)
+        for static_parent, moving_parent in family
+    ):
+        raise ValueError("all parent variables must be positive")
+    if any(
+        moving_parent <= moving_parent_cutoffs[side]
+        for side, family in enumerate(
+            (left_parent_weights, right_parent_weights)
+        )
+        for _, moving_parent in family
+    ):
+        raise ValueError("moving parents must exceed their Type cutoffs")
+    for label, kernel in labelled_common_shift_kernels.items():
+        if not label or not kernel:
+            raise ValueError("every packet label requires a nonempty kernel")
+        if any(r < 1 for r, _ in kernel):
+            raise ValueError("common quotients must be positive")
+        if any(c == 0 and Fraction(value) for (r, c), value in kernel.items()):
+            raise ValueError("the original zero shift must have kernel value zero")
+
+    moving_coefficients: dict[tuple[int, int], dict[int, int]] = {}
+    for side, family in enumerate((left_parent_weights, right_parent_weights)):
+        cutoff = moving_parent_cutoffs[side]
+        for _, moving_parent in family:
+            moving_coefficients[(moving_parent, cutoff)] = dict(
+                mobius_unsigned_sector_recombination(
+                    n=moving_parent,
+                    cutoff_u=cutoff,
+                ).outer_contributions
+            )
+
+    combined_kernel: dict[tuple[int, int], Fraction] = {}
+    packet_labels = tuple(sorted(labelled_common_shift_kernels))
+    for label in packet_labels:
+        for key, value in labelled_common_shift_kernels[label].items():
+            combined_kernel[key] = combined_kernel.get(key, Fraction(0)) + Fraction(
+                value
+            )
+
+    active_rows: list[tuple[int, int, Fraction]] = []
+    common_r_values = {r for r, _ in combined_kernel}
+    common_r_divides_shift = True
+    for (b, r1), left_weight in left_parent_weights.items():
+        left_coefficients = moving_coefficients[(r1, moving_parent_cutoffs[0])]
+        for (a, r2), right_weight in right_parent_weights.items():
+            right_coefficients = moving_coefficients[
+                (r2, moving_parent_cutoffs[1])
+            ]
+            for common_r in divisors(gcd(r1, r2)):
+                left_coefficient = left_coefficients.get(r1 // common_r, 0)
+                right_coefficient = right_coefficients.get(r2 // common_r, 0)
+                base_weight = (
+                    Fraction(left_weight)
+                    * mobius(b)
+                    * left_coefficient
+                    * Fraction(right_weight)
+                    * mobius(a)
+                    * right_coefficient
+                )
+                if not base_weight:
+                    continue
+                determinant_c = (
+                    b * (r1 // common_r) - a * (r2 // common_r)
+                )
+                original_shift = common_r * determinant_c
+                common_r_divides_shift = (
+                    common_r_divides_shift
+                    and original_shift % common_r == 0
+                )
+                active_rows.append((common_r, determinant_c, base_weight))
+                common_r_values.add(common_r)
+
+    signed_coordinates = [c for _, c in combined_kernel] + [
+        c for _, c, _ in active_rows
+    ]
+    if any(2 * abs(c) >= modulus for c in signed_coordinates):
+        raise ValueError("the cyclic modulus aliases an active signed shift")
+
+    means: dict[int, Fraction] = {}
+    centered_shift_sums: dict[int, Fraction] = {}
+    for common_r in sorted(common_r_values):
+        residue_kernel = {residue: Fraction(0) for residue in range(modulus)}
+        for (kernel_r, signed_c), value in combined_kernel.items():
+            if kernel_r == common_r:
+                residue_kernel[signed_c % modulus] += value
+        mean = sum(residue_kernel.values(), Fraction(0)) / modulus
+        means[common_r] = mean
+        centered_shift_sums[common_r] = sum(
+            (value - mean for value in residue_kernel.values()),
+            Fraction(0),
+        )
+
+    direct = sum(
+        (
+            base_weight
+            * combined_kernel.get((common_r, determinant_c), Fraction(0))
+        )
+        for common_r, determinant_c, base_weight in active_rows
+    )
+    centered = sum(
+        (
+            base_weight
+            * (
+                combined_kernel.get((common_r, determinant_c), Fraction(0))
+                - means[common_r]
+            )
+        )
+        for common_r, determinant_c, base_weight in active_rows
+    )
+
+    constant = Fraction(0)
+    for common_r in sorted(common_r_values):
+        left_projection = sum(
+            (
+                Fraction(weight)
+                * mobius(static_parent)
+                * moving_coefficients[
+                    (moving_parent, moving_parent_cutoffs[0])
+                ].get(moving_parent // common_r, 0)
+            )
+            for (static_parent, moving_parent), weight in left_parent_weights.items()
+            if moving_parent % common_r == 0
+        )
+        right_projection = sum(
+            (
+                Fraction(weight)
+                * mobius(static_parent)
+                * moving_coefficients[
+                    (moving_parent, moving_parent_cutoffs[1])
+                ].get(moving_parent // common_r, 0)
+            )
+            for (static_parent, moving_parent), weight in right_parent_weights.items()
+            if moving_parent % common_r == 0
+        )
+        constant += means[common_r] * left_projection * right_projection
+
+    recombined = constant + centered
+    return BBLRMovingParentZeroMode(
+        modulus=modulus,
+        direct_parent_master_sum=direct,
+        combined_kernel_mean_by_r=tuple(sorted(means.items())),
+        constant_mode_contribution=constant,
+        centered_parent_master_sum=centered,
+        recombined_parent_master_sum=recombined,
+        centered_kernel_shift_sum_by_r=tuple(
+            sorted(centered_shift_sums.items())
+        ),
+        packet_labels_retained=packet_labels,
+        common_r_divides_original_shift_verified=common_r_divides_shift,
+        packet_sum_precedes_centering=True,
+        zero_mode_split_identity_verified=(direct == recombined),
+        analytic_afe_ordering_kernel_exhaustive=False,
+        target_bound_proved=False,
     )
 
 

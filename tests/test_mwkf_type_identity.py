@@ -402,6 +402,43 @@ def test_bblr_partial_diagonal_slot_coprimality_leaves_only_moving_pair() -> Non
     assert audit.only_moving_pair_can_support_nontrivial_common_cofactor
 
 
+def test_bblr_moving_parent_master_extracts_zero_mode_after_packet_sum() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_moving_parent_zero_mode_sides",
+        None,
+    )
+    assert helper is not None, "BBLR moving-parent zero-mode master is missing"
+
+    sides = helper(
+        modulus=7,
+        moving_parent_cutoffs=(3, 3),
+        left_parent_weights={(7, 10): F(2)},
+        right_parent_weights={(5, 15): F(3)},
+        labelled_common_shift_kernels={
+            "dual/order-2": {(5, -1): F(-1), (5, 1): F(4)},
+            "main/order-1": {(5, -1): F(2)},
+        },
+    )
+
+    # At r=5: x=2, y=3, c=7*2-5*3=-1 and the parent weight is 24.
+    assert sides.direct_parent_master_sum == F(24)
+    assert sides.combined_kernel_mean_by_r == ((5, F(5, 7)),)
+    assert sides.constant_mode_contribution == F(120, 7)
+    assert sides.centered_parent_master_sum == F(48, 7)
+    assert sides.recombined_parent_master_sum == F(24)
+    assert sides.centered_kernel_shift_sum_by_r == ((5, F(0)),)
+    assert sides.packet_labels_retained == (
+        "dual/order-2",
+        "main/order-1",
+    )
+    assert sides.common_r_divides_original_shift_verified
+    assert sides.packet_sum_precedes_centering
+    assert sides.zero_mode_split_identity_verified
+    assert not sides.analytic_afe_ordering_kernel_exhaustive
+    assert not sides.target_bound_proved
+
+
 def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
     """The worst BBLR box loses every Möbius sign before global recombination."""
     adapter = getattr(

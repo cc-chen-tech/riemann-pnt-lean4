@@ -9660,7 +9660,7 @@ first three slot pairings are empty.  Only the moving--moving pairing can
 survive.  Writing
 
 \[
- r_1=rx,qquad r_2=ry
+ r_1=rx,\qquad r_2=ry
 \]
 
 then gives the exact parent-level incidence
@@ -9675,7 +9675,7 @@ the parent coordinates identified.  In (4.621zadj6) the surviving hard
 ordering is therefore
 
 \[
- p=b,qquad q=r_1,qquad m=a,qquad n=r_2,
+ p=b,\qquad q=r_1,\qquad m=a,\qquad n=r_2,
 \]
 
 and its arithmetic coefficient is
@@ -9693,6 +9693,98 @@ gcd rows in (4.621zadj8), the divisibility by \(h\), and that only the
 moving--moving pair can support a nontrivial common quotient.  This removes
 the hard-scale slot-permutation ambiguity; unit-inner boundary packets from
 the other three pairings still belong in the eventual full packet ledger.
+
+For the unique hard moving--moving pairing, the zero mode can now be
+extracted at the correct parent stage.  Let \(A(b,r_1)\), \(B(a,r_2)\) be
+arbitrary finitely supported parent weights, and let
+\(K_{\omega,r}(c)\) be the supplied kernel for packet label \(\omega\),
+where
+
+\[
+ r_1=rx,\qquad r_2=ry,\qquad c=bx-ay,\qquad h=rc.
+\]
+
+First combine every supplied label,
+
+\[
+ K_r(c)=\sum_\omega K_{\omega,r}(c),
+\tag{4.621zadj11}
+\]
+
+and extend \(K_r(0)=0\) for the already-counted original diagonal.  The
+finite moving-parent master is
+
+\[
+\boxed{
+\begin{aligned}
+ \mathscr D_{\rm mov}
+ =\sum_{r,b,a,x,y}
+ &A(b,rx)B(a,ry)\mu(b)\mu(a)\\
+ &\times C_{U_1}(rx;x)C_{U_2}(ry;y)K_r(bx-ay).
+\end{aligned}}
+\tag{4.621zadj12}
+\]
+
+Choose a cyclic modulus \(\mathfrak Q>2\max|c|\), so signed shifts do not
+alias, and put
+
+\[
+ \bar K_r=\frac1{\mathfrak Q}
+ \sum_{c\bmod\mathfrak Q}K_r(c),
+ \qquad K_r^\circ(c)=K_r(c)-\bar K_r.
+\tag{4.621zadj13}
+\]
+
+Define the two parent-aware Type projections
+
+\[
+\begin{aligned}
+ L_r&=\sum_{b,r\mid r_1}A(b,r_1)\mu(b)
+ C_{U_1}\!\left(r_1;\frac{r_1}{r}\right),\\
+ R_r&=\sum_{a,r\mid r_2}B(a,r_2)\mu(a)
+ C_{U_2}\!\left(r_2;\frac{r_2}{r}\right).
+\end{aligned}
+\tag{4.621zadj14}
+\]
+
+Then finite reindexing gives the exact, boundary-free split
+
+\[
+\boxed{
+ \mathscr D_{\rm mov}
+ =\sum_r\bar K_rL_rR_r
+ +\sum_{r,b,a,x,y}
+ A(b,rx)B(a,ry)\mu(b)\mu(a)
+ C_{U_1}(rx;x)C_{U_2}(ry;y)K_r^\circ(bx-ay),}
+\tag{4.621zadj15}
+\]
+
+with
+
+\[
+ \sum_{c\bmod\mathfrak Q}K_r^\circ(c)=0
+ \qquad\text{for every }r.
+\tag{4.621zadj16}
+\]
+
+The order in (4.621zadj11)--(4.621zadj13) is essential: centering each AFE
+or BBLR ordering separately would delete possible cancellation among their
+constant modes.  In the exact rational fixture
+\((b,r_1)=(7,10)\), \((a,r_2)=(5,15)\), \(U_1=U_2=3\), the sole active
+row has \(r=5,c=-1\) and parent weight \(24\).  For the two supplied
+packets the aggregate cyclic mean is \(5/7\), so (4.621zadj15) reads
+
+\[
+ 24=\frac{120}{7}+\frac{48}{7}.
+\]
+
+The finite helper `bblr_moving_parent_zero_mode_sides` verifies
+(4.621zadj11)--(4.621zadj16), preserves all packet labels, checks
+\(r\mid h\), and records `packet_sum_precedes_centering=True`.  It keeps
+`analytic_afe_ordering_kernel_exhaustive=False` and
+`target_bound_proved=False`: the supplied-kernel identity is complete, but
+the actual signed AFE/order/reflection kernel and its means \(\bar K_r\)
+have not yet been derived.
 
 The remaining adapter boundary is now narrower.  BBLR introduces dyadic
 weights that depend separately on its synthetic outer and inner slots.  To
