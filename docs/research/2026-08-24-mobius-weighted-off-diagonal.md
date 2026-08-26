@@ -4357,6 +4357,239 @@ exponent ledger (9.152)--(9.154) are checked exactly in
 `scripts/audit_mobius_type_ii.py`; the tests exhaust all admissible
 triples in the small dyadic boxes \(2\leq Y\leq20\).
 
+### 9.29 Cross-numerator collisions, Farey counting, and the surviving signed gate
+
+The fixed-\(r\) spacing argument cannot be used after a Cauchy expansion,
+where the two numerators are generally different.  There is nevertheless
+an exact integral replacement.  Put
+
+\[
+ u\equiv\bar r\pmod s,\qquad
+ v\equiv\overline{r'}\pmod t,
+\]
+
+and let \(k\) be the signed least residue of \(ut-vs\) modulo \(st\),
+choosing the positive representative in the tie \(k=st/2\).
+Then a unique integer \(\ell\) satisfies
+
+\[
+ \boxed{rr'k-(r't-rs)=\ell st.}
+\tag{9.155}
+\]
+
+Indeed, if \(ru=1+ps\) and \(r'v=1+qt\), multiplication by \(r't\)
+and \(rs\), respectively, gives (9.155).  More importantly, the same
+identity factors without a remainder:
+
+\[
+ \boxed{(rk-t)(r'+\ell s)=rs(k\ell-1).}
+\tag{9.156}
+\]
+
+No cross-coprimality such as \((rr',st)=1\) was inserted.  Thus (9.156)
+is a necessary divisor-switching equation for the original family, not
+an unjustified equivalence.  Its \(k\ell=1\) strata are genuine: the only
+integer possibilities are \((k,\ell)=(1,1)\) and \((-1,-1)\), which force
+\(t=r\) and \(r'=s\), respectively.  The tuples
+\((r,s,r',t)=(5,7,3,5)\) and \((5,7,7,2)\) realize the two signs.
+
+If
+
+\[
+ R<r,r'\leq2R,\qquad S<s,t\leq2S,
+ \qquad \left\|\frac us-\frac vt\right\|\leq A^{-1},
+\]
+
+then (9.155) gives the fully elementary bounds
+
+\[
+ \boxed{
+ |k|\leq\frac{4S^2}{A},\qquad
+ |\ell|\leq\frac{4R^2}{A}+\frac{4R}{S}.}
+\tag{9.157}
+\]
+
+At \((R,S,A)=(T^3,T^3,T^5)\), both new integers have length \(T\).
+Away from \(k\ell=1\), summing \(r,s,k,\ell\) and using (9.156) only
+through a divisor bound would cost \(T^{8+\varepsilon}\), one power above
+the natural collision volume \(T^{7+\varepsilon}\).  The omitted
+factor-degenerate strata are smaller and must be counted separately.
+For \((k,\ell)=(1,1)\), one has \(t=r\), and reducing the original
+inverse equation modulo \(r\) gives \(r'\equiv-s\pmod r\); hence there is
+at most one \(r'\) in the balanced dyadic interval for each \(r,s\).
+For \((k,\ell)=(-1,-1)\), one similarly has \(r'=s\) and
+\(t\equiv-r\pmod s\).  Together these diagonals contain at most \(2RS\)
+tuples, namely \(T^{6+o(1)}\) in the balanced box.  Thus the
+nondegenerate \(T^8\) ledger is complete after adjoining a strictly
+smaller \(T^6\) exceptional ledger.  The remaining one-power loss is
+avoidable before the Möbius weights are considered.
+
+Namely, \(u/s\) and \(v/t\) are reduced fractions.  For their unreduced
+determinant \(j=ut-vs\), one has
+
+\[
+ (j,s)=(j,t)=(s,t).
+\tag{9.158}
+\]
+
+When \(s,t\) are squarefree, write \(d=(s,t)\).  Then the exact reduced
+denominator in \(\mathbb R/\mathbb Z\) is
+
+\[
+ \boxed{
+ \frac{st}{(j,st)}
+ =\frac{\operatorname{lcm}(s,t)}{(j/d,d)}.}
+\tag{9.159}
+\]
+
+There is also a direct finite collision bound.  Let \(\mathcal N(S,K)\)
+count ordered reduced fractions with denominators in \((S,2S]\) whose
+signed circular determinant has absolute value at most \(K\).  For a
+fixed nonzero signed determinant \(k\), the ordinary determinant is one
+of \(k-st,k,k+st\).  Fixing \(s,t\), the congruence \(ut\equiv k\pmod s\)
+has at most \((s,t)\) solutions.  Grouping by \(d=(s,t)\mid k\) therefore
+gives the explicit finite majorant
+
+\[
+ \boxed{
+ \mathcal N(S,K)
+ \leq 2S^2+24S^2\sum_{1\leq k\leq K}\tau(k)
+ \ll_\varepsilon S^2(1+K)T^\varepsilon.}
+\tag{9.160}
+\]
+
+Here the last notation assumes \(S,K\leq T^{O(1)}\); the first inequality
+is the unconditional finite statement.
+
+The four signs also admit an exact finite change of coordinates.  Define
+
+\[
+ \mathcal M_R(u;s)=
+ \sum_{\substack{R<r\leq2R\\ru\equiv1\pmod s}}\mu(r),
+\tag{9.160a}
+\]
+
+and write \(k(u,s;v,t)\) for the signed circular determinant used in
+(9.160).  Then, with no estimate or discarded boundary term,
+
+\[
+\boxed{
+\begin{aligned}
+ &\sum_{\substack{R<r,r'\leq2R\\S<s,t\leq2S\\
+                  (r,s)=(r',t)=1}}
+ \mu(r)\mu(s)\mu(r')\mu(t)\,
+ {\bf1}_{|k(\bar r_s,s;\overline{r'}_t,t)|\leq K}\\
+ &\qquad =
+ \sum_{\substack{S<s,t\leq2S\\
+                  u\bmod s,\ (u,s)=1\\
+                  v\bmod t,\ (v,t)=1}}
+ \mu(s)\mu(t)\mathcal M_R(u;s)\mathcal M_R(v;t)\,
+ {\bf1}_{|k(u,s;v,t)|\leq K}.
+\end{aligned}}
+\tag{9.160b}
+\]
+
+In the balanced interval \(\mathcal M_R(u;s)\in\{0,\pm1\}\), since an
+interval of length \(R\) contains at most one integer in a residue class
+modulo \(s>R\).  Thus (9.160b), unlike the unsigned bound (9.160), retains
+all four Möbius weights.  It is the directly formalizable signed-Farey
+interface on which a genuine Type I/II or dispersion argument would have
+to act.
+
+Each reduced fraction \(u/s\) has at most \(1+R/s\) inverse lifts
+\(r\asymp R\).  In the balanced dyadic interval the lift is unique,
+because its length is \(S<s\).  Taking \(K\asymp S^2/A=T\) in (9.160)
+proves the unsigned central-collision bound \(T^{7+\varepsilon}\).
+Thus the extra \(T\) in the raw \((r,s,k,\ell)\) divisor ledger is not a
+real obstruction.  This is a counting theorem only: taking absolute
+values in (9.160) erases all four weights
+\(\mu(r)\mu(s)\mu(r')\mu(t)\), so it supplies none of the power
+cancellation required by the coupled kernel.
+
+Nor may the full product kernel be replaced by its central arc.  With
+
+\[
+ \mathcal K_{H,L}(x)=\sum_{h\leq H}\sum_{\delta\leq L}e(h\delta x)
+ =\sum_a\tau_{H,L}(a)e(ax),
+\tag{9.161}
+\]
+
+one has the exact noncentral resonance
+
+\[
+ \boxed{\mathcal K_{q,q}(1/q)=q,}
+\tag{9.162}
+\]
+
+although \(1/q>1/q^2=(HL)^{-1}\).  Formula (9.159) identifies the exact
+denominator of every such rational stratum, but approximate rational
+arcs still have to be estimated; central Farey counting alone is not a
+majorant for (9.161).
+
+For completeness, there is an exact two-dimensional additive completion
+which removes the inverse but displays why termwise treatment stops.
+Write
+
+\[
+ \widehat{1_H}(a;s)=\sum_{h\leq H}e_s(-ah),\qquad
+ \widehat{1_L}(b;s)=\sum_{\delta\leq L}e_s(-b\delta).
+\]
+
+Finite Fourier inversion and the complete identity
+
+\[
+ \sum_{x,y\bmod s}e_s(ax+by-\bar rxy)=s\,e_s(rab)
+\]
+
+give
+
+\[
+ \boxed{
+ \sum_{h\leq H}\sum_{\delta\leq L}e_s(-\bar r h\delta)
+ =\frac1s\sum_{a,b\bmod s}
+ \widehat{1_H}(a;s)\widehat{1_L}(b;s)e_s(rab).}
+\tag{9.163}
+\]
+
+The \(a=b=0\) term is exactly \(HL/s\).  If it is bounded separately
+and both dyadic Möbius sums are assigned a common exponent \(\beta\), the
+balanced maximal box requires
+
+\[
+ a-\sigma+\beta(\rho+\sigma)\leq\rho+\sigma,
+ \qquad\text{hence}\qquad \beta\leq\frac23.
+\tag{9.164}
+\]
+
+Classical zero-free technology does not provide this power bound.
+Equation (9.164) is a barrier for separating the additive zero mode, not
+a lower bound for the complete expression: cancellation between dual
+modes and gcd strata remains possible and must be retained.
+
+The published results located in this audit do not supply that
+cancellation.  Farey pair-correlation theorems concern unsigned reduced
+fractions and are consistent with (9.160).  Humphries studies the
+two-dimensional inverse graph for one fixed modulus; Bourgain--Garaev's
+multilinear reciprocal-set estimates work in one fixed residue ring;
+and Shkredov's modular-hyperbola incidence bounds are over one fixed
+prime field.  None averages the varying squarefree \(s,t\) family while
+retaining \(\mu(r)\mu(s)\mu(r')\mu(t)\) and the product kernel.  Moreover,
+Garaev--Shparlinski exhibit moduli and short intervals for which a
+one-variable inverse exponential sum is as large as \(N^{1-\gamma}\),
+so a uniform one-variable power saving cannot simply be assumed.
+
+The remaining analytic statement is therefore narrower than the former
+arbitrary-operator gate but still unproved: a **signed cross-modulus
+product-kernel estimate** must combine (9.156), (9.159), and (9.163)
+before taking absolute values over either Möbius pair or over the dual
+zero/nonzero modes.  The checker verifies the integral identities and
+finite bounds (9.155)--(9.160b) exactly on the stated small boxes,
+including the two degenerate diagonals and the improved constant in
+(9.157).  It checks the root-of-unity evaluations (9.161)--(9.163)
+numerically to explicit tolerances; their exact status comes from the
+displayed finite Fourier derivation, not from floating-point computation.
+None of these checks proves the signed estimate or CK\(_{\rm ub}(3)\).
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -4447,6 +4680,10 @@ Proved in this note:
   the exact proof that collapsing \(h\delta\) to arbitrary product
   coefficients leaves the same \(A^{1/2}\) operator loss,
   (9.151)--(9.154).
+* the cross-numerator divisor switch, natural-scale unsigned Farey collision
+  exponent, exact rational-denominator strata, product-kernel resonance,
+  and two-dimensional additive completion, (9.155)--(9.164); these
+  narrow but do not prove the signed cross-modulus gate.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -4485,6 +4722,7 @@ Proved in this note:
 | Blomer--Pascadi quadratic-character route | exact trace/coverage audit; direct routes insufficient | critical fixed-modulus saving \(c^{-1/32}\), but full-residue margins are negative in (9.140); Pascadi Corollary 7.9 has full-residue loss \(C^{(1+\tau)/6}\), (9.143); exact trace and character identities are (9.144)--(9.146) |
 | Coherent cross-modulus fourth trace | **unproved** | candidate joint interface (9.147) must retain the common \(\mu(r)\) transform, outer \(\mu(s)\), factorized \(h\delta\), scalar-divisor strata, and discriminant energy before taking moduluswise norms |
 | Fixed-numerator inverse fractions | spacing proved; generic operator route insufficient | for \(r,s,t\) in one balanced dyadic interval the exact congruence (9.148) gives spacing at least \(1/(16Y)\), (9.150); after collapsing \(h\delta\), the arbitrary-coefficient operator still loses exactly \(A^{1/2}\), (9.153)--(9.154) |
+| Cross-numerator product-kernel route | unsigned central count proved; signed estimate unproved | exact factorization (9.156), Farey count \(T^{7+\varepsilon}\) in (9.160), noncentral resonance (9.162), and additive completion (9.163); separating its zero mode again requires the \(2/3\) Mertens exponent (9.164) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |
@@ -4501,6 +4739,25 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 
 ## 11. Primary references
 
+* F. P. Boca, M. Siskaki, *A note on the pair correlation of Farey
+  fractions*, arXiv:2109.12744; used in Section 9.29 only as published
+  context for the unsigned determinant count.
+* P. Humphries, *Distributing Points on the Torus via Modular Inverses*,
+  arXiv:2003.09955, Q. J. Math. 73 (2022), 1--16; its fixed-modulus
+  inverse graph is compared with the varying-modulus family in
+  Section 9.29.
+* J. Bourgain, M. Z. Garaev, *Kloosterman sums in residue rings*,
+  arXiv:1309.1124, and *Sumsets of reciprocals in prime fields and
+  multilinear Kloosterman sums*, arXiv:1211.4184; both are fixed-ring
+  reciprocal-set results and do not supply the signed varying-modulus
+  estimate in Section 9.29.
+* I. D. Shkredov, *Modular hyperbolas and bilinear forms of Kloosterman
+  sums*, arXiv:1905.00291; its fixed-prime-field incidence setting is
+  recorded in the Section 9.29 applicability audit.
+* M. Z. Garaev, I. E. Shparlinski, *On the distribution of modular
+  inverses from short intervals*, arXiv:2304.07953; the lower-bound
+  examples rule out assuming a uniform one-variable inverse-sum power
+  saving.
 * S. Bettin, V. Chandee, M. Radziwiłł, *The mean square of the product of
   the Riemann zeta function with Dirichlet polynomials*, arXiv:1411.7764,
   especially Proposition 1 and Sections 3.1--3.4.

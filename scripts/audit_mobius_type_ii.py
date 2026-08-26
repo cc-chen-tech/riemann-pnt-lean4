@@ -7,6 +7,7 @@ It does not prove the residual averaged Type-II oscillatory estimate.
 
 from __future__ import annotations
 
+import cmath
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import lru_cache
@@ -139,6 +140,69 @@ class InverseFractionSeparation:
     congruence_quotient: int
 
 
+@dataclass(frozen=True)
+class CrossInverseFractionCollision:
+    """Certificate for two inverse fractions with different numerators.
+
+    For ``u=inv_s(r)`` and ``v=inv_t(r_prime)``, ``numerator`` is the
+    signed least residue of ``u*t-v*s`` modulo ``s*t``.  If it is denoted
+    by ``k`` and ``congruence_quotient`` by ``ell``, then
+
+    ``r*r_prime*k-(r_prime*t-r*s) = ell*s*t``
+
+    and hence the exact divisor-switching identity
+
+    ``(r*k-t)*(r_prime+ell*s) = r*s*(k*ell-1)``.
+
+    The identity is necessary for a near collision without imposing any
+    cross-coprimality that the original sum does not possess.
+    """
+
+    numerator: int
+    denominator: int
+    distance: Fraction
+    congruence_quotient: int
+
+
+@dataclass(frozen=True)
+class CentralCollisionMargins:
+    """Exact margins in the elementary dyadic central-arc bounds."""
+
+    numerator_margin: Fraction
+    quotient_margin: Fraction
+
+
+@dataclass(frozen=True)
+class CentralCollisionLedger:
+    """Exponent ledger for the divisor-switched central collision family.
+
+    ``degenerate_count`` records the separately counted ``k*ell=1``
+    diagonals. ``divisor_parameter_count`` is only the nondegenerate bound
+    obtained by summing the dyadic ``r,s,k,ell`` parameters and paying a
+    divisor-function factor.
+    ``random_collision_count`` is the diagonal-plus-volume benchmark, not
+    a proved cancellation estimate.
+    """
+
+    numerator: Fraction
+    quotient: Fraction
+    degenerate_count: Fraction
+    divisor_parameter_count: Fraction
+    random_collision_count: Fraction
+    counting_gap: Fraction
+
+
+@dataclass(frozen=True)
+class FareyCentralCollisionLedger:
+    """Exponent ledger after counting reduced fractions before inverse lifts."""
+
+    numerator: Fraction
+    lift_multiplicity: Fraction
+    elementary_count: Fraction
+    random_collision_count: Fraction
+    counting_gap: Fraction
+
+
 def inverse_fraction_separation(
     r: int, s: int, t: int
 ) -> InverseFractionSeparation:
@@ -161,6 +225,423 @@ def inverse_fraction_separation(
         denominator=denominator,
         distance=Fraction(abs(numerator), denominator),
         congruence_quotient=congruence_difference // denominator,
+    )
+
+
+def cross_inverse_fraction_collision(
+    r: int, s: int, r_prime: int, t: int
+) -> CrossInverseFractionCollision:
+    """Return the exact cross-numerator inverse-fraction certificate."""
+
+    if min(r, r_prime) < 1 or min(s, t) < 2:
+        raise ValueError("require r,r_prime >= 1 and s,t >= 2")
+    if gcd(r, s) != 1 or gcd(r_prime, t) != 1:
+        raise ValueError("each numerator must be invertible modulo its modulus")
+    denominator = s * t
+    raw_numerator = pow(r, -1, s) * t - pow(r_prime, -1, t) * s
+    numerator = raw_numerator % denominator
+    if 2 * numerator > denominator:
+        numerator -= denominator
+    congruence_difference = (
+        r * r_prime * numerator - (r_prime * t - r * s)
+    )
+    if congruence_difference % denominator != 0:
+        raise AssertionError("cross inverse-fraction congruence failed")
+    congruence_quotient = congruence_difference // denominator
+    left = (r * numerator - t) * (
+        r_prime + congruence_quotient * s
+    )
+    right = r * s * (numerator * congruence_quotient - 1)
+    if left != right:
+        raise AssertionError("cross inverse-fraction factorization failed")
+    return CrossInverseFractionCollision(
+        numerator=numerator,
+        denominator=denominator,
+        distance=Fraction(abs(numerator), denominator),
+        congruence_quotient=congruence_quotient,
+    )
+
+
+def central_cross_inverse_collision_margins(
+    r: int,
+    s: int,
+    r_prime: int,
+    t: int,
+    *,
+    lower_r: int,
+    lower_s: int,
+    product_length: int,
+) -> CentralCollisionMargins:
+    """Certify elementary bounds for a dyadic central near collision.
+
+    Assume ``R < r,r_prime <= 2R``, ``S < s,t <= 2S`` and inverse-fraction
+    distance at most ``1/A``.  With the certificate ``(k,ell)`` above,
+
+    ``|k| <= 4*S^2/A`` and
+    ``|ell| <= 4*R^2/A + 4*R/S``.
+
+    The second estimate follows directly from the defining congruence;
+    it does not use cross-coprimality or an equidistribution hypothesis.
+    """
+
+    if min(lower_r, lower_s, product_length) < 1:
+        raise ValueError("dyadic endpoints and product length must be positive")
+    if not (
+        lower_r < r <= 2 * lower_r
+        and lower_r < r_prime <= 2 * lower_r
+        and lower_s < s <= 2 * lower_s
+        and lower_s < t <= 2 * lower_s
+    ):
+        raise ValueError("variables must lie in their stated dyadic intervals")
+    certificate = cross_inverse_fraction_collision(r, s, r_prime, t)
+    if certificate.distance > Fraction(1, product_length):
+        raise ValueError("the inverse fractions are not in the central arc")
+    numerator_bound = Fraction(4 * lower_s * lower_s, product_length)
+    quotient_bound = (
+        Fraction(4 * lower_r * lower_r, product_length)
+        + Fraction(4 * lower_r, lower_s)
+    )
+    numerator_margin = numerator_bound - abs(certificate.numerator)
+    quotient_margin = quotient_bound - abs(certificate.congruence_quotient)
+    if numerator_margin < 0 or quotient_margin < 0:
+        raise AssertionError("elementary central-collision bound failed")
+    return CentralCollisionMargins(
+        numerator_margin=numerator_margin,
+        quotient_margin=quotient_margin,
+    )
+
+
+def central_collision_ledger(box: ExponentBox) -> CentralCollisionLedger:
+    """Return exact exponent sizes in the divisor-switched central arc.
+
+    For ``R=T^rho``, ``S=T^sigma`` and ``A=T^a``, the signed numerator
+    has length ``K=T^max(0,2*sigma-a)`` and the congruence quotient has
+    length ``E=T^max(0,2*rho-a,rho-sigma)``.  Summing ``r,s,k,ell`` and
+    using the factorization only through a divisor bound costs exponent
+    ``rho+sigma+K+E`` away from ``k*ell=1``.  The latter two diagonal
+    families cost ``rho+sigma`` in the balanced dyadic interval.  The
+    volume benchmark for collisions among
+    ``R*S`` points in an arc of width ``1/A`` is
+    ``max(rho+sigma,2*(rho+sigma)-a)``.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("central collision ledger requires an admissible box")
+    a = box.third_length
+    numerator = max(Fraction(0), 2 * box.sigma - a)
+    quotient = max(
+        Fraction(0), 2 * box.rho - a, box.rho - box.sigma
+    )
+    divisor_parameter_count = box.rho + box.sigma + numerator + quotient
+    random_collision_count = max(
+        box.rho + box.sigma,
+        2 * (box.rho + box.sigma) - a,
+    )
+    return CentralCollisionLedger(
+        numerator=numerator,
+        quotient=quotient,
+        degenerate_count=box.rho + box.sigma,
+        divisor_parameter_count=divisor_parameter_count,
+        random_collision_count=random_collision_count,
+        counting_gap=divisor_parameter_count - random_collision_count,
+    )
+
+
+def rectangular_product_multiplicities(
+    h_length: int, delta_length: int
+) -> dict[int, int]:
+    """Multiplicity of ``a=h*delta`` in a finite rectangular product box."""
+
+    if min(h_length, delta_length) < 1:
+        raise ValueError("product-box lengths must be positive")
+    result: dict[int, int] = {}
+    for h in range(1, h_length + 1):
+        for delta in range(1, delta_length + 1):
+            product = h * delta
+            result[product] = result.get(product, 0) + 1
+    return result
+
+
+def rectangular_product_kernel(
+    h_length: int, delta_length: int, phase: Fraction
+) -> complex:
+    """Evaluate ``sum_{h<=H,delta<=L} exp(2*pi*i*h*delta*phase)``."""
+
+    if min(h_length, delta_length) < 1:
+        raise ValueError("product-box lengths must be positive")
+    return sum(
+        cmath.exp(2j * cmath.pi * float((h * delta * phase) % 1))
+        for h in range(1, h_length + 1)
+        for delta in range(1, delta_length + 1)
+    )
+
+
+def _finite_interval_fourier(length: int, frequency: int, modulus: int) -> complex:
+    return sum(
+        cmath.exp(-2j * cmath.pi * frequency * value / modulus)
+        for value in range(1, length + 1)
+    )
+
+
+def additive_product_completion(
+    r: int, modulus: int, h_length: int, delta_length: int
+) -> complex:
+    """Exact two-dimensional finite completion of the inverse product phase.
+
+    If ``u=inv_modulus(r)`` and
+    ``W_hat(a)=sum_{h<=H} e_modulus(-a*h)`` (similarly for ``V``), then
+
+    ``sum_{h<=H,d<=L} e_modulus(-u*h*d)``
+    ``= 1/modulus * sum_{a,b mod modulus} W_hat(a)V_hat(b)``
+    ``  * e_modulus(r*a*b)``.
+
+    The complete two-variable transform is elementary: summing first in
+    the second residue forces ``x=r*b``.  In particular the inverse is
+    removed, but a nonoscillatory dual zero mode remains.
+    """
+
+    if min(r, modulus, h_length, delta_length) < 1:
+        raise ValueError("all completion parameters must be positive")
+    if gcd(r, modulus) != 1:
+        raise ValueError("r must be invertible modulo the modulus")
+    h_fourier = [
+        _finite_interval_fourier(h_length, a, modulus)
+        for a in range(modulus)
+    ]
+    delta_fourier = [
+        _finite_interval_fourier(delta_length, b, modulus)
+        for b in range(modulus)
+    ]
+    return sum(
+        h_fourier[a]
+        * delta_fourier[b]
+        * cmath.exp(2j * cmath.pi * ((r * a * b) % modulus) / modulus)
+        for a in range(modulus)
+        for b in range(modulus)
+    ) / modulus
+
+
+def additive_completion_zero_mode(
+    modulus: int, h_length: int, delta_length: int
+) -> Fraction:
+    """The exact ``a=b=0`` contribution in additive product completion."""
+
+    if min(modulus, h_length, delta_length) < 1:
+        raise ValueError("all zero-mode parameters must be positive")
+    return Fraction(h_length * delta_length, modulus)
+
+
+def additive_completion_zero_mode_mobius_exponent(
+    box: ExponentBox,
+) -> Fraction:
+    """Common power exponent forced by separately bounding the zero mode.
+
+    If both dyadic Möbius sums were bounded by ``X^(beta+epsilon)``, the
+    additive dual zero mode would have exponent
+    ``a-sigma+beta*(rho+sigma)``.  Reaching the local ``R*S`` target
+    requires
+
+    ``beta <= (rho+2*sigma-a)/(rho+sigma)``.
+
+    At the balanced maximal box this is exactly ``2/3``.  The ledger does
+    not assert such a Möbius bound; it identifies why separating the zero
+    mode reaches the same open power-saving barrier as earlier routes.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("zero-mode exponent requires an admissible box")
+    return (
+        box.rho + 2 * box.sigma - box.third_length
+    ) / (box.rho + box.sigma)
+
+
+def reduced_inverse_fraction_denominator(
+    u: int, s: int, v: int, t: int
+) -> int:
+    """Reduced denominator of ``u/s-v/t`` as an element of ``Q/Z``.
+
+    When ``s,t`` are squarefree and both input fractions are reduced, put
+    ``d=(s,t)`` and ``k=u*t-v*s``.  Then
+
+    ``(k,s)=(k,t)=d`` and
+    ``denominator = lcm(s,t)/(k/d,d)``.
+
+    The function returns the equivalent formula ``s*t/(k,s*t)``; the
+    squarefree refinement is audited separately by finite tests.
+    """
+
+    if min(s, t) < 2 or not (0 < u < s and 0 < v < t):
+        raise ValueError("require proper positive fractions")
+    if gcd(u, s) != 1 or gcd(v, t) != 1:
+        raise ValueError("both fractions must be reduced")
+    determinant = u * t - v * s
+    return s * t // gcd(determinant, s * t)
+
+
+def _centered_fraction_determinant(u: int, s: int, v: int, t: int) -> int:
+    denominator = s * t
+    numerator = (u * t - v * s) % denominator
+    if 2 * numerator > denominator:
+        numerator -= denominator
+    return numerator
+
+
+def farey_near_collision_count(lower: int, numerator_bound: int) -> int:
+    """Count an exact finite circular Farey near-collision family.
+
+    Denominators lie in ``(lower,2*lower]`` and both numerators are units.
+    Ordered pairs are counted when their centered determinant has absolute
+    value at most ``numerator_bound``.
+    """
+
+    if lower < 1 or numerator_bound < 0:
+        raise ValueError("lower must be positive and the bound nonnegative")
+    fractions = [
+        (u, s)
+        for s in range(lower + 1, 2 * lower + 1)
+        for u in range(1, s)
+        if gcd(u, s) == 1
+    ]
+    return sum(
+        abs(_centered_fraction_determinant(u, s, v, t))
+        <= numerator_bound
+        for u, s in fractions
+        for v, t in fractions
+    )
+
+
+def farey_near_collision_divisor_bound(
+    lower: int, numerator_bound: int
+) -> int:
+    """Elementary divisor majorant for ``farey_near_collision_count``.
+
+    For a nonzero centered determinant ``k``, fixing ``s,t`` leaves at
+    most ``3*(s,t)`` solutions: the unreduced determinant can be
+    ``k-st``, ``k``, or ``k+st``.  Grouping by ``d=(s,t)|k`` and dropping
+    coprimality gives at most ``12*lower^2*tau(|k|)`` for each sign.
+    The deliberately rounded finite bound below is therefore
+
+    ``2*S^2 + 24*S^2*sum_{1<=k<=K} tau(k)``.
+
+    It is coarse in constants but has the natural exponent ``S^2*K``.
+    """
+
+    if lower < 1 or numerator_bound < 0:
+        raise ValueError("lower must be positive and the bound nonnegative")
+    divisor_mass = sum(
+        len(divisors(k)) for k in range(1, numerator_bound + 1)
+    )
+    return 2 * lower * lower + 24 * lower * lower * divisor_mass
+
+
+def farey_central_collision_ledger(
+    box: ExponentBox,
+) -> FareyCentralCollisionLedger:
+    """Exponent bound from the elementary circular Farey parameterization.
+
+    A reduced fraction ``u/s`` has at most ``T^max(0,rho-sigma)`` lifts
+    ``r`` in a dyadic interval of length ``R`` satisfying ``r*u=1 mod s``.
+    Combining this with the finite ``S^2*K`` determinant bound removes
+    the extra balanced power in the cruder ``r,s,k,ell`` divisor switch.
+    This is an unsigned collision count; it supplies no Möbius saving.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("Farey collision ledger requires an admissible box")
+    numerator = max(Fraction(0), 2 * box.sigma - box.third_length)
+    lift_multiplicity = max(Fraction(0), box.rho - box.sigma)
+    elementary_count = (
+        2 * box.sigma + numerator + 2 * lift_multiplicity
+    )
+    random_collision_count = max(
+        box.rho + box.sigma,
+        2 * (box.rho + box.sigma) - box.third_length,
+    )
+    return FareyCentralCollisionLedger(
+        numerator=numerator,
+        lift_multiplicity=lift_multiplicity,
+        elementary_count=elementary_count,
+        random_collision_count=random_collision_count,
+        counting_gap=elementary_count - random_collision_count,
+    )
+
+
+def inverse_lift_mobius_weight(u: int, s: int, *, lower_r: int) -> int:
+    """Möbius weight of all inverse lifts in the stated dyadic interval.
+
+    This is the exact coefficient obtained after replacing r by its
+    inverse modulo s:
+
+    M_R(u;s) = sum mu(r) * 1_{r*u = 1 (mod s)}.
+
+    In the balanced interval lower_r=lower_s and s>lower_r, its absolute
+    value is at most one because the interval is shorter than the modulus.
+    """
+
+    if lower_r < 1 or s < 2 or not 0 < u < s:
+        raise ValueError("require a positive dyadic endpoint and 0 < u < s")
+    if gcd(u, s) != 1:
+        raise ValueError("u must be a unit modulo s")
+    return sum(
+        mobius(r)
+        for r in range(lower_r + 1, 2 * lower_r + 1)
+        if (r * u - 1) % s == 0
+    )
+
+
+def weighted_inverse_collision_sum(
+    lower_r: int, lower_s: int, numerator_bound: int
+) -> int:
+    """Original four-Möbius finite collision sum in inverse coordinates."""
+
+    if min(lower_r, lower_s) < 1 or numerator_bound < 0:
+        raise ValueError("dyadic endpoints must be positive and bound nonnegative")
+    points = [
+        (r, s, mobius(r) * mobius(s))
+        for s in range(lower_s + 1, 2 * lower_s + 1)
+        for r in range(lower_r + 1, 2 * lower_r + 1)
+        if gcd(r, s) == 1
+    ]
+    total = 0
+    for r, s, weight in points:
+        for r_prime, t, weight_prime in points:
+            certificate = cross_inverse_fraction_collision(
+                r, s, r_prime, t
+            )
+            if abs(certificate.numerator) <= numerator_bound:
+                total += weight * weight_prime
+    return total
+
+
+def weighted_farey_collision_sum(
+    lower_r: int, lower_s: int, numerator_bound: int
+) -> int:
+    """The same four-Möbius sum in exact signed Farey coordinates.
+
+    Both outer modulus weights and both inverse-lift Möbius weights remain
+    inside the collision sum.  Equality with the inverse-coordinate
+    version is a finite change of variables, not a cancellation estimate.
+    """
+
+    if min(lower_r, lower_s) < 1 or numerator_bound < 0:
+        raise ValueError("dyadic endpoints must be positive and bound nonnegative")
+    points = [
+        (
+            u,
+            s,
+            mobius(s)
+            * inverse_lift_mobius_weight(u, s, lower_r=lower_r),
+        )
+        for s in range(lower_s + 1, 2 * lower_s + 1)
+        for u in range(1, s)
+        if gcd(u, s) == 1
+    ]
+    return sum(
+        weight * weight_prime
+        for u, s, weight in points
+        for v, t, weight_prime in points
+        if abs(_centered_fraction_determinant(u, s, v, t))
+        <= numerator_bound
     )
 
 

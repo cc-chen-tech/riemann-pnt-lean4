@@ -87,3 +87,18 @@
 - [x] Record that an arbitrary product-coefficient spectral norm still loses `A^(1/2)` and that a successful route must retain `hδ`.
 - [x] Re-run focused and repository-wide Python verification.
 - [x] Commit, push, and update the Ready-for-view PR with the new proved spacing lemma and unchanged coupled-kernel boundary.
+
+### Task 6: Parameterize cross-numerator near collisions before any Cauchy loss
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the exact cross-numerator inverse congruence.
+- [x] Prove the associated central-arc Diophantine parameterization and sharp dyadic bounds for its auxiliary integer.
+- [x] Expand the uncollapsed product kernel and separate the genuine central arc from noncentral rational arcs.
+- [x] Test whether the resulting equation has a usable Type I/II factorization retaining all four Möbius weights.
+- [x] Map the remaining estimate against primary literature without importing a withdrawn or mismatched theorem.
+- [ ] Run focused and repository-wide verification; update the Ready-for-view PR only for a materially new exact reduction or proved estimate.
