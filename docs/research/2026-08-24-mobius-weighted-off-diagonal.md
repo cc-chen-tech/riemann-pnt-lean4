@@ -9148,7 +9148,15 @@ coefficients remain.  The unresolved content is a fixed-power
 two-dimensional Möbius correlation for shifts of length \(X^{2/3}\).
 Proving \({\rm SC}_{2/3}\), or proving that the particular integral
 family \(\mathcal J_{s,d}\) has an additional vanishing moment, would
-close this balanced face.  Neither conclusion is asserted here.
+close this balanced face.  Such vanishing is not a local algebraic
+identity for the admitted smooth class.  Indeed, after scaling
+\(h=Hp,\delta=Lq\) and taking \(x=y=0\), narrow nonnegative unit-mass
+bumps around any fixed \(p_0q_0\ne0\) make
+\(\mathcal J_{s,d}\) tend to
+\(e(-HLp_0q_0/(ds))\ne0\).  Any zero moment must therefore come from a
+global recombination of the actual AFE separation components, not from
+(9.372) alone.  Neither that recombination nor
+\({\rm SC}_{2/3}\) is asserted here.
 
 ## 10. What has and has not been proved
 
