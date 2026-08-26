@@ -16397,7 +16397,7 @@ their amplitude weights satisfy
  w_p(1)\leq p^{-1/2},\qquad
  w_p(2)=0.
 \]
-Thus absolute aggregation of primitive-conductor choices costs at most
+Absolute aggregation at the amplitude level would cost
 \[
  A^{-1/2}\prod_{p\mid A}(1+O(p^{-1/2}))
  =A^{-1/2}
@@ -16409,6 +16409,27 @@ the Vinogradov--Korobov factor has exponential logarithmic order
 \(3/5\), and therefore dominates this order-\(1/2\) conductor-subset
 overhead.
 
+PEVP does not take that triangle inequality: it keeps the signed local
+operator inside a square.  Put the complete exact-level multiplier on
+one side of Cauchy and the unweighted ambient spectral polynomial on
+the other.  The conductor weights in the first square are then
+\[
+ w_p^{(2)}(0)\ll p^{-2},\qquad
+ w_p^{(2)}(1)\leq p^{-1},\qquad
+ w_p^{(2)}(2)=0.
+\]
+Consequently their complete conductor-subset sum already satisfies
+\[
+ \sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)
+ \ll \frac1A\prod_{p\mid A}(1+O(p^{-1}))
+ \ll \frac{(\log\log(3A))^{O(1)}}A.
+\]
+Thus the signed-square conductor aggregation is polylogarithmic and
+supplies the required square saving \(A^{-1}\) without using VK.  The
+VK comparison above remains available for the rejected amplitude-level
+triangle inequality, but it is not needed in the accepted square
+ledger.
+
 One loss is still not explicit enough.  The cited spectral large sieve
 is stated with \((Q_0Y\mathcal T)^\varepsilon\).  At a zero-power
 margin, a fixed \(\varepsilon\)-loss cannot be absorbed by the
@@ -16417,26 +16438,30 @@ epsilon-free form
 
 \[
  \boxed{
- \sum_{Q_0\mid A^2B}w_A(Q_0)
+ \sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)
  \int_{\mathscr S^*(Q_0)}
  \left|\sum_{y\asymp Y}a_y\sqrt y\,\rho_\pi(y)\right|^2d\pi
- \ll_{C,W}(\log(2T))^C
+ \ll_{C,W}\frac{(\log(2T))^C}{A}
  \left(\mathcal T^2+\frac{Y}{AB}\right)
  \sum_y|a_y|^2,}
 \tag{PLS}_{Q_0}
 \]
 
-where \(w_A(Q_0)\) is the product of the three displayed local weights
-and includes the exact ambient normalizations in (4.845dc).  A proof
+where \(w_A^{(2)}(Q_0)\) is the product of the three squared local
+weights and includes the exact ambient normalizations in (4.845dc).
+The other Cauchy factor is the unweighted full ambient spectral
+polynomial.  A proof
 may use the Kuznetsov formula again, but every divisor factor must be
 summed in mean; replacing it by a pointwise \(n^\varepsilon\) bound is
 not sufficient.
 
 The interface `primitive_conductor_level_difference_audit` records the
-exact regrouping, the local exponents \(1\) and \(1/2\), and the
-comparison \(3/5>1/2\).  It keeps the epsilon-free large-sieve and PEVP
-flags false.  Consequently (PLS)\(_{Q_0}\), rather than the already
-removed \(5^{\omega(A)}\), is now the precise compact-core obstruction.
+exact regrouping, the local amplitude exponents \(1\) and \(1/2\), the
+required square exponent \(1\), and the polylogarithmic signed-square
+conductor sum.  It keeps the epsilon-free large-sieve and PEVP flags
+false.  Consequently (PLS)\(_{Q_0}\), rather than either
+\(5^{\omega(A)}\) or the conductor-subset count, is now the precise
+compact-core obstruction.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector

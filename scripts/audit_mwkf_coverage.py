@@ -1918,12 +1918,14 @@ class PrimitiveConductorLevelDifferenceAudit:
     fixed_power_margin: Fraction
     unramified_local_amplitude_saving_exponent: Fraction
     steinberg_local_amplitude_saving_exponent: Fraction
+    required_projector_square_saving_exponent: Fraction
     primitive_subset_overhead_log_exponent: Fraction
     vinogradov_korobov_decay_log_exponent: Fraction
     ambient_normalization_formula_exact: bool
     same_bessel_test_retained_at_every_level: bool
     finite_level_and_primitive_conductor_sums_interchanged_exactly: bool
     conductor_two_positive_valuation_vanishes: bool
+    signed_square_conductor_overhead_is_polylogarithmic: bool
     vinogradov_korobov_dominates_subset_overhead: bool
     published_large_sieve_has_explicit_polylog_constant: bool
     pevp_proved: bool
@@ -10539,12 +10541,14 @@ def primitive_conductor_level_difference_audit(
     The finite level difference is expanded in the general
     Blomer--Milicevic oldclass basis and then grouped by primitive
     conductor.  Exact ambient normalization and a level-independent
-    Bessel test make that regrouping algebraic.  Local conductor choices
-    leave at worst ``exp(O(sqrt(log A)/loglog A))`` overhead, whereas a
-    positive-power Mobius variable has Vinogradov--Korobov decay with
-    logarithmic exponent 3/5.  The published spectral large sieve is
-    nevertheless stated with an epsilon loss, not an explicit fixed
-    polylogarithmic constant, so PEVP is not marked proved here.
+    Bessel test make that regrouping algebraic.  A premature amplitude
+    triangle inequality leaves ``exp(O(sqrt(log A)/loglog A))``, but
+    keeping the signed local operator in one Cauchy square changes the
+    local weights to p^-2 and p^-1.  Their conductor-subset sum is
+    ``A^-1`` times a polylogarithmic Euler product.  The published
+    spectral large sieve is nevertheless stated with an epsilon loss,
+    not an explicit fixed polylogarithmic constant preserving A^-1, so
+    PEVP is not marked proved here.
     """
     alpha = F(level_factor_exponent)
     mobius = F(common_mobius_length_exponent)
@@ -10560,12 +10564,14 @@ def primitive_conductor_level_difference_audit(
         fixed_power_margin=margin,
         unramified_local_amplitude_saving_exponent=F(1),
         steinberg_local_amplitude_saving_exponent=F(1, 2),
+        required_projector_square_saving_exponent=F(1),
         primitive_subset_overhead_log_exponent=subset_log,
         vinogradov_korobov_decay_log_exponent=vk_log,
         ambient_normalization_formula_exact=True,
         same_bessel_test_retained_at_every_level=True,
         finite_level_and_primitive_conductor_sums_interchanged_exactly=True,
         conductor_two_positive_valuation_vanishes=True,
+        signed_square_conductor_overhead_is_polylogarithmic=True,
         vinogradov_korobov_dominates_subset_overhead=vk_dominates,
         published_large_sieve_has_explicit_polylog_constant=False,
         pevp_proved=False,
