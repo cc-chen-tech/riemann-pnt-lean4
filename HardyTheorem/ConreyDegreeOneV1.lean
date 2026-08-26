@@ -69,16 +69,20 @@ private theorem analyticAt_conreyH_of_re_pos {s : ℂ} (hs : 0 < s.re) :
   exact (((analyticAt_const.mul analyticAt_id).mul
     (analyticAt_id.sub analyticAt_const)).mul hgammaR)
 
-theorem conreyH_ne_zero_of_mem_criticalStrip {s : ℂ}
-    (hs0 : 0 < s.re) (hs1 : s.re < 1) :
+theorem conreyH_ne_zero_of_re_pos_of_ne_one {s : ℂ}
+    (hs0 : 0 < s.re) (hs1 : s ≠ 1) :
     conreyH s ≠ 0 := by
   have hsne0 := ne_zero_of_re_pos hs0
-  have hsne1 := ne_one_of_re_lt_one hs1
   unfold conreyH
   exact mul_ne_zero
     (mul_ne_zero (mul_ne_zero (by norm_num) hsne0)
-      (sub_ne_zero.mpr hsne1))
+      (sub_ne_zero.mpr hs1))
     (Gammaℝ_ne_zero_of_re_pos hs0)
+
+theorem conreyH_ne_zero_of_mem_criticalStrip {s : ℂ}
+    (hs0 : 0 < s.re) (hs1 : s.re < 1) :
+    conreyH s ≠ 0 :=
+  conreyH_ne_zero_of_re_pos_of_ne_one hs0 (ne_one_of_re_lt_one hs1)
 
 theorem completedZeta_eq_conreyH_mul_riemannZeta {s : ℂ}
     (hs0 : 0 < s.re) (hs1 : s.re < 1) :
@@ -141,14 +145,14 @@ theorem conreyDegreeOneEta_eq_zero_iff_conreyDegreeOneV1_eq_zero
     mul_eq_zero]
   exact or_iff_right (conreyH_ne_zero_of_mem_criticalStrip hs0 hs1)
 
-private theorem analyticAt_conreyDegreeOneV1
+theorem analyticAt_conreyDegreeOneV1_of_re_pos_of_ne_one
     {g g0 g1 L : ℝ} {s : ℂ}
-    (hs0 : 0 < s.re) (hs1 : s.re < 1) :
+    (hs0 : 0 < s.re) (hs1 : s ≠ 1) :
     AnalyticAt ℂ (conreyDegreeOneV1 g g0 g1 L) s := by
   have hH := analyticAt_conreyH_of_re_pos hs0
-  have hHne := conreyH_ne_zero_of_mem_criticalStrip hs0 hs1
+  have hHne := conreyH_ne_zero_of_re_pos_of_ne_one hs0 hs1
   have hzeta := ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one s
-    (ne_one_of_re_lt_one hs1)
+    hs1
   have hlogH : AnalyticAt ℂ (fun z => deriv conreyH z / conreyH z) s :=
     hH.deriv.div hH hHne
   exact (analyticAt_const.mul hzeta).add
@@ -174,8 +178,9 @@ theorem analyticOrderNatAt_conreyDegreeOneEta_eq_conreyDegreeOneV1
       analyticOrderNatAt (conreyDegreeOneV1 g g0 g1 L) s := by
   have hH := analyticAt_conreyH_of_re_pos hs0
   have hHne := conreyH_ne_zero_of_mem_criticalStrip hs0 hs1
-  have hV := analyticAt_conreyDegreeOneV1
-    (g := g) (g0 := g0) (g1 := g1) (L := L) hs0 hs1
+  have hV := analyticAt_conreyDegreeOneV1_of_re_pos_of_ne_one
+    (g := g) (g0 := g0) (g1 := g1) (L := L) hs0
+      (ne_one_of_re_lt_one hs1)
   unfold analyticOrderNatAt
   rw [analyticOrderAt_congr
       (conreyDegreeOneEta_eventuallyEq_conreyH_mul_conreyDegreeOneV1 hs0 hs1)]

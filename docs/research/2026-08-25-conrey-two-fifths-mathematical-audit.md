@@ -893,8 +893,65 @@ and equality of their analytic orders at `s`.  Thus the zero family denoted by
 `N_{0,V_1}` in equation (40) is now connected exactly, including
 multiplicity, to the `eta` whose critical-line crossings feed equation (41).
 
-This is an analytic factorization result, not yet the rectangle count.  The
-actual mollifier `B`, the zero family of the product `V_1 B`, the boundary
-multiplicity inclusion, and the connection to the Littlewood weighted
-rectangle identity remain to be constructed.  The horizontal and left-edge
-asymptotics and the long mollified mean-square estimate also remain open.
+This is an analytic factorization result, not yet the rectangle count.
+Section 17 constructs the actual mollifier `B` and the local product
+multiplicity inclusion.  The finite zero family of `V_1 B`, its half-weighted
+boundary count, and the connection to the Littlewood weighted rectangle
+identity remain to be constructed.  The horizontal and left-edge asymptotics
+and the long mollified mean-square estimate also remain open.
+
+## 17. Conrey's actual mollifier and the local equation-(35) inclusion
+
+The definitions in equations (1) and (33) have now been checked directly
+against the primary source and implemented in
+`HardyTheorem/ConreyMollifierProduct.lean`, with their public contract in
+`Test/ConreyMollifierProductContract.lean`.  For a cutoff `Y`, shift `sigma0`,
+and normalized polynomial `P`, the coefficient and mollifier are
+
+\[
+ b(n,P)=\mu(n)P\!\left(\frac{\log(Y/n)}{\log Y}\right),
+ \qquad
+ B(s,P)=\sum_{n\le Y}
+   \frac{b(n,P)n^{\sigma_0-1/2}}{n^s}.
+\]
+
+For `Y >= 2` and `P(1)=1`, Lean proves that the `n=1` coefficient is exactly
+one.  The finite Dirichlet polynomial `B` is entire, tends to one on the
+positive real axis, is not identically zero, and therefore has finite analytic
+order at every point.
+
+The earlier analyticity result for `V_1` has also been extended from the open
+critical strip to the full domain needed by the paper:
+
+\[
+  \operatorname{Re}s>0,\qquad s\ne1.
+\]
+
+In particular it applies throughout Conrey's zero-counting half-strip
+`sigma >= 1/2`, `t > 0`; the pole location `s=1` is excluded automatically by
+positive height.  Defining the actual product
+
+\[
+  (V_1B)(s)=V_1(s)B(s,P),
+\]
+
+Lean proves pointwise that every zero of `V_1` remains a zero of `V_1B`.  At
+every point where `V_1` has finite analytic order, it proves the
+multiplicity-sensitive form
+
+\[
+  \operatorname{ord}_s V_1
+    \le \operatorname{ord}_s(V_1B),
+\]
+
+using the exact product-order identity and the now-proved finiteness of the
+mollifier order.  This is the local analytic content of equation (35), not a
+cardinality-only surrogate.
+
+The global half-weighted inequality `N^*_{V_1}(T) <= N^*_{V_1B}(T)` still
+requires three explicit steps: prove finite analytic order for the chosen
+nondegenerate `V_1`, construct the finite zero divisors on bounded right-half
+rectangles, and remove the auxiliary far-right edge by proving that no zeros
+remain beyond it.  Only after those steps may the pointwise inclusion be
+summed.  Littlewood's inequality (37) and all of its edge asymptotics remain
+separate, as does the long mollified mean-square theorem.
