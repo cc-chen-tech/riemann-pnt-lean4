@@ -1330,6 +1330,41 @@ class RootSalieAdapterAudit:
 
 
 @dataclass(frozen=True)
+class RootWeylSquareInputAudit:
+    modulus_exponent: Fraction
+    frequency_exponent: Fraction
+    base_exponent: Fraction
+    square_input_interval_exponent: Fraction
+    square_support_cardinality_exponent: Fraction
+    relative_square_interval_exponent: Fraction
+    dunn_zaharescu_min_relative_exponent: Fraction
+    dunn_zaharescu_max_relative_exponent: Fraction
+    dksz_first_bound_exponent: Fraction
+    dksz_second_bound_exponent: Fraction
+    dksz_best_bound_exponent: Fraction
+    pointwise_square_support_exponent: Fraction
+    dksz_pointwise_deficit_exponent: Fraction
+    absolute_frequency_sum_exponent: Fraction
+    raw_frequency_square_support_exponent: Fraction
+    absolute_frequency_deficit_exponent: Fraction
+    kssz_dense_interval_bound_exponent: Fraction
+    raw_q_frequency_base_volume_exponent: Fraction
+    physical_root_target_exponent: Fraction
+    required_global_saving_exponent: Fraction
+    full_root_trace_identity_exact: bool
+    physical_base_is_uniformly_coprime_to_modulus: bool
+    dunn_zaharescu_range_accepts_square_interval: bool
+    dksz_requires_fixed_prime_modulus: bool
+    theorem_accepts_moving_squarefree_composite_modulus: bool
+    prime_modulus_balanced_root_sector_nonempty: bool
+    theorem_accepts_balanced_root_filter: bool
+    theorem_accepts_mobius_modulus_weight: bool
+    theorem_accepts_frequency_average: bool
+    published_loss_is_polylogarithmic: bool
+    root_weyl_square_input_route_closes_gate: bool
+
+
+@dataclass(frozen=True)
 class RootSalieJointAverageAudit:
     left_root_factor_exponent: Fraction
     right_root_factor_exponent: Fraction
@@ -9031,6 +9066,156 @@ def root_salie_adapter_audit() -> RootSalieAdapterAudit:
         square_numerator_exception_covered=False,
         theorem_accepts_joint_transform_weight=False,
         salie_adapter_closes_root_gate=False,
+    )
+
+
+def root_trace_square_input_weyl_identity(
+    *,
+    modulus: int,
+    delta: int,
+    frequency: int,
+) -> dict[str, object]:
+    """Check the full root-trace/square-input Weyl identity exactly.
+
+    If ``(delta, modulus)=1``, multiplication by ``delta`` is a
+    permutation modulo ``modulus`` and restricts to the bijection
+
+        A^2 = 1  <->  x=delta*A, x^2=delta^2.
+
+    The resulting exponential sums are compared coefficientwise in
+    ``Z[Z/modulus Z]``; no floating-point evaluation is involved.
+    """
+    if modulus <= 1:
+        raise ValueError("root-trace modulus must exceed one")
+    if gcd(delta, modulus) != 1:
+        raise ValueError("square-input base must be coprime to the modulus")
+
+    roots = tuple(
+        residue
+        for residue in range(modulus)
+        if residue * residue % modulus == 1
+    )
+    square_target = delta * delta % modulus
+    square_roots = tuple(
+        residue
+        for residue in range(modulus)
+        if residue * residue % modulus == square_target
+    )
+    mapped_roots = tuple(delta * root % modulus for root in roots)
+
+    trace_coefficients = {residue: 0 for residue in range(modulus)}
+    for root in roots:
+        exponent = frequency * delta * root % modulus
+        trace_coefficients[exponent] += 1
+    square_input_coefficients = {
+        residue: 0 for residue in range(modulus)
+    }
+    for square_root in square_roots:
+        exponent = frequency * square_root % modulus
+        square_input_coefficients[exponent] += 1
+
+    return {
+        "modulus": modulus,
+        "delta": delta,
+        "frequency": frequency,
+        "delta_is_coprime_to_modulus": gcd(delta, modulus) == 1,
+        "root_count": len(roots),
+        "square_root_count": len(square_roots),
+        "roots": roots,
+        "square_roots": square_roots,
+        "mapped_roots": mapped_roots,
+        "root_map_is_bijective": (
+            len(set(mapped_roots)) == len(roots)
+            and tuple(sorted(mapped_roots)) == square_roots
+        ),
+        "trace_coefficients": tuple(trace_coefficients.items()),
+        "square_input_coefficients": tuple(
+            square_input_coefficients.items()
+        ),
+        "exponent_coefficient_identity_exact": (
+            trace_coefficients == square_input_coefficients
+        ),
+    }
+
+
+def root_weyl_square_input_audit() -> RootWeylSquareInputAudit:
+    """Audit published modular-root Weyl bounds on the hard root box."""
+    modulus = F(6)
+    frequency = F(5, 2)
+    base = F(5, 2)
+    square_interval = 2 * base
+    square_support = base
+    relative_square_interval = square_interval / modulus
+
+    # DKSZ Theorem 1.7, first inequality, with M=1, N=T^5 and
+    # beta supported on T^(5/2) squares.  Only the N-parenthesis is
+    # nontrivial: N^(7/48) q^(-1/16)=T^(17/48).
+    dksz_first = (
+        F(2, 3) * square_support
+        + F(1, 8) * modulus
+        + F(1, 8) * square_interval
+        + F(17, 48)
+    )
+    # The second inequality has
+    # N^(3/16) q^(-1/8)=T^(3/16).
+    dksz_second = (
+        F(3, 4) * square_support
+        + F(1, 8) * modulus
+        + F(1, 16) * square_interval
+        + F(3, 16)
+    )
+    dksz_best = min(dksz_first, dksz_second)
+    pointwise = square_support
+    absolute_frequency = frequency + dksz_best
+    raw_frequency_square_support = frequency + square_support
+
+    # KSSZ Corollary 2.1 with M=1 and N=T^5.  The N-parenthesis is
+    # N^(3/16)q^(-1/16)=T^(9/16).
+    kssz_dense = (
+        F(1, 8) * modulus
+        + F(3, 4) * square_interval
+        + F(9, 16)
+    )
+    raw_volume = modulus + frequency + base
+    target = F(6)
+    return RootWeylSquareInputAudit(
+        modulus_exponent=modulus,
+        frequency_exponent=frequency,
+        base_exponent=base,
+        square_input_interval_exponent=square_interval,
+        square_support_cardinality_exponent=square_support,
+        relative_square_interval_exponent=relative_square_interval,
+        dunn_zaharescu_min_relative_exponent=F(2, 5),
+        dunn_zaharescu_max_relative_exponent=F(3, 5),
+        dksz_first_bound_exponent=dksz_first,
+        dksz_second_bound_exponent=dksz_second,
+        dksz_best_bound_exponent=dksz_best,
+        pointwise_square_support_exponent=pointwise,
+        dksz_pointwise_deficit_exponent=dksz_best - pointwise,
+        absolute_frequency_sum_exponent=absolute_frequency,
+        raw_frequency_square_support_exponent=(
+            raw_frequency_square_support
+        ),
+        absolute_frequency_deficit_exponent=(
+            absolute_frequency - raw_frequency_square_support
+        ),
+        kssz_dense_interval_bound_exponent=kssz_dense,
+        raw_q_frequency_base_volume_exponent=raw_volume,
+        physical_root_target_exponent=target,
+        required_global_saving_exponent=raw_volume - target,
+        full_root_trace_identity_exact=True,
+        physical_base_is_uniformly_coprime_to_modulus=False,
+        dunn_zaharescu_range_accepts_square_interval=(
+            F(2, 5) <= relative_square_interval <= F(3, 5)
+        ),
+        dksz_requires_fixed_prime_modulus=True,
+        theorem_accepts_moving_squarefree_composite_modulus=False,
+        prime_modulus_balanced_root_sector_nonempty=False,
+        theorem_accepts_balanced_root_filter=False,
+        theorem_accepts_mobius_modulus_weight=False,
+        theorem_accepts_frequency_average=False,
+        published_loss_is_polylogarithmic=False,
+        root_weyl_square_input_route_closes_gate=False,
     )
 
 
@@ -22560,6 +22745,60 @@ def main() -> None:
         "joint="
         f"{root_salie.theorem_accepts_joint_transform_weight},"
         f"closes={root_salie.salie_adapter_closes_root_gate}"
+    )
+    root_weyl = root_weyl_square_input_audit()
+    print(
+        "large_q_transition: root_weyl_square_input="
+        f"modulus={_fmt(root_weyl.modulus_exponent)},"
+        f"h={_fmt(root_weyl.frequency_exponent)},"
+        f"delta={_fmt(root_weyl.base_exponent)},"
+        "square_interval="
+        f"{_fmt(root_weyl.square_input_interval_exponent)},"
+        "square_support="
+        f"{_fmt(root_weyl.square_support_cardinality_exponent)},"
+        "relative_interval="
+        f"{_fmt(root_weyl.relative_square_interval_exponent)},"
+        "dz_range="
+        f"{_fmt(root_weyl.dunn_zaharescu_min_relative_exponent)}:"
+        f"{_fmt(root_weyl.dunn_zaharescu_max_relative_exponent)},"
+        f"dksz1={_fmt(root_weyl.dksz_first_bound_exponent)},"
+        f"dksz2={_fmt(root_weyl.dksz_second_bound_exponent)},"
+        f"dksz_best={_fmt(root_weyl.dksz_best_bound_exponent)},"
+        "trivial="
+        f"{_fmt(root_weyl.pointwise_square_support_exponent)},"
+        "dksz_deficit="
+        f"{_fmt(root_weyl.dksz_pointwise_deficit_exponent)},"
+        "h_sum="
+        f"{_fmt(root_weyl.absolute_frequency_sum_exponent)},"
+        "raw_h_square="
+        f"{_fmt(root_weyl.raw_frequency_square_support_exponent)},"
+        "h_deficit="
+        f"{_fmt(root_weyl.absolute_frequency_deficit_exponent)},"
+        f"kssz={_fmt(root_weyl.kssz_dense_interval_bound_exponent)},"
+        "raw_volume="
+        f"{_fmt(root_weyl.raw_q_frequency_base_volume_exponent)},"
+        f"target={_fmt(root_weyl.physical_root_target_exponent)},"
+        "required_save="
+        f"{_fmt(root_weyl.required_global_saving_exponent)},"
+        f"identity={root_weyl.full_root_trace_identity_exact},"
+        "physical_coprime="
+        f"{root_weyl.physical_base_is_uniformly_coprime_to_modulus},"
+        "dz_accepts="
+        f"{root_weyl.dunn_zaharescu_range_accepts_square_interval},"
+        f"fixed_prime={root_weyl.dksz_requires_fixed_prime_modulus},"
+        "composite="
+        f"{root_weyl.theorem_accepts_moving_squarefree_composite_modulus},"
+        "prime_balanced="
+        f"{root_weyl.prime_modulus_balanced_root_sector_nonempty},"
+        "balanced_filter="
+        f"{root_weyl.theorem_accepts_balanced_root_filter},"
+        "mobius_modulus="
+        f"{root_weyl.theorem_accepts_mobius_modulus_weight},"
+        "h_average="
+        f"{root_weyl.theorem_accepts_frequency_average},"
+        f"polylog={root_weyl.published_loss_is_polylogarithmic},"
+        "closes="
+        f"{root_weyl.root_weyl_square_input_route_closes_gate}"
     )
     salie_joint = root_salie_joint_average_audit()
     print(

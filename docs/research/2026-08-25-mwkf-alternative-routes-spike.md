@@ -10180,6 +10180,122 @@ The helper `odd_root_trace_salie_coefficient_identity` verifies (4.696a)
 with integer coefficient tables, while `root_salie_adapter_audit` keeps
 `salie_adapter_closes_root_gate=False`.
 
+### 4.82a Root trace is exactly a square-input Weyl sum
+
+There is a second exact representation which does not require an odd
+squarefree modulus or a Gauss-sum normalization.  Let \(m>1\) and
+\((\delta,m)=1\).  Multiplication by \(\delta\) modulo \(m\) restricts
+to the bijection
+
+\[
+ A^2\equiv1\pmod m
+ \quad\longleftrightarrow\quad
+ x=\delta A\pmod m,
+ \qquad x^2\equiv\delta^2\pmod m.
+\]
+
+Consequently, for every integer \(h\),
+
+\[
+ \boxed{
+ \sum_{A^2\equiv1\ (m)}e\!\left(\frac{h\delta A}{m}\right)
+ =\sum_{x^2\equiv\delta^2\ (m)}e\!\left(\frac{hx}{m}\right).}
+\tag{4.698b}
+\]
+
+This is an equality of coefficient tables in
+\(\mathbb Z[\mathbb Z/m\mathbb Z]\), not an asymptotic evaluation.  It
+also holds for even and composite \(m\).  The coprimality condition is
+essential: the physical shifted-divisor sum does not impose
+\((\delta,2n)=1\), so (4.698b) directly treats only the unit-gcd
+stratum.  For \(D=(\delta,2n)>1\), multiplication by \(\delta\) can
+identify different involutions and the congruence
+\(x^2\equiv\delta^2\pmod{2n}\) can contain additional roots.  Those
+strata must retain their exact valuation data; they cannot be inserted
+into the right side of (4.698b) unchanged.
+
+On the central physical box the exact length ledger is
+
+\[
+ m\asymp T^6,\qquad h\asymp T^{5/2},\qquad
+ \delta\asymp T^{5/2},\qquad \delta^2\asymp T^5.
+\tag{4.698c}
+\]
+
+Thus the square input occupies an interval of relative exponent \(5/6\)
+with respect to the modulus but is supported on only \(T^{5/2}\)
+squares.  This identifies a precise modular-root Weyl-sum adapter.  It
+does not, however, satisfy the published hypotheses:
+
+* Dunn--Zaharescu, [Theorem 1.2](https://arxiv.org/abs/1903.03416),
+  assumes a fixed prime modulus and a variable interval in the range
+  \(p^{2/5}\le N\le p^{3/5}\); the relative exponent \(5/6\) in
+  (4.698c) is outside that range.
+* Dunn--Kerr--Shparlinski--Zaharescu,
+  [Theorem 1.7](https://arxiv.org/abs/1908.10143), specialized with
+  \(M=1\), \(N=T^5\), and a coefficient supported on the
+  \(T^{5/2}\) squares, gives respectively
+
+  \[
+   T^{163/48+o(1)},qquad T^{25/8+o(1)}.
+  \]
+
+  The second is better, but the trivial cardinality bound for the same
+  fixed-frequency square-supported sum is \(T^{5/2}\).  Hence this
+  specialization loses, rather than saves,
+
+  \[
+   \frac{25}{8}-\frac52=\frac58.
+  \tag{4.698d}
+  \]
+
+  Absolute summation over \(h\asymp T^{5/2}\) gives exponent \(45/8\),
+  against the raw exponent \(5\), with the same \(5/8\) deficit.
+* Kerr--Shkredov--Shparlinski--Zaharescu,
+  [Corollary 2.1](https://www.cambridge.org/core/journals/journal-of-the-institute-of-mathematics-of-jussieu/article/energy-bounds-for-modular-roots-and-their-applications/7781F2066CF922D2B609F39EDF98AF0F),
+  gives exponent \(81/16\) under the same dense-interval specialization,
+  which is still larger.
+
+The last two results are stated for a fixed prime modulus.  The actual
+modulus is the moving squarefree composite \(2n\), weighted by
+\(\mu(n)\).  Moreover a prime \(n\asymp T^6\) has no ordered
+factorization \(n=rs\) with \(r,s\asymp T^3\), so the prime-modulus
+specialization is empty on the balanced-root sector.  None of these
+theorems accepts the balanced factorization test, the moving
+Möbius-weighted modulus, the \(h\)-average, or the original joint smooth
+kernel.  Their \(m^{o(1)}\) loss also cannot be relabelled as the
+polylogarithmic loss required at the zero-margin endpoint.
+
+For the unit-gcd stratum, the exact remaining Weyl-form local gate is
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\left|\sum_{n\asymp T^6}\mu(n)
+   \sum_{\substack{h,\delta\asymp T^{5/2}\\(\delta,2n)=1}}
+   \sum_{\substack{x^2\equiv\delta^2\ (2n)\\
+                    \mathcal B_{2n}(x,\delta)}}
+   \Omega_q(n,x,h,\delta)
+   e\!\left(\frac{hx}{2n}\right)\right|
+   \ll_{B,W}T^6(\log T)^{-B}.
+ \end{aligned}}
+\tag{4.698e}
+\]
+
+Here \(\mathcal B_{2n}(x,\delta)\) means that
+\(A\equiv\bar\delta x\pmod{2n}\) recovers factors
+\(r_A,s_A\asymp T^3\), and \(\Omega_q\) is the unreplaced joint
+physical weight from (4.682).  The raw \((n,h,\delta)\)-volume has
+exponent \(6+5/2+5/2=11\), so (4.698e) asks for a total saving of
+\(T^5\).
+This is an equivalent coordinate form of the unit-gcd part of the
+physical root gate, not a proof of it; the \(D>1\) valuation strata
+remain additional.  The helper `root_trace_square_input_weyl_identity`
+checks (4.698b) coefficientwise, and
+`root_weyl_square_input_audit` records all displayed rational exponents,
+`physical_base_is_uniformly_coprime_to_modulus=False`, and
+`root_weyl_square_input_route_closes_gate=False`.
+
 ### 4.83 Joint Salié averaging is the existing BCR endpoint
 
 Opening the Salié sum does not create a previously unused generic

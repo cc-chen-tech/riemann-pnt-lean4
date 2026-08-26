@@ -2433,6 +2433,10 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "\\tag{4.696}",
         "\\tag{4.698}",
         "salie_adapter_closes_root_gate=False",
+        "### 4.82a Root trace is exactly a square-input Weyl sum",
+        "\\tag{4.698b}",
+        "\\tag{4.698e}",
+        "root_weyl_square_input_route_closes_gate=False",
         "### 4.83 Joint Salié averaging is the existing BCR endpoint",
         "\\tag{4.701}",
         "\\tag{4.703}",
@@ -2618,6 +2622,18 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "odd_trace_exact=True,even_branch=False,balanced_filter=False,"
         "mobius_modulus=False,fixed_numerator=False,square_exception=False,"
         "joint=False,closes=False"
+    ) in report
+    assert (
+        "large_q_transition: root_weyl_square_input="
+        "modulus=6,h=5/2,delta=5/2,square_interval=5,"
+        "square_support=5/2,relative_interval=5/6,dz_range=2/5:3/5,"
+        "dksz1=163/48,dksz2=25/8,dksz_best=25/8,trivial=5/2,"
+        "dksz_deficit=5/8,h_sum=45/8,raw_h_square=5,"
+        "h_deficit=5/8,kssz=81/16,raw_volume=11,target=6,"
+        "required_save=5,identity=True,physical_coprime=False,"
+        "dz_accepts=False,fixed_prime=True,composite=False,"
+        "prime_balanced=False,balanced_filter=False,mobius_modulus=False,"
+        "h_average=False,polylog=False,closes=False"
     ) in report
     assert (
         "large_q_transition: root_salie_joint="
@@ -3470,6 +3486,70 @@ def test_odd_root_trace_has_exact_salie_coefficient_identity() -> None:
     assert not audit.square_numerator_exception_covered
     assert not audit.theorem_accepts_joint_transform_weight
     assert not audit.salie_adapter_closes_root_gate
+
+
+def test_root_trace_has_exact_square_input_weyl_identity_and_ledger() -> None:
+    helper = getattr(
+        coverage_audit,
+        "root_trace_square_input_weyl_identity",
+        None,
+    )
+    assert helper is not None, "square-input Weyl identity helper is missing"
+    for modulus, delta, frequency in (
+        (15, 2, 3),
+        (21, 5, 4),
+        (30, 7, 5),
+    ):
+        exact = helper(
+            modulus=modulus,
+            delta=delta,
+            frequency=frequency,
+        )
+        assert exact["delta_is_coprime_to_modulus"]
+        assert exact["root_map_is_bijective"]
+        assert exact["root_count"] == exact["square_root_count"]
+        assert exact["exponent_coefficient_identity_exact"]
+    with pytest.raises(ValueError, match="coprime"):
+        helper(modulus=12, delta=6, frequency=5)
+
+    adapter = getattr(
+        coverage_audit,
+        "root_weyl_square_input_audit",
+        None,
+    )
+    assert adapter is not None, "square-input Weyl theorem adapter is missing"
+    audit = adapter()
+    assert audit.modulus_exponent == F(6)
+    assert audit.frequency_exponent == F(5, 2)
+    assert audit.base_exponent == F(5, 2)
+    assert audit.square_input_interval_exponent == F(5)
+    assert audit.square_support_cardinality_exponent == F(5, 2)
+    assert audit.relative_square_interval_exponent == F(5, 6)
+    assert audit.dunn_zaharescu_min_relative_exponent == F(2, 5)
+    assert audit.dunn_zaharescu_max_relative_exponent == F(3, 5)
+    assert audit.dksz_first_bound_exponent == F(163, 48)
+    assert audit.dksz_second_bound_exponent == F(25, 8)
+    assert audit.dksz_best_bound_exponent == F(25, 8)
+    assert audit.pointwise_square_support_exponent == F(5, 2)
+    assert audit.dksz_pointwise_deficit_exponent == F(5, 8)
+    assert audit.absolute_frequency_sum_exponent == F(45, 8)
+    assert audit.raw_frequency_square_support_exponent == F(5)
+    assert audit.absolute_frequency_deficit_exponent == F(5, 8)
+    assert audit.kssz_dense_interval_bound_exponent == F(81, 16)
+    assert audit.raw_q_frequency_base_volume_exponent == F(11)
+    assert audit.physical_root_target_exponent == F(6)
+    assert audit.required_global_saving_exponent == F(5)
+    assert audit.full_root_trace_identity_exact
+    assert not audit.physical_base_is_uniformly_coprime_to_modulus
+    assert not audit.dunn_zaharescu_range_accepts_square_interval
+    assert audit.dksz_requires_fixed_prime_modulus
+    assert not audit.theorem_accepts_moving_squarefree_composite_modulus
+    assert not audit.prime_modulus_balanced_root_sector_nonempty
+    assert not audit.theorem_accepts_balanced_root_filter
+    assert not audit.theorem_accepts_mobius_modulus_weight
+    assert not audit.theorem_accepts_frequency_average
+    assert not audit.published_loss_is_polylogarithmic
+    assert not audit.root_weyl_square_input_route_closes_gate
 
 
 def test_square_product_sector_and_joint_salie_ledger_are_exact() -> None:
