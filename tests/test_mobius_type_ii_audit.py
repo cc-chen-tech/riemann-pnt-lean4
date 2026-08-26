@@ -112,6 +112,7 @@ from scripts.audit_mobius_type_ii import (
     migrate_nonprincipal_mobius_sign,
     mobius_character_mean_square_ledger,
     mobius_geometric_value,
+    mobius_principal_density_value,
     mobius_two_cutoff_hyperbola_value,
     mobius_weighted_centered_double_unit_divisor_spectrum,
     mobius_weighted_double_unit_divisor_spectrum,
@@ -791,6 +792,18 @@ def test_ordinary_character_large_sieve_leaves_quarter_power_gap() -> None:
         gap=F(1, 4),
         required_long_character_energy=F(4),
     )
+
+
+def test_principal_density_has_an_unavoidable_prime_slice() -> None:
+    for cutoff_left, cutoff_right in ((1, 1), (2, 5), (7, 3), (11, 13)):
+        for prime in (17, 19, 23, 29, 31, 37, 41, 43):
+            if prime <= max(cutoff_left, cutoff_right):
+                continue
+            assert mobius_principal_density_value(
+                prime,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ) == F(-1)
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

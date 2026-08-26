@@ -6767,6 +6767,42 @@ problem: a complete proof must retain the smooth lattice relation
 It is recorded as an exact quantitative target, not as a proved
 replacement for the coupled-kernel gate.
 
+The principal spectrum cannot be bounded away by an elementary
+Selberg-sieve Euler product.  If the congruence attached to each
+\(B=bc\) in (9.241) is replaced by its principal density
+\(1/\varphi(B)\), the exact two-cutoff coefficient is
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal P_{U,V}(r)
+={}&-\sum_{bc\mid r\atop b\leq U,\ c\leq V}
+ \frac{\mu(b)\mu(c)}{\varphi(bc)}\\
+ &+\sum_{bc\mid r\atop b>U,\ c>V}
+ \frac{\mu(b)\mu(c)}{\varphi(bc)}.
+\end{aligned}}
+\tag{9.272}
+\]
+
+For every prime \(p>\max(U,V)\), the only admissible divisor pair is
+\((b,c)=(1,1)\), and hence
+
+\[
+ \boxed{\mathcal P_{U,V}(p)=-1.}
+\]
+
+This is a finite obstruction, not merely an exponent heuristic.  In
+particular, no pointwise estimate
+\(\mathcal P_{U,V}(r)\ll r^{-\delta}\), and no power saving obtained by
+taking absolute values of the principal Euler product, can hold
+uniformly.  The \(B=1\) prime slice has no nonprincipal character with
+which to cancel.  A successful argument must therefore retain the
+outer Möbius weights and the endpoint phase on this slice, or recombine
+it with the already centered principal/axis terms before the Type-I/II
+character separation.  The checker verifies (9.272) exactly as a
+rational number and verifies \(\mathcal P_{U,V}(p)=-1\) for every tested
+prime above unequal cutoffs.
+
 Known one-variable Möbius--trace results do not close (9.239) or its
 recombined form (9.250).  Even if
 one optimistically grants a translated prime-modulus version of the
@@ -6961,6 +6997,9 @@ Proved in this note:
   (9.269)--(9.271).  Bombieri--Vinogradov gives no power beyond
   progression density, while the ordinary primitive-character large
   sieve saves only \(T^{1/4}\) of the required \(T^{1/2}\).
+* the exact principal-density coefficient (9.272).  Its value is
+  \(-1\) on every prime above the two cutoffs, ruling out a separate
+  pointwise Selberg-sieve/Euler-product power saving.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7009,6 +7048,7 @@ Proved in this note:
 | Common-modulus unit-numerator family | closes for \(\tau\geq1/4\); small-common-factor packet unproved | the CRT collision cancels \(t\) from the Young rational, (9.221)--(9.227), but after the scalar sum its exponent is \(19/2-2\tau\).  Ramanujan marginals and the recombined zero mode remain below target, (9.228)--(9.231).  The exact residual is (9.239) for \(0\leq\tau<1/4\) |
 | Scalar Möbius transition packet | exact Type-I/II and affine reduction; smooth endpoint modes unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Affine parametrization gives (9.255)--(9.258), Parseval is (9.259), and complete \(\delta\)-periods collapse exactly to an affine Mertens sum in (9.261)--(9.262).  Direct Bettin--Chandee and Wright applications remain above target, (9.252)--(9.254) and (9.263)--(9.266); the jointly averaged smooth incomplete-period modes remain unproved |
 | Affine endpoint character route | exact dual lattice; ordinary mean squares insufficient | smooth \(\delta\)-Poisson gives \(|n|\ll T^\varepsilon\) and \(h+nq=jd\), (9.267)--(9.268).  Character orthogonality is (9.269); Bombieri--Vinogradov gives no power beyond progression density, and the primitive large sieve leaves a \(T^{1/4}\) gap, (9.270).  The intermediate long-character moment (9.271) would fill the screening ledger but is unproved and does not by itself discharge the coupled smooth weights |
+| Principal Type-I/II density | exact finite obstruction to separate elementary closure | the rational coefficient is (9.272), and equals \(-1\) for every prime \(p>\max(U,V)\).  Thus a pointwise Selberg-sieve/Euler-product estimate of the separated principal spectrum cannot give a power saving; phase and Möbius recombination remain necessary |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

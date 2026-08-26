@@ -200,6 +200,41 @@ def mobius_two_cutoff_hyperbola_value(
     return long_long - short_short
 
 
+def mobius_principal_density_value(
+    n: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> Fraction:
+    """Principal-character density in the two-cutoff Möbius split."""
+
+    if n < 1 or cutoff_left < 1 or cutoff_right < 1:
+        raise ValueError("n and both cutoffs must be positive")
+    if n <= max(cutoff_left, cutoff_right):
+        raise ValueError("n must exceed both cutoffs")
+
+    short_short = Fraction(0)
+    long_long = Fraction(0)
+    for left_factor in divisors(n):
+        for right_factor in divisors(n // left_factor):
+            product = left_factor * right_factor
+            contribution = Fraction(
+                mobius(left_factor) * mobius(right_factor),
+                _euler_phi(product),
+            )
+            if (
+                left_factor <= cutoff_left
+                and right_factor <= cutoff_right
+            ):
+                short_short += contribution
+            elif (
+                left_factor > cutoff_left
+                and right_factor > cutoff_right
+            ):
+                long_long += contribution
+    return long_long - short_short
+
+
 def _validate_scalar_factor_family(
     modulus: int,
     interval_length: int,
