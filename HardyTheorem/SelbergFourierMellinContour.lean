@@ -197,10 +197,7 @@ theorem boundaryRectIntegral_selbergMellinRaw
         intro h
         subst s
         apply hsboundary
-        rw [mem_reProdIm]
-        constructor <;> simp only [one_re, one_im, mem_Ioo]
-        · exact ⟨by norm_num, hc⟩
-        · exact ⟨by linarith, hT⟩
+        exact ⟨by norm_num, hc, neg_lt_zero.mpr hT, hT⟩
       exact selbergMellinRaw_eq_regularized hz X hsre hs1)]
   exact boundaryRectIntegral_selbergMellinRegularized hz X hc hT
 

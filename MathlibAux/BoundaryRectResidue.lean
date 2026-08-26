@@ -474,10 +474,7 @@ theorem boundaryRectIntegral_eq_finite_simple_pole_weighted_residue_sum_of_diffe
           intro h
           subst z
           have hpp := hpoles p hp
-          apply hnotInterior
-          simpa [mem_reProdIm] using
-            And.intro (And.intro hpp.1 hpp.2.1)
-              (And.intro hpp.2.2.1 hpp.2.2.2)
+          exact hnotInterior hpp
         field_simp [sub_ne_zero.mpr hzp]
         ring
       _ = (z - anchor) * g z + ∑ p ∈ poles, residue p +
