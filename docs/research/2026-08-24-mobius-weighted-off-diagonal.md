@@ -5842,6 +5842,132 @@ is narrower but genuine: the hardest primitive raw term now maps to a
 published varying-level theorem at exactly the required exponent; it no
 longer requires a conjectural new two-modulus large sieve on that face.
 
+### 9.36 Common-modulus collision before the inverse-residue sum
+
+The common divisor \(t=(m,n)\) should not be bounded by a pointwise
+Kloosterman estimate.  Completing the numerator one step earlier turns
+it into an exact CRT collision.  For \(x\in(\mathbb Z/q\mathbb Z)^*\)
+and \((\gamma,q)=1\), direct finite Fourier inversion gives
+
+\[
+\boxed{
+ \sum_{h\bmod q}\mathscr E_{q,\gamma h}(x)e_q(-\ell h)
+ =q\,1_{(\ell,q)=1}
+ \left(1_{x\equiv\gamma\bar\ell\ ({\rm mod}\ q)}
+       -\frac1{\varphi(q)}\right).}
+\tag{9.221}
+\]
+
+Thus the unit support in (9.212) already exists before the
+inverse-residue sum: a centered inverse phase becomes one unit residue
+class minus the uniform unit-group mean.
+
+Let \(m=tu\), \(n=tv\), where \(t,u,v\) are pairwise coprime, and put
+\(Q=tuv\).  For unit residues \(r\bmod m\), \(s\bmod n\), define
+
+\[
+ \mathscr D_{m,r}(x)
+ :=1_{x\equiv r\ ({\rm mod}\ m)}-\frac1{\varphi(m)}.
+\]
+
+If \(r\equiv s\pmod t\), let \(x_0\bmod Q\) be the unique simultaneous
+solution \(x_0\equiv r\pmod m\), \(x_0\equiv s\pmod n\).  Expanding the
+two centered point masses and summing the free CRT coordinate gives
+
+\[
+\boxed{
+\begin{aligned}
+ \sum_{x\bmod Q}^{*}\mathscr D_{m,r}(x)\mathscr D_{n,s}(x)e_Q(-kx)
+ ={}&1_{r\equiv s\ ({\rm mod}\ t)}e_Q(-kx_0)\\
+ &-\frac{c_v(k)}{\varphi(n)}e_m(-kr\bar v_m)
+  -\frac{c_u(k)}{\varphi(m)}e_n(-ks\bar u_n)\\
+ &+\frac{c_Q(k)}{\varphi(m)\varphi(n)}.
+\end{aligned}}
+\tag{9.222}
+\]
+
+There is no Weil loss in the first term: it is a single CRT point.
+For the left numerator dual \(L\) and the conjugate right numerator
+dual \(M\), (9.221) selects
+
+\[
+ r\equiv\delta\bar L\pmod m,\qquad
+ s\equiv-\delta'\bar M\pmod n.
+\]
+
+Consequently the collision in (9.222) exists exactly when
+
+\[
+\boxed{t\mid M\delta+L\delta'.}
+\tag{9.223}
+\]
+
+On this support, CRT factorization of the additive character gives
+
+\[
+ e_Q(-kx_0)
+ =e_m(-k\delta\overline{vL}_m)
+  e_v(k\delta'\overline{mM}_v).
+\tag{9.224}
+\]
+
+This is precisely the left side of (9.214), with its left modulus
+replaced by \(m=tu\).  Its varying-level rational character has
+numerator \(A=M\delta+L\delta'\), denominator \(m\), and outer modulus
+\(vLM\).  Equation (9.223) cancels the same factor \(t\) from numerator
+and denominator:
+
+\[
+ \frac{A}{m}=\frac{A/t}{u}.
+\tag{9.225}
+\]
+
+This cancellation is also visible in the coefficient energy.  Put
+\(t=T^\tau\), \(0\leq\tau\leq2\); this is exactly the range with
+nonzero physical dual frequencies, whose length is \(T^{2-\tau}\).
+For fixed \(t\), the Young ledger is
+
+\[
+\begin{array}{c|c}
+ \text{quantity}&T\text{-exponent}\\ \hline
+ vLM&5/2-\tau\\
+ k\text{-row}&2-\tau\\
+ |A/t|u&9/2-2\tau\\
+ \sum_{A/t,u}|\alpha_{A/t,u}|^2&17/2-2\tau\\
+ (v,k)\text{ row Cauchy}&9/4-\tau\\
+ \text{Young constant}&5-2\tau\\ \hline
+ \text{bound for fixed }t&9-3\tau\\
+ \text{after summing }t\asymp T^\tau&9-2\tau\leq9.
+\end{array}
+\tag{9.226}
+\]
+
+The energy entry uses (9.218) with \(g=t\), while the count of
+\(u=m/t\) supplies the second \(t^{-1}\).  Hence the **nonzero-dual CRT
+collision term closes on every common-divisor stratum**, with margin
+\(2\tau\) away from \(t=1\).
+
+The remaining coprimality splits do not consume this margin.  If
+\(\kappa,\eta,\gamma\) denote respectively the row gcd, outer-numerator
+gcd, and lowest-rational gcd exponents after (9.225), the bound after
+summing \(t\) is
+
+\[
+ \frac{13}{2}-\tau+\frac\eta2+
+ \frac12\max\!\left(5-2\tau-2\kappa-2\eta,
+                    \frac92-2\tau-\eta-2\gamma\right)
+ \leq9.
+\tag{9.227}
+\]
+
+The two branches are
+\(9-2\tau-\kappa-\eta/2\) and
+\(35/4-2\tau-\gamma\).  The three Ramanujan marginal terms in
+(9.222), the \(k=0\) covariance (9.195), and the nonunit numerator
+multipliers are not silently included in this conclusion.  They remain
+to be recombined with the principal/axis spectrum; for \(\tau>2\),
+smooth dual decay leaves precisely that zero-mode problem.
+
 ## 10. What has and has not been proved
 
 **Current classification: the coprime-unit primitive exponent now closes
@@ -5967,6 +6093,12 @@ Proved in this note:
   required \(T^2\), and the complete three-gcd exponent audit
   (9.218)--(9.219) never exceeds the target exponent \(9\).  The
   squarefree mean factors have the elementary dyadic bound (9.220).
+* the pre-residue numerator transform (9.221), exact four-term
+  common-modulus collision formula (9.222), and compatibility divisor
+  (9.223); cancelling \(t=(m,n)\) from the Young rational gives the
+  common-stratum ledger (9.226), whose nonzero-dual collision term has
+  total exponent \(9-2\tau\leq9\), and the four-parameter gcd audit
+  remains at most \(9\), (9.227).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -6011,7 +6143,8 @@ Proved in this note:
 | Coprimality-migrated scalar spectrum | exact Type-II bridge; balanced face unproved | expanding \((k,\delta')=1\) gives the triple spectrum (9.187), whose product coefficient is independent of the oscillatory modulus; Bettin--Chandee applies with (9.189), but (9.193) proves a uniform gap of at least \(T^2\), with gap \(T^{67/16}\) at the primitive corner |
 | Centered common-divisor dispersion | exact zero-frequency reduction; nonzero dual estimate unproved | centering the full divisor packet makes the \(k=1\) layer vanish, (9.197); the cross-modulus covariance is zero for coprime moduli and otherwise factors only through \(t=(m,n)\), (9.194)--(9.196); (9.198)--(9.201) isolate the remaining dual Kloosterman frequencies and the \(t_0=Q^2/R=T^2\) transition |
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
-| Young varying-level primitive route | exact arithmetic exponent closure; global recombination unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps the raw term to Young's additive rational large sieve, (9.214)--(9.217), saving exactly \(T^2\).  The \(d,e,g\) strata remain at exponent at most \(9\), (9.218)--(9.219), but common \(t=(m,n)>1\), nonunit numerator multipliers, and uniform archimedean separation are not yet recombined |
+| Young varying-level primitive route | exact arithmetic exponent closure; global recombination unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps the raw term to Young's additive rational large sieve, (9.214)--(9.217), saving exactly \(T^2\).  The \(d,e,g\) strata remain at exponent at most \(9\), (9.218)--(9.219); uniform archimedean separation and nonunit numerator multipliers are not yet recombined |
+| Common-modulus nonzero-dual collision | exact arithmetic exponent closure; zero/marginal recombination unproved | completing before the residue sum gives delta-minus-mean (9.221) and the CRT collision formula (9.222).  Its support forces \(t\mid M\delta+L\delta'\), so the same \(t\) cancels from the Young rational, (9.223)--(9.225), and the summed exponent is \(9-2\tau\leq9\), (9.226).  All additional gcd strata remain at most \(9\), (9.227); the three Ramanujan marginals, \(k=0\) covariance, and nonunit multipliers remain |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

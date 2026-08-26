@@ -23,6 +23,7 @@ from scripts.audit_mobius_type_ii import (
     PascadiModuliMargins,
     SquarefreeScalarGcdStratum,
     WrightFactorSavings,
+    YoungCommonFactorLedger,
     YoungDualGcdLedger,
     YoungDualReciprocityLedger,
     additive_completion_axis_recombined,
@@ -53,10 +54,14 @@ from scripts.audit_mobius_type_ii import (
     centered_inverse_cross_correlation_gcd_formula,
     centered_inverse_cross_fourier,
     centered_inverse_cross_fourier_formula,
+    centered_inverse_numerator_fourier,
+    centered_inverse_numerator_fourier_formula,
     centered_kloosterman_crt_terms,
     centered_kloosterman_numerator_fourier,
     centered_kloosterman_numerator_fourier_formula,
     centered_kloosterman_transform,
+    centered_residue_collision_fourier,
+    centered_residue_collision_fourier_formula,
     central_collision_ledger,
     central_cross_inverse_collision_margins,
     character_large_sieve_unit_gap,
@@ -136,6 +141,7 @@ from scripts.audit_mobius_type_ii import (
     wright_factor_covers,
     wright_factor_savings,
     wright_unbalanced_modulus_margin,
+    young_common_factor_ledger,
     young_dual_reciprocity_gcd_ledger,
     young_dual_reciprocity_ledger,
 )
@@ -1829,6 +1835,66 @@ def test_young_additive_rational_sieve_hits_exact_required_saving() -> None:
     )
 
 
+def test_centered_inverse_numerator_fourier_is_delta_minus_mean() -> None:
+    for modulus in range(1, 13):
+        for multiplier in range(modulus):
+            if gcd(multiplier, modulus) != 1:
+                continue
+            for residue in range(modulus):
+                if gcd(residue, modulus) != 1:
+                    continue
+                for dual_frequency in range(modulus):
+                    direct = centered_inverse_numerator_fourier(
+                        modulus,
+                        multiplier,
+                        residue,
+                        dual_frequency,
+                    )
+                    formula = centered_inverse_numerator_fourier_formula(
+                        modulus,
+                        multiplier,
+                        residue,
+                        dual_frequency,
+                    )
+                    assert abs(direct - formula) < 1e-8
+
+
+def test_common_modulus_centered_residue_collision_has_crt_formula() -> None:
+    for common_factor in range(1, 6):
+        for left_cofactor in range(1, 6):
+            for right_cofactor in range(1, 6):
+                if (
+                    gcd(common_factor, left_cofactor) != 1
+                    or gcd(common_factor, right_cofactor) != 1
+                    or gcd(left_cofactor, right_cofactor) != 1
+                ):
+                    continue
+                left_modulus = common_factor * left_cofactor
+                right_modulus = common_factor * right_cofactor
+                for left_residue in range(left_modulus):
+                    if gcd(left_residue, left_modulus) != 1:
+                        continue
+                    for right_residue in range(right_modulus):
+                        if gcd(right_residue, right_modulus) != 1:
+                            continue
+                        for frequency in range(-3, 4):
+                            direct = centered_residue_collision_fourier(
+                                left_modulus,
+                                right_modulus,
+                                left_residue,
+                                right_residue,
+                                frequency,
+                            )
+                            formula = centered_residue_collision_fourier_formula(
+                                left_modulus,
+                                right_modulus,
+                                left_residue,
+                                right_residue,
+                                frequency,
+                            )
+                            assert abs(direct - formula) < 1e-8
+
+
 def test_young_dual_gcd_strata_never_exceed_the_target() -> None:
     assert young_dual_reciprocity_gcd_ledger(F(0), F(0)) == (
         YoungDualGcdLedger(
@@ -1862,6 +1928,50 @@ def test_young_dual_gcd_strata_never_exceed_the_target() -> None:
                     F(rational_gcd_quarters, 4),
                 )
                 assert ledger.theorem_bound <= ledger.target
+
+
+def test_young_common_factor_collision_gains_two_powers_of_t() -> None:
+    assert young_common_factor_ledger(F(0)) == YoungCommonFactorLedger(
+        outer_modulus=F(5, 2),
+        row_length=F(2),
+        rational_height=F(9, 2),
+        coefficient_energy=F(17, 2),
+        large_sieve_constant=F(5),
+        fixed_common_factor_bound=F(9),
+        summed_bound=F(9),
+        target=F(9),
+        margin=F(0),
+    )
+    for common_factor_quarters in range(9):
+        common_factor = F(common_factor_quarters, 4)
+        ledger = young_common_factor_ledger(common_factor)
+        assert ledger.fixed_common_factor_bound == F(9) - 3 * common_factor
+        assert ledger.summed_bound == F(9) - 2 * common_factor
+        assert ledger.summed_bound <= ledger.target
+        numerator_length_quarters = 8 - common_factor_quarters
+        row_length_quarters = numerator_length_quarters
+        outer_length_quarters = 10 - common_factor_quarters
+        for row_gcd_quarters in range(row_length_quarters + 1):
+            for numerator_gcd_quarters in range(
+                numerator_length_quarters + 1
+            ):
+                if (
+                    row_gcd_quarters + numerator_gcd_quarters
+                    > outer_length_quarters
+                ):
+                    continue
+                for rational_gcd_quarters in range(
+                    numerator_length_quarters
+                    - numerator_gcd_quarters
+                    + 1
+                ):
+                    stratified = young_common_factor_ledger(
+                        common_factor,
+                        F(row_gcd_quarters, 4),
+                        F(numerator_gcd_quarters, 4),
+                        F(rational_gcd_quarters, 4),
+                    )
+                    assert stratified.summed_bound <= stratified.target
 
 
 def test_linear_convolution_energy_loses_a_rational_gcd_factor() -> None:

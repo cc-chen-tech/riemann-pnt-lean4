@@ -1314,6 +1314,213 @@ def centered_kloosterman_numerator_fourier_formula(
     return modulus * (phase - float(linear_mean))
 
 
+def centered_inverse_numerator_fourier(
+    modulus: int,
+    numerator_multiplier: int,
+    inverse_residue: int,
+    dual_frequency: int,
+) -> complex:
+    """Fourier transform in the numerator before the inverse-residue sum."""
+
+    if modulus < 1:
+        raise ValueError("the modulus must be positive")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    if gcd(inverse_residue, modulus) != 1:
+        raise ValueError("the inverse residue must be a unit")
+    residue_inverse = (
+        0
+        if modulus == 1
+        else pow(inverse_residue % modulus, -1, modulus)
+    )
+    return sum(
+        (
+            cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    numerator_multiplier * numerator * residue_inverse
+                    % modulus
+                )
+                / modulus
+            )
+            - float(
+                Fraction(
+                    ramanujan_sum(
+                        modulus,
+                        numerator_multiplier * numerator,
+                    ),
+                    _euler_phi(modulus),
+                )
+            )
+        )
+        * cmath.exp(
+            -2j * cmath.pi * dual_frequency * numerator / modulus
+        )
+        for numerator in range(modulus)
+    )
+
+
+def centered_inverse_numerator_fourier_formula(
+    modulus: int,
+    numerator_multiplier: int,
+    inverse_residue: int,
+    dual_frequency: int,
+) -> complex:
+    """Exact unit-supported delta-minus-mean numerator transform."""
+
+    if modulus < 1:
+        raise ValueError("the modulus must be positive")
+    if gcd(numerator_multiplier, modulus) != 1:
+        raise ValueError("the numerator multiplier must be a unit")
+    if gcd(inverse_residue, modulus) != 1:
+        raise ValueError("the inverse residue must be a unit")
+    if gcd(dual_frequency, modulus) != 1:
+        return 0j
+    dual_inverse = (
+        0
+        if modulus == 1
+        else pow(dual_frequency % modulus, -1, modulus)
+    )
+    selected_residue = numerator_multiplier * dual_inverse % modulus
+    point_mass = int(inverse_residue % modulus == selected_residue)
+    return modulus * (
+        point_mass - Fraction(1, _euler_phi(modulus))
+    )
+
+
+def centered_residue_collision_fourier(
+    left_modulus: int,
+    right_modulus: int,
+    left_residue: int,
+    right_residue: int,
+    frequency: int,
+) -> complex:
+    """Direct Fourier transform of two centered residue point masses."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    if gcd(left_residue, left_modulus) != 1:
+        raise ValueError("the left residue must be a unit")
+    if gcd(right_residue, right_modulus) != 1:
+        raise ValueError("the right residue must be a unit")
+    common_modulus = (
+        left_modulus
+        * right_modulus
+        // gcd(left_modulus, right_modulus)
+    )
+    left_mean = Fraction(1, _euler_phi(left_modulus))
+    right_mean = Fraction(1, _euler_phi(right_modulus))
+    return sum(
+        (
+            int(residue % left_modulus == left_residue % left_modulus)
+            - float(left_mean)
+        )
+        * (
+            int(residue % right_modulus == right_residue % right_modulus)
+            - float(right_mean)
+        )
+        * cmath.exp(
+            -2j * cmath.pi * frequency * residue / common_modulus
+        )
+        for residue in range(common_modulus)
+        if gcd(residue, common_modulus) == 1
+    )
+
+
+def centered_residue_collision_fourier_formula(
+    left_modulus: int,
+    right_modulus: int,
+    left_residue: int,
+    right_residue: int,
+    frequency: int,
+) -> complex:
+    """CRT collision, two Ramanujan marginals, and their common mean."""
+
+    if left_modulus < 1 or right_modulus < 1:
+        raise ValueError("moduli must be positive")
+    if gcd(left_residue, left_modulus) != 1:
+        raise ValueError("the left residue must be a unit")
+    if gcd(right_residue, right_modulus) != 1:
+        raise ValueError("the right residue must be a unit")
+    common_factor = gcd(left_modulus, right_modulus)
+    left_cofactor = left_modulus // common_factor
+    right_cofactor = right_modulus // common_factor
+    if (
+        gcd(common_factor, left_cofactor) != 1
+        or gcd(common_factor, right_cofactor) != 1
+        or gcd(left_cofactor, right_cofactor) != 1
+    ):
+        raise ValueError("the common factor and cofactors must be pairwise coprime")
+    common_modulus = common_factor * left_cofactor * right_cofactor
+
+    collision = 0j
+    if (left_residue - right_residue) % common_factor == 0:
+        cofactor_inverse = (
+            0
+            if right_cofactor == 1
+            else pow(left_cofactor, -1, right_cofactor)
+        )
+        lift = (
+            (right_residue - left_residue)
+            // common_factor
+            * cofactor_inverse
+        ) % right_cofactor
+        collision_residue = (
+            left_residue + left_modulus * lift
+        ) % common_modulus
+        collision = cmath.exp(
+            -2j
+            * cmath.pi
+            * frequency
+            * collision_residue
+            / common_modulus
+        )
+
+    left_inverse = (
+        0
+        if left_modulus == 1
+        else pow(right_cofactor, -1, left_modulus)
+    )
+    left_marginal = ramanujan_sum(
+        right_cofactor,
+        frequency,
+    ) * cmath.exp(
+        -2j
+        * cmath.pi
+        * (
+            frequency * left_residue * left_inverse % left_modulus
+        )
+        / left_modulus
+    )
+    right_inverse = (
+        0
+        if right_modulus == 1
+        else pow(left_cofactor, -1, right_modulus)
+    )
+    right_marginal = ramanujan_sum(
+        left_cofactor,
+        frequency,
+    ) * cmath.exp(
+        -2j
+        * cmath.pi
+        * (
+            frequency * right_residue * right_inverse % right_modulus
+        )
+        / right_modulus
+    )
+    return (
+        collision
+        - left_marginal / _euler_phi(right_modulus)
+        - right_marginal / _euler_phi(left_modulus)
+        + ramanujan_sum(common_modulus, frequency)
+        / (
+            _euler_phi(left_modulus)
+            * _euler_phi(right_modulus)
+        )
+    )
+
+
 @dataclass(frozen=True)
 class CenteredKloostermanCrtTerms:
     """The three non-principal terms in a two-factor CRT expansion."""
@@ -1372,6 +1579,21 @@ class YoungDualGcdLedger:
     margin: Fraction
 
 
+@dataclass(frozen=True)
+class YoungCommonFactorLedger:
+    """Young-sieve ledger after an exact common-modulus CRT collision."""
+
+    outer_modulus: Fraction
+    row_length: Fraction
+    rational_height: Fraction
+    coefficient_energy: Fraction
+    large_sieve_constant: Fraction
+    fixed_common_factor_bound: Fraction
+    summed_bound: Fraction
+    target: Fraction
+    margin: Fraction
+
+
 def young_dual_reciprocity_ledger(
     outer_modulus: Fraction,
     row_length: Fraction,
@@ -1415,6 +1637,76 @@ def young_dual_reciprocity_ledger(
         trivial_bound=trivial_bound,
         saving=saving,
         margin=saving - required_saving,
+    )
+
+
+def young_common_factor_ledger(
+    common_factor: Fraction,
+    row_gcd: Fraction = Fraction(0),
+    numerator_gcd: Fraction = Fraction(0),
+    rational_gcd: Fraction = Fraction(0),
+) -> YoungCommonFactorLedger:
+    """Audit nonzero dual modes with a common modulus of the given exponent.
+
+    Write m=t*u and n=t*v.  Numerator completion makes the two centered
+    residue point masses compatible only when t divides
+    M*delta + L*delta'.  The same t then cancels from the rational
+    numerator and denominator in Young's additive large sieve.  For a
+    fixed t this lowers both the convolution energy and the denominator
+    count, while summing the dyadic t-box costs one copy of its exponent.
+    The other three arguments extract the same row, outer-numerator, and
+    lowest-rational gcd strata as in young_dual_reciprocity_gcd_ledger.
+    """
+
+    if common_factor < 0:
+        raise ValueError("the common-factor exponent must be nonnegative")
+    if common_factor > 2:
+        raise ValueError("this ledger is for the nonzero dual range t <= T^2")
+    if row_gcd < 0 or numerator_gcd < 0 or rational_gcd < 0:
+        raise ValueError("gcd exponents must be nonnegative")
+    numerator_length = Fraction(2) - common_factor
+    outer_length = Fraction(5, 2) - common_factor
+    if row_gcd > numerator_length:
+        raise ValueError("the row gcd cannot exceed the row length")
+    if row_gcd + numerator_gcd > outer_length:
+        raise ValueError("the outer gcds cannot exceed the modulus")
+    if numerator_gcd + rational_gcd > numerator_length:
+        raise ValueError("the rational gcd cannot exceed the numerator")
+
+    outer_modulus = outer_length - row_gcd - numerator_gcd
+    row_length = numerator_length - row_gcd
+    rational_height = (
+        Fraction(9, 2)
+        - 2 * common_factor
+        - numerator_gcd
+        - 2 * rational_gcd
+    )
+    coefficient_energy = (
+        Fraction(17, 2) - 2 * common_factor - 2 * rational_gcd
+    )
+    large_sieve_constant = max(
+        2 * outer_modulus,
+        rational_height,
+    )
+    row_cauchy = (outer_modulus + row_length) / 2
+    extracted_factor_count = row_gcd + numerator_gcd + rational_gcd
+    fixed_common_factor_bound = (
+        extracted_factor_count
+        + row_cauchy
+        + (large_sieve_constant + coefficient_energy) / 2
+    )
+    summed_bound = fixed_common_factor_bound + common_factor
+    target = Fraction(9)
+    return YoungCommonFactorLedger(
+        outer_modulus=outer_modulus,
+        row_length=row_length,
+        rational_height=rational_height,
+        coefficient_energy=coefficient_energy,
+        large_sieve_constant=large_sieve_constant,
+        fixed_common_factor_bound=fixed_common_factor_bound,
+        summed_bound=summed_bound,
+        target=target,
+        margin=target - summed_bound,
     )
 
 
