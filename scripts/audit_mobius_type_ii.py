@@ -805,6 +805,54 @@ def transition_numerator_dual_coordinates(
     )
 
 
+def centered_transition_completion_ledger(
+    *,
+    modulus: Fraction,
+    determinant_length: Fraction,
+) -> CenteredTransitionCompletionLedger:
+    """Compare the point mass and uniform mean after centered completion.
+
+    The normalized numerator transform is
+    ``1_{delta = ell*d (mod q)} - 1/phi(q)``.  On two intervals of
+    exponent ``D<q``, the aligned point mass has exponent ``D`` while
+    the uniform background has exponent ``2D-q``.  Their ratio is the
+    exact missing scalar exponent ``q-D``.
+    """
+
+    if determinant_length < 0 or modulus <= determinant_length:
+        raise ValueError("require nonnegative D exponent strictly below q")
+    uniform_background = 2 * determinant_length - modulus
+    return CenteredTransitionCompletionLedger(
+        point_mass=determinant_length,
+        uniform_background=uniform_background,
+        point_over_background=modulus - determinant_length,
+    )
+
+
+def centered_transition_diagonal_mass(
+    modulus: int,
+    interval_length: int,
+) -> Fraction:
+    """Exact centered mass on ``delta=d`` inside a short initial box.
+
+    For ``D<q`` the congruence ``delta=d (mod q)`` is literal equality.
+    If ``U`` is the number of units up to ``D``, the completed centered
+    kernel therefore has mass ``U-U^2/phi(q)``.  In particular it need
+    not have zero additive-shift mean after restriction to the short box.
+    """
+
+    if modulus < 2 or not 1 <= interval_length < modulus:
+        raise ValueError("require q>=2 and 1<=D<q")
+    unit_count = sum(
+        gcd(value, modulus) == 1
+        for value in range(1, interval_length + 1)
+    )
+    return Fraction(unit_count) - Fraction(
+        unit_count * unit_count,
+        _euler_phi(modulus),
+    )
+
+
 def near_determinant_coordinates(
     divisor_product: int,
     scalar_factor: int,
@@ -2823,6 +2871,15 @@ class TransitionNumeratorDualCoordinates:
     dual_frequency: int
     determinant: int
     numerator: int
+
+
+@dataclass(frozen=True)
+class CenteredTransitionCompletionLedger:
+    """Short-box imbalance of the centered numerator transform."""
+
+    point_mass: Fraction
+    uniform_background: Fraction
+    point_over_background: Fraction
 
 
 @dataclass(frozen=True)

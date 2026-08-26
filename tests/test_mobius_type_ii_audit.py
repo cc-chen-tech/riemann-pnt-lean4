@@ -12,6 +12,7 @@ from scripts.audit_mobius_type_ii import (
     BlomerPascadiUnbalancedLedger,
     CenteredCrtUnitMeanLedger,
     CenteredKloostermanCrtTerms,
+    CenteredTransitionCompletionLedger,
     CentralCollisionLedger,
     CommonFactorMarginalLedger,
     CompletedProductPhaseReduction,
@@ -79,6 +80,8 @@ from scripts.audit_mobius_type_ii import (
     centered_residue_collision_fourier,
     centered_residue_collision_fourier_formula,
     centered_residue_collision_zero_formula,
+    centered_transition_completion_ledger,
+    centered_transition_diagonal_mass,
     centered_unit_congruence_boundary_majorant,
     centered_unit_congruence_sum,
     central_collision_ledger,
@@ -937,6 +940,30 @@ def test_transition_numerator_dual_congruence_forces_exact_dilation() -> None:
                 determinant=determinant,
                 numerator=numerator,
             )
+
+
+def test_centered_transition_completion_keeps_the_short_interval_point_mass() -> None:
+    assert centered_transition_completion_ledger(
+        modulus=F(5, 2),
+        determinant_length=F(2),
+    ) == CenteredTransitionCompletionLedger(
+        point_mass=F(2),
+        uniform_background=F(3, 2),
+        point_over_background=F(1, 2),
+    )
+
+
+def test_centered_transition_diagonal_is_not_a_vanishing_d_major_arc() -> None:
+    # For a prime q>D and ell=1, the completed centered kernel on the
+    # aligned initial boxes is D-D^2/phi(q), not zero.  At q/D=T^(1/2)
+    # its uniform background is exactly a half-power smaller.
+    for modulus in (5, 7, 11, 13, 17):
+        for length in range(1, modulus):
+            assert centered_transition_diagonal_mass(
+                modulus,
+                length,
+            ) == F(length) - F(length * length, modulus - 1)
+    assert centered_transition_diagonal_mass(11, 3) == F(21, 10)
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:

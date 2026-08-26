@@ -7108,6 +7108,110 @@ aggregation.  The remaining analytic task is
 precisely to estimate (9.239) for \(0\leq\tau<1/4\) before taking an
 absolute value over \(g\); no unconditional closure is claimed.
 
+### 9.44 Transporting the centering through numerator completion
+
+The centering from (9.197) can be carried through the completion in
+Section 9.43 exactly.  It does not, however, turn the surviving
+\(d\)-weight into an additive minor-arc weight.  Recall
+
+\[
+ \mathscr E_{q,A}(x)=e_q(A\bar x_q)-\frac{c_q(A)}{\varphi(q)}.
+\]
+
+For \((d\delta_0,q)=1\), formula (9.221), with the sign of the numerator
+retained, gives
+
+\[
+\boxed{
+ \sum_{h\bmod q}\mathscr E_{q,-h\delta_0}(d)e_q(-\ell h)
+ =q\,1_{(\ell,q)=1}
+ \left(
+  1_{\delta_0\equiv-\ell d\ ({\rm mod}\ q)}
+  -\frac1{\varphi(q)}
+ \right).}
+\tag{9.283}
+\]
+
+Changing \(\ell\) to \(-\ell\) makes the point-mass condition identical
+to (9.279).  Smooth Poisson summation merely weights the bounded values of
+\(\ell\); it does not change the point-minus-uniform bracket in (9.283).
+The point term is the dilation packet in (9.280), whereas the uniform
+term is a Ramanujan marginal of the type already bounded in
+(9.228)--(9.229).  Thus the latter may be estimated separately, but it
+cannot be declared an equal-size cancellation of the former.
+
+There is a finite short-box certificate for this mismatch.  Put
+
+\[
+ U_q(D)=\#\{1\leq d\leq D:(d,q)=1\},\qquad 1\leq D<q.
+\]
+
+Since \(d\equiv\delta\pmod q\) is then literal equality on
+\([1,D]^2\), summing the normalized bracket in (9.283), with the signs
+aligned and \(\ell=1\), gives
+
+\[
+\boxed{
+ \sum_{\substack{d,\delta\leq D\\(d\delta,q)=1}}
+ \left(1_{\delta\equiv d\ ({\rm mod}\ q)}
+       -\frac1{\varphi(q)}\right)
+ =U_q(D)-\frac{U_q(D)^2}{\varphi(q)}.}
+\tag{9.284}
+\]
+
+In particular, if \(q\) is prime and \(D<q\), then
+
+\[
+ \boxed{\mathcal C_q(D)=D-\frac{D^2}{q-1}.}
+\tag{9.285}
+\]
+
+For \(D\leq(q-1)/2\), this is at least \(D/2\), so the short-box
+centered mass is not zero.  At the transition scales
+
+\[
+ q=T^{5/2},\qquad D=T^2,
+\]
+
+the point mass has normalized exponent \(2\), the uniform background
+has exponent \(2+2-5/2=3/2\), and
+
+\[
+\boxed{
+ E_{\rm point}-E_{\rm uniform}=\frac12.}
+\tag{9.286}
+\]
+
+This is exactly the scalar half-power left in (9.281).  Formula (9.284)
+is a counterexample to a *universal algebraic vanishing-moment claim*;
+it is not asserted as a lower bound for the particular signed smooth
+weight \(\Xi_\ell\).  What it proves is that (9.167)--(9.179) and the
+Ramanujan centering alone do not imply
+\(\sum_d\Xi_\ell(g,q,d)=0\), nor do they remove the \(d\)-major arcs.
+
+The closest short-interval Möbius theorems do not supply the missing
+power.  Matomäki--Radziwiłł--Tao's averaged Chowla estimate has decay of
+rough order \(\log\log D/\log D\).  The later average Fourier-uniformity
+theorems give \(o(1)\), not a fixed power.  The all-interval theorem of
+Matomäki--Shao--Tao--Teräväinen gives, for \(D\geq
+S^{5/8+\varepsilon}\), arbitrary fixed log-power saving for a Möbius
+sum against a fixed nilsequence.  Our \(D=S^{2/3}\) is in that range,
+but even the direct specialization
+
+\[
+ \sum_{S<n\leq S+D}\mu(n)F(n)
+ \ll_A D(\log S)^{-A}
+\]
+
+costs \(SD(\log S)^{-A}=T^5(\log T)^{-A}\) after the outer
+\((g,q)\)-count.  It does not reach \(T^{9/2+\varepsilon}\), and its
+fixed nilsequence does not encode the jointly varying divisor-incidence
+weight.  Therefore the weakest currently isolated analytic input remains
+the weighted averaged-Chowla power estimate (9.282), including its
+central major arc.  A classical minor-arc estimate cannot be applied to
+the whole packet unless an additional, weight-specific vanishing identity
+is proved; none follows from the exact centering.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -7311,6 +7415,13 @@ Proved in this note:
   requires the exact relative saving \(S^{-1/6}=T^{-1/2}\).  Nonzero
   numerator-dual frequency does not remove the separate shift-major
   arcs.
+* the exact transport of Ramanujan centering through that completion,
+  (9.283).  It becomes a point mass minus the uniform unit-group mean.
+  On a short aligned box the finite mass is
+  \(U_q(D)-U_q(D)^2/\varphi(q)\), (9.284), and for prime \(q>D\) this is
+  \(D-D^2/(q-1)\), (9.285).  Hence the background is exactly
+  \(T^{1/2}\) smaller at the transition, (9.286), and the original
+  centering supplies no universal \(d\)-major-arc vanishing identity.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7364,6 +7475,7 @@ Proved in this note:
 | Prime-slice Selberg variance | unconditional scalar projection insufficient; RH diagnostic only | at \(X=T^3,Y=T^2\), the unconditional \(J(X,Y/X)\ll XY^2T^\varepsilon\) gives exponent \(5\) after Cauchy, still \(1/2\) above target, (9.274).  RH-scale variance would give exponent \(4\), (9.275), but the density term separately requires the unproved \(X^{5/6+\varepsilon}\) Mertens bound (9.276); the Ramanujan zero mode (9.230) is not this density mode |
 | Averaged Möbius on shifted primes | stripped signed projection covered only logarithmically | \(h=Y-d,n=s+d-Y\) maps the scalar correlation to Lichtman's shift average with fixed \(G(n)=\Lambda(n+Y)\); endpoints cost \(Y^2=T^4\), but the theorem's main bound remains \(XY/(\log X)^{1/3-\delta}=T^{5-o(1)}\), leaving the full \(T^{1/2}\) power gap and excluding the actual shift-dependent inverse/product kernel, (9.277) |
 | Transition numerator completion | exact three-variable reduction; weighted averaged-Chowla power gate unproved | Poisson in \(h\) gives (9.278); \(q>\delta_0+|\ell d|\) forces \(\delta_0=\ell d\), (9.279), so the inverse/product kernel disappears and only bounded dual modes of (9.280) remain.  The ledger is \(23/2-2=19/2\), still \(1/2\) above target, (9.281), equivalently the core (9.282) needs \(S^{-1/6}\).  The nonzero \(h\)-dual mode does not delete the distinct \(d\)-major arcs |
+| Centering after transition completion | exact short-box obstruction; no major-arc deletion | the centered numerator transform is the point-minus-uniform identity (9.283).  Its aligned short-box mass is (9.284), equal to \(D-D^2/(q-1)\) for prime \(q>D\), so the uniform background is a factor \(D/q=T^{-1/2}\) below the dilation point mass, (9.285)--(9.286).  This disproves an automatic vanishing-moment route but is not a lower bound for the actual signed smooth packet; published averaged/short-interval Möbius bounds remain logarithmic at the required power scale |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -7469,6 +7581,16 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   conjecture*, Algebra Number Theory 9 (2015), 2167--2196,
   arXiv:1503.05121v3, Theorem 1.6 and Remark 5.2; mapped exactly to the
   affine family in Section 9.17.
+* K. Matomäki, M. Radziwiłł, T. Tao, J. Teräväinen, T. Ziegler,
+  *Higher uniformity of bounded multiplicative functions in short
+  intervals on average*, Ann. of Math. 197 (2023), 739--857,
+  arXiv:2007.15644; its qualitative \(o(1)\) Fourier-uniformity boundary
+  is recorded in Section 9.44.
+* K. Matomäki, X. Shao, T. Tao, J. Teräväinen, *Higher uniformity of
+  arithmetic functions in short intervals I. All intervals*,
+  arXiv:2204.03754, especially the \(\theta=5/8\) Möbius range; its
+  arbitrary log-power, rather than fixed \(S^{-1/6}\), saving is audited
+  in Section 9.44.
 * T. Tao, J. Teräväinen, *The structure of correlations of multiplicative
   functions at almost all scales, with applications to the Chowla and
   Elliott conjectures*, arXiv:1809.02518v2; its almost-all-scales boundary
