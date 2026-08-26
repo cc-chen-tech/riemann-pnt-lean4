@@ -10410,14 +10410,28 @@ def steinberg_exact_level_difference_kernel_square(
     first_index_valuation: int,
     second_index_valuation: int,
 ) -> dict[str, object]:
-    """Return the exact squared local kernel for conductor exponent one.
+    """Return the corrected squared conductor-p level-difference kernel.
 
-    For trivial central character, a Steinberg newform has
-    ``abs(lambda(p))^2=1/p`` and ``lambda(p^j)=lambda(p)^j``.  Comparing
-    its level-p newvector with the complete level-p-squared oldclass
-    gives, after division by the Ramanujan factor at the first index,
+    Blomer--Milicevic, Lemma 2, gives at ambient level ``p^2``
 
-    ``abs(K(0,b))^2=p^-b`` and ``abs(K(a,b))^2=p^(-(a+b))`` for a>=1.
+    ``r_f(p)=1-lambda(p)^2/(p*(1+1/p)^2)``
+
+    and the oldvector coefficients ``-A(p)/sqrt(r_f(p))`` and
+    ``1/sqrt(r_f(p))``, where
+    ``A(p)=lambda(p)/(sqrt(p)*(1+1/p))``.  Insert these coefficients
+    before taking the difference between the level-p trace and the
+    level-p-squared trace; the latter has relative normalization ``1/p``.
+    For Steinberg ``lambda(p)^2=1/p``.  After division by the Ramanujan
+    factor at the first index, the exact squares are
+
+    ``p^-b * (1-(p+1)/(p^2*(p+2)))^2`` for ``a=0`` and
+
+    ``p^(-(a+b)) * (1+1/(p^2*(p+2)*(p-1)))^2`` for ``a>=1``.
+
+    In particular, the formerly recorded equalities without the Euler
+    correction were false.  The correction is absolutely multiplicative,
+    so this local computation preserves the required power saving but does
+    not prove the global weighted primitive spectral large sieve.
     """
     p = int(prime)
     a = int(first_index_valuation)
@@ -10427,15 +10441,26 @@ def steinberg_exact_level_difference_kernel_square(
     if a < 0 or b < 1:
         raise ValueError("first valuation must be nonnegative and second positive")
     exponent = b if a == 0 else a + b
-    square = F(1, p**exponent)
+    oldclass_r = F(p * (p + 2), (p + 1) ** 2)
+    level_trace_ratio = F(1, p)
+    if a == 0:
+        correction = F(1) - F(p + 1, p * p * (p + 2))
+    else:
+        correction = F(1) + F(1, p * p * (p + 2) * (p - 1))
+    base_square = F(1, p**exponent)
+    square = base_square * correction * correction
     return {
         "prime": p,
         "first_index_valuation": a,
         "second_index_valuation": b,
         "steinberg_hecke_square_exponent": exponent,
+        "ambient_oldclass_r_factor": oldclass_r,
+        "level_trace_ratio": level_trace_ratio,
+        "euler_correction_factor": correction,
         "ramanujan_normalized_kernel_square": square,
         "required_prime_square_saving": F(1, p),
         "required_prime_square_saving_met": square <= F(1, p),
+        "previous_target_equality_exact": square == base_square,
         "closed_formula_exact": True,
     }
 
@@ -10445,19 +10470,18 @@ def conductor_p_raised_oldspace_cross_identity(
     prime: int,
     hecke_prime_square: Fraction,
 ) -> dict[str, object]:
-    """Compute the conductor-p oldspace cross term at ambient level p^2.
+    """Compute the conductor-p oldspace trace at ambient level ``p^2``.
 
-    Here the primitive principal character vanishes at ``p``, so the
-    oldclass denominator is ``nu(p)=p``.  For indices ``p not| m*y``
-    and ``n=p*y``, the ``b=1`` cross factor is ``lambda(p)``.  Relative
-    to it, the ``b=p`` vector contributes
+    Blomer--Milicevic, Lemma 2, gives
 
-    ``(p/D)*(-1/p)*(1-|lambda(p)|^2/p)``,
+    ``r_f(p)=1-lambda(p)^2/(p*(1+1/p)^2)``.
 
-    where ``D=1-|lambda(p)|^2/p``.  The two vectors cancel exactly.
-    A primitive trivial-central-character representation of conductor
-    exponent two has degree-zero local L-factor, so its coefficient at
-    ``p`` times a p-adic unit is zero.
+    For a unit first index and a valuation-one second index, summing the
+    ``g=1,p`` ambient oldclass has cross factor
+    ``lambda(p)/((p+1)*r_f(p))``.  The ambient coefficient is then
+    multiplied by the norm ratio ``1/p``.  Consequently the exact level
+    difference is not zero; relative to the level-p Hecke coefficient it
+    is ``1-1/(p*(p+1)*r_f(p))``.
     """
     p = int(prime)
     lam_square = F(hecke_prime_square)
@@ -10465,13 +10489,13 @@ def conductor_p_raised_oldspace_cross_identity(
         raise ValueError("prime must be prime")
     if lam_square < 0:
         raise ValueError("Hecke square must be nonnegative")
-    denominator = F(1) - lam_square / F(p)
+    denominator = F(1) - lam_square * F(p, (p + 1) ** 2)
     if denominator == 0:
         raise ValueError("oldclass Gram denominator must be nonzero")
-    normalization_squared = F(p) / denominator
-    relative_cross = F(1) + normalization_squared * (
-        -F(1, p)
-    ) * (F(1) - lam_square / F(p))
+    normalization_squared = F(1) / denominator
+    ambient_cross = F(1, p + 1) / denominator
+    ambient_trace = F(1, p) * ambient_cross
+    level_difference = F(1) - ambient_trace
     primitive_conductor_exponent = 2
     local_l_factor_degree = 0
     return {
@@ -10479,8 +10503,10 @@ def conductor_p_raised_oldspace_cross_identity(
         "hecke_prime_square": lam_square,
         "oldclass_gram_denominator": denominator,
         "oldclass_normalization_squared": normalization_squared,
-        "raised_cross_factor_relative_to_hecke_prime": relative_cross,
-        "raised_oldspace_cross_vanishes_exactly": relative_cross == 0,
+        "ambient_oldclass_cross_factor_relative_to_hecke_prime": ambient_cross,
+        "level_p_squared_trace_factor_relative_to_level_p": ambient_trace,
+        "level_difference_factor_relative_to_level_p": level_difference,
+        "raised_oldspace_cross_vanishes_exactly": level_difference == 0,
         "primitive_conductor_exponent": primitive_conductor_exponent,
         "primitive_local_l_factor_degree": local_l_factor_degree,
         "primitive_conductor_p_squared_coefficient_at_p_times_unit_is_zero": (
@@ -10543,7 +10569,8 @@ def physical_exact_valuation_projector_audit(
     This combines the finite oldspace identities with valuation density:
 
     * the unramified unit/unit cell saves ``p^(-(1-theta))``;
-    * conductor-p oldspace raised to p^2 cancels in the unit/unit cell;
+    * conductor-p oldspace raised to p^2 has the corrected absolutely
+      multiplicative Euler factor from the Steinberg audit;
     * conductor-p^2 newvectors have degree-zero local L-factor;
     * if ``p|h*delta``, its exact product-divisor allocation supplies
       one square-density factor p^-1;
@@ -10558,10 +10585,12 @@ def physical_exact_valuation_projector_audit(
     exactly what makes all deeper cells summable at the power-exponent
     level.  Primitive-conductor regrouping replaces the former
     ``5^omega(A)`` tensor bound by the two conductor Euler sums in
-    Section 4.109z.  The custom full-level harmonic large sieve uses
-    HPY (5.13) in its actual range ``P >> spectral_scale^(2+epsilon)``
-    and HPY (5.14) in the complementary range.  This proves physical
-    PEVP with a polylogarithmic tensor cost.
+    Section 4.109z.  A proposed custom full-level harmonic large sieve
+    uses HPY (5.13) in its actual range
+    ``P >> spectral_scale^(2+epsilon)`` and HPY (5.14) in the
+    complementary range.  Those transform formulae do not by themselves
+    prove the required uniform polylogarithmic theorem, so the physical
+    PEVP flags remain false.
     """
     theta = F(ramanujan_theta)
     if theta < 0 or theta >= F(1, 2):
@@ -10569,7 +10598,7 @@ def physical_exact_valuation_projector_audit(
     required = F(1, 2)
     generic = F(1) - theta
     generic_closes = generic >= required
-    raised_cancels = True
+    raised_cancels = False
     conductor_two_zero = True
     bad_density = theta < F(1, 2)
     poisson_denominator = theta < F(1, 2)
@@ -10579,7 +10608,6 @@ def physical_exact_valuation_projector_audit(
     power_covered = all(
         (
             generic_closes,
-            raised_cancels,
             conductor_two_zero,
             bad_density,
             poisson_denominator,
@@ -10604,9 +10632,9 @@ def physical_exact_valuation_projector_audit(
         prime_local_bounds_tensor_with_subpower_cost=tensors,
         bad_gcd_cell_square_multiplicity_base=4,
         divisor_partition_tensor_square_residual_base=5,
-        prime_local_bounds_tensor_with_polylog_cost=True,
+        prime_local_bounds_tensor_with_polylog_cost=False,
         power_exponent_exact_valuation_projector_covered=power_covered,
-        physical_product_exact_valuation_projector_proved=True,
+        physical_product_exact_valuation_projector_proved=False,
         arbitrary_coefficient_exact_valuation_projector_proved=False,
         outer_qct_normalization_aggregated=False,
         whole_mobius_gate_covered=False,
@@ -10749,10 +10777,10 @@ def primitive_conductor_level_difference_audit(
         length_conductor_euler_sum_is_polylogarithmic=True,
         vinogradov_korobov_dominates_subset_overhead=vk_dominates,
         published_large_sieve_has_explicit_polylog_constant=False,
-        custom_full_level_harmonic_large_sieve_has_polylog_constant=True,
+        custom_full_level_harmonic_large_sieve_has_polylog_constant=False,
         primitive_family_is_positive_full_level_subfamily=True,
-        weighted_primitive_large_sieve_proved=True,
-        pevp_proved=True,
+        weighted_primitive_large_sieve_proved=False,
+        pevp_proved=False,
         whole_mobius_gate_covered=False,
     )
 
@@ -11111,7 +11139,7 @@ def full_level_harmonic_large_sieve_audit(
         large_bessel_range_requires_new_estimate=False,
         maass_and_eisenstein_sectors_covered=True,
         holomorphic_sector_covered=True,
-        uniform_polylog_harmonic_large_sieve_proved=True,
+        uniform_polylog_harmonic_large_sieve_proved=False,
     )
 
 
@@ -11129,8 +11157,8 @@ def mwkf_tail_shell_aggregation_audit(
     normalized shell parameters.  PEVP is linear in the coupled kernel
     and its proof uses only a fixed finite set of kernel seminorms.
     A shell beginning at ``L^B`` contributes ``L^(C+7-BJ)`` after the
-    six dyadic and one harmonic-q logarithms.  The PEVP proof is stable
-    in the fixed kernel seminorms used by this ledger.
+    six dyadic and one harmonic-q logarithms.  If a seminorm-stable PEVP
+    theorem is supplied, the ledger closes; it is not supplied here.
     """
     start = F(tail_log_start)
     order = F(seminorm_decay_order)
@@ -11142,7 +11170,7 @@ def mwkf_tail_shell_aggregation_audit(
         raise ValueError("tail start and decay order must be positive")
     aggregation = F(7)
     net = start * order - local_loss - aggregation
-    pevp_available = True
+    pevp_available = False
     closes = pevp_available and net > target
     return MWKFTailShellAggregationAudit(
         tail_log_start=start,
@@ -11171,9 +11199,9 @@ def unconditional_long_mollifier_asymptotic_audit(
 
     The exact completed AFE and common-Mellin Poisson calculation give
     ``I = T*Q + R`` without a truncated-AFE error.  The merged Selberg
-    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  PEVP controls the
-    compact nonzero modes and the seminorm-stable shell argument
-    controls every AFE and transform tail.
+    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  The remaining
+    compact nonzero modes and the seminorm-stable shell argument are
+    conditional on PEVP, which is not proved by this audit.
     """
     projector = primitive_conductor_level_difference_audit(
         level_factor_exponent=F(3),

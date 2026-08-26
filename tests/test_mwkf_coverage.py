@@ -2540,8 +2540,8 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
     coverage_audit.main()
     report = capsys.readouterr().out
     assert (
-        "mwkf_final: status=unconditional asymptotic proved "
-        "theta=3 main=4/3 residual_cells=0 remainder_o_T=True"
+        "mwkf_final: status=analytic remainder gate open "
+        "theta=3 main=4/3 residual_cells=1 remainder_o_T=False"
     ) in report
     assert (
         "large_q_transition: poisson_exchange_second_order="
@@ -4412,15 +4412,17 @@ def test_unramified_prime_oldspace_cross_factor_has_exact_p_saving() -> None:
     assert local["generic_oldspace_cross_has_one_p_factor"]
 
 
-def test_conductor_p_oldspace_cross_vanishes_after_raise_to_p_squared() -> None:
+def test_conductor_p_oldspace_cross_has_correct_ambient_trace_factor() -> None:
     raised = coverage_audit.conductor_p_raised_oldspace_cross_identity(
         prime=5,
         hecke_prime_square=F(1, 5),
     )
-    assert raised["oldclass_gram_denominator"] == F(24, 25)
-    assert raised["oldclass_normalization_squared"] == F(125, 24)
-    assert raised["raised_cross_factor_relative_to_hecke_prime"] == F(0)
-    assert raised["raised_oldspace_cross_vanishes_exactly"]
+    assert raised["oldclass_gram_denominator"] == F(35, 36)
+    assert raised["oldclass_normalization_squared"] == F(36, 35)
+    assert raised["ambient_oldclass_cross_factor_relative_to_hecke_prime"] == F(6, 35)
+    assert raised["level_p_squared_trace_factor_relative_to_level_p"] == F(6, 175)
+    assert raised["level_difference_factor_relative_to_level_p"] == F(169, 175)
+    assert not raised["raised_oldspace_cross_vanishes_exactly"]
     assert raised["primitive_conductor_p_squared_coefficient_at_p_times_unit_is_zero"]
 
 
@@ -4514,13 +4516,17 @@ def test_unramified_exact_level_difference_retains_ramanujan_prime_saving() -> N
     assert bad_bad["level_difference_identity_exact"]
 
 
-def test_steinberg_exact_level_difference_has_closed_square_formula() -> None:
+def test_steinberg_exact_level_difference_has_corrected_square_formula() -> None:
     unit = coverage_audit.steinberg_exact_level_difference_kernel_square(
         prime=5,
         first_index_valuation=0,
         second_index_valuation=1,
     )
-    assert unit["ramanujan_normalized_kernel_square"] == F(1, 5)
+    unit_factor = F(1) - F(6, 25 * 7)
+    assert unit["ambient_oldclass_r_factor"] == F(35, 36)
+    assert unit["level_trace_ratio"] == F(1, 5)
+    assert unit["euler_correction_factor"] == unit_factor
+    assert unit["ramanujan_normalized_kernel_square"] == F(1, 5) * unit_factor**2
     assert unit["required_prime_square_saving_met"]
 
     both = coverage_audit.steinberg_exact_level_difference_kernel_square(
@@ -4528,8 +4534,36 @@ def test_steinberg_exact_level_difference_has_closed_square_formula() -> None:
         first_index_valuation=2,
         second_index_valuation=3,
     )
-    assert both["ramanujan_normalized_kernel_square"] == F(1, 5**5)
+    both_factor = F(1) + F(1, 25 * 7 * 4)
+    assert both["euler_correction_factor"] == both_factor
+    assert both["ramanujan_normalized_kernel_square"] == F(1, 5**5) * both_factor**2
     assert both["closed_formula_exact"]
+    assert not both["previous_target_equality_exact"]
+
+
+def test_corrected_steinberg_formula_does_not_certify_global_pevp() -> None:
+    """The local Euler correction does not prove the global large sieve."""
+    local = coverage_audit.steinberg_exact_level_difference_kernel_square(
+        prime=5,
+        first_index_valuation=0,
+        second_index_valuation=1,
+    )
+    assert local["closed_formula_exact"]
+    assert not local["previous_target_equality_exact"]
+
+    primitive = coverage_audit.primitive_conductor_level_difference_audit(
+        level_factor_exponent=F(3),
+        common_mobius_length_exponent=F(3, 2),
+        fixed_power_margin=F(0),
+    )
+    assert not primitive.weighted_primitive_large_sieve_proved
+    assert not primitive.pevp_proved
+
+    final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
+    assert not final.pevp_proved
+    assert not final.full_remainder_is_little_o_T
+    assert not final.unconditional_asymptotic_proved
+    assert final.residual_cell_count > 0
 
 
 def test_ambient_newform_normalization_indices_are_exact_at_p_and_p_squared() -> None:
@@ -4540,7 +4574,7 @@ def test_ambient_newform_normalization_indices_are_exact_at_p_and_p_squared() ->
     assert index(primitive_level=6, ambient_level=150) == 30
 
 
-def test_primitive_conductor_rearrangement_and_custom_polylog_large_sieve_prove_pevp() -> None:
+def test_primitive_conductor_rearrangement_leaves_polylog_large_sieve_open() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
         "### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate",
@@ -4571,10 +4605,10 @@ def test_primitive_conductor_rearrangement_and_custom_polylog_large_sieve_prove_
     assert audit.vinogradov_korobov_decay_log_exponent == F(3, 5)
     assert audit.vinogradov_korobov_dominates_subset_overhead
     assert not audit.published_large_sieve_has_explicit_polylog_constant
-    assert audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
+    assert not audit.custom_full_level_harmonic_large_sieve_has_polylog_constant
     assert audit.primitive_family_is_positive_full_level_subfamily
-    assert audit.weighted_primitive_large_sieve_proved
-    assert audit.pevp_proved
+    assert not audit.weighted_primitive_large_sieve_proved
+    assert not audit.pevp_proved
 
 
 def test_normalized_level_difference_has_a_positive_square_kernel_not_a_pure_layer() -> None:
@@ -4746,10 +4780,10 @@ def test_ambient_normalization_rejects_the_positive_kernel_as_a_pevp_closure() -
     assert not audit.pevp_proved
 
 
-def test_full_level_harmonic_large_sieve_has_a_polylog_uniform_constant() -> None:
+def test_full_level_harmonic_large_sieve_polylog_constant_is_still_open() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zf Sparse Farey spacing proves the polylog full-level harmonic large sieve",
+        "### 4.109zf Sparse Farey spacing leaves the polylog full-level harmonic large sieve open",
         r"\tag{4.845dc_12}",
         r"\tag{4.845dc_13}",
         r"\tag{4.845dc_14}",
@@ -4775,13 +4809,13 @@ def test_full_level_harmonic_large_sieve_has_a_polylog_uniform_constant() -> Non
     assert not audit.large_bessel_range_requires_new_estimate
     assert audit.maass_and_eisenstein_sectors_covered
     assert audit.holomorphic_sector_covered
-    assert audit.uniform_polylog_harmonic_large_sieve_proved
+    assert not audit.uniform_polylog_harmonic_large_sieve_proved
 
 
-def test_tail_shells_are_summed_with_seminorm_stable_pevp() -> None:
+def test_tail_shell_ledger_remains_conditional_on_seminorm_stable_pevp() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell",
+        "### 4.109zg Seminorm-stable PEVP would sum every AFE and transform tail shell",
         r"\tag{4.845dc_15}",
         r"\tag{4.845dc_16}",
         r"\tag{4.845dc_17}",
@@ -4803,23 +4837,24 @@ def test_tail_shells_are_summed_with_seminorm_stable_pevp() -> None:
     assert audit.time_nonstationary_tail_included
     assert audit.poisson_frequency_tail_included
     assert audit.qct_fourier_mellin_tail_included
-    assert audit.pevp_is_polynomial_in_fixed_kernel_seminorms
-    assert audit.power_far_shells_are_dominated
-    assert audit.polylog_near_shells_are_summable
-    assert audit.transform_tail_aggregated
-    assert audit.afe_tail_aggregated
-    assert audit.total_tail_is_little_o_T
+    assert not audit.pevp_is_polynomial_in_fixed_kernel_seminorms
+    assert not audit.power_far_shells_are_dominated
+    assert not audit.polylog_near_shells_are_summable
+    assert not audit.transform_tail_aggregated
+    assert not audit.afe_tail_aggregated
+    assert not audit.total_tail_is_little_o_T
 
 
-def test_final_theta_three_certificate_combines_main_term_and_full_remainder() -> None:
+def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    assert "unconditional asymptotic proved" not in note
     for marker in (
-        "### 4.109zh The exact main term and full remainder give the unconditional asymptotic",
+        "### 4.109zh The exact main term plus the open remainder gives a conditional asymptotic",
         r"\tag{4.845dc_18}",
         r"\tag{4.845dc_19}",
         r"\tag{4.845dc_20}",
         "unconditional_long_mollifier_asymptotic_audit",
-        "unconditional asymptotic proved",
+        "analytic remainder gate open",
     ):
         assert marker in note
 
@@ -4829,25 +4864,25 @@ def test_final_theta_three_certificate_combines_main_term_and_full_remainder() -
     assert audit.exact_completed_afe_proved
     assert audit.poisson_zero_mode_normalization_proved
     assert audit.lcm_main_term_asymptotic_proved
-    assert audit.pevp_proved
-    assert audit.compact_nonzero_poisson_core_is_little_o_T
-    assert audit.transform_tail_is_little_o_T
-    assert audit.afe_tail_is_little_o_T
+    assert not audit.pevp_proved
+    assert not audit.compact_nonzero_poisson_core_is_little_o_T
+    assert not audit.transform_tail_is_little_o_T
+    assert not audit.afe_tail_is_little_o_T
     assert audit.archimedean_correction_is_beyond_all_powers
-    assert audit.full_remainder_is_little_o_T
-    assert audit.unconditional_asymptotic_proved
-    assert audit.residual_cell_count == 0
-    assert audit.proof_status == "unconditional asymptotic proved"
+    assert not audit.full_remainder_is_little_o_T
+    assert not audit.unconditional_asymptotic_proved
+    assert audit.residual_cell_count == 1
+    assert audit.proof_status == "analytic remainder gate open"
 
 
-def test_physical_exact_valuation_projector_closes_at_polylog_level_via_pls() -> None:
+def test_physical_exact_valuation_projector_has_only_power_level_coverage() -> None:
     projector = coverage_audit.physical_exact_valuation_projector_audit(
         ramanujan_theta=F(7, 64),
     )
     assert projector.required_prime_amplitude_saving_exponent == F(1, 2)
     assert projector.generic_unramified_oldspace_saving_exponent == F(57, 64)
     assert projector.generic_unramified_cell_closes
-    assert projector.conductor_p_raised_oldspace_cancels
+    assert not projector.conductor_p_raised_oldspace_cancels
     assert projector.conductor_p_squared_positive_valuation_vanishes
     assert projector.bad_product_valuation_density_closes
     assert projector.poisson_ramanujan_denominator_closes_positive_valuation
@@ -4857,8 +4892,8 @@ def test_physical_exact_valuation_projector_closes_at_polylog_level_via_pls() ->
     assert projector.bad_gcd_cell_square_multiplicity_base == 4
     assert projector.divisor_partition_tensor_square_residual_base == 5
     assert projector.power_exponent_exact_valuation_projector_covered
-    assert projector.prime_local_bounds_tensor_with_polylog_cost
-    assert projector.physical_product_exact_valuation_projector_proved
+    assert not projector.prime_local_bounds_tensor_with_polylog_cost
+    assert not projector.physical_product_exact_valuation_projector_proved
     assert not projector.arbitrary_coefficient_exact_valuation_projector_proved
     assert not projector.outer_qct_normalization_aggregated
     assert not projector.whole_mobius_gate_covered
@@ -4895,12 +4930,12 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     assert core.net_log_saving == F(3)
     assert core.single_orientation_used_for_all_spectral_components
     assert core.power_exponent_exact_valuation_projector_used
-    assert core.polylog_tensor_projector_gate_proved
+    assert not core.polylog_tensor_projector_gate_proved
     assert core.ratio_gcd_layers_retained_inside_local_gate
-    assert core.nonzero_poisson_core_is_little_o_T
-    assert core.polylogarithmic_transform_tail_aggregated
-    assert core.afe_tail_aggregated
-    assert core.whole_mobius_gate_covered
+    assert not core.nonzero_poisson_core_is_little_o_T
+    assert not core.polylogarithmic_transform_tail_aggregated
+    assert not core.afe_tail_aggregated
+    assert not core.whole_mobius_gate_covered
 
 
 def test_eisenstein_second_moment_reciprocity_does_not_yet_prove_slf() -> None:
