@@ -101,4 +101,4 @@
 - [x] Expand the uncollapsed product kernel and separate the genuine central arc from noncentral rational arcs.
 - [x] Test whether the resulting equation has a usable Type I/II factorization retaining all four Möbius weights.
 - [x] Map the remaining estimate against primary literature without importing a withdrawn or mismatched theorem.
-- [ ] Run focused and repository-wide verification; update the Ready-for-view PR only for a materially new exact reduction or proved estimate.
+- [x] Run focused and repository-wide verification; update the Ready-for-view PR only for a materially new exact reduction or proved estimate.
