@@ -21007,6 +21007,98 @@ centered_product_energy_estimate_proved and unconditional_coverage
 false.  The remaining named sufficient gate is
 polylog_slope_averaged_affine_chowla.
 
+### 4.109zjaced2 Prime valuations block the ordinary-shift shortcut
+
+There is a tempting further reindexing which is valid on only one
+valuation stratum.  Suppress the harmless separated parameter and write
+
+\[
+ A_P(n)=\sum_{ms=n}c_P(m)f(s),
+ \qquad
+ f(s)=\mu(s)\prod_{p\mid s}\frac p{p+1}.
+\tag{4.845dc_14xq_35w45}
+\]
+
+Because (f) is supported on squarefree integers, if
+(R=\operatorname{rad}(n)), finite divisor reindexing gives the exact
+identity
+
+\[
+ \boxed{
+ A_P(n)=\sum_{s\mid\operatorname{rad}(n)}
+ c_P(n/s)f(s).}
+\tag{4.845dc_14xq_35w46}
+\]
+
+Equivalently, at every (p^v\Vert n), an active factorization has
+
+\[
+ (v_p(m),v_p(s))\in\{(v,0),(v-1,1)\}.
+\tag{4.845dc_14xq_35w47}
+\]
+
+When (n) is squarefree, both factors are squarefree and coprime, so
+
+\[
+ \mu(s)=\mu(m)\mu(n).
+\tag{4.845dc_14xq_35w48}
+\]
+
+Only on this stratum can the correlation be rewritten as an ordinary
+(\mu(n)\mu(n-\delta)) shifted correlation with divisor weights.  For
+(v\ge2), the second choice in (4.845dc_14xq_35w47) has
+(p\mid(m,s)), while the first choice permits a squareful
+multiplicand.  In both cases (mu(n)=0), but (A_P(n)) need not
+vanish.  A literal endpoint-weight fixture is
+
+\[
+ \begin{aligned}
+ n&=12,\qquad
+ c_P(2)=c_P(4)=c_P(6)=c_P(12)=1,\\
+ A_P(12)
+ &=f(6)+f(3)+f(2)+f(1)\\
+ &=\frac12-\frac34-\frac23+1
+ =\boxed{\frac1{12}},
+ \qquad \mu(12)=0.
+ \end{aligned}
+\tag{4.845dc_14xq_35w49}
+\]
+
+The omitted support is not an (o(1))-density exceptional set.  For a
+fixed prime (p), the local density of
+(p\mid m) and (v_p(s)=1) is
+
+\[
+ \frac1p\left(\frac1p-\frac1{p^2}\right)
+ =\frac{p-1}{p^3}.
+\tag{4.845dc_14xq_35w50}
+\]
+
+Multiplying the squarefree Euler densities at the other primes gives
+
+\[
+ \boxed{
+ \operatorname{dens}\{p\mid m,\ v_p(s)=1,\ \mu^2(s)=1\}
+ =\frac{1}{p(p+1)\zeta(2)}>0.}
+\tag{4.845dc_14xq_35w51}
+\]
+
+Likewise the local event (p^2\mid m, p\nmid s) has density
+((p-1)/p^3) before the Euler factors away from (p).  Hence neither
+the overlap layer nor the squareful-multiplicand layer may be removed by
+an absolute tail estimate.  A successful ordinary-shift route would
+have to prove and then recombine a theorem for every valuation pattern;
+doing only (4.845dc_14xq_35w48) does not prove
+(\mathrm{LCPE}_2).
+
+The helpers product_lift_valuation_decomposition and
+large_q_product_lift_valuation_audit verify (4.845dc_14xq_35w46)--
+(4.845dc_14xq_35w49) on exact rational fixtures, record the positive
+Euler density (4.845dc_14xq_35w51), and keep the centered-product-energy
+and unconditional-coverage flags false.  The honest version of the
+affine sufficient gate must retain the full prime-valuation tensor; it
+is named full_valuation_polylog_affine_chowla in the audit.
+
 ### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
 
 The July 2026 bilinear Kloosterman theorem of

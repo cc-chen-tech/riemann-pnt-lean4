@@ -23,7 +23,9 @@ from scripts.audit_mwkf_ranges import (
     is_admissible,
 )
 from scripts.mwkf_mobius_type_identity import (
+    endpoint_weighted_mobius,
     mobius,
+    product_lift_valuation_decomposition,
     split_mobius_identity,
 )
 
@@ -2559,6 +2561,27 @@ class LargeQAffineChowlaGcdSplitAudit:
     higher_uniformity_requires_fixed_positive_power_shift: bool
     physical_shift_has_zero_power_exponent: bool
     higher_uniformity_published_adapter_applies: bool
+    remaining_gate: str
+    centered_product_energy_estimate_proved: bool
+    unconditional_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class LargeQProductLiftValuationAudit:
+    squarefree_witness_product: int
+    squarefree_product_rewrite_exact: bool
+    nonsquarefree_witness_product: int
+    nonsquarefree_witness_coefficient: Fraction
+    nonsquarefree_witness_mobius: int
+    nonsquarefree_product_coefficient_survives: bool
+    prime_fixture: int
+    overlap_local_euler_density: Fraction
+    overlap_global_density_formula: str
+    overlap_stratum_has_positive_density: bool
+    squareful_multiplicand_stratum_has_positive_density: bool
+    nonsquarefree_strata_are_absolutely_negligible: bool
+    ordinary_shifted_chowla_rewrite_covers_product_lift: bool
     remaining_gate: str
     centered_product_energy_estimate_proved: bool
     unconditional_coverage: bool
@@ -17012,6 +17035,88 @@ def large_q_affine_chowla_gcd_split_audit(
     )
 
 
+def large_q_product_lift_valuation_audit(
+    *, prime_fixture: int
+) -> LargeQProductLiftValuationAudit:
+    """Check whether the critical product lift is an ordinary Mobius shift.
+
+    For ``n=m*s`` with the endpoint coefficient supported on squarefree
+    ``s``, put ``R=rad(n)``.  Exact divisor reindexing gives
+
+      ``A_P(n)=sum_(s|R) c_P(n/s) f(s)``.
+
+    If ``n`` is squarefree, every factor pair is coprime and squarefree,
+    so ``mu(s)=mu(m)mu(n)``.  If ``p^2|n``, the admissible valuation pair
+    ``(v_p(m),v_p(s))=(v_p(n)-1,1)`` overlaps the factors.  There is also
+    a squareful-multiplicand cell with ``v_p(s)=0``.  Neither cell factors
+    through ``mu(n)``, which vanishes.
+
+    These are not sparse support errors.  At a fixed prime, the local
+    density of ``p|m`` and ``v_p(s)=1`` is ``(p-1)/p^3``.  Multiplying by
+    the squarefree Euler factors away from p gives the global support
+    density ``1/(p*(p+1)*zeta(2))``.  The squareful-multiplicand event
+    ``p^2|m, p not|s`` has the same positive local density.  Thus an
+    ordinary shifted-Chowla theorem for ``mu(n)mu(n-delta)`` covers only
+    one genuine stratum of LCPE2.
+    """
+    p = int(prime_fixture)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime fixture must be prime")
+
+    nonsquarefree_multiplicands = {
+        divisor: F(1) for divisor in (2, 4, 6, 12)
+    }
+    nonsquarefree_reduced = {
+        divisor: endpoint_weighted_mobius(divisor)
+        for divisor in (1, 2, 3, 6)
+    }
+    nonsquarefree = product_lift_valuation_decomposition(
+        product=12,
+        multiplicand_coefficients=nonsquarefree_multiplicands,
+        reduced_coefficients=nonsquarefree_reduced,
+    )
+
+    squarefree_divisors = (1, 2, 3, 5, 6, 10, 15, 30)
+    squarefree = product_lift_valuation_decomposition(
+        product=30,
+        multiplicand_coefficients={divisor: F(1) for divisor in squarefree_divisors},
+        reduced_coefficients={
+            divisor: endpoint_weighted_mobius(divisor)
+            for divisor in squarefree_divisors
+        },
+    )
+    local_density = F(p - 1, p**3)
+    nonsquarefree_survives = (
+        nonsquarefree.product_mobius == 0
+        and nonsquarefree.direct_coefficient != 0
+        and nonsquarefree.direct_coefficient
+        == nonsquarefree.reindexed_coefficient
+    )
+    return LargeQProductLiftValuationAudit(
+        squarefree_witness_product=30,
+        squarefree_product_rewrite_exact=(
+            squarefree.coefficient_factors_through_product_mobius
+        ),
+        nonsquarefree_witness_product=12,
+        nonsquarefree_witness_coefficient=nonsquarefree.direct_coefficient,
+        nonsquarefree_witness_mobius=nonsquarefree.product_mobius,
+        nonsquarefree_product_coefficient_survives=nonsquarefree_survives,
+        prime_fixture=p,
+        overlap_local_euler_density=local_density,
+        overlap_global_density_formula="1/(p*(p+1)*zeta(2))",
+        overlap_stratum_has_positive_density=(local_density > 0),
+        squareful_multiplicand_stratum_has_positive_density=(
+            local_density > 0
+        ),
+        nonsquarefree_strata_are_absolutely_negligible=False,
+        ordinary_shifted_chowla_rewrite_covers_product_lift=False,
+        remaining_gate="full_valuation_polylog_affine_chowla",
+        centered_product_energy_estimate_proved=False,
+        unconditional_coverage=False,
+        source="exact product-divisor reindexing and prime Euler densities",
+    )
+
+
 def eisenstein_common_ramification_average_audit(
     *,
     frequency_length: int,
@@ -27242,6 +27347,30 @@ def main() -> None:
         f"all_cells={transport.all_parameter_cells_covered} "
         "asymptotic="
         f"{transport.full_long_mollifier_asymptotic_proved}"
+    )
+    valuation = large_q_product_lift_valuation_audit(prime_fixture=2)
+    print(
+        "large_q_endpoint: product_lift_valuation="
+        f"squarefree_n={valuation.squarefree_witness_product} "
+        f"squarefree_rewrite={valuation.squarefree_product_rewrite_exact} "
+        f"nonsquarefree_n={valuation.nonsquarefree_witness_product} "
+        "nonsquarefree_coefficient="
+        f"{_fmt(valuation.nonsquarefree_witness_coefficient)} "
+        f"mu={valuation.nonsquarefree_witness_mobius} "
+        f"survives={valuation.nonsquarefree_product_coefficient_survives} "
+        f"prime={valuation.prime_fixture} "
+        f"local_density={_fmt(valuation.overlap_local_euler_density)} "
+        f"global_density={valuation.overlap_global_density_formula} "
+        f"overlap_positive={valuation.overlap_stratum_has_positive_density} "
+        "squareful_positive="
+        f"{valuation.squareful_multiplicand_stratum_has_positive_density} "
+        "absolute_negligible="
+        f"{valuation.nonsquarefree_strata_are_absolutely_negligible} "
+        "ordinary_shift="
+        f"{valuation.ordinary_shifted_chowla_rewrite_covers_product_lift} "
+        f"remaining={valuation.remaining_gate} "
+        f"centered={valuation.centered_product_energy_estimate_proved} "
+        f"covered={valuation.unconditional_coverage}"
     )
     blomer_pascadi = blomer_pascadi_hard_box_audit()
     print(

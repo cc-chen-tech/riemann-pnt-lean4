@@ -43,6 +43,28 @@ class CoprimeDivisorPairIdentity:
 
 
 @dataclass(frozen=True)
+class ProductLiftValuationDecomposition:
+    product: int
+    direct_coefficient: Fraction
+    reindexed_coefficient: Fraction
+    product_mobius: int
+    product_is_squarefree: bool
+    coefficient_factors_through_product_mobius: bool
+    overlap_primes: tuple[int, ...]
+    factorizations: tuple[
+        tuple[
+            int,
+            int,
+            Fraction,
+            tuple[tuple[int, int, int], ...],
+            tuple[int, ...],
+            bool,
+        ],
+        ...,
+    ]
+
+
+@dataclass(frozen=True)
 class ProportionalDiagonalCoordinates:
     sign: int
     common_n_factor: int
@@ -534,6 +556,127 @@ def product_lift_shifted_correlation(
             for product, left_weight in left.items()
         ),
         start=Fraction(0),
+    )
+
+
+def product_lift_valuation_decomposition(
+    *,
+    product: int,
+    multiplicand_coefficients: dict[int, Fraction],
+    reduced_coefficients: dict[int, Fraction],
+) -> ProductLiftValuationDecomposition:
+    """Split one product-lift coefficient into exact prime strata.
+
+    The endpoint reduced coefficient is supported on squarefree integers.
+    If ``m*s=n`` and ``s`` is squarefree, then at every ``p^v || n``
+    the only valuation pairs are ``(v_p(m),v_p(s))=(v,0)`` or
+    ``(v-1,1)``.  The latter overlaps the two factors when ``v>=2``.
+
+    Only the squarefree-product stratum admits the ordinary-shift rewrite
+
+      ``mu(s)=mu(m)*mu(n)``.
+
+    In particular a nonzero coefficient at a nonsquarefree ``n`` cannot
+    be represented as ``mu(n)`` times a finite divisor coefficient.
+    """
+    n = int(product)
+    if n <= 0:
+        raise ValueError("product must be positive")
+    for reduced, coefficient in reduced_coefficients.items():
+        if reduced <= 0:
+            raise ValueError("reduced variables must be positive")
+        if coefficient and mobius(reduced) == 0:
+            raise ValueError("nonzero reduced coefficients must be squarefree")
+
+    primes = _distinct_prime_factors(n)
+
+    def valuation(value: int, prime: int) -> int:
+        exponent = 0
+        while value % prime == 0:
+            value //= prime
+            exponent += 1
+        return exponent
+
+    direct = sum(
+        multiplicand_weight * reduced_weight
+        for multiplicand, multiplicand_weight in multiplicand_coefficients.items()
+        for reduced, reduced_weight in reduced_coefficients.items()
+        if multiplicand * reduced == n
+    )
+    terms = []
+    for reduced in divisors(n):
+        multiplicand = n // reduced
+        if multiplicand not in multiplicand_coefficients:
+            continue
+        if reduced not in reduced_coefficients:
+            continue
+        coefficient = (
+            multiplicand_coefficients[multiplicand]
+            * reduced_coefficients[reduced]
+        )
+        if coefficient == 0:
+            continue
+        valuation_pairs = tuple(
+            (
+                prime,
+                valuation(multiplicand, prime),
+                valuation(reduced, prime),
+            )
+            for prime in primes
+        )
+        overlap = tuple(
+            prime
+            for prime, multiplicand_valuation, reduced_valuation in valuation_pairs
+            if multiplicand_valuation and reduced_valuation
+        )
+        ordinary_shift_legal = (
+            mobius(multiplicand) != 0
+            and mobius(reduced) != 0
+            and not overlap
+        )
+        terms.append(
+            (
+                multiplicand,
+                reduced,
+                coefficient,
+                valuation_pairs,
+                overlap,
+                ordinary_shift_legal,
+            )
+        )
+
+    terms.sort(key=lambda term: term[0])
+    reindexed = sum((term[2] for term in terms), start=Fraction(0))
+    overlap_primes = tuple(
+        sorted({prime for term in terms for prime in term[4]})
+    )
+    product_mu = mobius(n)
+    squarefree = product_mu != 0
+    factorization_identity = False
+    if squarefree:
+        quotient_sum = sum(
+            (
+                multiplicand_coefficients[multiplicand]
+                * mobius(multiplicand)
+                * reduced_coefficients[reduced]
+                / mobius(reduced)
+            )
+            for multiplicand, reduced, *_ in terms
+        )
+        factorization_identity = (
+            all(term[-1] for term in terms)
+            and reindexed == product_mu * quotient_sum
+        )
+
+    return ProductLiftValuationDecomposition(
+        product=n,
+        direct_coefficient=direct,
+        reindexed_coefficient=reindexed,
+        product_mobius=product_mu,
+        product_is_squarefree=squarefree,
+        coefficient_factors_through_product_mobius=factorization_identity,
+        overlap_primes=overlap_primes,
+        factorizations=tuple(terms),
     )
 
 

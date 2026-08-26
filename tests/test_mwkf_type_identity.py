@@ -437,6 +437,56 @@ def test_product_lift_is_exact_for_the_growing_zeta_shift_family() -> None:
     assert lifted == direct
 
 
+def test_product_lift_valuation_split_exposes_a_nonsquarefree_survivor() -> None:
+    """Ordinary shifted Chowla sees only the squarefree-product stratum."""
+    adapter = getattr(
+        type_identity,
+        "product_lift_valuation_decomposition",
+        None,
+    )
+    assert adapter is not None, "product-lift valuation audit is missing"
+
+    multiplicands = {2: F(1), 4: F(1), 6: F(1), 12: F(1)}
+    reduced = {
+        divisor: type_identity.endpoint_weighted_mobius(divisor)
+        for divisor in (1, 2, 3, 6)
+    }
+    nonsquarefree = adapter(
+        product=12,
+        multiplicand_coefficients=multiplicands,
+        reduced_coefficients=reduced,
+    )
+    assert nonsquarefree.direct_coefficient == F(1, 12)
+    assert nonsquarefree.reindexed_coefficient == F(1, 12)
+    assert nonsquarefree.product_mobius == 0
+    assert not nonsquarefree.product_is_squarefree
+    assert not nonsquarefree.coefficient_factors_through_product_mobius
+    assert nonsquarefree.overlap_primes == (2,)
+    assert nonsquarefree.factorizations == (
+        (2, 6, F(1, 2), ((2, 1, 1), (3, 0, 1)), (2,), False),
+        (4, 3, F(-3, 4), ((2, 2, 0), (3, 0, 1)), (), False),
+        (6, 2, F(-2, 3), ((2, 1, 1), (3, 1, 0)), (2,), False),
+        (12, 1, F(1), ((2, 2, 0), (3, 1, 0)), (), False),
+    )
+
+    squarefree_multiplicands = {
+        divisor: F(1) for divisor in (1, 2, 3, 5, 6, 10, 15, 30)
+    }
+    squarefree_reduced = {
+        divisor: type_identity.endpoint_weighted_mobius(divisor)
+        for divisor in squarefree_multiplicands
+    }
+    squarefree = adapter(
+        product=30,
+        multiplicand_coefficients=squarefree_multiplicands,
+        reduced_coefficients=squarefree_reduced,
+    )
+    assert squarefree.product_is_squarefree
+    assert squarefree.coefficient_factors_through_product_mobius
+    assert squarefree.overlap_primes == ()
+    assert all(term[-1] for term in squarefree.factorizations)
+
+
 def test_q_restricted_full_divisor_sum_is_a_sparse_von_mangoldt_signature() -> None:
     """The completed endpoint divisor sum sees only the q-free part."""
     for q in range(1, 25):

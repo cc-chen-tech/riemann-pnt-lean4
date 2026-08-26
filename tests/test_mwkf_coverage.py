@@ -6928,6 +6928,42 @@ def test_large_q_affine_chowla_split_discards_large_gcd_but_rejects_mrt() -> Non
     assert not audit.unconditional_coverage
 
 
+def test_product_lift_prime_strata_reject_plain_shifted_chowla() -> None:
+    """A positive-density nonsquarefree layer survives the product lift."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_product_lift_valuation_audit",
+        None,
+    )
+    assert adapter is not None, "product-lift valuation coverage audit is missing"
+    audit = adapter(prime_fixture=2)
+    assert audit.squarefree_witness_product == 30
+    assert audit.squarefree_product_rewrite_exact
+    assert audit.nonsquarefree_witness_product == 12
+    assert audit.nonsquarefree_witness_coefficient == F(1, 12)
+    assert audit.nonsquarefree_witness_mobius == 0
+    assert audit.nonsquarefree_product_coefficient_survives
+    assert audit.prime_fixture == 2
+    assert audit.overlap_local_euler_density == F(1, 8)
+    assert audit.overlap_global_density_formula == "1/(p*(p+1)*zeta(2))"
+    assert audit.overlap_stratum_has_positive_density
+    assert audit.squareful_multiplicand_stratum_has_positive_density
+    assert not audit.nonsquarefree_strata_are_absolutely_negligible
+    assert not audit.ordinary_shifted_chowla_rewrite_covers_product_lift
+    assert audit.remaining_gate == "full_valuation_polylog_affine_chowla"
+    assert not audit.centered_product_energy_estimate_proved
+    assert not audit.unconditional_coverage
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced2 Prime valuations block the ordinary-shift shortcut",
+        r"A_P(n)=\sum_{s\mid\operatorname{rad}(n)}",
+        r"\frac{1}{p(p+1)\zeta(2)}",
+        "large_q_product_lift_valuation_audit",
+    ):
+        assert marker in note
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
