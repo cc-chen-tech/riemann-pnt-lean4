@@ -473,6 +473,8 @@ lean_lib RiemannPNT where
     `Test.HadamardThreeLinesSquaredContract,
     `PrimeNumberTheorem.CarlsonGaussianHilbertSection,
     `Test.CarlsonGaussianHilbertSectionContract,
+    `PrimeNumberTheorem.CarlsonGaussianHilbertMemLp,
+    `Test.CarlsonGaussianHilbertMemLpContract,
     `HardyTheorem.TwoScaleSelbergMollifier,
     `Test.TwoScaleSelbergMollifierContract,
     `PrimeNumberTheorem.CarlsonTwoScaleDetector,
