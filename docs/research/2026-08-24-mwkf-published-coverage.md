@@ -1117,3 +1117,68 @@ The exact boundary helper, phase ledger, and scale audit are
 `beatty_sector_fourier_type_phase_ledger`, and
 `beatty_type_i_additive_large_sieve_audit`.  Only the boundary row is
 marked proved; the continuous joint Type-I/II spectrum remains open.
+
+The continuous phase has a stronger exact form once the original AFE
+oscillator is restored.  With \(\alpha=\xi+jQ\), \(A=h\delta\), and
+\(r=dp=ks+w\),
+
+\[
+ e_s(\alpha w-A\bar r)
+ =e_s(\alpha dp-A\bar d\bar p).
+ \tag{6.16}
+\]
+
+Hence the prime-bearing variable is a nonhomogeneous Kloosterman trace,
+not the additive phase used in the deliberately weaker audit (6.15).
+The direct and inverse coefficients are units simultaneously precisely
+when
+
+\[
+ (\alpha h\delta,s)=1.
+ \tag{6.17}
+\]
+
+Write \(s=T^\sigma,d=T^u,p=T^{\sigma-u}\).  The focused published
+coverage is:
+
+| modulus/range | theorem | relative saving | coupled-gate result |
+|---|---|---:|---|
+| composite \(s\), \(0\leq u<\sigma/4\) | Korolev, arXiv:1911.09981, Theorem 1 | at most \(T^{\sigma/35}\) | insufficient |
+| prime \(s\), \(0\leq u<\sigma/4\) | FKM Theorem 1.5 | limiting \(T^{\sigma/24}\) | insufficient |
+| prime \(s\), \(3\sigma/4<u\leq\sigma\) | FKM Theorem 1.7 | limiting \(T^{\sigma/24}\) | insufficient |
+| composite \(s\), \(3\sigma/4<u\leq\sigma\) | multiplicative trace estimate | logarithmic uniformly | no power coverage |
+| all \(s\), \(\sigma/4\leq u\leq3\sigma/4\) | bilinear Type II required | none applicable | unproved |
+
+For reference, Korolev's exact left-wing exponent is
+
+\[
+ \eta_{\rm Kor}=
+ \begin{cases}
+ (\sigma-3u)/35,&0\leq u\leq\sigma/8,\\
+ (\sigma/4-u)/7,&\sigma/8\leq u\leq\sigma/4,
+ \end{cases}
+ \tag{6.18}
+\]
+
+whereas the FKM limiting prime-modulus exponent is
+
+\[
+ \eta_{\rm FKM}=\sigma/24-u/6.
+ \tag{6.19}
+\]
+
+At \(\sigma=1,u=0\), the residual amplitude deficits are therefore
+
+\[
+ \frac12-\frac1{24}=\frac{11}{24},\qquad
+ \frac12-\frac1{35}=\frac{33}{70}.
+ \tag{6.20}
+\]
+
+Neither theorem provides the joint moment over the squarefree composite
+modulus \(s\), the sector frequency \(\xi\), and the factored numerator
+\(h\delta\).  Thus (6.16) corrects the theorem class to be targeted, but
+does not mark any full coupled-kernel row proved.  The executable phase
+and exponent audits are beatty_afe_type_kloosterman_phase_ledger,
+korolev_prime_kloosterman_type_i_audit, and
+fkm_prime_modulus_kloosterman_type_i_audit.

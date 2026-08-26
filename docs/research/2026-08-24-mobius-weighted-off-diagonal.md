@@ -11548,6 +11548,163 @@ The exponent helper beatty_type_i_additive_large_sieve_audit verifies
 (9.516).  It deliberately keeps the continuous Type-I/II coverage flag
 false; only the Fourier-boundary row has now been closed.
 
+### 9.77 The continuous harmonic restores the full Kloosterman phase
+
+The direct phase in (9.513) must not be estimated after discarding the
+phase already present in the AFE packet.  Put
+
+\[
+ \alpha=\xi+jQ,\qquad A=h\delta,\qquad r=dp=ks+w.
+\]
+
+Since \((r,s)=1\), both \(d\) and \(p\) are units modulo \(s\).  The
+product of the sector harmonic and the original Poisson phase is exactly
+
+\[
+ \boxed{
+ e_s(\alpha w-A\bar r)
+ =e_s(\alpha dp-A\bar d\bar p).}
+ \tag{9.517}
+\]
+
+Thus, after fixing the Type divisor \(d\), the prime-bearing factor is
+not a merely additive sum.  Its actual scalar core is
+
+\[
+ \boxed{
+ \sum_p\Lambda(p)V(p/P)
+ e_s(Bp+C\bar p),\qquad
+ B=\alpha d,\quad C=-A\bar d.}
+ \tag{9.518}
+\]
+
+Both Möbius factors \(\mu(s)\mu(d)\), the factorization
+\(A=h\delta\), and every outer packet label remain outside this displayed
+prime sum.  Moreover multiplication by the unit \(d\) gives the exact
+conductor condition
+
+\[
+ \boxed{(BC,s)=1\quad\Longleftrightarrow\quad(\alpha A,s)=1.}
+ \tag{9.519}
+\]
+
+Nonunit strata therefore require their genuine reduced modulus; they
+cannot be inserted into a unit-coefficient theorem by deleting a gcd.
+
+This exact phase permits a sharper published-coverage audit.  Write
+
+\[
+ s=T^\sigma,\qquad d=T^u,\qquad P=T^\pi,
+ \qquad \pi=\sigma-u.
+ \tag{9.520}
+\]
+
+Korolev's composite-modulus prime-Kloosterman theorem
+(arXiv:1911.09981, Theorem 1) applies on the unit stratum when
+\(3\sigma/4<\pi\leq3\sigma/2\).  Ignoring the theorem's fixed positive
+endpoint epsilon, its relative saving exponent is
+
+\[
+ \eta_{\rm Kor}(\sigma,u)
+ =\min\left(\frac{\sigma/4-u}{7},
+             \frac{\sigma-3u}{35}\right)
+ =\begin{cases}
+ (\sigma-3u)/35,&0\leq u\leq\sigma/8,\\
+ (\sigma/4-u)/7,&\sigma/8\leq u\leq\sigma/4.
+ \end{cases}
+ \tag{9.521}
+\]
+
+In particular its most favorable full-length saving is only
+\(\eta_{\rm Kor}(\sigma,0)=\sigma/35\).
+
+For prime \(s\), the phase \(e_s(Bx+C\bar x)\), with \(C\ne0\), is a
+bounded-conductor nonexceptional trace weight.  The smoothed form of
+Fouvry--Kowalski--Michel Theorem 1.5 gives, for every \(\eta<1/24\),
+
+\[
+ \sum_{p\ \mathrm{prime}}e_s(Bp+C\bar p)V(p/P)
+ \ll P(1+s/P)^{1/6}s^{-\eta}.
+ \tag{9.522}
+\]
+
+Consequently its *limiting*, not attained, saving exponent on the left
+Type-I wing is
+
+\[
+ \boxed{
+ \eta_{\rm FKM}(\sigma,u)
+ =\frac{\sigma}{24}-\frac u6,qquad 0\leq u<\sigma/4.}
+ \tag{9.523}
+\]
+
+The Möbius version of the same theorem gives the symmetric prime-modulus
+right wing \(3\sigma/4<u\leq\sigma\), after fixing the prime-bearing
+factor.  Prime powers of exponent at least two in \(\Lambda\) must be
+removed separately; their support has square-root cardinality and is not
+part of the prime theorem.
+
+The exact one-factor coverage table is therefore:
+
+| modulus and Type range | published input | best pointwise saving | status for the coupled gate |
+|---|---|---:|---|
+| composite squarefree \(s\), \(0\leq u<\sigma/4\), \((\alpha A,s)=1\) | Korolev prime-Kloosterman | at most \(T^{\sigma/35}\) | quantitatively insufficient; no joint \(s,\alpha,A\) moment |
+| prime \(s\), \(0\leq u<\sigma/4\) | FKM prime trace theorem | supremum \(T^{\sigma/24}\) | quantitatively insufficient and covers no composite-modulus aggregate |
+| prime \(s\), \(3\sigma/4<u\leq\sigma\) | FKM Möbius trace theorem | supremum \(T^{\sigma/24}\) | same mismatch after fixing the short prime factor |
+| composite \(s\), \(3\sigma/4<u\leq\sigma\) | Korolev multiplicative-coefficient theorem | logarithmic in the uniform composite case | no power coverage |
+| every \(s\), \(\sigma/4\leq u\leq3\sigma/4\) | genuinely bilinear trace Type II | no applicable one-variable theorem | **unproved central band** |
+
+At the critical face \(\sigma=1\), the coupled projector needs a
+half-power before squaring.  Even the best prime-modulus pointwise row
+leaves
+
+\[
+ \frac12-\frac1{24}=\frac{11}{24},
+ \tag{9.524}
+\]
+
+while the uniform composite row leaves
+\(1/2-1/35=33/70\).  Applying these estimates independently on the two
+sides of the energy doubles both the obtained and required exponents and
+does not change the deficit.  More importantly, termwise application
+would sum over \(s,\alpha,h,\delta\) absolutely and discard the exact
+coupling which the target is required to exploit.
+
+Hence (9.517) changes the correct analytic interface but does not prove
+the gate.  After removing the boundary already controlled in (9.515),
+the corresponding positive continuous gate can now be stated more
+narrowly.  With \(c_{\xi,j}\) as in (9.511), it is
+
+\[
+ \boxed{
+ \frac1Q\sum_{\xi=1}^{Q-1}
+ \left\|
+ \sum_s\mu(s)\sum_{h,\delta}\sum_{dp\asymp s}
+ \mu(d)\Lambda(p)\sum_{j\in\mathbb Z}c_{\xi,j}
+ \mathcal W_{s,\xi,j,h,\delta,d,p}
+ e_s((\xi+jQ)dp-h\delta\bar d\bar p)
+ \right\|_{\mathcal H}^{2}
+ \ll T^{2+\varepsilon}.}
+ \tag{9.525}
+\]
+
+Here \(\mathcal W\) includes the original smooth dyadic and reflected
+packet labels, the relation \(dp=ks+w\), and the nonboundary condition
+\(s\nmid Qw\).  Expanding the norm produces all four signed Type cross
+blocks; none has been removed before the final square.  Formula (9.525)
+is the exact Fourier form of the continuous part of the supplied
+centered sector gate, not a scalar surrogate and not yet an exhaustive
+adapter from every packet in (4.5).  The middle band in the table is its
+irreducible Type-II part; the outer wings are not independently
+disposable because their published savings do not pay the global
+half-power.
+
+The finite helper beatty_afe_type_kloosterman_phase_ledger verifies
+(9.517)--(9.519), including the equivalence of the unit conditions.  The
+helpers korolev_prime_kloosterman_type_i_audit and
+fkm_prime_modulus_kloosterman_type_i_audit verify (9.521)--(9.524) over
+exact rational exponents and keep the coupled-gate coverage flags false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -11681,7 +11838,13 @@ sector Fourier formula (9.510)--(9.515) now closes every primitive
 half-jump boundary by a one-entry-per-sector bijection.  The remaining
 continuous harmonics have the direct Type phase \(e(adp/s)\), but the
 standard additive-large-sieve ledger (9.516) is still one full power of
-energy above target.**
+energy above target.  Recombining that harmonic with the retained
+\(h\delta\)-inverse phase gives the genuine nonhomogeneous Kloosterman
+phase (9.517).  The focused coverage table (9.520)--(9.524) shows that
+published pointwise Type-I estimates cover only the outer factor wings
+and save at most \(1/24\) on prime moduli or \(1/35\) uniformly on
+composite moduli; the central Type-II band and the required joint
+\(s,\xi,h\delta\) moment remain unproved.**
 
 Proved in this note:
 
@@ -11914,6 +12077,14 @@ Proved in this note:
   \(e(adp/s)\).  Standard additive large sieve applied after Cauchy still
   has energy exponent \(3\) at the balanced face instead of the target
   \(2\), so the continuous Type-I/II estimate remains unproved.
+* the exact recombination of the sector harmonic with the AFE inverse
+  phase, (9.517)--(9.519), and the resulting one-factor coverage
+  polytope (9.520)--(9.524).  The prime-bearing phase is
+  \(e_s(\alpha dp-h\delta\bar d\bar p)\), with both Möbius factors and
+  the factorization \(h\delta\) retained.  Korolev's composite-modulus
+  theorem saves at most \(1/35\), while the FKM prime-modulus trace
+  theorem has limiting saving \(1/24\); neither supplies the required
+  joint half-power, and the central bilinear Type-II band is uncovered.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -12184,6 +12355,7 @@ Proved in this note:
 | Label-safe Type-entry determinant | internal zero orbit recombined; nonzero entry determinant unproved | The auxiliary sector character is \(\xi\), not \(a_{\rm AFE}=h\delta\), and all original packet labels remain in the row, (9.469)--(9.471).  A common Beatty sector is one common Euclidean quotient and obeys \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\), (9.472)--(9.477).  All \(dm=r\) cross factorizations must be recombined by the Möbius-log identity (9.478)--(9.481).  This makes the nonprincipal \(\Delta_{\rm Type}=0\) part exactly \((1-M^{-1})D_{\rm cont}\), already at diagonal power, (9.482); the extra power is confined to \(\Delta_{\rm Type}\ne0\), which is not estimated |
 | Moving-Beatty fixed-function and labelled Type split | structured slope sampling proved; exact centered positive projector isolated; moving-grid Hilbert square unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot directly encode the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\).  The zero blocks recombine, and (9.489) makes the complete packet an exact projector square.  Therefore only the one-sided joint upper gate \({\rm JNT}_{2}^{+}\), (9.491), is needed after the diagonal estimate.  Reindexing by \(n=rs\) further gives one fixed \(\mu(n)\) and an \(O(1)\) product-sector fiber, (9.494)--(9.497), but the vector weight remains factorization-dependent.  The Sobolev/divisor argument (9.498)--(9.503) proves \(T^\varepsilon\)-loss sampling on the reciprocal grid for every fixed Hilbert family.  Finally, (9.504)--(9.508) identify the exact centered positive moving-Beatty projector sufficient for the signed one-sided gate; it still needs one power of energy saving, and the exhaustive packet map remains unproved |
 | Primitive Beatty Fourier boundary | exact half-jump closure; continuous Type spectrum unproved | The exact sector-step expansion (9.510)--(9.512) has harmonics \(a=\xi+jQ\) and a half-jump term.  On primitive entries the boundary condition is equivalent to \(s\mid Q\), and (9.513)--(9.515) give a bijection with the \(Q\) sectors.  After label recombination the centered boundary is bounded by the known continuous diagonal.  The continuous harmonics retain both Möbius factors and the full \(h\delta\) labels through the phase \(e(adp/s)\), but standard additive large sieve still loses one energy power by (9.516) |
+| Sector--AFE Kloosterman Type polytope | exact combined phase and published outer-wing coverage; central band unproved | Recombining before absolute values gives \(e_s(\alpha dp-h\delta\bar d\bar p)\), (9.517), and the unit condition is exactly \((\alpha h\delta,s)=1\), (9.519).  For \(d=T^u,s=T^\sigma\), Korolev covers the composite-modulus left wing \(u<\sigma/4\) with saving at most \(\sigma/35\); FKM covers the two prime-modulus outer wings with limiting saving \(\sigma/24\).  Both are below the critical half-power and provide no joint \(s,\xi,h\delta\) moment.  The full central band \(\sigma/4\leq u\leq3\sigma/4\) is a genuinely bilinear trace Type-II gate, (9.520)--(9.525) |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -12318,6 +12490,10 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 * M. A. Korolev, *On Kloosterman sums with multiplicative coefficients*,
   Izv. Math. 82:4 (2018), 647--661, DOI 10.1070/IM8633, Theorems 1 and 5;
   audited in Section 9.8.
+* M. A. Korolev, *Kloosterman sums with primes to composite moduli*,
+  Research in Number Theory 6 (2020), article 24,
+  arXiv:1911.09981, Theorem 1; its exact nonhomogeneous Type-I coverage
+  and saving exponent are audited in Section 9.77.
 * É. Fouvry, E. Kowalski, P. Michel, *Algebraic trace functions over the
   primes*, Duke Math. J. 163 (2014), 1683--1736, arXiv:1211.6043,
   Theorem 1.7; its optimistic prime-modulus exponent at the transition

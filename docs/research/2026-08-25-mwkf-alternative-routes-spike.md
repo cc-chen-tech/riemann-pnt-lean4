@@ -8130,7 +8130,7 @@ Plancherel--Pólya sampling inequality for exponential polynomials,
 followed by dyadic layer cake, shows that (4.566) follows from
 
 \[
- \sum_{V\ {m dyadic}}R_\mu(V;T,U)V^4
+ \sum_{V\ \mathrm{dyadic}}R_\mu(V;T,U)V^4
  \ll T^3(\log T)^{1+o(1)}.
 \tag{4.567}
 \]
@@ -11791,6 +11791,101 @@ original entry, and proves equality of its sector energy with the
 diagonal sub-sum.  The scale helper
 `beatty_type_i_additive_large_sieve_audit` records (4.682) and keeps
 `standard_additive_large_sieve_covers_type_i` false.
+
+### 4.79 Restore the AFE inverse phase before classifying Type I/II
+
+The additive audit in (4.682) is not the strongest available
+classification, because it intentionally ignores an oscillator rather
+than taking its absolute value.  Restore
+
+\[
+ \alpha=\xi+jQ,\qquad A=h\delta,qquad r=dp=ks+w.
+\]
+
+Then the sector and AFE phases recombine exactly as
+
+\[
+ \boxed{
+ e_s(\alpha w-A\bar r)
+ =e_s(\alpha dp-A\bar d\bar p).}
+ \tag{4.683}
+\]
+
+For fixed \(d\), this is the nonhomogeneous prime-Kloosterman phase
+
+\[
+ e_s(Bp+C\bar p),qquad
+ B=\alpha d,quad C=-A\bar d,qquad
+ (BC,s)=1\Longleftrightarrow(\alpha A,s)=1.
+ \tag{4.684}
+\]
+
+The identity spends neither \(\mu(s)\), \(\mu(d)\), nor the
+factorization \(A=h\delta\).  It therefore gives the correct theorem
+class for the continuous packet.
+
+Put \(s=T^\sigma,d=T^u,p=T^{\sigma-u}\).  Korolev's
+composite-modulus theorem covers the unit left wing
+\(0\leq u<\sigma/4\), with
+
+\[
+ \eta_{\rm Kor}(\sigma,u)=
+ \begin{cases}
+ (\sigma-3u)/35,&0\leq u\leq\sigma/8,\\
+ (\sigma/4-u)/7,&\sigma/8\leq u\leq\sigma/4.
+ \end{cases}
+ \tag{4.685}
+\]
+
+For prime \(s\), Fouvry--Kowalski--Michel Theorem 1.5 gives the
+limiting left-wing exponent
+
+\[
+ \eta_{\rm FKM}(\sigma,u)=\sigma/24-u/6,
+ \qquad0\leq u<\sigma/4,
+ \tag{4.686}
+\]
+
+and its Möbius analogue gives the symmetric prime-modulus right wing.
+The exact coverage table is:
+
+| Type range | composite modulus | prime modulus | coupled status |
+|---|---|---|---|
+| \(0\leq u<\sigma/4\) | Korolev, max saving \(\sigma/35\) | FKM, limiting max \(\sigma/24\) | below target |
+| \(\sigma/4\leq u\leq3\sigma/4\) | no matching one-variable theorem | no matching one-variable theorem | bilinear Type II unproved |
+| \(3\sigma/4<u\leq\sigma\) | only logarithmic uniform Möbius trace input | FKM Möbius trace | below target |
+
+At the critical point the required amplitude saving is \(1/2\), so the
+best fixed prime-modulus theorem still leaves \(11/24\), and the uniform
+composite theorem leaves \(33/70\).  The estimates also have no joint
+moment over \(s,\xi,h,\delta\).  Consequently the corrected surviving
+interface is the pre-Cauchy Hilbert-valued bilinear trace square.  With
+the coefficients \(c_{\xi,j}\) from (4.677), it is
+
+\[
+ \boxed{
+ \frac1Q\sum_{\xi=1}^{Q-1}
+ \left\|
+ \sum_s\mu(s)\sum_{h,\delta}\sum_{dp\asymp s}
+ \mu(d)\Lambda(p)\sum_jc_{\xi,j}
+ \mathcal W_{s,\xi,j,h,\delta,d,p}
+ e_s((\xi+jQ)dp-h\delta\bar d\bar p)
+ \right\|_{\mathcal H}^{2}
+ \ll T^{2+\varepsilon}.}
+ \tag{4.687}
+\]
+
+The weight includes \(dp=ks+w\) and \(s\nmid Qw\).  Expanding the norm
+restores both Type copies and every reflection-label cross term.  This is
+the exact continuous Fourier form of the supplied centered sector gate,
+not yet the exhaustive adapter from (4.5).  It is narrower than an
+arbitrary coupled kernel, but its central factor band and
+composite-modulus aggregation remain unproved.
+
+The exact helper beatty_afe_type_kloosterman_phase_ledger verifies
+(4.683)--(4.684).  The Korolev and FKM exponent helpers verify
+(4.685)--(4.686), including their strict endpoint and modulus
+restrictions, and keep the full coupled-coverage flag false.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

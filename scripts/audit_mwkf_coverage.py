@@ -8142,6 +8142,253 @@ def beatty_type_i_additive_large_sieve_audit(
     }
 
 
+def beatty_afe_type_kloosterman_phase_ledger(
+    *,
+    sector_modulus: int,
+    sector_character: int,
+    harmonic: int,
+    denominator: int,
+    quotient: int,
+    remainder: int,
+    type_divisor: int,
+    prime_power: int,
+    h: int,
+    delta: int,
+) -> dict[str, object]:
+    """Recombine the sector harmonic with the original AFE inverse phase.
+
+    Put ``r=d*p=k*s+w`` and ``alpha=xi+j*Q``.  The sector completion
+    supplies ``e_s(alpha*w)``, while the exact Poisson packet already
+    contains ``e_s(-h*delta*inverse(r))``.  Since ``alpha*k`` is integral,
+
+    ``alpha*w-h*delta*inverse(r)``
+    ``=alpha*d*p-h*delta*inverse(d)*inverse(p) (mod s)``.
+
+    Thus the continuous Type-I prime-bearing variable has the genuine
+    nonhomogeneous Kloosterman phase ``e_s(B*p+A*inverse(p))`` with
+    ``B=alpha*d`` and ``A=-h*delta*inverse(d)``.  No ``h*delta`` label or
+    either Mobius factor is spent in deriving the identity.
+    """
+
+    if sector_modulus <= 1:
+        raise ValueError("sector_modulus must exceed one")
+    if not 0 < sector_character < sector_modulus:
+        raise ValueError("sector_character must be nonzero modulo Q")
+    if denominator <= 1 or quotient < 0:
+        raise ValueError("require denominator>1 and quotient>=0")
+    if remainder < 0 or remainder >= denominator:
+        raise ValueError("require 0<=remainder<denominator")
+    if type_divisor <= 0 or prime_power <= 0:
+        raise ValueError("Type factors must be positive")
+    if h == 0 or delta == 0:
+        raise ValueError("the nonzero Poisson packet requires h*delta nonzero")
+
+    frequency = sector_character + harmonic * sector_modulus
+    numerator = quotient * denominator + remainder
+    if type_divisor * prime_power != numerator:
+        raise ValueError("the exact Type relation d*p=k*s+w is required")
+    if gcd(numerator, denominator) != 1:
+        raise ValueError("the Farey/Type entry must be primitive")
+
+    inverse_numerator = pow(numerator, -1, denominator)
+    inverse_divisor = pow(type_divisor, -1, denominator)
+    inverse_prime = pow(prime_power, -1, denominator)
+    afe_product = h * delta
+    left_phase = (
+        frequency * remainder - afe_product * inverse_numerator
+    ) % denominator
+    direct_coefficient = (frequency * type_divisor) % denominator
+    inverse_coefficient = (-afe_product * inverse_divisor) % denominator
+    right_phase = (
+        direct_coefficient * prime_power
+        + inverse_coefficient * inverse_prime
+    ) % denominator
+    korolev_gcd = gcd(direct_coefficient * inverse_coefficient, denominator)
+    invariant_gcd = gcd(frequency * afe_product, denominator)
+    return {
+        "sector_modulus": sector_modulus,
+        "sector_character": sector_character,
+        "harmonic": harmonic,
+        "fourier_frequency": frequency,
+        "denominator": denominator,
+        "quotient": quotient,
+        "remainder": remainder,
+        "numerator": numerator,
+        "type_divisor": type_divisor,
+        "prime_power": prime_power,
+        "afe_product": afe_product,
+        "type_relation_exact": type_divisor * prime_power == numerator,
+        "primitive_entry": gcd(numerator, denominator) == 1,
+        "sector_phase_numerator_mod_denominator": (
+            frequency * remainder
+        ) % denominator,
+        "afe_inverse_phase_numerator_mod_denominator": (
+            -afe_product * inverse_numerator
+        ) % denominator,
+        "combined_original_phase_mod_denominator": left_phase,
+        "prime_kloosterman_direct_coefficient_mod_denominator": (
+            direct_coefficient
+        ),
+        "prime_kloosterman_inverse_coefficient_mod_denominator": (
+            inverse_coefficient
+        ),
+        "combined_type_phase_mod_denominator": right_phase,
+        "combined_phase_exact_mod_denominator": left_phase == right_phase,
+        "korolev_coefficient_product_gcd": korolev_gcd,
+        "frequency_times_afe_gcd": invariant_gcd,
+        "korolev_unit_condition_equivalent_to_frequency_times_afe_unit": (
+            korolev_gcd == invariant_gcd
+        ),
+        "korolev_unit_condition_holds": korolev_gcd == 1,
+        "both_mobius_weights_retained": True,
+        "retained_mobius_factors": ("mu(denominator)", "mu(type_divisor)"),
+        "afe_factorization_retained": True,
+        "retained_afe_factors": (h, delta),
+        "phase_class": "nonhomogeneous_prime_kloosterman",
+    }
+
+
+def korolev_prime_kloosterman_type_i_audit(
+    *,
+    modulus_exponent: Fraction,
+    type_divisor_exponent: Fraction,
+    required_unsquared_saving: Fraction,
+) -> dict[str, object]:
+    """Map Korolev's prime-Kloosterman theorem to one Type-I slice.
+
+    Korolev, arXiv:1911.09981, Theorem 1, bounds the von-Mangoldt sum
+
+    ``sum Lambda(p) e_q(A*inverse(p)+B*p)``
+
+    by ``X*q^eps*Delta`` for ``q^(3/4+eps)<=X<=q^(3/2)``, where
+
+    ``Delta=(q^(3/4)/X)^(1/7)+(q^(2/3)/X)^(3/35)``.
+
+    With ``q=T^sigma`` and ``p=T^(sigma-delta)``, the two saving
+    exponents are ``(pi-3*sigma/4)/7`` and
+    ``3*(pi-2*sigma/3)/35``.  At the most favorable full-length point
+    ``pi=sigma`` their minimum is only ``sigma/35``.  The theorem is
+    pointwise in the modulus and coefficients; it supplies no joint
+    moment over the sector character, ``h*delta``, or the outer Mobius
+    modulus, so it cannot by itself prove the coupled square-function
+    gate even on a numerically sufficient slice.
+    """
+
+    sigma = F(modulus_exponent)
+    divisor = F(type_divisor_exponent)
+    required = F(required_unsquared_saving)
+    if sigma <= 0:
+        raise ValueError("modulus_exponent must be positive")
+    if divisor < 0 or divisor > sigma:
+        raise ValueError("Type divisor exponent must lie in [0,sigma]")
+    if required < 0:
+        raise ValueError("required saving must be nonnegative")
+
+    prime_length = sigma - divisor
+    lower_endpoint = 3 * sigma / 4
+    transition = 7 * sigma / 8
+    upper_endpoint = 3 * sigma / 2
+    published_range = lower_endpoint < prime_length <= upper_endpoint
+    branch_one = max(F(0), (prime_length - lower_endpoint) / 7)
+    branch_two = max(F(0), 3 * (prime_length - 2 * sigma / 3) / 35)
+    saving = min(branch_one, branch_two) if published_range else F(0)
+    remaining = max(F(0), required - saving)
+    return {
+        "source": "Korolev, arXiv:1911.09981, Theorem 1",
+        "modulus_exponent": sigma,
+        "type_divisor_exponent": divisor,
+        "prime_length_exponent": prime_length,
+        "published_lower_endpoint_exponent": lower_endpoint,
+        "published_transition_exponent": transition,
+        "published_upper_endpoint_exponent": upper_endpoint,
+        "published_range_holds": published_range,
+        "strict_positive_epsilon_above_lower_endpoint_required": True,
+        "first_delta_term_saving_exponent": branch_one,
+        "second_delta_term_saving_exponent": branch_two,
+        "korolev_saving_exponent": saving,
+        "two_branches_meet": branch_one == branch_two,
+        "required_unsquared_saving": required,
+        "remaining_unsquared_deficit": remaining,
+        "saving_meets_required": published_range and saving >= required,
+        "von_mangoldt_type_weight_matches": True,
+        "smooth_dyadic_weight_reachable_by_partial_summation": True,
+        "requires_unit_direct_and_inverse_coefficients": True,
+        "joint_sector_character_moment_provided": False,
+        "joint_h_delta_moment_provided": False,
+        "outer_mobius_modulus_average_provided": False,
+        "pointwise_theorem_covers_coupled_gate": False,
+    }
+
+
+def fkm_prime_modulus_kloosterman_type_i_audit(
+    *,
+    modulus_exponent: Fraction,
+    type_divisor_exponent: Fraction,
+    required_unsquared_saving: Fraction,
+) -> dict[str, object]:
+    """Audit Fouvry--Kowalski--Michel on the prime-modulus Type-I slice.
+
+    For prime modulus ``p``, the function
+    ``K(x)=e_p(B*x+A*inverse(x))`` with ``A`` nonzero is a bounded-
+    conductor, nonexceptional trace weight.  The smoothed form of
+    Fouvry--Kowalski--Michel, arXiv:1211.6043v3, Theorem 1.5, is
+
+    ``sum_{l prime} K(l)V(l/X) << X(1+p/X)^(1/6)p^(-eta)``,
+
+    for every ``eta<1/24``.  With ``p=T^sigma`` and
+    ``X=T^pi<=p``, the limiting relative saving is
+    ``sigma/24-(sigma-pi)/6 = pi/6-sigma/8``.  It is positive only
+    for ``pi>3*sigma/4`` and reaches at most ``sigma/24``.  The strict
+    ``eta<1/24`` is recorded by calling this a limiting exponent, not
+    an attained endpoint.
+    """
+
+    sigma = F(modulus_exponent)
+    divisor = F(type_divisor_exponent)
+    required = F(required_unsquared_saving)
+    if sigma <= 0:
+        raise ValueError("modulus_exponent must be positive")
+    if divisor < 0 or divisor > sigma:
+        raise ValueError("Type divisor exponent must lie in [0,sigma]")
+    if required < 0:
+        raise ValueError("required saving must be nonnegative")
+
+    prime_length = sigma - divisor
+    trace_penalty = max(F(0), sigma - prime_length) / 6
+    limiting_trace_saving = sigma / 24
+    limiting_saving = max(F(0), limiting_trace_saving - trace_penalty)
+    power_range = prime_length > 3 * sigma / 4
+    remaining = max(F(0), required - limiting_saving)
+    return {
+        "source": (
+            "Fouvry--Kowalski--Michel, arXiv:1211.6043v3, Theorem 1.5"
+        ),
+        "modulus_exponent": sigma,
+        "type_divisor_exponent": divisor,
+        "prime_length_exponent": prime_length,
+        "trace_weight_p_power_saving_supremum": limiting_trace_saving,
+        "short_length_penalty_exponent": trace_penalty,
+        "limiting_saving_exponent": limiting_saving,
+        "endpoint_exponent_is_strict_supremum": True,
+        "power_saving_range_holds": power_range,
+        "required_unsquared_saving": required,
+        "remaining_unsquared_deficit": remaining,
+        "limiting_saving_meets_required": (
+            power_range and limiting_saving >= required
+        ),
+        "phase_is_nonexceptional_on_unit_inverse_coefficient_stratum": True,
+        "smooth_prime_weight_matches_after_log_partial_summation": True,
+        "higher_prime_powers_require_separate_trivial_treatment": True,
+        "prime_power_tail_trivial_saving_exponent": prime_length / 2,
+        "prime_modulus_required": True,
+        "composite_squarefree_moduli_covered": False,
+        "joint_sector_character_moment_provided": False,
+        "joint_h_delta_moment_provided": False,
+        "outer_mobius_modulus_average_provided": False,
+        "pointwise_theorem_covers_coupled_gate": False,
+    }
+
+
 def transition_line_coprimality_layer_identity(
     *,
     a: int,

@@ -2540,6 +2540,114 @@ def test_type_i_additive_large_sieve_still_loses_one_power() -> None:
     assert not result["standard_additive_large_sieve_covers_type_i"]
 
 
+def test_sector_and_afe_phases_recombine_to_prime_kloosterman_phase() -> None:
+    ledger = getattr(
+        coverage_audit,
+        "beatty_afe_type_kloosterman_phase_ledger",
+        None,
+    )
+    assert ledger is not None, "combined Beatty/AFE Kloosterman ledger is missing"
+
+    result = ledger(
+        sector_modulus=13,
+        sector_character=5,
+        harmonic=-1,
+        denominator=11,
+        quotient=1,
+        remainder=3,
+        type_divisor=2,
+        prime_power=7,
+        h=3,
+        delta=4,
+    )
+
+    assert result["fourier_frequency"] == -8
+    assert result["afe_product"] == 12
+    assert result["type_relation_exact"]
+    assert result["primitive_entry"]
+    assert result["combined_phase_exact_mod_denominator"]
+    assert result["prime_kloosterman_direct_coefficient_mod_denominator"] == 6
+    assert result["prime_kloosterman_inverse_coefficient_mod_denominator"] == 5
+    assert result["korolev_unit_condition_equivalent_to_frequency_times_afe_unit"]
+    assert result["korolev_unit_condition_holds"]
+    assert result["both_mobius_weights_retained"]
+    assert result["afe_factorization_retained"]
+
+
+def test_korolev_prime_kloosterman_saving_is_far_below_gate() -> None:
+    audit = getattr(
+        coverage_audit,
+        "korolev_prime_kloosterman_type_i_audit",
+        None,
+    )
+    assert audit is not None, "Korolev prime-Kloosterman audit is missing"
+
+    full = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(0),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert full["prime_length_exponent"] == F(1)
+    assert full["published_range_holds"]
+    assert full["korolev_saving_exponent"] == F(1, 35)
+    assert full["remaining_unsquared_deficit"] == F(33, 70)
+    assert not full["pointwise_theorem_covers_coupled_gate"]
+
+    transition = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert transition["prime_length_exponent"] == F(7, 8)
+    assert transition["korolev_saving_exponent"] == F(1, 56)
+    assert transition["two_branches_meet"]
+
+    outside = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(1, 3),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert not outside["published_range_holds"]
+    assert outside["korolev_saving_exponent"] == F(0)
+    assert not outside["pointwise_theorem_covers_coupled_gate"]
+
+
+def test_fkm_prime_modulus_trace_saving_is_still_far_below_gate() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fkm_prime_modulus_kloosterman_type_i_audit",
+        None,
+    )
+    assert audit is not None, "FKM prime-modulus trace audit is missing"
+
+    full = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(0),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert full["prime_length_exponent"] == F(1)
+    assert full["power_saving_range_holds"]
+    assert full["limiting_saving_exponent"] == F(1, 24)
+    assert full["remaining_unsquared_deficit"] == F(11, 24)
+    assert not full["pointwise_theorem_covers_coupled_gate"]
+
+    shorter = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert shorter["prime_length_exponent"] == F(7, 8)
+    assert shorter["limiting_saving_exponent"] == F(1, 48)
+
+    threshold = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(1, 4),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert threshold["limiting_saving_exponent"] == F(0)
+    assert not threshold["power_saving_range_holds"]
+
+
 def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
     coefficients = getattr(
         coverage_audit,
