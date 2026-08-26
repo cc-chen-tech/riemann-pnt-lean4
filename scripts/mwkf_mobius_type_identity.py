@@ -369,6 +369,22 @@ class BBLRCommonUnsignedCofactorGram:
 
 
 @dataclass(frozen=True)
+class BBLRFourParentPartialDiagonal:
+    parent_cutoffs: tuple[int, int, int, int]
+    direct_four_type_sum: Fraction
+    recombined_two_parent_sum: Fraction
+    gcd_kernel_sum: Fraction
+    labelled_recombined_sums: tuple[tuple[str, Fraction], ...]
+    direct_to_two_parent_recombination_verified: bool
+    two_parent_to_gcd_kernel_verified: bool
+    unconstrained_parent_type_sums_recombined_to_mobius: bool
+    common_diagonal_parent_kernel_retained: bool
+    supplied_slot_order_labels_retained: tuple[str, ...]
+    analytic_afe_packet_exhaustive: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
 class FourMobiusUnsignedSectorRecombination:
     values: tuple[int, int, int, int]
     cutoff_u: int
@@ -3212,6 +3228,156 @@ def bblr_common_unsigned_cofactor_gram_sides(
         gcd_kernel_to_gram_identity_verified=(gcd_kernel == gram),
         parent_and_inner_quotient_retained=True,
         analytic_bblr_packet_exhaustive=False,
+        target_bound_proved=False,
+    )
+
+
+def bblr_four_parent_partial_diagonal_sides(
+    *,
+    parent_cutoffs: tuple[int, int, int, int],
+    labelled_parent_kernels: dict[
+        str,
+        dict[tuple[int, int, int, int], Fraction],
+    ],
+) -> BBLRFourParentPartialDiagonal:
+    """Recombine the four Type identities around one common inner factor.
+
+    A parent tuple is ``(p,q,m,n)`` and the four Type cutoffs may differ.
+    The Type decompositions of ``q`` and ``n`` are constrained to have the
+    same unsigned quotient, while those of ``p`` and ``m`` are unrestricted.
+    Summing the latter two identities restores ``mu(p)mu(m)`` exactly and
+    leaves the parent-aware gcd kernel ``P_(U_q,U_n)(q,n)``.  Supplied labels
+    may encode BBLR slot permutations and AFE orderings, but this finite
+    helper does not assert that the supplied list exhausts the analytic
+    packets.
+    """
+
+    if len(parent_cutoffs) != 4 or min(parent_cutoffs) < 1:
+        raise ValueError("four positive parent-specific Type cutoffs are required")
+    if not labelled_parent_kernels:
+        raise ValueError("at least one labelled parent kernel is required")
+    for label, kernel in labelled_parent_kernels.items():
+        if not label or not kernel:
+            raise ValueError("every slot/order label requires a nonempty kernel")
+        if any(len(parents) != 4 for parents in kernel):
+            raise ValueError("each parent row must be a quadruple (p,q,m,n)")
+        if any(
+            parent <= parent_cutoffs[index]
+            for parents in kernel
+            for index, parent in enumerate(parents)
+        ):
+            raise ValueError("every parent variable must exceed the Type cutoff")
+
+    parent_cutoff_pairs = {
+        (parent, parent_cutoffs[index])
+        for kernel in labelled_parent_kernels.values()
+        for parents in kernel
+        for index, parent in enumerate(parents)
+    }
+    outer_coefficients = {
+        (parent, cutoff): dict(
+            mobius_unsigned_sector_recombination(
+                n=parent,
+                cutoff_u=cutoff,
+            ).outer_contributions
+        )
+        for parent, cutoff in parent_cutoff_pairs
+    }
+
+    direct = Fraction(0)
+    recombined = Fraction(0)
+    gcd_sum = Fraction(0)
+    labelled_sums: dict[str, Fraction] = {}
+    for label, kernel in labelled_parent_kernels.items():
+        labelled_recombined = Fraction(0)
+        for (left_free, left_diagonal, right_free, right_diagonal), weight in (
+            kernel.items()
+        ):
+            row_weight = Fraction(weight)
+            for _, left_free_coefficient in outer_coefficients[
+                (left_free, parent_cutoffs[0])
+            ].items():
+                for left_outer, left_diagonal_coefficient in outer_coefficients[
+                    (left_diagonal, parent_cutoffs[1])
+                ].items():
+                    left_inner = left_diagonal // left_outer
+                    for _, right_free_coefficient in outer_coefficients[
+                        (right_free, parent_cutoffs[2])
+                    ].items():
+                        for (
+                            right_outer,
+                            right_diagonal_coefficient,
+                        ) in outer_coefficients[
+                            (right_diagonal, parent_cutoffs[3])
+                        ].items():
+                            if left_inner != right_diagonal // right_outer:
+                                continue
+                            direct += (
+                                row_weight
+                                * left_free_coefficient
+                                * left_diagonal_coefficient
+                                * right_free_coefficient
+                                * right_diagonal_coefficient
+                            )
+
+            parent_kernel = sum(
+                left_coefficient * right_coefficient
+                for left_outer, left_coefficient in outer_coefficients[
+                    (left_diagonal, parent_cutoffs[1])
+                ].items()
+                for right_outer, right_coefficient in outer_coefficients[
+                    (right_diagonal, parent_cutoffs[3])
+                ].items()
+                if left_diagonal // left_outer
+                == right_diagonal // right_outer
+            )
+            recombined_row = (
+                row_weight
+                * mobius(left_free)
+                * mobius(right_free)
+                * parent_kernel
+            )
+            recombined += recombined_row
+            labelled_recombined += recombined_row
+
+            gcd_kernel = sum(
+                outer_coefficients[
+                    (left_diagonal, parent_cutoffs[1])
+                ].get(
+                    left_diagonal // common_cofactor,
+                    0,
+                )
+                * outer_coefficients[
+                    (right_diagonal, parent_cutoffs[3])
+                ].get(
+                    right_diagonal // common_cofactor,
+                    0,
+                )
+                for common_cofactor in divisors(
+                    gcd(left_diagonal, right_diagonal)
+                )
+            )
+            gcd_sum += (
+                row_weight
+                * mobius(left_free)
+                * mobius(right_free)
+                * gcd_kernel
+            )
+        labelled_sums[label] = labelled_recombined
+
+    retained_labels = tuple(sorted(labelled_parent_kernels))
+    return BBLRFourParentPartialDiagonal(
+        parent_cutoffs=parent_cutoffs,
+        direct_four_type_sum=direct,
+        recombined_two_parent_sum=recombined,
+        gcd_kernel_sum=gcd_sum,
+        labelled_recombined_sums=tuple(sorted(labelled_sums.items())),
+        direct_to_two_parent_recombination_verified=(direct == recombined),
+        two_parent_to_gcd_kernel_verified=(recombined == gcd_sum),
+        unconstrained_parent_type_sums_recombined_to_mobius=True,
+        common_diagonal_parent_kernel_retained=True,
+        supplied_slot_order_labels_retained=retained_labels,
+        analytic_afe_packet_exhaustive=False,
         target_bound_proved=False,
     )
 

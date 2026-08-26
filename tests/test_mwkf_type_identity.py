@@ -330,6 +330,55 @@ def test_bblr_common_unsigned_cofactor_is_an_exact_gcd_gram_kernel() -> None:
     )
 
 
+def test_bblr_four_parent_partial_diagonal_recombines_two_mobius_factors() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_four_parent_partial_diagonal_sides",
+        None,
+    )
+    assert helper is not None, "BBLR four-parent partial diagonal is missing"
+
+    sides = helper(
+        parent_cutoffs=(3, 3, 3, 3),
+        labelled_parent_kernels={
+            "dual/slot-1": {(10, 15, 6, 10): F(-1)},
+            "main/slot-2": {(6, 10, 14, 15): F(2)},
+        },
+    )
+
+    # P_3(10,15)=P_3(15,10)=4 and the unconstrained parents have mu=1.
+    assert sides.direct_four_type_sum == F(4)
+    assert sides.recombined_two_parent_sum == F(4)
+    assert sides.gcd_kernel_sum == F(4)
+    assert sides.labelled_recombined_sums == (
+        ("dual/slot-1", F(-4)),
+        ("main/slot-2", F(8)),
+    )
+    assert sides.direct_to_two_parent_recombination_verified
+    assert sides.two_parent_to_gcd_kernel_verified
+    assert sides.unconstrained_parent_type_sums_recombined_to_mobius
+    assert sides.common_diagonal_parent_kernel_retained
+    assert sides.supplied_slot_order_labels_retained == (
+        "dual/slot-1",
+        "main/slot-2",
+    )
+    assert not sides.analytic_afe_packet_exhaustive
+    assert not sides.target_bound_proved
+
+    asymmetric = helper(
+        parent_cutoffs=(2, 5, 3, 3),
+        labelled_parent_kernels={
+            "main/asymmetric-cutoff": {(6, 10, 14, 15): F(2)},
+        },
+    )
+    # C_5(10;2)=1 while C_3(15;3)=2 at their common quotient 5.
+    assert asymmetric.direct_four_type_sum == F(4)
+    assert asymmetric.recombined_two_parent_sum == F(4)
+    assert asymmetric.gcd_kernel_sum == F(4)
+    assert asymmetric.direct_to_two_parent_recombination_verified
+    assert asymmetric.two_parent_to_gcd_kernel_verified
+
+
 def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
     """The worst BBLR box loses every Möbius sign before global recombination."""
     adapter = getattr(

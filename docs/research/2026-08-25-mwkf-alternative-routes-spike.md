@@ -9554,6 +9554,86 @@ permutations, all AFE/order labels, and the original smooth kernel must
 still be pulled through this Gram decomposition before it becomes an
 analytic bound for the full principal term.
 
+The same arithmetic can be lifted through the second Möbius parent on each
+determinant side.  Write the original parent pairs as \((p,q)\) and
+\((m,n)\), with their possibly distinct Type cutoffs
+\((U_p,U_q,U_m,U_n)\), and suppose the selected BBLR slot equality is
+between the unsigned quotients of \(q\) and \(n\).  Put
+
+\[
+ P_{U,V}(q,n)=\sum_{r\mid(q,n)}
+ C_U\!\left(q;\frac qr\right)
+ C_V\!\left(n;\frac nr\right),
+ \qquad P_U=P_{U,U}.
+\tag{4.621zadj4a}
+\]
+
+For a supplied slot/order kernel
+\(W_\omega(p,q,m,n)\) that depends on the original parents, not on a
+particular Type factorization, expand all four parents by (4.614).  The
+finite partial-diagonal sum is
+
+\[
+\begin{aligned}
+ \mathscr D_{U,\omega}
+ =\sum_{p,q,m,n}W_\omega(p,q,m,n)
+ \sum_{\substack{u_p\mid p,\ u_q\mid q\\
+                   u_m\mid m,\ u_n\mid n\\
+                   q/u_q=n/u_n}}
+ &C_{U_p}(p;u_p)C_{U_q}(q;u_q)\\
+ &\times C_{U_m}(m;u_m)C_{U_n}(n;u_n).
+\end{aligned}
+\tag{4.621zadj5}
+\]
+
+The \(p\)- and \(m\)-factorizations are unrestricted, so (4.614) and
+(4.621zadj3) give the exact recombination
+
+\[
+ \boxed{
+ \mathscr D_{U,\omega}
+ =\sum_{p,q,m,n}W_\omega(p,q,m,n)
+   \mu(p)\mu(m)P_{U_q,U_n}(q,n).}
+\tag{4.621zadj6}
+\]
+
+Here the subscript \(U\) on \(\mathscr D_{U,\omega}\) denotes the full
+cutoff tuple.  There is no Type truncation or boundary error in
+(4.621zadj6).  In
+particular, the four artificial BBLR Type expansions reduce to two genuine
+Möbius parents multiplied by one cross-Gram gcd kernel.  It is
+positive-semidefinite when \(U_q=U_n\); for unequal cutoffs it is the
+bilinear pairing of the two different quotient projections.  Every supplied
+slot/order label \(\omega\) may be retained separately and summed only after
+this recombination.
+
+For the exact fixture \(U=3\), the labels `main/slot-2` and `dual/slot-1`
+give respectively
+
+\[
+ 2\,\mu(6)\mu(14)P_3(10,15)=8,
+ \qquad
+ -\mu(10)\mu(6)P_3(15,10)=-4,
+\]
+
+and the labelled total is \(4\).  The finite helper
+`bblr_four_parent_partial_diagonal_sides` verifies the direct four-Type
+sum, the two-parent recombination (4.621zadj6), and the divisor form
+(4.621zadj4a) independently with exact rationals.  It also verifies the
+asymmetric-cutoff fixture
+\((U_p,U_q,U_m,U_n)=(2,5,3,3)\), where
+\(C_5(10;2)C_3(15;3)=2\).  Thus the identity is not restricted to the
+symmetric hard cell.  The helper retains every supplied slot/order label.
+
+The remaining adapter boundary is now narrower.  BBLR introduces dyadic
+weights that depend separately on its synthetic outer and inner slots.  To
+apply (4.621zadj6) to the analytic principal term, one must first sum the
+complete Type dyadic partitions and every slot permutation and prove that
+their signed weight is the pullback of a kernel
+\(W_\omega(p,q,m,n)\) on the original parents.  This packet-exhaustion
+identity has not yet been written, so the helper records
+`analytic_afe_packet_exhaustive=False` and `target_bound_proved=False`.
+
 The dangerous additive principal mode can nevertheless be isolated
 without estimating it.  Embed one finite product box in
 \(\mathbb Z/\mathfrak Q\mathbb Z\), with \(\mathfrak Q\) larger than
