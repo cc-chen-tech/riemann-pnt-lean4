@@ -9947,6 +9947,177 @@ classical exponents \(4,6\), normalized exponents \(1,3\), and marks
 both the Guth--Maynard long-range reduction and the absence of a
 published Möbius-specific \(T^2\) saving.
 
+### 9.65 The zero-Mellin balanced product is a pure reflected boundary
+
+The zero-frequency decomposition (9.362) has a stronger exact form on
+the products which actually occur in the balanced mollifier block.  Let
+
+\[
+ 1<m<d\leq N,\qquad \mu(d)\ne0,\qquad x=dm.
+\]
+
+Then \(x\) is not a prime power.  Indeed, if \(x=p^j\), squarefreeness
+and \(d>1\) force \(d=p\).  Since \(m>1\), one has \(j\geq2\) and hence
+\(m=p^{j-1}\geq p=d\), contradicting \(m<d\).  Thus
+\(\Lambda(dm)=0\), and (9.362) becomes the boundary-exact identity
+
+\[
+\boxed{
+ B_{N,0}(dm)
+ =-\sum_{\substack{k\mid dm\\kN<dm}}
+ \mu(dm/k)\left(1-\frac{\log(dm/k)}{\log N}\right),
+ \qquad k<m.}
+\tag{9.414}
+\]
+
+The last inequality is also strict and exact: \(kN<dm\) and \(d\leq N\)
+give \(k<dm/N\leq m\).  On the decisive scale
+
+\[
+ d\asymp N=T^3,\qquad m\asymp T^{1/2},
+\]
+
+the hypotheses of (9.414) hold for all sufficiently large \(T\).
+Consequently the von-Mangoldt part of the compact coefficient is absent,
+not merely small, at \(\tau=0\) on this balanced product support.  This
+statement concerns \(B_{N,0}(dm)\); it does not remove the distinct
+\(B=1\) prime slice of the Type-I/II principal density in Sections
+9.40--9.42.
+
+The energy expansion must still retain every boundary cross term.  Extend
+the tapered formula algebraically to \(D>N\), and put
+
+\[
+ c_N(D):=\mu(D)\left(1-\frac{\log D}{\log N}\right),\qquad
+ R_N(x):=\sum_{\substack{D\mid x\\D>N}}c_N(D),
+\]
+
+so that (9.362) is \(B_{N,0}=F_0-R_N\), where
+\(F_0(x)=1_{x=1}+\Lambda(x)/\log N\).  For an arbitrary finite, possibly
+nonsymmetric pair kernel \(W(x,y)\), bilinearity gives
+
+\[
+\boxed{
+ \mathcal E_W(B,B)
+ =\mathcal E_W(F_0,F_0)
+ -\mathcal E_W(F_0,R_N)
+ -\mathcal E_W(R_N,F_0)
+ +\mathcal E_W(R_N,R_N).}
+\tag{9.415}
+\]
+
+The two middle terms in (9.415) are different for a nonsymmetric kernel.
+Thus neither may be merged or discarded before the actual AFE kernel has
+been recombined.  On a support consisting only of products in (9.414),
+the corresponding values of \(F_0\) vanish; this does not assert that the
+global cross terms vanish on the remaining product ranges.
+
+The boundary--boundary term has an exact two-short-cofactor unfolding.
+For every integer \(X\geq1\), zero-extending \(W\) outside
+\([1,X]^2\) gives
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal E_{R,W}(X)
+ &:=\sum_{x,y\leq X}W(x,y)R_N(x)R_N(y)\\
+ &=\sum_{D,E>N}c_N(D)c_N(E)
+   \sum_{k\leq X/D}\sum_{\ell\leq X/E}W(Dk,E\ell),
+ \qquad k,\ell<\frac XN .
+\end{aligned}}
+\tag{9.416}
+\]
+
+There is no floor or endpoint error in (9.416).  The strict cofactor
+bounds follow from \(D,E>N\).  At
+\(X=NM=T^{7/2}\), both cofactors have length
+
+\[
+ K=X/N=T^{1/2}.
+\tag{9.417}
+\]
+
+The diagonal of (9.416) is elementary.  Taking
+\(W(x,y)=1_{x=y}\) gives
+
+\[
+\boxed{
+ \sum_{x\leq X}R_N(x)^2
+ =\sum_{D,E>N}c_N(D)c_N(E)
+   \left\lfloor\frac{X}{[D,E]}\right\rfloor .}
+\tag{9.418}
+\]
+
+Only squarefree \(D,E\) contribute.  Write
+\(q=(D,E),D=qr,E=qs\).  Then \(q,r,s\) are pairwise coprime and every
+active term in (9.418) satisfies
+
+\[
+ q>\frac{N^2}{X},\qquad r,s<\frac XN.
+\tag{9.419}
+\]
+
+For \(N=T^3,X=T^{7/2}\), this is
+\(q>T^{5/2}\) and \(r,s<T^{1/2}\).  Formula (9.418), including its
+literal floor, is therefore another reciprocal-LCM quadratic form to
+which the finite gcd/LCM diagonalization applies.
+
+The restriction (9.419) is **diagonal only**.  If the kernel in (9.416)
+is supported on \(0<|x-y|\leq H\), an off-diagonal term instead obeys
+
+\[
+ Dk-E\ell=h,\qquad 0<|h|\leq H,\qquad k,\ell<K.
+\tag{9.420}
+\]
+
+There is no condition \([D,E]\leq X\) in (9.420), so the high-gcd lower
+bound in (9.419) cannot be imported.  Put
+\(g=(k,\ell),k=gk_0,\ell=g\ell_0\), with
+\((k_0,\ell_0)=1\).  Necessarily \(g\mid h\), and after choosing one
+solution \((D_0,E_0)\), all solutions lie on
+
+\[
+\boxed{
+ D=D_0+\ell_0t,\qquad E=E_0+k_0t,qquad
+ k_0D_0-\ell_0E_0=h/g.}
+\tag{9.421}
+\]
+
+Thus the exact reflected route reduces the nonzero shifted energy to a
+weighted product
+\(\mu(D_0+\ell_0t)\mu(E_0+k_0t)\), summed jointly over
+\(g,k_0,\ell_0,h\) and the original smooth kernel.  This is a
+two-Möbius affine correlation, not an elementary one-variable sieve
+remainder.  At (9.417) the slopes have length \(T^{1/2}\), the long
+variables have height \(T^3\), and the largest slopes leave a
+\(T^{5/2}\)-length \(t\)-interval, the same transition scale as the
+coupled-kernel obstruction.
+
+Published truncated-divisor correlations do not cover this high level.
+Goldston--Yıldırım define
+\(\Lambda_R(n)=\sum_{d\mid n,d\leq R}\mu(d)\log(R/d)\), which is
+\((\log R)B_{R,0}(n)\), and their moment range is
+\(R=X^{\theta_k}\) with \(\theta_k<1/k\); for the second moment this is
+\(R<X^{1/2}\).  See
+[Goldston--Yıldırım, (1.2), Corollary 1](https://arxiv.org/abs/math/0412366).
+Here \(R=N=T^3=X^{6/7}\), so that theorem does not estimate (9.416).
+The reflected identity lowers the cofactors to \(T^{1/2}\), but it
+leaves the two long Möbius factors in (9.421).  Existing averaged-Chowla
+inputs provide qualitative or logarithmic cancellation, not the fixed
+power required here.
+
+The finite helpers `balanced_selberg_reflection_sides`,
+`reflected_pair_kernel_energy_sides`,
+`reflected_boundary_pair_kernel_sides`, and
+`reflected_boundary_diagonal_sides` verify (9.414)--(9.419) with exact
+rational formal logarithms, arbitrary finite pair kernels, both distinct
+cross terms, every moving endpoint, and the literal LCM floor.  These
+identities close the zero-Mellin prime-support ambiguity and the diagonal
+boundary energy.  They do **not** prove an estimate for (9.420)--(9.421),
+nor do they control the nonzero compact Mellin frequencies in (9.364).
+The already tested `determinant_line_coordinates` gives the exact finite
+parametrization (9.421), including the divisibility condition \(g\mid h\).
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -10015,7 +10186,13 @@ saving.  The long-polynomial Fourier model (9.408)--(9.413) gives the
 same \(X/T=T^2\) deficit.  Guth--Maynard explicitly reduce to the
 classical first term when polynomial length exceeds the time interval;
 here those exponents are \(X=T^3>T\), so their new large-value range
-does not touch the residual face.**
+does not touch the residual face.  Finally, (9.414)--(9.421) show that
+the balanced squarefree product has no von-Mangoldt component at
+zero Mellin frequency and that its reflected diagonal is an exact LCM
+form, while the nonzero shifted part remains a two-Möbius affine
+correlation.  The diagonal high-gcd restriction cannot be used off the
+diagonal, and nonzero compact Mellin frequencies retain many-prime
+support.**
 
 Proved in this note:
 
@@ -10174,6 +10351,14 @@ Proved in this note:
   revert to that classical first term for \(N_{\rm GM}\geq T_{\rm GM}\),
   so their coefficient-agnostic large-value theorem supplies none of
   the missing \(T^2\).
+* the balanced zero-Mellin reflection (9.414), the four-term pair-kernel
+  energy identity (9.415), the exact short-cofactor unfolding
+  (9.416), and the diagonal LCM form (9.418)--(9.419).  These remove the
+  von-Mangoldt component at \(\tau=0\) on the balanced squarefree
+  product and close its boundary diagonal.  For nonzero shifts the same
+  unfolding leaves the affine two-Möbius family (9.420)--(9.421); the
+  diagonal high-gcd constraint and the zero-frequency vanishing do not
+  extend to that family.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from

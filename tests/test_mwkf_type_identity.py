@@ -487,6 +487,110 @@ def test_truncated_selberg_divisor_sum_reflects_only_through_small_cofactors() -
                 assert direct == expected
 
 
+def test_balanced_squarefree_product_has_only_a_strictly_descending_tail() -> None:
+    """Catch retaining Lambda(dm) or allowing the reflected endpoint k=m."""
+    prime_log_weights = {2: F(2), 3: F(5), 5: F(7), 7: F(11)}
+    fixture = type_identity.balanced_selberg_reflection_sides(
+        divisor=6,
+        cofactor=5,
+        cutoff=10,
+        normalization=F(13),
+        prime_log_weights=prime_log_weights,
+    )
+    assert fixture.direct == F(-2, 13)
+    assert fixture.completed_prime_part == F(0)
+    assert fixture.negative_reflected_tail == F(-2, 13)
+    assert fixture.reflected_cofactors == (1, 2)
+
+    for cutoff in range(3, 24):
+        for divisor in range(2, cutoff + 1):
+            if mobius(divisor) == 0:
+                continue
+            for cofactor in range(2, divisor):
+                sides = type_identity.balanced_selberg_reflection_sides(
+                    divisor=divisor,
+                    cofactor=cofactor,
+                    cutoff=cutoff,
+                    normalization=F(29),
+                    prime_log_weights=prime_log_weights,
+                )
+                expected_cofactors = tuple(
+                    k
+                    for k in type_identity.divisors(divisor * cofactor)
+                    if k * cutoff < divisor * cofactor
+                )
+                assert sides.direct == sides.negative_reflected_tail
+                assert sides.completed_prime_part == F(0)
+                assert sides.reflected_cofactors == expected_cofactors
+                assert all(k < cofactor for k in sides.reflected_cofactors)
+
+
+def test_reflected_pair_energy_keeps_both_nonsymmetric_cross_terms() -> None:
+    """Catch merging or discarding either completed-boundary cross term."""
+    energy = type_identity.reflected_pair_kernel_energy_sides(
+        completed_coefficients={1: F(2), 2: F(3)},
+        reflected_coefficients={1: F(5), 2: F(7)},
+        pair_kernel={
+            (1, 1): F(11),
+            (1, 2): F(13),
+            (2, 1): F(17),
+            (2, 2): F(19),
+        },
+    )
+    assert energy.direct_truncated == F(763)
+    assert energy.completed_completed == F(395)
+    assert energy.completed_reflected == F(946)
+    assert energy.reflected_completed == F(942)
+    assert energy.reflected_reflected == F(2256)
+    assert energy.expanded == F(763)
+
+
+def test_reflected_boundary_diagonal_is_an_exact_lcm_sum() -> None:
+    """Catch losing floors or the high-gcd/short-quotient restrictions."""
+    sides = type_identity.reflected_boundary_diagonal_sides(
+        long_weights={6: F(2), 10: F(3), 15: F(5)},
+        cutoff=5,
+        product_cutoff=60,
+    )
+    assert sides.direct == F(318)
+    assert sides.lcm_sum == F(318)
+    assert sides.gcd_parameterized_sum == F(318)
+    assert (2, 3, 5) in sides.active_gcd_coordinates
+    assert (3, 2, 5) in sides.active_gcd_coordinates
+    assert (5, 2, 3) in sides.active_gcd_coordinates
+    for common, left, right in sides.active_gcd_coordinates:
+        assert F(common) > F(5 * 5, 60)
+        assert F(left) < F(60, 5)
+        assert F(right) < F(60, 5)
+
+
+def test_reflected_boundary_pair_kernel_unfolds_to_short_cofactors() -> None:
+    """Catch truncating either moving cofactor range in the pair energy."""
+    sides = type_identity.reflected_boundary_pair_kernel_sides(
+        long_weights={6: F(2), 10: F(3)},
+        cutoff=5,
+        product_cutoff=30,
+        pair_kernel={
+            (6, 10): F(5),
+            (10, 6): F(7),
+            (12, 20): F(11),
+            (20, 12): F(13),
+            (30, 30): F(17),
+        },
+    )
+    assert sides.direct == F(641)
+    assert sides.unfolded == F(641)
+    assert (6, 5, 10, 3) in sides.active_factor_pairs
+    assert (10, 3, 6, 5) in sides.active_factor_pairs
+    for left_divisor, left_cofactor, right_divisor, right_cofactor in (
+        sides.active_factor_pairs
+    ):
+        assert left_divisor * left_cofactor <= 30
+        assert right_divisor * right_cofactor <= 30
+        assert F(left_cofactor) < F(30, 5)
+        assert F(right_cofactor) < F(30, 5)
+
+
 def test_zeta_variables_pair_exactly_with_their_mollifier_divisors() -> None:
     """Catch retaining four variables after the exact x=nd, y=me regrouping."""
     direct, paired = zeta_mollifier_pairing_sides(

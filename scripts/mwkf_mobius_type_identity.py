@@ -36,6 +36,39 @@ class TwistedRestrictedMobiusLogSignature:
 
 
 @dataclass(frozen=True)
+class BalancedSelbergReflection:
+    direct: Fraction
+    completed_prime_part: Fraction
+    negative_reflected_tail: Fraction
+    reflected_cofactors: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class ReflectedPairKernelEnergy:
+    direct_truncated: Fraction
+    completed_completed: Fraction
+    completed_reflected: Fraction
+    reflected_completed: Fraction
+    reflected_reflected: Fraction
+    expanded: Fraction
+
+
+@dataclass(frozen=True)
+class ReflectedBoundaryDiagonal:
+    direct: Fraction
+    lcm_sum: Fraction
+    gcd_parameterized_sum: Fraction
+    active_gcd_coordinates: tuple[tuple[int, int, int], ...]
+
+
+@dataclass(frozen=True)
+class ReflectedBoundaryPairKernel:
+    direct: Fraction
+    unfolded: Fraction
+    active_factor_pairs: tuple[tuple[int, int, int, int], ...]
+
+
+@dataclass(frozen=True)
 class CoprimeDivisorPairIdentity:
     direct_coprime_sum: Fraction
     mobius_inverted_sum: Fraction
@@ -451,6 +484,251 @@ def truncated_selberg_divisor_sides(
         Fraction(0),
     )
     return direct, completed, reflected
+
+
+def balanced_selberg_reflection_sides(
+    *,
+    divisor: int,
+    cofactor: int,
+    cutoff: int,
+    normalization: Fraction,
+    prime_log_weights: dict[int, Fraction],
+) -> BalancedSelbergReflection:
+    """Exact zero-mode reflection on a balanced squarefree product.
+
+    The hypotheses ``1 < cofactor < divisor <= cutoff`` and
+    ``mobius(divisor) != 0`` force ``divisor * cofactor`` to have at
+    least two distinct prime factors.  Hence its completed divisor sum
+    has no von-Mangoldt part.  Every reflected cofactor ``k`` obeys the
+    strict descent ``k < cofactor`` because ``k*cutoff < divisor*cofactor``.
+    """
+    if not 1 < cofactor < divisor <= cutoff:
+        raise ValueError("require 1 < cofactor < divisor <= cutoff")
+    if mobius(divisor) == 0:
+        raise ValueError("the balanced divisor must be squarefree")
+
+    product = divisor * cofactor
+    direct, _, reflected = truncated_selberg_divisor_sides(
+        product,
+        cutoff=cutoff,
+        normalization=normalization,
+        prime_log_weights=prime_log_weights,
+    )
+    reflected_cofactors = tuple(
+        k for k in divisors(product) if k * cutoff < product
+    )
+    completed_prime_part = Fraction(0)
+    return BalancedSelbergReflection(
+        direct=direct,
+        completed_prime_part=completed_prime_part,
+        negative_reflected_tail=reflected - completed_prime_part,
+        reflected_cofactors=reflected_cofactors,
+    )
+
+
+def reflected_pair_kernel_energy_sides(
+    *,
+    completed_coefficients: dict[int, Fraction],
+    reflected_coefficients: dict[int, Fraction],
+    pair_kernel: dict[tuple[int, int], Fraction],
+) -> ReflectedPairKernelEnergy:
+    """Expand ``B=F-R`` against an arbitrary finite pair kernel."""
+    support = tuple(
+        sorted(set(completed_coefficients) | set(reflected_coefficients))
+    )
+    if any(index <= 0 for index in support):
+        raise ValueError("pair-kernel coefficient indices must be positive")
+
+    def coefficient(
+        coefficients: dict[int, Fraction], index: int
+    ) -> Fraction:
+        return Fraction(coefficients.get(index, Fraction(0)))
+
+    def pair_sum(
+        left: dict[int, Fraction], right: dict[int, Fraction]
+    ) -> Fraction:
+        return sum(
+            (
+                Fraction(pair_kernel.get((x, y), Fraction(0)))
+                * coefficient(left, x)
+                * coefficient(right, y)
+                for x in support
+                for y in support
+            ),
+            Fraction(0),
+        )
+
+    truncated = {
+        index: coefficient(completed_coefficients, index)
+        - coefficient(reflected_coefficients, index)
+        for index in support
+    }
+    direct_truncated = pair_sum(truncated, truncated)
+    completed_completed = pair_sum(
+        completed_coefficients, completed_coefficients
+    )
+    completed_reflected = pair_sum(
+        completed_coefficients, reflected_coefficients
+    )
+    reflected_completed = pair_sum(
+        reflected_coefficients, completed_coefficients
+    )
+    reflected_reflected = pair_sum(
+        reflected_coefficients, reflected_coefficients
+    )
+    expanded = (
+        completed_completed
+        - completed_reflected
+        - reflected_completed
+        + reflected_reflected
+    )
+    return ReflectedPairKernelEnergy(
+        direct_truncated=direct_truncated,
+        completed_completed=completed_completed,
+        completed_reflected=completed_reflected,
+        reflected_completed=reflected_completed,
+        reflected_reflected=reflected_reflected,
+        expanded=expanded,
+    )
+
+
+def reflected_boundary_diagonal_sides(
+    *,
+    long_weights: dict[int, Fraction],
+    cutoff: int,
+    product_cutoff: int,
+) -> ReflectedBoundaryDiagonal:
+    """Diagonal reflected energy in direct, LCM, and gcd coordinates."""
+    if cutoff <= 0 or product_cutoff <= 0:
+        raise ValueError("boundary cutoffs must be positive")
+    if any(index <= cutoff for index in long_weights):
+        raise ValueError("all reflected divisors must exceed the cutoff")
+    if any(mobius(index) == 0 for index in long_weights):
+        raise ValueError("reflected divisors must be squarefree")
+
+    weights = {
+        index: Fraction(weight) for index, weight in long_weights.items()
+    }
+    direct = sum(
+        (
+            sum(
+                (
+                    weight
+                    for divisor, weight in weights.items()
+                    if product % divisor == 0
+                ),
+                Fraction(0),
+            )
+            ** 2
+            for product in range(1, product_cutoff + 1)
+        ),
+        Fraction(0),
+    )
+
+    lcm_sum = Fraction(0)
+    gcd_parameterized_sum = Fraction(0)
+    active_coordinates: list[tuple[int, int, int]] = []
+    for left_divisor, left_weight in weights.items():
+        for right_divisor, right_weight in weights.items():
+            common = gcd(left_divisor, right_divisor)
+            left = left_divisor // common
+            right = right_divisor // common
+            multiple_count = product_cutoff // (common * left * right)
+            contribution = left_weight * right_weight * multiple_count
+            lcm_sum += contribution
+            gcd_parameterized_sum += contribution
+            if contribution:
+                active_coordinates.append((common, left, right))
+
+    return ReflectedBoundaryDiagonal(
+        direct=direct,
+        lcm_sum=lcm_sum,
+        gcd_parameterized_sum=gcd_parameterized_sum,
+        active_gcd_coordinates=tuple(active_coordinates),
+    )
+
+
+def reflected_boundary_pair_kernel_sides(
+    *,
+    long_weights: dict[int, Fraction],
+    cutoff: int,
+    product_cutoff: int,
+    pair_kernel: dict[tuple[int, int], Fraction],
+) -> ReflectedBoundaryPairKernel:
+    """Unfold a reflected pair energy into its two short cofactors."""
+    if cutoff <= 0 or product_cutoff <= 0:
+        raise ValueError("boundary cutoffs must be positive")
+    if any(index <= cutoff for index in long_weights):
+        raise ValueError("all reflected divisors must exceed the cutoff")
+    if any(mobius(index) == 0 for index in long_weights):
+        raise ValueError("reflected divisors must be squarefree")
+
+    weights = {
+        index: Fraction(weight) for index, weight in long_weights.items()
+    }
+
+    def reflected_coefficient(product: int) -> Fraction:
+        return sum(
+            (
+                weight
+                for divisor, weight in weights.items()
+                if product % divisor == 0
+            ),
+            Fraction(0),
+        )
+
+    direct = sum(
+        (
+            Fraction(kernel_weight)
+            * reflected_coefficient(left_product)
+            * reflected_coefficient(right_product)
+            for (left_product, right_product), kernel_weight in (
+                pair_kernel.items()
+            )
+            if 1 <= left_product <= product_cutoff
+            and 1 <= right_product <= product_cutoff
+        ),
+        Fraction(0),
+    )
+
+    unfolded = Fraction(0)
+    active_factor_pairs: list[tuple[int, int, int, int]] = []
+    for left_divisor, left_weight in weights.items():
+        for right_divisor, right_weight in weights.items():
+            for left_cofactor in range(
+                1, product_cutoff // left_divisor + 1
+            ):
+                for right_cofactor in range(
+                    1, product_cutoff // right_divisor + 1
+                ):
+                    kernel_weight = Fraction(
+                        pair_kernel.get(
+                            (
+                                left_divisor * left_cofactor,
+                                right_divisor * right_cofactor,
+                            ),
+                            Fraction(0),
+                        )
+                    )
+                    contribution = (
+                        left_weight * right_weight * kernel_weight
+                    )
+                    unfolded += contribution
+                    if contribution:
+                        active_factor_pairs.append(
+                            (
+                                left_divisor,
+                                left_cofactor,
+                                right_divisor,
+                                right_cofactor,
+                            )
+                        )
+
+    return ReflectedBoundaryPairKernel(
+        direct=direct,
+        unfolded=unfolded,
+        active_factor_pairs=tuple(active_factor_pairs),
+    )
 
 
 def zeta_mollifier_pairing_sides(
