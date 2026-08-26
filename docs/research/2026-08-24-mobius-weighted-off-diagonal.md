@@ -6264,7 +6264,161 @@ cutoffs as well as the diagonal choice \(U=V\).  Estimating these two
 packets uniformly in the small-common-factor range remains the analytic
 gate; (9.241) is a reduction, not its proof.
 
-Known one-variable Möbius--trace results do not close (9.239).  Even if
+The short--short packet cannot be closed by congruence density alone.
+Indeed, \(bc\mid r=gq+d\) and \((r,gq)=1\) imply \((bc,q)=1\), so for
+fixed \(b,c,q,d\) the variable \(g\) occupies one residue class modulo
+\(bc\).  Hence
+
+\[
+ \#\{g\asymp G:bc\mid gq+d\}
+ \leq \frac{G}{bc}+1,
+\quad
+ \sum_{b\leq U,c\leq V}
+ \left(\frac{G}{bc}+1\right)
+ \ll G\log(2U)\log(2V)+UV.
+\tag{9.243}
+\]
+
+If \(G=T^\gamma,U=T^u,V=T^v\), the absolute Type-I exponent is therefore
+
+\[
+ \boxed{E_{\rm I}^{\rm abs}(u,v)=\max(\gamma,u+v)\geq\gamma.}
+\tag{9.244}
+\]
+
+At \(\gamma=1/2\), every choice \(u+v\leq1/2\) retains the full missing
+half-power, while \(u+v>1/2\) is worse.  Thus the Type-I congruence is a
+useful reparametrization but supplies no covered transition box after
+absolute values.
+
+The balanced cutoff is \(U=V=T^{1/4}\).  In the long--long packet write
+\(r=bck\).  At its lower cutoff face,
+
+\[
+ bc>T^{1/2},\qquad k\ll T^{5/2},\qquad
+ |bck-gq|=|d|\ll T^2,
+\tag{9.245}
+\]
+
+and, since \(d\equiv bck\pmod q\),
+
+\[
+ e_q(-h\delta_0\bar d_q)
+ =e_q(-h\delta_0\overline{bck}_q),
+ \qquad
+ \left|\frac{k}{q}-\frac{g}{bc}\right|\ll T^{-1}.
+\tag{9.246}
+\]
+
+For fixed \(b,c,g,q\), the allowed \(k\)-window has exponent \(3/2\).
+The exact cutoff ledger is therefore product floor \(1/2\), quotient
+ceiling \(5/2\), fixed-divisor quotient window \(3/2\), and rational
+distance exponent \(-1\).  This is a near-determinant Type-II family in
+the two long variables \(k,q\), coupled to the three short factors
+\(b,c,g\) and the unfused product \(h\delta_0\).  No published estimate
+cited here controls this complete family; (9.245)--(9.246) specify the
+remaining long--long interface rather than bounding it.
+
+There is a second exact recombination which shows that independent
+Möbius cancellation in \(g\) is not the right target.  Put
+\(s=gq\) and \(m=g\delta_0\).  Since \(s\) is squarefree and
+\((d,s)=1\),
+
+\[
+ \mu(g)\mu(q)=\mu(s),\qquad
+ e_q(-h\delta_0\bar d_q)=e_s(-hm\bar d_s).
+\tag{9.247}
+\]
+
+For dyadic sets \(\mathcal G,\mathcal Q\), define the divisor-incidence
+multiplicity
+
+\[
+ \nu_{\mathcal G,\mathcal Q}(s,m)
+ :=\#\{g:g\mid(s,m),\ g\in\mathcal G,\ s/g\in\mathcal Q\}.
+\tag{9.248}
+\]
+
+Then the complete primitive scalar sum has the boundary-exact identity
+
+\[
+\boxed{
+ \sum_{gq=s\atop g\in\mathcal G,\ q\in\mathcal Q}
+ \mu(g)\mu(q)
+ \sum_{\delta_0\leq L/g}
+ e_q(-h\delta_0\bar d_q)
+ =\mu(s)\sum_{m\leq L}
+ \nu_{\mathcal G,\mathcal Q}(s,m)e_s(-hm\bar d_s).}
+\tag{9.249}
+\]
+
+There is no floor error: \(\delta_0\leq\lfloor L/g\rfloor\) is
+equivalent to \(m=g\delta_0\leq L\).  Also
+\(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau((s,m))\leq\tau(s)\), so it
+is divisor-bounded pointwise, although it depends jointly on the modulus
+and the product variable.  The finite checker verifies (9.247)--(9.249)
+for every selected divisor family on squarefree \(s\leq60\), including
+the reduced modulus \(q=1\).
+
+Consequently (9.239) can equivalently be expressed with only the original
+two shifted signs \(\mu(s)\mu(s+d)\), at the price of the structured
+coefficient \(\nu_{\mathcal G,\mathcal Q}(s,m)\):
+
+\[
+ \sum_{s\asymp S}\mu(s)
+ \sum_{d\in I(s)\atop(d,s)=1}\mu(s+d)
+ \sum_{h\asymp H}\sum_{m\asymp L}
+ \nu_{\mathcal G,\mathcal Q}(s,m)
+ \widetilde\Omega(s,d,h,m)e_s(-hm\bar d_s).
+\tag{9.250}
+\]
+
+This removes the artificial scalar triangle inequality but returns the
+full modulus \(s\asymp T^3\).  Young's theorem in the fixed reduced
+modulus \(q\asymp T^{5/2}\) does not directly apply to (9.250), while
+replacing \(\nu\) by an arbitrary divisor-bounded coefficient discards
+the incidence relation which created the sparsity.  The revised analytic
+gate is therefore a divisor-incidence large sieve for (9.250), or an
+equivalent estimate of the Type-I/II packets (9.242), in the range
+\(0\leq\tau<1/4\).
+
+The incidence coefficient also has an exact second moment with all floor
+boundaries retained.  Write
+\(\mathcal G_{s,\mathcal Q}=\{g\in\mathcal G:g\mid s,
+s/g\in\mathcal Q\}\).  Opening the square in (9.248) gives
+
+\[
+\boxed{
+ \sum_{m\leq L}\nu_{\mathcal G,\mathcal Q}(s,m)^2
+ =\sum_{g_1,g_2\in\mathcal G_{s,\mathcal Q}}
+   \left\lfloor\frac{L}{[g_1,g_2]}\right\rfloor
+ \leq\left(\frac LG+1\right)\tau(s)^2,}
+\tag{9.251}
+\]
+
+where every \(g\in\mathcal G\) is at least \(G\).  At the transition
+scale this is \(T^{2+\varepsilon}\), rather than the full ambient
+\(m\)-length \(T^{5/2}\).  Thus the incidence energy recovers exactly the
+half-power hidden by a scalar triangle inequality.  It does not by itself
+prove (9.250): lifting the rational phase from the reduced modulus
+\(q\asymp T^{5/2}\) to the full modulus \(s\asymp T^3\) changes the
+large-sieve conductor, and a valid theorem must exploit (9.251)
+simultaneously with that lift.  Treating \(\nu\) as an arbitrary
+divisor-bounded sequence would not do so.
+
+The \(k\)-aspect of Young's multiplicative main theorem does not provide
+that missing interface.  In its definition, \(k\) is fixed and the norm
+sums over every Dirichlet character \(\theta\pmod k\), while \(q\) is
+the varying primitive conductor; the bound is \(Q^2kT+N\).  Formula
+(9.250) has no \(\theta\)-family, and its divisor \(g\) varies jointly
+with \(s,m\).  Moreover, Young's stated additive Theorem 1.2 specializes
+to \(k=T=1\); the following sentence mentions analogous hybrid bounds
+but does not state a variable-\(k\) average.  Hence the fixed-\(k\)
+factor cannot be identified with the sum over \(g\), and
+\(Q^2k+N\) is not a published bound for (9.250).
+
+Known one-variable Möbius--trace results do not close (9.239) or its
+recombined form (9.250).  Even if
 one optimistically grants a translated prime-modulus version of the
 Fouvry--Kowalski--Michel smoothed estimate at \(D=q^{4/5}\), it saves
 only \(q^{-1/120+o(1)}\): its factor is
@@ -6281,9 +6435,10 @@ absolute value over \(g\); no unconditional closure is claimed.
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
-globally aggregated transition range \(\tau\geq1/4\); the scalar-Möbius
-packet (9.239) for \(0\leq\tau<1/4\), hence the full Region-D
-recombination, remains unproved.**
+globally aggregated transition range \(\tau\geq1/4\); the equivalent
+Type-I/II packet (9.242) and divisor-incidence packet (9.250) for
+\(0\leq\tau<1/4\), hence the full Region-D recombination, remain
+unproved.**
 
 Proved in this note:
 
@@ -6427,6 +6582,16 @@ Proved in this note:
   (9.240)--(9.242) splits its last sign into short--short Type I and
   long--long Type II packets without mixed or truncation errors; the
   direct prime-modulus Möbius--trace ledger is quantitatively insufficient.
+  Absolute Type I retains at least the full scalar cost, (9.243)--(9.244),
+  while (9.245)--(9.246) identify the balanced long--long packet as a
+  near-determinant family with long variables \(k,q\asymp T^{5/2}\).
+* the exact scalar recombination (9.247)--(9.250): the two scalar signs
+  combine back to \(\mu(s)\), the phase lifts from \(q=s/g\) to \(s\),
+  and the scalar family becomes the divisor-incidence multiplicity
+  \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The resulting
+  full-modulus incidence large-sieve estimate remains unproved.  Its
+  exact LCM-pair energy is (9.251), saving the scalar half-power in the
+  coefficient moment.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -6473,7 +6638,8 @@ Proved in this note:
 | Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
 | Young varying-level primitive route | fixed scalar strata close; scalar aggregation residual unproved | numerator completion kills zero and nonunit dual modes, (9.212)--(9.213); reciprocity maps each fixed-stratum raw term to Young's additive rational large sieve, (9.214)--(9.219), saving \(T^2\).  Restoring the transition scalar sum gives exponent \(19/2\), leaving \(T^{1/2}\), (9.235)--(9.238) |
 | Common-modulus unit-numerator family | closes for \(\tau\geq1/4\); small-common-factor packet unproved | the CRT collision cancels \(t\) from the Young rational, (9.221)--(9.227), but after the scalar sum its exponent is \(19/2-2\tau\).  Ramanujan marginals and the recombined zero mode remain below target, (9.228)--(9.231).  The exact residual is (9.239) for \(0\leq\tau<1/4\) |
-| Scalar Möbius transition packet | exact Type-I/II reduction; joint estimate unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Fixed-prime Möbius--trace estimates give at best the optimistic \(q^{-1/120}\) ledger at \(D=q^{4/5}\), versus the required \(q^{-1/5}\) |
+| Scalar Möbius transition packet | exact Type-I/II reduction; joint estimate unproved | (9.239) retains \(\mu(g)\mu(q)\mu(gq+d)\), the exact moving \(d\)-interval, and \(h\delta_0\); (9.241) splits \(\mu(gq+d)\) exactly into short--short and long--long divisor packets.  Absolute Type I has exponent \(\max(1/2,u+v)\), so no cutoff closes it, (9.243)--(9.244); the balanced Type II is the near determinant (9.245)--(9.246).  Fixed-prime Möbius--trace estimates save at best the optimistic \(q^{-1/120}\), versus required \(q^{-1/5}\) |
+| Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |

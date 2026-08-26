@@ -200,6 +200,201 @@ def mobius_two_cutoff_hyperbola_value(
     return long_long - short_short
 
 
+def _validate_scalar_factor_family(
+    modulus: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> None:
+    if modulus < 2 or interval_length < 1:
+        raise ValueError("the modulus and interval length must be positive")
+    if mobius(modulus) == 0:
+        raise ValueError("the primitive scalar identity requires squarefree s")
+    if any(factor < 1 or modulus % factor != 0 for factor in scalar_factors):
+        raise ValueError("every scalar factor must divide s")
+    if len(set(scalar_factors)) != len(scalar_factors):
+        raise ValueError("the scalar-factor family must not contain duplicates")
+
+
+def _validate_primitive_scalar_inputs(
+    modulus: int,
+    shift: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> None:
+    _validate_scalar_factor_family(
+        modulus,
+        interval_length,
+        scalar_factors,
+    )
+    if gcd(shift, modulus) != 1:
+        raise ValueError("the shift must be a unit modulo s")
+
+
+def _inverse_additive_phase(
+    modulus: int,
+    numerator: int,
+    shift: int,
+) -> complex:
+    if modulus == 1:
+        return 1 + 0j
+    residue = numerator * pow(shift, -1, modulus) % modulus
+    return cmath.exp(2j * cmath.pi * residue / modulus)
+
+
+def primitive_scalar_direct_value(
+    modulus: int,
+    shift: int,
+    frequency: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> complex:
+    """Sum fixed primitive scalar strata with their reduced moduli."""
+
+    _validate_primitive_scalar_inputs(
+        modulus,
+        shift,
+        interval_length,
+        scalar_factors,
+    )
+    total = 0j
+    for scalar_factor in scalar_factors:
+        reduced_modulus = modulus // scalar_factor
+        sign = mobius(scalar_factor) * mobius(reduced_modulus)
+        total += sign * sum(
+            _inverse_additive_phase(
+                reduced_modulus,
+                -frequency * reduced_numerator,
+                shift,
+            )
+            for reduced_numerator in range(
+                1,
+                interval_length // scalar_factor + 1,
+            )
+        )
+    return total
+
+
+def primitive_scalar_recombined_value(
+    modulus: int,
+    shift: int,
+    frequency: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> complex:
+    """Recombine ``s=gq, m=g*delta`` before estimating the scalar sum."""
+
+    _validate_primitive_scalar_inputs(
+        modulus,
+        shift,
+        interval_length,
+        scalar_factors,
+    )
+    return mobius(modulus) * sum(
+        _inverse_additive_phase(
+            modulus,
+            -frequency * scalar_factor * reduced_numerator,
+            shift,
+        )
+        for scalar_factor in scalar_factors
+        for reduced_numerator in range(
+            1,
+            interval_length // scalar_factor + 1,
+        )
+    )
+
+
+def scalar_incidence_energy(
+    modulus: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> int:
+    """Direct second moment of the scalar divisor-incidence count."""
+
+    _validate_scalar_factor_family(
+        modulus,
+        interval_length,
+        scalar_factors,
+    )
+    return sum(
+        sum(multiple % factor == 0 for factor in scalar_factors) ** 2
+        for multiple in range(1, interval_length + 1)
+    )
+
+
+def scalar_incidence_pair_energy_formula(
+    modulus: int,
+    interval_length: int,
+    scalar_factors: tuple[int, ...],
+) -> int:
+    """LCM-pair formula for the scalar divisor-incidence energy."""
+
+    _validate_scalar_factor_family(
+        modulus,
+        interval_length,
+        scalar_factors,
+    )
+    return sum(
+        interval_length
+        // (left_factor * right_factor // gcd(left_factor, right_factor))
+        for left_factor in scalar_factors
+        for right_factor in scalar_factors
+    )
+
+
+def scalar_type_i_absolute_exponent(
+    scalar_length: Fraction,
+    left_cutoff: Fraction,
+    right_cutoff: Fraction,
+) -> Fraction:
+    """Power cost of the absolute short-short congruence count."""
+
+    if min(scalar_length, left_cutoff, right_cutoff) < 0:
+        raise ValueError("all cutoff exponents must be nonnegative")
+    return max(scalar_length, left_cutoff + right_cutoff)
+
+
+def scalar_type_ii_cutoff_ledger(
+    *,
+    r_length: Fraction,
+    reduced_modulus: Fraction,
+    scalar_length: Fraction,
+    shift_length: Fraction,
+    left_cutoff: Fraction,
+    right_cutoff: Fraction,
+) -> ScalarTypeIICutoffLedger:
+    """Exponent geometry after ``r=bc*k`` in the long-long packet."""
+
+    if min(
+        r_length,
+        reduced_modulus,
+        scalar_length,
+        shift_length,
+        left_cutoff,
+        right_cutoff,
+    ) < 0:
+        raise ValueError("all exponent lengths must be nonnegative")
+    divisor_product_floor = left_cutoff + right_cutoff
+    quotient_ceiling = r_length - divisor_product_floor
+    if quotient_ceiling < 0:
+        raise ValueError("the divisor product cannot exceed r")
+    return ScalarTypeIICutoffLedger(
+        divisor_product_floor=divisor_product_floor,
+        divisor_product_vs_scalar=(
+            divisor_product_floor - scalar_length
+        ),
+        quotient_ceiling=quotient_ceiling,
+        fixed_divisor_quotient_window=max(
+            Fraction(0),
+            shift_length - divisor_product_floor,
+        ),
+        rational_distance=(
+            shift_length
+            - divisor_product_floor
+            - reduced_modulus
+        ),
+    )
+
+
 @dataclass(frozen=True)
 class InverseFractionSeparation:
     """Centered numerator certificate for two fixed-numerator fractions.
@@ -1814,6 +2009,17 @@ class YoungScalarTransitionLedger:
     theorem_gap: Fraction
     required_saving: Fraction
     theorem_saving: Fraction
+
+
+@dataclass(frozen=True)
+class ScalarTypeIICutoffLedger:
+    """Balanced short-short/long-long cutoff geometry."""
+
+    divisor_product_floor: Fraction
+    divisor_product_vs_scalar: Fraction
+    quotient_ceiling: Fraction
+    fixed_divisor_quotient_window: Fraction
+    rational_distance: Fraction
 
 
 @dataclass(frozen=True)

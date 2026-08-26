@@ -22,6 +22,7 @@ from scripts.audit_mobius_type_ii import (
     MQWBlockSavings,
     PascadiFullResidueSavings,
     PascadiModuliMargins,
+    ScalarTypeIICutoffLedger,
     SquarefreeScalarGcdStratum,
     WrightFactorSavings,
     YoungCommonFactorLedger,
@@ -122,6 +123,8 @@ from scripts.audit_mobius_type_ii import (
     pascadi_balanced_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
+    primitive_scalar_direct_value,
+    primitive_scalar_recombined_value,
     ramanujan_mean_dyadic_divisor_majorant,
     ramanujan_mean_dyadic_sum,
     ramanujan_sum,
@@ -133,7 +136,11 @@ from scripts.audit_mobius_type_ii import (
     restricted_unit_fourier_lift_formula,
     reverse_unit_affine_progression_length,
     reverse_unit_solution_count_gap,
+    scalar_incidence_energy,
+    scalar_incidence_pair_energy_formula,
     scalar_stratum_bettin_chandee_ledger,
+    scalar_type_i_absolute_exponent,
+    scalar_type_ii_cutoff_ledger,
     squarefree_normalized_ramanujan_mean_formula,
     squarefree_outer_mobius_ramanujan,
     squarefree_scalar_gcd_stratum,
@@ -378,6 +385,96 @@ def test_two_cutoff_hyperbola_identity_has_no_cross_term_or_remainder() -> None:
                     cutoff_left=cutoff_left,
                     cutoff_right=cutoff_right,
                 ) == naive_mobius(n)
+
+
+def test_primitive_scalar_layers_recombine_into_sparse_full_modulus() -> None:
+    for modulus in range(2, 61):
+        if naive_mobius(modulus) == 0:
+            continue
+        all_factors = tuple(
+            divisor
+            for divisor in range(1, modulus + 1)
+            if modulus % divisor == 0
+        )
+        factor_families = (all_factors, all_factors[::2], all_factors[1::2])
+        for scalar_factors in factor_families:
+            for shift in range(1, min(modulus, 5)):
+                if gcd(shift, modulus) != 1:
+                    continue
+                for frequency in range(1, 4):
+                    for interval_length in range(1, 9):
+                        direct = primitive_scalar_direct_value(
+                            modulus,
+                            shift,
+                            frequency,
+                            interval_length,
+                            scalar_factors,
+                        )
+                        recombined = primitive_scalar_recombined_value(
+                            modulus,
+                            shift,
+                            frequency,
+                            interval_length,
+                            scalar_factors,
+                        )
+                        assert abs(direct - recombined) < 1e-8
+
+
+def test_scalar_incidence_energy_has_exact_lcm_pair_formula() -> None:
+    for modulus in range(2, 61):
+        if naive_mobius(modulus) == 0:
+            continue
+        all_factors = tuple(
+            divisor
+            for divisor in range(1, modulus + 1)
+            if modulus % divisor == 0
+        )
+        for scalar_factors in (all_factors, all_factors[::2], all_factors[1::2]):
+            for interval_length in range(1, 21):
+                assert scalar_incidence_energy(
+                    modulus,
+                    interval_length,
+                    scalar_factors,
+                ) == scalar_incidence_pair_energy_formula(
+                    modulus,
+                    interval_length,
+                    scalar_factors,
+                )
+
+
+def test_scalar_type_i_absolute_value_never_saves_the_half_power() -> None:
+    scalar_length = F(1, 2)
+    for left_quarters in range(3):
+        for right_quarters in range(3):
+            left_cutoff = F(left_quarters, 4)
+            right_cutoff = F(right_quarters, 4)
+            exponent = scalar_type_i_absolute_exponent(
+                scalar_length,
+                left_cutoff,
+                right_cutoff,
+            )
+            assert exponent == max(
+                scalar_length,
+                left_cutoff + right_cutoff,
+            )
+            assert exponent >= scalar_length
+
+
+def test_symmetric_type_ii_cutoff_creates_long_long_near_determinant() -> None:
+    assert scalar_type_ii_cutoff_ledger(
+        r_length=F(3),
+        reduced_modulus=F(5, 2),
+        scalar_length=F(1, 2),
+        shift_length=F(2),
+        left_cutoff=F(1, 4),
+        right_cutoff=F(1, 4),
+    ) == ScalarTypeIICutoffLedger(
+        divisor_product_floor=F(1, 2),
+        divisor_product_vs_scalar=F(0),
+        quotient_ceiling=F(5, 2),
+        fixed_divisor_quotient_window=F(3, 2),
+        rational_distance=F(-1),
+    )
 
 
 def test_balanced_two_sided_dispersion_gaps_are_exact() -> None:
