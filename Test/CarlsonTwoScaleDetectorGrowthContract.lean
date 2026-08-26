@@ -44,5 +44,19 @@ example :
             Real.log ((31 / 8 : ℝ) / (123 / 32 : ℝ)) :=
   exists_regularizedTwoScaleCarlsonInnerFactorDiskZeroMass_le_logPolynomial
 
+example {Y0 Y1 : ℕ} (hY0 : 2 ≤ Y0) (hY01 : Y0 < Y1) {T : ℝ} :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g
+        (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+      (∀ u : (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ) : Set ℂ),
+        g u ≠ 0) ∧
+      -Real.log (123 / 32 : ℝ) *
+          regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T ≤
+        Real.log ‖g ((4 : ℂ) + I * (T + 1 / 2))‖ :=
+  exists_regularizedTwoScaleCarlsonZeroDetector_fixedJensenFactor_center_lower
+    hY0 hY01
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

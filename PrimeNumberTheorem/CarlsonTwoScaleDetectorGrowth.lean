@@ -243,5 +243,74 @@ theorem exists_regularizedTwoScaleCarlsonInnerFactorDiskZeroMass_le_logPolynomia
   rw [regularizedTwoScaleCarlsonInnerFactorDiskZeroMass_eq]
   exact hbound hY0 hY01 hT
 
+/-- All two-scale detector zeros in the inner disk can be extracted into a
+finite divisor factor.  The remaining analytic factor is nonvanishing and
+has the divisor-mass center lower bound needed by Borel--Caratheodory. -/
+theorem exists_regularizedTwoScaleCarlsonZeroDetector_fixedJensenFactor_center_lower
+    {Y0 Y1 : ℕ} (hY0 : 2 ≤ Y0) (hY01 : Y0 < Y1) {T : ℝ} :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g
+        (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+      (∀ u : (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ) : Set ℂ),
+        g u ≠ 0) ∧
+      -Real.log (123 / 32 : ℝ) *
+          regularizedTwoScaleCarlsonInnerFactorDiskZeroMass Y0 Y1 T ≤
+        Real.log ‖g ((4 : ℂ) + I * (T + 1 / 2))‖ := by
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let b : ℝ := 123 / 32
+  let detector : ℂ → ℂ :=
+    regularizedTwoScaleCarlsonZeroDetector Y0 Y1
+  have hanalytic : AnalyticOnNhd ℂ detector
+      (Metric.closedBall c b) := by
+    apply
+      (analyticOnNhd_regularizedTwoScaleCarlsonZeroDetector_fixedJensenOuterDisk
+        Y0 Y1 T).mono
+    exact Metric.closedBall_subset_closedBall (by norm_num [b])
+  have hcenterNorm : 1 ≤ ‖detector c‖ := by
+    dsimp [detector]
+    apply one_le_norm_regularizedTwoScaleCarlsonZeroDetector_of_four_le_re
+    · simp [c]
+    · apply norm_twoScaleMollifiedZetaError_le_one_div_three_of_four_le_re
+        hY0 hY01
+      simp [c]
+  have hcenter : detector c ≠ 0 := by
+    intro hzero
+    rw [hzero, norm_zero] at hcenterNorm
+    norm_num at hcenterNorm
+  have hnotop : ∀ u : (Metric.closedBall c b : Set ℂ),
+      meromorphicOrderAt detector u ≠ ⊤ := by
+    intro u
+    have hdist : ‖(u : ℂ) - c‖ ≤ b := by
+      have hdist' : dist (u : ℂ) c ≤ b :=
+        Metric.mem_closedBall.mp u.property
+      simpa [Complex.dist_eq] using hdist'
+    have hreAbs := Complex.abs_re_le_norm ((u : ℂ) - c)
+    have hre : 0 < (u : ℂ).re := by
+      have habs : |(u : ℂ).re - 4| ≤ b := by
+        simpa [c] using hreAbs.trans hdist
+      rw [abs_le] at habs
+      dsimp [b] at habs
+      linarith
+    rw [(hanalytic u u.property).meromorphicOrderAt_eq]
+    intro htop
+    apply analyticOrderAt_regularizedTwoScaleCarlsonZeroDetector_ne_top
+      hY0 hY01 hre
+    exact ENat.map_eq_top_iff.mp htop
+  rcases exists_analytic_nonzero_factor_log_norm_at_center
+      (f := detector) (c := c) (R := b)
+      (by norm_num [b]) hanalytic hnotop hcenter with
+    ⟨g, hg, hgne, hfactor⟩
+  have hsum := finsum_divisor_mul_log_norm_center_sub_le_log_mul_mass
+    (f := detector) (c := c) (b := b)
+    (by norm_num [b]) hanalytic hcenter
+  have hcenterLog : 0 ≤ Real.log ‖detector c‖ :=
+    Real.log_nonneg hcenterNorm
+  refine ⟨g, by simpa [c, b] using hg, by simpa [c, b] using hgne, ?_⟩
+  dsimp [regularizedTwoScaleCarlsonInnerFactorDiskZeroMass,
+    detector, c, b] at hfactor hsum hcenterLog ⊢
+  linarith
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

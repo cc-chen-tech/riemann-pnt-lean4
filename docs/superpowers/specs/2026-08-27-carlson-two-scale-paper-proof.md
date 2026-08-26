@@ -313,7 +313,8 @@ and the resulting unconditional Jensen divisor-mass bound are now
 formalized in `CarlsonTwoScaleFarRight.lean` and
 `CarlsonTwoScaleDetectorGrowth.lean`; divisor locality also identifies
 this outer-Jensen mass with the complete divisor on the inner factorization
-disk.  The remaining generic Lean wrapper
+disk, and the corresponding nonvanishing analytic factor with its center
+divisor-mass lower bound has been extracted.  The remaining generic Lean wrapper
 starts after Jensen: it must factor the local divisor, perform the radial
 and height pigeonhole selections, and transfer the Borel--Caratheodory
 bound to the horizontal logarithmic derivative.
