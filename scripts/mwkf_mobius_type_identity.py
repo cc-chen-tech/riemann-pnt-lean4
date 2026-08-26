@@ -214,6 +214,21 @@ class CoupledProductDoubleMobiusCertificate:
 
 
 @dataclass(frozen=True)
+class DrappeauDoubleQuotientPhase:
+    original_r: int
+    original_s: int
+    drappeau_r: int
+    drappeau_d: int
+    drappeau_s: int
+    drappeau_c: int
+    drappeau_n: int
+    original_phase: Fraction
+    drappeau_phase: Fraction
+    phase_identity_verified: bool
+    coprimality_identity_verified: bool
+
+
+@dataclass(frozen=True)
 class ZeroRayPhaseReduction:
     s_u: int
     a_u: int
@@ -1883,6 +1898,89 @@ def _normalized_modular_phase(
         raise ValueError("phase denominator is not invertible")
     residue = numerator * pow(invert, -1, modulus) % modulus
     return Fraction(residue, modulus)
+
+
+def drappeau_double_quotient_phase(
+    *,
+    numerator: int,
+    r_short: int,
+    r_truncated_divisor: int,
+    r_smooth_quotient: int,
+    s_short: int,
+    s_truncated_divisor: int,
+    s_smooth_quotient: int,
+) -> DrappeauDoubleQuotientPhase:
+    """Match a double Type quotient with Drappeau's reciprocal phase.
+
+    Write the original variables as
+
+    ``r = r_short * r_truncated_divisor * r_smooth_quotient`` and
+    ``s = s_short * s_truncated_divisor * s_smooth_quotient``.
+
+    Drappeau's variables are then ``(r, d, s, c)`` equal to the first
+    two-factor product, the remaining r quotient, the analogous s
+    product, and the remaining s quotient.  The numerator is negated so
+    that ``e(n * inverse(r*d) / (s*c))`` is exactly the original
+    ``e(-numerator * inverse(original_r) / original_s)``.
+
+    This is an algebraic phase certificate only.  It does not verify the
+    smooth-weight or sharp-hyperbola hypotheses of the analytic theorem.
+    """
+
+    factors = (
+        r_short,
+        r_truncated_divisor,
+        r_smooth_quotient,
+        s_short,
+        s_truncated_divisor,
+        s_smooth_quotient,
+    )
+    if min(factors) < 1:
+        raise ValueError("all quotient factors must be positive")
+    if numerator == 0:
+        raise ValueError("the residual product frequency must be nonzero")
+
+    original_r = r_short * r_truncated_divisor * r_smooth_quotient
+    original_s = s_short * s_truncated_divisor * s_smooth_quotient
+    drappeau_r = r_short * r_truncated_divisor
+    drappeau_d = r_smooth_quotient
+    drappeau_s = s_short * s_truncated_divisor
+    drappeau_c = s_smooth_quotient
+    drappeau_n = -numerator
+
+    if gcd(original_r, original_s) != 1:
+        raise ValueError("the reciprocal phase requires coprime r and s")
+    original_phase = _normalized_modular_phase(
+        numerator=-numerator,
+        invert=original_r,
+        modulus=original_s,
+    )
+    drappeau_phase = _normalized_modular_phase(
+        numerator=drappeau_n,
+        invert=drappeau_r * drappeau_d,
+        modulus=drappeau_s * drappeau_c,
+    )
+    coprimality_identity_verified = (
+        gcd(original_r, original_s)
+        == gcd(
+            drappeau_r * drappeau_d,
+            drappeau_s * drappeau_c,
+        )
+        == 1
+    )
+    return DrappeauDoubleQuotientPhase(
+        original_r=original_r,
+        original_s=original_s,
+        drappeau_r=drappeau_r,
+        drappeau_d=drappeau_d,
+        drappeau_s=drappeau_s,
+        drappeau_c=drappeau_c,
+        drappeau_n=drappeau_n,
+        original_phase=original_phase,
+        drappeau_phase=drappeau_phase,
+        phase_identity_verified=original_phase == drappeau_phase,
+        coprimality_identity_verified=coprimality_identity_verified,
+    )
 
 
 def _fractional_part(value: Fraction) -> Fraction:

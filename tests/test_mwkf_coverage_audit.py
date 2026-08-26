@@ -193,6 +193,184 @@ def test_residual_finite_certificate_keeps_h_delta_before_estimation() -> None:
     assert certificate.recombination_identity_verified
 
 
+def test_drappeau_double_quotient_has_the_three_exact_k_squared_terms() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "drappeau_double_quotient_audit",
+        None,
+    )
+    assert adapter is not None, "Drappeau double-quotient audit is missing"
+
+    hard = boundary_witnesses()["balanced_max_a"]
+    audit = adapter(
+        hard,
+        r_smooth_quotient_exponent=F(3),
+        s_smooth_quotient_exponent=F(5, 2),
+    )
+
+    assert audit.r_coefficient_exponent == F(0)
+    assert audit.s_coefficient_exponent == F(1, 2)
+    assert audit.coefficient_l2_exponent == F(11, 4)
+    assert audit.k_squared_first_exponent == F(11)
+    assert audit.k_squared_second_exponent == F(11)
+    assert audit.k_squared_third_exponent == F(21, 2)
+    assert audit.bound_exponent == F(33, 4)
+    assert audit.target_exponent == F(5999, 1000)
+    assert audit.target_deficit == F(2251, 1000)
+    assert not audit.analytic_size_covers
+    assert not audit.sharp_hyperbola_adapter_verified
+    assert not audit.published_coverage
+
+
+def test_drappeau_size_cell_is_not_coverage_before_boundary_adapter() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "drappeau_double_quotient_audit",
+        None,
+    )
+    assert adapter is not None, "Drappeau double-quotient audit is missing"
+
+    short_product = ExponentBox(
+        F(3), F(3), F(1, 2), F(1, 2), F(1, 4), F(1, 4), F(0)
+    )
+    audit = adapter(
+        short_product,
+        r_smooth_quotient_exponent=F(3),
+        s_smooth_quotient_exponent=F(5, 2),
+    )
+
+    assert published_coverage_cell(short_product).route == "D"
+    assert audit.bound_exponent == F(39, 8)
+    assert audit.analytic_size_covers
+    assert not audit.sharp_hyperbola_adapter_verified
+    assert not audit.published_coverage
+
+
+def test_drappeau_hard_box_optimum_is_exactly_thirty_three_over_four() -> None:
+    optimum = getattr(
+        coverage_audit,
+        "drappeau_balanced_hard_optimum",
+        None,
+    )
+    assert optimum is not None, "Drappeau hard-box optimum is missing"
+
+    audit = optimum()
+    assert audit.minimum_bound_exponent == F(33, 4)
+    assert audit.r_smooth_quotient_exponent == F(3)
+    assert audit.s_smooth_quotient_min_exponent == F(5, 2)
+    assert audit.s_smooth_quotient_max_exponent == F(3)
+    assert audit.target_deficit == F(2251, 1000)
+    assert audit.lower_bound_proved_by_two_piece_max
+
+
+def test_drappeau_strict_type_subcell_has_a_boundary_safe_adapter() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "drappeau_type_subcell_audit",
+        None,
+    )
+    assert adapter is not None, "refined Drappeau Type audit is missing"
+
+    short_product = ExponentBox(
+        F(3), F(3), F(1, 2), F(1, 2), F(1, 4), F(1, 4), F(0)
+    )
+    audit = adapter(
+        short_product,
+        r_truncated_divisor_exponent=F(0),
+        r_smooth_quotient_exponent=F(3),
+        s_truncated_divisor_exponent=F(0),
+        s_smooth_quotient_exponent=F(5, 2),
+        r_cutoff_exponent=F(1),
+        s_cutoff_exponent=F(1),
+    )
+
+    assert audit.r_short_mobius_exponent == F(0)
+    assert audit.s_short_mobius_exponent == F(1, 2)
+    assert audit.r_hyperbola_relation == "strict_far"
+    assert audit.s_hyperbola_relation == "strict_far"
+    assert audit.sharp_hyperbola_adapter_verified
+    assert audit.base.analytic_size_covers
+    assert audit.published_coverage
+
+
+def test_drappeau_boundary_type_subcell_stays_residual() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "drappeau_type_subcell_audit",
+        None,
+    )
+    assert adapter is not None, "refined Drappeau Type audit is missing"
+
+    short_product = ExponentBox(
+        F(3), F(3), F(1, 2), F(1, 2), F(1, 4), F(1, 4), F(0)
+    )
+    audit = adapter(
+        short_product,
+        r_truncated_divisor_exponent=F(1),
+        r_smooth_quotient_exponent=F(0),
+        s_truncated_divisor_exponent=F(0),
+        s_smooth_quotient_exponent=F(5, 2),
+        r_cutoff_exponent=F(1),
+        s_cutoff_exponent=F(1),
+    )
+
+    assert audit.r_short_mobius_exponent == F(2)
+    assert audit.r_hyperbola_relation == "boundary"
+    assert audit.s_hyperbola_relation == "strict_far"
+    assert not audit.sharp_hyperbola_adapter_verified
+    assert not audit.published_coverage
+
+
+def test_drappeau_type_subcell_detects_empty_hyperbola_scale() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "drappeau_type_subcell_audit",
+        None,
+    )
+    assert adapter is not None, "refined Drappeau Type audit is missing"
+
+    short_product = ExponentBox(
+        F(3), F(3), F(1, 2), F(1, 2), F(1, 4), F(1, 4), F(0)
+    )
+    audit = adapter(
+        short_product,
+        r_truncated_divisor_exponent=F(0),
+        r_smooth_quotient_exponent=F(1, 2),
+        s_truncated_divisor_exponent=F(0),
+        s_smooth_quotient_exponent=F(5, 2),
+        r_cutoff_exponent=F(1),
+        s_cutoff_exponent=F(1),
+    )
+
+    assert audit.r_hyperbola_relation == "empty"
+    assert audit.asymptotically_empty
+    assert not audit.published_coverage
+
+
+def test_drappeau_refinement_still_cannot_cover_the_hard_box() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "drappeau_type_subcell_audit",
+        None,
+    )
+    assert adapter is not None, "refined Drappeau Type audit is missing"
+
+    audit = adapter(
+        boundary_witnesses()["balanced_max_a"],
+        r_truncated_divisor_exponent=F(0),
+        r_smooth_quotient_exponent=F(3),
+        s_truncated_divisor_exponent=F(0),
+        s_smooth_quotient_exponent=F(5, 2),
+        r_cutoff_exponent=F(1),
+        s_cutoff_exponent=F(1),
+    )
+
+    assert audit.sharp_hyperbola_adapter_verified
+    assert audit.base.bound_exponent == F(33, 4)
+    assert not audit.base.analytic_size_covers
+    assert not audit.published_coverage
+
+
 def test_zero_third_length_uses_the_elementary_route_when_bc_fails() -> None:
     box = ExponentBox(F(2), F(1), F(0), F(1), F(0), F(0), F(0))
     assert not bettin_chandee_covers(box)

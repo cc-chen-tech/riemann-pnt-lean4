@@ -1561,6 +1561,41 @@ spectral proposition, not a routine adapter.
 
 **new spectral proposition status: unproved.**
 
+### 4.8 A boundary-safe Drappeau subcell, but a hard-box no-go
+
+The published-coverage note now records a theorem adapter that is valid only
+after the exact Type identity.  In the notation
+(r=b_rd_re_r), (s=b_sd_se_s), it sends the unsigned quotients
+((e_r,e_s)) to Drappeau's smooth variables and the two signed products
+((b_rd_r,b_sd_s)), together with (n=-h\delta), to the arbitrary
+coefficient.  The reciprocal phase and coprimality condition are literal
+identities, so neither Möbius side nor the product frequency is separated.
+
+The sharp condition (d_re_r>U_r) is harmless only on a dyadic exponent
+cell with
+
+\[
+ \log_T d_r+\log_T e_r>\log_T U_r
+\]
+
+by a fixed positive amount, and likewise on the (s)-side.  Equality is a
+distinct uncovered boundary face.  This strict partition yields genuine
+published coverage for some short-product cells; the exact witness and all
+three terms of Drappeau's (K^2) are in Section 3.12 of the coverage note.
+
+For the hard box, however, the theorem output has the exact global lower
+bound (33/4), while the local target is (5999/1000).  No choice of the
+two smooth quotient scales can repair the hard face, even before its
+boundary cells are considered.  The hard task is therefore still the
+pre-Cauchy outer-scale/slope-family cancellation isolated in Sections
+4.67--4.68 of the alternative-routes note.
+
+The finite helpers `drappeau_double_quotient_phase`,
+`drappeau_double_quotient_audit`, and `drappeau_type_subcell_audit` keep the
+algebraic phase, analytic exponent, and sharp-hyperbola status as separate
+certificates.  A favourable exponent is never promoted to coverage on an
+equality boundary.
+
 ## 5. Tail and final-theorem boundary
 
 The same finite identity (2.5) can be applied inside

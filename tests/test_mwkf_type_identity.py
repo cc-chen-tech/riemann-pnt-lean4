@@ -142,6 +142,37 @@ def test_coupled_double_split_preserves_product_phase_and_two_mobius_sides() -> 
         )
 
 
+def test_double_quotient_factorization_matches_drappeau_phase_exactly() -> None:
+    adapter = getattr(
+        type_identity,
+        "drappeau_double_quotient_phase",
+        None,
+    )
+    assert adapter is not None, "Drappeau double-quotient phase is missing"
+
+    phase = adapter(
+        numerator=15,
+        r_short=2,
+        r_truncated_divisor=3,
+        r_smooth_quotient=5,
+        s_short=7,
+        s_truncated_divisor=1,
+        s_smooth_quotient=11,
+    )
+
+    assert phase.original_r == 30
+    assert phase.original_s == 77
+    assert phase.drappeau_r == 6
+    assert phase.drappeau_d == 5
+    assert phase.drappeau_s == 7
+    assert phase.drappeau_c == 11
+    assert phase.drappeau_n == -15
+    assert phase.original_phase == F(38, 77)
+    assert phase.drappeau_phase == F(38, 77)
+    assert phase.phase_identity_verified
+    assert phase.coprimality_identity_verified
+
+
 def test_full_truncated_mobius_convolution_vanishes_above_the_cutoff() -> None:
     """Catch localizing the s*a factorization before its exact centering."""
     adapter = getattr(

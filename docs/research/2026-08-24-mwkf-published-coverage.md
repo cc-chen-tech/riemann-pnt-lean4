@@ -526,6 +526,158 @@ coverage here.  The adapter pascadi_incomplete_kloosterman_audit records
 the regular and exceptional terms separately and sets all hypothesis and
 coverage flags to false.
 
+### 3.12 Drappeau double-quotient cells after the exact Möbius split
+
+[Drappeau, Theorem 2.1](https://arxiv.org/abs/1504.05549) bounds, for
+(q=1),
+
+\[
+ \sum_{c,d,n,r,s} b_{n,r,s}g(c,d,n,r,s)
+ e\!\left(\frac{n\overline{rd}}{sc}\right)
+ \ll (CDNRS)^{\varepsilon+O(\varepsilon _0)}
+ K(C,D,N,R,S)\lVert b\rVert _2,
+\]
+
+where
+
+\[
+ K^2=CS(RS+N)(C+RD)
+     +C^2DS\sqrt{(RS+N)R}
+     +D^2NRS^{-1}.
+\tag{3.22}
+\]
+
+This is not a direct base-cell estimate, but the exact two-sided Möbius
+identity supplies a literal post-Type adapter.  Write
+
+\[
+ r=b_r d_r e_r,\qquad s=b_s d_s e_s,
+\]
+
+where (d_r,d_s) are the truncated Möbius divisors, (e_r,e_s) are the
+unsigned quotients, and (b_r,b_s) retain the second Möbius weights.  Set
+
+\[
+ (r_{\rm Dra},d_{\rm Dra},s_{\rm Dra},c_{\rm Dra},n_{\rm Dra})
+ =(b_rd_r,e_r,b_sd_s,e_s,-h\delta).
+\tag{3.23}
+\]
+
+Then the Drappeau phase is exactly the original phase:
+
+\[
+ e\!\left(\frac{-h\delta\,\overline{b_rd_re_r}}
+                   {b_sd_se_s}\right)
+ =e\!\left(\frac{n_{\rm Dra}\overline{r_{\rm Dra}d_{\rm Dra}}}
+                   {s_{\rm Dra}c_{\rm Dra}}\right).
+\tag{3.24}
+\]
+
+Both Möbius weights and the product frequency remain in the arbitrary
+coefficient (b_{n,r,s}).  The multiplicity in
+((b_r,d_r)\mapsto b_rd_r), and similarly on the (s)-side, is divisor
+bounded.  If
+
+\[
+ d=\log_T e_r,\quad c=\log_T e_s,\quad
+ r_0=\rho-d,\quad s_0=\sigma-c,\quad a=\ell+h,
+\]
+
+the coefficient norm has exponent
+
+\[
+ B=\frac{a+r_0+s_0}{2}.
+\tag{3.25}
+\]
+
+The three terms of (3.22) have exact exponents
+
+\[
+\begin{aligned}
+ K_1&=\sigma+\max(r_0+s_0,a)+\max(c,\rho),\\
+ K_2&=\sigma+c+d
+       +\frac{\max(r_0+s_0,a)+r_0}{2},\\
+ K_3&=a+\rho-\sigma+d+c,
+\end{aligned}
+\tag{3.26}
+\]
+
+and hence
+
+\[
+ E_{\rm Dra}=B+\frac12\max(K_1,K_2,K_3).
+\tag{3.27}
+\]
+
+The remaining boundary distinction is essential.  If
+(pi_r=\log_T d_r), (u_r=\log_T U_r), the exact Type support is
+
+\[
+ \pi_r\le u_r<\pi_r+d,
+\tag{3.28}
+\]
+
+and similarly on the (s)-side.  Each side is partitioned as follows.
+
+| exponent relation | Type subcell status |
+|---|---|
+| (pi>u) or (pi+d<u) | asymptotically empty |
+| (pi+d=u) | sharp boundary; still residual |
+| (pi\le u<pi+d) with strict exponent gap | `strict_far`; the sharp indicator is eventually constant on the dyadic box |
+
+Only the last row removes the coefficient--smooth-variable coupling without
+a Mellin truncation or boundary error.  There the original dyadic kernel is
+an admissible smooth (g), Drappeau's coprimality is exactly the original
+reciprocal coprimality, and the signs of (n_{\rm Dra}) are handled as two
+packets.  Thus a strict cell with
+(E_{\rm Dra}<\rho+\sigma-1/1000) is genuine published coverage.
+
+For example, take the admissible residual base box
+
+\[
+ (\rho,\sigma,a)=(3,3,1/2),\quad
+ (d,c)=(3,5/2),\quad
+ (\pi_r,\pi_s)=(0,0),\quad (u_r,u_s)=(1,1).
+\]
+
+Both hyperbolas are `strict_far`, and (3.27) gives
+
+\[
+ E_{\rm Dra}=\frac{39}{8}<\frac{5999}{1000}.
+\tag{3.29}
+\]
+
+This is the first registered post-Type published subcell inside a base
+Region-D box.  It does **not** cover the base box, since every remaining
+factor cell must also be estimated.
+
+At the hard witness ((\rho,\sigma,a)=(3,3,5)), optimizing (3.27) over
+(0\le d,c\le3) gives
+
+\[
+ \min E_{\rm Dra}=\frac{33}{4},
+ \qquad d=3,\quad \frac52\le c\le3.
+\tag{3.30}
+\]
+
+If (c+d\le1), the first (K)-term gives
+(E_{\rm Dra}\ge21/2).  If (c+d\ge1), the second gives
+
+\[
+ E_{\rm Dra}\ge 9-\frac d4\ge\frac{33}{4},
+\]
+
+with equality on the interval in (3.30).  Thus even a strict-far adapter
+misses the hard target by
+
+\[
+ \frac{33}{4}-\frac{5999}{1000}=\frac{2251}{1000}.
+\tag{3.31}
+\]
+
+This is a theorem-strength no-go result for this Drappeau adapter on the
+hard box, not a lower bound for the original coupled sum.
+
 ## 4. Wright fixed-factor adapter
 
 Wright, arXiv:2604.25177v2, treats
@@ -583,6 +735,11 @@ must prove the two signed Farey trilinear bounds
 FTF\(_{\epsilon,1/1000}\) in the balanced box, without first taking
 absolute values in the size of the Poisson-dual variable; a zero-residual
 coverage report cannot be produced from the cited results.
+
+The refined post-Type table now contains nonempty Drappeau-covered subcells,
+such as (3.29).  This does not change either Region-D base row: the sharp
+boundary faces remain, and (3.30)--(3.31) show that no Drappeau factor
+allocation covers the balanced hard witness at all.
 
 The coefficient-first note also gives the exact finite-residue completion
 

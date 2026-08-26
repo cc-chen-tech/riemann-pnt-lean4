@@ -88,6 +88,63 @@ class ResidualDoubleMobiusTypeLedger:
     reason: str
 
 
+@dataclass(frozen=True)
+class DrappeauDoubleQuotientAudit:
+    """Exact exponent ledger for Drappeau's Theorem 2.1, with q=1."""
+
+    r_smooth_quotient_exponent: Fraction
+    s_smooth_quotient_exponent: Fraction
+    r_coefficient_exponent: Fraction
+    s_coefficient_exponent: Fraction
+    coefficient_l2_exponent: Fraction
+    k_squared_first_exponent: Fraction
+    k_squared_second_exponent: Fraction
+    k_squared_third_exponent: Fraction
+    bound_exponent: Fraction
+    target_exponent: Fraction
+    target_deficit: Fraction
+    analytic_size_covers: bool
+    algebraic_phase_adapter_verified: bool
+    arbitrary_coefficient_retains_double_mobius: bool
+    product_frequency_retained: bool
+    sharp_hyperbola_adapter_verified: bool
+    published_coverage: bool
+
+
+@dataclass(frozen=True)
+class DrappeauBalancedHardOptimum:
+    """Closed-form minimum of the Drappeau ledger on the hard box."""
+
+    minimum_bound_exponent: Fraction
+    r_smooth_quotient_exponent: Fraction
+    s_smooth_quotient_min_exponent: Fraction
+    s_smooth_quotient_max_exponent: Fraction
+    target_exponent: Fraction
+    target_deficit: Fraction
+    lower_bound_proved_by_two_piece_max: bool
+
+
+@dataclass(frozen=True)
+class DrappeauTypeSubcellAudit:
+    """Drappeau audit with the two sharp Type hyperbolas exposed."""
+
+    base: DrappeauDoubleQuotientAudit
+    r_truncated_divisor_exponent: Fraction
+    s_truncated_divisor_exponent: Fraction
+    r_short_mobius_exponent: Fraction
+    s_short_mobius_exponent: Fraction
+    r_cutoff_exponent: Fraction
+    s_cutoff_exponent: Fraction
+    r_hyperbola_relation: str
+    s_hyperbola_relation: str
+    asymptotically_empty: bool
+    sharp_hyperbola_adapter_verified: bool
+    theorem_q_equals_one: bool
+    dyadic_smooth_weight_verified: bool
+    coefficient_l2_divisor_bound_verified: bool
+    published_coverage: bool
+
+
 def inverse_product_max_multiplicity(modulus: int, delta: int) -> int:
     """Largest fibre of c -> delta*c^{-1} modulo the modulus on units."""
 
@@ -354,6 +411,221 @@ def residual_coupled_type_certificate(
         r_cutoff_v=r_cutoff_v,
         s_cutoff_u=s_cutoff_u,
         s_cutoff_v=s_cutoff_v,
+    )
+
+
+def drappeau_double_quotient_audit(
+    box: ExponentBox,
+    *,
+    r_smooth_quotient_exponent: Fraction,
+    s_smooth_quotient_exponent: Fraction,
+    target_saving: Fraction = Fraction(1, 1000),
+) -> DrappeauDoubleQuotientAudit:
+    """Evaluate Drappeau's three ``K^2`` terms after double quotienting.
+
+    Put ``d=T^d0`` and ``c=T^c0`` for the smooth quotients.  The other
+    two coefficient scales have exponents ``rho-d0`` and ``sigma-c0``;
+    the product frequency has exponent ``a=ell+h`` and remains inside the
+    arbitrary coefficient ``b[n,r,s]``.  For q=1, Theorem 2.1 gives
+
+    ``K^2 = CS(RS+N)(C+RD)``
+    ``      + C^2 DS sqrt((RS+N)R)``
+    ``      + D^2 N R / S``.
+
+    The returned ``published_coverage`` remains false until a separate
+    proof adapts the sharp Type hyperbola to the theorem's smooth
+    ``c,d`` weights.  A favourable exponent alone is not coverage.
+    """
+
+    if not is_admissible(box):
+        raise ValueError("Drappeau audit requires an admissible box")
+    d0 = Fraction(r_smooth_quotient_exponent)
+    c0 = Fraction(s_smooth_quotient_exponent)
+    if not (0 <= d0 <= box.rho):
+        raise ValueError("r smooth quotient must lie between 0 and rho")
+    if not (0 <= c0 <= box.sigma):
+        raise ValueError("s smooth quotient must lie between 0 and sigma")
+    target_saving = Fraction(target_saving)
+    if target_saving < 0:
+        raise ValueError("target saving must be nonnegative")
+
+    r0 = box.rho - d0
+    s0 = box.sigma - c0
+    a = box.third_length
+    rs_or_n = max(r0 + s0, a)
+    coefficient_l2 = Fraction(a + r0 + s0, 2)
+    k_first = box.sigma + rs_or_n + max(c0, box.rho)
+    k_second = (
+        box.sigma
+        + c0
+        + d0
+        + Fraction(rs_or_n + r0, 2)
+    )
+    k_third = a + box.rho - box.sigma + d0 + c0
+    bound = coefficient_l2 + Fraction(
+        max(k_first, k_second, k_third),
+        2,
+    )
+    target = box.rho + box.sigma - target_saving
+    analytic_size_covers = bound < target
+    sharp_hyperbola_adapter_verified = False
+    return DrappeauDoubleQuotientAudit(
+        r_smooth_quotient_exponent=d0,
+        s_smooth_quotient_exponent=c0,
+        r_coefficient_exponent=r0,
+        s_coefficient_exponent=s0,
+        coefficient_l2_exponent=coefficient_l2,
+        k_squared_first_exponent=k_first,
+        k_squared_second_exponent=k_second,
+        k_squared_third_exponent=k_third,
+        bound_exponent=bound,
+        target_exponent=target,
+        target_deficit=max(Fraction(0), bound - target),
+        analytic_size_covers=analytic_size_covers,
+        algebraic_phase_adapter_verified=True,
+        arbitrary_coefficient_retains_double_mobius=True,
+        product_frequency_retained=True,
+        sharp_hyperbola_adapter_verified=sharp_hyperbola_adapter_verified,
+        published_coverage=(
+            analytic_size_covers and sharp_hyperbola_adapter_verified
+        ),
+    )
+
+
+def drappeau_balanced_hard_optimum(
+    *,
+    target_saving: Fraction = Fraction(1, 1000),
+) -> DrappeauBalancedHardOptimum:
+    """Return the exact global minimum on ``rho=sigma=3, a=5``.
+
+    If ``x=c+d <= 1``, the first K term gives a bound at least ``21/2``.
+    If ``x >= 1``, the second K term gives ``9-d/4 >= 33/4``.  Equality
+    holds for ``d=3`` and every ``5/2 <= c <= 3``; the other K terms are
+    then no larger.  This proves the minimum without a numerical grid.
+    """
+
+    target = Fraction(6) - Fraction(target_saving)
+    minimum = Fraction(33, 4)
+    return DrappeauBalancedHardOptimum(
+        minimum_bound_exponent=minimum,
+        r_smooth_quotient_exponent=Fraction(3),
+        s_smooth_quotient_min_exponent=Fraction(5, 2),
+        s_smooth_quotient_max_exponent=Fraction(3),
+        target_exponent=target,
+        target_deficit=minimum - target,
+        lower_bound_proved_by_two_piece_max=True,
+    )
+
+
+def _type_hyperbola_relation(
+    *,
+    truncated_divisor_exponent: Fraction,
+    smooth_quotient_exponent: Fraction,
+    cutoff_exponent: Fraction,
+) -> str:
+    """Classify ``d <= U < d*e`` at the exponent level."""
+
+    if truncated_divisor_exponent > cutoff_exponent:
+        return "empty"
+    product_exponent = (
+        truncated_divisor_exponent + smooth_quotient_exponent
+    )
+    if product_exponent < cutoff_exponent:
+        return "empty"
+    if product_exponent == cutoff_exponent:
+        return "boundary"
+    return "strict_far"
+
+
+def drappeau_type_subcell_audit(
+    box: ExponentBox,
+    *,
+    r_truncated_divisor_exponent: Fraction,
+    r_smooth_quotient_exponent: Fraction,
+    s_truncated_divisor_exponent: Fraction,
+    s_smooth_quotient_exponent: Fraction,
+    r_cutoff_exponent: Fraction,
+    s_cutoff_exponent: Fraction,
+    target_saving: Fraction = Fraction(1, 1000),
+) -> DrappeauTypeSubcellAudit:
+    """Certify strict Type subcells where the sharp hyperbola disappears.
+
+    In one exact Möbius factorization write ``n=d*e*b`` with
+    ``d <= U < d*e``.  On a dyadic exponent cell, ``pi+epsilon>u`` by a
+    fixed amount makes the second inequality identically true for all
+    sufficiently large ``T``.  The smooth quotient ``e`` may then be the
+    Drappeau ``c`` or ``d`` variable, while ``d*b`` and both Möbius atoms
+    stay in the arbitrary coefficient.  Equality is deliberately retained
+    as an uncovered boundary face.
+
+    The original reciprocal coprimality is exactly Drappeau's q=1
+    condition.  Dyadic localization gives the required smooth weight, and
+    the number of factorizations absorbed by ``b[n,r,s]`` is divisor
+    bounded, so its L2 exponent is the one recorded in ``base``.
+    """
+
+    pi_r = Fraction(r_truncated_divisor_exponent)
+    pi_s = Fraction(s_truncated_divisor_exponent)
+    eps_r = Fraction(r_smooth_quotient_exponent)
+    eps_s = Fraction(s_smooth_quotient_exponent)
+    cutoff_r = Fraction(r_cutoff_exponent)
+    cutoff_s = Fraction(s_cutoff_exponent)
+    if min(pi_r, pi_s, eps_r, eps_s, cutoff_r, cutoff_s) < 0:
+        raise ValueError("Type subcell exponents must be nonnegative")
+    beta_r = box.rho - pi_r - eps_r
+    beta_s = box.sigma - pi_s - eps_s
+    if beta_r < 0 or beta_s < 0:
+        raise ValueError("Type factors cannot exceed the original scale")
+
+    base = drappeau_double_quotient_audit(
+        box,
+        r_smooth_quotient_exponent=eps_r,
+        s_smooth_quotient_exponent=eps_s,
+        target_saving=target_saving,
+    )
+    r_relation = _type_hyperbola_relation(
+        truncated_divisor_exponent=pi_r,
+        smooth_quotient_exponent=eps_r,
+        cutoff_exponent=cutoff_r,
+    )
+    s_relation = _type_hyperbola_relation(
+        truncated_divisor_exponent=pi_s,
+        smooth_quotient_exponent=eps_s,
+        cutoff_exponent=cutoff_s,
+    )
+    asymptotically_empty = "empty" in (r_relation, s_relation)
+    sharp_adapter = (
+        r_relation == "strict_far" and s_relation == "strict_far"
+    )
+    theorem_q_equals_one = True
+    dyadic_smooth_weight_verified = True
+    coefficient_l2_divisor_bound_verified = True
+    published_coverage = (
+        not asymptotically_empty
+        and base.analytic_size_covers
+        and sharp_adapter
+        and theorem_q_equals_one
+        and dyadic_smooth_weight_verified
+        and coefficient_l2_divisor_bound_verified
+    )
+    return DrappeauTypeSubcellAudit(
+        base=base,
+        r_truncated_divisor_exponent=pi_r,
+        s_truncated_divisor_exponent=pi_s,
+        r_short_mobius_exponent=beta_r,
+        s_short_mobius_exponent=beta_s,
+        r_cutoff_exponent=cutoff_r,
+        s_cutoff_exponent=cutoff_s,
+        r_hyperbola_relation=r_relation,
+        s_hyperbola_relation=s_relation,
+        asymptotically_empty=asymptotically_empty,
+        sharp_hyperbola_adapter_verified=sharp_adapter,
+        theorem_q_equals_one=theorem_q_equals_one,
+        dyadic_smooth_weight_verified=dyadic_smooth_weight_verified,
+        coefficient_l2_divisor_bound_verified=(
+            coefficient_l2_divisor_bound_verified
+        ),
+        published_coverage=published_coverage,
     )
 
 
