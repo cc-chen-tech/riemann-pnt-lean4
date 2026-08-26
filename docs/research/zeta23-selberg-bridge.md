@@ -1,4 +1,4 @@
-# Zeta23 → Selberg/Conrey 目标蕴含链（外部机器检查证明闭合）
+# Zeta23 → Selberg 目标与旧名兼容别名（外部机器检查证明闭合）
 
 ## 一句话结论
 
@@ -6,10 +6,13 @@ Anthropic 的机器检查 Lean 仓库
 [`anthropics/zeta-23-lean`](https://github.com/anthropics/zeta-23-lean)
 （论文 *More than two thirds of the zeros of the Riemann zeta function lie
 on the critical line*，2026）的 **Theorem B**（至少 2/3 的 zeta 零点是简单
-的且在临界线上）**形式化蕴含**本仓库的两个开放 `def ... : Prop` 目标：
+的且在临界线上）**形式化蕴含**本仓库的 Selberg 目标和一个历史旧名接口：
 
 - `HardyTheorem.selberg_odd_zero_proportion_target`
 - `KnownResults.conrey_40_percent_zeros_on_critical_line_target`
+
+第二个命题在定义上只是 Selberg 正比例目标；它没有表达简单零点，也没有
+要求常数严格大于 `2/5`，因此不是 Conrey 1989 的真正结论。
 
 闭合**不需要任何新的解析数学**——只需要定义级桥接引理 + 组装。本文件把
 这条蕴含链写成精确的数学陈述，作为合并的蓝图。
@@ -91,7 +94,7 @@ selberg_odd_zero_proportion_target
 | 仓库目标 | 状态 | 来源 |
 |---|---|---|
 | `HardyTheorem.selberg_odd_zero_proportion_target` | **闭合**（若合并） | Zeta23 Thm B + 引理 1–3 |
-| `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | **闭合**（若合并） | 上一步 + 现有两引理 |
+| `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | **旧名兼容别名闭合**（若合并） | 上一步 + 现有两引理；不是真正 Conrey `> 2/5` 目标 |
 | 其余 10 个开放目标 | 不受影响 | Zeta23 与 VK/RH 误差/Hardy 渐近无关 |
 
 ## 不闭合的边界（诚实声明）
@@ -100,7 +103,9 @@ selberg_odd_zero_proportion_target
 - `PrimeNumberTheorem.RH_*` 四个 RH 误差目标：Zeta23 是线上比例定理，与
   RH 误差尺度无关；
 - `HardyTheorem.integral_asymptotic_target`、`hardy_two_signed_moments_target`、
-  `HardyTheorem.Details.*`：对象是 Hardy `Z` 函数矩渐近，与 Zeta23 无关。
+  `HardyTheorem.Details.*`：对象是 Hardy `Z` 函数矩渐近，与 Zeta23 无关；
+- `HardyTheorem.conreyTwoFifthsSimpleZerosTarget`：Zeta23 路线与该独立的
+  Levinson--Conrey 长 mollifier 证明不同，本文桥接不闭合其解析门。
 
 ## 合并蓝图（Phase 3，若决策门通过）
 

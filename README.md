@@ -14,10 +14,12 @@ PNT 误差振荡。围绕该振荡，`main` 还包含每个充分靠后的固定
 对数窗口上，可以选取一个整窗共用的良好截断高度，使归一化有限高度近似余项一致
 趋于零，并使其局部二阶矩任意小。此外，`main` 通过
 [Zeta23 桥接](HardyTheorem/Zeta23SelbergBridge.lean)在仓库内核内闭合了
-Selberg 奇重零点正比例目标与 Conrey 40% 目标：输入是 Anthropic
+Selberg 奇重零点正比例目标：输入是 Anthropic
 [`zeta-23-lean`](https://github.com/anthropics/zeta-23-lean) 的机器检查
 Theorem B(至少 2/3 的零点简单且在临界线上,Apache 2.0)与本仓库自己的全高度
-Riemann--von Mangoldt 下界,桥接本身是定义级组装(来源与归属见
+Riemann--von Mangoldt 下界,桥接本身是定义级组装。旧名
+`conrey_40_percent_zeros_on_critical_line_target` 也由此成立，但它在定义上
+只是 Selberg 正比例目标，不是真正的简单零点 `> 2/5` 定理(来源与归属见
 [docs/research/zeta23-merge-provenance.md](docs/research/zeta23-merge-provenance.md))。
 项目没有证明 Riemann 假设或 Vinogradov--Korobov 零自由区域。
 
@@ -141,8 +143,8 @@ window, and proves that the normalized finite-height approximation remainder
 is uniformly arbitrarily small there, hence also arbitrarily small in local
 `L2`. This does not control the complementary zero package.  Through the
 Zeta23 bridge (`HardyTheorem.Zeta23SelbergBridge`), `main` additionally
-closes the Selberg odd-multiplicity positive-proportion target and the
-Conrey 40% target inside this repository's kernel: the inputs are the
+closes the Selberg odd-multiplicity positive-proportion target inside this
+repository's kernel: the inputs are the
 independently machine-checked Theorem B of Anthropic's
 [`zeta-23-lean`](https://github.com/anthropics/zeta-23-lean) (at least 2/3
 of the zeros are simple and on the critical line; Apache 2.0) and this
@@ -161,10 +163,11 @@ surface.
 
 The project does **not** prove the Riemann Hypothesis, the
 Vinogradov--Korobov zero-free region, or numerically explicit final
-constants. Selberg's positive-proportion theorem and Conrey's percentage
-theorem are closed in-repo through the external machine-checked Zeta23
-Theorem B (see above); the analytic content of that theorem is Anthropic's,
-not this repository's. Classical mathematical theorems are
+constants. Selberg's positive-proportion theorem is closed in-repo through the
+external machine-checked Zeta23 Theorem B (see above); the analytic content of
+that theorem is Anthropic's, not this repository's. A legacy target carrying
+Conrey's name is merely definitionally Selberg and must not be confused with
+the genuine simple-zero `> 2/5` theorem. Classical mathematical theorems are
 not presented as new results; the contribution is their machine-checked Lean
 formalization, the proof architecture required to connect them, and the
 resulting reusable library.
@@ -198,7 +201,7 @@ resulting reusable library.
 | 固定对数窗口上归一化有限高度显式公式余项一致趋于零 | `PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt` | [源码](PrimeNumberTheorem/ExplicitFormulaNormalizedWindowRemainder.lean) · [说明](docs/research/explicit-formula-normalized-window-remainder.md) |
 | 固定对数窗口上归一化有限高度近似误差的局部二阶矩任意小 | `PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterApproximationL2.lean) · [说明](docs/research/vk-edge-approximation-l2-decay.md) |
 | Selberg 奇重数临界线零点正比例(`c · T log T` 尺度) | `HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`(显式常数 `7/48`) | [桥接源码](HardyTheorem/Zeta23SelbergBridge.lean) · [桥接蓝图](docs/research/zeta23-selberg-bridge.md) · [来源说明](docs/research/zeta23-merge-provenance.md) |
-| Conrey 40% 临界线正比例 | `HardyTheorem.Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23` | [桥接源码](HardyTheorem/Zeta23SelbergBridge.lean) · 同上 |
+| 旧版 Conrey 名称兼容目标（实际为 Selberg 正比例） | `HardyTheorem.Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23` | [桥接源码](HardyTheorem/Zeta23SelbergBridge.lean) · 不是真正的简单零点 `> 2/5` 目标 |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
@@ -447,9 +450,11 @@ Selberg、最终 VK、Pintz 最大阶、正负双向振荡以及比固定 `epsil
   Anthropic `zeta-23-lean` 的 Theorem B(至少 2/3 零点简单且在临界线上)+
   本仓库定义级桥接(`HardyTheorem.Zeta23SelbergBridge`,常数 7/48);定理的解析
   内核属于 Anthropic,见[来源说明](docs/research/zeta23-merge-provenance.md);
-- Conrey 的百分比定理——同上,经仓库既有的
-  `selberg_zero_proportion_target_of_odd` 与
-  `conrey_40_percent_zeros_on_critical_line_target_of_selberg` 蕴含链闭合;
+- Conrey 1989 年的简单零点 `> 2/5` 定理——尚未完成无公理解析证明；
+  `HardyTheorem.conreyTwoFifthsSimpleZerosTarget` 是正确目标，显式积分与数值
+  层已形式化，但均方估计、论证原理及 Deshouillers--Iwaniec 谱输入仍是开放层。
+  旧的 `conrey_40_percent_zeros_on_critical_line_target_of_selberg` 只推出定义上
+  等同 Selberg 的兼容别名，不能作为该定理的证明；
 - Pintz 的均值阶或最大阶振荡定理；
 - 带最终数值常数的显式 Strong PNT 或零自由区域。
 

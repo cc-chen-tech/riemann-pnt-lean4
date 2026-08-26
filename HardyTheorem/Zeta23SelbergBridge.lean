@@ -9,18 +9,20 @@ open scoped BigOperators
 namespace HardyTheorem
 
 /-!
-# Zeta23 → Selberg/Conrey bridge (external machine-checked closure)
+# Zeta23 → Selberg bridge (plus a legacy compatibility alias)
 
 This file assembles the three-step bridge described in
 `docs/research/zeta23-selberg-bridge.md`.  It imports the vendored
 external artifact `Zeta23`, whose audit introduces no extra axioms
 (Anthropic's Lean formalization of
 "More than two thirds of the zeros of the Riemann zeta function lie on the
-critical line", Apache 2.0) and closes two of this repository's open
-`def ... : Prop` targets:
+critical line", Apache 2.0) and closes the repository's Selberg target plus
+one historically misnamed compatibility alias:
 
 * `selberg_odd_zero_proportion_target`
-* `KnownResults.conrey_40_percent_zeros_on_critical_line_target`
+* legacy `KnownResults.conrey_40_percent_zeros_on_critical_line_target`, which
+  is definitionally Selberg's target and is not the genuine Conrey `> 2/5`
+  simple-zero target
 
 The chain uses exactly the three bridge lemmas of the blueprint:
 
@@ -155,7 +157,9 @@ theorem selberg_zero_proportion_target_of_zeta23 :
     selberg_zero_proportion_target :=
   selberg_zero_proportion_target_of_odd selberg_odd_zero_proportion_target_of_zeta23
 
-/-- **Conrey 40% critical-line proportion, closed externally.** -/
+/-- **Legacy compatibility theorem.**  Despite its historical name, this
+target is definitionally Selberg's positive-proportion statement; it does not
+prove `HardyTheorem.conreyTwoFifthsSimpleZerosTarget`. -/
 theorem conrey_40_percent_zeros_on_critical_line_target_of_zeta23 :
     KnownResults.conrey_40_percent_zeros_on_critical_line_target :=
   KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_selberg
