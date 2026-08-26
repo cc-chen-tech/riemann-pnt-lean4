@@ -6032,7 +6032,11 @@ def test_unimodular_slope_family_has_exact_torus_operator_gate(
     assert audit.required_operator_l2_exponent == F(499, 1000)
     assert audit.required_operator_energy_exponent == F(499, 500)
     assert audit.slope_sum_retained_before_frequency_cauchy
+    assert audit.operator_is_fourier_transform_of_recombined_physical_kernel
     assert not audit.per_slope_triangle_inequality_used
+    assert audit.global_frequency_cauchy_discards_mobius_signs
+    assert audit.operator_l2_gate_is_sufficient_not_necessary
+    assert audit.signed_mobius_tensor_restriction_still_required
     assert not audit.signed_incomplete_poincare_operator_bound_proved
     assert not audit.mmkls_covered
 
@@ -6044,12 +6048,16 @@ def test_unimodular_slope_family_has_exact_torus_operator_gate(
         "torus=7 pullback=True tensor=True pairing=True relative_c=1 "
         "slope_det=True mobius_l2=3 target=3499/1000 "
         "operator_l2=499/1000 energy=499/500 slope_first=True "
-        "per_slope_triangle=False operator=False mmkls=False"
+        "physical_pullback=True per_slope_triangle=False cauchy_loses_mu=True "
+        "l2_sufficient_only=True signed_restriction=True "
+        "operator=False mmkls=False"
     ) in output
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
         "### 4.109zjabb Exact torus matrix coefficient retains cross-slope phases",
         r"\widehat{\widetilde K_M}(\xi)=\widehat K_M(M^{\mathsf T}\xi)",
+        r"\left|\sum_{M\in\mathcal M_g}K_M(M^{-1}z)\right|^2",
+        "actual two-Möbius Fourier tensor",
         r"j_2v_1-v_2j_1",
         r"T^{499/1000}",
         "signed_torus_slope_operator_audit",

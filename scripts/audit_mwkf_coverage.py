@@ -2138,7 +2138,11 @@ class SignedTorusSlopeOperatorAudit:
     required_operator_l2_exponent: Fraction
     required_operator_energy_exponent: Fraction
     slope_sum_retained_before_frequency_cauchy: bool
+    operator_is_fourier_transform_of_recombined_physical_kernel: bool
     per_slope_triangle_inequality_used: bool
+    global_frequency_cauchy_discards_mobius_signs: bool
+    operator_l2_gate_is_sufficient_not_necessary: bool
+    signed_mobius_tensor_restriction_still_required: bool
     signed_incomplete_poincare_operator_bound_proved: bool
     mmkls_covered: bool
 
@@ -11787,7 +11791,10 @@ def signed_torus_slope_operator_audit() -> SignedTorusSlopeOperatorAudit:
     back by ``M^t``.  Thus all primitive slopes can be summed *before* one
     global frequency-space Cauchy inequality.  The squared operator retains
     the off-diagonal matrices ``M2^t*M1^(-t)``; their lower-left entry is
-    exactly ``j2*v1-v2*j1``, the primitive-slope determinant.
+    exactly ``j2*v1-v2*j1``, the primitive-slope determinant.  A subsequent
+    global L2 Cauchy inequality still replaces the actual two-Mobius tensor
+    by its positive Parseval mass, so the resulting operator norm is only a
+    sufficient gate and may be strictly stronger than MMKLS.
 
     The finite fixture verifies all algebra over ``Z/7Z`` without floating
     point roots of unity.  It does not prove the required operator norm.
@@ -11966,7 +11973,11 @@ def signed_torus_slope_operator_audit() -> SignedTorusSlopeOperatorAudit:
         required_operator_l2_exponent=operator_l2,
         required_operator_energy_exponent=2 * operator_l2,
         slope_sum_retained_before_frequency_cauchy=True,
+        operator_is_fourier_transform_of_recombined_physical_kernel=True,
         per_slope_triangle_inequality_used=False,
+        global_frequency_cauchy_discards_mobius_signs=True,
+        operator_l2_gate_is_sufficient_not_necessary=True,
+        signed_mobius_tensor_restriction_still_required=True,
         signed_incomplete_poincare_operator_bound_proved=False,
         mmkls_covered=False,
     )
@@ -25272,7 +25283,15 @@ def main() -> None:
         f"energy={_fmt(torus_operator.required_operator_energy_exponent)} "
         "slope_first="
         f"{torus_operator.slope_sum_retained_before_frequency_cauchy} "
+        "physical_pullback="
+        f"{torus_operator.operator_is_fourier_transform_of_recombined_physical_kernel} "
         f"per_slope_triangle={torus_operator.per_slope_triangle_inequality_used} "
+        "cauchy_loses_mu="
+        f"{torus_operator.global_frequency_cauchy_discards_mobius_signs} "
+        "l2_sufficient_only="
+        f"{torus_operator.operator_l2_gate_is_sufficient_not_necessary} "
+        "signed_restriction="
+        f"{torus_operator.signed_mobius_tensor_restriction_still_required} "
         "operator="
         f"{torus_operator.signed_incomplete_poincare_operator_bound_proved} "
         f"mmkls={torus_operator.mmkls_covered}"

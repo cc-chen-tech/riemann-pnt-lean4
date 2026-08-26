@@ -19224,6 +19224,23 @@ time.  Define the phase-coherent operator
  \tag{4.845dc_14xq_19g}
 \]
 
+Because
+\(\widehat K_M(-M^{\mathsf T}\theta)
+=\widehat{\widetilde K_M}(-\theta)\), Parseval also gives the exact
+physical identity
+
+\[
+ \boxed{
+ \|\mathcal P_g\|_2^2
+ =\sum_{z\in\mathbb Z^2}
+   \left|\sum_{M\in\mathcal M_g}K_M(M^{-1}z)\right|^2.}
+ \tag{4.845dc_14xq_19ga}
+\]
+
+Thus the slope sum and every physical phase remain inside one square.
+This is more precise than a per-slope triangle inequality, but it is
+still a positive square after the two Möbius factors have been removed.
+
 Parseval gives
 
 \[
@@ -19242,7 +19259,21 @@ Consequently the following is a precise sufficient local gate for the
 \]
 
 Equivalently, its energy target has exponent \(499/500\).  This is only a
-sufficient Cauchy gate, not an equivalence or a proved estimate.
+sufficient Cauchy gate, not an equivalence or a proved estimate.  In
+particular, the step
+
+\[
+ |\langle A_R\otimes B_S,\mathcal P_g\rangle|
+ \leq \|A_R\otimes B_S\|_2\|\mathcal P_g\|_2
+ \tag{4.845dc_14xq_19hb}
+\]
+
+replaces the actual two-Möbius Fourier tensor by its positive Parseval
+mass.  Hence (4.845dc_14xq_19h) may be strictly stronger than MMKLS.
+If its physical energy (4.845dc_14xq_19ga) does not meet the target, the
+correct next theorem must bound the signed pairing in
+(4.845dc_14xq_19hb) on the actual Möbius tensor, rather than its full
+\(L^2(\mathbb T^2)\) operator norm.
 
 The virtue of this coordinate is visible after expanding the operator
 energy.  If
@@ -19266,8 +19297,9 @@ The interface `signed_torus_slope_operator_audit` checks Bezout shear
 invariance, the pullback phase, tensor Fourier factorization, and the full
 finite Fourier pairing over \(\mathbb Z/7\mathbb Z\) using exact integer
 cyclotomic coefficients.  It records the required operator exponents
-\(499/1000\) and \(499/500\), while keeping the operator bound and MMKLS
-false.
+\(499/1000\) and \(499/500\), marks the \(L^2\) gate as sufficient but
+not necessary, and keeps the signed tensor restriction, operator bound,
+and MMKLS false.
 
 ### 4.109zjac Product-index character energy saves locally but does not compose with PEVP
 
