@@ -5447,6 +5447,38 @@ class LabelledTypeZeroDeterminantRecombination:
     global_same_slope_gate_proved: bool
 
 
+@dataclass(frozen=True)
+class FareyScalarBeattyFixedCoefficientCollision:
+    q: int
+    k: int
+    entries: tuple[tuple[int, int, int, int, int, int], ...]
+    conflicting_value_coefficients: tuple[
+        tuple[int, int, int, int, int, int, int], ...
+    ]
+    fixed_scalar_value_assignment_consistent: bool
+    counterexample_to_universal_fixed_f_adapter: bool
+    technau_zafeiropoulos_fixed_f_hypothesis_refuted: bool
+
+
+@dataclass(frozen=True)
+class LabelledTypeNonprincipalDeterminantSplit:
+    packet_ids: tuple[str, ...]
+    product_frequencies: tuple[int, ...]
+    packet_label_ledger: tuple[tuple[str, int, int, str, str], ...]
+    sector_labels: tuple[int, ...]
+    type_pair_energies: tuple[tuple[str, Fraction], ...]
+    expanded_nonprincipal_energy: Fraction
+    zero_determinant_expanded_energy: Fraction
+    zero_determinant_recombined_energy: Fraction
+    nonzero_determinant_energy: Fraction
+    nonzero_determinants: tuple[int, ...]
+    all_original_packet_labels_retained: bool
+    type_i_ii_partition_exact: bool
+    determinant_split_exact: bool
+    zero_determinant_recombined_before_cauchy: bool
+    global_nonzero_determinant_gate_proved: bool
+
+
 def farey_type_ttstar_euclidean_ledger(
     *,
     q: int,
@@ -5773,6 +5805,286 @@ def labelled_type_zero_determinant_recombination(
         internal_type_factorizations_recombined=(expanded == recombined),
         distinct_outer_packets_still_cross_inside_entry=distinct_outer_cross,
         global_same_slope_gate_proved=False,
+    )
+
+
+def farey_scalar_beatty_fixed_coefficient_collision(
+    *,
+    q: int,
+    k: int,
+    sector_denominators: tuple[tuple[int, int], ...],
+) -> FareyScalarBeattyFixedCoefficientCollision:
+    """Test whether moving Beatty slopes can share one scalar coefficient.
+
+    A Technau--Zafeiropoulos slope average keeps one arithmetic function
+    ``f(r)`` fixed while the Beatty slope moves.  The present cluster has
+    coefficient ``mu(s)*mu(r)`` at
+
+    ``w=ceil(b*s/q),  r=k*s+w``.
+
+    If two supplied slopes produce the same value ``r`` from denominators
+    with different Mobius signs, no scalar assignment depending only on
+    ``r`` can encode both entries.  This is an exact finite obstruction;
+    it does not rule out a genuinely vector- or pair-valued theorem.
+    """
+    if q <= 0 or k < 0:
+        raise ValueError("q must be positive and k nonnegative")
+    if not sector_denominators:
+        raise ValueError("at least one sector-denominator pair is required")
+
+    entries: list[tuple[int, int, int, int, int, int]] = []
+    for sector, denominator in sector_denominators:
+        if sector < 0 or denominator <= 0 or denominator > q:
+            raise ValueError("require b >= 0 and 1 <= s <= q")
+        lower = (sector * denominator + q - 1) // q
+        upper = ((sector + 1) * denominator + q - 1) // q
+        if upper - lower != 1 or not (0 <= lower < denominator):
+            raise ValueError("every supplied critical sector fiber must be nonempty")
+        w = lower
+        r = k * denominator + w
+        if gcd(r, denominator) != 1 or mobius(r) == 0 or mobius(denominator) == 0:
+            raise ValueError("require primitive squarefree-supported entries")
+        entries.append(
+            (
+                sector,
+                denominator,
+                w,
+                r,
+                mobius(denominator),
+                mobius(r),
+            )
+        )
+
+    conflicts: list[tuple[int, int, int, int, int, int, int]] = []
+    for left_index, left in enumerate(entries):
+        left_sector, left_s, _, left_r, left_mu_s, left_mu_r = left
+        left_coefficient = left_mu_s * left_mu_r
+        for right in entries[left_index + 1 :]:
+            right_sector, right_s, _, right_r, right_mu_s, right_mu_r = right
+            right_coefficient = right_mu_s * right_mu_r
+            if left_r == right_r and left_coefficient != right_coefficient:
+                conflicts.append(
+                    (
+                        left_r,
+                        left_sector,
+                        left_s,
+                        left_coefficient,
+                        right_sector,
+                        right_s,
+                        right_coefficient,
+                    )
+                )
+
+    consistent = not conflicts
+    return FareyScalarBeattyFixedCoefficientCollision(
+        q=q,
+        k=k,
+        entries=tuple(entries),
+        conflicting_value_coefficients=tuple(conflicts),
+        fixed_scalar_value_assignment_consistent=consistent,
+        counterexample_to_universal_fixed_f_adapter=not consistent,
+        technau_zafeiropoulos_fixed_f_hypothesis_refuted=not consistent,
+    )
+
+
+def labelled_type_nonprincipal_determinant_split(
+    *,
+    packets: tuple[LabelledAfeTypePacket, ...],
+    angular_resolution: int,
+    slope_integer_part: int,
+    character_modulus: int,
+    type_cutoff: int,
+    prime_log_weights: dict[int, Fraction],
+) -> LabelledTypeNonprincipalDeterminantSplit:
+    """Split the exact nonprincipal Type Gram by sector and determinant.
+
+    The normalized nonprincipal character kernel is
+
+    ``1_(b_left=b_right) - 1/M``.
+
+    Each packet keeps its ``(h,delta,nu,sigma)`` labels and vector.  One
+    Mobius-log identity is expanded on each side, but all Type I/II cross
+    terms remain in the same signed Gram.  Only then is the determinant
+    ``n_left*s_right-n_right*s_left`` split into zero and nonzero parts.
+    The zero part is recombined over every internal ``d*m=n``
+    factorization before any estimate.
+    """
+    if not packets:
+        raise ValueError("at least one labelled packet is required")
+    if angular_resolution <= 0 or character_modulus <= 0 or type_cutoff < 1:
+        raise ValueError("Q,M,U must be positive")
+    if slope_integer_part < 0:
+        raise ValueError("the integer slope part must be nonnegative")
+    if len({packet.packet_id for packet in packets}) != len(packets):
+        raise ValueError("packet ids must be distinct")
+    dimensions = {len(packet.vector) for packet in packets}
+    if dimensions == {0} or len(dimensions) != 1:
+        raise ValueError("packet vectors must have one positive dimension")
+    if any(
+        packet.h == 0
+        or packet.n <= 0
+        or packet.s <= 0
+        or gcd(packet.n, packet.s) != 1
+        or mobius(packet.n) == 0
+        or mobius(packet.s) == 0
+        for packet in packets
+    ):
+        raise ValueError("require h nonzero and primitive squarefree support")
+
+    sectors: dict[str, int] = {}
+    for packet in packets:
+        w = packet.n - slope_integer_part * packet.s
+        if not (0 <= w < packet.s):
+            raise ValueError("require n=k*s+w with 0 <= w < s")
+        sector = angular_resolution * w // packet.s
+        if not (0 <= sector < character_modulus):
+            raise ValueError("sector labels must embed without character aliasing")
+        sectors[packet.packet_id] = sector
+
+    required_primes = {
+        prime
+        for packet in packets
+        for prime in _distinct_prime_factors(packet.n)
+    }
+    missing = tuple(
+        prime for prime in sorted(required_primes) if prime not in prime_log_weights
+    )
+    if missing:
+        raise ValueError(f"missing formal prime-log weights: {missing}")
+    ledgers = {
+        packet.packet_id: mobius_log_type_diagonal_recombination(
+            n=packet.n,
+            s=packet.s,
+        )
+        for packet in packets
+    }
+
+    def dot(left: tuple[Fraction, ...], right: tuple[Fraction, ...]) -> Fraction:
+        return sum(
+            (Fraction(x) * Fraction(y) for x, y in zip(left, right)),
+            Fraction(0),
+        )
+
+    def type_label(term: MobiusLogTypeTerm) -> str:
+        return "I" if min(term.d, term.m) <= type_cutoff else "II"
+
+    type_pair_energy = {
+        "I/I": Fraction(0),
+        "I/II": Fraction(0),
+        "II/I": Fraction(0),
+        "II/II": Fraction(0),
+    }
+    expanded = Fraction(0)
+    zero_expanded = Fraction(0)
+    nonzero = Fraction(0)
+    nonzero_determinants: set[int] = set()
+    for left in packets:
+        for right in packets:
+            wave_pair = (
+                Fraction(left.amplitude)
+                * Fraction(right.amplitude)
+                * dot(left.vector, right.vector)
+            )
+            character_kernel = (
+                Fraction(character_modulus - 1, character_modulus)
+                if sectors[left.packet_id] == sectors[right.packet_id]
+                else Fraction(-1, character_modulus)
+            )
+            determinant = left.n * right.s - right.n * left.s
+            for left_term in ledgers[left.packet_id].terms:
+                for right_term in ledgers[right.packet_id].terms:
+                    contribution = (
+                        wave_pair
+                        * character_kernel
+                        * left_term.coefficient
+                        * Fraction(prime_log_weights[left_term.prime])
+                        * right_term.coefficient
+                        * Fraction(prime_log_weights[right_term.prime])
+                    )
+                    pair_label = (
+                        f"{type_label(left_term)}/{type_label(right_term)}"
+                    )
+                    type_pair_energy[pair_label] += contribution
+                    expanded += contribution
+                    if determinant == 0:
+                        zero_expanded += contribution
+                    else:
+                        nonzero += contribution
+                        nonzero_determinants.add(determinant)
+
+    zero_recombined = Fraction(0)
+    for left in packets:
+        for right in packets:
+            if left.n * right.s != right.n * left.s:
+                continue
+            wave_pair = (
+                Fraction(left.amplitude)
+                * Fraction(right.amplitude)
+                * dot(left.vector, right.vector)
+            )
+            character_kernel = (
+                Fraction(character_modulus - 1, character_modulus)
+                if sectors[left.packet_id] == sectors[right.packet_id]
+                else Fraction(-1, character_modulus)
+            )
+            left_target = sum(
+                (
+                    coefficient * Fraction(prime_log_weights[prime])
+                    for prime, coefficient
+                    in ledgers[left.packet_id].target_prime_vector
+                ),
+                Fraction(0),
+            )
+            right_target = sum(
+                (
+                    coefficient * Fraction(prime_log_weights[prime])
+                    for prime, coefficient
+                    in ledgers[right.packet_id].target_prime_vector
+                ),
+                Fraction(0),
+            )
+            zero_recombined += (
+                wave_pair * character_kernel * left_target * right_target
+            )
+
+    packet_ids = tuple(packet.packet_id for packet in packets)
+    product_frequencies = tuple(packet.h * packet.delta for packet in packets)
+    packet_label_ledger = tuple(
+        (
+            packet.packet_id,
+            packet.h,
+            packet.delta,
+            packet.dyadic_label,
+            packet.afe_direction,
+        )
+        for packet in packets
+    )
+    ordered_type_pairs = tuple(type_pair_energy.items())
+    return LabelledTypeNonprincipalDeterminantSplit(
+        packet_ids=packet_ids,
+        product_frequencies=product_frequencies,
+        packet_label_ledger=packet_label_ledger,
+        sector_labels=tuple(sectors[packet.packet_id] for packet in packets),
+        type_pair_energies=ordered_type_pairs,
+        expanded_nonprincipal_energy=expanded,
+        zero_determinant_expanded_energy=zero_expanded,
+        zero_determinant_recombined_energy=zero_recombined,
+        nonzero_determinant_energy=nonzero,
+        nonzero_determinants=tuple(sorted(nonzero_determinants)),
+        all_original_packet_labels_retained=(
+            len(packet_ids) == len(packets)
+            and len(product_frequencies) == len(packets)
+            and len(packet_label_ledger) == len(packets)
+        ),
+        type_i_ii_partition_exact=(
+            expanded
+            == sum((energy for _, energy in ordered_type_pairs), Fraction(0))
+        ),
+        determinant_split_exact=(expanded == zero_expanded + nonzero),
+        zero_determinant_recombined_before_cauchy=(
+            zero_expanded == zero_recombined
+        ),
+        global_nonzero_determinant_gate_proved=False,
     )
 
 

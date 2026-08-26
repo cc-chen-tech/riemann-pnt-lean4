@@ -7294,8 +7294,12 @@ def technau_zafeiropoulos_grid_coverage_audit(
     Technau--Zafeiropoulos has frequencies ``k=m*j`` with ``m<=X`` and
     ``|j|<=sqrt(X)``.  Sampling a bandwidth ``K`` polynomial on only ``Q``
     rational slopes permits ``K/Q`` frequencies in one alias class.  This
-    ledger records the generic sampling loss; it does not claim that every
-    structured coefficient saturates that loss.
+    ledger records the generic sampling loss for the optimistic scalar
+    surrogate; it does not claim that every structured coefficient
+    saturates that loss.  The published theorem also keeps one arithmetic
+    function fixed while the slope moves.  The actual second Mobius weight
+    depends on the Beatty preimage, so a separate finite collision ledger
+    shows that this fixed-function adapter already fails before sampling.
     """
 
     x = F(value_length_exponent)
@@ -7325,6 +7329,8 @@ def technau_zafeiropoulos_grid_coverage_audit(
         "actual_slope_average": "Q-point rational grid",
         "continuous_metric_l2_reaches_target": continuous_total <= target,
         "second_index_mobius_supported": False,
+        "fixed_arithmetic_function_across_slopes_supported": False,
+        "finite_fixed_f_collision_exhibited": True,
         "afe_product_frequency_interlaces_sector_grid": False,
         "type_packet_fourier_adapter_constructed": False,
         "structured_nonzero_alias_cancellation_required": (
@@ -11229,6 +11235,10 @@ def main() -> None:
         "continuous_metric="
         f"{beatty_grid_alias['continuous_metric_l2_reaches_target']},"
         f"second_mu={beatty_grid_alias['second_index_mobius_supported']},"
+        "fixed_f="
+        f"{beatty_grid_alias['fixed_arithmetic_function_across_slopes_supported']},"
+        "collision="
+        f"{beatty_grid_alias['finite_fixed_f_collision_exhibited']},"
         "afe_interlaces="
         f"{beatty_grid_alias['afe_product_frequency_interlaces_sector_grid']},"
         "adapter="

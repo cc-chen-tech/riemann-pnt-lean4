@@ -2147,6 +2147,127 @@ def test_labelled_type_zero_determinant_recombines_but_keeps_h_delta_packets() -
     assert not ledger.global_same_slope_gate_proved
 
 
+def test_moving_beatty_slopes_do_not_share_one_scalar_coefficient_function() -> None:
+    collision = getattr(
+        type_identity,
+        "farey_scalar_beatty_fixed_coefficient_collision",
+        None,
+    )
+    assert collision is not None, "fixed-coefficient Beatty audit is missing"
+
+    ledger = collision(
+        q=6,
+        k=1,
+        sector_denominators=((1, 6), (2, 5)),
+    )
+
+    assert ledger.entries == (
+        (1, 6, 1, 7, 1, -1),
+        (2, 5, 2, 7, -1, -1),
+    )
+    assert ledger.conflicting_value_coefficients == (
+        (7, 1, 6, -1, 2, 5, 1),
+    )
+    assert not ledger.fixed_scalar_value_assignment_consistent
+    assert ledger.counterexample_to_universal_fixed_f_adapter
+    assert ledger.technau_zafeiropoulos_fixed_f_hypothesis_refuted
+
+
+def test_labelled_nonprincipal_type_energy_splits_before_cauchy() -> None:
+    packet_type = getattr(type_identity, "LabelledAfeTypePacket", None)
+    split = getattr(
+        type_identity,
+        "labelled_type_nonprincipal_determinant_split",
+        None,
+    )
+    assert packet_type is not None, "labelled AFE Type packet is missing"
+    assert split is not None, "labelled nonprincipal Type split is missing"
+
+    packets = (
+        packet_type(
+            packet_id="entry-30-plus",
+            h=2,
+            delta=3,
+            dyadic_label="nu-a",
+            afe_direction="+",
+            n=30,
+            s=19,
+            amplitude=F(2),
+            vector=(F(1), F(2)),
+        ),
+        packet_type(
+            packet_id="entry-30-minus",
+            h=-1,
+            delta=5,
+            dyadic_label="nu-b",
+            afe_direction="-",
+            n=30,
+            s=19,
+            amplitude=F(-1),
+            vector=(F(2), F(1)),
+        ),
+        packet_type(
+            packet_id="entry-35",
+            h=4,
+            delta=-2,
+            dyadic_label="nu-c",
+            afe_direction="+",
+            n=35,
+            s=22,
+            amplitude=F(3),
+            vector=(F(1), F(-1)),
+        ),
+    )
+    ledger = split(
+        packets=packets,
+        angular_resolution=20,
+        slope_integer_part=1,
+        character_modulus=20,
+        type_cutoff=2,
+        prime_log_weights={2: F(2), 3: F(3), 5: F(5), 7: F(7)},
+    )
+
+    assert ledger.packet_ids == (
+        "entry-30-plus",
+        "entry-30-minus",
+        "entry-35",
+    )
+    assert ledger.product_frequencies == (6, -5, -8)
+    assert ledger.sector_labels == (11, 11, 11)
+    assert tuple(label for label, _ in ledger.type_pair_energies) == (
+        "I/I",
+        "I/II",
+        "II/I",
+        "II/II",
+    )
+    assert ledger.type_pair_energies == (
+        ("I/I", F(171, 5)),
+        ("I/II", F(-342, 5)),
+        ("II/I", F(-342, 5)),
+        ("II/II", F(1368)),
+    )
+    assert ledger.zero_determinant_expanded_energy == F(16587, 5)
+    assert ledger.nonzero_determinant_energy == F(-2052)
+    assert ledger.expanded_nonprincipal_energy == F(6327, 5)
+    assert ledger.expanded_nonprincipal_energy == (
+        ledger.zero_determinant_expanded_energy
+        + ledger.nonzero_determinant_energy
+    )
+    assert ledger.zero_determinant_expanded_energy == (
+        ledger.zero_determinant_recombined_energy
+    )
+    assert ledger.expanded_nonprincipal_energy == sum(
+        (energy for _, energy in ledger.type_pair_energies),
+        F(0),
+    )
+    assert ledger.nonzero_determinants == (-5, 5)
+    assert ledger.all_original_packet_labels_retained
+    assert ledger.type_i_ii_partition_exact
+    assert ledger.determinant_split_exact
+    assert ledger.zero_determinant_recombined_before_cauchy
+    assert not ledger.global_nonzero_determinant_gate_proved
+
+
 def test_one_third_split_has_exact_balanced_scales() -> None:
     scales = type_scale_bounds(F(3), u=F(1, 3), v=F(1, 3))
     assert scales.u_exp == F(1)

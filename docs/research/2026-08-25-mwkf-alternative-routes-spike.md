@@ -11050,7 +11050,7 @@ is:
 | [Tao--Teräväinen](https://arxiv.org/abs/2107.02158) | quantitative Möbius/\(\Lambda\) Gowers uniformity for fixed-complexity linear systems | \((\log\log T)^{-c}\), power exponent \(0\) | no |
 | [Banks--Shparlinski](https://arxiv.org/abs/0708.1015) | primes in a fixed irrational finite-type Beatty sequence | power error in a one-prime problem | no double Möbius and no moving rational family |
 | [Lichtman](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \(L^1\) average of scalar shifted-prime Möbius sums | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | no moving Farey/AFE weight, no endpoint \(H\asymp X\), and no vector \(L^2\) half-power |
-| [Technau--Zafeiropoulos](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for a continuous/metric Beatty slope | continuous Lebesgue slope average reaches the scalar target | no rational \(Q\)-grid sampling, no second index Möbius, and generic aliasing loses \(T^{1/2}\) in energy |
+| [Technau--Zafeiropoulos](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for one fixed arithmetic function in a continuous/metric Beatty slope | continuous Lebesgue slope average reaches the scalar surrogate target | no fixed-\(f\) adapter for the second Möbius weight, no rational \(Q\)-grid sampling, and generic aliasing loses \(T^{1/2}\) in energy |
 | Kim, arXiv:2603.23250 | ternary shifted correlations | saving \(<T^{1/600}\) in the entering range | short by \(T^{299/600}\), Möbius hypothesis also fails |
 
 Thus (4.644) narrows the coefficient class but does not turn a logarithmic
@@ -11143,12 +11143,12 @@ lichtman_shifted_prime_type_i_coverage_audit verify (4.646)--(4.648) and
 record the norm, range, and half-power deficit.  Their Type-I coverage flags
 remain false.
 
-### 4.75 Continuous metric Beatty \(L^2\) reaches the target, but rational-grid aliasing restores the half-power
+### 4.75 The scalar metric-Beatty surrogate reaches the exponent, but fixed-\(f\) and sampling both fail
 
 Technau--Zafeiropoulos, arXiv:1907.06050, Theorem 2.1 and Corollary
-4.4 give a genuinely square-root-sized discrepancy for one arithmetic
-function on a Beatty set.  In the notation of their paper the underlying
-continuous estimate is
+4.4 give a genuinely square-root-sized discrepancy for one *fixed*
+arithmetic function on a Beatty set.  In the notation of their paper the
+underlying continuous estimate is
 
 \[
  \int_0^1
@@ -11159,10 +11159,32 @@ continuous estimate is
 \]
 
 For bounded or prime-logarithmic coefficients, the power exponent on the
-right is one.  Multiplying by \(Q\asymp X\) slope samples would therefore
-give total energy exponent two, exactly the target in (4.645).  This is the
-first audited Beatty theorem whose continuous \(L^2\) strength is
-numerically sufficient.
+right is one.  If one fixed arithmetic function represented every sector,
+multiplying by \(Q\asymp X\) slope samples would therefore give total
+energy exponent two, exactly the target in (4.645).  This is a numerically
+sufficient scalar surrogate, not yet an adapter for the actual packet.
+
+Indeed, the fixed-function hypothesis fails before sampling is considered.
+At \(Q=6,k=1\), the two nonempty critical fibers
+
+\[
+ (b,s,w,r)=(1,6,1,7),\qquad(2,5,2,7)
+ \tag{4.650a}
+\]
+
+produce the same Beatty value \(r=ks+w=7\), but their actual coefficients
+are
+
+\[
+ \mu(6)\mu(7)=-1,\qquad \mu(5)\mu(7)=1.
+ \tag{4.650b}
+\]
+
+No scalar assignment \(f(7)\) can encode both slopes.  The published
+continuous integral keeps \(f\) fixed as the slope varies, so it cannot be
+applied to the family \(f_b(r)=\mu(s_b(r))\mu(r)\).  This finite collision
+does not rule out a new pair-valued or vector-valued theorem; it rules out
+the proposed scalar fixed-\(f\) adapter.
 
 The conclusion, however, is a Lebesgue slope average, not a theorem on the
 moving rational grid.  The classical finite trigonometric polynomial
@@ -11213,10 +11235,11 @@ the same generic factor \(1+X^{3/2}/Q\).  Thus, at \(X=Q=T\),
  \tag{4.654}
 \]
 
-This reproduces the hard-face exponent \(5/2\) from a new direction.  It
-does not prove that the actual coefficients saturate the generic sampling
-bound.  Instead it identifies the precise improvement a successful
-metric-Beatty route would need:
+Conditional on first replacing the actual packet by a fixed scalar
+coefficient, this reproduces the hard-face exponent \(5/2\) from a new
+direction.  It does not prove that the actual coefficients saturate the
+generic sampling bound.  Instead it identifies the precise improvement a
+successful metric-Beatty route would need:
 
 \[
  \boxed{
@@ -11236,17 +11259,111 @@ without a new derived identity.  Moreover (4.650) has one coefficient
 function on Beatty values, whereas the actual packet retains the second
 index Möbius factor and a vector wave packet.
 
-The finite helper trigonometric_grid_aliasing_sides verifies (4.652)--(4.653)
-over exact rational coefficients.  The scale adapter
+The finite helper farey_scalar_beatty_fixed_coefficient_collision verifies
+(4.650a)--(4.650b).  The helper trigonometric_grid_aliasing_sides verifies
+(4.652)--(4.653) over exact rational coefficients.  The scale adapter
 technau_zafeiropoulos_grid_coverage_audit records bandwidth \(3/2\), grid
 exponent one, the alias exponent \(1/2\), continuous exponent two, sampled
 exponent \(5/2\), the two coefficient/packet mismatches, and the missing
 Type-packet Fourier adapter.  It keeps
-the coverage flag false.  The exact map from the original Type packet to the
-Fourier coefficients in (4.655) has not been constructed.  Formula (4.655)
-is therefore a narrower
-candidate pre-Cauchy nonzero-alias target, not a proved or already-derived
-replacement for the coupled-kernel gate.
+the coverage flag false.  The exact map from the original Type packet to
+the Fourier coefficients in (4.655) has not been constructed.  Formula
+(4.655) is therefore a narrower candidate pre-Cauchy nonzero-alias target,
+not a proved or already-derived replacement for the coupled-kernel gate.
+
+### 4.76 Exact nonprincipal Type Gram with all cross sectors retained
+
+The failed scalar adapter is not needed to state the true finite gate.  Let
+\(P\) range over the supplied labelled packets and put
+
+\[
+ b(P)=\left\lfloor\frac{Q(n_P-ks_P)}{s_P}\right\rfloor,
+ \qquad
+ \kappa_M(b,b')=\mathbf1_{b=b'}-\frac1M.
+ \tag{4.656}
+\]
+
+For a Type factorization \(t=(d,m)\), \(dm=n_P\), retain
+
+\[
+ C_{P;(d,m)}=
+ c_P\,\mu(s_P)\mu(d)\Lambda(m)\,\widetilde V_P,
+ \tag{4.657}
+\]
+
+where \(c_P\) contains the signed AFE amplitude and the labels
+\((h,\delta,\nu,\sigma)\), in particular the original product
+\(a_{\rm AFE}=h\delta\).  Nonprincipal character orthogonality gives the
+exact finite Gram
+
+\[
+ \boxed{
+ \mathcal N_{\ne0}^{\rm Type}
+ =\sum_{P,P'}\sum_{dm=n_P}\sum_{d'm'=n_{P'}}
+ \kappa_M(b(P),b(P'))
+ \langle C_{P;(d,m)},C_{P';(d',m')}\rangle.}
+ \tag{4.658}
+\]
+
+Classify \(t\) as Type I when \(\min(d,m)\le U\) and as Type II
+otherwise.  Without an intervening absolute value, (4.658) has the exact
+eight-block split
+
+\[
+ \boxed{
+ \mathcal N_{\ne0}^{\rm Type}
+ =\sum_{X,Y\in\{\mathrm I,\mathrm{II}\}}
+ \left(\mathcal N_{X,Y}^{\Delta=0}
+       +\mathcal N_{X,Y}^{\Delta\ne0}\right),
+ \quad
+ \Delta=n_Ps_{P'}-n_{P'}s_P.}
+ \tag{4.659}
+\]
+
+All four \(X/Y\) blocks, including the mixed I/II and II/I terms, are
+retained.  On primitive support \(\Delta=0\) forces one original
+\((n,s)\) entry; summing every \(dm=n\) cross factorization then gives
+\(-\mu(s)\mu(n)\log n\) on each side by (4.621zadj16z).  Therefore
+
+\[
+ \boxed{
+ \sum_{X,Y}\mathcal N_{X,Y}^{\Delta=0}
+ =\mathcal N_{\Delta=0}^{\rm original\ entry},}
+ \tag{4.660}
+\]
+
+before Cauchy--Schwarz.  The helper
+labelled_type_nonprincipal_determinant_split verifies
+(4.656)--(4.660) over exact rational vector packets.  Its fixture includes
+two differently labelled packets on \((n,s)=(30,19)\), a second entry
+\((35,22)\), common sector \(b=11\), all four Type-pair blocks, and the
+nonzero determinants \(\pm5\).  It records every \(h\delta\) and keeps
+global_nonzero_determinant_gate_proved false.
+
+Since the original-entry diagonal already has exponent two, the weakest
+sufficient estimate for this supplied sector packet is the *joint* gate
+
+\[
+ \boxed{
+ \mathrm{JNT}_2:\qquad
+ \left|\sum_{X,Y\in\{\mathrm I,\mathrm{II}\}}
+ \mathcal N_{X,Y}^{\Delta\ne0}\right|
+ \ll_{\varepsilon,W}T^{2+\varepsilon}.}
+ \tag{4.661}
+\]
+
+No separate bound for an individual Type block is required.  The finite
+fixture makes this distinction visible: the four full Type-pair energies
+are \(171/5,-342/5,-342/5,1368\), while their nonzero-determinant part is
+the signed value \(-2052\).  Taking absolute values blockwise would erase
+precisely the cross-sector cancellation retained by (4.661).
+
+This is the correct finite adapter after the sector packet has been
+supplied.  It is stronger and more faithful than the scalar alias target
+(4.655), but it is still not the analytic estimate: the signed sum of the
+four \(\Delta\ne0\) blocks must be bounded globally, and the exhaustive
+map from the original coupled remainder to the supplied packet family must
+remain outside any premature triangle inequality.
 
 ## 5. Route C: endpoint-to-all-length interpolation
 

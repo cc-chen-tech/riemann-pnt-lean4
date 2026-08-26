@@ -11038,6 +11038,94 @@ original \((h,\delta,\nu,\sigma)\) packets inside the square, and
 (iii) the \(T^4\) global \(TT^*\) saving for the nonzero row-slope
 determinant, with \(\xi\ne0\) used only as an auxiliary sector character.
 
+### 9.74 The scalar metric-Beatty adapter fails, but the labelled Type Gram splits exactly
+
+The metric theorem of Technau--Zafeiropoulos keeps one arithmetic function
+\(f(r)\) fixed while the Beatty slope varies.  The present coefficient does
+not have that form.  There is already an exact collision at
+\(Q=6,k=1\):
+
+\[
+ (b,s,w,r)=(1,6,1,7),\qquad(2,5,2,7),
+ \tag{9.483}
+\]
+
+but
+
+\[
+ \mu(6)\mu(7)=-1\ne1=\mu(5)\mu(7).
+ \tag{9.484}
+\]
+
+Thus no scalar value \(f(7)\) represents both moving slopes.  This is
+independent of the additional rational-grid sampling loss in
+(4.652)--(4.654) of the alternative-routes note.  A new pair-valued or
+vector-valued theorem could evade (9.484), but the published scalar
+continuous-slope estimate cannot be inserted into (9.482).
+
+The actual finite nonprincipal Gram can instead be written without this
+adapter.  For a labelled packet \(P\), put
+
+\[
+ b(P)=\left\lfloor\frac{Q(n_P-ks_P)}{s_P}\right\rfloor,
+ \qquad
+ \kappa_M(b,b')=\mathbf1_{b=b'}-\frac1M.
+ \tag{9.485}
+\]
+
+After expanding one Möbius factor by (9.478), let \(t=(d,m)\),
+\(dm=n_P\), and retain
+
+\[
+ C_{P,t}=c_P\mu(s_P)\mu(d)\Lambda(m)\widetilde V_P,
+ \tag{9.486}
+\]
+
+where \(c_P\) still contains every \((h,\delta,\nu,\sigma)\) label and
+the original product \(a_{\rm AFE}=h\delta\).  Then character
+orthogonality and a Type cutoff \(U\) give the exact pre-Cauchy split
+
+\[
+ \boxed{
+ \mathcal N_{\ne0}^{\rm Type}
+ =\sum_{X,Y\in\{\mathrm I,\mathrm{II}\}}
+ \left(\mathcal N_{X,Y}^{\Delta=0}
+       +\mathcal N_{X,Y}^{\Delta\ne0}\right),
+ \quad
+ \Delta=n_Ps_{P'}-n_{P'}s_P.}
+ \tag{9.487}
+\]
+
+Here Type I means \(\min(d,m)\le U\); all I/I, I/II, II/I, and II/II
+cross terms remain signed inside (9.487).  Summing all four zero-determinant
+blocks before estimating recombines every internal factorization and gives
+the original-entry diagonal (9.481).  Hence the exact remaining analytic
+object is the *joint* sum of the four \(\Delta\ne0\) blocks, not four
+separate absolute-value bounds.
+
+Because the recombined original-entry diagonal already has exponent two,
+the weakest sufficient local estimate for the supplied sector packet is
+
+\[
+ \boxed{
+ \left|\sum_{X,Y\in\{\mathrm I,\mathrm{II}\}}
+ \mathcal N_{X,Y}^{\Delta\ne0}\right|
+ \ll_{\varepsilon,W}T^{2+\varepsilon}.}
+ \tag{9.488}
+\]
+
+Formula (9.488) is one joint signed gate; it does not ask for four
+blockwise absolute-value estimates.  It becomes a replacement for the
+corresponding sector portion of the coupled-kernel gate only after the
+analytic packet-exhaustion map has been proved.
+
+The helpers farey_scalar_beatty_fixed_coefficient_collision and
+labelled_type_nonprincipal_determinant_split verify (9.483)--(9.487) with
+exact integer/rational data.  The latter fixture retains three distinct
+AFE packets, product frequencies \(6,-5,-8\), all Type-pair blocks, and
+nonzero determinants \(\pm5\).  It does not prove the global
+nonzero-determinant estimate or the exhaustive analytic packet map.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -11151,7 +11239,13 @@ cross factorization before Cauchy.  The Type-entry determinant-zero part
 is exactly the original self diagonal and has no positive-power deficit;
 the sector model's extra power is confined to
 \(\Delta_{\rm Type}\ne0\).  This does not close either that offdiagonal
-estimate or the separate global same-slope gate.**
+estimate or the separate global same-slope gate.  The fixed-function
+collision (9.483)--(9.484) additionally rules out applying the published
+scalar metric-Beatty \(L^2\) theorem across the moving sector family.
+The exact labelled split (9.485)--(9.487) now retains all four Type-pair
+blocks and every \(h\delta\) packet before separating \(\Delta=0\) from
+\(\Delta\ne0\); only the former is recombined, while the joint signed
+nonzero-determinant estimate remains open.**
 
 Proved in this note:
 
@@ -11644,6 +11738,7 @@ Proved in this note:
 | Actual zero-mode Fourier projector | exact high-rank identification; banded Möbius energy unproved | The fully recombined equal-index packet is the Fourier Gram (9.457), minus its explicit diagonal (9.458).  On the Gaussian \(1,2,4\) minor, both determinants in (9.462) are nonzero, so the full and diagonal-removed projectors have rank \(3\); every product-density row/column/grand projection has rank at most \(2\), (9.463).  Hence scalar-density centering cannot isolate the whole resonance, and the remaining projector is the long-polynomial gate rather than an LCM diagonal |
 | Determinant-zero primitive slopes | exact same-slope decomposition; within-slope norm unproved | Since every affine slope \((k_0,\ell_0)\) is positive and primitive, determinant zero forces equality of the two slopes, (9.465)--(9.466).  The zero orbit is therefore the sum of same-slope squared norms (9.467), with no cross-slope collisions.  All \(g,h,\delta,\nu,\sigma\) signs remain inside each square, and the bound (9.468) is still open |
 | Label-safe Type-entry determinant | internal zero orbit recombined; nonzero entry determinant unproved | The auxiliary sector character is \(\xi\), not \(a_{\rm AFE}=h\delta\), and all original packet labels remain in the row, (9.469)--(9.471).  A common Beatty sector is one common Euclidean quotient and obeys \(Q\Delta_{\rm Type}=\rho_1s_2-\rho_2s_1\), (9.472)--(9.477).  All \(dm=r\) cross factorizations must be recombined by the Möbius-log identity (9.478)--(9.481).  This makes the nonprincipal \(\Delta_{\rm Type}=0\) part exactly \((1-M^{-1})D_{\rm cont}\), already at diagonal power, (9.482); the extra power is confined to \(\Delta_{\rm Type}\ne0\), which is not estimated |
+| Moving-Beatty fixed-function and labelled Type split | scalar adapter disproved; exact joint Type Gram; nonzero determinant unproved | The collision (9.483)--(9.484) shows that one value \(r=7\) receives opposite two-Möbius coefficients at two moving slopes, so the published fixed-\(f\) metric theorem cannot be sampled into the packet.  Equations (9.485)--(9.487) instead split the true nonprincipal labelled Gram into all I/I, I/II, II/I, II/II and \(\Delta=0/\ne0\) blocks while retaining \(h\delta\); the zero blocks recombine, but their joint signed nonzero counterpart remains the gate |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -11662,6 +11757,11 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 
 ## 11. Primary references
 
+* M. Technau, A. Zafeiropoulos, *Metric results on summatory arithmetic
+  functions on Beatty sets*, arXiv:1907.06050, Theorem 2.1 and Corollary
+  4.4; Section 9.74 records the exact fixed-function collision preventing
+  its scalar continuous-slope estimate from representing the moving
+  two-Möbius packet.
 * F. P. Boca, M. Siskaki, *A note on the pair correlation of Farey
   fractions*, arXiv:2109.12744; used in Section 9.29 only as published
   context for the unsigned determinant count.

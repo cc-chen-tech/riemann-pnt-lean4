@@ -2204,6 +2204,8 @@ def test_metric_beatty_sampling_recreates_the_hard_face_half_power() -> None:
     assert result["published_slope_average"] == "continuous Lebesgue"
     assert result["actual_slope_average"] == "Q-point rational grid"
     assert not result["second_index_mobius_supported"]
+    assert not result["fixed_arithmetic_function_across_slopes_supported"]
+    assert result["finite_fixed_f_collision_exhibited"]
     assert not result["afe_product_frequency_interlaces_sector_grid"]
     assert not result["type_packet_fourier_adapter_constructed"]
     assert result["structured_nonzero_alias_cancellation_required"]
@@ -4882,7 +4884,8 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "large_q_transition: beatty_grid_alias="
         "bandwidth=3/2,grid=1,alias=1/2,continuous=2,"
         "sampled=5/2,target=2,deficit=1/2,continuous_metric=True,"
-        "second_mu=False,afe_interlaces=False,adapter=False,"
+        "second_mu=False,fixed_f=False,collision=True,"
+        "afe_interlaces=False,adapter=False,"
         "alias_gate=True,covered=False"
     ) in output
     assert (

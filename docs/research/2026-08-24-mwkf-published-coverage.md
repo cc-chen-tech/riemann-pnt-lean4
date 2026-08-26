@@ -874,7 +874,7 @@ The resulting exact coverage table is:
 | Tao--Teräväinen, [arXiv:2107.02158](https://arxiv.org/abs/2107.02158) | \((\log\log T)^{-c}\) | fixed-complexity linear systems and logarithmic, not half-power, decay | no |
 | Teräväinen--Walker, arXiv:2303.12574 | qualitative logarithmic limit | fixed Beatty data, not a moving rational vector family | no |
 | Lichtman, [arXiv:2009.08969v2](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | scalar \(L^1\) shift average, fixed weight, and \(H=X^\theta<X\), not the moving-weight endpoint vector \(L^2\) packet | no |
-| Technau--Zafeiropoulos, [arXiv:1907.06050](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error in continuous/metric slope | rational \(Q\)-grid is not covered, a second index Möbius is absent, and generic sampling aliases cost \(T^{1/2}\) in energy | no |
+| Technau--Zafeiropoulos, [arXiv:1907.06050](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for one fixed arithmetic function in continuous/metric slope | the actual coefficient changes with the Beatty preimage, the rational \(Q\)-grid is not covered, and generic sampling aliases cost \(T^{1/2}\) in energy | no |
 | Kim, arXiv:2603.23250 | \(<T^{1/600}\) in the entering range | deficit \(T^{299/600}\) and Möbius coefficient hypothesis fails | no |
 
 For Pascadi Corollary 1.4, substituting
@@ -916,9 +916,20 @@ lichtman_shifted_prime_type_i_coverage_audit record this exact
 reindexing and the three independent mismatches; neither asserts a Type-I
 estimate.
 
-Technau--Zafeiropoulos gives a closer \(L^2\) comparison.  Its continuous
-metric estimate has coefficient energy \(\|f\|_2^2\), so \(Q\asymp T\)
-copies would have the desired total exponent two.  But the finite
+Technau--Zafeiropoulos gives a closer scalar \(L^2\) comparison.  Its
+continuous metric estimate has coefficient energy \(\|f\|_2^2\), so if
+one fixed arithmetic function represented every sector, \(Q\asymp T\)
+copies would have the desired total exponent two.  That fixed-function
+hypothesis already fails for the actual two-Möbius coefficient.  At
+\(Q=6,k=1\), the entries
+
+\[
+ (b,s,w,r)=(1,6,1,7),\qquad(2,5,2,7)
+\]
+
+give the same Beatty value \(r=7\), but
+\(\mu(6)\mu(7)=-1\) and \(\mu(5)\mu(7)=1\).  Hence no scalar value
+\(f(7)\) works for both slopes.  Independently, the finite
 trigonometric polynomial used to expose Beatty membership has bandwidth
 \(K\asymp T^{3/2}\).  On a uniform \(Q\)-grid,
 
@@ -949,12 +960,16 @@ nonzero alias classes:
  \tag{6.6}
 \]
 
-This must retain both Möbius factors and all \(h\delta\) packets.
+This must retain both Möbius factors and all \(h\delta\) packets.  It is
+only an optimistic scalar-sampling target: even proving it would still
+require a valid fixed-coefficient or vector-valued adapter.
 Technau--Zafeiropoulos treats one fixed coefficient function and a
 continuous Lebesgue slope average; it proves neither the rational-grid
 sampling step nor (6.6).  The helpers
 trigonometric_grid_aliasing_sides and
 technau_zafeiropoulos_grid_coverage_audit record the exact alias identity
-and the resulting half-power deficit.  The exact Fourier-coefficient map
-from the original Type packet to (6.6) is also still missing.  Their
-coverage flag remains false.
+and the resulting half-power deficit.  The helper
+farey_scalar_beatty_fixed_coefficient_collision verifies the independent
+finite fixed-\(f\) obstruction.  The exact Fourier-coefficient map from
+the original Type packet to (6.6) is still missing.  Their coverage flag
+remains false.
