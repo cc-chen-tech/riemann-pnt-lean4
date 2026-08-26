@@ -18062,7 +18062,7 @@ orientation therefore leaves the exact power ledger
  \boxed{
  E_{\rm outer}(\alpha,\beta)
  =\alpha+\beta-\frac12\max(\alpha,\beta),}
- \qquad A_0=T^\alpha,quad B_0=T^\beta.
+ \qquad A_0=T^\alpha,\qquad B_0=T^\beta.
  \tag{4.845dc_14xn}
 \]
 
@@ -18075,15 +18075,22 @@ raising the logarithmic threshold for \(\max(A,B)\).  In particular,
 the former claim that all large-entry boxes close and only
 \(A,B<L^K\) remain is invalid.
 
-The remaining gate must retain both outer Möbius convolutions inside
-the same signed estimate.  For the left orientation its exact form is
+For one separated smooth tensor, write
+\[
+ \mathfrak S^{\rm lift}_{q,A,B}
+ =\alpha(A)\beta(B)\mathfrak K^{\rm lift}_{q,A,B};
+\]
+the original finite nuclear superposition costs only a fixed power of
+\(L\).  Thus neither coefficient is counted twice below.  The remaining
+gate must retain both outer Möbius convolutions inside the same signed
+estimate.  For the left orientation its exact form is
 
 \[
  \boxed{
  \left|
- \sum_{\substack{A,B\geq1\\	ext{all exact endpoint and gcd conditions}}}
+ \sum_{\substack{A,B\geq1\\\text{all exact endpoint and gcd conditions}}}
  \alpha(A)\beta(B)
- \frac{\mathfrak S^{\rm lift}_{q,A,B}}R
+ \frac{\mathfrak K^{\rm lift}_{q,A,B}}R
  \right|
  \ll_{B_0,W} S L^{-B_0}.}
  \tag{OLISK}_{q}^{L}
@@ -18102,6 +18109,240 @@ is yet closed by PEVP alone.  The interface
 `lifted_outer_qct_aggregation_audit` now records the two coefficient
 energies, the residual exponent (4.845dc_14xn), and the full outer LISK
 gate.  It deliberately rejects the former double-small split.
+
+### 4.109zj Ambient normalization reverses the raw mixed-entry Gram
+
+There is a more coherent alternative to the scalar majorant in
+(4.845dc_14xn).  Expand the square of the full outer sum before taking
+an absolute value between distinct entry pairs.  The local level
+operators then have an exact pairwise Gram kernel.
+
+At one prime \(p\), embed both members of the pair in the common
+level-\(p^2\) oldspace.  Let
+\[
+ P_0\leq P_1\leq P_2,\qquad
+ \operatorname{tr}P_0=1,\quad
+ \operatorname{tr}P_1=p+1,\quad
+ \operatorname{tr}P_2=p(p+1)
+\]
+be its nested orthogonal projections.  The local states prime absent,
+prime in the modulus factor \(B\), and prime in the signed entry factor
+\(A\) are respectively
+\[
+ E_0=P_0,\qquad
+ E_B=\frac{P_1}{p+1},\qquad
+ E_A=\frac{P_1}{p+1}-\frac{P_2}{p(p+1)}.
+\]
+Put
+\[
+ \kappa_p=\frac{p-1}{p(p+1)},\qquad b_p=\frac1{p+1}.
+\]
+Direct multiplication on
+\(\operatorname{im}P_0\),
+\(\operatorname{im}P_1\ominus\operatorname{im}P_0\), and
+\(\operatorname{im}P_2\ominus\operatorname{im}P_1\) gives
+\[
+ \boxed{
+ \bigl(\operatorname{tr}(E_\epsilon E_{\epsilon'})\bigr)_{
+ \epsilon,\epsilon'\in\{0,B,A\}}
+ =
+ \begin{pmatrix}
+ 1&b_p&\kappa_p\\
+ b_p&b_p&\kappa_p\\
+ \kappa_p&\kappa_p&\kappa_p
+ \end{pmatrix}.}
+ \tag{4.845dc_14xo}
+\]
+For example,
+\[
+ \operatorname{tr}(E_A^2)
+ =\frac{(p-1)^2}{p^2(p+1)}
+  +\frac{p-1}{p^2(p+1)}
+ =\kappa_p,
+\]
+and \(\operatorname{tr}(E_AE_0)=\operatorname{tr}(E_AE_B)=\kappa_p\).
+Thus every *raw* cell in which \(p\) occurs on at least one side is at
+most \(b_p\).  It is tempting to tensor this matrix and infer
+\[
+ \prod_{p\mid[AB,A'B']}\frac1{p+1}
+ \leq\frac1{[AB,A'B']}.
+\]
+That inference omits the physical ambient Plancherel normalization.
+At common level \(p^2\), the trace is multiplied by
+\(\nu_2=p(p+1)\).  Therefore the actual positive Gram matrix is
+\[
+ \boxed{
+ \nu_2
+ \bigl(\operatorname{tr}(E_\epsilon E_{\epsilon'})\bigr)
+ =
+ \begin{pmatrix}
+ p(p+1)&p&p-1\\
+ p&p&p-1\\
+ p-1&p-1&p-1
+ \end{pmatrix}.}
+ \tag{4.845dc_14xp}
+\]
+In particular, an entry-difference cell has physical square mass
+\(p-1\), whereas PEVP requires \(p^{-1}\).  The exact missing ratio is
+\[
+ \boxed{\frac{p-1}{p^{-1}}=p(p-1).}
+\]
+This is the same normalization reversal proved for the diagonal
+positive square in Section 4.109ze.  Hence bare projection algebra does
+not produce a reciprocal-LCM physical kernel.
+
+If a signed cross-index argument repairs this exact ambient deficit and
+produces the desired reciprocal-LCM kernel, its arithmetic aggregation
+is only polylogarithmic.  Group one separated tensor by \(n=AB\):
+\[
+ \gamma(n)=\sum_{\substack{AB=n\\(A,B)=1}}
+ \alpha(A)\beta(B)w(A,B).
+\]
+The fixed smooth tensor and restricted divisor convolutions imply
+\(|\gamma(n)|\leq\tau_K(n)\) for a fixed \(K\).  The exact identity
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{n,n'}\frac{|\gamma(n)\gamma(n')|}{[n,n']}
+ &=\sum_{n,n'}\frac{|\gamma(n)\gamma(n')|(n,n')}{nn'}\\
+ &=\sum_{g\geq1}\varphi(g)
+   \left(\sum_{g\mid n}\frac{|\gamma(n)|}{n}\right)^2
+ \ll_K(\log(2T))^{C_K}
+ \end{aligned}}
+ \tag{4.845dc_14xq}
+\]
+follows from
+\((n,n')=\sum_{g\mid n,n'}\varphi(g)\) and the standard dyadic
+divisor mean.  Thus the outer cardinality would no longer be a
+positive-power obstruction once the signed physical cross-index kernel
+has supplied the reciprocal-LCM factor.  The raw projection matrix does
+not supply it.
+
+That last qualification is the remaining analytic point.  In a mixed
+pair the two second indices are \(Ah\delta\) and \(A'h'\delta'\), and
+the Blomer--Milićević oldvectors, exact-valuation tensors, and Bessel
+tests must be transported to the pairwise common level
+\([ABj,A'B'j']\) before (4.845dc_14xo) may be inserted.  The required
+mixed-entry statement is
+\[
+ \boxed{
+ |\mathcal G_{\rm phys}(A,B;A',B')|
+ \ll_{J,W}
+ \frac{L^{C_J}}{[AB,A'B']}\,
+ \mathcal N_{A,B}\mathcal N_{A',B'},}
+ \tag{MEPEVP}
+\]
+uniformly for the exact physical coefficient lists and normalized
+kernel seminorms.  Summing (MEPEVP) by (4.845dc_14xq), followed by the
+seven-log ledger (4.845cx), proves \((\mathrm{OLISK})_q\).
+
+Equations (4.845dc_14xo)--(4.845dc_14xp) prove that ordinary positive
+projection Gram is insufficient; (4.845dc_14xq) proves that the desired
+kernel would aggregate.  What is not yet proved is that the shifted
+Fourier-index cross terms recover the missing local ratio \(p(p-1)\)
+and produce MEPEVP with a uniform polylogarithmic harmonic-large-sieve
+constant.
+The interface mixed_entry_projection_gram_audit therefore marks the
+local tensor and arithmetic aggregation true, but keeps MEPEVP and the
+whole outer LISK gate false.
+
+### 4.109zk Pascadi v2 saves only one quarter power after factor freezing
+
+Pascadi's revised composite-modulus theorem is unusually well matched
+to the arithmetic factorization of the lifted Kloosterman modulus, so
+it must be tested before introducing a new harmonic large sieve.  Write
+
+\[
+ A=T^\alpha,\qquad B=T^\beta,\qquad j=T^\gamma,
+ \qquad R=S=T^3,qquad H=L=T^{5/2}.
+\]
+
+The CRT lift in Section 4.109v has
+
+\[
+ c=As,qquad C=T^{\alpha+3},\qquad q=ABj.
+\]
+
+Because the physical support has \(A,B,j,s\) squarefree,
+\((A,s)=1\), \(j\mid A\), and \(Bj\mid s\), Corollary 7.9 admits the
+exact factorization
+
+\[
+ q=dd'e,qquad d=A,qquad d'=j,qquad e=B,qquad f=A,
+ \tag{4.845dc_14xr}
+\]
+
+where \(f\) is the largest integer with \(f^2\mid qd\).  Thus there is
+no loss from replacing the physical factorization by a generic one.
+
+For interval exponents \(M\geq N\), the two alternatives in
+[Pascadi, Corollary 7.9](https://arxiv.org/abs/2511.08445) contribute
+the sixth root of the smaller of
+
+\[
+ \max\{d+3M+N-3C,\ f+2M-2C,\ f-2d\}
+\]
+
+and
+
+\[
+ \max\{d+3M+N-q-2C,\ f+2M-q-C,\ f+q-2d-C\}.
+ \tag{4.845dc_14xs}
+\]
+
+Here the same letters denote base-\(T\) exponents.  The complete
+operator bound, before the two coefficient norms, has exponent
+\(2C-q\) plus that sixth-root exponent.  The interface
+`pascadi_lifted_physical_audit` evaluates these expressions using
+`Fraction`, with no floating-point optimization.
+
+At the top cell \((\alpha,\beta,\gamma)=(3,3,0)\), retaining the full
+product index \(h\delta\) gives \(M=5,N=3,C=q=6\).  Both alternatives
+in (4.845dc_14xs) have term exponents
+
+\[
+ (3,1,-3).
+\]
+
+Consequently the published bound has exponent \(13/2\), while the
+averaged Fourier trivial bound has exponent \(6\).  Direct use of the
+full product index is therefore worse by \(T^{1/2}\).
+
+The most optimistic repair is to freeze one of \(h,\delta\) and apply
+the theorem to intervals of exponents \(M=3,N=5/2\).  Both alternatives
+then have term exponents
+
+\[
+ \left(-\frac72,-3,-3\right),
+\]
+
+so the Corollary 7.9 bound has exponent \(11/2\).  The corresponding
+sum of the per-modulus Weil bounds has exponent \(23/4\).  The exact
+net gain is only
+
+\[
+ \boxed{\frac{23}{4}-\frac{11}{2}=\frac14.}
+ \tag{4.845dc_14xt}
+\]
+
+This does not repair the ambient-normalization deficit from
+(4.845dc_14xp).  Tensoring the physical entry mass \(p-1\) over
+\(A=T^3\), versus the required \(p^{-1}\), leaves the exact square
+ratio
+\[
+ \prod_{p\mid A}p(p-1)=A\varphi(A)=T^{6+o(1)}.
+\]
+It therefore requires amplitude power \(T^{3+o(1)}\).  Even the
+optimistic frozen-factor saving leaves power deficit \(T^{11/4+o(1)}\).
+
+There are two further structural failures.  Corollary 7.9 takes an
+absolute value separately at every modulus, so it discards the outer
+Möbius level signs.  Freezing one of \(h,\delta\) also discards the
+two-index interference which MEPEVP is designed to preserve.  Finally,
+the published constant is \(C^{o(1)}\), not the uniform
+\((\log T)^{O(1)}\) constant required on the zero-margin boundary.
+Pascadi v2 is therefore a genuine fixed-modulus improvement on some
+subcells, but it does not prove PEVP, MEPEVP, or OLISK.
 
 ### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell
 

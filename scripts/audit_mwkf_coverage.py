@@ -1927,6 +1927,67 @@ class LiftedOuterQCTAggregationAudit:
 
 
 @dataclass(frozen=True)
+class MixedEntryProjectionGramAudit:
+    prime: int
+    level_p_index: int
+    level_p_squared_index: int
+    entry_difference_mass: Fraction
+    modulus_level_mass: Fraction
+    state_order: tuple[str, str, str]
+    raw_gram_matrix: tuple[tuple[Fraction, ...], ...]
+    ambient_normalization_multiplier: int
+    physical_ambient_gram_matrix: tuple[tuple[Fraction, ...], ...]
+    raw_nontrivial_union_cell_is_at_most_inverse_nu_p: bool
+    physical_tensor_kernel_is_majorized_by_reciprocal_lcm: bool
+    physical_entry_cell_mass: Fraction
+    required_entry_cell_mass: Fraction
+    entry_cell_deficit_ratio: Fraction
+    outer_product_coefficients_regroup_to_divisor_bounded_sequence: bool
+    reciprocal_lcm_quadratic_form_is_polylogarithmic: bool
+    physical_mixed_cross_index_transfer_proved: bool
+    mixed_entry_harmonic_large_sieve_proved: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class PascadiLiftedPhysicalAudit:
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    coprimality_divisor_exponent: Fraction
+    physical_modulus_exponent: Fraction
+    ambient_level_exponent: Fraction
+    factorization_d_exponent: Fraction
+    square_divisor_f_exponent: Fraction
+    poisson_dual_index_exponent: Fraction
+    single_product_factor_exponent: Fraction
+    full_product_index_exponent: Fraction
+    single_factor_method_one_terms: tuple[Fraction, Fraction, Fraction]
+    single_factor_method_two_terms: tuple[Fraction, Fraction, Fraction]
+    single_factor_sixth_root_exponent: Fraction
+    single_factor_corollary_bound_exponent: Fraction
+    single_factor_averaged_weil_exponent: Fraction
+    single_factor_net_saving_exponent: Fraction
+    full_product_method_one_terms: tuple[Fraction, Fraction, Fraction]
+    full_product_method_two_terms: tuple[Fraction, Fraction, Fraction]
+    full_product_sixth_root_exponent: Fraction
+    full_product_corollary_bound_exponent: Fraction
+    full_product_averaged_fourier_exponent: Fraction
+    full_product_net_saving_exponent: Fraction
+    required_physical_cross_index_amplitude_saving_exponent: Fraction
+    remaining_cross_index_amplitude_deficit: Fraction
+    squarefree_factorization_makes_f_equal_d: bool
+    corollary_level_divides_every_lifted_modulus: bool
+    single_factor_length_hypotheses_verified: bool
+    full_product_length_hypotheses_verified: bool
+    corollary_takes_absolute_values_over_moduli: bool
+    modulus_mobius_signs_retained: bool
+    product_cross_index_structure_retained: bool
+    published_o1_loss_is_polylogarithmic: bool
+    physical_pevp_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class PrimitiveConductorLevelDifferenceAudit:
     level_factor_exponent: Fraction
     common_mobius_length_exponent: Fraction
@@ -11177,6 +11238,228 @@ def lifted_outer_qct_aggregation_audit(
     )
 
 
+def mixed_entry_projection_gram_audit(
+    *, prime: int
+) -> MixedEntryProjectionGramAudit:
+    """Compute the local outer-entry Gram kernel exactly.
+
+    Work in the common level-p-squared oldspace and write ``P0 <= P1
+    <= P2`` for the nested orthogonal projections of local ranks
+    ``1, p+1, p(p+1)``.  The three local outer-entry states are
+
+    ``E0 = P0``, ``EB = P1/(p+1)``, and
+    ``EA = P1/(p+1) - P2/(p(p+1))``.
+
+    The raw trace Gram matrix has only two nontrivial masses.  A modulus
+    state contributes ``1/(p+1)``; every cell containing an entry
+    difference contributes ``(p-1)/(p(p+1))``.  Both are at most
+    ``1/(p+1)``.  This tempting reciprocal-LCM kernel is not physical:
+    insertion of the common ambient level-p-squared Plancherel measure
+    multiplies the matrix by ``p(p+1)``.  The entry mass becomes ``p-1``
+    instead of the required ``1/p``, reproducing the exact deficit
+    ``p(p-1)`` from the positive ambient square.  Only a signed physical
+    cross-index transfer could recover the raw reciprocal-LCM scale.
+    """
+    if not isinstance(prime, int) or prime < 2 or not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+
+    p = prime
+    nu1 = p + 1
+    nu2 = p * (p + 1)
+    entry_mass = F(p - 1, p * (p + 1))
+    modulus_mass = F(1, p + 1)
+    gram = (
+        (F(1), modulus_mass, entry_mass),
+        (modulus_mass, modulus_mass, entry_mass),
+        (entry_mass, entry_mass, entry_mass),
+    )
+    nontrivial = (
+        gram[0][1], gram[0][2], gram[1][0], gram[1][1],
+        gram[1][2], gram[2][0], gram[2][1], gram[2][2],
+    )
+    union_bound = all(value <= modulus_mass for value in nontrivial)
+    ambient_gram = tuple(
+        tuple(F(nu2) * value for value in row) for row in gram
+    )
+    physical_entry = F(nu2) * entry_mass
+    required_entry = F(1, p)
+    return MixedEntryProjectionGramAudit(
+        prime=p,
+        level_p_index=nu1,
+        level_p_squared_index=nu2,
+        entry_difference_mass=entry_mass,
+        modulus_level_mass=modulus_mass,
+        state_order=("none", "modulus", "entry"),
+        raw_gram_matrix=gram,
+        ambient_normalization_multiplier=nu2,
+        physical_ambient_gram_matrix=ambient_gram,
+        raw_nontrivial_union_cell_is_at_most_inverse_nu_p=union_bound,
+        physical_tensor_kernel_is_majorized_by_reciprocal_lcm=False,
+        physical_entry_cell_mass=physical_entry,
+        required_entry_cell_mass=required_entry,
+        entry_cell_deficit_ratio=physical_entry / required_entry,
+        outer_product_coefficients_regroup_to_divisor_bounded_sequence=True,
+        reciprocal_lcm_quadratic_form_is_polylogarithmic=True,
+        physical_mixed_cross_index_transfer_proved=False,
+        mixed_entry_harmonic_large_sieve_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
+def pascadi_lifted_physical_audit(
+    *,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+    coprimality_divisor_exponent: Fraction,
+    base_modulus_exponent: Fraction = F(3),
+    single_product_factor_exponent: Fraction = F(5, 2),
+    full_product_index_exponent: Fraction = F(5),
+) -> PascadiLiftedPhysicalAudit:
+    """Insert the hard lifted QCT scales into Pascadi v2 exactly.
+
+    Write ``A=T^alpha``, ``B=T^beta``, ``j=T^gamma`` and
+    ``s=T^sigma``.  The CRT lift has modulus ``c=A*s`` and the
+    Corollary 7.9 level is ``q=A*B*j``.  On the squarefree physical
+    support, with ``(A,s)=1`` and ``B*j|s``, the factorization
+
+    ``q=d*d'*e``, ``d=A``, ``d'=j``, ``e=B``
+
+    has largest ``f`` with ``f^2|q*d`` equal to ``A``.  This is the
+    most favorable exact factorization supplied by the physical
+    variables.
+
+    For interval exponents ``M>=N``, Corollary 7.9 contributes the
+    sixth root of the better of
+
+    ``(d*M^3*N/C^3, f*M^2/C^2, f/d^2)`` and
+    ``(d*M^3*N/(q*C^2), f*M^2/(q*C), f*q/(d^2*C))``.
+
+    The helper retains these six exponents as rational numbers.  It
+    tests both the full product index ``h*delta`` and the optimistic
+    operation which freezes one factor.  Freezing gives at most a
+    quarter-power improvement at the top physical cell, but destroys
+    the cross-index structure needed by PEVP.  The source theorem also
+    has a ``C^o(1)`` loss and takes absolute values over the moduli, so
+    it is not the required signed polylogarithmic harmonic large sieve.
+    """
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    gamma = F(coprimality_divisor_exponent)
+    sigma = F(base_modulus_exponent)
+    one_factor = F(single_product_factor_exponent)
+    full_product = F(full_product_index_exponent)
+    if min(alpha, beta, gamma, sigma, one_factor, full_product) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if gamma > alpha:
+        raise ValueError("the coprimality divisor j must divide A")
+
+    modulus = alpha + sigma
+    level = alpha + beta + gamma
+    if level > modulus:
+        raise ValueError("the Corollary 7.9 level must divide the modulus")
+    dual = alpha + sigma - F(3)
+    if dual < 0:
+        raise ValueError("the lifted Poisson dual interval is subunit")
+
+    d_exp = alpha
+    f_exp = alpha
+
+    def corollary_terms(
+        first_length: Fraction,
+        second_length: Fraction,
+    ) -> tuple[
+        tuple[Fraction, Fraction, Fraction],
+        tuple[Fraction, Fraction, Fraction],
+        Fraction,
+        Fraction,
+        Fraction,
+    ]:
+        longer = max(first_length, second_length)
+        shorter = min(first_length, second_length)
+        method_one = (
+            d_exp + 3 * longer + shorter - 3 * modulus,
+            f_exp + 2 * longer - 2 * modulus,
+            f_exp - 2 * d_exp,
+        )
+        method_two = (
+            d_exp + 3 * longer + shorter - level - 2 * modulus,
+            f_exp + 2 * longer - level - modulus,
+            f_exp + level - 2 * d_exp - modulus,
+        )
+        sixth_root = min(max(method_one), max(method_two)) / 6
+        corollary_bound = 2 * modulus - level + sixth_root
+        fixed_modulus_trivial = min(
+            modulus,
+            (longer + shorter + modulus) / 2,
+        )
+        averaged_trivial = modulus - level + fixed_modulus_trivial
+        net_saving = averaged_trivial - corollary_bound
+        return (
+            method_one,
+            method_two,
+            sixth_root,
+            corollary_bound,
+            net_saving,
+        )
+
+    single = corollary_terms(dual, one_factor)
+    product = corollary_terms(dual, full_product)
+    single_trivial = modulus - level + min(
+        modulus,
+        (dual + one_factor + modulus) / 2,
+    )
+    product_trivial = modulus - level + min(
+        modulus,
+        (dual + full_product + modulus) / 2,
+    )
+    required_cross_index = alpha
+    available_cross_index = max(F(0), single[4], product[4])
+    remaining = max(F(0), required_cross_index - available_cross_index)
+    single_lengths_ok = max(dual, one_factor) <= modulus
+    product_lengths_ok = max(dual, full_product) <= modulus
+    return PascadiLiftedPhysicalAudit(
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        coprimality_divisor_exponent=gamma,
+        physical_modulus_exponent=modulus,
+        ambient_level_exponent=level,
+        factorization_d_exponent=d_exp,
+        square_divisor_f_exponent=f_exp,
+        poisson_dual_index_exponent=dual,
+        single_product_factor_exponent=one_factor,
+        full_product_index_exponent=full_product,
+        single_factor_method_one_terms=single[0],
+        single_factor_method_two_terms=single[1],
+        single_factor_sixth_root_exponent=single[2],
+        single_factor_corollary_bound_exponent=single[3],
+        single_factor_averaged_weil_exponent=single_trivial,
+        single_factor_net_saving_exponent=single[4],
+        full_product_method_one_terms=product[0],
+        full_product_method_two_terms=product[1],
+        full_product_sixth_root_exponent=product[2],
+        full_product_corollary_bound_exponent=product[3],
+        full_product_averaged_fourier_exponent=product_trivial,
+        full_product_net_saving_exponent=product[4],
+        required_physical_cross_index_amplitude_saving_exponent=(
+            required_cross_index
+        ),
+        remaining_cross_index_amplitude_deficit=remaining,
+        squarefree_factorization_makes_f_equal_d=True,
+        corollary_level_divides_every_lifted_modulus=(level <= modulus),
+        single_factor_length_hypotheses_verified=single_lengths_ok,
+        full_product_length_hypotheses_verified=product_lengths_ok,
+        corollary_takes_absolute_values_over_moduli=True,
+        modulus_mobius_signs_retained=False,
+        product_cross_index_structure_retained=False,
+        published_o1_loss_is_polylogarithmic=False,
+        physical_pevp_covered=False,
+        source=(
+            "Pascadi, arXiv:2511.08445v2, Theorem 7.1 and "
+            "Corollary 7.9"
+        ),
+    )
+
+
 def primitive_conductor_level_difference_audit(
     *,
     level_factor_exponent: Fraction,
@@ -12820,6 +13103,50 @@ def _euler_phi(value: int) -> int:
     if remaining > 1:
         result -= result // remaining
     return result
+
+
+def reciprocal_lcm_quadratic_energy(
+    coefficients: dict[int, Fraction],
+) -> dict[str, object]:
+    """Check the reciprocal-LCM/totient identity on finite data.
+
+    For ``c_n=abs(coefficients[n])`` the positive quadratic form is
+
+    ``sum_(m,n) c_m*c_n/lcm(m,n)``.
+
+    Since ``gcd(m,n)=sum_(d|m,d|n) phi(d)``, it is identically
+
+    ``sum_d phi(d)*(sum_(d|n) c_n/n)^2``.
+
+    The analytic outer-entry use groups ``A*B=n`` first.  Restricted
+    smooth Mobius convolutions are divisor-bounded, and the displayed
+    identity plus the standard divisor mean gives only a fixed power of
+    ``log T`` on a dyadic interval.  This helper is an exact finite
+    regression witness for the algebraic identity, not the analytic
+    mean-value proof.
+    """
+    if not coefficients or any(index <= 0 for index in coefficients):
+        raise ValueError("coefficients must have positive integer indices")
+    absolute = {index: abs(F(value)) for index, value in coefficients.items()}
+    direct = F(0)
+    for left, left_value in absolute.items():
+        for right, right_value in absolute.items():
+            lcm = left * right // gcd(left, right)
+            direct += left_value * right_value / lcm
+
+    maximum = max(absolute)
+    expanded = F(0)
+    for divisor in range(1, maximum + 1):
+        inner = sum(
+            (value / index for index, value in absolute.items() if index % divisor == 0),
+            F(0),
+        )
+        expanded += F(_euler_phi(divisor)) * inner * inner
+    return {
+        "direct_energy": direct,
+        "gcd_totient_energy": expanded,
+        "identity_verified": direct == expanded,
+    }
 
 
 def eisenstein_common_ramification_average_audit(
@@ -22301,6 +22628,36 @@ def main() -> None:
         "direct="
         f"{determinant_audit.direct_corollary_hypotheses_verified} "
         f"covered={determinant_audit.published_coverage}"
+    )
+    mixed_gram = mixed_entry_projection_gram_audit(prime=5)
+    print(
+        "balanced_max_a: mixed_entry_gram="
+        f"raw_entry={_fmt(mixed_gram.entry_difference_mass)} "
+        f"physical_entry={_fmt(mixed_gram.physical_entry_cell_mass)} "
+        f"target={_fmt(mixed_gram.required_entry_cell_mass)} "
+        f"ratio={_fmt(mixed_gram.entry_cell_deficit_ratio)} "
+        "reciprocal_lcm_physical="
+        f"{mixed_gram.physical_tensor_kernel_is_majorized_by_reciprocal_lcm} "
+        f"mepevp={mixed_gram.mixed_entry_harmonic_large_sieve_proved}"
+    )
+    pascadi_lifted = pascadi_lifted_physical_audit(
+        entry_divisor_exponent=F(3),
+        modulus_divisor_exponent=F(3),
+        coprimality_divisor_exponent=F(0),
+    )
+    print(
+        "balanced_max_a: pascadi_v2_lifted="
+        "single_factor_saving="
+        f"{_fmt(pascadi_lifted.single_factor_net_saving_exponent)} "
+        "full_product_saving="
+        f"{_fmt(pascadi_lifted.full_product_net_saving_exponent)} "
+        "required_cross_index="
+        f"{_fmt(pascadi_lifted.required_physical_cross_index_amplitude_saving_exponent)} "
+        "remaining="
+        f"{_fmt(pascadi_lifted.remaining_cross_index_amplitude_deficit)} "
+        f"signed_moduli={pascadi_lifted.modulus_mobius_signs_retained} "
+        f"polylog={pascadi_lifted.published_o1_loss_is_polylogarithmic} "
+        f"covered={pascadi_lifted.physical_pevp_covered}"
     )
     final = unconditional_long_mollifier_asymptotic_audit()
     print(

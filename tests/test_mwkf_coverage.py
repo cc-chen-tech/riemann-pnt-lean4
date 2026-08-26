@@ -5280,6 +5280,111 @@ def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
     assert not core.whole_mobius_gate_covered
 
 
+def test_mixed_entry_projection_gram_reverses_after_ambient_normalization() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zj Ambient normalization reverses the raw mixed-entry Gram",
+        r"\tag{4.845dc_14xo}",
+        r"\tag{4.845dc_14xp}",
+        r"\tag{4.845dc_14xq}",
+        r"\tag{MEPEVP}",
+    ):
+        assert marker in note
+
+    local = coverage_audit.mixed_entry_projection_gram_audit(prime=5)
+    assert local.level_p_index == 6
+    assert local.level_p_squared_index == 30
+    assert local.entry_difference_mass == F(2, 15)
+    assert local.modulus_level_mass == F(1, 6)
+    assert local.state_order == ("none", "modulus", "entry")
+    assert local.raw_gram_matrix == (
+        (F(1), F(1, 6), F(2, 15)),
+        (F(1, 6), F(1, 6), F(2, 15)),
+        (F(2, 15), F(2, 15), F(2, 15)),
+    )
+    assert local.ambient_normalization_multiplier == 30
+    assert local.physical_ambient_gram_matrix == (
+        (F(30), F(5), F(4)),
+        (F(5), F(5), F(4)),
+        (F(4), F(4), F(4)),
+    )
+    assert local.raw_nontrivial_union_cell_is_at_most_inverse_nu_p
+    assert not local.physical_tensor_kernel_is_majorized_by_reciprocal_lcm
+    assert local.physical_entry_cell_mass == 4
+    assert local.required_entry_cell_mass == F(1, 5)
+    assert local.entry_cell_deficit_ratio == 20
+    assert local.outer_product_coefficients_regroup_to_divisor_bounded_sequence
+    assert local.reciprocal_lcm_quadratic_form_is_polylogarithmic
+    assert not local.physical_mixed_cross_index_transfer_proved
+    assert not local.mixed_entry_harmonic_large_sieve_proved
+    assert not local.outer_lisk_covered
+
+    energy = coverage_audit.reciprocal_lcm_quadratic_energy(
+        {1: F(1), 2: F(-2), 3: F(-2), 6: F(4)}
+    )
+    assert energy["direct_energy"] == energy["gcd_totient_energy"]
+    assert energy["identity_verified"]
+
+
+def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zk Pascadi v2 saves only one quarter power after factor freezing",
+        r"\tag{4.845dc_14xr}",
+        r"\tag{4.845dc_14xs}",
+        r"\tag{4.845dc_14xt}",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.pascadi_lifted_physical_audit(
+        entry_divisor_exponent=F(3),
+        modulus_divisor_exponent=F(3),
+        coprimality_divisor_exponent=F(0),
+    )
+    assert audit.physical_modulus_exponent == F(6)
+    assert audit.ambient_level_exponent == F(6)
+    assert audit.factorization_d_exponent == F(3)
+    assert audit.square_divisor_f_exponent == F(3)
+    assert audit.poisson_dual_index_exponent == F(3)
+    assert audit.single_product_factor_exponent == F(5, 2)
+    assert audit.full_product_index_exponent == F(5)
+
+    assert audit.single_factor_method_one_terms == (
+        F(-7, 2),
+        F(-3),
+        F(-3),
+    )
+    assert audit.single_factor_method_two_terms == (
+        F(-7, 2),
+        F(-3),
+        F(-3),
+    )
+    assert audit.single_factor_sixth_root_exponent == F(-1, 2)
+    assert audit.single_factor_corollary_bound_exponent == F(11, 2)
+    assert audit.single_factor_averaged_weil_exponent == F(23, 4)
+    assert audit.single_factor_net_saving_exponent == F(1, 4)
+
+    assert audit.full_product_method_one_terms == (F(3), F(1), F(-3))
+    assert audit.full_product_method_two_terms == (F(3), F(1), F(-3))
+    assert audit.full_product_sixth_root_exponent == F(1, 2)
+    assert audit.full_product_corollary_bound_exponent == F(13, 2)
+    assert audit.full_product_averaged_fourier_exponent == F(6)
+    assert audit.full_product_net_saving_exponent == F(-1, 2)
+
+    assert audit.required_physical_cross_index_amplitude_saving_exponent == F(3)
+    assert audit.remaining_cross_index_amplitude_deficit == F(11, 4)
+    assert audit.squarefree_factorization_makes_f_equal_d
+    assert audit.corollary_level_divides_every_lifted_modulus
+    assert audit.single_factor_length_hypotheses_verified
+    assert audit.full_product_length_hypotheses_verified
+    assert audit.corollary_takes_absolute_values_over_moduli
+    assert not audit.modulus_mobius_signs_retained
+    assert not audit.product_cross_index_structure_retained
+    assert not audit.published_o1_loss_is_polylogarithmic
+    assert not audit.physical_pevp_covered
+    assert audit.source == "Pascadi, arXiv:2511.08445v2, Theorem 7.1 and Corollary 7.9"
+
+
 def test_eisenstein_second_moment_reciprocity_does_not_yet_prove_slf() -> None:
     local_identity = getattr(
         coverage_audit,
