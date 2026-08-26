@@ -20276,7 +20276,7 @@ squarefree counting and partial summation give the density main term
  =
  \frac dS\frac{\mathcal W}{\zeta(2)}
  \prod_{p\mid dA}\left(1+\frac1p\right)^{-1}
- \mathcal E_{d,A}.
+ +\mathcal E_{d,A}.
  \tag{4.845dc_14xq_35v}
 \]
 
@@ -20339,6 +20339,130 @@ The interface double_poisson_ramanujan_audit checks
 (4.845dc_14xq_35w), records the two \(T^{1/2}\) dual lengths and the
 zero power margin, and keeps the density-error, short-cofactor, and
 MMKLS flags false.
+
+### 4.109zjacea The zero Ramanujan argument is a separate Möbius PNT cell
+
+There is a necessary exceptional split before \((\mathrm{SDRG})_\alpha\).
+The reciprocal-radical product in (4.845dc_14xq_35w) is a finite product
+only for a nonzero integer.  It is not defined by that formula when
+
+\[
+ m+Akl=0.
+ \tag{4.845dc_14xq_35w0}
+\]
+
+This hyperbola is not excluded by the physical QCT derivative bounds.
+At the balanced hard scales the normalized Fourier sample spacings are
+
+\[
+ \frac Hs=\frac Ls=T^{-1/2},
+\]
+
+whereas a fixed normalized cutoff has Fourier width \(T^{0+o(1)}\).
+Thus the raw dual box contains, for example,
+
+\[
+ (A,m,k,l)=(A,A,-1,1).
+ \tag{4.845dc_14xq_35w1}
+\]
+
+Neither the Fourier nuclear-norm estimate (4.845ai) nor the row/column
+centering in (4.663) is a vanishing identity on this hyperbola.  The
+latter only kills its own coordinate axes and belongs to a different
+Hermitian completion.
+
+The exceptional cell nevertheless has a direct unconditional estimate.
+For every modulus,
+
+\[
+ \boxed{c_s(0)=\varphi(s).}
+ \tag{4.845dc_14xq_35w2}
+\]
+
+Consequently the squarefree modulus coefficient in (4.845dc_14xq_35u)
+is exactly
+
+\[
+ \frac{\mu(s)c_s(0)}{s^2}
+ =\frac{\mu(s)\varphi(s)}{s^2}.
+ \tag{4.845dc_14xq_35w3}
+\]
+
+Put \(a_s=\mu(s)\varphi(s)/s\).  With the coprimality condition retained,
+the Dirichlet series has the exact Euler factorization
+
+\[
+ \boxed{
+ \sum_{\substack{s\ge1\\(s,A)=1}}\frac{a_s}{s^z}
+ =\frac{1}{\zeta(z)}G_A(z),}
+ \tag{4.845dc_14xq_35w4}
+\]
+
+where
+
+\[
+ G_A(z)=
+ \prod_{p\nmid A}
+ \frac{1-(1-p^{-1})p^{-z}}{1-p^{-z}}
+ \prod_{p\mid A}(1-p^{-z})^{-1}.
+ \tag{4.845dc_14xq_35w5}
+\]
+
+The first product converges absolutely and locally uniformly for
+\(\Re z>0\), since its local factor is
+\(1+O(p^{-1-\Re z})\).  On the Vinogradov--Korobov contour at height
+bounded by a fixed power of \(T\), the finite product over \(p\mid A\)
+is \((\log(3A))^{O(1)}\), uniformly for \(A\le T^3\).  Mellin inversion,
+the classical zero-free region for \(\zeta\), and partial summation
+therefore give, for every \(B\) and every smooth dyadic weight
+\(W_{A,m,k,l}\) whose fixed seminorms are polylogarithmic,
+
+\[
+ \boxed{
+ \sum_{\substack{s\ge1\\(s,A)=1}}
+ \frac{\mu(s)\varphi(s)}{s^2}
+ W_{A,m,k,l}(s/S)
+ \ll_{B,J} (\log T)^{-B}
+ \sum_{j\le J}\|W_{A,m,k,l}^{(j)}\|_\infty.}
+ \tag{4.845dc_14xq_35w6}
+\]
+
+Here \(J\) is fixed after \(B\); the already available polylogarithmic
+QCT seminorm cost is absorbed by first requesting a larger value of
+\(B\).  No positive power of \(S\) occurs because (4.845dc_14xq_35w3)
+has one additional factor \(s^{-1}\) relative to the dyadic PNT sum for
+\(a_s\).
+
+Finally, (4.845dc_14xq_35w0) implies \(A\mid m\) and
+
+\[
+ kl=-\frac mA.
+\]
+
+Since \(A\) and \(m\) have the same dyadic scale, the quotient lies in
+a fixed interval.  For fixed \(A,m\) there are exactly
+\(2\tau(m/A)\) ordered nonzero signed factor pairs, and the outer
+coefficient has the existing \(A^{-1}\) normalization.  The outer sum
+therefore costs only a fixed power of \(\log T\), which is absorbed by
+choosing \(B\) larger in (4.845dc_14xq_35w6).  This proves the required
+arbitrary logarithmic saving for the entire resonance cell.
+
+The honest remaining statement is consequently the nonzero gate
+
+\[
+ \boxed{
+ (\mathrm{SDRG}^{\ne0})_\alpha:
+ \quad (\mathrm{SDRG})_\alpha\ \text{with}\ m+Akl\ne0,
+ \qquad
+ b_A(n):=\prod_{\substack{p\mid |n|\\p\nmid A}}\frac1{p+1}.}
+ \tag{4.845dc_14xq_35w7}
+\]
+
+This correction closes the zero-argument cell but does not prove
+\((\mathrm{SDRG}^{\ne0})_\alpha\), aggregate the short-cofactor cell, or
+prove MMKLS.  The interface physical_ramanujan_resonance_audit records
+the exact zero fixture, the inverse-zeta factor, the divisor-bounded
+resonance multiplicity, and those remaining false flags.
 
 ### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
 

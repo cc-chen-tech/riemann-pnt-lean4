@@ -6667,6 +6667,62 @@ def test_double_poisson_turns_the_product_index_kloosterman_sum_into_a_short_ram
         assert marker in note
 
 
+def test_ramanujan_resonance_is_split_before_the_reciprocal_radical_gate(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The zero argument is a Möbius PNT cell, not a value of b_A(n)."""
+    adapter = getattr(
+        coverage_audit,
+        "physical_ramanujan_resonance_audit",
+        None,
+    )
+    assert adapter is not None, "physical Ramanujan resonance audit is missing"
+    audit = adapter(
+        outer_entry=6,
+        poisson_index=6,
+        first_dual_frequency=-1,
+        second_dual_frequency=1,
+        modulus=35,
+    )
+    assert audit.resonance_tuple == (6, 6, -1, 1)
+    assert audit.ramanujan_argument == 0
+    assert audit.resonance_is_inside_raw_dual_box
+    assert not audit.physical_qct_derivative_bounds_force_resonance_vanishing
+    assert not audit.reciprocal_radical_weight_defined_at_zero
+    assert audit.sdrg_requires_zero_argument_split
+    assert audit.ramanujan_zero_value == 24
+    assert audit.ramanujan_zero_value_equals_euler_phi
+    assert audit.mobius_weighted_zero_coefficient == F(24, 1225)
+    assert audit.zero_mode_dirichlet_series_has_inverse_zeta_factor
+    assert audit.coprimality_euler_correction_has_polylog_cost
+    assert audit.resonant_frequency_pairs_are_divisor_bounded
+    assert audit.resonance_has_arbitrary_log_saving
+    assert audit.resonance_cell_closed
+    assert not audit.nonzero_short_dual_gate_proved
+    assert not audit.full_mmkls_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: ramanujan_resonance="
+        "tuple=6,6,-1,1 n=0 raw_box=True qct_vanish=False "
+        "b_zero=False split=True modulus=35 c0=24 phi=True "
+        "coefficient=24/1225 inverse_zeta=True coprime_polylog=True "
+        "factor_pairs=True log_saving=True resonance_closed=True "
+        "nonzero_gate=False mmkls=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjacea The zero Ramanujan argument is a separate Möbius PNT cell",
+        r"m+Akl=0",
+        r"c_s(0)=\varphi(s)",
+        r"\frac{1}{\zeta(z)}G_A(z)",
+        r"(\mathrm{SDRG}^{\ne0})_\alpha",
+        "physical_ramanujan_resonance_audit",
+    ):
+        assert marker in note
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

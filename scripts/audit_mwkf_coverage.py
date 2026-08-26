@@ -2446,6 +2446,28 @@ class DoublePoissonRamanujanAudit:
 
 
 @dataclass(frozen=True)
+class PhysicalRamanujanResonanceAudit:
+    resonance_tuple: tuple[int, int, int, int]
+    ramanujan_argument: int
+    resonance_is_inside_raw_dual_box: bool
+    physical_qct_derivative_bounds_force_resonance_vanishing: bool
+    reciprocal_radical_weight_defined_at_zero: bool
+    sdrg_requires_zero_argument_split: bool
+    modulus: int
+    ramanujan_zero_value: int
+    ramanujan_zero_value_equals_euler_phi: bool
+    mobius_weighted_zero_coefficient: Fraction
+    zero_mode_dirichlet_series_has_inverse_zeta_factor: bool
+    coprimality_euler_correction_has_polylog_cost: bool
+    resonant_frequency_pairs_are_divisor_bounded: bool
+    resonance_has_arbitrary_log_saving: bool
+    resonance_cell_closed: bool
+    nonzero_short_dual_gate_proved: bool
+    full_mmkls_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class PascadiLiftedPhysicalAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -16492,6 +16514,84 @@ def double_poisson_ramanujan_audit(
     )
 
 
+def physical_ramanujan_resonance_audit(
+    *,
+    outer_entry: int,
+    poisson_index: int,
+    first_dual_frequency: int,
+    second_dual_frequency: int,
+    modulus: int,
+) -> PhysicalRamanujanResonanceAudit:
+    """Split the zero Ramanujan argument before defining ``b_A(n)``.
+
+    The transformed argument is ``n=m+A*k*l``.  At ``n=0`` every
+    divisor of the squarefree modulus contributes, so the finite Euler
+    product defining the reciprocal-radical weight for nonzero integers
+    is not a legal notation.  Instead ``c_s(0)=phi(s)`` and the modulus
+    coefficient is ``mu(s)*phi(s)/s^2``.
+
+    Put ``a_s=mu(s)*phi(s)/s``.  For ``(s,A)=1`` its Dirichlet series is
+
+      sum a_s*s^(-z) = zeta(z)^(-1) G_A(z),
+
+    where the infinite local correction differs from one by
+    ``O(p^(-Re(z)-1))`` and the omitted-prime factors over ``p|A`` cost
+    only a fixed power of ``log log(3A)`` near ``Re(z)=1``.  The
+    classical zeta zero-free region therefore gives arbitrary logarithmic
+    decay for a smooth dyadic modulus sum.  Since ``A`` and ``m`` have
+    the same dyadic scale, ``m=-A*k*l`` leaves only divisor-many opposite
+    sign frequency pairs and no positive outer power.
+
+    The physical QCT derivative bounds and polylog Fourier nuclear norm
+    do not themselves impose a vanishing condition on this hyperbola.
+    Thus the zero cell is closed by the Möbius PNT argument, while the
+    corrected nonzero short-dual gate remains open.
+    """
+    A = int(outer_entry)
+    m = int(poisson_index)
+    k = int(first_dual_frequency)
+    ell = int(second_dual_frequency)
+    s = int(modulus)
+    if min(A, m) <= 0:
+        raise ValueError("outer entry and Poisson index must be positive")
+    if s <= 1 or mobius(s) == 0:
+        raise ValueError("fixture modulus must be squarefree and nontrivial")
+    argument = m + A * k * ell
+    if argument != 0:
+        raise ValueError("fixture frequencies must lie on m+A*k*l=0")
+
+    phi_s = _euler_phi(s)
+    # For a fixed dyadic ratio m/A, the resonance has k*l=-m/A.
+    # Hence k,l are nonzero, of opposite sign, and form a divisor family.
+    factor_pairs = (
+        k != 0
+        and ell != 0
+        and k * ell < 0
+        and m % A == 0
+        and abs(k * ell) == m // A
+    )
+    return PhysicalRamanujanResonanceAudit(
+        resonance_tuple=(A, m, k, ell),
+        ramanujan_argument=argument,
+        resonance_is_inside_raw_dual_box=(abs(k) <= 1 and abs(ell) <= 1),
+        physical_qct_derivative_bounds_force_resonance_vanishing=False,
+        reciprocal_radical_weight_defined_at_zero=False,
+        sdrg_requires_zero_argument_split=True,
+        modulus=s,
+        ramanujan_zero_value=phi_s,
+        ramanujan_zero_value_equals_euler_phi=True,
+        mobius_weighted_zero_coefficient=F(mobius(s) * phi_s, s * s),
+        zero_mode_dirichlet_series_has_inverse_zeta_factor=True,
+        coprimality_euler_correction_has_polylog_cost=True,
+        resonant_frequency_pairs_are_divisor_bounded=factor_pairs,
+        resonance_has_arbitrary_log_saving=True,
+        resonance_cell_closed=factor_pairs,
+        nonzero_short_dual_gate_proved=False,
+        full_mmkls_proved=False,
+        source="Ramanujan zero value and the classical zeta zero-free region",
+    )
+
+
 def eisenstein_common_ramification_average_audit(
     *,
     frequency_length: int,
@@ -26582,6 +26682,41 @@ def main() -> None:
         "positive_log="
         f"{double_poisson.positive_reciprocal_radical_majorant_supplies_log_saving} "
         f"mmkls={double_poisson.double_poisson_route_closes_mmkls}"
+    )
+    resonance = physical_ramanujan_resonance_audit(
+        outer_entry=6,
+        poisson_index=6,
+        first_dual_frequency=-1,
+        second_dual_frequency=1,
+        modulus=35,
+    )
+    print(
+        "balanced_max_a: ramanujan_resonance="
+        "tuple="
+        + ",".join(str(value) for value in resonance.resonance_tuple)
+        + " "
+        f"n={resonance.ramanujan_argument} "
+        f"raw_box={resonance.resonance_is_inside_raw_dual_box} "
+        "qct_vanish="
+        f"{resonance.physical_qct_derivative_bounds_force_resonance_vanishing} "
+        "b_zero="
+        f"{resonance.reciprocal_radical_weight_defined_at_zero} "
+        f"split={resonance.sdrg_requires_zero_argument_split} "
+        f"modulus={resonance.modulus} "
+        f"c0={resonance.ramanujan_zero_value} "
+        f"phi={resonance.ramanujan_zero_value_equals_euler_phi} "
+        "coefficient="
+        f"{_fmt(resonance.mobius_weighted_zero_coefficient)} "
+        "inverse_zeta="
+        f"{resonance.zero_mode_dirichlet_series_has_inverse_zeta_factor} "
+        "coprime_polylog="
+        f"{resonance.coprimality_euler_correction_has_polylog_cost} "
+        "factor_pairs="
+        f"{resonance.resonant_frequency_pairs_are_divisor_bounded} "
+        f"log_saving={resonance.resonance_has_arbitrary_log_saving} "
+        f"resonance_closed={resonance.resonance_cell_closed} "
+        f"nonzero_gate={resonance.nonzero_short_dual_gate_proved} "
+        f"mmkls={resonance.full_mmkls_proved}"
     )
     blomer_pascadi = blomer_pascadi_hard_box_audit()
     print(
