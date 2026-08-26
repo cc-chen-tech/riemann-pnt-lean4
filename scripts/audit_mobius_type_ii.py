@@ -6479,6 +6479,27 @@ class PerronZetaRatioLedger:
 
 
 @dataclass(frozen=True)
+class RhPerronNegativeMomentLedger:
+    """Conditional exponent ledger using shifted negative zeta moments."""
+
+    cutoff_exponent: Fraction
+    target_epsilon: Fraction
+    contour_real_part: Fraction
+    perron_square_cost: Fraction
+    ratio_moment_exponent: Fraction
+    conditional_moment_exponent: Fraction
+    target_moment_exponent: Fraction
+    power_margin: Fraction
+    positive_moment_order: int
+    negative_moment_order: int
+    negative_moment_k: Fraction
+    fixed_shift_theorem_range: bool
+    rh_required: bool
+    conditional_power_covered: bool
+    unconditional_power_covered: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -6841,6 +6862,51 @@ def perron_zeta_ratio_ledger(
         ),
         potential_residue_has_inverse_zeta_derivative=True,
         unconditional_negative_moment_input=False,
+    )
+
+
+def rh_perron_negative_moment_ledger(
+    cutoff_exponent: Fraction,
+    target_epsilon: Fraction,
+) -> RhPerronNegativeMomentLedger:
+    """Audit the fixed-shift Perron route conditional on RH.
+
+    Choose ``c=epsilon/(4*theta)`` for ``N=T**theta``.  The factor
+    ``N**(2*c)`` then costs only ``T**(epsilon/2)``.  Under RH, shifting to
+    ``Re(w)=c>0`` crosses no zeta zeros.  For fixed ``c``, Bui--Florea
+    Theorem 1.2 with ``k=2`` supplies a polylogarithmic fourth negative
+    moment of ``zeta(1/2+c+it)``.  Holder with the classical positive fourth
+    moment leaves ratio second-moment exponent one; logarithms are omitted
+    from this rational power ledger.
+
+    The function records a conditional implication only.  It does not turn
+    the RH-dependent negative-moment theorem into an unconditional input.
+    """
+
+    if cutoff_exponent <= 0 or target_epsilon <= 0:
+        raise ValueError("the cutoff exponent and target epsilon must be positive")
+    contour_real_part = target_epsilon / (4 * cutoff_exponent)
+    perron_square_cost = 2 * cutoff_exponent * contour_real_part
+    ratio_moment_exponent = Fraction(1)
+    conditional_moment_exponent = ratio_moment_exponent + perron_square_cost
+    target_moment_exponent = ratio_moment_exponent + target_epsilon
+    power_margin = target_moment_exponent - conditional_moment_exponent
+    return RhPerronNegativeMomentLedger(
+        cutoff_exponent=cutoff_exponent,
+        target_epsilon=target_epsilon,
+        contour_real_part=contour_real_part,
+        perron_square_cost=perron_square_cost,
+        ratio_moment_exponent=ratio_moment_exponent,
+        conditional_moment_exponent=conditional_moment_exponent,
+        target_moment_exponent=target_moment_exponent,
+        power_margin=power_margin,
+        positive_moment_order=4,
+        negative_moment_order=4,
+        negative_moment_k=Fraction(2),
+        fixed_shift_theorem_range=True,
+        rh_required=True,
+        conditional_power_covered=(power_margin > 0),
+        unconditional_power_covered=False,
     )
 
 

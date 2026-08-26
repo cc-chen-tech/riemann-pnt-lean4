@@ -10223,6 +10223,101 @@ zero-residue family (or a different reciprocal-zeta estimate of equivalent
 strength).  No such unconditional estimate has been proved here, so the
 coupled-kernel gate remains open.
 
+### 9.67 Conditional RH closure through shifted negative moments
+
+Although Section 9.66 does not give an unconditional bound, it can be closed
+under RH with a published negative-moment theorem.  This separates the
+zero-sensitive obstruction from the finite two-Möbius algebra.
+
+Fix \(0<c<1/2\).  Under RH, every zero \(\rho\) has
+\(\Re(\rho-s)=0\) when \(\Re s=1/2\).  Therefore the rectangle between the
+original line \(c_0>1/2\) in (9.424) and the line \(c>0\) contains no pole of
+\(1/\zeta(s+w)\); the pole at \(w=0\) is also to its left.  The RH pointwise
+lower bound used by Bui--Florea gives, for fixed \(c\),
+\(1/\zeta(1/2+c+iu)=|u|^{o(1)}\).  Consequently the \(w^{-2}\) factor kills
+the horizontal sides along a sequence of growing rectangles, and (9.424)
+holds on \(\Re w=c\):
+
+\[
+ \zeta(s)M_N(s)
+ =\frac1L\frac1{2\pi i}\int_{(c)}
+       \frac{N^w}{w^2}\frac{\zeta(s)}{\zeta(s+w)}\,dw
+ \qquad (\mathrm{RH}).
+\tag{9.427}
+\]
+
+The required reciprocal-zeta input is now available.  Bui--Florea,
+[Theorem 1.2](https://arxiv.org/abs/2302.07226), under RH and with their
+\(k=2\), implies for every fixed \(c>0\)
+
+\[
+ \frac1U\int_U^{2U}
+ \left|\zeta\!\left(\frac12+c+iu\right)\right|^{-4}du
+ \ll_c (\log\log U)^2(\log U)^4.
+\tag{9.428}
+\]
+
+This is exactly the fourth negative moment needed after Hölder, not merely
+the \(k<1/2\) asymptotic range quoted in the abstract.  Combine (9.428) with
+the classical fourth moment
+
+\[
+ \int_T^{2T}|\zeta(1/2+it)|^4dt\ll T(\log T)^4.
+\tag{9.429}
+\]
+
+For \(v\in\mathbb R\), let \(U_v=2+T+|v|\).  Decompose the interval
+\([T+v,2T+v]\), after reflection when necessary, into dyadic intervals of
+height at most \(U_v\).  Their geometric lengths sum to \(O(U_v)\), and the
+extra logarithmic number of intervals is absorbed below.  Hölder gives
+
+\[
+ \left\|
+ \frac{\zeta(1/2+it)}
+      {\zeta(1/2+c+i(t+v))}
+ \right\|_{L^2(T,2T)}
+ \ll_c (TU_v)^{1/4}(\log U_v)^{O(1)}.
+\tag{9.430}
+\]
+
+Minkowski is now harmless because the Perron kernel retains its full
+\((c^2+v^2)^{-1}\) decay.  Splitting at \(|v|=3T\), (9.430) gives
+
+\[
+ \begin{aligned}
+ &\int_{\mathbb R}\frac1{c^2+v^2}
+ \left\|
+ \frac{\zeta(1/2+it)}
+      {\zeta(1/2+c+i(t+v))}
+ \right\|_2\,dv \\
+ &\hspace{35mm}\ll_c T^{1/2}(\log T)^{O(1)},
+ \end{aligned}
+\tag{9.431}
+\]
+
+since the far tail is bounded by
+\(T^{1/4}\int_T^\infty v^{-7/4}(\log v)^{O(1)}dv\).
+Equations (9.427) and (9.431) therefore prove the conditional estimate
+
+\[
+ \boxed{
+ \int_T^{2T}|\zeta(1/2+it)M_N(1/2+it)|^2dt
+ \ll_c N^{2c}T(\log T)^{O(1)}
+ \qquad (\mathrm{RH}).}
+\tag{9.432}
+\]
+
+For \(N=T^\theta\), choose \(c=\varepsilon/(4\theta)\).  Then
+\(N^{2c}=T^{\varepsilon/2}\), so the logarithms are absorbed and (9.432)
+is \(\ll_{\varepsilon,\theta}T^{1+\varepsilon}\).  In particular the full
+mollified second moment, and hence its off-diagonal contribution after the
+already proved main-term bound, has the target size at \(\theta=3\)
+**conditional on RH**.  The helper `rh_perron_negative_moment_ledger`
+verifies the rational power calculation: for target epsilon \(1/100\) and
+\(\theta=3\), it selects \(c=1/1200\), spends \(1/200\), and retains
+power margin \(1/200\).  Its unconditional-coverage flag is deliberately
+false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -10301,7 +10396,11 @@ support.  The intact-mollifier Perron formula (9.422)--(9.426) does not
 bypass this: its absolute-convergence line gives exponent \(4\) instead of
 \(1\), while shifting far enough left enters a region of possible
 reciprocal-zeta poles whose simple-zero residues contain uncontrolled
-\(1/\zeta'(\rho)\).**
+\(1/\zeta'(\rho)\).  Under RH, however, there are no poles between the two
+positive \(w\)-lines, and Bui--Florea's fixed-shift fourth negative moment
+closes the full \(\theta=3\) mollified second moment by (9.427)--(9.432).
+This last closure is conditional on RH and does not change the unconditional
+status.**
 
 Proved in this note:
 
@@ -10476,6 +10575,13 @@ Proved in this note:
   \(1/\zeta'(\rho)\).  Existing negative moment results do not provide the
   unconditional all-zero residue bound, so this is a certified obstruction
   rather than a closure of the gate.
+* conditional on RH, the pole-free shift to every fixed \(c>0\), the
+  Bui--Florea \(k=2\) negative fourth moment, and the classical positive
+  fourth moment give the ratio estimate (9.430)--(9.431).  Hence (9.432)
+  proves the full mollified second-moment bound
+  \(\ll_{\varepsilon,\theta}T^{1+\varepsilon}\) for every fixed \(\theta\),
+  including \(\theta=3\).  This is a conditional theorem and supplies no
+  unconditional control of off-critical zeros.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -10737,7 +10843,7 @@ Proved in this note:
 | Balanced short-shift integer lattice | exact equal-index forcing; banded two-Möbius estimate unproved | Under the literal endpoint condition \(S/2>2L+4MD\), (9.396)--(9.399) force every original solution to have \(m_1=m_2=m\) and \(\delta=-m(r-s)\).  On this divisibility slice the retained product is \(h\delta=-hm(r-s)\) and the inverse phase is exactly \(e_s(hm)\), (9.400), with critical scale \(HM/S=T^{o(1)}\).  Formula (9.402) is the exact post-Poisson subpacket.  A fixed \(h\)-box also contains a complementary continuous-\(x\) packet which cancels only after full Poisson inversion; hence the result removes the prospective shift oscillation and extra zeta-index average, but does not prove the remaining \(T^2\) two-Möbius saving |
 | Coupled compact-Mellin integral | exact finite recombination; no independent power saving | Keeping \(\tau\) before absolute values is formally weaker than \({\rm CME}_3\), but (9.403)--(9.404) show that the single common mode cancels both mollifier twists and leaves only \((nm)^{-i\tau}\).  The actual contour reconstructs \(V_t(nm)\), (9.405), hence the original conditions \(y-x=\Delta\) and \(nm\asymp T\), (9.406).  It supplies neither two divisor orthogonalities nor an equal-divisor condition; the finite Laurent identity is (9.407).  Any gain must therefore use this product constraint jointly with the shift and both Möbius signs |
 | Guth--Maynard large-value route | exact Fourier-cell audit; long range reduces to classical | The separated equal-index model is the exact energy (9.409), whose time window resolves \(|r-s|\ll X/T\), (9.410).  At \(X=T^3\), each cell contains \(X/T=T^2\) coefficients.  Montgomery--Vaughan gives normalized exponent \(3\) against diagonal exponent \(1\), (9.412).  Guth--Maynard's proof explicitly returns to the classical first term for polynomial length \(N_{\rm GM}\geq T_{\rm GM}\); here \(N_{\rm GM}=T^3>T=T_{\rm GM}\).  Their theorem is coefficient-agnostic and provides no Möbius-specific saving, so (9.413) remains exactly the unavailable banded two-Möbius estimate |
-| Intact-mollifier Perron route | exact contour identity; possible zero-residue estimate unproved | Perron inversion has no endpoint or truncation error, (9.422)--(9.424).  On the limiting absolute-convergence contour \(c=1/2\), squaring \(N^c\) gives exponent \(4\) at \(N=T^3\), three powers above target, (9.425).  Reaching \(T^{1+\varepsilon}\) requires \(c\leq\varepsilon/6\), entering a region where off-critical zeros are not unconditionally excluded.  Any simple-zero residue encountered contains \(1/\zeta'(\rho)\), (9.426); zero density alone does not control it, and the cited negative-moment upper bounds are conditional and restricted to a subfamily |
+| Intact-mollifier Perron route | unconditional possible-zero estimate unproved; RH route closes | Perron inversion has no endpoint or truncation error, (9.422)--(9.424).  On the limiting absolute-convergence contour \(c=1/2\), squaring \(N^c\) gives exponent \(4\) at \(N=T^3\), three powers above target, (9.425).  Reaching \(T^{1+\varepsilon}\) unconditionally enters a region where off-critical zeros are not excluded, and any simple-zero residue encountered contains \(1/\zeta'(\rho)\), (9.426).  Under RH the shift to fixed \(c>0\) is pole-free; Bui--Florea's \(k=2\) fourth negative moment plus the classical fourth moment yields (9.432), which closes every fixed \(\theta\), including \(3\), conditionally on RH |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

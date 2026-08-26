@@ -2643,6 +2643,27 @@ def test_perron_ratio_route_must_control_possible_zero_residues() -> None:
     assert not ledger.unconditional_negative_moment_input
 
 
+def test_rh_negative_moment_perron_route_has_theta_three_power_margin() -> None:
+    ledger = audit.rh_perron_negative_moment_ledger(
+        cutoff_exponent=F(3),
+        target_epsilon=F(1, 100),
+    )
+
+    assert ledger.contour_real_part == F(1, 1200)
+    assert ledger.perron_square_cost == F(1, 200)
+    assert ledger.ratio_moment_exponent == F(1)
+    assert ledger.conditional_moment_exponent == F(201, 200)
+    assert ledger.target_moment_exponent == F(101, 100)
+    assert ledger.power_margin == F(1, 200)
+    assert ledger.positive_moment_order == 4
+    assert ledger.negative_moment_order == 4
+    assert ledger.negative_moment_k == F(2)
+    assert ledger.fixed_shift_theorem_range
+    assert ledger.rh_required
+    assert ledger.conditional_power_covered
+    assert not ledger.unconditional_power_covered
+
+
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     transition = additive_dual_block_ledger(box, F(1, 2), F(1, 2))
