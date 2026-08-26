@@ -19915,6 +19915,166 @@ norm, the nonunit layers, and the principal frequency average true.
 They record the non-composability witness (4.845dc_14xq_35) and keep
 the physical-normalization bridge, MMKLS, OSLSP, and OLISK false.
 
+### 4.109zjacc Primitive-conductor recombination covers a strict subpolytope
+
+The character identity (4.845dc_14xq_20) has additional exact structure
+when the modulus coefficient \(\mu(s)\) is retained.  Write the squarefree
+modulus as
+
+\[
+ s=fr,\qquad (f,r)=1,
+\]
+
+and let \(\chi\bmod fr\) be induced by the primitive character
+\(\chi^*\bmod f\).  CRT gives, with \(\chi^*(n)=0\) on nonunits,
+
+\[
+ \boxed{
+ G_{fr}(\bar\chi,n)
+ =\chi^*(n\bar r)\tau(\bar\chi^*)c_r(n).}
+ \tag{4.845dc_14xq_35a}
+\]
+
+Indeed, the additive character factors as
+
+\[
+ e_{fr}(nx)
+ =e_f(n(x\bmod f)\bar r)\,
+  e_r(n(x\bmod r)\bar f),
+\]
+
+the \(f\)-factor is the primitive Gauss sum, and the \(r\)-factor is
+the Ramanujan sum.  Since \(c_r(1)=\mu(r)\), multiplying the two Gauss
+factors in (4.845dc_14xq_20) by the physical modulus coefficient gives
+the exact signed identity
+
+\[
+ \boxed{
+ \mu(fr)G_{fr}(\bar\chi,1)G_{fr}(\bar\chi,a)
+ =\mu(f)c_r(a)\chi^*(a\bar r^2)
+  \tau(\bar\chi^*)^2.}
+ \tag{4.845dc_14xq_35b}
+\]
+
+Thus one occurrence of the cofactor sign cancels, but the cofactor does
+not disappear: on \((a,r)=1\),
+
+\[
+ c_r(a)=\mu(r).
+ \tag{4.845dc_14xq_35c}
+\]
+
+Put
+
+\[
+ \epsilon(\chi^*):=\frac{\tau(\bar\chi^*)^2}{f},
+ \qquad |\epsilon(\chi^*)|=1.
+\]
+
+On the full unit stratum, one separated physical tensor is therefore a
+finite linear combination of sums of the form
+
+\[
+ \boxed{
+ \sum_{r\asymp R}\frac{\mu(r)}{r\varphi(r)}
+ \sum_{f\asymp F}\frac{\mu(f)}{\varphi(f)}
+ \sum_{\chi^*\bmod f}^{*}
+ \epsilon(\chi^*)\chi^*(\bar r^2)
+ A_{\bar\chi^*,r}M_{\chi^*,r}
+ H_{\chi^*,r}L_{\chi^*,r}.}
+ \tag{PCRLS}_{\alpha,\kappa}
+\]
+
+Here \(FR=S=T^3\), \(F=T^\kappa\), \(R=T^{3-\kappa}\);
+the four polynomials retain the coprimality to \(r\), all Mellin
+parameters, and the physical QCT seminorms.  Their lengths are
+\[
+ A,m\asymp T^\alpha,\qquad h,\delta\asymp T^{5/2},
+\]
+and the \(A\)-coefficients include the exact factor \(A^{-1}\).
+
+There is a nontrivial region where the classical multiplicative large
+sieve already proves (PCRLS).  Cross-group \(A\) with \(h\), and \(m\)
+with \(\delta\).  Divisor multiplicity costs only logarithms, and the
+two convolution coefficient norms have squared \(T\)-exponents
+
+\[
+ \frac52-\alpha,\qquad \frac52+\alpha.
+ \tag{4.845dc_14xq_35d}
+\]
+
+On a dyadic primitive-conductor interval, the standard large sieve in
+the required normalization is
+
+\[
+ \sum_{f\asymp F}\frac1{\varphi(f)}
+ \sum_{\chi^*\bmod f}^{*}
+ \left|\sum_{n\asymp N}b_n\chi^*(n)\right|^2
+ \ll
+ \left(F+\frac NF\right)\sum_n|b_n|^2.
+ \tag{4.845dc_14xq_35e}
+\]
+
+Cauchy applied to the two cross-convolutions, followed by
+\[
+ \sum_{r\asymp R}\frac1{r\varphi(r)}
+ \ll R^{-1}(\log(2R))^C,
+\]
+gives the exact power exponent
+
+\[
+ \boxed{
+ E_{\rm PCRLS}(\alpha,\kappa)
+ =-\frac12+\kappa+
+ \max\left(\kappa,\alpha+\frac52-\kappa\right).}
+ \tag{4.845dc_14xq_35f}
+\]
+
+Equivalently,
+
+\[
+ E_{\rm PCRLS}(\alpha,\kappa)=
+ \begin{cases}
+ \alpha+2,&2\kappa\le\alpha+\frac52,\\
+ 2\kappa-\frac12,&2\kappa\ge\alpha+\frac52.
+ \end{cases}
+ \tag{4.845dc_14xq_35g}
+\]
+
+The MMKLS target exponent is \(3\).  Hence this argument has a fixed
+positive power margin exactly in the strict subpolytope
+
+\[
+ \boxed{\alpha<1,\qquad \kappa<\frac74.}
+ \tag{4.845dc_14xq_35h}
+\]
+
+At either boundary it has zero margin and cannot absorb the required
+arbitrary logarithmic saving.  At the worst cell
+\((\alpha,\kappa)=(3,3)\), it gives
+
+\[
+ E_{\rm PCRLS}(3,3)=\frac{11}{2},
+ \qquad E_{\rm PCRLS}-E_{\rm MMKLS}=\frac52.
+ \tag{4.845dc_14xq_35i}
+\]
+
+This is still useful: the previously local character-energy estimate
+has now been composed with the \(A,m\) variables and genuinely removes
+all unit cells with \(\alpha<1,\kappa<7/4\).  The residual is no longer
+an arbitrary character large sieve.  It is the signed normalized-Gauss
+root-number average (PCRLS) for large outer entry or large primitive
+conductor.  Taking \(\epsilon(\chi^*)\), \(\mu(f)\), and \(\mu(r)\) in
+absolute value returns (4.845dc_14xq_35f) and cannot close that region.
+
+The nonunit factor \(c_r(a)\), and the exact gcd layers in
+(4.845dc_14xq_27)--(4.845dc_14xq_34), have not yet been composed with
+the cross-convolution large sieve.  Therefore this subsection proves a
+strict unit subregion, not MMKLS.  The interface
+primitive_conductor_mmkls_audit verifies the CRT phase, the Möbius
+cancellation, (4.845dc_14xq_35d)--(4.845dc_14xq_35i), and keeps the
+full MMKLS flag false.
+
 ### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
 
 The July 2026 bilinear Kloosterman theorem of

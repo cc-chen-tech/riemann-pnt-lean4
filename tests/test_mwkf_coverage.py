@@ -6440,6 +6440,100 @@ def test_product_index_character_energy_has_a_half_power_hard_margin(
     ) in output
 
 
+def test_primitive_conductor_recombination_covers_only_small_outer_and_conductor_cells(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Keep the Gauss root number and record the exact residual polytope."""
+    adapter = getattr(
+        coverage_audit,
+        "primitive_conductor_mmkls_audit",
+        None,
+    )
+    assert adapter is not None, "primitive-conductor MMKLS audit is missing"
+
+    covered = adapter(
+        outer_entry_exponent=F(1, 2),
+        primitive_conductor_exponent=F(3, 2),
+    )
+    assert covered.modulus_exponent == F(3)
+    assert covered.cofactor_exponent == F(3, 2)
+    assert covered.long_product_factor_exponent == F(5, 2)
+    assert covered.induced_gauss_sum_crt_identity_exact
+    assert covered.mobius_cofactor_cancellation_exact
+    assert covered.cofactor_ramanujan_factor_remains
+    assert covered.unit_cofactor_ramanujan_equals_mobius
+    assert covered.normalized_primitive_gauss_square_has_unit_modulus
+    assert covered.outer_frequency_pair_l2_exponent == F(0)
+    assert covered.first_cross_convolution_l2_exponent == F(2)
+    assert covered.second_cross_convolution_l2_exponent == F(3)
+    assert covered.large_sieve_factor_exponent == F(3, 2)
+    assert covered.unit_stratum_bound_exponent == F(5, 2)
+    assert covered.mmkls_target_exponent == F(3)
+    assert covered.power_saving_margin == F(1, 2)
+    assert covered.small_outer_condition_verified
+    assert covered.small_conductor_condition_verified
+    assert covered.standard_multiplicative_large_sieve_closes_unit_cell
+    assert covered.residual_requires_signed_gauss_root_number_average
+    assert not covered.nonunit_ramanujan_layers_composed_with_large_sieve
+    assert not covered.full_mmkls_proved
+
+    conductor_boundary = adapter(
+        outer_entry_exponent=F(1, 2),
+        primitive_conductor_exponent=F(7, 4),
+    )
+    assert conductor_boundary.unit_stratum_bound_exponent == F(3)
+    assert conductor_boundary.power_saving_margin == F(0)
+    assert conductor_boundary.small_outer_condition_verified
+    assert not conductor_boundary.small_conductor_condition_verified
+    assert not conductor_boundary.standard_multiplicative_large_sieve_closes_unit_cell
+
+    outer_boundary = adapter(
+        outer_entry_exponent=F(1),
+        primitive_conductor_exponent=F(1),
+    )
+    assert outer_boundary.unit_stratum_bound_exponent == F(3)
+    assert outer_boundary.power_saving_margin == F(0)
+    assert not outer_boundary.small_outer_condition_verified
+    assert outer_boundary.small_conductor_condition_verified
+    assert not outer_boundary.standard_multiplicative_large_sieve_closes_unit_cell
+
+    hard = adapter(
+        outer_entry_exponent=F(3),
+        primitive_conductor_exponent=F(3),
+    )
+    assert hard.cofactor_exponent == F(0)
+    assert hard.large_sieve_factor_exponent == F(3)
+    assert hard.unit_stratum_bound_exponent == F(11, 2)
+    assert hard.power_saving_margin == F(-5, 2)
+    assert not hard.small_outer_condition_verified
+    assert not hard.small_conductor_condition_verified
+    assert not hard.standard_multiplicative_large_sieve_closes_unit_cell
+    assert hard.source == (
+        "exact squarefree induced-Gauss CRT identity and the classical "
+        "multiplicative large sieve"
+    )
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: primitive_conductor_mmkls="
+        "alpha=1/2 kappa=3/2 r=3/2 cross_norms=2,3 "
+        "ls=3/2 bound=5/2 target=3 margin=1/2 "
+        "gauss_crt=True mobius_cancel=True ramanujan_remains=True "
+        "small_outer=True small_conductor=True unit=True "
+        "nonunit=False root_number_residual=True mmkls=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjacc Primitive-conductor recombination covers a strict subpolytope",
+        r"\mu(fr)G_{fr}(\bar\chi,1)G_{fr}(\bar\chi,a)",
+        r"E_{\rm PCRLS}(\alpha,\kappa)",
+        r"\alpha<1,\qquad \kappa<\frac74",
+        "primitive_conductor_mmkls_audit",
+    ):
+        assert marker in note
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

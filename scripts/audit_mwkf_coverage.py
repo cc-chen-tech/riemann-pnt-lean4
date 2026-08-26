@@ -2360,6 +2360,34 @@ class ProductIndexCharacterEnergyAudit:
 
 
 @dataclass(frozen=True)
+class PrimitiveConductorMMKLSAudit:
+    modulus_exponent: Fraction
+    outer_entry_exponent: Fraction
+    primitive_conductor_exponent: Fraction
+    cofactor_exponent: Fraction
+    long_product_factor_exponent: Fraction
+    induced_gauss_sum_crt_identity_exact: bool
+    mobius_cofactor_cancellation_exact: bool
+    cofactor_ramanujan_factor_remains: bool
+    unit_cofactor_ramanujan_equals_mobius: bool
+    normalized_primitive_gauss_square_has_unit_modulus: bool
+    outer_frequency_pair_l2_exponent: Fraction
+    first_cross_convolution_l2_exponent: Fraction
+    second_cross_convolution_l2_exponent: Fraction
+    large_sieve_factor_exponent: Fraction
+    unit_stratum_bound_exponent: Fraction
+    mmkls_target_exponent: Fraction
+    power_saving_margin: Fraction
+    small_outer_condition_verified: bool
+    small_conductor_condition_verified: bool
+    standard_multiplicative_large_sieve_closes_unit_cell: bool
+    residual_requires_signed_gauss_root_number_average: bool
+    nonunit_ramanujan_layers_composed_with_large_sieve: bool
+    full_mmkls_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class PascadiLiftedPhysicalAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -16014,6 +16042,141 @@ def product_index_character_energy_audit(
     )
 
 
+def primitive_conductor_mmkls_audit(
+    *,
+    outer_entry_exponent: Fraction,
+    primitive_conductor_exponent: Fraction,
+) -> PrimitiveConductorMMKLSAudit:
+    """Recombine squarefree MMKLS characters by primitive conductor.
+
+    Write the squarefree modulus as s=f*r and let a character modulo s be
+    induced by the primitive character chi* modulo f.  CRT and the primitive
+    Gauss identity give
+
+    G_(fr)(conj(chi),n)
+      = chi*(n*inverse(r mod f))*tau(conj(chi*))*c_r(n).
+
+    Since c_r(1)=mu(r), multiplication by the physical mu(f*r) yields
+    the exact signed pair
+
+    mu(f)*c_r(a)*chi*(a*inverse(r)^2)*tau(conj(chi*))^2.
+
+    Thus one cofactor Möbius sign cancels, but c_r(a) remains and is again
+    mu(r) on the unit-frequency stratum.  Normalize the primitive Gauss
+    square by f; it is a unit-modulus root number.
+
+    For a separated physical tensor, cross-group the outer-entry polynomial
+    of length T^alpha with the h polynomial of length T^(5/2), and the
+    Poisson-frequency polynomial of the same outer length with the delta
+    polynomial.  Their coefficient L2 exponents are respectively
+    5/2-alpha and 5/2+alpha.  The multiplicative large sieve with weight
+    1/phi(f) contributes max(kappa, alpha+5/2-kappa).
+
+    The cofactor harmonic sum contributes -(3-kappa).  Hence the full
+    unit-stratum exponent is
+
+    -1/2+kappa+max(kappa,alpha+5/2-kappa).
+
+    It is strictly below the MMKLS exponent three exactly when alpha<1
+    and kappa<7/4.  Boundary equality gives no logarithmic saving.  The
+    complementary cells still require cancellation of the signed normalized
+    Gauss square across primitive conductors; taking its absolute value is
+    the large-conductor residual.
+    """
+    alpha = F(outer_entry_exponent)
+    kappa = F(primitive_conductor_exponent)
+    sigma = F(3)
+    x = F(5, 2)
+    if not (F(0) <= alpha <= sigma):
+        raise ValueError("outer-entry exponent must lie in [0,3]")
+    if not (F(0) <= kappa <= sigma):
+        raise ValueError("primitive-conductor exponent must lie in [0,3]")
+
+    # Exact finite CRT phase fixture for s=f*r, with both tested frequencies
+    # coprime to s.  This verifies the additive step in the induced Gauss-sum
+    # factorization; the character component is the defining inflation.
+    f, r, a = 5, 6, 7
+    s = f * r
+    crt_phase_exact = True
+    for frequency in (1, a):
+        for residue in range(1, s + 1):
+            if gcd(residue, s) != 1:
+                continue
+            left = F(frequency * residue, s)
+            right = (
+                F(
+                    frequency
+                    * (residue % f)
+                    * pow(r, -1, f),
+                    f,
+                )
+                + F(
+                    frequency
+                    * (residue % r)
+                    * pow(f, -1, r),
+                    r,
+                )
+            )
+            if (left - right).denominator != 1:
+                crt_phase_exact = False
+
+    def squarefree_ramanujan(modulus: int, frequency: int) -> int:
+        common = gcd(modulus, frequency)
+        reduced = modulus // common
+        return (
+            mobius(reduced)
+            * _euler_phi(modulus)
+            // _euler_phi(reduced)
+        )
+
+    c_r_one = squarefree_ramanujan(r, 1)
+    c_r_a = squarefree_ramanujan(r, a)
+    mobius_cancel = mobius(s) * c_r_one == mobius(f)
+    unit_ramanujan_is_mobius = c_r_a == mobius(r)
+
+    cofactor = sigma - kappa
+    first_cross_norm = x - alpha
+    second_cross_norm = x + alpha
+    pair_norm = (first_cross_norm + second_cross_norm) / 2
+    large_sieve = max(kappa, alpha + x - kappa)
+    bound = -cofactor + pair_norm + large_sieve
+    target = sigma
+    margin = target - bound
+    small_outer = alpha < F(1)
+    small_conductor = kappa < F(7, 4)
+    closes = margin > 0 and small_outer and small_conductor
+
+    return PrimitiveConductorMMKLSAudit(
+        modulus_exponent=sigma,
+        outer_entry_exponent=alpha,
+        primitive_conductor_exponent=kappa,
+        cofactor_exponent=cofactor,
+        long_product_factor_exponent=x,
+        induced_gauss_sum_crt_identity_exact=crt_phase_exact,
+        mobius_cofactor_cancellation_exact=mobius_cancel,
+        cofactor_ramanujan_factor_remains=True,
+        unit_cofactor_ramanujan_equals_mobius=unit_ramanujan_is_mobius,
+        normalized_primitive_gauss_square_has_unit_modulus=True,
+        outer_frequency_pair_l2_exponent=F(0),
+        first_cross_convolution_l2_exponent=first_cross_norm,
+        second_cross_convolution_l2_exponent=second_cross_norm,
+        large_sieve_factor_exponent=large_sieve,
+        unit_stratum_bound_exponent=bound,
+        mmkls_target_exponent=target,
+        power_saving_margin=margin,
+        small_outer_condition_verified=small_outer,
+        small_conductor_condition_verified=small_conductor,
+        standard_multiplicative_large_sieve_closes_unit_cell=closes,
+        residual_requires_signed_gauss_root_number_average=True,
+        nonunit_ramanujan_layers_composed_with_large_sieve=False,
+        full_mmkls_proved=False,
+        source=(
+            "exact squarefree induced-Gauss CRT identity and the classical "
+            "multiplicative large sieve"
+        ),
+    )
+
+
 def eisenstein_common_ramification_average_audit(
     *,
     frequency_length: int,
@@ -25969,6 +26132,41 @@ def main() -> None:
         f"{product_energy.physical_mmkls_weight_normalization_reinserted} "
         f"mmkls={product_energy.product_index_energy_closes_mmkls} "
         f"olisk={product_energy.whole_mobius_gate_covered}"
+    )
+    primitive_conductor = primitive_conductor_mmkls_audit(
+        outer_entry_exponent=F(1, 2),
+        primitive_conductor_exponent=F(3, 2),
+    )
+    print(
+        "balanced_max_a: primitive_conductor_mmkls="
+        f"alpha={_fmt(primitive_conductor.outer_entry_exponent)} "
+        "kappa="
+        f"{_fmt(primitive_conductor.primitive_conductor_exponent)} "
+        f"r={_fmt(primitive_conductor.cofactor_exponent)} "
+        "cross_norms="
+        f"{_fmt(primitive_conductor.first_cross_convolution_l2_exponent)},"
+        f"{_fmt(primitive_conductor.second_cross_convolution_l2_exponent)} "
+        f"ls={_fmt(primitive_conductor.large_sieve_factor_exponent)} "
+        f"bound={_fmt(primitive_conductor.unit_stratum_bound_exponent)} "
+        f"target={_fmt(primitive_conductor.mmkls_target_exponent)} "
+        f"margin={_fmt(primitive_conductor.power_saving_margin)} "
+        "gauss_crt="
+        f"{primitive_conductor.induced_gauss_sum_crt_identity_exact} "
+        "mobius_cancel="
+        f"{primitive_conductor.mobius_cofactor_cancellation_exact} "
+        "ramanujan_remains="
+        f"{primitive_conductor.cofactor_ramanujan_factor_remains} "
+        "small_outer="
+        f"{primitive_conductor.small_outer_condition_verified} "
+        "small_conductor="
+        f"{primitive_conductor.small_conductor_condition_verified} "
+        "unit="
+        f"{primitive_conductor.standard_multiplicative_large_sieve_closes_unit_cell} "
+        "nonunit="
+        f"{primitive_conductor.nonunit_ramanujan_layers_composed_with_large_sieve} "
+        "root_number_residual="
+        f"{primitive_conductor.residual_requires_signed_gauss_root_number_average} "
+        f"mmkls={primitive_conductor.full_mmkls_proved}"
     )
     blomer_pascadi = blomer_pascadi_hard_box_audit()
     print(
