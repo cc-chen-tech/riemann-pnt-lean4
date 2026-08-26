@@ -4894,13 +4894,13 @@ def test_full_level_harmonic_large_sieve_polylog_constant_is_still_open() -> Non
     assert audit.kloosterman_indices_may_be_noncoprime_to_level
     assert audit.full_level_spectral_measure_is_positive
     assert audit.primitive_family_is_positive_subfamily
-    assert audit.small_bessel_tail_has_polylog_mean_divisor_bound
+    assert not audit.small_bessel_tail_has_polylog_mean_divisor_bound
     assert audit.archimedean_partition_has_polylog_total_variation
     assert audit.hpy_first_mellin_requires_bessel_scale_above_spectral_square
     assert audit.power_sized_large_bessel_range_covered
     assert not audit.large_bessel_range_requires_new_estimate
     assert audit.maass_and_eisenstein_sectors_covered
-    assert audit.holomorphic_sector_covered
+    assert not audit.holomorphic_sector_covered
     assert not audit.uniform_polylog_harmonic_large_sieve_proved
 
 
@@ -4911,7 +4911,7 @@ def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> N
         r"\tag{4.845dc_14a}",
         r"\tag{4.845dc_14f}",
         "pointwise transform formula as negligible",
-        "the single remaining PLS input",
+        "fixed weight-two Petersson tail",
         "dyadic_bessel_mellin_block_audit",
     ):
         assert marker in note
@@ -4964,6 +4964,52 @@ def test_exact_dyadic_mellin_route_closes_every_zero_power_spectral_block() -> N
         spectral_scale_exponent=F(1, 10),
     )
     assert not positive_power_spectrum.physical_full_level_block_covered
+
+
+def test_exact_archimedean_symbol_route_is_remainder_free_but_keeps_weight_two_tail_open() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zfg Exact Hankel symbols remove the polylog spectral remainder",
+        r"\tag{4.845dc_14xa}",
+        r"\tag{4.845dc_14xc}",
+        "weight-two Petersson tail",
+        "exact_archimedean_mellin_transfer_audit",
+    ):
+        assert marker in note
+
+    large = coverage_audit.exact_archimedean_mellin_transfer_audit(
+        spectral_scale=8,
+        bessel_scale=1024,
+        maass_zero_order=4,
+        minimum_holomorphic_weight=2,
+    )
+    assert large.large_symbol_range
+    assert large.exact_maass_fourier_kernel_retained
+    assert large.no_spectral_power_remainder_discarded
+    assert large.same_sign_hankel_symbol_bound_proved
+    assert large.opposite_sign_nonstationary_bound_proved
+    assert large.holomorphic_large_weight_symbol_bound_proved
+    assert large.large_mellin_linfty_bound_proved
+    assert not large.transition_mellin_l1_bound_used
+    assert large.maass_small_argument_tail_power == 8
+    assert large.maass_small_argument_tail_summable
+    assert not large.weight_two_petersson_tail_proved
+    assert not large.all_archimedean_sectors_and_endpoints_proved
+    assert not large.uniform_polylog_harmonic_large_sieve_proved
+
+    transition = coverage_audit.exact_archimedean_mellin_transfer_audit(
+        spectral_scale=8,
+        bessel_scale=32,
+        maass_zero_order=4,
+        minimum_holomorphic_weight=4,
+    )
+    assert not transition.large_symbol_range
+    assert transition.transition_mellin_l1_bound_used
+    assert transition.transition_mellin_l1_bound_proved
+    assert transition.holomorphic_small_argument_tail_power == 3
+    assert transition.holomorphic_small_argument_tail_summable
+    assert transition.all_archimedean_sectors_and_endpoints_proved
+    assert not transition.uniform_polylog_harmonic_large_sieve_proved
 
 
 def test_signed_level_difference_becomes_an_exact_valuation_farey_family() -> None:

@@ -2083,6 +2083,32 @@ class DyadicBesselMellinBlockAudit:
 
 
 @dataclass(frozen=True)
+class ExactArchimedeanMellinTransferAudit:
+    spectral_scale: int
+    bessel_scale: int
+    maass_zero_order: int
+    minimum_holomorphic_weight: int
+    large_symbol_threshold: int
+    large_symbol_range: bool
+    exact_maass_fourier_kernel_retained: bool
+    exact_holomorphic_fourier_kernel_retained: bool
+    no_spectral_power_remainder_discarded: bool
+    same_sign_hankel_symbol_bound_proved: bool
+    opposite_sign_nonstationary_bound_proved: bool
+    holomorphic_large_weight_symbol_bound_proved: bool
+    large_mellin_linfty_bound_proved: bool
+    transition_mellin_l1_bound_used: bool
+    transition_mellin_l1_bound_proved: bool
+    maass_small_argument_tail_power: int
+    maass_small_argument_tail_summable: bool
+    holomorphic_small_argument_tail_power: int
+    holomorphic_small_argument_tail_summable: bool
+    weight_two_petersson_tail_proved: bool
+    all_archimedean_sectors_and_endpoints_proved: bool
+    uniform_polylog_harmonic_large_sieve_proved: bool
+
+
+@dataclass(frozen=True)
 class ExactLevelGeometricFiberAudit:
     mobius_level: int
     fixed_level: int
@@ -11486,13 +11512,13 @@ def full_level_harmonic_large_sieve_audit(
         kloosterman_indices_may_be_noncoprime_to_level=True,
         full_level_spectral_measure_is_positive=True,
         primitive_family_is_positive_subfamily=True,
-        small_bessel_tail_has_polylog_mean_divisor_bound=True,
+        small_bessel_tail_has_polylog_mean_divisor_bound=False,
         archimedean_partition_has_polylog_total_variation=True,
         hpy_first_mellin_requires_bessel_scale_above_spectral_square=True,
         power_sized_large_bessel_range_covered=True,
         large_bessel_range_requires_new_estimate=False,
         maass_and_eisenstein_sectors_covered=True,
-        holomorphic_sector_covered=True,
+        holomorphic_sector_covered=False,
         uniform_polylog_harmonic_large_sieve_proved=False,
     )
 
@@ -11579,6 +11605,88 @@ def dyadic_bessel_mellin_block_audit(
         holomorphic_block_covered=holomorphic,
         physical_full_level_block_covered=physical,
         uniform_stationary_phase_seminorm_bound_proved=False,
+    )
+
+
+def exact_archimedean_mellin_transfer_audit(
+    *,
+    spectral_scale: int,
+    bessel_scale: int,
+    maass_zero_order: int,
+    minimum_holomorphic_weight: int,
+) -> ExactArchimedeanMellinTransferAudit:
+    """Audit the remainder-free archimedean symbol reduction.
+
+    For an admissible dyadic Maaß test ``h_R``, retain the exact Fourier
+    kernels for the ``J`` and ``K`` Kuznetsov transforms.  When
+    ``P >= 8(1+R)^2``, the exact Bessel ODE/Volterra representation gives
+    Hankel symbols in the same-sign and holomorphic sectors, while the
+    opposite-sign phase is nonstationary.  Local additive-to-Mellin
+    stationary phase then has height ``R^O(1)/P`` on intervals of length
+    ``P``.  No ``R^-A`` pointwise remainder is removed before Gallagher.
+
+    On ``1 <= P < 8(1+R)^2``, differentiation of the exact kernels gives
+    the required weighted Mellin L1 bound with a polynomial in ``R``.
+    Below ``P=1``, zeros of the Maaß test at the crossed half-integers
+    permit a contour shift with power ``2*maass_zero_order``.  A fixed
+    holomorphic weight ``k`` has only the small-argument power ``k-1``;
+    consequently weights at least four have an absolutely summable
+    Petersson tail, whereas the weight-two endpoint needs a separate
+    fixed-weight large sieve and remains open here.
+
+    The archimedean-completeness flag can be true for the restricted
+    family in which that weight-two endpoint is absent.  The full PLS
+    flag remains false even there until this lemma is reinserted into
+    the complete arithmetic large-sieve proof.  The physical PEVP audit
+    includes weight two and also continues to keep its PLS flag false.
+    """
+    integers = (
+        spectral_scale,
+        bessel_scale,
+        maass_zero_order,
+        minimum_holomorphic_weight,
+    )
+    if not all(isinstance(value, int) for value in integers):
+        raise TypeError("all inputs must be integers")
+    if spectral_scale < 1 or bessel_scale < 1:
+        raise ValueError("spectral and Bessel scales must be positive")
+    if maass_zero_order < 1:
+        raise ValueError("maass_zero_order must be positive")
+    if minimum_holomorphic_weight < 2:
+        raise ValueError("minimum holomorphic weight must be at least two")
+
+    threshold = 8 * (1 + spectral_scale) ** 2
+    large = bessel_scale >= threshold
+    maass_tail_power = 2 * maass_zero_order
+    holomorphic_tail_power = minimum_holomorphic_weight - 1
+    maass_tail = maass_tail_power > 1
+    holomorphic_tail = holomorphic_tail_power > 1
+    weight_two = minimum_holomorphic_weight <= 2
+    all_sectors = maass_tail and holomorphic_tail and not weight_two
+
+    return ExactArchimedeanMellinTransferAudit(
+        spectral_scale=spectral_scale,
+        bessel_scale=bessel_scale,
+        maass_zero_order=maass_zero_order,
+        minimum_holomorphic_weight=minimum_holomorphic_weight,
+        large_symbol_threshold=threshold,
+        large_symbol_range=large,
+        exact_maass_fourier_kernel_retained=True,
+        exact_holomorphic_fourier_kernel_retained=True,
+        no_spectral_power_remainder_discarded=True,
+        same_sign_hankel_symbol_bound_proved=large,
+        opposite_sign_nonstationary_bound_proved=large,
+        holomorphic_large_weight_symbol_bound_proved=large,
+        large_mellin_linfty_bound_proved=large,
+        transition_mellin_l1_bound_used=not large,
+        transition_mellin_l1_bound_proved=not large,
+        maass_small_argument_tail_power=maass_tail_power,
+        maass_small_argument_tail_summable=maass_tail,
+        holomorphic_small_argument_tail_power=holomorphic_tail_power,
+        holomorphic_small_argument_tail_summable=holomorphic_tail,
+        weight_two_petersson_tail_proved=False,
+        all_archimedean_sectors_and_endpoints_proved=all_sectors,
+        uniform_polylog_harmonic_large_sieve_proved=False,
     )
 
 

@@ -14,8 +14,10 @@
 > analytic cell.  Sections 4.109zfd--4.109zff now give the complete
 > finite cross-index transfer: two shifts for unramified data, one for
 > Steinberg data, and zero for ramified trivial-nebentypus Eisenstein
-> data.  The remaining input is the uniform-polylog harmonic large sieve
-> with all Bessel-transform seminorms, not a further local projector.
+> data.  Section 4.109zfg proves the remainder-free large and transition
+> Bessel--Mellin ranges and every Maaß/Eisenstein tail.  The remaining
+> archimedean input is the fixed weight-two Petersson tail; PLS and PEVP
+> are still false until that endpoint is controlled.
 
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
@@ -16510,8 +16512,10 @@ harmonic large sieve \((\mathrm{PLS})_{Q_0}\).
 At this point the published large sieve still does not supply the
 required constant.  Section 4.109zf gives the sparse-Farey reduction
 for the full-level harmonic square, while Section 4.109zfa records an
-exact dyadic Mellin exponent calculation.  Uniform transform constants
-for the Maaß, holomorphic, and Eisenstein measures remain unproved.
+exact dyadic Mellin exponent calculation.  Section 4.109zfg supplies
+uniform transform constants for the Maaß, Eisenstein, and holomorphic
+weight-at-least-four measures.  The fixed weight-two Petersson tail
+remains unproved.
 
 The interface `primitive_conductor_level_difference_audit` records the
 exact regrouping, the pre-density unramified exponent \(1\), the
@@ -17191,7 +17195,9 @@ Maaß, Eisenstein, and holomorphic transforms and justify all endpoint
 partitions.  The finite signed cross-index transfer is no longer a
 second open obligation: Sections 4.109zfd--4.109zff move it to fixed
 downward Fourier shifts before positive Cauchy.  Thus the corrected
-stationary-phase/seminorm theorem is the single remaining PLS input.
+stationary-phase/seminorm theorem is the remaining PLS input at this
+point of the argument.  Section 4.109zfg proves all of it except the
+fixed weight-two Petersson tail.
 
 The interface \`dyadic_bessel_mellin_block_audit\` checks
 (4.845dc_14c)--(4.845dc_14f) in exact rational power exponents.  It
@@ -17609,6 +17615,168 @@ the even conductor alternatives and the positive-valuation zero,
 marks the continuous local transfer proved, and leaves the global
 large-sieve and PEVP flags false.
 
+
+### 4.109zfg Exact Hankel symbols remove the polylog spectral remainder
+
+The remaining transform issue in Section 4.109zfa can be separated
+from one genuine endpoint.  Let \(h_R\) be an even dyadic Maaß test on
+\(|r|\asymp R\), \(1\leq R\leq(\log(2T))^K\), holomorphic in a fixed
+strip and satisfying the usual normalized derivative seminorms.  For
+a fixed integer \(A\geq2\), multiply the partition by a normalized
+square of
+
+\[
+ \prod_{0\leq j<A}\left(r^2+(j+\tfrac12)^2\right).
+\]
+
+This remains nonnegative on the real and exceptional spectra,
+dominates the original dyadic interval after changing the fixed
+constant, and vanishes at every half-integer pole crossed below.  Put
+
+\[
+ G_R(v)=\frac4{\pi^2}\int_0^\infty
+ r h_R(r)\tanh(\pi r)e^{2irv}\,dr.
+\]
+
+Do not replace \(G_R\) by a compactly supported approximation.  The
+exact Kuznetsov formulae are
+
+\[
+ \boxed{
+ \begin{aligned}
+ H_R^+(x)&=\int_{\mathbb R}\cos(x\cosh v)G_R(v)\,dv,\\
+ H_R^-(x)&=\frac14\int_{\mathbb R}\cos(x\sinh v)G_R(v)\,dv.
+ \end{aligned}}
+ \tag{4.845dc_14xa}
+\]
+
+All Schwartz seminorms of \(R^{-2}G_R(u/R)\), as functions of \(u\), are
+\(O_{j,A,W}(R^{C_j})\).  This is just integration by parts in the
+defining Fourier transform and has no \(R^{-B}\) remainder.  The
+holomorphic Petersson transform has the analogous exact discrete
+Fourier representation with \(\cosh,\sinh\) replaced by
+\(\cos,\sin\).
+
+Here is the exact large-argument lemma needed for Mellin separation.
+Let \(w\) be supported in \([1/2,2]\) and put \(x\asymp P\).  If
+
+\[
+ P\geq8(1+R)^2,
+\]
+
+then, for every fixed \(J\),
+
+\[
+ \begin{aligned}
+ w(x/P)H_R^+(x)
+ &=x^{-1/2}\sum_{\pm}e^{\pm ix}A_{\pm,R,P}(x),\\
+ (x\partial_x)^jA_{\pm,R,P}(x)&\ll_{j,J,W}R^{C_J},\\
+ (x\partial_x)^j\{w(x/P)H_R^-(x)\}
+ &\ll_{j,J,W}R^{C_J}P^{-J}.
+ \end{aligned}
+ \tag{4.845dc_14xb}
+\]
+
+The first identity is exact, not a truncated asymptotic expansion.
+One proof writes the two \(J\)-Bessel functions as Hankel functions,
+sets \(u_\nu(x)=x^{1/2}e^{\mp ix}H_\nu^{(1,2)}(x)\), and uses the
+Volterra equation obtained from
+
+\[
+ u_\nu''\pm2iu_\nu'
+ +\frac{1/4-\nu^2}{x^2}u_\nu=0.
+\]
+
+On \(x\geq8(1+|\nu|)^2\), its integral operator has norm at most
+\(1/2\); differentiating the equation gives the displayed symbol
+bounds.  For \(\nu=2ir\), the \(e^{\pm\pi r}\) Hankel constants cancel
+exactly after forming
+\((J_{2ir}-J_{-2ir})/\cosh(\pi r)\).  Integrating against \(rh_R(r)\)
+gives (4.845dc_14xb).  In the \(K\)-Bessel sector it is essential not
+to estimate \(K_{2ir}\sinh(\pi r)\) separately.  In the second exact
+integral in (4.845dc_14xa), the phases
+\(\pm x\sinh v+2rv\) have no stationary point when
+\(x\geq8(1+R)^2\); repeated integration by parts gives the last line.
+The same Hankel--Volterra argument applies to every holomorphic weight
+\(k\asymp R\).
+
+Apply the additive-to-multiplicative stationary-phase lemma directly
+to the two exact symbols in (4.845dc_14xb).  Their localized Mellin
+transforms obey
+
+\[
+ \boxed{
+ \sup_{\tau\in\mathbb R}
+ \left(1+
+ \frac{\operatorname{dist}(\tau,
+       [P/2,2P]\cup[-2P,-P/2])}{P}\right)^J
+ |\widetilde H_{R,P}(\tau)|
+ \ll_{J,W}\frac{R^2}{P}(\log(2T))^{C_J}.}
+ \tag{4.845dc_14xc}
+\]
+
+The harmless extra powers of \(R\) in the symbol seminorms have been
+absorbed into the displayed logarithm.  This proves the corrected
+\(L^\infty\), width-\(P\) estimate (4.845dc_14b) for the large range,
+with no discarded spectral-power error.  The continuous spectrum uses
+the same Maaß transform and adds no new archimedean sector.
+
+For the transition range
+
+\[
+ 1\leq P<8(1+R)^2,
+\]
+
+contour shifting in the exact \(J/K\) integrals and differentiation
+under (4.845dc_14xa) give, for fixed \(j\),
+
+\[
+ |(x\partial_x)^jH_R^\pm(x)|
+ +|(x\partial_x)^jH_R^{\rm hol}(x)|
+ \ll_{j,W}P R^{C_j}.
+\]
+
+Ordinary Mellin integration by parts therefore proves (4.845dc_14d).
+This covers every finite modulus block with \(C\leq X\), including the
+boundary \(P\asymp R^2\).
+
+It remains to sum \(C>X\), where \(P<1\).  The half-integer zeros of
+\(h_R\) allow the Maaß contours to move to
+\(\Re(2ir)=2A\), with every crossed residue equal to zero.  Hence
+
+\[
+ |(x\partial_x)^jH_R^\pm(x)|\ll_{j,A,W}x^{2A}R^{C_{j,A}}.
+\]
+
+A holomorphic form of weight \(k\) instead has the exact
+small-argument power \(J_{k-1}(x)\ll_k x^{k-1}\).  If a sector has
+power \(\beta>1\), its modulus block after Farey Cauchy is
+
+\[
+ \frac{P^\beta}{C}
+ \left(\frac{C^2}{Q}+X\right)
+ =\frac{X^\beta C^{1-\beta}}Q
+  +X^{\beta+1}C^{-\beta-1}.
+\]
+
+Summing dyadically over \(C>X\) gives
+\(O_{\beta}(X/Q+1)\).  Thus the Maaß/Eisenstein tail and every
+holomorphic weight \(k\geq4\) are complete with polylogarithmic
+seminorm constants.
+
+The remaining endpoint is the **weight-two Petersson tail**.  There
+\(\beta=k-1=1\), so the first displayed term equals \(X/Q\) on every
+dyadic block and the absolute tail does not converge.  Its conditional
+Kloosterman cancellation is not supplied by the Farey square above.
+One must either prove the fixed-weight-\(2\) harmonic large sieve with
+an explicit polylogarithmic constant or arrange a trace formula in
+which this endpoint is absent.  Until that is done, the full
+holomorphic PLS, PEVP, and the unconditional asymptotic remain open.
+
+The interface exact_archimedean_mellin_transfer_audit records the
+remainder-free large and transition ranges, the contour-shift powers,
+and this single weight-two endpoint.  It sets the full physical
+large-sieve flag false when weight two is included.
 
 ### 4.109zg Seminorm-stable PEVP would sum every AFE and transform tail shell
 
