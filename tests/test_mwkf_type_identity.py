@@ -379,6 +379,29 @@ def test_bblr_four_parent_partial_diagonal_recombines_two_mobius_factors() -> No
     assert asymmetric.two_parent_to_gcd_kernel_verified
 
 
+def test_bblr_partial_diagonal_slot_coprimality_leaves_only_moving_pair() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_partial_diagonal_slot_coprimality",
+        None,
+    )
+    assert helper is not None, "BBLR slot-coprimality audit is missing"
+
+    audit = helper(a=5, b=7, r1=6, r2=6)
+
+    assert audit.shift_h == 12
+    assert audit.pairing_gcds == (
+        ("b/a", 1),
+        ("b/r2", 1),
+        ("r1/a", 1),
+        ("r1/r2", 6),
+    )
+    assert audit.three_static_or_mixed_pairings_forced_unit
+    assert audit.moving_pair_gcd == 6
+    assert audit.moving_pair_gcd_divides_shift
+    assert audit.only_moving_pair_can_support_nontrivial_common_cofactor
+
+
 def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
     """The worst BBLR box loses every Möbius sign before global recombination."""
     adapter = getattr(

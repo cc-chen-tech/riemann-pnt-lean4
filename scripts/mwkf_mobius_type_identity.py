@@ -385,6 +385,20 @@ class BBLRFourParentPartialDiagonal:
 
 
 @dataclass(frozen=True)
+class BBLRPartialDiagonalSlotCoprimality:
+    a: int
+    b: int
+    r1: int
+    r2: int
+    shift_h: int
+    pairing_gcds: tuple[tuple[str, int], ...]
+    three_static_or_mixed_pairings_forced_unit: bool
+    moving_pair_gcd: int
+    moving_pair_gcd_divides_shift: bool
+    only_moving_pair_can_support_nontrivial_common_cofactor: bool
+
+
+@dataclass(frozen=True)
 class FourMobiusUnsignedSectorRecombination:
     values: tuple[int, int, int, int]
     cutoff_u: int
@@ -3379,6 +3393,58 @@ def bblr_four_parent_partial_diagonal_sides(
         supplied_slot_order_labels_retained=retained_labels,
         analytic_afe_packet_exhaustive=False,
         target_bound_proved=False,
+    )
+
+
+def bblr_partial_diagonal_slot_coprimality(
+    *,
+    a: int,
+    b: int,
+    r1: int,
+    r2: int,
+) -> BBLRPartialDiagonalSlotCoprimality:
+    """Classify the four possible common-inner BBLR slot pairings.
+
+    The determinant line is ``b*r1-a*r2=h``.  Its exact support has
+    ``gcd(a,b)=gcd(r1,a)=gcd(r2,b)=1``.  Thus the denominator/denominator
+    and both mixed cross-side pairings have unit gcd.  Only the moving pair
+    ``r1/r2`` may have a nontrivial common inner quotient, and its gcd
+    divides ``h``.
+    """
+
+    if min(a, b, r1, r2) < 1:
+        raise ValueError("determinant parents must be positive")
+    if gcd(a, b) != 1:
+        raise ValueError("the denominator cofactors a,b must be coprime")
+    if gcd(r1, a) != 1:
+        raise ValueError("the first moving parent must be coprime to a")
+    if gcd(r2, b) != 1:
+        raise ValueError("the second moving parent must be coprime to b")
+
+    shift = b * r1 - a * r2
+    if shift == 0:
+        raise ValueError("the off-diagonal determinant shift must be nonzero")
+    moving_gcd = gcd(r1, r2)
+    pairings = (
+        ("b/a", gcd(b, a)),
+        ("b/r2", gcd(b, r2)),
+        ("r1/a", gcd(r1, a)),
+        ("r1/r2", moving_gcd),
+    )
+    first_three_unit = all(value == 1 for _, value in pairings[:3])
+    return BBLRPartialDiagonalSlotCoprimality(
+        a=a,
+        b=b,
+        r1=r1,
+        r2=r2,
+        shift_h=shift,
+        pairing_gcds=pairings,
+        three_static_or_mixed_pairings_forced_unit=first_three_unit,
+        moving_pair_gcd=moving_gcd,
+        moving_pair_gcd_divides_shift=(shift % moving_gcd == 0),
+        only_moving_pair_can_support_nontrivial_common_cofactor=(
+            first_three_unit
+        ),
     )
 
 

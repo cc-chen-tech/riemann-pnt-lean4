@@ -9625,6 +9625,75 @@ asymmetric-cutoff fixture
 \(C_5(10;2)C_3(15;3)=2\).  Thus the identity is not restricted to the
 symmetric hard cell.  The helper retains every supplied slot/order label.
 
+For the actual determinant parents, the slot permutations collapse much
+further.  The two side-products in (4.496) are
+
+\[
+ b r_1-a r_2=h,
+\]
+
+and the exact support in (4.499) includes
+
+\[
+ (a,b)=1,qquad(r_1,a)=1,qquad(r_2,b)=1.
+\tag{4.621zadj7}
+\]
+
+The four possible cross-side equal-inner pairings therefore have gcds
+
+\[
+ \boxed{
+ \begin{array}{c|c}
+ \text{paired parents}&\text{possible common inner quotient}\\ \hline
+ b\leftrightarrow a&1\\
+ b\leftrightarrow r_2&1\\
+ r_1\leftrightarrow a&1\\
+ r_1\leftrightarrow r_2&r\mid(r_1,r_2),\quad r\mid h.
+ \end{array}}
+\tag{4.621zadj8}
+\]
+
+The last divisibility follows immediately from
+\((r_1,r_2)\mid(br_1-ar_2)\).  Thus on the hard partial-diagonal block,
+where the common BBLR inner variable satisfies \(r\asymp T^{1/2}>1\), the
+first three slot pairings are empty.  Only the moving--moving pairing can
+survive.  Writing
+
+\[
+ r_1=rx,qquad r_2=ry
+\]
+
+then gives the exact parent-level incidence
+
+\[
+ \boxed{h=r(bx-ay).}
+\tag{4.621zadj9}
+\]
+
+This is precisely the additive-band identity behind (4.621zadf), now with
+the parent coordinates identified.  In (4.621zadj6) the surviving hard
+ordering is therefore
+
+\[
+ p=b,qquad q=r_1,qquad m=a,qquad n=r_2,
+\]
+
+and its arithmetic coefficient is
+
+\[
+ \boxed{
+ \mu(a)\mu(b)
+ P_{U_{r_1},U_{r_2}}(r_1,r_2),
+ \qquad r\mid h.}
+\tag{4.621zadj10}
+\]
+
+The finite helper `bblr_partial_diagonal_slot_coprimality` verifies all four
+gcd rows in (4.621zadj8), the divisibility by \(h\), and that only the
+moving--moving pair can support a nontrivial common quotient.  This removes
+the hard-scale slot-permutation ambiguity; unit-inner boundary packets from
+the other three pairings still belong in the eventual full packet ledger.
+
 The remaining adapter boundary is now narrower.  BBLR introduces dyadic
 weights that depend separately on its synthetic outer and inner slots.  To
 apply (4.621zadj6) to the analytic principal term, one must first sum the
