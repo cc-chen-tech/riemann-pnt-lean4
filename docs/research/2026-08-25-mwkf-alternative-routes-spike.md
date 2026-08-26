@@ -18692,7 +18692,7 @@ The interfaces `outer_modulus_divisor_incidence_energy` and
 finite Type recombination, the zero outer-scale power loss, and the
 hard-face \(1/2\) deficit.  They keep MMKLS, OSLSP, and OLISK false.
 
-### 4.109zjac The unit product-index stratum saves a full power
+### 4.109zjac Product-index character energy saves locally but does not compose with PEVP
 
 There is a geometric estimate which was lost in the operator-norm bound
 (4.143d)--(4.143e).  Keep one separated physical tensor from
@@ -18807,10 +18807,12 @@ exponents for one fixed \(s,m,A\) are
  \tag{4.845dc_14xq_26}
 \]
 
-Thus the proved unit stratum saves \(T^1\), leaving a formal margin
-\(T^{1/2}\) over the deficit in (4.845dc_14xq_19).  This is stronger
-than the quarter-power obtained by freezing one factor in Section
-4.109zk.
+Thus the proved unit stratum saves \(T^1\) relative to termwise Weil,
+which is stronger than the quarter-power obtained by freezing one
+factor in Section 4.109zk.  It is not legitimate to subtract this
+power from the deficit in (4.845dc_14xq_19): that deficit is measured
+after PEVP, whose \(\|a\|_2\) factor already charges the square-root
+energy of the product-index coefficient.
 
 Equation (4.845dc_14xq_26) is not yet inserted as a bound for MMKLS.
 The physical sum also contains the disjoint strata
@@ -18829,21 +18831,118 @@ for which CRT gives
  \tag{4.845dc_14xq_28}
 \]
 
-The reduced product is a unit modulo \(c\), but exact gcd rather than
-mere divisibility introduces two further finite inclusion--exclusion
-layers at primes dividing \(g/d_1\) and \(g/d_2\).  In addition, the
-principal term in (4.845dc_14xq_21) contains \(c_s(a)\) when
-\((a,s)>1\).  Before promoting (4.845dc_14xq_24), one must sum these
-layers with the physical \(A^{-1}\), the \(m\asymp A\) average, the
-\(D=(A,h\delta)\) layer, and every ratio/gcd restriction still inside
-\(\Psi_{A,q}\).  No such aggregation is asserted in this subsection.
+The reduced product is a unit modulo \(c\).  Exact gcd rather than mere
+divisibility introduces two further finite inclusion--exclusion layers
+at primes dividing \(g/d_1\) and \(g/d_2\).  Their costs can be summed
+without a positive power.  At one prime in \(g\), the three allocations
+\((p,1),(1,p),(p,p)\), including both exclusion divisors, have total
+square-root density
+
+\[
+ \boxed{2p^{-1/2}+3p^{-1}.}
+ \tag{4.845dc_14xq_29}
+\]
+
+Consequently, after summing every \(d_1,d_2\), the nonprincipal part of
+the physical \(h,\delta\) sum is at most
+
+\[
+ \boxed{
+ s(HL)^{1/2}(\log(2s))^C
+ \prod_{p\mid s}
+ \left(
+ 4+\frac{|c_p(a)|}{p}
+ \left(2p^{-1/2}+3p^{-1}\right)
+ \right).}
+ \tag{4.845dc_14xq_30}
+\]
+
+For both \(p\mid a\) and \(p\nmid a\), every local factor in
+(4.845dc_14xq_30) is at most \(8\).  Therefore
+
+\[
+ \sum_{s\le X}\frac{\mu^2(s)8^{\omega(s)}}s
+ \le\prod_{p\le X}\left(1+\frac8p\right)
+ \ll(\log(2X))^8.
+ \tag{4.845dc_14xq_31}
+\]
+
+The principal term can also be aggregated.  Multiplicativity in
+(4.845dc_14xq_28) gives
+\(c_g(a)c_c(a)=c_s(a)\).  The corresponding exact-density sum is
+bounded by
+
+\[
+ \boxed{
+ \frac{HL}{s}
+ \prod_{p\mid s}
+ |c_p(a)|
+ \left(\frac p{p-1}+2+\frac3p\right).}
+ \tag{4.845dc_14xq_32}
+\]
+
+The local factor in (4.845dc_14xq_32) is at most \(6\) if \(p\nmid a\)
+and at most \(6p\) if \(p\mid a\).  Since \((A,s)=1\), the condition
+\(p\mid a=\overline A m\) is exactly \(p\mid m\).  For every interval
+\(M<m\le2M\), finite divisor expansion gives
+
+\[
+ \begin{aligned}
+ \sum_{M<m\le2M}\prod_{\substack{p\mid s\\p\mid m}}p
+ &=\sum_{d\mid s}\varphi(d)
+   \#\{M<m\le2M:d\mid m\}\\
+ &\le M\sum_{d\mid s}\frac{\varphi(d)}d
+ +\sum_{\substack{d\mid s\\d\le2M}}\varphi(d)\\
+ &\le 3M\,2^{\omega(s)}.
+ \end{aligned}
+ \tag{4.845dc_14xq_33}
+\]
+
+Thus the principal \(m\)-average costs at most
+\(3M12^{\omega(s)}\), and
+
+\[
+ \sum_{s\le X}\frac{\mu^2(s)12^{\omega(s)}}s
+ \ll(\log(2X))^{12}.
+ \tag{4.845dc_14xq_34}
+\]
+
+Equations (4.845dc_14xq_29)--(4.845dc_14xq_34) close the nonunit gcd
+and principal Ramanujan averages at zero power.  They do not by
+themselves prove MMKLS.  Indeed, insert (4.845dc_14xq_30) directly in
+\((\mathrm{MMKLS})_q^L\).  The \(s^{-1}\) weight cancels its leading
+\(s\), the \(m\asymp A\) count cancels \(A^{-1}\), and a dyadic
+outer-entry interval \(A\asymp T^\alpha\) still contains
+\(T^\alpha\) actual integers.  Even at the most favorable
+\(\alpha=0\), taking absolute values in the remaining variables gives
+
+\[
+ \boxed{
+ E_{\rm direct}^{\min}
+ =\sigma+\frac{h+\ell}{2}
+ =\frac{11}2,\qquad
+ E_{\rm MMKLS}=\sigma=3,\qquad
+ E_{\rm direct}^{\min}-E_{\rm MMKLS}=\frac52.}
+ \tag{4.845dc_14xq_35}
+\]
+
+For a general outer box the first exponent in (4.845dc_14xq_35) is
+\(\alpha+11/2\).  Hence the local character-energy estimate and the
+outer PEVP estimate are two non-composable Cauchy organizations, not
+two independent savings.  A successful use of (4.845dc_14xq_24) would
+still require a hybrid inequality retaining the \(s,m,A\) cancellation
+at the same time.  That hybrid inequality is another form of the
+signed two-index large-sieve gate, rather than a proof of it.
 
 The helpers squarefree_gauss_pair_fourth_mass and
 product_index_character_energy_audit check (4.845dc_14xq_22), the
 three exponents in (4.845dc_14xq_26), and the remaining half-power
-margin.  They mark the published unit fourth-moment input and the
-physical kernel nuclear norm true, while keeping the nonunit,
-principal-average, MMKLS, OSLSP, and OLISK flags false.
+margin.  The helper product_gcd_layer_prime_majorant checks the local
+constants in (4.845dc_14xq_30)--(4.845dc_14xq_33).  The adapters mark
+the published unit fourth-moment input, the physical kernel nuclear
+norm, the nonunit layers, and the principal frequency average true.
+They record the non-composability witness (4.845dc_14xq_35) and keep
+the physical-normalization bridge, MMKLS, OSLSP, and OLISK false.
 
 ### 4.109zk Pascadi v2 saves only one quarter power after factor freezing
 

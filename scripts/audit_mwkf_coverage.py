@@ -2017,6 +2017,9 @@ class ProductIndexCharacterEnergyAudit:
     unit_layer_saving_exponent: Fraction
     required_hard_face_saving_exponent: Fraction
     unit_layer_saving_margin: Fraction
+    minimum_direct_mmkls_bound_exponent: Fraction
+    mmkls_target_exponent: Fraction
+    minimum_direct_mmkls_deficit: Fraction
     product_intervals_are_shorter_than_modulus: bool
     cochrane_shi_fourth_moment_applies_to_unit_intervals: bool
     smooth_weight_partial_summation_has_zero_power_cost: bool
@@ -2025,6 +2028,11 @@ class ProductIndexCharacterEnergyAudit:
     physical_product_kernel_nuclear_norm_available: bool
     nonunit_product_gcd_layers_aggregated: bool
     principal_ramanujan_frequency_average_aggregated: bool
+    nonprincipal_gcd_layer_harmonic_log_power: int
+    principal_frequency_average_harmonic_log_power: int
+    outer_pevp_product_l2_energy_already_charged: bool
+    local_product_saving_composes_with_outer_pevp: bool
+    physical_mmkls_weight_normalization_reinserted: bool
     product_index_energy_closes_mmkls: bool
     whole_mobius_gate_covered: bool
     source: str
@@ -14450,6 +14458,44 @@ def squarefree_gauss_pair_fourth_mass(
     }
 
 
+def product_gcd_layer_prime_majorant(
+    *,
+    prime: int,
+    frequency_divisible: bool,
+) -> dict[str, object]:
+    """Return the local majorants after exact product-gcd extraction.
+
+    For ``d1=(h,s)``, ``d2=(delta,s)``, and ``g=lcm(d1,d2)``, exact
+    coprimality of the reduced variables adds the two exclusion divisors
+    from ``g/d1`` and ``g/d2``.  At a prime in ``g`` their square-root
+    density is ``2/sqrt(p)+3/p``.  Together with the four supplied by
+    the Cochrane--Shi factor when the prime stays in ``s/g``, this is at
+    most eight after the Ramanujan factor is inserted.
+
+    The principal ratio, after comparison with ``H*L/s``, is exactly
+
+    ``|c_p(a)| * (p/(p-1)+2+3/p)``.
+
+    It is at most six for ``p`` not dividing ``a`` and at most ``6p``
+    otherwise.  Averaging the latter divisibility over the Poisson
+    interval gives the local harmonic majorant twelve.
+    """
+    p = int(prime)
+    if not _is_prime_integer(p):
+        raise ValueError("prime must be prime")
+    ramanujan = p - 1 if frequency_divisible else 1
+    principal = F(ramanujan) * (F(p, p - 1) + 2 + F(3, p))
+    return {
+        "prime": p,
+        "frequency_divisible": bool(frequency_divisible),
+        "ramanujan_absolute_value": ramanujan,
+        "principal_ratio_local_factor": principal,
+        "principal_ratio_local_upper_bound": 6 * p if frequency_divisible else 6,
+        "nonprincipal_local_upper_bound": 8,
+        "principal_interval_mean_local_upper_bound": 12,
+    }
+
+
 def product_index_character_energy_audit(
     *,
     modulus_exponent: Fraction,
@@ -14472,10 +14518,14 @@ def product_index_character_energy_audit(
     above shows that the nonprincipal estimate is uniform in that first
     index.
 
-    This adapter records only the proved unit stratum.  The physical sum
-    also contains variables sharing primes with ``s`` and a principal
-    Ramanujan factor ``c_s(m)``.  Their exact divisor aggregation is left
-    false, so the full MMKLS gate is not promoted here.
+    The gcd and principal-frequency layers can be aggregated at
+    logarithmic cost.  This still does not compose with the outer PEVP:
+    its product-index L2 norm already charges the same square-root
+    energy.  If the geometric estimate is inserted directly and the
+    remaining modulus, frequency, and outer-entry variables are summed
+    absolutely, the most favorable outer-entry exponent zero gives the
+    bound ``s*sqrt(H*L)`` against the MMKLS target ``s``.  The full gate
+    is therefore not promoted here.
     """
     sigma = F(modulus_exponent)
     h = F(first_product_length_exponent)
@@ -14488,6 +14538,8 @@ def product_index_character_energy_audit(
     principal = h + ell - sigma
     saving = trivial - nonprincipal
     margin = saving - required
+    direct_target = sigma
+    direct_deficit = nonprincipal - direct_target
     return ProductIndexCharacterEnergyAudit(
         modulus_exponent=sigma,
         first_product_length_exponent=h,
@@ -14498,14 +14550,22 @@ def product_index_character_energy_audit(
         unit_layer_saving_exponent=saving,
         required_hard_face_saving_exponent=required,
         unit_layer_saving_margin=margin,
+        minimum_direct_mmkls_bound_exponent=nonprincipal,
+        mmkls_target_exponent=direct_target,
+        minimum_direct_mmkls_deficit=direct_deficit,
         product_intervals_are_shorter_than_modulus=max(h, ell) < sigma,
         cochrane_shi_fourth_moment_applies_to_unit_intervals=max(h, ell) < sigma,
         smooth_weight_partial_summation_has_zero_power_cost=True,
         generalized_gauss_pair_mass_has_zero_power_cost=True,
         squarefree_local_factor_harmonic_mean_is_polylogarithmic=True,
         physical_product_kernel_nuclear_norm_available=True,
-        nonunit_product_gcd_layers_aggregated=False,
-        principal_ramanujan_frequency_average_aggregated=False,
+        nonunit_product_gcd_layers_aggregated=True,
+        principal_ramanujan_frequency_average_aggregated=True,
+        nonprincipal_gcd_layer_harmonic_log_power=8,
+        principal_frequency_average_harmonic_log_power=12,
+        outer_pevp_product_l2_energy_already_charged=True,
+        local_product_saving_composes_with_outer_pevp=False,
+        physical_mmkls_weight_normalization_reinserted=False,
         product_index_energy_closes_mmkls=False,
         whole_mobius_gate_covered=False,
         source=(
@@ -24075,12 +24135,21 @@ def main() -> None:
         "required="
         f"{_fmt(product_energy.required_hard_face_saving_exponent)} "
         f"margin={_fmt(product_energy.unit_layer_saving_margin)} "
+        "direct="
+        f"{_fmt(product_energy.minimum_direct_mmkls_bound_exponent)}>"
+        f"{_fmt(product_energy.mmkls_target_exponent)} "
+        "direct_gap="
+        f"{_fmt(product_energy.minimum_direct_mmkls_deficit)} "
+        "compose="
+        f"{product_energy.local_product_saving_composes_with_outer_pevp} "
         "gauss_gcd="
         f"{product_energy.generalized_gauss_pair_mass_has_zero_power_cost} "
         "nonunit="
         f"{product_energy.nonunit_product_gcd_layers_aggregated} "
         "principal_avg="
         f"{product_energy.principal_ramanujan_frequency_average_aggregated} "
+        "physical="
+        f"{product_energy.physical_mmkls_weight_normalization_reinserted} "
         f"mmkls={product_energy.product_index_energy_closes_mmkls} "
         f"olisk={product_energy.whole_mobius_gate_covered}"
     )

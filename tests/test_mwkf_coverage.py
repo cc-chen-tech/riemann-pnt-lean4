@@ -5715,18 +5715,43 @@ def test_squarefree_generalized_gauss_pair_mass_has_no_gcd_power_loss() -> None:
     assert mass["pair_fourth_mass_has_no_frequency_gcd_power_loss"]
 
 
+def test_product_gcd_layer_euler_majorants_are_polylogarithmic() -> None:
+    """Check the local constants after exact nonunit gcd extraction."""
+    unit_frequency = coverage_audit.product_gcd_layer_prime_majorant(
+        prime=5,
+        frequency_divisible=False,
+    )
+    assert unit_frequency["ramanujan_absolute_value"] == 1
+    assert unit_frequency["principal_ratio_local_factor"] == F(77, 20)
+    assert unit_frequency["principal_ratio_local_upper_bound"] == 6
+    assert unit_frequency["nonprincipal_local_upper_bound"] == 8
+
+    ramified_frequency = coverage_audit.product_gcd_layer_prime_majorant(
+        prime=5,
+        frequency_divisible=True,
+    )
+    assert ramified_frequency["ramanujan_absolute_value"] == 4
+    assert ramified_frequency["principal_ratio_local_factor"] == F(77, 5)
+    assert ramified_frequency["principal_ratio_local_upper_bound"] == 30
+    assert ramified_frequency["principal_interval_mean_local_upper_bound"] == 12
+
+
 def test_product_index_character_energy_has_a_half_power_hard_margin(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     """Record the proved unit layer without promoting the nonunit aggregation."""
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zjac The unit product-index stratum saves a full power",
+        "### 4.109zjac Product-index character energy saves locally but does not compose with PEVP",
         r"\tag{4.845dc_14xq_20}",
         r"\tag{4.845dc_14xq_22}",
         r"\tag{4.845dc_14xq_24}",
         r"\tag{4.845dc_14xq_26}",
         r"\tag{4.845dc_14xq_28}",
+        r"\tag{4.845dc_14xq_30}",
+        r"\tag{4.845dc_14xq_33}",
+        r"\tag{4.845dc_14xq_34}",
+        r"\tag{4.845dc_14xq_35}",
         "Cochrane--Shi",
     ):
         assert marker in note
@@ -5742,12 +5767,20 @@ def test_product_index_character_energy_has_a_half_power_hard_margin(
     assert audit.unit_layer_saving_exponent == 1
     assert audit.required_hard_face_saving_exponent == F(1, 2)
     assert audit.unit_layer_saving_margin == F(1, 2)
+    assert audit.minimum_direct_mmkls_bound_exponent == F(11, 2)
+    assert audit.mmkls_target_exponent == 3
+    assert audit.minimum_direct_mmkls_deficit == F(5, 2)
     assert audit.cochrane_shi_fourth_moment_applies_to_unit_intervals
     assert audit.smooth_weight_partial_summation_has_zero_power_cost
     assert audit.generalized_gauss_pair_mass_has_zero_power_cost
     assert audit.physical_product_kernel_nuclear_norm_available
-    assert not audit.nonunit_product_gcd_layers_aggregated
-    assert not audit.principal_ramanujan_frequency_average_aggregated
+    assert audit.nonunit_product_gcd_layers_aggregated
+    assert audit.principal_ramanujan_frequency_average_aggregated
+    assert audit.nonprincipal_gcd_layer_harmonic_log_power == 8
+    assert audit.principal_frequency_average_harmonic_log_power == 12
+    assert audit.outer_pevp_product_l2_energy_already_charged
+    assert not audit.local_product_saving_composes_with_outer_pevp
+    assert not audit.physical_mmkls_weight_normalization_reinserted
     assert not audit.product_index_energy_closes_mmkls
     assert not audit.whole_mobius_gate_covered
 
@@ -5756,8 +5789,9 @@ def test_product_index_character_energy_has_a_half_power_hard_margin(
     assert (
         "balanced_max_a: product_index_energy="
         "trivial=13/2 nonprincipal=11/2 principal=2 saving=1 "
-        "required=1/2 margin=1/2 gauss_gcd=True nonunit=False "
-        "principal_avg=False mmkls=False olisk=False"
+        "required=1/2 margin=1/2 direct=11/2>3 direct_gap=5/2 "
+        "compose=False gauss_gcd=True nonunit=True "
+        "principal_avg=True physical=False mmkls=False olisk=False"
     ) in output
 
 
