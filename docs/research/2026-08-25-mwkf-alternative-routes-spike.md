@@ -9115,6 +9115,104 @@ coordinate bijection and shift-label preservation as true, while keeping
 `completed_coefficient_identification_proved=False` and
 `packet_family_exhaustive=False`.
 
+#### 4.68.3 The supercritical nonzero family must be grouped by full reciprocal phase
+
+The factorization-blind reindexing is not restricted to (l=0).  Let a
+supplied finite BBLR packet retain its original ((h,delta))-provenance and
+write
+
+\[
+ \mathscr W(d,X,Y;h,\delta,l)
+\]
+
+for its complete smooth weight, integral and nonzero-(l) phase.  The
+analytic adapter from the original coupled kernel to this labelled BBLR
+packet is still an obligation; the following finite statement says that
+once those labels are supplied, no Type-factorization step is allowed to
+delete them.
+
+With (A_d,B_d) as in (4.621j), exact finite reindexing gives
+
+\[
+ \boxed{
+ \mathscr S_{\rm BBLR}^{\ne0}
+ =\sum_d\sum_{(X,Y)=1}A_d(X)B_d(Y)
+   \sum_{h,\delta}\sum_{l\ne0}
+   \mathscr W(d,X,Y;h,\delta,l).}
+\tag{4.621t}
+\]
+
+Thus every Type sector having the same products (am_1=dX) and (bn_1=dY)
+recombines inside (A_d(X)) and (B_d(Y)) before any absolute value.  Both
+coupled products remain visible:
+
+\[
+ a_0:=h\delta,qquad b_0:=hl,qquad
+ \phi(d,X,Y;h,l):=-\frac{b_0\bar X}{Y}\pmod1.
+\tag{4.621u}
+\]
+
+In particular the all-unsigned outer cell cannot be estimated and summed
+afterwards: its positive coefficient is cancelled, if at all, only inside
+the complete aggregated (A_d,B_d).
+
+The correct (TT^*) resonance is equality of the full rational phases in
+(4.621u), not equality of either scalar product.  For two rows (u,v), it
+is exactly
+
+\[
+ \frac{h_ul_u\overline{X_u}}{Y_u}
+ \equiv
+ \frac{h_vl_v\overline{X_v}}{Y_v}\pmod1.
+\tag{4.621v}
+\]
+
+Distinct values of both (h\delta) and (hl) can satisfy (4.621v).  Hence a
+partition by the original product frequency does not diagonalize the new
+operator.
+
+After lifting a finite row family to a common cyclic modulus (Q), exact
+character orthogonality gives
+
+\[
+ \boxed{
+ Q\sum_\phi\left|\sum_{u:\phi_u=\phi}c_u\right|^2
+ =Q\sum_u|c_u|^2
+  +Q\sum_{\substack{u\ne v\\\phi_u=\phi_v}}
+       c_u\overline{c_v}.}
+\tag{4.621w}
+\]
+
+The second term in (4.621w) is signed and can cancel the positive identity
+diagonal.  Taking absolute values of phase classes, or applying Cauchy
+before the Type sectors have recombined, deletes precisely this possible
+source of the full (L)-saving.
+
+On the supercritical region with (\min(x,y)\ge\alpha), put
+(\lambda=x+y-P>0).  Equations (4.621s) and (4.621w) give the exact budget
+
+\[
+ E_{\rm raw}=P+\lambda,qquad
+ S_{\rm required}=\lambda,qquad
+ S_{\rm generic\ square\ root}=\frac\lambda2,qquad
+ S_{\rm still\ missing}=\frac\lambda2.
+\tag{4.621x}
+\]
+
+At the signed hard cell, (\lambda=1), so the remaining signed phase-class
+gain is exactly (T^{1/2}) after a generic square-root treatment.  This is
+not a proof of that gain; it identifies its only surviving location inside
+the BBLR route.
+
+The finite helper `bblr_nonzero_frequency_reindex_sides` verifies
+(4.621t)--(4.621u) with nonzero (l), both original labels and both products
+unchanged.  The helpers `bblr_reciprocal_phase_collision_audit` and
+`bblr_phase_group_ttstar_sides` verify (4.621v)--(4.621w), including a
+fixture in which distinct product frequencies collide and the signed cross
+term reduces the positive identity diagonal.  The exponent adapter
+`transition_bblr_phase_group_saving_audit` records (4.621x) and keeps
+`required_phase_class_cancellation_proved=False`.
+
 ### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range but not the gate
 
 The recent circle-method theorem of

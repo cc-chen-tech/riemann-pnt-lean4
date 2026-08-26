@@ -2405,6 +2405,31 @@ def test_bblr_h_completion_uses_the_better_left_right_orientation() -> None:
     assert not supercritical.nonzero_frequency_cell_covered
 
 
+def test_bblr_phase_group_budget_locates_the_extra_half_power() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_phase_group_saving_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR phase-group saving audit is missing"
+
+    hard = adapter(
+        side_product_exponent=F(2),
+        shift_exponent=F(1),
+        left_prefix_exponent=F(3, 2),
+        right_prefix_exponent=F(3, 2),
+    )
+    assert hard.nonzero_l_range_exponent == F(1)
+    assert hard.raw_nonzero_frequency_exponent == F(3)
+    assert hard.target_exponent == F(2)
+    assert hard.required_l_range_saving_exponent == F(1)
+    assert hard.square_root_l_saving_exponent == F(1, 2)
+    assert hard.remaining_after_square_root_exponent == F(1, 2)
+    assert hard.signed_phase_class_cross_terms_required
+    assert not hard.product_frequency_partition_is_sufficient
+    assert not hard.required_phase_class_cancellation_proved
+
+
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     helper = getattr(
         coverage_audit,

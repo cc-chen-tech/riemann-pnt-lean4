@@ -777,6 +777,102 @@ def test_bblr_zero_frequency_reindexes_into_two_outer_coefficients() -> None:
     assert not sides.registered_zero_master_identification_proved
 
 
+def test_bblr_nonzero_frequency_recombines_sectors_before_absolute_values() -> None:
+    """Catch separating Type sectors or replacing the original h*delta label."""
+    helper = getattr(
+        type_identity,
+        "bblr_nonzero_frequency_reindex_sides",
+        None,
+    )
+    assert helper is not None, "BBLR nonzero-frequency reindex is missing"
+
+    sides = helper(
+        left_outer_weights={1: F(2), 2: F(-1)},
+        left_inner_weights={3: F(4), 6: F(1)},
+        right_outer_weights={1: F(3)},
+        right_inner_weights={2: F(5)},
+        labelled_kernels={
+            (2, 3, 1, 2, 3, 1): F(7),
+            (2, 3, 1, -1, 5, -2): F(11),
+        },
+    )
+
+    assert sides.direct_sum == F(-540)
+    assert sides.reindexed_sum == F(-540)
+    assert sides.active_labels == (
+        (2, 3, 1, -1, 5, -2, -5, 2),
+        (2, 3, 1, 2, 3, 1, 6, 2),
+    )
+    assert sides.nonzero_poisson_frequencies_retained
+    assert sides.original_shift_and_delta_labels_retained
+    assert sides.product_frequency_h_times_delta_preserved
+    assert sides.poisson_product_h_times_l_preserved
+    assert sides.type_factorizations_recombined_before_absolute_values
+    assert sides.left_and_right_mobius_families_remain_separate
+    assert not sides.global_ttstar_estimate_proved
+
+
+def test_bblr_ttstar_resonance_is_exact_reciprocal_phase_collision() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_reciprocal_phase_collision_audit",
+        None,
+    )
+    assert helper is not None, "BBLR reciprocal-phase collision audit is missing"
+
+    collision = helper(
+        left_x=2,
+        left_y=5,
+        left_h=1,
+        left_delta=7,
+        left_l=1,
+        right_x=3,
+        right_y=5,
+        right_h=2,
+        right_delta=11,
+        right_l=2,
+    )
+    assert collision.left_phase_mod_one == F(2, 5)
+    assert collision.right_phase_mod_one == F(2, 5)
+    assert collision.common_phase_modulus == 5
+    assert collision.cross_phase_numerator == 0
+    assert collision.exact_phase_collision
+    assert not collision.identical_rows
+    assert collision.left_original_product_frequency == 7
+    assert collision.right_original_product_frequency == 22
+    assert collision.left_poisson_product == 1
+    assert collision.right_poisson_product == 4
+    assert collision.resonance_can_join_distinct_product_frequencies
+
+
+def test_bblr_ttstar_keeps_signed_cross_terms_inside_each_phase_class() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_phase_group_ttstar_sides",
+        None,
+    )
+    assert helper is not None, "BBLR phase-group TT* identity is missing"
+
+    sides = helper(
+        rows=(
+            ("u", 2, 5, 1, 7, 1, F(2)),
+            ("v", 3, 5, 2, 11, 2, F(-1)),
+            ("w", 1, 5, 1, 13, 1, F(3)),
+        )
+    )
+    assert sides.common_phase_modulus == 5
+    assert sides.phase_groups == (
+        (F(2, 5), ("u", "v")),
+        (F(4, 5), ("w",)),
+    )
+    assert sides.identity_diagonal_quadratic == F(70)
+    assert sides.distinct_collision_quadratic == F(-20)
+    assert sides.orthogonality_quadratic == F(50)
+    assert sides.signed_cross_terms_can_cancel_identity_diagonal
+    assert not sides.product_frequency_partition_diagonalizes_ttstar
+    assert not sides.absolute_value_phase_classes_reach_target_proved
+
+
 def test_zero_frequency_master_rejects_the_already_counted_original_zero_mode() -> None:
     """The h=0 term belongs to (4.6), not the secondary completion master."""
     with pytest.raises(ValueError, match="original h=0"):

@@ -126,6 +126,49 @@ class BBLRZeroFrequencyReindex:
 
 
 @dataclass(frozen=True)
+class BBLRNonzeroFrequencyReindex:
+    direct_sum: Fraction
+    reindexed_sum: Fraction
+    active_labels: tuple[
+        tuple[int, int, int, int, int, int, int, int], ...
+    ]
+    nonzero_poisson_frequencies_retained: bool
+    original_shift_and_delta_labels_retained: bool
+    product_frequency_h_times_delta_preserved: bool
+    poisson_product_h_times_l_preserved: bool
+    type_factorizations_recombined_before_absolute_values: bool
+    left_and_right_mobius_families_remain_separate: bool
+    global_ttstar_estimate_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRReciprocalPhaseCollision:
+    left_phase_mod_one: Fraction
+    right_phase_mod_one: Fraction
+    common_phase_modulus: int
+    cross_phase_numerator: int
+    exact_phase_collision: bool
+    identical_rows: bool
+    left_original_product_frequency: int
+    right_original_product_frequency: int
+    left_poisson_product: int
+    right_poisson_product: int
+    resonance_can_join_distinct_product_frequencies: bool
+
+
+@dataclass(frozen=True)
+class BBLRPhaseGroupTTStar:
+    common_phase_modulus: int
+    phase_groups: tuple[tuple[Fraction, tuple[str, ...]], ...]
+    identity_diagonal_quadratic: Fraction
+    distinct_collision_quadratic: Fraction
+    orthogonality_quadratic: Fraction
+    signed_cross_terms_can_cancel_identity_diagonal: bool
+    product_frequency_partition_diagonalizes_ttstar: bool
+    absolute_value_phase_classes_reach_target_proved: bool
+
+
+@dataclass(frozen=True)
 class CenteredOperatorSavingLedger:
     raw_sum_exponent: Fraction
     target_sum_exponent: Fraction
@@ -858,6 +901,305 @@ def reflected_boundary_pair_kernel_sides(
         direct=direct,
         unfolded=unfolded,
         active_factor_pairs=tuple(active_factor_pairs),
+    )
+
+
+def bblr_nonzero_frequency_reindex_sides(
+    *,
+    left_outer_weights: dict[int, Fraction],
+    left_inner_weights: dict[int, Fraction],
+    right_outer_weights: dict[int, Fraction],
+    right_inner_weights: dict[int, Fraction],
+    labelled_kernels: dict[tuple[int, int, int, int, int, int], Fraction],
+) -> BBLRNonzeroFrequencyReindex:
+    """Recombine Type factorizations in the full BBLR nonzero-l kernel.
+
+    Kernel keys are ``(d,X,Y,h,delta,l)`` with ``(X,Y)=1`` and
+    ``h*delta*l != 0``.  They may contain every smooth weight and phase
+    from the analytic problem.  BBLR equation (14) depends on a left
+    factorization ``a*m1`` and a right factorization ``b*n1`` only through
+    ``d=(a*m1,b*n1)``, ``X=a*m1/d`` and ``Y=b*n1/d``.  Consequently all
+    Type sectors with the same products can be summed in the two outer
+    coefficients before any absolute value, while the original h, delta,
+    nonzero l, and product-frequency h*delta labels remain unchanged.
+
+    This is the exact finite master reindexing only.  It supplies no
+    global dispersion or TT* estimate.
+    """
+
+    families = (
+        left_outer_weights,
+        left_inner_weights,
+        right_outer_weights,
+        right_inner_weights,
+    )
+    if any(not family for family in families):
+        raise ValueError("all four BBLR coefficient families must be nonempty")
+    if any(index <= 0 for family in families for index in family):
+        raise ValueError("BBLR coefficient indices must be positive")
+    if any(
+        d <= 0
+        or x <= 0
+        or y <= 0
+        or gcd(x, y) != 1
+        or h == 0
+        or delta == 0
+        or frequency == 0
+        for d, x, y, h, delta, frequency in labelled_kernels
+    ):
+        raise ValueError(
+            "labelled kernels require positive d, coprime X,Y, and nonzero h,delta,l"
+        )
+
+    left_products: dict[int, Fraction] = {}
+    for outer, outer_weight in left_outer_weights.items():
+        for inner, inner_weight in left_inner_weights.items():
+            product = outer * inner
+            left_products[product] = left_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    right_products: dict[int, Fraction] = {}
+    for outer, outer_weight in right_outer_weights.items():
+        for inner, inner_weight in right_inner_weights.items():
+            product = outer * inner
+            right_products[product] = right_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    coordinate_kernels: dict[tuple[int, int, int], Fraction] = {}
+    for (d, x, y, _, _, _), weight in labelled_kernels.items():
+        coordinate = (d, x, y)
+        coordinate_kernels[coordinate] = coordinate_kernels.get(
+            coordinate, Fraction(0)
+        ) + Fraction(weight)
+
+    direct = Fraction(0)
+    for left_product, left_weight in left_products.items():
+        for right_product, right_weight in right_products.items():
+            d = gcd(left_product, right_product)
+            direct += (
+                left_weight
+                * right_weight
+                * coordinate_kernels.get(
+                    (d, left_product // d, right_product // d),
+                    Fraction(0),
+                )
+            )
+
+    reindexed = Fraction(0)
+    active: list[tuple[int, int, int, int, int, int, int, int]] = []
+    for (d, x, y, h, delta, frequency), kernel_weight in sorted(
+        labelled_kernels.items()
+    ):
+        contribution = (
+            left_products.get(d * x, Fraction(0))
+            * right_products.get(d * y, Fraction(0))
+            * Fraction(kernel_weight)
+        )
+        reindexed += contribution
+        if contribution:
+            active.append(
+                (
+                    d,
+                    x,
+                    y,
+                    h,
+                    delta,
+                    frequency,
+                    h * delta,
+                    h * frequency,
+                )
+            )
+
+    return BBLRNonzeroFrequencyReindex(
+        direct_sum=direct,
+        reindexed_sum=reindexed,
+        active_labels=tuple(active),
+        nonzero_poisson_frequencies_retained=True,
+        original_shift_and_delta_labels_retained=True,
+        product_frequency_h_times_delta_preserved=True,
+        poisson_product_h_times_l_preserved=True,
+        type_factorizations_recombined_before_absolute_values=True,
+        left_and_right_mobius_families_remain_separate=True,
+        global_ttstar_estimate_proved=False,
+    )
+
+
+def bblr_reciprocal_phase_collision_audit(
+    *,
+    left_x: int,
+    left_y: int,
+    left_h: int,
+    left_delta: int,
+    left_l: int,
+    right_x: int,
+    right_y: int,
+    right_h: int,
+    right_delta: int,
+    right_l: int,
+) -> BBLRReciprocalPhaseCollision:
+    """Classify the exact row resonance in the BBLR nonzero-l TT*.
+
+    Equation (14)'s plus-orientation phase is
+
+    ``-l*h*inverse(X) / Y (mod 1)``.
+
+    Lifting the two reduced fractions to their least common denominator
+    gives the exact incidence condition in a global TT*.  The original
+    product frequency ``h*delta`` and the new Poisson product ``h*l`` are
+    both retained.  Distinct values of either product may still collide
+    after multiplication by the reciprocal residue; resonance is not the
+    same as equality of one scalar product-frequency label.
+    """
+
+    if min(left_x, left_y, right_x, right_y) <= 0:
+        raise ValueError("BBLR reciprocal coordinates must be positive")
+    if gcd(left_x, left_y) != 1 or gcd(right_x, right_y) != 1:
+        raise ValueError("BBLR reciprocal coordinates must be coprime")
+    if 0 in (left_h, left_delta, left_l, right_h, right_delta, right_l):
+        raise ValueError("BBLR h, delta, and nonzero l labels must be nonzero")
+
+    left_phase = Fraction(
+        (-left_l * left_h * pow(left_x, -1, left_y)) % left_y,
+        left_y,
+    )
+    right_phase = Fraction(
+        (-right_l * right_h * pow(right_x, -1, right_y)) % right_y,
+        right_y,
+    )
+    common_modulus = (
+        left_phase.denominator
+        * right_phase.denominator
+        // gcd(left_phase.denominator, right_phase.denominator)
+    )
+    cross_numerator = (
+        left_phase.numerator
+        * (common_modulus // left_phase.denominator)
+        - right_phase.numerator
+        * (common_modulus // right_phase.denominator)
+    ) % common_modulus
+    collision = cross_numerator == 0
+    identical = (
+        left_x,
+        left_y,
+        left_h,
+        left_delta,
+        left_l,
+    ) == (
+        right_x,
+        right_y,
+        right_h,
+        right_delta,
+        right_l,
+    )
+    left_original = left_h * left_delta
+    right_original = right_h * right_delta
+    left_poisson = left_h * left_l
+    right_poisson = right_h * right_l
+    return BBLRReciprocalPhaseCollision(
+        left_phase_mod_one=left_phase,
+        right_phase_mod_one=right_phase,
+        common_phase_modulus=common_modulus,
+        cross_phase_numerator=cross_numerator,
+        exact_phase_collision=collision,
+        identical_rows=identical,
+        left_original_product_frequency=left_original,
+        right_original_product_frequency=right_original,
+        left_poisson_product=left_poisson,
+        right_poisson_product=right_poisson,
+        resonance_can_join_distinct_product_frequencies=(
+            collision
+            and (left_original != right_original or left_poisson != right_poisson)
+        ),
+    )
+
+
+def bblr_phase_group_ttstar_sides(
+    *,
+    rows: tuple[tuple[str, int, int, int, int, int, Fraction], ...],
+) -> BBLRPhaseGroupTTStar:
+    """Evaluate one exact cyclic TT* by reciprocal-phase classes.
+
+    A row is ``(label,X,Y,h,delta,l,coefficient)``.  After lifting all
+    phases ``-l*h*inverse(X)/Y`` to one cyclic group, character
+    orthogonality gives
+
+    ``Q * sum_phase (sum_{row in phase} coefficient)^2``.
+
+    The identity diagonal and the distinct-row collision contribution are
+    returned separately.  Keeping the latter signed is essential: it can
+    cancel the positive identity diagonal for the actual coefficient
+    vector.  Grouping only by the original product frequency h*delta does
+    not in general diagonalize these phase classes.
+    """
+
+    if not rows:
+        raise ValueError("the BBLR TT* requires at least one row")
+    labels = tuple(row[0] for row in rows)
+    if len(set(labels)) != len(labels):
+        raise ValueError("BBLR TT* row labels must be unique")
+
+    phases: dict[str, Fraction] = {}
+    coefficients: dict[str, Fraction] = {}
+    original_products: dict[str, int] = {}
+    common_modulus = 1
+    for label, x, y, h, delta, frequency, coefficient in rows:
+        if x <= 0 or y <= 0 or gcd(x, y) != 1:
+            raise ValueError("BBLR phase rows require positive coprime X,Y")
+        if h == 0 or delta == 0 or frequency == 0:
+            raise ValueError("BBLR phase rows require nonzero h,delta,l")
+        phase = Fraction(
+            (-frequency * h * pow(x, -1, y)) % y,
+            y,
+        )
+        phases[label] = phase
+        coefficients[label] = Fraction(coefficient)
+        original_products[label] = h * delta
+        common_modulus = (
+            common_modulus
+            * phase.denominator
+            // gcd(common_modulus, phase.denominator)
+        )
+
+    grouped_labels: dict[Fraction, list[str]] = {}
+    for label in labels:
+        grouped_labels.setdefault(phases[label], []).append(label)
+    phase_groups = tuple(
+        (phase, tuple(grouped_labels[phase]))
+        for phase in sorted(grouped_labels)
+    )
+    identity_diagonal = common_modulus * sum(
+        (coefficient * coefficient for coefficient in coefficients.values()),
+        Fraction(0),
+    )
+    orthogonality = common_modulus * sum(
+        (
+            sum(
+                (coefficients[label] for label in group_labels),
+                Fraction(0),
+            )
+            ** 2
+            for _, group_labels in phase_groups
+        ),
+        Fraction(0),
+    )
+    collision_cross = orthogonality - identity_diagonal
+    product_partition_diagonalizes = all(
+        len({original_products[label] for label in group_labels}) <= 1
+        for _, group_labels in phase_groups
+    )
+    return BBLRPhaseGroupTTStar(
+        common_phase_modulus=common_modulus,
+        phase_groups=phase_groups,
+        identity_diagonal_quadratic=identity_diagonal,
+        distinct_collision_quadratic=collision_cross,
+        orthogonality_quadratic=orthogonality,
+        signed_cross_terms_can_cancel_identity_diagonal=(collision_cross < 0),
+        product_frequency_partition_diagonalizes_ttstar=(
+            product_partition_diagonalizes
+        ),
+        absolute_value_phase_classes_reach_target_proved=False,
     )
 
 

@@ -1171,6 +1171,23 @@ class TransitionBBLRSymmetricHCompletionAudit:
 
 
 @dataclass(frozen=True)
+class TransitionBBLRPhaseGroupSavingAudit:
+    side_product_exponent: Fraction
+    shift_exponent: Fraction
+    left_prefix_exponent: Fraction
+    right_prefix_exponent: Fraction
+    nonzero_l_range_exponent: Fraction
+    raw_nonzero_frequency_exponent: Fraction
+    target_exponent: Fraction
+    required_l_range_saving_exponent: Fraction
+    square_root_l_saving_exponent: Fraction
+    remaining_after_square_root_exponent: Fraction
+    signed_phase_class_cross_terms_required: bool
+    product_frequency_partition_is_sufficient: bool
+    required_phase_class_cancellation_proved: bool
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5742,6 +5759,55 @@ def transition_bblr_symmetric_h_completion_audit(
             "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
             "Proposition 3.1 equation (14), better symmetric orientation"
         ),
+    )
+
+
+def transition_bblr_phase_group_saving_audit(
+    *,
+    side_product_exponent: Fraction,
+    shift_exponent: Fraction,
+    left_prefix_exponent: Fraction,
+    right_prefix_exponent: Fraction,
+) -> TransitionBBLRPhaseGroupSavingAudit:
+    """Record the exact saving demanded from supercritical phase classes.
+
+    On the symmetric region where both prefixes are at least the shift
+    exponent, the h-first bound exceeds the local target only by
+    ``lambda=x+y-P``, exactly the nonzero-l range exponent.  A generic
+    Cauchy/large-sieve square root can register only ``lambda/2``.  The
+    other half must therefore come from signed cross terms inside the full
+    reciprocal-phase collision classes (or an earlier exact
+    recombination), not from partitioning rows by h*delta alone.
+    """
+
+    product = F(side_product_exponent)
+    shift = F(shift_exponent)
+    x = F(left_prefix_exponent)
+    y = F(right_prefix_exponent)
+    if min(product, shift, x, y) < 0:
+        raise ValueError("BBLR phase-group exponents must be nonnegative")
+    if min(x, y) < shift:
+        raise ValueError("phase-group ledger requires both prefixes >= shift")
+    l_range = x + y - product
+    if l_range <= 0:
+        raise ValueError("phase-group ledger requires a supercritical l-range")
+    raw = product + l_range
+    square_root = l_range / 2
+    remaining = l_range - square_root
+    return TransitionBBLRPhaseGroupSavingAudit(
+        side_product_exponent=product,
+        shift_exponent=shift,
+        left_prefix_exponent=x,
+        right_prefix_exponent=y,
+        nonzero_l_range_exponent=l_range,
+        raw_nonzero_frequency_exponent=raw,
+        target_exponent=product,
+        required_l_range_saving_exponent=l_range,
+        square_root_l_saving_exponent=square_root,
+        remaining_after_square_root_exponent=remaining,
+        signed_phase_class_cross_terms_required=True,
+        product_frequency_partition_is_sufficient=False,
+        required_phase_class_cancellation_proved=False,
     )
 
 
