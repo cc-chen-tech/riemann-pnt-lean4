@@ -8964,35 +8964,123 @@ separate; in particular their two Möbius-bearing decompositions have not
 been replaced by absolute values.
 
 This identity also explains why the main term cannot be discarded
-cellwise.  In the all-unsigned hard cell, each ((m_1,n_1))-pair contributes
-a shift length (T/d) times an integral of length (d), hence (T).  There are
-(T^{2+o(1)}) such pairs, so the raw phase-free cell has size
+cellwise.  For a balanced side-product exponent (P), shift exponent
+(alpha), and (d=T^eta), the (X,Y)-counts, the shift length (H/d), and
+the integral length (dM_2/(BN_1)) give the fixed-(d) absolute-value
+exponent
 
 \[
- \mathcal M_{\rm BBLR}^{\rm hard,unsigned}\ll T^{3+\varepsilon},
+ E_{\ell=0,d}=P+\alpha-2\eta.
 \tag{4.621m}
 \]
 
-one full power above its local (T^{2+\varepsilon}) target.  Thus the
-nonzero-frequency completion does not by itself cover the whole cell.
-The missing statement is now the explicit recombination identity
+The dyadic (d)-layer contains (T^{\eta+o(1)}) values.  Hence
 
 \[
- \sum_{\substack{\text{AFE directions, BBLR orderings,}\\
-                   \text{four outer Möbius sectors}}}
- \mathcal M_{\rm BBLR}
- \stackrel{?}{=}
- \mathcal M_{\rm res}^{\rm registered}
- \quad\text{(including any required explicit diagonal)}.
+ E_{\ell=0,\rm layer}=P+\alpha-\eta,
+ \qquad
+ \boxed{E_{\ell=0,\rm global}=P+\alpha.}
 \tag{4.621n}
 \]
 
-Equation (4.621n) is not yet proved.  In particular, neither cancellation
-nor absorption into the previously registered resonant master is asserted.
+Thus the raw phase-free main term is one complete shift length
+(T^\alpha) above the local (T^P) target.  In the all-unsigned hard cell
+this specializes to
+
+\[
+ \mathcal M_{\rm BBLR}^{\rm hard,unsigned}
+ \ll T^{3+\varepsilon}
+ \quad\text{against target }T^{2+\varepsilon}.
+\tag{4.621o}
+\]
+
+Moreover, the plus/minus shifted equations in BBLR have the same
+(l=0) term: their only orientation dependence is in the additive phase,
+which has disappeared.  The two orientations therefore do not cancel
+internally when their external weights agree.  Opposite signs from a
+larger AFE recombination are not ruled out, but must be exhibited there.
+
+Thus the
+nonzero-frequency completion does not by itself cover the whole cell.
+Inside the present DCV/square-function route, the correctly typed missing
+object is the fully recombined BBLR zero-frequency contribution
+
+\[
+ \mathfrak G_{\rm BBLR}^{(0)}
+ :=\sum_{\substack{\text{AFE directions, BBLR orderings,}\\
+                    \text{four outer Möbius sectors}}}
+ \mathcal M_{\rm BBLR},
+ \qquad
+ \mathfrak G_{\rm BBLR}^{(0)}
+ \stackrel{?}{\ll}T^{P+\varepsilon}.
+\tag{4.621p}
+\]
+
+The estimate in (4.621p) is not yet proved.  Nor is
+\(\mathfrak G_{\rm BBLR}^{(0)}\) identified with the pre-Cauchy
+\(\mathcal M_{\rm res}\) in (9.447): they live at different stated stages,
+so they cannot be literally cancelled without first constructing an
+adapter that undoes or bypasses the DCV reorganization.
 The finite helper `bblr_zero_frequency_reindex_sides` verifies (4.621j)--
 (4.621l) for arbitrary rational coefficient fixtures and deliberately sets
 `registered_zero_master_identification_proved=False`.  This separates the
 remaining main-term adapter from the now-bounded nonzero-frequency error.
+The adapter `transition_bblr_zero_main_term_audit` records (4.621m)--
+(4.621o) and the shift-orientation boundary with exact rational exponents.
+
+There is no further coordinate obstruction to constructing a pair kernel
+of the same algebraic shape as the finite master schema (9.437)--(9.448).
+This does **not** yet identify the analytic stage: the BBLR comparison may
+already lie inside a DCV/square-function reorganization, whereas
+\(\mathcal M_{\rm res}\) in (9.447) is pre-Cauchy.  Put (x=dX), (y=dY),
+so the coprimality in (4.621l) is equivalent to (d=(x,y)), and define the
+labelled product kernel
+
+\[
+ W_h^{\rm BBLR}(x,y):=
+ W_0\!\left(\frac{(x,y)h}{H}\right)
+ \int_0^\infty
+ W_2\!\left(\frac{y u}{(x,y)M_2}\right)
+ W_4\!\left(\frac{x u}{(x,y)N_2}\right)\,du.
+\tag{4.621q}
+\]
+
+Writing
+
+\[
+ A(x)=\sum_{am_1=x}\alpha_aW_1(m_1/M_1),\qquad
+ B(y)=\sum_{bn_1=y}\beta_bW_3(n_1/N_1),
+\]
+
+equation (4.621l) becomes the literal pair-kernel identity
+
+\[
+ \boxed{
+ \mathcal M_{\rm BBLR}
+ =\sum_h\sum_{x,y\ge1}A(x)B(y)W_h^{\rm BBLR}(x,y).}
+\tag{4.621r}
+\]
+
+Thus each original nonzero shift (h), together with its AFE direction,
+BBLR ordering and dyadic label, can be retained in a
+secondary-zero-packet-shaped kernel; no inverse phase or gcd endpoint is
+lost.  What is still missing is not a kernel-coordinate map.  It is the
+analytic proof that this BBLR object is at the same pre-Cauchy stage as
+(9.440), that after summing every Type sector and ordering the functions
+(A,B) in (4.621r) are exactly the completed left/right coefficients in
+(9.439), and that the resulting labelled packet family is exhaustive.
+Only after all three facts are proved can this BBLR object be compared
+literally with the old pre-Cauchy master.  Independently, proving the bound
+in (4.621p) inside the DCV route requires the exhaustive ordering/sector
+sum and a (T^alpha)-saving estimate for that recombined object.
+
+The finite helper `bblr_zero_frequency_reindex_sides` now verifies all
+three equal values: the original factorized sum, the primitive
+((d,X,Y))-sum, and the labelled product-pair sum (4.621r).  It marks the
+coordinate bijection and shift-label preservation as true, while keeping
+`pre_cauchy_stage_identification_proved=False`,
+`completed_coefficient_identification_proved=False` and
+`packet_family_exhaustive=False`.
 
 ### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range but not the gate
 

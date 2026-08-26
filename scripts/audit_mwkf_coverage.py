@@ -1134,6 +1134,23 @@ class FrequencyGcdSumIdentity:
 
 
 @dataclass(frozen=True)
+class TransitionBBLRZeroMainTermAudit:
+    side_product_exponent: Fraction
+    shift_exponent: Fraction
+    poisson_gcd_exponent: Fraction
+    fixed_gcd_exponent: Fraction
+    dyadic_gcd_layer_exponent: Fraction
+    global_raw_main_term_exponent: Fraction
+    target_exponent: Fraction
+    power_margin: Fraction
+    missing_saving_exponent: Fraction
+    main_term_is_independent_of_shift_orientation: bool
+    shift_orientations_cancel_internally: bool
+    registered_zero_master_identification_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5577,6 +5594,57 @@ def transition_bblr_h_completion_subcell_audit(
         source=(
             "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
             "Proposition 3.1 equation (14), h completed before Watt"
+        ),
+    )
+
+
+def transition_bblr_zero_main_term_audit(
+    *,
+    side_product_exponent: Fraction,
+    shift_exponent: Fraction,
+    poisson_gcd_exponent: Fraction,
+) -> TransitionBBLRZeroMainTermAudit:
+    """Count BBLR's phase-free ``l=0`` main term before recombination.
+
+    Let each balanced side have product exponent ``P`` and let
+    ``d=T^eta``.  Reindexing by ``X=a*m1/d`` and ``Y=b*n1/d`` gives
+    divisor-bounded factorization multiplicity.  The X and Y counts, the
+    shift length ``H/d`` and the integral length ``d*M2/(B*N1)`` have
+    total exponent ``P+alpha-2*eta`` for a fixed d.  A dyadic d layer
+    contains ``T^eta`` values, so its exponent is ``P+alpha-eta`` and
+    the global maximum is ``P+alpha`` at d of subpower size.
+
+    The BBLR main term is the same for the plus and minus shifted
+    equations because setting l=0 deletes their only orientation phase.
+    This is a raw-size ledger, not the missing outer-scale estimate.
+    """
+
+    product = F(side_product_exponent)
+    shift = F(shift_exponent)
+    eta = F(poisson_gcd_exponent)
+    if product < 0 or shift < 0:
+        raise ValueError("BBLR product and shift exponents must be nonnegative")
+    if eta < 0 or eta > shift:
+        raise ValueError("Poisson gcd exponent must lie in [0,shift]")
+    fixed = product + shift - 2 * eta
+    layer = fixed + eta
+    global_raw = product + shift
+    return TransitionBBLRZeroMainTermAudit(
+        side_product_exponent=product,
+        shift_exponent=shift,
+        poisson_gcd_exponent=eta,
+        fixed_gcd_exponent=fixed,
+        dyadic_gcd_layer_exponent=layer,
+        global_raw_main_term_exponent=global_raw,
+        target_exponent=product,
+        power_margin=product - global_raw,
+        missing_saving_exponent=shift,
+        main_term_is_independent_of_shift_orientation=True,
+        shift_orientations_cancel_internally=False,
+        registered_zero_master_identification_proved=False,
+        source=(
+            "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
+            "Proposition 3.1 l=0 main term"
         ),
     )
 

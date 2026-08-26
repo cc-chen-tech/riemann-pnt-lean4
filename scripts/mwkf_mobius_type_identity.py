@@ -104,11 +104,24 @@ class ZeroFrequencyReflectedMaster:
 class BBLRZeroFrequencyReindex:
     direct_sum: Fraction
     reindexed_sum: Fraction
+    product_pair_sum: Fraction
     left_aggregate_entries: tuple[tuple[int, int, Fraction], ...]
     right_aggregate_entries: tuple[tuple[int, int, Fraction], ...]
     active_coprime_coordinates: tuple[tuple[int, int, int], ...]
+    labelled_product_pair_kernel_entries: tuple[
+        tuple[int, int, int, Fraction], ...
+    ]
+    combined_product_pair_kernel_entries: tuple[
+        tuple[int, int, Fraction], ...
+    ]
+    primitive_to_product_coordinates_are_bijective: bool
+    original_shift_labels_preserved: bool
+    secondary_zero_packet_shaped_kernels_constructed: bool
     left_and_right_outer_weights_remain_separate: bool
     zero_frequency_is_phase_free: bool
+    pre_cauchy_stage_identification_proved: bool
+    completed_coefficient_identification_proved: bool
+    packet_family_exhaustive: bool
     registered_zero_master_identification_proved: bool
 
 
@@ -962,9 +975,47 @@ def bblr_zero_frequency_reindex_sides(
         if contribution:
             active.append((d, x, y))
 
+    labelled_pair_kernels = tuple(
+        sorted(
+            (
+                h,
+                d * x,
+                d * y,
+                Fraction(shift_weight) * Fraction(kernel_weight),
+            )
+            for (d, x, y), kernel_weight in zero_kernels.items()
+            for (shift_d, h), shift_weight in shift_weights.items()
+            if shift_d == d and shift_weight and kernel_weight
+        )
+    )
+    combined_pair_kernels: dict[tuple[int, int], Fraction] = {}
+    for _, left_product, right_product, weight in labelled_pair_kernels:
+        pair = (left_product, right_product)
+        combined_pair_kernels[pair] = combined_pair_kernels.get(
+            pair, Fraction(0)
+        ) + weight
+    product_pair_sum = sum(
+        (
+            left_products.get(left_product, Fraction(0))
+            * right_products.get(right_product, Fraction(0))
+            * kernel_weight
+            for (left_product, right_product), kernel_weight in (
+                combined_pair_kernels.items()
+            )
+        ),
+        Fraction(0),
+    )
+    coordinate_bijection = all(
+        gcd(d * x, d * y) == d
+        and (d * x) // gcd(d * x, d * y) == x
+        and (d * y) // gcd(d * x, d * y) == y
+        for d, x, y in zero_kernels
+    )
+
     return BBLRZeroFrequencyReindex(
         direct_sum=direct,
         reindexed_sum=reindexed,
+        product_pair_sum=product_pair_sum,
         left_aggregate_entries=tuple(
             (d, x, weight)
             for (d, x), weight in sorted(left_aggregates.items())
@@ -976,8 +1027,20 @@ def bblr_zero_frequency_reindex_sides(
             if weight
         ),
         active_coprime_coordinates=tuple(active),
+        labelled_product_pair_kernel_entries=labelled_pair_kernels,
+        combined_product_pair_kernel_entries=tuple(
+            (left, right, weight)
+            for (left, right), weight in sorted(combined_pair_kernels.items())
+            if weight
+        ),
+        primitive_to_product_coordinates_are_bijective=coordinate_bijection,
+        original_shift_labels_preserved=True,
+        secondary_zero_packet_shaped_kernels_constructed=True,
         left_and_right_outer_weights_remain_separate=True,
         zero_frequency_is_phase_free=True,
+        pre_cauchy_stage_identification_proved=False,
+        completed_coefficient_identification_proved=False,
+        packet_family_exhaustive=False,
         registered_zero_master_identification_proved=False,
     )
 

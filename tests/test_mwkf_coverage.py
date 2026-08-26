@@ -2328,6 +2328,39 @@ def test_bblr_h_completion_gives_an_exact_type_subcell_coverage_test() -> None:
     assert empty.nonzero_frequency_cell_covered
 
 
+def test_bblr_zero_main_term_has_exactly_one_shift_length_gap() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_zero_main_term_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR zero-main-term audit is missing"
+
+    bottom = adapter(
+        side_product_exponent=F(2),
+        shift_exponent=F(1),
+        poisson_gcd_exponent=F(0),
+    )
+    assert bottom.fixed_gcd_exponent == F(3)
+    assert bottom.dyadic_gcd_layer_exponent == F(3)
+    assert bottom.global_raw_main_term_exponent == F(3)
+    assert bottom.target_exponent == F(2)
+    assert bottom.power_margin == F(-1)
+    assert bottom.missing_saving_exponent == F(1)
+    assert bottom.main_term_is_independent_of_shift_orientation
+    assert not bottom.shift_orientations_cancel_internally
+    assert not bottom.registered_zero_master_identification_proved
+
+    positive_gcd = adapter(
+        side_product_exponent=F(2),
+        shift_exponent=F(1),
+        poisson_gcd_exponent=F(1, 3),
+    )
+    assert positive_gcd.fixed_gcd_exponent == F(7, 3)
+    assert positive_gcd.dyadic_gcd_layer_exponent == F(8, 3)
+    assert positive_gcd.global_raw_main_term_exponent == F(3)
+
+
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     helper = getattr(
         coverage_audit,

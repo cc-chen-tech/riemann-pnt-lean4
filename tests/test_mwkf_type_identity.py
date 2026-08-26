@@ -757,11 +757,23 @@ def test_bblr_zero_frequency_reindexes_into_two_outer_coefficients() -> None:
 
     assert sides.direct_sum == F(-2100)
     assert sides.reindexed_sum == F(-2100)
+    assert sides.product_pair_sum == F(-2100)
     assert (2, 3, F(-2)) in sides.left_aggregate_entries
     assert (2, 1, F(15)) in sides.right_aggregate_entries
     assert sides.active_coprime_coordinates == ((2, 3, 1),)
+    assert sides.labelled_product_pair_kernel_entries == (
+        (1, 6, 2, F(77)),
+        (2, 6, 2, F(-7)),
+    )
+    assert sides.combined_product_pair_kernel_entries == ((6, 2, F(70)),)
+    assert sides.primitive_to_product_coordinates_are_bijective
+    assert sides.original_shift_labels_preserved
+    assert sides.secondary_zero_packet_shaped_kernels_constructed
     assert sides.left_and_right_outer_weights_remain_separate
     assert sides.zero_frequency_is_phase_free
+    assert not sides.pre_cauchy_stage_identification_proved
+    assert not sides.completed_coefficient_identification_proved
+    assert not sides.packet_family_exhaustive
     assert not sides.registered_zero_master_identification_proved
 
 
