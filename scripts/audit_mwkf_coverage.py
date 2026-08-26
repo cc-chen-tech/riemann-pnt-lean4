@@ -2536,6 +2536,36 @@ class OrientedMMKLSGlobalTransportAudit:
 
 
 @dataclass(frozen=True)
+class LargeQAffineChowlaGcdSplitAudit:
+    product_scale: int
+    shift_scale: int
+    long_scale: int
+    gcd_cutoff: int
+    critical_scales_match: bool
+    large_gcd_relative_absolute_bound: Fraction
+    large_gcd_bound_tends_to_zero_under_declared_limit: bool
+    small_gcd_max_reduced_slope: int
+    small_gcd_min_shift_average_length: Fraction
+    small_gcd_min_line_length: Fraction
+    bezout_coordinate_determinant: int
+    small_gcd_raw_mass_by_g: str
+    mrt_theorem: str
+    mrt_affine_coefficient_prefactor_power: int
+    mrt_shift_geometry_is_a_full_box: bool
+    physical_shift_geometry_is_one_dimensional: bool
+    mrt_relative_factor_at_reduced_slope: str
+    mrt_published_adapter_applies: bool
+    higher_uniformity_theorem: str
+    higher_uniformity_requires_fixed_positive_power_shift: bool
+    physical_shift_has_zero_power_exponent: bool
+    higher_uniformity_published_adapter_applies: bool
+    remaining_gate: str
+    centered_product_energy_estimate_proved: bool
+    unconditional_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class PascadiLiftedPhysicalAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -16896,6 +16926,88 @@ def oriented_mmkls_global_transport_audit(
         source=(
             "oriented complementary-divisor exponents and exact large-q "
             "inverse-Poisson/product-lift audits"
+        ),
+    )
+
+
+def large_q_affine_chowla_gcd_split_audit(
+    *,
+    product_scale: int,
+    shift_scale: int,
+    long_scale: int,
+    gcd_cutoff: int,
+) -> LargeQAffineChowlaGcdSplitAudit:
+    """Split the critical product lift by ``g=(m1,m2)``.
+
+    Put ``P=product_scale``, ``L=shift_scale``, and ``T=long_scale``.
+    For ``g>G``, retaining both ``g|delta`` and the affine-line count
+
+      ``1 + T*g/P``
+
+    gives, after the ``1/P`` product weight, the absolute bound
+
+      ``O(L*P/G^2 + T*L/G)``.
+
+    Relative to the critical target ``T*L`` this is
+    ``1/G + P/(T*G^2)``.  For ``g<=G`` write ``m1=g*a``, ``m2=g*b``.
+    A Bezout pair ``a*v-b*u=1`` parametrizes the physical line as
+
+      ``r=a*t+u*k, s=b*t+v*k, delta=g*k``.
+
+    The determinant is one, but ``k`` moves the two intercepts on a
+    one-dimensional sublattice.  Matomaki--Radziwill--Tao Theorem 1.6
+    averages a full additive-shift box and carries an ``A^2`` factor.
+    Even if the geometry mismatch is ignored, inserting
+    ``A=Q=P/g`` leaves the displayed relative factor rather than an
+    ``o(1)`` estimate at polylogarithmic ``Q``.  The adapter therefore
+    records a smaller new affine-Chowla gate, not coverage.
+    """
+    P = int(product_scale)
+    L = int(shift_scale)
+    T = int(long_scale)
+    G = int(gcd_cutoff)
+    if min(P, L, T, G) <= 0:
+        raise ValueError("all scales and the gcd cutoff must be positive")
+    if G > P:
+        raise ValueError("gcd cutoff cannot exceed the product scale")
+
+    relative_bound = F(1, G) + F(P, T * G * G)
+    return LargeQAffineChowlaGcdSplitAudit(
+        product_scale=P,
+        shift_scale=L,
+        long_scale=T,
+        gcd_cutoff=G,
+        critical_scales_match=L == P,
+        large_gcd_relative_absolute_bound=relative_bound,
+        large_gcd_bound_tends_to_zero_under_declared_limit=True,
+        small_gcd_max_reduced_slope=P,
+        small_gcd_min_shift_average_length=F(L, G),
+        small_gcd_min_line_length=F(T, P),
+        bezout_coordinate_determinant=1,
+        small_gcd_raw_mass_by_g="TP/g^2",
+        mrt_theorem="arXiv:1503.05121v3, Theorem 1.6",
+        mrt_affine_coefficient_prefactor_power=2,
+        mrt_shift_geometry_is_a_full_box=False,
+        physical_shift_geometry_is_one_dimensional=True,
+        mrt_relative_factor_at_reduced_slope=(
+            "Q^2*(exp(-M/80)+loglog(Q)/log(Q)+"
+            "log(T/Q)^(-1/3000))"
+        ),
+        mrt_published_adapter_applies=False,
+        higher_uniformity_theorem=(
+            "arXiv:2007.15644v3, Corollary 1.11"
+        ),
+        higher_uniformity_requires_fixed_positive_power_shift=True,
+        physical_shift_has_zero_power_exponent=True,
+        higher_uniformity_published_adapter_applies=False,
+        remaining_gate="polylog_slope_averaged_affine_chowla",
+        centered_product_energy_estimate_proved=False,
+        unconditional_coverage=False,
+        source=(
+            "gcd divisibility and Bezout line parametrization; "
+            "Matomaki--Radziwill--Tao arXiv:1503.05121v3 Theorem 1.6; "
+            "Matomaki--Radziwill--Tao--Teravainen--Ziegler "
+            "arXiv:2007.15644v3 Corollary 1.11"
         ),
     )
 

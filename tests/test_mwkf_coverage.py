@@ -6887,6 +6887,47 @@ def test_oriented_cofactor_transport_leaves_only_the_polylog_large_q_gate(
         assert marker in note
 
 
+def test_large_q_affine_chowla_split_discards_large_gcd_but_rejects_mrt() -> None:
+    """The critical product energy needs a slope-averaged affine theorem."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_affine_chowla_gcd_split_audit",
+        None,
+    )
+    assert adapter is not None, "large-q affine Chowla gcd split is missing"
+    audit = adapter(
+        product_scale=64,
+        shift_scale=64,
+        long_scale=1_000_000,
+        gcd_cutoff=8,
+    )
+    assert audit.critical_scales_match
+    assert audit.large_gcd_relative_absolute_bound == F(125001, 1_000_000)
+    assert audit.large_gcd_bound_tends_to_zero_under_declared_limit
+    assert audit.small_gcd_max_reduced_slope == 64
+    assert audit.small_gcd_min_shift_average_length == 8
+    assert audit.small_gcd_min_line_length == F(15625)
+    assert audit.bezout_coordinate_determinant == 1
+    assert audit.small_gcd_raw_mass_by_g == "TP/g^2"
+    assert audit.mrt_theorem == "arXiv:1503.05121v3, Theorem 1.6"
+    assert audit.mrt_affine_coefficient_prefactor_power == 2
+    assert audit.mrt_shift_geometry_is_a_full_box is False
+    assert audit.physical_shift_geometry_is_one_dimensional is True
+    assert audit.mrt_relative_factor_at_reduced_slope == (
+        "Q^2*(exp(-M/80)+loglog(Q)/log(Q)+log(T/Q)^(-1/3000))"
+    )
+    assert not audit.mrt_published_adapter_applies
+    assert audit.higher_uniformity_theorem == (
+        "arXiv:2007.15644v3, Corollary 1.11"
+    )
+    assert audit.higher_uniformity_requires_fixed_positive_power_shift
+    assert audit.physical_shift_has_zero_power_exponent
+    assert not audit.higher_uniformity_published_adapter_applies
+    assert audit.remaining_gate == "polylog_slope_averaged_affine_chowla"
+    assert not audit.centered_product_energy_estimate_proved
+    assert not audit.unconditional_coverage
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

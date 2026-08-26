@@ -20858,6 +20858,155 @@ ratios in (4.845dc_14xq_35w31), reuses the proved bounded endpoint and
 the exact critical product lift, and keeps both full-polytope coverage
 and the final asymptotic false.
 
+### 4.109zjaced1 The critical product energy has one polylog-slope affine core
+
+The gcd divisibility in (4.236) gives a useful second reduction of
+\(\mathrm{LCPE}_2\).  It also shows exactly why the published averaged
+Chowla theorem does not yet close this last logarithmic face.  Put
+
+\[
+ P=L=(\log(2T))^2,\qquad g=(m_1,m_2),
+ \qquad m_1=ga,\quad m_2=gb,\quad(a,b)=1.
+\tag{4.845dc_14xq_35w34}
+\]
+
+Fix a cutoff \(1<G<P\).  The contribution of \(g>G\) may be taken
+absolutely.  There are \(O((P/g)^2)\) reduced pairs \((a,b)\), at most
+\(O(L/g)\) nonzero admissible shifts, and each affine line contains
+\(O(1+Tg/P)\) points.  Since
+\((m_1m_2)^{-1/2}\ll P^{-1}\), summing in this order gives
+
+\[
+ \begin{aligned}
+ \mathfrak C_{P,L}^{g>G}
+ &\ll_W \frac1P\sum_{g>G}
+   \left(\frac Pg\right)^2\frac Lg
+   \left(1+\frac{Tg}{P}\right)\\
+ &\ll_W \boxed{\frac{LP}{G^2}+\frac{TL}{G}}.
+ \end{aligned}
+\tag{4.845dc_14xq_35w35}
+\]
+
+Thus
+
+\[
+ \frac{|\mathfrak C_{P,L}^{g>G}|}{TL}
+ \ll_W \frac1G+\frac{P}{TG^2}=o_W(1)
+\tag{4.845dc_14xq_35w36}
+\]
+
+for any \(G=G(T)\to\infty\) with \(G\le P\).  No Möbius cancellation
+is needed in this range.
+
+For \(g\le G\), write \(\delta=gk\).  Choose a Bezout pair \(u,v\)
+with
+
+\[
+ av-bu=1,\qquad |u|\le a,\quad |v|\le b.
+\tag{4.845dc_14xq_35w37}
+\]
+
+Then every solution of \(as-br=k\) has the exact parametrization
+
+\[
+ \boxed{r=at+uk,\qquad s=bt+vk},\qquad
+ \det\begin{pmatrix}a&u\\b&v\end{pmatrix}=1.
+\tag{4.845dc_14xq_35w38}
+\]
+
+On the critical face, if \(Q=P/g\), its scales are
+
+\[
+ a,b\asymp Q,\qquad |k|\ll Q,\qquad
+ t\asymp \frac{T}{Q}.
+\tag{4.845dc_14xq_35w39}
+\]
+
+Before cancellation the fixed-\(g\) mass is exactly at scale
+
+\[
+ \frac1P\cdot Q^2\cdot Q\cdot\frac{T}{Q}
+ =\boxed{\frac{TP}{g^2}}.
+\tag{4.845dc_14xq_35w40}
+\]
+
+A sufficient remaining estimate, with the separated smooth tensor and
+its total variation norm restored, is therefore
+
+\[
+ \boxed{
+ \sum_{g\le G}\frac1P
+ \sum_{\substack{a,b\asymp P/g\\(a,b)=1}}
+ \sum_{0<|k|\ll P/g}
+ \left|\sum_{t\asymp Tg/P}
+ f(at+uk)f(bt+vk)\Omega_{g,a,b,k}(t)\right|
+ =o_W(TP).}
+\tag{AAC}_{P,G}
+\]
+
+This is a polylogarithmic-slope, averaged affine Chowla estimate.  It is
+strictly more explicit than (4.239), but the absolute values in
+\((\mathrm{AAC})_{P,G}\) make it a sufficient condition rather than an
+equivalent reformulation of the original signed tensor.
+
+[Matomaki--Radziwill--Tao, Theorem 1.6](https://arxiv.org/abs/1503.05121)
+does not supply this condition.  Their affine coefficient parameter is
+\(A\), and the explicit right side contains
+
+\[
+ A^2\left(
+ e^{-M/80}+\frac{\log\log H}{\log H}
+ +\frac1{\log^{1/3000}X}\right).
+\tag{4.845dc_14xq_35w41}
+\]
+
+Here the optimistic substitution is
+
+\[
+ A=H=Q,\qquad X=T/Q.
+\tag{4.845dc_14xq_35w42}
+\]
+
+Even if one ignores the hypothesis mismatch, the relative multiplier
+in (4.845dc_14xq_35w41) becomes
+
+\[
+ Q^2\left(
+ e^{-M/80}+\frac{\log\log Q}{\log Q}
+ +\frac1{\log^{1/3000}(T/Q)}\right),
+\tag{4.845dc_14xq_35w43}
+\]
+
+which does not tend to zero for \(Q\asymp(\log T)^2\).  The structural
+mismatch is prior: (4.845dc_14xq_35w38) moves the two intercepts along
+the one-dimensional sublattice \(k(u,v)\), whereas the theorem averages
+a full additive-shift box (or fixes one form and shifts the other).
+Partitioning the physical line into such boxes loses the same slope
+factor that (4.845dc_14xq_35w43) displays.
+
+The higher-uniformity result of
+[Matomaki--Radziwill--Tao--Teravainen--Ziegler, Corollary 1.11](https://arxiv.org/abs/2007.15644)
+does preserve a one-dimensional family of linear shifts, but its range
+is
+
+\[
+ 1\le h\le X^\varepsilon
+\tag{4.845dc_14xq_35w44}
+\]
+
+for a fixed \(\varepsilon>0\).  In the present variables
+\(X=T/Q\) and \(h\le Q\asymp(\log T)^2\).  Hence the physical shift
+has zero power exponent relative to \(X\), and (4.845dc_14xq_35w44)
+does not contain it.  The almost-all-interval higher-uniformity theorem
+has the same fixed-positive-power lower boundary for the Möbius input.
+
+The interface large_q_affine_chowla_gcd_split_audit records the exact
+large-gcd relative bound, the unimodular parametrization, the raw
+\(TP/g^2\) scale, and both failed published adapters.  It keeps
+centered_product_energy_estimate_proved and unconditional_coverage
+false.  The remaining named sufficient gate is
+polylog_slope_averaged_affine_chowla.
+
 ### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
 
 The July 2026 bilinear Kloosterman theorem of
