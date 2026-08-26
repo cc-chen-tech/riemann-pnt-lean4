@@ -101,6 +101,18 @@ class ZeroFrequencyReflectedMaster:
 
 
 @dataclass(frozen=True)
+class BBLRZeroFrequencyReindex:
+    direct_sum: Fraction
+    reindexed_sum: Fraction
+    left_aggregate_entries: tuple[tuple[int, int, Fraction], ...]
+    right_aggregate_entries: tuple[tuple[int, int, Fraction], ...]
+    active_coprime_coordinates: tuple[tuple[int, int, int], ...]
+    left_and_right_outer_weights_remain_separate: bool
+    zero_frequency_is_phase_free: bool
+    registered_zero_master_identification_proved: bool
+
+
+@dataclass(frozen=True)
 class CenteredOperatorSavingLedger:
     raw_sum_exponent: Fraction
     target_sum_exponent: Fraction
@@ -833,6 +845,140 @@ def reflected_boundary_pair_kernel_sides(
         direct=direct,
         unfolded=unfolded,
         active_factor_pairs=tuple(active_factor_pairs),
+    )
+
+
+def bblr_zero_frequency_reindex_sides(
+    *,
+    left_outer_weights: dict[int, Fraction],
+    left_inner_weights: dict[int, Fraction],
+    right_outer_weights: dict[int, Fraction],
+    right_inner_weights: dict[int, Fraction],
+    shift_weights: dict[tuple[int, int], Fraction],
+    zero_kernels: dict[tuple[int, int, int], Fraction],
+) -> BBLRZeroFrequencyReindex:
+    """Reindex BBLR's finite ``l=0`` term by ``d,X,Y`` exactly.
+
+    For every original tuple put
+
+    ``d=(a*m1,b*n1)``, ``X=a*m1/d`` and ``Y=b*n1/d``.
+
+    The zero-frequency Poisson integral depends on the original four
+    variables only through ``d,X,Y``.  Thus the left factorizations of
+    ``dX`` and the right factorizations of ``dY`` aggregate separately,
+    while ``(X,Y)=1`` is retained.  This is the finite reindexing only;
+    identifying the resulting phase-free main term with the registered
+    reflected zero-frequency master remains a separate obligation.
+    """
+
+    families = (
+        left_outer_weights,
+        left_inner_weights,
+        right_outer_weights,
+        right_inner_weights,
+    )
+    if any(not family for family in families):
+        raise ValueError("all four BBLR coefficient families must be nonempty")
+    if any(index <= 0 for family in families for index in family):
+        raise ValueError("BBLR coefficient indices must be positive")
+    if any(d <= 0 or h <= 0 for d, h in shift_weights):
+        raise ValueError("BBLR shift coordinates must be positive")
+    if any(
+        d <= 0 or x <= 0 or y <= 0 or gcd(x, y) != 1
+        for d, x, y in zero_kernels
+    ):
+        raise ValueError("zero kernels require positive coprime X,Y coordinates")
+
+    left_products: dict[int, Fraction] = {}
+    for outer, outer_weight in left_outer_weights.items():
+        for inner, inner_weight in left_inner_weights.items():
+            product = outer * inner
+            left_products[product] = left_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    right_products: dict[int, Fraction] = {}
+    for outer, outer_weight in right_outer_weights.items():
+        for inner, inner_weight in right_inner_weights.items():
+            product = outer * inner
+            right_products[product] = right_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    possible_gcds = tuple(
+        sorted(
+            {
+                gcd(left_product, right_product)
+                for left_product in left_products
+                for right_product in right_products
+            }
+        )
+    )
+    shift_sums = {
+        d: sum(
+            (
+                Fraction(weight)
+                for (shift_d, _), weight in shift_weights.items()
+                if shift_d == d
+            ),
+            Fraction(0),
+        )
+        for d in possible_gcds
+    }
+
+    direct = Fraction(0)
+    for left_product, left_weight in left_products.items():
+        for right_product, right_weight in right_products.items():
+            d = gcd(left_product, right_product)
+            x = left_product // d
+            y = right_product // d
+            direct += (
+                left_weight
+                * right_weight
+                * shift_sums[d]
+                * Fraction(zero_kernels.get((d, x, y), Fraction(0)))
+            )
+
+    left_aggregates: dict[tuple[int, int], Fraction] = {}
+    right_aggregates: dict[tuple[int, int], Fraction] = {}
+    for d in possible_gcds:
+        for product, weight in left_products.items():
+            if product % d == 0:
+                left_aggregates[(d, product // d)] = weight
+        for product, weight in right_products.items():
+            if product % d == 0:
+                right_aggregates[(d, product // d)] = weight
+
+    reindexed = Fraction(0)
+    active: list[tuple[int, int, int]] = []
+    for (d, x, y), kernel_weight in sorted(zero_kernels.items()):
+        contribution = (
+            left_aggregates.get((d, x), Fraction(0))
+            * right_aggregates.get((d, y), Fraction(0))
+            * shift_sums.get(d, Fraction(0))
+            * Fraction(kernel_weight)
+        )
+        reindexed += contribution
+        if contribution:
+            active.append((d, x, y))
+
+    return BBLRZeroFrequencyReindex(
+        direct_sum=direct,
+        reindexed_sum=reindexed,
+        left_aggregate_entries=tuple(
+            (d, x, weight)
+            for (d, x), weight in sorted(left_aggregates.items())
+            if weight
+        ),
+        right_aggregate_entries=tuple(
+            (d, y, weight)
+            for (d, y), weight in sorted(right_aggregates.items())
+            if weight
+        ),
+        active_coprime_coordinates=tuple(active),
+        left_and_right_outer_weights_remain_separate=True,
+        zero_frequency_is_phase_free=True,
+        registered_zero_master_identification_proved=False,
     )
 
 

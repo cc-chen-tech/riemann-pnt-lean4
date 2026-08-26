@@ -1068,6 +1068,72 @@ class TransitionBBLRHardUnsignedCellAudit:
 
 
 @dataclass(frozen=True)
+class TransitionBBLRHardHCompletionAudit:
+    poisson_gcd_exponent: Fraction
+    reduced_h_length_exponent: Fraction
+    reduced_modulus_exponent: Fraction
+    h_length_matches_modulus: bool
+    nonzero_l_cutoff_exponent: Fraction
+    positive_power_gcd_shell_has_no_nonzero_l: bool
+    reduced_n1_count_exponent: Fraction
+    completed_m1_h_exponent: Fraction
+    poisson_integral_exponent: Fraction
+    fixed_gcd_value_exponent: Fraction
+    poisson_gcd_count_exponent: Fraction
+    dyadic_layer_exponent: Fraction
+    global_nonzero_frequency_exponent: Fraction
+    target_exponent: Fraction
+    power_margin: Fraction
+    inverse_map_is_permutation_on_units: bool
+    multiplier_fibre_bound_is_gcd: bool
+    nonzero_frequency_error_closed_with_epsilon_loss: bool
+    poisson_main_term_controlled: bool
+    whole_unsigned_cell_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class TransitionBBLRHCompletionSubcellAudit:
+    outer_a_exponent: Fraction
+    outer_b_exponent: Fraction
+    m1_exponent: Fraction
+    m2_exponent: Fraction
+    n1_exponent: Fraction
+    n2_exponent: Fraction
+    shift_exponent: Fraction
+    left_side_product_exponent: Fraction
+    right_side_product_exponent: Fraction
+    x_product_exponent: Fraction
+    y_modulus_exponent: Fraction
+    x_over_y_excess_exponent: Fraction
+    h_or_modulus_exponent: Fraction
+    nonzero_l_base_cutoff_exponent: Fraction
+    summed_frequency_gcd_exponent: Fraction
+    nonzero_frequency_family_empty: bool
+    global_nonzero_frequency_exponent: Fraction
+    target_exponent: Fraction
+    power_margin: Fraction
+    nonzero_frequency_cell_covered: bool
+    outer_coefficients_may_be_arbitrary: bool
+    factorization_multiplicity_is_divisor_bounded: bool
+    frequency_gcd_average_is_divisor_bounded: bool
+    preserves_two_mobius_weights_in_outer_coefficients: bool
+    poisson_main_term_controlled: bool
+    whole_type_subcell_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class FrequencyGcdSumIdentity:
+    modulus: int
+    cutoff: int
+    direct_gcd_sum: int
+    divisor_totient_sum: int
+    divisor_count: int
+    linear_divisor_bound: int
+
+
+@dataclass(frozen=True)
 class TransitionLineFourierMicroarcAudit:
     denominator_gcd_exponent: Fraction
     denominator_cofactor_exponent: Fraction
@@ -5289,6 +5355,228 @@ def transition_bblr_hard_unsigned_cell_audit(
         source=(
             "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
             "Proposition 3.1 equations (14)--(16)"
+        ),
+    )
+
+
+def inverse_multiplier_unit_fibre_max(
+    modulus: int,
+    multiplier: int,
+) -> int:
+    """Largest fibre of ``x -> multiplier*inverse(x) mod modulus``."""
+
+    if modulus < 1 or multiplier == 0:
+        raise ValueError("require a positive modulus and nonzero multiplier")
+    fibres: dict[int, int] = {}
+    for residue in range(modulus):
+        if gcd(residue, modulus) != 1:
+            continue
+        image = (multiplier * pow(residue, -1, modulus)) % modulus
+        fibres[image] = fibres.get(image, 0) + 1
+    return max(fibres.values(), default=0)
+
+
+def frequency_gcd_sum_identity(
+    *,
+    modulus: int,
+    cutoff: int,
+) -> FrequencyGcdSumIdentity:
+    """Evaluate ``sum_{l<=L} (l,q)`` by its exact divisor expansion."""
+
+    if modulus < 1 or cutoff < 0:
+        raise ValueError("require a positive modulus and nonnegative cutoff")
+    divisors = tuple(
+        divisor
+        for divisor in range(1, modulus + 1)
+        if modulus % divisor == 0
+    )
+    totients = {
+        divisor: sum(
+            1 for residue in range(1, divisor + 1)
+            if gcd(residue, divisor) == 1
+        )
+        for divisor in divisors
+    }
+    direct = sum(gcd(frequency, modulus) for frequency in range(1, cutoff + 1))
+    expanded = sum(
+        totients[divisor] * (cutoff // divisor) for divisor in divisors
+    )
+    divisor_count = len(divisors)
+    return FrequencyGcdSumIdentity(
+        modulus=modulus,
+        cutoff=cutoff,
+        direct_gcd_sum=direct,
+        divisor_totient_sum=expanded,
+        divisor_count=divisor_count,
+        linear_divisor_bound=cutoff * divisor_count,
+    )
+
+
+def transition_bblr_hard_h_completion_audit(
+    *,
+    poisson_gcd_exponent: Fraction,
+) -> TransitionBBLRHardHCompletionAudit:
+    """Complete the shift before estimating BBLR's hard remainder.
+
+    In the all-unsigned hard cell, equation (14) has
+    ``A=B=1, M1=M2=N1=N2=H=T``.  Write
+    ``d=(m1,n1)=T^eta``, ``m1=d*m`` and ``n1=d*n``.  The new shift
+    variable has length ``H/d`` and its additive phase has modulus ``n``;
+    both have exponent ``1-eta``.  Poisson summation in the shift gives a
+    rapidly decaying weight in ``l*inverse(m) mod n``.
+
+    As ``m`` varies, inversion permutes the units modulo ``n`` and
+    multiplication by ``l`` has fibres bounded by ``(l,n)``.  Thus the
+    combined ``m,h`` sum has exponent ``1-eta`` up to ``T^epsilon``, not
+    the trivial ``2-2*eta``.  The remaining n count contributes
+    ``1-eta`` and the Fourier integral F in equation (14) contributes
+    ``eta``.  For fixed d this is ``2-eta``; the d shell has ``T^eta``
+    members, leaving exponent 2.
+
+    Equation (14)'s nonzero-frequency cutoff is ``L=T^epsilon/d``, so
+    every fixed positive-power d shell is actually empty.  This controls
+    only the nonzero Poisson frequencies: the l=0 main term still needs
+    its full Möbius/outer-scale recombination.
+    """
+
+    eta = F(poisson_gcd_exponent)
+    if eta < F(0) or eta > F(1):
+        raise ValueError("Poisson gcd exponent must lie in [0,1]")
+    reduced = F(1) - eta
+    l_cutoff = -eta
+    n_count = reduced
+    completed_m_h = reduced
+    integral = eta
+    fixed_d = n_count + completed_m_h + integral
+    d_count = eta
+    layer = fixed_d + d_count
+    target = F(2)
+    return TransitionBBLRHardHCompletionAudit(
+        poisson_gcd_exponent=eta,
+        reduced_h_length_exponent=reduced,
+        reduced_modulus_exponent=reduced,
+        h_length_matches_modulus=True,
+        nonzero_l_cutoff_exponent=l_cutoff,
+        positive_power_gcd_shell_has_no_nonzero_l=(eta > 0),
+        reduced_n1_count_exponent=n_count,
+        completed_m1_h_exponent=completed_m_h,
+        poisson_integral_exponent=integral,
+        fixed_gcd_value_exponent=fixed_d,
+        poisson_gcd_count_exponent=d_count,
+        dyadic_layer_exponent=layer,
+        global_nonzero_frequency_exponent=layer,
+        target_exponent=target,
+        power_margin=target - layer,
+        inverse_map_is_permutation_on_units=True,
+        multiplier_fibre_bound_is_gcd=True,
+        nonzero_frequency_error_closed_with_epsilon_loss=(layer <= target),
+        poisson_main_term_controlled=False,
+        whole_unsigned_cell_covered=False,
+        source=(
+            "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
+            "Proposition 3.1 equations (14)--(16), h completed first"
+        ),
+    )
+
+
+def transition_bblr_h_completion_subcell_audit(
+    *,
+    outer_a_exponent: Fraction,
+    outer_b_exponent: Fraction,
+    m1_exponent: Fraction,
+    m2_exponent: Fraction,
+    n1_exponent: Fraction,
+    n2_exponent: Fraction,
+    shift_exponent: Fraction,
+) -> TransitionBBLRHCompletionSubcellAudit:
+    """Exact nonzero-frequency coverage test after completing h first.
+
+    In BBLR equation (14), put
+
+    ``X=a*m1/d`` and ``Y=b*n1/d``.
+
+    For fixed d, the factorizations of X and Y have divisor-bounded
+    multiplicity, so arbitrary outer coefficients (including every
+    Möbius atom) are harmless.  Completing the h sum and then summing X
+    through its residue classes modulo Y costs
+
+    ``max(Y,H) * (1 + X/Y)``
+
+    up to ``T^epsilon`` and the gcd fibre of the nonzero frequency l.
+    The remaining continuous Poisson integral has scale ``M2/Y``.  The
+    exact identity
+
+    ``sum_{l<=L} (l,Y) = sum_{r|Y} phi(r) floor(L/r)``
+
+    bounds the whole frequency gcd average by ``L*tau(Y)``, rather than
+    the pointwise ``L^2`` cost.  At d=1 the resulting exponent is
+
+    ``M2 + max(0,X-Y) + max(Y,H) + max(0,L)``,
+
+    where ``L=A+M1-N2`` is the exponent of equation (14)'s l cutoff.
+    Positive d exponents only shorten L, so this is the global maximum.
+    If L<0, the nonzero-frequency family is empty on that subcell.
+
+    This is an error-term adapter only.  The l=0 Poisson main term remains
+    a separate outer-scale recombination obligation.
+    """
+
+    a = F(outer_a_exponent)
+    b = F(outer_b_exponent)
+    m1 = F(m1_exponent)
+    m2 = F(m2_exponent)
+    n1 = F(n1_exponent)
+    n2 = F(n2_exponent)
+    h = F(shift_exponent)
+    if min(a, b, m1, m2, n1, n2, h) < 0:
+        raise ValueError("BBLR subcell exponents must be nonnegative")
+    if m1 > m2 or n1 > n2:
+        raise ValueError("require the BBLR orderings M1<=M2 and N1<=N2")
+    left_product = a + m1 + m2
+    right_product = b + n1 + n2
+    if left_product != right_product:
+        raise ValueError("the two BBLR side products must balance")
+
+    x = a + m1
+    y = b + n1
+    ratio = max(F(0), x - y)
+    h_or_modulus = max(h, y)
+    l_cutoff = a + m1 - n2
+    frequency_gcd = max(F(0), l_cutoff)
+    family_empty = l_cutoff < 0
+    bound = m2 + ratio + h_or_modulus + frequency_gcd
+    target = left_product
+    covered = family_empty or bound <= target
+    return TransitionBBLRHCompletionSubcellAudit(
+        outer_a_exponent=a,
+        outer_b_exponent=b,
+        m1_exponent=m1,
+        m2_exponent=m2,
+        n1_exponent=n1,
+        n2_exponent=n2,
+        shift_exponent=h,
+        left_side_product_exponent=left_product,
+        right_side_product_exponent=right_product,
+        x_product_exponent=x,
+        y_modulus_exponent=y,
+        x_over_y_excess_exponent=ratio,
+        h_or_modulus_exponent=h_or_modulus,
+        nonzero_l_base_cutoff_exponent=l_cutoff,
+        summed_frequency_gcd_exponent=frequency_gcd,
+        nonzero_frequency_family_empty=family_empty,
+        global_nonzero_frequency_exponent=bound,
+        target_exponent=target,
+        power_margin=target - bound,
+        nonzero_frequency_cell_covered=covered,
+        outer_coefficients_may_be_arbitrary=True,
+        factorization_multiplicity_is_divisor_bounded=True,
+        frequency_gcd_average_is_divisor_bounded=True,
+        preserves_two_mobius_weights_in_outer_coefficients=True,
+        poisson_main_term_controlled=False,
+        whole_type_subcell_covered=False,
+        source=(
+            "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
+            "Proposition 3.1 equation (14), h completed before Watt"
         ),
     )
 

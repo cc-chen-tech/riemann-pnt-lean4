@@ -8753,14 +8753,246 @@ The finite helpers `mobius_unsigned_sector_recombination` and
 `four_mobius_unsigned_sector_recombination` verify (4.613)--(4.617) on
 integer fixtures.  The adapter
 `transition_bblr_hard_unsigned_cell_audit` records (4.618)--(4.621) with
-`Fraction`.  This is a no-go result only for cellwise use of BBLR.  It is
-not a lower bound for the original signed sum.  The two remaining logical
-options are now disjoint:
+`Fraction`.  This is a no-go result only for the Watt-first, cellwise use of
+BBLR.  It is not a lower bound for the original signed sum.  At that stage
+the two visible global options were:
 
 1. prove a BBLR-strength joint estimate after summing all outer scales in
    (4.616), before any triangle inequality; or
 2. return to the pre-Cauchy slope family (4.457), where cancellation among
    slopes need not pass through the positive DCV square function.
+
+#### 4.68.1 Completing the shift first removes the hard error deficit
+
+The conclusion after (4.621) is correct for a literal application of the
+published Watt estimate, but it is not the best estimate of BBLR's exact
+nonzero-frequency expression (14).  In the all-unsigned hard cell, complete
+the (h)-sum before estimating the inverse fraction.
+
+Put
+
+\[
+ d=(m_1,n_1),\qquad m_1=dm,\qquad n_1=dn,
+\tag{4.621a}
+\]
+
+so that (m,n\asymp T/d) and ((m,n)=1).  Equation (14) has
+
+\[
+ 0<|l|\le L,\qquad L\ll \frac{T^\varepsilon}{d},
+\tag{4.621b}
+\]
+
+and its phase in (h) is
+
+\[
+ e\!\left(\mp l h\frac{\bar m}{n}\right).
+\]
+
+Poisson summation gives, for every fixed (A>0),
+
+\[
+ \sum_h W_0\!\left(\frac{dh}{T}\right)
+ e\!\left(\mp l h\frac{\bar m}{n}\right)
+ \ll_A \frac Td
+ \left(1+\left|l\bar m\right|_n\right)^{-A},
+\tag{4.621c}
+\]
+
+where (|x|_n) is the least absolute residue.  Here (T/d\asymp n), so
+there is no omitted ratio of the shift length to the modulus.
+
+As (m) runs through an interval of length (T/d\asymp n), inversion
+permutes the reduced residue system modulo (n).  Multiplication by (l)
+has fibres of size at most ((l,n)).  Therefore
+
+\[
+ \sum_{\substack{m\asymp T/d\\(m,n)=1}}
+ \left|\sum_h W_0\!\left(\frac{dh}{T}\right)
+ e\!\left(\mp l h\frac{\bar m}{n}\right)\right|
+ \ll_A \frac Td(l,n)T^\varepsilon.
+\tag{4.621d}
+\]
+
+The integral (F) in equation (14) has length (d), hence
+(F\ll d).  Do not now use the pointwise inequality ((l,n)\le l).
+Instead sum the frequency gcd by the exact identity
+
+\[
+ \sum_{1\le l\le L}(l,n)
+ =\sum_{r\mid n}\varphi(r)\left\lfloor\frac Lr\right\rfloor
+ \le L\tau(n).
+\tag{4.621e}
+\]
+
+After (4.621d), the (F)-factor, the (n\asymp T/d)-sum and
+(4.621e), the whole fixed-(d) nonzero-frequency contribution is
+
+\[
+ \mathcal R_d\ll
+ \frac{T^2}{d}L T^\varepsilon
+ \ll \frac{T^{2+\varepsilon}}{d^2}.
+\tag{4.621f}
+\]
+
+Now (4.621b) forces (d\le T^\varepsilon).  Summing over (d) yields
+
+\[
+ \boxed{\mathcal R_{\pm}^{\rm hard,unsigned}
+ \ll T^{2+\varepsilon}.}
+\tag{4.621g}
+\]
+
+The approximation error already present in (14) is (H^2T^\varepsilon
+=T^{2+\varepsilon}), so (4.621g) reaches the exact local target.  The
+previous (T^{5/2}) ledger is therefore a deficit of the Watt-first route,
+not a deficit of the hard nonzero-frequency sum itself.
+
+The same calculation gives a finite post-Type coverage test.  Write the
+BBLR exponents as
+
+\[
+ A=T^a,\ B=T^b,\ M_i=T^{\mu_i},\ N_i=T^{\nu_i},\ H=T^\alpha,
+\]
+
+with (a+\mu_1+\mu_2=b+\nu_1+\nu_2=P).  Reindex
+(X=am_1/d), (Y=bn_1/d); the factorization multiplicities are divisor
+bounded, so all Möbius atoms may remain in the two arbitrary outer
+coefficients.  Completing (h), summing the (X)-residues and then applying
+(4.621e) to the complete (l)-average gives the nonzero-frequency exponent
+
+\[
+ \boxed{
+  E_{h\text{-comp}}
+ =\mu_2+(a+\mu_1-b-\nu_1)_+
+  +\max(b+\nu_1,\alpha)
+  +(a+\mu_1-\nu_2)_+.}
+\tag{4.621h}
+\]
+
+If (a+\mu_1-\nu_2<0), the nonzero (l)-family is empty by its exact
+cutoff.  Otherwise the subcell is covered whenever
+
+\[
+ E_{h\text{-comp}}\le P.
+\tag{4.621i}
+\]
+
+This coverage region has an exact elementary description.  Set
+(x=a+\mu_1) and (y=b+\nu_1).  Balance gives (\nu_2=P-y), so the
+cutoff exponent is
+
+\[
+ a+\mu_1-\nu_2=x+y-P.
+\]
+
+Consequently:
+
+1. if (x+y<P), the nonzero-frequency family is empty;
+2. if (x+y=P), (4.621i) holds exactly when (x\ge y\ge\alpha);
+3. if (x+y>P), the completion bound is strictly above (P).
+
+Thus the remaining nonzero-frequency Type cells are not diffuse: they are
+the supercritical half-polytope (x+y>P), together with the reversed or
+too-small-(y) portion of the boundary (x+y=P).  No assertion is made that
+failure of this particular completion bound is a lower bound for the
+original signed sum.
+
+For (4.618), (4.621h) is exactly (2).  For example, the signed cell
+(a=b=1), (mu_i=\nu_i=1/2), (alpha=1) instead gives (3), so the
+new completion is a genuine additional coverage region, not a proof of all
+Type cells.
+
+Finally, (4.621g) concerns only (l\ne0).  The (l=0) Poisson main term
+is of larger raw size and still has to be recombined across all four
+Möbius outer allocations and the BBLR orderings, together with the already
+registered zero-frequency master.  Consequently the whole coupled gate is
+not yet proved, but its formerly worst **nonzero-frequency** cell is now
+closed without any Möbius estimate.
+
+The adapters `transition_bblr_hard_h_completion_audit` and
+`transition_bblr_h_completion_subcell_audit` record (4.621a)--(4.621i).
+The helpers `inverse_multiplier_unit_fibre_max` and
+`frequency_gcd_sum_identity` check the exact fibre and frequency-average
+identities on finite moduli.
+
+#### 4.68.2 The remaining BBLR main term is an exact phase-free outer product
+
+The (l=0) term can be isolated without an estimate.  Put
+
+\[
+ \mathcal A_d(X)=
+ \sum_{am_1=dX}\alpha_aW_1\!\left(\frac{m_1}{M_1}\right),
+ \qquad
+ \mathcal B_d(Y)=
+ \sum_{bn_1=dY}\beta_bW_3\!\left(\frac{n_1}{N_1}\right),
+\tag{4.621j}
+\]
+
+and
+
+\[
+ \mathcal K_d(X,Y)=
+ \sum_h W_0\!\left(\frac{dh}{H}\right)
+ \int_0^\infty
+ W_2\!\left(\frac{Yx}{M_2}\right)
+ W_4\!\left(\frac{Xx}{N_2}\right)\,dx.
+\tag{4.621k}
+\]
+
+Since
+
+\[
+ d=(am_1,bn_1),\qquad X=\frac{am_1}{d},\qquad
+ Y=\frac{bn_1}{d},\qquad (X,Y)=1,
+\]
+
+the main term in BBLR Proposition 3.1 is exactly
+
+\[
+ \boxed{
+ \mathcal M_{\rm BBLR}
+ =\sum_{d\ge1}\sum_{(X,Y)=1}
+ \mathcal A_d(X)\mathcal B_d(Y)\mathcal K_d(X,Y).}
+\tag{4.621l}
+\]
+
+All sums in (4.621l) are finite because the five original smooth weights
+are compactly supported.  There is no endpoint error, no inverse residue
+and no additive phase.  The two arbitrary outer coefficients remain
+separate; in particular their two Möbius-bearing decompositions have not
+been replaced by absolute values.
+
+This identity also explains why the main term cannot be discarded
+cellwise.  In the all-unsigned hard cell, each ((m_1,n_1))-pair contributes
+a shift length (T/d) times an integral of length (d), hence (T).  There are
+(T^{2+o(1)}) such pairs, so the raw phase-free cell has size
+
+\[
+ \mathcal M_{\rm BBLR}^{\rm hard,unsigned}\ll T^{3+\varepsilon},
+\tag{4.621m}
+\]
+
+one full power above its local (T^{2+\varepsilon}) target.  Thus the
+nonzero-frequency completion does not by itself cover the whole cell.
+The missing statement is now the explicit recombination identity
+
+\[
+ \sum_{\substack{\text{AFE directions, BBLR orderings,}\\
+                   \text{four outer Möbius sectors}}}
+ \mathcal M_{\rm BBLR}
+ \stackrel{?}{=}
+ \mathcal M_{\rm res}^{\rm registered}
+ \quad\text{(including any required explicit diagonal)}.
+\tag{4.621n}
+\]
+
+Equation (4.621n) is not yet proved.  In particular, neither cancellation
+nor absorption into the previously registered resonant master is asserted.
+The finite helper `bblr_zero_frequency_reindex_sides` verifies (4.621j)--
+(4.621l) for arbitrary rational coefficient fixtures and deliberately sets
+`registered_zero_master_identification_proved=False`.  This separates the
+remaining main-term adapter from the now-bounded nonzero-frequency error.
 
 ### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range but not the gate
 

@@ -737,6 +737,34 @@ def test_zero_frequency_master_keeps_both_afe_directions_and_centers_once() -> N
     assert all(value == 0 for _, value in sides.weighted_centered_column_sums)
 
 
+def test_bblr_zero_frequency_reindexes_into_two_outer_coefficients() -> None:
+    """Catch losing a factorization or inserting a phase into BBLR's l=0 term."""
+    helper = getattr(
+        type_identity,
+        "bblr_zero_frequency_reindex_sides",
+        None,
+    )
+    assert helper is not None, "BBLR zero-frequency reindex is missing"
+
+    sides = helper(
+        left_outer_weights={1: F(2), 2: F(-1)},
+        left_inner_weights={3: F(4), 6: F(1)},
+        right_outer_weights={1: F(3)},
+        right_inner_weights={2: F(5)},
+        shift_weights={(2, 1): F(11), (2, 2): F(-1)},
+        zero_kernels={(2, 3, 1): F(7)},
+    )
+
+    assert sides.direct_sum == F(-2100)
+    assert sides.reindexed_sum == F(-2100)
+    assert (2, 3, F(-2)) in sides.left_aggregate_entries
+    assert (2, 1, F(15)) in sides.right_aggregate_entries
+    assert sides.active_coprime_coordinates == ((2, 3, 1),)
+    assert sides.left_and_right_outer_weights_remain_separate
+    assert sides.zero_frequency_is_phase_free
+    assert not sides.registered_zero_master_identification_proved
+
+
 def test_zero_frequency_master_rejects_the_already_counted_original_zero_mode() -> None:
     """The h=0 term belongs to (4.6), not the secondary completion master."""
     with pytest.raises(ValueError, match="original h=0"):

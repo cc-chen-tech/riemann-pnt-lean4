@@ -1,5 +1,6 @@
-from fractions import Fraction as F
 import sys
+from fractions import Fraction as F
+from math import gcd
 from pathlib import Path
 
 import pytest
@@ -2187,6 +2188,144 @@ def test_bblr_uncompressed_lemma_keeps_the_half_power_unsigned_deficit() -> None
     assert top.dyadic_layer_exponent == F(1)
     assert top.initial_h_squared_error_exponent == F(2)
     assert top.global_error_exponent == F(5, 2)
+
+
+def test_bblr_h_first_completion_closes_the_hard_unsigned_error() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_hard_h_completion_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR h-first completion audit is missing"
+
+    bottom = adapter(poisson_gcd_exponent=F(0))
+    assert bottom.reduced_h_length_exponent == F(1)
+    assert bottom.reduced_modulus_exponent == F(1)
+    assert bottom.h_length_matches_modulus
+    assert bottom.nonzero_l_cutoff_exponent == F(0)
+    assert not bottom.positive_power_gcd_shell_has_no_nonzero_l
+    assert bottom.reduced_n1_count_exponent == F(1)
+    assert bottom.completed_m1_h_exponent == F(1)
+    assert bottom.poisson_integral_exponent == F(0)
+    assert bottom.fixed_gcd_value_exponent == F(2)
+    assert bottom.poisson_gcd_count_exponent == F(0)
+    assert bottom.dyadic_layer_exponent == F(2)
+    assert bottom.global_nonzero_frequency_exponent == F(2)
+    assert bottom.target_exponent == F(2)
+    assert bottom.power_margin == F(0)
+    assert bottom.inverse_map_is_permutation_on_units
+    assert bottom.multiplier_fibre_bound_is_gcd
+    assert bottom.nonzero_frequency_error_closed_with_epsilon_loss
+    assert not bottom.poisson_main_term_controlled
+    assert not bottom.whole_unsigned_cell_covered
+
+    positive = adapter(poisson_gcd_exponent=F(1, 3))
+    assert positive.reduced_h_length_exponent == F(2, 3)
+    assert positive.reduced_modulus_exponent == F(2, 3)
+    assert positive.nonzero_l_cutoff_exponent == F(-1, 3)
+    assert positive.positive_power_gcd_shell_has_no_nonzero_l
+    assert positive.poisson_integral_exponent == F(1, 3)
+    assert positive.fixed_gcd_value_exponent == F(5, 3)
+    assert positive.poisson_gcd_count_exponent == F(1, 3)
+    assert positive.dyadic_layer_exponent == F(2)
+
+
+def test_bblr_h_completion_inverse_multiplier_fibres_are_gcd_bounded() -> None:
+    helper = getattr(
+        coverage_audit,
+        "inverse_multiplier_unit_fibre_max",
+        None,
+    )
+    assert helper is not None, "inverse multiplier fibre helper is missing"
+
+    for modulus in range(2, 80):
+        for multiplier in range(1, 16):
+            assert helper(modulus, multiplier) <= gcd(modulus, multiplier)
+
+
+def test_bblr_frequency_gcd_sum_has_an_exact_divisor_expansion() -> None:
+    helper = getattr(
+        coverage_audit,
+        "frequency_gcd_sum_identity",
+        None,
+    )
+    assert helper is not None, "frequency gcd-sum identity is missing"
+
+    identity = helper(modulus=12, cutoff=10)
+    assert identity.direct_gcd_sum == 27
+    assert identity.divisor_totient_sum == 27
+    assert identity.divisor_count == 6
+    assert identity.linear_divisor_bound == 60
+    assert identity.direct_gcd_sum <= identity.linear_divisor_bound
+
+
+def test_bblr_h_completion_gives_an_exact_type_subcell_coverage_test() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_h_completion_subcell_audit",
+        None,
+    )
+    assert adapter is not None, "general BBLR h-completion audit is missing"
+
+    unsigned = adapter(
+        outer_a_exponent=F(0),
+        outer_b_exponent=F(0),
+        m1_exponent=F(1),
+        m2_exponent=F(1),
+        n1_exponent=F(1),
+        n2_exponent=F(1),
+        shift_exponent=F(1),
+    )
+    assert unsigned.left_side_product_exponent == F(2)
+    assert unsigned.right_side_product_exponent == F(2)
+    assert unsigned.x_product_exponent == F(1)
+    assert unsigned.y_modulus_exponent == F(1)
+    assert unsigned.x_over_y_excess_exponent == F(0)
+    assert unsigned.h_or_modulus_exponent == F(1)
+    assert unsigned.nonzero_l_base_cutoff_exponent == F(0)
+    assert unsigned.summed_frequency_gcd_exponent == F(0)
+    assert not unsigned.nonzero_frequency_family_empty
+    assert unsigned.global_nonzero_frequency_exponent == F(2)
+    assert unsigned.target_exponent == F(2)
+    assert unsigned.nonzero_frequency_cell_covered
+    assert unsigned.outer_coefficients_may_be_arbitrary
+    assert unsigned.factorization_multiplicity_is_divisor_bounded
+    assert unsigned.frequency_gcd_average_is_divisor_bounded
+    assert not unsigned.poisson_main_term_controlled
+    assert not unsigned.whole_type_subcell_covered
+
+    signed = adapter(
+        outer_a_exponent=F(1),
+        outer_b_exponent=F(1),
+        m1_exponent=F(1, 2),
+        m2_exponent=F(1, 2),
+        n1_exponent=F(1, 2),
+        n2_exponent=F(1, 2),
+        shift_exponent=F(1),
+    )
+    assert signed.x_product_exponent == F(3, 2)
+    assert signed.y_modulus_exponent == F(3, 2)
+    assert signed.h_or_modulus_exponent == F(3, 2)
+    assert signed.nonzero_l_base_cutoff_exponent == F(1)
+    assert signed.summed_frequency_gcd_exponent == F(1)
+    assert signed.global_nonzero_frequency_exponent == F(3)
+    assert signed.target_exponent == F(2)
+    assert signed.power_margin == F(-1)
+    assert not signed.nonzero_frequency_cell_covered
+
+    empty = adapter(
+        outer_a_exponent=F(0),
+        outer_b_exponent=F(1),
+        m1_exponent=F(1, 4),
+        m2_exponent=F(7, 4),
+        n1_exponent=F(1, 2),
+        n2_exponent=F(1, 2),
+        shift_exponent=F(1),
+    )
+    assert empty.nonzero_l_base_cutoff_exponent == F(-1, 4)
+    assert empty.summed_frequency_gcd_exponent == F(0)
+    assert empty.nonzero_frequency_family_empty
+    assert empty.nonzero_frequency_cell_covered
 
 
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
