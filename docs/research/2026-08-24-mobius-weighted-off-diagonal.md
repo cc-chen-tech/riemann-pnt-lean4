@@ -9539,6 +9539,73 @@ multiplicative rational spectral weights, repeated divisor entries, and
 every moving floor boundary.  Its pole-density test checks that the
 bulk vanishes while the boundary survives exactly.
 
+### 9.61 Mellin \(L^2\) returns the same long-polynomial problem
+
+One might try to improve the pointwise convexity row above by using the
+mean square of \(\zeta\) on the shifted \(w\)-line.  A finite Fourier
+identity shows that this is not an independent input.
+
+Let \(V\) be a fixed smooth cutoff on \([1/2,2]\), and define the finite
+product polynomial
+
+\[
+ F_{z,X}(t):=
+ \sum_{n\geq1}
+ \frac{B_{N,z}(n)}{n^{1/2+it}}V(n/X).
+\tag{9.393}
+\]
+
+For the Gaussian time weight, termwise integration is finite and gives
+
+\[
+\boxed{
+\begin{aligned}
+ &\int_{\mathbb R}e^{-t^2/(2T^2)}
+ F_{z,X}(t)F_{z,X}(-t)\,dt\\
+ &\quad=\sqrt{2\pi}\,T
+ \sum_{m,n\geq1}
+ \frac{B_{N,z}(m)B_{N,z}(n)}{\sqrt{mn}}
+ V(m/X)V(n/X)
+ \exp\left\{-\frac{T^2}{2}\log^2\frac mn\right\}.
+\end{aligned}}
+\tag{9.394}
+\]
+
+There is no positivity assumption in (9.394): the two coefficients have
+the same \(z\), exactly as in (9.361).  The Gaussian restricts the right
+side to
+
+\[
+ |\log(m/n)|\ll T^{-1},
+ \qquad |m-n|\ll X/T=H,
+\tag{9.395}
+\]
+
+up to arbitrary-power tails.  A general compact \(W(t/T)\) gives the
+same finite bilinear identity with its Fourier transform in place of the
+Gaussian.
+
+Applying Cauchy--Schwarz to the left side of (9.394) asks for the
+ordinary \(L^2\) norm of the length-\(X\) polynomial \(F_{z,X}\).
+Opening \(B_{N,z}\) by (9.360) returns the same zeta-index times
+mollifier-divisor product from (9.361), with the product cutoff retained.
+Thus a sharp \(L^2\) theorem for \(F_{z,X}\) is already the compact
+long-mollifier estimate one is trying to prove.
+
+The general Montgomery--Vaughan mean-value inequality has scale
+\((T+X)\sum|c_n|^2\).  Since \(X/T=H=T^{5/2}\), its long-polynomial term
+loses exactly the window factor which \({\rm CME}_3\) must save.
+Goldston--Gonek replace that loss by coefficient correlations, but for
+the present coefficients those correlations are the right side of
+(9.394).  Hence Mellin \(L^2\), general large sieve, and the
+long-polynomial correlation formula form a closed circle; none is a
+strictly weaker proved input.
+
+Equations (9.393)--(9.395) do not rule out a coefficient-specific
+bilinear argument which keeps both Möbius signs and \(h\delta\).  They
+do rule out claiming that a standard zeta mean square, applied after
+compact-Mellin centering, proves \({\rm CME}_3\).
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -9587,7 +9654,11 @@ does not close that route: (9.387)--(9.390) cancel the infinite-series
 pole but leave the complete finite product boundary, while the
 transition contour ledger (9.391) shows that zeta convexity exactly
 cancels the geometric line-shift gain.  The resulting diagonal-sized
-compact-Mellin gate \({\rm CME}_3\), (9.392), is also unproved.**
+compact-Mellin gate \({\rm CME}_3\), (9.392), is also unproved.
+The exact Gaussian bilinear identity (9.393)--(9.395) further shows
+that applying a standard Mellin \(L^2\) estimate returns the same
+length-\(T^{7/2}\) product polynomial; Montgomery--Vaughan loses the
+entire \(X/T=T^{5/2}\) window factor.**
 
 Proved in this note:
 
@@ -9716,6 +9787,13 @@ Proved in this note:
   The sufficient compact-Mellin correlation gate (9.392) therefore
   remains a new, unproved diagonal-sized estimate rather than an
   elementary consequence of pole cancellation.
+* the exact finite Gaussian product-polynomial identity
+  (9.393)--(9.395).  It identifies the compact shifted correlation
+  with a bilinear mean of the same \(B_{N,z}\) polynomial.  Cauchy
+  returns its long \(L^2\) norm, while Montgomery--Vaughan loses
+  \(X/T=T^{5/2}\), exactly the factor required by \({\rm CME}_3\).
+  Thus standard Mellin \(L^2\) is circular here, not a proved weaker
+  gate.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -9973,6 +10051,7 @@ Proved in this note:
 | Precompletion $\zeta$--mollifier pairing | exact two-product-variable reduction; compact twisted coefficient family unproved | Pairing $x=nd,y=me$ on the initial AFE line gives (9.361) with the truncated coefficients $B_{N,z}$.  At $z=0$, (9.362)--(9.363) are exactly von Mangoldt plus a reflected cofactor shorter than $T^{1/2+\varepsilon}$ on the balanced transition.  But the actual compact Mellin family contains every $B_{N,i\tau}$; (9.364) shows that nonzero bounded $\tau$ restores arbitrary many-prime support.  Moving the reindexed long energy to a left line is not absolutely convergent, so the prime slice alone is not the full gate |
 | Short-modulus zero-frequency recombination | complete aggregate identified; fixed balanced weight still unproved | Only after summing the full \(h,\delta\) dyadic partitions does Fourier inversion give the continuous \(m_1=m_2\) condition (9.380)--(9.383).  Summing gcd strata gives the literal square (9.384), minus the explicit \(r=s\) diagonal.  A fixed balanced box has Fourier width \(S/H\asymp M\), so it is not a point mass and no converse from its actual weight to \({\rm MS}_{2/3}\) is claimed.  The identified alternative is a uniform shifted-energy theorem for the full compact family \(B_{N,i\tau}\), not merely its prime-supported \(\tau=0\) slice |
 | Compact-Mellin density centering | exact pole cancellation and finite boundary; diagonal-sized correlation unproved | The generating series is (9.388), and subtracting \(\beta_N(z)\) cancels its \(w=1\) pole in (9.389).  For every finite product cutoff, (9.390) shows that the entire moving edge remains; at \(w=1\) it is the whole centered prefix.  On the transition \(X=T^{7/2},H=X/T\), convexity cancels the contour gain exactly, (9.391).  Goldston--Gonek requires the same coefficient correlations as input, and the Conrey--Keating divisor Type II framework does not apply to the inverse Möbius coefficient.  The precise sufficient replacement \({\rm CME}_3\), (9.392), needs the full \(H=T^{5/2}\) diagonal saving and is unproved |
+| Compact-Mellin \(L^2\) route | exact finite Fourier identity; standard mean values circular | The Gaussian identity (9.394) localizes the product polynomial to \(|m-n|\ll X/T\), (9.395), with the same-\(z\) bilinear coefficients from (9.361).  Cauchy asks for the \(L^2\) norm of that same length-\(X\) polynomial.  Opening \(B_{N,z}\) returns the original zeta--mollifier product chunk, while Montgomery--Vaughan has the long term \(X\sum|c_n|^2\), losing exactly \(X/T=T^{5/2}\).  Goldston--Gonek replaces the loss only after assuming the coefficient correlations on the right side, so no standard mean-square theorem proves \({\rm CME}_3\) |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
