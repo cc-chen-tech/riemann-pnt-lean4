@@ -760,3 +760,44 @@ This closes the local simple-zero implication needed in equation (42).  It
 does not yet count the relevant argument crossings: the Littlewood
 rectangle/argument-variation inequality and the long mollified mean-square
 estimate, including the Deshouillers--Iwaniec spectral input, remain open.
+
+## 14. Zero-free argument-crossing engine implemented
+
+The topological crossing mechanism on the left-hand side of Conrey's equation
+(41) is now isolated in `MathlibAux/ArgumentCrossing.lean`, with its public
+contract in `Test/ArgumentCrossingContract.lean`.
+
+For a continuous nonvanishing curve
+
+\[
+  \gamma:[0,1]\longrightarrow \mathbb C^\times,
+\]
+
+the construction lifts `gamma` through the covering map
+`Complex.exp : C -> C^x`, normalized by `log (gamma 0)`.  Thus it supplies a
+continuous logarithm `Lambda` satisfying
+
+\[
+  e^{\Lambda(t)}=\gamma(t),\qquad
+  \Lambda(0)=\log\gamma(0).
+\]
+
+If a level `pi/2 + k pi` lies between the two endpoint imaginary parts, the
+intermediate value theorem gives a time `t_k` with
+
+\[
+  \operatorname{Im}\Lambda(t_k)=\frac\pi2+k\pi,
+  \qquad \operatorname{Re}\gamma(t_k)=0.
+\]
+
+For every finite set of such integers, Lean also chooses these crossing times
+simultaneously and proves that `k -> t_k` is injective.  The injectivity step is
+essential: it turns distinct lifted argument levels into genuinely distinct
+real-part crossings, rather than merely repeated existence claims.
+
+This is an unconditional zero-free-interval theorem.  It does not yet prove
+the full inequality (41): to apply it to `eta` one must partition the critical
+line at the finitely many zeros of `eta`, reconcile the lifts on the resulting
+zero-free components, and account for the loss `N_{0,eta}(T)`.  The rectangle
+argument estimate and the long mollified mean-square/spectral estimate also
+remain open.
