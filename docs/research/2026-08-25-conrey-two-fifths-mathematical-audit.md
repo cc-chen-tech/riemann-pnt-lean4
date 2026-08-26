@@ -948,10 +948,28 @@ using the exact product-order identity and the now-proved finiteness of the
 mollifier order.  This is the local analytic content of equation (35), not a
 cardinality-only surrogate.
 
+The finite-order premise has now also been discharged for Conrey's
+nondegenerate degree-one choice.  In
+`HardyTheorem/ConreyDegreeOneNontrivial.lean`, with its contract in
+`Test/ConreyDegreeOneNontrivialContract.lean`, Lean first proves that `eta` is
+entire.  If `g != 0`, choose a positive good height `T` and put
+`s=1/2+iT`.  The good-height condition makes `zeta(s)` nonzero, hence
+`xi(s)` is nonzero; critical-line symmetry makes `xi(s)` real, and therefore
+
+\[
+  \operatorname{Re}\eta(s)=g\,\xi(s)\ne0.
+\]
+
+Thus `eta` is not identically zero and has finite analytic order everywhere.
+The factorization `eta=H V_1` and nonvanishing of `H`, now proved throughout
+`Re s > 0`, `s != 1`, transfer finite order to `V_1`.  Consequently the local
+equation-(35) multiplicity inequality above is available from the actual
+coefficient hypothesis `g != 0`, with no auxiliary `V_1` finite-order
+assumption.
+
 The global half-weighted inequality `N^*_{V_1}(T) <= N^*_{V_1B}(T)` still
-requires three explicit steps: prove finite analytic order for the chosen
-nondegenerate `V_1`, construct the finite zero divisors on bounded right-half
-rectangles, and remove the auxiliary far-right edge by proving that no zeros
-remain beyond it.  Only after those steps may the pointwise inclusion be
-summed.  Littlewood's inequality (37) and all of its edge asymptotics remain
+requires two explicit steps: construct the finite zero divisors on bounded
+right-half rectangles, and remove the auxiliary far-right edge by proving that
+no zeros remain beyond it.  Only after those steps may the pointwise inclusion
+be summed.  Littlewood's inequality (37) and all of its edge asymptotics remain
 separate, as does the long mollified mean-square theorem.

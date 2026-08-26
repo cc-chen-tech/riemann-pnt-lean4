@@ -1,4 +1,4 @@
-import HardyTheorem.ConreyDegreeOneV1
+import HardyTheorem.ConreyDegreeOneNontrivial
 import HardyTheorem.SelbergMollifierNonvanishing
 
 /-!
@@ -133,5 +133,17 @@ theorem analyticOrderNatAt_conreyDegreeOneV1_le_mollified
       (conreyDegreeOneV1 g g0 g1 L * conreyMollifier Y sigma0 P) s
   rw [analyticOrderNatAt_mul hV hB hVfinite hBfinite]
   exact Nat.le_add_right _ _
+
+/-- With Conrey's actual leading-coefficient condition `g != 0`, equation
+(35)'s pointwise multiplicity inclusion has no extra finite-order premise. -/
+theorem analyticOrderNatAt_conreyDegreeOneV1_le_mollified_of_g_ne_zero
+    {g g0 g1 L sigma0 : ℝ} {Y : ℕ} {P : ℝ → ℝ} {s : ℂ}
+    (hg : g ≠ 0) (hs0 : 0 < s.re) (hs1 : s ≠ 1)
+    (hY : 2 ≤ Y) (hP1 : P 1 = 1) :
+    analyticOrderNatAt (conreyDegreeOneV1 g g0 g1 L) s ≤
+      analyticOrderNatAt
+        (conreyMollifiedDegreeOneV1 g g0 g1 L Y sigma0 P) s :=
+  analyticOrderNatAt_conreyDegreeOneV1_le_mollified hs0 hs1 hY hP1
+    (analyticOrderAt_conreyDegreeOneV1_ne_top_of_g_ne_zero hg hs0 hs1)
 
 end HardyTheorem
