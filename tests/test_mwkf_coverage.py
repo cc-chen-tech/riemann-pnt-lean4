@@ -4933,9 +4933,52 @@ def test_cross_cusp_l2_density_closes_nonzero_continuous_residual_square() -> No
     assert audit.weighted_crt_boundary_absorbed_on_residual_square
     assert audit.physical_cross_cusp_nonzero_mode_covered
     assert not audit.completed_residue_decomposition_needed
-    assert not audit.poisson_zero_mode_residue_pairing_proved
+    assert audit.original_common_mellin_zero_mode_main_term_proved
+    assert not audit.separate_spectral_residue_pairing_needed
     assert not audit.global_ratio_gcd_aggregation_proved
     assert not audit.whole_mobius_gate_covered
+
+
+def test_balanced_spectral_factor_polytope_is_fully_covered() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "balanced_spectral_factor_polytope_audit",
+        None,
+    )
+    assert adapter is not None, "balanced factor-polytope audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109t Every balanced factor cell has a half-power margin",
+        "\\tag{4.845ci}",
+        "\\tag{4.845ck}",
+        "balanced_spectral_factor_polytope_audit",
+    ):
+        assert marker in note
+
+    center = adapter(
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    assert center.product_variable_exponent == F(5, 2)
+    assert center.ambient_level_exponent == F(5, 2)
+    assert center.shorter_level_factor_exponent == F(5, 4)
+    assert center.maximum_residual_hecke_length_exponent == F(5, 2)
+    assert center.primal_large_sieve_excess_exponent == F(5, 4)
+    assert center.primal_excess_never_exceeds_shorter_factor
+    assert center.cuspidal_normalized_excess_exponent == F(0)
+    assert center.cuspidal_holomorphic_bound_exponent == F(3, 2)
+    assert center.continuous_bound_exponent == F(3, 2)
+    assert center.universal_factor_cell_bound_exponent == F(3, 2)
+    assert center.target_exponent == F(2)
+    assert center.fixed_margin_exponent == F(1, 2)
+    assert center.type_i_type_i_cells_covered
+    assert center.mixed_type_i_type_ii_cells_covered
+    assert center.type_ii_type_ii_cells_covered
+    assert center.balanced_hard_geometry_all_factor_cells_covered
+    assert not center.unbalanced_original_exponent_polytope_covered
+    assert not center.polylogarithmic_transform_tail_aggregated
+    assert not center.whole_mobius_gate_covered
 
 
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:

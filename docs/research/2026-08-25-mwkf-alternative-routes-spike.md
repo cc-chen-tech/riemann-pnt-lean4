@@ -15362,8 +15362,89 @@ prime-five moments, the \(5/8\) center saving, the final exponent
 \(3/2\), QCT weight separation, the finite common-divisor allocations,
 and the weighted CRT boundary estimate.  It marks the physical
 cross-cusp **nonzero-mode** continuous residual square covered.  It
-keeps the Poisson-zero-mode/completed-residue pairing, global
-ratio/gcd and dyadic aggregation, and the whole Möbius gate false.
+also records that the original common-Mellin zero-mode/main-term
+identity (4.5a)--(4.8) is proved.  Because this primal route does not
+shift the two Eisenstein polynomials separately, the stronger spectral
+residue decomposition is not a required intermediate theorem.  It
+keeps global ratio/gcd and dyadic aggregation, and the whole Möbius
+gate false.
+
+
+### 4.109t Every balanced factor cell has a half-power margin
+
+Sections 4.109i--4.109s can now be combined without a numerical grid.
+Keep the balanced hard geometry
+\[
+ R=S=T^3,\qquad |h|=|\delta|=T^{5/2},
+\]
+but allow every factor box produced by the exact Type-I/II identity.
+Write
+\[
+ A=T^\alpha,\qquad B=T^\beta,\qquad
+ \lambda=\alpha+\beta,\qquad
+ \eta=\min(\alpha,\beta),\qquad 0\leq\alpha,\beta\leq3.
+\]
+The maximum residual Hecke-polynomial exponent is
+\(\min(5/2,\lambda)\).  Hence the primal large-sieve excess from
+(4.845bc) is
+
+\[
+ \boxed{
+ x(\alpha,\beta)
+ =\left(\eta+\min(5/2,\lambda)-\lambda\right)_+
+ \leq\eta.}
+\tag{4.845ci}
+\]
+
+This inequality is formal: \(\min(5/2,\lambda)\leq\lambda\).
+For a primitive cuspidal conductor \(q_0=T^\rho\) with
+\(0\leq\rho\leq\lambda\), the primal/dual normalized excess in
+(4.845bg) is at most
+
+\[
+ \boxed{
+ \eta+\frac{\rho}{2}-\lambda
+ \leq\eta-\frac{\lambda}{2}
+ =-\frac{|\alpha-\beta|}{2}\leq0.}
+\tag{4.845cj}
+\]
+
+Thus the Maaß and holomorphic cusp contributions have exponent
+\(3/2\).  For the continuous contribution, (4.845ch) and
+(4.845ci) give
+
+\[
+ \boxed{
+ \begin{aligned}
+ E_{\rm cusp/holo}(\alpha,\beta)&\leq\frac32,\\
+ E_{\rm cont}^{\ne0}(\alpha,\beta)
+ &=\frac32+\frac{x(\alpha,\beta)-\eta}{2}
+ \leq\frac32,\\
+ \max(E_{\rm cusp/holo},E_{\rm cont}^{\ne0})
+ &\leq\frac32=2-\frac12.
+ \end{aligned}}
+\tag{4.845ck}
+\]
+
+No case distinction remains: (4.845ck) covers Type-I/Type-I,
+Type-I/Type-II, and Type-II/Type-II factor cells, including their
+boundary faces.  Divisor allocations, oldclass shifts, and the
+five-variable physical nuclear measure have \(T^{o(1)}\) or
+polylogarithmic cost, absorbed by the fixed \(1/2\) margin.
+
+This is a complete factor-polytope statement only inside the balanced
+hard geometry.  The original exponent polytope also contains
+\(R\neq S\), unequal \(h,\delta\) lengths, positive \(q\)-exponent,
+and boxes outside the polylogarithmic transform core.  The normalization
+leading to the common base \(3/2\) has not yet been rederived uniformly
+on those cells.  Equation (4.845ck) must not be used as a global MWKF
+coverage certificate before that rederivation.
+
+The interface balanced_spectral_factor_polytope_audit checks
+(4.845ci)--(4.845ck) with exact rational arithmetic.  It marks all
+balanced Type-I/II factor cells covered with margin \(1/2\), while
+keeping the unbalanced original polytope, transform-tail aggregation,
+and whole Möbius gate false.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector

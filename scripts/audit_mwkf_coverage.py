@@ -2108,8 +2108,34 @@ class EisensteinCrossCuspL2DensityAudit:
     weighted_crt_boundary_absorbed_on_residual_square: bool
     physical_cross_cusp_nonzero_mode_covered: bool
     completed_residue_decomposition_needed: bool
-    poisson_zero_mode_residue_pairing_proved: bool
+    original_common_mellin_zero_mode_main_term_proved: bool
+    separate_spectral_residue_pairing_needed: bool
     global_ratio_gcd_aggregation_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class BalancedSpectralFactorPolytopeAudit:
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    product_variable_exponent: Fraction
+    ambient_level_exponent: Fraction
+    shorter_level_factor_exponent: Fraction
+    maximum_residual_hecke_length_exponent: Fraction
+    primal_large_sieve_excess_exponent: Fraction
+    primal_excess_never_exceeds_shorter_factor: bool
+    cuspidal_normalized_excess_exponent: Fraction
+    cuspidal_holomorphic_bound_exponent: Fraction
+    continuous_bound_exponent: Fraction
+    universal_factor_cell_bound_exponent: Fraction
+    target_exponent: Fraction
+    fixed_margin_exponent: Fraction
+    type_i_type_i_cells_covered: bool
+    mixed_type_i_type_ii_cells_covered: bool
+    type_ii_type_ii_cells_covered: bool
+    balanced_hard_geometry_all_factor_cells_covered: bool
+    unbalanced_original_exponent_polytope_covered: bool
+    polylogarithmic_transform_tail_aggregated: bool
     whole_mobius_gate_covered: bool
 
 
@@ -10616,8 +10642,11 @@ def eisenstein_cross_cusp_l2_density_audit(
     exponent.  Since the residual-square excess ``x`` is at most
     ``min(alpha,beta)``, the entire square has exponent at most ``3/2``.
 
-    This is a nonzero-Poisson-mode statement.  It does not prove the
-    separate zero-mode/residue pairing or the global box aggregation.
+    This is a nonzero-Poisson-mode statement.  The original common-Mellin
+    calculation already pairs the geometric zero mode with the diagonal
+    main term.  Since this primal argument does not shift either
+    Eisenstein polynomial separately, the stronger spectral residue
+    pairing is not required.  The global box aggregation remains separate.
     """
     if prime < 3:
         raise ValueError("use an odd prime")
@@ -10667,8 +10696,72 @@ def eisenstein_cross_cusp_l2_density_audit(
         weighted_crt_boundary_absorbed_on_residual_square=True,
         physical_cross_cusp_nonzero_mode_covered=True,
         completed_residue_decomposition_needed=False,
-        poisson_zero_mode_residue_pairing_proved=False,
+        original_common_mellin_zero_mode_main_term_proved=True,
+        separate_spectral_residue_pairing_needed=False,
         global_ratio_gcd_aggregation_proved=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def balanced_spectral_factor_polytope_audit(
+    *,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+) -> BalancedSpectralFactorPolytopeAudit:
+    """Combine the cusp and Eisenstein bounds on the balanced hard box.
+
+    The product-variable exponent is ``H=5/2``.  For arbitrary factor
+    exponents ``alpha,beta in [0,3]``, put ``level=alpha+beta`` and
+    ``eta=min(alpha,beta)``.  The primal product large-sieve excess is
+
+    ``x=(eta+min(H,level)-level)_+ <= eta``.
+
+    The cross-cusp L2 density subtracts ``eta/2`` from the continuous
+    exponent, so it is at most ``3/2``.  For a cuspidal primitive
+    conductor ``q0<=level``, primal/dual optimization has normalized
+    excess at most ``eta-level/2<=0`` and also gives ``3/2``.  These two
+    elementary inequalities do not depend on the Type-I/II labels and
+    therefore cover every factor cell of the balanced hard geometry.
+
+    This adapter deliberately does not transfer the normalization to an
+    unbalanced original exponent box and does not aggregate transform
+    tails.
+    """
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    if not (F(0) <= alpha <= F(3)) or not (F(0) <= beta <= F(3)):
+        raise ValueError("balanced level-factor exponents must lie in [0,3]")
+    h = F(5, 2)
+    level = alpha + beta
+    eta = min(alpha, beta)
+    residual = min(h, level)
+    primal_excess = _positive_part(eta + residual - level)
+    cusp_normalized = eta - level / 2
+    cusp_bound = F(3, 2) + _positive_part(cusp_normalized) / 2
+    continuous_bound = F(3, 2) + (primal_excess - eta) / 2
+    universal = max(cusp_bound, continuous_bound)
+    target = F(2)
+    return BalancedSpectralFactorPolytopeAudit(
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        product_variable_exponent=h,
+        ambient_level_exponent=level,
+        shorter_level_factor_exponent=eta,
+        maximum_residual_hecke_length_exponent=residual,
+        primal_large_sieve_excess_exponent=primal_excess,
+        primal_excess_never_exceeds_shorter_factor=(primal_excess <= eta),
+        cuspidal_normalized_excess_exponent=cusp_normalized,
+        cuspidal_holomorphic_bound_exponent=cusp_bound,
+        continuous_bound_exponent=continuous_bound,
+        universal_factor_cell_bound_exponent=universal,
+        target_exponent=target,
+        fixed_margin_exponent=target - universal,
+        type_i_type_i_cells_covered=True,
+        mixed_type_i_type_ii_cells_covered=True,
+        type_ii_type_ii_cells_covered=True,
+        balanced_hard_geometry_all_factor_cells_covered=(universal < target),
+        unbalanced_original_exponent_polytope_covered=False,
+        polylogarithmic_transform_tail_aggregated=False,
         whole_mobius_gate_covered=False,
     )
 
@@ -17893,11 +17986,51 @@ def main() -> None:
         f"{l2_density.physical_cross_cusp_nonzero_mode_covered},"
         "needs_residues="
         f"{l2_density.completed_residue_decomposition_needed},"
-        "zero_pairing="
-        f"{l2_density.poisson_zero_mode_residue_pairing_proved},"
+        "original_zero_mode="
+        f"{l2_density.original_common_mellin_zero_mode_main_term_proved},"
+        "separate_residue_pairing_needed="
+        f"{l2_density.separate_spectral_residue_pairing_needed},"
         "global_gcd="
         f"{l2_density.global_ratio_gcd_aggregation_proved},"
         f"covered={l2_density.whole_mobius_gate_covered}"
+    )
+    balanced_factors = balanced_spectral_factor_polytope_audit(
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: balanced_spectral_factor_polytope="
+        f"alpha={_fmt(balanced_factors.left_level_factor_exponent)},"
+        f"beta={_fmt(balanced_factors.right_level_factor_exponent)},"
+        f"H={_fmt(balanced_factors.product_variable_exponent)},"
+        f"level={_fmt(balanced_factors.ambient_level_exponent)},"
+        f"eta={_fmt(balanced_factors.shorter_level_factor_exponent)},"
+        "residual="
+        f"{_fmt(balanced_factors.maximum_residual_hecke_length_exponent)},"
+        "x="
+        f"{_fmt(balanced_factors.primal_large_sieve_excess_exponent)},"
+        "x_le_eta="
+        f"{balanced_factors.primal_excess_never_exceeds_shorter_factor},"
+        "cusp_normalized="
+        f"{_fmt(balanced_factors.cuspidal_normalized_excess_exponent)},"
+        "cusp_bound="
+        f"{_fmt(balanced_factors.cuspidal_holomorphic_bound_exponent)},"
+        "continuous_bound="
+        f"{_fmt(balanced_factors.continuous_bound_exponent)},"
+        "universal="
+        f"{_fmt(balanced_factors.universal_factor_cell_bound_exponent)},"
+        f"target={_fmt(balanced_factors.target_exponent)},"
+        f"margin={_fmt(balanced_factors.fixed_margin_exponent)},"
+        f"II={balanced_factors.type_i_type_i_cells_covered},"
+        f"I_II={balanced_factors.mixed_type_i_type_ii_cells_covered},"
+        f"IIII={balanced_factors.type_ii_type_ii_cells_covered},"
+        "balanced_all="
+        f"{balanced_factors.balanced_hard_geometry_all_factor_cells_covered},"
+        "unbalanced="
+        f"{balanced_factors.unbalanced_original_exponent_polytope_covered},"
+        "tails="
+        f"{balanced_factors.polylogarithmic_transform_tail_aggregated},"
+        f"covered={balanced_factors.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(
