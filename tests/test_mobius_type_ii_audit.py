@@ -10,6 +10,8 @@ from scripts.audit_mobius_type_ii import (
     AdditiveShiftedChowlaLedger,
     BlomerPascadiMargins,
     BlomerPascadiUnbalancedLedger,
+    CenteredCrtUnitMeanLedger,
+    CenteredKloostermanCrtTerms,
     CentralCollisionLedger,
     CompletedProductPhaseReduction,
     CrossInverseFractionCollision,
@@ -39,6 +41,7 @@ from scripts.audit_mobius_type_ii import (
     blomer_pascadi_best_trivial_margins,
     blomer_pascadi_unbalanced_ledger,
     c_coefficient,
+    centered_crt_unit_mean_ledger,
     centered_dual_common_mobius_exponent,
     centered_dual_parseval_covers,
     centered_dual_parseval_loss,
@@ -48,6 +51,7 @@ from scripts.audit_mobius_type_ii import (
     centered_inverse_cross_correlation_gcd_formula,
     centered_inverse_cross_fourier,
     centered_inverse_cross_fourier_formula,
+    centered_kloosterman_crt_terms,
     centered_kloosterman_transform,
     central_collision_ledger,
     central_cross_inverse_collision_margins,
@@ -108,6 +112,7 @@ from scripts.audit_mobius_type_ii import (
     squarefree_scalar_gcd_stratum,
     squarefree_scalar_stratum_completed_sum,
     squarefree_scalar_stratum_divisor_spectrum,
+    two_sided_centered_kloosterman_crt_terms,
     two_sided_mobius_geometric_value,
     unrestricted_fourier_lift,
     unrestricted_fourier_lift_formula,
@@ -1654,6 +1659,76 @@ def test_coprime_centered_cross_fourier_tensor_factorization() -> None:
                                 frequency,
                             )
                         ) < 1e-8
+
+
+def test_centered_kloosterman_transform_has_three_term_crt_expansion() -> None:
+    for left_factor in range(1, 10):
+        for right_factor in range(1, 10):
+            if gcd(left_factor, right_factor) != 1:
+                continue
+            for inverse_numerator in range(-2, 4):
+                for linear_frequency in range(-3, 4):
+                    terms = centered_kloosterman_crt_terms(
+                        left_factor,
+                        right_factor,
+                        inverse_numerator,
+                        linear_frequency,
+                    )
+                    assert isinstance(terms, CenteredKloostermanCrtTerms)
+                    assert abs(
+                        terms.total
+                        - centered_kloosterman_transform(
+                            left_factor * right_factor,
+                            inverse_numerator,
+                            linear_frequency,
+                        )
+                    ) < 1e-8
+
+
+def test_two_sided_centered_crt_tensor_has_exactly_nine_terms() -> None:
+    factor_pairs = ((1, 1), (1, 2), (2, 3), (3, 5), (5, 7))
+    for left_short, left_long in factor_pairs:
+        left_modulus = left_short * left_long
+        for right_short, right_long in factor_pairs:
+            right_modulus = right_short * right_long
+            if gcd(left_modulus, right_modulus) != 1:
+                continue
+            for left_numerator in range(-1, 2):
+                for right_numerator in range(-1, 2):
+                    for frequency in range(-2, 3):
+                        terms = two_sided_centered_kloosterman_crt_terms(
+                            left_short,
+                            left_long,
+                            left_numerator,
+                            right_short,
+                            right_long,
+                            right_numerator,
+                            frequency,
+                        )
+                        assert len(terms) == 9
+                        assert abs(
+                            sum(terms)
+                            - centered_inverse_cross_fourier_formula(
+                                left_modulus,
+                                left_numerator,
+                                right_modulus,
+                                right_numerator,
+                                frequency,
+                            )
+                        ) < 1e-8
+                        if frequency == 0:
+                            assert abs(sum(terms)) < 1e-8
+
+
+def test_balanced_unit_crt_mean_terms_have_exact_savings_ledger() -> None:
+    assert centered_crt_unit_mean_ledger(
+        local_factor_exponent=F(5, 4),
+        required_saving=F(2),
+    ) == CenteredCrtUnitMeanLedger(
+        saving_per_mean=F(15, 8),
+        one_mean_gap=F(1, 8),
+        two_mean_margin=F(7, 4),
+    )
 
 
 def test_blomer_pascadi_unbalanced_tensor_insertions_are_still_trivial() -> None:

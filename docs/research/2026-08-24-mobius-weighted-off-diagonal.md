@@ -5517,6 +5517,146 @@ They prove that applying the fixed-modulus theorem to only one factor of
 Kloosterman tensor must take a joint moment over both varying moduli (or
 exploit the two Möbius signs) before paying either factor's operator norm.
 
+### 9.34 Factorwise centering for a double Möbius Type-II split
+
+The centered transform in (9.198a) has a further exact decomposition
+which is adapted to a Type I/II factorization of each Möbius modulus.
+Let \(m=ab\), with \((a,b)=1\), and put
+
+\[
+ M_{q,A}(z):=\frac{c_q(A)c_q(z)}{\varphi(q)},
+ \qquad
+ \mathscr K_{q,A}(z)=S_q(A,z)-M_{q,A}(z).
+\]
+
+Write \(\bar b_a\) and \(\bar a_b\) for the two CRT inverses, and abbreviate
+
+\[
+ \mathscr K_a^{(b)}
+ :=\mathscr K_{a,A\bar b_a}(z\bar b_a),\qquad
+ \mathscr K_b^{(a)}
+ :=\mathscr K_{b,A\bar a_b}(z\bar a_b).
+\]
+
+Twisted multiplicativity of the raw Kloosterman sum and invariance of a
+Ramanujan sum under multiplication by a unit give
+
+\[
+ S_{ab}(A,z)
+ =S_a(A\bar b_a,z\bar b_a)
+  S_b(A\bar a_b,z\bar a_b),
+ \qquad
+ M_{ab,A}(z)=M_{a,A}(z)M_{b,A}(z).
+\tag{9.205}
+\]
+
+Subtracting the second product from the first therefore leaves exactly
+three, rather than four, terms:
+
+\[
+\boxed{
+ \mathscr K_{ab,A}(z)
+ =\mathscr K_a^{(b)}\mathscr K_b^{(a)}
+  +\mathscr K_a^{(b)}M_{b,A}(z)
+  +M_{a,A}(z)\mathscr K_b^{(a)}.}
+\tag{9.206}
+\]
+
+The all-principal product \(M_{a,A}M_{b,A}\) cancels identically.  This
+is an algebraic consequence of centering, not an estimate, and (9.206)
+is valid for arbitrary coprime positive \(a,b\); squarefreeness enters
+only when the Möbius weights are restored.
+
+Now write the coprime cofactors in (9.198b) as
+
+\[
+ u=ab,\qquad v=cd,\qquad (a,b,c,d)\quad\text{pairwise coprime},
+\]
+
+and set \(z_u=-k\bar v_u\), \(z_v=-k\bar u_v\).  Applying (9.206) on
+both sides gives the finite nine-term identity
+
+\[
+\boxed{
+ \widehat{\mathscr C}_{u,v;A,B}(k)
+ =\left(K_aK_b+K_aM_b+M_aK_b\right)
+  \left(K_cK_d+K_cM_d+M_cK_d\right),}
+\tag{9.207}
+\]
+
+where every local \(K\) includes the CRT-scaled numerator and frequency
+from (9.206).  Thus every one of the nine summands contains at least one
+centered local transform from \(\{a,b\}\) and at least one from
+\(\{c,d\}\).  There is no term which is principal on an entire side.
+For squarefree \(u,v\), the signs split without loss:
+
+\[
+ \mu(u)\mu(v)=\mu(a)\mu(b)\mu(c)\mu(d).
+\tag{9.208}
+\]
+
+Consequently a Vaughan/Heath--Brown-style split may be inserted before
+any Cauchy--Schwarz step while retaining all four factor signs and a
+certified centered local factor on each side.  This is the precise
+factorized interface missing from a termwise application of the
+fixed-modulus estimates in Sections 9.5 and 9.27.
+
+There is a useful, but limited, pointwise screening on the unit face.
+If \((Az,q)=1\) and \(q\) is squarefree, then
+
+\[
+ |M_{q,A}(z)|=\frac1{\varphi(q)}\ll_\varepsilon q^{-1+\varepsilon},
+ \qquad
+ |\mathscr K_{q,A}(z)|\ll_\varepsilon q^{1/2+\varepsilon}.
+\tag{9.209}
+\]
+
+Replacing a local centered factor by its local mean therefore saves
+\(q^{3/2-o(1)}\).  At the primitive corner
+\(u,v\asymp T^{5/2}\), with balanced Type-II factors
+\(a,b,c,d\asymp T^{5/4}\), the exact ledger is
+
+\[
+ \text{one local mean saves }T^{15/8-o(1)},
+ \qquad
+ \text{two local means save }T^{15/4-o(1)}.
+\tag{9.210}
+\]
+
+Compared only with the \(T^2\) deficit diagnostic in (9.172), the four
+nine-term patterns containing two means have a raw margin \(T^{7/4}\),
+the four patterns containing exactly one mean still miss by \(T^{1/8}\),
+and the fully centered pattern \(K_aK_bK_cK_d\) receives no such
+pointwise gain:
+
+\[
+ 2-\frac{15}{8}=\frac18,
+ \qquad
+ 2\frac{15}{8}-2=\frac74.
+\tag{9.211}
+\]
+
+This is a **screening ledger, not a closure proof**.  The comparison does
+not yet account for the product-coefficient multiplicities, nonunit
+strata, smooth dual weights, or the simultaneous sums over all four
+factors.  In particular it does not authorize deleting the two-mean
+patterns from the coupled kernel.  It does, however, identify the
+analytic priority sharply: first control the fully centered four-local
+term, then recover the missing \(T^{1/8}\) on the one-mean terms, while
+the two-mean terms should be treated by their explicit totient
+denominators rather than by a generic Kloosterman norm.
+
+Pascadi's composite-modulus Type-II theorem is structurally close to
+(9.206), since its proof also exploits a factorization of the modulus.
+Its published statement, however, bounds two argument sequences for one
+fixed modulus.  It does not average the mutually inverted pair
+\((u,v)\), and applying it after taking absolute values over the other
+three factors loses (9.208).  Hence the negative fixed-modulus audits
+(9.21) and (9.203)--(9.204) remain in force.  The new result is the exact
+nine-term reduction and the unit-mean screening (9.205)--(9.211); the
+joint estimate for the fully centered and one-mean families remains
+unproved.
+
 ## 10. What has and has not been proved
 
 **Current classification: published/elementary coverage complete; Region D remains
@@ -5631,6 +5771,11 @@ Proved in this note:
   (9.198)--(9.201); coprime oscillatory moduli are exactly orthogonal and
   the zero dual mode collapses to their common divisor, while the
   nonzero dual mixed moment remains unproved.
+* the factorwise centered CRT identity (9.205)--(9.208), which splits the
+  coprime double-Möbius tensor into nine terms with no all-principal
+  factor on either side, and the exact balanced unit-mean screening
+  ledger (9.209)--(9.211); the fully centered and one-mean joint moments
+  remain unproved.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -5674,6 +5819,7 @@ Proved in this note:
 | Scalar-stratum unit spectrum | exact divisor decomposition; top layer unproved | unit and unrestricted lifts are (9.180)--(9.181); the double-unit sum has divisor spectrum (9.183), outer \(\mu(q)\) migrates to \(\mu(k)\) in (9.184), and (9.185) isolates the inverse-product top layer (9.186) |
 | Coprimality-migrated scalar spectrum | exact Type-II bridge; balanced face unproved | expanding \((k,\delta')=1\) gives the triple spectrum (9.187), whose product coefficient is independent of the oscillatory modulus; Bettin--Chandee applies with (9.189), but (9.193) proves a uniform gap of at least \(T^2\), with gap \(T^{67/16}\) at the primitive corner |
 | Centered common-divisor dispersion | exact zero-frequency reduction; nonzero dual estimate unproved | centering the full divisor packet makes the \(k=1\) layer vanish, (9.197); the cross-modulus covariance is zero for coprime moduli and otherwise factors only through \(t=(m,n)\), (9.194)--(9.196); (9.198)--(9.201) isolate the remaining dual Kloosterman frequencies and the \(t_0=Q^2/R=T^2\) transition |
+| Factorwise centered Type-II tensor | exact nine-term reduction; joint estimate unproved | (9.206) has three terms and no all-principal product; applying it on both coprime Möbius moduli gives the nine-term tensor (9.207) while retaining all four signs (9.208).  On the balanced unit face, one mean saves \(T^{15/8-o(1)}\) and two save \(T^{15/4-o(1)}\), but (9.211) is only a screening ledger |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

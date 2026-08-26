@@ -1201,6 +1201,130 @@ def centered_kloosterman_transform(
     )
 
 
+@dataclass(frozen=True)
+class CenteredKloostermanCrtTerms:
+    """The three non-principal terms in a two-factor CRT expansion."""
+
+    both_centered: complex
+    left_centered_right_mean: complex
+    left_mean_right_centered: complex
+
+    @property
+    def summands(self) -> tuple[complex, complex, complex]:
+        return (
+            self.both_centered,
+            self.left_centered_right_mean,
+            self.left_mean_right_centered,
+        )
+
+    @property
+    def total(self) -> complex:
+        return sum(self.summands)
+
+
+@dataclass(frozen=True)
+class CenteredCrtUnitMeanLedger:
+    """Pointwise saving from local principal means on the unit face."""
+
+    saving_per_mean: Fraction
+    one_mean_gap: Fraction
+    two_mean_margin: Fraction
+
+
+def centered_crt_unit_mean_ledger(
+    local_factor_exponent: Fraction,
+    required_saving: Fraction,
+) -> CenteredCrtUnitMeanLedger:
+    """Compare local mean suppression with a required global saving.
+
+    For unit Kloosterman arguments, a local centered transform has Weil
+    size ``q^(1/2+o(1))`` while its principal mean has size
+    ``q^(-1+o(1))``.  Replacing one centered local factor by its mean
+    therefore saves ``q^(3/2-o(1))``.
+    """
+
+    if local_factor_exponent < 0 or required_saving < 0:
+        raise ValueError("exponents must be nonnegative")
+    saving_per_mean = Fraction(3, 2) * local_factor_exponent
+    return CenteredCrtUnitMeanLedger(
+        saving_per_mean=saving_per_mean,
+        one_mean_gap=max(Fraction(0), required_saving - saving_per_mean),
+        two_mean_margin=max(
+            Fraction(0), 2 * saving_per_mean - required_saving
+        ),
+    )
+
+
+def centered_kloosterman_crt_terms(
+    left_factor: int,
+    right_factor: int,
+    inverse_numerator: int,
+    linear_frequency: int,
+) -> CenteredKloostermanCrtTerms:
+    """Factor a centered transform over two coprime CRT factors.
+
+    If ``m = left_factor * right_factor``, the raw Kloosterman sum is
+    the product of its two local sums.  Subtracting the product of the
+    two local means leaves exactly three terms: centered-centered and
+    the two centered-mean cross terms.  In particular there is no
+    all-principal term.
+    """
+
+    if left_factor < 1 or right_factor < 1:
+        raise ValueError("CRT factors must be positive")
+    if gcd(left_factor, right_factor) != 1:
+        raise ValueError("CRT factors must be coprime")
+
+    right_inverse_mod_left = (
+        0
+        if left_factor == 1
+        else pow(right_factor, -1, left_factor)
+    )
+    left_inverse_mod_right = (
+        0
+        if right_factor == 1
+        else pow(left_factor, -1, right_factor)
+    )
+    left_inverse_numerator = (
+        inverse_numerator * right_inverse_mod_left
+    )
+    left_linear_frequency = (
+        linear_frequency * right_inverse_mod_left
+    )
+    right_inverse_numerator = (
+        inverse_numerator * left_inverse_mod_right
+    )
+    right_linear_frequency = (
+        linear_frequency * left_inverse_mod_right
+    )
+
+    left_centered = centered_kloosterman_transform(
+        left_factor,
+        left_inverse_numerator,
+        left_linear_frequency,
+    )
+    right_centered = centered_kloosterman_transform(
+        right_factor,
+        right_inverse_numerator,
+        right_linear_frequency,
+    )
+    left_mean = Fraction(
+        ramanujan_sum(left_factor, inverse_numerator)
+        * ramanujan_sum(left_factor, linear_frequency),
+        _euler_phi(left_factor),
+    )
+    right_mean = Fraction(
+        ramanujan_sum(right_factor, inverse_numerator)
+        * ramanujan_sum(right_factor, linear_frequency),
+        _euler_phi(right_factor),
+    )
+    return CenteredKloostermanCrtTerms(
+        both_centered=left_centered * right_centered,
+        left_centered_right_mean=left_centered * float(right_mean),
+        left_mean_right_centered=float(left_mean) * right_centered,
+    )
+
+
 def coprime_centered_inverse_cross_fourier_factorization(
     left_modulus: int,
     left_numerator: int,
@@ -1238,6 +1362,62 @@ def coprime_centered_inverse_cross_fourier_factorization(
         right_modulus,
         -right_numerator,
         -frequency * left_inverse_mod_right,
+    )
+
+
+def two_sided_centered_kloosterman_crt_terms(
+    left_short_factor: int,
+    left_long_factor: int,
+    left_numerator: int,
+    right_short_factor: int,
+    right_long_factor: int,
+    right_numerator: int,
+    frequency: int,
+) -> tuple[complex, ...]:
+    """Nine-term Type-I/II expansion of a coprime centered tensor."""
+
+    left_modulus = left_short_factor * left_long_factor
+    right_modulus = right_short_factor * right_long_factor
+    if min(
+        left_short_factor,
+        left_long_factor,
+        right_short_factor,
+        right_long_factor,
+    ) < 1:
+        raise ValueError("CRT factors must be positive")
+    if gcd(left_short_factor, left_long_factor) != 1:
+        raise ValueError("left CRT factors must be coprime")
+    if gcd(right_short_factor, right_long_factor) != 1:
+        raise ValueError("right CRT factors must be coprime")
+    if gcd(left_modulus, right_modulus) != 1:
+        raise ValueError("left and right moduli must be coprime")
+
+    right_inverse_mod_left = (
+        0
+        if left_modulus == 1
+        else pow(right_modulus, -1, left_modulus)
+    )
+    left_inverse_mod_right = (
+        0
+        if right_modulus == 1
+        else pow(left_modulus, -1, right_modulus)
+    )
+    left_terms = centered_kloosterman_crt_terms(
+        left_short_factor,
+        left_long_factor,
+        left_numerator,
+        -frequency * right_inverse_mod_left,
+    )
+    right_terms = centered_kloosterman_crt_terms(
+        right_short_factor,
+        right_long_factor,
+        -right_numerator,
+        -frequency * left_inverse_mod_right,
+    )
+    return tuple(
+        left_term * right_term
+        for left_term in left_terms.summands
+        for right_term in right_terms.summands
     )
 
 

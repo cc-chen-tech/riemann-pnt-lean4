@@ -167,3 +167,21 @@
 - [x] Map the coprime Fourier tensor to Blomer--Pascadi Theorem 5.5 and audit the exact `11/45` and `13/90` fixed-modulus losses.
 - [ ] Bound the nonzero dual mixed moment while retaining `mu(u)mu(v)` and both product factorizations.
 - [x] Review, verify, and update the Ready-for-view PR only after the new centered interface survives full checks.
+
+### Task 11: Split each centered modulus before the Type-II norm
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Add failing finite tests for the three-term CRT factorization of one centered Kloosterman transform.
+- [x] Prove that the all-principal local product cancels and exhaustively verify the identity on small coprime factors.
+- [x] Apply the factorization to both coprime Möbius moduli and verify the exact nine-term tensor against the original finite Fourier coefficient.
+- [x] Retain the four split Möbius signs and record that every term has a centered local factor on each side.
+- [x] Audit the balanced unit-face mean suppression: one mean saves T^(15/8-o(1)), two save T^(15/4-o(1)).
+- [x] Recheck Pascadi's composite-modulus theorem against the new interface and preserve the fixed-modulus insufficiency boundary.
+- [ ] Prove the joint fully-centered four-local estimate and recover the remaining T^(1/8) on the one-mean terms without taking absolute values over the other modulus.
+- [ ] Recombine the nonunit factor strata and coefficient multiplicities to turn the screening ledger into an unconditional coupled-kernel bound.
+- [ ] Review, verify, commit, push, and update the Ready-for-view PR.
