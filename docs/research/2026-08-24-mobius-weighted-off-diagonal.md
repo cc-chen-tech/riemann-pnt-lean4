@@ -7568,6 +7568,11 @@ than (9.245)'s \(B=T^{1/2},k=T^{5/2}\) face.  It is a useful new
 starting point for a bilinear dispersion estimate, but it does not
 cancel (9.301) or prove the central major arc.
 
+This was the largest cutoff justified by estimating each Type-I
+completion error separately.  Once the centered estimate (9.308) is
+available, the endpoint choice (9.319) below supersedes (9.305) for the
+final residual gate.
+
 The product regrouping permits one more unconditional step.  Put
 \[
  \Lambda_{U,V}(D)
@@ -7644,9 +7649,10 @@ The original restriction \((d,s)=1\) is handled before applying
 \]
 The inclusion coefficient \(\mu(j)\) remains outside and has modulus
 at most one.
-The \(j\)-layer has lengths \(S_j=S/j,D_j=D/j\); take
-\(U_j=V_j=D_j^{3/8}\) and apply (9.307) to \(\mu(n+h)\) with
-centering cutoff \(D_j\).  At its endpoint
+The \(j\)-layer has lengths \(S_j=S/j,D_j=D/j\); after establishing
+(9.308), take the endpoint cutoffs
+\(U_j=V_j=\lfloor\sqrt{D_j}\rfloor\) and apply (9.307) to
+\(\mu(n+h)\) with centering cutoff \(D_j\).  At its endpoint
 \(M=D_j\), (9.308) has exponent \(9/2-2\tau\) for
 \(j=T^\tau\leq T\), and at most \(4-3\tau/2\) for \(\tau\geq1\).
 Thus the dyadic \(j\)-sum costs no power.  The auxiliary conditions
@@ -7675,8 +7681,9 @@ remaining interface
 \]
 
 Formula (9.310) displays the primitive \(j=1\) layer; the exact gate
-also sums its scaled \(j\)-analogues with \(D_j=D/j\).  Here
-\(U=V=T^{3/4}\) on the primitive layer, and separated smooth factors
+also sums its scaled \(j\)-analogues with \(D_j=D/j\).  The preliminary
+choice here is \(U=V=T^{3/4}\); the endpoint split (9.319) below gives
+the final sharper gate.  Separated smooth factors
 in \(s,d\) may be restored with their recorded \(T^\varepsilon\) norm.
 In the second term write \(s+d=mk\); then \(m>D=T^2\) forces
 \(k\ll S/D=T\).
@@ -7694,8 +7701,9 @@ complementary part is the negative of its centered part.  Hence (9.308)
 already bounds their total contribution.  It remains only to consider
 squarefree \(n=s+d\).
 
-Every divisor \(m\mid n\) is then squarefree.  Since the high range has
-\(m>D>UV\), the short--short part of (9.295) is empty.  Define
+Every divisor \(m\mid n\) is then squarefree.  Since the endpoint high
+range has \(m>D\geq UV\), the short--short part of (9.295) is empty.
+Define
 \[
  R_{U,V}(m)
  :=\#\{(b,c):bc=m,\ b>U,\ c>V\}.
@@ -7743,12 +7751,12 @@ balanced exponent map is
 \boxed{
  x=S=T^3,\qquad {\mathcal D}=D=T^2=x^{2/3},\qquad
  N=k\leq T=x^{1/3}=\sqrt{\mathcal D},\qquad
- U=T^{3/4}<x/{\mathcal D}=T.}
+ U=T=x/{\mathcal D}.}
 \tag{9.314}
 \]
 
 Thus the top \(k\)-block lies at the lower parity-breaking boundary in
-their condition (B1), and the short divisor cutoff lies below their
+their condition (B1), and the endpoint divisor cutoff equals their
 (B3) ceiling.  The executable exponent ledger checks these equalities.
 However, Friedlander--Iwaniec **assume** their bilinear estimate (B);
 it is not a conclusion of the asymptotic-sieve theorem.  Moreover, their
@@ -7789,7 +7797,7 @@ The complementary polytope is
 \[
 \boxed{
  \beta+\gamma+\kappa=3,\qquad
- \beta,\gamma\geq\frac34,\qquad 0\leq\kappa\leq1.}
+ \beta,\gamma\geq1,\qquad 0\leq\kappa\leq1.}
 \tag{9.316}
 \]
 After fixing \(c,k\), varying \(d\) gives the \(b\)-variable an interval
@@ -7805,11 +7813,11 @@ The published \(5/8\) threshold would require
  \quad\Longleftrightarrow\quad
  \beta\geq\frac83.
 \]
-But (9.316) gives \(\beta\leq3-\gamma\leq9/4\).  Therefore
+But (9.316) gives \(\beta\leq3-\gamma\leq2\).  Therefore
 \[
 \boxed{
  \beta_{\rm required}-\beta_{\rm maximum}
- =\frac83-\frac94=\frac5{12}>0,}
+ =\frac83-2=\frac23>0,}
 \tag{9.318}
 \]
 and the one-factor coverage set is empty; the same argument applies to
@@ -7817,6 +7825,48 @@ and the one-factor coverage set is empty; the same argument applies to
 must exploit a joint \(b,c,k\) average (or an equivalent global
 recombination); it cannot be reduced to a published all-interval estimate
 for one Möbius factor.
+
+### 9.49 The exact square-root cutoff
+
+The centered bound (9.308) permits the canonical integer choice
+\[
+\boxed{U=V=\lfloor\sqrt D\rfloor.}
+\tag{9.319}
+\]
+This is stronger than the preliminary \(T^{3/4}\) cutoff.  It separates
+the two rectangles exactly:
+\[
+\boxed{
+ \lambda^{\rm I}_{U,V}(m)=0\quad(m>D),\qquad
+ \lambda^{\rm II}_{U,V}(m)=0\quad(m\leq D).}
+\tag{9.320}
+\]
+Indeed, short--short has \(bc\leq U^2\leq D\), while long--long has
+\(bc\geq(U+1)^2>D\).  The finite checker verifies both support
+statements for unequal products around every tested square cutoff.
+Thus (9.307) is now literally Type I density plus centered Type I for
+\(m\leq D\), followed by pure Type II for \(m>D\); there is no
+transition overlap.
+
+At the balanced scale \(U=V=T\), the residual product polytope becomes
+\[
+\boxed{
+ \beta+\gamma+\kappa=3,\qquad
+ \beta,\gamma\geq1,\qquad0\leq\kappa\leq1.}
+\tag{9.321}
+\]
+In particular each long Möbius factor has exponent at most \(2\), the
+complementary quotient still has exponent at most \(1\), and the
+one-factor \(5/8\) gap strengthens from the preliminary \(5/12\) to
+\[
+\boxed{\frac83-2=\frac23.}
+\tag{9.322}
+\]
+All occurrences of (9.310)--(9.315) in the final gate use the endpoint
+cutoff (9.319), and on the \(j\)-layer use
+\(U_j=V_j=\lfloor\sqrt{D_j}\rfloor\).  This exact square-root split is
+the smallest remaining joint \(b,c,k\) region obtained by the present
+Type-I/II method.
 
 Nor does (9.303) prove that such a Mertens estimate is necessary: the
 actual coupled kernel could still cancel between the low-modulus prefix,
@@ -8062,10 +8112,10 @@ Proved in this note:
   Type-I nonzero modes and even sharp endpoint errors are below target,
   (9.300), leaving precisely (9.301); a factorwise central-arc route
   needs the fixed-power inequality (9.303), which is not supplied by the
-  classical zero-free region.  Post-completion one may enlarge the
-  cutoffs to \(U=V=T^{3/4}\), closing all Type-I nonzero modes and
-  shortening the long--long face to \(B>T^{3/2}\), \(k\ll T^{3/2}\),
-  (9.304)--(9.306).
+  classical zero-free region.  The preliminary \(U=V=T^{3/4}\)
+  geometry is (9.304)--(9.306); after the centered large-sieve step the
+  exact endpoint \(U=V=\lfloor\sqrt D\rfloor\) separates Type I and
+  Type II at \(m=D\), (9.319)--(9.322).
 * the exact density/centered/complementary split (9.307).  Additive
   large sieve closes every centered low-product block, with the uniform
   bound (9.308) and exact exponent (9.309); the gcd layers scale by
@@ -8078,9 +8128,9 @@ Proved in this note:
   \(\mu(m)=\mu(mk)\mu(k)\).  The exact FI parameter map is (9.314);
   their parity-breaking estimate (B) is an assumption, not a theorem
   applicable here.  The remaining gate is equivalently the signed
-  asymptotic-sieve bilinear form (9.315).  Fixing either long factor
-  leaves an interval below the published \(5/8\) threshold by the exact
-  exponent gap \(5/12\), (9.316)--(9.318).
+  asymptotic-sieve bilinear form (9.315).  At the final square-root
+  cutoff, fixing either long factor misses the published \(5/8\)
+  threshold by the exact exponent gap \(2/3\), (9.316)--(9.322).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -8137,7 +8187,7 @@ Proved in this note:
 | Centering after transition completion | exact short-box obstruction; no major-arc deletion | the centered numerator transform is the point-minus-uniform identity (9.283).  Its aligned short-box mass is (9.284), equal to \(D-D^2/(q-1)\) for prime \(q>D\), so the uniform background is a factor \(D/q=T^{-1/2}\) below the dilation point mass, (9.285)--(9.286).  This disproves an automatic vanishing-moment route but is not a lower bound for the actual signed smooth packet; published averaged/short-interval Möbius bounds remain logarithmic at the required power scale |
 | Actual archimedean zero-moment route | scale audit exact; special identity unproved | in the balanced transition every parameter \(TL/(MR),HM/S,M^2R/(ST),KS/(MR),gD/L,H/q\) has exponent zero, (9.287)--(9.288).  Thus the completed weight is sampled at bounded frequency and integration by parts gives no power.  The AFE zeros at Mellin \(z=\pm1/2\) do not force the proposed \(d\)-moment (9.289), and even that moment would remove only the additive origin |
 | Post-completion scalar recombination | exact two-Möbius form; published average only logarithmic | (9.290)--(9.291) merge \(\mu(g)\mu(q)\) into \(\mu(s)\) and put every separated scalar weight into \(\omega_{G,Q}(s)\).  Its divisor-bounded \(L^2\) norm (9.292), together with the exact gcd-divisor split, fits Lichtman's arbitrary-coefficient Fourier lemma componentwise.  The resulting bound has power exponent \(SD=T^5\), not the target \(S^{3/2}=T^{9/2}\), (9.293)--(9.294); no third independent Möbius sign remains |
-| Central Type-I/II density prefix | exact finite regrouping and improved cutoff; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  Type-I nonzero modes are below target, (9.300)--(9.303), and \(U=V=T^{3/4}\) shortens the geometry, (9.304)--(9.306).  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that centered bound; on squarefree support the exact sign migration (9.311)--(9.313) maps the residual to the FI boundary (9.314).  FI assumes rather than proves the needed bilinear axiom, leaving (9.315) unproved.  Fixing either long Möbius factor misses the published \(5/8\) interval threshold by \(5/12\), (9.316)--(9.318), so joint averaging is essential |
+| Central Type-I/II density prefix | exact square-root split; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that bound; on squarefree support (9.311)--(9.313) maps the residual to the FI boundary (9.314), whose bilinear axiom is assumed rather than proved.  The endpoint \(U=V=\lfloor\sqrt D\rfloor\) makes \(m\leq D\) pure Type I and \(m>D\) pure Type II, (9.319)--(9.320), leaving \(\beta,\gamma\geq1,\kappa\leq1\), (9.321).  Fixing either long factor misses the \(5/8\) theorem by \(2/3\), (9.322), so the joint gate (9.315) remains essential |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

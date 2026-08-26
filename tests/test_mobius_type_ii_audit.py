@@ -481,6 +481,22 @@ def test_long_long_density_starts_after_the_short_short_origin() -> None:
             ).long_long == 0
 
 
+def test_sqrt_shift_cutoff_separates_short_and_long_product_support() -> None:
+    for cutoff in range(1, 8):
+        for product in range(1, cutoff * cutoff + 1):
+            assert mobius_two_cutoff_product_coefficient(
+                product,
+                cutoff_left=cutoff,
+                cutoff_right=cutoff,
+            ).long_long == 0
+        for product in range(cutoff * cutoff + 1, 101):
+            assert mobius_two_cutoff_product_coefficient(
+                product,
+                cutoff_left=cutoff,
+                cutoff_right=cutoff,
+            ).short_short == 0
+
+
 def test_finite_complete_period_is_exactly_the_density_prefix() -> None:
     for cutoff_left, cutoff_right in ((1, 1), (2, 3), (4, 2)):
         for scalar in range(1, 8):
@@ -555,13 +571,13 @@ def test_asymptotic_sieve_map_hits_the_parity_breaking_endpoint() -> None:
         ambient_length=F(3),
         distribution_level=F(2),
         complementary_quotient=F(1),
-        short_divisor_cutoff=F(3, 4),
+        short_divisor_cutoff=F(1),
     ) == AsymptoticSieveTransitionLedger(
         square_root_level=F(1),
         square_root_ambient=F(3, 2),
         complementary_quotient=F(1),
         b3_coefficient_ceiling=F(1),
-        short_divisor_cutoff=F(3, 4),
+        short_divisor_cutoff=F(1),
         quotient_at_lower_endpoint=True,
         cutoff_inside_b3_ceiling=True,
     )
@@ -571,12 +587,12 @@ def test_all_interval_mobius_has_no_complementary_factor_box() -> None:
     assert complementary_one_factor_coverage_ledger(
         ambient_length=F(3),
         shift_length=F(2),
-        other_long_factor_floor=F(3, 4),
+        other_long_factor_floor=F(1),
         theorem_short_interval_ratio=F(5, 8),
     ) == ComplementaryOneFactorCoverageLedger(
-        maximum_factor_length=F(9, 4),
+        maximum_factor_length=F(2),
         required_factor_length=F(8, 3),
-        coverage_gap=F(5, 12),
+        coverage_gap=F(2, 3),
         covered=False,
     )
 
