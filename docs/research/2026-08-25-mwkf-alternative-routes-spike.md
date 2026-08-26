@@ -9495,6 +9495,65 @@ The finite helper `bblr_coefficient_stage_separation_witness` verifies
 `direct_outer_index_only_adapter_refuted=True` and
 `packet_exhaustive_parent_aware_adapter_still_open=True`.
 
+Retaining that missing parent coordinate exposes a positive structure.
+For one Type decomposition define the common-unsigned-cofactor kernel
+
+\[
+ \boxed{
+ P_U(n,m)=
+ \sum_{r\mid(n,m)}
+ C_U\!\left(n;\frac nr\right)
+ C_U\!\left(m;\frac mr\right).}
+\tag{4.621zadj2}
+\]
+
+The divisor \(r\) is exactly the unsigned inner quotient: if the signed
+outer products are \(u,v\), then \(n=ur\), \(m=vr\).  Hence the direct
+partial-diagonal restriction and (4.621zadj2) agree with no endpoint term:
+
+\[
+ \sum_{\substack{u\mid n,\ v\mid m\\n/u=m/v}}
+ C_U(n;u)C_U(m;v)=P_U(n,m).
+\tag{4.621zadj3}
+\]
+
+For arbitrary finitely supported parent weights \(A,B\), a second finite
+reindexing gives the exact gcd-Gram diagonalization
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{n,m}A(n)B(m)P_U(n,m)
+ =\sum_{r\ge1}
+ &\left(\sum_{r\mid n}A(n)
+ C_U\!\left(n;\frac nr\right)\right)\\
+ {}\times&\left(\sum_{r\mid m}B(m)
+ C_U\!\left(m;\frac mr\right)\right).
+ \end{aligned}}
+\tag{4.621zadj4}
+\]
+
+In particular, when \(A=B\), the right side of (4.621zadj4) is a sum of
+squares.  For the finite witness \(U=3,n=10,m=15\), the only common active
+quotient is \(r=5\), and
+
+\[
+ P_3(10,15)=C_3(10;2)C_3(15;3)=4.
+\]
+
+Thus the parent-aware core of one BBLR partial diagonal returns to the same
+totient/gcd-square philosophy as the original LCM main term; it is not a
+pointwise \(\zeta_XM_N\)-coefficient identification.  The finite helper
+`bblr_common_unsigned_cofactor_gram_sides` verifies
+(4.621zadj2)--(4.621zadj4) with exact rationals and records
+`parent_and_inner_quotient_retained=True`.  Its present scope is one
+supplied pair of parent-weight families.  It deliberately keeps
+`analytic_bblr_packet_exhaustive=False` and `target_bound_proved=False`:
+the second Möbius parent on each determinant side, the BBLR slot
+permutations, all AFE/order labels, and the original smooth kernel must
+still be pulled through this Gram decomposition before it becomes an
+analytic bound for the full principal term.
+
 The dangerous additive principal mode can nevertheless be isolated
 without estimating it.  Embed one finite product box in
 \(\mathbb Z/\mathfrak Q\mathbb Z\), with \(\mathfrak Q\) larger than

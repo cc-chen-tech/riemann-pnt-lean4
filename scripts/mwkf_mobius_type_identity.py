@@ -355,6 +355,20 @@ class BBLRCoefficientStageSeparationWitness:
 
 
 @dataclass(frozen=True)
+class BBLRCommonUnsignedCofactorGram:
+    cutoff_u: int
+    direct_partial_diagonal_sum: Fraction
+    gcd_kernel_sum: Fraction
+    common_cofactor_gram_sum: Fraction
+    active_common_cofactor_rows: tuple[tuple[int, Fraction, Fraction], ...]
+    direct_to_gcd_kernel_identity_verified: bool
+    gcd_kernel_to_gram_identity_verified: bool
+    parent_and_inner_quotient_retained: bool
+    analytic_bblr_packet_exhaustive: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
 class FourMobiusUnsignedSectorRecombination:
     values: tuple[int, int, int, int]
     cutoff_u: int
@@ -3073,6 +3087,132 @@ def bblr_coefficient_stage_separation_witness(
         parent_dependent_outer_weight=parent_dependent,
         direct_outer_index_only_adapter_refuted=parent_dependent,
         packet_exhaustive_parent_aware_adapter_still_open=True,
+    )
+
+
+def bblr_common_unsigned_cofactor_gram_sides(
+    *,
+    cutoff_u: int,
+    left_parent_weights: dict[int, Fraction],
+    right_parent_weights: dict[int, Fraction],
+) -> BBLRCommonUnsignedCofactorGram:
+    """Diagonalize one parent-aware BBLR inner-cofactor equality.
+
+    Group one Type identity by its signed outer product ``u`` and retain
+    the unsigned inner quotient ``r=n/u``.  Equality of the left and right
+    inner quotients gives the finite gcd kernel
+
+    ``P_U(n,m)=sum_(r|(n,m)) C_U(n;n/r) C_U(m;m/r)``.
+
+    A second finite reindexing writes the bilinear form with kernel ``P_U``
+    as a Gram sum over ``r``.  Equal left and right parent weights therefore
+    give a sum of exact rational squares.  This is a Type-stage identity;
+    analytic AFE/ordering packet exhaustion and the target estimate are not
+    asserted.
+    """
+
+    if cutoff_u < 1:
+        raise ValueError("the Type cutoff must be positive")
+    if not left_parent_weights or not right_parent_weights:
+        raise ValueError("both parent-weight families are required")
+    if any(
+        parent <= cutoff_u
+        for family in (left_parent_weights, right_parent_weights)
+        for parent in family
+    ):
+        raise ValueError("every parent variable must exceed the Type cutoff")
+
+    parents = set(left_parent_weights) | set(right_parent_weights)
+    outer_coefficients = {
+        parent: dict(
+            mobius_unsigned_sector_recombination(
+                n=parent,
+                cutoff_u=cutoff_u,
+            ).outer_contributions
+        )
+        for parent in parents
+    }
+
+    direct = Fraction(0)
+    for left_parent, left_weight in left_parent_weights.items():
+        for left_outer, left_coefficient in outer_coefficients[
+            left_parent
+        ].items():
+            left_inner = left_parent // left_outer
+            for right_parent, right_weight in right_parent_weights.items():
+                for right_outer, right_coefficient in outer_coefficients[
+                    right_parent
+                ].items():
+                    if left_inner != right_parent // right_outer:
+                        continue
+                    direct += (
+                        Fraction(left_weight)
+                        * left_coefficient
+                        * Fraction(right_weight)
+                        * right_coefficient
+                    )
+
+    gcd_kernel = Fraction(0)
+    for left_parent, left_weight in left_parent_weights.items():
+        for right_parent, right_weight in right_parent_weights.items():
+            kernel = sum(
+                outer_coefficients[left_parent].get(left_parent // r, 0)
+                * outer_coefficients[right_parent].get(right_parent // r, 0)
+                for r in divisors(gcd(left_parent, right_parent))
+            )
+            gcd_kernel += (
+                Fraction(left_weight) * Fraction(right_weight) * kernel
+            )
+
+    common_cofactors = sorted(
+        {
+            r
+            for parent in parents
+            for r in divisors(parent)
+        }
+    )
+    gram = Fraction(0)
+    active_rows: list[tuple[int, Fraction, Fraction]] = []
+    for common_cofactor in common_cofactors:
+        left_projection = sum(
+            (
+                Fraction(weight)
+                * outer_coefficients[parent].get(
+                    parent // common_cofactor,
+                    0,
+                )
+            )
+            for parent, weight in left_parent_weights.items()
+            if parent % common_cofactor == 0
+        )
+        right_projection = sum(
+            (
+                Fraction(weight)
+                * outer_coefficients[parent].get(
+                    parent // common_cofactor,
+                    0,
+                )
+            )
+            for parent, weight in right_parent_weights.items()
+            if parent % common_cofactor == 0
+        )
+        gram += left_projection * right_projection
+        if left_projection and right_projection:
+            active_rows.append(
+                (common_cofactor, left_projection, right_projection)
+            )
+
+    return BBLRCommonUnsignedCofactorGram(
+        cutoff_u=cutoff_u,
+        direct_partial_diagonal_sum=direct,
+        gcd_kernel_sum=gcd_kernel,
+        common_cofactor_gram_sum=gram,
+        active_common_cofactor_rows=tuple(active_rows),
+        direct_to_gcd_kernel_identity_verified=(direct == gcd_kernel),
+        gcd_kernel_to_gram_identity_verified=(gcd_kernel == gram),
+        parent_and_inner_quotient_retained=True,
+        analytic_bblr_packet_exhaustive=False,
+        target_bound_proved=False,
     )
 
 

@@ -294,6 +294,42 @@ def test_bblr_outer_product_weight_is_not_a_parent_free_coefficient() -> None:
     assert audit.packet_exhaustive_parent_aware_adapter_still_open
 
 
+def test_bblr_common_unsigned_cofactor_is_an_exact_gcd_gram_kernel() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_common_unsigned_cofactor_gram_sides",
+        None,
+    )
+    assert helper is not None, "BBLR common-cofactor Gram helper is missing"
+
+    sides = helper(
+        cutoff_u=3,
+        left_parent_weights={10: F(2)},
+        right_parent_weights={15: F(3)},
+    )
+
+    # C_3(10;2)=C_3(15;3)=2 and both have inner quotient r=5.
+    assert sides.direct_partial_diagonal_sum == F(24)
+    assert sides.gcd_kernel_sum == F(24)
+    assert sides.common_cofactor_gram_sum == F(24)
+    assert sides.active_common_cofactor_rows == ((5, F(4), F(6)),)
+    assert sides.direct_to_gcd_kernel_identity_verified
+    assert sides.gcd_kernel_to_gram_identity_verified
+    assert sides.parent_and_inner_quotient_retained
+    assert not sides.analytic_bblr_packet_exhaustive
+    assert not sides.target_bound_proved
+
+    square = helper(
+        cutoff_u=3,
+        left_parent_weights={10: F(2), 15: F(3)},
+        right_parent_weights={10: F(2), 15: F(3)},
+    )
+    assert all(left == right for _, left, right in square.active_common_cofactor_rows)
+    assert square.common_cofactor_gram_sum == sum(
+        left * left for _, left, _ in square.active_common_cofactor_rows
+    )
+
+
 def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
     """The worst BBLR box loses every Möbius sign before global recombination."""
     adapter = getattr(
