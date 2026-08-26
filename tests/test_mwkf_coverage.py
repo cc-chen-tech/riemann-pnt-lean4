@@ -4516,6 +4516,40 @@ def test_unramified_exact_level_difference_retains_ramanujan_prime_saving() -> N
     assert bad_bad["level_difference_identity_exact"]
 
 
+def test_unramified_cross_index_kernel_has_exact_two_shift_factorization() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zfd The unramified cross-index kernel is an exact two-shift form",
+        r"\tag{4.845dc_14s}",
+        r"\tag{4.845dc_14t}",
+        "unramified_cross_index_two_shift_identity",
+    ):
+        assert marker in note
+
+    expected = {
+        (0, 1): F(-2, 33),
+        (1, 1): F(5, 33),
+        (2, 1): F(19, 66),
+        (2, 3): F(35, 264),
+    }
+    for (a, b), normalized in expected.items():
+        local = coverage_audit.unramified_cross_index_two_shift_identity(
+            prime=5,
+            hecke_prime=F(3, 2),
+            first_index_valuation=a,
+            second_index_valuation=b,
+        )
+        assert local["gram_polynomial"] == F(99, 4)
+        assert local["ramanujan_normalized_kernel"] == normalized
+        assert local["rank_two_kernel"] == normalized
+        assert local["rank_two_factorization_exact"]
+        assert local["positive_valuation_hecke_shift_exact"]
+        assert local["rank_two_matrix_determinant"] == F(-4, 99)
+        assert local["cross_index_dependence_is_two_fourier_shifts"]
+        assert not local["weighted_two_index_large_sieve_proved"]
+        assert not local["pevp_proved"]
+
+
 def test_steinberg_exact_level_difference_has_corrected_square_formula() -> None:
     unit = coverage_audit.steinberg_exact_level_difference_kernel_square(
         prime=5,

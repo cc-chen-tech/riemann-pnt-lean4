@@ -10477,6 +10477,103 @@ def unramified_exact_level_difference_kernel(
     }
 
 
+def unramified_cross_index_two_shift_identity(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    first_index_valuation: int,
+    second_index_valuation: int,
+) -> dict[str, object]:
+    """Factor the unramified signed level kernel before positive Cauchy.
+
+    Put ``q=p+1``, ``E=q^2-p*lambda(p)^2`` and extend the local Hecke
+    sequence by zero at negative exponents.  If
+
+    ``r_k=lambda_k-p*lambda_1*lambda_(k-1)/q`` and
+    ``s_k=lambda_(k-1)``, then the exact kernel from
+    :func:`unramified_exact_level_difference_kernel`, after division by
+    the physical Ramanujan factor at the first index, is
+
+    ``-q/E*r_a*r_b + 1/q*s_a*s_b``.
+
+    For every positive valuation the Hecke recurrence removes the
+    spectral multiplier from ``r_k``:
+
+    ``q*r_k=lambda_k-p*lambda_(k-2)``.
+
+    Thus the cross-index dependence is a rank-two combination of the
+    two Fourier-index shifts ``p^k`` and ``p^(k-2)``.  This finite
+    identity does not by itself prove the weighted two-index harmonic
+    large sieve or PEVP.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    a = int(first_index_valuation)
+    b = int(second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if a < 0 or b < 1:
+        raise ValueError("first valuation must be nonnegative and second positive")
+
+    values = [F(1), lam]
+    while len(values) <= max(a, b):
+        values.append(lam * values[-1] - values[-2])
+
+    def hecke(index: int) -> Fraction:
+        return F(0) if index < 0 else values[index]
+
+    q = F(p + 1)
+    gram = q * q - F(p) * lam * lam
+    if gram == 0:
+        raise ValueError("oldclass Gram polynomial must be nonzero")
+
+    def first_form(index: int) -> Fraction:
+        return hecke(index) - F(p) * lam * hecke(index - 1) / q
+
+    def second_form(index: int) -> Fraction:
+        return hecke(index - 1)
+
+    rank_two = (
+        -q * first_form(a) * first_form(b) / gram
+        + second_form(a) * second_form(b) / q
+    )
+    direct = unramified_exact_level_difference_kernel(
+        prime=p,
+        hecke_prime=lam,
+        first_index_valuation=a,
+        second_index_valuation=b,
+    )["ramanujan_normalized_kernel"]
+    shifted_a = q * first_form(a)
+    shifted_b = q * first_form(b)
+    expected_shift_a = hecke(a) - F(p) * hecke(a - 2)
+    expected_shift_b = hecke(b) - F(p) * hecke(b - 2)
+    positive_shift_exact = shifted_b == expected_shift_b and (
+        a == 0 or shifted_a == expected_shift_a
+    )
+
+    return {
+        "prime": p,
+        "first_index_valuation": a,
+        "second_index_valuation": b,
+        "hecke_values": tuple(values),
+        "gram_polynomial": gram,
+        "first_rank_form_at_a": first_form(a),
+        "first_rank_form_at_b": first_form(b),
+        "second_rank_form_at_a": second_form(a),
+        "second_rank_form_at_b": second_form(b),
+        "ramanujan_normalized_kernel": direct,
+        "rank_two_kernel": rank_two,
+        "rank_two_factorization_exact": rank_two == direct,
+        "positive_valuation_hecke_shift_exact": positive_shift_exact,
+        "rank_two_matrix_determinant": -F(1) / gram,
+        "rank_one_scalar_square_sum": (q / gram) ** 2 + (F(1) / q) ** 2,
+        "cross_index_dependence_is_two_fourier_shifts": True,
+        "ordinary_ambient_positive_cauchy_used": False,
+        "weighted_two_index_large_sieve_proved": False,
+        "pevp_proved": False,
+    }
+
+
 def steinberg_exact_level_difference_kernel_square(
     *,
     prime: int,

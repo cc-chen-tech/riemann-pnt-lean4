@@ -11,7 +11,10 @@
 > polylogarithmic full-level harmonic large sieve (4.845dc_12) has not been
 > proved from HPY Lemma 5.6.  Consequently PEVP, the tail aggregation, and
 > the unconditional \(T^3\) asymptotic remain unproved, with one residual
-> analytic cell.
+> analytic cell.  Section 4.109zfd now gives an exact two-shift
+> factorization of the unramified cross-index kernel; this removes that
+> finite local transfer ambiguity but does not supply the required global
+> weighted two-index large sieve.
 
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
@@ -17360,6 +17363,91 @@ two-coordinate large sieve or the pre-Cauchy slope square function
 The interface \`coupled_farey_collision_audit\` checks
 (4.845dc_14o)--(4.845dc_14q) on exact integer data and explicitly keeps
 both the beyond-BBLR and joint-large-sieve flags false.
+
+
+### 4.109zfd The unramified cross-index kernel is an exact two-shift form
+
+There is a finite-rank alternative to replacing the signed level
+difference by the bad positive ambient operator of Section 4.109ze.
+It does not prove PEVP, but it removes one ambiguity in the proposed
+primitive-conductor route: the unramified cross-index oldvector weight
+can be transferred to finitely many Fourier-index shifts exactly.
+
+Fix \(p\mid A\), let
+
+\[
+ q=p+1,\qquad L=\lambda_\pi(p),\qquad
+ E=q^2-pL^2,
+\]
+
+and put \(\lambda_k=\lambda_\pi(p^k)\), with \(\lambda_k=0\) for
+\(k<0\).  For \(k\geq0\), define
+
+\[
+ r_k=\lambda_k-\frac{pL}{q}\lambda_{k-1},
+ \qquad s_k=\lambda_{k-1}.
+\]
+
+Let \(a=v_p(m)\geq0\), \(b=v_p(Ah\delta)\geq1\).  Substituting the
+two oldvectors in (4.845cz), using
+\(D_p=E/q^2\), and only then dividing by the physical Ramanujan
+factor \(c_p(p^a)\), gives the exact identity
+
+\[
+ \boxed{
+ \frac{\mathcal K_p^{(0)}(a,b)}{c_p(p^a)}
+ =-\frac qE r_ar_b+\frac1q s_as_b.}
+ \tag{4.845dc_14s}
+\]
+
+For completeness, when \(a,b\geq1\) the matrix of the right side in
+the basis \((\lambda_k,\lambda_{k-1})\) is
+
+\[
+ \frac1E
+ \begin{pmatrix}
+  -q&pL\\ pL&q-pL^2
+ \end{pmatrix}
+ =-\frac qE
+ \binom{1}{-pL/q}\binom{1}{-pL/q}^{\!t}
+  +\frac1q\binom01\binom01^{\!t}.
+\]
+
+Its determinant is \(-E^{-1}\), so the kernel is genuinely rank two,
+not a disguised rank-one projector.  The same formula includes the
+boundary \(a=0\), since \(s_0=0\) and \(c_p(1)=-1\).
+
+The Hecke recurrence removes the remaining mixed multiplier in each
+positive valuation:
+
+\[
+ \boxed{
+ q r_k=\lambda_k-p\lambda_{k-2}\qquad(k\geq1).}
+ \tag{4.845dc_14t}
+\]
+
+Thus each rank-one factor in (4.845dc_14s) is a fixed linear
+combination of the Fourier coefficients at the two indices differing
+by \(p^2\).  No spectral-dependent coefficient has to be inserted into
+the input sequence, and the cross-index cancellation has not been
+replaced by the ambient square mass \(p-1\).  The scalar \(E^{-1}\)
+is still representation-dependent; it must remain in the spectral test
+weight (or be expanded with a uniformly summable local multiplier), so
+this identity does not silently invoke an unweighted large sieve.
+
+This calculation closes only the unramified **finite transfer**.  A
+global proof must still tensor the two choices over \(p\mid A\), sum
+primitive-conductor choices in square mean, retain the Steinberg and
+ramified Eisenstein pieces, and prove the uniform polylogarithmic
+two-index harmonic large sieve for the resulting shifted sequences.
+Taking absolute values over the \(2^{\omega(A)}\) rank choices would
+merely create a new subpower loss, so neither PLS nor PEVP is asserted
+here.
+
+The interface \`unramified_cross_index_two_shift_identity\` checks
+(4.845dc_14s)--(4.845dc_14t) with exact rational Hecke data, records the
+nonzero rank-two determinant, and keeps the weighted large-sieve and
+PEVP flags false.
 
 
 ### 4.109zg Seminorm-stable PEVP would sum every AFE and transform tail shell
