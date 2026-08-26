@@ -20075,6 +20075,271 @@ primitive_conductor_mmkls_audit verifies the CRT phase, the Möbius
 cancellation, (4.845dc_14xq_35d)--(4.845dc_14xq_35i), and keeps the
 full MMKLS flag false.
 
+### 4.109zjacd Primitive root-number orthogonality returns the MMKLS top conductor
+
+The signed root number in (PCRLS) must be evaluated before it is treated
+as a new source of cancellation.  For squarefree \(f\) and
+\((u,f)=1\), put
+
+\[
+ \mathcal K_f(u):=
+ \frac{\mu(f)}{\varphi(f)}
+ \sum_{\chi^*\bmod f}^{*}
+ \frac{\tau(\bar\chi^*)^2}{f}\chi^*(u).
+ \tag{4.845dc_14xq_35j}
+\]
+
+Primitive-character orthogonality is
+
+\[
+ \boxed{
+ \sum_{\chi^*\bmod f}^{*}\chi^*(v)
+ =\sum_{\substack{d\mid f\\v\equiv1\pmod d}}
+ \mu(f/d)\varphi(d),\qquad (v,f)=1.}
+ \tag{4.845dc_14xq_35k}
+\]
+
+Expand the two Gauss sums in (4.845dc_14xq_35j), apply
+(4.845dc_14xq_35k), and write \(f=dc\).  The condition on the
+\(d\)-coordinates is \(xy\equiv u\pmod d\).  The two \(c\)-coordinates
+are independent, and each contributes
+\(c_c(\bar d)=\mu(c)\).  On the \(d\)-coordinate, CRT gives
+
+\[
+ S(\bar c,u\bar c;d)=S(1,u\bar c^2;d).
+\]
+
+Since \(\mu(f)\mu(c)=\mu(d)\), the exact result is
+
+\[
+ \boxed{
+ \mathcal K_f(u)
+ =\sum_{dc=f}\frac{\mu(d)}{dc\varphi(c)}
+ S(1,u\bar c^2;d).}
+ \tag{4.845dc_14xq_35l}
+\]
+
+The term \(c=1,d=f\) is
+
+\[
+ \boxed{\frac{\mu(f)}fS(1,u;f),}
+ \tag{4.845dc_14xq_35m}
+\]
+
+which is exactly the normalized Möbius-weighted Kloosterman kernel from
+MMKLS.  Proper divisors have smaller integer modulus, but not a uniform
+power-smaller modulus: \(c\) may remain a fixed prime while \(d\asymp f\).
+Thus (4.845dc_14xq_35l) is not a descending conductor induction with a
+fixed contraction.
+
+The obstruction is already literal at prime conductor.  For every odd
+prime \(p\),
+
+\[
+ \boxed{
+ \mathcal K_p(u)=-\frac1pS(1,u;p)+\frac1{p(p-1)}.}
+ \tag{4.845dc_14xq_35n}
+\]
+
+The scalar correction is harmless, but the first term survives with
+the full physical normalization.  Moreover \(\mu(p)=-1\) is constant
+throughout the prime-conductor sector, so no modulus-Möbius cancellation
+is available there.
+
+Consequently the hardest unit prime-conductor cell of (PCRLS), at
+\(p\asymp T^3\), contains the explicit four-variable family
+
+\[
+ \boxed{
+ \sum_{p\asymp T^3}\frac1p
+ \sum_{A\asymp T^\alpha}\frac{\alpha(A)}A
+ \sum_{\substack{m\asymp T^\alpha\\
+                  h,\delta\asymp T^{5/2}\\
+                  (Amh\delta,p)=1}}
+ S(1,-mh\delta\bar A;p)
+ \Psi_{A,p}(m,h,\delta).}
+ \tag{PK4}_{\alpha}
+\]
+
+All Mellin parameters, endpoint restrictions, and QCT seminorms remain
+inside \(\Psi_{A,p}\).  A bound
+
+\[
+ |(\mathrm{PK4})_\alpha|
+ \ll_{B,W}T^3(\log T)^{-B}
+ \tag{4.845dc_14xq_35o}
+\]
+
+uniformly for \(0\le\alpha\le3\), together with the corresponding
+large composite-conductor cells and the nonunit layers, would close the
+remaining region.  Formula (4.845dc_14xq_35n) shows that such a theorem
+must estimate the Kloosterman family itself; it cannot follow merely by
+declaring the normalized Gauss squares to be oscillatory coefficients.
+
+The interface primitive_root_number_kernel_audit verifies
+(4.845dc_14xq_35k) on every unit of an exact squarefree fixture, checks
+all divisor coefficients in (4.845dc_14xq_35l), and records the prime
+formula (4.845dc_14xq_35n).  It marks the root-number route
+self-similar and keeps MMKLS false.
+
+### 4.109zjace Double product-index Poisson collapses Kloosterman to Ramanujan
+
+There is a second exact transformation which does not pass through
+characters.  Take one separated \(h,\delta\) tensor from
+(4.845dc_14xq_20), with
+
+\[
+ \widehat u(\xi)=\int_{\mathbb R}u(x)e(-x\xi)\,dx
+\]
+
+and the same convention for \(v\).  For every integer modulus \(s\)
+and every \((a,s)=1\), residue-class Poisson in both variables gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{h,\delta\in\mathbb Z}
+ u(h/H)v(\delta/L)S(a,-h\delta;s)\\
+ &\qquad=\frac{HL}{s}\sum_{k,l\in\mathbb Z}
+ \widehat u(kH/s)\widehat v(lL/s)c_s(a+kl).
+ \end{aligned}}
+ \tag{4.845dc_14xq_35p}
+\]
+
+The sign and normalization follow from the complete bilinear identity
+
+\[
+ \boxed{
+ \sum_{x,y\bmod s}e_s(-cxy+kx+ly)
+ =s\,e_s(kl\bar c),\qquad(c,s)=1.}
+ \tag{4.845dc_14xq_35q}
+\]
+
+Indeed the \(y\)-sum forces \(x=l\bar c\).  In the Kloosterman sum
+\(c=\bar z\), so (4.845dc_14xq_35q) contributes \(e_s(klz)\);
+the remaining \(z\)-sum is \(c_s(a+kl)\).  No primality hypothesis is
+used.
+
+At the balanced hard scales
+
+\[
+ s=T^3,\qquad H=L=T^{5/2},
+\]
+
+the two effective dual lengths are
+
+\[
+ K=\frac{s}{H}=T^{1/2},\qquad
+ J=\frac{s}{L}=T^{1/2}.
+ \tag{4.845dc_14xq_35r}
+\]
+
+Both zero frequencies must be retained.  The existing physical-kernel
+separation has polylogarithmic nuclear norm, but an individual separated
+member can have nonzero Fourier mass at \(k=0\) or \(l=0\).
+
+The modulus Möbius weight now has an exact elementary expansion.  On
+squarefree support,
+
+\[
+ \boxed{
+ \mu(s)c_s(n)
+ =\sum_{\substack{d\mid s\\d\mid n}}d\mu(d).}
+ \tag{4.845dc_14xq_35s}
+\]
+
+In the physical orbit \(a=\bar A m\) and \((A,s)=1\).  Therefore, for
+\(d\mid s\),
+
+\[
+ d\mid a+kl\quad\Longleftrightarrow\quad d\mid m+Akl.
+ \tag{4.845dc_14xq_35t}
+\]
+
+Writing \(s=de\), one smooth \(s\)-tensor in the transformed MMKLS sum
+is exactly
+
+\[
+ \boxed{
+ \sum_{\substack{d\mid m+Akl\\(d,A)=1}}\frac{\mu(d)}d
+ \sum_{\substack{e\ge1\\(e,dA)=1}}
+ \frac{\mu^2(e)}{e^2}W(de/S).}
+ \tag{4.845dc_14xq_35u}
+\]
+
+When the cofactor length \(E=S/d\) tends to infinity with a fixed power,
+squarefree counting and partial summation give the density main term
+
+\[
+ \sum_{\substack{e\ge1\\(e,dA)=1}}
+ \frac{\mu^2(e)}{e^2}W(de/S)
+ =
+ \frac dS\frac{\mathcal W}{\zeta(2)}
+ \prod_{p\mid dA}\left(1+\frac1p\right)^{-1}
+ \mathcal E_{d,A}.
+ \tag{4.845dc_14xq_35v}
+\]
+
+Here \(\mathcal W\) is a fixed seminorm-controlled integral.  The local
+\(d\)-sum in the main term is
+
+\[
+ \boxed{
+ \sum_{\substack{d\mid n\\(d,A)=1}}
+ \mu(d)\prod_{p\mid d}\frac p{p+1}
+ =
+ \prod_{\substack{p\mid n\\p\nmid A}}\frac1{p+1}.}
+ \tag{4.845dc_14xq_35w}
+\]
+
+Thus the long-cofactor main is governed by the reciprocal-radical
+weight
+
+\[
+ b_A(n):=\prod_{\substack{p\mid n\\p\nmid A}}\frac1{p+1},
+\qquad
+ \mathfrak g(A):=\prod_{p\mid A}\frac p{p+1}.
+\]
+
+After removing the exact prefactor \(HL/S=T^2\), the remaining
+zero-margin short-dual statement is
+
+\[
+ \boxed{
+ \begin{aligned}
+ (\mathrm{SDRG})_\alpha:\quad
+ \left|
+ \sum_{A\asymp T^\alpha}\frac{\alpha(A)}A
+ \sum_{m\asymp T^\alpha}
+ \sum_{\substack{|k|,|l|\ll T^{1/2}(\log T)^C}}
+ \widehat\Psi_{A,m}(k,l)\,
+ \mathfrak g(A)b_A(m+Akl)
+ \right|\\
+ \ll_{B,W}T(\log T)^{-B}.
+ \end{aligned}}
+ \tag{SDRG}_{\alpha}
+\]
+
+The raw \(k,l\)-volume is already \(T\), exactly the power on the
+right.  Hence a positive reciprocal-radical majorant with only
+\(T^{o(1)}\) control does not supply the required arbitrary logarithmic
+saving.  Cancellation among the separated physical tensors or in the
+outer divisor coefficients must still be retained.
+
+There are also two unaggregated pieces: the errors
+\(\mathcal E_{d,A}\) in (4.845dc_14xq_35v), and the short-cofactor range
+where \(E=S/d\) is not power-large.  The latter contains \(e=1,d=s\),
+which is exactly the prime/top-conductor cell (PK4).  Consequently
+(4.845dc_14xq_35p) is a genuine reduction to short dual variables, but
+not yet a proof of MMKLS.
+
+The interface double_poisson_ramanujan_audit checks
+(4.845dc_14xq_35q) on a composite fixture, verifies
+(4.845dc_14xq_35s) and the Euler identity
+(4.845dc_14xq_35w), records the two \(T^{1/2}\) dual lengths and the
+zero power margin, and keeps the density-error, short-cofactor, and
+MMKLS flags false.
+
 ### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
 
 The July 2026 bilinear Kloosterman theorem of

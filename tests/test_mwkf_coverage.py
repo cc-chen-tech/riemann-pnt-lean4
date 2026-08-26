@@ -6534,6 +6534,139 @@ def test_primitive_conductor_recombination_covers_only_small_outer_and_conductor
         assert marker in note
 
 
+def test_primitive_root_number_average_returns_the_top_kloosterman_modulus(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Primitive orthogonality exposes a self-similar top conductor term."""
+    adapter = getattr(
+        coverage_audit,
+        "primitive_root_number_kernel_audit",
+        None,
+    )
+    assert adapter is not None, "primitive root-number kernel audit is missing"
+    audit = adapter(
+        squarefree_modulus=15,
+        unit_argument=2,
+        prime_fixture=5,
+    )
+    assert audit.squarefree_modulus == 15
+    assert audit.unit_argument == 2
+    assert audit.primitive_character_orthogonality_exact
+    assert audit.primitive_root_number_divisor_formula_exact
+    assert audit.outer_mobius_moves_to_kloosterman_modulus
+    assert audit.divisor_kernel_terms == (
+        (1, 15, F(1, 120), 0),
+        (3, 5, F(-1, 60), 2),
+        (5, 3, F(-1, 30), 3),
+        (15, 1, F(1, 15), 2),
+    )
+    assert audit.top_conductor_divisor == 15
+    assert audit.top_conductor_cofactor == 1
+    assert audit.top_conductor_coefficient == F(1, 15)
+    assert audit.top_conductor_coefficient_equals_physical_mobius_over_modulus
+    assert audit.proper_divisors_reduce_integer_modulus
+    assert not audit.proper_divisors_have_uniform_power_drop
+    assert audit.prime_fixture == 5
+    assert audit.prime_kloosterman_coefficient == F(-1, 5)
+    assert audit.prime_scalar_correction == F(1, 20)
+    assert audit.prime_conductor_top_term_survives
+    assert audit.prime_modulus_mobius_weight_is_constant
+    assert audit.root_number_average_is_self_similar_mmkls
+    assert not audit.root_number_average_is_independent_large_sieve_saving
+    assert not audit.full_mmkls_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: primitive_root_number_kernel="
+        "f=15 u=2 orthogonality=True divisor_formula=True "
+        "terms=1:15:1/120:0,3:5:-1/60:2,5:3:-1/30:3,15:1:1/15:2 "
+        "top=15,1,1/15 physical=True proper_lower=True "
+        "power_drop=False prime=5 prime_kernel=-1/5 correction=1/20 "
+        "prime_survives=True prime_mu_constant=True self_similar=True "
+        "independent=False mmkls=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjacd Primitive root-number orthogonality returns the MMKLS top conductor",
+        r"\mathcal K_f(u)",
+        r"\sum_{dc=f}\frac{\mu(d)}{dc\varphi(c)}",
+        r"\mathcal K_p(u)=-\frac1pS(1,u;p)+\frac1{p(p-1)}",
+        "primitive_root_number_kernel_audit",
+    ):
+        assert marker in note
+
+
+def test_double_poisson_turns_the_product_index_kloosterman_sum_into_a_short_ramanujan_gate(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Keep both dual zero frequencies and isolate the short-cofactor tail."""
+    adapter = getattr(
+        coverage_audit,
+        "double_poisson_ramanujan_audit",
+        None,
+    )
+    assert adapter is not None, "double-Poisson Ramanujan audit is missing"
+    audit = adapter(
+        modulus=30,
+        first_kloosterman_index=7,
+        ramanujan_frequency=42,
+        coprimality_parameter=5,
+    )
+    assert audit.modulus == 30
+    assert audit.first_kloosterman_index == 7
+    assert audit.complete_bilinear_poisson_identity_exact
+    assert audit.identity_holds_for_composite_modulus
+    assert audit.kloosterman_sum_collapses_to_ramanujan_sum
+    assert audit.transformed_ramanujan_argument_sign == "a+k*l"
+    assert audit.modulus_exponent == F(3)
+    assert audit.first_product_length_exponent == F(5, 2)
+    assert audit.second_product_length_exponent == F(5, 2)
+    assert audit.first_dual_length_exponent == F(1, 2)
+    assert audit.second_dual_length_exponent == F(1, 2)
+    assert audit.dual_volume_exponent == F(1)
+    assert audit.pre_modulus_sum_prefactor_exponent == F(-1)
+    assert audit.mobius_ramanujan_divisor_identity_exact
+    assert audit.reciprocal_radical_density_divisor_sum == F(1, 96)
+    assert audit.reciprocal_radical_density_euler_product_exact
+    assert audit.long_cofactor_main_prefactor_exponent == F(2)
+    assert audit.mmkls_target_exponent == F(3)
+    assert audit.required_short_dual_gate_exponent == F(1)
+    assert audit.raw_short_dual_volume_exponent == F(1)
+    assert audit.short_dual_gate_has_zero_power_margin
+    assert audit.physical_kernel_has_polylog_separated_nuclear_norm
+    assert audit.individual_separated_zero_frequency_may_be_nonzero
+    assert audit.long_cofactor_density_main_identified
+    assert not audit.cofactor_error_and_short_tail_aggregated
+    assert audit.short_cofactor_contains_prime_top_conductor_cell
+    assert not audit.positive_reciprocal_radical_majorant_supplies_log_saving
+    assert not audit.double_poisson_route_closes_mmkls
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: double_poisson_ramanujan="
+        "s=30 a=7 bilinear=True composite=True ramanujan=True sign=a+k*l "
+        "scales=3,5/2,5/2 dual=1/2,1/2 volume=1 pre=-1 "
+        "mobius_ramanujan=True density=1/96 density_euler=True "
+        "long_prefactor=2 target=3 short_target=1 raw_dual=1 "
+        "zero_margin=True separated=True zero_frequency=True "
+        "long_main=True error_tail=False prime_tail=True "
+        "positive_log=False mmkls=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjace Double product-index Poisson collapses Kloosterman to Ramanujan",
+        r"\frac{HL}{s}\sum_{k,l\in\mathbb Z}",
+        r"c_s(a+kl)",
+        r"\mu(s)c_s(n)",
+        r"\prod_{\substack{p\mid n\\p\nmid A}}\frac1{p+1}",
+        r"\tag{SDRG}_{\alpha}",
+        "double_poisson_ramanujan_audit",
+    ):
+        assert marker in note
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (

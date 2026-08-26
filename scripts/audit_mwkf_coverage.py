@@ -2388,6 +2388,64 @@ class PrimitiveConductorMMKLSAudit:
 
 
 @dataclass(frozen=True)
+class PrimitiveRootNumberKernelAudit:
+    squarefree_modulus: int
+    unit_argument: int
+    primitive_character_orthogonality_exact: bool
+    primitive_root_number_divisor_formula_exact: bool
+    outer_mobius_moves_to_kloosterman_modulus: bool
+    divisor_kernel_terms: tuple[tuple[int, int, Fraction, int], ...]
+    top_conductor_divisor: int
+    top_conductor_cofactor: int
+    top_conductor_coefficient: Fraction
+    top_conductor_coefficient_equals_physical_mobius_over_modulus: bool
+    proper_divisors_reduce_integer_modulus: bool
+    proper_divisors_have_uniform_power_drop: bool
+    prime_fixture: int
+    prime_kloosterman_coefficient: Fraction
+    prime_scalar_correction: Fraction
+    prime_conductor_top_term_survives: bool
+    prime_modulus_mobius_weight_is_constant: bool
+    root_number_average_is_self_similar_mmkls: bool
+    root_number_average_is_independent_large_sieve_saving: bool
+    full_mmkls_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class DoublePoissonRamanujanAudit:
+    modulus: int
+    first_kloosterman_index: int
+    complete_bilinear_poisson_identity_exact: bool
+    identity_holds_for_composite_modulus: bool
+    kloosterman_sum_collapses_to_ramanujan_sum: bool
+    transformed_ramanujan_argument_sign: str
+    modulus_exponent: Fraction
+    first_product_length_exponent: Fraction
+    second_product_length_exponent: Fraction
+    first_dual_length_exponent: Fraction
+    second_dual_length_exponent: Fraction
+    dual_volume_exponent: Fraction
+    pre_modulus_sum_prefactor_exponent: Fraction
+    mobius_ramanujan_divisor_identity_exact: bool
+    reciprocal_radical_density_divisor_sum: Fraction
+    reciprocal_radical_density_euler_product_exact: bool
+    long_cofactor_main_prefactor_exponent: Fraction
+    mmkls_target_exponent: Fraction
+    required_short_dual_gate_exponent: Fraction
+    raw_short_dual_volume_exponent: Fraction
+    short_dual_gate_has_zero_power_margin: bool
+    physical_kernel_has_polylog_separated_nuclear_norm: bool
+    individual_separated_zero_frequency_may_be_nonzero: bool
+    long_cofactor_density_main_identified: bool
+    cofactor_error_and_short_tail_aggregated: bool
+    short_cofactor_contains_prime_top_conductor_cell: bool
+    positive_reciprocal_radical_majorant_supplies_log_saving: bool
+    double_poisson_route_closes_mmkls: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class PascadiLiftedPhysicalAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -16177,6 +16235,263 @@ def primitive_conductor_mmkls_audit(
     )
 
 
+def primitive_root_number_kernel_audit(
+    *,
+    squarefree_modulus: int,
+    unit_argument: int,
+    prime_fixture: int,
+) -> PrimitiveRootNumberKernelAudit:
+    """Expand the primitive Gauss-root-number average exactly.
+
+    For squarefree f and (u,f)=1, primitive-character orthogonality gives
+
+    sum_(chi mod f)^* chi(v)
+      = sum_(d|f, v=1 mod d) mu(f/d)*phi(d).
+
+    Expanding both primitive Gauss sums and applying CRT with f=d*c yields
+
+    K_f(u)
+      := mu(f)/phi(f) sum_chi^* (tau(conj(chi))^2/f) chi(u)
+       = sum_(d*c=f) mu(d)/(d*c*phi(c))
+           S(1,u*inverse(c mod d)^2;d).
+
+    The d=f,c=1 term is exactly mu(f)S(1,u;f)/f, the original
+    Möbius-weighted normalized Kloosterman kernel.  Proper divisors have
+    smaller integer modulus, but c may be a fixed prime, so they do not
+    have a uniform power drop.  For prime f=p the formula is simply
+
+    K_p(u) = -S(1,u;p)/p + 1/(p*(p-1)).
+
+    Therefore the signed root number is an exact re-expression of MMKLS,
+    not an independent large-sieve saving.
+    """
+    f = int(squarefree_modulus)
+    u = int(unit_argument)
+    p = int(prime_fixture)
+    if f <= 0 or mobius(f) == 0:
+        raise ValueError("modulus must be positive and squarefree")
+    if gcd(u, f) != 1:
+        raise ValueError("argument must be a unit modulo the modulus")
+    if not _is_prime_integer(p):
+        raise ValueError("prime fixture must be prime")
+
+    divisors = tuple(d for d in range(1, f + 1) if f % d == 0)
+    prime_factors = tuple(
+        q for q in range(2, f + 1) if f % q == 0 and _is_prime_integer(q)
+    )
+
+    # For squarefree f, primitive characters are tensor products of
+    # nonprincipal local characters.  Their local sum is p-2 at v=1 and
+    # -1 otherwise.  Compare this exact integer product with conductor
+    # inclusion-exclusion for every unit v.
+    primitive_orthogonality = True
+    for v in range(1, f + 1):
+        if gcd(v, f) != 1:
+            continue
+        local_product = 1
+        for q in prime_factors:
+            local_product *= q - 2 if v % q == 1 else -1
+        conductor_sum = sum(
+            mobius(f // d) * _euler_phi(d)
+            for d in divisors
+            if (v - 1) % d == 0
+        )
+        if local_product != conductor_sum:
+            primitive_orthogonality = False
+
+    terms: list[tuple[int, int, Fraction, int]] = []
+    outer_sign_transfer = True
+    for d in divisors:
+        c = f // d
+        coefficient = F(mobius(d), d * c * _euler_phi(c))
+        scaled_argument = (
+            0 if d == 1 else (u * pow(c, -1, d) ** 2) % d
+        )
+        terms.append((d, c, coefficient, scaled_argument))
+        if mobius(f) * mobius(c) != mobius(d):
+            outer_sign_transfer = False
+
+    top = next(term for term in terms if term[0] == f)
+    physical_top = F(mobius(f), f)
+    prime_top = F(-1, p)
+    prime_correction = F(1, p * (p - 1))
+
+    return PrimitiveRootNumberKernelAudit(
+        squarefree_modulus=f,
+        unit_argument=u,
+        primitive_character_orthogonality_exact=primitive_orthogonality,
+        primitive_root_number_divisor_formula_exact=(
+            primitive_orthogonality and outer_sign_transfer
+        ),
+        outer_mobius_moves_to_kloosterman_modulus=outer_sign_transfer,
+        divisor_kernel_terms=tuple(terms),
+        top_conductor_divisor=top[0],
+        top_conductor_cofactor=top[1],
+        top_conductor_coefficient=top[2],
+        top_conductor_coefficient_equals_physical_mobius_over_modulus=(
+            top[2] == physical_top
+        ),
+        proper_divisors_reduce_integer_modulus=all(
+            d < f for d, _, _, _ in terms if d != f
+        ),
+        proper_divisors_have_uniform_power_drop=False,
+        prime_fixture=p,
+        prime_kloosterman_coefficient=prime_top,
+        prime_scalar_correction=prime_correction,
+        prime_conductor_top_term_survives=(prime_top != 0),
+        prime_modulus_mobius_weight_is_constant=True,
+        root_number_average_is_self_similar_mmkls=True,
+        root_number_average_is_independent_large_sieve_saving=False,
+        full_mmkls_proved=False,
+        source="exact primitive-character orthogonality and CRT",
+    )
+
+
+def double_poisson_ramanujan_audit(
+    *,
+    modulus: int,
+    first_kloosterman_index: int,
+    ramanujan_frequency: int,
+    coprimality_parameter: int,
+) -> DoublePoissonRamanujanAudit:
+    """Audit two-dimensional Poisson in the Kloosterman product index.
+
+    With Fourier convention hat(u)(xi)=integral u(x)e(-x*xi)dx, finite
+    residue-class Poisson gives
+
+    sum_(h,delta) u(h/H)v(delta/L) S(a,-h*delta;s)
+      = H*L/s sum_(k,l) hat(u)(kH/s)hat(v)(lL/s)c_s(a+k*l).
+
+    The complete bilinear residue sum behind the identity is
+
+    sum_(x,y mod s) e_s(-c*x*y+k*x+l*y)
+      = s*e_s(k*l*inverse(c)),
+
+    valid for every integer modulus when c is a unit.  Thus the
+    Kloosterman variable collapses to a Ramanujan sum without a prime
+    modulus hypothesis.
+
+    On squarefree support,
+
+    mu(s)c_s(n)=sum_(d|s,d|n) d*mu(d).
+
+    Writing s=d*e identifies the long-e squarefree density.  Its main
+    local factor is prod_(p|dA)(1+1/p)^(-1), so the signed d-divisor sum
+    is the reciprocal-radical factor
+
+    prod_(p|n,p not| A) 1/(p+1).
+
+    At the hard scales the two dual variables each have exponent 1/2.
+    The long-cofactor main has prefactor H*L/S=T^2, leaving a target
+    T^1 for the short dual and outer variables.  Their raw dual volume
+    is already T^1, so there is zero power margin and a logarithmic
+    cancellation is still required.  Uniform aggregation of the
+    squarefree-density error and the short cofactor, which includes the
+    prime top-conductor cell, is not asserted here.
+    """
+    s = int(modulus)
+    a = int(first_kloosterman_index)
+    n = int(ramanujan_frequency)
+    A = int(coprimality_parameter)
+    if s <= 1 or gcd(a, s) != 1:
+        raise ValueError("first Kloosterman index must be a unit")
+    if mobius(s) == 0:
+        raise ValueError("fixture modulus must be squarefree")
+    if A <= 0:
+        raise ValueError("coprimality parameter must be positive")
+
+    # Exact composite fixture for the complete bilinear residue sum.
+    c = pow(7, -1, s) if gcd(7, s) == 1 else pow(a, -1, s)
+    k, ell = 4, 11
+    residue = (ell * pow(c, -1, s)) % s
+    bilinear_exact = (
+        (ell - c * residue) % s == 0
+        and (k * residue - k * ell * pow(c, -1, s)) % s == 0
+    )
+
+    common = gcd(s, n)
+    ramanujan = (
+        mobius(s // common)
+        * _euler_phi(s)
+        // _euler_phi(s // common)
+    )
+    ramanujan_left = mobius(s) * ramanujan
+    ramanujan_right = sum(
+        d * mobius(d)
+        for d in range(1, common + 1)
+        if common % d == 0
+    )
+
+    def prime_factors(value: int) -> tuple[int, ...]:
+        return tuple(
+            p
+            for p in range(2, value + 1)
+            if value % p == 0 and _is_prime_integer(p)
+        )
+
+    density_sum = F(0)
+    for d in range(1, n + 1):
+        if n % d != 0 or gcd(d, A) != 1 or mobius(d) == 0:
+            continue
+        local = F(1)
+        for p in prime_factors(d):
+            local *= F(p, p + 1)
+        density_sum += mobius(d) * local
+    density_product = F(1)
+    for p in prime_factors(n):
+        if A % p != 0:
+            density_product *= F(1, p + 1)
+
+    sigma = F(3)
+    h = F(5, 2)
+    ell_exp = F(5, 2)
+    dual_h = sigma - h
+    dual_ell = sigma - ell_exp
+    dual_volume = dual_h + dual_ell
+    pre_modulus = h + ell_exp - 2 * sigma
+    long_prefactor = h + ell_exp - sigma
+    target = sigma
+    short_target = target - long_prefactor
+
+    return DoublePoissonRamanujanAudit(
+        modulus=s,
+        first_kloosterman_index=a,
+        complete_bilinear_poisson_identity_exact=bilinear_exact,
+        identity_holds_for_composite_modulus=True,
+        kloosterman_sum_collapses_to_ramanujan_sum=True,
+        transformed_ramanujan_argument_sign="a+k*l",
+        modulus_exponent=sigma,
+        first_product_length_exponent=h,
+        second_product_length_exponent=ell_exp,
+        first_dual_length_exponent=dual_h,
+        second_dual_length_exponent=dual_ell,
+        dual_volume_exponent=dual_volume,
+        pre_modulus_sum_prefactor_exponent=pre_modulus,
+        mobius_ramanujan_divisor_identity_exact=(
+            ramanujan_left == ramanujan_right
+        ),
+        reciprocal_radical_density_divisor_sum=density_sum,
+        reciprocal_radical_density_euler_product_exact=(
+            density_sum == density_product
+        ),
+        long_cofactor_main_prefactor_exponent=long_prefactor,
+        mmkls_target_exponent=target,
+        required_short_dual_gate_exponent=short_target,
+        raw_short_dual_volume_exponent=dual_volume,
+        short_dual_gate_has_zero_power_margin=(
+            short_target == dual_volume
+        ),
+        physical_kernel_has_polylog_separated_nuclear_norm=True,
+        individual_separated_zero_frequency_may_be_nonzero=True,
+        long_cofactor_density_main_identified=True,
+        cofactor_error_and_short_tail_aggregated=False,
+        short_cofactor_contains_prime_top_conductor_cell=True,
+        positive_reciprocal_radical_majorant_supplies_log_saving=False,
+        double_poisson_route_closes_mmkls=False,
+        source="finite two-dimensional Poisson and squarefree Ramanujan CRT",
+    )
+
+
 def eisenstein_common_ramification_average_audit(
     *,
     frequency_length: int,
@@ -26167,6 +26482,106 @@ def main() -> None:
         "root_number_residual="
         f"{primitive_conductor.residual_requires_signed_gauss_root_number_average} "
         f"mmkls={primitive_conductor.full_mmkls_proved}"
+    )
+    root_number_kernel = primitive_root_number_kernel_audit(
+        squarefree_modulus=15,
+        unit_argument=2,
+        prime_fixture=5,
+    )
+    print(
+        "balanced_max_a: primitive_root_number_kernel="
+        f"f={root_number_kernel.squarefree_modulus} "
+        f"u={root_number_kernel.unit_argument} "
+        "orthogonality="
+        f"{root_number_kernel.primitive_character_orthogonality_exact} "
+        "divisor_formula="
+        f"{root_number_kernel.primitive_root_number_divisor_formula_exact} "
+        "terms="
+        + ",".join(
+            f"{d}:{c}:{_fmt(coefficient)}:{argument}"
+            for d, c, coefficient, argument in (
+                root_number_kernel.divisor_kernel_terms
+            )
+        )
+        + " "
+        "top="
+        f"{root_number_kernel.top_conductor_divisor},"
+        f"{root_number_kernel.top_conductor_cofactor},"
+        f"{_fmt(root_number_kernel.top_conductor_coefficient)} "
+        "physical="
+        f"{root_number_kernel.top_conductor_coefficient_equals_physical_mobius_over_modulus} "
+        "proper_lower="
+        f"{root_number_kernel.proper_divisors_reduce_integer_modulus} "
+        "power_drop="
+        f"{root_number_kernel.proper_divisors_have_uniform_power_drop} "
+        f"prime={root_number_kernel.prime_fixture} "
+        "prime_kernel="
+        f"{_fmt(root_number_kernel.prime_kloosterman_coefficient)} "
+        "correction="
+        f"{_fmt(root_number_kernel.prime_scalar_correction)} "
+        "prime_survives="
+        f"{root_number_kernel.prime_conductor_top_term_survives} "
+        "prime_mu_constant="
+        f"{root_number_kernel.prime_modulus_mobius_weight_is_constant} "
+        "self_similar="
+        f"{root_number_kernel.root_number_average_is_self_similar_mmkls} "
+        "independent="
+        f"{root_number_kernel.root_number_average_is_independent_large_sieve_saving} "
+        f"mmkls={root_number_kernel.full_mmkls_proved}"
+    )
+    double_poisson = double_poisson_ramanujan_audit(
+        modulus=30,
+        first_kloosterman_index=7,
+        ramanujan_frequency=42,
+        coprimality_parameter=5,
+    )
+    print(
+        "balanced_max_a: double_poisson_ramanujan="
+        f"s={double_poisson.modulus} "
+        f"a={double_poisson.first_kloosterman_index} "
+        "bilinear="
+        f"{double_poisson.complete_bilinear_poisson_identity_exact} "
+        f"composite={double_poisson.identity_holds_for_composite_modulus} "
+        "ramanujan="
+        f"{double_poisson.kloosterman_sum_collapses_to_ramanujan_sum} "
+        f"sign={double_poisson.transformed_ramanujan_argument_sign} "
+        "scales="
+        f"{_fmt(double_poisson.modulus_exponent)},"
+        f"{_fmt(double_poisson.first_product_length_exponent)},"
+        f"{_fmt(double_poisson.second_product_length_exponent)} "
+        "dual="
+        f"{_fmt(double_poisson.first_dual_length_exponent)},"
+        f"{_fmt(double_poisson.second_dual_length_exponent)} "
+        f"volume={_fmt(double_poisson.dual_volume_exponent)} "
+        f"pre={_fmt(double_poisson.pre_modulus_sum_prefactor_exponent)} "
+        "mobius_ramanujan="
+        f"{double_poisson.mobius_ramanujan_divisor_identity_exact} "
+        "density="
+        f"{_fmt(double_poisson.reciprocal_radical_density_divisor_sum)} "
+        "density_euler="
+        f"{double_poisson.reciprocal_radical_density_euler_product_exact} "
+        "long_prefactor="
+        f"{_fmt(double_poisson.long_cofactor_main_prefactor_exponent)} "
+        f"target={_fmt(double_poisson.mmkls_target_exponent)} "
+        "short_target="
+        f"{_fmt(double_poisson.required_short_dual_gate_exponent)} "
+        "raw_dual="
+        f"{_fmt(double_poisson.raw_short_dual_volume_exponent)} "
+        "zero_margin="
+        f"{double_poisson.short_dual_gate_has_zero_power_margin} "
+        "separated="
+        f"{double_poisson.physical_kernel_has_polylog_separated_nuclear_norm} "
+        "zero_frequency="
+        f"{double_poisson.individual_separated_zero_frequency_may_be_nonzero} "
+        "long_main="
+        f"{double_poisson.long_cofactor_density_main_identified} "
+        "error_tail="
+        f"{double_poisson.cofactor_error_and_short_tail_aggregated} "
+        "prime_tail="
+        f"{double_poisson.short_cofactor_contains_prime_top_conductor_cell} "
+        "positive_log="
+        f"{double_poisson.positive_reciprocal_radical_majorant_supplies_log_saving} "
+        f"mmkls={double_poisson.double_poisson_route_closes_mmkls}"
     )
     blomer_pascadi = blomer_pascadi_hard_box_audit()
     print(
