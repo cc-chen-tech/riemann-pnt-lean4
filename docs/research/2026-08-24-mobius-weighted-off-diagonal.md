@@ -7686,6 +7686,100 @@ than equal-modulus algebra.  Estimate (9.310) remains unproved, but it
 is narrower than (9.282): all Type-I nonzero modes and all centered
 low-product Type-II modes have now been removed unconditionally.
 
+### 9.48 Complementary divisor switching and the asymptotic-sieve boundary
+
+The nonsquarefree shifted arguments do not belong to the remaining
+gate.  If \(\mu(s+d)=0\), (9.307) says pointwise that its density plus
+complementary part is the negative of its centered part.  Hence (9.308)
+already bounds their total contribution.  It remains only to consider
+squarefree \(n=s+d\).
+
+Every divisor \(m\mid n\) is then squarefree.  Since the high range has
+\(m>D>UV\), the short--short part of (9.295) is empty.  Define
+\[
+ R_{U,V}(m)
+ :=\#\{(b,c):bc=m,\ b>U,\ c>V\}.
+\]
+All long--long factor pairs have the same sign, giving
+\[
+\boxed{\lambda_{U,V}(m)=\mu(m)R_{U,V}(m)
+\qquad(\mu^2(m)=1,\ m>UV).}
+\tag{9.311}
+\]
+
+If \(n=mk\) is squarefree, then \((m,k)=1\) and
+\[
+\boxed{\mu(m)=\mu(mk)\mu(k).}
+\tag{9.312}
+\]
+
+Let
+\[
+ A(n):=\sum_{\substack{s+d=n\\s\asymp S,\ d\in I(s)\\(d,s)=1}}
+       \mu(s)\omega_{G,Q}(s)X_d(d).
+\]
+On the squarefree support, complementary divisor switching turns the
+second part of (9.310) into
+\[
+\boxed{
+ \sum_{\substack{n\asymp S\\\mu^2(n)=1}}A(n)
+ \sum_{\substack{m>D\\m\mid n}}\lambda_{U,V}(m)
+ =
+ \sum_{k\ll S/D}\mu(k)
+ \sum_{\substack{m>D\\(m,k)=1\\mk\asymp S}}
+ R_{U,V}(m)\mu(mk)A(mk).}
+\tag{9.313}
+\]
+
+All endpoints and signs are literal.  The finite checker verifies
+(9.311)--(9.312) for every squarefree product in its test range.  Formula
+(9.313) is a parity-sensitive Möbius bilinear form, not an arbitrary
+divisor sum.
+
+This is exactly where the Friedlander--Iwaniec asymptotic sieve becomes
+relevant, but it does not supply the estimate.  In their notation our
+balanced exponent map is
+\[
+\boxed{
+ x=S=T^3,\qquad {\mathcal D}=D=T^2=x^{2/3},\qquad
+ N=k\leq T=x^{1/3}=\sqrt{\mathcal D},\qquad
+ U=T^{3/4}<x/{\mathcal D}=T.}
+\tag{9.314}
+\]
+
+Thus the top \(k\)-block lies at the lower parity-breaking boundary in
+their condition (B1), and the short divisor cutoff lies below their
+(B3) ceiling.  The executable exponent ledger checks these equalities.
+However, Friedlander--Iwaniec **assume** their bilinear estimate (B);
+it is not a conclusion of the asymptotic-sieve theorem.  Moreover, their
+theorem starts with a nonnegative sequence \(a_n\), their coefficient is
+\(\gamma(k,C)=\sum_{d\mid k,d\leq C}\mu(d)\), and their bilinear form
+has no extra \(m\)-weight \(R_{U,V}(m)\).  Our \(A(n)\) is signed and
+retains the shifted two-Möbius correlation.  Consequently applying their
+Theorem 1 here would amount to assuming the missing estimate.
+
+The genuinely narrowed residual is the squarefree asymptotic-sieve
+bilinear gate
+\[
+\boxed{
+ \Lambda_{U,V}(D)
+ \sum_{\substack{n\asymp S\\\mu^2(n)=1}}A(n)
+ +
+ \sum_{k\ll T}\mu(k)
+ \sum_{\substack{m>D\\(m,k)=1\\mk\asymp S}}
+ R_{U,V}(m)\mu(mk)A(mk)
+ \ll_\varepsilon T^{9/2+\varepsilon}.}
+\tag{9.315}
+\]
+
+Equation (9.315), together with its scaled gcd layers, is equivalent to
+(9.310) modulo the already proved centered contribution.  It exposes
+the precise parity-breaking input still missing: a bilinear estimate for
+the actual signed additive-convolution sequence \(A\), at
+\(k\leq\sqrt D\), with the divisor multiplicity \(R_{U,V}\) retained.
+The published asymptotic sieve names this kind of input but does not
+prove it.
+
 Nor does (9.303) prove that such a Mertens estimate is necessary: the
 actual coupled kernel could still cancel between the low-modulus prefix,
 the long--long modes \(m\gtrsim D\), and different separated
@@ -7704,7 +7798,8 @@ Möbius--inverse packet (9.258) for \(0\leq\tau<1/4\), hence the full
 Region-D recombination, remain unproved.  After transition completion,
 all Type-I nonzero modes and all centered low-product modes are now
 proved within target; their exact remaining projection is the joint
-density-plus-complementary gate (9.310), still unproved.**
+density-plus-complementary gate (9.310), equivalently the squarefree
+parity-breaking bilinear gate (9.315), still unproved.**
 
 Proved in this note:
 
@@ -7939,6 +8034,13 @@ Proved in this note:
   \(S_j=S/j,D_j=D/j\) and cost no power.  The transition obstruction is
   therefore reduced to the joint density plus \(m>D_j\) complementary
   divisor gate (9.310), whose quotient always has length at most \(T\).
+* the squarefree complementary switch (9.311)--(9.313): nonsquarefree
+  shifted arguments return to the already bounded centered term, while
+  on the residual support \(\lambda(m)=\mu(m)R_{U,V}(m)\) and
+  \(\mu(m)=\mu(mk)\mu(k)\).  The exact FI parameter map is (9.314);
+  their parity-breaking estimate (B) is an assumption, not a theorem
+  applicable here.  The remaining gate is equivalently the signed
+  asymptotic-sieve bilinear form (9.315).
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -7995,7 +8097,7 @@ Proved in this note:
 | Centering after transition completion | exact short-box obstruction; no major-arc deletion | the centered numerator transform is the point-minus-uniform identity (9.283).  Its aligned short-box mass is (9.284), equal to \(D-D^2/(q-1)\) for prime \(q>D\), so the uniform background is a factor \(D/q=T^{-1/2}\) below the dilation point mass, (9.285)--(9.286).  This disproves an automatic vanishing-moment route but is not a lower bound for the actual signed smooth packet; published averaged/short-interval Möbius bounds remain logarithmic at the required power scale |
 | Actual archimedean zero-moment route | scale audit exact; special identity unproved | in the balanced transition every parameter \(TL/(MR),HM/S,M^2R/(ST),KS/(MR),gD/L,H/q\) has exponent zero, (9.287)--(9.288).  Thus the completed weight is sampled at bounded frequency and integration by parts gives no power.  The AFE zeros at Mellin \(z=\pm1/2\) do not force the proposed \(d\)-moment (9.289), and even that moment would remove only the additive origin |
 | Post-completion scalar recombination | exact two-Möbius form; published average only logarithmic | (9.290)--(9.291) merge \(\mu(g)\mu(q)\) into \(\mu(s)\) and put every separated scalar weight into \(\omega_{G,Q}(s)\).  Its divisor-bounded \(L^2\) norm (9.292), together with the exact gcd-divisor split, fits Lichtman's arbitrary-coefficient Fourier lemma componentwise.  The resulting bound has power exponent \(SD=T^5\), not the target \(S^{3/2}=T^{9/2}\), (9.293)--(9.294); no third independent Möbius sign remains |
-| Central Type-I/II density prefix | exact finite regrouping and improved cutoff; density-plus-complementary gate unproved | (9.295)--(9.298) group the split by \(m=bc\), prove that long--long has no equal-modulus partner for the Type-I origin, and identify the exact finite principal prefix.  Its Dirichlet series has only Abelian cancellation, (9.299).  Type-I nonzero completion modes and sharp boundaries are below target, (9.300), while the surviving zero frequency is (9.301)--(9.302).  Any factorwise Mertens route must satisfy (9.303).  After completion \(U=V=T^{3/4}\) shortens the geometry, (9.304)--(9.306).  The exact split (9.307) plus additive large sieve (9.308)--(9.309) unconditionally removes every centered low-product block; only the joint density and \(m>D_j\), \(k\ll T\) complementary-divisor gate (9.310) remains |
+| Central Type-I/II density prefix | exact finite regrouping and improved cutoff; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  Type-I nonzero modes are below target, (9.300)--(9.303), and \(U=V=T^{3/4}\) shortens the geometry, (9.304)--(9.306).  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that centered bound; on squarefree support the exact sign migration (9.311)--(9.313) maps the residual to the FI boundary (9.314).  FI assumes rather than proves the needed bilinear axiom, leaving precisely (9.315) unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -8040,6 +8142,11 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   Q. J. Math. 73 (2022), 729--757, arXiv:2009.08969v2, especially
   Theorems 1.3 and 6.2; mapped to the stripped signed prime projection
   in Section 9.42.
+* J. Friedlander, H. Iwaniec, *Asymptotic sieve for primes*, Ann. of
+  Math. 148 (1998), 1041--1065, arXiv:math/9811186, especially
+  hypotheses (B), (B1)--(B3); Section 9.48 maps the complementary
+  divisor scales exactly and records that (B) is an input axiom, not a
+  theorem available for the signed sequence here.
 * M. Z. Garaev, I. E. Shparlinski, *On the distribution of modular
   inverses from short intervals*, arXiv:2304.07953; the lower-bound
   examples rule out assuming a uniform one-variable inverse-sum power

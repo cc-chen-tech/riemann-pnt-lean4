@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).parents[1]))
 from scripts.audit_mobius_type_ii import (
     AdditiveDualBlockLedger,
     AdditiveShiftedChowlaLedger,
+    AsymptoticSieveTransitionLedger,
     BlomerPascadiMargins,
     BlomerPascadiUnbalancedLedger,
     CenteredCrtUnitMeanLedger,
@@ -59,6 +60,7 @@ from scripts.audit_mobius_type_ii import (
     additive_shifted_chowla_ledger,
     ambient_centered_residue_collision_fourier,
     ambient_centered_residue_collision_fourier_formula,
+    asymptotic_sieve_transition_ledger,
     balanced_dual_low_mode_mobius_exponent,
     balanced_inverse_fraction_spacing_margin,
     balanced_principal_character_mobius_exponent,
@@ -187,6 +189,8 @@ from scripts.audit_mobius_type_ii import (
     scalar_type_ii_cutoff_ledger,
     shifted_prime_mobius_coordinates,
     shifted_prime_mobius_ledger,
+    squarefree_complementary_sign_recombination,
+    squarefree_high_product_multiplicity,
     squarefree_normalized_ramanujan_mean_formula,
     squarefree_outer_mobius_ramanujan,
     squarefree_scalar_gcd_stratum,
@@ -510,6 +514,55 @@ def test_centered_low_product_and_complementary_divisor_split_is_exact() -> None
                     + split.complementary
                     == naive_mobius(n)
                 )
+                if naive_mobius(n) == 0:
+                    assert (
+                        split.density + split.complementary
+                        == -split.centered
+                    )
+
+
+def test_squarefree_complementary_coefficient_is_a_mobius_bilinear_sign() -> None:
+    for cutoff_left, cutoff_right in ((1, 1), (2, 3), (4, 2)):
+        for modulus in range(2, 101):
+            if naive_mobius(modulus) == 0:
+                continue
+            if modulus <= cutoff_left * cutoff_right:
+                continue
+            multiplicity = squarefree_high_product_multiplicity(
+                modulus,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            )
+            assert mobius_two_cutoff_product_value(
+                modulus,
+                cutoff_left=cutoff_left,
+                cutoff_right=cutoff_right,
+            ) == naive_mobius(modulus) * multiplicity
+            for quotient in range(1, 20):
+                shifted = modulus * quotient
+                if naive_mobius(shifted) == 0:
+                    continue
+                assert squarefree_complementary_sign_recombination(
+                    shifted,
+                    modulus,
+                ) == (naive_mobius(modulus), naive_mobius(modulus))
+
+
+def test_asymptotic_sieve_map_hits_the_parity_breaking_endpoint() -> None:
+    assert asymptotic_sieve_transition_ledger(
+        ambient_length=F(3),
+        distribution_level=F(2),
+        complementary_quotient=F(1),
+        short_divisor_cutoff=F(3, 4),
+    ) == AsymptoticSieveTransitionLedger(
+        square_root_level=F(1),
+        square_root_ambient=F(3, 2),
+        complementary_quotient=F(1),
+        b3_coefficient_ceiling=F(1),
+        short_divisor_cutoff=F(3, 4),
+        quotient_at_lower_endpoint=True,
+        cutoff_inside_b3_ceiling=True,
+    )
 
 
 def test_central_major_arc_needs_a_fixed_mertens_power() -> None:

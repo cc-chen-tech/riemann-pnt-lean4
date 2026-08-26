@@ -247,6 +247,48 @@ def mobius_two_cutoff_product_value(
     ).combined
 
 
+def squarefree_high_product_multiplicity(
+    product: int,
+    *,
+    cutoff_left: int,
+    cutoff_right: int,
+) -> int:
+    """Count the long-long factorizations of a squarefree product.
+
+    When ``product>U*V``, the short-short coefficient vanishes.  Every
+    factor pair of a squarefree product is coprime, so each surviving
+    Möbius product has the common sign ``mu(product)``.
+    """
+
+    if min(product, cutoff_left, cutoff_right) < 1:
+        raise ValueError("the product and cutoffs must be positive")
+    if mobius(product) == 0:
+        raise ValueError("the high-product sign identity is squarefree")
+    return sum(
+        left_factor > cutoff_left
+        and product // left_factor > cutoff_right
+        for left_factor in divisors(product)
+    )
+
+
+def squarefree_complementary_sign_recombination(
+    shifted_argument: int,
+    product_divisor: int,
+) -> tuple[int, int]:
+    """Move ``mu(m)`` to ``mu(mk)mu(k)`` when ``mk`` is squarefree."""
+
+    if min(shifted_argument, product_divisor) < 1:
+        raise ValueError("the shifted argument and divisor must be positive")
+    if shifted_argument % product_divisor != 0:
+        raise ValueError("the product divisor must divide the shifted argument")
+    if mobius(shifted_argument) == 0:
+        raise ValueError("the shifted argument must be squarefree")
+    quotient = shifted_argument // product_divisor
+    direct = mobius(product_divisor)
+    recombined = mobius(shifted_argument) * mobius(quotient)
+    return direct, recombined
+
+
 def mobius_two_cutoff_density_period_average(
     scalar: int,
     *,
@@ -702,6 +744,46 @@ def centered_low_modulus_large_sieve_ledger(
         bound=bound,
         target=target,
         margin=target - bound,
+    )
+
+
+def asymptotic_sieve_transition_ledger(
+    *,
+    ambient_length: Fraction,
+    distribution_level: Fraction,
+    complementary_quotient: Fraction,
+    short_divisor_cutoff: Fraction,
+) -> AsymptoticSieveTransitionLedger:
+    """Map the complementary divisor face to FI's sieve parameters.
+
+    This ledger checks only the exponent syntax of Friedlander--Iwaniec
+    conditions (B1)--(B3).  Their bilinear condition (B) is an input
+    axiom, not a conclusion of the asymptotic sieve theorem.
+    """
+
+    lengths = (
+        ambient_length,
+        distribution_level,
+        complementary_quotient,
+        short_divisor_cutoff,
+    )
+    if min(lengths) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if distribution_level > ambient_length:
+        raise ValueError("the distribution level cannot exceed x")
+    square_root_level = distribution_level / 2
+    square_root_ambient = ambient_length / 2
+    b3_ceiling = ambient_length - distribution_level
+    return AsymptoticSieveTransitionLedger(
+        square_root_level=square_root_level,
+        square_root_ambient=square_root_ambient,
+        complementary_quotient=complementary_quotient,
+        b3_coefficient_ceiling=b3_ceiling,
+        short_divisor_cutoff=short_divisor_cutoff,
+        quotient_at_lower_endpoint=(
+            complementary_quotient == square_root_level
+        ),
+        cutoff_inside_b3_ceiling=(short_divisor_cutoff <= b3_ceiling),
     )
 
 
@@ -3324,6 +3406,19 @@ class CenteredLowModulusLargeSieveLedger:
     bound: Fraction
     target: Fraction
     margin: Fraction
+
+
+@dataclass(frozen=True)
+class AsymptoticSieveTransitionLedger:
+    """Exponent syntax of the FI parity-breaking bilinear axiom."""
+
+    square_root_level: Fraction
+    square_root_ambient: Fraction
+    complementary_quotient: Fraction
+    b3_coefficient_ceiling: Fraction
+    short_divisor_cutoff: Fraction
+    quotient_at_lower_endpoint: bool
+    cutoff_inside_b3_ceiling: bool
 
 
 @dataclass(frozen=True)
