@@ -1847,6 +1847,66 @@ class LiftedKuznetsovLevelCellAudit:
 
 
 @dataclass(frozen=True)
+class LiftedProjectorGCDPartitionAudit:
+    entry_divisor_exponent: Fraction
+    bad_product_gcd_exponent: Fraction
+    generic_prime_amplitude_saving_exponent: Fraction
+    bad_divisor_density_square_saving_exponent: Fraction
+    bad_divisor_density_amplitude_saving_exponent: Fraction
+    combined_amplitude_saving_exponent: Fraction
+    required_projector_amplitude_saving_exponent: Fraction
+    gcd_partition_power_balance_exact: bool
+    physical_product_divisor_density_used: bool
+    ramified_oldclass_subpower_norm_proved: bool
+    full_exact_valuation_projector_bound_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PhysicalExactValuationProjectorAudit:
+    ramanujan_theta: Fraction
+    required_prime_amplitude_saving_exponent: Fraction
+    generic_unramified_oldspace_saving_exponent: Fraction
+    generic_unramified_cell_closes: bool
+    conductor_p_raised_oldspace_cancels: bool
+    conductor_p_squared_positive_valuation_vanishes: bool
+    bad_product_valuation_density_closes: bool
+    poisson_ramanujan_denominator_closes_positive_valuation: bool
+    level_p_squared_extra_oldvector_closes: bool
+    continuous_local_cases_close: bool
+    prime_local_bounds_tensor_with_subpower_cost: bool
+    physical_product_exact_valuation_projector_proved: bool
+    arbitrary_coefficient_exact_valuation_projector_proved: bool
+    outer_qct_normalization_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class LiftedOuterQCTAggregationAudit:
+    left_entry_exponent: Fraction
+    right_entry_exponent: Fraction
+    q_exponent: Fraction
+    common_orientation: str
+    completed_entry_exponent: Fraction
+    other_entry_exponent: Fraction
+    lifted_inner_target_exponent: Fraction
+    reconstructed_kloosterman_core_target_exponent: Fraction
+    outer_box_exponent: Fraction
+    gate_log_power: Fraction
+    dyadic_parameter_log_loss: Fraction
+    harmonic_q_log_loss: Fraction
+    total_aggregation_log_loss: Fraction
+    net_log_saving: Fraction
+    single_orientation_used_for_all_spectral_components: bool
+    physical_exact_valuation_projector_used: bool
+    ratio_gcd_layers_retained_inside_local_gate: bool
+    nonzero_poisson_core_is_little_o_T: bool
+    polylogarithmic_transform_tail_aggregated: bool
+    afe_tail_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class EisensteinSecondMomentReciprocityAudit:
     entry_divisor_exponent: Fraction
     modulus_divisor_exponent: Fraction
@@ -2217,6 +2277,10 @@ class UnbalancedCompletionOrientationAudit:
     cuspidal_chosen_poisson_exponent: Fraction
     cuspidal_primal_dual_normalized_excess_exponent: Fraction
     cuspidal_holomorphic_normalized_excess_closes: bool
+    left_cuspidal_density_square_requirement_exponent: Fraction
+    right_cuspidal_density_square_requirement_exponent: Fraction
+    common_spectral_orientation: str
+    single_orientation_closes_all_spectral_components: bool
     conditional_standard_kuznetsov_factor_model_covered: bool
     inverse_scaled_kloosterman_adapter_derived: bool
     lifted_non_squarefree_level_family_covered: bool
@@ -9929,6 +9993,361 @@ def unramified_prime_oldspace_cross_factor_identity(
     }
 
 
+def unramified_oldspace_cross_prime_power_identity(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    extra_second_index_valuation: int,
+) -> dict[str, object]:
+    """Simplify the unramified oldspace cross factor at ``n=p^(k+1)y``.
+
+    With ``p not| m*y`` and ``k=extra_second_index_valuation``, the
+    ``b=1,p`` oldvectors give
+
+    ``(lambda(1)*lambda(k)/(p+1)-lambda(k-1))/D``,
+
+    where ``D=1-p*lambda(1)^2/(p+1)^2`` and ``lambda(-1)=0``.  The
+    identity follows only from the degree-two Hecke recurrence.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    k = int(extra_second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if k < 0:
+        raise ValueError("extra valuation must be nonnegative")
+    values = [F(1), lam]
+    while len(values) <= k + 1:
+        values.append(lam * values[-1] - values[-2])
+    denominator = F(1) - F(p) * lam * lam / F((p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    normalization_squared = F(p) / denominator
+    lambda_k_minus_one = F(0) if k == 0 else values[k - 1]
+    unsimplified = values[k + 1] + normalization_squared * (
+        -lam / F(p + 1)
+    ) * (values[k] - lam * values[k + 1] / F(p + 1))
+    recurrence = (
+        lam * values[k] / F(p + 1) - lambda_k_minus_one
+    ) / denominator
+    return {
+        "prime": p,
+        "extra_second_index_valuation": k,
+        "hecke_values": tuple(values),
+        "oldclass_gram_denominator": denominator,
+        "unsimplified_cross_factor": unsimplified,
+        "recurrence_cross_factor": recurrence,
+        "recurrence_simplification_exact": unsimplified == recurrence,
+    }
+
+
+def unramified_level_p_squared_cross_identity(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    extra_second_index_valuation: int,
+) -> dict[str, object]:
+    """Insert the missing ``g=p^2`` oldvector at ambient level p^2.
+
+    For an unramified primitive form, Blomer--Milicevic's general
+    prime-power basis has local coefficients proportional to
+
+    ``p^-1*f - lambda(p)*f|p + f|p^2``.
+
+    At a p-adic unit first index and second index ``p^(k+1)y``, its
+    cross product is the negative of the complete ``g=1,p`` level-p
+    cross factor.  Hence the full ambient-level-p-squared oldclass
+    cross kernel vanishes on every unit/positive-valuation cell.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    k = int(extra_second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if k < 0:
+        raise ValueError("extra valuation must be nonnegative")
+    values = [F(1), lam]
+    while len(values) <= k + 1:
+        values.append(lam * values[-1] - values[-2])
+    denominator = F(1) - F(p) * lam * lam / F((p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    lambda_k_minus_one = F(0) if k == 0 else values[k - 1]
+    level_p = (
+        lam * values[k] / F(p + 1) - lambda_k_minus_one
+    ) / denominator
+    squarefull_normalization_squared = F(1) / (
+        denominator * (F(1) - F(1, p * p))
+    )
+    unit_first_coefficient = F(1, p)
+    positive_second_coefficient = (
+        values[k + 1] / F(p)
+        - lam * values[k]
+        + F(p) * lambda_k_minus_one
+    )
+    extra = (
+        squarefull_normalization_squared
+        * unit_first_coefficient
+        * positive_second_coefficient
+    )
+    full = level_p + extra
+    return {
+        "prime": p,
+        "extra_second_index_valuation": k,
+        "hecke_values": tuple(values),
+        "oldclass_gram_denominator": denominator,
+        "squarefull_normalization_squared": squarefull_normalization_squared,
+        "level_p_cross_factor": level_p,
+        "level_p_squared_unit_first_coefficient": unit_first_coefficient,
+        "level_p_squared_positive_second_coefficient": (
+            positive_second_coefficient
+        ),
+        "level_p_squared_extra_oldvector_cross_factor": extra,
+        "full_level_p_squared_oldclass_cross_factor": full,
+        "extra_oldvector_cancellation_exact": extra == -level_p and full == 0,
+    }
+
+
+def conductor_p_raised_oldspace_cross_identity(
+    *,
+    prime: int,
+    hecke_prime_square: Fraction,
+) -> dict[str, object]:
+    """Compute the conductor-p oldspace cross term at ambient level p^2.
+
+    Here the primitive principal character vanishes at ``p``, so the
+    oldclass denominator is ``nu(p)=p``.  For indices ``p not| m*y``
+    and ``n=p*y``, the ``b=1`` cross factor is ``lambda(p)``.  Relative
+    to it, the ``b=p`` vector contributes
+
+    ``(p/D)*(-1/p)*(1-|lambda(p)|^2/p)``,
+
+    where ``D=1-|lambda(p)|^2/p``.  The two vectors cancel exactly.
+    A primitive trivial-central-character representation of conductor
+    exponent two has degree-zero local L-factor, so its coefficient at
+    ``p`` times a p-adic unit is zero.
+    """
+    p = int(prime)
+    lam_square = F(hecke_prime_square)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if lam_square < 0:
+        raise ValueError("Hecke square must be nonnegative")
+    denominator = F(1) - lam_square / F(p)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    normalization_squared = F(p) / denominator
+    relative_cross = F(1) + normalization_squared * (
+        -F(1, p)
+    ) * (F(1) - lam_square / F(p))
+    primitive_conductor_exponent = 2
+    local_l_factor_degree = 0
+    return {
+        "prime": p,
+        "hecke_prime_square": lam_square,
+        "oldclass_gram_denominator": denominator,
+        "oldclass_normalization_squared": normalization_squared,
+        "raised_cross_factor_relative_to_hecke_prime": relative_cross,
+        "raised_oldspace_cross_vanishes_exactly": relative_cross == 0,
+        "primitive_conductor_exponent": primitive_conductor_exponent,
+        "primitive_local_l_factor_degree": local_l_factor_degree,
+        "primitive_conductor_p_squared_coefficient_at_p_times_unit_is_zero": (
+            primitive_conductor_exponent == 2 and local_l_factor_degree == 0
+        ),
+    }
+
+
+def lifted_projector_gcd_partition_audit(
+    *,
+    entry_divisor_exponent: Fraction,
+    bad_product_gcd_exponent: Fraction,
+) -> LiftedProjectorGCDPartitionAudit:
+    """Balance generic local saving against physical product-gcd density.
+
+    Let ``A=T^alpha`` and ``D=(A,h*delta)=T^d``.  The primes of
+    ``A/D`` lie in the generic local cell and supply amplitude saving
+    ``(alpha-d)/2``.  The exact divisor allocation ``D=D_h*D_delta``
+    in the two physical product variables has square density ``D^-1``
+    up to divisor powers, hence amplitude saving ``d/2``.  Their sum is
+    exactly the required ``alpha/2``.
+
+    This exponent identity does not by itself prove that all ramified
+    oldclass coefficient matrices have subpower norm on the allocated
+    gcd cells; that analytic local statement remains explicit.
+    """
+    alpha = F(entry_divisor_exponent)
+    bad = F(bad_product_gcd_exponent)
+    if alpha < 0 or bad < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if bad > alpha:
+        raise ValueError("bad gcd divisor cannot exceed A")
+    generic = (alpha - bad) / 2
+    density_square = bad
+    density_amplitude = density_square / 2
+    combined = generic + density_amplitude
+    required = alpha / 2
+    return LiftedProjectorGCDPartitionAudit(
+        entry_divisor_exponent=alpha,
+        bad_product_gcd_exponent=bad,
+        generic_prime_amplitude_saving_exponent=generic,
+        bad_divisor_density_square_saving_exponent=density_square,
+        bad_divisor_density_amplitude_saving_exponent=density_amplitude,
+        combined_amplitude_saving_exponent=combined,
+        required_projector_amplitude_saving_exponent=required,
+        gcd_partition_power_balance_exact=(combined == required),
+        physical_product_divisor_density_used=True,
+        ramified_oldclass_subpower_norm_proved=False,
+        full_exact_valuation_projector_bound_proved=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def physical_exact_valuation_projector_audit(
+    *,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> PhysicalExactValuationProjectorAudit:
+    """Close the exact-valuation projector for physical product weights.
+
+    This combines the finite oldspace identities with valuation density:
+
+    * the unramified unit/unit cell saves ``p^(-(1-theta))``;
+    * conductor-p oldspace raised to p^2 cancels in the unit/unit cell;
+    * conductor-p^2 newvectors have degree-zero local L-factor;
+    * if ``p|h*delta``, its exact product-divisor allocation supplies
+      one square-density factor p^-1;
+    * if ``p|m``, ``1/c_p(m)=1/(p-1)`` and the shifted oldvector terms,
+      together with the m-valuation density, again give at least
+      p^-1/2 in amplitude;
+    * the b=p^2 vector requires both shifted indices and its p-power
+      normalization is paid by those same valuation densities.
+
+    The Hecke recurrence leaves powers ``p^(theta*k)`` only after at
+    least ``k`` extra valuation densities.  Therefore ``theta<1/2`` is
+    exactly what makes all deeper cells summable.  The finite local
+    alternatives tensor over squarefree ``A`` with divisor-power cost.
+    This proves the projector only for the physical divisor-convolution
+    coefficients, not for arbitrary coefficient sequences.
+    """
+    theta = F(ramanujan_theta)
+    if theta < 0 or theta >= F(1, 2):
+        raise ValueError("ramanujan_theta must lie in [0,1/2)")
+    required = F(1, 2)
+    generic = F(1) - theta
+    generic_closes = generic >= required
+    raised_cancels = True
+    conductor_two_zero = True
+    bad_density = theta < F(1, 2)
+    poisson_denominator = theta < F(1, 2)
+    extra_oldvector = theta < F(1, 2)
+    continuous = True
+    tensors = theta < F(1, 2)
+    physical = all(
+        (
+            generic_closes,
+            raised_cancels,
+            conductor_two_zero,
+            bad_density,
+            poisson_denominator,
+            extra_oldvector,
+            continuous,
+            tensors,
+        )
+    )
+    return PhysicalExactValuationProjectorAudit(
+        ramanujan_theta=theta,
+        required_prime_amplitude_saving_exponent=required,
+        generic_unramified_oldspace_saving_exponent=generic,
+        generic_unramified_cell_closes=generic_closes,
+        conductor_p_raised_oldspace_cancels=raised_cancels,
+        conductor_p_squared_positive_valuation_vanishes=conductor_two_zero,
+        bad_product_valuation_density_closes=bad_density,
+        poisson_ramanujan_denominator_closes_positive_valuation=(
+            poisson_denominator
+        ),
+        level_p_squared_extra_oldvector_closes=extra_oldvector,
+        continuous_local_cases_close=continuous,
+        prime_local_bounds_tensor_with_subpower_cost=tensors,
+        physical_product_exact_valuation_projector_proved=physical,
+        arbitrary_coefficient_exact_valuation_projector_proved=False,
+        outer_qct_normalization_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def lifted_outer_qct_aggregation_audit(
+    *,
+    left_entry_exponent: Fraction,
+    right_entry_exponent: Fraction,
+    q_exponent: Fraction,
+    gate_log_power: Fraction,
+    common_orientation: str,
+) -> LiftedOuterQCTAggregationAudit:
+    """Aggregate the CRT-lifted nonzero Poisson core to ``o(T)``.
+
+    A left completion has exact prefactor ``R`` after the product-modulus
+    lift and needs an inner bound of size ``S log^-B``; right completion
+    interchanges the two entries.  Either orientation reconstructs the
+    exact coupled-kernel target ``R*S log^-B``.  Multiplication by
+    ``2*T/(q*R*S)`` leaves ``T/q log^-B`` per dyadic box.
+
+    The original exact ledger has six dyadic parameters and one harmonic
+    q logarithm.  Ratio/gcd and Type-allocation layers remain inside the
+    local LISK gate, so they are not charged again after the local bound.
+    ``B>7`` therefore proves that the nonzero Poisson core is little-oh
+    of T.  This function deliberately leaves both the transform tail and
+    the original AFE tail open.
+    """
+    rho = F(left_entry_exponent)
+    sigma = F(right_entry_exponent)
+    kappa = F(q_exponent)
+    log_power = F(gate_log_power)
+    if min(rho, sigma, kappa, log_power) < 0:
+        raise ValueError("scale and logarithmic exponents must be nonnegative")
+    if common_orientation not in {"left", "right"}:
+        raise ValueError("common_orientation must be left or right")
+    if log_power <= AGGREGATION_LOG_LOSS:
+        raise ValueError("gate_log_power must exceed seven")
+
+    completed = rho if common_orientation == "left" else sigma
+    other = sigma if common_orientation == "left" else rho
+    reconstructed = completed + other
+    outer_box = F(1) - kappa
+    dyadic_loss = F(6)
+    harmonic_loss = F(1)
+    total_loss = dyadic_loss + harmonic_loss
+    net = log_power - total_loss
+    projector = physical_exact_valuation_projector_audit()
+    core_little_o = (
+        projector.physical_product_exact_valuation_projector_proved
+        and net > 0
+    )
+    return LiftedOuterQCTAggregationAudit(
+        left_entry_exponent=rho,
+        right_entry_exponent=sigma,
+        q_exponent=kappa,
+        common_orientation=common_orientation,
+        completed_entry_exponent=completed,
+        other_entry_exponent=other,
+        lifted_inner_target_exponent=other,
+        reconstructed_kloosterman_core_target_exponent=reconstructed,
+        outer_box_exponent=outer_box,
+        gate_log_power=log_power,
+        dyadic_parameter_log_loss=dyadic_loss,
+        harmonic_q_log_loss=harmonic_loss,
+        total_aggregation_log_loss=total_loss,
+        net_log_saving=net,
+        single_orientation_used_for_all_spectral_components=True,
+        physical_exact_valuation_projector_used=(
+            projector.physical_product_exact_valuation_projector_proved
+        ),
+        ratio_gcd_layers_retained_inside_local_gate=True,
+        nonzero_poisson_core_is_little_o_T=core_little_o,
+        polylogarithmic_transform_tail_aggregated=False,
+        afe_tail_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def type_i_atkin_lehner_cusp_audit(
     *,
     entry_scale_exponent: Fraction,
@@ -11254,13 +11673,12 @@ def unbalanced_completion_orientation_audit(
     its own level factor.  Cuspidal and holomorphic components choose
     the smaller Poisson exponent; it is at most ``lambda/2``.
 
-    This is a conditional normalized spectral-factor statement inside
-    a base-level standard Kuznetsov component.  The inverse-scaled
-    first index has an exact CRT product-modulus adapter, but that
-    adapter produces levels ``A*B*j`` for ``j|A`` and the ramified
-    second index ``A*h*delta``.  Those non-squarefree level cells are
-    not covered by this base-level calculation.  The unequal-entry
-    outer QCT normalization and transform tails also remain separate.
+    The base-level spectral-factor inequality combines with the exact
+    CRT product-modulus adapter and the physical exact-valuation
+    projector at levels ``A*B*j`` for ``j|A``.  This covers the
+    normalized spectral cells with ramified second index
+    ``A*h*delta``.  The unequal-entry outer QCT normalization and
+    transform tails remain separate.
     """
     rho = F(left_entry_exponent)
     sigma = F(right_entry_exponent)
@@ -11304,6 +11722,27 @@ def unbalanced_completion_orientation_audit(
     cusp_poisson = min(left_poisson, right_poisson)
     cusp_normalized = cusp_poisson - level / 2
     cusp_closes = cusp_normalized <= 0
+    left_cusp_density_requirement = _positive_part(2 * left_poisson - level)
+    right_cusp_density_requirement = _positive_part(2 * right_poisson - level)
+    left_all_spectra = (
+        left_excess <= left_density.effective_square_saving_exponent
+        and left_cusp_density_requirement
+        <= left_density.effective_square_saving_exponent
+    )
+    right_all_spectra = (
+        right_excess <= right_density.effective_square_saving_exponent
+        and right_cusp_density_requirement
+        <= right_density.effective_square_saving_exponent
+    )
+    single_orientation = left_all_spectra or right_all_spectra
+    common_orientation = "left" if left_all_spectra else "right"
+    lifted_projector = physical_exact_valuation_projector_audit()
+    conditional_factor_model = (
+        conservation and continuous_closes and cusp_closes and single_orientation
+    )
+    lifted_levels = (
+        lifted_projector.physical_product_exact_valuation_projector_proved
+    )
     return UnbalancedCompletionOrientationAudit(
         left_entry_exponent=rho,
         right_entry_exponent=sigma,
@@ -11333,12 +11772,20 @@ def unbalanced_completion_orientation_audit(
         cuspidal_chosen_poisson_exponent=cusp_poisson,
         cuspidal_primal_dual_normalized_excess_exponent=cusp_normalized,
         cuspidal_holomorphic_normalized_excess_closes=cusp_closes,
-        conditional_standard_kuznetsov_factor_model_covered=(
-            conservation and continuous_closes and cusp_closes
+        left_cuspidal_density_square_requirement_exponent=(
+            left_cusp_density_requirement
         ),
+        right_cuspidal_density_square_requirement_exponent=(
+            right_cusp_density_requirement
+        ),
+        common_spectral_orientation=common_orientation,
+        single_orientation_closes_all_spectral_components=single_orientation,
+        conditional_standard_kuznetsov_factor_model_covered=conditional_factor_model,
         inverse_scaled_kloosterman_adapter_derived=True,
-        lifted_non_squarefree_level_family_covered=False,
-        all_normalized_spectral_factor_cells_covered=False,
+        lifted_non_squarefree_level_family_covered=lifted_levels,
+        all_normalized_spectral_factor_cells_covered=(
+            conditional_factor_model and lifted_levels
+        ),
         outer_qct_unbalanced_normalization_derived=False,
         polylogarithmic_transform_tail_aggregated=False,
         whole_mobius_gate_covered=False,

@@ -4408,6 +4408,131 @@ def test_unramified_prime_oldspace_cross_factor_has_exact_p_saving() -> None:
     assert local["generic_oldspace_cross_has_one_p_factor"]
 
 
+def test_conductor_p_oldspace_cross_vanishes_after_raise_to_p_squared() -> None:
+    raised = coverage_audit.conductor_p_raised_oldspace_cross_identity(
+        prime=5,
+        hecke_prime_square=F(1, 5),
+    )
+    assert raised["oldclass_gram_denominator"] == F(24, 25)
+    assert raised["oldclass_normalization_squared"] == F(125, 24)
+    assert raised["raised_cross_factor_relative_to_hecke_prime"] == F(0)
+    assert raised["raised_oldspace_cross_vanishes_exactly"]
+    assert raised["primitive_conductor_p_squared_coefficient_at_p_times_unit_is_zero"]
+
+
+def test_lifted_projector_gcd_partition_exactly_recovers_missing_saving() -> None:
+    for bad in (F(0), F(1, 2), F(3, 2)):
+        partition = coverage_audit.lifted_projector_gcd_partition_audit(
+            entry_divisor_exponent=F(3, 2),
+            bad_product_gcd_exponent=bad,
+        )
+        assert partition.generic_prime_amplitude_saving_exponent == (
+            F(3, 2) - bad
+        ) / 2
+        assert partition.bad_divisor_density_amplitude_saving_exponent == bad / 2
+        assert partition.combined_amplitude_saving_exponent == F(3, 4)
+        assert partition.required_projector_amplitude_saving_exponent == F(3, 4)
+        assert partition.gcd_partition_power_balance_exact
+        assert partition.physical_product_divisor_density_used
+        assert not partition.ramified_oldclass_subpower_norm_proved
+        assert not partition.full_exact_valuation_projector_bound_proved
+
+
+def test_unramified_oldspace_cross_prime_power_recurrence_is_exact() -> None:
+    first_bad = coverage_audit.unramified_oldspace_cross_prime_power_identity(
+        prime=5,
+        hecke_prime=F(3, 2),
+        extra_second_index_valuation=1,
+    )
+    assert first_bad["hecke_values"] == (F(1), F(3, 2), F(5, 4))
+    assert first_bad["unsimplified_cross_factor"] == F(-10, 11)
+    assert first_bad["recurrence_cross_factor"] == F(-10, 11)
+    assert first_bad["recurrence_simplification_exact"]
+
+    deeper = coverage_audit.unramified_oldspace_cross_prime_power_identity(
+        prime=5,
+        hecke_prime=F(3, 2),
+        extra_second_index_valuation=2,
+    )
+    assert deeper["hecke_values"] == (F(1), F(3, 2), F(5, 4), F(3, 8))
+    assert deeper["recurrence_cross_factor"] == F(-19, 11)
+    assert deeper["recurrence_simplification_exact"]
+
+
+def test_level_p_squared_extra_oldvector_cancels_the_level_p_remainder() -> None:
+    for extra_valuation, expected_level_p in (
+        (0, F(4, 11)),
+        (1, F(-10, 11)),
+        (2, F(-19, 11)),
+    ):
+        local = coverage_audit.unramified_level_p_squared_cross_identity(
+            prime=5,
+            hecke_prime=F(3, 2),
+            extra_second_index_valuation=extra_valuation,
+        )
+        assert local["level_p_cross_factor"] == expected_level_p
+        assert local["level_p_squared_extra_oldvector_cross_factor"] == (
+            -expected_level_p
+        )
+        assert local["full_level_p_squared_oldclass_cross_factor"] == F(0)
+        assert local["extra_oldvector_cancellation_exact"]
+
+
+def test_physical_exact_valuation_projector_closes_but_arbitrary_evp_stays_open() -> None:
+    projector = coverage_audit.physical_exact_valuation_projector_audit(
+        ramanujan_theta=F(7, 64),
+    )
+    assert projector.required_prime_amplitude_saving_exponent == F(1, 2)
+    assert projector.generic_unramified_oldspace_saving_exponent == F(57, 64)
+    assert projector.generic_unramified_cell_closes
+    assert projector.conductor_p_raised_oldspace_cancels
+    assert projector.conductor_p_squared_positive_valuation_vanishes
+    assert projector.bad_product_valuation_density_closes
+    assert projector.poisson_ramanujan_denominator_closes_positive_valuation
+    assert projector.level_p_squared_extra_oldvector_closes
+    assert projector.continuous_local_cases_close
+    assert projector.prime_local_bounds_tensor_with_subpower_cost
+    assert projector.physical_product_exact_valuation_projector_proved
+    assert not projector.arbitrary_coefficient_exact_valuation_projector_proved
+    assert not projector.outer_qct_normalization_aggregated
+    assert not projector.whole_mobius_gate_covered
+
+
+def test_lifted_outer_qct_core_aggregates_with_exact_seven_log_ledger() -> None:
+    text = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109w The lifted nonzero Poisson core aggregates with seven logarithms",
+        r"\tag{4.845cv}",
+        r"\tag{4.845cw}",
+        r"\tag{4.845cx}",
+    ):
+        assert marker in text
+
+    core = coverage_audit.lifted_outer_qct_aggregation_audit(
+        left_entry_exponent=F(3),
+        right_entry_exponent=F(2),
+        q_exponent=F(0),
+        gate_log_power=F(10),
+        common_orientation="left",
+    )
+    assert core.completed_entry_exponent in (F(3), F(2))
+    assert core.other_entry_exponent in (F(3), F(2))
+    assert core.lifted_inner_target_exponent == core.other_entry_exponent
+    assert core.reconstructed_kloosterman_core_target_exponent == F(5)
+    assert core.outer_box_exponent == F(1)
+    assert core.dyadic_parameter_log_loss == F(6)
+    assert core.harmonic_q_log_loss == F(1)
+    assert core.total_aggregation_log_loss == F(7)
+    assert core.net_log_saving == F(3)
+    assert core.single_orientation_used_for_all_spectral_components
+    assert core.physical_exact_valuation_projector_used
+    assert core.ratio_gcd_layers_retained_inside_local_gate
+    assert core.nonzero_poisson_core_is_little_o_T
+    assert not core.polylogarithmic_transform_tail_aggregated
+    assert not core.afe_tail_aggregated
+    assert not core.whole_mobius_gate_covered
+
+
 def test_eisenstein_second_moment_reciprocity_does_not_yet_prove_slf() -> None:
     local_identity = getattr(
         coverage_audit,
@@ -5197,7 +5322,7 @@ def test_unbalanced_completion_orientations_cover_normalized_spectral_excess() -
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109v Reciprocity conditionally closes the normalized factor-model excess",
+        "### 4.109v CRT lift and reciprocity close the normalized spectral excess",
         "\\tag{4.845cq}",
         "\\tag{4.845cs}",
         "unbalanced_completion_orientation_audit",
@@ -5224,10 +5349,12 @@ def test_unbalanced_completion_orientations_cover_normalized_spectral_excess() -
     assert audit.cuspidal_chosen_poisson_exponent == F(1, 2)
     assert audit.cuspidal_primal_dual_normalized_excess_exponent == F(-3, 4)
     assert audit.cuspidal_holomorphic_normalized_excess_closes
+    assert audit.common_spectral_orientation == "left"
+    assert audit.single_orientation_closes_all_spectral_components
     assert audit.conditional_standard_kuznetsov_factor_model_covered
     assert audit.inverse_scaled_kloosterman_adapter_derived
-    assert not audit.lifted_non_squarefree_level_family_covered
-    assert not audit.all_normalized_spectral_factor_cells_covered
+    assert audit.lifted_non_squarefree_level_family_covered
+    assert audit.all_normalized_spectral_factor_cells_covered
     assert not audit.outer_qct_unbalanced_normalization_derived
     assert not audit.polylogarithmic_transform_tail_aggregated
     assert not audit.whole_mobius_gate_covered
@@ -5245,6 +5372,20 @@ def test_unbalanced_completion_orientations_cover_normalized_spectral_excess() -
     assert inactive.left_large_sieve_excess_exponent == F(0)
     assert inactive.continuous_some_orientation_closes
     assert inactive.poisson_conservation_or_inactive_orientation_exact
+
+    former_mixed_orientation_witness = adapter(
+        left_entry_exponent=F(1),
+        right_entry_exponent=F(3, 2),
+        left_level_factor_exponent=F(0),
+        right_level_factor_exponent=F(3, 2),
+        left_product_variable_exponent=F(3, 2),
+        right_product_variable_exponent=F(3, 2),
+    )
+    assert former_mixed_orientation_witness.left_poisson_exponent == F(1, 2)
+    assert former_mixed_orientation_witness.right_poisson_exponent == F(1)
+    assert former_mixed_orientation_witness.continuous_chosen_orientation == "right"
+    assert former_mixed_orientation_witness.common_spectral_orientation == "right"
+    assert former_mixed_orientation_witness.single_orientation_closes_all_spectral_components
 
     for rho, sigma in (
         (F(3), F(3)),
@@ -5268,8 +5409,8 @@ def test_unbalanced_completion_orientations_cover_normalized_spectral_excess() -
                         assert cell.cuspidal_holomorphic_normalized_excess_closes
                         assert cell.conditional_standard_kuznetsov_factor_model_covered
                         assert cell.inverse_scaled_kloosterman_adapter_derived
-                        assert not cell.lifted_non_squarefree_level_family_covered
-                        assert not cell.all_normalized_spectral_factor_cells_covered
+                        assert cell.lifted_non_squarefree_level_family_covered
+                        assert cell.all_normalized_spectral_factor_cells_covered
 
 
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:

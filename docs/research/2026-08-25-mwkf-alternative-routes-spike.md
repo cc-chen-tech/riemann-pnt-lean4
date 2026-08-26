@@ -14219,9 +14219,10 @@ required bilinear statement is
 The measure includes Maaß, holomorphic, and continuous spectra with the
 standard Kuznetsov normalizations.  No published theorem has yet been
 matched to this signed exact-valuation projector, so
-\(\mathrm{EVP}_{A,B}\) is the current local obstruction, not a proved
-lemma.  The adapter lifted_kuznetsov_level_cell_audit records
-(4.845aq_2) with exact rational arithmetic.
+the arbitrary-coefficient \(\mathrm{EVP}_{A,B}\) is not a proved lemma.
+It is a sufficient diagnostic, not the accepted physical gate below.
+The adapter lifted_kuznetsov_level_cell_audit records (4.845aq_2) with
+exact rational arithmetic.
 
 One generic cuspidal local cell can be closed exactly.  Let \(p\mid A\),
 let \(f\) be primitive and unramified at \(p\), and assume
@@ -14247,11 +14248,198 @@ simplification
 
 Since \(|\lambda_f(p)|\leq2p^{7/64}\), the right side is
 \(O(p^{-57/64})\), strictly stronger than the required
-\(p^{-1/2}\).  The identity is checked independently by
-unramified_prime_oldspace_cross_factor_identity.  It does not yet prove
-\(\mathrm{EVP}_{A,B}\): the cells with \(p\mid my\), the extra
-level-\(p^2\) oldvectors when \(p\mid j\), and the complete Eisenstein
-oldspace must still be combined before multiplying over \(p\mid A\).
+\(p^{-1/2}\).  At ambient level \(p^2\), the additional \(b=p^2\)
+oldvector does **not** have zero coefficient at the first index.  Its
+cross term is the negative of (4.845aq_3), so the complete
+\(b=1,p,p^2\) oldclass vanishes in this coprime/ramified cell.  The
+exact prime-power calculation is recorded below in (4.845aq_8).
+
+The primitive conductor-\(p\) oldspace cancels even more sharply after
+raising to ambient level \(p^2\).  Here \(\nu(p)=p\).  With
+\(D'_p=1-|\lambda_f(p)|^2/p\), the two oldvectors give
+
+\[
+ \boxed{
+ \lambda_f(p)+\frac p{D'_p}
+ \left(-\frac{\lambda_f(p)}p\right)
+ \left(1-\frac{|\lambda_f(p)|^2}p\right)=0.}
+\tag{4.845aq_4}
+\]
+
+At level \(p\) itself the Steinberg identity
+\(|\lambda_f(p)|=p^{-1/2}\) supplies exactly the required local
+amplitude saving.  A primitive trivial-central representation of
+conductor exponent two has degree-zero local \(L\)-factor, hence its
+coefficient at \(py\), \(p\nmid y\), is zero.  The same alternatives
+cover the continuous spectrum: the level-one Eisenstein oldspace uses
+(4.845aq_3), there is no trivial-nebentypus conductor-\(p\) Eisenstein
+newform, and a conductor-\(p^2\) character pair has zero \(p\)-Euler
+coefficient.
+
+The two exact identities are checked independently by
+unramified_prime_oldspace_cross_factor_identity and
+conductor_p_raised_oldspace_cross_identity.  They close the generic
+\(p\nmid my\) local cell for all three spectra.  They do not yet prove
+\(\mathrm{EVP}_{A,B}\): the cells with \(p\mid my\) must be averaged
+with the Ramanujan denominator and multiplied consistently over
+\(p\mid A\).
+
+The arbitrary-sequence form \(\mathrm{EVP}_{A,B}\) is stronger than the
+physical problem.  Here the sparse coefficient is the fixed
+divisor-convolution
+
+\[
+ a_y^{H,L}
+ =\sum_{h\delta=y}U(h/H)V(\delta/L),
+\]
+
+with the exact coupled smooth factors retained by Fourier--Mellin
+superposition.  Let \(D=(A,h\delta)\).  Since \(A\) is squarefree, every
+condition \(D\mid h\delta\) has the disjoint prime allocation
+\(D=D_1D_2\), \((D_1,D_2)=1\), with \(D_1\mid h,D_2\mid\delta\).  Hence
+the boundary-aware count is
+
+\[
+ \boxed{
+ \sum_{h\asymp H}\sum_{\delta\asymp L}
+ \mathbf1_{D\mid h\delta}
+ \leq
+ \sum_{\substack{D_1D_2=D\\(D_1,D_2)=1}}
+ \left(\frac{2H}{D_1}+1\right)
+ \left(\frac{2L}{D_2}+1\right).}
+\tag{4.845aq_5}
+\]
+
+Terms with \(D_1>2H\) or \(D_2>2L\) vanish.  On every remaining
+allocation the right side is
+\(\ll HL D^{-1}4^{\omega(D)}\).  Thus if
+\(A=T^\alpha,D=T^d\), the bad-prime density supplies square saving
+\(d\), while (4.845aq_3)--(4.845aq_4) supply generic-prime amplitude
+saving \((\alpha-d)/2\).  The exact power balance is
+
+\[
+ \boxed{
+ \frac{\alpha-d}{2}+\frac d2=\frac\alpha2.}
+\tag{4.845aq_6}
+\]
+
+This recovers the entire power required in (4.845aq_2), including the
+short-interval boundary cells.  It remains to verify that no ramified
+oldclass matrix consumes that saving.  This follows by the same finite
+basis formula.  Put \(a=v_p(m)\),
+\(k=v_p(y)\), and let \(\lambda_j=\lambda_f(p^j)\) for an unramified
+primitive form.  When \(a=0\), the \(b=1,p\) cross factor at the second
+index \(p^{k+1}y\) is exactly
+
+\[
+ \boxed{
+ \lambda_{k+1}+\frac p{D_p}
+ \left(-\frac{\lambda_1}{p+1}\right)
+ \left(\lambda_k-\frac{\lambda_1\lambda_{k+1}}{p+1}\right)
+ =\frac{\lambda_1\lambda_k/(p+1)-\lambda_{k-1}}{D_p},}
+\tag{4.845aq_7}
+\]
+
+with \(\lambda_{-1}=0\).  This is just
+\(\lambda_{j+1}=\lambda_1\lambda_j-\lambda_{j-1}\).  For \(k=0\)
+it is (4.845aq_3); for \(k\geq1\), Kim--Sarnak and the exact
+\(p^{-k/2}\) amplitude density give
+
+\[
+ p^{(k-1)7/64}p^{-k/2}
+ =p^{-1/2}p^{-(k-1)25/64}.
+\]
+
+The squarefull oldvector is supplied by the general
+[Blomer--Milićević basis, Lemma 2](https://arxiv.org/abs/1404.7845),
+not by the squarefree specialization used in
+(4.845aq_3).  Put
+\(C_{p^2}^2=(D_p(1-p^{-2}))^{-1}\).  In normalized Fourier
+coefficients its local polynomial is
+\[
+ u_{p^2}(a)
+ =C_{p^2}\left(p^{-1}\lambda_a-lambda_1\lambda_{a-1}
+                    +p\lambda_{a-2}\right),
+ \qquad \lambda_{-1}=\lambda_{-2}=0.
+\]
+Consequently, at the unit first index and the second index of
+valuation \(k+1\),
+
+\[
+ \boxed{
+ u_{p^2}(0)u_{p^2}(k+1)
+ =-\frac{\lambda_1\lambda_k/(p+1)-\lambda_{k-1}}{D_p},
+ \qquad
+ \sum_{b=1,p,p^2}u_b(0)u_b(k+1)=0.}
+\tag{4.845aq_8}
+\]
+
+Thus (4.845aq_7) is exactly the level-\(p\) remainder, while the full
+ambient-level-\(p^2\) oldclass cancels.  The checker
+`unramified_level_p_squared_cross_identity` evaluates both sides for
+every requested \(k\); it replaces the incorrect claim that the
+\(p^2\) vector vanished separately.
+
+If \(a\geq1\), then
+\(|c_p(m)|^{-1}=(p-1)^{-1}\).  In the \(b=p\) vector its normalization
+\(p/D_p\) cancels this denominator and leaves the leading product
+\(\lambda_{a-1}\lambda_k\).  The two valuation densities give
+
+\[
+ p^{(a+k-1)7/64}p^{-(a+k)/2}
+ =p^{-1/2}p^{-(a+k-1)25/64}.
+\]
+
+For the \(b=p^2\) vector, (4.845aq_8) gives the exact three-term
+coefficient.  Its potentially largest product is
+\(p^2\lambda_{a-2}\lambda_{k-1}\); it occurs only for
+\(a\geq2,k\geq1\).  Division by \(|c_p(m)|=p-1\), followed by the
+two amplitude densities \(p^{-a/2}p^{-k/2}\), bounds this term by
+\[
+ p^{1+(a+k-3)7/64-(a+k)/2}
+ \leq p^{-1/2}p^{-(a+k-3)25/64}.
+\]
+For completeness, after the Ramanujan denominator and the two density
+factors, the nine exponents (rows in the order
+\(p^{-1}\lambda_a,-\lambda_1\lambda_{a-1},p\lambda_{a-2}\),
+columns in the analogous order at \(k+1\)) are
+
+\[
+\begin{pmatrix}
+-3+(a+k+1)\theta-(a+k)/2&
+-2+(a+k+1)\theta-(a+k)/2&
+-1+(a+k-1)\theta-(a+k)/2\\
+-2+(a+k+1)\theta-(a+k)/2&
+-1+(a+k+1)\theta-(a+k)/2&
+(a+k-1)\theta-(a+k)/2\\
+-1+(a+k-1)\theta-(a+k)/2&
+(a+k-1)\theta-(a+k)/2&
+1+(a+k-3)\theta-(a+k)/2
+\end{pmatrix}.
+\]
+
+The third row requires \(a\geq2\), and the third column requires
+\(k\geq1\).  With \(0\leq\theta<1/2\), every entry is at most
+\(-1/2\); equality can occur only in the bottom-right entry at
+\((a,k)=(2,1)\).  This supplies the promised exact local inequality,
+including all nine squarefull cross products.  The conductor-\(p\) and
+conductor-\(p^2\) cases
+use (4.845aq_4) and the degree-zero local factor, respectively.  For
+Eisenstein oldvectors the unramified coefficients satisfy
+\(|\lambda_j|\leq j+1\), and the ramified character-pair coefficient at
+positive p-valuation is zero, so the same bounds hold with
+\(7/64=0\).
+
+The local alternatives multiply over squarefree \(A\); their finite
+case count and the factors \(4^{\omega(D)}\) are \(A^{o(1)}\).  Thus the
+physical divisor-convolution version of the exact-valuation projector
+is proved with the required \(A^{-1/2+o(1)}\) amplitude factor.  The
+arbitrary-sequence statement \(\mathrm{EVP}_{A,B}\) remains unproved
+and is not used.  The adapters
+unramified_oldspace_cross_prime_power_identity and
+physical_exact_valuation_projector_audit record (4.845aq_7) and this
+case split; lifted_projector_gcd_partition_audit separately records the
+power identity (4.845aq_6).
 
 Before spectral transformation, the raw Poisson normalization and its
 dual length still cancel:
@@ -14273,18 +14461,18 @@ Fourier-coefficient normalization at level \(ABj\), and the sum over
 \(j\mid A\) must be retained together.  In particular the former
 \(\mathrm{SLF}_{\alpha,\beta}\) target, derived under the false
 level-\(AB\) cusp adapter, is no longer an accepted physical gate.  The
-current exact gates are \(\mathrm{LISK}_q\) and
-\(\mathrm{EVP}_{A,B}\); their outer aggregation must be recomputed only
-after the latter is proved.
+physical exact-valuation projector is now available, so the remaining
+gate in this sector is the outer \(\mathrm{LISK}_q\) aggregation with
+all ratio/gcd and \(q\)-layers restored.
 
 The adapter type_i_atkin_lehner_cusp_audit records both the rejected
 Kiral--Young match and the exact CRT product-modulus repair.  It marks
 the physical Type-I/Type-I reduction to a finite standard Kuznetsov
-level family true, but keeps the old cusp-pair identity false.  All
-later factor-model estimates in Sections 4.109i--4.109v used level
-\(AB\), so they remain conditional until they are rechecked uniformly
-for \(ABj\), the ramified second index \(An\), and the outer factor
-\(R/c_A(m)\).
+level family true, but keeps the old cusp-pair identity false.  The
+physical projector above restores the base-level large-sieve scale
+uniformly for \(ABj\) and the ramified second index \(An\); Section
+4.109v combines it with the orientation inequalities.  The outer factor
+\(R/c_A(m)\), ratio/gcd layers, and \(q\)-aggregation remain separate.
 
 
 ### 4.109h The inverse-zeta zero does not by itself prove level reciprocity
@@ -15775,7 +15963,7 @@ normalization, choice of orientation, and \(q\)-dependent tails must be
 rederived before (4.845cp) can be promoted to global coverage.
 
 
-### 4.109v Reciprocity conditionally closes the normalized factor-model excess
+### 4.109v CRT lift and reciprocity close the normalized spectral excess
 
 The two completion orientations can be compared before choosing either
 one.  For \(R=T^\rho\), \(S=T^\sigma\), their Poisson exponents are
@@ -15856,8 +16044,48 @@ positive primal/dual excess.  Otherwise
  \min(p_L,p_R)+\frac{\log_Tq_0}{2}-\lambda\leq0.
 \]
 
-Thus, **conditional on controlling the exact lifted**
-\(ABj\) **family by** \(\mathrm{EVP}_{A,B}\), every
+For a bound on the original geometric sum, however, the spectral
+components must use one common completion orientation.  The density
+projector from Section 4.109g also applies to cusp forms.  In squared
+normalization their two worst conductor requirements are
+
+\[
+ \boxed{
+ q_L=(2p_L-\lambda)_+,qquad
+ q_R=(2p_R-\lambda)_+.}
+\tag{4.845ct}
+\]
+
+There is always one index \(i\in\{L,R\}\) for which both
+\(x_i\leq d_i\) and \(q_i\leq d_i\).  The inactive-orientation case is
+immediate.  Suppose both are active.  Section 4.109v already proves
+that at least one orientation closes the continuous spectrum.  If that
+orientation has the smaller \(p_i\), then \(q_i=0\).  Otherwise, say
+the left orientation closes continuous but fails cusp.  Then
+
+\[
+ p_L>p_R,qquad d_L<p_L-p_R.
+\]
+
+If the right continuous excess were positive, then \(c>p_L\), while
+left continuous closure would give
+
+\[
+ d_L\geq c-p_R>p_L-p_R,
+\]
+
+a contradiction.  Hence the right continuous excess is zero, and
+\(p_R<p_L\) gives \(q_R=0\).  The reversed case is identical.  Thus
+
+\[
+ \boxed{
+ \exists i\in\{L,R\}:\qquad
+ x_i\leq d_i\quad\text{and}\quad q_i\leq d_i.}
+\tag{4.845cu}
+\]
+
+Combining the physical exact-valuation projector from Section 4.109g
+with this orientation argument, every
 original entry-scale asymmetry, every factor allocation, and every pair
 of product lengths has no positive normalized factor-model excess:
 Maaß, holomorphic, and nonzero continuous components all have a valid
@@ -15865,13 +16093,63 @@ completion orientation.  The interface
 unbalanced_completion_orientation_audit records (4.845cq)--(4.845cs)
 with exact rational arithmetic.
 
-It marks the conditional base-level factor model and the inverse-scaled
-geometric adapter true, but marks the lifted non-squarefree level family
-and physical all-cell coverage false.  Even after EVP is resolved, the
-common outer spectral base was derived
-only at \(R=S=T^3\); its cancellation against \(2T/(qRS)\), the
-ratio/gcd allocations, the dyadic \(q\)-sum, and all polylogarithmic
-transform tails must still be recomputed uniformly.
+It marks the base-level factor model, the inverse-scaled geometric
+adapter, the physical exact-valuation level family, and normalized
+spectral all-cell coverage true.  Section 4.109w now performs the outer
+normalization uniformly.  Polylogarithmic transform tails and the AFE
+tail remain separate obligations.
+
+
+### 4.109w The lifted nonzero Poisson core aggregates with seven logarithms
+
+Write \(L=\log(2T)\).  The local lifted estimates retain every ratio,
+gcd, exact-valuation, and Type-I/II allocation inside their coupled
+weight; none of these indices is summed a second time after the local
+gate.  For a left completion, the exact CRT lift has prefactor \(R\),
+whereas a right completion has prefactor \(S\).  Thus the two possible
+local gates are
+
+\[
+ \boxed{
+ \mathfrak S^{L}_{q}=R\mathfrak K^{L}_{q},\qquad
+ |\mathfrak K^{L}_{q}|\ll_{W,C} S L^{-B};
+ \quad
+ \mathfrak S^{R}_{q}=S\mathfrak K^{R}_{q},\qquad
+ |\mathfrak K^{R}_{q}|\ll_{W,C} R L^{-B}.}
+\tag{4.845cv}
+\]
+
+Here \(C\) is a fixed finite collection of normalized kernel
+seminorms.  The common-orientation assertion (4.845cu) chooses one of
+these two gates for all Maaß, holomorphic, and nonzero Eisenstein
+components in the same geometric box.  In either orientation it gives
+the identical reconstructed bound
+
+\[
+ \boxed{ |\mathfrak S_q|\ll_{W,C}RS L^{-B}. }
+\tag{4.845cw}
+\]
+
+For the six dyadic variables in the exact decomposition there are at
+most \(O_W(L^6)\) nonempty boxes.  The outer normalization is exactly
+\(2T/(qRS)\), and the gcd variable has the harmonic ledger
+\(\sum_{q\leq T^{O(1)}}q^{-1}\ll L\).  Consequently the retained
+nonzero Poisson core satisfies
+
+\[
+ \boxed{
+ \sum_q\ \sum_{\text{six dyadic boxes}}
+   {2T\over qRS}|\mathfrak S_q|
+ \ll_{W,C} T L^{7-B}=o_W(T)\qquad(B>7).}
+\tag{4.845cx}
+\]
+
+This is only the compactly retained nonzero-mode core.  Formula
+(4.845cx) does not absorb the polylogarithmic kernel-separation tail or
+the original AFE tail.  The interface
+`lifted_outer_qct_aggregation_audit` therefore marks precisely the
+nonzero Poisson core true and leaves both tail flags, and hence the
+whole Möbius gate, false.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
