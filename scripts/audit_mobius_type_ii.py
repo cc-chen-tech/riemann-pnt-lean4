@@ -588,6 +588,342 @@ def squarefree_scalar_gcd_stratum(
     )
 
 
+def restricted_unit_fourier_lift(
+    scalar: int, reduced_modulus: int, residue: int, length: int
+) -> complex:
+    """Direct unit-restricted lift of an interval transform from q to gq."""
+
+    if min(scalar, reduced_modulus, length) < 1:
+        raise ValueError("the lift parameters must be positive")
+    if gcd(scalar, reduced_modulus) != 1:
+        raise ValueError("the scalar and reduced modulus must be coprime")
+    if gcd(residue, reduced_modulus) != 1:
+        raise ValueError("the base residue must be a unit modulo q")
+    modulus = scalar * reduced_modulus
+    return sum(
+        _finite_interval_fourier(length, lift, modulus)
+        for lift in (
+            residue + multiple * reduced_modulus
+            for multiple in range(scalar)
+        )
+        if gcd(lift, modulus) == 1
+    )
+
+
+def restricted_unit_fourier_lift_formula(
+    scalar: int, reduced_modulus: int, residue: int, length: int
+) -> complex:
+    """Ramanujan formula for :func:`restricted_unit_fourier_lift`."""
+
+    if min(scalar, reduced_modulus, length) < 1:
+        raise ValueError("the lift parameters must be positive")
+    if gcd(scalar, reduced_modulus) != 1:
+        raise ValueError("the scalar and reduced modulus must be coprime")
+    if gcd(residue, reduced_modulus) != 1:
+        raise ValueError("the base residue must be a unit modulo q")
+    if reduced_modulus == 1:
+        inverse_scalar = 0
+    else:
+        inverse_scalar = pow(scalar, -1, reduced_modulus)
+    return sum(
+        ramanujan_sum(scalar, value)
+        * cmath.exp(
+            2j
+            * cmath.pi
+            * ((-inverse_scalar * residue * value) % reduced_modulus)
+            / reduced_modulus
+        )
+        for value in range(1, length + 1)
+    )
+
+
+def unrestricted_fourier_lift(
+    scalar: int, reduced_modulus: int, residue: int, length: int
+) -> complex:
+    """Direct unrestricted lift of an interval transform from q to gq."""
+
+    if min(scalar, reduced_modulus, length) < 1:
+        raise ValueError("the lift parameters must be positive")
+    if gcd(scalar, reduced_modulus) != 1:
+        raise ValueError("the scalar and reduced modulus must be coprime")
+    modulus = scalar * reduced_modulus
+    return sum(
+        _finite_interval_fourier(
+            length,
+            residue + multiple * reduced_modulus,
+            modulus,
+        )
+        for multiple in range(scalar)
+    )
+
+
+def unrestricted_fourier_lift_formula(
+    scalar: int, reduced_modulus: int, residue: int, length: int
+) -> complex:
+    """Orthogonality formula for :func:`unrestricted_fourier_lift`."""
+
+    if min(scalar, reduced_modulus, length) < 1:
+        raise ValueError("the lift parameters must be positive")
+    if gcd(scalar, reduced_modulus) != 1:
+        raise ValueError("the scalar and reduced modulus must be coprime")
+    return scalar * _finite_interval_fourier(
+        length // scalar,
+        residue,
+        reduced_modulus,
+    )
+
+
+def double_unit_bilinear_sum(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+    bilinear_coefficient: int,
+) -> complex:
+    """Direct complete sum over two units modulo a squarefree modulus."""
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the double-unit sum requires squarefree q")
+    if gcd(bilinear_coefficient, modulus) != 1:
+        raise ValueError("the bilinear coefficient must be a unit modulo q")
+    return sum(
+        cmath.exp(
+            2j
+            * cmath.pi
+            * (
+                (
+                    bilinear_coefficient * u * v
+                    - a_coefficient * u
+                    - b_coefficient * v
+                )
+                % modulus
+            )
+            / modulus
+        )
+        for u in range(modulus)
+        if gcd(u, modulus) == 1
+        for v in range(modulus)
+        if gcd(v, modulus) == 1
+    )
+
+
+def double_unit_divisor_spectrum(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+    bilinear_coefficient: int,
+) -> complex:
+    """Exact divisor spectrum of the complete double-unit bilinear sum.
+
+    For squarefree ``q`` and ``(d,q)=1``, Chinese remaindering the local
+    prime identity
+
+    ``sum_{u,v != 0 mod p} e_p(d*u*v-A*u-B*v)``
+    ``= p*e_p(-A*B/d)-c_p(A)``
+
+    gives, after noting that the local stationary unit exists only when
+    ``p`` does not divide ``B``,
+
+    ``sum_{k|q, (k,B)=1} k*mu(q/k)*c_{q/k}(A)``
+    ``  * e_k(-A*B*inv_k(d*(q/k)))``.
+
+    The ``k=1`` phase is interpreted as one.
+    """
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the divisor spectrum requires squarefree q")
+    if gcd(bilinear_coefficient, modulus) != 1:
+        raise ValueError("the bilinear coefficient must be a unit modulo q")
+    total = 0j
+    for divisor_modulus in divisors(modulus):
+        if gcd(divisor_modulus, b_coefficient) != 1:
+            continue
+        cofactor = modulus // divisor_modulus
+        coefficient = (
+            divisor_modulus
+            * mobius(cofactor)
+            * ramanujan_sum(cofactor, a_coefficient)
+        )
+        if divisor_modulus == 1:
+            phase = 1 + 0j
+        else:
+            inverse = pow(
+                (bilinear_coefficient * cofactor) % divisor_modulus,
+                -1,
+                divisor_modulus,
+            )
+            phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    (-a_coefficient * b_coefficient * inverse)
+                    % divisor_modulus
+                )
+                / divisor_modulus
+            )
+        total += coefficient * phase
+    return total
+
+
+def mobius_weighted_double_unit_divisor_spectrum(
+    modulus: int,
+    a_coefficient: int,
+    b_coefficient: int,
+    bilinear_coefficient: int,
+) -> complex:
+    """Divisor spectrum after migrating the outer squarefree ``mu(q)``.
+
+    Writing ``q=k*n``, squarefreeness gives
+    ``mu(q)*mu(n)=mu(k)``.  Thus the cofactor Möbius sign disappears and
+    the surviving sign is attached to the oscillatory divisor modulus.
+    """
+
+    if modulus < 1 or mobius(modulus) == 0:
+        raise ValueError("the weighted spectrum requires squarefree q")
+    if gcd(bilinear_coefficient, modulus) != 1:
+        raise ValueError("the bilinear coefficient must be a unit modulo q")
+    total = 0j
+    for divisor_modulus in divisors(modulus):
+        if gcd(divisor_modulus, b_coefficient) != 1:
+            continue
+        cofactor = modulus // divisor_modulus
+        coefficient = (
+            divisor_modulus
+            * mobius(divisor_modulus)
+            * ramanujan_sum(cofactor, a_coefficient)
+        )
+        if divisor_modulus == 1:
+            phase = 1 + 0j
+        else:
+            inverse = pow(
+                (bilinear_coefficient * cofactor) % divisor_modulus,
+                -1,
+                divisor_modulus,
+            )
+            phase = cmath.exp(
+                2j
+                * cmath.pi
+                * (
+                    (-a_coefficient * b_coefficient * inverse)
+                    % divisor_modulus
+                )
+                / divisor_modulus
+            )
+        total += coefficient * phase
+    return total
+
+
+def _validate_squarefree_scalar_factors(
+    a_gcd: int, b_gcd: int, reduced_modulus: int, shift: int
+) -> int:
+    if min(a_gcd, b_gcd, reduced_modulus) < 1:
+        raise ValueError("the scalar factors must be positive")
+    modulus = a_gcd * b_gcd * reduced_modulus
+    if mobius(modulus) == 0:
+        raise ValueError("the three scalar factors must have squarefree product")
+    if reduced_modulus == 1:
+        raise ValueError("the off-axis divisor spectrum is stated for q>1")
+    if gcd(shift, modulus) != 1:
+        raise ValueError("the shift must be a unit modulo s")
+    return modulus
+
+
+def squarefree_scalar_stratum_completed_sum(
+    a_gcd: int,
+    b_gcd: int,
+    reduced_modulus: int,
+    shift: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Direct Möbius-weighted completed sum on one ordered gcd stratum."""
+
+    modulus = _validate_squarefree_scalar_factors(
+        a_gcd, b_gcd, reduced_modulus, shift
+    )
+    if min(h_length, delta_length) < 1:
+        raise ValueError("the interval lengths must be positive")
+    total = sum(
+        _finite_interval_fourier(h_length, a, modulus)
+        * _finite_interval_fourier(delta_length, b, modulus)
+        * cmath.exp(
+            2j
+            * cmath.pi
+            * ((shift * a * b) % modulus)
+            / modulus
+        )
+        for a in range(modulus)
+        if gcd(a, modulus) == a_gcd
+        for b in range(modulus)
+        if gcd(b, modulus // a_gcd) == b_gcd
+    )
+    return Fraction(mobius(modulus), modulus) * total
+
+
+def squarefree_scalar_stratum_divisor_spectrum(
+    a_gcd: int,
+    b_gcd: int,
+    reduced_modulus: int,
+    shift: int,
+    h_length: int,
+    delta_length: int,
+) -> complex:
+    """Exact migrated divisor spectrum of one ordered scalar stratum.
+
+    This composes the two lift identities with the Möbius-weighted
+    double-unit spectrum.  It is a finite equality, not an estimate.
+    """
+
+    _validate_squarefree_scalar_factors(
+        a_gcd, b_gcd, reduced_modulus, shift
+    )
+    if min(h_length, delta_length) < 1:
+        raise ValueError("the interval lengths must be positive")
+    prefactor = Fraction(
+        mobius(a_gcd) * mobius(b_gcd),
+        b_gcd * reduced_modulus,
+    )
+    total = 0j
+    for h in range(1, h_length + 1):
+        scalar_ramanujan = ramanujan_sum(b_gcd, h)
+        for delta_reduced in range(1, delta_length // a_gcd + 1):
+            for divisor_modulus in divisors(reduced_modulus):
+                if gcd(divisor_modulus, delta_reduced) != 1:
+                    continue
+                cofactor = reduced_modulus // divisor_modulus
+                coefficient = (
+                    divisor_modulus
+                    * mobius(divisor_modulus)
+                    * ramanujan_sum(cofactor, h)
+                )
+                if divisor_modulus == 1:
+                    phase = 1 + 0j
+                else:
+                    inverse = pow(
+                        (shift * cofactor) % divisor_modulus,
+                        -1,
+                        divisor_modulus,
+                    )
+                    scalar_inverse = pow(
+                        b_gcd, -1, divisor_modulus
+                    )
+                    phase = cmath.exp(
+                        2j
+                        * cmath.pi
+                        * (
+                            (
+                                -scalar_inverse
+                                * h
+                                * delta_reduced
+                                * inverse
+                            )
+                            % divisor_modulus
+                        )
+                        / divisor_modulus
+                    )
+                total += scalar_ramanujan * coefficient * phase
+    return prefactor * total
+
+
 def additive_completion_shifted(
     r: int, modulus: int, h_length: int, delta_length: int
 ) -> complex:

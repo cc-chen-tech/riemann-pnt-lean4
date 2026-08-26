@@ -118,3 +118,18 @@
 - [x] Split the complementary dual blocks and rational-resonance strata without discarding the `a=h*delta` factorization.
 - [ ] State and attack the remaining gcd-stratified far-arc two-Möbius estimate on the exact finite interface.
 - [x] Run focused and repository-wide verification; update the Ready-for-view PR only after the exact finite proposition and proof boundary are reviewed.
+
+### Task 8: Complete the unit spectrum on every scalar-gcd stratum
+
+**Files:**
+
+- Modify: `tests/test_mobius_type_ii_audit.py`
+- Modify: `scripts/audit_mobius_type_ii.py`
+- Modify: `docs/research/2026-08-24-mobius-weighted-off-diagonal.md`
+
+- [x] Prove the restricted and unrestricted Fourier-lift identities from modulus `q` to `gq`.
+- [x] Evaluate the complete double-unit bilinear sum prime by prime and retain the necessary `(k,B)=1` condition.
+- [x] Migrate the outer squarefree `mu(q)` sign to the divisor modulus `mu(k)`.
+- [x] Compose the identities into one boundary-exact formula for every ordered scalar-gcd stratum.
+- [x] Isolate the self-similar top spectrum from the proper Ramanujan-divisor layers without claiming an estimate.
+- [x] Independently review the new identities, then verify and update the Ready-for-view PR.

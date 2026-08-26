@@ -4888,14 +4888,146 @@ Cesàro two-point Chowla, and its shift range does not reach
 the binary weight \(\mu(s)\mu(s+d)\).
 
 Accordingly, the finite sum in (9.166), with (9.167)--(9.179) retained
-before absolute values, is the new exact interface.  The next unresolved
-step is to prove a joint estimate for its nonzero dyadic blocks, splitting
-the circular near arcs \(\|d/s\|\leq C^{-1}\) from the complementary
-full-denominator strata while retaining both Möbius weights and the
-factorization \(ab\).  Since \((d,s)=1\), every phase \(d/s\) has full
-denominator \(s\); nevertheless, taking absolute values over \(d\), or
-replacing the \(ab\)-coefficients by arbitrary coefficients, returns the
-previous large-sieve loss.  No such joint power estimate is proved here.
+before absolute values, is an exact interface for the remaining joint
+estimate.  Its nonzero dyadic blocks split into circular near arcs
+\(\|d/s\|\leq C^{-1}\) and complementary scalar-gcd strata while retaining
+both Möbius weights and the factorization \(ab\).  Taking absolute values
+over \(d\), or replacing the \(ab\)-coefficients by arbitrary coefficients,
+returns the previous large-sieve loss.  Before attempting an estimate,
+Section 9.31 performs one more exact completion of each scalar stratum.
+
+### 9.31 Complete unit spectrum on each scalar-gcd stratum
+
+The ordered splitting (9.179) can be completed further without applying
+Cauchy.  Two finite lift identities account for the different exact-gcd
+conditions.  If \((g,q)=1\) and \(u\in(\mathbb Z/q\mathbb Z)^\times\),
+then
+
+\[
+\boxed{
+ \sum_{\substack{x\bmod gq\\x\equiv u\pmod q\\(x,gq)=1}}
+ \widehat{1_H}(x;gq)
+ =\sum_{h\leq H}c_g(h)e_q(-\bar g_q u h).}
+\tag{9.180}
+\]
+
+For an unrestricted lift one instead has
+
+\[
+\boxed{
+ \sum_{\substack{y\bmod gq\\y\equiv v\pmod q}}
+ \widehat{1_L}(y;gq)
+ =g\,\widehat{1_{\lfloor L/g\rfloor}}(v;q).}
+\tag{9.181}
+\]
+
+Both follow by inserting the finite interval transform and using
+orthogonality over the lift variable.  The unit restriction in (9.180)
+produces the Ramanujan sum; no endpoint is lost in (9.181), whose last
+interval has the exact floor \(\lfloor L/g\rfloor\).
+
+Define the complete double-unit bilinear sum
+
+\[
+ U_q(A,B;d)=
+ \sum_{u,v\in(\mathbb Z/q\mathbb Z)^\times}
+ e_q(duv-Au-Bv),\qquad (d,q)=1.
+\]
+
+For a prime \(p\), summing first over \(v\) gives the exact local identity
+
+\[
+ U_p(A,B;d)
+ =p\,\mathbf 1_{p\nmid B}e_p(-AB\bar d_p)-c_p(A).
+\tag{9.182}
+\]
+
+The indicator is essential: if \(p\mid B\), the stationary residue
+\(u=B\bar d_p\) is not a unit.  Chinese remaindering (9.182) over
+squarefree \(q\) gives
+
+\[
+\boxed{
+ U_q(A,B;d)=
+ \sum_{\substack{k\mid q\\(k,B)=1}}
+ k\mu(q/k)c_{q/k}(A)
+ e_k\!\left(-AB\,\overline{d(q/k)}_k\right).}
+\tag{9.183}
+\]
+
+The phase for \(k=1\) is one.  Multiplication by the outer Möbius sign
+now performs an exact sign migration:
+
+\[
+\boxed{
+ \mu(q)U_q(A,B;d)=
+ \sum_{\substack{k\mid q\\(k,B)=1}}
+ k\mu(k)c_{q/k}(A)
+ e_k\!\left(-AB\,\overline{d(q/k)}_k\right),}
+\tag{9.184}
+\]
+
+because \(q\) is squarefree.  Thus every proper divisor layer carries
+\(\mu(k)\), not a separately estimated \(\mu(q)\).
+
+Combining (9.180)--(9.184) yields a closed finite formula for one ordered
+stratum.  Put \(s=g_ag_bq\), with the factors in (9.179), and define
+
+\[
+ \mathcal F_{g_a,g_b,q}(d)
+ :=\frac{\mu(s)}s
+ \sum_{\substack{a,b\bmod s\\(a,s)=g_a\\
+                  (b,s/g_a)=g_b}}
+ \widehat{1_H}(a;s)\widehat{1_L}(b;s)e_s(dab).
+\]
+
+For \(q>1\), so that this is off the coordinate axes, one has
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal F_{g_a,g_b,q}(d)
+ &=\frac{\mu(g_a)\mu(g_b)}{g_bq}
+ \sum_{h\leq H}c_{g_b}(h)
+ \sum_{\delta'\leq L/g_a}
+ \sum_{\substack{k\mid q\\(k,\delta')=1}}
+ k\mu(k)c_{q/k}(h)\\
+ &\qquad\qquad\times
+ e_k\!\left(
+  -\bar g_{b,k}h\delta'\,
+   \overline{d(q/k)}_k\right).
+\end{aligned}}
+\tag{9.185}
+\]
+
+Here \(L/g_a\) in the summation means the exact integer endpoint
+\(\lfloor L/g_a\rfloor\), and every inverse is taken only after the
+displayed coprimality conditions make it legal.  The checker numerically
+verifies (9.180)--(9.185) on deterministic small squarefree factors,
+including composite \(q=6\), intermediate divisor layers, negative
+frequencies, and the indicator \((k,\delta')=1\).  Exactness is supplied
+by the displayed finite algebra, rather than inferred from those samples.
+
+Formula (9.185) materially narrows the far-arc gate.  All proper layers
+\(k<q\) have the migrated sign \(\mu(k)\) and an explicit Ramanujan
+cofactor.  The top layer \(k=q\), however, is
+
+\[
+ \frac{\mu(g_a)\mu(g_b)\mu(q)}{g_b}
+ \sum_{h\leq H}c_{g_b}(h)
+ \sum_{\substack{\delta'\leq L/g_a\\(\delta',q)=1}}
+ e_q(-\bar g_b h\delta'\bar d_q),
+\tag{9.186}
+\]
+
+and remains an inverse-product kernel coupled to
+\(\mu(g_ag_bq+d)\).  On the transition resonance
+\(g_a\asymp T^{1/2}\), \(g_b=1\), \(q\asymp T^{5/2}\), it has lengths
+\(H=T^{5/2}\) and \(L/g_a=T^2\).  No cited theorem handles this kernel
+with the simultaneous \(g_a,q,d\) dependence and shifted Möbius factor.
+Thus (9.185) proves that the proper divisor spectrum is structurally
+simpler, while (9.186) is the exact surviving top-spectrum gate; neither
+is declared bounded here.
 
 ## 10. What has and has not been proved
 
@@ -4996,6 +5128,10 @@ Proved in this note:
   \(X^{2/3}\)-shift power ledger, (9.165)--(9.179); these remove the
   separately bounded zero mode, close the near-block exponent polytope,
   and prove that one-modulus Parseval still misses the target.
+* the exact unit-lift formulas, complete squarefree double-unit divisor
+  spectrum, Möbius sign migration, and closed scalar-stratum identity,
+  (9.180)--(9.186); these isolate the still-unproved top spectrum from
+  its proper Ramanujan-divisor layers.
 
 | Claim | Status | Complete derivation or exact status location |
 |---|---|---|
@@ -5036,6 +5172,7 @@ Proved in this note:
 | Fixed-numerator inverse fractions | spacing proved; generic operator route insufficient | for \(r,s,t\) in one balanced dyadic interval the exact congruence (9.148) gives spacing at least \(1/(16Y)\), (9.150); after collapsing \(h\delta\), the arbitrary-coefficient operator still loses exactly \(A^{1/2}\), (9.153)--(9.154) |
 | Cross-numerator product-kernel route | unsigned central count proved; signed estimate unproved | exact factorization (9.156), Farey count \(T^{7+\varepsilon}\) in (9.160), noncentral resonance (9.162), and additive completion (9.163); termwise separation of its origin would require the \(2/3\) Mertens exponent (9.164), but Section 9.30 recombines that origin with the axes |
 | Additive-dual shifted-Chowla route | exact finite reduction; joint estimate unproved | \(r=s+d\) gives the moving-endpoint identity (9.166); complete axes recombine the origin in (9.167)--(9.168), so the isolated \(2/3\) Mertens barrier is removed; all near blocks lose at most \(T^2\), one-modulus Parseval loses \(T^{5/2}\), (9.177) records the surviving resonance, (9.178) absorbs every axis boundary, and (9.179) factorizes each squarefree scalar-gcd stratum |
+| Scalar-stratum unit spectrum | exact divisor decomposition; top layer unproved | unit and unrestricted lifts are (9.180)--(9.181); the double-unit sum has divisor spectrum (9.183), outer \(\mu(q)\) migrates to \(\mu(k)\) in (9.184), and (9.185) isolates the inverse-product top layer (9.186) |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
 | Averaged Möbius Type-II estimate | **unproved** | explicit residual statement (9.13) |
 | Global remainder upper bound | **conditional** | CK\(_{\rm ub}(3)\) implies it by (6.13) |

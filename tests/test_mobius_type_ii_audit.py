@@ -51,6 +51,8 @@ from scripts.audit_mobius_type_ii import (
     direct_fourfold_random_margin,
     dispersion_pointwise_mean_square_gap,
     dispersion_random_benchmark_gap,
+    double_unit_bilinear_sum,
+    double_unit_divisor_spectrum,
     elementary_large_sieve_loss,
     farey_central_collision_ledger,
     farey_near_collision_count,
@@ -63,6 +65,7 @@ from scripts.audit_mobius_type_ii import (
     inverse_product_phase_mod_one,
     migrate_nonprincipal_mobius_sign,
     mobius_geometric_value,
+    mobius_weighted_double_unit_divisor_spectrum,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
@@ -81,11 +84,17 @@ from scripts.audit_mobius_type_ii import (
     rectangular_product_multiplicities,
     reduce_inverse_product_phase,
     reduced_inverse_fraction_denominator,
+    restricted_unit_fourier_lift,
+    restricted_unit_fourier_lift_formula,
     reverse_unit_affine_progression_length,
     reverse_unit_solution_count_gap,
     squarefree_outer_mobius_ramanujan,
     squarefree_scalar_gcd_stratum,
+    squarefree_scalar_stratum_completed_sum,
+    squarefree_scalar_stratum_divisor_spectrum,
     two_sided_mobius_geometric_value,
+    unrestricted_fourier_lift,
+    unrestricted_fourier_lift_formula,
     weighted_farey_collision_sum,
     weighted_inverse_collision_sum,
     weighted_inverse_product_box_sum,
@@ -1180,6 +1189,108 @@ def test_squarefree_scalar_gcd_stratum_preserves_phase_and_mobius_sign() -> None
                     stratum.a_reduced * stratum.b_reduced,
                     stratum.reduced_modulus,
                 ) % 1
+
+
+def test_squarefree_double_unit_sum_has_exact_divisor_spectrum() -> None:
+    for modulus in range(1, 31):
+        if naive_mobius(modulus) == 0:
+            continue
+        for d in range(1, modulus + 1):
+            if gcd(d, modulus) != 1:
+                continue
+            for a_coefficient in range(-3, 4):
+                for b_coefficient in range(-3, 4):
+                    assert abs(
+                        double_unit_bilinear_sum(
+                            modulus,
+                            a_coefficient,
+                            b_coefficient,
+                            d,
+                        )
+                        - double_unit_divisor_spectrum(
+                            modulus,
+                            a_coefficient,
+                            b_coefficient,
+                            d,
+                        )
+                    ) < 1e-8
+                    assert abs(
+                        naive_mobius(modulus)
+                        * double_unit_bilinear_sum(
+                            modulus,
+                            a_coefficient,
+                            b_coefficient,
+                            d,
+                        )
+                        - mobius_weighted_double_unit_divisor_spectrum(
+                            modulus,
+                            a_coefficient,
+                            b_coefficient,
+                            d,
+                        )
+                    ) < 1e-8
+
+
+def test_scalar_gcd_fourier_lifts_have_exact_q_modulus_formulas() -> None:
+    for scalar in range(1, 8):
+        for reduced_modulus in range(1, 9):
+            if gcd(scalar, reduced_modulus) != 1:
+                continue
+            for residue in range(reduced_modulus):
+                if gcd(residue, reduced_modulus) != 1:
+                    continue
+                for length in range(1, 10):
+                    assert abs(
+                        restricted_unit_fourier_lift(
+                            scalar, reduced_modulus, residue, length
+                        )
+                        - restricted_unit_fourier_lift_formula(
+                            scalar, reduced_modulus, residue, length
+                        )
+                    ) < 1e-8
+                    assert abs(
+                        unrestricted_fourier_lift(
+                            scalar, reduced_modulus, residue, length
+                        )
+                        - unrestricted_fourier_lift_formula(
+                            scalar, reduced_modulus, residue, length
+                        )
+                    ) < 1e-8
+
+
+def test_complete_squarefree_scalar_stratum_has_migrated_divisor_spectrum() -> None:
+    for a_gcd, b_gcd, reduced_modulus in (
+        (1, 1, 2),
+        (1, 1, 6),
+        (1, 2, 3),
+        (2, 1, 3),
+        (2, 3, 5),
+        (3, 2, 5),
+    ):
+        modulus = a_gcd * b_gcd * reduced_modulus
+        for shift in range(1, modulus):
+            if gcd(shift, modulus) != 1:
+                continue
+            for h_length in range(1, 5):
+                for delta_length in range(1, 5):
+                    assert abs(
+                        squarefree_scalar_stratum_completed_sum(
+                            a_gcd,
+                            b_gcd,
+                            reduced_modulus,
+                            shift,
+                            h_length,
+                            delta_length,
+                        )
+                        - squarefree_scalar_stratum_divisor_spectrum(
+                            a_gcd,
+                            b_gcd,
+                            reduced_modulus,
+                            shift,
+                            h_length,
+                            delta_length,
+                        )
+                    ) < 1e-8
 
 
 def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:
