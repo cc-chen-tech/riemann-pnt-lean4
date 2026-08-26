@@ -9846,6 +9846,107 @@ and hand-computed rational values, so deleting the common
 \((xy)^{-k}\) factor, dropping the shifted kernel, or replacing \(nm\)
 by a divisor product is detected.
 
+### 9.64 Long-polynomial large values see the same resolution cell
+
+After (9.398), fix one smooth separated component of the pre-Poisson
+equal-index band; the Selberg taper, fixed gcd stratum, and separated
+archimedean factors may be absorbed into a bounded dyadic weight \(w\).
+That component has the following long Dirichlet-polynomial energy
+model.  This is sufficient for a direct applicability audit of the
+coefficient-agnostic Guth--Maynard theorem; it is not a claim that every
+unseparated moving weight is one product.
+
+Let \(\Phi\) be smooth and compactly supported, put
+
+\[
+ D_X(t):=\sum_{s\asymp X}
+ \frac{\mu(s)w(s/X)}{\sqrt{s}}s^{-it},
+ \qquad
+ \widehat\Phi(u):=\int_{\mathbb R}\Phi(v)e^{-iuv}\,dv.
+\tag{9.408}
+\]
+
+Finite termwise Fourier inversion gives
+
+\[
+\boxed{
+ \int_{\mathbb R}\Phi(t/T)|D_X(t)|^2\,dt
+ =
+ T\sum_{r,s\asymp X}
+ \frac{\mu(r)\mu(s)w(r/X)\overline{w(s/X)}}{\sqrt{rs}}
+ \widehat\Phi\!\left(T\log\frac rs\right).}
+\tag{9.409}
+\]
+
+There is no endpoint error in (9.409); zero extension of \(w\) includes
+both dyadic edges.  Rapid decay restricts the off-diagonal to
+
+\[
+ |r-s|\ll X/T,
+\tag{9.410}
+\]
+
+up to arbitrary-power tails.  Conversely, one Fourier resolution cell
+contains \(X/T\) adjacent coefficients.  At the decisive scale
+
+\[
+ X=T^3,\qquad X/T=T^2,
+\tag{9.411}
+\]
+
+so the Fourier-cell multiplicity is exactly the missing
+\({\rm SC}_{2/3}\) power.
+
+For the coefficients in (9.408),
+\(\sum_{s\asymp X}|w(s/X)|^2/s\asymp1\).  The diagonal scale in
+(9.409) is therefore \(T\), whereas the classical Dirichlet-polynomial
+mean-value theorem gives
+
+\[
+ (T+X)\sum_{s\asymp X}\frac{|w(s/X)|^2}{s}
+ \ll T+X\asymp X=T^3.
+\tag{9.412}
+\]
+
+Thus its exact normalized loss is \(X/T=T^2\).  Before the
+\(s^{-1/2}\) normalization the same ledger reads \(TX=T^4\) on the
+diagonal and \((T+X)X=T^6\) classically.
+
+Guth--Maynard, Theorem 1.1, is an arbitrary-\(1\)-bounded-coefficient
+large-value estimate.  In their reduction they state explicitly that
+when the polynomial length \(N_{\rm GM}\geq T_{\rm GM}\), their theorem
+already follows from the classical first term; the new argument is
+used after reducing to \(N_{\rm GM}<T_{\rm GM}\).  See
+[Guth--Maynard, proof of Theorem 1.1](https://arxiv.org/abs/2405.20552).
+Here \(N_{\rm GM}=X=T^3\) and \(T_{\rm GM}=T\), so the theorem is on
+that classical side of its range.  Its coefficient hypothesis accepts
+\(\mu(s)w(s/X)\), but the conclusion is coefficient-agnostic and does
+not exploit the Möbius sign to remove the coherent \(X/T\) block.
+
+Consequently the new large-value theorem does not improve (9.412) at
+this face.  This is stronger than saying that its published
+applications concern shorter polynomials: the theorem's own first-term
+reduction lands exactly at exponent \(3\) after normalization, against
+the required exponent \(1\).  A usable large-value input would need a
+new coefficient-specific estimate
+
+\[
+ \int\Phi(t/T)|D_X(t)|^2\,dt\ll_\varepsilon T^{1+\varepsilon}
+\tag{9.413}
+\]
+
+for this Selberg--Möbius family.  By (9.409), (9.413) is the same
+banded two-Möbius energy already isolated by
+\({\rm SC}_{2/3}\)/\({\rm MS}_{2/3}\), not a weaker theorem currently
+provided by large-value technology.
+
+The helper long_polynomial_mean_value_ledger records the two exact
+normalizations.  At polynomial exponent \(3\) and time exponent \(1\)
+it returns resolution-cell exponent \(2\), unnormalized diagonal and
+classical exponents \(4,6\), normalized exponents \(1,3\), and marks
+both the Guth--Maynard long-range reduction and the absence of a
+published Möbius-specific \(T^2\) saving.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -9910,7 +10011,11 @@ retaining the common compact-Mellin integral before absolute values is
 weaker than \({\rm CME}_3\) but supplies only the original
 \(m_1m_2\asymp T\) AFE constraint.  It is an exact loop back to the
 balanced shifted-divisor packet, not a proved source of a power
-saving.**
+saving.  The long-polynomial Fourier model (9.408)--(9.413) gives the
+same \(X/T=T^2\) deficit.  Guth--Maynard explicitly reduce to the
+classical first term when polynomial length exceeds the time interval;
+here those exponents are \(X=T^3>T\), so their new large-value range
+does not touch the residual face.**
 
 Proved in this note:
 
@@ -10061,6 +10166,14 @@ Proved in this note:
   reconstructs \(V_t(nm)\), so this strictly weaker formulation loops
   back to the original shifted-divisor geometry and does not provide
   an independent orthogonality or power saving.
+* the exact long-polynomial Fourier identity (9.408)--(9.410) and its
+  mean-value ledger (9.411)--(9.413).  A time interval of length \(T\)
+  resolves only blocks of \(X/T=T^2\) adjacent coefficients in a
+  length-\(X=T^3\) Möbius polynomial.  The classical normalized bound
+  has exponent \(3\) against diagonal exponent \(1\).  Guth--Maynard
+  revert to that classical first term for \(N_{\rm GM}\geq T_{\rm GM}\),
+  so their coefficient-agnostic large-value theorem supplies none of
+  the missing \(T^2\).
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -10321,6 +10434,7 @@ Proved in this note:
 | Compact-Mellin \(L^2\) route | exact finite Fourier identity; standard mean values circular | The Gaussian identity (9.394) localizes the product polynomial to \(|m-n|\ll X/T\), (9.395), with the same-\(z\) bilinear coefficients from (9.361).  Cauchy asks for the \(L^2\) norm of that same length-\(X\) polynomial.  Opening \(B_{N,z}\) returns the original zeta--mollifier product chunk, while Montgomery--Vaughan has the long term \(X\sum|c_n|^2\), losing exactly \(X/T=T^{5/2}\).  Goldston--Gonek replaces the loss only after assuming the coefficient correlations on the right side, so no standard mean-square theorem proves \({\rm CME}_3\) |
 | Balanced short-shift integer lattice | exact equal-index forcing; banded two-Möbius estimate unproved | Under the literal endpoint condition \(S/2>2L+4MD\), (9.396)--(9.399) force every original solution to have \(m_1=m_2=m\) and \(\delta=-m(r-s)\).  On this divisibility slice the retained product is \(h\delta=-hm(r-s)\) and the inverse phase is exactly \(e_s(hm)\), (9.400), with critical scale \(HM/S=T^{o(1)}\).  Formula (9.402) is the exact post-Poisson subpacket.  A fixed \(h\)-box also contains a complementary continuous-\(x\) packet which cancels only after full Poisson inversion; hence the result removes the prospective shift oscillation and extra zeta-index average, but does not prove the remaining \(T^2\) two-Möbius saving |
 | Coupled compact-Mellin integral | exact finite recombination; no independent power saving | Keeping \(\tau\) before absolute values is formally weaker than \({\rm CME}_3\), but (9.403)--(9.404) show that the single common mode cancels both mollifier twists and leaves only \((nm)^{-i\tau}\).  The actual contour reconstructs \(V_t(nm)\), (9.405), hence the original conditions \(y-x=\Delta\) and \(nm\asymp T\), (9.406).  It supplies neither two divisor orthogonalities nor an equal-divisor condition; the finite Laurent identity is (9.407).  Any gain must therefore use this product constraint jointly with the shift and both Möbius signs |
+| Guth--Maynard large-value route | exact Fourier-cell audit; long range reduces to classical | The separated equal-index model is the exact energy (9.409), whose time window resolves \(|r-s|\ll X/T\), (9.410).  At \(X=T^3\), each cell contains \(X/T=T^2\) coefficients.  Montgomery--Vaughan gives normalized exponent \(3\) against diagonal exponent \(1\), (9.412).  Guth--Maynard's proof explicitly returns to the classical first term for polynomial length \(N_{\rm GM}\geq T_{\rm GM}\); here \(N_{\rm GM}=T^3>T=T_{\rm GM}\).  Their theorem is coefficient-agnostic and provides no Möbius-specific saving, so (9.413) remains exactly the unavailable banded two-Möbius estimate |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

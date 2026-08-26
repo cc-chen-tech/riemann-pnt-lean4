@@ -6438,6 +6438,22 @@ class ShortMertensEnergyLedger:
 
 
 @dataclass(frozen=True)
+class LongPolynomialMeanValueLedger:
+    """Resolution-cell ledger for a polynomial longer than the time window."""
+
+    polynomial_length: Fraction
+    time_length: Fraction
+    coefficients_per_resolution_cell: Fraction
+    unnormalized_diagonal: Fraction
+    unnormalized_classical: Fraction
+    normalized_diagonal: Fraction
+    normalized_classical: Fraction
+    required_coefficient_saving: Fraction
+    guth_maynard_reduces_to_classical: bool
+    published_mobius_specific_saving: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -6699,6 +6715,52 @@ def short_mertens_energy_ledger(
         required_energy_saving=trivial_energy - diagonal_energy,
         normalized_correlation_target=diagonal_energy - window_length,
         published_optimal_mean_square_covered=False,
+    )
+
+
+def long_polynomial_mean_value_ledger(
+    polynomial_length: Fraction,
+    time_length: Fraction,
+) -> LongPolynomialMeanValueLedger:
+    """Return the long-polynomial coherence and mean-value exponents.
+
+    For ``D(t)=sum_(n~X) b_n n**it`` with 1-bounded coefficients, the
+    diagonal scale over a time interval of length ``T`` is ``T*X``.
+    The classical mean-value theorem has scale ``(T+X)*X``.  Dividing
+    by ``X`` models the coefficients ``b_n/sqrt(n)`` on one dyadic block.
+
+    Guth--Maynard explicitly reduce their large-value theorem to the
+    classical first term when ``X>=T``.  No published coefficient-specific
+    Mobius saving is inserted into this finite exponent ledger.
+    """
+
+    if polynomial_length <= 0 or time_length <= 0:
+        raise ValueError("the polynomial and time lengths must be positive")
+    zero = Fraction(0)
+    unnormalized_diagonal = polynomial_length + time_length
+    unnormalized_classical = max(
+        unnormalized_diagonal,
+        2 * polynomial_length,
+    )
+    normalized_diagonal = unnormalized_diagonal - polynomial_length
+    normalized_classical = unnormalized_classical - polynomial_length
+    return LongPolynomialMeanValueLedger(
+        polynomial_length=polynomial_length,
+        time_length=time_length,
+        coefficients_per_resolution_cell=max(
+            zero, polynomial_length - time_length
+        ),
+        unnormalized_diagonal=unnormalized_diagonal,
+        unnormalized_classical=unnormalized_classical,
+        normalized_diagonal=normalized_diagonal,
+        normalized_classical=normalized_classical,
+        required_coefficient_saving=(
+            normalized_classical - normalized_diagonal
+        ),
+        guth_maynard_reduces_to_classical=(
+            polynomial_length >= time_length
+        ),
+        published_mobius_specific_saving=False,
     )
 
 

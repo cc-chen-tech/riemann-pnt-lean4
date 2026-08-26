@@ -2611,6 +2611,20 @@ def test_sc_two_thirds_is_optimal_short_mertens_mean_square() -> None:
     assert not ledger.published_optimal_mean_square_covered
 
 
+def test_long_polynomial_large_values_leave_the_same_coherence_loss() -> None:
+    ledger = audit.long_polynomial_mean_value_ledger(F(3), F(1))
+    assert ledger.polynomial_length == F(3)
+    assert ledger.time_length == F(1)
+    assert ledger.coefficients_per_resolution_cell == F(2)
+    assert ledger.unnormalized_diagonal == F(4)
+    assert ledger.unnormalized_classical == F(6)
+    assert ledger.normalized_diagonal == F(1)
+    assert ledger.normalized_classical == F(3)
+    assert ledger.required_coefficient_saving == F(2)
+    assert ledger.guth_maynard_reduces_to_classical
+    assert not ledger.published_mobius_specific_saving
+
+
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:
     box = boundary_witnesses()["balanced_max_a"]
     transition = additive_dual_block_ledger(box, F(1, 2), F(1, 2))
