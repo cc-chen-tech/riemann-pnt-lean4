@@ -1,4 +1,5 @@
 import Mathlib.Analysis.Complex.CoveringMap
+import Mathlib.Order.Interval.Finset.Floor
 import Mathlib.Topology.Homotopy.Lifting
 import Mathlib.Topology.Order.IntermediateValue
 
@@ -53,6 +54,93 @@ theorem continuousArgumentLift_zero (gamma : C(unitInterval, ℂ)) (hne : ∀ t,
 noncomputable def argumentCrossingLevel (k : ℤ) : ℝ :=
   Real.pi / 2 + k * Real.pi
 
+/-- All half-odd-integer multiples of `π` lying between two argument values. -/
+noncomputable def argumentCrossingIndices (alpha beta : ℝ) : Finset ℤ :=
+  Finset.Icc
+    ⌈(alpha - Real.pi / 2) / Real.pi⌉
+    ⌊(beta - Real.pi / 2) / Real.pi⌋
+
+@[simp]
+theorem mem_argumentCrossingIndices_iff {alpha beta : ℝ} {k : ℤ} :
+    k ∈ argumentCrossingIndices alpha beta ↔
+      argumentCrossingLevel k ∈ Icc alpha beta := by
+  have hpi : 0 < Real.pi := Real.pi_pos
+  rw [argumentCrossingIndices]
+  constructor
+  · intro hk
+    have hnormalized : (k : ℝ) ∈
+        Icc ((alpha - Real.pi / 2) / Real.pi)
+          ((beta - Real.pi / 2) / Real.pi) :=
+      Int.cast_mem_Icc_iff.mpr hk
+    constructor
+    · have h := (div_le_iff₀ hpi).mp hnormalized.1
+      unfold argumentCrossingLevel
+      nlinarith
+    · have h := (le_div_iff₀ hpi).mp hnormalized.2
+      unfold argumentCrossingLevel
+      nlinarith
+  · intro hk
+    apply Int.cast_mem_Icc_iff.mp
+    constructor
+    · apply (div_le_iff₀ hpi).mpr
+      unfold argumentCrossingLevel at hk
+      nlinarith [hk.1]
+    · apply (le_div_iff₀ hpi).mpr
+      unfold argumentCrossingLevel at hk
+      nlinarith [hk.2]
+
+/-- A real interval of argument length `beta - alpha` contains at least
+`(beta - alpha) / π - 1` crossing levels.  The loss of one is the exact
+endpoint-rounding cost that must be retained when zero-free components are
+later summed. -/
+private theorem argumentCrossingIndices_card_lower_bound_of_le {alpha beta : ℝ}
+    (hab : alpha ≤ beta) :
+    (beta - alpha) / Real.pi - 1 ≤
+      (argumentCrossingIndices alpha beta).card := by
+  let x : ℝ := (alpha - Real.pi / 2) / Real.pi
+  let y : ℝ := (beta - Real.pi / 2) / Real.pi
+  let a : ℤ := ⌈x⌉
+  let b : ℤ := ⌊y⌋
+  have hpi : 0 < Real.pi := Real.pi_pos
+  have hxy : x ≤ y := by
+    dsimp [x, y]
+    exact (div_le_div_iff_of_pos_right hpi).mpr (sub_le_sub_right hab _)
+  have hfloor : y < (b : ℝ) + 1 := by
+    have := Int.sub_one_lt_floor y
+    dsimp [b]
+    linarith
+  have habInt : a ≤ b + 1 := by
+    apply Int.ceil_le.mpr
+    simpa using hxy.trans hfloor.le
+  have hcardInt :
+      ((Finset.Icc a b).card : ℤ) = b + 1 - a :=
+    Int.card_Icc_of_le a b habInt
+  have hcardReal :
+      ((Finset.Icc a b).card : ℝ) = (b : ℝ) + 1 - (a : ℝ) := by
+    exact_mod_cast hcardInt
+  have hceil : (a : ℝ) < x + 1 := by
+    simpa [a] using (Int.ceil_lt_add_one x)
+  have hnormalize : (beta - alpha) / Real.pi = y - x := by
+    dsimp [x, y]
+    field_simp [Real.pi_ne_zero]
+    ring
+  rw [argumentCrossingIndices]
+  change (beta - alpha) / Real.pi - 1 ≤ ((Finset.Icc a b).card : ℝ)
+  rw [hnormalize, hcardReal]
+  linarith
+
+theorem argumentCrossingIndices_card_lower_bound {alpha beta : ℝ} :
+    (beta - alpha) / Real.pi - 1 ≤
+      (argumentCrossingIndices alpha beta).card := by
+  by_cases hab : alpha ≤ beta
+  · exact argumentCrossingIndices_card_lower_bound_of_le hab
+  · have hdiff : beta - alpha < 0 := sub_neg.mpr (lt_of_not_ge hab)
+    have hquot : (beta - alpha) / Real.pi < 0 :=
+      div_neg_of_neg_of_pos hdiff Real.pi_pos
+    have hcard : 0 ≤ ((argumentCrossingIndices alpha beta).card : ℝ) := by
+      positivity
+    linarith
+
 theorem exists_argumentCrossing_of_level_mem_Icc
     (gamma : C(unitInterval, ℂ)) (hne : ∀ t, gamma t ≠ 0) (k : ℤ)
     (hlevel : argumentCrossingLevel k ∈
@@ -105,5 +193,39 @@ theorem exists_injective_argumentCrossing_times
     unfold argumentCrossingLevel at hlevels
     nlinarith [Real.pi_pos]
   exact_mod_cast hcasts
+
+/-- Quantitative zero-free argument crossing: the endpoint argument increase
+produces an injectively indexed family of real-part crossings, with only the
+single unavoidable endpoint-rounding loss. -/
+theorem exists_quantified_argumentCrossing_times
+    (gamma : C(unitInterval, ℂ)) (hne : ∀ t, gamma t ≠ 0) :
+    ∃ tau : ℤ → unitInterval,
+      Set.InjOn tau
+          (argumentCrossingIndices
+            (continuousArgumentLift gamma hne 0).im
+            (continuousArgumentLift gamma hne 1).im : Set ℤ) ∧
+        (∀ k ∈ argumentCrossingIndices
+            (continuousArgumentLift gamma hne 0).im
+            (continuousArgumentLift gamma hne 1).im,
+          (continuousArgumentLift gamma hne (tau k)).im =
+              argumentCrossingLevel k ∧
+            (gamma (tau k)).re = 0) ∧
+        ((continuousArgumentLift gamma hne 1).im -
+            (continuousArgumentLift gamma hne 0).im) / Real.pi - 1 ≤
+          (argumentCrossingIndices
+            (continuousArgumentLift gamma hne 0).im
+            (continuousArgumentLift gamma hne 1).im).card := by
+  let K := argumentCrossingIndices
+    (continuousArgumentLift gamma hne 0).im
+    (continuousArgumentLift gamma hne 1).im
+  have hK : ∀ k ∈ K, argumentCrossingLevel k ∈
+      Icc (continuousArgumentLift gamma hne 0).im
+        (continuousArgumentLift gamma hne 1).im := by
+    intro k hk
+    exact mem_argumentCrossingIndices_iff.mp hk
+  rcases exists_injective_argumentCrossing_times gamma hne K hK with
+    ⟨tau, hinj, htau⟩
+  refine ⟨tau, hinj, htau, ?_⟩
+  exact argumentCrossingIndices_card_lower_bound
 
 end MathlibAux

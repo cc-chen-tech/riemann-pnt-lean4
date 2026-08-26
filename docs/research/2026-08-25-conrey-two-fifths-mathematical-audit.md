@@ -795,6 +795,27 @@ simultaneously and proves that `k -> t_k` is injective.  The injectivity step is
 essential: it turns distinct lifted argument levels into genuinely distinct
 real-part crossings, rather than merely repeated existence claims.
 
+The admissible levels are now packaged as the exact integer interval
+
+\[
+  K(\alpha,\beta)=
+  \left\{k\in\mathbb Z:
+    \alpha\le \frac\pi2+k\pi\le\beta\right\}.
+\]
+
+Floor/ceiling arithmetic gives the unconditional quantitative estimate
+
+\[
+  \frac{\beta-\alpha}{\pi}-1\le \#K(\alpha,\beta).
+\]
+
+No monotonicity assumption `alpha <= beta` is required: when the net argument
+change is negative, the left-hand side is already negative and the empty
+crossing family is valid.  Consequently every zero-free component contributes
+its signed argument change divided by `pi`, with exactly one endpoint-rounding
+loss.  This is the form that can be summed after partitioning at the zeros of
+`eta`.
+
 This is an unconditional zero-free-interval theorem.  It does not yet prove
 the full inequality (41): to apply it to `eta` one must partition the critical
 line at the finitely many zeros of `eta`, reconcile the lifts on the resulting
