@@ -22,6 +22,10 @@ from scripts.audit_mwkf_ranges import (
     boundary_witnesses,
     is_admissible,
 )
+from scripts.mwkf_mobius_type_identity import (
+    mobius,
+    split_mobius_identity,
+)
 
 
 F = Fraction
@@ -1969,6 +1973,36 @@ class OuterStateInclusionExclusionAudit:
     dyadic_mellin_twist_preserves_unit_cancellation: bool
     recombination_before_outer_scale_separation_is_necessary: bool
     recombined_outer_scale_physical_kernel_proved: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class OuterModulusTypeRecombinationAudit:
+    original_modulus: int
+    cutoff_u: int
+    cutoff_v: int
+    original_mobius_weight: int
+    type_i_sum_inside_parentheses: int
+    type_ii_sum_inside_parentheses: int
+    recombined_modulus_weight: int
+    all_type_allocations_recombine_exactly: bool
+    recombined_modulus_weight_absolute_bound: int
+    physical_modulus_scale_exponent: Fraction
+    grouped_coefficient_l2_squared_exponent: Fraction
+    outer_scale_power_loss_after_recombination: Fraction
+    physical_inverse_entry_normalization_retained: bool
+    hard_face_arbitrary_coefficient_bound_exponent: Fraction
+    hard_face_target_exponent: Fraction
+    required_mobius_modulus_saving_exponent: Fraction
+    arbitrary_coefficient_large_sieve_closes_hard_face: bool
+    level_divisibility_swaps_to_divisor_incidence: bool
+    divisor_incidence_energy_has_exact_lcm_kernel: bool
+    dyadic_lcm_boundary_error_is_polylogarithmic: bool
+    exact_remaining_gate_is_mobius_modulus_kuznetsov: bool
+    arithmetic_modulus_weight_is_a_smooth_bessel_test: bool
+    standard_kuznetsov_large_sieve_applies: bool
+    mobius_modulus_harmonic_large_sieve_proved: bool
+    steinberg_conductor_average_proved: bool
     outer_lisk_covered: bool
 
 
@@ -14201,6 +14235,139 @@ def reciprocal_lcm_quadratic_energy(
     }
 
 
+def outer_modulus_divisor_incidence_energy(
+    coefficients: dict[int, Fraction],
+    *,
+    interval_lower: int,
+    interval_upper: int,
+) -> dict[str, object]:
+    """Square the exact divisor-incidence coefficient in two ways.
+
+    After the outer divisor sum is interchanged with the lifted modulus
+    sum, its coefficient at a physical modulus ``s`` is
+
+    ``G(s)=sum_(B|s) beta(B)``.
+
+    Expanding ``sum_(S0<=s<=S1) |G(s)|^2`` shows that a pair
+    ``(B1,B2)`` occurs exactly once for every multiple of
+    ``lcm(B1,B2)`` in the interval.  The helper checks this finite
+    identity with signed rational coefficients.  It deliberately does
+    not replace the resulting arithmetic modulus coefficient by a
+    smooth Kuznetsov test.
+    """
+    if not coefficients or any(index <= 0 for index in coefficients):
+        raise ValueError("coefficients must have positive integer indices")
+    lower = int(interval_lower)
+    upper = int(interval_upper)
+    if lower <= 0 or upper < lower:
+        raise ValueError("require 1 <= interval_lower <= interval_upper")
+    beta = {index: F(value) for index, value in coefficients.items()}
+    grouped = tuple(
+        (
+            modulus,
+            sum(
+                (
+                    value
+                    for divisor, value in beta.items()
+                    if modulus % divisor == 0
+                ),
+                F(0),
+            ),
+        )
+        for modulus in range(lower, upper + 1)
+    )
+    direct = sum((value * value for _, value in grouped), F(0))
+    diagonal = F(0)
+    offdiagonal = F(0)
+    for left, left_value in beta.items():
+        for right, right_value in beta.items():
+            lcm = left * right // gcd(left, right)
+            count = upper // lcm - (lower - 1) // lcm
+            contribution = left_value * right_value * count
+            if left == right:
+                diagonal += contribution
+            else:
+                offdiagonal += contribution
+    pairwise = diagonal + offdiagonal
+    return {
+        "grouped_modulus_coefficients": grouped,
+        "direct_energy": direct,
+        "pairwise_lcm_count_energy": pairwise,
+        "diagonal_pair_energy": diagonal,
+        "offdiagonal_pair_energy": offdiagonal,
+        "lcm_pair_count_identity_verified": direct == pairwise,
+    }
+
+
+def outer_modulus_type_recombination_audit(
+    *,
+    original_modulus: int,
+    cutoff_u: int,
+    cutoff_v: int,
+    physical_modulus_exponent: Fraction,
+) -> OuterModulusTypeRecombinationAudit:
+    """Recombine all artificial Type scales before the modulus trace.
+
+    The exact one-variable identity is
+
+    ``mu(s)=-(Type-I(s)+Type-II(s))``.
+
+    Hence summing all allocation boxes reconstructs the original
+    arithmetic modulus coefficient ``mu(s)``, whose absolute value is
+    at most one.  Swapping an individual outer divisor sum with the
+    lifted modulus condition turns ``B|s`` into the lcm pair-count
+    identity checked by :func:`outer_modulus_divisor_incidence_energy`.
+    Both facts remove a spurious positive power from the outer-scale
+    ledger.  They do not make ``mu(s)`` a smooth Bessel test, so the
+    remaining Möbius-modulus Kuznetsov large sieve is left open.
+    """
+    n = int(original_modulus)
+    u = int(cutoff_u)
+    v = int(cutoff_v)
+    sigma = F(physical_modulus_exponent)
+    if n <= u or u < 1 or v < 1:
+        raise ValueError(
+            "require original_modulus > cutoff_u >= 1 and cutoff_v >= 1"
+        )
+    if sigma < 0:
+        raise ValueError("physical_modulus_exponent must be nonnegative")
+    original, type_i, type_ii = split_mobius_identity(
+        n,
+        cutoff_u=u,
+        cutoff_v=v,
+    )
+    recombined = -(type_i + type_ii)
+    exact = original == mobius(n) == recombined
+    return OuterModulusTypeRecombinationAudit(
+        original_modulus=n,
+        cutoff_u=u,
+        cutoff_v=v,
+        original_mobius_weight=original,
+        type_i_sum_inside_parentheses=type_i,
+        type_ii_sum_inside_parentheses=type_ii,
+        recombined_modulus_weight=recombined,
+        all_type_allocations_recombine_exactly=exact,
+        recombined_modulus_weight_absolute_bound=abs(recombined),
+        physical_modulus_scale_exponent=sigma,
+        grouped_coefficient_l2_squared_exponent=sigma,
+        outer_scale_power_loss_after_recombination=F(0),
+        physical_inverse_entry_normalization_retained=True,
+        hard_face_arbitrary_coefficient_bound_exponent=F(5, 2),
+        hard_face_target_exponent=F(2),
+        required_mobius_modulus_saving_exponent=F(1, 2),
+        arbitrary_coefficient_large_sieve_closes_hard_face=False,
+        level_divisibility_swaps_to_divisor_incidence=True,
+        divisor_incidence_energy_has_exact_lcm_kernel=True,
+        dyadic_lcm_boundary_error_is_polylogarithmic=True,
+        exact_remaining_gate_is_mobius_modulus_kuznetsov=True,
+        arithmetic_modulus_weight_is_a_smooth_bessel_test=False,
+        standard_kuznetsov_large_sieve_applies=False,
+        mobius_modulus_harmonic_large_sieve_proved=False,
+        steinberg_conductor_average_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
 def eisenstein_common_ramification_average_audit(
     *,
     frequency_length: int,
@@ -23711,6 +23878,37 @@ def main() -> None:
         "recombined="
         f"{outer_inclusion.recombined_outer_scale_physical_kernel_proved} "
         f"olisk={outer_inclusion.outer_lisk_covered}"
+    )
+    outer_modulus = outer_modulus_type_recombination_audit(
+        original_modulus=30,
+        cutoff_u=5,
+        cutoff_v=4,
+        physical_modulus_exponent=F(3),
+    )
+    print(
+        "balanced_max_a: outer_modulus_recombination="
+        f"mu={outer_modulus.original_mobius_weight} "
+        f"type_i={outer_modulus.type_i_sum_inside_parentheses} "
+        f"type_ii={outer_modulus.type_ii_sum_inside_parentheses} "
+        f"recombined={outer_modulus.recombined_modulus_weight} "
+        "l2_exp="
+        f"{_fmt(outer_modulus.grouped_coefficient_l2_squared_exponent)} "
+        "outer_loss="
+        f"{_fmt(outer_modulus.outer_scale_power_loss_after_recombination)} "
+        "hard="
+        f"{_fmt(outer_modulus.hard_face_arbitrary_coefficient_bound_exponent)} "
+        "target="
+        f"{_fmt(outer_modulus.hard_face_target_exponent)} "
+        "gap="
+        f"{_fmt(outer_modulus.required_mobius_modulus_saving_exponent)} "
+        "lcm="
+        f"{outer_modulus.divisor_incidence_energy_has_exact_lcm_kernel} "
+        "smooth="
+        f"{outer_modulus.arithmetic_modulus_weight_is_a_smooth_bessel_test} "
+        "mobius_modulus_ls="
+        f"{outer_modulus.mobius_modulus_harmonic_large_sieve_proved} "
+        f"oslsp={outer_modulus.steinberg_conductor_average_proved} "
+        f"olisk={outer_modulus.outer_lisk_covered}"
     )
     cross_tensor = unramified_cross_index_tensor_norm_audit()
     print(

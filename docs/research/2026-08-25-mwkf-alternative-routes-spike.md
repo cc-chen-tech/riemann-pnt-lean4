@@ -25,7 +25,14 @@
 > dyadic outer-scale separation destroys this cancellation.  Thus the
 > exact residual is the recombined signed outer-level square
 > \((\mathrm{OSLSP})_q^{L,R}\), which still lacks one analytic prime
-> factor and implies OLISK if proved.
+> factor and implies OLISK if proved.  Section 4.109zjab now interchanges
+> the outer modulus divisor with the lifted modulus exactly.  Its \(L^2\)
+> energy is an LCM incidence form of size only \(S(\log T)^C\), and
+> recombining every artificial Type allocation returns the original
+> coefficient \(\mu(s)\).  This removes the spurious outer-cardinality
+> loss but turns OSLSP into a Möbius-weighted-modulus Kuznetsov gate;
+> the known arbitrary-coefficient estimate is still short by
+> \(T^{1/2}\) on the hard face.
 > Therefore the unconditional \(T^3\) asymptotic remains open.
 
 This document starts from the exact symmetric completion in
@@ -18503,6 +18510,188 @@ steinberg_outer_state_unit_obstruction_audit records
 two-orientation/conductor-average, recombined-outer-kernel, and OLISK
 coverage false.
 
+### 4.109zjab Outer-divisor incidence returns the original Möbius modulus
+
+There is one exact reordering which is invisible in a fixed-entry
+spectral square.  Work with one separated smooth tensor in
+(4.845aq_1), fix \(A,j,m,h,\delta\), and put
+
+\[
+ u=\frac{c}{Aj}.
+\]
+
+The condition \(ABj\mid c\) is exactly \(B\mid u\).  Therefore the
+finite \(B,c\) sums may be interchanged without a convergence issue:
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_B\beta_{\mathcal B}(B)
+   \sum_{ABj\mid c}\frac{S(m,-Ah\delta;c)}c
+      \Omega_{A,B,q}(c,m,h,\delta)\\
+ &\quad=\sum_{Aj\mid c}\frac{S(m,-Ah\delta;c)}c
+   G_{\mathcal B,j}\!\left(\frac{c}{Aj};c,m,h,\delta\right),
+ \end{aligned}}
+ \tag{4.845dc_14xq_11}
+\]
+
+where
+
+\[
+ G_{\mathcal B,j}(u;c,m,h,\delta)
+ :=\sum_{B\mid u}\beta_{\mathcal B}(B)
+   \Omega_{A,B,q}(c,m,h,\delta).
+ \tag{4.845dc_14xq_12}
+\]
+
+All endpoint, gcd, ratio, and physical Bessel restrictions remain in
+\(\Omega\); no smooth factor has been replaced by its supremum in
+(4.845dc_14xq_11).
+
+The divisor incidence itself has no positive-power L2 cost.  To see the
+exact algebra first omit the bounded smooth tensor and write
+\(G(u)=\sum_{B\mid u}\beta(B)\).  For every finite interval
+\(U_0<u\leq U_1\), expansion of the square gives
+
+\[
+ \boxed{
+ \sum_{U_0<u\leq U_1}|G(u)|^2
+ =\sum_{B_1,B_2}\beta(B_1)\overline{\beta(B_2)}
+ \left(
+ \left\lfloor\frac{U_1}{[B_1,B_2]}\right\rfloor
+ -\left\lfloor\frac{U_0}{[B_1,B_2]}\right\rfloor
+ \right).}
+ \tag{4.845dc_14xq_13}
+\]
+
+For the physical separated weights, expansion gives the same set of
+multiples with an additional uniformly bounded smooth product.  If
+\(|\beta(B)|\leq\tau_K(B)\), its absolute value is at most
+
+\[
+ \begin{aligned}
+ &U\sum_{B_1,B_2}
+   \frac{\tau_K(B_1)\tau_K(B_2)}{[B_1,B_2]}\\
+ &\qquad+
+ \sum_{\substack{B_1,B_2\\[B_1,B_2]\leq 2U}}
+   \tau_K(B_1)\tau_K(B_2),
+ \qquad U\asymp S/j.
+ \end{aligned}
+ \tag{4.845dc_14xq_14}
+\]
+
+The first line is \(\ll_K U(\log(2T))^{C_K}\) by the
+reciprocal-LCM/totient identity (4.845dc_14xq).  In the second line,
+group pairs by \(l=[B_1,B_2]\).  Both \(B_i\mid l\), so the summand and
+the number of pairs are bounded by a fixed divisor power; hence
+
+\[
+ \sum_{l\leq2U}\tau_{K'}(l)
+ \ll_{K'}U(\log(2U))^{C_{K'}}.
+\]
+
+Consequently
+
+\[
+ \boxed{
+ \sum_{u\asymp S/j}|G_{\mathcal B,j}(u;\cdots)|^2
+ \ll_{K,J,W}\frac Sj(\log(2T))^{C_{K,J,W}}.}
+ \tag{4.845dc_14xq_15}
+\]
+
+This proves that the outer \(B\)-incidence, including the floor-function
+boundary in (4.845dc_14xq_13), costs only logarithms.
+
+It is essential to identify what happens when all Type allocations are
+actually restored.  With
+
+\[
+ c_U(a)=\sum_{d\mid a,\ d\leq U}\mu(d),
+\]
+
+the exact finite identity is
+
+\[
+ \mu(s)=-\sum_{\substack{ab=s\\a>U}}c_U(a)\mu(b)
+ \qquad(s>U).
+ \tag{4.845dc_14xq_16}
+\]
+
+The Type-I and Type-II sectors are merely the two parts \(b\leq V\)
+and \(b>V\) of the sum in (4.845dc_14xq_16).  Summing every dyadic
+partition of unity and both sectors therefore returns \(\mu(s)\), not
+a new annihilating coefficient.  Restoring the finite \(j\)-sum gives
+
+\[
+ \sum_{j\mid A}\mu(j)\mathbf1_{j\mid s}
+ =\mathbf1_{(A,s)=1}.
+ \tag{4.845dc_14xq_17}
+\]
+
+Thus the fully recombined left-oriented geometric gate is equivalently
+the following Möbius-weighted-modulus estimate:
+
+\[
+ \boxed{
+ \begin{aligned}
+ \left|\sum_A\frac{\alpha(A)}A
+ \sum_{\substack{s\asymp S\\(s,A)=1}}
+ \frac{\mu(s)}s
+ \sum_{\substack{m\ne0\\h,\delta\ne0}}
+ S(\overline A m,-h\delta;s)
+ \Psi_{A,q}(s,m,h,\delta)\right|
+ \ll_{B_0,W}S(\log T)^{-B_0}.
+ \end{aligned}}
+ \tag{MMKLS}_{q}^{L}
+\]
+
+The factor \(A^{-1}\) is the exact normalization: (4.845ap_3) contributes
+\(A/c_A(m)\), while the outer Poisson factor is \(E=R/A\); after
+dividing (4.845aq_1) by \(R\), returning from the standard orbit to the
+physical orbit leaves \(1/A\).  Here \(\Psi_{A,q}\) is the unreduced
+physical QCT kernel.  In the hard balanced box its exact scales are
+
+\[
+ \boxed{
+ s\asymp T^3,\quad A\asymp T^\alpha\ (0\leq\alpha\leq3),\quad
+ m\asymp T^\alpha,\quad |h|\asymp|\delta|\asymp T^{5/2},\quad
+ |h\delta|\asymp T^5,}
+ \tag{4.845dc_14xq_18}
+\]
+
+with \(m,h,\delta\ne0\), \((s,A)=1\), the exact
+\(D=(A,h\delta)\) layer, all ratio restrictions, and the two-coordinate
+Kloosterman phase retained.  The right-oriented gate interchanges the
+two mollifier variables.
+
+Equation (4.845dc_14xq_15) removes the apparent \(B_0\) cardinality
+loss, but it does not prove \((\mathrm{MMKLS})_q^L\).  The coefficient
+\(\mu(s)\) is arithmetic in the trace-formula modulus and is not a
+smooth Bessel test.  Expanding it again into divisibility levels is
+exactly the outer-level sum with which this subsection began.  Replacing
+\(\mu(s)\) by an arbitrary coefficient of modulus at most one returns
+the already audited hard-face exponent
+
+\[
+ \boxed{
+ E_{\rm arbitrary}=\frac52,\qquad E_{\rm target}=2,
+ \qquad E_{\rm missing}=\frac12.}
+ \tag{4.845dc_14xq_19}
+\]
+
+Therefore OSLSP has now been reduced to a strictly named theorem: a
+signed Möbius-modulus, two-Fourier-index harmonic large sieve which
+gains \(T^{1/2}\) beyond the arbitrary-coefficient bound while retaining
+the physical Bessel/QCT kernel.  This is the same Steinberg
+conductor-one average isolated in (4.845dc_14xq_10), expressed on the
+geometric side.  Neither the incidence L2 estimate nor ordinary
+Kuznetsov proves that theorem.
+
+The interfaces `outer_modulus_divisor_incidence_energy` and
+`outer_modulus_type_recombination_audit` check (4.845dc_14xq_13), the
+finite Type recombination, the zero outer-scale power loss, and the
+hard-face \(1/2\) deficit.  They keep MMKLS, OSLSP, and OLISK false.
+
 ### 4.109zk Pascadi v2 saves only one quarter power after factor freezing
 
 Pascadi's revised composite-modulus theorem is unusually well matched
@@ -19396,8 +19585,12 @@ Unconditionally the argument stops at
 \[
  \boxed{\mathcal R_{\lfloor T^3\rfloor,T}=o_W(T)
  \quad\Longleftarrow\quad
- (\mathrm{OLISK})_{q}^{L,R}\ \text{uniformly in every outer box}.}
+ (\mathrm{MMKLS})_{q}^{L,R}\ \text{uniformly in every outer box}.}
 \]
+By Section 4.109zjab this is the geometric-side form of the recombined
+outer-level square \((\mathrm{OSLSP})_q^{L,R}\), and it implies
+\((\mathrm{OLISK})_q^{L,R}\).  On the hard balanced face it requires
+the explicit extra saving \(T^{1/2}\) in (4.845dc_14xq_19).
 Combining this remaining implication with (4.845dc_19) would give
 
 \[
@@ -19409,11 +19602,12 @@ Combining this remaining implication with (4.845dc_19) would give
 
 The displayed asymptotic is therefore still unproved for real
 \(W\in C_c^\infty(\mathbb R)\) supported in \([1,2]\).  The final
-coverage certificate has one residual analytic gate: the full signed
-outer-entry aggregation \((\mathrm{OLISK})_{q}^{L,R}\), equivalently
-the recombined outer-level square \((\mathrm{OSLSP})_q^{L,R}\) from
-Section 4.109zja, over power-sized as well as polylogarithmic entry
-divisors.  The full-level harmonic
+coverage certificate has one residual analytic gate: the
+Möbius-weighted-modulus two-index large sieve
+\((\mathrm{MMKLS})_{q}^{L,R}\), equivalently the recombined outer-level
+square \((\mathrm{OSLSP})_q^{L,R}\) and hence the full signed outer-entry
+aggregation \((\mathrm{OLISK})_{q}^{L,R}\), over power-sized as well as
+polylogarithmic entry divisors.  The full-level harmonic
 large sieve, weighted primitive-conductor large sieve, fixed-entry PEVP,
 and all analytic tails are no longer residual inputs.
 

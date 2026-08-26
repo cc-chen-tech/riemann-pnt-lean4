@@ -5629,6 +5629,79 @@ def test_steinberg_modulus_state_blocks_simple_outer_recombination() -> None:
     assert not audit["outer_lisk_covered"]
 
 
+def test_outer_modulus_divisor_incidence_energy_is_exact_lcm_pair_count() -> None:
+    """Catch paying separately for the B-divisors after swapping B and c."""
+    energy = coverage_audit.outer_modulus_divisor_incidence_energy(
+        {2: F(1), 3: F(-1)},
+        interval_lower=1,
+        interval_upper=12,
+    )
+    assert energy["grouped_modulus_coefficients"] == (
+        (1, F(0)),
+        (2, F(1)),
+        (3, F(-1)),
+        (4, F(1)),
+        (5, F(0)),
+        (6, F(0)),
+        (7, F(0)),
+        (8, F(1)),
+        (9, F(-1)),
+        (10, F(1)),
+        (11, F(0)),
+        (12, F(0)),
+    )
+    assert energy["direct_energy"] == 6
+    assert energy["pairwise_lcm_count_energy"] == 6
+    assert energy["diagonal_pair_energy"] == 10
+    assert energy["offdiagonal_pair_energy"] == -4
+    assert energy["lcm_pair_count_identity_verified"]
+
+
+def test_full_type_recombination_returns_the_original_mobius_modulus_weight(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Catch treating Type allocations as independent positive outer scales."""
+    audit = coverage_audit.outer_modulus_type_recombination_audit(
+        original_modulus=30,
+        cutoff_u=5,
+        cutoff_v=4,
+        physical_modulus_exponent=F(3),
+    )
+    assert audit.original_mobius_weight == -1
+    assert audit.type_i_sum_inside_parentheses == 0
+    assert audit.type_ii_sum_inside_parentheses == 1
+    assert audit.recombined_modulus_weight == -1
+    assert audit.all_type_allocations_recombine_exactly
+    assert audit.recombined_modulus_weight_absolute_bound == 1
+    assert audit.physical_modulus_scale_exponent == 3
+    assert audit.grouped_coefficient_l2_squared_exponent == 3
+    assert audit.outer_scale_power_loss_after_recombination == 0
+    assert audit.physical_inverse_entry_normalization_retained
+    assert audit.hard_face_arbitrary_coefficient_bound_exponent == F(5, 2)
+    assert audit.hard_face_target_exponent == 2
+    assert audit.required_mobius_modulus_saving_exponent == F(1, 2)
+    assert not audit.arbitrary_coefficient_large_sieve_closes_hard_face
+    assert audit.level_divisibility_swaps_to_divisor_incidence
+    assert audit.divisor_incidence_energy_has_exact_lcm_kernel
+    assert audit.dyadic_lcm_boundary_error_is_polylogarithmic
+    assert audit.exact_remaining_gate_is_mobius_modulus_kuznetsov
+    assert not audit.arithmetic_modulus_weight_is_a_smooth_bessel_test
+    assert not audit.standard_kuznetsov_large_sieve_applies
+    assert not audit.mobius_modulus_harmonic_large_sieve_proved
+    assert not audit.steinberg_conductor_average_proved
+    assert not audit.outer_lisk_covered
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: outer_modulus_recombination="
+        "mu=-1 type_i=0 type_ii=1 recombined=-1 "
+        "l2_exp=3 outer_loss=0 hard=5/2 target=2 gap=1/2 "
+        "lcm=True smooth=False "
+        "mobius_modulus_ls=False oslsp=False olisk=False"
+    ) in output
+
+
 def test_pascadi_v2_lifted_modulus_audit_leaves_the_physical_pevp_gap() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
