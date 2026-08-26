@@ -5852,6 +5852,59 @@ def test_atkin_lehner_symmetric_difference_recovers_reciprocal_lcm(
     ) in output
 
 
+def test_full_steinberg_cross_orientation_has_an_unsigned_cross_state(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The sign-sector LCM identity does not control the full three-state square."""
+    audit = coverage_audit.steinberg_full_cross_orientation_matrix_audit(
+        prime=5
+    )
+    assert audit.steinberg_entry_correction == F(169, 175)
+    assert audit.state_order == ("absent", "modulus", "entry")
+    assert audit.first_orientation_amplitudes == ("0", "-1", "x")
+    assert audit.swapped_orientation_amplitudes == ("0", "x", "-1")
+    assert audit.constant_term_matrix == (
+        (F(0), F(0), F(0)),
+        (F(0), F(0), F(1)),
+        (F(0), F(0), F(0)),
+    )
+    assert audit.linear_x_matrix == (
+        (F(0), F(0), F(0)),
+        (F(0), F(-1), F(0)),
+        (F(0), F(0), F(-1)),
+    )
+    assert audit.quadratic_x_matrix == (
+        (F(0), F(0), F(0)),
+        (F(0), F(0), F(0)),
+        (F(0), F(1), F(0)),
+    )
+    assert audit.full_recombined_polynomial_coefficients == (
+        F(1),
+        F(-2),
+        F(1),
+    )
+    assert audit.unsigned_modulus_to_entry_coefficient == F(1)
+    assert audit.required_reciprocal_prime_coefficient == F(1, 5)
+    assert audit.unsigned_cross_state_exceeds_target
+    assert audit.uniform_full_mass_lower_bound == F(1, 4)
+    assert audit.uniform_full_mass_lower_bound_exceeds_target
+    assert audit.symmetric_difference_trace_controls_only_signed_same_states
+    assert not audit.full_three_state_cross_orientation_closes_steinberg
+    assert not audit.physical_outer_kernel_reinserted
+    assert not audit.outer_lisk_covered
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: steinberg_full_cross_orientation="
+        "prime=5 correction=169/175 states=absent,modulus,entry "
+        "first=0,-1,x swapped=0,x,-1 polynomial=1,-2,1 "
+        "unsigned_cross=1 target=1/5 exceeds=True lower=1/4 "
+        "lower_exceeds=True same_state_only=True full=False "
+        "physical=False olisk=False"
+    ) in output
+
+
 def test_drappeau_quintilinear_bound_does_not_compose_with_outer_pevp(
     capsys: pytest.CaptureFixture[str],
 ) -> None:

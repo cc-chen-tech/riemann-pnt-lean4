@@ -2045,6 +2045,28 @@ class AtkinLehnerSymmetricDifferenceKernelAudit:
 
 
 @dataclass(frozen=True)
+class SteinbergFullCrossOrientationMatrixAudit:
+    prime: int
+    steinberg_entry_correction: Fraction
+    state_order: tuple[str, str, str]
+    first_orientation_amplitudes: tuple[str, str, str]
+    swapped_orientation_amplitudes: tuple[str, str, str]
+    constant_term_matrix: tuple[tuple[Fraction, ...], ...]
+    linear_x_matrix: tuple[tuple[Fraction, ...], ...]
+    quadratic_x_matrix: tuple[tuple[Fraction, ...], ...]
+    full_recombined_polynomial_coefficients: tuple[Fraction, Fraction, Fraction]
+    unsigned_modulus_to_entry_coefficient: Fraction
+    required_reciprocal_prime_coefficient: Fraction
+    unsigned_cross_state_exceeds_target: bool
+    uniform_full_mass_lower_bound: Fraction
+    uniform_full_mass_lower_bound_exceeds_target: bool
+    symmetric_difference_trace_controls_only_signed_same_states: bool
+    full_three_state_cross_orientation_closes_steinberg: bool
+    physical_outer_kernel_reinserted: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiHardBoxAudit:
     modulus_exponent: Fraction
     left_argument_length_exponent: Fraction
@@ -11441,6 +11463,76 @@ def atkin_lehner_symmetric_difference_kernel_audit(
         ),
         cross_cusp_farey_large_sieve_has_same_constant=exact_divisor,
         atkin_lehner_oldvector_permutation_preserves_l2=True,
+        physical_outer_kernel_reinserted=False,
+        outer_lisk_covered=False,
+    )
+
+
+def steinberg_full_cross_orientation_matrix_audit(
+    *, prime: int
+) -> SteinbergFullCrossOrientationMatrixAudit:
+    """Expand the complete Steinberg three-state cross orientation.
+
+    Work inside the primitive conductor-p sector.  The absent outer
+    state has amplitude zero because a conductor-p representation does
+    not occur at level one.  After the outer Mobius signs, the modulus
+    and entry amplitudes in one completion orientation are
+
+    ``m=-1`` and ``e=x=epsilon_p*C_p/sqrt(p)``.
+
+    Swapping the completion orientation interchanges these two
+    amplitudes.  Thus the two vectors are ``(0,-1,x)`` and
+    ``(0,x,-1)``.  Their outer product has signed same-state entries
+    ``-x``, but it also has the unsigned modulus-to-entry coefficient
+    one.  Summing the full conductor-p block gives
+
+    ``1 - 2*x + x^2 = (1-x)^2``.
+
+    Since ``|x|<1/sqrt(p)<1/2`` for ``p>=5``, the full mass is greater
+    than ``1/4``, whereas the reciprocal-prime target is at most
+    ``1/5``.  The symmetric-difference Atkin--Lehner trace therefore
+    controls only the signed same-state subkernel; it cannot be
+    promoted to the complete physical three-state square.
+    """
+    p = int(prime)
+    if p < 5 or not _is_prime_integer(p):
+        raise ValueError("prime must be a prime at least five")
+    correction = F(1) - F(p + 1, p * p * (p + 2))
+    zero = F(0)
+    constant = (
+        (zero, zero, zero),
+        (zero, zero, F(1)),
+        (zero, zero, zero),
+    )
+    linear = (
+        (zero, zero, zero),
+        (zero, F(-1), zero),
+        (zero, zero, F(-1)),
+    )
+    quadratic = (
+        (zero, zero, zero),
+        (zero, zero, zero),
+        (zero, F(1), zero),
+    )
+    target = F(1, p)
+    lower = F(1, 4)
+    return SteinbergFullCrossOrientationMatrixAudit(
+        prime=p,
+        steinberg_entry_correction=correction,
+        state_order=("absent", "modulus", "entry"),
+        first_orientation_amplitudes=("0", "-1", "x"),
+        swapped_orientation_amplitudes=("0", "x", "-1"),
+        constant_term_matrix=constant,
+        linear_x_matrix=linear,
+        quadratic_x_matrix=quadratic,
+        full_recombined_polynomial_coefficients=(F(1), F(-2), F(1)),
+        unsigned_modulus_to_entry_coefficient=F(1),
+        required_reciprocal_prime_coefficient=target,
+        unsigned_cross_state_exceeds_target=(F(1) > target),
+        uniform_full_mass_lower_bound=lower,
+        uniform_full_mass_lower_bound_exceeds_target=(lower > target),
+        symmetric_difference_trace_controls_only_signed_same_states=True,
+        full_three_state_cross_orientation_closes_steinberg=False,
         physical_outer_kernel_reinserted=False,
         outer_lisk_covered=False,
     )
@@ -24619,6 +24711,43 @@ def main() -> None:
         "physical="
         f"{symmetric_difference.physical_outer_kernel_reinserted} "
         f"olisk={symmetric_difference.outer_lisk_covered}"
+    )
+    full_cross_orientation = steinberg_full_cross_orientation_matrix_audit(
+        prime=5
+    )
+    print(
+        "balanced_max_a: steinberg_full_cross_orientation="
+        f"prime={full_cross_orientation.prime} "
+        "correction="
+        f"{_fmt(full_cross_orientation.steinberg_entry_correction)} "
+        "states="
+        + ",".join(full_cross_orientation.state_order)
+        + " first="
+        + ",".join(full_cross_orientation.first_orientation_amplitudes)
+        + " swapped="
+        + ",".join(full_cross_orientation.swapped_orientation_amplitudes)
+        + " polynomial="
+        + ",".join(
+            _fmt(value)
+            for value in full_cross_orientation.full_recombined_polynomial_coefficients
+        )
+        + " "
+        "unsigned_cross="
+        f"{_fmt(full_cross_orientation.unsigned_modulus_to_entry_coefficient)} "
+        "target="
+        f"{_fmt(full_cross_orientation.required_reciprocal_prime_coefficient)} "
+        "exceeds="
+        f"{full_cross_orientation.unsigned_cross_state_exceeds_target} "
+        f"lower={_fmt(full_cross_orientation.uniform_full_mass_lower_bound)} "
+        "lower_exceeds="
+        f"{full_cross_orientation.uniform_full_mass_lower_bound_exceeds_target} "
+        "same_state_only="
+        f"{full_cross_orientation.symmetric_difference_trace_controls_only_signed_same_states} "
+        "full="
+        f"{full_cross_orientation.full_three_state_cross_orientation_closes_steinberg} "
+        "physical="
+        f"{full_cross_orientation.physical_outer_kernel_reinserted} "
+        f"olisk={full_cross_orientation.outer_lisk_covered}"
     )
     outer_modulus = outer_modulus_type_recombination_audit(
         original_modulus=30,

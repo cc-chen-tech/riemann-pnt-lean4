@@ -25,7 +25,15 @@
 > dyadic outer-scale separation destroys this cancellation.  Thus the
 > exact residual is the recombined signed outer-level square
 > \((\mathrm{OSLSP})_q^{L,R}\), which still lacks one analytic prime
-> factor and implies OLISK if proved.  Section 4.109zjab now interchanges
+> factor and implies OLISK if proved.  The
+> two-orientation audit in Section 4.109zjaaac does not repair this:
+> its symmetric-difference Atkin--Lehner trace supplies the desired
+> reciprocal-LCM factor only in the two signed same-state cells.  The
+> complete Steinberg cross matrix contains an unsigned
+> \(B_{\rm left}\)-to-\(A_{\rm right}\) coefficient \(1\), and its
+> local mass is \(>1/4>1/p\).  Thus a same-state cross-cusp trace cannot
+> be promoted to OSLSP.
+> Section 4.109zjab interchanges
 > the outer modulus divisor with the lifted modulus exactly.  Its \(L^2\)
 > energy is an LCM incidence form of size only \(S(\log T)^C\), and
 > recombining every artificial Type allocation returns the original
@@ -18656,11 +18664,12 @@ but that theorem remains open and OSLSP is still false.  The interface
 rational deficit and prevents treating the square of
 (4.845dc_14xq_10d) as a second independent square.
 
-### 4.109zjaaac The symmetric-difference Atkin--Lehner trace produces the reciprocal-LCM kernel
+### 4.109zjaaac The symmetric-difference trace produces only a reciprocal-LCM same-state subkernel
 
-There is a fixed-transform mechanism for the missing factor which is
-stronger than unitarity.  It does not yet prove the physical outer
-inequality, but it identifies its exact geometric normalization.
+There is a fixed-transform mechanism for the missing factor in the two
+signed same-state cells which is stronger than unitarity.  It does not
+prove the physical outer inequality; the complete three-state
+calculation below shows exactly why.
 
 Let \(A,A'\) be the squarefree Steinberg-prime supports of two outer
 entries in a common squarefree ambient level \(L\), put
@@ -18721,9 +18730,10 @@ the Gallagher--Farey constant is the same as in the positive same-cusp
 large sieve, while the geometric denominator retains the factor
 \(Q^{-1/2}\).
 
-This is exactly the missing arithmetic power kernel.  After stripping
-the bounded local corrections \(C_A C_{A'}\), the cross-orientation
-coefficients contribute \((AA')^{-1/2}\).  By (4.845dc_14xq_10g),
+This is exactly the missing arithmetic power kernel in the signed
+same-state subkernel.  After stripping the bounded local corrections
+\(C_A C_{A'}\), the cross-orientation coefficients contribute
+\((AA')^{-1/2}\).  By (4.845dc_14xq_10g),
 
 \[
  \boxed{
@@ -18744,27 +18754,88 @@ so the ordinary positive diagonal is at exactly the reciprocal-LCM
 size.  Kiral--Young's oldvector involution permutes the coefficient
 lists up to Atkin--Lehner signs, hence preserves their \(L^2\) norm.
 
-What remains is no longer the local prime saving asserted in (ALSG).
-One must embed every pair of actual outer states in the same physical
-ambient level before separating the endpoint, \(D\)-layer, and QCT
-weights; prove that this operation retains the single transform used in
-(4.845dc_14xq_10k); and include the Maaß, holomorphic, and Eisenstein
-cross-cusp transforms without taking an absolute value before the
-\(\epsilon_Q\)-trace.  An outer Mellin separation is not admissible by
-(4.845dc_14xq_4)--(4.845dc_14xq_5).  Therefore the current certified
-statement is
+The full local Steinberg block contains more than those same-state
+cells.  In the primitive conductor-\(p\) sector the absent state has
+amplitude zero: a conductor-\(p\) representation does not occur at
+level one.  After the outer Möbius signs put
+
+\[
+ x=\epsilon_p\frac{C_p}{\sqrt p}.
+\]
+
+The first orientation and the swapped orientation have respective
+state vectors, in the order \((0,B,A)\),
+
+\[
+ u=(0,-1,x),\qquad v=(0,x,-1).
+ \tag{4.845dc_14xq_10m}
+\]
+
+Consequently their complete cross matrix is
 
 \[
  \boxed{
- \text{fixed-transform cross-cusp kernel}=\frac1{[A,A']},\qquad
- \text{physical OLISK reinsertion still open}.}
- \tag{4.845dc_14xq_10m}
+ uv^{\mathsf T}
+ =
+ \begin{pmatrix}
+ 0&0&0\\
+ 0&-x&1\\
+ 0&x^2&-x
+ \end{pmatrix}.}
+ \tag{4.845dc_14xq_10n}
+\]
+
+The two diagonal state cells carry the signed coefficient \(-x\) and
+are precisely the cells to which (4.845dc_14xq_10g)--(4.845dc_14xq_10l)
+apply.  However, the \(B\)-on-the-left, \(A\)-on-the-right cell has the
+unsigned coefficient \(1\).  Summing the complete conductor-\(p\)
+block gives
+
+\[
+ \boxed{
+ \sum_{\epsilon,\epsilon'\in\{0,B,A\}}
+ (uv^{\mathsf T})_{\epsilon,\epsilon'}
+ =1-2x+x^2=(1-x)^2.}
+ \tag{4.845dc_14xq_10o}
+\]
+
+Since \(0<C_p<1\), for every \(p\geq5\) and both Steinberg signs,
+
+\[
+ |1-x|^2
+ \geq\left(1-\frac1{\sqrt p}\right)^2
+ >\frac14>\frac1p.
+ \tag{4.845dc_14xq_10p}
+\]
+
+Thus the unsigned cross-state cell already blocks the reciprocal-prime
+target before any endpoint or transform issue is considered.  The
+actual pairwise ambient level is also not squarefree in an entry state:
+the exact-level operator uses level \(p^2\).  Kiral--Young's
+Atkin--Lehner involution at \(p^2\) swaps its two \(p\)-oldvectors up to
+\(\epsilon_p\), but this permutation does not remove the coefficient
+one in (4.845dc_14xq_10n).
+
+Therefore the current certified statement is
+
+\[
+ \boxed{
+ \text{signed same-state subkernel}=\frac1{[A,A']},\qquad
+ \text{full three-state cross kernel}\not\ll\frac1p.}
+ \tag{4.845dc_14xq_10q}
 \]
 
 The interface `atkin_lehner_symmetric_difference_kernel_audit` checks
 (4.845dc_14xq_10g), (4.845dc_14xq_10k), and (4.845dc_14xq_10l) by
 exact integer and rational arithmetic.  It keeps
 `physical_outer_kernel_reinserted=False` and `outer_lisk_covered=False`.
+
+The interface `steinberg_full_cross_orientation_matrix_audit` checks
+(4.845dc_14xq_10m)--(4.845dc_14xq_10p) and records the fatal unsigned
+cross-state coefficient.  Hence (ALSG), OSLSP, and OLISK all remain
+unproved.  A successful trace estimate must cancel the \(B\)-to-\(A\)
+and \(A\)-to-\(B\) cells jointly with other conductor patterns; a
+same-state Atkin--Lehner trace alone cannot close the gate.
 
 After that exact recombination the remaining squared gate is
 \[
