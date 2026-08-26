@@ -6008,6 +6008,55 @@ def test_higher_uniformity_theorem_misses_the_critical_affine_endpoint(
         assert marker in note
 
 
+def test_unimodular_slope_family_has_exact_torus_operator_gate(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The frequency reformulation keeps cross-slope phases before Cauchy."""
+    audit = coverage_audit.signed_torus_slope_operator_audit()
+    assert audit.primitive_slope == (1, 2)
+    assert audit.bezout_pair == (1, -1)
+    assert audit.unimodular_matrix == ((1, 1), (1, 2))
+    assert audit.determinant == 1
+    assert audit.alternate_bezout_shear == 3
+    assert audit.alternate_unimodular_matrix == ((4, 1), (7, 2))
+    assert audit.bezout_change_is_right_unipotent_shear
+    assert audit.physical_sum_is_bezout_independent
+    assert audit.finite_torus_modulus == 7
+    assert audit.torus_pullback_phase_is_exact
+    assert audit.mobius_fourier_tensor_factorization_is_exact
+    assert audit.finite_fourier_pairing_is_exact
+    assert audit.relative_matrix_lower_left == 1
+    assert audit.relative_matrix_lower_left_is_slope_determinant
+    assert audit.mobius_tensor_l2_exponent == F(3)
+    assert audit.physical_layer_target_exponent == F(3499, 1000)
+    assert audit.required_operator_l2_exponent == F(499, 1000)
+    assert audit.required_operator_energy_exponent == F(499, 500)
+    assert audit.slope_sum_retained_before_frequency_cauchy
+    assert not audit.per_slope_triangle_inequality_used
+    assert not audit.signed_incomplete_poincare_operator_bound_proved
+    assert not audit.mmkls_covered
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "balanced_max_a: signed_torus_slope_operator="
+        "slope=1,2 bezout=1,-1 det=1 shear=3 bezout_invariant=True "
+        "torus=7 pullback=True tensor=True pairing=True relative_c=1 "
+        "slope_det=True mobius_l2=3 target=3499/1000 "
+        "operator_l2=499/1000 energy=499/500 slope_first=True "
+        "per_slope_triangle=False operator=False mmkls=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjabb Exact torus matrix coefficient retains cross-slope phases",
+        r"\widehat{\widetilde K_M}(\xi)=\widehat K_M(M^{\mathsf T}\xi)",
+        r"j_2v_1-v_2j_1",
+        r"T^{499/1000}",
+        "signed_torus_slope_operator_audit",
+    ):
+        assert marker in note
+
+
 def test_drappeau_quintilinear_bound_does_not_compose_with_outer_pevp(
     capsys: pytest.CaptureFixture[str],
 ) -> None:

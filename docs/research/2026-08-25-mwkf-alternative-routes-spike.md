@@ -19155,6 +19155,120 @@ the maximal-progression normalization and second-affine-factor hypotheses.  This
 direct application of the published theorem; it does not rule out a
 new density-sensitive two-affine Möbius estimate.
 
+### 4.109zjabb Exact torus matrix coefficient retains cross-slope phases
+
+There is a frequency-space formulation which avoids taking an absolute
+value for each primitive slope.  Fix a primitive pair \((j,v)\), choose
+\(xv+yj=1\), and put
+
+\[
+ M=M_{j,v}:=
+ \begin{pmatrix}x&j\\-y&v\end{pmatrix}\in SL_2(\mathbb Z).
+ \tag{4.845dc_14xq_19c}
+\]
+
+Then (4.166) is \(z=(r,s)^{\mathsf T}=Mu\), where
+\(u=(\delta_0,n)^{\mathsf T}\).  A second Bezout choice has the form
+
+\[
+ (x',y')=(x+kj,y-kv),\qquad
+ M'=M\begin{pmatrix}1&0\\k&1\end{pmatrix}.
+ \tag{4.845dc_14xq_19d}
+\]
+
+The change \(u'=\left(\begin{smallmatrix}1&0\\-k&1\end{smallmatrix}\right)u\)
+therefore proves exact Bezout-choice independence after reindexing the
+finite line sum.  No norm estimate is used here.
+
+For a finite line-coordinate kernel \(K_M(u)\), use
+
+\[
+ \widehat K_M(\xi)=\sum_{u\in\mathbb Z^2}K_M(u)e(-u\cdot\xi).
+\]
+
+Choose product cutoffs \(0\leq\chi_R,\chi_S\leq1\) equal to one on every
+physical support and define
+
+\[
+ A_R(\theta_1)=\sum_r\mu(r)\chi_R(r)e(-r\theta_1),\qquad
+ B_S(\theta_2)=\sum_s\mu(s)\chi_S(s)e(-s\theta_2).
+\]
+
+Define its physical pullback by
+\(\widetilde K_M(z)=K_M(M^{-1}z)\).  Character orthogonality and
+
+\[
+ (Mu)\cdot\xi=u\cdot(M^{\mathsf T}\xi),\qquad
+ \widehat{\widetilde K_M}(\xi)=\widehat K_M(M^{\mathsf T}\xi)
+ \tag{4.845dc_14xq_19e}
+\]
+
+give the exact finite identity
+
+\[
+ \boxed{
+ \sum_M\sum_u\mu((Mu)_1)\mu((Mu)_2)K_M(u)
+ =\int_{\mathbb T^2}A_R(\theta_1)B_S(\theta_2)
+   \sum_M\widehat K_M(-M^{\mathsf T}\theta)\,d\theta.}
+ \tag{4.845dc_14xq_19f}
+\]
+
+All coprimality projectors, physical cutoffs, and transform phases are
+part of \(K_M\).  In particular, (4.845dc_14xq_19f) does not replace the
+second Möbius factor by a nilsequence and does not square one slope at a
+time.  Define the phase-coherent operator
+
+\[
+ \mathcal P_g(\theta):=
+ \sum_{M\in\mathcal M_g}\widehat K_M(-M^{\mathsf T}\theta).
+ \tag{4.845dc_14xq_19g}
+\]
+
+Parseval gives
+
+\[
+ \|A_RB_S\|_2
+ \le (RS)^{1/2}\le T^3.
+\]
+
+Consequently the following is a precise sufficient local gate for the
+\(T^{3499/1000}\) physical layer:
+
+\[
+ \boxed{
+ \|\mathcal P_g\|_{L^2(\mathbb T^2)}
+ \ll_{B,W}T^{499/1000}(\log T)^{-B}.}
+ \tag{4.845dc_14xq_19h}
+\]
+
+Equivalently, its energy target has exponent \(499/500\).  This is only a
+sufficient Cauchy gate, not an equivalence or a proved estimate.
+
+The virtue of this coordinate is visible after expanding the operator
+energy.  If
+\(M_i=\left(\begin{smallmatrix}x_i&j_i\\-y_i&v_i\end{smallmatrix}\right)\),
+then the cross-slope correlation is transported by
+
+\[
+ M_2^{\mathsf T}M_1^{-\mathsf T},\qquad
+ \left(M_2^{\mathsf T}M_1^{-\mathsf T}\right)_{21}
+ =j_2v_1-v_2j_1.
+ \tag{4.845dc_14xq_19i}
+\]
+
+Thus the primitive-slope determinant survives exactly inside the one
+global square.  The remaining task is now an explicit correlation bound
+for the diagonal, near-parallel, and separated determinant shells of
+\(\mathcal P_g\).  Taking a triangle inequality in \(M\) would erase this
+structure and return the old positive diagonal.
+
+The interface `signed_torus_slope_operator_audit` checks Bezout shear
+invariance, the pullback phase, tensor Fourier factorization, and the full
+finite Fourier pairing over \(\mathbb Z/7\mathbb Z\) using exact integer
+cyclotomic coefficients.  It records the required operator exponents
+\(499/1000\) and \(499/500\), while keeping the operator bound and MMKLS
+false.
+
 ### 4.109zjac Product-index character energy saves locally but does not compose with PEVP
 
 There is a geometric estimate which was lost in the operator-norm bound

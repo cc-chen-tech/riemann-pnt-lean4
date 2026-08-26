@@ -2118,6 +2118,32 @@ class CriticalAffineMobiusUniformityAudit:
 
 
 @dataclass(frozen=True)
+class SignedTorusSlopeOperatorAudit:
+    primitive_slope: tuple[int, int]
+    bezout_pair: tuple[int, int]
+    unimodular_matrix: tuple[tuple[int, int], tuple[int, int]]
+    determinant: int
+    alternate_bezout_shear: int
+    alternate_unimodular_matrix: tuple[tuple[int, int], tuple[int, int]]
+    bezout_change_is_right_unipotent_shear: bool
+    physical_sum_is_bezout_independent: bool
+    finite_torus_modulus: int
+    torus_pullback_phase_is_exact: bool
+    mobius_fourier_tensor_factorization_is_exact: bool
+    finite_fourier_pairing_is_exact: bool
+    relative_matrix_lower_left: int
+    relative_matrix_lower_left_is_slope_determinant: bool
+    mobius_tensor_l2_exponent: Fraction
+    physical_layer_target_exponent: Fraction
+    required_operator_l2_exponent: Fraction
+    required_operator_energy_exponent: Fraction
+    slope_sum_retained_before_frequency_cauchy: bool
+    per_slope_triangle_inequality_used: bool
+    signed_incomplete_poincare_operator_bound_proved: bool
+    mmkls_covered: bool
+
+
+@dataclass(frozen=True)
 class BlomerPascadiHardBoxAudit:
     modulus_exponent: Fraction
     left_argument_length_exponent: Fraction
@@ -11743,6 +11769,206 @@ def critical_affine_mobius_uniformity_audit(
             "Matomaki--Radziwill--Shao--Tao--Teravainen, "
             "arXiv:2411.05770v2, Theorem 1.1(i)"
         ),
+    )
+
+
+def signed_torus_slope_operator_audit() -> SignedTorusSlopeOperatorAudit:
+    """Give an exact finite model for the phase-coherent slope operator.
+
+    For a primitive slope ``(j,v)`` and Bezout pair ``(x,y)`` with
+    ``x*v+y*j=1``, put ``M=((x,j),(-y,v))``.  The determinant-line change
+    of variables is ``(r,s)^t=M*(delta,n)^t``.  A different Bezout pair is
+    a right unipotent shear, so the physical sum is unchanged after the
+    corresponding exact reindexing of ``n``.
+
+    On a finite torus the pullback identity is
+    ``(M*u).xi = u.(M^t*xi)``.  The two coordinate Mobius functions have a
+    tensor-product Fourier transform, while every slope kernel is pulled
+    back by ``M^t``.  Thus all primitive slopes can be summed *before* one
+    global frequency-space Cauchy inequality.  The squared operator retains
+    the off-diagonal matrices ``M2^t*M1^(-t)``; their lower-left entry is
+    exactly ``j2*v1-v2*j1``, the primitive-slope determinant.
+
+    The finite fixture verifies all algebra over ``Z/7Z`` without floating
+    point roots of unity.  It does not prove the required operator norm.
+    """
+
+    def mat_vec(
+        matrix: tuple[tuple[int, int], tuple[int, int]],
+        vector: tuple[int, int],
+    ) -> tuple[int, int]:
+        return (
+            matrix[0][0] * vector[0] + matrix[0][1] * vector[1],
+            matrix[1][0] * vector[0] + matrix[1][1] * vector[1],
+        )
+
+    def mat_mul(
+        left: tuple[tuple[int, int], tuple[int, int]],
+        right: tuple[tuple[int, int], tuple[int, int]],
+    ) -> tuple[tuple[int, int], tuple[int, int]]:
+        return (
+            (
+                left[0][0] * right[0][0] + left[0][1] * right[1][0],
+                left[0][0] * right[0][1] + left[0][1] * right[1][1],
+            ),
+            (
+                left[1][0] * right[0][0] + left[1][1] * right[1][0],
+                left[1][0] * right[0][1] + left[1][1] * right[1][1],
+            ),
+        )
+
+    j, v = 1, 2
+    x, y = 1, -1
+    matrix = ((x, j), (-y, v))
+    determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+    shear_parameter = 3
+    shear = ((1, 0), (shear_parameter, 1))
+    alternate_matrix = mat_mul(matrix, shear)
+    alternate_x = x + shear_parameter * j
+    alternate_y = y - shear_parameter * v
+    expected_alternate = ((alternate_x, j), (-alternate_y, v))
+
+    kernel = {
+        (1, 0): 2,
+        (0, 1): -3,
+        (1, 1): 5,
+        (2, 1): 7,
+        (1, 2): -11,
+    }
+    direct_sum = sum(
+        mobius(mat_vec(matrix, point)[0])
+        * mobius(mat_vec(matrix, point)[1])
+        * weight
+        for point, weight in kernel.items()
+    )
+    inverse_shear = ((1, 0), (-shear_parameter, 1))
+    reindexed_kernel = {
+        mat_vec(inverse_shear, point): weight for point, weight in kernel.items()
+    }
+    reindexed_sum = sum(
+        mobius(mat_vec(alternate_matrix, point)[0])
+        * mobius(mat_vec(alternate_matrix, point)[1])
+        * weight
+        for point, weight in reindexed_kernel.items()
+    )
+
+    torus_modulus = 7
+    residues = range(torus_modulus)
+    phase_pullback = all(
+        (
+            mat_vec(matrix, point)[0] * frequency[0]
+            + mat_vec(matrix, point)[1] * frequency[1]
+            - point[0]
+            * (matrix[0][0] * frequency[0] + matrix[1][0] * frequency[1])
+            - point[1]
+            * (matrix[0][1] * frequency[0] + matrix[1][1] * frequency[1])
+        )
+        % torus_modulus
+        == 0
+        for point in kernel
+        for frequency in ((a, b) for a in residues for b in residues)
+    )
+
+    mobius_residue = [0] + [mobius(value) for value in range(1, torus_modulus)]
+    tensor_factorization = True
+    for first_frequency in residues:
+        for second_frequency in residues:
+            joint_counts = [0] * torus_modulus
+            first_counts = [0] * torus_modulus
+            second_counts = [0] * torus_modulus
+            for first_value in residues:
+                first_counts[(-first_value * first_frequency) % torus_modulus] += (
+                    mobius_residue[first_value]
+                )
+            for second_value in residues:
+                second_counts[(-second_value * second_frequency) % torus_modulus] += (
+                    mobius_residue[second_value]
+                )
+            for first_value in residues:
+                for second_value in residues:
+                    exponent = (
+                        -first_value * first_frequency
+                        - second_value * second_frequency
+                    ) % torus_modulus
+                    joint_counts[exponent] += (
+                        mobius_residue[first_value]
+                        * mobius_residue[second_value]
+                    )
+            convolution = [0] * torus_modulus
+            for first_exponent in residues:
+                for second_exponent in residues:
+                    convolution[
+                        (first_exponent + second_exponent) % torus_modulus
+                    ] += (
+                        first_counts[first_exponent]
+                        * second_counts[second_exponent]
+                    )
+            tensor_factorization &= joint_counts == convolution
+
+    orthogonality_coefficients = [0] * torus_modulus
+    for point, weight in kernel.items():
+        physical = mat_vec(matrix, point)
+        for first_value in residues:
+            for second_value in residues:
+                coefficient = (
+                    mobius_residue[first_value]
+                    * mobius_residue[second_value]
+                    * weight
+                )
+                for first_frequency in residues:
+                    for second_frequency in residues:
+                        exponent = (
+                            (physical[0] - first_value) * first_frequency
+                            + (physical[1] - second_value) * second_frequency
+                        ) % torus_modulus
+                        orthogonality_coefficients[exponent] += coefficient
+    common_nonconstant_coefficient = orthogonality_coefficients[1]
+    pairing_exact = (
+        len(set(orthogonality_coefficients[1:])) == 1
+        and orthogonality_coefficients[0] - common_nonconstant_coefficient
+        == torus_modulus**2 * direct_sum
+    )
+
+    second_j, second_v = 2, 3
+    second_x, second_y = 1, -1
+    second_matrix = ((second_x, second_j), (-second_y, second_v))
+    first_inverse_transpose = ((v, y), (-j, x))
+    second_transpose = (
+        (second_matrix[0][0], second_matrix[1][0]),
+        (second_matrix[0][1], second_matrix[1][1]),
+    )
+    relative_matrix = mat_mul(second_transpose, first_inverse_transpose)
+    slope_determinant = second_j * v - second_v * j
+    mobius_l2 = F(3)
+    target = F(3499, 1000)
+    operator_l2 = target - mobius_l2
+    return SignedTorusSlopeOperatorAudit(
+        primitive_slope=(j, v),
+        bezout_pair=(x, y),
+        unimodular_matrix=matrix,
+        determinant=determinant,
+        alternate_bezout_shear=shear_parameter,
+        alternate_unimodular_matrix=alternate_matrix,
+        bezout_change_is_right_unipotent_shear=(
+            alternate_matrix == expected_alternate
+        ),
+        physical_sum_is_bezout_independent=(direct_sum == reindexed_sum),
+        finite_torus_modulus=torus_modulus,
+        torus_pullback_phase_is_exact=phase_pullback,
+        mobius_fourier_tensor_factorization_is_exact=tensor_factorization,
+        finite_fourier_pairing_is_exact=pairing_exact,
+        relative_matrix_lower_left=relative_matrix[1][0],
+        relative_matrix_lower_left_is_slope_determinant=(
+            relative_matrix[1][0] == slope_determinant
+        ),
+        mobius_tensor_l2_exponent=mobius_l2,
+        physical_layer_target_exponent=target,
+        required_operator_l2_exponent=operator_l2,
+        required_operator_energy_exponent=2 * operator_l2,
+        slope_sum_retained_before_frequency_cauchy=True,
+        per_slope_triangle_inequality_used=False,
+        signed_incomplete_poincare_operator_bound_proved=False,
+        mmkls_covered=False,
     )
 
 
@@ -25022,6 +25248,34 @@ def main() -> None:
         "critical="
         f"{affine_uniformity.published_theorem_closes_critical_slope_family} "
         f"mmkls={affine_uniformity.mmkls_covered}"
+    )
+    torus_operator = signed_torus_slope_operator_audit()
+    print(
+        "balanced_max_a: signed_torus_slope_operator="
+        f"slope={torus_operator.primitive_slope[0]},{torus_operator.primitive_slope[1]} "
+        f"bezout={torus_operator.bezout_pair[0]},{torus_operator.bezout_pair[1]} "
+        f"det={torus_operator.determinant} "
+        f"shear={torus_operator.alternate_bezout_shear} "
+        "bezout_invariant="
+        f"{torus_operator.physical_sum_is_bezout_independent} "
+        f"torus={torus_operator.finite_torus_modulus} "
+        f"pullback={torus_operator.torus_pullback_phase_is_exact} "
+        "tensor="
+        f"{torus_operator.mobius_fourier_tensor_factorization_is_exact} "
+        f"pairing={torus_operator.finite_fourier_pairing_is_exact} "
+        f"relative_c={torus_operator.relative_matrix_lower_left} "
+        "slope_det="
+        f"{torus_operator.relative_matrix_lower_left_is_slope_determinant} "
+        f"mobius_l2={_fmt(torus_operator.mobius_tensor_l2_exponent)} "
+        f"target={_fmt(torus_operator.physical_layer_target_exponent)} "
+        f"operator_l2={_fmt(torus_operator.required_operator_l2_exponent)} "
+        f"energy={_fmt(torus_operator.required_operator_energy_exponent)} "
+        "slope_first="
+        f"{torus_operator.slope_sum_retained_before_frequency_cauchy} "
+        f"per_slope_triangle={torus_operator.per_slope_triangle_inequality_used} "
+        "operator="
+        f"{torus_operator.signed_incomplete_poincare_operator_bound_proved} "
+        f"mmkls={torus_operator.mmkls_covered}"
     )
     outer_modulus = outer_modulus_type_recombination_audit(
         original_modulus=30,
