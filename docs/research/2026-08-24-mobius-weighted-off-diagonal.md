@@ -10398,6 +10398,266 @@ upper bound nor makes the Perron zero residues harmless; it rules out the
 incorrect meta-objection that the dyadic \(\theta=3\) estimate is already
 known to imply RH.
 
+### 9.69 A boundary-exact master for the secondary zero modes
+
+The first zero mode must not be counted twice.  The original Poisson
+frequency \(h=0\) in Section 4 is already combined with the explicit
+diagonal in (4.6), giving \(T\mathcal Q_{N,T}\) and the archimedean
+correction in (4.8).  The present subsection concerns only zero or
+singular modes created by the later completion, reflection, and dyadic
+recombination of the original \(h\ne0\) remainder.
+
+Fix a finite product box \(1\leq x,y\leq X\).  Let
+
+\[
+ \mathfrak P_X=\{\pi=(\sigma,h,\delta,\nu)\}
+\tag{9.437}
+\]
+
+be the complete finite packet family retained at that stage: \(\sigma\)
+is the AFE direction, \(h\ne0\) is the original shifted-divisor frequency,
+\(\delta\in\mathbb Z\) is the unrestricted additive shift, and \(\nu\)
+records every dyadic scale.  Write \(W_\pi(x,y)\) for the original smooth
+weight,
+including its sign and all endpoint cutoffs, and put
+
+\[
+ W(x,y):=\sum_{\pi\in\mathfrak P_X}W_\pi(x,y),
+ \qquad W_\pi(x,y)=0\quad\text{outside }[1,X]^2.
+\tag{9.438}
+\]
+
+No absolute value is taken in (9.438).  Formula (2.4) uses the symmetric
+AFE and has already folded its two functional-equation directions into
+the factor \(2\).  If that formula is unfolded instead, both values of
+\(\sigma\) must occur in \(\mathfrak P_X\) before (9.438) is formed.
+
+Let \(F(x)\) be the completed zero-Mellin coefficient.  To allow the two
+reflected sides to remain genuinely nonsymmetric, take finite long-divisor
+weights \(c_D^{\rm L},c_E^{\rm R}\), and define
+
+\[
+ \begin{aligned}
+ R_{\rm L}(x)&:=\sum_{\substack{D\mid x\\D>N}}c_D^{\rm L},
+ &B_{\rm L}(x)&:=F(x)-R_{\rm L}(x),\\
+ R_{\rm R}(y)&:=\sum_{\substack{E\mid y\\E>N}}c_E^{\rm R},
+ &B_{\rm R}(y)&:=F(y)-R_{\rm R}(y).
+ \end{aligned}
+\tag{9.439}
+\]
+
+For the finite explicit-diagonal weights \(d_x\), the whole secondary-zero
+packet is
+
+\[
+ \mathcal R^{(0)}_{\rm sec}
+ :=\sum_{\pi\in\mathfrak P_X}\sum_{x,y\leq X}
+ W_\pi(x,y)B_{\rm L}(x)B_{\rm R}(y)
+ -\sum_{x\leq X}d_xB_{\rm L}(x)B_{\rm R}(x).
+\tag{9.440}
+\]
+
+Thus (9.440) retains both AFE directions, all \(h,\delta,\nu\), the
+original smooth weights, and the explicit diagonal in one formula.  Its
+four reflected pieces are exactly
+
+\[
+ \mathcal R^{(0)}_{\rm sec}
+ =E_W(F,F)-E_W(F,R_{\rm R})-E_W(R_{\rm L},F)
+  +E_W(R_{\rm L},R_{\rm R})-\mathcal D_B.
+\tag{9.441}
+\]
+
+The two cross terms in (9.441) are distinct; no symmetry is used to merge
+them.  The reflected--reflected term has the boundary-exact unfolding
+
+\[
+ \begin{aligned}
+ E_W(R_{\rm L},R_{\rm R})
+ &=\sum_{D>N}\sum_{E>N}c_D^{\rm L}c_E^{\rm R}K(D,E),\\
+ K(D,E)&:=
+ \sum_{1\leq k\leq\lfloor X/D\rfloor}
+ \sum_{1\leq \ell\leq\lfloor X/E\rfloor}W(Dk,E\ell).
+ \end{aligned}
+\tag{9.442}
+\]
+
+The floors and the zero extension in (9.438) contain every finite endpoint;
+there is no boundary or truncation error in (9.439)--(9.442).  The earlier
+AFE archimedean error remains the already isolated
+\(\mathcal E_{\rm arch}\) in (4.8), not a new term in this master identity.
+
+Now choose finite density weights \(p_D,q_E\) on the two long-divisor
+supports, with \(\sum_Dp_D=\sum_Eq_E=1\).  Define
+
+\[
+ \rho_D:=\sum_Eq_EK(D,E),\qquad
+ \kappa_E:=\sum_Dp_DK(D,E),\qquad
+ m:=\sum_{D,E}p_Dq_EK(D,E),
+\tag{9.443}
+\]
+
+and center only once:
+
+\[
+ K^\circ(D,E):=K(D,E)-\rho_D-\kappa_E+m.
+\tag{9.444}
+\]
+
+Then the weighted row and column sums vanish identically,
+
+\[
+ \sum_Eq_EK^\circ(D,E)=0,
+ \qquad
+ \sum_Dp_DK^\circ(D,E)=0.
+\tag{9.445}
+\]
+
+Put \(C_{\rm L}=\sum_Dc_D^{\rm L}\) and
+\(C_{\rm R}=\sum_Ec_E^{\rm R}\).  The full resonant projection of the
+reflected boundary is the explicit three-term expression
+
+\[
+ \begin{aligned}
+ \mathcal P_{\rm res}
+ &:=(c^{\rm L})^{\!t}(K-K^\circ)c^{\rm R}\\
+ &=C_{\rm R}\sum_Dc_D^{\rm L}\rho_D
+  +C_{\rm L}\sum_Ec_E^{\rm R}\kappa_E
+  -mC_{\rm L}C_{\rm R}.
+ \end{aligned}
+\tag{9.446}
+\]
+
+Consequently define
+
+\[
+ \begin{aligned}
+ \mathcal M_{\rm res}
+ &:=
+ E_W(F,F)-E_W(F,R_{\rm R})-E_W(R_{\rm L},F)
+ +\mathcal P_{\rm res}-\mathcal D_B,\\
+ \mathcal R_{\rm cent}
+ &:=(c^{\rm L})^{\!t}K^\circ c^{\rm R}.
+ \end{aligned}
+\tag{9.447}
+\]
+
+Equations (9.441)--(9.447) give the finite exact master identity
+
+\[
+ \boxed{\mathcal R^{(0)}_{\rm sec}=\mathcal M_{\rm res}+\mathcal R_{\rm cent}.}
+\tag{9.448}
+\]
+
+This is the first required milestone, but not yet an estimate.  Arbitrary
+probability weights \(p,q\) give an algebraically valid centering; the next
+analytic task is to derive the *actual* principal density from the fully
+recombined AFE packet and then decide which of the following occurs:
+
+1. \(\mathcal M_{\rm res}\) is another reciprocal-LCM form and is
+   \(O(T^{1+\varepsilon})\);
+2. it cancels with the other AFE direction or the explicit diagonal;
+3. it is a genuine secondary main term missing from the present asymptotic.
+
+No one of these alternatives is asserted here.  Likewise, (9.448) by
+itself gives no power saving for \(\mathcal R_{\rm cent}\).  The finite
+helper `zero_frequency_reflected_master_sides` verifies (9.438)--(9.448)
+over exact rational data, rejects original \(h=0\), retains the packet
+labels, and checks both identities in (9.445).  A second finite fixture
+changes \(p,q\) and proves that \(\mathcal M_{\rm res}\) and
+\(\mathcal R_{\rm cent}\) separately change while their sum (9.448) does
+not.  Thus an arbitrary centering cannot be advertised as the canonical
+principal-mode extraction; deriving the AFE density is a genuine analytic
+step.
+
+### 9.70 The centered operator gate and the global TT* split
+
+Let \(\mathbf c_{\rm L},\mathbf c_{\rm R}\) be the two reflected coefficient
+vectors.  The elementary operator inequality is
+
+\[
+ |\mathcal R_{\rm cent}|
+ \leq \|K^\circ\|_{2\to2}
+       \|\mathbf c_{\rm L}\|_2\|\mathbf c_{\rm R}\|_2.
+\tag{9.449}
+\]
+
+For the balanced normalization used in Sections 9.43--9.64, the raw
+coupled sum has exponent \(5\), while the required local target has
+exponent \(3\).  After keeping the same coefficient norms and packet
+normalization on both sides of (9.449), the centered-operator gate must
+therefore save
+
+\[
+ T^{5-3}=T^2.
+\tag{9.450}
+\]
+
+For the one fixed Möbius vector, such a \(2\to2\) estimate is a sufficient
+condition.  It is literally equivalent to the bilinear estimate only when
+the latter is required uniformly over both Euclidean unit balls.  After
+squaring by \(TT^*\), (9.450) becomes a \(T^4\) saving in the quadratic
+norm.  The exact exponent helper records this as
+`required_operator_saving_exponent=2` and
+`required_ttstar_saving_exponent=4`; it does not assert either estimate.
+
+The point of preserving all outer indices is that \(TT^*\) must be formed
+globally.  After the affine-line parametrization, let
+
+\[
+ u=(g,k_u,\ell_u,h,\delta,\nu,\sigma),
+ \qquad \mathcal T_{u,t}
+\tag{9.451}
+\]
+
+denote one row of the centered coupled operator.  Only after summing all
+such rows do we expand
+
+\[
+ \|\mathcal T^*a\|_2^2
+ =\sum_{u,v}a_u\overline{a_v}
+   \sum_t\mathcal T_{u,t}\overline{\mathcal T_{v,t}}.
+\tag{9.452}
+\]
+
+The cross-row incidence invariant is
+
+\[
+ \det(u,v)=k_u\ell_v-k_v\ell_u.
+\tag{9.453}
+\]
+
+Thus (9.452) has the exact, pre-estimate split
+
+\[
+ \|\mathcal T^*a\|_2^2
+ =\mathfrak G_{\det=0}(a)+\mathfrak G_{\det\ne0}(a).
+\tag{9.454}
+\]
+
+The \(\det=0\) parallel-slope orbit is resonant.  It must be computed
+together with \(\mathcal M_{\rm res}\), the explicit diagonal, and both
+reflected cross terms; it is not legitimate to discard it by centering
+alone.  Only \(\mathfrak G_{\det\ne0}\) is a candidate for reciprocity,
+Poisson/Voronoi completion, Kuznetsov, or a Deshouillers--Iwaniec type
+spectral large sieve.  This ordering also explains why decomposing one
+Möbius factor can help only *inside* the global dispersion: decomposing a
+fixed affine line first returns the unavailable pointwise Chowla problem.
+
+The helper `coupled_ttstar_determinant_split_sides` verifies (9.452)--(9.454)
+as a finite matrix identity.  It supplies no spectral estimate and makes no
+claim that the determinant-zero term has already recombined correctly with
+(9.447).  Those are precisely the two remaining analytic gates:
+
+\[
+ \boxed{
+ \text{evaluate }\mathcal M_{\rm res}+\mathfrak G_{\det=0},
+ \quad
+ \text{then prove the }T^4\text{ TT* saving on }
+ \mathfrak G_{\det\ne0}.}
+\tag{9.455}
+\]
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -10484,7 +10744,16 @@ status.  Bettin--Gonek's converse calibration (9.433)--(9.436) does not make
 the dyadic target RH-hard: at \(\theta=3\) its zero-free boundary is the
 vacuous \(7/6\).  It instead shows that a viable unconditional residue
 argument must retain the height displacement lost by a global negative
-moment.**
+moment.  The new finite master (9.437)--(9.448) now keeps every labelled
+secondary-zero packet, both reflected cross terms, and the explicit
+diagonal before centering, while excluding the original \(h=0\) mode
+already settled in (4.6).  Its decomposition is exact but depends on the
+as-yet-underived principal density: changing that density moves mass
+between \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\).  Finally,
+(9.449)--(9.455) identify the exact \(T^2\) operator saving, equivalently
+\(T^4\) after \(TT^*\), and split the global Gram form into determinant-zero
+and determinant-nonzero orbits.  Neither the resonant evaluation nor the
+nonzero-determinant spectral estimate has been proved.**
 
 Proved in this note:
 
@@ -10672,6 +10941,20 @@ Proved in this note:
   only \(\Re\rho>7/6\) and is vacuous.  Their model (9.436) exhibits the
   dyadic \(T^{-3}\) displacement factor; it is not an unconditional
   all-zero expansion or an upper bound.
+* the boundary-exact secondary-zero master (9.437)--(9.448), including
+  labelled AFE directions, all retained \(h,\delta\) and dyadic packets,
+  both nonsymmetric reflected cross terms, the explicit diagonal, and
+  the weighted zero-row/zero-column centered kernel.  The finite identity
+  has no endpoint error and rejects the already counted original \(h=0\)
+  mode.  It also proves that arbitrary choices of the centering density
+  change the separate resonant and centered terms, so no canonical
+  principal mode or estimate is claimed.
+* the centered \(2\to2\) exponent ledger and the global finite \(TT^*\)
+  determinant split (9.449)--(9.455).  Raw exponent \(5\) to target
+  exponent \(3\) requires \(T^2\) before squaring and \(T^4\) in the Gram
+  form.  The determinant-zero and determinant-nonzero pieces recombine
+  exactly, but their required resonant and spectral estimates remain
+  unproved.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -10935,6 +11218,8 @@ Proved in this note:
 | Guth--Maynard large-value route | exact Fourier-cell audit; long range reduces to classical | The separated equal-index model is the exact energy (9.409), whose time window resolves \(|r-s|\ll X/T\), (9.410).  At \(X=T^3\), each cell contains \(X/T=T^2\) coefficients.  Montgomery--Vaughan gives normalized exponent \(3\) against diagonal exponent \(1\), (9.412).  Guth--Maynard's proof explicitly returns to the classical first term for polynomial length \(N_{\rm GM}\geq T_{\rm GM}\); here \(N_{\rm GM}=T^3>T=T_{\rm GM}\).  Their theorem is coefficient-agnostic and provides no Möbius-specific saving, so (9.413) remains exactly the unavailable banded two-Möbius estimate |
 | Intact-mollifier Perron route | unconditional possible-zero estimate unproved; RH route closes | Perron inversion has no endpoint or truncation error, (9.422)--(9.424).  On the limiting absolute-convergence contour \(c=1/2\), squaring \(N^c\) gives exponent \(4\) at \(N=T^3\), three powers above target, (9.425).  Reaching \(T^{1+\varepsilon}\) unconditionally enters a region where off-critical zeros are not excluded, and any simple-zero residue encountered contains \(1/\zeta'(\rho)\), (9.426).  Under RH the shift to fixed \(c>0\) is pole-free; Bui--Florea's \(k=2\) fourth negative moment plus the classical fourth moment yields (9.432), which closes every fixed \(\theta\), including \(3\), conditionally on RH |
 | Bettin--Gonek long-mollifier converse | exact theorem map; no dyadic \(\theta=3\) zero-free obstruction | Uniform \(T^{1+\varepsilon}\) control for every \(N\leq T^\theta\) on \([0,T]\) excludes zeros right of \(1/2+1/(2\theta)\), while on \([T,2T]\) it excludes only those right of \(1/2+2/\theta\), (9.434).  At \(\theta=3\) the dyadic boundary is \(7/6\), hence vacuous; a nontrivial dyadic consequence starts only at \(\theta>4\).  Their model (9.436) shows a \(T^{-3}\) displacement factor for one fixed off-line zero, but is not an unconditional all-zero upper bound |
+| Secondary-zero boundary master | exact finite recombination; canonical density and resonant evaluation unproved | Equations (9.437)--(9.448) retain every labelled AFE/\(h,\delta\)/dyadic packet before absolute values, both reflected cross terms, the diagonal, and all finite endpoints.  Double centering gives weighted zero row and column sums, but changing the density changes the separate \(\mathcal M_{\rm res}\) and \(\mathcal R_{\rm cent}\).  Deriving the actual principal mode and deciding LCM bound, cancellation, or secondary main term remain open |
+| Global centered \(TT^*\) route | exact determinant split; both analytic estimates unproved | The balanced operator needs a relative \(T^2\) saving, or \(T^4\) after squaring, (9.449)--(9.450).  One global Gram expansion splits exactly by \(k_u\ell_v-k_v\ell_u=0\) or not, (9.451)--(9.454).  The zero determinant must recombine with the resonant master; only the nonzero determinant is eligible for a spectral large sieve.  Neither bound in (9.455) is asserted |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

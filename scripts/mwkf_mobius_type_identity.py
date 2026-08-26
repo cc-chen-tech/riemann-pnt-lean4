@@ -69,6 +69,66 @@ class ReflectedBoundaryPairKernel:
 
 
 @dataclass(frozen=True)
+class SecondaryZeroPacket:
+    afe_direction: str
+    poisson_frequency_h: int
+    additive_shift_delta: int
+    dyadic_label: str
+    pair_kernel: dict[tuple[int, int], Fraction]
+
+
+@dataclass(frozen=True)
+class ZeroFrequencyReflectedMaster:
+    packet_contributions: tuple[tuple[str, int, int, str, Fraction], ...]
+    afe_direction_contributions: tuple[tuple[str, Fraction], ...]
+    direct_full_remainder: Fraction
+    completed_completed: Fraction
+    completed_reflected: Fraction
+    reflected_completed: Fraction
+    reflected_reflected: Fraction
+    explicit_diagonal: Fraction
+    reflected_unfolded: Fraction
+    resonant_row_component: Fraction
+    resonant_column_component: Fraction
+    resonant_grand_component: Fraction
+    resonant_reflected_projection: Fraction
+    resonant_master_term: Fraction
+    centered_remainder: Fraction
+    recombined_master_remainder: Fraction
+    weighted_centered_row_sums: tuple[tuple[int, Fraction], ...]
+    weighted_centered_column_sums: tuple[tuple[int, Fraction], ...]
+    centered_kernel_entries: tuple[tuple[int, int, Fraction], ...]
+
+
+@dataclass(frozen=True)
+class CenteredOperatorSavingLedger:
+    raw_sum_exponent: Fraction
+    target_sum_exponent: Fraction
+    required_operator_saving_exponent: Fraction
+    required_ttstar_saving_exponent: Fraction
+    fixed_coefficient_operator_gate_is_sufficient: bool
+    uniform_unit_ball_operator_gate_is_equivalent: bool
+
+
+@dataclass(frozen=True)
+class CoupledOperatorRow:
+    label: str
+    short_slope_k: int
+    short_slope_l: int
+
+
+@dataclass(frozen=True)
+class CoupledTTStarDeterminantSplit:
+    direct_quadratic: Fraction
+    gram_quadratic: Fraction
+    determinant_zero_quadratic: Fraction
+    determinant_nonzero_quadratic: Fraction
+    determinant_zero_pairs: tuple[tuple[str, str], ...]
+    determinant_nonzero_pairs: tuple[tuple[str, str], ...]
+    gram_entries: tuple[tuple[str, str, Fraction], ...]
+
+
+@dataclass(frozen=True)
 class CoprimeDivisorPairIdentity:
     direct_coprime_sum: Fraction
     mobius_inverted_sum: Fraction
@@ -728,6 +788,470 @@ def reflected_boundary_pair_kernel_sides(
         direct=direct,
         unfolded=unfolded,
         active_factor_pairs=tuple(active_factor_pairs),
+    )
+
+
+def zero_frequency_reflected_master_sides(
+    *,
+    completed_coefficients: dict[int, Fraction],
+    long_left_weights: dict[int, Fraction],
+    long_right_weights: dict[int, Fraction],
+    product_cutoff: int,
+    secondary_zero_packets: tuple[SecondaryZeroPacket, ...],
+    explicit_diagonal_weights: dict[int, Fraction],
+    left_density_weights: dict[int, Fraction],
+    right_density_weights: dict[int, Fraction],
+) -> ZeroFrequencyReflectedMaster:
+    """One finite zero-frequency master identity before any outer Cauchy.
+
+    Every secondary-zero packet keeps its AFE direction, nonzero original
+    Poisson frequency, unrestricted additive shift, dyadic label, and full
+    smooth pair kernel.
+    The kernels are summed without taking absolute values.  For ``B=F-R``
+    the pair energy is then expanded into its two distinct cross terms.
+    The reflected ``D,E`` cofactor kernel is double-centered once against
+    the supplied probability weights.  Its row/column/grand projections,
+    together with the completed terms and the explicit diagonal, form the
+    resonant master term; only the zero-row, zero-column operator remains
+    in ``centered_remainder``.
+
+    The original Poisson ``h=0`` term is rejected: it is already combined
+    with the explicit diagonal in equations (4.6)--(4.8) of the note.
+    """
+
+    if product_cutoff <= 0:
+        raise ValueError("product cutoff must be positive")
+    if not secondary_zero_packets:
+        raise ValueError("at least one secondary-zero packet is required")
+    if any(
+        packet.poisson_frequency_h == 0
+        for packet in secondary_zero_packets
+    ):
+        raise ValueError("the original h=0 mode is already counted in (4.6)--(4.8)")
+    if any(not packet.afe_direction for packet in secondary_zero_packets):
+        raise ValueError("every AFE direction must be named")
+    if any(not packet.dyadic_label for packet in secondary_zero_packets):
+        raise ValueError("every dyadic packet must be named")
+    left_divisors = tuple(sorted(long_left_weights))
+    right_divisors = tuple(sorted(long_right_weights))
+    if not left_divisors or not right_divisors:
+        raise ValueError("both reflected divisor families must be nonempty")
+    if set(left_density_weights) != set(left_divisors):
+        raise ValueError("left density support must equal the left divisor support")
+    if set(right_density_weights) != set(right_divisors):
+        raise ValueError("right density support must equal the right divisor support")
+
+    left_density = {
+        index: Fraction(left_density_weights[index]) for index in left_divisors
+    }
+    right_density = {
+        index: Fraction(right_density_weights[index])
+        for index in right_divisors
+    }
+    if any(weight < 0 for weight in left_density.values()) or any(
+        weight < 0 for weight in right_density.values()
+    ):
+        raise ValueError("density weights must be nonnegative")
+    if sum(left_density.values(), Fraction(0)) != 1:
+        raise ValueError("left density weights must sum to one")
+    if sum(right_density.values(), Fraction(0)) != 1:
+        raise ValueError("right density weights must sum to one")
+
+    for packet in secondary_zero_packets:
+        kernel = packet.pair_kernel
+        if any(
+            x <= 0 or y <= 0 or x > product_cutoff or y > product_cutoff
+            for x, y in kernel
+        ):
+            raise ValueError("AFE kernel indices must lie in the product box")
+    if any(
+        index <= 0 or index > product_cutoff
+        for index in explicit_diagonal_weights
+    ):
+        raise ValueError("diagonal indices must lie in the product box")
+
+    completed = {
+        index: Fraction(completed_coefficients.get(index, Fraction(0)))
+        for index in range(1, product_cutoff + 1)
+    }
+    left_long = {
+        index: Fraction(long_left_weights[index]) for index in left_divisors
+    }
+    right_long = {
+        index: Fraction(long_right_weights[index]) for index in right_divisors
+    }
+
+    def reflected(product: int, weights: dict[int, Fraction]) -> Fraction:
+        return sum(
+            (
+                weight
+                for divisor, weight in weights.items()
+                if product % divisor == 0
+            ),
+            Fraction(0),
+        )
+
+    reflected_left = {
+        x: reflected(x, left_long) for x in range(1, product_cutoff + 1)
+    }
+    reflected_right = {
+        y: reflected(y, right_long) for y in range(1, product_cutoff + 1)
+    }
+    truncated_left = {
+        x: completed[x] - reflected_left[x]
+        for x in range(1, product_cutoff + 1)
+    }
+    truncated_right = {
+        y: completed[y] - reflected_right[y]
+        for y in range(1, product_cutoff + 1)
+    }
+
+    combined_kernel: dict[tuple[int, int], Fraction] = {}
+    for packet in secondary_zero_packets:
+        kernel = packet.pair_kernel
+        for pair, weight in kernel.items():
+            combined_kernel[pair] = (
+                combined_kernel.get(pair, Fraction(0)) + Fraction(weight)
+            )
+
+    def pair_sum(
+        kernel: dict[tuple[int, int], Fraction],
+        left: dict[int, Fraction],
+        right: dict[int, Fraction],
+    ) -> Fraction:
+        return sum(
+            (
+                Fraction(weight) * left[x] * right[y]
+                for (x, y), weight in kernel.items()
+            ),
+            Fraction(0),
+        )
+
+    packet_contributions = tuple(
+        (
+            packet.afe_direction,
+            packet.poisson_frequency_h,
+            packet.additive_shift_delta,
+            packet.dyadic_label,
+            pair_sum(packet.pair_kernel, truncated_left, truncated_right),
+        )
+        for packet in secondary_zero_packets
+    )
+    direction_order = tuple(
+        dict.fromkeys(packet.afe_direction for packet in secondary_zero_packets)
+    )
+    direction_contributions = tuple(
+        (
+            direction,
+            sum(
+                (
+                    contribution
+                    for packet_direction, _, _, _, contribution in (
+                        packet_contributions
+                    )
+                    if packet_direction == direction
+                ),
+                Fraction(0),
+            ),
+        )
+        for direction in direction_order
+    )
+    pair_energy = sum(
+        (contribution for _, _, _, _, contribution in packet_contributions),
+        Fraction(0),
+    )
+    explicit_diagonal = sum(
+        (
+            Fraction(weight) * truncated_left[index] * truncated_right[index]
+            for index, weight in explicit_diagonal_weights.items()
+        ),
+        Fraction(0),
+    )
+    completed_completed = pair_sum(combined_kernel, completed, completed)
+    completed_reflected = pair_sum(
+        combined_kernel, completed, reflected_right
+    )
+    reflected_completed = pair_sum(
+        combined_kernel, reflected_left, completed
+    )
+    reflected_reflected = pair_sum(
+        combined_kernel, reflected_left, reflected_right
+    )
+
+    boundary_kernel: dict[tuple[int, int], Fraction] = {}
+    for left_divisor in left_divisors:
+        for right_divisor in right_divisors:
+            boundary_kernel[(left_divisor, right_divisor)] = sum(
+                (
+                    combined_kernel.get(
+                        (left_divisor * left_cofactor,
+                         right_divisor * right_cofactor),
+                        Fraction(0),
+                    )
+                    for left_cofactor in range(
+                        1, product_cutoff // left_divisor + 1
+                    )
+                    for right_cofactor in range(
+                        1, product_cutoff // right_divisor + 1
+                    )
+                ),
+                Fraction(0),
+            )
+
+    reflected_unfolded = sum(
+        (
+            left_long[left] * right_long[right] * value
+            for (left, right), value in boundary_kernel.items()
+        ),
+        Fraction(0),
+    )
+    row_means = {
+        left: sum(
+            (
+                right_density[right] * boundary_kernel[(left, right)]
+                for right in right_divisors
+            ),
+            Fraction(0),
+        )
+        for left in left_divisors
+    }
+    column_means = {
+        right: sum(
+            (
+                left_density[left] * boundary_kernel[(left, right)]
+                for left in left_divisors
+            ),
+            Fraction(0),
+        )
+        for right in right_divisors
+    }
+    grand_mean = sum(
+        (left_density[left] * row_means[left] for left in left_divisors),
+        Fraction(0),
+    )
+    centered_kernel = {
+        (left, right): (
+            boundary_kernel[(left, right)]
+            - row_means[left]
+            - column_means[right]
+            + grand_mean
+        )
+        for left in left_divisors
+        for right in right_divisors
+    }
+    weighted_row_sums = tuple(
+        (
+            left,
+            sum(
+                (
+                    right_density[right] * centered_kernel[(left, right)]
+                    for right in right_divisors
+                ),
+                Fraction(0),
+            ),
+        )
+        for left in left_divisors
+    )
+    weighted_column_sums = tuple(
+        (
+            right,
+            sum(
+                (
+                    left_density[left] * centered_kernel[(left, right)]
+                    for left in left_divisors
+                ),
+                Fraction(0),
+            ),
+        )
+        for right in right_divisors
+    )
+    centered_remainder = sum(
+        (
+            left_long[left]
+            * right_long[right]
+            * centered_kernel[(left, right)]
+            for left in left_divisors
+            for right in right_divisors
+        ),
+        Fraction(0),
+    )
+    left_mass = sum(left_long.values(), Fraction(0))
+    right_mass = sum(right_long.values(), Fraction(0))
+    resonant_row_component = right_mass * sum(
+        (left_long[left] * row_means[left] for left in left_divisors),
+        Fraction(0),
+    )
+    resonant_column_component = left_mass * sum(
+        (right_long[right] * column_means[right] for right in right_divisors),
+        Fraction(0),
+    )
+    resonant_grand_component = -grand_mean * left_mass * right_mass
+    resonant_projection = (
+        resonant_row_component
+        + resonant_column_component
+        + resonant_grand_component
+    )
+    resonant_master = (
+        completed_completed
+        - completed_reflected
+        - reflected_completed
+        + resonant_projection
+        - explicit_diagonal
+    )
+    recombined = resonant_master + centered_remainder
+    return ZeroFrequencyReflectedMaster(
+        packet_contributions=packet_contributions,
+        afe_direction_contributions=direction_contributions,
+        direct_full_remainder=pair_energy - explicit_diagonal,
+        completed_completed=completed_completed,
+        completed_reflected=completed_reflected,
+        reflected_completed=reflected_completed,
+        reflected_reflected=reflected_reflected,
+        explicit_diagonal=explicit_diagonal,
+        reflected_unfolded=reflected_unfolded,
+        resonant_row_component=resonant_row_component,
+        resonant_column_component=resonant_column_component,
+        resonant_grand_component=resonant_grand_component,
+        resonant_reflected_projection=resonant_projection,
+        resonant_master_term=resonant_master,
+        centered_remainder=centered_remainder,
+        recombined_master_remainder=recombined,
+        weighted_centered_row_sums=weighted_row_sums,
+        weighted_centered_column_sums=weighted_column_sums,
+        centered_kernel_entries=tuple(
+            (left, right, centered_kernel[(left, right)])
+            for left in left_divisors
+            for right in right_divisors
+        ),
+    )
+
+
+def centered_operator_saving_ledger(
+    *,
+    raw_sum_exponent: Fraction,
+    target_sum_exponent: Fraction,
+) -> CenteredOperatorSavingLedger:
+    """Record the exact norm saving demanded by a centered-operator gate.
+
+    A fixed-coefficient ``2 -> 2`` estimate is sufficient by Cauchy.  The
+    same estimate is equivalent to a bilinear bound only when required
+    uniformly over both Euclidean unit balls.  Squaring through ``TT*``
+    doubles the exponent saving.
+    """
+
+    raw = Fraction(raw_sum_exponent)
+    target = Fraction(target_sum_exponent)
+    if target > raw:
+        raise ValueError("the target exponent cannot exceed the raw exponent")
+    saving = raw - target
+    return CenteredOperatorSavingLedger(
+        raw_sum_exponent=raw,
+        target_sum_exponent=target,
+        required_operator_saving_exponent=saving,
+        required_ttstar_saving_exponent=2 * saving,
+        fixed_coefficient_operator_gate_is_sufficient=True,
+        uniform_unit_ball_operator_gate_is_equivalent=True,
+    )
+
+
+def coupled_ttstar_determinant_split_sides(
+    *,
+    rows: tuple[CoupledOperatorRow, ...],
+    columns: tuple[str, ...],
+    operator_entries: dict[tuple[str, str], Fraction],
+    row_coefficients: dict[str, Fraction],
+) -> CoupledTTStarDeterminantSplit:
+    """Expand one global ``TT*`` and split determinant zero/nonzero exactly.
+
+    The split is made only after all row parameters have entered the same
+    operator.  No estimate is asserted: the determinant-zero part still
+    has to recombine with the resonant master term, and a spectral large
+    sieve is relevant only to the determinant-nonzero part.
+    """
+
+    if not rows or not columns:
+        raise ValueError("the coupled operator must have rows and columns")
+    row_labels = tuple(row.label for row in rows)
+    if len(set(row_labels)) != len(row_labels):
+        raise ValueError("coupled operator row labels must be unique")
+    if len(set(columns)) != len(columns):
+        raise ValueError("coupled operator column labels must be unique")
+    if set(row_coefficients) != set(row_labels):
+        raise ValueError("row coefficient support must equal the row labels")
+    if any(
+        row_label not in row_coefficients or column not in columns
+        for row_label, column in operator_entries
+    ):
+        raise ValueError("operator entry lies outside the declared supports")
+
+    coefficients = {
+        label: Fraction(row_coefficients[label]) for label in row_labels
+    }
+    entries = {
+        (label, column): Fraction(operator_entries.get((label, column), 0))
+        for label in row_labels
+        for column in columns
+    }
+    direct = sum(
+        (
+            sum(
+                (
+                    coefficients[label] * entries[(label, column)]
+                    for label in row_labels
+                ),
+                Fraction(0),
+            )
+            ** 2
+            for column in columns
+        ),
+        Fraction(0),
+    )
+
+    gram: dict[tuple[str, str], Fraction] = {}
+    zero_pairs: list[tuple[str, str]] = []
+    nonzero_pairs: list[tuple[str, str]] = []
+    zero_quadratic = Fraction(0)
+    nonzero_quadratic = Fraction(0)
+    for left in rows:
+        for right in rows:
+            pair = (left.label, right.label)
+            gram[pair] = sum(
+                (
+                    entries[(left.label, column)]
+                    * entries[(right.label, column)]
+                    for column in columns
+                ),
+                Fraction(0),
+            )
+            contribution = (
+                coefficients[left.label]
+                * coefficients[right.label]
+                * gram[pair]
+            )
+            determinant = (
+                left.short_slope_k * right.short_slope_l
+                - right.short_slope_k * left.short_slope_l
+            )
+            if determinant == 0:
+                zero_pairs.append(pair)
+                zero_quadratic += contribution
+            else:
+                nonzero_pairs.append(pair)
+                nonzero_quadratic += contribution
+
+    gram_quadratic = zero_quadratic + nonzero_quadratic
+    return CoupledTTStarDeterminantSplit(
+        direct_quadratic=direct,
+        gram_quadratic=gram_quadratic,
+        determinant_zero_quadratic=zero_quadratic,
+        determinant_nonzero_quadratic=nonzero_quadratic,
+        determinant_zero_pairs=tuple(zero_pairs),
+        determinant_nonzero_pairs=tuple(nonzero_pairs),
+        gram_entries=tuple(
+            (left.label, right.label, gram[(left.label, right.label)])
+            for left in rows
+            for right in rows
+        ),
     )
 
 

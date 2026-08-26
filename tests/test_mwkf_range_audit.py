@@ -108,6 +108,19 @@ def test_research_note_exposes_poisson_audit_ledger() -> None:
     assert "\\mathcal E_{\\rm arch}" in text
 
 
+def test_research_note_exposes_global_secondary_zero_master_and_ttstar_split() -> None:
+    text = NOTE.read_text()
+    for marker in (
+        "### 9.69 A boundary-exact master for the secondary zero modes",
+        "\\mathcal R^{(0)}_{\\rm sec}=\\mathcal M_{\\rm res}"
+        "+\\mathcal R_{\\rm cent}",
+        "### 9.70 The centered operator gate and the global TT* split",
+        "\\det(u,v)=k_u\\ell_v-k_v\\ell_u",
+        "required_ttstar_saving_exponent=4",
+    ):
+        assert marker in text
+
+
 def test_research_note_has_one_honest_phase_one_classification() -> None:
     text = NOTE.read_text()
     labels = (

@@ -591,6 +591,198 @@ def test_reflected_boundary_pair_kernel_unfolds_to_short_cofactors() -> None:
         assert F(right_cofactor) < F(30, 5)
 
 
+def test_zero_frequency_master_keeps_both_afe_directions_and_centers_once() -> None:
+    """Catch losing a cross term, diagonal, or outer-scale row/column mode."""
+    sides = type_identity.zero_frequency_reflected_master_sides(
+        completed_coefficients={1: F(1), 2: F(2), 3: F(-1), 4: F(3), 6: F(1)},
+        long_left_weights={4: F(2), 5: F(-1)},
+        long_right_weights={4: F(2), 5: F(-1)},
+        product_cutoff=6,
+        secondary_zero_packets=(
+            type_identity.SecondaryZeroPacket(
+                afe_direction="main",
+                poisson_frequency_h=1,
+                additive_shift_delta=2,
+                dyadic_label="H1-D2",
+                pair_kernel={
+                    (4, 5): F(2),
+                    (5, 4): F(3),
+                    (4, 4): F(5),
+                    (6, 5): F(7),
+                },
+            ),
+            type_identity.SecondaryZeroPacket(
+                afe_direction="dual",
+                poisson_frequency_h=-2,
+                additive_shift_delta=-3,
+                dyadic_label="H2-D3",
+                pair_kernel={
+                    (4, 5): F(-1),
+                    (5, 4): F(4),
+                    (5, 5): F(2),
+                    (6, 4): F(-2),
+                },
+            ),
+        ),
+        explicit_diagonal_weights={4: F(11), 5: F(13), 6: F(17)},
+        left_density_weights={4: F(1, 2), 5: F(1, 2)},
+        right_density_weights={4: F(1, 2), 5: F(1, 2)},
+    )
+
+    assert sides.packet_contributions == (
+        ("main", 1, 2, "H1-D2", F(17)),
+        ("dual", -2, -3, "H2-D3", F(3)),
+    )
+    assert sides.afe_direction_contributions == (
+        ("main", F(17)),
+        ("dual", F(3)),
+    )
+    assert sides.direct_full_remainder == F(-21)
+    assert sides.completed_completed == F(39)
+    assert sides.completed_reflected == F(16)
+    assert sides.reflected_completed == F(9)
+    assert sides.reflected_reflected == F(6)
+    assert sides.explicit_diagonal == F(41)
+    assert sides.reflected_unfolded == F(6)
+    assert (
+        sides.resonant_row_component
+        + sides.resonant_column_component
+        + sides.resonant_grand_component
+        == sides.resonant_reflected_projection
+    )
+    assert sides.resonant_reflected_projection == F(33, 4)
+    assert sides.resonant_master_term == F(-75, 4)
+    assert sides.centered_remainder == F(-9, 4)
+    assert sides.recombined_master_remainder == F(-21)
+    assert all(value == 0 for _, value in sides.weighted_centered_row_sums)
+    assert all(value == 0 for _, value in sides.weighted_centered_column_sums)
+
+
+def test_zero_frequency_master_rejects_the_already_counted_original_zero_mode() -> None:
+    """The h=0 term belongs to (4.6), not the secondary completion master."""
+    with pytest.raises(ValueError, match="original h=0"):
+        type_identity.zero_frequency_reflected_master_sides(
+            completed_coefficients={1: F(1)},
+            long_left_weights={1: F(1)},
+            long_right_weights={1: F(1)},
+            product_cutoff=1,
+            secondary_zero_packets=(
+                type_identity.SecondaryZeroPacket(
+                    afe_direction="main",
+                    poisson_frequency_h=0,
+                    additive_shift_delta=1,
+                    dyadic_label="zero",
+                    pair_kernel={(1, 1): F(1)},
+                ),
+            ),
+            explicit_diagonal_weights={1: F(1)},
+            left_density_weights={1: F(1)},
+            right_density_weights={1: F(1)},
+        )
+
+
+def test_zero_frequency_centering_is_not_canonical_until_density_is_derived() -> None:
+    """Changing p,q moves mass between M_res and R_cent, not their sum."""
+    packets = (
+        type_identity.SecondaryZeroPacket(
+            "main", 1, 2, "H1-D2", {(4, 4): F(5), (4, 5): F(2)}
+        ),
+        type_identity.SecondaryZeroPacket(
+            "dual", -2, 3, "H2-D3", {(5, 4): F(4), (5, 5): F(2)}
+        ),
+    )
+    common = {
+        "completed_coefficients": {4: F(3), 5: F(-1)},
+        "long_left_weights": {4: F(2), 5: F(-1)},
+        "long_right_weights": {4: F(2), 5: F(-1)},
+        "product_cutoff": 5,
+        "secondary_zero_packets": packets,
+        "explicit_diagonal_weights": {4: F(11), 5: F(13)},
+    }
+    uniform = type_identity.zero_frequency_reflected_master_sides(
+        **common,
+        left_density_weights={4: F(1, 2), 5: F(1, 2)},
+        right_density_weights={4: F(1, 2), 5: F(1, 2)},
+    )
+    endpoint = type_identity.zero_frequency_reflected_master_sides(
+        **common,
+        left_density_weights={4: F(1), 5: F(0)},
+        right_density_weights={4: F(0), 5: F(1)},
+    )
+
+    assert (
+        uniform.recombined_master_remainder
+        == endpoint.recombined_master_remainder
+    )
+    assert uniform.resonant_master_term != endpoint.resonant_master_term
+    assert uniform.centered_remainder != endpoint.centered_remainder
+
+
+def test_zero_frequency_master_requires_probability_density_weights() -> None:
+    packet = type_identity.SecondaryZeroPacket(
+        "main", 1, 1, "unit", {(1, 1): F(1)}
+    )
+    with pytest.raises(ValueError, match="nonnegative"):
+        type_identity.zero_frequency_reflected_master_sides(
+            completed_coefficients={1: F(1)},
+            long_left_weights={1: F(1), 2: F(1)},
+            long_right_weights={1: F(1)},
+            product_cutoff=2,
+            secondary_zero_packets=(packet,),
+            explicit_diagonal_weights={1: F(1)},
+            left_density_weights={1: F(2), 2: F(-1)},
+            right_density_weights={1: F(1)},
+        )
+
+
+def test_centered_operator_gate_records_the_exact_t_squared_saving() -> None:
+    """Raw T^5 to target T^3 means T^2, or T^4 after TT*."""
+    ledger = type_identity.centered_operator_saving_ledger(
+        raw_sum_exponent=F(5),
+        target_sum_exponent=F(3),
+    )
+
+    assert ledger.required_operator_saving_exponent == F(2)
+    assert ledger.required_ttstar_saving_exponent == F(4)
+    assert ledger.fixed_coefficient_operator_gate_is_sufficient
+    assert ledger.uniform_unit_ball_operator_gate_is_equivalent
+
+
+def test_coupled_ttstar_splits_parallel_and_nonparallel_slopes_exactly() -> None:
+    """The determinant-zero orbit is separated before any spectral bound."""
+    split = type_identity.coupled_ttstar_determinant_split_sides(
+        rows=(
+            type_identity.CoupledOperatorRow("u", 1, 1),
+            type_identity.CoupledOperatorRow("v", 2, 2),
+            type_identity.CoupledOperatorRow("w", 1, 2),
+        ),
+        columns=("t0", "t1"),
+        operator_entries={
+            ("u", "t0"): F(1),
+            ("u", "t1"): F(2),
+            ("v", "t0"): F(-1),
+            ("v", "t1"): F(3),
+            ("w", "t0"): F(4),
+            ("w", "t1"): F(-2),
+        },
+        row_coefficients={"u": F(2), "v": F(-1), "w": F(3)},
+    )
+
+    assert split.direct_quadratic == split.gram_quadratic
+    assert (
+        split.determinant_zero_quadratic
+        + split.determinant_nonzero_quadratic
+        == split.gram_quadratic
+    )
+    assert split.determinant_zero_pairs == (
+        ("u", "u"),
+        ("u", "v"),
+        ("v", "u"),
+        ("v", "v"),
+        ("w", "w"),
+    )
+
+
 def test_zeta_variables_pair_exactly_with_their_mollifier_divisors() -> None:
     """Catch retaining four variables after the exact x=nd, y=me regrouping."""
     direct, paired = zeta_mollifier_pairing_sides(
