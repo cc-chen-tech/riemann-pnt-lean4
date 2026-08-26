@@ -516,6 +516,99 @@ def zeta_mollifier_pairing_sides(
     return direct, paired
 
 
+def centered_selberg_product_boundary_sides(
+    *,
+    mollifier_weights: tuple[tuple[int, Fraction], ...],
+    product_cutoff: int,
+    completely_multiplicative_weight: Callable[[int], Fraction],
+    density: Fraction,
+) -> tuple[Fraction, Fraction, Fraction]:
+    """Center a finite zeta--mollifier convolution with every boundary kept.
+
+    Put B(n)=sum_(d|n) a_d on n<=X.  Complete multiplicativity gives
+
+    sum_(n<=X) (B(n)-beta) chi(n)
+      = (sum_d a_d chi(d)-beta) sum_(m<=X) chi(m) - boundary,
+
+    where boundary is the moving product tail
+
+    sum_d a_d chi(d) sum_(X/d < m <= X) chi(m).
+
+    At the pole density beta=sum_d a_d chi(d), the separated bulk
+    vanishes but the whole centered finite sum is the negative boundary.
+    This catches the invalid step of treating density centering as deletion
+    of the reflected AFE/product edge.
+    """
+
+    if product_cutoff < 1:
+        raise ValueError("the product cutoff must be positive")
+    if any(index < 1 for index, _ in mollifier_weights):
+        raise ValueError("mollifier indices must be positive")
+
+    weights: dict[int, Fraction] = {}
+    for index, weight in mollifier_weights:
+        weights[index] = weights.get(index, Fraction(0)) + weight
+    weights = {
+        index: weight for index, weight in weights.items() if weight != 0
+    }
+    product_coefficients = {
+        product: sum(
+            (
+                weight
+                for divisor, weight in weights.items()
+                if product % divisor == 0
+            ),
+            Fraction(0),
+        )
+        for product in range(1, product_cutoff + 1)
+    }
+    direct = sum(
+        (
+            (product_coefficients[product] - density)
+            * completely_multiplicative_weight(product)
+            for product in range(1, product_cutoff + 1)
+        ),
+        Fraction(0),
+    )
+
+    zeta_prefix = sum(
+        (
+            completely_multiplicative_weight(index)
+            for index in range(1, product_cutoff + 1)
+        ),
+        Fraction(0),
+    )
+    mollifier_transform = sum(
+        (
+            weight * completely_multiplicative_weight(divisor)
+            for divisor, weight in weights.items()
+        ),
+        Fraction(0),
+    )
+    boundary = sum(
+        (
+            weight
+            * completely_multiplicative_weight(divisor)
+            * sum(
+                (
+                    completely_multiplicative_weight(cofactor)
+                    for cofactor in range(
+                        product_cutoff // divisor + 1,
+                        product_cutoff + 1,
+                    )
+                ),
+                Fraction(0),
+            )
+            for divisor, weight in weights.items()
+        ),
+        Fraction(0),
+    )
+    recombined = (
+        (mollifier_transform - density) * zeta_prefix - boundary
+    )
+    return direct, recombined, boundary
+
+
 def q_restricted_twisted_log_signature(
     n: int,
     q: int,

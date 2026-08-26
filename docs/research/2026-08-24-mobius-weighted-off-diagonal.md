@@ -9387,6 +9387,158 @@ bounded by \({\rm SC}_{2/3}\), and the Fejér specialization of that gate
 is supplied by \({\rm MS}_{2/3}\).  No converse or final mean-square
 estimate is asserted.
 
+### 9.60 Density centering leaves the entire moving product boundary
+
+The compact \(B_{N,i\tau}\) route in Section 9.55 has one more tempting
+shortcut: subtract the mean coefficient, cancel the pole of \(\zeta\),
+and shift the product-variable contour.  The finite boundary calculation
+shows exactly what this does and does not remove.
+
+Put
+
+\[
+ \mathcal M_{N,z}(w):=
+ \sum_{d\leq N}\mu(d)
+ \left(1-\frac{\log d}{\log N}\right)d^{z-w}.
+\tag{9.387}
+\]
+
+On \({\rm Re}\,w>1\), absolute convergence and divisor convolution give
+
+\[
+ \boxed{
+ \sum_{n\geq1}\frac{B_{N,z}(n)}{n^w}
+ =\zeta(w)\mathcal M_{N,z}(w).}
+\tag{9.388}
+\]
+
+Let
+
+\[
+ \beta_N(z):=\mathcal M_{N,z}(1),\qquad
+ \widetilde B_{N,z}(n):=B_{N,z}(n)-\beta_N(z).
+\]
+
+Then the infinite Dirichlet series has the formally pole-cancelled form
+
+\[
+ \sum_{n\geq1}\frac{\widetilde B_{N,z}(n)}{n^w}
+ =\zeta(w)\{\mathcal M_{N,z}(w)-\mathcal M_{N,z}(1)\}.
+\tag{9.389}
+\]
+
+The bracket vanishes at \(w=1\).  This is an exact cancellation of the
+principal density, but it is not an estimate for a finite product band.
+For every integer \(X\geq1\), complete multiplicativity gives the
+boundary-exact identity
+
+\[
+\boxed{
+\begin{aligned}
+ \sum_{n\leq X}\frac{\widetilde B_{N,z}(n)}{n^w}
+={}&\{\mathcal M_{N,z}(w)-\beta_N(z)\}
+       \sum_{m\leq X}\frac1{m^w}\\
+ &-\sum_{d\leq N}
+   \frac{\mu(d)(1-\log d/\log N)d^z}{d^w}
+   \sum_{X/d<m\leq X}\frac1{m^w}.
+\end{aligned}}
+\tag{9.390}
+\]
+
+There is no asymptotic or omitted endpoint in (9.390).  In particular,
+at \(w=1\) the separated first line is exactly zero, and the whole
+centered prefix equals the negative moving product boundary in the
+second line.  Thus pole centering migrates the arithmetic obligation to
+the endpoint; it does not delete it.  This is the product-variable
+counterpart of the reflected cofactor in (9.362).
+
+The balanced transition also explains why a bare contour shift gives no
+power.  Here
+
+\[
+ X=NM=T^{7/2},\qquad |\Delta|=X/T=T^{5/2}.
+\tag{9.391}
+\]
+
+Moving a smooth short-product Perron integral from
+\({\rm Re}\,w=1\) to \(1-c\), \(0\leq c\leq1/2\), gives the geometric
+ratio
+
+\[
+ (N/X)^c=T^{-c/2}.
+\]
+
+The Mellin height of a relative \(T^{-1}\) product window is
+\(|{\rm Im}\,w|\asymp T\).  The convexity bound for
+\(\zeta(1-c+iv)\) costs \(T^{c/2+\varepsilon}\), exactly cancelling
+that geometric gain.  On the critical line this ledger reads
+\(T^{-1/4}\cdot T^{1/4+\varepsilon}=T^\varepsilon\).
+Pointwise subconvexity leaves a small fixed saving, but a standalone
+length-\(X\), width-\(X/T\) pair energy needs the full diagonal saving
+\(X/T=T^{5/2}\).  The subconvex saving therefore does not close the
+two-coefficient correlation.
+
+The published long-polynomial comparison has the same boundary:
+
+| input | what it proves | outcome for \(B_{N,i\tau}\) |
+|---|---|---|
+| exact density centering | cancels the \(w=1\) pole in (9.389) | the complete finite edge remains in (9.390) |
+| zeta convexity on \(1-c\) | costs \(T^{c/2+\varepsilon}\) | exactly cancels \((N/X)^c\) |
+| zeta pointwise subconvexity | improves one contour factor by a small fixed power | far short of diagonal-sized shifted energy |
+| Goldston--Gonek long-polynomial formula | expresses the mean value through uniform coefficient correlations | requires, rather than proves, the correlation estimate for \(B_{N,i\tau}\) |
+| Conrey--Keating length-\(T^3\) Type II framework | organizes long energies for divisor coefficients | does not transfer to the reciprocal Möbius coefficient without a new correlation theorem |
+
+For the last two rows see
+[Goldston--Gonek](https://doi.org/10.4064/aa-84-2-155-192) and
+[Conrey--Keating](https://link.springer.com/article/10.1007/s40993-016-0056-4).
+The former explicitly takes coefficient correlations as input; the
+latter studies divisor-sum coefficients, whose automorphic/additive
+divisor structure is absent from the inverse Euler factor in
+\(B_{N,i\tau}\).
+
+Consequently the compact-Mellin alternative is now an exact gate, not
+an informal escape:
+
+\[
+\boxed{
+\begin{aligned}
+ {\rm CME}_{3}:\quad
+ \int_{\mathbb R}(1+|\tau|)^{-A}
+ \left|
+ \sum_{0<|h|\ll H}\sum_{n\asymp X}
+ \widetilde B_{N,i\tau}(n)
+ \widetilde B_{N,i\tau}(n+h)
+ \mathcal W_{\tau,h}(n/X)
+ \right|d\tau
+ \ll_{\varepsilon,A}XT^\varepsilon,\\
+ X=T^{7/2},\qquad H=X/T=T^{5/2},
+\end{aligned}}
+\tag{9.392}
+\]
+
+uniformly for the bounded smooth family
+\(\mathcal W_{\tau,h}\) produced by the compact AFE separation, together
+with the three density/cross terms obtained by expanding
+\(B=\widetilde B+\beta_N\) and the exact boundary term in (9.390).
+The right side \(X\) is the diagonal scale; the unsigned pair count is
+\(XH\), so (9.392) asks for the full saving \(H=T^{5/2}\).
+
+The implication
+\({\rm CME}_{3}\Rightarrow\) the balanced precompletion product packet
+is a finite Mellin-inversion reduction: the factor \(1/X\) from
+\((xy)^{-1/2}\) and the \(T\)-scale time transform turn the right side
+of (9.392) into \(O(T^{1+\varepsilon})\).  No cited theorem proves
+\({\rm CME}_{3}\), and (9.390)--(9.391) show why elementary pole
+centering plus convexity does not do so.  This gate is an alternative
+global formulation of the remaining long-mollifier correlation, not a
+proved replacement for \({\rm SC}_{2/3}\).
+
+The helper centered_selberg_product_boundary_sides verifies (9.390)
+for arbitrary finite rational mollifier weights, arbitrary completely
+multiplicative rational spectral weights, repeated divisor entries, and
+every moving floor boundary.  Its pole-density test checks that the
+bulk vanishes while the boundary survives exactly.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -9430,7 +9582,12 @@ literal long-mollifier square.  This aggregate is not the original
 Poisson \(h=0\) mode.  A fixed balanced box is only one broad Fourier
 constituent, so global cancellation is not excluded; the identified
 escape is the precompletion \(B_{N,i\tau}\) regrouping in (9.361), whose
-uniform compact-\(\tau\) shifted energy is unproved.**
+uniform compact-\(\tau\) shifted energy is unproved.  Density centering
+does not close that route: (9.387)--(9.390) cancel the infinite-series
+pole but leave the complete finite product boundary, while the
+transition contour ledger (9.391) shows that zeta convexity exactly
+cancels the geometric line-shift gain.  The resulting diagonal-sized
+compact-Mellin gate \({\rm CME}_3\), (9.392), is also unproved.**
 
 Proved in this note:
 
@@ -9551,6 +9708,14 @@ Proved in this note:
   balanced box retains a broad Fourier cutoff; these identities do not
   prove \({\rm MS}_{2/3}\), its necessity for every weight, or the
   uniform \(B_{N,i\tau}\) replacement.
+* the exact truncated generating series and density centering
+  (9.387)--(9.389), including the complete moving product boundary
+  (9.390).  At the pole density the separated bulk vanishes but the
+  boundary survives.  On \(X=T^{7/2},H=X/T\), contour geometry saves
+  \(T^{-c/2}\) while zeta convexity costs \(T^{c/2}\), (9.391).
+  The sufficient compact-Mellin correlation gate (9.392) therefore
+  remains a new, unproved diagonal-sized estimate rather than an
+  elementary consequence of pole cancellation.
 * the exact unit-lift formulas, complete squarefree double-unit divisor
   spectrum, Möbius sign migration, and closed scalar-stratum identity,
   (9.180)--(9.186); these isolate the still-unproved top spectrum from
@@ -9807,6 +9972,7 @@ Proved in this note:
 | Coprime $3\times2$ shifted convolution | exact finite reduction and published proxy exponents; actual main/error pair unproved | (9.353) is the finite correlation of a dyadic three-factor Möbius convolution with a dyadic two-factor one.  Topacogullari's fixed-shift standard $d_3$--$d$ error sums to exponent $9/2+7/64$, while the Baier--Browning--Marasingha--Zhao signed $d_3$--$d_3$ first moment has exponent $17/4$.  Neither theorem accepts the coefficients (9.352).  The natural central cell (9.358), not one resampling-dependent zero point, has raw exponent $5$ and needs the invariant half-power; hence the weaker actual interface still requires both singular-cell recombination and a centered coefficient-transfer estimate |
 | Precompletion $\zeta$--mollifier pairing | exact two-product-variable reduction; compact twisted coefficient family unproved | Pairing $x=nd,y=me$ on the initial AFE line gives (9.361) with the truncated coefficients $B_{N,z}$.  At $z=0$, (9.362)--(9.363) are exactly von Mangoldt plus a reflected cofactor shorter than $T^{1/2+\varepsilon}$ on the balanced transition.  But the actual compact Mellin family contains every $B_{N,i\tau}$; (9.364) shows that nonzero bounded $\tau$ restores arbitrary many-prime support.  Moving the reindexed long energy to a left line is not absolutely convergent, so the prime slice alone is not the full gate |
 | Short-modulus zero-frequency recombination | complete aggregate identified; fixed balanced weight still unproved | Only after summing the full \(h,\delta\) dyadic partitions does Fourier inversion give the continuous \(m_1=m_2\) condition (9.380)--(9.383).  Summing gcd strata gives the literal square (9.384), minus the explicit \(r=s\) diagonal.  A fixed balanced box has Fourier width \(S/H\asymp M\), so it is not a point mass and no converse from its actual weight to \({\rm MS}_{2/3}\) is claimed.  The identified alternative is a uniform shifted-energy theorem for the full compact family \(B_{N,i\tau}\), not merely its prime-supported \(\tau=0\) slice |
+| Compact-Mellin density centering | exact pole cancellation and finite boundary; diagonal-sized correlation unproved | The generating series is (9.388), and subtracting \(\beta_N(z)\) cancels its \(w=1\) pole in (9.389).  For every finite product cutoff, (9.390) shows that the entire moving edge remains; at \(w=1\) it is the whole centered prefix.  On the transition \(X=T^{7/2},H=X/T\), convexity cancels the contour gain exactly, (9.391).  Goldston--Gonek requires the same coefficient correlations as input, and the Conrey--Keating divisor Type II framework does not apply to the inverse Möbius coefficient.  The precise sufficient replacement \({\rm CME}_3\), (9.392), needs the full \(H=T^{5/2}\) diagonal saving and is unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

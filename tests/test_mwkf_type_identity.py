@@ -18,6 +18,7 @@ from scripts.mwkf_mobius_type_identity import (
     c_u,
     centered_completion_via_orthogonality,
     centered_product_frequency_coefficients,
+    centered_selberg_product_boundary_sides,
     coprime_divisor_pair_identity,
     crt_reciprocity_numerators,
     determinant_cokernel_coordinates,
@@ -506,6 +507,43 @@ def test_zeta_variables_pair_exactly_with_their_mollifier_divisors() -> None:
     )
     assert direct == F(8088)
     assert paired == F(8088)
+
+
+def test_centering_moves_the_complete_pole_mass_to_the_product_boundary() -> None:
+    mollifier_weights = (
+        (1, F(2)),
+        (2, F(-3, 2)),
+        (3, F(5, 3)),
+        (6, F(-7, 5)),
+        (2, F(1, 2)),
+    )
+    for product_cutoff in range(1, 18):
+        direct, recombined, _ = centered_selberg_product_boundary_sides(
+            mollifier_weights=mollifier_weights,
+            product_cutoff=product_cutoff,
+            completely_multiplicative_weight=lambda value: F(value * value),
+            density=F(11, 7),
+        )
+        assert direct == recombined
+
+        combined = {1: F(2), 2: F(-1), 3: F(5, 3), 6: F(-7, 5)}
+        pole_density = sum(
+            (
+                weight / divisor
+                for divisor, weight in combined.items()
+            ),
+            F(0),
+        )
+        pole_direct, pole_recombined, boundary = (
+            centered_selberg_product_boundary_sides(
+                mollifier_weights=mollifier_weights,
+                product_cutoff=product_cutoff,
+                completely_multiplicative_weight=lambda value: F(1, value),
+                density=pole_density,
+            )
+        )
+        assert pole_direct == pole_recombined
+        assert pole_direct == -boundary
 
 
 def test_q_restricted_twisted_divisor_sum_has_exact_euler_derivative() -> None:
