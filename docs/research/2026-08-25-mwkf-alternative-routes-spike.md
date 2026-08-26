@@ -15397,6 +15397,96 @@ The maximum residual Hecke-polynomial exponent is
 \]
 
 This inequality is formal: \(\min(5/2,\lambda)\leq\lambda\).
+
+There is one endpoint correction to the density ledger of Section
+4.109s.  Its residual square has \(\eta\leq3/2\), so the
+\(A^{-2}\) term in (4.845cg) dominates all three CRT boundary terms.
+That dominance does not persist on the whole factor square.  For
+general \(A=T^\eta\), \(H=T^h\), and \(L=T^\ell\), (4.845cg) has
+square-decay exponent
+
+\[
+ d_{\rm CRT}=\min(2\eta,\eta+h,\eta+\ell,h+\ell).
+\]
+
+The pointwise cross-projector square already has decay exponent
+\(\eta\).  Taking the better of it and the two-variable CRT estimate
+gives the additional square saving
+
+\[
+ \boxed{
+ d_2(\eta;h,\ell)
+ =\max\{0,\min(\eta,h,\ell,h+\ell-\eta)\}.}
+\tag{4.845cl}
+\]
+
+For unequal product intervals there is a second, stronger boundary
+estimate.  The local formulae in (4.845ce), with their valuation
+powers absorbed by \(T^\varepsilon\), give for squarefree \(A\)
+
+\[
+ |\mathcal P_A(m,h\delta;t)|^2
+ \ll_\varepsilon A^{-2+\varepsilon}(A,h\delta).
+\]
+
+Put \(u=\min(h,\ell)\), \(v=\max(h,\ell)\), bound the variable
+\(z\sim T^u\) pointwise, and average the other variable
+\(y\sim T^v\).  The elementary divisor identity
+\((A,y)=\sum_{d\mid(A,y)}\varphi(d)\) gives
+
+\[
+ \frac1{T^v}\sum_{y\asymp T^v}(A,y)
+ \ll_\varepsilon T^\varepsilon(1+A/T^v),
+ \qquad (A,yz)\leq |z|(A,y).
+\]
+
+Consequently this one-variable route has additional square saving
+
+\[
+ \boxed{
+ d_1(\eta;h,\ell)
+ =\max\{0,\min(\eta-u,v-u)\},\qquad
+ d=\max(d_1,d_2).}
+\tag{4.845cm}
+\]
+
+In particular, \((\eta,h,\ell)=(1,1,0)\) has \(d_2=0\) but
+\(d_1=1\).  A bounded nonzero shift variable therefore does not erase
+the density saving: its gcd with the squarefree level factor is bounded,
+and the full divisibility average is taken in the other product
+variable.
+
+The zero-saving locus is now exact:
+
+\[
+ \boxed{d(\eta;h,\ell)=0
+ \quad\Longleftrightarrow\quad
+ h=\ell=:u\ \text{ and }\ \eta\geq2u.}
+\tag{4.845cn}
+\]
+
+If \(h\ne\ell\), then either \(\eta\leq u\), when
+\(d_2=\eta>0\), or \(\eta>u\), when
+\(d_1=\min(\eta-u,v-u)>0\).  If \(h=\ell=u\), then \(d_1=0\)
+and (4.845cl) is positive exactly when \(2u>\eta\).  Thus the
+continuous-spectrum density obstruction in the original unbalanced
+polytope is confined to the equal short-product face (4.845cn), rather
+than to all boxes with a bounded product variable.  This geometric
+classification does not yet supply the unbalanced Kuznetsov
+normalization or aggregate the transform tails.
+
+At the balanced product lengths \(h=\ell=5/2\), this becomes
+\[
+ d_2(\eta;5/2,5/2)
+ =\max\{0,\min(\eta,5/2,5-\eta)\}.
+\]
+Here \(d_1=0\), while \(d=d_2\) still dominates
+\(x(\alpha,\beta)\).  Indeed, if
+\(\lambda\leq5/2\), then \(\eta\leq5/4\) and both quantities equal
+\(\eta\).  If \(\lambda>5/2\) and \(\eta\leq5/2\), then
+\(d=\eta\) and \(x\leq\eta\).  Finally, if \(\eta>5/2\), then
+\(\lambda\geq2\eta>5\), so \(x=0\leq d\).  Thus no unrecorded
+short-interval boundary loss occurs.
 For a primitive cuspidal conductor \(q_0=T^\rho\) with
 \(0\leq\rho\leq\lambda\), the primal/dual normalized excess in
 (4.845bg) is at most
@@ -15410,15 +15500,16 @@ For a primitive cuspidal conductor \(q_0=T^\rho\) with
 \]
 
 Thus the Maaß and holomorphic cusp contributions have exponent
-\(3/2\).  For the continuous contribution, (4.845ch) and
-(4.845ci) give
+\(3/2\).  For the continuous contribution, the boundary-corrected
+version of (4.845ch) and (4.845ci) give
 
 \[
  \boxed{
  \begin{aligned}
  E_{\rm cusp/holo}(\alpha,\beta)&\leq\frac32,\\
  E_{\rm cont}^{\ne0}(\alpha,\beta)
- &=\frac32+\frac{x(\alpha,\beta)-\eta}{2}
+ &=\frac32+\frac{x(\alpha,\beta)
+                    -d_2(\eta;5/2,5/2)}2
  \leq\frac32,\\
  \max(E_{\rm cusp/holo},E_{\rm cont}^{\ne0})
  &\leq\frac32=2-\frac12.
@@ -15440,11 +15531,171 @@ leading to the common base \(3/2\) has not yet been rederived uniformly
 on those cells.  Equation (4.845ck) must not be used as a global MWKF
 coverage certificate before that rederivation.
 
-The interface balanced_spectral_factor_polytope_audit checks
-(4.845ci)--(4.845ck) with exact rational arithmetic.  It marks all
-balanced Type-I/II factor cells covered with margin \(1/2\), while
-keeping the unbalanced original polytope, transform-tail aggregation,
-and whole Möbius gate false.
+The interfaces cross_cusp_density_boundary_audit and
+balanced_spectral_factor_polytope_audit check (4.845ci)--(4.845cn)
+with exact rational arithmetic.  In particular, at
+\(\alpha=\beta=3\), the CRT decay is \(5\), not \(6\), and the
+additional amplitude saving is \(1\), not \(3/2\).  The continuous
+exponent is then \(1/2\), while the cuspidal maximum remains \(3/2\).
+The audit therefore still marks all balanced Type-I/II factor cells
+covered with margin \(1/2\), while keeping the unbalanced original
+polytope, transform-tail aggregation, and whole Möbius gate false.
+
+
+### 4.109u Unequal product lengths leave no normalized continuous excess
+
+The boundary refinement also removes the assumption
+\(H=L=T^{5/2}\) from the normalized product-sieve comparison.  Write
+
+\[
+ u=\min(h,\ell),\qquad v=\max(h,\ell),\qquad
+ \lambda=\alpha+\beta,qquad\eta=\min(\alpha,\beta).
+\]
+
+In (4.845t), split the common divisor at
+\(c=T^{(v-\lambda)_+}\).  Above this split both residual Hecke
+polynomials have length at most \(T^\lambda\).  Multiplying the
+Poisson--Hecke index \(T^\eta\) into the shorter residual polynomial
+leaves the square-large-sieve excess
+
+\[
+ \boxed{
+ x_{u,v}
+ =\left(\eta+\max\{0,u-(v-\lambda)_+\}-\lambda\right)_+.}
+\tag{4.845co}
+\]
+
+If \((v-\lambda)_+>u\), the large-common-divisor range is empty and
+the small-common-divisor Möbius-PNT estimate applies; this is the zero
+inside the inner maximum in (4.845co).
+
+For every \(\alpha,\beta,h,\ell\geq0\), one has
+
+\[
+ \boxed{x_{u,v}\leq d(\eta;h,\ell).}
+\tag{4.845cp}
+\]
+
+Indeed \(\lambda\geq2\eta\).  If \(v\leq\lambda\), then
+\(u\leq\lambda\), so
+\(x_{u,v}=(\eta+u-\lambda)_+\leq\eta\); whenever it is positive,
+the two-variable density term in (4.845cl) supplies the required
+amount.  If \(v>\lambda\), then
+\(x_{u,v}=(\eta+u-v)_+\).  Positivity together with
+\(v>\lambda\geq2\eta\) forces \(u>\eta\); hence
+\(d_2=\eta\) and again \(x_{u,v}\leq d_2\).  On the exact
+zero-density face (4.845cn), \(\lambda\geq2\eta\geq4u), so
+\(x_{u,u}=0\).
+
+After Cauchy, the large-sieve excess contributes \(x_{u,v}/2\) in
+amplitude, while (4.845cl)--(4.845cm) subtract
+\(d(\eta;h,\ell)/2\).  Thus the nonzero continuous normalized excess
+is nonpositive for every unequal-product cell whenever completion has
+Poisson length \(T^\eta\).  The interface
+balanced_completion_unequal_product_audit records the common-divisor
+split, shorter residual length, excess, and density saving.
+
+This is not yet the full original-polytope theorem.  For
+\(R\ne S\), completing the \(r\)-quotient produces Poisson exponent
+\((\sigma-\rho+\alpha)_+\), and completing the \(s\)-quotient produces
+\((\rho-\sigma+\beta)_+\), rather than \(\eta\).  The outer QCT
+normalization, choice of orientation, and \(q\)-dependent tails must be
+rederived before (4.845cp) can be promoted to global coverage.
+
+
+### 4.109v Reciprocity closes the unbalanced normalized spectral excess
+
+The two completion orientations can be compared before choosing either
+one.  For \(R=T^\rho\), \(S=T^\sigma\), their Poisson exponents are
+
+\[
+ \boxed{
+ p_L=(\sigma-\rho+\alpha)_+,\qquad
+ p_R=(\rho-\sigma+\beta)_+.}
+\tag{4.845cq}
+\]
+
+If both are positive, then
+\[
+ p_L+p_R=\alpha+\beta=\lambda.
+\]
+If one is zero, that inactive orientation has no positive Poisson
+length.  Retain the common shorter residual exponent
+
+\[
+ c=\max\{0,u-(v-\lambda)_+\}\leq\min(u,\lambda).
+\]
+
+The two square-large-sieve excesses and their density corrections are
+
+\[
+ \boxed{
+ x_L=(p_L+c-\lambda)_+,\quad
+ x_R=(p_R+c-\lambda)_+,\qquad
+ d_L=d(\alpha;h,\ell),\quad
+ d_R=d(\beta;h,\ell).}
+\tag{4.845cr}
+\]
+
+At least one orientation satisfies \(x_\star\leq d_\star\).  If a
+Poisson exponent vanishes, choose it: \(c\leq\lambda\) gives
+\(x_\star=0\).  Suppose therefore that both are positive.  Then
+\[
+ x_L=(c-p_R)_+,\qquad x_R=(c-p_L)_+.
+\]
+If \(\lambda\geq2c\), one of \(p_L,p_R\) is at least \(c\), and the
+opposite excess is zero.
+
+It remains to consider \(\lambda<2c\).  Since
+\(c\leq\min(u,\lambda)\), one has \(\lambda<2u\).  On
+\([0,\lambda]\), put
+\[
+ \tau_u(a)=\min(a,2u-a).
+\]
+The two-variable term in (4.845cl) gives
+\[
+ d(a;h,\ell)\geq d_2(a;h,\ell)\geq\tau_u(a),
+\]
+and the elementary tent-function inequality is
+\[
+ \tau_u(a)+\tau_u(\lambda-a)
+ \geq\min(\lambda,2u-\lambda)
+ \geq2c-\lambda.
+\]
+If both \(x_L>d_L\) and \(x_R>d_R\), adding the two strict
+inequalities would instead give
+\[
+ d_L+d_R<2c-(p_L+p_R)=2c-\lambda,
+\]
+a contradiction.  Therefore
+
+\[
+ \boxed{
+ \min\{x_L-d_L,\ x_R-d_R\}\leq0.}
+\tag{4.845cs}
+\]
+
+The cuspidal and holomorphic components may choose their completion
+orientation separately.  If one Poisson exponent is zero, it has no
+positive primal/dual excess.  Otherwise
+\(\min(p_L,p_R)\leq\lambda/2\), so for every primitive conductor
+\(q_0\leq T^\lambda\),
+\[
+ \min(p_L,p_R)+\frac{\log_Tq_0}{2}-\lambda\leq0.
+\]
+
+Thus every original entry-scale asymmetry, every factor allocation, and
+every pair of product lengths has no positive *normalized spectral
+factor excess*: Maaß, holomorphic, and nonzero continuous components
+all have a valid completion orientation.  The interface
+unbalanced_completion_orientation_audit records (4.845cq)--(4.845cs)
+with exact rational arithmetic.
+
+This still does not assert the long-mollifier asymptotic.  The common
+outer spectral base was derived only at \(R=S=T^3\); its cancellation
+against \(2T/(qRS)\), the ratio/gcd allocations, the dyadic \(q\)-sum,
+and all polylogarithmic transform tails have not yet been recomputed
+uniformly.  Those are the remaining global obligations.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector

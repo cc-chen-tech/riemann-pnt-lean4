@@ -4952,6 +4952,10 @@ def test_balanced_spectral_factor_polytope_is_fully_covered() -> None:
         "### 4.109t Every balanced factor cell has a half-power margin",
         "\\tag{4.845ci}",
         "\\tag{4.845ck}",
+        "\\tag{4.845cl}",
+        "\\tag{4.845cm}",
+        "\\tag{4.845cn}",
+        "cross_cusp_density_boundary_audit",
         "balanced_spectral_factor_polytope_audit",
     ):
         assert marker in note
@@ -4979,6 +4983,200 @@ def test_balanced_spectral_factor_polytope_is_fully_covered() -> None:
     assert not center.unbalanced_original_exponent_polytope_covered
     assert not center.polylogarithmic_transform_tail_aggregated
     assert not center.whole_mobius_gate_covered
+
+    edge = adapter(
+        left_level_factor_exponent=F(3),
+        right_level_factor_exponent=F(3),
+    )
+    assert edge.weighted_crt_square_decay_exponent == F(5)
+    assert edge.effective_cross_density_square_saving_exponent == F(2)
+    assert edge.effective_cross_density_amplitude_saving_exponent == F(1)
+    assert not edge.weighted_crt_main_term_dominates
+    assert edge.continuous_bound_exponent == F(1, 2)
+    assert edge.universal_factor_cell_bound_exponent == F(3, 2)
+    assert edge.balanced_hard_geometry_all_factor_cells_covered
+
+
+def test_cross_cusp_density_ledger_retains_short_interval_boundaries() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "cross_cusp_density_boundary_audit",
+        None,
+    )
+    assert adapter is not None, "cross-cusp boundary audit is missing"
+
+    center = adapter(
+        shorter_level_factor_exponent=F(5, 4),
+        left_product_variable_exponent=F(5, 2),
+        right_product_variable_exponent=F(5, 2),
+    )
+    assert center.pointwise_square_decay_exponent == F(5, 4)
+    assert center.weighted_crt_square_decay_exponent == F(5, 2)
+    assert center.two_variable_square_saving_exponent == F(5, 4)
+    assert center.one_variable_gcd_square_saving_exponent == F(0)
+    assert center.effective_square_saving_exponent == F(5, 4)
+    assert center.effective_amplitude_saving_exponent == F(5, 8)
+    assert center.weighted_crt_main_term_dominates
+
+    short = adapter(
+        shorter_level_factor_exponent=F(3),
+        left_product_variable_exponent=F(5, 2),
+        right_product_variable_exponent=F(5, 2),
+    )
+    assert short.weighted_crt_square_decay_exponent == F(5)
+    assert short.two_variable_square_saving_exponent == F(2)
+    assert short.one_variable_gcd_square_saving_exponent == F(0)
+    assert short.effective_square_saving_exponent == F(2)
+    assert short.effective_amplitude_saving_exponent == F(1)
+    assert not short.weighted_crt_main_term_dominates
+
+    degenerate = adapter(
+        shorter_level_factor_exponent=F(1),
+        left_product_variable_exponent=F(0),
+        right_product_variable_exponent=F(1),
+    )
+    assert degenerate.weighted_crt_square_decay_exponent == F(1)
+    assert degenerate.two_variable_square_saving_exponent == F(0)
+    assert degenerate.one_variable_gcd_square_saving_exponent == F(1)
+    assert degenerate.effective_square_saving_exponent == F(1)
+    assert degenerate.effective_amplitude_saving_exponent == F(1, 2)
+    assert degenerate.positive_density_saving_available
+    assert not degenerate.on_exact_zero_density_saving_face
+    assert degenerate.zero_density_saving_face_characterization_exact
+
+    zero_face = adapter(
+        shorter_level_factor_exponent=F(2),
+        left_product_variable_exponent=F(1),
+        right_product_variable_exponent=F(1),
+    )
+    assert zero_face.effective_square_saving_exponent == F(0)
+    assert zero_face.on_exact_zero_density_saving_face
+    assert zero_face.zero_density_saving_face_characterization_exact
+
+
+def test_balanced_completion_density_absorbs_unequal_product_excess() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "balanced_completion_unequal_product_audit",
+        None,
+    )
+    assert adapter is not None, "unequal-product completion audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109u Unequal product lengths leave no normalized continuous excess",
+        "\\tag{4.845co}",
+        "\\tag{4.845cp}",
+        "balanced_completion_unequal_product_audit",
+    ):
+        assert marker in note
+
+    unequal = adapter(
+        left_level_factor_exponent=F(1, 2),
+        right_level_factor_exponent=F(1, 2),
+        left_product_variable_exponent=F(1),
+        right_product_variable_exponent=F(5, 4),
+    )
+    assert unequal.ambient_level_exponent == F(1)
+    assert unequal.shorter_level_factor_exponent == F(1, 2)
+    assert unequal.common_divisor_split_exponent == F(1, 4)
+    assert unequal.poisson_multiplied_residual_exponent == F(3, 4)
+    assert unequal.large_sieve_excess_exponent == F(1, 4)
+    assert unequal.effective_density_square_saving_exponent == F(1, 2)
+    assert unequal.density_amplitude_saving_exponent == F(1, 4)
+    assert unequal.large_sieve_excess_absorbed_by_density
+
+    zero_face = adapter(
+        left_level_factor_exponent=F(1),
+        right_level_factor_exponent=F(1),
+        left_product_variable_exponent=F(1, 2),
+        right_product_variable_exponent=F(1, 2),
+    )
+    assert zero_face.on_exact_zero_density_saving_face
+    assert zero_face.large_sieve_excess_exponent == F(0)
+    assert zero_face.zero_density_face_has_zero_large_sieve_excess
+    assert zero_face.all_unequal_product_cells_normalized_excess_covered
+    assert not zero_face.unbalanced_entry_scale_normalization_derived
+    assert not zero_face.whole_mobius_gate_covered
+
+
+def test_unbalanced_completion_orientations_cover_normalized_spectral_excess() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "unbalanced_completion_orientation_audit",
+        None,
+    )
+    assert adapter is not None, "unbalanced orientation audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109v Reciprocity closes the unbalanced normalized spectral excess",
+        "\\tag{4.845cq}",
+        "\\tag{4.845cs}",
+        "unbalanced_completion_orientation_audit",
+    ):
+        assert marker in note
+
+    audit = adapter(
+        left_entry_exponent=F(3),
+        right_entry_exponent=F(2),
+        left_level_factor_exponent=F(3, 2),
+        right_level_factor_exponent=F(1),
+        left_product_variable_exponent=F(2),
+        right_product_variable_exponent=F(2),
+    )
+    assert audit.ambient_level_exponent == F(5, 2)
+    assert audit.left_poisson_exponent == F(1, 2)
+    assert audit.right_poisson_exponent == F(2)
+    assert audit.left_large_sieve_excess_exponent == F(0)
+    assert audit.right_large_sieve_excess_exponent == F(3, 2)
+    assert audit.left_density_square_saving_exponent == F(3, 2)
+    assert audit.right_density_square_saving_exponent == F(1)
+    assert audit.continuous_chosen_orientation == "left"
+    assert audit.continuous_some_orientation_closes
+    assert audit.cuspidal_chosen_poisson_exponent == F(1, 2)
+    assert audit.cuspidal_primal_dual_normalized_excess_exponent == F(-3, 4)
+    assert audit.cuspidal_holomorphic_normalized_excess_closes
+    assert audit.all_normalized_spectral_factor_cells_covered
+    assert not audit.outer_qct_unbalanced_normalization_derived
+    assert not audit.polylogarithmic_transform_tail_aggregated
+    assert not audit.whole_mobius_gate_covered
+
+    inactive = adapter(
+        left_entry_exponent=F(3),
+        right_entry_exponent=F(2),
+        left_level_factor_exponent=F(0),
+        right_level_factor_exponent=F(1),
+        left_product_variable_exponent=F(0),
+        right_product_variable_exponent=F(1),
+    )
+    assert inactive.left_poisson_exponent == F(0)
+    assert inactive.right_poisson_exponent == F(2)
+    assert inactive.left_large_sieve_excess_exponent == F(0)
+    assert inactive.continuous_some_orientation_closes
+    assert inactive.poisson_conservation_or_inactive_orientation_exact
+
+    for rho, sigma in (
+        (F(3), F(3)),
+        (F(3), F(2)),
+        (F(2), F(3)),
+        (F(1), F(1)),
+    ):
+        for alpha in (F(0), rho / 2, rho):
+            for beta in (F(0), sigma / 2, sigma):
+                for h in (F(0), F(1, 2), F(1), F(2)):
+                    for ell in (F(0), F(1, 2), F(1), F(2)):
+                        cell = adapter(
+                            left_entry_exponent=rho,
+                            right_entry_exponent=sigma,
+                            left_level_factor_exponent=alpha,
+                            right_level_factor_exponent=beta,
+                            left_product_variable_exponent=h,
+                            right_product_variable_exponent=ell,
+                        )
+                        assert cell.continuous_some_orientation_closes
+                        assert cell.cuspidal_holomorphic_normalized_excess_closes
+                        assert cell.all_normalized_spectral_factor_cells_covered
 
 
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:

@@ -2115,6 +2115,81 @@ class EisensteinCrossCuspL2DensityAudit:
 
 
 @dataclass(frozen=True)
+class CrossCuspDensityBoundaryAudit:
+    shorter_level_factor_exponent: Fraction
+    left_product_variable_exponent: Fraction
+    right_product_variable_exponent: Fraction
+    pointwise_square_decay_exponent: Fraction
+    weighted_crt_square_decay_exponent: Fraction
+    two_variable_square_saving_exponent: Fraction
+    one_variable_gcd_square_saving_exponent: Fraction
+    effective_square_decay_exponent: Fraction
+    effective_square_saving_exponent: Fraction
+    effective_amplitude_saving_exponent: Fraction
+    weighted_crt_main_term_dominates: bool
+    positive_density_saving_available: bool
+    on_exact_zero_density_saving_face: bool
+    zero_density_saving_face_characterization_exact: bool
+    short_interval_boundary_terms_retained: bool
+
+
+@dataclass(frozen=True)
+class BalancedCompletionUnequalProductAudit:
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    shorter_level_factor_exponent: Fraction
+    left_product_variable_exponent: Fraction
+    right_product_variable_exponent: Fraction
+    shorter_product_variable_exponent: Fraction
+    longer_product_variable_exponent: Fraction
+    common_divisor_split_exponent: Fraction
+    poisson_multiplied_residual_exponent: Fraction
+    large_sieve_excess_exponent: Fraction
+    effective_density_square_saving_exponent: Fraction
+    density_amplitude_saving_exponent: Fraction
+    on_exact_zero_density_saving_face: bool
+    large_sieve_excess_absorbed_by_density: bool
+    zero_density_face_has_zero_large_sieve_excess: bool
+    all_unequal_product_cells_normalized_excess_covered: bool
+    unbalanced_entry_scale_normalization_derived: bool
+    transform_tail_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class UnbalancedCompletionOrientationAudit:
+    left_entry_exponent: Fraction
+    right_entry_exponent: Fraction
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    left_product_variable_exponent: Fraction
+    right_product_variable_exponent: Fraction
+    shorter_product_variable_exponent: Fraction
+    longer_product_variable_exponent: Fraction
+    common_residual_shorter_exponent: Fraction
+    left_poisson_exponent: Fraction
+    right_poisson_exponent: Fraction
+    left_large_sieve_excess_exponent: Fraction
+    right_large_sieve_excess_exponent: Fraction
+    left_density_square_saving_exponent: Fraction
+    right_density_square_saving_exponent: Fraction
+    left_continuous_residual_exponent: Fraction
+    right_continuous_residual_exponent: Fraction
+    continuous_chosen_orientation: str
+    continuous_some_orientation_closes: bool
+    poisson_conservation_or_inactive_orientation_exact: bool
+    cuspidal_chosen_poisson_exponent: Fraction
+    cuspidal_primal_dual_normalized_excess_exponent: Fraction
+    cuspidal_holomorphic_normalized_excess_closes: bool
+    all_normalized_spectral_factor_cells_covered: bool
+    outer_qct_unbalanced_normalization_derived: bool
+    polylogarithmic_transform_tail_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class BalancedSpectralFactorPolytopeAudit:
     left_level_factor_exponent: Fraction
     right_level_factor_exponent: Fraction
@@ -2124,6 +2199,10 @@ class BalancedSpectralFactorPolytopeAudit:
     maximum_residual_hecke_length_exponent: Fraction
     primal_large_sieve_excess_exponent: Fraction
     primal_excess_never_exceeds_shorter_factor: bool
+    weighted_crt_square_decay_exponent: Fraction
+    effective_cross_density_square_saving_exponent: Fraction
+    effective_cross_density_amplitude_saving_exponent: Fraction
+    weighted_crt_main_term_dominates: bool
     cuspidal_normalized_excess_exponent: Fraction
     cuspidal_holomorphic_bound_exponent: Fraction
     continuous_bound_exponent: Fraction
@@ -10703,6 +10782,282 @@ def eisenstein_cross_cusp_l2_density_audit(
     )
 
 
+def cross_cusp_density_boundary_audit(
+    *,
+    shorter_level_factor_exponent: Fraction,
+    left_product_variable_exponent: Fraction,
+    right_product_variable_exponent: Fraction,
+) -> CrossCuspDensityBoundaryAudit:
+    """Retain every boundary term in the weighted cross-cusp CRT bound.
+
+    If ``A=T^eta``, ``H=T^h`` and ``L=T^ell``, the weighted local
+    second moment is bounded by
+
+    ``A^-2 + (A*H)^-1 + (A*L)^-1 + (H*L)^-1``.
+
+    Its power decay is therefore
+
+    ``min(2*eta, eta+h, eta+ell, h+ell)``.
+
+    The pointwise cross-projector square already decays like ``A^-1``.
+    There is a second estimate when the product intervals are unequal.
+    Put ``u=min(h,ell)`` and ``v=max(h,ell)``.  The local pointwise
+    majorant
+
+    ``|P_A(h*delta)|^2 << T^epsilon*A^-2*(A,h*delta)``
+
+    and ``(A,y*z)<=(A,y)*|z|`` allow the shorter variable ``z`` to be
+    bounded and only the longer variable ``y`` to be averaged.  Since
+
+    ``V^-1 sum_(y~V) (A,y) << T^epsilon*(1+A/V)``,
+
+    this gives extra square saving
+
+    ``max(0,min(eta-u,v-u))``.
+
+    Taking the better of the two-variable CRT estimate, this
+    one-variable gcd estimate, and the pointwise bound gives the
+    effective decay.  The two-variable saving alone is
+
+    ``max(0, min(eta, h, ell, h+ell-eta))``.
+
+    This formula is valid when one product interval is shorter than the
+    level factor; it deliberately does not discard the three endpoint
+    errors in the weighted CRT count.
+    """
+    eta = F(shorter_level_factor_exponent)
+    h = F(left_product_variable_exponent)
+    ell = F(right_product_variable_exponent)
+    if min(eta, h, ell) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+
+    crt_decay = min(2 * eta, eta + h, eta + ell, h + ell)
+    two_variable_saving = max(F(0), crt_decay - eta)
+    shorter = min(h, ell)
+    longer = max(h, ell)
+    one_variable_saving = max(
+        F(0),
+        min(eta - shorter, longer - shorter),
+    )
+    square_saving = max(two_variable_saving, one_variable_saving)
+    effective_decay = eta + square_saving
+    amplitude_saving = square_saving / 2
+    zero_face = h == ell and eta >= 2 * h
+    return CrossCuspDensityBoundaryAudit(
+        shorter_level_factor_exponent=eta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+        pointwise_square_decay_exponent=eta,
+        weighted_crt_square_decay_exponent=crt_decay,
+        two_variable_square_saving_exponent=two_variable_saving,
+        one_variable_gcd_square_saving_exponent=one_variable_saving,
+        effective_square_decay_exponent=effective_decay,
+        effective_square_saving_exponent=square_saving,
+        effective_amplitude_saving_exponent=amplitude_saving,
+        weighted_crt_main_term_dominates=(crt_decay == 2 * eta),
+        positive_density_saving_available=(square_saving > 0),
+        on_exact_zero_density_saving_face=zero_face,
+        zero_density_saving_face_characterization_exact=(
+            (square_saving == 0) == zero_face
+        ),
+        short_interval_boundary_terms_retained=True,
+    )
+
+
+def balanced_completion_unequal_product_audit(
+    *,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+    left_product_variable_exponent: Fraction,
+    right_product_variable_exponent: Fraction,
+) -> BalancedCompletionUnequalProductAudit:
+    """Neutralize the product-sieve excess when completion has length eta.
+
+    Put ``lambda=alpha+beta``, ``eta=min(alpha,beta)``, and let
+    ``u<=v`` be the two product-polynomial exponents.  In the large
+    common-divisor range split at ``c=T^(v-lambda)_+``.  Both residual
+    polynomials then have length at most the level, and the Poisson
+    Hecke index ``T^eta`` is multiplied into the shorter one.  The only
+    remaining square-sieve excess is
+
+    ``x=(eta+u-(v-lambda)_+-lambda)_+``.
+
+    The boundary-corrected cross-cusp density saving from
+    :func:`cross_cusp_density_boundary_audit` always satisfies ``x<=d``
+    because ``lambda>=2*eta``.  If its saving vanishes, then
+    ``u=v`` and ``eta>=2*u``; this forces ``x=0``.  This proves the
+    normalized product/continuous inequality for every pair ``u,v``
+    under balanced completion.  It does not derive the outer QCT base
+    when the original entry scales are unequal.
+    """
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    h = F(left_product_variable_exponent)
+    ell = F(right_product_variable_exponent)
+    if min(alpha, beta, h, ell) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+
+    level = alpha + beta
+    eta = min(alpha, beta)
+    shorter = min(h, ell)
+    longer = max(h, ell)
+    common_divisor_split = _positive_part(longer - level)
+    residual = shorter - common_divisor_split
+    if residual < 0:
+        residual = F(0)
+    excess = _positive_part(eta + residual - level)
+    density = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=eta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+    )
+    absorbed = excess <= density.effective_square_saving_exponent
+    zero_face_zero_excess = (
+        not density.on_exact_zero_density_saving_face
+        or excess == 0
+    )
+    return BalancedCompletionUnequalProductAudit(
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        shorter_level_factor_exponent=eta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+        shorter_product_variable_exponent=shorter,
+        longer_product_variable_exponent=longer,
+        common_divisor_split_exponent=common_divisor_split,
+        poisson_multiplied_residual_exponent=residual,
+        large_sieve_excess_exponent=excess,
+        effective_density_square_saving_exponent=(
+            density.effective_square_saving_exponent
+        ),
+        density_amplitude_saving_exponent=(
+            density.effective_amplitude_saving_exponent
+        ),
+        on_exact_zero_density_saving_face=(
+            density.on_exact_zero_density_saving_face
+        ),
+        large_sieve_excess_absorbed_by_density=absorbed,
+        zero_density_face_has_zero_large_sieve_excess=zero_face_zero_excess,
+        all_unequal_product_cells_normalized_excess_covered=(
+            absorbed and zero_face_zero_excess
+        ),
+        unbalanced_entry_scale_normalization_derived=False,
+        transform_tail_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def unbalanced_completion_orientation_audit(
+    *,
+    left_entry_exponent: Fraction,
+    right_entry_exponent: Fraction,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+    left_product_variable_exponent: Fraction,
+    right_product_variable_exponent: Fraction,
+) -> UnbalancedCompletionOrientationAudit:
+    """Choose reciprocity orientation on an unequal original entry box.
+
+    For entry lengths ``R=T^rho`` and ``S=T^sigma``, left completion
+    has Poisson exponent ``p_L=(sigma-rho+alpha)_+`` and right
+    completion has ``p_R=(rho-sigma+beta)_+``.  If both are positive,
+    ``p_L+p_R=lambda=alpha+beta``; otherwise the inactive orientation
+    has Poisson exponent zero.
+
+    With ``u<=v`` and
+
+    ``c=max(0,u-(v-lambda)_+) <= min(u,lambda)``,
+
+    the two product-sieve excesses are ``(p_L+c-lambda)_+`` and
+    ``(p_R+c-lambda)_+``.  The paired density inequality proves that at
+    least one is absorbed by the cross-cusp square saving belonging to
+    its own level factor.  Cuspidal and holomorphic components choose
+    the smaller Poisson exponent; it is at most ``lambda/2``.
+
+    This is a normalized spectral-factor statement.  The unequal-entry
+    outer QCT normalization and transform tails remain separate.
+    """
+    rho = F(left_entry_exponent)
+    sigma = F(right_entry_exponent)
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    h = F(left_product_variable_exponent)
+    ell = F(right_product_variable_exponent)
+    if min(rho, sigma, alpha, beta, h, ell) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if alpha > rho or beta > sigma:
+        raise ValueError("level factors cannot exceed their entries")
+
+    level = alpha + beta
+    shorter = min(h, ell)
+    longer = max(h, ell)
+    residual = max(F(0), shorter - _positive_part(longer - level))
+    left_poisson = _positive_part(sigma - rho + alpha)
+    right_poisson = _positive_part(rho - sigma + beta)
+    left_excess = _positive_part(left_poisson + residual - level)
+    right_excess = _positive_part(right_poisson + residual - level)
+    left_density = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=alpha,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+    )
+    right_density = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=beta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+    )
+    left_gap = left_excess - left_density.effective_square_saving_exponent
+    right_gap = right_excess - right_density.effective_square_saving_exponent
+    choose_left = left_gap <= right_gap
+    orientation = "left" if choose_left else "right"
+    continuous_closes = min(left_gap, right_gap) <= 0
+    conservation = (
+        left_poisson == 0
+        or right_poisson == 0
+        or left_poisson + right_poisson == level
+    )
+    cusp_poisson = min(left_poisson, right_poisson)
+    cusp_normalized = cusp_poisson - level / 2
+    cusp_closes = cusp_normalized <= 0
+    return UnbalancedCompletionOrientationAudit(
+        left_entry_exponent=rho,
+        right_entry_exponent=sigma,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+        shorter_product_variable_exponent=shorter,
+        longer_product_variable_exponent=longer,
+        common_residual_shorter_exponent=residual,
+        left_poisson_exponent=left_poisson,
+        right_poisson_exponent=right_poisson,
+        left_large_sieve_excess_exponent=left_excess,
+        right_large_sieve_excess_exponent=right_excess,
+        left_density_square_saving_exponent=(
+            left_density.effective_square_saving_exponent
+        ),
+        right_density_square_saving_exponent=(
+            right_density.effective_square_saving_exponent
+        ),
+        left_continuous_residual_exponent=left_gap,
+        right_continuous_residual_exponent=right_gap,
+        continuous_chosen_orientation=orientation,
+        continuous_some_orientation_closes=continuous_closes,
+        poisson_conservation_or_inactive_orientation_exact=conservation,
+        cuspidal_chosen_poisson_exponent=cusp_poisson,
+        cuspidal_primal_dual_normalized_excess_exponent=cusp_normalized,
+        cuspidal_holomorphic_normalized_excess_closes=cusp_closes,
+        all_normalized_spectral_factor_cells_covered=(
+            conservation and continuous_closes and cusp_closes
+        ),
+        outer_qct_unbalanced_normalization_derived=False,
+        polylogarithmic_transform_tail_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def balanced_spectral_factor_polytope_audit(
     *,
     left_level_factor_exponent: Fraction,
@@ -10716,8 +11071,13 @@ def balanced_spectral_factor_polytope_audit(
 
     ``x=(eta+min(H,level)-level)_+ <= eta``.
 
-    The cross-cusp L2 density subtracts ``eta/2`` from the continuous
-    exponent, so it is at most ``3/2``.  For a cuspidal primitive
+    The cross-cusp L2 density has four CRT terms.  Combining them with
+    the pointwise square bound gives the exact additional square saving
+
+    ``d=max(0,min(eta,5/2,5-eta))``.
+
+    One has ``x<=d`` on the whole factor square, so the continuous
+    exponent is at most ``3/2``.  For a cuspidal primitive
     conductor ``q0<=level``, primal/dual optimization has normalized
     excess at most ``eta-level/2<=0`` and also gives ``3/2``.  These two
     elementary inequalities do not depend on the Type-I/II labels and
@@ -10736,9 +11096,18 @@ def balanced_spectral_factor_polytope_audit(
     eta = min(alpha, beta)
     residual = min(h, level)
     primal_excess = _positive_part(eta + residual - level)
+    density = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=eta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=h,
+    )
     cusp_normalized = eta - level / 2
     cusp_bound = F(3, 2) + _positive_part(cusp_normalized) / 2
-    continuous_bound = F(3, 2) + (primal_excess - eta) / 2
+    continuous_bound = (
+        F(3, 2)
+        + primal_excess / 2
+        - density.effective_amplitude_saving_exponent
+    )
     universal = max(cusp_bound, continuous_bound)
     target = F(2)
     return BalancedSpectralFactorPolytopeAudit(
@@ -10750,6 +11119,18 @@ def balanced_spectral_factor_polytope_audit(
         maximum_residual_hecke_length_exponent=residual,
         primal_large_sieve_excess_exponent=primal_excess,
         primal_excess_never_exceeds_shorter_factor=(primal_excess <= eta),
+        weighted_crt_square_decay_exponent=(
+            density.weighted_crt_square_decay_exponent
+        ),
+        effective_cross_density_square_saving_exponent=(
+            density.effective_square_saving_exponent
+        ),
+        effective_cross_density_amplitude_saving_exponent=(
+            density.effective_amplitude_saving_exponent
+        ),
+        weighted_crt_main_term_dominates=(
+            density.weighted_crt_main_term_dominates
+        ),
         cuspidal_normalized_excess_exponent=cusp_normalized,
         cuspidal_holomorphic_bound_exponent=cusp_bound,
         continuous_bound_exponent=continuous_bound,
@@ -17994,6 +18375,42 @@ def main() -> None:
         f"{l2_density.global_ratio_gcd_aggregation_proved},"
         f"covered={l2_density.whole_mobius_gate_covered}"
     )
+    density_boundary = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=F(3),
+        left_product_variable_exponent=F(5, 2),
+        right_product_variable_exponent=F(5, 2),
+    )
+    print(
+        "large_q_transition: cross_cusp_density_boundary="
+        "eta="
+        f"{_fmt(density_boundary.shorter_level_factor_exponent)},"
+        f"h={_fmt(density_boundary.left_product_variable_exponent)},"
+        f"ell={_fmt(density_boundary.right_product_variable_exponent)},"
+        "pointwise_decay="
+        f"{_fmt(density_boundary.pointwise_square_decay_exponent)},"
+        "crt_decay="
+        f"{_fmt(density_boundary.weighted_crt_square_decay_exponent)},"
+        "two_variable_saving="
+        f"{_fmt(density_boundary.two_variable_square_saving_exponent)},"
+        "one_variable_saving="
+        f"{_fmt(density_boundary.one_variable_gcd_square_saving_exponent)},"
+        "effective_decay="
+        f"{_fmt(density_boundary.effective_square_decay_exponent)},"
+        "square_saving="
+        f"{_fmt(density_boundary.effective_square_saving_exponent)},"
+        "amplitude_saving="
+        f"{_fmt(density_boundary.effective_amplitude_saving_exponent)},"
+        "crt_main="
+        f"{density_boundary.weighted_crt_main_term_dominates},"
+        "positive="
+        f"{density_boundary.positive_density_saving_available},"
+        "zero_face="
+        f"{density_boundary.on_exact_zero_density_saving_face},"
+        "zero_face_exact="
+        f"{density_boundary.zero_density_saving_face_characterization_exact},"
+        "boundaries="
+        f"{density_boundary.short_interval_boundary_terms_retained}"
+    )
     balanced_factors = balanced_spectral_factor_polytope_audit(
         left_level_factor_exponent=F(5, 4),
         right_level_factor_exponent=F(5, 4),
@@ -18011,6 +18428,14 @@ def main() -> None:
         f"{_fmt(balanced_factors.primal_large_sieve_excess_exponent)},"
         "x_le_eta="
         f"{balanced_factors.primal_excess_never_exceeds_shorter_factor},"
+        "crt_decay="
+        f"{_fmt(balanced_factors.weighted_crt_square_decay_exponent)},"
+        "density_square_saving="
+        f"{_fmt(balanced_factors.effective_cross_density_square_saving_exponent)},"
+        "density_amplitude_saving="
+        f"{_fmt(balanced_factors.effective_cross_density_amplitude_saving_exponent)},"
+        "crt_main="
+        f"{balanced_factors.weighted_crt_main_term_dominates},"
         "cusp_normalized="
         f"{_fmt(balanced_factors.cuspidal_normalized_excess_exponent)},"
         "cusp_bound="
@@ -18031,6 +18456,85 @@ def main() -> None:
         "tails="
         f"{balanced_factors.polylogarithmic_transform_tail_aggregated},"
         f"covered={balanced_factors.whole_mobius_gate_covered}"
+    )
+    unequal_products = balanced_completion_unequal_product_audit(
+        left_level_factor_exponent=F(1, 2),
+        right_level_factor_exponent=F(1, 2),
+        left_product_variable_exponent=F(1),
+        right_product_variable_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: balanced_completion_unequal_product="
+        f"alpha={_fmt(unequal_products.left_level_factor_exponent)},"
+        f"beta={_fmt(unequal_products.right_level_factor_exponent)},"
+        f"level={_fmt(unequal_products.ambient_level_exponent)},"
+        f"eta={_fmt(unequal_products.shorter_level_factor_exponent)},"
+        f"h={_fmt(unequal_products.left_product_variable_exponent)},"
+        f"ell={_fmt(unequal_products.right_product_variable_exponent)},"
+        f"u={_fmt(unequal_products.shorter_product_variable_exponent)},"
+        f"v={_fmt(unequal_products.longer_product_variable_exponent)},"
+        "c_split="
+        f"{_fmt(unequal_products.common_divisor_split_exponent)},"
+        "residual="
+        f"{_fmt(unequal_products.poisson_multiplied_residual_exponent)},"
+        f"excess={_fmt(unequal_products.large_sieve_excess_exponent)},"
+        "density_square="
+        f"{_fmt(unequal_products.effective_density_square_saving_exponent)},"
+        "density_amplitude="
+        f"{_fmt(unequal_products.density_amplitude_saving_exponent)},"
+        f"zero_face={unequal_products.on_exact_zero_density_saving_face},"
+        "absorbed="
+        f"{unequal_products.large_sieve_excess_absorbed_by_density},"
+        "zero_face_zero_excess="
+        f"{unequal_products.zero_density_face_has_zero_large_sieve_excess},"
+        "normalized_all="
+        f"{unequal_products.all_unequal_product_cells_normalized_excess_covered},"
+        "unbalanced_base="
+        f"{unequal_products.unbalanced_entry_scale_normalization_derived},"
+        f"tails={unequal_products.transform_tail_aggregated},"
+        f"covered={unequal_products.whole_mobius_gate_covered}"
+    )
+    unbalanced_orientation = unbalanced_completion_orientation_audit(
+        left_entry_exponent=F(3),
+        right_entry_exponent=F(2),
+        left_level_factor_exponent=F(3, 2),
+        right_level_factor_exponent=F(1),
+        left_product_variable_exponent=F(2),
+        right_product_variable_exponent=F(2),
+    )
+    print(
+        "large_q_transition: unbalanced_completion_orientation="
+        f"rho={_fmt(unbalanced_orientation.left_entry_exponent)},"
+        f"sigma={_fmt(unbalanced_orientation.right_entry_exponent)},"
+        f"alpha={_fmt(unbalanced_orientation.left_level_factor_exponent)},"
+        f"beta={_fmt(unbalanced_orientation.right_level_factor_exponent)},"
+        f"level={_fmt(unbalanced_orientation.ambient_level_exponent)},"
+        f"pL={_fmt(unbalanced_orientation.left_poisson_exponent)},"
+        f"pR={_fmt(unbalanced_orientation.right_poisson_exponent)},"
+        f"c={_fmt(unbalanced_orientation.common_residual_shorter_exponent)},"
+        f"xL={_fmt(unbalanced_orientation.left_large_sieve_excess_exponent)},"
+        f"xR={_fmt(unbalanced_orientation.right_large_sieve_excess_exponent)},"
+        f"dL={_fmt(unbalanced_orientation.left_density_square_saving_exponent)},"
+        f"dR={_fmt(unbalanced_orientation.right_density_square_saving_exponent)},"
+        "continuous_orientation="
+        f"{unbalanced_orientation.continuous_chosen_orientation},"
+        "continuous="
+        f"{unbalanced_orientation.continuous_some_orientation_closes},"
+        "poisson_identity="
+        f"{unbalanced_orientation.poisson_conservation_or_inactive_orientation_exact},"
+        "cusp_p="
+        f"{_fmt(unbalanced_orientation.cuspidal_chosen_poisson_exponent)},"
+        "cusp_excess="
+        f"{_fmt(unbalanced_orientation.cuspidal_primal_dual_normalized_excess_exponent)},"
+        "cusp="
+        f"{unbalanced_orientation.cuspidal_holomorphic_normalized_excess_closes},"
+        "spectral_all="
+        f"{unbalanced_orientation.all_normalized_spectral_factor_cells_covered},"
+        "outer_base="
+        f"{unbalanced_orientation.outer_qct_unbalanced_normalization_derived},"
+        "tails="
+        f"{unbalanced_orientation.polylogarithmic_transform_tail_aggregated},"
+        f"covered={unbalanced_orientation.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(
