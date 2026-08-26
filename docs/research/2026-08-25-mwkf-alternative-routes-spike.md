@@ -35,6 +35,21 @@
 > \(T^{1/2}\) on the hard face.
 > Therefore the unconditional \(T^3\) asymptotic remains open.
 
+Source correction: Kiral--Young Proposition 2.6 gives
+
+\[
+S_{\infty,1/B}^{(AB)}(m,-n;s\sqrt A)
+=S(\overline A m,-n;s),
+\]
+
+not \(S(Am,-n;s)\).  Hence the physical Poisson orbit has a direct
+level-\(AB\) cross-cusp adapter.  Its \(\sqrt A\) cusp-normalization
+factor combines with the normalized outer Poisson factor \(A^{-1}\)
+to give \(A^{-1/2}\) in amplitude.  This makes the fixed-entry PEVP
+normalization direct, but it does not change the current proof status:
+the actual outer \(A,B\) sums still require OLISK/MMKLS and its hard-face
+\(T^{1/2}\) saving.
+
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
 the failed candidate routes and the remaining exact-level spectral route.
@@ -13987,7 +14002,7 @@ Accordingly the finite-prime Hecke gate and the whole Möbius gate remain
 unproved.
 
 
-### 4.109g Type-I completion leaves an inverse-scaled Kloosterman index
+### 4.109g Type-I completion is the exact Atkin--Lehner cross-cusp orbit
 
 Apply the finite Möbius identity (4.833) to the
 two entry weights.  In one fixed factor box write
@@ -14042,7 +14057,7 @@ which is the Kloosterman sum in (4.845ao).  No estimate and no
 completion of a Möbius-weighted variable occurs here: the quotient is
 unweighted because the full finite Type-I identity is retained.
 
-At this point the previously claimed geometric adapter fails.  Use
+The geometric adapter is direct.  Use
 [Kiral--Young, Proposition 2.6](https://arxiv.org/abs/1710.00914).  In
 their notation take
 \[
@@ -14059,33 +14074,63 @@ Their explicit formula is
  \boxed{
  S_{\infty,1/B}^{(AB)}
    (m,-n;s\sqrt A)
- =S(A m,-n;s),}
+ =S(\overline A m,-n;s),}
 \tag{4.845ap}
 \]
 
-whereas the exact Poisson residue sum in (4.845ao) is
+which is exactly (4.845ao), including the inverse on \(A\).  Earlier
+versions of this audit misquoted Proposition 2.6 as \(S(Am,-n;s)\);
+the source formula is \(S(\overline{s_{\rm KY}}m,n;c)\), and here
+\(s_{\rm KY}=A\).
 
-\[
- \boxed{S(\overline A m,-n;s).}
-\tag{4.845ap'}
-\]
-
-The two first indices are not interchangeable.  For example, with
-\(A=2,s=5,m=n=1\), one has \(\overline A=3\pmod5\) and
+The Kuznetsov geometric normalization uses the cusp modulus
+\(s\sqrt A\).  Therefore the physical orbit satisfies the exact
+identity
 
 \[
  \boxed{
- S(3,-1;5)=-(1+\sqrt5),\qquad
- S(2,-1;5)=\sqrt5-1.}
-\tag{4.845ap''}
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac{S(\overline A m,-n;s)}sF(s/S)
+ =\sqrt A
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac{S_{\infty,1/B}^{(AB)}(m,-n;s\sqrt A)}{s\sqrt A}F(s/S).}
+ \tag{4.845ap'}
 \]
 
-Thus the allowed-modulus condition matches, but the physical Poisson
-sum is not the Kiral--Young cusp Kloosterman orbit.  The former audit
-checked only the permutation \(e\mapsto Ae\pmod s\) and then hard-coded
-the last equality; (4.845ap'') is a finite counterexample to that step.
-The inverse-scaled family is nevertheless reducible by a different
-exact identity.  CRT multiplicativity gives
+Thus Type-I completion lands directly in the cross-cusp Kuznetsov
+formula at level \(AB\), without a \(j\mid A\) level family.  The
+factor \(\sqrt A\) in (4.845ap') is essential: Atkin--Lehner unitarity
+does not turn the direct adapter itself into an \(A^{-1/2}\) saving.
+The cross-cusp trace has no diagonal term, but any saving must come
+from estimating that off-diagonal physical trace, not from changing
+the cusp normalization.
+
+There is nevertheless an exact fixed-entry normalization once the
+outer Poisson factor is restored.  Since \(E=R/A\), dividing the left
+completion by the outer entry scale \(R\) gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\frac ER
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac{S(\overline A m,-n;s)}sF(s/S)\\
+ &\qquad=\frac1{\sqrt A}
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac{S_{\infty,1/B}^{(AB)}(m,-n;s\sqrt A)}{s\sqrt A}F(s/S).
+ \end{aligned}}
+ \tag{4.845ap''}
+\]
+
+Thus the physical \(\sqrt A\) conversion and the normalized Poisson
+factor \(A^{-1}\) leave precisely \(A^{-1/2}\) in amplitude, or
+\(A^{-1}\) after squaring.  This supplies the fixed-\((A,B)\) PEVP
+normalization directly.  It does **not** aggregate the genuine outer
+integer sums over \(A,B\); those remain the joint OLISK/MMKLS gate in
+Sections 4.109zi--4.109zjab.
+
+For comparison, an alternative infinity--infinity lift remains exact.
+CRT multiplicativity gives
 
 \[
  \boxed{
@@ -14105,7 +14150,7 @@ because its local factor modulo \(A\) is
 \tag{4.845ap_2}
 \]
 
-Therefore the inverse-scaled family
+Therefore the same physical family
 
 \[
  \sum_{\substack{B\mid s\\(s,A)=1}}
@@ -14113,7 +14158,7 @@ Therefore the inverse-scaled family
 \tag{ISK}_{A,B}
 \]
 
-has the exact standard-orbit expansion
+also has the exact standard-orbit expansion
 
 \[
  \boxed{
@@ -14129,11 +14174,12 @@ Indeed \(c=As\) and
 \(\mathbf1_{(s,A)=1}=\sum_{j\mid A,\ j\mid s}\mu(j)\).  Thus each
 inner sum in (4.845ap_3) is an infinity--infinity Kuznetsov orbit at
 level \(ABj\); no division by a possibly zero local factor occurs.
-This is the correct geometric repair of (4.845ap), but it introduces
-the non-squarefree level family \(ABj\) with \(j\mid A\), whose exponent
-can be as large as \(2\alpha+\beta\).
+This is now only an alternative representation.  It introduces the
+avoidable non-squarefree level family \(ABj\) with \(j\mid A\), whose
+exponent can be as large as \(2\alpha+\beta\), while (4.845ap') stays
+at level \(AB\).
 
-The repaired orbit has an exact scale cancellation.  At the balanced
+The alternative lifted orbit has an exact scale cancellation.  At the balanced
 QCT box let
 \[
  R=S=T^3,\qquad |h\delta|=T^5,\qquad
@@ -14532,25 +14578,21 @@ dual length still cancel:
 For \(m\ne0\), (4.845ar) uses only
 \(\sum_{m\asymp M}|\lambda_f(m)|\ll M(Q_fM)^{o(1)}\); it never invokes
 the pointwise \(m^\vartheta\) bound.  This raw identity alone does not
-normalize the spectral side of (4.845ap_3): the Bessel transform, the
-Fourier-coefficient normalization at level \(ABj\), and the sum over
-\(j\mid A\) must be retained together.  In particular the former
-\(\mathrm{SLF}_{\alpha,\beta}\) target, derived under the false
-level-\(AB\) cusp adapter, is no longer an accepted physical gate.  The
-power-exponent exact-valuation calculation is now available.  The
-remaining gate in this sector is the polylogarithmic tensor inequality
-PEVP\(_{A,B}\), followed by the outer \(\mathrm{LISK}_q\) aggregation
-with all ratio/gcd and \(q\)-layers restored.
+normalize the spectral side.  The missing factor is supplied by the
+exact outer normalization (4.845ap''), not by discarding the Bessel
+transform or the Fourier-coefficient normalization.  The direct
+level-\(AB\) cusp adapter is therefore accepted; the \(ABj\) family in
+(4.845ap_3) is an optional infinity--infinity representation, not a
+necessary repair.
 
-The adapter type_i_atkin_lehner_cusp_audit records both the rejected
-Kiral--Young match and the exact CRT product-modulus repair.  It marks
-the physical Type-I/Type-I reduction to a finite standard Kuznetsov
-level family true, but keeps the old cusp-pair identity false.  The
-local calculation above restores the base-level large-sieve *power
-exponent* uniformly for \(ABj\) and the ramified second index \(An\);
-Section 4.109v combines it with the orientation inequalities.  The
-polylogarithmic tensor bound, outer factor
-\(R/c_A(m)\), ratio/gcd layers, and \(q\)-aggregation remain separate.
+The adapter type_i_atkin_lehner_cusp_audit records the accepted
+Kiral--Young match, the physical \(\sqrt A\) conversion, the outer
+Poisson \(A^{-1}\), and their net fixed-entry \(A^{-1/2}\).  It also
+keeps the outer-entry aggregation false: applying the fixed-entry
+bound separately does not sum the actual \(A,B\) variables.  The
+remaining compact-core gate is consequently the joint OLISK/MMKLS
+estimate of Sections 4.109zi--4.109zjab, with all ratio/gcd and
+\(q\)-layers restored.
 
 
 ### 4.109h The inverse-zeta zero does not by itself prove level reciprocity
@@ -16171,8 +16213,8 @@ completion orientation.  The interface
 unbalanced_completion_orientation_audit records (4.845cq)--(4.845cs)
 with exact rational arithmetic.
 
-It marks the base-level factor model, the inverse-scaled geometric
-adapter, the exact-valuation level family, and normalized
+It marks the base-level factor model, the direct cross-cusp geometric
+adapter, the optional exact-valuation lifted family, and normalized
 *power-exponent* all-cell coverage true.  The polylogarithmic tensor
 estimate isolated in Section 4.109x is reduced in Section 4.109zf to a
 uniform physical harmonic-large-sieve target.  Section 4.109zfa closes
@@ -20707,9 +20749,13 @@ directly apply because both the rational point and its modulus vary in
 
 The chronological spike first ended at the pre-Cauchy two-Möbius
 spectral inequality displayed above.  The later exact-level route in
-Sections 4.109g--4.109zh repairs the inverse-scaled Kloosterman orbit
-and proves the fixed-entry weighted primitive-conductor PEVP square
-function.  Section 4.109zi shows that this fixed-entry statement does
-not control the actual outer \(A,B\) sums.  The remaining theorem is the
-joint signed outer-entry gate \((\mathrm{OLISK})_q\); until it is proved,
-the asymptotic (4.845dc_20) is not unconditional.
+Sections 4.109g--4.109zh now start from the corrected Kiral--Young
+specialization: the physical Poisson orbit is directly the level-\(AB\)
+cross-cusp Kuznetsov orbit, and the normalized fixed-entry square has
+the exact \(A^{-1}\) factor without the optional \(ABj\) lift.  Those
+sections also prove the stronger weighted primitive-conductor PEVP
+square function.  Section 4.109zi shows that neither fixed-entry
+statement controls the actual outer \(A,B\) sums.  The remaining
+theorem is the joint signed outer-entry gate
+\((\mathrm{OLISK})_q\), equivalently MMKLS; until it is proved, the
+asymptotic (4.845dc_20) is not unconditional.

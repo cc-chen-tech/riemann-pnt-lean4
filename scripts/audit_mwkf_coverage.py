@@ -1802,6 +1802,10 @@ class TypeIAtkinLehnerCuspAudit:
     bessel_ratio_inverse_square_exponent: Fraction
     poisson_normalization_exponent: Fraction
     poisson_prefactor_after_modulus_lift_exponent: Fraction
+    physical_to_cross_cusp_prefactor_exponent: Fraction
+    outer_poisson_normalization_after_dividing_entry_exponent: Fraction
+    normalized_cross_cusp_prefactor_exponent: Fraction
+    fixed_entry_cross_cusp_square_saving_exponent: Fraction
     normalized_dual_hecke_l1_exponent: Fraction
     type_i_identity_leaves_unweighted_quotient: bool
     entry_and_modulus_divisors_are_coprime: bool
@@ -1816,6 +1820,11 @@ class TypeIAtkinLehnerCuspAudit:
     zero_dual_mode_is_eisenstein_only: bool
     raw_poisson_dual_l1_normalization_is_zero_power: bool
     nonzero_dual_hecke_average_has_no_positive_power_cost: bool
+    cross_cusp_sign_trace_has_diagonal_term: bool
+    ordinary_cross_cusp_large_sieve_has_unitary_norm: bool
+    atkin_lehner_sign_trace_gains_from_normalization_alone: bool
+    direct_fixed_entry_pevp_normalization_available: bool
+    direct_fixed_entry_adapter_aggregates_outer_entries: bool
     physical_qct_bessel_kernel_restored: bool
     type_i_type_i_qct_to_standard_kuznetsov_derived: bool
     type_i_type_i_qct_to_cusp_kuznetsov_derived: bool
@@ -10395,12 +10404,12 @@ def type_i_atkin_lehner_cusp_identity(
     ``sum_e^* e((m*e-n*inverse(A*e))/s)``.
 
     The permutation ``x=A*e (mod s)`` turns this exactly into
-    ``S(inverse(A)*m,-n;s)``.  If ``B|s`` and ``(s,A)=1``, Kiral--Young's
-    Atkin--Lehner cusp formula at level ``A*B`` instead gives
-    ``S(A*m,-n;s)`` for ``(infinity,1/B)`` and cusp modulus
-    ``s*sqrt(A)``.  The returned comparison evaluates the two finite
-    Kloosterman sums; it is not hard-coded from the allowed-modulus
-    condition.
+    ``S(inverse(A)*m,-n;s)``.  For ``B|s`` and ``(s,A)=1``, this is
+    precisely Kiral--Young, Proposition 2.6, at level ``A*B``: with
+    their ``r=B`` and Atkin--Lehner factor ``s_KY=A``, the first index
+    is ``inverse(s_KY)*m`` and the cusp modulus is ``s*sqrt(A)``.
+    The returned comparison evaluates the two finite Kloosterman sums;
+    it is not inferred only from the allowed-modulus condition.
     """
     A = int(entry_divisor)
     B = int(modulus_divisor)
@@ -10415,7 +10424,7 @@ def type_i_atkin_lehner_cusp_identity(
     units = tuple(x for x in range(s) if gcd(x, s) == 1)
     inverse_A = pow(A, -1, s)
     poisson_first_index = inverse_A * m % s
-    kiral_young_first_index = A * m % s
+    kiral_young_first_index = inverse_A * m % s
     left = sorted(
         (m * e - n * pow((A * e) % s, -1, s)) % s
         for e in units
@@ -13782,7 +13791,7 @@ def type_i_atkin_lehner_cusp_audit(
     entry_divisor_exponent: Fraction,
     modulus_divisor_exponent: Fraction,
 ) -> TypeIAtkinLehnerCuspAudit:
-    """Audit the failed Type-I/Type-I QCT-to-cusp candidate adapter.
+    """Audit the exact Type-I/Type-I QCT-to-cross-cusp adapter.
 
     Let ``r=A*e`` and force ``B|s`` by the Type-I expansions of the two
     entry Mobius weights.  The quotient e is unweighted before optional
@@ -13792,20 +13801,28 @@ def type_i_atkin_lehner_cusp_audit(
     powers after normalization.
 
     The exact Poisson sum has first Kloosterman index
-    ``inverse(A)*m (mod s)``.  Kiral--Young Proposition 2.6 instead
-    supplies ``A*m (mod s)`` for the cusp pair infinity, 1/B at level
-    A*B.  These indices, and the corresponding Kloosterman sums, need
-    not agree.  Thus the displayed cusp modulus and Bessel scales are
-    only the scales of the rejected candidate adapter; they do not
-    establish a spectral identity for the physical QCT sum.  The repair
-    is CRT multiplicativity at the product modulus:
+    ``inverse(A)*m (mod s)``.  This is exactly Kiral--Young Proposition
+    2.6 for the cusp pair infinity, 1/B at level A*B: their
+    Atkin--Lehner factor is A, so their first index is
+    ``inverse(A)*m`` and their cusp modulus is ``s*sqrt(A)``.
+
+    The physical ``1/s`` weight is ``sqrt(A)`` times the normalized
+    cross-cusp weight ``1/(s*sqrt(A))``.  This conversion alone loses
+    ``A^(1/2)``.  In the normalized outer block, however, the Poisson
+    factor is ``E/R=1/A``.  Their product is exactly ``A^(-1/2)``;
+    after squaring this supplies the fixed-entry ``A^-1`` normalization
+    required by PEVP.  It does not sum the actual outer integers A,B.
+    The cross-cusp trace has no diagonal term, and an ordinary positive
+    large sieve still has the same norm because Atkin--Lehner is unitary.
+
+    The CRT product-modulus identity remains a valid alternative:
 
     ``S(m,-A*n;A*s)=c_A(m)S(inverse(A)*m,-n;s)``.
 
     The exact Mobius support makes ``A`` squarefree, hence the Ramanujan
-    factor ``c_A(m)`` is nonzero.  The remaining condition ``(s,A)=1``
-    is finite inclusion-exclusion over ``j|A`` and produces standard
-    infinity-cusp Kuznetsov level families with ``A*B*j | A*s``.
+    factor ``c_A(m)`` is nonzero.  Inclusion-exclusion over ``j|A`` then
+    produces standard infinity-infinity levels ``A*B*j``.  This lifted
+    route is no longer needed to derive the physical spectral orbit.
     """
     rho = F(entry_scale_exponent)
     sigma = F(modulus_scale_exponent)
@@ -13824,10 +13841,13 @@ def type_i_atkin_lehner_cusp_audit(
     level = alpha + beta
     cusp_modulus = sigma + alpha / 2
     standard_modulus = sigma + alpha
-    bessel_numerator = numerator + dual + alpha
-    bessel_ratio = 2 * standard_modulus - bessel_numerator
+    bessel_numerator = numerator + dual
+    bessel_ratio = 2 * cusp_modulus - bessel_numerator
     completion = quotient - sigma
     lifted_prefactor = quotient + alpha
+    cross_cusp_prefactor = alpha / 2
+    normalized_outer_poisson = -alpha
+    normalized_cross_cusp = normalized_outer_poisson + cross_cusp_prefactor
     normalized_dual = completion + dual
     return TypeIAtkinLehnerCuspAudit(
         entry_scale_exponent=rho,
@@ -13844,12 +13864,20 @@ def type_i_atkin_lehner_cusp_audit(
         bessel_ratio_inverse_square_exponent=bessel_ratio,
         poisson_normalization_exponent=completion,
         poisson_prefactor_after_modulus_lift_exponent=lifted_prefactor,
+        physical_to_cross_cusp_prefactor_exponent=cross_cusp_prefactor,
+        outer_poisson_normalization_after_dividing_entry_exponent=(
+            normalized_outer_poisson
+        ),
+        normalized_cross_cusp_prefactor_exponent=normalized_cross_cusp,
+        fixed_entry_cross_cusp_square_saving_exponent=(
+            -2 * normalized_cross_cusp
+        ),
         normalized_dual_hecke_l1_exponent=normalized_dual,
         type_i_identity_leaves_unweighted_quotient=True,
         entry_and_modulus_divisors_are_coprime=True,
         kiral_young_allowed_moduli_match_exactly=True,
-        kiral_young_kloosterman_formula_matches_exactly=False,
-        inverse_scaled_kloosterman_obstruction_present=True,
+        kiral_young_kloosterman_formula_matches_exactly=True,
+        inverse_scaled_kloosterman_obstruction_present=False,
         crt_product_modulus_lift_exact=True,
         squarefree_ramanujan_denominator_nonzero=True,
         coprimality_inclusion_exclusion_is_standard_level_family=True,
@@ -13858,9 +13886,16 @@ def type_i_atkin_lehner_cusp_audit(
         zero_dual_mode_is_eisenstein_only=True,
         raw_poisson_dual_l1_normalization_is_zero_power=(normalized_dual == 0),
         nonzero_dual_hecke_average_has_no_positive_power_cost=False,
+        cross_cusp_sign_trace_has_diagonal_term=False,
+        ordinary_cross_cusp_large_sieve_has_unitary_norm=True,
+        atkin_lehner_sign_trace_gains_from_normalization_alone=False,
+        direct_fixed_entry_pevp_normalization_available=(
+            normalized_cross_cusp == -alpha / 2
+        ),
+        direct_fixed_entry_adapter_aggregates_outer_entries=False,
         physical_qct_bessel_kernel_restored=True,
         type_i_type_i_qct_to_standard_kuznetsov_derived=True,
-        type_i_type_i_qct_to_cusp_kuznetsov_derived=False,
+        type_i_type_i_qct_to_cusp_kuznetsov_derived=True,
         signed_level_family_aggregation_proved=False,
         type_ii_sectors_restored=False,
         finite_prime_hecke_gate_covered=False,
@@ -22343,7 +22378,7 @@ def main() -> None:
         f"quotient={_fmt(cusp_adapter.entry_quotient_exponent)},"
         f"dual={_fmt(cusp_adapter.poisson_dual_index_exponent)},"
         f"level={_fmt(cusp_adapter.ambient_level_exponent)},"
-        f"rejected_cusp_modulus={_fmt(cusp_adapter.cusp_modulus_exponent)},"
+        f"cusp_modulus={_fmt(cusp_adapter.cusp_modulus_exponent)},"
         "lifted_modulus="
         f"{_fmt(cusp_adapter.standard_lifted_modulus_exponent)},"
         "bessel_numerator="
@@ -22354,6 +22389,14 @@ def main() -> None:
         f"{_fmt(cusp_adapter.poisson_normalization_exponent)},"
         "lifted_prefactor="
         f"{_fmt(cusp_adapter.poisson_prefactor_after_modulus_lift_exponent)},"
+        "physical_cross_prefactor="
+        f"{_fmt(cusp_adapter.physical_to_cross_cusp_prefactor_exponent)},"
+        "outer_poisson_norm="
+        f"{_fmt(cusp_adapter.outer_poisson_normalization_after_dividing_entry_exponent)},"
+        "normalized_cross_prefactor="
+        f"{_fmt(cusp_adapter.normalized_cross_cusp_prefactor_exponent)},"
+        "fixed_entry_square_saving="
+        f"{_fmt(cusp_adapter.fixed_entry_cross_cusp_square_saving_exponent)},"
         "dual_l1="
         f"{_fmt(cusp_adapter.normalized_dual_hecke_l1_exponent)},"
         "unweighted="
@@ -22381,6 +22424,16 @@ def main() -> None:
         f"{cusp_adapter.raw_poisson_dual_l1_normalization_is_zero_power},"
         "dual_no_power="
         f"{cusp_adapter.nonzero_dual_hecke_average_has_no_positive_power_cost},"
+        "cross_diagonal="
+        f"{cusp_adapter.cross_cusp_sign_trace_has_diagonal_term},"
+        "unitary_norm="
+        f"{cusp_adapter.ordinary_cross_cusp_large_sieve_has_unitary_norm},"
+        "normalization_gain="
+        f"{cusp_adapter.atkin_lehner_sign_trace_gains_from_normalization_alone},"
+        "direct_fixed_entry_pevp="
+        f"{cusp_adapter.direct_fixed_entry_pevp_normalization_available},"
+        "outer_entries="
+        f"{cusp_adapter.direct_fixed_entry_adapter_aggregates_outer_entries},"
         "physical="
         f"{cusp_adapter.physical_qct_bessel_kernel_restored},"
         "qct_adapter="

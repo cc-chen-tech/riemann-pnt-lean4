@@ -2796,14 +2796,20 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "large_q_transition: type_i_atkin_lehner_cusp="
         "entry=3,modulus=3,product=5,entry_divisor=1/2,"
         "modulus_divisor=1/2,quotient=5/2,dual=1/2,level=1,"
-        "rejected_cusp_modulus=13/4,lifted_modulus=7/2,"
-        "bessel_numerator=6,bessel_ratio=1,"
-        "poisson_norm=-1/2,lifted_prefactor=3,dual_l1=0,unweighted=True,"
-        "coprime_divisors=True,allowed_moduli=True,kloosterman=False,"
-        "inverse_obstruction=True,crt_lift=True,ramanujan_nonzero=True,"
+        "cusp_modulus=13/4,lifted_modulus=7/2,"
+        "bessel_numerator=11/2,bessel_ratio=1,"
+        "poisson_norm=-1/2,lifted_prefactor=3,physical_cross_prefactor=1/4,"
+        "outer_poisson_norm=-1/2,normalized_cross_prefactor=-1/4,"
+        "fixed_entry_square_saving=1/2,"
+        "dual_l1=0,unweighted=True,"
+        "coprime_divisors=True,allowed_moduli=True,kloosterman=True,"
+        "inverse_obstruction=False,crt_lift=True,ramanujan_nonzero=True,"
         "coprime_level_family=True,"
         "newform_sign=True,oldclass_permuted=True,zero_eisenstein=True,"
-        "raw_dual_l1=True,dual_no_power=False,physical=True,qct_adapter=False,"
+        "raw_dual_l1=True,dual_no_power=False,cross_diagonal=False,"
+        "unitary_norm=True,normalization_gain=False,"
+        "direct_fixed_entry_pevp=True,outer_entries=False,"
+        "physical=True,qct_adapter=True,"
         "standard_qct_adapter=True,"
         "level_family=False,type_ii=False,finite_gate=False,covered=False"
     ) in report
@@ -4263,7 +4269,7 @@ def test_physical_qct_bessel_kernel_has_zero_power_product_bandwidth() -> None:
     assert not hard.whole_mobius_gate_covered
 
 
-def test_type_i_completion_has_inverse_scaled_kloosterman_obstruction() -> None:
+def test_type_i_completion_matches_the_atkin_lehner_cross_cusp_orbit() -> None:
     identity = getattr(
         coverage_audit,
         "type_i_atkin_lehner_cusp_identity",
@@ -4280,7 +4286,7 @@ def test_type_i_completion_has_inverse_scaled_kloosterman_obstruction() -> None:
     assert exact["modulus_is_allowed_for_cusp_pair"]
     assert exact["entry_scaling_permutes_reduced_residues"]
     assert exact["poisson_residue_multisets_match"]
-    assert not exact["ordinary_kloosterman_matches_atkin_lehner_cusp_sum"]
+    assert exact["ordinary_kloosterman_matches_atkin_lehner_cusp_sum"]
 
     adapter = getattr(
         coverage_audit,
@@ -4291,7 +4297,7 @@ def test_type_i_completion_has_inverse_scaled_kloosterman_obstruction() -> None:
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109g Type-I completion leaves an inverse-scaled Kloosterman index",
+        "### 4.109g Type-I completion is the exact Atkin--Lehner cross-cusp orbit",
         "\\tag{4.845an}",
         "\\tag{4.845ar}",
         "type_i_atkin_lehner_cusp_audit",
@@ -4308,17 +4314,22 @@ def test_type_i_completion_has_inverse_scaled_kloosterman_obstruction() -> None:
     assert hard.entry_quotient_exponent == F(5, 2)
     assert hard.poisson_dual_index_exponent == F(1, 2)
     assert hard.ambient_level_exponent == F(1)
+    assert hard.cusp_modulus_exponent == F(13, 4)
     assert hard.standard_lifted_modulus_exponent == F(7, 2)
-    assert hard.bessel_numerator_product_exponent == F(6)
+    assert hard.bessel_numerator_product_exponent == F(11, 2)
     assert hard.bessel_ratio_inverse_square_exponent == F(1)
     assert hard.poisson_normalization_exponent == F(-1, 2)
     assert hard.poisson_prefactor_after_modulus_lift_exponent == F(3)
+    assert hard.physical_to_cross_cusp_prefactor_exponent == F(1, 4)
+    assert hard.outer_poisson_normalization_after_dividing_entry_exponent == F(-1, 2)
+    assert hard.normalized_cross_cusp_prefactor_exponent == F(-1, 4)
+    assert hard.fixed_entry_cross_cusp_square_saving_exponent == F(1, 2)
     assert hard.normalized_dual_hecke_l1_exponent == F(0)
     assert hard.type_i_identity_leaves_unweighted_quotient
     assert hard.entry_and_modulus_divisors_are_coprime
     assert hard.kiral_young_allowed_moduli_match_exactly
-    assert not hard.kiral_young_kloosterman_formula_matches_exactly
-    assert hard.inverse_scaled_kloosterman_obstruction_present
+    assert hard.kiral_young_kloosterman_formula_matches_exactly
+    assert not hard.inverse_scaled_kloosterman_obstruction_present
     assert hard.crt_product_modulus_lift_exact
     assert hard.squarefree_ramanujan_denominator_nonzero
     assert hard.coprimality_inclusion_exclusion_is_standard_level_family
@@ -4327,17 +4338,22 @@ def test_type_i_completion_has_inverse_scaled_kloosterman_obstruction() -> None:
     assert hard.zero_dual_mode_is_eisenstein_only
     assert hard.raw_poisson_dual_l1_normalization_is_zero_power
     assert not hard.nonzero_dual_hecke_average_has_no_positive_power_cost
+    assert not hard.cross_cusp_sign_trace_has_diagonal_term
+    assert hard.ordinary_cross_cusp_large_sieve_has_unitary_norm
+    assert not hard.atkin_lehner_sign_trace_gains_from_normalization_alone
+    assert hard.direct_fixed_entry_pevp_normalization_available
+    assert not hard.direct_fixed_entry_adapter_aggregates_outer_entries
     assert hard.physical_qct_bessel_kernel_restored
     assert hard.type_i_type_i_qct_to_standard_kuznetsov_derived
-    assert not hard.type_i_type_i_qct_to_cusp_kuznetsov_derived
+    assert hard.type_i_type_i_qct_to_cusp_kuznetsov_derived
     assert not hard.signed_level_family_aggregation_proved
     assert not hard.type_ii_sectors_restored
     assert not hard.finite_prime_hecke_gate_covered
     assert not hard.whole_mobius_gate_covered
 
 
-def test_type_i_cusp_adapter_rejects_inverse_scaling_counterexample() -> None:
-    """Catch the false replacement of inverse(A) by A in the KY index."""
+def test_type_i_cusp_adapter_uses_kiral_young_inverse_scaling() -> None:
+    """Catch misquoting the KY first index as A*m instead of inverse(A)*m."""
     identity = coverage_audit.type_i_atkin_lehner_cusp_identity(
         entry_divisor=2,
         modulus_divisor=1,
@@ -4346,8 +4362,8 @@ def test_type_i_cusp_adapter_rejects_inverse_scaling_counterexample() -> None:
         product_index=1,
     )
     assert identity["poisson_first_index_mod_modulus"] == 3
-    assert identity["kiral_young_first_index_mod_modulus"] == 2
-    assert not identity["ordinary_kloosterman_matches_atkin_lehner_cusp_sum"]
+    assert identity["kiral_young_first_index_mod_modulus"] == 3
+    assert identity["ordinary_kloosterman_matches_atkin_lehner_cusp_sum"]
 
 
 def test_inverse_scaled_kloosterman_has_exact_squarefree_modulus_lift() -> None:
