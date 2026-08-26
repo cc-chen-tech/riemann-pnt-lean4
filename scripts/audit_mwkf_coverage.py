@@ -2038,6 +2038,55 @@ class PrimeLevelEisensteinCrossCuspAudit:
 
 
 @dataclass(frozen=True)
+class CompletedEisensteinResidueTrilinearAudit:
+    product_variable_exponent: Fraction
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    poisson_frequency_exponent: Fraction
+    primal_residue_bound_exponent: Fraction
+    target_exponent: Fraction
+    required_saving_exponent: Fraction
+    maximum_required_saving_exponent: Fraction
+    maximum_saving_witness: tuple[Fraction, Fraction]
+    residue_expansion_term_count: int
+    remaining_arithmetic_variable_count: int
+    grouped_left_mobius_coefficient_exact: bool
+    grouped_right_mobius_coefficient_exact: bool
+    kiral_young_cross_kernel_exact: bool
+    pole_subtracted_identity_exact: bool
+    signed_level_frequency_trilinear_estimate_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class EisensteinCrossCuspRamificationDensityAudit:
+    prime: int
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    expected_absolute_diagonal_cusp_factor: Fraction
+    offdiagonal_cusp_factor_squared: Fraction
+    cross_average_majorant_squared: Fraction
+    cross_average_squared_prime_exponent: Fraction
+    same_cusp_average_squared_prime_exponent: Fraction
+    extra_cross_density_amplitude_saving_exponent: Fraction
+    center_pre_density_bound_exponent: Fraction
+    candidate_center_density_saving_exponent: Fraction
+    candidate_center_post_density_bound_exponent: Fraction
+    smooth_interval_boundary_has_divisor_subpower_cost: bool
+    unrestricted_two_index_density_bound_proved: bool
+    candidate_density_would_close_center: bool
+    physical_tensor_preserves_unrestricted_density: bool
+    residue_residue_terms_covered: bool
+    residue_dual_mixed_terms_covered: bool
+    completed_residue_trilinear_gate_covered: bool
+    continuous_local_gate_covered: bool
+    global_ratio_gcd_aggregation_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
 class NewformLevelMobiusProjectorAudit:
     prime: int
     squarefree_level_index: Fraction
@@ -10373,6 +10422,143 @@ def prime_level_eisenstein_cross_cusp_audit(
     )
 
 
+def completed_eisenstein_residue_trilinear_audit(
+    *,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+    product_variable_exponent: Fraction,
+) -> CompletedEisensteinResidueTrilinearAudit:
+    """Isolate the exact signed level-frequency residue gate.
+
+    Group the two Mobius factor variables on each side into coefficients
+    ``alpha(A)`` and ``beta(B)``.  For every separated physical tensor,
+    write each Eisenstein polynomial as ``A_i=R_i+D_i`` using the exact
+    pole-subtracted functional equation.  Removing the already dualized
+    ``D_1*D_2`` term leaves exactly
+
+    ``R_1*R_2 + R_1*D_2 + D_1*R_2``.
+
+    The h and delta variables are evaluated inside these explicit residue
+    and dual transforms.  The remaining arithmetic variables are the two
+    squarefree level factors ``A,B`` and the normalized Poisson frequency
+    ``m``.  Hence this is a genuine Mobius-weighted trilinear gate.
+
+    Its primal exponent is the already audited product large-sieve
+    exponent ``3/2+x/2``.  On the Type-II square it has maximal deficit
+    ``1/8`` at ``alpha=beta=5/4``.
+    """
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    h = F(product_variable_exponent)
+    if min(alpha, beta, h) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    level = alpha + beta
+    eta = min(alpha, beta)
+    residual = min(h, level)
+    excess = _positive_part(eta + residual - level)
+    bound = F(3, 2) + excess / 2
+    target = F(2)
+    required = _positive_part(bound - target)
+    return CompletedEisensteinResidueTrilinearAudit(
+        product_variable_exponent=h,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        poisson_frequency_exponent=eta,
+        primal_residue_bound_exponent=bound,
+        target_exponent=target,
+        required_saving_exponent=required,
+        maximum_required_saving_exponent=F(1, 8),
+        maximum_saving_witness=(F(5, 4), F(5, 4)),
+        residue_expansion_term_count=3,
+        remaining_arithmetic_variable_count=3,
+        grouped_left_mobius_coefficient_exact=True,
+        grouped_right_mobius_coefficient_exact=True,
+        kiral_young_cross_kernel_exact=True,
+        pole_subtracted_identity_exact=True,
+        signed_level_frequency_trilinear_estimate_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def eisenstein_cross_cusp_ramification_density_audit(
+    *,
+    prime: int,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+) -> EisensteinCrossCuspRamificationDensityAudit:
+    """Compute the unrestricted local ramification-density candidate.
+
+    Uniformly in the spectral parameter, the finite local factors from
+    Kiral--Young satisfy
+
+    ``|D_p(0)|=1/p``,
+    ``|D_p(v)| <= (p-1)(v+1)/p`` for ``v>=1``, and
+    ``|O_p(v)| <= sqrt(p)/(p-1)``.
+
+    Under the natural valuation measure
+    ``P(v=k)=(1-1/p)p^(-k)``, the first two inequalities give
+
+    ``E|D_p| <= (3p-2)/p^2``.
+
+    For two unrestricted independent integer indices, the absolute
+    cross-cusp projector is therefore at most ``2|O_p|E|D_p|`` on
+    average, whose square is
+
+    ``4p(3p-2)^2 / ((p-1)^2 p^4)``.
+
+    Smooth interval endpoints add a divisor-subpower boundary term.
+    This calculation does *not* show that the exact physical tensor,
+    its ratio/gcd restrictions, or its pole-subtracted mixed terms
+    preserve the unrestricted valuation measure.  Accordingly all
+    completed-residue and global coverage flags remain false.
+    """
+    if prime < 3:
+        raise ValueError("use an odd prime")
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    if min(alpha, beta) < 0:
+        raise ValueError("level-factor exponents must be nonnegative")
+
+    expected_abs_d = F(3 * prime - 2, prime**2)
+    offdiagonal_squared = F(prime, (prime - 1) ** 2)
+    cross_average_squared = (
+        4 * offdiagonal_squared * expected_abs_d * expected_abs_d
+    )
+    center = completed_eisenstein_residue_trilinear_audit(
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        product_variable_exponent=alpha + beta,
+    )
+    candidate_saving = min(alpha, beta)
+    candidate_post = center.primal_residue_bound_exponent - candidate_saving
+    return EisensteinCrossCuspRamificationDensityAudit(
+        prime=prime,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        expected_absolute_diagonal_cusp_factor=expected_abs_d,
+        offdiagonal_cusp_factor_squared=offdiagonal_squared,
+        cross_average_majorant_squared=cross_average_squared,
+        cross_average_squared_prime_exponent=F(-3),
+        same_cusp_average_squared_prime_exponent=F(-2),
+        extra_cross_density_amplitude_saving_exponent=F(1),
+        center_pre_density_bound_exponent=center.primal_residue_bound_exponent,
+        candidate_center_density_saving_exponent=candidate_saving,
+        candidate_center_post_density_bound_exponent=candidate_post,
+        smooth_interval_boundary_has_divisor_subpower_cost=True,
+        unrestricted_two_index_density_bound_proved=True,
+        candidate_density_would_close_center=candidate_post < center.target_exponent,
+        physical_tensor_preserves_unrestricted_density=False,
+        residue_residue_terms_covered=False,
+        residue_dual_mixed_terms_covered=False,
+        completed_residue_trilinear_gate_covered=False,
+        continuous_local_gate_covered=False,
+        global_ratio_gcd_aggregation_proved=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
 def newform_level_mobius_projector_audit(
     *,
     prime: int,
@@ -17464,6 +17650,95 @@ def main() -> None:
         "continuous="
         f"{prime_cross.continuous_spectrum_gate_covered},"
         f"covered={prime_cross.whole_mobius_gate_covered}"
+    )
+    residue_trilinear = completed_eisenstein_residue_trilinear_audit(
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+        product_variable_exponent=F(5, 2),
+    )
+    print(
+        "large_q_transition: completed_eisenstein_residue_trilinear="
+        f"H={_fmt(residue_trilinear.product_variable_exponent)},"
+        f"alpha={_fmt(residue_trilinear.left_level_factor_exponent)},"
+        f"beta={_fmt(residue_trilinear.right_level_factor_exponent)},"
+        f"level={_fmt(residue_trilinear.ambient_level_exponent)},"
+        "poisson="
+        f"{_fmt(residue_trilinear.poisson_frequency_exponent)},"
+        "bound="
+        f"{_fmt(residue_trilinear.primal_residue_bound_exponent)},"
+        f"target={_fmt(residue_trilinear.target_exponent)},"
+        "required="
+        f"{_fmt(residue_trilinear.required_saving_exponent)},"
+        "max_required="
+        f"{_fmt(residue_trilinear.maximum_required_saving_exponent)},"
+        "witness="
+        f"{_fmt(residue_trilinear.maximum_saving_witness[0])}:"
+        f"{_fmt(residue_trilinear.maximum_saving_witness[1])},"
+        f"terms={residue_trilinear.residue_expansion_term_count},"
+        f"variables={residue_trilinear.remaining_arithmetic_variable_count},"
+        "left_group="
+        f"{residue_trilinear.grouped_left_mobius_coefficient_exact},"
+        "right_group="
+        f"{residue_trilinear.grouped_right_mobius_coefficient_exact},"
+        "cross_kernel="
+        f"{residue_trilinear.kiral_young_cross_kernel_exact},"
+        "pole_identity="
+        f"{residue_trilinear.pole_subtracted_identity_exact},"
+        "trilinear="
+        f"{residue_trilinear.signed_level_frequency_trilinear_estimate_proved},"
+        "continuous="
+        f"{residue_trilinear.continuous_spectrum_gate_covered},"
+        f"covered={residue_trilinear.whole_mobius_gate_covered}"
+    )
+    ramification_density = eisenstein_cross_cusp_ramification_density_audit(
+        prime=5,
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: eisenstein_cross_cusp_ramification_density="
+        f"prime={ramification_density.prime},"
+        "alpha="
+        f"{_fmt(ramification_density.left_level_factor_exponent)},"
+        "beta="
+        f"{_fmt(ramification_density.right_level_factor_exponent)},"
+        "EabsD="
+        f"{_fmt(ramification_density.expected_absolute_diagonal_cusp_factor)},"
+        "O2="
+        f"{_fmt(ramification_density.offdiagonal_cusp_factor_squared)},"
+        "cross_avg2="
+        f"{_fmt(ramification_density.cross_average_majorant_squared)},"
+        "cross_exp="
+        f"{_fmt(ramification_density.cross_average_squared_prime_exponent)},"
+        "same_exp="
+        f"{_fmt(ramification_density.same_cusp_average_squared_prime_exponent)},"
+        "extra_amplitude="
+        f"{_fmt(ramification_density.extra_cross_density_amplitude_saving_exponent)},"
+        "pre="
+        f"{_fmt(ramification_density.center_pre_density_bound_exponent)},"
+        "candidate_saving="
+        f"{_fmt(ramification_density.candidate_center_density_saving_exponent)},"
+        "candidate_post="
+        f"{_fmt(ramification_density.candidate_center_post_density_bound_exponent)},"
+        "smooth_boundary="
+        f"{ramification_density.smooth_interval_boundary_has_divisor_subpower_cost},"
+        "unrestricted="
+        f"{ramification_density.unrestricted_two_index_density_bound_proved},"
+        "candidate_closes="
+        f"{ramification_density.candidate_density_would_close_center},"
+        "physical_tensor="
+        f"{ramification_density.physical_tensor_preserves_unrestricted_density},"
+        "RR="
+        f"{ramification_density.residue_residue_terms_covered},"
+        "mixed="
+        f"{ramification_density.residue_dual_mixed_terms_covered},"
+        "residue_gate="
+        f"{ramification_density.completed_residue_trilinear_gate_covered},"
+        "continuous="
+        f"{ramification_density.continuous_local_gate_covered},"
+        "global_gcd="
+        f"{ramification_density.global_ratio_gcd_aggregation_proved},"
+        f"covered={ramification_density.whole_mobius_gate_covered}"
     )
     newform_level = newform_level_mobius_projector_audit(prime=5)
     print(

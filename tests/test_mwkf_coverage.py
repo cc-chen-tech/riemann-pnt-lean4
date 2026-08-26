@@ -4811,6 +4811,89 @@ def test_prime_level_eisenstein_cross_cusp_keeps_half_level_deficit() -> None:
     assert not audit.continuous_spectrum_gate_covered
 
 
+def test_completed_eisenstein_residue_is_exact_level_frequency_trilinear_gate() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "completed_eisenstein_residue_trilinear_audit",
+        None,
+    )
+    assert adapter is not None, "completed residue trilinear audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109q The completed Eisenstein residue is a three-variable gate",
+        "\\tag{4.845by}",
+        "\\tag{4.845ca}",
+        "completed_eisenstein_residue_trilinear_audit",
+    ):
+        assert marker in note
+
+    center = adapter(
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+        product_variable_exponent=F(5, 2),
+    )
+    assert center.ambient_level_exponent == F(5, 2)
+    assert center.poisson_frequency_exponent == F(5, 4)
+    assert center.primal_residue_bound_exponent == F(17, 8)
+    assert center.target_exponent == F(2)
+    assert center.required_saving_exponent == F(1, 8)
+    assert center.maximum_required_saving_exponent == F(1, 8)
+    assert center.maximum_saving_witness == (F(5, 4), F(5, 4))
+    assert center.residue_expansion_term_count == 3
+    assert center.remaining_arithmetic_variable_count == 3
+    assert center.grouped_left_mobius_coefficient_exact
+    assert center.grouped_right_mobius_coefficient_exact
+    assert center.kiral_young_cross_kernel_exact
+    assert center.pole_subtracted_identity_exact
+    assert not center.signed_level_frequency_trilinear_estimate_proved
+    assert not center.continuous_spectrum_gate_covered
+    assert not center.whole_mobius_gate_covered
+
+
+def test_cross_cusp_ramification_density_is_only_a_local_candidate() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "eisenstein_cross_cusp_ramification_density_audit",
+        None,
+    )
+    assert adapter is not None, "cross-cusp density audit is missing"
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109r Ramification density gives a local candidate, not a closure",
+        "\\tag{4.845cb}",
+        "\\tag{4.845cd}",
+        "eisenstein_cross_cusp_ramification_density_audit",
+    ):
+        assert marker in note
+
+    audit = adapter(
+        prime=5,
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    assert audit.expected_absolute_diagonal_cusp_factor == F(13, 25)
+    assert audit.offdiagonal_cusp_factor_squared == F(5, 16)
+    assert audit.cross_average_majorant_squared == F(169, 500)
+    assert audit.cross_average_squared_prime_exponent == F(-3)
+    assert audit.same_cusp_average_squared_prime_exponent == F(-2)
+    assert audit.extra_cross_density_amplitude_saving_exponent == F(1)
+    assert audit.center_pre_density_bound_exponent == F(17, 8)
+    assert audit.candidate_center_density_saving_exponent == F(5, 4)
+    assert audit.candidate_center_post_density_bound_exponent == F(7, 8)
+    assert audit.smooth_interval_boundary_has_divisor_subpower_cost
+    assert audit.unrestricted_two_index_density_bound_proved
+    assert audit.candidate_density_would_close_center
+    assert not audit.physical_tensor_preserves_unrestricted_density
+    assert not audit.residue_residue_terms_covered
+    assert not audit.residue_dual_mixed_terms_covered
+    assert not audit.completed_residue_trilinear_gate_covered
+    assert not audit.continuous_local_gate_covered
+    assert not audit.global_ratio_gcd_aggregation_proved
+    assert not audit.whole_mobius_gate_covered
+
+
 def test_mobius_level_weight_is_not_the_newform_kuznetsov_projector() -> None:
     adapter = getattr(
         coverage_audit,

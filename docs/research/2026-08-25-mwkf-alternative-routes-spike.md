@@ -15006,6 +15006,211 @@ residue-level ledger, continuous-spectrum gate, and whole Möbius gate
 false.
 
 
+### 4.109q The completed Eisenstein residue is a three-variable gate
+
+The physical cross-cusp formula now permits the continuous remainder
+to be stated without an unspecified oldspace adapter.  In one fixed
+Type-I/II allocation and dyadic factor box, group the two Möbius
+variables on each side as
+
+\[
+ \boxed{
+ \begin{aligned}
+ \alpha_{\mathcal D,\mathcal B}(A)
+ &=\sum_{\substack{db=A\\d\in\mathcal D,\ b\in\mathcal B}}
+   \mu(d)\mu(b)\,w_{\mathcal D,\mathcal B}(d,b),\\
+ \beta_{\mathcal D',\mathcal B'}(B)
+ &=\sum_{\substack{d'b'=B\\d'\in\mathcal D',\ b'\in\mathcal B'}}
+   \mu(d')\mu(b')\,w'_{\mathcal D',\mathcal B'}(d',b').
+ \end{aligned}}
+\tag{4.845by}
+\]
+
+The endpoint inequalities \(d\leq U,de>U,b\leq V\) or \(b>V\)
+are part of the displayed smooth weights.  Since the original entries
+are squarefree and coprime, \(A,B\) are squarefree and \((A,B)=1\).
+Equation (4.845by) is a finite regrouping, not an estimate.
+
+For one tensor from the physical nuclear decomposition, write the two
+Eisenstein polynomials as
+\[
+ A_t(Y_i;W_i)=R_i(t)+D_i(t)
+\]
+using (4.845bq)--(4.845br).  The reciprocal-length term
+\(D_1D_2\) is the part to which the primal/dual large-sieve argument
+applies.  The remaining identity is exactly
+
+\[
+ \boxed{
+ A_t(Y_1;W_1)A_t(Y_2;W_2)-D_1(t)D_2(t)
+ =R_1(t)R_2(t)+R_1(t)D_2(t)+D_1(t)R_2(t).}
+\tag{4.845bz}
+\]
+
+Let \(\mathscr H_{A,B}(t;m)\) denote the exact Bessel--Mellin test
+weight multiplied by the squarefree product of the local
+Kiral--Young cross factors (4.845bw).  After the \(h,\delta\)
+polynomials in (4.845bz) have been evaluated by their displayed
+residue or dual formulas, the normalized continuous residual for the
+box is
+
+\[
+ \begin{aligned}
+ \mathfrak R_{\alpha,\beta}[\Psi]
+ :=\frac1M
+ \sum_{\substack{A\asymp T^\alpha,\ B\asymp T^\beta\\(A,B)=1}}
+ \alpha_{\mathcal D,\mathcal B}(A)
+ \beta_{\mathcal D',\mathcal B'}(B)
+ \sum_{m\ne0}\widehat U(m/M)
+ \int_{\mathbb R}\mathscr H_{A,B}(t;m)\\
+ {}\times
+ \bigl(R_1(t)R_2(t)+R_1(t)D_2(t)+D_1(t)R_2(t)\bigr)\,dt,
+ \qquad M=T^{\min(\alpha,\beta)+o(1)}.
+ \end{aligned}
+\]
+
+Thus the remaining arithmetic variables are precisely \(A,B,m\):
+this is a Möbius-weighted three-variable sum, with all local
+ramification, smooth weights, and archimedean transforms specified.
+The finite tensor integral has polylogarithmic total variation by
+(4.845ai).
+
+In the normalization of (4.845bc), the primal estimate gives
+\[
+ E_{\rm primal}=3/2+x(\alpha,\beta)/2.
+\]
+On the residual Type-II square its unique worst point is
+\((\alpha,\beta)=(5/4,5/4)\), where
+
+\[
+ \boxed{
+ |\mathfrak R_{5/4,5/4}[\Psi]|
+ \ \text{currently has exponent }\frac{17}{8},
+ \qquad
+ |\mathfrak R_{5/4,5/4}[\Psi]|
+ \ll_{C,W}T^2(\log T)^{-C}
+ \ \text{is required}.}
+\tag{4.845ca}
+\]
+
+The missing power is therefore exactly \(T^{1/8}\).  On the boundary
+of (4.845bd), only arbitrary logarithmic decay is required.  Proving
+(4.845ca), uniformly over the exact divisor allocations and physical
+nuclear measure, closes the continuous local gate; no stronger
+all-purpose spectral theorem is needed.
+
+The interface completed_eisenstein_residue_trilinear_audit records the
+three residue terms, the three remaining arithmetic variables, the
+\(17/8\) center exponent, and the \(1/8\) required saving.  It leaves
+the signed trilinear estimate, continuous-spectrum gate, and whole
+Möbius gate false.
+
+
+### 4.109r Ramification density gives a local candidate, not a closure
+
+The pointwise prime-level witness (4.845bx) occurs only when one
+Fourier index is \(p\)-ramified.  There is therefore a stronger
+*unrestricted-index* average.  Remove the common
+\(\zeta(1+2it)^{-1}\) factor as in Section 4.109p and put
+\(v=v_p(n)\).  Uniformly for real \(t\), the finite Kiral--Young
+factors satisfy
+
+\[
+ \boxed{
+ |D_p(0,1/2+it)|=\frac1p,\qquad
+ |D_p(v,1/2+it)|\leq\frac{p-1}{p}(v+1)\ (v\geq1),
+ \qquad
+ |O_p(v,1/2+it)|\leq\frac{\sqrt p}{p-1}.}
+\tag{4.845cb}
+\]
+
+Indeed the first two bounds use
+\(\left|\sum_{j=0}^{v}p^{-2itj}\right|\leq v+1\), and the last uses
+\(\left|1-p^{-1-2it}\right|\geq1-p^{-1}\).  For an unrestricted
+integer, the exact natural valuation probabilities are
+\(\Pr(v=k)=(1-p^{-1})p^{-k}\).  Consequently
+
+\[
+ \begin{aligned}
+ \mathbb E_p|D_p|
+ &\leq
+ \left(1-\frac1p\right)
+ \left\{\frac1p+
+ \frac{p-1}{p}\sum_{k\geq1}\frac{k+1}{p^k}\right\}\\
+ &=\frac{3p-2}{p^2}.
+ \end{aligned}
+\]
+
+For two independent unrestricted indices \(m,n\), the triangle
+inequality applied to the physical cross projector gives the exact
+majorant
+
+\[
+ \boxed{
+ \left(
+ \mathbb E_{p,m,n}
+ |D_p(m)\overline{O_p(n)}+O_p(m)\overline{D_p(n)}|
+ \right)^2
+ \leq
+ \frac{4(3p-2)^2}{p^3(p-1)^2}
+ \asymp p^{-3}.}
+\tag{4.845cc}
+\]
+
+At \(p=5\), the three rational values are
+\[
+ \mathbb E_5|D_5|\leq\frac{13}{25},\qquad
+ |O_5|^2\leq\frac5{16},\qquad
+ (2|O_5|\mathbb E_5|D_5|)^2\leq\frac{169}{500}.
+\]
+Thus the unrestricted average has amplitude \(p^{-3/2+o(1)}\),
+one full factor \(p^{-1}\) better than the pointwise
+\(p^{-1/2+o(1)}\) bound.
+
+The corresponding elementary smooth-interval statement is also
+available.  Expanding the valuation factors into divisibility
+indicators and counting multiples in an interval of length \(X\)
+gives, for squarefree \(A\),
+
+\[
+ \boxed{
+ \frac1X\sum_{n\in\mathbb Z}V(n/X)
+ \prod_{p\mid A}|D_p(n,1/2+it)|
+ \ll_{V,C}
+ A^{-1}\tau(A)^C+X^{-1}\tau(A)^C.}
+\tag{4.845cd}
+\]
+
+The constant \(C\) is absolute after fixing finitely many seminorms of
+\(V\); the \(O(1)\) boundary error for each divisibility condition
+produces only the displayed divisor-power cost.  When \(X\asymp A\),
+(4.845cd) is \(A^{-1+o(1)}\).  Formally inserting this extra
+\(A^{-1}\) into the center ledger would change
+\[
+ \frac{17}{8}\longmapsto
+ \frac{17}{8}-\frac54=\frac78,
+\]
+so the candidate has much more than the required \(1/8\) saving.
+
+This is not yet a proof for \(\mathfrak R_{\alpha,\beta}[\Psi]\).
+The physical sum has ratio and gcd restrictions inherited from the
+original \(r,s,h,\delta\) allocation; its indices are \(m\) and the
+completed residue/dual transforms of \(h\delta\), not two independent
+unrestricted integers.  In particular, the current derivation has not
+proved that every physical nuclear tensor preserves the valuation
+measure used in (4.845cc), nor has it controlled the two mixed terms
+\(R_1D_2\) and \(D_1R_2\) uniformly at all reciprocal-length
+endpoints.  These are theorem hypotheses, not polylogarithmic
+bookkeeping.
+
+The interface eisenstein_cross_cusp_ramification_density_audit records
+the exact local majorant and the *candidate* center exponent \(7/8\).
+It marks the unrestricted two-index density bound proved, while
+keeping physical-tensor density preservation, all three completed
+residue terms, the continuous local gate, global ratio/gcd
+aggregation, and the whole Möbius gate false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps
