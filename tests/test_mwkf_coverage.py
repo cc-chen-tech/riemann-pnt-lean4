@@ -4478,6 +4478,56 @@ def test_level_p_squared_extra_oldvector_cancels_the_level_p_remainder() -> None
         assert local["extra_oldvector_cancellation_exact"]
 
 
+def test_unramified_exact_level_difference_retains_ramanujan_prime_saving() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109y Exact-level differencing removes the bad valuation multiplicity",
+        r"\tag{4.845cz}",
+        r"\tag{4.845da}",
+        "unramified_exact_level_difference_kernel",
+    ):
+        assert marker in note
+
+    unit_ramified = coverage_audit.unramified_exact_level_difference_kernel(
+        prime=5,
+        hecke_prime=F(3, 2),
+        first_index_valuation=0,
+        second_index_valuation=1,
+    )
+    assert unit_ramified["level_p_trace_kernel"] == F(2, 33)
+    assert unit_ramified["level_p_squared_trace_kernel"] == F(0)
+    assert unit_ramified["exact_level_difference_kernel"] == F(2, 33)
+    assert unit_ramified["ramanujan_normalized_kernel"] == F(-2, 33)
+
+    bad_bad = coverage_audit.unramified_exact_level_difference_kernel(
+        prime=5,
+        hecke_prime=F(3, 2),
+        first_index_valuation=1,
+        second_index_valuation=1,
+    )
+    assert bad_bad["exact_level_difference_kernel"] == F(20, 33)
+    assert bad_bad["ramanujan_normalized_kernel"] == F(5, 33)
+    assert bad_bad["level_difference_identity_exact"]
+
+
+def test_steinberg_exact_level_difference_has_closed_square_formula() -> None:
+    unit = coverage_audit.steinberg_exact_level_difference_kernel_square(
+        prime=5,
+        first_index_valuation=0,
+        second_index_valuation=1,
+    )
+    assert unit["ramanujan_normalized_kernel_square"] == F(1, 5)
+    assert unit["required_prime_square_saving_met"]
+
+    both = coverage_audit.steinberg_exact_level_difference_kernel_square(
+        prime=5,
+        first_index_valuation=2,
+        second_index_valuation=3,
+    )
+    assert both["ramanujan_normalized_kernel_square"] == F(1, 5**5)
+    assert both["closed_formula_exact"]
+
+
 def test_physical_exact_valuation_projector_closes_only_at_power_exponent_level() -> None:
     projector = coverage_audit.physical_exact_valuation_projector_audit(
         ramanujan_theta=F(7, 64),

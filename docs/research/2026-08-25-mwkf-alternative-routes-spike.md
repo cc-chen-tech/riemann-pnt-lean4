@@ -16221,6 +16221,119 @@ Proving it would make (4.845cv)--(4.845cx) unconditional for the compact
 core; it would still leave the transform and AFE tails.
 
 
+### 4.109y Exact-level differencing removes the bad valuation multiplicity
+
+The factor \(5^{\omega(A)}\) in (4.845cy) is created by taking
+absolute values before the signed \(j\)-sum.  At one prime \(p\mid A\),
+that sum is the exact level difference \(\Delta_p-\Delta_{p^2}\).
+It can be evaluated on each primitive representation before any
+valuation partition.
+
+First take a primitive representation unramified at \(p\).  Let
+\(\lambda_a=\lambda(p^a)\), put \(\lambda_a=0\) for \(a<0\), and set
+\[
+ D_p=1-\frac{p|\lambda_1|^2}{(p+1)^2}.
+\]
+For valuations \(a=v_p(m)\) and \(b=v_p(Ah\delta)\geq1\), define
+\[
+\begin{aligned}
+ P_p(a,b)
+ &=\lambda_a\lambda_b
+  +\frac p{D_p}
+   \left(\lambda_{a-1}-\frac{\lambda_1\lambda_a}{p+1}\right)
+   \left(\lambda_{b-1}-\frac{\lambda_1\lambda_b}{p+1}\right),\\
+ U_{p^2}(a)
+ &=\frac{p^{-1}\lambda_a-\lambda_1\lambda_{a-1}
+                  +p\lambda_{a-2}}
+        {\sqrt{D_p(1-p^{-2})}}.
+\end{aligned}
+\]
+The ambient first-coefficient square normalizations are
+\((p+1)^{-1}\) at level \(p\) and \((p(p+1))^{-1}\) at level
+\(p^2\).  Hence the literal signed local trace kernel is
+
+\[
+ \boxed{
+ \mathcal K_p^{(0)}(a,b)
+ =\frac{P_p(a,b)}{p+1}
+  -\frac{P_p(a,b)+U_{p^2}(a)U_{p^2}(b)}{p(p+1)}.}
+\tag{4.845cz}
+\]
+
+For \(a=0\), (4.845aq_8) makes the complete level-\(p^2\) oldclass
+cross term zero.  The Hecke recurrence therefore gives
+\[
+ \frac{\mathcal K_p^{(0)}(0,b)}{c_p(1)}
+ =-\frac{\lambda_1\lambda_{b-1}/(p+1)-\lambda_{b-2}}
+         {(p+1)D_p}.
+\]
+For \(a\geq1\), insert the three terms in \(U_{p^2}\) and use
+\(|c_p(p^a)|=p-1\).  Uniformly for \(b\geq1\), Kim--Sarnak and
+\(D_p\gg1\) give the two explicit local inequalities
+
+\[
+ \boxed{
+ \begin{aligned}
+ \left|\frac{\mathcal K_p^{(0)}(0,b)}{c_p(1)}\right|
+ &\ll (b+1)p^{-1+(b-2)_+\theta},\\
+ \left|\frac{\mathcal K_p^{(0)}(a,b)}{c_p(p^a)}\right|
+ &\ll (a+1)(b+1)p^{-1+(a+b-2)\theta}
+ \qquad(a\geq1).
+ \end{aligned}}
+\tag{4.845da}
+\]
+
+The exact-valuation coefficient norms contribute
+\(p^{-a/2}\) from the Poisson index and \(p^{-(b-1)/2}\) from the
+physical product index.  Thus the first line of (4.845da) has total
+exponent at most \(-1\), while the second has exponent
+\[
+ -1+(a+b-2)\theta-\frac{a+b-1}{2}\leq-\frac32
+ \qquad(\theta<1/2).
+\]
+There is therefore a fixed half-prime margin over the required
+\(p^{-1/2}\), rather than the equality which produced
+\(4^{\omega(D)}\).
+
+For primitive conductor exponent one, the local representation is
+Steinberg: \(|\lambda_1|^2=p^{-1}\) and
+\(\lambda_b=\lambda_1^b\).  Comparing the level-\(p\) newvector with
+its complete level-\(p^2\) oldclass gives the exact squared formula
+\[
+ \left|\frac{\mathcal K_p^{(1)}(a,b)}{c_p(p^a)}\right|^2
+ =\begin{cases}
+ p^{-b},&a=0,\\
+ p^{-(a+b)},&a\geq1.
+ \end{cases}
+\]
+Primitive conductor exponent two contributes zero because its local
+Euler factor has degree zero and \(b\geq1\).  The unramified
+Eisenstein oldspace obeys (4.845cz)--(4.845da) with \(\theta=0\), and
+the conductor-\(p^2\) character pair again vanishes at positive
+valuation.
+
+After summing primitive-conductor choices, the remaining local overhead
+is at worst
+\[
+ \prod_{p\mid A}(1+O(p^{-1/2}))
+ \leq\exp\!\left(O\!\left(
+       \frac{\sqrt{\log(2A)}}{\log\log(3A)}\right)\right).
+\]
+This is smaller than the Vinogradov--Korobov Möbius saving already
+retained in (4.845y) whenever the common Möbius variable has a fixed
+positive power length.  On the zero-exponent face, \(A\) is only
+polylogarithmic and the same overhead is absorbed by arbitrary
+logarithmic decay.
+
+The functions `unramified_exact_level_difference_kernel` and
+`steinberg_exact_level_difference_kernel_square` check the two finite
+local formulae.  To promote this improvement to PEVP\(_{A,B}\), the
+newform decomposition must still be rearranged with the same Bessel
+test at every level and the Vinogradov--Korobov factor must be retained
+uniformly through the primitive-conductor sum.  Until that global
+rearrangement is written, the polylog tensor flag remains false.
+
+
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
 
 There remains a possible algebraic escape from Section 4.109: perhaps

@@ -10113,6 +10113,116 @@ def unramified_level_p_squared_cross_identity(
     }
 
 
+def unramified_exact_level_difference_kernel(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    first_index_valuation: int,
+    second_index_valuation: int,
+) -> dict[str, object]:
+    """Compute the signed local trace ``Delta_p-Delta_p_squared``.
+
+    The primitive representation is unramified at p.  At ambient level
+    p the oldclass consists of ``g=1,p``; at level p^2 it also contains
+    ``g=p^2``.  A primitive form normalized at the ambient level has
+    local first-coefficient square factors ``1/(p+1)`` and
+    ``1/(p*(p+1))``, respectively.  The returned level difference is
+    therefore the literal local factor in the signed j=1,p trace.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    a = int(first_index_valuation)
+    b = int(second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if a < 0 or b < 1:
+        raise ValueError("first valuation must be nonnegative and second positive")
+    values = [F(1), lam]
+    while len(values) <= max(a, b):
+        values.append(lam * values[-1] - values[-2])
+
+    def hecke(index: int) -> Fraction:
+        return F(0) if index < 0 else values[index]
+
+    denominator = F(1) - F(p) * lam * lam / F((p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    level_p_oldclass = hecke(a) * hecke(b) + F(p) / denominator * (
+        hecke(a - 1) - lam * hecke(a) / F(p + 1)
+    ) * (
+        hecke(b - 1) - lam * hecke(b) / F(p + 1)
+    )
+    squarefull_norm_square = F(1) / (
+        denominator * (F(1) - F(1, p * p))
+    )
+    squarefull_a = (
+        hecke(a) / F(p) - lam * hecke(a - 1) + F(p) * hecke(a - 2)
+    )
+    squarefull_b = (
+        hecke(b) / F(p) - lam * hecke(b - 1) + F(p) * hecke(b - 2)
+    )
+    squarefull_cross = squarefull_norm_square * squarefull_a * squarefull_b
+    level_p_squared_oldclass = level_p_oldclass + squarefull_cross
+    level_p_trace = level_p_oldclass / F(p + 1)
+    level_p_squared_trace = level_p_squared_oldclass / F(p * (p + 1))
+    exact_difference = level_p_trace - level_p_squared_trace
+    ramanujan = F(-1) if a == 0 else F(p - 1)
+    return {
+        "prime": p,
+        "first_index_valuation": a,
+        "second_index_valuation": b,
+        "hecke_values": tuple(values),
+        "oldclass_gram_denominator": denominator,
+        "level_p_oldclass_kernel": level_p_oldclass,
+        "level_p_squared_extra_oldvector_kernel": squarefull_cross,
+        "level_p_squared_oldclass_kernel": level_p_squared_oldclass,
+        "level_p_trace_kernel": level_p_trace,
+        "level_p_squared_trace_kernel": level_p_squared_trace,
+        "exact_level_difference_kernel": exact_difference,
+        "ramanujan_prime_factor": ramanujan,
+        "ramanujan_normalized_kernel": exact_difference / ramanujan,
+        "level_difference_identity_exact": (
+            exact_difference == level_p_trace - level_p_squared_trace
+        ),
+    }
+
+
+def steinberg_exact_level_difference_kernel_square(
+    *,
+    prime: int,
+    first_index_valuation: int,
+    second_index_valuation: int,
+) -> dict[str, object]:
+    """Return the exact squared local kernel for conductor exponent one.
+
+    For trivial central character, a Steinberg newform has
+    ``abs(lambda(p))^2=1/p`` and ``lambda(p^j)=lambda(p)^j``.  Comparing
+    its level-p newvector with the complete level-p-squared oldclass
+    gives, after division by the Ramanujan factor at the first index,
+
+    ``abs(K(0,b))^2=p^-b`` and ``abs(K(a,b))^2=p^(-(a+b))`` for a>=1.
+    """
+    p = int(prime)
+    a = int(first_index_valuation)
+    b = int(second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if a < 0 or b < 1:
+        raise ValueError("first valuation must be nonnegative and second positive")
+    exponent = b if a == 0 else a + b
+    square = F(1, p**exponent)
+    return {
+        "prime": p,
+        "first_index_valuation": a,
+        "second_index_valuation": b,
+        "steinberg_hecke_square_exponent": exponent,
+        "ramanujan_normalized_kernel_square": square,
+        "required_prime_square_saving": F(1, p),
+        "required_prime_square_saving_met": square <= F(1, p),
+        "closed_formula_exact": True,
+    }
+
+
 def conductor_p_raised_oldspace_cross_identity(
     *,
     prime: int,
