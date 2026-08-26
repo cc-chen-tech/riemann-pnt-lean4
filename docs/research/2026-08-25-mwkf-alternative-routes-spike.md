@@ -18463,6 +18463,59 @@ aggregation in OLISK.
 The interface unramified_cross_index_tensor_norm_audit checks every
 rational small-prime bound and keeps those three later gates false.
 
+### 4.109zlb All primitive conductor cells retain A inverse one half
+
+The same tensor bound extends to the other primitive local types, but
+only at the level of one fixed primitive representation.
+
+At a Steinberg prime, Section 4.109zfe gives a rank-one kernel.  Its
+second Fourier coefficient has absolute value at most \(p^{-1/2}\),
+and the larger of its two first-index Euler corrections is
+\[
+ 1+\frac1{p^2(p+2)(p-1)}\leq1+\frac1{p^4}.
+\]
+Therefore a set \(S\) of Steinberg primes contributes at most
+\[
+ \frac1{\sqrt{\prod_{p\in S}p}}
+ \prod_{p\in S}(1+p^{-4}).
+\]
+The correction product is uniformly bounded:
+\[
+ \prod_p(1+p^{-4})<\zeta(4)
+ \leq1+\frac1{16}+\int_2^\infty x^{-4}\,dx
+ =\frac{53}{48}<\frac43.
+ \tag{4.845dc_14xy}
+\]
+
+At primitive conductor exponent two, the local newform Euler factor has
+degree zero.  Since \(p\mid Ah\delta\), its positive second-index
+coefficient vanishes.  For the continuous spectrum this is also the
+explicit character calculation (4.845dc_14x).  Thus every nonzero
+primitive representation partitions the primes of \(A\) only between
+the unramified and Steinberg cases.  Combining (4.845dc_14xv) with
+(4.845dc_14xy) gives
+\[
+ \boxed{
+ \mathcal C_A(\pi)
+ \leq\frac{91\cdot(4/3)}{\sqrt A}
+ <\frac{122}{\sqrt A}.}
+ \tag{4.845dc_14xz}
+\]
+
+Hence the complete Maaß, holomorphic, and Eisenstein **finite local
+transfer for each fixed primitive representation** retains the exact
+\(A^{-1/2}\) PEVP amplitude.  The remaining global issue is no longer
+the cross-index oldvector matrix itself.  One must sum the different
+primitive-conductor patterns with their harmonic measures while
+keeping the shifted coefficient lists inside a single
+\((\log T)^{O(1)}\) full-level large sieve.  Taking a separate large
+sieve and a triangle inequality for every conductor pattern would
+reintroduce \(2^{\omega(A)}\), so it is not an admissible completion.
+
+The interface all_conductor_cross_index_tensor_audit marks the
+per-representation tensor bound true, but leaves conductor-pattern
+aggregation, the polylog harmonic large sieve, and PEVP false.
+
 ### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell
 
 The tail \(\mathcal R_{\rm tail}^{(B)}\) in (5.2a) of the exact

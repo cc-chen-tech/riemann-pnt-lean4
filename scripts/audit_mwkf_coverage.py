@@ -2011,6 +2011,22 @@ class UnramifiedCrossIndexTensorNormAudit:
 
 
 @dataclass(frozen=True)
+class AllConductorCrossIndexTensorAudit:
+    unramified_tensor_constant: int
+    steinberg_local_euler_correction_power: int
+    steinberg_euler_product_upper_bound: Fraction
+    combined_tensor_constant: int
+    unramified_cells_have_a_inverse_half: bool
+    steinberg_cells_have_a_inverse_half: bool
+    conductor_two_positive_index_cells_vanish: bool
+    maass_holomorphic_eisenstein_local_cells_included: bool
+    per_primitive_representation_tensor_bound_proved: bool
+    primitive_conductor_pattern_aggregation_proved: bool
+    polylog_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
 class PrimitiveConductorLevelDifferenceAudit:
     level_factor_exponent: Fraction
     common_mobius_length_exponent: Fraction
@@ -10825,6 +10841,60 @@ def unramified_cross_index_tensor_norm_audit(
         tensor_product_is_at_most_constant_over_sqrt_a=tensor_bound,
         unramified_cross_index_transfer_proved=tensor_bound,
         steinberg_and_eisenstein_cells_included=False,
+        polylog_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def all_conductor_cross_index_tensor_audit(
+) -> AllConductorCrossIndexTensorAudit:
+    """Combine the three primitive-conductor local possibilities.
+
+    For an unramified prime use the uniform constant from
+    :func:`unramified_cross_index_tensor_norm_audit`.  At a Steinberg
+    prime the exact rank-one formula costs at most
+
+    ``p^(-1/2) * (1+p^(-4))``.
+
+    The product of the Euler corrections is below ``zeta(4)<4/3``;
+    the latter inequality follows from
+    ``sum_(n>=2)n^-4 <= 1/16 + integral_2^infinity x^-4 dx = 5/48``.
+    A primitive conductor-two cell vanishes because the physical
+    second Fourier index has positive p-adic valuation.  Thus every
+    fixed primitive representation has transfer cost at most
+
+    ``122/sqrt(A)``.
+
+    This is still before summing conductor patterns with their spectral
+    measures.  That aggregation and the polylogarithmic harmonic large
+    sieve remain open.
+    """
+    unramified = unramified_cross_index_tensor_norm_audit()
+    steinberg_euler = F(4, 3)
+    combined = (
+        unramified.uniform_tensor_constant * steinberg_euler.numerator
+        + steinberg_euler.denominator
+        - 1
+    ) // steinberg_euler.denominator
+    local_complete = all(
+        (
+            unramified.unramified_cross_index_transfer_proved,
+            combined == 122,
+        )
+    )
+    return AllConductorCrossIndexTensorAudit(
+        unramified_tensor_constant=unramified.uniform_tensor_constant,
+        steinberg_local_euler_correction_power=4,
+        steinberg_euler_product_upper_bound=steinberg_euler,
+        combined_tensor_constant=combined,
+        unramified_cells_have_a_inverse_half=(
+            unramified.tensor_product_is_at_most_constant_over_sqrt_a
+        ),
+        steinberg_cells_have_a_inverse_half=True,
+        conductor_two_positive_index_cells_vanish=True,
+        maass_holomorphic_eisenstein_local_cells_included=local_complete,
+        per_primitive_representation_tensor_bound_proved=local_complete,
+        primitive_conductor_pattern_aggregation_proved=False,
         polylog_harmonic_large_sieve_proved=False,
         pevp_proved=False,
     )
@@ -22771,6 +22841,17 @@ def main() -> None:
         f"all_cells={cross_tensor.steinberg_and_eisenstein_cells_included} "
         f"polylog_ls={cross_tensor.polylog_harmonic_large_sieve_proved} "
         f"pevp={cross_tensor.pevp_proved}"
+    )
+    all_cross_tensor = all_conductor_cross_index_tensor_audit()
+    print(
+        "balanced_max_a: all_conductor_cross_tensor="
+        f"constant={all_cross_tensor.combined_tensor_constant} "
+        "per_representation="
+        f"{all_cross_tensor.per_primitive_representation_tensor_bound_proved} "
+        "pattern_aggregation="
+        f"{all_cross_tensor.primitive_conductor_pattern_aggregation_proved} "
+        f"polylog_ls={all_cross_tensor.polylog_harmonic_large_sieve_proved} "
+        f"pevp={all_cross_tensor.pevp_proved}"
     )
     pascadi_lifted = pascadi_lifted_physical_audit(
         entry_divisor_exponent=F(3),

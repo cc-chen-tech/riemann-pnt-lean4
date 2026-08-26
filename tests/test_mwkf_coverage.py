@@ -4588,6 +4588,31 @@ def test_unramified_cross_index_transfer_tensors_with_uniform_a_half_saving() ->
     assert not audit.pevp_proved
 
 
+def test_all_primitive_conductor_cells_retain_a_half_per_representation() -> None:
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zlb All primitive conductor cells retain A inverse one half",
+        r"\tag{4.845dc_14xy}",
+        r"\tag{4.845dc_14xz}",
+        "all_conductor_cross_index_tensor_audit",
+    ):
+        assert marker in note
+
+    audit = coverage_audit.all_conductor_cross_index_tensor_audit()
+    assert audit.unramified_tensor_constant == 91
+    assert audit.steinberg_local_euler_correction_power == 4
+    assert audit.steinberg_euler_product_upper_bound == F(4, 3)
+    assert audit.combined_tensor_constant == 122
+    assert audit.unramified_cells_have_a_inverse_half
+    assert audit.steinberg_cells_have_a_inverse_half
+    assert audit.conductor_two_positive_index_cells_vanish
+    assert audit.maass_holomorphic_eisenstein_local_cells_included
+    assert audit.per_primitive_representation_tensor_bound_proved
+    assert not audit.primitive_conductor_pattern_aggregation_proved
+    assert not audit.polylog_harmonic_large_sieve_proved
+    assert not audit.pevp_proved
+
+
 def test_steinberg_exact_level_difference_has_corrected_square_formula() -> None:
     unit = coverage_audit.steinberg_exact_level_difference_kernel_square(
         prime=5,
