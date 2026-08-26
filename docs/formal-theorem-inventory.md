@@ -3446,14 +3446,27 @@ the global target.
 ### `KnownResults` in `RiemannExplorer.lean`
 
 - `conrey_40_percent_zeros_on_critical_line_target`
-  target: a positive-proportion statement on critical-line zeros, expressed as
-  a target alias for `HardyTheorem.selberg_zero_proportion_target`.
+  legacy target: a positive-proportion statement on critical-line zeros,
+  definitionally an alias for `HardyTheorem.selberg_zero_proportion_target`.
+  It is not the genuine strict `> 2/5` simple-zero statement.
   **Closed in-repo (2026-08, via verified external artifact):** proved by
   `HardyTheorem.Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23`
   through the Zeta23-implied `selberg_odd_zero_proportion_target` and the
   repo's existing `selberg_zero_proportion_target_of_odd` and
   `conrey_40_percent_zeros_on_critical_line_target_of_selberg` lemmas (see
   [zeta23-selberg-bridge.md](research/zeta23-selberg-bridge.md)).
+
+### Genuine Conrey two-fifths interface
+
+- `HardyTheorem.conreyTwoFifthsSimpleZerosTarget`
+  counts simple positive-height critical-line zeros against
+  `PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount`, which counts all
+  nontrivial zeros with analytic multiplicity, and requires `c > 2/5`.
+- `HardyTheorem.conreyExplicitAnalyticLowerBound`
+  is the remaining explicit mollified mean-square/argument-principle
+  hypothesis.  The theorem
+  `conreyTwoFifthsSimpleZerosTarget_of_explicit_analytic_lower_bound` closes
+  the target from this hypothesis and the proved explicit-integral margin.
 
 ## Route Interfaces and Reusable Predicates
 
