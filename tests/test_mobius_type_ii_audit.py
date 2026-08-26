@@ -1,52 +1,80 @@
+import sys
 from fractions import Fraction as F
 from math import gcd
-import sys
 from pathlib import Path
-
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mobius_type_ii import (
+    BlomerPascadiMargins,
+    CentralCollisionLedger,
+    CrossInverseFractionCollision,
+    FareyCentralCollisionLedger,
+    InverseFractionSeparation,
     MQWBlockSavings,
     PascadiFullResidueSavings,
+    PascadiModuliMargins,
     WrightFactorSavings,
+    additive_completion_zero_mode,
+    additive_completion_zero_mode_mobius_exponent,
+    additive_product_completion,
     balanced_dual_low_mode_mobius_exponent,
+    balanced_inverse_fraction_spacing_margin,
     balanced_principal_character_mobius_exponent,
+    blomer_pascadi_beats_best_trivial,
+    blomer_pascadi_best_trivial_margins,
     c_coefficient,
-    centered_dual_scales,
     centered_dual_common_mobius_exponent,
     centered_dual_parseval_covers,
     centered_dual_parseval_loss,
+    centered_dual_scales,
+    central_collision_ledger,
+    central_cross_inverse_collision_margins,
     character_large_sieve_unit_gap,
+    coherent_operator_large_sieve_exponent,
+    coherent_operator_large_sieve_gap,
+    coherent_operator_required_exponent,
     coprime_indicator_via_mobius,
+    cross_inverse_fraction_collision,
+    direct_fourfold_random_margin,
     dispersion_pointwise_mean_square_gap,
     dispersion_random_benchmark_gap,
-    direct_fourfold_random_margin,
     elementary_large_sieve_loss,
-    global_unit_principal_completion_margin,
+    farey_central_collision_ledger,
+    farey_near_collision_count,
+    farey_near_collision_divisor_bound,
     generalized_centered_dual_scales,
+    global_unit_principal_completion_margin,
     induced_gauss_outer_mobius_sign,
+    inverse_fraction_separation,
+    inverse_lift_mobius_weight,
     inverse_product_phase_mod_one,
+    migrate_nonprincipal_mobius_sign,
+    mobius_geometric_value,
     mqw_block_savings,
     mqw_initial_rectangle_supremal_saving,
     mqw_initial_rectangle_witness,
-    mobius_geometric_value,
-    migrate_nonprincipal_mobius_sign,
-    nonunit_principal_long_factor_floor,
     nonunit_principal_equal_mobius_exponent,
     nonunit_principal_h_boundary_slack,
     nonunit_principal_is_residual_face,
+    nonunit_principal_long_factor_floor,
     nonunit_principal_trivial_loss,
-    pascadi_balanced_gap,
     pascadi_2024_direct_dispersion_gap,
+    pascadi_averaged_moduli_margins,
+    pascadi_balanced_gap,
     pascadi_full_residue_savings,
     pascadi_optimal_delta,
-    reduce_inverse_product_phase,
     ramanujan_sum,
+    rectangular_product_kernel,
+    rectangular_product_multiplicities,
+    reduce_inverse_product_phase,
+    reduced_inverse_fraction_denominator,
     reverse_unit_affine_progression_length,
     reverse_unit_solution_count_gap,
     squarefree_outer_mobius_ramanujan,
     two_sided_mobius_geometric_value,
+    weighted_farey_collision_sum,
+    weighted_inverse_collision_sum,
     wright_factor_covers,
     wright_factor_savings,
     wright_unbalanced_modulus_margin,
@@ -141,6 +169,63 @@ def test_pascadi_full_residue_optimum_is_the_exact_intersection() -> None:
     assert min(savings.values()) == F(33, 191)
 
 
+def test_blomer_pascadi_has_literal_critical_length_savings() -> None:
+    assert blomer_pascadi_best_trivial_margins(F(1, 2)) == (
+        BlomerPascadiMargins(
+            first=F(1, 32),
+            second=F(1, 32),
+            third=F(1, 18),
+        )
+    )
+    assert blomer_pascadi_beats_best_trivial(F(1, 2))
+
+
+def test_blomer_pascadi_published_nontrivial_endpoints_are_exact() -> None:
+    lower = blomer_pascadi_best_trivial_margins(F(13, 28))
+    upper = blomer_pascadi_best_trivial_margins(F(7, 12))
+    assert lower.first == 0
+    assert upper.third == 0
+    assert not blomer_pascadi_beats_best_trivial(F(13, 28))
+    assert not blomer_pascadi_beats_best_trivial(F(7, 12))
+    assert blomer_pascadi_beats_best_trivial(F(13, 28) + F(1, 10_000))
+    assert blomer_pascadi_beats_best_trivial(F(7, 12) - F(1, 10_000))
+
+
+def test_blomer_pascadi_does_not_cover_the_full_residue_scale() -> None:
+    margins = blomer_pascadi_best_trivial_margins(F(1))
+    assert margins == BlomerPascadiMargins(
+        first=-F(1, 32),
+        second=-F(1, 8),
+        third=-F(5, 18),
+    )
+    assert not blomer_pascadi_beats_best_trivial(F(1))
+
+
+def test_pascadi_averaged_moduli_corollary_covers_only_short_fourier_boxes() -> None:
+    critical = pascadi_averaged_moduli_margins(
+        length=F(1, 2), fixed_modulus=F(1), amplifier=F(1, 2)
+    )
+    assert critical == PascadiModuliMargins(first=F(1, 12), second=F(1, 12))
+    assert critical.best == F(1, 12)
+
+    no_fixed_modulus = pascadi_averaged_moduli_margins(
+        length=F(1, 2), fixed_modulus=F(0), amplifier=F(0)
+    )
+    assert no_fixed_modulus.best == 0
+
+
+def test_pascadi_averaged_moduli_corollary_worsens_full_residue_boxes() -> None:
+    for fixed_modulus in (F(0), F(1, 4), F(1, 2), F(1)):
+        for amplifier in (F(0), fixed_modulus / 2, fixed_modulus):
+            margins = pascadi_averaged_moduli_margins(
+                length=F(1),
+                fixed_modulus=fixed_modulus,
+                amplifier=amplifier,
+            )
+            assert margins.best == -(1 + amplifier) / 6
+            assert margins.best < 0
+
+
 def test_pascadi_still_leaves_the_balanced_local_gap() -> None:
     assert pascadi_balanced_gap() == F(856, 191)
 
@@ -177,6 +262,18 @@ def test_elementary_large_sieve_loses_exactly_square_root_of_a() -> None:
     assert elementary_large_sieve_loss(witnesses["r_long"]) == F(2)
     assert elementary_large_sieve_loss(witnesses["s_long"]) == F(2)
     assert elementary_large_sieve_loss(witnesses["large_q_endpoint"]) == F(1, 2)
+
+
+def test_coherent_modulus_operator_ledger_recovers_the_same_exact_loss() -> None:
+    witnesses = boundary_witnesses()
+    balanced = witnesses["balanced_max_a"]
+    assert coherent_operator_required_exponent(balanced) == F(2)
+    assert coherent_operator_large_sieve_exponent(balanced) == F(9, 2)
+    assert coherent_operator_large_sieve_gap(balanced) == F(5, 2)
+    for box in witnesses.values():
+        assert coherent_operator_large_sieve_gap(box) == (
+            elementary_large_sieve_loss(box)
+        )
 
 
 def test_two_sided_finite_mobius_decomposition_preserves_both_signs() -> None:
@@ -559,6 +656,298 @@ def test_gcd_reduction_preserves_every_small_inverse_product_phase() -> None:
                             reduced.delta_reduced,
                         )
                     )
+
+
+def test_fixed_numerator_inverse_fraction_congruence_is_exact() -> None:
+    certificate = inverse_fraction_separation(r=19, s=11, t=16)
+    assert certificate == InverseFractionSeparation(
+        numerator=-9,
+        denominator=176,
+        distance=F(9, 176),
+        congruence_quotient=-1,
+    )
+    assert (
+        19 * certificate.numerator - (16 - 11)
+        == certificate.congruence_quotient * certificate.denominator
+    )
+
+
+def test_balanced_fixed_numerator_fractions_have_inverse_linear_spacing() -> None:
+    for lower in range(2, 21):
+        for r in range(lower + 1, 2 * lower + 1):
+            for s in range(lower + 1, 2 * lower + 1):
+                for t in range(lower + 1, 2 * lower + 1):
+                    if s == t or gcd(r, s * t) != 1:
+                        continue
+                    certificate = inverse_fraction_separation(r, s, t)
+                    assert certificate.congruence_quotient != 0
+                    assert balanced_inverse_fraction_spacing_margin(
+                        r, s, t, lower=lower
+                    ) >= 0
+
+
+def test_equal_moduli_are_the_only_zero_fixed_numerator_separation() -> None:
+    for modulus in range(2, 30):
+        for r in range(1, 2 * modulus):
+            if gcd(r, modulus) != 1:
+                continue
+            certificate = inverse_fraction_separation(r, modulus, modulus)
+            assert certificate.numerator == 0
+            assert certificate.distance == 0
+
+
+def test_cross_numerator_inverse_fraction_congruence_is_exact() -> None:
+    certificate = cross_inverse_fraction_collision(r=5, s=7, r_prime=11, t=8)
+    assert certificate == CrossInverseFractionCollision(
+        numerator=3,
+        denominator=56,
+        distance=F(3, 56),
+        congruence_quotient=2,
+    )
+    assert (
+        5 * 11 * certificate.numerator - (11 * 8 - 5 * 7)
+        == certificate.congruence_quotient * certificate.denominator
+    )
+    assert (5 * certificate.numerator - 8) * (
+        11 + certificate.congruence_quotient * 7
+    ) == 5 * 7 * (
+        certificate.numerator * certificate.congruence_quotient - 1
+    )
+
+
+def test_cross_numerator_factorization_holds_exhaustively() -> None:
+    for r in range(1, 15):
+        for s in range(2, 15):
+            if gcd(r, s) != 1:
+                continue
+            for r_prime in range(1, 15):
+                for t in range(2, 15):
+                    if gcd(r_prime, t) != 1:
+                        continue
+                    certificate = cross_inverse_fraction_collision(
+                        r, s, r_prime, t
+                    )
+                    k = certificate.numerator
+                    ell = certificate.congruence_quotient
+                    assert r * r_prime * k - (r_prime * t - r * s) == (
+                        ell * s * t
+                    )
+                    assert (r * k - t) * (r_prime + ell * s) == (
+                        r * s * (k * ell - 1)
+                    )
+
+
+def test_cross_numerator_degenerate_factorizations_are_real_diagonals() -> None:
+    positive = cross_inverse_fraction_collision(5, 7, 3, 5)
+    assert (positive.numerator, positive.congruence_quotient) == (1, 1)
+    assert 5 * positive.numerator - 5 == 0
+
+    negative = cross_inverse_fraction_collision(5, 7, 7, 2)
+    assert (negative.numerator, negative.congruence_quotient) == (-1, -1)
+    assert 7 + negative.congruence_quotient * 7 == 0
+
+
+def test_balanced_central_collision_bounds_are_exact_rational_margins() -> None:
+    # This literal collision has distance 1/42 <= 1/16 and lies in
+    # 4 < r,r' <= 8 and 4 < s,t <= 8.
+    margins = central_cross_inverse_collision_margins(
+        r=5,
+        s=6,
+        r_prime=6,
+        t=7,
+        lower_r=4,
+        lower_s=4,
+        product_length=16,
+    )
+    assert margins.numerator_margin == F(3)
+    assert margins.quotient_margin == F(7)
+
+
+def test_balanced_central_collision_bounds_hold_on_small_boxes() -> None:
+    for lower in range(2, 13):
+        for r in range(lower + 1, 2 * lower + 1):
+            for s in range(lower + 1, 2 * lower + 1):
+                if gcd(r, s) != 1:
+                    continue
+                for r_prime in range(lower + 1, 2 * lower + 1):
+                    for t in range(lower + 1, 2 * lower + 1):
+                        if gcd(r_prime, t) != 1:
+                            continue
+                        certificate = cross_inverse_fraction_collision(
+                            r, s, r_prime, t
+                        )
+                        for product_length in (1, lower, lower * lower):
+                            if certificate.distance > F(1, product_length):
+                                continue
+                            margins = central_cross_inverse_collision_margins(
+                                r,
+                                s,
+                                r_prime,
+                                t,
+                                lower_r=lower,
+                                lower_s=lower,
+                                product_length=product_length,
+                            )
+                            assert margins.numerator_margin >= 0
+                            assert margins.quotient_margin >= 0
+
+
+def test_factor_degenerate_cross_collisions_are_two_small_diagonals() -> None:
+    for lower in range(2, 21):
+        points = [
+            (r, s)
+            for r in range(lower + 1, 2 * lower + 1)
+            for s in range(lower + 1, 2 * lower + 1)
+            if gcd(r, s) == 1
+        ]
+        degenerate_count = 0
+        for r, s in points:
+            for r_prime, t in points:
+                certificate = cross_inverse_fraction_collision(
+                    r, s, r_prime, t
+                )
+                k = certificate.numerator
+                ell = certificate.congruence_quotient
+                if k * ell != 1:
+                    continue
+                degenerate_count += 1
+                assert (k, ell) in {(1, 1), (-1, -1)}
+                assert (k == 1 and t == r) or (k == -1 and r_prime == s)
+        assert degenerate_count <= 2 * lower * lower
+
+
+def test_balanced_central_collision_ledger_exposes_one_power_counting_gap() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert central_collision_ledger(box) == CentralCollisionLedger(
+        numerator=F(1),
+        quotient=F(1),
+        degenerate_count=F(6),
+        divisor_parameter_count=F(8),
+        random_collision_count=F(7),
+        counting_gap=F(1),
+    )
+
+
+def test_product_kernel_matches_divisor_multiplicity_form_numerically() -> None:
+    for h_length in range(1, 8):
+        for delta_length in range(1, 8):
+            multiplicities = rectangular_product_multiplicities(
+                h_length, delta_length
+            )
+            assert sum(multiplicities.values()) == h_length * delta_length
+            for denominator in range(2, 10):
+                phase = F(1, denominator)
+                direct = rectangular_product_kernel(
+                    h_length, delta_length, phase
+                )
+                collapsed = sum(
+                    multiplicity
+                    * rectangular_product_kernel(1, 1, phase * product)
+                    for product, multiplicity in multiplicities.items()
+                )
+                assert abs(direct - collapsed) < 1e-10
+
+
+def test_product_kernel_numerically_realizes_noncentral_rational_resonance() -> None:
+    for denominator in (5, 7, 11):
+        phase = F(1, denominator)
+        kernel = rectangular_product_kernel(denominator, denominator, phase)
+        assert abs(kernel - denominator) < 1e-9
+        assert phase > F(1, denominator * denominator)
+
+
+def test_inverse_fraction_determinant_has_exact_gcd_structure() -> None:
+    for s in range(2, 30):
+        if naive_mobius(s) == 0:
+            continue
+        for t in range(2, 30):
+            if naive_mobius(t) == 0:
+                continue
+            common = gcd(s, t)
+            for u in range(1, s):
+                if gcd(u, s) != 1:
+                    continue
+                for v in range(1, t):
+                    if gcd(v, t) != 1:
+                        continue
+                    determinant = u * t - v * s
+                    assert gcd(determinant, s) == common
+                    assert gcd(determinant, t) == common
+                    assert reduced_inverse_fraction_denominator(
+                        u, s, v, t
+                    ) == (s * t) // gcd(determinant, s * t)
+                    assert reduced_inverse_fraction_denominator(
+                        u, s, v, t
+                    ) == (s * t // common) // gcd(
+                        determinant // common, common
+                    )
+
+
+def test_farey_central_collision_divisor_bound_is_a_finite_majorant() -> None:
+    for lower in range(2, 13):
+        for numerator_bound in range(lower + 1):
+            assert farey_near_collision_count(lower, numerator_bound) <= (
+                farey_near_collision_divisor_bound(lower, numerator_bound)
+            )
+
+
+def test_farey_parameterization_removes_the_balanced_one_power_gap() -> None:
+    box = boundary_witnesses()["balanced_max_a"]
+    assert farey_central_collision_ledger(box) == FareyCentralCollisionLedger(
+        numerator=F(1),
+        lift_multiplicity=F(0),
+        elementary_count=F(7),
+        random_collision_count=F(7),
+        counting_gap=F(0),
+    )
+
+
+def test_balanced_inverse_lift_weights_are_zero_or_one_mobius_sign() -> None:
+    for lower in range(2, 20):
+        for modulus in range(lower + 1, 2 * lower + 1):
+            for numerator in range(1, modulus):
+                if gcd(numerator, modulus) != 1:
+                    continue
+                assert abs(
+                    inverse_lift_mobius_weight(
+                        numerator, modulus, lower_r=lower
+                    )
+                ) <= 1
+
+
+def test_four_mobius_collision_sum_has_exact_signed_farey_coordinates() -> None:
+    for lower_r in range(2, 7):
+        for lower_s in range(2, 7):
+            for numerator_bound in range(4):
+                assert weighted_inverse_collision_sum(
+                    lower_r, lower_s, numerator_bound
+                ) == weighted_farey_collision_sum(
+                    lower_r, lower_s, numerator_bound
+                )
+
+
+def test_additive_completion_matches_direct_evaluation_numerically() -> None:
+    for modulus in range(2, 13):
+        for r in range(1, 2 * modulus):
+            if gcd(r, modulus) != 1:
+                continue
+            for h_length in range(1, 6):
+                for delta_length in range(1, 6):
+                    direct = rectangular_product_kernel(
+                        h_length,
+                        delta_length,
+                        -F(pow(r, -1, modulus), modulus),
+                    )
+                    completed = additive_product_completion(
+                        r, modulus, h_length, delta_length
+                    )
+                    assert abs(direct - completed) < 1e-9
+
+
+def test_additive_completion_zero_mode_hits_the_two_thirds_barrier() -> None:
+    assert additive_completion_zero_mode(11, 7, 5) == F(35, 11)
+    balanced = boundary_witnesses()["balanced_max_a"]
+    assert additive_completion_zero_mode_mobius_exponent(balanced) == F(2, 3)
 
 
 def test_pascadi_2024_direct_dispersion_bound_is_too_large() -> None:
