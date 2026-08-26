@@ -94,6 +94,54 @@ def test_exact_double_mobius_split_has_four_sectors() -> None:
                 assert set(sectors) == {"I/I", "I/II", "II/I", "II/II"}
 
 
+def test_coupled_double_split_preserves_product_phase_and_two_mobius_sides() -> None:
+    adapter = getattr(
+        type_identity,
+        "coupled_product_double_mobius_certificate",
+        None,
+    )
+    assert adapter is not None, "coupled double-Mobius certificate is missing"
+
+    certificate = adapter(
+        r=30,
+        s=77,
+        h=3,
+        delta=-5,
+        r_cutoff_u=3,
+        r_cutoff_v=5,
+        s_cutoff_u=4,
+        s_cutoff_v=6,
+    )
+
+    assert certificate.direct_mobius_product == mobius(30) * mobius(77)
+    assert sum(dict(certificate.sector_sums).values()) == (
+        certificate.direct_mobius_product
+    )
+    assert {name for name, _ in certificate.sector_sums} == {
+        "I/I",
+        "I/II",
+        "II/I",
+        "II/II",
+    }
+    assert certificate.product_frequency == -15
+    assert certificate.phase_mod_one == F(39, 77)
+    assert certificate.product_frequency_preserved
+    assert certificate.two_mobius_sides_preserved
+    assert certificate.recombination_identity_verified
+
+    for term in certificate.terms:
+        assert term.r_long_factor * term.r_short_mobius_factor == 30
+        assert term.s_long_factor * term.s_short_mobius_factor == 77
+        assert term.product_frequency == certificate.product_frequency
+        assert term.phase_mod_one == certificate.phase_mod_one
+        assert term.coefficient == (
+            term.r_truncated_coefficient
+            * term.r_short_mobius_value
+            * term.s_truncated_coefficient
+            * term.s_short_mobius_value
+        )
+
+
 def test_full_truncated_mobius_convolution_vanishes_above_the_cutoff() -> None:
     """Catch localizing the s*a factorization before its exact centering."""
     adapter = getattr(

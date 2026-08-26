@@ -184,6 +184,36 @@ class FourMobiusUnsignedSectorRecombination:
 
 
 @dataclass(frozen=True)
+class CoupledMobiusSectorTerm:
+    sector: str
+    r_long_factor: int
+    r_short_mobius_factor: int
+    s_long_factor: int
+    s_short_mobius_factor: int
+    r_truncated_coefficient: int
+    r_short_mobius_value: int
+    s_truncated_coefficient: int
+    s_short_mobius_value: int
+    coefficient: int
+    product_frequency: int
+    phase_mod_one: Fraction
+
+
+@dataclass(frozen=True)
+class CoupledProductDoubleMobiusCertificate:
+    r: int
+    s: int
+    product_frequency: int
+    phase_mod_one: Fraction
+    direct_mobius_product: int
+    sector_sums: tuple[tuple[str, int], ...]
+    terms: tuple[CoupledMobiusSectorTerm, ...]
+    product_frequency_preserved: bool
+    two_mobius_sides_preserved: bool
+    recombination_identity_verified: bool
+
+
+@dataclass(frozen=True)
 class ZeroRayPhaseReduction:
     s_u: int
     a_u: int
@@ -2115,6 +2145,140 @@ def double_split_mobius_identity(
         "II/II": r_ii * s_ii,
     }
     return mu_r * mu_s, sectors
+
+
+def coupled_product_double_mobius_certificate(
+    *,
+    r: int,
+    s: int,
+    h: int,
+    delta: int,
+    r_cutoff_u: int,
+    r_cutoff_v: int,
+    s_cutoff_u: int,
+    s_cutoff_v: int,
+) -> CoupledProductDoubleMobiusCertificate:
+    """Expand both Möbius weights without separating the product phase.
+
+    The exact one-variable identity is applied independently to ``r`` and
+    ``s``.  Every resulting Type-I/II term retains the same original phase
+
+    ``e(-h*delta*bar(r)/s)``.
+
+    Thus this is a finite reindexing certificate, not an estimate and not a
+    replacement of the product frequency by an arbitrary third coefficient.
+    """
+
+    cutoffs = (
+        r_cutoff_u,
+        r_cutoff_v,
+        s_cutoff_u,
+        s_cutoff_v,
+    )
+    if min(r, s, *cutoffs) < 1:
+        raise ValueError("variables and cutoffs must be positive")
+    if r <= r_cutoff_u or s <= s_cutoff_u:
+        raise ValueError("both Möbius variables must exceed their U cutoffs")
+    if h == 0 or delta == 0:
+        raise ValueError("the residual coupled cell requires h*delta nonzero")
+    if gcd(r, s) != 1:
+        raise ValueError("the reciprocal phase requires coprime r and s")
+
+    product_frequency = h * delta
+    phase_mod_one = _normalized_modular_phase(
+        numerator=-product_frequency,
+        invert=r,
+        modulus=s,
+    )
+    sector_sums = {
+        "I/I": 0,
+        "I/II": 0,
+        "II/I": 0,
+        "II/II": 0,
+    }
+    terms: list[CoupledMobiusSectorTerm] = []
+
+    r_terms: list[tuple[str, int, int, int, int]] = []
+    for r_long in divisors(r):
+        if r_long <= r_cutoff_u:
+            continue
+        r_short = r // r_long
+        r_truncated = c_u(r_long, r_cutoff_u)
+        r_mobius = mobius(r_short)
+        r_type = "I" if r_short <= r_cutoff_v else "II"
+        r_terms.append(
+            (r_type, r_long, r_short, r_truncated, r_mobius)
+        )
+
+    s_terms: list[tuple[str, int, int, int, int]] = []
+    for s_long in divisors(s):
+        if s_long <= s_cutoff_u:
+            continue
+        s_short = s // s_long
+        s_truncated = c_u(s_long, s_cutoff_u)
+        s_mobius = mobius(s_short)
+        s_type = "I" if s_short <= s_cutoff_v else "II"
+        s_terms.append(
+            (s_type, s_long, s_short, s_truncated, s_mobius)
+        )
+
+    for r_type, r_long, r_short, r_truncated, r_mobius in r_terms:
+        for s_type, s_long, s_short, s_truncated, s_mobius in s_terms:
+            sector = f"{r_type}/{s_type}"
+            coefficient = (
+                r_truncated * r_mobius * s_truncated * s_mobius
+            )
+            sector_sums[sector] += coefficient
+            if coefficient == 0:
+                continue
+            terms.append(
+                CoupledMobiusSectorTerm(
+                    sector=sector,
+                    r_long_factor=r_long,
+                    r_short_mobius_factor=r_short,
+                    s_long_factor=s_long,
+                    s_short_mobius_factor=s_short,
+                    r_truncated_coefficient=r_truncated,
+                    r_short_mobius_value=r_mobius,
+                    s_truncated_coefficient=s_truncated,
+                    s_short_mobius_value=s_mobius,
+                    coefficient=coefficient,
+                    product_frequency=product_frequency,
+                    phase_mod_one=phase_mod_one,
+                )
+            )
+
+    direct = mobius(r) * mobius(s)
+    recombined = sum(sector_sums.values())
+    product_preserved = all(
+        term.product_frequency == product_frequency
+        and term.phase_mod_one == phase_mod_one
+        for term in terms
+    )
+    two_sides_preserved = all(
+        term.r_long_factor * term.r_short_mobius_factor == r
+        and term.s_long_factor * term.s_short_mobius_factor == s
+        and term.coefficient
+        == (
+            term.r_truncated_coefficient
+            * term.r_short_mobius_value
+            * term.s_truncated_coefficient
+            * term.s_short_mobius_value
+        )
+        for term in terms
+    )
+    return CoupledProductDoubleMobiusCertificate(
+        r=r,
+        s=s,
+        product_frequency=product_frequency,
+        phase_mod_one=phase_mod_one,
+        direct_mobius_product=direct,
+        sector_sums=tuple(sector_sums.items()),
+        terms=tuple(terms),
+        product_frequency_preserved=product_preserved,
+        two_mobius_sides_preserved=two_sides_preserved,
+        recombination_identity_verified=(recombined == direct),
+    )
 
 
 def crt_reciprocity_numerators(

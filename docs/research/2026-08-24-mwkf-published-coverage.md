@@ -83,6 +83,149 @@ For \((\rho,\sigma,a)=(1,1,0)\), (2.3) gives \(s_{\rm BC}=1/20\).
 For the balanced maximal box \((3,3,5)\), it gives
 \(s_{\rm BC}=-37/8\).
 
+### 2.1 Exact mutually exclusive coverage cells
+
+The accepted local gate requires a strict saving, not merely a
+nonnegative exponent.  Put
+
+\[
+ \eta:=\frac1{1000},\qquad
+ u:=\max(\rho,\sigma),\qquad
+ v:=\min(\rho,\sigma),\qquad a:=\ell+h.
+\tag{2.5}
+\]
+
+Equations (2.1)--(2.3) give the two exact BCR savings
+
+\[
+ s_1=\frac{3v-2u-17a}{20},\qquad
+ s_2=\frac v8-a.
+\tag{2.6}
+\]
+
+Because the theorem has a \(T^\varepsilon\) loss and the separated kernel
+has polylogarithmic seminorm costs, its direct cell is
+
+\[
+ \boxed{s_{\rm BC}:=\min(s_1,s_2)>\frac1{1000}.}
+\tag{2.7}
+\]
+
+Equality in (2.7) is not enough.  This corrects the older executable
+predicate, which tested only \(s_1,s_2\geq0\).  For example, the admissible
+box
+
+\[
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(1,1,0,0,0,\frac{99}{1700},0\right)
+\tag{2.8}
+\]
+
+has \(s_1=1/2000\) and \(s_2>1/1000\).  Its saving is positive but smaller than
+the required threshold, so it is not a published-coverage cell.
+
+Intersecting throughout with the admissible polytope from Section 5 of
+the exact-audit note gives the following mutually exclusive table.  The
+ordering convention assigns \(\rho=\sigma\) to the first wing.
+
+| cell | exact additional conditions | route | proved? |
+|---|---|---|---|
+| A_rho_ge_sigma | \(\rho\geq\sigma\), \(s_1>\eta\), \(s_2>\eta\) | Bettin--Chandee Theorem 1 | yes |
+| A_sigma_gt_rho | \(\sigma>\rho\), \(s_1>\eta\), \(s_2>\eta\) | Bettin--Chandee Theorem 1 | yes |
+| B_ell_zero | not A, \(\ell=0\) | exact \(\delta\)-factor completion | yes |
+| B_h_zero | not A, \(\ell>0\), \(h=0\) | exact \(h\)-factor completion | yes |
+| D_rho_ge_sigma | not A, \(\ell,h>0\), \(\rho\geq\sigma\) | coupled residual | no |
+| D_sigma_gt_rho | not A, \(\ell,h>0\), \(\sigma>\rho\) | coupled residual | no |
+
+The table is exhaustive: every admissible box is either in A or not; in
+the complement, nonnegativity makes \(\ell=0\), else \(h=0\), else
+\(\ell,h>0\); the last region is split by the total order of
+\(\rho,\sigma\).  The cases are disjoint by the displayed priority.
+
+Wright Theorem 2.1 and Pascadi Corollary 18 have empty *direct* cells in
+this table.  Wright first requires an actually fixed denominator factor;
+Pascadi first requires the coefficient tuple in Assumption 14 and a
+nondegenerate incomplete-Kloosterman adapter.  Neither hypothesis is
+created by a linear inequality in the base polytope, so neither theorem
+may be credited with a cell before the corresponding exact factorization
+and coefficient transfer have been proved.
+
+The helper published_coverage_cell implements precisely this partition.
+The helper published_coverage_witnesses supplies one admissible rational
+witness for each of the six nonempty cells, and the report prints the two
+BCR savings and completion losses for every witness.
+
+### 2.2 Exact residual Type-I/II routing
+
+Only the two D cells are passed to the Möbius factorization.  For integer
+cutoffs \(U_R,V_R,U_S,V_S\geq1\), with \(r>U_R\) and \(s>U_S\), put
+
+\[
+ c_U(a):=\sum_{d\mid a,\ d\leq U}\mu(d).
+\tag{2.9}
+\]
+
+Applying the finite identity separately to \(r\) and \(s\) gives, with no
+boundary or truncation remainder,
+
+\[
+ \mu(r)\mu(s)
+ =\sum_{X,Y\in\{\mathrm I,\mathrm {II}\}}
+   \sum_{ab=r,\,cd=s}
+   \mathcal C_X(r;a,b)\mathcal C_Y(s;c,d),
+\tag{2.10}
+\]
+
+where
+
+\[
+ \mathcal C_{\mathrm I}(r;a,b)
+ =c_{U_R}(a)\mu(b)
+  \mathbf1_{a>U_R,\,b\leq V_R},\qquad
+ \mathcal C_{\mathrm {II}}(r;a,b)
+ =c_{U_R}(a)\mu(b)
+  \mathbf1_{a>U_R,\,b>V_R},
+\tag{2.11}
+\]
+
+and the \(s\)-side uses \(c_{U_S}(c)\mu(d)\).  The two minus signs in the
+one-variable identities cancel, so (2.10) consists of exactly the four
+I/I, I/II, II/I, and II/II sectors.
+
+Most importantly, (2.10) is inserted *before* changing or estimating the
+oscillatory kernel.  Every nonzero finite term therefore retains
+
+\[
+ c_{U_R}(a)\mu(b)c_{U_S}(c)\mu(d)
+ e\!\left(-\frac{h\delta\bar r}{s}\right),
+ \qquad ab=r,\quad cd=s.
+\tag{2.12}
+\]
+
+Thus both Möbius sides remain explicit and the third frequency is still
+the product \(h\delta\), not an arbitrary coefficient of length \(HL\).
+There is no factorization error and no phase replacement error in this
+step.
+
+For the symmetric exponent choice \(U_R=V_R=R^{1/3}\) and
+\(U_S=V_S=S^{1/3}\), the exact scale ledger is
+
+| side | Type I | Type II |
+|---|---|---|
+| \(r=ab\) | \(b\leq R^{1/3}\), \(a\gg R^{2/3}\) | \(R^{1/3}<b\ll R^{2/3}\), \(R^{1/3}\ll a\ll R^{2/3}\) |
+| \(s=cd\) | \(d\leq S^{1/3}\), \(c\gg S^{2/3}\) | \(S^{1/3}<d\ll S^{2/3}\), \(S^{1/3}\ll c\ll S^{2/3}\) |
+
+The executable `residual_type_i_ii_ledger` rejects A and B cells and
+records these four scale sectors on D.  The finite helper
+`residual_coupled_type_certificate` checks (2.10)--(2.12) with exact
+integer arithmetic, including the normalized reciprocal phase.
+
+This closes only the decomposition step.  It proves no new saving: after
+the exact reindexing, each of the four sectors still requires a uniform
+global, pre-Cauchy estimate that permits cancellation across
+\((h,\delta)\), slopes, gcd parameters, and dyadic blocks.  In particular,
+the two D cells remain uncovered.
+
 ## 3. Completion adapters
 
 Smooth Poisson summation in \(h\) is an exact identity at every relative
@@ -415,13 +558,14 @@ that factor has actually been fixed.
 
 The deterministic report is:
 
-| witness | primary route | BCR saving | reason |
+| witness cell | primary route | decisive BCR saving | result |
 |---|---|---:|---|
-| bcr_small_a | BCR | \(1/20\) | covered |
-| balanced_max_a | Möbius Farey trilinear | \(-37/8\) | new signed trilinear estimate required |
-| large_q_endpoint | Möbius Farey trilinear | \(-7/8\) | new signed trilinear estimate required |
-| r_long | global coupled operator | \(-15/4\) | new global estimate required |
-| s_long | Möbius Farey trilinear | \(-15/4\) | new signed trilinear estimate required |
+| A_rho_ge_sigma | BCR | \(1/20\) | covered |
+| A_sigma_gt_rho | BCR | \(3/100\) | covered |
+| B_ell_zero | elementary completion | \(-7/8\) | covered despite BCR failure |
+| B_h_zero | elementary completion | \(-9/10\) | covered despite BCR failure |
+| D_rho_ge_sigma | global coupled operator | \(-37/8\) | residual |
+| D_sigma_gt_rho | global coupled operator | \(-15/4\) | residual |
 
 The routing priority is BCR, completion, Wright fixed-factor, the exact
 signed-\(j\) Farey reduction when \(L<S\), and finally the unreduced global

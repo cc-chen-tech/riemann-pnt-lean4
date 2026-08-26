@@ -276,6 +276,22 @@ Thus (4.3a) has exactly four sectors and no remainder.  At the balanced
 box, the exponent of \(d\) is in \([0,1]\) in denominator Type I and in
 \([1,2]\) in denominator Type II.
 
+At this stage the phase has not been separated or majorized.  Every finite
+summand still has the form
+
+\[
+ c_{U_R}(a)\mu(b)c_{U_S}(c)\mu(d)
+ e\!\left(-\frac{h\delta\bar r}{s}\right),
+ \qquad ab=r,\quad cd=s.
+\tag{4.3a'}
+\]
+
+The helper \`coupled_product_double_mobius_certificate\` verifies (4.3a')
+with exact integer arithmetic for independent cutoffs on the two sides.
+It records the same normalized reciprocal phase in all four sectors and
+checks that their signed sum is exactly \(\mu(r)\mu(s)\).  This is an exact
+reindexing certificate only; it supplies no analytic saving.
+
 Fixing \(c\sim C_0\) in the denominator split gives Wright's parameters
 
 \[
