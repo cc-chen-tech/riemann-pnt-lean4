@@ -13143,6 +13143,349 @@ The exponent ledger smooth_projective_product_spectrum_audit records that
 the sharp exponent \(5\) survives the smooth adapter while keeping the
 joint arithmetic packet and coupled-kernel flags false.
 
+### 9.89 Global ratio-frequency diagonalization before Type I/II
+
+The remaining \(q\)-phase obstruction in Section 9.88 should not be
+handled by applying (9.576) separately for every product residue \(x\).
+There is a further exact reindexing which retains all cross terms.  It is
+cleanest to take the cofactor in (9.564) to be the full squarefree modulus
+\(s\), so that the complementary factor is (1).  For arbitrary arrays
+\(c_x(a)\), \(x\in U(s)\), put
+
+\[
+ \widehat c_x(k)=\sum_{a\bmod s}c_x(a)e_s(-ka).
+\]
+
+In (9.567) set \(y=x_1\overline{x_2}\).  Summing first in \(a,b\), then
+putting \(k=\overline v\) and \(\lambda=x_2k\), gives
+
+\[
+\boxed{
+ \begin{aligned}
+ &\sum_{x_1,x_2\in U(s)}\sum_{a,b\bmod s}
+ c_{x_1}(a)\overline{c_{x_2}(b)}
+ C_{x_1\overline{x_2}}(a,b)\\
+ &\qquad=\sum_{\lambda\in U(s)}
+ \left|\sum_{x\in U(s)}
+ e_s(Bx\overline\lambda)
+ \widehat c_x(\lambda\overline x)\right|^2\\
+ &\qquad=\sum_{\lambda\in U(s)}
+ \left|\sum_{t\in U(s)}e_s(Bt)
+ \widehat c_{t\lambda}(\overline t)\right|^2.
+ \end{aligned}}
+ \tag{9.591}
+\]
+
+The second equality is the bijection \(x=t\lambda\).  The phase
+simplifications are exact:
+
+\[
+ (x_1\overline{x_2}-1)\overline{k}
+=(x_1-x_2)\overline\lambda,\qquad
+ \lambda\overline{x}=\overline t.
+\]
+
+Thus the complete unequal-label Gram is one positive ratio-frequency
+square.  No triangle inequality in \(x_1,x_2\), no pointwise conductor
+bound, and no deletion of distinct congruent product labels occurs.
+
+The identity becomes especially transparent on one rank-one tensor from
+(9.587).  Suppose
+
+\[
+ c_x(a)=C(x)U(a),\qquad
+ \widehat U(k)=\sum_aU(a)e_s(-ka),qquad
+ A(t)=e_s(Bt)\widehat U(\overline t).
+\]
+
+Then (9.591) is the multiplicative correlation
+
+\[
+ \boxed{
+ \mathcal G_s(C,U)
+ =\sum_{\lambda\in U(s)}
+ \left|\sum_{t\in U(s)}A(t)C(t\lambda)\right|^2
+ =\frac1{\varphi(s)}\sum_{\chi\bmod s}
+ |\widehat A(\overline\chi)|^2|\widehat C(\chi)|^2.}
+ \tag{9.592}
+\]
+
+Here \(\widehat F(\chi)=\sum_{u\in U(s)}F(u)\overline{\chi(u)}\).
+The last equality is multiplicative Parseval, not an inequality.  If the
+product residue is formed from the two Type variables,
+
+\[
+ C(x)=\sum_{dp\equiv x\,(s)}\alpha_d\beta_p,
+\]
+
+then its transform factors exactly:
+
+\[
+ \boxed{
+ \widehat C(\chi)
+ =\left(\sum_d\alpha_d\overline{\chi(d)}\right)
+  \left(\sum_p\beta_p\overline{\chi(p)}\right).}
+ \tag{9.593}
+\]
+
+Equations (9.591)--(9.593) put the product trace, the complete outer-label
+sum, and both Type polynomials inside one fixed-modulus character moment.  The smooth
+projective norm (9.588) permits summing the rank-one tensors at
+\(T^\varepsilon\) cost.  In the application \(\alpha_d\) contains the
+Möbius sign \(\mu(d)\), and that sign remains inside (9.592).  However,
+the outer sign \(\mu(s)\) is constant on a fixed-modulus block and is
+squared away by (9.591).  Therefore one may not sum the positive quantity
+(9.592) over \(s\) and claim that both original Möbius signs were retained.
+The identity is an exact inner-block diagonalization, not yet the required
+cross-modulus two-Möbius dispersion.
+
+There is also a determinant form which is better suited to dispersion.
+Opening the first square in (9.592) and using (9.593) gives the exact
+incidence
+
+\[
+ \boxed{
+ d_1p_1t_2\equiv d_2p_2t_1\pmod s.}
+ \tag{9.594}
+\]
+
+Apply the remainder-free two-cutoff identity (9.241) to the single factor
+\(\mu(d)\), and write \(d=bcn\).  Every I/I, I/II, II/I, and II/II term
+in the square still satisfies
+
+\[
+ \boxed{
+ b_1c_1n_1p_1t_2-b_2c_2n_2p_2t_1=js.}
+ \tag{9.595}
+\]
+
+This is the promised pre-Cauchy Type I/II determinant: \(j=0\) is the
+exact rational-product resonance, while \(j\ne0\) is the genuine
+dispersion family.  The product label \(a=h\delta\) remains inside
+\(A(t)=\sum_aU(a)e_s(Bt-a\overline t)\), and the Type sign remains as
+\(\mu(b)\mu(c)\).  The outer sign \(\mu(s)\) can survive only if the
+original \(s\)-sum is squared once globally, producing cross-modulus
+blocks \((s_1,s_2)\); it is not present in the fixed-\(s\) positive square.
+
+The available published estimates cover only projections of this master
+identity:
+
+| input | part genuinely controlled | missing hypothesis for (9.592)--(9.595) |
+|---|---|---|
+| Cochrane--Shi Theorem 1 | the unweighted primitive \(a=h\delta\) spectrum, including all gcd strata and BV weights, Sections 9.86--9.88 | no simultaneous weight \(|\widehat C(\chi)|^2\) and no outer \(s\)-average |
+| multiplicative large sieve / classical character moments | the unweighted mean of the factored Type polynomial (9.593) | no correlation with the rank-one product trace \(|\widehat A(\bar\chi)|^2\); taking its supremum loses the recovered powers |
+| FKM/FKMS prime Type I/II estimates | the fixed-prime outer wings recorded in (9.521)--(9.524) | the balanced rank-one inverse-pole resonance (9.546) and the composite-modulus/outer-\(s\) moment remain |
+| Pascadi, Blomer--Pascadi, Milićević--Qin--Wu | bilinear forms with independently short classical Kloosterman arguments | (9.592) has one complete multiplicative character family weighted by a product-additive transform, as already exposed by (9.527)--(9.529) |
+
+Thus (9.592) is a strictly more explicit **fixed-modulus inner gate** than
+a generic pointwise kernel estimate, but it is not the surviving global
+two-Möbius gate.  The next analytic task is to form the cross-modulus
+\((s_1,s_2)\) analogue before any fixed-\(s\) square, subtract its exact
+zero determinant, and apply one global dispersion step to the nonzero
+determinants without taking absolute values over \(s_1,s_2\) or the Type
+blocks.
+
+The finite helper global_ratio_frequency_square_audit verifies all three
+forms in (9.591), the character Parseval identity (9.592), and the Type
+factorization (9.593).  It leaves the determinant estimate, outer-modulus
+two-Möbius average, and coupled-kernel gate explicitly false.
+
+### 9.90 The global linear character master retains both Möbius weights
+
+The loss of \(\mu(s)\) in (9.591) is caused by the fixed-modulus Cauchy
+step, not by multiplicative Fourier inversion itself.  Return to the exact
+linear identity (9.564), take its cofactor to be the full modulus \(s\),
+and perform the smooth tensor separation (9.587) without taking absolute
+values over \(s\).  For one tensor put
+
+\[
+ \begin{aligned}
+ \mathcal A_s(\chi;U)
+   &=\sum_{t\in U(s)}e_s(Bt)\overline{\chi(t)}
+       \sum_aU(a)e_s(-a\overline t),\\
+ D_s(\chi)&=\sum_d\mu(d)\alpha_d\chi(d),\qquad
+ P_s(\chi)=\sum_p\beta_p\chi(p).
+ \end{aligned}
+\]
+
+Multiplicative inversion and the product congruence \(x\equiv dp\pmod s\)
+give the boundary-exact global formula
+
+\[
+ \boxed{
+ \mathscr S[\alpha,\beta,U]
+ =\sum_s\frac{\mu(s)}{\varphi(s)}
+   \sum_{\chi\bmod s}
+   \mathcal A_s(\chi;U)D_s(\chi)P_s(\chi).}
+ \tag{9.596}
+\]
+
+The left side is the original product-trace packet
+
+\[
+ \sum_s\mu(s)\sum_{d,p,a}
+ \mu(d)\alpha_d\beta_pU(a)
+ e_s\!\left(Bdp-a\overline{dp}\right),
+ \tag{9.597}
+\]
+
+with the unit and dyadic restrictions absorbed in the displayed finite
+coefficient families.  Thus (9.596), unlike (9.592), keeps \(\mu(s)\) and
+\(\mu(d)\) simultaneously and linearly.  No character supremum and no
+fixed-modulus positive square has appeared.
+
+The single inner Möbius polynomial has an exact boundary-safe Type split.
+Let \(W_0=\max(U_0,V_0)\).  Retain \(d\leq W_0\) as a finite small term;
+for \(d>W_0\), insert (9.241).  Then
+
+\[
+ \boxed{
+ D_s(\chi)=D_s^{\rm small}(\chi)
+           -D_{s,U_0,V_0}^{\rm I}(\chi)
+           +D_{s,U_0,V_0}^{\rm II}(\chi),}
+ \tag{9.598}
+\]
+
+where
+
+\[
+ \begin{aligned}
+ D_s^{\rm I}(\chi)
+ &=\sum_{d>W_0}\alpha_d\chi(d)
+   \sum_{bc\mid d\atop b\leq U_0,\ c\leq V_0}\mu(b)\mu(c),\\
+ D_s^{\rm II}(\chi)
+ &=\sum_{d>W_0}\alpha_d\chi(d)
+   \sum_{bc\mid d\atop b>U_0,\ c>V_0}\mu(b)\mu(c).
+ \end{aligned}
+ \tag{9.599}
+\]
+
+Equations (9.596)--(9.599) are the requested pre-Cauchy two-Möbius Type
+I/II master: the factor \(a=h\delta\) remains in \(\mathcal A_s\), the
+outer sign \(\mu(s)\) remains outside the character sum, and the second
+sign is represented exactly by the short--short/long--long divisor
+families.  All small-\(d\) boundaries are displayed, and there is no mixed
+rectangle or truncation remainder.
+
+Only now may one perform a single global dispersion.  Its formal square
+contains
+
+\[
+ \frac{\mu(s_1)\mu(s_2)}{\varphi(s_1)\varphi(s_2)}
+ \varepsilon_{\star_1}\varepsilon_{\star_2}
+ \mathcal A_{s_1}(\chi_1)\overline{\mathcal A_{s_2}(\chi_2)}
+ D_{s_1}^{\star_1}(\chi_1)\overline{D_{s_2}^{\star_2}(\chi_2)}
+ P_{s_1}(\chi_1)\overline{P_{s_2}(\chi_2)},
+ \tag{9.600}
+\]
+
+for every ordered Type pair
+\((\star_1,\star_2)\in
+\{\mathrm{small},\mathrm I,\mathrm{II}\}^2\), with
+
+\[
+ \varepsilon_{\mathrm{small}}=\varepsilon_{\mathrm{II}}=1,
+ \qquad \varepsilon_{\mathrm I}=-1.
+\]
+
+Thus all nine ordered cross-Type blocks, not only the three equal-Type
+blocks, remain in the same signed global square.
+This is the cross-modulus object which (9.592) cannot see.  Character
+large sieves separately control an unweighted \(D\)- or \(P\)-square,
+and Sections 9.86--9.88 control an unweighted \(\mathcal A\)-square, but
+neither result bounds their product with the signed \((s_1,s_2)\) kernel
+in (9.600).  Applying Cauchy to detach any one of the three factors
+returns the known balanced deficit.
+
+A targeted literature check does not presently fill this row.  Xi's
+[moments of multiplicative analogues of Kloosterman
+sums](https://arxiv.org/abs/2105.15051) concern, for one prime modulus,
+the different trace
+\(p^{-1/2}\sum_a\chi(a+\overline a)\) and certain special \(L\)-value
+weights.  They do not provide a varying-squarefree-modulus estimate for
+\(\mathcal A_s(\chi)D_s(\chi)P_s(\chi)\) with arbitrary dyadic Type
+polynomials.  The KMS/FKMS trace-function bilinear theorems likewise fix a
+prime modulus and require their stated NIO/gallant hypotheses; the
+rank-one resonance audit in (9.530)--(9.549) remains applicable.  Thus
+neither source is entered as coverage of (9.600).
+
+Accordingly the remaining analytic gate is now stated on an exact finite
+object: prove the target norm for the sum of (9.600), after recombining all
+Type pairs and packet labels, by subtracting its zero determinant before
+estimating the nonzero determinant family.  This is weaker and more
+structured than an arbitrary coupled-kernel hypothesis, but it remains
+unproved and has not yet been shown packet-exhaustive for every term of
+(4.5).
+
+The helper global_two_mobius_character_master_audit verifies (9.596)--
+(9.599) for supplied finite squarefree moduli, including unequal cutoffs
+and the small-\(d\) boundary.  It keeps the global dispersion, packet map,
+and coupled-kernel flags false.
+
+### 9.91 The cross-modulus zero product frequency is exactly diagonal
+
+The first subtraction in the global square (9.600) can be identified
+without an estimate.  For \(t\in U(s)\), define the reduced frequency
+
+\[
+ \xi(s,t)=\frac{\overline t_s}{s}\in(0,1).
+ \tag{9.601}
+\]
+
+Both numerator and denominator are coprime.  Hence uniqueness of reduced
+fractions gives
+
+\[
+ \boxed{
+ \xi(s_1,t_1)=\xi(s_2,t_2)
+ \Longleftrightarrow s_1=s_2\ \text{and}\ t_1=t_2.}
+ \tag{9.602}
+\]
+
+More generally, for two distinct pairs with \(s_i\leq2S\),
+
+\[
+ \boxed{
+ \|\xi(s_1,t_1)-\xi(s_2,t_2)\|_{\mathbb R/\mathbb Z}
+ \geq\frac1{s_1s_2}\geq\frac1{4S^2}.}
+ \tag{9.603}
+\]
+
+Thus the zero outer-product Fourier mode in
+\(\mathcal A_{s_1}\overline{\mathcal A_{s_2}}\) has no hidden
+cross-modulus component: it is exactly the same-\((s,t)\) diagonal.  On
+that diagonal \(\mu(s_1)\mu(s_2)=1\), and its product-label energy is the
+same primitive spectrum bounded in Sections 9.86--9.88.  It must still be
+combined with the Type-polynomial diagonal and the explicit AFE/reflection
+ledger, but no speculative cancellation is needed to classify it.
+
+The complementary frequencies are separated enough for the classical
+additive large sieve.  If \(U(a)\) is supported on an interval of length
+\(A\), then
+
+\[
+ \sum_{S\leq s\leq2S}\ \sum_{t\in U(s)}
+ \left|\sum_aU(a)e_s(-a\overline t)\right|^2
+ \ll (A+S^2)\sum_a|U(a)|^2.
+ \tag{9.604}
+\]
+
+At the balanced face \(A=HL=T^5\), \(S=T^3\), and
+\(\sum_a|U(a)|^2\ll T^{5+\varepsilon}\), (9.604) has exponent \(11\).
+The energy in (9.577) is normalized by \(1/s\).  For this comparison one
+must first recover the unnormalized row energy \(s\mathcal E_s\), and then
+sum it over \(s\asymp T^3\); the exponent ledger is therefore
+\(3+3+5=11\), the same exponent as (9.604).  Thus the ordinary Farey large sieve correctly
+separates the zero mode but supplies no additional power for the weighted
+three-factor character master (9.596).  The needed gain must come from
+the simultaneous Type and outer-modulus signs in the nonzero-frequency
+part of (9.600), not from frequency spacing alone.
+
+The helper primitive_product_farey_collision_audit checks (9.601)--
+(9.603) on finite modulus families and records the balanced \(11\) ceiling.
+It leaves the same-diagonal reassembly, signed nonzero-frequency estimate,
+and coupled-kernel gate false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -13808,6 +14151,9 @@ Proved in this note:
 | Unit-label primitive product spectrum | published composite-modulus fourth moment closes the unit sharp-interval subpacket | Multiplicative Plancherel gives the exact Gauss-weighted character formula (9.580).  Cochrane--Shi Theorem 1 supplies the arbitrary-translated-interval fourth moment (9.581), and squarefree Gauss bounds yield (9.582).  On \(H=L=T^{5/2},r=T^3\), the nonprincipal and principal exponents are \(5\) and \(4\), both below the \(T^7\) product-density scale.  Section 9.87 extends this through every nonunit gcd stratum |
 | Nonunit primitive product gcd descent | exact reduced conductor and published sharp-interval closure; archimedean adapter handled next | With \(d=(h,r),e=(\delta,r),w=[d,e]\), the phase descends exactly to modulus \(R=r/w\), and \(U(r)\to U(R)\) has \(\varphi(w)\) lifts, (9.583)--(9.584).  Every \(R>1\) term returns to Cochrane--Shi after finite Möbius inversion.  The \(R=1\) locus is exactly \(r\mid h\delta\) and has mass (9.585).  Thus (9.586) bounds every separated sharp-interval stratum by exponent \(5\) at the balanced face.  Section 9.88 supplies the smooth archimedean adapter; compatibility with the joint \(q\)-phase, two Möbius weights, reflection, and exhaustive packet map remains unproved |
 | Smooth archimedean product-spectrum adapter | bounded projective cost proved; joint arithmetic packet unproved | The four-variable Fourier expansion (9.587) has variation-weighted projective norm \(\ll\mathscr L^{C_s}\) by Sobolev--Parseval, (9.588).  Abel summation plus a dyadic maximal fourth-moment argument extends Cochrane--Shi to separated bounded-variation factors, (9.589)--(9.590).  Hence the actual smooth archimedean core weight preserves the all-gcd exponent \(5+\varepsilon\).  The same \(q\)-phase, two Möbius weights, reflection, and exhaustive global packet map are not consequences of this separation and remain unproved |
+| Fixed-modulus ratio-frequency/character square | exact inner-block diagonalization and Type determinant; cross-modulus two-Möbius estimate unproved | Taking the full squarefree modulus as cofactor rewrites the fixed-\(s\) unequal-label Gram as the positive ratio-frequency square (9.591).  On each smooth rank-one tensor, multiplicative Parseval gives (9.592), while the Type product transform factors as two Dirichlet polynomials, (9.593).  Opening the square and applying the remainder-free split (9.241) gives (9.595), retaining \(a=h\delta\) and the Type Möbius sign.  The fixed-modulus square necessarily removes the outer \(\mu(s)\); the required next object is its cross-modulus \((s_1,s_2)\) analogue formed before Cauchy, with both outer signs retained |
+| Global linear two-Möbius character master | exact pre-Cauchy Type I/II form; cross-modulus dispersion unproved | Applying multiplicative inversion linearly before the \(s\)-sum gives (9.596)--(9.597): \(\mu(s)\), \(\mu(d)\), the complete character family, and \(a=h\delta\) all remain in one finite sum.  The boundary-safe identity (9.598)--(9.599) splits only \(\mu(d)\), retains \(d\leq\max(U_0,V_0)\), and has no mixed rectangles or remainder.  A single subsequent global square has the signed cross-modulus kernel (9.600).  Published separate character moments do not bound the product of its trace, Type, and companion polynomials at the balanced face |
+| Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -13964,6 +14310,11 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   Type-II exceptional family for the present kernel.  Section 9.78 gives
   an exact dimension obstruction and retains \(1/224\) only as a formal,
   invalidated gallant-formula calibration.
+* P. Xi, *Moments and equidistributions of multiplicative analogues of
+  Kloosterman sums*, arXiv:2105.15051; its fixed-prime moments concern
+  \(p^{-1/2}\sum_a\chi(a+\bar a)\), not the varying-modulus three-factor
+  character master (9.596), so Section 9.90 records it as a no-coverage
+  comparison rather than an input.
 * M. A. Korolev, I. E. Shparlinski, *Sums of algebraic trace functions
   twisted by arithmetic functions*, Proc. Steklov Inst. Math. 314
   (2021), 128--144, arXiv:1804.01337, Theorem 2.1; its saving in the

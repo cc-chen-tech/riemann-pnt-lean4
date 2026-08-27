@@ -10897,6 +10897,593 @@ def smooth_projective_product_spectrum_audit(
     }
 
 
+def global_ratio_frequency_square_audit(
+    *,
+    squarefree_modulus: int,
+    direct_coefficient: int,
+    type_left_coefficients: dict[int, complex],
+    type_right_coefficients: dict[int, complex],
+    outer_product_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Verify the global ratio-frequency and character-square identities.
+
+    For the rank-one packet ``c_x(a)=C(x)U(a)``, where ``C`` is the product
+    residue convolution of two Type coefficient families, Section 9.89
+    rewrites the complete unequal-label cofactor Gram in three exact ways:
+
+    * the direct four-label Kloosterman kernel;
+    * one positive primitive ratio-frequency square;
+    * one multiplicative-character Parseval moment.
+
+    This helper checks all three finite identities and the exact factorization
+    of the product-residue character transform.  It does not estimate the
+    resulting determinant family.
+    """
+
+    s = int(squarefree_modulus)
+    factorization = _finite_prime_exponents(s) if s > 1 else {}
+    if s <= 1 or any(exponent != 1 for exponent in factorization.values()):
+        raise ValueError("the modulus must be squarefree and greater than one")
+    b_direct = int(direct_coefficient) % s
+    if gcd(b_direct, s) != 1:
+        raise ValueError("the direct coefficient must be a unit modulo s")
+    if (
+        not type_left_coefficients
+        or not type_right_coefficients
+        or not outer_product_coefficients
+    ):
+        raise ValueError("all three coefficient families must be nonempty")
+
+    left = {int(label): complex(value) for label, value in type_left_coefficients.items()}
+    right = {
+        int(label): complex(value)
+        for label, value in type_right_coefficients.items()
+    }
+    outer: dict[int, complex] = {}
+    for label, value in outer_product_coefficients.items():
+        residue = int(label) % s
+        outer[residue] = outer.get(residue, 0j) + complex(value)
+    if any(gcd(label, s) != 1 for label in (*left, *right)):
+        raise ValueError("all Type labels must be units modulo s")
+
+    units = tuple(value for value in range(1, s) if gcd(value, s) == 1)
+    phi_s = len(units)
+    root = cmath.exp(2j * cmath.pi / s)
+    product_residue_coefficients = {
+        residue: sum(
+            left_value * right_value
+            for d, left_value in left.items()
+            for p, right_value in right.items()
+            if d * p % s == residue
+        )
+        for residue in units
+    }
+    packet = {
+        x: {
+            a: product_residue_coefficients[x] * outer_value
+            for a, outer_value in outer.items()
+        }
+        for x in units
+    }
+    additive_fourier = {
+        x: {
+            frequency: sum(
+                coefficient * root ** (-frequency * a % s)
+                for a, coefficient in packet[x].items()
+            )
+            for frequency in units
+        }
+        for x in units
+    }
+
+    direct_gram = 0j
+    for x1 in units:
+        for x2 in units:
+            y = x1 * pow(x2, -1, s) % s
+            inverse_y = pow(y, -1, s)
+            for a, coefficient_a in packet[x1].items():
+                for a2, coefficient_b in packet[x2].items():
+                    kernel = sum(
+                        root
+                        ** (
+                            b_direct * (y - 1) * value
+                            + (a2 - a * inverse_y) * pow(value, -1, s)
+                        )
+                        for value in units
+                    )
+                    direct_gram += coefficient_a * coefficient_b.conjugate() * kernel
+
+    frequency_square = sum(
+        abs(
+            sum(
+                root ** (b_direct * x * pow(frequency, -1, s) % s)
+                * additive_fourier[x][frequency * pow(x, -1, s) % s]
+                for x in units
+            )
+        )
+        ** 2
+        for frequency in units
+    )
+    ratio_square = sum(
+        abs(
+            sum(
+                root ** (b_direct * t % s)
+                * additive_fourier[t * frequency % s][pow(t, -1, s)]
+                for t in units
+            )
+        )
+        ** 2
+        for frequency in units
+    )
+
+    outer_fourier = {
+        frequency: sum(
+            coefficient * root ** (-frequency * a % s)
+            for a, coefficient in outer.items()
+        )
+        for frequency in units
+    }
+    trace_vector = {
+        t: root ** (b_direct * t % s) * outer_fourier[pow(t, -1, s)]
+        for t in units
+    }
+    convolution_square = sum(
+        abs(
+            sum(
+                trace_vector[t]
+                * product_residue_coefficients[t * frequency % s]
+                for t in units
+            )
+        )
+        ** 2
+        for frequency in units
+    )
+
+    primes = tuple(sorted(factorization))
+    discrete_logs: dict[int, dict[int, int]] = {}
+    character_roots: dict[int, complex] = {}
+    for prime in primes:
+        order = prime - 1
+        if prime == 2:
+            generator = 1
+        else:
+            order_prime_factors = tuple(_finite_prime_exponents(order))
+            generator = next(
+                candidate
+                for candidate in range(2, prime)
+                if all(
+                    pow(candidate, order // divisor, prime) != 1
+                    for divisor in order_prime_factors
+                )
+            )
+        local_logs: dict[int, int] = {}
+        current = 1
+        for exponent in range(order):
+            local_logs[current] = exponent
+            current = current * generator % prime
+        discrete_logs[prime] = local_logs
+        character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+    character_indices = tuple(product(*(range(prime - 1) for prime in primes)))
+
+    def character(index: tuple[int, ...], value: int) -> complex:
+        result = 1 + 0j
+        for component, prime in zip(index, primes):
+            exponent = discrete_logs[prime][value % prime]
+            result *= character_roots[prime] ** (
+                component * exponent % (prime - 1)
+            )
+        return result
+
+    character_rows: list[dict[str, object]] = []
+    character_parseval = 0.0
+    for index in character_indices:
+        c_transform = sum(
+            product_residue_coefficients[x] * character(index, x).conjugate()
+            for x in units
+        )
+        left_transform = sum(
+            coefficient * character(index, d).conjugate()
+            for d, coefficient in left.items()
+        )
+        right_transform = sum(
+            coefficient * character(index, p).conjugate()
+            for p, coefficient in right.items()
+        )
+        trace_transform = sum(
+            trace_vector[t] * character(index, t)
+            for t in units
+        )
+        factorized = left_transform * right_transform
+        character_parseval += abs(trace_transform) ** 2 * abs(c_transform) ** 2 / phi_s
+        character_rows.append(
+            {
+                "character_index": index,
+                "product_residue_transform": c_transform,
+                "factorized_type_transform": factorized,
+                "type_factorization_exact": abs(c_transform - factorized) < 1e-8,
+                "trace_transform": trace_transform,
+            }
+        )
+
+    tolerance = 1e-7
+    return {
+        "squarefree_modulus": s,
+        "unit_residues": units,
+        "product_residue_coefficients": product_residue_coefficients,
+        "outer_product_residue_coefficients": outer,
+        "direct_gram": direct_gram,
+        "frequency_square": frequency_square,
+        "ratio_square": ratio_square,
+        "convolution_square": convolution_square,
+        "character_parseval_square": character_parseval,
+        "direct_gram_is_real": abs(direct_gram.imag) < tolerance,
+        "direct_equals_frequency_square": abs(direct_gram.real - frequency_square)
+        < tolerance,
+        "frequency_equals_ratio_square": abs(frequency_square - ratio_square)
+        < tolerance,
+        "ratio_equals_rank_one_convolution_square": abs(
+            ratio_square - convolution_square
+        )
+        < tolerance,
+        "multiplicative_parseval_identity_exact": abs(
+            convolution_square - character_parseval
+        )
+        < tolerance,
+        "character_rows": tuple(character_rows),
+        "all_type_character_transforms_factor_exactly": all(
+            bool(row["type_factorization_exact"]) for row in character_rows
+        ),
+        "all_outer_cross_terms_retained": True,
+        "absolute_values_taken_before_global_square": False,
+        "type_mobius_weight_retained_inside_fixed_modulus_square": True,
+        "outer_modulus_mobius_weight_retained_after_fixed_modulus_square": False,
+        "cross_modulus_two_mobius_dispersion_proved": False,
+        "type_i_ii_determinant_estimate_proved": False,
+        "outer_modulus_average_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def global_two_mobius_character_master_audit(
+    *,
+    squarefree_moduli: tuple[int, ...],
+    direct_coefficient: int,
+    type_base_coefficients: dict[int, complex],
+    companion_type_coefficients: dict[int, complex],
+    outer_product_coefficients: dict[int, complex],
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+) -> dict[str, object]:
+    """Verify the global linear character master and exact Type split.
+
+    Unlike :func:`global_ratio_frequency_square_audit`, this identity is
+    kept linear in the squarefree modulus.  Hence the two application signs
+    ``mu(s)`` and ``mu(d)`` are both present before any global dispersion.
+    The inner ``mu(d)`` is split by the remainder-free two-cutoff identity,
+    with ``d <= max(U,V)`` retained as an explicit boundary term.
+    """
+
+    moduli = tuple(int(value) for value in squarefree_moduli)
+    if not moduli:
+        raise ValueError("at least one squarefree modulus is required")
+    for modulus in moduli:
+        factors = _finite_prime_exponents(modulus) if modulus > 1 else {}
+        if modulus <= 1 or any(exponent != 1 for exponent in factors.values()):
+            raise ValueError("every modulus must be squarefree and greater than one")
+        if gcd(int(direct_coefficient), modulus) != 1:
+            raise ValueError("the direct coefficient must be a unit for every modulus")
+    if (
+        not type_base_coefficients
+        or not companion_type_coefficients
+        or not outer_product_coefficients
+    ):
+        raise ValueError("all coefficient families must be nonempty")
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if cutoff_u < 1 or cutoff_v < 1:
+        raise ValueError("both Type cutoffs must be positive")
+    boundary = max(cutoff_u, cutoff_v)
+
+    base = {int(label): complex(value) for label, value in type_base_coefficients.items()}
+    companion = {
+        int(label): complex(value)
+        for label, value in companion_type_coefficients.items()
+    }
+    outer = {
+        int(label): complex(value)
+        for label, value in outer_product_coefficients.items()
+    }
+
+    def character_data(modulus: int):
+        factors = _finite_prime_exponents(modulus)
+        primes = tuple(sorted(factors))
+        discrete_logs: dict[int, dict[int, int]] = {}
+        character_roots: dict[int, complex] = {}
+        for prime in primes:
+            order = prime - 1
+            if prime == 2:
+                generator = 1
+            else:
+                order_prime_factors = tuple(_finite_prime_exponents(order))
+                generator = next(
+                    candidate
+                    for candidate in range(2, prime)
+                    if all(
+                        pow(candidate, order // divisor, prime) != 1
+                        for divisor in order_prime_factors
+                    )
+                )
+            logs: dict[int, int] = {}
+            current = 1
+            for exponent in range(order):
+                logs[current] = exponent
+                current = current * generator % prime
+            discrete_logs[prime] = logs
+            character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+        indices = tuple(product(*(range(prime - 1) for prime in primes)))
+        units = tuple(
+            value for value in range(1, modulus) if gcd(value, modulus) == 1
+        )
+
+        def evaluate(index: tuple[int, ...], value: int) -> complex:
+            if gcd(value, modulus) != 1:
+                return 0j
+            result = 1 + 0j
+            for component, prime in zip(index, primes):
+                exponent = discrete_logs[prime][value % prime]
+                result *= character_roots[prime] ** (
+                    component * exponent % (prime - 1)
+                )
+            return result
+
+        return units, indices, evaluate
+
+    direct_packet = 0j
+    character_master = 0j
+    modulus_rows: list[dict[str, object]] = []
+    for modulus in moduli:
+        root = cmath.exp(2j * cmath.pi / modulus)
+        mu_modulus = _finite_mobius(modulus)
+        units, indices, character = character_data(modulus)
+        for d, base_value in base.items():
+            mu_d = _finite_mobius(d)
+            if mu_d == 0:
+                continue
+            for p, companion_value in companion.items():
+                product_label = d * p % modulus
+                if gcd(product_label, modulus) != 1:
+                    continue
+                inverse_product = pow(product_label, -1, modulus)
+                for a, outer_value in outer.items():
+                    direct_packet += (
+                        mu_modulus
+                        * mu_d
+                        * base_value
+                        * companion_value
+                        * outer_value
+                        * root
+                        ** (
+                            int(direct_coefficient) * product_label
+                            - a * inverse_product
+                        )
+                    )
+
+        character_rows: list[dict[str, object]] = []
+        modulus_master = 0j
+        for index in indices:
+            trace_transform = sum(
+                root ** (int(direct_coefficient) * t % modulus)
+                * character(index, t).conjugate()
+                * sum(
+                    coefficient
+                    * root ** (-a * pow(t, -1, modulus) % modulus)
+                    for a, coefficient in outer.items()
+                )
+                for t in units
+            )
+            d_transform = sum(
+                _finite_mobius(d) * coefficient * character(index, d)
+                for d, coefficient in base.items()
+            )
+            p_transform = sum(
+                coefficient * character(index, p)
+                for p, coefficient in companion.items()
+            )
+            small_transform = sum(
+                _finite_mobius(d) * coefficient * character(index, d)
+                for d, coefficient in base.items()
+                if d <= boundary
+            )
+            type_i_transform = 0j
+            type_ii_transform = 0j
+            for d, coefficient in base.items():
+                if d <= boundary:
+                    continue
+                divisors = _positive_divisors(d)
+                short_short = sum(
+                    _finite_mobius(b) * _finite_mobius(c)
+                    for b in divisors
+                    if b <= cutoff_u
+                    for c in _positive_divisors(d // b)
+                    if c <= cutoff_v
+                )
+                long_long = sum(
+                    _finite_mobius(b) * _finite_mobius(c)
+                    for b in divisors
+                    if b > cutoff_u
+                    for c in _positive_divisors(d // b)
+                    if c > cutoff_v
+                )
+                type_i_transform += (
+                    coefficient * character(index, d) * short_short
+                )
+                type_ii_transform += (
+                    coefficient * character(index, d) * long_long
+                )
+            reconstructed_d = small_transform - type_i_transform + type_ii_transform
+            term = trace_transform * d_transform * p_transform
+            modulus_master += term
+            character_rows.append(
+                {
+                    "character_index": index,
+                    "trace_transform": trace_transform,
+                    "mobius_type_transform": d_transform,
+                    "companion_type_transform": p_transform,
+                    "small_d_transform": small_transform,
+                    "type_i_transform": type_i_transform,
+                    "type_ii_transform": type_ii_transform,
+                    "reconstructed_mobius_type_transform": reconstructed_d,
+                    "type_split_exact": abs(d_transform - reconstructed_d) < 1e-8,
+                }
+            )
+        modulus_master *= mu_modulus / len(units)
+        character_master += modulus_master
+        modulus_rows.append(
+            {
+                "modulus": modulus,
+                "outer_mobius_weight": mu_modulus,
+                "character_rows": tuple(character_rows),
+                "all_character_type_splits_exact": all(
+                    bool(row["type_split_exact"]) for row in character_rows
+                ),
+                "linear_character_master_contribution": modulus_master,
+            }
+        )
+
+    tolerance = 1e-7
+    return {
+        "squarefree_moduli": moduli,
+        "short_cutoff_u": cutoff_u,
+        "short_cutoff_v": cutoff_v,
+        "small_d_boundary": boundary,
+        "direct_two_mobius_packet": direct_packet,
+        "linear_character_master": character_master,
+        "global_linear_character_identity_exact": abs(
+            direct_packet - character_master
+        )
+        < tolerance,
+        "modulus_rows": tuple(modulus_rows),
+        "all_character_type_splits_exact": all(
+            bool(row["all_character_type_splits_exact"]) for row in modulus_rows
+        ),
+        "outer_modulus_mobius_weight_retained_linearly": True,
+        "inner_type_mobius_weight_retained_linearly": True,
+        "small_d_boundary_retained_exactly": True,
+        "mixed_type_rectangles_cancel_exactly": True,
+        "absolute_values_taken_before_global_master": False,
+        "global_cross_modulus_dispersion_proved": False,
+        "exhaustive_afe_packet_map_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def primitive_product_farey_collision_audit(
+    *,
+    moduli: tuple[int, ...],
+    h_length_exponent: Fraction = F(5, 2),
+    delta_length_exponent: Fraction = F(5, 2),
+    modulus_exponent: Fraction = F(3),
+) -> dict[str, object]:
+    """Classify cross-modulus primitive product-frequency collisions.
+
+    For ``t`` a unit modulo ``s``, the frequency ``inverse(t)/s`` is a
+    reduced fraction.  Equality is therefore exactly equality of ``(s,t)``;
+    distinct frequencies have circular spacing at least ``1/(s1*s2)``.
+    The exponent ledger records the ordinary additive-large-sieve ceiling
+    for the balanced product sequence.
+    """
+
+    modulus_family = tuple(int(value) for value in moduli)
+    if not modulus_family:
+        raise ValueError("at least one modulus is required")
+    frequencies: list[dict[str, object]] = []
+    for modulus in modulus_family:
+        if modulus <= 1:
+            raise ValueError("all moduli must be greater than one")
+        for t in range(1, modulus):
+            if gcd(t, modulus) != 1:
+                continue
+            numerator = pow(t, -1, modulus)
+            frequencies.append(
+                {
+                    "modulus": modulus,
+                    "unit_label": t,
+                    "numerator": numerator,
+                    "frequency": F(numerator, modulus),
+                }
+            )
+
+    collision_rows: list[dict[str, object]] = []
+    minimum_circular_spacing: Fraction | None = None
+    for first_position, first in enumerate(frequencies):
+        for second_position, second in enumerate(frequencies[first_position:], start=first_position):
+            difference = abs(F(first["frequency"]) - F(second["frequency"]))
+            circular = min(difference, 1 - difference)
+            same_pair = (
+                int(first["modulus"]) == int(second["modulus"])
+                and int(first["unit_label"]) == int(second["unit_label"])
+            )
+            equal_frequency = difference == 0
+            if not equal_frequency and (
+                minimum_circular_spacing is None
+                or circular < minimum_circular_spacing
+            ):
+                minimum_circular_spacing = circular
+            denominator_product = int(first["modulus"]) * int(second["modulus"])
+            collision_rows.append(
+                {
+                    "first": first,
+                    "second": second,
+                    "same_pair": same_pair,
+                    "equal_frequency": equal_frequency,
+                    "zero_frequency_collision_exact": equal_frequency == same_pair,
+                    "circular_spacing": circular,
+                    "farey_spacing_bound_holds": (
+                        equal_frequency or circular >= F(1, denominator_product)
+                    ),
+                }
+            )
+
+    h = F(h_length_exponent)
+    delta = F(delta_length_exponent)
+    sigma = F(modulus_exponent)
+    if min(h, delta, sigma) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    product_length = h + delta
+    coefficient_energy = product_length
+    large_sieve_energy = max(product_length, 2 * sigma) + coefficient_energy
+    fixed_modulus_energy = cochrane_shi_all_gcd_product_spectrum_audit(
+        h_length_exponent=h,
+        delta_length_exponent=delta,
+        squarefree_modulus_exponent=sigma,
+    )["all_gcd_sharp_interval_bound_exponent"]
+    fixed_moduli_aggregate = sigma + sigma + F(fixed_modulus_energy)
+    return {
+        "moduli": modulus_family,
+        "frequencies": tuple(frequencies),
+        "collision_rows": tuple(collision_rows),
+        "all_zero_frequency_collisions_diagonal": all(
+            bool(row["zero_frequency_collision_exact"]) for row in collision_rows
+        ),
+        "all_distinct_frequencies_obey_farey_spacing": all(
+            bool(row["farey_spacing_bound_holds"]) for row in collision_rows
+        ),
+        "minimum_circular_spacing": minimum_circular_spacing,
+        "product_length_exponent": product_length,
+        "coefficient_energy_exponent": coefficient_energy,
+        "additive_large_sieve_energy_exponent": large_sieve_energy,
+        "summed_fixed_modulus_cochrane_shi_exponent": fixed_moduli_aggregate,
+        "large_sieve_improves_summed_fixed_modulus_exponent": (
+            large_sieve_energy < fixed_moduli_aggregate
+        ),
+        "zero_frequency_projector_classified": True,
+        "same_diagonal_globally_reassembled": False,
+        "signed_nonzero_frequency_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

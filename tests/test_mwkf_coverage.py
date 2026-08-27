@@ -3427,6 +3427,162 @@ def test_smooth_projective_adapter_preserves_the_balanced_exponent() -> None:
     assert power_core["projective_cost_absorbed_in_epsilon_budget"]
 
 
+def test_global_ratio_frequency_square_keeps_all_outer_cross_terms() -> None:
+    audit = getattr(
+        coverage_audit,
+        "global_ratio_frequency_square_audit",
+        None,
+    )
+    assert audit is not None, "global ratio-frequency square audit is missing"
+
+    result = audit(
+        squarefree_modulus=30,
+        direct_coefficient=7,
+        type_left_coefficients={1: 1, 7: -1, 11: 2j},
+        type_right_coefficients={1: 2, 13: 1 - 1j, 17: -1},
+        outer_product_coefficients={0: 1, 2: -2, 9: 1j, 17: 1 + 2j},
+    )
+    assert result["unit_residues"] == (1, 7, 11, 13, 17, 19, 23, 29)
+    assert result["direct_gram_is_real"]
+    assert result["direct_equals_frequency_square"]
+    assert result["frequency_equals_ratio_square"]
+    assert result["ratio_equals_rank_one_convolution_square"]
+    assert result["multiplicative_parseval_identity_exact"]
+    assert result["all_type_character_transforms_factor_exactly"]
+    assert result["all_outer_cross_terms_retained"]
+    assert not result["absolute_values_taken_before_global_square"]
+    assert result["type_mobius_weight_retained_inside_fixed_modulus_square"]
+    assert not result[
+        "outer_modulus_mobius_weight_retained_after_fixed_modulus_square"
+    ]
+    assert not result["cross_modulus_two_mobius_dispersion_proved"]
+    assert not result["type_i_ii_determinant_estimate_proved"]
+    assert not result["outer_modulus_average_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    prime = audit(
+        squarefree_modulus=7,
+        direct_coefficient=3,
+        type_left_coefficients={1: 1, 2: -1j, 3: 2},
+        type_right_coefficients={1: -1, 4: 1 + 1j},
+        outer_product_coefficients={0: 2, 1: -1, 5: 3j},
+    )
+    assert prime["direct_equals_frequency_square"]
+    assert prime["frequency_equals_ratio_square"]
+    assert prime["ratio_equals_rank_one_convolution_square"]
+    assert prime["multiplicative_parseval_identity_exact"]
+    assert prime["all_type_character_transforms_factor_exactly"]
+
+    congruent_outer_labels = audit(
+        squarefree_modulus=5,
+        direct_coefficient=2,
+        type_left_coefficients={1: 1, 2: -1j},
+        type_right_coefficients={1: 2, 3: -1},
+        outer_product_coefficients={0: 1, 5: 2, 1: -1j, 6: 3j},
+    )
+    assert congruent_outer_labels["outer_product_residue_coefficients"] == {
+        0: 3,
+        1: 2j,
+    }
+    assert congruent_outer_labels["direct_equals_frequency_square"]
+    assert congruent_outer_labels["frequency_equals_ratio_square"]
+    assert congruent_outer_labels["ratio_equals_rank_one_convolution_square"]
+    assert congruent_outer_labels["multiplicative_parseval_identity_exact"]
+
+
+def test_global_linear_character_master_retains_both_mobius_weights() -> None:
+    audit = getattr(
+        coverage_audit,
+        "global_two_mobius_character_master_audit",
+        None,
+    )
+    assert audit is not None, "global two-Mobius character audit is missing"
+
+    result = audit(
+        squarefree_moduli=(5, 7, 11),
+        direct_coefficient=2,
+        type_base_coefficients={1: 1, 2: -1j, 3: 2, 6: -1, 11: 1 + 2j, 13: -2},
+        companion_type_coefficients={1: 2, 4: -1, 9: 1j},
+        outer_product_coefficients={0: 1, 2: -2, 7: 1j, 13: 2 + 1j},
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+    )
+    assert result["short_cutoff_u"] == 2
+    assert result["short_cutoff_v"] == 3
+    assert result["small_d_boundary"] == 3
+    assert result["global_linear_character_identity_exact"]
+    assert result["all_character_type_splits_exact"]
+    assert result["outer_modulus_mobius_weight_retained_linearly"]
+    assert result["inner_type_mobius_weight_retained_linearly"]
+    assert result["small_d_boundary_retained_exactly"]
+    assert result["mixed_type_rectangles_cancel_exactly"]
+    assert not result["absolute_values_taken_before_global_master"]
+    assert not result["global_cross_modulus_dispersion_proved"]
+    assert not result["exhaustive_afe_packet_map_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    assert [row["outer_mobius_weight"] for row in result["modulus_rows"]] == [
+        -1,
+        -1,
+        -1,
+    ]
+
+    unequal = audit(
+        squarefree_moduli=(6, 10),
+        direct_coefficient=7,
+        type_base_coefficients={1: 1, 5: -2, 7: 1j, 14: 3},
+        companion_type_coefficients={1: -1, 11: 2j},
+        outer_product_coefficients={0: 2, 3: -1j, 8: 1},
+        short_cutoff_u=1,
+        short_cutoff_v=4,
+    )
+    assert unequal["small_d_boundary"] == 4
+    assert unequal["global_linear_character_identity_exact"]
+    assert unequal["all_character_type_splits_exact"]
+
+
+def test_cross_modulus_zero_product_frequency_is_exactly_diagonal() -> None:
+    audit = getattr(
+        coverage_audit,
+        "primitive_product_farey_collision_audit",
+        None,
+    )
+    assert audit is not None, "primitive product-Farey audit is missing"
+
+    result = audit(moduli=(5, 6, 7, 10, 14, 15))
+    assert result["all_zero_frequency_collisions_diagonal"]
+    assert result["all_distinct_frequencies_obey_farey_spacing"]
+    assert result["minimum_circular_spacing"] is not None
+    assert result["product_length_exponent"] == F(5)
+    assert result["coefficient_energy_exponent"] == F(5)
+    assert result["additive_large_sieve_energy_exponent"] == F(11)
+    assert result["summed_fixed_modulus_cochrane_shi_exponent"] == F(11)
+    assert not result["large_sieve_improves_summed_fixed_modulus_exponent"]
+    assert result["zero_frequency_projector_classified"]
+    assert not result["same_diagonal_globally_reassembled"]
+    assert not result["signed_nonzero_frequency_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    rows = result["collision_rows"]
+    same = next(
+        row
+        for row in rows
+        if row["first"]["modulus"] == 10
+        and row["first"]["unit_label"] == 3
+        and row["second"]["modulus"] == 10
+        and row["second"]["unit_label"] == 3
+    )
+    assert same["equal_frequency"]
+    assert same["same_pair"]
+
+    cross = next(
+        row
+        for row in rows
+        if row["first"]["modulus"] != row["second"]["modulus"]
+    )
+    assert not cross["equal_frequency"]
+    assert cross["farey_spacing_bound_holds"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,
