@@ -222,6 +222,23 @@ def test_research_note_records_product_trace_completion_and_rank_one_boundary() 
         "primitive_product_spectrum_exponent_audit",
         "one half-power larger than the",
         "analytic primitive-spectrum estimate",
+        "### 9.86 A published fourth moment closes the unit-label interval subpacket",
+        r"\mathcal E_{r,U}^{\rm prim}(I,J)",
+        r"8^{\omega(r)}\tau(r)(\log r)^3(\log\log r)^7B^2",
+        r"\frac{|I|^2|J|^2}{r\varphi(r)}",
+        "cochrane_shi_unit_product_spectrum_audit",
+        "nonunit gcd strata",
+        "joint two-Möbius packet",
+        "### 9.87 Exact nonunit gcd descent closes every sharp interval stratum",
+        r"w=[d,e],\qquad R=\frac r w",
+        r"e_r(kh\delta)",
+        r"\frac{\varphi([d,e])}{[d,e]}",
+        r"R=1",
+        r"\Longleftrightarrow r\mid h\delta",
+        r"1+H+L+\frac{HL}{r}",
+        "nonunit_product_gcd_strata_audit",
+        "cochrane_shi_all_gcd_product_spectrum_audit",
+        "smooth, nonseparable AFE packet",
     ):
         assert marker in text
 

@@ -10520,6 +10520,257 @@ def primitive_product_spectrum_exponent_audit(
     }
 
 
+def cochrane_shi_unit_product_spectrum_audit(
+    *,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    squarefree_modulus_exponent: Fraction,
+) -> dict[str, object]:
+    """Map the unit-label primitive spectrum to a published fourth moment.
+
+    Cochrane--Shi Theorem 1 bounds the normalized nonprincipal fourth
+    moment of a character sum on an arbitrary translated interval by
+    ``r^epsilon * B^2`` for squarefree ``r``.  Multiplicative Plancherel
+    and the squarefree Gauss bound ``|tau_r(chi)|^2 <= r`` therefore give
+
+    ``E_prim(I,J) << r^epsilon*H*L + H^2*L^2/(r*phi(r))``
+
+    when both outer variables are units modulo ``r`` and the weights are
+    sharp interval indicators.  This adapter does not handle nonunit gcd
+    strata or the actual smooth, nonseparable AFE packet.
+    """
+
+    h = F(h_length_exponent)
+    delta = F(delta_length_exponent)
+    modulus = F(squarefree_modulus_exponent)
+    if min(h, delta, modulus) < 0:
+        raise ValueError("all length and modulus exponents must be nonnegative")
+
+    nonprincipal_fourth_moment_h = 2 * h
+    nonprincipal_fourth_moment_delta = 2 * delta
+    nonprincipal_primitive_energy = h + delta
+    principal_primitive_energy = 2 * h + 2 * delta - 2 * modulus
+    published_unit_interval_bound = max(
+        nonprincipal_primitive_energy,
+        principal_primitive_energy,
+    )
+    elementary = primitive_product_spectrum_exponent_audit(
+        h_length_exponent=h,
+        delta_length_exponent=delta,
+        modulus_exponent=modulus,
+    )
+    product_density = F(elementary["product_density_energy_exponent"])
+    return {
+        "h_length_exponent": h,
+        "delta_length_exponent": delta,
+        "squarefree_modulus_exponent": modulus,
+        "cochrane_shi_normalized_fourth_moment_h_exponent": (
+            nonprincipal_fourth_moment_h
+        ),
+        "cochrane_shi_normalized_fourth_moment_delta_exponent": (
+            nonprincipal_fourth_moment_delta
+        ),
+        "squarefree_gauss_weight_ceiling_exponent": modulus,
+        "nonprincipal_primitive_energy_exponent": (
+            nonprincipal_primitive_energy
+        ),
+        "principal_primitive_energy_exponent": principal_primitive_energy,
+        "published_unit_interval_bound_exponent": published_unit_interval_bound,
+        "elementary_primitive_energy_exponent": F(
+            elementary["elementary_primitive_energy_exponent"]
+        ),
+        "saving_over_elementary_bound": max(
+            F(0),
+            F(elementary["elementary_primitive_energy_exponent"])
+            - published_unit_interval_bound,
+        ),
+        "product_density_energy_exponent": product_density,
+        "margin_below_product_density_energy": (
+            product_density - published_unit_interval_bound
+        ),
+        "cochrane_shi_theorem_one_applies": True,
+        "arbitrary_translated_sharp_intervals_covered": True,
+        "squarefree_arithmetic_factor_absorbed_in_t_epsilon": True,
+        "unit_outer_product_stratum_covered": True,
+        "nonunit_gcd_strata_reduced_and_covered": False,
+        "smooth_afe_packet_adapter_proved": False,
+        "joint_q_phase_and_mobius_packet_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def nonunit_product_gcd_strata_audit(
+    *,
+    squarefree_modulus: int,
+    h_labels: tuple[int, ...],
+    delta_labels: tuple[int, ...],
+) -> dict[str, object]:
+    """Verify the exact reduced conductor on every nonunit product stratum."""
+
+    r = int(squarefree_modulus)
+    factorization = _finite_prime_exponents(r) if r > 1 else {}
+    if r <= 1 or any(exponent != 1 for exponent in factorization.values()):
+        raise ValueError("the modulus must be squarefree and greater than one")
+    if not h_labels or not delta_labels:
+        raise ValueError("both label families must be nonempty")
+
+    units_r = tuple(value for value in range(1, r) if gcd(value, r) == 1)
+    root_r = cmath.exp(2j * cmath.pi / r)
+    rows: list[dict[str, object]] = []
+    for h in tuple(int(value) for value in h_labels):
+        for delta in tuple(int(value) for value in delta_labels):
+            d = gcd(h, r)
+            e = gcd(delta, r)
+            w = d * e // gcd(d, e)
+            reduced_modulus = r // w
+            reduced_h = h // d
+            reduced_delta = delta // e
+            phase_multiplier = gcd(d, e)
+            if reduced_modulus == 1:
+                reduction_counts = {0: len(units_r)}
+                expected_lift_count = len(units_r)
+                phase_reduction_exact = all(
+                    abs(root_r ** (k * h * delta % r) - 1) < 1e-8
+                    for k in units_r
+                )
+            else:
+                units_reduced = tuple(
+                    value
+                    for value in range(1, reduced_modulus)
+                    if gcd(value, reduced_modulus) == 1
+                )
+                reduction_counts = {
+                    residue: sum(1 for k in units_r if k % reduced_modulus == residue)
+                    for residue in units_reduced
+                }
+                expected_lift_count = len(units_r) // len(units_reduced)
+                root_reduced = cmath.exp(2j * cmath.pi / reduced_modulus)
+                phase_reduction_exact = all(
+                    abs(
+                        root_r ** (k * h * delta % r)
+                        - root_reduced
+                        ** (
+                            k
+                            * phase_multiplier
+                            * reduced_h
+                            * reduced_delta
+                            % reduced_modulus
+                        )
+                    )
+                    < 1e-8
+                    for k in units_r
+                )
+            rows.append(
+                {
+                    "h": h,
+                    "delta": delta,
+                    "h_modulus_gcd": d,
+                    "delta_modulus_gcd": e,
+                    "product_gcd_lcm": w,
+                    "reduced_modulus": reduced_modulus,
+                    "reduced_h": reduced_h,
+                    "reduced_delta": reduced_delta,
+                    "phase_multiplier": phase_multiplier,
+                    "reduced_variables_are_units": (
+                        gcd(reduced_h, reduced_modulus) == 1
+                        and gcd(reduced_delta, reduced_modulus) == 1
+                    ),
+                    "phase_reduction_exact": phase_reduction_exact,
+                    "frequency_reduction_counts": reduction_counts,
+                    "expected_frequency_lift_count": expected_lift_count,
+                    "uniform_frequency_lifts": all(
+                        count == expected_lift_count
+                        for count in reduction_counts.values()
+                    ),
+                    "fully_resonant_product": reduced_modulus == 1,
+                    "fully_resonant_iff_modulus_divides_product": (
+                        (reduced_modulus == 1) == (h * delta % r == 0)
+                    ),
+                }
+            )
+
+    return {
+        "squarefree_modulus": r,
+        "rows": tuple(rows),
+        "all_reduced_variables_are_units": all(
+            bool(row["reduced_variables_are_units"]) for row in rows
+        ),
+        "all_phase_reductions_exact": all(
+            bool(row["phase_reduction_exact"]) for row in rows
+        ),
+        "all_frequency_lifts_uniform": all(
+            bool(row["uniform_frequency_lifts"]) for row in rows
+        ),
+        "all_fully_resonant_conditions_exact": all(
+            bool(row["fully_resonant_iff_modulus_divides_product"])
+            for row in rows
+        ),
+        "nonunit_gcd_stratification_identity_proved": True,
+        "cochrane_shi_reapplies_on_every_reduced_modulus_above_one": True,
+        "fully_resonant_divisor_incidence_analytic_bound_proved": False,
+        "smooth_afe_packet_adapter_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def cochrane_shi_all_gcd_product_spectrum_audit(
+    *,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    squarefree_modulus_exponent: Fraction,
+) -> dict[str, object]:
+    """Record the sharp-interval bound after all nonunit gcd strata.
+
+    Exact gcd splitting reduces every nonresonant stratum to the unit-label
+    Cochrane--Shi fourth moment.  The reduced-modulus-one strata satisfy
+    ``r | h*delta`` and have total interval mass
+    ``r^epsilon*(H+L+H*L/r)``.  Cauchy over the divisor strata costs only
+    ``r^epsilon`` for squarefree ``r``.
+    """
+
+    h = F(h_length_exponent)
+    delta = F(delta_length_exponent)
+    modulus = F(squarefree_modulus_exponent)
+    if min(h, delta, modulus) < 0:
+        raise ValueError("all length and modulus exponents must be nonnegative")
+
+    unit = cochrane_shi_unit_product_spectrum_audit(
+        h_length_exponent=h,
+        delta_length_exponent=delta,
+        squarefree_modulus_exponent=modulus,
+    )
+    fully_resonant_mass = max(F(0), h, delta, h + delta - modulus)
+    fully_resonant_energy = 2 * fully_resonant_mass
+    all_gcd_bound = max(
+        F(unit["published_unit_interval_bound_exponent"]),
+        fully_resonant_energy,
+    )
+    return {
+        "h_length_exponent": h,
+        "delta_length_exponent": delta,
+        "squarefree_modulus_exponent": modulus,
+        "unit_stratum_bound_exponent": F(
+            unit["published_unit_interval_bound_exponent"]
+        ),
+        "fully_resonant_mass_exponent": fully_resonant_mass,
+        "fully_resonant_energy_exponent": fully_resonant_energy,
+        "all_gcd_sharp_interval_bound_exponent": all_gcd_bound,
+        "product_density_energy_exponent": F(
+            unit["product_density_energy_exponent"]
+        ),
+        "margin_below_product_density_energy": (
+            F(unit["product_density_energy_exponent"]) - all_gcd_bound
+        ),
+        "squarefree_divisor_strata_cost_only_t_epsilon": True,
+        "nonresonant_reduced_moduli_use_cochrane_shi": True,
+        "fully_resonant_divisor_incidence_bound_proved": True,
+        "all_sharp_interval_gcd_strata_covered": True,
+        "smooth_afe_packet_adapter_proved": False,
+        "joint_q_phase_and_mobius_packet_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

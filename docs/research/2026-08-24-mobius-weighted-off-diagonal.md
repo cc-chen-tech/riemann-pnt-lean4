@@ -12867,6 +12867,180 @@ primitive_product_spectrum_exponent_audit records the exact \(15/2\) versus
 \(7\) balanced ledger.  All three helpers leave the analytic primitive-spectrum estimate
 and the coupled-kernel gate explicitly false.
 
+### 9.86 A published fourth moment closes the unit-label interval subpacket
+
+The half-power loss in (9.579) is not intrinsic on the stratum where both
+outer variables are units modulo \(r\).  Let \(I,J\) be arbitrary translated
+integer intervals, put
+
+\[
+ S_I(\chi)=\sum_{h\in I}\chi(h),\qquad
+ S_J(\chi)=\sum_{\delta\in J}\chi(\delta),
+\]
+
+and extend Dirichlet characters by zero on nonunits.  Multiplicative
+Plancherel in the primitive additive-frequency variable \(k\), applied to
+(9.577), gives the exact identity
+
+\[
+ \boxed{
+ \mathcal E_{r,U}^{\rm prim}(I,J)
+ =\frac1{r\varphi(r)}
+ \sum_{\chi\bmod r}
+ |\tau_r(\overline\chi)|^2
+ |S_I(\chi)|^2|S_J(\chi)|^2.}
+ \tag{9.580}
+\]
+
+Here the subscript \(U\) means that \(h,\delta\) are restricted to
+\(U(r)\), exactly as enforced by the character sums.  Cochrane--Shi,
+Theorem 1, proves uniformly for every translated interval of length \(B\)
+and every positive integer modulus \(r\) that
+
+\[
+ \frac1{\varphi(r)}
+ \sum_{\chi\ne\chi_0}
+ \left|\sum_{a<n\le a+B}\chi(n)\right|^4
+ \ll
+ 8^{\omega(r)}\tau(r)(\log r)^3(\log\log r)^7B^2.
+ \tag{9.581}
+\]
+
+For squarefree \(r\), the arithmetic factor on the right is
+\(r^\varepsilon\), and the induced-character Gauss formula gives
+\(|\tau_r(\chi)|^2\le r\).  Cauchy between the \(I\)- and \(J\)-moments
+therefore bounds the nonprincipal characters in (9.580) by
+\(r^\varepsilon |I||J|\).  The principal character has
+\(\tau_r(\chi_0)=\mu(r)\).  Consequently
+
+\[
+ \boxed{
+ \mathcal E_{r,U}^{\rm prim}(I,J)
+ \ll_\varepsilon
+ r^\varepsilon |I||J|
+ +\frac{|I|^2|J|^2}{r\varphi(r)}.}
+ \tag{9.582}
+\]
+
+On \(H=L=T^{5/2}\), \(r=T^3\), the two exponents in (9.582) are \(5\)
+and \(4\), respectively.  Thus the sharp unit-label interval subpacket is
+not merely at the \(T^7\) product-density scale: it lies two powers below
+that scale.  This rigorously removes the apparent half-power obstruction
+of (9.579) on this subpacket.
+
+Three interfaces still prevent a global conclusion.  First, (9.580) does
+not represent labels for which \((h\delta,r)>1\); those require an exact
+\((h,r),(\delta,r)\) decomposition and include the fully resonant condition
+\(r\mid h\delta\).  Second, the actual AFE weight must be decomposed into
+translated interval or bounded-variation rank-one packets at
+\(T^\varepsilon\) total projective cost.  Third, the resulting estimate
+must remain inside the same \(q\)-phase, two-Möbius character square, and
+global AFE/reflection packet map.  None of these three statements follows
+from the scalar fourth moment.
+
+The exact-rational helper cochrane_shi_unit_product_spectrum_audit records
+the \(5,4\) exponents against the elementary \(15/2\) and product-density
+\(7\) ledgers.  It marks only the unit, sharp-interval subpacket as covered;
+the nonunit gcd strata, smooth adapter, joint two-Möbius packet, and full
+coupled-kernel gate remain false.
+
+### 9.87 Exact nonunit gcd descent closes every sharp interval stratum
+
+The first missing interface after (9.582) can also be discharged without a
+new analytic theorem.  For every pair \(h,\delta\), put
+
+\[
+ d=(h,r),\qquad e=(\delta,r),\qquad
+ w=[d,e],\qquad R=\frac r w,\qquad
+ h=dh',\quad\delta=e\delta'.
+\]
+
+Squarefreeness makes \(w\) and \(R\) coprime, and
+\((d,e)=de/w\) is a unit modulo \(R\).  Hence
+
+\[
+ \boxed{
+ e_r(kh\delta)
+ =e_R\!\left(k(d,e)h'\delta'\right),\qquad
+ h',\delta'\in U(R),}
+ \tag{9.583}
+\]
+
+while reduction \(U(r)\to U(R)\) is exactly
+\(\varphi(w)\)-to-one.  Splitting (9.577) by the exact pair
+\((d,e)\), then applying Cauchy only across these divisor strata, gives
+
+\[
+ \mathcal E_r^{\rm prim}(I,J)
+ \le \tau(r)^2
+ \sum_{d,e\mid r}
+ \frac{\varphi([d,e])}{[d,e]}\,
+ \mathcal E_{r/[d,e],U}^{\rm prim}(I_d,J_e).
+ \tag{9.584}
+\]
+
+Here \(I_d\) is the interval for \(h'=h/d\) with the exact restriction
+\((h',r/d)=1\), and similarly for \(J_e\).  The primes in
+\([d,e]/d\) and \([d,e]/e\) do not divide the reduced modulus; Möbius
+inversion of those remaining coprimalities writes each \(I_d,J_e\) as
+\(r^\varepsilon\) translated interval character sums.  Therefore every
+term with \(R>1\) is covered by (9.582).  Summing the interval lengths over
+\(d,e\) costs only \(r^\varepsilon\).
+
+When \(R=1\), (9.583) has no oscillatory residue left.  This is not hidden:
+
+\[
+ R=1
+ \Longleftrightarrow [d,e]=r
+ \Longleftrightarrow r\mid h\delta.
+\]
+
+The complete mass of these fully resonant divisor strata has the elementary
+Euler-product bound
+
+\[
+ \boxed{
+ \sum_{\substack{d,e\mid r\\[d,e]=r}}
+ \left(\frac Hd+1\right)\left(\frac Le+1\right)
+ \ll_\varepsilon
+ r^\varepsilon\left(1+H+L+\frac{HL}{r}\right).}
+ \tag{9.585}
+\]
+
+Indeed, prime by prime there are only the three assignments
+\((p\mid d,p\nmid e)\), \((p\nmid d,p\mid e)\), and
+\((p\mid d,p\mid e)\); the \(HL\)-coefficient is
+\(r^{-1}\prod_{p\mid r}(2+1/p)\), and all boundary coefficients are
+\(r^\varepsilon\).
+
+Combining (9.582)--(9.585), including the principal terms on all reduced
+moduli, proves the separated sharp-interval estimate
+
+\[
+ \boxed{
+ \mathcal E_r^{\rm prim}(I,J)
+ \ll_\varepsilon
+ r^\varepsilon\left\{
+ HL+\left(1+H+L+\frac{HL}{r}\right)^2
+ \right\}.}
+ \tag{9.586}
+\]
+
+At \(H=L=T^{5/2}\), \(r=T^3\), both terms in braces have exponent \(5\).
+Thus all unit and nonunit sharp-interval gcd strata lie two powers below
+the \(T^7\) product-density scale.  The surviving obstruction has moved
+again: it is now the \(T^\varepsilon\)-projective decomposition of the
+actual smooth, nonseparable AFE packet and its compatibility with the
+joint \(q\)-phase, both Möbius weights, reflection, and the global packet
+map.  Formula (9.586) alone does not provide that compatibility.
+
+The finite helper nonunit_product_gcd_strata_audit checks (9.583), the
+uniform frequency-lift multiplicity, and the equivalence
+\(R=1\Longleftrightarrow r\mid h\delta\) on supplied finite labels.  The
+exact-rational helper cochrane_shi_all_gcd_product_spectrum_audit records
+the exponent \(5\) in (9.586).  It leaves the smooth AFE adapter, joint
+two-Möbius packet, and coupled-kernel gate explicitly false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -13528,7 +13702,9 @@ Proved in this note:
 | Pre-Poisson product-incidence orthogonality | exact equal-outer-label Fourier bound with half-power numerical capacity; full Gram estimate unproved | After the cofactor character square imposes \(x_1\equiv x_2\pmod r\), the equal-\((h,\delta)\) inverse cross phase has reduced conductor \(Q=q/(x_1-x_2,q)\), while the same pair collides modulo \(s/Q\), (9.557)--(9.560).  Grouping \(h,\delta\) modulo \(Q\) gives the exact Fourier-operator bound (9.561)--(9.562).  On the original \(s=T^3,H=L=T^{5/2}\) box, every \(T\leq Q\leq T^3\) has at least half-power numerical capacity, (9.563).  This acts before \(h\)-Poisson and is an alternative ordering of (9.493), not an extra post-Poisson gain.  Closing the route still requires the unequal-label Gram estimate (9.566), a joint count for \(Q<T\), a \(T^\varepsilon\)-cost smooth adapter, compatibility with the preceding reductions, and an exhaustive global packet map |
 | Full unequal-label CRT character Gram | exact Kloosterman collapse and coefficient-principal classification; global operator bound unproved | Keeping every \(a=h\delta\) label inside one character Cauchy step gives (9.564)--(9.566), with no pointwise \(\varphi(r)^{1/2}\) multiplier cost.  Character orthogonality collapses the full square to the cofactor trace \(\mathcal C_r(a_1,a_2;y)\), (9.567).  Its exact coefficient-principal set is \(y=1,\ a_1\equiv a_2\pmod r\), where the kernel equals \(\varphi(r)\), (9.568); this includes distinct outer product labels.  For composite \(r\), the complement still contains local-principal finite aliases, so no uniform pointwise square-root claim is made.  The principal mode needs global AFE/reflection/diagonal reassembly, while the coefficient-nonprincipal trace must be estimated jointly with the \(q\)-phase, both Möbius weights, and all packets |
 | Cofactor Kloosterman conductor stratification | exact prime-factor split and local square-root bound; conductor average unproved | With \(g=(B(y-1),a_2-a_1\bar y,r)\) and \(R_0=r/g\), CRT gives the exact prime product (9.570).  Principal primes contribute \(p-1\), one-zero primes contribute \(-1\), and the remaining primes satisfy the classical \(2\sqrt p\) bound.  Hence (9.571) gives \(|\mathcal C_r|\ll_\varepsilon\varphi(g)R_0^{1/2+\varepsilon}\), including all \(2,3\)-adic aliases.  Low conductor forces \(y=1\) and \(a_1=a_2\) modulo the large divisor \(g\), (9.572).  Section 9.85 gives a stronger global alternative to summing these entries pointwise, but its primitive product-spectrum estimate remains open |
-| Exact cofactor outer-label Fourier operator | exact partial isometry and alias cancellation; primitive product-spectrum estimate unproved | The complete matrix \(C_y(a,b)\) maps a unit additive frequency to a phase times the permuted frequency \(\bar yk\), with singular value exactly \(r\), and annihilates every nonunit frequency, (9.573)--(9.575).  Thus all row and column sums vanish and principal/full-amplitude composite aliases cancel before absolute values.  The sharp bound (9.576) depends only on the primitive projection of the \(a=h\delta\) residue arrays.  Its exact energy is (9.577); elementary Cauchy--Parseval gives (9.578)--(9.579), which is still one half-power too large at \(H=L=T^{5/2},r=T^3\).  The remaining interface is therefore a primitive two-Möbius product-spectrum bound, not pointwise cofactor conductor summation |
+| Exact cofactor outer-label Fourier operator | exact partial isometry and alias cancellation; full primitive product-spectrum estimate unproved | The complete matrix \(C_y(a,b)\) maps a unit additive frequency to a phase times the permuted frequency \(\bar yk\), with singular value exactly \(r\), and annihilates every nonunit frequency, (9.573)--(9.575).  Thus all row and column sums vanish and principal/full-amplitude composite aliases cancel before absolute values.  The sharp bound (9.576) depends only on the primitive projection of the \(a=h\delta\) residue arrays.  Its exact energy is (9.577); elementary Cauchy--Parseval gives (9.578)--(9.579), which is still one half-power too large at \(H=L=T^{5/2},r=T^3\).  Section 9.86 closes the unit sharp-interval subpacket, but nonunit gcd strata and the actual smooth global packet remain |
+| Unit-label primitive product spectrum | published composite-modulus fourth moment closes the unit sharp-interval subpacket | Multiplicative Plancherel gives the exact Gauss-weighted character formula (9.580).  Cochrane--Shi Theorem 1 supplies the arbitrary-translated-interval fourth moment (9.581), and squarefree Gauss bounds yield (9.582).  On \(H=L=T^{5/2},r=T^3\), the nonprincipal and principal exponents are \(5\) and \(4\), both below the \(T^7\) product-density scale.  Section 9.87 extends this through every nonunit gcd stratum |
+| Nonunit primitive product gcd descent | exact reduced conductor and published sharp-interval closure; smooth/global adapters unproved | With \(d=(h,r),e=(\delta,r),w=[d,e]\), the phase descends exactly to modulus \(R=r/w\), and \(U(r)\to U(R)\) has \(\varphi(w)\) lifts, (9.583)--(9.584).  Every \(R>1\) term returns to Cochrane--Shi after finite Möbius inversion.  The \(R=1\) locus is exactly \(r\mid h\delta\) and has mass (9.585).  Thus (9.586) bounds every separated sharp-interval stratum by exponent \(5\) at the balanced face.  The smooth nonseparable AFE adapter and its compatibility with the joint \(q\)-phase, two Möbius weights, reflection, and exhaustive packet map remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
@@ -13577,6 +13753,12 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
 * I. D. Shkredov, *Modular hyperbolas and bilinear forms of Kloosterman
   sums*, arXiv:1905.00291; its fixed-prime-field incidence setting is
   recorded in the Section 9.29 applicability audit.
+* T. Cochrane, S. Shi, *The congruence \(x_1x_2\equiv x_3x_4\pmod m\)
+  and mean values of character sums*, J. Number Theory 130 (2010),
+  767--785, Theorem 1 and Lemma 1; Section 9.86 combines its
+  arbitrary-translated-interval fourth moment with the squarefree
+  induced-character Gauss formula to prove (9.582) on the unit-label
+  subpacket.
 * A. J. Irving, *Average Bounds for Kloosterman Sums Over Primes*,
   arXiv:1301.6372, Theorem 1; the \(B=1\) prime-slice exponents and its
   moving-short-interval mismatch are audited in Section 9.40.

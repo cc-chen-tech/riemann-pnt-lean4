@@ -3255,6 +3255,110 @@ def test_balanced_primitive_product_spectrum_keeps_exact_half_power_deficit() ->
     assert not balanced["coupled_kernel_gate_closed"]
 
 
+def test_cochrane_shi_closes_the_unit_interval_primitive_spectrum_only() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cochrane_shi_unit_product_spectrum_audit",
+        None,
+    )
+    assert audit is not None, "Cochrane--Shi primitive-spectrum audit is missing"
+
+    balanced = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+    )
+    assert balanced["cochrane_shi_normalized_fourth_moment_h_exponent"] == F(5)
+    assert balanced["cochrane_shi_normalized_fourth_moment_delta_exponent"] == F(5)
+    assert balanced["squarefree_gauss_weight_ceiling_exponent"] == F(3)
+    assert balanced["nonprincipal_primitive_energy_exponent"] == F(5)
+    assert balanced["principal_primitive_energy_exponent"] == F(4)
+    assert balanced["published_unit_interval_bound_exponent"] == F(5)
+    assert balanced["elementary_primitive_energy_exponent"] == F(15, 2)
+    assert balanced["saving_over_elementary_bound"] == F(5, 2)
+    assert balanced["product_density_energy_exponent"] == F(7)
+    assert balanced["margin_below_product_density_energy"] == F(2)
+    assert balanced["cochrane_shi_theorem_one_applies"]
+    assert balanced["arbitrary_translated_sharp_intervals_covered"]
+    assert balanced["squarefree_arithmetic_factor_absorbed_in_t_epsilon"]
+    assert balanced["unit_outer_product_stratum_covered"]
+    assert not balanced["nonunit_gcd_strata_reduced_and_covered"]
+    assert not balanced["smooth_afe_packet_adapter_proved"]
+    assert not balanced["joint_q_phase_and_mobius_packet_bound_proved"]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+
+def test_nonunit_product_gcd_strata_have_exact_reduced_conductors() -> None:
+    audit = getattr(
+        coverage_audit,
+        "nonunit_product_gcd_strata_audit",
+        None,
+    )
+    assert audit is not None, "nonunit product-gcd audit is missing"
+
+    result = audit(
+        squarefree_modulus=30,
+        h_labels=(1, 2, 3, 5, 6, 10, 15, 30, 42),
+        delta_labels=(1, 2, 5, 7, 10, 15, 21, 30, 45),
+    )
+    assert result["all_reduced_variables_are_units"]
+    assert result["all_phase_reductions_exact"]
+    assert result["all_frequency_lifts_uniform"]
+    assert result["all_fully_resonant_conditions_exact"]
+    assert result["nonunit_gcd_stratification_identity_proved"]
+    assert result["cochrane_shi_reapplies_on_every_reduced_modulus_above_one"]
+    assert not result["fully_resonant_divisor_incidence_analytic_bound_proved"]
+    assert not result["smooth_afe_packet_adapter_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    rows = result["rows"]
+    partially_reduced = next(
+        row for row in rows if row["h"] == 6 and row["delta"] == 5
+    )
+    assert partially_reduced["h_modulus_gcd"] == 6
+    assert partially_reduced["delta_modulus_gcd"] == 5
+    assert partially_reduced["product_gcd_lcm"] == 30
+    assert partially_reduced["reduced_modulus"] == 1
+    assert partially_reduced["fully_resonant_product"]
+
+    conductor_five = next(
+        row for row in rows if row["h"] == 2 and row["delta"] == 21
+    )
+    assert conductor_five["product_gcd_lcm"] == 6
+    assert conductor_five["reduced_modulus"] == 5
+    assert conductor_five["phase_multiplier"] == 1
+    assert conductor_five["expected_frequency_lift_count"] == 2
+    assert set(conductor_five["frequency_reduction_counts"].values()) == {2}
+
+
+def test_cochrane_shi_closes_all_sharp_interval_gcd_strata() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cochrane_shi_all_gcd_product_spectrum_audit",
+        None,
+    )
+    assert audit is not None, "all-gcd Cochrane--Shi audit is missing"
+
+    balanced = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+    )
+    assert balanced["unit_stratum_bound_exponent"] == F(5)
+    assert balanced["fully_resonant_mass_exponent"] == F(5, 2)
+    assert balanced["fully_resonant_energy_exponent"] == F(5)
+    assert balanced["all_gcd_sharp_interval_bound_exponent"] == F(5)
+    assert balanced["product_density_energy_exponent"] == F(7)
+    assert balanced["margin_below_product_density_energy"] == F(2)
+    assert balanced["squarefree_divisor_strata_cost_only_t_epsilon"]
+    assert balanced["nonresonant_reduced_moduli_use_cochrane_shi"]
+    assert balanced["fully_resonant_divisor_incidence_bound_proved"]
+    assert balanced["all_sharp_interval_gcd_strata_covered"]
+    assert not balanced["smooth_afe_packet_adapter_proved"]
+    assert not balanced["joint_q_phase_and_mobius_packet_bound_proved"]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,
