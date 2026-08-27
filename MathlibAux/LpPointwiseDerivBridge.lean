@@ -1,5 +1,6 @@
 import Mathlib.Analysis.Calculus.Deriv.Slope
 import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # From pointwise slopes to an `L²`-valued derivative
@@ -100,3 +101,41 @@ theorem hasDerivAt_memLpToLp_of_tendsto_integral_pointwiseSlope_sq
   apply hasDerivAt_iff_tendsto_slope.mpr
   rw [tendsto_iff_norm_sub_tendsto_zero]
   exact hnormTendsto
+
+/-- A filter-form dominated convergence criterion for the squared pointwise
+slope error.  Together with
+`hasDerivAt_memLpToLp_of_tendsto_integral_pointwiseSlope_sq`, this reduces an
+`L²`-valued derivative proof to an explicit integrable majorant. -/
+theorem tendsto_integral_pointwiseSlope_sq_of_dominated
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    (f : ℂ → α → ℂ) {z : ℂ} {f' : α → ℂ} {bound : α → ℝ}
+    (hMeas : ∀ᶠ u in 𝓝[≠] z,
+      AEStronglyMeasurable
+        (fun t => ‖pointwiseComplexSlope f z u t - f' t‖ ^ 2) μ)
+    (hBound : ∀ᶠ u in 𝓝[≠] z, ∀ᵐ t ∂μ,
+      ‖(‖pointwiseComplexSlope f z u t - f' t‖ ^ 2 : ℝ)‖ ≤ bound t)
+    (hBoundInt : Integrable bound μ)
+    (hDeriv : ∀ᵐ t ∂μ, HasDerivAt (fun u => f u t) (f' t) z) :
+    Tendsto
+      (fun u : ℂ => ∫ t,
+        ‖pointwiseComplexSlope f z u t - f' t‖ ^ 2 ∂μ)
+      (𝓝[≠] z) (𝓝 0) := by
+  have hpointwise : ∀ᵐ t ∂μ, Tendsto
+      (fun u : ℂ => ‖pointwiseComplexSlope f z u t - f' t‖ ^ 2)
+      (𝓝[≠] z) (𝓝 0) := by
+    filter_upwards [hDeriv] with t ht
+    have hslope : Tendsto
+        (fun u : ℂ => pointwiseComplexSlope f z u t)
+        (𝓝[≠] z) (𝓝 (f' t)) := by
+      convert ht.tendsto_slope using 1
+      funext u
+      rw [pointwiseComplexSlope, slope_def_field, div_eq_mul_inv]
+      ring
+    have hconst : Tendsto (fun _ : ℂ => f' t) (𝓝[≠] z) (𝓝 (f' t)) :=
+      tendsto_const_nhds
+    simpa using (hslope.sub hconst).norm.pow 2
+  have hraw := tendsto_integral_filter_of_dominated_convergence
+    (F := fun u : ℂ => fun t : α =>
+      ‖pointwiseComplexSlope f z u t - f' t‖ ^ 2)
+    (f := fun _ : α => (0 : ℝ)) bound hMeas hBound hBoundInt hpointwise
+  simpa using hraw

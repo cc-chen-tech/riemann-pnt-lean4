@@ -446,7 +446,13 @@ has now been formalized: convergence to zero of the integral of the squared
 pointwise slope error implies the corresponding `MemLp.toLp` family has the
 expected complex derivative.  Thus the remaining analyticity gate is no
 longer `Lp` algebra; it is precisely the dominated-convergence estimate for
-that scalar squared slope error.  The paper proof
+that scalar squared slope error.  The filter-form dominated-convergence
+step itself has also been formalized: eventual measurability, domination by
+an explicit integrable scalar function, and the already proved pointwise
+derivative imply the required integral limit.  Consequently the remaining
+analyticity gate is now exactly the construction of a single neighborhood-
+uniform polynomial-times-Gaussian majorant for the concrete slope errors.
+The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
