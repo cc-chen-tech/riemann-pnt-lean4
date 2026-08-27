@@ -402,16 +402,19 @@ uniformly bounded on the compact rectangle `1/2 <= Re(s) <= 4`,
 `|Im(s)| <= 1`; the complementary high-height estimate has been combined
 with it into a degree-ten square-growth bound on the full strip
 `1/2 <= Re(s) <= 4`.  Consequently the concrete Gaussian section is
-formally in `L^2(R)` for every complex strip parameter in that strip.  The
-paper proof leaves the following concrete Lean lemmas, none of which may be
-replaced by a final density axiom:
+formally in `L^2(R)` for every complex strip parameter in that strip.  It has
+also been packaged as an actual `Lp C 2 volume` element, with an a.e.-exact
+representative and an exact norm-square integral formula.  The paper proof
+leaves the following concrete Lean lemmas, none of which may be replaced by
+a final density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
 2. extension of the concrete polynomial-growth/`L^2(R)` membership bound
    from the currently formalized right endpoint `R=4` to the paper's
-   `R=1000`, its `L^2(R)`-valued strip analyticity and boundary norm
-   estimates, followed by the finite Gaussian covering argument;
+   `R=1000`, the `Lp C 2 volume`-valued strip analyticity of the now-defined
+   concrete values and their boundary norm estimates, followed by the finite
+   Gaussian covering argument;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
 
