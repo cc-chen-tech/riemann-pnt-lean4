@@ -239,6 +239,12 @@ def test_research_note_records_product_trace_completion_and_rank_one_boundary() 
         "nonunit_product_gcd_strata_audit",
         "cochrane_shi_all_gcd_product_spectrum_audit",
         "smooth, nonseparable AFE packet",
+        "### 9.88 The archimedean smooth packet has bounded projective cost",
+        r"\sum_{\mathbf n}|c_{\mathbf n}|",
+        r"\operatorname {Var}_I w",
+        "finite_two_variable_fourier_projective_audit",
+        "smooth_projective_product_spectrum_audit",
+        "joint arithmetic packet and coupled-kernel flags false",
     ):
         assert marker in text
 

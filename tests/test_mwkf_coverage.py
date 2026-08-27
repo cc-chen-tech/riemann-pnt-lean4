@@ -3359,6 +3359,74 @@ def test_cochrane_shi_closes_all_sharp_interval_gcd_strata() -> None:
     assert not balanced["coupled_kernel_gate_closed"]
 
 
+def test_finite_smooth_weight_has_exact_tensor_fourier_reconstruction() -> None:
+    audit = getattr(
+        coverage_audit,
+        "finite_two_variable_fourier_projective_audit",
+        None,
+    )
+    assert audit is not None, "finite smooth-projective audit is missing"
+
+    result = audit(
+        (
+            (1, 2 - 1j, -1, 3j),
+            (2, -2, 1 + 2j, 0),
+            (1j, 3, -1j, 4),
+        )
+    )
+    assert result["h_grid_size"] == 3
+    assert result["delta_grid_size"] == 4
+    assert result["maximum_reconstruction_error"] < 1e-8
+    assert result["exact_reconstruction"]
+    assert result["variation_weighted_projective_norm"] >= result[
+        "unweighted_projective_norm"
+    ]
+    assert result["finite_tensor_fourier_identity_proved"]
+    assert not result["continuous_sobolev_wiener_bound_proved_by_finite_check"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_smooth_projective_adapter_preserves_the_balanced_exponent() -> None:
+    audit = getattr(
+        coverage_audit,
+        "smooth_projective_product_spectrum_audit",
+        None,
+    )
+    assert audit is not None, "smooth product-spectrum audit is missing"
+
+    polylog_core = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+    )
+    assert polylog_core["sharp_interval_energy_exponent"] == F(5)
+    assert polylog_core["weighted_projective_norm_exponent"] == F(0)
+    assert polylog_core["minkowski_energy_cost_exponent"] == F(0)
+    assert polylog_core["smooth_packet_energy_exponent"] == F(5)
+    assert polylog_core["projective_cost_absorbed_in_epsilon_budget"]
+    assert polylog_core[
+        "four_variable_sobolev_order_required_strictly_above_four"
+    ]
+    assert polylog_core[
+        "bounded_variation_character_fourth_moment_adapter_proved"
+    ]
+    assert polylog_core["smooth_archimedean_afe_packet_adapter_proved"]
+    assert not polylog_core["joint_q_phase_and_mobius_packet_bound_proved"]
+    assert not polylog_core["reflection_and_global_packet_map_proved"]
+    assert not polylog_core["coupled_kernel_gate_closed"]
+
+    power_core = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+        weighted_projective_norm_exponent=F(1, 4000),
+        epsilon_budget=F(1, 1000),
+    )
+    assert power_core["minkowski_energy_cost_exponent"] == F(1, 2000)
+    assert power_core["smooth_packet_energy_exponent"] == F(10001, 2000)
+    assert power_core["projective_cost_absorbed_in_epsilon_budget"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

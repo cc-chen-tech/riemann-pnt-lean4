@@ -10771,6 +10771,132 @@ def cochrane_shi_all_gcd_product_spectrum_audit(
     }
 
 
+def finite_two_variable_fourier_projective_audit(
+    weight_rows: tuple[tuple[complex, ...], ...],
+) -> dict[str, object]:
+    """Check exact finite tensor Fourier reconstruction of a coupled weight.
+
+    The continuous adapter in Section 9.88 uses a Fourier series with a
+    variation-weighted Wiener norm.  On a finite ``H`` by ``L`` grid, this
+    helper records the directly formalizable discrete identity and the
+    corresponding weighted projective norm.
+    """
+
+    if not weight_rows or not weight_rows[0]:
+        raise ValueError("the finite weight grid must be nonempty")
+    h_size = len(weight_rows)
+    delta_size = len(weight_rows[0])
+    if any(len(row) != delta_size for row in weight_rows):
+        raise ValueError("all finite weight-grid rows must have equal length")
+    weights = tuple(tuple(complex(value) for value in row) for row in weight_rows)
+    h_root = cmath.exp(2j * cmath.pi / h_size)
+    delta_root = cmath.exp(2j * cmath.pi / delta_size)
+    coefficients = tuple(
+        tuple(
+            sum(
+                weights[h][delta]
+                * h_root ** (-frequency_h * h % h_size)
+                * delta_root ** (-frequency_delta * delta % delta_size)
+                for h in range(h_size)
+                for delta in range(delta_size)
+            )
+            / (h_size * delta_size)
+            for frequency_delta in range(delta_size)
+        )
+        for frequency_h in range(h_size)
+    )
+    reconstruction = tuple(
+        tuple(
+            sum(
+                coefficients[frequency_h][frequency_delta]
+                * h_root ** (frequency_h * h % h_size)
+                * delta_root ** (frequency_delta * delta % delta_size)
+                for frequency_h in range(h_size)
+                for frequency_delta in range(delta_size)
+            )
+            for delta in range(delta_size)
+        )
+        for h in range(h_size)
+    )
+    maximum_reconstruction_error = max(
+        abs(reconstruction[h][delta] - weights[h][delta])
+        for h in range(h_size)
+        for delta in range(delta_size)
+    )
+    unweighted_projective_norm = sum(
+        abs(coefficients[frequency_h][frequency_delta])
+        for frequency_h in range(h_size)
+        for frequency_delta in range(delta_size)
+    )
+    weighted_projective_norm = sum(
+        abs(coefficients[frequency_h][frequency_delta])
+        * (1 + min(frequency_h, h_size - frequency_h))
+        * (1 + min(frequency_delta, delta_size - frequency_delta))
+        for frequency_h in range(h_size)
+        for frequency_delta in range(delta_size)
+    )
+    return {
+        "h_grid_size": h_size,
+        "delta_grid_size": delta_size,
+        "fourier_coefficients": coefficients,
+        "reconstruction": reconstruction,
+        "maximum_reconstruction_error": maximum_reconstruction_error,
+        "exact_reconstruction": maximum_reconstruction_error < 1e-8,
+        "unweighted_projective_norm": unweighted_projective_norm,
+        "variation_weighted_projective_norm": weighted_projective_norm,
+        "finite_tensor_fourier_identity_proved": True,
+        "continuous_sobolev_wiener_bound_proved_by_finite_check": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def smooth_projective_product_spectrum_audit(
+    *,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    squarefree_modulus_exponent: Fraction,
+    weighted_projective_norm_exponent: Fraction = F(0),
+    epsilon_budget: Fraction = F(1, 1000),
+) -> dict[str, object]:
+    """Propagate the all-gcd interval bound through the smooth adapter.
+
+    Minkowski is used on the primitive-projection Hilbert norm, so a
+    projective norm of size ``T^p`` costs ``T^(2p)`` in the energy.  The
+    polylogarithmic core has ``p=0``; the power-enlarged core chooses its
+    derivative slack small enough that ``2p`` fits inside the requested
+    epsilon budget.
+    """
+
+    projective = F(weighted_projective_norm_exponent)
+    epsilon = F(epsilon_budget)
+    if projective < 0 or epsilon < 0:
+        raise ValueError("projective loss and epsilon budget must be nonnegative")
+    sharp = cochrane_shi_all_gcd_product_spectrum_audit(
+        h_length_exponent=h_length_exponent,
+        delta_length_exponent=delta_length_exponent,
+        squarefree_modulus_exponent=squarefree_modulus_exponent,
+    )
+    sharp_exponent = F(sharp["all_gcd_sharp_interval_bound_exponent"])
+    smooth_exponent = sharp_exponent + 2 * projective
+    return {
+        "h_length_exponent": F(h_length_exponent),
+        "delta_length_exponent": F(delta_length_exponent),
+        "squarefree_modulus_exponent": F(squarefree_modulus_exponent),
+        "sharp_interval_energy_exponent": sharp_exponent,
+        "weighted_projective_norm_exponent": projective,
+        "minkowski_energy_cost_exponent": 2 * projective,
+        "smooth_packet_energy_exponent": smooth_exponent,
+        "epsilon_budget": epsilon,
+        "projective_cost_absorbed_in_epsilon_budget": 2 * projective <= epsilon,
+        "four_variable_sobolev_order_required_strictly_above_four": True,
+        "bounded_variation_character_fourth_moment_adapter_proved": True,
+        "smooth_archimedean_afe_packet_adapter_proved": True,
+        "joint_q_phase_and_mobius_packet_bound_proved": False,
+        "reflection_and_global_packet_map_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,
