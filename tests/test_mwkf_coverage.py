@@ -3937,6 +3937,111 @@ def test_double_centering_covers_coprime_and_composite_unequal_pairs(
     assert result["double_centered_pairing_obeys_universal_incidence_bound"]
 
 
+def test_cross_modulus_product_labels_factor_through_frequency_difference() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cross_modulus_product_label_phase_audit",
+        None,
+    )
+    assert audit is not None, "cross-modulus product-label phase audit is missing"
+
+    row = audit(
+        left_modulus=6,
+        right_modulus=10,
+        left_product_label=3,
+        right_product_label=5,
+    )
+    assert row["common_modulus"] == 2
+    assert row["lcm_modulus"] == 30
+    assert row["product_labels_congruent_mod_common_modulus"]
+    assert row["circular_frequency_coefficient"] == 15
+    assert row["phase_factors_through_single_circular_character"]
+    assert row["all_unit_pair_phase_exponents_match"]
+    assert row["circular_multiplier_has_zero_mean"]
+    assert not row["principal_circular_multiplier_mode"]
+
+    odd_common_factor = audit(
+        left_modulus=15,
+        right_modulus=21,
+        left_product_label=4,
+        right_product_label=10,
+    )
+    assert odd_common_factor["common_modulus"] == 3
+    assert odd_common_factor["circular_frequency_coefficient"] == 11
+    assert odd_common_factor["phase_factors_through_single_circular_character"]
+    assert odd_common_factor["circular_multiplier_has_zero_mean"]
+
+
+def test_product_label_principal_mean_is_exactly_double_divisibility() -> None:
+    audit = coverage_audit.cross_modulus_product_label_phase_audit
+    principal = audit(
+        left_modulus=6,
+        right_modulus=10,
+        left_product_label=12,
+        right_product_label=20,
+    )
+    assert principal["circular_frequency_coefficient"] == 0
+    assert principal["left_modulus_divides_left_product_label"]
+    assert principal["right_modulus_divides_right_product_label"]
+    assert principal["principal_circular_multiplier_mode"]
+    assert not principal["circular_multiplier_has_zero_mean"]
+    assert principal["principal_mode_iff_both_product_labels_divisible"]
+
+    nonfactorable = audit(
+        left_modulus=6,
+        right_modulus=10,
+        left_product_label=3,
+        right_product_label=4,
+    )
+    assert not nonfactorable["product_labels_congruent_mod_common_modulus"]
+    assert nonfactorable["circular_frequency_coefficient"] is None
+    assert not nonfactorable["phase_factors_through_single_circular_character"]
+    assert not nonfactorable["circular_multiplier_mean_classified"]
+    assert not nonfactorable["physical_afe_ttstar_packet_map_exhaustive"]
+    assert not nonfactorable["coupled_kernel_gate_closed"]
+
+
+def test_product_label_divisibility_has_unique_gcd_stratum() -> None:
+    audit = getattr(
+        coverage_audit,
+        "product_label_divisibility_gcd_split_audit",
+        None,
+    )
+    assert audit is not None, "product-label gcd split audit is missing"
+
+    divisible = audit(modulus=30, h=12, delta=5)
+    assert divisible["direct_modulus_divides_product"]
+    assert divisible["h_modulus_gcd"] == 6
+    assert divisible["active_divisor_strata"] == (6,)
+    assert divisible["gcd_divisibility_split_total"] == 1
+    assert divisible["gcd_divisibility_split_exact"]
+
+    nondivisible = audit(modulus=30, h=12, delta=-7)
+    assert not nondivisible["direct_modulus_divides_product"]
+    assert nondivisible["active_divisor_strata"] == ()
+    assert nondivisible["gcd_divisibility_split_total"] == 0
+    assert nondivisible["gcd_divisibility_split_exact"]
+
+
+def test_product_label_resonant_set_has_reciprocal_modulus_density() -> None:
+    audit = getattr(
+        coverage_audit,
+        "product_label_resonant_pair_count_audit",
+        None,
+    )
+    assert audit is not None, "product-label resonant count audit is missing"
+
+    result = audit(modulus=6, h_radius=5, delta_radius=4)
+    assert result["direct_resonant_pair_count"] == 16
+    assert result["gcd_stratum_pair_counts"] == {1: 0, 2: 8, 3: 8, 6: 0}
+    assert result["gcd_stratum_count_sum"] == 16
+    assert result["exact_gcd_stratum_count_identity"]
+    assert result["reciprocal_modulus_upper_bound"] == F(160, 3)
+    assert result["resonant_count_obeys_reciprocal_modulus_bound"]
+    assert not result["principal_afe_weighted_sum_bounded"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

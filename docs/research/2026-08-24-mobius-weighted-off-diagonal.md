@@ -13925,6 +13925,154 @@ and the resulting squared norm inequality.  Its physical-multiplier map,
 principal-mean reassembly, signed double-centered dispersion, and
 coupled-kernel flags remain false.
 
+### 9.96 The product-label inverse phase has an exact principal set
+
+One part of the physical multiplier map can now be made explicit.  Keep
+the two product labels
+
+\[
+ a_1=h_1\delta_1,
+ \qquad a_2=h_2\delta_2
+\]
+
+intact, write \(s_i=gr_i\), and let \(u_i=\overline t_i\pmod{s_i}\).
+The inverse-label factor in the cross-modulus product is
+
+\[
+ \Phi_{a_1,a_2}(u_1,u_2)
+ =e_{s_1}(-a_1u_1)e_{s_2}(a_2u_2)
+ =e_L(-a_1r_2u_1+a_2r_1u_2),
+ \qquad L=gr_1r_2.
+ \tag{9.629}
+\]
+
+The generalized CRT system
+
+\[
+ c\equiv-a_1\pmod{s_1},
+ \qquad c\equiv-a_2\pmod{s_2}
+ \tag{9.630}
+\]
+
+has a unique solution modulo \(L\) exactly when
+\(a_1\equiv a_2\pmod g\).  On this congruent-label sector, coefficient
+comparison in (9.629) gives
+
+\[
+ \boxed{
+ \Phi_{a_1,a_2}(u_1,u_2)
+ =e_L\!\left(c(r_2u_1-r_1u_2)\right)
+ =e_L(c\kappa).}
+ \tag{9.631}
+\]
+
+Thus this entire inverse-label factor is a single circular additive
+character and may be inserted as \(K(\kappa)=e_L(c\kappa)\) in (9.625).
+Character orthogonality evaluates its mean without an estimate:
+
+\[
+ \frac1L\sum_{\kappa\bmod L}e_L(c\kappa)
+ =\mathbf1_{c\equiv0\ ({\rm mod}\ L)}.
+ \tag{9.632}
+\]
+
+The two CRT congruences show that the principal case is exactly
+
+\[
+ \boxed{
+ c\equiv0\pmod L
+ \quad\Longleftrightarrow\quad
+ s_1\mid a_1\ \text{ and }\ s_2\mid a_2.}
+ \tag{9.633}
+\]
+
+Consequently every congruent-label pair outside this explicit double
+divisibility set has zero multiplier mean and contributes only to the
+double-centered terms of (9.625).  Distinct labels are included: equality
+of \(a_1,a_2\) is not required, only congruence modulo \(g\).
+
+The remaining principal set still preserves the product structure.  For
+each squarefree \(s\) and every integer pair \((h,\delta)\), the unique
+choice \(d=(h,s)\) gives the finite identity
+
+\[
+ \boxed{
+ \mathbf1_{s\mid h\delta}
+ =\sum_{d\mid s}
+   \mathbf1_{(h,s)=d}\,\mathbf1_{s/d\mid\delta}.}
+ \tag{9.634}
+\]
+
+Hence the principal mean is not an arbitrary two-Möbius packet: it is a
+finite gcd/divisibility family in both copies, still summed with the
+original \(h_i,\delta_i\), Type signs, and outer
+\(\mu(s_1)\mu(s_2)\).  Equation (9.634) is the correct next input for
+the AFE/reflection principal ledger.
+
+This family has reciprocal-modulus density with no endpoint error.  Put
+
+\[
+ \mathcal P_s(H,D)
+ :=\{(h,\delta):0<|h|\leq H,\ 0<|\delta|\leq D,
+                       \ s\mid h\delta\}
+\]
+
+and
+\(H_s(d;H):=\#\{0<|h|\leq H:(h,s)=d\}\).  The unique stratum in
+(9.634) gives the exact floor identity
+
+\[
+ \boxed{
+ |\mathcal P_s(H,D)|
+ =\sum_{d\mid s}H_s(d;H)
+    \,2\left\lfloor\frac{Dd}{s}\right\rfloor.}
+ \tag{9.635}
+\]
+
+Since
+\(H_s(d;H)\leq2\lfloor H/d\rfloor\leq2H/d\), every divisor summand is
+at most \(4HD/s\).  Therefore
+
+\[
+ \boxed{
+ |\mathcal P_s(H,D)|
+ \leq4\tau(s)\frac{HD}{s}.}
+ \tag{9.636}
+\]
+
+In the balanced product-label range
+\(s\asymp T^3\), \(H,D\asymp T^{5/2}\), this is
+\(T^{2+\varepsilon}\), compared with the raw \(T^5\) label count.
+For both copies, the double-principal label set has cardinality at most
+
+\[
+ 16\tau(s_1)\tau(s_2)
+ \frac{H_1D_1H_2D_2}{s_1s_2}.
+\]
+
+This proves the full cardinality saving on the multiplier-mean support;
+it is not yet an estimate for its AFE-weighted contribution.  The direct
+\(Bt_i\) phases, smooth weights, remaining modulus variables, and both
+outer Möbius signs still have to be reassembled before deciding whether
+the principal mean is harmless or contributes a secondary main term.
+
+If \(a_1\not\equiv a_2\pmod g\), the inverse phase cannot be represented
+by a *single linear circular character* through the coefficient CRT
+(9.630).  This does not assert that no accidental nonlinear description
+exists on a sparse finite fibre.  Such labels, as well as the direct
+\(Bt_i\) phases and all smooth weights, remain in the full pair kernel
+until the packet-exhaustive adapter is derived.
+
+The helper cross_modulus_product_label_phase_audit verifies
+(9.629)--(9.633) over every unit pair for supplied squarefree moduli,
+including unequal congruent labels.  It keeps the exhaustive physical
+packet map, the bound for the double-divisibility resonant sum, the signed
+nonfactorable-label dispersion, and the coupled-kernel flags false.
+The separate helper product_label_divisibility_gcd_split_audit verifies
+(9.634), including uniqueness of the active divisor stratum.  The helper
+product_label_resonant_pair_count_audit independently enumerates
+(9.635) and verifies the per-stratum and global bound (9.636).
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -14597,6 +14745,7 @@ Proved in this note:
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |
 | Principal-density normalization | exact no-gain audit for the bare global square | A single \(\kappa\)-fibre contributes the reciprocal-LCM density (9.620), but the unnormalized sum over all \([s_1,s_2]\) residues cancels that denominator exactly, (9.621).  Hence the bare master returns \(|\sum_s\mu(s)Z_s^{\rm tot}|^2\), not the totient-square form (9.623).  Any useful reciprocal-LCM normalization must be exhibited by the complete physical AFE/\(TT^*\) multiplier; it is not a consequence of centering, and no such packet-exhaustive multiplier has yet been proved |
 | Physical multiplier double centering | exact finite identity and sharp fixed-pair incidence norm; exhaustive map and global signed estimate unproved | For any supplied frequency multiplier, (9.625) isolates its mean times the bare packet total and pairs only \(K^\circ\) with both centered packet pieces.  The fibre map has exact maximum multiplicity \(\varphi((s_1,s_2))\), (9.626), giving the finite norm bound (9.628) at divisor cost.  This closes arbitrary fixed-pair algebra on small-gcd strata but exposes the sharp \(\varphi(g)^{1/2}\) obstruction to outer absolute values.  The complete AFE/reflection derivation of \(K\), its principal mean ledger, and the signed large-gcd double-centered dispersion remain open |
+| Cross-modulus product-label phase | exact circular-character, principal-set, and cardinality classification; weighted resonant sum unbounded | For \(a_i=h_i\delta_i\), the inverse-label cross phase is a single character \(e_L(c\kappa)\) exactly on the coefficient-CRT sector \(a_1\equiv a_2\pmod{(s_1,s_2)}\), (9.629)--(9.631).  Its multiplier mean is nonzero exactly when \(s_1\mid a_1\) and \(s_2\mid a_2\), (9.632)--(9.633); all other congruent-label pairs are automatically multiplier-centered.  The surviving principal set has the exact gcd/divisibility split (9.634), retaining \(h\delta\) and both Möbius signs, and its signed-window cardinality is at most \(4\tau(s)HD/s\), (9.635)--(9.636).  Bounding the full AFE/reflection weighted sum and treating noncongruent labels in the full pair kernel remain open |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

@@ -12228,6 +12228,268 @@ def weighted_frequency_multiplier_centering_audit(
     }
 
 
+def cross_modulus_product_label_phase_audit(
+    *,
+    left_modulus: int,
+    right_modulus: int,
+    left_product_label: int,
+    right_product_label: int,
+) -> dict[str, object]:
+    """Classify when two product-label phases depend only on kappa."""
+
+    s1 = int(left_modulus)
+    s2 = int(right_modulus)
+    factors1 = _finite_prime_exponents(s1) if s1 > 1 else {}
+    factors2 = _finite_prime_exponents(s2) if s2 > 1 else {}
+    if (
+        s1 <= 1
+        or s2 <= 1
+        or any(exponent != 1 for exponent in (*factors1.values(), *factors2.values()))
+    ):
+        raise ValueError("both moduli must be squarefree and greater than one")
+
+    a1 = int(left_product_label)
+    a2 = int(right_product_label)
+    common = gcd(s1, s2)
+    left_cofactor = s1 // common
+    right_cofactor = s2 // common
+    lcm_modulus = common * left_cofactor * right_cofactor
+    compatible = (a1 - a2) % common == 0
+
+    circular_coefficient: int | None = None
+    coefficient_congruences_hold = False
+    if compatible:
+        if right_cofactor == 1:
+            lift = 0
+        else:
+            lift = (
+                F(a1 - a2, common)
+                * pow(left_cofactor, -1, right_cofactor)
+            ) % right_cofactor
+            lift = int(lift)
+        circular_coefficient = (-a1 + s1 * lift) % lcm_modulus
+        coefficient_congruences_hold = (
+            (circular_coefficient + a1) % s1 == 0
+            and (circular_coefficient + a2) % s2 == 0
+        )
+
+    unit_pairs = tuple(
+        (left_unit, right_unit)
+        for left_unit in range(1, s1)
+        if gcd(left_unit, s1) == 1
+        for right_unit in range(1, s2)
+        if gcd(right_unit, s2) == 1
+    )
+    original_phase_exponents = {
+        pair: (
+            -a1 * right_cofactor * pair[0]
+            + a2 * left_cofactor * pair[1]
+        )
+        % lcm_modulus
+        for pair in unit_pairs
+    }
+    circular_frequency_residues = {
+        pair: (
+            right_cofactor * pair[0] - left_cofactor * pair[1]
+        )
+        % lcm_modulus
+        for pair in unit_pairs
+    }
+    factored_phase_exponents = (
+        {
+            pair: circular_coefficient * circular_frequency_residues[pair]
+            % lcm_modulus
+            for pair in unit_pairs
+        }
+        if circular_coefficient is not None
+        else None
+    )
+    all_phase_exponents_match = (
+        factored_phase_exponents == original_phase_exponents
+        if factored_phase_exponents is not None
+        else False
+    )
+    left_divides = a1 % s1 == 0
+    right_divides = a2 % s2 == 0
+    principal_mode = circular_coefficient == 0
+
+    return {
+        "left_modulus": s1,
+        "right_modulus": s2,
+        "common_modulus": common,
+        "left_cofactor": left_cofactor,
+        "right_cofactor": right_cofactor,
+        "lcm_modulus": lcm_modulus,
+        "left_product_label": a1,
+        "right_product_label": a2,
+        "product_labels_congruent_mod_common_modulus": compatible,
+        "circular_frequency_coefficient": circular_coefficient,
+        "coefficient_crt_congruences_hold": coefficient_congruences_hold,
+        "circular_frequency_residues": circular_frequency_residues,
+        "original_phase_exponents": original_phase_exponents,
+        "factored_phase_exponents": factored_phase_exponents,
+        "all_unit_pair_phase_exponents_match": all_phase_exponents_match,
+        "phase_factors_through_single_circular_character": (
+            compatible
+            and coefficient_congruences_hold
+            and all_phase_exponents_match
+        ),
+        "circular_multiplier_mean_classified": compatible,
+        "circular_multiplier_has_zero_mean": (
+            compatible and circular_coefficient != 0
+        ),
+        "left_modulus_divides_left_product_label": left_divides,
+        "right_modulus_divides_right_product_label": right_divides,
+        "principal_circular_multiplier_mode": principal_mode,
+        "principal_mode_iff_both_product_labels_divisible": (
+            principal_mode == (left_divides and right_divides)
+        ),
+        "h_delta_product_labels_retained_exactly": True,
+        "outer_mobius_pair_weight_retained_linearly": True,
+        "inner_type_mobius_weights_retained_linearly": True,
+        "physical_afe_ttstar_packet_map_exhaustive": False,
+        "double_divisibility_resonant_sum_bounded": False,
+        "signed_nonfactorable_label_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def product_label_divisibility_gcd_split_audit(
+    *,
+    modulus: int,
+    h: int,
+    delta: int,
+) -> dict[str, object]:
+    """Verify 1_(s|h*delta) by the unique d=(h,s) stratum."""
+
+    s = int(modulus)
+    factors = _finite_prime_exponents(s) if s > 1 else {}
+    if s <= 1 or any(exponent != 1 for exponent in factors.values()):
+        raise ValueError("the modulus must be squarefree and greater than one")
+    h_value = int(h)
+    delta_value = int(delta)
+    h_modulus_gcd = gcd(h_value, s)
+    divisor_rows = tuple(
+        {
+            "divisor": divisor,
+            "h_gcd_matches": h_modulus_gcd == divisor,
+            "complement_divides_delta": delta_value % (s // divisor) == 0,
+            "stratum_active": (
+                h_modulus_gcd == divisor
+                and delta_value % (s // divisor) == 0
+            ),
+        }
+        for divisor in _positive_divisors(s)
+    )
+    active_strata = tuple(
+        int(row["divisor"])
+        for row in divisor_rows
+        if bool(row["stratum_active"])
+    )
+    split_total = sum(bool(row["stratum_active"]) for row in divisor_rows)
+    direct = h_value * delta_value % s == 0
+    return {
+        "modulus": s,
+        "h": h_value,
+        "delta": delta_value,
+        "h_modulus_gcd": h_modulus_gcd,
+        "divisor_rows": divisor_rows,
+        "active_divisor_strata": active_strata,
+        "direct_modulus_divides_product": direct,
+        "gcd_divisibility_split_total": split_total,
+        "gcd_divisibility_split_exact": split_total == int(direct),
+        "active_stratum_is_unique_when_product_divisible": (
+            not direct or active_strata == (h_modulus_gcd,)
+        ),
+        "h_delta_product_structure_retained": True,
+        "resonant_sum_bounded": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def product_label_resonant_pair_count_audit(
+    *,
+    modulus: int,
+    h_radius: int,
+    delta_radius: int,
+) -> dict[str, object]:
+    """Count signed product labels satisfying s | h*delta."""
+
+    s = int(modulus)
+    factors = _finite_prime_exponents(s) if s > 1 else {}
+    if s <= 1 or any(exponent != 1 for exponent in factors.values()):
+        raise ValueError("the modulus must be squarefree and greater than one")
+    h_bound = int(h_radius)
+    delta_bound = int(delta_radius)
+    if h_bound <= 0 or delta_bound <= 0:
+        raise ValueError("both signed radii must be positive")
+
+    divisors = _positive_divisors(s)
+    h_counts = {
+        divisor: sum(
+            1
+            for h_value in range(-h_bound, h_bound + 1)
+            if h_value != 0 and gcd(h_value, s) == divisor
+        )
+        for divisor in divisors
+    }
+    delta_multiple_counts = {
+        divisor: 2 * (delta_bound // (s // divisor))
+        for divisor in divisors
+    }
+    stratum_counts = {
+        divisor: h_counts[divisor] * delta_multiple_counts[divisor]
+        for divisor in divisors
+    }
+    direct_count = sum(
+        1
+        for h_value in range(-h_bound, h_bound + 1)
+        if h_value != 0
+        for delta_value in range(-delta_bound, delta_bound + 1)
+        if delta_value != 0 and h_value * delta_value % s == 0
+    )
+    stratum_count_sum = sum(stratum_counts.values())
+    reciprocal_modulus_bound = F(
+        4 * len(divisors) * h_bound * delta_bound,
+        s,
+    )
+    per_stratum_bounds = {
+        divisor: (
+            h_counts[divisor] <= F(2 * h_bound, divisor)
+            and delta_multiple_counts[divisor]
+            <= F(2 * delta_bound * divisor, s)
+            and stratum_counts[divisor]
+            <= F(4 * h_bound * delta_bound, s)
+        )
+        for divisor in divisors
+    }
+    return {
+        "modulus": s,
+        "h_radius": h_bound,
+        "delta_radius": delta_bound,
+        "divisor_count": len(divisors),
+        "h_gcd_stratum_counts": h_counts,
+        "delta_complement_multiple_counts": delta_multiple_counts,
+        "gcd_stratum_pair_counts": stratum_counts,
+        "direct_resonant_pair_count": direct_count,
+        "gcd_stratum_count_sum": stratum_count_sum,
+        "exact_gcd_stratum_count_identity": (
+            direct_count == stratum_count_sum
+        ),
+        "per_stratum_reciprocal_modulus_bounds": per_stratum_bounds,
+        "every_stratum_obeys_reciprocal_modulus_bound": all(
+            per_stratum_bounds.values()
+        ),
+        "reciprocal_modulus_upper_bound": reciprocal_modulus_bound,
+        "resonant_count_obeys_reciprocal_modulus_bound": (
+            F(direct_count) <= reciprocal_modulus_bound
+        ),
+        "h_delta_product_structure_retained": True,
+        "principal_afe_weighted_sum_bounded": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,
