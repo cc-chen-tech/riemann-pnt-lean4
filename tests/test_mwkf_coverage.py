@@ -3583,6 +3583,52 @@ def test_cross_modulus_zero_product_frequency_is_exactly_diagonal() -> None:
     assert cross["farey_spacing_bound_holds"]
 
 
+def test_cross_modulus_frequency_density_has_exact_centered_euler_product() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cross_modulus_product_frequency_density_audit",
+        None,
+    )
+    assert audit is not None, "cross-modulus frequency-density audit is missing"
+
+    for left_modulus, right_modulus in (
+        (5, 7),
+        (30, 42),
+        (30, 30),
+        (6, 10),
+        (14, 21),
+    ):
+        result = audit(
+            left_modulus=left_modulus,
+            right_modulus=right_modulus,
+        )
+        assert result["direct_equals_local_product_formula"]
+        assert result["centered_local_factorization_exact"]
+        assert result["centered_basis_expansion_exact"]
+        assert result["principal_density_equals_average_multiplicity"]
+        assert result["centered_frequency_sum_is_zero"]
+        assert result["zero_frequency_occurs_exactly_on_same_modulus"]
+        assert result["common_factor_mobius_sign_cancels"]
+        assert not result["weighted_type_packet_centered"]
+        assert not result["signed_nonzero_frequency_estimate_proved"]
+        assert not result["coupled_kernel_gate_closed"]
+
+    common_even = audit(left_modulus=30, right_modulus=42)
+    assert common_even["common_modulus_factor"] == 6
+    assert common_even["left_coprime_cofactor"] == 5
+    assert common_even["right_coprime_cofactor"] == 7
+    assert common_even["lcm_modulus"] == 210
+    assert common_even["direct_frequency_multiplicities"][1] == 0
+    assert common_even["direct_frequency_multiplicities"][2] == 1
+    assert common_even["direct_frequency_multiplicities"][6] == 2
+    assert common_even["direct_frequency_multiplicities"][11] == 0
+    assert common_even["direct_frequency_multiplicities"][22] == 1
+
+    same = audit(left_modulus=30, right_modulus=30)
+    assert same["zero_frequency_multiplicity"] == 8
+    assert same["principal_local_density"] == F(32, 15)
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

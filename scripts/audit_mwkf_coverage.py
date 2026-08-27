@@ -11484,6 +11484,165 @@ def primitive_product_farey_collision_audit(
     }
 
 
+def cross_modulus_product_frequency_density_audit(
+    *,
+    left_modulus: int,
+    right_modulus: int,
+) -> dict[str, object]:
+    """Verify the exact local density and centering of product frequencies.
+
+    Write ``s1=g*r1`` and ``s2=g*r2``.  Squarefreeness makes ``g``, ``r1``
+    and ``r2`` pairwise coprime.  For inverse labels ``u_i`` the circular
+    frequency difference has numerator
+
+    ``kappa = r2*u1-r1*u2 (mod lcm(s1,s2))``.
+
+    CRT gives one local unit restriction at primes dividing ``r1*r2`` and
+    ``p-1`` or ``p-2`` choices at primes dividing ``g``.  The same product
+    has an exact constant-density plus mean-zero local expansion.
+    """
+
+    s1 = int(left_modulus)
+    s2 = int(right_modulus)
+    factors1 = _finite_prime_exponents(s1) if s1 > 1 else {}
+    factors2 = _finite_prime_exponents(s2) if s2 > 1 else {}
+    if (
+        s1 <= 1
+        or s2 <= 1
+        or any(exponent != 1 for exponent in (*factors1.values(), *factors2.values()))
+    ):
+        raise ValueError("both moduli must be squarefree and greater than one")
+
+    common = gcd(s1, s2)
+    left_cofactor = s1 // common
+    right_cofactor = s2 // common
+    lcm_modulus = common * left_cofactor * right_cofactor
+    common_primes = tuple(sorted(_finite_prime_exponents(common)))
+    cofactor_primes = tuple(
+        sorted(_finite_prime_exponents(left_cofactor * right_cofactor))
+    )
+    all_primes = tuple(sorted((*common_primes, *cofactor_primes)))
+
+    left_units = tuple(value for value in range(1, s1) if gcd(value, s1) == 1)
+    right_units = tuple(value for value in range(1, s2) if gcd(value, s2) == 1)
+    direct_multiplicities = {residue: 0 for residue in range(lcm_modulus)}
+    for left_inverse in left_units:
+        for right_inverse in right_units:
+            residue = (
+                right_cofactor * left_inverse
+                - left_cofactor * right_inverse
+            ) % lcm_modulus
+            direct_multiplicities[residue] += 1
+
+    formula_multiplicities: dict[int, int] = {}
+    centered_factorizations: dict[int, Fraction] = {}
+    expansion_values: dict[int, Fraction] = {}
+    expansion_coefficients: dict[int, Fraction] = {}
+    for divisor in _positive_divisors(lcm_modulus):
+        coefficient = F(1)
+        for prime in all_primes:
+            if divisor % prime == 0:
+                coefficient *= -1 if prime in cofactor_primes else 1
+            elif prime in cofactor_primes:
+                coefficient *= F(prime - 1, prime)
+            else:
+                coefficient *= F((prime - 1) ** 2, prime)
+        expansion_coefficients[divisor] = coefficient
+
+    for residue in range(lcm_modulus):
+        if gcd(residue, left_cofactor * right_cofactor) != 1:
+            formula = 0
+        else:
+            formula = 1
+            for prime in common_primes:
+                formula *= prime - 1 if residue % prime == 0 else prime - 2
+        formula_multiplicities[residue] = formula
+
+        centered_product = F(1)
+        for prime in cofactor_primes:
+            local_center = F(int(residue % prime == 0)) - F(1, prime)
+            centered_product *= F(prime - 1, prime) - local_center
+        for prime in common_primes:
+            local_center = F(int(residue % prime == 0)) - F(1, prime)
+            centered_product *= F((prime - 1) ** 2, prime) + local_center
+        centered_factorizations[residue] = centered_product
+
+        expansion = F(0)
+        for divisor, coefficient in expansion_coefficients.items():
+            basis = F(1)
+            for prime in _finite_prime_exponents(divisor):
+                basis *= F(int(residue % prime == 0)) - F(1, prime)
+            expansion += coefficient * basis
+        expansion_values[residue] = expansion
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    principal_density = F(
+        finite_totient(s1) * finite_totient(s2),
+        lcm_modulus,
+    )
+    centered_multiplicities = {
+        residue: F(value) - principal_density
+        for residue, value in formula_multiplicities.items()
+    }
+    zero_multiplicity = direct_multiplicities[0]
+    tolerance_free_zero_diagonal = (
+        zero_multiplicity > 0
+    ) == (s1 == s2)
+    return {
+        "left_modulus": s1,
+        "right_modulus": s2,
+        "common_modulus_factor": common,
+        "left_coprime_cofactor": left_cofactor,
+        "right_coprime_cofactor": right_cofactor,
+        "lcm_modulus": lcm_modulus,
+        "direct_frequency_multiplicities": direct_multiplicities,
+        "local_product_formula_multiplicities": formula_multiplicities,
+        "direct_equals_local_product_formula": (
+            direct_multiplicities == formula_multiplicities
+        ),
+        "centered_local_factorizations": centered_factorizations,
+        "centered_local_factorization_exact": all(
+            centered_factorizations[residue] == formula_multiplicities[residue]
+            for residue in range(lcm_modulus)
+        ),
+        "centered_basis_expansion_coefficients": expansion_coefficients,
+        "centered_basis_expansion_values": expansion_values,
+        "centered_basis_expansion_exact": all(
+            expansion_values[residue] == formula_multiplicities[residue]
+            for residue in range(lcm_modulus)
+        ),
+        "principal_local_density": principal_density,
+        "principal_density_equals_average_multiplicity": (
+            principal_density
+            == F(sum(direct_multiplicities.values()), lcm_modulus)
+        ),
+        "centered_frequency_multiplicities": centered_multiplicities,
+        "centered_frequency_sum_is_zero": (
+            sum(centered_multiplicities.values(), F(0)) == 0
+        ),
+        "zero_frequency_multiplicity": zero_multiplicity,
+        "zero_frequency_occurs_exactly_on_same_modulus": (
+            tolerance_free_zero_diagonal
+        ),
+        "outer_mobius_product": _finite_mobius(s1) * _finite_mobius(s2),
+        "cofactor_mobius_product": (
+            _finite_mobius(left_cofactor) * _finite_mobius(right_cofactor)
+        ),
+        "common_factor_mobius_sign_cancels": (
+            _finite_mobius(s1) * _finite_mobius(s2)
+            == _finite_mobius(left_cofactor) * _finite_mobius(right_cofactor)
+        ),
+        "weighted_type_packet_centered": False,
+        "signed_nonzero_frequency_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

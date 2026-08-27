@@ -13486,6 +13486,125 @@ The helper primitive_product_farey_collision_audit checks (9.601)--
 It leaves the same-diagonal reassembly, signed nonzero-frequency estimate,
 and coupled-kernel gate false.
 
+### 9.92 Exact Euler centering of every cross-modulus frequency
+
+The nonzero-frequency family has a further exact local decomposition before
+any spectral estimate.  Let \(s_1,s_2\) be squarefree and write
+
+\[
+ g=(s_1,s_2),\qquad s_1=gr_1,\qquad s_2=gr_2,
+ \qquad L=[s_1,s_2]=gr_1r_2.
+\]
+
+Then \(g,r_1,r_2\) are pairwise coprime.  For inverse labels
+\(u_i=\overline{t_i}_{s_i}\), define the circular numerator
+
+\[
+ \kappa\equiv r_2u_1-r_1u_2\pmod L.
+ \tag{9.605}
+\]
+
+Thus \(u_1/s_1-u_2/s_2\equiv\kappa/L\pmod1\).  The exact multiplicity
+of this frequency is
+
+\[
+ \mathfrak m_{s_1,s_2}(\kappa)
+ :=\#\{(t_1,t_2)\in U(s_1)\times U(s_2):(9.605)\}
+\]
+
+and CRT gives
+
+\[
+ \boxed{
+ \mathfrak m_{s_1,s_2}(\kappa)
+ =\mathbf 1_{(\kappa,r_1r_2)=1}
+  \prod_{p\mid g,\ p\mid\kappa}(p-1)
+  \prod_{p\mid g,\ p\nmid\kappa}(p-2).}
+ \tag{9.606}
+\]
+
+Indeed, a prime dividing \(r_1r_2\) fixes the corresponding unit label
+and forces \(p\nmid\kappa\).  At a prime \(p\mid g\), the nonzero pair
+\((u_1,u_2)\in\mathbb F_p^\times\times\mathbb F_p^\times\) on the
+linear fibre has \(p-1\) choices when \(p\mid\kappa\), and \(p-2\)
+choices otherwise.  In particular, if \(2\mid g\), every odd
+\(\kappa\) fibre is empty.  The zero fibre is nonempty exactly when
+\(r_1=r_2=1\), recovering the same-\((s,t)\) diagonal in (9.602).
+
+The outer signs simplify without an estimate:
+
+\[
+ \boxed{\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2).}
+ \tag{9.607}
+\]
+
+The common-factor sign has squared to one, but the two coprime-cofactor
+Möbius signs remain.  This is the exact signed pair which a cross-modulus
+dispersion estimate must retain.
+
+More importantly, (9.606) has a canonical principal-density subtraction.
+Put
+
+\[
+ z_p(\kappa)=\mathbf 1_{p\mid\kappa}-\frac1p.
+\]
+
+Then each \(z_p\) has mean zero modulo \(p\), and the entire frequency
+multiplicity factors as
+
+\[
+ \boxed{
+ \mathfrak m_{s_1,s_2}(\kappa)
+ =\prod_{p\mid r_1r_2}
+   \left(\frac{p-1}{p}-z_p(\kappa)\right)
+  \prod_{p\mid g}
+   \left(\frac{(p-1)^2}{p}+z_p(\kappa)\right).}
+ \tag{9.608}
+\]
+
+The constant term is therefore
+
+\[
+ \boxed{
+ \rho(s_1,s_2)
+ =\frac{\varphi(r_1r_2)}{r_1r_2}\frac{\varphi(g)^2}{g}
+ =\frac{\varphi(s_1)\varphi(s_2)}{[s_1,s_2]}.}
+ \tag{9.609}
+\]
+
+Expanding (9.608) over squarefree \(q\mid L\) gives
+
+\[
+ \mathfrak m_{s_1,s_2}(\kappa)
+ =\rho(s_1,s_2)
+  +\sum_{1<q\mid L}c_q(s_1,s_2)
+    \prod_{p\mid q}z_p(\kappa),
+ \qquad
+ \sum_{\kappa\bmod L}
+ \bigl(\mathfrak m_{s_1,s_2}(\kappa)-\rho(s_1,s_2)\bigr)=0.
+ \tag{9.610}
+\]
+
+This is an exact finite principal-mode/centered-complement decomposition,
+not a probabilistic heuristic.  It identifies the local density which
+must be returned to the AFE/reflection ledger and supplies an Euler basis
+whose every nonconstant term has a genuinely mean-zero prime factor.
+
+There is still a decisive boundary.  Formula (9.606) counts unweighted
+inverse-label fibres.  The factors
+\(e_{s_i}(Bt_i)\), the two Type polynomials, the smooth \(h\delta\)
+packet, and all nine signs in (9.600) vary inside such a fibre.  Therefore
+the weighted Type/AFE packet has not yet been centered merely by (9.608),
+and no nonzero-frequency bound follows by taking the absolute value of
+the coefficients \(c_q\).  The next valid step is to lift (9.608) through
+the full weighted master and then apply dispersion only to the
+\(q>1\) mean-zero Euler blocks.
+
+The helper cross_modulus_product_frequency_density_audit verifies
+(9.605)--(9.610) exactly for finite squarefree pairs.  It keeps the
+weighted-packet centering, signed nonzero-frequency estimate, and
+coupled-kernel flags false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -14154,6 +14273,7 @@ Proved in this note:
 | Fixed-modulus ratio-frequency/character square | exact inner-block diagonalization and Type determinant; cross-modulus two-Möbius estimate unproved | Taking the full squarefree modulus as cofactor rewrites the fixed-\(s\) unequal-label Gram as the positive ratio-frequency square (9.591).  On each smooth rank-one tensor, multiplicative Parseval gives (9.592), while the Type product transform factors as two Dirichlet polynomials, (9.593).  Opening the square and applying the remainder-free split (9.241) gives (9.595), retaining \(a=h\delta\) and the Type Möbius sign.  The fixed-modulus square necessarily removes the outer \(\mu(s)\); the required next object is its cross-modulus \((s_1,s_2)\) analogue formed before Cauchy, with both outer signs retained |
 | Global linear two-Möbius character master | exact pre-Cauchy Type I/II form; cross-modulus dispersion unproved | Applying multiplicative inversion linearly before the \(s\)-sum gives (9.596)--(9.597): \(\mu(s)\), \(\mu(d)\), the complete character family, and \(a=h\delta\) all remain in one finite sum.  The boundary-safe identity (9.598)--(9.599) splits only \(\mu(d)\), retains \(d\leq\max(U_0,V_0)\), and has no mixed rectangles or remainder.  A single subsequent global square has the signed cross-modulus kernel (9.600).  Published separate character moments do not bound the product of its trace, Type, and companion polynomials at the balanced face |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
+| Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift unproved | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  This is an unweighted fibre identity; compatibility with the Type/AFE weights and a signed estimate for the centered blocks remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

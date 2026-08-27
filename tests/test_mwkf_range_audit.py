@@ -270,6 +270,12 @@ def test_research_note_records_product_trace_completion_and_rank_one_boundary() 
         "primitive_product_farey_collision_audit",
         r"exponent \(11\)",
         r"3+3+5=11",
+        "### 9.92 Exact Euler centering of every cross-modulus frequency",
+        r"\mathfrak m_{s_1,s_2}(\kappa)",
+        r"\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)",
+        r"z_p(\kappa)",
+        "cross_modulus_product_frequency_density_audit",
+        "weighted Type/AFE packet has not yet been centered",
     ):
         assert marker in text
 
