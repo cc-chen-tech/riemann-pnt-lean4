@@ -203,9 +203,17 @@ def test_research_note_records_product_trace_completion_and_rank_one_boundary() 
         r"a_1\equiv a_2\pmod r",
         "globally coefficient-nonprincipal",
         r"\mathcal C_6=\varphi(6)=2",
+        r"\mathcal C_{10}=-4=-\varphi(10)",
         "local-principal aliases",
         "squarefree_crt_unequal_outer_character_gram_audit",
         "coefficient-nonprincipal operator",
+        "### 9.84 Prime-by-prime conductor of the cofactor kernel",
+        r"g=(A,C,r)",
+        r"t_p=\overline q_r\,\overline{(r/p)}_p",
+        r"R_{\rm sm}=(R_0,6)",
+        r"\varphi(g)R_0^{1/2+\varepsilon}",
+        r"a_1\equiv a_2\pmod g",
+        "cofactor-conductor operator problem",
     ):
         assert marker in text
 

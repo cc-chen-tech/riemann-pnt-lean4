@@ -3020,6 +3020,11 @@ def test_unequal_outer_labels_collapse_to_one_cofactor_kloosterman_gram() -> Non
     assert result["global_character_cauchy_bound_holds"]
     assert result["character_square_collapse_exact"]
     assert result["all_kloosterman_formulas_exact"]
+    assert result["all_local_crt_factorizations_exact"]
+    assert result["all_local_weil_or_trivial_bounds_hold"]
+    assert result["all_one_zero_ramanujan_values_exact"]
+    assert result["all_cofactor_conductor_bounds_hold"]
+    assert result["all_low_conductor_principal_congruences_hold"]
     assert result["all_principal_conditions_exact"]
     assert result["all_principal_kernels_equal_phi"]
     assert result["unequal_outer_product_labels_retained_inside_character_square"]
@@ -3064,8 +3069,13 @@ def test_unequal_outer_labels_collapse_to_one_cofactor_kloosterman_gram() -> Non
     assert composite["crt_character_reconstruction_exact"]
     assert composite["character_square_collapse_exact"]
     assert composite["all_kloosterman_formulas_exact"]
+    assert composite["all_local_crt_factorizations_exact"]
+    assert composite["all_local_weil_or_trivial_bounds_hold"]
+    assert composite["all_one_zero_ramanujan_values_exact"]
+    assert composite["all_cofactor_conductor_bounds_hold"]
+    assert composite["all_low_conductor_principal_congruences_hold"]
     assert composite["all_principal_conditions_exact"]
-    aliases = composite["nonprincipal_finite_alias_rows"]
+    aliases = composite["nonprincipal_full_amplitude_alias_rows"]
     assert aliases
     alias = next(
         row
@@ -3080,10 +3090,44 @@ def test_unequal_outer_labels_collapse_to_one_cofactor_kloosterman_gram() -> Non
     assert alias["inverse_phase_coefficient_mod_cofactor"] == 4
     assert not alias["principal_cofactor_mode"]
     assert alias["cofactor_correlation"] == pytest.approx(2)
+    assert alias["principal_divisor"] == 2
+    assert alias["nonprincipal_conductor"] == 3
+    assert alias["small_alias_part"] == 3
+    assert alias["large_nonprincipal_part"] == 1
+    assert alias["cofactor_conductor_ceiling"] == pytest.approx(2)
+    assert alias["cofactor_conductor_bound_holds"]
+    assert alias["low_conductor_forces_principal_congruences"]
     assert composite[
         "nonprincipal_finite_aliases_may_exist_for_composite_cofactor"
     ]
     assert not composite["centered_cofactor_kloosterman_operator_bound_proved"]
+
+    negative_alias = audit(
+        prime_modulus=3,
+        squarefree_cofactor=10,
+        direct_coefficient=1,
+        outer_product_coefficients={
+            10: {1: 1},
+            5: {1: 1},
+        },
+    )
+    assert negative_alias["all_local_crt_factorizations_exact"]
+    negative_rows = negative_alias["nonprincipal_full_amplitude_alias_rows"]
+    assert negative_rows
+    negative = next(
+        row
+        for row in negative_rows
+        if row["outer_label_1"] == 10
+        and row["outer_label_2"] == 5
+        and row["first_product_residue"] == 1
+        and row["second_product_residue"] == 1
+    )
+    assert not negative["principal_cofactor_mode"]
+    assert negative["principal_divisor"] == 5
+    assert negative["nonprincipal_conductor"] == 2
+    assert negative["cofactor_correlation"] == pytest.approx(-4)
+    assert negative["cofactor_conductor_ceiling"] == pytest.approx(4)
+    assert negative["cofactor_conductor_bound_holds"]
 
 
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:

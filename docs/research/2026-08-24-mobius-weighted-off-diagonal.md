@@ -12662,7 +12662,10 @@ with
 the two coefficients are \(2,4\bmod6\), but
 \(\mathcal C_6=\varphi(6)=2\).  These local-principal aliases remain
 inside the coefficient-nonprincipal operator and must be stratified
-prime by prime.  A pointwise Weil estimate would both miss this issue
+prime by prime.  Full-amplitude aliases can have either sign: for
+\(q=3,r=10,B=1,y=1,a_1=0,a_2=5\), one has
+\(\mathcal C_{10}=-4=-\varphi(10)\).  A pointwise Weil estimate would
+both miss this issue
 and discard the outer labels; the required result must estimate (9.566)
 jointly with the \(q\)-phase, both Möbius weights, and every dyadic packet.
 
@@ -12673,6 +12676,82 @@ the collapsed \(v\)-sum.  Its test includes distinct labels
 coefficient-nonprincipal pair \(a_1=2,a_2=3\), and the composite
 \(r=6\) finite alias above.  The principal reassembly and the centered
 Kloosterman operator estimate remain explicitly false.
+
+### 9.84 Prime-by-prime conductor of the cofactor kernel
+
+The composite aliases in Section 9.83 can be isolated completely.  Put
+
+\[
+ A=B(y-1),\qquad C=a_2-a_1\overline y,\qquad
+ g=(A,C,r),\qquad R_0=\frac r g.
+ \tag{9.569}
+\]
+
+Since \(r\) is squarefree, CRT factors (9.567) into prime-modulus
+Kloosterman traces:
+
+\[
+ \boxed{
+ \mathcal C_r(a_1,a_2;y)
+ =\prod_{p\mid r}
+ \sum_{v\in\mathbb F_p^\times}
+ e_p\!\left(t_p(Av+C\overline v)\right),
+ \qquad
+ t_p=\overline q_r\,\overline{(r/p)}_p.}
+ \tag{9.570}
+\]
+
+For \(p\mid g\), the local factor is exactly \(p-1\).  For
+\(p\nmid g\), if exactly one of the two local coefficients vanishes,
+the factor is the Ramanujan sum \(-1\).  If both are nonzero, the
+classical prime Kloosterman bound gives at most \(2\sqrt p\); for
+\(p=2,3\) retain the sharper trivial ceiling \(p-1\).  Therefore, with
+
+\[
+ R_{\rm sm}=(R_0,6),\qquad R_{\rm lg}=R_0/R_{\rm sm},
+\]
+
+one obtains the unconditional squarefree-conductor estimate
+
+\[
+ \boxed{
+ |\mathcal C_r(a_1,a_2;y)|
+ \leq
+ \varphi(g)\varphi(R_{\rm sm})
+ 2^{\omega(R_{\rm lg})}R_{\rm lg}^{1/2}
+ \ll_\varepsilon
+ \varphi(g)R_0^{1/2+\varepsilon}.}
+ \tag{9.571}
+\]
+
+This includes every \(2\)- and \(3\)-adic finite alias from Section
+9.83.  Relative to the coefficient-independent trivial scale
+\(\varphi(r)=\varphi(g)\varphi(R_0)\), it gives square-root cancellation
+in the genuine cofactor conductor \(R_0\).
+
+The complementary low-conductor strata also carry exact incidence.
+Since \(B\) is a unit and \(g\mid A,C\),
+
+\[
+ \boxed{
+ y\equiv1\pmod g,\qquad a_1\equiv a_2\pmod g.}
+ \tag{9.572}
+\]
+
+Thus no composite exception is left unclassified: either \(R_0\) is
+large and (9.571) supplies a square-root kernel saving, or \(R_0\) is
+small and (9.572) forces simultaneous product-ratio and outer-product
+congruences modulo the large divisor \(g=r/R_0\).
+
+This is still not the global coupled estimate.  Summing the
+\(g,R_0\)-strata without losing (9.571), and exploiting (9.572) together
+with the \(q\)-phase and both Möbius weights, is precisely the remaining
+cofactor-conductor operator problem.  The finite helper
+squarefree_crt_unequal_outer_character_gram_audit verifies the CRT
+factorization, all one-zero Ramanujan values, the local
+Weil/trivial ceilings, (9.571), and (9.572) for every supplied finite
+packet.  It does not mark the global conductor-stratified operator bound
+as proved.
 
 ## 10. What has and has not been proved
 
@@ -13334,6 +13413,7 @@ Proved in this note:
 | Resonant-projector dual split | exact principal/centered decomposition; both global estimates unproved | Additive orthogonality on \(L\) and every block residue \(R(\rho)\) gives the product formula (9.552)--(9.554) without taking absolute values.  The zero dual frequency is the explicit product of total-mass products minus local \(a=b\) diagonals, (9.555); it must be recombined across AFE directions, reflection, the explicit diagonal, \(h,\delta\), and dyadic scales.  Every remaining mode has a genuine nonzero \((\lambda,\eta_\rho)\), (9.556), but its squarefree CRT character operator still needs a global pre-Cauchy estimate |
 | Pre-Poisson product-incidence orthogonality | exact equal-outer-label Fourier bound with half-power numerical capacity; full Gram estimate unproved | After the cofactor character square imposes \(x_1\equiv x_2\pmod r\), the equal-\((h,\delta)\) inverse cross phase has reduced conductor \(Q=q/(x_1-x_2,q)\), while the same pair collides modulo \(s/Q\), (9.557)--(9.560).  Grouping \(h,\delta\) modulo \(Q\) gives the exact Fourier-operator bound (9.561)--(9.562).  On the original \(s=T^3,H=L=T^{5/2}\) box, every \(T\leq Q\leq T^3\) has at least half-power numerical capacity, (9.563).  This acts before \(h\)-Poisson and is an alternative ordering of (9.493), not an extra post-Poisson gain.  Closing the route still requires the unequal-label Gram estimate (9.566), a joint count for \(Q<T\), a \(T^\varepsilon\)-cost smooth adapter, compatibility with the preceding reductions, and an exhaustive global packet map |
 | Full unequal-label CRT character Gram | exact Kloosterman collapse and coefficient-principal classification; global operator bound unproved | Keeping every \(a=h\delta\) label inside one character Cauchy step gives (9.564)--(9.566), with no pointwise \(\varphi(r)^{1/2}\) multiplier cost.  Character orthogonality collapses the full square to the cofactor trace \(\mathcal C_r(a_1,a_2;y)\), (9.567).  Its exact coefficient-principal set is \(y=1,\ a_1\equiv a_2\pmod r\), where the kernel equals \(\varphi(r)\), (9.568); this includes distinct outer product labels.  For composite \(r\), the complement still contains local-principal finite aliases, so no uniform pointwise square-root claim is made.  The principal mode needs global AFE/reflection/diagonal reassembly, while the coefficient-nonprincipal trace must be estimated jointly with the \(q\)-phase, both Möbius weights, and all packets |
+| Cofactor Kloosterman conductor stratification | exact prime-factor split and local square-root bound; conductor average unproved | With \(g=(B(y-1),a_2-a_1\bar y,r)\) and \(R_0=r/g\), CRT gives the exact prime product (9.570).  Principal primes contribute \(p-1\), one-zero primes contribute \(-1\), and the remaining primes satisfy the classical \(2\sqrt p\) bound.  Hence (9.571) gives \(|\mathcal C_r|\ll_\varepsilon\varphi(g)R_0^{1/2+\varepsilon}\), including all \(2,3\)-adic aliases.  Low conductor forces \(y=1\) and \(a_1=a_2\) modulo the large divisor \(g\), (9.572).  The remaining task is to sum these conductor/incidence strata without losing the square-root gain while retaining the \(q\)-phase and both Möbius weights |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

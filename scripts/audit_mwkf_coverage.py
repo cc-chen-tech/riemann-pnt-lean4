@@ -9857,6 +9857,13 @@ def squarefree_crt_unequal_outer_character_gram_audit(
         root = cmath.exp(2j * cmath.pi / modulus)
         return root**phase
 
+    def squarefree_phi(value: int) -> int:
+        return_value = 1
+        for prime in cofactor_primes:
+            if value % prime == 0:
+                return_value *= prime - 1
+        return return_value
+
     cofactor_fourier: dict[int, list[complex]] = {}
     prime_character_forms: dict[int, list[complex]] = {}
     for outer_label, family in normalized_coefficients.items():
@@ -9928,6 +9935,79 @@ def squarefree_crt_unequal_outer_character_gram_audit(
                         )
                         for v in unit_residues
                     )
+                    local_factor_rows: list[dict[str, object]] = []
+                    local_factor_product = 1 + 0j
+                    principal_divisor = 1
+                    for prime in cofactor_primes:
+                        local_twist = pow(r // prime, -1, prime)
+                        local_direct = (
+                            local_twist * direct_phase_coefficient
+                        ) % prime
+                        local_inverse = (
+                            local_twist * inverse_phase_coefficient
+                        ) % prime
+                        root_prime = cmath.exp(2j * cmath.pi / prime)
+                        local_factor = sum(
+                            root_prime
+                            ** (
+                                local_direct * unit
+                                + local_inverse * pow(unit, -1, prime)
+                            )
+                            for unit in range(1, prime)
+                        )
+                        local_principal = (
+                            local_direct == 0 and local_inverse == 0
+                        )
+                        exactly_one_zero = (
+                            (local_direct == 0) != (local_inverse == 0)
+                        )
+                        if local_principal:
+                            principal_divisor *= prime
+                            local_ceiling = float(prime - 1)
+                        elif exactly_one_zero:
+                            local_ceiling = 1.0
+                        else:
+                            local_ceiling = min(
+                                float(prime - 1), 2 * prime**0.5
+                            )
+                        local_factor_product *= local_factor
+                        local_factor_rows.append(
+                            {
+                                "prime": prime,
+                                "crt_twist": local_twist,
+                                "local_direct_coefficient": local_direct,
+                                "local_inverse_coefficient": local_inverse,
+                                "local_factor": local_factor,
+                                "local_principal": local_principal,
+                                "exactly_one_local_coefficient_zero": (
+                                    exactly_one_zero
+                                ),
+                                "one_zero_ramanujan_value_exact": (
+                                    not exactly_one_zero
+                                    or abs(local_factor + 1) < 1e-8
+                                ),
+                                "local_weil_or_trivial_ceiling": local_ceiling,
+                                "local_weil_or_trivial_bound_holds": (
+                                    abs(local_factor) <= local_ceiling + 1e-8
+                                ),
+                            }
+                        )
+                    nonprincipal_conductor = r // principal_divisor
+                    small_alias_part = gcd(nonprincipal_conductor, 6)
+                    large_nonprincipal_part = (
+                        nonprincipal_conductor // small_alias_part
+                    )
+                    large_prime_count = sum(
+                        1
+                        for prime in cofactor_primes
+                        if large_nonprincipal_part % prime == 0
+                    )
+                    conductor_ceiling = (
+                        squarefree_phi(principal_divisor)
+                        * squarefree_phi(small_alias_part)
+                        * 2**large_prime_count
+                        * large_nonprincipal_part**0.5
+                    )
                     principal = (
                         direct_phase_coefficient == 0
                         and inverse_phase_coefficient == 0
@@ -9961,6 +10041,32 @@ def squarefree_crt_unequal_outer_character_gram_audit(
                                 abs(cofactor_correlation - kloosterman_formula)
                                 < 1e-8
                             ),
+                            "local_factor_rows": tuple(local_factor_rows),
+                            "local_crt_factorization": local_factor_product,
+                            "local_crt_factorization_exact": (
+                                abs(cofactor_correlation - local_factor_product)
+                                < 1e-8
+                            ),
+                            "principal_divisor": principal_divisor,
+                            "nonprincipal_conductor": nonprincipal_conductor,
+                            "small_alias_part": small_alias_part,
+                            "large_nonprincipal_part": (
+                                large_nonprincipal_part
+                            ),
+                            "large_nonprincipal_prime_count": (
+                                large_prime_count
+                            ),
+                            "cofactor_conductor_ceiling": conductor_ceiling,
+                            "cofactor_conductor_bound_holds": (
+                                abs(cofactor_correlation)
+                                <= conductor_ceiling + 1e-8
+                            ),
+                            "low_conductor_forces_principal_congruences": (
+                                (y - 1) % principal_divisor == 0
+                                and (outer_label_1 - outer_label_2)
+                                % principal_divisor
+                                == 0
+                            ),
                             "principal_cofactor_mode": principal,
                             "expected_principal_condition": expected_principal,
                             "principal_condition_exact": (
@@ -9974,11 +10080,11 @@ def squarefree_crt_unequal_outer_character_gram_audit(
                     )
 
     tolerance = 1e-8
-    nonprincipal_finite_alias_rows = tuple(
+    nonprincipal_full_amplitude_alias_rows = tuple(
         row
         for row in correlation_rows
         if not bool(row["principal_cofactor_mode"])
-        and abs(complex(row["cofactor_correlation"]) - phi_r) < tolerance
+        and abs(abs(complex(row["cofactor_correlation"])) - phi_r) < tolerance
     )
     return {
         "squarefree_modulus": s,
@@ -10007,6 +10113,28 @@ def squarefree_crt_unequal_outer_character_gram_audit(
             bool(row["kloosterman_formula_exact"])
             for row in correlation_rows
         ),
+        "all_local_crt_factorizations_exact": all(
+            bool(row["local_crt_factorization_exact"])
+            for row in correlation_rows
+        ),
+        "all_local_weil_or_trivial_bounds_hold": all(
+            bool(local_row["local_weil_or_trivial_bound_holds"])
+            for row in correlation_rows
+            for local_row in row["local_factor_rows"]
+        ),
+        "all_one_zero_ramanujan_values_exact": all(
+            bool(local_row["one_zero_ramanujan_value_exact"])
+            for row in correlation_rows
+            for local_row in row["local_factor_rows"]
+        ),
+        "all_cofactor_conductor_bounds_hold": all(
+            bool(row["cofactor_conductor_bound_holds"])
+            for row in correlation_rows
+        ),
+        "all_low_conductor_principal_congruences_hold": all(
+            bool(row["low_conductor_forces_principal_congruences"])
+            for row in correlation_rows
+        ),
         "all_principal_conditions_exact": all(
             bool(row["principal_condition_exact"])
             for row in correlation_rows
@@ -10015,7 +10143,9 @@ def squarefree_crt_unequal_outer_character_gram_audit(
             bool(row["principal_kernel_equals_phi"])
             for row in correlation_rows
         ),
-        "nonprincipal_finite_alias_rows": nonprincipal_finite_alias_rows,
+        "nonprincipal_full_amplitude_alias_rows": (
+            nonprincipal_full_amplitude_alias_rows
+        ),
         "nonprincipal_finite_aliases_may_exist_for_composite_cofactor": True,
         "unequal_outer_product_labels_retained_inside_character_square": True,
         "pointwise_cofactor_l1_cost_paid": False,
