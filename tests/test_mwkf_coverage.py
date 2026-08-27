@@ -7331,12 +7331,29 @@ def test_large_q_affine_chowla_split_discards_large_gcd_but_rejects_mrt() -> Non
     assert audit.higher_uniformity_theorem == (
         "arXiv:2007.15644v3, Corollary 1.11"
     )
+    assert audit.higher_uniformity_shift_average == "1<=h<=X^epsilon"
+    assert audit.higher_uniformity_averages_full_power_interval
     assert audit.higher_uniformity_requires_fixed_positive_power_shift
+    assert audit.higher_uniformity_requires_fixed_linear_coefficients
+    assert audit.higher_uniformity_requires_common_base_variable
+    assert audit.physical_shift_average == "1<=|k|<=Q, Q=(log T)^2/g"
+    assert audit.physical_shift_interval_is_below_theorem_range
     assert audit.physical_shift_has_zero_power_exponent
+    assert audit.physical_linear_coefficients_grow_with_T
+    assert audit.physical_forms_have_distinct_base_slopes
     assert not audit.higher_uniformity_published_adapter_applies
     assert audit.remaining_gate == "polylog_slope_averaged_affine_chowla"
     assert not audit.centered_product_energy_estimate_proved
     assert not audit.unconditional_coverage
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        r"\mathbb E_{1\le h\le X^\varepsilon}",
+        "every shorter initial segment",
+        r"a_i\) are fixed independently of \(X\)",
+        r"a,b\asymp Q=(\log T)^2/g",
+    ):
+        assert marker in note
 
 
 def test_product_lift_prime_strata_reject_plain_shifted_chowla() -> None:

@@ -21690,19 +21690,33 @@ factor that (4.845dc_14xq_35w43) displays.
 
 The higher-uniformity result of
 [Matomaki--Radziwill--Tao--Teravainen--Ziegler, Corollary 1.11](https://arxiv.org/abs/2007.15644)
-does preserve a one-dimensional family of linear shifts, but its range
-is
+states, for every fixed \(\varepsilon>0\) and fixed distinct
+nonnegative integers \(a_i\), the full-average estimate
 
 \[
- 1\le h\le X^\varepsilon
+ \mathbb E_{1\le h\le X^\varepsilon}
+ \left|\mathbb E_{n\le X}
+ \lambda(n+a_1h)\cdots\lambda(n+a_kh)\right|=o(1).
 \tag{4.845dc_14xq_35w44}
 \]
 
-for a fixed \(\varepsilon>0\).  In the present variables
-\(X=T/Q\) and \(h\le Q\asymp(\log T)^2\).  Hence the physical shift
-has zero power exponent relative to \(X\), and (4.845dc_14xq_35w44)
-does not contain it.  The almost-all-interval higher-uniformity theorem
-has the same fixed-positive-power lower boundary for the Möbius input.
+This is not a pointwise hypothesis saying merely that
+\(h\le X^\varepsilon\), and it does not assert the same estimate for
+every shorter initial segment.  In the present variables \(X=T/Q\),
+whereas the physical average has only
+\(1\le |k|\le Q\asymp(\log T)^2\).  Its length has zero power exponent
+relative to \(X\), so restricting (4.845dc_14xq_35w44) to this subset
+is not legitimate.
+
+There are two further hypothesis mismatches.  The corollary's
+\(a_i\) are fixed independently of \(X\), while here
+\(a,b\asymp Q=(\log T)^2/g\) vary with \(T\).  Moreover its forms share
+the same base variable \(n\), whereas the physical pair is
+\(at+uk,bt+vk\), with distinct base slopes \(a,b\).  Thus even a
+hypothetical extension from Liouville to the required Möbius weights
+would not furnish \((\mathrm{AAC})_{P,G}\) from the published
+statement.  The almost-all-interval higher-uniformity theorem likewise
+does not provide the missing polylogarithmic-length affine estimate.
 
 The interface large_q_affine_chowla_gcd_split_audit records the exact
 large-gcd relative bound, the unimodular parametrization, the raw

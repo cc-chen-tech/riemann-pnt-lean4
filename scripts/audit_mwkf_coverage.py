@@ -2736,8 +2736,16 @@ class LargeQAffineChowlaGcdSplitAudit:
     mrt_relative_factor_at_reduced_slope: str
     mrt_published_adapter_applies: bool
     higher_uniformity_theorem: str
+    higher_uniformity_shift_average: str
+    higher_uniformity_averages_full_power_interval: bool
     higher_uniformity_requires_fixed_positive_power_shift: bool
+    higher_uniformity_requires_fixed_linear_coefficients: bool
+    higher_uniformity_requires_common_base_variable: bool
+    physical_shift_average: str
+    physical_shift_interval_is_below_theorem_range: bool
     physical_shift_has_zero_power_exponent: bool
+    physical_linear_coefficients_grow_with_T: bool
+    physical_forms_have_distinct_base_slopes: bool
     higher_uniformity_published_adapter_applies: bool
     remaining_gate: str
     centered_product_energy_estimate_proved: bool
@@ -17823,8 +17831,16 @@ def large_q_affine_chowla_gcd_split_audit(
     averages a full additive-shift box and carries an ``A^2`` factor.
     Even if the geometry mismatch is ignored, inserting
     ``A=Q=P/g`` leaves the displayed relative factor rather than an
-    ``o(1)`` estimate at polylogarithmic ``Q``.  The adapter therefore
-    records a smaller new affine-Chowla gate, not coverage.
+    ``o(1)`` estimate at polylogarithmic ``Q``.
+
+    Corollary 1.11 of arXiv:2007.15644 averages the *whole* interval
+    ``1 <= h <= X^epsilon`` for fixed ``epsilon > 0`` and fixed
+    coefficients in forms ``n+a_i*h``.  It does not state the same
+    estimate for an arbitrary shorter initial segment.  Here the
+    physical shift is only ``|k| <= Q`` with polylogarithmic ``Q``, the
+    coefficients ``a,b`` grow with ``T``, and the forms have distinct
+    base slopes ``a*t`` and ``b*t``.  The adapter therefore records a
+    smaller new affine-Chowla gate, not coverage.
     """
     P = int(product_scale)
     L = int(shift_scale)
@@ -17861,8 +17877,16 @@ def large_q_affine_chowla_gcd_split_audit(
         higher_uniformity_theorem=(
             "arXiv:2007.15644v3, Corollary 1.11"
         ),
+        higher_uniformity_shift_average="1<=h<=X^epsilon",
+        higher_uniformity_averages_full_power_interval=True,
         higher_uniformity_requires_fixed_positive_power_shift=True,
+        higher_uniformity_requires_fixed_linear_coefficients=True,
+        higher_uniformity_requires_common_base_variable=True,
+        physical_shift_average="1<=|k|<=Q, Q=(log T)^2/g",
+        physical_shift_interval_is_below_theorem_range=True,
         physical_shift_has_zero_power_exponent=True,
+        physical_linear_coefficients_grow_with_T=True,
+        physical_forms_have_distinct_base_slopes=True,
         higher_uniformity_published_adapter_applies=False,
         remaining_gate="polylog_slope_averaged_affine_chowla",
         centered_product_energy_estimate_proved=False,
