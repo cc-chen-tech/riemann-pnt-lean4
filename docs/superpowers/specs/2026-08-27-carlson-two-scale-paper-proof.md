@@ -441,7 +441,12 @@ with its explicit degree-twelve polynomial majorant.  Their exact pointwise
 sum identity has been formalized and the full displayed derivative function
 has been proved to belong to `L^2(R)` on the inner strip.  The dominated
 difference-quotient passage in `Lp` remains; hence this still does not by
-itself prove `Lp`-valued analyticity.  The paper proof
+itself prove `Lp`-valued analyticity.  A general functional-analytic bridge
+has now been formalized: convergence to zero of the integral of the squared
+pointwise slope error implies the corresponding `MemLp.toLp` family has the
+expected complex derivative.  Thus the remaining analyticity gate is no
+longer `Lp` algebra; it is precisely the dominated-convergence estimate for
+that scalar squared slope error.  The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 

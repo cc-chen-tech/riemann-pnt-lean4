@@ -471,6 +471,8 @@ lean_lib RiemannPNT where
     `Test.CarlsonMeanSquareContourBridgeContract,
     `MathlibAux.HadamardThreeLinesSquared,
     `Test.HadamardThreeLinesSquaredContract,
+    `MathlibAux.LpPointwiseDerivBridge,
+    `Test.LpPointwiseDerivBridgeContract,
     `PrimeNumberTheorem.CarlsonGaussianHilbertSection,
     `Test.CarlsonGaussianHilbertSectionContract,
     `PrimeNumberTheorem.CarlsonGaussianHilbertMemLp,
