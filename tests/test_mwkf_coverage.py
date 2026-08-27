@@ -4747,6 +4747,7 @@ def test_pattern_dependent_lists_reduce_to_one_scalar_ambient_large_sieve() -> N
         "### 4.109zld Orthogonal patterns need only one scalar ambient large sieve",
         r"\tag{4.845dc_14xyc}",
         r"\tag{4.845dc_14xyd}",
+        r"\tag{4.845dc_14xyd_1}",
         "vector_valued_pattern_large_sieve_reduction_audit",
     ):
         assert marker in note
@@ -4758,6 +4759,11 @@ def test_pattern_dependent_lists_reduce_to_one_scalar_ambient_large_sieve() -> N
     assert audit.common_ambient_level_used
     assert audit.conductor_pattern_projections_are_orthogonal
     assert audit.downward_shifted_support_is_uniform
+    assert audit.spectral_dependent_coefficients_use_pointwise_majorants
+    assert audit.transfer_is_placed_on_only_one_cauchy_factor
+    assert audit.unweighted_factor_is_one_ambient_spectral_polynomial
+    assert audit.pattern_costs_are_squared_before_euler_aggregation
+    assert audit.no_pattern_triangle_inequality_is_used
     assert audit.scalar_large_sieve_implies_vector_valued_bound
     assert audit.no_conductor_pattern_cardinality_loss
     assert audit.cross_index_weights_legally_enter_scalar_large_sieve

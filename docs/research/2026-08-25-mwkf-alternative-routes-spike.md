@@ -22383,6 +22383,53 @@ implies, for arbitrary pattern-dependent lists \(a_\sigma\),
 This is only orthogonality and the scalar operator norm; it introduces
 no factor equal to the number of patterns.
 
+There is a subtlety hidden by the notation \(a_\sigma\).  In the
+unramified cell the coefficient \(E_\pi^{-1}\) in (4.845dc_14s)
+depends on the primitive representation, so it is not literally a
+coefficient of an input sequence.  This does not require a new
+spectral-multiplier theorem.  Write the transferred polynomial on one
+pattern as
+\[
+ (K_\sigma a)(\pi)
+ =\sum_{\nu\in\mathcal J_\sigma}
+ c_{\sigma,\nu}(\pi)(T_QS_\nu a)(\pi),
+ \qquad
+ |c_{\sigma,\nu}(\pi)|\le d_{\sigma,\nu},
+ \qquad
+ D_\sigma:=\sum_\nu d_{\sigma,\nu}.
+\]
+Here every \(S_\nu\) is a downward prime-power shift and hence an
+\(\ell^2\)-contraction.  Pointwise weighted Cauchy, followed by the
+scalar ambient large sieve, gives
+\[
+ \boxed{
+ \begin{aligned}
+ \|P_\sigma K_\sigma a\|_{\mathcal H_Q}^2
+ &\le D_\sigma\sum_\nu d_{\sigma,\nu}
+       \|P_\sigma T_QS_\nu a\|_{\mathcal H_Q}^2\\
+ &\le L_QD_\sigma^2\|a\|_2^2.
+ \end{aligned}}
+ \tag{4.845dc_14xyd_1}
+\]
+Thus the representation-dependent factor is bounded before the large
+sieve, but the rank choices are not counted without their coefficients.
+
+The complete transfer is placed on only one side of the Cauchy
+inequality for the original bilinear form.  The other side is the
+single unweighted ambient polynomial; orthogonality gives
+\[
+ \sum_\sigma\|P_\sigma T_Qb\|_{\mathcal H_Q}^2
+ \le\|T_Qb\|_{\mathcal H_Q}^2
+ \le L_Q\|b\|_2^2.
+\]
+Combining this with (4.845dc_14xyd_1) costs
+\(L_Q^2\sum_\sigma D_\sigma^2\), exactly the Euler square in
+(4.845dc_14xyb).  A triangle inequality over the scalar pattern
+contributions would instead cost
+\((\sum_\sigma D_\sigma)^2\) and is not used.  This one-sided placement
+is the precise reason the cross-index weights may legally enter the
+scalar large sieve despite the \(\pi\)-dependence of \(E_\pi^{-1}\).
+
 Every list \(a_\sigma\) is obtained from the same physical list by the
 downward \(p\)- and \(p^2\)-shifts of Sections 4.109zla--4.109zlb.
 Hence all lists have the same support ceiling, and their direct-sum

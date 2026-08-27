@@ -2866,6 +2866,11 @@ class VectorValuedPatternLargeSieveReductionAudit:
     common_ambient_level_used: bool
     conductor_pattern_projections_are_orthogonal: bool
     downward_shifted_support_is_uniform: bool
+    spectral_dependent_coefficients_use_pointwise_majorants: bool
+    transfer_is_placed_on_only_one_cauchy_factor: bool
+    unweighted_factor_is_one_ambient_spectral_polynomial: bool
+    pattern_costs_are_squared_before_euler_aggregation: bool
+    no_pattern_triangle_inequality_is_used: bool
     scalar_large_sieve_implies_vector_valued_bound: bool
     no_conductor_pattern_cardinality_loss: bool
     cross_index_weights_legally_enter_scalar_large_sieve: bool
@@ -13200,9 +13205,28 @@ def vector_valued_pattern_large_sieve_reduction_audit(
 
     Embed every primitive conductor family in the common full level
     ``Q=A^2*B`` and let ``P_sigma`` be the mutually orthogonal spectral
-    projection onto pattern sigma.  If the scalar evaluation operator
-    ``T_Q`` satisfies ``||T_Q a||^2 <= L_Q ||a||^2``, then for arbitrary
-    pattern-dependent lists ``a_sigma`` one has
+    projection onto pattern sigma.  The unramified coefficients contain
+    the representation-dependent positive factor ``E_pi^(-1)``.  Do not
+    pretend that it is an input-sequence coefficient.  Instead write the
+    transferred spectral polynomial pointwise as
+
+    ``K_sigma(a)(pi)=sum_nu c_(sigma,nu)(pi) T_Q(S_nu a)(pi)``,
+
+    with ``|c_(sigma,nu)(pi)|<=d_(sigma,nu)`` and
+    ``D_sigma=sum_nu d_(sigma,nu)``.  Weighted Cauchy at each ``pi`` and
+    the scalar bound give
+
+    ``||P_sigma K_sigma(a)||^2 <= L_Q D_sigma^2 ||a||^2``.
+
+    Put this complete transfer on only one side of the original Cauchy
+    inequality.  The other side is the single unweighted ambient
+    polynomial ``T_Q b``.  Orthogonality therefore yields a cost
+    ``sum_sigma D_sigma^2``, not ``(sum_sigma D_sigma)^2`` and not one
+    scalar-large-sieve charge per pattern.
+
+    Equivalently, after absorbing the pointwise majorants into fixed
+    shifted lists, if ``T_Q`` satisfies
+    ``||T_Q a||^2 <= L_Q ||a||^2``, then
 
     ``sum_sigma ||P_sigma T_Q a_sigma||^2``
     ``<= sum_sigma ||T_Q a_sigma||^2``
@@ -13250,6 +13274,11 @@ def vector_valued_pattern_large_sieve_reduction_audit(
         common_ambient_level_used=True,
         conductor_pattern_projections_are_orthogonal=True,
         downward_shifted_support_is_uniform=True,
+        spectral_dependent_coefficients_use_pointwise_majorants=True,
+        transfer_is_placed_on_only_one_cauchy_factor=True,
+        unweighted_factor_is_one_ambient_spectral_polynomial=True,
+        pattern_costs_are_squared_before_euler_aggregation=True,
+        no_pattern_triangle_inequality_is_used=True,
         scalar_large_sieve_implies_vector_valued_bound=reduction,
         no_conductor_pattern_cardinality_loss=reduction,
         cross_index_weights_legally_enter_scalar_large_sieve=reduction,
@@ -28498,6 +28527,12 @@ def main() -> None:
         f"a_inverse_polylog={pattern_square.conductor_pattern_sum_is_a_inverse_polylog} "
         "scalar_reduction="
         f"{pattern_vector.scalar_large_sieve_implies_vector_valued_bound} "
+        "pointwise_multiplier="
+        f"{pattern_vector.spectral_dependent_coefficients_use_pointwise_majorants} "
+        "one_sided_transfer="
+        f"{pattern_vector.transfer_is_placed_on_only_one_cauchy_factor} "
+        "pattern_square_before_euler="
+        f"{pattern_vector.pattern_costs_are_squared_before_euler_aggregation} "
         "cross_index_legal="
         f"{pattern_vector.cross_index_weights_legally_enter_scalar_large_sieve} "
         "scalar_polylog_ls="
