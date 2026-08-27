@@ -21137,6 +21137,203 @@ parameter polytope and it does not prove the logarithmic
 large-\(q\) centered product-energy gate.  Therefore neither full
 MMKLS nor the unconditional long-mollifier asymptotic is asserted here.
 
+### 4.109zjaced00a The full balanced edge leaves a strict transition interval
+
+The preceding endpoint-dispersion certificate starts at (u=2), but
+that is not the left endpoint of the balanced zero-slack edge.  The
+exact family is
+
+\[
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(u,u,\frac12,\frac12,u-\frac12,u-\frac12,3-u\right),
+ \qquad \frac12\le u\le3.
+\tag{4.845dc_14xq_35s}
+\]
+
+Both mollifier caps, (k+m=1), ratio balance, the separate shift and
+Poisson-frequency caps, and the joint third-length cap are equalities.
+All variables are nonnegative precisely on the displayed interval, so
+(4.845dc_14xq_35s) is admissible throughout it.
+
+Literal substitution into the BCR adapter gives the piecewise saving
+
+\[
+ \operatorname{sav}_{\rm BCR}(u)=
+ \begin{cases}
+ \displaystyle\frac{17}{20}-\frac{33u}{20},
+   &\frac12\le u\le\frac23,\\[4pt]
+ \displaystyle1-\frac{15u}{8},
+   &\frac23\le u\le3.
+ \end{cases}
+\tag{4.845dc_14xq_35t}
+\]
+
+The coverage adapter requires a *strict* saving greater than
+(1/1000).  Solving the first branch exactly gives
+
+\[
+ \operatorname{sav}_{\rm BCR}\!\left(\frac{283}{550}\right)
+ =\frac1{1000},
+\tag{4.845dc_14xq_35u}
+\]
+
+so BCR covers (1/2\le u<283/550), but not the endpoint.
+
+For endpoint dispersion, first let the cofactor cutoff, the small
+(Q)-smooth relative exponent, and the theorem slack tend to zero
+through fixed positive values.  The limiting relative interval exponent
+is
+
+\[
+ \frac{\log_T H}{\log_T X}=\frac{u-1}{u}.
+\tag{4.845dc_14xq_35v}
+\]
+
+The published (1/3+\varepsilon) condition can therefore be met for
+each fixed (u>3/2), and cannot be met at (u=3/2), where the ratio is
+exactly (1/3).  With the concrete choices
+(\eta=1/8\), (\rho_Q=1/10\), and
+(\varepsilon=1/30), equality with the required (11/30) occurs at
+
+\[
+ u=\frac{857}{456},\qquad
+ 1-\frac{1}{(1-1/10)(u-1/8)}=\frac{11}{30};
+\tag{4.845dc_14xq_35w}
+\]
+
+strictness again excludes this endpoint.  Consequently the presently
+proved BCR and endpoint-dispersion pieces leave the explicit
+power-scale transition residual
+
+\[
+ \boxed{\frac{283}{550}\le u\le\frac32.}
+\tag{4.845dc_14xq_35x}
+\]
+
+This correction does not say that (4.845dc_14xq_35x) is the only
+residual of the full admissibility polytope: cells with
+(\ell+h<\rho+\sigma-1) have not yet been enumerated.  The executable
+interface `balanced_zero_slack_full_range_audit` records both strict
+endpoints and therefore prevents the local (u=2) certificate from
+being extrapolated to the whole edge.  The alternative-route ledger is
+now
+
+```text
+balanced_zero_slack_u_in_[283/550,3/2]
+unclassified_slack_cells_outside_zero_slack_family
+large_q_centered_product_energy_lambda_2
+```
+
+and all three entries remain unproved.
+
+### 4.109zjaced00b The transition interval is one two-Möbius Farey family
+
+The power residual (4.845dc_14xq_35x) can be returned to the original
+Poisson variables without Cauchy.  On its (u)-box the exact scales are
+
+\[
+ q\asymp T^{3-u},\qquad R=S=T^u,\qquad K=M=T^{1/2},
+ \qquad H=L=T^{u-1/2}.
+\tag{4.845dc_14xq_35y}
+\]
+
+Split the bounded ratio (r/s) into its finitely many integer-slope
+sectors and write
+
+\[
+ r=cs+w,\qquad |w|\asymp T^\theta,qquad 0\le\theta\le u.
+\tag{4.845dc_14xq_35z}
+\]
+
+For one sign box and one dyadic shell define
+
+\[
+\boxed{
+\begin{aligned}
+ \mathrm{BTF}_{u,\theta}(q,c):={}&
+ \sum_{\substack{s\asymp T^u,\ |w|\asymp T^\theta\\
+                  cs+w\asymp T^u,\ (w,s)=1\\
+                  (q,s(cs+w))=1}}
+ \mu(s)\mu(cs+w)
+ p_N(qs)p_N(q(cs+w))\\
+ &\quad\times
+ \sum_{\substack{|h|\asymp T^{u-1/2}\\
+                   |\delta|\asymp T^{u-1/2}}}
+ \Psi_{q,c,u,\theta}\!\left(
+  \frac{s}{T^u},\frac{w}{T^\theta},
+  \frac{h}{T^{u-1/2}},\frac{\delta}{T^{u-1/2}}
+ \right)
+ e\!\left(-\frac{h\delta\bar w}{s}\right).
+\end{aligned}}
+\tag{4.845dc_14xq_35za}
+\]
+
+Here \(\bar w\) is the inverse modulo \(s\).  The weight is the actual
+dyadic restriction of the time-integrated coupled kernel; its declared
+seminorm is retained in the implied constant, and no separated tensor
+or arbitrary coefficient replacement is made.  The other sign boxes
+have the same ranges after changing the signs in the support and phase.
+Thus (4.845dc_14xq_35za) retains both original Möbius weights, both
+endpoint tapers, both coprimality conditions, and the physical phase.
+
+Put (A=HL=T^{2u-1}).  The same reciprocity and local-density Farey
+argument as (4.319)--(4.323), now with (S=T^u), gives
+
+\[
+ \|\nu\|_2^2\ll_W A\log(2T),\qquad
+ |\mathrm{BTF}_{u,\theta}(q,c)|
+ \ll_W
+ T^{,2u-1/2+\max(\theta,u-1/2)}(\log T)^{O_W(1)}.
+\tag{4.845dc_14xq_35zb}
+\]
+
+Indeed the three factors are (S),
+((A+T^{2\theta})^{1/2}), and (A^{1/2}).  This records the exact
+power of the proved unsigned Farey-energy bound.
+
+The normalization and the number of (q)'s are
+
+\[
+ \frac{2T}{qRS}=T^{-2-u+o(1)},\qquad
+ \#\{q\asymp T^{3-u}\}=T^{3-u+o(1)}.
+\tag{4.845dc_14xq_35zc}
+\]
+
+Consequently the uniform local estimate
+
+\[
+ \boxed{
+ |\mathrm{BTF}_{u,\theta}(q,c)|
+ \ll_{\varepsilon,W}T^{,2u-1/1000+\varepsilon}}
+\tag{BTF}_{u,\theta}
+\]
+
+would contribute (T^{999/1000+\varepsilon}=o(T)).  Comparing
+(4.845dc_14xq_35zb) with this fixed-power target shows that the exact
+additional signed saving is
+
+\[
+ \boxed{
+ \left(\max\left(\theta,u-\frac12\right)-\frac12+\frac1{1000}\right)_+.}
+\tag{4.845dc_14xq_35zd}
+\]
+
+At ((u,\theta)=(1,1)), (4.845dc_14xq_35za) is exactly the earlier
+(mathrm{TFS}_1(q,c)) family and (4.845dc_14xq_35zd) is
+(501/1000).  At (u=3/2), the missing saving is (501/1000) even
+on the smallest difference shells and (1001/1000) on the top shell.
+At (u=283/550,	heta=0), the positive part is zero, so the elementary
+Farey bound already meets the fixed-power target there.  Thus the box
+label in (4.845dc_14xq_35x) is an honest outer interval, while
+(4.845dc_14xq_35zd) removes the internally easy shells.
+
+The executable interface `balanced_transition_farey_gate_audit`
+checks (4.845dc_14xq_35y)--(4.845dc_14xq_35zd) with exact rational
+arithmetic.  It sets `required_new_mobius_estimate_proved=False`
+whenever the positive part in (4.845dc_14xq_35zd) is nonzero.  No
+published theorem audited here proves that remaining two-Möbius
+trilinear estimate.
+
 ### 4.109zjaced1 The critical product energy has one polylog-slope affine core
 
 The gcd divisibility in (4.236) gives a useful second reduction of

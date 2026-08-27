@@ -2602,6 +2602,57 @@ class AlmostAllMobiusEndpointDispersionAudit:
 
 
 @dataclass(frozen=True)
+class BalancedZeroSlackFullRangeAudit:
+    family_parameter_interval: tuple[Fraction, Fraction]
+    family_is_admissible_on_full_interval: bool
+    family_saturates_all_seven_defining_equalities: bool
+    bcr_branch_breakpoint: Fraction
+    bcr_strict_coverage_upper_endpoint: Fraction
+    bcr_endpoint_saving: Fraction
+    bcr_endpoint_is_covered: bool
+    fixed_endpoint_dispersion_lower_endpoint: Fraction
+    fixed_endpoint_ratio: Fraction
+    fixed_endpoint_is_covered: bool
+    structural_endpoint_dispersion_lower_endpoint: Fraction
+    structural_endpoint_ratio: Fraction
+    structural_endpoint_is_covered: bool
+    explicit_power_residual_interval: tuple[Fraction, Fraction]
+    exact_witnesses: tuple[
+        tuple[Fraction, Fraction, bool, Fraction, bool], ...
+    ]
+    full_balanced_family_covered: bool
+    full_parameter_polytope_enumerated: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class BalancedTransitionFareyGateAudit:
+    u: Fraction
+    difference_exponent: Fraction
+    q_exponent: Fraction
+    r_exponent: Fraction
+    s_exponent: Fraction
+    zeta_m_exponent: Fraction
+    zeta_k_exponent: Fraction
+    h_exponent: Fraction
+    delta_exponent: Fraction
+    product_numerator_exponent: Fraction
+    farey_energy_bound_exponent: Fraction
+    local_fixed_power_target_exponent: Fraction
+    required_additional_mobius_saving_exponent: Fraction
+    global_exponent_after_local_target: Fraction
+    exact_phase: str
+    two_original_mobius_weights_retained: bool
+    coprimality_conditions: tuple[str, ...]
+    matches_existing_TFS_theta_gate: bool
+    farey_energy_bound_proved: bool
+    required_new_mobius_estimate_proved: bool
+    local_gate_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class LargeQAffineChowlaGcdSplitAudit:
     product_scale: int
     shift_scale: int
@@ -15271,12 +15322,17 @@ def unconditional_long_mollifier_asymptotic_audit(
         outer_entry_exponent=F(7, 8),
         qsmooth_relative_exponent=F(1, 10),
     )
+    balanced_range = balanced_zero_slack_full_range_audit()
     residual_top_level = () if final else ("OLISK_q^{L,R}",)
     if final:
         alternative_unverified = ()
-    elif endpoint_dispersion.balanced_zero_slack_family_covered:
+    elif (
+        endpoint_dispersion.balanced_zero_slack_family_covered
+        and not balanced_range.full_balanced_family_covered
+    ):
         alternative_unverified = (
-            "unclassified_power_scale_cells_outside_certified_balanced_family",
+            "balanced_zero_slack_u_in_[283/550,3/2]",
+            "unclassified_slack_cells_outside_zero_slack_family",
             "large_q_centered_product_energy_lambda_2",
         )
     else:
@@ -17055,6 +17111,178 @@ def oriented_mmkls_polytope_gap_audit(
         source=(
             "exact admissibility algebra and the strict 7/12 "
             "Motohashi--Ramachandra threshold"
+        ),
+    )
+
+
+def balanced_zero_slack_full_range_audit(
+) -> BalancedZeroSlackFullRangeAudit:
+    """Audit every point of the balanced zero-slack edge exactly.
+
+    The edge is
+
+      ``rho=sigma=u``, ``m=k=1/2``, ``ell=h=u-1/2``, ``kappa=3-u``
+
+    and is admissible for the full interval ``1/2 <= u <= 3``.  BCR's
+    saving on it is ``17/20-33u/20`` up to ``u=2/3`` and
+    ``1-15u/8`` afterwards.  Since adapters require a strict saving
+    larger than ``1/1000``, the BCR endpoint ``283/550`` itself is open.
+
+    With vanishing cofactor and Q-smooth cutoffs, endpoint dispersion has
+    relative interval exponent ``(u-1)/u``.  Its published ``theta=1/3``
+    theorem therefore starts only at strict ``u>3/2``; equality at
+    ``u=3/2`` is not covered.  This leaves the displayed transition
+    interval as a genuine power-scale residual before any slack cells are
+    considered.
+    """
+
+    def family_box(u: Fraction) -> ExponentBox:
+        return ExponentBox(
+            rho=u,
+            sigma=u,
+            m=F(1, 2),
+            k=F(1, 2),
+            ell=u - F(1, 2),
+            h=u - F(1, 2),
+            kappa=F(3) - u,
+        )
+
+    endpoints = (F(1, 2), F(3))
+    admissible = all(is_admissible(family_box(u)) for u in endpoints)
+    saturated = all(
+        (
+            box.kappa + box.rho == F(3)
+            and box.kappa + box.sigma == F(3)
+            and box.k + box.m == F(1)
+            and box.k + box.sigma == box.m + box.rho
+            and box.ell == box.m + box.rho - F(1)
+            and box.h == box.sigma - box.m
+            and box.third_length == box.rho + box.sigma - F(1)
+        )
+        for box in (family_box(u) for u in endpoints)
+    )
+
+    bcr_breakpoint = F(2, 3)
+    bcr_endpoint = F(283, 550)
+    bcr_endpoint_result = bcr_adapter(family_box(bcr_endpoint))
+
+    fixed_eta = F(1, 8)
+    fixed_rho = F(1, 10)
+    fixed_endpoint = F(857, 456)
+    fixed_reduced = fixed_endpoint - fixed_eta
+    fixed_ratio = F(1) - F(1) / ((F(1) - fixed_rho) * fixed_reduced)
+
+    structural_endpoint = F(3, 2)
+    structural_ratio = (structural_endpoint - F(1)) / structural_endpoint
+
+    witnesses = []
+    for u in (F(1, 2), bcr_endpoint, F(1), F(3, 2), F(2), F(3)):
+        bcr = bcr_adapter(family_box(u))
+        assert bcr.saving is not None
+        raw_ratio = (u - F(1)) / u
+        endpoint_covered = raw_ratio > F(1, 3)
+        witnesses.append(
+            (u, bcr.saving, bcr.applicable, raw_ratio, endpoint_covered)
+        )
+
+    return BalancedZeroSlackFullRangeAudit(
+        family_parameter_interval=endpoints,
+        family_is_admissible_on_full_interval=admissible,
+        family_saturates_all_seven_defining_equalities=saturated,
+        bcr_branch_breakpoint=bcr_breakpoint,
+        bcr_strict_coverage_upper_endpoint=bcr_endpoint,
+        bcr_endpoint_saving=bcr_endpoint_result.saving,
+        bcr_endpoint_is_covered=bcr_endpoint_result.applicable,
+        fixed_endpoint_dispersion_lower_endpoint=fixed_endpoint,
+        fixed_endpoint_ratio=fixed_ratio,
+        fixed_endpoint_is_covered=(fixed_ratio > F(11, 30)),
+        structural_endpoint_dispersion_lower_endpoint=structural_endpoint,
+        structural_endpoint_ratio=structural_ratio,
+        structural_endpoint_is_covered=(structural_ratio > F(1, 3)),
+        explicit_power_residual_interval=(bcr_endpoint, structural_endpoint),
+        exact_witnesses=tuple(witnesses),
+        full_balanced_family_covered=False,
+        full_parameter_polytope_enumerated=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact admissibility algebra; Bettin--Chandee Theorem 1; "
+            "arXiv:2411.05770v2, Theorem 1.1(i)"
+        ),
+    )
+
+
+def balanced_transition_farey_gate_audit(
+    *,
+    u: Fraction,
+    difference_exponent: Fraction,
+) -> BalancedTransitionFareyGateAudit:
+    """Normalize the two-Mobius Farey gate on the balanced edge.
+
+    Put ``R=S=T^u``, ``q=T^(3-u)``, ``H=L=T^(u-1/2)`` and split
+    ``r=c*s+w`` with ``|w|=T^theta``.  The additive local-density large
+    sieve, before any new Mobius cancellation, has exponent
+
+      ``2u-1/2 + max(theta,u-1/2)``.
+
+    A per-q bound of exponent ``2u-1/1000`` sums, with the exact
+    ``2T/(qRS)`` normalization, to exponent ``999/1000`` globally.
+    The positive difference between these two exponents is the exact
+    extra signed two-Mobius saving still required on the shell.
+    """
+    u = F(u)
+    theta = F(difference_exponent)
+    if not (F(283, 550) <= u <= F(3, 2)):
+        raise ValueError("u must lie in [283/550,3/2]")
+    if not (F(0) <= theta <= u):
+        raise ValueError("difference exponent must lie in [0,u]")
+
+    q_exponent = F(3) - u
+    zeta_exponent = F(1, 2)
+    h_exponent = u - zeta_exponent
+    numerator_exponent = 2 * h_exponent
+    farey_bound = (
+        2 * u
+        - F(1, 2)
+        + max(theta, u - F(1, 2))
+    )
+    local_target = 2 * u - TARGET_SAVING
+    required = _positive_part(farey_bound - local_target)
+
+    # There are T^(3-u) q values and the per-q normalization has
+    # exponent 1-(3-u)-2u=-2-u.
+    global_after_target = (
+        (F(3) - u) + (-F(2) - u) + local_target
+    )
+    assert global_after_target == F(1) - TARGET_SAVING
+
+    return BalancedTransitionFareyGateAudit(
+        u=u,
+        difference_exponent=theta,
+        q_exponent=q_exponent,
+        r_exponent=u,
+        s_exponent=u,
+        zeta_m_exponent=zeta_exponent,
+        zeta_k_exponent=zeta_exponent,
+        h_exponent=h_exponent,
+        delta_exponent=h_exponent,
+        product_numerator_exponent=numerator_exponent,
+        farey_energy_bound_exponent=farey_bound,
+        local_fixed_power_target_exponent=local_target,
+        required_additional_mobius_saving_exponent=required,
+        global_exponent_after_local_target=global_after_target,
+        exact_phase="e(-h*delta*inverse(w mod s)/s)",
+        two_original_mobius_weights_retained=True,
+        coprimality_conditions=(
+            "gcd(w,s)=1",
+            "gcd(q,s*(c*s+w))=1",
+        ),
+        matches_existing_TFS_theta_gate=(u == F(1)),
+        farey_energy_bound_proved=True,
+        required_new_mobius_estimate_proved=(required == 0),
+        local_gate_covered=(required == 0),
+        source=(
+            "exact balanced-edge normalization and additive "
+            "local-density Farey large sieve"
         ),
     )
 
@@ -27790,6 +28018,74 @@ def main() -> None:
         f"{endpoint_dispersion.large_q_centered_product_energy_proved} "
         "asymptotic="
         f"{endpoint_dispersion.full_long_mollifier_asymptotic_proved}"
+    )
+    balanced_range = balanced_zero_slack_full_range_audit()
+    print(
+        "mwkf_balanced_full_range: "
+        "u="
+        f"{_fmt(balanced_range.family_parameter_interval[0])}:"
+        f"{_fmt(balanced_range.family_parameter_interval[1])} "
+        "admissible="
+        f"{balanced_range.family_is_admissible_on_full_interval} "
+        "saturated="
+        f"{balanced_range.family_saturates_all_seven_defining_equalities} "
+        f"bcr_break={_fmt(balanced_range.bcr_branch_breakpoint)} "
+        "bcr_endpoint="
+        f"{_fmt(balanced_range.bcr_strict_coverage_upper_endpoint)} "
+        f"bcr_saving={_fmt(balanced_range.bcr_endpoint_saving)} "
+        f"bcr_strict={balanced_range.bcr_endpoint_is_covered} "
+        "fixed_endpoint="
+        f"{_fmt(balanced_range.fixed_endpoint_dispersion_lower_endpoint)} "
+        f"fixed_ratio={_fmt(balanced_range.fixed_endpoint_ratio)} "
+        f"fixed_strict={balanced_range.fixed_endpoint_is_covered} "
+        "structural_endpoint="
+        f"{_fmt(balanced_range.structural_endpoint_dispersion_lower_endpoint)} "
+        f"structural_ratio={_fmt(balanced_range.structural_endpoint_ratio)} "
+        "structural_strict="
+        f"{balanced_range.structural_endpoint_is_covered} "
+        "residual="
+        f"{_fmt(balanced_range.explicit_power_residual_interval[0])}:"
+        f"{_fmt(balanced_range.explicit_power_residual_interval[1])} "
+        f"balanced_covered={balanced_range.full_balanced_family_covered} "
+        f"full_polytope={balanced_range.full_parameter_polytope_enumerated} "
+        "asymptotic="
+        f"{balanced_range.full_long_mollifier_asymptotic_proved}"
+    )
+    transition_gate = balanced_transition_farey_gate_audit(
+        u=F(1),
+        difference_exponent=F(1),
+    )
+    transition_upper = balanced_transition_farey_gate_audit(
+        u=F(3, 2),
+        difference_exponent=F(3, 2),
+    )
+
+    def transition_report(audit: BalancedTransitionFareyGateAudit) -> str:
+        return (
+            f"u={_fmt(audit.u)} "
+            f"theta={_fmt(audit.difference_exponent)} "
+            f"q={_fmt(audit.q_exponent)} "
+            f"R={_fmt(audit.r_exponent)} "
+            f"S={_fmt(audit.s_exponent)} "
+            f"H={_fmt(audit.h_exponent)} "
+            f"L={_fmt(audit.delta_exponent)} "
+            f"A={_fmt(audit.product_numerator_exponent)} "
+            f"farey={_fmt(audit.farey_energy_bound_exponent)} "
+            f"target={_fmt(audit.local_fixed_power_target_exponent)} "
+            "missing="
+            f"{_fmt(audit.required_additional_mobius_saving_exponent)} "
+            "global="
+            f"{_fmt(audit.global_exponent_after_local_target)} "
+            "two_mu="
+            f"{audit.two_original_mobius_weights_retained} "
+            f"covered={audit.local_gate_covered}"
+        )
+
+    print(
+        "mwkf_balanced_transition: "
+        + transition_report(transition_gate)
+        + "; "
+        + transition_report(transition_upper)
     )
     valuation = large_q_product_lift_valuation_audit(prime_fixture=2)
     print(

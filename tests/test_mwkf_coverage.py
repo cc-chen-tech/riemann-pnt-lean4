@@ -2547,10 +2547,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "mwkf_final: status=analytic remainder gate open "
         "theta=3 main=4/3 residual_top_level_gates=1 "
         "residual_semantics=top_level_gate_count_not_literal_cell_count "
-        "top_level=OLISK_q^{L,R} "
-        "alternative_unverified="
-        "unclassified_power_scale_cells_outside_certified_balanced_family,"
-        "large_q_centered_product_energy_lambda_2 "
+            "top_level=OLISK_q^{L,R} "
+            "alternative_unverified="
+            "balanced_zero_slack_u_in_[283/550,3/2],"
+            "unclassified_slack_cells_outside_zero_slack_family,"
+            "large_q_centered_product_energy_lambda_2 "
         "all_dyadic_cells=False remainder_o_T=False"
     ) in report
     assert (
@@ -5501,7 +5502,8 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     )
     assert audit.residual_top_level_gates == ("OLISK_q^{L,R}",)
     assert audit.alternative_route_unverified_gates == (
-        "unclassified_power_scale_cells_outside_certified_balanced_family",
+        "balanced_zero_slack_u_in_[283/550,3/2]",
+        "unclassified_slack_cells_outside_zero_slack_family",
         "large_q_centered_product_energy_lambda_2",
     )
     assert not audit.all_dyadic_parameter_cells_enumerated
@@ -7006,6 +7008,140 @@ def test_almost_all_mobius_endpoint_dispersion_closes_the_balanced_power_family(
         "maximal=True integer_exception=True divisor_l2=True "
         "log_absorption=True balanced_family=True full_polytope=False "
         "lcpe=False asymptotic=False"
+    ) in output
+
+
+def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Do not extrapolate the u=2 endpoint certificate to 1/2 <= u <= 3."""
+    adapter = getattr(
+        coverage_audit,
+        "balanced_zero_slack_full_range_audit",
+        None,
+    )
+    assert adapter is not None, "full balanced-family audit is missing"
+    audit = adapter()
+
+    assert audit.family_parameter_interval == (F(1, 2), F(3))
+    assert audit.family_is_admissible_on_full_interval
+    assert audit.family_saturates_all_seven_defining_equalities
+    assert audit.bcr_branch_breakpoint == F(2, 3)
+    assert audit.bcr_strict_coverage_upper_endpoint == F(283, 550)
+    assert audit.bcr_endpoint_saving == F(1, 1000)
+    assert not audit.bcr_endpoint_is_covered
+    assert audit.fixed_endpoint_dispersion_lower_endpoint == F(857, 456)
+    assert audit.fixed_endpoint_ratio == F(11, 30)
+    assert not audit.fixed_endpoint_is_covered
+    assert audit.structural_endpoint_dispersion_lower_endpoint == F(3, 2)
+    assert audit.structural_endpoint_ratio == F(1, 3)
+    assert not audit.structural_endpoint_is_covered
+    assert audit.explicit_power_residual_interval == (F(283, 550), F(3, 2))
+    assert audit.exact_witnesses == (
+        (F(1, 2), F(1, 40), True, F(-1), False),
+        (F(283, 550), F(1, 1000), False, F(-267, 283), False),
+        (F(1), F(-7, 8), False, F(0), False),
+        (F(3, 2), F(-29, 16), False, F(1, 3), False),
+        (F(2), F(-11, 4), False, F(1, 2), True),
+        (F(3), F(-37, 8), False, F(2, 3), True),
+    )
+    assert not audit.full_balanced_family_covered
+    assert not audit.full_parameter_polytope_enumerated
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced00a The full balanced edge leaves a strict transition interval",
+        r"\frac{283}{550}\le u\le\frac32",
+        "balanced_zero_slack_full_range_audit",
+        "unclassified_slack_cells_outside_zero_slack_family",
+    ):
+        assert marker in note
+
+    final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
+    assert final.alternative_route_unverified_gates == (
+        "balanced_zero_slack_u_in_[283/550,3/2]",
+        "unclassified_slack_cells_outside_zero_slack_family",
+        "large_q_centered_product_energy_lambda_2",
+    )
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_balanced_full_range: u=1/2:3 admissible=True saturated=True "
+        "bcr_break=2/3 bcr_endpoint=283/550 bcr_saving=1/1000 "
+        "bcr_strict=False fixed_endpoint=857/456 fixed_ratio=11/30 "
+        "fixed_strict=False structural_endpoint=3/2 structural_ratio=1/3 "
+        "structural_strict=False residual=283/550:3/2 "
+        "balanced_covered=False full_polytope=False asymptotic=False"
+    ) in output
+
+
+def test_balanced_transition_farey_gate_has_exact_normalized_deficit(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The full-edge residual must reduce to the old u=1 TFS gate exactly."""
+    adapter = getattr(
+        coverage_audit,
+        "balanced_transition_farey_gate_audit",
+        None,
+    )
+    assert adapter is not None, "balanced transition Farey gate is missing"
+
+    transition = adapter(u=F(1), difference_exponent=F(1))
+    assert transition.q_exponent == F(2)
+    assert transition.r_exponent == F(1)
+    assert transition.s_exponent == F(1)
+    assert transition.zeta_m_exponent == F(1, 2)
+    assert transition.zeta_k_exponent == F(1, 2)
+    assert transition.h_exponent == F(1, 2)
+    assert transition.delta_exponent == F(1, 2)
+    assert transition.product_numerator_exponent == F(1)
+    assert transition.farey_energy_bound_exponent == F(5, 2)
+    assert transition.local_fixed_power_target_exponent == F(1999, 1000)
+    assert transition.required_additional_mobius_saving_exponent == F(501, 1000)
+    assert transition.global_exponent_after_local_target == F(999, 1000)
+    assert transition.exact_phase == "e(-h*delta*inverse(w mod s)/s)"
+    assert transition.two_original_mobius_weights_retained
+    assert transition.coprimality_conditions == (
+        "gcd(w,s)=1",
+        "gcd(q,s*(c*s+w))=1",
+    )
+    assert transition.matches_existing_TFS_theta_gate
+    assert not transition.required_new_mobius_estimate_proved
+    assert not transition.local_gate_covered
+
+    upper_low_shell = adapter(u=F(3, 2), difference_exponent=F(0))
+    assert upper_low_shell.farey_energy_bound_exponent == F(7, 2)
+    assert upper_low_shell.local_fixed_power_target_exponent == F(2999, 1000)
+    assert upper_low_shell.required_additional_mobius_saving_exponent == F(501, 1000)
+
+    upper_far_shell = adapter(u=F(3, 2), difference_exponent=F(3, 2))
+    assert upper_far_shell.farey_energy_bound_exponent == F(4)
+    assert upper_far_shell.required_additional_mobius_saving_exponent == F(1001, 1000)
+
+    left_low_shell = adapter(u=F(283, 550), difference_exponent=F(0))
+    assert left_low_shell.required_additional_mobius_saving_exponent == F(0)
+    assert left_low_shell.local_gate_covered
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced00b The transition interval is one two-Möbius Farey family",
+        r"\mathrm{BTF}_{u,\theta}(q,c)",
+        r"\left(\max\left(\theta,u-\frac12\right)-\frac12+\frac1{1000}\right)_+",
+        "balanced_transition_farey_gate_audit",
+    ):
+        assert marker in note
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_balanced_transition: u=1 theta=1 q=2 R=1 S=1 "
+        "H=1/2 L=1/2 A=1 farey=5/2 target=1999/1000 "
+        "missing=501/1000 global=999/1000 two_mu=True covered=False; "
+        "u=3/2 theta=3/2 q=3/2 R=3/2 S=3/2 H=1 L=1 A=2 "
+        "farey=4 target=2999/1000 missing=1001/1000 "
+        "global=999/1000 two_mu=True covered=False"
     ) in output
 
 
