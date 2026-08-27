@@ -479,6 +479,8 @@ lean_lib RiemannPNT where
     `Test.CarlsonPoleFreeMollifiedErrorContract,
     `PrimeNumberTheorem.CarlsonPoleFreeMollifiedErrorGrowth,
     `Test.CarlsonPoleFreeMollifiedErrorGrowthContract,
+    `PrimeNumberTheorem.CarlsonPoleFreeMollifiedErrorDerivGrowth,
+    `Test.CarlsonPoleFreeMollifiedErrorDerivGrowthContract,
     `PrimeNumberTheorem.CarlsonGaussianPoleFreeLpValue,
     `Test.CarlsonGaussianPoleFreeLpValueContract,
     `PrimeNumberTheorem.CarlsonGaussianHilbertSectionDeriv,

@@ -429,7 +429,12 @@ representative and an exact norm-square integral formula.  For an arbitrary
 analytic scalar factor `H`, the exact pointwise complex derivative of the
 Gaussian section in the strip parameter has now also been formalized; this
 is the pointwise input, but not yet the dominated `L^2` difference-quotient
-argument needed for `Lp C 2 volume`-valued analyticity.  The paper proof
+argument needed for `Lp C 2 volume`-valued analyticity.  Cauchy's derivative
+estimate has additionally converted the concrete degree-ten square-growth
+bound for the pole-free error on `1/2 <= Re(s) <= 4` into a degree-twenty
+square-growth bound for its derivative on the fixed inner strip
+`2/3 <= Re(s) <= 47/12`; this is sufficient for the next Gaussian derivative
+membership step, but does not by itself prove `Lp`-valued analyticity.  The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
