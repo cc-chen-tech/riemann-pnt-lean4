@@ -35,3 +35,17 @@ example {α : Type*} [MeasurableSpace α] {μ : Measure α}
     f hMeas hBound hBoundInt hDeriv
 
 #print axioms tendsto_integral_pointwiseSlope_sq_of_dominated
+
+example {α : Type*} (f f' : ℂ → α → ℂ) {z : ℂ} {r : ℝ}
+    {B : α → ℝ} (hr : 0 ≤ r)
+    (hDeriv : ∀ v ∈ Metric.closedBall z r, ∀ t,
+      HasDerivAt (fun u => f u t) (f' v t) v)
+    (hB : ∀ t, 0 ≤ B t)
+    (hDerivSq : ∀ v ∈ Metric.closedBall z r, ∀ t,
+      ‖f' v t‖ ^ 2 ≤ B t) :
+    ∀ u ∈ Metric.closedBall z r, u ≠ z → ∀ t,
+      ‖pointwiseComplexSlope f z u t - f' z t‖ ^ 2 ≤ 4 * B t :=
+  pointwiseSlope_error_sq_le_four_mul_of_deriv_sq_le
+    f f' hr hDeriv hB hDerivSq
+
+#print axioms pointwiseSlope_error_sq_le_four_mul_of_deriv_sq_le

@@ -1,4 +1,5 @@
 import Mathlib.Analysis.Calculus.Deriv.Slope
+import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
@@ -139,3 +140,55 @@ theorem tendsto_integral_pointwiseSlope_sq_of_dominated
       ‖pointwiseComplexSlope f z u t - f' t‖ ^ 2)
     (f := fun _ : α => (0 : ℝ)) bound hMeas hBound hBoundInt hpointwise
   simpa using hraw
+
+/-- A closed-ball derivative-square bound controls the squared error between
+every nontrivial pointwise slope from the center and the center derivative.
+The factor four is the triangle inequality after the mean-value bound. -/
+theorem pointwiseSlope_error_sq_le_four_mul_of_deriv_sq_le
+    {α : Type*} (f f' : ℂ → α → ℂ) {z : ℂ} {r : ℝ}
+    {B : α → ℝ} (hr : 0 ≤ r)
+    (hDeriv : ∀ v ∈ Metric.closedBall z r, ∀ t,
+      HasDerivAt (fun u => f u t) (f' v t) v)
+    (hB : ∀ t, 0 ≤ B t)
+    (hDerivSq : ∀ v ∈ Metric.closedBall z r, ∀ t,
+      ‖f' v t‖ ^ 2 ≤ B t) :
+    ∀ u ∈ Metric.closedBall z r, u ≠ z → ∀ t,
+      ‖pointwiseComplexSlope f z u t - f' z t‖ ^ 2 ≤ 4 * B t := by
+  intro u hu huz t
+  have hz : z ∈ Metric.closedBall z r :=
+    Metric.mem_closedBall_self hr
+  have hnormDeriv : ∀ v ∈ Metric.closedBall z r,
+      ‖f' v t‖ ≤ Real.sqrt (B t) := by
+    intro v hv
+    exact Real.le_sqrt_of_sq_le (hDerivSq v hv t)
+  have hdiff : ‖f u t - f z t‖ ≤
+      Real.sqrt (B t) * ‖u - z‖ :=
+    Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+      (f := fun v : ℂ => f v t) (f' := fun v => f' v t)
+      (s := Metric.closedBall z r)
+      (fun v hv => (hDeriv v hv t).hasDerivWithinAt)
+      hnormDeriv (convex_closedBall z r) hz hu
+  have hnormSubPos : 0 < ‖u - z‖ :=
+    norm_pos_iff.mpr (sub_ne_zero.mpr huz)
+  have hslopeNorm : ‖pointwiseComplexSlope f z u t‖ ≤
+      Real.sqrt (B t) := by
+    rw [pointwiseComplexSlope, norm_mul, norm_inv]
+    rw [inv_mul_eq_div]
+    exact (div_le_iff₀ hnormSubPos).2 hdiff
+  have hcenterNorm : ‖f' z t‖ ≤ Real.sqrt (B t) :=
+    hnormDeriv z hz
+  have herrorNorm :
+      ‖pointwiseComplexSlope f z u t - f' z t‖ ≤
+        2 * Real.sqrt (B t) := by
+    calc
+      ‖pointwiseComplexSlope f z u t - f' z t‖
+          ≤ ‖pointwiseComplexSlope f z u t‖ + ‖f' z t‖ :=
+            norm_sub_le _ _
+      _ ≤ Real.sqrt (B t) + Real.sqrt (B t) :=
+        add_le_add hslopeNorm hcenterNorm
+      _ = 2 * Real.sqrt (B t) := by ring
+  calc
+    ‖pointwiseComplexSlope f z u t - f' z t‖ ^ 2
+        ≤ (2 * Real.sqrt (B t)) ^ 2 :=
+          pow_le_pow_left₀ (norm_nonneg _) herrorNorm 2
+    _ = 4 * B t := by rw [mul_pow, Real.sq_sqrt (hB t)]; norm_num

@@ -452,6 +452,11 @@ an explicit integrable scalar function, and the already proved pointwise
 derivative imply the required integral limit.  Consequently the remaining
 analyticity gate is now exactly the construction of a single neighborhood-
 uniform polynomial-times-Gaussian majorant for the concrete slope errors.
+The general complex mean-value reduction for this last step is now also
+formalized: a closed-ball derivative-square bound `B(t)` implies the squared
+slope error is at most `4*B(t)`.  Thus it is enough to produce an integrable
+closed-ball-uniform majorant for the already defined concrete derivative
+section.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
