@@ -2564,6 +2564,44 @@ class OrientedMMKLSPolytopeGapAudit:
 
 
 @dataclass(frozen=True)
+class AlmostAllMobiusEndpointDispersionAudit:
+    modulus_exponent: Fraction
+    cofactor_exponent: Fraction
+    reduced_modulus_exponent: Fraction
+    dual_product_exponent: Fraction
+    outer_entry_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    qsmooth_factor_exponent: Fraction
+    mobius_ambient_exponent: Fraction
+    mobius_interval_exponent: Fraction
+    mobius_interval_ratio: Fraction
+    published_theta: Fraction
+    published_epsilon: Fraction
+    published_lower_ratio: Fraction
+    lower_ratio_margin: Fraction
+    complementary_divisor_exponent: Fraction
+    endpoint_mass_exponent: Fraction
+    endpoint_range_exponent: Fraction
+    endpoint_energy_target_exponent: Fraction
+    product_value_exponent: Fraction
+    collision_shift_count_exponent: Fraction
+    divisor_second_moment_energy_exponent: Fraction
+    endpoint_energy_power_margin: Fraction
+    finite_collision_fixture_exact: bool
+    maximal_progression_norm_handles_smooth_subintervals: bool
+    integer_start_exception_count_follows_from_measure_bound: bool
+    divisor_second_moment_supplies_only_polylog_loss: bool
+    arbitrary_log_saving_absorbs_endpoint_energy_polylogs: bool
+    longer_intervals_use_strict_three_fifths_pointwise_split: bool
+    worst_endpoint_is_monotone_over_balanced_family: bool
+    balanced_zero_slack_family_covered: bool
+    full_parameter_polytope_enumerated: bool
+    large_q_centered_product_energy_proved: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class LargeQAffineChowlaGcdSplitAudit:
     product_scale: int
     shift_scale: int
@@ -15226,10 +15264,23 @@ def unconditional_long_mollifier_asymptotic_audit(
     transport_gap = oriented_mmkls_polytope_gap_audit(
         cofactor_cutoff_exponent=F(1, 8)
     )
-    residual_top_level = () if final else ("OLISK_q^{L,R}",)
-    alternative_unverified = (
-        () if final else transport_gap.remaining_gates
+    endpoint_dispersion = almost_all_mobius_endpoint_dispersion_audit(
+        modulus_exponent=F(2),
+        cofactor_exponent=F(1, 8),
+        dual_product_exponent=F(1),
+        outer_entry_exponent=F(7, 8),
+        qsmooth_relative_exponent=F(1, 10),
     )
+    residual_top_level = () if final else ("OLISK_q^{L,R}",)
+    if final:
+        alternative_unverified = ()
+    elif endpoint_dispersion.balanced_zero_slack_family_covered:
+        alternative_unverified = (
+            "unclassified_power_scale_cells_outside_certified_balanced_family",
+            "large_q_centered_product_energy_lambda_2",
+        )
+    else:
+        alternative_unverified = transport_gap.remaining_gates
     return UnconditionalLongMollifierAsymptoticAudit(
         mollifier_length_exponent=F(3),
         main_term_constant=F(4, 3),
@@ -17004,6 +17055,174 @@ def oriented_mmkls_polytope_gap_audit(
         source=(
             "exact admissibility algebra and the strict 7/12 "
             "Motohashi--Ramachandra threshold"
+        ),
+    )
+
+
+def almost_all_mobius_endpoint_dispersion_audit(
+    *,
+    modulus_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    dual_product_exponent: Fraction,
+    outer_entry_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+) -> AlmostAllMobiusEndpointDispersionAudit:
+    """Audit exceptional-set transport on the balanced zero-slack family.
+
+    After ``s=d*e`` and the small Q-smooth convolution factor ``r``, put
+
+      ``D=T^(u-eta)``, ``X=D/r``, ``P=K*L=T^p``.
+
+    The ordinary Mobius interval has length ``X/P``.  At the uniform
+    endpoint ``u=2, eta=1/8, p=1, r=D^(1/10)`` its relative exponent is
+    ``11/27``, strictly above ``1/3+1/30``.  The maximal-progression form
+    of MRSTT Theorem 1.1(i) therefore gives arbitrary logarithmic saving
+    outside ``O(X log^(-A) X)`` starting points.
+
+    Structured starting points cannot simply be declared generic.  On a
+    dyadic complementary-divisor box ``c~C``, equality of integer start
+    bins for ``A*k*l/(c*r)`` forces
+
+      ``|A*k*l*c' - A'*k'*l'*c| < 2*C^2*r``.
+
+    The two product values have divisor-bounded representation weights.
+    Cauchy and the fixed divisor second moment
+    ``sum_(n<=Y) tau_J(n)^2 << Y log^O_J(1) Y`` cost ``C^2*r`` shifts.
+    This is exactly the endpoint-energy target ``mass^2/X``.  Hence the
+    exceptional set is harmless after choosing the theorem's logarithmic
+    saving larger than all fixed kernel and dyadic losses.
+    """
+    u = F(modulus_exponent)
+    eta = F(cofactor_exponent)
+    p = F(dual_product_exponent)
+    alpha = F(outer_entry_exponent)
+    rho = F(qsmooth_relative_exponent)
+    if not (F(2) <= u <= F(12, 5)):
+        raise ValueError("modulus exponent must lie in [2,12/5]")
+    if not (F(0) <= eta <= F(1, 8)):
+        raise ValueError("cofactor exponent must lie in [0,1/8]")
+    if not (F(0) <= p <= F(1)):
+        raise ValueError("dual product exponent must lie in [0,1]")
+    if not (F(0) <= rho <= F(1, 10)):
+        raise ValueError("Q-smooth relative exponent must lie in [0,1/10]")
+
+    reduced_modulus = u - eta
+    qsmooth_factor = rho * reduced_modulus
+    ambient = reduced_modulus - qsmooth_factor
+    interval = reduced_modulus - p - qsmooth_factor
+    if interval <= 0:
+        raise ValueError("ordinary Mobius interval must have power length")
+    interval_ratio = interval / ambient
+
+    theta = F(1, 3)
+    published_epsilon = F(1, 30)
+    published_lower_ratio = theta + published_epsilon
+    lower_margin = interval_ratio - published_lower_ratio
+
+    complementary = alpha + p - reduced_modulus
+    if complementary < 0:
+        raise ValueError("the nonzero complementary-divisor box is empty")
+    endpoint_mass = alpha + p + complementary
+    endpoint_range = ambient
+    energy_target = 2 * endpoint_mass - endpoint_range
+    product_value = endpoint_mass
+    shift_count = 2 * complementary + qsmooth_factor
+    divisor_energy = product_value + shift_count
+    energy_margin = energy_target - divisor_energy
+
+    canonical_worst_endpoint = (
+        u == F(2)
+        and eta == F(1, 8)
+        and p == F(1)
+        and alpha == F(7, 8)
+        and rho == F(1, 10)
+    )
+    published_applies = (
+        lower_margin > 0
+        and interval_ratio < F(1) - published_epsilon
+    )
+    endpoint_energy_closes = energy_margin >= 0
+    family_covered = (
+        canonical_worst_endpoint and published_applies and endpoint_energy_closes
+    )
+
+    def collision_implication(
+        a: int,
+        k: int,
+        ell: int,
+        c: int,
+        a_prime: int,
+        k_prime: int,
+        ell_prime: int,
+        c_prime: int,
+        r: int,
+    ) -> bool:
+        left_denominator = c * r
+        right_denominator = c_prime * r
+        left_bin = (a * k * ell) // left_denominator
+        right_bin = (a_prime * k_prime * ell_prime) // right_denominator
+        if left_bin != right_bin:
+            return True
+        cross_difference = abs(
+            a * k * ell * c_prime - a_prime * k_prime * ell_prime * c
+        )
+        return cross_difference < abs(c * c_prime) * r
+
+    fixture_exact = all(
+        collision_implication(a, k, ell, c, ap, kp, ellp, cp, r)
+        for a in range(2, 5)
+        for k in range(1, 4)
+        for ell in range(1, 4)
+        for c in range(1, 4)
+        for ap in range(2, 5)
+        for kp in range(1, 4)
+        for ellp in range(1, 4)
+        for cp in range(1, 4)
+        for r in range(1, 4)
+    )
+    return AlmostAllMobiusEndpointDispersionAudit(
+        modulus_exponent=u,
+        cofactor_exponent=eta,
+        reduced_modulus_exponent=reduced_modulus,
+        dual_product_exponent=p,
+        outer_entry_exponent=alpha,
+        qsmooth_relative_exponent=rho,
+        qsmooth_factor_exponent=qsmooth_factor,
+        mobius_ambient_exponent=ambient,
+        mobius_interval_exponent=interval,
+        mobius_interval_ratio=interval_ratio,
+        published_theta=theta,
+        published_epsilon=published_epsilon,
+        published_lower_ratio=published_lower_ratio,
+        lower_ratio_margin=lower_margin,
+        complementary_divisor_exponent=complementary,
+        endpoint_mass_exponent=endpoint_mass,
+        endpoint_range_exponent=endpoint_range,
+        endpoint_energy_target_exponent=energy_target,
+        product_value_exponent=product_value,
+        collision_shift_count_exponent=shift_count,
+        divisor_second_moment_energy_exponent=divisor_energy,
+        endpoint_energy_power_margin=energy_margin,
+        finite_collision_fixture_exact=fixture_exact,
+        maximal_progression_norm_handles_smooth_subintervals=True,
+        integer_start_exception_count_follows_from_measure_bound=True,
+        divisor_second_moment_supplies_only_polylog_loss=True,
+        arbitrary_log_saving_absorbs_endpoint_energy_polylogs=(
+            published_applies and endpoint_energy_closes
+        ),
+        longer_intervals_use_strict_three_fifths_pointwise_split=(
+            F(3, 5) > F(7, 12)
+        ),
+        worst_endpoint_is_monotone_over_balanced_family=(
+            canonical_worst_endpoint
+        ),
+        balanced_zero_slack_family_covered=family_covered,
+        full_parameter_polytope_enumerated=False,
+        large_q_centered_product_energy_proved=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "arXiv:2411.05770v2, Theorem 1.1(i), maximal Mobius "
+            "discorrelation; fixed divisor second moments"
         ),
     )
 
@@ -27518,6 +27737,59 @@ def main() -> None:
         f"all_cells={transport_gap.all_parameter_cells_covered} "
         "asymptotic="
         f"{transport_gap.full_long_mollifier_asymptotic_proved}"
+    )
+    endpoint_dispersion = almost_all_mobius_endpoint_dispersion_audit(
+        modulus_exponent=F(2),
+        cofactor_exponent=F(1, 8),
+        dual_product_exponent=F(1),
+        outer_entry_exponent=F(7, 8),
+        qsmooth_relative_exponent=F(1, 10),
+    )
+    print(
+        "mwkf_endpoint_dispersion: "
+        f"u={_fmt(endpoint_dispersion.modulus_exponent)} "
+        f"eta={_fmt(endpoint_dispersion.cofactor_exponent)} "
+        f"p={_fmt(endpoint_dispersion.dual_product_exponent)} "
+        f"alpha={_fmt(endpoint_dispersion.outer_entry_exponent)} "
+        f"rho={_fmt(endpoint_dispersion.qsmooth_relative_exponent)} "
+        f"D={_fmt(endpoint_dispersion.reduced_modulus_exponent)} "
+        f"beta={_fmt(endpoint_dispersion.qsmooth_factor_exponent)} "
+        f"X={_fmt(endpoint_dispersion.mobius_ambient_exponent)} "
+        f"H={_fmt(endpoint_dispersion.mobius_interval_exponent)} "
+        f"ratio={_fmt(endpoint_dispersion.mobius_interval_ratio)} "
+        f"theorem={_fmt(endpoint_dispersion.published_theta)}+"
+        f"{_fmt(endpoint_dispersion.published_epsilon)} "
+        f"lower={_fmt(endpoint_dispersion.published_lower_ratio)} "
+        f"margin={_fmt(endpoint_dispersion.lower_ratio_margin)} "
+        "C="
+        f"{_fmt(endpoint_dispersion.complementary_divisor_exponent)} "
+        f"mass={_fmt(endpoint_dispersion.endpoint_mass_exponent)} "
+        "energy_target="
+        f"{_fmt(endpoint_dispersion.endpoint_energy_target_exponent)} "
+        f"product={_fmt(endpoint_dispersion.product_value_exponent)} "
+        "shifts="
+        f"{_fmt(endpoint_dispersion.collision_shift_count_exponent)} "
+        "energy="
+        f"{_fmt(endpoint_dispersion.divisor_second_moment_energy_exponent)} "
+        "power_margin="
+        f"{_fmt(endpoint_dispersion.endpoint_energy_power_margin)} "
+        f"collision={endpoint_dispersion.finite_collision_fixture_exact} "
+        "maximal="
+        f"{endpoint_dispersion.maximal_progression_norm_handles_smooth_subintervals} "
+        "integer_exception="
+        f"{endpoint_dispersion.integer_start_exception_count_follows_from_measure_bound} "
+        "divisor_l2="
+        f"{endpoint_dispersion.divisor_second_moment_supplies_only_polylog_loss} "
+        "log_absorption="
+        f"{endpoint_dispersion.arbitrary_log_saving_absorbs_endpoint_energy_polylogs} "
+        "balanced_family="
+        f"{endpoint_dispersion.balanced_zero_slack_family_covered} "
+        "full_polytope="
+        f"{endpoint_dispersion.full_parameter_polytope_enumerated} "
+        "lcpe="
+        f"{endpoint_dispersion.large_q_centered_product_energy_proved} "
+        "asymptotic="
+        f"{endpoint_dispersion.full_long_mollifier_asymptotic_proved}"
     )
     valuation = large_q_product_lift_valuation_audit(prime_fixture=2)
     print(

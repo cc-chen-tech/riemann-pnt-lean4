@@ -2548,7 +2548,8 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "theta=3 main=4/3 residual_top_level_gates=1 "
         "residual_semantics=top_level_gate_count_not_literal_cell_count "
         "top_level=OLISK_q^{L,R} "
-        "alternative_unverified=balanced_zero_slack_u_in_[2,12/5],"
+        "alternative_unverified="
+        "unclassified_power_scale_cells_outside_certified_balanced_family,"
         "large_q_centered_product_energy_lambda_2 "
         "all_dyadic_cells=False remainder_o_T=False"
     ) in report
@@ -5500,7 +5501,7 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     )
     assert audit.residual_top_level_gates == ("OLISK_q^{L,R}",)
     assert audit.alternative_route_unverified_gates == (
-        "balanced_zero_slack_u_in_[2,12/5]",
+        "unclassified_power_scale_cells_outside_certified_balanced_family",
         "large_q_centered_product_energy_lambda_2",
     )
     assert not audit.all_dyadic_parameter_cells_enumerated
@@ -6946,6 +6947,66 @@ def test_oriented_cofactor_witnesses_do_not_cover_the_zero_slack_polytope() -> N
         "oriented_mmkls_polytope_gap_audit",
     ):
         assert marker in note
+
+
+def test_almost_all_mobius_endpoint_dispersion_closes_the_balanced_power_family(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Catch a missing exceptional-set collision cost at the worst endpoint."""
+    adapter = getattr(
+        coverage_audit,
+        "almost_all_mobius_endpoint_dispersion_audit",
+        None,
+    )
+    assert adapter is not None, "almost-all endpoint audit is missing"
+    audit = adapter(
+        modulus_exponent=F(2),
+        cofactor_exponent=F(1, 8),
+        dual_product_exponent=F(1),
+        outer_entry_exponent=F(7, 8),
+        qsmooth_relative_exponent=F(1, 10),
+    )
+    assert audit.reduced_modulus_exponent == F(15, 8)
+    assert audit.qsmooth_factor_exponent == F(3, 16)
+    assert audit.mobius_ambient_exponent == F(27, 16)
+    assert audit.mobius_interval_exponent == F(11, 16)
+    assert audit.mobius_interval_ratio == F(11, 27)
+    assert audit.published_theta == F(1, 3)
+    assert audit.published_epsilon == F(1, 30)
+    assert audit.published_lower_ratio == F(11, 30)
+    assert audit.lower_ratio_margin == F(11, 270)
+    assert audit.complementary_divisor_exponent == F(0)
+    assert audit.endpoint_mass_exponent == F(15, 8)
+    assert audit.endpoint_range_exponent == F(27, 16)
+    assert audit.endpoint_energy_target_exponent == F(33, 16)
+    assert audit.product_value_exponent == F(15, 8)
+    assert audit.collision_shift_count_exponent == F(3, 16)
+    assert audit.divisor_second_moment_energy_exponent == F(33, 16)
+    assert audit.endpoint_energy_power_margin == F(0)
+    assert audit.finite_collision_fixture_exact
+    assert audit.maximal_progression_norm_handles_smooth_subintervals
+    assert audit.integer_start_exception_count_follows_from_measure_bound
+    assert audit.divisor_second_moment_supplies_only_polylog_loss
+    assert audit.arbitrary_log_saving_absorbs_endpoint_energy_polylogs
+    assert audit.longer_intervals_use_strict_three_fifths_pointwise_split
+    assert audit.worst_endpoint_is_monotone_over_balanced_family
+    assert audit.balanced_zero_slack_family_covered
+    assert not audit.full_parameter_polytope_enumerated
+    assert not audit.large_q_centered_product_energy_proved
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_endpoint_dispersion: u=2 eta=1/8 p=1 alpha=7/8 "
+        "rho=1/10 D=15/8 beta=3/16 X=27/16 H=11/16 "
+        "ratio=11/27 theorem=1/3+1/30 lower=11/30 margin=11/270 "
+        "C=0 mass=15/8 energy_target=33/16 product=15/8 "
+        "shifts=3/16 energy=33/16 power_margin=0 collision=True "
+        "maximal=True integer_exception=True divisor_l2=True "
+        "log_absorption=True balanced_family=True full_polytope=False "
+        "lcpe=False asymptotic=False"
+    ) in output
 
 
 def test_large_q_affine_chowla_split_discards_large_gcd_but_rejects_mrt() -> None:

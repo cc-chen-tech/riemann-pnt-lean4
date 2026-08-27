@@ -20949,6 +20949,194 @@ arithmetic and explicitly sets
 four_boundary_witnesses_imply_full_polytope_coverage and
 sole_lcpe_residual_claim_is_valid to false.
 
+### 4.109zjaced00 Almost-all endpoint dispersion closes the exhibited balanced power family
+
+The pointwise threshold in (4.845dc_14xq_35w33d) is not the correct
+threshold after the complementary-divisor starting points are kept
+together.  The required replacement is the maximal almost-all theorem,
+not an unquantified assertion that the structured endpoints are generic.
+
+Keep one dyadic short-cofactor box.  Write
+
+\[
+ s=de,\qquad d=rn,\qquad
+ D=T^{u-\eta},\qquad r\asymp T^\beta,
+ \qquad 0\leq\beta\leq\frac{u-\eta}{10},
+\tag{4.845dc_14xq_35w33h}
+\]
+
+where \(e\asymp T^\eta\), \(0\leq\eta\leq1/8\), and \(r\) is the
+small \(Q\)-smooth factor in (4.845dc_14xq_35w23).  Put
+
+\[
+ |k|\asymp K,\qquad |l|\asymp L,\qquad
+ KL=T^p,\qquad 0\leq p\leq1.
+\tag{4.845dc_14xq_35w33i}
+\]
+
+For \(A\asymp A_0=T^\alpha\) and a nonzero complementary divisor
+\(c\asymp C\), the support of
+
+\[
+ m+Akl=rnc
+\tag{4.845dc_14xq_35w33j}
+\]
+
+forces
+
+\[
+ C\asymp\frac{A_0KL}{D},\qquad
+ X:=\frac Dr,\qquad
+ H:=\frac{A_0}{Cr}=\frac{X}{KL}.
+\tag{4.845dc_14xq_35w33k}
+\]
+
+The cases \(C<1\) or \(kl=0\) belong to the already available
+long-interval or zero-frequency pieces.  After the \(Q\)-smooth split,
+the pointwise theorem (4.845dc_14xq_35w25) also covers
+\(H\geq X^{3/5}\), since \(3/5>7/12\).  In the remaining box take an
+integer ambient interval of length comparable to \(H\)
+starting at
+
+\[
+ x_{A,k,l,c,r}:=
+ \left\lfloor\frac{Akl}{cr}\right\rfloor .
+\tag{4.845dc_14xq_35w33l}
+\]
+
+The actual smooth \(n\)-sum is a subinterval of this ambient interval.
+Thus the maximal-progression norm in
+[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Theorem 1.1(i)](https://arxiv.org/html/2411.05770v2#S1.Thmtheorem1.1)
+applies after partial summation.  The finitely many sign choices of
+\(k,l,c\) are split first; reversing the ambient interval when \(c<0\)
+does not change any length or collision estimate below.
+
+The theorem can be used uniformly with \(\theta=1/3\) and
+\(\varepsilon=1/30\).  Indeed the smallest possible relative length
+on (4.845dc_14xq_35w33a) occurs at
+
+\[
+ u=2,\qquad \eta=\frac18,\qquad p=1,
+ \qquad \beta=\frac1{10}\left(2-\frac18\right)=\frac3{16},
+\]
+
+and is exactly
+
+\[
+ \boxed{
+ \frac{\log_T H}{\log_T X}
+ =\frac{2-1/8-1-3/16}{2-1/8-3/16}
+ =\frac{11}{27}
+ >\frac13+\frac1{30}=\frac{11}{30}.}
+\tag{4.845dc_14xq_35w33m}
+\]
+
+The strict margin is \(11/270\).  The upper hypothesis
+\(H\leq X^{1-1/30}\) is automatic from the preceding
+\(H<X^{3/5}\) split.
+Consequently, for every fixed \(B\), the maximal Möbius sum is
+\(O(H(\log X)^{-B})\) outside a set of real starting points of measure
+\(O_B(X(\log X)^{-B})\).
+
+It remains to prove that the rational endpoints in
+(4.845dc_14xq_35w33l) cannot concentrate on that exceptional set.  For
+fixed \(r\), equality of two integer start bins implies the exact
+cross-multiplied inequality
+
+\[
+ \boxed{
+ |Aklc'-A'k'l'c|<|cc'|r\ll C^2r.}
+\tag{4.845dc_14xq_35w33n}
+\]
+
+This implication retains both Fourier indices.  Put
+
+\[
+ Y:=A_0KLC.
+\]
+
+Each integer \(v\) of size \(Y\) has at most a fixed divisor-function
+weight of representations \(v=Aklc'\); the original divisor-bounded
+outer allocation only changes the fixed order of that divisor
+function.  Therefore Cauchy and the classical fixed-divisor second
+moment give
+
+\[
+ \begin{aligned}
+ \sum_x\nu_r(x)^2
+ &\ll (\log T)^{C_W}
+ \sum_{|h|\ll C^2r}\sum_{|v|\ll Y}
+     \tau_J(|v|)\tau_J(|v+h|)\\
+ &\ll (\log T)^{C'_W}(1+C^2r)Y.
+\end{aligned}
+\tag{4.845dc_14xq_35w33o}
+\]
+
+Here \(J\) is fixed and
+\(\sum_{v\leq Y}\tau_J(v)^2\ll_JY(\log(2Y))^{J^2-1}\).
+For clarity, this follows from the Euler product
+\(\sum_n\tau_J(n)^2n^{-s}=\zeta(s)^{J^2}G_J(s)\), where \(G_J\)
+converges absolutely in a fixed half-plane to the left of \(1\),
+followed by the standard fixed-order divisor moment estimate.  There is
+no hidden \(T^\varepsilon\) in (4.845dc_14xq_35w33o).
+Since (4.845dc_14xq_35w33k) gives
+
+\[
+ Y=DC^2,\qquad X=\frac Dr,
+\]
+
+the last line of (4.845dc_14xq_35w33o) is exactly
+
+\[
+ \boxed{
+ (C^2r)Y=DC^4r=\frac{Y^2}{X}.}
+\tag{4.845dc_14xq_35w33p}
+\]
+
+Thus the endpoint energy has precisely the normalization needed to
+transfer the exceptional-set estimate.  If \(\mathcal E\) is the set
+of bad integer start bins, then integer interval length makes the
+maximal sum constant on each open unit interval; hence the real-measure
+bound implies
+
+\[
+ \#\mathcal E\ll_B X(\log X)^{-B}.
+\tag{4.845dc_14xq_35w33q}
+\]
+
+Cauchy, (4.845dc_14xq_35w33p), and the trivial bound \(H\) on a bad
+interval now give
+
+\[
+ \sum_{x\in\mathcal E}\nu_r(x)
+  \left|\sum_{n\in I_x}\mu(n)\right|
+ \ll H Y(\log T)^{(C'_W-B)/2}.
+\tag{4.845dc_14xq_35w33r}
+\]
+
+On the good starts Theorem 1.1(i) gives \(HY(\log T)^{-B}\)
+directly.  Choose \(B\) after all fixed QCT seminorm, dyadic,
+\(Q\)-smooth harmonic, and \(q\)-sum logarithms.  The large
+\(Q\)-smooth tail is still covered by (4.845dc_14xq_35w26)--
+(4.845dc_14xq_35w27).  More explicitly, the original \(d^{-1}\)
+weight is \(D^{-1}\) on the dyadic box, while the \(n\)-interval length
+\(H=(A_0/C)/r\) already contains one factor \(r^{-1}\); hence summing
+the small factors costs only
+\(\sum_{r\leq D^{1/10},\,r\ Q\text{-smooth}}r^{-1}\), which is a fixed
+polylogarithm already absorbed by \(B\).  This proves the
+short-cofactor estimate uniformly
+for the entire exhibited balanced family \(2\leq u\leq12/5\).
+
+The exact-rational interface
+almost_all_mobius_endpoint_dispersion_audit records the worst ratio
+\(11/27\), its \(11/270\) theorem margin, and the zero power margin in
+(4.845dc_14xq_35w33p).  This removes
+balanced_zero_slack_u_in_[2,12/5] from the alternative-route residual
+ledger.  It still does **not** enumerate every cell of the original
+parameter polytope and it does not prove the logarithmic
+large-\(q\) centered product-energy gate.  Therefore neither full
+MMKLS nor the unconditional long-mollifier asymptotic is asserted here.
+
 ### 4.109zjaced1 The critical product energy has one polylog-slope affine core
 
 The gcd divisibility in (4.236) gives a useful second reduction of
@@ -22326,10 +22514,13 @@ The word "one" here counts the aggregate implication
 \((\mathrm{OLISK})_q^{L,R}\); it is not a claim that every dyadic
 parameter cell has been enumerated and only one literal cell remains.
 For the double-Poisson/short-cofactor attempt, Section 4.109zjaced0
-exhibits the still-uncovered power family
-\(2\le u\le12/5\), while Sections 4.109zjaced1--4.109zjaced2 retain the
+exhibits the power family \(2\le u\le12/5\), and Section
+4.109zjaced00 closes that particular family by almost-all endpoint
+dispersion.  This does not certify all other cells of the continuous
+parameter polytope.  Sections 4.109zjaced1--4.109zjaced2 also retain the
 separate logarithmic endpoint \(\mathrm{LCPE}_2\).  Either a direct proof
-of the top-level gate or proofs of all such subgates are still required.
+of the top-level gate or a complete enumeration and proof of all
+remaining subgates is still required.
 
 The interface \`unconditional_long_mollifier_asymptotic_audit\`
 combines the exact AFE, zero mode, PR #478 LCM main term, PEVP,
