@@ -399,16 +399,19 @@ error in (5.1) has been defined through the analytic zeta pole unit, proved
 analytic on `Re(s)>0`, identified with the paper formula away from the pole,
 and proved continuous on each such vertical line.  Its norm is formally
 uniformly bounded on the compact rectangle `1/2 <= Re(s) <= 4`,
-`|Im(s)| <= 1`.  The paper proof leaves the following concrete Lean lemmas,
-none of which may be replaced by a final density axiom:
+`|Im(s)| <= 1`; the complementary high-height estimate has been combined
+with it into a degree-ten square-growth bound on the full strip
+`1/2 <= Re(s) <= 4`.  Consequently the concrete Gaussian section is
+formally in `L^2(R)` for every complex strip parameter in that strip.  The
+paper proof leaves the following concrete Lean lemmas, none of which may be
+replaced by a final density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. the complementary high-height polynomial bound for the concrete
-   pole-free function (and its combination with the compact bound) for that
-   `L^2(R)` membership interface, its `L^2(R)`-valued strip analyticity and
-   boundary norm estimates, followed by the finite Gaussian covering
-   argument;
+2. extension of the concrete polynomial-growth/`L^2(R)` membership bound
+   from the currently formalized right endpoint `R=4` to the paper's
+   `R=1000`, its `L^2(R)`-valued strip analyticity and boundary norm
+   estimates, followed by the finite Gaussian covering argument;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
 
