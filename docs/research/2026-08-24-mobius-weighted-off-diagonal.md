@@ -13816,6 +13816,115 @@ The helper weighted_principal_density_normalization_audit verifies
 the extra AFE/\(TT^\ast\) LCM normalization, principal-density bound, and
 coupled-kernel flags false.
 
+### 9.95 A physical frequency multiplier must be centered separately
+
+The no-gain statement in Section 9.94 concerns the bare multiplier
+\(K(\kappa)=1\).  A packet-exhaustive return from (4.5) may produce a
+kernel on the full pair \((u_1,u_2)\).  The reduction below applies
+precisely to the part of that kernel proved to factor through the circular
+difference \(F(u_1,u_2)=\kappa\), say as a finite physical multiplier
+\(K_{s_1,s_2}(\kappa)\).  Proving that the relevant AFE, reflection,
+\(h,\delta\), and dyadic packet has this form is itself part of the missing
+adapter.  Its mean must not be guessed.  For the present finite identity,
+write simply
+
+\[
+ \overline K:=\frac1L\sum_{\kappa\bmod L}K(\kappa),
+ \qquad K^\circ(\kappa):=K(\kappa)-\overline K,
+ \qquad L=[s_1,s_2].
+ \tag{9.624}
+\]
+
+Pairing (9.616) with \(K\), and using both zero-sum statements in
+(9.617), gives the exact **double-centering identity**
+
+\[
+\boxed{
+\begin{aligned}
+ \mathscr B(K,W)
+ &:=\sum_{\kappa\bmod L}K(\kappa)\mathscr F_W(\kappa)\\
+ &=\overline K\sum_{\omega\in\Omega}W(\omega)
+   +\overline W\sum_{\kappa\bmod L}K^\circ(\kappa)
+       \bigl(\mathfrak m_{s_1,s_2}(\kappa)-\rho(s_1,s_2)\bigr)\\
+ &\hspace{2cm}
+   +\sum_{1<q\mid L}\sum_{\kappa\bmod L}
+       K^\circ(\kappa)\mathscr F_{W_q}(\kappa).
+\end{aligned}}
+\tag{9.625}
+\]
+
+Thus the only term in (9.625) containing the uncentered packet total is
+\(\overline K\sum W\).  If the complete AFE/reflection/diagonal ledger
+proves \(\overline K=0\), that bare principal term disappears exactly.
+This implication is one-way: a zero-mean multiplier does not kill either
+of the two centered pairings on the last two lines.  Conversely, if
+\(\overline K\ne0\), the first term is the explicit candidate secondary
+main term and must be evaluated before any Cauchy step.
+
+There is also an exact fixed-pair norm ledger.  Formula (9.606) implies
+
+\[
+ \boxed{
+  \max_{\kappa\bmod L}\mathfrak m_{s_1,s_2}(\kappa)
+  =\varphi(g),\qquad g=(s_1,s_2).}
+ \tag{9.626}
+\]
+
+Indeed, every prime dividing \(r_1r_2\) contributes either zero or one,
+whereas a prime \(p\mid g\) contributes at most \(p-1\), with equality
+on \(p\mid\kappa\).  Consequently the fibre-incidence operator satisfies
+
+\[
+ \sum_{\kappa\bmod L}
+ \left|\sum_{F(\omega)=\kappa}V(\omega)\right|^2
+ \leq\varphi(g)\sum_{\omega\in\Omega}|V(\omega)|^2.
+ \tag{9.627}
+\]
+
+For the constant component, subtracting its constant frequency projection
+can only decrease the left side of (9.627).  Apply (9.627) to every
+Hoeffding component, Cauchy over \(q\mid L\), and (9.613).  This proves
+
+\[
+\boxed{
+ \left|\mathscr B(K,W)
+       -\overline K\sum_{\omega\in\Omega}W(\omega)\right|^2
+ \leq
+ \tau(L)\varphi(g)\,\|K^\circ\|_2^2\,\|W\|_2^2.}
+\tag{9.628}
+\]
+
+The divisor factor is \(T^\varepsilon\), but the incidence loss
+\(\varphi(g)^{1/2}\) is real and is sharp for arbitrary fixed-pair data:
+one may support \(V\) on a largest fibre.  Hence (9.628) is useful on the
+coprime or small-common-gcd strata, but it cannot close the balanced face
+after taking absolute values over \((s_1,s_2)\).  The large-\(g\) strata
+still require the outer \(\mu(r_1)\mu(r_2)\) signs to remain inside one
+global dispersion step.
+
+Equations (9.625)--(9.628) replace the arbitrary-kernel wording by two
+strictly separated finite tasks:
+
+1. derive the actual \(K_{s_1,s_2}\) from every term of (4.5) and evaluate
+   its mean together with both AFE directions, both reflected cross terms,
+   and the explicit diagonal;
+2. estimate only the signed sum of the double-centered pairings in the
+   last two lines of (9.625), retaining both Möbius weights and all nine
+   ordered Type blocks.
+
+This is a weaker and more structured candidate gate than CK\(_{\rm ub}(3)\),
+but it is not yet a proved replacement: packet exhaustiveness and the
+global signed estimate are both still missing.  In particular, (9.628)
+is not silently summed by absolute values over the outer modulus pairs.
+
+The helper weighted_frequency_multiplier_centering_audit verifies
+(9.624)--(9.628) exactly for finite rational data.  It checks the direct
+pairing against the double-centered reassembly, the sharp
+\(\varphi((s_1,s_2))\) fibre multiplicity, componentwise incidence bounds,
+and the resulting squared norm inequality.  Its physical-multiplier map,
+principal-mean reassembly, signed double-centered dispersion, and
+coupled-kernel flags remain false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -14487,6 +14596,7 @@ Proved in this note:
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |
 | Principal-density normalization | exact no-gain audit for the bare global square | A single \(\kappa\)-fibre contributes the reciprocal-LCM density (9.620), but the unnormalized sum over all \([s_1,s_2]\) residues cancels that denominator exactly, (9.621).  Hence the bare master returns \(|\sum_s\mu(s)Z_s^{\rm tot}|^2\), not the totient-square form (9.623).  Any useful reciprocal-LCM normalization must be exhibited by the complete physical AFE/\(TT^*\) multiplier; it is not a consequence of centering, and no such packet-exhaustive multiplier has yet been proved |
+| Physical multiplier double centering | exact finite identity and sharp fixed-pair incidence norm; exhaustive map and global signed estimate unproved | For any supplied frequency multiplier, (9.625) isolates its mean times the bare packet total and pairs only \(K^\circ\) with both centered packet pieces.  The fibre map has exact maximum multiplicity \(\varphi((s_1,s_2))\), (9.626), giving the finite norm bound (9.628) at divisor cost.  This closes arbitrary fixed-pair algebra on small-gcd strata but exposes the sharp \(\varphi(g)^{1/2}\) obstruction to outer absolute values.  The complete AFE/reflection derivation of \(K\), its principal mean ledger, and the signed large-gcd double-centered dispersion remain open |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

@@ -12017,6 +12017,217 @@ def weighted_principal_density_normalization_audit(
     }
 
 
+def weighted_frequency_multiplier_centering_audit(
+    *,
+    left_modulus: int,
+    right_modulus: int,
+    inverse_pair_weights: dict[tuple[int, int], Fraction],
+    frequency_multiplier: dict[int, Fraction],
+) -> dict[str, object]:
+    """Center both a weighted CRT packet and its frequency multiplier."""
+
+    packet = weighted_cross_modulus_hoeffding_audit(
+        left_modulus=left_modulus,
+        right_modulus=right_modulus,
+        inverse_pair_weights=inverse_pair_weights,
+    )
+    lcm_modulus = int(packet["lcm_modulus"])
+    residues = tuple(range(lcm_modulus))
+    if set(frequency_multiplier) != set(residues):
+        raise ValueError("the multiplier must contain every frequency residue")
+    multiplier = {
+        residue: F(frequency_multiplier[residue]) for residue in residues
+    }
+    multiplier_mean = sum(multiplier.values(), F(0)) / lcm_modulus
+    centered_multiplier = {
+        residue: value - multiplier_mean
+        for residue, value in multiplier.items()
+    }
+
+    weighted_fibres = packet["weighted_frequency_fibre_sums"]
+    constant_centered_fibres = packet[
+        "constant_centered_frequency_fibre_sums"
+    ]
+    component_fibres = packet["component_frequency_fibre_sums"]
+    direct_pairing = sum(
+        (
+            multiplier[residue] * weighted_fibres[residue]
+            for residue in residues
+        ),
+        F(0),
+    )
+    total_packet_weight = sum(
+        (F(value) for value in inverse_pair_weights.values()),
+        F(0),
+    )
+    principal_mean_term = multiplier_mean * total_packet_weight
+    constant_centered_pairing = sum(
+        (
+            centered_multiplier[residue]
+            * constant_centered_fibres[residue]
+            for residue in residues
+        ),
+        F(0),
+    )
+    component_pairings = {
+        divisor: sum(
+            (
+                centered_multiplier[residue] * fibre_values[residue]
+                for residue in residues
+            ),
+            F(0),
+        )
+        for divisor, fibre_values in component_fibres.items()
+        if divisor > 1
+    }
+    nonconstant_pairing = sum(component_pairings.values(), F(0))
+    centered_pairing = constant_centered_pairing + nonconstant_pairing
+    reassembly = principal_mean_term + centered_pairing
+
+    full_multiplier_constant_pairing = sum(
+        (
+            multiplier[residue] * constant_centered_fibres[residue]
+            for residue in residues
+        ),
+        F(0),
+    )
+    full_multiplier_component_pairings = {
+        divisor: sum(
+            (
+                multiplier[residue] * fibre_values[residue]
+                for residue in residues
+            ),
+            F(0),
+        )
+        for divisor, fibre_values in component_fibres.items()
+        if divisor > 1
+    }
+
+    fibre_multiplicities = packet[
+        "unweighted_frequency_fibre_multiplicities"
+    ]
+    maximum_fibre_multiplicity = max(fibre_multiplicities.values())
+    common_modulus = gcd(int(left_modulus), int(right_modulus))
+    common_phi = sum(
+        1
+        for value in range(1, common_modulus + 1)
+        if gcd(value, common_modulus) == 1
+    )
+    centered_multiplier_energy = sum(
+        (value * value for value in centered_multiplier.values()),
+        F(0),
+    )
+    constant_centered_fibre_energy = sum(
+        (value * value for value in constant_centered_fibres.values()),
+        F(0),
+    )
+    component_fibre_energies = {
+        divisor: sum((value * value for value in values.values()), F(0))
+        for divisor, values in component_fibres.items()
+        if divisor > 1
+    }
+    centered_output_energy_sum = (
+        constant_centered_fibre_energy
+        + sum(component_fibre_energies.values(), F(0))
+    )
+    active_centered_term_count = int(constant_centered_fibre_energy != 0) + sum(
+        energy != 0 for energy in component_fibre_energies.values()
+    )
+    observed_cauchy_squared_upper_bound = (
+        centered_multiplier_energy
+        * active_centered_term_count
+        * centered_output_energy_sum
+    )
+    component_input_energies = packet["component_l2_energies"]
+    component_incidence_bounds = {
+        1: (
+            constant_centered_fibre_energy
+            <= maximum_fibre_multiplicity * component_input_energies[1]
+        ),
+        **{
+            divisor: (
+                energy
+                <= maximum_fibre_multiplicity
+                * component_input_energies[divisor]
+            )
+            for divisor, energy in component_fibre_energies.items()
+        },
+    }
+    divisor_count = len(_positive_divisors(lcm_modulus))
+    universal_incidence_squared_upper_bound = (
+        centered_multiplier_energy
+        * divisor_count
+        * common_phi
+        * F(packet["original_l2_energy"])
+    )
+    centered_pairing_square = centered_pairing * centered_pairing
+
+    return {
+        "left_modulus": int(left_modulus),
+        "right_modulus": int(right_modulus),
+        "common_modulus": common_modulus,
+        "lcm_modulus": lcm_modulus,
+        "weighted_frequency_fibre_sums": weighted_fibres,
+        "frequency_multiplier": multiplier,
+        "multiplier_global_mean": multiplier_mean,
+        "centered_frequency_multiplier": centered_multiplier,
+        "centered_multiplier_sum_is_zero": (
+            sum(centered_multiplier.values(), F(0)) == 0
+        ),
+        "direct_multiplier_pairing": direct_pairing,
+        "principal_multiplier_mean_term": principal_mean_term,
+        "constant_fibre_centered_pairing": constant_centered_pairing,
+        "nonconstant_component_pairings": component_pairings,
+        "nonconstant_packet_component_pairing": nonconstant_pairing,
+        "double_centered_pairing": centered_pairing,
+        "double_centered_reassembly": reassembly,
+        "double_centered_reassembly_exact": reassembly == direct_pairing,
+        "all_centered_fibre_terms_ignore_multiplier_mean": (
+            full_multiplier_constant_pairing == constant_centered_pairing
+            and full_multiplier_component_pairings == component_pairings
+        ),
+        "maximum_frequency_fibre_multiplicity": maximum_fibre_multiplicity,
+        "common_gcd_euler_phi": common_phi,
+        "maximum_fibre_multiplicity_equals_common_gcd_phi": (
+            maximum_fibre_multiplicity == common_phi
+        ),
+        "centered_multiplier_l2_energy": centered_multiplier_energy,
+        "constant_centered_fibre_l2_energy": constant_centered_fibre_energy,
+        "nonconstant_component_fibre_l2_energies": component_fibre_energies,
+        "centered_output_energy_sum": centered_output_energy_sum,
+        "active_centered_term_count": active_centered_term_count,
+        "observed_cauchy_squared_upper_bound": (
+            observed_cauchy_squared_upper_bound
+        ),
+        "universal_incidence_squared_upper_bound": (
+            universal_incidence_squared_upper_bound
+        ),
+        "double_centered_pairing_obeys_observed_cauchy_bound": (
+            centered_pairing_square <= observed_cauchy_squared_upper_bound
+        ),
+        "component_incidence_bounds": component_incidence_bounds,
+        "every_component_obeys_common_gcd_incidence_bound": all(
+            component_incidence_bounds.values()
+        ),
+        "double_centered_pairing_obeys_universal_incidence_bound": (
+            centered_pairing_square <= universal_incidence_squared_upper_bound
+        ),
+        "zero_mean_multiplier_eliminates_bare_principal_term": (
+            multiplier_mean != 0 or principal_mean_term == 0
+        ),
+        "zero_mean_multiplier_eliminates_centered_pairing": (
+            multiplier_mean == 0 and centered_pairing == 0
+        ),
+        "outer_mobius_pair_weight_retained_linearly": True,
+        "inner_type_mobius_weights_retained_linearly": True,
+        "h_delta_product_packet_retained_linearly": True,
+        "physical_afe_ttstar_multiplier_derived_exhaustively": False,
+        "principal_multiplier_mean_reassembled": False,
+        "signed_double_centered_dispersion_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

@@ -3811,6 +3811,132 @@ def test_unnormalized_kappa_sum_cancels_reciprocal_lcm_density() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_frequency_multiplier_is_double_centered_before_dispersion() -> None:
+    audit = getattr(
+        coverage_audit,
+        "weighted_frequency_multiplier_centering_audit",
+        None,
+    )
+    assert audit is not None, "weighted frequency-multiplier audit is missing"
+
+    result = audit(
+        left_modulus=3,
+        right_modulus=3,
+        inverse_pair_weights={
+            (1, 1): F(1),
+            (1, 2): F(2),
+            (2, 1): F(4),
+            (2, 2): F(8),
+        },
+        frequency_multiplier={0: F(1), 1: F(2), 2: F(4)},
+    )
+    assert result["weighted_frequency_fibre_sums"] == {0: 9, 1: 4, 2: 2}
+    assert result["multiplier_global_mean"] == F(7, 3)
+    assert result["centered_frequency_multiplier"] == {
+        0: F(-4, 3),
+        1: F(-1, 3),
+        2: F(5, 3),
+    }
+    assert result["direct_multiplier_pairing"] == 25
+    assert result["principal_multiplier_mean_term"] == 35
+    assert result["constant_fibre_centered_pairing"] == -5
+    assert result["nonconstant_packet_component_pairing"] == -5
+    assert result["double_centered_reassembly"] == 25
+    assert result["double_centered_reassembly_exact"]
+    assert result["centered_multiplier_sum_is_zero"]
+    assert result["all_centered_fibre_terms_ignore_multiplier_mean"]
+
+
+def test_double_centered_incidence_bound_exposes_only_common_gcd_cost() -> None:
+    audit = coverage_audit.weighted_frequency_multiplier_centering_audit
+    result = audit(
+        left_modulus=3,
+        right_modulus=3,
+        inverse_pair_weights={
+            (1, 1): F(1),
+            (1, 2): F(2),
+            (2, 1): F(4),
+            (2, 2): F(8),
+        },
+        frequency_multiplier={0: F(1), 1: F(2), 2: F(4)},
+    )
+    assert result["maximum_frequency_fibre_multiplicity"] == 2
+    assert result["common_gcd_euler_phi"] == 2
+    assert result["maximum_fibre_multiplicity_equals_common_gcd_phi"]
+    assert result["centered_multiplier_l2_energy"] == F(14, 3)
+    assert result["constant_centered_fibre_l2_energy"] == F(75, 8)
+    assert result["nonconstant_component_fibre_l2_energies"] == {3: F(43, 8)}
+    assert result["centered_output_energy_sum"] == F(59, 4)
+    assert result["observed_cauchy_squared_upper_bound"] == F(413, 3)
+    assert result["universal_incidence_squared_upper_bound"] == F(4760, 3)
+    assert result["double_centered_pairing_obeys_observed_cauchy_bound"]
+    assert result["every_component_obeys_common_gcd_incidence_bound"]
+    assert result["double_centered_pairing_obeys_universal_incidence_bound"]
+    assert not result["physical_afe_ttstar_multiplier_derived_exhaustively"]
+    assert not result["principal_multiplier_mean_reassembled"]
+    assert not result["signed_double_centered_dispersion_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_zero_mean_multiplier_removes_only_the_bare_principal_mode() -> None:
+    result = coverage_audit.weighted_frequency_multiplier_centering_audit(
+        left_modulus=3,
+        right_modulus=3,
+        inverse_pair_weights={
+            (1, 1): F(1),
+            (1, 2): F(2),
+            (2, 1): F(4),
+            (2, 2): F(8),
+        },
+        frequency_multiplier={0: F(-1), 1: F(0), 2: F(1)},
+    )
+    assert result["multiplier_global_mean"] == 0
+    assert result["principal_multiplier_mean_term"] == 0
+    assert result["direct_multiplier_pairing"] == -7
+    assert result["double_centered_reassembly"] == -7
+    assert result["zero_mean_multiplier_eliminates_bare_principal_term"]
+    assert not result["zero_mean_multiplier_eliminates_centered_pairing"]
+
+
+@pytest.mark.parametrize("left_modulus,right_modulus", [(5, 7), (30, 42)])
+def test_double_centering_covers_coprime_and_composite_unequal_pairs(
+    left_modulus: int,
+    right_modulus: int,
+) -> None:
+    units_left = [
+        value
+        for value in range(1, left_modulus)
+        if gcd(value, left_modulus) == 1
+    ]
+    units_right = [
+        value
+        for value in range(1, right_modulus)
+        if gcd(value, right_modulus) == 1
+    ]
+    lcm_modulus = left_modulus * right_modulus // gcd(
+        left_modulus,
+        right_modulus,
+    )
+    result = coverage_audit.weighted_frequency_multiplier_centering_audit(
+        left_modulus=left_modulus,
+        right_modulus=right_modulus,
+        inverse_pair_weights={
+            (left, right): F((3 * left - 2 * right) % 11 - 5)
+            for left in units_left
+            for right in units_right
+        },
+        frequency_multiplier={
+            residue: F((residue * residue + 3 * residue) % 13 - 6)
+            for residue in range(lcm_modulus)
+        },
+    )
+    assert result["double_centered_reassembly_exact"]
+    assert result["all_centered_fibre_terms_ignore_multiplier_mean"]
+    assert result["maximum_fibre_multiplicity_equals_common_gcd_phi"]
+    assert result["every_component_obeys_common_gcd_incidence_bound"]
+    assert result["double_centered_pairing_obeys_universal_incidence_bound"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,
