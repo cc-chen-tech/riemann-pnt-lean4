@@ -9003,6 +9003,176 @@ def rank_one_type_ii_resonance_partition_audit(
     }
 
 
+def rank_one_resonance_orthogonality_audit(
+    *,
+    modulus: int,
+    shifts: tuple[int, ...],
+    left_coefficient_families: tuple[dict[int, complex], ...],
+    right_coefficient_families: tuple[dict[int, complex], ...],
+) -> dict[str, object]:
+    """Split the exact resonance projector into dual frequency modes.
+
+    For every local Type-II pair ``a_j != b_j``, use the increment
+
+    ``(eps_j*(a_j-b_j),``
+    `` eps_j*(inverse(a_j)-inverse(b_j))*unit_shift_block_j)``.
+
+    Additive orthogonality on the global linear coordinate and on every
+    shift-block reciprocal coordinate reconstructs the direct resonant
+    sum exactly.  The zero dual frequency is returned separately from
+    all centered frequencies.  Both supplied coefficient families stay
+    in every local factor; no absolute value is taken.
+    """
+
+    q = int(modulus)
+    if q < 3 or any(q % p == 0 for p in range(2, isqrt(q) + 1)):
+        raise ValueError("modulus must be an odd prime")
+    entry_count = len(shifts)
+    if entry_count == 0 or entry_count % 2:
+        raise ValueError("the shift family must have positive even length")
+    if not (
+        len(left_coefficient_families)
+        == len(right_coefficient_families)
+        == entry_count
+    ):
+        raise ValueError("one left and right coefficient family is required per shift")
+
+    def normalize(family: dict[int, complex]) -> dict[int, complex]:
+        if not family:
+            raise ValueError("coefficient families must be nonempty")
+        normalized: dict[int, complex] = {}
+        for residue, coefficient in family.items():
+            reduced = int(residue) % q
+            if reduced == 0:
+                raise ValueError("coefficient support must consist of units")
+            normalized[reduced] = normalized.get(reduced, 0j) + complex(
+                coefficient
+            )
+        return normalized
+
+    left = tuple(normalize(family) for family in left_coefficient_families)
+    right = tuple(normalize(family) for family in right_coefficient_families)
+    reduced_shifts = tuple(value % q for value in shifts)
+    distinct_shifts = tuple(sorted(set(reduced_shifts)))
+    block_index = {
+        shift: index for index, shift in enumerate(distinct_shifts)
+    }
+    moment_order = entry_count // 2
+    signs = (1,) * moment_order + (-1,) * moment_order
+    coordinate_count = 1 + len(distinct_shifts)
+    zero_state = (0,) * coordinate_count
+
+    local_transitions: list[dict[tuple[int, ...], complex]] = []
+    local_zero_frequency_factors: list[complex] = []
+    local_zero_frequency_formula_factors: list[complex] = []
+    for index, (sign, shift) in enumerate(zip(signs, reduced_shifts)):
+        transitions: dict[tuple[int, ...], complex] = {}
+        for a, alpha in left[index].items():
+            for b, beta in right[index].items():
+                if a == b:
+                    continue
+                delta = [0] * coordinate_count
+                delta[0] = sign * (a - b) % q
+                delta[1 + block_index[shift]] = sign * (
+                    pow(a, -1, q) - pow(b, -1, q)
+                ) % q
+                key = tuple(delta)
+                transitions[key] = transitions.get(key, 0j) + alpha * beta
+        local_transitions.append(transitions)
+        direct_local_total = sum(transitions.values(), 0j)
+        local_zero_frequency_factors.append(direct_local_total)
+        diagonal = sum(
+            left[index].get(unit, 0j) * right[index].get(unit, 0j)
+            for unit in range(1, q)
+        )
+        formula_total = (
+            sum(left[index].values(), 0j)
+            * sum(right[index].values(), 0j)
+            - diagonal
+        )
+        local_zero_frequency_formula_factors.append(formula_total)
+
+    state_weights: dict[tuple[int, ...], complex] = {zero_state: 1 + 0j}
+    for transitions in local_transitions:
+        updated: dict[tuple[int, ...], complex] = {}
+        for state, state_weight in state_weights.items():
+            for delta, local_weight in transitions.items():
+                target = tuple(
+                    (state[coordinate] + delta[coordinate]) % q
+                    for coordinate in range(coordinate_count)
+                )
+                updated[target] = (
+                    updated.get(target, 0j) + state_weight * local_weight
+                )
+        state_weights = updated
+    direct_resonance_sum = state_weights.get(zero_state, 0j)
+
+    root = cmath.exp(2j * cmath.pi / q)
+    dual_total = 0j
+    principal_numerator = 1 + 0j
+    for factor in local_zero_frequency_factors:
+        principal_numerator *= factor
+    for frequency in product(range(q), repeat=coordinate_count):
+        frequency_product = 1 + 0j
+        for transitions in local_transitions:
+            local_transform = sum(
+                weight
+                * root
+                ** (
+                    sum(
+                        frequency[coordinate] * delta[coordinate]
+                        for coordinate in range(coordinate_count)
+                    )
+                    % q
+                )
+                for delta, weight in transitions.items()
+            )
+            frequency_product *= local_transform
+        dual_total += frequency_product
+    normalization = q**coordinate_count
+    reconstructed = dual_total / normalization
+    principal_mode = principal_numerator / normalization
+    centered_modes = reconstructed - principal_mode
+    tolerance = 1e-8
+    return {
+        "modulus": q,
+        "moment_order": moment_order,
+        "signs": signs,
+        "distinct_shifts": distinct_shifts,
+        "dual_coordinate_count": coordinate_count,
+        "dual_frequency_count": normalization,
+        "direct_state_count": len(state_weights),
+        "direct_resonance_sum": direct_resonance_sum,
+        "dual_reconstructed_resonance_sum": reconstructed,
+        "principal_dual_mode": principal_mode,
+        "centered_dual_modes": centered_modes,
+        "principal_plus_centered_exact": (
+            abs(reconstructed - principal_mode - centered_modes) < tolerance
+        ),
+        "additive_orthogonality_reconstruction_exact": (
+            abs(direct_resonance_sum - reconstructed) < tolerance
+        ),
+        "local_zero_frequency_factors": tuple(
+            local_zero_frequency_factors
+        ),
+        "local_zero_frequency_formula_factors": tuple(
+            local_zero_frequency_formula_factors
+        ),
+        "type_ii_diagonal_removal_formula_exact": all(
+            abs(direct - formula) < tolerance
+            for direct, formula in zip(
+                local_zero_frequency_factors,
+                local_zero_frequency_formula_factors,
+            )
+        ),
+        "both_coefficient_families_retained": True,
+        "absolute_values_taken_before_reconstruction": False,
+        "principal_dual_mode_is_nonoscillatory": True,
+        "principal_dual_mode_globally_evaluated": False,
+        "centered_dual_operator_bound_proved": False,
+    }
+
+
 def squarefree_product_trace_crt_character_audit(
     *,
     prime_modulus: int,
@@ -9164,16 +9334,21 @@ def squarefree_product_trace_crt_character_audit(
         weight * product_trace(d * p, s)
         for d, p, weight in atoms
     )
-    split_bilinear = sum(
-        coefficient
-        * sum(
+    character_twisted_forms = [
+        sum(
             weight
             * character(index, d)
             * character(index, p)
             * product_trace(d * p, q, inv_r_q)
             for d, p, weight in atoms
         )
-        for coefficient, index in zip(fourier, character_indices)
+        for index in character_indices
+    ]
+    split_bilinear = sum(
+        coefficient * twisted_form
+        for coefficient, twisted_form in zip(
+            fourier, character_twisted_forms
+        )
     ) / character_count
 
     fourier_energy = sum(abs(value) ** 2 for value in fourier)
@@ -9181,6 +9356,45 @@ def squarefree_product_trace_crt_character_audit(
         abs(value) ** 2 for value in cofactor_kernel.values()
     )
     normalized_l1 = sum(abs(value) for value in fourier) / character_count
+    normalized_multiplier_l2 = (
+        fourier_energy / character_count**2
+    )
+    character_square_function_energy = sum(
+        abs(value) ** 2 for value in character_twisted_forms
+    )
+    atom_trace_values = [
+        (
+            d * p % r,
+            weight * product_trace(d * p, q, inv_r_q),
+            gcd(d * p, r) == 1,
+        )
+        for d, p, weight in atoms
+    ]
+    product_residue_incidence_energy = character_count * sum(
+        first_value * second_value.conjugate()
+        for first_residue, first_value, first_unit in atom_trace_values
+        for second_residue, second_value, second_unit in atom_trace_values
+        if first_unit and second_unit and first_residue == second_residue
+    )
+    product_residue_clusters = {
+        residue: sum(
+            value
+            for atom_residue, value, is_unit in atom_trace_values
+            if is_unit and atom_residue == residue
+        )
+        for residue in unit_residues
+    }
+    total_unit_product_mass = sum(product_residue_clusters.values(), 0j)
+    uniform_product_residue_mean = (
+        total_unit_product_mass / character_count
+    )
+    uniform_product_residue_principal_energy = abs(
+        total_unit_product_mass
+    ) ** 2
+    centered_product_residue_energy = character_count * sum(
+        abs(value - uniform_product_residue_mean) ** 2
+        for value in product_residue_clusters.values()
+    )
     tolerance = 1e-9
     return {
         "squarefree_modulus": s,
@@ -9213,6 +9427,41 @@ def squarefree_product_trace_crt_character_audit(
         "cofactor_character_parseval_exact": (
             abs(fourier_energy - kernel_energy) < tolerance
         ),
+        "normalized_character_multiplier_l2": normalized_multiplier_l2,
+        "normalized_character_multiplier_l2_is_one": (
+            abs(normalized_multiplier_l2 - 1) < tolerance
+        ),
+        "character_square_function_energy": (
+            character_square_function_energy
+        ),
+        "product_residue_incidence_energy": (
+            product_residue_incidence_energy
+        ),
+        "product_residue_clusters": product_residue_clusters,
+        "uniform_product_residue_mean": uniform_product_residue_mean,
+        "uniform_product_residue_principal_energy": (
+            uniform_product_residue_principal_energy
+        ),
+        "centered_product_residue_energy": centered_product_residue_energy,
+        "product_incidence_principal_centered_split_exact": (
+            abs(
+                character_square_function_energy
+                - uniform_product_residue_principal_energy
+                - centered_product_residue_energy
+            )
+            < tolerance
+        ),
+        "character_square_function_incidence_exact": (
+            abs(
+                character_square_function_energy
+                - product_residue_incidence_energy
+            )
+            < tolerance
+        ),
+        "crt_bilinear_energy_le_character_square_function": (
+            abs(split_bilinear) ** 2
+            <= character_square_function_energy + tolerance
+        ),
         "normalized_character_l1": normalized_l1,
         "normalized_character_l1_bound": character_count**0.5,
         "normalized_character_l1_bound_holds": (
@@ -9222,6 +9471,268 @@ def squarefree_product_trace_crt_character_audit(
         "retained_mobius_factors": ("mu(q*r)", "mu(d)"),
         "h_delta_factor_retained": True,
         "crt_iteration_covers_squarefree_cofactor": True,
+        "global_product_incidence_bound_proved": False,
+    }
+
+
+def hdelta_product_incidence_fourier_audit(
+    *,
+    squarefree_modulus: int,
+    selected_divisor: int,
+    first_product_residue: int,
+    second_product_residue: int,
+    h_coefficients: dict[int, complex],
+    delta_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Audit the pre-h-Poisson Fourier gain on one CRT square term.
+
+    Write ``s=q*r`` with ``s`` squarefree and ``(q,r)=1``.  On the
+    equal-outer-label slice, a cofactor character square forces
+    ``x1 == x2 (mod r)``.  The inverse part of the two product traces
+    then leaves
+
+    ``e_q(-inverse(r)*h*delta*(inverse(x1)-inverse(x2)))``.
+
+    If ``g=gcd(x1-x2,q)`` and ``Q=q/g``, this is a primitive product
+    phase modulo ``Q``.  Grouping ``h`` and ``delta`` by residues modulo
+    ``Q`` and applying Parseval gives the exact finite operator bound
+
+    ``|sum f_h g_delta e_Q(c*h*delta)|``
+    ``    <= sqrt(Q * sum_a |F_a|^2 * sum_b |G_b|^2)``.
+
+    This is an alternative use of the h-orthogonality underlying the
+    determinant-line identity: it is valid before completing h, not an
+    additional oscillator after h-Poisson.
+    """
+
+    s = int(squarefree_modulus)
+    q = int(selected_divisor)
+    if s <= 1 or q <= 1 or s % q:
+        raise ValueError("q must be a nontrivial divisor of s")
+    factorization = _finite_prime_exponents(s)
+    if any(exponent != 1 for exponent in factorization.values()):
+        raise ValueError("s must be squarefree")
+    r = s // q
+    if gcd(q, r) != 1:
+        raise ValueError("q and its complementary divisor must be coprime")
+    x1 = int(first_product_residue) % s
+    x2 = int(second_product_residue) % s
+    if gcd(x1 * x2, s) != 1:
+        raise ValueError("both product residues must be units modulo s")
+    if (x1 - x2) % r:
+        raise ValueError("the cofactor product-incidence condition is required")
+    if not h_coefficients or not delta_coefficients:
+        raise ValueError("both finite coefficient families must be nonempty")
+
+    inverse_r_mod_q = pow(r, -1, q) if r > 1 else 1
+    inverse_difference = (pow(x1, -1, q) - pow(x2, -1, q)) % q
+    phase_coefficient_mod_q = (-inverse_r_mod_q * inverse_difference) % q
+    coefficient_gcd = gcd(phase_coefficient_mod_q, q)
+    conductor = q // coefficient_gcd
+    reduced_phase_coefficient = (
+        phase_coefficient_mod_q // coefficient_gcd % conductor
+        if conductor > 1
+        else 0
+    )
+    collision_modulus = r * coefficient_gcd
+
+    h_data = {int(index): complex(value) for index, value in h_coefficients.items()}
+    delta_data = {
+        int(index): complex(value) for index, value in delta_coefficients.items()
+    }
+
+    def phase(modulus: int, coefficient: int, h: int, delta: int) -> complex:
+        if modulus == 1:
+            return 1 + 0j
+        root = cmath.exp(2j * cmath.pi / modulus)
+        return root ** (coefficient * h * delta % modulus)
+
+    direct_mod_q_sum = sum(
+        f_h
+        * g_delta
+        * phase(q, phase_coefficient_mod_q, h, delta)
+        for h, f_h in h_data.items()
+        for delta, g_delta in delta_data.items()
+    )
+    reduced_conductor_sum = sum(
+        f_h
+        * g_delta
+        * phase(conductor, reduced_phase_coefficient, h, delta)
+        for h, f_h in h_data.items()
+        for delta, g_delta in delta_data.items()
+    )
+
+    grouped_h = {
+        residue: sum(
+            value for index, value in h_data.items() if index % conductor == residue
+        )
+        for residue in range(conductor)
+    }
+    grouped_delta = {
+        residue: sum(
+            value
+            for index, value in delta_data.items()
+            if index % conductor == residue
+        )
+        for residue in range(conductor)
+    }
+    grouped_sum = sum(
+        grouped_h[a]
+        * grouped_delta[b]
+        * phase(conductor, reduced_phase_coefficient, a, b)
+        for a in range(conductor)
+        for b in range(conductor)
+    )
+    h_residue_energy = sum(abs(value) ** 2 for value in grouped_h.values())
+    delta_residue_energy = sum(
+        abs(value) ** 2 for value in grouped_delta.values()
+    )
+    fourier_operator_bound = (
+        conductor * h_residue_energy * delta_residue_energy
+    ) ** 0.5
+
+    h_multiplicities = tuple(
+        sum(1 for index in h_data if index % conductor == residue)
+        for residue in range(conductor)
+    )
+    delta_multiplicities = tuple(
+        sum(1 for index in delta_data if index % conductor == residue)
+        for residue in range(conductor)
+    )
+    h_l2 = sum(abs(value) ** 2 for value in h_data.values())
+    delta_l2 = sum(abs(value) ** 2 for value in delta_data.values())
+    multiplicity_bound = (
+        conductor
+        * max(h_multiplicities, default=0)
+        * h_l2
+        * max(delta_multiplicities, default=0)
+        * delta_l2
+    ) ** 0.5
+
+    def consecutive(indices: tuple[int, ...]) -> bool:
+        ordered = sorted(indices)
+        return ordered == list(range(ordered[0], ordered[0] + len(ordered)))
+
+    h_is_interval = consecutive(tuple(h_data))
+    delta_is_interval = consecutive(tuple(delta_data))
+    one_bounded = all(abs(value) <= 1 + 1e-12 for value in h_data.values()) and all(
+        abs(value) <= 1 + 1e-12 for value in delta_data.values()
+    )
+    interval_one_bounded_ceiling = (
+        (
+            conductor
+            * len(h_data)
+            * len(delta_data)
+            * ((len(h_data) + conductor - 1) // conductor)
+            * ((len(delta_data) + conductor - 1) // conductor)
+        )
+        ** 0.5
+        if h_is_interval and delta_is_interval and one_bounded
+        else None
+    )
+    tolerance = 1e-8
+    return {
+        "squarefree_modulus": s,
+        "selected_divisor": q,
+        "cofactor": r,
+        "cofactor_product_incidence_holds": True,
+        "inverse_cofactor_mod_selected_divisor": inverse_r_mod_q,
+        "inverse_difference_mod_selected_divisor": inverse_difference,
+        "phase_coefficient_mod_selected_divisor": phase_coefficient_mod_q,
+        "phase_coefficient_gcd": coefficient_gcd,
+        "reduced_conductor": conductor,
+        "reduced_phase_coefficient": reduced_phase_coefficient,
+        "reduced_phase_is_primitive": (
+            conductor == 1 or gcd(reduced_phase_coefficient, conductor) == 1
+        ),
+        "collision_modulus": collision_modulus,
+        "collision_modulus_equals_s_over_conductor": (
+            collision_modulus == s // conductor
+        ),
+        "stronger_product_collision_holds": (
+            (x1 - x2) % collision_modulus == 0
+        ),
+        "full_product_diagonal": (x1 - x2) % s == 0,
+        "conductor_one_iff_full_product_diagonal": (
+            (conductor == 1) == ((x1 - x2) % s == 0)
+        ),
+        "direct_mod_selected_divisor_sum": direct_mod_q_sum,
+        "reduced_conductor_sum": reduced_conductor_sum,
+        "grouped_residue_sum": grouped_sum,
+        "conductor_reduction_exact": (
+            abs(direct_mod_q_sum - reduced_conductor_sum) < tolerance
+        ),
+        "residue_grouping_exact": (
+            abs(reduced_conductor_sum - grouped_sum) < tolerance
+        ),
+        "h_residue_energy": h_residue_energy,
+        "delta_residue_energy": delta_residue_energy,
+        "fourier_operator_bound": fourier_operator_bound,
+        "fourier_operator_bound_holds": (
+            abs(grouped_sum) <= fourier_operator_bound + tolerance
+        ),
+        "h_max_residue_multiplicity": max(h_multiplicities, default=0),
+        "delta_max_residue_multiplicity": max(
+            delta_multiplicities, default=0
+        ),
+        "multiplicity_l2_bound": multiplicity_bound,
+        "multiplicity_l2_bound_holds": (
+            fourier_operator_bound <= multiplicity_bound + tolerance
+        ),
+        "h_support_is_integer_interval": h_is_interval,
+        "delta_support_is_integer_interval": delta_is_interval,
+        "coefficients_are_one_bounded": one_bounded,
+        "interval_one_bounded_ceiling": interval_one_bounded_ceiling,
+        "interval_one_bounded_ceiling_holds": (
+            interval_one_bounded_ceiling is not None
+            and fourier_operator_bound <= interval_one_bounded_ceiling + tolerance
+        ),
+        "equal_outer_label_slice_only": True,
+        "unequal_outer_label_gram_proved": False,
+        "uses_h_orthogonality_before_h_poisson": True,
+        "additional_post_h_poisson_saving_claimed": False,
+        "low_conductor_collision_strata_globally_bounded": False,
+        "afe_smooth_packet_adapter_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def hdelta_fourier_exponent_audit(
+    *,
+    conductor_exponent: Fraction,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    required_saving_exponent: Fraction = F(1, 2),
+) -> dict[str, Fraction | bool]:
+    """Record the exponent saving of the finite product-phase operator."""
+
+    lam = F(conductor_exponent)
+    h = F(h_length_exponent)
+    ell = F(delta_length_exponent)
+    required = F(required_saving_exponent)
+    if min(lam, h, ell, required) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    h_multiplicity = max(F(0), h - lam)
+    delta_multiplicity = max(F(0), ell - lam)
+    bound = (lam + h + ell + h_multiplicity + delta_multiplicity) / 2
+    trivial = h + ell
+    saving = trivial - bound
+    return {
+        "conductor_exponent": lam,
+        "h_length_exponent": h,
+        "delta_length_exponent": ell,
+        "h_residue_multiplicity_exponent": h_multiplicity,
+        "delta_residue_multiplicity_exponent": delta_multiplicity,
+        "trivial_bilinear_exponent": trivial,
+        "fourier_operator_bound_exponent": bound,
+        "relative_saving_exponent": saving,
+        "required_saving_exponent": required,
+        "reaches_required_saving_on_this_conductor": saving >= required,
+        "compatibility_with_preceding_reductions_proved": False,
+        "unequal_outer_label_gram_proved": False,
+        "low_conductor_strata_covered": False,
+        "analytic_packet_adapter_proved": False,
+        "coupled_kernel_gate_closed": False,
     }
 
 

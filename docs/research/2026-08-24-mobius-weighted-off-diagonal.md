@@ -11973,6 +11973,66 @@ sharp coefficient-independent ceiling
  \tag{9.539}
 \]
 
+There is an exact alternative to paying this \(L^1\) ceiling.  Put
+\(w_\chi=\widehat K_r(\chi)/\varphi(r)\), and denote the inner
+prime-modulus form in (9.537) by \(\mathcal B_\chi\).  Parseval gives
+
+\[
+ \boxed{\sum_{\chi\bmod r}|w_\chi|^2=1,\qquad
+ |\mathcal B_{qr}|^2\leq
+ \sum_{\chi\bmod r}|\mathcal B_\chi|^2.}
+ \tag{9.539a}
+\]
+
+Character orthogonality converts the square function into one explicit
+product-incidence energy.  If
+
+\[
+ z_{d,p}=\alpha_d\beta_pK_q^{(r)}(dp),
+\]
+
+then
+
+\[
+ \boxed{
+ \sum_{\chi\bmod r}|\mathcal B_\chi|^2
+ =\varphi(r)
+ \sum_{\substack{d_1p_1\equiv d_2p_2\pmod r\\
+                 (d_1p_1d_2p_2,r)=1}}
+ z_{d_1,p_1}\overline{z_{d_2,p_2}}.}
+ \tag{9.539b}
+\]
+
+Thus the factor \(\varphi(r)^{1/2}\) is unavoidable only for a
+coefficient-independent pointwise treatment.  Keeping the character
+family inside the square replaces it by (9.539b), whose diagonal,
+uniform-residue principal part, and centered off-diagonal must be
+estimated jointly with the two Möbius weights and \(h\delta\).  No such
+global incidence estimate is supplied by Parseval itself.
+
+More explicitly, put
+
+\[
+ C_u=\sum_{\substack{d,p\\dp\equiv u\pmod r}}z_{d,p},
+ \qquad
+ \overline C=\frac1{\varphi(r)}
+ \sum_{u\in U(r)}C_u.
+\]
+
+Then the incidence energy has the exact principal/centered split
+
+\[
+ \boxed{
+ \varphi(r)\sum_{u\in U(r)}|C_u|^2
+ =\left|\sum_{u\in U(r)}C_u\right|^2
+  +\varphi(r)\sum_{u\in U(r)}|C_u-\overline C|^2.}
+ \tag{9.539c}
+\]
+
+The first term is the uniform cofactor-character mode and must be put
+on the same principal ledger as (9.555).  Only the second term is a
+genuinely centered product-residue operator.
+
 Suppose optimistically that a fixed-prime Type-II theorem accepts every
 twisted coefficient array in (9.537) and saves \(q^{-\kappa}\).  Equations
 (9.537)--(9.539) transfer only the factor
@@ -12046,6 +12106,10 @@ product character group
 \[
  \widehat{U(r)}=\prod_{p\mid r}\widehat{\mathbb F_p^\times}.
 \]
+
+The same helper also checks (9.539a)--(9.539c) on arbitrary finite
+bilinear coefficient packets and keeps the global product-incidence
+bound explicitly false.
 
 The exact-rational helper
 squarefree_prime_factor_transfer_audit verifies (9.540)--(9.542) and
@@ -12204,6 +12268,265 @@ The helper
 rank_one_type_ii_resonance_partition_audit verifies the dimension ledger
 (9.549) for every supplied shift partition and rejects singleton blocks
 under the Type-II exclusion.
+
+### 9.81 Zero dual frequency of the resonant projector
+
+The projector in (9.546) itself admits the “principal first, centered
+second” split required by the global strategy.  Fix one admissible
+equal-shift partition \(\mathcal P\), with \(k\) blocks, and attach two
+arbitrary coefficient families \(u_j(a)\), \(v_j(b)\) to every local
+Type-II pair.  The phase in (9.547) can be absorbed into these local
+families, since
+
+\[
+ e_q\!\left(B\sum_jA_jr_j\right)
+ =\prod_j e_q(B\epsilon_jr_ja_j)
+          e_q(-B\epsilon_jr_jb_j).
+\]
+
+The exact additive-orthogonality identity is
+
+\[
+ \boxed{
+ \mathbf 1_{L=0}\prod_{\rho\in\mathcal P}\mathbf 1_{R(\rho)=0}
+ =\frac1{q^{k+1}}
+  \sum_{\lambda\bmod q}\ \sum_{(\eta_\rho)\bmod q}
+  e_q\!\left(\lambda L+\sum_\rho\eta_\rho R(\rho)\right).}
+ \tag{9.552}
+\]
+
+Consequently the weighted resonant sum factors completely:
+
+\[
+ \boxed{
+ \mathfrak R_{\mathcal P}
+ =\frac1{q^{k+1}}\sum_{\lambda,(\eta_\rho)}
+   \prod_{j=1}^{2m}\mathcal L_j(\lambda,\eta_{r_j}),}
+ \tag{9.553}
+\]
+
+where
+
+\[
+ \mathcal L_j(\lambda,\eta)
+ =\sum_{\substack{a,b\in\mathbb F_q^\times\\a\ne b}}
+ u_j(a)v_j(b)
+ e_q\!\left(\epsilon_j\{
+ \lambda(a-b)+\eta(a^{-1}-b^{-1})\}\right).
+ \tag{9.554}
+\]
+
+No coefficient has been replaced by an absolute value.  In particular,
+the zero dual frequency is explicit:
+
+\[
+ \boxed{
+ \mathfrak R_{\mathcal P}^{(0)}
+ =\frac1{q^{k+1}}\prod_{j=1}^{2m}
+ \left\{
+ \left(\sum_a u_j(a)\right)
+ \left(\sum_b v_j(b)\right)
+ -\sum_a u_j(a)v_j(a)
+ \right\}.}
+ \tag{9.555}
+\]
+
+The last term is precisely the local \(a=b\) Type-II diagonal removed
+from the product of the two total masses.  Thus (9.555) is the genuine
+nonoscillatory account; it is not part of the Weil remainder (9.548).
+All other modes satisfy
+
+\[
+ (\lambda,(\eta_\rho))\ne(0,\mathbf0)
+ \tag{9.556}
+\]
+
+and form the centered resonant spectrum.
+
+This split does not yet bound either piece, but it removes an ambiguity
+about what must happen next.  The principal expression (9.555) contains
+short/long Möbius total masses and local diagonal corrections.  It must
+be put back together across both AFE directions, every reflected
+boundary packet, the explicit diagonal, all \(h,\delta\), and all
+dyadic scales.  It can then be small, cancel, or produce a missing
+secondary main term; no one of these outcomes is asserted here.
+Termwise Mertens estimates would return the known unavailable power.
+
+The centered modes (9.556) are again product-trace factors, now with at
+least one genuine dual frequency.  They must be combined with the
+squarefree CRT characters of (9.537) inside one global square.  Taking
+absolute values in \((\lambda,\eta_\rho,\chi)\) would reintroduce the
+same \(\varphi(r)^{1/2}\) and resonance-dimension losses already
+isolated above.  Hence the remaining gate is now explicitly ordered:
+
+1. globally evaluate the finite principal resonant master (9.555);
+2. prove the centered, nonzero-dual coupled character operator bound.
+
+The finite helper rank_one_resonance_orthogonality_audit evaluates the
+direct congruence-state sum and the full dual sum independently, checks
+(9.552)--(9.555) numerically on exact finite coefficient data, and keeps
+both coefficient families signed.  Its proof-status flags leave both
+the global principal evaluation and the centered operator estimate
+false.
+
+### 9.82 Pre-Poisson product-incidence orthogonality
+
+There is one exact way to combine the retained \(h\delta\) phase with
+the cofactor square function (9.539b).  It is an alternative ordering of
+the \(h\)-orthogonality in (9.493), not a second saving available after
+\(h\)-Poisson.
+
+Let \(s=qr\) be squarefree, with \((q,r)=1\), and consider one cross term
+in (9.539b) at a fixed common outer label \((h,\delta)\).  Put
+\(x_i=d_ip_i\in U(s)\).  The cofactor character
+orthogonality has already imposed
+
+\[
+ x_1\equiv x_2\pmod r.
+ \tag{9.557}
+\]
+
+In the inverse part of the two \(q\)-traces the common AFE label leaves
+the exact cross phase
+
+\[
+ \boxed{
+ e_q\!\left(-\overline r_qh\delta
+       (\overline{x_1}-\overline{x_2})\right).}
+ \tag{9.558}
+\]
+
+Write
+
+\[
+ g=(x_1-x_2,q),\qquad Q=\frac qg.
+ \tag{9.559}
+\]
+
+Because \(x_1,x_2\) are units, the gcd of
+\(\overline{x_1}-\overline{x_2}\) with \(q\) is also \(g\).  Thus (9.558)
+is \(e_Q(ch\delta)\) for a unit \(c\bmod Q\).  Moreover (9.557) and
+\(x_1\equiv x_2\pmod g\) give the stronger collision
+
+\[
+ \boxed{x_1\equiv x_2\pmod{rg},\qquad rg=s/Q.}
+ \tag{9.560}
+\]
+
+The conductor-one stratum is therefore exactly the full product
+diagonal \(x_1\equiv x_2\pmod s\).  If \(q\) is prime, these are the only
+two possibilities: \(Q=q\) off the full diagonal and \(Q=1\) on it.  For
+composite \(q\), every small-conductor stratum is accompanied by the
+stronger congruence (9.560).
+
+For arbitrary finite coefficient arrays \(f_h,g_\delta\), group them by
+residue modulo \(Q\):
+
+\[
+ F_a=\sum_{h\equiv a\ (Q)}f_h,\qquad
+ G_b=\sum_{\delta\equiv b\ (Q)}g_\delta.
+\]
+
+The finite Fourier matrix then gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal S_Q(f,g)
+   &:=\sum_h\sum_\delta f_hg_\delta e_Q(ch\delta)\\
+   &=\sum_{a,b\bmod Q}F_aG_be_Q(cab),\\
+ |\mathcal S_Q(f,g)|
+   &\leq Q^{1/2}
+      \left(\sum_{a\bmod Q}|F_a|^2\right)^{1/2}
+      \left(\sum_{b\bmod Q}|G_b|^2\right)^{1/2}.
+ \end{aligned}}
+ \tag{9.561}
+\]
+
+This is just Cauchy and Parseval for a primitive additive Fourier
+matrix, but no \(x_i,h,\delta\) cross term has been discarded.  If the
+two supports are integer intervals of cardinalities \(H,L\), and both
+coefficient arrays are one-bounded, residue multiplicity gives the
+fully explicit ceiling
+
+\[
+ \boxed{
+ |\mathcal S_Q(f,g)|
+ \leq
+ \{QHL\lceil H/Q\rceil\lceil L/Q\rceil\}^{1/2}.}
+ \tag{9.562}
+\]
+
+Write \(Q=T^\lambda,H=T^h,L=T^\ell\), ignoring endpoint constants.
+Relative to the trivial \(HL\), (9.562) saves the exact exponent
+
+\[
+ \boxed{
+ \eta_{h\delta}(\lambda)
+ =\frac12\{h+\ell-\lambda
+ -(h-\lambda)_+-(\ell-\lambda)_+\}.}
+ \tag{9.563}
+\]
+
+On the original balanced maximal box, not the later normalized
+Type/Farey packet,
+
+\[
+ s\asymp T^3,\qquad H=L=T^{5/2}.
+\]
+
+Hence
+
+\[
+ \eta_{h\delta}(\lambda)=
+ \begin{cases}
+ \lambda/2,&0\leq\lambda\leq5/2,\\
+ (5-\lambda)/2,&5/2\leq\lambda,
+ \end{cases}
+\]
+
+so every reduced conductor \(T\leq Q\leq T^3\) supplies at least a
+half-power on this isolated \(h,\delta\) operator.  This has the correct
+numerical size to pay the final half-power in the later residual ledger
+only if the preceding reductions and this ordering can be made
+simultaneously.  No such compatibility is asserted by (9.563).
+
+It does **not** yet prove the coupled-kernel gate.  Four adapters remain:
+
+1. A squarefree \(s\asymp T^3\) has a divisor \(q\) between \(T\) and
+   \(T^3\): take a prime factor at least \(T\), or multiply factors below
+   \(T\) until their product first crosses \(T\).  But this controls
+   \(q\), not the reduced conductor \(Q=q/(x_1-x_2,q)\).  The stronger
+   collision strata (9.560) still need a joint divisor-incidence bound.
+2. The original AFE weight is a smooth function of both \(h/H\) and
+   \(\delta/L\), not necessarily one rank-one tensor \(f_hg_\delta\).
+   It must be given a uniform finite/Fourier separable decomposition whose
+   projective norm costs only \(T^\varepsilon\), while all other packet
+   labels remain inside the same square.
+3. Formula (9.493) completes one original \(h\)-sum and spends the phase
+   on a determinant-line incidence.  Formula (9.561) instead acts on a
+   cross term after cofactor-character orthogonality and **before** that
+   completion.  Applying both estimates sequentially would double-count
+   the same orthogonality.  A packet-exhaustion map must choose this
+   ordering globally and rederive the diagonal/reflection ledger.
+4. Most importantly, the full global Gram has two outer labels
+   \((h_1,\delta_1)\) and \((h_2,\delta_2)\).  Its inverse cross phase is
+   \[
+   e_q\!\left(-\overline r_q
+      (h_1\delta_1\overline{x_1}
+       -h_2\delta_2\overline{x_2})\right),
+   \]
+   whereas (9.558) is only the equal-label slice.  The unequal-label
+   cross terms must stay in the same pre-Cauchy operator.  Bounding the
+   equal-label slice alone does not bound the full Gram.
+
+The finite helper hdelta_product_incidence_fourier_audit verifies
+(9.557)--(9.562), including prime, composite reduced-conductor, and full
+diagonal examples.  The exact-rational helper
+hdelta_fourier_exponent_audit verifies the isolated ledger (9.563) at
+\(\lambda=1,5/2,3\).  Both keep the low-conductor incidence estimate,
+the unequal-label Gram, the smooth packet adapter, and the coupled-kernel
+conclusion explicitly false.
 
 ## 10. What has and has not been proved
 
@@ -12862,6 +13185,8 @@ Proved in this note:
 | Sector--AFE Kloosterman Type polytope | exact combined phase and published prime-slice coverage; composite central band unproved | Recombining before absolute values gives \(e_s(\alpha dp-h\delta\bar d\bar p)\), (9.517), and the unit condition is exactly \((\alpha h\delta,s)=1\), (9.519).  For \(d=T^u,s=T^\sigma\), Korolev covers the composite-modulus left wing with saving at most \(\sigma/35\); the FKM one-variable prime rows give \(\sigma/24\).  FKM Theorem 1.17 applies bilinearly at fixed prime modulus, saving at most \(\sigma/8\) but zero at \(u=\sigma/2\).  The exact completion (9.526)--(9.529) has one fixed Kloosterman argument and Cauchy--Parseval returns the trivial scale, so the recent complete-Kloosterman bilinear theorems do not directly fit.  The apparent FKMS rank-one \(1/224\) substitution is also invalid: the equal-shift constant-phase family has dimension \(4m-1>3m\), (9.530)--(9.533), so the required Type-II moment count fails.  All inputs remain below the critical half-power and provide no joint \(s,\xi,h\delta\) moment.  The prime balanced slice, composite central band, and full coupled Type-II gate remain unproved, (9.520)--(9.535) |
 | Squarefree CRT prime-factor transfer | exact factorization and sharp pointwise cofactor cost; coupled character average unproved | For \(s=qr\), (9.536)--(9.539) factor the product trace and separate the cofactor by multiplicative characters while retaining \(\mu(s)\mu(d)\) and \(h\delta\).  A prime bound saving \(q^{-\kappa}\) pays the unavoidable coefficient-independent cost \(r^{1/2}\), so a power remains only for \(\lambda>\sigma/(1+2\kappa)\), (9.541).  Even the optimistic registered \(\kappa=1/8\) requires a prime factor larger than \(s^{4/5}\), gives only \(1/16\) at \(q=s^{9/10}\), and never reaches the required half-power.  Eliminating the \(r^{1/2}\) loss requires a new global character square-function before Cauchy, not a fixed-prime theorem, (9.540)--(9.542) |
 | Rank-one Type-II resonance subtraction | exact classification and centered square-root bound; signed resonant projector unproved | The partial fractions (9.543)--(9.546) classify every constant phase by one global linear equation and one reciprocal-residue equation per equal-shift block.  Its nonpole value is explicit, (9.547), and subtracting it leaves a standard Weil square-root sum, (9.548).  Every admissible partition has resonant dimension at least \(4m-1\), so the positive FKMS moment exceeds its \(3m\) allowance by \(m-1\), (9.549).  The remaining \(\operatorname{RSCCG}_3\) must retain \(\mu(qr)\mu(d)\), \(h\delta\), all characters, and all packet labels before Hölder; neither that signed resonant estimate nor the exhaustive implication to \(\operatorname{CK}_{\rm ub}(3)\) is proved |
+| Resonant-projector dual split | exact principal/centered decomposition; both global estimates unproved | Additive orthogonality on \(L\) and every block residue \(R(\rho)\) gives the product formula (9.552)--(9.554) without taking absolute values.  The zero dual frequency is the explicit product of total-mass products minus local \(a=b\) diagonals, (9.555); it must be recombined across AFE directions, reflection, the explicit diagonal, \(h,\delta\), and dyadic scales.  Every remaining mode has a genuine nonzero \((\lambda,\eta_\rho)\), (9.556), but its squarefree CRT character operator still needs a global pre-Cauchy estimate |
+| Pre-Poisson product-incidence orthogonality | exact equal-outer-label Fourier bound with half-power numerical capacity; full Gram unproved | After the cofactor character square imposes \(x_1\equiv x_2\pmod r\), the equal-\((h,\delta)\) inverse cross phase has reduced conductor \(Q=q/(x_1-x_2,q)\), while the same pair collides modulo \(s/Q\), (9.557)--(9.560).  Grouping \(h,\delta\) modulo \(Q\) gives the exact Fourier-operator bound (9.561)--(9.562).  On the original \(s=T^3,H=L=T^{5/2}\) box, every \(T\leq Q\leq T^3\) has at least half-power numerical capacity, (9.563).  This acts before \(h\)-Poisson and is an alternative ordering of (9.493), not an extra post-Poisson gain.  Closing the route still requires the unequal-\((h_i,\delta_i)\) Gram, a joint count for \(Q<T\), a \(T^\varepsilon\)-cost smooth adapter, compatibility with the preceding reductions, and an exhaustive global packet map |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

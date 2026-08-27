@@ -2833,6 +2833,11 @@ def test_squarefree_product_trace_crt_character_split_is_exact() -> None:
     assert result["cofactor_character_reconstruction_exact"]
     assert result["bilinear_character_split_exact"]
     assert result["cofactor_character_parseval_exact"]
+    assert result["normalized_character_multiplier_l2_is_one"]
+    assert result["character_square_function_incidence_exact"]
+    assert result["product_incidence_principal_centered_split_exact"]
+    assert result["crt_bilinear_energy_le_character_square_function"]
+    assert not result["global_product_incidence_bound_proved"]
     assert result["normalized_character_l1_bound_holds"]
     assert result["both_mobius_weights_retained"]
     assert result["h_delta_factor_retained"]
@@ -2853,6 +2858,10 @@ def test_squarefree_product_trace_crt_character_split_is_exact() -> None:
     assert iterated["cofactor_character_reconstruction_exact"]
     assert iterated["bilinear_character_split_exact"]
     assert iterated["cofactor_character_parseval_exact"]
+    assert iterated["normalized_character_multiplier_l2_is_one"]
+    assert iterated["character_square_function_incidence_exact"]
+    assert iterated["product_incidence_principal_centered_split_exact"]
+    assert iterated["crt_bilinear_energy_le_character_square_function"]
 
     even_cofactor = audit(
         prime_modulus=5,
@@ -2870,6 +2879,119 @@ def test_squarefree_product_trace_crt_character_split_is_exact() -> None:
     assert even_cofactor["cofactor_character_reconstruction_exact"]
     assert even_cofactor["bilinear_character_split_exact"]
     assert even_cofactor["cofactor_character_parseval_exact"]
+    assert even_cofactor["normalized_character_multiplier_l2_is_one"]
+    assert even_cofactor["character_square_function_incidence_exact"]
+    assert even_cofactor["product_incidence_principal_centered_split_exact"]
+    assert even_cofactor["crt_bilinear_energy_le_character_square_function"]
+
+
+def test_product_incidence_hdelta_phase_has_exact_reduced_conductor_bound() -> None:
+    audit = getattr(
+        coverage_audit,
+        "hdelta_product_incidence_fourier_audit",
+        None,
+    )
+    assert audit is not None, "h-delta product-incidence audit is missing"
+
+    prime_conductor = audit(
+        squarefree_modulus=35,
+        selected_divisor=5,
+        first_product_residue=11,
+        second_product_residue=18,
+        h_coefficients={index: (-1) ** index for index in range(1, 9)},
+        delta_coefficients={index: 1 for index in range(2, 9)},
+    )
+    assert prime_conductor["cofactor"] == 7
+    assert prime_conductor["cofactor_product_incidence_holds"]
+    assert prime_conductor["reduced_conductor"] == 5
+    assert prime_conductor["reduced_phase_is_primitive"]
+    assert prime_conductor["collision_modulus"] == 7
+    assert prime_conductor["collision_modulus_equals_s_over_conductor"]
+    assert prime_conductor["stronger_product_collision_holds"]
+    assert not prime_conductor["full_product_diagonal"]
+    assert prime_conductor["conductor_one_iff_full_product_diagonal"]
+    assert prime_conductor["conductor_reduction_exact"]
+    assert prime_conductor["residue_grouping_exact"]
+    assert prime_conductor["fourier_operator_bound_holds"]
+    assert prime_conductor["multiplicity_l2_bound_holds"]
+    assert prime_conductor["interval_one_bounded_ceiling_holds"]
+    assert prime_conductor["equal_outer_label_slice_only"]
+    assert not prime_conductor["unequal_outer_label_gram_proved"]
+    assert prime_conductor["uses_h_orthogonality_before_h_poisson"]
+    assert not prime_conductor["additional_post_h_poisson_saving_claimed"]
+    assert not prime_conductor["low_conductor_collision_strata_globally_bounded"]
+    assert not prime_conductor["afe_smooth_packet_adapter_proved"]
+    assert not prime_conductor["coupled_kernel_gate_closed"]
+
+    composite_reduced = audit(
+        squarefree_modulus=105,
+        selected_divisor=15,
+        first_product_residue=1,
+        second_product_residue=22,
+        h_coefficients={index: 1 for index in range(1, 12)},
+        delta_coefficients={index: (-1) ** index for index in range(1, 10)},
+    )
+    assert composite_reduced["cofactor"] == 7
+    assert composite_reduced["phase_coefficient_gcd"] == 3
+    assert composite_reduced["reduced_conductor"] == 5
+    assert composite_reduced["collision_modulus"] == 21
+    assert composite_reduced["stronger_product_collision_holds"]
+    assert not composite_reduced["full_product_diagonal"]
+    assert composite_reduced["conductor_reduction_exact"]
+    assert composite_reduced["residue_grouping_exact"]
+    assert composite_reduced["fourier_operator_bound_holds"]
+
+    diagonal = audit(
+        squarefree_modulus=35,
+        selected_divisor=5,
+        first_product_residue=11,
+        second_product_residue=11,
+        h_coefficients={1: 1, 2: -1},
+        delta_coefficients={1: 1, 2: 1},
+    )
+    assert diagonal["reduced_conductor"] == 1
+    assert diagonal["collision_modulus"] == 35
+    assert diagonal["full_product_diagonal"]
+    assert diagonal["conductor_one_iff_full_product_diagonal"]
+    assert diagonal["conductor_reduction_exact"]
+    assert diagonal["fourier_operator_bound_holds"]
+
+
+def test_balanced_hdelta_fourier_ledger_supplies_half_power_on_large_conductors() -> None:
+    audit = getattr(coverage_audit, "hdelta_fourier_exponent_audit", None)
+    assert audit is not None, "h-delta Fourier exponent audit is missing"
+
+    at_one = audit(
+        conductor_exponent=F(1),
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+    )
+    assert at_one["fourier_operator_bound_exponent"] == F(9, 2)
+    assert at_one["relative_saving_exponent"] == F(1, 2)
+    assert at_one["reaches_required_saving_on_this_conductor"]
+
+    at_turning_point = audit(
+        conductor_exponent=F(5, 2),
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+    )
+    assert at_turning_point["fourier_operator_bound_exponent"] == F(15, 4)
+    assert at_turning_point["relative_saving_exponent"] == F(5, 4)
+    assert at_turning_point["reaches_required_saving_on_this_conductor"]
+
+    at_three = audit(
+        conductor_exponent=F(3),
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+    )
+    assert at_three["fourier_operator_bound_exponent"] == F(4)
+    assert at_three["relative_saving_exponent"] == F(1)
+    assert at_three["reaches_required_saving_on_this_conductor"]
+    assert not at_three["compatibility_with_preceding_reductions_proved"]
+    assert not at_three["unequal_outer_label_gram_proved"]
+    assert not at_three["low_conductor_strata_covered"]
+    assert not at_three["analytic_packet_adapter_proved"]
+    assert not at_three["coupled_kernel_gate_closed"]
 
 
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
@@ -2964,6 +3086,77 @@ def test_all_type_ii_resonance_partitions_have_the_same_dimension_barrier() -> N
     assert not singleton["active_admissible_resonant_stratum"]
     assert singleton["standard_type_ii_exception_count_can_hold"]
     assert not singleton["resonant_term_requires_separate_global_estimate"]
+
+
+def test_resonance_projector_splits_into_principal_and_centered_dual_modes() -> None:
+    audit = getattr(
+        coverage_audit,
+        "rank_one_resonance_orthogonality_audit",
+        None,
+    )
+    assert audit is not None, "rank-one resonance orthogonality audit is missing"
+
+    result = audit(
+        modulus=5,
+        shifts=(0, 0),
+        left_coefficient_families=(
+            {1: 1, 2: -1, 3: 2, 4: 1},
+            {1: -1, 2: 1, 3: 1, 4: 2},
+        ),
+        right_coefficient_families=(
+            {1: 2, 2: 1, 3: -1, 4: 1},
+            {1: 1, 2: -2, 3: 1, 4: 1},
+        ),
+    )
+
+    assert result["moment_order"] == 1
+    assert result["distinct_shifts"] == (0,)
+    assert result["dual_coordinate_count"] == 2
+    assert result["dual_frequency_count"] == 25
+    assert result["direct_state_count"] == 25
+    assert result["direct_resonance_sum"] == -15 + 0j
+    assert result["dual_reconstructed_resonance_sum"] == pytest.approx(-15)
+    assert result["local_zero_frequency_factors"] == (9 + 0j, 3 + 0j)
+    assert result["local_zero_frequency_formula_factors"] == (
+        9 + 0j,
+        3 + 0j,
+    )
+    assert result["principal_dual_mode"] == pytest.approx(F(27, 25))
+    assert result["centered_dual_modes"] == pytest.approx(F(-402, 25))
+    assert result["principal_plus_centered_exact"]
+    assert result["additive_orthogonality_reconstruction_exact"]
+    assert result["type_ii_diagonal_removal_formula_exact"]
+    assert result["both_coefficient_families_retained"]
+    assert not result["absolute_values_taken_before_reconstruction"]
+    assert result["principal_dual_mode_is_nonoscillatory"]
+    assert not result["principal_dual_mode_globally_evaluated"]
+    assert not result["centered_dual_operator_bound_proved"]
+
+    multi_block = audit(
+        modulus=5,
+        shifts=(0, 0, 1, 1),
+        left_coefficient_families=(
+            {1: 1, 2: -1, 3: 1},
+            {1: -1, 2: 1, 4: 1},
+            {1: 2, 3: -1, 4: 1},
+            {1: 1, 2: 1, 3: -1},
+        ),
+        right_coefficient_families=(
+            {1: 1, 2: 1, 4: -1},
+            {1: 2, 3: 1, 4: -1},
+            {1: -1, 2: 1, 3: 1},
+            {1: 1, 2: -1, 4: 2},
+        ),
+    )
+    assert multi_block["moment_order"] == 2
+    assert multi_block["distinct_shifts"] == (0, 1)
+    assert multi_block["dual_coordinate_count"] == 3
+    assert multi_block["dual_frequency_count"] == 125
+    assert multi_block["additive_orthogonality_reconstruction_exact"]
+    assert multi_block["type_ii_diagonal_removal_formula_exact"]
+    assert multi_block["principal_plus_centered_exact"]
+    assert not multi_block["principal_dual_mode_globally_evaluated"]
+    assert not multi_block["centered_dual_operator_bound_proved"]
 
 
 def test_prime_factor_transfer_cost_covers_only_an_extreme_large_prime_subface() -> None:
