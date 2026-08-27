@@ -21087,9 +21087,184 @@ The executable interface
 exact Poisson sign, the minimum exponent \(207/80\), the curvature
 margin \(\frac{37}{80}\), both theorem margins \(1/4\), and the separate
 subcritical/critical entry treatments.  It closes these two boundary
-witnesses only.  It does not enumerate the unclassified slack cells,
-prove the balanced transition gates, prove \((\mathrm{LCPE}_2)\), or
-imply the final asymptotic.
+witnesses only.  The next subsection now enumerates every vertex of the
+full admissibility polytope, but does not prove the intervening faces,
+the balanced transition gates, \((\mathrm{LCPE}_2)\), or the final
+asymptotic.
+
+### 4.109zjaced000a The full admissibility polytope has exactly 25 rational vertices
+
+The earlier label `unclassified_slack_cells_outside_zero_slack_family`
+did not specify a finite set of exponent witnesses.  It can now be
+replaced by an exact vertex ledger.  Eliminate the ratio equality by
+
+\[
+ k=m+\rho-\sigma
+\]
+
+and use coordinates
+\(x=(\rho,\sigma,m,\ell,h,\kappa)\).  The admissible set is the
+intersection of the following thirteen closed rational half-spaces:
+
+\[
+\begin{gathered}
+ \rho,\sigma,m,\ell,h,\kappa\ge0,
+ \qquad m+\rho-\sigma\ge0,\\
+ \rho+\kappa\le3,
+ \qquad \sigma+\kappa\le3,
+ \qquad 2m+\rho-\sigma\le1,\\
+ \ell-m-\rho\le-1,
+ \qquad h+m-\sigma\le0,
+ \qquad \ell+h-\rho-\sigma\le-1.
+\end{gathered}
+\tag{4.845dc_14xq_35w31n}
+\]
+
+These inequalities make the set bounded:
+\(0\le\rho,\sigma,\kappa\le3\),
+\(0\le m,k\le1\), and then
+\(0\le\ell,h\le3\).  It is also full-dimensional in the six reduced
+coordinates.  One strict rational interior point is
+
+\[
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(2,2,\frac14,\frac14,\frac12,\frac12,\frac12\right).
+\]
+
+Every vertex is the unique intersection of six linearly independent
+active supporting hyperplanes.  Enumerating all
+\(\binom{13}{6}\) choices, solving each system over
+\(\mathbb Q\), checking all thirteen inequalities, and deduplicating
+multiple active-set descriptions gives exactly the following list.  A
+tuple is ordered as
+\((\rho,\sigma,m,k,\ell,h,\kappa)\).
+
+| vertex | exact exponent tuple | current primary status |
+|---:|:---|:---|
+| v01 | \((0,1,1,0,0,0,0)\) | polylog short-entry reciprocity covered |
+| v02 | \((0,1,1,0,0,0,2)\) | polylog short-entry reciprocity covered |
+| v03 | \((1/2,1/2,1/2,1/2,0,0,5/2)\) | BCR covered |
+| v04 | \((1,0,0,1,0,0,0)\) | polylog short-entry reciprocity covered |
+| v05 | \((1,0,0,1,0,0,2)\) | polylog short-entry reciprocity covered |
+| v06 | \((1,1,0,0,0,0,0)\) | BCR covered |
+| v07 | \((1,1,0,0,0,0,2)\) | BCR covered |
+| v08 | \((1,1,0,0,0,1,0)\) | Farey/MMKLS gate |
+| v09 | \((1,1,0,0,0,1,2)\) | Farey/MMKLS gate; large-\(q\) endpoint |
+| v10 | \((2,3,1,0,0,0,0)\) | Farey/MMKLS gate |
+| v11 | \((2,3,1,0,0,2,0)\) | Farey/MMKLS gate |
+| v12 | \((2,3,1,0,2,0,0)\) | Farey/MMKLS gate |
+| v13 | \((2,3,1,0,2,2,0)\) | complementary-divisor covered; \(s_{\rm long}\) |
+| v14 | \((3,2,0,1,0,0,0)\) | Farey/MMKLS gate |
+| v15 | \((3,2,0,1,0,2,0)\) | Farey/MMKLS gate |
+| v16 | \((3,2,0,1,2,0,0)\) | global coupled gate |
+| v17 | \((3,2,0,1,2,2,0)\) | complementary-divisor covered; \(r_{\rm long}\) |
+| v18 | \((3,3,0,0,0,0,0)\) | BCR covered |
+| v19 | \((3,3,0,0,0,3,0)\) | Farey/MMKLS gate |
+| v20 | \((3,3,0,0,2,0,0)\) | Farey/MMKLS gate |
+| v21 | \((3,3,0,0,2,3,0)\) | Farey/MMKLS gate |
+| v22 | \((3,3,1/2,1/2,0,0,0)\) | BCR covered |
+| v23 | \((3,3,1/2,1/2,0,5/2,0)\) | Farey/MMKLS gate |
+| v24 | \((3,3,1/2,1/2,5/2,0,0)\) | Farey/MMKLS gate |
+| v25 | \((3,3,1/2,1/2,5/2,5/2,0)\) | Farey/MMKLS gate; balanced maximum |
+
+Thus the current primary router gives five BCR vertices, sixteen Farey
+vertices and four global-coupled vertices.  After separately inserting
+the theorem of Section 4.109zjaced000, v13 and v17 are also covered.
+Four further vertices do not require a new coupled theorem.  Put
+\(L_T=\log(2T)\), and suppose in the left orientation that
+
+\[
+ R\le L_T^{K_R},\qquad H\le L_T^{K_H},\qquad
+ \Delta\le L_T^{K_\Delta},\qquad
+ S=T^{\sigma+o(1)},\quad\sigma>0.
+\tag{4.845dc_14xq_35w31p}
+\]
+
+For \((r,s)=1\), Kloosterman reciprocity is the exact identity
+
+\[
+ \boxed{
+ e\!\left(-\frac{h\delta\bar r}{s}\right)
+ =e\!\left(\frac{h\delta\bar s}{r}\right)
+  e\!\left(-\frac{h\delta}{rs}\right).}
+\tag{4.845dc_14xq_35w31q}
+\]
+
+Write each absolutely convergent endpoint Euler weight as
+\(f=\mu*h_0\), truncate the \(h_0\)-variable at
+\(L_T^{K_E}\), and retain the complementary tail.  The first phase in
+(4.845dc_14xq_35w31q) is periodic in the long Möbius variable with
+modulus at most \(rd\le L_T^{K_R+K_E}\).  Expand this periodic function
+in Dirichlet characters.  The bound of
+[Green--Tao, Example 2](https://arxiv.org/abs/math/0606087)
+gives \(S q^{1/2}L_T^{-A}\) for each character of modulus \(q\);
+Parseval and Cauchy for the character coefficients cost at most another
+\(q^{1/2}\).  Equivalently one may use the classical Möbius
+Siegel--Walfisz estimate recorded by
+[Fouvry--Tenenbaum, Section 4.2](https://tenenb.perso.math.cnrs.fr/PPP/BV.pdf).
+Thus, uniformly for the polylogarithmic conductors occurring here,
+
+\[
+ \sum_{s\asymp S}\mu(s)U_{r,h,\delta,d}(s/S)
+ e\!\left(-\frac{h\delta\bar r}{s}\right)
+ \ll_{A,\mathbf K,U} S L_T^{-A+K_R+K_E}.
+\tag{4.845dc_14xq_35w31r}
+\]
+
+The case \(r=1\), and the cases \(h\delta=0\), use the ordinary smooth
+Möbius PNT and satisfy the same bound without the character expansion.
+
+The reciprocal correction in the second phase is absorbed by partial
+summation; all its normalized derivatives are bounded by the declared
+polylogarithmic seminorms.  A deliberately crude residue-class and
+outer-variable count gives the complete two-piece ledger
+
+\[
+ \boxed{
+ \mathfrak S_{\rm short}
+ \ll S L_T^{-A+2K_R+2K_E+K_H+K_\Delta+C_W}
+ +S L_T^{-K_E/2+K_R+K_H+K_\Delta+C_W}.}
+\tag{4.845dc_14xq_35w31s}
+\]
+
+The second term uses absolute convergence of the Euler convolution
+with the conservative half-power tail.  Choose \(K_E\) after the
+short-entry, kernel and seven aggregation logarithms, then choose
+\(A\).  This yields arbitrary prescribed logarithmic saving.  For the
+executable witness
+
+\[
+ (K_R,K_H,K_\Delta,K_E,A,C_W,K_{\rm agg})
+ =(8,6,6,100,350,10,7),
+\]
+
+the progression modulus depth is \(108\), the finite-convolution loss
+is \(228\), its net saving is \(105\), and the Euler-tail net saving is
+\(13\).  Hence v01, v02 and, by the right-oriented identity, v04, v05
+are covered.
+
+The remaining exact vertex set is
+
+\[
+\boxed{
+ \{\mathrm{v08},\mathrm{v09},\mathrm{v10},\mathrm{v11},
+ \mathrm{v12},\mathrm{v14},\mathrm{v15},\mathrm{v16},
+ \mathrm{v19},\mathrm{v20},\mathrm{v21},\mathrm{v23},
+ \mathrm{v24},\mathrm{v25}\}.}
+\tag{4.845dc_14xq_35w31o}
+\]
+
+This list is a complete vertex enumeration, not a coverage theorem for
+the polytope.  The hypotheses and savings of BCR, Farey completion and
+the complementary-divisor argument have not been proved to define a
+convex closed cover.  Consequently even a future proof of all fourteen
+displayed vertices would not by itself cover every edge, face and
+interior point.  The executable interfaces
+`admissible_polytope_vertices`,
+`polylog_short_entry_reciprocity_audit`, and
+`admissible_polytope_vertex_ledger_audit` therefore keep
+`vertex_routes_prove_every_face_and_interior=False` and
+`all_dyadic_parameter_cells_enumerated=False`.
 
 ### 4.109zjaced0 Four witnesses do not cover the parameter polytope
 
@@ -21464,7 +21639,7 @@ now
 ```text
 balanced_nonzero_j_diagonal_scale_slope_square_function
 balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]
-unclassified_slack_cells_outside_zero_slack_family
+admissible_polytope_unrouted_vertices_v08_v09_v10_v11_v12_v14_v15_v16_v19_v20_v21_v23_v24_v25
 large_q_centered_product_energy_lambda_2
 ```
 

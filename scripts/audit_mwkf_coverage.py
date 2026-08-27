@@ -19,6 +19,7 @@ sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mwkf_ranges import (
     ExponentBox,
+    admissible_polytope_vertices,
     boundary_witnesses,
     is_admissible,
 )
@@ -3307,6 +3308,55 @@ class UnconditionalLongMollifierAsymptoticAudit:
     alternative_route_unverified_gates: tuple[str, ...]
     all_dyadic_parameter_cells_enumerated: bool
     proof_status: str
+
+
+@dataclass(frozen=True)
+class AdmissiblePolytopeVertexLedgerAudit:
+    ambient_dimension: int
+    halfspace_count: int
+    vertex_count: int
+    vertices: tuple[ExponentBox, ...]
+    all_vertices_are_exact_rational: bool
+    all_vertices_are_admissible: bool
+    four_named_boundary_witnesses_are_vertices: bool
+    primary_routes: tuple[str, ...]
+    primary_route_counts: tuple[tuple[str, int], ...]
+    bcr_covered_vertex_indices: tuple[int, ...]
+    unbalanced_recombination_covered_vertex_indices: tuple[int, ...]
+    polylog_short_entry_covered_vertex_indices: tuple[int, ...]
+    remaining_unrouted_vertex_indices: tuple[int, ...]
+    remaining_unrouted_vertex_count: int
+    vertex_routes_prove_every_face_and_interior: bool
+    all_dyadic_parameter_cells_enumerated: bool
+
+
+@dataclass(frozen=True)
+class PolylogShortEntryReciprocityAudit:
+    short_entry_log_depth: Fraction
+    h_log_depth: Fraction
+    delta_log_depth: Fraction
+    euler_convolution_cutoff_log_depth: Fraction
+    siegel_walfisz_log_saving: Fraction
+    kernel_seminorm_log_loss: Fraction
+    aggregation_log_loss: Fraction
+    progression_modulus_log_depth: Fraction
+    outer_and_residue_log_loss: Fraction
+    siegel_walfisz_net_log_saving: Fraction
+    euler_tail_net_log_saving: Fraction
+    net_log_saving: Fraction
+    reciprocity_phase_identity_exact: bool
+    long_mobius_sum_is_in_progressions_modulo_short_times_euler: bool
+    siegel_walfisz_is_uniform_for_polylog_moduli: bool
+    euler_convolution_tail_has_arbitrary_log_saving: bool
+    smooth_reciprocal_correction_uses_partial_summation: bool
+    unit_short_entry_uses_ordinary_mobius_pnt: bool
+    left_short_vertices_covered: tuple[int, ...]
+    right_short_vertices_covered: tuple[int, ...]
+    covered_vertex_indices: tuple[int, ...]
+    polylog_short_entry_faces_covered: bool
+    all_parameter_cells_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
 
 
 @dataclass(frozen=True)
@@ -15468,6 +15518,14 @@ def unconditional_long_mollifier_asymptotic_audit(
             published_epsilon=F(1, 12),
         )
     )
+    vertex_ledger = admissible_polytope_vertex_ledger_audit()
+    vertex_residual = (
+        "admissible_polytope_unrouted_vertices_"
+        + "_".join(
+            f"v{index:02d}"
+            for index in vertex_ledger.remaining_unrouted_vertex_indices
+        )
+    )
     residual_top_level = () if final else ("OLISK_q^{L,R}",)
     if final:
         alternative_unverified = ()
@@ -15480,7 +15538,7 @@ def unconditional_long_mollifier_asymptotic_audit(
             "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
             *(() if unbalanced_recombination.unbalanced_boundary_witnesses_covered
               else ("unbalanced_power_witnesses_r_long_s_long",)),
-            "unclassified_slack_cells_outside_zero_slack_family",
+            vertex_residual,
             "large_q_centered_product_energy_lambda_2",
         )
     else:
@@ -15504,7 +15562,9 @@ def unconditional_long_mollifier_asymptotic_audit(
         residual_count_semantics="top_level_gate_count_not_literal_cell_count",
         residual_top_level_gates=residual_top_level,
         alternative_route_unverified_gates=alternative_unverified,
-        all_dyadic_parameter_cells_enumerated=False,
+        all_dyadic_parameter_cells_enumerated=(
+            vertex_ledger.all_dyadic_parameter_cells_enumerated
+        ),
         proof_status=(
             "unconditional asymptotic proved"
             if final
@@ -17862,6 +17922,190 @@ def unbalanced_complementary_divisor_recombination_audit(
             "exact complementary-divisor Poisson identity; "
             "arXiv:2411.05770v2, Theorem 1.1(i)"
         ),
+    )
+
+
+def polylog_short_entry_reciprocity_audit(
+    *,
+    short_entry_log_depth: Fraction,
+    h_log_depth: Fraction,
+    delta_log_depth: Fraction,
+    euler_convolution_cutoff_log_depth: Fraction,
+    siegel_walfisz_log_saving: Fraction,
+    kernel_seminorm_log_loss: Fraction,
+    aggregation_log_loss: Fraction,
+) -> PolylogShortEntryReciprocityAudit:
+    """Close the four vertices with one polylogarithmic entry variable.
+
+    Suppose, in the left orientation,
+
+    ``R <= log(T)^K_R``, ``H <= log(T)^K_H`` and
+    ``Delta <= log(T)^K_D``, while ``S`` has positive power length.
+    Reciprocity gives the exact identity
+
+    ``e(-h*delta*rbar/s) = e(h*delta*sbar/r)e(-h*delta/(r*s))``.
+
+    After writing every absolutely convergent endpoint Euler weight as
+    ``mu*h`` and truncating its convolution variable at
+    ``log(T)^K_E``, the long Möbius variable lies in progressions modulo
+    at most ``r*d <= log(T)^(K_R+K_E)``.  The classical
+    Möbius--character bound gives any prescribed logarithmic saving
+    uniformly for those moduli.  Parseval for the character expansion
+    of the periodic reciprocal phase costs at most one full modulus.
+    Summing ``r,d,h,delta`` then costs at most
+
+    ``2*K_R + 2*K_E + K_H + K_D`` logarithms.
+
+    The discarded Euler tail uses absolute convergence with the
+    conservative margin ``1/2`` and therefore saves ``K_E/2`` before
+    the remaining outer and seminorm losses.  Both savings can be made
+    arbitrarily large by choosing ``K_E`` and then the
+    Siegel--Walfisz exponent.  The right orientation is identical.
+    """
+    short = F(short_entry_log_depth)
+    h_depth = F(h_log_depth)
+    delta_depth = F(delta_log_depth)
+    euler = F(euler_convolution_cutoff_log_depth)
+    sw = F(siegel_walfisz_log_saving)
+    seminorm = F(kernel_seminorm_log_loss)
+    aggregation = F(aggregation_log_loss)
+    if min(short, h_depth, delta_depth, euler, sw, seminorm, aggregation) < 0:
+        raise ValueError("polylogarithmic depths and savings must be nonnegative")
+
+    modulus_depth = short + euler
+    outer_loss = 2 * short + 2 * euler + h_depth + delta_depth
+    sw_net = sw - outer_loss - seminorm - aggregation
+    euler_tail_net = (
+        euler / 2
+        - short - h_depth - delta_depth - seminorm - aggregation
+    )
+    net = min(sw_net, euler_tail_net)
+    covered = net > 0
+    left_vertices = (1, 2) if covered else ()
+    right_vertices = (4, 5) if covered else ()
+    return PolylogShortEntryReciprocityAudit(
+        short_entry_log_depth=short,
+        h_log_depth=h_depth,
+        delta_log_depth=delta_depth,
+        euler_convolution_cutoff_log_depth=euler,
+        siegel_walfisz_log_saving=sw,
+        kernel_seminorm_log_loss=seminorm,
+        aggregation_log_loss=aggregation,
+        progression_modulus_log_depth=modulus_depth,
+        outer_and_residue_log_loss=outer_loss,
+        siegel_walfisz_net_log_saving=sw_net,
+        euler_tail_net_log_saving=euler_tail_net,
+        net_log_saving=net,
+        reciprocity_phase_identity_exact=True,
+        long_mobius_sum_is_in_progressions_modulo_short_times_euler=True,
+        siegel_walfisz_is_uniform_for_polylog_moduli=True,
+        euler_convolution_tail_has_arbitrary_log_saving=covered,
+        smooth_reciprocal_correction_uses_partial_summation=True,
+        unit_short_entry_uses_ordinary_mobius_pnt=True,
+        left_short_vertices_covered=left_vertices,
+        right_short_vertices_covered=right_vertices,
+        covered_vertex_indices=left_vertices + right_vertices,
+        polylog_short_entry_faces_covered=covered,
+        all_parameter_cells_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "Green--Tao, Quadratic uniformity of the Mobius function, "
+            "Example 2; Fouvry--Tenenbaum, Multiplicative functions "
+            "in large arithmetic progressions, Section 4.2; exact "
+            "Kloosterman reciprocity"
+        ),
+    )
+
+
+def admissible_polytope_vertex_ledger_audit(
+) -> AdmissiblePolytopeVertexLedgerAudit:
+    """Route every exact vertex of the full admissibility polytope.
+
+    This replaces a numerical or prose-only ``unclassified cells``
+    placeholder by the complete rational H-polytope vertex list.  The
+    approved primary router closes five vertices by BCR.  The separate
+    complementary-divisor theorem closes the named ``r_long`` and
+    ``s_long`` vertices.  The other vertices remain explicit witnesses.
+
+    Vertex routing alone does not cover an intervening face: the
+    analytic route hypotheses and savings have not been proved to form
+    a convex closed cover.  Accordingly the final two flags remain
+    false even though the finite vertex enumeration itself is complete.
+    """
+    vertices = admissible_polytope_vertices()
+    routes = tuple(route_box(vertex).route for vertex in vertices)
+    route_counts = tuple(sorted(
+        (route, routes.count(route)) for route in set(routes)
+    ))
+    bcr_indices = tuple(
+        index
+        for index, vertex in enumerate(vertices, start=1)
+        if (
+            route_box(vertex).route == "bcr"
+            and route_box(vertex).applicable
+        )
+    )
+    recombination = unbalanced_complementary_divisor_recombination_audit(
+        cofactor_cutoff_exponent=F(1, 8),
+        qsmooth_relative_exponent=F(1, 10),
+        taylor_block_relative_exponent=F(2, 3),
+        published_epsilon=F(1, 12),
+    )
+    witnesses = boundary_witnesses()
+    unbalanced_boxes = {witnesses["r_long"], witnesses["s_long"]}
+    unbalanced_indices = tuple(
+        index
+        for index, vertex in enumerate(vertices, start=1)
+        if (
+            recombination.unbalanced_boundary_witnesses_covered
+            and vertex in unbalanced_boxes
+        )
+    )
+    short_entry = polylog_short_entry_reciprocity_audit(
+        short_entry_log_depth=F(8),
+        h_log_depth=F(6),
+        delta_log_depth=F(6),
+        euler_convolution_cutoff_log_depth=F(100),
+        siegel_walfisz_log_saving=F(350),
+        kernel_seminorm_log_loss=F(10),
+        aggregation_log_loss=AGGREGATION_LOG_LOSS,
+    )
+    short_entry_indices = short_entry.covered_vertex_indices
+    covered = (
+        set(bcr_indices)
+        | set(unbalanced_indices)
+        | set(short_entry_indices)
+    )
+    remaining = tuple(
+        index for index in range(1, len(vertices) + 1)
+        if index not in covered
+    )
+    exact = all(
+        isinstance(getattr(vertex, field), Fraction)
+        for vertex in vertices
+        for field in ("rho", "sigma", "m", "k", "ell", "h", "kappa")
+    )
+    return AdmissiblePolytopeVertexLedgerAudit(
+        ambient_dimension=6,
+        halfspace_count=13,
+        vertex_count=len(vertices),
+        vertices=vertices,
+        all_vertices_are_exact_rational=exact,
+        all_vertices_are_admissible=all(map(is_admissible, vertices)),
+        four_named_boundary_witnesses_are_vertices=(
+            set(witnesses.values()) <= set(vertices)
+        ),
+        primary_routes=routes,
+        primary_route_counts=route_counts,
+        bcr_covered_vertex_indices=bcr_indices,
+        unbalanced_recombination_covered_vertex_indices=(
+            unbalanced_indices
+        ),
+        polylog_short_entry_covered_vertex_indices=short_entry_indices,
+        remaining_unrouted_vertex_indices=remaining,
+        remaining_unrouted_vertex_count=len(remaining),
+        vertex_routes_prove_every_face_and_interior=False,
+        all_dyadic_parameter_cells_enumerated=False,
     )
 
 
@@ -28435,6 +28679,70 @@ def main() -> None:
         f"all_cells={c_recombination.all_parameter_cells_covered} "
         "asymptotic="
         f"{c_recombination.full_long_mollifier_asymptotic_proved}"
+    )
+    vertex_ledger = admissible_polytope_vertex_ledger_audit()
+    print(
+        "mwkf_polytope_vertices: "
+        f"dimension={vertex_ledger.ambient_dimension} "
+        f"halfspaces={vertex_ledger.halfspace_count} "
+        f"vertices={vertex_ledger.vertex_count} "
+        "routes="
+        + ",".join(
+            f"{route}:{count}"
+            for route, count in vertex_ledger.primary_route_counts
+        )
+        + " bcr="
+        + ",".join(
+            f"v{index:02d}"
+            for index in vertex_ledger.bcr_covered_vertex_indices
+        )
+        + " unbalanced="
+        + ",".join(
+            f"v{index:02d}"
+            for index in (
+                vertex_ledger.unbalanced_recombination_covered_vertex_indices
+            )
+        )
+        + " polylog_short="
+        + ",".join(
+            f"v{index:02d}"
+            for index in (
+                vertex_ledger.polylog_short_entry_covered_vertex_indices
+            )
+        )
+        + " remaining="
+        + ",".join(
+            f"v{index:02d}"
+            for index in vertex_ledger.remaining_unrouted_vertex_indices
+        )
+        + " "
+        f"faces={vertex_ledger.vertex_routes_prove_every_face_and_interior} "
+        "all_cells="
+        f"{vertex_ledger.all_dyadic_parameter_cells_enumerated}"
+    )
+    short_entry = polylog_short_entry_reciprocity_audit(
+        short_entry_log_depth=F(8),
+        h_log_depth=F(6),
+        delta_log_depth=F(6),
+        euler_convolution_cutoff_log_depth=F(100),
+        siegel_walfisz_log_saving=F(350),
+        kernel_seminorm_log_loss=F(10),
+        aggregation_log_loss=AGGREGATION_LOG_LOSS,
+    )
+    print(
+        "mwkf_polylog_short_entry: "
+        f"modulus_log={_fmt(short_entry.progression_modulus_log_depth)} "
+        f"finite_loss={_fmt(short_entry.outer_and_residue_log_loss)} "
+        f"sw_net={_fmt(short_entry.siegel_walfisz_net_log_saving)} "
+        f"tail_net={_fmt(short_entry.euler_tail_net_log_saving)} "
+        f"net={_fmt(short_entry.net_log_saving)} "
+        "vertices="
+        + ",".join(
+            f"v{index:02d}" for index in short_entry.covered_vertex_indices
+        )
+        + " "
+        f"faces={short_entry.polylog_short_entry_faces_covered} "
+        f"all_cells={short_entry.all_parameter_cells_covered}"
     )
     transport_gap = oriented_mmkls_polytope_gap_audit(
         cofactor_cutoff_exponent=F(1, 8)

@@ -8,6 +8,8 @@ sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mwkf_ranges import (
     ExponentBox,
+    admissible_polytope_strict_interior_witness,
+    admissible_polytope_vertices,
     admissibility_violations,
     boundary_witnesses,
     derived_bounds,
@@ -53,6 +55,69 @@ def test_balanced_box_exhibits_the_long_a_gap() -> None:
     assert box.third_length == F(5)
     assert (box.rho + box.sigma) / 2 == F(3)
     assert box.third_length - (box.rho + box.sigma) / 2 == F(2)
+
+
+def test_exact_admissible_polytope_has_25_vertices() -> None:
+    vertices = admissible_polytope_vertices()
+    assert len(vertices) == 25
+    assert len(set(vertices)) == 25
+    assert all(is_admissible(box) for box in vertices)
+
+
+def test_reduced_polytope_is_full_dimensional() -> None:
+    box = admissible_polytope_strict_interior_witness()
+    assert is_admissible(box)
+    assert min(
+        box.rho, box.sigma, box.m, box.k,
+        box.ell, box.h, box.kappa,
+    ) > 0
+    assert box.kappa + box.rho < 3
+    assert box.kappa + box.sigma < 3
+    assert box.k + box.m < 1
+    assert box.ell < box.m + box.rho - 1
+    assert box.h < box.sigma - box.m
+    assert box.third_length < box.rho + box.sigma - 1
+
+
+def test_exact_vertex_ledger_contains_every_named_boundary_witness() -> None:
+    vertices = set(admissible_polytope_vertices())
+    assert set(boundary_witnesses().values()) <= vertices
+
+
+def test_exact_vertex_ledger_is_stable() -> None:
+    vertices = admissible_polytope_vertices()
+    tuples = [
+        (box.rho, box.sigma, box.m, box.k,
+         box.ell, box.h, box.kappa)
+        for box in vertices
+    ]
+    assert tuples == [
+        (F(0), F(1), F(1), F(0), F(0), F(0), F(0)),
+        (F(0), F(1), F(1), F(0), F(0), F(0), F(2)),
+        (F(1, 2), F(1, 2), F(1, 2), F(1, 2), F(0), F(0), F(5, 2)),
+        (F(1), F(0), F(0), F(1), F(0), F(0), F(0)),
+        (F(1), F(0), F(0), F(1), F(0), F(0), F(2)),
+        (F(1), F(1), F(0), F(0), F(0), F(0), F(0)),
+        (F(1), F(1), F(0), F(0), F(0), F(0), F(2)),
+        (F(1), F(1), F(0), F(0), F(0), F(1), F(0)),
+        (F(1), F(1), F(0), F(0), F(0), F(1), F(2)),
+        (F(2), F(3), F(1), F(0), F(0), F(0), F(0)),
+        (F(2), F(3), F(1), F(0), F(0), F(2), F(0)),
+        (F(2), F(3), F(1), F(0), F(2), F(0), F(0)),
+        (F(2), F(3), F(1), F(0), F(2), F(2), F(0)),
+        (F(3), F(2), F(0), F(1), F(0), F(0), F(0)),
+        (F(3), F(2), F(0), F(1), F(0), F(2), F(0)),
+        (F(3), F(2), F(0), F(1), F(2), F(0), F(0)),
+        (F(3), F(2), F(0), F(1), F(2), F(2), F(0)),
+        (F(3), F(3), F(0), F(0), F(0), F(0), F(0)),
+        (F(3), F(3), F(0), F(0), F(0), F(3), F(0)),
+        (F(3), F(3), F(0), F(0), F(2), F(0), F(0)),
+        (F(3), F(3), F(0), F(0), F(2), F(3), F(0)),
+        (F(3), F(3), F(1, 2), F(1, 2), F(0), F(0), F(0)),
+        (F(3), F(3), F(1, 2), F(1, 2), F(0), F(5, 2), F(0)),
+        (F(3), F(3), F(1, 2), F(1, 2), F(5, 2), F(0), F(0)),
+        (F(3), F(3), F(1, 2), F(1, 2), F(5, 2), F(5, 2), F(0)),
+    ]
 
 
 @pytest.mark.parametrize(

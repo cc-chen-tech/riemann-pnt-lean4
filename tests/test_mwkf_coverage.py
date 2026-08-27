@@ -2551,7 +2551,9 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
             "alternative_unverified="
             "balanced_nonzero_j_diagonal_scale_slope_square_function,"
             "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2],"
-            "unclassified_slack_cells_outside_zero_slack_family,"
+            "admissible_polytope_unrouted_vertices_"
+            "v08_v09_v10_v11_v12_v14_v15_v16_"
+            "v19_v20_v21_v23_v24_v25,"
             "large_q_centered_product_energy_lambda_2 "
         "all_dyadic_cells=False remainder_o_T=False"
     ) in report
@@ -5511,7 +5513,9 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     assert audit.alternative_route_unverified_gates == (
         "balanced_nonzero_j_diagonal_scale_slope_square_function",
         "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
-        "unclassified_slack_cells_outside_zero_slack_family",
+        "admissible_polytope_unrouted_vertices_"
+        "v08_v09_v10_v11_v12_v14_v15_v16_"
+        "v19_v20_v21_v23_v24_v25",
         "large_q_centered_product_energy_lambda_2",
     )
     assert not audit.all_dyadic_parameter_cells_enumerated
@@ -6984,6 +6988,60 @@ def test_unbalanced_complementary_divisor_recombination_closes_two_boundary_witn
         assert marker in note
 
 
+def test_exact_polytope_vertex_ledger_replaces_the_unclassified_placeholder(
+) -> None:
+    audit = coverage_audit.admissible_polytope_vertex_ledger_audit()
+    assert audit.ambient_dimension == 6
+    assert audit.halfspace_count == 13
+    assert audit.vertex_count == 25
+    assert audit.all_vertices_are_exact_rational
+    assert audit.all_vertices_are_admissible
+    assert audit.four_named_boundary_witnesses_are_vertices
+    assert audit.primary_route_counts == (
+        ("bcr", 5),
+        ("global_coupled_operator", 4),
+        ("mobius_farey_trilinear", 16),
+    )
+    assert audit.bcr_covered_vertex_indices == (3, 6, 7, 18, 22)
+    assert audit.unbalanced_recombination_covered_vertex_indices == (13, 17)
+    assert audit.polylog_short_entry_covered_vertex_indices == (1, 2, 4, 5)
+    assert audit.remaining_unrouted_vertex_indices == (
+        8, 9, 10, 11, 12, 14, 15, 16, 19, 20, 21, 23, 24, 25,
+    )
+    assert audit.remaining_unrouted_vertex_count == 14
+    assert not audit.vertex_routes_prove_every_face_and_interior
+    assert not audit.all_dyadic_parameter_cells_enumerated
+
+
+def test_polylog_short_entry_reciprocity_closes_four_vertices() -> None:
+    audit = coverage_audit.polylog_short_entry_reciprocity_audit(
+        short_entry_log_depth=F(8),
+        h_log_depth=F(6),
+        delta_log_depth=F(6),
+        euler_convolution_cutoff_log_depth=F(100),
+        siegel_walfisz_log_saving=F(350),
+        kernel_seminorm_log_loss=F(10),
+        aggregation_log_loss=F(7),
+    )
+    assert audit.reciprocity_phase_identity_exact
+    assert audit.long_mobius_sum_is_in_progressions_modulo_short_times_euler
+    assert audit.progression_modulus_log_depth == F(108)
+    assert audit.outer_and_residue_log_loss == F(228)
+    assert audit.siegel_walfisz_net_log_saving == F(105)
+    assert audit.euler_tail_net_log_saving == F(13)
+    assert audit.net_log_saving == F(13)
+    assert audit.siegel_walfisz_is_uniform_for_polylog_moduli
+    assert audit.euler_convolution_tail_has_arbitrary_log_saving
+    assert audit.smooth_reciprocal_correction_uses_partial_summation
+    assert audit.unit_short_entry_uses_ordinary_mobius_pnt
+    assert audit.left_short_vertices_covered == (1, 2)
+    assert audit.right_short_vertices_covered == (4, 5)
+    assert audit.covered_vertex_indices == (1, 2, 4, 5)
+    assert audit.polylog_short_entry_faces_covered
+    assert not audit.all_parameter_cells_covered
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+
 def test_oriented_cofactor_witnesses_do_not_cover_the_zero_slack_polytope() -> None:
     """The balanced u-family has a strict power-scale residual interval."""
     adapter = getattr(
@@ -7135,7 +7193,9 @@ def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
         "### 4.109zjaced00a The full balanced edge leaves a strict transition interval",
         r"\frac{283}{550}\le u\le\frac32",
         "balanced_zero_slack_full_range_audit",
-        "unclassified_slack_cells_outside_zero_slack_family",
+        "admissible_polytope_unrouted_vertices_"
+        "v08_v09_v10_v11_v12_v14_v15_v16_"
+        "v19_v20_v21_v23_v24_v25",
     ):
         assert marker in note
 
@@ -7143,7 +7203,9 @@ def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
     assert final.alternative_route_unverified_gates == (
         "balanced_nonzero_j_diagonal_scale_slope_square_function",
         "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
-        "unclassified_slack_cells_outside_zero_slack_family",
+        "admissible_polytope_unrouted_vertices_"
+        "v08_v09_v10_v11_v12_v14_v15_v16_"
+        "v19_v20_v21_v23_v24_v25",
         "large_q_centered_product_energy_lambda_2",
     )
 
