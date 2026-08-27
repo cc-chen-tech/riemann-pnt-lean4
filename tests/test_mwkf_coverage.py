@@ -4042,6 +4042,76 @@ def test_product_label_resonant_set_has_reciprocal_modulus_density() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_principal_product_labels_reduce_to_unit_masked_farey_large_sieve() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_product_label_additive_master_audit",
+        None,
+    )
+    assert audit is not None, "principal additive-master audit is missing"
+
+    result = audit(
+        squarefree_moduli=(5, 6),
+        dyadic_modulus_lower=3,
+        direct_coefficient=1,
+        h_coefficients={1: F(1), 2: F(-1), 3: F(2)},
+        delta_coefficients={1: F(2), 2: F(1), 5: F(-1)},
+        type_base_coefficients={1: F(1), 2: F(-1), 3: F(2)},
+        companion_type_coefficients={1: F(1), 2: F(3)},
+    )
+    assert result["principal_product_label_weights"] == {5: -2, 6: 2}
+    assert result["type_product_convolution_coefficients"] == {
+        1: 1,
+        2: 4,
+        3: -2,
+        4: 3,
+        6: -6,
+    }
+    assert result["type_product_convolution_l2_energy"] == 66
+    assert result["type_convolution_divisor_bound"] == 240
+    assert result["type_convolution_energy_obeys_divisor_bound"]
+    assert result["all_unit_masks_equal_divisor_expansions"]
+    assert result["direct_principal_master_equals_divisor_farey_expansion"]
+    assert result["every_farey_row_bound_holds"]
+    assert result["finite_farey_large_sieve_bound_holds"]
+    assert result["all_principal_weight_cauchy_bounds_hold"]
+    assert result["outer_mobius_weight_retained_linearly"]
+    assert result["inner_type_mobius_weight_retained_linearly"]
+    assert result["h_delta_product_structure_retained"]
+    assert not result["full_afe_norm_adapter_proved"]
+    assert not result["principal_twisted_moment_contribution_in_target_proved"]
+    assert not result["nonprincipal_signed_dispersion_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_principal_product_label_master_validates_farey_support_endpoints() -> None:
+    audit = coverage_audit.principal_product_label_additive_master_audit
+    common = {
+        "dyadic_modulus_lower": 3,
+        "direct_coefficient": 1,
+        "h_coefficients": {1: F(1)},
+        "delta_coefficients": {1: F(1)},
+        "type_base_coefficients": {1: F(1)},
+        "companion_type_coefficients": {1: F(1)},
+    }
+    with pytest.raises(ValueError, match="must not contain duplicates"):
+        audit(squarefree_moduli=(5, 5), **common)
+    with pytest.raises(ValueError, match="positive labels"):
+        audit(
+            squarefree_moduli=(5,),
+            **{**common, "type_base_coefficients": {0: F(1)}},
+        )
+
+    zero = audit(
+        squarefree_moduli=(5,),
+        **{**common, "type_base_coefficients": {4: F(1)}},
+    )
+    assert zero["type_product_convolution_coefficients"] == {}
+    assert zero["direct_principal_additive_master"] == 0
+    assert zero["finite_farey_large_sieve_bound_holds"]
+    assert zero["type_convolution_energy_obeys_divisor_bound"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

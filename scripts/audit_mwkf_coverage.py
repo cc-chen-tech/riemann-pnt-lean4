@@ -12490,6 +12490,324 @@ def product_label_resonant_pair_count_audit(
     }
 
 
+def principal_product_label_additive_master_audit(
+    *,
+    squarefree_moduli: tuple[int, ...],
+    dyadic_modulus_lower: int,
+    direct_coefficient: int,
+    h_coefficients: dict[int, Fraction],
+    delta_coefficients: dict[int, Fraction],
+    type_base_coefficients: dict[int, Fraction],
+    companion_type_coefficients: dict[int, Fraction],
+) -> dict[str, object]:
+    """Audit the finite unit-mask/Farey bound for the principal master.
+
+    The returned identities retain ``mu(s)``, the Type factor ``mu(d)``,
+    and the divisibility condition ``s | h*delta``.  They do not supply
+    the packet-exhaustive physical AFE normalization or a bound for the
+    nonprincipal double-centered dispersion.
+    """
+
+    moduli = tuple(int(value) for value in squarefree_moduli)
+    scale = int(dyadic_modulus_lower)
+    direct = int(direct_coefficient)
+    if not moduli or scale <= 0:
+        raise ValueError("a nonempty positive dyadic modulus block is required")
+    if len(set(moduli)) != len(moduli):
+        raise ValueError("the dyadic modulus block must not contain duplicates")
+    for modulus in moduli:
+        factors = _finite_prime_exponents(modulus) if modulus > 1 else {}
+        if (
+            modulus <= scale
+            or modulus > 2 * scale
+            or any(exponent != 1 for exponent in factors.values())
+        ):
+            raise ValueError("every modulus must be squarefree and in (S,2S]")
+        if gcd(direct, modulus) != 1:
+            raise ValueError("the direct coefficient must be a unit modulo every s")
+    if (
+        not h_coefficients
+        or not delta_coefficients
+        or not type_base_coefficients
+        or not companion_type_coefficients
+    ):
+        raise ValueError("all four coefficient families must be nonempty")
+    if any(int(label) == 0 for label in (*h_coefficients, *delta_coefficients)):
+        raise ValueError("the h and delta labels must be nonzero")
+    if any(
+        int(label) <= 0
+        for label in (*type_base_coefficients, *companion_type_coefficients)
+    ):
+        raise ValueError("both Type coefficient families require positive labels")
+
+    h_coeffs = {int(label): F(value) for label, value in h_coefficients.items()}
+    delta_coeffs = {
+        int(label): F(value) for label, value in delta_coefficients.items()
+    }
+    base_coeffs = {
+        int(label): F(value) for label, value in type_base_coefficients.items()
+    }
+    companion_coeffs = {
+        int(label): F(value)
+        for label, value in companion_type_coefficients.items()
+    }
+    principal_weights = {
+        modulus: sum(
+            (
+                h_coefficient * delta_coefficient
+                for h_label, h_coefficient in h_coeffs.items()
+                for delta_label, delta_coefficient in delta_coeffs.items()
+                if h_label * delta_label % modulus == 0
+            ),
+            F(0),
+        )
+        for modulus in moduli
+    }
+    signed_modulus_weights = {
+        modulus: _finite_mobius(modulus) * principal_weights[modulus]
+        for modulus in moduli
+    }
+
+    product_coefficients: dict[int, Fraction] = {}
+    for d, base_coefficient in base_coeffs.items():
+        mobius_d = _finite_mobius(d)
+        if mobius_d == 0:
+            continue
+        for p, companion_coefficient in companion_coeffs.items():
+            product_coefficients[d * p] = product_coefficients.get(
+                d * p,
+                F(0),
+            ) + mobius_d * base_coefficient * companion_coefficient
+    product_coefficients = {
+        label: value for label, value in product_coefficients.items() if value != 0
+    }
+
+    direct_master = 0j
+    divisor_farey_expansion = 0j
+    unit_mask_rows: dict[tuple[int, int], dict[str, object]] = {}
+    for modulus in moduli:
+        root = cmath.exp(2j * cmath.pi / modulus)
+        signed_weight = signed_modulus_weights[modulus]
+        for product_label, coefficient in product_coefficients.items():
+            unit_indicator = int(gcd(product_label, modulus) == 1)
+            mask_expansion = sum(
+                _finite_mobius(divisor)
+                for divisor in _positive_divisors(gcd(product_label, modulus))
+            )
+            unit_mask_rows[(modulus, product_label)] = {
+                "unit_indicator": unit_indicator,
+                "divisor_expansion": mask_expansion,
+                "identity_holds": unit_indicator == mask_expansion,
+            }
+            direct_master += (
+                signed_weight
+                * coefficient
+                * unit_indicator
+                * root ** (direct * product_label % modulus)
+            )
+            for divisor in _positive_divisors(gcd(product_label, modulus)):
+                quotient = modulus // divisor
+                quotient_root = cmath.exp(2j * cmath.pi / quotient)
+                divisor_farey_expansion += (
+                    signed_weight
+                    * _finite_mobius(divisor)
+                    * coefficient
+                    * quotient_root
+                    ** (direct * (product_label // divisor) % quotient)
+                )
+
+    divisor_rows: list[dict[str, object]] = []
+    repeated_modulus_weight_energy = F(0)
+    farey_row_bound_sum = F(0)
+    relevant_divisors = tuple(
+        sorted(
+            {
+                divisor
+                for modulus in moduli
+                for divisor in _positive_divisors(modulus)
+            }
+        )
+    )
+    for divisor in relevant_divisors:
+        quotient_moduli = tuple(
+            modulus // divisor for modulus in moduli if modulus % divisor == 0
+        )
+        modulus_weight_energy = sum(
+            (
+                signed_modulus_weights[modulus]
+                * signed_modulus_weights[modulus]
+                for modulus in moduli
+                if modulus % divisor == 0
+            ),
+            F(0),
+        )
+        repeated_modulus_weight_energy += modulus_weight_energy
+        dilated_coefficients = {
+            product_label // divisor: coefficient
+            for product_label, coefficient in product_coefficients.items()
+            if product_label % divisor == 0
+        }
+        coefficient_energy = sum(
+            (value * value for value in dilated_coefficients.values()),
+            F(0),
+        )
+        if not quotient_moduli or not dilated_coefficients:
+            large_sieve_factor = F(0)
+            direct_row_energy = 0.0
+        else:
+            frequencies = tuple(
+                F(direct % quotient, quotient) if quotient > 1 else F(0)
+                for quotient in quotient_moduli
+            )
+            if len(frequencies) == 1:
+                inverse_spacing = F(1)
+            else:
+                spacings = []
+                for first_position, first in enumerate(frequencies):
+                    for second in frequencies[first_position + 1 :]:
+                        difference = abs(first - second)
+                        spacings.append(min(difference, 1 - difference))
+                minimum_spacing = min(spacings)
+                inverse_spacing = 1 / minimum_spacing
+            interval_length = max(dilated_coefficients)
+            large_sieve_factor = F(interval_length - 1) + inverse_spacing
+            direct_row_energy = sum(
+                abs(
+                    sum(
+                        complex(coefficient)
+                        * cmath.exp(
+                            2j
+                            * cmath.pi
+                            * direct
+                            * reduced_label
+                            / quotient
+                        )
+                        for reduced_label, coefficient in dilated_coefficients.items()
+                    )
+                )
+                ** 2
+                for quotient in quotient_moduli
+            )
+        farey_row_bound = large_sieve_factor * coefficient_energy
+        farey_row_bound_sum += farey_row_bound
+        divisor_rows.append(
+            {
+                "divisor": divisor,
+                "quotient_moduli": quotient_moduli,
+                "modulus_weight_l2_energy": modulus_weight_energy,
+                "dilated_product_coefficients": dilated_coefficients,
+                "dilated_coefficient_l2_energy": coefficient_energy,
+                "large_sieve_factor": large_sieve_factor,
+                "direct_farey_row_energy": direct_row_energy,
+                "farey_row_upper_bound": farey_row_bound,
+                "farey_row_bound_holds": (
+                    direct_row_energy <= float(farey_row_bound) + 1e-8
+                ),
+            }
+        )
+
+    finite_farey_upper_bound = (
+        repeated_modulus_weight_energy * farey_row_bound_sum
+    )
+    direct_master_energy = abs(direct_master) ** 2
+    type_product_energy = sum(
+        (value * value for value in product_coefficients.values()),
+        F(0),
+    )
+    base_energy = sum((value * value for value in base_coeffs.values()), F(0))
+    companion_energy = sum(
+        (value * value for value in companion_coeffs.values()),
+        F(0),
+    )
+    maximum_product_divisor_count = max(
+        (
+            len(_positive_divisors(label))
+            for label in product_coefficients
+        ),
+        default=0,
+    )
+    type_convolution_divisor_bound = (
+        maximum_product_divisor_count * base_energy * companion_energy
+    )
+    product_pair_energy = sum(
+        (
+            h_coefficient
+            * h_coefficient
+            * delta_coefficient
+            * delta_coefficient
+            for h_coefficient in h_coeffs.values()
+            for delta_coefficient in delta_coeffs.values()
+        ),
+        F(0),
+    )
+    principal_weight_cauchy_rows = {
+        modulus: {
+            "resonant_pair_count": sum(
+                1
+                for h_label in h_coeffs
+                for delta_label in delta_coeffs
+                if h_label * delta_label % modulus == 0
+            ),
+            "principal_weight_square": principal_weights[modulus]
+            * principal_weights[modulus],
+        }
+        for modulus in moduli
+    }
+    for row in principal_weight_cauchy_rows.values():
+        row["cauchy_upper_bound"] = (
+            int(row["resonant_pair_count"]) * product_pair_energy
+        )
+        row["cauchy_bound_holds"] = (
+            F(row["principal_weight_square"])
+            <= F(row["cauchy_upper_bound"])
+        )
+
+    tolerance = 1e-7
+    return {
+        "squarefree_moduli": moduli,
+        "dyadic_modulus_lower": scale,
+        "principal_product_label_weights": principal_weights,
+        "outer_signed_principal_weights": signed_modulus_weights,
+        "type_product_convolution_coefficients": product_coefficients,
+        "direct_principal_additive_master": direct_master,
+        "unit_mask_divisor_farey_expansion": divisor_farey_expansion,
+        "unit_mask_rows": unit_mask_rows,
+        "all_unit_masks_equal_divisor_expansions": all(
+            bool(row["identity_holds"]) for row in unit_mask_rows.values()
+        ),
+        "direct_principal_master_equals_divisor_farey_expansion": (
+            abs(direct_master - divisor_farey_expansion) < tolerance
+        ),
+        "divisor_farey_rows": tuple(divisor_rows),
+        "every_farey_row_bound_holds": all(
+            bool(row["farey_row_bound_holds"]) for row in divisor_rows
+        ),
+        "repeated_modulus_weight_l2_energy": repeated_modulus_weight_energy,
+        "farey_row_bound_sum": farey_row_bound_sum,
+        "finite_farey_large_sieve_upper_bound": finite_farey_upper_bound,
+        "finite_farey_large_sieve_bound_holds": (
+            direct_master_energy <= float(finite_farey_upper_bound) + tolerance
+        ),
+        "type_product_convolution_l2_energy": type_product_energy,
+        "type_convolution_divisor_bound": type_convolution_divisor_bound,
+        "type_convolution_energy_obeys_divisor_bound": (
+            type_product_energy <= type_convolution_divisor_bound
+        ),
+        "principal_weight_cauchy_rows": principal_weight_cauchy_rows,
+        "all_principal_weight_cauchy_bounds_hold": all(
+            bool(row["cauchy_bound_holds"])
+            for row in principal_weight_cauchy_rows.values()
+        ),
+        "outer_mobius_weight_retained_linearly": True,
+        "inner_type_mobius_weight_retained_linearly": True,
+        "h_delta_product_structure_retained": True,
+        "full_afe_norm_adapter_proved": False,
+        "principal_twisted_moment_contribution_in_target_proved": False,
+        "nonprincipal_signed_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

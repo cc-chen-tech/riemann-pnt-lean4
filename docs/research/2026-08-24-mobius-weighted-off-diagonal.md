@@ -14073,6 +14073,165 @@ The separate helper product_label_divisibility_gcd_split_audit verifies
 product_label_resonant_pair_count_audit independently enumerates
 (9.635) and verifies the per-stratum and global bound (9.636).
 
+### 9.97 The principal product-label additive master has a finite norm bound
+
+The cardinality saving in (9.636) can be upgraded to a genuinely
+weighted estimate once one keeps the direct additive phase.  This is a
+finite statement; no character large sieve, primitive-character
+replacement, or asymptotic completion is needed.  Let
+\(\mathcal S\subset(S,2S]\) be a set of distinct squarefree moduli, let
+\((B,s)=1\) for every \(s\in\mathcal S\), and put
+
+\[
+ U_s^{\rm res}
+ :=\sum_{s\mid h\delta} f_hg_\delta,
+ \qquad
+ b_s:=\mu(s)U_s^{\rm res}.
+ \tag{9.637}
+\]
+
+The labels \(h,\delta\) are nonzero and may have either sign.  Retain the
+inner Type Möbius weight in the product convolution
+
+\[
+ c_n:=\sum_{dp=n}\mu(d)\alpha_d\beta_p,
+ \qquad n\leq X.
+ \tag{9.638}
+\]
+
+The one-copy principal additive master is
+
+\[
+ \mathscr S_{\rm prin}
+ :=\sum_{s\in\mathcal S}b_s
+   \sum_{\substack{n\leq X\\(n,s)=1}}
+       c_n e_s(Bn).
+ \tag{9.639}
+\]
+
+The coprimality restriction in (9.639) must not be discarded or replaced
+by an assertion about all imprimitive Dirichlet characters.  Instead use
+the exact unit mask
+
+\[
+ \mathbf1_{(n,s)=1}
+ =\sum_{\ell\mid(n,s)}\mu(\ell).
+\]
+
+Writing \(s=\ell q\) and \(n=\ell m\) gives, without a boundary term,
+
+\[
+ \boxed{
+ \mathscr S_{\rm prin}
+ =\sum_{\ell\geq1}\mu(\ell)
+   \sum_{\substack{q:\ \ell q\in\mathcal S}}
+       b_{\ell q}
+       \sum_{\ell m\leq X}c_{\ell m}e_q(Bm).}
+ \tag{9.640}
+\]
+
+All original restrictions are still visible: \(S<\ell q\leq2S\),
+\((\ell,q)=1\) because \(\ell q\) is squarefree, and \((B,q)=1\).
+For fixed \(\ell\), the points \(B/q\pmod1\) are distinct reduced Farey
+fractions.  Their circular spacing is at least
+\(\ell^2/(4S^2)\).  The ordinary additive large sieve therefore gives
+
+\[
+ \sum_{q:\,\ell q\in\mathcal S}
+ \left|\sum_{\ell m\leq X}c_{\ell m}e_q(Bm)\right|^2
+ \ll
+ \left(\frac X\ell+\frac{S^2}{\ell^2}\right)
+ \sum_m|c_{\ell m}|^2.
+ \tag{9.641}
+\]
+
+A single Cauchy inequality in the full \((\ell,q)\) index set, followed
+by (9.641), yields the completely finite estimate
+
+\[
+ \begin{aligned}
+ |\mathscr S_{\rm prin}|^2
+ &\leq
+ \left(\sum_{\ell}\sum_{\ell\mid s}|b_s|^2\right)
+ \left(\sum_{\ell}
+   \left(\frac X\ell+\frac{S^2}{\ell^2}\right)
+   \sum_m|c_{\ell m}|^2\right)\\
+ &\ll_\varepsilon
+ (S^2+X)(SX)^\varepsilon
+ \left(\sum_{s\in\mathcal S}|U_s^{\rm res}|^2\right)
+ \left(\sum_{n\leq X}|c_n|^2\right).
+ \end{aligned}
+ \tag{9.642}
+\]
+
+Indeed, the first repeated sum is
+\(\sum_s\tau(s)|b_s|^2\), while the second loses only divisor sums
+\(\sum_{\ell\mid n}\ell^{-1}\) and
+\(\sum_{\ell\mid n}\ell^{-2}\).  Thus every repetition costs
+\((SX)^\varepsilon\), not a power of a modulus.
+
+Equations (9.635)--(9.636) also control the outer resonant weights.  By
+Cauchy on \(\mathcal P_s(H,D)\), followed by the trivial fact that a
+dyadic block contains at most \(S\) integer moduli,
+
+\[
+ \sum_{s\in\mathcal S}|U_s^{\rm res}|^2
+ \ll_\varepsilon
+ HD\,S^\varepsilon
+ \left(\sum_h|f_h|^2\right)
+ \left(\sum_\delta|g_\delta|^2\right).
+ \tag{9.643}
+\]
+
+Likewise, Cauchy on the divisor representations in (9.638) gives
+
+\[
+ \sum_{n\leq X}|c_n|^2
+ \ll_\varepsilon
+ X^\varepsilon
+ \left(\sum_d|\alpha_d|^2\right)
+ \left(\sum_p|\beta_p|^2\right).
+ \tag{9.644}
+\]
+
+Combining (9.642)--(9.644) proves
+
+\[
+ \boxed{
+ |\mathscr S_{\rm prin}|^2
+ \ll_\varepsilon
+ (S^2+X)HD(SX)^\varepsilon
+ \|f\|_2^2\|g\|_2^2
+ \|\alpha\|_2^2\|\beta\|_2^2.}
+ \tag{9.645}
+\]
+
+This is an unconditional weighted bound for the finite principal master,
+and it preserves the outer \(\mu(s)\), the inner \(\mu(d)\), and the
+product label \(h\delta\) throughout.  It deliberately uses the ordinary
+additive/Farey large sieve only after exact unit-mask expansion.  A
+purported unweighted large sieve over all imprimitive characters would
+be false because their coherent principal modes need not be orthogonal.
+
+Equation (9.645) is not yet the claimed twisted-moment estimate.  The
+complete AFE/reflection ledger may have packet-dependent direct
+coefficients \(B\), additional smooth and modulus weights, and a physical
+normalization not represented in (9.639).  Showing that all such packets
+embed into (9.645) with only \(T^\varepsilon\) projective cost is the
+remaining principal-mode adapter.  The noncongruent product labels and
+the large-common-gcd double-centered terms of (9.625) still require a
+global signed dispersion estimate.
+
+The helper principal_product_label_additive_master_audit verifies the
+unit-mask identity (9.640), every finite Farey-row inequality (9.641),
+the finite Cauchy inequality underlying (9.642), the Type convolution
+divisor bound (9.644), and the pointwise Cauchy input to (9.643).
+Duplicate moduli, zero \(h,\delta\) labels, and nonpositive Type labels
+are rejected, while an identically vanishing Type convolution returns
+the zero estimate.  Its full AFE norm adapter, principal twisted-moment
+target, nonprincipal signed dispersion, and coupled-kernel flags remain
+false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -14746,6 +14905,7 @@ Proved in this note:
 | Principal-density normalization | exact no-gain audit for the bare global square | A single \(\kappa\)-fibre contributes the reciprocal-LCM density (9.620), but the unnormalized sum over all \([s_1,s_2]\) residues cancels that denominator exactly, (9.621).  Hence the bare master returns \(|\sum_s\mu(s)Z_s^{\rm tot}|^2\), not the totient-square form (9.623).  Any useful reciprocal-LCM normalization must be exhibited by the complete physical AFE/\(TT^*\) multiplier; it is not a consequence of centering, and no such packet-exhaustive multiplier has yet been proved |
 | Physical multiplier double centering | exact finite identity and sharp fixed-pair incidence norm; exhaustive map and global signed estimate unproved | For any supplied frequency multiplier, (9.625) isolates its mean times the bare packet total and pairs only \(K^\circ\) with both centered packet pieces.  The fibre map has exact maximum multiplicity \(\varphi((s_1,s_2))\), (9.626), giving the finite norm bound (9.628) at divisor cost.  This closes arbitrary fixed-pair algebra on small-gcd strata but exposes the sharp \(\varphi(g)^{1/2}\) obstruction to outer absolute values.  The complete AFE/reflection derivation of \(K\), its principal mean ledger, and the signed large-gcd double-centered dispersion remain open |
 | Cross-modulus product-label phase | exact circular-character, principal-set, and cardinality classification; weighted resonant sum unbounded | For \(a_i=h_i\delta_i\), the inverse-label cross phase is a single character \(e_L(c\kappa)\) exactly on the coefficient-CRT sector \(a_1\equiv a_2\pmod{(s_1,s_2)}\), (9.629)--(9.631).  Its multiplier mean is nonzero exactly when \(s_1\mid a_1\) and \(s_2\mid a_2\), (9.632)--(9.633); all other congruent-label pairs are automatically multiplier-centered.  The surviving principal set has the exact gcd/divisibility split (9.634), retaining \(h\delta\) and both Möbius signs, and its signed-window cardinality is at most \(4\tau(s)HD/s\), (9.635)--(9.636).  Bounding the full AFE/reflection weighted sum and treating noncongruent labels in the full pair kernel remain open |
+| Principal product-label additive master | unconditional finite large-sieve norm bound; full AFE normalization unproved | Exact unit-mask expansion turns the principal master into reduced Farey rows, (9.637)--(9.640).  The ordinary additive large sieve and one global Cauchy step give (9.642); resonant-label density and the retained Type convolution yield the weighted bound (9.645), with both Möbius signs and \(h\delta\) intact.  This avoids the false shortcut of applying a primitive-character large sieve to all imprimitive principal modes.  Packet-dependent direct phases, smooth physical weights, reflected terms, and their exhaustive \(T^\varepsilon\)-cost AFE adapter remain unproved, as does the nonprincipal signed dispersion |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
