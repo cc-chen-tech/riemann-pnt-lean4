@@ -21219,7 +21219,8 @@ being extrapolated to the whole edge.  The alternative-route ledger is
 now
 
 ```text
-balanced_zero_slack_u_in_[283/550,3/2]
+balanced_nonzero_j_diagonal_scale_slope_square_function
+balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]
 unclassified_slack_cells_outside_zero_slack_family
 large_q_centered_product_energy_lambda_2
 ```
@@ -21333,6 +21334,166 @@ arithmetic.  It sets `required_new_mobius_estimate_proved=False`
 whenever the positive part in (4.845dc_14xq_35zd) is nonzero.  No
 published theorem audited here proves that remaining two-Möbius
 trilinear estimate.
+
+### 4.109zjaced00c h-Poisson separates PEVP from one resonant zero mode
+
+There is a sharper decomposition of (4.845dc_14xq_35za).  Poisson
+summation in the complete \(h\)-sum gives the exact determinant equation
+
+\[
+ \boxed{wv-js=\delta},
+\tag{4.845dc_14xq_35ze}
+\]
+
+with Poisson factor \(T^{u-1/2}\).  On a nonzero-\(j\) shell its dual
+scales are
+
+\[
+ |v|\asymp T^{1/2},\qquad
+ |j|\asymp T^{\theta+1/2-u},\qquad
+ |\delta|\asymp T^{u-1/2}.
+\tag{4.845dc_14xq_35zf}
+\]
+
+Put \(g=(|v|,|j|)=T^\gamma\), \(v=gv_0\),
+\(j=gj_0\), and \(\delta=g\delta_0\).  Then
+
+\[
+\begin{array}{c|ccccc}
+ &g&v_0&j_0&\delta_0&n\\ \hline
+\log_T\text{-scale}
+ &\gamma&1/2-\gamma&
+ \theta+1/2-u-\gamma&
+ u-1/2-\gamma&
+ u-1/2+\gamma .
+\end{array}
+\tag{4.845dc_14xq_35zg}
+\]
+
+Here \(n\) is the complete line parameter.  If
+\((v_0,j_0)=1\) and \(xv_0+yj_0=1\), every solution has
+
+\[
+ w=x\delta_0+j_0n,\qquad
+ s=-y\delta_0+v_0n,
+\tag{4.845dc_14xq_35zh}
+\]
+
+and, since \(r=cs+w\),
+
+\[
+ \binom{s}{r}
+ =
+ \begin{pmatrix}
+ -y&v_0\\ x-cy&j_0+cv_0
+ \end{pmatrix}
+ \binom{\delta_0}{n},
+ \qquad \det=-1.
+\tag{4.845dc_14xq_35zi}
+\]
+
+Thus the inner Möbius arguments remain unimodular coordinates.  Their
+area exponent and the primitive-slope-family exponent are respectively
+
+\[
+ E_{\rm inner}=2u-1,\qquad
+ E_{\rm slope}=\theta+1-u-\gamma.
+\tag{4.845dc_14xq_35zj}
+\]
+
+Including the Poisson factor, the transformed cardinality is
+
+\[
+ E_{\rm card}=2u+\theta-\frac12-\gamma.
+\tag{4.845dc_14xq_35zk}
+\]
+
+Against the asymptotic local target \(T^{2u}\), the diagonal-scale
+saving required from the inner square function is
+
+\[
+ s_{\rm diag}=
+ \left(\theta-\frac12-\gamma\right)_+.
+\tag{4.845dc_14xq_35zl}
+\]
+
+The square root of the unimodular inner area is \(T^{u-1/2}\).
+Whenever the positive part in (4.845dc_14xq_35zl) is active, its power
+margin is
+
+\[
+ \left(u-\frac12\right)
+ -\left(\theta-\frac12-\gamma\right)
+ =u-\theta+\gamma.
+\tag{4.845dc_14xq_35zm}
+\]
+
+It vanishes precisely on
+
+\[
+ \boxed{\theta=u,\qquad\gamma=0.}
+\tag{4.845dc_14xq_35zn}
+\]
+
+This is the generalized PEVP face.  At \(u=1\), all four inner and
+primitive dual coordinates have exponent \(1/2\), recovering
+(4.451)--(4.465).  At \(u=3/2\), the two primitive dual slopes still
+have exponent \(1/2\), but \(\delta_0,n\) each have exponent \(1\).
+A fixed \(1/1000\) power target asks for
+\((\theta-1/2-\gamma+1/1000)_+\); at the two top examples this is
+\(501/1000\) and \(1001/1000\).  For the actual little-oh theorem,
+however, diagonal scale plus a sufficient logarithmic saving is the
+right critical target.
+
+The \(j=0\) term is arithmetically different.  The Fourier transform
+forces \(v\asymp T^{1/2}\), so \(wv=\delta\) is resonant only when
+
+\[
+ \boxed{\theta_0=u-1}
+\tag{4.845dc_14xq_35zo}
+\]
+
+and hence only for \(u\ge1\).  For \(u<1\), every integer
+\(w\ne0\) lies in the rapid transform tail.  For \(1\le u\le3/2\),
+divisibility \(w\mid\delta\) gives \(T^{u-1/2+o(1)}\)
+\((w,\delta)\)-pairs.  After the \(s\)-sum and Poisson factor, the
+zero-mode cardinality is
+
+\[
+ T^{u-1/2}\cdot T^u\cdot T^{u-1/2}
+ =T^{3u-1}.
+\tag{4.845dc_14xq_35zp}
+\]
+
+It therefore needs the affine two-Möbius saving \(T^{u-1}\) to reach
+\(T^{2u}\).  In physical terms it is an average of
+\(\mu(s)\mu(cs+w)\) over
+
+\[
+ s\asymp T^u,\qquad |w|\asymp T^{u-1},\qquad
+ \frac{\log_T|w|}{\log_T s}=\frac{u-1}{u}\le\frac13.
+\tag{4.845dc_14xq_35zq}
+\]
+
+The inequality is an equality only at \(u=3/2\), while the published
+almost-all theorem requires a strict \(1/3+\varepsilon\).  Thus the
+zero mode cannot be sent through the nonzero-\(j\) PEVP square
+function, and the short-interval theorem cannot close it.  At \(u=1\)
+its power deficit is zero and the two endpoint tapers give the existing
+logarithmic little-oh.
+
+The exact-rational interfaces
+balanced_transition_h_poisson_audit and
+balanced_transition_h_poisson_zero_mode_audit record the two ledgers.
+The remaining power work on the balanced edge is therefore reduced to
+two named estimates:
+
+1. a diagonal-scale signed slope square function on the critical
+   nonzero-\(j\) face (generalized PEVP);
+2. the resonant affine Möbius dispersion (4.845dc_14xq_35zp) for
+   \(1<u\le3/2\).
+
+Neither estimate is proved here.
 
 ### 4.109zjaced1 The critical product energy has one polylog-slope affine core
 

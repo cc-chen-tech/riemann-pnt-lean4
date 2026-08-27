@@ -2653,6 +2653,50 @@ class BalancedTransitionFareyGateAudit:
 
 
 @dataclass(frozen=True)
+class BalancedTransitionHPoissonAudit:
+    u: Fraction
+    difference_exponent: Fraction
+    gcd_exponent: Fraction
+    h_poisson_factor_exponent: Fraction
+    v_exponent: Fraction
+    j_exponent: Fraction
+    delta0_exponent: Fraction
+    line_parameter_exponent: Fraction
+    unimodular_inner_area_exponent: Fraction
+    primitive_slope_family_exponent: Fraction
+    transformed_cardinality_exponent: Fraction
+    asymptotic_local_target_exponent: Fraction
+    required_diagonal_scale_saving_exponent: Fraction
+    inner_square_root_saving_exponent: Fraction
+    square_root_power_margin: Fraction
+    fixed_power_required_saving_exponent: Fraction
+    determinant_equation: str
+    unimodular_coordinate_change_exact: bool
+    is_unique_zero_margin_face: bool
+    diagonal_scale_slope_square_function_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class BalancedTransitionHPoissonZeroModeAudit:
+    u: Fraction
+    resonant_zero_mode_present: bool
+    difference_exponent: Fraction
+    shift_family_exponent: Fraction
+    mobius_interval_exponent: Fraction
+    relative_shift_exponent: Fraction
+    transformed_cardinality_exponent: Fraction
+    asymptotic_local_target_exponent: Fraction
+    required_affine_dispersion_saving_exponent: Fraction
+    published_strict_one_third_theorem_applies: bool
+    endpoint_tapers_close_zero_power_margin: bool
+    zero_mode_is_rapid_transform_tail: bool
+    affine_mobius_dispersion_proved: bool
+    local_gate_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class LargeQAffineChowlaGcdSplitAudit:
     product_scale: int
     shift_scale: int
@@ -15331,7 +15375,8 @@ def unconditional_long_mollifier_asymptotic_audit(
         and not balanced_range.full_balanced_family_covered
     ):
         alternative_unverified = (
-            "balanced_zero_slack_u_in_[283/550,3/2]",
+            "balanced_nonzero_j_diagonal_scale_slope_square_function",
+            "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
             "unclassified_slack_cells_outside_zero_slack_family",
             "large_q_centered_product_energy_lambda_2",
         )
@@ -17283,6 +17328,124 @@ def balanced_transition_farey_gate_audit(
         source=(
             "exact balanced-edge normalization and additive "
             "local-density Farey large sieve"
+        ),
+    )
+
+
+def balanced_transition_h_poisson_audit(
+    *,
+    u: Fraction,
+    difference_exponent: Fraction,
+    gcd_exponent: Fraction,
+) -> BalancedTransitionHPoissonAudit:
+    """Audit the nonzero-j h-Poisson line on the balanced transition.
+
+    Poisson summation in ``h`` gives ``w*v-j*s=delta``.  On a
+    ``g=gcd(v,j)=T^gamma`` box, primitive Bezout coordinates turn
+    ``(s,r)`` into a determinant-minus-one linear image of
+    ``(delta/g,n)``.  This function records the exact exponent ledger
+    before the still-unproved diagonal-scale slope square function.
+    """
+    u = F(u)
+    theta = F(difference_exponent)
+    gamma = F(gcd_exponent)
+    if not (F(283, 550) <= u <= F(3, 2)):
+        raise ValueError("u must lie in [283/550,3/2]")
+    if not (u - F(1, 2) <= theta <= u):
+        raise ValueError("nonzero-j shell needs u-1/2 <= theta <= u")
+
+    poisson = u - F(1, 2)
+    v = F(1, 2)
+    j = theta + F(1, 2) - u
+    max_gamma = min(v, j, u - F(1, 2))
+    if not (F(0) <= gamma <= max_gamma):
+        raise ValueError("gcd exponent exceeds a nonzero dual variable")
+
+    delta0 = u - F(1, 2) - gamma
+    line_parameter = u - F(1, 2) + gamma
+    inner_area = delta0 + line_parameter
+    slope_family = gamma + (v - gamma) + (j - gamma)
+    transformed = poisson + inner_area + slope_family
+    asymptotic_target = 2 * u
+    required_diagonal = _positive_part(transformed - asymptotic_target)
+    inner_square_root = inner_area / 2
+    square_root_margin = inner_square_root - required_diagonal
+    fixed_required = _positive_part(
+        transformed - (asymptotic_target - TARGET_SAVING)
+    )
+    critical = (
+        theta == u
+        and gamma == 0
+        and square_root_margin == 0
+    )
+
+    return BalancedTransitionHPoissonAudit(
+        u=u,
+        difference_exponent=theta,
+        gcd_exponent=gamma,
+        h_poisson_factor_exponent=poisson,
+        v_exponent=v,
+        j_exponent=j,
+        delta0_exponent=delta0,
+        line_parameter_exponent=line_parameter,
+        unimodular_inner_area_exponent=inner_area,
+        primitive_slope_family_exponent=slope_family,
+        transformed_cardinality_exponent=transformed,
+        asymptotic_local_target_exponent=asymptotic_target,
+        required_diagonal_scale_saving_exponent=required_diagonal,
+        inner_square_root_saving_exponent=inner_square_root,
+        square_root_power_margin=square_root_margin,
+        fixed_power_required_saving_exponent=fixed_required,
+        determinant_equation="w*v-j*s=delta",
+        unimodular_coordinate_change_exact=True,
+        is_unique_zero_margin_face=critical,
+        diagonal_scale_slope_square_function_proved=False,
+        source="exact h-Poisson and primitive Bezout parametrization",
+    )
+
+
+def balanced_transition_h_poisson_zero_mode_audit(
+    *,
+    u: Fraction,
+) -> BalancedTransitionHPoissonZeroModeAudit:
+    """Audit the resonant ``j=0`` term after h-Poisson.
+
+    The dual transform requires ``v=T^(1/2)``.  Since ``w*v=delta``
+    and ``delta=T^(u-1/2)``, a positive-power integer ``w`` exists only
+    for ``u>=1`` and then has exponent ``u-1``.  Divisibility reduces
+    the ``(w,delta)`` pair count to exponent ``u-1/2``.  Including
+    ``s`` and the Poisson factor gives exponent ``3u-1``.
+    """
+    u = F(u)
+    if not (F(283, 550) <= u <= F(3, 2)):
+        raise ValueError("u must lie in [283/550,3/2]")
+    present = u >= F(1)
+    difference = u - F(1) if present else F(0)
+    relative = difference / u if present else F(0)
+    transformed = 3 * u - F(1) if present else F(0)
+    target = 2 * u
+    required = _positive_part(transformed - target) if present else F(0)
+    taper_boundary = present and u == F(1)
+    rapid_tail = not present
+    covered = rapid_tail or taper_boundary
+    return BalancedTransitionHPoissonZeroModeAudit(
+        u=u,
+        resonant_zero_mode_present=present,
+        difference_exponent=difference,
+        shift_family_exponent=difference,
+        mobius_interval_exponent=u,
+        relative_shift_exponent=relative,
+        transformed_cardinality_exponent=transformed,
+        asymptotic_local_target_exponent=target,
+        required_affine_dispersion_saving_exponent=required,
+        published_strict_one_third_theorem_applies=(relative > F(1, 3)),
+        endpoint_tapers_close_zero_power_margin=taper_boundary,
+        zero_mode_is_rapid_transform_tail=rapid_tail,
+        affine_mobius_dispersion_proved=(required == 0),
+        local_gate_covered=covered,
+        source=(
+            "exact j=0 h-Poisson resonance and the strict one-third "
+            "short-interval threshold"
         ),
     )
 
@@ -28086,6 +28249,58 @@ def main() -> None:
         + transition_report(transition_gate)
         + "; "
         + transition_report(transition_upper)
+    )
+    h_poisson_transition = balanced_transition_h_poisson_audit(
+        u=F(1),
+        difference_exponent=F(1),
+        gcd_exponent=F(0),
+    )
+    h_poisson_zero = balanced_transition_h_poisson_zero_mode_audit(
+        u=F(3, 2)
+    )
+    print(
+        "mwkf_balanced_h_poisson: "
+        f"u={_fmt(h_poisson_transition.u)} "
+        f"theta={_fmt(h_poisson_transition.difference_exponent)} "
+        f"gamma={_fmt(h_poisson_transition.gcd_exponent)} "
+        f"H={_fmt(h_poisson_transition.h_poisson_factor_exponent)} "
+        f"v={_fmt(h_poisson_transition.v_exponent)} "
+        f"j={_fmt(h_poisson_transition.j_exponent)} "
+        f"delta0={_fmt(h_poisson_transition.delta0_exponent)} "
+        f"n={_fmt(h_poisson_transition.line_parameter_exponent)} "
+        "area="
+        f"{_fmt(h_poisson_transition.unimodular_inner_area_exponent)} "
+        "slopes="
+        f"{_fmt(h_poisson_transition.primitive_slope_family_exponent)} "
+        "card="
+        f"{_fmt(h_poisson_transition.transformed_cardinality_exponent)} "
+        "target="
+        f"{_fmt(h_poisson_transition.asymptotic_local_target_exponent)} "
+        "diagonal="
+        f"{_fmt(h_poisson_transition.required_diagonal_scale_saving_exponent)} "
+        "sqrt="
+        f"{_fmt(h_poisson_transition.inner_square_root_saving_exponent)} "
+        "margin="
+        f"{_fmt(h_poisson_transition.square_root_power_margin)} "
+        "fixed="
+        f"{_fmt(h_poisson_transition.fixed_power_required_saving_exponent)} "
+        f"critical={h_poisson_transition.is_unique_zero_margin_face} "
+        "pevp="
+        f"{h_poisson_transition.diagonal_scale_slope_square_function_proved}; "
+        f"j0_u={_fmt(h_poisson_zero.u)} "
+        f"present={h_poisson_zero.resonant_zero_mode_present} "
+        f"theta={_fmt(h_poisson_zero.difference_exponent)} "
+        f"relative={_fmt(h_poisson_zero.relative_shift_exponent)} "
+        "card="
+        f"{_fmt(h_poisson_zero.transformed_cardinality_exponent)} "
+        "target="
+        f"{_fmt(h_poisson_zero.asymptotic_local_target_exponent)} "
+        "missing="
+        f"{_fmt(h_poisson_zero.required_affine_dispersion_saving_exponent)} "
+        "published="
+        f"{h_poisson_zero.published_strict_one_third_theorem_applies} "
+        f"affine={h_poisson_zero.affine_mobius_dispersion_proved} "
+        f"covered={h_poisson_zero.local_gate_covered}"
     )
     valuation = large_q_product_lift_valuation_audit(prime_fixture=2)
     print(

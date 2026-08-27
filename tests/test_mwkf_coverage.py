@@ -2549,7 +2549,8 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "residual_semantics=top_level_gate_count_not_literal_cell_count "
             "top_level=OLISK_q^{L,R} "
             "alternative_unverified="
-            "balanced_zero_slack_u_in_[283/550,3/2],"
+            "balanced_nonzero_j_diagonal_scale_slope_square_function,"
+            "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2],"
             "unclassified_slack_cells_outside_zero_slack_family,"
             "large_q_centered_product_energy_lambda_2 "
         "all_dyadic_cells=False remainder_o_T=False"
@@ -5502,7 +5503,8 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     )
     assert audit.residual_top_level_gates == ("OLISK_q^{L,R}",)
     assert audit.alternative_route_unverified_gates == (
-        "balanced_zero_slack_u_in_[283/550,3/2]",
+        "balanced_nonzero_j_diagonal_scale_slope_square_function",
+        "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
         "unclassified_slack_cells_outside_zero_slack_family",
         "large_q_centered_product_energy_lambda_2",
     )
@@ -7060,7 +7062,8 @@ def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
 
     final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
     assert final.alternative_route_unverified_gates == (
-        "balanced_zero_slack_u_in_[283/550,3/2]",
+        "balanced_nonzero_j_diagonal_scale_slope_square_function",
+        "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
         "unclassified_slack_cells_outside_zero_slack_family",
         "large_q_centered_product_energy_lambda_2",
     )
@@ -7142,6 +7145,106 @@ def test_balanced_transition_farey_gate_has_exact_normalized_deficit(
         "u=3/2 theta=3/2 q=3/2 R=3/2 S=3/2 H=1 L=1 A=2 "
         "farey=4 target=2999/1000 missing=1001/1000 "
         "global=999/1000 two_mu=True covered=False"
+    ) in output
+
+
+def test_balanced_transition_h_poisson_splits_pevp_from_zero_mode(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The transition residual has distinct nonzero-j and resonant j=0 gates."""
+    nonzero = getattr(
+        coverage_audit,
+        "balanced_transition_h_poisson_audit",
+        None,
+    )
+    zero = getattr(
+        coverage_audit,
+        "balanced_transition_h_poisson_zero_mode_audit",
+        None,
+    )
+    assert nonzero is not None, "nonzero h-Poisson audit is missing"
+    assert zero is not None, "zero-mode h-Poisson audit is missing"
+
+    critical = nonzero(u=F(1), difference_exponent=F(1), gcd_exponent=F(0))
+    assert critical.h_poisson_factor_exponent == F(1, 2)
+    assert critical.v_exponent == F(1, 2)
+    assert critical.j_exponent == F(1, 2)
+    assert critical.delta0_exponent == F(1, 2)
+    assert critical.line_parameter_exponent == F(1, 2)
+    assert critical.unimodular_inner_area_exponent == F(1)
+    assert critical.primitive_slope_family_exponent == F(1)
+    assert critical.transformed_cardinality_exponent == F(5, 2)
+    assert critical.asymptotic_local_target_exponent == F(2)
+    assert critical.required_diagonal_scale_saving_exponent == F(1, 2)
+    assert critical.inner_square_root_saving_exponent == F(1, 2)
+    assert critical.square_root_power_margin == F(0)
+    assert critical.fixed_power_required_saving_exponent == F(501, 1000)
+    assert critical.is_unique_zero_margin_face
+    assert critical.determinant_equation == "w*v-j*s=delta"
+    assert critical.unimodular_coordinate_change_exact
+    assert not critical.diagonal_scale_slope_square_function_proved
+
+    upper = nonzero(
+        u=F(3, 2),
+        difference_exponent=F(3, 2),
+        gcd_exponent=F(0),
+    )
+    assert upper.v_exponent == F(1, 2)
+    assert upper.j_exponent == F(1, 2)
+    assert upper.delta0_exponent == F(1)
+    assert upper.line_parameter_exponent == F(1)
+    assert upper.unimodular_inner_area_exponent == F(2)
+    assert upper.transformed_cardinality_exponent == F(4)
+    assert upper.required_diagonal_scale_saving_exponent == F(1)
+    assert upper.inner_square_root_saving_exponent == F(1)
+    assert upper.square_root_power_margin == F(0)
+    assert upper.fixed_power_required_saving_exponent == F(1001, 1000)
+    assert upper.is_unique_zero_margin_face
+
+    endpoint_zero = zero(u=F(3, 2))
+    assert endpoint_zero.resonant_zero_mode_present
+    assert endpoint_zero.difference_exponent == F(1, 2)
+    assert endpoint_zero.shift_family_exponent == F(1, 2)
+    assert endpoint_zero.mobius_interval_exponent == F(3, 2)
+    assert endpoint_zero.relative_shift_exponent == F(1, 3)
+    assert endpoint_zero.transformed_cardinality_exponent == F(7, 2)
+    assert endpoint_zero.asymptotic_local_target_exponent == F(3)
+    assert endpoint_zero.required_affine_dispersion_saving_exponent == F(1, 2)
+    assert not endpoint_zero.published_strict_one_third_theorem_applies
+    assert not endpoint_zero.affine_mobius_dispersion_proved
+
+    transition_zero = zero(u=F(1))
+    assert transition_zero.resonant_zero_mode_present
+    assert transition_zero.difference_exponent == F(0)
+    assert transition_zero.required_affine_dispersion_saving_exponent == F(0)
+    assert transition_zero.endpoint_tapers_close_zero_power_margin
+    assert transition_zero.local_gate_covered
+
+    subtransition_zero = zero(u=F(4, 5))
+    assert not subtransition_zero.resonant_zero_mode_present
+    assert subtransition_zero.zero_mode_is_rapid_transform_tail
+    assert subtransition_zero.local_gate_covered
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced00c h-Poisson separates PEVP from one resonant zero mode",
+        r"wv-js=\delta",
+        r"\theta=u,\qquad\gamma=0",
+        r"\theta_0=u-1",
+        "balanced_transition_h_poisson_audit",
+        "balanced_transition_h_poisson_zero_mode_audit",
+    ):
+        assert marker in note
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_balanced_h_poisson: u=1 theta=1 gamma=0 H=1/2 "
+        "v=1/2 j=1/2 delta0=1/2 n=1/2 area=1 slopes=1 "
+        "card=5/2 target=2 diagonal=1/2 sqrt=1/2 margin=0 "
+        "fixed=501/1000 critical=True pevp=False; "
+        "j0_u=3/2 present=True theta=1/2 relative=1/3 card=7/2 "
+        "target=3 missing=1/2 published=False affine=False covered=False"
     ) in output
 
 
