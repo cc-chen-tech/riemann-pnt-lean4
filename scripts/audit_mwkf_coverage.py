@@ -11643,6 +11643,380 @@ def cross_modulus_product_frequency_density_audit(
     }
 
 
+def weighted_cross_modulus_hoeffding_audit(
+    *,
+    left_modulus: int,
+    right_modulus: int,
+    inverse_pair_weights: dict[tuple[int, int], Fraction],
+) -> dict[str, object]:
+    """Decompose an arbitrary inverse-label packet by CRT coordinates."""
+
+    s1 = int(left_modulus)
+    s2 = int(right_modulus)
+    factors1 = _finite_prime_exponents(s1) if s1 > 1 else {}
+    factors2 = _finite_prime_exponents(s2) if s2 > 1 else {}
+    if (
+        s1 <= 1
+        or s2 <= 1
+        or any(exponent != 1 for exponent in (*factors1.values(), *factors2.values()))
+    ):
+        raise ValueError("both moduli must be squarefree and greater than one")
+
+    common = gcd(s1, s2)
+    lcm_modulus = s1 * s2 // common
+    primes = tuple(sorted(_finite_prime_exponents(lcm_modulus)))
+    states = tuple(
+        (left_inverse, right_inverse)
+        for left_inverse in range(1, s1)
+        if gcd(left_inverse, s1) == 1
+        for right_inverse in range(1, s2)
+        if gcd(right_inverse, s2) == 1
+    )
+    supplied_states = set(inverse_pair_weights)
+    if supplied_states != set(states):
+        raise ValueError("weights must be supplied for every unit inverse-label pair")
+    weights = {state: F(inverse_pair_weights[state]) for state in states}
+
+    local_coordinates = {
+        state: {
+            prime: (
+                (state[0] % prime, state[1] % prime)
+                if s1 % prime == 0 and s2 % prime == 0
+                else state[0] % prime
+                if s1 % prime == 0
+                else state[1] % prime
+            )
+            for prime in primes
+        }
+        for state in states
+    }
+
+    def conditional_average(
+        values: dict[tuple[int, int], Fraction],
+        prime: int,
+    ) -> dict[tuple[int, int], Fraction]:
+        groups: dict[tuple[object, ...], list[tuple[int, int]]] = {}
+        other_primes = tuple(value for value in primes if value != prime)
+        for state in states:
+            key = tuple(local_coordinates[state][value] for value in other_primes)
+            groups.setdefault(key, []).append(state)
+        result: dict[tuple[int, int], Fraction] = {}
+        for group in groups.values():
+            average = sum((values[state] for state in group), F(0)) / len(group)
+            for state in group:
+                result[state] = average
+        return result
+
+    component_values: dict[int, dict[tuple[int, int], Fraction]] = {}
+    for divisor in _positive_divisors(lcm_modulus):
+        values = dict(weights)
+        for prime in primes:
+            averaged = conditional_average(values, prime)
+            if divisor % prime == 0:
+                values = {
+                    state: values[state] - averaged[state] for state in states
+                }
+            else:
+                values = averaged
+        component_values[divisor] = values
+
+    reconstructed = {
+        state: sum(
+            (component_values[divisor][state] for divisor in component_values),
+            F(0),
+        )
+        for state in states
+    }
+    original_energy = sum((value * value for value in weights.values()), F(0))
+    component_energies = {
+        divisor: sum((value * value for value in values.values()), F(0))
+        for divisor, values in component_values.items()
+    }
+    component_energy_sum = sum(component_energies.values(), F(0))
+    pairwise_inner_products: dict[tuple[int, int], Fraction] = {}
+    component_divisors = tuple(component_values)
+    for left_position, left_divisor in enumerate(component_divisors):
+        for right_divisor in component_divisors[left_position + 1 :]:
+            pairwise_inner_products[(left_divisor, right_divisor)] = sum(
+                (
+                    component_values[left_divisor][state]
+                    * component_values[right_divisor][state]
+                    for state in states
+                ),
+                F(0),
+            )
+
+    active_prime_marginal_sums: dict[
+        tuple[int, int], tuple[Fraction, ...]
+    ] = {}
+    for divisor, values in component_values.items():
+        for prime in primes:
+            if divisor % prime != 0:
+                continue
+            other_primes = tuple(value for value in primes if value != prime)
+            groups: dict[tuple[object, ...], list[tuple[int, int]]] = {}
+            for state in states:
+                key = tuple(local_coordinates[state][value] for value in other_primes)
+                groups.setdefault(key, []).append(state)
+            active_prime_marginal_sums[(divisor, prime)] = tuple(
+                sum((values[state] for state in group), F(0))
+                for group in groups.values()
+            )
+
+    left_cofactor = s1 // common
+    right_cofactor = s2 // common
+    frequency_residues = {
+        state: (
+            right_cofactor * state[0] - left_cofactor * state[1]
+        )
+        % lcm_modulus
+        for state in states
+    }
+    unweighted_fibre_multiplicities = {
+        residue: sum(
+            1 for state in states if frequency_residues[state] == residue
+        )
+        for residue in range(lcm_modulus)
+    }
+    weighted_fibre_sums = {
+        residue: sum(
+            (
+                weights[state]
+                for state in states
+                if frequency_residues[state] == residue
+            ),
+            F(0),
+        )
+        for residue in range(lcm_modulus)
+    }
+    component_fibre_sums = {
+        divisor: {
+            residue: sum(
+                (
+                    values[state]
+                    for state in states
+                    if frequency_residues[state] == residue
+                ),
+                F(0),
+            )
+            for residue in range(lcm_modulus)
+        }
+        for divisor, values in component_values.items()
+    }
+    packet_mean = sum(weights.values(), F(0)) / len(states)
+    principal_density = F(len(states), lcm_modulus)
+    principal_weighted_density = packet_mean * principal_density
+    constant_centered_fibre_sums = {
+        residue: packet_mean
+        * (F(unweighted_fibre_multiplicities[residue]) - principal_density)
+        for residue in range(lcm_modulus)
+    }
+    nonconstant_fibre_sums = {
+        residue: sum(
+            (
+                component_fibre_sums[divisor][residue]
+                for divisor in component_fibre_sums
+                if divisor > 1
+            ),
+            F(0),
+        )
+        for residue in range(lcm_modulus)
+    }
+    weighted_fibre_reassembly = {
+        residue: (
+            principal_weighted_density
+            + constant_centered_fibre_sums[residue]
+            + nonconstant_fibre_sums[residue]
+        )
+        for residue in range(lcm_modulus)
+    }
+    constant_component_matches = all(
+        component_fibre_sums[1][residue]
+        == packet_mean * unweighted_fibre_multiplicities[residue]
+        for residue in range(lcm_modulus)
+    )
+    constant_centered_zero = (
+        sum(constant_centered_fibre_sums.values(), F(0)) == 0
+    )
+    nonconstant_zero = sum(nonconstant_fibre_sums.values(), F(0)) == 0
+    weighted_reassembly_exact = weighted_fibre_reassembly == weighted_fibre_sums
+    energy_identity_exact = component_energy_sum == original_energy
+    pairwise_orthogonal = all(
+        value == 0 for value in pairwise_inner_products.values()
+    )
+    active_marginals_zero = all(
+        value == 0
+        for marginal_sums in active_prime_marginal_sums.values()
+        for value in marginal_sums
+    )
+    return {
+        "left_modulus": s1,
+        "right_modulus": s2,
+        "lcm_modulus": lcm_modulus,
+        "component_point_values": component_values,
+        "reconstructed_point_values": reconstructed,
+        "pointwise_reconstruction_exact": reconstructed == weights,
+        "original_l2_energy": original_energy,
+        "component_l2_energies": component_energies,
+        "component_energy_sum": component_energy_sum,
+        "orthogonal_energy_identity_exact": energy_identity_exact,
+        "pairwise_component_inner_products": pairwise_inner_products,
+        "all_distinct_components_pairwise_orthogonal": pairwise_orthogonal,
+        "active_prime_conditional_marginal_sums": active_prime_marginal_sums,
+        "all_active_prime_conditional_marginals_zero": active_marginals_zero,
+        "frequency_residue_by_inverse_pair": frequency_residues,
+        "unweighted_frequency_fibre_multiplicities": (
+            unweighted_fibre_multiplicities
+        ),
+        "weighted_frequency_fibre_sums": weighted_fibre_sums,
+        "component_frequency_fibre_sums": component_fibre_sums,
+        "packet_global_mean": packet_mean,
+        "principal_local_density": principal_density,
+        "principal_weighted_density": principal_weighted_density,
+        "constant_centered_frequency_fibre_sums": (
+            constant_centered_fibre_sums
+        ),
+        "nonconstant_component_frequency_fibre_sums": nonconstant_fibre_sums,
+        "weighted_fibre_reassembly": weighted_fibre_reassembly,
+        "weighted_fibre_reassembly_exact": weighted_reassembly_exact,
+        "constant_component_matches_mean_times_unweighted_multiplicity": (
+            constant_component_matches
+        ),
+        "constant_centered_frequency_sum_is_zero": constant_centered_zero,
+        "nonconstant_component_frequency_sum_is_zero": nonconstant_zero,
+        "arbitrary_fixed_modulus_pair_packet_centered_exactly": (
+            weighted_reassembly_exact
+            and constant_component_matches
+            and constant_centered_zero
+            and nonconstant_zero
+            and energy_identity_exact
+            and pairwise_orthogonal
+            and active_marginals_zero
+        ),
+        "outer_mobius_pair_weight_retained_linearly": True,
+        "inner_type_mobius_weights_retained_linearly": True,
+        "h_delta_product_packet_retained_linearly": True,
+        "afe_reflection_principal_density_reassembled": False,
+        "signed_centered_dispersion_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def weighted_principal_density_normalization_audit(
+    *,
+    modulus_packets: dict[int, dict[int, Fraction]],
+) -> dict[str, object]:
+    """Check whether the kappa ledger contains an LCM normalization."""
+
+    if not modulus_packets:
+        raise ValueError("at least one squarefree modulus packet is required")
+    packets: dict[int, dict[int, Fraction]] = {}
+    unit_rows: dict[int, tuple[int, ...]] = {}
+    for raw_modulus, raw_packet in modulus_packets.items():
+        modulus = int(raw_modulus)
+        factors = _finite_prime_exponents(modulus) if modulus > 1 else {}
+        if modulus <= 1 or any(exponent != 1 for exponent in factors.values()):
+            raise ValueError("every packet modulus must be squarefree and greater than one")
+        units = tuple(value for value in range(1, modulus) if gcd(value, modulus) == 1)
+        if set(raw_packet) != set(units):
+            raise ValueError("each packet must contain every unit inverse label")
+        packets[modulus] = {unit: F(raw_packet[unit]) for unit in units}
+        unit_rows[modulus] = units
+
+    totals = {
+        modulus: sum(packet.values(), F(0))
+        for modulus, packet in packets.items()
+    }
+    signed_totals = {
+        modulus: _finite_mobius(modulus) * total
+        for modulus, total in totals.items()
+    }
+    global_total = sum(signed_totals.values(), F(0))
+    global_square = global_total * global_total
+
+    reciprocal_lcm_candidate = F(0)
+    unnormalized_principal = F(0)
+    explicit_normalized_kappa_average = F(0)
+    pair_rows: list[dict[str, object]] = []
+    for left_modulus, left_total in totals.items():
+        for right_modulus, right_total in totals.items():
+            lcm_modulus = left_modulus * right_modulus // gcd(
+                left_modulus, right_modulus
+            )
+            left_phi = len(unit_rows[left_modulus])
+            right_phi = len(unit_rows[right_modulus])
+            packet_pair_mean = F(left_total, left_phi) * F(
+                right_total, right_phi
+            )
+            principal_density = F(left_phi * right_phi, lcm_modulus)
+            per_frequency_principal = packet_pair_mean * principal_density
+            outer_sign = _finite_mobius(left_modulus) * _finite_mobius(
+                right_modulus
+            )
+            direct_reciprocal_lcm_contribution = F(
+                outer_sign * left_total * right_total,
+                lcm_modulus,
+            )
+            unnormalized_contribution = sum(
+                (
+                    outer_sign * per_frequency_principal
+                    for _ in range(lcm_modulus)
+                ),
+                F(0),
+            )
+            explicit_normalized_kappa_average_contribution = F(
+                unnormalized_contribution,
+                lcm_modulus,
+            )
+            reciprocal_lcm_candidate += direct_reciprocal_lcm_contribution
+            explicit_normalized_kappa_average += (
+                explicit_normalized_kappa_average_contribution
+            )
+            unnormalized_principal += unnormalized_contribution
+            pair_rows.append(
+                {
+                    "left_modulus": left_modulus,
+                    "right_modulus": right_modulus,
+                    "lcm_modulus": lcm_modulus,
+                    "packet_pair_mean": packet_pair_mean,
+                    "principal_density": principal_density,
+                    "per_frequency_principal": per_frequency_principal,
+                    "direct_reciprocal_lcm_contribution": (
+                        direct_reciprocal_lcm_contribution
+                    ),
+                    "explicit_normalized_kappa_average_contribution": (
+                        explicit_normalized_kappa_average_contribution
+                    ),
+                    "unnormalized_kappa_sum_contribution": (
+                        unnormalized_contribution
+                    ),
+                }
+            )
+
+    return {
+        "packet_totals": totals,
+        "outer_signed_packet_totals": signed_totals,
+        "global_linear_packet_total": global_total,
+        "global_square": global_square,
+        "pair_rows": tuple(pair_rows),
+        "reciprocal_lcm_density_candidate": reciprocal_lcm_candidate,
+        "explicit_normalized_kappa_average_principal_total": (
+            explicit_normalized_kappa_average
+        ),
+        "unnormalized_kappa_principal_total": unnormalized_principal,
+        "unnormalized_principal_recovers_global_square": (
+            unnormalized_principal == global_square
+        ),
+        "reciprocal_lcm_candidate_requires_kappa_average": (
+            reciprocal_lcm_candidate == explicit_normalized_kappa_average
+        ),
+        "reciprocal_lcm_saving_present_in_original_square": False,
+        "afe_ttstar_extra_lcm_normalization_proved": False,
+        "principal_density_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

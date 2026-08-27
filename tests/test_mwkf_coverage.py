@@ -3629,6 +3629,188 @@ def test_cross_modulus_frequency_density_has_exact_centered_euler_product() -> N
     assert same["principal_local_density"] == F(32, 15)
 
 
+def test_weighted_cross_modulus_hoeffding_projection_reconstructs_packet() -> None:
+    audit = getattr(
+        coverage_audit,
+        "weighted_cross_modulus_hoeffding_audit",
+        None,
+    )
+    assert audit is not None, "weighted cross-modulus Hoeffding audit is missing"
+
+    weights = {
+        (1, 1): F(1),
+        (1, 3): F(2),
+        (1, 7): F(4),
+        (1, 9): F(8),
+        (5, 1): F(16),
+        (5, 3): F(32),
+        (5, 7): F(64),
+        (5, 9): F(128),
+    }
+    result = audit(
+        left_modulus=6,
+        right_modulus=10,
+        inverse_pair_weights=weights,
+    )
+    point = (1, 1)
+    assert result["component_point_values"][1][point] == F(255, 8)
+    assert result["component_point_values"][3][point] == F(-225, 8)
+    assert result["component_point_values"][5][point] == F(-187, 8)
+    assert result["component_point_values"][15][point] == F(165, 8)
+    assert result["component_point_values"][2][point] == 0
+    assert result["component_point_values"][6][point] == 0
+    assert result["component_point_values"][10][point] == 0
+    assert result["component_point_values"][30][point] == 0
+    assert result["pointwise_reconstruction_exact"]
+    assert result["reconstructed_point_values"] == weights
+
+
+def test_weighted_cross_modulus_hoeffding_components_are_orthogonal() -> None:
+    audit = coverage_audit.weighted_cross_modulus_hoeffding_audit
+    weights = {
+        (1, 1): F(1),
+        (1, 3): F(2),
+        (1, 7): F(4),
+        (1, 9): F(8),
+        (5, 1): F(16),
+        (5, 3): F(32),
+        (5, 7): F(64),
+        (5, 9): F(128),
+    }
+    result = audit(
+        left_modulus=6,
+        right_modulus=10,
+        inverse_pair_weights=weights,
+    )
+    assert result["original_l2_energy"] == 21845
+    assert result["component_l2_energies"] == {
+        1: F(65025, 8),
+        2: 0,
+        3: F(50625, 8),
+        5: F(33235, 8),
+        6: 0,
+        10: 0,
+        15: F(25875, 8),
+        30: 0,
+    }
+    assert result["component_energy_sum"] == 21845
+    assert result["orthogonal_energy_identity_exact"]
+    assert result["all_distinct_components_pairwise_orthogonal"]
+    assert result["all_active_prime_conditional_marginals_zero"]
+
+
+def test_weighted_hoeffding_projection_uses_nontrivial_common_prime_pair() -> None:
+    audit = coverage_audit.weighted_cross_modulus_hoeffding_audit
+    weights = {
+        (left_inverse, right_inverse): F(
+            {
+                (1, 1): 1,
+                (1, 2): 2,
+                (2, 1): 4,
+                (2, 2): 8,
+            }[(left_inverse % 3, right_inverse % 3)]
+        )
+        for left_inverse in range(1, 15)
+        if gcd(left_inverse, 15) == 1
+        for right_inverse in range(1, 21)
+        if gcd(right_inverse, 21) == 1
+    }
+    result = audit(
+        left_modulus=15,
+        right_modulus=21,
+        inverse_pair_weights=weights,
+    )
+    assert result["component_point_values"][1][(1, 1)] == F(15, 4)
+    assert result["component_point_values"][3][(1, 1)] == F(-11, 4)
+    assert result["component_point_values"][3][(1, 2)] == F(-7, 4)
+    assert result["component_point_values"][3][(2, 1)] == F(1, 4)
+    assert result["component_point_values"][3][(2, 2)] == F(17, 4)
+    assert result["original_l2_energy"] == 2040
+    assert result["component_l2_energies"][1] == 1350
+    assert result["component_l2_energies"][3] == 690
+    assert sum(
+        energy
+        for divisor, energy in result["component_l2_energies"].items()
+        if divisor not in (1, 3)
+    ) == 0
+    assert result["all_active_prime_conditional_marginals_zero"]
+    assert result["arbitrary_fixed_modulus_pair_packet_centered_exactly"]
+
+
+def test_weighted_cross_modulus_fibres_split_principal_and_centered_parts() -> None:
+    audit = coverage_audit.weighted_cross_modulus_hoeffding_audit
+    weights = {
+        (1, 1): F(1),
+        (1, 3): F(2),
+        (1, 7): F(4),
+        (1, 9): F(8),
+        (5, 1): F(16),
+        (5, 3): F(32),
+        (5, 7): F(64),
+        (5, 9): F(128),
+    }
+    result = audit(
+        left_modulus=6,
+        right_modulus=10,
+        inverse_pair_weights=weights,
+    )
+    assert result["weighted_frequency_fibre_sums"][2] == 1
+    assert result["weighted_frequency_fibre_sums"][26] == 2
+    assert result["component_frequency_fibre_sums"][1][2] == F(255, 8)
+    assert result["packet_global_mean"] == F(255, 8)
+    assert result["principal_weighted_density"] == F(17, 2)
+    assert result["constant_centered_frequency_fibre_sums"][2] == F(187, 8)
+    assert result["constant_centered_frequency_fibre_sums"][1] == F(-17, 2)
+    assert result["nonconstant_component_frequency_fibre_sums"][2] == F(-247, 8)
+    assert result["weighted_fibre_reassembly_exact"]
+    assert result["constant_component_matches_mean_times_unweighted_multiplicity"]
+    assert result["constant_centered_frequency_sum_is_zero"]
+    assert result["nonconstant_component_frequency_sum_is_zero"]
+    assert result["arbitrary_fixed_modulus_pair_packet_centered_exactly"]
+    assert result["outer_mobius_pair_weight_retained_linearly"]
+    assert result["inner_type_mobius_weights_retained_linearly"]
+    assert result["h_delta_product_packet_retained_linearly"]
+    assert not result["afe_reflection_principal_density_reassembled"]
+    assert not result["signed_centered_dispersion_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_unnormalized_kappa_sum_cancels_reciprocal_lcm_density() -> None:
+    audit = getattr(
+        coverage_audit,
+        "weighted_principal_density_normalization_audit",
+        None,
+    )
+    assert audit is not None, "weighted principal-density normalization audit is missing"
+
+    result = audit(
+        modulus_packets={
+            5: {1: F(1), 2: F(-2), 3: F(3), 4: F(1)},
+            6: {1: F(5), 5: F(-7)},
+        }
+    )
+    assert result["packet_totals"] == {5: 3, 6: -2}
+    assert result["outer_signed_packet_totals"] == {5: -3, 6: -2}
+    assert result["global_linear_packet_total"] == -5
+    assert result["global_square"] == 25
+    assert result["reciprocal_lcm_density_candidate"] == F(43, 15)
+    assert result["explicit_normalized_kappa_average_principal_total"] == F(
+        43, 15
+    )
+    assert all(
+        row["direct_reciprocal_lcm_contribution"]
+        == row["explicit_normalized_kappa_average_contribution"]
+        for row in result["pair_rows"]
+    )
+    assert result["unnormalized_kappa_principal_total"] == 25
+    assert result["unnormalized_principal_recovers_global_square"]
+    assert result["reciprocal_lcm_candidate_requires_kappa_average"]
+    assert not result["reciprocal_lcm_saving_present_in_original_square"]
+    assert not result["afe_ttstar_extra_lcm_normalization_proved"]
+    assert not result["principal_density_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,
