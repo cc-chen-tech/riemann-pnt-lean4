@@ -2994,6 +2994,98 @@ def test_balanced_hdelta_fourier_ledger_supplies_half_power_on_large_conductors(
     assert not at_three["coupled_kernel_gate_closed"]
 
 
+def test_unequal_outer_labels_collapse_to_one_cofactor_kloosterman_gram() -> None:
+    audit = getattr(
+        coverage_audit,
+        "squarefree_crt_unequal_outer_character_gram_audit",
+        None,
+    )
+    assert audit is not None, "unequal-outer CRT character Gram audit is missing"
+
+    result = audit(
+        prime_modulus=5,
+        squarefree_cofactor=7,
+        direct_coefficient=2,
+        outer_product_coefficients={
+            2: {1: 1, 2: -1, 3: 1},
+            3: {1: -1, 4: 2},
+            9: {1: 2, 2: 1, 4: -1},
+        },
+    )
+
+    assert result["squarefree_modulus"] == 35
+    assert result["outer_product_labels"] == (2, 3, 9)
+    assert result["cofactor_character_count"] == 6
+    assert result["crt_character_reconstruction_exact"]
+    assert result["global_character_cauchy_bound_holds"]
+    assert result["character_square_collapse_exact"]
+    assert result["all_kloosterman_formulas_exact"]
+    assert result["all_principal_conditions_exact"]
+    assert result["all_principal_kernels_equal_phi"]
+    assert result["unequal_outer_product_labels_retained_inside_character_square"]
+    assert not result["pointwise_cofactor_l1_cost_paid"]
+
+    rows = result["correlation_rows"]
+    congruent_unequal_principal = [
+        row
+        for row in rows
+        if row["outer_label_1"] == 2
+        and row["outer_label_2"] == 9
+        and row["product_ratio_mod_cofactor"] == 1
+    ]
+    assert congruent_unequal_principal
+    assert all(row["principal_cofactor_mode"] for row in congruent_unequal_principal)
+    assert all(row["principal_kernel_equals_phi"] for row in congruent_unequal_principal)
+
+    genuinely_centered = [
+        row
+        for row in rows
+        if row["outer_label_1"] == 2
+        and row["outer_label_2"] == 3
+        and row["product_ratio_mod_cofactor"] == 1
+    ]
+    assert genuinely_centered
+    assert not any(row["principal_cofactor_mode"] for row in genuinely_centered)
+    assert not result["principal_cofactor_mode_globally_reassembled"]
+    assert not result["centered_cofactor_kloosterman_operator_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    composite = audit(
+        prime_modulus=5,
+        squarefree_cofactor=6,
+        direct_coefficient=1,
+        outer_product_coefficients={
+            6: {11: 1},
+            2: {1: 1},
+        },
+    )
+    assert composite["squarefree_modulus"] == 30
+    assert composite["cofactor_character_count"] == 2
+    assert composite["crt_character_reconstruction_exact"]
+    assert composite["character_square_collapse_exact"]
+    assert composite["all_kloosterman_formulas_exact"]
+    assert composite["all_principal_conditions_exact"]
+    aliases = composite["nonprincipal_finite_alias_rows"]
+    assert aliases
+    alias = next(
+        row
+        for row in aliases
+        if row["outer_label_1"] == 6
+        and row["outer_label_2"] == 2
+        and row["first_product_residue"] == 11
+        and row["second_product_residue"] == 1
+    )
+    assert alias["product_ratio_mod_cofactor"] == 5
+    assert alias["direct_phase_coefficient_mod_cofactor"] == 2
+    assert alias["inverse_phase_coefficient_mod_cofactor"] == 4
+    assert not alias["principal_cofactor_mode"]
+    assert alias["cofactor_correlation"] == pytest.approx(2)
+    assert composite[
+        "nonprincipal_finite_aliases_may_exist_for_composite_cofactor"
+    ]
+    assert not composite["centered_cofactor_kloosterman_operator_bound_proved"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

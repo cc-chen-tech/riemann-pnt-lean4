@@ -196,6 +196,16 @@ def test_research_note_records_product_trace_completion_and_rank_one_boundary() 
         "hdelta_product_incidence_fourier_audit",
         "low-conductor incidence estimate",
         "smooth packet adapter",
+        "### 9.83 The full unequal-label CRT character Gram",
+        r"\widehat K_{r,a}(\chi)",
+        r"\mathcal B_{q,a,\chi}",
+        r"\mathcal C_r(a_1,a_2;y)",
+        r"a_1\equiv a_2\pmod r",
+        "globally coefficient-nonprincipal",
+        r"\mathcal C_6=\varphi(6)=2",
+        "local-principal aliases",
+        "squarefree_crt_unequal_outer_character_gram_audit",
+        "coefficient-nonprincipal operator",
     ):
         assert marker in text
 

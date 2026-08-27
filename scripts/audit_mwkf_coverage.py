@@ -9736,6 +9736,295 @@ def hdelta_fourier_exponent_audit(
     }
 
 
+def squarefree_crt_unequal_outer_character_gram_audit(
+    *,
+    prime_modulus: int,
+    squarefree_cofactor: int,
+    direct_coefficient: int,
+    outer_product_coefficients: dict[int, dict[int, complex]],
+) -> dict[str, object]:
+    """Collapse the full unequal-outer-label CRT character square.
+
+    The outer key is the retained product label ``a=h*delta``.  For
+    ``s=q*r``, expand the cofactor kernel for every ``a`` in multiplicative
+    characters modulo ``r`` and make one Cauchy step only after summing all
+    outer labels inside each character.
+
+    Character orthogonality then converts the full square exactly into the
+    cross kernel
+
+    ``C_r(a1,a2;y) = sum_v K_(r,a1)(v*y) conjugate(K_(r,a2)(v))``
+
+    with ``y=x1/inverse(x2)``.  This is the Kloosterman-type trace with
+    direct coefficient ``B*(y-1)`` and inverse coefficient
+    ``a2-a1*inverse(y)``.  Its principal mode is therefore
+    ``y=1`` and ``a1=a2 (mod r)`` when ``B`` is a unit.
+    """
+
+    q = int(prime_modulus)
+    r = int(squarefree_cofactor)
+
+    def is_prime(value: int) -> bool:
+        return value >= 2 and not any(
+            value % divisor == 0
+            for divisor in range(2, isqrt(value) + 1)
+        )
+
+    r_factorization = _finite_prime_exponents(r) if r > 1 else {}
+    if not is_prime(q):
+        raise ValueError("q must be prime")
+    if (
+        r <= 1
+        or any(exponent != 1 for exponent in r_factorization.values())
+        or gcd(q, r) != 1
+    ):
+        raise ValueError("r must be a squarefree cofactor coprime to q")
+    s = q * r
+    b = int(direct_coefficient) % s
+    if gcd(b, s) != 1:
+        raise ValueError("the direct coefficient must be a unit modulo q*r")
+    if not outer_product_coefficients or any(
+        not family for family in outer_product_coefficients.values()
+    ):
+        raise ValueError("every outer product label needs a coefficient family")
+
+    normalized_coefficients: dict[int, dict[int, complex]] = {}
+    for outer_label, family in outer_product_coefficients.items():
+        normalized_family: dict[int, complex] = {}
+        for residue, coefficient in family.items():
+            reduced = int(residue) % s
+            if gcd(reduced, s) != 1:
+                raise ValueError("all product residues must be units modulo q*r")
+            normalized_family[reduced] = normalized_family.get(
+                reduced, 0j
+            ) + complex(coefficient)
+        normalized_coefficients[int(outer_label)] = normalized_family
+
+    inv_r_q = pow(r, -1, q)
+    inv_q_r = pow(q, -1, r)
+    cofactor_primes = tuple(sorted(r_factorization))
+    discrete_logs: dict[int, dict[int, int]] = {}
+    character_roots: dict[int, complex] = {}
+    for prime in cofactor_primes:
+        order = prime - 1
+        if prime == 2:
+            generator = 1
+        else:
+            order_prime_factors = tuple(_finite_prime_exponents(order))
+            generator = next(
+                candidate
+                for candidate in range(2, prime)
+                if all(
+                    pow(candidate, order // divisor, prime) != 1
+                    for divisor in order_prime_factors
+                )
+            )
+        local_logs: dict[int, int] = {}
+        current = 1
+        for exponent in range(order):
+            local_logs[current] = exponent
+            current = current * generator % prime
+        discrete_logs[prime] = local_logs
+        character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+    character_indices = tuple(
+        product(*(range(prime - 1) for prime in cofactor_primes))
+    )
+    unit_residues = tuple(
+        value for value in range(1, r) if gcd(value, r) == 1
+    )
+    phi_r = len(unit_residues)
+
+    def character(index: tuple[int, ...], value: int) -> complex:
+        if gcd(value, r) != 1:
+            return 0j
+        result = 1 + 0j
+        for component, prime in zip(index, cofactor_primes):
+            exponent = discrete_logs[prime][value % prime]
+            result *= character_roots[prime] ** (
+                component * exponent % (prime - 1)
+            )
+        return result
+
+    def kernel(modulus: int, twist: int, outer_label: int, value: int) -> complex:
+        reduced = value % modulus
+        if gcd(reduced, modulus) != 1:
+            return 0j
+        phase = twist * (
+            direct_coefficient * reduced
+            - outer_label * pow(reduced, -1, modulus)
+        ) % modulus
+        root = cmath.exp(2j * cmath.pi / modulus)
+        return root**phase
+
+    cofactor_fourier: dict[int, list[complex]] = {}
+    prime_character_forms: dict[int, list[complex]] = {}
+    for outer_label, family in normalized_coefficients.items():
+        cofactor_values = {
+            value: kernel(r, inv_q_r, outer_label, value)
+            for value in unit_residues
+        }
+        cofactor_fourier[outer_label] = [
+            sum(
+                cofactor_values[value]
+                * character(index, value).conjugate()
+                for value in unit_residues
+            )
+            for index in character_indices
+        ]
+        prime_character_forms[outer_label] = [
+            sum(
+                coefficient
+                * character(index, value)
+                * kernel(q, inv_r_q, outer_label, value)
+                for value, coefficient in family.items()
+            )
+            for index in character_indices
+        ]
+
+    direct_full_sum = sum(
+        coefficient * kernel(s, 1, outer_label, value)
+        for outer_label, family in normalized_coefficients.items()
+        for value, coefficient in family.items()
+    )
+    character_totals = [
+        sum(
+            cofactor_fourier[outer_label][character_position]
+            * prime_character_forms[outer_label][character_position]
+            for outer_label in normalized_coefficients
+        )
+        for character_position in range(phi_r)
+    ]
+    character_reconstruction = sum(character_totals, 0j) / phi_r
+    global_character_square = sum(
+        abs(value) ** 2 for value in character_totals
+    ) / phi_r
+
+    correlation_rows: list[dict[str, object]] = []
+    collapsed_character_square = 0j
+    for outer_label_1, family_1 in normalized_coefficients.items():
+        for outer_label_2, family_2 in normalized_coefficients.items():
+            for x1, coefficient_1 in family_1.items():
+                for x2, coefficient_2 in family_2.items():
+                    y = x1 * pow(x2, -1, r) % r
+                    cofactor_correlation = sum(
+                        kernel(r, inv_q_r, outer_label_1, v * y)
+                        * kernel(r, inv_q_r, outer_label_2, v).conjugate()
+                        for v in unit_residues
+                    )
+                    direct_phase_coefficient = (
+                        inv_q_r * direct_coefficient * (y - 1)
+                    ) % r
+                    inverse_phase_coefficient = (
+                        inv_q_r
+                        * (outer_label_2 - outer_label_1 * pow(y, -1, r))
+                    ) % r
+                    root_r = cmath.exp(2j * cmath.pi / r)
+                    kloosterman_formula = sum(
+                        root_r
+                        ** (
+                            direct_phase_coefficient * v
+                            + inverse_phase_coefficient * pow(v, -1, r)
+                        )
+                        for v in unit_residues
+                    )
+                    principal = (
+                        direct_phase_coefficient == 0
+                        and inverse_phase_coefficient == 0
+                    )
+                    expected_principal = (
+                        y == 1 and (outer_label_1 - outer_label_2) % r == 0
+                    )
+                    q_cross = (
+                        coefficient_1
+                        * coefficient_2.conjugate()
+                        * kernel(q, inv_r_q, outer_label_1, x1)
+                        * kernel(q, inv_r_q, outer_label_2, x2).conjugate()
+                    )
+                    collapsed_character_square += q_cross * cofactor_correlation
+                    correlation_rows.append(
+                        {
+                            "outer_label_1": outer_label_1,
+                            "outer_label_2": outer_label_2,
+                            "first_product_residue": x1,
+                            "second_product_residue": x2,
+                            "product_ratio_mod_cofactor": y,
+                            "direct_phase_coefficient_mod_cofactor": (
+                                direct_phase_coefficient
+                            ),
+                            "inverse_phase_coefficient_mod_cofactor": (
+                                inverse_phase_coefficient
+                            ),
+                            "cofactor_correlation": cofactor_correlation,
+                            "kloosterman_formula": kloosterman_formula,
+                            "kloosterman_formula_exact": (
+                                abs(cofactor_correlation - kloosterman_formula)
+                                < 1e-8
+                            ),
+                            "principal_cofactor_mode": principal,
+                            "expected_principal_condition": expected_principal,
+                            "principal_condition_exact": (
+                                principal == expected_principal
+                            ),
+                            "principal_kernel_equals_phi": (
+                                not principal
+                                or abs(cofactor_correlation - phi_r) < 1e-8
+                            ),
+                        }
+                    )
+
+    tolerance = 1e-8
+    nonprincipal_finite_alias_rows = tuple(
+        row
+        for row in correlation_rows
+        if not bool(row["principal_cofactor_mode"])
+        and abs(complex(row["cofactor_correlation"]) - phi_r) < tolerance
+    )
+    return {
+        "squarefree_modulus": s,
+        "prime_modulus": q,
+        "squarefree_cofactor": r,
+        "outer_product_labels": tuple(normalized_coefficients),
+        "cofactor_character_count": phi_r,
+        "direct_full_sum": direct_full_sum,
+        "character_reconstruction": character_reconstruction,
+        "crt_character_reconstruction_exact": (
+            abs(direct_full_sum - character_reconstruction) < tolerance
+        ),
+        "direct_full_energy": abs(direct_full_sum) ** 2,
+        "global_character_square": global_character_square,
+        "global_character_cauchy_bound_holds": (
+            abs(direct_full_sum) ** 2
+            <= global_character_square + tolerance
+        ),
+        "collapsed_character_square": collapsed_character_square,
+        "character_square_collapse_exact": (
+            abs(global_character_square - collapsed_character_square)
+            < tolerance
+        ),
+        "correlation_rows": tuple(correlation_rows),
+        "all_kloosterman_formulas_exact": all(
+            bool(row["kloosterman_formula_exact"])
+            for row in correlation_rows
+        ),
+        "all_principal_conditions_exact": all(
+            bool(row["principal_condition_exact"])
+            for row in correlation_rows
+        ),
+        "all_principal_kernels_equal_phi": all(
+            bool(row["principal_kernel_equals_phi"])
+            for row in correlation_rows
+        ),
+        "nonprincipal_finite_alias_rows": nonprincipal_finite_alias_rows,
+        "nonprincipal_finite_aliases_may_exist_for_composite_cofactor": True,
+        "unequal_outer_product_labels_retained_inside_character_square": True,
+        "pointwise_cofactor_l1_cost_paid": False,
+        "principal_cofactor_mode_globally_reassembled": False,
+        "centered_cofactor_kloosterman_operator_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

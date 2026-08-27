@@ -12518,7 +12518,8 @@ It does **not** yet prove the coupled-kernel gate.  Four adapters remain:
    \]
    whereas (9.558) is only the equal-label slice.  The unequal-label
    cross terms must stay in the same pre-Cauchy operator.  Bounding the
-   equal-label slice alone does not bound the full Gram.
+   equal-label slice alone does not bound the full Gram.  Section 9.83
+   derives the correct full finite Gram, but not its required estimate.
 
 The finite helper hdelta_product_incidence_fourier_audit verifies
 (9.557)--(9.562), including prime, composite reduced-conductor, and full
@@ -12527,6 +12528,151 @@ hdelta_fourier_exponent_audit verifies the isolated ledger (9.563) at
 \(\lambda=1,5/2,3\).  Both keep the low-conductor incidence estimate,
 the unequal-label Gram, the smooth packet adapter, and the coupled-kernel
 conclusion explicitly false.
+
+### 9.83 The full unequal-label CRT character Gram
+
+The missing algebra in the fourth item above can be completed exactly.
+It changes the shape of the residual operator: the full outer-label
+square is not the product-incidence energy (9.539b), but one cofactor
+Kloosterman correlation which retains both labels.
+
+Let \(\mathcal A\) be a finite set of outer product labels
+\(a=h\delta\).  For \(s=qr\), \((q,r)=1\), and a unit \(B\bmod s\), put
+
+\[
+ K_{m,a}^{(t)}(x)=e_m\!\left(t(Bx-a\overline x)\right),
+\]
+
+with \(t=1\) for \(m=s\), \(t=\overline r_q\) for \(m=q\), and
+\(t=\overline q_r\) for \(m=r\).  Given arbitrary signed coefficient
+families \(c_a(x)\) on \(U(s)\), define
+
+\[
+ \mathcal B_s
+ =\sum_{a\in\mathcal A}\sum_xc_a(x)K_{s,a}^{(1)}(x).
+\]
+
+For each label, take the multiplicative Fourier transform only in the
+cofactor:
+
+\[
+ \widehat K_{r,a}(\chi)
+ =\sum_{u\in U(r)}K_{r,a}^{(\overline q_r)}(u)\overline{\chi(u)},
+ \qquad
+ \mathcal B_{q,a,\chi}
+ =\sum_xc_a(x)\chi(x)K_{q,a}^{(\overline r_q)}(x).
+\]
+
+CRT and Fourier inversion give the exact reconstruction
+
+\[
+ \boxed{
+ \mathcal B_s
+ =\frac1{\varphi(r)}
+   \sum_{\chi\bmod r}\sum_{a\in\mathcal A}
+   \widehat K_{r,a}(\chi)\mathcal B_{q,a,\chi}.}
+ \tag{9.564}
+\]
+
+Make one Cauchy step in \(\chi\), with the complete \(a\)-sum still
+inside:
+
+\[
+ \boxed{
+ |\mathcal B_s|^2
+ \leq\frac1{\varphi(r)}
+ \sum_{\chi\bmod r}
+ \left|\sum_{a\in\mathcal A}
+ \widehat K_{r,a}(\chi)\mathcal B_{q,a,\chi}\right|^2.}
+ \tag{9.565}
+\]
+
+Unlike the pointwise use of (9.539), this pays no
+coefficient-independent \(\varphi(r)^{1/2}\) multiplier cost.  Expanding
+the right side of (9.565) and using character orthogonality gives an
+exact four-index kernel.  Put
+
+\[
+ z_a(x)=c_a(x)K_{q,a}^{(\overline r_q)}(x),
+ \qquad y=x_1\overline{x_2}\pmod r.
+\]
+
+Then
+
+\[
+ \boxed{
+ \begin{aligned}
+ \frac1{\varphi(r)}\sum_\chi
+ \left|\sum_a\widehat K_{r,a}(\chi)\mathcal B_{q,a,\chi}\right|^2
+ =\sum_{\substack{a_1,a_2\in\mathcal A\\x_1,x_2}}
+ z_{a_1}(x_1)\overline{z_{a_2}(x_2)}
+ \mathcal C_r(a_1,a_2;y),
+ \end{aligned}}
+ \tag{9.566}
+\]
+
+where
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal C_r(a_1,a_2;y)
+ &=\sum_{v\in U(r)}
+ K_{r,a_1}^{(\overline q_r)}(vy)
+ \overline{K_{r,a_2}^{(\overline q_r)}(v)}\\
+ &=\sum_{v\in U(r)}
+ e_r\!\left(\overline q_r\left\{
+ B(y-1)v+(a_2-a_1\overline y)\overline v
+ \right\}\right).
+ \end{aligned}}
+ \tag{9.567}
+\]
+
+Thus the full unequal-label character square collapses to one explicit
+Kloosterman-type trace.  Since \(B\) is a unit, its simultaneous
+direct/inverse principal mode is classified exactly:
+
+\[
+ \boxed{
+ \begin{aligned}
+ B(y-1)&\equiv0\pmod r,\qquad
+ a_2-a_1\overline y\equiv0\pmod r\\
+ &\Longleftrightarrow
+ y\equiv1\pmod r,\qquad a_1\equiv a_2\pmod r,
+ \end{aligned}
+ \qquad
+ \mathcal C_r=\varphi(r).}
+ \tag{9.568}
+\]
+
+This principal set is larger than equality of the individual
+\((h,\delta)\) labels: distinct products \(a_1,a_2\) remain resonant
+whenever they are congruent modulo \(r\).  It must be recombined with the
+zero dual mode (9.555), both AFE directions, reflection, and the explicit
+diagonal.  Off (9.568), (9.567) is the centered cofactor Kloosterman
+operator in the sense of being globally coefficient-nonprincipal.
+For composite \(r\), this does **not** guarantee pointwise square-root
+cancellation: individual CRT factors may still be locally principal,
+and finite aliases can make \(\mathcal C_r=\varphi(r)\) even when the
+two coefficients in (9.567) are not both zero modulo \(r\).  For example,
+with
+\[
+ q=5,\quad r=6,\quad B=1,\quad y=5,\quad a_1=0,\quad a_2=2,
+\]
+the two coefficients are \(2,4\bmod6\), but
+\(\mathcal C_6=\varphi(6)=2\).  These local-principal aliases remain
+inside the coefficient-nonprincipal operator and must be stratified
+prime by prime.  A pointwise Weil estimate would both miss this issue
+and discard the outer labels; the required result must estimate (9.566)
+jointly with the \(q\)-phase, both Möbius weights, and every dyadic packet.
+
+The finite helper squarefree_crt_unequal_outer_character_gram_audit
+verifies (9.564)--(9.568) independently by character expansion and by
+the collapsed \(v\)-sum.  Its test includes distinct labels
+\(a_1=2,a_2=9\) modulo \(r=7\), which lie on the principal set, a
+coefficient-nonprincipal pair \(a_1=2,a_2=3\), and the composite
+\(r=6\) finite alias above.  The principal reassembly and the centered
+Kloosterman operator estimate remain explicitly false.
 
 ## 10. What has and has not been proved
 
@@ -13186,7 +13332,8 @@ Proved in this note:
 | Squarefree CRT prime-factor transfer | exact factorization and sharp pointwise cofactor cost; coupled character average unproved | For \(s=qr\), (9.536)--(9.539) factor the product trace and separate the cofactor by multiplicative characters while retaining \(\mu(s)\mu(d)\) and \(h\delta\).  A prime bound saving \(q^{-\kappa}\) pays the unavoidable coefficient-independent cost \(r^{1/2}\), so a power remains only for \(\lambda>\sigma/(1+2\kappa)\), (9.541).  Even the optimistic registered \(\kappa=1/8\) requires a prime factor larger than \(s^{4/5}\), gives only \(1/16\) at \(q=s^{9/10}\), and never reaches the required half-power.  Eliminating the \(r^{1/2}\) loss requires a new global character square-function before Cauchy, not a fixed-prime theorem, (9.540)--(9.542) |
 | Rank-one Type-II resonance subtraction | exact classification and centered square-root bound; signed resonant projector unproved | The partial fractions (9.543)--(9.546) classify every constant phase by one global linear equation and one reciprocal-residue equation per equal-shift block.  Its nonpole value is explicit, (9.547), and subtracting it leaves a standard Weil square-root sum, (9.548).  Every admissible partition has resonant dimension at least \(4m-1\), so the positive FKMS moment exceeds its \(3m\) allowance by \(m-1\), (9.549).  The remaining \(\operatorname{RSCCG}_3\) must retain \(\mu(qr)\mu(d)\), \(h\delta\), all characters, and all packet labels before Hölder; neither that signed resonant estimate nor the exhaustive implication to \(\operatorname{CK}_{\rm ub}(3)\) is proved |
 | Resonant-projector dual split | exact principal/centered decomposition; both global estimates unproved | Additive orthogonality on \(L\) and every block residue \(R(\rho)\) gives the product formula (9.552)--(9.554) without taking absolute values.  The zero dual frequency is the explicit product of total-mass products minus local \(a=b\) diagonals, (9.555); it must be recombined across AFE directions, reflection, the explicit diagonal, \(h,\delta\), and dyadic scales.  Every remaining mode has a genuine nonzero \((\lambda,\eta_\rho)\), (9.556), but its squarefree CRT character operator still needs a global pre-Cauchy estimate |
-| Pre-Poisson product-incidence orthogonality | exact equal-outer-label Fourier bound with half-power numerical capacity; full Gram unproved | After the cofactor character square imposes \(x_1\equiv x_2\pmod r\), the equal-\((h,\delta)\) inverse cross phase has reduced conductor \(Q=q/(x_1-x_2,q)\), while the same pair collides modulo \(s/Q\), (9.557)--(9.560).  Grouping \(h,\delta\) modulo \(Q\) gives the exact Fourier-operator bound (9.561)--(9.562).  On the original \(s=T^3,H=L=T^{5/2}\) box, every \(T\leq Q\leq T^3\) has at least half-power numerical capacity, (9.563).  This acts before \(h\)-Poisson and is an alternative ordering of (9.493), not an extra post-Poisson gain.  Closing the route still requires the unequal-\((h_i,\delta_i)\) Gram, a joint count for \(Q<T\), a \(T^\varepsilon\)-cost smooth adapter, compatibility with the preceding reductions, and an exhaustive global packet map |
+| Pre-Poisson product-incidence orthogonality | exact equal-outer-label Fourier bound with half-power numerical capacity; full Gram estimate unproved | After the cofactor character square imposes \(x_1\equiv x_2\pmod r\), the equal-\((h,\delta)\) inverse cross phase has reduced conductor \(Q=q/(x_1-x_2,q)\), while the same pair collides modulo \(s/Q\), (9.557)--(9.560).  Grouping \(h,\delta\) modulo \(Q\) gives the exact Fourier-operator bound (9.561)--(9.562).  On the original \(s=T^3,H=L=T^{5/2}\) box, every \(T\leq Q\leq T^3\) has at least half-power numerical capacity, (9.563).  This acts before \(h\)-Poisson and is an alternative ordering of (9.493), not an extra post-Poisson gain.  Closing the route still requires the unequal-label Gram estimate (9.566), a joint count for \(Q<T\), a \(T^\varepsilon\)-cost smooth adapter, compatibility with the preceding reductions, and an exhaustive global packet map |
+| Full unequal-label CRT character Gram | exact Kloosterman collapse and coefficient-principal classification; global operator bound unproved | Keeping every \(a=h\delta\) label inside one character Cauchy step gives (9.564)--(9.566), with no pointwise \(\varphi(r)^{1/2}\) multiplier cost.  Character orthogonality collapses the full square to the cofactor trace \(\mathcal C_r(a_1,a_2;y)\), (9.567).  Its exact coefficient-principal set is \(y=1,\ a_1\equiv a_2\pmod r\), where the kernel equals \(\varphi(r)\), (9.568); this includes distinct outer product labels.  For composite \(r\), the complement still contains local-principal finite aliases, so no uniform pointwise square-root claim is made.  The principal mode needs global AFE/reflection/diagonal reassembly, while the coefficient-nonprincipal trace must be estimated jointly with the \(q\)-phase, both Möbius weights, and all packets |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
