@@ -2754,6 +2754,31 @@ class BalancedZeroModeAveragedElliottAudit:
 
 
 @dataclass(frozen=True)
+class MRTAffineCriticalParameterAudit:
+    theorem: str
+    truncated_proposition: str
+    slope_log_depth: Fraction
+    shift_log_depth: Fraction
+    shift_length_tends_to_infinity: bool
+    arity: int
+    affine_prefactor_log_exponent: Fraction
+    x_error_log_saving_exponent: Fraction
+    x_error_net_log_exponent: Fraction
+    x_error_term_tends_to_zero: bool
+    truncated_w_upper_h_reciprocal_power: int
+    nontrivial_branch_w_root_power: int
+    affine_coefficient_power: int
+    implied_shift_power_on_k_a_squared: int
+    proof_branch_required_shift_log_depth: Fraction
+    proof_branch_shift_log_margin: Fraction
+    proof_nontrivial_branch_available: bool
+    loglog_over_log_term_diverges_after_affine_prefactor: bool
+    published_bound_is_little_o: bool
+    remaining_gate: str
+    source: str
+
+
+@dataclass(frozen=True)
 class LargeQAffineChowlaGcdSplitAudit:
     product_scale: int
     shift_scale: int
@@ -18313,6 +18338,86 @@ def large_q_affine_chowla_gcd_split_audit(
     )
 
 
+def mrt_affine_critical_parameter_audit(
+    *,
+    slope_log_depth: Fraction,
+    shift_log_depth: Fraction,
+    arity: int,
+) -> MRTAffineCriticalParameterAudit:
+    """Audit MRT Theorem 1.6 at a growing polylogarithmic slope.
+
+    Write ``L=log T``, ``A=L^a`` and ``H=L^h``.  Formula (1.10) in
+    arXiv:1503.05121v3 has the explicit relative prefactor ``A^2``.
+    Its ``log(X)^(-1/3000)`` term therefore has net logarithmic
+    exponent ``2*a-1/3000`` when ``X=T/L^h``.
+
+    The nontrivial branch in the proof of Proposition 5.1 uses both
+
+      ``W^(1/20) >= k*A^2`` and ``W <= H^(1/500)``.
+
+    Consequently ``H >= (k*A^2)^10000``.  At the exponent level this
+    requires ``h >= 20000*a``.  The physical LCPE2 substitution
+    ``a=h=2`` misses that condition by 39998 logarithmic powers.  These
+    two failures are independent of the separate one-dimensional
+    shift-geometry mismatch.
+    """
+    a = F(slope_log_depth)
+    h = F(shift_log_depth)
+    k = int(arity)
+    if a < 0 or h < 0:
+        raise ValueError("logarithmic depths must be nonnegative")
+    if k < 1:
+        raise ValueError("arity must be positive")
+
+    affine_prefactor = 2 * a
+    x_saving = F(1, 3000)
+    x_net = affine_prefactor - x_saving
+    required_h = F(20000) * a
+    h_margin = h - required_h
+    shift_tends_to_infinity = h > 0
+    loglog_term_diverges = affine_prefactor > 0
+    x_term_tends_to_zero = x_net < 0
+    proof_branch_available = h_margin > 0 or (h_margin == 0 and k == 1)
+    published_little_o = (
+        shift_tends_to_infinity
+        and not loglog_term_diverges
+        and x_term_tends_to_zero
+        and proof_branch_available
+    )
+
+    return MRTAffineCriticalParameterAudit(
+        theorem="arXiv:1503.05121v3, Theorem 1.6 (1.10)",
+        truncated_proposition=(
+            "arXiv:1503.05121v3, Proposition 5.1"
+        ),
+        slope_log_depth=a,
+        shift_log_depth=h,
+        shift_length_tends_to_infinity=shift_tends_to_infinity,
+        arity=k,
+        affine_prefactor_log_exponent=affine_prefactor,
+        x_error_log_saving_exponent=x_saving,
+        x_error_net_log_exponent=x_net,
+        x_error_term_tends_to_zero=x_term_tends_to_zero,
+        truncated_w_upper_h_reciprocal_power=500,
+        nontrivial_branch_w_root_power=20,
+        affine_coefficient_power=2,
+        implied_shift_power_on_k_a_squared=10000,
+        proof_branch_required_shift_log_depth=required_h,
+        proof_branch_shift_log_margin=h_margin,
+        proof_nontrivial_branch_available=proof_branch_available,
+        loglog_over_log_term_diverges_after_affine_prefactor=(
+            loglog_term_diverges
+        ),
+        published_bound_is_little_o=published_little_o,
+        remaining_gate="polylog_slope_averaged_affine_chowla",
+        source=(
+            "Matomaki--Radziwill--Tao arXiv:1503.05121v3, "
+            "Theorem 1.6 equations (1.10), Proposition 5.1, and proof "
+            "condition (5.7)"
+        ),
+    )
+
+
 def large_q_product_lift_valuation_audit(
     *, prime_fixture: int
 ) -> LargeQProductLiftValuationAudit:
@@ -28970,6 +29075,30 @@ def main() -> None:
         "only_log="
         f"{zero_elliott.theorem_supplies_only_logarithmic_relative_saving} "
         f"closes={zero_elliott.published_theorem_closes_zero_mode}"
+    )
+    mrt_affine = mrt_affine_critical_parameter_audit(
+        slope_log_depth=F(2),
+        shift_log_depth=F(2),
+        arity=2,
+    )
+    print(
+        "large_q_endpoint: mrt_affine_critical="
+        f"A_log={_fmt(mrt_affine.slope_log_depth)} "
+        f"H_log={_fmt(mrt_affine.shift_log_depth)} "
+        "prefactor_log="
+        f"{_fmt(mrt_affine.affine_prefactor_log_exponent)} "
+        "x_saving="
+        f"{_fmt(mrt_affine.x_error_log_saving_exponent)} "
+        f"x_net={_fmt(mrt_affine.x_error_net_log_exponent)} "
+        "required_H_log="
+        f"{_fmt(mrt_affine.proof_branch_required_shift_log_depth)} "
+        f"margin={_fmt(mrt_affine.proof_branch_shift_log_margin)} "
+        "proof_branch="
+        f"{mrt_affine.proof_nontrivial_branch_available} "
+        "loglog_diverges="
+        f"{mrt_affine.loglog_over_log_term_diverges_after_affine_prefactor} "
+        f"little_o={mrt_affine.published_bound_is_little_o} "
+        f"remaining={mrt_affine.remaining_gate}"
     )
     valuation = large_q_product_lift_valuation_audit(prime_fixture=2)
     print(

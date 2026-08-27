@@ -7491,6 +7491,75 @@ def test_large_q_affine_chowla_split_discards_large_gcd_but_rejects_mrt() -> Non
         assert marker in note
 
 
+def test_mrt_affine_adapter_has_two_exact_polylogarithmic_failure_witnesses(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Catch hiding the growing affine coefficient inside an O_A constant."""
+    adapter = getattr(
+        coverage_audit,
+        "mrt_affine_critical_parameter_audit",
+        None,
+    )
+    assert adapter is not None, "exact MRT affine-parameter adapter is missing"
+
+    audit = adapter(
+        slope_log_depth=F(2),
+        shift_log_depth=F(2),
+        arity=2,
+    )
+    assert audit.theorem == "arXiv:1503.05121v3, Theorem 1.6 (1.10)"
+    assert audit.truncated_proposition == (
+        "arXiv:1503.05121v3, Proposition 5.1"
+    )
+    assert audit.slope_log_depth == F(2)
+    assert audit.shift_log_depth == F(2)
+    assert audit.shift_length_tends_to_infinity
+    assert audit.affine_prefactor_log_exponent == F(4)
+    assert audit.x_error_log_saving_exponent == F(1, 3000)
+    assert audit.x_error_net_log_exponent == F(11999, 3000)
+    assert not audit.x_error_term_tends_to_zero
+    assert audit.truncated_w_upper_h_reciprocal_power == 500
+    assert audit.nontrivial_branch_w_root_power == 20
+    assert audit.affine_coefficient_power == 2
+    assert audit.implied_shift_power_on_k_a_squared == 10000
+    assert audit.proof_branch_required_shift_log_depth == F(40000)
+    assert audit.proof_branch_shift_log_margin == F(-39998)
+    assert not audit.proof_nontrivial_branch_available
+    assert audit.loglog_over_log_term_diverges_after_affine_prefactor
+    assert not audit.published_bound_is_little_o
+    assert audit.remaining_gate == "polylog_slope_averaged_affine_chowla"
+
+    fixed_slope = adapter(
+        slope_log_depth=F(0),
+        shift_log_depth=F(2),
+        arity=2,
+    )
+    assert fixed_slope.x_error_net_log_exponent == F(-1, 3000)
+    assert fixed_slope.shift_length_tends_to_infinity
+    assert fixed_slope.proof_nontrivial_branch_available
+    assert not fixed_slope.loglog_over_log_term_diverges_after_affine_prefactor
+    assert fixed_slope.published_bound_is_little_o
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        r"H\ge (kA^2)^{10000}",
+        r"2\ge40000",
+        r"\frac{11999}{3000}",
+        "mrt_affine_critical_parameter_audit",
+    ):
+        assert marker in note
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "large_q_endpoint: mrt_affine_critical="
+        "A_log=2 H_log=2 prefactor_log=4 x_saving=1/3000 "
+        "x_net=11999/3000 required_H_log=40000 margin=-39998 "
+        "proof_branch=False loglog_diverges=True little_o=False "
+        "remaining=polylog_slope_averaged_affine_chowla"
+    ) in output
+
+
 def test_product_lift_prime_strata_reject_plain_shifted_chowla() -> None:
     """A positive-density nonsquarefree layer survives the product lift."""
     adapter = getattr(

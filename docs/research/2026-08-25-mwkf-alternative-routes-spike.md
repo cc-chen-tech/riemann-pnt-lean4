@@ -22106,6 +22106,51 @@ a full additive-shift box (or fixes one form and shifts the other).
 Partitioning the physical line into such boxes loses the same slope
 factor that (4.845dc_14xq_35w43) displays.
 
+There are also two exact parameter witnesses inside the published MRT
+argument.  Proposition 5.1 introduces an auxiliary \(W\) satisfying
+
+\[
+ \log^{20}H\le W\le
+ \min\{H^{1/500},(\log X)^{1/125}\}.
+\tag{4.845dc_14xq_35w43a}
+\]
+
+In its proof, the nontrivial branch may assume equation (5.7),
+\(W^{1/20}\ge kA^2\); otherwise the claimed estimate is already
+trivial.  Combining this with the first upper bound in
+(4.845dc_14xq_35w43a) forces
+
+\[
+ \boxed{H\ge (kA^2)^{10000}.}
+\tag{4.845dc_14xq_35w43b}
+\]
+
+Write \(L_T=\log T\), \(A=L_T^a\), and \(H=L_T^h\).  At the critical
+substitution \(a=h=2\), the exponent condition from
+(4.845dc_14xq_35w43b) is
+
+\[
+ \boxed{2\ge40000,}
+\tag{4.845dc_14xq_35w43c}
+\]
+
+which fails before constants are considered.  Independently, the last
+term in (4.845dc_14xq_35w43) alone is
+
+\[
+ Q^2\log^{-1/3000}(T/Q)
+ =L_T^{\,4-1/3000+o(1)}
+ =\boxed{L_T^{\frac{11999}{3000}+o(1)}},
+\tag{4.845dc_14xq_35w43d}
+\]
+
+and therefore diverges.  The middle term
+\(Q^2\log\log Q/\log Q\) also diverges.  Thus the MRT adapter fails in
+three separately auditable ways: the one-dimensional shift geometry,
+the nontrivial proof-branch range, and the explicit theorem bound.  The
+exact-rational interface `mrt_affine_critical_parameter_audit` records
+the latter two failures; it does not upgrade them to a new theorem.
+
 The higher-uniformity result of
 [Matomaki--Radziwill--Tao--Teravainen--Ziegler, Corollary 1.11](https://arxiv.org/abs/2007.15644)
 states, for every fixed \(\varepsilon>0\) and fixed distinct
