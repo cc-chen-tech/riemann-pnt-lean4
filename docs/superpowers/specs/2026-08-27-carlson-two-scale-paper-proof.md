@@ -436,9 +436,10 @@ square-growth bound for its derivative on the fixed inner strip
 `2/3 <= Re(s) <= 47/12`; this is sufficient for the next Gaussian derivative
 membership step.  The Gaussian section formed from this concrete derivative
 has now been proved to belong to `L^2(R)` on that inner strip.  The companion
-linear-times-error summand in the pointwise derivative, and the dominated
-difference-quotient passage in `Lp`, remain; hence this still does not by
-itself prove `Lp`-valued analyticity.  The paper proof
+linear-times-error summand has now also been proved to belong to `L^2(R)`,
+with its explicit degree-twelve polynomial majorant.  Combining the two
+summands and the dominated difference-quotient passage in `Lp` remain; hence
+this still does not by itself prove `Lp`-valued analyticity.  The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
