@@ -199,6 +199,27 @@ Take `R=1000` and `epsilon=1/10000`.  At `x=2/3`,
      =\frac{12146849}{14992500}.                            \tag{5.6}
 \]
 
+There is also a weaker but formally much shorter specialization which uses
+only the already formalized strip endpoint `R=4`.  Here
+
+\[
+ \lambda(2/3)=\frac1{21},\qquad
+ q_4=1+\frac{20}{21}\frac1{10000}
+        +\frac1{21}\,2\frac{57}{100}(1-4)
+     =\frac{8791}{10500}.
+\]
+
+Since
+
+\[
+ \frac{151}{180}-q_4=\frac{13}{7875}>0,
+ \qquad \frac{151}{180}=\frac89-\frac1{20},               \tag{5.7}
+\]
+
+the `R=4` specialization alone proves the explicit saving
+`delta=1/20`.  Thus `R=1000` is needed only for the stronger displayed
+`delta=5/64`, not for the existence of a power saving.
+
 If `x=2/3+O(1/log U)`, this exponent changes by `O(1/log U)`, hence only by
 an absolute multiplicative constant after exponentiation.
 
@@ -414,11 +435,11 @@ a final density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. extension of the concrete polynomial-growth/`L^2(R)` membership bound
-   from the currently formalized right endpoint `R=4` to the paper's
-   `R=1000`, the `Lp C 2 volume`-valued strip analyticity of the now-defined
-   concrete values and their boundary norm estimates, followed by the finite
-   Gaussian covering argument;
+2. for the first unconditional formal target `delta=1/20`, the
+   `Lp C 2 volume`-valued analyticity on the already controlled strip
+   `1/2 <= Re(s) <= 4`, its boundary norm estimates, and the finite Gaussian
+   covering argument; extending the same package to `R=1000` is an optional
+   strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
 

@@ -40,6 +40,66 @@ def diTargetExponent : ℝ := 467 / 576
 /-- The explicit saving from `8/9` represented by `diTargetExponent`. -/
 def diDelta : ℝ := 5 / 64
 
+/-! ## Short-strip specialization
+
+The endpoint `R = 4` is already covered by the concrete polynomial-growth
+and Gaussian `L²` infrastructure.  It gives a weaker but still explicit
+power saving, avoiding any need to extend those analytic bounds to `R = 1000`
+before closing the first unconditional formal certificate. -/
+
+/-- The already formalized right boundary used by the short-strip route. -/
+def diShortRightBoundary : ℝ := 4
+
+/-- Three-lines weight at `sigma = 2/3` for the strip `[1/2, 4]`. -/
+def diShortInterpolationWeight : ℝ :=
+  ((2 / 3 : ℝ) - 1 / 2) / (diShortRightBoundary - 1 / 2)
+
+/-- Exact short-strip exponent obtained from the normalized interpolation
+formula, including the critical-boundary epsilon reserve. -/
+def diShortInterpolatedExponent : ℝ :=
+  (1 - diShortInterpolationWeight) * (1 + diEpsilon) +
+    diShortInterpolationWeight *
+      (1 + 2 * diCoreExponent * (1 - diShortRightBoundary))
+
+/-- Convenient target exponent for the short-strip route. -/
+def diShortTargetExponent : ℝ := 151 / 180
+
+/-- Explicit Carlson saving supplied by the short-strip target. -/
+def diShortDelta : ℝ := 1 / 20
+
+theorem di_short_interpolation_weight_eq :
+    diShortInterpolationWeight = 1 / 21 := by
+  norm_num [diShortInterpolationWeight, diShortRightBoundary]
+
+theorem di_short_interpolated_exponent_eq :
+    diShortInterpolatedExponent = 8791 / 10500 := by
+  norm_num [diShortInterpolatedExponent, diShortInterpolationWeight,
+    diShortRightBoundary, diCoreExponent, diEpsilon]
+
+/-- Exact positive slack between the short-strip interpolation output and
+the target `8/9 - 1/20`. -/
+theorem di_short_interpolated_exponent_lt_target :
+    diShortTargetExponent - diShortInterpolatedExponent = 13 / 7875 ∧
+      diShortInterpolatedExponent < diShortTargetExponent := by
+  norm_num [diShortTargetExponent, diShortInterpolatedExponent,
+    diShortInterpolationWeight, diShortRightBoundary, diCoreExponent,
+    diEpsilon]
+
+theorem di_short_target_eq_carlson_sub_delta :
+    diShortTargetExponent = 8 / 9 - diShortDelta := by
+  norm_num [diShortTargetExponent, diShortDelta]
+
+/-- The `beta = 14/17` contradiction margin left by the short-strip saving. -/
+theorem di_short_fourteenSeventeenths_margin :
+    (3 / 17) * diShortDelta = 3 / 340 := by
+  norm_num [diShortDelta]
+
+/-- Exact separated-density beta threshold for the short-strip target. -/
+theorem di_short_separated_threshold_eq :
+    (4 / 3 + 8 / 9 + diShortTargetExponent) /
+        (2 + 8 / 9 + diShortTargetExponent) = 551 / 671 := by
+  norm_num [diShortTargetExponent]
+
 theorem di_interpolation_weight_eq :
     diInterpolationWeight = 1 / 5997 := by
   norm_num [diInterpolationWeight, diRightBoundary]
