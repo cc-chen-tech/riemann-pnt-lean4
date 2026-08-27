@@ -21495,6 +21495,73 @@ two named estimates:
 
 Neither estimate is proved here.
 
+### 4.109zjaced00d Averaged Elliott gives no part of the required power
+
+The resonant affine form in (4.845dc_14xq_35zp) is structurally close
+to [Matomäki--Radziwiłł--Tao, Theorem 1.6](https://arxiv.org/abs/1503.05121).
+Their stronger formula
+(1.10) permits fixed coefficients \(a_1,a_2\), averages one affine
+shift \(h\le H\), and for a nonpretentious \(1\)-bounded
+multiplicative function gives
+
+\[
+ \sum_{h\le H}
+ \left|\sum_{n\le X}
+ g_1(a_1n+b_1)g_2(a_2n+b_2+h)\right|
+ \ll_A \mathcal E(X,H)\,HX,
+\tag{4.845dc_14xq_35zr}
+\]
+
+where
+
+\[
+ \mathcal E(X,H)=
+ O_A\!\left(
+ e^{-M/80}+\frac{\log\log H}{\log H}
+ +\frac1{\log^{1/3000}X}\right)=o_A(1)
+\tag{4.845dc_14xq_35zs}
+\]
+
+when \(H\to\infty\) and the nonpretentiousness parameter tends to
+infinity.  The fixed integer slope \(c\) in \(\mu(s)\mu(cs+w)\) is
+therefore allowed.  For the numerical comparison, grant also the two
+additional uniformities needed by the actual sum: replace \(\mu\) by
+\(\mu(n)\mathbf1_{(n,q)=1}\), and separate the smooth
+\((s,w,v)\)-weight with bounded total transform norm.
+
+On the resonant box,
+
+\[
+ X=T^u,\qquad H=T^{u-1}.
+\tag{4.845dc_14xq_35zt}
+\]
+
+Thus (4.845dc_14xq_35zr), followed by the
+\(T^u\) Poisson-and-\(v\) prefactor, gives only
+
+\[
+ \boxed{T^{3u-1}\mathcal E(T^u,T^{u-1}).}
+\tag{4.845dc_14xq_35zu}
+\]
+
+The required local scale is \(T^{2u}\).  Since
+
+\[
+ \boxed{(3u-1)-2u=u-1>0,}
+\tag{4.845dc_14xq_35zv}
+\]
+
+an arbitrary logarithmic relative saving cannot supply any part of the
+missing power \(T^{u-1}\).  This obstruction is numerical even under
+the optimistic hypothesis grants above, so there is no need to settle
+their uniform versions in order to reject this adapter.
+
+The interface balanced_zero_mode_averaged_elliott_audit records
+(4.845dc_14xq_35zt)--(4.845dc_14xq_35zv).  In particular,
+published_theorem_closes_zero_mode=False.  The averaged Elliott theorem
+is valuable for proving an \(o(1)\) density statement, but the present
+normalization requires full shift-length power cancellation.
+
 ### 4.109zjaced1 The critical product energy has one polylog-slope affine core
 
 The gcd divisibility in (4.236) gives a useful second reduction of

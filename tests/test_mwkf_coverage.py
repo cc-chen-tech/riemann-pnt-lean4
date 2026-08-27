@@ -7248,6 +7248,50 @@ def test_balanced_transition_h_poisson_splits_pevp_from_zero_mode(
     ) in output
 
 
+def test_averaged_elliott_is_structurally_relevant_but_power_insufficient(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Do not replace the resonant j=0 power gate by an o(1) theorem."""
+    adapter = getattr(
+        coverage_audit,
+        "balanced_zero_mode_averaged_elliott_audit",
+        None,
+    )
+    assert adapter is not None, "averaged Elliott zero-mode audit is missing"
+    audit = adapter(u=F(3, 2))
+    assert audit.mobius_interval_exponent == F(3, 2)
+    assert audit.shift_average_exponent == F(1, 2)
+    assert audit.raw_affine_correlation_exponent == F(2)
+    assert audit.h_poisson_and_v_prefactor_exponent == F(3, 2)
+    assert audit.optimistic_theorem_total_exponent == F(7, 2)
+    assert audit.local_target_exponent == F(3)
+    assert audit.remaining_power_deficit == F(1, 2)
+    assert audit.fixed_slope_hypothesis_holds
+    assert audit.shift_length_tends_to_infinity
+    assert audit.theorem_supplies_only_logarithmic_relative_saving
+    assert audit.optimistically_grants_q_coprime_uniformity
+    assert audit.optimistically_grants_smooth_weight_separation
+    assert not audit.published_theorem_closes_zero_mode
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced00d Averaged Elliott gives no part of the required power",
+        r"T^{3u-1}\mathcal E(T^u,T^{u-1})",
+        r"(3u-1)-2u=u-1",
+        "balanced_zero_mode_averaged_elliott_audit",
+    ):
+        assert marker in note
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_balanced_j0_elliott: u=3/2 X=3/2 H=1/2 "
+        "correlation=2 prefactor=3/2 theorem=7/2 target=3 "
+        "deficit=1/2 fixed_slope=True H_to_infinity=True "
+        "only_log=True closes=False"
+    ) in output
+
+
 def test_large_q_affine_chowla_split_discards_large_gcd_but_rejects_mrt() -> None:
     """The critical product energy needs a slope-averaged affine theorem."""
     adapter = getattr(

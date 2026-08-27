@@ -2697,6 +2697,25 @@ class BalancedTransitionHPoissonZeroModeAudit:
 
 
 @dataclass(frozen=True)
+class BalancedZeroModeAveragedElliottAudit:
+    u: Fraction
+    mobius_interval_exponent: Fraction
+    shift_average_exponent: Fraction
+    raw_affine_correlation_exponent: Fraction
+    h_poisson_and_v_prefactor_exponent: Fraction
+    optimistic_theorem_total_exponent: Fraction
+    local_target_exponent: Fraction
+    remaining_power_deficit: Fraction
+    fixed_slope_hypothesis_holds: bool
+    shift_length_tends_to_infinity: bool
+    theorem_supplies_only_logarithmic_relative_saving: bool
+    optimistically_grants_q_coprime_uniformity: bool
+    optimistically_grants_smooth_weight_separation: bool
+    published_theorem_closes_zero_mode: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class LargeQAffineChowlaGcdSplitAudit:
     product_scale: int
     shift_scale: int
@@ -17450,6 +17469,52 @@ def balanced_transition_h_poisson_zero_mode_audit(
     )
 
 
+def balanced_zero_mode_averaged_elliott_audit(
+    *,
+    u: Fraction,
+) -> BalancedZeroModeAveragedElliottAudit:
+    """Compare the resonant zero mode with averaged Elliott exactly.
+
+    MRT Theorem 1.6 permits fixed affine slopes and gives an arbitrary
+    slowly vanishing relative factor for an average over shifts
+    ``H -> infinity``.  Even granting uniform q-coprime modifications
+    and a bounded smooth-weight decomposition, this changes no power of
+    ``T``.  The physical zero mode needs the full shift-length power
+    ``T^(u-1)``, so the theorem is numerically insufficient.
+    """
+    u = F(u)
+    if not (F(1) < u <= F(3, 2)):
+        raise ValueError("the resonant power zero mode needs 1<u<=3/2")
+    interval = u
+    shift = u - F(1)
+    raw_correlation = interval + shift
+    poisson_and_v = u
+    theorem_total = raw_correlation + poisson_and_v
+    target = 2 * u
+    deficit = theorem_total - target
+    assert deficit == u - F(1)
+    return BalancedZeroModeAveragedElliottAudit(
+        u=u,
+        mobius_interval_exponent=interval,
+        shift_average_exponent=shift,
+        raw_affine_correlation_exponent=raw_correlation,
+        h_poisson_and_v_prefactor_exponent=poisson_and_v,
+        optimistic_theorem_total_exponent=theorem_total,
+        local_target_exponent=target,
+        remaining_power_deficit=deficit,
+        fixed_slope_hypothesis_holds=True,
+        shift_length_tends_to_infinity=True,
+        theorem_supplies_only_logarithmic_relative_saving=True,
+        optimistically_grants_q_coprime_uniformity=True,
+        optimistically_grants_smooth_weight_separation=True,
+        published_theorem_closes_zero_mode=False,
+        source=(
+            "Matomaki--Radziwill--Tao, arXiv:1503.05121, "
+            "Theorem 1.6"
+        ),
+    )
+
+
 def almost_all_mobius_endpoint_dispersion_audit(
     *,
     modulus_exponent: Fraction,
@@ -28301,6 +28366,26 @@ def main() -> None:
         f"{h_poisson_zero.published_strict_one_third_theorem_applies} "
         f"affine={h_poisson_zero.affine_mobius_dispersion_proved} "
         f"covered={h_poisson_zero.local_gate_covered}"
+    )
+    zero_elliott = balanced_zero_mode_averaged_elliott_audit(u=F(3, 2))
+    print(
+        "mwkf_balanced_j0_elliott: "
+        f"u={_fmt(zero_elliott.u)} "
+        f"X={_fmt(zero_elliott.mobius_interval_exponent)} "
+        f"H={_fmt(zero_elliott.shift_average_exponent)} "
+        "correlation="
+        f"{_fmt(zero_elliott.raw_affine_correlation_exponent)} "
+        "prefactor="
+        f"{_fmt(zero_elliott.h_poisson_and_v_prefactor_exponent)} "
+        "theorem="
+        f"{_fmt(zero_elliott.optimistic_theorem_total_exponent)} "
+        f"target={_fmt(zero_elliott.local_target_exponent)} "
+        f"deficit={_fmt(zero_elliott.remaining_power_deficit)} "
+        f"fixed_slope={zero_elliott.fixed_slope_hypothesis_holds} "
+        f"H_to_infinity={zero_elliott.shift_length_tends_to_infinity} "
+        "only_log="
+        f"{zero_elliott.theorem_supplies_only_logarithmic_relative_saving} "
+        f"closes={zero_elliott.published_theorem_closes_zero_mode}"
     )
     valuation = large_q_product_lift_valuation_audit(prime_fixture=2)
     print(
