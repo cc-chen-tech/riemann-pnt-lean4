@@ -433,7 +433,9 @@ argument needed for `Lp C 2 volume`-valued analyticity.  Cauchy's derivative
 estimate has additionally converted the concrete degree-ten square-growth
 bound for the pole-free error on `1/2 <= Re(s) <= 4` into a degree-twenty
 square-growth bound for its derivative on the fixed inner strip
-`2/3 <= Re(s) <= 47/12`; this is sufficient for the next Gaussian derivative
+`7/12 <= Re(s) <= 47/12` (the earlier `2/3`-left-edge statement is retained
+as a corollary); this reaches the shifted contour line
+`x_0=2/3-1/log U` once `log U >= 12` and is sufficient for the next Gaussian derivative
 membership step.  The Gaussian section formed from this concrete derivative
 has now been proved to belong to `L^2(R)` on that inner strip.  The companion
 linear-times-error summand has now also been proved to belong to `L^2(R)`,
