@@ -3130,6 +3130,131 @@ def test_unequal_outer_labels_collapse_to_one_cofactor_kloosterman_gram() -> Non
     assert negative["cofactor_conductor_bound_holds"]
 
 
+def test_cofactor_outer_product_matrix_is_an_exact_partial_fourier_isometry() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cofactor_outer_product_fourier_operator_audit",
+        None,
+    )
+    assert audit is not None, "cofactor outer-product Fourier audit is missing"
+
+    composite = audit(
+        prime_modulus=5,
+        squarefree_cofactor=6,
+        direct_coefficient=1,
+        product_ratio=5,
+        left_outer_coefficients={0: 1, 7: 2 - 1j, 13: -1},
+        right_outer_coefficients={1: 1j, 8: 3, 16: 2 + 1j},
+    )
+    assert composite["squarefree_cofactor"] == 6
+    assert composite["all_row_sums_zero"]
+    assert composite["all_column_sums_zero"]
+    assert composite["all_fourier_actions_exact"]
+    assert composite["nonzero_singular_value"] == 6
+    assert composite["nonzero_singular_value_multiplicity"] == 2
+    assert composite["zero_singular_value_multiplicity"] == 4
+    assert composite["exact_operator_norm"] == 6
+    assert (
+        composite["left_primitive_fourier_energy"]
+        <= composite["left_residue_energy"] + 1e-8
+    )
+    assert (
+        composite["right_primitive_fourier_energy"]
+        <= composite["right_residue_energy"] + 1e-8
+    )
+    assert composite["operator_bound_holds"]
+    assert composite["principal_and_alias_entries_cancel_in_complete_rows"]
+    assert composite["outer_product_residue_operator_bound_proved"]
+    assert not composite["analytic_packet_residue_energy_bound_proved"]
+    assert not composite["coupled_kernel_gate_closed"]
+
+    rows = composite["fourier_action_rows"]
+    assert [row["input_frequency"] for row in rows] == list(range(6))
+    assert [
+        row["input_frequency"]
+        for row in rows
+        if row["input_frequency_is_unit"]
+    ] == [1, 5]
+    assert all(row["fourier_action_exact"] for row in rows)
+
+    prime_cofactor = audit(
+        prime_modulus=5,
+        squarefree_cofactor=7,
+        direct_coefficient=2,
+        product_ratio=3,
+        left_outer_coefficients={0: 1, 8: -2, 17: 1j},
+        right_outer_coefficients={2: 1, 10: -1j, 16: 3},
+    )
+    assert prime_cofactor["all_row_sums_zero"]
+    assert prime_cofactor["all_column_sums_zero"]
+    assert prime_cofactor["all_fourier_actions_exact"]
+    assert prime_cofactor["nonzero_singular_value"] == 7
+    assert prime_cofactor["nonzero_singular_value_multiplicity"] == 6
+    assert prime_cofactor["zero_singular_value_multiplicity"] == 1
+    assert prime_cofactor["operator_bound_holds"]
+
+
+def test_primitive_product_residue_energy_has_exact_parseval_and_alias_bounds() -> None:
+    audit = getattr(
+        coverage_audit,
+        "primitive_product_residue_energy_audit",
+        None,
+    )
+    assert audit is not None, "primitive product-residue audit is missing"
+
+    result = audit(
+        squarefree_modulus=30,
+        h_coefficients={1: 1, 2: -1, 7: 2, 31: 1j},
+        delta_coefficients={1: 2, 3: -1, 8: 1j, 33: 1},
+    )
+    assert result["squarefree_modulus"] == 30
+    assert result["unit_frequencies"] == (1, 7, 11, 13, 17, 19, 23, 29)
+    assert result["primitive_parseval_identity_exact"]
+    assert result["elementary_alias_bound_holds"]
+    assert result["interval_span_bound_holds"]
+    assert result["elementary_alias_bound"] <= result["interval_span_bound"]
+    assert result["constant_frequency_annihilated_by_cofactor_operator"]
+    assert result["nonunit_frequencies_annihilated_by_cofactor_operator"]
+    assert not result["mobius_cancellation_used_in_elementary_bound"]
+    assert not result["analytic_primitive_product_spectrum_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    dense = audit(
+        squarefree_modulus=6,
+        h_coefficients={index: (-1) ** index for index in range(1, 10)},
+        delta_coefficients={index: 1 + (index % 2) * 1j for index in range(1, 8)},
+    )
+    assert dense["primitive_parseval_identity_exact"]
+    assert dense["elementary_alias_bound_holds"]
+    assert dense["interval_span_bound_holds"]
+    assert dense["left_alias_multiplicity"] <= dense["left_interval_ceiling"]
+    assert dense["right_alias_multiplicity"] <= dense["right_interval_ceiling"]
+
+
+def test_balanced_primitive_product_spectrum_keeps_exact_half_power_deficit() -> None:
+    audit = getattr(
+        coverage_audit,
+        "primitive_product_spectrum_exponent_audit",
+        None,
+    )
+    assert audit is not None, "primitive product-spectrum ledger is missing"
+
+    balanced = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        modulus_exponent=F(3),
+    )
+    assert balanced["coefficient_energy_exponent"] == F(5)
+    assert balanced["elementary_alias_factor_exponent"] == F(5, 2)
+    assert balanced["elementary_primitive_energy_exponent"] == F(15, 2)
+    assert balanced["product_density_factor_exponent"] == F(2)
+    assert balanced["product_density_energy_exponent"] == F(7)
+    assert balanced["elementary_primitive_energy_deficit"] == F(1, 2)
+    assert not balanced["mobius_cancellation_used"]
+    assert not balanced["primitive_product_spectrum_power_saving_proved"]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

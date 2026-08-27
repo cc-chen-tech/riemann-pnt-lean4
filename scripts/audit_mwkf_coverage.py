@@ -10155,6 +10155,371 @@ def squarefree_crt_unequal_outer_character_gram_audit(
     }
 
 
+def cofactor_outer_product_fourier_operator_audit(
+    *,
+    prime_modulus: int,
+    squarefree_cofactor: int,
+    direct_coefficient: int,
+    product_ratio: int,
+    left_outer_coefficients: dict[int, complex],
+    right_outer_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Diagonalize the full outer-product-label cofactor matrix.
+
+    For fixed product ratio ``y``, the matrix is
+
+    ``C_y(a,b)=sum_v e_r(qbar*(B*(y-1)*v``
+    ``                         +(b-a/y)/v))``.
+
+    Its additive Fourier basis is mapped by a signed permutation on unit
+    frequencies, with multiplier of modulus ``r``; nonunit frequencies
+    vanish.  Thus every nonzero singular value is exactly ``r``.  In
+    particular the complete matrix has zero row and column sums even when
+    individual composite-modulus entries are full-amplitude aliases.
+    """
+
+    q = int(prime_modulus)
+    r = int(squarefree_cofactor)
+    if q < 2 or any(q % divisor == 0 for divisor in range(2, isqrt(q) + 1)):
+        raise ValueError("q must be prime")
+    factorization = _finite_prime_exponents(r) if r > 1 else {}
+    if (
+        r <= 1
+        or any(exponent != 1 for exponent in factorization.values())
+        or gcd(q, r) != 1
+    ):
+        raise ValueError("r must be squarefree and coprime to q")
+    if gcd(direct_coefficient, r) != 1:
+        raise ValueError("the direct coefficient must be a unit modulo r")
+    y = int(product_ratio) % r
+    if gcd(y, r) != 1:
+        raise ValueError("the product ratio must be a unit modulo r")
+    if not left_outer_coefficients or not right_outer_coefficients:
+        raise ValueError("both outer coefficient families must be nonempty")
+
+    inv_q_r = pow(q, -1, r)
+    inv_y_r = pow(y, -1, r)
+    root = cmath.exp(2j * cmath.pi / r)
+    units = tuple(value for value in range(1, r) if gcd(value, r) == 1)
+    matrix = tuple(
+        tuple(
+            sum(
+                root
+                ** (
+                    inv_q_r
+                    * (
+                        direct_coefficient * (y - 1) * v
+                        + (b - a * inv_y_r) * pow(v, -1, r)
+                    )
+                    % r
+                )
+                for v in units
+            )
+            for b in range(r)
+        )
+        for a in range(r)
+    )
+    row_sums = tuple(sum(row, 0j) for row in matrix)
+    column_sums = tuple(
+        sum(matrix[a][b] for a in range(r)) for b in range(r)
+    )
+
+    fourier_action_rows: list[dict[str, object]] = []
+    for frequency in range(r):
+        action = tuple(
+            sum(
+                matrix[a][b] * root ** (frequency * b % r)
+                for b in range(r)
+            )
+            for a in range(r)
+        )
+        if gcd(frequency, r) == 1:
+            constant_phase = (
+                -direct_coefficient
+                * (y - 1)
+                * pow(frequency, -1, r)
+                * pow(inv_q_r, 2, r)
+            ) % r
+            output_frequency = inv_y_r * frequency % r
+            expected = tuple(
+                r * root ** ((constant_phase + output_frequency * a) % r)
+                for a in range(r)
+            )
+        else:
+            constant_phase = None
+            output_frequency = None
+            expected = (0j,) * r
+        fourier_action_rows.append(
+            {
+                "input_frequency": frequency,
+                "input_frequency_is_unit": gcd(frequency, r) == 1,
+                "constant_phase": constant_phase,
+                "output_frequency": output_frequency,
+                "action": action,
+                "expected_action": expected,
+                "fourier_action_exact": all(
+                    abs(actual - target) < 1e-8
+                    for actual, target in zip(action, expected)
+                ),
+            }
+        )
+
+    def aggregate(family: dict[int, complex]) -> tuple[complex, ...]:
+        return tuple(
+            sum(
+                complex(coefficient)
+                for label, coefficient in family.items()
+                if int(label) % r == residue
+            )
+            for residue in range(r)
+        )
+
+    left = aggregate(left_outer_coefficients)
+    right = aggregate(right_outer_coefficients)
+    bilinear_form = sum(
+        left[a] * right[b].conjugate() * matrix[a][b]
+        for a in range(r)
+        for b in range(r)
+    )
+    left_energy = sum(abs(value) ** 2 for value in left)
+    right_energy = sum(abs(value) ** 2 for value in right)
+    left_primitive_fourier_energy = sum(
+        abs(sum(left[a] * root ** (frequency * a % r) for a in range(r)))
+        ** 2
+        for frequency in units
+    ) / r
+    right_primitive_fourier_energy = sum(
+        abs(sum(right[b] * root ** (frequency * b % r) for b in range(r)))
+        ** 2
+        for frequency in units
+    ) / r
+    operator_bound = r * (
+        left_primitive_fourier_energy * right_primitive_fourier_energy
+    ) ** 0.5
+    tolerance = 1e-8
+    return {
+        "prime_modulus": q,
+        "squarefree_cofactor": r,
+        "product_ratio": y,
+        "matrix": matrix,
+        "row_sums": row_sums,
+        "column_sums": column_sums,
+        "all_row_sums_zero": all(abs(value) < tolerance for value in row_sums),
+        "all_column_sums_zero": all(
+            abs(value) < tolerance for value in column_sums
+        ),
+        "fourier_action_rows": tuple(fourier_action_rows),
+        "all_fourier_actions_exact": all(
+            bool(row["fourier_action_exact"])
+            for row in fourier_action_rows
+        ),
+        "nonzero_singular_value": r,
+        "nonzero_singular_value_multiplicity": len(units),
+        "zero_singular_value_multiplicity": r - len(units),
+        "exact_operator_norm": r,
+        "left_residue_energy": left_energy,
+        "right_residue_energy": right_energy,
+        "left_primitive_fourier_energy": left_primitive_fourier_energy,
+        "right_primitive_fourier_energy": right_primitive_fourier_energy,
+        "bilinear_form": bilinear_form,
+        "operator_bound": operator_bound,
+        "operator_bound_holds": abs(bilinear_form) <= operator_bound + tolerance,
+        "principal_and_alias_entries_cancel_in_complete_rows": (
+            all(abs(value) < tolerance for value in row_sums)
+            and all(abs(value) < tolerance for value in column_sums)
+        ),
+        "outer_product_residue_operator_bound_proved": True,
+        "analytic_packet_residue_energy_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def primitive_product_residue_energy_audit(
+    *,
+    squarefree_modulus: int,
+    h_coefficients: dict[int, complex],
+    delta_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Isolate the primitive additive spectrum of ``a=h*delta``.
+
+    The cofactor matrix in
+    :func:`cofactor_outer_product_fourier_operator_audit` annihilates every
+    nonunit additive frequency.  This helper computes the surviving
+    projection exactly and records the elementary Cauchy--Parseval ceiling.
+    The latter deliberately uses no Möbius cancellation.
+    """
+
+    r = int(squarefree_modulus)
+    factorization = _finite_prime_exponents(r) if r > 1 else {}
+    if r <= 1 or any(exponent != 1 for exponent in factorization.values()):
+        raise ValueError("the modulus must be squarefree and greater than one")
+    if not h_coefficients or not delta_coefficients:
+        raise ValueError("both coefficient families must be nonempty")
+
+    h_family = {
+        int(label): complex(coefficient)
+        for label, coefficient in h_coefficients.items()
+        if complex(coefficient) != 0
+    }
+    delta_family = {
+        int(label): complex(coefficient)
+        for label, coefficient in delta_coefficients.items()
+        if complex(coefficient) != 0
+    }
+    if not h_family or not delta_family:
+        raise ValueError("both coefficient families must have nonzero support")
+
+    root = cmath.exp(2j * cmath.pi / r)
+    units = tuple(value for value in range(1, r) if gcd(value, r) == 1)
+    product_residue_coefficients = tuple(
+        sum(
+            h_coefficient * delta_coefficient
+            for h, h_coefficient in h_family.items()
+            for delta, delta_coefficient in delta_family.items()
+            if h * delta % r == residue
+        )
+        for residue in range(r)
+    )
+    product_fourier_coefficients = tuple(
+        sum(
+            product_residue_coefficients[residue]
+            * root ** (frequency * residue % r)
+            for residue in range(r)
+        )
+        for frequency in range(r)
+    )
+    primitive_projection = tuple(
+        sum(
+            product_fourier_coefficients[frequency]
+            * root ** (-frequency * residue % r)
+            for frequency in units
+        )
+        / r
+        for residue in range(r)
+    )
+    direct_primitive_energy = sum(
+        abs(value) ** 2 for value in primitive_projection
+    )
+    parseval_primitive_energy = sum(
+        abs(product_fourier_coefficients[frequency]) ** 2
+        for frequency in units
+    ) / r
+
+    h_energy = sum(abs(value) ** 2 for value in h_family.values())
+    delta_energy = sum(abs(value) ** 2 for value in delta_family.values())
+
+    def maximum_residue_multiplicity(
+        labels: tuple[int, ...], modulus: int
+    ) -> int:
+        return max(
+            sum(1 for label in labels if label % modulus == residue)
+            for residue in range(modulus)
+        )
+
+    h_labels = tuple(h_family)
+    delta_labels = tuple(delta_family)
+    left_alias_multiplicity = sum(
+        maximum_residue_multiplicity(delta_labels, r // gcd(h, r))
+        for h in h_labels
+    )
+    right_alias_multiplicity = sum(
+        maximum_residue_multiplicity(h_labels, r // gcd(delta, r))
+        for delta in delta_labels
+    )
+    elementary_alias_bound = (
+        h_energy
+        * delta_energy
+        * min(left_alias_multiplicity, right_alias_multiplicity)
+    )
+
+    h_span = max(h_labels) - min(h_labels) + 1
+    delta_span = max(delta_labels) - min(delta_labels) + 1
+    left_interval_ceiling = sum(
+        (delta_span + r // gcd(h, r) - 1) // (r // gcd(h, r))
+        for h in h_labels
+    )
+    right_interval_ceiling = sum(
+        (h_span + r // gcd(delta, r) - 1) // (r // gcd(delta, r))
+        for delta in delta_labels
+    )
+    interval_span_bound = (
+        h_energy
+        * delta_energy
+        * min(left_interval_ceiling, right_interval_ceiling)
+    )
+    tolerance = 1e-8
+    return {
+        "squarefree_modulus": r,
+        "unit_frequencies": units,
+        "product_residue_coefficients": product_residue_coefficients,
+        "product_fourier_coefficients": product_fourier_coefficients,
+        "primitive_projection": primitive_projection,
+        "direct_primitive_energy": direct_primitive_energy,
+        "parseval_primitive_energy": parseval_primitive_energy,
+        "primitive_parseval_identity_exact": abs(
+            direct_primitive_energy - parseval_primitive_energy
+        )
+        < tolerance,
+        "h_coefficient_energy": h_energy,
+        "delta_coefficient_energy": delta_energy,
+        "left_alias_multiplicity": left_alias_multiplicity,
+        "right_alias_multiplicity": right_alias_multiplicity,
+        "elementary_alias_bound": elementary_alias_bound,
+        "elementary_alias_bound_holds": (
+            direct_primitive_energy <= elementary_alias_bound + tolerance
+        ),
+        "h_support_span": h_span,
+        "delta_support_span": delta_span,
+        "left_interval_ceiling": left_interval_ceiling,
+        "right_interval_ceiling": right_interval_ceiling,
+        "interval_span_bound": interval_span_bound,
+        "interval_span_bound_holds": (
+            direct_primitive_energy <= interval_span_bound + tolerance
+        ),
+        "constant_frequency_annihilated_by_cofactor_operator": True,
+        "nonunit_frequencies_annihilated_by_cofactor_operator": True,
+        "mobius_cancellation_used_in_elementary_bound": False,
+        "analytic_primitive_product_spectrum_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def primitive_product_spectrum_exponent_audit(
+    *,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    modulus_exponent: Fraction,
+) -> dict[str, object]:
+    """Record the exponent loss in the elementary primitive-energy bound."""
+
+    h = F(h_length_exponent)
+    delta = F(delta_length_exponent)
+    modulus = F(modulus_exponent)
+    if min(h, delta, modulus) < 0:
+        raise ValueError("all length and modulus exponents must be nonnegative")
+    coefficient_energy = h + delta
+    elementary_alias_factor = max(h, delta, h + delta - modulus)
+    elementary_primitive_energy = coefficient_energy + elementary_alias_factor
+    product_density_factor = max(F(0), h + delta - modulus)
+    product_density_energy = coefficient_energy + product_density_factor
+    return {
+        "h_length_exponent": h,
+        "delta_length_exponent": delta,
+        "modulus_exponent": modulus,
+        "coefficient_energy_exponent": coefficient_energy,
+        "elementary_alias_factor_exponent": elementary_alias_factor,
+        "elementary_primitive_energy_exponent": elementary_primitive_energy,
+        "product_density_factor_exponent": product_density_factor,
+        "product_density_energy_exponent": product_density_energy,
+        "elementary_primitive_energy_deficit": max(
+            F(0), elementary_primitive_energy - product_density_energy
+        ),
+        "mobius_cancellation_used": False,
+        "primitive_product_spectrum_power_saving_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

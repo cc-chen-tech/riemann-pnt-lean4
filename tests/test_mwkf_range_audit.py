@@ -214,6 +214,14 @@ def test_research_note_records_product_trace_completion_and_rank_one_boundary() 
         r"\varphi(g)R_0^{1/2+\varepsilon}",
         r"a_1\equiv a_2\pmod g",
         "cofactor-conductor operator problem",
+        "### 9.85 Exact outer-label Fourier operator and the primitive product spectrum",
+        r"\operatorname{Spec}_{\rm sing}(C_y)",
+        r"P_r^{\rm prim}",
+        r"\mathcal E_r^{\rm prim}(f,g)",
+        "primitive_product_residue_energy_audit",
+        "primitive_product_spectrum_exponent_audit",
+        "one half-power larger than the",
+        "analytic primitive-spectrum estimate",
     ):
         assert marker in text
 

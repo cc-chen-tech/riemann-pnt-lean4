@@ -12753,6 +12753,120 @@ Weil/trivial ceilings, (9.571), and (9.572) for every supplied finite
 packet.  It does not mark the global conductor-stratified operator bound
 as proved.
 
+### 9.85 Exact outer-label Fourier operator and the primitive product spectrum
+
+Pointwise conductor stratification is not the strongest way to retain the
+outer labels.  Fix a unit product ratio \(y\bmod r\), and regard (9.567) as
+the complete \(r\times r\) matrix
+
+\[
+ C_y(a,b)=\sum_{v\in U(r)}
+ e_r\!\left(\overline q_r
+ \{B(y-1)v+(b-a\overline y)\overline v\}\right),
+ \qquad a,b\bmod r.
+ \tag{9.573}
+\]
+
+For the additive Fourier vector \(e_k(b)=e_r(kb)\), summing first over
+\(b\) forces
+\(\overline q_r\overline v+k\equiv0\pmod r\).  Hence there is no solution
+when \((k,r)>1\), while for \(k\in U(r)\) the unique solution is
+\(v=-\overline k\,\overline q_r\).  Substitution gives the exact action
+
+\[
+ \boxed{
+ C_y e_k(a)=
+ \begin{cases}
+ r\,e_r\!\left(-B(y-1)\overline k\,\overline q_r^{\,2}\right)
+       e_r(a\overline y k),&(k,r)=1,\\[2mm]
+ 0,&(k,r)>1.
+ \end{cases}}
+ \tag{9.574}
+\]
+
+Thus \(C_y\) is \(r\) times a phase-permutation on the primitive additive
+frequencies and is zero on their orthogonal complement.  In particular,
+
+\[
+ \operatorname{rank}C_y=\varphi(r),\qquad
+ \operatorname{Spec}_{\rm sing}(C_y)
+ =\{r^{[\varphi(r)]},0^{[r-\varphi(r)]}\},\qquad
+ \sum_bC_y(a,b)=\sum_aC_y(a,b)=0.
+ \tag{9.575}
+\]
+
+Let \(P_r^{\rm prim}\) be additive Fourier projection onto
+\((k,r)=1\).  For arbitrary residue arrays \(u,v\), (9.574) gives the
+strictly sharper pre-Cauchy estimate
+
+\[
+ \boxed{
+ \left|\sum_{a,b\bmod r}u_a\overline{v_b}C_y(a,b)\right|
+ \le r\,\|P_r^{\rm prim}u\|_2\,
+          \|P_r^{\rm prim}v\|_2.}
+ \tag{9.576}
+\]
+
+Consequently the coefficient-principal entries and every composite
+full-amplitude alias from Section 9.83 cancel inside complete rows and
+columns before absolute values.  The remaining analytic input is not the
+full residue energy.  For separated outer coefficients \(f_h,g_\delta\),
+put
+
+\[
+ U_\rho=\sum_{h\delta\equiv\rho\,(r)}f_hg_\delta,
+ \qquad
+ \mathcal E_r^{\rm prim}(f,g)
+ :=\|P_r^{\rm prim}U\|_2^2
+ =\frac1r\sum_{\substack{k\bmod r\\(k,r)=1}}
+ \left|\sum_{h,\delta}f_hg_\delta e_r(kh\delta)\right|^2.
+ \tag{9.577}
+\]
+
+There is an exact elementary ceiling, but it does not exploit either
+Möbius sign.  If \(M_g(m)\) is the maximum number of elements of
+\(\operatorname{supp}g\) in one class modulo \(m\), then Cauchy in \(h\),
+followed by full additive Parseval, gives
+
+\[
+ \mathcal E_r^{\rm prim}(f,g)
+ \le \|f\|_2^2\|g\|_2^2
+ \min\!\left\{
+ \sum_{h\in\operatorname{supp}f}M_g\!\left(\frac r{(h,r)}\right),
+ \sum_{\delta\in\operatorname{supp}g}M_f\!\left(\frac r{(\delta,r)}\right)
+ \right\}.
+ \tag{9.578}
+\]
+
+For supports in intervals of lengths \(H,L\), the divisor identity
+\((n,r)=\sum_{d\mid(n,r)}\varphi(d)\) bounds the right side by
+
+\[
+ \mathcal E_r^{\rm prim}(f,g)
+ \ll_\varepsilon
+ \|f\|_2^2\|g\|_2^2
+ \left(H+L+\frac{HL}{r}\right)r^\varepsilon.
+ \tag{9.579}
+\]
+
+At the original balanced scale \(H=L=T^{5/2}\), \(r=T^3\), and
+\(|f_h|,|g_\delta|\le1\), this only gives
+\(\mathcal E_r^{\rm prim}\ll T^{15/2+\varepsilon}\).  The \(H+L\)
+term is one half-power larger than the \(T^7\) product-density scale.
+Therefore (9.574)--(9.576) remove the spurious pointwise alias obstruction
+and identify a weaker surviving gate, but elementary Cauchy--Parseval still
+does not close it: one must save a half-power in the primitive product
+spectrum using the actual Möbius/AFE packet before the outer character
+square is separated.
+
+The finite helper cofactor_outer_product_fourier_operator_audit verifies
+(9.573)--(9.576), including composite alias-rich moduli.  The helper
+primitive_product_residue_energy_audit verifies (9.577), the exact finite
+version of (9.578), and its interval ceiling.  The companion
+primitive_product_spectrum_exponent_audit records the exact \(15/2\) versus
+\(7\) balanced ledger.  All three helpers leave the analytic primitive-spectrum estimate
+and the coupled-kernel gate explicitly false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -13413,7 +13527,8 @@ Proved in this note:
 | Resonant-projector dual split | exact principal/centered decomposition; both global estimates unproved | Additive orthogonality on \(L\) and every block residue \(R(\rho)\) gives the product formula (9.552)--(9.554) without taking absolute values.  The zero dual frequency is the explicit product of total-mass products minus local \(a=b\) diagonals, (9.555); it must be recombined across AFE directions, reflection, the explicit diagonal, \(h,\delta\), and dyadic scales.  Every remaining mode has a genuine nonzero \((\lambda,\eta_\rho)\), (9.556), but its squarefree CRT character operator still needs a global pre-Cauchy estimate |
 | Pre-Poisson product-incidence orthogonality | exact equal-outer-label Fourier bound with half-power numerical capacity; full Gram estimate unproved | After the cofactor character square imposes \(x_1\equiv x_2\pmod r\), the equal-\((h,\delta)\) inverse cross phase has reduced conductor \(Q=q/(x_1-x_2,q)\), while the same pair collides modulo \(s/Q\), (9.557)--(9.560).  Grouping \(h,\delta\) modulo \(Q\) gives the exact Fourier-operator bound (9.561)--(9.562).  On the original \(s=T^3,H=L=T^{5/2}\) box, every \(T\leq Q\leq T^3\) has at least half-power numerical capacity, (9.563).  This acts before \(h\)-Poisson and is an alternative ordering of (9.493), not an extra post-Poisson gain.  Closing the route still requires the unequal-label Gram estimate (9.566), a joint count for \(Q<T\), a \(T^\varepsilon\)-cost smooth adapter, compatibility with the preceding reductions, and an exhaustive global packet map |
 | Full unequal-label CRT character Gram | exact Kloosterman collapse and coefficient-principal classification; global operator bound unproved | Keeping every \(a=h\delta\) label inside one character Cauchy step gives (9.564)--(9.566), with no pointwise \(\varphi(r)^{1/2}\) multiplier cost.  Character orthogonality collapses the full square to the cofactor trace \(\mathcal C_r(a_1,a_2;y)\), (9.567).  Its exact coefficient-principal set is \(y=1,\ a_1\equiv a_2\pmod r\), where the kernel equals \(\varphi(r)\), (9.568); this includes distinct outer product labels.  For composite \(r\), the complement still contains local-principal finite aliases, so no uniform pointwise square-root claim is made.  The principal mode needs global AFE/reflection/diagonal reassembly, while the coefficient-nonprincipal trace must be estimated jointly with the \(q\)-phase, both Möbius weights, and all packets |
-| Cofactor Kloosterman conductor stratification | exact prime-factor split and local square-root bound; conductor average unproved | With \(g=(B(y-1),a_2-a_1\bar y,r)\) and \(R_0=r/g\), CRT gives the exact prime product (9.570).  Principal primes contribute \(p-1\), one-zero primes contribute \(-1\), and the remaining primes satisfy the classical \(2\sqrt p\) bound.  Hence (9.571) gives \(|\mathcal C_r|\ll_\varepsilon\varphi(g)R_0^{1/2+\varepsilon}\), including all \(2,3\)-adic aliases.  Low conductor forces \(y=1\) and \(a_1=a_2\) modulo the large divisor \(g\), (9.572).  The remaining task is to sum these conductor/incidence strata without losing the square-root gain while retaining the \(q\)-phase and both Möbius weights |
+| Cofactor Kloosterman conductor stratification | exact prime-factor split and local square-root bound; conductor average unproved | With \(g=(B(y-1),a_2-a_1\bar y,r)\) and \(R_0=r/g\), CRT gives the exact prime product (9.570).  Principal primes contribute \(p-1\), one-zero primes contribute \(-1\), and the remaining primes satisfy the classical \(2\sqrt p\) bound.  Hence (9.571) gives \(|\mathcal C_r|\ll_\varepsilon\varphi(g)R_0^{1/2+\varepsilon}\), including all \(2,3\)-adic aliases.  Low conductor forces \(y=1\) and \(a_1=a_2\) modulo the large divisor \(g\), (9.572).  Section 9.85 gives a stronger global alternative to summing these entries pointwise, but its primitive product-spectrum estimate remains open |
+| Exact cofactor outer-label Fourier operator | exact partial isometry and alias cancellation; primitive product-spectrum estimate unproved | The complete matrix \(C_y(a,b)\) maps a unit additive frequency to a phase times the permuted frequency \(\bar yk\), with singular value exactly \(r\), and annihilates every nonunit frequency, (9.573)--(9.575).  Thus all row and column sums vanish and principal/full-amplitude composite aliases cancel before absolute values.  The sharp bound (9.576) depends only on the primitive projection of the \(a=h\delta\) residue arrays.  Its exact energy is (9.577); elementary Cauchy--Parseval gives (9.578)--(9.579), which is still one half-power too large at \(H=L=T^{5/2},r=T^3\).  The remaining interface is therefore a primitive two-Möbius product-spectrum bound, not pointwise cofactor conductor summation |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
