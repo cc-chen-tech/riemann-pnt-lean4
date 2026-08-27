@@ -2551,6 +2551,7 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
             "alternative_unverified="
             "balanced_nonzero_j_diagonal_scale_slope_square_function,"
             "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2],"
+            "unbalanced_power_witnesses_r_long_s_long,"
             "unclassified_slack_cells_outside_zero_slack_family,"
             "large_q_centered_product_energy_lambda_2 "
         "all_dyadic_cells=False remainder_o_T=False"
@@ -5511,6 +5512,7 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     assert audit.alternative_route_unverified_gates == (
         "balanced_nonzero_j_diagonal_scale_slope_square_function",
         "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
+        "unbalanced_power_witnesses_r_long_s_long",
         "unclassified_slack_cells_outside_zero_slack_family",
         "large_q_centered_product_energy_lambda_2",
     )
@@ -6872,19 +6874,24 @@ def test_oriented_cofactor_transport_records_four_boundary_witnesses(
     assert adapter is not None, "oriented MMKLS transport audit is missing"
     audit = adapter(cofactor_cutoff_exponent=F(1, 8))
     assert audit.oriented_boundary_cells == (
-        ("balanced_max_a", "left", F(2, 3), F(15, 23), True),
-        ("r_long", "right", F(2, 3), F(15, 23), True),
-        ("s_long", "left", F(2, 3), F(15, 23), True),
-        ("large_q_endpoint", "left", F(0), F(0), False),
+        ("balanced_max_a", "left", F(1), F(2, 3), F(15, 23), True),
+        ("r_long", "right", F(2), F(1, 3), F(7, 23), False),
+        ("s_long", "left", F(2), F(1, 3), F(7, 23), False),
+        ("large_q_endpoint", "left", F(1), F(0), F(0), False),
     )
     assert audit.published_threshold == F(7, 12)
-    assert audit.three_power_scale_boundary_witnesses_covered
+    assert audit.common_modulus_double_poisson_dual_product_exact
+    assert audit.reciprocity_preserves_physical_h_delta_lengths
+    assert not audit.unbalanced_power_witnesses_covered
+    assert not audit.three_power_scale_boundary_witnesses_covered
     assert audit.bounded_zeta_endpoint_shift_log_depth == F(0)
     assert audit.bounded_zeta_endpoint_covered
     assert audit.critical_polylog_shift_log_depth == F(2)
     assert audit.critical_product_lift_identity_exact
     assert not audit.critical_centered_product_energy_proved
-    assert audit.remaining_gate == "large_q_centered_product_energy_lambda_2"
+    assert audit.remaining_gate == (
+        "unbalanced_power_faces_and_large_q_centered_product_energy"
+    )
     assert not audit.all_parameter_cells_covered
     assert not audit.full_long_mollifier_asymptotic_proved
 
@@ -6892,20 +6899,23 @@ def test_oriented_cofactor_transport_records_four_boundary_witnesses(
     output = capsys.readouterr().out
     assert (
         "mwkf_transport: cells="
-        "balanced_max_a:left:2/3:15/23:True,"
-        "r_long:right:2/3:15/23:True,"
-        "s_long:left:2/3:15/23:True,"
-        "large_q_endpoint:left:0:0:False threshold=7/12 "
-        "power_witnesses=True endpoint_depth=0 endpoint=True "
+        "balanced_max_a:left:1:2/3:15/23:True,"
+        "r_long:right:2:1/3:7/23:False,"
+        "s_long:left:2:1/3:7/23:False,"
+        "large_q_endpoint:left:1:0:0:False threshold=7/12 "
+        "double_dual=True reciprocity_lengths=True unbalanced=False "
+        "power_witnesses=False endpoint_depth=0 endpoint=True "
         "critical_depth=2 product_lift=True centered=False "
-        "remaining=large_q_centered_product_energy_lambda_2 "
+        "remaining=unbalanced_power_faces_and_large_q_centered_product_energy "
         "all_cells=False asymptotic=False"
     ) in output
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
-        "### 4.109zjaced Orientation transports the new bound to the maximal power faces",
+        "### 4.109zjaced Double-Poisson normalization blocks the unbalanced transport",
         r"\Theta_{\rm SI}(R,S,H,L)",
         r"\frac{15}{23}",
+        r"\frac{s^2}{HL}",
+        r"\frac7{23}<\frac7{12}",
         r"\mathfrak C_{P,L}[\Omega]",
         "oriented_mmkls_global_transport_audit",
     ):
@@ -6943,6 +6953,7 @@ def test_oriented_cofactor_witnesses_do_not_cover_the_zero_slack_polytope() -> N
     assert audit.four_boundary_witnesses_imply_full_polytope_coverage is False
     assert audit.sole_lcpe_residual_claim_is_valid is False
     assert audit.remaining_gates == (
+        "unbalanced_power_witnesses_r_long_s_long",
         "balanced_zero_slack_u_in_[2,12/5]",
         "large_q_centered_product_energy_lambda_2",
     )
@@ -7070,6 +7081,7 @@ def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
     assert final.alternative_route_unverified_gates == (
         "balanced_nonzero_j_diagonal_scale_slope_square_function",
         "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
+        "unbalanced_power_witnesses_r_long_s_long",
         "unclassified_slack_cells_outside_zero_slack_family",
         "large_q_centered_product_energy_lambda_2",
     )

@@ -2522,9 +2522,12 @@ class ShortCofactorMobiusIntervalAudit:
 class OrientedMMKLSGlobalTransportAudit:
     cofactor_cutoff_exponent: Fraction
     oriented_boundary_cells: tuple[
-        tuple[str, str, Fraction, Fraction, bool], ...
+        tuple[str, str, Fraction, Fraction, Fraction, bool], ...
     ]
     published_threshold: Fraction
+    common_modulus_double_poisson_dual_product_exact: bool
+    reciprocity_preserves_physical_h_delta_lengths: bool
+    unbalanced_power_witnesses_covered: bool
     three_power_scale_boundary_witnesses_covered: bool
     bounded_zeta_endpoint_shift_log_depth: Fraction
     bounded_zeta_endpoint_covered: bool
@@ -15433,6 +15436,7 @@ def unconditional_long_mollifier_asymptotic_audit(
         alternative_unverified = (
             "balanced_nonzero_j_diagonal_scale_slope_square_function",
             "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
+            "unbalanced_power_witnesses_r_long_s_long",
             "unclassified_slack_cells_outside_zero_slack_family",
             "large_q_centered_product_energy_lambda_2",
         )
@@ -17204,6 +17208,7 @@ def oriented_mmkls_polytope_gap_audit(
         four_boundary_witnesses_imply_full_polytope_coverage=False,
         sole_lcpe_residual_claim_is_valid=False,
         remaining_gates=(
+            "unbalanced_power_witnesses_r_long_s_long",
             "balanced_zero_slack_u_in_[2,12/5]",
             "large_q_centered_product_energy_lambda_2",
         ),
@@ -17726,17 +17731,24 @@ def oriented_mmkls_global_transport_audit(
     """Transport the cofactor interval test across the four boundary boxes.
 
     Choose as Ramanujan/Kloosterman modulus the longer of ``R`` and ``S``.
-    If ``u=max(rho,sigma)``, ``v=min(rho,sigma)``, and
-    ``a=ell+h``, the raw complementary-divisor interval ratio is
+    If ``u=max(rho,sigma)`` and ``a=ell+h``, both Poisson variables use
+    that same modulus.  Their dual product therefore has exponent
 
-      theta=(a-v)/u.
+      ``p=2*u-a``.
+
+    Reciprocity changes the phase but does not rescale the physical
+    ``h`` or ``delta`` lengths.  The raw complementary-divisor interval
+    ratio is consequently
+
+      theta=(a-u)/u,
 
     After ``e<=T^eta`` it becomes
 
-      theta_eta=(a-v-eta)/(u-eta).
+      theta_eta=(a-u-eta)/(u-eta).
 
-    The balanced and two maximally unbalanced power witnesses all give
-    15/23 at eta=1/8.  The large-q exponent witness gives zero; its
+    The balanced witness gives 15/23 at eta=1/8.  The two maximally
+    unbalanced power witnesses instead give 7/23 and are not covered by
+    the published 7/12 theorem.  The large-q exponent witness gives zero; its
     genuinely bounded-zeta member is already covered by exact inverse
     Poisson at shift-log depth zero, while the critical depth-two,
     growing-zeta member remains the centered product-energy gate.
@@ -17748,7 +17760,9 @@ def oriented_mmkls_global_transport_audit(
     if eta <= 0 or eta >= 1:
         raise ValueError("cofactor cutoff exponent must lie in (0,1)")
     threshold = F(7, 12)
-    rows: list[tuple[str, str, Fraction, Fraction, bool]] = []
+    rows: list[
+        tuple[str, str, Fraction, Fraction, Fraction, bool]
+    ] = []
     for name in (
         "balanced_max_a",
         "r_long",
@@ -17757,16 +17771,25 @@ def oriented_mmkls_global_transport_audit(
     ):
         box = boundary_witnesses()[name]
         u = max(box.rho, box.sigma)
-        v = min(box.rho, box.sigma)
         a = box.ell + box.h
         orientation = "left" if box.sigma >= box.rho else "right"
-        raw = max(F(0), (a - v) / u) if u > 0 else F(0)
+        dual_product = 2 * u - a
+        raw = max(F(0), (a - u) / u) if u > 0 else F(0)
         adjusted = (
-            max(F(0), (a - v - eta) / (u - eta))
+            max(F(0), (a - u - eta) / (u - eta))
             if u > eta
             else F(0)
         )
-        rows.append((name, orientation, raw, adjusted, adjusted > threshold))
+        rows.append(
+            (
+                name,
+                orientation,
+                dual_product,
+                raw,
+                adjusted,
+                adjusted > threshold,
+            )
+        )
 
     endpoint_box = boundary_witnesses()["large_q_endpoint"]
     endpoint = large_q_endpoint_unpoisson_audit(
@@ -17777,11 +17800,15 @@ def oriented_mmkls_global_transport_audit(
         endpoint_box,
         shift_log_depth=F(2),
     )
-    power_witnesses = all(row[4] for row in rows[:3])
+    unbalanced_power_witnesses = rows[1][5] and rows[2][5]
+    power_witnesses = all(row[5] for row in rows[:3])
     return OrientedMMKLSGlobalTransportAudit(
         cofactor_cutoff_exponent=eta,
         oriented_boundary_cells=tuple(rows),
         published_threshold=threshold,
+        common_modulus_double_poisson_dual_product_exact=True,
+        reciprocity_preserves_physical_h_delta_lengths=True,
+        unbalanced_power_witnesses_covered=unbalanced_power_witnesses,
         three_power_scale_boundary_witnesses_covered=power_witnesses,
         bounded_zeta_endpoint_shift_log_depth=F(0),
         bounded_zeta_endpoint_covered=endpoint.unconditional_coverage,
@@ -17792,7 +17819,9 @@ def oriented_mmkls_global_transport_audit(
         critical_centered_product_energy_proved=(
             critical.centered_product_energy_estimate_proved
         ),
-        remaining_gate="large_q_centered_product_energy_lambda_2",
+        remaining_gate=(
+            "unbalanced_power_faces_and_large_q_centered_product_energy"
+        ),
         all_parameter_cells_covered=False,
         full_long_mollifier_asymptotic_proved=False,
         source=(
@@ -28190,13 +28219,20 @@ def main() -> None:
     print(
         "mwkf_transport: cells="
         + ",".join(
-            f"{name}:{orientation}:{_fmt(raw)}:{_fmt(adjusted)}:{covered}"
-            for name, orientation, raw, adjusted, covered in (
+            f"{name}:{orientation}:{_fmt(dual)}:{_fmt(raw)}:"
+            f"{_fmt(adjusted)}:{covered}"
+            for name, orientation, dual, raw, adjusted, covered in (
                 transport.oriented_boundary_cells
             )
         )
         + " "
         f"threshold={_fmt(transport.published_threshold)} "
+        "double_dual="
+        f"{transport.common_modulus_double_poisson_dual_product_exact} "
+        "reciprocity_lengths="
+        f"{transport.reciprocity_preserves_physical_h_delta_lengths} "
+        "unbalanced="
+        f"{transport.unbalanced_power_witnesses_covered} "
         "power_witnesses="
         f"{transport.three_power_scale_boundary_witnesses_covered} "
         "endpoint_depth="

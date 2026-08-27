@@ -20774,7 +20774,7 @@ short_cofactor_mobius_interval_audit records the exact threshold margin,
 both Q-smooth tails, the density-error saving, and keeps the global
 aggregation and final-asymptotic flags false.
 
-### 4.109zjaced Orientation transports the new bound to the maximal power faces
+### 4.109zjaced Double-Poisson normalization blocks the unbalanced transport
 
 The preceding calculation is not intrinsically balanced.  Before
 double Poisson, choose the longer of the two mollifier variables as the
@@ -20782,21 +20782,32 @@ Ramanujan modulus.  Put
 
 \[
  u=\max(\rho,\sigma),\qquad
- v=\min(\rho,\sigma),\qquad
  a=\ell+h.
 \]
 
-The modulus has scale \(D=T^u/e\).  The complementary-divisor interval
-comes from the Poisson variable attached to the shorter original entry
-and has minimum scale \(T^{a-v}/e\).  Hence the exact oriented ratio is
+Both Poisson variables in (4.845dc_14xq_35p) use the **same** chosen
+modulus.  Thus their two effective dual lengths have product
+
+\[
+ \boxed{KL=\frac{s^2}{HL}=T^{2u-a}.}
+\tag{4.845dc_14xq_35w30a}
+\]
+
+The reciprocity identity (3.1) changes the phase and inserts
+\(e(-h\delta/(rs))\) into the smooth physical kernel, but it does not
+rescale either physical length \(H\) or \(L\).  If
+\(D=T^u/e\), the complementary-divisor interval after the small
+\(Q\)-smooth factor is therefore based on
+\(D/(KL)=T^{a-u}/e\), not \(T^{a-v}/e\).  Hence the corrected oriented
+ratio is
 
 \[
  \boxed{
  \Theta_{\rm SI}(R,S,H,L)
- :=\frac{a-v}{u},
+ :=\frac{a-u}{u},
  \qquad
  \Theta_{\rm SI}^{(\eta)}
- :=\frac{a-v-\eta}{u-\eta}}
+ :=\frac{a-u-\eta}{u-\eta}}
  \tag{4.845dc_14xq_35w30}
 \]
 
@@ -20808,16 +20819,26 @@ the four designated boundary witnesses give
  \text{box}&\text{orientation}&\Theta_{\rm SI}
  &\Theta_{\rm SI}^{(1/8)}\\ \hline
  \text{balanced\_max\_a}&L&2/3&15/23\\
- r\text{\_long}&R&2/3&15/23\\
- s\text{\_long}&L&2/3&15/23\\
+ r\text{\_long}&R&1/3&7/23\\
+ s\text{\_long}&L&1/3&7/23\\
  \text{large\_q\_endpoint}&L&0&0
  \end{array}
  \tag{4.845dc_14xq_35w31}
 \]
 
-Thus the same strict \(15/23>7/12\) argument covers the balanced and
-both maximally unbalanced power-scale witnesses after the indicated
-exchange.  It does not cover the large-\(q\) exponent-zero shift cell.
+Thus the strict \(15/23>7/12\) argument covers the balanced maximal
+witness, but the two maximally unbalanced witnesses satisfy
+
+\[
+ \boxed{\frac7{23}<\frac7{12}}
+\tag{4.845dc_14xq_35w31a}
+\]
+
+and are not covered by the published short-interval theorem.  The
+earlier \(2/3\) entries for those two rows implicitly replaced one of
+the two modulus-\(T^u\) dual lengths by a modulus-\(T^v\) length; no
+such replacement occurs in the exact double-Poisson identity.  The
+large-\(q\) exponent-zero shift cell is also not covered.
 
 That last row has two different logarithmic strata which must not be
 conflated.  For genuinely bounded \(K,M,L\), Section 4.25 already proves
@@ -20842,10 +20863,10 @@ remaining exact statement is still (4.239):
 The product lift producing \(\mathfrak C_{P,L}[\Omega]\) is exact, but
 no estimate proved in this audit supplies its centered little-oh
 uniformly at logarithmic depth two.  Consequently the new hard-box
-argument removes the three maximal power witnesses and preserves the
-bounded large-\(q\) theorem, but it does not yet certify the whole
-parameter polytope or the final asymptotic.  The endpoint residual
-identified by these four witnesses is
+argument removes the balanced maximal witness and preserves the
+bounded large-\(q\) theorem, but leaves both maximally unbalanced power
+witnesses.  It does not certify the whole parameter polytope or the
+final asymptotic.  The separate logarithmic endpoint residual is
 
 \[
 \boxed{\mathrm{LCPE}_2:\quad
@@ -20853,10 +20874,12 @@ identified by these four witnesses is
  \tag{4.845dc_14xq_35w33}
 \]
 
-The interface oriented_mmkls_global_transport_audit computes all four
-ratios in (4.845dc_14xq_35w31), reuses the proved bounded endpoint and
-the exact critical product lift, and keeps both full-polytope coverage
-and the final asymptotic false.
+The interface oriented_mmkls_global_transport_audit computes the common
+modulus dual-product exponent and all four corrected ratios in
+(4.845dc_14xq_35w31).  It reuses the proved bounded endpoint and the
+exact critical product lift, but now explicitly keeps the two
+unbalanced power witnesses, full-polytope coverage, and the final
+asymptotic false.
 
 ### 4.109zjaced0 Four witnesses do not cover the parameter polytope
 
@@ -20940,6 +20963,13 @@ At minimum the present route has the two disjoint gates
  \qquad \mathrm{LCPE}_2.}
 \tag{4.845dc_14xq_35w33g}
 \]
+
+After the common-modulus correction in Section 4.109zjaced, the two
+unbalanced witnesses \(r\_\mathrm{long}\) and
+\(s\_\mathrm{long}\) are an additional explicit power residual.  The
+later almost-all argument closes the balanced interval displayed in
+(4.845dc_14xq_35w33g), but it does not change those unbalanced dual
+lengths.
 
 This is a correction to the earlier four-witness interpretation, not a
 new analytic estimate.  The interface
@@ -21221,6 +21251,7 @@ now
 ```text
 balanced_nonzero_j_diagonal_scale_slope_square_function
 balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]
+unbalanced_power_witnesses_r_long_s_long
 unclassified_slack_cells_outside_zero_slack_family
 large_q_centered_product_energy_lambda_2
 ```
