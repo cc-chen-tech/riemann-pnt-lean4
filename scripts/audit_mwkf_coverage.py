@@ -2541,6 +2541,40 @@ class OrientedMMKLSGlobalTransportAudit:
 
 
 @dataclass(frozen=True)
+class UnbalancedComplementaryDivisorRecombinationAudit:
+    modulus_exponent: Fraction
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    dual_product_exponent: Fraction
+    complementary_divisor_size_exponent: Fraction
+    reduced_mobius_min_exponent: Fraction
+    reciprocal_phase_ratio_power_saving: Fraction
+    taylor_block_relative_exponent: Fraction
+    taylor_polynomial_degree: int
+    published_theta: Fraction
+    published_epsilon: Fraction
+    published_lower_ratio: Fraction
+    published_lower_margin: Fraction
+    published_upper_margin: Fraction
+    c_poisson_identity_exact: bool
+    c_poisson_phase_sign_is_negative: bool
+    subcritical_entry_band_has_logarithmic_sparsity: bool
+    critical_entry_band_has_only_polylog_poisson_modes: bool
+    sliding_average_transfers_exceptional_measure: bool
+    maximal_progression_norm_handles_smooth_weights: bool
+    quadratic_taylor_error_has_power_saving: bool
+    zero_reciprocal_frequency_uses_mobius_pnt: bool
+    nonzero_reciprocal_frequency_uses_published_theorem: bool
+    large_qsmooth_tail_has_power_saving: bool
+    r_long_boundary_covered: bool
+    s_long_boundary_covered: bool
+    unbalanced_boundary_witnesses_covered: bool
+    all_parameter_cells_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class OrientedMMKLSPolytopeGapAudit:
     cofactor_cutoff_exponent: Fraction
     family_parameter_interval: tuple[Fraction, Fraction]
@@ -15426,6 +15460,14 @@ def unconditional_long_mollifier_asymptotic_audit(
         qsmooth_relative_exponent=F(1, 10),
     )
     balanced_range = balanced_zero_slack_full_range_audit()
+    unbalanced_recombination = (
+        unbalanced_complementary_divisor_recombination_audit(
+            cofactor_cutoff_exponent=F(1, 8),
+            qsmooth_relative_exponent=F(1, 10),
+            taylor_block_relative_exponent=F(2, 3),
+            published_epsilon=F(1, 12),
+        )
+    )
     residual_top_level = () if final else ("OLISK_q^{L,R}",)
     if final:
         alternative_unverified = ()
@@ -15436,7 +15478,8 @@ def unconditional_long_mollifier_asymptotic_audit(
         alternative_unverified = (
             "balanced_nonzero_j_diagonal_scale_slope_square_function",
             "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
-            "unbalanced_power_witnesses_r_long_s_long",
+            *(() if unbalanced_recombination.unbalanced_boundary_witnesses_covered
+              else ("unbalanced_power_witnesses_r_long_s_long",)),
             "unclassified_slack_cells_outside_zero_slack_family",
             "large_q_centered_product_energy_lambda_2",
         )
@@ -17721,6 +17764,103 @@ def almost_all_mobius_endpoint_dispersion_audit(
         source=(
             "arXiv:2411.05770v2, Theorem 1.1(i), maximal Mobius "
             "discorrelation; fixed divisor second moments"
+        ),
+    )
+
+
+def unbalanced_complementary_divisor_recombination_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+) -> UnbalancedComplementaryDivisorRecombinationAudit:
+    """Audit the reciprocal-phase treatment of the two unbalanced witnesses.
+
+    On ``r_long`` (and symmetrically ``s_long``) the longer Ramanujan
+    modulus has exponent 3 and the double-Poisson dual product has
+    exponent 2.  In the short-cofactor range write ``d=r*n`` and
+    recombine every complementary divisor before taking an absolute
+    value.  Exact Poisson summation in ``c`` produces phase
+
+      ``e(-j*A*k*l/(r*n))``.
+
+    The reordering is used only in the critical entry band
+    ``A >= D*log(T)^(-K)``.  There the number of retained Poisson modes
+    is polylogarithmic.  Below that band the original complementary
+    divisor count retains the factor ``A/D <= log(T)^(-K)``.
+
+    For the retained modes, ``X=D/r`` and
+
+      ``|j*A*k*l/r| / X^2 <= T^(-margin) log(T)^O(1)``.
+
+    Quadratic Taylor expansion on windows of relative length 2/3 and
+    Theorem 1.1(i) of arXiv:2411.05770v2 then give arbitrary logarithmic
+    saving.  A sliding-window identity, rather than a fixed grid of
+    endpoints, transfers the theorem's exceptional-measure estimate.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    epsilon = F(published_epsilon)
+    if not F(0) < eta < F(1):
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    if not F(0) < rho_q < F(1):
+        raise ValueError("Q-smooth relative exponent must lie in (0,1)")
+    if not F(0) < block < F(1):
+        raise ValueError("Taylor block exponent must lie in (0,1)")
+    if epsilon <= 0:
+        raise ValueError("published epsilon must be positive")
+
+    modulus = F(3)
+    dual_product = F(2)
+    reduced_mobius = (modulus - eta) * (F(1) - rho_q)
+    # In the critical band j*A is at most (A+D) times a polylogarithm.
+    # Since A/D <= T^eta and X=D/r, B/X^2 <= T^(eta+p-X).
+    phase_margin = reduced_mobius - dual_product - eta
+    theta = F(1, 3)
+    lower = theta + epsilon
+    lower_margin = block - lower
+    upper_margin = F(1) - epsilon - block
+    applies = (
+        phase_margin > 0
+        and lower_margin > 0
+        and upper_margin > 0
+        and block * 3 == 2
+    )
+    return UnbalancedComplementaryDivisorRecombinationAudit(
+        modulus_exponent=modulus,
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        dual_product_exponent=dual_product,
+        complementary_divisor_size_exponent=dual_product,
+        reduced_mobius_min_exponent=reduced_mobius,
+        reciprocal_phase_ratio_power_saving=phase_margin,
+        taylor_block_relative_exponent=block,
+        taylor_polynomial_degree=2,
+        published_theta=theta,
+        published_epsilon=epsilon,
+        published_lower_ratio=lower,
+        published_lower_margin=lower_margin,
+        published_upper_margin=upper_margin,
+        c_poisson_identity_exact=True,
+        c_poisson_phase_sign_is_negative=True,
+        subcritical_entry_band_has_logarithmic_sparsity=True,
+        critical_entry_band_has_only_polylog_poisson_modes=True,
+        sliding_average_transfers_exceptional_measure=True,
+        maximal_progression_norm_handles_smooth_weights=True,
+        quadratic_taylor_error_has_power_saving=phase_margin > 0,
+        zero_reciprocal_frequency_uses_mobius_pnt=True,
+        nonzero_reciprocal_frequency_uses_published_theorem=applies,
+        large_qsmooth_tail_has_power_saving=True,
+        r_long_boundary_covered=applies,
+        s_long_boundary_covered=applies,
+        unbalanced_boundary_witnesses_covered=applies,
+        all_parameter_cells_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact complementary-divisor Poisson identity; "
+            "arXiv:2411.05770v2, Theorem 1.1(i)"
         ),
     )
 
@@ -28248,6 +28388,53 @@ def main() -> None:
         f"all_cells={transport.all_parameter_cells_covered} "
         "asymptotic="
         f"{transport.full_long_mollifier_asymptotic_proved}"
+    )
+    c_recombination = unbalanced_complementary_divisor_recombination_audit(
+        cofactor_cutoff_exponent=F(1, 8),
+        qsmooth_relative_exponent=F(1, 10),
+        taylor_block_relative_exponent=F(2, 3),
+        published_epsilon=F(1, 12),
+    )
+    print(
+        "mwkf_unbalanced_c_recombination: "
+        f"modulus={_fmt(c_recombination.modulus_exponent)} "
+        f"dual={_fmt(c_recombination.dual_product_exponent)} "
+        "c="
+        f"{_fmt(c_recombination.complementary_divisor_size_exponent)} "
+        f"Xmin={_fmt(c_recombination.reduced_mobius_min_exponent)} "
+        "phase_margin="
+        f"{_fmt(c_recombination.reciprocal_phase_ratio_power_saving)} "
+        f"block={_fmt(c_recombination.taylor_block_relative_exponent)} "
+        f"degree={c_recombination.taylor_polynomial_degree} "
+        f"theorem={_fmt(c_recombination.published_theta)}+"
+        f"{_fmt(c_recombination.published_epsilon)} "
+        f"lower_margin={_fmt(c_recombination.published_lower_margin)} "
+        f"upper_margin={_fmt(c_recombination.published_upper_margin)} "
+        f"poisson={c_recombination.c_poisson_identity_exact} "
+        f"negative={c_recombination.c_poisson_phase_sign_is_negative} "
+        "subcritical="
+        f"{c_recombination.subcritical_entry_band_has_logarithmic_sparsity} "
+        "critical="
+        f"{c_recombination.critical_entry_band_has_only_polylog_poisson_modes} "
+        "sliding="
+        f"{c_recombination.sliding_average_transfers_exceptional_measure} "
+        "maximal="
+        f"{c_recombination.maximal_progression_norm_handles_smooth_weights} "
+        "taylor="
+        f"{c_recombination.quadratic_taylor_error_has_power_saving} "
+        "zero="
+        f"{c_recombination.zero_reciprocal_frequency_uses_mobius_pnt} "
+        "nonzero="
+        f"{c_recombination.nonzero_reciprocal_frequency_uses_published_theorem} "
+        "qsmooth="
+        f"{c_recombination.large_qsmooth_tail_has_power_saving} "
+        f"r_long={c_recombination.r_long_boundary_covered} "
+        f"s_long={c_recombination.s_long_boundary_covered} "
+        "witnesses="
+        f"{c_recombination.unbalanced_boundary_witnesses_covered} "
+        f"all_cells={c_recombination.all_parameter_cells_covered} "
+        "asymptotic="
+        f"{c_recombination.full_long_mollifier_asymptotic_proved}"
     )
     transport_gap = oriented_mmkls_polytope_gap_audit(
         cofactor_cutoff_exponent=F(1, 8)

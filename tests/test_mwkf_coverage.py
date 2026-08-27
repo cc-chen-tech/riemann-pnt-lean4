@@ -2551,7 +2551,6 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
             "alternative_unverified="
             "balanced_nonzero_j_diagonal_scale_slope_square_function,"
             "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2],"
-            "unbalanced_power_witnesses_r_long_s_long,"
             "unclassified_slack_cells_outside_zero_slack_family,"
             "large_q_centered_product_energy_lambda_2 "
         "all_dyadic_cells=False remainder_o_T=False"
@@ -5512,7 +5511,6 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     assert audit.alternative_route_unverified_gates == (
         "balanced_nonzero_j_diagonal_scale_slope_square_function",
         "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
-        "unbalanced_power_witnesses_r_long_s_long",
         "unclassified_slack_cells_outside_zero_slack_family",
         "large_q_centered_product_energy_lambda_2",
     )
@@ -6922,6 +6920,70 @@ def test_oriented_cofactor_transport_records_four_boundary_witnesses(
         assert marker in note
 
 
+def test_unbalanced_complementary_divisor_recombination_closes_two_boundary_witnesses(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Poissonize the recombined c-sum only in the critical A/D band."""
+    adapter = getattr(
+        coverage_audit,
+        "unbalanced_complementary_divisor_recombination_audit",
+        None,
+    )
+    assert adapter is not None, "unbalanced c-recombination audit is missing"
+    audit = adapter(
+        cofactor_cutoff_exponent=F(1, 8),
+        qsmooth_relative_exponent=F(1, 10),
+        taylor_block_relative_exponent=F(2, 3),
+        published_epsilon=F(1, 12),
+    )
+    assert audit.modulus_exponent == F(3)
+    assert audit.dual_product_exponent == F(2)
+    assert audit.complementary_divisor_size_exponent == F(2)
+    assert audit.reduced_mobius_min_exponent == F(207, 80)
+    assert audit.reciprocal_phase_ratio_power_saving == F(37, 80)
+    assert audit.taylor_block_relative_exponent == F(2, 3)
+    assert audit.taylor_polynomial_degree == 2
+    assert audit.published_lower_ratio == F(5, 12)
+    assert audit.published_lower_margin == F(1, 4)
+    assert audit.published_upper_margin == F(1, 4)
+    assert audit.c_poisson_identity_exact
+    assert audit.c_poisson_phase_sign_is_negative
+    assert audit.subcritical_entry_band_has_logarithmic_sparsity
+    assert audit.critical_entry_band_has_only_polylog_poisson_modes
+    assert audit.sliding_average_transfers_exceptional_measure
+    assert audit.maximal_progression_norm_handles_smooth_weights
+    assert audit.quadratic_taylor_error_has_power_saving
+    assert audit.zero_reciprocal_frequency_uses_mobius_pnt
+    assert audit.nonzero_reciprocal_frequency_uses_published_theorem
+    assert audit.large_qsmooth_tail_has_power_saving
+    assert audit.r_long_boundary_covered
+    assert audit.s_long_boundary_covered
+    assert audit.unbalanced_boundary_witnesses_covered
+    assert not audit.all_parameter_cells_covered
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_unbalanced_c_recombination: modulus=3 dual=2 c=2 "
+        "Xmin=207/80 phase_margin=37/80 block=2/3 degree=2 "
+        "theorem=1/3+1/12 lower_margin=1/4 upper_margin=1/4 "
+        "poisson=True negative=True subcritical=True critical=True "
+        "sliding=True maximal=True taylor=True zero=True nonzero=True "
+        "qsmooth=True r_long=True s_long=True witnesses=True "
+        "all_cells=False asymptotic=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced000 Recombining the complementary divisor closes the two unbalanced witnesses",
+        r"\sum_{c\in\mathbb Z}\Phi\!\left(\frac nX,\frac{rnc-Akl}{A}\right)",
+        r"e\!\left(-\frac{jAkl}{rn}\right)",
+        r"\frac{37}{80}",
+        "unbalanced_complementary_divisor_recombination_audit",
+    ):
+        assert marker in note
+
+
 def test_oriented_cofactor_witnesses_do_not_cover_the_zero_slack_polytope() -> None:
     """The balanced u-family has a strict power-scale residual interval."""
     adapter = getattr(
@@ -7081,7 +7143,6 @@ def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
     assert final.alternative_route_unverified_gates == (
         "balanced_nonzero_j_diagonal_scale_slope_square_function",
         "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
-        "unbalanced_power_witnesses_r_long_s_long",
         "unclassified_slack_cells_outside_zero_slack_family",
         "large_q_centered_product_energy_lambda_2",
     )

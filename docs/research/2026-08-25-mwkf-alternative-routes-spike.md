@@ -20881,6 +20881,216 @@ exact critical product lift, but now explicitly keeps the two
 unbalanced power witnesses, full-polytope coverage, and the final
 asymptotic false.
 
+### 4.109zjaced000 Recombining the complementary divisor closes the two unbalanced witnesses
+
+The interval ratio in (4.845dc_14xq_35w31a) is an obstruction only if
+the complementary divisor is fixed before cancellation is taken.  On
+the two unbalanced witnesses there is another legal ordering.  Put
+
+\[
+ S=T^3,\qquad P:=KL=T^2,\qquad D=\frac Se,
+ \qquad X=\frac Dr,
+ \tag{4.845dc_14xq_35w31b}
+\]
+
+where \(e\leq T^{1/8}\), \(d=rn\), and
+\(r\leq D^{1/10}\) is the small \(Ae\)-smooth factor from
+(4.845dc_14xq_35w23).  The right orientation gives these scales for
+\(r\_\mathrm{long}\); interchanging the two mollifier variables gives
+the identical formula for \(s\_\mathrm{long}\).
+
+Keep one compactly supported physical tensor.  All sums are finite
+after the existing Fourier truncation, so the \(n,c\) order may be
+interchanged exactly.  The part containing the equation
+\(m+Akl=rnc\), before the outer \(A^{-1}\) coefficient is inserted, is
+
+\[
+ \mathcal C_{A,e,r,k,l}
+ :=\frac1{e^2}\sum_n\frac{\mu(n)}{rn}W\!\left(\frac{rne}{S}\right)
+ \sum_{c\in\mathbb Z}\Phi\!\left(\frac nX,\frac{rnc-Akl}{A}\right).
+ \tag{4.845dc_14xq_35w31c}
+\]
+
+Here \(\Phi\) is the actual smooth restriction of that tensor; its
+normalized derivatives have the already recorded polylogarithmic QCT
+seminorms.  With
+
+\[
+ \widehat\Phi_2(x,\xi)
+ :=\int_{\mathbb R}\Phi(x,y)e(-y\xi)\,dy,
+\]
+
+ordinary Poisson summation in \(c\) gives the exact identity
+
+\[
+ \boxed{
+ \mathcal C_{A,e,r,k,l}
+ =\frac{A}{r^2e^2}\sum_{j\in\mathbb Z}\sum_n
+ \frac{\mu(n)}{n^2}W\!\left(\frac{rne}{S}\right)
+ \widehat\Phi_2\!\left(\frac nX,\frac{jA}{rn}\right)
+ e\!\left(-\frac{jAkl}{rn}\right).}
+ \tag{4.845dc_14xq_35w31d}
+\]
+
+The minus sign follows by substituting
+\(y=(rnc-Akl)/A\) in the Fourier transform.  In particular it is not
+the positive phase written in the preliminary route note.
+
+Let \(L_T=\log(3T)\), and fix \(K_0\) after all existing logarithmic
+losses.  There are two disjoint entry ranges, treated in different
+coordinates.
+
+* If \(A<D L_T^{-K_0}\), do not use (4.845dc_14xq_35w31d).  The
+  original \(c\)-sum has total relative mass \(A/D\).  After the
+  \(e^{-2}\) weight, the \(P\) dual pairs, the outer \(A^{-1}\)
+  coefficient, and the physical factor \(HL/S=T\), its contribution is
+
+  \[
+   \frac{HL}{S}P\frac{A_0}{S}
+   \sum_{\substack{e\leq T^{1/8}\\A_0<D L_T^{-K_0}}}\frac1e
+   L_T^{O_W(1)}
+   \ll T^3L_T^{-K_0+O_W(1)}.
+   \tag{4.845dc_14xq_35w31e}
+  \]
+
+* If \(A\geq D L_T^{-K_0}\), use (4.845dc_14xq_35w31d).  Fourier
+  decay restricts
+
+  \[
+   |j|\ll\left(1+\frac DA\right)L_T^{C_W}ll L_T^{K_0+C_W};
+   \tag{4.845dc_14xq_35w31f}
+  \]
+
+  its complement is \(O(T^{-100})\) after choosing a fixed number of
+  integrations by parts.  Thus taking absolute values over \(j\) now
+  costs only a polylogarithm.  This is why (4.845dc_14xq_35w31d) must
+  not be used in the first range.
+
+The required estimate for a retained nonzero \(jkl\) is a reciprocal
+phase Möbius sum.  Put
+
+\[
+ B:=\frac{jAkl}{r}.
+\]
+
+Since \(A\leq S=eD\), (4.845dc_14xq_35w31f) gives
+
+\[
+ |B|\ll \frac{eDP}{r}L_T^{K_0+C_W}
+       =eXP L_T^{K_0+C_W}.
+ \tag{4.845dc_14xq_35w31g}
+\]
+
+Moreover
+
+\[
+ X\geq (T^{3-1/8})^{9/10}=T^{207/80}.
+\]
+
+Consequently
+
+\[
+ \boxed{
+ \frac{|B|}{X^2}
+ \ll T^{,1/8+2-207/80}L_T^{K_0+C_W}
+ =T^{-37/80}L_T^{K_0+C_W}.}
+ \tag{4.845dc_14xq_35w31h}
+\]
+
+We record the precise analytic lemma used here.  If \(a\) is supported
+in a fixed compact subinterval of \((0,\infty)\), has fixed normalized
+seminorms bounded by a power of \(L_T\), and (4.845dc_14xq_35w31h)
+holds, then for every fixed \(M\)
+
+\[
+ \boxed{
+ \sum_{n\asymp X}\mu(n)a(n/X)e(B/n)
+ \ll_{M,a}X L_T^{-M}.}
+ \tag{4.845dc_14xq_35w31i}
+\]
+
+Here is a proof which does not assume that a prescribed grid avoids an
+exceptional set.  Set \(Y=X^{2/3}\).  On every interval
+\((x,x+Y]\), Taylor expansion at \(x\) gives a quadratic polynomial
+\(P_x(n)\) such that
+
+\[
+ \sup_{x<n\leq x+Y}|B/n-P_x(n)|
+ \ll \frac{|B|Y^3}{X^4}=\frac{|B|}{X^2}
+ \ll T^{-37/80}L_T^{K_0+C_W}.
+ \tag{4.845dc_14xq_35w31j}
+\]
+
+[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Theorem 1.1(i)](https://arxiv.org/html/2411.05770v2#S1.Thmtheorem1)
+applies with \(\theta=1/3\) and \(\varepsilon=1/12\), since
+
+\[
+ \frac23-\left(\frac13+\frac1{12}\right)=\frac14,
+ \qquad
+ \left(1-\frac1{12}\right)-\frac23=\frac14.
+ \tag{4.845dc_14xq_35w31k}
+\]
+
+Use the fixed one-dimensional torus and \(F(z)=e(z)\).  The supremum
+over polynomial sequences in that theorem is uniform in every
+coefficient of \(P_x\), and its maximal norm is the supremum over
+arithmetic progressions inside \((x,x+Y]\).  Hence partial summation
+handles \(a(n/X)\) with only its declared seminorms.  Outside a set
+\(\mathcal E\subset[X,2X]\) of measure
+\(O_M(XL_T^{-M})\), every such maximal sum is
+\(O(YL_T^{-M})\).
+
+To pass from almost all windows to the full dyadic sum, remove the two
+edge intervals of total length \(O(Y)\), and use the exact sliding
+identity on the remaining integer interval \(I\):
+
+\[
+ \sum_{n\in I}u_n
+ =\frac1Y\int_X^{2X-Y}
+   \sum_{x<n\leq x+Y}u_n\mathbf1_I(n)\,dx.
+ \tag{4.845dc_14xq_35w31l}
+\]
+
+The good \(x\)'s contribute \(O(XL_T^{-M})\).  On \(\mathcal E\),
+the trivial bound \(Y\), divided by the outer \(Y\), contributes
+\(O(XL_T^{-M})\).  The edges contribute
+\(O(X^{2/3})\), and the Taylor error in (4.845dc_14xq_35w31j)
+contributes \(O(XT^{-37/80}L_T^{K_0+C_W})\).  Both are smaller than
+\(XL_T^{-M}\) for every fixed \(M\).  This proves
+(4.845dc_14xq_35w31i).  Notice that the sliding identity is essential:
+the exceptional-measure estimate alone gives no information about one
+fixed sparse grid of starting points.
+
+Applying (4.845dc_14xq_35w31i) by partial summation to the \(n^{-2}\)
+sum in (4.845dc_14xq_35w31d) gives \(X^{-1}L_T^{-M}\).
+The cases \(jkl=0\) use the ordinary smooth Möbius PNT.  Summing the
+critical \(A\)-box and the modes in (4.845dc_14xq_35w31f) gives
+
+\[
+ \frac{HL}{S}P L_T^{-M+O_W(1)}
+ \sum_{e\leq T^{1/8}}
+ \left(\frac1{e^2}+\frac{A_0}{eS}\right)
+ \sum_{\substack{r\leq D^{1/10}\\r\ Ae\text{-smooth}}}\frac1r
+ \ll T^3L_T^{-M+O_W(1)}.
+ \tag{4.845dc_14xq_35w31m}
+\]
+
+The \(r>D^{1/10}\) tail retains the fixed power saving from
+(4.845dc_14xq_35w26).  Choose \(K_0\), then \(M\), after all QCT,
+dyadic, and harmonic \(q\)-sum logarithms.  Equations
+(4.845dc_14xq_35w31e) and (4.845dc_14xq_35w31m) therefore give the
+required arbitrary logarithmic saving for both
+\(r\_\mathrm{long}\) and \(s\_\mathrm{long}\).
+
+The executable interface
+`unbalanced_complementary_divisor_recombination_audit` records the
+exact Poisson sign, the minimum exponent \(207/80\), the curvature
+margin \(\frac{37}{80}\), both theorem margins \(1/4\), and the separate
+subcritical/critical entry treatments.  It closes these two boundary
+witnesses only.  It does not enumerate the unclassified slack cells,
+prove the balanced transition gates, prove \((\mathrm{LCPE}_2)\), or
+imply the final asymptotic.
+
 ### 4.109zjaced0 Four witnesses do not cover the parameter polytope
 
 The last qualification is essential.  There is a continuous admissible
@@ -20964,12 +21174,15 @@ At minimum the present route has the two disjoint gates
 \tag{4.845dc_14xq_35w33g}
 \]
 
-After the common-modulus correction in Section 4.109zjaced, the two
+At the level of the fixed-complementary-divisor interval route, the two
 unbalanced witnesses \(r\_\mathrm{long}\) and
 \(s\_\mathrm{long}\) are an additional explicit power residual.  The
-later almost-all argument closes the balanced interval displayed in
-(4.845dc_14xq_35w33g), but it does not change those unbalanced dual
-lengths.
+almost-all endpoint argument below closes the balanced interval
+displayed in (4.845dc_14xq_35w33g), but it does not change those
+unbalanced dual lengths.  Section 4.109zjaced000 closes the two
+unbalanced witnesses by the different operation of recombining and
+Poissonizing the complementary divisor; therefore this interval-route
+residual is not retained in the final alternative ledger.
 
 This is a correction to the earlier four-witness interpretation, not a
 new analytic estimate.  The interface
@@ -21251,12 +21464,11 @@ now
 ```text
 balanced_nonzero_j_diagonal_scale_slope_square_function
 balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]
-unbalanced_power_witnesses_r_long_s_long
 unclassified_slack_cells_outside_zero_slack_family
 large_q_centered_product_energy_lambda_2
 ```
 
-and all three entries remain unproved.
+and all four entries remain unproved.
 
 ### 4.109zjaced00b The transition interval is one two-Möbius Farey family
 
