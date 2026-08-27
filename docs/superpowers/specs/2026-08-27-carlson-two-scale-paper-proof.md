@@ -404,7 +404,11 @@ with it into a degree-ten square-growth bound on the full strip
 `1/2 <= Re(s) <= 4`.  Consequently the concrete Gaussian section is
 formally in `L^2(R)` for every complex strip parameter in that strip.  It has
 also been packaged as an actual `Lp C 2 volume` element, with an a.e.-exact
-representative and an exact norm-square integral formula.  The paper proof
+representative and an exact norm-square integral formula.  For an arbitrary
+analytic scalar factor `H`, the exact pointwise complex derivative of the
+Gaussian section in the strip parameter has now also been formalized; this
+is the pointwise input, but not yet the dominated `L^2` difference-quotient
+argument needed for `Lp C 2 volume`-valued analyticity.  The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
