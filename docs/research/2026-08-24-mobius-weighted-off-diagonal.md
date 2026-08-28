@@ -68,6 +68,7 @@
 > | Ambient-to-active scale adapter | Section 9.175 separates the three exponent conventions which cannot be identified: the Section 9.138 ambient reduced-modulus exponent \(\Gamma_i\), the common Type-frequency denominator exponent \(\gamma\), and the active primitive-conductor exponent \(\sigma_i\).  Exactly \(\Gamma_i=\delta_i+\gamma+\sigma_i+\kappa_i\).  On the extreme prime face \((\delta_L,\delta_S,\gamma,\sigma_L,\sigma_S)=(0,1/2,1,2,3/2)\), both ambient exponents remain 3, so both effective \(F\)-lifts still have length exponent 5.  The top internal \(G\)-block has exponent 3 and therefore only four I/II blocks, but neither Type-frequency descent nor the common gcd shortens the physical \(F\)-lift or supplies the missing \(1/4\) power |
 > | Resonant/nonresonant split inside prime incidence | Section 9.176 expands the two local density subtractions exactly, then splits the double-incidence term by one integer determinant \(t\).  The \(t=0\) rows factor into independent primitive ray profiles on \(px=qy+Dz\).  For \(t\ne0\), the two incidence vectors lie in the primitive plane lattice \(\Lambda_{p,q,D}\), their cross product is \(-t(p,-q,-D)\), and \(|t|\) is the exact index of the sublattice they generate.  In a canonical basis the remainder is therefore a fixed-determinant \(2\times2\) integer-matrix family.  Hence the full prime zero-mode is an explicit resonant ray-profile term, including all three density compensations, plus a literal Hecke-type \(t\ne0\) incidence remainder.  These are finite identities; neither analytic part is bounded yet |
 > | Short-side Type-I companion subpolytope | Section 9.177 opens the internal Type-I multiplier before the character estimate, but keeps the separate companion coefficient \(\mu(p)\) from (9.1038).  Only the quotient residual is a bounded-variation character sum.  If the companion length is \(T^{\varpi}\), the short-row fourth moment is bounded by \(4E_{\rm sm}+2\max(\sigma_S,\varpi)+2\varpi\), capped by the generic moment, where \(E_{\rm sm}=\min\{3-\varpi,1+\sigma_S/2\}\).  On the physical imbalance wedge this covers the short-side Type-I cells with \(\varpi\leq(4-\sigma_L-\sigma_S+2\kappa_L+2\kappa_S)_+\), hence only \(\varpi\leq1/2\) at the extreme face.  It does not close an entire I--I or II--I block.  The remaining signed gate (PCDI-SREM) retains every short-side Type-II cell and every short-side Type-I cell above that threshold |
+> | Companion fourth-moment saturation | Section 9.178 restores that \(p\) is the prime-power-bearing \(\Lambda(p)\) coordinate; on squarefree support it is prime and \(\mu(p)=-1\), so there is no second Möbius oscillation to split.  For a prime character modulus \(q\) and companion support \(P^2<q\), character orthogonality and unique factorization give the exact fourth moment \((q-1)(2(\sum|a_p|^2)^2-\sum|a_p|^4)\).  Under the weaker \(P<q\) condition, exact second-moment orthogonality plus Cauchy gives the lower bound \((q-1)(\sum|a_p|^2)^2\).  Thus no separate positive row theorem uniform over this coefficient class can improve the companion exponent in the residual collar.  The missing saving must be obtained before Cauchy from the cross-row determinant; at the extreme face it is \(\min\{(\varpi-1/2)_+/2,1/4\}\) |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -25234,7 +25235,7 @@ extraction, ray factorization, and lattice adapter proved, but both analytic
 bounds, (PCDI), (NPIT), bounded \(D\), and the coupled-kernel gate
 remain false.
 
-### 9.177 Type I opens one PV variable but retains the companion Möbius factor
+### 9.177 Type I opens one PV variable but retains the companion prime factor
 
 The four top-face blocks in (9.1176) do not have equal difficulty, but
 the Type-I identity must be inserted with the complete coefficient from
@@ -25264,9 +25265,13 @@ complete finite formula
 \]
 
 with \(n=bcr>\max(U,V)\) and every original support mask understood.
-There is no \(\mu(r)\), and there is no mixed endpoint remainder.  But
-the independent companion factor \(\mu(p)\) remains.  This is exactly
-the factor which the earlier, stronger draft of this section omitted.
+Here \(p\) is the prime-power-bearing coordinate from \(\Lambda(p)\) in
+(9.889).  Since \(w\) is squarefree on the present support, \(p\) is
+prime and \(\mu(p)=-1\); its logarithmic weight is absorbed into
+\(B\).  There is no \(\mu(r)\), and there is no mixed endpoint
+remainder, but the independent companion **length and prime support**
+remain.  This is exactly the factor which the earlier, stronger draft
+of this section omitted.  No oscillation of \(\mu(p)\) is claimed.
 
 Expand the unit masks by (9.957) and distribute their squarefree divisor
 atoms among \(b,c,r,p\).  On each resulting dyadic box, Mellin inversion
@@ -25278,8 +25283,8 @@ weight \(B_\nu(bcrp)\) from (9.956), with total projective norm
  \left(\sum_r R_\nu(r)\xi(r)\right)
  \left(\sum_p\mu(p)P_\nu(p)\xi(p)\right).
 \]
-Pólya--Vinogradov is applied only to the first factor; the signed second
-factor is kept for the subsequent character moment.  It is not
+Pólya--Vinogradov is applied only to the first factor; the prime-bearing
+second factor is kept for the subsequent character moment.  It is not
 legitimate to take the absolute value of the \(p\)-sum and then call the
 whole residual Möbius-free.
 
@@ -25306,7 +25311,8 @@ Summing the two short factors trivially gives the smooth-group exponent
 All \(a=h\delta\), AFE/reflection, inactive-gcd, and opposite-row labels
 remain in the same projective packet.  Only \(b,c,r\) have been put into
 the pointwise PV envelope; the companion \(p\) remains in a genuine
-divisor-bounded character polynomial.
+prime-supported character polynomial.  Its logarithmic coefficient is
+\(T^\varepsilon\)-harmless but its length is not.
 
 On the maximal prime-incidence face,
 
@@ -25326,7 +25332,7 @@ The ordinary fourth-moment exponent for the full length-
 \]
 
 The retained length-\(T^\varpi\) companion polynomial has the standard
-divisor-bounded fourth-moment exponent
+prime-supported (hence divisor-bounded up to logarithms) fourth-moment exponent
 \(M_4(p)=2\max\{\sigma_S,\varpi\}+2\varpi\).  Consequently (9.1198)--
 (9.1199) give the safe capped estimate
 
@@ -25413,12 +25419,114 @@ coupled-kernel gate remain unproved.
 The finite helper `prime_incidence_type_I_factorization_audit` verifies
 the quotient identity and every endpoint.  The separate helper
 `prime_incidence_type_I_companion_factorization_audit` verifies
-(9.1197) on arbitrary finite squarefree coprime rows and records the
-literal \(\mu(p)\) sign in every factorized term.  The exact-rational
+(9.1197) on arbitrary finite physical rows with prime \(p\), and records
+the literal constant sign \(\mu(p)=-1\) in every factorized term.  The exact-rational
 helper `prime_incidence_short_type_I_pv_polytope_audit` checks
 (9.1199)--(9.1204), marks only the selected companion cells covered,
 and sends all other Type-I cells and every Type-II cell to
 (PCDI-SREM).  All three leave the coupled-kernel flag false.
+
+### 9.178 The companion fourth moment is diagonally sharp
+
+The remaining \(p\)-factor cannot be opened as a second oscillating
+Möbius variable.  It is the prime-bearing coordinate of (9.889), and
+on squarefree support its Möbius sign is constantly \(-1\).  A second
+formal Type split would leave the prime support untouched and would not
+create a bounded-variation interval sum.
+
+There is also an exact obstruction to improving (9.1202) by a stronger
+**separate positive fourth moment**.  Let \(q\) be prime, let
+\(\mathcal P\) be a finite set of primes coprime to \(q\), and put
+
+\[
+ P_\chi=\sum_{p\in\mathcal P}a_p\chi(p).
+\]
+
+Multiplicative character orthogonality gives the finite identity
+
+\[
+ \boxed{
+ \sum_{\chi\bmod q}|P_\chi|^4
+ =(q-1)
+ \sum_{p_1p_2\equiv p_3p_4\ (q)}
+ a_{p_1}a_{p_2}\overline{a_{p_3}a_{p_4}}.}
+ \tag{9.1205}
+\]
+
+If \(\max(\mathcal P)^2<q\), every congruence in (9.1205) is an
+integer equality.  Unique factorization then leaves only the two
+permutations of each unordered prime pair, with the repeated-pair
+overlap removed once:
+
+\[
+ \boxed{
+ \sum_{\chi\bmod q}|P_\chi|^4
+ =(q-1)\left{
+ 2\left(\sum_{p\in\mathcal P}|a_p|^2\right)^2
+ -\sum_{p\in\mathcal P}|a_p|^4
+ \right}.}
+ \tag{9.1206}
+\]
+
+Under the weaker condition \(\max(\mathcal P)<q\), the prime residues
+are distinct, so second-moment orthogonality and Cauchy's inequality give
+
+\[
+ \boxed{
+ \sum_{\chi\bmod q}|P_\chi|^2
+ =(q-1)\sum_{p\in\mathcal P}|a_p|^2,
+ \qquad
+ \sum_{\chi\bmod q}|P_\chi|^4
+ \geq(q-1)\left(\sum_{p\in\mathcal P}|a_p|^2\right)^2.}
+ \tag{9.1207}
+\]
+
+For a dyadic family \(q\asymp T^{\sigma_S}\),
+\(p\asymp T^\varpi\), and unit-size logarithmic prime weights allowed
+by the registered coefficient envelope, summing the lower bound over
+the prime moduli gives exponent \(2\sigma_S+2\varpi\), up to
+logarithms.  This is exactly the companion contribution used in
+(9.1202).  Thus no separate positive row theorem **uniform over that
+coefficient class** can enlarge the companion subpolytope by a power of
+\(T\) in the range \(\varpi<\sigma_S\).  In particular, the no-wrap collar
+\(2\varpi<\sigma_S\) is not easier: there (9.1206) shows exact
+diagonal saturation rather than extra cancellation.
+
+The residual power which must come from an estimate coupling the two
+physical rows is therefore
+
+\[
+ \boxed{
+ \eta_{\rm cross}
+ :=\left(\eta_{\rm imb}-\eta_{\rm I,S}(\varpi)\right)_+.}
+ \tag{9.1208}
+\]
+
+Here \(\eta_{\rm I,S}\) means the nonnegative capped gain
+\((12-M_{4,{\rm I}})/4\) from (9.1202); formula (9.1203) is its
+positive-gain physical branch.
+
+At the extreme face this becomes
+\[
+ \eta_{\rm cross}
+ =\min\left\{\frac{(\varpi-1/2)_+}{2},\frac14\right\}.
+\]
+For example, the first uncovered witness \(\varpi=3/4\) needs exactly
+another \(1/8\).  That saving cannot be booked in either row separately:
+it must arise before Cauchy from the shared \(t\ne0\) determinant,
+the signed outer family, or a cancellation with the resonant ledger.
+This rules out the naive ``split \(\mu(p)\) again'' route and sharpens
+(PCDI-SREM) into a quantitative cross-row obligation; it does not prove
+that obligation.
+
+The finite helper
+`prime_companion_character_fourth_moment_collision_audit` enumerates
+all multiplicative residue collisions for arbitrary supplied rational
+weights under \(\max(\mathcal P)^2<q\), verifies the exact second and
+fourth moments in (9.1205)--(9.1207),
+and leaves both the required determinant dispersion and the
+coupled-kernel gate open.  The polytope helper records
+\(\eta_{\rm cross}\) cell by cell.
 
 ## 10. What has and has not been proved
 
@@ -25542,6 +25650,21 @@ No complete I--I or II--I block is proved.  The remaining signed gate
 (PCDI-SREM) retains all short-side Type-II cells and the Type-I cells
 above the threshold.  No global resonant evaluation or moving
 weighted-determinant estimate is inferred.
+
+Section 9.178 proves that the companion fourth-moment term is not a
+loose use of the large sieve which can be sharpened away.  The physical
+companion is the prime-bearing \(\Lambda(p)\) coordinate, so its
+\(\mu(p)\) sign is constantly \(-1\) on squarefree support.  Character
+orthogonality and unique factorization give the exact formula (9.1206)
+when \(P^2<q\); for \(P<q\), second-moment orthogonality and Cauchy give
+(9.1207).  Hence no separate positive row theorem uniform over the
+registered coefficient class can improve the exponent
+\(2\sigma_S+2\varpi\) in the residual collar.
+The still-required cellwise gain is
+\(\eta_{\rm cross}=(\eta_{\rm imb}-\eta_{\rm I,S})_+\); at the extreme
+face it is \(\min\{(\varpi-1/2)_+/2,1/4\}\).  This gain must come from
+pre-Cauchy cross-row determinant dispersion or resonant reassembly, and
+remains unproved.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

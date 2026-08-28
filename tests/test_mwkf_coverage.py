@@ -8641,15 +8641,16 @@ def test_prime_incidence_type_I_factorization_and_short_side_pv_gain() -> None:
     companion_exact = companion_factorization(
         short_cutoff_u=2,
         short_cutoff_v=3,
-        rows=((5, 2, F(2, 3)), (7, 6, F(3, 5)), (10, 3, F(5, 7))),
+        rows=((5, 2, F(2, 3)), (7, 3, F(3, 5)), (6, 5, F(5, 7))),
     )
     assert companion_exact["full_companion_factorization_reassembles_exactly"]
     assert companion_exact["direct_coefficients"] == {
         (5, 2): F(2, 3),
-        (7, 6): F(-3, 5),
-        (10, 3): F(-5, 7),
+        (7, 3): F(3, 5),
+        (6, 5): F(-5, 7),
     }
-    assert companion_exact["companion_mobius_signs_retained"] == (-1, 1, -1)
+    assert companion_exact["physical_prime_companions_verified"]
+    assert companion_exact["companion_mobius_signs_retained"] == (-1, -1, -1)
     assert not companion_exact["companion_factor_mobius_coefficient_removed"]
 
     polytope = getattr(
@@ -8679,6 +8680,7 @@ def test_prime_incidence_type_I_factorization_and_short_side_pv_gain() -> None:
     assert result["required_conductor_imbalance_gain_exponent"] == F(1, 4)
     assert result["covered_type_I_short_companion_subpolytope"]
     assert result["maximum_uniformly_covered_companion_exponent"] == F(1, 2)
+    assert result["remaining_companion_dispersion_gain_exponent"] == F(0)
     assert not result["type_I_cell_retained_in_PCDI_SREM"]
     assert result["short_side_type_II_cells_retained_in_PCDI_SREM"]
     assert not result["entire_short_side_type_I_blocks_covered"]
@@ -8726,8 +8728,34 @@ def test_prime_incidence_short_type_I_pv_gain_covers_the_oriented_wedge() -> Non
     )
     assert outside["usable_bilinear_gain_exponent"] == F(1, 8)
     assert not outside["covered_type_I_short_companion_subpolytope"]
+    assert outside["remaining_companion_dispersion_gain_exponent"] == F(1, 8)
     assert outside["type_I_cell_retained_in_PCDI_SREM"]
     assert outside["short_side_type_II_cells_retained_in_PCDI_SREM"]
+
+
+def test_prime_companion_fourth_moment_is_diagonally_saturated_below_sqrt_modulus() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_companion_character_fourth_moment_collision_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        prime_modulus=101,
+        companion_primes=(2, 3, 5),
+        weights=(F(1), F(2), F(3)),
+    )
+    assert result["maximum_integer_product_is_below_modulus"]
+    assert result["all_residue_collisions_are_integer_product_diagonals"]
+    assert result["character_second_moment_sum"] == F(1400)
+    assert result["weighted_collision_energy"] == F(294)
+    assert result["character_fourth_moment_sum"] == F(29400)
+    assert result["diagonal_lower_bound"] == F(19600)
+    assert result["fourth_from_second_moment_lower_bound"] == F(19600)
+    assert result["diagonal_lower_bound_verified"]
+    assert not result["separate_row_power_saving_available"]
+    assert result["requires_cross_row_determinant_dispersion"]
+    assert not result["coupled_kernel_gate_closed"]
 
 
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:

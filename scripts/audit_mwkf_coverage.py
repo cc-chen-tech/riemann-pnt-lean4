@@ -25295,8 +25295,9 @@ def prime_incidence_type_I_companion_factorization_audit(
 ) -> dict[str, object]:
     """Verify the Type-I identity while retaining the companion sign.
 
-    A row is ``(n, p, weight)`` on the squarefree coprime support
-    ``w=n*p``.  Expanding only ``lambda_I(n)`` gives
+    A row is ``(n, p, weight)`` on the physical squarefree coprime
+    support ``w=n*p``, where ``p`` is the prime-bearing variable from
+    ``Lambda(p)``.  Expanding only ``lambda_I(n)`` gives
 
     ``-mu(p) * sum_{bc|n, b<=U, c<=V} mu(b)mu(c)``.
 
@@ -25321,6 +25322,8 @@ def prime_incidence_type_I_companion_factorization_audit(
         key = (n, p)
         if min(n, p) <= 0 or key in direct:
             raise ValueError("companion rows must have distinct positive labels")
+        if _finite_prime_exponents(p) != {p: 1}:
+            raise ValueError("each physical companion factor p must be prime")
         if gcd(n, p) != 1 or _finite_mobius(n * p) == 0:
             raise ValueError("each product n*p must be squarefree with (n,p)=1")
         mu_p = _finite_mobius(p)
@@ -25366,6 +25369,7 @@ def prime_incidence_type_I_companion_factorization_audit(
         "direct_coefficients": direct,
         "factorized_coefficients": dict(factorized),
         "factorized_rows": tuple(expanded_rows),
+        "physical_prime_companions_verified": True,
         "companion_mobius_signs_retained": tuple(companion_signs),
         "full_companion_factorization_reassembles_exactly": bool(
             direct == dict(factorized)
@@ -25373,6 +25377,102 @@ def prime_incidence_type_I_companion_factorization_audit(
         "quotient_residual_factor_has_no_mobius_coefficient": True,
         "companion_factor_mobius_coefficient_removed": False,
         "mixed_endpoint_remainder_present": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def prime_companion_character_fourth_moment_collision_audit(
+    *,
+    prime_modulus: int,
+    companion_primes: tuple[int, ...],
+    weights: tuple[Fraction, ...],
+) -> dict[str, object]:
+    """Verify exact diagonal saturation of a short prime polynomial.
+
+    If every product of two supplied companion primes is smaller than
+    the prime modulus ``q``, multiplicative residue collisions modulo
+    ``q`` are literal integer product equalities.  Unique factorization
+    then gives the exact weighted collision energy
+
+    ``2*(sum_p a_p^2)^2 - sum_p a_p^4``.
+
+    Character orthogonality multiplies this by ``q-1``.  In particular
+    the diagonal lower bound ``(q-1)*(sum_p a_p^2)^2`` is already
+    present, so a separate positive fourth-moment estimate cannot give
+    a power saving over its natural scale.
+    """
+
+    modulus = int(prime_modulus)
+    primes = tuple(int(value) for value in companion_primes)
+    coefficients = tuple(F(value) for value in weights)
+    if _finite_prime_exponents(modulus) != {modulus: 1}:
+        raise ValueError("the character modulus must be prime")
+    if not primes or len(primes) != len(coefficients):
+        raise ValueError("prime support and weights must be nonempty and aligned")
+    if len(set(primes)) != len(primes):
+        raise ValueError("companion primes must be distinct")
+    if any(_finite_prime_exponents(value) != {value: 1} for value in primes):
+        raise ValueError("every companion support label must be prime")
+    if all(value == 0 for value in coefficients):
+        raise ValueError("at least one companion coefficient must be nonzero")
+    maximum_product = max(primes) ** 2
+    if maximum_product >= modulus:
+        raise ValueError("the exact no-wrap audit requires max(p)^2 < q")
+
+    residue_energy = F(0)
+    integer_product_energy = F(0)
+    all_residue_collisions_are_integer = True
+    for first_index, first in enumerate(primes):
+        for second_index, second in enumerate(primes):
+            left_product = first * second
+            left_weight = coefficients[first_index] * coefficients[second_index]
+            for third_index, third in enumerate(primes):
+                for fourth_index, fourth in enumerate(primes):
+                    right_product = third * fourth
+                    if left_product % modulus != right_product % modulus:
+                        continue
+                    row_weight = (
+                        left_weight
+                        * coefficients[third_index]
+                        * coefficients[fourth_index]
+                    )
+                    residue_energy += row_weight
+                    if left_product == right_product:
+                        integer_product_energy += row_weight
+                    else:
+                        all_residue_collisions_are_integer = False
+
+    squared_l2 = sum((value * value for value in coefficients), F(0))
+    fourth_diagonal = sum((value**4 for value in coefficients), F(0))
+    unique_factorization_energy = 2 * squared_l2**2 - fourth_diagonal
+    character_second = F(modulus - 1) * squared_l2
+    character_fourth = F(modulus - 1) * residue_energy
+    fourth_from_second = character_second**2 / F(modulus - 1)
+    diagonal_lower_bound = F(modulus - 1) * squared_l2**2
+    return {
+        "prime_modulus": modulus,
+        "companion_primes": primes,
+        "weights": coefficients,
+        "maximum_integer_product": maximum_product,
+        "maximum_integer_product_is_below_modulus": maximum_product < modulus,
+        "weighted_collision_energy": residue_energy,
+        "integer_product_collision_energy": integer_product_energy,
+        "unique_factorization_diagonal_energy": unique_factorization_energy,
+        "all_residue_collisions_are_integer_product_diagonals": bool(
+            all_residue_collisions_are_integer
+            and residue_energy == integer_product_energy
+            and residue_energy == unique_factorization_energy
+        ),
+        "character_second_moment_sum": character_second,
+        "character_fourth_moment_sum": character_fourth,
+        "diagonal_lower_bound": diagonal_lower_bound,
+        "fourth_from_second_moment_lower_bound": fourth_from_second,
+        "diagonal_lower_bound_verified": character_fourth >= diagonal_lower_bound,
+        "physical_companion_mobius_sign_is_constant_minus_one": all(
+            _finite_mobius(value) == -1 for value in primes
+        ),
+        "separate_row_power_saving_available": False,
+        "requires_cross_row_determinant_dispersion": True,
         "coupled_kernel_gate_closed": False,
     }
 
@@ -25451,6 +25551,9 @@ def prime_incidence_short_type_I_pv_polytope_audit(
     required_imbalance_gain = _positive_part(
         (sigma_long - sigma_short) / 2 - kappa_long - kappa_short
     )
+    remaining_companion_dispersion_gain = _positive_part(
+        required_imbalance_gain - usable_bilinear_gain
+    )
     adapter = bool(packet_exhaustive_residual_bv_adapter_verified)
     covered = bool(adapter and usable_bilinear_gain >= required_imbalance_gain)
     maximum_uniform_companion = _positive_part(
@@ -25478,6 +25581,9 @@ def prime_incidence_short_type_I_pv_polytope_audit(
         "short_type_I_fourth_moment_gain_exponent": fourth_gain,
         "usable_bilinear_gain_exponent": usable_bilinear_gain,
         "required_conductor_imbalance_gain_exponent": required_imbalance_gain,
+        "remaining_companion_dispersion_gain_exponent": (
+            remaining_companion_dispersion_gain
+        ),
         "gain_margin_exponent": usable_bilinear_gain - required_imbalance_gain,
         "maximum_uniformly_covered_companion_exponent": maximum_uniform_companion,
         "packet_exhaustive_residual_bv_adapter_verified": adapter,
