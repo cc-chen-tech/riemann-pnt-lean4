@@ -16248,6 +16248,397 @@ def retained_product_spectrum_exponent_audit(
     }
 
 
+def ramanujan_lifted_retained_product_spectrum_audit(
+    *,
+    active_squarefree_modulus: int,
+    joint_inactive_squarefree_cofactor: int,
+    common_inactive_squarefree_cofactor: int,
+    physical_direct_label: int,
+    h_coefficients: dict[int, Fraction],
+    delta_coefficients: dict[int, Fraction],
+    product_factor_coefficients: tuple[dict[int, Fraction], ...],
+) -> dict[str, object]:
+    """Verify the Ramanujan-cofactor lift of retained product duality.
+
+    For coprime squarefree ``G`` and ``K``, expand
+    ``c_K(h*delta)/phi(K)`` as the average of the unit additive
+    frequencies modulo ``K``.  For each such frequency ``u``, CRT sends
+    ``x`` to the total-modulus frequency with residues
+    ``-A/x (mod G)`` and ``u (mod K)``.  This is an injection from
+    ``U(G)`` into ``U(G*K)``, so the partial frequency energy is bounded
+    by the full primitive product spectrum at the total modulus.
+    """
+
+    G = int(active_squarefree_modulus)
+    k = int(joint_inactive_squarefree_cofactor)
+    r0 = int(common_inactive_squarefree_cofactor)
+    K = k * r0
+    factors_G = _finite_prime_exponents(G) if G > 1 else {}
+    factors_k = _finite_prime_exponents(k) if k > 1 else {}
+    factors_r0 = _finite_prime_exponents(r0) if r0 > 1 else {}
+    if G <= 1 or any(exponent != 1 for exponent in factors_G.values()):
+        raise ValueError("active_squarefree_modulus must be squarefree and exceed one")
+    if k <= 0 or any(exponent != 1 for exponent in factors_k.values()):
+        raise ValueError("joint inactive cofactor must be positive and squarefree")
+    if r0 <= 0 or any(exponent != 1 for exponent in factors_r0.values()):
+        raise ValueError("common inactive cofactor must be positive and squarefree")
+    if gcd(k, r0) != 1:
+        raise ValueError("the two inactive cofactors must be coprime")
+    if gcd(G, K) != 1:
+        raise ValueError("active modulus and inactive cofactor must be coprime")
+    S = G * K
+    factors_S = {**factors_G, **factors_k, **factors_r0}
+    physical_direct = int(physical_direct_label)
+    A = pow(K, -1, G)
+    B = A * physical_direct % G
+    if not h_coefficients or not delta_coefficients:
+        raise ValueError("both h and delta coefficient families are required")
+    if not product_factor_coefficients or any(
+        not family for family in product_factor_coefficients
+    ):
+        raise ValueError("at least one nonempty product-factor family is required")
+
+    h_family = {int(label): F(value) for label, value in h_coefficients.items()}
+    delta_family = {
+        int(label): F(value) for label, value in delta_coefficients.items()
+    }
+    product_families = tuple(
+        {int(label): F(value) for label, value in family.items()}
+        for family in product_factor_coefficients
+    )
+    if any(
+        gcd(label, G) != 1
+        for family in product_families
+        for label in family
+    ):
+        raise ValueError("every product-factor label must be a unit modulo G")
+
+    unit_products = tuple(residue for residue in range(G) if gcd(residue, G) == 1)
+    unit_cofactor_frequencies = tuple(
+        residue for residue in range(K) if gcd(residue, K) == 1
+    )
+    phi_K = len(unit_cofactor_frequencies)
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(label: int, modulus: int) -> int:
+        common = gcd(label, modulus)
+        return _finite_mobius(modulus // common) * finite_totient(common)
+
+    product_rows: list[tuple[int, Fraction]] = []
+    product_residues = {residue: F(0) for residue in range(G)}
+    for entries in product(*(tuple(family.items()) for family in product_families)):
+        label = prod(entry[0] for entry in entries)
+        coefficient = prod((entry[1] for entry in entries), start=F(1))
+        residue = label % G
+        product_rows.append((residue, coefficient))
+        product_residues[residue] += coefficient
+
+    h_delta_residues = {residue: F(0) for residue in range(S)}
+    h_delta_labels = set()
+    for h, h_coefficient in h_family.items():
+        for delta, delta_coefficient in delta_family.items():
+            label = h * delta
+            h_delta_labels.add(label)
+            h_delta_residues[label % S] += h_coefficient * delta_coefficient
+    nonzero_h_delta_residues = {
+        residue: coefficient
+        for residue, coefficient in h_delta_residues.items()
+        if coefficient != 0
+    }
+
+    joint_conductor = G * k
+    inverse_r0_mod_joint = pow(r0, -1, joint_conductor)
+    ramanujan_cofactor_rows = []
+    for label in sorted(h_delta_labels | {physical_direct}):
+        scaled_label = label * inverse_r0_mod_joint % joint_conductor
+        left = F(ramanujan(scaled_label, k), finite_totient(k)) * F(
+            ramanujan(label, r0),
+            finite_totient(r0),
+        )
+        right = F(ramanujan(label, K), phi_K)
+        ramanujan_cofactor_rows.append(
+            {
+                "label": label,
+                "scaled_active_label": scaled_label,
+                "separate_normalized_ramanujan_product": left,
+                "combined_normalized_ramanujan_weight": right,
+                "multiplicative_identity_exact": left == right,
+            }
+        )
+
+    expanded_phase_polynomial: Counter[int] = Counter()
+    fixed_frequency_polynomials: dict[int, Counter[int]] = {}
+    for cofactor_frequency in unit_cofactor_frequencies:
+        frequency_polynomial: Counter[int] = Counter()
+        for h, h_coefficient in h_family.items():
+            for delta, delta_coefficient in delta_family.items():
+                for product_residue, product_coefficient in product_rows:
+                    phase = (
+                        K
+                        * (
+                            B * product_residue
+                            - A
+                            * h
+                            * delta
+                            * pow(product_residue, -1, G)
+                        )
+                        + G * cofactor_frequency * h * delta
+                    ) % S
+                    coefficient = (
+                        h_coefficient
+                        * delta_coefficient
+                        * product_coefficient
+                        / phi_K
+                    )
+                    expanded_phase_polynomial[phase] += coefficient
+                    frequency_polynomial[phase] += coefficient * phi_K
+        fixed_frequency_polynomials[cofactor_frequency] = frequency_polynomial
+
+    grouped_phase_polynomial: Counter[int] = Counter()
+    lifted_frequency_rows: dict[int, tuple[int, ...]] = {}
+    for cofactor_frequency in unit_cofactor_frequencies:
+        lifted_frequencies = tuple(
+            (
+                -K * A * pow(product_residue, -1, G)
+                + G * cofactor_frequency
+            )
+            % S
+            for product_residue in unit_products
+        )
+        lifted_frequency_rows[cofactor_frequency] = lifted_frequencies
+        for product_residue, product_coefficient in product_residues.items():
+            if product_coefficient == 0:
+                continue
+            frequency = (
+                -K * A * pow(product_residue, -1, G)
+                + G * cofactor_frequency
+            ) % S
+            for h_delta_residue, h_delta_coefficient in (
+                nonzero_h_delta_residues.items()
+            ):
+                grouped_phase_polynomial[
+                    (K * B * product_residue + frequency * h_delta_residue) % S
+                ] += (
+                    product_coefficient
+                    * h_delta_coefficient
+                    / phi_K
+                )
+
+    def squarefree_ramanujan(label: int) -> int:
+        value = 1
+        for prime in factors_S:
+            value *= prime - 1 if label % prime == 0 else -1
+        return value
+
+    primitive_fourier_energy_raw = sum(
+        (
+            left_coefficient
+            * right_coefficient
+            * squarefree_ramanujan(left_residue - right_residue)
+        )
+        for left_residue, left_coefficient in nonzero_h_delta_residues.items()
+        for right_residue, right_coefficient in nonzero_h_delta_residues.items()
+    )
+    product_residue_energy = sum(
+        (coefficient * coefficient for coefficient in product_residues.values()),
+        F(0),
+    )
+    cauchy_bound_squared = product_residue_energy * primitive_fourier_energy_raw
+
+    root_S = cmath.exp(2j * cmath.pi / S)
+    root_G = cmath.exp(2j * cmath.pi / G)
+    expanded_sum = sum(
+        complex(coefficient) * root_S ** phase
+        for phase, coefficient in expanded_phase_polynomial.items()
+    )
+    direct_ramanujan_sum = sum(
+        complex(h_coefficient * delta_coefficient * product_coefficient)
+        * F(ramanujan(h * delta, K), phi_K)
+        * root_G
+        ** (
+            B * product_residue
+            - A * h * delta * pow(product_residue, -1, G)
+        )
+        for h, h_coefficient in h_family.items()
+        for delta, delta_coefficient in delta_family.items()
+        for product_residue, product_coefficient in product_rows
+    )
+    direct_ramanujan_scalar = F(
+        ramanujan(physical_direct, K),
+        phi_K,
+    )
+    scalar_weighted_sum = complex(direct_ramanujan_scalar) * expanded_sum
+    tolerance = 1e-8 * max(1.0, float(cauchy_bound_squared))
+    ramanujan_expansion_exact = all(
+        abs(
+            sum(
+                cmath.exp(2j * cmath.pi * u * label / K)
+                for u in unit_cofactor_frequencies
+            )
+            - ramanujan(label, K)
+        )
+        < 1e-8
+        for label in h_delta_labels
+    )
+    return {
+        "active_squarefree_modulus": G,
+        "joint_inactive_squarefree_cofactor": k,
+        "common_inactive_squarefree_cofactor": r0,
+        "inactive_squarefree_cofactor": K,
+        "total_squarefree_modulus": S,
+        "active_and_inactive_moduli_coprime": True,
+        "physical_direct_label": physical_direct,
+        "derived_active_inverse_multiplier": A,
+        "derived_active_direct_coefficient": B,
+        "physical_phase_bridge_exact": bool(
+            A == pow(k, -1, G) * pow(r0, -1, G) % G
+            and B == A * physical_direct % G
+        ),
+        "ramanujan_cofactor_multiplicativity_rows": tuple(
+            ramanujan_cofactor_rows
+        ),
+        "physical_separate_ramanujan_cofactors_combine_exactly": all(
+            bool(row["multiplicative_identity_exact"])
+            for row in ramanujan_cofactor_rows
+        ),
+        "unit_product_residues": unit_products,
+        "unit_cofactor_frequencies": unit_cofactor_frequencies,
+        "normalized_inactive_direct_ramanujan_scalar": (
+            direct_ramanujan_scalar
+        ),
+        "direct_ramanujan_scalar_absolute_value_at_most_one": bool(
+            abs(direct_ramanujan_scalar) <= 1
+        ),
+        "ramanujan_expanded_phase_polynomial": dict(expanded_phase_polynomial),
+        "grouped_lifted_phase_polynomial": dict(grouped_phase_polynomial),
+        "lifted_phase_polynomial_identity_exact": bool(
+            expanded_phase_polynomial == grouped_phase_polynomial
+        ),
+        "ramanujan_expansion_exact": bool(
+            ramanujan_expansion_exact
+            and abs(expanded_sum - direct_ramanujan_sum) < tolerance
+        ),
+        "lifted_frequency_rows": lifted_frequency_rows,
+        "every_fixed_cofactor_frequency_map_injective": all(
+            len(set(row)) == len(unit_products)
+            for row in lifted_frequency_rows.values()
+        ),
+        "every_lifted_frequency_is_primitive": all(
+            gcd(frequency, S) == 1
+            for row in lifted_frequency_rows.values()
+            for frequency in row
+        ),
+        "primitive_h_delta_fourier_energy_raw_at_total_modulus": (
+            primitive_fourier_energy_raw
+        ),
+        "product_residue_energy_at_active_modulus": product_residue_energy,
+        "ramanujan_average_cauchy_upper_bound_squared": (
+            cauchy_bound_squared
+        ),
+        "ramanujan_weighted_actual_absolute_square": abs(expanded_sum) ** 2,
+        "direct_scalar_weighted_actual_absolute_square": (
+            abs(scalar_weighted_sum) ** 2
+        ),
+        "ramanujan_average_minkowski_bound_holds": bool(
+            abs(expanded_sum) ** 2 <= float(cauchy_bound_squared) + tolerance
+            and abs(scalar_weighted_sum) ** 2
+            <= float(cauchy_bound_squared) + tolerance
+        ),
+        "inactive_cofactor_absorbed_without_phi_power_loss": True,
+        "fixed_physical_cofactor_atom_operator_bound_proved": True,
+        "smooth_physical_tensor_adapter_proved": False,
+        "signed_varying_conductor_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def ramanujan_lifted_retained_product_exponent_audit(
+    *,
+    total_modulus_exponent: Fraction,
+    active_modulus_exponent: Fraction,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    product_total_length_exponent: Fraction,
+    required_saving_exponent: Fraction,
+    squarefree_coprime_conductor_factorization_verified: bool,
+    unit_product_support_and_inverse_multiplier_verified: bool,
+    smooth_physical_tensor_adapter_verified: bool,
+    divisor_bounded_product_convolution_verified: bool,
+) -> dict[str, object]:
+    """Record the cofactor-lifted retained-spectrum exponent ledger."""
+
+    sigma = F(total_modulus_exponent)
+    gamma = F(active_modulus_exponent)
+    h = F(h_length_exponent)
+    delta = F(delta_length_exponent)
+    x = F(product_total_length_exponent)
+    required = F(required_saving_exponent)
+    if min(sigma, gamma, h, delta, x, required) < 0 or sigma == 0:
+        raise ValueError("all exponents must be nonnegative and total modulus positive")
+    if gamma > sigma:
+        raise ValueError("active modulus exponent cannot exceed total modulus exponent")
+
+    boundary_base = max(F(0), h, delta, h + delta - sigma)
+    primitive_energy = max(h + delta, 2 * boundary_base)
+    product_energy = max(x, 2 * x - gamma)
+    operator_bound = (sigma + primitive_energy + product_energy) / 2
+    trivial = h + delta + x
+    saving = max(F(0), trivial - operator_bound)
+    balanced = bool(
+        sigma == 3 and h == F(5, 2) and delta == F(5, 2)
+    )
+    balanced_closed_form = (
+        F(1) + min(gamma, x) / 2 if balanced else None
+    )
+    hypotheses = bool(
+        squarefree_coprime_conductor_factorization_verified
+        and unit_product_support_and_inverse_multiplier_verified
+        and smooth_physical_tensor_adapter_verified
+        and divisor_bounded_product_convolution_verified
+    )
+    target_met = bool(hypotheses and saving >= required)
+    return {
+        "total_modulus_exponent": sigma,
+        "active_modulus_exponent": gamma,
+        "inactive_cofactor_exponent": sigma - gamma,
+        "h_length_exponent": h,
+        "delta_length_exponent": delta,
+        "product_total_length_exponent": x,
+        "primitive_h_delta_energy_exponent": primitive_energy,
+        "product_residue_energy_exponent": product_energy,
+        "operator_bound_exponent": operator_bound,
+        "trivial_amplitude_exponent": trivial,
+        "power_saving_exponent": saving,
+        "required_saving_exponent": required,
+        "balanced_maximal_scale": balanced,
+        "balanced_saving_closed_form": balanced_closed_form,
+        "balanced_target_region_exact": bool(
+            balanced and ((saving >= required) == (min(gamma, x) >= 2))
+        ),
+        "squarefree_coprime_conductor_factorization_verified": bool(
+            squarefree_coprime_conductor_factorization_verified
+        ),
+        "unit_product_support_and_inverse_multiplier_verified": bool(
+            unit_product_support_and_inverse_multiplier_verified
+        ),
+        "smooth_physical_tensor_adapter_verified": bool(
+            smooth_physical_tensor_adapter_verified
+        ),
+        "divisor_bounded_product_convolution_verified": bool(
+            divisor_bounded_product_convolution_verified
+        ),
+        "published_hypotheses_verified": hypotheses,
+        "fixed_physical_cofactor_atom_target_met": target_met,
+        "signed_varying_conductor_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

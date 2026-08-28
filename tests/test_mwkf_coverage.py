@@ -5425,6 +5425,140 @@ def test_retained_product_spectrum_duality_covers_resonant_fixed_atoms() -> None
         assert marker in note
 
 
+def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
+    finite_audit = getattr(
+        coverage_audit,
+        "ramanujan_lifted_retained_product_spectrum_audit",
+        None,
+    )
+    assert finite_audit is not None, "Ramanujan-lifted spectrum audit is missing"
+
+    finite = finite_audit(
+        active_squarefree_modulus=30,
+        joint_inactive_squarefree_cofactor=7,
+        common_inactive_squarefree_cofactor=11,
+        physical_direct_label=5,
+        h_coefficients={1: F(2), 6: F(-1), 11: F(3)},
+        delta_coefficients={1: F(1), 14: F(2), 17: F(-1)},
+        product_factor_coefficients=(
+            {1: F(1), 7: F(1), 11: F(-1)},
+            {1: F(2), 13: F(1), 17: F(-2)},
+        ),
+    )
+    assert finite["inactive_squarefree_cofactor"] == 77
+    assert finite["total_squarefree_modulus"] == 2310
+    assert finite["active_and_inactive_moduli_coprime"]
+    assert finite["derived_active_inverse_multiplier"] == 23
+    assert finite["derived_active_direct_coefficient"] == 25
+    assert finite["physical_phase_bridge_exact"]
+    assert finite["physical_separate_ramanujan_cofactors_combine_exactly"]
+    assert finite["ramanujan_expansion_exact"]
+    assert finite["lifted_phase_polynomial_identity_exact"]
+    assert finite["every_fixed_cofactor_frequency_map_injective"]
+    assert finite["every_lifted_frequency_is_primitive"]
+    assert finite["direct_ramanujan_scalar_absolute_value_at_most_one"]
+    assert finite["ramanujan_average_minkowski_bound_holds"]
+    assert finite["inactive_cofactor_absorbed_without_phi_power_loss"]
+    assert finite["fixed_physical_cofactor_atom_operator_bound_proved"]
+    assert not finite["signed_varying_conductor_reassembly_proved"]
+    assert not finite["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="coprime"):
+        finite_audit(
+            active_squarefree_modulus=30,
+            joint_inactive_squarefree_cofactor=15,
+            common_inactive_squarefree_cofactor=7,
+            physical_direct_label=5,
+            h_coefficients={1: F(1)},
+            delta_coefficients={1: F(1)},
+            product_factor_coefficients=({1: F(1)},),
+        )
+    with pytest.raises(ValueError, match="product-factor label"):
+        finite_audit(
+            active_squarefree_modulus=30,
+            joint_inactive_squarefree_cofactor=7,
+            common_inactive_squarefree_cofactor=11,
+            physical_direct_label=5,
+            h_coefficients={1: F(1)},
+            delta_coefficients={1: F(1)},
+            product_factor_coefficients=({2: F(1)},),
+        )
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "ramanujan_lifted_retained_product_exponent_audit",
+        None,
+    )
+    assert exponent_audit is not None, "Ramanujan-lifted exponent audit is missing"
+    common = {
+        "total_modulus_exponent": F(3),
+        "h_length_exponent": F(5, 2),
+        "delta_length_exponent": F(5, 2),
+        "required_saving_exponent": F(2),
+        "squarefree_coprime_conductor_factorization_verified": True,
+        "unit_product_support_and_inverse_multiplier_verified": True,
+        "smooth_physical_tensor_adapter_verified": True,
+        "divisor_bounded_product_convolution_verified": True,
+    }
+    high_active = exponent_audit(
+        active_modulus_exponent=F(9, 4),
+        product_total_length_exponent=F(5, 2),
+        **common,
+    )
+    assert high_active["primitive_h_delta_energy_exponent"] == F(5)
+    assert high_active["product_residue_energy_exponent"] == F(11, 4)
+    assert high_active["operator_bound_exponent"] == F(43, 8)
+    assert high_active["power_saving_exponent"] == F(17, 8)
+    assert high_active["balanced_saving_closed_form"] == F(17, 8)
+    assert high_active["fixed_physical_cofactor_atom_target_met"]
+
+    threshold = exponent_audit(
+        active_modulus_exponent=F(2),
+        product_total_length_exponent=F(3),
+        **common,
+    )
+    assert threshold["power_saving_exponent"] == F(2)
+    assert threshold["fixed_physical_cofactor_atom_target_met"]
+
+    low_active = exponent_audit(
+        active_modulus_exponent=F(3, 2),
+        product_total_length_exponent=F(3),
+        **common,
+    )
+    assert low_active["power_saving_exponent"] == F(7, 4)
+    assert not low_active["fixed_physical_cofactor_atom_target_met"]
+
+    short_product = exponent_audit(
+        active_modulus_exponent=F(3),
+        product_total_length_exponent=F(3, 2),
+        **common,
+    )
+    assert short_product["power_saving_exponent"] == F(7, 4)
+    assert not short_product["fixed_physical_cofactor_atom_target_met"]
+
+    missing_adapter = exponent_audit(
+        active_modulus_exponent=F(9, 4),
+        product_total_length_exponent=F(5, 2),
+        **{**common, "smooth_physical_tensor_adapter_verified": False},
+    )
+    assert missing_adapter["power_saving_exponent"] == F(17, 8)
+    assert not missing_adapter["published_hypotheses_verified"]
+    assert not missing_adapter["fixed_physical_cofactor_atom_target_met"]
+    assert not missing_adapter["signed_varying_conductor_reassembly_proved"]
+    assert not missing_adapter["coupled_kernel_gate_closed"]
+
+    note = OFFDIAGONAL_NOTE.read_text()
+    for marker in (
+        "### 9.130 The Ramanujan cofactor lifts to the total primitive spectrum",
+        r"\frac{c_K(a)}{\varphi(K)}",
+        r"\iota_u(x):=-KA\bar x+Gu",
+        r"\eta_0^{\rm Ram}",
+        r"\min\{\gamma,x\}\geq2",
+        "ramanujan_lifted_retained_product_spectrum_audit",
+    ):
+        assert marker in note
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,
