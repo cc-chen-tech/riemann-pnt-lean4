@@ -481,18 +481,23 @@ artificial strip boundary.  The uniform bound plus these pointwise facts have
 now been assembled through the complex mean-value estimate and dominated
 convergence into an actual `HasDerivAt` theorem for the totalized
 `Lp C 2 volume` map at every center with
-`29/48 <= Re(z) <= 187/48`.  Thus the local `Lp` analyticity gate needed by
-the shifted `2/3` contour is closed.  This does not yet supply either endpoint
-mean-square estimate or the finite Gaussian covering.
+`29/48 <= Re(z) <= 187/48`.  This closes the local analytic neighborhood of
+the shifted `2/3` contour, but it is not yet the full analyticity hypothesis
+for Hadamard three-lines: that theorem needs every point of the open strip
+`1/2 < Re(z) < 4`, arbitrarily close to both boundary lines.  Extending the
+argument requires a point-dependent Cauchy radius controlled by the distance
+to the boundary.  The endpoint mean-square estimates and finite Gaussian
+covering also remain.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. for the first unconditional formal target `delta=1/20`, the boundary norm
-   estimates and finite Gaussian covering argument using the now formalized
-   local `Lp C 2 volume` analyticity; extending the same package to `R=1000` is an optional
+2. for the first unconditional formal target `delta=1/20`, extend the proved
+   central `Lp C 2 volume` differentiability to the full open strip
+   `1/2 < Re(s) < 4` using point-dependent local radii, then prove the boundary
+   norm estimates and finite Gaussian covering argument; extending the same package to `R=1000` is an optional
    strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
