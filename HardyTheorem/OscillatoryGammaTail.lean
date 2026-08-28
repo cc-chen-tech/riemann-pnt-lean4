@@ -227,4 +227,49 @@ theorem exists_tendsto_oscillatoryGammaPartial_atTop
       hNn hNpos hz1 hc himN).trans_lt hNsmall
   exact cauchySeq_tendsto_of_complete hcauchy
 
+/-- The canonical value of the conditionally convergent right-hand boundary
+Gamma integral. -/
+noncomputable def oscillatoryGammaBoundary (z : ℂ) (c : ℝ) : ℂ :=
+  limUnder atTop (oscillatoryGammaPartial z c)
+
+/-- The canonical boundary value is the limit of the natural truncations. -/
+theorem tendsto_oscillatoryGammaPartial_atTop
+    {z : ℂ} {c : ℝ} (hz1 : z.re < 1) (hc : 0 < c) :
+    Tendsto (oscillatoryGammaPartial z c) atTop
+      (nhds (oscillatoryGammaBoundary z c)) := by
+  apply tendsto_nhds_limUnder
+  exact exists_tendsto_oscillatoryGammaPartial_atTop hz1 hc
+
+/-- The same power-saving tail bound survives passage to the canonical
+conditional limit. -/
+theorem norm_oscillatoryGammaBoundary_sub_partial_le
+    {z : ℂ} {c : ℝ} (hz1 : z.re < 1) (hc : 0 < c)
+    {N : ℕ} (hN : 1 ≤ N) (him : 2 * |z.im| ≤ c * (N : ℝ)) :
+    ‖oscillatoryGammaBoundary z c - oscillatoryGammaPartial z c N‖ ≤
+      8 * (N : ℝ) ^ (z.re - 1) / c := by
+  have hlim := (tendsto_oscillatoryGammaPartial_atTop hz1 hc).sub_const
+    (oscillatoryGammaPartial z c N)
+  have hnorm := hlim.norm
+  apply le_of_tendsto hnorm
+  filter_upwards [eventually_ge_atTop N] with n hn
+  have hNpos : 0 < (N : ℝ) := by
+    exact_mod_cast (Nat.zero_lt_of_lt hN)
+  have hNn : (N : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
+  have h1N : (1 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN
+  have hbase := intervalIntegrable_cpow_mul_cexp_linear z c
+    (a := 1) (b := (N : ℝ)) (by norm_num) h1N
+  have htail := intervalIntegrable_cpow_mul_cexp_linear z c
+    (a := (N : ℝ)) (b := (n : ℝ)) hNpos hNn
+  have hadd := intervalIntegral.integral_add_adjacent_intervals hbase htail
+  have hdiff :
+      oscillatoryGammaPartial z c n - oscillatoryGammaPartial z c N =
+        ∫ u in (N : ℝ)..(n : ℝ),
+          (u : ℂ) ^ (z - 1) * Complex.exp (I * (c * u)) := by
+    dsimp only [oscillatoryGammaPartial]
+    rw [← hadd]
+    ring
+  rw [hdiff]
+  exact norm_intervalIntegral_cpow_mul_cexp_linear_le
+    hNn hNpos hz1 hc him
+
 end HardyTheorem.OscillatoryGammaTail

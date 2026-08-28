@@ -1018,6 +1018,22 @@ existence of their limit for every `Re(z)<1` and `c>0`.  This latter theorem
 still makes no assertion about the value of the limit; identifying it with
 `exp(i*pi*z/2)c^(-z)Gamma(z)` is the remaining Abel-boundary step.
 
+The damping-uniform version is formal as well.  If `r>=0` and the other
+hypotheses of (8.13) hold, Lean proves
+
+\[
+ \left|\int_A^B u^{z-1}e^{-ru}e^{-icu}\,du\right|
+ \le \frac{8}{c}A^{\Re z-1},                                      \tag{8.14}
+\]
+
+with no dependence on `r` or `B`.  The proof abstracts the same
+bounded-primitive argument to a positive decreasing `C^1` weight and applies
+it to
+`exp(-(1-Re(z))log u-r u)`.  Thus the two tails in the Abel boundary passage
+are now quantitatively uniform; the remaining work is the compact-interval
+limit, the positive-real scaling of the rotated Mellin integral, and the
+final limit-uniqueness calculation.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta
