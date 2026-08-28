@@ -14143,6 +14143,128 @@ def two_dimensional_mixed_abel_audit(
     }
 
 
+def principal_harmonic_gcd_projection_audit(
+    *,
+    modulus: int,
+    shift: int,
+    cyclic_samples: tuple[Fraction, ...],
+) -> dict[str, object]:
+    """Audit the exact finite principal-harmonic projection.
+
+    For the length-``s`` discrete Fourier transform, the frequencies with
+    ``s | h*delta`` are exactly ``h=(s/g)j``, ``0 <= j < g``, where
+    ``g=(s,delta)``.  Their sum is the orthogonal projection onto samples
+    supported at multiples of ``g``.  This is the finite cyclic analogue
+    of the Poisson identity used for the physical kernel.
+    """
+
+    s = int(modulus)
+    delta = int(shift)
+    samples = tuple(F(value) for value in cyclic_samples)
+    if s <= 0:
+        raise ValueError("modulus must be positive")
+    if delta == 0:
+        raise ValueError("shift must be nonzero")
+    if len(samples) != s:
+        raise ValueError("cyclic_samples must have exactly modulus entries")
+
+    common = gcd(s, abs(delta))
+    reduced_modulus = s // common
+    principal_residues = tuple(
+        frequency
+        for frequency in range(s)
+        if (frequency * delta) % s == 0
+    )
+    expected_principal_residues = tuple(
+        reduced_modulus * index for index in range(common)
+    )
+
+    orthogonality_weights: list[int] = []
+    phase_cycle_orders: list[int] = []
+    phase_cycles_are_complete = True
+    for sample_index in range(s):
+        divisor = gcd(common, sample_index)
+        order = common // divisor
+        phase_cycle_orders.append(order)
+        residues = tuple(
+            (-(reduced_modulus * index) * sample_index) % s
+            for index in range(common)
+        )
+        if order == 1:
+            phase_cycles_are_complete &= all(residue == 0 for residue in residues)
+            orthogonality_weights.append(common)
+            continue
+
+        reduced_residues = tuple(
+            (residue // reduced_modulus) % common for residue in residues
+        )
+        expected_counts = common // order
+        active_cycle = {
+            (step * (common // order)) % common for step in range(order)
+        }
+        phase_cycles_are_complete &= all(
+            reduced_residues.count(residue) == expected_counts
+            for residue in active_cycle
+        )
+        phase_cycles_are_complete &= all(
+            residue in active_cycle for residue in reduced_residues
+        )
+        orthogonality_weights.append(0)
+
+    zero_frequency = sum(samples, F(0))
+    all_principal_projection = sum(
+        (
+            F(weight) * sample
+            for weight, sample in zip(orthogonality_weights, samples)
+        ),
+        F(0),
+    )
+    sampled_lattice_projection = F(common) * sum(
+        (
+            sample
+            for sample_index, sample in enumerate(samples)
+            if sample_index % common == 0
+        ),
+        F(0),
+    )
+    nonzero_principal_projection = all_principal_projection - zero_frequency
+
+    return {
+        "modulus": s,
+        "shift": delta,
+        "gcd": common,
+        "reduced_modulus": reduced_modulus,
+        "principal_frequency_residues": principal_residues,
+        "expected_principal_frequency_residues": (
+            expected_principal_residues
+        ),
+        "phase_cycle_orders": tuple(phase_cycle_orders),
+        "orthogonality_weights": tuple(orthogonality_weights),
+        "zero_frequency_projection": zero_frequency,
+        "all_principal_projection": all_principal_projection,
+        "sampled_lattice_projection": sampled_lattice_projection,
+        "nonzero_principal_projection": nonzero_principal_projection,
+        "principal_residues_are_exact_multiples": (
+            principal_residues == expected_principal_residues
+        ),
+        "phase_cycles_are_complete": phase_cycles_are_complete,
+        "principal_projection_equals_gcd_sampled_lattice": (
+            all_principal_projection == sampled_lattice_projection
+        ),
+        "nonzero_principal_plus_zero_reassembles_sampled_lattice": (
+            nonzero_principal_projection + zero_frequency
+            == sampled_lattice_projection
+        ),
+        "finite_principal_harmonic_projection_proved": True,
+        "continuous_poisson_requires_smooth_compact_support": True,
+        "principal_harmonic_packet_exhaustion_proved": True,
+        "raw_zero_mode_reassembly_proved": True,
+        "sampled_principal_master_bound_proved": False,
+        "centered_harmonic_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

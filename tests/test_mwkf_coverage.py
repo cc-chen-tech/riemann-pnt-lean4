@@ -4766,6 +4766,88 @@ def test_two_dimensional_mixed_abel_is_exact_and_variation_bounded() -> None:
         )
 
 
+def test_principal_harmonics_project_exactly_to_the_gcd_lattice() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_harmonic_gcd_projection_audit",
+        None,
+    )
+    assert audit is not None, "principal harmonic projection is missing"
+
+    result = audit(
+        modulus=12,
+        shift=8,
+        cyclic_samples=tuple(F(index + 1) for index in range(12)),
+    )
+    assert result["gcd"] == 4
+    assert result["reduced_modulus"] == 3
+    assert result["principal_frequency_residues"] == (0, 3, 6, 9)
+    assert result["orthogonality_weights"] == (
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+    )
+    assert result["zero_frequency_projection"] == 78
+    assert result["all_principal_projection"] == 60
+    assert result["nonzero_principal_projection"] == -18
+    assert result["principal_residues_are_exact_multiples"]
+    assert result["phase_cycles_are_complete"]
+    assert result["principal_projection_equals_gcd_sampled_lattice"]
+    assert result[
+        "nonzero_principal_plus_zero_reassembles_sampled_lattice"
+    ]
+    assert result["principal_harmonic_packet_exhaustion_proved"]
+    assert result["raw_zero_mode_reassembly_proved"]
+    assert not result["sampled_principal_master_bound_proved"]
+    assert not result["centered_harmonic_dispersion_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    for modulus in range(2, 25):
+        samples = tuple(
+            F((index + 2) * (index - 3), index + 1)
+            for index in range(modulus)
+        )
+        for shift in range(-2 * modulus, 2 * modulus + 1):
+            if shift == 0:
+                continue
+            exhaustive = audit(
+                modulus=modulus,
+                shift=shift,
+                cyclic_samples=samples,
+            )
+            assert exhaustive["principal_residues_are_exact_multiples"]
+            assert exhaustive["phase_cycles_are_complete"]
+            assert exhaustive[
+                "principal_projection_equals_gcd_sampled_lattice"
+            ]
+            assert exhaustive[
+                "nonzero_principal_plus_zero_reassembles_sampled_lattice"
+            ]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.106 Principal $h$-harmonics" in text
+    assert r"s\mid h\delta" in text
+    assert r"g\sum_{n\in\mathbb Z}\mathcal F_{r,s,\delta}(gn)" in text
+    assert r"\mathcal O_{q;R,S,K,M}^{h=0}" in text
+    assert r"\mathcal P_{q;R,S,K,M}^{\ne0}" in text
+    assert r"\frac{M}{32\mathscr L^B}\le g\le2M" in text
+    assert "sampled-master estimate" in text
+
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=5, shift=0, cyclic_samples=(F(0),) * 5)
+    with pytest.raises(ValueError, match="exactly modulus"):
+        audit(modulus=5, shift=1, cyclic_samples=(F(0),) * 4)
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

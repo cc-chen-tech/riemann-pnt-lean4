@@ -7,6 +7,7 @@
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
+> | Principal inverse-phase harmonics plus the raw zero mode | exact gcd-sampled reassembly proved in Section 9.106; sampled master unbounded |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -15195,6 +15196,234 @@ The centered nonprincipal dispersion is also unchanged.  Consequently
 (9.689) is not marked as a proof of the principal twisted-moment bound or
 of \({\rm CK}_{\rm ub}(3)\).
 
+### 9.106 Principal $h$-harmonics reassemble with the raw zero mode exactly
+
+Sections 9.14--9.15 treated the principal *multiplicative-character*
+projection by Ramanujan averaging.  The product-label multiplier mean in
+(9.633) is a different object: before a cross-modulus square it is the
+literal subfamily \(s\mid h\delta\), on which the inverse phase equals
+one.  Its density can be derived directly at the original Poisson stage,
+before a fixed-\(H\) absolute value.  Remove only the Fourier phase from
+(4.4): extend
+by zero to \(x\in\mathbb R\) and write
+
+\[
+ \begin{aligned}
+ \mathcal F_{r,s,\delta}(x)
+ :={}&\mathbf1_{x>0,\,xr+\delta>0}
+ \frac{F_M(x)F_K((xr+\delta)/s)}
+ {\sqrt{x(xr+\delta)/s}}\\
+ &\times\int_{\mathbb R}W(t/T)
+ V_t\!\left(\frac{x(xr+\delta)}s\right)
+ \exp\!\left(it\log\left(1+\frac{\delta}{xr}\right)\right)dt .
+ \end{aligned}
+ \tag{9.690}
+\]
+
+Thus
+
+\[
+ \mathscr K_{R,S,K,M}(r,s;\delta,h)
+ =\int_{\mathbb R}\mathcal F_{r,s,\delta}(x)e(-hx/s)\,dx.
+ \tag{9.691}
+\]
+
+Fix \(\delta\ne0\), put \(g=(s,|\delta|)\) and \(s_0=s/g\).
+Since \((r,s)=1\), the inverse phase is principal precisely on
+
+\[
+ e(-h\delta\bar r/s)=1
+ \quad\Longleftrightarrow\quad s\mid h\delta
+ \quad\Longleftrightarrow\quad s_0\mid h.
+ \tag{9.692}
+\]
+
+The dyadic \(h\)-partition must now be summed back to all integers.
+Poisson summation applied to the smooth compactly supported function in
+(9.690) gives the exact identity
+
+\[
+ \boxed{
+ \sum_{j\in\mathbb Z}
+ \mathscr K_{R,S,K,M}(r,s;\delta,s_0j)
+ =g\sum_{n\in\mathbb Z}\mathcal F_{r,s,\delta}(gn).}
+ \tag{9.693}
+\]
+
+The support in (9.690) makes the sum on the right finite.  Removing
+\(j=0\) therefore gives
+
+\[
+ \boxed{
+ \sum_{\substack{h\ne0\\s\mid h\delta}}
+ e(-h\delta\bar r/s)
+ \mathscr K(r,s;\delta,h)
+ =g\sum_n\mathcal F_{r,s,\delta}(gn)
+  -\mathscr K(r,s;\delta,0).}
+ \tag{9.694}
+\]
+
+This identifies the actual inverse-phase principal projection; no
+probability density or arbitrary centering weight is chosen.  It is not
+the Ramanujan principal-character projection in (9.65)--(9.69), and the
+two must not be added as independent savings.  At fixed \(q,R,S,K,M\), let
+\(\mathcal P_{q;R,S,K,M}^{\ne0}\) denote the subfamily of (4.5) with
+\(s\mid h\delta\), after all \(H\)-blocks have been recombined, and let
+\(\mathcal O_{q;R,S,K,M}^{h=0}\) be the corresponding raw zero-Poisson
+contribution before the Mellin calculation in Section 4.2.  Substitution
+of (9.694), with every \(\delta,r,s\) weight retained, gives
+
+\[
+ \boxed{
+ \mathcal O_{q;R,S,K,M}^{h=0}
+ +\mathcal P_{q;R,S,K,M}^{\ne0}
+ =:\mathcal P_{q;R,S,K,M}^{\rm all}
+ =\frac2q
+ \sum_{\substack{r,s\ge1\\(r,s)=1}}
+ \frac{a_N(qr)a_N(qs)F_R(r)F_S(s)}{\sqrt{rs}\,s}
+ \sum_{\delta\ne0}
+ g\sum_n\mathcal F_{r,s,\delta}(gn).}
+ \tag{9.695}
+\]
+
+There is no endpoint or truncation remainder in (9.695).  In particular,
+the negative zero-frequency term in (9.694) cancels the literal raw
+\(h=0\) packet coefficient by coefficient.  Now sum (9.695) in
+\(q,R,S,K,M\), and omit those indices from the notation.  Combining the
+result with (4.6) gives the equivalent global ledger
+
+\[
+ \boxed{
+ T\mathcal Q_{N,T}+\mathcal E_{\rm arch}
+ +\mathcal P^{\ne0}
+ =\mathcal D+\mathcal P^{\rm all}.}
+ \tag{9.696}
+\]
+
+If \(\mathcal C^{\ne0}\) denotes the complementary harmonics
+\(s\nmid h\delta\), the original moment may consequently be written
+without a secondary principal-density choice as
+
+\[
+ \boxed{I_{N,W}(T)=\mathcal D+\mathcal P^{\rm all}
+ +\mathcal C^{\ne0}.}
+ \tag{9.697}
+\]
+
+This is a packet-exhaustive return of the inverse-phase principal set to
+the original AFE/Poisson ledger.  Formula (2.4) already uses the
+symmetric AFE with its two directions folded into the factor \(2\), and
+(9.690) retains that exact physical kernel.  No reflection or later
+sector model is needed to justify (9.693)--(9.697).
+
+The sampled master is much narrower than the former arbitrary principal
+mean.  Since \(F_M(gn)\ne0\) implies \(g\le2M\),
+
+\[
+ \boxed{\mathcal F_{r,s,\delta}(gn)\ne0\quad\Longrightarrow\quad
+ (s,|\delta|)=g\le2M.}
+ \tag{9.698}
+\]
+
+On the other hand, a nonzero principal harmonic in a retained \(H\)-box
+requires \(s/g\le2H\), so
+
+\[
+ \frac{s}{2H}\le g\le2M.
+ \tag{9.699}
+\]
+
+Using \(s\asymp S\) and \(H\le8S\mathscr L^B/M\) from (5.8), this
+localizes
+
+\[
+ \boxed{\frac{M}{32\mathscr L^B}\le g\le2M.}
+ \tag{9.700}
+\]
+
+Consequently the two Poisson coordinates
+
+\[
+ n\asymp M/g,\qquad j=h/(s/g)\asymp Hg/s
+ \tag{9.701}
+\]
+
+have only polylogarithmic length throughout the principal core.  On the
+balanced face this is the concrete transition
+
+\[
+ g\asymp T^{1/2}\mathscr L^{O(1)},\qquad
+ s/g\asymp T^{5/2}\mathscr L^{O(1)},\qquad
+ \delta/g\asymp T^2\mathscr L^{O(1)}.
+ \tag{9.702}
+\]
+
+The sampled lattice has a boundary-exact reduced-coordinate form.  Write
+
+\[
+ s=gs_0,\qquad \delta=g\delta_0,qquad
+ (g,s_0)=(\delta_0,s_0)=1.
+\]
+
+The first coprimality follows on the squarefree support of \(a_N(qs)\),
+and the second is the definition of \(g\).  Since
+
+\[
+ \frac{(gn)r+g\delta_0}{gs_0}
+ =\frac{nr+\delta_0}{s_0},
+\]
+
+(9.695) becomes
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal P_{q;R,S,K,M}^{\rm all}
+ ={}&\frac2q
+ \sum_{\substack{g,s_0,r\ge1\\
+          (g,s_0)=(r,gs_0)=1}}
+ \frac{a_N(qr)a_N(qgs_0)F_R(r)F_S(gs_0)}
+      {\sqrt{rgs_0}\,s_0}\\
+ &\times\sum_{\substack{\delta_0\ne0\\(\delta_0,s_0)=1}}
+ \sum_n\mathcal F_{r,gs_0,g\delta_0}(gn).
+ \end{aligned}}
+ \tag{9.703}
+\]
+
+All restrictions \(qr,qgs_0\le N\), the positivity condition
+\(nr+\delta_0>0\), and the original AFE weight remain inside the
+displayed factors.  In particular, the two coupled physical coordinates
+are
+
+\[
+ x=gn,\qquad
+ \frac{xr+\delta}{s}=\frac{nr+\delta_0}{s_0}.
+ \tag{9.704}
+\]
+
+Equations (9.695)--(9.702) remove two previous ambiguities: this
+inverse-phase principal mean is fixed by Poisson orthogonality, and all
+large-\(g\) strata cancel
+against the raw zero mode because their sampled lattice is empty.  They do
+**not** bound \(\mathcal P^{\rm all}\).  The remaining sampled lattice
+still contains the two Selberg--Möbius weights in (9.703).  The short
+\(n\)-coordinate does not separate the long \(r,s_0,\delta_0\) packet.
+
+Nor is \(\mathcal C^{\ne0}\) estimated: it is the genuinely centered
+nonprincipal harmonic family.  The next analytic tasks are therefore a
+bound or further LCM reassembly for (9.695), and a global signed
+dispersion estimate for \(\mathcal C^{\ne0}\).  Neither
+\({\rm CK}_{\rm ub}(3)\) nor the full off-diagonal bound is asserted.
+
+The finite helper `principal_harmonic_gcd_projection_audit` verifies the
+cyclic version of (9.692)--(9.694) exactly: for a length-\(s\) DFT it
+enumerates every frequency with \(s\mid h\delta\), proves that they are
+the multiples of \(s/g\), checks the complete root cycles, and verifies
+that their sum is \(g\) times the samples at multiples of \(g\).  The
+continuous passage in (9.693) is ordinary Poisson summation for (9.690).
+The sampled-master estimate, centered dispersion, and coupled-kernel flags
+remain false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -15349,7 +15578,16 @@ identity (9.680)--(9.685).  Each fixed-label tail rectangle, and hence
 the whole local two-taper divisor lattice, is \(T^\varepsilon\)-bounded
 by (9.687)--(9.689).  The packet-exhaustive global reassembly, complete
 AFE/reflection normalization, principal analytic bound, and centered
-dispersion remain unproved.**
+dispersion remain unproved.  Returning instead to the original Poisson
+ordering, (9.690)--(9.697) now derives the inverse-phase principal density
+without any centering choice: all \(s\mid h\delta\) harmonics plus the raw
+\(h=0\) packet are exactly the \((s,\delta)\)-spaced physical lattice.
+The retained polylogarithmic core has
+\((s,\delta)\asymp M\) up to polylogarithms and
+the two Poisson coordinates are polylogarithmically short,
+(9.698)--(9.702).  The reduced master (9.703) still contains both long
+Selberg--Möbius weights, so its bound and the complementary centered
+harmonic dispersion remain unproved.**
 
 Proved in this note:
 
@@ -15360,6 +15598,10 @@ Proved in this note:
 * the corrected zero-mode identity, including the previously omitted
   \(1-4z^2\) zero and the exact archimedean correction,
   (4.5a)--(4.8);
+* the packet-exhaustive principal-harmonic projection: all
+  \(s\mid h\delta\) modes reassemble with the raw \(h=0\) packet into
+  the gcd-sampled lattice (9.693)--(9.697), with the exact transition
+  support and reduced-coordinate master (9.698)--(9.704);
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -15890,6 +16132,7 @@ Proved in this note:
 | Two-taper weighted interaction adapter | exact sparse-axis/mixed split; smooth norm handled by the next row | For arbitrary \(W(r,s)\), (9.674)--(9.677) split the complete weighted lattice into the anchored core, two axis variations, and one mixed interaction.  Each axis variation sums the other taper into the one-prime core (9.675); only \(\Delta_{12}W\) retains the full coprime lattice.  It vanishes for additive weights and factorizes for rank-one weights, (9.678).  Equation (9.679) retains both inclusive reflected tails and their double-boundary correction.  Section 9.104 removes its smooth-weight cost; the resulting arithmetic tail rectangles and centered dispersion remain unproved |
 | Two-dimensional mixed Abel adapter | smooth variation cost controlled; fixed rectangle handled next | Ordering both divisor lattices gives the exact pointwise telescoping and suffix identity (9.681)--(9.683).  Hence the mixed pairing is bounded by the adjacent-increment \(\ell^1\) norm times the largest arithmetic upper-right rectangle, (9.684).  The fundamental theorem of calculus and (5.14) bound the first factor by \(T^\varepsilon\) on every supplied physical dyadic weight, (9.685).  Reflection makes both remaining cofactor coordinates \(O(T^{2+o(1)})\) on the balanced face, (9.686).  Section 9.105 bounds each fixed-label rectangle; their joint signed AFE/reflection sum and the exhaustive packet map remain unproved |
 | Fixed-label principal divisor bound | local two-taper operator proved at \(T^\varepsilon\) cost; global packet sum unproved | Every suffix rectangle has at most \(\tau(R_1)\tau(R_2)\) entries and bounded taper factors, (9.687)--(9.688).  Together with the mixed Abel variation this proves (9.689) for each supplied fixed dyadic packet and fixed label pair.  The anchor, axes, and all three weighted boundaries have the same divisor-bound cost.  This does not permit absolute summation over all AFE/\(h,\delta\)/Type/dyadic/reflection labels; the packet-exhaustive normalization, principal twisted-moment estimate, and centered dispersion remain unproved |
+| Original principal \(h\)-harmonic projection | exact packet-exhaustive gcd-sampled reassembly; sampled master unbounded | Before the \(H\)-dyadic split, \(s\mid h\delta\) is exactly \(h=(s/(s,\delta))j\).  Poisson summation gives (9.693)--(9.694), so the nonzero principal harmonics plus the literal raw \(h=0\) packet are exactly the \((s,\delta)\)-spaced physical lattice, (9.695), and the main-term ledger becomes (9.696)--(9.697) without choosing a principal density.  Physical support and the core inequalities force \(M/(32\mathscr L^B)\le(s,\delta)\le2M\), making both new Poisson coordinates polylogarithmically short, (9.698)--(9.702).  The reduced master (9.703) still has both long Möbius weights; neither its analytic bound nor the complementary centered-harmonic dispersion is proved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
