@@ -1,0 +1,14 @@
+import PrimeNumberTheorem.CarlsonGaussianPoleFreeBoundaryContinuity
+
+open Complex Set MeasureTheory
+open scoped ENNReal MeasureTheory
+
+namespace PrimeNumberTheorem.CarlsonZeroDensity
+
+#check exists_integrable_carlsonGaussianPoleFreeSection_sq_bound_on_half_four
+#check continuousOn_norm_sq_carlsonGaussianPoleFreeLpValueTotal_real
+
+#print axioms exists_integrable_carlsonGaussianPoleFreeSection_sq_bound_on_half_four
+#print axioms continuousOn_norm_sq_carlsonGaussianPoleFreeLpValueTotal_real
+
+end PrimeNumberTheorem.CarlsonZeroDensity

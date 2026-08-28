@@ -478,12 +478,16 @@ norm(Phi(x))^2 <= A^(1-(x-l)/(u-l)) * B^((x-l)/(u-l)),
 with no square-root loss.  Its formal axiom audit contains only `propext`,
 `Classical.choice`, and `Quot.sound`.
 
-The remaining functional-analytic boundary step is now precise: either prove
-one-sided `L^2` continuity at `Re(z)=1/2,4` and pass the interior theorem to
-the limiting strip, or supply the Conrey and absolute-convergence endpoint
-bounds on edges displaced by `O(1/log U)`.  This is distinct from the deep
-Conrey--Deshouillers--Iwaniec estimate itself.  The Conrey left endpoint, this
-boundary-limit specialization, and the finite Gaussian covering still remain.
+The one-sided boundary continuity has now also been proved.  The degree-ten
+strip growth and the exact Gaussian formula give a single integrable
+polynomial-Gaussian majorant for all real parameters in `[1/2,4]`;
+filter-form dominated convergence then proves continuity of
+`x |-> norm(Phi(x))^2` on that closed interval.  Its formal axiom audit again
+contains only `propext`, `Classical.choice`, and `Quot.sound`.  What remains of
+the boundary passage is the pure real-variable limit of the interior
+three-lines inequality as `l -> 1/2` and `u -> 4`.  This is distinct from the
+deep Conrey--Deshouillers--Iwaniec estimate itself.  The Conrey left endpoint,
+that final rpow limit, and the finite Gaussian covering still remain.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
