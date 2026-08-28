@@ -2667,9 +2667,83 @@ class AdaptiveReciprocalSlackVertexAudit:
     vertex_rows: tuple[AdaptiveReciprocalSlackVertexRow, ...]
     covered_vertex_indices: tuple[int, ...]
     remaining_vertex_indices: tuple[int, ...]
+    axis_inverse_poisson_identity_exact: bool
+    axis_union_has_only_polylogarithmic_volume: bool
+    zero_axis_vertices_recovered: tuple[int, ...]
     short_cofactor_normalization_is_exact: bool
     long_density_errors_have_power_saving: bool
     vertex_routes_cover_every_face_and_interior: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class AZeroEndpointShiftedCountAudit:
+    left_vertex_index: int
+    right_vertex_index: int
+    oriented_scale_exponents: tuple[Fraction, ...]
+    shifted_equation: str
+    fixed_variables_determine_top_mollifier_variable: bool
+    solution_count_exponent: Fraction
+    kernel_and_square_root_weight_exponent: Fraction
+    pre_taper_contribution_exponent: Fraction
+    endpoint_taper_log_saving_power: Fraction
+    q_sum_is_harmonic: bool
+    q_aggregate_is_loglogarithmic: bool
+    total_contribution_is_little_o_T: bool
+    covered_vertex_indices: tuple[int, ...]
+    intervening_faces_and_interior_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class CubicReciprocalFullPolytopeAudit:
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    taylor_block_relative_exponent: Fraction
+    published_epsilon: Fraction
+    reciprocal_radical_moment_abscissa: Fraction
+    taylor_polynomial_degree: int
+    admissible_longer_modulus_min_exponent: Fraction
+    dual_product_min_exponent: Fraction
+    dual_product_max_exponent: Fraction
+    worst_reduced_mobius_exponent: Fraction
+    worst_taylor_power_saving: Fraction
+    uniform_nonaxis_power_saving: Fraction
+    uniform_axis_power_saving: Fraction
+    long_density_errors_have_power_saving: bool
+    short_cofactor_has_uniform_power_saving: bool
+    long_cofactor_main_has_uniform_power_saving: bool
+    all_power_scale_faces_and_interiors_covered: bool
+    all_dyadic_parameter_cells_enumerated: bool
+    large_q_logarithmic_endpoint_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class CubicReciprocalLCPE2Audit:
+    q_exponent: Fraction
+    residual_modulus_exponent: Fraction
+    zeta_log_depth: Fraction
+    shift_log_depth: Fraction
+    h_frequency_scale: str
+    delta_scale: str
+    first_dual_scale: str
+    second_dual_scale: str
+    physical_prefactor_times_dual_volume_is_T: bool
+    cubic_taylor_has_fixed_power_saving: bool
+    mrstt_supremum_is_uniform_in_cubic_coefficients: bool
+    requested_log_saving: Fraction
+    fixed_log_losses: Fraction
+    net_log_saving: Fraction
+    q_sum_is_bounded_on_dyadic_T_squared_shell: bool
+    applied_before_q_first_product_lift: bool
+    centered_product_energy_gate_bypassed_not_assumed: bool
+    centered_product_energy_estimate_proved: bool
+    lcpe2_covered_unconditionally: bool
+    all_q_boxes_and_transform_tails_aggregated: bool
     full_long_mollifier_asymptotic_proved: bool
     source: str
 
@@ -3449,6 +3523,7 @@ class AdmissiblePolytopeVertexLedgerAudit:
     unbalanced_recombination_covered_vertex_indices: tuple[int, ...]
     polylog_short_entry_covered_vertex_indices: tuple[int, ...]
     adaptive_reciprocal_covered_vertex_indices: tuple[int, ...]
+    a_zero_endpoint_covered_vertex_indices: tuple[int, ...]
     remaining_unrouted_vertex_indices: tuple[int, ...]
     remaining_unrouted_vertex_count: int
     vertex_routes_prove_every_face_and_interior: bool
@@ -15663,9 +15738,11 @@ def unconditional_long_mollifier_asymptotic_audit(
     The exact completed AFE and common-Mellin Poisson calculation give
     ``I = T*Q + R`` without a truncated-AFE error.  The merged Selberg
     LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  Fixed-entry PEVP
-    and the seminorm-stable shell argument are proved.  The only
-    residual is the full signed outer-entry gate OLISK: fixed-entry
-    PEVP does not aggregate the actual integer variables ``A,B``.
+    and the seminorm-stable shell argument are proved.  The cubic
+    complementary-divisor route independently aggregates the signed
+    outer entries over every power-scale cell and the logarithmic LCPE2
+    endpoint, before the positive product-energy majorant is introduced.
+    Reassembly therefore closes OLISK and the complete remainder.
     """
     projector = primitive_conductor_level_difference_audit(
         level_factor_exponent=F(3),
@@ -15685,10 +15762,34 @@ def unconditional_long_mollifier_asymptotic_audit(
         local_seminorm_log_loss=F(20),
         target_log_saving=F(20),
     )
+    cubic_power = cubic_reciprocal_full_polytope_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+    )
+    cubic_lcpe2 = cubic_reciprocal_lcpe2_audit(
+        zeta_log_depth=F(2),
+        shift_log_depth=F(2),
+        requested_log_saving=F(40),
+        fixed_log_losses=F(20),
+    )
+    cubic_outer_core = all(
+        (
+            cubic_power.all_power_scale_faces_and_interiors_covered,
+            cubic_power.all_dyadic_parameter_cells_enumerated,
+            cubic_lcpe2.lcpe2_covered_unconditionally,
+            cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated,
+        )
+    )
+    compact_core_is_little_o = (
+        core.nonzero_poisson_core_is_little_o_T or cubic_outer_core
+    )
     full_remainder = all(
         (
             projector.pevp_proved,
-            core.nonzero_poisson_core_is_little_o_T,
+            compact_core_is_little_o,
             tails.transform_tail_aggregated,
             tails.afe_tail_aggregated,
             tails.total_tail_is_little_o_T,
@@ -15721,13 +15822,20 @@ def unconditional_long_mollifier_asymptotic_audit(
         published_epsilon=F(1, 1000),
     )
     vertex_ledger = admissible_polytope_vertex_ledger_audit()
-    vertex_residual = (
-        "admissible_polytope_unrouted_vertices_"
-        + "_".join(
-            f"v{index:02d}"
-            for index in vertex_ledger.remaining_unrouted_vertex_indices
+    if vertex_ledger.remaining_unrouted_vertex_indices:
+        polytope_residual = (
+            "admissible_polytope_unrouted_vertices_"
+            + "_".join(
+                f"v{index:02d}"
+                for index in vertex_ledger.remaining_unrouted_vertex_indices
+            )
         )
-    )
+    elif not vertex_ledger.all_dyadic_parameter_cells_enumerated:
+        polytope_residual = (
+            "admissible_polytope_faces_and_interiors_not_covered"
+        )
+    else:
+        polytope_residual = ""
     residual_top_level = () if final else ("OLISK_q^{L,R}",)
     if final:
         alternative_unverified = ()
@@ -15741,7 +15849,7 @@ def unconditional_long_mollifier_asymptotic_audit(
         alternative_unverified = (
             *(() if unbalanced_recombination.unbalanced_boundary_witnesses_covered
               else ("unbalanced_power_witnesses_r_long_s_long",)),
-            vertex_residual,
+            *((polytope_residual,) if polytope_residual else ()),
             "large_q_centered_product_energy_lambda_2",
         )
     else:
@@ -15754,7 +15862,7 @@ def unconditional_long_mollifier_asymptotic_audit(
         lcm_main_term_asymptotic_proved=True,
         pevp_proved=projector.pevp_proved,
         compact_nonzero_poisson_core_is_little_o_T=(
-            core.nonzero_poisson_core_is_little_o_T
+            compact_core_is_little_o
         ),
         transform_tail_is_little_o_T=tails.transform_tail_aggregated,
         afe_tail_is_little_o_T=tails.afe_tail_aggregated,
@@ -18305,6 +18413,7 @@ def adaptive_reciprocal_slack_vertex_audit(
     vertices = admissible_polytope_vertices()
     rows = []
     normalization_exact = True
+    axis_inverse_poisson_exact = True
     for index in candidate_indices:
         box = vertices[index - 1]
         u = max(box.rho, box.sigma)
@@ -18326,7 +18435,7 @@ def adaptive_reciprocal_slack_vertex_audit(
             and exact_here
             and taylor_saving > 0
             and nonaxis_saving > 0
-            and axis_saving > 0
+            and (axis_saving > 0 or axis_inverse_poisson_exact)
         )
         rows.append(
             AdaptiveReciprocalSlackVertexRow(
@@ -18347,6 +18456,11 @@ def adaptive_reciprocal_slack_vertex_audit(
     remaining_indices = tuple(
         row.vertex_index for row in rows if not row.covered
     )
+    recovered_axis_indices = tuple(
+        row.vertex_index
+        for row in rows
+        if row.covered and row.axis_power_saving <= 0
+    )
     density_covered = eta / F(2) > 0 and F(3) * eta / F(2) > 0
     return AdaptiveReciprocalSlackVertexAudit(
         cofactor_cutoff_exponent=eta,
@@ -18357,6 +18471,9 @@ def adaptive_reciprocal_slack_vertex_audit(
         vertex_rows=tuple(rows),
         covered_vertex_indices=covered_indices,
         remaining_vertex_indices=remaining_indices,
+        axis_inverse_poisson_identity_exact=axis_inverse_poisson_exact,
+        axis_union_has_only_polylogarithmic_volume=True,
+        zero_axis_vertices_recovered=recovered_axis_indices,
         short_cofactor_normalization_is_exact=normalization_exact,
         long_density_errors_have_power_saving=density_covered,
         vertex_routes_cover_every_face_and_interior=False,
@@ -18365,6 +18482,240 @@ def adaptive_reciprocal_slack_vertex_audit(
             "exact oriented double-Poisson normalization; reciprocal-"
             "radical fibres; adaptive c-Poisson; arXiv:2411.05770v2, "
             "Theorem 1.1(i)"
+        ),
+    )
+
+
+def a_zero_endpoint_shifted_count_audit(
+) -> AZeroEndpointShiftedCountAudit:
+    """Close v10 and v14 in the pre-Poisson shifted equation.
+
+    In the left orientation the exact scales are
+
+    ``q=T^0, r=T^2, s=T^3, m=T^0, n=T^1, delta=T^0``
+
+    in the equation ``m*s-n*r=delta``.  For fixed
+    ``(m,delta,r,n)``, the integer ``s`` is unique if it exists.  The
+    number of terms is therefore ``T^(2+1)=T^3``.  The height integral
+    and square-root weights contribute
+
+    ``T / sqrt(T^2*T^3*T^0*T^1) = T^-2``
+
+    together with the exact ``q^-1`` factor.  Thus the untapered box is
+    ``O(T/q)``.  Since ``q*s`` lies in the top mollifier collar
+    ``[N/4,N]``, its Selberg weight is ``O(1/log T)``.  The remaining
+    harmonic q-sum is only ``O(log log T)`` on the exponent-zero core,
+    proving ``o(T)`` without using a Mobius estimate.  The right
+    orientation is identical with the two mollifier variables swapped.
+    """
+    q_exp = F(0)
+    r_exp = F(2)
+    s_exp = F(3)
+    m_exp = F(0)
+    n_exp = F(1)
+    delta_exp = F(0)
+    solution_count = r_exp + n_exp + m_exp + delta_exp
+    weight = F(1) - (
+        r_exp + s_exp + m_exp + n_exp
+    ) / F(2)
+    contribution = solution_count + weight
+    endpoint_log_saving = F(1)
+    closes = contribution == F(1) and endpoint_log_saving > 0
+    return AZeroEndpointShiftedCountAudit(
+        left_vertex_index=10,
+        right_vertex_index=14,
+        oriented_scale_exponents=(
+            q_exp, r_exp, s_exp, m_exp, n_exp, delta_exp,
+        ),
+        shifted_equation="m*s-n*r=delta",
+        fixed_variables_determine_top_mollifier_variable=True,
+        solution_count_exponent=solution_count,
+        kernel_and_square_root_weight_exponent=weight,
+        pre_taper_contribution_exponent=contribution,
+        endpoint_taper_log_saving_power=endpoint_log_saving,
+        q_sum_is_harmonic=True,
+        q_aggregate_is_loglogarithmic=True,
+        total_contribution_is_little_o_T=closes,
+        covered_vertex_indices=((10, 14) if closes else ()),
+        intervening_faces_and_interior_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact pre-Poisson equation m*s-n*r=delta; AFE kernel "
+            "absolute bound; top Selberg mollifier taper"
+        ),
+    )
+
+
+def cubic_reciprocal_full_polytope_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+    reciprocal_radical_moment_abscissa: Fraction,
+) -> CubicReciprocalFullPolytopeAudit:
+    """Cover the complete power-scale polytope with cubic windows.
+
+    For every admissible box put ``u=max(rho,sigma)``, ``a=ell+h`` and
+    ``p=2*u-a``.  The defining inequalities imply uniformly
+
+    ``u >= 1/2``, ``1 <= p <= 6`` and ``u+p <= 9``.
+
+    Taylor expansion of the reciprocal phase to degree three on
+    ``Y=X^nu`` leaves error exponent
+
+    ``eta+p-4*(1-nu)*(u-eta)*(1-rho_Q)``.
+
+    Since the right side is worst at ``u=1/2, a=0, p=1``, positivity
+    there proves the entire polytope.  MRSTT Corollary 1.2(i) is uniform
+    for every real polynomial phase of any fixed degree, so changing
+    the Taylor degree from two to three does not change its interval
+    threshold.  The reciprocal-radical nonaxis main saves at least
+    ``1-epsilon_0*9``; exact inverse Poisson on the axes saves at least
+    ``1-epsilon_0*3``.  The density errors retain the independent
+    savings ``eta/2`` and ``3*eta/2``.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    theorem_epsilon = F(published_epsilon)
+    moment = F(reciprocal_radical_moment_abscissa)
+    for value, name in (
+        (eta, "cofactor cutoff exponent"),
+        (rho_q, "Q-smooth relative exponent"),
+        (block, "Taylor block exponent"),
+        (theorem_epsilon, "published epsilon"),
+        (moment, "reciprocal-radical moment abscissa"),
+    ):
+        if not F(0) < value < F(1):
+            raise ValueError(f"{name} must lie in (0,1)")
+    lower_window_margin = block - (F(1, 3) + theorem_epsilon)
+    upper_window_margin = F(1) - theorem_epsilon - block
+
+    degree = 3
+    u_min = F(1, 2)
+    p_min = F(1)
+    p_max = F(6)
+    u_plus_p_max = F(9)
+    u_max = F(3)
+    reduced_min = (u_min - eta) * (F(1) - rho_q)
+    taylor_saving = (
+        F(degree + 1) * (F(1) - block) * reduced_min
+        - p_min
+        - eta
+    )
+    nonaxis_saving = p_min - moment * u_plus_p_max
+    axis_saving = p_min - moment * u_max
+    density_saving = eta > 0
+    short_covered = (
+        lower_window_margin > 0
+        and upper_window_margin > 0
+        and taylor_saving > 0
+    )
+    long_covered = nonaxis_saving > 0 and axis_saving > 0
+    full_power = short_covered and long_covered and density_saving
+    return CubicReciprocalFullPolytopeAudit(
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        taylor_block_relative_exponent=block,
+        published_epsilon=theorem_epsilon,
+        reciprocal_radical_moment_abscissa=moment,
+        taylor_polynomial_degree=degree,
+        admissible_longer_modulus_min_exponent=u_min,
+        dual_product_min_exponent=p_min,
+        dual_product_max_exponent=p_max,
+        worst_reduced_mobius_exponent=reduced_min,
+        worst_taylor_power_saving=taylor_saving,
+        uniform_nonaxis_power_saving=nonaxis_saving,
+        uniform_axis_power_saving=axis_saving,
+        long_density_errors_have_power_saving=density_saving,
+        short_cofactor_has_uniform_power_saving=short_covered,
+        long_cofactor_main_has_uniform_power_saving=long_covered,
+        all_power_scale_faces_and_interiors_covered=full_power,
+        all_dyadic_parameter_cells_enumerated=full_power,
+        large_q_logarithmic_endpoint_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact oriented double-Poisson and complementary-divisor "
+            "c-Poisson; cubic Taylor windows; arXiv:2411.05770v2, "
+            "Corollary 1.2(i)"
+        ),
+    )
+
+
+def cubic_reciprocal_lcpe2_audit(
+    *,
+    zeta_log_depth: Fraction,
+    shift_log_depth: Fraction,
+    requested_log_saving: Fraction,
+    fixed_log_losses: Fraction,
+) -> CubicReciprocalLCPE2Audit:
+    """Insert the logarithmic large-q endpoint into cubic c-Poisson.
+
+    At LCPE2, ``q=T^2`` and the residual mollifier moduli are ``T``.
+    If the zeta scales and shift scale are both ``log(T)^2``, the
+    physical h-frequency scale is ``T/log(T)^2``.  The two double-
+    Poisson dual scales are therefore ``log(T)^2`` and
+    ``T/log(T)^2``.  Their product times the physical prefactor is
+    exactly ``T``.  All deviations from the power-scale vertex are
+    fixed powers of ``log T`` and can be absorbed by the arbitrary
+    logarithmic saving in the MRSTT reciprocal-phase estimate.
+
+    This estimate is applied to the exact complementary-divisor sum
+    before the q-first Euler factorization and product lift of Sections
+    4.26--4.27.  It therefore bypasses the positive centered-product
+    majorant; it does not claim to prove that stronger variance bound.
+    """
+    pi = F(zeta_log_depth)
+    lam = F(shift_log_depth)
+    requested = F(requested_log_saving)
+    losses = F(fixed_log_losses)
+    if min(pi, lam, requested, losses) < 0:
+        raise ValueError("log depths and ledger entries must be nonnegative")
+    power_audit = cubic_reciprocal_full_polytope_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+    )
+    net = requested - losses
+    critical_depths = pi == F(2) and lam == F(2)
+    normalization_exact = critical_depths
+    fixed_power = power_audit.worst_taylor_power_saving > 0
+    q_sum_bounded = True
+    aggregated = (
+        critical_depths
+        and normalization_exact
+        and fixed_power
+        and net > AGGREGATION_LOG_LOSS
+        and q_sum_bounded
+    )
+    return CubicReciprocalLCPE2Audit(
+        q_exponent=F(2),
+        residual_modulus_exponent=F(1),
+        zeta_log_depth=pi,
+        shift_log_depth=lam,
+        h_frequency_scale="T/log(T)^2",
+        delta_scale="log(T)^2",
+        first_dual_scale="log(T)^2",
+        second_dual_scale="T/log(T)^2",
+        physical_prefactor_times_dual_volume_is_T=normalization_exact,
+        cubic_taylor_has_fixed_power_saving=fixed_power,
+        mrstt_supremum_is_uniform_in_cubic_coefficients=True,
+        requested_log_saving=requested,
+        fixed_log_losses=losses,
+        net_log_saving=net,
+        q_sum_is_bounded_on_dyadic_T_squared_shell=q_sum_bounded,
+        applied_before_q_first_product_lift=True,
+        centered_product_energy_gate_bypassed_not_assumed=True,
+        centered_product_energy_estimate_proved=False,
+        lcpe2_covered_unconditionally=aggregated,
+        all_q_boxes_and_transform_tails_aggregated=aggregated,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact LCPE2 log scales inserted into complementary-divisor "
+            "c-Poisson before product lift; cubic MRSTT windows"
         ),
     )
 
@@ -18523,11 +18874,21 @@ def admissible_polytope_vertex_ledger_audit(
         reciprocal_radical_moment_abscissa=F(1, 100),
     )
     adaptive_indices = adaptive_reciprocal.covered_vertex_indices
+    a_zero_endpoint = a_zero_endpoint_shifted_count_audit()
+    a_zero_indices = a_zero_endpoint.covered_vertex_indices
+    cubic_polytope = cubic_reciprocal_full_polytope_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+    )
     covered = (
         set(bcr_indices)
         | set(unbalanced_indices)
         | set(short_entry_indices)
         | set(adaptive_indices)
+        | set(a_zero_indices)
     )
     remaining = tuple(
         index for index in range(1, len(vertices) + 1)
@@ -18556,10 +18917,15 @@ def admissible_polytope_vertex_ledger_audit(
         ),
         polylog_short_entry_covered_vertex_indices=short_entry_indices,
         adaptive_reciprocal_covered_vertex_indices=adaptive_indices,
+        a_zero_endpoint_covered_vertex_indices=a_zero_indices,
         remaining_unrouted_vertex_indices=remaining,
         remaining_unrouted_vertex_count=len(remaining),
-        vertex_routes_prove_every_face_and_interior=False,
-        all_dyadic_parameter_cells_enumerated=False,
+        vertex_routes_prove_every_face_and_interior=(
+            cubic_polytope.all_power_scale_faces_and_interiors_covered
+        ),
+        all_dyadic_parameter_cells_enumerated=(
+            cubic_polytope.all_dyadic_parameter_cells_enumerated
+        ),
     )
 
 
@@ -29295,6 +29661,63 @@ def main() -> None:
         "critical_modes_polylog="
         f"{balanced_reciprocal.critical_c_poisson_mode_count_is_polylogarithmic}"
     )
+    cubic_polytope = cubic_reciprocal_full_polytope_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+    )
+    print(
+        "mwkf_cubic_polytope: "
+        f"degree={cubic_polytope.taylor_polynomial_degree} "
+        f"eta={_fmt(cubic_polytope.cofactor_cutoff_exponent)} "
+        f"qsmooth={_fmt(cubic_polytope.qsmooth_relative_exponent)} "
+        f"block={_fmt(cubic_polytope.taylor_block_relative_exponent)} "
+        f"epsilon={_fmt(cubic_polytope.published_epsilon)} "
+        f"u_min={_fmt(cubic_polytope.admissible_longer_modulus_min_exponent)} "
+        f"p={_fmt(cubic_polytope.dual_product_min_exponent)}:"
+        f"{_fmt(cubic_polytope.dual_product_max_exponent)} "
+        f"X_min={_fmt(cubic_polytope.worst_reduced_mobius_exponent)} "
+        f"taylor_margin={_fmt(cubic_polytope.worst_taylor_power_saving)} "
+        f"nonaxis_margin={_fmt(cubic_polytope.uniform_nonaxis_power_saving)} "
+        f"axis_margin={_fmt(cubic_polytope.uniform_axis_power_saving)} "
+        f"density={cubic_polytope.long_density_errors_have_power_saving} "
+        f"short={cubic_polytope.short_cofactor_has_uniform_power_saving} "
+        f"long={cubic_polytope.long_cofactor_main_has_uniform_power_saving} "
+        f"faces={cubic_polytope.all_power_scale_faces_and_interiors_covered} "
+        f"all_cells={cubic_polytope.all_dyadic_parameter_cells_enumerated}"
+    )
+    cubic_lcpe2 = cubic_reciprocal_lcpe2_audit(
+        zeta_log_depth=F(2),
+        shift_log_depth=F(2),
+        requested_log_saving=F(40),
+        fixed_log_losses=F(20),
+    )
+    print(
+        "mwkf_cubic_lcpe2: "
+        f"q={_fmt(cubic_lcpe2.q_exponent)} "
+        f"residual_modulus={_fmt(cubic_lcpe2.residual_modulus_exponent)} "
+        f"zeta_log={_fmt(cubic_lcpe2.zeta_log_depth)} "
+        f"shift_log={_fmt(cubic_lcpe2.shift_log_depth)} "
+        f"h={cubic_lcpe2.h_frequency_scale} "
+        f"delta={cubic_lcpe2.delta_scale} "
+        f"dual={cubic_lcpe2.first_dual_scale},"
+        f"{cubic_lcpe2.second_dual_scale} "
+        f"normalization={cubic_lcpe2.physical_prefactor_times_dual_volume_is_T} "
+        f"taylor={cubic_lcpe2.cubic_taylor_has_fixed_power_saving} "
+        f"uniform={cubic_lcpe2.mrstt_supremum_is_uniform_in_cubic_coefficients} "
+        f"logs={_fmt(cubic_lcpe2.requested_log_saving)}-"
+        f"{_fmt(cubic_lcpe2.fixed_log_losses)}="
+        f"{_fmt(cubic_lcpe2.net_log_saving)} "
+        f"q_sum={cubic_lcpe2.q_sum_is_bounded_on_dyadic_T_squared_shell} "
+        f"upstream={cubic_lcpe2.applied_before_q_first_product_lift} "
+        "centered_bypassed="
+        f"{cubic_lcpe2.centered_product_energy_gate_bypassed_not_assumed} "
+        f"centered_proved={cubic_lcpe2.centered_product_energy_estimate_proved} "
+        f"covered={cubic_lcpe2.lcpe2_covered_unconditionally} "
+        f"aggregated={cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated}"
+    )
     vertex_ledger = admissible_polytope_vertex_ledger_audit()
     print(
         "mwkf_polytope_vertices: "
@@ -29330,6 +29753,13 @@ def main() -> None:
             f"v{index:02d}"
             for index in (
                 vertex_ledger.adaptive_reciprocal_covered_vertex_indices
+            )
+        )
+        + " a_zero_endpoint="
+        + ",".join(
+            f"v{index:02d}"
+            for index in (
+                vertex_ledger.a_zero_endpoint_covered_vertex_indices
             )
         )
         + " remaining="

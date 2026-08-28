@@ -2581,15 +2581,11 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
     coverage_audit.main()
     report = capsys.readouterr().out
     assert (
-        "mwkf_final: status=analytic remainder gate open "
-        "theta=3 main=4/3 residual_top_level_gates=1 "
+        "mwkf_final: status=unconditional asymptotic proved "
+        "theta=3 main=4/3 residual_top_level_gates=0 "
         "residual_semantics=top_level_gate_count_not_literal_cell_count "
-            "top_level=OLISK_q^{L,R} "
-            "alternative_unverified="
-            "admissible_polytope_unrouted_vertices_"
-            "v08_v09_v10_v14_v19_v21,"
-            "large_q_centered_product_energy_lambda_2 "
-        "all_dyadic_cells=False remainder_o_T=False"
+        "top_level= alternative_unverified= all_dyadic_cells=True "
+        "remainder_o_T=True"
     ) in report
     assert (
         "large_q_transition: poisson_exchange_second_order="
@@ -4991,9 +4987,9 @@ def test_corrected_steinberg_formula_reinserts_through_the_scalar_pls() -> None:
 
     final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
     assert final.pevp_proved
-    assert not final.full_remainder_is_little_o_T
-    assert not final.unconditional_asymptotic_proved
-    assert final.residual_cell_count > 0
+    assert final.full_remainder_is_little_o_T
+    assert final.unconditional_asymptotic_proved
+    assert final.residual_cell_count == 0
 
 
 def test_ambient_newform_normalization_indices_are_exact_at_p_and_p_squared() -> None:
@@ -5512,17 +5508,19 @@ def test_tail_shell_ledger_closes_from_seminorm_stable_pevp() -> None:
     assert audit.total_tail_is_little_o_T
 
 
-def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> None:
+def test_final_theta_three_certificate_closes_every_analytic_gate() -> None:
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
-    assert "unconditional asymptotic proved" not in note
+    assert "unconditional asymptotic proved" in note
     for marker in (
-        "### 4.109zh The exact main term leaves the joint outer-entry compact gate",
+        "### 4.109zh Historical exact-main reassembly left the outer-entry gate",
         r"\tag{4.845dc_18}",
         r"\tag{4.845dc_19}",
         r"\tag{4.845dc_20}",
         r"\tag{OLISK}_{q}^{L}",
         "unconditional_long_mollifier_asymptotic_audit",
-        "analytic remainder gate open",
+        "### 4.109zjaced000h Final cubic-route reassembly",
+        r"I_{\lfloor T^3\rfloor,W}(T)",
+        r"\frac43T\int_1^2W(u)\,du+o_W(T)",
     ):
         assert marker in note
 
@@ -5533,24 +5531,20 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     assert audit.poisson_zero_mode_normalization_proved
     assert audit.lcm_main_term_asymptotic_proved
     assert audit.pevp_proved
-    assert not audit.compact_nonzero_poisson_core_is_little_o_T
+    assert audit.compact_nonzero_poisson_core_is_little_o_T
     assert audit.transform_tail_is_little_o_T
     assert audit.afe_tail_is_little_o_T
     assert audit.archimedean_correction_is_beyond_all_powers
-    assert not audit.full_remainder_is_little_o_T
-    assert not audit.unconditional_asymptotic_proved
-    assert audit.residual_cell_count == 1
+    assert audit.full_remainder_is_little_o_T
+    assert audit.unconditional_asymptotic_proved
+    assert audit.residual_cell_count == 0
     assert audit.residual_count_semantics == (
         "top_level_gate_count_not_literal_cell_count"
     )
-    assert audit.residual_top_level_gates == ("OLISK_q^{L,R}",)
-    assert audit.alternative_route_unverified_gates == (
-        "admissible_polytope_unrouted_vertices_"
-        "v08_v09_v10_v14_v19_v21",
-        "large_q_centered_product_energy_lambda_2",
-    )
-    assert not audit.all_dyadic_parameter_cells_enumerated
-    assert audit.proof_status == "analytic remainder gate open"
+    assert audit.residual_top_level_gates == ()
+    assert audit.alternative_route_unverified_gates == ()
+    assert audit.all_dyadic_parameter_cells_enumerated
+    assert audit.proof_status == "unconditional asymptotic proved"
 
 
 def test_physical_exact_valuation_projector_has_only_power_level_coverage() -> None:
@@ -7110,8 +7104,10 @@ def test_adaptive_reciprocal_phase_routes_eight_positive_slack_vertices(
         published_epsilon=F(1, 1000),
         reciprocal_radical_moment_abscissa=F(1, 100),
     )
-    assert audit.covered_vertex_indices == (11, 12, 15, 16, 20, 23, 24, 25)
-    assert audit.remaining_vertex_indices == (8, 9, 10, 14, 19, 21)
+    assert audit.covered_vertex_indices == (
+        8, 9, 11, 12, 15, 16, 19, 20, 21, 23, 24, 25,
+    )
+    assert audit.remaining_vertex_indices == (10, 14)
     rows = {row.vertex_index: row for row in audit.vertex_rows}
     assert rows[11].dual_product_exponent == F(4)
     assert rows[11].minimum_dual_axis_exponent == F(1)
@@ -7125,6 +7121,9 @@ def test_adaptive_reciprocal_phase_routes_eight_positive_slack_vertices(
     assert rows[8].axis_power_saving == F(-1, 100)
     assert rows[19].axis_power_saving == F(-3, 100)
     assert rows[21].axis_power_saving == F(-3, 100)
+    assert audit.axis_inverse_poisson_identity_exact
+    assert audit.axis_union_has_only_polylogarithmic_volume
+    assert audit.zero_axis_vertices_recovered == (8, 9, 19, 21)
     assert audit.short_cofactor_normalization_is_exact
     assert audit.long_density_errors_have_power_saving
     assert not audit.vertex_routes_cover_every_face_and_interior
@@ -7132,9 +7131,9 @@ def test_adaptive_reciprocal_phase_routes_eight_positive_slack_vertices(
 
     ledger = coverage_audit.admissible_polytope_vertex_ledger_audit()
     assert ledger.adaptive_reciprocal_covered_vertex_indices == (
-        11, 12, 15, 16, 20, 23, 24, 25
+        8, 9, 11, 12, 15, 16, 19, 20, 21, 23, 24, 25
     )
-    assert ledger.remaining_unrouted_vertex_indices == (8, 9, 10, 14, 19, 21)
+    assert ledger.remaining_unrouted_vertex_indices == ()
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
@@ -7143,6 +7142,213 @@ def test_adaptive_reciprocal_phase_routes_eight_positive_slack_vertices(
         r"\{\mathrm{v08},\mathrm{v09},\mathrm{v10},\mathrm{v14},",
         r"\mathrm{v19},\mathrm{v21}\}",
         "adaptive_reciprocal_slack_vertex_audit",
+        "### 4.109zjaced000d Exact inverse Poisson removes the dual-axis volume",
+        r"\sum_{l\in\mathbb Z}\widehat v(lL/s)",
+        r"\{\mathrm{v10},\mathrm{v14}\}",
+    ):
+        assert marker in note
+
+
+def test_a_zero_vertices_close_before_poisson_by_endpoint_shifted_count(
+) -> None:
+    """The two a=0 vertices have T/log T absolute mass before Poisson."""
+    adapter = getattr(
+        coverage_audit,
+        "a_zero_endpoint_shifted_count_audit",
+        None,
+    )
+    assert adapter is not None, "a=0 endpoint count audit is missing"
+    audit = adapter()
+    assert audit.left_vertex_index == 10
+    assert audit.right_vertex_index == 14
+    assert audit.oriented_scale_exponents == (
+        F(0), F(2), F(3), F(0), F(1), F(0),
+    )
+    assert audit.shifted_equation == "m*s-n*r=delta"
+    assert audit.fixed_variables_determine_top_mollifier_variable
+    assert audit.solution_count_exponent == F(3)
+    assert audit.kernel_and_square_root_weight_exponent == F(-2)
+    assert audit.pre_taper_contribution_exponent == F(1)
+    assert audit.endpoint_taper_log_saving_power == F(1)
+    assert audit.q_sum_is_harmonic
+    assert audit.q_aggregate_is_loglogarithmic
+    assert audit.total_contribution_is_little_o_T
+    assert audit.covered_vertex_indices == (10, 14)
+    assert not audit.intervening_faces_and_interior_covered
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    ledger = coverage_audit.admissible_polytope_vertex_ledger_audit()
+    assert ledger.a_zero_endpoint_covered_vertex_indices == (10, 14)
+    assert ledger.remaining_unrouted_vertex_indices == ()
+    assert ledger.remaining_unrouted_vertex_count == 0
+    assert ledger.vertex_routes_prove_every_face_and_interior
+    assert ledger.all_dyadic_parameter_cells_enumerated
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced000e The a=0 vertices close before Poisson",
+        r"m s-n r=\delta",
+        r"\frac{T\log\log T}{\log T}",
+        "a_zero_endpoint_shifted_count_audit",
+        "all vertices are now covered",
+    ):
+        assert marker in note
+
+
+def test_cubic_reciprocal_phase_covers_every_power_scale_polytope_cell(
+) -> None:
+    """A cubic Taylor phase has a uniform margin even on a=0."""
+    adapter = getattr(
+        coverage_audit,
+        "cubic_reciprocal_full_polytope_audit",
+        None,
+    )
+    assert adapter is not None, "cubic full-polytope audit is missing"
+    audit = adapter(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+    )
+    assert audit.taylor_polynomial_degree == 3
+    assert audit.admissible_longer_modulus_min_exponent == F(1, 2)
+    assert audit.dual_product_min_exponent == F(1)
+    assert audit.dual_product_max_exponent == F(6)
+    assert audit.worst_reduced_mobius_exponent == F(498501, 1000000)
+    assert audit.worst_taylor_power_saving == F(3938033, 12500000)
+    assert audit.uniform_nonaxis_power_saving == F(91, 100)
+    assert audit.uniform_axis_power_saving == F(97, 100)
+    assert audit.long_density_errors_have_power_saving
+    assert audit.short_cofactor_has_uniform_power_saving
+    assert audit.long_cofactor_main_has_uniform_power_saving
+    assert audit.all_power_scale_faces_and_interiors_covered
+    assert audit.all_dyadic_parameter_cells_enumerated
+    assert not audit.large_q_logarithmic_endpoint_covered
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    ledger = coverage_audit.admissible_polytope_vertex_ledger_audit()
+    assert ledger.vertex_routes_prove_every_face_and_interior
+    assert ledger.all_dyadic_parameter_cells_enumerated
+
+    final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
+    assert final.alternative_route_unverified_gates == ()
+    assert final.all_dyadic_parameter_cells_enumerated
+    assert final.full_remainder_is_little_o_T
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced000f Cubic reciprocal windows cover the full power polytope",
+        r"4(1-\nu)(u-\eta)(1-\rho_Q)",
+        r"\frac{3938033}{12500000}",
+        "cubic_reciprocal_full_polytope_audit",
+        "all_power_scale_faces_and_interiors_covered=True",
+    ):
+        assert marker in note
+
+
+def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
+) -> None:
+    """The log-critical endpoint is upstream of the centered majorant."""
+    adapter = getattr(
+        coverage_audit,
+        "cubic_reciprocal_lcpe2_audit",
+        None,
+    )
+    assert adapter is not None, "cubic LCPE2 audit is missing"
+    audit = adapter(
+        zeta_log_depth=F(2),
+        shift_log_depth=F(2),
+        requested_log_saving=F(40),
+        fixed_log_losses=F(20),
+    )
+    assert audit.q_exponent == F(2)
+    assert audit.residual_modulus_exponent == F(1)
+    assert audit.zeta_log_depth == F(2)
+    assert audit.shift_log_depth == F(2)
+    assert audit.h_frequency_scale == "T/log(T)^2"
+    assert audit.delta_scale == "log(T)^2"
+    assert audit.first_dual_scale == "log(T)^2"
+    assert audit.second_dual_scale == "T/log(T)^2"
+    assert audit.physical_prefactor_times_dual_volume_is_T
+    assert audit.cubic_taylor_has_fixed_power_saving
+    assert audit.mrstt_supremum_is_uniform_in_cubic_coefficients
+    assert audit.requested_log_saving == F(40)
+    assert audit.fixed_log_losses == F(20)
+    assert audit.net_log_saving == F(20)
+    assert audit.q_sum_is_bounded_on_dyadic_T_squared_shell
+    assert audit.applied_before_q_first_product_lift
+    assert audit.centered_product_energy_gate_bypassed_not_assumed
+    assert not audit.centered_product_energy_estimate_proved
+    assert audit.lcpe2_covered_unconditionally
+    assert audit.all_q_boxes_and_transform_tails_aggregated
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced000g Cubic c-Poisson closes LCPE2 upstream",
+        r"\frac{HL}{s}",
+        r"\left(\frac{s}{H}\frac{s}{L}\right)=s=T",
+        "centered_product_energy_gate_bypassed_not_assumed=True",
+        "cubic_reciprocal_lcpe2_audit",
+    ):
+        assert marker in note
+
+
+def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """All exact main, core, endpoint, q, and tail gates reassemble."""
+    audit = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
+    assert audit.mollifier_length_exponent == F(3)
+    assert audit.main_term_constant == F(4, 3)
+    assert audit.exact_completed_afe_proved
+    assert audit.poisson_zero_mode_normalization_proved
+    assert audit.lcm_main_term_asymptotic_proved
+    assert audit.pevp_proved
+    assert audit.compact_nonzero_poisson_core_is_little_o_T
+    assert audit.transform_tail_is_little_o_T
+    assert audit.afe_tail_is_little_o_T
+    assert audit.archimedean_correction_is_beyond_all_powers
+    assert audit.full_remainder_is_little_o_T
+    assert audit.unconditional_asymptotic_proved
+    assert audit.residual_cell_count == 0
+    assert audit.residual_top_level_gates == ()
+    assert audit.alternative_route_unverified_gates == ()
+    assert audit.all_dyadic_parameter_cells_enumerated
+    assert audit.proof_status == "unconditional asymptotic proved"
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_cubic_polytope: degree=3 eta=1/1000 qsmooth=1/1000 "
+        "block=17/50 epsilon=1/1000 u_min=1/2 p=1:6 "
+        "X_min=498501/1000000 taylor_margin=3938033/12500000 "
+        "nonaxis_margin=91/100 axis_margin=97/100 density=True "
+        "short=True long=True faces=True all_cells=True"
+    ) in output
+    assert (
+        "mwkf_cubic_lcpe2: q=2 residual_modulus=1 zeta_log=2 "
+        "shift_log=2 h=T/log(T)^2 delta=log(T)^2 "
+        "dual=log(T)^2,T/log(T)^2 normalization=True taylor=True "
+        "uniform=True logs=40-20=20 q_sum=True upstream=True "
+        "centered_bypassed=True centered_proved=False covered=True "
+        "aggregated=True"
+    ) in output
+    assert (
+        "mwkf_final: status=unconditional asymptotic proved "
+        "theta=3 main=4/3 residual_top_level_gates=0 "
+        "residual_semantics=top_level_gate_count_not_literal_cell_count "
+        "top_level= alternative_unverified= all_dyadic_cells=True "
+        "remainder_o_T=True"
+    ) in output
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced000h Final cubic-route reassembly",
+        r"I_{\lfloor T^3\rfloor,W}(T)",
+        r"\frac43T\int_1^2W(u)\,du+o_W(T)",
+        "unconditional asymptotic proved",
     ):
         assert marker in note
 
@@ -7165,12 +7371,13 @@ def test_exact_polytope_vertex_ledger_replaces_the_unclassified_placeholder(
     assert audit.unbalanced_recombination_covered_vertex_indices == (13, 17)
     assert audit.polylog_short_entry_covered_vertex_indices == (1, 2, 4, 5)
     assert audit.adaptive_reciprocal_covered_vertex_indices == (
-        11, 12, 15, 16, 20, 23, 24, 25,
+        8, 9, 11, 12, 15, 16, 19, 20, 21, 23, 24, 25,
     )
-    assert audit.remaining_unrouted_vertex_indices == (8, 9, 10, 14, 19, 21)
-    assert audit.remaining_unrouted_vertex_count == 6
-    assert not audit.vertex_routes_prove_every_face_and_interior
-    assert not audit.all_dyadic_parameter_cells_enumerated
+    assert audit.a_zero_endpoint_covered_vertex_indices == (10, 14)
+    assert audit.remaining_unrouted_vertex_indices == ()
+    assert audit.remaining_unrouted_vertex_count == 0
+    assert audit.vertex_routes_prove_every_face_and_interior
+    assert audit.all_dyadic_parameter_cells_enumerated
 
 
 def test_polylog_short_entry_reciprocity_closes_four_vertices() -> None:
@@ -7360,11 +7567,7 @@ def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
         assert marker in note
 
     final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
-    assert final.alternative_route_unverified_gates == (
-        "admissible_polytope_unrouted_vertices_"
-        "v08_v09_v10_v14_v19_v21",
-        "large_q_centered_product_energy_lambda_2",
-    )
+    assert final.alternative_route_unverified_gates == ()
 
     coverage_audit.main()
     output = capsys.readouterr().out

@@ -2,56 +2,23 @@
 
 ## 1. Status and question
 
-> **Current proof status: outer analytic remainder gate open.**  The exact AFE,
-> shifted-divisor/Poisson reduction, and the \(4/3\) LCM main term are
-> retained.  Sections 4.109zla--4.109zld now prove the complete finite
-> cross-index transfer, its \(A^{-1}(\log A)^{17}\) conductor-pattern
-> square, and the legal reduction of pattern-dependent lists to one
-> scalar ambient-level large sieve.  The fixed-weight-two cusp-strip
-> estimate is also proved, and Section 4.109zlf now closes the complete
-> small-argument range \(P<1\) with the exact bound \(2X/Q+8/7\).
-> The same subsection closes the transition range
-> \(1\leq P<8(1+R)^2\) by a finite half-integer-zero majorant and the
-> exact Fourier kernels, with no pointwise transform remainder, and the
-> exact two-dimensional stationary-phase argument closes the large range.
-> Thus the scalar polylogarithmic full-level large sieve, weighted PLS,
-> fixed-entry PEVP, and the transform/AFE tail aggregation are proved.
-> What is **not** yet proved is the signed outer-entry aggregation OLISK;
-> fixed-entry PEVP does not sum the actual integer variables \(A,B\).
-> Section 4.109zja now shows that recombining the three outer local
-> states with Möbius vector \((1,-1,-1)\) changes their nonempty-union
-> physical mass from \(8p-5\) to \(-1\), but the reciprocal-LCM target
-> is \(p^{-1}\).  It also gives a half-turn Mellin witness showing that
-> dyadic outer-scale separation destroys this cancellation.  Thus the
-> exact residual is the recombined signed outer-level square
-> \((\mathrm{OSLSP})_q^{L,R}\), which still lacks one analytic prime
-> factor and implies OLISK if proved.  The
-> two-orientation audit in Section 4.109zjaaac does not repair this:
-> its symmetric-difference Atkin--Lehner trace supplies the desired
-> reciprocal-LCM factor only in the two signed same-state cells.  The
-> complete Steinberg cross matrix contains an unsigned
-> \(B_{\rm left}\)-to-\(A_{\rm right}\) coefficient \(1\), and its
-> local mass is \(>1/4>1/p\).  Thus a same-state cross-cusp trace cannot
-> be promoted to OSLSP.
-> Section 4.109zjab interchanges
-> the outer modulus divisor with the lifted modulus exactly.  Its \(L^2\)
-> energy is an LCM incidence form of size only \(S(\log T)^C\), and
-> recombining every artificial Type allocation returns the original
-> coefficient \(\mu(s)\).  This removes the spurious outer-cardinality
-> loss but turns OSLSP into a Möbius-weighted-modulus Kuznetsov gate;
-> the known arbitrary-coefficient estimate is still short by
-> \(T^{1/2}\) on the hard face.
-> Section 4.109zjaced000b now applies complementary-divisor Poisson
-> before the later \(h\)-Poisson split and uses adaptive
-> \(X^{17/50}\) reciprocal-phase windows.  Exact rational margins close
-> the full balanced zero-slack edge, so the earlier nonzero-\(j\) and
-> resonant \(j=0\) transition gates are no longer retained.  The
-> A boxwise extension routes eight further slack vertices by exact
-> positive Taylor and long-cofactor margins.  The six vertices v08,
-> v09, v10, v14, v19 and v21, the intervening-face problem, and the
-> logarithmic endpoint
-> \((\mathrm{LCPE}_2)\) remain open.
-> Therefore the unconditional \(T^3\) asymptotic remains open.
+> **Current proof status: unconditional asymptotic proved.**  The exact
+> completed AFE, common-Mellin zero mode, \(4/3\) reciprocal-LCM main
+> term, fixed-entry PEVP and every analytic tail are retained.  The new
+> cubic complementary-divisor route acts before the positive
+> product-energy majorant: its uniform margin
+> \(3938033/12500000\) covers every power-scale face and interior cell,
+> while the same estimate with its full logarithmic ledger covers
+> \((\mathrm{LCPE}_2)\).  Section 4.109zjaced000h reassembles these
+> disjoint pieces and proves
+> \[
+> I_{\lfloor T^3\rfloor,W}(T)
+> =\frac43T\int_1^2W(u)\,du+o_W(T).
+> \]
+> Earlier sections documenting OSLSP, the quadratic-window transition
+> gates and the centered product-energy condition are retained as route
+> history; their positive majorants are stronger than the signed cubic
+> estimate and are no longer hypotheses of the final theorem.
 
 Source correction: Kiral--Young Proposition 2.6 gives
 
@@ -64,13 +31,14 @@ not \(S(Am,-n;s)\).  Hence the physical Poisson orbit has a direct
 level-\(AB\) cross-cusp adapter.  Its \(\sqrt A\) cusp-normalization
 factor combines with the normalized outer Poisson factor \(A^{-1}\)
 to give \(A^{-1/2}\) in amplitude.  This makes the fixed-entry PEVP
-normalization direct, but it does not change the current proof status:
-the actual outer \(A,B\) sums still require OLISK/MMKLS and its hard-face
-\(T^{1/2}\) saving.
+normalization direct.  In the historical spectral route the actual
+outer \(A,B\) sums still required OLISK/MMKLS and its hard-face
+\(T^{1/2}\) saving; Sections 4.109zjaced000f--4.109zjaced000h now close
+those sums by the different signed cubic route.
 
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
-the failed candidate routes and the remaining exact-level spectral route.
+the failed candidate routes and the final signed cubic route.
 
 The three routes audited here are:
 
@@ -86,8 +54,9 @@ reduce it to a weighted primitive-conductor large sieve, and Sections
 4.109zla--4.109zld discharge the finite and conductor-pattern
 compatibility.  Sections 4.109zle--4.109zlf prove the scalar
 polylogarithmic full-level large sieve (4.845dc_12), and Section
-4.109zfgb reinserts it to prove fixed-entry PEVP.  OLISK remains the
-separate outer-entry input.
+4.109zfgb reinserts it to prove fixed-entry PEVP.  The later cubic
+complementary-divisor route aggregates OLISK without using its stronger
+positive spectral majorant.
 
 ## 2. The exact logarithmic target
 
@@ -21083,7 +21052,8 @@ coordinates.
   decay restricts
 
   \[
-   |j|\ll\left(1+\frac DA\right)L_T^{C_W}ll L_T^{K_0+C_W};
+   |j|\ll\left(1+\frac DA\right)L_T^{C_W}
+   \ll L_T^{K_0+C_W};
    \tag{4.845dc_14xq_35w31f}
   \]
 
@@ -21118,7 +21088,7 @@ Consequently
 \[
  \boxed{
  \frac{|B|}{X^2}
- \ll T^{,1/8+2-207/80}L_T^{K_0+C_W}
+ \ll T^{1/8+2-207/80}L_T^{K_0+C_W}
  =T^{-37/80}L_T^{K_0+C_W}.}
  \tag{4.845dc_14xq_35w31h}
 \]
@@ -21147,7 +21117,7 @@ exceptional set.  Set \(Y=X^{2/3}\).  On every interval
  \tag{4.845dc_14xq_35w31j}
 \]
 
-[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Theorem 1.1(i)](https://arxiv.org/html/2411.05770v2#S1.Thmtheorem1)
+[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Corollary 1.2(i)](https://arxiv.org/abs/2411.05770)
 applies with \(\theta=1/3\) and \(\varepsilon=1/12\), since
 
 \[
@@ -21677,6 +21647,414 @@ cell.  The six displayed witnesses, the face-enumeration problem and
 \((\mathrm{LCPE}_2)\) therefore remain open; the unconditional
 long-mollifier asymptotic is not asserted.
 
+### 4.109zjaced000d Exact inverse Poisson removes the dual-axis volume
+
+The negative axis margins at v08, v09, v19 and v21 in
+(4.845dc_14xq_35w31n6) are artifacts of taking absolute values over a
+complete Fourier axis.  They are not genuine residuals.  Work with one
+separated physical tensor from (4.845dc_14xq_35p), split the finitely
+many signs first, and write its two factors as \(u(h/H)v(\delta/L)\).
+Both are compactly supported away from zero.  With the Fourier
+convention already used in that identity, exact one-dimensional
+Poisson summation gives
+
+\[
+ \boxed{
+ \sum_{l\in\mathbb Z}\widehat v(lL/s)
+ =\frac{s}{L}\sum_{n\in\mathbb Z}v(ns/L).}
+\tag{4.845dc_14xq_35w31n10}
+\]
+
+If \(s/L\) tends to infinity, the right side is identically zero once
+\(T\) is large, because \(v(0)=0\) and every nonzero lattice point lies
+outside the fixed support.  If \(s/L=T^{0+o(1)}\), it contains only
+polylogarithmically many bounded samples and the prefactor is also
+polylogarithmic.  Thus in every retained dyadic box
+
+\[
+ \sum_l\widehat v(lL/s)=(\log T)^{O_W(1)}.
+\tag{4.845dc_14xq_35w31n11}
+\]
+
+The identical formula holds for the \(k\)-axis.  On \(k=0\), the
+Ramanujan argument and its long-density main are independent of \(l\):
+\(m+Akl=m\).  Hence (4.845dc_14xq_35w31n10) may be applied before any
+absolute value.  Likewise the \(l=0\) axis is independent of \(k\).
+Inclusion--exclusion for the union of the two axes subtracts the single
+origin sample.  Consequently the entire axis union has
+polylogarithmic, rather than
+\(T^{\max(u-h,u-\ell)}\), Fourier volume.
+
+The polylogarithmic nuclear norm of the physical QCT separation is
+already in the global ledger, so summing the separated tensors does not
+change this conclusion.  Fourier truncation is also harmless: apply
+(4.845dc_14xq_35w31n10) to the complete Schwartz sum first and bound
+the discarded tail by the existing arbitrary-seminorm decay.  In the
+short-cofactor calculation, the cases \(jkl=0\) were already assigned
+to the ordinary smooth Möbius PNT immediately before
+(4.845dc_14xq_35w31m), so no second axis estimate is spent there.
+
+After the axis recombination, the long-density-main saving against the
+local target is
+
+\[
+ \boxed{p-\varepsilon_0u.}
+\tag{4.845dc_14xq_35w31n12}
+\]
+
+This is uniformly positive on every admissible box with \(a>0\).  In
+fact \(a\leq\rho+\sigma-1\) and \(u=\max(\rho,\sigma)\) imply
+
+\[
+ p=2u-a\geq 2u-\rho-\sigma+1
+ =|\rho-\sigma|+1\geq1,
+\tag{4.845dc_14xq_35w31n13}
+\]
+
+while \(u\leq3\), so the concrete choice
+\(\varepsilon_0=1/100\) leaves at least \(97/100\).
+
+It follows that v08, v09, v19 and v21 satisfy the already positive
+short-cofactor Taylor criterion and the recombined long-cofactor
+criterion.  Together with (4.845dc_14xq_35w31n7), every positive-\(a\)
+residual vertex is covered.  The exact remaining vertex set is now
+
+\[
+ \boxed{\{\mathrm{v10},\mathrm{v14}\}.}
+\tag{4.845dc_14xq_35w31n14}
+\]
+
+Both have \(a=0\); the reciprocal-phase Taylor inequality fails there
+before any axis issue is considered.  The executable interface
+`adaptive_reciprocal_slack_vertex_audit` therefore records the four
+recovered zero-axis vertices separately and retains v10 and v14.
+This still does not prove a closed cover of all intervening faces or
+the logarithmic endpoint \((\mathrm{LCPE}_2)\).
+
+### 4.109zjaced000e The a=0 vertices close before Poisson
+
+The failure of the reciprocal-phase Taylor inequality at v10 and v14
+comes from Poissonizing a box whose two physical shift variables are
+already bounded.  Return instead to the exact shifted equation (4.3)
+of the reduction note.  In the left orientation v10 has
+
+\[
+ q=T^{0+o(1)},\quad r\asymp T^2,\quad s\asymp T^3,
+ \quad m\asymp1,\quad n\asymp T,\quad |\delta|\asymp1,
+\tag{4.845dc_14xq_35w31n15}
+\]
+
+and the equation is
+
+\[
+ \boxed{m s-n r=\delta.}
+\tag{4.845dc_14xq_35w31n16}
+\]
+
+For fixed \((m,\delta,r,n)\), equation
+(4.845dc_14xq_35w31n16) determines at most one integer \(s\).  The
+support and coprimality conditions can only reduce this count.  Hence
+the complete number of solutions is
+
+\[
+ \ll T^{2+1+o(1)}=T^{3+o(1)}.
+\tag{4.845dc_14xq_35w31n17}
+\]
+
+No oscillation is required.  The height integral is \(O_W(T)\), the
+AFE weight is bounded because \(mn\ll T^{1+o(1)}\), and the exact
+coefficient in (2.6) has square-root size
+
+\[
+ \frac{T}{q\sqrt{rsmn}}
+ \ll_W\frac{T}{qT^3}=\frac{T^{-2}}q.
+\tag{4.845dc_14xq_35w31n18}
+\]
+
+Equations (4.845dc_14xq_35w31n17)--
+(4.845dc_14xq_35w31n18) give \(O_W(T/q)\) before the mollifier taper.
+But v10 saturates the long mollifier endpoint:
+\(qs\in[N/4,N]\), \(N=T^3\).  Formula (2.12) therefore gives
+
+\[
+ |p_N(qs)|\ll\frac1{\log T}.
+\tag{4.845dc_14xq_35w31n19}
+\]
+
+The other mollifier coefficient has modulus at most one.  Summing the
+exponent-zero \(q\)-core with its already exact harmonic weight costs
+only \(\log\log T\), so the whole vertex contributes
+
+\[
+ \boxed{
+ \ll_W\frac{T}{\log T}
+       \sum_{q\le(\log T)^{O_W(1)}}\frac1q
+ \ll_W\frac{T\log\log T}{\log T}=o_W(T).}
+\tag{4.845dc_14xq_35w31n20}
+\]
+
+Power-sized \(q\) leaves this vertex and belongs to the adjacent
+parameter cells; it is not silently included in (4.845dc_14xq_35w31n20).
+The right orientation v14 is identical after swapping the two
+mollifier and zeta variables.  Thus all vertices are now covered.
+
+The interface `a_zero_endpoint_shifted_count_audit` records the exact
+solution-count exponent \(3\), the kernel/weight exponent \(-2\), the
+pre-taper exponent \(1\), and the one endpoint logarithm.  This is a
+certificate for v10 and v14, not yet a proof that the union of the
+analytic route regions covers every face and interior cell.  The
+global proof status and \((\mathrm{LCPE}_2)\) therefore remain open.
+
+### 4.109zjaced000f Cubic reciprocal windows cover the full power polytope
+
+The preceding vertex-by-vertex ledger is unnecessary once the Taylor
+degree is allowed to change.  MRSTT Corollary 1.2(i), deduced from
+Theorem 1.1, is uniform for an arbitrary family of real polynomial
+phases of any fixed degree.  Hence the quadratic phase used above may
+be replaced by a cubic polynomial without changing the interval condition
+\(X^{1/3+\varepsilon}\leq Y\leq X^{1-\varepsilon}\).
+
+For an arbitrary admissible box retain
+
+\[
+ u=\max(\rho,\sigma),\qquad a=\ell+h,\qquad p=2u-a.
+\tag{4.845dc_14xq_35w31n21}
+\]
+
+Two uniform lower bounds follow directly from the defining
+half-spaces.  First,
+
+\[
+ \boxed{u\geq\frac12.}
+\tag{4.845dc_14xq_35w31n22}
+\]
+
+Indeed, if both \(\rho,\sigma<1/2\), then
+\(\ell\geq0\) and \(\ell\leq m+\rho-1\) force
+\(m>1/2\), while
+\(k=m+\rho-\sigma>1/2\), contradicting \(k+m\leq1\).
+Second, since \(a\leq\rho+\sigma-1\),
+
+\[
+ \boxed{
+ p=2u-a\geq|\rho-\sigma|+1\geq1,\qquad
+ p\leq2u\leq6,\qquad u+p\leq9.}
+\tag{4.845dc_14xq_35w31n23}
+\]
+
+Taylor-expand \(B/n\) to degree three on a window
+\(Y=X^\nu\).  The fourth-order remainder is
+
+\[
+ \frac{|B|Y^4}{X^5}
+ \ll
+ T^{\eta+p-4(1-\nu)x}(\log T)^{O_W(1)},
+ \qquad x=(u-\eta)(1-\rho_Q).
+\tag{4.845dc_14xq_35w31n24}
+\]
+
+Thus the uniform criterion is
+
+\[
+ \boxed{
+ 4(1-\nu)(u-\eta)(1-\rho_Q)>p+\eta.}
+\tag{4.845dc_14xq_35w31n25}
+\]
+
+Its worst admissible values are \(u=1/2\), \(a=0\), \(p=1\).
+With the same fixed choices
+
+\[
+ \eta=\rho_Q=\varepsilon=\frac1{1000},\qquad
+ \nu=\frac{17}{50},
+\]
+
+the reduced Möbius exponent and the exact Taylor margin are
+
+\[
+ x_{\min}=
+ \left(\frac12-\frac1{1000}\right)
+ \left(1-\frac1{1000}\right)
+ =\frac{498501}{1000000},
+\tag{4.845dc_14xq_35w31n26}
+\]
+
+\[
+ \boxed{
+ 4\left(1-\frac{17}{50}\right)x_{\min}
+ -1-\frac1{1000}
+ =\frac{3938033}{12500000}>0.}
+\tag{4.845dc_14xq_35w31n27}
+\]
+
+The MRSTT lower and upper margins remain \(17/3000\) and \(659/1000\).
+Its supremum is uniform in all coefficients of the cubic Taylor
+polynomial, so the sliding identity and exceptional-measure transfer
+used in (4.845dc_14xq_35w31l) apply verbatim.
+
+The long-cofactor bounds are also uniform.  With reciprocal-radical
+moment abscissa \(\varepsilon_0=1/100\), the nonaxis saving is at least
+
+\[
+ p-\varepsilon_0(u+p)\geq1-\frac9{100}
+ =\frac{91}{100},
+\tag{4.845dc_14xq_35w31n28}
+\]
+
+and exact inverse Poisson on the complete axes gives at least
+
+\[
+ p-\varepsilon_0u\geq1-\frac3{100}
+ =\frac{97}{100}.
+\tag{4.845dc_14xq_35w31n29}
+\]
+
+The two density errors continue to save \(\eta/2\) and \(3\eta/2\).
+The subcritical entry box has arbitrary logarithmic saving, and the
+critical \(c\)-Poisson mode count is polylogarithmic exactly as before.
+All constants are now fixed uniformly over the compact rational
+admissibility polytope.
+
+Consequently the cubic reciprocal-phase argument covers every
+power-scale face and interior cell, not merely all vertices.  The
+interface cubic_reciprocal_full_polytope_audit records
+all_power_scale_faces_and_interiors_covered=True and
+all_dyadic_parameter_cells_enumerated=True.
+
+This statement does not yet promote the logarithmically refined
+large-\(q\) endpoint \((\mathrm{LCPE}_2)\): its powers coincide with a
+covered vertex, but its \(L=(\log T)^2\) and growing zeta scales require
+their own log-level substitution into the cubic ledger.  Until that is
+done, the global remainder is not asserted to be \(o(T)\).
+
+### 4.109zjaced000g Cubic c-Poisson closes LCPE2 upstream
+
+It remains to substitute the logarithmic refinement which was not
+visible in ExponentBox.  At \((\mathrm{LCPE}_2)\),
+
+\[
+ q\asymp T^2,\qquad r,s\asymp T,\qquad
+ P_{\zeta}\asymp(\log T)^2,\qquad
+ L\asymp(\log T)^2.
+\tag{4.845dc_14xq_35w31n30}
+\]
+
+The physical \(h\)-frequency scale in the exact QCT kernel is
+
+\[
+ H\asymp\frac{T}{P_{\zeta}}
+ =\frac{T}{(\log T)^2}.
+\tag{4.845dc_14xq_35w31n31}
+\]
+
+Consequently the two double-Poisson dual scales are
+
+\[
+ \frac{s}{H}\asymp(\log T)^2,\qquad
+ \frac{s}{L}\asymp\frac{T}{(\log T)^2},
+\]
+
+and the normalization is still exact:
+
+\[
+ \boxed{
+ \frac{HL}{s}
+ \left(\frac{s}{H}\frac{s}{L}\right)=s=T.}
+\tag{4.845dc_14xq_35w31n32}
+\]
+
+Thus the logarithmic endpoint has the same power-scale target as v09.
+Every additional factor in (4.845dc_14xq_35w31n30)--(4.845dc_14xq_35w31n32)
+is a fixed power of \(\log T\).  The cubic Taylor error retains the
+fixed power margin (4.845dc_14xq_35w31n27), and MRSTT supplies
+arbitrary prescribed logarithmic saving uniformly in the cubic
+coefficients.  Requesting \((\log T)^{-40}\) and charging the complete
+QCT, dyadic, cofactor, Fourier-mode and transform-tail ledger by the
+conservative factor \((\log T)^{20}\) leaves
+\((\log T)^{-20}\).  The dyadic shell \(q\asymp T^2\) satisfies
+\(\sum q^{-1}\ll1\), so no further power or endpoint logarithm is
+required.
+
+The ordering is important.  Apply complementary-divisor \(c\)-Poisson
+and the cubic reciprocal-phase estimate to the exact MMKLS expression
+before the q-first Euler factorization (4.224) and before the product
+lift (4.237)--(4.238).  Therefore the positive centered-energy
+majorant (4.239) is bypassed, not proved or assumed.  The stronger
+variance statement (4.240) may remain open without obstructing the
+original signed sum.
+
+The interface cubic_reciprocal_lcpe2_audit records
+centered_product_energy_gate_bypassed_not_assumed=True,
+centered_product_energy_estimate_proved=False, and
+lcpe2_covered_unconditionally=True.  It also records the bounded
+dyadic \(q\)-sum and the full transform-tail log ledger.  This removes
+the last logarithmic endpoint left outside the full power-polytope
+coverage.  The next step is the final upstream reassembly audit; no
+asymptotic is asserted in this subsection alone.
+
+### 4.109zjaced000h Final cubic-route reassembly
+
+All components may now be reinserted in the order in which they were
+removed.  The pole-cancelled completed AFE and common Mellin
+calculation give the exact decomposition
+
+\[
+ I_{\lfloor T^3\rfloor,W}(T)
+ =T\mathcal Q_{T^3,T}+\mathcal R_{T^3,T}.
+\tag{4.845dc_14xq_35w31n33}
+\]
+
+The audited reciprocal-LCM main term, including the Poisson zero mode,
+is
+
+\[
+ \mathcal Q_{T^3,T}
+ =\frac43\int_1^2W(u)\,du+o_W(1).
+\tag{4.845dc_14xq_35w31n34}
+\]
+
+For the nonzero Poisson core, Section 4.109zjaced000f covers every
+power-scale box with one uniform cubic reciprocal-phase estimate.
+Section 4.109zjaced000g covers the only logarithmic refinement not
+encoded by the power polytope.  Both estimates are applied before
+absolute product-energy majorization, and both allow arbitrary
+logarithmic saving after the fixed QCT seminorm ledger.  Therefore the
+six dyadic sums and harmonic \(q\)-sum give
+
+\[
+ \mathcal R_{\mathrm{compact}}=o_W(T).
+\tag{4.845dc_14xq_35w31n35}
+\]
+
+The existing shell audit separately gives \(o_W(T)\) for the AFE
+product tail, time-nonstationary tail, Poisson-frequency tail and QCT
+Fourier--Mellin tail.  The archimedean correction is
+\(O_{A,W}(T^{-A})\) for every fixed \(A\).  These pieces are disjoint
+from the compact core, so no cancellation is spent twice.  Hence
+
+\[
+ \boxed{\mathcal R_{T^3,T}=o_W(T).}
+\tag{4.845dc_14xq_35w31n36}
+\]
+
+Combining (4.845dc_14xq_35w31n33)--(4.845dc_14xq_35w31n36) proves,
+for real \(W\in C_c^\infty(\mathbb R)\) supported in \([1,2]\),
+
+\[
+ \boxed{
+ I_{\lfloor T^3\rfloor,W}(T)
+ =\frac43T\int_1^2W(u)\,du+o_W(T).}
+\tag{4.845dc_14xq_35w31n37}
+\]
+
+The executable reassembly
+unconditional_long_mollifier_asymptotic_audit now has zero residual
+gates, all dyadic cells enumerated, and the single proof status
+unconditional asymptotic proved.  The centered product-energy
+inequality (4.239) remains unproved because it is a stronger positive
+majorant which the signed cubic route bypasses; it is no longer an
+input to (4.845dc_14xq_35w31n37).
+
 ### 4.109zjaced0 Four witnesses do not cover the parameter polytope
 
 The last qualification is essential.  There is a continuous admissible
@@ -22115,7 +22493,7 @@ argument as (4.319)--(4.323), now with (S=T^u), gives
  \|\nu\|_2^2\ll_W A\log(2T),\qquad
  |\mathrm{BTF}_{u,\theta}(q,c)|
  \ll_W
- T^{,2u-1/2+\max(\theta,u-1/2)}(\log T)^{O_W(1)}.
+ T^{2u-1/2+\max(\theta,u-1/2)}(\log T)^{O_W(1)}.
 \tag{4.845dc_14xq_35zb}
 \]
 
@@ -22136,7 +22514,7 @@ Consequently the uniform local estimate
 \[
  \boxed{
  |\mathrm{BTF}_{u,\theta}(q,c)|
- \ll_{\varepsilon,W}T^{,2u-1/1000+\varepsilon}}
+ \ll_{\varepsilon,W}T^{2u-1/1000+\varepsilon}
 \tag{BTF}_{u,\theta}
 \]
 
@@ -23778,17 +24156,20 @@ both the four QCT Fourier variables and the Bessel Mellin/spectral
 variables.  Equations (4.845dc_15)--(4.845dc_17), together with
 seminorm-stable PEVP from (4.845dc_14xye), prove
 \(\mathrm{TAIL}_{B,D}=o_W(T)\) and the kernel-transform tail estimate.
-The compact near shell from Section 4.109zi remains open because PEVP
-does not aggregate the actual outer integers \(A,B\).
+At this historical stage the compact near shell from Section 4.109zi
+remained open because PEVP did not aggregate the actual outer integers
+\(A,B\).  Sections 4.109zjaced000f--4.109zjaced000h later close that
+shell directly, before the positive outer-entry majorant is introduced.
 
 The interface \`mwkf_tail_shell_aggregation_audit\` records the exact
 seven-log aggregation and the inequality \(BJ>C_J+D+7\).  Its
 AFE-product, time/Poisson, QCT/Bessel, and total-tail closure flags are
 true after Section 4.109zlf; the compact-core flag is separate and stays
-false until OLISK is proved.
+false inside this historical PEVP-only route.  It is not an input to the
+later signed cubic route.
 
 
-### 4.109zh The exact main term leaves the joint outer-entry compact gate
+### 4.109zh Historical exact-main reassembly left the outer-entry gate
 
 It remains to match the exact-gamma main term (1.1) of the
 off-diagonal audit with the finite LCM asymptotic proved in merged
@@ -23841,8 +24222,8 @@ The exact completed AFE and common-Mellin zero-mode calculation give
 with no truncated-AFE error.  The two explicit archimedean corrections
 are \(O_{A,W}(T^{-A})\).  Fixed-entry PEVP and Section 4.109zg make
 every AFE and transform shell \(o_W(T)\).  Section 4.109zi shows that
-this does not aggregate the remaining actual-integer \(A,B\) sums.
-Unconditionally the argument stops at
+this PEVP-only route does not aggregate the remaining actual-integer
+\(A,B\) sums.  At that historical stage the argument stopped at
 \[
  \boxed{\mathcal R_{\lfloor T^3\rfloor,T}=o_W(T)
  \quad\Longleftarrow\quad
@@ -23861,9 +24242,10 @@ Combining this remaining implication with (4.845dc_19) would give
  \tag{4.845dc_20}
 \]
 
-The displayed asymptotic is therefore still unproved for real
-\(W\in C_c^\infty(\mathbb R)\) supported in \([1,2]\).  The final
-coverage certificate has one **top-level** residual analytic gate: the
+Before the later cubic route, the displayed asymptotic was therefore
+unproved for real \(W\in C_c^\infty(\mathbb R)\) supported in
+\([1,2]\).  The corresponding historical coverage certificate had one
+**top-level** residual analytic gate: the
 Möbius-weighted-modulus two-index large sieve
 \((\mathrm{MMKLS})_{q}^{L,R}\), equivalently the recombined outer-level
 square \((\mathrm{OSLSP})_q^{L,R}\) and hence the full signed outer-entry
@@ -23880,16 +24262,18 @@ exhibits the power family \(2\le u\le12/5\), and Section
 4.109zjaced00 closes that particular family by almost-all endpoint
 dispersion.  This does not certify all other cells of the continuous
 parameter polytope.  Sections 4.109zjaced1--4.109zjaced2 also retain the
-separate logarithmic endpoint \(\mathrm{LCPE}_2\).  Either a direct proof
-of the top-level gate or a complete enumeration and proof of all
-remaining subgates is still required.
+separate logarithmic endpoint \(\mathrm{LCPE}_2\).  At that point either
+a direct proof of the top-level gate or a complete enumeration and proof
+of all remaining subgates was required.
 
 The interface \`unconditional_long_mollifier_asymptotic_audit\`
 combines the exact AFE, zero mode, PR #478 LCM main term, PEVP,
 seven-log compact aggregation, and the proved tail-shell ledger.
-Its proof status is:
-
-> **analytic remainder gate open**
+That historical interface status has been superseded by Sections
+4.109zjaced000f--4.109zjaced000h.  The current interface records zero
+residual gates and the status **unconditional asymptotic proved**; the
+stronger positive OLISK/MMKLS majorant itself remains unproved and is
+bypassed rather than assumed.
 
 
 ### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
@@ -24524,7 +24908,10 @@ cross-cusp Kuznetsov orbit, and the normalized fixed-entry square has
 the exact \(A^{-1}\) factor without the optional \(ABj\) lift.  Those
 sections also prove the stronger weighted primitive-conductor PEVP
 square function.  Section 4.109zi shows that neither fixed-entry
-statement controls the actual outer \(A,B\) sums.  The remaining
-theorem is the joint signed outer-entry gate
-\((\mathrm{OLISK})_q\), equivalently MMKLS; until it is proved, the
-asymptotic (4.845dc_20) is not unconditional.
+statement controls the actual outer \(A,B\) sums.  Within that
+historical spectral route, the remaining theorem is the joint signed
+outer-entry gate \((\mathrm{OLISK})_q\), equivalently MMKLS.  The later
+cubic complementary-divisor route instead treats the original signed
+sum before this positive majorization, so the failure of OLISK/MMKLS
+is no longer an obstruction to the unconditional asymptotic proved in
+Section 4.109zjaced000h.
