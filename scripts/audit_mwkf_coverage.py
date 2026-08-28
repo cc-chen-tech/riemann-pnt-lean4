@@ -16999,6 +16999,79 @@ def fixed_total_modulus_partition_exponent_audit(
     }
 
 
+def physical_sector_product_support_bridge_audit(
+    *,
+    original_total_modulus_exponent: Fraction,
+    normalized_sector_modulus_exponent: Fraction,
+    factor_exponents: tuple[Fraction, Fraction, Fraction, Fraction],
+    dp_comparable_to_total_modulus_verified: bool,
+    quotient_type_factorization_d_equals_bcn_verified: bool,
+    cross_model_total_modulus_identification_verified: bool,
+) -> dict[str, object]:
+    """Audit the missing bridge between two differently scaled moduli.
+
+    The ``s`` in the normalized sector gate (9.525) has critical exponent
+    one, whereas the original total modulus in Sections 9.130--9.131 has
+    exponent three.  The identity ``d*p comparable to s`` therefore fixes
+    product length only relative to the normalized sector denominator.
+    """
+
+    original_sigma = F(original_total_modulus_exponent)
+    sector_sigma = F(normalized_sector_modulus_exponent)
+    factors = tuple(F(value) for value in factor_exponents)
+    if len(factors) != 4:
+        raise ValueError("exactly four b,c,n,p factor exponents are required")
+    if min((original_sigma, sector_sigma, *factors)) < 0:
+        raise ValueError("all exponents must be nonnegative and modulus positive")
+    if original_sigma == 0 or sector_sigma == 0:
+        raise ValueError("both modulus exponents must be positive")
+    x = sum(factors, start=F(0))
+    physical_support = bool(
+        dp_comparable_to_total_modulus_verified
+        and quotient_type_factorization_d_equals_bcn_verified
+    )
+    if physical_support and x != sector_sigma:
+        raise ValueError(
+            "dp comparable to the sector denominator and d=b*c*n force "
+            "product exponent x=sector sigma"
+        )
+    bridge = bool(cross_model_total_modulus_identification_verified)
+    if bridge and sector_sigma != original_sigma:
+        raise ValueError(
+            "a direct cross-model modulus identification requires equal exponents"
+        )
+    product_matches_original = bool(physical_support and x == original_sigma)
+    return {
+        "original_total_modulus_exponent": original_sigma,
+        "normalized_sector_modulus_exponent": sector_sigma,
+        "factor_exponents": factors,
+        "product_total_length_exponent": x,
+        "dp_comparable_to_total_modulus_verified": bool(
+            dp_comparable_to_total_modulus_verified
+        ),
+        "quotient_type_factorization_d_equals_bcn_verified": bool(
+            quotient_type_factorization_d_equals_bcn_verified
+        ),
+        "normalized_sector_product_support_identity_verified": physical_support,
+        "product_length_equals_normalized_sector_modulus_exponent": bool(
+            physical_support and x == sector_sigma
+        ),
+        "product_length_equals_original_total_modulus_exponent": (
+            product_matches_original
+        ),
+        "cross_model_total_modulus_identification_verified": bridge,
+        "fixed_total_modulus_partition_reassembly_applicable": bool(
+            physical_support and bridge and product_matches_original
+        ),
+        "theta_three_short_product_wedge_removed": bool(
+            physical_support and bridge and original_sigma == 3 and x >= 2
+        ),
+        "joint_varying_total_modulus_and_phase_estimate_proved": False,
+        "packet_exhaustive_adapter_from_afe_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

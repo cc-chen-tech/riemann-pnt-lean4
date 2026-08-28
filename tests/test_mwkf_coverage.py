@@ -5745,6 +5745,81 @@ def test_fixed_total_modulus_divisor_sum_removes_active_conductor_loss() -> None
     assert not unfixed_phase["coupled_kernel_gate_closed"]
 
 
+def test_continuous_sector_support_does_not_identify_original_modulus() -> None:
+    """The normalized s~T sector cannot be silently replaced by s~T^3."""
+
+    audit = getattr(
+        coverage_audit,
+        "physical_sector_product_support_bridge_audit",
+        None,
+    )
+    assert audit is not None, "physical sector bridge audit is missing"
+    common = {
+        "original_total_modulus_exponent": F(3),
+        "normalized_sector_modulus_exponent": F(1),
+        "dp_comparable_to_total_modulus_verified": True,
+        "quotient_type_factorization_d_equals_bcn_verified": True,
+        "cross_model_total_modulus_identification_verified": False,
+    }
+    normalized_quarters = audit(
+        factor_exponents=(F(1, 4), F(1, 4), F(1, 4), F(1, 4)),
+        **common,
+    )
+    assert normalized_quarters["product_total_length_exponent"] == F(1)
+    assert normalized_quarters[
+        "product_length_equals_normalized_sector_modulus_exponent"
+    ]
+    assert not normalized_quarters[
+        "product_length_equals_original_total_modulus_exponent"
+    ]
+    assert not normalized_quarters[
+        "fixed_total_modulus_partition_reassembly_applicable"
+    ]
+    assert not normalized_quarters["theta_three_short_product_wedge_removed"]
+    assert not normalized_quarters[
+        "joint_varying_total_modulus_and_phase_estimate_proved"
+    ]
+    assert not normalized_quarters["packet_exhaustive_adapter_from_afe_proved"]
+    assert not normalized_quarters["coupled_kernel_gate_closed"]
+
+    missing_physical_support = audit(
+        factor_exponents=(F(1, 4), F(1, 4), F(1, 4), F(1, 4)),
+        **{**common, "dp_comparable_to_total_modulus_verified": False},
+    )
+    assert not missing_physical_support[
+        "normalized_sector_product_support_identity_verified"
+    ]
+
+    with pytest.raises(ValueError, match="sector denominator"):
+        audit(
+            factor_exponents=(F(1, 2), F(1, 2), F(1, 4), F(1, 4)),
+            **common,
+        )
+
+    with pytest.raises(ValueError, match="equal exponents"):
+        audit(
+            factor_exponents=(F(1, 4), F(1, 4), F(1, 4), F(1, 4)),
+            **{
+                **common,
+                "cross_model_total_modulus_identification_verified": True,
+            },
+        )
+
+    identified_same_scale = audit(
+        original_total_modulus_exponent=F(3),
+        normalized_sector_modulus_exponent=F(3),
+        factor_exponents=(F(3, 4), F(3, 4), F(3, 4), F(3, 4)),
+        dp_comparable_to_total_modulus_verified=True,
+        quotient_type_factorization_d_equals_bcn_verified=True,
+        cross_model_total_modulus_identification_verified=True,
+    )
+    assert identified_same_scale[
+        "fixed_total_modulus_partition_reassembly_applicable"
+    ]
+    assert identified_same_scale["theta_three_short_product_wedge_removed"]
+    assert not identified_same_scale["coupled_kernel_gate_closed"]
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,
