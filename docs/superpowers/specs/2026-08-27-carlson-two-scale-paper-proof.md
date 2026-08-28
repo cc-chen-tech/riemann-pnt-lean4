@@ -508,6 +508,23 @@ The factor `exp(1/4)` is exactly the reciprocal of the least Gaussian weight
 on a half-window.  This step is purely real-variable and its axiom audit also
 contains only `propext`, `Classical.choice`, and `Quot.sound`.
 
+The detector adapter is now formalized too.  On `Re(s)=2/3` the inverse
+pole-removal factor satisfies
+```
+norm ((s+1)/(s-1)) <= 5,
+```
+so the ordinary two-scale mollified error has square at most `25` times the
+pole-free error square.  Its vertical section is continuous, the resulting
+Gaussian local integrals are integrable, and the exact covering consequence
+is
+```
+integral_[U,V] |F(2/3+it)|^2
+  <= exp(1/4) * (floor ((V-U)/Delta) + 1) * (25*L),
+```
+whenever every covering centre has pole-free Gaussian `L^2` norm square at
+most `L`.  No height restriction or unproved analytic premise is used in this
+adapter, and its axiom audit again has only the three permitted axioms.
+
 At the first formal target `R=4`, the closed-strip theorem has also been
 specialized at `x=2/3`.  The interpolation weights reduce exactly to
 `20/21` and `1/21`; the right endpoint is discharged by the proved
@@ -522,8 +539,8 @@ a final density axiom:
    specialization, including its uniformity in the local center;
 2. for the first unconditional formal target `delta=1/20`, use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
-   specialization, and connect the resulting local norm to the now-proved
-   finite Gaussian covering theorem; extending
+   specialization, and insert the resulting local norm into the now-proved
+   detector-covering adapter; extending
    the same package to `R=1000` is an optional
    strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional
