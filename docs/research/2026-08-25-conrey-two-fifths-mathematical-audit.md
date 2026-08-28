@@ -1966,3 +1966,18 @@ two combinatorial layers are closed.
 Local analytic phase alignment and global attribution for the actual `eta`
 remain open.  Thus equation (41) and the Conrey simple-zero proportion are not
 yet proved.
+
+The algebraic part of local phase alignment is now specialized to the actual
+degree-one auxiliary function.  The theorem
+`exists_conreyDegreeOneEta_vertical_order_factor` proves that a finite
+order-`m` zero at ordinate `tau` admits an analytic regular factor `h`, nonzero
+both at the zero and throughout a real neighborhood, with
+
+\[
+  \eta(1/2+it)=\bigl(i(t-\tau)\bigr)^m h(1/2+it).
+\]
+
+This closes the analytic-order-to-vertical-factorization step without assuming
+the desired phase jump.  A continuous logarithm of `h` and the exact alignment
+of the two component lifts by `m*pi` are still required before the bridge can
+be inserted into the global argument path.

@@ -150,3 +150,38 @@ analytic phase alignment and the disjoint global attribution, remain the
 actual equation-(41) gate.  No equation-(41) or Conrey simple-zero proportion
 claim should be made before all four layers are connected to the actual
 `eta`.
+
+## 6. Analytic-order specialization on the critical line
+
+Mathlib's exact local-order interface already supplies the algebraic part of
+Layer 3.  If `rho=1/2+i*tau` and
+
+\[
+  \operatorname{analyticOrderAt}(\eta,\rho)=m<\infty,
+\]
+
+then there is a function `h`, analytic at `rho` and nonzero there, such that
+
+\[
+  \eta(z)=(z-\rho)^m h(z)
+\]
+
+throughout a neighborhood of `rho`.  Restricting this neighborhood identity
+along `z=1/2+i*t` gives the exact real-parameter factorization
+
+\[
+  \eta(1/2+it)=\bigl(i(t-\tau)\bigr)^m h(1/2+it).
+\tag{6}
+\]
+
+Continuity and `h(rho) != 0` also make the restricted regular factor nonzero
+on a sufficiently small real neighborhood of `tau`.  Thus every local zero
+on the critical line is isolated there and its entire singular phase is
+carried by the explicit power in (6).
+
+To finish Layer 3, choose a continuous logarithm of the regular factor on that
+small interval.  Its argument has the same left and right limit, whereas
+`i(t-tau)` changes from argument `-pi/2` to `pi/2`.  The aligned right-hand
+lift is therefore the left-hand lift plus exactly `m*pi`.  This final logarithm
+and lift-alignment statement is not implied merely by (6) and remains the next
+formal checkpoint.

@@ -1,6 +1,6 @@
 import PrimeNumberTheorem.RiemannVonMangoldt.CompletedZetaSymmetry
 
-open Complex
+open Complex Filter
 open scoped ComplexConjugate
 open PrimeNumberTheorem.RiemannVonMangoldt
 
@@ -111,6 +111,62 @@ noncomputable def conreyDegreeOneEta (g g0 g1 L : ℝ) (s : ℂ) : ℂ :=
   (g : ℂ) * RiemannHypothesis.completedZeta s +
     I * (g0 : ℂ) * RiemannHypothesis.completedZeta s +
     ((g1 / L : ℝ) : ℂ) * deriv RiemannHypothesis.completedZeta s
+
+/-- Conrey's degree-one auxiliary function is analytic everywhere. -/
+theorem analyticAt_conreyDegreeOneEta (g g0 g1 L : ℝ) (s : ℂ) :
+    AnalyticAt ℂ (conreyDegreeOneEta g g0 g1 L) s := by
+  have hxi : AnalyticAt ℂ RiemannHypothesis.completedZeta s :=
+    differentiable_completedZeta.analyticAt s
+  have hxideriv : AnalyticAt ℂ (deriv RiemannHypothesis.completedZeta) s :=
+    hxi.deriv
+  exact ((analyticAt_const.mul hxi).add
+    ((analyticAt_const.mul analyticAt_const).mul hxi)).add
+      (analyticAt_const.mul hxideriv)
+
+/-- At a finite order-`m` zero on the critical line, the restriction of
+Conrey's `eta` has the exact local form
+`(I * (t - tau)) ^ m * h(1/2 + I*t)`, where the regular factor is analytic
+and remains nonzero on a real neighborhood of `tau`. -/
+theorem exists_conreyDegreeOneEta_vertical_order_factor
+    {g g0 g1 L tau : ℝ} {m : ℕ}
+    (horder :
+      analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+        (conreyCriticalPoint tau) = m) :
+    ∃ h : ℂ → ℂ,
+      AnalyticAt ℂ h (conreyCriticalPoint tau) ∧
+      h (conreyCriticalPoint tau) ≠ 0 ∧
+      (∀ᶠ t in nhds tau, h (conreyCriticalPoint t) ≠ 0) ∧
+      (∀ᶠ t in nhds tau,
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) =
+          (I * ((t - tau : ℝ) : ℂ)) ^ m *
+            h (conreyCriticalPoint t)) := by
+  have heta := analyticAt_conreyDegreeOneEta g g0 g1 L
+    (conreyCriticalPoint tau)
+  rcases heta.analyticOrderAt_eq_natCast.mp horder with
+    ⟨h, hhanalytic, hhne, hfactor⟩
+  have hcriticalContinuous : Continuous conreyCriticalPoint := by
+    unfold conreyCriticalPoint
+    fun_prop
+  have hcriticalTendsto :
+      Tendsto conreyCriticalPoint (nhds tau)
+        (nhds (conreyCriticalPoint tau)) :=
+    hcriticalContinuous.continuousAt
+  have hhneReal :
+      ∀ᶠ t in nhds tau, h (conreyCriticalPoint t) ≠ 0 :=
+    hcriticalTendsto.eventually
+      (hhanalytic.continuousAt.eventually_ne hhne)
+  have hfactorReal :
+      ∀ᶠ t in nhds tau,
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) =
+          (I * ((t - tau : ℝ) : ℂ)) ^ m *
+            h (conreyCriticalPoint t) := by
+    filter_upwards [hcriticalTendsto.eventually hfactor] with t ht
+    have hdisplacement :
+        conreyCriticalPoint t - conreyCriticalPoint tau =
+          I * ((t - tau : ℝ) : ℂ) := by
+      apply Complex.ext <;> simp [conreyCriticalPoint]
+    simpa [hdisplacement] using ht
+  exact ⟨h, hhanalytic, hhne, hhneReal, hfactorReal⟩
 
 /-- On the critical line, the real part of Conrey's degree-one `eta` is
 exactly the leading real coefficient times `xi`. -/
