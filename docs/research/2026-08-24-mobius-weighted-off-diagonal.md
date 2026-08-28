@@ -20,6 +20,7 @@
 > | Squarefree principal-quotient trace rows | Section 9.121 expands the retained squarefree density by \(\mu^2(N)=\sum_{d^2\mid N}\mu(d)\).  Classical completion gives a fixed-row saving \(\eta_{\rm sf}(\gamma,u)=[\min\{\gamma/2,u/2-\gamma/4\}]_+\) for a squarefree unit-phase conductor and verified separated \(N\)-weight.  Section 9.122 proves the nonunit descent to \(R=G/(a_0,G)\) and replaces \(\gamma\) by the effective exponent \(\rho\).  Rows with \(u\leq\rho/2\), the physical packet adapter, the signed outer reassembly, and all of \(\mathscr B\) remain unproved |
 > | Double-Möbius product-partition coverage | Section 9.123 tests all seven unordered bipartitions of \(bcnp\), not only \(b\mid cnp\).  FKM Theorem 1.17 covers a verified separated fixed-prime atom whenever one partition has both sides nonempty and its longer side exceeds \(G^{1/2}\); FKM Theorem 1.7 covers long \(b\)- or \(c\)-axes, and elementary completion covers long smooth \(n\)- or \(p\)-axes.  The prime balanced two-factor face, composite central band, physical adapter, and signed global dispersion remain unproved |
 > | Balanced double-Möbius cross-conductor Gram | Section 9.124 regroups the residual as \(\sum_b\mu(b)\mathcal A_b\) before one Cauchy step.  The exact Gram phase is \(e_{[G_1,G_2]}(Db+E\bar b)\), retaining both \(\mu(c_i)\), outer signs, and \(a_i=h_i\delta_i\).  On unit squarefree rows the zero orbit forces \(G_1=G_2\) and one explicit \(c_2\)-residue per \(c_1\); the outer invariant-fibre norm and nonzero cross-conductor spectral estimate remain unproved |
+> | Resonant invariant-fibre energy | Section 9.125 applies full multiplicative Plancherel, not the earlier primitive additive projection.  Cochrane--Shi plus exact gcd descent gives \(HD+H^2D^2/G+(1+H+D+HD/G)^2\); at \(H=D=T^{5/2},G=T^3\) this is the permitted exponent \(7\).  Unit multipliers \(Bk^{-2}\) only permute residues, so every subpolynomial-projective multiplier family is also within target.  Proving that the physical sector/cofactor family has this norm in the same exhaustive packet remains open |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -18100,6 +18101,127 @@ the resonant/nonresonant split, (9.838), the compatibility and unique
 residue in (9.839), retention of all Möbius and inverse-phase labels,
 and leaves the analytic Gram-bound and coupled-kernel flags false.
 
+### 9.125 Full product energy closes each resonant invariant fibre
+
+The resonant fibre in (9.839) is governed by the **full** product-residue
+energy, not the primitive additive projection (9.577).  For unit labels
+and separated coefficients put
+
+\[
+ U_\rho=\sum_{h\delta\equiv\rho\,(G)}f_hg_\delta,qquad
+ \mathcal F_{G,U}(f,g)=\sum_{\rho\in U(G)}|U_\rho|^2.
+ \tag{9.840}
+\]
+
+Multiplicative Plancherel gives the exact identity
+
+\[
+ \boxed{
+ \mathcal F_{G,U}(f,g)
+ =\frac1{\varphi(G)}\sum_{\chi\bmod G}
+ \left|\sum_hf_h\chi(h)\right|^2
+ \left|\sum_\delta g_\delta\chi(\delta)\right|^2.}
+ \tag{9.841}
+\]
+
+For translated intervals of lengths \(H,D\), Cauchy between the two
+character families and Cochrane--Shi (9.581) bound the nonprincipal
+part by \(G^\varepsilon HD\).  The principal character must now be
+retained: it contributes
+\(O(H^2D^2/\varphi(G))\), rather than the smaller Gauss-weighted term in
+(9.582).  Hence
+
+\[
+ \boxed{
+ \mathcal F_{G,U}(I,J)
+ \ll_\varepsilon G^\varepsilon
+ \left(HD+\frac{H^2D^2}{G}\right).}
+ \tag{9.842}
+\]
+
+All nonunit labels descend exactly as in (9.583).  On the stratum
+\(d=(h,G)\), \(e=(\delta,G)\), equality of two products modulo \(G\)
+reduces to equality of the unit products modulo
+\(R=G/[d,e]\).  Cauchy across the divisor strata costs \(G^\varepsilon\).
+In the principal terms,
+
+\[
+ \frac{(H/d)^2(D/e)^2}{\varphi(G/[d,e])}
+ \ll_\varepsilon
+ \frac{H^2D^2}{G}\,\frac1{de(d,e)},
+\]
+
+whose divisor sum is \(G^\varepsilon H^2D^2/G\).  Keeping every
+``+1'' interval endpoint gives the already explicit boundary square.
+Thus the complete all-gcd energy satisfies
+
+\[
+ \boxed{
+ \mathcal F_G(I,J)
+ \ll_\varepsilon G^\varepsilon
+ \left\{HD+\frac{H^2D^2}{G}
+ +\left(1+H+D+\frac{HD}{G}\right)^2\right\}.}
+ \tag{9.843}
+\]
+
+This includes the fully nonoscillatory \(G\mid h\delta\) strata; no
+principal or endpoint term is deleted.
+
+Now let \(u=Bk^{-2}\in U(G)\).  The resonant invariant is
+\(\rho=u h\delta\), and multiplication by \(u\) is a permutation of
+the residue array.  Therefore
+
+\[
+ \sum_\rho\left|
+   \sum_{h\delta:\,uh\delta\equiv\rho}f_hg_\delta
+ \right|^2=\mathcal F_G(f,g).
+ \tag{9.844}
+\]
+
+More generally, for a projective family of multiplier packets
+\(w_uU^{(u)}\), Minkowski in \(\ell^2(\mathbb Z/G\mathbb Z)\) gives
+
+\[
+ \boxed{
+ \left\|\sum_uw_uP_uU^{(u)}\right\|_2^2
+ \leq\left(\sum_u|w_u|\,\|U^{(u)}\|_2\right)^2,}
+ \tag{9.845}
+\]
+
+where \(P_u\) is the residue permutation.  Hence any family with total
+projective norm \(T^\varepsilon\) preserves (9.843).
+
+At the balanced scale
+
+\[
+ H=D=T^{5/2},\qquad G=T^3,
+\]
+
+the three exponents in (9.843) are respectively \(5,7,5\).  The full
+resonant invariant fibre is therefore of exponent \(7+\varepsilon\),
+exactly the product-density/diagonal target identified in Section 9.85.
+This proves the resonant analytic bound for each fixed multiplier and
+for every already verified subpolynomial-projective multiplier family.
+It also shows that a multiplier norm \(T^p\) with any fixed \(p>0\)
+would cost \(T^{2p}\) and exceed the sharp target.
+
+The sector coefficients (9.651)--(9.653) and the divisor family
+\(k=Q/G\) separately have logarithmic/divisor projective cost.  What is
+not yet proved is that they parameterize the same packet-exhaustive
+\(B,k,h,\delta,\Pi\) family appearing in (9.833), with the reflected
+terms and explicit diagonal normalized compatibly.  Thus the arithmetic
+resonant fibre is closed, while the **physical multiplier adapter** and
+the nonzero-\((D,E)\) Gram remain open.
+
+The finite helper `resonant_invariant_product_fibre_audit` verifies that
+every unit multiplier is an exact residue permutation and checks
+(9.844)--(9.845) with rational coefficients.  The exponent helper
+`resonant_invariant_product_energy_exponent_audit` records the
+nonprincipal, principal, boundary, projective-cost, and sharp target
+exponents.  It marks the fixed/subpolynomial multiplier conclusion true,
+but keeps the physical multiplier, global AFE/reflection, nonzero Gram,
+and coupled-kernel flags false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -18347,8 +18469,11 @@ isolates an explicit Type-sign-free principal quotient from the genuine
   physical adapters, and signed cross-row norm remain.  On the balanced
   two-factor face, the exact pre-Cauchy Gram (9.833)--(9.839) removes all
   cross-conductor zero orbits and reduces the same-conductor resonance
-  to one explicit invariant fibre.  Its outer fibre norm and nonzero
-  Kloosterman Gram estimate remain unproved.**
+  to one explicit invariant fibre.  Full multiplicative Plancherel and
+  Cochrane--Shi close every fixed or subpolynomial-projective invariant
+  fibre at the sharp exponent \(7\), (9.840)--(9.845).  The physical
+  multiplier adapter and nonzero Kloosterman Gram estimate remain
+  unproved.**
 
 Proved in this note:
 
@@ -18465,6 +18590,14 @@ Proved in this note:
   \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue per \(c_1\).  The
   packet-exhaustive invariant-fibre norm and nonzero spectral Gram bound
   are not proved;
+* the full resonant product-residue energy (9.840)--(9.845).
+  Multiplicative Plancherel, Cochrane--Shi, and exact all-gcd descent give
+  \(HD+H^2D^2/G+(1+H+D+HD/G)^2\).  Its balanced exponent is exactly
+  \(7\), so every fixed multiplier and every verified
+  \(T^\varepsilon\)-projective multiplier family is within the resonant
+  target.  The physical sector/cofactor family has separately
+  logarithmic/divisor costs, but its packet-exhaustive identification
+  with (9.833) remains unproved;
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -18991,6 +19124,7 @@ Proved in this note:
 | Squarefree principal-quotient trace completion | elementary fixed-row subpolytope and nonunit descent proved; global principal master unproved | The exact projector \(\mu^2(N)=\sum_{d^2\mid N}\mu(d)\), (9.811), is split without remainder at \(d\leq D\).  For squarefree \(G\) and a unit inverse phase, CRT--Weil and smooth completion give \(XG^{-1/2}+DG^{1/2}+X/D\), (9.812)--(9.817), hence the local saving (9.819).  For a nonunit inverse coefficient, (9.820)--(9.822) expand every inactive local Fourier factor exactly and descend at divisor cost to \(R=G/(a_0,G)\); the bound becomes \(XR^{-1/2}+DR^{1/2}+X/D\), with saving (9.825), positive precisely for \(R>1,u>\rho/2\).  This is valid only after a separated physical \(N\)-weight is verified.  Short effective rows, the \(R=1\) refinement, packet-exhaustive adapter, signed \(Q,G,r_0,h,\delta,\Pi\) reassembly, and every \(\mathscr B\) row remain open |
 | Double-Möbius all-product-partition coverage | exact published fixed-row polytope; balanced/composite global residual unproved | For \((b,c,n,p)=T^{(\beta,\chi,\nu,\varpi)}\), (9.826)--(9.828) apply FKM Theorem 1.17 to all seven unordered bipartitions.  The best bilinear saving is positive exactly when at least two coordinates are positive and \(L-m_+>\gamma/2\), (9.829).  FKM Theorem 1.7 covers a single \(b\)- or \(c\)-axis beyond \(3\gamma/4\), (9.830), while elementary completion covers a smooth \(n\)- or \(p\)-axis beyond \(\gamma/2\), (9.831), including squarefree composite conductors.  A verified separated prime row with four \(3/4\)-coordinates has saving \(3/8\), but the \((3/2,3/2,0,0)\) face is degenerate.  Composite central rows, absent physical adapters, and the signed outer \(Q,G,r_0,h,\delta,\Pi\) norm remain unproved |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |
+| Resonant invariant-fibre product energy | fixed/subpolynomial-projective arithmetic fibre within target; physical adapter unproved | The resonant object needs full product-residue energy, not primitive additive projection.  Multiplicative Plancherel gives (9.841); Cochrane--Shi bounds the nonprincipal term by \(HD\), while the retained principal term is \(H^2D^2/G\), (9.842).  Exact gcd descent, including every endpoint and \(G\mid h\delta\) stratum, gives (9.843).  Multiplication by \(Bk^{-2}\) is a residue permutation, and Minkowski costs the square of its projective norm, (9.844)--(9.845).  At \(H=D=T^{5/2},G=T^3\), the exponents are \(5,7,5\), exactly within the resonant target.  The sector harmonic and cofactor families separately have subpolynomial projective cost, but their exhaustive common AFE/reflection packet map is not proved |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |

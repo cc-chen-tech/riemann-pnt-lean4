@@ -15343,6 +15343,163 @@ def double_mobius_cross_conductor_ttstar_audit(
     }
 
 
+def resonant_invariant_product_fibre_audit(
+    *,
+    squarefree_modulus: int,
+    h_coefficients: dict[int, Fraction],
+    delta_coefficients: dict[int, Fraction],
+    multiplier_coefficients: dict[int, Fraction],
+) -> dict[str, object]:
+    """Verify invariant-fibre permutation and its projective bound.
+
+    For a unit multiplier ``u=B*k^(-2)`` the resonant invariant is
+    ``rho=u*h*delta (mod G)``.  Multiplication by ``u`` only permutes the
+    product-residue array.  A projective family of such multipliers is
+    therefore bounded by its ``l1`` norm times the full product energy.
+    """
+
+    G = int(squarefree_modulus)
+    factors = _finite_prime_exponents(G) if G > 1 else {}
+    if G <= 1 or any(exponent != 1 for exponent in factors.values()):
+        raise ValueError("squarefree_modulus must be squarefree and exceed one")
+    if not h_coefficients or not delta_coefficients:
+        raise ValueError("both product-coordinate coefficient families are required")
+    if not multiplier_coefficients:
+        raise ValueError("at least one invariant multiplier is required")
+
+    h_coeffs = {int(label): F(value) for label, value in h_coefficients.items()}
+    delta_coeffs = {
+        int(label): F(value) for label, value in delta_coefficients.items()
+    }
+    multipliers = {
+        int(label) % G: F(value)
+        for label, value in multiplier_coefficients.items()
+    }
+    if any(gcd(label, G) != 1 for label in (*h_coeffs, *delta_coeffs)):
+        raise ValueError("this finite fibre audit requires unit h and delta labels")
+    if any(gcd(multiplier, G) != 1 for multiplier in multipliers):
+        raise ValueError("every invariant multiplier must be a unit")
+
+    base = {residue: F(0) for residue in range(G)}
+    for h_label, h_coefficient in h_coeffs.items():
+        for delta_label, delta_coefficient in delta_coeffs.items():
+            base[h_label * delta_label % G] += (
+                h_coefficient * delta_coefficient
+            )
+    base_energy = sum((value * value for value in base.values()), F(0))
+
+    multiplier_rows: list[dict[str, object]] = []
+    combined = {residue: F(0) for residue in range(G)}
+    for multiplier, coefficient in multipliers.items():
+        multiplier_inverse = pow(multiplier, -1, G)
+        permuted = {
+            residue: base[residue * multiplier_inverse % G]
+            for residue in range(G)
+        }
+        energy = sum((value * value for value in permuted.values()), F(0))
+        for residue, value in permuted.items():
+            combined[residue] += coefficient * value
+        multiplier_rows.append(
+            {
+                "multiplier": multiplier,
+                "coefficient": coefficient,
+                "permuted_product_residue_array": permuted,
+                "product_energy": energy,
+                "preserves_base_product_energy": energy == base_energy,
+            }
+        )
+
+    combined_energy = sum(
+        (value * value for value in combined.values()),
+        F(0),
+    )
+    multiplier_l1 = sum((abs(value) for value in multipliers.values()), F(0))
+    projective_bound = multiplier_l1 * multiplier_l1 * base_energy
+    return {
+        "squarefree_modulus": G,
+        "base_product_residue_array": base,
+        "base_full_product_energy": base_energy,
+        "multiplier_rows": tuple(multiplier_rows),
+        "combined_invariant_fibre_array": combined,
+        "combined_invariant_fibre_energy": combined_energy,
+        "multiplier_projective_l1_norm": multiplier_l1,
+        "projective_l1_energy_bound": projective_bound,
+        "all_multipliers_are_unit_residue_permutations": True,
+        "every_single_multiplier_preserves_product_energy": all(
+            bool(row["preserves_base_product_energy"])
+            for row in multiplier_rows
+        ),
+        "combined_invariant_fibre_energy_within_projective_l1_bound": (
+            combined_energy <= projective_bound
+        ),
+        "h_delta_product_structure_retained": True,
+        "physical_multiplier_projective_norm_proved": False,
+        "resonant_global_afe_reflection_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def resonant_invariant_product_energy_exponent_audit(
+    *,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    squarefree_modulus_exponent: Fraction,
+    multiplier_projective_norm_exponent: Fraction,
+) -> dict[str, object]:
+    """Audit the full product-residue energy on a resonant fibre.
+
+    Multiplicative Plancherel and Cochrane--Shi give the nonprincipal
+    term ``H*D`` and principal term ``H^2*D^2/G``.  Exact nonunit gcd
+    descent contributes the boundary square
+    ``(1+H+D+H*D/G)^2``.  A multiplier projective norm ``T^p`` costs
+    ``T^(2p)`` in the energy.
+    """
+
+    h = F(h_length_exponent)
+    delta = F(delta_length_exponent)
+    gamma = F(squarefree_modulus_exponent)
+    projective = F(multiplier_projective_norm_exponent)
+    if min(h, delta, projective) < 0 or gamma <= 0:
+        raise ValueError("lengths/projective cost must be nonnegative and modulus positive")
+
+    nonprincipal = h + delta
+    principal = 2 * h + 2 * delta - gamma
+    boundary = 2 * max(F(0), h, delta, h + delta - gamma)
+    full_energy = max(nonprincipal, principal, boundary)
+    projective_cost = 2 * projective
+    multiplier_family_energy = full_energy + projective_cost
+    diagonal_target = 2 * h + 2 * delta - gamma
+    fixed_within = full_energy <= diagonal_target
+    return {
+        "source": (
+            "Cochrane--Shi character fourth moment plus exact squarefree "
+            "nonunit gcd descent and multiplicative Plancherel"
+        ),
+        "h_length_exponent": h,
+        "delta_length_exponent": delta,
+        "squarefree_modulus_exponent": gamma,
+        "nonprincipal_product_energy_exponent": nonprincipal,
+        "principal_product_energy_exponent": principal,
+        "boundary_product_energy_exponent": boundary,
+        "full_product_energy_exponent": full_energy,
+        "resonant_diagonal_target_exponent": diagonal_target,
+        "fixed_multiplier_resonant_fibre_within_target": fixed_within,
+        "multiplier_projective_norm_exponent": projective,
+        "projective_energy_cost_exponent": projective_cost,
+        "multiplier_family_energy_exponent": multiplier_family_energy,
+        "subpolynomial_multiplier_family_within_target": bool(
+            projective == 0 and fixed_within
+        ),
+        "multiplier_family_within_diagonal_target": (
+            multiplier_family_energy <= diagonal_target
+        ),
+        "full_product_not_only_primitive_projection": True,
+        "physical_multiplier_projective_norm_proved": False,
+        "resonant_global_afe_reflection_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

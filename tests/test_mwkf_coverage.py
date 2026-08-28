@@ -4838,6 +4838,59 @@ def test_double_mobius_pre_cauchy_gram_keeps_cross_conductor_phase() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_resonant_invariant_fibres_have_full_product_energy_bound() -> None:
+    finite_audit = getattr(
+        coverage_audit,
+        "resonant_invariant_product_fibre_audit",
+        None,
+    )
+    assert finite_audit is not None, "resonant invariant-fibre audit is missing"
+
+    finite = finite_audit(
+        squarefree_modulus=30,
+        h_coefficients={1: F(2), 7: F(-1), 11: F(3), 13: F(1)},
+        delta_coefficients={1: F(1), 7: F(2), 17: F(-2)},
+        multiplier_coefficients={1: F(2), 7: F(-1), 11: F(3)},
+    )
+    assert finite["all_multipliers_are_unit_residue_permutations"]
+    assert finite["every_single_multiplier_preserves_product_energy"]
+    assert finite["combined_invariant_fibre_energy_within_projective_l1_bound"]
+    assert finite["h_delta_product_structure_retained"]
+    assert not finite["physical_multiplier_projective_norm_proved"]
+    assert not finite["coupled_kernel_gate_closed"]
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "resonant_invariant_product_energy_exponent_audit",
+        None,
+    )
+    assert exponent_audit is not None, "resonant product-energy ledger is missing"
+
+    balanced = exponent_audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+        multiplier_projective_norm_exponent=F(0),
+    )
+    assert balanced["nonprincipal_product_energy_exponent"] == F(5)
+    assert balanced["principal_product_energy_exponent"] == F(7)
+    assert balanced["boundary_product_energy_exponent"] == F(5)
+    assert balanced["full_product_energy_exponent"] == F(7)
+    assert balanced["resonant_diagonal_target_exponent"] == F(7)
+    assert balanced["fixed_multiplier_resonant_fibre_within_target"]
+    assert balanced["subpolynomial_multiplier_family_within_target"]
+    assert not balanced["physical_multiplier_projective_norm_proved"]
+
+    power_cost = exponent_audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+        multiplier_projective_norm_exponent=F(1, 10),
+    )
+    assert power_cost["projective_energy_cost_exponent"] == F(1, 5)
+    assert not power_cost["multiplier_family_within_diagonal_target"]
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,
