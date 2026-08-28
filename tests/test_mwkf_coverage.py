@@ -6399,6 +6399,12 @@ def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
     assert top["ideal_divisor_bounded_primitive_projector_exponent"] == F(13)
     assert top["squared_local_target_exponent"] == F(12)
     assert top["ideal_primitive_remaining_deficit"] == F(1)
+    assert top[
+        "ideal_required_signed_conductor_linear_saving_exponent"
+    ] == F(1, 2)
+    assert top["ideal_required_signed_conductor_power_of_q"] == F(1, 6)
+    assert top["required_signed_gain_is_below_square_root_conductor"]
+    assert not top["centered_signed_conductor_gain_gate_proved"]
     assert top["total_convolution_excess_budget"] == F(-2)
     assert not top[
         "generic_primitive_fourth_moment_can_meet_target_even_ideally"
@@ -6432,6 +6438,10 @@ def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
     assert transition[
         "generic_primitive_fourth_moment_can_meet_target_even_ideally"
     ]
+    assert transition[
+        "ideal_required_signed_conductor_linear_saving_exponent"
+    ] == F(0)
+    assert transition["ideal_required_signed_conductor_power_of_q"] == F(0)
     assert transition["principal_character_projector_bound_exponent"] == F(14)
     assert transition["required_principal_type_mean_exponent"] == F(2)
     assert transition[
@@ -6458,6 +6468,9 @@ def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
     assert low["principal_character_projector_bound_exponent"] == F(12)
     assert low["required_principal_type_mean_exponent"] == F(3)
     assert low["required_principal_type_amplitude_saving_exponent"] == F(0)
+    assert low[
+        "ideal_required_signed_conductor_linear_saving_exponent"
+    ] == F(0)
     assert low["principal_character_meets_target"]
     assert low["full_projector_covered_by_this_route"]
 
@@ -6483,6 +6496,100 @@ def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
     assert not physical["principal_character_mean_bound_verified"]
     assert not physical["full_projector_covered_by_this_route"]
     assert not physical["retains_cofactor_and_type_mobius_cancellation_jointly"]
+    assert not physical["q_projector_bound_proved"]
+    assert not physical["coupled_kernel_gate_closed"]
+
+
+def test_pv_hybrid_closes_only_the_adapted_primitive_centered_polytope() -> None:
+    """PV on the longer label factor removes the numerical top deficit."""
+
+    audit = getattr(
+        coverage_audit,
+        "primitive_centered_pv_hybrid_envelope_audit",
+        None,
+    )
+    assert audit is not None, "primitive centered PV hybrid audit is missing"
+
+    top = audit(
+        reduced_conductor_exponent=F(3),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        smooth_bv_label_separation_verified=True,
+        common_type_coefficient_across_conductors_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=False,
+    )
+    assert top["inactive_cofactor_exponent"] == F(0)
+    assert top["effective_product_label_length_exponent"] == F(5)
+    assert top["short_label_factor_cap_exponent"] == F(5, 2)
+    assert top["pv_long_factor_fourth_power_exponent"] == F(6)
+    assert top["short_factor_varying_character_fourth_moment_exponent"] == F(11)
+    assert top["inactive_cofactor_fourth_power_cost_exponent"] == F(0)
+    assert top["left_pv_hybrid_fourth_moment_exponent"] == F(17)
+    assert top["type_fourth_moment_exponent"] == F(12)
+    assert top["generic_projector_energy_exponent"] == F(13)
+    assert top["pv_hybrid_projector_energy_exponent"] == F(23, 2)
+    assert top["optimal_primitive_projector_energy_exponent"] == F(23, 2)
+    assert top["squared_local_target_exponent"] == F(12)
+    assert top["primitive_centered_numerical_margin_exponent"] == F(1, 2)
+    assert top["pv_hybrid_selected"]
+    assert top["primitive_centered_character_polytope_numerically_closed"]
+    assert not top["packet_exhaustive_outer_label_adapter_verified"]
+    assert not top["physical_primitive_centered_slice_covered"]
+
+    transition = audit(
+        reduced_conductor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        smooth_bv_label_separation_verified=True,
+        common_type_coefficient_across_conductors_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert transition["inactive_cofactor_exponent"] == F(1)
+    assert transition["effective_product_label_length_exponent"] == F(4)
+    assert transition["short_label_factor_cap_exponent"] == F(2)
+    assert transition["pv_long_factor_fourth_power_exponent"] == F(4)
+    assert transition[
+        "short_factor_varying_character_fourth_moment_exponent"
+    ] == F(8)
+    assert transition["inactive_cofactor_fourth_power_cost_exponent"] == F(4)
+    assert transition["left_pv_hybrid_fourth_moment_exponent"] == F(16)
+    assert transition["pv_hybrid_projector_energy_exponent"] == F(12)
+    assert transition["optimal_primitive_projector_energy_exponent"] == F(12)
+    assert transition["primitive_centered_numerical_margin_exponent"] == F(0)
+    assert transition["physical_primitive_centered_slice_covered"]
+
+    low = audit(
+        reduced_conductor_exponent=F(1),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        smooth_bv_label_separation_verified=True,
+        common_type_coefficient_across_conductors_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert low["generic_projector_energy_exponent"] == F(11)
+    assert low["pv_hybrid_projector_energy_exponent"] == F(13)
+    assert low["optimal_primitive_projector_energy_exponent"] == F(11)
+    assert not low["pv_hybrid_selected"]
+    assert low["physical_primitive_centered_slice_covered"]
+
+    physical = audit(
+        reduced_conductor_exponent=F(3),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        smooth_bv_label_separation_verified=False,
+        common_type_coefficient_across_conductors_verified=False,
+        packet_exhaustive_outer_label_adapter_verified=False,
+    )
+    assert physical["optimal_primitive_projector_energy_exponent"] == F(23, 2)
+    assert physical["primitive_centered_character_polytope_numerically_closed"]
+    assert not physical["primitive_centered_analytic_hypotheses_verified"]
+    assert not physical["physical_primitive_centered_slice_covered"]
+    assert not physical["imprimitive_centered_descent_verified"]
+    assert not physical["fused_principal_master_bound_proved"]
     assert not physical["q_projector_bound_proved"]
     assert not physical["coupled_kernel_gate_closed"]
 

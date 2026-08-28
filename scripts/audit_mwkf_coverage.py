@@ -18453,6 +18453,15 @@ def optimistic_resonant_fourth_moment_envelope_audit(
         F(0),
         weighted_primitive_projector_bound - squared_local_target,
     )
+    ideal_signed_conductor_saving = ideal_primitive_deficit / 2
+    actual_signed_conductor_saving = actual_primitive_deficit / 2
+    ideal_signed_power_of_q = (
+        ideal_signed_conductor_saving / gamma if gamma > 0 else F(0)
+    )
+    actual_signed_power_of_q = (
+        actual_signed_conductor_saving / gamma if gamma > 0 else F(0)
+    )
+    square_root_conductor_saving = gamma / 2
     total_excess_budget = 2 * (
         squared_local_target - ideal_primitive_bound
     )
@@ -18495,6 +18504,24 @@ def optimistic_resonant_fourth_moment_envelope_audit(
         "squared_local_target_exponent": squared_local_target,
         "ideal_primitive_remaining_deficit": ideal_primitive_deficit,
         "actual_primitive_remaining_deficit": actual_primitive_deficit,
+        "ideal_required_signed_conductor_linear_saving_exponent": (
+            ideal_signed_conductor_saving
+        ),
+        "actual_required_signed_conductor_linear_saving_exponent": (
+            actual_signed_conductor_saving
+        ),
+        "ideal_required_signed_conductor_power_of_q": (
+            ideal_signed_power_of_q
+        ),
+        "actual_required_signed_conductor_power_of_q": (
+            actual_signed_power_of_q
+        ),
+        "square_root_conductor_saving_exponent": (
+            square_root_conductor_saving
+        ),
+        "required_signed_gain_is_below_square_root_conductor": bool(
+            ideal_signed_conductor_saving <= square_root_conductor_saving
+        ),
         "total_convolution_excess_budget": total_excess_budget,
         "generic_primitive_fourth_moment_can_meet_target_even_ideally": bool(
             ideal_primitive_bound <= squared_local_target
@@ -18533,6 +18560,133 @@ def optimistic_resonant_fourth_moment_envelope_audit(
             and principal_projector_bound <= squared_local_target
         ),
         "retains_cofactor_and_type_mobius_cancellation_jointly": False,
+        "centered_signed_conductor_gain_gate_proved": False,
+        "q_projector_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def primitive_centered_pv_hybrid_envelope_audit(
+    *,
+    reduced_conductor_exponent: Fraction,
+    oriented_modulus_exponent: Fraction,
+    type_entry_exponent: Fraction,
+    product_label_count_exponent: Fraction,
+    smooth_bv_label_separation_verified: bool,
+    common_type_coefficient_across_conductors_verified: bool,
+    packet_exhaustive_outer_label_adapter_verified: bool,
+) -> dict[str, object]:
+    """Audit a PV/fourth-moment hybrid on the primitive centered slice.
+
+    After removing the inactive cofactor ``V/Q``, split the product-label
+    length ``Y`` between its two factors and call the shorter exponent
+    ``t``.  The worst case has ``t=Y/2``.  Pólya--Vinogradov costs ``q^2``
+    in the fourth power on the longer BV factor, while the varying-character
+    fourth moment on the shorter factor costs ``(q^2+t^2)t^2`` at exponent
+    level.  A safe triangle over the inactive cofactor rows costs their
+    count to the fourth power.
+
+    The returned numerical envelope is deliberately separate from the
+    physical coverage flag: the latter also requires the common-q Type
+    coefficient and packet-exhaustive outer-label adapters.
+    """
+
+    gamma = F(reduced_conductor_exponent)
+    v = F(oriented_modulus_exponent)
+    u = F(type_entry_exponent)
+    label_count = F(product_label_count_exponent)
+    if min(gamma, v, u, label_count) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if gamma == 0:
+        raise ValueError("the primitive PV hybrid requires positive conductor")
+    if gamma > v:
+        raise ValueError("the reduced conductor cannot exceed the total modulus")
+
+    cofactor = v - gamma
+    effective_label_length = label_count - cofactor
+    if effective_label_length < 0:
+        raise ValueError("a nonempty cofactor stratum requires HL at least V/Q")
+
+    short_factor_cap = effective_label_length / 2
+    pv_long_fourth_power = 2 * gamma
+    short_factor_fourth_moment = (
+        2 * max(gamma, short_factor_cap) + 2 * short_factor_cap
+    )
+    cofactor_fourth_power_cost = 4 * cofactor
+    left_pv_hybrid_fourth_moment = (
+        pv_long_fourth_power
+        + short_factor_fourth_moment
+        + cofactor_fourth_power_cost
+    )
+    type_fourth_moment = 2 * max(gamma, u) + 2 * u
+    pv_hybrid_projector = (
+        -gamma
+        + (left_pv_hybrid_fourth_moment + type_fourth_moment) / 2
+    )
+
+    left_generic_fourth_moment = (
+        2 * max(gamma, effective_label_length)
+        + 2 * effective_label_length
+    )
+    generic_projector = (
+        -gamma + (left_generic_fourth_moment + type_fourth_moment) / 2
+    )
+    optimal_projector = min(generic_projector, pv_hybrid_projector)
+    target = 2 * (u + v)
+    numerical_margin = max(F(0), target - optimal_projector)
+    numerical_deficit = max(F(0), optimal_projector - target)
+    hypotheses = bool(
+        smooth_bv_label_separation_verified
+        and common_type_coefficient_across_conductors_verified
+        and packet_exhaustive_outer_label_adapter_verified
+    )
+    numerically_closed = bool(optimal_projector <= target)
+
+    return {
+        "reduced_conductor_exponent": gamma,
+        "oriented_modulus_exponent": v,
+        "type_entry_exponent": u,
+        "product_label_count_exponent": label_count,
+        "inactive_cofactor_exponent": cofactor,
+        "effective_product_label_length_exponent": effective_label_length,
+        "short_label_factor_cap_exponent": short_factor_cap,
+        "pv_long_factor_fourth_power_exponent": pv_long_fourth_power,
+        "short_factor_varying_character_fourth_moment_exponent": (
+            short_factor_fourth_moment
+        ),
+        "inactive_cofactor_fourth_power_cost_exponent": (
+            cofactor_fourth_power_cost
+        ),
+        "left_pv_hybrid_fourth_moment_exponent": (
+            left_pv_hybrid_fourth_moment
+        ),
+        "left_generic_fourth_moment_exponent": left_generic_fourth_moment,
+        "type_fourth_moment_exponent": type_fourth_moment,
+        "generic_projector_energy_exponent": generic_projector,
+        "pv_hybrid_projector_energy_exponent": pv_hybrid_projector,
+        "optimal_primitive_projector_energy_exponent": optimal_projector,
+        "squared_local_target_exponent": target,
+        "primitive_centered_numerical_margin_exponent": numerical_margin,
+        "primitive_centered_numerical_deficit_exponent": numerical_deficit,
+        "pv_hybrid_selected": bool(pv_hybrid_projector < generic_projector),
+        "primitive_centered_character_polytope_numerically_closed": (
+            numerically_closed
+        ),
+        "smooth_bv_label_separation_verified": bool(
+            smooth_bv_label_separation_verified
+        ),
+        "common_type_coefficient_across_conductors_verified": bool(
+            common_type_coefficient_across_conductors_verified
+        ),
+        "packet_exhaustive_outer_label_adapter_verified": bool(
+            packet_exhaustive_outer_label_adapter_verified
+        ),
+        "primitive_centered_analytic_hypotheses_verified": hypotheses,
+        "physical_primitive_centered_slice_covered": bool(
+            hypotheses and numerically_closed
+        ),
+        "imprimitive_centered_descent_verified": False,
+        "fused_principal_master_bound_proved": False,
         "q_projector_bound_proved": False,
         "coupled_kernel_gate_closed": False,
     }
