@@ -13,6 +13,7 @@
 > | Joint all-character/conductor master | exact \(q=1\) principal plus \(q>1\) centered recombination proved in Section 9.113; signed cross-\(q\) estimate unproved, with standard large-sieve deficit \(T^{5/2}\) |
 > | Joint conductor LCM reduction | common inactive cofactor isolated at divisor cost in Section 9.115; jointly primitive cross-modulus core unproved |
 > | Centered tensor conductor collapse | exact Ramanujan-cofactor/Möbius--Kloosterman decomposition proved in Section 9.116; signed conductor estimate unproved |
+> | Conductor--Type Möbius fusion | inside the fixed-\(r_0\) jointly primitive core, the conductor and Type signs fuse exactly through \(d=(m,Q)\) in Section 9.117; the common-cofactor adapter and varying-gcd kernel estimate are unproved |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -16827,22 +16828,132 @@ They can each be as large as the final sum.  Taking absolute values in
 \(d\) would destroy the primewise centering in (9.771).
 
 The analytic advantage of (9.776) is instead organizational: the two
-Möbius sources are now the conductor sign \(\mu(d)\) and the original
-Type sign inside \(C^{[k]}_{d,r_0}\), while \(a=h\delta\) remains in
-the inverse phase.  Applying the remainder-free split (9.598)--(9.599)
-to both Möbius factors gives nine signed small/I/II conductor--Type
-blocks before any Cauchy step.  The fixed-conductor norm calculation
-(9.774) gives no gain, and the rank-one inverse-pole obstruction
-(9.530)--(9.535) still applies to the top block.  What remains to prove
-is a single signed varying-\(d\) estimate for the recombined nine blocks,
-with the \(k,r_0\) lifts kept at divisor cost; no cited published theorem
-currently supplies that estimate.
+apparent Möbius sources are now the conductor sign \(\mu(d)\) and the
+original Type sign inside \(C^{[k]}_{d,r_0}\), while \(a=h\delta\)
+remains in the inverse phase.  Applying the remainder-free split
+(9.598)--(9.599) to both signs separately gives nine signed
+small/I/II conductor--Type blocks before any Cauchy step.  This is a
+valid but nonminimal decomposition: Section 9.117 first fuses the two
+signs exactly and therefore reduces the same pointwise split to three
+blocks.  The fixed-conductor norm calculation (9.774) gives no gain,
+and the rank-one inverse-pole obstruction (9.530)--(9.535) still applies
+to the top block.  No cited published theorem currently supplies the
+remaining varying-gcd estimate.
 
 The helper `centered_type_phase_divisor_kloosterman_audit` verifies
 (9.775)--(9.779) by independently enumerating every free CRT phase and
 comparing the collapsed conductor sum with the original character
 tensor.  It covers zero, nonunit, and negative phase labels and leaves
 the signed conductor estimate and coupled-kernel gate explicitly false.
+
+### 9.117 The conductor and Type Möbius signs fuse through one gcd
+
+The two signs displayed after (9.776) are not independent on the actual
+Type support.  Open one finite Type packet before any norm inequality as
+
+\[
+ \boxed{
+ C_{Q,r_0}(x)
+ =\sum_{\substack{n,p\\(np,Qr_0)=1\\np\equiv x\ (Q)}}
+   \mu(n)\,\alpha_{Q,r_0}(n,p).}
+ \tag{9.780}
+\]
+
+The coefficient \(\alpha_{Q,r_0}(n,p)\) may contain every dyadic,
+Selberg-taper, AFE, reflection, and companion-Type label; no product
+separation is assumed.  Formula (9.780) is just the direct opening of
+\(D_{Qr_0}(\chi)P_{Qr_0}(\chi)\) in (9.770).
+
+For \(Q=dk\), put
+
+\[
+ \begin{aligned}
+ \mathscr W_{d,k,r_0}(n,p;B,a)
+ :={}&\frac{c_k(B_0)c_k(a_0)}{\varphi(k)^2}
+       \alpha_{Q,r_0}(n,p)\\
+ &\times e_d\!\left(
+   \bar k_d\{B_0np-a_0\overline{np}_d\}\right),
+ \end{aligned}
+ \tag{9.781}
+\]
+
+with phase \(1\) when \(d=1\).  Substituting (9.780) into (9.776)
+gives the literal two-sign sum
+
+\[
+ \mathfrak T_{Q,r_0}
+ =\sum_{dk=Q}
+   \sum_{\substack{n,p\\(np,Qr_0)=1}}
+   \mu(d)\mu(n)\mathscr W_{d,k,r_0}(n,p;B,a).
+ \tag{9.782}
+\]
+
+The unit mask forces \((d,n)=1\).  Set \(m=dn\).  On the nonzero
+Möbius support, squarefreeness of \(Q\) gives the exact inverse map
+
+\[
+ \boxed{
+ \mu(d)\mu(n)=\mu(m),\qquad
+ d=(m,Q),\qquad
+ k=\frac Q{(m,Q)},\qquad
+ n=\frac m{(m,Q)}.}
+ \tag{9.783}
+\]
+
+Conversely, every squarefree \(m\) has \(m/(m,Q)\) coprime to \(Q\),
+so (9.783) is a bijection rather than a one-sided substitution.  Since
+\((Q,r_0)=1\), the ambient mask also transports without a boundary term:
+
+\[
+ (np,Qr_0)=1
+ \Longleftrightarrow
+ (m,r_0)=1\quad\hbox{and}\quad(p,Qr_0)=1.
+\]
+
+Therefore the conductor divisor sum and the original Type sign collapse
+to the one-Möbius finite master
+
+\[
+ \boxed{
+ \mathfrak T_{Q,r_0}
+ =\sum_{\substack{m\ge1\\\mu(m)\ne0\\(m,r_0)=1}}
+   \mu(m)
+   \sum_{\substack{p\\(p,Qr_0)=1}}
+   \mathscr W_{g,Q/g,r_0}(m/g,p;B,a),
+ \qquad g=(m,Q).}
+ \tag{9.784}
+\]
+
+No conductor row was estimated or placed outside an absolute value in
+this derivation.  In particular, at fixed \(r_0\), applying the
+pointwise small/I/II identity (9.598)--(9.599) after (9.784) produces
+only three signed blocks, not the \(3\times3\) blocks obtained by
+splitting \(\mu(d)\) and \(\mu(n)\) before fusion.
+
+This is a genuine weakening of the analytic interface, not its proof.
+The new coefficient depends on the moving gcd \(g=(m,Q)\), the original
+Type weight is sampled at \(m/g\), and both the Kloosterman conductor
+\(g\) and Ramanujan cofactor \(Q/g\) move with the same Möbius variable.
+Consequently a theorem for one Möbius function against one fixed trace
+function cannot be inserted directly.  Moreover the common inactive
+factor
+\(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\) from (9.763) lies
+outside \(\mathfrak T_{Q,r_0}\) and is not fused by (9.783).  The two
+remaining tasks are therefore a packet-uniform \(r_0\)-adapter at the
+advertised divisor cost and, after that lift, a one-Möbius
+**varying-gcd conductor estimate**, with the \(Q\), \(h\delta\),
+AFE/reflection, and companion-Type sums still inside the same
+pre-Cauchy master.  Neither target norm is proved, so (9.784) does not
+close (9.750), (9.119), or the full twisted moment.
+
+The helper `conductor_type_mobius_gcd_fusion_audit` enumerates the
+two-sign side and the gcd-fused side independently for arbitrary finite
+Type-pair weights.  It verifies (9.783)--(9.784), including the ambient
+unit mask, zero direct phase, zero Möbius coefficients, and nonunit rows.
+At fixed \(r_0\), it records the reduction from two pointwise Möbius
+factors and nine ordered Type blocks to one factor and three blocks,
+while leaving the common-cofactor adapter, varying-gcd estimate, and
+coupled-kernel gate explicitly false.
 
 ## 10. What has and has not been proved
 
@@ -17041,7 +17152,15 @@ unproved.  The July 2026 Blomer--Pascadi bound does not fill this gap:
 the actual short coordinates have \(N=c^{1/6}\), below its
 \(c^{13/28}\) power range, and both the optimistic short-interval model
 and the valid full-interval sparse embedding are worse than trivial by
-\(c^{25/96}\) and \(c^{5/36}\), respectively, (9.739)--(9.742).**
+\(c^{25/96}\) and \(c^{5/36}\), respectively, (9.739)--(9.742).
+Finally, the joint conductor reduction (9.760)--(9.779) may be opened
+one step further: at fixed common cofactor \(r_0\), the ambient unit
+mask makes its conductor and Type Möbius factors coprime, so
+(9.780)--(9.784) fuse them through \(d=(m,Q)\) into one Möbius
+variable.  This reduces the nonminimal nine-block core interface to
+three blocks but leaves both the signed common-cofactor lift and a
+moving-gcd trace kernel for which no global estimate or physical packet
+adapter has been proved.**
 
 Proved in this note:
 
@@ -17079,6 +17198,16 @@ Proved in this note:
   arXiv:2607.24311v1 at the \(c=T^3,N=T^{1/2}=c^{1/6}\) Type-I face,
   including the complete Theorem 5.5 maximum rather than its favorable
   \(F_0\) subterm, (9.739)--(9.742).  It supplies no saving here;
+* the joint phase-conductor LCM, common inactive Ramanujan cofactor,
+  primewise centered Type--phase tensor, and its exact
+  Ramanujan-cofactor/Kloosterman-conductor collapse, (9.760)--(9.779).
+  These identities do not prove a signed varying-conductor estimate;
+* the exact fixed-\(r_0\) conductor--Type Möbius fusion
+  \(m=dn\), \(d=(m,Q)\), (9.780)--(9.784), which replaces two
+  pointwise Möbius factors and nine ordered Type blocks by one factor
+  and three blocks inside the jointly primitive core.  The signed
+  common-cofactor adapter and resulting varying-gcd kernel estimate
+  remain unproved;
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -17598,6 +17727,7 @@ Proved in this note:
 | Convolved-principal Type slice | exact centered Kloosterman collapse; joint modulus average unproved | On \(\lambda\psi=\chi_0\), character orthogonality gives \(\varphi(s)^{-1}\sum_\psi G_\psi(B)G_\psi(-a)=S(B,-a;s)\), (9.754)--(9.757).  Its inverse-character \(q=1\) row is the Ramanujan product (9.758), and all \(q>1\) rows are exactly the centered Kloosterman complement (9.759), including nonunit \(B,a\).  Pointwise Weil gives exponent \(19/2\), one power worse than the global large sieve and \(7/2\) above target; the slice must therefore remain coupled to the outer Möbius, Type coefficients, and complementary convolved characters |
 | Joint conductor LCM/common cofactor | exact scaled lift and primewise centered Type--phase tensor; global estimate unproved | For \(Q=[q_\lambda,q_\psi]\) and \(r_0=s/Q\), every prime of \(r_0\) is inactive in both phase characters and the normalized Gauss product extracts exactly \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\), while CRT transports both residual frequencies by \(\bar r_0\), (9.760)--(9.763).  Its absolute cofactor sum has the Euler product (9.764), hence no fixed-power cost.  Reparametrizing by \(\chi=\lambda\psi\) gives (9.767); after the ambient unit mask is retained in \(C_{Q,r_0}\) and the Type polynomial is recombined before Cauchy, every prime contributes the centered tensor factor (9.771), and the outer \(\mu(Q)\) migrates to the divisor sign \(\mu(d)\) in (9.773).  The phase and coefficient still depend on \(r_0\), and neither their packet-uniform cofactor adapter nor the signed global norm of (9.772) is proved |
 | Ramanujan-cofactor/Kloosterman-conductor collapse | exact zero-direct-compatible reduction; signed varying-conductor estimate unproved | Writing \(Q=dk\), CRT sums the free \(k\)-coordinates in every incidence row to \(c_k(B_0)c_k(a_0)\), (9.775), and gives the exact conductor master (9.776)--(9.778).  The outer sign is now \(\mu(d)\), the original Type sign remains inside \(C^{[k]}_{d,r_0}\), and \(a=h\delta\) is unchanged.  For \(B=0\) the cofactor weight is exactly \(c_k(a_0)/\varphi(k)\), (9.779).  Principal, intermediate, and top-conductor rows must remain recombined; applying the exact small/I/II split to both Möbius factors produces nine signed blocks whose global varying-\(d\) estimate is still unproved |
+| Conductor--Type Möbius gcd fusion | exact fixed-\(r_0\) one-sign reindexing; cofactor adapter and varying-gcd estimate unproved | Opening the Type packet before Cauchy makes the ambient unit mask force \((d,n)=1\).  The bijection \(m=dn\) then gives \(\mu(d)\mu(n)=\mu(m)\), \(d=(m,Q)\), \(k=Q/(m,Q)\), and \(n=m/(m,Q)\), (9.780)--(9.784).  Thus, inside the jointly primitive core at fixed \(r_0\), the nine separately split conductor--Type blocks may be replaced by three blocks from one pointwise split of \(\mu(m)\), with no absolute value or boundary error.  The factor \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\) remains outside, and the fused kernel's conductor, cofactor, and Type argument all move with \((m,Q)\); neither the physical \(r_0\)-adapter nor a global bound for this coefficient class is asserted |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |

@@ -13249,6 +13249,266 @@ def centered_type_phase_divisor_kloosterman_audit(
     }
 
 
+def conductor_type_mobius_gcd_fusion_audit(
+    *,
+    modulus: int,
+    common_cofactor: int,
+    direct_label: int,
+    inverse_label: int,
+    type_pair_weights: dict[tuple[int, int], complex],
+) -> dict[str, object]:
+    """Fuse the conductor and Type Mobius signs into one gcd variable.
+
+    Open the Type coefficient in the conductor collapse as
+
+    ``C(x) = sum_(n*p=x) mu(n) W(n,p)``.
+
+    The ambient unit mask forces ``(n,Q)=1``.  Hence for every conductor
+    divisor ``d|Q`` the substitution ``m=d*n`` is a bijection with
+
+    ``d=(m,Q), k=Q/d, n=m/d``
+
+    on the squarefree support, and ``mu(d)mu(n)=mu(m)``.  This removes one
+    independent Mobius factor without estimating any conductor row.  The
+    resulting kernel still depends on ``(m,Q)``, so no analytic bound is
+    asserted.
+    """
+
+    Q = int(modulus)
+    r0 = int(common_cofactor)
+    B = int(direct_label)
+    a = int(inverse_label)
+    if Q <= 1 or _finite_mobius(Q) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if r0 <= 0 or _finite_mobius(r0) == 0 or gcd(Q, r0) != 1:
+        raise ValueError(
+            "common_cofactor must be positive, squarefree, and coprime to modulus"
+        )
+    if a == 0:
+        raise ValueError("inverse phase label must be nonzero")
+    if not type_pair_weights:
+        raise ValueError("type_pair_weights must be nonempty")
+    if any(
+        int(type_label) <= 0 or int(companion_label) <= 0
+        for type_label, companion_label in type_pair_weights
+    ):
+        raise ValueError("all Type and companion labels must be positive")
+
+    weights = {
+        (int(type_label), int(companion_label)): complex(value)
+        for (type_label, companion_label), value in type_pair_weights.items()
+    }
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(label: int, modulus_value: int) -> int:
+        common = gcd(abs(label), modulus_value)
+        return _finite_mobius(modulus_value // common) * finite_totient(common)
+
+    inverse_r0 = pow(r0, -1, Q)
+    B0 = B * inverse_r0 % Q
+    a0 = a * inverse_r0 % Q
+    divisors = tuple(sorted(_positive_divisors(Q)))
+
+    def row_kernel(
+        conductor: int,
+        type_label: int,
+        companion_label: int,
+    ) -> tuple[Fraction, complex]:
+        cofactor = Q // conductor
+        phi_cofactor = finite_totient(cofactor)
+        cofactor_weight = F(
+            ramanujan(B0, cofactor) * ramanujan(a0, cofactor),
+            phi_cofactor**2,
+        )
+        if conductor == 1:
+            return cofactor_weight, 1 + 0j
+        inverse_cofactor = pow(cofactor, -1, conductor)
+        product_label = type_label * companion_label % conductor
+        inverse_product = pow(product_label, -1, conductor)
+        root = cmath.exp(2j * cmath.pi / conductor)
+        phase = root ** (
+            (
+                inverse_cofactor
+                * (B0 * product_label - a0 * inverse_product)
+            )
+            % conductor
+        )
+        return cofactor_weight, phase
+
+    original_master = 0j
+    retained_original_rows: list[dict[str, object]] = []
+    ambient_mask_rows: list[dict[str, object]] = []
+    for conductor in divisors:
+        cofactor = Q // conductor
+        for (type_label, companion_label), weight in weights.items():
+            original_unit_mask = (
+                gcd(type_label * companion_label, Q * r0) == 1
+            )
+            fused_label = conductor * type_label
+            transported_unit_mask = (
+                gcd(fused_label, r0) == 1
+                and gcd(companion_label, Q * r0) == 1
+                and gcd(fused_label // conductor, Q) == 1
+            )
+            ambient_mask_rows.append(
+                {
+                    "conductor": conductor,
+                    "type_label": type_label,
+                    "companion_label": companion_label,
+                    "original_unit_mask": original_unit_mask,
+                    "transported_unit_mask": transported_unit_mask,
+                    "unit_mask_transport_exact": (
+                        original_unit_mask == transported_unit_mask
+                    ),
+                }
+            )
+            if not original_unit_mask:
+                continue
+
+            cofactor_weight, phase = row_kernel(
+                conductor,
+                type_label,
+                companion_label,
+            )
+            original_sign = (
+                _finite_mobius(conductor) * _finite_mobius(type_label)
+            )
+            fused_sign = _finite_mobius(fused_label)
+            contribution = (
+                original_sign * complex(cofactor_weight) * weight * phase
+            )
+            original_master += contribution
+            fused_gcd = gcd(fused_label, Q)
+            retained_original_rows.append(
+                {
+                    "conductor": conductor,
+                    "ramanujan_cofactor": cofactor,
+                    "type_label": type_label,
+                    "companion_label": companion_label,
+                    "fused_label": fused_label,
+                    "fused_gcd": fused_gcd,
+                    "fused_cofactor": Q // fused_gcd,
+                    "fused_type_quotient": fused_label // fused_gcd,
+                    "mobius_product": original_sign,
+                    "fused_mobius": fused_sign,
+                    "mobius_product_fuses_exactly": original_sign == fused_sign,
+                    "conductor_and_type_are_coprime": (
+                        gcd(conductor, type_label) == 1
+                    ),
+                    "normalized_cofactor_weight": cofactor_weight,
+                    "phase": phase,
+                    "contribution": contribution,
+                }
+            )
+
+    fused_candidates = {
+        (conductor * type_label, companion_label)
+        for conductor in divisors
+        for type_label, companion_label in weights
+    }
+    fused_master = 0j
+    fused_rows: list[dict[str, object]] = []
+    for fused_label, companion_label in sorted(fused_candidates):
+        conductor = gcd(fused_label, Q)
+        cofactor = Q // conductor
+        type_label = fused_label // conductor
+        weight = weights.get((type_label, companion_label))
+        if weight is None:
+            continue
+        transported_unit_mask = (
+            gcd(fused_label, r0) == 1
+            and gcd(companion_label, Q * r0) == 1
+            and gcd(type_label, Q) == 1
+        )
+        if not transported_unit_mask:
+            continue
+        cofactor_weight, phase = row_kernel(
+            conductor,
+            type_label,
+            companion_label,
+        )
+        contribution = (
+            _finite_mobius(fused_label)
+            * complex(cofactor_weight)
+            * weight
+            * phase
+        )
+        fused_master += contribution
+        fused_rows.append(
+            {
+                "fused_label": fused_label,
+                "companion_label": companion_label,
+                "conductor_gcd": conductor,
+                "ramanujan_cofactor": cofactor,
+                "type_quotient": type_label,
+                "fused_mobius": _finite_mobius(fused_label),
+                "normalized_cofactor_weight": cofactor_weight,
+                "phase": phase,
+                "contribution": contribution,
+            }
+        )
+
+    tolerance = 1e-7
+    return {
+        "squarefree_modulus": Q,
+        "common_cofactor": r0,
+        "direct_label": B,
+        "inverse_label": a,
+        "scaled_direct_label": B0,
+        "scaled_inverse_label": a0,
+        "type_pair_weights": weights,
+        "original_two_mobius_master": original_master,
+        "gcd_fused_one_mobius_master": fused_master,
+        "retained_original_rows": tuple(retained_original_rows),
+        "gcd_fused_rows": tuple(fused_rows),
+        "ambient_mask_rows": tuple(ambient_mask_rows),
+        "two_mobius_master_equals_gcd_fused_master": abs(
+            original_master - fused_master
+        )
+        < tolerance,
+        "every_retained_row_has_coprime_mobius_factors": all(
+            bool(row["conductor_and_type_are_coprime"])
+            for row in retained_original_rows
+        ),
+        "every_retained_mobius_product_fuses_exactly": all(
+            bool(row["mobius_product_fuses_exactly"])
+            for row in retained_original_rows
+        ),
+        "conductor_is_gcd_of_fused_label_and_joint_modulus": all(
+            int(row["conductor"]) == int(row["fused_gcd"])
+            for row in retained_original_rows
+        ),
+        "cofactor_is_joint_modulus_over_that_gcd": all(
+            int(row["ramanujan_cofactor"]) == int(row["fused_cofactor"])
+            for row in retained_original_rows
+        ),
+        "type_label_is_fused_label_over_that_gcd": all(
+            int(row["type_label"]) == int(row["fused_type_quotient"])
+            for row in retained_original_rows
+        ),
+        "ambient_unit_mask_transports_exactly": all(
+            bool(row["unit_mask_transport_exact"])
+            for row in ambient_mask_rows
+        ),
+        "zero_direct_phase_supported": B == 0,
+        "mobius_factor_count_before_fusion": 2,
+        "mobius_factor_count_after_fusion": 1,
+        "ordered_type_block_count_before_fusion": 9,
+        "ordered_type_block_count_after_fusion": 3,
+        "fusion_scope": "fixed_common_cofactor_jointly_primitive_core",
+        "common_cofactor_mobius_fused": False,
+        "absolute_values_taken_in_conductor_rows": False,
+        "packet_uniform_common_cofactor_adapter_proved": False,
+        "gcd_dependent_kernel_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

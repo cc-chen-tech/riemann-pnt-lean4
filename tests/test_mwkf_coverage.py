@@ -4002,6 +4002,100 @@ def test_centered_tensor_collapses_to_ramanujan_kloosterman_conductors() -> None
     assert audited_cases == 90
 
 
+def test_conductor_and_type_mobius_signs_fuse_through_the_gcd() -> None:
+    audit = getattr(
+        coverage_audit,
+        "conductor_type_mobius_gcd_fusion_audit",
+        None,
+    )
+    assert audit is not None, "conductor-Type Mobius gcd fusion audit is missing"
+
+    result = audit(
+        modulus=15,
+        common_cofactor=7,
+        direct_label=0,
+        inverse_label=-2,
+        type_pair_weights={
+            (1, 1): 1,
+            (2, 4): -2,
+            (4, 2): 3j,
+            (11, 13): 2 - 1j,
+            (3, 1): 99,
+            (5, 2): -101,
+            (7, 11): 103,
+        },
+    )
+    assert result["two_mobius_master_equals_gcd_fused_master"]
+    assert result["every_retained_row_has_coprime_mobius_factors"]
+    assert result["every_retained_mobius_product_fuses_exactly"]
+    assert result["conductor_is_gcd_of_fused_label_and_joint_modulus"]
+    assert result["cofactor_is_joint_modulus_over_that_gcd"]
+    assert result["type_label_is_fused_label_over_that_gcd"]
+    assert result["ambient_unit_mask_transports_exactly"]
+    assert result["zero_direct_phase_supported"]
+    assert result["mobius_factor_count_before_fusion"] == 2
+    assert result["mobius_factor_count_after_fusion"] == 1
+    assert result["ordered_type_block_count_before_fusion"] == 9
+    assert result["ordered_type_block_count_after_fusion"] == 3
+    assert result["fusion_scope"] == "fixed_common_cofactor_jointly_primitive_core"
+    assert not result["common_cofactor_mobius_fused"]
+    assert not result["packet_uniform_common_cofactor_adapter_proved"]
+    assert not result["gcd_dependent_kernel_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    retained = result["retained_original_rows"]
+    assert retained
+    assert all(row["conductor"] == row["fused_gcd"] for row in retained)
+    assert all(row["type_label"] == row["fused_type_quotient"] for row in retained)
+
+    audited_cases = 0
+    for modulus in range(2, 16):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        weights = {
+            (type_label, companion_label): complex(
+                type_label - companion_label,
+                type_label + companion_label,
+            )
+            for type_label in range(1, modulus + 3)
+            for companion_label in range(1, 5)
+        }
+        for direct_label in (0, 1, modulus):
+            for inverse_label in (1, -2, modulus):
+                exhaustive = audit(
+                    modulus=modulus,
+                    common_cofactor=1,
+                    direct_label=direct_label,
+                    inverse_label=inverse_label,
+                    type_pair_weights=weights,
+                )
+                assert exhaustive[
+                    "two_mobius_master_equals_gcd_fused_master"
+                ]
+                assert exhaustive[
+                    "every_retained_mobius_product_fuses_exactly"
+                ]
+                assert exhaustive[
+                    "conductor_is_gcd_of_fused_label_and_joint_modulus"
+                ]
+                assert exhaustive["ambient_unit_mask_transports_exactly"]
+                audited_cases += 1
+    assert audited_cases == 90
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"d=(m,Q)" in text
+    assert "one Möbius variable" in text
+
+    with pytest.raises(ValueError, match="positive"):
+        audit(
+            modulus=15,
+            common_cofactor=1,
+            direct_label=0,
+            inverse_label=1,
+            type_pair_weights={(0, 1): 1},
+        )
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,
