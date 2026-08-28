@@ -321,7 +321,8 @@ theorem exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residu
     (x0 := a) (x1 := c) (y0 := -W) (y1 := W) (fun z hzK hzBoundary => by
       have hzPoles : z ∉ poles := by
         intro hzPole
-        exact hzBoundary (hpolesInterior z hzPole)
+        apply hzBoundary
+        exact hpolesInterior z hzPole
       rw [heq z hzK hzPoles]
       dsimp [base, principal, term, quad, cube]
       ring)
