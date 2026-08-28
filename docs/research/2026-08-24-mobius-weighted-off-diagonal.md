@@ -15966,6 +15966,117 @@ including examples with nonunit \(a\) and nonunit \(k\).  It records that
 fixed-modulus Cauchy is forbidden before the outer sum and leaves every
 global analytic flag false.
 
+### 9.111 Principal-character deletion and primitive-conductor descent
+
+The rank-one correction in (9.716) should not be discarded before taking
+the multiplicative transform.  Put
+
+\[
+ F^\circ_{s,a,k}(d)
+ :=\mathbf1_{s\nmid a}\left\{
+ S(k\bar d,-a;s)-\frac{c_s(a)c_s(k)}{\varphi(s)}
+ \right\}.
+ \tag{9.734}
+\]
+
+When \(s\mid a\), the expression in braces is already zero.  Character
+orthogonality and (9.730) therefore give the sharper exact identity
+
+\[
+ \boxed{
+ \sum_{d\in U(s)}\overline{\chi(d)}F^\circ_{s,a,k}(d)
+ =
+ \begin{cases}
+ 0,&\chi=\chi_0,\\
+ G_\chi(-a)G_\chi(k),&\chi\ne\chi_0.
+ \end{cases}}
+ \tag{9.735}
+\]
+
+Thus the correction closed in Section 9.109 is exactly the principal
+multiplicative-character row of the pure Kloosterman transform.  Keeping
+the two terms together deletes that row rather than merely bounding it
+separately.
+
+There is also an exact conductor descent which retains every nonunit
+stratum.  Write
+
+\[
+ \operatorname{cond}(\chi)=q,\qquad s=qr,\qquad(q,r)=1,
+\]
+
+and let \(\chi^\ast\) be the primitive character modulo \(q\) inducing
+\(\chi\).  Squarefreeness of \(s\) implies squarefreeness of \(q,r\).
+CRT factorization of the additive character gives, for \(q>1\),
+
+\[
+ \boxed{
+ G_\chi(n;s)
+ =\mathbf1_{(n,q)=1}\,
+   \chi^\ast(r)\overline{\chi^\ast(n)}
+   \tau(\chi^\ast)c_r(n).}
+ \tag{9.736}
+\]
+
+For \(q=1\), this is replaced by \(G_{\chi_0}(n;s)=c_s(n)\), and that
+row has already vanished in (9.735).  Substituting (9.736) into (9.733)
+and reindexing \(s=qr\) gives the exact remaining finite master
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{q>1}\frac{\mu(q)}{\varphi(q)}
+ \sum_{\chi^\ast\bmod q}^{\rm primitive}\tau(\chi^\ast)^2
+ \sum_{\substack{r\ {\rm squarefree}\\(r,q)=1}}
+ \frac{\mu(r)\chi^\ast(r)^2}{\varphi(r)}
+ \sum_{h,\delta,d,k}
+ &f_hg_\delta A_{d,k}(qr)\,
+ \mathbf1_{(h\delta k,q)=1}\\
+ {}\times&
+ c_r(h\delta)c_r(k)\,
+ \overline{\chi^\ast(-h\delta k)}\chi^\ast(d).
+ \end{aligned}}
+ \tag{9.737}
+\]
+
+All dyadic, AFE-direction, and reflected-boundary labels remain inside
+\(A_{d,k}(qr)\), which also contains the original
+\((d,qr)=1\) support.  In particular, (9.737) is a reindexing, not a
+separation of the physical weight.  It retains the outer
+\(\mu(q)\mu(r)\), the Type Möbius polynomial inside \(A\), and the full
+product label \(h\delta\).
+
+The complementary conductor \(r\) has only divisor-weight cost after the
+physical coefficient envelope has been supplied.  The elementary
+Ramanujan estimates from Section 9.109 give
+
+\[
+ \sum_{h,\delta}|c_r(h\delta)|\ll HL\,3^{\omega(r)},\qquad
+ \sum_k|c_r(k)|\ll K\,2^{\omega(r)},
+\]
+
+and hence
+
+\[
+ \sum_{\substack{r\le R\\r\ {\rm squarefree}}}
+ \frac{6^{\omega(r)}}{\varphi(r)}
+ \le
+ \prod_{p\le R}\left(1+\frac6{p-1}\right)
+ \ll(\log(2R))^6.
+ \tag{9.738}
+\]
+
+Consequently the bare imprimitive lift costs no fixed power once the
+remaining packet is controlled uniformly; all nonunit \(a,k\) primes
+are confined to the Ramanujan cofactor \(r\), while the primitive
+conductor \(q\) sees \((h\delta k,q)=1\).  This identifies a
+**primitive unit-conductor gate**, with \(r\) retained as a
+divisor-weighted lift and outer \(\mu(q)\), but does not estimate that
+gate.  The dependence of \(A_{d,k}(qr)\) on \(r\), the joint centered
+Type-II block, and the cross-\(q\) signed dispersion remain unproved.
+In particular, (9.738) must not be advertised as the missing half-power
+saving.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -16152,7 +16263,14 @@ is a varying-squarefree-modulus Gauss-product character moment in the
 same linear architecture as (9.596), with the outer \(\mu(s)\), the
 short Type Möbius polynomial, and \(a=h\delta\) all retained.  This is an
 exact bridge, not a bound; the resulting Gauss-product moment must still
-be estimated jointly with centered Type II before Cauchy.**
+be estimated jointly with centered Type II before Cauchy.  Keeping the
+rank-one correction inside this transform deletes its principal
+character exactly, (9.734)--(9.735).  The remaining rows descend by
+primitive conductor \(q\mid s\), (9.736)--(9.737): \(q\) sees only unit
+\(h\delta k\), while every nonunit prime lies in a Ramanujan cofactor
+whose bare Euler cost is polylogarithmic, (9.738).  The physical
+\(r\)-dependent packet norm and cross-\(q\) signed moment are still
+unproved.**
 
 Proved in this note:
 
@@ -16181,6 +16299,11 @@ Proved in this note:
   \(h\delta\) and dual-frequency stratum, and its exact linear embedding
   into the global character master, (9.729)--(9.733).  This does not
   prove the varying-modulus character moment or centered Type-II bound;
+* deletion of the principal multiplicative-character row after restoring
+  the rank-one correction, the exact primitive-conductor/Ramanujan-
+  cofactor descent, and the polylogarithmic bare cofactor Euler cost,
+  (9.734)--(9.738).  The physical cofactor-dependent packet norm and
+  primitive cross-conductor signed moment remain unproved;
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -16715,6 +16838,7 @@ Proved in this note:
 | Principal-extracted Ramanujan and centered Type gate | exact nonoverlapping split and sufficient weaker gate; two joint analytic estimates unproved | Equation (9.706) splits the inverse phase into the literal \(s\mid h\delta\) family, its Ramanujan mean with that family removed, and a kernel that has zero unit-residue mean and vanishes on the removed labels, (9.707).  After the outer \(\mu(s)\), the residual mean has the proper-divisor-only formula (9.708), so the top reverse-Poisson divisor is deleted rather than counted twice.  The direct and proper-divisor pieces recombine before absolute values into the earlier reverse-Poisson principal lattice, (9.710a); its unit part is already proved and only the nonunit top face (9.69) remains.  Applying (9.241) only to the centered kernel gives (9.711)--(9.712), retaining \(\mu(s)\mu(b)\mu(c)\), \(a=h\delta\), all endpoints, and no mixed rectangles.  The elementary diagonal bound (9.713) makes the two joint target estimates in (9.714) sufficient.  The nonunit principal lattice and centered signed Type dispersion remain unproved |
 | Centered Type-I additive completion | zero dual frequency and rank-one correction closed; pure nonzero spectrum unproved | The exact transform (9.716) is a Kloosterman sum minus the rank-one Ramanujan correction forced by centering.  Its \(k=0\) row vanishes identically, (9.717), and Poisson in \(r=bc\,n\) gives only \(k\ne0\) with dual length \(bc\,s/R\), (9.718)--(9.719).  The finite Ramanujan averages (9.721)--(9.724) bound the correction globally by \(HLUVT^\varepsilon\), (9.725), so it lies within target on \(HLUV\le RS\); the balanced \(U=V=T^{1/4}\) choice has a half-power margin.  No Möbius or Kloosterman cancellation is spent.  The remaining Type-I term is the pure nonzero spectrum \(S(k,-h\delta;s)\) in (9.728), which must still be estimated jointly with centered Type II and the outer signs |
 | Pure Type-I character bridge | exact Gauss-product factorization; global varying-modulus moment unproved | For every squarefree \(s\), arbitrary nonzero \(a,k\), and every character on \(U(s)\), (9.730) gives \(\sum_d\overline{\chi(d)}S(k\bar d,-a;s)=G_\chi(-a)G_\chi(k)\), including all nonunit gcd strata.  Inversion embeds the completed Type-I packet into the linear master (9.733), retaining outer \(\mu(s)\), inner \(\mu(b)\mu(c)\), \(a=h\delta\), and \(k\ne0\).  Fixed-modulus Cauchy would erase the outer sign, so the remaining target is a signed varying-modulus Gauss-product moment jointly with centered Type II; no analytic bound is asserted |
+| Centered character conductor descent | principal row deleted and bare imprimitive lift costs only polylogarithms; primitive signed moment unproved | Restoring the rank-one correction before multiplicative inversion makes the principal character row exactly zero, (9.734)--(9.735).  For every remaining \(\chi\) of conductor \(q\mid s=qr\), CRT gives \(G_\chi(n;s)=\mathbf1_{(n,q)=1}\chi^\ast(r)\overline{\chi^\ast(n)}\tau(\chi^\ast)c_r(n)\), (9.736), and the exact master (9.737) retains all Möbius and physical labels.  The Ramanujan averages and \(\sum_r6^{\omega(r)}/\varphi(r)\ll\log^6(2R)\) show that the bare \(r\)-lift costs no power, (9.738), but do not control the \(r\)-dependent physical packet.  The remaining gate is a primitive unit-conductor cross-\(q\) moment jointly with centered Type II |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

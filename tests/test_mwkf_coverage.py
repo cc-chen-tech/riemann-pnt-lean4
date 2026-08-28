@@ -5123,6 +5123,55 @@ def test_type_i_kloosterman_divisor_transform_factors_into_gauss_sums() -> None:
         audit(modulus=6, product_label=1, additive_frequency=0)
 
 
+def test_centered_type_i_character_transform_deletes_principal_conductor() -> None:
+    audit = coverage_audit.kloosterman_type_divisor_character_factorization_audit
+
+    result = audit(
+        modulus=30,
+        product_label=6,
+        additive_frequency=7,
+    )
+    assert result["all_centered_character_rows_factor_exactly"]
+    assert result["principal_character_centered_row_deleted"]
+    assert result["all_gauss_sums_match_primitive_conductor_factorization"]
+    assert result["all_gauss_products_match_primitive_conductor_factorization"]
+    assert result["character_count_by_primitive_conductor"] == {
+        1: 1,
+        3: 1,
+        5: 3,
+        15: 3,
+    }
+    assert result["nonprincipal_character_count"] == 7
+    assert result["principal_character_count"] == 1
+    assert result["nonunit_labels_are_confined_to_ramanujan_cofactors"]
+    assert result["primitive_conductor_master_retains_outer_mobius_weight"]
+    assert result["ramanujan_cofactor_absolute_summation_costs_only_divisor_weights"]
+    assert not result["primitive_conductor_global_moment_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    principal_row = next(
+        row for row in result["character_rows"] if row["is_principal_character"]
+    )
+    assert principal_row["primitive_conductor"] == 1
+    assert principal_row["ramanujan_cofactor"] == 30
+    assert abs(principal_row["centered_direct_transform"]) < 1e-8
+    assert abs(principal_row["centered_factorized_transform"]) < 1e-8
+
+    for row in result["character_rows"]:
+        assert row["primitive_conductor"] * row["ramanujan_cofactor"] == 30
+        assert row["centered_identity_holds"]
+        assert row["product_conductor_factorization_holds"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.111 Principal-character deletion" in text
+    assert r"\chi=\chi_0" in text
+    assert r"\operatorname{cond}(\chi)=q" in text
+    assert r"\mathbf1_{(n,q)=1}" in text
+    assert r"c_r(h\delta)c_r(k)" in text
+    assert r"\prod_{p\le R}\left(1+\frac6{p-1}\right)" in text
+    assert "primitive unit-conductor gate" in text
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

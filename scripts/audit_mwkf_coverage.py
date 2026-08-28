@@ -14631,14 +14631,33 @@ def kloosterman_type_divisor_character_factorization_audit(
     character_indices = tuple(product(*(range(prime - 1) for prime in primes)))
     additive_root = cmath.exp(2j * cmath.pi / s)
 
-    def character(index: tuple[int, ...], value: int) -> complex:
-        if gcd(value, s) != 1:
+    def character_on_primes(
+        index: tuple[int, ...],
+        value: int,
+        active_primes: tuple[int, ...],
+    ) -> complex:
+        if any(value % prime == 0 for prime in active_primes):
             return 0j
         result = 1 + 0j
         for component, prime in zip(index, primes):
+            if prime not in active_primes:
+                continue
             exponent = discrete_logs[prime][value % prime]
             result *= roots[prime] ** (component * exponent % (prime - 1))
         return result
+
+    def character(index: tuple[int, ...], value: int) -> complex:
+        return character_on_primes(index, value, primes)
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(frequency: int, modulus_value: int) -> int:
+        common = gcd(abs(frequency), modulus_value)
+        return _finite_mobius(modulus_value // common) * finite_totient(common)
 
     def gauss(index: tuple[int, ...], frequency: int) -> complex:
         return sum(
@@ -14662,6 +14681,10 @@ def kloosterman_type_divisor_character_factorization_audit(
 
     rows: list[dict[str, object]] = []
     maximum_error = 0.0
+    maximum_centered_error = 0.0
+    maximum_conductor_error = 0.0
+    conductor_counts: dict[int, int] = {}
+    correction = ramanujan(a, s) * ramanujan(k, s) / finite_totient(s)
     for index in character_indices:
         direct = sum(
             (
@@ -14676,17 +14699,151 @@ def kloosterman_type_divisor_character_factorization_audit(
         factorized = product_label_gauss * additive_frequency_gauss
         error = abs(direct - factorized)
         maximum_error = max(maximum_error, error)
+
+        active_primes = tuple(
+            prime
+            for component, prime in zip(index, primes)
+            if component != 0
+        )
+        primitive_conductor = prod(active_primes)
+        ramanujan_cofactor = s // primitive_conductor
+        conductor_counts[primitive_conductor] = (
+            conductor_counts.get(primitive_conductor, 0) + 1
+        )
+        is_principal = primitive_conductor == 1
+        if is_principal:
+            primitive_gauss_sum = 1 + 0j
+        else:
+            primitive_root = cmath.exp(
+                2j * cmath.pi / primitive_conductor
+            )
+            primitive_gauss_sum = sum(
+                (
+                    character_on_primes(index, unit, active_primes)
+                    * primitive_root ** unit
+                    for unit in range(1, primitive_conductor)
+                    if gcd(unit, primitive_conductor) == 1
+                ),
+                0j,
+            )
+
+        def conductor_gauss(frequency: int) -> complex:
+            if is_principal:
+                return complex(ramanujan(frequency, ramanujan_cofactor))
+            if gcd(frequency, primitive_conductor) != 1:
+                return 0j
+            primitive_twist = (
+                character_on_primes(
+                    index,
+                    ramanujan_cofactor,
+                    active_primes,
+                )
+                * character_on_primes(
+                    index,
+                    frequency,
+                    active_primes,
+                ).conjugate()
+            )
+            return (
+                primitive_twist
+                * primitive_gauss_sum
+                * ramanujan(frequency, ramanujan_cofactor)
+            )
+
+        conductor_product_label_gauss = conductor_gauss(-a)
+        conductor_additive_frequency_gauss = conductor_gauss(k)
+        conductor_factorized = (
+            conductor_product_label_gauss
+            * conductor_additive_frequency_gauss
+        )
+        conductor_error = max(
+            abs(product_label_gauss - conductor_product_label_gauss),
+            abs(
+                additive_frequency_gauss
+                - conductor_additive_frequency_gauss
+            ),
+            abs(factorized - conductor_factorized),
+        )
+        maximum_conductor_error = max(
+            maximum_conductor_error,
+            conductor_error,
+        )
+
+        centered_direct = sum(
+            (
+                character(index, divisor).conjugate()
+                * (
+                    kloosterman(k * pow(divisor, -1, s), -a)
+                    - correction
+                )
+                for divisor in units
+            ),
+            0j,
+        )
+        if a % s == 0:
+            centered_direct = 0j
+        centered_factorized = 0j if is_principal else factorized
+        centered_error = abs(centered_direct - centered_factorized)
+        maximum_centered_error = max(maximum_centered_error, centered_error)
         rows.append(
             {
                 "character_index": index,
+                "is_principal_character": is_principal,
+                "primitive_conductor": primitive_conductor,
+                "ramanujan_cofactor": ramanujan_cofactor,
                 "direct_type_divisor_transform": direct,
                 "product_label_gauss_sum": product_label_gauss,
                 "additive_frequency_gauss_sum": additive_frequency_gauss,
                 "factorized_transform": factorized,
                 "identity_holds": error < 1e-8,
+                "primitive_character_gauss_sum": primitive_gauss_sum,
+                "conductor_product_label_gauss_sum": (
+                    conductor_product_label_gauss
+                ),
+                "conductor_additive_frequency_gauss_sum": (
+                    conductor_additive_frequency_gauss
+                ),
+                "conductor_factorized_transform": conductor_factorized,
+                "product_label_conductor_factorization_holds": (
+                    abs(
+                        product_label_gauss
+                        - conductor_product_label_gauss
+                    )
+                    < 1e-8
+                ),
+                "additive_frequency_conductor_factorization_holds": (
+                    abs(
+                        additive_frequency_gauss
+                        - conductor_additive_frequency_gauss
+                    )
+                    < 1e-8
+                ),
+                "product_conductor_factorization_holds": (
+                    abs(factorized - conductor_factorized) < 1e-8
+                ),
+                "centered_direct_transform": centered_direct,
+                "centered_factorized_transform": centered_factorized,
+                "centered_identity_holds": centered_error < 1e-8,
+                "primitive_conductor_requires_unit_product_labels": (
+                    is_principal
+                    or abs(factorized) < 1e-8
+                    or gcd(a * k, primitive_conductor) == 1
+                ),
+                "ramanujan_cofactor_absolute_value_formula_holds": (
+                    abs(ramanujan(a, ramanujan_cofactor))
+                    == finite_totient(gcd(abs(a), ramanujan_cofactor))
+                    and abs(ramanujan(k, ramanujan_cofactor))
+                    == finite_totient(gcd(abs(k), ramanujan_cofactor))
+                ),
             }
         )
 
+    principal_rows = tuple(
+        row for row in rows if bool(row["is_principal_character"])
+    )
+    nonprincipal_rows = tuple(
+        row for row in rows if not bool(row["is_principal_character"])
+    )
     return {
         "squarefree_modulus": s,
         "product_label": a,
@@ -14699,10 +14856,51 @@ def kloosterman_type_divisor_character_factorization_audit(
         ),
         "nonunit_product_labels_supported": gcd(a, s) != 1,
         "nonunit_additive_frequencies_supported": gcd(k, s) != 1,
+        "maximum_centered_factorization_error": maximum_centered_error,
+        "all_centered_character_rows_factor_exactly": all(
+            bool(row["centered_identity_holds"]) for row in rows
+        ),
+        "principal_character_centered_row_deleted": (
+            len(principal_rows) == 1
+            and abs(complex(principal_rows[0]["centered_direct_transform"]))
+            < 1e-8
+            and abs(
+                complex(principal_rows[0]["centered_factorized_transform"])
+            )
+            < 1e-8
+        ),
+        "maximum_primitive_conductor_factorization_error": (
+            maximum_conductor_error
+        ),
+        "all_gauss_sums_match_primitive_conductor_factorization": all(
+            bool(row["product_label_conductor_factorization_holds"])
+            and bool(
+                row["additive_frequency_conductor_factorization_holds"]
+            )
+            for row in rows
+        ),
+        "all_gauss_products_match_primitive_conductor_factorization": all(
+            bool(row["product_conductor_factorization_holds"])
+            for row in rows
+        ),
+        "character_count_by_primitive_conductor": conductor_counts,
+        "principal_character_count": len(principal_rows),
+        "nonprincipal_character_count": len(nonprincipal_rows),
+        "nonunit_labels_are_confined_to_ramanujan_cofactors": all(
+            bool(row["primitive_conductor_requires_unit_product_labels"])
+            for row in nonprincipal_rows
+        ),
+        "all_ramanujan_cofactor_absolute_value_formulas_hold": all(
+            bool(row["ramanujan_cofactor_absolute_value_formula_holds"])
+            for row in rows
+        ),
         "type_divisor_mobius_polynomial_remains_linear": True,
         "outer_modulus_mobius_weight_remains_linear": True,
         "fixed_modulus_cauchy_forbidden_before_outer_sum": True,
+        "primitive_conductor_master_retains_outer_mobius_weight": True,
+        "ramanujan_cofactor_absolute_summation_costs_only_divisor_weights": True,
         "global_gauss_product_character_moment_proved": False,
+        "primitive_conductor_global_moment_proved": False,
         "centered_type_i_global_bound_proved": False,
         "centered_type_ii_global_bound_proved": False,
         "coupled_kernel_gate_closed": False,
