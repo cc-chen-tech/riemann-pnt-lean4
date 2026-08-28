@@ -1660,3 +1660,35 @@ to (explicit-V1) and prove the global logarithmic integral.  Only after the
 second layer is green may the right-vertical item in Section 20 be marked
 closed.  The horizontal Jensen terms and admissible endpoint heights remain
 separate gates.
+
+### 23.1 Verified checkpoint: the reusable height layer
+
+The first layer is now proved in Lean with no new project axioms:
+
+- `norm_riemannZeta_sub_one_le_rightTail` proves the infinite Dirichlet tail
+
+  \[
+  \|\zeta(s)-1\|\le 2^{-\Re s}
+    \left(1+{2\over \Re s-1}\right),
+  \]
+
+  and `norm_riemannZeta_movingRight_sub_one_le` specializes it to `3/L`;
+- `norm_digamma_halfLine_sub_log_le_nine` proves the Gauss-series height
+  estimate with constant `9` by splitting at `ceil ||z||`;
+- `norm_logDeriv_conreyH_sub_half_log_t_div_two_pi_le` proves (H-height)
+  with the explicit constant `C_H=8`;
+- `conreyDegreeOneV1_sub_heightMain_eq` proves the exact height-dependent
+  decomposition, and
+  `norm_conreyDegreeOneV1_sub_heightMain_movingRight_le` proves
+
+  \[
+  \|V_1(s)-A_L(t)\|
+  \le {3\|A_L(t)\|+34|g_1|\over L}
+  \]
+
+  on `Re s=2 log L`, `L>=exp 2`, `2<=t`, and `Re s<=t`.
+
+This checkpoint closes the reusable pointwise height estimates only.  It
+does **not** yet prove (a-height), (a-int), the low-range reciprocal bound,
+or the global absolute-log integral.  Consequently equation (37)'s global
+right vertical remains open until the second layer is green.

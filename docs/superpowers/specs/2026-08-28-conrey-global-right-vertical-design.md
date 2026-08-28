@@ -28,7 +28,7 @@ constant is `g + g1 / 2 = 1`.
 Use the Gauss series for digamma already proved in
 `PrimeNumberTheorem/DigammaBounds.lean`.  At
 `z = (sigma + i t) / 2`, split the series at `N = ceil |z|`.  When
-`2 <= t` and `0 < sigma <= t`, the first reciprocal block, the quadratic
+`2 <= t` and `1 < sigma <= t`, the first reciprocal block, the quadratic
 tail, and the harmonic/log comparison are all bounded by explicit absolute
 constants.  This gives
 
@@ -61,14 +61,15 @@ Create a focused right-tail module proving
 from the absolutely convergent Dirichlet series and the same integral
 comparison already used for the finite mollifier.  Specialize it at
 `Re s = 2 log L` to obtain `3 / L`.  Reuse the existing Cauchy estimate
-`||zeta'(s)|| <= zeta(2) <= 5/3` once `Re s >= 4`.
+`||zeta'(s)|| <= zeta(2) <= 5/3` once `Re s >= 4`; consequently the
+combined `V1` moving-edge theorem assumes `L >= exp 2`.
 
 ### Digamma and archimedean height main term
 
 Create a module exposing the Gauss-series split and the height-uniform
 digamma bound.  Promote the exact `H'/H` formula currently private in
 `ConreyFarRight.lean` to a public theorem, then prove the explicit
-height-main estimate.  All conditions (`2 <= t`, `0 < sigma`, `sigma <= t`)
+height-main estimate.  All conditions (`2 <= t`, `1 < sigma`, `sigma <= t`)
 remain visible in the interface.
 
 ### Degree-one `V1` decomposition

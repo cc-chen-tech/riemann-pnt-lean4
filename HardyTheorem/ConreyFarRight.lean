@@ -193,7 +193,9 @@ private theorem differentiableAt_GammaReal {s : ℂ}
     (Or.inl (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero))).mul
       ((Complex.differentiableAt_Gamma (s / 2) hsGamma).comp s (by fun_prop))
 
-private theorem logDeriv_conreyH_eq {s : ℂ} (hs : 1 < s.re) :
+/-- Exact logarithmic derivative of Conrey's completed archimedean factor on
+the right half-plane. -/
+theorem logDeriv_conreyH_eq {s : ℂ} (hs : 1 < s.re) :
     deriv conreyH s / conreyH s =
       1 / s + 1 / (s - 1) - Complex.log Real.pi / 2 +
         Complex.digamma (s / 2) / 2 := by
