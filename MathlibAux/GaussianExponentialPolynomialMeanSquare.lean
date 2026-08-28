@@ -49,6 +49,72 @@ private theorem normSq_exponentialPolynomial_eq_gaussian_double_sum
   congr 2
   ring
 
+/-- A finite exponential polynomial has integrable Gaussian square norm.
+
+This is the integrability input needed to compare a compact-height moment with
+the corresponding full-line Gaussian moment.  It is stated separately from the
+quantitative mean-square bound so that downstream interval arguments do not
+have to reconstruct the finite double-sum expansion. -/
+theorem integrable_gaussian_mul_normSq_exponentialPolynomial
+    {ι : Type*} [DecidableEq ι]
+    {Delta : ℝ} (hDelta : 0 < Delta) (w : ℝ)
+    (s : Finset ι) (coeff : ι → ℂ) (freq : ι → ℝ) :
+    Integrable fun t : ℝ =>
+      Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+        Complex.normSq (exponentialPolynomial s coeff freq t) := by
+  have htermInt (m n : ι) : Integrable fun t : ℝ =>
+      Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+        ((starRingEnd ℂ) (coeff n) * coeff m *
+          Complex.exp (I * ((freq m - freq n) * t))).re := by
+    have hcomplex :=
+      (integrable_shiftedGaussian_mul_cexp hDelta w (freq m - freq n)).const_mul
+        ((starRingEnd ℂ) (coeff n) * coeff m)
+    have hre : Integrable fun t : ℝ =>
+        (((starRingEnd ℂ) (coeff n) * coeff m) *
+          ((Real.exp (-((t - w) ^ 2) / Delta ^ 2) : ℂ) *
+            Complex.exp (I * ((freq m - freq n : ℝ) : ℂ) * (t : ℂ)))).re :=
+      hcomplex.re
+    refine hre.congr (Filter.Eventually.of_forall fun t => ?_)
+    change
+      (((starRingEnd ℂ) (coeff n) * coeff m) *
+          ((Real.exp (-((t - w) ^ 2) / Delta ^ 2) : ℂ) *
+            Complex.exp
+              (I * ((freq m - freq n : ℝ) : ℂ) * (t : ℂ)))).re =
+        Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+          (((starRingEnd ℂ) (coeff n) * coeff m) *
+            Complex.exp
+              (I * (((freq m : ℂ) - (freq n : ℂ)) * (t : ℂ)))).re
+    rw [show ((freq m - freq n : ℝ) : ℂ) =
+      (freq m : ℂ) - (freq n : ℂ) by push_cast; rfl]
+    calc
+      _ = (((Real.exp (-((t - w) ^ 2) / Delta ^ 2) : ℂ) *
+              ((starRingEnd ℂ) (coeff n) * coeff m *
+                Complex.exp
+                  (I * (((freq m : ℂ) - (freq n : ℂ)) * (t : ℂ)))))).re := by
+            congr 1
+            ring
+      _ = _ := by
+        rw [Complex.mul_re]
+        simp only [Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
+  have hsumInt : Integrable fun t : ℝ =>
+      ∑ m ∈ s, ∑ n ∈ s,
+        Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+          ((starRingEnd ℂ) (coeff n) * coeff m *
+            Complex.exp (I * ((freq m - freq n) * t))).re := by
+    exact integrable_finsetSum s fun m _hm =>
+      integrable_finsetSum s fun n _hn => htermInt m n
+  refine hsumInt.congr (Filter.Eventually.of_forall fun t => ?_)
+  symm
+  change
+    Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+        Complex.normSq (exponentialPolynomial s coeff freq t) =
+      ∑ m ∈ s, ∑ n ∈ s,
+        Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+          ((starRingEnd ℂ) (coeff n) * coeff m *
+            Complex.exp (I * ((freq m - freq n) * t))).re
+  rw [normSq_exponentialPolynomial_eq_gaussian_double_sum]
+  simp only [Finset.mul_sum]
+
 /-- Gaussian second moment bounded by the exact positive frequency kernel.
 No frequency separation is assumed. -/
 theorem integral_gaussian_mul_normSq_exponentialPolynomial_le
