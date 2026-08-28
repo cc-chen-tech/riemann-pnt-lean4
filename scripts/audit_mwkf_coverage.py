@@ -13576,6 +13576,7 @@ def zero_direct_two_taper_coprime_reassembly_audit(
     second_product_label: int,
     first_coprimality_label: int,
     second_coprimality_label: int,
+    pair_weights: dict[tuple[int, int], Fraction] | None = None,
 ) -> dict[str, object]:
     """Complete two coprime Selberg-taper divisor lattices exactly.
 
@@ -13784,6 +13785,124 @@ def zero_direct_two_taper_coprime_reassembly_audit(
         subtract(subtract(closed_core, first_tail), second_tail),
         double_tail,
     )
+
+    admissible_pair_set = set(admissible_pairs)
+    if pair_weights is None:
+        weights = {pair: F(1) for pair in admissible_pairs}
+    else:
+        weights = {
+            (int(pair[0]), int(pair[1])): F(weight)
+            for pair, weight in pair_weights.items()
+        }
+        if set(weights) != admissible_pair_set:
+            raise ValueError(
+                "pair_weights must contain exactly the admissible coprime "
+                "divisor pairs"
+            )
+
+    def single_taper_core(radical: int) -> Polynomial:
+        primes = tuple(_finite_prime_exponents(radical))
+        if not primes:
+            return taper(1)
+        if len(primes) == 1:
+            return {(primes[0],): F(1)}
+        return {}
+
+    anchor_weight = weights[(1, 1)]
+    weighted_complete: Polynomial = {}
+    weighted_truncated: Polynomial = {}
+    weighted_first_tail: Polynomial = {}
+    weighted_second_tail: Polynomial = {}
+    weighted_double_tail: Polynomial = {}
+    first_axis_enumerated: Polynomial = {}
+    second_axis_enumerated: Polynomial = {}
+    mixed_interaction: Polynomial = {}
+    mixed_differences: dict[tuple[int, int], Fraction] = {}
+    for first_divisor, second_divisor in admissible_pairs:
+        pair = (first_divisor, second_divisor)
+        term = multiply(taper(first_divisor), taper(second_divisor))
+        weight = weights[pair]
+        weighted_term = scale(term, weight)
+        weighted_complete = add(weighted_complete, weighted_term)
+        first_is_long = common * first_divisor > level
+        second_is_long = common * second_divisor > level
+        if not first_is_long and not second_is_long:
+            weighted_truncated = add(weighted_truncated, weighted_term)
+        if first_is_long:
+            weighted_first_tail = add(weighted_first_tail, weighted_term)
+        if second_is_long:
+            weighted_second_tail = add(weighted_second_tail, weighted_term)
+        if first_is_long and second_is_long:
+            weighted_double_tail = add(weighted_double_tail, weighted_term)
+
+        first_difference = weights[(first_divisor, 1)] - anchor_weight
+        second_difference = weights[(1, second_divisor)] - anchor_weight
+        mixed_difference = (
+            weight
+            - weights[(first_divisor, 1)]
+            - weights[(1, second_divisor)]
+            + anchor_weight
+        )
+        mixed_differences[pair] = mixed_difference
+        first_axis_enumerated = add(
+            first_axis_enumerated,
+            scale(term, first_difference),
+        )
+        second_axis_enumerated = add(
+            second_axis_enumerated,
+            scale(term, second_difference),
+        )
+        mixed_interaction = add(
+            mixed_interaction,
+            scale(term, mixed_difference),
+        )
+
+    first_axis_sparse: Polynomial = {}
+    for first_divisor in _positive_divisors(first_radical):
+        first_difference = weights[(first_divisor, 1)] - anchor_weight
+        remaining_second_radical = second_radical // gcd(
+            second_radical, first_divisor
+        )
+        first_axis_sparse = add(
+            first_axis_sparse,
+            scale(
+                multiply(
+                    taper(first_divisor),
+                    single_taper_core(remaining_second_radical),
+                ),
+                first_difference,
+            ),
+        )
+
+    second_axis_sparse: Polynomial = {}
+    for second_divisor in _positive_divisors(second_radical):
+        second_difference = weights[(1, second_divisor)] - anchor_weight
+        remaining_first_radical = first_radical // gcd(
+            first_radical, second_divisor
+        )
+        second_axis_sparse = add(
+            second_axis_sparse,
+            scale(
+                multiply(
+                    taper(second_divisor),
+                    single_taper_core(remaining_first_radical),
+                ),
+                second_difference,
+            ),
+        )
+
+    anchored_core = scale(closed_core, anchor_weight)
+    reconstructed_weighted_complete = add(
+        add(add(anchored_core, first_axis_sparse), second_axis_sparse),
+        mixed_interaction,
+    )
+    reconstructed_weighted_truncated = add(
+        subtract(
+            subtract(weighted_complete, weighted_first_tail),
+            weighted_second_tail,
+        ),
+        weighted_double_tail,
+    )
     return {
         "cutoff": level,
         "common_factor": common,
@@ -13805,6 +13924,24 @@ def zero_direct_two_taper_coprime_reassembly_audit(
         "first_reflected_tail_formal_weight": public(first_tail),
         "second_reflected_tail_formal_weight": public(second_tail),
         "double_reflected_tail_formal_weight": public(double_tail),
+        "pair_weights": dict(sorted(weights.items())),
+        "anchor_pair_weight": anchor_weight,
+        "weighted_complete_formal_weight": public(weighted_complete),
+        "weighted_truncated_formal_weight": public(weighted_truncated),
+        "weighted_first_reflected_tail_formal_weight": public(
+            weighted_first_tail
+        ),
+        "weighted_second_reflected_tail_formal_weight": public(
+            weighted_second_tail
+        ),
+        "weighted_double_reflected_tail_formal_weight": public(
+            weighted_double_tail
+        ),
+        "anchored_two_taper_core_formal_weight": public(anchored_core),
+        "first_axis_variation_formal_weight": public(first_axis_sparse),
+        "second_axis_variation_formal_weight": public(second_axis_sparse),
+        "mixed_interaction_formal_weight": public(mixed_interaction),
+        "mixed_pair_differences": dict(sorted(mixed_differences.items())),
         "first_boundary_cofactors": tuple(first_boundary_cofactors),
         "second_boundary_cofactors": tuple(second_boundary_cofactors),
         "double_boundary_cofactors": tuple(double_boundary_cofactors),
@@ -13822,6 +13959,22 @@ def zero_direct_two_taper_coprime_reassembly_audit(
         "truncated_equals_core_minus_first_tail_minus_second_tail_plus_double_tail": (
             truncated == reconstructed_truncated
         ),
+        "first_axis_inner_euler_cores_are_sparse": (
+            first_axis_enumerated == first_axis_sparse
+        ),
+        "second_axis_inner_euler_cores_are_sparse": (
+            second_axis_enumerated == second_axis_sparse
+        ),
+        "weighted_complete_equals_anchor_plus_first_axis_plus_second_axis_plus_mixed": (
+            weighted_complete == reconstructed_weighted_complete
+        ),
+        "weighted_truncated_equals_complete_minus_first_tail_minus_second_tail_plus_double_tail": (
+            weighted_truncated == reconstructed_weighted_truncated
+        ),
+        "additively_separable_weights_have_zero_mixed_interaction": (
+            not any(mixed_differences.values())
+            and not mixed_interaction
+        ),
         "every_first_boundary_cofactor_is_short": all(
             F(cofactor) < F(common * first_radical, level)
             and F(cofactor) <= F(common * first_product, level)
@@ -13833,6 +13986,7 @@ def zero_direct_two_taper_coprime_reassembly_audit(
             for cofactor in second_boundary_cofactors
         ),
         "both_outer_mobius_sums_performed_before_absolute_values": True,
+        "physical_mixed_interaction_bound_proved": False,
         "full_afe_reflection_adapter_proved": False,
         "principal_analytic_bound_proved": False,
         "coupled_kernel_gate_closed": False,

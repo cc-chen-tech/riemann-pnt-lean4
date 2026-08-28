@@ -4625,6 +4625,79 @@ def test_zero_direct_two_taper_coprime_euler_core_and_reflections() -> None:
         )
 
 
+def test_two_taper_weighted_adapter_is_axis_sparse_plus_mixed() -> None:
+    audit = coverage_audit.zero_direct_two_taper_coprime_reassembly_audit
+    admissible_pairs = tuple(
+        (first, second)
+        for first in (1, 2, 3, 6)
+        for second in (1, 2, 5, 10)
+        if gcd(first, second) == 1
+    )
+    additive_weights = {
+        pair: F(pair[0] + 2 * pair[1]) for pair in admissible_pairs
+    }
+    additive = audit(
+        cutoff=5,
+        common_factor=1,
+        first_product_label=6,
+        second_product_label=10,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+        pair_weights=additive_weights,
+    )
+    assert additive[
+        "weighted_complete_equals_anchor_plus_first_axis_plus_second_axis_plus_mixed"
+    ]
+    assert additive[
+        "weighted_truncated_equals_complete_minus_first_tail_minus_second_tail_plus_double_tail"
+    ]
+    assert additive["first_axis_inner_euler_cores_are_sparse"]
+    assert additive["second_axis_inner_euler_cores_are_sparse"]
+    assert additive["mixed_interaction_formal_weight"] == {
+        "constant": F(0),
+        "log_monomial_coefficients": {},
+    }
+    assert additive["additively_separable_weights_have_zero_mixed_interaction"]
+    assert not additive["physical_mixed_interaction_bound_proved"]
+    assert not additive["principal_analytic_bound_proved"]
+
+    rank_one_weights = {
+        pair: F(pair[0] * pair[1]) for pair in admissible_pairs
+    }
+    rank_one = audit(
+        cutoff=5,
+        common_factor=1,
+        first_product_label=6,
+        second_product_label=10,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+        pair_weights=rank_one_weights,
+    )
+    assert rank_one[
+        "weighted_complete_equals_anchor_plus_first_axis_plus_second_axis_plus_mixed"
+    ]
+    assert rank_one[
+        "mixed_interaction_formal_weight"
+    ] != {"constant": F(0), "log_monomial_coefficients": {}}
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.103 Only the genuinely mixed" in text
+    assert r"\Delta_{12}W(r,s)" in text
+    assert r"\mathscr V_1(W)+\mathscr V_2(W)+\mathscr V_{12}(W)" in text
+    assert "mixed-interaction gate" in text
+
+    with pytest.raises(ValueError, match="exactly the admissible"):
+        audit(
+            cutoff=5,
+            common_factor=1,
+            first_product_label=6,
+            second_product_label=10,
+            first_coprimality_label=1,
+            second_coprimality_label=1,
+            pair_weights={(1, 1): F(1)},
+        )
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

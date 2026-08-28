@@ -14880,6 +14880,122 @@ the formal degree-two basis
 checks (9.672)--(9.673) with strict endpoints.  Its full AFE/reflection
 adapter, principal analytic bound, and coupled-kernel flags remain false.
 
+### 9.103 Only the genuinely mixed physical variation survives
+
+The arbitrary joint weight can now be inserted without forfeiting the
+two-taper completion.  Let \(W(r,s)\) be defined on the coprime divisor
+pairs in (9.670), put \(W_{00}=W(1,1)\), and define
+
+\[
+\begin{aligned}
+ \Delta_1W(r)&=W(r,1)-W_{00},\\
+ \Delta_2W(s)&=W(1,s)-W_{00},\\
+ \Delta_{12}W(r,s)
+ &=W(r,s)-W(r,1)-W(1,s)+W_{00}.
+\end{aligned}
+\tag{9.674}
+\]
+
+Thus
+\[
+ W(r,s)=W_{00}+\Delta_1W(r)+\Delta_2W(s)
+        +\Delta_{12}W(r,s)
+\]
+pointwise.  For a squarefree radical \(R\), retain the one-taper core
+
+\[
+ \mathscr C_q(R)
+ :=\sum_{d\mid R}\mu(d)p_N(qd)
+ =p_N(q)\mathbf1_{R=1}
+  +\mathbf1_{\omega(R)=1}\frac{\log R}{\log N}.
+\tag{9.675}
+\]
+
+For fixed \(r\mid R_1\), the coprimality condition deletes from the second
+radical exactly the primes dividing \(r\).  Consequently
+
+\[
+\begin{aligned}
+ \mathscr V_1(W)
+ &:=
+ \sum_{r\mid R_1}\mu(r)p_N(qr)\Delta_1W(r)
+ \mathscr C_q\!\left(\frac{R_2}{(R_2,r)}\right),\\
+ \mathscr V_2(W)
+ &:=
+ \sum_{s\mid R_2}\mu(s)p_N(qs)\Delta_2W(s)
+ \mathscr C_q\!\left(\frac{R_1}{(R_1,s)}\right),\\
+ \mathscr V_{12}(W)
+ &:=
+ \sum_{\substack{r\mid R_1,\ s\mid R_2\\(r,s)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)\Delta_{12}W(r,s).
+\end{aligned}
+\tag{9.676}
+\]
+
+Summing (9.674), and using (9.675) separately in the two axis terms,
+gives the exact weighted completion
+
+\[
+\boxed{
+ \sum_{\substack{r\mid R_1,\ s\mid R_2\\(r,s)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)W(r,s)
+ =
+ W_{00}\mathscr E_q(R_1,R_2)
+ +\mathscr V_1(W)+\mathscr V_2(W)+\mathscr V_{12}(W).}
+\tag{9.677}
+\]
+
+There is no generic one-variable variation left in (9.677): every such
+term has already collapsed through the sparse core (9.675).  Only the
+genuine mixed interaction \(\mathscr V_{12}\) still sees the full coprime
+divisor lattice.  This distinction is exact rather than terminological.
+For an additively separated weight
+\(W(r,s)=U(r)+V(s)+c\), one has \(\Delta_{12}W=0\).  For a rank-one
+weight \(W(r,s)=U(r)V(s)\),
+
+\[
+ \boxed{
+ \Delta_{12}W(r,s)
+ =\{U(r)-U(1)\}\{V(s)-V(1)\}.}
+\tag{9.678}
+\]
+
+Hence a projective separated expansion of the physical kernel converts
+the only unsummed term into a product of two anchored one-variable
+differences; it does not create an arbitrary pair coefficient.
+
+The cutoff remains boundary-exact with the weight retained.  If
+\(\mathscr B_i(W)\) and \(\mathscr B_{12}(W)\) denote the three sums in
+(9.672) with \(W(r,s)\) inserted, then
+
+\[
+\boxed{
+ \sum_{\substack{r\mid R_1,\ s\mid R_2,\ (r,s)=1\\
+                 qr\leq N,\ qs\leq N}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)W(r,s)
+ =
+ W_{00}\mathscr E_q+\mathscr V_1+\mathscr V_2+\mathscr V_{12}
+ -\mathscr B_1(W)-\mathscr B_2(W)+\mathscr B_{12}(W).}
+\tag{9.679}
+\]
+
+Equations (9.674)--(9.679) replace the previous generic
+"joint two-variable variation" wording by the strictly smaller
+**mixed-interaction gate**.  They do not bound that gate.  In particular,
+boundedness or smoothness of \(W\) alone does not make
+\(\Delta_{12}W\) small across large multiplicative prime jumps.  The
+remaining analytic task is to prove a \(T^\varepsilon\)-cost projective
+bound for the actual reassembled AFE/reflection family and then sum
+\(\mathscr V_{12}\) together with the reflected edges and centered
+nonprincipal packet before Cauchy.
+
+With optional exact rational pair weights, the helper
+zero_direct_two_taper_coprime_reassembly_audit independently verifies
+(9.674)--(9.679).  It enumerates the axis terms directly and through
+(9.675), checks their equality, and records the mixed interaction
+separately.  Its physical mixed-interaction bound, full AFE/reflection
+adapter, principal analytic bound, and coupled-kernel flags remain false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -15027,8 +15143,10 @@ divisor-independent principal set: the coprime Euler core has an explicit
 four-case degree-two formula and the finite cutoff is exactly the two
 single reflections plus their double-reflection correction.  This removes
 the second taper as a separate algebraic omission, but the joint physical
-weight, complete AFE/reflection normalization, principal analytic bound,
-and centered signed dispersion remain unproved.**
+weight now reduces exactly by (9.674)--(9.679) to sparse one-axis Euler
+cores and one genuinely mixed interaction.  A projective bound for that
+interaction, the complete AFE/reflection normalization, principal analytic
+bound, and centered signed dispersion remain unproved.**
 
 Proved in this note:
 
@@ -15566,6 +15684,7 @@ Proved in this note:
 | Zero-direct principal Selberg reassembly | exact \(q\)-aware one-prime Euler core and \(T^{2+o(1)}/q\) reflected boundary for divisor-independent coefficients; physical weighted norm and analytic bound unproved | Before sector completion the original packet has \(B=0\), outside (9.649).  At fixed common layer \(q\), summing one complete reduced Selberg--Möbius divisor lattice first gives (9.662): only \(R_q(m,n)=1\) or one prime outside \(qn\) survives.  The finite cutoff is exactly the reflected sum (9.663), with every cofactor \(k<qR_q(m,n)/N\leq qm/N\).  Combining (5.3), (5.8), and (9.664) proves the core-box length \(k\ll T^{2+o(1)}/q\) at \(N=T^3\).  There is no common \(\mu(q)\) sign by (5.2).  The remaining gate is analytic control of the weighted variation while retaining the other reduced Möbius factor, second taper, physical AFE/dyadic kernel, both AFE directions, reflection, and the explicit diagonal |
 | Weighted zero-direct divisor adapter | exact anchor/variation/boundary identity and Boolean mixed difference; physical variation bound unproved | For arbitrary divisor weight \(W(s)\), (9.666)--(9.668) split one truncated taper into \(W(1)\) times the sparse Euler core, one complete anchored variation, and the reflected boundary.  Equation (9.669) identifies the complete weighted sum with the full Boolean mixed difference over unmatched primes.  This is an algebraic adapter, not a norm estimate: on a single physical dyadic block \(W(1)\) may vanish and the variation can contain the entire block.  Full dyadic/AFE reassembly, a useful joint two-variable variation bound, reflection, diagonal, and nonprincipal signed dispersion remain unproved |
 | Two-taper coprime principal reassembly | exact degree-two Euler core and all single/double reflections; physical weighted norm unproved | Completing both divisor lattices with \((r,s)=1\) gives (9.670)--(9.671).  Shared primes contribute an explicit sign and quadratic correction, while the core vanishes unless each side has at most one exclusive prime.  Inclusion--exclusion gives the endpoint-exact truncation \(\mathscr E_q-\mathscr B_1-\mathscr B_2+\mathscr B_{12}\), (9.672), and reflection gives \(k_i<qR_i/N\leq qa_i/N\), (9.673), hence the same \(T^{2+o(1)}/q\) coordinate lengths.  This closes the constant-weight two-taper algebra only; the joint physical AFE/reflection adapter, principal analytic estimate, and centered dispersion remain unproved |
+| Two-taper weighted interaction adapter | exact sparse-axis/mixed split; mixed physical norm unproved | For arbitrary \(W(r,s)\), (9.674)--(9.677) split the complete weighted lattice into the anchored core, two axis variations, and one mixed interaction.  Each axis variation sums the other taper into the one-prime core (9.675); only \(\Delta_{12}W\) retains the full coprime lattice.  It vanishes for additive weights and factorizes for rank-one weights, (9.678).  Equation (9.679) retains both inclusive reflected tails and their double-boundary correction.  No power bound for the actual AFE/reflection mixed interaction or centered dispersion is asserted |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
