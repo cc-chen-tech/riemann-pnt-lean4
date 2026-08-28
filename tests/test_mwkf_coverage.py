@@ -5172,6 +5172,48 @@ def test_centered_type_i_character_transform_deletes_principal_conductor() -> No
     assert "primitive unit-conductor gate" in text
 
 
+def test_blomer_pascadi_2026_is_too_short_on_centered_type_i_face() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "blomer_pascadi_2026_centered_type_i_audit",
+        None,
+    )
+    assert adapter is not None, "Blomer--Pascadi 2026 audit is missing"
+
+    result = adapter(
+        modulus_exponent=F(3),
+        short_coordinate_exponent=F(1, 2),
+    )
+    assert result["source"] == (
+        "Blomer--Pascadi, arXiv:2607.24311v1, "
+        "Theorems 1.1 and 5.5"
+    )
+    assert result["short_length_relative_to_modulus"] == F(1, 6)
+    assert result["published_balanced_lower_threshold"] == F(13, 28)
+    assert not result["published_balanced_power_range_holds"]
+    assert result["critical_square_root_saving"] == F(1, 32)
+    assert result["optimistic_balanced_published_bound_exponent"] == F(89, 96)
+    assert result["balanced_trivial_bound_exponent"] == F(2, 3)
+    assert result["balanced_published_over_trivial_deficit"] == F(25, 96)
+    assert result["full_label_f0_factor_exponent"] == F(1, 96)
+    assert result["full_label_general_bound_factor_exponent"] == F(5, 36)
+    assert result["full_label_general_bound_exponent"] == F(41, 36)
+    assert result["full_label_trivial_bound_exponent"] == F(1)
+    assert result["full_label_published_over_trivial_deficit"] == F(5, 36)
+    assert result["inverse_type_divisor_image_is_not_an_interval"]
+    assert not result["outer_modulus_mobius_average_provided"]
+    assert not result["joint_centered_type_ii_block_provided"]
+    assert not result["direct_published_coverage"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.112 Full-interval refinement" in text
+    assert "arXiv:2607.24311v1" in text
+    assert r"N=c^{1/6}" in text
+    assert r"c^{25/96}" in text
+    assert r"c^{1/96}" in text
+    assert r"c^{5/36}" in text
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

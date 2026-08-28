@@ -14907,6 +14907,116 @@ def kloosterman_type_divisor_character_factorization_audit(
     }
 
 
+def blomer_pascadi_2026_centered_type_i_audit(
+    *,
+    modulus_exponent: Fraction,
+    short_coordinate_exponent: Fraction,
+) -> dict[str, object]:
+    """Audit arXiv:2607.24311 on the centered Type-I hard face.
+
+    The balanced theorem bounds two interval variables of length N=c^nu
+    by c*H, where
+
+    H = N^(1/8)c^(-3/32) + N^(5/16)c^(-3/16)
+        + N^(2/3)c^(-7/18).
+
+    The actual Type divisor and its additive dual both have
+    T^(1/2)=c^(1/6) on c=T^3.  Their inverse-residue image is not a
+    short interval.  Even granting the optimistic short-interval model,
+    the published bound is worse than the elementary trivial bound.
+
+    The general unequal-length theorem can be applied after embedding the
+    inverse image in a full interval M=c.  We evaluate every displayed
+    term of its H(M,N,c); no favorable subterm is selected in isolation.
+    """
+
+    sigma = F(modulus_exponent)
+    short = F(short_coordinate_exponent)
+    if sigma <= 0:
+        raise ValueError("modulus_exponent must be positive")
+    if short < 0 or short > sigma / 2:
+        raise ValueError(
+            "short_coordinate_exponent must lie in [0, modulus_exponent/2]"
+        )
+
+    nu = short / sigma
+    balanced_terms = (
+        nu / 8 - F(3, 32),
+        5 * nu / 16 - F(3, 16),
+        2 * nu / 3 - F(7, 18),
+    )
+    balanced_published = 1 + max(balanced_terms)
+    balanced_trivial = min(F(1), nu + F(1, 2))
+
+    # Theorem 5.5 with M=c and N=c^nu, for 0 <= nu <= 1/2.
+    full_f0 = nu / 16
+    full_one_third_term = F(2, 15)
+    full_mixed_terms = (
+        F(1, 9) + nu / 6,
+        nu / 2 - F(2, 9),
+    )
+    full_one_fifteenth_term = F(0)
+    full_terms = (
+        full_f0,
+        full_one_third_term,
+        *full_mixed_terms,
+        full_one_fifteenth_term,
+    )
+    full_factor = max(full_terms)
+    full_published = 1 + full_factor
+    full_trivial = F(1)
+
+    critical_nu = F(1, 2)
+    critical_terms = (
+        critical_nu / 8 - F(3, 32),
+        5 * critical_nu / 16 - F(3, 16),
+        2 * critical_nu / 3 - F(7, 18),
+    )
+    critical_saving = -max(critical_terms)
+    lower_threshold = F(13, 28)
+    upper_threshold = F(7, 12)
+
+    return {
+        "source": (
+            "Blomer--Pascadi, arXiv:2607.24311v1, "
+            "Theorems 1.1 and 5.5"
+        ),
+        "modulus_exponent": sigma,
+        "short_coordinate_exponent": short,
+        "short_length_relative_to_modulus": nu,
+        "published_balanced_lower_threshold": lower_threshold,
+        "published_balanced_upper_threshold": upper_threshold,
+        "published_balanced_power_range_holds": (
+            lower_threshold < nu < upper_threshold
+        ),
+        "critical_square_root_saving": critical_saving,
+        "optimistic_balanced_h_factor_exponents": balanced_terms,
+        "optimistic_balanced_published_bound_exponent": balanced_published,
+        "balanced_trivial_bound_exponent": balanced_trivial,
+        "balanced_published_over_trivial_deficit": max(
+            F(0),
+            balanced_published - balanced_trivial,
+        ),
+        "full_label_f0_factor_exponent": full_f0,
+        "full_label_other_h_factor_exponents": full_terms[1:],
+        "full_label_general_bound_factor_exponent": full_factor,
+        "full_label_general_bound_exponent": full_published,
+        "full_label_trivial_bound_exponent": full_trivial,
+        "full_label_published_over_trivial_deficit": max(
+            F(0),
+            full_published - full_trivial,
+        ),
+        "inverse_type_divisor_image_is_not_an_interval": True,
+        "full_interval_sparse_embedding_available": True,
+        "fixed_modulus_only": True,
+        "outer_modulus_mobius_average_provided": False,
+        "physical_h_delta_packet_average_provided": False,
+        "joint_centered_type_ii_block_provided": False,
+        "direct_published_coverage": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

@@ -16077,6 +16077,84 @@ Type-II block, and the cross-\(q\) signed dispersion remain unproved.
 In particular, (9.738) must not be advertised as the missing half-power
 saving.
 
+### 9.112 Full-interval refinement of the Blomer--Pascadi 2026 audit
+
+Sections 9.27 and 9.56 already audit the short--short use of
+Blomer--Pascadi, arXiv:2607.24311v1.  The conductor descent above makes
+it useful to add the complementary *valid full-interval embedding* and
+to compare it with the optimistic short model in one place.  Their
+Theorem 1.1 proves for two
+length-\(N\) intervals and arbitrary coefficients the fixed-modulus bound
+
+\[
+ \sum_{m,n}\alpha_m\beta_n S(am,n;c)
+ \ll \|\alpha\|\|\beta\|c^{1+o(1)}
+ \left(
+ \frac{N^{1/8}}{c^{3/32}}
+ \frac{N^{5/16}}{c^{3/16}}
+ \frac{N^{2/3}}{c^{7/18}}
+ \right).
+ \tag{9.739}
+\]
+
+At the genuine square-root length \(N=c^{1/2}\), (9.739) saves
+\(c^{-1/32}\) over the trivial bound.  The centered Type-I hard face is
+much shorter.  Here \(c=s=T^3\), \(d=bc=T^{1/2}\), and the nonzero
+Poisson dual length in (9.719) is also \(T^{1/2}\).  Thus
+
+\[
+ N=c^{1/6},
+ \tag{9.740}
+\]
+
+well below the published nontrivial lower threshold
+\(c^{13/28}\).  Even if one optimistically pretends that the inverse
+image \(\{\bar d:d\asymp c^{1/6}\}\) is an interval of the same length,
+the three factors in (9.739) have exponents
+
+\[
+ -\frac7{96},\qquad-\frac{13}{96},\qquad-\frac5{18}.
+\]
+
+Hence the published right-hand side has exponent \(c^{89/96+o(1)}\),
+whereas the elementary Weil--Cauchy bound is
+\(Nc^{1/2}=c^{2/3}\).  The optimistic application is worse by
+
+\[
+ \boxed{c^{89/96-2/3}=c^{25/96}.}
+ \tag{9.741}
+\]
+
+There is a formally valid sparse embedding: regard the inverse-divisor
+coefficients as supported in the full interval \(M=c\), and keep the
+dual variable at \(N=c^{1/6}\).  Substitution in their general Theorem
+5.5 gives \(F_0=c^{1/96}\), but \(F_0\) is not the whole bound.  The term
+
+\[
+ \frac{M^{1/2}N^{1/6}}{c^{7/18}}=c^{5/36}
+\]
+
+dominates the displayed \(H(M,N,c)\).  The resulting published bound is
+\(c^{41/36+o(1)}\), again worse than the full-interval trivial bound
+\(c\), now by
+
+\[
+ \boxed{c^{5/36}.}
+ \tag{9.742}
+\]
+
+This audit is deliberately stronger than citing only the attractive
+critical saving \(c^{-1/32}\): both the optimistic short model and the
+valid full-interval embedding fail numerically.  Moreover the theorem is
+pointwise in \(c\); it supplies neither the outer \(\mu(q)\) modulus
+average from (9.737), the physical \(h\delta\) packet average, nor the
+joint centered Type-II block.  It therefore gives no direct published
+coverage of the primitive unit-conductor gate.
+
+The helper blomer_pascadi_2026_centered_type_i_audit evaluates every
+exponent in (9.739)--(9.742) as an exact rational number and leaves all
+global-coverage flags false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -16270,7 +16348,11 @@ primitive conductor \(q\mid s\), (9.736)--(9.737): \(q\) sees only unit
 \(h\delta k\), while every nonunit prime lies in a Ramanujan cofactor
 whose bare Euler cost is polylogarithmic, (9.738).  The physical
 \(r\)-dependent packet norm and cross-\(q\) signed moment are still
-unproved.**
+unproved.  The July 2026 Blomer--Pascadi bound does not fill this gap:
+the actual short coordinates have \(N=c^{1/6}\), below its
+\(c^{13/28}\) power range, and both the optimistic short-interval model
+and the valid full-interval sparse embedding are worse than trivial by
+\(c^{25/96}\) and \(c^{5/36}\), respectively, (9.739)--(9.742).**
 
 Proved in this note:
 
@@ -16304,6 +16386,10 @@ Proved in this note:
   cofactor descent, and the polylogarithmic bare cofactor Euler cost,
   (9.734)--(9.738).  The physical cofactor-dependent packet norm and
   primitive cross-conductor signed moment remain unproved;
+* the exact applicability audit of Blomer--Pascadi
+  arXiv:2607.24311v1 at the \(c=T^3,N=T^{1/2}=c^{1/6}\) Type-I face,
+  including the complete Theorem 5.5 maximum rather than its favorable
+  \(F_0\) subterm, (9.739)--(9.742).  It supplies no saving here;
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -16839,6 +16925,7 @@ Proved in this note:
 | Centered Type-I additive completion | zero dual frequency and rank-one correction closed; pure nonzero spectrum unproved | The exact transform (9.716) is a Kloosterman sum minus the rank-one Ramanujan correction forced by centering.  Its \(k=0\) row vanishes identically, (9.717), and Poisson in \(r=bc\,n\) gives only \(k\ne0\) with dual length \(bc\,s/R\), (9.718)--(9.719).  The finite Ramanujan averages (9.721)--(9.724) bound the correction globally by \(HLUVT^\varepsilon\), (9.725), so it lies within target on \(HLUV\le RS\); the balanced \(U=V=T^{1/4}\) choice has a half-power margin.  No Möbius or Kloosterman cancellation is spent.  The remaining Type-I term is the pure nonzero spectrum \(S(k,-h\delta;s)\) in (9.728), which must still be estimated jointly with centered Type II and the outer signs |
 | Pure Type-I character bridge | exact Gauss-product factorization; global varying-modulus moment unproved | For every squarefree \(s\), arbitrary nonzero \(a,k\), and every character on \(U(s)\), (9.730) gives \(\sum_d\overline{\chi(d)}S(k\bar d,-a;s)=G_\chi(-a)G_\chi(k)\), including all nonunit gcd strata.  Inversion embeds the completed Type-I packet into the linear master (9.733), retaining outer \(\mu(s)\), inner \(\mu(b)\mu(c)\), \(a=h\delta\), and \(k\ne0\).  Fixed-modulus Cauchy would erase the outer sign, so the remaining target is a signed varying-modulus Gauss-product moment jointly with centered Type II; no analytic bound is asserted |
 | Centered character conductor descent | principal row deleted and bare imprimitive lift costs only polylogarithms; primitive signed moment unproved | Restoring the rank-one correction before multiplicative inversion makes the principal character row exactly zero, (9.734)--(9.735).  For every remaining \(\chi\) of conductor \(q\mid s=qr\), CRT gives \(G_\chi(n;s)=\mathbf1_{(n,q)=1}\chi^\ast(r)\overline{\chi^\ast(n)}\tau(\chi^\ast)c_r(n)\), (9.736), and the exact master (9.737) retains all Möbius and physical labels.  The Ramanujan averages and \(\sum_r6^{\omega(r)}/\varphi(r)\ll\log^6(2R)\) show that the bare \(r\)-lift costs no power, (9.738), but do not control the \(r\)-dependent physical packet.  The remaining gate is a primitive unit-conductor cross-\(q\) moment jointly with centered Type II |
+| Blomer--Pascadi 2026 fixed-modulus bilinear form | new \(c^{-1/32}\) critical saving verified; actual Type-I face remains outside range | Theorem 1.1 of arXiv:2607.24311v1 saves \(c^{-1/32}\) at \(N=c^{1/2}\), but the present coordinates have \(N=c^{1/6}\).  Even granting a false short-interval model for the inverse-divisor image, its bound \(c^{89/96}\) is worse than the trivial \(c^{2/3}\) by \(c^{25/96}\), (9.739)--(9.741).  The valid sparse embedding \(M=c,N=c^{1/6}\) in Theorem 5.5 has favorable \(F_0=c^{1/96}\), but the full \(H\) is dominated by \(c^{5/36}\), giving \(c^{41/36}\) against trivial \(c\), (9.742).  The theorem is fixed-modulus and contains neither outer \(\mu(q)\) nor centered Type II |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |
