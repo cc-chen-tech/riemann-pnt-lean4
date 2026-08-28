@@ -842,8 +842,8 @@ a final density axiom:
    4*sqrt(U/(2*pi))*X <= Delta.
    ```
    These facts are composed with the complete critical AFE window theorem,
-   and their axiom audit again contains only the allowed three axioms.  What
-   The selected depth and polynomial logarithm are now normalized as well:
+   and their axiom audit again contains only the allowed three axioms.  The
+   selected depth and polynomial logarithm are now normalized as well:
    ```
    K+1 <= 2*(1+log U),
    1+log(2^K*X) <= 2*(1+log U),
@@ -857,14 +857,28 @@ a final density axiom:
    ```
    Finally it fixes the common broad width `Delta=4*U^(19/20)` and proves
    that this covers every `X<=U^(9/20)`.  All these scale and logarithmic
-   theorems again have only the allowed three axioms.  The next formal gate
-   is now precise: the existing Carlson Hilbert/three-lines interface expects
-   a full-real-line Gaussian product integral, whereas the AFE theorem just
-   proved controls `[L,U]`.  One must use the already proved polynomial zeta
-   growth and the elementary mollifier bound to show that the two Gaussian
-   tails are negligible, then identify the standard linear mollifier and
-   feed the resulting full-line bounds into the two-scale interface.  This
-   tail transfer must not be omitted or treated as a harmless equality.
+   theorems again have only the allowed three axioms.  The full-real-line
+   product integrability and the exact tail ledger are now formal too.  For
+   every fixed `X>=2`, unconditional polynomial zeta growth and the elementary
+   mollifier bound give
+   ```
+   |zeta(1/2+it) M_X(1/2+it)|^2 <= C_X (|t|+3)^8,
+   ```
+   hence the Gaussian product is integrable.  Lean then proves exactly
+   ```
+   integral_R gaussian*|zeta*M_X|^2
+     = integral_[L,U] gaussian*|zeta*M_X|^2 + Tail(Delta,w,X,L,U)
+   ```
+   and combines this equality with the local AFE bound above.  The axiom
+   audit is again the allowed three axioms.  This is not yet a quantitative
+   tail estimate: the present compact-range constant `C_X` depends on `X`.
+   The next formal gate is therefore to replace it by a bound uniform in the
+   Carlson scale (with the explicit elementary factor `X`), and then prove
+   that for centers separated from the complement by a fixed multiple of
+   `U`, `Delta=4*U^(19/20)` makes the tail exponentially small in `U^(1/10)`.
+   Only after that estimate may the standard linear mollifier be identified
+   and the full-line bound fed into the two-scale interface.  This tail
+   transfer must not be omitted or treated as a harmless equality.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved
