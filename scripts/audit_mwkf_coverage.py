@@ -23771,6 +23771,190 @@ def near_primitive_conductor_imbalance_wedge_audit(
     }
 
 
+def prime_conductor_zero_frequency_saturation_audit(
+    *,
+    long_primes: tuple[int, ...],
+    short_prime: int,
+    residue_class: int,
+    deleted_character_order_bound: int,
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+) -> dict[str, object]:
+    """Build the prime-conductor residue-delta obstruction to NPIT.
+
+    For a prime conductor above both Type cutoffs, the exact two-cutoff
+    identity has only its ``I`` atom: ``lambda_I(p)=-1``.  At common
+    additive frequency zero the conductor-pair multiplier is one.  If
+    all supplied long primes are congruent to ``a`` modulo the short
+    prime ``q``, the high-order characters modulo ``q`` form the exact
+    residue-delta vector
+
+    ``b_psi = conjugate(psi(a))``.
+
+    Its input norm squared is ``#H_B(q)``.  On every long prime ``p`` in
+    the chosen residue class, every high-order row character has output
+    of modulus ``#H_B(q)``.  Thus the output norm squared and the induced
+    operator lower bound are exact integers, with no floating-point
+    character evaluation.
+    """
+
+    q = int(short_prime)
+    primes = tuple(int(value) for value in long_primes)
+    residue = int(residue_class) % q
+    order_bound = int(deleted_character_order_bound)
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if not primes:
+        raise ValueError("at least one long prime is required")
+    if min(q, order_bound, cutoff_u, cutoff_v) <= 0:
+        raise ValueError("prime, order bound, and Type cutoffs must be positive")
+
+    def is_prime(value: int) -> bool:
+        return value > 1 and _finite_prime_exponents(value) == {value: 1}
+
+    if not is_prime(q) or any(not is_prime(value) for value in primes):
+        raise ValueError("all supplied conductors must be prime")
+    if len(set(primes)) != len(primes):
+        raise ValueError("long prime conductors must be distinct")
+    if any(value <= q for value in primes):
+        raise ValueError("every long conductor must exceed the short conductor")
+    if gcd(residue, q) != 1:
+        raise ValueError("the selected short residue class must be a unit")
+    if any(value % q != residue for value in primes):
+        raise ValueError("all long primes must occupy the selected residue class")
+
+    boundary = max(cutoff_u, cutoff_v)
+
+    def type_multipliers(value: int) -> dict[str, int]:
+        if value <= boundary:
+            return {"small": _finite_mobius(value), "I": 0, "II": 0}
+        short_short = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first <= cutoff_u
+            for second in _positive_divisors(value // first)
+            if second <= cutoff_v
+        )
+        long_long = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first > cutoff_u
+            for second in _positive_divisors(value // first)
+            if second > cutoff_v
+        )
+        return {"small": 0, "I": -short_short, "II": long_long}
+
+    def high_order_character_count(prime: int) -> int:
+        group_order = prime - 1
+        return sum(
+            1
+            for index in range(group_order)
+            if group_order // gcd(group_order, index) > order_bound
+        )
+
+    short_types = type_multipliers(q)
+    long_types = {value: type_multipliers(value) for value in primes}
+    short_count = high_order_character_count(q)
+    long_counts = {
+        value: high_order_character_count(value) for value in primes
+    }
+    if short_count == 0 or any(count == 0 for count in long_counts.values()):
+        raise ValueError("the supplied order cutoff deletes an entire character family")
+
+    input_norm_squared = short_count
+    output_norm_squared = short_count**2 * sum(long_counts.values())
+    operator_lower_bound_squared = output_norm_squared // input_norm_squared
+    type_i_only = bool(
+        short_types == {"small": 0, "I": -1, "II": 0}
+        and all(
+            multipliers == {"small": 0, "I": -1, "II": 0}
+            for multipliers in long_types.values()
+        )
+    )
+    return {
+        "long_prime_conductors": primes,
+        "short_prime_conductor": q,
+        "selected_short_residue_class": residue,
+        "deleted_character_order_bound": order_bound,
+        "all_supplied_conductors_are_prime": True,
+        "all_long_primes_lie_in_one_short_residue_class": True,
+        "short_conductor_type_multipliers": short_types,
+        "long_conductor_type_multipliers": long_types,
+        "only_I_I_conductor_block_survives": type_i_only,
+        "short_high_order_character_count": short_count,
+        "long_high_order_character_counts": long_counts,
+        "residue_delta_input_norm_squared": input_norm_squared,
+        "residue_delta_output_norm_squared": output_norm_squared,
+        "mutual_operator_norm_lower_bound_squared": (
+            operator_lower_bound_squared
+        ),
+        "residue_delta_character_orthogonality_is_exact": True,
+        "zero_frequency_pair_multiplier_is_one": True,
+        "conductor_mobius_sign_is_constant_on_prime_face": bool(
+            _finite_mobius(q) == -1
+            and all(_finite_mobius(value) == -1 for value in primes)
+        ),
+        "type_reassembly_supplies_power_cancellation": False,
+        "physical_row_coefficients_are_forced_to_avoid_delta_packet": False,
+        "near_primitive_zero_frequency_bound_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def prime_conductor_zero_frequency_polytope_audit(
+    *,
+    long_conductor_exponent: Fraction,
+    short_conductor_exponent: Fraction,
+    dyadic_prime_density_loss_exponent: Fraction,
+    bounded_order_deletion_loss_exponent: Fraction,
+) -> dict[str, object]:
+    """Record the power ledger forced by the prime residue-delta packet."""
+
+    long_scale = F(long_conductor_exponent)
+    short_scale = F(short_conductor_exponent)
+    density_loss = F(dyadic_prime_density_loss_exponent)
+    deletion_loss = F(bounded_order_deletion_loss_exponent)
+    if min(long_scale, short_scale, density_loss, deletion_loss) < 0:
+        raise ValueError("all scale and loss exponents must be nonnegative")
+    if long_scale <= short_scale:
+        raise ValueError("the prime obstruction is oriented long over short")
+
+    operator_exponent = long_scale - (density_loss + deletion_loss) / 2
+    balanced_target = (long_scale + short_scale) / 2
+    unremoved = _positive_part(operator_exponent - balanced_target)
+    nominal_imbalance = (long_scale - short_scale) / 2
+    no_power_losses = density_loss == 0 and deletion_loss == 0
+    return {
+        "long_conductor_exponent": long_scale,
+        "short_conductor_exponent": short_scale,
+        "dyadic_prime_density_loss_exponent": density_loss,
+        "bounded_order_deletion_loss_exponent": deletion_loss,
+        "mutual_character_operator_exponent": operator_exponent,
+        "balanced_operator_target_exponent": balanced_target,
+        "unremoved_imbalance_exponent": unremoved,
+        "nominal_mutual_large_sieve_imbalance_exponent": nominal_imbalance,
+        "matches_NPIT_extreme_deficit": bool(
+            no_power_losses and unremoved == nominal_imbalance
+        ),
+        "prime_conductor_face_is_type_I_only": True,
+        "prime_density_and_fixed_order_deletion_are_subpolynomial": bool(
+            no_power_losses
+        ),
+        "type_split_cannot_remove_a_positive_power": bool(unremoved > 0),
+        "uniform_character_energy_improvement_sufficient_for_NPIT": False,
+        "required_next_input": (
+            "physical-zero-frequency compression or explicit residual-main-term "
+            "reassembly"
+        ),
+        "physical_zero_frequency_compression_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

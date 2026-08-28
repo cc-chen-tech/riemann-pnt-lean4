@@ -60,6 +60,7 @@
 > | Active-conductor entropy polytope | Section 9.167 partitions the remaining active characters by primitive conductor \(c=T^\sigma\) inside \(r=T^\rho\), with imprimitive cofactor \(k=r/c=T^\kappa\).  The inverse-totient weighted number of conductor-\(c\) character rows costs only \(T^{\sigma+\varepsilon}\), because the \(\varphi(c)\) characters cancel the \(1/\varphi(c)\) normalization.  Section 9.144 has energy margin \(T^{-2\kappa}\).  Hence every sector with \(\sigma\leq2\kappa\), equivalently \(c\leq r^{2/3}\), is also within target.  The unresolved bounded-\(D\) family is now confined to near-primitive high-order active conductors \(c>r^{2/3}\) |
 > | Near-primitive common-frequency split | Section 9.168 writes the remaining \(r_i=c_i k_i\), \(c_i>r_i^{2/3}\), master before Cauchy.  Scaling the common residues by \(s_i=r_i z_i\) converts the determinant incidence to \(z_1-z_2=D\overline{r_1r_2}\pmod g\); additive Fourier is then exact.  Every frequency is a mutual character-evaluation matrix times a modulus-one pair multiplier.  Two-sided character orthogonality is unchanged by an arbitrary such multiplier and gives normalized cost \(T^{|\sigma_1-\sigma_2|/2+\varepsilon}\).  Cauchy in the common frequency followed by Parseval costs no power of \(g\).  Hence the Section 9.144 row margins close all common frequencies whenever \(|\sigma_1-\sigma_2|\leq2(\kappa_1+\kappa_2)\).  The unresolved near-primitive family is now only the conductor-imbalance wedge.  There the nonzero-frequency kernel is \(\overline{\psi_1(c_2)}\psi_2(c_1)e_g(\nu D\overline{c_1c_2k_1k_2})\).  Splitting \(\mu(c_1)\mu(c_2)\) gives four I/II blocks while retaining \(\mu(k_1)\mu(k_2)\) and \(a=h\delta\); no published estimate closes their combined imbalance packet |
 > | Oriented conductor-imbalance wedge | Section 9.169 translates the only remaining inequality back to the physical Type-frequency polytope.  If \(\sigma_1>\sigma_2\), then failure of Section 9.168 is exactly \(\rho_1-\rho_2>3\kappa_1+\kappa_2\).  Since \(|\rho_1-\rho_2|\leq1/2\), the missing pre-Cauchy Type saving is \(\eta=((\rho_1-\rho_2)-3\kappa_1-\kappa_2)/2\leq1/4\), and the long-conductor side has \(\kappa_1<1/6\).  Thus the former one-power bounded-\(D\) obstruction has been reduced to a sharply oriented at-most-quarter-power Type gate.  Existing fixed-prime trace estimates cover diagnostic atoms only; no published theorem supplies this saving for the full moving two-character, \(h\delta\)-weighted packet |
+> | Prime-conductor zero-frequency obstruction | Section 9.170 isolates a subface on which the proposed conductor Type mechanism has no cancellation to spend.  For every prime conductor above the two Type cutoffs, the exact split is \(\lambda_{\rm I}(p)=-1\), \(\lambda_{\rm II}(p)=0\); hence the prime--prime face lies wholly in I--I and both Möbius signs are constant.  At common frequency zero, high-order characters modulo a short prime form an exact residue-delta packet.  Pigeonholing long primes into one short residue class gives mutual-character operator norm \(\gg P/\sqrt{\log P}\), so the \(P+Q\) large-sieve cost is sharp in powers and cannot be replaced uniformly by \(\sqrt{PQ}\).  Therefore NPIT cannot follow from the Type split plus arbitrary row-energy control alone.  Its zero-frequency prime face must instead use a proved delocalization of the literal physical transforms, or be extracted and reassembled as a residual main term; neither step is yet proved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -24064,6 +24065,183 @@ two conductor cells, verifies (9.1125)--(9.1127), enforces the physical
 half-power active-scale gap, and records (9.1128).  It leaves (NPIT),
 the full bounded-\(D\), and coupled-kernel gates unproved.
 
+### 9.170 The prime-conductor zero frequency cannot be closed by the Type split
+
+Before trying to prove \((\mathrm{NPIT})\) block by block, one must test
+whether its proposed source of cancellation is present on every
+arithmetic subface.
+It is not.  Fix the two cutoffs \(U,V\), put
+\(W_0=\max\{U,V\}\), and let \(p>W_0\) be prime.  In (9.934), the only
+factorization \(bc\mid p\) with \(b\leq U,c\leq V\) is \(b=c=1\),
+while no factorization has both \(b>U,c>V\).  Therefore
+
+\[
+ \boxed{
+ \lambda_{\rm small}(p)=0,\qquad
+ \lambda_{\rm I}(p)=-1,\qquad
+ \lambda_{\rm II}(p)=0.}
+ \tag{9.1129}
+\]
+
+This is exactly \(\mu(p)=-1\), not an estimate.  Consequently the
+prime--prime conductor face of (9.1122) lies wholly in the I--I block,
+and
+
+\[
+ \mu(p)\mu(q)=1.
+ \tag{9.1130}
+\]
+
+There is no cross-block or conductor-Möbius cancellation on this face.
+In particular, the \(b=c=1\) Type-I atom cannot be discarded as a
+harmless endpoint.
+
+The zero common frequency shows that ordinary character energy cannot
+replace the missing cancellation.  For a fixed integer \(B\geq1\) and
+a prime \(\ell\), let
+
+\[
+ \mathcal H_B(\ell)
+ :=\{\chi\pmod\ell:\operatorname {ord}(\chi)>B\}.
+ \tag{9.1131}
+\]
+
+Every member is primitive because the principal character has order
+one.  Since the character group modulo \(\ell\) is cyclic,
+
+\[
+ |\mathcal H_B(\ell)|
+ =(\ell-1)-
+ \sum_{\substack{d\mid \ell-1\\d\leq B}}\varphi(d)
+ \geq \ell-1-L_B,
+ \qquad
+ L_B:=\sum_{d\leq B}\varphi(d).
+ \tag{9.1132}
+\]
+
+Thus deleting every bounded-order family changes the number of rows by
+only \(O_B(1)\) at a prime modulus.
+
+Let \(q\asymp Q\) be a short prime conductor, let
+\(\mathcal P_a\) be a finite set of long primes \(p\asymp P\),
+\(P>Q\), all satisfying \(p\equiv a\pmod q\), and retain only the
+fully primitive \(k_1=k_2=1\) rows.  At \(\nu=0\), the pair multiplier
+in (9.1123) is one.  The \(D\)-twists in (9.1111) are rowwise units and
+can be absorbed into the two coefficient vectors.  The resulting
+mutual-character operator contains the exact finite submatrix
+
+\[
+ \boxed{
+ (\mathcal M_{P,Q}^{(0)}b)_{p,\chi}
+ =\overline{\chi(q)}
+   \sum_{\psi\in\mathcal H_B(q)}b_\psi\psi(p),
+ \quad
+ p\in\mathcal P_a,\ \chi\in\mathcal H_B(p).}
+ \tag{9.1133}
+\]
+
+Choose the residue-delta vector
+\(b_\psi=\overline{\psi(a)}\).  Since every \(p\in\mathcal P_a\)
+equals \(a\) modulo \(q\), character orthogonality is not even needed
+to estimate the output: every summand is one.  Hence
+
+\[
+ \boxed{
+ \begin{aligned}
+ \|b\|_2^2
+ &=|\mathcal H_B(q)|,\\
+ \|\mathcal M_{P,Q}^{(0)}b\|_2^2
+ &=|\mathcal H_B(q)|^2
+   \sum_{p\in\mathcal P_a}|\mathcal H_B(p)|,\\
+ \|\mathcal M_{P,Q}^{(0)}\|_{2\to2}^2
+ &\geq |\mathcal H_B(q)|
+   \sum_{p\in\mathcal P_a}|\mathcal H_B(p)|.
+ \end{aligned}}
+ \tag{9.1134}
+\]
+
+This is an exact finite saturation witness supported entirely on the
+high-order primitive-character complement left after Section 9.166.
+It also persists if arbitrary rowwise unit twists are inserted.
+
+The exponent consequence uses only the ordinary dyadic prime count and
+pigeonhole.  Choose one prime \(q\in[Q,2Q]\).  The primes in
+\([P,2P]\) occupy at most \(q-1\) unit classes modulo \(q\), so some
+class \(a\) contains
+
+\[
+ |\mathcal P_a|
+ \geq\frac{\pi(2P)-\pi(P)-1}{q-1}
+ \gg\frac{P}{Q\log P}.
+ \tag{9.1135}
+\]
+
+For a positive-power imbalance \(P/Q\to\infty\), (9.1132)--(9.1135)
+give
+
+\[
+ \boxed{
+ \|\mathcal M_{P,Q}^{(0)}\|_{2\to2}
+ \gg_B\frac P{\sqrt{\log P}}.}
+ \tag{9.1136}
+\]
+
+Thus the \(P+Q\asymp P\) cost in (9.1117) is sharp in powers on the
+prime-conductor zero-frequency subspace.  A uniform replacement by
+\(\sqrt{PQ}\,T^\varepsilon\) would contradict (9.1136) whenever
+\(P/Q\) is a fixed positive power and \(\varepsilon\) is chosen smaller
+than half that gap.  At the extreme physical cell
+\((\sigma_{\rm long},\sigma_{\rm short})=(2,3/2)\), the unrecovered
+operator exponent is exactly
+
+\[
+ 2-\frac{2+3/2}{2}=\frac14=\eta_{\rm imb}.
+ \tag{9.1137}
+\]
+
+Equations (9.1129)--(9.1137) do **not** disprove the physical statement
+\((\mathrm{NPIT})\).  The coefficient vectors in (9.1115) are the
+literal transforms \(\widehat U_i(0)\), not arbitrary vectors, and they
+may fail to correlate with the residue-delta witness.  What the
+calculation proves is narrower and decisive: neither the conductor Type
+identity nor an improved uniform mutual-character large sieve can prove
+the prime--prime zero-frequency physical compression.
+
+Accordingly the remaining imbalance master must first be split as
+
+\[
+ \boxed{
+ \mathscr S_{\rm imb}
+ =\mathscr S_{\rm pp,0}^{\rm phys}
+  +\mathscr S_{\rm rest}^{\rm phys},}
+ \tag{9.1138}
+\]
+
+where the first term has \(k_1=k_2=1\), both primitive conductors prime,
+and \(\nu=0\).  There are only two honest ways to close it:
+
+1. prove that the actual \(\widehat U_i(0)\) have a power-saving
+   projection onto every residue-delta near-extremizer in (9.1134); or
+2. evaluate this projection explicitly as a residual main term and
+   reassemble it with the reflected boundary, Ramanujan-principal term,
+   and explicit diagonal before estimating the centered remainder.
+
+The remaining term in (9.1138) is where the composite-conductor Type
+I/II factorization and the nonzero common-frequency phase may still
+produce the saving (9.1127).  The resulting physical gate is still unproved.
+This rules out a false proof strategy, but it does not close
+\((\mathrm{NPIT})\), bounded \(D\), LDSKM, the coupled-kernel gate, or
+the full \(\theta=3\) twisted moment.
+
+The finite helper
+`prime_conductor_zero_frequency_saturation_audit` verifies (9.1129) on
+every supplied prime, counts the high-order character families exactly,
+and checks all three norm identities in (9.1134) using integer
+arithmetic.  The exponent helper
+`prime_conductor_zero_frequency_polytope_audit` records (9.1136)--
+(9.1137), while leaving the physical compression, \((\mathrm{NPIT})\),
+bounded-\(D\), and coupled-kernel flags false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -24088,6 +24266,20 @@ Section 9.169 orients that wedge and proves that its exact missing
 pre-Cauchy Type saving is the variable exponent (9.1127), never more
 than \(1/4\); the long-conductor imprimitive cofactor is \(<T^{1/6}\).
 The resulting combined Type gate (NPIT) remains unproved.
+
+Section 9.170 proves that the conductor Type split cannot be the whole
+mechanism behind \((\mathrm{NPIT})\).  On prime conductors above the
+cutoffs it has only the I atom, and the two conductor Möbius signs are
+constant.  At
+zero common frequency, a high-order residue-delta packet gives operator
+norm \(\gg P/\sqrt{\log P}\); hence the mutual-character large sieve is
+sharp in powers even after every fixed-order character family is
+deleted.  The unresolved imbalance must therefore be split into the
+prime--prime zero-frequency physical projection and its complement.
+The first requires actual \(\widehat U_i(0)\) delocalization or an
+explicit residual-main-term reassembly; the second remains the proper
+domain for composite Type I/II and nonzero-frequency dispersion.  No
+bound for either physical piece is asserted.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

@@ -8169,6 +8169,92 @@ def test_remaining_conductor_imbalance_wedge_needs_at_most_one_quarter_power() -
     assert not boundary["coupled_kernel_gate_closed"]
 
 
+def test_prime_conductor_zero_frequency_face_is_type_I_only_and_saturates() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_conductor_zero_frequency_saturation_audit",
+        None,
+    )
+    assert audit is not None, "prime-conductor zero-frequency audit is missing"
+    result = audit(
+        long_primes=(31, 41, 61, 71),
+        short_prime=5,
+        residue_class=1,
+        deleted_character_order_bound=2,
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+    )
+    assert result["all_supplied_conductors_are_prime"]
+    assert result["all_long_primes_lie_in_one_short_residue_class"]
+    assert result["short_conductor_type_multipliers"] == {
+        "small": 0,
+        "I": -1,
+        "II": 0,
+    }
+    assert all(
+        multipliers == {"small": 0, "I": -1, "II": 0}
+        for multipliers in result["long_conductor_type_multipliers"].values()
+    )
+    assert result["only_I_I_conductor_block_survives"]
+    assert result["short_high_order_character_count"] == 2
+    assert result["long_high_order_character_counts"] == {
+        31: 28,
+        41: 38,
+        61: 58,
+        71: 68,
+    }
+    assert result["residue_delta_input_norm_squared"] == 2
+    assert result["residue_delta_output_norm_squared"] == 768
+    assert result["mutual_operator_norm_lower_bound_squared"] == 384
+    assert result["zero_frequency_pair_multiplier_is_one"]
+    assert result["conductor_mobius_sign_is_constant_on_prime_face"]
+    assert not result["type_reassembly_supplies_power_cancellation"]
+    assert not result["near_primitive_zero_frequency_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_conductor_saturation_keeps_the_full_imbalance_exponent() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_conductor_zero_frequency_polytope_audit",
+        None,
+    )
+    assert audit is not None, "prime-conductor exponent audit is missing"
+    extreme = audit(
+        long_conductor_exponent=F(2),
+        short_conductor_exponent=F(3, 2),
+        dyadic_prime_density_loss_exponent=F(0),
+        bounded_order_deletion_loss_exponent=F(0),
+    )
+    assert extreme["mutual_character_operator_exponent"] == 2
+    assert extreme["balanced_operator_target_exponent"] == F(7, 4)
+    assert extreme["unremoved_imbalance_exponent"] == F(1, 4)
+    assert extreme["matches_NPIT_extreme_deficit"]
+    assert extreme["prime_conductor_face_is_type_I_only"]
+    assert extreme["type_split_cannot_remove_a_positive_power"]
+    assert extreme["required_next_input"] == (
+        "physical-zero-frequency compression or explicit residual-main-term "
+        "reassembly"
+    )
+    assert not extreme["physical_zero_frequency_compression_proved"]
+    assert not extreme["NPIT_proved"]
+    assert not extreme["coupled_kernel_gate_closed"]
+
+
+def test_prime_conductor_zero_frequency_obstruction_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.170 The prime-conductor zero frequency cannot be closed by "
+        "the Type split"
+    ) in text
+    assert r"\lambda_{\rm I}(p)=-1" in text
+    assert r"\lambda_{\rm II}(p)=0" in text
+    assert r"\|\mathcal M_{P,Q}^{(0)}\|" in text
+    assert r"\gg_B\frac P{\sqrt{\log P}}" in text
+    assert "prime--prime zero-frequency physical compression" in text
+    assert "The resulting physical gate is still unproved" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (
