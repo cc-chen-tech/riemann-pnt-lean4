@@ -1299,3 +1299,97 @@ argument-principle surrogate is needed.
 Equations (38)--(40), the equation-(41) critical-line partition, and the
 long mollified mean square remain separate.  No `O`-term or published
 spectral estimate is represented by an axiom in this slice.
+
+## 21. Quantitative moving-right estimate for the explicit mollifier
+
+The source of the right-edge estimate omitted in Conrey 1989, equation
+(37), is Conrey 1983, Section 4.  On page 59 that paper chooses
+`sigma_1 = log L`; on page 60 it then uses
+
+\[
+  A2^{-\sigma_1}<L^{-1}.
+\]
+
+These two displays are incompatible when `log` is the natural logarithm.
+The correction `sigma_1=2 log L` is sufficient and remains inside the
+paper's allowed strip `0<sigma<A log L`.  The following calculation gives a
+complete quantitative theorem for the repository's explicit mollifier,
+without using a spectral estimate.
+
+For
+
+\[
+  P(x)={84x+15x^3+x^5\over100}
+\]
+
+one has `0 <= P(x) <= 1` on `[0,1]`: all coefficients are nonnegative, and
+`x^3 <= x`, `x^5 <= x` there.  If `1 <= n <= Y`, then
+
+\[
+  x_{n,Y}={\log(Y/n)\over\log Y}\in[0,1].
+\]
+
+Consequently, when `sigma_0 <= 1/2`, every nonconstant coefficient in
+Conrey's equation-(33) mollifier satisfies
+
+\[
+ \left|\mu(n)P(x_{n,Y})n^{\sigma_0-1/2}\right|\le1.
+\]
+
+Writing `sigma=Re s>1` and using the exact constant coefficient `b(1)=1`
+therefore gives, uniformly in `Im s` and in the cutoff `Y`,
+
+\[
+\begin{aligned}
+ |B(s,P)-1|
+ &\le \sum_{2\le n\le Y}n^{-\sigma}\\
+ &\le 2^{-\sigma}+\int_2^\infty x^{-\sigma}\,dx\\
+ &=2^{-\sigma}\left(1+{2\over\sigma-1}\right).
+\end{aligned}
+\tag{B-right}
+\]
+
+Now let `L>=e` and take `sigma=2 log L`.  Then `sigma>=2`, so the
+parenthetical factor in (B-right) is at most `3`.  Moreover
+`log 2>1/2`, hence
+
+\[
+  2^{-2\log L}
+   =\exp(-2\log2\log L)
+   \le \exp(-\log L)=L^{-1}.
+\]
+
+Thus the corrected moving edge has the explicit bound
+
+\[
+ \boxed{\quad
+  \left|B(2\log L+it,P)-1\right|\le {3\over L}
+  \quad(L\ge e).\quad}
+\tag{B-moving}
+\]
+
+This is the first genuinely quantitative part of the missing equation-(37)
+boundary estimate.  In particular, `L>3` makes the mollifier nonzero on the
+whole moving right edge.  If `L>=6`, then its norm lies between
+`1-3/L` and `1+3/L`; the elementary bounds
+`log(1+u)<=u` and `-log(1-u)<=u/(1-u)` give
+
+\[
+  \left|\log|B(2\log L+it,P)|\right|\le {6\over L}.
+\tag{B-log}
+\]
+
+Therefore the mollifier alone contributes at most `6U/L` to a right
+vertical logarithmic integral of height `U`.  The corresponding normalized
+estimate for `V_1` is still a separate obligation: it needs quantitative
+Dirichlet-series estimates for `zeta` and `zeta'`, and a uniform Stirling
+estimate for `H'/H` when `t` is in a proportional interval.  No product
+estimate is claimed until that second factor is proved.
+
+The bounds (B-right) and (B-moving) are implemented in
+`HardyTheorem/ConreyMollifierRightEdge.lean`, with public contract
+`Test/ConreyMollifierRightEdgeContract.lean`.  The generic theorem keeps
+both necessary hypotheses separate: `P(1)=1` supplies the exact constant
+term, while `|P(x)|<=1` on `[0,1]` controls the nonconstant coefficients.
+The logarithmic corollary (B-log), the `V_1` estimate, and their product
+integral have not yet been promoted to public Lean theorems.
