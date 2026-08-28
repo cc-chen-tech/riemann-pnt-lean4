@@ -885,14 +885,26 @@ a final density axiom:
              * exp(-D^2/(2*Delta^2)).
    ```
    It also proves that `w in [2V,3V]` is at distance at least `V` from the
-   complement of `[V,4V]`, and instantiates this bound at
-   `Delta=4*(4V)^(19/20)`.  All new theorems again have only the allowed three
-   axioms.  The remaining real-variable normalization is now only to bound
-   the displayed prefactor polynomially and use
-   `exp(-c*V^(1/10))` to absorb it.  After that, the standard linear mollifier
-   can be identified and the full-line bound fed into the two-scale
-   interface.  This tail transfer must not be omitted or treated as a
-   harmless equality.
+   complement of `[V,4V]`.  At the algebraically convenient width
+   `Delta=16*V^(19/20)`, Lean proves the exact exponent identity
+   ```
+   V^2/(2*Delta^2) = V^(1/10)/512
+   ```
+   and reduces the entire tail uniformly to
+   `A*V^18*exp(-V^(1/10)/512)`.  The latter tends to zero, so the tail is
+   eventually at most `1`, uniformly over `w in [2V,3V]` and
+   `X<=V^(9/20)`.  Finally Lean verifies that this slightly enlarged width
+   still dominates every AFE product frequency and obtains the conditional
+   full-real-line bound
+   ```
+   integral_R gaussian*|zeta*M_X|^2
+     <= 3*GaussianMass*(256*C_Schur*(1+log(4V))^6 + 4*R^2) + 1.
+   ```
+   Thus the Gaussian tail transfer is closed, not assumed.  All new theorems
+   again have only the allowed three axioms.  The remaining analytic premise
+   at this layer is exactly the explicit symmetric square-root AFE target;
+   after discharging it, the standard linear mollifier can be identified and
+   the full-line bound fed into the two-scale interface.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved

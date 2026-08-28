@@ -9,7 +9,7 @@ This is deliberately separate from the quantitative tail estimate.  It uses
 only unconditional polynomial zeta growth and the elementary pointwise bound
 for the finite Selberg mollifier. -/
 
-open Complex MeasureTheory Set
+open Complex Filter MeasureTheory Set
 
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
@@ -510,6 +510,165 @@ theorem exists_carlsonHalfRangeProductTail_le_broadScale :
   exact htail hDelta (zero_le_one.trans hV) hX
     (halfRange_center_separation (zero_le_one.trans hV) hwLower hwUpper)
 
+/-- Exact exponent exposed by the slightly enlarged and algebraically simpler
+width `16*V^(19/20)`. -/
+theorem halfRange_simpleScale_exponent_identity
+    {V : ℝ} (hV : 0 < V) :
+    V ^ 2 / (2 * (16 * V ^ (19 / 20 : ℝ)) ^ 2) =
+      V ^ (1 / 10 : ℝ) / 512 := by
+  have hp : 0 < V ^ (19 / 20 : ℝ) := Real.rpow_pos_of_pos hV _
+  have hratio :
+      V ^ 2 / (V ^ (19 / 20 : ℝ)) ^ 2 = V ^ (1 / 10 : ℝ) := by
+    calc
+      V ^ 2 / (V ^ (19 / 20 : ℝ)) ^ 2 =
+          V ^ (2 : ℝ) / V ^ ((19 / 20 : ℝ) * 2) := by
+        rw [show V ^ 2 = V ^ (2 : ℝ) by norm_num [Real.rpow_natCast],
+          show (V ^ (19 / 20 : ℝ)) ^ 2 =
+              (V ^ (19 / 20 : ℝ)) ^ (2 : ℝ) by
+            norm_num [Real.rpow_natCast],
+          Real.rpow_mul hV.le]
+      _ = V ^ ((2 : ℝ) - (19 / 20 : ℝ) * 2) := by
+        rw [Real.rpow_sub hV]
+      _ = V ^ (1 / 10 : ℝ) := by norm_num
+  calc
+    V ^ 2 / (2 * (16 * V ^ (19 / 20 : ℝ)) ^ 2) =
+        (V ^ 2 / (V ^ (19 / 20 : ℝ)) ^ 2) / 512 := by
+      field_simp [hp.ne']
+      ring
+    _ = V ^ (1 / 10 : ℝ) / 512 := by rw [hratio]
+
+/-- A polynomial times the exposed `V^(1/10)` exponential tends to zero. -/
+theorem tendsto_pow_eighteen_mul_exp_neg_oneTenth :
+    Tendsto (fun V : ℝ => V ^ 18 *
+      Real.exp (-(V ^ (1 / 10 : ℝ)) / 512)) atTop (nhds 0) := by
+  have hbase := tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero
+    (180 : ℝ) (1 / 512 : ℝ) (by norm_num)
+  have hscale : Tendsto (fun V : ℝ => V ^ (1 / 10 : ℝ)) atTop atTop :=
+    tendsto_rpow_atTop (by norm_num)
+  have hcomp := hbase.comp hscale
+  apply hcomp.congr'
+  filter_upwards [eventually_ge_atTop (0 : ℝ)] with V hV
+  simp only [Function.comp_apply]
+  have hpow : (V ^ (1 / 10 : ℝ)) ^ (180 : ℝ) = V ^ (18 : ℕ) := by
+    calc
+      _ = V ^ (18 : ℝ) := by
+        rw [← Real.rpow_mul hV]
+        norm_num
+      _ = V ^ (18 : ℕ) := Real.rpow_natCast V 18
+  rw [hpow]
+  rw [show -(1 / 512 : ℝ) * V ^ (1 / 10 : ℝ) =
+      -(V ^ (1 / 10 : ℝ)) / 512 by ring]
+
+/-- At the simple broad scale, the whole tail is bounded by one absolute
+constant times a fixed polynomial-exponential function tending to zero. -/
+theorem exists_carlsonHalfRangeProductTail_le_simpleScalePolynomial :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ {V w : ℝ} {X : ℕ},
+      1 ≤ V → 2 * V ≤ w → w ≤ 3 * V → 2 ≤ X →
+      (X : ℝ) ≤ V ^ (9 / 20 : ℝ) →
+      carlsonHalfRangeProductTail
+          (16 * V ^ (19 / 20 : ℝ)) w X V (4 * V) ≤
+        A * V ^ 18 * Real.exp (-(V ^ (1 / 10 : ℝ)) / 512) := by
+  obtain ⟨C, hC, htail⟩ := exists_carlsonHalfRangeProductTail_le
+  let A : ℝ := C * 6 ^ 8 * 16 ^ 9 * gaussianPolynomialMomentEight
+  have hA : 0 ≤ A := by
+    dsimp only [A]
+    exact mul_nonneg
+      (mul_nonneg (mul_nonneg hC (pow_nonneg (by norm_num) 8))
+        (pow_nonneg (by norm_num) 9))
+      gaussianPolynomialMomentEight_nonneg
+  refine ⟨A, hA, ?_⟩
+  intro V w X hV hwLower hwUpper hX hXscale
+  have hVpos : 0 < V := zero_lt_one.trans_le hV
+  have hV0 : 0 ≤ V := hVpos.le
+  have hXleV : (X : ℝ) ≤ V := by
+    exact hXscale.trans (by
+      simpa only [Real.rpow_one] using
+        Real.rpow_le_rpow_of_exponent_le hV (by norm_num : (9 / 20 : ℝ) ≤ 1))
+  have hw0 : 0 ≤ w := by nlinarith
+  have hwLinear : |w| + 3 ≤ 6 * V := by
+    rw [abs_of_nonneg hw0]
+    nlinarith
+  have hpowScale : V ^ (19 / 20 : ℝ) ≤ V := by
+    simpa only [Real.rpow_one] using
+      Real.rpow_le_rpow_of_exponent_le hV (by norm_num : (19 / 20 : ℝ) ≤ 1)
+  have hDelta : 1 ≤ 16 * V ^ (19 / 20 : ℝ) := by
+    have : 1 ≤ V ^ (19 / 20 : ℝ) := Real.one_le_rpow hV (by norm_num)
+    nlinarith
+  have hraw := htail hDelta hV0 hX
+    (halfRange_center_separation hV0 hwLower hwUpper)
+  have hexp :
+      Real.exp (-(V ^ 2) /
+          (2 * (16 * V ^ (19 / 20 : ℝ)) ^ 2)) =
+        Real.exp (-(V ^ (1 / 10 : ℝ)) / 512) := by
+    congr 1
+    calc
+      -(V ^ 2) / (2 * (16 * V ^ (19 / 20 : ℝ)) ^ 2) =
+          -(V ^ 2 / (2 * (16 * V ^ (19 / 20 : ℝ)) ^ 2)) := by ring
+      _ = -(V ^ (1 / 10 : ℝ) / 512) := by
+        rw [halfRange_simpleScale_exponent_identity hVpos]
+      _ = -(V ^ (1 / 10 : ℝ)) / 512 := by ring
+  rw [hexp] at hraw
+  calc
+    carlsonHalfRangeProductTail
+          (16 * V ^ (19 / 20 : ℝ)) w X V (4 * V) ≤
+        C * X * (|w| + 3) ^ 8 *
+          Real.exp (-(V ^ (1 / 10 : ℝ)) / 512) *
+          (16 * V ^ (19 / 20 : ℝ)) ^ 9 *
+            gaussianPolynomialMomentEight := hraw
+    _ ≤ C * V * (6 * V) ^ 8 *
+          Real.exp (-(V ^ (1 / 10 : ℝ)) / 512) *
+          (16 * V) ^ 9 * gaussianPolynomialMomentEight := by
+      gcongr
+      exact gaussianPolynomialMomentEight_nonneg
+    _ = A * V ^ 18 * Real.exp (-(V ^ (1 / 10 : ℝ)) / 512) := by
+      dsimp only [A]
+      ring
+
+/-- Uniform negligibility of the middle-half Carlson tail. -/
+theorem exists_eventually_carlsonHalfRangeProductTail_le_one_simpleScale :
+    ∀ᶠ V : ℝ in atTop, ∀ (w : ℝ) (X : ℕ),
+      2 * V ≤ w → w ≤ 3 * V → 2 ≤ X →
+      (X : ℝ) ≤ V ^ (9 / 20 : ℝ) →
+      carlsonHalfRangeProductTail
+          (16 * V ^ (19 / 20 : ℝ)) w X V (4 * V) ≤ 1 := by
+  obtain ⟨A, hA, htail⟩ :=
+    exists_carlsonHalfRangeProductTail_le_simpleScalePolynomial
+  have hlimit : Tendsto (fun V : ℝ => A *
+      (V ^ 18 * Real.exp (-(V ^ (1 / 10 : ℝ)) / 512))) atTop (nhds 0) :=
+    by simpa using tendsto_pow_eighteen_mul_exp_neg_oneTenth.const_mul A
+  have hevent : ∀ᶠ V : ℝ in atTop,
+      A * (V ^ 18 * Real.exp (-(V ^ (1 / 10 : ℝ)) / 512)) ≤ 1 :=
+    by
+      filter_upwards [(tendsto_order.1 hlimit).2 1 (by norm_num)] with V h
+      exact h.le
+  filter_upwards [eventually_ge_atTop (1 : ℝ), hevent] with V hV hsmall
+  intro w X hwLower hwUpper hX hXscale
+  exact (htail hV hwLower hwUpper hX hXscale).trans (by
+    simpa only [mul_assoc] using hsmall)
+
+/-- The simple width still dominates every half-range AFE product frequency. -/
+theorem four_mul_sqrt_fourV_scale_mul_length_le_simpleScale
+    {V : ℝ} {X : ℕ} (hV : 1 ≤ V)
+    (hX : (X : ℝ) ≤ V ^ (9 / 20 : ℝ)) :
+    4 * Real.sqrt ((4 * V) / (2 * Real.pi)) * (X : ℝ) ≤
+      16 * V ^ (19 / 20 : ℝ) := by
+  have hVpos : 0 < V := zero_lt_one.trans_le hV
+  have hFourV : 1 ≤ 4 * V := by nlinarith
+  have hXFour : (X : ℝ) ≤ (4 * V) ^ (9 / 20 : ℝ) :=
+    hX.trans (Real.rpow_le_rpow hVpos.le (by nlinarith) (by norm_num))
+  have hbase := HardyTheorem.AFE.four_mul_sqrt_scale_mul_length_le_halfRangeDelta
+    hFourV hXFour
+  have hfourPow : (4 : ℝ) ^ (19 / 20 : ℝ) ≤ 4 := by
+    simpa only [Real.rpow_one] using
+      Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 4)
+        (by norm_num : (19 / 20 : ℝ) ≤ 1)
+  have hscale : 4 * (4 * V) ^ (19 / 20 : ℝ) ≤
+      16 * V ^ (19 / 20 : ℝ) := by
+    rw [Real.mul_rpow (by norm_num) hVpos.le]
+    have hVp : 0 ≤ V ^ (19 / 20 : ℝ) := Real.rpow_nonneg hVpos.le _
+    nlinarith
+  exact hbase.trans hscale
+
 /-- Exact central-window plus tail decomposition. -/
 theorem integral_gaussian_product_eq_setIntegral_add_tail
     {Delta w L U : ℝ} {X : ℕ} (hDelta : 0 < Delta) (hX : 2 ≤ X) :
@@ -524,6 +683,74 @@ theorem integral_gaussian_product_eq_setIntegral_add_tail
   exact integral_add_compl (s := Icc L U) measurableSet_Icc
     (integrable_gaussian_norm_sq_linearLogSelbergMollifiedZetaProduct
       hDelta hX)
+
+/-- Conditional full-line critical product bound at the simple scale.  The
+only analytic premise is the symmetric square-root AFE; the Gaussian tail is
+now unconditionally absorbed by `1`. -/
+theorem integral_gaussian_product_le_halfRange_simpleScale
+    (hAFE : HardyTheorem.AFE.zeta_critical_afe_target) :
+    ∃ R > (0 : ℝ), ∀ᶠ V : ℝ in atTop, ∀ (w : ℝ) (X : ℕ),
+      2 * V ≤ w → w ≤ 3 * V → 2 ≤ X →
+      (X : ℝ) ≤ V ^ (9 / 20 : ℝ) →
+      (∫ t : ℝ,
+        carlsonGaussianWeight (16 * V ^ (19 / 20 : ℝ)) w t *
+          ‖linearLogSelbergMollifiedZetaProduct X
+            ((1 / 2 : ℂ) + I * (t : ℂ))‖ ^ 2) ≤
+        3 * Real.sqrt
+          (Real.pi / (1 / (16 * V ^ (19 / 20 : ℝ)) ^ 2)) *
+          (256 * MathlibAux.gaussianBucketSchurConstant *
+              (1 + Real.log (4 * V)) ^ 6 + 4 * R ^ 2) + 1 := by
+  obtain ⟨R, hR, hwindow⟩ :=
+    HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_halfRange_log
+      hAFE
+  refine ⟨R, hR, ?_⟩
+  filter_upwards [eventually_ge_atTop (2 : ℝ),
+    exists_eventually_carlsonHalfRangeProductTail_le_one_simpleScale] with
+      V hV htail
+  intro w X hwLower hwUpper hX hXscale
+  have hVpos : 0 < V := by linarith
+  have hVone : 1 ≤ V := by linarith
+  have hFourV : 4 ≤ 4 * V := by nlinarith
+  have hTwoPi : 2 * Real.pi ≤ 4 * V := by
+    nlinarith [Real.pi_lt_four]
+  obtain ⟨hSqrtOne, hSqrtUpper⟩ :=
+    HardyTheorem.AFE.criticalHalfRange_sqrt_scale_bounds hTwoPi hFourV
+  have hcentral := hwindow (L := V) (U := 4 * V)
+    (Delta := 16 * V ^ (19 / 20 : ℝ))
+    (by linarith) (by nlinarith) hX hXscale hSqrtOne hSqrtUpper
+    (four_mul_sqrt_fourV_scale_mul_length_le_simpleScale hVone hXscale) w
+  have hcentral' :
+      (∫ t : ℝ in Icc V (4 * V),
+        carlsonGaussianWeight (16 * V ^ (19 / 20 : ℝ)) w t *
+          ‖linearLogSelbergMollifiedZetaProduct X
+            ((1 / 2 : ℂ) + I * (t : ℂ))‖ ^ 2) ≤
+        3 * Real.sqrt
+          (Real.pi / (1 / (16 * V ^ (19 / 20 : ℝ)) ^ 2)) *
+          (256 * MathlibAux.gaussianBucketSchurConstant *
+              (1 + Real.log (4 * V)) ^ 6 + 4 * R ^ 2) := by
+    simpa only [carlsonGaussianWeight,
+      linearLogSelbergMollifiedZetaProduct,
+      HardyTheorem.linearLogSelbergMollifier_eq_selbergMoebiusMollifier,
+      Complex.normSq_eq_norm_sq] using hcentral
+  have hDelta : 0 < 16 * V ^ (19 / 20 : ℝ) := by positivity
+  calc
+    (∫ t : ℝ,
+        carlsonGaussianWeight (16 * V ^ (19 / 20 : ℝ)) w t *
+          ‖linearLogSelbergMollifiedZetaProduct X
+            ((1 / 2 : ℂ) + I * (t : ℂ))‖ ^ 2) =
+      (∫ t : ℝ in Icc V (4 * V),
+        carlsonGaussianWeight (16 * V ^ (19 / 20 : ℝ)) w t *
+          ‖linearLogSelbergMollifiedZetaProduct X
+            ((1 / 2 : ℂ) + I * (t : ℂ))‖ ^ 2) +
+        carlsonHalfRangeProductTail
+          (16 * V ^ (19 / 20 : ℝ)) w X V (4 * V) :=
+      integral_gaussian_product_eq_setIntegral_add_tail
+        (L := V) (U := 4 * V) hDelta hX
+    _ ≤ 3 * Real.sqrt
+          (Real.pi / (1 / (16 * V ^ (19 / 20 : ℝ)) ^ 2)) *
+          (256 * MathlibAux.gaussianBucketSchurConstant *
+              (1 + Real.log (4 * V)) ^ 6 + 4 * R ^ 2) + 1 :=
+      add_le_add hcentral' (htail w X hwLower hwUpper hX hXscale)
 
 /-- The conditional half-range AFE estimate promoted to the full line with
 one explicit, and still unestimated, Gaussian tail. -/
