@@ -22410,7 +22410,7 @@ def active_principal_crt_fiber_projection_audit(
             centered_saturation
         ),
         "inverse_totient_weight_gives_uniform_power_saving": False,
-        "principal_active_sector_bound_proved": False,
+        "principal_active_sector_bound_proved_by_fiber_projection_alone": False,
         "bounded_D_one_power_gate_closed": False,
         "coupled_kernel_gate_closed": False,
     }
@@ -22527,7 +22527,7 @@ def principal_active_outer_mobius_type_split_audit(
         ),
         "no_blockwise_absolute_value_taken": True,
         "ordered_outer_type_block_bounds_proved": False,
-        "principal_active_sector_bound_proved": False,
+        "principal_active_sector_bound_proved_by_outer_type_split_alone": False,
         "bounded_D_one_power_gate_closed": False,
         "coupled_kernel_gate_closed": False,
     }
@@ -22585,7 +22585,383 @@ def principal_active_outer_type_polytope_audit(
         "principal_active_raw_exponent": F(5),
         "principal_active_target_exponent": F(4),
         "principal_active_required_saving_exponent": F(1),
-        "combined_I_II_APBD_bound_proved": False,
+        "combined_I_II_APBD_bound_proved_by_polytope_alone": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def active_principal_physical_H_descent_audit(
+    *,
+    common_modulus: int,
+    active_cofactor: int,
+    physical_H_values: tuple[tuple[int, int, Fraction], ...],
+) -> dict[str, object]:
+    """Descend the physical ``H_{q,A}(w)`` packet to the common modulus.
+
+    Build ``Z_q(c)=sum_{-A/w=c} H_{q,A}(w)`` exactly.  Averaging ``Z``
+    over its active CRT coordinate equals the same projective packet at
+    modulus ``g``, formed from the double active-coordinate sum of ``H``
+    divided by one factor ``phi(r)``.  Centering commutes with this map.
+    """
+
+    g = int(common_modulus)
+    r = int(active_cofactor)
+    if min(g, r) <= 1:
+        raise ValueError("common modulus and active cofactor must exceed one")
+    if _finite_mobius(g) == 0 or _finite_mobius(r) == 0 or gcd(g, r) != 1:
+        raise ValueError("g and r must be squarefree and coprime")
+    q = g * r
+    common_units = tuple(value for value in range(g) if gcd(value, g) == 1)
+    active_units = tuple(value for value in range(r) if gcd(value, r) == 1)
+    ambient_units = tuple(value for value in range(q) if gcd(value, q) == 1)
+
+    supplied_H: dict[tuple[int, int], Fraction] = {}
+    for product_label, type_unit, value in physical_H_values:
+        key = (int(product_label), int(type_unit))
+        if key in supplied_H:
+            raise ValueError("physical H coordinates must be unique")
+        if gcd(key[0], q) != 1 or gcd(key[1], q) != 1:
+            raise ValueError("physical H coordinates must be ambient units")
+        supplied_H[key] = F(value)
+
+    ambient_packet = {residue: F(0) for residue in ambient_units}
+    for (product_label, type_unit), value in supplied_H.items():
+        residue = -product_label * pow(type_unit, -1, q) % q
+        ambient_packet[residue] += value
+    ambient_packet = {
+        residue: value
+        for residue, value in ambient_packet.items()
+        if value != 0
+    }
+
+    active_count = len(active_units)
+    fiber_profile: dict[int, Fraction] = {}
+    for common in common_units:
+        fiber_sum = sum(
+            (
+                ambient_packet.get(residue, F(0))
+                for residue in ambient_units
+                if residue % g == common
+            ),
+            F(0),
+        )
+        fiber_profile[common] = fiber_sum / active_count
+
+    descended_H: dict[tuple[int, int], Fraction] = {}
+    for (product_label, type_unit), value in supplied_H.items():
+        key = (product_label % g, type_unit % g)
+        descended_H[key] = descended_H.get(key, F(0)) + value / active_count
+    descended_H = {
+        key: value for key, value in descended_H.items() if value != 0
+    }
+    descended_profile = {
+        common: sum(
+            (
+                descended_H.get(
+                    ((-common * type_unit) % g, type_unit),
+                    F(0),
+                )
+                for type_unit in common_units
+            ),
+            F(0),
+        )
+        for common in common_units
+    }
+    common_mean = sum(descended_profile.values(), F(0)) / len(common_units)
+    centered_common_profile = {
+        common: value - common_mean
+        for common, value in descended_profile.items()
+    }
+    ambient_mean = sum(ambient_packet.values(), F(0)) / len(ambient_units)
+    centered_then_fiber_profile = {
+        common: sum(
+            (
+                ambient_packet.get(residue, F(0)) - ambient_mean
+                for residue in ambient_units
+                if residue % g == common
+            ),
+            F(0),
+        )
+        / active_count
+        for common in common_units
+    }
+    return {
+        "common_modulus": g,
+        "active_cofactor": r,
+        "ambient_modulus": q,
+        "ambient_projective_packet": ambient_packet,
+        "active_principal_fiber_profile": fiber_profile,
+        "descended_H_values": descended_H,
+        "common_modulus_profile_from_descended_H": descended_profile,
+        "centered_common_modulus_profile": centered_common_profile,
+        "centered_then_fiber_profile": centered_then_fiber_profile,
+        "fiber_projection_equals_physical_H_descent": bool(
+            fiber_profile == descended_profile
+        ),
+        "centering_commutes_with_active_principal_descent": bool(
+            centered_then_fiber_profile == centered_common_profile
+        ),
+        "descended_packet_has_same_common_modulus_form": True,
+        "single_inverse_totient_normalization_gives_power_saving": False,
+        "cross_cofactor_sum_bound_proved_by_H_descent_alone": False,
+        "principal_active_sector_bound_proved_by_H_descent_alone": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def active_principal_ratio_convolution_descent_audit(
+    *,
+    common_modulus: int,
+    active_cofactor: int,
+    left_ratio_values: tuple[tuple[int, Fraction], ...],
+    right_ratio_values: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Descend ``Z(c)=mu(gr) sum_y F(-cy)G(y)`` factor by factor."""
+
+    g = int(common_modulus)
+    r = int(active_cofactor)
+    if min(g, r) <= 1:
+        raise ValueError("common modulus and active cofactor must exceed one")
+    if _finite_mobius(g) == 0 or _finite_mobius(r) == 0 or gcd(g, r) != 1:
+        raise ValueError("g and r must be squarefree and coprime")
+    q = g * r
+    conductor_sign = _finite_mobius(q)
+    common_units = tuple(value for value in range(g) if gcd(value, g) == 1)
+    active_units = tuple(value for value in range(r) if gcd(value, r) == 1)
+    ambient_units = tuple(value for value in range(q) if gcd(value, q) == 1)
+
+    def supplied_values(
+        rows: tuple[tuple[int, Fraction], ...],
+    ) -> dict[int, Fraction]:
+        supplied: dict[int, Fraction] = {}
+        for residue, value in rows:
+            residue = int(residue)
+            if residue in supplied:
+                raise ValueError("ratio residues must be unique")
+            if gcd(residue, q) != 1:
+                raise ValueError("ratio residues must be ambient units")
+            supplied[residue] = F(value)
+        return supplied
+
+    left_values = supplied_values(left_ratio_values)
+    right_values = supplied_values(right_ratio_values)
+    ambient_packet = {residue: F(0) for residue in ambient_units}
+    for left_residue, left_value in left_values.items():
+        for right_residue, right_value in right_values.items():
+            ratio = -left_residue * pow(right_residue, -1, q) % q
+            ambient_packet[ratio] += (
+                conductor_sign * left_value * right_value
+            )
+
+    active_count = len(active_units)
+    fiber_profile = {
+        common: sum(
+            (
+                ambient_packet[residue]
+                for residue in ambient_units
+                if residue % g == common
+            ),
+            F(0),
+        )
+        / active_count
+        for common in common_units
+    }
+    left_transform = {
+        common: sum(
+            (
+                value
+                for residue, value in left_values.items()
+                if residue % g == common
+            ),
+            F(0),
+        )
+        for common in common_units
+    }
+    right_transform = {
+        common: sum(
+            (
+                value
+                for residue, value in right_values.items()
+                if residue % g == common
+            ),
+            F(0),
+        )
+        for common in common_units
+    }
+    factorized_H = {
+        (left_common, right_common): F(conductor_sign, active_count)
+        * left_value
+        * right_value
+        for left_common, left_value in left_transform.items()
+        for right_common, right_value in right_transform.items()
+        if left_value != 0 and right_value != 0
+    }
+    factorized_profile = {
+        common: sum(
+            (
+                factorized_H.get(
+                    ((-common * right_common) % g, right_common),
+                    F(0),
+                )
+                for right_common in common_units
+            ),
+            F(0),
+        )
+        for common in common_units
+    }
+    return {
+        "common_modulus": g,
+        "active_cofactor": r,
+        "ambient_modulus": q,
+        "ambient_conductor_mobius_sign": conductor_sign,
+        "ambient_ratio_packet": ambient_packet,
+        "left_active_principal_transform": left_transform,
+        "right_active_principal_transform": right_transform,
+        "factorized_descended_H": factorized_H,
+        "active_principal_fiber_profile": fiber_profile,
+        "factorized_common_modulus_ratio_profile": factorized_profile,
+        "physical_ratio_packet_descends_factorwise": bool(
+            fiber_profile == factorized_profile
+        ),
+        "single_active_totient_divides_two_principal_transforms": True,
+        "active_principal_transforms_have_power_cancellation": False,
+        "cross_cofactor_sum_bound_proved_by_ratio_descent_alone": False,
+        "principal_active_sector_bound_proved_by_ratio_descent_alone": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def weighted_pairwise_contraction_audit(
+    *,
+    rows: tuple[tuple[int, int, int, Fraction], ...],
+    pair_contractions: tuple[tuple[int, int, Fraction], ...],
+) -> dict[str, object]:
+    """Check the weighted contraction/Cauchy inequality exactly.
+
+    A row is ``(label, inverse-weight denominator, sign, amplitude)``.
+    The scalar contraction fixture is the one-dimensional instance of
+    the Hilbert-space inequality used for the common-lift operators.
+    """
+
+    row_data: dict[int, tuple[Fraction, int, Fraction]] = {}
+    for label, denominator, sign, amplitude in rows:
+        label = int(label)
+        denominator = int(denominator)
+        sign = int(sign)
+        if label in row_data:
+            raise ValueError("row labels must be unique")
+        if denominator <= 0 or sign not in (-1, 1):
+            raise ValueError("weights must be positive and signs be +/-1")
+        row_data[label] = (F(1, denominator), sign, F(amplitude))
+
+    contractions: dict[tuple[int, int], Fraction] = {}
+    for left, right, value in pair_contractions:
+        key = (int(left), int(right))
+        if key in contractions:
+            raise ValueError("pair contractions must be unique")
+        contraction = F(value)
+        if abs(contraction) > 1:
+            raise ValueError("every supplied pair operator must contract")
+        contractions[key] = contraction
+    expected_pairs = {
+        (left, right) for left in row_data for right in row_data
+    }
+    if set(contractions) != expected_pairs:
+        raise ValueError("one contraction is required for every ordered pair")
+
+    signed_pair_sum = sum(
+        (
+            left_weight
+            * right_weight
+            * left_sign
+            * right_sign
+            * left_amplitude
+            * contractions[(left, right)]
+            * right_amplitude
+            for left, (
+                left_weight,
+                left_sign,
+                left_amplitude,
+            ) in row_data.items()
+            for right, (
+                right_weight,
+                right_sign,
+                right_amplitude,
+            ) in row_data.items()
+        ),
+        F(0),
+    )
+    weighted_l1 = sum(
+        (weight * abs(amplitude) for weight, _, amplitude in row_data.values()),
+        F(0),
+    )
+    total_weight = sum((weight for weight, _, _ in row_data.values()), F(0))
+    weighted_energy = sum(
+        (weight * amplitude * amplitude for weight, _, amplitude in row_data.values()),
+        F(0),
+    )
+    l1_square = weighted_l1 * weighted_l1
+    energy_envelope = total_weight * weighted_energy
+    return {
+        "signed_pair_sum": signed_pair_sum,
+        "weighted_l1_norm": weighted_l1,
+        "weighted_l1_square": l1_square,
+        "total_euler_weight": total_weight,
+        "weighted_row_energy": weighted_energy,
+        "euler_weight_times_row_energy": energy_envelope,
+        "pair_sum_bounded_by_weighted_l1_square": bool(
+            abs(signed_pair_sum) <= l1_square
+        ),
+        "weighted_l1_square_bounded_by_one_row_energy": bool(
+            l1_square <= energy_envelope
+        ),
+        "all_pair_operators_are_contractions": True,
+        "outer_mobius_signs_are_retained_but_not_spent": True,
+    }
+
+
+def principal_active_APBD_transfer_audit(
+    *,
+    physical_H_descent_verified: bool,
+    ratio_convolution_factorization_verified: bool,
+    centered_imprimitive_energy_bound_proved: bool,
+    pairwise_common_lift_contraction_verified: bool,
+    inverse_totient_euler_sum_is_subpolynomial: bool,
+    bounded_determinant_count_is_subpolynomial: bool,
+) -> dict[str, object]:
+    """Record the proved transfer from resonant energy to combined APBD."""
+
+    descent = bool(physical_H_descent_verified)
+    factorization = bool(ratio_convolution_factorization_verified)
+    resonant_energy = bool(centered_imprimitive_energy_bound_proved)
+    contractions = bool(pairwise_common_lift_contraction_verified)
+    euler_weight = bool(inverse_totient_euler_sum_is_subpolynomial)
+    determinant_count = bool(bounded_determinant_count_is_subpolynomial)
+    energy_subset = bool(descent and factorization and resonant_energy)
+    one_row_transfer = bool(energy_subset and contractions and euler_weight)
+    combined_apbd = bool(one_row_transfer and determinant_count)
+    return {
+        "physical_H_descent_verified": descent,
+        "ratio_convolution_factorization_verified": factorization,
+        "centered_imprimitive_energy_bound_proved": resonant_energy,
+        "pairwise_common_lift_contraction_verified": contractions,
+        "inverse_totient_euler_sum_is_subpolynomial": euler_weight,
+        "bounded_determinant_count_is_subpolynomial": determinant_count,
+        "active_principal_energy_is_subset_of_section_9_144": energy_subset,
+        "pairwise_cross_cofactor_sum_uses_one_row_energy": one_row_transfer,
+        "outer_type_blocks_must_be_reassembled_before_bound": True,
+        "individual_outer_type_block_bounds_proved": {
+            "I-I": False,
+            "I-II": False,
+            "II-I": False,
+            "II-II": False,
+        },
+        "combined_I_II_APBD_bound_proved": combined_apbd,
+        "principal_active_sector_bound_proved": combined_apbd,
+        "all_active_character_sectors_proved": False,
         "bounded_D_one_power_gate_closed": False,
         "coupled_kernel_gate_closed": False,
     }

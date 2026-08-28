@@ -7643,7 +7643,9 @@ def test_active_principal_projection_cancels_no_crt_fiber_power() -> None:
     assert result["unphased_projected_determinant_pair_sum"] == -2
     assert result["centering_does_not_force_cofactor_power_saving"]
     assert not result["inverse_totient_weight_gives_uniform_power_saving"]
-    assert not result["principal_active_sector_bound_proved"]
+    assert not result[
+        "principal_active_sector_bound_proved_by_fiber_projection_alone"
+    ]
     assert not result["bounded_D_one_power_gate_closed"]
     assert not result["coupled_kernel_gate_closed"]
 
@@ -7698,7 +7700,9 @@ def test_principal_active_outer_mobius_type_blocks_reassemble_pre_cauchy() -> No
     assert result["product_label_remains_exact_h_delta_convolution"]
     assert result["no_blockwise_absolute_value_taken"]
     assert not result["ordered_outer_type_block_bounds_proved"]
-    assert not result["principal_active_sector_bound_proved"]
+    assert not result[
+        "principal_active_sector_bound_proved_by_outer_type_split_alone"
+    ]
     assert not result["bounded_D_one_power_gate_closed"]
     assert not result["coupled_kernel_gate_closed"]
 
@@ -7735,7 +7739,179 @@ def test_principal_active_polytope_deletes_all_outer_small_blocks() -> None:
     assert result["principal_active_raw_exponent"] == 5
     assert result["principal_active_target_exponent"] == 4
     assert result["principal_active_required_saving_exponent"] == 1
-    assert not result["combined_I_II_APBD_bound_proved"]
+    assert not result["combined_I_II_APBD_bound_proved_by_polytope_alone"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_active_principal_physical_H_packet_descends_to_common_modulus() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_principal_physical_H_descent_audit",
+        None,
+    )
+    assert audit is not None, "active-principal physical-H descent is missing"
+    result = audit(
+        common_modulus=5,
+        active_cofactor=3,
+        physical_H_values=(
+            (1, 1, F(2)),
+            (4, 1, F(3)),
+            (1, 2, F(5)),
+            (4, 2, F(7)),
+        ),
+    )
+    assert result["ambient_modulus"] == 15
+    assert result["ambient_projective_packet"] == {
+        7: F(5),
+        11: F(3),
+        13: F(7),
+        14: F(2),
+    }
+    assert result["active_principal_fiber_profile"] == {
+        1: F(3, 2),
+        2: F(5, 2),
+        3: F(7, 2),
+        4: F(1),
+    }
+    assert result["descended_H_values"] == {
+        (1, 1): F(1),
+        (1, 2): F(5, 2),
+        (4, 1): F(3, 2),
+        (4, 2): F(7, 2),
+    }
+    assert result["common_modulus_profile_from_descended_H"] == {
+        1: F(3, 2),
+        2: F(5, 2),
+        3: F(7, 2),
+        4: F(1),
+    }
+    assert result["centered_common_modulus_profile"] == {
+        1: F(-5, 8),
+        2: F(3, 8),
+        3: F(11, 8),
+        4: F(-9, 8),
+    }
+    assert result["fiber_projection_equals_physical_H_descent"]
+    assert result["centering_commutes_with_active_principal_descent"]
+    assert result["descended_packet_has_same_common_modulus_form"]
+    assert not result["single_inverse_totient_normalization_gives_power_saving"]
+    assert not result["cross_cofactor_sum_bound_proved_by_H_descent_alone"]
+    assert not result["principal_active_sector_bound_proved_by_H_descent_alone"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_active_principal_ratio_convolution_descends_factorwise() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_principal_ratio_convolution_descent_audit",
+        None,
+    )
+    assert audit is not None, "active-principal ratio descent is missing"
+    result = audit(
+        common_modulus=5,
+        active_cofactor=3,
+        left_ratio_values=((1, F(2)), (4, F(3))),
+        right_ratio_values=((1, F(5)), (2, F(7))),
+    )
+    assert result["ambient_conductor_mobius_sign"] == 1
+    assert result["left_active_principal_transform"] == {
+        1: F(2),
+        2: F(0),
+        3: F(0),
+        4: F(3),
+    }
+    assert result["right_active_principal_transform"] == {
+        1: F(5),
+        2: F(7),
+        3: F(0),
+        4: F(0),
+    }
+    assert result["factorized_descended_H"] == {
+        (1, 1): F(5),
+        (1, 2): F(7),
+        (4, 1): F(15, 2),
+        (4, 2): F(21, 2),
+    }
+    assert result["active_principal_fiber_profile"] == {
+        1: F(15, 2),
+        2: F(7),
+        3: F(21, 2),
+        4: F(5),
+    }
+    assert result["factorized_common_modulus_ratio_profile"] == {
+        1: F(15, 2),
+        2: F(7),
+        3: F(21, 2),
+        4: F(5),
+    }
+    assert result["physical_ratio_packet_descends_factorwise"]
+    assert result["single_active_totient_divides_two_principal_transforms"]
+    assert not result["active_principal_transforms_have_power_cancellation"]
+    assert not result[
+        "cross_cofactor_sum_bound_proved_by_ratio_descent_alone"
+    ]
+    assert not result[
+        "principal_active_sector_bound_proved_by_ratio_descent_alone"
+    ]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_weighted_pairwise_contractions_are_bounded_by_one_row_energy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "weighted_pairwise_contraction_audit",
+        None,
+    )
+    assert audit is not None, "weighted pairwise contraction audit is missing"
+    result = audit(
+        rows=((3, 2, -1, F(2)), (5, 4, -1, F(-1))),
+        pair_contractions=(
+            (3, 3, F(1)),
+            (3, 5, F(-1)),
+            (5, 3, F(1, 2)),
+            (5, 5, F(0)),
+        ),
+    )
+    assert result["signed_pair_sum"] == F(9, 8)
+    assert result["weighted_l1_norm"] == F(5, 4)
+    assert result["weighted_l1_square"] == F(25, 16)
+    assert result["total_euler_weight"] == F(3, 4)
+    assert result["weighted_row_energy"] == F(9, 4)
+    assert result["euler_weight_times_row_energy"] == F(27, 16)
+    assert result["pair_sum_bounded_by_weighted_l1_square"]
+    assert result["weighted_l1_square_bounded_by_one_row_energy"]
+    assert result["all_pair_operators_are_contractions"]
+    assert result["outer_mobius_signs_are_retained_but_not_spent"]
+
+
+def test_principal_active_APBD_transfers_to_proved_resonant_energy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_active_APBD_transfer_audit",
+        None,
+    )
+    assert audit is not None, "principal-active APBD transfer audit is missing"
+    result = audit(
+        physical_H_descent_verified=True,
+        ratio_convolution_factorization_verified=True,
+        centered_imprimitive_energy_bound_proved=True,
+        pairwise_common_lift_contraction_verified=True,
+        inverse_totient_euler_sum_is_subpolynomial=True,
+        bounded_determinant_count_is_subpolynomial=True,
+    )
+    assert result["active_principal_energy_is_subset_of_section_9_144"]
+    assert result["pairwise_cross_cofactor_sum_uses_one_row_energy"]
+    assert result["outer_type_blocks_must_be_reassembled_before_bound"]
+    assert result["individual_outer_type_block_bounds_proved"] == {
+        "I-I": False,
+        "I-II": False,
+        "II-I": False,
+        "II-II": False,
+    }
+    assert result["combined_I_II_APBD_bound_proved"]
+    assert result["principal_active_sector_bound_proved"]
+    assert not result["all_active_character_sectors_proved"]
     assert not result["bounded_D_one_power_gate_closed"]
     assert not result["coupled_kernel_gate_closed"]
 
