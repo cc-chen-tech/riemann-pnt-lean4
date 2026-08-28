@@ -31,6 +31,7 @@
 > | Reciprocity-oriented all-core support | Section 9.136 uses \(-a\bar r/s\equiv a\bar s/r-a/(rs)\) and swaps \((r,s,M,K,\delta)\) when \(S>R\).  The extra phase has exponent at most \(-1\), so it stays in the coupled seminorm class.  With \(u=\max(\rho,\sigma)\), \(v=\min(\rho,\sigma)\), the Type product has exponent \(u\), both \(h,\delta\) exponents are at most \(v\), and the squared fixed-fibre exponent is at most \(2(u+v)\).  Hence every core box reaches \(RS\,T^\varepsilon\) locally.  This does not estimate the signed varying-oriented-modulus sum or the nonzero determinant family |
 > | Global reduced-frequency projector | Section 9.137 performs the reciprocal orientation linearly for every core packet, producing one exact master with short modulus \(v\), long Type entry \(w=bcup\), both signs \(\mu(v)\mu(w)\), and \(a=h\delta\).  Writing \(d=(a,v)\), \(q=v/d\), \(A=a/d\), the inverse frequency is the reduced fraction \(-A\bar w_q/q\).  Equal frequencies have a common \(q\), satisfy \(A_1w_2\equiv A_2w_1\pmod q\), and cancel only the common \(\mu(q)^2\), leaving the cofactor and Type signs inside the exact projector \(\sum_{q,c}\|Z_{q,c}\|^2\).  The \(q=1\) principal reassembly, \(q>1\) projector bound, and reduced-determinant nonzero dispersion remain unproved |
 > | Nonprincipal cofactor--Type convolution | Section 9.138 splits \(d=d_1d_2\), \(h=d_1h_1\), \(\delta=d_2\delta_1\) uniquely and rewrites every separated fixed-\(q>1\) projector atom as the exact ratio convolution \(Z_{q,c}=\mu(q)\sum_{y\in U(q)}F_q(-cy)G_q(y)\).  Multiplicative Parseval retains \(\mu(d_1)\mu(d_2)\) in \(F_q\), \(\mu(w)\) and all small/I/II Type blocks in \(G_q\), and exposes an additional principal multiplicative character for every \(q>1\).  Linearly, its Ramanujan sum cancels the common \(\mu(q)\) and produces the explicit density \(F_q^{\rm tot}G_q^{\rm tot}/\varphi(q)\), while the remainder has zero \(c\)-mass.  The optimistic primitive-character envelope is \(T^{10+\gamma}\) against target \(T^{12}\), but the uncentered principal row has trivial exponent \(10+2\gamma\).  At \(\gamma=3\) a standalone positive-projector proof would require a \(T^2\) amplitude saving in its length-\(T^3\) Type mean, or exact pre-square AFE/reflection reassembly.  The physical adapter, principal reassembly, high-conductor centered estimate, and projector bound remain unproved |
+> | Oriented Ramanujan-principal bridge | Section 9.139 distinguishes the original common gcd layer, the ambient reduced modulus \(q_{\rm red}>1\), and the inverse character's primitive conductor.  The principal character modulo \(q_{\rm red}\) has primitive conductor \(1\), and \(\mu(q_{\rm red})c_{q_{\rm red}}(A)/\varphi(q_{\rm red})=1/\varphi(q_{\rm red})\) for every reduced unit label \(A\).  Hence (9.921b) is exactly the unit-label, zero-direct specialization of the Ramanujan principal row (9.748), not a new secondary main term.  Equation (9.932) now performs this principal/centered split packet-exhaustively and linearly on the entire oriented master (9.906), without a separated-weight assumption.  The standalone positive projector is therefore replaced by the weaker joint analytic gate (9.933), equivalent to (9.750); that bound and the centered determinant dispersion remain unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -20065,6 +20066,144 @@ primitive fourth-moment subfamily from the principal row.  Both leave
 the physical adapter, the principal mean bound/reassembly, the \(q>1\)
 projector estimate, and the coupled-kernel gate false.
 
+### 9.139 The new density is the old Ramanujan principal row
+
+There are three different conductor variables in the preceding
+reductions, and identifying them would give a false reassembly:
+
+* \(q_{\rm gcd}\) is the common mollifier divisor in (4.5) and
+  Sections 9.100--9.105;
+* \(q_{\rm red}=v/(|h\delta|,v)\) is the ambient reduced modulus in
+  (9.908);
+* \(q_\psi\) is the primitive conductor of an inverse character in
+  (9.749).
+
+The principal character modulo an ambient \(q_{\rm red}>1\) has
+\(q_\psi=1\).  Thus the phrase “the \(q=1\) row” after (9.748) refers
+to primitive character conductor, not to the ambient reduced modulus.
+
+This gives an exact bridge from (9.921b) to the joint character master.
+Abbreviate \(q=q_{\rm red}\).  Since every reduced label
+\(A=h\delta/(|h\delta|,v)\) is a unit modulo \(q\),
+
+\[
+ \boxed{
+ \rho_q(A):=\frac{c_q(A)}{\varphi(q)}
+ =\frac{\mu(q)}{\varphi(q)},\qquad
+ \mu(q)\rho_q(A)=\frac1{\varphi(q)}.}
+ \tag{9.929}
+\]
+
+In the zero-direct specialization of (9.748),
+\(\mathcal J_q=1\), so
+\(\widehat{\mathcal J}_q(\chi_0)=\varphi(q)\) and all other direct
+characters vanish.  Therefore one separated atom of (9.748) is
+
+\[
+ \boxed{
+ \frac{\mu(q)}{\varphi(q)}
+ \widehat{\mathcal J}_q(\chi_0)
+ \left(\sum_AF_q(A)\rho_q(A)\right)G_q^{\rm tot}
+ =\frac{F_q^{\rm tot}G_q^{\rm tot}}{\varphi(q)}.}
+ \tag{9.930}
+\]
+
+This is exactly the first term of (9.921b).  Equivalently, the
+canonical rowwise centering is
+
+\[
+ \boxed{
+ \mathcal K_{q,A}^{\circ}(w)
+ :=e_q(-A\overline w_q)-\rho_q(A),\qquad
+ \sum_{w\in U(q)}\mathcal K_{q,A}^{\circ}(w)=0,}
+ \tag{9.931}
+\]
+
+and multiplying (9.931) by the outer \(\mu(q)\), then summing the
+separated \(F_q(A)G_q(w)\), gives the density plus centered remainder in
+(9.921b).  Hence the density is not a fourth, independent secondary main
+term.  It is the unit-label, zero-direct coordinate form of the
+Ramanujan principal projection \(\mathfrak P\) already retained in
+(9.748)--(9.750).
+
+Two other principal objects remain distinct.  The condition
+\(q_{\rm red}=1\) is the literal phase-one set \(v\mid h\delta\), whose
+original \(h\)-harmonics reassemble by (9.693)--(9.697).  The variable
+\(q_{\rm gcd}\) in the two-taper Euler core (9.661)--(9.689) is the
+common divisor layer before the reduced inverse modulus is formed.
+Neither can be substituted for the ambient-modulus Ramanujan density in
+(9.929).
+
+The centering is packet-exhaustive directly on (9.906); no separated
+rank-one hypothesis is needed for this algebraic step.  For each row put
+\(d=(|h\delta|,v)\), \(q=v/d\), and
+\(A=h\delta/d\), with \(\rho_1(A)=1\).  Define
+
+\[
+ \boxed{\begin{aligned}
+ \mathfrak P_{\rm top}^{\rm or}
+ &:={}
+ \sum_{\omega,v,w,h,\delta}
+ \frac{\mu(d)\mu(w)}{\varphi(q)}
+ \widetilde C_\omega(v,w,h,\delta),\\
+ \mathfrak N_{\rm all}^{\rm or}
+ &:={}
+ \sum_{\omega,v,w,h,\delta}
+ \mu(v)\mu(w)\widetilde C_\omega(v,w,h,\delta)
+ \left\{e_q(-A\overline w_q)-\rho_q(A)\right\},\\
+ \mathscr S_{\rm core}
+ &=\mathfrak P_{\rm top}^{\rm or}
+   +\mathfrak N_{\rm all}^{\rm or}.
+ \end{aligned}}
+ \tag{9.932}
+\]
+
+All sums in (9.932) have exactly the support and packet labels of
+(9.906).  Its first equality uses
+\(\mu(v)\rho_q(A)=\mu(q)\mu(d)\mu(q)/\varphi(q)\).
+For \(q=1\), the centered brace is zero and the entire phase-one row is
+in \(\mathfrak P_{\rm top}^{\rm or}\).  For \(q>1\), the brace has
+zero mean as a function of \(w\in U(q)\).  Thus (9.932) supplies the
+previously missing **oriented Ramanujan principal/centered packet
+adapter**, while preserving both remaining Möbius signs, \(h\delta\),
+the reciprocity correction, and every AFE/reflection label inside
+\(\widetilde C_\omega\).
+
+The analytic consequence is a genuine weakening of the sufficient gate
+listed in Section 9.137.  Bounding the positive \(q_{\rm red}>1\)
+projector separately forces the Type mean scale (9.928).  The original
+master only requires
+
+\[
+ \boxed{
+ |\mathfrak P_{\rm top}^{\rm or}
+   +\mathfrak N_{\rm all}^{\rm or}|
+ \ll_{\varepsilon,W}RS T^\varepsilon,}
+ \tag{9.933}
+\]
+
+where the superscript records the reciprocity orientation in (9.906).
+Equations (9.929)--(9.932) prove the direct oriented principal/centered
+split.  They do not construct the larger double-character label map with
+an additional direct phase in (9.747); nor is that detour required to
+state (9.933) for the zero-direct core.  The estimate (9.933) is the same
+unproved weakest analytic gate as (9.750), now written
+packet-exhaustively in the oriented cofactor--Type coordinates.  It is a
+proved replacement of the **stronger standalone projector interface**,
+not a proof of the estimate itself.
+
+The helper `oriented_nonprincipal_cofactor_type_convolution_audit`
+records the primitive conductor \(1\) of the ambient principal
+character and checks (9.929) exactly: for every squarefree \(q>1\), the
+outer conductor sign times the unit Ramanujan density is
+\(1/\varphi(q)\).  The global helper
+`oriented_global_reduced_frequency_projector_audit` verifies (9.932) in
+the formal additive-phase basis for arbitrary rational packet vectors:
+the raw coefficients equal the constant principal vector plus the
+rowwise centered phase coefficients exactly.  It marks the oriented
+Ramanujan split proved, while the larger double-character packet map,
+the bound (9.933), and the coupled-kernel flags remain false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -21037,6 +21176,7 @@ Proved in this note:
 | Reciprocity-oriented all-core fixed fibres | exact local target; signed global dispersion unproved | Additive reciprocity contributes only the smooth factor \(e(-a/(rs))\), whose exponent is at most \(-1\), (9.900)--(9.902).  The transformed AFE constraints force both label exponents below \(v=\min(\rho,\sigma)\), while the Type product exponent is \(u=\max(\rho,\sigma)\), (9.903)--(9.904).  The retained product-spectrum square therefore has exponent at most \(2(u+v)\), exactly the squared local target, (9.905).  This exhausts the fixed-fibre core polytope but supplies no outer signed cancellation |
 | Global oriented reduced-frequency split | exact packet-exhaustive resonant projector; three analytic bounds unproved | The reciprocal transformation is linear at the core-master level, giving (9.906) with short modulus \(v\), long Type entry \(w=bcup\), both Möbius weights, and \(a=h\delta\).  Reduction by \(d=(a,v)\) gives the primitive frequency \(-A\bar w_q/q\), (9.908)--(9.909).  Resonance is exactly \(q_1=q_2\), \(A_1w_2\equiv A_2w_1\pmod q\), and the common conductor sign cancels while the cofactor and Type signs remain, (9.910)--(9.912).  Hence the resonant Gram is the positive but still signed-inside projector \(\sum_{q,c}\|Z_{q,c}\|^2\), (9.913), and the complement has reduced determinant \(c_1q_2-c_2q_1\ne0\), (9.914).  The \(q=1\) AFE/reflection reassembly, \(q>1\) projector estimate, and nonzero-determinant dispersion remain open |
 | Nonprincipal cofactor--Type ratio convolution | exact fixed-\(q\) factorization and principal/centered split; neither global piece closed | The unique split \(d=d_1d_2\), \(h=d_1h_1\), \(\delta=d_2\delta_1\) turns each separated unit atom into \(Z_{q,c}=\mu(q)\sum_yF_q(-cy)G_q(y)\), (9.915)--(9.920).  Multiplicative Parseval retains \(\mu(d_1)\mu(d_2)\) and \(\mu(w)\), and (9.921a) extracts the principal multiplicative character for every \(q>1\).  Returning its mean to the additive phase gives exactly \(F_q^{\rm tot}G_q^{\rm tot}/\varphi(q)\), with no conductor sign, plus a zero-\(c\)-mass remainder, (9.921b).  The optimistic primitive-character envelope is \(10+\gamma\), hence fails above \(q=T^2\), but it is not an all-character bound.  The uncentered principal row has trivial balanced exponent \(10+2\gamma\); at \(q=T^3\), (9.926)--(9.928) require a \(T^2\) amplitude saving in the length-\(T^3\) Type mean unless exact AFE/reflection/diagonal reassembly cancels it before the square.  The physical primitive-conductor adapter, principal reassembly, centered high-conductor estimate, and \(q>1\) projector bound remain unproved |
+| Oriented projector to Ramanujan-principal bridge | exact packet-exhaustive linear adapter; joint analytic gate unproved | The common gcd layer \(q_{\rm gcd}\), ambient reduced modulus \(q_{\rm red}\), and inverse-character primitive conductor \(q_\psi\) are distinct.  The principal character modulo \(q_{\rm red}>1\) has \(q_\psi=1\), and for unit \(A\), \(\mu(q_{\rm red})\rho_{q_{\rm red}}(A)=1/\varphi(q_{\rm red})\), (9.929).  Equations (9.930)--(9.931) identify the density in (9.921b) with the zero-direct unit-label specialization of the Ramanujan row (9.748); it is not an independent secondary main term and is distinct from the phase-one set \(q_{\rm red}=1\) in (9.693)--(9.697).  Equation (9.932) applies the canonical centering directly to every packet of (9.906), proving the full oriented principal/centered adapter without rank-one separation and retaining both Möbius signs and \(h\delta\).  The positive projector is thereby replaced by the weaker joint gate (9.933), equivalent to (9.750); its analytic bound, the optional larger double-character map, and centered determinant dispersion remain unproved |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |

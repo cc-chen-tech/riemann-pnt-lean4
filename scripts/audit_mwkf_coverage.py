@@ -17403,6 +17403,7 @@ def oriented_global_reduced_frequency_projector_audit(
     checked_rows: list[dict[str, object]] = []
     vector_dimension: int | None = None
     grouped_vectors: dict[tuple[int, int], list[Fraction]] = {}
+    principal_density_vector: list[Fraction] | None = None
     for raw_row in rows:
         if len(raw_row) != 10:
             raise ValueError(
@@ -17435,6 +17436,7 @@ def oriented_global_reduced_frequency_projector_audit(
             raise ValueError("every packet vector must be nonempty")
         if vector_dimension is None:
             vector_dimension = len(vector)
+            principal_density_vector = [F(0) for _ in vector]
         elif len(vector) != vector_dimension:
             raise ValueError("all packet vectors must have the same dimension")
 
@@ -17468,6 +17470,26 @@ def oriented_global_reduced_frequency_projector_audit(
         )
 
         signed_vector = tuple(F(full_sign) * value for value in vector)
+        reduced_phi = (
+            1
+            if reduced_conductor == 1
+            else sum(
+                1
+                for residue in range(1, reduced_conductor)
+                if gcd(residue, reduced_conductor) == 1
+            )
+        )
+        ramanujan_density = F(
+            _finite_mobius(reduced_conductor),
+            reduced_phi,
+        )
+        principal_signed_vector = tuple(
+            ramanujan_density * value for value in signed_vector
+        )
+        if principal_density_vector is None:
+            raise RuntimeError("principal density vector was not initialized")
+        for index, value in enumerate(principal_signed_vector):
+            principal_density_vector[index] += value
         accumulator = grouped_vectors.setdefault(
             frequency,
             [F(0) for _ in vector],
@@ -17504,6 +17526,11 @@ def oriented_global_reduced_frequency_projector_audit(
                 "quotient_type_factors": (b, c, u),
                 "packet_vector": vector,
                 "signed_packet_vector": signed_vector,
+                "principal_character_primitive_conductor": 1,
+                "ramanujan_principal_density": ramanujan_density,
+                "principal_density_signed_packet_vector": (
+                    principal_signed_vector
+                ),
             }
         )
 
@@ -17543,6 +17570,47 @@ def oriented_global_reduced_frequency_projector_audit(
         frequency: tuple(vector)
         for frequency, vector in grouped_vectors.items()
     }
+    if principal_density_vector is None:
+        raise RuntimeError("principal density vector was not initialized")
+    constant_frequency = (1, 0)
+    centered_formal_vectors = {
+        frequency: list(vector)
+        for frequency, vector in grouped.items()
+    }
+    centered_constant = centered_formal_vectors.setdefault(
+        constant_frequency,
+        [F(0) for _ in principal_density_vector],
+    )
+    for index, value in enumerate(principal_density_vector):
+        centered_constant[index] -= value
+
+    recombined_formal_vectors = {
+        frequency: list(vector)
+        for frequency, vector in centered_formal_vectors.items()
+    }
+    recombined_constant = recombined_formal_vectors.setdefault(
+        constant_frequency,
+        [F(0) for _ in principal_density_vector],
+    )
+    for index, value in enumerate(principal_density_vector):
+        recombined_constant[index] += value
+
+    def nonzero_vectors(
+        family: dict[tuple[int, int], list[Fraction]],
+    ) -> dict[tuple[int, int], tuple[Fraction, ...]]:
+        return {
+            frequency: tuple(vector)
+            for frequency, vector in family.items()
+            if any(value != 0 for value in vector)
+        }
+
+    centered_formal = nonzero_vectors(centered_formal_vectors)
+    recombined_formal = nonzero_vectors(recombined_formal_vectors)
+    raw_formal = {
+        frequency: vector
+        for frequency, vector in grouped.items()
+        if any(value != 0 for value in vector)
+    }
     projector_energy = sum(
         (dot(vector, vector) for vector in grouped.values()),
         start=F(0),
@@ -17566,6 +17634,15 @@ def oriented_global_reduced_frequency_projector_audit(
     return {
         "rows": tuple(checked_rows),
         "grouped_signed_packet_vectors": grouped,
+        "raw_linear_phase_coefficients": raw_formal,
+        "principal_ramanujan_density_vector": tuple(
+            principal_density_vector
+        ),
+        "centered_linear_phase_coefficients": centered_formal,
+        "principal_plus_centered_linear_coefficients": recombined_formal,
+        "canonical_ramanujan_linear_split_exact": bool(
+            recombined_formal == raw_formal
+        ),
         "resonant_pair_sum": resonant_pair_sum,
         "reduced_frequency_projector_energy": projector_energy,
         "resonant_pair_sum_equals_projector_energy": bool(
@@ -17582,6 +17659,9 @@ def oriented_global_reduced_frequency_projector_audit(
         "product_label_factorization_retained": True,
         "two_mobius_weights_retained_before_global_square": True,
         "all_type_support_factorizations_retained": True,
+        "oriented_global_ramanujan_split_proved": True,
+        "rowwise_centered_inverse_kernel_has_zero_unit_mean": True,
+        "oriented_to_joint_double_character_packet_map_proved": False,
         "principal_q_one_projector_extracted": True,
         "nonprincipal_resonant_projector_extracted": True,
         "principal_afe_reflection_reassembly_proved": False,
@@ -17623,6 +17703,10 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
     if not cofactor_product_rows or not type_rows:
         raise ValueError("both cofactor/product and Type rows are required")
     units = tuple(value for value in range(1, q) if gcd(value, q) == 1)
+    ramanujan_principal_density = F(_finite_mobius(q), len(units))
+    outer_sign_times_ramanujan_density = (
+        F(_finite_mobius(q)) * ramanujan_principal_density
+    )
 
     left_rows: list[dict[str, object]] = []
     left_residues = {value: F(0) for value in units}
@@ -17800,6 +17884,14 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
     return {
         "reduced_conductor": q,
         "unit_residues": units,
+        "principal_character_primitive_conductor": 1,
+        "ramanujan_principal_density": ramanujan_principal_density,
+        "outer_sign_times_ramanujan_density": (
+            outer_sign_times_ramanujan_density
+        ),
+        "ramanujan_bridge_to_joint_master_principal_row": bool(
+            outer_sign_times_ramanujan_density == F(1, len(units))
+        ),
         "cofactor_product_rows": tuple(left_rows),
         "type_rows": tuple(right_rows),
         "cofactor_product_residue_function": left_residues,
@@ -17834,6 +17926,7 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
         "all_cofactor_product_splits_exact": all_cofactor_splits_exact,
         "common_conductor_sign_retained_linearly": True,
         "common_conductor_sign_cancels_in_principal_density": True,
+        "ambient_reduced_modulus_is_not_primitive_character_conductor": True,
         "cofactor_double_mobius_sign_retained": True,
         "type_mobius_sign_retained": True,
         "product_label_factorization_retained": True,

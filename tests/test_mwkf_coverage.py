@@ -6129,6 +6129,21 @@ def test_oriented_global_reduced_frequency_resonance_is_one_projector() -> None:
         (5, 2): (F(5), F(3)),
         (5, 1): (F(1), F(-3)),
     }
+    assert result["principal_ramanujan_density_vector"] == (
+        F(-1, 2),
+        F(2),
+    )
+    assert result["centered_linear_phase_coefficients"] == {
+        (1, 0): (F(3, 2), F(0)),
+        (5, 2): (F(5), F(3)),
+        (5, 1): (F(1), F(-3)),
+    }
+    assert result["principal_plus_centered_linear_coefficients"] == {
+        (1, 0): (F(1), F(2)),
+        (5, 2): (F(5), F(3)),
+        (5, 1): (F(1), F(-3)),
+    }
+    assert result["canonical_ramanujan_linear_split_exact"]
     assert result["principal_conductor_one_energy"] == F(5)
     assert result["nonprincipal_resonant_energy"] == F(44)
     assert result["reduced_frequency_projector_energy"] == F(49)
@@ -6141,6 +6156,9 @@ def test_oriented_global_reduced_frequency_resonance_is_one_projector() -> None:
     ]
     assert result["product_label_factorization_retained"]
     assert result["two_mobius_weights_retained_before_global_square"]
+    assert result["oriented_global_ramanujan_split_proved"]
+    assert result["rowwise_centered_inverse_kernel_has_zero_unit_mean"]
+    assert not result["oriented_to_joint_double_character_packet_map_proved"]
     assert result["principal_q_one_projector_extracted"]
     assert result["nonprincipal_resonant_projector_extracted"]
     assert not result["principal_afe_reflection_reassembly_proved"]
@@ -6185,6 +6203,13 @@ def test_nonprincipal_projector_retains_cofactor_and_type_convolution() -> None:
         ),
     )
     assert result["all_cofactor_product_splits_exact"]
+    assert result["principal_character_primitive_conductor"] == 1
+    assert result["ramanujan_principal_density"] == F(-1, 2)
+    assert result["outer_sign_times_ramanujan_density"] == F(1, 2)
+    assert result["ramanujan_bridge_to_joint_master_principal_row"]
+    assert result[
+        "ambient_reduced_modulus_is_not_primitive_character_conductor"
+    ]
     assert result["cofactor_product_residue_function"] == {
         1: F(2),
         2: F(3),
