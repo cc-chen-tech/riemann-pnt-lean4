@@ -6,5 +6,7 @@ namespace HardyTheorem.OscillatoryGammaCompactLimit
 
 #check tendsto_intervalIntegral_dampedGamma_nhdsWithin_zero
 #print axioms tendsto_intervalIntegral_dampedGamma_nhdsWithin_zero
+#check tendsto_intervalIntegral_dampedGamma_zero_one_nhdsWithin_zero
+#print axioms tendsto_intervalIntegral_dampedGamma_zero_one_nhdsWithin_zero
 
 end HardyTheorem.OscillatoryGammaCompactLimit

@@ -99,4 +99,86 @@ theorem tendsto_intervalIntegral_dampedGamma_nhdsWithin_zero
     intervalIntegral.tendsto_integral_filter_of_dominated_convergence
       bound hmeas hmajor hbound_int hpoint
 
+/-- The same Abel limit on `(0,1]`.  Continuity at the endpoint `0` is not
+claimed; `0 < Re z` is exactly the local integrability condition for the
+dominating power. -/
+theorem tendsto_intervalIntegral_dampedGamma_zero_one_nhdsWithin_zero
+    {z : ℂ} {c : ℝ} (hz0 : 0 < z.re) :
+    Tendsto
+      (fun r : ℝ => ∫ u in (0 : ℝ)..1,
+        (u : ℂ) ^ (z - 1) * Complex.exp (-(r * u)) *
+          Complex.exp (-I * (c * u)))
+      (nhdsWithin 0 (Ici 0))
+      (nhds (∫ u in (0 : ℝ)..1,
+        (u : ℂ) ^ (z - 1) * Complex.exp (-I * (c * u)))) := by
+  let F : ℝ → ℝ → ℂ := fun r u =>
+    (u : ℂ) ^ (z - 1) * Complex.exp (-(r * u)) *
+      Complex.exp (-I * (c * u))
+  let f : ℝ → ℂ := fun u =>
+    (u : ℂ) ^ (z - 1) * Complex.exp (-I * (c * u))
+  let bound : ℝ → ℝ := fun u => u ^ (z.re - 1)
+  have hF_cont (r : ℝ) : ContinuousOn (F r) (uIoc (0 : ℝ) 1) := by
+    intro u hu
+    have huIoc : u ∈ Ioc (0 : ℝ) 1 := by
+      simpa [uIoc_of_le (by norm_num : (0 : ℝ) ≤ 1)] using hu
+    have hupos : 0 < u := huIoc.1
+    have hu0 : u ≠ 0 := hupos.ne'
+    have hpow : ContinuousAt (fun v : ℝ => (v : ℂ) ^ (z - 1)) u :=
+      Complex.continuousAt_ofReal_cpow_const _ _ (Or.inr hu0)
+    have hdamp : ContinuousAt (fun v : ℝ => Complex.exp (-(r * v))) u := by
+      fun_prop
+    have hphase : ContinuousAt (fun v : ℝ => Complex.exp (-I * (c * v))) u := by
+      fun_prop
+    exact ((hpow.mul hdamp).mul hphase).continuousWithinAt
+  have hbound_int : IntervalIntegrable bound volume 0 1 := by
+    dsimp only [bound]
+    exact intervalIntegral.intervalIntegrable_rpow' (by linarith)
+  have hmeas : ∀ᶠ r in nhdsWithin 0 (Ici 0),
+      AEStronglyMeasurable (F r) (volume.restrict (uIoc 0 1)) := by
+    exact Eventually.of_forall fun r =>
+      (hF_cont r).aestronglyMeasurable measurableSet_uIoc
+  have hmajor : ∀ᶠ r in nhdsWithin 0 (Ici 0),
+      ∀ᵐ u ∂volume, u ∈ uIoc (0 : ℝ) 1 → ‖F r u‖ ≤ bound u := by
+    filter_upwards [self_mem_nhdsWithin] with r hr
+    filter_upwards with u hu
+    have huIoc : u ∈ Ioc (0 : ℝ) 1 := by
+      simpa [uIoc_of_le (by norm_num : (0 : ℝ) ≤ 1)] using hu
+    have hupos : 0 < u := huIoc.1
+    have hru : 0 ≤ r * u := mul_nonneg hr hupos.le
+    have hdamp : Real.exp (-(r * u)) ≤ 1 := by
+      rw [Real.exp_le_one_iff]
+      exact neg_nonpos.mpr hru
+    dsimp only [F, bound]
+    rw [norm_mul, norm_mul,
+      Complex.norm_cpow_eq_rpow_re_of_pos hupos]
+    have hdampNorm : ‖Complex.exp (-(r * u))‖ = Real.exp (-(r * u)) := by
+      rw [Complex.norm_exp]
+      simp
+    have hphaseNorm : ‖Complex.exp (-I * (c * u))‖ = 1 := by
+      rw [Complex.norm_exp]
+      simp
+    rw [hdampNorm, hphaseNorm, mul_one]
+    exact mul_le_of_le_one_right (Real.rpow_nonneg hupos.le _) hdamp
+  have hpoint : ∀ᵐ u ∂volume, u ∈ uIoc (0 : ℝ) 1 →
+      Tendsto (fun r => F r u) (nhdsWithin 0 (Ici 0)) (nhds (f u)) := by
+    filter_upwards with u hu
+    have hdamp : Tendsto (fun r : ℝ => Complex.exp (-(r * u)))
+        (nhdsWithin 0 (Ici 0)) (nhds 1) := by
+      have hcont : ContinuousAt (fun r : ℝ => Complex.exp (-(r * u))) 0 := by
+        fun_prop
+      have hval : Complex.exp (-((0 : ℝ) * u)) = 1 := by simp
+      rw [← hval]
+      exact hcont.continuousWithinAt
+    have hpow : Tendsto (fun _ : ℝ => (u : ℂ) ^ (z - 1))
+        (nhdsWithin 0 (Ici 0)) (nhds ((u : ℂ) ^ (z - 1))) :=
+      tendsto_const_nhds
+    have hphase : Tendsto (fun _ : ℝ => Complex.exp (-I * (c * u)))
+        (nhdsWithin 0 (Ici 0)) (nhds (Complex.exp (-I * (c * u)))) :=
+      tendsto_const_nhds
+    dsimp only [F, f]
+    simpa using ((hpow.mul hdamp).mul hphase)
+  simpa [F, f] using
+    intervalIntegral.tendsto_integral_filter_of_dominated_convergence
+      bound hmeas hmajor hbound_int hpoint
+
 end HardyTheorem.OscillatoryGammaCompactLimit

@@ -1048,6 +1048,16 @@ close the compact-plus-right-tail part of the Abel passage.  It remains to
 add the absolutely convergent `(0,1]` piece and identify the damped whole-ray
 integral with the already formal rotated Mellin/Gamma expression.
 
+The endpoint piece is now formal.  Under the exact local condition
+`0<Re(z)`, Lean proves the analogue of (8.15) on `[0,1]`.  The proof only
+uses continuity on `(0,1]`; the omitted endpoint has measure zero, while
+`intervalIntegrable_rpow'` supplies integrability of
+`u^(Re(z)-1)`.  Hence all three limiting pieces needed for the Abel passage
+are available: the origin segment, an arbitrary fixed positive compact
+segment, and a right tail uniform in the damping.  The remaining boundary
+Gamma gate is now algebraic/measure-theoretic assembly with the rotated
+Mellin identity, not a further oscillatory estimate.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta
