@@ -13102,6 +13102,303 @@ def sector_harmonic_farey_operator_audit(
     }
 
 
+def zero_direct_principal_selberg_reassembly_audit(
+    *,
+    cutoff: int,
+    common_factor: int,
+    packet_coefficients: dict[tuple[int, int], Fraction],
+) -> dict[str, object]:
+    """Reassemble the zero-direct principal Selberg taper symbolically.
+
+    The formal vector (c, {p: c_p}) denotes
+    c + sum_p c_p * log(p) / log(cutoff).
+    """
+
+    level = int(cutoff)
+    common = int(common_factor)
+    if level <= 1:
+        raise ValueError("the Selberg cutoff must exceed one")
+    if common <= 0 or common > level:
+        raise ValueError("the common factor must lie in [1, cutoff]")
+    if not packet_coefficients:
+        raise ValueError("at least one product/type packet is required")
+
+    packets: dict[tuple[int, int], Fraction] = {}
+    for (product_label, type_label), coefficient in packet_coefficients.items():
+        product_label = int(product_label)
+        type_label = int(type_label)
+        if product_label <= 0 or type_label <= 0:
+            raise ValueError("product and Type labels must be positive")
+        packets[(product_label, type_label)] = F(coefficient)
+
+    def empty_vector() -> tuple[Fraction, dict[int, Fraction]]:
+        return F(0), {}
+
+    def add_taper_term(
+        vector: tuple[Fraction, dict[int, Fraction]],
+        *,
+        divisor: int,
+        scalar: Fraction,
+    ) -> tuple[Fraction, dict[int, Fraction]]:
+        constant, logarithms = vector
+        mobius = F(_finite_mobius(divisor))
+        constant += scalar * mobius
+        logarithms = dict(logarithms)
+        for prime, exponent in _finite_prime_exponents(
+            common * divisor
+        ).items():
+            logarithms[prime] = (
+                logarithms.get(prime, F(0))
+                - scalar * mobius * exponent
+            )
+            if logarithms[prime] == 0:
+                del logarithms[prime]
+        return constant, logarithms
+
+    def add_vector(
+        left: tuple[Fraction, dict[int, Fraction]],
+        right: tuple[Fraction, dict[int, Fraction]],
+        *,
+        scalar: Fraction,
+    ) -> tuple[Fraction, dict[int, Fraction]]:
+        constant = left[0] + scalar * right[0]
+        logarithms = dict(left[1])
+        for prime, coefficient in right[1].items():
+            logarithms[prime] = (
+                logarithms.get(prime, F(0)) + scalar * coefficient
+            )
+            if logarithms[prime] == 0:
+                del logarithms[prime]
+        return constant, logarithms
+
+    def public_vector(
+        vector: tuple[Fraction, dict[int, Fraction]],
+    ) -> dict[str, object]:
+        return {
+            "constant": vector[0],
+            "log_prime_coefficients": dict(sorted(vector[1].items())),
+        }
+
+    direct_total = empty_vector()
+    enumerated_complete_total = empty_vector()
+    core_total = empty_vector()
+    boundary_total = empty_vector()
+    rows: list[dict[str, object]] = []
+    boundary_cofactors: list[int] = []
+    strict_bounds: list[Fraction] = []
+
+    for (product_label, type_label), packet_coefficient in sorted(
+        packets.items()
+    ):
+        unmatched_primes = tuple(
+            prime
+            for prime in _finite_prime_exponents(product_label)
+            if type_label % prime != 0 and common % prime != 0
+        )
+        unmatched_radical = 1
+        for prime in unmatched_primes:
+            unmatched_radical *= prime
+
+        direct = empty_vector()
+        enumerated_complete = empty_vector()
+        boundary = empty_vector()
+        row_boundary_cofactors: list[int] = []
+        for divisor in _positive_divisors(unmatched_radical):
+            enumerated_complete = add_taper_term(
+                enumerated_complete,
+                divisor=divisor,
+                scalar=F(1),
+            )
+            if common * divisor <= level:
+                direct = add_taper_term(
+                    direct,
+                    divisor=divisor,
+                    scalar=F(1),
+                )
+            else:
+                boundary = add_taper_term(
+                    boundary,
+                    divisor=divisor,
+                    scalar=F(1),
+                )
+                row_boundary_cofactors.append(unmatched_radical // divisor)
+
+        core = empty_vector()
+        if not unmatched_primes:
+            core = add_taper_term(
+                empty_vector(),
+                divisor=1,
+                scalar=F(1),
+            )
+        elif len(unmatched_primes) == 1:
+            core = (F(0), {unmatched_primes[0]: F(1)})
+
+        direct_total = add_vector(
+            direct_total,
+            direct,
+            scalar=packet_coefficient,
+        )
+        enumerated_complete_total = add_vector(
+            enumerated_complete_total,
+            enumerated_complete,
+            scalar=packet_coefficient,
+        )
+        core_total = add_vector(
+            core_total,
+            core,
+            scalar=packet_coefficient,
+        )
+        boundary_total = add_vector(
+            boundary_total,
+            boundary,
+            scalar=packet_coefficient,
+        )
+        boundary_cofactors.extend(row_boundary_cofactors)
+        strict_bounds.append(F(unmatched_radical, level))
+        rows.append(
+            {
+                "product_label": product_label,
+                "type_label": type_label,
+                "common_factor": common,
+                "packet_coefficient": packet_coefficient,
+                "unmatched_primes": unmatched_primes,
+                "unmatched_radical": unmatched_radical,
+                "direct_truncated_formal_weight": public_vector(direct),
+                "enumerated_complete_formal_weight": public_vector(
+                    enumerated_complete
+                ),
+                "euler_core_formal_weight": public_vector(core),
+                "long_divisor_boundary_formal_weight": public_vector(boundary),
+                "boundary_cofactors": tuple(row_boundary_cofactors),
+                "euler_core_identity_holds": enumerated_complete == core,
+                "truncated_equals_core_minus_boundary": (
+                    direct
+                    == add_vector(core, boundary, scalar=F(-1))
+                ),
+                "every_boundary_cofactor_is_short": all(
+                    F(cofactor) < F(common * unmatched_radical, level)
+                    and F(cofactor) <= F(common * product_label, level)
+                    for cofactor in row_boundary_cofactors
+                ),
+            }
+        )
+
+    return {
+        "cutoff": level,
+        "common_factor": common,
+        "packet_coefficients": packets,
+        "packet_rows": tuple(rows),
+        "direct_truncated_formal_weight": public_vector(direct_total),
+        "enumerated_complete_formal_weight": public_vector(
+            enumerated_complete_total
+        ),
+        "complete_euler_core_formal_weight": public_vector(core_total),
+        "long_divisor_boundary_formal_weight": public_vector(boundary_total),
+        "complete_core_supported_on_at_most_one_unmatched_prime": all(
+            bool(row["euler_core_identity_holds"]) for row in rows
+        ),
+        "truncated_equals_core_minus_boundary": (
+            direct_total
+            == add_vector(core_total, boundary_total, scalar=F(-1))
+        ),
+        "boundary_cofactors": tuple(boundary_cofactors),
+        "largest_boundary_cofactor": max(boundary_cofactors, default=0),
+        "boundary_cofactor_strict_upper_bound": max(
+            (common * bound for bound in strict_bounds),
+            default=F(0),
+        ),
+        "every_boundary_cofactor_is_short": all(
+            bool(row["every_boundary_cofactor_is_short"]) for row in rows
+        ),
+        "outer_mobius_sum_performed_before_absolute_values": True,
+        "zero_direct_coefficient_included": True,
+        "full_afe_packet_adapter_proved": False,
+        "zero_direct_principal_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def zero_direct_principal_box_boundary_audit(
+    *,
+    cutoff: int,
+    common_factor: int,
+    first_mollifier_scale: int,
+    second_mollifier_scale: int,
+    time_scale: int,
+    logarithmic_factor: Fraction = Fraction(1),
+) -> dict[str, object]:
+    """Record the polylog-core length of the reflected principal boundary.
+
+    ``logarithmic_factor`` represents the positive factor L^(2B) in (5.8).
+    All returned inequalities are exact rational scale comparisons.
+    """
+
+    level = int(cutoff)
+    common = int(common_factor)
+    first_scale = int(first_mollifier_scale)
+    second_scale = int(second_mollifier_scale)
+    time = int(time_scale)
+    log_factor = F(logarithmic_factor)
+    if level <= 1:
+        raise ValueError("the Selberg cutoff must exceed one")
+    if common <= 0 or common > level:
+        raise ValueError("the common factor must lie in [1, cutoff]")
+    if first_scale <= 0 or second_scale <= 0 or time <= 0:
+        raise ValueError("all dyadic and time scales must be positive")
+    if log_factor <= 0:
+        raise ValueError("the logarithmic factor must be positive")
+    if common * first_scale > 2 * level or common * second_scale > 2 * level:
+        raise ValueError("the dyadic box violates the core support qR,qS <= 2N")
+
+    product_label_upper_bound = (
+        F(64 * first_scale * second_scale, time) * log_factor
+    )
+    common_scaled_product_over_cutoff = (
+        F(common, level) * product_label_upper_bound
+    )
+    dyadic_boundary_upper_bound = (
+        F(128 * min(first_scale, second_scale), time) * log_factor
+    )
+    global_boundary_upper_bound = (
+        F(256 * level, common * time) * log_factor
+    )
+    theta_three_support_condition_holds = level == time**3
+
+    return {
+        "cutoff": level,
+        "common_factor": common,
+        "first_mollifier_scale": first_scale,
+        "second_mollifier_scale": second_scale,
+        "time_scale": time,
+        "logarithmic_factor": log_factor,
+        "product_label_upper_bound": product_label_upper_bound,
+        "common_scaled_product_over_cutoff": (
+            common_scaled_product_over_cutoff
+        ),
+        "dyadic_boundary_upper_bound": dyadic_boundary_upper_bound,
+        "global_boundary_upper_bound": global_boundary_upper_bound,
+        "common_scaled_product_obeys_dyadic_bound": (
+            common_scaled_product_over_cutoff <= dyadic_boundary_upper_bound
+        ),
+        "dyadic_bound_obeys_global_bound": (
+            dyadic_boundary_upper_bound <= global_boundary_upper_bound
+        ),
+        "theta_three_support_condition_holds": (
+            theta_three_support_condition_holds
+        ),
+        "theta_three_boundary_exponent": (
+            F(2) if theta_three_support_condition_holds else None
+        ),
+        "theta_three_common_factor_gain": (
+            F(1, common) if theta_three_support_condition_holds else None
+        ),
+        "polylogarithmic_loss_retained": True,
+        "weighted_divisor_lattice_adapter_proved": False,
+        "zero_direct_principal_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

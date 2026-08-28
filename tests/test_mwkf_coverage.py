@@ -4263,6 +4263,136 @@ def test_sector_note_keeps_original_and_normalized_modulus_scales_separate() -> 
     assert r"\sum_s|b_s|^2" in sector_operator
 
 
+def test_zero_direct_principal_taper_is_euler_core_plus_short_boundary() -> None:
+    audit = getattr(
+        coverage_audit,
+        "zero_direct_principal_selberg_reassembly_audit",
+        None,
+    )
+    assert audit is not None, "zero-direct principal reassembly is missing"
+
+    result = audit(
+        cutoff=5,
+        common_factor=1,
+        packet_coefficients={
+            (30, 1): F(1),
+            (5, 1): F(2),
+            (30, 30): F(-1),
+        },
+    )
+    assert result["direct_truncated_formal_weight"] == {
+        "constant": F(-3),
+        "log_prime_coefficients": {2: F(1), 3: F(1), 5: F(3)},
+    }
+    assert result["complete_euler_core_formal_weight"] == {
+        "constant": F(-1),
+        "log_prime_coefficients": {5: F(2)},
+    }
+    assert result["long_divisor_boundary_formal_weight"] == {
+        "constant": F(2),
+        "log_prime_coefficients": {2: F(-1), 3: F(-1), 5: F(-1)},
+    }
+    assert result["truncated_equals_core_minus_boundary"]
+    assert result["complete_core_supported_on_at_most_one_unmatched_prime"]
+    assert result["every_boundary_cofactor_is_short"]
+    assert result["largest_boundary_cofactor"] == 5
+    assert result["boundary_cofactor_strict_upper_bound"] == F(6)
+    assert result["common_factor"] == 1
+    assert result["outer_mobius_sum_performed_before_absolute_values"]
+    assert result["zero_direct_coefficient_included"]
+    assert not result["full_afe_packet_adapter_proved"]
+    assert not result["zero_direct_principal_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    common_factor = audit(
+        cutoff=30,
+        common_factor=6,
+        packet_coefficients={(35, 1): F(1)},
+    )
+    assert common_factor["direct_truncated_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {5: F(1)},
+    }
+    assert common_factor["complete_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {},
+    }
+    assert common_factor["long_divisor_boundary_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {5: F(-1)},
+    }
+    assert common_factor["boundary_cofactors"] == (5, 1)
+    assert common_factor["largest_boundary_cofactor"] == 5
+    assert common_factor["boundary_cofactor_strict_upper_bound"] == F(7)
+    assert common_factor["truncated_equals_core_minus_boundary"]
+    assert common_factor["every_boundary_cofactor_is_short"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.100 The zero-direct principal taper" in text
+    assert "| Zero-direct principal Selberg reassembly |" in text
+    assert r"k<\frac{qR_q(m,n)}N\leq\frac{qm}N" in text
+    assert "does not prove a bound for the zero-direct principal master" in text
+    assert "There is no common Möbius sign to restore" in text
+    assert "The factor \\(\\mu(q)\\)" not in text
+    assert "coefficient is not yet known to be independent" in text
+
+
+def test_zero_direct_principal_core_box_shortens_the_reflected_boundary() -> None:
+    audit = getattr(
+        coverage_audit,
+        "zero_direct_principal_box_boundary_audit",
+        None,
+    )
+    assert audit is not None, "zero-direct core-box boundary ledger is missing"
+
+    result = audit(
+        cutoff=1000,
+        common_factor=5,
+        first_mollifier_scale=200,
+        second_mollifier_scale=300,
+        time_scale=10,
+        logarithmic_factor=F(7, 3),
+    )
+    assert result["product_label_upper_bound"] == F(896000)
+    assert result["common_scaled_product_over_cutoff"] == F(4480)
+    assert result["dyadic_boundary_upper_bound"] == F(17920, 3)
+    assert result["global_boundary_upper_bound"] == F(35840, 3)
+    assert result["common_scaled_product_obeys_dyadic_bound"]
+    assert result["dyadic_bound_obeys_global_bound"]
+    assert result["theta_three_support_condition_holds"]
+    assert result["theta_three_boundary_exponent"] == F(2)
+    assert result["theta_three_common_factor_gain"] == F(1, 5)
+    assert not result["weighted_divisor_lattice_adapter_proved"]
+    assert not result["zero_direct_principal_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    non_theta_three = audit(
+        cutoff=100,
+        common_factor=2,
+        first_mollifier_scale=20,
+        second_mollifier_scale=30,
+        time_scale=5,
+    )
+    assert not non_theta_three["theta_three_support_condition_holds"]
+    assert non_theta_three["theta_three_boundary_exponent"] is None
+    assert non_theta_three["theta_three_common_factor_gain"] is None
+
+    with pytest.raises(ValueError, match="core support"):
+        audit(
+            cutoff=100,
+            common_factor=3,
+            first_mollifier_scale=100,
+            second_mollifier_scale=10,
+            time_scale=10,
+        )
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"m=|h\delta|\leq\frac{64RS}T\mathscr L^{2B}" in text
+    assert r"\frac{256N}{qT}\mathscr L^{2B}" in text
+    assert r"T^{2+o(1)}/q" in text
+    assert "Thus at (N=T^3)" not in text
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,
