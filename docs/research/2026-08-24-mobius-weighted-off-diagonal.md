@@ -14232,6 +14232,312 @@ the zero estimate.  Its full AFE norm adapter, principal twisted-moment
 target, nonprincipal signed dispersion, and coupled-kernel flags remain
 false.
 
+### 9.98 Arbitrary direct coefficients and sector harmonics have separate finite adapters
+
+The fixed-unit hypothesis on \(B\) in Section 9.97 need not be satisfied
+by a packet-dependent direct coefficient.  Independently, the physical
+continuous sector expansion in (9.511)--(9.513) produces
+
+\[
+ B=\xi+jQ,
+ \qquad 0<\xi<Q,\quad j\in\mathbb Z,
+ \tag{9.646}
+\]
+
+which is nonzero but may share prime factors with its sector denominator.
+The arbitrary-\(B\) obstruction in the principal master can be removed
+exactly.  Start from the unit-mask expansion
+(9.640), so that \(s=\ell q\), \(n=\ell m\), and the direct phase is
+\(e_q(Bm)\).  For each resulting quotient put
+
+\[
+ v=(B,q),\qquad q=vr,\qquad B=vB_v.
+\]
+
+Then \((B_v,r)=1\) and
+
+\[
+ \boxed{e_q(Bm)=e_r(B_vm).}
+ \tag{9.647}
+\]
+
+For fixed \((\ell,v)\), distinct \(q\)'s give distinct reduced moduli
+\(r=q/v\), all in
+
+\[
+ \frac{S}{\ell v}<r\leq\frac{2S}{\ell v}.
+\]
+
+Thus the reduced points \(B_v/r\pmod1\) are distinct and have circular
+spacing at least \(\ell^2v^2/(4S^2)\).  The ordinary additive large
+sieve now gives
+
+\[
+ \sum_{\substack{q:\,\ell q\in\mathcal S\\(B,q)=v}}
+ \left|\sum_{\ell m\leq X}c_{\ell m}e_q(Bm)\right|^2
+ \ll
+ \left(\frac X\ell+\frac{S^2}{\ell^2v^2}\right)
+ \sum_m|c_{\ell m}|^2.
+ \tag{9.648}
+\]
+
+The value \(v\) is uniquely determined by \((B,q)\), so the first
+Cauchy factor in (9.642) is unchanged: every \(b_s\) is still repeated
+only once for each \(\ell\mid s\).  In the second factor, at most
+\(\tau(|B|)\) gcd strata occur.  Consequently (9.642) extends to every
+nonzero integer \(B\) as
+
+\[
+ \boxed{
+ |\mathscr S_{{\rm prin},B}|^2
+ \ll_\varepsilon
+ \tau(|B|)(S^2+X)(SX)^\varepsilon
+ \left(\sum_s|U_s^{\rm res}|^2\right)
+ \left(\sum_n|c_n|^2\right).}
+ \tag{9.649}
+\]
+
+Combining with (9.643)--(9.644) gives the corresponding arbitrary-\(B\)
+version of (9.645):
+
+\[
+ \boxed{
+ |\mathscr S_{{\rm prin},B}|^2
+ \ll_\varepsilon
+ \tau(|B|)(S^2+X)HD(SX)^\varepsilon
+ \|f\|_2^2\|g\|_2^2
+ \|\alpha\|_2^2\|\beta\|_2^2.}
+ \tag{9.650}
+\]
+
+The sector harmonic itself has a separate finite truncation.  Put
+
+\[
+ c_{\xi,j}
+ :=\frac{Q(1-e(-\xi/Q))}{2\pi i(\xi+jQ)}.
+ \tag{9.651}
+\]
+
+At a nonboundary Type entry \(x=w/s\), so that \(s\nmid Qw\), symmetric
+truncation and Abel summation of each geometric tail give
+
+\[
+ \boxed{
+ F_{\xi,Q}(w/s)
+ =\sum_{|j|\leq J}c_{\xi,j}
+   e((\xi+jQ)w/s)+R_{\xi,J}(w/s),
+ \qquad
+ |R_{\xi,J}(w/s)|
+ \ll\frac1{J\|Qw/s\|}
+ \leq\frac{s}{J}.}
+ \tag{9.652}
+\]
+
+Indeed, a partial geometric sum is at most
+\(1/|\sin(\pi Qw/s)|\), while the two monotone tails have first terms
+\(O(J^{-1})\).  The rational nonboundary condition gives
+\(\|Qw/s\|\geq1/s\).  The same coefficients have the uniform projective
+bound
+
+\[
+ \boxed{
+ \sum_{|j|\leq J}|c_{\xi,j}|
+ \leq 2+\frac2\pi\{1+\log(J+1)\}
+ \ll1+\log J.}
+ \tag{9.653}
+\]
+
+The two potentially small denominators \(j=0,-1\) are cancelled by
+\(|1-e(-\xi/Q)|=2\sin(\pi\xi/Q)\); all other terms form harmonic sums.
+Every retained coefficient \(B=\xi+jQ\) is nonzero.  Inside the normalized
+sector model, taking \(J=T^C\) with a sufficiently large fixed \(C\),
+(9.652) makes the remainder smaller than any prescribed power after the
+crude finite majorant (5.8d), while (9.653) costs only
+\(T^\varepsilon\).  Moreover
+\(|B|\ll QJ\) is polynomial in \(T\), so
+\(\tau(|B|)\ll_\varepsilon T^\varepsilon\).  The normalized
+\(Q^{-1}\sum_{0<\xi<Q}\) sector average adds no power when the bound is
+uniform in \(\xi\).  This truncation statement does not by itself identify
+the normalized sector denominator \(s\ll Q\) in (9.504)--(9.525) with the
+original long principal modulus \(s\asymp T^3\) in (9.629)--(9.650).
+
+There is no hidden power saving in this adapter.  For one-bounded
+\(f_h,g_\delta\), (9.636) gives the sharper pointwise estimate
+\(|U_s^{\rm res}|\ll_\varepsilon HD/S\) on \(s\asymp S\), while the
+divisor-bounded Type convolution has
+\(\sum_n|c_n|^2\ll_\varepsilon X\).  Hence the natural finite model gives
+
+\[
+ \boxed{
+ \sum_s|U_s^{\rm res}|^2
+ \ll_\varepsilon\frac{(HD)^2}{S},\qquad
+ |\mathscr S_{{\rm prin},B}|^2
+ \ll_\varepsilon
+ (S^2+X)\frac{(HD)^2X}{S}.}
+ \tag{9.654}
+\]
+
+At the original principal-master scale \(S=X=T^3\) and \(HD=T^5\), the
+last exponent is \(16\), exactly
+the square of the trivial \(T^8\) amplitude.  Thus individual-\(B\)
+Farey spacing removes the formal nonunit obstruction but does not supply
+any part of the missing \(T^2\) amplitude saving.  This calibration uses
+no sector parameter \(Q\).  Importing the normalized sector average here
+would first require an analytic map between two different coordinate
+models, which has not been proved.
+
+Therefore arbitrary nonzero direct coefficients in the principal master
+and the discontinuous sector Fourier endpoint are not separate algebraic
+obstructions.  The jump correction is already controlled by
+(9.514)--(9.515), while the continuous nonboundary sector harmonics have
+only logarithmic projective cost.  What is **not** proved is that these
+two finite adapters act on one and the same packet-exhaustive coefficient
+family, or that the complete AFE/reflection coefficients have exactly the
+\(L^2\) normalization required to put (9.650) within the twisted-moment target.
+The two reflected directions, the explicit diagonal, and all remaining
+modulus weights must still be placed in one exhaustive ledger.  The
+nonprincipal double-centered dispersion is unchanged.
+
+The extended helper principal_product_label_additive_master_audit groups
+every unit-mask quotient by \(v=(B,q)\), verifies (9.647), and applies
+the finite Farey inequality separately to the reduced moduli.  The helper
+sector_fourier_nonboundary_truncation_audit checks the finite partial sum,
+the power tail in (9.652), the logarithmic coefficient bound (9.653), and
+the fact that all physical direct coefficients are nonzero.  Both leave
+the cross-model packet adapter, full physical norm adapter, and
+coupled-kernel flags false.
+
+### 9.99 The normalized sector average recovers one frequency length
+
+The physical sector projector averages all \(0<\xi<Q\) with the
+normalization \(Q^{-1}\).  On a fixed coefficient family in the normalized
+sector variables, this average can be combined with Farey spacing before
+any outer absolute value.  This is not a continuation of the original
+\(S=X=T^3\) calibration in (9.654): the sector model in (9.504) has
+\(s\leq Q\), and its critical face in (9.498)--(9.525) has
+\(s\asymp Q\asymp T\).
+
+Let \(\mathcal F\) be a finite set of distinct reduced points
+\(t/s\pmod1\), with \(S<s\leq2S\), and attach fixed coefficients
+\(A_{s,t}\).  Put
+
+\[
+ Z_B:=\sum_{(s,t)\in\mathcal F}A_{s,t}e_s(Bt),
+ \qquad
+ E_{\mathcal F}:=\sum_{(s,t)\in\mathcal F}|A_{s,t}|^2,
+ \tag{9.655}
+\]
+
+and use the truncated physical coefficients (9.651):
+
+\[
+ Y_\xi^{(J)}
+ :=\sum_{|j|\leq J}c_{\xi,j}Z_{\xi+jQ}.
+ \tag{9.656}
+\]
+
+For fixed \(\xi\), weighted Cauchy and (9.653) give
+
+\[
+ |Y_\xi^{(J)}|^2
+ \ll\log(2J)
+ \sum_{|j|\leq J}|c_{\xi,j}|
+ |Z_{\xi+jQ}|^2.
+ \tag{9.657}
+\]
+
+The map \((\xi,j)\mapsto B=\xi+jQ\) is injective on
+\(0<\xi<Q\); its image consists of the nonmultiples of \(Q\).  Group
+\(j\) into \(\{-1,0\}\) and the positive and negative dyadic blocks
+\(|j|\asymp J_0\).  On such a block,
+\(|c_{\xi,j}|\ll J_0^{-1}\), while its \(B\)-frequencies lie in an
+integer interval of length \(O(QJ_0)\).  The dual additive large sieve
+for the \(1/(4S^2)\)-spaced points in \(\mathcal F\) gives
+
+\[
+ \sum_{B\ {\rm in\ the\ block}}|Z_B|^2
+ \ll(QJ_0+S^2)E_{\mathcal F}.
+ \tag{9.658}
+\]
+
+Sum the geometric \(S^2/J_0\) terms and the logarithmically many \(Q\)
+terms, then divide by the physical \(Q\).  This proves the finite
+operator estimate
+
+\[
+ \boxed{
+ \frac1Q\sum_{\xi=1}^{Q-1}|Y_\xi^{(J)}|^2
+ \ll
+ \log(2J)\left\{\log(2J)+1+\frac{S^2}{Q}\right\}
+ E_{\mathcal F}.}
+ \tag{9.659}
+\]
+
+Thus the dominant \(S^2\) Farey term is divided by the full sector
+frequency length \(Q\).  No cancellation from either Möbius function
+has been assumed.
+
+For any residue-aggregated fixed coefficient family, put
+
+\[
+ A_{s,t}
+ :=b_s\sum_{\substack{n\leq X\\n\equiv t\ ({\rm mod}\ s)}}c_n,
+ \qquad (t,s)=1.
+\]
+
+There are at most \(1+X/s\) integers \(n\leq X\) in one residue class.
+Cauchy inside each class therefore gives
+
+\[
+ E_{\mathcal F}
+ \leq
+ \left(1+\frac XS\right)
+ \left(\sum_s|b_s|^2\right)
+ \left(\sum_n|c_n|^2\right).
+\]
+
+Combining this with (9.659) yields
+
+\[
+ \boxed{
+ \frac1Q\sum_{\xi=1}^{Q-1}|Y_\xi^{(J)}|^2
+ \ll_\varepsilon
+ T^\varepsilon
+ \left(1+\frac{S^2}{Q}\right)
+ \left(1+\frac XS\right)
+ \left(\sum_s|b_s|^2\right)
+ \left(\sum_n|c_n|^2\right).}
+ \tag{9.660}
+\]
+
+The truncation remainder is negligible by (9.652), and the jump boundary
+remains covered by (9.515).  The correct normalized-sector calibration is
+
+\[
+ S\asymp X\asymp Q\asymp T.
+\]
+
+Then the operator factor in (9.659) is \(T^{1+o(1)}\).  Even if the fixed
+coefficient energy \(E_{\mathcal F}\) is only diagonal-sized,
+\(T^{2+o(1)}\), as in (9.482), the resulting ceiling is
+\(T^{3+\varepsilon}\), against the sector target \(T^{2+\varepsilon}\)
+in (9.508).  Thus the normalized Farey operator still leaves one full
+power of energy, equivalently a half-power before squaring.  This agrees
+with the independent ledger (9.516).  It is not comparable to the
+\(T^8\) original-modulus ceiling in (9.654), because no adapter between
+the \(s\asymp T^3\) principal master and the \(s\asymp Q\asymp T\)
+sector family has been constructed.
+
+The helper sector_harmonic_farey_operator_audit constructs every
+\((\xi,j)\) frequency, checks global injectivity, performs the dyadic
+weighted Cauchy/Farey bound block by block, and verifies the normalized
+finite operator inequality (9.659).  It marks only the fixed-coefficient
+operator as proved.  It separately records whether the supplied finite
+moduli satisfy the physical support condition \(s\leq Q\), but never
+claims an adapter from the original long-modulus principal master.  The
+physical coefficient-energy target and the coupled-kernel gate remain
+false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -14905,7 +15211,9 @@ Proved in this note:
 | Principal-density normalization | exact no-gain audit for the bare global square | A single \(\kappa\)-fibre contributes the reciprocal-LCM density (9.620), but the unnormalized sum over all \([s_1,s_2]\) residues cancels that denominator exactly, (9.621).  Hence the bare master returns \(|\sum_s\mu(s)Z_s^{\rm tot}|^2\), not the totient-square form (9.623).  Any useful reciprocal-LCM normalization must be exhibited by the complete physical AFE/\(TT^*\) multiplier; it is not a consequence of centering, and no such packet-exhaustive multiplier has yet been proved |
 | Physical multiplier double centering | exact finite identity and sharp fixed-pair incidence norm; exhaustive map and global signed estimate unproved | For any supplied frequency multiplier, (9.625) isolates its mean times the bare packet total and pairs only \(K^\circ\) with both centered packet pieces.  The fibre map has exact maximum multiplicity \(\varphi((s_1,s_2))\), (9.626), giving the finite norm bound (9.628) at divisor cost.  This closes arbitrary fixed-pair algebra on small-gcd strata but exposes the sharp \(\varphi(g)^{1/2}\) obstruction to outer absolute values.  The complete AFE/reflection derivation of \(K\), its principal mean ledger, and the signed large-gcd double-centered dispersion remain open |
 | Cross-modulus product-label phase | exact circular-character, principal-set, and cardinality classification; weighted resonant sum unbounded | For \(a_i=h_i\delta_i\), the inverse-label cross phase is a single character \(e_L(c\kappa)\) exactly on the coefficient-CRT sector \(a_1\equiv a_2\pmod{(s_1,s_2)}\), (9.629)--(9.631).  Its multiplier mean is nonzero exactly when \(s_1\mid a_1\) and \(s_2\mid a_2\), (9.632)--(9.633); all other congruent-label pairs are automatically multiplier-centered.  The surviving principal set has the exact gcd/divisibility split (9.634), retaining \(h\delta\) and both Möbius signs, and its signed-window cardinality is at most \(4\tau(s)HD/s\), (9.635)--(9.636).  Bounding the full AFE/reflection weighted sum and treating noncongruent labels in the full pair kernel remain open |
-| Principal product-label additive master | unconditional finite large-sieve norm bound; full AFE normalization unproved | Exact unit-mask expansion turns the principal master into reduced Farey rows, (9.637)--(9.640).  The ordinary additive large sieve and one global Cauchy step give (9.642); resonant-label density and the retained Type convolution yield the weighted bound (9.645), with both Möbius signs and \(h\delta\) intact.  This avoids the false shortcut of applying a primitive-character large sieve to all imprimitive principal modes.  Packet-dependent direct phases, smooth physical weights, reflected terms, and their exhaustive \(T^\varepsilon\)-cost AFE adapter remain unproved, as does the nonprincipal signed dispersion |
+| Principal product-label additive master | unconditional finite large-sieve norm bound; full AFE normalization unproved | Exact unit-mask expansion turns the principal master into reduced Farey rows, (9.637)--(9.640).  The ordinary additive large sieve and one global Cauchy step give (9.642); resonant-label density and the retained Type convolution yield the weighted bound (9.645), with both Möbius signs and \(h\delta\) intact.  This avoids the false shortcut of applying a primitive-character large sieve to all imprimitive principal modes.  Section 9.98 handles an arbitrary fixed nonzero direct phase within the finite principal master; the packet-dependent global family, smooth physical coefficient norms, reflected terms, and their exhaustive AFE ledger remain unproved, as does the nonprincipal signed dispersion |
+| Separate direct-coefficient and sector-harmonic adapters | both finite costs proved separately; cross-model packet adapter unproved | Grouping each unit-mask quotient by \(v=(B,q)\) reduces an arbitrary nonzero direct phase in the original principal master to unit Farey rows, (9.647)--(9.650), at divisor cost.  Separately, symmetric truncation of the normalized-sector \(B=\xi+jQ\) expansion has tail \(O(s/J)\) and projective norm \(O(\log J)\), (9.651)--(9.653); the jump boundary was already closed in (9.514)--(9.515).  No identification between the original \(s\asymp T^3\) modulus and the normalized \(s\leq Q\asymp T\) sector denominator is asserted.  The packet-exhaustive cross-model map, complete AFE/reflection coefficient normalization, and nonprincipal double-centered dispersion remain unproved |
+| Normalized sector-harmonic Farey operator | fixed-coefficient \(Q^{-1}\)-averaged norm proved; cross-model and coefficient-energy adapters unproved | Weighted Cauchy in the physical harmonics and one dual Farey large sieve per dyadic \(j\)-block prove (9.659), recovering the full factor \(Q\) from the dominant \(S^2\) spacing term.  Residue aggregation gives (9.660).  On the actual normalized scale \(S\asymp X\asymp Q\asymp T\), diagonal-sized coefficient energy still yields \(T^{3+\varepsilon}\) against the \(T^{2+\varepsilon}\) sector target: one full power of energy remains.  This cannot be combined with the distinct \(s\asymp T^3\) principal-master ledger until the packet-exhaustive cross-model adapter is proved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

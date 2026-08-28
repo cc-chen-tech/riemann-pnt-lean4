@@ -33,6 +33,9 @@ COVERAGE_NOTE = Path(
 ALTERNATIVE_ROUTES_NOTE = Path(
     "docs/research/2026-08-25-mwkf-alternative-routes-spike.md"
 )
+OFFDIAGONAL_NOTE = Path(
+    "docs/research/2026-08-24-mobius-weighted-off-diagonal.md"
+)
 
 
 def test_bcr_covers_a_small_third_variable_box() -> None:
@@ -4101,6 +4104,11 @@ def test_principal_product_label_master_validates_farey_support_endpoints() -> N
             squarefree_moduli=(5,),
             **{**common, "type_base_coefficients": {0: F(1)}},
         )
+    with pytest.raises(ValueError, match="direct coefficient must be nonzero"):
+        audit(
+            squarefree_moduli=(5,),
+            **{**common, "direct_coefficient": 0},
+        )
 
     zero = audit(
         squarefree_moduli=(5,),
@@ -4110,6 +4118,149 @@ def test_principal_product_label_master_validates_farey_support_endpoints() -> N
     assert zero["direct_principal_additive_master"] == 0
     assert zero["finite_farey_large_sieve_bound_holds"]
     assert zero["type_convolution_energy_obeys_divisor_bound"]
+
+
+def test_principal_master_stratifies_nonunit_direct_frequencies() -> None:
+    result = coverage_audit.principal_product_label_additive_master_audit(
+        squarefree_moduli=(5, 6),
+        dyadic_modulus_lower=3,
+        direct_coefficient=6,
+        h_coefficients={1: F(1), 2: F(-1), 3: F(2)},
+        delta_coefficients={1: F(2), 2: F(1), 5: F(-1)},
+        type_base_coefficients={1: F(1), 2: F(-1), 3: F(2)},
+        companion_type_coefficients={1: F(1), 2: F(3)},
+    )
+    assert result["direct_coefficient"] == 6
+    assert result["nonunit_direct_frequency_stratified_exactly"]
+    assert result["all_unit_masks_equal_divisor_expansions"]
+    assert result["direct_principal_master_equals_divisor_farey_expansion"]
+    assert result["every_farey_row_bound_holds"]
+    assert result["finite_farey_large_sieve_bound_holds"]
+    assert any(
+        row["direct_gcd"] > 1 for row in result["divisor_farey_rows"]
+    )
+    assert not result["full_afe_norm_adapter_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_nonboundary_sector_harmonics_have_log_cost_and_power_tail() -> None:
+    audit = getattr(
+        coverage_audit,
+        "sector_fourier_nonboundary_truncation_audit",
+        None,
+    )
+    assert audit is not None, "sector harmonic truncation audit is missing"
+
+    result = audit(
+        sector_modulus=7,
+        sector_frequency=3,
+        residue_numerator=2,
+        residue_modulus=11,
+        harmonic_cutoff=80,
+    )
+    assert result["nonboundary"]
+    assert result["all_direct_coefficients_nonzero"]
+    assert result["truncation_error_obeys_power_tail"]
+    assert result["coefficient_l1_obeys_logarithmic_bound"]
+    assert result["maximum_direct_coefficient"] == 563
+    assert result["physical_principal_norm_adapter_proved"] is False
+    assert result["coupled_kernel_gate_closed"] is False
+
+    for edge_frequency in (1, 12):
+        edge = audit(
+            sector_modulus=13,
+            sector_frequency=edge_frequency,
+            residue_numerator=2,
+            residue_modulus=11,
+            harmonic_cutoff=1,
+        )
+        assert edge["truncation_error_obeys_power_tail"]
+        assert edge["coefficient_l1_obeys_logarithmic_bound"]
+        assert edge["all_direct_coefficients_nonzero"]
+
+    with pytest.raises(ValueError, match=r"excludes s dividing Q\*w"):
+        audit(
+            sector_modulus=5,
+            sector_frequency=2,
+            residue_numerator=1,
+            residue_modulus=5,
+            harmonic_cutoff=10,
+        )
+
+
+def test_sector_harmonic_average_gains_the_normalizing_frequency_length() -> None:
+    audit = getattr(
+        coverage_audit,
+        "sector_harmonic_farey_operator_audit",
+        None,
+    )
+    assert audit is not None, "sector harmonic Farey operator audit is missing"
+
+    result = audit(
+        squarefree_moduli=(5, 6),
+        dyadic_modulus_lower=3,
+        sector_modulus=7,
+        harmonic_cutoff=20,
+        reduced_fraction_coefficients={
+            (5, 1): F(2),
+            (5, 2): F(-1),
+            (6, 1): F(3),
+            (6, 5): F(-2),
+        },
+    )
+    assert result["reduced_farey_points_are_distinct"]
+    assert result["harmonic_labels_are_globally_unique"]
+    assert result["weighted_block_large_sieve_bound_holds"]
+    assert result["normalized_sector_energy_obeys_operator_bound"]
+    assert result["frequency_normalization_gain_recorded"]
+    assert result["fixed_coefficient_operator_proved"]
+    assert result["physical_sector_support_condition_holds"]
+    assert not result["original_long_modulus_principal_adapter_proved"]
+    assert not result["physical_coefficient_energy_target_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_sector_harmonic_operator_does_not_identify_long_principal_moduli() -> None:
+    result = coverage_audit.sector_harmonic_farey_operator_audit(
+        squarefree_moduli=(10, 11),
+        dyadic_modulus_lower=7,
+        sector_modulus=7,
+        harmonic_cutoff=4,
+        reduced_fraction_coefficients={
+            (10, 1): F(1),
+            (11, 2): F(-2),
+        },
+    )
+    assert result["fixed_coefficient_operator_proved"]
+    assert not result["physical_sector_support_condition_holds"]
+    assert not result["original_long_modulus_principal_adapter_proved"]
+    assert not result["physical_coefficient_energy_target_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_sector_note_keeps_original_and_normalized_modulus_scales_separate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "S=X=T^3,\\qquad Q=T" not in text
+    assert "an amplitude \\(T^{15/2}\\)" not in text
+    assert "S\\asymp X\\asymp Q\\asymp T" in text
+    assert "one full power of energy" in text
+    assert "| Nonunit sector-harmonic principal adapter |" not in text
+    assert (
+        "| Separate direct-coefficient and sector-harmonic adapters |"
+        in text
+    )
+    assert "handles packet-dependent nonunit direct phases" not in text
+    assert (
+        "handles an arbitrary fixed nonzero direct phase within the finite "
+        "principal master"
+        in text
+    )
+    sector_operator = text.split(
+        "### 9.99 The normalized sector average recovers one frequency length",
+        1,
+    )[1].split("## 10. What has and has not been proved", 1)[0]
+    assert r"U_s^{\rm res}" not in sector_operator
+    assert r"\sum_s|b_s|^2" in sector_operator
 
 
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:

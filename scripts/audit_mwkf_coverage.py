@@ -13,7 +13,7 @@ import sys
 from dataclasses import dataclass
 from fractions import Fraction
 from itertools import product
-from math import gcd, isqrt
+from math import gcd, isqrt, log, pi
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
@@ -12515,6 +12515,8 @@ def principal_product_label_additive_master_audit(
         raise ValueError("a nonempty positive dyadic modulus block is required")
     if len(set(moduli)) != len(moduli):
         raise ValueError("the dyadic modulus block must not contain duplicates")
+    if direct == 0:
+        raise ValueError("the direct coefficient must be nonzero")
     for modulus in moduli:
         factors = _finite_prime_exponents(modulus) if modulus > 1 else {}
         if (
@@ -12523,8 +12525,6 @@ def principal_product_label_additive_master_audit(
             or any(exponent != 1 for exponent in factors.values())
         ):
             raise ValueError("every modulus must be squarefree and in (S,2S]")
-        if gcd(direct, modulus) != 1:
-            raise ValueError("the direct coefficient must be a unit modulo every s")
     if (
         not h_coefficients
         or not delta_coefficients
@@ -12629,19 +12629,11 @@ def principal_product_label_additive_master_audit(
         )
     )
     for divisor in relevant_divisors:
-        quotient_moduli = tuple(
-            modulus // divisor for modulus in moduli if modulus % divisor == 0
+        quotient_pairs = tuple(
+            (modulus, modulus // divisor)
+            for modulus in moduli
+            if modulus % divisor == 0
         )
-        modulus_weight_energy = sum(
-            (
-                signed_modulus_weights[modulus]
-                * signed_modulus_weights[modulus]
-                for modulus in moduli
-                if modulus % divisor == 0
-            ),
-            F(0),
-        )
-        repeated_modulus_weight_energy += modulus_weight_energy
         dilated_coefficients = {
             product_label // divisor: coefficient
             for product_label, coefficient in product_coefficients.items()
@@ -12651,60 +12643,86 @@ def principal_product_label_additive_master_audit(
             (value * value for value in dilated_coefficients.values()),
             F(0),
         )
-        if not quotient_moduli or not dilated_coefficients:
-            large_sieve_factor = F(0)
-            direct_row_energy = 0.0
-        else:
-            frequencies = tuple(
-                F(direct % quotient, quotient) if quotient > 1 else F(0)
-                for quotient in quotient_moduli
+        direct_gcd_groups: dict[int, list[tuple[int, int]]] = {}
+        for modulus, quotient in quotient_pairs:
+            direct_gcd_groups.setdefault(
+                gcd(abs(direct), quotient),
+                [],
+            ).append((modulus, quotient))
+        for direct_gcd, group in sorted(direct_gcd_groups.items()):
+            quotient_moduli = tuple(quotient for _, quotient in group)
+            reduced_quotient_moduli = tuple(
+                quotient // direct_gcd for quotient in quotient_moduli
             )
-            if len(frequencies) == 1:
-                inverse_spacing = F(1)
-            else:
-                spacings = []
-                for first_position, first in enumerate(frequencies):
-                    for second in frequencies[first_position + 1 :]:
-                        difference = abs(first - second)
-                        spacings.append(min(difference, 1 - difference))
-                minimum_spacing = min(spacings)
-                inverse_spacing = 1 / minimum_spacing
-            interval_length = max(dilated_coefficients)
-            large_sieve_factor = F(interval_length - 1) + inverse_spacing
-            direct_row_energy = sum(
-                abs(
-                    sum(
-                        complex(coefficient)
-                        * cmath.exp(
-                            2j
-                            * cmath.pi
-                            * direct
-                            * reduced_label
-                            / quotient
-                        )
-                        for reduced_label, coefficient in dilated_coefficients.items()
-                    )
-                )
-                ** 2
-                for quotient in quotient_moduli
-            )
-        farey_row_bound = large_sieve_factor * coefficient_energy
-        farey_row_bound_sum += farey_row_bound
-        divisor_rows.append(
-            {
-                "divisor": divisor,
-                "quotient_moduli": quotient_moduli,
-                "modulus_weight_l2_energy": modulus_weight_energy,
-                "dilated_product_coefficients": dilated_coefficients,
-                "dilated_coefficient_l2_energy": coefficient_energy,
-                "large_sieve_factor": large_sieve_factor,
-                "direct_farey_row_energy": direct_row_energy,
-                "farey_row_upper_bound": farey_row_bound,
-                "farey_row_bound_holds": (
-                    direct_row_energy <= float(farey_row_bound) + 1e-8
+            reduced_direct = direct // direct_gcd
+            modulus_weight_energy = sum(
+                (
+                    signed_modulus_weights[modulus]
+                    * signed_modulus_weights[modulus]
+                    for modulus, _ in group
                 ),
-            }
-        )
+                F(0),
+            )
+            repeated_modulus_weight_energy += modulus_weight_energy
+            if not dilated_coefficients:
+                large_sieve_factor = F(0)
+                direct_row_energy = 0.0
+            else:
+                frequencies = tuple(
+                    F(reduced_direct % reduced_modulus, reduced_modulus)
+                    if reduced_modulus > 1
+                    else F(0)
+                    for reduced_modulus in reduced_quotient_moduli
+                )
+                if len(frequencies) == 1:
+                    inverse_spacing = F(1)
+                else:
+                    spacings = []
+                    for first_position, first in enumerate(frequencies):
+                        for second in frequencies[first_position + 1 :]:
+                            difference = abs(first - second)
+                            spacings.append(min(difference, 1 - difference))
+                    minimum_spacing = min(spacings)
+                    inverse_spacing = 1 / minimum_spacing
+                interval_length = max(dilated_coefficients)
+                large_sieve_factor = F(interval_length - 1) + inverse_spacing
+                direct_row_energy = sum(
+                    abs(
+                        sum(
+                            complex(coefficient)
+                            * cmath.exp(
+                                2j
+                                * cmath.pi
+                                * direct
+                                * reduced_label
+                                / quotient
+                            )
+                            for reduced_label, coefficient in dilated_coefficients.items()
+                        )
+                    )
+                    ** 2
+                    for quotient in quotient_moduli
+                )
+            farey_row_bound = large_sieve_factor * coefficient_energy
+            farey_row_bound_sum += farey_row_bound
+            divisor_rows.append(
+                {
+                    "divisor": divisor,
+                    "direct_gcd": direct_gcd,
+                    "reduced_direct_coefficient": reduced_direct,
+                    "quotient_moduli": quotient_moduli,
+                    "reduced_quotient_moduli": reduced_quotient_moduli,
+                    "modulus_weight_l2_energy": modulus_weight_energy,
+                    "dilated_product_coefficients": dilated_coefficients,
+                    "dilated_coefficient_l2_energy": coefficient_energy,
+                    "large_sieve_factor": large_sieve_factor,
+                    "direct_farey_row_energy": direct_row_energy,
+                    "farey_row_upper_bound": farey_row_bound,
+                    "farey_row_bound_holds": (
+                        direct_row_energy <= float(farey_row_bound) + 1e-8
+                    ),
+                }
+            )
 
     finite_farey_upper_bound = (
         repeated_modulus_weight_energy * farey_row_bound_sum
@@ -12766,6 +12784,7 @@ def principal_product_label_additive_master_audit(
     return {
         "squarefree_moduli": moduli,
         "dyadic_modulus_lower": scale,
+        "direct_coefficient": direct,
         "principal_product_label_weights": principal_weights,
         "outer_signed_principal_weights": signed_modulus_weights,
         "type_product_convolution_coefficients": product_coefficients,
@@ -12801,9 +12820,284 @@ def principal_product_label_additive_master_audit(
         "outer_mobius_weight_retained_linearly": True,
         "inner_type_mobius_weight_retained_linearly": True,
         "h_delta_product_structure_retained": True,
+        "nonunit_direct_frequency_stratified_exactly": True,
         "full_afe_norm_adapter_proved": False,
         "principal_twisted_moment_contribution_in_target_proved": False,
         "nonprincipal_signed_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def sector_fourier_nonboundary_truncation_audit(
+    *,
+    sector_modulus: int,
+    sector_frequency: int,
+    residue_numerator: int,
+    residue_modulus: int,
+    harmonic_cutoff: int,
+) -> dict[str, object]:
+    """Audit the logarithmic-cost truncation of a nonboundary sector mode."""
+
+    q = int(sector_modulus)
+    xi = int(sector_frequency)
+    w = int(residue_numerator)
+    s = int(residue_modulus)
+    cutoff = int(harmonic_cutoff)
+    if q <= 1 or not 0 < xi < q:
+        raise ValueError("the sector frequency must satisfy 0 < xi < Q")
+    if s <= 1 or not 0 <= w < s or gcd(w, s) != 1:
+        raise ValueError("w/s must be a reduced residue in [0,1)")
+    if cutoff < 1:
+        raise ValueError("the harmonic cutoff must be positive")
+    remainder = (q * w) % s
+    if remainder == 0:
+        raise ValueError("the nonboundary audit excludes s dividing Q*w")
+
+    x = F(w, s)
+    sector_value = cmath.exp(
+        2j * cmath.pi * xi * ((q * w) // s) / q
+    )
+    coefficients: dict[int, complex] = {}
+    partial_sum = 0j
+    for harmonic_index in range(-cutoff, cutoff + 1):
+        direct = xi + harmonic_index * q
+        coefficient = (
+            q
+            * (1 - cmath.exp(-2j * cmath.pi * xi / q))
+            / (2j * cmath.pi * direct)
+        )
+        coefficients[harmonic_index] = coefficient
+        partial_sum += coefficient * cmath.exp(
+            2j * cmath.pi * direct * float(x)
+        )
+
+    circular_distance = F(min(remainder, s - remainder), s)
+    power_tail_bound = 1 / (cutoff * float(circular_distance))
+    truncation_error = abs(sector_value - partial_sum)
+    coefficient_l1 = sum(abs(value) for value in coefficients.values())
+    logarithmic_l1_bound = 2 + 2 * (1 + log(cutoff + 1)) / pi
+    direct_coefficients = tuple(
+        xi + harmonic_index * q
+        for harmonic_index in range(-cutoff, cutoff + 1)
+    )
+    tolerance = 1e-10
+    return {
+        "sector_modulus": q,
+        "sector_frequency": xi,
+        "residue_fraction": x,
+        "nonboundary": True,
+        "circular_boundary_distance": circular_distance,
+        "harmonic_cutoff": cutoff,
+        "continuous_harmonic_coefficients": coefficients,
+        "finite_harmonic_sum": partial_sum,
+        "exact_sector_value": sector_value,
+        "truncation_error": truncation_error,
+        "power_tail_upper_bound": power_tail_bound,
+        "truncation_error_obeys_power_tail": (
+            truncation_error <= power_tail_bound + tolerance
+        ),
+        "coefficient_l1_norm": coefficient_l1,
+        "logarithmic_l1_upper_bound": logarithmic_l1_bound,
+        "coefficient_l1_obeys_logarithmic_bound": (
+            coefficient_l1 <= logarithmic_l1_bound + tolerance
+        ),
+        "minimum_direct_coefficient": min(direct_coefficients),
+        "maximum_direct_coefficient": max(abs(value) for value in direct_coefficients),
+        "all_direct_coefficients_nonzero": all(
+            value != 0 for value in direct_coefficients
+        ),
+        "harmonic_projective_cost_is_logarithmic": True,
+        "nonunit_farey_stratification_available": True,
+        "physical_principal_norm_adapter_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def sector_harmonic_farey_operator_audit(
+    *,
+    squarefree_moduli: tuple[int, ...],
+    dyadic_modulus_lower: int,
+    sector_modulus: int,
+    harmonic_cutoff: int,
+    reduced_fraction_coefficients: dict[tuple[int, int], Fraction],
+) -> dict[str, object]:
+    """Audit the normalized sector-harmonic large-sieve operator."""
+
+    moduli = tuple(int(value) for value in squarefree_moduli)
+    scale = int(dyadic_modulus_lower)
+    q = int(sector_modulus)
+    cutoff = int(harmonic_cutoff)
+    if not moduli or scale <= 0 or len(set(moduli)) != len(moduli):
+        raise ValueError("a distinct nonempty dyadic modulus block is required")
+    for modulus in moduli:
+        factors = _finite_prime_exponents(modulus) if modulus > 1 else {}
+        if (
+            modulus <= scale
+            or modulus > 2 * scale
+            or any(exponent != 1 for exponent in factors.values())
+        ):
+            raise ValueError("every modulus must be squarefree and in (S,2S]")
+    if q <= 1 or cutoff < 1:
+        raise ValueError("Q and the harmonic cutoff must be positive")
+    if not reduced_fraction_coefficients:
+        raise ValueError("at least one reduced Farey coefficient is required")
+
+    farey_coefficients: dict[tuple[int, int], Fraction] = {}
+    farey_points: list[Fraction] = []
+    for (modulus, numerator), coefficient in reduced_fraction_coefficients.items():
+        modulus = int(modulus)
+        numerator = int(numerator)
+        if (
+            modulus not in moduli
+            or not 0 < numerator < modulus
+            or gcd(numerator, modulus) != 1
+        ):
+            raise ValueError("every label must be a reduced t/s in the block")
+        farey_coefficients[(modulus, numerator)] = F(coefficient)
+        farey_points.append(F(numerator, modulus))
+    distinct_farey_points = len(set(farey_points)) == len(farey_points)
+    if not distinct_farey_points:
+        raise ValueError("the reduced Farey points must be distinct")
+
+    coefficient_energy = sum(
+        (coefficient * coefficient for coefficient in farey_coefficients.values()),
+        F(0),
+    )
+
+    def harmonic_coefficient(xi: int, harmonic_index: int) -> complex:
+        direct = xi + harmonic_index * q
+        return (
+            q
+            * (1 - cmath.exp(-2j * cmath.pi * xi / q))
+            / (2j * cmath.pi * direct)
+        )
+
+    def direct_transform(direct: int) -> complex:
+        return sum(
+            complex(coefficient)
+            * cmath.exp(2j * cmath.pi * direct * numerator / modulus)
+            for (modulus, numerator), coefficient in farey_coefficients.items()
+        )
+
+    harmonic_labels = tuple(
+        (xi, harmonic_index, xi + harmonic_index * q)
+        for xi in range(1, q)
+        for harmonic_index in range(-cutoff, cutoff + 1)
+    )
+    direct_labels = tuple(label[2] for label in harmonic_labels)
+    direct_transforms = {
+        direct: direct_transform(direct) for direct in direct_labels
+    }
+    sector_rows = {
+        xi: sum(
+            harmonic_coefficient(xi, harmonic_index)
+            * direct_transforms[xi + harmonic_index * q]
+            for harmonic_index in range(-cutoff, cutoff + 1)
+        )
+        for xi in range(1, q)
+    }
+    normalized_sector_energy = sum(
+        abs(value) ** 2 for value in sector_rows.values()
+    ) / q
+    maximum_harmonic_l1 = max(
+        sum(
+            abs(harmonic_coefficient(xi, harmonic_index))
+            for harmonic_index in range(-cutoff, cutoff + 1)
+        )
+        for xi in range(1, q)
+    )
+
+    harmonic_blocks: list[tuple[int, ...]] = [(-1, 0)]
+    positive_start = 1
+    while positive_start <= cutoff:
+        positive_end = min(2 * positive_start - 1, cutoff)
+        harmonic_blocks.append(tuple(range(positive_start, positive_end + 1)))
+        positive_start *= 2
+    negative_start = 2
+    while negative_start <= cutoff:
+        negative_end = min(2 * negative_start - 1, cutoff)
+        harmonic_blocks.append(
+            tuple(-index for index in range(negative_start, negative_end + 1))
+        )
+        negative_start *= 2
+
+    block_rows: list[dict[str, object]] = []
+    weighted_direct_sum = 0.0
+    weighted_large_sieve_upper_sum = 0.0
+    inverse_spacing_ceiling = 4 * scale * scale
+    for harmonic_block in harmonic_blocks:
+        labels = tuple(
+            (xi, harmonic_index, xi + harmonic_index * q)
+            for xi in range(1, q)
+            for harmonic_index in harmonic_block
+        )
+        weights = tuple(
+            abs(harmonic_coefficient(xi, harmonic_index))
+            for xi, harmonic_index, _ in labels
+        )
+        block_direct_labels = tuple(direct for _, _, direct in labels)
+        interval_length = max(block_direct_labels) - min(block_direct_labels) + 1
+        maximum_weight = max(weights)
+        direct_weighted_energy = sum(
+            weight * abs(direct_transforms[direct]) ** 2
+            for weight, direct in zip(weights, block_direct_labels, strict=True)
+        )
+        large_sieve_upper_bound = float(
+            F(interval_length - 1 + inverse_spacing_ceiling)
+            * coefficient_energy
+        )
+        weighted_upper_bound = maximum_weight * large_sieve_upper_bound
+        weighted_direct_sum += direct_weighted_energy
+        weighted_large_sieve_upper_sum += weighted_upper_bound
+        block_rows.append(
+            {
+                "harmonic_indices": harmonic_block,
+                "direct_frequency_interval_length": interval_length,
+                "maximum_harmonic_weight": maximum_weight,
+                "direct_weighted_energy": direct_weighted_energy,
+                "weighted_large_sieve_upper_bound": weighted_upper_bound,
+                "bound_holds": (
+                    direct_weighted_energy <= weighted_upper_bound + 1e-8
+                ),
+            }
+        )
+
+    cauchy_intermediate = maximum_harmonic_l1 * weighted_direct_sum / q
+    operator_upper_bound = (
+        maximum_harmonic_l1 * weighted_large_sieve_upper_sum / q
+    )
+    return {
+        "squarefree_moduli": moduli,
+        "dyadic_modulus_lower": scale,
+        "sector_modulus": q,
+        "harmonic_cutoff": cutoff,
+        "reduced_fraction_coefficients": farey_coefficients,
+        "reduced_farey_points_are_distinct": distinct_farey_points,
+        "harmonic_labels_are_globally_unique": (
+            len(set(direct_labels)) == len(direct_labels)
+        ),
+        "coefficient_l2_energy": coefficient_energy,
+        "maximum_harmonic_l1_norm": maximum_harmonic_l1,
+        "sector_rows": sector_rows,
+        "normalized_sector_energy": normalized_sector_energy,
+        "weighted_direct_frequency_energy": weighted_direct_sum,
+        "cauchy_intermediate_upper_bound": cauchy_intermediate,
+        "harmonic_blocks": tuple(block_rows),
+        "weighted_block_large_sieve_bound_holds": all(
+            bool(row["bound_holds"]) for row in block_rows
+        ),
+        "operator_upper_bound": operator_upper_bound,
+        "normalized_sector_energy_obeys_operator_bound": (
+            normalized_sector_energy <= operator_upper_bound + 1e-8
+            and normalized_sector_energy <= cauchy_intermediate + 1e-8
+        ),
+        "frequency_normalization_gain_recorded": True,
+        "fixed_coefficient_operator_proved": True,
+        "physical_sector_support_condition_holds": all(
+            modulus <= q for modulus in moduli
+        ),
+        "original_long_modulus_principal_adapter_proved": False,
+        "physical_coefficient_energy_target_proved": False,
         "coupled_kernel_gate_closed": False,
     }
 
