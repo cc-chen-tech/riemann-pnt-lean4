@@ -7487,8 +7487,15 @@ def test_common_g_lifts_form_a_two_pole_mixed_character_sum() -> None:
     assert result["worst_exceptional_divisor_divides_short_determinant"]
     assert result["published_square_root_bound_applies_prime_by_prime"]
     assert result["squarefree_CRT_common_lift_bound_proved"]
-    assert result["common_lift_saving_exponent"] == F(1, 2)
-    assert result["bounded_D_residual_saving_after_common_lift"] == F(1, 2)
+    assert result["fixed_character_atom_common_lift_saving_exponent"] == F(
+        1,
+        2,
+    )
+    assert result["formal_fixed_atom_bounded_D_residual_saving"] == F(1, 2)
+    assert not result[
+        "fixed_atom_saving_survives_arbitrary_character_reassembly"
+    ]
+    assert result["global_bounded_D_residual_without_coefficient_input"] == 1
     assert not result["common_lift_bound_alone_closes_bounded_D_gate"]
     assert not result["coupled_kernel_gate_closed"]
 
@@ -7518,6 +7525,49 @@ def test_common_g_two_pole_bound_is_documented_with_its_exceptional_divisor() ->
     assert r"g^{1/2+\varepsilon}g_{\rm exc}^{1/2}" in text
     assert r"1-\frac\gamma2" in text
     assert "remains unproved" in text
+
+
+def test_common_g_character_reassembly_has_no_automatic_operator_saving() -> None:
+    audit = getattr(
+        coverage_audit,
+        "common_g_character_reassembly_operator_audit",
+        None,
+    )
+    assert audit is not None, "common-g character operator audit is missing"
+    result = audit(
+        common_modulus=15,
+        short_determinant=1,
+        common_modulus_exponent=F(1),
+        bounded_short_determinant_exponent=F(0),
+    )
+    assert result["partial_shift_is_injective_on_its_unit_domain"]
+    assert result["admissible_domain_is_nonempty"]
+    assert result["delta_mass_saturates_unrestricted_packet_operator"]
+    assert result["unrestricted_packet_operator_l2_norm"] == 1
+    assert result["multiplicative_character_transform_is_unitary"]
+    assert not result["entrywise_Weil_implies_packet_operator_saving"]
+    assert result["fixed_character_atom_common_lift_saving_exponent"] == F(
+        1,
+        2,
+    )
+    assert result["formal_fixed_atom_bounded_D_residual_saving"] == F(1, 2)
+    assert result["global_bounded_D_residual_without_coefficient_input"] == 1
+    assert not result["centered_physical_character_compression_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_common_g_operator_norm_boundary_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.159 Entrywise Weil does not survive arbitrary character reconstruction"
+        in text
+    )
+    assert r"\|J_D\|_{2\to2}=1" in text
+    assert "partial isometry" in text
+    assert "small entries and a small spectral norm" in text
+    assert "fixed character atom:" in text
+    assert "arbitrary reconstructed packet:" in text
 
 
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:

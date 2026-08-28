@@ -50,7 +50,7 @@
 > | Symmetric AFE direction ledger | Section 9.155 returns to the exact contour identity (2.3e)--(2.4).  After the canonical \(z\mapsto-z\) and summation-name exchange, the two functional-equation directions are the same packet, so the factor 2 in (2.4) and (4.5) is reinforcement, not a sign choice.  Every downstream linear dyadic/Poisson/centering/bounded-\(|D|\) projection therefore maps the unfolded pair to twice one direction.  Any exact deletion of the unit-determinant face must come from a zero one-direction coefficient or reassembly with reflection, the principal ledger, or the explicit diagonal; that reassembly remains open |
 > | Bounded-determinant Type master | Section 9.156 inserts the exact small/I/II split before restricting the one opened global square to \(0<|D|\leq D_0\).  The product-label weight is retained as \(W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta)\), not replaced by arbitrary coefficients.  All nine ordered Type cross blocks reassemble the bounded-\(D\) master exactly, with the modulus and Type Möbius signs still linear before the pair sum.  The primitive bounded-\(D\) target still needs one power.  The published-coverage table has no complete row: fixed-modulus estimates lose the signed varying-level packet, while the long--long results do not supply the required power or physical adapter |
 > | Resonant two-PV compatibility boundary | Section 9.157 proves that the Section 9.144 argument cannot simply be reused on bounded nonzero \(D\).  Every physical reduced modulus is at least \(T^{5/2}\); equal reduced moduli would give \(g\geq T^{5/2}\), contradicting \(g|D|\ll T\).  Hence the cross term has distinct ambient moduli and two independent character families.  The determinant incidence does not impose \(\chi_1=\chi_2\); a shared primitive-conductor slice is not exhaustive.  Applying Cauchy separately returns the exact outer-sign saturation of Section 9.135.  Thus the two PV savings close the resonant projector only, not the one-power bounded-\(D\) gate |
-> | Common-lift two-pole sum | Section 9.158 parameterizes every common \(g\)-lift by \(x_1r_2\equiv t\), \(x_2r_1\equiv t-D\pmod g\).  After multiplicative expansion of the two residue packets, the retained common trace is a fixed-degree mixed character sum with additive phase \(A/t+B/(t-D)\).  Prime-modulus Weil and squarefree CRT give \(g^{1/2+\varepsilon}g_{\rm exc}^{1/2}\), where every exceptional prime divides \((g,D,A+B)\) and also requires equality of the two local characters.  Hence \(g_{\rm exc}\mid D\), so bounded \(D\) gives a proved local \(g^{1/2}\) saving.  At \(g=T^\gamma\) the one-power gate is reduced only to \(T^{1-\gamma/2}\); the active cofactor/two-character average remains unproved |
+> | Common-lift two-pole sum and reconstruction boundary | Section 9.158 parameterizes every common \(g\)-lift by \(x_1r_2\equiv t\), \(x_2r_1\equiv t-D\pmod g\).  For one fixed pair of multiplicative-character atoms the retained common trace is a fixed-degree mixed character sum with additive phase \(A/t+B/(t-D)\).  Prime-modulus Weil and squarefree CRT give \(g^{1/2+\varepsilon}g_{\rm exc}^{1/2}\), where \(g_{\rm exc}\mid D\).  This is a genuine fixed-atom square-root bound, but Section 9.159 proves that arbitrary character reconstruction is the matrix of a norm-one partial shift: entrywise Weil cancellation does not yield an operator-norm saving.  Thus \(1-\gamma/2\) is only the formal fixed-atom residual; without a physical restriction on the character coefficients the global bounded-\(D\) gate still requires one full power |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22744,28 +22744,114 @@ gives the proved fixed-atom bound
 
 For \(|D|\ll T^{o(1)}\), (9.1051) makes the exceptional factor
 subpolynomial.  Thus at \(g=T^\gamma\), (9.1052) saves
-\(T^{\gamma/2}\) over the trivial common-lift length.  Combining this
-with (9.1042) leaves the exact residual requirement
+\(T^{\gamma/2}\) over the trivial common-lift length **for one fixed
+character atom**.  If this saving survived reconstruction of the full
+physical character packet with no norm loss, the formal residual would
+be
 
 \[
  \boxed{
- S_{\rm residual}(\gamma)=1-\frac\gamma2,
+ S_{\rm residual}^{\rm atom}(\gamma)=1-\frac\gamma2,
  \qquad0\leq\gamma\leq1.}
  \tag{9.1053}
 \]
 
-In particular, even the largest bounded-determinant common gcd
-\(g\asymp T\) still leaves a half-power.  The local Weil saving is real
-published coverage, but it is not the full gate: after (9.1049) is
-bounded, the two active cofactor characters, the four outer Möbius signs,
-all nine Type blocks, and the level-dependent physical transforms remain.
-Their required joint saving is (9.1053), and it remains unproved.
+In particular, even this atomwise ledger leaves a half-power when
+\(g\asymp T\).  It is essential not to call (9.1053) the global residual:
+the two common local characters still have to be summed back into the
+physical centered residue packets.  Section 9.159 shows that entrywise
+Weil cancellation alone does not survive that reconstruction.  The two
+active cofactor characters, the four outer Möbius signs, all nine Type
+blocks, and the level-dependent physical transforms remain as additional
+structure which a successful norm estimate must use.
 
 The helper `common_g_lift_two_pole_audit` exhausts the finite CRT lifts,
 verifies (9.1047)--(9.1048) modulo one, and computes the worst divisor
-in (9.1051).  Its exponent ledger records the proved common-lift saving
-and the residual (9.1053), while keeping the active-cofactor,
-bounded-\(D\), LDSKM, and coupled-kernel flags false.
+in (9.1051).  Its exponent ledger records the fixed-atom saving and the
+formal residual (9.1053), but explicitly refuses to transfer them through
+arbitrary character reconstruction.  The global bounded-\(D\), LDSKM,
+and coupled-kernel flags remain false.
+
+### 9.159 Entrywise Weil does not survive arbitrary character reconstruction
+
+The norm loss can be seen before any asymptotics.  Let
+
+\[
+ U_g=(\mathbb Z/g\mathbb Z)^\times,
+ \qquad X_D=\{t\in U_g:t-D\in U_g\},
+\]
+
+and extend a function on \(U_g\) by zero off the units.  The physical
+common-lift bilinear form underlying (9.1049) is
+
+\[
+ \mathcal B_g(F,G)
+ =\sum_{t\in X_D}F(t)\overline{G(t-D)}
+ e_g\!\left(\frac A t+\frac B{t-D}\right).
+ \tag{9.1054}
+\]
+
+Equivalently, it is the matrix coefficient of
+
+\[
+ (J_DG)(t)
+ =1_{X_D}(t)e_g\!\left(\frac A t+\frac B{t-D}\right)G(t-D).
+ \tag{9.1055}
+\]
+
+The map \(t\mapsto t-D\) is injective.  The phase in (9.1055) has
+absolute value one.  Therefore
+
+\[
+ \boxed{\|J_DG\|_2\leq\|G\|_2,\qquad \|J_D\|_{2\to2}=1}
+ \tag{9.1056}
+\]
+
+whenever \(X_D\ne\varnothing\); equality is obtained by supporting
+\(G\) at one admissible source point.  This is a partial isometry, not
+a small operator.
+
+Use the orthonormal multiplicative-character basis
+\(e_\chi=\chi/\sqrt{\varphi(g)}\) on \(U_g\).  Its matrix entries are
+exactly normalized versions of (9.1049):
+
+\[
+ \langle e_{\chi_1},J_De_{\chi_2}\rangle
+ =\frac1{\varphi(g)}\mathcal T_g(\chi_1,\chi_2;A,B,D).
+ \tag{9.1057}
+\]
+
+Away from the exceptional divisor, (9.1052) says that every entry in
+(9.1057) is \(O(g^{-1/2+\varepsilon})\).  Equation (9.1056) nevertheless
+says that the full matrix has norm one.  This is the familiar distinction
+between small entries and a small spectral norm: summing the
+\(\asymp\varphi(g)^2\) character atoms can spend the entire square-root
+gain.
+
+The physical packets are centered, so their principal-character
+coordinates are absent.  That fact is already used in Sections
+9.144--9.150, but the fixed-atom Weil theorem supplies no estimate for
+the compression of (9.1055) to the particular nonprincipal physical
+coefficient subspace.  Proving a saving there requires an additional
+delocalization, Type-energy, or cross-level Möbius property; it cannot be
+deduced from (9.1052) alone.
+
+Consequently the honest exponent ledger is
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\text{fixed character atom:}&&1-\gamma/2,\\
+ &\text{arbitrary reconstructed packet:}&&1.
+ \end{aligned}}
+ \tag{9.1058}
+\]
+
+The helper `common_g_character_reassembly_operator_audit` enumerates the
+unit-domain partial shift, verifies its injectivity and exact delta-mass
+saturation, and records the two distinct exponents in (9.1058).  It
+leaves the centered physical compression, the active-cofactor average,
+the bounded-\(D\) gate, and the complete coupled-kernel gate unproved.
 
 ## 10. What has and has not been proved
 

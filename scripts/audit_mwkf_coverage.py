@@ -21995,8 +21995,11 @@ def common_g_lift_two_pole_audit(
     exceptional_divides_determinant = bool(
         abs(determinant) % exceptional_divisor == 0
     )
-    common_lift_saving = max(F(0), (gamma - determinant_exponent) / 2)
-    residual_saving = max(F(0), F(1) - common_lift_saving)
+    fixed_atom_saving = max(
+        F(0),
+        (gamma - determinant_exponent) / 2,
+    )
+    formal_fixed_atom_residual = max(F(0), F(1) - fixed_atom_saving)
     return {
         "common_modulus": g,
         "left_reduced_cofactor": r1,
@@ -22032,11 +22035,100 @@ def common_g_lift_two_pole_audit(
         ),
         "common_modulus_exponent": gamma,
         "bounded_short_determinant_exponent": determinant_exponent,
-        "common_lift_saving_exponent": common_lift_saving,
-        "bounded_D_residual_saving_after_common_lift": residual_saving,
-        "common_lift_bound_alone_closes_bounded_D_gate": bool(
-            residual_saving == 0
+        "fixed_character_atom_common_lift_saving_exponent": (
+            fixed_atom_saving
         ),
+        "formal_fixed_atom_bounded_D_residual_saving": (
+            formal_fixed_atom_residual
+        ),
+        "fixed_atom_saving_survives_arbitrary_character_reassembly": False,
+        "global_bounded_D_residual_without_coefficient_input": F(1),
+        "common_lift_bound_alone_closes_bounded_D_gate": False,
+        "active_cofactor_character_average_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def common_g_character_reassembly_operator_audit(
+    *,
+    common_modulus: int,
+    short_determinant: int,
+    common_modulus_exponent: Fraction,
+    bounded_short_determinant_exponent: Fraction,
+) -> dict[str, object]:
+    """Separate fixed-character Weil saving from packet operator norm.
+
+    On the unit group modulo ``g``, the common-lift operator is a phase
+    times the partial shift ``t-D -> t``.  Translation is injective and
+    the phase has modulus one, so this operator has l2 norm one whenever
+    its admissible domain is nonempty.  Multiplicative Fourier transform
+    is unitary: square-root bounds for each character-matrix entry do not
+    imply a square-root bound for the reconstructed packet operator.
+
+    This finite audit checks the support geometry exactly.  It does not
+    claim that the actual centered Type/AFE coefficient subspace contains
+    a delta mass; exploiting such extra physical structure is precisely
+    the remaining analytic gate.
+    """
+
+    g = int(common_modulus)
+    determinant = int(short_determinant)
+    gamma = F(common_modulus_exponent)
+    determinant_exponent = F(bounded_short_determinant_exponent)
+    if g <= 1 or determinant == 0:
+        raise ValueError("common modulus must exceed one and D be nonzero")
+    if _finite_mobius(g) == 0:
+        raise ValueError("common modulus must be squarefree")
+    if gamma < 0 or determinant_exponent < 0:
+        raise ValueError("scale exponents must be nonnegative")
+
+    units = tuple(value for value in range(g) if gcd(value, g) == 1)
+    admissible_targets = tuple(
+        value for value in units if gcd(value - determinant, g) == 1
+    )
+    target_to_source = {
+        target: (target - determinant) % g
+        for target in admissible_targets
+    }
+    sources = tuple(target_to_source.values())
+    injective_partial_shift = bool(
+        len(set(sources)) == len(admissible_targets)
+        and all(source in units for source in sources)
+    )
+    nonempty = bool(admissible_targets)
+    exact_delta_mass_saturation = bool(nonempty and injective_partial_shift)
+    operator_norm = F(1) if exact_delta_mass_saturation else F(0)
+
+    fixed_atom_saving = max(
+        F(0),
+        (gamma - determinant_exponent) / 2,
+    )
+    formal_fixed_atom_residual = max(F(0), F(1) - fixed_atom_saving)
+    return {
+        "common_modulus": g,
+        "short_determinant": determinant,
+        "unit_residues": units,
+        "admissible_targets": admissible_targets,
+        "target_to_source_partial_shift": target_to_source,
+        "partial_shift_is_injective_on_its_unit_domain": (
+            injective_partial_shift
+        ),
+        "admissible_domain_is_nonempty": nonempty,
+        "delta_mass_saturates_unrestricted_packet_operator": (
+            exact_delta_mass_saturation
+        ),
+        "unrestricted_packet_operator_l2_norm": operator_norm,
+        "multiplicative_character_transform_is_unitary": True,
+        "entrywise_Weil_implies_packet_operator_saving": False,
+        "fixed_character_atom_common_lift_saving_exponent": (
+            fixed_atom_saving
+        ),
+        "formal_fixed_atom_bounded_D_residual_saving": (
+            formal_fixed_atom_residual
+        ),
+        "global_bounded_D_residual_without_coefficient_input": F(1),
+        "centered_physical_character_compression_proved": False,
         "active_cofactor_character_average_proved": False,
         "bounded_D_one_power_gate_closed": False,
         "coupled_kernel_gate_closed": False,
