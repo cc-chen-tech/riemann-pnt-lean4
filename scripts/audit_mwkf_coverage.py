@@ -20026,6 +20026,765 @@ def diagonal_subtracted_kloosterman_second_moment_audit(
     }
 
 
+def physical_centered_kloosterman_completion_audit(
+    *,
+    modulus: int,
+    product_labels: tuple[int, ...],
+    product_label_weights: tuple[Fraction, ...],
+    type_residue_weights: tuple[tuple[Fraction, ...], ...],
+) -> dict[str, object]:
+    """Complete one physical centered inverse-phase row additively.
+
+    For each reduced unit product label ``A`` and an arbitrary Type packet
+    ``G_A(w)`` on ``U(q)``, finite Fourier inversion gives
+
+    ``sum_w G_A(w) K^circ_(q,A)(w)``
+
+    as ``1/q`` times the nonzero-``k`` sum of the centered Kloosterman
+    transform.  Since ``A`` is a unit,
+
+    ``S(k,-A;q)=S(-A*k,1;q)``.
+
+    Regrouping by ``n=-A*k (mod q)`` therefore produces a coefficient
+    sequence ``b_q(n)``.  The sequence retains the Type Fourier transform
+    and is level-dependent; the identity does not create the common
+    unweighted modulus sequence required by the BRS proxy theorem.
+    """
+
+    q = int(modulus)
+    labels = tuple(int(value) for value in product_labels)
+    label_weights = tuple(F(value) for value in product_label_weights)
+    type_weights = tuple(
+        tuple(F(value) for value in row) for row in type_residue_weights
+    )
+    if q <= 1 or _finite_mobius(q) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if not labels or not (
+        len(labels) == len(label_weights) == len(type_weights)
+    ):
+        raise ValueError("label and Type packet families must have equal positive length")
+    if any(len(row) != q for row in type_weights):
+        raise ValueError("each Type residue row must have exactly modulus entries")
+    all_labels_units = all(gcd(abs(label), q) == 1 for label in labels)
+    if not all_labels_units:
+        raise ValueError("every reduced product label must be a unit modulo q")
+
+    units = tuple(residue for residue in range(1, q) if gcd(residue, q) == 1)
+    phi_q = len(units)
+    root = cmath.exp(2j * cmath.pi / q)
+    tolerance = 1e-8
+
+    def phase(exponent: int) -> complex:
+        return root ** (exponent % q)
+
+    def ramanujan(label: int) -> complex:
+        return sum((phase(label * unit) for unit in units), 0j)
+
+    def kloosterman(left: int, right: int) -> complex:
+        return sum(
+            (
+                phase(left * unit + right * pow(unit, -1, q))
+                for unit in units
+            ),
+            0j,
+        )
+
+    rows: list[dict[str, object]] = []
+    coefficient_by_residue = {residue: 0j for residue in range(q)}
+    direct_master = 0j
+    pure_master = 0j
+    correction_master = 0j
+    max_completion_error = 0.0
+    max_scaling_error = 0.0
+    zero_modes_vanish = True
+    for label, label_weight, residue_row in zip(
+        labels, label_weights, type_weights
+    ):
+        density = ramanujan(-label) / phi_q
+        fourier = {
+            frequency: sum(
+                (
+                    complex(residue_row[unit]) * phase(-frequency * unit)
+                    for unit in units
+                ),
+                0j,
+            )
+            for frequency in range(q)
+        }
+        direct = sum(
+            (
+                complex(residue_row[unit])
+                * (phase(-label * pow(unit, -1, q)) - density)
+                for unit in units
+            ),
+            0j,
+        )
+        completed = 0j
+        pure = 0j
+        correction = 0j
+        scaling_errors: list[float] = []
+        zero_transform = kloosterman(0, -label) - density * ramanujan(0)
+        zero_modes_vanish = bool(
+            zero_modes_vanish and abs(zero_transform) <= tolerance
+        )
+        for frequency in range(1, q):
+            raw_kloosterman = kloosterman(frequency, -label)
+            centered_transform = (
+                raw_kloosterman - density * ramanujan(frequency)
+            )
+            completed += fourier[frequency] * centered_transform / q
+            scaled = kloosterman(-label * frequency, 1)
+            scaling_error = abs(raw_kloosterman - scaled)
+            scaling_errors.append(scaling_error)
+            pure += fourier[frequency] * scaled / q
+            correction += (
+                fourier[frequency]
+                * density
+                * ramanujan(frequency)
+                / q
+            )
+            product_frequency = (-label * frequency) % q
+            coefficient_by_residue[product_frequency] += (
+                complex(label_weight) * fourier[frequency]
+            )
+
+        completion_error = abs(direct - completed)
+        max_completion_error = max(max_completion_error, completion_error)
+        max_scaling_error = max(
+            max_scaling_error,
+            max(scaling_errors, default=0.0),
+        )
+        weighted_label = complex(label_weight)
+        direct_master += weighted_label * direct
+        pure_master += weighted_label * pure
+        correction_master += weighted_label * correction
+        rows.append(
+            {
+                "product_label": label,
+                "product_label_weight": label_weight,
+                "type_fourier_coefficients": fourier,
+                "centered_zero_frequency": zero_transform,
+                "direct_centered_row": direct,
+                "completed_centered_row": completed,
+                "pure_kloosterman_row": pure,
+                "rank_one_ramanujan_correction": correction,
+                "completion_error": completion_error,
+                "maximum_scaling_error": max(scaling_errors, default=0.0),
+                "direct_equals_pure_minus_correction": (
+                    abs(direct - (pure - correction)) <= tolerance
+                ),
+            }
+        )
+
+    regrouped_pure_master = sum(
+        (
+            coefficient * kloosterman(product_frequency, 1) / q
+            for product_frequency, coefficient in coefficient_by_residue.items()
+        ),
+        0j,
+    )
+    resonant_fibres = {
+        frequency: sum(
+            (
+                complex(label_weight)
+                * complex(residue_row[(-label * pow(frequency, -1, q)) % q])
+                for label, label_weight, residue_row in zip(
+                    labels, label_weights, type_weights
+                )
+            ),
+            0j,
+        )
+        for frequency in units
+    }
+    coefficient_from_resonant_fibres = {
+        product_frequency: sum(
+            (
+                coefficient * phase(
+                    -product_frequency * pow(frequency, -1, q)
+                )
+                for frequency, coefficient in resonant_fibres.items()
+            ),
+            0j,
+        )
+        for product_frequency in range(q)
+    }
+    coefficient_fourier_error = max(
+        (
+            abs(
+                coefficient_by_residue[product_frequency]
+                - coefficient_from_resonant_fibres[product_frequency]
+            )
+            for product_frequency in range(1, q)
+        ),
+        default=0.0,
+    )
+    deleted_zero_exact = abs(coefficient_by_residue[0]) <= tolerance
+    resonant_total = sum(resonant_fibres.values(), 0j)
+    deleted_zero_coefficient_error = abs(
+        coefficient_from_resonant_fibres[0] - resonant_total
+    )
+    completed_coefficient_energy = sum(
+        (abs(value) ** 2 for value in coefficient_by_residue.values()),
+        0.0,
+    )
+    resonant_projector_energy = sum(
+        (abs(value) ** 2 for value in resonant_fibres.values()),
+        0.0,
+    )
+    centered_resonant_fibres = {
+        frequency: coefficient - resonant_total / phi_q
+        for frequency, coefficient in resonant_fibres.items()
+    }
+    centered_completed_coefficients = {
+        product_frequency: sum(
+            (
+                coefficient * phase(
+                    -product_frequency * pow(frequency, -1, q)
+                )
+                for frequency, coefficient in centered_resonant_fibres.items()
+            ),
+            0j,
+        )
+        for product_frequency in range(q)
+    }
+    centered_resonant_projector_energy = sum(
+        (abs(value) ** 2 for value in centered_resonant_fibres.values()),
+        0.0,
+    )
+    centered_completed_coefficient_energy = sum(
+        (abs(value) ** 2 for value in centered_completed_coefficients.values()),
+        0.0,
+    )
+    centered_completed_parseval_error = abs(
+        centered_completed_coefficient_energy
+        - q * centered_resonant_projector_energy
+    )
+    centered_kloosterman_master = sum(
+        (
+            coefficient * kloosterman(product_frequency, 1) / q
+            for product_frequency, coefficient
+            in centered_completed_coefficients.items()
+        ),
+        0j,
+    )
+    centered_master_reassembly_error = abs(
+        centered_kloosterman_master - direct_master
+    )
+    centered_raw_diagonal_energy = (
+        phi_q * centered_completed_coefficient_energy / (q * q)
+    )
+    centered_renormalized_diagonal_energy = (
+        q * centered_raw_diagonal_energy / phi_q
+    )
+    centered_diagonal_error = abs(
+        centered_renormalized_diagonal_energy
+        - centered_resonant_projector_energy
+    )
+    parseval_error = abs(
+        completed_coefficient_energy
+        - (q * resonant_projector_energy - abs(resonant_total) ** 2)
+    )
+    principal_excess_energy = (
+        (q / phi_q - 1) * abs(resonant_total) ** 2
+    )
+    centered_energy_split_error = abs(
+        completed_coefficient_energy
+        - (
+            q * centered_resonant_projector_energy
+            + principal_excess_energy
+        )
+    )
+    raw_kloosterman_diagonal_energy = (
+        phi_q * completed_coefficient_energy / (q * q)
+    )
+    raw_principal_excess_diagonal = (
+        phi_q * principal_excess_energy / (q * q)
+    )
+    principal_subtracted_renormalized_diagonal = (
+        q
+        * (
+            raw_kloosterman_diagonal_energy
+            - raw_principal_excess_diagonal
+        )
+        / phi_q
+    )
+    principal_subtracted_diagonal_error = abs(
+        principal_subtracted_renormalized_diagonal
+        - centered_resonant_projector_energy
+    )
+    correction_exact = abs(
+        direct_master - (pure_master - correction_master)
+    ) <= tolerance
+    pure_regrouping_exact = abs(
+        pure_master - regrouped_pure_master
+    ) <= tolerance
+    return {
+        "modulus": q,
+        "product_labels": labels,
+        "rows": tuple(rows),
+        "completed_product_frequency_coefficients": coefficient_by_residue,
+        "resonant_reduced_frequency_fibres": resonant_fibres,
+        "centered_resonant_reduced_frequency_fibres": (
+            centered_resonant_fibres
+        ),
+        "centered_completed_product_frequency_coefficients": (
+            centered_completed_coefficients
+        ),
+        "coefficients_from_resonant_fibre_fourier_transform": (
+            coefficient_from_resonant_fibres
+        ),
+        "direct_centered_master": direct_master,
+        "pure_kloosterman_master": pure_master,
+        "rank_one_ramanujan_correction_master": correction_master,
+        "regrouped_pure_kloosterman_master": regrouped_pure_master,
+        "maximum_additive_completion_error": max_completion_error,
+        "maximum_unit_argument_scaling_error": max_scaling_error,
+        "maximum_resonant_fibre_fourier_error": coefficient_fourier_error,
+        "deleted_zero_coefficient_error": deleted_zero_coefficient_error,
+        "completed_coefficient_energy": completed_coefficient_energy,
+        "uncentered_resonant_projector_energy": resonant_projector_energy,
+        "centered_resonant_projector_energy": (
+            centered_resonant_projector_energy
+        ),
+        "centered_completed_coefficient_energy": (
+            centered_completed_coefficient_energy
+        ),
+        "centered_completed_parseval_error": (
+            centered_completed_parseval_error
+        ),
+        "centered_kloosterman_master": centered_kloosterman_master,
+        "centered_master_reassembly_error": centered_master_reassembly_error,
+        "centered_raw_diagonal_energy": centered_raw_diagonal_energy,
+        "centered_renormalized_diagonal_energy": (
+            centered_renormalized_diagonal_energy
+        ),
+        "resonant_fibre_total": resonant_total,
+        "completed_parseval_error": parseval_error,
+        "principal_excess_energy": principal_excess_energy,
+        "centered_energy_split_error": centered_energy_split_error,
+        "raw_kloosterman_diagonal_energy": raw_kloosterman_diagonal_energy,
+        "raw_principal_excess_diagonal": raw_principal_excess_diagonal,
+        "principal_subtracted_renormalized_diagonal": (
+            principal_subtracted_renormalized_diagonal
+        ),
+        "squarefree_modulus_verified": True,
+        "all_product_labels_are_units": all_labels_units,
+        "all_centered_zero_additive_modes_vanish": zero_modes_vanish,
+        "all_additive_completion_rows_exact": (
+            max_completion_error <= tolerance
+        ),
+        "all_unit_argument_kloosterman_scalings_exact": (
+            max_scaling_error <= tolerance
+        ),
+        "pure_kloosterman_rows_reassemble_by_product_frequency": (
+            pure_regrouping_exact
+        ),
+        "rank_one_ramanujan_corrections_reassemble_exactly": correction_exact,
+        "centered_direct_master_equals_pure_minus_correction": (
+            correction_exact
+        ),
+        "completed_nonzero_coefficient_is_deleted_zero_fourier_projection": (
+            coefficient_fourier_error <= tolerance
+            and deleted_zero_exact
+            and deleted_zero_coefficient_error <= tolerance
+        ),
+        "nonzero_parseval_has_exact_deleted_zero_correction": (
+            parseval_error <= tolerance
+        ),
+        "completed_energy_splits_centered_resonant_and_principal_excess": (
+            centered_energy_split_error <= tolerance
+        ),
+        "principal_excess_subtracted_diagonal_renormalizes_to_centered_projector": (
+            principal_subtracted_diagonal_error <= tolerance
+        ),
+        "centered_completed_coefficients_have_zero_additive_mode": (
+            abs(centered_completed_coefficients[0]) <= tolerance
+        ),
+        "centered_completed_coefficient_is_fourier_transform_of_centered_fibres": (
+            True
+        ),
+        "centered_kloosterman_master_reassembles_direct_centered_master": (
+            centered_master_reassembly_error <= tolerance
+        ),
+        "centered_completed_parseval_equals_q_times_centered_projector": (
+            centered_completed_parseval_error <= tolerance
+        ),
+        "q_over_phi_centered_diagonal_equals_centered_projector": (
+            centered_diagonal_error <= tolerance
+        ),
+        "fixed_modulus_diagonal_adapter_proved": bool(
+            coefficient_fourier_error <= tolerance
+            and deleted_zero_exact
+            and deleted_zero_coefficient_error <= tolerance
+            and parseval_error <= tolerance
+            and centered_energy_split_error <= tolerance
+            and principal_subtracted_diagonal_error <= tolerance
+            and abs(centered_completed_coefficients[0]) <= tolerance
+            and centered_master_reassembly_error <= tolerance
+            and centered_completed_parseval_error <= tolerance
+            and centered_diagonal_error <= tolerance
+        ),
+        "completed_coefficient_depends_on_modulus_and_type_packet": True,
+        "common_coefficient_sequence_across_moduli_proved": False,
+        "brs_unweighted_modulus_moment_directly_applicable": False,
+        "pascadi_one_level_independent_sequence_hypothesis_verified": False,
+        "physical_level_dependent_dskm_proved": False,
+        "centered_nonzero_determinant_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def type_frequency_reduced_determinant_reciprocity_audit(
+    *,
+    rows: tuple[tuple[int, int, int], ...],
+    product_label_length_exponent: Fraction,
+    reduced_modulus_exponents: tuple[Fraction, ...],
+) -> dict[str, object]:
+    """Descend a nonzero Type frequency to its primitive fraction.
+
+    A row is ``(q,k,y)``, where ``q`` is squarefree, ``k`` is nonzero
+    modulo ``q``, and ``y`` is a unit.  Put
+
+    ``d=(k,q)``, ``Q=q/d``, ``K=k/d``, and ``x=-K*y (mod Q)``.
+
+    Then ``K`` and ``x`` are units modulo ``Q``.  Thus the product-label
+    phase ``-k*y/q`` is the primitive fraction ``x/Q``.  For two rows,
+    a nonzero circular determinant has the form
+
+    ``Delta=x1*Q2-x2*Q1-j*Q1*Q2=g*D``, ``g=(Q1,Q2)``.
+
+    The determinant fixes the two cofactor residues.  CRT first separates
+    the inactive Type-gcd moduli ``d_i`` and then the common reduced-modulus
+    gcd ``g``.  Elementary additive reciprocity transfers the remaining
+    cofactor inverse phases to the short modulus ``D``.  This is an exact
+    finite identity only; no signed short-determinant estimate is asserted.
+    """
+
+    supplied_rows = tuple(
+        (int(modulus), int(frequency), int(residue))
+        for modulus, frequency, residue in rows
+    )
+    modulus_exponents = tuple(F(value) for value in reduced_modulus_exponents)
+    product_exponent = F(product_label_length_exponent)
+    if not supplied_rows or len(supplied_rows) != len(modulus_exponents):
+        raise ValueError("rows and reduced-modulus exponents must have equal positive length")
+    if product_exponent <= 0 or any(value < 0 for value in modulus_exponents):
+        raise ValueError("length exponents must be nonnegative and product length positive")
+
+    def inv_mod(value: int, modulus: int) -> int:
+        return 0 if modulus == 1 else pow(value, -1, modulus)
+
+    all_squarefree = all(
+        modulus > 1 and _finite_mobius(modulus) != 0
+        for modulus, _, _ in supplied_rows
+    )
+    all_nonzero = all(
+        frequency % modulus != 0
+        for modulus, frequency, _ in supplied_rows
+    )
+    all_residue_units = all(
+        gcd(residue, modulus) == 1
+        for modulus, _, residue in supplied_rows
+    )
+    if not all_squarefree:
+        raise ValueError("every modulus must be squarefree and greater than one")
+    if not all_nonzero:
+        raise ValueError("every Type frequency must be nonzero modulo its modulus")
+    if not all_residue_units:
+        raise ValueError("every residue label must be a unit modulo its modulus")
+
+    reduced_rows: list[dict[str, object]] = []
+    reduced_type_units = True
+    primitive_fractions = True
+    inactive_active_splits = True
+    for modulus, frequency, residue in supplied_rows:
+        normalized_frequency = frequency % modulus
+        type_gcd = gcd(normalized_frequency, modulus)
+        reduced_modulus = modulus // type_gcd
+        reduced_frequency = normalized_frequency // type_gcd
+        reduced_numerator = (-reduced_frequency * residue) % reduced_modulus
+        reduced_type_unit = gcd(reduced_frequency, reduced_modulus) == 1
+        primitive = gcd(reduced_numerator, reduced_modulus) == 1
+
+        inactive_phase = F(
+            inv_mod(residue, type_gcd)
+            * inv_mod(reduced_modulus, type_gcd),
+            type_gcd,
+        )
+        active_coefficient = (
+            -reduced_frequency * inv_mod(type_gcd, reduced_modulus)
+        )
+        active_phase = F(
+            active_coefficient
+            * inv_mod(reduced_numerator, reduced_modulus),
+            reduced_modulus,
+        )
+        original_phase = F(inv_mod(residue, modulus), modulus)
+        split_exact = (original_phase - inactive_phase - active_phase).denominator == 1
+
+        reduced_type_units = bool(reduced_type_units and reduced_type_unit)
+        primitive_fractions = bool(primitive_fractions and primitive)
+        inactive_active_splits = bool(inactive_active_splits and split_exact)
+        reduced_rows.append(
+            {
+                "modulus": modulus,
+                "type_frequency": normalized_frequency,
+                "residue_label": residue % modulus,
+                "type_frequency_gcd": type_gcd,
+                "reduced_modulus": reduced_modulus,
+                "reduced_type_frequency": reduced_frequency,
+                "reduced_additive_numerator": reduced_numerator,
+                "reduced_additive_fraction": F(
+                    reduced_numerator, reduced_modulus
+                ),
+                "inactive_inverse_phase": inactive_phase,
+                "active_inverse_phase": active_phase,
+                "original_inverse_phase": original_phase,
+                "reduced_type_frequency_is_unit": reduced_type_unit,
+                "reduced_additive_fraction_is_primitive": primitive,
+                "inactive_active_crt_split_exact": split_exact,
+            }
+        )
+
+    zero_determinant_exact = True
+    gcd_divisibility = True
+    cofactor_uniqueness = True
+    determinant_cofactor_units = True
+    active_crt_exact = True
+    reciprocity_exact = True
+    determinant_rows: list[dict[str, object]] = []
+    for left_index, left in enumerate(reduced_rows):
+        for right in reduced_rows[left_index + 1:]:
+            q_left = int(left["reduced_modulus"])
+            x_left = int(left["reduced_additive_numerator"])
+            q_right = int(right["reduced_modulus"])
+            x_right = int(right["reduced_additive_numerator"])
+            raw_delta = x_left * q_right - x_right * q_left
+            period = q_left * q_right
+            circular_delta = min(
+                (raw_delta - period, raw_delta, raw_delta + period),
+                key=lambda value: (abs(value), value < 0),
+            )
+            equal_frequencies = (
+                F(x_left, q_left) == F(x_right, q_right)
+            )
+            zero_determinant_exact = bool(
+                zero_determinant_exact
+                and ((circular_delta == 0) == equal_frequencies)
+            )
+            if circular_delta == 0:
+                continue
+            if circular_delta > 0:
+                first, second, delta = left, right, circular_delta
+            else:
+                first, second, delta = right, left, -circular_delta
+
+            q1 = int(first["reduced_modulus"])
+            q2 = int(second["reduced_modulus"])
+            x1 = int(first["reduced_additive_numerator"])
+            x2 = int(second["reduced_additive_numerator"])
+            d1 = int(first["type_frequency_gcd"])
+            d2 = int(second["type_frequency_gcd"])
+            k1 = int(first["reduced_type_frequency"])
+            k2 = int(second["reduced_type_frequency"])
+            y1 = int(first["residue_label"])
+            y2 = int(second["residue_label"])
+            original_q1 = int(first["modulus"])
+            original_q2 = int(second["modulus"])
+
+            common = gcd(q1, q2)
+            r1 = q1 // common
+            r2 = q2 // common
+            divides = delta % common == 0
+            gcd_divisibility = bool(gcd_divisibility and divides)
+            if not divides:
+                continue
+            reduced_delta = delta // common
+            unique_left = (
+                x1 % r1
+                == (reduced_delta * inv_mod(r2, r1)) % r1
+            )
+            unique_right = (
+                x2 % r2
+                == (-reduced_delta * inv_mod(r1, r2)) % r2
+            )
+            cofactor_unit = gcd(reduced_delta, r1 * r2) == 1
+            cofactor_uniqueness = bool(
+                cofactor_uniqueness and unique_left and unique_right
+            )
+            determinant_cofactor_units = bool(
+                determinant_cofactor_units and cofactor_unit
+            )
+
+            original_phase = (
+                F(inv_mod(y1, original_q1), original_q1)
+                - F(inv_mod(y2, original_q2), original_q2)
+            )
+            inactive_phase = (
+                F(inv_mod(y1, d1) * inv_mod(q1, d1), d1)
+                - F(inv_mod(y2, d2) * inv_mod(q2, d2), d2)
+            )
+            active_coefficient_1 = -k1 * inv_mod(d1, q1)
+            active_coefficient_2 = k2 * inv_mod(d2, q2)
+            active_phase = (
+                F(active_coefficient_1 * inv_mod(x1, q1), q1)
+                + F(active_coefficient_2 * inv_mod(x2, q2), q2)
+            )
+            inactive_active_exact = (
+                original_phase - inactive_phase - active_phase
+            ).denominator == 1
+            inactive_active_splits = bool(
+                inactive_active_splits and inactive_active_exact
+            )
+
+            common_phase = (
+                F(
+                    active_coefficient_1
+                    * inv_mod(x1, common)
+                    * inv_mod(r1, common),
+                    common,
+                )
+                + F(
+                    active_coefficient_2
+                    * inv_mod(x2, common)
+                    * inv_mod(r2, common),
+                    common,
+                )
+            )
+            left_cofactor_phase = F(
+                active_coefficient_1
+                * inv_mod(x1, r1)
+                * inv_mod(common, r1),
+                r1,
+            )
+            right_cofactor_phase = F(
+                active_coefficient_2
+                * inv_mod(x2, r2)
+                * inv_mod(common, r2),
+                r2,
+            )
+            active_crt_phase = (
+                common_phase + left_cofactor_phase + right_cofactor_phase
+            )
+            active_row_exact = (
+                active_phase - active_crt_phase
+            ).denominator == 1
+            active_crt_exact = bool(active_crt_exact and active_row_exact)
+
+            left_multiplier = (
+                active_coefficient_1
+                * r2
+                * inv_mod(common, r1)
+            )
+            right_multiplier = (
+                -active_coefficient_2
+                * r1
+                * inv_mod(common, r2)
+            )
+            transferred_phase = inactive_phase + common_phase
+            transferred_phase += (
+                -F(
+                    left_multiplier * inv_mod(r1, reduced_delta),
+                    reduced_delta,
+                )
+                + F(left_multiplier, reduced_delta * r1)
+            )
+            transferred_phase += (
+                -F(
+                    right_multiplier * inv_mod(r2, reduced_delta),
+                    reduced_delta,
+                )
+                + F(right_multiplier, reduced_delta * r2)
+            )
+            reciprocity_row_exact = (
+                original_phase - transferred_phase
+            ).denominator == 1
+            reciprocity_exact = bool(
+                reciprocity_exact and reciprocity_row_exact
+            )
+            determinant_rows.append(
+                {
+                    "left_reduced_modulus": q1,
+                    "right_reduced_modulus": q2,
+                    "left_reduced_numerator": x1,
+                    "right_reduced_numerator": x2,
+                    "circular_reduced_determinant": delta,
+                    "common_reduced_modulus_gcd": common,
+                    "left_coprime_cofactor": r1,
+                    "right_coprime_cofactor": r2,
+                    "short_reduced_determinant": reduced_delta,
+                    "left_inactive_type_gcd": d1,
+                    "right_inactive_type_gcd": d2,
+                    "common_gcd_divides_reduced_determinant": divides,
+                    "left_cofactor_residue_class_unique": unique_left,
+                    "right_cofactor_residue_class_unique": unique_right,
+                    "short_determinant_is_cofactor_unit": cofactor_unit,
+                    "inactive_active_crt_split_exact": inactive_active_exact,
+                    "active_common_cofactor_crt_split_exact": active_row_exact,
+                    "active_cofactor_phase_transfers_to_short_determinant": (
+                        reciprocity_row_exact
+                    ),
+                }
+            )
+
+    maximum_modulus_exponent = max(modulus_exponents)
+    determinant_collar = max(
+        F(0),
+        max(
+            left + right - product_exponent
+            for left in modulus_exponents
+            for right in modulus_exponents
+        ),
+    )
+    balanced_short_conductor = max(
+        F(0), 2 * maximum_modulus_exponent - product_exponent
+    )
+    type_gcd_lowers_modulus = all(
+        int(row["reduced_modulus"]) <= int(row["modulus"])
+        for row in reduced_rows
+    )
+    return {
+        "rows": tuple(reduced_rows),
+        "determinant_rows": tuple(determinant_rows),
+        "product_label_length_exponent": product_exponent,
+        "reduced_modulus_exponents": modulus_exponents,
+        "all_moduli_squarefree": all_squarefree,
+        "all_type_frequencies_nonzero_mod_modulus": all_nonzero,
+        "all_residue_labels_are_units": all_residue_units,
+        "all_reduced_type_frequencies_are_units": reduced_type_units,
+        "all_reduced_additive_fractions_are_primitive": primitive_fractions,
+        "zero_reduced_determinant_is_exact_frequency_equality": (
+            zero_determinant_exact
+        ),
+        "every_nonzero_reduced_determinant_is_divisible_by_reduced_modulus_gcd": (
+            gcd_divisibility
+        ),
+        "all_reduced_cofactor_residue_classes_are_unique": (
+            cofactor_uniqueness
+        ),
+        "all_reduced_determinants_are_cofactor_units": (
+            determinant_cofactor_units
+        ),
+        "all_inactive_active_crt_splits_exact": inactive_active_splits,
+        "all_active_common_cofactor_crt_splits_exact": active_crt_exact,
+        "all_active_cofactor_phases_transfer_to_short_determinant": (
+            reciprocity_exact
+        ),
+        "type_frequency_gcd_only_lowers_effective_modulus": (
+            type_gcd_lowers_modulus
+        ),
+        "maximum_determinant_collar_exponent": determinant_collar,
+        "balanced_combined_short_conductor_exponent": (
+            balanced_short_conductor
+        ),
+        "inactive_type_gcd_traces_retained": True,
+        "common_reduced_modulus_gcd_trace_retained": True,
+        "signed_short_determinant_family_bound_proved": False,
+        "level_dependent_dskm_offdiagonal_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

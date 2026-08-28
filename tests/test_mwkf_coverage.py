@@ -7067,6 +7067,128 @@ def test_short_determinant_checkpoint_is_documented_as_an_unproved_gate() -> Non
     assert "not proved" in text
 
 
+def test_physical_centered_completion_creates_level_dependent_coefficients() -> None:
+    """Additive completion reaches S(n,1;q), but with a q-dependent sequence."""
+
+    audit = getattr(
+        coverage_audit,
+        "physical_centered_kloosterman_completion_audit",
+        None,
+    )
+    assert audit is not None, "physical centered Kloosterman adapter is missing"
+    result = audit(
+        modulus=15,
+        product_labels=(1, 2, 4),
+        product_label_weights=(F(2), F(-3), F(5)),
+        type_residue_weights=(
+            tuple(F(index - 4) for index in range(15)),
+            tuple(F((index + 1) * (index - 2), 3) for index in range(15)),
+            tuple(F((-1) ** index * (index + 2), 5) for index in range(15)),
+        ),
+    )
+    assert result["squarefree_modulus_verified"]
+    assert result["all_product_labels_are_units"]
+    assert result["all_centered_zero_additive_modes_vanish"]
+    assert result["all_additive_completion_rows_exact"]
+    assert result["all_unit_argument_kloosterman_scalings_exact"]
+    assert result["pure_kloosterman_rows_reassemble_by_product_frequency"]
+    assert result["rank_one_ramanujan_corrections_reassemble_exactly"]
+    assert result["centered_direct_master_equals_pure_minus_correction"]
+    assert result["completed_nonzero_coefficient_is_deleted_zero_fourier_projection"]
+    assert result["nonzero_parseval_has_exact_deleted_zero_correction"]
+    assert result["completed_energy_splits_centered_resonant_and_principal_excess"]
+    assert result["principal_excess_subtracted_diagonal_renormalizes_to_centered_projector"]
+    assert result["centered_completed_coefficients_have_zero_additive_mode"]
+    assert result["centered_completed_coefficient_is_fourier_transform_of_centered_fibres"]
+    assert result["centered_kloosterman_master_reassembles_direct_centered_master"]
+    assert result["centered_completed_parseval_equals_q_times_centered_projector"]
+    assert result["q_over_phi_centered_diagonal_equals_centered_projector"]
+    assert result["fixed_modulus_diagonal_adapter_proved"]
+    assert result["completed_coefficient_depends_on_modulus_and_type_packet"]
+    assert not result["common_coefficient_sequence_across_moduli_proved"]
+    assert not result["brs_unweighted_modulus_moment_directly_applicable"]
+    assert not result["pascadi_one_level_independent_sequence_hypothesis_verified"]
+    assert not result["physical_level_dependent_dskm_proved"]
+    assert not result["centered_nonzero_determinant_gate_closed"]
+
+
+def test_level_dependent_dskm_is_documented_as_the_physical_gate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.149 The physical completion is level-dependent" in text
+    assert r"S(k,-A;q)=S(-Ak,1;q)" in text
+    assert r"b_{\omega,q}(n)" in text
+    assert r"\mathfrak E_{\rm lev}" in text
+    assert r"\mathfrak D_{\rm lev}" in text
+    assert "not a common sequence in the modulus" in text
+    assert "level-dependent DSKM" in text
+    assert "remains unproved" in text
+
+
+def test_centered_level_diagonal_is_exactly_the_resonant_projector_weight() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.150 The centered level diagonal is already closed" in text
+    assert r"\widetilde b_{q}(n)" in text
+    assert r"q\mathcal E_q^{\rm mult\text{-}cent}" in text
+    assert r"\frac{\varphi(q)}q" in text
+    assert r"\mathcal E_q^{\rm mult\text{-}cent}" in text
+    assert "diagonal is already within the Section 9.144 target" in text
+    assert "only the level-dependent off-diagonal remainder" in text
+    assert "remains unproved" in text
+
+
+def test_type_frequency_reduction_preserves_the_short_determinant_reciprocity() -> None:
+    audit = getattr(
+        coverage_audit,
+        "type_frequency_reduced_determinant_reciprocity_audit",
+        None,
+    )
+    assert audit is not None, "Type-frequency determinant audit is missing"
+    result = audit(
+        rows=(
+            # (squarefree modulus q, nonzero Type frequency k, unit y)
+            (15, 5, 2),
+            (21, 3, 5),
+            (35, 10, 3),
+            (30, 6, 7),
+            (77, 9, 10),
+        ),
+        product_label_length_exponent=F(5),
+        reduced_modulus_exponents=(F(3), F(5, 2), F(2), F(3, 2), F(1)),
+    )
+    assert result["all_moduli_squarefree"]
+    assert result["all_type_frequencies_nonzero_mod_modulus"]
+    assert result["all_residue_labels_are_units"]
+    assert result["all_reduced_type_frequencies_are_units"]
+    assert result["all_reduced_additive_fractions_are_primitive"]
+    assert result["zero_reduced_determinant_is_exact_frequency_equality"]
+    assert result["every_nonzero_reduced_determinant_is_divisible_by_reduced_modulus_gcd"]
+    assert result["all_reduced_cofactor_residue_classes_are_unique"]
+    assert result["all_reduced_determinants_are_cofactor_units"]
+    assert result["all_inactive_active_crt_splits_exact"]
+    assert result["all_active_cofactor_phases_transfer_to_short_determinant"]
+    assert result["type_frequency_gcd_only_lowers_effective_modulus"]
+    assert result["maximum_determinant_collar_exponent"] == F(1)
+    assert result["balanced_combined_short_conductor_exponent"] == F(1)
+    assert result["inactive_type_gcd_traces_retained"]
+    assert result["common_reduced_modulus_gcd_trace_retained"]
+    assert not result["signed_short_determinant_family_bound_proved"]
+    assert not result["level_dependent_dskm_offdiagonal_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_type_frequency_short_determinant_is_documented_without_claiming_bound() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.151 Type-frequency gcd only shortens the determinant modulus" in text
+    assert r"q'=q/(k,q)" in text
+    assert r"x\equiv-k'y\pmod {q'}" in text
+    assert r"\Delta_k=x_1q'_2-x_2q'_1" in text
+    assert r"gD=\Delta_k" in text
+    assert r"gD\ll T\mathscr L^B" in text
+    assert "inactive Type-gcd traces" in text
+    assert "signed short-determinant family" in text
+    assert "remains unproved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 
