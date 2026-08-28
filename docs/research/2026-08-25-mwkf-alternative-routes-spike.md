@@ -22353,7 +22353,12 @@ six dyadic sums and harmonic \(q\)-sum give
 
 The existing shell audit separately gives \(o_W(T)\) for the AFE
 product tail, time-nonstationary tail, Poisson-frequency tail and QCT
-Fourier--Mellin tail.  The archimedean correction is
+Fourier--Mellin tail.  Its present proof is the seminorm-stable PEVP
+argument of Section 4.109zg: the compact core bypasses PEVP, but the
+tail shells still use seminorm-stable PEVP.  In particular, the final
+asymptotic presently depends on PEVP for these four disjoint tail
+families; the cubic route has removed PEVP only from the compact
+outer-entry aggregation.  The archimedean correction is
 \(O_{A,W}(T^{-A})\) for every fixed \(A\).  To make disjointness
 literal, order the transform parameters once and assign every
 noncompact tuple to the shell of its first active tail parameter.

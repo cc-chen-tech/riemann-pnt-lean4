@@ -3602,6 +3602,9 @@ class UnconditionalLongMollifierAsymptoticAudit:
     poisson_zero_mode_normalization_proved: bool
     lcm_main_term_asymptotic_proved: bool
     pevp_proved: bool
+    compact_core_bypasses_pevp: bool
+    tail_shells_use_seminorm_stable_pevp: bool
+    full_remainder_requires_pevp_for_tails: bool
     endpoint_dispersion_local_lemma_proved: bool
     physical_weight_ledger_verified: bool
     nested_log_choices_verified: bool
@@ -15852,12 +15855,16 @@ def unconditional_long_mollifier_asymptotic_audit(
 
     The exact completed AFE and common-Mellin Poisson calculation give
     ``I = T*Q + R`` without a truncated-AFE error.  The merged Selberg
-    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  Fixed-entry PEVP
-    and the seminorm-stable shell argument are proved.  The cubic
+    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  The cubic
     complementary-divisor route independently aggregates the signed
-    outer entries over every power-scale cell and the logarithmic LCPE2
-    endpoint, before the positive product-energy majorant is introduced.
-    Reassembly therefore closes OLISK and the complete remainder.
+    outer entries in the compact core over every power-scale cell and
+    the logarithmic LCPE2 endpoint, before the positive product-energy
+    majorant is introduced.  This compact-core step bypasses PEVP.
+
+    The four first-active AFE/transform tail families are a separate
+    partition.  Their present proof still uses the separately proved
+    seminorm-stable PEVP theorem.  Thus the complete remainder requires
+    PEVP for tails even though its compact outer-entry core does not.
     """
     projector = primitive_conductor_level_difference_audit(
         level_factor_exponent=F(3),
@@ -15933,6 +15940,15 @@ def unconditional_long_mollifier_asymptotic_audit(
     )
     compact_core_is_little_o = (
         core.nonzero_poisson_core_is_little_o_T or cubic_outer_core
+    )
+    compact_core_bypasses_pevp = cubic_outer_core
+    tails_use_pevp = all(
+        (
+            tails.pevp_is_polynomial_in_fixed_kernel_seminorms,
+            tails.transform_tail_aggregated,
+            tails.afe_tail_aggregated,
+            tails.total_tail_is_little_o_T,
+        )
     )
     full_remainder = all(
         (
@@ -16012,6 +16028,9 @@ def unconditional_long_mollifier_asymptotic_audit(
         poisson_zero_mode_normalization_proved=True,
         lcm_main_term_asymptotic_proved=True,
         pevp_proved=projector.pevp_proved,
+        compact_core_bypasses_pevp=compact_core_bypasses_pevp,
+        tail_shells_use_seminorm_stable_pevp=tails_use_pevp,
+        full_remainder_requires_pevp_for_tails=True,
         endpoint_dispersion_local_lemma_proved=(
             cubic_power.endpoint_dispersion_local_lemma_proved
         ),
@@ -31123,6 +31142,10 @@ def main() -> None:
         f"{','.join(final.alternative_route_unverified_gates)} "
         "all_dyadic_cells="
         f"{final.all_dyadic_parameter_cells_enumerated} "
+        "compact_bypasses_pevp="
+        f"{final.compact_core_bypasses_pevp} "
+        "tail_pevp="
+        f"{final.tail_shells_use_seminorm_stable_pevp} "
         f"remainder_o_T={final.full_remainder_is_little_o_T}"
     )
 

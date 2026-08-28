@@ -1,3 +1,4 @@
+from dataclasses import replace
 from fractions import Fraction as F
 from math import gcd
 import sys
@@ -2585,6 +2586,7 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "theta=3 main=4/3 residual_top_level_gates=0 "
         "residual_semantics=top_level_gate_count_not_literal_cell_count "
         "top_level= alternative_unverified= all_dyadic_cells=True "
+        "compact_bypasses_pevp=True tail_pevp=True "
         "remainder_o_T=True"
     ) in report
     assert (
@@ -7552,6 +7554,9 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
     assert audit.poisson_zero_mode_normalization_proved
     assert audit.lcm_main_term_asymptotic_proved
     assert audit.pevp_proved
+    assert audit.compact_core_bypasses_pevp
+    assert audit.tail_shells_use_seminorm_stable_pevp
+    assert audit.full_remainder_requires_pevp_for_tails
     assert audit.endpoint_dispersion_local_lemma_proved
     assert audit.physical_weight_ledger_verified
     assert audit.nested_log_choices_verified
@@ -7570,6 +7575,13 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
     assert audit.alternative_route_unverified_gates == ()
     assert audit.all_dyadic_parameter_cells_enumerated
     assert audit.proof_status == "unconditional asymptotic proved"
+
+    # The cubic route removes PEVP only from the compact outer-entry core.
+    # Transform/AFE tails still use the separately proved seminorm-stable
+    # PEVP estimate, so the final dependency ledger must say so explicitly.
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    assert "compact core bypasses PEVP" in note
+    assert "tail shells still use seminorm-stable PEVP" in note
 
     coverage_audit.main()
     output = capsys.readouterr().out
@@ -7632,6 +7644,7 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
         "theta=3 main=4/3 residual_top_level_gates=0 "
         "residual_semantics=top_level_gate_count_not_literal_cell_count "
         "top_level= alternative_unverified= all_dyadic_cells=True "
+        "compact_bypasses_pevp=True tail_pevp=True "
         "remainder_o_T=True"
     ) in output
 
@@ -7643,6 +7656,35 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
         "unconditional asymptotic proved",
     ):
         assert marker in note
+
+
+def test_cubic_compact_core_does_not_hide_tail_pevp_dependency(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Removing PEVP must reopen only the tail-to-final implication."""
+    original = coverage_audit.primitive_conductor_level_difference_audit
+
+    def without_pevp(**kwargs: object):
+        return replace(
+            original(**kwargs),
+            pevp_is_polynomial_in_fixed_kernel_seminorms=False,
+            weighted_primitive_large_sieve_proved=False,
+            pevp_proved=False,
+        )
+
+    monkeypatch.setattr(
+        coverage_audit,
+        "primitive_conductor_level_difference_audit",
+        without_pevp,
+    )
+    audit = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
+    assert audit.compact_core_bypasses_pevp
+    assert not audit.tail_shells_use_seminorm_stable_pevp
+    assert audit.compact_nonzero_poisson_core_is_little_o_T
+    assert not audit.transform_tail_is_little_o_T
+    assert not audit.afe_tail_is_little_o_T
+    assert not audit.full_remainder_is_little_o_T
+    assert not audit.unconditional_asymptotic_proved
 
 
 def test_exact_polytope_vertex_ledger_replaces_the_unclassified_placeholder(
