@@ -491,6 +491,8 @@ lean_lib RiemannPNT where
     `Test.CarlsonGaussianPoleFreeSectionDerivMemLpContract,
     `PrimeNumberTheorem.CarlsonGaussianPoleFreeDerivMajorant,
     `Test.CarlsonGaussianPoleFreeDerivMajorantContract,
+    `PrimeNumberTheorem.CarlsonGaussianPoleFreeDerivMajorantBound,
+    `Test.CarlsonGaussianPoleFreeDerivMajorantBoundContract,
     `PrimeNumberTheorem.CarlsonGaussianPoleFreeLpValue,
     `Test.CarlsonGaussianPoleFreeLpValueContract,
     `PrimeNumberTheorem.CarlsonGaussianHilbertSectionDeriv,
