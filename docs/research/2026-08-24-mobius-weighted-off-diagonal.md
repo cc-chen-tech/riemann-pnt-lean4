@@ -64,6 +64,7 @@
 > | Prime zero-frequency physical reinversion | Section 9.171 removes the arbitrary-character-vector enlargement on the obstructing face.  If \(V_p^{(0)}\) is the literal common-zero-frequency active-residue profile and \(P_{>B,p}\) its high-order character projector, then the normalized double character sum is exactly \(P_{>B,p}V_p^{(0)}(D\overline q_p)\overline{P_{>B,q}V_q^{(0)}(-D\overline p_q)}\).  Thus the missing term is a finite cross-residue bilinear form in the original ratio-convolution/AFE profiles, not a generic mutual-character operator.  Row energy alone still permits point-mass saturation, so the remaining input is a physical cross-residue profile bound or a residual-main-term reassembly; neither is proved |
 > | One-sided cross-residue occupancy | Section 9.172 shows exactly where the remaining prime zero-mode loss sits.  For fixed long \(p\), the map \(q\mapsto D\overline q_p\) is injective because every short \(q<p\).  For fixed short \(q\), the values \(-D\overline p_q\) repeat with residue occupancy \(n_q(a)\).  Cauchy therefore costs precisely \((\max_{q,a}n_q(a))^{1/2}\), which has exponent \((\sigma_{\rm long}-\sigma_{\rm short})/2\) on the pigeonholed prime family and reproduces the full mutual-character imbalance.  Centering does not remove this positive sampling energy.  Any successful estimate must delay Cauchy past the long-prime average and use the physical profiles there |
 > | Prime centered divisor-incidence master | Section 9.173 expands the two physical ratio convolutions before Cauchy.  The inverse residues disappear exactly: \(Z_{p,D\overline q_p}^{\circ}\) is the \(f_p(m)g_p(n)\)-weighted discrepancy \(\mu(p)(\mathbf1_{p\mid qm+Dn}-1/\varphi(p))\), and the other profile is the analogous \(\mu(q)(\mathbf1_{q\mid pu-Dv}-1/\varphi(q))\).  The prime conductor signs are constant, but all Möbius/Type weights inside the four physical lifts remain.  The coupled congruences admit quotients \(pr=qm+Dn\), \(qs=pu-Dv\) satisfying \(q(rs-mu)=D(nu-rv)\).  This is an exact pre-Cauchy finite master; no published centered-incidence estimate for its level-dependent four lifts is known |
+> | Nine internal Type blocks on the prime incidence face | Section 9.174 inserts the exact small/I/II split into the two internal \(G\)-lifts of (9.1160), without changing either centered density subtraction or either \(F\)-lift.  The product has nine ordered signed blocks and only their sum equals the original physical incidence master.  Fixed-prime Type-I completion removes one local zero dual mode, but does not accept the other moving modulus/profile; FKM/FKMS and Bettin--Chandee likewise do not cover any complete level-dependent block.  The weakest prime-zero-mode obligation is the combined nine-block pre-Cauchy incidence bound (PCDI), not nine separate absolute estimates |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -24635,6 +24636,126 @@ with exact rational arithmetic, and verifies that their centered product
 is the coupled incidence product in (9.1160).  It marks no analytic gate
 closed.
 
+### 9.174 The centered incidence master has nine exact internal Type blocks
+
+The prime conductor signs in (9.1160) are constant, but the Type sign
+inside each \(G\)-lift is not.  To distinguish the residue lift from its
+Möbius argument, index a left \(G\)-entry by
+\(\jmath=(y_\jmath,N_\jmath)\), where \(y_\jmath\) is the integer lift
+appearing in the congruence and \(N_\jmath\) is the squarefree Type
+argument.  Write its raw weight as
+
+\[
+ g_{p,\jmath}^{\rm raw}
+ =\mu(N_\jmath)\widetilde g_{p,\jmath}.
+ \tag{9.1163}
+\]
+
+For the same cutoffs \(U,V\) as (9.934), define
+
+\[
+ g_{p,\jmath}^{\alpha}
+ :=\lambda_\alpha(N_\jmath)\widetilde g_{p,\jmath},
+ \qquad
+ \alpha\in\{{\rm small},{\rm I},{\rm II}\}.
+ \tag{9.1164}
+\]
+
+The pointwise identity (9.935) gives
+
+\[
+ \boxed{
+ g_{p,\jmath}^{\rm raw}
+ =g_{p,\jmath}^{\rm small}
+  +g_{p,\jmath}^{\rm I}
+  +g_{p,\jmath}^{\rm II}.}
+ \tag{9.1165}
+\]
+
+Define the centered local kernels
+
+\[
+ \Delta_p(t):=\mathbf1_{p\mid t}-\frac1{\varphi(p)},
+ \qquad
+ \Delta_q(t):=\mathbf1_{q\mid t}-\frac1{\varphi(q)}.
+ \tag{9.1166}
+\]
+
+For \(\alpha,\beta\in\{{\rm small},{\rm I},{\rm II}\}\), let
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr I_{\rm pp,0}^{\alpha,\beta}
+ :={}&\sum_{p,q,D}\sum_{m,u}\sum_{\jmath,\kappa}
+ f_p(m)g_{p,\jmath}^{\alpha}
+ \overline{f_q(u)g_{q,\kappa}^{\beta}}\\
+ &\times
+ \Delta_p(qm+Dy_\jmath)
+ \Delta_q(pu-Dy_\kappa),
+ \end{aligned}}
+ \tag{9.1167}
+\]
+
+with every packet weight from (9.1160) retained.  Substituting (9.1165)
+on both sides, before any absolute value, proves the finite identity
+
+\[
+ \boxed{
+ \mathscr I_{\rm pp,0}
+ =\sum_{\alpha,\beta\in\{{\rm small},{\rm I},{\rm II}\}}
+ \mathscr I_{\rm pp,0}^{\alpha,\beta}.}
+ \tag{9.1168}
+\]
+
+Neither \(\Delta_p\) nor \(\Delta_q\) changes under this split.  The two
+\(F\)-lifts, which contain the \(h\delta\) factorization and the cofactor
+signs \(\mu(d_1)\mu(d_2)\), also remain unchanged.  In contrast to the
+outer prime conductors in (9.1129), the internal Type arguments
+\(N_\jmath\) may lie below the cutoff, so the **small** blocks are not
+vacuous on the full physical packet.
+
+The published-coverage table is now attached to the actual centered
+incidence blocks:
+
+| ordered internal block | available input | exact conclusion |
+|---|---|---|
+| small--small | finite support and the two local density subtractions | no full bound: both prime levels and both physical profiles still move |
+| small--I or I--small | fixed-prime Type I completion of Sections 9.108--9.110 | the local zero dual frequency vanishes, but the theorem does not retain the other moving prime/profile |
+| I--I | two copies of the same fixed-prime Type I completion | separate completion followed by Cauchy recreates the short-side occupancy (9.1151) |
+| any block with exactly one II side | FKM/FKMS fixed-prime trace estimates and Bettin--Chandee scalar Kloosterman-fraction bounds | diagnostic fixed fibres only; the opposite level-dependent centered incidence is outside the hypotheses |
+| II--II | bilinear trace estimates at one fixed prime; standard dispersion after freezing one level | no full coverage: freezing either level destroys the joint long-prime average required by Section 9.172 |
+| all nine blocks reassembled | exact signs (9.1165), both density subtractions, all four physical lifts, and \(a=h\delta\) | no published row closes one full physical block; cross-block cancellation is still available |
+
+Thus all nine blocks must be reassembled before Cauchy.  The weakest
+prime-zero-mode target is
+
+\[
+ \boxed{
+ \left|
+ \sum_{\alpha,\beta}
+ \mathscr I_{\rm pp,0}^{\alpha,\beta}
+ \right|
+ \ll_{\varepsilon,W}
+ T^{-\eta_{\rm imb}+\varepsilon}\mathscr B_{\rm MC}.}
+ \tag{PCDI}
+\]
+
+Here \(\mathscr B_{\rm MC}\) is the same mutual-character/row-energy
+baseline used in (NPIT), restricted to the prime--prime zero-frequency
+face.  The target (PCDI) is not an additional saving to be multiplied
+with (NPIT); it is the exact physical realization of the missing
+\(\eta_{\rm imb}\) on this subface.  The
+combined nine-block incidence bound remains unproved, as do (NPIT),
+bounded \(D\), LDSKM, and the
+coupled-kernel gate.
+
+The finite helper prime_centered_incidence_internal_type_split_audit
+applies (9.934) pointwise to arbitrary supplied Type arguments on both
+\(G\)-lifts, constructs all nine products in (9.1167), and verifies
+(9.1168) with exact rational arithmetic.  It takes no blockwise absolute
+value and marks every analytic-bound flag false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -24702,6 +24823,18 @@ remain.  Their quotient variables satisfy
 \(q(rs-mu)=D(nu-rv)\).  The prime zero-mode gate is therefore the
 explicit coupled centered incidence master (9.1160); its required
 pre-Cauchy bound is not proved.
+
+Section 9.174 inserts the remainder-free small/I/II identity into each
+of the two internal \(G\)-lifts of this incidence master.  This produces
+nine ordered signed blocks whose sum, before absolute values, is exactly
+the original prime zero-mode packet.  Both centered density
+subtractions, both \(F\)-lifts, the \(h\delta\) factorization, and the
+cofactor Möbius signs are unchanged.  The resulting published-coverage
+table shows that fixed-prime Type-I completion and the available trace
+or Kloosterman-fraction estimates cover only frozen fibres, not a full
+level-dependent physical block.  Consequently the combined
+nine-block bound (PCDI), and hence this prime-zero-mode part of (NPIT),
+remains unproved.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

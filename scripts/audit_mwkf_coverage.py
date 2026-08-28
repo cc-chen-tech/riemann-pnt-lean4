@@ -24472,6 +24472,193 @@ def prime_cross_residue_centered_divisor_incidence_audit(
     }
 
 
+def prime_centered_incidence_internal_type_split_audit(
+    *,
+    left_prime: int,
+    right_prime: int,
+    determinant: int,
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    left_F_lift: tuple[tuple[int, Fraction], ...],
+    left_G_type_lift: tuple[tuple[int, int, Fraction], ...],
+    right_F_lift: tuple[tuple[int, Fraction], ...],
+    right_G_type_lift: tuple[tuple[int, int, Fraction], ...],
+) -> dict[str, object]:
+    """Split both internal ``G``-lift Möbius weights before Cauchy.
+
+    Each row ``(label, mobius_argument, base_weight)`` contributes
+    ``mu(mobius_argument)*base_weight`` to the raw physical lift.  The
+    exact small/I/II identity (9.934)--(9.935) is inserted pointwise,
+    while both centered divisor kernels and both ``F`` lifts are left
+    unchanged.  The product therefore has nine ordered signed blocks.
+    """
+
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if min(cutoff_u, cutoff_v) <= 0:
+        raise ValueError("both Type cutoffs must be positive")
+    boundary = max(cutoff_u, cutoff_v)
+    type_names = ("small", "I", "II")
+
+    def type_multipliers(value: int) -> dict[str, int]:
+        if value <= 0 or _finite_mobius(value) == 0:
+            raise ValueError("every internal Type argument must be squarefree")
+        if value <= boundary:
+            return {"small": _finite_mobius(value), "I": 0, "II": 0}
+        short_short = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first <= cutoff_u
+            for second in _positive_divisors(value // first)
+            if second <= cutoff_v
+        )
+        long_long = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first > cutoff_u
+            for second in _positive_divisors(value // first)
+            if second > cutoff_v
+        )
+        multipliers = {"small": 0, "I": -short_short, "II": long_long}
+        if sum(multipliers.values()) != _finite_mobius(value):
+            raise RuntimeError("the internal Type identity did not reassemble")
+        return multipliers
+
+    def convert_type_lift(
+        rows: tuple[tuple[int, int, Fraction], ...],
+    ) -> tuple[
+        tuple[tuple[int, int, Fraction], ...],
+        dict[int, dict[str, int]],
+        tuple[tuple[int, Fraction], ...],
+        dict[str, tuple[tuple[int, Fraction], ...]],
+    ]:
+        if not rows:
+            raise ValueError("both internal Type lifts must be nonempty")
+        converted: list[tuple[int, int, Fraction]] = []
+        seen_labels: set[int] = set()
+        multipliers_by_argument: dict[int, dict[str, int]] = {}
+        for label_value, argument_value, weight_value in rows:
+            label = int(label_value)
+            argument = int(argument_value)
+            if label in seen_labels:
+                raise ValueError("internal Type lift labels must be unique")
+            seen_labels.add(label)
+            multipliers = type_multipliers(argument)
+            multipliers_by_argument[argument] = multipliers
+            converted.append((label, argument, F(weight_value)))
+        raw = tuple(
+            (label, F(_finite_mobius(argument)) * weight)
+            for label, argument, weight in converted
+        )
+        blocks = {
+            type_name: tuple(
+                (
+                    label,
+                    F(multipliers_by_argument[argument][type_name]) * weight,
+                )
+                for label, argument, weight in converted
+            )
+            for type_name in type_names
+        }
+        return tuple(converted), multipliers_by_argument, raw, blocks
+
+    (
+        left_rows,
+        left_multipliers,
+        left_raw_G,
+        left_blocks,
+    ) = convert_type_lift(left_G_type_lift)
+    (
+        right_rows,
+        right_multipliers,
+        right_raw_G,
+        right_blocks,
+    ) = convert_type_lift(right_G_type_lift)
+
+    raw = prime_cross_residue_centered_divisor_incidence_audit(
+        left_prime=left_prime,
+        right_prime=right_prime,
+        determinant=determinant,
+        left_F_lift=left_F_lift,
+        left_G_lift=left_raw_G,
+        right_F_lift=right_F_lift,
+        right_G_lift=right_raw_G,
+    )
+    ordered_blocks: dict[tuple[str, str], Fraction] = {}
+    for left_type in type_names:
+        for right_type in type_names:
+            block = prime_cross_residue_centered_divisor_incidence_audit(
+                left_prime=left_prime,
+                right_prime=right_prime,
+                determinant=determinant,
+                left_F_lift=left_F_lift,
+                left_G_lift=left_blocks[left_type],
+                right_F_lift=right_F_lift,
+                right_G_lift=right_blocks[right_type],
+            )
+            ordered_blocks[(left_type, right_type)] = F(
+                block["centered_cross_product"]
+            )
+    ordered_sum = sum(ordered_blocks.values(), F(0))
+
+    def pointwise_reassembles(
+        rows: tuple[tuple[int, int, Fraction], ...],
+        raw_rows: tuple[tuple[int, Fraction], ...],
+        blocks: dict[str, tuple[tuple[int, Fraction], ...]],
+    ) -> bool:
+        raw_by_label = dict(raw_rows)
+        block_by_type = {
+            type_name: dict(type_rows)
+            for type_name, type_rows in blocks.items()
+        }
+        return all(
+            raw_by_label[label]
+            == sum(
+                (block_by_type[type_name][label] for type_name in type_names),
+                F(0),
+            )
+            for label, _, _ in rows
+        )
+
+    return {
+        "left_prime_conductor": int(left_prime),
+        "right_prime_conductor": int(right_prime),
+        "bounded_determinant": int(determinant),
+        "left_type_multipliers_by_argument": left_multipliers,
+        "right_type_multipliers_by_argument": right_multipliers,
+        "left_raw_G_lift": left_raw_G,
+        "right_raw_G_lift": right_raw_G,
+        "left_internal_type_lifts": left_blocks,
+        "right_internal_type_lifts": right_blocks,
+        "raw_centered_incidence_product": raw["centered_cross_product"],
+        "ordered_internal_type_block_products": ordered_blocks,
+        "ordered_internal_type_block_sum": ordered_sum,
+        "all_nine_ordered_internal_type_blocks_retained": (
+            len(ordered_blocks) == 9
+        ),
+        "left_raw_G_lift_reassembles_pointwise": pointwise_reassembles(
+            left_rows,
+            left_raw_G,
+            left_blocks,
+        ),
+        "right_raw_G_lift_reassembles_pointwise": pointwise_reassembles(
+            right_rows,
+            right_raw_G,
+            right_blocks,
+        ),
+        "internal_type_blocks_reassemble_centered_incidence_before_cauchy": (
+            ordered_sum == raw["centered_cross_product"]
+        ),
+        "F_lifts_keep_product_label_and_cofactor_mobius_weights": True,
+        "both_local_density_subtractions_are_unchanged_by_type_split": True,
+        "individual_internal_type_block_bounds_proved": False,
+        "combined_internal_type_incidence_bound_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def prime_conductor_zero_frequency_polytope_audit(
     *,
     long_conductor_exponent: Fraction,

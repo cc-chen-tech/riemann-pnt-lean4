@@ -8389,6 +8389,59 @@ def test_prime_centered_divisor_incidence_gate_is_documented() -> None:
     assert "centered incidence bound remains unproved" in text
 
 
+def test_prime_centered_incidence_has_nine_exact_internal_type_blocks() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_centered_incidence_internal_type_split_audit",
+        None,
+    )
+    assert audit is not None, "prime centered-incidence Type split is missing"
+    result = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+        left_F_lift=((1, 2), (2, -1), (10, 3)),
+        left_G_type_lift=((1, 2, 1), (3, 3, -2), (9, 15, 4)),
+        right_F_lift=((1, -1), (2, 3), (8, 2)),
+        right_G_type_lift=((1, 2, 2), (4, 3, -1), (7, 15, 3)),
+    )
+    assert result["left_type_multipliers_by_argument"][2] == {
+        "small": -1,
+        "I": 0,
+        "II": 0,
+    }
+    assert result["left_type_multipliers_by_argument"][15] == {
+        "small": 0,
+        "I": -1,
+        "II": 2,
+    }
+    assert result["all_nine_ordered_internal_type_blocks_retained"]
+    assert result["internal_type_blocks_reassemble_centered_incidence_before_cauchy"]
+    assert result["left_raw_G_lift_reassembles_pointwise"]
+    assert result["right_raw_G_lift_reassembles_pointwise"]
+    assert result["F_lifts_keep_product_label_and_cofactor_mobius_weights"]
+    assert result["both_local_density_subtractions_are_unchanged_by_type_split"]
+    assert not result["individual_internal_type_block_bounds_proved"]
+    assert not result["combined_internal_type_incidence_bound_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_centered_incidence_type_polytope_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.174 The centered incidence master has nine exact internal "
+        "Type blocks"
+    ) in text
+    assert r"\mathscr I_{\rm pp,0}^{\alpha,\beta}" in text
+    assert "all nine blocks must be reassembled before Cauchy" in text
+    assert "fixed-prime Type I completion" in text
+    assert "no published row closes one full physical block" in text
+    assert "combined nine-block incidence bound remains unproved" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (
