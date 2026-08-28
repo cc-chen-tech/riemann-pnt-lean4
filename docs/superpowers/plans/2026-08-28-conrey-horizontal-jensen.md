@@ -235,13 +235,13 @@ endpoint.  Expected: unknown declarations before implementation.
 Apply Jensen at `b`, not at `r`; preserve
 `(log M + log 6) / log (outerRadius / b)` exactly.
 
-- [ ] **Step 4: Extract the factor and select a good circle**
+- [x] **Step 4: Extract the factor and select a good circle**
 
 Use the complete divisor support in `closedBall(c,b)`.  Select
 `q in Icc a q1`, prove the lower separation `delta_J`, and derive both the
 center lower bound and good-sphere upper bound for `log norm g`.
 
-- [ ] **Step 5: Apply Borel--Caratheodory and verify**
+- [x] **Step 5: Apply Borel--Caratheodory and verify**
 
 Prove `HJ-regular-logderiv` throughout `closedBall(c,r)`.  Do not yet claim
 the weighted horizontal integral, which additionally needs the principal-part

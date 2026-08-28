@@ -10,7 +10,16 @@ open HardyTheorem
 #check conreyHorizontalJensenRadiusGap_lt_one_fourth
 #check conreyHorizontalJensenBufferGeometry
 #check conreyHorizontalJensenFactorZeroMass
+#check conreyHorizontalJensenFactorZeroSupport
+#check conreyHorizontalJensenFactorDiskSeparation
 #check exists_conreyHorizontalJensenFactorZeroMass_le
+#check card_conreyHorizontalJensenFactorZeroSupport_le_mass
+#check conreyHorizontalJensenFactorDiskSeparation_lower_of_mass_le
+#check mem_conreyHorizontalJensenFactorZeroSupport_iff_zero
+#check exists_conreyHorizontalJensenGoodFactorCircle
+#check conreyHorizontalJensenFactorCircleLogUpper
+#check conreyHorizontalJensenFactorCenterLogLower
+#check exists_conreyHorizontalJensenGoodFactor_logDeriv_le
 
 example {R L : ℝ} (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5)
     (hL : 40000 ≤ L) :
@@ -35,3 +44,6 @@ example :
 #print axioms conreyHorizontalJensenRadiusGap_lt_one_fourth
 #print axioms conreyHorizontalJensenBufferGeometry
 #print axioms exists_conreyHorizontalJensenFactorZeroMass_le
+#print axioms conreyHorizontalJensenFactorDiskSeparation_lower_of_mass_le
+#print axioms exists_conreyHorizontalJensenGoodFactorCircle
+#print axioms exists_conreyHorizontalJensenGoodFactor_logDeriv_le
