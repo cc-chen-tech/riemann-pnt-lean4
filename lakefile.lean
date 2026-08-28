@@ -2767,6 +2767,7 @@ lean_lib RiemannPNT where
     `Test.ConreyExplicitRightVerticalLowContract,
     `Test.ConreyHorizontalJensenGeometryContract,
     `Test.ConreyHorizontalJensenCenterContract,
+    `Test.ConreyHorizontalJensenGrowthContract,
     `Test.ConreyEquation35GlobalContract,
     `Test.ArgumentCrossingContract,
     `Test.HalfWeightedMultiplicityContract,
