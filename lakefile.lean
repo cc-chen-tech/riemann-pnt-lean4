@@ -1805,6 +1805,8 @@ lean_lib RiemannPNT where
     `Test.SelbergMollifiedCoefficientArithmeticContract,
     `Test.SelbergMollifiedCoefficientEnergyContract,
     `Test.SelbergMollifiedGaussianPolynomialContract,
+    `Test.AFECorrectedPhaseContract,
+    `Test.AFECorrectedPhaseAxiomAudit,
     `Test.SelbergGoodWindowMeasureContract,
     `Test.SelbergSignedMassSecondMomentContract,
     `Test.SelbergSignedMassSecondMomentAxiomAudit,

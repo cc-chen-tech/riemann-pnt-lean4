@@ -249,9 +249,32 @@ Conrey theorem.  Its importance for formalization is different: the required
 `theta<1/2` mean square can in principle be proved from the classical
 square-root approximate functional equation and finite Dirichlet-polynomial
 mean value, without the Deshouillers--Iwaniec/Kuznetsov input needed beyond
-`1/2`.  The repository does not yet contain that AFE theorem, so (5.8) is a
-strictly smaller analytic gate, not a claim that the Lean density certificate
-is already unconditional.
+`1/2`.  Here the phase normalization must be fixed before this reduction is
+used.  Put
+
+\[
+ s=\frac12+it,\qquad
+ \frac{\Gamma_{\mathbb R}(s)}{|\Gamma_{\mathbb R}(s)|}
+       =e^{i\vartheta(t)}.
+\]
+
+Since `1-s=conj(s)` and
+`Gamma_R(conj(s))=conj(Gamma_R(s))`, the multiplier in the dual AFE sum is
+
+\[
+ \chi(s)=\frac{\Gamma_{\mathbb R}(1-s)}
+                 {\Gamma_{\mathbb R}(s)}
+        =\frac{\overline{\Gamma_{\mathbb R}(s)}}
+               {\Gamma_{\mathbb R}(s)}
+        =e^{-2i\vartheta(t)}.                              \tag{5.9}
+\]
+
+In particular `exp(+i thetaPhase t)` is not the AFE dual multiplier.  The
+previous placeholder in `HardyTheorem/AFE.lean` used that incorrect phase;
+it must be replaced by (5.9), not treated as an analytic hypothesis.  The
+repository still does not contain a proof of the resulting corrected AFE, so
+(5.8) is a strictly smaller analytic gate, not a claim that the Lean density
+certificate is already unconditional.
 
 If `x=2/3+O(1/log U)`, this exponent changes by `O(1/log U)`, hence only by
 an absolute multiplicative constant after exponentiation.
@@ -603,8 +626,11 @@ a final density axiom:
 1. For the smallest unconditional formal target `delta=1/400`, prove the
    Gaussian mollified mean square for the two lengths `2/5` and `9/20`.
    This is the classical `theta<1/2` subrange; a proof may use a formalized
-   square-root approximate functional equation and the existing finite
-   Dirichlet-polynomial mean-value machinery.  For `delta=1/20` or `5/64`,
+   square-root approximate functional equation with the exact dual phase
+   `exp(-2 I thetaPhase t)` from (5.9), and the existing finite
+   Dirichlet-polynomial mean-value machinery.  The old
+   `exp(+I thetaPhase t)` placeholder is not an admissible premise.  For
+   `delta=1/20` or `5/64`,
    formalize Conrey's full `theta<4/7` theorem and its DI spectral input.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
