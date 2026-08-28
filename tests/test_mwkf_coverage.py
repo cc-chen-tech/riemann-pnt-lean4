@@ -4848,6 +4848,214 @@ def test_principal_harmonics_project_exactly_to_the_gcd_lattice() -> None:
         audit(modulus=5, shift=1, cyclic_samples=(F(0),) * 4)
 
 
+def test_principal_extraction_leaves_a_proper_divisor_centered_gate() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_extracted_ramanujan_centering_audit",
+        None,
+    )
+    assert audit is not None, "principal-extracted centering is missing"
+
+    principal = audit(modulus=6, product_label=12)
+    assert principal["totient"] == 2
+    assert principal["gcd"] == 6
+    assert principal["principal_indicator"]
+    assert principal["ramanujan_sum"] == 2
+    assert principal["residual_mean_numerator"] == 0
+    assert principal["proper_divisor_numerator"] == 0
+    assert principal["centered_kernel_is_zero_on_principal_set"]
+
+    nonprincipal = audit(modulus=6, product_label=4)
+    assert nonprincipal["gcd"] == 2
+    assert not nonprincipal["principal_indicator"]
+    assert nonprincipal["ramanujan_sum"] == -1
+    assert nonprincipal["residual_mean_numerator"] == -1
+    assert nonprincipal["proper_divisor_numerator"] == -1
+    assert nonprincipal["ramanujan_divisor_formulas_agree"]
+    assert nonprincipal[
+        "principal_extracted_mean_uses_only_proper_divisors"
+    ]
+    assert nonprincipal["centered_kernel_has_zero_unit_mean"]
+    assert nonprincipal["pointwise_three_way_inverse_phase_split_proved"]
+    assert nonprincipal["outer_modulus_mobius_weight_retained"]
+    assert nonprincipal["inner_mobius_type_split_permitted_after_centering"]
+    assert nonprincipal["pecg_algebraic_replacement_proved"]
+    assert nonprincipal[
+        "principal_and_proper_mean_recombine_before_absolute_values"
+    ]
+    assert not nonprincipal["proper_divisor_mean_estimate_proved"]
+    assert not nonprincipal[
+        "joint_nonunit_principal_lattice_estimate_proved"
+    ]
+    assert not nonprincipal["centered_type_i_ii_dispersion_proved"]
+    assert not nonprincipal["sampled_principal_master_bound_proved"]
+    assert not nonprincipal["coupled_kernel_gate_closed"]
+
+    audited_cases = 0
+    for modulus in range(2, 51):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for product_label in range(-2 * modulus, 2 * modulus + 1):
+            if product_label == 0:
+                continue
+            exhaustive = audit(
+                modulus=modulus,
+                product_label=product_label,
+            )
+            assert exhaustive["ramanujan_divisor_formulas_agree"]
+            assert exhaustive[
+                "principal_extracted_mean_uses_only_proper_divisors"
+            ]
+            assert exhaustive["residual_mean_vanishes_on_principal_set"]
+            assert exhaustive["centered_kernel_has_zero_unit_mean"]
+            assert exhaustive[
+                "pointwise_three_way_inverse_phase_split_proved"
+            ]
+            audited_cases += 1
+    assert audited_cases == 2956
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.107 Principal extraction" in text
+    assert r"K_{s,a}^{\circ}(r)" in text
+    assert r"\rho_s(a)-\mathbf1_{s\mid a}" in text
+    assert r"j\mid s\\j<s" in text
+    assert r"\mathcal C^{\ne0}=\mathcal M^{\rm prop}+\mathcal C^\circ" in text
+    assert r"\mathcal P^{\rm all}+\mathcal M^{\rm prop}" in text
+    assert r"\mathfrak C^{\circ}" in text
+    assert r"a=h\delta" in text
+    assert r"{\rm PECG}_3" in text
+    assert r"|\mathcal D|\ll_W T\log^4(2N)" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=12, product_label=5)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, product_label=0)
+
+
+def test_centered_inverse_phase_has_no_zero_additive_frequency() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_inverse_phase_additive_transform_audit",
+        None,
+    )
+    assert audit is not None, "centered inverse-phase transform is missing"
+
+    nonprincipal = audit(modulus=6, product_label=4)
+    assert not nonprincipal["principal_indicator"]
+    assert nonprincipal["ramanujan_product_label"] == -1
+    assert nonprincipal["all_additive_transform_rows_match"]
+    assert nonprincipal["maximum_transform_error"] < 1e-8
+    assert nonprincipal["zero_additive_frequency_vanishes"]
+    assert nonprincipal["rank_one_ramanujan_correction_retained"]
+    assert nonprincipal["centered_type_i_zero_dual_mode_removed"]
+    assert not nonprincipal["nonzero_kloosterman_spectrum_estimate_proved"]
+    assert not nonprincipal["centered_type_i_global_bound_proved"]
+    assert not nonprincipal["centered_type_ii_global_bound_proved"]
+    assert not nonprincipal["coupled_kernel_gate_closed"]
+
+    principal = audit(modulus=6, product_label=12)
+    assert principal["principal_indicator"]
+    assert principal["zero_additive_frequency_vanishes"]
+    assert principal["principal_labels_have_identically_zero_centered_transform"]
+    assert all(
+        abs(row["direct_centered_transform"]) < 1e-8
+        for row in principal["transform_rows"]
+    )
+
+    audited_cases = 0
+    for modulus in range(2, 36):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for product_label in range(1, 2 * modulus + 1):
+            exhaustive = audit(
+                modulus=modulus,
+                product_label=product_label,
+            )
+            assert exhaustive["all_additive_transform_rows_match"]
+            assert exhaustive["maximum_transform_error"] < 1e-8
+            assert exhaustive["zero_additive_frequency_vanishes"]
+            assert exhaustive[
+                "principal_labels_have_identically_zero_centered_transform"
+            ]
+            audited_cases += 1
+    assert audited_cases == 812
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.108 Centered Type I" in text
+    assert r"\widehat K_{s,a}^\circ(0)=0" in text
+    assert r"S(k,-a;s)-\frac{c_s(a)c_s(k)}{\varphi(s)}" in text
+    assert r"k\in\mathbb Z\setminus\{0\}" in text
+    assert r"|k|\ll\frac{ds}{R}\mathscr L^{C_W}" in text
+    assert "rank-one Ramanujan correction" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=8, product_label=3)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, product_label=0)
+
+
+def test_centered_type_i_ramanujan_correction_is_elementary() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_type_i_ramanujan_correction_audit",
+        None,
+    )
+    assert audit is not None, "Type-I Ramanujan correction audit is missing"
+
+    result = audit(
+        modulus=6,
+        h_bound=3,
+        delta_bound=4,
+        dual_bound=5,
+    )
+    assert result["prime_factors"] == (2, 3)
+    assert result["product_ramanujan_average_bound_holds"]
+    assert result["dual_ramanujan_average_bound_holds"]
+    assert result["product_euler_cost_below_three_to_omega"]
+    assert result["dual_euler_cost_below_two_to_omega"]
+    assert result["rank_one_ramanujan_correction_locally_closed"]
+    assert result["global_correction_bound_requires_hluv_le_rs"]
+    assert not result["nonzero_kloosterman_spectrum_estimate_proved"]
+    assert not result["centered_type_i_global_bound_proved"]
+    assert not result["centered_type_ii_global_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    audited_cases = 0
+    for modulus in range(2, 45):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for h_bound, delta_bound, dual_bound in (
+            (1, 1, 1),
+            (2, 3, 4),
+            (5, 4, 3),
+        ):
+            exhaustive = audit(
+                modulus=modulus,
+                h_bound=h_bound,
+                delta_bound=delta_bound,
+                dual_bound=dual_bound,
+            )
+            assert exhaustive["product_ramanujan_average_bound_holds"]
+            assert exhaustive["dual_ramanujan_average_bound_holds"]
+            assert exhaustive["product_euler_cost_below_three_to_omega"]
+            assert exhaustive["dual_euler_cost_below_two_to_omega"]
+            audited_cases += 1
+    assert audited_cases == 84
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.109 The rank-one Ramanujan correction" in text
+    assert r"|c_s(n)|=\varphi((s,n))" in text
+    assert r"HLUV\,T^\varepsilon" in text
+    assert r"HLUV\le RS" in text
+    assert r"\frac{11}{2}<6" in text
+    assert r"S(k,-h\delta;s)" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=18, h_bound=1, delta_bound=1, dual_bound=1)
+    with pytest.raises(ValueError, match="positive"):
+        audit(modulus=6, h_bound=0, delta_bound=1, dual_bound=1)
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

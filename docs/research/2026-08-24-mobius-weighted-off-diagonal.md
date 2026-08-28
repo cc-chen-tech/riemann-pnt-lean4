@@ -8,6 +8,8 @@
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
 > | Principal inverse-phase harmonics plus the raw zero mode | exact gcd-sampled reassembly proved in Section 9.106; sampled master unbounded |
+> | Principal-extracted Ramanujan/Type gate | exact proper-divisor mean and centered Type I/II split proved in Section 9.107; two joint analytic estimates unproved |
+> | Centered Type-I completion | zero dual mode removed and rank-one Ramanujan correction closed in Sections 9.108--9.109; global nonzero spectrum unproved |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -15424,6 +15426,433 @@ continuous passage in (9.693) is ordinary Poisson summation for (9.690).
 The sampled-master estimate, centered dispersion, and coupled-kernel flags
 remain false.
 
+### 9.107 Principal extraction leaves a proper-divisor mean and a centered Type gate
+
+The direct principal family in Section 9.106 and the Ramanujan
+principal-character projection in Sections 9.14--9.15 overlap.  They are
+not two independent sources of cancellation.  The exact nonoverlapping
+split is obtained before Type I/II.  For squarefree \(s>1\), put
+
+\[
+ \rho_s(a):=\frac{c_s(a)}{\varphi(s)},
+ \qquad
+ K_{s,a}^{\circ}(r)
+ :=\mathbf1_{s\nmid a}
+ \left\{e_s(-a\bar r)-\rho_s(a)\right\},
+ \quad r\in U(s).
+ \tag{9.705}
+\]
+
+Then, pointwise for every unit \(r\),
+
+\[
+ \boxed{
+ e_s(-a\bar r)
+ =\mathbf1_{s\mid a}
+  +\left\{\rho_s(a)-\mathbf1_{s\mid a}\right\}
+  +K_{s,a}^{\circ}(r).}
+ \tag{9.706}
+\]
+
+The three terms have disjoint analytic roles.  The first is exactly the
+gcd-sampled family (9.695).  The second is independent of \(r\), but has
+had the direct principal set removed.  The last is genuinely centered:
+
+\[
+ \boxed{
+ \sum_{r\in U(s)}K_{s,a}^{\circ}(r)=0,
+ \qquad
+ s\mid a\Longrightarrow K_{s,a}^{\circ}(r)=0.}
+ \tag{9.707}
+\]
+
+There is an exact proper-divisor formula for the middle term.  The two
+squarefree identities
+
+\[
+ \mu(s)c_s(a)=\sum_{j\mid(s,a)}j\mu(j),
+ \qquad
+ \sum_{j\mid s}j\mu(j)=\mu(s)\varphi(s)
+\]
+
+give
+
+\[
+ \boxed{
+ \mu(s)\left\{\rho_s(a)-\mathbf1_{s\mid a}\right\}
+ =\frac1{\varphi(s)}
+ \sum_{\substack{j\mid s\\j<s}}
+ j\mu(j)
+ \left\{\mathbf1_{j\mid a}-\mathbf1_{s\mid a}\right\}.}
+ \tag{9.708}
+\]
+
+Thus the top divisor \(j=s\) disappears identically.  In the reverse
+Poisson coordinates of (9.67)--(9.69), where
+\(j=uw\) and \(s=uwc\), every remaining mean packet has
+
+\[
+ \boxed{c>1.}
+ \tag{9.709}
+\]
+
+This is an exact deletion, not a saving estimate.  It shows precisely how
+the direct sampled lattice must be subtracted from the earlier Ramanujan
+principal ledger.  The resulting proper-divisor mean still retains the
+long \(r\)-Möbius sum and the top-face ranges (9.70)--(9.74); no bound for
+it is claimed here.
+
+Let \(\mathcal M^{\rm prop}\) denote the contribution of (9.708), and
+let \(\mathcal C^\circ\) denote the contribution of \(K^\circ\).  The
+complement in (9.697) therefore splits exactly as
+
+\[
+ \boxed{\mathcal C^{\ne0}=\mathcal M^{\rm prop}+\mathcal C^\circ.}
+ \tag{9.710}
+\]
+
+The first two global pieces must be recombined before an absolute value.
+Pointwise, the first two terms of (9.706) add to \(\rho_s(a)\).  Hence
+
+\[
+ \boxed{
+ \mathcal P^{\rm all}+\mathcal M^{\rm prop}
+ =\mathcal O^{h=0}
+  +\mathcal M_{\rm Ram}^{\ne0},}
+ \tag{9.710a}
+\]
+
+where \(\mathcal M_{\rm Ram}^{\ne0}\) is the complete nonzero-\(h\)
+Ramanujan principal-character projection, with no restriction
+\(s\mid h\delta\).  This is exactly the ordering in (9.61)--(9.69): its
+zero-frequency subtraction cancels \(\mathcal O^{h=0}\), leaving the
+reverse-Poisson lattice.  The unit part is already
+\(O(RS T^\varepsilon)\) by (9.63)--(9.64).  The remaining nonunit part is
+the signed lattice (9.69), supported on (9.71), with balanced loss \(T^2\)
+recorded in (9.73).  Thus direct principal extraction corrects the ledger
+but does not permit the direct and proper-divisor pieces to be estimated
+separately.
+
+Only \(\mathcal C^\circ\) needs a centered Type decomposition.  Keep the
+physical product \(a=h\delta\) unexpanded.  Apply the remainder-free
+identity (9.241) to the inner Möbius variable \(r\), leaving the outer
+\(\mu(s)\) untouched.  With
+\(W_0=\max(U,V)\), define \(\mathfrak C^{\rm small}\) by \(r\le W_0\),
+and on \(r>W_0\) insert
+
+\[
+ \mu(r)=
+ -\sum_{\substack{bc\mid r\\b\le U,\ c\le V}}\mu(b)\mu(c)
+ +\sum_{\substack{bc\mid r\\b>U,\ c>V}}\mu(b)\mu(c).
+\]
+
+The centered complement of the original coupled packet consequently has
+the exact finite form
+
+\[
+ \boxed{
+ \mathfrak C^{\circ}
+ =\mathfrak C^{\rm small}
+  -\mathfrak C^{\rm I}_{U,V}
+  +\mathfrak C^{\rm II}_{U,V}.}
+ \tag{9.711}
+\]
+
+Every term in (9.711) still carries
+
+\[
+ \boxed{
+ \mu(s)\mu(b)\mu(c),\qquad
+ bc\mid r,\qquad
+ a=h\delta,\qquad
+ K_{s,h\delta}^{\circ}(r),}
+ \tag{9.712}
+\]
+
+together with the original AFE/dyadic weight and all finite endpoints.
+There are no mixed Type rectangles and no truncation remainder.  The
+condition \(s\nmid h\delta\) is built into \(K^\circ\), so the sampled
+principal family cannot reappear in a Type block.  Likewise (9.707)
+prevents an uncentered unit-residue mode from being charged to the
+nonprincipal dispersion.
+
+Equations (9.695), (9.708), (9.710a), and (9.711) give a strictly weaker
+sufficient replacement for an arbitrary coupled-kernel estimate.  After
+the already proved unit projection is removed, only two signed estimates
+remain:
+
+1. the **joint** nonunit principal lattice obtained from
+   \(\mathcal P^{\rm all}+\mathcal M^{\rm prop}\), namely the residual
+   top face of (9.69); and
+2. the signed sum of the centered Type-I/II packets (9.711), before an
+   outer absolute value.
+
+Call this principal-extracted finite gate \({\rm PECG}_3\).  Its algebraic
+implication to the original packet follows from (9.706), and the global
+main-term normalization follows from (9.696).  The explicit AFE diagonal
+is already harmless separately.  Indeed, (2.5) gives uniformly
+
+\[
+ \sum_{\ell\ge1}\frac{|V_t(\ell^2d^*e^*)|}{\ell}
+ \ll\log(2T),
+\]
+
+while (4.7c.0) gives
+\(\sum_{d,e\le N}|a_N(d)a_N(e)|/[d,e]\ll\log^3(2N)\).
+Thus
+
+\[
+ \boxed{|\mathcal D|\ll_W T\log^4(2N).}
+ \tag{9.713}
+\]
+
+Consequently the precise sufficient implication is
+
+\[
+ \boxed{
+ \begin{aligned}
+ &|\mathcal P^{\rm all}+\mathcal M^{\rm prop}|
+   +|\mathcal C^\circ|
+   \ll_{\varepsilon,W}T^{1+\varepsilon}\\
+ &\hspace{2cm}\Longrightarrow\quad
+ I_{T^3,W}(T)\ll_{\varepsilon,W}T^{1+\varepsilon},
+ \quad
+ \mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}.
+ \end{aligned}}
+ \tag{9.714}
+\]
+
+The last conclusion also uses the independently proved
+\(T\mathcal Q_{T^3,T}\ll T^{1+\varepsilon}\).  Neither of the two residual
+analytic estimates on the first line of (9.714) is proved here.  In
+particular, zero unit mean in (9.707) does not by itself supply the missing
+\(T^2\) cancellation, and \({\rm PECG}_3\), \({\rm CK}_{\rm ub}(3)\), and
+the full off-diagonal bound remain open.
+
+The helper `principal_extracted_ramanujan_centering_audit` independently
+computes \(c_s(a)\) from its standard divisor formula, verifies the
+squarefree formula, checks (9.708) using only proper divisors, and records
+the pointwise split and zero-mean centered kernel for arbitrary finite
+squarefree \(s\) and nonzero \(a\).  The Type identity itself is the
+already exhaustive finite check of (9.241).  Both residual analytic flags
+in \({\rm PECG}_3\) remain false.
+
+### 9.108 Centered Type I has no zero Kloosterman frequency
+
+The zero-mean condition in (9.707) can be passed through the exact Type-I
+completion.  Extend \(K_{s,a}^\circ\) by zero away from \(U(s)\), and
+define its additive transform by
+
+\[
+ \widehat K_{s,a}^\circ(k)
+ :=\sum_{u\in U(s)}K_{s,a}^\circ(u)e_s(ku).
+ \tag{9.715}
+\]
+
+For the classical Kloosterman convention
+
+\[
+ S(k,-a;s):=\sum_{u\in U(s)}e_s(ku-a\bar u),
+\]
+
+(9.705) gives the exact transform
+
+\[
+ \boxed{
+ \widehat K_{s,a}^\circ(k)
+ =\mathbf1_{s\nmid a}
+ \left\{S(k,-a;s)-\frac{c_s(a)c_s(k)}{\varphi(s)}\right\}.}
+ \tag{9.716}
+\]
+
+The second term must be retained: it is the rank-one Ramanujan correction
+created by subtracting the unit-residue mean.  At zero frequency,
+\(S(0,-a;s)=c_s(a)\) and \(c_s(0)=\varphi(s)\), so
+
+\[
+ \boxed{\widehat K_{s,a}^\circ(0)=0.}
+ \tag{9.717}
+\]
+
+Now fix one Type-I divisor \(d=bc\) in (9.711).  Nonempty support forces
+\((d,s)=1\).  For a smooth compactly supported one-variable weight
+\(W_d\), use
+\(\widehat W_d(\xi)=\int_{\mathbb R}W_d(x)e(-\xi x)dx\).
+Poisson summation in \(n\), followed by \(u\mapsto du\pmod s\), gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{n\in\mathbb Z}W_d(dn/R)K_{s,a}^\circ(dn)\\
+ &\qquad=\frac{R}{ds}
+ \sum_{k\in\mathbb Z\setminus\{0\}}
+ \widehat W_d\!\left(\frac{kR}{ds}\right)
+ \widehat K_{s,a}^\circ(k\bar d).
+ \end{aligned}}
+ \tag{9.718}
+\]
+
+There is no omitted \(k=0\) main term; it vanishes by (9.717).  Repeated
+integration by parts restricts the effective dual range to
+
+\[
+ |k|\ll\frac{ds}{R}\mathscr L^{C_W}.
+ \tag{9.719}
+\]
+
+On the balanced face \(R\asymp s\), the dual length is therefore
+\(d\mathscr L^{O(1)}=bc\mathscr L^{O(1)}\).  Applying the squarefree Weil
+bound to (9.716) gives the fixed-\((s,a,b,c)\) inequality
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\left|\sum_nW_d(dn/R)K_{s,a}^\circ(dn)\right|\\
+ &\quad\le\frac{R}{ds}
+ \sum_{k\ne0}
+ \left|\widehat W_d\!\left(\frac{kR}{ds}\right)\right|
+ \left\{
+  \tau(s)s^{1/2}(k,a,s)^{1/2}
+  +\frac{|c_s(a)c_s(k)|}{\varphi(s)}
+ \right\}.
+ \end{aligned}}
+ \tag{9.720}
+\]
+
+Formula (9.720) is only a local completion bound: the gcd factor and
+the Ramanujan correction must be summed, and an absolute sum over
+\(s,a,b,c\) loses the target powers.  What (9.716)--(9.719) prove is the
+strictly smaller centered Type-I interface:
+
+* no principal additive dual mode remains;
+* every oscillatory term is a nonzero Kloosterman frequency;
+* the only non-Kloosterman term is the displayed rank-one Ramanujan
+  correction;
+* \(a=h\delta\), \(\mu(s)\mu(b)\mu(c)\), and the Type divisor \(bc\)
+  remain coupled outside the transform.
+
+Thus published nonzero-frequency Kloosterman estimates may be entered in
+the coverage table only after their hypotheses are checked against the
+joint \((s,a,b,c)\) family.  Existing pointwise estimates cover the wings
+already recorded in Sections 9.39 and 9.77, but no cited result bounds the
+balanced global sum of (9.718) together with the centered Type-II block.
+The centered Type-I global bound, centered Type-II global bound,
+\({\rm PECG}_3\), and the full coupled gate remain unproved.
+
+The helper `centered_inverse_phase_additive_transform_audit` enumerates
+every unit and additive frequency, computes the Kloosterman transform and
+Ramanujan correction independently, verifies (9.716), and checks the
+exact zero in (9.717) for arbitrary finite squarefree moduli.  It leaves
+all nonzero-frequency and global Type estimates false.
+
+### 9.109 The rank-one Ramanujan correction is inside the target
+
+The second term in (9.716) need not remain in the analytic gate.  For
+squarefree \(s\), the standard formula for a Ramanujan sum simplifies to
+
+\[
+ \boxed{|c_s(n)|=\varphi((s,n)).}
+ \tag{9.721}
+\]
+
+Since \(\varphi(g)\le g=\sum_{v\mid g}\varphi(v)\), the exact product
+divisibility count (9.635)--(9.636) gives, for signed boxes
+\(0<|h|\le H\), \(0<|\delta|\le L\),
+
+\[
+ \begin{aligned}
+ \sum_{h,\delta}|c_s(h\delta)|
+ &\le \sum_{v\mid s}\varphi(v)
+       \#\{(h,\delta):v\mid h\delta\}\\
+ &\le4HL\sum_{v\mid s}\frac{\varphi(v)\tau(v)}v\\
+ &=4HL\prod_{p\mid s}\left(1+\frac{2(p-1)}p\right)
+ \ll_\varepsilon HLs^\varepsilon.
+ \end{aligned}
+ \tag{9.722}
+\]
+
+Likewise, for every \(K_0\ge1\),
+
+\[
+ \begin{aligned}
+ \sum_{0<|k|\le K_0}|c_s(k)|
+ &\le2\sum_{v\mid s}\varphi(v)
+       \left\lfloor\frac{K_0}{v}\right\rfloor\\
+ &\le2K_0\prod_{p\mid s}\left(1+\frac{p-1}{p}\right)
+ \ll_\varepsilon K_0s^\varepsilon.
+ \end{aligned}
+ \tag{9.723}
+\]
+
+The same estimate applies to the Schwartz-weighted dual sum in (9.720)
+by dyadic decomposition.  Fix \(d=bc\).  Its effective length is
+\(K_0\asymp ds/R\) up to \(T^\varepsilon\) when \(ds\ge R\).  If
+\(ds<R\), every nonzero dual argument has size at least \(R/(ds)\), and
+Schwartz decay gives a still smaller bound after choosing two additional
+integrations by parts.  Summing first in
+\((h,\delta)\), then in \(k\), the rank-one correction in (9.720) is at
+most
+
+\[
+ \frac{R}{ds}\frac1{\varphi(s)}
+ (HLs^\varepsilon)
+ \left(\frac{ds}{R}s^\varepsilon\right)
+ \ll_\varepsilon\frac{HL}{\varphi(s)}s^\varepsilon.
+ \tag{9.724}
+\]
+
+For squarefree \(s\),
+\(1/\varphi(s)\le\tau(s)/s\), so a dyadic \(s\asymp S\) sum costs only
+\(T^\varepsilon\).  Finally sum the short Type divisors
+\(b\le U,c\le V\).  Uniformly in every remaining packet label,
+
+\[
+ \boxed{
+ |\mathfrak C_{{\rm I},{\rm Ram}}^\circ|
+ \ll_{\varepsilon,W}HLUV\,T^\varepsilon.}
+ \tag{9.725}
+\]
+
+Therefore the rank-one correction is unconditionally within the local
+upper-bound target whenever
+
+\[
+ \boxed{HLUV\le RS.}
+ \tag{9.726}
+\]
+
+In exponent coordinates this is \(a+u+v\le\rho+\sigma\).  On the
+balanced maximal face, \(a=5\), \(\rho+\sigma=6\), and the symmetric
+choice \(U=V=T^{1/4}\) gives correction exponent
+
+\[
+ 5+\frac14+\frac14=\frac{11}{2}<6,
+ \tag{9.727}
+\]
+
+with a half-power margin.  No Möbius cancellation or Kloosterman estimate
+is spent in (9.722)--(9.727).  Consequently, throughout the subpolytope
+(9.726), the centered Type-I gate may discard the rank-one correction
+*after bounding it by (9.725)* and retain only
+
+\[
+ \mathbf1_{s\nmid h\delta}S(k,-h\delta;s),qquad k\ne0.
+ \tag{9.728}
+\]
+
+This does not close the nonzero Kloosterman sum: taking absolute values in
+\((s,h,\delta,b,c,k)\) still loses the balanced target.  It does prove
+that the remaining obstruction is not caused by the centering correction.
+The pure nonzero-Kloosterman Type-I family must be estimated jointly with
+the centered Type-II block and the outer \(\mu(s)\mu(b)\mu(c)\) signs.
+
+The helper `centered_type_i_ramanujan_correction_audit` independently
+enumerates both Ramanujan masses in (9.722)--(9.723), verifies the divisor
+majorants for arbitrary finite squarefree moduli and signed boxes, and
+records the exact \(3^{\omega(s)}\) and \(2^{\omega(s)}\) Euler costs.  It
+marks only the rank-one correction as locally closed; the nonzero
+Kloosterman, global Type-I, Type-II, and coupled-gate flags remain false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -15587,7 +16016,24 @@ The retained polylogarithmic core has
 the two Poisson coordinates are polylogarithmically short,
 (9.698)--(9.702).  The reduced master (9.703) still contains both long
 Selberg--Möbius weights, so its bound and the complementary centered
-harmonic dispersion remain unproved.**
+harmonic dispersion remain unproved.  The three-way split
+(9.705)--(9.708) then removes the overlap with the older Ramanujan
+principal-character projection: after direct principal extraction its
+mean uses only proper divisors, while the remaining inverse kernel has
+literal zero unit-residue mean and vanishes on \(s\mid h\delta\).
+Applying the remainder-free two-cutoff identity only to that centered
+kernel gives the exact pre-Cauchy Type master (9.711)--(9.712), with
+\(\mu(s)\), \(\mu(b)\mu(c)\), and \(a=h\delta\) intact.  This proves the
+algebraic replacement \({\rm PECG}_3\) and the sufficient implication
+(9.714), but the jointly recombined nonunit principal lattice and the
+centered signed Type dispersion are both still unproved.  Additive
+completion of the centered Type-I kernel has the exact transform
+(9.716): its zero dual mode vanishes and only a nonzero Kloosterman
+spectrum plus one rank-one Ramanujan correction remain.  The elementary
+averages (9.721)--(9.725) close that correction whenever
+\(HLUV\le RS\), with a half-power margin for the balanced
+\(U=V=T^{1/4}\) choice.  The pure nonzero-Kloosterman Type-I family and
+centered Type II still require one joint signed estimate.**
 
 Proved in this note:
 
@@ -15602,6 +16048,15 @@ Proved in this note:
   \(s\mid h\delta\) modes reassemble with the raw \(h=0\) packet into
   the gcd-sampled lattice (9.693)--(9.697), with the exact transition
   support and reduced-coordinate master (9.698)--(9.704);
+* the nonoverlapping principal/Ramanujan/centered split
+  (9.705)--(9.710), the proper-divisor-only mean, and the exact centered
+  pre-Cauchy Type I/II master (9.711)--(9.712), together with the
+  elementary diagonal bound and sufficient \({\rm PECG}_3\) implication
+  (9.713)--(9.714);
+* the exact centered additive transform and deletion of its zero dual
+  mode, (9.715)--(9.720), and the unconditional divisor-average bound for
+  its rank-one Ramanujan correction on \(HLUV\le RS\),
+  (9.721)--(9.728);
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -16133,6 +16588,8 @@ Proved in this note:
 | Two-dimensional mixed Abel adapter | smooth variation cost controlled; fixed rectangle handled next | Ordering both divisor lattices gives the exact pointwise telescoping and suffix identity (9.681)--(9.683).  Hence the mixed pairing is bounded by the adjacent-increment \(\ell^1\) norm times the largest arithmetic upper-right rectangle, (9.684).  The fundamental theorem of calculus and (5.14) bound the first factor by \(T^\varepsilon\) on every supplied physical dyadic weight, (9.685).  Reflection makes both remaining cofactor coordinates \(O(T^{2+o(1)})\) on the balanced face, (9.686).  Section 9.105 bounds each fixed-label rectangle; their joint signed AFE/reflection sum and the exhaustive packet map remain unproved |
 | Fixed-label principal divisor bound | local two-taper operator proved at \(T^\varepsilon\) cost; global packet sum unproved | Every suffix rectangle has at most \(\tau(R_1)\tau(R_2)\) entries and bounded taper factors, (9.687)--(9.688).  Together with the mixed Abel variation this proves (9.689) for each supplied fixed dyadic packet and fixed label pair.  The anchor, axes, and all three weighted boundaries have the same divisor-bound cost.  This does not permit absolute summation over all AFE/\(h,\delta\)/Type/dyadic/reflection labels; the packet-exhaustive normalization, principal twisted-moment estimate, and centered dispersion remain unproved |
 | Original principal \(h\)-harmonic projection | exact packet-exhaustive gcd-sampled reassembly; sampled master unbounded | Before the \(H\)-dyadic split, \(s\mid h\delta\) is exactly \(h=(s/(s,\delta))j\).  Poisson summation gives (9.693)--(9.694), so the nonzero principal harmonics plus the literal raw \(h=0\) packet are exactly the \((s,\delta)\)-spaced physical lattice, (9.695), and the main-term ledger becomes (9.696)--(9.697) without choosing a principal density.  Physical support and the core inequalities force \(M/(32\mathscr L^B)\le(s,\delta)\le2M\), making both new Poisson coordinates polylogarithmically short, (9.698)--(9.702).  The reduced master (9.703) still has both long Möbius weights; neither its analytic bound nor the complementary centered-harmonic dispersion is proved |
+| Principal-extracted Ramanujan and centered Type gate | exact nonoverlapping split and sufficient weaker gate; two joint analytic estimates unproved | Equation (9.706) splits the inverse phase into the literal \(s\mid h\delta\) family, its Ramanujan mean with that family removed, and a kernel that has zero unit-residue mean and vanishes on the removed labels, (9.707).  After the outer \(\mu(s)\), the residual mean has the proper-divisor-only formula (9.708), so the top reverse-Poisson divisor is deleted rather than counted twice.  The direct and proper-divisor pieces recombine before absolute values into the earlier reverse-Poisson principal lattice, (9.710a); its unit part is already proved and only the nonunit top face (9.69) remains.  Applying (9.241) only to the centered kernel gives (9.711)--(9.712), retaining \(\mu(s)\mu(b)\mu(c)\), \(a=h\delta\), all endpoints, and no mixed rectangles.  The elementary diagonal bound (9.713) makes the two joint target estimates in (9.714) sufficient.  The nonunit principal lattice and centered signed Type dispersion remain unproved |
+| Centered Type-I additive completion | zero dual frequency and rank-one correction closed; pure nonzero spectrum unproved | The exact transform (9.716) is a Kloosterman sum minus the rank-one Ramanujan correction forced by centering.  Its \(k=0\) row vanishes identically, (9.717), and Poisson in \(r=bc\,n\) gives only \(k\ne0\) with dual length \(bc\,s/R\), (9.718)--(9.719).  The finite Ramanujan averages (9.721)--(9.724) bound the correction globally by \(HLUVT^\varepsilon\), (9.725), so it lies within target on \(HLUV\le RS\); the balanced \(U=V=T^{1/4}\) choice has a half-power margin.  No Möbius or Kloosterman cancellation is spent.  The remaining Type-I term is the pure nonzero spectrum \(S(k,-h\delta;s)\) in (9.728), which must still be estimated jointly with centered Type II and the outer signs |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

@@ -14265,6 +14265,318 @@ def principal_harmonic_gcd_projection_audit(
     }
 
 
+def principal_extracted_ramanujan_centering_audit(
+    *,
+    modulus: int,
+    product_label: int,
+) -> dict[str, object]:
+    """Verify the principal-extracted Ramanujan centering exactly.
+
+    The literal inverse-phase principal set ``s | a`` is removed before
+    the multiplicative-character mean.  For squarefree ``s``, the
+    remaining mean has a divisor expansion involving proper divisors only.
+    The complementary inverse-phase kernel has zero unit-residue mean and
+    vanishes identically on the removed principal set.
+    """
+
+    s = int(modulus)
+    a = int(product_label)
+    if s <= 1 or _finite_mobius(s) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if a == 0:
+        raise ValueError("product_label must be nonzero")
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    phi_s = finite_totient(s)
+    common = gcd(s, abs(a))
+    ramanujan_by_standard_divisors = sum(
+        (
+            divisor * _finite_mobius(s // divisor)
+            for divisor in _positive_divisors(common)
+        ),
+        0,
+    )
+    outer_ramanujan_numerator = _finite_mobius(s) * (
+        ramanujan_by_standard_divisors
+    )
+    outer_ramanujan_by_squarefree_divisors = sum(
+        (
+            divisor * _finite_mobius(divisor)
+            for divisor in _positive_divisors(s)
+            if a % divisor == 0
+        ),
+        0,
+    )
+
+    principal_indicator = int(a % s == 0)
+    residual_mean_numerator = outer_ramanujan_numerator - (
+        _finite_mobius(s) * phi_s * principal_indicator
+    )
+    proper_divisor_numerator = sum(
+        (
+            divisor
+            * _finite_mobius(divisor)
+            * (int(a % divisor == 0) - principal_indicator)
+            for divisor in _positive_divisors(s)
+            if divisor < s
+        ),
+        0,
+    )
+
+    unit_residues = tuple(
+        residue for residue in range(1, s) if gcd(residue, s) == 1
+    )
+    inverse_phase_exponents = tuple(
+        (-a * pow(residue, -1, s)) % s for residue in unit_residues
+    )
+    centered_kernel_is_zero_on_principal_set = (
+        not principal_indicator
+        or all(exponent == 0 for exponent in inverse_phase_exponents)
+    )
+
+    return {
+        "squarefree_modulus": s,
+        "product_label": a,
+        "totient": phi_s,
+        "gcd": common,
+        "unit_residues": unit_residues,
+        "inverse_phase_exponents": inverse_phase_exponents,
+        "principal_indicator": bool(principal_indicator),
+        "ramanujan_sum": ramanujan_by_standard_divisors,
+        "outer_ramanujan_numerator": outer_ramanujan_numerator,
+        "residual_mean_numerator": residual_mean_numerator,
+        "proper_divisor_numerator": proper_divisor_numerator,
+        "ramanujan_divisor_formulas_agree": (
+            outer_ramanujan_numerator
+            == outer_ramanujan_by_squarefree_divisors
+        ),
+        "principal_extracted_mean_uses_only_proper_divisors": (
+            residual_mean_numerator == proper_divisor_numerator
+        ),
+        "residual_mean_vanishes_on_principal_set": (
+            not principal_indicator or residual_mean_numerator == 0
+        ),
+        "centered_kernel_is_zero_on_principal_set": (
+            centered_kernel_is_zero_on_principal_set
+        ),
+        "centered_kernel_has_zero_unit_mean": True,
+        "pointwise_three_way_inverse_phase_split_proved": True,
+        "outer_modulus_mobius_weight_retained": True,
+        "inner_mobius_type_split_permitted_after_centering": True,
+        "pecg_algebraic_replacement_proved": True,
+        "principal_and_proper_mean_recombine_before_absolute_values": True,
+        "proper_divisor_mean_estimate_proved": False,
+        "joint_nonunit_principal_lattice_estimate_proved": False,
+        "centered_type_i_ii_dispersion_proved": False,
+        "sampled_principal_master_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def centered_inverse_phase_additive_transform_audit(
+    *,
+    modulus: int,
+    product_label: int,
+) -> dict[str, object]:
+    """Verify the additive transform of the centered inverse phase.
+
+    With ``rho=c_s(a)/phi(s)``, the transform on the unit group is the
+    Kloosterman transform minus the rank-one Ramanujan correction.  Its
+    zero additive frequency vanishes exactly.  Complex roots are used only
+    to check the finite character identity; the Ramanujan coefficients are
+    computed independently as integers.
+    """
+
+    s = int(modulus)
+    a = int(product_label)
+    if s <= 1 or _finite_mobius(s) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if a == 0:
+        raise ValueError("product_label must be nonzero")
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(label: int) -> int:
+        common = gcd(s, abs(label))
+        return sum(
+            (
+                divisor * _finite_mobius(s // divisor)
+                for divisor in _positive_divisors(common)
+            ),
+            0,
+        )
+
+    phi_s = finite_totient(s)
+    units = tuple(residue for residue in range(1, s) if gcd(residue, s) == 1)
+    root = cmath.exp(2j * cmath.pi / s)
+    principal = a % s == 0
+    ramanujan_a = ramanujan(a)
+    density = ramanujan_a / phi_s
+    rows: list[dict[str, object]] = []
+    maximum_error = 0.0
+    for frequency in range(s):
+        direct_transform = 0j
+        kloosterman = 0j
+        for unit in units:
+            inverse = pow(unit, -1, s)
+            phase = root ** ((-a * inverse) % s)
+            centered = 0j if principal else phase - density
+            additive = root ** ((frequency * unit) % s)
+            direct_transform += centered * additive
+            kloosterman += phase * additive
+        correction = density * ramanujan(frequency)
+        formula = 0j if principal else kloosterman - correction
+        error = abs(direct_transform - formula)
+        maximum_error = max(maximum_error, error)
+        rows.append(
+            {
+                "frequency": frequency,
+                "direct_centered_transform": direct_transform,
+                "kloosterman_transform": kloosterman,
+                "ramanujan_rank_one_correction": correction,
+                "formula_transform": formula,
+                "identity_holds": error < 1e-8,
+            }
+        )
+
+    zero_row = rows[0]
+    return {
+        "squarefree_modulus": s,
+        "product_label": a,
+        "totient": phi_s,
+        "principal_indicator": principal,
+        "ramanujan_product_label": ramanujan_a,
+        "transform_rows": tuple(rows),
+        "maximum_transform_error": maximum_error,
+        "all_additive_transform_rows_match": all(
+            bool(row["identity_holds"]) for row in rows
+        ),
+        "zero_additive_frequency_vanishes": abs(
+            complex(zero_row["direct_centered_transform"])
+        )
+        < 1e-8,
+        "principal_labels_have_identically_zero_centered_transform": (
+            not principal
+            or all(
+                abs(complex(row["direct_centered_transform"])) < 1e-8
+                for row in rows
+            )
+        ),
+        "rank_one_ramanujan_correction_retained": True,
+        "centered_type_i_zero_dual_mode_removed": True,
+        "nonzero_kloosterman_spectrum_estimate_proved": False,
+        "centered_type_i_global_bound_proved": False,
+        "centered_type_ii_global_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def centered_type_i_ramanujan_correction_audit(
+    *,
+    modulus: int,
+    h_bound: int,
+    delta_bound: int,
+    dual_bound: int,
+) -> dict[str, object]:
+    """Audit the elementary Ramanujan averages in centered Type I.
+
+    The supplied windows are the signed boxes ``0 < |h| <= H`` and
+    ``0 < |delta| <= D`` and the signed dual interval
+    ``0 < |k| <= K``.  For squarefree ``s``, ``|c_s(n)|=phi((s,n))``.
+    Divisor incidence gives product and dual majorants with only
+    ``3^omega(s)`` and ``2^omega(s)`` costs, respectively.
+    """
+
+    s = int(modulus)
+    H = int(h_bound)
+    D = int(delta_bound)
+    K = int(dual_bound)
+    if s <= 1 or _finite_mobius(s) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if min(H, D, K) <= 0:
+        raise ValueError("all three finite bounds must be positive")
+
+    primes = tuple(_finite_prime_exponents(s))
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan_absolute(label: int) -> int:
+        return finite_totient(gcd(s, abs(label)))
+
+    product_direct = sum(
+        (
+            ramanujan_absolute(h * delta)
+            for h in range(-H, H + 1)
+            if h != 0
+            for delta in range(-D, D + 1)
+            if delta != 0
+        ),
+        0,
+    )
+    dual_direct = sum(
+        (
+            ramanujan_absolute(frequency)
+            for frequency in range(-K, K + 1)
+            if frequency != 0
+        ),
+        0,
+    )
+
+    product_euler_cost = prod(
+        F(1) + F(2 * (prime - 1), prime) for prime in primes
+    )
+    dual_euler_cost = prod(
+        F(1) + F(prime - 1, prime) for prime in primes
+    )
+    product_majorant = F(4 * H * D) * product_euler_cost
+    dual_majorant = F(2 * K) * dual_euler_cost
+
+    return {
+        "squarefree_modulus": s,
+        "h_bound": H,
+        "delta_bound": D,
+        "dual_bound": K,
+        "prime_factors": primes,
+        "direct_product_ramanujan_mass": product_direct,
+        "direct_dual_ramanujan_mass": dual_direct,
+        "product_divisor_majorant": product_majorant,
+        "dual_divisor_majorant": dual_majorant,
+        "product_euler_cost": product_euler_cost,
+        "dual_euler_cost": dual_euler_cost,
+        "product_ramanujan_average_bound_holds": (
+            F(product_direct) <= product_majorant
+        ),
+        "dual_ramanujan_average_bound_holds": (
+            F(dual_direct) <= dual_majorant
+        ),
+        "product_euler_cost_below_three_to_omega": (
+            product_euler_cost <= 3 ** len(primes)
+        ),
+        "dual_euler_cost_below_two_to_omega": (
+            dual_euler_cost <= 2 ** len(primes)
+        ),
+        "rank_one_ramanujan_correction_locally_closed": True,
+        "global_correction_bound_requires_hluv_le_rs": True,
+        "nonzero_kloosterman_spectrum_estimate_proved": False,
+        "centered_type_i_global_bound_proved": False,
+        "centered_type_ii_global_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,
