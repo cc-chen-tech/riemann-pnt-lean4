@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.CarlsonGaussianPoleFreeHadamard
+import MathlibAux.HadamardBoundaryLimit
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
@@ -182,6 +183,78 @@ theorem continuousOn_norm_sq_carlsonGaussianPoleFreeLpValueTotal_real
   exact hraw.congr' <| by
     filter_upwards [self_mem_nhdsWithin] with y hy
     exact (hnormIntegral y hy).symm
+
+/-- Exact squared-norm Hadamard interpolation on the closed Carlson strip.
+The artificial totalization is never used from outside the strip: the result
+is the limit of the already proved inner-strip inequalities. -/
+theorem norm_sq_carlsonGaussianPoleFreeLpValueTotal_le_interp_on_closed_strip
+    {Delta w x : ℝ} {Y0 Y1 : ℕ}
+    (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    (hx : x ∈ Icc (1 / 2 : ℝ) 4) :
+    ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+        hDelta hY0 hY01 (x : ℂ)‖ ^ 2 ≤
+      (‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+          hDelta hY0 hY01 ((1 / 2 : ℝ) : ℂ)‖ ^ 2) ^
+            (1 - (x - 1 / 2) / (4 - 1 / 2)) *
+        (‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+          hDelta hY0 hY01 (4 : ℂ)‖ ^ 2) ^
+            ((x - 1 / 2) / (4 - 1 / 2)) := by
+  let f : ℝ → ℝ := fun y =>
+    ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+      hDelta hY0 hY01 (y : ℂ)‖ ^ 2
+  apply MathlibAux.le_endpoint_interp_of_continuousOn_of_inner_interp
+    (f := f) (l := (1 / 2 : ℝ)) (u := 4) (x := x)
+    (by norm_num) hx
+    (continuousOn_norm_sq_carlsonGaussianPoleFreeLpValueTotal_real
+      hDelta hY0 hY01)
+  intro l u hl hu hlu hxu
+  exact
+    norm_sq_carlsonGaussianPoleFreeLpValueTotal_le_interp_on_inner_strip
+      hDelta hY0 hY01 hl hu hlu hxu
+      (sq_nonneg _) (sq_nonneg _) le_rfl le_rfl
+
+/-- Endpoint second-moment estimates can be inserted directly into the closed
+strip interpolation inequality. -/
+theorem norm_sq_carlsonGaussianPoleFreeLpValueTotal_le_of_endpoint_bounds
+    {Delta w x A B : ℝ} {Y0 Y1 : ℕ}
+    (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    (hx : x ∈ Icc (1 / 2 : ℝ) 4)
+    (hA : ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+        hDelta hY0 hY01 ((1 / 2 : ℝ) : ℂ)‖ ^ 2 ≤ A)
+    (hB : ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+        hDelta hY0 hY01 (4 : ℂ)‖ ^ 2 ≤ B) :
+    ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+        hDelta hY0 hY01 (x : ℂ)‖ ^ 2 ≤
+      A ^ (1 - (x - 1 / 2) / (4 - 1 / 2)) *
+        B ^ ((x - 1 / 2) / (4 - 1 / 2)) := by
+  let p : ℝ := 1 - (x - 1 / 2) / (4 - 1 / 2)
+  let q : ℝ := (x - 1 / 2) / (4 - 1 / 2)
+  have hA0 : 0 ≤ A := (sq_nonneg _).trans hA
+  have hp : 0 ≤ p := by
+    dsimp [p]
+    norm_num
+    linarith [hx.2]
+  have hq : 0 ≤ q := by
+    dsimp [q]
+    norm_num
+    linarith [hx.1]
+  have hleft := Real.rpow_le_rpow (sq_nonneg _) hA hp
+  have hright := Real.rpow_le_rpow (sq_nonneg _) hB hq
+  calc
+    ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+        hDelta hY0 hY01 (x : ℂ)‖ ^ 2 ≤
+      (‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+          hDelta hY0 hY01 ((1 / 2 : ℝ) : ℂ)‖ ^ 2) ^ p *
+        (‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+          hDelta hY0 hY01 (4 : ℂ)‖ ^ 2) ^ q := by
+      simpa [p, q] using
+        norm_sq_carlsonGaussianPoleFreeLpValueTotal_le_interp_on_closed_strip
+          hDelta hY0 hY01 hx
+    _ ≤ A ^ p * B ^ q :=
+      mul_le_mul hleft hright (Real.rpow_nonneg (sq_nonneg _) q)
+        (Real.rpow_nonneg hA0 p)
+    _ = A ^ (1 - (x - 1 / 2) / (4 - 1 / 2)) *
+        B ^ ((x - 1 / 2) / (4 - 1 / 2)) := by rfl
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

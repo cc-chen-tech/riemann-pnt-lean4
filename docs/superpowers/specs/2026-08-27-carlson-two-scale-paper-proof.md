@@ -483,11 +483,17 @@ strip growth and the exact Gaussian formula give a single integrable
 polynomial-Gaussian majorant for all real parameters in `[1/2,4]`;
 filter-form dominated convergence then proves continuity of
 `x |-> norm(Phi(x))^2` on that closed interval.  Its formal axiom audit again
-contains only `propext`, `Classical.choice`, and `Quot.sound`.  What remains of
-the boundary passage is the pure real-variable limit of the interior
-three-lines inequality as `l -> 1/2` and `u -> 4`.  This is distinct from the
-deep Conrey--Deshouillers--Iwaniec estimate itself.  The Conrey left endpoint,
-that final rpow limit, and the finite Gaussian covering still remain.
+contains only `propext`, `Classical.choice`, and `Quot.sound`.
+
+The pure real-variable boundary passage is now closed as well.  A general
+lemma approaches both endpoints by `1/(n+1)`, uses continuity of the endpoint
+data, joint continuity of real `rpow` (the two limiting exponents are positive
+away from the trivial endpoint cases), and closedness of `<=`.  Instantiating
+it gives the exact closed-strip inequality with endpoint second moments
+`A,B`, again without a square-root loss and with only the three permitted
+axioms.  This is distinct from the deep Conrey--Deshouillers--Iwaniec estimate
+itself.  The Conrey left endpoint and the finite Gaussian covering still
+remain.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
@@ -495,9 +501,9 @@ a final density axiom:
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
 2. for the first unconditional formal target `delta=1/20`, use item 1 for
-   the left boundary norm, pass the proved interior Hadamard specialization
-   to the limiting endpoint strip, and prove the finite Gaussian covering
-   argument; extending the same package to `R=1000` is an optional
+   the left boundary norm, insert it into the proved closed-strip Hadamard
+   specialization, and prove the finite Gaussian covering argument; extending
+   the same package to `R=1000` is an optional
    strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
