@@ -1,6 +1,6 @@
 import HardyTheorem.SelbergMollifiedDirichlet
 import HardyTheorem.SelbergMollifiedGaussianPolynomial
-import MathlibAux.DyadicPrefixDecomposition
+import MathlibAux.FiberwiseNormSq
 
 /-!
 # Coefficient energy for dyadic AFE blocks
