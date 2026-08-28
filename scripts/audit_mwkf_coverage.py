@@ -19774,6 +19774,258 @@ def ramanujan_principal_second_poisson_closure_audit(
     }
 
 
+def diagonal_subtracted_kloosterman_second_moment_audit(
+    *,
+    moduli: tuple[int, ...],
+    frequency_length_exponent: Fraction,
+    modulus_length_exponent: Fraction,
+    physical_offdiagonal_energy_target_exponent: Fraction,
+    physical_packet_to_common_kloosterman_sequence_verified: bool,
+    published_diagonal_subtracted_remainder_verified: bool,
+) -> dict[str, object]:
+    """Audit the exact diagonal and short determinant behind a modulus moment.
+
+    The physical normalized model is
+
+    ``sum_a W(a/A) |sum_(q~Q) mu(q) S(a,1;q)/q|^2``.
+
+    Blomer--Risager--Shparlinski prove a total second-moment upper bound
+    with the same exponents for the unweighted modulus sequence, not for
+    arbitrary coefficients such as ``mu(q)``.  Its first normalized
+    exponent is exactly the arithmetic reduced-fraction diagonal scale,
+    but their theorem also does not state an asymptotic or a bound after
+    that diagonal is subtracted.  This audit therefore records the
+    tempting exponent margin without converting it into published
+    coverage.
+
+    The finite part enumerates primitive fractions ``x/q``.  For a
+    nonzero circular determinant, orient the pair so that
+
+    ``Delta = x1*q2-x2*q1-k*q1*q2 > 0``.
+
+    If ``g=(q1,q2)`` and ``q_i=g*r_i``, then ``g|Delta`` and
+    ``D=Delta/g`` is a unit modulo both coprime cofactors.  The determinant
+    fixes ``x1 (mod r1)`` and ``x2 (mod r2)``.  CRT followed by elementary
+    additive reciprocity transfers both cofactor inverse phases to the
+    short modulus ``D``; the common-gcd trace remains explicit.
+    """
+
+    modulus_family = tuple(int(value) for value in moduli)
+    if not modulus_family or len(set(modulus_family)) != len(modulus_family):
+        raise ValueError("moduli must be a nonempty tuple without duplicates")
+    all_squarefree = all(
+        modulus > 1 and _finite_mobius(modulus) != 0
+        for modulus in modulus_family
+    )
+    if not all_squarefree:
+        raise ValueError("all moduli must be squarefree and greater than one")
+
+    a_exp = F(frequency_length_exponent)
+    q_exp = F(modulus_length_exponent)
+    target = F(physical_offdiagonal_energy_target_exponent)
+    if min(a_exp, q_exp, target) < 0 or q_exp == 0:
+        raise ValueError("all exponents must be nonnegative and Q must grow")
+
+    def inv_mod(value: int, modulus: int) -> int:
+        return 0 if modulus == 1 else pow(value, -1, modulus)
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    primitive_rows = tuple(
+        (modulus, numerator)
+        for modulus in modulus_family
+        for numerator in range(1, modulus)
+        if gcd(numerator, modulus) == 1
+    )
+    reduced_fraction_diagonal_exact = all(
+        (F(x1, q1) == F(x2, q2)) == ((q1, x1) == (q2, x2))
+        for q1, x1 in primitive_rows
+        for q2, x2 in primitive_rows
+    )
+    normalized_diagonal_weight = sum(
+        F(_finite_mobius(modulus) ** 2 * finite_totient(modulus), modulus**2)
+        for modulus in modulus_family
+    )
+
+    determinant_rows: list[dict[str, object]] = []
+    gcd_divisibility = True
+    cofactor_uniqueness = True
+    cofactor_unit = True
+    crt_exact = True
+    reciprocity_exact = True
+    for left_index, (q_left, x_left) in enumerate(primitive_rows):
+        for q_right, x_right in primitive_rows[left_index + 1:]:
+            raw_delta = x_left * q_right - x_right * q_left
+            period = q_left * q_right
+            circular_candidates = (raw_delta - period, raw_delta, raw_delta + period)
+            circular_delta = min(
+                circular_candidates,
+                key=lambda value: (abs(value), value < 0),
+            )
+            if circular_delta == 0:
+                # Reduced fractions have already been proved equal only on
+                # the literal diagonal, which is excluded by i<j.
+                raise AssertionError("unexpected off-diagonal zero determinant")
+            if circular_delta > 0:
+                q1, x1, q2, x2, delta = (
+                    q_left, x_left, q_right, x_right, circular_delta
+                )
+            else:
+                q1, x1, q2, x2, delta = (
+                    q_right, x_right, q_left, x_left, -circular_delta
+                )
+
+            common = gcd(q1, q2)
+            r1 = q1 // common
+            r2 = q2 // common
+            divides = delta % common == 0
+            gcd_divisibility = bool(gcd_divisibility and divides)
+            if not divides:
+                continue
+            reduced_delta = delta // common
+            unique_left = (
+                x1 % r1
+                == (reduced_delta * inv_mod(r2, r1)) % r1
+            )
+            unique_right = (
+                x2 % r2
+                == (-reduced_delta * inv_mod(r1, r2)) % r2
+            )
+            units = gcd(reduced_delta, r1 * r2) == 1
+            cofactor_uniqueness = bool(
+                cofactor_uniqueness and unique_left and unique_right
+            )
+            cofactor_unit = bool(cofactor_unit and units)
+
+            original_phase = (
+                F(inv_mod(x1, q1), q1) - F(inv_mod(x2, q2), q2)
+            )
+            common_phase = (
+                F(inv_mod(x1, common) * inv_mod(r1, common), common)
+                - F(inv_mod(x2, common) * inv_mod(r2, common), common)
+            )
+            left_cofactor_phase = F(
+                inv_mod(x1, r1) * inv_mod(common, r1), r1
+            )
+            right_cofactor_phase = -F(
+                inv_mod(x2, r2) * inv_mod(common, r2), r2
+            )
+            crt_phase = common_phase + left_cofactor_phase + right_cofactor_phase
+            crt_row_exact = (original_phase - crt_phase).denominator == 1
+            crt_exact = bool(crt_exact and crt_row_exact)
+
+            left_multiplier = r2 * inv_mod(common, r1)
+            right_multiplier = r1 * inv_mod(common, r2)
+            transferred_phase = common_phase
+            transferred_phase += (
+                -F(left_multiplier * inv_mod(r1, reduced_delta), reduced_delta)
+                + F(left_multiplier, reduced_delta * r1)
+            )
+            transferred_phase += (
+                -F(right_multiplier * inv_mod(r2, reduced_delta), reduced_delta)
+                + F(right_multiplier, reduced_delta * r2)
+            )
+            reciprocity_row_exact = (
+                original_phase - transferred_phase
+            ).denominator == 1
+            reciprocity_exact = bool(reciprocity_exact and reciprocity_row_exact)
+            determinant_rows.append(
+                {
+                    "left_modulus": q1,
+                    "right_modulus": q2,
+                    "left_numerator": x1,
+                    "right_numerator": x2,
+                    "circular_determinant": delta,
+                    "common_gcd": common,
+                    "left_coprime_cofactor": r1,
+                    "right_coprime_cofactor": r2,
+                    "reduced_determinant": reduced_delta,
+                    "common_gcd_divides_determinant": divides,
+                    "left_residue_class_unique": unique_left,
+                    "right_residue_class_unique": unique_right,
+                    "reduced_determinant_is_cofactor_unit": units,
+                    "crt_inverse_phase_exact": crt_row_exact,
+                    "short_determinant_reciprocity_exact": (
+                        reciprocity_row_exact
+                    ),
+                }
+            )
+
+    raw_regular = a_exp + 2 * q_exp
+    raw_secondary = a_exp / 3 + 7 * q_exp / 3
+    normalized_regular = raw_regular - 2 * q_exp
+    normalized_secondary = raw_secondary - 2 * q_exp
+    determinant_collar = max(F(0), 2 * q_exp - a_exp)
+    conditional_margin = target - normalized_secondary
+    published_separates_diagonal = bool(
+        published_diagonal_subtracted_remainder_verified
+    )
+    physical_adapter = bool(
+        physical_packet_to_common_kloosterman_sequence_verified
+    )
+    remainder_proved = bool(
+        published_separates_diagonal
+        and physical_adapter
+        and normalized_secondary <= target
+    )
+    return {
+        "moduli": modulus_family,
+        "all_moduli_squarefree": all_squarefree,
+        "primitive_rows": primitive_rows,
+        "determinant_rows": tuple(determinant_rows),
+        "reduced_fraction_diagonal_exact": reduced_fraction_diagonal_exact,
+        "normalized_diagonal_weight": normalized_diagonal_weight,
+        "every_nonzero_determinant_is_divisible_by_modulus_gcd": (
+            gcd_divisibility
+        ),
+        "cofactor_residue_classes_are_unique": cofactor_uniqueness,
+        "reduced_determinant_is_unit_at_both_cofactors": cofactor_unit,
+        "crt_inverse_phase_factorization_exact": crt_exact,
+        "short_determinant_reciprocity_exact": reciprocity_exact,
+        "frequency_length_exponent": a_exp,
+        "modulus_length_exponent": q_exp,
+        "physical_offdiagonal_energy_target_exponent": target,
+        "brs_raw_regular_term_exponent": raw_regular,
+        "brs_raw_secondary_term_exponent": raw_secondary,
+        "brs_normalized_regular_term_exponent": normalized_regular,
+        "brs_normalized_secondary_term_exponent": normalized_secondary,
+        "exact_diagonal_exponent": a_exp,
+        "determinant_collar_exponent": determinant_collar,
+        "short_cofactor_determinant_exponent_at_common_gcd_zero": (
+            determinant_collar
+        ),
+        "conditional_secondary_margin_to_physical_target": conditional_margin,
+        "published_total_moment_bound_contains_exact_diagonal_scale": (
+            normalized_regular == a_exp
+        ),
+        "brs_allows_arbitrary_modulus_coefficients": False,
+        "published_total_moment_bound_applies_to_physical_mobius_weight": (
+            False
+        ),
+        "published_theorem_separates_arithmetic_diagonal": (
+            published_separates_diagonal
+        ),
+        "physical_packet_adapter_verified": physical_adapter,
+        "diagonal_subtracted_remainder_bound_proved": remainder_proved,
+        "centered_nonzero_determinant_gate_closed": remainder_proved,
+        "coupled_kernel_gate_closed": remainder_proved,
+        "brs_source": (
+            "Blomer--Risager--Shparlinski, Triple sums of Kloosterman "
+            "sums and the discrepancy of modular inverses, JLMS 112 "
+            "(2025), Theorem 1.3"
+        ),
+        "pascadi_source": (
+            "Pascadi, Large sieve inequalities for exceptional Maass "
+            "forms and the greatest prime factor of n^2+1, Forum Math. "
+            "Pi 14 (2026), Corollary 18"
+        ),
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

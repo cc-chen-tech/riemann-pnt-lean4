@@ -7007,6 +7007,66 @@ def test_joint_principal_closure_is_documented_without_closing_the_full_gate() -
     assert r"\tag{9.984}" in text
 
 
+def test_diagonal_subtracted_kloosterman_moment_has_short_determinant_model() -> None:
+    """The BRS secondary term fits only after an unavailable exact subtraction."""
+
+    audit = getattr(
+        coverage_audit,
+        "diagonal_subtracted_kloosterman_second_moment_audit",
+        None,
+    )
+    assert audit is not None, "diagonal-subtracted Kloosterman audit is missing"
+    result = audit(
+        moduli=(5, 7, 15, 21, 35),
+        frequency_length_exponent=F(5),
+        modulus_length_exponent=F(3),
+        physical_offdiagonal_energy_target_exponent=F(4),
+        physical_packet_to_common_kloosterman_sequence_verified=False,
+        published_diagonal_subtracted_remainder_verified=False,
+    )
+    assert result["all_moduli_squarefree"]
+    assert result["reduced_fraction_diagonal_exact"]
+    assert result["normalized_diagonal_weight"] == sum(
+        F(sum(1 for residue in range(1, modulus) if gcd(residue, modulus) == 1),
+          modulus * modulus)
+        for modulus in (5, 7, 15, 21, 35)
+    )
+    assert result["every_nonzero_determinant_is_divisible_by_modulus_gcd"]
+    assert result["cofactor_residue_classes_are_unique"]
+    assert result["reduced_determinant_is_unit_at_both_cofactors"]
+    assert result["crt_inverse_phase_factorization_exact"]
+    assert result["short_determinant_reciprocity_exact"]
+    assert result["brs_raw_regular_term_exponent"] == F(11)
+    assert result["brs_raw_secondary_term_exponent"] == F(26, 3)
+    assert result["brs_normalized_regular_term_exponent"] == F(5)
+    assert result["brs_normalized_secondary_term_exponent"] == F(8, 3)
+    assert result["exact_diagonal_exponent"] == F(5)
+    assert result["determinant_collar_exponent"] == F(1)
+    assert result["short_cofactor_determinant_exponent_at_common_gcd_zero"] == F(1)
+    assert result["conditional_secondary_margin_to_physical_target"] == F(4, 3)
+    assert result["published_total_moment_bound_contains_exact_diagonal_scale"]
+    assert not result["brs_allows_arbitrary_modulus_coefficients"]
+    assert not result["published_total_moment_bound_applies_to_physical_mobius_weight"]
+    assert not result["published_theorem_separates_arithmetic_diagonal"]
+    assert not result["physical_packet_adapter_verified"]
+    assert not result["diagonal_subtracted_remainder_bound_proved"]
+    assert not result["centered_nonzero_determinant_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_short_determinant_checkpoint_is_documented_as_an_unproved_gate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.148 A diagonal-subtracted modulus moment is the next exact gate" in text
+    assert r"\mathfrak E_\beta(A,Q)" in text
+    assert r"\Delta=x_1q_2-x_2q_1" in text
+    assert r"g\mid\Delta" in text
+    assert r"|D|\ll T/g" in text
+    assert r"(AQ)^{1/3}" in text
+    assert "does not state a diagonal-subtracted theorem" in text
+    assert "physical packet adapter" in text
+    assert "not proved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

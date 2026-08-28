@@ -40,6 +40,7 @@
 > | Fused-principal/Ramanujan-sampled bridge | Section 9.145 proves row by row that the ambient and reduced Ramanujan densities agree; after multiplication by the outer Möbius signs, the canonical, ambient-Ramanujan, and fused moving-gcd coefficients all equal \(\mu(m)/\varphi(q)\), where \(d=(|h\delta|,v)\), \(q=v/d\), and \(m=dw\).  Hence the fused master (9.940) is exactly the earlier nonzero-\(h\) Ramanujan principal projection, not another main term.  Adding the raw \(h=0\) packet gives the gcd-sampled lattice plus the proper-divisor mean from (9.710a); Section 9.147 bounds this unique joint ledger |
 > | Second Poisson zero mode and diagonal | Section 9.146 applies coprime Poisson to the exact \(\delta _0\)-sum in (9.703).  After the original \(K\)-partition is reassembled, its zero dual mode is the Mellin transform of \(V_t\) at \(s_t\) and vanishes exactly because \(G_t(s_t)=0\).  The sole deleted-origin correction occurs at \(s_0=1\) and is coefficient by coefficient the AFE diagonal.  Thus \(\mathcal D+\mathcal P^{\rm all}\) is an exact nonzero-second-dual master with \(k\asymp T/K\); Section 9.147 applies the same transform to the proper-divisor-completed principal row and estimates it |
 > | Full Ramanujan principal closure | Section 9.147 applies second Poisson to the exact joint sampled/proper-divisor lattice.  Its zero dual mode vanishes, its unique deleted-origin divisor sum returns the AFE diagonal, and two-dimensional stationary phase plus the Ramanujan short-sum bound gives \(E_{\rm pr}^{(2)}(\omega)=1-(m-\omega)\leq1\) for every \(w,c\) split.  Hence the whole principal contribution is \(O(T^{1+\varepsilon})\) unconditionally.  Together with Section 9.144, this reduces the remaining sufficient gate to centered \(\Delta_{\rm red}\ne0\) dispersion only |
+> | Diagonal-subtracted modulus-moment gate | Section 9.148 compares the remaining square with the Blomer--Risager--Shparlinski modulus second moment.  After the dyadic \(1/q\) normalization its two exponents are \(T^5\) and \(T^{8/3}\); the first is exactly the reduced-fraction diagonal scale, while the second lies below the physical off-diagonal energy target \(T^4\).  The published theorem has no arbitrary modulus coefficient such as \(\mu(q)\), bounds only its unweighted total moment, and does not permit subtraction of the first term.  Smooth Poisson nevertheless gives the exact collar \(gD\ll T^{1+o(1)}\), cofactor residue uniqueness, and reciprocity to the short determinant modulus \(D\).  The physical common-sequence adapter and a diagonal-subtracted remainder theorem remain unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -21379,6 +21380,230 @@ to promote the joint principal bound.  It records the centered resonant
 input separately and keeps the nonzero-determinant and full-gate flags
 false.
 
+### 9.148 A diagonal-subtracted modulus moment is the next exact gate
+
+After Sections 9.144 and 9.147, a generic total-moment estimate is still
+too coarse: it pays again for the reduced-frequency diagonal which has
+already been evaluated.  The closest published model makes this issue
+quantitatively exact.  With
+
+\[
+ S(a,1;q):=\sum_{x\in U(q)}e_q(ax+\bar x_q),
+\]
+
+consider the normalized dyadic modulus moment with a coefficient sequence
+\(\beta_q\):
+
+\[
+ \boxed{
+ \mathfrak E_\beta(A,Q)
+ :=\sum_a W(a/A)
+   \left|\sum_{q\asymp Q}\frac{\beta_q}qS(a,1;q)\right|^2.}
+ \tag{9.985}
+\]
+
+The physical comparison would require \(\beta_q=\mu(q)\), together with
+the remaining Type/AFE packet.  The unweighted proxy has
+\(\beta_q=1\).
+
+Opening the Kloosterman sums shows that equality of the two additive
+frequencies means
+
+\[
+ \frac{x_1}{q_1}=\frac{x_2}{q_2},\qquad (x_i,q_i)=1.
+\]
+
+Both fractions are reduced, so this is equivalent to
+\((q_1,x_1)=(q_2,x_2)\).  The exact arithmetic diagonal in (9.985) is
+therefore
+
+\[
+ \boxed{
+ \mathfrak D_\beta(A,Q)
+ =\sum_aW(a/A)
+   \sum_{q\asymp Q}\frac{|\beta_q|^2\varphi(q)}{q^2}
+ \asymp_W A.}
+ \tag{9.986}
+\]
+
+Theorem 1.3 of
+[Blomer--Risager--Shparlinski](https://arxiv.org/abs/2411.17823)
+proves, before the dyadic \(1/q\) normalization, the exponent pair
+
+\[
+ AQ^2+(AQ^7)^{1/3}.
+\]
+
+for the **unweighted** modulus sum.  Partial summation on one smooth
+dyadic \(q\)-block thus gives the proxy upper-bound scale
+
+\[
+ \boxed{\mathfrak E_1(A,Q)\ll_\varepsilon
+ A+(AQ)^{1/3}(AQ)^\varepsilon.}
+ \tag{9.987}
+\]
+
+At the balanced physical lengths \(A=T^5\), \(Q=T^3\), the two powers
+in (9.987) are
+
+\[
+ T^5\quad\hbox{and}\quad T^{8/3}.
+ \tag{9.988}
+\]
+
+The first is exactly the exponent of (9.986), whereas the second is
+below the normalized nonzero-determinant energy target \(T^{4+\varepsilon}\)
+by \(T^{4/3}\).  There are two independent reasons why this is not
+coverage.  First, the theorem does not allow arbitrary coefficients in
+the \(q\)-sum, so it cannot be specialized to \(\beta_q=\mu(q)\); the
+unweighted square does not dominate the Möbius-weighted square.  Second,
+even for \(\beta_q=1\), the first term cannot be deleted from the
+published inequality: an upper bound
+\(\mathfrak E_1\ll \mathfrak D_1+R\) does not imply
+\(|\mathfrak E_1-\mathfrak D_1|\ll R\).  In the cited proof the
+\(A\)-term comes from the regular-spectrum part of a dual spectral large
+sieve; the paper does not state a diagonal-subtracted theorem or an
+asymptotic with the coefficient in (9.986).
+
+[Blomer--Milićević, Theorem 1](https://arxiv.org/abs/1410.4538) does
+allow a general **periodic** arithmetic modulus weight
+\(f:(\mathbb Z/r\mathbb Z)^\times\to\mathbb C\), at the cost of its
+Mellin norm \(\|\widehat f\|_1\).  The dyadic function
+\(q\mapsto\mu(q)\) is not periodic with a fixed subpolynomial modulus;
+encoding its exact values by a growing period gives no acceptable norm.
+That theorem also treats fixed Kloosterman arguments rather than the
+joint \(a\)-second moment.  It therefore does not repair either missing
+step above.
+
+Pascadi's
+[Corollary 18](https://arxiv.org/abs/2404.04239) reaches the same
+regular-spectrum ceiling.  Under the optimistic raw substitution
+\(R=1,S=T^3,N=T^5,D=T^3,C=1\), its term \(D^2NR\) has exponent \(11\),
+again exponent \(5\) after the two \(1/q\) normalizations.  Moreover its
+\(d\)-variable carries a smooth weight, not the modulus-dependent
+Möbius/Type coefficient of (9.906).  Hence neither published statement
+proves the required subtraction or the physical packet adapter.
+
+There is nevertheless additional exact structure off the diagonal.
+Poisson summation in the \(a\)-variable of (9.985) gives a smooth factor
+
+\[
+ A\widehat W\!\left(A\left(k+\frac{x_1}{q_1}
+                              -\frac{x_2}{q_2}\right)\right).
+\]
+
+Choose the circular lift and orientation for which
+
+\[
+ \boxed{
+ \Delta=x_1q_2-x_2q_1-kq_1q_2>0.}
+ \tag{9.989}
+\]
+
+Outside an arbitrary logarithmic enlargement, integration by parts
+removes all rows except
+
+\[
+ |\Delta|\ll_W\frac{q_1q_2}{A}\mathscr L^B.
+ \tag{9.990}
+\]
+
+Put
+
+\[
+ g=(q_1,q_2),\qquad q_i=gr_i,\qquad
+ D=\Delta/g.
+\]
+
+On the squarefree support, \(g,r_1,r_2\) are pairwise coprime.  Formula
+(9.989) gives the finite identities
+
+\[
+ \boxed{
+ g\mid\Delta,\qquad
+ x_1\equiv D\bar r_{2,r_1}\pmod {r_1},\qquad
+ x_2\equiv-D\bar r_{1,r_2}\pmod {r_2},\qquad
+ (D,r_1r_2)=1.}
+ \tag{9.991}
+\]
+
+Thus the determinant determines one numerator class modulo each coprime
+cofactor.  It does not determine the common-\(g\) lift; that remaining
+trace must be kept rather than bounded trivially.
+
+The inverse phase also transfers exactly to the short determinant.  Use
+the convention that an inverse and its additive phase modulo one are
+zero.  Set
+
+\[
+ \begin{aligned}
+ P_g&:=\frac{\bar x_{1,g}\bar r_{1,g}
+                 -\bar x_{2,g}\bar r_{2,g}}g,\\
+ B_1&:=r_2\bar g_{r_1},\qquad
+ B_2:=r_1\bar g_{r_2}.
+ \end{aligned}
+\]
+
+CRT, (9.991), and
+\(\bar D_r/r+\bar r_D/D\equiv1/(Dr)\pmod1\) give
+
+\[
+ \boxed{
+ \frac{\bar x_{1,q_1}}{q_1}-\frac{\bar x_{2,q_2}}{q_2}
+ \equiv P_g
+ -\frac{B_1\bar r_{1,D}+B_2\bar r_{2,D}}D
+ +\frac1D\left(\frac{B_1}{r_1}+\frac{B_2}{r_2}\right)
+ \pmod1.}
+ \tag{9.992}
+\]
+
+At \(A=T^5,Q=T^3\), (9.990) and (9.991) imply
+
+\[
+ \boxed{gD\ll T\mathscr L^B,\qquad |D|\ll T/g\,\mathscr L^B.}
+ \tag{9.993}
+\]
+
+Consequently the genuinely nonresonant collar has combined conductor at
+most \(T^{1+o(1)}\), even though the original moduli have length \(T^3\).
+This is the concrete opportunity missed by a generic Farey large sieve:
+one should retain \(\mu(q_1)\mu(q_2)\), the common-\(g\) trace in
+(9.992), and all nine Type blocks while averaging the short
+\((g,D)\)-family.
+
+The resulting weaker sufficient gate has two parts.
+
+1. A packet-exhaustive, subpolynomial-projective physical packet adapter
+   must identify the global product-spectrum square from (9.906) with a
+   finite sum of moments of the form (9.985), and identify its literal
+   diagonal with the centered resonant projector already bounded in
+   Section 9.144.
+2. For that physical coefficient class, one needs the one-sided absolute
+   remainder estimate
+
+   \[
+    \boxed{
+    |\mathfrak E_{\rm phys}(T^5,T^3)
+      -\mathfrak D_{\rm phys}(T^5,T^3)|
+    \ll_{\varepsilon,W}T^{4+\varepsilon}.}
+    \tag{DSKM}
+   \]
+
+If both statements hold, the remaining
+\(\mathcal C^\circ_{\Delta_{\rm red}\ne0}\) gate follows with room to
+spare.  Neither statement is proved here.  In particular, (9.987) is not
+(DSKM), and applying Cauchy separately to each physical modulus would
+again erase the double Möbius cancellation.
+
+The finite helper
+`diagonal_subtracted_kloosterman_second_moment_audit` exhausts supplied
+squarefree moduli.  It verifies the reduced-fraction diagonal (9.986),
+every assertion in (9.991), the CRT factorization and reciprocity
+(9.992), and the exact exponents \(11,26/3,5,8/3\) in (9.987)--(9.988).
+It records both the physical packet adapter and the diagonal-subtracted
+remainder as false, so neither the centered determinant gate nor the
+coupled-kernel gate is promoted.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -22359,6 +22584,7 @@ Proved in this note:
 | Fused-principal/Ramanujan-sampled bridge | exact identification; analytic estimate supplied in Section 9.147 | For \(d=(|h\delta|,v)\), \(q=v/d\), \(A=h\delta/d\), the squarefree Ramanujan formula gives \(\rho_v(h\delta)=\rho_q(A)=\mu(q)/\varphi(q)\), (9.962)--(9.963).  Multiplication by \(\mu(v)\mu(w)\) then gives exactly the fused moving-gcd coefficient \(\mu(dw)/\varphi(q)\), (9.964).  Hence (9.965) identifies the canonical principal master with the earlier nonzero-\(h\) Ramanujan projection, and adding the raw zero mode gives the gcd-sampled lattice plus proper-divisor mean, (9.966).  These are alternative coordinates for the joint row bounded in (9.984), not separate main terms |
 | Second principal Poisson zero/diagonal ledger | exact global reassembly; intermediate step to full principal closure | Coprime Poisson in \(\delta_0\) has the unique deleted-origin correction \(-\mathbf1_{s_0=1}\Phi(0)\), (9.968).  After all physical \(K\)-packets are restored, its zero dual transform is \(G_t(s_t)g_t(s_t)/s_t=0\), (9.969), while the deleted origin is exactly the \(\ell=n\) AFE diagonal, (9.970).  Hence \(\mathcal D+\mathcal P^{\rm all}=\mathcal P^{(2),\ne0}\), (9.972), with effective \(k\asymp T/K\), (9.974).  Section 9.147 performs the required proper-divisor recombination before estimating |
 | Full Ramanujan principal second-Poisson closure | proved unconditionally; centered nonzero determinant remains | The exact joint row is (9.975).  Coprime Poisson in \(\delta_1\) has zero Mellin mode by \(G_t(s_t)=0\), (9.978), and the \(u=1\) deleted-origin sum is the AFE diagonal by \(\sum_{w\mid s}w\mu(w)=\mu(s)\varphi(s)\), (9.979)--(9.980).  The nonzero transform has a phase-zero nondegenerate saddle, (9.981), and Ramanujan averaging gives (9.983).  Every \(w=T^\omega,c=T^{m-\omega}\) split then satisfies \(E_{\rm pr}^{(2)}(\omega)=1-(m-\omega)\le1\), (9.984).  Thus the complete principal contribution is \(O(T^{1+\varepsilon})\); after Section 9.144, only centered \(\Delta_{\rm red}\ne0\) dispersion remains |
+| Diagonal-subtracted Kloosterman modulus moment | exact arithmetic collar and exponent opportunity; physical theorem unproved | For the proxy moment (9.985), primitive fraction equality gives the literal diagonal (9.986).  The unweighted Blomer--Risager--Shparlinski theorem has normalized powers \(A\) and \((AQ)^{1/3}\), hence \(T^5\) and \(T^{8/3}\) at \((A,Q)=(T^5,T^3)\); the latter lies \(T^{4/3}\) below the physical energy target.  The theorem neither accepts the modulus weight \(\mu(q)\) nor bounds the remainder after its \(A\)-scale term is subtracted.  Smooth \(a\)-Poisson gives \(\Delta=x_1q_2-x_2q_1-kq_1q_2\), (9.989), and squarefree gcd extraction gives unique cofactor residues and \(gD=\Delta\ll T^{1+o(1)}\), (9.991)--(9.993).  CRT plus reciprocity transfers the cofactor inverse phases to modulus \(D\), while retaining the common-\(g\) trace.  The packet-exhaustive physical adapter and (DSKM) remain unproved |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |
