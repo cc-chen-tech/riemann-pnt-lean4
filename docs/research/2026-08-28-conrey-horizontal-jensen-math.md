@@ -111,31 +111,50 @@ Hardy/argument-variation 主项仍为 `T log T`；下端的所有多对数误差
 
 在真正的 Conrey 截断 `2<=Y<=e^L` 下，`log max(1,|B|)<=L`。
 
+仓库中“系数绝对值至多一”的证明目前是
+`ConreyMollifierRightEdge` 的 private lemma。形式化增长界时应把这一
+有限和事实公开为独立端点，或者在新模块中重证；不能把右边线上
+`B=1+O(1/L)` 的定理误用于整个外圆。
+
 ### 3.2 zeta 与导数
 
-在 `1/4<=Re s<=4` 使用仓库已有的多项式竖直增长；在 `Re s>=4`
-使用绝对收敛 Dirichlet 级数。对导数，在前一条带内用半径 `1/16`
-的 Cauchy 圆，后一条带内直接对
-`sum (log n)n^{-s}` 取绝对值。于是存在固定 `Cz>=1` 使
+外圆并不具有固定的实部上界：其最右点约为 `4 log L`。因此先在
+`1/4<=Re s<=4` 使用仓库已有的多项式竖直增长，在 `Re s>=4`
+使用绝对收敛区的统一 zeta 界。
+
+对导数固定 Cauchy 半径 `delta=1/16`。若中心
+`Re s<=63/16`，则 Cauchy 圆落在 `0<=Re w<=4`；由外圆下端
+`Im s>=7/4`，该小圆还满足 `|Im w|>=27/16>1`，所以可直接使用
+零到四条带的多项式界。若 `Re s>63/16`，则同一小圆完全落在
+`Re w>2`，使用绝对收敛区的统一 zeta 界。两段都由仓库已有的
+`norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one` 转成导数界。
+于是存在固定 `Cz>=1` 使
 
 \[
  |\zeta(s)|+|\zeta'(s)|\le
- C_z(|\operatorname{Im}s|+A+10)^5.
+ C_z(|\operatorname{Im}s|+A+10)^4.
 \]
 
-指数 `5` 只为留出 Cauchy 圆的余量，不参与最终优化。
+最终产品仍可粗化到六次幂；这里没有必要因 Cauchy 圆额外损失一次
+幂。
 
 ### 3.3 archimedean 对数导数
 
-由
+需要先把仓库现有的 `logDeriv_conreyH_eq` 从 `Re s>1` 推广到精确的
+适用域 `Re s>0` 且 `s!=1`。其证明中的 Gamma 非零、`s!=0` 和
+非正整数极点排除只用到 `Re s>0`；线性因子只额外需要 `s!=1`。
+推广后仍有
 
 \[
  {H'\over H}(s)={1\over s}+{1\over s-1}
  -{\log\pi\over2}+{1\over2}\psi(s/2)
 \]
 
-和 digamma 递推 `psi(z)=psi(z+1)-1/z`，在 `Re s>=1/4` 且圆盘离
-`s=1` 至少 `3/4` 的条件下得到
+和 digamma 递推 `psi(z)=psi(z+1)-1/z`。这里 `z=s/2` 只有
+`Re z>=1/8`，不能直接套用要求 `Re z>=1/4` 的现有辅助定理；但外圆
+几何给出 `|Im s|>=7/4`，故 `|Im z|>=7/8`、`|z^{-1}|<=8/7`，而
+`Re(z+1)>=1`，一次递推即可回到标准 digamma 对数界。在外圆离
+`s=1` 的虚部距离至少 `7/4` 的条件下得到
 
 \[
  \left|{H'\over H}(s)\right|
@@ -151,6 +170,11 @@ Hardy/argument-variation 主项仍为 `T log T`；下端的所有多对数误差
 \]
 
 当 `Y<=e^L` 且 `U<=e^L` 时，`log M=O(L)`。
+
+这一节的 Lean 依赖账本因此是：公开实际 mollifier 的有限和界；证明
+外圆 `Im s>=7/4`；推广 `H'/H` 精确公式；按 `63/16` 分段证明 zeta
+及导数增长；最后才装配实际 `V1*B`。其中任何一项缺失时，Task 3
+都只能标为未完成。
 
 ## 4. 中心下界和 Jensen 质量
 

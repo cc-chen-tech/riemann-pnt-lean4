@@ -38,6 +38,11 @@ square, or strict `> 2/5` are complete.  The proved right-edge
 - admissible window: `rightEdge L + 1 <= U` and `U + 1 <= exp L`
 - center norm lower bound: `1/6`
 
+The growth proof must expose, rather than assume, the finite mollifier bound,
+the outer-disk lower height `7/4`, the extension of the exact `H'/H` formula
+from `Re s > 1` to `Re s > 0` with `s != 1`, and the radius-`1/16` Cauchy
+split at `Re s = 63/16` for the zeta derivative.
+
 The later division by the Littlewood gap additionally requires `0 < R`.
 This checkpoint keeps `R = 0` only because disk geometry and height selection
 do not divide by the gap. The explicit certificate value `R = 6/5` must be

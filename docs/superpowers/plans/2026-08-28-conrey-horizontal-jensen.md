@@ -143,15 +143,23 @@ Check separate mollifier, zeta/derivative, `H'/H`, `V1`, and product growth endp
 
 - [ ] **Step 2: Prove `norm B <= Y` on `Re s >= 1/4`**
 
-Expose or locally reuse the coefficient bound from `ConreyMollifierRightEdge`; bound every Dirichlet term by one and the number of terms by `Y`.
+Expose or locally reprove the private coefficient bound from
+`ConreyMollifierRightEdge`; bound every Dirichlet term by one and the number of
+terms by `Y`.  Do not reuse the moving-right-line `B = 1 + O(1/L)` theorem.
 
 - [ ] **Step 3: Prove zeta and zeta-derivative polynomial bounds**
 
-Split at `Re s = 4`. Use the existing zero-to-four polynomial theorem on the left and absolute Dirichlet convergence on the right. Use a radius-`1/16` Cauchy circle for the derivative in the bounded strip.
+Use a radius-`1/16` Cauchy circle and split its center at `Re s = 63/16`.
+On the left the circle lies in `0 <= Re w <= 4` and has `|Im w| > 1`; on
+the right it lies in `Re w > 2`.  Feed the corresponding zeta bounds into
+the proved Cauchy derivative bridge.
 
 - [ ] **Step 4: Prove the `H'/H` logarithmic bound**
 
-Use `logDeriv_conreyH_eq`, one digamma recurrence, and the disk's positive imaginary separation from `s=1`.
+First generalize `logDeriv_conreyH_eq` to `0 < Re s` and `s != 1`.
+For `z=s/2`, use `|Im z| >= 7/8` to control `z⁻¹`, then one digamma
+recurrence to `Re (z+1) >= 1`.  Use the disk's `Im s >= 7/4` for the rational
+factors.
 
 - [ ] **Step 5: Assemble actual-product growth, verify, and commit**
 
