@@ -31,6 +31,39 @@ def dyadicPrefixIds : ℕ → ℕ → ℕ → Finset (ℕ × ℕ)
         insert (K, 2 * q)
           (dyadicPrefixIds K (m - 2 ^ K) (2 * q + 1))
 
+/-- Every aligned dyadic block inside the ambient block of length `2^K`.
+
+The recursive description is tailored to the prefix decomposition: at the
+next level it contains both half-blocks together with the two complete
+subtrees. -/
+def dyadicPrefixTree : ℕ → ℕ → Finset (ℕ × ℕ)
+  | 0, q => {(0, q)}
+  | K + 1, q =>
+      insert (K, 2 * q) <|
+        insert (K, 2 * q + 1) <|
+          dyadicPrefixTree K (2 * q) ∪ dyadicPrefixTree K (2 * q + 1)
+
+/-- Every block selected by a binary prefix decomposition belongs to the
+complete aligned dyadic tree of the ambient block. -/
+theorem dyadicPrefixIds_subset_tree (K m q : ℕ) :
+    dyadicPrefixIds K m q ⊆ dyadicPrefixTree K q := by
+  induction K generalizing m q with
+  | zero =>
+      by_cases hm : m = 0 <;> simp [dyadicPrefixIds, dyadicPrefixTree, hm]
+  | succ K ih =>
+      rw [dyadicPrefixIds, dyadicPrefixTree]
+      split_ifs with hsmall
+      · intro p hp
+        simp only [Finset.mem_insert, Finset.mem_union]
+        exact Or.inr (Or.inr (Or.inl (ih m (2 * q) hp)))
+      · intro p hp
+        rw [Finset.mem_insert] at hp
+        rcases hp with rfl | hp
+        · simp
+        · simp only [Finset.mem_insert, Finset.mem_union]
+          exact Or.inr (Or.inr (Or.inr
+            (ih (m - 2 ^ K) (2 * q + 1) hp)))
+
 /-- The binary prefix decomposition uses at most `K+1` blocks. -/
 theorem card_dyadicPrefixIds_le (K m q : ℕ) :
     (dyadicPrefixIds K m q).card ≤ K + 1 := by
@@ -154,5 +187,23 @@ theorem normSq_sum_Ico_le_dyadicPrefixBlocks
   exact hcs.trans (mul_le_mul_of_nonneg_right
     (by exact_mod_cast card_dyadicPrefixIds_le K m q)
     (Finset.sum_nonneg fun p hp => Complex.normSq_nonneg _))
+
+/-- Uniform pointwise Rademacher--Menshov envelope: every prefix square is
+bounded by `K+1` times the block-square energy of the complete aligned
+dyadic tree. -/
+theorem normSq_sum_Ico_le_dyadicPrefixTree
+    (K m q : ℕ) (hm : m ≤ 2 ^ K) (f : ℕ → ℂ) :
+    Complex.normSq
+        (∑ n ∈ Finset.Ico (q * 2 ^ K) (q * 2 ^ K + m), f n) ≤
+      (K + 1 : ℝ) *
+        ∑ p ∈ dyadicPrefixTree K q,
+          Complex.normSq (∑ n ∈ dyadicPrefixBlock p.1 p.2, f n) := by
+  refine (normSq_sum_Ico_le_dyadicPrefixBlocks K m q hm f).trans ?_
+  apply mul_le_mul_of_nonneg_left
+  · exact Finset.sum_le_sum_of_subset_of_nonneg
+      (dyadicPrefixIds_subset_tree K m q) (by
+        intro p hp hnot
+        exact Complex.normSq_nonneg _)
+  · positivity
 
 end MathlibAux
