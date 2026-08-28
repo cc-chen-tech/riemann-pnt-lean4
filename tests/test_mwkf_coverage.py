@@ -3792,7 +3792,7 @@ def test_joint_character_conductors_isolate_only_common_principal_cofactor() -> 
     with pytest.raises(ValueError, match="squarefree"):
         audit(modulus=12, direct_label=1, inverse_label=1, cofactor_bound=10)
     with pytest.raises(ValueError, match="nonzero"):
-        audit(modulus=6, direct_label=0, inverse_label=1, cofactor_bound=10)
+        audit(modulus=6, direct_label=1, inverse_label=0, cofactor_bound=10)
     with pytest.raises(ValueError, match="positive"):
         audit(modulus=6, direct_label=1, inverse_label=1, cofactor_bound=0)
 
@@ -3909,6 +3909,97 @@ def test_jointly_primitive_type_phase_tensor_is_primewise_centered() -> None:
             inverse_label=1,
             type_coefficients={},
         )
+
+
+def test_joint_conductor_audits_support_zero_direct_phase() -> None:
+    ambient = coverage_audit.joint_phase_character_conductor_lcm_audit(
+        modulus=15,
+        direct_label=0,
+        inverse_label=1,
+        cofactor_bound=15,
+        type_coefficients={1: 1, 2: -1, 3: 99, 4: 2j, 7: 3},
+    )
+    assert ambient["all_stripped_gauss_factors_match_scaled_joint_modulus"]
+    assert ambient["all_joint_conductor_tensor_bridges_exact"]
+    assert ambient["zero_direct_phase_supported"]
+
+    phase = coverage_audit.jointly_primitive_phase_convolution_audit(
+        modulus=15,
+        direct_label=0,
+        inverse_label=1,
+    )
+    assert phase["all_convolved_character_rows_match_incidence_kernel"]
+    assert phase["zero_direct_phase_supported"]
+
+    tensor = coverage_audit.jointly_primitive_type_phase_tensor_audit(
+        modulus=15,
+        direct_label=0,
+        inverse_label=1,
+        type_coefficients={1: 1, 2: -1, 4: 2j, 7: 3},
+    )
+    assert tensor["character_master_equals_centered_incidence_tensor"]
+    assert tensor["normalized_tensor_equals_mobius_divisor_expansion"]
+    assert tensor["zero_direct_phase_supported"]
+
+
+def test_centered_tensor_collapses_to_ramanujan_kloosterman_conductors() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_type_phase_divisor_kloosterman_audit",
+        None,
+    )
+    assert audit is not None, "divisor-Kloosterman collapse audit is missing"
+
+    result = audit(
+        modulus=3,
+        direct_label=0,
+        inverse_label=1,
+        type_coefficients={1: 1, 2: 2},
+    )
+    assert result["centered_tensor_equals_divisor_kloosterman_collapse"]
+    assert result["every_free_cofactor_sum_is_ramanujan_exact"]
+    assert result["outer_mobius_retained_on_kloosterman_conductor"]
+    assert result["zero_direct_phase_cofactor_weight_reduces_exactly"]
+    assert abs(complex(result["collapsed_master"]).real) < 1e-8
+    assert abs(
+        complex(result["collapsed_master"]).imag + 3 ** 0.5 / 2
+    ) < 1e-8
+
+    rows = result["kloosterman_conductor_rows"]
+    assert tuple(row["conductor"] for row in rows) == (1, 3)
+    assert rows[0]["ramanujan_cofactor"] == 3
+    assert abs(complex(rows[0]["normalized_contribution"]) + 1.5) < 1e-8
+    assert rows[-1]["ramanujan_cofactor"] == 1
+    assert abs(complex(rows[-1]["normalized_contribution"]).real - 1.5) < 1e-8
+    assert not result["conductor_rows_may_be_bounded_separately"]
+    assert not result["signed_kloosterman_conductor_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    audited_cases = 0
+    for modulus in range(2, 16):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for direct_label in (0, 1, modulus):
+            for inverse_label in (1, -2, modulus):
+                exhaustive = audit(
+                    modulus=modulus,
+                    direct_label=direct_label,
+                    inverse_label=inverse_label,
+                    type_coefficients={
+                        1: 1,
+                        2: -1,
+                        modulus: 7,
+                        modulus + 1: 2j,
+                    },
+                )
+                assert exhaustive[
+                    "centered_tensor_equals_divisor_kloosterman_collapse"
+                ]
+                assert exhaustive[
+                    "every_free_cofactor_sum_is_ramanujan_exact"
+                ]
+                audited_cases += 1
+    assert audited_cases == 90
 
 
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:

@@ -12,6 +12,7 @@
 > | Centered Type-I completion | zero dual mode removed and rank-one Ramanujan correction closed in Sections 9.108--9.109; global nonzero spectrum unproved |
 > | Joint all-character/conductor master | exact \(q=1\) principal plus \(q>1\) centered recombination proved in Section 9.113; signed cross-\(q\) estimate unproved, with standard large-sieve deficit \(T^{5/2}\) |
 > | Joint conductor LCM reduction | common inactive cofactor isolated at divisor cost in Section 9.115; jointly primitive cross-modulus core unproved |
+> | Centered tensor conductor collapse | exact Ramanujan-cofactor/Möbius--Kloosterman decomposition proved in Section 9.116; signed conductor estimate unproved |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -16512,8 +16513,9 @@ consequently splits as
 \]
 
 Thus the common principal lift really is arithmetically cheap.  For
-nonzero \(B,a\), multiplicativity and the squarefree formula for
-Ramanujan sums give the finite majorant
+nonzero \(a\) and arbitrary \(B\), including the physical zero-direct
+case \(B=0\), multiplicativity and the squarefree formula for Ramanujan
+sums give the finite majorant
 
 \[
  \begin{aligned}
@@ -16533,10 +16535,14 @@ Ramanujan sums give the finite majorant
  \tag{9.764}
 \]
 
-The last Euler product is \(\ll_\varepsilon(2|Ba|)^\varepsilon\): the
-first two cases involve only divisors of \(Ba\), and the third Euler
-product converges.  Hence the bare common-cofactor sum has no fixed-power
-loss when the phase labels have polynomial size.
+When \(B\ne0\), the last Euler product is
+\(\ll_\varepsilon(2|Ba|)^\varepsilon\): the first two cases involve only
+divisors of \(Ba\), and the third Euler product converges.  When \(B=0\),
+its local term is \(1\) on \(p\mid a\) and \((p-1)^{-1}\) otherwise, so
+the same product is
+\(\ll_\varepsilon(2R|a|)^\varepsilon\).  Hence the bare
+common-cofactor sum has no fixed-power loss when the phase labels and
+cutoff have polynomial size.
 
 This reduction does **not** make the remaining family sparse.  At an odd
 prime \(p\), there are \((p-1)^2\) local pairs of characters, exactly one
@@ -16738,6 +16744,105 @@ scaled tensor (9.772), including the ambient unit mask.  The exact-rational help
 `centered_type_phase_local_spectrum_audit` verifies (9.774).  All helpers
 leave the physical-packet adapter, centered-tensor global estimate, and
 coupled-kernel gate explicitly false.
+
+### 9.116 Ramanujan cofactor and Möbius--Kloosterman conductor
+
+The divisor expansion (9.773) can be collapsed further without a norm
+inequality.  For one incidence divisor write
+
+\[
+ Q=dk,\qquad(d,k)=1,\qquad
+ k\bar k_d\equiv1\pmod d.
+\]
+
+Fix \(x\in U(Q)\).  The two congruences in (9.773) determine the
+\(d\)-components of \(u,v\), while their \(k\)-components remain free.
+CRT and complete summation of those free components give
+
+\[
+ \boxed{
+ \sum_{\substack{u,v\in U(Q)\\
+ u\equiv x\ (d)\\vx\equiv1\ (d)}}
+ e_Q(B_0u-a_0v)
+ =c_k(B_0)c_k(a_0)
+ e_d\!\left(\bar k_d(B_0x-a_0\bar x_d)\right).}
+ \tag{9.775}
+\]
+
+For \(d=1\) the last phase is interpreted as \(1\).  Substitution into
+(9.773) yields the exact conductor decomposition
+
+\[
+ \boxed{
+ \mathfrak T_{Q,r_0}(B,a;C)
+ =\sum_{dk=Q}\mu(d)
+ \frac{c_k(B_0)c_k(a_0)}{\varphi(k)^2}
+ \mathcal K_{d;k,r_0}(B_0,a_0),}
+ \tag{9.776}
+\]
+
+where
+
+\[
+ \mathcal K_{d;k,r_0}(B_0,a_0)
+ :=\sum_{x\in U(Q)}C_{Q,r_0}(x)
+ e_d\!\left(\bar k_d(B_0x-a_0\bar x_d)\right).
+ \tag{9.777}
+\]
+
+Equivalently, aggregate the Type packet along the free \(k\)-coordinate,
+
+\[
+ C^{[k]}_{d,r_0}(y)
+ :=\sum_{\substack{x\in U(Q)\\x\equiv y\ (d)}}C_{Q,r_0}(x),
+\]
+
+so that
+
+\[
+ \mathcal K_{d;k,r_0}(B_0,a_0)
+ =\sum_{y\in U(d)}C^{[k]}_{d,r_0}(y)
+ e_d\!\left(\bar k_d(B_0y-a_0\bar y)\right).
+ \tag{9.778}
+\]
+
+Thus the jointly primitive tensor is an exact sum of weighted
+Kloosterman traces of conductor \(d\), with the migrated outer sign
+\(\mu(d)\), and a Ramanujan cofactor \(k\).  In the zero-direct case,
+
+\[
+ \frac{c_k(0)c_k(a_0)}{\varphi(k)^2}
+ =\frac{c_k(a_0)}{\varphi(k)},
+ \tag{9.779}
+\]
+
+so (9.776) also covers the original packet before sector-harmonic
+completion.  The cofactor weight has only Euler/divisor cost after the
+physical coefficient envelope is supplied.
+
+This is not yet an estimate.  The \(d=1\) row is the principal baseline,
+the \(d=Q\) row is the full Möbius-weighted rank-one Kloosterman trace,
+and the intermediate rows are its local principal-mode subtractions.
+They can each be as large as the final sum.  Taking absolute values in
+\(d\) would destroy the primewise centering in (9.771).
+
+The analytic advantage of (9.776) is instead organizational: the two
+Möbius sources are now the conductor sign \(\mu(d)\) and the original
+Type sign inside \(C^{[k]}_{d,r_0}\), while \(a=h\delta\) remains in
+the inverse phase.  Applying the remainder-free split (9.598)--(9.599)
+to both Möbius factors gives nine signed small/I/II conductor--Type
+blocks before any Cauchy step.  The fixed-conductor norm calculation
+(9.774) gives no gain, and the rank-one inverse-pole obstruction
+(9.530)--(9.535) still applies to the top block.  What remains to prove
+is a single signed varying-\(d\) estimate for the recombined nine blocks,
+with the \(k,r_0\) lifts kept at divisor cost; no cited published theorem
+currently supplies that estimate.
+
+The helper `centered_type_phase_divisor_kloosterman_audit` verifies
+(9.775)--(9.779) by independently enumerating every free CRT phase and
+comparing the collapsed conductor sum with the original character
+tensor.  It covers zero, nonunit, and negative phase labels and leaves
+the signed conductor estimate and coupled-kernel gate explicitly false.
 
 ## 10. What has and has not been proved
 
@@ -17492,6 +17597,7 @@ Proved in this note:
 | Joint all-character/conductor master | exact principal-centered recombination; signed cross-\(q\) estimate unproved | Separately transforming the direct and inverse phases gives the double-character master (9.747): the Type polynomial sees \(\lambda\psi\), so centering the inverse character \(\psi\) does not delete principal convolved Type rows.  The \(q=1\) row is exactly the Ramanujan principal projection (9.748); every \(q>1\) row has the primitive-conductor descent (9.749).  Adding them before absolute values recovers (9.117), hence the true residual target is the joint gate \(|\mathfrak P_{\rm top}+\mathfrak N_{\rm all}|\), not separate PECG bounds.  Standard Farey/character large sieves give \(T^{17/2+\varepsilon}\) against target \(T^{6+\varepsilon}\), an exact \(T^{5/2}\) deficit, (9.751)--(9.753) |
 | Convolved-principal Type slice | exact centered Kloosterman collapse; joint modulus average unproved | On \(\lambda\psi=\chi_0\), character orthogonality gives \(\varphi(s)^{-1}\sum_\psi G_\psi(B)G_\psi(-a)=S(B,-a;s)\), (9.754)--(9.757).  Its inverse-character \(q=1\) row is the Ramanujan product (9.758), and all \(q>1\) rows are exactly the centered Kloosterman complement (9.759), including nonunit \(B,a\).  Pointwise Weil gives exponent \(19/2\), one power worse than the global large sieve and \(7/2\) above target; the slice must therefore remain coupled to the outer Möbius, Type coefficients, and complementary convolved characters |
 | Joint conductor LCM/common cofactor | exact scaled lift and primewise centered Type--phase tensor; global estimate unproved | For \(Q=[q_\lambda,q_\psi]\) and \(r_0=s/Q\), every prime of \(r_0\) is inactive in both phase characters and the normalized Gauss product extracts exactly \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\), while CRT transports both residual frequencies by \(\bar r_0\), (9.760)--(9.763).  Its absolute cofactor sum has the Euler product (9.764), hence no fixed-power cost.  Reparametrizing by \(\chi=\lambda\psi\) gives (9.767); after the ambient unit mask is retained in \(C_{Q,r_0}\) and the Type polynomial is recombined before Cauchy, every prime contributes the centered tensor factor (9.771), and the outer \(\mu(Q)\) migrates to the divisor sign \(\mu(d)\) in (9.773).  The phase and coefficient still depend on \(r_0\), and neither their packet-uniform cofactor adapter nor the signed global norm of (9.772) is proved |
+| Ramanujan-cofactor/Kloosterman-conductor collapse | exact zero-direct-compatible reduction; signed varying-conductor estimate unproved | Writing \(Q=dk\), CRT sums the free \(k\)-coordinates in every incidence row to \(c_k(B_0)c_k(a_0)\), (9.775), and gives the exact conductor master (9.776)--(9.778).  The outer sign is now \(\mu(d)\), the original Type sign remains inside \(C^{[k]}_{d,r_0}\), and \(a=h\delta\) is unchanged.  For \(B=0\) the cofactor weight is exactly \(c_k(a_0)/\varphi(k)\), (9.779).  Principal, intermediate, and top-conductor rows must remain recombined; applying the exact small/I/II split to both Möbius factors produces nine signed blocks whose global varying-\(d\) estimate is still unproved |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |

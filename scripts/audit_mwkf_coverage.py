@@ -12100,8 +12100,8 @@ def joint_phase_character_conductor_lcm_audit(
     bound = int(cofactor_bound)
     if s <= 1 or _finite_mobius(s) == 0:
         raise ValueError("modulus must be squarefree and greater than one")
-    if B == 0 or a == 0:
-        raise ValueError("both phase labels must be nonzero")
+    if a == 0:
+        raise ValueError("inverse phase label must be nonzero")
     if bound <= 0:
         raise ValueError("cofactor_bound must be positive")
 
@@ -12579,6 +12579,7 @@ def joint_phase_character_conductor_lcm_audit(
             bool(row["local_classification_exact"]) for row in euler_rows
         ),
         "common_cofactor_cost_has_no_fixed_power": True,
+        "zero_direct_phase_supported": B == 0,
         "joint_conductor_tensor_bridge_rows": tuple(tensor_bridge_rows),
         "all_joint_conductor_tensor_bridges_exact": (
             type_coefficients is not None
@@ -12619,8 +12620,8 @@ def jointly_primitive_phase_convolution_audit(
     a = int(inverse_label)
     if Q <= 1 or _finite_mobius(Q) == 0:
         raise ValueError("modulus must be squarefree and greater than one")
-    if B == 0 or a == 0:
-        raise ValueError("both phase labels must be nonzero")
+    if a == 0:
+        raise ValueError("inverse phase label must be nonzero")
 
     primes = tuple(sorted(_finite_prime_exponents(Q)))
     units = tuple(value for value in range(1, Q) if gcd(value, Q) == 1)
@@ -12818,6 +12819,7 @@ def jointly_primitive_phase_convolution_audit(
             for row in fully_primitive_rows
         ),
         "nonunit_phase_labels_supported": gcd(B * a, Q) != 1,
+        "zero_direct_phase_supported": B == 0,
         "physical_type_coefficients_retained_by_convolved_character": True,
         "jointly_primitive_twisted_kloosterman_moment_proved": False,
         "coupled_kernel_gate_closed": False,
@@ -12849,8 +12851,8 @@ def jointly_primitive_type_phase_tensor_audit(
     a = int(inverse_label)
     if Q <= 1 or _finite_mobius(Q) == 0:
         raise ValueError("modulus must be squarefree and greater than one")
-    if B == 0 or a == 0:
-        raise ValueError("both phase labels must be nonzero")
+    if a == 0:
+        raise ValueError("inverse phase label must be nonzero")
     if not type_coefficients:
         raise ValueError("type_coefficients must be nonempty")
 
@@ -13063,8 +13065,186 @@ def jointly_primitive_type_phase_tensor_audit(
             character_master - unit_supported_character_master
         )
         < tolerance,
+        "zero_direct_phase_supported": B == 0,
         "divisor_terms_may_be_bounded_separately": False,
         "centered_tensor_global_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def centered_type_phase_divisor_kloosterman_audit(
+    *,
+    modulus: int,
+    direct_label: int,
+    inverse_label: int,
+    type_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Collapse each incidence divisor to a weighted Kloosterman trace.
+
+    In the divisor expansion of the primewise centered tensor, write
+    ``Q=d*k``.  The two incidence conditions fix the ``d``-components of
+    the phase variables.  Exact CRT summation of their free ``k``-parts
+    gives ``c_k(B)c_k(a)``.  The remaining ``d``-trace retains ``mu(d)``
+    and the complete Type coefficient packet.
+
+    This is an exact recombination of all divisor rows.  The rows are not
+    separately centered and no signed conductor estimate is asserted.
+    """
+
+    Q = int(modulus)
+    B = int(direct_label)
+    a = int(inverse_label)
+    if Q <= 1 or _finite_mobius(Q) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if a == 0:
+        raise ValueError("inverse phase label must be nonzero")
+    if not type_coefficients:
+        raise ValueError("type_coefficients must be nonempty")
+
+    coefficients = {
+        int(label): complex(value) for label, value in type_coefficients.items()
+    }
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(label: int, modulus_value: int) -> int:
+        common = gcd(abs(label), modulus_value)
+        return _finite_mobius(modulus_value // common) * finite_totient(common)
+
+    tensor = jointly_primitive_type_phase_tensor_audit(
+        modulus=Q,
+        direct_label=B,
+        inverse_label=a,
+        type_coefficients=coefficients,
+    )
+    units = tuple(value for value in range(1, Q) if gcd(value, Q) == 1)
+    root_Q = cmath.exp(2j * cmath.pi / Q)
+    rows: list[dict[str, object]] = []
+    collapsed_master = 0j
+    maximum_free_cofactor_error = 0.0
+    for conductor in sorted(_positive_divisors(Q)):
+        cofactor = Q // conductor
+        phi_cofactor = finite_totient(cofactor)
+        cofactor_weight = F(
+            ramanujan(B, cofactor) * ramanujan(a, cofactor),
+            phi_cofactor**2,
+        )
+        if conductor == 1:
+            inverse_cofactor = 0
+            root_conductor = 1 + 0j
+        else:
+            inverse_cofactor = pow(cofactor, -1, conductor)
+            root_conductor = cmath.exp(2j * cmath.pi / conductor)
+
+        weighted_trace = 0j
+        row_free_cofactor_error = 0.0
+        for label, coefficient in coefficients.items():
+            if gcd(label, Q) != 1:
+                continue
+            if conductor == 1:
+                conductor_phase = 1 + 0j
+            else:
+                inverse_label = pow(label, -1, conductor)
+                conductor_phase = root_conductor ** (
+                    (
+                        inverse_cofactor
+                        * (B * label - a * inverse_label)
+                    )
+                    % conductor
+                )
+            weighted_trace += coefficient * conductor_phase
+
+            free_phase_sum = sum(
+                root_Q ** ((B * u - a * v) % Q)
+                for u in units
+                if (u - label) % conductor == 0
+                for v in units
+                if (v * label - 1) % conductor == 0
+            )
+            expected_free_phase_sum = (
+                ramanujan(B, cofactor)
+                * ramanujan(a, cofactor)
+                * conductor_phase
+            )
+            row_free_cofactor_error = max(
+                row_free_cofactor_error,
+                abs(free_phase_sum - expected_free_phase_sum),
+            )
+
+        normalized_contribution = (
+            _finite_mobius(conductor)
+            * complex(cofactor_weight)
+            * weighted_trace
+        )
+        collapsed_master += normalized_contribution
+        maximum_free_cofactor_error = max(
+            maximum_free_cofactor_error,
+            row_free_cofactor_error,
+        )
+        zero_direct_reduction_exact = (
+            B != 0
+            or cofactor_weight
+            == F(ramanujan(a, cofactor), phi_cofactor)
+        )
+        rows.append(
+            {
+                "conductor": conductor,
+                "ramanujan_cofactor": cofactor,
+                "conductor_mobius_weight": _finite_mobius(conductor),
+                "direct_ramanujan_sum": ramanujan(B, cofactor),
+                "inverse_ramanujan_sum": ramanujan(a, cofactor),
+                "normalized_cofactor_weight": cofactor_weight,
+                "weighted_kloosterman_trace": weighted_trace,
+                "normalized_contribution": normalized_contribution,
+                "maximum_free_cofactor_error": row_free_cofactor_error,
+                "free_cofactor_sum_is_ramanujan_exact": (
+                    row_free_cofactor_error < 1e-8
+                ),
+                "zero_direct_weight_reduction_exact": (
+                    zero_direct_reduction_exact
+                ),
+                "is_principal_divisor_row": conductor == 1,
+                "is_top_kloosterman_conductor": conductor == Q,
+            }
+        )
+
+    tensor_master = complex(tensor["normalized_character_master"])
+    tolerance = 1e-7
+    return {
+        "squarefree_modulus": Q,
+        "direct_label": B,
+        "inverse_label": a,
+        "type_coefficients": coefficients,
+        "centered_tensor_master": tensor_master,
+        "collapsed_master": collapsed_master,
+        "kloosterman_conductor_rows": tuple(rows),
+        "maximum_free_cofactor_error": maximum_free_cofactor_error,
+        "centered_tensor_equals_divisor_kloosterman_collapse": abs(
+            tensor_master - collapsed_master
+        )
+        < tolerance,
+        "every_free_cofactor_sum_is_ramanujan_exact": all(
+            bool(row["free_cofactor_sum_is_ramanujan_exact"])
+            for row in rows
+        ),
+        "outer_mobius_retained_on_kloosterman_conductor": all(
+            int(row["conductor_mobius_weight"])
+            == _finite_mobius(int(row["conductor"]))
+            for row in rows
+        ),
+        "zero_direct_phase_cofactor_weight_reduces_exactly": (
+            B == 0
+            and all(
+                bool(row["zero_direct_weight_reduction_exact"])
+                for row in rows
+            )
+        ),
+        "conductor_rows_may_be_bounded_separately": False,
+        "signed_kloosterman_conductor_estimate_proved": False,
         "coupled_kernel_gate_closed": False,
     }
 
