@@ -69,6 +69,10 @@
 > | Resonant/nonresonant split inside prime incidence | Section 9.176 expands the two local density subtractions exactly, then splits the double-incidence term by one integer determinant \(t\).  The \(t=0\) rows factor into independent primitive ray profiles on \(px=qy+Dz\).  For \(t\ne0\), the two incidence vectors lie in the primitive plane lattice \(\Lambda_{p,q,D}\), their cross product is \(-t(p,-q,-D)\), and \(|t|\) is the exact index of the sublattice they generate.  In a canonical basis the remainder is therefore a fixed-determinant \(2\times2\) integer-matrix family.  Hence the full prime zero-mode is an explicit resonant ray-profile term, including all three density compensations, plus a literal Hecke-type \(t\ne0\) incidence remainder.  These are finite identities; neither analytic part is bounded yet |
 > | Short-side Type-I companion subpolytope | Section 9.177 opens the internal Type-I multiplier before the character estimate, but keeps the separate companion coefficient \(\mu(p)\) from (9.1038).  Only the quotient residual is a bounded-variation character sum.  If the companion length is \(T^{\varpi}\), the short-row fourth moment is bounded by \(4E_{\rm sm}+2\max(\sigma_S,\varpi)+2\varpi\), capped by the generic moment, where \(E_{\rm sm}=\min\{3-\varpi,1+\sigma_S/2\}\).  On the physical imbalance wedge this covers the short-side Type-I cells with \(\varpi\leq(4-\sigma_L-\sigma_S+2\kappa_L+2\kappa_S)_+\), hence only \(\varpi\leq1/2\) at the extreme face.  It does not close an entire I--I or II--I block.  The remaining signed gate (PCDI-SREM) retains every short-side Type-II cell and every short-side Type-I cell above that threshold |
 > | Companion fourth-moment saturation | Section 9.178 restores that \(p\) is the prime-power-bearing \(\Lambda(p)\) coordinate; on squarefree support it is prime and \(\mu(p)=-1\), so there is no second Möbius oscillation to split.  For a prime character modulus \(q\) and companion support \(P^2<q\), character orthogonality and unique factorization give the exact fourth moment \((q-1)(2(\sum|a_p|^2)^2-\sum|a_p|^4)\).  Under the weaker \(P<q\) condition, exact second-moment orthogonality plus Cauchy gives the lower bound \((q-1)(\sum|a_p|^2)^2\).  Thus no separate positive row theorem uniform over this coefficient class can improve the companion exponent in the residual collar.  The missing saving must be obtained before Cauchy from the cross-row determinant; at the extreme face it is \(\min\{(\varpi-1/2)_+/2,1/4\}\) |
+> | Determinant-value centering correction | Section 9.179 shows that the integer \(t\) in (9.1180) is a determinant value, not a Fourier frequency.  For fixed \((p,q,D,\omega)\), if \(H(t)\) is the weighted determinant histogram, then \(\sum_tH(t)=(\sum_XA(X))(\sum_YB(Y))\) and \(\sum_{t\ne0}H(t)=\text{rank-one all-pairs mode}-H(0)\).  Hence the \(t=0\) term cancels exactly when the all-\(t\ne0\) complement is rewritten, and (9.1186) is a geometric classification rather than a canonical main/remainder split.  A fixed-determinant theorem can enter only after its actual main terms \(M_{p,q,D,\omega}(t)\) are reassembled with the density, AFE/reflection, and diagonal ledger; the signed sum of the centered errors is then the spectral object.  Neither the physical main-term adapter nor that error estimate is proved |
+> | Global-\(D\) centered Gram identity | Section 9.180 performs the short-prime \(TT^*\) algebra before taking an absolute value in the outer \((p,D)\)-family.  For the scalar centered incidence kernels \(K_{q,c}(u,v)=\mathbf1_{v\equiv cu\ (q)}-1/\varphi(q)\), their exact Gram matrix is \(\varphi(q)\mathbf1_{c=c'}-1\).  With \(c=p\overline D\), the complete energy is therefore \(\varphi(q)\sum_c|\sum_{p\overline D=c}W_q(p,D)|^2-|\sum_{p,D}W_q(p,D)|^2\), and two rows collide exactly when \(q\mid p_1D_2-p_2D_1\).  Thus the signed outer weights must be summed inside each ratio fiber before squaring.  The finite scalar identity is proved and (WRFE) is a candidate scalar route; Section 9.181 removes the scalar-adapter prerequisite at the algebraic Gram level |
+> | Adapter-free weighted-profile Gram | Section 9.181 allows each outer row \(i=(p,D,\ldots)\) to carry an arbitrary level-dependent unit-grid profile \(A_i(u,v)\).  If \(c_i=p\overline D\), \(L_{ij}(c)=\sum_uA_i(u,cu)\overline{A_j(u,cu)}\), and \(M_{ij}=\sum_{u,v}A_i(u,v)\overline{A_j(u,v)}\), then the exact Gram entry is \(\mathbf1_{c_i=c_j}L_{ij}(c_i)-(L_{ij}(c_i)+L_{ij}(c_j))/\varphi(q)+M_{ij}/\varphi(q)^2\).  Summing these entries is exactly the direct centered-profile energy, so this algebraic identity needs no scalar projective adapter.  The candidate physical leaf is the weighted line-Gram bound (WPLG), but the packet-exhaustive identification and normalization of the actual (PCDI-SREM) post-duality form with these fixed-\(q\) profiles is not yet proved; neither is (WPLG) |
+> | Fixed-packet cross-residue \(TT^*\) adapter | Section 9.182 returns to the literal cross-residue form (9.1145).  After fixing \((\omega,g,D,q)\), its short unit-grid profile is common to every long prime \(p\); all \(p\)-dependence is a scalar coefficient and the centered graph slope \(p\overline D\).  The whole long-prime sum is therefore one exact inner product with \(H_{q,D}(u,v)=\sum_pC_{q,D}(p)K_{q,p\overline D}(u,v)\), whose norm is the signed ratio-fiber energy (9.1216).  Thus the long-prime sum really does precede the fixed-packet Cauchy step, with no scalar projective adapter.  What is not proved is that Cauchy over all shared \(a=h\delta\), AFE/reflection, Type, and dyadic packet labels fits the registered baseline without spending the cancellation sought in (PCDI-SREM); the global packet adapter and (WRFE) remain open |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -25213,15 +25217,16 @@ global dispersion/Cauchy step.  The closest spectral technology is
 therefore a guide for the \(TT^*\) analysis, not a black-box estimate
 which can be multiplied into the already-booked row energy.
 
-This is the promised point at which the nonoscillating part can be
-``put on the same invoice'': all local density compensations belong to
-the explicit resonant ledger, while the remaining double incidence has
-the nonzero integer determinant \(t\).  The choice in (9.1186) is
-algebraic, not an estimate.  It does not yet show that
-\(\mathcal M_{\rm pp,0}^{\rm res}\) is small, cancels another AFE or
-diagonal term, or produces a new secondary main term.  Nor does it
-bound the \(t\ne0\) family.  Those are now two separate analytic
-obligations, and both retain the internal Type and \(h\delta\) weights.
+The choice in (9.1186) is algebraic, not an estimate.  It does not show
+that \(\mathcal M_{\rm pp,0}^{\rm res}\) is small, cancels another AFE
+or diagonal term, or produces a new secondary main term.  Nor does it
+bound the \(t\ne0\) family.  Section 9.179 below proves a further
+warning: these two displayed pieces must not be estimated separately.
+Summing all \(t\ne0\) retains the rank-one all-pairs mode and contains
+the negative of the \(t=0\) orbit.  Thus (9.1186) is a useful geometric
+classification, but it is not yet the determinant-value centering
+required before a spectral estimate.  All Type and \(h\delta\) weights
+must remain through that later centering.
 
 The finite helper `prime_centered_incidence_resonant_split_audit`
 expands all four terms of (9.1178), enumerates the positive quotient
@@ -25528,6 +25533,412 @@ and leaves both the required determinant dispersion and the
 coupled-kernel gate open.  The polytope helper records
 \(\eta_{\rm cross}\) cell by cell.
 
+### 9.179 Summing all nonzero determinants retains the rank-one mode
+
+The integer \(t\) in (9.1180) is a value of the determinant in
+(9.1195); it is not a Fourier frequency.  This distinction changes the
+order in which a fixed-determinant theorem may be used.  Fix one
+\(\lambda=(p,q,D,\omega)\), pull the two physical rows back to the
+lattice basis (9.1192), and write their finite weights as
+\(A_\lambda(x)\) and \(B_\lambda(y)\), with
+\(x,y\in\mathbb Z^2\setminus\{0\}\).  Define the complete determinant
+histogram
+
+\[
+ \boxed{
+ H_\lambda(t):=
+ \sum_{\det(x,y)=-t}A_\lambda(x)\overline{B_\lambda(y)}.}
+ \tag{9.1209}
+\]
+
+Since every ordered pair has exactly one determinant, finite
+reindexing gives
+
+\[
+ \boxed{
+ \sum_{t\in\mathbb Z}H_\lambda(t)
+ =\left(\sum_xA_\lambda(x)\right)
+  \overline{\left(\sum_yB_\lambda(y)\right)},
+ \qquad
+ \sum_{t\ne0}H_\lambda(t)
+ =\left(\sum_xA_\lambda(x)\right)
+  \overline{\left(\sum_yB_\lambda(y)\right)}-H_\lambda(0).}
+ \tag{9.1210}
+\]
+
+Equivalently, on the two finite coordinate sets the all-nonzero-
+determinant kernel is
+
+\[
+ \boxed{
+ \mathbf1_{\det(x,y)\ne0}
+ =\mathbf1_{\rm all\ pairs}
+  -\mathbf1_{\det(x,y)=0}.}
+ \tag{9.1211}
+\]
+
+The first term in (9.1211) is a rank-one constant matrix.  Thus deleting
+the parallel-slope orbit does not center the determinant operator.
+Substituting (9.1210) into (9.1186) makes the cancellation explicit:
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal M_{\rm pp,0}^{\rm res}
+ +\mathcal R_{\rm pp,0}^{\ne0}
+ ={}&\left(\sum_xA_\lambda(x)\right)
+  \overline{\left(\sum_yB_\lambda(y)\right)}\\
+ &-\frac{I_{10}}{\varphi(q)}
+  -\frac{I_{01}}{\varphi(p)}
+  +\frac{I_{00}}{\varphi(p)\varphi(q)}.
+ \end{aligned}}
+ \tag{9.1212}
+\]
+
+The copy of \(H_\lambda(0)\) in
+\(\mathcal M_{\rm pp,0}^{\rm res}\) cancels the copy subtracted inside
+\(\mathcal R_{\rm pp,0}^{\ne0}\).  In particular, the nonzero local
+witness in (9.1190) does not by itself diagnose a secondary main term:
+that question can be decided only after the determinant main terms and
+the complete AFE/reflection/density ledger are reassembled.
+
+Suppose a fixed-determinant theorem supplies, for \(t\ne0\),
+
+\[
+ H_\lambda(t)=M_\lambda(t)+E_\lambda(t).
+ \tag{9.1213}
+\]
+
+The correct global order is then:
+
+1. retain \(H_\lambda(0)+\sum_{t\ne0}M_\lambda(t)\) and reassemble it
+   with the three density terms, both AFE directions, both reflected
+   cross terms, and the explicit diagonal;
+2. only afterwards estimate the signed physical sum
+   \(\sum_{\lambda}\sum_{t\ne0}E_\lambda(t)\), with all Type blocks and
+   \(a=h\delta\) still present.
+
+The Ganguly--Guria theorems quoted after (9.1195) do have explicit main
+terms for one fixed determinant, but their fixed isotropic weights do
+not construct the moving \(M_\lambda(t)\) required in step 1, and their
+error statements do not bound the signed moving-level sum in step 2.
+Summing their full estimates over \(t\) by absolute values would count
+the rank-one mode in (9.1210), not prove cancellation.
+
+Consequently the next valid spectral interface is a
+**determinant-main-term reassembly plus centered-error estimate**, not
+an estimate of \(I_{11}^{\ne0}\) merely because \(t\ne0\).  This is a
+strict correction to the earlier roadmap, not a proof of
+(PCDI-SREM).  The exact physical \(M_\lambda(t)\), its global
+reassembly, and the centered signed error bound remain open.
+
+The finite helper `prime_incidence_all_determinants_rank_one_audit`
+forms the complete determinant histogram for arbitrary rational row
+weights, verifies (9.1209)--(9.1212), and marks determinant-value
+centering, the nonzero spectral estimate, (PCDI-SREM), and the
+coupled-kernel gate false.
+
+### 9.180 Global \(D\)-averaging turns occupancy into signed ratio-fiber energy
+
+There is a second order-of-operations issue before any determinant
+theorem is applied.  Fix an odd prime \(q\).  On the complete unit grid
+\(U(q)^2\), put
+
+\[
+ K_{q,c}(u,v)
+ :=\mathbf1_{v\equiv cu\pmod q}-\frac1{\varphi(q)},
+ \qquad c\in U(q).
+ \tag{9.1214}
+\]
+
+For any \(c,c'\in U(q)\), direct finite counting gives
+
+\[
+ \boxed{
+ \sum_{u,v\in U(q)}K_{q,c}(u,v)\overline{K_{q,c'}(u,v)}
+ =\varphi(q)\mathbf1_{c=c'}-1.}
+ \tag{9.1215}
+\]
+
+Indeed, each graph \(v=cu\) has \(\varphi(q)\) points, two distinct
+graphs are disjoint on \(U(q)^2\), and the constant subtraction in
+(9.1214) has total mass \(\varphi(q)\).  Let \(\mathcal A_q\) be any
+finite family of unit pairs \((p,D)\), let \(W_q(p,D)\) be arbitrary
+complex scalar weights, and set \(c(p,D)=p\overline D\pmod q\).  Then
+(9.1215) gives the exact global \(TT^*\) identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{u,v\in U(q)}
+ \left|\sum_{(p,D)\in\mathcal A_q}
+ W_q(p,D)K_{q,p\overline D}(u,v)\right|^2\\
+ &\quad=\varphi(q)\sum_{c\in U(q)}
+ \left|\sum_{\substack{(p,D)\in\mathcal A_q\\
+                         p\overline D\equiv c\ (q)}}
+ W_q(p,D)\right|^2
+ -\left|\sum_{(p,D)\in\mathcal A_q}W_q(p,D)\right|^2.
+ \end{aligned}}
+ \tag{9.1216}
+\]
+
+The collision relation in the first term is itself a determinant
+condition:
+
+\[
+ \boxed{
+ p_1\overline{D_1}\equiv p_2\overline{D_2}\pmod q
+ \quad\Longleftrightarrow\quad
+ q\mid p_1D_2-p_2D_1.}
+ \tag{9.1217}
+\]
+
+Thus the fixed-\(D\) maximum occupancy from Section 9.172 is not the
+canonical global energy.  It is recovered only after discarding the
+negative rank-one term in (9.1216), taking absolute values inside every
+ratio fiber, and applying Cauchy:
+
+\[
+ \varphi(q)\sum_c\left|\sum_{p\overline D=c}W_q(p,D)\right|^2
+ \leq \varphi(q)n_q^{\max}
+       \sum_{p,D}|W_q(p,D)|^2,
+ \tag{9.1218}
+\]
+
+where \(n_q^{\max}\) is the largest fiber cardinality.  Formula
+(9.1216), by contrast, retains cancellation among all long primes,
+all \(D\)-packets, and all weights which have the same ratio modulo
+\(q\).  This is the genuine pre-Cauchy quantity on which an improvement
+over the Section 9.172 occupancy loss must act.
+
+There is an important global-packet boundary.  The physical coefficient
+in (9.1160) contains level-dependent \(F\)- and \(G\)-lifts, dyadic
+weights, AFE/reflection labels, and the full \(a=h\delta\) packet.
+Section 9.182 below shows that no scalar projective decomposition is
+needed after all these shared labels and \((q,D)\) are fixed.  What is
+not yet proved is that the resulting fixed-packet norms can be summed
+within the registered baseline without orthogonalizing away the shared
+\(a=h\delta\) and cross-block cancellation.  In particular, the symbol
+\(D\) here is the determinant-shift label from the prime incidence
+master; it is not being identified with \(a=h\delta\).  The latter is
+retained inside the physical lift coefficients.
+
+Conditional on such a global packet-norm reassembly, let
+\(W_{q,\nu}^{\rm rem}(p,D)\) denote one scalar atom of the exact
+(PCDI-SREM) packet and let \(n_{q,\nu}^{\max}\) be its largest ratio
+fiber.  The remaining cross-row saving from (9.1208) would follow from
+the squared-energy estimate
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak E_{\rm fib}^{\rm rem}
+ &:=\sum_{q,\nu}\varphi(q)\sum_c
+ \left|\sum_{p\overline D=c}
+ W_{q,\nu}^{\rm rem}(p,D)\right|^2\\
+ &\ll_{\varepsilon,W}T^{-2\eta_{\rm cross}+\varepsilon}
+ \sum_{q,\nu}\varphi(q)n_{q,\nu}^{\max}
+ \sum_{p,D}|W_{q,\nu}^{\rm rem}(p,D)|^2.
+ \end{aligned}}
+ \tag{WRFE}
+\]
+
+The exponent is doubled because (WRFE) is an energy statement and
+\(\eta_{\rm cross}\) in (9.1208) is the required linear saving after
+Cauchy.  This formulation is strictly more structural than a stronger
+separate row moment: same-fiber signed weights are combined before any
+absolute value, and the collision determinant (9.1217) is still
+visible.  Neither the global packet norm reassembly nor (WRFE) has been
+proved, so no implication to (PCDI-SREM) is yet registered as a closed
+gate.
+
+The exact-rational helper
+`short_prime_global_D_centered_ttstar_audit` evaluates both sides of
+(9.1216) on arbitrary supplied real rational weights, verifies
+(9.1217) for every pair of rows, and records separately that the global
+packet norm reassembly, (WRFE), (PCDI-SREM), and the coupled-kernel
+gate remain open.
+
+### 9.181 The literal physical profiles admit an adapter-free weighted Gram
+
+The scalar specialization (9.1216) is useful for locating the signed
+ratio fibers, but the level-dependent lifts in (9.1160) need not be
+constant on the \((u,v)\)-grid.  This does **not** force a projective
+scalar adapter.  Index the literal outer rows by
+\(i=(p_i,D_i,\ldots)\), put
+
+\[
+ c_i:=p_i\overline{D_i}\pmod q,
+ \tag{9.1219}
+\]
+
+and let \(A_i(u,v)\) be the complete complex coefficient multiplying
+\(K_{q,c_i}(u,v)\) after the long-profile factor has been placed on
+the other side of the Section 9.172 Cauchy step.  In particular,
+\(A_i\) may retain its full level-dependent \(F/G\), Type,
+AFE/reflection, dyadic, and \(a=h\delta\) dependence.  Define the
+weighted line and full-grid correlations
+
+\[
+ L_{ij}(c):=\sum_{u\in U(q)}
+ A_i(u,cu)\overline{A_j(u,cu)},
+ \qquad
+ M_{ij}:=\sum_{u,v\in U(q)}
+ A_i(u,v)\overline{A_j(u,v)}.
+ \tag{9.1220}
+\]
+
+Expanding the two centered kernels pointwise gives the exact entry
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal G_q(i,j)
+ :={}&\sum_{u,v\in U(q)}
+ A_i(u,v)\overline{A_j(u,v)}
+ K_{q,c_i}(u,v)K_{q,c_j}(u,v)\\
+ ={}&\mathbf1_{c_i=c_j}L_{ij}(c_i)
+ -\frac{L_{ij}(c_i)+L_{ij}(c_j)}{\varphi(q)}
+ +\frac{M_{ij}}{\varphi(q)^2}.
+ \end{aligned}}
+ \tag{9.1221}
+\]
+
+There is no estimate and no tensor separation in (9.1221): the first
+term uses that two different graphs \(v=c_iu\) and \(v=c_ju\) are
+disjoint on \(U(q)^2\), while the next three terms are the literal
+expansion of the two density subtractions.  Summing the Gram entries
+therefore gives
+
+\[
+ \boxed{
+ \sum_{i,j}\mathcal G_q(i,j)
+ =\sum_{u,v\in U(q)}
+ \left|\sum_iA_i(u,v)K_{q,c_i}(u,v)\right|^2.}
+ \tag{9.1222}
+\]
+
+Taking every \(A_i(u,v)=W_q(p_i,D_i)\) constant recovers
+(9.1215)--(9.1216).  For the physical family, however, (9.1221) is the
+correct interface: it preserves outer-dependent inner profiles exactly
+and still exposes the determinant collision \(c_i=c_j\), equivalently
+\(q\mid p_iD_j-p_jD_i\), in its first term.  The two weighted line
+corrections and the full-grid correction show precisely what the scalar
+ratio-fiber formula would omit.
+
+Let \(\mathscr E_{q,\omega}^{\rm row,rem}\) denote the intended
+short-profile row-energy factor for the same residual cell and packet;
+no long-profile energy or Type-I saving is to be included a second time
+in this notation.  The candidate adapter-free squared-energy leaf is
+
+\[
+ \boxed{
+ \sum_{q,\omega}\sum_{i,j}
+ \mathcal G_{q,\omega}^{\rm rem}(i,j)
+ \ll_{\varepsilon,W}
+ T^{-2\eta_{\rm cross}+\varepsilon}
+ \sum_{q,\omega}\mathscr E_{q,\omega}^{\rm row,rem}.}
+ \tag{WPLG}
+\]
+
+The exponent \(2\eta_{\rm cross}\) is the one which would supply the
+remaining linear gain after a single square root.  However, one finite
+bookkeeping step is still missing: the complete
+\((p,q,D,\omega)\)-sum in (PCDI-SREM), with its long profile and all
+packet weights, has not yet been put through one explicit duality step
+and identified coefficient by coefficient with the left side of
+(WPLG), with the right-side row energy normalized at the already
+registered baseline.  Until that physical \(TT^*\) adapter is proved,
+(WPLG) is a candidate sufficient replacement for the scalar route
+(WRFE), not a registered implication to (PCDI-SREM).  It does avoid any
+bounded-projective-rank hypothesis at the algebraic Gram level.
+
+The exact-rational helper
+`short_prime_weighted_profile_ttstar_audit` accepts arbitrary
+outer-dependent real rational unit-grid profiles, computes the direct
+energy and every entry in (9.1221), verifies (9.1222), and marks only
+the adapter-free finite identity proved.  The physical \(TT^*\)
+adapter, the (WPLG) analytic bound, (PCDI-SREM), and the coupled-kernel
+gate remain false.
+
+### 9.182 The cross-residue master has an exact fixed-packet scalar adapter
+
+The literal formula (9.1145) has more factorization than an arbitrary
+family in Section 9.181.  Fix
+\(\lambda=(\omega,g,D,q,\text{all other shared packet labels})\).
+After (9.1159), the short unit-grid coefficient
+\(b_\lambda(u,v)\) is common to every long prime \(p\).  Put
+
+\[
+ C_\lambda(p):=
+ \mathfrak w_\lambda(p,q)
+ (P_{>B,p}V_{\lambda;p}^{(0)})(D\overline q_p),
+ \qquad c_p:=p\overline D\pmod q,
+ \tag{9.1223}
+\]
+
+where every left-row Möbius/Type and physical lift coefficient remains
+inside the scalar \(C_\lambda(p)\).  Equations (9.1158)--(9.1159) then
+give the coefficient-by-coefficient finite identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr S_\lambda
+ &:=\sum_p C_\lambda(p)
+   \sum_{u,v\in U(q)}
+   \overline{b_\lambda(u,v)}K_{q,c_p}(u,v)\\
+ &=\sum_{u,v\in U(q)}\overline{b_\lambda(u,v)}
+   H_\lambda(u,v),\\
+ H_\lambda(u,v)&:=\sum_pC_\lambda(p)K_{q,c_p}(u,v).
+ \end{aligned}}
+ \tag{9.1224}
+\]
+
+Hence the long-prime sum occurs before the fixed-packet Cauchy step:
+
+\[
+ \boxed{
+ |\mathscr S_\lambda|^2
+ \leq \|b_\lambda\|_2^2\|H_\lambda\|_2^2,
+ \qquad
+ \|H_\lambda\|_2^2
+ =\varphi(q)\sum_c
+ \left|\sum_{p\overline D=c}C_\lambda(p)\right|^2
+ -\left|\sum_pC_\lambda(p)\right|^2.}
+ \tag{9.1225}
+\]
+
+This proves the scalar ratio-fiber adapter on every literal fixed
+packet; no separation of \(b_\lambda(u,v)\) into scalar kernels is
+needed.  In particular, same-residue long-prime coefficients cancel
+inside (9.1225), before an absolute value.
+
+It is not yet legitimate to declare the full packet closed by summing
+(9.1225).  The labels suppressed in \(\lambda\) include the shared
+\(a=h\delta\) convolution, AFE/reflection and Type data, and dyadic
+outer scales.  Treating all \(\lambda\) as an orthogonal direct sum and
+applying Cauchy may discard precisely the cross-packet cancellation
+which (PCDI-SREM) retained.  A complete adapter must show, with exact
+normalizations, that the resulting \(\sum_\lambda\|b_\lambda\|_2^2\)
+is already part of the registered row-energy baseline and that no
+Type-I or common-frequency saving is charged twice.  That global
+packet assertion is still unproved.
+
+Thus (9.1224)--(9.1225) remove the local scalar-projective obstacle and
+identify the exact analytic object inside each packet, but (WRFE) is
+not yet a proved sufficient replacement for (PCDI-SREM) globally.  The
+next finite task is the packet-exhaustive direct-sum normalization; only
+after it is proved can the weighted ratio-fiber estimate be attacked as
+the sole analytic leaf.
+
+The exact-rational helper
+`prime_cross_residue_fixed_packet_ttstar_audit` evaluates the original
+cross-residue block, the inner product in (9.1224), and both sides of
+(9.1225) for arbitrary supplied real rational data.  It marks the
+fixed-packet adapter proved while leaving the global packet adapter,
+(WRFE), (PCDI-SREM), and the coupled-kernel gate false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -25635,8 +26046,11 @@ For the complementary rows, \(X\times Y=-t(p,-q,-D)\), and \(|t|\) is
 the exact sublattice index in the primitive incidence plane.  Hence the
 remaining geometry is a level-dependent fixed-determinant integer-
 matrix family.  The decomposition, ray factorization, and lattice
-adapter are proved; the global resonant evaluation and the resulting
-Hecke-type nonzero-determinant estimate are both still open.
+adapter are proved.  Section 9.179 subsequently shows that this is only
+a geometric split: the all-\(t\ne0\) complement still contains the
+rank-one all-pairs mode and the negative of the \(t=0\) orbit.  Hence a
+separate global resonant evaluation followed by an estimate of raw
+\(I_{11}^{\ne0}\) is not a valid canonical main/remainder strategy.
 
 Section 9.177 supplies the first analytic coverage of a short-side
 Type-I **companion-length subpolytope** on the maximal prime face.
@@ -25665,6 +26079,51 @@ The still-required cellwise gain is
 face it is \(\min\{(\varpi-1/2)_+/2,1/4\}\).  This gain must come from
 pre-Cauchy cross-row determinant dispersion or resonant reassembly, and
 remains unproved.
+
+Section 9.179 corrects the determinant route itself.  If \(H(t)\) is
+the pulled-back physical determinant histogram, then
+\(\sum_tH(t)=(\sum A)(\sum\overline B)\) and
+\(\sum_{t\ne0}H(t)=(\sum A)(\sum\overline B)-H(0)\).  Thus \(t\ne0\)
+is not determinant-frequency centering, and the \(H(0)\) term cancels
+when the complement is rewritten.  The next legitimate spectral
+interface must first derive and globally reassemble the actual
+fixed-determinant main terms with every density, AFE/reflection, and
+diagonal contribution, then estimate only their signed centered errors.
+Neither step is proved; (PCDI-SREM) and the coupled-kernel gate remain
+open.
+
+Section 9.180 identifies the correct global short-prime \(TT^*\)
+energy before the outer \((p,D)\)-average is sacrificed.  On common
+scalar centered-incidence atoms its Gram matrix is exactly
+\(\varphi(q)\mathbf1_{c=c'}-1\), with \(c=p\overline D\), so the
+outer weights are summed with their signs inside determinant fibers
+\(q\mid p_1D_2-p_2D_1\) before squaring.  The old maximum-occupancy
+loss is only the Cauchy majorant (9.1218).  This is a proved finite
+algebraic improvement in the formulation of the target, not an
+analytic estimate: the global packet-norm reassembly and the weighted
+ratio-fiber energy saving (WRFE) both remain unproved.
+
+Section 9.181 then removes that scalar adapter as a logical prerequisite.
+For arbitrary literal outer-dependent profiles, (9.1221) expresses the
+centered Gram entry as one same-slope line correlation, two density-
+correction line correlations, and one full-grid correlation.  Its sum
+is exactly the direct physical centered-profile energy (9.1222).
+Consequently the next candidate adapter-free leaf is (WPLG), which asks
+for the remaining doubled energy saving on this weighted line Gram.
+The coefficient-by-coefficient physical \(TT^*\) identification and
+baseline normalization have not yet been proved, so (WPLG) is not yet
+registered as an implication to (PCDI-SREM); its analytic estimate is
+also unproved.
+
+Section 9.182 then specializes back to the actual factorization in
+(9.1145).  For fixed \((\omega,g,D,q)\) and all shared physical labels,
+the short profile is common to the long-prime family, so the latter is
+summed inside \(H_\lambda\) before the single Cauchy step.  Its norm is
+exactly the signed scalar ratio-fiber energy (9.1225).  This proves the
+fixed-packet scalar \(TT^*\) adapter without a projective-rank
+hypothesis.  It does not yet justify orthogonalizing the shared
+\(a=h\delta\), Type, AFE/reflection, and dyadic packet labels: the
+packet-exhaustive direct-sum normalization and (WRFE) remain unproved.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

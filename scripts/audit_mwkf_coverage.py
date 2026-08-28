@@ -25287,6 +25287,461 @@ def prime_incidence_type_I_factorization_audit(
     }
 
 
+def prime_incidence_all_determinants_rank_one_audit(
+    *,
+    left_rows: tuple[tuple[tuple[int, int], Fraction], ...],
+    right_rows: tuple[tuple[tuple[int, int], Fraction], ...],
+) -> dict[str, object]:
+    """Sum the complete determinant histogram before any estimate.
+
+    In coordinates for the rank-two plane lattice, summing every
+    nonzero determinant is not a nonzero Fourier projection.  Its
+    kernel is exactly
+
+    ``1_(det != 0) = 1 - 1_(det = 0)``.
+
+    Hence the nonzero-determinant sum contains the rank-one all-pairs
+    mode, with only the parallel-slope orbit removed.  Any theorem
+    applied one fixed determinant at a time must reassemble all of its
+    main terms before it can yield cancellation for the physical sum.
+    """
+
+    if not left_rows or not right_rows:
+        raise ValueError("both determinant row families must be nonempty")
+
+    def convert(
+        rows: tuple[tuple[tuple[int, int], Fraction], ...],
+    ) -> tuple[tuple[tuple[int, int], Fraction], ...]:
+        converted: list[tuple[tuple[int, int], Fraction]] = []
+        seen: set[tuple[int, int]] = set()
+        for coordinates, weight in rows:
+            if len(coordinates) != 2:
+                raise ValueError("every lattice row must have two coordinates")
+            vector = (int(coordinates[0]), int(coordinates[1]))
+            if vector == (0, 0) or vector in seen:
+                raise ValueError("lattice rows must be distinct and nonzero")
+            seen.add(vector)
+            converted.append((vector, F(weight)))
+        return tuple(converted)
+
+    left = convert(left_rows)
+    right = convert(right_rows)
+    histogram: dict[int, Fraction] = defaultdict(F)
+    for (first, second), left_weight in left:
+        for (third, fourth), right_weight in right:
+            determinant = first * fourth - second * third
+            histogram[determinant] += left_weight * right_weight
+
+    ordered_histogram = dict(sorted(histogram.items()))
+    all_pair_weight = sum((weight for weight in histogram.values()), F(0))
+    zero_weight = histogram.get(0, F(0))
+    nonzero_weight = sum(
+        (weight for determinant, weight in histogram.items() if determinant != 0),
+        F(0),
+    )
+    rank_one_weight = sum((weight for _, weight in left), F(0)) * sum(
+        (weight for _, weight in right), F(0)
+    )
+    return {
+        "left_rows": left,
+        "right_rows": right,
+        "determinant_histogram": ordered_histogram,
+        "all_pair_weight": all_pair_weight,
+        "rank_one_all_pairs_weight": rank_one_weight,
+        "zero_determinant_weight": zero_weight,
+        "nonzero_determinant_weight": nonzero_weight,
+        "all_determinants_reassemble_all_pairs": bool(
+            all_pair_weight == rank_one_weight
+        ),
+        "nonzero_equals_rank_one_mode_minus_parallel_orbit": bool(
+            nonzero_weight == rank_one_weight - zero_weight
+        ),
+        "zero_orbit_cancels_after_nonzero_is_rewritten": bool(
+            zero_weight + (rank_one_weight - zero_weight) == rank_one_weight
+        ),
+        "all_t_kernel_contains_rank_one_constant_mode": True,
+        "t_nonzero_is_not_fourier_frequency_centering": True,
+        "zero_vs_nonzero_is_not_a_canonical_main_remainder_split": True,
+        "fixed_determinant_main_terms_require_global_reassembly": True,
+        "determinant_value_centering_derived_from_physical_AFE": False,
+        "nonzero_determinant_spectral_bound_proved": False,
+        "PCDI_SREM_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def short_prime_global_D_centered_ttstar_audit(
+    *,
+    short_prime: int,
+    outer_rows: tuple[tuple[int, int, Fraction], ...],
+) -> dict[str, object]:
+    """Verify the exact global-``D`` centered incidence Gram identity.
+
+    A physical outer row ``(p, D, weight)`` contributes the centered
+    incidence kernel
+
+    ``1_(p*u = D*v mod q) - 1/(q-1)``
+
+    on the full unit grid modulo the prime ``q``.  Summing the signed
+    outer weights *before* squaring groups them by the ratio
+    ``c = p / D mod q``.  Exact finite orthogonality then gives
+
+    ``energy = (q-1) * sum_c W_c^2 - (sum_c W_c)^2``.
+
+    This is an algebraic TT* identity only.  It deliberately does not
+    assert the physical weighted ratio-fiber estimate needed for the
+    remaining coupled-kernel gate.
+    """
+
+    q = int(short_prime)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if not outer_rows:
+        raise ValueError("at least one physical outer row is required")
+
+    converted: list[tuple[int, int, Fraction]] = []
+    seen: set[tuple[int, int]] = set()
+    signed_fibers: dict[int, Fraction] = defaultdict(F)
+    for raw_p, raw_D, raw_weight in outer_rows:
+        p = int(raw_p)
+        D = int(raw_D)
+        label = (p, D)
+        if label in seen:
+            raise ValueError("physical outer row labels must be distinct")
+        if gcd(p, q) != 1 or gcd(D, q) != 1:
+            raise ValueError("both p and D must be units modulo q")
+        seen.add(label)
+        weight = F(raw_weight)
+        converted.append((p, D, weight))
+        slope = (p * pow(D, -1, q)) % q
+        signed_fibers[slope] += weight
+
+    phi_q = q - 1
+    direct_energy = F(0)
+    centered_profiles: dict[tuple[int, int], Fraction] = {}
+    for u in range(1, q):
+        for v in range(1, q):
+            profile = sum(
+                (
+                    F(1 if (p * u - D * v) % q == 0 else 0)
+                    - F(1, phi_q)
+                )
+                * weight
+                for p, D, weight in converted
+            )
+            centered_profiles[(u, v)] = profile
+            direct_energy += profile * profile
+
+    total_weight = sum((weight for _, _, weight in converted), F(0))
+    fiber_energy = F(phi_q) * sum(
+        (weight * weight for weight in signed_fibers.values()), F(0)
+    ) - total_weight * total_weight
+
+    same_fiber_iff_outer_determinant_zero = all(
+        (
+            (p_first * pow(D_first, -1, q)) % q
+            == (p_second * pow(D_second, -1, q)) % q
+        )
+        == ((p_first * D_second - p_second * D_first) % q == 0)
+        for p_first, D_first, _ in converted
+        for p_second, D_second, _ in converted
+    )
+    identity_proved = bool(
+        direct_energy == fiber_energy
+        and same_fiber_iff_outer_determinant_zero
+    )
+    return {
+        "short_prime": q,
+        "euler_phi": phi_q,
+        "outer_rows": tuple(converted),
+        "signed_ratio_fiber_weights": dict(sorted(signed_fibers.items())),
+        "centered_unit_grid_profile": centered_profiles,
+        "direct_centered_gram_energy": direct_energy,
+        "ratio_fiber_energy_formula": fiber_energy,
+        "direct_gram_equals_ratio_fiber_energy": bool(
+            direct_energy == fiber_energy
+        ),
+        "same_ratio_fiber_iff_outer_determinant_zero_mod_q": bool(
+            same_fiber_iff_outer_determinant_zero
+        ),
+        "same_fiber_weights_are_summed_before_absolute_values": True,
+        "global_D_ttstar_identity_proved": identity_proved,
+        "physical_packet_exhaustive_adapter_proved": False,
+        "weighted_ratio_fiber_energy_bound_proved": False,
+        "PCDI_SREM_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def short_prime_weighted_profile_ttstar_audit(
+    *,
+    short_prime: int,
+    outer_profiles: tuple[
+        tuple[
+            int,
+            int,
+            tuple[tuple[tuple[int, int], Fraction], ...],
+        ],
+        ...,
+    ],
+) -> dict[str, object]:
+    """Expand centered incidence TT* for arbitrary physical profiles.
+
+    Unlike ``short_prime_global_D_centered_ttstar_audit``, this helper
+    does not assume that the coefficient attached to an outer row is
+    constant on the unit grid.  For row ``i`` let ``A_i(u,v)`` be its
+    supplied profile and ``c_i = p_i / D_i mod q``.  With
+
+    ``L_ij(c) = sum_u A_i(u,c*u) A_j(u,c*u)``
+
+    and ``M_ij = sum_(u,v) A_i(u,v) A_j(u,v)``, direct expansion gives
+
+    ``G_ij = 1_(c_i=c_j)L_ij(c_i)
+             - (L_ij(c_i)+L_ij(c_j))/(q-1)
+             + M_ij/(q-1)^2``.
+
+    The sum of this exact Gram matrix is the direct centered-profile
+    energy.  Thus no scalar projective adapter is logically required;
+    the remaining task is an analytic bound for the weighted line
+    Gram with the literal physical profiles.
+    """
+
+    q = int(short_prime)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if not outer_profiles:
+        raise ValueError("at least one physical outer profile is required")
+
+    converted: list[tuple[int, int, dict[tuple[int, int], Fraction]]] = []
+    seen_rows: set[tuple[int, int]] = set()
+    for raw_p, raw_D, raw_profile in outer_profiles:
+        p = int(raw_p)
+        D = int(raw_D)
+        row = (p, D)
+        if row in seen_rows:
+            raise ValueError("physical outer profile labels must be distinct")
+        if gcd(p, q) != 1 or gcd(D, q) != 1:
+            raise ValueError("both p and D must be units modulo q")
+        seen_rows.add(row)
+        profile: dict[tuple[int, int], Fraction] = {}
+        for raw_coordinates, raw_value in raw_profile:
+            if len(raw_coordinates) != 2:
+                raise ValueError("unit-grid coordinates must be pairs")
+            coordinates = (int(raw_coordinates[0]), int(raw_coordinates[1]))
+            if not all(1 <= coordinate < q for coordinate in coordinates):
+                raise ValueError("profile coordinates must lie in U(q)^2")
+            if coordinates in profile:
+                raise ValueError("profile coordinates must be distinct")
+            profile[coordinates] = F(raw_value)
+        converted.append((p, D, profile))
+
+    phi_q = q - 1
+    slopes = tuple((p * pow(D, -1, q)) % q for p, D, _ in converted)
+
+    direct_profile: dict[tuple[int, int], Fraction] = {}
+    direct_energy = F(0)
+    for u in range(1, q):
+        for v in range(1, q):
+            value = sum(
+                profile.get((u, v), F(0))
+                * (
+                    F(1 if v == (slope * u) % q else 0)
+                    - F(1, phi_q)
+                )
+                for slope, (_, _, profile) in zip(slopes, converted)
+            )
+            direct_profile[(u, v)] = value
+            direct_energy += value * value
+
+    gram_rows: list[tuple[Fraction, ...]] = []
+    for first_index, (_, _, first_profile) in enumerate(converted):
+        gram_row: list[Fraction] = []
+        first_slope = slopes[first_index]
+        for second_index, (_, _, second_profile) in enumerate(converted):
+            second_slope = slopes[second_index]
+
+            def line_correlation(slope: int) -> Fraction:
+                return sum(
+                    (
+                        first_profile.get((u, (slope * u) % q), F(0))
+                        * second_profile.get((u, (slope * u) % q), F(0))
+                    )
+                    for u in range(1, q)
+                )
+
+            first_line = line_correlation(first_slope)
+            second_line = line_correlation(second_slope)
+            full_correlation = sum(
+                (
+                    first_profile.get((u, v), F(0))
+                    * second_profile.get((u, v), F(0))
+                )
+                for u in range(1, q)
+                for v in range(1, q)
+            )
+            gram_entry = (
+                (first_line if first_slope == second_slope else F(0))
+                - F(first_line + second_line, phi_q)
+                + F(full_correlation, phi_q * phi_q)
+            )
+            gram_row.append(gram_entry)
+        gram_rows.append(tuple(gram_row))
+
+    gram_matrix = tuple(gram_rows)
+    gram_energy = sum(
+        (entry for row in gram_matrix for entry in row), F(0)
+    )
+    identity_proved = bool(direct_energy == gram_energy)
+    return {
+        "short_prime": q,
+        "euler_phi": phi_q,
+        "outer_profiles": tuple(converted),
+        "slopes": slopes,
+        "direct_centered_profile": direct_profile,
+        "direct_centered_profile_energy": direct_energy,
+        "weighted_gram_matrix": gram_matrix,
+        "weighted_line_gram_energy": gram_energy,
+        "direct_energy_equals_weighted_line_gram": identity_proved,
+        "outer_dependent_profiles_retained_exactly": True,
+        "scalar_projective_adapter_required": False,
+        "adapter_free_weighted_ttstar_identity_proved": identity_proved,
+        "physical_PCDI_ttstar_adapter_proved": False,
+        "weighted_physical_line_gram_bound_proved": False,
+        "PCDI_SREM_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def prime_cross_residue_fixed_packet_ttstar_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    short_profile: tuple[tuple[tuple[int, int], Fraction], ...],
+    long_outer_rows: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Verify the fixed-packet scalar TT* adapter from cross residues.
+
+    For fixed packet labels and fixed ``(q,D)``, the short physical
+    profile ``b_q(u,v)`` is common to every long prime ``p``.  Its
+    cross-residue value is the inner product with the centered graph
+    kernel of slope ``p/D mod q``.  Consequently the complete long
+    prime sum is one inner product
+
+    ``<b_q, sum_p W(p) K_(p/D)>``
+
+    and the long-prime sum occurs before the single Cauchy step.  This
+    is the finite adapter behind the scalar ratio-fiber energy; it
+    neither proves the required weighted energy saving nor closes the
+    physical coupled gate.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if gcd(D, q) != 1:
+        raise ValueError("the determinant shift must be a unit modulo q")
+    if not long_outer_rows:
+        raise ValueError("at least one long-prime outer row is required")
+
+    profile: dict[tuple[int, int], Fraction] = {}
+    for raw_coordinates, raw_value in short_profile:
+        if len(raw_coordinates) != 2:
+            raise ValueError("unit-grid coordinates must be pairs")
+        coordinates = (int(raw_coordinates[0]), int(raw_coordinates[1]))
+        if not all(1 <= coordinate < q for coordinate in coordinates):
+            raise ValueError("short-profile coordinates must lie in U(q)^2")
+        if coordinates in profile:
+            raise ValueError("short-profile coordinates must be distinct")
+        profile[coordinates] = F(raw_value)
+
+    converted_rows: list[tuple[int, Fraction, int]] = []
+    seen_primes: set[int] = set()
+    signed_fibers: dict[int, Fraction] = defaultdict(F)
+    inverse_D = pow(D, -1, q)
+    for raw_p, raw_weight in long_outer_rows:
+        p = int(raw_p)
+        if (
+            p in seen_primes
+            or _finite_prime_exponents(p) != {p: 1}
+            or gcd(p, q) != 1
+        ):
+            raise ValueError(
+                "long-prime labels must be distinct primes coprime to q"
+            )
+        seen_primes.add(p)
+        weight = F(raw_weight)
+        slope = (p * inverse_D) % q
+        converted_rows.append((p, weight, slope))
+        signed_fibers[slope] += weight
+
+    phi_q = q - 1
+
+    def centered_kernel(slope: int, u: int, v: int) -> Fraction:
+        return (
+            F(1 if v == (slope * u) % q else 0)
+            - F(1, phi_q)
+        )
+
+    original_block = sum(
+        weight
+        * sum(
+            profile.get((u, v), F(0)) * centered_kernel(slope, u, v)
+            for u in range(1, q)
+            for v in range(1, q)
+        )
+        for _, weight, slope in converted_rows
+    )
+    outer_profile: dict[tuple[int, int], Fraction] = {}
+    for u in range(1, q):
+        for v in range(1, q):
+            outer_profile[(u, v)] = sum(
+                weight * centered_kernel(slope, u, v)
+                for _, weight, slope in converted_rows
+            )
+    ttstar_inner_product = sum(
+        profile.get((u, v), F(0)) * outer_profile[(u, v)]
+        for u in range(1, q)
+        for v in range(1, q)
+    )
+    short_energy = sum((value * value for value in profile.values()), F(0))
+    direct_outer_energy = sum(
+        (value * value for value in outer_profile.values()), F(0)
+    )
+    ratio_outer_energy = F(phi_q) * sum(
+        (value * value for value in signed_fibers.values()), F(0)
+    ) - sum((weight for _, weight, _ in converted_rows), F(0)) ** 2
+    cauchy_bound_squared = short_energy * direct_outer_energy
+    adapter_proved = bool(
+        original_block == ttstar_inner_product
+        and direct_outer_energy == ratio_outer_energy
+        and original_block * original_block <= cauchy_bound_squared
+    )
+    return {
+        "short_prime": q,
+        "determinant_shift": D,
+        "short_profile": profile,
+        "long_outer_rows": tuple(converted_rows),
+        "signed_ratio_fiber_weights": dict(sorted(signed_fibers.items())),
+        "original_cross_residue_block": original_block,
+        "ttstar_inner_product": ttstar_inner_product,
+        "short_profile_energy": short_energy,
+        "centered_outer_profile": outer_profile,
+        "centered_outer_energy": direct_outer_energy,
+        "ratio_fiber_energy_formula": ratio_outer_energy,
+        "cauchy_upper_bound_squared": cauchy_bound_squared,
+        "original_equals_ttstar_inner_product": bool(
+            original_block == ttstar_inner_product
+        ),
+        "outer_prime_sum_precedes_cauchy": True,
+        "fixed_packet_scalar_ttstar_adapter_proved": adapter_proved,
+        "scalar_projective_adapter_required": False,
+        "weighted_ratio_fiber_energy_bound_proved": False,
+        "PCDI_SREM_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def prime_incidence_type_I_companion_factorization_audit(
     *,
     short_cutoff_u: int,

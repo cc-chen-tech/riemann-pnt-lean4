@@ -8758,6 +8758,172 @@ def test_prime_companion_fourth_moment_is_diagonally_saturated_below_sqrt_modulu
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_prime_incidence_all_nonzero_determinants_retain_the_rank_one_mode() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_incidence_all_determinants_rank_one_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        left_rows=(((1, 0), F(1)), ((0, 1), F(2)), ((1, 1), F(3))),
+        right_rows=(((1, 0), F(4)), ((0, 1), F(5)), ((1, 1), F(6))),
+    )
+    assert result["determinant_histogram"] == {
+        -1: F(32),
+        0: F(32),
+        1: F(26),
+    }
+    assert result["all_pair_weight"] == F(90)
+    assert result["zero_determinant_weight"] == F(32)
+    assert result["nonzero_determinant_weight"] == F(58)
+    assert result["all_determinants_reassemble_all_pairs"]
+    assert result["nonzero_equals_rank_one_mode_minus_parallel_orbit"]
+    assert result["zero_orbit_cancels_after_nonzero_is_rewritten"]
+    assert result["all_t_kernel_contains_rank_one_constant_mode"]
+    assert result["t_nonzero_is_not_fourier_frequency_centering"]
+    assert result["zero_vs_nonzero_is_not_a_canonical_main_remainder_split"]
+    assert result["fixed_determinant_main_terms_require_global_reassembly"]
+    assert not result["nonzero_determinant_spectral_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_short_prime_global_D_ttstar_is_signed_ratio_fiber_energy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "short_prime_global_D_centered_ttstar_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        outer_rows=(
+            (7, 1, F(1)),
+            (17, 1, F(-1)),
+            (11, 2, F(2)),
+            (13, 1, F(3)),
+        ),
+    )
+    assert result["signed_ratio_fiber_weights"] == {2: F(0), 3: F(5)}
+    assert result["direct_centered_gram_energy"] == F(75)
+    assert result["ratio_fiber_energy_formula"] == F(75)
+    assert result["direct_gram_equals_ratio_fiber_energy"]
+    assert result["same_ratio_fiber_iff_outer_determinant_zero_mod_q"]
+    assert result["same_fiber_weights_are_summed_before_absolute_values"]
+    assert result["global_D_ttstar_identity_proved"]
+    assert not result["weighted_ratio_fiber_energy_bound_proved"]
+    assert not result["PCDI_SREM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.180 Global \\(D\\)-averaging turns occupancy into signed "
+        "ratio-fiber energy"
+    ) in text
+    assert r"\varphi(q)\mathbf1_{c=c'}-1" in text
+    assert r"q\mid p_1D_2-p_2D_1" in text
+    assert "(WRFE)" in text
+    assert "global packet norm reassembly nor (WRFE) has been" in text
+
+
+def test_short_prime_weighted_profile_ttstar_needs_no_scalar_adapter() -> None:
+    audit = getattr(
+        coverage_audit,
+        "short_prime_weighted_profile_ttstar_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=3,
+        outer_profiles=(
+            (
+                1,
+                1,
+                (
+                    ((1, 1), F(1)),
+                    ((1, 2), F(2)),
+                    ((2, 1), F(3)),
+                    ((2, 2), F(4)),
+                ),
+            ),
+            (
+                2,
+                1,
+                (
+                    ((1, 1), F(5)),
+                    ((1, 2), F(6)),
+                    ((2, 1), F(7)),
+                    ((2, 2), F(8)),
+                ),
+            ),
+        ),
+    )
+    assert result["slopes"] == (1, 2)
+    assert result["direct_centered_profile_energy"] == F(16)
+    assert result["weighted_line_gram_energy"] == F(16)
+    assert result["weighted_gram_matrix"] == (
+        (F(15, 2), F(-35, 2)),
+        (F(-35, 2), F(87, 2)),
+    )
+    assert result["direct_energy_equals_weighted_line_gram"]
+    assert result["outer_dependent_profiles_retained_exactly"]
+    assert result["scalar_projective_adapter_required"] is False
+    assert result["adapter_free_weighted_ttstar_identity_proved"]
+    assert not result["physical_PCDI_ttstar_adapter_proved"]
+    assert not result["weighted_physical_line_gram_bound_proved"]
+    assert not result["PCDI_SREM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.181 The literal physical profiles admit an adapter-free "
+        "weighted Gram"
+    ) in text
+    assert r"\mathcal G_q(i,j)" in text
+    assert r"\mathbf1_{c_i=c_j}L_{ij}(c_i)" in text
+    assert "(WPLG)" in text
+    assert "(WPLG) analytic bound" in text
+
+
+def test_prime_cross_residue_fixed_packet_has_exact_scalar_ttstar_adapter() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_cross_residue_fixed_packet_ttstar_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        short_profile=(((1, 3), F(1)),),
+        long_outer_rows=(
+            (7, F(1)),
+            (17, F(-1)),
+            (23, F(2)),
+            (13, F(3)),
+        ),
+    )
+    assert result["signed_ratio_fiber_weights"] == {2: F(0), 3: F(5)}
+    assert result["original_cross_residue_block"] == F(15, 4)
+    assert result["ttstar_inner_product"] == F(15, 4)
+    assert result["short_profile_energy"] == F(1)
+    assert result["centered_outer_energy"] == F(75)
+    assert result["cauchy_upper_bound_squared"] == F(75)
+    assert result["original_equals_ttstar_inner_product"]
+    assert result["outer_prime_sum_precedes_cauchy"]
+    assert result["fixed_packet_scalar_ttstar_adapter_proved"]
+    assert result["scalar_projective_adapter_required"] is False
+    assert not result["weighted_ratio_fiber_energy_bound_proved"]
+    assert not result["PCDI_SREM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.182 The cross-residue master has an exact fixed-packet "
+        "scalar adapter"
+    ) in text
+    assert r"H_\lambda(u,v)&:=\sum_pC_\lambda(p)K_{q,c_p}(u,v)" in text
+    assert "packet-exhaustive direct-sum normalization" in text
+    assert "global packet adapter" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (
