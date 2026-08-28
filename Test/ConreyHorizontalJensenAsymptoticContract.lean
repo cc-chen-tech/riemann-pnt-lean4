@@ -8,6 +8,7 @@ open HardyTheorem
 #check conreyHorizontalJensenFactorZeroMassMajorant
 #check conreyHorizontalJensenFactorZeroMassMajorant_bounds
 #check exists_conreyHorizontalJensenFactorZeroMassMajorant_bounds
+#check conreyHorizontalJensenFactorLogVariationMajorant_le_eightyOneMillion
 
 example :
     ∃ C : ℝ, 1 ≤ C ∧ ∀ {Y : ℕ} {R L U : ℝ}, 2 ≤ Y →
@@ -21,8 +22,22 @@ example :
           1000 * L ^ 2 :=
   exists_conreyHorizontalJensenFactorZeroMassMajorant_bounds
 
+example {Creg Cmass L U : ℝ} {Y : ℕ} {R : ℝ}
+    (hCreg : 1 ≤ Creg) (hCregTop : Creg ≤ Real.exp L)
+    (hCmass : 1 ≤ Cmass) (hCmassTop : Cmass ≤ Real.exp L)
+    (hY : 2 ≤ Y) (hYtop : (Y : ℝ) ≤ Real.exp L)
+    (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5) (hL : 40000 ≤ L)
+    (hU : conreyHorizontalRightEdge L + 1 ≤ U)
+    (hUtop : U + 1 ≤ Real.exp L) :
+    conreyHorizontalJensenFactorLogVariationMajorant Creg Y R L U
+        (conreyHorizontalJensenFactorZeroMassMajorant Cmass Y R L U) ≤
+      81000000 * L ^ 4 :=
+  conreyHorizontalJensenFactorLogVariationMajorant_le_eightyOneMillion
+    hCreg hCregTop hCmass hCmassTop hY hYtop hR0 hRmax hL hU hUtop
+
 #print axioms conreyHorizontalJensenHeightBase_le_three_mul_exp_two
 #print axioms conreyHorizontalJensenGrowthLog_le_twentyFive_mul
 #print axioms conreyHorizontalJensenFactorLogDenominator_lower
 #print axioms conreyHorizontalJensenFactorZeroMassMajorant_bounds
 #print axioms exists_conreyHorizontalJensenFactorZeroMassMajorant_bounds
+#print axioms conreyHorizontalJensenFactorLogVariationMajorant_le_eightyOneMillion

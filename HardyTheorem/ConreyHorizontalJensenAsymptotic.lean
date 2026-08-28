@@ -233,4 +233,83 @@ theorem exists_conreyHorizontalJensenFactorZeroMassMajorant_bounds :
     simpa [conreyHorizontalJensenFactorZeroMassMajorant] using hactual,
     hbounds⟩
 
+/-- After inserting the exact Jensen mass majorant, the logarithmic variation
+is bounded by a fixed fourth power of `L`.  The two growth constants remain
+independent. -/
+theorem conreyHorizontalJensenFactorLogVariationMajorant_le_eightyOneMillion
+    {Creg Cmass L U : ℝ} {Y : ℕ} {R : ℝ}
+    (hCreg : 1 ≤ Creg) (hCregTop : Creg ≤ Real.exp L)
+    (hCmass : 1 ≤ Cmass) (hCmassTop : Cmass ≤ Real.exp L)
+    (hY : 2 ≤ Y) (hYtop : (Y : ℝ) ≤ Real.exp L)
+    (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5) (hL : 40000 ≤ L)
+    (hU : conreyHorizontalRightEdge L + 1 ≤ U)
+    (hUtop : U + 1 ≤ Real.exp L) :
+    conreyHorizontalJensenFactorLogVariationMajorant Creg Y R L U
+        (conreyHorizontalJensenFactorZeroMassMajorant Cmass Y R L U) ≤
+      81000000 * L ^ 4 := by
+  let J := conreyHorizontalJensenFactorZeroMassMajorant Cmass Y R L U
+  let gap := conreyHorizontalJensenRadiusGap R L
+  let b := conreyHorizontalJensenFactorRadius R L
+  let delta := gap / (16 * (J + 1))
+  have hLpos : 0 < L := by linarith
+  have hJbounds := conreyHorizontalJensenFactorZeroMassMajorant_bounds
+    hCmass hCmassTop hY hYtop hR0 hRmax hL hU hUtop
+  have hJ0 : 0 ≤ J := by simpa [J] using hJbounds.1
+  have hJtop : J ≤ 1000 * L ^ 2 := by simpa [J] using hJbounds.2
+  have hgapPos : 0 < gap := by
+    have h := one_fifth_lt_conreyHorizontalJensenRadiusGap hR0 hRmax hL
+    simpa [gap] using (show 0 < conreyHorizontalJensenRadiusGap R L by linarith)
+  have hgapLower : (1 / 5 : ℝ) < gap := by
+    simpa [gap] using
+      one_fifth_lt_conreyHorizontalJensenRadiusGap hR0 hRmax hL
+  have hdenPos : 0 < 16 * (J + 1) := by positivity
+  have hdeltaPos : 0 < delta := div_pos hgapPos hdenPos
+  have hdeltaInv : delta⁻¹ = 16 * (J + 1) / gap := by
+    dsimp [delta]
+    field_simp [hgapPos.ne', hdenPos.ne']
+  have hInvTop : delta⁻¹ ≤ 80 * (J + 1) := by
+    rw [hdeltaInv]
+    apply (div_le_iff₀ hgapPos).2
+    nlinarith
+  have hnegLogDelta : -Real.log delta ≤ 80 * (J + 1) := by
+    rw [← Real.log_inv]
+    have h := Real.log_le_sub_one_of_pos (inv_pos.mpr hdeltaPos)
+    linarith
+  have hbuffer := conreyHorizontalJensenBufferGeometry hR0 hRmax hL
+  have hbOne : 1 ≤ b := by
+    simpa [b] using one_le_conreyHorizontalJensenFactorRadius hR0 hRmax hL
+  have hlogL : Real.log L ≤ L := by
+    have h := Real.log_le_sub_one_of_pos hLpos
+    linarith
+  have hbTop : b ≤ 2 * L := by
+    have hbOuter : b ≤ conreyHorizontalJensenOuterRadius L := by
+      simpa [b] using hbuffer.2.2.2.le
+    have houterTop : conreyHorizontalJensenOuterRadius L ≤ 2 * L := by
+      dsimp [conreyHorizontalJensenOuterRadius,
+        conreyHorizontalRightEdge]
+      linarith
+    exact hbOuter.trans houterTop
+  have hlogB : Real.log b ≤ 2 * L := by
+    have h := Real.log_le_sub_one_of_pos (zero_lt_one.trans_le hbOne)
+    linarith
+  have hgrowth :
+      Real.log (Creg * (Y : ℝ) *
+          conreyHorizontalJensenHeightBase L U ^ 6 * (L + 2) ^ 2) +
+        Real.log 6 ≤ 25 * L :=
+    conreyHorizontalJensenGrowthLog_le_twentyFive_mul
+      hCreg hCregTop hY hYtop hL hU hUtop
+  have hLsqOne : 1 ≤ L ^ 2 := by nlinarith
+  have hJone : J + 1 ≤ 1001 * L ^ 2 := by nlinarith
+  have hcoeff : Real.log b - Real.log delta ≤ 80082 * L ^ 2 := by
+    nlinarith
+  have hweighted :
+      (Real.log b - Real.log delta) * J ≤ 80082000 * L ^ 4 := by
+    have hcoeffNonneg : 0 ≤ 80082 * L ^ 2 := by positivity
+    exact (mul_le_mul_of_nonneg_right hcoeff hJ0).trans (by
+      have := mul_le_mul_of_nonneg_left hJtop hcoeffNonneg
+      nlinarith [sq_nonneg (L ^ 2)])
+  dsimp [conreyHorizontalJensenFactorLogVariationMajorant, J, gap, b,
+    delta] at *
+  nlinarith [mul_nonneg (sq_nonneg L) (sq_nonneg L)]
+
 end HardyTheorem
