@@ -6837,6 +6837,54 @@ def test_two_pv_closes_all_adapted_centered_character_conductors() -> None:
     assert not missing_minkowski["physical_centered_resonant_projector_covered"]
 
 
+def test_fused_principal_master_is_the_ramanujan_nonzero_projection() -> None:
+    """The moving-gcd principal form is not an independent main term."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_principal_ramanujan_sampled_bridge_audit",
+        None,
+    )
+    assert audit is not None, "principal Ramanujan/sampled bridge is missing"
+    result = audit(
+        rows=(
+            # (oriented modulus v, Type entry w, product label a, packet weight)
+            (30, 7, 18, F(2)),
+            (15, 2, 10, F(-3)),
+            (6, 5, 12, F(4)),
+            (1, 7, -3, F(5)),
+        ),
+        principal_harmonic_poisson_reassembly_verified=True,
+        proper_divisor_ramanujan_split_verified=True,
+    )
+    assert result["all_oriented_moduli_and_type_entries_squarefree"]
+    assert result["all_type_entries_are_units_at_oriented_moduli"]
+    assert result["all_reduced_product_labels_are_units"]
+    assert result["ambient_ramanujan_density_equals_reduced_unit_density"]
+    assert result["canonical_principal_coefficient_equals_fused_coefficient"]
+    assert result["direct_principal_plus_proper_mean_equals_ramanujan_mean"]
+    assert result["canonical_principal_master_equals_ramanujan_nonzero_master"]
+    assert result["raw_zero_plus_ramanujan_equals_sampled_plus_proper_ledger"]
+    assert result["canonical_and_sampled_principal_are_not_independent"]
+    q_one_rows = tuple(row for row in result["rows"] if row["reduced_modulus"] == 1)
+    assert len(q_one_rows) == 2
+    assert all(row["direct_principal_indicator"] == 1 for row in q_one_rows)
+    assert not result["sampled_principal_master_bound_proved"]
+    assert not result["fused_principal_master_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.145 The fused principal master is the earlier "
+        "sampled/Ramanujan ledger"
+    ) in text
+    assert r"\rho_v(a):=\frac{c_v(a)}{\varphi(v)}" in text
+    assert r"\mathfrak P_{\rm top}^{\rm or}" in text
+    assert r"\mathcal P^{{\rm all},{\rm or}}" in text
+    assert "not a third residual main term" in text
+    assert "neither is proved here" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

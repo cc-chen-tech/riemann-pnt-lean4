@@ -19224,6 +19224,178 @@ def centered_two_pv_conductor_envelope_audit(
     }
 
 
+def oriented_principal_ramanujan_sampled_bridge_audit(
+    *,
+    rows: tuple[tuple[int, int, int, Fraction], ...],
+    principal_harmonic_poisson_reassembly_verified: bool,
+    proper_divisor_ramanujan_split_verified: bool,
+) -> dict[str, object]:
+    """Identify the fused principal form with the Ramanujan projection.
+
+    For squarefree oriented modulus ``v``, Type unit ``w``, and nonzero
+    product label ``a``, put ``d=gcd(|a|,v)``, ``q=v/d``, and ``m=dw``.
+    The ambient Ramanujan density equals the reduced unit density.  After
+    the outer Mobius signs are inserted, both resulting coefficients equal
+    the fused moving-gcd coefficient.  Combined with the separately
+    verified Poisson and proper-divisor identities, this shows that the
+    fused principal master is not a new main term.
+    """
+
+    physical_rows = tuple(
+        (int(v), int(w), int(a), F(weight))
+        for v, w, a, weight in rows
+    )
+    if not physical_rows:
+        raise ValueError("at least one oriented principal row is required")
+    if any(v < 1 or w < 1 or a == 0 for v, w, a, _ in physical_rows):
+        raise ValueError("require positive moduli/Type entries and nonzero labels")
+    if any(
+        _finite_mobius(v) == 0 or _finite_mobius(w) == 0
+        for v, w, _, _ in physical_rows
+    ):
+        raise ValueError("oriented moduli and Type entries must be squarefree")
+    if any(gcd(v, w) != 1 for v, w, _, _ in physical_rows):
+        raise ValueError("every Type entry must be a unit at its modulus")
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    checked_rows: list[dict[str, object]] = []
+    canonical_total = F(0)
+    ambient_ramanujan_total = F(0)
+    fused_total = F(0)
+    all_density_equal = True
+    all_coefficients_equal = True
+    all_direct_proper_equal = True
+    for v, w, a, weight in physical_rows:
+        d = gcd(abs(a), v)
+        q = v // d
+        reduced_label = a // d
+        m = d * w
+        phi_v = finite_totient(v)
+        phi_d = finite_totient(d)
+        phi_q = finite_totient(q)
+        ramanujan_sum = _finite_mobius(q) * phi_d
+        ambient_density = F(ramanujan_sum, phi_v)
+        reduced_density = F(_finite_mobius(q), phi_q)
+        direct_indicator = int(a % v == 0)
+        proper_mean = ambient_density - direct_indicator
+
+        canonical_coefficient = (
+            weight
+            * _finite_mobius(v)
+            * _finite_mobius(w)
+            * reduced_density
+        )
+        ambient_ramanujan_coefficient = (
+            weight
+            * _finite_mobius(v)
+            * _finite_mobius(w)
+            * ambient_density
+        )
+        fused_coefficient = weight * F(_finite_mobius(m), phi_q)
+        density_equal = ambient_density == reduced_density
+        coefficient_equal = (
+            canonical_coefficient
+            == ambient_ramanujan_coefficient
+            == fused_coefficient
+        )
+        direct_proper_equal = (
+            F(direct_indicator) + proper_mean == ambient_density
+        )
+        all_density_equal = bool(all_density_equal and density_equal)
+        all_coefficients_equal = bool(
+            all_coefficients_equal and coefficient_equal
+        )
+        all_direct_proper_equal = bool(
+            all_direct_proper_equal and direct_proper_equal
+        )
+        canonical_total += canonical_coefficient
+        ambient_ramanujan_total += ambient_ramanujan_coefficient
+        fused_total += fused_coefficient
+        checked_rows.append(
+            {
+                "oriented_modulus": v,
+                "type_entry": w,
+                "product_label": a,
+                "packet_weight": weight,
+                "product_modulus_gcd": d,
+                "reduced_modulus": q,
+                "reduced_product_label": reduced_label,
+                "fused_mobius_entry": m,
+                "moving_gcd_recovered": gcd(m, v),
+                "ambient_ramanujan_sum": ramanujan_sum,
+                "ambient_ramanujan_density": ambient_density,
+                "reduced_unit_density": reduced_density,
+                "direct_principal_indicator": direct_indicator,
+                "proper_divisor_mean_density": proper_mean,
+                "canonical_principal_coefficient": canonical_coefficient,
+                "ambient_ramanujan_coefficient": (
+                    ambient_ramanujan_coefficient
+                ),
+                "fused_moving_gcd_coefficient": fused_coefficient,
+                "ambient_density_equals_reduced_density": density_equal,
+                "all_three_principal_coefficients_equal": coefficient_equal,
+                "direct_plus_proper_equals_ramanujan": direct_proper_equal,
+            }
+        )
+
+    master_equal = bool(
+        all_coefficients_equal
+        and canonical_total == ambient_ramanujan_total == fused_total
+    )
+    full_ledger_bridge = bool(
+        master_equal
+        and all_direct_proper_equal
+        and principal_harmonic_poisson_reassembly_verified
+        and proper_divisor_ramanujan_split_verified
+    )
+    return {
+        "rows": tuple(checked_rows),
+        "canonical_principal_master": canonical_total,
+        "ambient_ramanujan_nonzero_master": ambient_ramanujan_total,
+        "fused_moving_gcd_master": fused_total,
+        "all_oriented_moduli_and_type_entries_squarefree": True,
+        "all_type_entries_are_units_at_oriented_moduli": True,
+        "all_reduced_product_labels_are_units": all(
+            gcd(int(row["reduced_product_label"]), int(row["reduced_modulus"]))
+            == 1
+            for row in checked_rows
+        ),
+        "ambient_ramanujan_density_equals_reduced_unit_density": (
+            all_density_equal
+        ),
+        "canonical_principal_coefficient_equals_fused_coefficient": (
+            all_coefficients_equal
+        ),
+        "direct_principal_plus_proper_mean_equals_ramanujan_mean": (
+            all_direct_proper_equal
+        ),
+        "canonical_principal_master_equals_ramanujan_nonzero_master": (
+            master_equal
+        ),
+        "principal_harmonic_poisson_reassembly_verified": bool(
+            principal_harmonic_poisson_reassembly_verified
+        ),
+        "proper_divisor_ramanujan_split_verified": bool(
+            proper_divisor_ramanujan_split_verified
+        ),
+        "raw_zero_plus_ramanujan_equals_sampled_plus_proper_ledger": (
+            full_ledger_bridge
+        ),
+        "canonical_and_sampled_principal_are_not_independent": (
+            full_ledger_bridge
+        ),
+        "sampled_principal_master_bound_proved": False,
+        "fused_principal_master_bound_proved": False,
+        "nonzero_determinant_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,
