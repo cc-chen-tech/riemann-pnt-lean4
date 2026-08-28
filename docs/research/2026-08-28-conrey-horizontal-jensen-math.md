@@ -427,6 +427,38 @@ contract 直接锁定实际 `F'/F` 的上述结论，公理审计仍只有 `prop
 `O(L(1+log L)^5)`。精确的幂次不参与 `2/5` 优化；后续必须形式化的
 是某个固定多对数界，并证明它为 `o(e^L/L)`。
 
+为降低形式化脆弱性，可以不用追求上述较尖的幂次。令 `C_r` 是正则
+因子端点的增长常数，`C_m` 是因子盘 Jensen 质量端点的增长常数；不把
+两个存在常数未经证明地认作相同。对最终充分大的 `L` 分别加入
+`C_r<=e^L`、`C_m<=e^L`，并取
+
+\[
+ J_m={\log(C_mYH^6(L+2)^2)+\log6\over
+          \log(\mathcal R/b)}.
+\]
+
+下列宽松链条足够：
+
+1. `H<=3e^(2L)`，故增长对数连同 `log 6` 至多 `25L`；
+2. `log(mathcal R/b)>=1/(40L)`。这里用
+   `1-(mathcal R/b)^(-1)<=log(mathcal R/b)`、
+   `mathcal R-b=Delta/4`、`Delta>1/5` 和 `mathcal R<=2L`；
+3. 因而 `0<=J_m<=1000L^2`；
+4. 用 `b<=2L`、`Delta>1/5` 以及
+   `log x<=x` 粗估 `-log(delta_J)`，可取
+   `V(C_r,J_m)<=81,000,000 L^4`；
+5. 再用 `A-sigma0<=2L`、`mathcal R<=2L`、`Delta^(-2)<=25`
+   代入 `HJ-horizontal-explicit`，得到安全的
+
+\[
+ |\text{horizontal}|\le 1{,}100{,}000{,}000{,}000\,L^7.
+\tag{HJ-horizontal-coarse}
+\]
+
+这个七次幂比真实量级宽松很多，但没有消耗任何新的解析抵消；因为
+`L^8/e^L -> 0`，它已经足以推出 `HJ-horizontal-coarse=o(e^L/L)`。
+Lean 阶段应逐项保留上述分母下界和两个常数的独立性。
+
 因此完成该因子分解后的目标为
 
 \[
