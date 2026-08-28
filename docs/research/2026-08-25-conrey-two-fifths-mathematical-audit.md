@@ -1871,7 +1871,29 @@ actual weighted logarithmic derivative by
 
 Thus the selected-height horizontal Jensen term is closed.  The subsequent
 right-half-plane argument module also proves `Re F >= 3/10` on the whole
-moving edge and bounds the far-right argument variation by `pi`.  What
-remains at equation (37) is the formal contour assembly and the transfer from
-selected endpoints to every height.  Equations (38)--(41) and the long
-mollified second moment remain open; strict `> 2/5` is not proved.
+moving edge and bounds the far-right argument variation by `pi`.
+
+The two horizontal selectors have now been applied simultaneously in
+`HardyTheorem/ConreyEquation37Edges.lean`: one height lies in
+`[2 log L+1,2 log L+2]`, the other in `[exp L-1,exp L]`, and the complete
+non-left boundary remainder is at most
+
+\[
+ {507e^L\over L}+2.2\cdot10^{12}L^7+
+ \bigl(2\log L-(1/2-R/L)\bigr)\pi.
+\]
+
+This assembly exposed one boundary convention that the preceding ledger had
+not stated.  The current exact Lean Littlewood theorem requires all rectangle
+zeros to be strictly interior.  The selected heights and the positive-real-
+part right edge exclude bottom, top, and right boundary zeros, but the actual
+product need not be nonzero on `Re s=sigma_0`.  Classical Littlewood permits
+those left-edge zeros by shifting the edge and taking a limit; their weighted
+contribution tends to zero, while local analytic factorization gives `L^1`
+convergence of the logarithmic integral.  Formalizing this boundary-limit
+version is the next contour-core task.  It must replace, not hide behind, a
+left-edge nonvanishing assumption.
+
+After that, the transfer from selected endpoints to every height,
+equations (38)--(41), and the long mollified second moment remain open;
+strict `> 2/5` is not proved.
