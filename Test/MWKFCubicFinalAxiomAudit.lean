@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicFinal
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicMainConstant
+#print axioms PrimeNumberTheorem.MWKFCubic.cubic_long_mollifier_asymptotic_of_exact_inputs

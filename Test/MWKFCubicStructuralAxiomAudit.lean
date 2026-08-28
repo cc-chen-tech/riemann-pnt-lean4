@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.MWKFCubicStructural
+
+#print axioms PrimeNumberTheorem.MWKFCubic.gcd_scaled_eq_iff_coprime
+#print axioms PrimeNumberTheorem.MWKFCubic.gcd_extraction
+#print axioms PrimeNumberTheorem.MWKFCubic.shifted_eq_complementary_divisor
+#print axioms PrimeNumberTheorem.MWKFCubic.sum_partition_by_shell
+#print axioms PrimeNumberTheorem.MWKFCubic.sum_moebius_convolution_divisors

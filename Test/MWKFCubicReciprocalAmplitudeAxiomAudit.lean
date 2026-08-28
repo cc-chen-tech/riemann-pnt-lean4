@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicReciprocalAmplitude
+
+#print axioms PrimeNumberTheorem.MWKFCubic.hasDerivAt_reciprocalAmplitude
+#print axioms PrimeNumberTheorem.MWKFCubic.normalized_reciprocalAmplitude_derivative
