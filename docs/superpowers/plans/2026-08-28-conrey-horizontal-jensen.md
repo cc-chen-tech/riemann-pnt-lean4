@@ -183,19 +183,19 @@ git commit -m "feat(conrey): prove horizontal Jensen circle growth"
 - Consumes: Tasks 1--3 and `PrimeNumberTheorem.AnalyticJensen`.
 - Produces the exact `HJ-mass` inequality and a height `t in Icc U (U+1)` on which `F(x+it) != 0` for every `x in Icc sigma0 A`.
 
-- [ ] **Step 1: Write and run the failing contract**
+- [x] **Step 1: Write and run the failing contract**
 
 Check the divisor definition, finite support, exact mass bound, and admissible-height theorem. Expected: unknown declarations.
 
-- [ ] **Step 2: Apply Jensen with center norm `1/6`**
+- [x] **Step 2: Apply Jensen with center norm `1/6`**
 
 Keep `Real.log (outerRadius / innerRadius)` visible. Do not replace it by a Big-O predicate.
 
-- [ ] **Step 3: Select a zero-free height**
+- [x] **Step 3: Select a zero-free height**
 
 Map the finite divisor support in the inner disk to imaginary parts and use the existing finite-set separation lemma to obtain a height in the unit window. Convert any hypothetical horizontal zero back to inner-disk divisor support using Task 1 containment.
 
-- [ ] **Step 4: Verify, document, and commit**
+- [x] **Step 4: Verify, document, and commit**
 
 ```bash
 lake env lean Test/ConreyHorizontalJensenCountContract.lean

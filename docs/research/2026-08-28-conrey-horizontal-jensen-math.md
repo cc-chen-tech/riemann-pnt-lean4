@@ -111,10 +111,9 @@ Hardy/argument-variation 主项仍为 `T log T`；下端的所有多对数误差
 
 在真正的 Conrey 截断 `2<=Y<=e^L` 下，`log max(1,|B|)<=L`。
 
-仓库中“系数绝对值至多一”的证明目前是
-`ConreyMollifierRightEdge` 的 private lemma。形式化增长界时应把这一
-有限和事实公开为独立端点，或者在新模块中重证；不能把右边线上
-`B=1+O(1/L)` 的定理误用于整个外圆。
+仓库中的“系数绝对值至多一”以及实际有限和界现已作为
+`ConreyMollifierRightEdge` 的公共端点。外圆增长证明直接使用这些端点；
+不能把右边线上 `B=1+O(1/L)` 的定理误用于整个外圆。
 
 ### 3.2 zeta 与导数
 
@@ -217,9 +216,31 @@ Jensen divisor、可容许高度以及正则部分水平积分仍未因此自动
 `HJ-mass` 作为第一公共端点，再单独证明尺度粗化，避免把几何损失藏在
 大 O 中。
 
+形式化时边界平均取
+
+\[
+ M=C\,Y\,(U+A+10)^6(L+2)^2,
+ \qquad {1\over6}\le |F(c)|.
+\]
+
+由球面点值界先得 `circleAverage log|F| <= log M`，再直接套 Jensen，
+因此右端最初出现为
+
+\[
+ {\log M-\log(1/6)\over\log(\mathcal R/r)}
+ ={\log M+\log6\over\log(\mathcal R/r)}.
+\]
+
+这里没有把点值上界直接冒充平均界；中间的 circle-average 单调性依赖
+`F` 在整个外圆盘解析。
+
 ## 5. 可容许高度和水平积分
 
-外圆 divisor 支撑有限。把内矩形零点的虚部组成有限集 `H`. 在
+外圆 divisor 支撑有限。这里 `H` 必须取“外圆 divisor 支撑中过滤到
+内圆 `closedBall(c,r)` 的点”的虚部，而不能取整个外圆支撑：Jensen
+只控制内圆质量，外环支撑的基数没有由 `HJ-mass` 控制。由于整个目标
+矩形包含于内圆，这个过滤不会漏掉水平段上的零点。把这些虚部组成
+有限集 `H`. 在
 `[U,U+1]` 中选择 `t`，使
 
 \[
