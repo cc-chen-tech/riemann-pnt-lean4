@@ -9106,6 +9106,102 @@ def test_ratio_fiber_energy_is_a_centered_short_shift_master() -> None:
     assert "(PCDI-SREM), and the coupled-kernel gate remain unproved" in text
 
 
+def test_ratio_fiber_energy_retains_all_three_centered_incidence_kernels() -> None:
+    audit = getattr(
+        coverage_audit,
+        "triple_centered_ratio_incidence_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        physical_rows=(
+            (7, (((1, 2), F(1)),)),
+            (17, (((3, 2), F(1)),)),
+        ),
+    )
+    assert result["physical_row_coefficients"] == {
+        7: F(5, 6),
+        17: F(15, 16),
+    }
+    assert result["direct_ratio_fiber_energy"] == F(7225, 768)
+    assert result["triple_centered_incidence_energy"] == F(7225, 768)
+    assert result["direct_equals_triple_centered_incidence"]
+    assert result["outer_centering_is_not_split_from_inner_centering"]
+    assert result["all_density_cross_terms_retained"]
+    assert result["triple_centered_finite_master_proved"]
+    assert not result["triple_centered_incidence_bound_proved"]
+    assert not result["CSSM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.186 The physical short-shift master has three centerings "
+        "and one determinant"
+    ) in text
+    assert r"\Delta_q(p_1-p_2)" in text
+    assert "all eight" in text
+    assert "triple-centered" in text
+
+
+def test_short_shift_double_incidence_has_exact_t_resonance_parameterization() -> None:
+    audit = getattr(
+        coverage_audit,
+        "short_shift_double_incidence_determinant_audit",
+        None,
+    )
+    assert audit is not None
+    resonant = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        short_shift=2,
+        first_m=1,
+        first_n=2,
+        first_quotient=1,
+        second_m=3,
+        second_n=2,
+        second_quotient=1,
+    )
+    assert resonant["common_determinant_t"] == 0
+    assert resonant["resonant"]
+    assert resonant["resonant_parameters"] == {
+        "common_gcd": 1,
+        "first_primitive_slope": 1,
+        "second_primitive_slope": 1,
+        "common_n_factor": 2,
+        "base_m_factor": 1,
+    }
+    assert resonant["resonant_ray_parameterization_reconstructs"]
+
+    nonresonant = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        short_shift=2,
+        first_m=1,
+        first_n=2,
+        first_quotient=1,
+        second_m=2,
+        second_n=7,
+        second_quotient=1,
+    )
+    assert nonresonant["common_determinant_t"] == 1
+    assert not nonresonant["resonant"]
+    assert nonresonant["first_determinant_equals_D_times_t"]
+    assert nonresonant["second_determinant_equals_q_times_t"]
+    assert not nonresonant["nonzero_determinant_bound_proved"]
+    assert not nonresonant["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"n_2s_1-n_1s_2&=qt" in text
+    assert r"m_2=v(\ell+rg)" in text
+    assert "determinant **value**, not a Fourier frequency" in text
+    assert "the other seven density terms" in text
+    assert "the coupled-kernel gate remain open" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

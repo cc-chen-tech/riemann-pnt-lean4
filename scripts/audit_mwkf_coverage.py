@@ -25473,6 +25473,270 @@ def short_prime_global_D_centered_ttstar_audit(
     }
 
 
+def triple_centered_ratio_incidence_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    physical_rows: tuple[
+        tuple[
+            int,
+            tuple[tuple[tuple[int, int], Fraction], ...],
+        ],
+        ...,
+    ],
+) -> dict[str, object]:
+    """Keep outer ratio centering and both inner centerings together.
+
+    A long-prime row ``p`` carries the literal centered coefficient
+
+    ``C(p) = sum_(m,n) w(p,m,n)``
+    ``(1_(p | q*m + D*n) - 1/(p-1))``.
+
+    The scalar ratio-fiber Gram is therefore exactly the triple-centered
+    incidence sum
+
+    ``(q-1) sum w_1 w_2 Delta_q(p_1-p_2)``
+    ``Delta_(p_1)(q*m_1+D*n_1) Delta_(p_2)(q*m_2+D*n_2)``.
+
+    This finite identity deliberately expands every density cross term;
+    it supplies no estimate for the resulting moving-coefficient sum.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if gcd(D, q) != 1:
+        raise ValueError("the determinant shift must be a unit modulo q")
+    if not physical_rows:
+        raise ValueError("at least one physical long-prime row is required")
+
+    converted: list[
+        tuple[int, tuple[tuple[int, int, Fraction], ...]]
+    ] = []
+    seen_primes: set[int] = set()
+    row_coefficients: dict[int, Fraction] = {}
+    for raw_p, raw_lifts in physical_rows:
+        p = int(raw_p)
+        if (
+            p in seen_primes
+            or _finite_prime_exponents(p) != {p: 1}
+            or gcd(p, q) != 1
+        ):
+            raise ValueError(
+                "long-prime labels must be distinct primes coprime to q"
+            )
+        if not raw_lifts:
+            raise ValueError("every physical row needs at least one lift")
+        seen_primes.add(p)
+        lifts: list[tuple[int, int, Fraction]] = []
+        seen_lifts: set[tuple[int, int]] = set()
+        coefficient = F(0)
+        for raw_coordinates, raw_weight in raw_lifts:
+            if len(raw_coordinates) != 2:
+                raise ValueError("lift coordinates must be pairs")
+            m = int(raw_coordinates[0])
+            n = int(raw_coordinates[1])
+            if min(m, n) <= 0 or (m, n) in seen_lifts:
+                raise ValueError(
+                    "lift coordinates must be distinct positive pairs"
+                )
+            seen_lifts.add((m, n))
+            weight = F(raw_weight)
+            lifts.append((m, n, weight))
+            inner_delta = (
+                F(1 if (q * m + D * n) % p == 0 else 0)
+                - F(1, p - 1)
+            )
+            coefficient += weight * inner_delta
+        converted.append((p, tuple(lifts)))
+        row_coefficients[p] = coefficient
+
+    scalar_audit = short_prime_global_D_centered_ttstar_audit(
+        short_prime=q,
+        outer_rows=tuple(
+            (p, D, row_coefficients[p]) for p, _ in converted
+        ),
+    )
+    direct_energy = F(scalar_audit["ratio_fiber_energy_formula"])
+    phi_q = q - 1
+    triple_energy = F(0)
+    for first_p, first_lifts in converted:
+        for second_p, second_lifts in converted:
+            outer_delta = (
+                F(1 if (first_p - second_p) % q == 0 else 0)
+                - F(1, phi_q)
+            )
+            for first_m, first_n, first_weight in first_lifts:
+                first_delta = (
+                    F(
+                        1
+                        if (q * first_m + D * first_n) % first_p == 0
+                        else 0
+                    )
+                    - F(1, first_p - 1)
+                )
+                for second_m, second_n, second_weight in second_lifts:
+                    second_delta = (
+                        F(
+                            1
+                            if (q * second_m + D * second_n) % second_p == 0
+                            else 0
+                        )
+                        - F(1, second_p - 1)
+                    )
+                    triple_energy += (
+                        F(phi_q)
+                        * first_weight
+                        * second_weight
+                        * outer_delta
+                        * first_delta
+                        * second_delta
+                    )
+
+    identity_proved = bool(direct_energy == triple_energy)
+    return {
+        "short_prime": q,
+        "determinant_shift": D,
+        "physical_rows": tuple(converted),
+        "physical_row_coefficients": row_coefficients,
+        "direct_ratio_fiber_energy": direct_energy,
+        "triple_centered_incidence_energy": triple_energy,
+        "direct_equals_triple_centered_incidence": identity_proved,
+        "outer_centering_is_not_split_from_inner_centering": True,
+        "all_density_cross_terms_retained": True,
+        "triple_centered_finite_master_proved": identity_proved,
+        "triple_centered_incidence_bound_proved": False,
+        "CSSM_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def short_shift_double_incidence_determinant_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    first_long_prime: int,
+    second_long_prime: int,
+    short_shift: int,
+    first_m: int,
+    first_n: int,
+    first_quotient: int,
+    second_m: int,
+    second_n: int,
+    second_quotient: int,
+) -> dict[str, object]:
+    """Eliminate two inner incidences on one outer short-shift fiber.
+
+    With ``p_2=p_1+r*q`` and ``p_i*s_i=q*m_i+D*n_i``, exact
+    elimination gives one common determinant value ``t``:
+
+    ``n_2*s_1-n_1*s_2=q*t`` and
+    ``m_1*s_2+r*s_1*s_2-m_2*s_1=D*t``.
+
+    When ``t=0``, writing ``s_1=g*u`` and ``s_2=g*v`` with coprime
+    ``u,v`` gives the exact ray parameterization
+
+    ``n_1=u*k, n_2=v*k, m_1=u*l, m_2=v*(l+r*g)``.
+
+    The parameterization identifies the resonant ledger but does not
+    evaluate or bound it.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    p1 = int(first_long_prime)
+    p2 = int(second_long_prime)
+    r = int(short_shift)
+    m1 = int(first_m)
+    n1 = int(first_n)
+    s1 = int(first_quotient)
+    m2 = int(second_m)
+    n2 = int(second_n)
+    s2 = int(second_quotient)
+
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if gcd(D, q) != 1:
+        raise ValueError("the determinant shift must be a unit modulo q")
+    if (
+        _finite_prime_exponents(p1) != {p1: 1}
+        or _finite_prime_exponents(p2) != {p2: 1}
+        or gcd(p1 * p2, q) != 1
+    ):
+        raise ValueError("the long labels must be primes coprime to q")
+    if min(m1, n1, s1, m2, n2, s2) <= 0:
+        raise ValueError("all lift and quotient coordinates must be positive")
+    if p2 != p1 + r * q:
+        raise ValueError("the outer rows do not lie on the supplied short shift")
+    if p1 * s1 != q * m1 + D * n1:
+        raise ValueError("the first inner incidence equation does not hold")
+    if p2 * s2 != q * m2 + D * n2:
+        raise ValueError("the second inner incidence equation does not hold")
+
+    first_determinant = m1 * s2 + r * s1 * s2 - m2 * s1
+    second_determinant = n2 * s1 - n1 * s2
+    elimination_identity = q * first_determinant == D * second_determinant
+    if not elimination_identity or second_determinant % q != 0:
+        raise ArithmeticError("coprime determinant elimination failed")
+    t = second_determinant // q
+    first_identity = first_determinant == D * t
+    second_identity = second_determinant == q * t
+    if not first_identity:
+        raise ArithmeticError("the first determinant is not D times t")
+
+    resonant_parameters: dict[str, int] | None = None
+    reconstructs = False
+    if t == 0:
+        common_gcd = gcd(s1, s2)
+        u = s1 // common_gcd
+        v = s2 // common_gcd
+        if (
+            gcd(u, v) != 1
+            or n1 % u != 0
+            or n2 % v != 0
+            or m1 % u != 0
+            or m2 % v != 0
+        ):
+            raise ArithmeticError("the resonant ray divisibilities failed")
+        k = n1 // u
+        ell = m1 // u
+        resonant_parameters = {
+            "common_gcd": common_gcd,
+            "first_primitive_slope": u,
+            "second_primitive_slope": v,
+            "common_n_factor": k,
+            "base_m_factor": ell,
+        }
+        reconstructs = bool(
+            n1 == u * k
+            and n2 == v * k
+            and m1 == u * ell
+            and m2 == v * (ell + r * common_gcd)
+        )
+        if not reconstructs:
+            raise ArithmeticError("the resonant ray does not reconstruct")
+
+    return {
+        "short_prime": q,
+        "determinant_shift": D,
+        "short_shift": r,
+        "first_determinant": first_determinant,
+        "second_determinant": second_determinant,
+        "common_determinant_t": t,
+        "resonant": t == 0,
+        "resonant_parameters": resonant_parameters,
+        "resonant_ray_parameterization_reconstructs": reconstructs,
+        "first_determinant_equals_D_times_t": first_identity,
+        "second_determinant_equals_q_times_t": second_identity,
+        "determinant_elimination_identity_proved": elimination_identity,
+        "nonzero_determinant_bound_proved": False,
+        "resonant_ledger_evaluated": False,
+        "CSSM_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def short_prime_weighted_profile_ttstar_audit(
     *,
     short_prime: int,

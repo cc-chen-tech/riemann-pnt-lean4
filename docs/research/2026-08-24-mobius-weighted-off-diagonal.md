@@ -76,6 +76,7 @@
 > | Global packet-norm reassembly | Section 9.183 proves the missing direct-sum normalization.  The shared \(a=h\delta\) convolution and all signed Type blocks remain inside each physical row; only the already registered Hilbert coordinates \((g,D,q,\ldots)\) are direct-summed.  For projective weights \(\rho_\omega\), one weighted Hilbert-space Cauchy inequality gives \(|\mathscr S|^2\leq(\sum_\omega|\rho_\omega|\mathfrak E_{{\rm short},\omega})(\sum_\omega|\rho_\omega|\mathfrak E_{{\rm fib},\omega})\).  The first factor is a subenergy of the packet-exhaustive Section 9.144 row norm; the second is exactly the signed ratio-fiber energy.  Consequently (WRFE) now rigorously implies (PCDI-SREM), with no repeated Type-I or row-energy saving.  This proves the global adapter and replaces the former packet ambiguity by one analytic leaf; (WRFE) itself remains unproved |
 > | Separated ratio-fiber large-sieve coverage | Section 9.184 applies character Parseval and the Bombieri--Davenport multiplicative large sieve to the coefficient class \(C_q(p)=\beta_q\alpha_p\), and more generally to a subpolynomial-projective sum of such atoms.  The occupancy energy exponent is \(\sigma_L+\sigma_S\), whereas the large-sieve exponent is \(\max\{\sigma_L,2\sigma_S\}\).  On the physical wedge this saves exactly \(\sigma_L-\sigma_S\geq2\eta_{\rm cross}\), including equality at the extreme face; hence every genuinely level-independent long-coefficient atom satisfies (WRFE).  But the literal coefficient contains \(V_p(D\overline q_p)\) and is level-dependent.  A one-residue-class finite witness has ratio-fiber energy \((\varphi(q)-1)n^2\), a fixed proportion of the occupancy bound \(\varphi(q)n^2\), so no arbitrary level-dependent large sieve can prove (WRFE).  The remaining gate must exploit the first physical incidence and its retained Möbius/\(h\delta\) structure |
 > | Centered short-shift Type master | Section 9.185 opens the ratio-fiber equality itself.  For fixed \((\omega,\lambda,q,D)\), write \(p_2-p_1=rq\).  Then \(|r|\ll P/Q\leq T^{1/2}\) and the exact fiber energy is \(\varphi(q)\mathcal C(0)+\{\varphi(q)\sum_{r\ne0}\mathcal C(r)-|\sum_pC(p)|^2\}\).  The braces are the centered nonzero-shift remainder; the negative rank-one term cannot be discarded.  Substituting the exact residual \(C=C^{\rm I}+C^{\rm II}\) produces all four ordered Type blocks in both the shift correlations and the rank-one subtraction before any absolute value.  At the extreme face (WRFE) is exactly the assertion that this centered \(|r|\leq T^{1/2}\) two-Möbius remainder is of diagonal size.  The finite master and Type reassembly are proved; its analytic bound is not |
+> | Triple-centered short-shift determinant | Section 9.186 substitutes the literal first physical incidence into the ratio-fiber energy before expanding any density term.  The exact result is a product of three centered kernels, \(\Delta_q(p_1-p_2)\Delta_{p_1}(qm_1+Dn_1)\Delta_{p_2}(qm_2+Dn_2)\), so all eight incidence/density terms remain in one finite master.  On the fully incident outer shift \(p_2=p_1+rq\), quotient elimination produces one common determinant \(t\): \(n_2s_1-n_1s_2=qt\) and \(m_1s_2+rs_1s_2-m_2s_1=Dt\).  Its \(t=0\) rows have the exact coprime-ray parameterization \(s_1=gu,s_2=gv,n_1=uk,n_2=vk,m_1=u\ell,m_2=v(\ell+rg)\).  This parameterizes only the fully incident summand: the other seven density terms have no canonical \(t\), so a separate positive \(t=0\) extraction would again be invalid.  The finite identity and ray parameterization are proved; the globally reassembled resonant ledger and the \(t\ne0\) analytic bound remain unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -26368,6 +26369,127 @@ ordered Type blocks, and records the largest finite shift.  It marks
 the finite reassembly proved while leaving (CSSM) and every analytic
 downstream gate false.
 
+### 9.186 The physical short-shift master has three centerings and one determinant
+
+The coefficient in Section 9.185 is not an arbitrary function of the
+long prime.  For one finite physical row write
+
+\[
+ \Delta_\ell(x):=\mathbf 1_{\ell\mid x}-\frac1{\varphi(\ell)},
+ \qquad
+ C(p)=\sum_{m,n}w_p(m,n)\Delta_p(qm+Dn).
+ \tag{9.1249}
+\]
+
+Here the supplied weight \(w_p(m,n)\) retains the internal Type block,
+the Möbius coefficients, \(a=h\delta\), and the AFE/reflection packet.
+Substituting (9.1249) into the ratio-fiber formula (9.1227), before
+expanding any centering, gives the exact finite identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak E_{\rm fib}
+ =\varphi(q)\sum_{p_1,p_2}\sum_{m_1,n_1,m_2,n_2}
+ &w_{p_1}(m_1,n_1)\overline{w_{p_2}(m_2,n_2)}\\
+ &\times\Delta_q(p_1-p_2)
+ \Delta_{p_1}(qm_1+Dn_1)
+ \Delta_{p_2}(qm_2+Dn_2).
+ \end{aligned}}
+ \tag{9.1250}
+\]
+
+Thus the outer progression mean and both inner divisor densities are
+one **triple-centered** object.  Expanding (9.1250) produces all eight
+incidence/density cross terms.  No one of the three negative density
+pieces can be charged separately without changing the rank-one
+subtraction already present in (9.1243).  There is no truncation error
+in (9.1250): all variables retain precisely their original finite
+physical supports.
+
+The fully incident term has a further exact determinant structure.  On
+its outer incidence put
+
+\[
+ p_2=p_1+rq,
+ \tag{9.1251}
+\]
+
+and introduce the positive inner quotients
+
+\[
+ p_1s_1=qm_1+Dn_1,
+ \qquad
+ p_2s_2=qm_2+Dn_2.
+ \tag{9.1252}
+\]
+
+Multiplying the two equations in (9.1252) by \(s_2,s_1\), respectively,
+and using (9.1251) gives
+
+\[
+ q\bigl(m_1s_2+rs_1s_2-m_2s_1\bigr)
+ =D\bigl(n_2s_1-n_1s_2\bigr).
+ \tag{9.1253}
+\]
+
+The physical support has \((q,D)=1\).  Hence there is a unique integer
+\(t\) such that
+
+\[
+ \boxed{
+ \begin{aligned}
+ n_2s_1-n_1s_2&=qt,\\
+ m_1s_2+rs_1s_2-m_2s_1&=Dt.
+ \end{aligned}}
+ \tag{9.1254}
+\]
+
+This \(t\) is a determinant **value**, not a Fourier frequency; the
+warning in Section 9.179 continues to apply.  The zero-value rows admit
+a complete elementary parameterization.  Write
+\(g=(s_1,s_2)\), \(s_1=gu\), and \(s_2=gv\), with \((u,v)=1\).
+Then \(t=0\) in (9.1254) is equivalent to the existence of integers
+\(k,\ell\) for which
+
+\[
+ \boxed{
+ n_1=uk,\quad n_2=vk,\quad
+ m_1=u\ell,\quad m_2=v(\ell+rg).}
+ \tag{9.1255}
+\]
+
+Indeed, the first zero determinant gives \(n_2u=n_1v\), hence the
+first two formulae by coprimality.  The second gives
+\(vm_1=u(m_2-rgv)\), hence the last two; substitution proves the
+converse.  This is endpoint-exact and introduces no divisor-bound or
+dyadic loss.
+
+Equation (9.1255) does **not** by itself evaluate the resonant
+contribution to (9.1250).  It parameterizes only the term in which all
+three incidence indicators equal one.  The other seven density terms
+in the expansion of (9.1250) do not carry quotients \(s_1,s_2\), and
+therefore have no canonical determinant value \(t\).  Consequently a
+positive extraction of the \(t=0\) part of the fully incident term,
+followed by a separate estimate of the density corrections, repeats
+the invalid determinant split identified in Section 9.179.
+
+The next legitimate finite task is therefore narrower and explicit:
+reassemble the \(t=0\) ray family (9.1255) with all seven density terms,
+the negative rank-one term of (9.1243), both AFE directions, reflection,
+and the explicit diagonal.  Only after that common ledger is evaluated
+may the signed \(t\ne0\) family in (9.1254) be passed to determinant
+dispersion.  Neither the resonant ledger nor that analytic nonzero-
+determinant estimate is proved here, so (CSSM), (WRFE), (PCDI-SREM), and
+the coupled-kernel gate remain open.
+
+The helper `triple_centered_ratio_incidence_audit` verifies (9.1250)
+for arbitrary finite rational row weights while retaining every density
+cross term.  The helper
+`short_shift_double_incidence_determinant_audit` verifies (9.1253)--
+(9.1255) and reconstructs the resonant ray.  Both leave the resonant-
+ledger, nonzero-determinant, (CSSM), and coupled-kernel flags false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -26584,6 +26706,19 @@ rank-one term retain all four ordered Type blocks before absolute
 values.  At the extreme face the missing estimate is precisely the
 diagonal-size bound (9.1248).  This finite Type/shift reduction is
 proved; the analytic centered short-shift estimate (CSSM) is not.
+
+Section 9.186 now substitutes the first literal physical incidence into
+that fiber energy and proves the triple-centered master (9.1250).  On
+the term where all three incidences occur, the outer short shift and
+the two inner quotients collapse to the single determinant value in
+(9.1254); the zero-value locus is exactly the coprime-ray family
+(9.1255).  This is a sharper finite reduction, but not a resonant
+evaluation: the seven density cross terms have no canonical \(t\), so
+they must be reassembled with the \(t=0\) ray, rank-one subtraction,
+AFE/reflection, and diagonal before any positivity argument.  That
+global resonant ledger and the signed \(t\ne0\) dispersion are both
+unproved; therefore (CSSM), (WRFE), and the coupled-kernel gate remain
+open.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
