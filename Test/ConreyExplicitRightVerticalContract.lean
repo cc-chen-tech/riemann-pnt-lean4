@@ -15,6 +15,10 @@ namespace HardyTheorem
 #check conreyExplicitRightVerticalProduct
 #check norm_conreyExplicitRightVerticalProduct_sub_heightMain_le
 #check conreyExplicitRightVerticalProduct_ne_zero
+#check abs_log_sub_log_le_six_mul_abs_sub
+#check abs_log_le_three_mul_one_sub
+#check integral_log_conrey_height_compensation_one_exp_le
+#check abs_log_norm_conreyExplicitRightVerticalProduct_le
 
 #print axioms conreyExplicitDegreeOneHeightMain_eq
 #print axioms one_third_le_conreyExplicitDegreeOneHeightMain_re
@@ -23,5 +27,9 @@ namespace HardyTheorem
 #print axioms norm_conreyExplicitDegreeOneHeightMain_eq_re
 #print axioms norm_conreyExplicitRightVerticalProduct_sub_heightMain_le
 #print axioms conreyExplicitRightVerticalProduct_ne_zero
+#print axioms abs_log_sub_log_le_six_mul_abs_sub
+#print axioms abs_log_le_three_mul_one_sub
+#print axioms integral_log_conrey_height_compensation_one_exp_le
+#print axioms abs_log_norm_conreyExplicitRightVerticalProduct_le
 
 end HardyTheorem

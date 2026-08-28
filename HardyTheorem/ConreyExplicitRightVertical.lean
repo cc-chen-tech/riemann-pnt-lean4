@@ -1,5 +1,6 @@
 import HardyTheorem.ConreyMollifierRightEdge
 import HardyTheorem.ConreyV1RightEdge
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # Conrey's explicit height main term on the global right vertical
@@ -247,5 +248,211 @@ theorem conreyExplicitRightVerticalProduct_ne_zero
     gcongr
   have : (1 / 3 : ℝ) ≤ 79 / 600 := hmain.trans (herr.trans hsmall)
   norm_num at this
+
+/-- A quantitative logarithm stability estimate on the positive half-line.
+The asymmetric lower bounds are the ones needed for the explicit Conrey
+product and its height-dependent main term. -/
+theorem abs_log_sub_log_le_six_mul_abs_sub
+    {x a : ℝ} (hx : 1 / 6 ≤ x) (ha : 1 / 3 ≤ a) :
+    |Real.log x - Real.log a| ≤ 6 * |x - a| := by
+  have hxpos : 0 < x := by linarith
+  have hapos : 0 < a := by linarith
+  by_cases hax : a ≤ x
+  · have hlog : 0 ≤ Real.log x - Real.log a := by
+      exact sub_nonneg.mpr (Real.log_le_log hapos hax)
+    rw [abs_of_nonneg hlog, ← Real.log_div hxpos.ne' hapos.ne']
+    calc
+      Real.log (x / a) ≤ x / a - 1 :=
+        Real.log_le_sub_one_of_pos (div_pos hxpos hapos)
+      _ = (x - a) / a := by field_simp [hapos.ne']
+      _ ≤ 3 * (x - a) := by
+        have hinv : a⁻¹ ≤ 3 := by
+          rw [inv_le_iff_one_le_mul₀ hapos]
+          linarith
+        rw [div_eq_mul_inv]
+        simpa only [mul_comm] using
+          mul_le_mul_of_nonneg_left hinv (sub_nonneg.mpr hax)
+      _ ≤ 6 * |x - a| := by
+        rw [abs_of_nonneg (sub_nonneg.mpr hax)]
+        linarith
+  · have hxa : x ≤ a := le_of_not_ge hax
+    have hlog : Real.log x - Real.log a ≤ 0 := by
+      exact sub_nonpos.mpr (Real.log_le_log hxpos hxa)
+    rw [abs_of_nonpos hlog]
+    rw [show -(Real.log x - Real.log a) = Real.log a - Real.log x by ring,
+      ← Real.log_div hapos.ne' hxpos.ne']
+    calc
+      Real.log (a / x) ≤ a / x - 1 :=
+        Real.log_le_sub_one_of_pos (div_pos hapos hxpos)
+      _ = (a - x) / x := by field_simp [hxpos.ne']
+      _ ≤ 6 * (a - x) := by
+        have hinv : x⁻¹ ≤ 6 := by
+          rw [inv_le_iff_one_le_mul₀ hxpos]
+          linarith
+        rw [div_eq_mul_inv]
+        simpa only [mul_comm] using
+          mul_le_mul_of_nonneg_left hinv (sub_nonneg.mpr hxa)
+      _ = 6 * |x - a| := by
+        rw [abs_of_nonpos (sub_nonpos.mpr hxa)]
+        ring
+
+/-- On `[1/3,1]`, the logarithm is controlled by the distance from one. -/
+theorem abs_log_le_three_mul_one_sub
+    {a : ℝ} (ha : 1 / 3 ≤ a) (ha1 : a ≤ 1) :
+    |Real.log a| ≤ 3 * (1 - a) := by
+  have hapos : 0 < a := by linarith
+  have hlog : Real.log a ≤ 0 := Real.log_nonpos hapos.le ha1
+  rw [abs_of_nonpos hlog, ← Real.log_inv]
+  calc
+    Real.log a⁻¹ ≤ a⁻¹ - 1 := Real.log_le_sub_one_of_pos (inv_pos.mpr hapos)
+    _ = (1 - a) / a := by field_simp [hapos.ne']
+    _ ≤ 3 * (1 - a) := by
+      have hinv : a⁻¹ ≤ 3 := by
+        rw [inv_le_iff_one_le_mul₀ hapos]
+        linarith
+      rw [div_eq_mul_inv]
+      simpa only [mul_comm] using
+        mul_le_mul_of_nonneg_left hinv (sub_nonneg.mpr ha1)
+
+/-- The height-compensation logarithm has only linear total mass.  This is
+the elementary integral which recovers the factor `1/L` on the global right
+vertical. -/
+theorem integral_log_conrey_height_compensation_one_exp_le
+    {L : ℝ} (hL : 0 ≤ L) :
+    (∫ t in (1 : ℝ)..Real.exp L,
+      Real.log ((2 * Real.pi * Real.exp L) / t)) ≤ 3 * Real.exp L := by
+  have honeexp : (1 : ℝ) ≤ Real.exp L := by
+    simpa only [Real.exp_zero] using Real.exp_le_exp.mpr hL
+  have hCpos : 0 < 2 * Real.pi * Real.exp L := by positivity
+  have heq :
+      (∫ t in (1 : ℝ)..Real.exp L,
+        Real.log ((2 * Real.pi * Real.exp L) / t)) =
+      ∫ t in (1 : ℝ)..Real.exp L,
+        (Real.log (2 * Real.pi * Real.exp L) - Real.log t) := by
+    apply intervalIntegral.integral_congr
+    intro t ht
+    rw [Set.uIcc_of_le honeexp] at ht
+    exact Real.log_div hCpos.ne' (by linarith [ht.1])
+  rw [heq, intervalIntegral.integral_sub
+      (intervalIntegrable_const : IntervalIntegrable
+        (fun _t : ℝ => Real.log (2 * Real.pi * Real.exp L))
+          MeasureTheory.volume 1 (Real.exp L))
+      intervalIntegral.intervalIntegrable_log',
+    intervalIntegral.integral_const, integral_log]
+  simp only [smul_eq_mul]
+  have hlogC : Real.log (2 * Real.pi * Real.exp L) =
+      Real.log (2 * Real.pi) + L := by
+    rw [Real.log_mul (by positivity : 2 * Real.pi ≠ 0) (Real.exp_ne_zero L),
+      Real.log_exp]
+  rw [hlogC, Real.log_exp, Real.log_one]
+  have hlogTwoPi : Real.log (2 * Real.pi) ≤ 2 := by
+    exact log_two_mul_pi_le_two
+  have hlogCnonneg : 0 ≤ Real.log (2 * Real.pi) + L := by
+    have : 0 ≤ Real.log (2 * Real.pi) := Real.log_nonneg (by
+      have hpi := Real.pi_gt_three
+      nlinarith)
+    linarith
+  nlinarith [Real.exp_pos L]
+
+/-- Pointwise `O(1/L)` control of the logarithm on the high part of Conrey's
+global right vertical.  The second term retains the exact height compensation
+which is integrable without losing a factor of `L`. -/
+theorem abs_log_norm_conreyExplicitRightVerticalProduct_le
+    {Y : ℕ} {sigma0 L t : ℝ}
+    (hY : 2 ≤ Y) (hsigma0 : sigma0 ≤ 1 / 2)
+    (hL : 600 ≤ L) (ht : 2 * Real.log L ≤ t)
+    (htop : t ≤ Real.exp L) :
+    |Real.log ‖conreyExplicitRightVerticalProduct Y sigma0 L t‖| ≤
+      500 / L + (2 / L) * Real.log ((2 * Real.pi * Real.exp L) / t) := by
+  have hLpos : 0 < L := by linarith
+  have he2lt : Real.exp 2 < 9 := by
+    have he := Real.exp_one_lt_three
+    have he2 : Real.exp 2 = Real.exp 1 * Real.exp 1 := by
+      rw [← Real.exp_add]
+      norm_num
+    rw [he2]
+    nlinarith [Real.exp_pos 1]
+  have hLexp2 : Real.exp 2 ≤ L := he2lt.le.trans (by linarith)
+  have hlogL : 2 ≤ Real.log L := by
+    have hmono := Real.strictMonoOn_log.monotoneOn
+      (Set.mem_Ioi.mpr (Real.exp_pos 2)) (Set.mem_Ioi.mpr hLpos) hLexp2
+    simpa only [Real.log_exp] using hmono
+  have ht1 : 1 ≤ t := by linarith
+  have htpos : 0 < t := by linarith
+  let P : ℂ := conreyExplicitRightVerticalProduct Y sigma0 L t
+  let A : ℂ := conreyExplicitDegreeOneHeightMain L t
+  have hAeq : ‖A‖ = A.re := by
+    simpa only [A] using norm_conreyExplicitDegreeOneHeightMain_eq_re hLexp2 ht1
+  have hAlower : (1 / 3 : ℝ) ≤ ‖A‖ := by
+    rw [hAeq]
+    simpa only [A] using one_third_le_conreyExplicitDegreeOneHeightMain_re hLexp2 ht1
+  have hAupper : ‖A‖ ≤ 1 := by
+    rw [hAeq]
+    simpa only [A] using
+      conreyExplicitDegreeOneHeightMain_re_le_one hLpos htpos htop
+  have herr : ‖P - A‖ ≤ 79 / L := by
+    simpa only [P, A] using
+      norm_conreyExplicitRightVerticalProduct_sub_heightMain_le
+        hY hsigma0 hL ht htop
+  have hnormdiff : |‖P‖ - ‖A‖| ≤ 79 / L :=
+    (abs_norm_sub_norm_le P A).trans herr
+  have hP_lower : (1 / 6 : ℝ) ≤ ‖P‖ := by
+    have hsmall : (79 / L : ℝ) ≤ 79 / 600 := by gcongr
+    have hleft : ‖A‖ - ‖P‖ ≤ 79 / L := by
+      have := (le_abs_self (‖A‖ - ‖P‖)).trans
+        (by simpa only [abs_sub_comm] using hnormdiff)
+      exact this
+    nlinarith [hAlower, hleft, hsmall]
+  have hperturb :
+      |Real.log ‖P‖ - Real.log ‖A‖| ≤ 474 / L := by
+    calc
+      |Real.log ‖P‖ - Real.log ‖A‖| ≤ 6 * |‖P‖ - ‖A‖| :=
+        abs_log_sub_log_le_six_mul_abs_sub hP_lower hAlower
+      _ ≤ 6 * (79 / L) := by gcongr
+      _ = 474 / L := by ring
+  have hmainlog : |Real.log ‖A‖| ≤ 3 * (1 - ‖A‖) :=
+    abs_log_le_three_mul_one_sub hAlower hAupper
+  have hgap :
+      1 - ‖A‖ = 51 / (100 * L) *
+        Real.log ((2 * Real.pi * Real.exp L) / t) := by
+    rw [hAeq]
+    simpa only [A] using
+      one_sub_conreyExplicitDegreeOneHeightMain_re_eq hLpos.ne' htpos
+  have htwoPi : 1 ≤ 2 * Real.pi := by
+    have hpi := Real.pi_gt_three
+    nlinarith
+  have hratio : 1 ≤ (2 * Real.pi * Real.exp L) / t := by
+    rw [le_div_iff₀ htpos]
+    simpa only [one_mul] using
+      htop.trans (le_mul_of_one_le_left (Real.exp_nonneg L) htwoPi)
+  have hlogratio : 0 ≤ Real.log ((2 * Real.pi * Real.exp L) / t) :=
+    Real.log_nonneg hratio
+  have hmainlog' :
+      |Real.log ‖A‖| ≤ (2 / L) *
+        Real.log ((2 * Real.pi * Real.exp L) / t) := by
+    rw [hgap] at hmainlog
+    calc
+      |Real.log ‖A‖| ≤ 3 *
+          (51 / (100 * L) * Real.log ((2 * Real.pi * Real.exp L) / t)) :=
+        hmainlog
+      _ = (3 * (51 / (100 * L))) *
+          Real.log ((2 * Real.pi * Real.exp L) / t) := by ring
+      _ ≤ (2 / L) * Real.log ((2 * Real.pi * Real.exp L) / t) := by
+        have hcoeff : 3 * (51 / (100 * L)) ≤ 2 / L := by
+          field_simp [hLpos.ne']
+          norm_num
+        exact mul_le_mul_of_nonneg_right hcoeff hlogratio
+  calc
+    |Real.log ‖conreyExplicitRightVerticalProduct Y sigma0 L t‖| =
+        |Real.log ‖P‖| := by rfl
+    _ = |(Real.log ‖P‖ - Real.log ‖A‖) + Real.log ‖A‖| := by ring_nf
+    _ ≤ |Real.log ‖P‖ - Real.log ‖A‖| + |Real.log ‖A‖| := abs_add_le _ _
+    _ ≤ 474 / L + (2 / L) *
+        Real.log ((2 * Real.pi * Real.exp L) / t) :=
+      add_le_add hperturb hmainlog'
+    _ ≤ 500 / L + (2 / L) *
+        Real.log ((2 * Real.pi * Real.exp L) / t) := by
+      exact add_le_add
+        (div_le_div_of_nonneg_right (by norm_num) hLpos.le) le_rfl
 
 end HardyTheorem

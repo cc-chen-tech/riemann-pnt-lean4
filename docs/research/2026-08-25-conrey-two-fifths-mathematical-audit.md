@@ -1730,3 +1730,34 @@ This closes the explicit high-part pointwise and nonvanishing layer.  It does
 **not** yet prove the absolute-log Lipschitz bound, its high-part integral,
 the low-part reciprocal bound, or the final global right-vertical integral.
 Equation (37)'s right vertical therefore remains open at this checkpoint.
+
+### 23.3 Verified checkpoint: high-part logarithmic compensation
+
+The next high-part step is now proved without replacing the moving main term
+by a constant:
+
+- `abs_log_sub_log_le_six_mul_abs_sub` proves the elementary positive-line
+  Lipschitz estimate needed to pass from the product error to logarithms;
+- `abs_log_le_three_mul_one_sub` controls the logarithm of the real main term
+  by its exact distance from one;
+- `abs_log_norm_conreyExplicitRightVerticalProduct_le` combines these facts
+  with Section 23.2 to prove
+
+  \[
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|
+  \le {500\over L}+{2\over L}\log {2\pi e^L\over t}
+  \]
+
+  throughout `2 log L <= t <= exp L`, for `L >= 600`; and
+- `integral_log_conrey_height_compensation_one_exp_le` proves the elementary
+  global compensation estimate
+
+  \[
+  \int_1^{e^L}\log {2\pi e^L\over t}\,dt\le 3e^L.
+  \]
+
+This proves both mathematical ingredients responsible for recovering the
+factor `1/L` on the high range.  The interval-integrability/composition step,
+the low-part reciprocal bound, and the final global absolute-log integral are
+still open.  Hence equation (37)'s right vertical, the horizontal Jensen
+terms, and the genuine two-fifths theorem remain unproved at this checkpoint.
