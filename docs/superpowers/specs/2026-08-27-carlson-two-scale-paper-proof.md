@@ -1034,6 +1034,20 @@ are now quantitatively uniform; the remaining work is the compact-interval
 limit, the positive-real scaling of the rotated Mellin integral, and the
 final limit-uniqueness calculation.
 
+The compact-interval limit is now formal too.  For every fixed
+`0<a<=b`, arbitrary `z` and real frequency `c`, Lean proves
+
+\[
+ \lim_{r\to0+}\int_a^b u^{z-1}e^{-ru}e^{-icu}\,du
+   =\int_a^b u^{z-1}e^{-icu}\,du.                                  \tag{8.15}
+\]
+
+The dominating function is exactly `u^(Re(z)-1)` on `[a,b]`; no tail or
+absolute-convergence claim is hidden in (8.15).  Together, (8.14) and (8.15)
+close the compact-plus-right-tail part of the Abel passage.  It remains to
+add the absolutely convergent `(0,1]` piece and identify the damped whole-ray
+integral with the already formal rotated Mellin/Gamma expression.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta
