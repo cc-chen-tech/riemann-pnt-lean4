@@ -1887,12 +1887,14 @@ This assembly exposed one boundary convention that the preceding ledger had
 not stated.  The current exact Lean Littlewood theorem requires all rectangle
 zeros to be strictly interior.  The selected heights and the positive-real-
 part right edge exclude bottom, top, and right boundary zeros, but the actual
-product need not be nonzero on `Re s=sigma_0`.  Classical Littlewood permits
-those left-edge zeros by shifting the edge and taking a limit; their weighted
-contribution tends to zero, while local analytic factorization gives `L^1`
-convergence of the logarithmic integral.  Formalizing this boundary-limit
-version is the next contour-core task.  It must replace, not hide behind, a
-left-edge nonvanishing assumption.
+product need not be nonzero on `Re s=sigma_0`.  The boundary is now handled
+by shifting it from the right through zero-free lines.  Target zeros with
+`Re rho>=1/2` remain in every shifted rectangle, and reverse Fatou gives the
+needed one-sided bound for the limiting left logarithmic integral; full
+`L^1` convergence is unnecessary.  The general epsilon theorem is formalized
+in `PrimeNumberTheorem/LittlewoodLeftBoundaryLimit.lean`.  Ordinary
+convergence of its shifted non-left remainder and specialization to the
+actual product remain the next contour-core tasks.
 
 After that, the transfer from selected endpoints to every height,
 equations (38)--(41), and the long mollified second moment remain open;
