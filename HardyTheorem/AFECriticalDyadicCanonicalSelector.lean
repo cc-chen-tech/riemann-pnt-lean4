@@ -98,6 +98,42 @@ theorem criticalAfeMainSum_mul_mollifier_eq_dyadicClampedPrefix
     criticalAfeMainSum_eq_Icc]
   congr 2
 
+private theorem aestronglyMeasurable_gaussian_normSq_dyadicClampedCriticalPrefix
+    (K X : ℕ) (Delta w : ℝ) :
+    AEStronglyMeasurable fun t : ℝ =>
+      Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+        Complex.normSq
+          (dyadicClampedCriticalPrefixMollifiedPolynomial K X t) := by
+  have hweight : Measurable fun t : ℝ =>
+      Real.exp (-((t - w) ^ 2) / Delta ^ 2) := by
+    fun_prop
+  have henergy : Measurable fun t : ℝ =>
+      Complex.normSq
+        (dyadicClampedCriticalPrefixMollifiedPolynomial K X t) :=
+    Complex.continuous_normSq.measurable.comp
+      (measurable_dyadicClampedCriticalPrefixMollifiedPolynomial K X)
+  change AEStronglyMeasurable
+    ((fun t : ℝ => Real.exp (-((t - w) ^ 2) / Delta ^ 2)) *
+      fun t : ℝ => Complex.normSq
+        (dyadicClampedCriticalPrefixMollifiedPolynomial K X t))
+  exact (hweight.mul henergy).aestronglyMeasurable
+
+/-- The canonical clamped Gaussian prefix energy is globally integrable. -/
+theorem integrable_gaussian_normSq_dyadicClampedCriticalPrefix
+    {K X : ℕ} (hX : 2 ≤ X) {Delta : ℝ}
+    (hDelta : 2 * (((2 ^ K * X : ℕ) : ℝ)) ≤ Delta) (w : ℝ) :
+    Integrable fun t : ℝ =>
+      Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+        Complex.normSq
+          (dyadicClampedCriticalPrefixMollifiedPolynomial K X t) := by
+  apply integrable_gaussian_normSq_dyadicMovingPrefixMollifiedPolynomial
+    hX hDelta w (fun t => min (criticalAfeCutoff t + 1) (2 ^ K))
+  · intro t
+    exact min_le_right _ _
+  · simpa only [dyadicClampedCriticalPrefixMollifiedPolynomial] using
+      aestronglyMeasurable_gaussian_normSq_dyadicClampedCriticalPrefix
+        K X Delta w
+
 /-- The measurable clamped canonical selector satisfies the global Gaussian
 Rademacher--Menshov bound without a separate measurability premise. -/
 theorem integral_gaussian_normSq_dyadicClampedCriticalPrefix_le
@@ -114,19 +150,63 @@ theorem integral_gaussian_normSq_dyadicClampedCriticalPrefix_le
     hX hDelta w (fun t => min (criticalAfeCutoff t + 1) (2 ^ K))
   · intro t
     exact min_le_right _ _
-  · have hweight : Measurable fun t : ℝ =>
-        Real.exp (-((t - w) ^ 2) / Delta ^ 2) := by
-      fun_prop
-    have henergy : Measurable fun t : ℝ =>
+  · simpa only [dyadicClampedCriticalPrefixMollifiedPolynomial] using
+      aestronglyMeasurable_gaussian_normSq_dyadicClampedCriticalPrefix
+        K X Delta w
+
+/-- On a window lying below the ambient dyadic endpoint, the genuine
+canonical AFE main term has no more Gaussian energy than the global clamped
+maximal selector. -/
+theorem setIntegral_gaussian_normSq_criticalAfeMain_mul_mollifier_le
+    {K X : ℕ} (hX : 2 ≤ X) {L U Delta : ℝ}
+    (hU : Real.sqrt (U / (2 * Real.pi)) < (((2 ^ K : ℕ) : ℝ)))
+    (hDelta : 2 * (((2 ^ K * X : ℕ) : ℝ)) ≤ Delta) (w : ℝ) :
+    (∫ t : ℝ in Icc L U,
+      Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
         Complex.normSq
-          (dyadicClampedCriticalPrefixMollifiedPolynomial K X t) :=
-      Complex.continuous_normSq.measurable.comp
-        (measurable_dyadicClampedCriticalPrefixMollifiedPolynomial K X)
-    change AEStronglyMeasurable
-      ((fun t : ℝ => Real.exp (-((t - w) ^ 2) / Delta ^ 2)) *
-        fun t : ℝ => Complex.normSq
-          (dyadicClampedCriticalPrefixMollifiedPolynomial K X t))
-    exact (hweight.mul henergy).aestronglyMeasurable
+          (criticalAfeMainSum t *
+            selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t))) ≤
+      (K + 1 : ℝ) ^ 2 *
+        ((Real.sqrt (Real.pi / (1 / Delta ^ 2)) *
+            MathlibAux.gaussianBucketSchurConstant) *
+          (2 * (1 + Real.log (((2 ^ K * X : ℕ) : ℝ))) ^ 4)) := by
+  let f : ℝ → ℝ := fun t =>
+    Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+      Complex.normSq
+        (dyadicClampedCriticalPrefixMollifiedPolynomial K X t)
+  have hsetEq :
+      (∫ t : ℝ in Icc L U,
+        Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+          Complex.normSq
+            (criticalAfeMainSum t *
+              selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t))) =
+        ∫ t : ℝ in Icc L U, f t := by
+    apply setIntegral_congr_fun measurableSet_Icc
+    intro t ht
+    dsimp only [f]
+    rw [criticalAfeMainSum_mul_mollifier_eq_dyadicClampedPrefix
+      (criticalAfeCutoff_succ_le_pow_of_mem_Icc ht hU)]
+  have hfInt : Integrable f := by
+    simpa only [f] using
+      integrable_gaussian_normSq_dyadicClampedCriticalPrefix hX hDelta w
+  have hfNonneg : 0 ≤ᵐ[volume] f :=
+    Filter.Eventually.of_forall fun t =>
+      mul_nonneg (Real.exp_nonneg _) (Complex.normSq_nonneg _)
+  calc
+    (∫ t : ℝ in Icc L U,
+      Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+        Complex.normSq
+          (criticalAfeMainSum t *
+            selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t))) =
+        ∫ t : ℝ in Icc L U, f t := hsetEq
+    _ ≤ ∫ t : ℝ, f t := setIntegral_le_integral hfInt hfNonneg
+    _ ≤ (K + 1 : ℝ) ^ 2 *
+        ((Real.sqrt (Real.pi / (1 / Delta ^ 2)) *
+            MathlibAux.gaussianBucketSchurConstant) *
+          (2 * (1 + Real.log (((2 ^ K * X : ℕ) : ℝ))) ^ 4)) := by
+      simpa only [f] using
+        integral_gaussian_normSq_dyadicClampedCriticalPrefix_le
+          hX hDelta w
 
 end AFE
 end HardyTheorem

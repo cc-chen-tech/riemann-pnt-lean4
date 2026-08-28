@@ -809,10 +809,16 @@ a final density axiom:
    audit.  The local-window cutoff upper bound is now formal as well: from
    `t in [L,U]` and `sqrt(U/(2*pi))<2^K`, Lean derives
    `criticalAfeCutoff(t)+1<=2^K`, so the recovered prefix identity applies
-   pointwise throughout the window.  What remains before applying it to
-   (8.1) is the symmetric square-root AFE itself (still the genuine analytic
-   gate), the local-set-integral to global clamped-Gaussian comparison, and
-   the translated-Gaussian tail assembly in (8.7)--(8.8).
+   pointwise throughout the window.  The global integrability hidden in the
+   maximal proof is now exported, and the local-set-integral comparison is
+   closed: the genuine main AFE term on `[L,U]` is replaced pointwise by the
+   clamp, enlarged to the full real line by nonnegativity, and bounded by the
+   proved `(K+1)^2` Gaussian selector estimate.  Its axiom audit again has
+   only `propext`, `Classical.choice`, and `Quot.sound`.  What remains before
+   applying the whole AFE in (8.1) is the pointwise norm bridge for the dual
+   AFE term, the symmetric square-root AFE itself (still the genuine analytic
+   gate), the canonical remainder contribution, and the translated-Gaussian
+   tail assembly in (8.7)--(8.8).
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved
