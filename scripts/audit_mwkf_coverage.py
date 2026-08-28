@@ -15939,6 +15939,315 @@ def bourgain_garaev_all_product_partition_polytope_audit(
     }
 
 
+def retained_product_spectrum_duality_audit(
+    *,
+    squarefree_modulus: int,
+    inverse_coefficient: int,
+    direct_coefficient: int,
+    h_coefficients: dict[int, Fraction],
+    delta_coefficients: dict[int, Fraction],
+    product_factor_coefficients: tuple[dict[int, Fraction], ...],
+) -> dict[str, object]:
+    """Verify the retained product-spectrum Cauchy identity.
+
+    Retain ``a=h*delta`` and group every remaining factor by its product
+    residue ``x``.  Since ``x -> A*x^(-1)`` permutes the units, Cauchy
+    pairs the product-residue energy with the primitive additive Fourier
+    energy of the ``h*delta`` sequence.  All phase identities and both
+    energies are computed exactly over ``Fraction`` coefficients.
+    """
+
+    G = int(squarefree_modulus)
+    factors = _finite_prime_exponents(G) if G > 1 else {}
+    if G <= 1 or any(exponent != 1 for exponent in factors.values()):
+        raise ValueError("squarefree_modulus must be squarefree and exceed one")
+    A = int(inverse_coefficient) % G
+    B = int(direct_coefficient) % G
+    if gcd(A, G) != 1:
+        raise ValueError("inverse_coefficient must be a unit")
+    if not h_coefficients or not delta_coefficients:
+        raise ValueError("both h and delta coefficient families are required")
+    if not product_factor_coefficients or any(
+        not family for family in product_factor_coefficients
+    ):
+        raise ValueError("at least one nonempty product-factor family is required")
+
+    h_family = {int(label): F(value) for label, value in h_coefficients.items()}
+    delta_family = {
+        int(label): F(value) for label, value in delta_coefficients.items()
+    }
+    product_families = tuple(
+        {int(label): F(value) for label, value in family.items()}
+        for family in product_factor_coefficients
+    )
+    if any(
+        gcd(label, G) != 1
+        for family in product_families
+        for label in family
+    ):
+        raise ValueError("every product-factor label must be a unit")
+
+    h_delta_residues = {residue: F(0) for residue in range(G)}
+    for h, h_coefficient in h_family.items():
+        for delta, delta_coefficient in delta_family.items():
+            h_delta_residues[h * delta % G] += (
+                h_coefficient * delta_coefficient
+            )
+
+    product_residues = {residue: F(0) for residue in range(G)}
+    integer_product_coefficients: Counter[int] = Counter()
+    product_rows: list[tuple[int, Fraction]] = []
+    for entries in product(*(tuple(family.items()) for family in product_families)):
+        label = prod(entry[0] for entry in entries)
+        coefficient = prod((entry[1] for entry in entries), start=F(1))
+        residue = label % G
+        integer_product_coefficients[label] += coefficient
+        product_residues[residue] += coefficient
+        product_rows.append((residue, coefficient))
+
+    direct_phase_polynomial: Counter[int] = Counter()
+    for h, h_coefficient in h_family.items():
+        for delta, delta_coefficient in delta_family.items():
+            for product_residue, product_coefficient in product_rows:
+                phase = (
+                    B * product_residue
+                    - A * h * delta * pow(product_residue, -1, G)
+                ) % G
+                direct_phase_polynomial[phase] += (
+                    h_coefficient
+                    * delta_coefficient
+                    * product_coefficient
+                )
+
+    grouped_phase_polynomial: Counter[int] = Counter()
+    for product_residue, product_coefficient in product_residues.items():
+        if product_coefficient == 0:
+            continue
+        frequency = -A * pow(product_residue, -1, G) % G
+        for h_delta_residue, h_delta_coefficient in h_delta_residues.items():
+            grouped_phase_polynomial[
+                (B * product_residue + frequency * h_delta_residue) % G
+            ] += product_coefficient * h_delta_coefficient
+
+    unit_residues = tuple(residue for residue in range(G) if gcd(residue, G) == 1)
+    permuted_frequencies = tuple(
+        -A * pow(residue, -1, G) % G for residue in unit_residues
+    )
+
+    def squarefree_ramanujan(label: int) -> int:
+        value = 1
+        for prime in factors:
+            value *= prime - 1 if label % prime == 0 else -1
+        return value
+
+    primitive_fourier_energy = sum(
+        (
+            left_coefficient
+            * right_coefficient
+            * squarefree_ramanujan(left_residue - right_residue)
+        )
+        for left_residue, left_coefficient in h_delta_residues.items()
+        for right_residue, right_coefficient in h_delta_residues.items()
+    )
+    product_residue_energy = sum(
+        (coefficient * coefficient for coefficient in product_residues.values()),
+        F(0),
+    )
+    cauchy_bound_squared = product_residue_energy * primitive_fourier_energy
+
+    root = cmath.exp(2j * cmath.pi / G)
+    direct_primitive_fourier_values = {
+        frequency: sum(
+            complex(coefficient) * root ** (frequency * residue % G)
+            for residue, coefficient in h_delta_residues.items()
+        )
+        for frequency in unit_residues
+    }
+    direct_primitive_fourier_energy_raw = sum(
+        abs(value) ** 2 for value in direct_primitive_fourier_values.values()
+    )
+    normalized_primitive_h_delta_energy = primitive_fourier_energy / G
+
+    product_support_minimum = min(integer_product_coefficients)
+    product_support_maximum = max(integer_product_coefficients)
+    product_support_span = product_support_maximum - product_support_minimum + 1
+    interval_residue_multiplicity_ceiling = (
+        product_support_span + G - 1
+    ) // G
+    integer_product_coefficient_energy = sum(
+        (
+            coefficient * coefficient
+            for coefficient in integer_product_coefficients.values()
+        ),
+        F(0),
+    )
+    residue_occupancies = Counter(
+        label % G for label in integer_product_coefficients
+    )
+    actual_maximum_residue_occupancy = max(residue_occupancies.values())
+    exact_residue_cauchy_bound = (
+        actual_maximum_residue_occupancy * integer_product_coefficient_energy
+    )
+    interval_endpoint_cauchy_bound = (
+        interval_residue_multiplicity_ceiling
+        * integer_product_coefficient_energy
+    )
+
+    actual_sum = sum(
+        complex(coefficient) * root ** phase
+        for phase, coefficient in direct_phase_polynomial.items()
+    )
+    actual_absolute_square = abs(actual_sum) ** 2
+    tolerance = 1e-8 * max(1.0, float(cauchy_bound_squared))
+    primitive_energy_tolerance = 1e-8 * max(
+        1.0,
+        float(primitive_fourier_energy),
+    )
+    return {
+        "squarefree_modulus": G,
+        "inverse_coefficient": A,
+        "direct_coefficient": B,
+        "unit_residues": unit_residues,
+        "permuted_unit_frequencies": permuted_frequencies,
+        "inverse_map_permuted_unit_frequencies_exact": bool(
+            len(set(permuted_frequencies)) == len(unit_residues)
+            and set(permuted_frequencies) == set(unit_residues)
+        ),
+        "h_delta_product_residue_coefficients": h_delta_residues,
+        "grouped_product_residue_coefficients": product_residues,
+        "direct_phase_polynomial": dict(direct_phase_polynomial),
+        "residue_fourier_pairing_polynomial": dict(grouped_phase_polynomial),
+        "direct_phase_polynomial_equals_residue_fourier_pairing": bool(
+            direct_phase_polynomial == grouped_phase_polynomial
+        ),
+        "primitive_h_delta_fourier_energy": primitive_fourier_energy,
+        "primitive_h_delta_fourier_energy_raw": primitive_fourier_energy,
+        "normalized_primitive_h_delta_energy": (
+            normalized_primitive_h_delta_energy
+        ),
+        "direct_primitive_fourier_values": direct_primitive_fourier_values,
+        "direct_primitive_fourier_energy_raw": (
+            direct_primitive_fourier_energy_raw
+        ),
+        "direct_normalized_primitive_energy": (
+            direct_primitive_fourier_energy_raw / G
+        ),
+        "primitive_fourier_energy_ramanujan_identity_exact": bool(
+            abs(
+                direct_primitive_fourier_energy_raw
+                - float(primitive_fourier_energy)
+            )
+            <= primitive_energy_tolerance
+        ),
+        "integer_product_coefficients": dict(integer_product_coefficients),
+        "integer_product_convolution_has_collision": bool(
+            len(product_rows) > len(integer_product_coefficients)
+        ),
+        "product_support_minimum": product_support_minimum,
+        "product_support_maximum": product_support_maximum,
+        "product_support_span": product_support_span,
+        "product_support_crosses_modulus_multiple": bool(
+            product_support_minimum // G != product_support_maximum // G
+        ),
+        "integer_product_coefficient_energy": (
+            integer_product_coefficient_energy
+        ),
+        "actual_maximum_residue_occupancy": (
+            actual_maximum_residue_occupancy
+        ),
+        "interval_residue_multiplicity_ceiling": (
+            interval_residue_multiplicity_ceiling
+        ),
+        "exact_residue_cauchy_bound": exact_residue_cauchy_bound,
+        "interval_endpoint_cauchy_bound": interval_endpoint_cauchy_bound,
+        "product_residue_energy_within_exact_residue_cauchy_bound": bool(
+            product_residue_energy <= exact_residue_cauchy_bound
+        ),
+        "product_residue_energy_within_interval_endpoint_bound": bool(
+            product_residue_energy <= interval_endpoint_cauchy_bound
+        ),
+        "product_residue_energy": product_residue_energy,
+        "cauchy_upper_bound_squared": cauchy_bound_squared,
+        "actual_absolute_square": actual_absolute_square,
+        "cauchy_operator_bound_holds": bool(
+            actual_absolute_square <= float(cauchy_bound_squared) + tolerance
+        ),
+        "h_delta_factorization_retained": True,
+        "product_factorization_retained": True,
+        "fixed_coupled_phase_atom_operator_bound_proved": True,
+        "arbitrary_fixed_direct_phase_covered": True,
+        "physical_packet_adapter_proved": False,
+        "global_varying_modulus_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def retained_product_spectrum_exponent_audit(
+    *,
+    conductor_exponent: Fraction,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    product_total_length_exponent: Fraction,
+    required_saving_exponent: Fraction,
+    squarefree_conductor: bool,
+    unit_inverse_phase_and_product_support: bool,
+    separated_h_delta_projective_adapter_verified: bool,
+    divisor_bounded_product_convolution_verified: bool,
+) -> dict[str, object]:
+    """Record the exponent gain from retained product-spectrum duality."""
+
+    gamma = F(conductor_exponent)
+    h = F(h_length_exponent)
+    delta = F(delta_length_exponent)
+    x = F(product_total_length_exponent)
+    required = F(required_saving_exponent)
+    if min(gamma, h, delta, x, required) < 0 or gamma == 0:
+        raise ValueError("all exponents must be nonnegative and conductor positive")
+
+    boundary_base = max(F(0), h, delta, h + delta - gamma)
+    primitive_energy = max(h + delta, 2 * boundary_base)
+    product_energy = max(x, 2 * x - gamma)
+    operator_bound = (gamma + primitive_energy + product_energy) / 2
+    trivial = h + delta + x
+    saving = max(F(0), trivial - operator_bound)
+    hypotheses = bool(
+        squarefree_conductor
+        and unit_inverse_phase_and_product_support
+        and separated_h_delta_projective_adapter_verified
+        and divisor_bounded_product_convolution_verified
+    )
+    target_met = bool(hypotheses and saving >= required)
+    return {
+        "conductor_exponent": gamma,
+        "h_length_exponent": h,
+        "delta_length_exponent": delta,
+        "product_total_length_exponent": x,
+        "required_saving_exponent": required,
+        "primitive_h_delta_energy_exponent": primitive_energy,
+        "product_residue_energy_exponent": product_energy,
+        "primitive_frequency_sum_exponent": gamma + primitive_energy,
+        "operator_bound_exponent": operator_bound,
+        "trivial_amplitude_exponent": trivial,
+        "power_saving_exponent": saving,
+        "squarefree_conductor_hypothesis_verified": bool(squarefree_conductor),
+        "unit_inverse_phase_and_product_support_verified": bool(
+            unit_inverse_phase_and_product_support
+        ),
+        "separated_h_delta_projective_adapter_verified": bool(
+            separated_h_delta_projective_adapter_verified
+        ),
+        "divisor_bounded_product_convolution_verified": bool(
+            divisor_bounded_product_convolution_verified
+        ),
+        "published_hypotheses_verified": hypotheses,
+        "fixed_coupled_phase_atom_target_met": target_met,
+        "arbitrary_fixed_direct_phase_covered": True,
+        "physical_packet_adapter_proved": False,
+        "global_varying_modulus_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

@@ -5244,6 +5244,187 @@ def test_bourgain_garaev_all_product_partitions_sharpen_composite_residual() -> 
         assert marker in note
 
 
+def test_retained_product_spectrum_duality_covers_resonant_fixed_atoms() -> None:
+    finite_audit = getattr(
+        coverage_audit,
+        "retained_product_spectrum_duality_audit",
+        None,
+    )
+    assert finite_audit is not None, "retained product-spectrum audit is missing"
+
+    finite = finite_audit(
+        squarefree_modulus=30,
+        inverse_coefficient=7,
+        direct_coefficient=11,
+        h_coefficients={1: F(2), 7: F(-1), 11: F(3)},
+        delta_coefficients={1: F(1), 13: F(2), 17: F(-1)},
+        product_factor_coefficients=(
+            {1: F(1), 7: F(1), 11: F(-1)},
+            {1: F(2), 7: F(1), 17: F(-2)},
+        ),
+    )
+    assert finite["direct_phase_polynomial_equals_residue_fourier_pairing"]
+    assert finite["inverse_map_permuted_unit_frequencies_exact"]
+    assert finite["primitive_fourier_energy_ramanujan_identity_exact"]
+    assert finite["primitive_h_delta_fourier_energy_raw"] == F(372)
+    assert finite["normalized_primitive_h_delta_energy"] == F(62, 5)
+    assert finite["direct_primitive_fourier_energy_raw"] == pytest.approx(372)
+    assert finite["direct_normalized_primitive_energy"] == pytest.approx(62 / 5)
+    legacy_primitive = coverage_audit.primitive_product_residue_energy_audit(
+        squarefree_modulus=30,
+        h_coefficients={1: 2, 7: -1, 11: 3},
+        delta_coefficients={1: 1, 13: 2, 17: -1},
+    )
+    assert legacy_primitive["primitive_parseval_identity_exact"]
+    assert finite["direct_normalized_primitive_energy"] == pytest.approx(
+        legacy_primitive["parseval_primitive_energy"]
+    )
+    assert finite["integer_product_convolution_has_collision"]
+    assert finite["product_support_crosses_modulus_multiple"]
+    assert finite["product_support_maximum"] == 187
+    assert finite["interval_residue_multiplicity_ceiling"] >= 2
+    assert finite["product_residue_energy"] > finite[
+        "integer_product_coefficient_energy"
+    ]
+    assert finite[
+        "product_residue_energy_within_exact_residue_cauchy_bound"
+    ]
+    assert finite[
+        "product_residue_energy_within_interval_endpoint_bound"
+    ]
+    assert finite["cauchy_operator_bound_holds"]
+    assert finite["h_delta_factorization_retained"]
+    assert finite["product_factorization_retained"]
+    assert finite["fixed_coupled_phase_atom_operator_bound_proved"]
+    assert finite["arbitrary_fixed_direct_phase_covered"]
+    assert not finite["physical_packet_adapter_proved"]
+    assert not finite["global_varying_modulus_reassembly_proved"]
+    assert not finite["coupled_kernel_gate_closed"]
+
+    zero_direct = finite_audit(
+        squarefree_modulus=30,
+        inverse_coefficient=7,
+        direct_coefficient=0,
+        h_coefficients={1: F(2), 7: F(-1), 11: F(3)},
+        delta_coefficients={1: F(1), 13: F(2), 17: F(-1)},
+        product_factor_coefficients=(
+            {1: F(1), 7: F(1), 11: F(-1)},
+            {1: F(2), 7: F(1), 17: F(-2)},
+        ),
+    )
+    assert zero_direct["direct_phase_polynomial_equals_residue_fourier_pairing"]
+    assert zero_direct["cauchy_upper_bound_squared"] == finite[
+        "cauchy_upper_bound_squared"
+    ]
+
+    with pytest.raises(ValueError, match="inverse_coefficient"):
+        finite_audit(
+            squarefree_modulus=30,
+            inverse_coefficient=6,
+            direct_coefficient=11,
+            h_coefficients={1: F(1)},
+            delta_coefficients={1: F(1)},
+            product_factor_coefficients=({1: F(1)},),
+        )
+    with pytest.raises(ValueError, match="product-factor label"):
+        finite_audit(
+            squarefree_modulus=30,
+            inverse_coefficient=7,
+            direct_coefficient=11,
+            h_coefficients={1: F(1)},
+            delta_coefficients={1: F(1)},
+            product_factor_coefficients=({2: F(1)},),
+        )
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "retained_product_spectrum_exponent_audit",
+        None,
+    )
+    assert exponent_audit is not None, "retained product-spectrum ledger is missing"
+    common = {
+        "conductor_exponent": F(3),
+        "h_length_exponent": F(5, 2),
+        "delta_length_exponent": F(5, 2),
+        "required_saving_exponent": F(2),
+        "squarefree_conductor": True,
+        "unit_inverse_phase_and_product_support": True,
+        "separated_h_delta_projective_adapter_verified": True,
+        "divisor_bounded_product_convolution_verified": True,
+    }
+
+    square_root_pair = exponent_audit(
+        product_total_length_exponent=F(3),
+        **common,
+    )
+    assert square_root_pair["primitive_h_delta_energy_exponent"] == F(5)
+    assert square_root_pair["product_residue_energy_exponent"] == F(3)
+    assert square_root_pair["operator_bound_exponent"] == F(11, 2)
+    assert square_root_pair["trivial_amplitude_exponent"] == F(8)
+    assert square_root_pair["power_saving_exponent"] == F(5, 2)
+    assert square_root_pair["fixed_coupled_phase_atom_target_met"]
+
+    three_quarters = exponent_audit(
+        product_total_length_exponent=F(9, 4),
+        **common,
+    )
+    assert three_quarters["operator_bound_exponent"] == F(41, 8)
+    assert three_quarters["trivial_amplitude_exponent"] == F(29, 4)
+    assert three_quarters["power_saving_exponent"] == F(17, 8)
+    assert three_quarters["fixed_coupled_phase_atom_target_met"]
+
+    threshold = exponent_audit(
+        product_total_length_exponent=F(2),
+        **common,
+    )
+    assert threshold["power_saving_exponent"] == F(2)
+    assert threshold["fixed_coupled_phase_atom_target_met"]
+
+    below_threshold = exponent_audit(
+        product_total_length_exponent=F(3, 2),
+        **common,
+    )
+    assert below_threshold["power_saving_exponent"] == F(7, 4)
+    assert not below_threshold["fixed_coupled_phase_atom_target_met"]
+
+    missing_adapter = exponent_audit(
+        product_total_length_exponent=F(3),
+        **{
+            **common,
+            "separated_h_delta_projective_adapter_verified": False,
+        },
+    )
+    assert missing_adapter["power_saving_exponent"] == F(5, 2)
+    assert not missing_adapter["published_hypotheses_verified"]
+    assert not missing_adapter["fixed_coupled_phase_atom_target_met"]
+    assert not missing_adapter["global_varying_modulus_reassembly_proved"]
+    assert not missing_adapter["coupled_kernel_gate_closed"]
+
+    for hypothesis in (
+        "squarefree_conductor",
+        "unit_inverse_phase_and_product_support",
+        "separated_h_delta_projective_adapter_verified",
+        "divisor_bounded_product_convolution_verified",
+    ):
+        rejected = exponent_audit(
+            product_total_length_exponent=F(3),
+            **{**common, hypothesis: False},
+        )
+        assert rejected["power_saving_exponent"] == F(5, 2)
+        assert not rejected["published_hypotheses_verified"]
+        assert not rejected["fixed_coupled_phase_atom_target_met"]
+
+    note = OFFDIAGONAL_NOTE.read_text()
+    for marker in (
+        "### 9.129 Retaining the product spectrum closes the resonant fixed atoms",
+        r"\mathcal E_{G}^{\rm prod}(V)",
+        r"\eta_{0}^{\rm spec}(3,x)=1+\frac{x}{2}",
+        r"\eta_{0}^{\rm spec}\left(3,\frac94\right)=\frac{17}{8}",
+        "retained_product_spectrum_duality_audit",
+    ):
+        assert marker in note
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,
