@@ -23,6 +23,9 @@ from scripts.audit_mwkf_ranges import (
     boundary_witnesses,
     is_admissible,
 )
+from scripts.mwkf_coefficient_first import (
+    restricted_complementary_divisor_partition,
+)
 from scripts.mwkf_mobius_type_identity import (
     endpoint_weighted_mobius,
     mobius,
@@ -287,6 +290,29 @@ class LargeQBoundaryReflectionAudit:
     reflected_tail_phase_separated_at_boundary: bool
     formal_remaining_terms: tuple[str, str]
     reflected_tail_energy_estimate_proved: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
+class LargeQPairedBoundaryCompletionAudit:
+    shift_log_depth: Fraction
+    zeta_log_depth: Fraction
+    finite_four_piece_identity_is_exact: bool
+    strict_lower_log_depth_tail_has_height_phase_saving: bool
+    constant_ratio_lower_tail_has_height_phase_saving: bool
+    boundary_plus_lower_tail_closes_completion: bool
+    unpaired_boundary_tail_remains: bool
+    unpaired_upper_available_scales_remain: bool
+    witness_product: int
+    witness_cutoff: int
+    witness_modulus: int
+    witness_boundary_divisor: int
+    witness_boundary_zeta_scale: int
+    witness_upper_divisor: int
+    witness_upper_zeta_scale: int
+    witness_two_sided_upper_product: int
+    full_completion_can_cross_afe_transition: bool
+    remaining_gates: tuple[str, str]
     unconditional_coverage: bool
 
 
@@ -5750,6 +5776,77 @@ def large_q_boundary_reflection_audit(
         reflected_tail_phase_separated_at_boundary=False,
         formal_remaining_terms=("reflected_tail", "reflected_tail"),
         reflected_tail_energy_estimate_proved=False,
+        unconditional_coverage=False,
+    )
+
+
+def large_q_paired_boundary_completion_audit(
+    box: ExponentBox,
+    *,
+    shift_log_depth: Fraction,
+    zeta_log_depth: Fraction,
+) -> LargeQPairedBoundaryCompletionAudit:
+    """Test the narrow boundary-plus-lower-tail completion proposal.
+
+    On ``PX <= n <= 2PX`` the restricted complete divisor convolution
+    has four exact complementary-divisor pieces: lower reflected tail,
+    boundary tail, boundary available, and upper available.  Pairing the
+    available boundary box only with the lower reflected tail leaves the
+    other two pieces.  The fixture ``n=102, X=35, q=5, P=2`` additionally
+    has the squarefree representations ``102=3*34=6*17``.  Thus the upper
+    available piece can move both zeta variables from the boundary box to
+    product ``6^2>35``, across the model AFE transition.
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+    if shift_log_depth != F(2) or zeta_log_depth != F(2):
+        raise ValueError("paired completion audit is for the (2,2) face")
+
+    product = 102
+    cutoff = 35
+    modulus = 5
+    boundary_divisor = 34
+    upper_divisor = 17
+    partition = restricted_complementary_divisor_partition(
+        product,
+        cutoff_x=cutoff,
+        modulus_q=modulus,
+        boundary_p=2,
+    )
+    boundary_scale = product // boundary_divisor
+    upper_scale = product // upper_divisor
+    upper_product = upper_scale * upper_scale
+    return LargeQPairedBoundaryCompletionAudit(
+        shift_log_depth=shift_log_depth,
+        zeta_log_depth=zeta_log_depth,
+        finite_four_piece_identity_is_exact=(
+            partition.complete_identity_holds
+            and partition.complete_matches_sparse_formula
+        ),
+        strict_lower_log_depth_tail_has_height_phase_saving=True,
+        constant_ratio_lower_tail_has_height_phase_saving=False,
+        boundary_plus_lower_tail_closes_completion=(
+            partition.pair_closes_completion
+        ),
+        unpaired_boundary_tail_remains=bool(
+            partition.boundary_tail_divisors
+        ),
+        unpaired_upper_available_scales_remain=bool(
+            partition.above_boundary_available_divisors
+        ),
+        witness_product=product,
+        witness_cutoff=cutoff,
+        witness_modulus=modulus,
+        witness_boundary_divisor=boundary_divisor,
+        witness_boundary_zeta_scale=boundary_scale,
+        witness_upper_divisor=upper_divisor,
+        witness_upper_zeta_scale=upper_scale,
+        witness_two_sided_upper_product=upper_product,
+        full_completion_can_cross_afe_transition=(upper_product > cutoff),
+        remaining_gates=(
+            "boundary_tail_at_log_depth_2",
+            "upper_available_cross_scale_transition",
+        ),
         unconditional_coverage=False,
     )
 
@@ -24350,6 +24447,25 @@ def main() -> None:
         "main_main=True mixed=True cross_scale=False formal_tail=tail*tail "
         "tail_phase=False "
         "covered=False"
+    )
+    paired_boundary = large_q_paired_boundary_completion_audit(
+        boxes["large_q_endpoint"],
+        shift_log_depth=F(2),
+        zeta_log_depth=F(2),
+    )
+    print(
+        "large_q_endpoint: paired_boundary_completion="
+        "four_piece=True strict_lower_phase=True constant_ratio_phase=False "
+        "pair_closes=False boundary_tail=True upper_available=True "
+        f"witness={paired_boundary.witness_product}/"
+        f"{paired_boundary.witness_cutoff} "
+        f"boundary={paired_boundary.witness_boundary_zeta_scale}*"
+        f"{paired_boundary.witness_boundary_divisor} "
+        f"upper={paired_boundary.witness_upper_zeta_scale}*"
+        f"{paired_boundary.witness_upper_divisor} "
+        "upper_product="
+        f"{paired_boundary.witness_two_sided_upper_product} "
+        "crosses_transition=True covered=False"
     )
     subcritical_afe = large_q_subcritical_afe_completion_audit(
         boxes["large_q_endpoint"],

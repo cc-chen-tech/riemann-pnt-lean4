@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
+from math import gcd
 if __package__:
     from scripts.mwkf_mobius_type_identity import divisors, mobius
 else:
@@ -17,6 +18,28 @@ else:
 
 
 FormalLog = dict[int, int]
+
+
+@dataclass(frozen=True)
+class RestrictedComplementaryDivisorPartition:
+    """Exact four-piece partition on one critical complementary collar."""
+
+    critical_collar: bool
+    complete: FormalLog
+    sparse_completion: FormalLog
+    below_boundary_tail: FormalLog
+    boundary_tail: FormalLog
+    boundary_available: FormalLog
+    above_boundary_available: FormalLog
+    below_boundary_tail_divisors: tuple[int, ...]
+    boundary_tail_divisors: tuple[int, ...]
+    boundary_available_divisors: tuple[int, ...]
+    above_boundary_available_divisors: tuple[int, ...]
+    paired_boundary_plus_lower_tail: FormalLog
+    unpaired_boundary_plus_upper: FormalLog
+    complete_identity_holds: bool
+    complete_matches_sparse_formula: bool
+    pair_closes_completion: bool
 
 
 @dataclass(frozen=True)
@@ -126,6 +149,24 @@ def _add_scaled(target: FormalLog, source: FormalLog, scale: int) -> None:
             target.pop(prime, None)
 
 
+def _sum_formal_logs(*sources: FormalLog) -> FormalLog:
+    result: FormalLog = {}
+    for source in sources:
+        _add_scaled(result, source, 1)
+    return result
+
+
+def _restricted_divisor_term(d: int, cutoff_x: int) -> FormalLog:
+    result = formal_log(cutoff_x)
+    _add_scaled(result, formal_log(d), -1)
+    mu_d = mobius(d)
+    if mu_d == 1:
+        return result
+    if mu_d == -1:
+        return {prime: -exponent for prime, exponent in result.items()}
+    return {}
+
+
 def formal_log(n: int) -> FormalLog:
     """Return the exact prime-vector representing ``log(n)``."""
     return _prime_factorization(n)
@@ -138,6 +179,122 @@ def formal_von_mangoldt(n: int) -> FormalLog:
         return {}
     prime = next(iter(factors))
     return {prime: 1}
+
+
+def _q_free_part(n: int, modulus_q: int) -> int:
+    result = 1
+    for prime, exponent in _prime_factorization(n).items():
+        if modulus_q % prime:
+            result *= prime**exponent
+    return result
+
+
+def restricted_complementary_divisor_partition(
+    n: int,
+    *,
+    cutoff_x: int,
+    modulus_q: int,
+    boundary_p: int,
+) -> RestrictedComplementaryDivisorPartition:
+    """Partition a restricted divisor completion on ``n/X in [P,2P]``.
+
+    Write ``m=n/d`` and retain only ``(d,q)=1``.  The complete formal
+    convolution is
+
+    ``sum mu(d) * log(X/d)``.
+
+    On the critical collar ``PX <= n <= 2PX``, every ``m<P`` term lies
+    in the reflected tail ``d>X`` and every ``m>2P`` term is available
+    in the truncated convolution ``d<=X``.  The remaining collar splits
+    at ``d=X``.  This gives four disjoint pieces without an asymptotic or
+    a floating-point logarithm.
+    """
+    _require_positive("n", n)
+    _require_positive("cutoff_x", cutoff_x)
+    _require_positive("modulus_q", modulus_q)
+    _require_positive("boundary_p", boundary_p)
+    critical_collar = (
+        boundary_p * cutoff_x <= n
+        and n <= 2 * boundary_p * cutoff_x
+    )
+    if not critical_collar:
+        raise ValueError("n must lie in the critical collar [P*X,2*P*X]")
+
+    complete: FormalLog = {}
+    below_boundary_tail: FormalLog = {}
+    boundary_tail: FormalLog = {}
+    boundary_available: FormalLog = {}
+    above_boundary_available: FormalLog = {}
+    below_boundary_tail_divisors: list[int] = []
+    boundary_tail_divisors: list[int] = []
+    boundary_available_divisors: list[int] = []
+    above_boundary_available_divisors: list[int] = []
+
+    for d in divisors(n):
+        if gcd(d, modulus_q) != 1:
+            continue
+        term = _restricted_divisor_term(d, cutoff_x)
+        _add_scaled(complete, term, 1)
+        complementary = n // d
+        if complementary < boundary_p:
+            if d <= cutoff_x:
+                raise AssertionError("critical-collar lower term is available")
+            _add_scaled(below_boundary_tail, term, 1)
+            if mobius(d):
+                below_boundary_tail_divisors.append(d)
+        elif complementary <= 2 * boundary_p:
+            available = d <= cutoff_x
+            target = boundary_available if available else boundary_tail
+            _add_scaled(target, term, 1)
+            if mobius(d):
+                divisors_target = (
+                    boundary_available_divisors
+                    if available
+                    else boundary_tail_divisors
+                )
+                divisors_target.append(d)
+        else:
+            if d > cutoff_x:
+                raise AssertionError("critical-collar upper term is in the tail")
+            _add_scaled(above_boundary_available, term, 1)
+            if mobius(d):
+                above_boundary_available_divisors.append(d)
+
+    paired = _sum_formal_logs(
+        below_boundary_tail,
+        boundary_available,
+    )
+    unpaired = _sum_formal_logs(
+        boundary_tail,
+        above_boundary_available,
+    )
+    reconstructed = _sum_formal_logs(paired, unpaired)
+    q_free = _q_free_part(n, modulus_q)
+    sparse_completion = (
+        formal_log(cutoff_x)
+        if q_free == 1
+        else formal_von_mangoldt(q_free)
+    )
+    return RestrictedComplementaryDivisorPartition(
+        critical_collar=critical_collar,
+        complete=complete,
+        sparse_completion=sparse_completion,
+        below_boundary_tail=below_boundary_tail,
+        boundary_tail=boundary_tail,
+        boundary_available=boundary_available,
+        above_boundary_available=above_boundary_available,
+        below_boundary_tail_divisors=tuple(below_boundary_tail_divisors),
+        boundary_tail_divisors=tuple(boundary_tail_divisors),
+        boundary_available_divisors=tuple(boundary_available_divisors),
+        above_boundary_available_divisors=tuple(
+            above_boundary_available_divisors
+        ),
+        paired_boundary_plus_lower_tail=paired,
+        unpaired_boundary_plus_upper=unpaired,
+        complete_identity_holds=reconstructed == complete,
+        complete_matches_sparse_formula=(complete == sparse_completion),
+        pair_closes_completion=unpaired == {},
+    )
 
 
 def missing_convolution_divisors(

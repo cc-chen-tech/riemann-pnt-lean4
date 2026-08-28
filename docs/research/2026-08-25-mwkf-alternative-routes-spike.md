@@ -3836,6 +3836,122 @@ cross_scale_aggregation_proved=False,
 reflected_tail_energy_estimate_proved=False, and
 unconditional_coverage=False.
 
+### 4.29a Pairing only the boundary box with the lower tail is not closed
+
+There is a narrower completion proposal which does not require inserting
+all complementary divisor scales at once.  It also fails, for an exact
+reason.  Fix \(P,X,n,q\) with
+
+\[
+ PX\leq n\leq 2PX,
+\tag{4.255a}
+\]
+
+write \(m=n/d\), and split the complete left side of (4.250) into
+
+\[
+\begin{aligned}
+ C_{<}^{\rm tail}
+ &:=\sum_{\substack{d\mid n,(d,q)=1\\d>X,\ n/d<P}}
+       \mu(d)\log\frac Xd,\\
+ C_{\rm bd}^{\rm tail}
+ &:=\sum_{\substack{d\mid n,(d,q)=1\\d>X,\ P\leq n/d\leq2P}}
+       \mu(d)\log\frac Xd,\\
+ C_{\rm bd}^{\rm av}
+ &:=\sum_{\substack{d\mid n,(d,q)=1\\d\leq X,\ P\leq n/d\leq2P}}
+       \mu(d)\log\frac Xd,\\
+ C_{>}^{\rm av}
+ &:=\sum_{\substack{d\mid n,(d,q)=1\\d\leq X,\ n/d>2P}}
+       \mu(d)\log\frac Xd.
+\end{aligned}
+\tag{4.255b}
+\]
+
+Condition (4.255a) implies that there is no available term with \(m<P\)
+and no tail term with \(m>2P\).  Hence the four sums in (4.255b) are a
+disjoint exhaustive partition and
+
+\[
+ \boxed{
+ C_{\rm bd}^{\rm av}+C_{<}^{\rm tail}
+ =\log X\,\mathbf1_{n^{(q)}=1}+\Lambda(n^{(q)})
+  -\left(C_{\rm bd}^{\rm tail}+C_{>}^{\rm av}\right).}
+\tag{4.255c}
+\]
+
+Thus the original boundary box plus only the reflected tail below it is
+not the completed sparse coefficient.  It leaves two exact packages:
+the other half of the moving-cutoff collar and every available scale
+above the box.  The strict logarithmic subface
+\(m\leq\mathscr L^{2-\varepsilon}\) inside \(C_<^{\rm tail}\) is covered
+by (4.245), but the constant-ratio range \(m\asymp P\) is not:
+\(L/m\) need not grow.  Consequently even the
+whole first term on the left of (4.255c) is not already a phase-covered
+error.
+
+The upper package can reach the AFE transition while all divisors remain
+squarefree.  Here is a scale-faithful family.  Let \(P\to\infty\), choose
+a prime
+
+\[
+ r\asymp \exp(\sqrt P)
+\]
+
+and then, by Bertrand's postulate, a prime \(a\) with
+
+\[
+ P^2r<a<2P^2r.
+\tag{4.255d}
+\]
+
+Put
+
+\[
+ X=2ar,\qquad n=2Par,
+ \qquad d_0=ar,\quad d_1=a.
+\tag{4.255e}
+\]
+
+Choose a prime \(q\) with \(X^2<q<2X^2\), put
+\(T=(qX)^{1/3}\), and set \(N=qX=T^3\).  Then
+\(q\asymp T^2\), \(X=N/q\asymp T\), and \((q,2ar)=1\).  Both
+\(d_0,d_1\leq X\) are squarefree,
+and the same integer has the two available representations
+
+\[
+ n=(2P)d_0=(2Pr)d_1.
+\tag{4.255f}
+\]
+
+The first complementary scale belongs to \([P,2P]\), while the second is
+above \(2P\).  Moreover
+
+\[
+ (2Pr)^2=4P^2r^2>2ar=X.
+\tag{4.255g}
+\]
+
+Since \(\log X=2\sqrt P+O(\log P)\), one has
+\(P\asymp(\log X)^2\asymp(\log T)^2\).  Applying the upper representation on both sides
+therefore moves an actual critical polylogarithmic pair to
+\(m_1m_2>X\), i.e. across the model AFE transition.  This is an
+asymptotic construction, not merely a small numerical fixture.
+
+For a finite exact check, \(n=102,X=35,q=5,P=2\) has
+\(102=3\cdot34=6\cdot17\); the four formal-log pieces in (4.255b) are
+all computed without floating point, and the proposed pair is nonzero
+while its unpaired complement is its negative.  The helpers
+`restricted_complementary_divisor_partition` and
+`large_q_paired_boundary_completion_audit` certify (4.255b)--(4.255c),
+the two nonempty residual packages, and the transition witness.  They
+keep `boundary_plus_lower_tail_closes_completion=False` and
+`unconditional_coverage=False`.
+
+This rules out the paired-boundary shortcut.  It does not rule out a
+genuinely coupled cancellation among all four packages with the common
+AFE kernel; that statement is exactly the cross-scale transition gate
+below.
+
 ### 4.30 Subcritical AFE residue and the remaining cross-scale obstruction
 
 One part of the cross-scale interface in Section 4.29 can be completed

@@ -11,6 +11,7 @@ from scripts.mwkf_coefficient_first import (
     formal_von_mangoldt,
     missing_convolution_divisors,
     scaled_boundary_correction,
+    restricted_complementary_divisor_partition,
     scaled_truncated_product_coefficient,
     scaled_zeta_mollifier_coefficient,
     zero_route_audit,
@@ -105,3 +106,65 @@ def test_single_mollifier_length_does_not_meet_bettin_gonek_scope() -> None:
     assert audit.zero_residue_amplification == F(0)
     assert not audit.bettin_gonek_applicable
     assert audit.reason == "requires_all_lengths_up_to_T_theta"
+
+
+def test_critical_complementary_divisor_pair_leaves_two_exact_residuals() -> None:
+    # Here n/X=105/11 lies in the complementary-divisor collar [5,10].
+    # The available boundary term and the reflected tail below 5 therefore
+    # do not complete the restricted divisor convolution by themselves:
+    # the boundary-tail terms 5<=m<10 and the available scales m>10 remain.
+    audit = restricted_complementary_divisor_partition(
+        210,
+        cutoff_x=22,
+        modulus_q=1,
+        boundary_p=5,
+    )
+    assert audit.critical_collar
+    assert audit.boundary_available
+    assert audit.below_boundary_tail
+    assert audit.boundary_tail
+    assert audit.above_boundary_available
+    assert audit.complete == {}
+    assert audit.paired_boundary_plus_lower_tail
+    assert audit.unpaired_boundary_plus_upper
+    assert audit.paired_boundary_plus_lower_tail == {
+        prime: -exponent
+        for prime, exponent in audit.unpaired_boundary_plus_upper.items()
+    }
+    assert audit.complete_identity_holds
+    assert audit.complete_matches_sparse_formula
+    assert not audit.pair_closes_completion
+
+
+def test_available_upper_scale_can_cross_the_two_sided_afe_transition() -> None:
+    # The same n has a boundary representation 102=3*34 and an upper
+    # representation 102=6*17.  Both reduced divisors are squarefree,
+    # coprime to q=5, and below X=35.  Repeating the upper representation
+    # on both sides gives 6^2>35, so completing the boundary box can move
+    # a polylog-sized zeta pair across the model AFE product transition.
+    audit = restricted_complementary_divisor_partition(
+        102,
+        cutoff_x=35,
+        modulus_q=5,
+        boundary_p=2,
+    )
+    assert 34 in audit.boundary_available_divisors
+    assert 17 in audit.above_boundary_available_divisors
+    assert 102 // 34 == 3
+    assert 102 // 17 == 6
+    assert (102 // 17) ** 2 > 35
+    assert audit.complete_identity_holds
+    assert audit.complete_matches_sparse_formula
+    assert not audit.pair_closes_completion
+
+
+def test_restricted_completion_retains_the_q_smooth_mass_term() -> None:
+    audit = restricted_complementary_divisor_partition(
+        40,
+        cutoff_x=10,
+        modulus_q=10,
+        boundary_p=2,
+    )
+    assert audit.complete == formal_log(10)
+    assert audit.sparse_completion == formal_log(10)
+    assert audit.complete_matches_sparse_formula

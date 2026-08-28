@@ -505,6 +505,43 @@ def test_boundary_completion_forces_prime_main_and_isolates_reflected_tail() -> 
     assert not audit.unconditional_coverage
 
 
+def test_paired_boundary_completion_retains_collar_and_transition_residuals() -> None:
+    """Boundary plus lower tail is not a closed cross-scale package."""
+    adapter = getattr(
+        coverage_audit,
+        "large_q_paired_boundary_completion_audit",
+        None,
+    )
+    assert adapter is not None, "paired boundary completion audit is missing"
+    audit = adapter(
+        boundary_witnesses()["large_q_endpoint"],
+        shift_log_depth=F(2),
+        zeta_log_depth=F(2),
+    )
+
+    assert audit.finite_four_piece_identity_is_exact
+    assert audit.strict_lower_log_depth_tail_has_height_phase_saving
+    assert not audit.constant_ratio_lower_tail_has_height_phase_saving
+    assert not audit.boundary_plus_lower_tail_closes_completion
+    assert audit.unpaired_boundary_tail_remains
+    assert audit.unpaired_upper_available_scales_remain
+    assert audit.witness_product == 102
+    assert audit.witness_cutoff == 35
+    assert audit.witness_modulus == 5
+    assert audit.witness_boundary_divisor == 34
+    assert audit.witness_boundary_zeta_scale == 3
+    assert audit.witness_upper_divisor == 17
+    assert audit.witness_upper_zeta_scale == 6
+    assert audit.witness_two_sided_upper_product == 36
+    assert audit.witness_two_sided_upper_product > audit.witness_cutoff
+    assert audit.full_completion_can_cross_afe_transition
+    assert audit.remaining_gates == (
+        "boundary_tail_at_log_depth_2",
+        "upper_available_cross_scale_transition",
+    )
+    assert not audit.unconditional_coverage
+
+
 def test_subcritical_afe_residue_does_not_complete_missing_divisor_scales() -> None:
     """The local residue error is small, but completion changes zeta scale."""
     adapter = getattr(
@@ -10895,6 +10932,13 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "covered=False"
     ) in output
     assert (
+        "large_q_endpoint: paired_boundary_completion="
+        "four_piece=True strict_lower_phase=True constant_ratio_phase=False "
+        "pair_closes=False boundary_tail=True upper_available=True "
+        "witness=102/35 boundary=3*34 upper=6*17 "
+        "upper_product=36 crosses_transition=True covered=False"
+    ) in output
+    assert (
         "large_q_endpoint: subcritical_afe_completion="
         "gap=1/10 left_shift=1/8 remainder_save=1/80 local_power=1 "
         "local_residue=True regrouped=False divisor_completion=False "
@@ -11591,6 +11635,14 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"\mathfrak C^{\mathrm{tail}\times\mathrm{tail}}_{P,L}",
         "cross_scale_aggregation_proved=False",
         "reflected_tail_energy_estimate_proved=False",
+        "### 4.29a Pairing only the boundary box with the lower tail is not closed",
+        r"C_{\rm bd}^{\rm av}+C_{<}^{\rm tail}",
+        r"C_{\rm bd}^{\rm tail}+C_{>}^{\rm av}",
+        r"T=(qX)^{1/3}",
+        r"(2Pr)^2=4P^2r^2>2ar=X",
+        "restricted_complementary_divisor_partition",
+        "large_q_paired_boundary_completion_audit",
+        "boundary_plus_lower_tail_closes_completion=False",
         "### 4.30 Subcritical AFE residue and the remaining cross-scale obstruction",
         r"m_1m_2\le T^{1-\eta}",
         r"T^{-c\eta}",
