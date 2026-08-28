@@ -354,6 +354,61 @@ theorem integral_log_conrey_height_compensation_one_exp_le
     linarith
   nlinarith [Real.exp_pos L]
 
+/-- The explicit `V1 B` product is continuous along the moving right
+vertical.  Analyticity supplies continuity of `V1`, while the finite
+mollifier is entire. -/
+theorem continuous_conreyExplicitRightVerticalProduct
+    {Y : ℕ} {sigma0 L : ℝ} (hL : Real.exp 2 ≤ L) :
+    Continuous (fun t : ℝ =>
+      conreyExplicitRightVerticalProduct Y sigma0 L t) := by
+  have hLpos : 0 < L := (Real.exp_pos 2).trans_le hL
+  have hlogL : 2 ≤ Real.log L := by
+    have hmono := Real.strictMonoOn_log.monotoneOn
+      (Set.mem_Ioi.mpr (Real.exp_pos 2)) (Set.mem_Ioi.mpr hLpos) hL
+    simpa only [Real.log_exp] using hmono
+  rw [continuous_iff_continuousAt]
+  intro t
+  have hsre :
+      0 < (((2 * Real.log L : ℝ) : ℂ) + I * t).re := by
+    simp
+    linarith
+  have hsne : (((2 * Real.log L : ℝ) : ℂ) + I * t) ≠ 1 := by
+    intro heq
+    have hre := congrArg Complex.re heq
+    simp at hre
+    linarith
+  have hline : ContinuousAt
+      (fun u : ℝ => ((2 * Real.log L : ℝ) : ℂ) + I * u) t := by
+    fun_prop
+  have hVbase :=
+    (analyticAt_conreyDegreeOneV1_of_re_pos_of_ne_one
+      (g := (49 / 100 : ℝ)) (g0 := 0) (g1 := (51 / 50 : ℝ))
+      (L := L) hsre hsne).continuousAt
+  have hV : ContinuousAt (fun u : ℝ =>
+      conreyDegreeOneV1 (49 / 100) 0 (51 / 50) L
+        (((2 * Real.log L : ℝ) : ℂ) + I * u)) t :=
+    ContinuousAt.comp'
+      (f := fun u : ℝ => ((2 * Real.log L : ℝ) : ℂ) + I * u)
+      (g := conreyDegreeOneV1 (49 / 100) 0 (51 / 50) L)
+      (x := t) hVbase hline
+  have hMbase :=
+    ((analyticOnNhd_conreyMollifier Y sigma0 conreyExplicitP)
+      (((2 * Real.log L : ℝ) : ℂ) + I * t) (by simp)).continuousAt
+  have hM : ContinuousAt (fun u : ℝ =>
+      conreyMollifier Y sigma0 conreyExplicitP
+        (((2 * Real.log L : ℝ) : ℂ) + I * u)) t :=
+    ContinuousAt.comp'
+      (f := fun u : ℝ => ((2 * Real.log L : ℝ) : ℂ) + I * u)
+      (g := conreyMollifier Y sigma0 conreyExplicitP)
+      (x := t) hMbase hline
+  unfold conreyExplicitRightVerticalProduct
+  change ContinuousAt
+    ((fun u : ℝ => conreyDegreeOneV1 (49 / 100) 0 (51 / 50) L
+        (((2 * Real.log L : ℝ) : ℂ) + I * u)) *
+      (fun u : ℝ => conreyMollifier Y sigma0 conreyExplicitP
+        (((2 * Real.log L : ℝ) : ℂ) + I * u))) t
+  exact hV.mul hM
+
 /-- Pointwise `O(1/L)` control of the logarithm on the high part of Conrey's
 global right vertical.  The second term retains the exact height compensation
 which is integrable without losing a factor of `L`. -/
@@ -454,5 +509,142 @@ theorem abs_log_norm_conreyExplicitRightVerticalProduct_le
         Real.log ((2 * Real.pi * Real.exp L) / t) := by
       exact add_le_add
         (div_le_div_of_nonneg_right (by norm_num) hLpos.le) le_rfl
+
+/-- The complete high part of the explicit right-vertical absolute logarithm
+has the required `exp L / L` scale. -/
+theorem integral_abs_log_norm_conreyExplicitRightVerticalProduct_high_le
+    {Y : ℕ} {sigma0 L : ℝ}
+    (hY : 2 ≤ Y) (hsigma0 : sigma0 ≤ 1 / 2) (hL : 600 ≤ L) :
+    (∫ t in 2 * Real.log L..Real.exp L,
+      |Real.log ‖conreyExplicitRightVerticalProduct Y sigma0 L t‖|) ≤
+        506 * Real.exp L / L := by
+  have hLpos : 0 < L := by linarith
+  have he2lt : Real.exp 2 < 9 := by
+    have he := Real.exp_one_lt_three
+    have he2 : Real.exp 2 = Real.exp 1 * Real.exp 1 := by
+      rw [← Real.exp_add]
+      norm_num
+    rw [he2]
+    nlinarith [Real.exp_pos 1]
+  have hLexp2 : Real.exp 2 ≤ L := he2lt.le.trans (by linarith)
+  have hlogL : 2 ≤ Real.log L := by
+    have hmono := Real.strictMonoOn_log.monotoneOn
+      (Set.mem_Ioi.mpr (Real.exp_pos 2)) (Set.mem_Ioi.mpr hLpos) hLexp2
+    simpa only [Real.log_exp] using hmono
+  have ha1 : (1 : ℝ) ≤ 2 * Real.log L := by linarith
+  have hab : 2 * Real.log L ≤ Real.exp L := by
+    have hlogLleL : Real.log L ≤ L := by
+      have := Real.add_one_le_exp (Real.log L)
+      rw [Real.exp_log hLpos] at this
+      linarith
+    have hehalf := Real.add_one_le_exp (L / 2)
+    have hexpLarge : 2 * L ≤ Real.exp L := by
+      rw [show L = L / 2 + L / 2 by ring, Real.exp_add]
+      nlinarith [sq_nonneg (L / 2 - 1)]
+    linarith
+  let P : ℝ → ℂ := fun t => conreyExplicitRightVerticalProduct Y sigma0 L t
+  let q : ℝ → ℝ := fun t => Real.log ((2 * Real.pi * Real.exp L) / t)
+  let f : ℝ → ℝ := fun t => |Real.log ‖P t‖|
+  let g : ℝ → ℝ := fun t => 500 / L + (2 / L) * q t
+  have hPcont : Continuous P := by
+    simpa only [P] using
+      continuous_conreyExplicitRightVerticalProduct
+        (Y := Y) (sigma0 := sigma0) hLexp2
+  have hfcont : ContinuousOn f (Set.Icc (2 * Real.log L) (Real.exp L)) := by
+    intro t htmem
+    have hPne : P t ≠ 0 := by
+      simpa only [P] using
+        conreyExplicitRightVerticalProduct_ne_zero hY hsigma0 hL htmem.1 htmem.2
+    have hnorm : ContinuousAt (fun u => ‖P u‖) t :=
+      (continuous_norm.comp hPcont).continuousAt
+    have hlog : ContinuousAt (fun u => Real.log ‖P u‖) t :=
+      (Real.continuousAt_log (by simpa using hPne)).comp' hnorm
+    exact (continuous_abs.continuousAt.comp' hlog).continuousWithinAt
+  have hfint : IntervalIntegrable f MeasureTheory.volume
+      (2 * Real.log L) (Real.exp L) := by
+    apply ContinuousOn.intervalIntegrable
+    simpa only [Set.uIcc_of_le hab] using hfcont
+  have hqcontFull : ContinuousOn q (Set.Icc 1 (Real.exp L)) := by
+    intro t htmem
+    have htpos : 0 < t := lt_of_lt_of_le (by norm_num) htmem.1
+    have hratioAt : ContinuousAt
+        (fun u : ℝ => (2 * Real.pi * Real.exp L) / u) t := by
+      exact continuousAt_const.div₀ continuousAt_id htpos.ne'
+    exact ((Real.continuousAt_log (by positivity)).comp' hratioAt).continuousWithinAt
+  have hqintFull : IntervalIntegrable q MeasureTheory.volume 1 (Real.exp L) :=
+    (by
+      apply ContinuousOn.intervalIntegrable
+      rw [Set.uIcc_of_le]
+      · exact hqcontFull
+      · simpa only [Real.exp_zero] using
+          Real.exp_le_exp.mpr (show (0 : ℝ) ≤ L by linarith))
+  have hqintHigh : IntervalIntegrable q MeasureTheory.volume
+      (2 * Real.log L) (Real.exp L) :=
+    hqintFull.mono_set (by
+      rw [Set.uIcc_of_le hab, Set.uIcc_of_le (by
+        simpa only [Real.exp_zero] using
+          Real.exp_le_exp.mpr (show (0 : ℝ) ≤ L by linarith))]
+      exact Set.Icc_subset_Icc ha1 le_rfl)
+  have hgint : IntervalIntegrable g MeasureTheory.volume
+      (2 * Real.log L) (Real.exp L) := by
+    exact intervalIntegrable_const.add (hqintHigh.const_mul (2 / L))
+  have hfg : ∀ t ∈ Set.Icc (2 * Real.log L) (Real.exp L), f t ≤ g t := by
+    intro t htmem
+    simpa only [f, g, P, q] using
+      abs_log_norm_conreyExplicitRightVerticalProduct_le
+        hY hsigma0 hL htmem.1 htmem.2
+  have hmono : (∫ t in 2 * Real.log L..Real.exp L, f t) ≤
+      ∫ t in 2 * Real.log L..Real.exp L, g t :=
+    intervalIntegral.integral_mono_on hab hfint hgint hfg
+  have hqnonneg : ∀ t ∈ Set.Ioc 1 (Real.exp L), 0 ≤ q t := by
+    intro t htmem
+    have htpos : 0 < t := lt_trans (by norm_num) htmem.1
+    have htwoPi : 1 ≤ 2 * Real.pi := by
+      have hpi := Real.pi_gt_three
+      nlinarith
+    apply Real.log_nonneg
+    rw [le_div_iff₀ htpos]
+    simpa only [one_mul] using htmem.2.trans
+      (le_mul_of_one_le_left (Real.exp_nonneg L) htwoPi)
+  have hqae : 0 ≤ᵐ[MeasureTheory.volume.restrict
+      (Set.Ioc 1 (Real.exp L))] q :=
+    (MeasureTheory.ae_restrict_iff' measurableSet_Ioc).mpr
+      (MeasureTheory.ae_of_all _ hqnonneg)
+  have hqmono : (∫ t in 2 * Real.log L..Real.exp L, q t) ≤
+      ∫ t in 1..Real.exp L, q t :=
+    intervalIntegral.integral_mono_interval ha1 hab le_rfl hqae hqintFull
+  have hqfull : (∫ t in 1..Real.exp L, q t) ≤ 3 * Real.exp L := by
+    simpa only [q] using integral_log_conrey_height_compensation_one_exp_le
+      (show (0 : ℝ) ≤ L by linarith)
+  have hqhigh : (∫ t in 2 * Real.log L..Real.exp L, q t) ≤
+      3 * Real.exp L := hqmono.trans hqfull
+  have hconst :
+      (Real.exp L - 2 * Real.log L) * (500 / L) ≤
+        500 * Real.exp L / L := by
+    field_simp [hLpos.ne']
+    have : 0 ≤ Real.log L := by linarith
+    nlinarith
+  have hqscaled : (2 / L) *
+      (∫ t in 2 * Real.log L..Real.exp L, q t) ≤
+        6 * Real.exp L / L := by
+    have := mul_le_mul_of_nonneg_left hqhigh (by positivity : 0 ≤ 2 / L)
+    calc
+      (2 / L) * (∫ t in 2 * Real.log L..Real.exp L, q t) ≤
+          (2 / L) * (3 * Real.exp L) := this
+      _ = 6 * Real.exp L / L := by ring
+  calc
+    (∫ t in 2 * Real.log L..Real.exp L,
+      |Real.log ‖conreyExplicitRightVerticalProduct Y sigma0 L t‖|) =
+        ∫ t in 2 * Real.log L..Real.exp L, f t := by rfl
+    _ ≤ ∫ t in 2 * Real.log L..Real.exp L, g t := hmono
+    _ = (Real.exp L - 2 * Real.log L) * (500 / L) +
+        (2 / L) * (∫ t in 2 * Real.log L..Real.exp L, q t) := by
+      rw [intervalIntegral.integral_add intervalIntegrable_const
+        (hqintHigh.const_mul (2 / L)), intervalIntegral.integral_const,
+        intervalIntegral.integral_const_mul]
+      simp only [smul_eq_mul]
+    _ ≤ 500 * Real.exp L / L + 6 * Real.exp L / L :=
+      add_le_add hconst hqscaled
+    _ = 506 * Real.exp L / L := by ring
 
 end HardyTheorem

@@ -1756,8 +1756,21 @@ by a constant:
   \int_1^{e^L}\log {2\pi e^L\over t}\,dt\le 3e^L.
   \]
 
-This proves both mathematical ingredients responsible for recovering the
-factor `1/L` on the high range.  The interval-integrability/composition step,
-the low-part reciprocal bound, and the final global absolute-log integral are
-still open.  Hence equation (37)'s right vertical, the horizontal Jensen
-terms, and the genuine two-fifths theorem remain unproved at this checkpoint.
+- `continuous_conreyExplicitRightVerticalProduct` derives continuity along
+  the moving vertical line from the analytic `V1` factor and the entire finite
+  mollifier; and
+- `integral_abs_log_norm_conreyExplicitRightVerticalProduct_high_le` combines
+  continuity, direct nonvanishing, the pointwise logarithmic bound, and the
+  compensation integral to prove
+
+  \[
+  \int_{2\log L}^{e^L}
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|dt
+  \le {506e^L\over L}.
+  \]
+
+This closes the complete high range and formally recovers the factor `1/L`
+without a constant-height substitution.  The low-part reciprocal bound and
+the final global interval split are still open.  Hence equation (37)'s right
+vertical, the horizontal Jensen terms, and the genuine two-fifths theorem
+remain unproved at this checkpoint.
