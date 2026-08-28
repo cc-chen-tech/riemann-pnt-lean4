@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.CarlsonUnitPhaseLogProductIntegrable
+
+namespace PrimeNumberTheorem.CarlsonZeroDensity
+
+#check integral_gaussian_product_le_halfRange_simpleScale_of_unitPhase_log_target
+#print axioms integral_gaussian_product_le_halfRange_simpleScale_of_unitPhase_log_target
+
+end PrimeNumberTheorem.CarlsonZeroDensity

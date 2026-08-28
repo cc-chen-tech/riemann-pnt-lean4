@@ -920,6 +920,76 @@ At paper level the first `delta=1/400` target now uses only the classical
 symmetric AFE and Dirichlet-polynomial mean value through (8.1)--(8.8);
 the stronger `theta<4/7` targets still use the cited Conrey theorem.
 
+### 8.1 A strictly weaker AFE which is sufficient for the formal target
+
+The exact phase and the log-free remainder in `zeta_critical_afe_target` are
+stronger than the critical-boundary argument needs.  It is enough to prove
+that there are constants `R>0` and `T0>=1` such that, for every `t>=T0`, there
+are `u(t),E(t) in C` with
+
+\[
+ |u(t)|=1,
+ \qquad
+ \zeta(1/2+it)=D_{K(t)}(t)+u(t)\overline{D_{K(t)}(t)}+E(t),             \tag{8.9}
+\]
+
+and
+
+\[
+ |E(t)|\le R t^{-1/4}(1+\log t).                                      \tag{8.10}
+\]
+
+Here `K(t)=floor(sqrt(t/(2*pi)))`, with the same inclusive cutoff as in
+(8.1).  No regularity of `u(t)` is required.  Indeed, pointwise,
+
+\[
+ |u(t)\overline{D_{K(t)}(t)}A(t)|^2
+   =|D_{K(t)}(t)A(t)|^2,                                                \tag{8.11}
+\]
+
+because `|u(t)|=1` and complex conjugation preserves norm.  Thus the same
+dyadic maximal estimate controls both finite sums.  Moreover the elementary
+bound `|A(t)|<=2 sqrt(X)` gives
+
+\[
+ |E(t)A(t)|^2
+ \le 4R^2 X t^{-1/2}(1+\log t)^2
+ \le 4R^2 t^{-1/20}(1+\log t)^2=O_R(1)                                \tag{8.12}
+\]
+
+for `X<=t^(9/20)`.  The last function tends to zero.  Hence replacing the
+sharp remainder in (8.1) by (8.10) changes no power and costs at most two
+harmless logarithms before its eventual boundedness is used.
+
+Titchmarsh, Theorem 4.13, proves precisely the stronger formula with the
+exact functional-equation multiplier and error
+
+\[
+ O(x^{-\sigma}\log t)+O(t^{1/2-\sigma}y^{\sigma-1}),
+ \qquad 2\pi xy=t.
+\]
+
+At `sigma=1/2` and `x=y=sqrt(t/(2*pi))` this is (8.9)--(8.10); on the
+critical line the exact multiplier has norm one.  Consequently the paper
+proof of the first `delta=1/400` target needs only Titchmarsh's imperfect
+approximate functional equation, not the sharper Theorem 4.15.
+
+For Lean, the shortest honest proof route is correspondingly narrower than
+the full sharp AFE.  The required analytic leaf is the weighted
+van-der-Corput/Poisson transformation used in Titchmarsh Lemma 4.10 and
+Theorem 4.13, specialized to `g(u)=u^(-1/2)` and
+`f(u)=-(t/(2*pi))*log u`.  The repository already contains the exact Abel
+floor-error identity, the absolutely convergent second-Bernoulli Fourier
+series, and first- and second-derivative oscillatory integral bounds.  What
+is not yet present is the transformation which extracts the stationary
+positive Fourier modes as the conjugate square-root Dirichlet polynomial.
+The negative modes and the positive modes outside the stationary range are
+nonstationary; their reciprocal distance-to-endpoint sum is the single
+`log t` in (8.10).  This is the exact next analytic lemma.  A long cutoff
+followed by independent mean value, or independent summation over moving
+cutoff fibres, does not prove (8.9) and incurs the power losses already
+recorded above.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta
@@ -930,3 +1000,7 @@ the stronger `theta<4/7` targets still use the cited Conrey theorem.
   polynomials and the Riemann zeta-function, II*, Acta Arith. 43 (1984),
   305--312, DOI `10.4064/aa-43-3-305-312`.  This is the spectral large-values
   input used inside Conrey's proof of the `theta<4/7` range.
+- E. C. Titchmarsh, revised by D. R. Heath-Brown, *The Theory of the Riemann
+  Zeta-function*, second edition, Oxford University Press, 1986, Theorems
+  4.13 and 4.15.  Theorem 4.13 supplies the logarithmic AFE (8.9)--(8.10);
+  Theorem 4.15 removes the extra logarithm but is not needed here.
