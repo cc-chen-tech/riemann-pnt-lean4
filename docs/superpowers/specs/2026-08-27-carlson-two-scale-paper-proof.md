@@ -1147,6 +1147,72 @@ positive-phase improper integral.  The Gamma boundary integral is therefore
 closed.  The next unresolved analytic input is precisely the weighted
 truncated Poisson transformation used in Titchmarsh Theorem 4.13.
 
+The first exact Poisson layer is now formal as well.  For real `x<=N`, let
+`w_{x,N}` be a fixed smooth bump centered at `(x+N)/2`, with inner radius
+`(N-x)/2+1` and outer radius `(N-x)/2+2`.  Then
+
+\[
+  0\leq w_{x,N}\leq1,\qquad
+  w_{x,N}(u)=1\quad(x\leq u\leq N),
+\]
+
+and
+
+\[
+  w_{x,N}(u)=0\quad
+  (u\leq x-2\ \hbox{or}\ u\geq N+2).                         \tag{8.20}
+\]
+
+For `2<x<=N`, the function
+
+\[
+  F_{s,x,N}(u)=w_{x,N}(u)\exp(-s\log u)                         \tag{8.21}
+\]
+
+is globally smooth and compactly supported.  The apparent singularity at
+zero is harmless because (8.20) makes the function identically zero on a
+neighborhood of zero.  It is therefore a Schwartz function, and the
+mathlib Poisson theorem gives the unconditional identity
+
+\[
+  \sum_{n\in\mathbb Z}F_{s,x,N}(n)
+   =\sum_{k\in\mathbb Z}\widehat F_{s,x,N}(k),\qquad
+  \widehat F(k)=\int_{\mathbb R}F(u)e^{-2\pi iku}\,du.          \tag{8.22}
+\]
+
+On `[x,N]`, (8.21) is exactly `u^{-s}` with the principal-power
+normalization.  The difference between its integer sum and the hard finite
+sum is supported on the two transition intervals of total length four; on
+the critical line it is therefore `O((x-2)^(-1/2))`.  Thus smoothing the
+finite endpoints cannot consume a power of `T`.
+
+With `s=sigma+it`, the phase in the `k`-th Fourier integral is
+
+\[
+  -t\log u-2\pi ku.
+\]
+
+Only negative modes `k=-m<0` can be stationary, at
+`u=t/(2*pi*m)`.  Consequently the stationary range is exactly
+
+\[
+  \frac{t}{2\pi(N+2)}<m<\frac{t}{2\pi(x-2)},                    \tag{8.23}
+\]
+
+up to the two constant-width transition strips.  Formula (8.19), with
+`z=1-s` and `c=2*pi*m`, identifies the full positive-frequency integral as
+
+\[
+  (2\pi m)^{s-1}e^{i\pi(1-s)/2}\Gamma(1-s).                    \tag{8.24}
+\]
+
+The remaining analytic gate is now quantitative rather than structural:
+sum the nonstationary Fourier modes in (8.22), replace the stationary
+truncated integrals by (8.24), and prove that the two endpoint-distance
+harmonic sums and transition strips contribute
+`O(x^(-sigma) log t)+O(t^(1/2-sigma)y^(sigma-1))`.  No Poisson identity,
+Gamma boundary value, or smoothing existence remains unproved.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta

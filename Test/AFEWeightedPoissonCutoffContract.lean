@@ -1,0 +1,19 @@
+import HardyTheorem.AFEWeightedPoissonCutoff
+
+open Complex
+
+open HardyTheorem AFE
+
+#check intervalPlateauBump
+#check intervalPlateauBump_eq_one
+#check intervalPlateauBump_eq_zero_of_le
+#check intervalPlateauBump_eq_zero_of_ge
+#check weightedPoissonCutoff
+#check weightedPoissonCutoff_hasCompactSupport
+#check weightedPoissonCutoff_contDiff
+#check weightedPoissonCutoff_eq_cpow
+#check weightedPoissonCutoff_tsum_eq_fourier_tsum
+
+#print axioms intervalPlateauBump_eq_one
+#print axioms weightedPoissonCutoff_contDiff
+#print axioms weightedPoissonCutoff_tsum_eq_fourier_tsum
