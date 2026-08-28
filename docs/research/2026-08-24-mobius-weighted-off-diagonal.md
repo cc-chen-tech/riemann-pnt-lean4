@@ -38,6 +38,7 @@
 > | Primitive centered one-PV hybrid | Section 9.143 is an intermediate exponent improvement: Pólya--Vinogradov on the longer product-label factor and ordinary fourth moments on the shorter factor and Type polynomial give \(E_{\rm PV}(\gamma)\leq13-\gamma/2\) for \(2\leq\gamma\leq3\), hence \(23/2\) at the top.  Section 9.144 supersedes its conditional adapter ledger by applying Pólya--Vinogradov to both centered label factors |
 > | Packet-exhaustive two-PV centered projector | Section 9.144 first partitions every nonprincipal ambient character by primitive conductor \(q_\psi\), retaining the inverse-totient Euler weight of the imprimitive cofactor.  Four-variable Fourier expansion and exact divisor expansion of the three inactive unit masks leave a common Type sequence across \(q_\psi\).  Pólya--Vinogradov on both label factors gives \(M_4(F)\leq T^{6\gamma+4r+\varepsilon}\), while the ordinary Type fourth moment gives exponent \(12\).  If \(v=\gamma+\kappa+r=3\), the centered resonant projector exponent is \(12-2\kappa\leq12\).  Thus all primitive and imprimitive centered resonant character rows are within target for the registered physical core.  The sampled/Ramanujan principal ledger and nonzero reduced-determinant dispersion remain unproved, so the coupled-kernel gate and full twisted moment are still open |
 > | Fused-principal/Ramanujan-sampled bridge | Section 9.145 proves row by row that the ambient and reduced Ramanujan densities agree; after multiplication by the outer Möbius signs, the canonical, ambient-Ramanujan, and fused moving-gcd coefficients all equal \(\mu(m)/\varphi(q)\), where \(d=(|h\delta|,v)\), \(q=v/d\), and \(m=dw\).  Hence the fused master (9.940) is exactly the earlier nonzero-\(h\) Ramanujan principal projection, not another main term.  Adding the raw \(h=0\) packet gives the gcd-sampled lattice plus the proper-divisor mean from (9.710a).  This removes a duplicated gate description but does not bound the sampled principal lattice |
+> | Second Poisson zero mode and diagonal | Section 9.146 applies coprime Poisson to the exact \(\delta _0\)-sum in (9.703).  After the original \(K\)-partition is reassembled, its zero dual mode is the Mellin transform of \(V_t\) at \(s_t\) and vanishes exactly because \(G_t(s_t)=0\).  The sole deleted-origin correction occurs at \(s_0=1\) and is coefficient by coefficient the AFE diagonal.  Thus \(\mathcal D+\mathcal P^{\rm all}\) is an exact nonzero-second-dual master with \(k\asymp T/K\), hence \(k\asymp T^{1/2}\) on the balanced face.  This removes a possible residual main term but does not estimate the surviving two-Möbius master or the nonzero determinant family |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -21018,6 +21019,162 @@ Poisson reassembly (9.693)--(9.695) and proper-divisor split
 (9.706)--(9.710a), it records (9.965)--(9.966) while leaving both
 principal analytic-bound flags and the coupled-kernel flag false.
 
+### 9.146 Second Poisson kills its zero mode and returns the diagonal
+
+The reduced sampled lattice (9.703) has one further exact global
+reorganization.  It is essential to keep the original \(K\)-partition
+until after Poisson and then sum it back before estimating the zero dual
+frequency.  For fixed \(r,g,s_0,n,K,M\), extend to real \(x\)
+
+\[
+ \boxed{
+ \Phi_{r,g,s_0,n}^{K,M}(x)
+ :=\mathcal F_{r,gs_0,gx}(gn),\qquad
+ \widehat\Phi_{r,g,s_0,n}^{K,M}(\xi)
+ :=\int_{\mathbb R}\Phi_{r,g,s_0,n}^{K,M}(x)e(-\xi x)\,dx.}
+ \tag{9.967}
+\]
+
+The positivity condition and \(F_K((nr+x)/s_0)\) make this a smooth
+compactly supported function of \(x\).  Summing ordinary Poisson over the
+unit residue classes modulo \(s_0\) gives the boundary-exact identity
+
+\[
+ \boxed{
+ \sum_{\substack{x\in\mathbb Z\setminus\{0\}\\(x,s_0)=1}}
+ \Phi^{K,M}(x)
+ =\frac1{s_0}\sum_{k\in\mathbb Z}c_{s_0}(k)
+   \widehat\Phi^{K,M}(k/s_0)
+  -\mathbf1_{s_0=1}\Phi^{K,M}(0).}
+ \tag{9.968}
+\]
+
+For \(s_0>1\), zero is not a unit residue and there is no correction.  For
+\(s_0=1\), the unique residue class contains zero, so the last term is
+forced by the exclusion \(x=0\) in (9.703).  Thus (9.968) contains every
+endpoint and no limiting convention at the origin.
+
+The apparent \(k=0\) principal term vanishes after the physical
+\(K\)-packets are reassembled.  Since \(\sum_KF_K(y)=1\) for \(y>0\),
+the change of variable \(y=(nr+x)/s_0\) gives
+
+\[
+\begin{aligned}
+ \sum_K\widehat\Phi_{r,g,s_0,n}^{K,M}(0)
+ ={}&\frac{s_0F_M(gn)}{\sqrt{gn}}
+ \int_{\mathbb R}W(t/T)\left(\frac{s_0}{nr}\right)^{it}\\
+ &\quad\times
+ \left\{\int_0^\infty V_t(gn y)y^{s_t-1}\,dy\right\}dt\\
+ ={}&\frac{s_0F_M(gn)}{\sqrt{gn}}
+ \int_{\mathbb R}W(t/T)\left(\frac{s_0}{nr}\right)^{it}
+ (gn)^{-s_t}\frac{G_t(s_t)g_t(s_t)}{s_t}\,dt=0.
+\end{aligned}
+ \tag{9.969}
+\]
+
+Here the Mellin identity
+\(\int_0^\infty V_t(u)u^{w-1}du=G_t(w)g_t(w)/w\) is valid on
+\(0<\Re w<2\): near zero, \(V_t(u)=1+O(u^c)\), and at infinity (2.5)
+gives arbitrary decay.  It may therefore be evaluated at
+\(w=s_t=1/2+it\).  The moving-pole factor in (2.1) gives
+\(G_t(s_t)=0\).  Local finiteness of the dyadic partition and the same
+bounds justify the displayed interchanges.  This is an exact AFE-kernel
+zero, not cancellation conjectured for a long Möbius sum.
+
+It remains to identify the correction in (9.968).  When \(s_0=1\), one
+has \(s=g\), and at \(x=0\)
+
+\[
+ \frac1{\sqrt{rg}}
+ \frac1{\sqrt{gn\,nr}}
+ =\frac1{nrg},\qquad
+ m_1=nr,\quad m_2=gn,\quad m_1g=m_2r.
+ \tag{9.970}
+\]
+
+After multiplication by \(2a_N(qr)a_N(qg)/q\), this is exactly the
+\(\ell=n\) summand of (2.10), because
+\([qr,qg]=qrg\).  Summing \(q,R,S,K,M,g,r,n\) therefore returns the
+complete AFE diagonal \(\mathcal D\), with the same dyadic weights and no
+truncation error.
+
+Put
+\(\widehat\Phi^{M}:=\sum_K\widehat\Phi^{K,M}\), and define the nonzero
+second-dual packet
+
+\[
+ \boxed{
+\begin{aligned}
+ \mathcal P_{q;R,S,M}^{(2),\ne0}
+ :={}&\frac2q
+ \sum_{\substack{g,s_0,r\ge1\\
+          (g,s_0)=(r,gs_0)=1}}
+ \frac{a_N(qr)a_N(qgs_0)F_R(r)F_S(gs_0)}
+      {\sqrt{rgs_0}\,s_0^2}\\
+ &\times\sum_n\sum_{k\ne0}c_{s_0}(k)
+ \widehat\Phi^M_{r,g,s_0,n}(k/s_0).
+\end{aligned}}
+ \tag{9.971}
+\]
+
+Equations (9.968)--(9.970), summed in the original packet order, now give
+
+\[
+ \boxed{
+ \mathcal D+\mathcal P^{\rm all}
+ =\mathcal P^{(2),\ne0}.}
+ \tag{9.972}
+\]
+
+Consequently the packet-exhaustive identity (9.697) may equivalently be
+written
+
+\[
+ \boxed{
+ I_{N,W}(T)=\mathcal P^{(2),\ne0}+\mathcal C^{\ne0}
+ =\mathcal P^{(2),\ne0}+\mathcal M^{\rm prop}+\mathcal C^\circ.}
+ \tag{9.973}
+\]
+
+This does not separate \(\mathcal P^{(2),\ne0}\) from
+\(\mathcal M^{\rm prop}\) analytically: by (9.710a) they still form the
+same principal ledger before an outer absolute value.  It only proves
+that this ledger has no hidden second-Poisson zero mode or additional
+diagonal term.
+
+For \(k\ne0\), the joint \((x,t)\)-phase in (9.971) is
+
+\[
+ t\log\left(1+\frac{x}{nr}\right)-\frac{2\pi kx}{s_0},
+ \qquad
+ \partial_x=\frac{t}{nr+x}-\frac{2\pi k}{s_0}.
+ \tag{9.974}
+\]
+
+On the support \((nr+x)/s_0\asymp K\) and \(t\asymp T\), repeated
+nonstationary integration by parts leaves
+\(k\asymp T/K\), up to the declared polylogarithmic collars.  Hence the
+balanced face \(K\asymp T^{1/2}\) has a genuinely nonzero dual variable
+of length \(T^{1/2+o(1)}\).
+
+This is useful structural progress, but it does not bound the nonzero
+second-dual master.  Both Selberg--Möbius coefficients in (9.971) remain;
+moreover, on \((k,s_0)=1\), the identity
+\(c_{s_0}(k)=\mu(s_0)\) can cancel rather than reinforce the outer
+\(s_0\)-sign.  Thus no independent Möbius saving may be booked from the
+Ramanujan coefficient.  The surviving \(k\ne0\) family must still be
+combined pre-Cauchy with the proper-divisor row, while
+\(\mathcal C^\circ\) still requires the nonzero reduced-determinant
+dispersion.  Neither analytic estimate, the coupled-kernel gate, nor the
+full \(\theta=3\) twisted moment is proved here.
+
+The finite helper `second_principal_coprime_poisson_audit` verifies the
+cyclic Ramanujan projector underlying (9.968), including the unique
+modulus-one deleted origin, and the exact denominator identity in
+(9.970).  It records the Mellin-zero and packet-reassembly hypotheses
+separately, derives the balanced \(T^{1/2}\) dual length, and leaves the
+nonzero-second-dual analytic and coupled-kernel flags false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -21996,6 +22153,7 @@ Proved in this note:
 | Centered primitive-conductor residual polytope | exact fallback calibration, superseded on centered rows | The generic fourth-moment deficit and its sufficient signed \(q^{-1/6}\) top gain are (9.942)--(9.945).  The one-PV hybrid (9.946)--(9.952) then closes the adapted primitive exponent polytope.  Section 9.144 proves a stronger two-PV estimate on the packet-exhaustive physical centered projector, so no signed conductor input is now needed for this resonant component |
 | Packet-exhaustive centered two-PV projector | primitive and imprimitive resonant rows proved within target | Equations (9.953)--(9.958) partition all nonprincipal ambient characters by primitive conductor, retain the imprimitive \(1/\varphi(k)\) Euler weight, and prove the common-\(q_\psi\) Type coefficient adapter using four-variable Fourier separation and exact unit-mask divisor expansion.  Pólya--Vinogradov on both label factors gives \(M_4(F)\leq6\gamma+4r\), (9.959).  With the ordinary Type fourth moment, the physical centered resonant projector exponent is \(12-2\kappa\leq12\), (9.960)--(9.961).  This bounds the recombined Möbius Type polynomial before any separate nine-block absolute values.  The sampled/Ramanujan principal master and nonzero reduced-determinant dispersion remain unproved, so neither the full projector nor the coupled-kernel gate is closed |
 | Fused-principal/Ramanujan-sampled bridge | exact identification; one principal estimate remains unproved | For \(d=(|h\delta|,v)\), \(q=v/d\), \(A=h\delta/d\), the squarefree Ramanujan formula gives \(\rho_v(h\delta)=\rho_q(A)=\mu(q)/\varphi(q)\), (9.962)--(9.963).  Multiplication by \(\mu(v)\mu(w)\) then gives exactly the fused moving-gcd coefficient \(\mu(dw)/\varphi(q)\), (9.964).  Hence (9.965) identifies the canonical principal master with the earlier nonzero-\(h\) Ramanujan projection, and adding the raw zero mode gives the gcd-sampled lattice plus proper-divisor mean, (9.966).  These are alternative coordinates for one principal obligation, not separate main terms.  The sampled principal analytic bound and nonzero determinant dispersion remain open |
+| Second principal Poisson zero/diagonal ledger | exact global reassembly; nonzero dual estimate remains unproved | Coprime Poisson in \(\delta_0\) has the unique deleted-origin correction \(-\mathbf1_{s_0=1}\Phi(0)\), (9.968).  After all physical \(K\)-packets are restored, its zero dual transform is \(G_t(s_t)g_t(s_t)/s_t=0\), (9.969), while the deleted origin is exactly the \(\ell=n\) AFE diagonal, (9.970).  Hence \(\mathcal D+\mathcal P^{\rm all}=\mathcal P^{(2),\ne0}\), (9.972), with effective \(k\asymp T/K\), (9.974).  On the balanced face this is a short \(T^{1/2+o(1)}\) nonzero dual family, but it retains the two long Selberg--Möbius coefficients and must still be combined with the proper-divisor row before Cauchy |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |

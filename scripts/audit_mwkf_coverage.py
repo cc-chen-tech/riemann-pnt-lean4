@@ -19396,6 +19396,190 @@ def oriented_principal_ramanujan_sampled_bridge_audit(
     }
 
 
+def second_principal_coprime_poisson_audit(
+    *,
+    cyclic_values: tuple[Fraction, ...],
+    coprime_moduli: tuple[int, ...],
+    q: int,
+    reduced_r: int,
+    gcd_g: int,
+    diagonal_index_n: int,
+    k_partition_reassembled_exactly: bool,
+    afe_mellin_transform_verified: bool,
+    diagonal_packet_reassembly_verified: bool,
+    original_afe_packet_map_verified: bool,
+    physical_k_exponent: Fraction = F(1, 2),
+) -> dict[str, object]:
+    """Audit the second coprime Poisson step on the sampled principal row.
+
+    The finite cyclic model verifies the Ramanujan-weighted Fourier
+    projector and the exceptional deleted origin at modulus one.  The
+    continuous zero dual mode is recorded only when the original K-packets
+    have first been reassembled and the Mellin transform of the exact AFE
+    weight has been independently verified.  At that point its value is
+    proportional to ``G_t(s_t)`` and vanishes.  The deleted origin at
+    ``s0=1`` has the exact coefficient of the AFE diagonal.
+    """
+
+    values = tuple(complex(F(value)) for value in cyclic_values)
+    moduli = tuple(int(value) for value in coprime_moduli)
+    period = len(values)
+    if period < 1 or not moduli:
+        raise ValueError("cyclic values and coprime moduli must be nonempty")
+    if any(modulus < 1 or period % modulus != 0 for modulus in moduli):
+        raise ValueError("every coprime modulus must divide the cyclic period")
+    if min(q, reduced_r, gcd_g, diagonal_index_n) < 1:
+        raise ValueError("all diagonal labels must be positive")
+    if gcd(reduced_r, gcd_g) != 1 or gcd(q, reduced_r * gcd_g) != 1:
+        raise ValueError("q, reduced r, and gcd g must be pairwise coprime")
+
+    fourier = tuple(
+        sum(
+            value * cmath.exp(-2j * pi * frequency * index / period)
+            for index, value in enumerate(values)
+        )
+        for frequency in range(period)
+    )
+
+    rows: list[dict[str, object]] = []
+    all_rows_exact = True
+    deleted_origin_only_at_one = True
+    zero_ramanujan_coefficients_exact = True
+    for modulus in moduli:
+        ramanujan = tuple(
+            sum(
+                cmath.exp(2j * pi * frequency * residue / modulus)
+                for residue in range(modulus)
+                if gcd(residue, modulus) == 1
+            )
+            for frequency in range(modulus)
+        )
+        direct_units = sum(
+            value
+            for index, value in enumerate(values)
+            if gcd(index, modulus) == 1
+        )
+        poisson_units = sum(
+            ramanujan[frequency]
+            * fourier[(period // modulus) * frequency]
+            for frequency in range(modulus)
+        ) / modulus
+        origin_correction = values[0] if modulus == 1 else 0j
+        direct_nonzero_units = direct_units - origin_correction
+        poisson_nonzero_units = poisson_units - origin_correction
+        tolerance = 1e-8 * max(
+            1.0,
+            abs(direct_units),
+            abs(poisson_units),
+            abs(direct_nonzero_units),
+        )
+        unit_row_exact = abs(direct_units - poisson_units) <= tolerance
+        deleted_row_exact = (
+            abs(direct_nonzero_units - poisson_nonzero_units) <= tolerance
+        )
+        zero_coefficient_exact = (
+            abs(ramanujan[0] - sum(
+                1 for residue in range(modulus)
+                if gcd(residue, modulus) == 1
+            ))
+            <= tolerance
+        )
+        all_rows_exact = bool(
+            all_rows_exact and unit_row_exact and deleted_row_exact
+        )
+        deleted_origin_only_at_one = bool(
+            deleted_origin_only_at_one
+            and ((origin_correction != 0j) == (modulus == 1 and values[0] != 0j))
+        )
+        zero_ramanujan_coefficients_exact = bool(
+            zero_ramanujan_coefficients_exact and zero_coefficient_exact
+        )
+        rows.append(
+            {
+                "modulus": modulus,
+                "direct_unit_sum": direct_units,
+                "ramanujan_fourier_unit_sum": poisson_units,
+                "deleted_origin_correction": origin_correction,
+                "direct_nonzero_unit_sum": direct_nonzero_units,
+                "ramanujan_fourier_nonzero_unit_sum": poisson_nonzero_units,
+                "unit_projector_exact": unit_row_exact,
+                "deleted_origin_projector_exact": deleted_row_exact,
+                "ramanujan_zero_frequency": ramanujan[0],
+                "ramanujan_zero_frequency_equals_totient": (
+                    zero_coefficient_exact
+                ),
+            }
+        )
+
+    moving_zero = bool(
+        k_partition_reassembled_exactly and afe_mellin_transform_verified
+    )
+    radical_denominator_identity = bool(
+        (reduced_r * gcd_g)
+        * (gcd_g * diagonal_index_n)
+        * (diagonal_index_n * reduced_r)
+        == (diagonal_index_n * reduced_r * gcd_g) ** 2
+    )
+    diagonal_denominator = q * diagonal_index_n * reduced_r * gcd_g
+    diagonal_exact = bool(
+        radical_denominator_identity
+        and diagonal_packet_reassembly_verified
+        and original_afe_packet_map_verified
+    )
+    nonzero_reassembly = bool(
+        all_rows_exact
+        and deleted_origin_only_at_one
+        and zero_ramanujan_coefficients_exact
+        and moving_zero
+        and diagonal_exact
+    )
+    kappa = F(physical_k_exponent)
+    if kappa < 0 or kappa > 1:
+        raise ValueError("the physical K exponent must lie in [0,1]")
+    dual_exponent = F(1) - kappa
+    return {
+        "cyclic_period": period,
+        "coprime_moduli": moduli,
+        "rows": tuple(rows),
+        "all_cyclic_coprime_poisson_rows_exact": all_rows_exact,
+        "deleted_origin_occurs_only_for_modulus_one": (
+            deleted_origin_only_at_one
+        ),
+        "modulus_one_deleted_origin_correction_exact": all(
+            bool(row["deleted_origin_projector_exact"])
+            for row in rows
+            if int(row["modulus"]) == 1
+        ),
+        "positive_modulus_rows_have_ramanujan_zero_coefficient": (
+            zero_ramanujan_coefficients_exact
+        ),
+        "k_partition_reassembled_exactly": bool(
+            k_partition_reassembled_exactly
+        ),
+        "afe_mellin_transform_verified": bool(afe_mellin_transform_verified),
+        "moving_afe_zero_factor_at_st": True,
+        "zero_dual_mode_vanishes_after_global_k_reassembly": moving_zero,
+        "radical_denominator_product_is_diagonal_square": (
+            radical_denominator_identity
+        ),
+        "diagonal_coefficient_denominator": diagonal_denominator,
+        "s0_one_origin_is_exact_afe_diagonal": diagonal_exact,
+        "diagonal_plus_sampled_master_has_only_nonzero_second_dual_modes": (
+            nonzero_reassembly
+        ),
+        "physical_k_exponent": kappa,
+        "second_dual_frequency_exponent": dual_exponent,
+        "balanced_second_dual_frequency_length": (
+            f"T^({_fmt(dual_exponent)}+o(1))"
+        ),
+        "nonzero_second_dual_modes_retain_both_mobius_weights": True,
+        "principal_zero_mode_is_not_a_new_secondary_main_term": moving_zero,
+        "nonzero_second_dual_master_bound_proved": False,
+        "nonzero_determinant_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

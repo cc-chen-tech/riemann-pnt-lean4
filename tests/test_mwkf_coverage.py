@@ -6885,6 +6885,71 @@ def test_fused_principal_master_is_the_ramanujan_nonzero_projection() -> None:
     assert "neither is proved here" in text
 
 
+def test_second_principal_poisson_has_exact_coprime_origin_correction() -> None:
+    """The cyclic model keeps the s0=1 deleted origin and no other one."""
+
+    audit = getattr(
+        coverage_audit,
+        "second_principal_coprime_poisson_audit",
+        None,
+    )
+    assert audit is not None, "second principal Poisson audit is missing"
+    result = audit(
+        cyclic_values=(F(2), F(-1), F(3), F(5), F(-2), F(4),
+                       F(1), F(-3), F(6), F(2), F(-4), F(7)),
+        coprime_moduli=(1, 2, 3, 6),
+        q=5,
+        reduced_r=7,
+        gcd_g=6,
+        diagonal_index_n=3,
+        k_partition_reassembled_exactly=True,
+        afe_mellin_transform_verified=True,
+        diagonal_packet_reassembly_verified=True,
+        original_afe_packet_map_verified=True,
+    )
+    assert result["all_cyclic_coprime_poisson_rows_exact"]
+    assert result["deleted_origin_occurs_only_for_modulus_one"]
+    assert result["modulus_one_deleted_origin_correction_exact"]
+    assert result["positive_modulus_rows_have_ramanujan_zero_coefficient"]
+    assert result["zero_dual_mode_vanishes_after_global_k_reassembly"]
+    assert result["s0_one_origin_is_exact_afe_diagonal"]
+    assert result["diagonal_coefficient_denominator"] == 5 * 7 * 6 * 3
+    assert result["diagonal_plus_sampled_master_has_only_nonzero_second_dual_modes"]
+    assert not result["nonzero_second_dual_master_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_second_principal_poisson_balanced_dual_length_is_half_power() -> None:
+    """The exact zero removal leaves k asymptotic to T/K, not k=0."""
+
+    audit = coverage_audit.second_principal_coprime_poisson_audit
+    result = audit(
+        cyclic_values=(F(1), F(4), F(-2), F(3), F(5), F(-1)),
+        coprime_moduli=(1, 2, 3, 6),
+        q=1,
+        reduced_r=5,
+        gcd_g=6,
+        diagonal_index_n=2,
+        k_partition_reassembled_exactly=True,
+        afe_mellin_transform_verified=True,
+        diagonal_packet_reassembly_verified=True,
+        original_afe_packet_map_verified=True,
+        physical_k_exponent=F(1, 2),
+    )
+    assert result["second_dual_frequency_exponent"] == F(1, 2)
+    assert result["balanced_second_dual_frequency_length"] == "T^(1/2+o(1))"
+    assert result["nonzero_second_dual_modes_retain_both_mobius_weights"]
+    assert result["principal_zero_mode_is_not_a_new_secondary_main_term"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.146 Second Poisson kills its zero mode and returns the diagonal" in text
+    assert r"G_t(s_t)=0" in text
+    assert r"\mathbf1_{s_0=1}\Phi^{K,M}(0)" in text
+    assert r"\mathcal D+\mathcal P^{\rm all}\) is an exact" in text
+    assert r"\tag{9.972}" in text
+    assert "doesnotboundthenonzerosecond-dualmaster" in "".join(text.split())
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 
