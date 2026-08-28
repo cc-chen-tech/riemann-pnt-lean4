@@ -98,6 +98,65 @@ theorem criticalAfeMainSum_mul_mollifier_eq_dyadicClampedPrefix
     criticalAfeMainSum_eq_Icc]
   congr 2
 
+private theorem conj_inv_nat_cpow_criticalLine_eq_neg
+    (n : ℕ) (t : ℝ) :
+    (starRingEnd ℂ)
+        (1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) =
+      1 / (n : ℂ) ^ ((1 / 2 : ℂ) - I * t) := by
+  rw [map_div₀, map_one]
+  have harg : (n : ℂ).arg ≠ Real.pi := by
+    rw [Complex.natCast_arg]
+    exact Real.pi_ne_zero.symm
+  have hpow := Complex.cpow_conj
+    (n : ℂ) ((1 / 2 : ℂ) + I * t) harg
+  have hconj :
+      (starRingEnd ℂ) ((1 / 2 : ℂ) + I * t) =
+        (1 / 2 : ℂ) - I * t := by
+    apply Complex.ext <;> norm_num
+  rw [hconj] at hpow
+  simpa using congrArg Inv.inv hpow.symm
+
+/-- The dual square-root AFE polynomial is exactly the complex conjugate of
+the main polynomial at the same height. -/
+theorem criticalAfeDualSum_eq_conj_mainSum (t : ℝ) :
+    criticalAfeDualSum t = (starRingEnd ℂ) (criticalAfeMainSum t) := by
+  calc
+    criticalAfeDualSum t =
+        ∑ n ∈ Finset.Icc 1 (criticalAfeCutoff t),
+          1 / (n : ℂ) ^ ((1 / 2 : ℂ) - I * t) :=
+      criticalAfeDualSum_eq_Icc t
+    _ = ∑ n ∈ Finset.Icc 1 (criticalAfeCutoff t),
+          (starRingEnd ℂ)
+            (1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) := by
+      apply Finset.sum_congr rfl
+      intro n hn
+      exact (conj_inv_nat_cpow_criticalLine_eq_neg n t).symm
+    _ = (starRingEnd ℂ)
+        (∑ n ∈ Finset.Icc 1 (criticalAfeCutoff t),
+          1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) := by
+      exact (map_sum (starAddEquiv : ℂ ≃+ ℂ) _ _).symm
+    _ = (starRingEnd ℂ) (criticalAfeMainSum t) := by
+      rw [criticalAfeMainSum_eq_Icc]
+
+/-- The corrected unit dual phase and complex conjugation preserve exactly
+the squared norm of the main AFE term after multiplication by the same
+mollifier. -/
+theorem criticalAfeDualProduct_normSq_eq_mainProduct
+    (X : ℕ) (t : ℝ) :
+    Complex.normSq
+        (criticalAfeDualPhase t *
+          (criticalAfeDualSum t *
+            selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t))) =
+      Complex.normSq
+        (criticalAfeMainSum t *
+          selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t)) := by
+  rw [Complex.normSq_mul, Complex.normSq_mul, Complex.normSq_mul,
+    criticalAfeDualSum_eq_conj_mainSum, Complex.normSq_conj]
+  have hphase : Complex.normSq (criticalAfeDualPhase t) = 1 := by
+    rw [Complex.normSq_eq_norm_sq, norm_criticalAfeDualPhase]
+    norm_num
+  rw [hphase, one_mul]
+
 private theorem aestronglyMeasurable_gaussian_normSq_dyadicClampedCriticalPrefix
     (K X : ℕ) (Delta w : ℝ) :
     AEStronglyMeasurable fun t : ℝ =>
@@ -207,6 +266,42 @@ theorem setIntegral_gaussian_normSq_criticalAfeMain_mul_mollifier_le
       simpa only [f] using
         integral_gaussian_normSq_dyadicClampedCriticalPrefix_le
           hX hDelta w
+
+/-- The complete dual AFE term, including its corrected unit phase, has the
+same window Gaussian bound as the main AFE term. -/
+theorem setIntegral_gaussian_normSq_criticalAfeDualProduct_le
+    {K X : ℕ} (hX : 2 ≤ X) {L U Delta : ℝ}
+    (hU : Real.sqrt (U / (2 * Real.pi)) < (((2 ^ K : ℕ) : ℝ)))
+    (hDelta : 2 * (((2 ^ K * X : ℕ) : ℝ)) ≤ Delta) (w : ℝ) :
+    (∫ t : ℝ in Icc L U,
+      Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+        Complex.normSq
+          (criticalAfeDualPhase t *
+            (criticalAfeDualSum t *
+              selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t)))) ≤
+      (K + 1 : ℝ) ^ 2 *
+        ((Real.sqrt (Real.pi / (1 / Delta ^ 2)) *
+            MathlibAux.gaussianBucketSchurConstant) *
+          (2 * (1 + Real.log (((2 ^ K * X : ℕ) : ℝ))) ^ 4)) := by
+  have hEq :
+      (∫ t : ℝ in Icc L U,
+        Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+          Complex.normSq
+            (criticalAfeDualPhase t *
+              (criticalAfeDualSum t *
+                selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t)))) =
+        ∫ t : ℝ in Icc L U,
+          Real.exp (-((t - w) ^ 2) / Delta ^ 2) *
+            Complex.normSq
+              (criticalAfeMainSum t *
+                selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t)) := by
+    apply setIntegral_congr_fun measurableSet_Icc
+    intro t ht
+    dsimp only
+    rw [criticalAfeDualProduct_normSq_eq_mainProduct]
+  rw [hEq]
+  exact setIntegral_gaussian_normSq_criticalAfeMain_mul_mollifier_le
+    hX hU hDelta w
 
 end AFE
 end HardyTheorem
