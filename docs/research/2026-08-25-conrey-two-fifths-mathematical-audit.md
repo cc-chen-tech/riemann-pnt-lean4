@@ -1187,7 +1187,8 @@ the displayed inequality in Section 3 for
 `F=V_1B`, the remaining equation-(37) work is now exactly:
 
 1. bound the bottom and top weighted phase integrals;
-2. bound the far-right argument variation and right-edge `log|F|` term;
+2. bound the far-right argument variation (the moving-right-edge `log|F|`
+   integral is now closed in Section 23.4);
 3. pass from a boundary-zero-free sequence of heights to every `T` with a
    controlled endpoint error;
 4. only then combine (37-exact), (37-gap), and the already proved
@@ -1774,3 +1775,54 @@ without a constant-height substitution.  The low-part reciprocal bound and
 the final global interval split are still open.  Hence equation (37)'s right
 vertical, the horizontal Jensen terms, and the genuine two-fifths theorem
 remain unproved at this checkpoint.
+
+### 23.4 Verified checkpoint: complete global right-edge logarithmic integral
+
+The short low range and the final interval split are now proved in
+`ConreyExplicitRightVerticalLow.lean`:
+
+- `log_le_div_hundred_of_ge_forty_thousand` gives the explicit elementary
+  scale `log L <= L/100` for `L >= 40000`;
+- `norm_logDeriv_conreyH_movingRight_low_le` applies the coarse digamma bound
+  on `1 <= t <= 2 log L` and proves
+
+  \[
+  \left\|{H'\over H}(2\log L+it)\right\|\le 6+\log L;
+  \]
+
+- `norm_conreyExplicitV1_sub_const_low_le` consequently proves
+
+  \[
+  \left\|V_1(2\log L+it)-{49\over100}\right\|\le {1\over50};
+  \]
+
+- `conreyExplicitRightVerticalProduct_low_norm_bounds` combines this with the
+  finite-mollifier tail to obtain the direct, assumption-free bounds
+
+  \[
+  {2\over5}\le\|V_1(2\log L+it)B(2\log L+it)\|\le {3\over5};
+  \]
+
+- hence `abs_log_norm_conreyExplicitRightVerticalProduct_low_le_two` and
+  `integral_abs_log_norm_conreyExplicitRightVerticalProduct_low_le` prove
+
+  \[
+  \int_1^{2\log L}|\log\|V_1B\||\,dt\le4\log L;
+  \]
+
+- finally `integral_abs_log_norm_conreyExplicitRightVerticalProduct_global_le`
+  joins this estimate to Section 23.3 and proves
+
+  \[
+  \int_1^{e^L}
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|dt
+  \le {507e^L\over L}
+  \]
+
+  for `L >= 40000`.
+
+This closes the moving-right-edge logarithmic-integral item needed in
+equation (37), with a concrete product and no abstract boundary nonvanishing
+hypothesis.  It does **not** close the two horizontal weighted phase/Jensen
+terms, admissible endpoint selection, or the long mollified mean square.
+Those remain the next gates before any genuine two-fifths claim.
