@@ -17935,6 +17935,184 @@ def oriented_canonical_centering_type_split_audit(
     }
 
 
+def oriented_principal_cofactor_type_mobius_fusion_audit(
+    *,
+    rows: tuple[
+        tuple[
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            tuple[Fraction, ...],
+        ],
+        ...,
+    ],
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+) -> dict[str, object]:
+    """Fuse the canonical principal cofactor and Type Möbius signs.
+
+    If ``d=gcd(h*delta,v)`` and ``m=d*w``, the oriented unit mask
+    ``gcd(v,w)=1`` gives ``gcd(m,v)=d``.  Hence ``d`` and ``w`` are
+    recovered from ``(v,m,h*delta)`` and
+
+    ``mu(d) * mu(w) / phi(v/d) = mu(m) / phi(v/gcd(m,v))``.
+
+    The principal row therefore has one moving-gcd Möbius variable.  Its
+    remainder-free Type split is applied to ``mu(m)`` only.  No analytic
+    estimate is asserted, and at top reduced conductor ``d=1`` the
+    fusion is the identity ``m=w``.
+    """
+
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if cutoff_u < 1 or cutoff_v < 1:
+        raise ValueError("both Type cutoffs must be positive")
+    boundary = max(cutoff_u, cutoff_v)
+    base = oriented_global_reduced_frequency_projector_audit(rows=rows)
+    old_principal = tuple(
+        F(value) for value in tuple(base["principal_ramanujan_density_vector"])
+    )
+    vector_dimension = len(old_principal)
+    fused_principal = [F(0) for _ in range(vector_dimension)]
+    type_blocks = {
+        "small": [F(0) for _ in range(vector_dimension)],
+        "I": [F(0) for _ in range(vector_dimension)],
+        "II": [F(0) for _ in range(vector_dimension)],
+    }
+    checked_rows: list[dict[str, object]] = []
+
+    for row in tuple(base["rows"]):
+        v = int(row["oriented_modulus"])
+        w = int(row["type_entry"])
+        product_label = int(row["product_label"])
+        d = int(row["inactive_cofactor"])
+        q = int(row["reduced_conductor"])
+        m = d * w
+        reconstructed_d = gcd(m, v)
+        reconstructed_w = m // reconstructed_d
+        reconstructed_q = v // reconstructed_d
+        bijective = bool(
+            reconstructed_d == d
+            and reconstructed_d == gcd(abs(product_label), v)
+            and reconstructed_w == w
+            and reconstructed_q == q
+        )
+        mu_m = _finite_mobius(m)
+        if mu_m == 0:
+            raise RuntimeError("the fused cofactor--Type entry is not squarefree")
+        phi_q = (
+            1
+            if q == 1
+            else sum(1 for residue in range(1, q) if gcd(residue, q) == 1)
+        )
+        old_coefficient = F(row["full_two_mobius_sign"]) * F(
+            row["ramanujan_principal_density"]
+        )
+        fused_coefficient = F(mu_m, phi_q)
+        vector = tuple(F(value) for value in tuple(row["packet_vector"]))
+        for index, value in enumerate(vector):
+            fused_principal[index] += fused_coefficient * value
+
+        if m <= boundary:
+            multipliers = {"small": mu_m, "I": 0, "II": 0}
+        else:
+            short_short = sum(
+                _finite_mobius(b) * _finite_mobius(c)
+                for b in _positive_divisors(m)
+                if b <= cutoff_u
+                for c in _positive_divisors(m // b)
+                if c <= cutoff_v
+            )
+            long_long = sum(
+                _finite_mobius(b) * _finite_mobius(c)
+                for b in _positive_divisors(m)
+                if b > cutoff_u
+                for c in _positive_divisors(m // b)
+                if c > cutoff_v
+            )
+            multipliers = {
+                "small": 0,
+                "I": -short_short,
+                "II": long_long,
+            }
+        for name, multiplier in multipliers.items():
+            for index, value in enumerate(vector):
+                type_blocks[name][index] += F(multiplier, phi_q) * value
+
+        checked_rows.append(
+            {
+                "oriented_modulus": v,
+                "type_entry": w,
+                "product_label": product_label,
+                "inactive_cofactor": d,
+                "reduced_conductor": q,
+                "fused_mobius_entry": m,
+                "reconstructed_inactive_cofactor": reconstructed_d,
+                "reconstructed_type_entry": reconstructed_w,
+                "cofactor_type_map_is_bijective": bijective,
+                "old_two_mobius_principal_coefficient": old_coefficient,
+                "fused_one_mobius_principal_coefficient": fused_coefficient,
+                "principal_coefficient_fusion_exact": bool(
+                    old_coefficient == fused_coefficient
+                ),
+                "fused_signed_type_multipliers": multipliers,
+                "fused_type_split_exact": bool(
+                    sum(multipliers.values()) == mu_m
+                ),
+                "top_conductor_fusion_is_identity": bool(d == 1 and m == w),
+            }
+        )
+
+    fused_principal_vector = tuple(fused_principal)
+    fused_type_blocks = {
+        name: tuple(vector) for name, vector in type_blocks.items()
+    }
+    recombined_type_vector = tuple(
+        sum(
+            (fused_type_blocks[name][index] for name in ("small", "I", "II")),
+            start=F(0),
+        )
+        for index in range(vector_dimension)
+    )
+    all_bijective = all(
+        bool(row["cofactor_type_map_is_bijective"])
+        and bool(row["principal_coefficient_fusion_exact"])
+        for row in checked_rows
+    )
+    all_type_exact = all(
+        bool(row["fused_type_split_exact"]) for row in checked_rows
+    )
+    top_row_present = any(
+        bool(row["top_conductor_fusion_is_identity"])
+        for row in checked_rows
+    )
+    return {
+        "rows": tuple(checked_rows),
+        "old_principal_vector": old_principal,
+        "fused_one_mobius_principal_vector": fused_principal_vector,
+        "cofactor_type_map_is_bijective_on_every_row": all_bijective,
+        "principal_two_to_one_mobius_fusion_exact": bool(
+            all_bijective and fused_principal_vector == old_principal
+        ),
+        "fused_type_block_vectors": fused_type_blocks,
+        "fused_one_mobius_type_split_exact": bool(
+            all_type_exact and recombined_type_vector == fused_principal_vector
+        ),
+        "principal_mobius_sources_before_fusion": 2,
+        "principal_mobius_sources_after_fusion": 1,
+        "top_conductor_still_requires_length_type_mean": top_row_present,
+        "fused_principal_analytic_bound_proved": False,
+        "centered_two_mobius_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def oriented_nonprincipal_cofactor_type_convolution_audit(
     *,
     reduced_conductor: int,

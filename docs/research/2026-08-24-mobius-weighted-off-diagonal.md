@@ -33,6 +33,7 @@
 > | Nonprincipal cofactor--Type convolution | Section 9.138 splits \(d=d_1d_2\), \(h=d_1h_1\), \(\delta=d_2\delta_1\) uniquely and rewrites every separated fixed-\(q>1\) projector atom as the exact ratio convolution \(Z_{q,c}=\mu(q)\sum_{y\in U(q)}F_q(-cy)G_q(y)\).  Multiplicative Parseval retains \(\mu(d_1)\mu(d_2)\) in \(F_q\), \(\mu(w)\) and all small/I/II Type blocks in \(G_q\), and exposes an additional principal multiplicative character for every \(q>1\).  Linearly, its Ramanujan sum cancels the common \(\mu(q)\) and produces the explicit density \(F_q^{\rm tot}G_q^{\rm tot}/\varphi(q)\), while the remainder has zero \(c\)-mass.  The optimistic primitive-character envelope is \(T^{10+\gamma}\) against target \(T^{12}\), but the uncentered principal row has trivial exponent \(10+2\gamma\).  At \(\gamma=3\) a standalone positive-projector proof would require a \(T^2\) amplitude saving in its length-\(T^3\) Type mean, or exact pre-square AFE/reflection reassembly.  The physical adapter, principal reassembly, high-conductor centered estimate, and projector bound remain unproved |
 > | Oriented Ramanujan-principal bridge | Section 9.139 distinguishes the original common gcd layer, the ambient reduced modulus \(q_{\rm red}>1\), and the inverse character's primitive conductor.  The principal character modulo \(q_{\rm red}\) has primitive conductor \(1\), and \(\mu(q_{\rm red})c_{q_{\rm red}}(A)/\varphi(q_{\rm red})=1/\varphi(q_{\rm red})\) for every reduced unit label \(A\).  Hence (9.921b) is exactly the unit-label, zero-direct specialization of the Ramanujan principal row (9.748), not a new secondary main term.  Equation (9.932) now performs this principal/centered split packet-exhaustively and linearly on the entire oriented master (9.906), without a separated-weight assumption.  The standalone positive projector is therefore replaced by the weaker joint analytic gate (9.933), equivalent to (9.750); that bound and the centered determinant dispersion remain unproved |
 > | Centering-compatible pre-Cauchy Type split | Section 9.140 applies the boundary-safe two-cutoff identity only to \(\mu(n)\) in the oriented Type entry \(w=np\).  Since the Ramanujan density is independent of \(w\), the small/I/II split commutes exactly with the packet-exhaustive centering (9.932), retaining \(\mu(v)\mu(p)\), \(a=h\delta\), and all packet labels.  One global square contains all nine ordered cross-Type blocks, whose signed sum is exactly the original reduced-frequency projector.  A finite witness has diagonal-block energy \(55\), cross-block contribution \(-30\), and total \(25\), so separate post-square absolute values erase real algebraic cancellation.  The joint nine-block analytic estimate remains unproved |
+> | Oriented principal Möbius fusion | Section 9.141 observes that the canonical principal row has fewer independent signs than the centered row.  With \(d=(|h\delta|,v)\) and \(m=dw\), the unit support gives \((m,v)=d\), so \((d,w)\leftrightarrow m\) is bijective and \(\mu(d)\mu(w)/\varphi(v/d)=\mu(m)/\varphi(v/(m,v))\).  Thus the full principal contribution is one moving-gcd Möbius sum and its exact Type decomposition has three blocks, while only the centered contribution retains the genuine two-Möbius nine-block dispersion.  On the top conductor \(d=1\), however, \(m=w\), so the length-\(T^3\) Type mean remains unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -20325,6 +20326,105 @@ proved.  It deliberately leaves the joint ordered-block bound, the
 centered nonzero-determinant dispersion, (9.933), and the coupled-kernel
 gate false.
 
+### 9.141 The canonical principal row has only one Möbius variable
+
+Equation (9.932) still displays the principal coefficient as
+\(\mu(d)\mu(w)/\varphi(q)\), but the two signs are not independent.
+For one oriented row put
+
+\[
+ d=(|h\delta|,v),\qquad q=v/d,\qquad m=dw.
+\]
+
+The support conditions in (9.906) give \((v,w)=1\); since \(v\) and
+\(w\) are squarefree, \((d,w)=1\) as well.  Consequently
+
+\[
+ \boxed{
+ (m,v)=d,\qquad
+ d=(m,v),\qquad
+ w=\frac{m}{(m,v)},\qquad
+ q=\frac{v}{(m,v)}.}
+ \tag{9.938}
+\]
+
+Thus \((d,w)\mapsto m=dw\) is a bijection on every physical row once
+\((v,h\delta)\) is retained.  It also fuses the two principal signs:
+
+\[
+ \boxed{
+ \frac{\mu(d)\mu(w)}{\varphi(q)}
+ =\frac{\mu(m)}{\varphi(v/(m,v))}.}
+ \tag{9.939}
+\]
+
+No multiplicative separation of \(\widetilde C_\omega\) is used here.
+Substitution into the first line of (9.932) gives the packet-exhaustive
+one-Möbius principal master
+
+\[
+ \boxed{\begin{aligned}
+ \mathfrak P_{\rm top}^{\rm or}
+ ={}&\sum_{\omega,v,m,h,\delta}
+ \frac{\mu(m)}{\varphi(v/(m,v))}\,
+ {\bf1}_{(m,v)=(|h\delta|,v)}\\
+ &\qquad\qquad\cdot
+ \widetilde C_\omega
+ \left(v,\frac{m}{(m,v)},h,\delta\right).
+ \end{aligned}}
+ \tag{9.940}
+\]
+
+Every original support condition is enforced by extending the displayed
+coefficient by zero.  In particular, (9.940) does not enlarge the
+dyadic support of \(w=m/(m,v)\), and the equality of the two gcds is an
+exact incidence condition, not a majorant.
+
+The remainder-free two-cutoff identity may now be applied once to
+\(\mu(m)\).  With the signed multipliers of (9.934), but evaluated at
+\(m\), one obtains only three principal blocks:
+
+\[
+ \boxed{
+ \mathfrak P_{\rm top}^{\rm or}
+ =\mathfrak P_{\rm fused}^{\rm small}
+  +\mathfrak P_{\rm fused}^{\rm I}
+  +\mathfrak P_{\rm fused}^{\rm II}.}
+ \tag{9.941}
+\]
+
+This improves the analytic interface: the principal term no longer
+requires a two-Möbius or nine-block theorem.  The genuinely coupled
+two-Möbius object is the centered family
+\(\mathfrak N_{\rm all}^{\rm or}\), whose exact nine-block expansion is
+(9.936)--(9.937).  The joint gate (9.933) can therefore be read as
+
+\[
+ \left|
+  \mathfrak P_{\rm fused}^{\rm small}
+ +\mathfrak P_{\rm fused}^{\rm I}
+ +\mathfrak P_{\rm fused}^{\rm II}
+ +\mathfrak N_{\rm all}^{\rm or}
+ \right|\ll_{\varepsilon,W}RST^\varepsilon.
+\]
+
+There are two remaining cautions.  First, the kernel in (9.940) depends
+on the moving gcd \((m,v)\), so a theorem for one Möbius function
+against one fixed trace function does not apply automatically.  Second,
+on the top reduced conductor \(q=v\) one has \(d=1\), hence
+\(m=w\).  The fusion then changes no length and still leaves the
+length-\(T^3\) one-Möbius Type mean identified in (9.928).  Therefore
+(9.938)--(9.941) strictly reduce the number of independent Möbius
+sources in the principal ledger, but do not prove its analytic bound.
+
+The helper
+`oriented_principal_cofactor_type_mobius_fusion_audit` reconstructs
+\((d,w,q)\) from \((v,m,h\delta)\), verifies (9.938)--(9.940) for
+arbitrary rational packet vectors, and applies the exact three-block
+split in (9.941).  It marks the two-to-one principal Möbius fusion
+proved while leaving the fused principal estimate, centered
+two-Möbius dispersion, (9.933), and the coupled-kernel gate false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -21299,6 +21399,7 @@ Proved in this note:
 | Nonprincipal cofactor--Type ratio convolution | exact fixed-\(q\) factorization and principal/centered split; neither global piece closed | The unique split \(d=d_1d_2\), \(h=d_1h_1\), \(\delta=d_2\delta_1\) turns each separated unit atom into \(Z_{q,c}=\mu(q)\sum_yF_q(-cy)G_q(y)\), (9.915)--(9.920).  Multiplicative Parseval retains \(\mu(d_1)\mu(d_2)\) and \(\mu(w)\), and (9.921a) extracts the principal multiplicative character for every \(q>1\).  Returning its mean to the additive phase gives exactly \(F_q^{\rm tot}G_q^{\rm tot}/\varphi(q)\), with no conductor sign, plus a zero-\(c\)-mass remainder, (9.921b).  The optimistic primitive-character envelope is \(10+\gamma\), hence fails above \(q=T^2\), but it is not an all-character bound.  The uncentered principal row has trivial balanced exponent \(10+2\gamma\); at \(q=T^3\), (9.926)--(9.928) require a \(T^2\) amplitude saving in the length-\(T^3\) Type mean unless exact AFE/reflection/diagonal reassembly cancels it before the square.  The physical primitive-conductor adapter, principal reassembly, centered high-conductor estimate, and \(q>1\) projector bound remain unproved |
 | Oriented projector to Ramanujan-principal bridge | exact packet-exhaustive linear adapter; joint analytic gate unproved | The common gcd layer \(q_{\rm gcd}\), ambient reduced modulus \(q_{\rm red}\), and inverse-character primitive conductor \(q_\psi\) are distinct.  The principal character modulo \(q_{\rm red}>1\) has \(q_\psi=1\), and for unit \(A\), \(\mu(q_{\rm red})\rho_{q_{\rm red}}(A)=1/\varphi(q_{\rm red})\), (9.929).  Equations (9.930)--(9.931) identify the density in (9.921b) with the zero-direct unit-label specialization of the Ramanujan row (9.748); it is not an independent secondary main term and is distinct from the phase-one set \(q_{\rm red}=1\) in (9.693)--(9.697).  Equation (9.932) applies the canonical centering directly to every packet of (9.906), proving the full oriented principal/centered adapter without rank-one separation and retaining both Möbius signs and \(h\delta\).  The positive projector is thereby replaced by the weaker joint gate (9.933), equivalent to (9.750); its analytic bound, the optional larger double-character map, and centered determinant dispersion remain unproved |
 | Oriented canonical centering with Type I/II | exact three-block linear split and nine-block Gram reassembly; analytic bound unproved | The signed multipliers (9.934) satisfy the endpoint-exact identity (9.935).  Because \(q,A,\rho_q(A)\) are unchanged by this scalar decomposition, (9.936) proves that packet-exhaustive centering commutes with small/I/II before any Cauchy step, preserving \(\mu(v)\mu(p)\), the I/II signs \(\mu(b)\mu(c)\), \(h\delta\), and all physical labels.  The one permissible global square is the nine ordered-block identity (9.937).  A finite witness has self-energy \(55\), cross energy \(-30\), and total \(25\), so separate post-square absolute values are strictly stronger even algebraically.  No joint nine-block estimate or centered determinant dispersion is proved |
+| Oriented principal cofactor--Type fusion | exact reduction from two Möbius signs to one moving-gcd sign; top analytic mean unproved | With \(d=(|h\delta|,v)\) and \(m=dw\), the unit support gives the bijection (9.938) and the coefficient identity (9.939).  Hence (9.940) rewrites the entire canonical principal contribution as one Möbius sum with the exact incidence \((m,v)=(|h\delta|,v)\), without separating the packet weight.  Its remainder-free decomposition has only the three blocks (9.941); the centered family alone retains the genuine two-Möbius nine-block dispersion.  At top reduced conductor \(d=1\), however, \(m=w\), so the length-\(T^3\) one-Möbius Type mean and the joint principal--centered bound remain unproved |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |

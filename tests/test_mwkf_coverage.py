@@ -6315,6 +6315,61 @@ def test_oriented_canonical_centering_commutes_with_exact_type_split() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_oriented_principal_cofactor_and_type_signs_fuse_exactly() -> None:
+    """The canonical principal row has one moving-gcd Möbius sign."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_principal_cofactor_type_mobius_fusion_audit",
+        None,
+    )
+    assert audit is not None, "oriented principal Möbius fusion is missing"
+    result = audit(
+        rows=(
+            # (v,w,h,delta,n,p,b,c,u,packet vector)
+            (6, 35, 2, 3, 7, 5, 7, 1, 1, (F(1), F(2))),
+            (10, 21, 2, 3, 3, 7, 3, 1, 1, (F(3), F(-1))),
+            (15, 14, 2, 3, 2, 7, 2, 1, 1, (F(2), F(4))),
+            (10, 7, 2, 3, 1, 7, 1, 1, 1, (F(-1), F(3))),
+        ),
+        short_cutoff_u=1,
+        short_cutoff_v=1,
+    )
+    assert result["cofactor_type_map_is_bijective_on_every_row"]
+    assert [row["fused_mobius_entry"] for row in result["rows"]] == [
+        210,
+        42,
+        42,
+        14,
+    ]
+    assert result["old_principal_vector"] == (F(-1, 2), F(2))
+    assert result["fused_one_mobius_principal_vector"] == (
+        F(-1, 2),
+        F(2),
+    )
+    assert result["principal_two_to_one_mobius_fusion_exact"]
+    assert result["fused_type_block_vectors"] == {
+        "small": (F(0), F(0)),
+        "I": (F(-2), F(-7, 2)),
+        "II": (F(3, 2), F(11, 2)),
+    }
+    assert result["fused_one_mobius_type_split_exact"]
+    assert result["principal_mobius_sources_before_fusion"] == 2
+    assert result["principal_mobius_sources_after_fusion"] == 1
+    assert not result["fused_principal_analytic_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    top = audit(
+        rows=((5, 6, 1, 1, 6, 1, 2, 3, 1, (F(2), F(1))),),
+        short_cutoff_u=1,
+        short_cutoff_v=1,
+    )
+    assert top["rows"][0]["inactive_cofactor"] == 1
+    assert top["rows"][0]["fused_mobius_entry"] == 6
+    assert top["rows"][0]["top_conductor_fusion_is_identity"]
+    assert top["top_conductor_still_requires_length_type_mean"]
+
+
 def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
     """Primitive fourth moments omit an even larger principal row."""
 
