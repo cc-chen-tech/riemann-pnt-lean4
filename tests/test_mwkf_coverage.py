@@ -6264,6 +6264,57 @@ def test_nonprincipal_projector_retains_cofactor_and_type_convolution() -> None:
         )
 
 
+def test_oriented_canonical_centering_commutes_with_exact_type_split() -> None:
+    """Center first or split first gives the same nine-block projector."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_canonical_centering_type_split_audit",
+        None,
+    )
+    assert audit is not None, "oriented centered Type-split audit is missing"
+    result = audit(
+        rows=(
+            # (v,w,h,delta,n,p,b,c,u,packet vector)
+            (5, 1, 1, 1, 1, 1, 1, 1, 1, (F(1), F(2))),
+            (5, 6, 1, 1, 6, 1, 2, 3, 1, (F(3), F(1))),
+        ),
+        short_cutoff_u=1,
+        short_cutoff_v=1,
+    )
+    assert result["rowwise_remainder_free_type_split_exact"]
+    assert result["type_block_signed_frequency_vectors"] == {
+        "small": {(5, 4): (F(-1), F(-2))},
+        "I": {(5, 4): (F(3), F(1))},
+        "II": {(5, 4): (F(-6), F(-2))},
+    }
+    assert result["type_blocks_recombine_to_raw_oriented_master"]
+    assert result["type_block_principal_vectors"] == {
+        "small": (F(1, 4), F(1, 2)),
+        "I": (F(-3, 4), F(-1, 4)),
+        "II": (F(3, 2), F(1, 2)),
+    }
+    assert result["canonical_centering_commutes_with_type_split"]
+    assert result["ordered_type_cross_energies"] == {
+        ("small", "small"): F(5),
+        ("small", "I"): F(-5),
+        ("small", "II"): F(10),
+        ("I", "small"): F(-5),
+        ("I", "I"): F(10),
+        ("I", "II"): F(-20),
+        ("II", "small"): F(10),
+        ("II", "I"): F(-20),
+        ("II", "II"): F(40),
+    }
+    assert result["all_nine_ordered_cross_type_blocks_retained"]
+    assert result["ordered_cross_type_sum"] == F(25)
+    assert result["original_reduced_frequency_projector_energy"] == F(25)
+    assert result["nine_cross_type_blocks_recombine_to_projector"]
+    assert result["two_mobius_weights_and_product_label_retained"]
+    assert not result["ordered_cross_type_analytic_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
 def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
     """Primitive fourth moments omit an even larger principal row."""
 

@@ -17671,6 +17671,270 @@ def oriented_global_reduced_frequency_projector_audit(
     }
 
 
+def oriented_canonical_centering_type_split_audit(
+    *,
+    rows: tuple[
+        tuple[
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            tuple[Fraction, ...],
+        ],
+        ...,
+    ],
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+) -> dict[str, object]:
+    """Commute canonical Ramanujan centering with the exact Type split.
+
+    The input rows are those of
+    :func:`oriented_global_reduced_frequency_projector_audit`.  Only the
+    Möbius factor ``mu(n)`` in the Type entry ``w=n*p`` is decomposed.
+    The three signed multipliers are the small boundary, minus the
+    short--short divisor block, and plus the long--long divisor block.
+    Thus their pointwise sum is ``mu(n)`` with no mixed rectangles or
+    remainder.  Linearity then lets the same split pass through the
+    Ramanujan principal projection and its centered complement before a
+    single global square.
+    """
+
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if cutoff_u < 1 or cutoff_v < 1:
+        raise ValueError("both Type cutoffs must be positive")
+    boundary = max(cutoff_u, cutoff_v)
+    base = oriented_global_reduced_frequency_projector_audit(rows=rows)
+    type_names = ("small", "I", "II")
+    vector_dimension = len(tuple(base["principal_ramanujan_density_vector"]))
+
+    def zero_vector() -> list[Fraction]:
+        return [F(0) for _ in range(vector_dimension)]
+
+    block_frequency_vectors: dict[
+        str,
+        dict[tuple[int, int], list[Fraction]],
+    ] = {name: {} for name in type_names}
+    block_principal_vectors = {name: zero_vector() for name in type_names}
+    checked_rows: list[dict[str, object]] = []
+
+    for row in tuple(base["rows"]):
+        n = int(row["type_cofactor"])
+        p = int(row["prime_bearing_factor"])
+        mu_n = _finite_mobius(n)
+        mu_p = _finite_mobius(p)
+        if mu_n == 0 or mu_p == 0:
+            raise RuntimeError("the validated squarefree Type entry lost support")
+
+        if n <= boundary:
+            small_multiplier = mu_n
+            type_i_multiplier = 0
+            type_ii_multiplier = 0
+        else:
+            small_multiplier = 0
+            short_short = sum(
+                _finite_mobius(b) * _finite_mobius(c)
+                for b in _positive_divisors(n)
+                if b <= cutoff_u
+                for c in _positive_divisors(n // b)
+                if c <= cutoff_v
+            )
+            long_long = sum(
+                _finite_mobius(b) * _finite_mobius(c)
+                for b in _positive_divisors(n)
+                if b > cutoff_u
+                for c in _positive_divisors(n // b)
+                if c > cutoff_v
+            )
+            type_i_multiplier = -short_short
+            type_ii_multiplier = long_long
+
+        multipliers = {
+            "small": small_multiplier,
+            "I": type_i_multiplier,
+            "II": type_ii_multiplier,
+        }
+        type_split_exact = sum(multipliers.values()) == mu_n
+        frequency = tuple(row["reduced_frequency"])
+        vector = tuple(F(value) for value in tuple(row["packet_vector"]))
+        outer_sign = int(row["outer_mobius_sign"])
+        density = F(row["ramanujan_principal_density"])
+        block_signed_coefficients: dict[str, int] = {}
+        for name, multiplier in multipliers.items():
+            signed_coefficient = outer_sign * mu_p * multiplier
+            block_signed_coefficients[name] = signed_coefficient
+            accumulator = block_frequency_vectors[name].setdefault(
+                frequency,
+                zero_vector(),
+            )
+            for index, value in enumerate(vector):
+                signed_value = F(signed_coefficient) * value
+                accumulator[index] += signed_value
+                block_principal_vectors[name][index] += density * signed_value
+
+        checked_rows.append(
+            {
+                "oriented_modulus": row["oriented_modulus"],
+                "type_entry": row["type_entry"],
+                "type_cofactor": n,
+                "prime_bearing_factor": p,
+                "product_label": row["product_label"],
+                "reduced_frequency": frequency,
+                "signed_type_multipliers": multipliers,
+                "block_signed_coefficients": block_signed_coefficients,
+                "pointwise_type_split_exact": type_split_exact,
+                "raw_two_mobius_coefficient": row["full_two_mobius_sign"],
+                "blocks_recombine_to_raw_two_mobius_coefficient": bool(
+                    sum(block_signed_coefficients.values())
+                    == int(row["full_two_mobius_sign"])
+                ),
+            }
+        )
+
+    def nonzero_vectors(
+        family: dict[tuple[int, int], list[Fraction]],
+    ) -> dict[tuple[int, int], tuple[Fraction, ...]]:
+        return {
+            frequency: tuple(vector)
+            for frequency, vector in family.items()
+            if any(value != 0 for value in vector)
+        }
+
+    block_raw = {
+        name: nonzero_vectors(block_frequency_vectors[name])
+        for name in type_names
+    }
+    block_principal = {
+        name: tuple(block_principal_vectors[name])
+        for name in type_names
+    }
+    block_centered: dict[
+        str,
+        dict[tuple[int, int], tuple[Fraction, ...]],
+    ] = {}
+    block_recombination_exact = True
+    for name in type_names:
+        centered = {
+            frequency: list(vector)
+            for frequency, vector in block_raw[name].items()
+        }
+        constant = centered.setdefault((1, 0), zero_vector())
+        for index, value in enumerate(block_principal[name]):
+            constant[index] -= value
+        block_centered[name] = nonzero_vectors(centered)
+
+        recombined = {
+            frequency: list(vector)
+            for frequency, vector in block_centered[name].items()
+        }
+        recombined_constant = recombined.setdefault((1, 0), zero_vector())
+        for index, value in enumerate(block_principal[name]):
+            recombined_constant[index] += value
+        block_recombination_exact = bool(
+            block_recombination_exact
+            and nonzero_vectors(recombined) == block_raw[name]
+        )
+
+    def sum_vector_families(
+        families: tuple[
+            dict[tuple[int, int], tuple[Fraction, ...]],
+            ...,
+        ],
+    ) -> dict[tuple[int, int], tuple[Fraction, ...]]:
+        total: dict[tuple[int, int], list[Fraction]] = {}
+        for family in families:
+            for frequency, vector in family.items():
+                accumulator = total.setdefault(frequency, zero_vector())
+                for index, value in enumerate(vector):
+                    accumulator[index] += value
+        return nonzero_vectors(total)
+
+    combined_raw = sum_vector_families(
+        tuple(block_raw[name] for name in type_names)
+    )
+    combined_centered = sum_vector_families(
+        tuple(block_centered[name] for name in type_names)
+    )
+    combined_principal = tuple(
+        sum(
+            (block_principal[name][index] for name in type_names),
+            start=F(0),
+        )
+        for index in range(vector_dimension)
+    )
+
+    def dot(
+        left: tuple[Fraction, ...],
+        right: tuple[Fraction, ...],
+    ) -> Fraction:
+        return sum((x * y for x, y in zip(left, right)), start=F(0))
+
+    ordered_cross_energies: dict[tuple[str, str], Fraction] = {}
+    for left_name in type_names:
+        for right_name in type_names:
+            common_frequencies = set(block_raw[left_name]) & set(
+                block_raw[right_name]
+            )
+            ordered_cross_energies[(left_name, right_name)] = sum(
+                (
+                    dot(
+                        block_raw[left_name][frequency],
+                        block_raw[right_name][frequency],
+                    )
+                    for frequency in common_frequencies
+                ),
+                start=F(0),
+            )
+    ordered_cross_sum = sum(ordered_cross_energies.values(), start=F(0))
+    original_projector_energy = F(base["reduced_frequency_projector_energy"])
+    rowwise_exact = all(
+        bool(row["pointwise_type_split_exact"])
+        and bool(row["blocks_recombine_to_raw_two_mobius_coefficient"])
+        for row in checked_rows
+    )
+    centering_commutes = bool(
+        block_recombination_exact
+        and combined_raw == base["raw_linear_phase_coefficients"]
+        and combined_principal == base["principal_ramanujan_density_vector"]
+        and combined_centered == base["centered_linear_phase_coefficients"]
+    )
+    return {
+        "rows": tuple(checked_rows),
+        "short_cutoff_u": cutoff_u,
+        "short_cutoff_v": cutoff_v,
+        "small_boundary": boundary,
+        "rowwise_remainder_free_type_split_exact": rowwise_exact,
+        "type_block_signed_frequency_vectors": block_raw,
+        "type_blocks_recombine_to_raw_oriented_master": bool(
+            combined_raw == base["raw_linear_phase_coefficients"]
+        ),
+        "type_block_principal_vectors": block_principal,
+        "type_block_centered_linear_coefficients": block_centered,
+        "canonical_centering_commutes_with_type_split": centering_commutes,
+        "ordered_type_cross_energies": ordered_cross_energies,
+        "all_nine_ordered_cross_type_blocks_retained": bool(
+            len(ordered_cross_energies) == 9
+        ),
+        "ordered_cross_type_sum": ordered_cross_sum,
+        "original_reduced_frequency_projector_energy": (
+            original_projector_energy
+        ),
+        "nine_cross_type_blocks_recombine_to_projector": bool(
+            ordered_cross_sum == original_projector_energy
+        ),
+        "two_mobius_weights_and_product_label_retained": True,
+        "absolute_values_taken_before_global_square": False,
+        "ordered_cross_type_analytic_bound_proved": False,
+        "centered_nonzero_determinant_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def oriented_nonprincipal_cofactor_type_convolution_audit(
     *,
     reduced_conductor: int,
