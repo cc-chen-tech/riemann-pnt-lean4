@@ -78,6 +78,7 @@
 > | Centered short-shift Type master | Section 9.185 opens the ratio-fiber equality itself.  For fixed \((\omega,\lambda,q,D)\), write \(p_2-p_1=rq\).  Then \(|r|\ll P/Q\leq T^{1/2}\) and the exact fiber energy is \(\varphi(q)\mathcal C(0)+\{\varphi(q)\sum_{r\ne0}\mathcal C(r)-|\sum_pC(p)|^2\}\).  The braces are the centered nonzero-shift remainder; the negative rank-one term cannot be discarded.  Substituting the exact residual \(C=C^{\rm I}+C^{\rm II}\) produces all four ordered Type blocks in both the shift correlations and the rank-one subtraction before any absolute value.  At the extreme face (WRFE) is exactly the assertion that this centered \(|r|\leq T^{1/2}\) two-Möbius remainder is of diagonal size.  The finite master and Type reassembly are proved; its analytic bound is not |
 > | Triple-centered short-shift determinant | Section 9.186 substitutes the literal first physical incidence into the ratio-fiber energy before expanding any density term.  The exact result is a product of three centered kernels, \(\Delta_q(p_1-p_2)\Delta_{p_1}(qm_1+Dn_1)\Delta_{p_2}(qm_2+Dn_2)\), so all eight incidence/density terms remain in one finite master.  On the fully incident outer shift \(p_2=p_1+rq\), quotient elimination produces one common determinant \(t\): \(n_2s_1-n_1s_2=qt\) and \(m_1s_2+rs_1s_2-m_2s_1=Dt\).  Its \(t=0\) rows have the exact coprime-ray parameterization \(s_1=gu,s_2=gv,n_1=uk,n_2=vk,m_1=u\ell,m_2=v(\ell+rg)\).  This parameterizes only the fully incident summand: the other seven density terms have no canonical \(t\), so a separate positive \(t=0\) extraction would again be invalid.  The finite identity and ray parameterization are proved; the globally reassembled resonant ledger and the \(t\ne0\) analytic bound remain unproved |
 > | Eight-term route boundary | Section 9.187 expands the triple-centered kernel with exact signs and records a determinant histogram only for the all-incidence term.  A two-row fixture has total fiber energy \(7225/768\), while its all-incidence contribution is \(16\), split as determinant weights \(4,8,4\) at \(t=-1,0,1\); the other seven density terms sum to \(-5063/768\).  Thus the cancellation needed by WRFE already occurs inside the positive energy identity, and the isolated \(t=0\) mass is not a positive secondary term.  This separates two valid routes: prove WRFE by an internal eight-term reassembly, or return before Cauchy and prove a new direct AFE/reflection/diagonal implication.  The explicit diagonal cannot be used to prove WRFE after Cauchy.  Neither route's analytic estimate is proved |
+> | Primitive-ray factorization of the all-incidence zero determinant | Section 9.188 assumes only the literal factorization \(w_p(m,n)=f_p(m)g_p(n)\).  Every incident lift has a unique primitive core \((g,\ell,k)=(s,m,n)/(s,m,n)\) on \(pg=q\ell+Dk\).  For \(p_2=p_1+rq\), determinant zero is exactly equality of the two primitive cores after the shear \((g,\ell,k)\mapsto(g,\ell+rg,k)\).  Consequently the two dilation variables sum independently into one-dimensional ray profiles \(\mathcal L_p(g,\ell,k)\), giving the exact factorization (9.1260).  This is a candidate entry point for LCM square-energy, but no such bound is inferred: the primitive plane, prime shift, physical Type weights, and seven density terms must still be retained |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -26583,6 +26584,106 @@ eight signed terms and the determinant histogram of the fully incident
 term.  It verifies their exact reassembly but marks both the within-
 energy resonant ledger and the pre-Cauchy AFE/diagonal bypass false.
 
+### 9.188 The zero determinant factors into primitive ray profiles
+
+The all-incidence \(t=0\) term has one more exact simplification when the
+literal two-lift weight is retained in its physical factorized form
+
+\[
+ w_p(m,n)=f_p(m)g_p(n).
+ \tag{9.1258}
+\]
+
+For every inner incidence, let \(s=(qm+Dn)/p\), put
+\(u=(s,m,n)\), and write
+
+\[
+ (s,m,n)=u(g,\ell,k),\qquad (g,\ell,k)=1.
+\]
+
+Division of the incidence by \(u\) gives the primitive plane equation
+
+\[
+ \boxed{pg=q\ell+Dk.}
+ \tag{9.1259}
+\]
+
+Define the finite primitive ray profile, including all original support
+masks, by
+
+\[
+ \boxed{
+ \mathcal L_{p}(g,\ell,k)
+ :=\sum_{u\geq1}f_p(u\ell)g_p(uk),
+ \qquad (g,\ell,k)=1,quad pg=q\ell+Dk.}
+ \tag{9.1260}
+\]
+
+Now let \(p_2=p_1+rq\).  The parameterization (9.1255), followed by
+division of its common core by \((g,\ell,k)\), shows that two fully
+incident lifts have \(t=0\) if and only if their unique primitive cores
+are
+
+\[
+ (g,\ell,k),qquad (g,\ell+rg,k).
+\]
+
+The second core is primitive whenever the first is, since adding \(rg\)
+does not change the gcd with \(g,k\); its plane equation is automatic:
+
+\[
+ p_2g=(p_1+rq)g=q(\ell+rg)+Dk.
+\]
+
+Therefore the complete determinant-zero subtotal of the fully incident
+term is
+
+\[
+ \boxed{
+ E_{111,t=0}
+ =\varphi(q)
+ \sum_{p_2=p_1+rq}
+ \sum_{\substack{(g,\ell,k)=1\\p_1g=q\ell+Dk}}
+ \mathcal L_{p_1}(g,\ell,k)
+ \overline{\mathcal L_{p_2}(g,\ell+rg,k)}.}
+ \tag{9.1261}
+\]
+
+There is no Cauchy step in (9.1261).  The two dilation variables have
+already been summed independently inside the two ray profiles, and all
+outer prime shifts remain signed.  A finite fixture with
+\(q=5,D=1,p_1=7,p_2=17\) gives
+
+\[
+ \mathcal L_7(1,1,2)=149,qquad
+ \mathcal L_{17}(1,3,2)=358,qquad
+ E_{111,t=0}=4(149+358)^2=1028196,
+ \tag{9.1262}
+\]
+
+both by direct six-variable enumeration and by (9.1261).
+
+Formula (9.1261) is the precise candidate entry point for LCM square-energy:
+each \(\mathcal L_p\) is a one-parameter dilation sum, and the primitive
+core has only the linear equation (9.1259).  However, the already proved
+reciprocal-LCM quadratic form does not automatically bound this object.
+The ray factors still contain level-dependent Type/AFE weights, the
+outer prime pair is constrained by \(p_2-p_1=rq\), and (9.1261) is only
+one of the eight terms in (9.1256).  No LCM energy estimate may be spent
+on (9.1261) and then reused on the seven density corrections.
+
+Thus the next analytic subproblem is now explicit: establish a joint
+ray-profile energy bound that retains the short-shift prime average and
+is compatible with the other seven centered terms.  The finite ray
+factorization is proved; that LCM-compatible energy bound, the within-
+energy resonant ledger, (WRFE), and the coupled-kernel gate remain
+unproved.
+
+The helper `short_shift_t0_ray_factorization_audit` constructs the
+primitive profiles from arbitrary finite rational factors, checks every
+plane equation, and verifies (9.1261) against the direct \(t=0\)
+determinant histogram.  Its analytic flags remain false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -26822,6 +26923,15 @@ inside the post-Cauchy proof of (WRFE).  One must either prove the
 within-energy eight-term estimate, or return before Cauchy and establish
 a new direct AFE/reflection/diagonal bypass.  Neither analytic route is
 closed.
+
+Section 9.188 factorizes the fully incident \(t=0\) subtotal further.
+After each incident triple \((s,m,n)\) is divided by its gcd, it lies on
+the primitive plane \(pg=q\ell+Dk\); the two independent dilation sums
+form the ray profiles (9.1260), and determinant zero becomes the shear
+correlation (9.1261).  This is an exact candidate interface for the
+existing LCM square-energy machinery, but not yet a bound: it must be
+proved jointly with the short-prime/long-prime shift and the seven
+density terms, without spending the same cancellation twice.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

@@ -9235,6 +9235,47 @@ def test_triple_centered_eight_term_ledger_marks_only_full_incidence_by_t() -> N
     assert "pre-Cauchy bypass route" in text
 
 
+def test_t0_full_incidence_factors_through_primitive_ray_profiles() -> None:
+    audit = getattr(
+        coverage_audit,
+        "short_shift_t0_ray_factorization_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        factorized_rows=(
+            (
+                7,
+                ((1, F(2)), (2, F(11))),
+                ((2, F(3)), (4, F(13))),
+            ),
+            (
+                17,
+                ((3, F(5)), (6, F(17))),
+                ((2, F(7)), (4, F(19))),
+            ),
+        ),
+    )
+    assert result["primitive_ray_profiles"][7][(1, 1, 2)] == F(149)
+    assert result["primitive_ray_profiles"][17][(1, 3, 2)] == F(358)
+    assert result["direct_fully_incident_t0_energy"] == F(1028196)
+    assert result["primitive_ray_factorized_t0_energy"] == F(1028196)
+    assert result["direct_t0_equals_primitive_ray_factorization"]
+    assert result["all_primitive_cores_satisfy_plane_incidence"]
+    assert result["dilation_variables_are_independent_after_core_fixing"]
+    assert result["ray_factorization_finite_master_proved"]
+    assert not result["ray_profile_LCM_energy_bound_proved"]
+    assert not result["within_energy_resonant_ledger_evaluated"]
+    assert not result["WRFE_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.188 The zero determinant factors into primitive ray profiles" in text
+    assert r"p_1g=q\ell+Dk" in text
+    assert r"\mathcal L_{p}(g,\ell,k)" in text
+    assert "candidate entry point for LCM square-energy" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

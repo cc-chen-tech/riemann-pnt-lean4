@@ -25824,6 +25824,161 @@ def short_shift_double_incidence_determinant_audit(
     }
 
 
+def short_shift_t0_ray_factorization_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    factorized_rows: tuple[
+        tuple[
+            int,
+            tuple[tuple[int, Fraction], ...],
+            tuple[tuple[int, Fraction], ...],
+        ],
+        ...,
+    ],
+) -> dict[str, object]:
+    """Factor the fully incident ``t=0`` term into primitive rays.
+
+    A row ``p`` has a factorized lift weight ``f_p(m) g_p(n)``.  Every
+    incident lift has a quotient ``s=(q*m+D*n)/p``.  Dividing
+    ``(s,m,n)`` by its gcd gives a unique primitive core ``(g,l,k)``
+    on the plane ``p*g=q*l+D*k`` and a one-dimensional dilation.
+
+    For ``p_2=p_1+r*q``, two fully incident lifts have determinant zero
+    exactly when their primitive cores are
+
+    ``(g,l,k)`` and ``(g,l+r*g,k)``.
+
+    Hence the dilation sums on the two rows are independent after the
+    primitive core is fixed.  This is an exact finite factorization,
+    not an LCM-energy estimate for the resulting ray profiles.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if gcd(D, q) != 1:
+        raise ValueError("the determinant shift must be a unit modulo q")
+    if not factorized_rows:
+        raise ValueError("at least one factorized long-prime row is required")
+
+    converted: list[
+        tuple[int, dict[int, Fraction], dict[int, Fraction]]
+    ] = []
+    physical_rows: list[
+        tuple[int, tuple[tuple[tuple[int, int], Fraction], ...]]
+    ] = []
+    seen_primes: set[int] = set()
+    for raw_p, raw_first_factor, raw_second_factor in factorized_rows:
+        p = int(raw_p)
+        if (
+            p in seen_primes
+            or _finite_prime_exponents(p) != {p: 1}
+            or gcd(p, q) != 1
+        ):
+            raise ValueError(
+                "long-prime labels must be distinct primes coprime to q"
+            )
+        seen_primes.add(p)
+
+        def convert_factor(
+            raw_factor: tuple[tuple[int, Fraction], ...],
+        ) -> dict[int, Fraction]:
+            if not raw_factor:
+                raise ValueError("both row factors must be nonempty")
+            factor: dict[int, Fraction] = {}
+            for raw_coordinate, raw_weight in raw_factor:
+                coordinate = int(raw_coordinate)
+                if coordinate <= 0 or coordinate in factor:
+                    raise ValueError(
+                        "factor coordinates must be distinct and positive"
+                    )
+                factor[coordinate] = F(raw_weight)
+            return factor
+
+        first_factor = convert_factor(raw_first_factor)
+        second_factor = convert_factor(raw_second_factor)
+        converted.append((p, first_factor, second_factor))
+        lifts = tuple(
+            ((m, n), first_weight * second_weight)
+            for m, first_weight in first_factor.items()
+            for n, second_weight in second_factor.items()
+        )
+        physical_rows.append((p, lifts))
+
+    triple_audit = triple_centered_ratio_incidence_audit(
+        short_prime=q,
+        determinant_shift=D,
+        physical_rows=tuple(physical_rows),
+    )
+    direct_t0 = F(triple_audit["fully_incident_t0_energy"])
+
+    ray_profiles: dict[int, dict[tuple[int, int, int], Fraction]] = {}
+    all_cores_on_plane = True
+    for p, first_factor, second_factor in converted:
+        profile: dict[tuple[int, int, int], Fraction] = defaultdict(F)
+        for m, first_weight in first_factor.items():
+            for n, second_weight in second_factor.items():
+                incidence_value = q * m + D * n
+                if incidence_value % p != 0:
+                    continue
+                quotient = incidence_value // p
+                if quotient <= 0:
+                    continue
+                dilation = gcd(gcd(quotient, m), n)
+                core = (
+                    quotient // dilation,
+                    m // dilation,
+                    n // dilation,
+                )
+                if gcd(gcd(core[0], core[1]), core[2]) != 1:
+                    raise ArithmeticError("the normalized ray core is not primitive")
+                all_cores_on_plane = bool(
+                    all_cores_on_plane
+                    and p * core[0] == q * core[1] + D * core[2]
+                )
+                profile[core] += first_weight * second_weight
+        ray_profiles[p] = dict(sorted(profile.items()))
+
+    ray_energy = F(0)
+    for first_p, _, _ in converted:
+        for second_p, _, _ in converted:
+            if (second_p - first_p) % q != 0:
+                continue
+            short_shift = (second_p - first_p) // q
+            second_profile = ray_profiles[second_p]
+            for (g, ell, k), first_value in ray_profiles[first_p].items():
+                companion_core = (g, ell + short_shift * g, k)
+                ray_energy += (
+                    F(q - 1)
+                    * first_value
+                    * second_profile.get(companion_core, F(0))
+                )
+
+    factorization_proved = bool(
+        all_cores_on_plane and direct_t0 == ray_energy
+    )
+    return {
+        "short_prime": q,
+        "determinant_shift": D,
+        "factorized_rows": tuple(converted),
+        "primitive_ray_profiles": ray_profiles,
+        "direct_fully_incident_t0_energy": direct_t0,
+        "primitive_ray_factorized_t0_energy": ray_energy,
+        "direct_t0_equals_primitive_ray_factorization": bool(
+            direct_t0 == ray_energy
+        ),
+        "all_primitive_cores_satisfy_plane_incidence": all_cores_on_plane,
+        "dilation_variables_are_independent_after_core_fixing": True,
+        "ray_factorization_finite_master_proved": factorization_proved,
+        "ray_profile_LCM_energy_bound_proved": False,
+        "within_energy_resonant_ledger_evaluated": False,
+        "WRFE_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def short_prime_weighted_profile_ttstar_audit(
     *,
     short_prime: int,
