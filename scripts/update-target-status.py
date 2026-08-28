@@ -33,7 +33,7 @@ CHAIN_SUMMARY = [
     {
         "name": "Quantitative critical-line extensions",
         "target": "conreyTwoFifthsSimpleZerosTarget",
-        "status": "Hardy's theorem and the Hardy-Littlewood lower bounds are proved; the Zeta23 bridge closes the Selberg odd-zero proportion target, while Conrey's genuine strict two-fifths simple-zero target remains open",
+        "status": "Hardy's theorem and the Hardy-Littlewood lower bounds are proved; the native Selberg Fourier-Mellin mainline proves the odd-zero proportion target independently of Zeta23, while Conrey's genuine strict two-fifths simple-zero target remains open",
         "next_step": "prove the long-mollifier mean square at length T^(4/7-epsilon) and transfer it through the argument principle to discharge conreyExplicitAnalyticLowerBound",
     },
 ]
@@ -67,7 +67,15 @@ PROVED_REUSABLE_PREDICATES = {
         "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
 }
 
-CLOSED_BY_ZETA23_BRIDGE = {
+PROVED_MATHEMATICAL_TARGETS = {
+    "HardyTheorem.selberg_odd_zero_proportion_target":
+        "HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline",
+    "KnownResults.conrey_40_percent_zeros_on_critical_line_target":
+        "HardyTheorem.selberg_zero_proportion_target_proved_mainline + "
+        "KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_selberg",
+}
+
+INDEPENDENTLY_CLOSED_BY_ZETA23_BRIDGE = {
     "HardyTheorem.selberg_odd_zero_proportion_target",
     "KnownResults.conrey_40_percent_zeros_on_critical_line_target",
 }
@@ -115,8 +123,11 @@ def build_status() -> dict[str, object]:
                     previous_shapes.get(record.name, "<unknown>"),
                 ),
                 "depends_on": [],
-            } | ({"closed_by_zeta23_bridge": True}
-                 if record.qualified_name in CLOSED_BY_ZETA23_BRIDGE else {}))
+            } | ({"proved_by": PROVED_MATHEMATICAL_TARGETS[record.qualified_name]}
+                 if record.qualified_name in PROVED_MATHEMATICAL_TARGETS else {})
+              | ({"independently_closed_by_zeta23_bridge": True}
+                 if record.qualified_name in INDEPENDENTLY_CLOSED_BY_ZETA23_BRIDGE
+                 else {}))
         )
 
     return {

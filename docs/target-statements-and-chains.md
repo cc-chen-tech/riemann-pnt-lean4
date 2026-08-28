@@ -230,14 +230,17 @@ analytic-multiplicity counts and proves
 Hardy-Littlewood and Selberg statements use the odd-order count supplied by
 the sign-change method. The Hardy-Littlewood linear lower bound is now proved.
 
-**Closure of the Selberg target and its legacy Conrey-named compatibility
-alias (2026-08, in-repo via verified external artifact):**
-`HardyTheorem.selberg_odd_zero_proportion_target` and the definitionally
-Selberg statement `KnownResults.conrey_40_percent_zeros_on_critical_line_target`
-are now proved inside this repository's kernel by
+**Native closure of the Selberg target (2026-08):**
+`HardyTheorem.selberg_odd_zero_proportion_target` is proved inside this
+repository's kernel by
+`HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline`, using the
+short-mollifier Fourier--Mellin S1--S5 chain. The separate `N=T^3`
+long-mollifier/MWKF asymptotic remains open and is not required by this proof.
+
+**Independent Zeta23 closure and legacy Conrey-named compatibility alias:**
 `HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`
-(resp. `..._conrey_40_percent_zeros_on_critical_line_target_of_zeta23`),
-which combine the independently verified Anthropic `zeta-23-lean` Theorem B
+and `...conrey_40_percent_zeros_on_critical_line_target_of_zeta23` combine the
+independently verified Anthropic `zeta-23-lean` Theorem B
 (`Zeta23.thmB₀_mult_cumulative`: at least 2/3 of the zeta zeros are simple
 and on the critical line; kernel-checked with `#print axioms` =
 `[propext, Classical.choice, Quot.sound]`) with this repository's own
@@ -267,6 +270,7 @@ records the remaining mollified mean-square/argument-principle input.
 - `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
 - `HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
 - `HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure`
+- `HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline`
 - `HardyTheorem.integral_normSq_selbergMoebiusMollifier_le_one_add_log`
 - `HardyTheorem.criticalLineDirichletPolynomial_mul_selbergMoebiusMollifier_eq_convolutionSum`
 - `HardyTheorem.selbergMollifiedDirichletCoeff_eq_vonMangoldt_div_log`
@@ -422,8 +426,11 @@ target counts in this file.
   is the upper-level Conrey target form.  The submodule declaration
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   is only a route-interface alias to this target. The upper-level target is
-  discharged by the named Zeta23 bridge theorem; an independent native proof
-  remains separate research.
+  discharged natively by composing
+  `HardyTheorem.selberg_zero_proportion_target_proved_mainline` with
+  `KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_selberg`;
+  the named Zeta23 bridge theorem is an independent closure. Neither route
+  proves the genuine Conrey strict `> 2/5` simple-zero target.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is a route
   interface with a real statement body.  It marks the missing rectangle
   contour/residue theorem and is not counted as a mathematical target.

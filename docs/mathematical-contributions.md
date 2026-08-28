@@ -326,6 +326,16 @@ moving-height ordinary-PNT estimate, de la Vallee Poussin-form `psi` and
 Further work concerns power-saving estimates, stronger zero-free regions, and
 numerically explicit constants.
 
+## Native Selberg positive-proportion theorem (2026-08)
+
+The short-mollifier Fourier--Mellin S1--S5 chain proves
+`HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline` without
+Zeta23. It uses a square-root-zeta mollifier of length `T^(1/32)`, obtains the
+signed second moment, absolute-window second moment, and first absolute moment,
+then transfers positive measure of strict-cancellation starts through the
+odd-zero cover to the `c T log T` count. The separate `N=T^3` long-mollifier
+off-diagonal problem remains open and is not an input to this theorem.
+
 ## External SOTA Merge: Anthropic zeta-23-lean (2026-08)
 
 As a separate, independently kernel-checked artifact, Anthropic's
@@ -337,8 +347,8 @@ verified the artifact: full `lake build` passed and the bridge input theorem
 `[propext, Classical.choice, Quot.sound]` (see
 [zeta23-external-verification.md](research/zeta23-external-verification.md)).
 
-Consequence for this repository's Selberg target and legacy compatibility
-surface:
+Independent additional consequence for this repository's Selberg target and
+legacy compatibility surface:
 `HardyTheorem.Zeta23SelbergBridge` vendors the axiom-clean `Zeta23` library
 and closes `selberg_odd_zero_proportion_target` and
 `KnownResults.conrey_40_percent_zeros_on_critical_line_target` inside this

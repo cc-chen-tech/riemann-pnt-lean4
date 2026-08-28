@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-26",
+  "timestamp": "2026-08-28",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -19,7 +19,8 @@
         "line": 250,
         "shape": "<unknown>",
         "depends_on": [],
-        "closed_by_zeta23_bridge": true
+        "proved_by": "HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline",
+        "independently_closed_by_zeta23_bridge": true
       },
       {
         "name": "integral_asymptotic_target",
@@ -124,7 +125,8 @@
         "line": 237,
         "shape": "∃c>0, ∃T0, ∀T≥T0, zeroCountOnCriticalLine T ≥ c*(T/(2π)*log T)",
         "depends_on": [],
-        "closed_by_zeta23_bridge": true
+        "proved_by": "HardyTheorem.selberg_zero_proportion_target_proved_mainline + KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_selberg",
+        "independently_closed_by_zeta23_bridge": true
       }
     ],
     "Global": [
@@ -1406,7 +1408,7 @@
     {
       "name": "Quantitative critical-line extensions",
       "target": "conreyTwoFifthsSimpleZerosTarget",
-      "status": "Hardy's theorem and the Hardy-Littlewood lower bounds are proved; the Zeta23 bridge closes the Selberg odd-zero proportion target, while Conrey's genuine strict two-fifths simple-zero target remains open",
+      "status": "Hardy's theorem and the Hardy-Littlewood lower bounds are proved; the native Selberg Fourier-Mellin mainline proves the odd-zero proportion target independently of Zeta23, while Conrey's genuine strict two-fifths simple-zero target remains open",
       "next_step": "prove the long-mollifier mean square at length T^(4/7-epsilon) and transfer it through the argument principle to discharge conreyExplicitAnalyticLowerBound"
     }
   ],
