@@ -25561,40 +25561,112 @@ def triple_centered_ratio_incidence_audit(
     direct_energy = F(scalar_audit["ratio_fiber_energy_formula"])
     phi_q = q - 1
     triple_energy = F(0)
+    eight_terms: dict[str, Fraction] = defaultdict(F)
+    determinant_histogram: dict[int, Fraction] = defaultdict(F)
     for first_p, first_lifts in converted:
         for second_p, second_lifts in converted:
-            outer_delta = (
-                F(1 if (first_p - second_p) % q == 0 else 0)
-                - F(1, phi_q)
-            )
+            outer_indicator = int((first_p - second_p) % q == 0)
+            outer_delta = F(outer_indicator) - F(1, phi_q)
             for first_m, first_n, first_weight in first_lifts:
-                first_delta = (
-                    F(
-                        1
-                        if (q * first_m + D * first_n) % first_p == 0
-                        else 0
-                    )
-                    - F(1, first_p - 1)
+                first_indicator = int(
+                    (q * first_m + D * first_n) % first_p == 0
                 )
+                first_delta = F(first_indicator) - F(1, first_p - 1)
                 for second_m, second_n, second_weight in second_lifts:
-                    second_delta = (
-                        F(
-                            1
-                            if (q * second_m + D * second_n) % second_p == 0
-                            else 0
-                        )
-                        - F(1, second_p - 1)
+                    second_indicator = int(
+                        (q * second_m + D * second_n) % second_p == 0
                     )
+                    second_delta = (
+                        F(second_indicator) - F(1, second_p - 1)
+                    )
+                    base_weight = F(phi_q) * first_weight * second_weight
                     triple_energy += (
-                        F(phi_q)
-                        * first_weight
-                        * second_weight
+                        base_weight
                         * outer_delta
                         * first_delta
                         * second_delta
                     )
+                    eight_terms["outer_first_second_incidence"] += (
+                        base_weight
+                        * outer_indicator
+                        * first_indicator
+                        * second_indicator
+                    )
+                    eight_terms["outer_first_incidence_second_density"] += (
+                        -base_weight
+                        * outer_indicator
+                        * first_indicator
+                        * F(1, second_p - 1)
+                    )
+                    eight_terms["outer_second_incidence_first_density"] += (
+                        -base_weight
+                        * outer_indicator
+                        * second_indicator
+                        * F(1, first_p - 1)
+                    )
+                    eight_terms["outer_incidence_two_inner_densities"] += (
+                        base_weight
+                        * outer_indicator
+                        * F(1, (first_p - 1) * (second_p - 1))
+                    )
+                    eight_terms["two_inner_incidences_outer_density"] += (
+                        -base_weight
+                        * first_indicator
+                        * second_indicator
+                        * F(1, phi_q)
+                    )
+                    eight_terms["first_incidence_two_other_densities"] += (
+                        base_weight
+                        * first_indicator
+                        * F(1, phi_q * (second_p - 1))
+                    )
+                    eight_terms["second_incidence_two_other_densities"] += (
+                        base_weight
+                        * second_indicator
+                        * F(1, phi_q * (first_p - 1))
+                    )
+                    eight_terms["three_densities"] += (
+                        -base_weight
+                        * F(
+                            1,
+                            phi_q * (first_p - 1) * (second_p - 1),
+                        )
+                    )
+
+                    if outer_indicator and first_indicator and second_indicator:
+                        r = (second_p - first_p) // q
+                        first_quotient = (
+                            q * first_m + D * first_n
+                        ) // first_p
+                        second_quotient = (
+                            q * second_m + D * second_n
+                        ) // second_p
+                        second_determinant = (
+                            second_n * first_quotient
+                            - first_n * second_quotient
+                        )
+                        if second_determinant % q != 0:
+                            raise ArithmeticError(
+                                "the fully incident determinant is not divisible by q"
+                            )
+                        determinant_t = second_determinant // q
+                        first_determinant = (
+                            first_m * second_quotient
+                            + r * first_quotient * second_quotient
+                            - second_m * first_quotient
+                        )
+                        if first_determinant != D * determinant_t:
+                            raise ArithmeticError(
+                                "the two fully incident determinants disagree"
+                            )
+                        determinant_histogram[determinant_t] += base_weight
 
     identity_proved = bool(direct_energy == triple_energy)
+    eight_term_energy = sum(eight_terms.values(), F(0))
+    fully_incident_energy = eight_terms[
+        "outer_first_second_incidence"
+    ]
+    density_energy = eight_term_energy - fully_incident_energy
     return {
         "short_prime": q,
         "determinant_shift": D,
@@ -25603,6 +25675,21 @@ def triple_centered_ratio_incidence_audit(
         "direct_ratio_fiber_energy": direct_energy,
         "triple_centered_incidence_energy": triple_energy,
         "direct_equals_triple_centered_incidence": identity_proved,
+        "eight_term_incidence_density_ledger": dict(eight_terms),
+        "eight_term_expansion_energy": eight_term_energy,
+        "eight_terms_equal_triple_centered_incidence": bool(
+            eight_term_energy == triple_energy
+        ),
+        "fully_incident_determinant_histogram": dict(
+            sorted(determinant_histogram.items())
+        ),
+        "fully_incident_energy": fully_incident_energy,
+        "fully_incident_t0_energy": determinant_histogram.get(0, F(0)),
+        "all_seven_density_terms_energy": density_energy,
+        "only_fully_incident_term_has_canonical_determinant": True,
+        "density_terms_have_no_canonical_determinant_value": True,
+        "within_energy_resonant_ledger_evaluated": False,
+        "pre_cauchy_AFE_diagonal_bypass_proved": False,
         "outer_centering_is_not_split_from_inner_centering": True,
         "all_density_cross_terms_retained": True,
         "triple_centered_finite_master_proved": identity_proved,

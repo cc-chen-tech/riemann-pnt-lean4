@@ -77,6 +77,7 @@
 > | Separated ratio-fiber large-sieve coverage | Section 9.184 applies character Parseval and the Bombieri--Davenport multiplicative large sieve to the coefficient class \(C_q(p)=\beta_q\alpha_p\), and more generally to a subpolynomial-projective sum of such atoms.  The occupancy energy exponent is \(\sigma_L+\sigma_S\), whereas the large-sieve exponent is \(\max\{\sigma_L,2\sigma_S\}\).  On the physical wedge this saves exactly \(\sigma_L-\sigma_S\geq2\eta_{\rm cross}\), including equality at the extreme face; hence every genuinely level-independent long-coefficient atom satisfies (WRFE).  But the literal coefficient contains \(V_p(D\overline q_p)\) and is level-dependent.  A one-residue-class finite witness has ratio-fiber energy \((\varphi(q)-1)n^2\), a fixed proportion of the occupancy bound \(\varphi(q)n^2\), so no arbitrary level-dependent large sieve can prove (WRFE).  The remaining gate must exploit the first physical incidence and its retained Möbius/\(h\delta\) structure |
 > | Centered short-shift Type master | Section 9.185 opens the ratio-fiber equality itself.  For fixed \((\omega,\lambda,q,D)\), write \(p_2-p_1=rq\).  Then \(|r|\ll P/Q\leq T^{1/2}\) and the exact fiber energy is \(\varphi(q)\mathcal C(0)+\{\varphi(q)\sum_{r\ne0}\mathcal C(r)-|\sum_pC(p)|^2\}\).  The braces are the centered nonzero-shift remainder; the negative rank-one term cannot be discarded.  Substituting the exact residual \(C=C^{\rm I}+C^{\rm II}\) produces all four ordered Type blocks in both the shift correlations and the rank-one subtraction before any absolute value.  At the extreme face (WRFE) is exactly the assertion that this centered \(|r|\leq T^{1/2}\) two-Möbius remainder is of diagonal size.  The finite master and Type reassembly are proved; its analytic bound is not |
 > | Triple-centered short-shift determinant | Section 9.186 substitutes the literal first physical incidence into the ratio-fiber energy before expanding any density term.  The exact result is a product of three centered kernels, \(\Delta_q(p_1-p_2)\Delta_{p_1}(qm_1+Dn_1)\Delta_{p_2}(qm_2+Dn_2)\), so all eight incidence/density terms remain in one finite master.  On the fully incident outer shift \(p_2=p_1+rq\), quotient elimination produces one common determinant \(t\): \(n_2s_1-n_1s_2=qt\) and \(m_1s_2+rs_1s_2-m_2s_1=Dt\).  Its \(t=0\) rows have the exact coprime-ray parameterization \(s_1=gu,s_2=gv,n_1=uk,n_2=vk,m_1=u\ell,m_2=v(\ell+rg)\).  This parameterizes only the fully incident summand: the other seven density terms have no canonical \(t\), so a separate positive \(t=0\) extraction would again be invalid.  The finite identity and ray parameterization are proved; the globally reassembled resonant ledger and the \(t\ne0\) analytic bound remain unproved |
+> | Eight-term route boundary | Section 9.187 expands the triple-centered kernel with exact signs and records a determinant histogram only for the all-incidence term.  A two-row fixture has total fiber energy \(7225/768\), while its all-incidence contribution is \(16\), split as determinant weights \(4,8,4\) at \(t=-1,0,1\); the other seven density terms sum to \(-5063/768\).  Thus the cancellation needed by WRFE already occurs inside the positive energy identity, and the isolated \(t=0\) mass is not a positive secondary term.  This separates two valid routes: prove WRFE by an internal eight-term reassembly, or return before Cauchy and prove a new direct AFE/reflection/diagonal implication.  The explicit diagonal cannot be used to prove WRFE after Cauchy.  Neither route's analytic estimate is proved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -26474,14 +26475,19 @@ positive extraction of the \(t=0\) part of the fully incident term,
 followed by a separate estimate of the density corrections, repeats
 the invalid determinant split identified in Section 9.179.
 
-The next legitimate finite task is therefore narrower and explicit:
-reassemble the \(t=0\) ray family (9.1255) with all seven density terms,
-the negative rank-one term of (9.1243), both AFE directions, reflection,
-and the explicit diagonal.  Only after that common ledger is evaluated
-may the signed \(t\ne0\) family in (9.1254) be passed to determinant
-dispersion.  Neither the resonant ledger nor that analytic nonzero-
-determinant estimate is proved here, so (CSSM), (WRFE), (PCDI-SREM), and
-the coupled-kernel gate remain open.
+The next legitimate task depends on which implication is being proved.
+To prove (WRFE), one must reassemble the \(t=0\) ray family (9.1255)
+with all seven density terms and the negative rank-one term of (9.1243)
+*inside this same energy*.  The original AFE/reflection packet is already
+contained in \(w_p\), but the explicit twisted-moment diagonal is not a
+summand of this post-Cauchy positive energy and cannot cancel it.  To use
+the explicit diagonal one must instead return to the pre-Cauchy moment,
+restore the whole AFE/reflection/principal ledger, and prove a new direct
+implication to (PCDI-SREM) or to the original remainder.  That second
+route would bypass rather than prove (WRFE).  Section 9.187 makes this
+logical boundary finite and explicit.  Neither route's resonant ledger
+nor the analytic nonzero-determinant estimate is proved here, so (CSSM),
+(WRFE), (PCDI-SREM), and the coupled-kernel gate remain open.
 
 The helper `triple_centered_ratio_incidence_audit` verifies (9.1250)
 for arbitrary finite rational row weights while retaining every density
@@ -26489,6 +26495,93 @@ cross term.  The helper
 `short_shift_double_incidence_determinant_audit` verifies (9.1253)--
 (9.1255) and reconstructs the resonant ray.  Both leave the resonant-
 ledger, nonzero-determinant, (CSSM), and coupled-kernel flags false.
+
+### 9.187 The eight-term ledger separates two logically different routes
+
+Write \(I_q=\mathbf1_{q\mid p_1-p_2}\) and
+\(I_i=\mathbf1_{p_i\mid qm_i+Dn_i}\).  One summand of (9.1250), after
+the outer factor \(\varphi(q)w_1\overline w_2\) is suppressed, expands
+exactly as
+
+\[
+ \boxed{
+ \begin{aligned}
+ &(I_q-\varphi(q)^{-1})
+ (I_1-\varphi(p_1)^{-1})
+ (I_2-\varphi(p_2)^{-1})\\
+ ={}&I_qI_1I_2
+ -\frac{I_qI_1}{\varphi(p_2)}
+ -\frac{I_qI_2}{\varphi(p_1)}
+ +\frac{I_q}{\varphi(p_1)\varphi(p_2)}\\
+ &-\frac{I_1I_2}{\varphi(q)}
+ +\frac{I_1}{\varphi(q)\varphi(p_2)}
+ +\frac{I_2}{\varphi(q)\varphi(p_1)}
+ -\frac1{\varphi(q)\varphi(p_1)\varphi(p_2)}.
+ \end{aligned}}
+ \tag{9.1256}
+\]
+
+Only the first term in (9.1256) supplies all three divisibilities needed
+to define \(r,s_1,s_2\), and hence the common determinant \(t\) in
+(9.1254).  The other seven terms are nevertheless part of the same exact
+fiber energy and may have either sign after summation.  They cannot be
+assigned determinant values without adding an extra, noncanonical
+completion measure.
+
+The size of this distinction is visible in a two-row rational fixture.
+Take
+
+\[
+ q=5,\quad D=1,\qquad
+ (p_1,m_1,n_1)=(7,1,2),\quad
+ (p_2,m_2,n_2)=(17,2,7),
+\]
+
+and give both rows weight one.  Both inner incidences hold.  Exact
+enumeration of the four ordered row pairs gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak E_{\rm fib}&=\frac{7225}{768},\\
+ E_{111}&=16,
+ &H_{111}(-1)&=4,&H_{111}(0)&=8,&H_{111}(1)&=4,\\
+ E_{\rm seven\ densities}&=-\frac{5063}{768}.
+ \end{aligned}}
+ \tag{9.1257}
+\]
+
+Thus even though the total fiber energy is nonnegative, its isolated
+fully incident \(t=0\) subtotal is not a positive secondary main term:
+the exact centering cancellation is distributed over all eight terms.
+
+This leaves two logically distinct proof routes, called the
+**within-energy route** and the **pre-Cauchy bypass route** below.
+
+1. **Within-energy route.**  Prove (WRFE), equivalently (CSSM), by
+   reassembling (9.1256) with the rank-one subtraction and controlling
+   the signed \(t\ne0\) determinant family.  All AFE/reflection and Type
+   data remain inside the weights, but only terms belonging to the fiber
+   energy may be used.
+2. **Pre-Cauchy bypass route.**  Return to the linear physical master
+   before the Hilbert-space Cauchy step of Section 9.183, combine its
+   resonant coefficient with the complete principal, reflection, AFE,
+   and explicit-diagonal ledger, and prove directly that the surviving
+   centered sum meets the target.  This may prove (PCDI-SREM) or the
+   original remainder without proving (WRFE), but requires a new exact
+   implication and a separate analytic estimate.
+
+In particular, cancellation with the explicit twisted-moment diagonal
+cannot prove the positive energy statement (WRFE): the diagonal is no
+longer present after the Cauchy majorization.  Conversely, an internal
+cancellation in (9.1256) says nothing by itself about a secondary main
+term of the original moment.  Keeping these routes separate prevents
+the same cancellation from being spent twice.
+
+The finite helper `triple_centered_ratio_incidence_audit` now records all
+eight signed terms and the determinant histogram of the fully incident
+term.  It verifies their exact reassembly but marks both the within-
+energy resonant ledger and the pre-Cauchy AFE/diagonal bypass false.
 
 ## 10. What has and has not been proved
 
@@ -26719,6 +26812,16 @@ AFE/reflection, and diagonal before any positivity argument.  That
 global resonant ledger and the signed \(t\ne0\) dispersion are both
 unproved; therefore (CSSM), (WRFE), and the coupled-kernel gate remain
 open.
+
+Section 9.187 expands all eight signed incidence/density terms and shows
+on exact rational data that the \(t=0\) all-incidence subtotal may be
+larger than the final positive fiber energy because the other seven
+terms provide essential negative cancellation.  It also corrects the
+next-step ledger: the explicit twisted-moment diagonal cannot be used
+inside the post-Cauchy proof of (WRFE).  One must either prove the
+within-energy eight-term estimate, or return before Cauchy and establish
+a new direct AFE/reflection/diagonal bypass.  Neither analytic route is
+closed.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

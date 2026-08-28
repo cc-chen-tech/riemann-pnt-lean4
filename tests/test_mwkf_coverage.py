@@ -9202,6 +9202,39 @@ def test_short_shift_double_incidence_has_exact_t_resonance_parameterization() -
     assert "the coupled-kernel gate remain open" in text
 
 
+def test_triple_centered_eight_term_ledger_marks_only_full_incidence_by_t() -> None:
+    result = coverage_audit.triple_centered_ratio_incidence_audit(
+        short_prime=5,
+        determinant_shift=1,
+        physical_rows=(
+            (7, (((1, 2), F(1)),)),
+            (17, (((2, 7), F(1)),)),
+        ),
+    )
+    assert result["fully_incident_determinant_histogram"] == {
+        -1: F(4),
+        0: F(8),
+        1: F(4),
+    }
+    assert result["fully_incident_energy"] == F(16)
+    assert result["fully_incident_t0_energy"] == F(8)
+    assert result["all_seven_density_terms_energy"] == F(-5063, 768)
+    assert result["eight_term_expansion_energy"] == F(7225, 768)
+    assert result["eight_terms_equal_triple_centered_incidence"]
+    assert result["only_fully_incident_term_has_canonical_determinant"]
+    assert result["density_terms_have_no_canonical_determinant_value"]
+    assert not result["within_energy_resonant_ledger_evaluated"]
+    assert not result["pre_cauchy_AFE_diagonal_bypass_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.187 The eight-term ledger separates two logically "
+        "different routes"
+    ) in text
+    assert "cannot prove the positive energy statement (WRFE)" in text
+    assert "within-energy route" in text
+    assert "pre-Cauchy bypass route" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (
