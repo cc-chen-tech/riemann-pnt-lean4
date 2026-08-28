@@ -789,9 +789,18 @@ a final density axiom:
    used in the Gaussian tree estimate.  The actual moving prefix times the
    concrete mollifier is now pointwise bounded by `(K+1)` times the complete
    tree energy, with the ambient support handled by exact zero extension.
-   What remains in (8.6) is the standard Gaussian integrability and monotone
-   integral composition; together with the tree moment this gives the second
-   factor `K+1` and hence the intended logarithmic-square maximal loss.
+   The Gaussian integrability and monotone-integral composition are now
+   formal too.  For every measurable selector `t |-> cutoff(t)` with
+   `cutoff(t)<=2^K`, the selected moving-prefix moment is bounded by
+   `(K+1)^2` times the common Gaussian mass, Schur constant, and
+   `2(1+log(2^K X))^4`.  Thus the full Rademacher--Menshov selector estimate
+   has only the intended logarithmic-square maximal loss and no hidden power
+   of `U`.  Its axiom audit contains only `propext`, `Classical.choice`, and
+   `Quot.sound`.  What remains before applying it to (8.1) is to prove
+   measurability for the canonical floor-square-root AFE cutoff and to prove
+   the symmetric square-root AFE itself; the latter is still the genuine
+   analytic gate.  The translated-Gaussian tail assembly in (8.7)--(8.8)
+   also remains to be composed formally.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved
