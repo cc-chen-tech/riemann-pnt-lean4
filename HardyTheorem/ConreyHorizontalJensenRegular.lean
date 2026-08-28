@@ -157,6 +157,60 @@ theorem one_le_conreyHorizontalJensenFactorRadius
     conreyHorizontalJensenOuterRadius] at *
   linarith
 
+/-- The Borel geometry factor on every selected good circle has the explicit
+`32 * outerRadius / gap^2` bound.  The leading `4` in the analytic Borel
+theorem therefore produces the documented constant `128`. -/
+theorem conreyHorizontalJensenFactorGeometry_le
+    {R L q : ℝ} (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5)
+    (hL : 40000 ≤ L)
+    (hq : q ∈ Set.Icc (conreyHorizontalJensenGoodRadiusLower R L)
+      (conreyHorizontalJensenGoodRadiusUpper R L)) :
+    (q + conreyHorizontalJensenInnerRadius R L) /
+        (q - conreyHorizontalJensenInnerRadius R L) ^ 2 ≤
+      32 * conreyHorizontalJensenOuterRadius L /
+        conreyHorizontalJensenRadiusGap R L ^ 2 := by
+  let r := conreyHorizontalJensenInnerRadius R L
+  let R₀ := conreyHorizontalJensenOuterRadius L
+  let gap := conreyHorizontalJensenRadiusGap R L
+  have hbuffer := conreyHorizontalJensenBufferGeometry hR0 hRmax hL
+  have hgapLower := one_fifth_lt_conreyHorizontalJensenRadiusGap hR0 hRmax hL
+  have hgapPos : 0 < gap := by simpa [gap] using hgapLower.trans' (by norm_num)
+  have hrPos : 0 < r := by
+    simpa [r] using conreyHorizontalJensenInnerRadius_pos R L
+  have hrR : r < R₀ := by
+    simpa [r, R₀] using
+      conreyHorizontalJensenInnerRadius_lt_outerRadius hR0 hRmax hL
+  have hqLower : r + gap / 4 ≤ q := by
+    simpa [r, gap, conreyHorizontalJensenGoodRadiusLower] using hq.1
+  have hqUpper : q ≤ r + gap / 2 := by
+    simpa [r, gap, conreyHorizontalJensenGoodRadiusUpper] using hq.2
+  have hgapDef : gap = R₀ - r := by
+    rfl
+  have hqR : q ≤ R₀ := by linarith
+  have hnum : q + r ≤ 2 * R₀ := by linarith
+  have hqdiff : gap / 4 ≤ q - r := by linarith
+  have hqdiffPos : 0 < q - r := by
+    have : 0 < gap / 4 := by positivity
+    linarith
+  have hdenLower : gap ^ 2 / 16 ≤ (q - r) ^ 2 := by
+    have hsquare := (sq_le_sq₀ (by positivity : 0 ≤ gap / 4)
+      hqdiffPos.le).2 hqdiff
+    nlinarith
+  have hgapSqPos : 0 < gap ^ 2 := sq_pos_of_pos hgapPos
+  have hR₀Pos : 0 < R₀ := hrPos.trans hrR
+  have hcoefNonneg : 0 ≤ 32 * R₀ / gap ^ 2 := by positivity
+  have hscaled := mul_le_mul_of_nonneg_left hdenLower hcoefNonneg
+  have hnormalize :
+      (32 * R₀ / gap ^ 2) * (gap ^ 2 / 16) = 2 * R₀ := by
+    field_simp
+    ring
+  change (q + r) / (q - r) ^ 2 ≤ 32 * R₀ / gap ^ 2
+  apply (div_le_iff₀ (sq_pos_of_pos hqdiffPos)).2
+  calc
+    q + r ≤ 2 * R₀ := hnum
+    _ = (32 * R₀ / gap ^ 2) * (gap ^ 2 / 16) := hnormalize.symm
+    _ ≤ (32 * R₀ / gap ^ 2) * (q - r) ^ 2 := hscaled
+
 /-- Total analytic zero multiplicity on the buffered factorization disk. -/
 noncomputable def conreyHorizontalJensenFactorZeroMass
     (Y : ℕ) (R L U : ℝ) : ℝ :=
@@ -502,6 +556,81 @@ noncomputable def conreyHorizontalJensenFactorCenterLogLower
     Real.log (conreyHorizontalJensenFactorRadius R L) *
       conreyHorizontalJensenFactorZeroMass Y R L U
 
+/-- Explicit logarithmic-variation majorant after replacing the actual zero
+mass by `J` and the actual good-circle separation by `gap/(16*(J+1))`. -/
+noncomputable def conreyHorizontalJensenFactorLogVariationMajorant
+    (C : ℝ) (Y : ℕ) (R L U J : ℝ) : ℝ :=
+  Real.log (C * (Y : ℝ) *
+      (conreyHorizontalJensenHeightBase L U) ^ 6 * (L + 2) ^ 2) +
+    Real.log 6 +
+    (Real.log (conreyHorizontalJensenFactorRadius R L) -
+      Real.log (conreyHorizontalJensenRadiusGap R L / (16 * (J + 1)))) * J
+
+/-- The actual center-to-circle logarithmic variation is controlled by the
+explicit mass/separation majorant.  All sign conditions needed when replacing
+the mass and the logarithm of the separation are kept visible. -/
+theorem conreyHorizontalJensenFactorLogVariation_le_of_mass_le
+    {C J : ℝ} {Y : ℕ} {R L U : ℝ}
+    (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5) (hL : 40000 ≤ L)
+    (hU : conreyHorizontalRightEdge L + 1 ≤ U)
+    (hmass : conreyHorizontalJensenFactorZeroMass Y R L U ≤ J) :
+    conreyHorizontalJensenFactorCircleLogUpper C Y R L U -
+        conreyHorizontalJensenFactorCenterLogLower Y R L U ≤
+      conreyHorizontalJensenFactorLogVariationMajorant C Y R L U J := by
+  let m := conreyHorizontalJensenFactorZeroMass Y R L U
+  let sep := conreyHorizontalJensenFactorDiskSeparation Y R L U
+  let delta := conreyHorizontalJensenRadiusGap R L / (16 * (J + 1))
+  let b := conreyHorizontalJensenFactorRadius R L
+  have hbuffer := conreyHorizontalJensenBufferGeometry hR0 hRmax hL
+  have hanalyticOuter :=
+    analyticOnNhd_conreyExplicitMollifiedV1_horizontalJensenOuterClosedBall
+      Y (conreyHorizontalLeftEdge R L) L U hL hU
+  have hanalyticFactor := hanalyticOuter.mono
+    (Metric.closedBall_subset_closedBall hbuffer.2.2.2.le)
+  have hDnonneg := hanalyticFactor.divisor_nonneg
+  have hmNonneg : 0 ≤ m := by
+    change 0 ≤ ∑ᶠ u,
+      (MeromorphicOn.divisor (conreyHorizontalJensenProduct Y R L)
+        (Metric.closedBall (conreyHorizontalJensenCenter L U)
+          (conreyHorizontalJensenFactorRadius R L)) u : ℝ)
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hDnonneg u
+  have hJNonneg : 0 ≤ J := hmNonneg.trans hmass
+  have hsepMajor := conreyHorizontalJensenFactorDiskSeparation_lower_of_mass_le
+    (Y := Y) (U := U) hR0 hRmax hL hU hmass
+  have hdeltaPos : 0 < delta := by simpa [delta] using hsepMajor.1
+  have hdeltaSep : delta ≤ sep := by simpa [delta, sep] using hsepMajor.2
+  have hlogDeltaSep : Real.log delta ≤ Real.log sep :=
+    Real.log_le_log hdeltaPos hdeltaSep
+  have hgapUpper :=
+    conreyHorizontalJensenRadiusGap_lt_one_fourth hR0 hRmax hL
+  have hdenPos : 0 < 16 * (J + 1) := by positivity
+  have hdeltaLeOne : delta ≤ 1 := by
+    dsimp [delta]
+    apply (div_le_iff₀ hdenPos).2
+    nlinarith
+  have hlogDeltaNonpos : Real.log delta ≤ 0 :=
+    Real.log_nonpos hdeltaPos.le hdeltaLeOne
+  have hbOne : 1 ≤ b := by
+    simpa [b] using one_le_conreyHorizontalJensenFactorRadius hR0 hRmax hL
+  have hlogBNonneg : 0 ≤ Real.log b := Real.log_nonneg hbOne
+  have hcoeffLe :
+      -Real.log sep + Real.log b ≤ -Real.log delta + Real.log b := by
+    linarith
+  have hcoeffNonneg : 0 ≤ -Real.log delta + Real.log b := by
+    linarith
+  have hweighted :
+      (-Real.log sep + Real.log b) * m ≤
+        (-Real.log delta + Real.log b) * J := by
+    exact (mul_le_mul_of_nonneg_right hcoeffLe hmNonneg).trans
+      (mul_le_mul_of_nonneg_left hmass hcoeffNonneg)
+  dsimp [conreyHorizontalJensenFactorCircleLogUpper,
+    conreyHorizontalJensenFactorCenterLogLower,
+    conreyHorizontalJensenFactorLogVariationMajorant,
+    m, sep, delta, b]
+  linarith
+
 /-- One good circle and one extracted factor simultaneously give the center
 lower bound, circle upper bound, logarithmic-derivative decomposition, and the
 Borel--Caratheodory estimate throughout the rectangle disk. -/
@@ -718,5 +847,150 @@ theorem exists_conreyHorizontalJensenGoodFactor_logDeriv_le :
     exact hld z (by simpa [f, c, b] using hz) hfz
   · intro z hz
     exact hregular z (by simpa [c, d] using hz)
+
+/-- The same extracted factor admits a Borel bound with every explicit
+majorant `J` for the complete factor-disk zero mass. -/
+theorem exists_conreyHorizontalJensenGoodFactor_logDeriv_le_majorant :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {Y : ℕ} {R L U J : ℝ}, 2 ≤ Y →
+      (Y : ℝ) ≤ Real.exp L → 0 ≤ R → R ≤ 6 / 5 → 40000 ≤ L →
+      conreyHorizontalRightEdge L + 1 ≤ U → U + 1 ≤ Real.exp L →
+      conreyHorizontalJensenFactorZeroMass Y R L U ≤ J →
+      ∃ q : ℝ, ∃ g : ℂ → ℂ,
+        q ∈ Set.Icc (conreyHorizontalJensenGoodRadiusLower R L)
+          (conreyHorizontalJensenGoodRadiusUpper R L) ∧
+        AnalyticOnNhd ℂ g
+          (Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L)) ∧
+        (∀ u : (Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L) : Set ℂ), g u ≠ 0) ∧
+        (∀ z ∈ Metric.ball (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L),
+          conreyHorizontalJensenProduct Y R L z ≠ 0 →
+            logDeriv (conreyHorizontalJensenProduct Y R L) z =
+              (∑ᶠ u,
+                (MeromorphicOn.divisor
+                  (conreyHorizontalJensenProduct Y R L)
+                  (Metric.closedBall (conreyHorizontalJensenCenter L U)
+                    (conreyHorizontalJensenFactorRadius R L)) u : ℂ) *
+                  (z - u)⁻¹) + logDeriv g z) ∧
+        ∀ z ∈ Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenInnerRadius R L),
+          ‖logDeriv g z‖ ≤
+            4 * max
+                (conreyHorizontalJensenFactorLogVariationMajorant
+                  C Y R L U J) 1 *
+              (q + conreyHorizontalJensenInnerRadius R L) /
+              (q - conreyHorizontalJensenInnerRadius R L) ^ 2 := by
+  rcases exists_conreyHorizontalJensenGoodFactor_logDeriv_le with
+    ⟨C, hC, hfactor⟩
+  refine ⟨C, hC, ?_⟩
+  intro Y R L U J hY hYtop hR0 hRmax hL hU hUtop hmass
+  rcases hfactor hY hYtop hR0 hRmax hL hU hUtop with
+    ⟨q, g, hq, hg, hgne, hcenter, hsphere, hdecomp, hregular⟩
+  have hvariation :=
+    conreyHorizontalJensenFactorLogVariation_le_of_mass_le
+      (C := C) hR0 hRmax hL hU hmass
+  have hmax :
+      max (conreyHorizontalJensenFactorCircleLogUpper C Y R L U -
+          conreyHorizontalJensenFactorCenterLogLower Y R L U) 1 ≤
+        max (conreyHorizontalJensenFactorLogVariationMajorant
+          C Y R L U J) 1 := by
+    exact max_le
+      (hvariation.trans (le_max_left _ _)) (le_max_right _ _)
+  have hbuffer := conreyHorizontalJensenBufferGeometry hR0 hRmax hL
+  have hqpos : 0 < q :=
+    (conreyHorizontalJensenInnerRadius_pos R L).trans
+      (hbuffer.1.trans_le hq.1)
+  have hdq : conreyHorizontalJensenInnerRadius R L < q :=
+    hbuffer.1.trans_le hq.1
+  have hnumNonneg : 0 ≤ q + conreyHorizontalJensenInnerRadius R L := by
+    have hdpos := conreyHorizontalJensenInnerRadius_pos R L
+    linarith
+  have hdenSqPos : 0 <
+      (q - conreyHorizontalJensenInnerRadius R L) ^ 2 :=
+    sq_pos_of_pos (sub_pos.mpr hdq)
+  refine ⟨q, g, hq, hg, hgne, hdecomp, ?_⟩
+  intro z hz
+  have hraw := hregular z hz
+  apply hraw.trans
+  apply (div_le_div_iff_of_pos_right hdenSqPos).2
+  exact mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hmax (by norm_num : (0 : ℝ) ≤ 4))
+    hnumNonneg
+
+/-- Fully explicit Borel bound for the same extracted nonvanishing factor.
+The buffered-circle geometry absorbs the selected radius `q` and leaves the
+documented constant `128`. -/
+theorem exists_conreyHorizontalJensenGoodFactor_logDeriv_le_explicit :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {Y : ℕ} {R L U J : ℝ}, 2 ≤ Y →
+      (Y : ℝ) ≤ Real.exp L → 0 ≤ R → R ≤ 6 / 5 → 40000 ≤ L →
+      conreyHorizontalRightEdge L + 1 ≤ U → U + 1 ≤ Real.exp L →
+      conreyHorizontalJensenFactorZeroMass Y R L U ≤ J →
+      ∃ q : ℝ, ∃ g : ℂ → ℂ,
+        q ∈ Set.Icc (conreyHorizontalJensenGoodRadiusLower R L)
+          (conreyHorizontalJensenGoodRadiusUpper R L) ∧
+        AnalyticOnNhd ℂ g
+          (Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L)) ∧
+        (∀ u : (Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L) : Set ℂ), g u ≠ 0) ∧
+        (∀ z ∈ Metric.ball (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L),
+          conreyHorizontalJensenProduct Y R L z ≠ 0 →
+            logDeriv (conreyHorizontalJensenProduct Y R L) z =
+              (∑ᶠ u,
+                (MeromorphicOn.divisor
+                  (conreyHorizontalJensenProduct Y R L)
+                  (Metric.closedBall (conreyHorizontalJensenCenter L U)
+                    (conreyHorizontalJensenFactorRadius R L)) u : ℂ) *
+                  (z - u)⁻¹) + logDeriv g z) ∧
+        ∀ z ∈ Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenInnerRadius R L),
+          ‖logDeriv g z‖ ≤
+            128 * max
+                (conreyHorizontalJensenFactorLogVariationMajorant
+                  C Y R L U J) 1 *
+              conreyHorizontalJensenOuterRadius L /
+              conreyHorizontalJensenRadiusGap R L ^ 2 := by
+  rcases exists_conreyHorizontalJensenGoodFactor_logDeriv_le_majorant with
+    ⟨C, hC, hfactor⟩
+  refine ⟨C, hC, ?_⟩
+  intro Y R L U J hY hYtop hR0 hRmax hL hU hUtop hmass
+  rcases hfactor hY hYtop hR0 hRmax hL hU hUtop hmass with
+    ⟨q, g, hq, hg, hgne, hdecomp, hregular⟩
+  refine ⟨q, g, hq, hg, hgne, hdecomp, ?_⟩
+  intro z hz
+  have hraw := hregular z hz
+  have hgeometry :=
+    conreyHorizontalJensenFactorGeometry_le hR0 hRmax hL hq
+  have hmaxNonneg :
+      0 ≤ max
+        (conreyHorizontalJensenFactorLogVariationMajorant
+          C Y R L U J) 1 :=
+    (by norm_num : (0 : ℝ) ≤ 1).trans (le_max_right _ _)
+  have hscaled := mul_le_mul_of_nonneg_left hgeometry
+    (mul_nonneg (by norm_num : (0 : ℝ) ≤ 4) hmaxNonneg)
+  exact hraw.trans (by
+    calc
+      4 * max
+          (conreyHorizontalJensenFactorLogVariationMajorant
+            C Y R L U J) 1 *
+          (q + conreyHorizontalJensenInnerRadius R L) /
+          (q - conreyHorizontalJensenInnerRadius R L) ^ 2 =
+          (4 * max
+            (conreyHorizontalJensenFactorLogVariationMajorant
+              C Y R L U J) 1) *
+            ((q + conreyHorizontalJensenInnerRadius R L) /
+              (q - conreyHorizontalJensenInnerRadius R L) ^ 2) := by ring
+      _ ≤ (4 * max
+            (conreyHorizontalJensenFactorLogVariationMajorant
+              C Y R L U J) 1) *
+            (32 * conreyHorizontalJensenOuterRadius L /
+              conreyHorizontalJensenRadiusGap R L ^ 2) := hscaled
+      _ = 128 * max
+            (conreyHorizontalJensenFactorLogVariationMajorant
+              C Y R L U J) 1 *
+            conreyHorizontalJensenOuterRadius L /
+            conreyHorizontalJensenRadiusGap R L ^ 2 := by ring)
 
 end HardyTheorem

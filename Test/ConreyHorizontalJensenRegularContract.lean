@@ -9,6 +9,7 @@ open HardyTheorem
 #check one_fifth_lt_conreyHorizontalJensenRadiusGap
 #check conreyHorizontalJensenRadiusGap_lt_one_fourth
 #check conreyHorizontalJensenBufferGeometry
+#check conreyHorizontalJensenFactorGeometry_le
 #check conreyHorizontalJensenFactorZeroMass
 #check conreyHorizontalJensenFactorZeroSupport
 #check conreyHorizontalJensenFactorDiskSeparation
@@ -19,7 +20,11 @@ open HardyTheorem
 #check exists_conreyHorizontalJensenGoodFactorCircle
 #check conreyHorizontalJensenFactorCircleLogUpper
 #check conreyHorizontalJensenFactorCenterLogLower
+#check conreyHorizontalJensenFactorLogVariationMajorant
+#check conreyHorizontalJensenFactorLogVariation_le_of_mass_le
 #check exists_conreyHorizontalJensenGoodFactor_logDeriv_le
+#check exists_conreyHorizontalJensenGoodFactor_logDeriv_le_majorant
+#check exists_conreyHorizontalJensenGoodFactor_logDeriv_le_explicit
 
 example {R L : ℝ} (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5)
     (hL : 40000 ≤ L) :
@@ -47,6 +52,26 @@ example {Y : ℕ} {R L U J : ℝ} (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5)
       conreyHorizontalJensenRadiusGap R L / (16 * (J + 1)) ≤
         conreyHorizontalJensenFactorDiskSeparation Y R L U :=
   conreyHorizontalJensenFactorDiskSeparation_lower_of_mass_le
+    hR0 hRmax hL hU hmass
+
+example {R L q : ℝ} (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5)
+    (hL : 40000 ≤ L)
+    (hq : q ∈ Set.Icc (conreyHorizontalJensenGoodRadiusLower R L)
+      (conreyHorizontalJensenGoodRadiusUpper R L)) :
+    (q + conreyHorizontalJensenInnerRadius R L) /
+        (q - conreyHorizontalJensenInnerRadius R L) ^ 2 ≤
+      32 * conreyHorizontalJensenOuterRadius L /
+        conreyHorizontalJensenRadiusGap R L ^ 2 :=
+  conreyHorizontalJensenFactorGeometry_le hR0 hRmax hL hq
+
+example {C J : ℝ} {Y : ℕ} {R L U : ℝ}
+    (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5) (hL : 40000 ≤ L)
+    (hU : conreyHorizontalRightEdge L + 1 ≤ U)
+    (hmass : conreyHorizontalJensenFactorZeroMass Y R L U ≤ J) :
+    conreyHorizontalJensenFactorCircleLogUpper C Y R L U -
+        conreyHorizontalJensenFactorCenterLogLower Y R L U ≤
+      conreyHorizontalJensenFactorLogVariationMajorant C Y R L U J :=
+  conreyHorizontalJensenFactorLogVariation_le_of_mass_le
     hR0 hRmax hL hU hmass
 
 example {Y : ℕ} {R L U : ℝ} (hY : 2 ≤ Y) (hR0 : 0 ≤ R)
@@ -113,10 +138,47 @@ example :
               (q - conreyHorizontalJensenInnerRadius R L) ^ 2 :=
   exists_conreyHorizontalJensenGoodFactor_logDeriv_le
 
+example :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {Y : ℕ} {R L U J : ℝ}, 2 ≤ Y →
+      (Y : ℝ) ≤ Real.exp L → 0 ≤ R → R ≤ 6 / 5 → 40000 ≤ L →
+      conreyHorizontalRightEdge L + 1 ≤ U → U + 1 ≤ Real.exp L →
+      conreyHorizontalJensenFactorZeroMass Y R L U ≤ J →
+      ∃ q : ℝ, ∃ g : ℂ → ℂ,
+        q ∈ Set.Icc (conreyHorizontalJensenGoodRadiusLower R L)
+          (conreyHorizontalJensenGoodRadiusUpper R L) ∧
+        AnalyticOnNhd ℂ g
+          (Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L)) ∧
+        (∀ u : (Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L) : Set ℂ), g u ≠ 0) ∧
+        (∀ z ∈ Metric.ball (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenFactorRadius R L),
+          conreyHorizontalJensenProduct Y R L z ≠ 0 →
+            logDeriv (conreyHorizontalJensenProduct Y R L) z =
+              (∑ᶠ u,
+                (MeromorphicOn.divisor
+                  (conreyHorizontalJensenProduct Y R L)
+                  (Metric.closedBall (conreyHorizontalJensenCenter L U)
+                    (conreyHorizontalJensenFactorRadius R L)) u : ℂ) *
+                  (z - u)⁻¹) + logDeriv g z) ∧
+        ∀ z ∈ Metric.closedBall (conreyHorizontalJensenCenter L U)
+            (conreyHorizontalJensenInnerRadius R L),
+          ‖logDeriv g z‖ ≤
+            128 * max
+                (conreyHorizontalJensenFactorLogVariationMajorant
+                  C Y R L U J) 1 *
+              conreyHorizontalJensenOuterRadius L /
+              conreyHorizontalJensenRadiusGap R L ^ 2 :=
+  exists_conreyHorizontalJensenGoodFactor_logDeriv_le_explicit
+
 #print axioms one_fifth_lt_conreyHorizontalJensenRadiusGap
 #print axioms conreyHorizontalJensenRadiusGap_lt_one_fourth
 #print axioms conreyHorizontalJensenBufferGeometry
+#print axioms conreyHorizontalJensenFactorGeometry_le
 #print axioms exists_conreyHorizontalJensenFactorZeroMass_le
 #print axioms conreyHorizontalJensenFactorDiskSeparation_lower_of_mass_le
 #print axioms exists_conreyHorizontalJensenGoodFactorCircle
 #print axioms exists_conreyHorizontalJensenGoodFactor_logDeriv_le
+#print axioms conreyHorizontalJensenFactorLogVariation_le_of_mass_le
+#print axioms exists_conreyHorizontalJensenGoodFactor_logDeriv_le_majorant
+#print axioms exists_conreyHorizontalJensenGoodFactor_logDeriv_le_explicit
