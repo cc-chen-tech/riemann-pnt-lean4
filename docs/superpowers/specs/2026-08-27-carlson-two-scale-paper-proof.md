@@ -775,9 +775,12 @@ a final density axiom:
    at every level and product index `k`, the sum over aligned block owners is
    at most `d(k)^2`.  The critical-line `1/k` weight and the fourfold-divisor
    sum are now formal as well, giving each complete dyadic level coefficient
-   energy at most `2(1+log(2^K X))^4`, uniformly in the level.  The remaining
-   part of (8.4)--(8.6) is the levelwise Gaussian Schur mean square and its
-   summation through the pointwise tree envelope.
+   energy at most `2(1+log(2^K X))^4`, uniformly in the level.  The levelwise
+   Gaussian Schur mean square is now formal too: under `2(2^K X)<=Delta`, the
+   sum of the Gaussian block moments has exactly the common Gaussian-mass
+   factor times this polylogarithmic energy.  The remaining part of
+   (8.4)--(8.6) is its summation through the pointwise tree envelope and the
+   exact identification with the moving mollified prefix polynomial.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved
