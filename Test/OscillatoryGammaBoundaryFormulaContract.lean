@@ -8,5 +8,15 @@ namespace HardyTheorem.OscillatoryGammaBoundaryFormula
 #print axioms dampedGammaNegWhole_tan_eq
 #check oscillatoryGammaNegWhole_eq
 #print axioms oscillatoryGammaNegWhole_eq
+#check dampedGammaNegWhole_scale
+#print axioms dampedGammaNegWhole_scale
+#check oscillatoryGammaNegWhole_eq_of_pos
+#print axioms oscillatoryGammaNegWhole_eq_of_pos
+#check oscillatoryGammaPosWhole
+#check oscillatoryGammaPosWhole_eq_of_pos
+#print axioms oscillatoryGammaPosWhole_eq_of_pos
+#check oscillatoryGammaPosFullPartial
+#check tendsto_oscillatoryGammaPosFullPartial_atTop
+#print axioms tendsto_oscillatoryGammaPosFullPartial_atTop
 
 end HardyTheorem.OscillatoryGammaBoundaryFormula

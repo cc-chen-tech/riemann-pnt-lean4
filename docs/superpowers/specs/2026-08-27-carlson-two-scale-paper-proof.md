@@ -1122,6 +1122,31 @@ integrable.  What remains for the exact Titchmarsh kernel is positive
 frequency, arbitrary positive scaling, and the weighted Poisson summation
 step.
 
+The frequency and sign normalizations are now formal as well.  For every
+`c>0`, positive-real scaling and a second Abel-limit uniqueness argument give
+
+\[
+ J^-_0(z,c)=c^{-z}e^{-i\pi z/2}\Gamma(z).
+\]
+
+Conjugating at the conjugate exponent then gives the exact Titchmarsh sign,
+
+\[
+ J^+_0(z,c)=c^{-z}e^{i\pi z/2}\Gamma(z).                          \tag{8.19}
+\]
+
+Lean also proves that the actual natural truncations
+
+\[
+ \int_0^1u^{z-1}e^{icu}\,du+\int_1^N u^{z-1}e^{icu}\,du
+\]
+
+converge to `J^+_0(z,c)`.  Thus (8.19) is not merely a definition by
+conjugation: it is the value of the intended conditionally convergent
+positive-phase improper integral.  The Gamma boundary integral is therefore
+closed.  The next unresolved analytic input is precisely the weighted
+truncated Poisson transformation used in Titchmarsh Theorem 4.13.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta
