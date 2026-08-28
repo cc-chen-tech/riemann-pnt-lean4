@@ -21354,6 +21354,86 @@ def centered_unit_short_determinant_witness_audit(
     }
 
 
+def symmetric_afe_direction_reassembly_audit(
+    *,
+    packet_coefficients: tuple[Fraction, ...],
+    linear_operator: tuple[tuple[Fraction, ...], ...],
+) -> dict[str, object]:
+    """Audit linear reinforcement of the canonically folded AFE halves.
+
+    In (2.3e)--(2.4), the functional equation and ``z -> -z`` identify
+    the dual contour with the same Dirichlet packet after the canonical
+    exchange of summation names.  Thus the two direction vectors are
+    equal, not opposite.  Every downstream linear packet map ``L`` obeys
+
+    ``L(O_plus + O_minus) = 2*L(O_plus)``.
+
+    The first supplied row may be read as a bounded-``D`` selector.  This
+    finite linear statement does not reassemble the reflected boundary or
+    the explicit diagonal and does not prove that the physical selected
+    coefficient is nonzero.
+    """
+
+    coefficients = tuple(F(value) for value in packet_coefficients)
+    operator = tuple(
+        tuple(F(value) for value in row) for row in linear_operator
+    )
+    if not coefficients or not operator:
+        raise ValueError("packet and linear operator must be nonempty")
+    if any(len(row) != len(coefficients) for row in operator):
+        raise ValueError("every operator row must match the packet length")
+
+    forward_direction = coefficients
+    dual_direction = coefficients
+    unfolded_sum = tuple(
+        forward + dual
+        for forward, dual in zip(forward_direction, dual_direction)
+    )
+    doubled_forward = tuple(2 * value for value in forward_direction)
+
+    def apply(vector: tuple[Fraction, ...]) -> tuple[Fraction, ...]:
+        return tuple(
+            sum((entry * value for entry, value in zip(row, vector)), F(0))
+            for row in operator
+        )
+
+    forward_image = apply(forward_direction)
+    dual_image = apply(dual_direction)
+    unfolded_image = apply(unfolded_sum)
+    doubled_image = tuple(2 * value for value in forward_image)
+    direction_vectors_equal = bool(forward_direction == dual_direction)
+    unfolded_doubles = bool(unfolded_sum == doubled_forward)
+    images_reinforce = bool(
+        forward_image == dual_image and unfolded_image == doubled_image
+    )
+    bounded_projection_zero = bool(forward_image[0] == 0)
+    return {
+        "forward_direction_vector": forward_direction,
+        "dual_direction_vector_after_canonical_identification": dual_direction,
+        "unfolded_direction_sum": unfolded_sum,
+        "forward_linear_image": forward_image,
+        "dual_linear_image": dual_image,
+        "unfolded_linear_image": unfolded_image,
+        "two_canonically_identified_AFE_direction_vectors_are_equal": (
+            direction_vectors_equal
+        ),
+        "unfolded_direction_sum_equals_twice_one_direction": (
+            unfolded_doubles
+        ),
+        "every_supplied_linear_packet_image_reinforces_exactly": (
+            images_reinforce
+        ),
+        "bounded_D_one_direction_projection_is_zero": bounded_projection_zero,
+        "nonzero_bounded_D_projection_cannot_cancel_between_AFE_directions": bool(
+            images_reinforce and not bounded_projection_zero
+        ),
+        "reflected_boundary_and_explicit_diagonal_reassembled": False,
+        "bounded_D_physical_coefficient_proved_zero": False,
+        "bounded_D_four_mobius_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

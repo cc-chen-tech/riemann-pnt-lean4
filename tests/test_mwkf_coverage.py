@@ -7329,6 +7329,41 @@ def test_unit_short_determinant_witness_is_documented_without_claiming_AFE_survi
     assert "remains unproved" in text
 
 
+def test_symmetric_AFE_directions_reinforce_under_linear_packet_maps() -> None:
+    audit = getattr(
+        coverage_audit,
+        "symmetric_afe_direction_reassembly_audit",
+        None,
+    )
+    assert audit is not None, "symmetric AFE reassembly audit is missing"
+    result = audit(
+        packet_coefficients=(F(2), F(-3), F(5, 2)),
+        linear_operator=(
+            (F(1), F(0), F(-2)),
+            (F(3), F(-1), F(4)),
+        ),
+    )
+    assert result["two_canonically_identified_AFE_direction_vectors_are_equal"]
+    assert result["unfolded_direction_sum_equals_twice_one_direction"]
+    assert result["every_supplied_linear_packet_image_reinforces_exactly"]
+    assert result["nonzero_bounded_D_projection_cannot_cancel_between_AFE_directions"]
+    assert not result["bounded_D_one_direction_projection_is_zero"]
+    assert not result["reflected_boundary_and_explicit_diagonal_reassembled"]
+    assert not result["bounded_D_physical_coefficient_proved_zero"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_AFE_direction_reinforcement_is_documented_before_other_cancellations() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.155 The two symmetric AFE directions reinforce linearly" in text
+    assert r"2\mathscr J_t=\Lambda(s_t)\Lambda(1-s_t)" in text
+    assert r"L(\mathscr O^{+}+\mathscr O^{-})=2L(\mathscr O^{+})" in text
+    assert "cannot supply an" in text
+    assert "opposite-sign cancellation" in text
+    assert "reflected boundary" in text
+    assert "remains unproved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

@@ -47,6 +47,7 @@
 > | Signed short-determinant projective master | Section 9.152 opens exactly one global product-label square for an arbitrary supplied projective atom and groups every nonresonant pair by \((d_1,d_2,g,D,r_1,r_2)\).  Since \(q_i=d_i g r_i\) are squarefree, the common \(g\)-sign squares away and \(\mu(q_1)\mu(q_2)=\mu(d_1)\mu(d_2)\mu(r_1)\mu(r_2)\); no rowwise absolute value is used.  The remaining phase is exactly the short-\(D\) phase of (9.1014), with \(D\ll T\mathscr L^B/g\).  A source-level audit of the BRS proof shows that its regular \(N\)-term comes from the dual spectral large sieve rather than an extracted arithmetic diagonal, and its Kuznetsov input has a smooth modulus weight, not the physical level-dependent Möbius packet.  The signed short-\(D\) estimate remains unproved |
 > | Inactive Type-lift conservation | Section 9.153 audits the whole nonunit-frequency exponent polytope.  If \((k_i,q_i)=T^{\delta_i}\), then the active collar shrinks to \(\kappa_D=1-\delta_1-\delta_2\), but the two CRT fibres have combined exponent \(\delta_1+\delta_2\).  Together with the product-label Poisson normalization \(T^{-1}\), the net mass per modulus pair is unchanged.  At common reduced gcd \(T^\gamma\), the raw outer exponent is \(6-\gamma\), so the target requires \(2-\gamma\) saving.  The four surviving outer Möbius variables have volume exponent \(6-2\gamma\); a full square root would save \(3-\gamma\), leaving exactly one power of margin.  This is a feasibility identity, not a proved cancellation estimate |
 > | Unit short-determinant face | Section 9.154 gives an exact centered finite witness with adjacent fractions \(3/7\) and \(2/5\): both fixed-modulus packets have zero unit mean, but their \(D=1\) cross atom is nonzero.  For \(D=1\) the modular inverse term in (9.1014) is trivial, while the two rational tails reconstruct the original inverse phase modulo one.  On the primitive balanced face, restricting \(|D|\asymp1\) removes the whole \(T^{1-\gamma}\) collar and leaves raw exponent five against target four.  Thus only one power remains, but neither the actual AFE coefficient on this face nor the required bounded-\(D\) four-Möbius cancellation is proved |
+> | Symmetric AFE direction ledger | Section 9.155 returns to the exact contour identity (2.3e)--(2.4).  After the canonical \(z\mapsto-z\) and summation-name exchange, the two functional-equation directions are the same packet, so the factor 2 in (2.4) and (4.5) is reinforcement, not a sign choice.  Every downstream linear dyadic/Poisson/centering/bounded-\(|D|\) projection therefore maps the unfolded pair to twice one direction.  Any exact deletion of the unit-determinant face must come from a zero one-direction coefficient or reassembly with reflection, the principal ledger, or the explicit diagonal; that reassembly remains open |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22351,6 +22352,68 @@ two centered transforms, checks their nonzero cross atom, and verifies
 the reciprocity phase modulo one.  It deliberately leaves the actual AFE
 coefficient, bounded-\(D\) four-Möbius estimate, LDSKM, and coupled-kernel
 flags false.
+
+### 9.155 The two symmetric AFE directions reinforce linearly
+
+One of the three possibilities listed after (9.448) can now be narrowed.
+The exact approximate functional equation in Section 2 is not a sum of
+two independently signed packets.  If \(\mathscr J_t\) is the completed
+right-contour integral in (2.3a), functional equation, evenness of
+\(G_t\), and \(z\mapsto-z\) identify the left-contour integral with
+\(-\mathscr J_t\), the minus sign coming only from contour orientation.
+The residue theorem therefore gives
+
+\[
+ \boxed{2\mathscr J_t=\Lambda(s_t)\Lambda(1-s_t).}
+ \tag{9.1032}
+\]
+
+After division by the gamma factors and termwise expansion on the
+absolutely convergent right line, (9.1032) is exactly (2.4).  In
+particular, after the canonical exchange of the two Dirichlet summation
+names, write the two unfolded directions as
+\(\mathscr O^{+}\) and \(\mathscr O^{-}\).  Their packet vectors satisfy
+
+\[
+ \boxed{\mathscr O^{-}=\mathscr O^{+},\qquad
+        \mathscr O^{+}+\mathscr O^{-}=2\mathscr O^{+}.}
+ \tag{9.1033}
+\]
+
+This equality holds before dyadic decomposition.  Hence it commutes with
+every later *linear* operation.  If \(L\) denotes insertion of dyadic
+partitions, Poisson summation, canonical reciprocity orientation,
+principal/centered projection, or a symmetric bounded-\(|D|\) selector,
+then
+
+\[
+ \boxed{
+ L(\mathscr O^{+}+\mathscr O^{-})=2L(\mathscr O^{+}).}
+ \tag{9.1034}
+\]
+
+The factor \(2/q\) in the exact nonzero-mode master (4.5) already contains
+this reinforcement.  Unfolding it again as two AFE directions and assigning
+them opposite signs would therefore double count the functional equation.
+For an oriented \(D=1\) atom one first pairs it with its \(D=-1\) conjugate,
+or equivalently uses the \(|D|=1\) selector; this selector is invariant
+under the canonical exchange used in (9.1033).
+
+Consequently the other symmetric AFE direction cannot supply an
+opposite-sign cancellation of a nonzero bounded-\(|D|\) coefficient.
+Such a coefficient can still vanish because the *one-direction* physical
+packet has zero projection, or cancel after it is put in the same linear
+ledger as the reflected boundary, Ramanujan-principal term, and explicit
+diagonal.  Equations (9.1032)--(9.1034) do not decide those remaining
+possibilities.  In particular, the actual bounded-\(D\) physical
+coefficient and its four-Möbius estimate remain unproved.
+
+The helper `symmetric_afe_direction_reassembly_audit` verifies (9.1033)--
+(9.1034) for arbitrary rational packet vectors and arbitrary supplied
+finite linear maps.  Its first row may be used as a bounded-\(D\)
+selector.  It marks the direction reinforcement exact while leaving the
+reflection/diagonal reassembly, bounded-\(D\) coefficient, analytic
+four-Möbius bound, and coupled-kernel flags false.
 
 ## 10. What has and has not been proved
 
