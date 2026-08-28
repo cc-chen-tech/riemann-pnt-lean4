@@ -4619,6 +4619,87 @@ def test_squarefree_density_projector_has_half_conductor_trace_coverage() -> Non
     assert not missing_adapter["global_principal_quotient_coverage"]
 
 
+def test_nonunit_inverse_phase_descends_to_effective_squarefree_conductor() -> None:
+    finite_audit = getattr(
+        coverage_audit,
+        "squarefree_nonunit_inverse_conductor_descent_audit",
+        None,
+    )
+    assert finite_audit is not None, "nonunit conductor descent is missing"
+
+    nonunit = finite_audit(
+        ambient_conductor=30,
+        inverse_coefficient=6,
+        direct_coefficient=11,
+        phase_multiplier=7,
+    )
+    assert nonunit["inactive_conductor"] == 6
+    assert nonunit["effective_inverse_conductor"] == 5
+    assert nonunit["inactive_primes"] == (2, 3)
+    assert nonunit["active_inverse_primes"] == (5,)
+    assert nonunit["inactive_fourier_divisor_expansion_exact"]
+
+    unit = finite_audit(
+        ambient_conductor=30,
+        inverse_coefficient=7,
+        direct_coefficient=11,
+        phase_multiplier=7,
+    )
+    assert unit["inactive_conductor"] == 1
+    assert unit["effective_inverse_conductor"] == 30
+    assert unit["inactive_fourier_divisor_expansion_exact"]
+
+    zero_inverse = finite_audit(
+        ambient_conductor=30,
+        inverse_coefficient=0,
+        direct_coefficient=11,
+        phase_multiplier=7,
+    )
+    assert zero_inverse["inactive_conductor"] == 30
+    assert zero_inverse["effective_inverse_conductor"] == 1
+    assert zero_inverse["inactive_fourier_divisor_expansion_exact"]
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "squarefree_density_effective_conductor_completion_audit",
+        None,
+    )
+    assert exponent_audit is not None, "effective-conductor ledger is missing"
+
+    covered = exponent_audit(
+        ambient_conductor_exponent=F(3),
+        effective_inverse_conductor_exponent=F(1),
+        squarefree_length_exponent=F(1),
+        squarefree_ambient_conductor=True,
+        conductor_descent_verified=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert covered["limiting_local_saving_exponent"] == F(1, 4)
+    assert covered["published_local_effective_conductor_coverage"]
+
+    boundary = exponent_audit(
+        ambient_conductor_exponent=F(3),
+        effective_inverse_conductor_exponent=F(1),
+        squarefree_length_exponent=F(1, 2),
+        squarefree_ambient_conductor=True,
+        conductor_descent_verified=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert boundary["limiting_local_saving_exponent"] == 0
+    assert not boundary["published_local_effective_conductor_coverage"]
+
+    purely_direct = exponent_audit(
+        ambient_conductor_exponent=F(3),
+        effective_inverse_conductor_exponent=F(0),
+        squarefree_length_exponent=F(3),
+        squarefree_ambient_conductor=True,
+        conductor_descent_verified=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert purely_direct["limiting_local_saving_exponent"] == 0
+    assert not purely_direct["published_local_effective_conductor_coverage"]
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,

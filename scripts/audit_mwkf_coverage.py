@@ -14719,6 +14719,180 @@ def squarefree_density_trace_completion_audit(
     }
 
 
+def squarefree_nonunit_inverse_conductor_descent_audit(
+    *,
+    ambient_conductor: int,
+    inverse_coefficient: int,
+    direct_coefficient: int,
+    phase_multiplier: int,
+) -> dict[str, object]:
+    """Verify the inactive-prime Fourier divisor expansion.
+
+    For squarefree ``G``, put ``w=(a,G)`` and ``R=G/w``.  At a prime
+    ``p|w`` the inverse phase vanishes, and the unit-restricted local
+    additive transform is
+
+    ``p*1_(t = K*B mod p) - 1``.
+
+    Multiplying these factors gives the exact divisor expansion
+
+    ``sum_(j|w) mu(w/j)*j*1_(t = K*B mod j)``.
+
+    The remaining Kloosterman factors have squarefree conductor ``R``.
+    """
+
+    G = int(ambient_conductor)
+    a = int(inverse_coefficient)
+    B = int(direct_coefficient)
+    K = int(phase_multiplier)
+    factors = _finite_prime_exponents(G) if G > 1 else {}
+    if G <= 1 or any(exponent != 1 for exponent in factors.values()):
+        raise ValueError("ambient_conductor must be squarefree and greater than one")
+    if gcd(K, G) != 1:
+        raise ValueError("phase_multiplier must be a unit modulo the conductor")
+
+    inactive = gcd(a, G)
+    effective = G // inactive
+    inactive_primes = tuple(sorted(_finite_prime_exponents(inactive)))
+    active_primes = tuple(sorted(_finite_prime_exponents(effective)))
+    matched_residue = (K * B) % G
+    frequency_rows: list[dict[str, object]] = []
+    for frequency in range(G):
+        local_product = 1
+        local_factors: list[dict[str, int | bool]] = []
+        for prime in inactive_primes:
+            matched = (frequency - matched_residue) % prime == 0
+            local_value = prime - 1 if matched else -1
+            local_product *= local_value
+            local_factors.append(
+                {
+                    "prime": prime,
+                    "frequency_matches_direct_phase": matched,
+                    "local_fourier_factor": local_value,
+                }
+            )
+        divisor_expansion = sum(
+            _finite_mobius(inactive // divisor)
+            * divisor
+            * int((frequency - matched_residue) % divisor == 0)
+            for divisor in _positive_divisors(inactive)
+        )
+        frequency_rows.append(
+            {
+                "frequency": frequency,
+                "local_factors": tuple(local_factors),
+                "inactive_local_product": local_product,
+                "inactive_divisor_expansion": divisor_expansion,
+                "divisor_expansion_exact": local_product == divisor_expansion,
+            }
+        )
+
+    inactive_divisor_l1 = sum(_positive_divisors(inactive))
+    return {
+        "ambient_conductor": G,
+        "inverse_coefficient": a,
+        "direct_coefficient": B,
+        "phase_multiplier": K,
+        "inactive_conductor": inactive,
+        "effective_inverse_conductor": effective,
+        "inactive_primes": inactive_primes,
+        "active_inverse_primes": active_primes,
+        "matched_direct_frequency_residue": matched_residue,
+        "frequency_rows": tuple(frequency_rows),
+        "inactive_fourier_divisor_expansion_exact": all(
+            bool(row["divisor_expansion_exact"]) for row in frequency_rows
+        ),
+        "inactive_divisor_coefficient_l1": inactive_divisor_l1,
+        "inactive_divisor_strata_have_divisor_cost": True,
+        "global_principal_quotient_coverage": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def squarefree_density_effective_conductor_completion_audit(
+    *,
+    ambient_conductor_exponent: Fraction,
+    effective_inverse_conductor_exponent: Fraction,
+    squarefree_length_exponent: Fraction,
+    squarefree_ambient_conductor: bool,
+    conductor_descent_verified: bool,
+    separable_weight_adapter_verified: bool,
+) -> dict[str, object]:
+    """Audit squarefree-density completion after nonunit descent.
+
+    If ``G=T^gamma`` and ``R=G/(a,G)=T^rho``, the inactive-prime
+    Fourier expansion has only divisor cost.  The completion ledger is
+
+    ``X/R^(1/2) + D*R^(1/2) + X/D``.
+
+    It gives the same squarefree-density saving formula with ``rho`` in
+    place of the ambient exponent ``gamma``.
+    """
+
+    gamma = F(ambient_conductor_exponent)
+    rho = F(effective_inverse_conductor_exponent)
+    u = F(squarefree_length_exponent)
+    if gamma <= 0:
+        raise ValueError("ambient conductor exponent must be positive")
+    if rho < 0 or rho > gamma:
+        raise ValueError("effective exponent must lie between zero and ambient")
+    if u < 0:
+        raise ValueError("squarefree length exponent must be nonnegative")
+
+    cutoff = _positive_part(u / 2 - rho / 4)
+    complete_main_exponent = u - rho / 2
+    short_remainder_exponent = cutoff + rho / 2
+    long_tail_exponent = u - cutoff
+    optimized_nontrivial_exponent = max(
+        complete_main_exponent,
+        short_remainder_exponent,
+        long_tail_exponent,
+    )
+    optimized_bound_exponent = min(u, optimized_nontrivial_exponent)
+    saving = u - optimized_bound_exponent
+    formula_saving = _positive_part(min(rho / 2, u / 2 - rho / 4))
+    hypotheses_verified = bool(
+        squarefree_ambient_conductor
+        and conductor_descent_verified
+        and separable_weight_adapter_verified
+    )
+    local_coverage = bool(hypotheses_verified and rho > 0 and saving > 0)
+    return {
+        "source": (
+            "inactive-prime Fourier divisor expansion plus squarefree "
+            "effective-conductor Kloosterman completion"
+        ),
+        "ambient_conductor_exponent": gamma,
+        "effective_inverse_conductor_exponent": rho,
+        "squarefree_length_exponent": u,
+        "optimized_square_divisor_cutoff_exponent": cutoff,
+        "complete_trace_main_exponent": complete_main_exponent,
+        "short_square_divisor_completion_remainder_exponent": (
+            short_remainder_exponent
+        ),
+        "long_square_divisor_tail_exponent": long_tail_exponent,
+        "optimized_bound_exponent": optimized_bound_exponent,
+        "limiting_local_saving_exponent": saving,
+        "closed_formula_saving_exponent": formula_saving,
+        "ledger_matches_closed_formula": saving == formula_saving,
+        "positive_saving_length_threshold": rho / 2,
+        "squarefree_ambient_conductor_hypothesis_verified": bool(
+            squarefree_ambient_conductor
+        ),
+        "conductor_descent_hypothesis_verified": bool(conductor_descent_verified),
+        "separable_weight_adapter_hypothesis_verified": bool(
+            separable_weight_adapter_verified
+        ),
+        "published_local_effective_conductor_coverage": local_coverage,
+        "inactive_divisor_strata_absorbed_in_t_epsilon": bool(
+            squarefree_ambient_conductor and conductor_descent_verified
+        ),
+        "divisor_lifted_physical_adapter_proved": False,
+        "global_principal_quotient_coverage": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 
