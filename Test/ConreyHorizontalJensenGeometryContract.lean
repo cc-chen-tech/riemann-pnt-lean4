@@ -23,4 +23,3 @@ namespace HardyTheorem
 #print axioms analyticOnNhd_conreyExplicitMollifiedV1_horizontalJensenOuterClosedBall
 
 end HardyTheorem
-
