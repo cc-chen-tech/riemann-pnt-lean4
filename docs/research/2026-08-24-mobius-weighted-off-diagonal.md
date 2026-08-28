@@ -45,6 +45,7 @@
 > | Centered level-moment diagonal | Section 9.150 aggregates arbitrary physical packet coefficients into \(Z_{q,c}^{\circ}\), then proves that \(\widetilde b_q\) is its full additive Fourier transform.  Parseval gives \(\sum_n|\widetilde b_q(n)|^2=q\mathcal E_q^{\rm mult-cent}\), so the normalized Kloosterman diagonal is exactly \((\varphi(q)/q)\mathcal E_q^{\rm mult-cent}\leq\mathcal E_q^{\rm mult-cent}\), already bounded by Section 9.144.  Removing the Ramanujan correction before this identity creates a quantified principal excess; keeping it centered removes that artifact.  Only the level-dependent off-diagonal \({\rm LDSKM}^{\circ}\) remains |
 > | Type-frequency reduced determinant | Section 9.151 keeps the literal \((A,k)\) packet through the product-label Poisson step.  A nonunit Type frequency replaces \(q\) by the smaller primitive modulus \(q'=q/(k,q)\) and produces the reduced fraction \(x/q'\), \(x\equiv-k'y\pmod {q'}\).  Pairing two rows gives \(\Delta_k=gD\), with the same collar \(gD\ll T\mathscr L^B\).  CRT and additive reciprocity transfer the active cofactor inverse phases to the short modulus \(D\), while retaining both inactive Type-gcd traces and the common-\(g\) trace.  This removes the nonunit-frequency adapter gap, but the signed short-determinant family estimate remains unproved |
 > | Signed short-determinant projective master | Section 9.152 opens exactly one global product-label square for an arbitrary supplied projective atom and groups every nonresonant pair by \((d_1,d_2,g,D,r_1,r_2)\).  Since \(q_i=d_i g r_i\) are squarefree, the common \(g\)-sign squares away and \(\mu(q_1)\mu(q_2)=\mu(d_1)\mu(d_2)\mu(r_1)\mu(r_2)\); no rowwise absolute value is used.  The remaining phase is exactly the short-\(D\) phase of (9.1014), with \(D\ll T\mathscr L^B/g\).  A source-level audit of the BRS proof shows that its regular \(N\)-term comes from the dual spectral large sieve rather than an extracted arithmetic diagonal, and its Kuznetsov input has a smooth modulus weight, not the physical level-dependent Möbius packet.  The signed short-\(D\) estimate remains unproved |
+> | Inactive Type-lift conservation | Section 9.153 audits the whole nonunit-frequency exponent polytope.  If \((k_i,q_i)=T^{\delta_i}\), then the active collar shrinks to \(\kappa_D=1-\delta_1-\delta_2\), but the two CRT fibres have combined exponent \(\delta_1+\delta_2\).  Together with the product-label Poisson normalization \(T^{-1}\), the net mass per modulus pair is unchanged.  At common reduced gcd \(T^\gamma\), the raw outer exponent is \(6-\gamma\), so the target requires \(2-\gamma\) saving.  The four surviving outer Möbius variables have volume exponent \(6-2\gamma\); a full square root would save \(3-\gamma\), leaving exactly one power of margin.  This is a feasibility identity, not a proved cancellation estimate |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22142,6 +22143,120 @@ transfer.  It marks the supplied projective-atom master proved, but keeps
 the BRS weighted-Kuznetsov, arithmetic-diagonal, signed short-\(D\),
 physical packet bound, LDSKM, and coupled-kernel flags false.
 
+### 9.153 Inactive Type lifts exactly restore the lost collar volume
+
+The shorter active modulus in Section 9.151 must not be booked as a
+power saving before its inactive CRT fibres are counted.  On the balanced
+physical face, write
+
+\[
+ q_i=T^3,qquad d_i=(k_i,q_i)=T^{\delta_i},qquad
+ Q_i=q_i/d_i=T^{3-\delta_i},qquad
+ 0\leq\delta_i\leq\frac12.
+ \tag{9.1020}
+\]
+
+The upper bound on \(\delta_i\) comes from the balanced Type dual length
+in (9.719).  Product-label Poisson has length \(T^5\).  Hence, when the
+collar has positive power length,
+
+\[
+ \boxed{
+ \kappa_D=1-\delta_1-\delta_2,qquad
+ g=T^\gamma,quad 0\leq\gamma\leq\kappa_D,qquad
+ |D|\ll T^{\kappa_D-\gamma}\mathscr L^B.}
+ \tag{9.1021}
+\]
+
+For fixed reduced moduli, the number of close reduced numerator pairs has
+exponent \(\kappa_D\).  But squarefreeness gives
+\((d_i,Q_i)=1\), and the reduction map \(U(q_i)\to U(Q_i)\) has
+\(\varphi(d_i)\) lifts.  The two inactive Type fibres therefore have
+combined exponent
+
+\[
+ \delta_1+\delta_2.
+\]
+
+Finally, the product-label Poisson factor divided by the two original
+\(q_i\)-normalizations has exponent \(5-3-3=-1\).  The complete mass
+per fixed original modulus pair is consequently
+
+\[
+ \boxed{
+ \underbrace{(1-\delta_1-\delta_2)}_{\text{reduced collar}}
+ +\underbrace{(\delta_1+\delta_2)}_{\text{inactive lifts}}
+ -\underbrace{1}_{\text{Poisson normalization}}=0.}
+ \tag{9.1022}
+\]
+
+This includes the boundary \(\delta_1+\delta_2=1\), where the active
+collar has bounded length and all of the missing volume is carried by
+the inactive fibres.
+
+Now write \(Q_i=gr_i\).  The family of
+\((d_1,d_2,g,r_1,r_2)\) has exponent
+
+\[
+ (\delta_1+\delta_2)+\gamma
+ +(3-\delta_1-\gamma)+(3-\delta_2-\gamma)
+ =6-\gamma.
+\]
+
+By (9.1022), this is also the raw normalized outer exponent:
+
+\[
+ \boxed{E_{\rm raw}=6-\gamma.}
+ \tag{9.1023}
+\]
+
+The physical centered energy target is exponent four.  Thus every Type
+gcd stratum has the same required saving
+
+\[
+ \boxed{S_{\rm need}=2-\gamma.}
+ \tag{9.1024}
+\]
+
+Equation (9.1017) shows that the signed outer variables are
+\(d_1,d_2,r_1,r_2\), while \(g\) is unsigned.  Their total volume
+exponent is
+
+\[
+ (\delta_1+\delta_2)
+ +(3-\delta_1-\gamma)+(3-\delta_2-\gamma)
+ =6-2\gamma.
+\]
+
+Therefore a genuine square-root estimate in the four outer Möbius
+variables would provide
+
+\[
+ \boxed{S_{\rm sqrt}=3-\gamma,qquad
+ S_{\rm sqrt}-S_{\rm need}=1.}
+ \tag{9.1025}
+\]
+
+There is uniformly one full power of margin.  The primitive
+\(\delta_1=\delta_2=0\) row is the largest-conductor row, but it is not
+worse in the saving ledger than a nonunit row: inactive lifts exactly
+enforce this conservation.
+
+Equations (9.1022)--(9.1025) are only an exponent feasibility statement.
+The lift multiplicity does not constitute a cancellation estimate, and
+the one-power margin cannot be spent before a theorem supplies the
+four-sign square root for the actual coupled weight.  In particular,
+ordinary rowwise Cauchy still erases the signs and proves none of
+(9.1025).  The four-outer-Möbius square-root estimate, the signed
+short-\(D\) family bound, LDSKM, and the coupled-kernel gate remain
+unproved.
+
+The helper `type_frequency_inactive_lift_conservation_audit` checks the
+entire rational polytope in (9.1020)--(9.1025).  It records separately
+the reduced collar, inactive lift volume, Poisson normalization, raw
+family exponent, required saving, hypothetical square-root saving, and
+the exact one-power margin.  Every analytic-bound flag remains false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -23127,6 +23242,7 @@ Proved in this note:
 | Centered level diagonal/Parseval adapter | exact packet-exhaustive finite identity; analytic diagonal already covered | Equations (9.1001)--(9.1003) form the arbitrary fixed-\(q\) physical fibres \(Z_{q,c}^{\circ}\) and their complete additive transform \(\widetilde b_q(n)\), with zero mode deleted exactly.  Parseval gives \(\sum_n|\widetilde b_q(n)|^2=q\mathcal E_q^{\rm mult-cent}\), (9.1005), and the same-reduced-fraction Kloosterman diagonal is \((\varphi(q)/q)\mathcal E_q^{\rm mult-cent}\), (9.1006), hence no larger than the Section 9.144 projector.  The Ramanujan term in (9.1004) is required for this exact centering; removing it early creates the displayed principal excess.  Therefore the diagonal is closed and only \({\rm LDSKM}^{\circ}\) remains unproved |
 | Type-frequency reduced determinant | exact primitive descent, determinant collar, and inverse-phase reciprocity; signed short-\(D\) estimate unproved | Equations (9.1007)--(9.1008) replace every nonzero Type frequency by the primitive fraction \(x/q'\), where \(q'=q/(k,q)\).  The paired circular determinant satisfies \(\Delta_k=gD\) and \(gD\ll T\mathscr L^B\), (9.1009)--(9.1012).  The exact CRT ledger (9.1013)--(9.1014) retains both inactive Type-gcd traces and the common-\(g\) trace while transferring only the active cofactor phase to modulus \(D\).  Thus nonunit frequencies cannot worsen the collar.  Bounding the resulting level-dependent signed short-determinant family remains unproved, so \({\rm LDSKM}^{\circ}\) and the coupled-kernel gate stay open |
 | Signed short-determinant projective master | exact one-square reassembly and outer Möbius sign ledger; analytic family bound unproved | Equation (9.1016) opens one supplied physical projective atom without rowwise absolute values.  The centered resonant fractions are already covered.  In every remaining pair, \(q_i=d_i g r_i\) and the common sign squares away, giving \(\mu(q_1)\mu(q_2)=\mu(d_1)\mu(d_2)\mu(r_1)\mu(r_2)\), (9.1017).  Equation (9.1018) retains these four signs, all inner Type signs, the common-\(g\) trace, and the short conductor \(D\ll T\mathscr L^B/g\).  The source-level BRS audit (9.1019) shows that its regular \(N\)-term is a dual-large-sieve term, not a proved arithmetic diagonal, while its Kuznetsov modulus weight is smooth rather than the physical level-dependent Möbius packet.  A global signed short-\(D\) estimate remains unproved |
+| Inactive Type-lift conservation | exact exponent polytope; four-sign square-root theorem unproved | With \((k_i,q_i)=T^{\delta_i}\), the reduced determinant collar has exponent \(1-\delta_1-\delta_2\), but its two inactive CRT fibres have exponent \(\delta_1+\delta_2\).  Equation (9.1022) shows that these and the \(T^{-1}\) Poisson normalization cancel exactly.  Hence at \(g=T^\gamma\), \(E_{\rm raw}=6-\gamma\) and the target requires \(S_{\rm need}=2-\gamma\), independently of the Type gcds, (9.1023)--(9.1024).  The four surviving outer Möbius variables have volume \(6-2\gamma\), so their hypothetical square-root saving is \(3-\gamma\), one full power more than needed, (9.1025).  No such physical coupled four-sign estimate is proved |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |

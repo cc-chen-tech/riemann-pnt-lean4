@@ -21043,6 +21043,187 @@ def signed_short_determinant_projective_master_audit(
     }
 
 
+def type_frequency_inactive_lift_conservation_audit(
+    *,
+    type_gcd_exponent_pairs: tuple[tuple[Fraction, Fraction], ...],
+    common_reduced_gcd_exponents: tuple[Fraction, ...],
+    original_modulus_exponent: Fraction,
+    product_label_length_exponent: Fraction,
+    physical_energy_target_exponent: Fraction,
+    maximum_type_gcd_exponent: Fraction,
+) -> dict[str, object]:
+    """Audit the exponent conservation caused by inactive Type lifts.
+
+    Put ``q_i=T^m``, ``d_i=(k_i,q_i)=T^delta_i``, and
+    ``Q_i=q_i/d_i``.  Product-label Poisson at length ``T^A`` gives
+    the reduced determinant collar
+
+    ``kappa_D=2*m-delta_1-delta_2-A``.
+
+    The reduced numerator-pair volume loses ``delta_1+delta_2``
+    powers compared with the primitive row, but the CRT fibres from
+    ``U(q_i) -> U(Q_i)`` have exactly that combined exponent.  Together
+    with the Poisson normalization ``A-2*m``, their net pair mass is
+    zero.  Decomposing ``Q_i=g*r_i`` therefore leaves raw exponent
+    ``2*m-gamma`` independently of the Type gcds.
+
+    The common ``g`` Möbius sign has already squared away.  The four
+    remaining outer signs have total length ``2*m-2*gamma``; a full
+    square root would save ``m-gamma``.  This is an exponent budget,
+    not a proof of that square-root estimate.
+    """
+
+    type_pairs = tuple(
+        (F(left), F(right))
+        for left, right in type_gcd_exponent_pairs
+    )
+    common_exponents = tuple(F(value) for value in common_reduced_gcd_exponents)
+    if not type_pairs or len(type_pairs) != len(common_exponents):
+        raise ValueError("Type-gcd pairs and common-gcd exponents must have equal positive length")
+    modulus = F(original_modulus_exponent)
+    product_length = F(product_label_length_exponent)
+    target = F(physical_energy_target_exponent)
+    maximum_type_gcd = F(maximum_type_gcd_exponent)
+    if min(modulus, product_length, target, maximum_type_gcd) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    if modulus == 0 or product_length == 0:
+        raise ValueError("modulus and product-label lengths must be positive")
+
+    row_results: list[dict[str, object]] = []
+    physical_polytope = True
+    gcd_inside_collar = True
+    lift_conservation = True
+    raw_formula = True
+    required_formula = True
+    square_root_formula = True
+    margin_formula = True
+    for (left_type_gcd, right_type_gcd), common_gcd in zip(
+        type_pairs, common_exponents
+    ):
+        type_sum = left_type_gcd + right_type_gcd
+        collar = 2 * modulus - type_sum - product_length
+        left_reduced_modulus = modulus - left_type_gcd
+        right_reduced_modulus = modulus - right_type_gcd
+        left_reduced_cofactor = left_reduced_modulus - common_gcd
+        right_reduced_cofactor = right_reduced_modulus - common_gcd
+        row_physical = bool(
+            0 <= left_type_gcd <= maximum_type_gcd
+            and 0 <= right_type_gcd <= maximum_type_gcd
+            and collar >= 0
+            and left_reduced_cofactor >= 0
+            and right_reduced_cofactor >= 0
+        )
+        row_gcd_inside = bool(0 <= common_gcd <= collar)
+        reduced_numerator_pair_volume = collar
+        inactive_lift_volume = type_sum
+        poisson_normalization = product_length - 2 * modulus
+        net_pair_mass = (
+            reduced_numerator_pair_volume
+            + inactive_lift_volume
+            + poisson_normalization
+        )
+        modulus_pair_family = 2 * modulus - common_gcd
+        raw_outer_family = modulus_pair_family + net_pair_mass
+        required_saving = raw_outer_family - target
+        signed_outer_volume = 2 * modulus - 2 * common_gcd
+        square_root_saving = signed_outer_volume / 2
+        square_root_margin = square_root_saving - required_saving
+
+        physical_polytope = bool(physical_polytope and row_physical)
+        gcd_inside_collar = bool(gcd_inside_collar and row_gcd_inside)
+        lift_conservation = bool(
+            lift_conservation and net_pair_mass == 0
+        )
+        raw_formula = bool(
+            raw_formula
+            and raw_outer_family == 2 * modulus - common_gcd
+        )
+        required_formula = bool(
+            required_formula
+            and required_saving
+            == 2 * modulus - target - common_gcd
+        )
+        square_root_formula = bool(
+            square_root_formula
+            and square_root_saving == modulus - common_gcd
+        )
+        margin_formula = bool(
+            margin_formula
+            and square_root_margin == target - modulus
+        )
+        row_results.append(
+            {
+                "left_type_gcd_exponent": left_type_gcd,
+                "right_type_gcd_exponent": right_type_gcd,
+                "type_gcd_sum_exponent": type_sum,
+                "left_reduced_modulus_exponent": left_reduced_modulus,
+                "right_reduced_modulus_exponent": right_reduced_modulus,
+                "reduced_determinant_collar_exponent": collar,
+                "common_reduced_gcd_exponent": common_gcd,
+                "left_reduced_cofactor_exponent": left_reduced_cofactor,
+                "right_reduced_cofactor_exponent": right_reduced_cofactor,
+                "reduced_numerator_pair_volume_exponent": (
+                    reduced_numerator_pair_volume
+                ),
+                "inactive_crt_lift_volume_exponent": inactive_lift_volume,
+                "poisson_normalization_exponent": poisson_normalization,
+                "net_per_modulus_pair_mass_exponent": net_pair_mass,
+                "modulus_pair_family_exponent": modulus_pair_family,
+                "raw_outer_family_exponent": raw_outer_family,
+                "required_saving_exponent": required_saving,
+                "four_outer_mobius_volume_exponent": signed_outer_volume,
+                "hypothetical_square_root_saving_exponent": (
+                    square_root_saving
+                ),
+                "hypothetical_square_root_power_margin": (
+                    square_root_margin
+                ),
+                "inside_physical_polytope": row_physical,
+                "common_gcd_inside_collar": row_gcd_inside,
+            }
+        )
+
+    primitive_collar = 2 * modulus - product_length
+    primitive_is_worst = all(
+        row["reduced_determinant_collar_exponent"] <= primitive_collar
+        for row in row_results
+    )
+    return {
+        "rows": tuple(row_results),
+        "original_modulus_exponent": modulus,
+        "product_label_length_exponent": product_length,
+        "physical_energy_target_exponent": target,
+        "maximum_type_gcd_exponent": maximum_type_gcd,
+        "all_rows_inside_physical_type_gcd_polytope": physical_polytope,
+        "all_common_gcd_exponents_inside_determinant_collar": (
+            gcd_inside_collar
+        ),
+        "all_inactive_lifts_exactly_restore_reduced_collar_loss": (
+            lift_conservation
+        ),
+        "all_raw_outer_family_exponents_equal_six_minus_gamma": bool(
+            raw_formula and modulus == F(3)
+        ),
+        "all_required_savings_equal_two_minus_gamma": bool(
+            required_formula and 2 * modulus - target == F(2)
+        ),
+        "all_four_outer_mobius_square_root_savings_equal_three_minus_gamma": bool(
+            square_root_formula and modulus == F(3)
+        ),
+        "all_square_root_power_margins_equal_one": bool(
+            margin_formula and target - modulus == F(1)
+        ),
+        "primitive_type_frequency_row_is_the_conductor_worst_case": (
+            primitive_is_worst
+        ),
+        "inactive_type_lifts_supply_analytic_cancellation": False,
+        "four_outer_mobius_square_root_bound_proved": False,
+        "signed_short_D_family_bound_proved": False,
+        "level_dependent_dskm_offdiagonal_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

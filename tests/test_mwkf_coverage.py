@@ -7240,6 +7240,52 @@ def test_signed_short_determinant_master_is_documented_as_an_unproved_bound() ->
     assert "remains unproved" in text
 
 
+def test_inactive_type_lifts_exactly_balance_the_shorter_frequency_collar() -> None:
+    audit = getattr(
+        coverage_audit,
+        "type_frequency_inactive_lift_conservation_audit",
+        None,
+    )
+    assert audit is not None, "inactive Type-lift conservation audit is missing"
+    result = audit(
+        type_gcd_exponent_pairs=(
+            (F(0), F(0)),
+            (F(1, 4), F(1, 4)),
+            (F(1, 2), F(1, 2)),
+        ),
+        common_reduced_gcd_exponents=(F(0), F(1, 2), F(0)),
+        original_modulus_exponent=F(3),
+        product_label_length_exponent=F(5),
+        physical_energy_target_exponent=F(4),
+        maximum_type_gcd_exponent=F(1, 2),
+    )
+    assert result["all_rows_inside_physical_type_gcd_polytope"]
+    assert result["all_common_gcd_exponents_inside_determinant_collar"]
+    assert result["all_inactive_lifts_exactly_restore_reduced_collar_loss"]
+    assert result["all_raw_outer_family_exponents_equal_six_minus_gamma"]
+    assert result["all_required_savings_equal_two_minus_gamma"]
+    assert result["all_four_outer_mobius_square_root_savings_equal_three_minus_gamma"]
+    assert result["all_square_root_power_margins_equal_one"]
+    assert result["primitive_type_frequency_row_is_the_conductor_worst_case"]
+    assert not result["inactive_type_lifts_supply_analytic_cancellation"]
+    assert not result["four_outer_mobius_square_root_bound_proved"]
+    assert not result["signed_short_D_family_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_inactive_type_lift_conservation_is_documented_without_spending_it() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.153 Inactive Type lifts exactly restore the lost collar volume" in text
+    assert r"\kappa_D=1-\delta_1-\delta_2" in text
+    assert r"\delta_1+\delta_2" in text
+    assert r"E_{\rm raw}=6-\gamma" in text
+    assert r"S_{\rm need}=2-\gamma" in text
+    assert r"S_{\rm sqrt}=3-\gamma" in text
+    assert "one full power of margin" in text
+    assert "does not constitute a cancellation estimate" in text
+    assert "remains unproved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 
