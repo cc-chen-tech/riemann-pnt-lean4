@@ -7286,6 +7286,49 @@ def test_inactive_type_lift_conservation_is_documented_without_spending_it() -> 
     assert "remains unproved" in text
 
 
+def test_centering_does_not_formally_delete_the_unit_short_determinant() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_unit_short_determinant_witness_audit",
+        None,
+    )
+    assert audit is not None, "centered unit-D witness audit is missing"
+    result = audit(
+        left_modulus=7,
+        left_numerator=3,
+        right_modulus=5,
+        right_numerator=2,
+    )
+    assert result["original_moduli_are_squarefree_and_coprime"]
+    assert result["reduced_fractions_are_primitive"]
+    assert result["oriented_determinant"] == 1
+    assert result["short_determinant"] == 1
+    assert result["both_fixed_modulus_packets_are_centered"]
+    assert result["both_centered_fourier_coefficients_are_nonzero"]
+    assert result["centered_cross_atom_is_nonzero"]
+    assert result["unit_D_modular_inverse_term_is_trivial"]
+    assert result["rational_tails_reconstruct_original_phase_mod_one"]
+    assert result["centering_alone_does_not_annihilate_unit_D_atom"]
+    assert result["bounded_D_removes_exactly_full_collar_exponent"]
+    assert result["bounded_D_raw_exponent"] == F(5)
+    assert result["bounded_D_required_saving_exponent"] == F(1)
+    assert not result["actual_AFE_unit_D_coefficient_evaluated"]
+    assert not result["bounded_D_four_mobius_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_unit_short_determinant_witness_is_documented_without_claiming_AFE_survival() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.154 Centering alone does not delete the unit-determinant face" in text
+    assert r"x_1Q_2-x_2Q_1=1" in text
+    assert r"Z_{q,1}=1,\qquad Z_{q,-1}=-1" in text
+    assert r"\widetilde b_q(n)=e_q(-n)-e_q(n)" in text
+    assert r"=-2i\sin(2\pi n/q)" in text
+    assert r"E_{|D|\asymp1}=5" in text
+    assert "actual AFE/reflection packet" in text
+    assert "remains unproved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

@@ -46,6 +46,7 @@
 > | Type-frequency reduced determinant | Section 9.151 keeps the literal \((A,k)\) packet through the product-label Poisson step.  A nonunit Type frequency replaces \(q\) by the smaller primitive modulus \(q'=q/(k,q)\) and produces the reduced fraction \(x/q'\), \(x\equiv-k'y\pmod {q'}\).  Pairing two rows gives \(\Delta_k=gD\), with the same collar \(gD\ll T\mathscr L^B\).  CRT and additive reciprocity transfer the active cofactor inverse phases to the short modulus \(D\), while retaining both inactive Type-gcd traces and the common-\(g\) trace.  This removes the nonunit-frequency adapter gap, but the signed short-determinant family estimate remains unproved |
 > | Signed short-determinant projective master | Section 9.152 opens exactly one global product-label square for an arbitrary supplied projective atom and groups every nonresonant pair by \((d_1,d_2,g,D,r_1,r_2)\).  Since \(q_i=d_i g r_i\) are squarefree, the common \(g\)-sign squares away and \(\mu(q_1)\mu(q_2)=\mu(d_1)\mu(d_2)\mu(r_1)\mu(r_2)\); no rowwise absolute value is used.  The remaining phase is exactly the short-\(D\) phase of (9.1014), with \(D\ll T\mathscr L^B/g\).  A source-level audit of the BRS proof shows that its regular \(N\)-term comes from the dual spectral large sieve rather than an extracted arithmetic diagonal, and its Kuznetsov input has a smooth modulus weight, not the physical level-dependent Möbius packet.  The signed short-\(D\) estimate remains unproved |
 > | Inactive Type-lift conservation | Section 9.153 audits the whole nonunit-frequency exponent polytope.  If \((k_i,q_i)=T^{\delta_i}\), then the active collar shrinks to \(\kappa_D=1-\delta_1-\delta_2\), but the two CRT fibres have combined exponent \(\delta_1+\delta_2\).  Together with the product-label Poisson normalization \(T^{-1}\), the net mass per modulus pair is unchanged.  At common reduced gcd \(T^\gamma\), the raw outer exponent is \(6-\gamma\), so the target requires \(2-\gamma\) saving.  The four surviving outer Möbius variables have volume exponent \(6-2\gamma\); a full square root would save \(3-\gamma\), leaving exactly one power of margin.  This is a feasibility identity, not a proved cancellation estimate |
+> | Unit short-determinant face | Section 9.154 gives an exact centered finite witness with adjacent fractions \(3/7\) and \(2/5\): both fixed-modulus packets have zero unit mean, but their \(D=1\) cross atom is nonzero.  For \(D=1\) the modular inverse term in (9.1014) is trivial, while the two rational tails reconstruct the original inverse phase modulo one.  On the primitive balanced face, restricting \(|D|\asymp1\) removes the whole \(T^{1-\gamma}\) collar and leaves raw exponent five against target four.  Thus only one power remains, but neither the actual AFE coefficient on this face nor the required bounded-\(D\) four-Möbius cancellation is proved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22256,6 +22257,100 @@ entire rational polytope in (9.1020)--(9.1025).  It records separately
 the reduced collar, inactive lift volume, Poisson normalization, raw
 family exponent, required saving, hypothetical square-root saving, and
 the exact one-power margin.  Every analytic-bound flag remains false.
+
+### 9.154 Centering alone does not delete the unit-determinant face
+
+The smallest short conductor must be settled before a spectral estimate
+for growing \(D\) can close the master.  Fixed-modulus centering by itself
+does not remove it.  Indeed, take the adjacent primitive fractions
+
+\[
+ \frac{x_1}{Q_1}=\frac37,\qquad
+ \frac{x_2}{Q_2}=\frac25,\qquad
+ \boxed{x_1Q_2-x_2Q_1=1.}
+ \tag{9.1026}
+\]
+
+Thus \(g=(Q_1,Q_2)=1\) and \(D=1\).  At each of the two moduli, define
+the centered unit packet
+
+\[
+ \boxed{Z_{q,1}=1,\qquad Z_{q,-1}=-1,\qquad
+        \sum_{c\in U(q)}Z_{q,c}=0.}
+ \tag{9.1027}
+\]
+
+Its transform from (9.1002) is
+
+\[
+ \boxed{
+ \widetilde b_q(n)=e_q(-n)-e_q(n)
+ =-2i\sin(2\pi n/q).}
+ \tag{9.1028}
+\]
+
+In particular, both \(\widetilde b_7(3)\) and
+\(\widetilde b_5(2)\) are nonzero, so their cross atom on (9.1026) is
+nonzero.  This is a finite counterexample to the formal implication
+
+\[
+ \text{zero unit mean at each modulus}
+ \quad\Longrightarrow\quad
+ \text{the }D=1\text{ cross face vanishes}.
+ \tag{9.1029}
+\]
+
+The reciprocity phase also retains nontrivial information.  Put
+\(y_1=y_2=1\), \(K_1=4\pmod7\), and \(K_2=3\pmod5\), so that
+\(x_i\equiv-K_i y_i\pmod {Q_i}\).  On the primitive
+\(d_1=d_2=g=D=1\) face, (9.1014) has no inactive trace, common-gcd
+trace, or inverse residue modulo \(D\).  Nevertheless
+
+\[
+ B_1=-20,\qquad B_2=-21,
+\]
+
+and the rational tails give
+
+\[
+ \boxed{
+ \frac{B_1}{r_1}+\frac{B_2}{r_2}
+ =-\frac{20}{7}-\frac{21}{5}
+ \equiv \frac17-\frac15\pmod1.}
+ \tag{9.1030}
+\]
+
+So \(D=1\) deletes only the short-modulus inverse oscillation; it does
+not make the full phase constant.
+
+There is also an exact exponent consequence.  On the primitive balanced
+face, a dyadic common-gcd stratum \(g=T^\gamma\) has the full raw exponent
+\(6-\gamma\) from (9.1023), while the \(D\)-collar has exponent
+\(1-\gamma\).  Restricting to bounded nonzero \(D\) therefore leaves
+
+\[
+ \boxed{E_{|D|\asymp1}=5,\qquad
+        S_{|D|\asymp1}=5-4=1.}
+ \tag{9.1031}
+\]
+
+This is the same one-power numerical obstruction seen in the
+constant-phase microarc and balanced Möbius-convolution variance audits
+of Sections 4.58--4.60 of the alternative-route note.  It is not yet an
+equivalence of kernels: (9.1027) is an admissible centered packet witness,
+not the evaluation of the actual AFE/reflection packet.  The next exact
+task is therefore binary.  Either the complete AFE/reflection reassembly
+has zero coefficient on every bounded-\(D\) packet, or this face requires
+a one-power cancellation theorem for its coupled four-Möbius family.
+Neither alternative has been proved here, and the coupled-kernel gate
+remains unproved.
+
+The helper `centered_unit_short_determinant_witness_audit` verifies
+(9.1026)--(9.1031) on exact integer and rational data.  It constructs the
+two centered transforms, checks their nonzero cross atom, and verifies
+the reciprocity phase modulo one.  It deliberately leaves the actual AFE
+coefficient, bounded-\(D\) four-Möbius estimate, LDSKM, and coupled-kernel
+flags false.
 
 ## 10. What has and has not been proved
 

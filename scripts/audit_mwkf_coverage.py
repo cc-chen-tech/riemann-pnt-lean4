@@ -21224,6 +21224,136 @@ def type_frequency_inactive_lift_conservation_audit(
     }
 
 
+def centered_unit_short_determinant_witness_audit(
+    *,
+    left_modulus: int,
+    left_numerator: int,
+    right_modulus: int,
+    right_numerator: int,
+) -> dict[str, object]:
+    """Show that fixed-modulus centering does not formally kill ``D=1``.
+
+    The two centered unit packets are supported at ``c=1,-1`` with
+    coefficients ``1,-1``.  Their additive transforms are
+
+    ``exp(-2*pi*i*n/q)-exp(2*pi*i*n/q)``.
+
+    For adjacent primitive fractions ``x_1/q_1`` and ``x_2/q_2``, this
+    gives a nonzero centered cross atom with determinant one.  Taking
+    ``y_i=1`` and ``K_i=-x_i (mod q_i)`` also checks the ``D=1``
+    specialization of the reciprocity formula: the modular inverse term
+    is trivial, but the two rational tails reconstruct the original
+    inverse phase modulo one.  This is a finite obstruction witness, not
+    an evaluation of the actual AFE/reflection coefficient on that face.
+    """
+
+    q1 = int(left_modulus)
+    q2 = int(right_modulus)
+    x1 = int(left_numerator)
+    x2 = int(right_numerator)
+    if min(q1, q2) <= 2:
+        raise ValueError("the witness moduli must exceed two")
+    if not (0 < x1 < q1 and 0 < x2 < q2):
+        raise ValueError("numerators must lie strictly inside their moduli")
+
+    squarefree_coprime = bool(
+        _finite_mobius(q1) != 0
+        and _finite_mobius(q2) != 0
+        and gcd(q1, q2) == 1
+    )
+    primitive_fractions = bool(gcd(x1, q1) == 1 and gcd(x2, q2) == 1)
+    determinant = x1 * q2 - x2 * q1
+    if determinant != 1:
+        raise ValueError("the supplied fractions must have oriented determinant one")
+    common = gcd(q1, q2)
+    short_determinant = determinant // common
+
+    def centered_transform(modulus: int, frequency: int) -> complex:
+        negative = cmath.exp(-2j * cmath.pi * frequency / modulus)
+        positive = cmath.exp(2j * cmath.pi * frequency / modulus)
+        return negative - positive
+
+    left_transform = centered_transform(q1, x1)
+    right_transform = centered_transform(q2, x2)
+    centered_cross_atom = left_transform * right_transform.conjugate()
+    tolerance = 1e-10
+
+    left_type_frequency = (-x1) % q1
+    right_type_frequency = (-x2) % q2
+    left_c = -left_type_frequency
+    right_c = right_type_frequency
+    left_b = left_c * q2
+    right_b = -right_c * q1
+    original_inverse_phase = F(1, q1) - F(1, q2)
+    unit_modular_inverse_term = F(0)
+    rational_tails = F(left_b, q1) + F(right_b, q2)
+    tail_difference = rational_tails - original_inverse_phase
+    phase_reconstruction = bool(tail_difference.denominator == 1)
+
+    full_collar_exponent = F(1)
+    bounded_d_exponent = F(0)
+    full_raw_exponent = F(6)
+    target_exponent = F(4)
+    bounded_raw_exponent = full_raw_exponent - (
+        full_collar_exponent - bounded_d_exponent
+    )
+    bounded_required_saving = bounded_raw_exponent - target_exponent
+    centered_nonzero = bool(
+        abs(left_transform) > tolerance
+        and abs(right_transform) > tolerance
+        and abs(centered_cross_atom) > tolerance
+    )
+    return {
+        "left_modulus": q1,
+        "right_modulus": q2,
+        "left_numerator": x1,
+        "right_numerator": x2,
+        "original_moduli_are_squarefree_and_coprime": squarefree_coprime,
+        "reduced_fractions_are_primitive": primitive_fractions,
+        "oriented_determinant": determinant,
+        "common_reduced_modulus_gcd": common,
+        "short_determinant": short_determinant,
+        "left_centered_packet_total": F(0),
+        "right_centered_packet_total": F(0),
+        "both_fixed_modulus_packets_are_centered": True,
+        "left_centered_fourier_coefficient": left_transform,
+        "right_centered_fourier_coefficient": right_transform,
+        "both_centered_fourier_coefficients_are_nonzero": centered_nonzero,
+        "centered_cross_atom": centered_cross_atom,
+        "centered_cross_atom_is_nonzero": bool(
+            abs(centered_cross_atom) > tolerance
+        ),
+        "unit_D_modular_inverse_term": unit_modular_inverse_term,
+        "unit_D_modular_inverse_term_is_trivial": bool(
+            unit_modular_inverse_term == 0
+        ),
+        "original_inverse_phase": original_inverse_phase,
+        "unit_D_rational_tails": rational_tails,
+        "rational_tail_integer_discrepancy": tail_difference,
+        "rational_tails_reconstruct_original_phase_mod_one": (
+            phase_reconstruction
+        ),
+        "centering_alone_does_not_annihilate_unit_D_atom": bool(
+            squarefree_coprime
+            and primitive_fractions
+            and short_determinant == 1
+            and centered_nonzero
+            and phase_reconstruction
+        ),
+        "full_collar_exponent": full_collar_exponent,
+        "bounded_D_shell_exponent": bounded_d_exponent,
+        "bounded_D_removes_exactly_full_collar_exponent": bool(
+            full_collar_exponent - bounded_d_exponent == 1
+        ),
+        "bounded_D_raw_exponent": bounded_raw_exponent,
+        "bounded_D_required_saving_exponent": bounded_required_saving,
+        "actual_AFE_unit_D_coefficient_evaluated": False,
+        "bounded_D_four_mobius_bound_proved": False,
+        "level_dependent_dskm_offdiagonal_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,
