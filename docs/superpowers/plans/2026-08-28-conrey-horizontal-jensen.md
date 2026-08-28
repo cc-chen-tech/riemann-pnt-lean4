@@ -31,7 +31,7 @@
 - Consumes: `analyticAt_conreyDegreeOneV1_of_re_pos_of_ne_one` and `analyticOnNhd_conreyMollifier`.
 - Produces: `conreyHorizontalRightEdge`, `conreyHorizontalLeftEdge`, `conreyHorizontalJensenCenter`, `conreyHorizontalJensenInnerRadius`, `conreyHorizontalJensenOuterRadius`, rectangle containment, `innerRadius < outerRadius`, and actual-product analyticity on the outer closed ball.
 
-- [ ] **Step 1: Write the failing contract**
+- [x] **Step 1: Write the failing contract**
 
 Check all seven definitions/endpoints above with `#check`, then run:
 
@@ -41,7 +41,7 @@ lake env lean Test/ConreyHorizontalJensenGeometryContract.lean
 
 Expected: failure because `HardyTheorem.ConreyHorizontalJensenGeometry` does not exist.
 
-- [ ] **Step 2: Implement the five exact geometry definitions**
+- [x] **Step 2: Implement the five exact geometry definitions**
 
 Use exactly:
 
@@ -57,20 +57,20 @@ def conreyHorizontalJensenOuterRadius (L : ℝ) : ℝ :=
   conreyHorizontalRightEdge L - 1 / 4
 ```
 
-- [ ] **Step 3: Prove the geometry inequalities**
+- [x] **Step 3: Prove the geometry inequalities**
 
 Under `40000 <= L`, `0 <= R`, `R <= 6/5`, prove rectangle containment,
 `0 < innerRadius`, `innerRadius < outerRadius`, and `1/4 <= z.re` on the
 outer disk. Under `rightEdge L + 1 <= U`, prove every point of the outer disk
 is different from `1`.
 
-- [ ] **Step 4: Prove actual-product analyticity**
+- [x] **Step 4: Prove actual-product analyticity**
 
 For the explicit parameters and `conreyExplicitP`, combine the preceding
 real-part and pole-avoidance statements with the existing `V1` and mollifier
 analyticity theorems.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 ```bash
 lake env lean Test/ConreyHorizontalJensenGeometryContract.lean
@@ -99,18 +99,18 @@ theorem one_sixth_le_norm_conreyExplicitRightVerticalProduct
     (1 / 6 : ℝ) ≤ ‖conreyExplicitRightVerticalProduct Y sigma0 L t‖
 ```
 
-- [ ] **Step 1: Write and run the failing contract**
+- [x] **Step 1: Write and run the failing contract**
 
 Expected: unknown declaration.
 
-- [ ] **Step 2: Split at `t = 2 * log L`**
+- [x] **Step 2: Split at `t = 2 * log L`**
 
 Use the existing low theorem for the first interval. On the high interval,
 combine `one_third_le_conreyExplicitDegreeOneHeightMain_re` with the proved
 product error bound and discharge the explicit `<= 1/6` error arithmetic at
 `L >= 40000`.
 
-- [ ] **Step 3: Verify axiom boundary and commit**
+- [x] **Step 3: Verify axiom boundary and commit**
 
 ```bash
 lake env lean Test/ConreyHorizontalJensenCenterContract.lean
