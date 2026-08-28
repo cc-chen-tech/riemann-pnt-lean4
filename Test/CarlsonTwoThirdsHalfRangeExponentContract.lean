@@ -10,6 +10,9 @@ namespace PrimeNumberTheorem
 #check halfRange_fourteenSeventeenths_margin
 #check halfRange_direct_gap_at_fourteen_seventeenths
 #check halfRange_separated_threshold_eq
+#check halfRangeNaiveCutoffPartitionExponent
+#check halfRange_naiveCutoffPartition_exponent_eq
+#check halfRange_naiveCutoffPartition_no_power_saving
 
 #print axioms halfRange_length_range
 #print axioms halfRange_interpolation_weight_eq
@@ -19,5 +22,7 @@ namespace PrimeNumberTheorem
 #print axioms halfRange_fourteenSeventeenths_margin
 #print axioms halfRange_direct_gap_at_fourteen_seventeenths
 #print axioms halfRange_separated_threshold_eq
+#print axioms halfRange_naiveCutoffPartition_exponent_eq
+#print axioms halfRange_naiveCutoffPartition_no_power_saving
 
 end PrimeNumberTheorem

@@ -599,6 +599,48 @@ The rational ledger for the smaller half-length target is formalized too:
 margin `3/6800`.  These are arithmetic certificates only; they do not assert
 the missing half-length Gaussian mean square.
 
+The first square-root AFE reduction is now formalized further, but it also
+exposes a moving-cutoff obstruction that must not be hidden.  For a fixed
+cutoff `N`, Lean proves the exact main and dual exponential-polynomial
+identities, their full-line Gaussian integrability, and the bound
+```
+integral_R gaussian(Delta,w;t) * E_(N,X)(t)
+  <= 2 * sqrt(pi/(1/Delta^2)) * C_Schur
+       * 2*(1+log(NX))^4,
+```
+under `2*N*X <= Delta`.  The canonical AFE cutoff on a window where
+```
+sqrt(U/(2*pi)) < sqrt(L/(2*pi)) + 1
+```
+is proved to be either `N(L)` or `N(L)+1`.  Conditional only on the explicit
+proposition `zeta_critical_afe_target`, the actual mollified-zeta integral on
+such a window is consequently bounded by the two fixed-cutoff full-line
+energies plus the exact full Gaussian mass times the canonical remainder.
+All these theorems have only the three permitted axioms; the AFE remains a
+parameter, not an axiom.
+
+This local statement cannot be summed cutoff by cutoff.  In the half-range
+case `N asymp U^(1/2)`, `X=U^b`, and Conrey's broad Gaussian has
+`Delta=U^(1-eta)`.  The fixed-polynomial separation condition requires
+`eta <= 1/2-b`.  Across one broad Gaussian there are then at least
+```
+Delta/sqrt(U) = U^(1/2-eta) >= U^b
+```
+different square-root cutoffs.  Applying the full-line bound independently
+to every cutoff fibre therefore inserts a critical-boundary loss at least
+`kappa=b`.  At `b=9/20`, interpolation transmits this with weight `20/21`,
+giving exactly
+```
+1861/2100 + (20/21)*(9/20) = 2761/2100
+                               = 8/9 + 2683/6300.
+```
+Thus this precisely defined independent-fibre method is a no-go even for
+recovering Carlson's baseline.  This arithmetic obstruction is formalized.
+It does not rule out the broader AFE route: the next required finite lemma is
+a Gaussian maximal mean-square inequality for the nested moving partial sums
+(and its rational-ray dual), of Rademacher--Menshov type, whose logarithmic
+rather than power cost would recover the desired `O(Delta log^B U)` bound.
+
 All proved analytic layers have now been composed into one public bridge.
 Uniform Gaussian product bounds `C0,C1` for the two standard linear
 mollifiers imply directly
@@ -628,7 +670,10 @@ a final density axiom:
    This is the classical `theta<1/2` subrange; a proof may use a formalized
    square-root approximate functional equation with the exact dual phase
    `exp(-2 I thetaPhase t)` from (5.9), and the existing finite
-   Dirichlet-polynomial mean-value machinery.  The old
+   Dirichlet-polynomial mean-value machinery.  Because the square-root AFE
+   cutoff moves across a broad Gaussian, this must include the nested-cutoff
+   Gaussian maximal inequality just identified; independent cutoff-fibre
+   summation is formally ruled out.  The old
    `exp(+I thetaPhase t)` placeholder is not an admissible premise.  For
    `delta=1/20` or `5/64`,
    formalize Conrey's full `theta<4/7` theorem and its DI spectral input.

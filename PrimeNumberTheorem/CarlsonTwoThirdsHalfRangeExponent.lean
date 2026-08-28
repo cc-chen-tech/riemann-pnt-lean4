@@ -43,6 +43,15 @@ def halfRangeTargetExponent : ℝ := 8 / 9 - 1 / 400
 /-- Explicit first power saving. -/
 def halfRangeDelta : ℝ := 1 / 400
 
+/-- Exponent produced by the naive moving-cutoff strategy: split the broad
+critical Gaussian into independent one-cutoff pieces, apply a full-line
+fixed-polynomial estimate to every piece, and sum the estimates.  The number
+of relevant square-root cutoffs costs at least the outer mollifier exponent
+`b`; interpolation transmits this loss with left-boundary weight `20/21`. -/
+def halfRangeNaiveCutoffPartitionExponent : ℝ :=
+  halfRangeInterpolatedExponent +
+    (1 - halfRangeInterpolationWeight) * halfRangeOuterExponent
+
 theorem halfRange_length_range :
     1 / 3 < halfRangeCoreExponent ∧
       halfRangeCoreExponent < halfRangeOuterExponent ∧
@@ -88,6 +97,28 @@ theorem halfRange_separated_threshold_eq :
     (4 / 3 + 8 / 9 + halfRangeTargetExponent) /
         (2 + 8 / 9 + halfRangeTargetExponent) = 11191 / 13591 := by
   norm_num [halfRangeTargetExponent]
+
+/-- Exact exponent of the independent-cutoff summation at the half-range
+parameters. -/
+theorem halfRange_naiveCutoffPartition_exponent_eq :
+    halfRangeNaiveCutoffPartitionExponent = 2761 / 2100 := by
+  norm_num [halfRangeNaiveCutoffPartitionExponent,
+    halfRangeInterpolatedExponent, halfRangeInterpolationWeight,
+    halfRangeRightBoundary, halfRangeCoreExponent, halfRangeOuterExponent,
+    halfRangeEpsilon]
+
+/-- Independent summation over the moving AFE cutoffs is not merely too weak
+for the target `1/400` saving: its exponent already exceeds the original
+Carlson `8/9` exponent by `2683/6300`.  Any successful AFE formalization must
+therefore retain the nested cutoffs through a maximal/orthogonality estimate
+rather than bounding each cutoff fibre separately. -/
+theorem halfRange_naiveCutoffPartition_no_power_saving :
+    halfRangeNaiveCutoffPartitionExponent - 8 / 9 = 2683 / 6300 ∧
+      8 / 9 < halfRangeNaiveCutoffPartitionExponent := by
+  norm_num [halfRangeNaiveCutoffPartitionExponent,
+    halfRangeInterpolatedExponent, halfRangeInterpolationWeight,
+    halfRangeRightBoundary, halfRangeCoreExponent, halfRangeOuterExponent,
+    halfRangeEpsilon]
 
 end
 
