@@ -24287,6 +24287,191 @@ def prime_cross_residue_incidence_audit(
     }
 
 
+def prime_cross_residue_centered_divisor_incidence_audit(
+    *,
+    left_prime: int,
+    right_prime: int,
+    determinant: int,
+    left_F_lift: tuple[tuple[int, Fraction], ...],
+    left_G_lift: tuple[tuple[int, Fraction], ...],
+    right_F_lift: tuple[tuple[int, Fraction], ...],
+    right_G_lift: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Remove both cross inverses inside the physical ratio convolution.
+
+    At ``c=D*inverse(q) mod p``, the condition ``m=-c*n mod p`` is
+    exactly ``p | q*m + D*n``.  At
+    ``c=-D*inverse(p) mod q`` it is exactly ``q | p*u-D*v``.  Subtracting
+    the principal multiplicative character is the literal local density
+    ``1/phi(p)`` or ``1/phi(q)`` on the unit lifts.
+    """
+
+    p = int(left_prime)
+    q = int(right_prime)
+    D = int(determinant)
+    if min(p, q) <= 2 or p == q or D == 0:
+        raise ValueError("two distinct odd primes and a nonzero determinant are required")
+    if (
+        _finite_prime_exponents(p) != {p: 1}
+        or _finite_prime_exponents(q) != {q: 1}
+    ):
+        raise ValueError("both conductors must be prime")
+    if gcd(D, p * q) != 1:
+        raise ValueError("the determinant must be a unit at both primes")
+
+    def supplied_lift(
+        modulus: int,
+        rows: tuple[tuple[int, Fraction], ...],
+    ) -> tuple[tuple[int, Fraction], ...]:
+        if not rows:
+            raise ValueError("every physical lift must be nonempty")
+        converted: list[tuple[int, Fraction]] = []
+        seen: set[int] = set()
+        for label_value, weight_value in rows:
+            label = int(label_value)
+            if label in seen:
+                raise ValueError("physical lift labels must be unique")
+            if gcd(label, modulus) != 1:
+                raise ValueError("every lift label must be a unit modulo its prime")
+            seen.add(label)
+            converted.append((label, F(weight_value)))
+        return tuple(converted)
+
+    left_F = supplied_lift(p, left_F_lift)
+    left_G = supplied_lift(p, left_G_lift)
+    right_F = supplied_lift(q, right_F_lift)
+    right_G = supplied_lift(q, right_G_lift)
+
+    def residue_profile(
+        modulus: int,
+        lift: tuple[tuple[int, Fraction], ...],
+    ) -> dict[int, Fraction]:
+        profile = {residue: F(0) for residue in range(1, modulus)}
+        for label, weight in lift:
+            residue = label % modulus
+            profile[residue] += weight
+        return profile
+
+    def ratio_convolution(
+        modulus: int,
+        cross_residue: int,
+        F_lift: tuple[tuple[int, Fraction], ...],
+        G_lift: tuple[tuple[int, Fraction], ...],
+    ) -> tuple[Fraction, Fraction, Fraction]:
+        F_profile = residue_profile(modulus, F_lift)
+        G_profile = residue_profile(modulus, G_lift)
+        raw = F(_finite_mobius(modulus)) * sum(
+            (
+                F_profile[-cross_residue * y % modulus] * G_profile[y]
+                for y in range(1, modulus)
+            ),
+            F(0),
+        )
+        mean = (
+            F(_finite_mobius(modulus), modulus - 1)
+            * sum((weight for _, weight in F_lift), F(0))
+            * sum((weight for _, weight in G_lift), F(0))
+        )
+        return raw, mean, raw - mean
+
+    left_residue = D * pow(q, -1, p) % p
+    right_residue = -D * pow(p, -1, q) % q
+    left_raw, left_mean, left_centered = ratio_convolution(
+        p,
+        left_residue,
+        left_F,
+        left_G,
+    )
+    right_raw, right_mean, right_centered = ratio_convolution(
+        q,
+        right_residue,
+        right_F,
+        right_G,
+    )
+
+    left_incidence = F(_finite_mobius(p)) * sum(
+        (
+            f_weight * g_weight
+            for m, f_weight in left_F
+            for n, g_weight in left_G
+            if (q * m + D * n) % p == 0
+        ),
+        F(0),
+    )
+    right_incidence = F(_finite_mobius(q)) * sum(
+        (
+            f_weight * g_weight
+            for u, f_weight in right_F
+            for v, g_weight in right_G
+            if (p * u - D * v) % q == 0
+        ),
+        F(0),
+    )
+    left_centered_incidence = F(_finite_mobius(p)) * sum(
+        (
+            f_weight
+            * g_weight
+            * (F(int((q * m + D * n) % p == 0)) - F(1, p - 1))
+            for m, f_weight in left_F
+            for n, g_weight in left_G
+        ),
+        F(0),
+    )
+    right_centered_incidence = F(_finite_mobius(q)) * sum(
+        (
+            f_weight
+            * g_weight
+            * (F(int((p * u - D * v) % q == 0)) - F(1, q - 1))
+            for u, f_weight in right_F
+            for v, g_weight in right_G
+        ),
+        F(0),
+    )
+    centered_cross_product = left_centered * right_centered
+    incidence_cross_product = left_centered_incidence * right_centered_incidence
+    return {
+        "left_prime_conductor": p,
+        "right_prime_conductor": q,
+        "bounded_determinant": D,
+        "left_cross_residue": left_residue,
+        "right_cross_residue": right_residue,
+        "left_ratio_convolution_value": left_raw,
+        "right_ratio_convolution_value": right_raw,
+        "left_principal_density": left_mean,
+        "right_principal_density": right_mean,
+        "left_centered_profile_value": left_centered,
+        "right_centered_profile_value": right_centered,
+        "left_divisor_incidence_value": left_incidence,
+        "right_divisor_incidence_value": right_incidence,
+        "left_centered_divisor_incidence_value": left_centered_incidence,
+        "right_centered_divisor_incidence_value": right_centered_incidence,
+        "left_ratio_convolution_equals_divisor_incidence": (
+            left_raw == left_incidence
+        ),
+        "right_ratio_convolution_equals_divisor_incidence": (
+            right_raw == right_incidence
+        ),
+        "left_centered_profile_equals_density_subtracted_incidence": (
+            left_centered == left_centered_incidence
+        ),
+        "right_centered_profile_equals_density_subtracted_incidence": (
+            right_centered == right_centered_incidence
+        ),
+        "centered_cross_product": centered_cross_product,
+        "coupled_centered_incidence_product": incidence_cross_product,
+        "centered_cross_product_equals_coupled_incidence_product": (
+            centered_cross_product == incidence_cross_product
+        ),
+        "inverse_residue_has_been_eliminated": True,
+        "physical_lift_weights_remain_inside_incidence": True,
+        "bounded_order_projectors_are_separate_sparse_corrections": True,
+        "coupled_centered_incidence_bound_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def prime_conductor_zero_frequency_polytope_audit(
     *,
     long_conductor_exponent: Fraction,

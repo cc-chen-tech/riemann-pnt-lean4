@@ -8345,6 +8345,50 @@ def test_prime_cross_residue_occupancy_boundary_is_documented() -> None:
     assert "pre-Cauchy physical incidence bound remains unproved" in text
 
 
+def test_prime_cross_residue_ratio_convolution_becomes_centered_incidence() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_cross_residue_centered_divisor_incidence_audit",
+        None,
+    )
+    assert audit is not None, "centered prime divisor-incidence audit is missing"
+    result = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        left_F_lift=((1, 2), (2, -1), (10, 3)),
+        left_G_lift=((1, 1), (3, -2), (9, 4)),
+        right_F_lift=((1, -1), (2, 3), (8, 2)),
+        right_G_lift=((1, 2), (4, -1), (7, 3)),
+    )
+    assert result["left_cross_residue"] == 3
+    assert result["right_cross_residue"] == 2
+    assert result["left_ratio_convolution_equals_divisor_incidence"]
+    assert result["right_ratio_convolution_equals_divisor_incidence"]
+    assert result["left_centered_profile_equals_density_subtracted_incidence"]
+    assert result["right_centered_profile_equals_density_subtracted_incidence"]
+    assert result["centered_cross_product_equals_coupled_incidence_product"]
+    assert result["inverse_residue_has_been_eliminated"]
+    assert result["physical_lift_weights_remain_inside_incidence"]
+    assert result["bounded_order_projectors_are_separate_sparse_corrections"]
+    assert not result["coupled_centered_incidence_bound_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_centered_divisor_incidence_gate_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.173 Ratio-convolution expansion removes both cross inverses"
+    ) in text
+    assert r"p\mid qm+Dn" in text
+    assert r"q\mid pu-Dv" in text
+    assert r"\mathbf1_{p\mid qm+Dn}-\frac1{\varphi(p)}" in text
+    assert "coupled centered divisor-incidence master" in text
+    assert "physical Möbius and Type weights remain inside" in text
+    assert "centered incidence bound remains unproved" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

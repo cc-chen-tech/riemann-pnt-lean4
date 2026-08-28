@@ -63,6 +63,7 @@
 > | Prime-conductor zero-frequency obstruction | Section 9.170 isolates a subface on which the proposed conductor Type mechanism has no cancellation to spend.  For every prime conductor above the two Type cutoffs, the exact split is \(\lambda_{\rm I}(p)=-1\), \(\lambda_{\rm II}(p)=0\); hence the prime--prime face lies wholly in I--I and both Möbius signs are constant.  At common frequency zero, high-order characters modulo a short prime form an exact residue-delta packet.  Pigeonholing long primes into one short residue class gives mutual-character operator norm \(\gg P/\sqrt{\log P}\), so the \(P+Q\) large-sieve cost is sharp in powers and cannot be replaced uniformly by \(\sqrt{PQ}\).  Therefore NPIT cannot follow from the Type split plus arbitrary row-energy control alone.  Its zero-frequency prime face must instead use a proved delocalization of the literal physical transforms, or be extracted and reassembled as a residual main term; neither step is yet proved |
 > | Prime zero-frequency physical reinversion | Section 9.171 removes the arbitrary-character-vector enlargement on the obstructing face.  If \(V_p^{(0)}\) is the literal common-zero-frequency active-residue profile and \(P_{>B,p}\) its high-order character projector, then the normalized double character sum is exactly \(P_{>B,p}V_p^{(0)}(D\overline q_p)\overline{P_{>B,q}V_q^{(0)}(-D\overline p_q)}\).  Thus the missing term is a finite cross-residue bilinear form in the original ratio-convolution/AFE profiles, not a generic mutual-character operator.  Row energy alone still permits point-mass saturation, so the remaining input is a physical cross-residue profile bound or a residual-main-term reassembly; neither is proved |
 > | One-sided cross-residue occupancy | Section 9.172 shows exactly where the remaining prime zero-mode loss sits.  For fixed long \(p\), the map \(q\mapsto D\overline q_p\) is injective because every short \(q<p\).  For fixed short \(q\), the values \(-D\overline p_q\) repeat with residue occupancy \(n_q(a)\).  Cauchy therefore costs precisely \((\max_{q,a}n_q(a))^{1/2}\), which has exponent \((\sigma_{\rm long}-\sigma_{\rm short})/2\) on the pigeonholed prime family and reproduces the full mutual-character imbalance.  Centering does not remove this positive sampling energy.  Any successful estimate must delay Cauchy past the long-prime average and use the physical profiles there |
+> | Prime centered divisor-incidence master | Section 9.173 expands the two physical ratio convolutions before Cauchy.  The inverse residues disappear exactly: \(Z_{p,D\overline q_p}^{\circ}\) is the \(f_p(m)g_p(n)\)-weighted discrepancy \(\mu(p)(\mathbf1_{p\mid qm+Dn}-1/\varphi(p))\), and the other profile is the analogous \(\mu(q)(\mathbf1_{q\mid pu-Dv}-1/\varphi(q))\).  The prime conductor signs are constant, but all Möbius/Type weights inside the four physical lifts remain.  The coupled congruences admit quotients \(pr=qm+Dn\), \(qs=pu-Dv\) satisfying \(q(rs-mu)=D(nu-rv)\).  This is an exact pre-Cauchy finite master; no published centered-incidence estimate for its level-dependent four lifts is known |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -24499,6 +24500,141 @@ The finite helper prime_cross_residue_incidence_audit checks
 records every residue occupancy, and verifies that all determinant
 congruences are exact.  It marks no analytic gate closed.
 
+### 9.173 Ratio-convolution expansion removes both cross inverses
+
+The profiles in (9.1145) still have the exact ratio-convolution
+structure of (9.920).  On one separated physical atom, choose finite
+unit lifts
+
+\[
+ F_p(x)=\sum_{m\equiv x\ (p)}f_p(m),\qquad
+ G_p(y)=\sum_{n\equiv y\ (p)}g_p(n),
+ \tag{9.1154}
+\]
+
+and similarly \(F_q(u),G_q(v)\).  The symbols \(f_p,g_p,f_q,g_q\)
+retain their literal \(h,\delta\), inactive-gcd, Möbius/Type, and smooth
+AFE weights.  No modulus-independent replacement is made.
+
+At the first cross residue \(c=D\overline q_p\), the ratio condition in
+(9.920) is
+
+\[
+ m\equiv-c n\pmod p
+ \quad\Longleftrightarrow\quad
+ \boxed{p\mid qm+Dn.}
+ \tag{9.1155}
+\]
+
+Therefore
+
+\[
+ \boxed{
+ Z_{p,D\overline q_p}
+ =\mu(p)\sum_{m,n}f_p(m)g_p(n)
+   \mathbf1_{p\mid qm+Dn}.}
+ \tag{9.1156}
+\]
+
+All lift variables are units modulo \(p\).  Averaging (9.1156) over the
+active residue \(c\in U(p)\) gives exactly one admissible \(c\) for each
+pair \((m,n)\), so the principal multiplicative density is
+\(\mu(p)/\varphi(p)\).  Thus
+
+\[
+ \boxed{
+ Z_{p,D\overline q_p}^{\circ}
+ =\mu(p)\sum_{m,n}f_p(m)g_p(n)
+ \left(
+ \mathbf1_{p\mid qm+Dn}-\frac1{\varphi(p)}
+ \right).}
+ \tag{9.1157}
+\]
+
+On the other side, \(c=-D\overline p_q\), so
+
+\[
+ u\equiv-cv\pmod q
+ \quad\Longleftrightarrow\quad
+ \boxed{q\mid pu-Dv,}
+ \tag{9.1158}
+\]
+
+and hence
+
+\[
+ \boxed{
+ Z_{q,-D\overline p_q}^{\circ}
+ =\mu(q)\sum_{u,v}f_q(u)g_q(v)
+ \left(
+ \mathbf1_{q\mid pu-Dv}-\frac1{\varphi(q)}
+ \right).}
+ \tag{9.1159}
+\]
+
+Equations (9.1157)--(9.1159) remove both cross inverses without
+completion, reciprocity, or an error term.  Their product is the exact
+prime--prime zero-frequency centered core
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr I_{\rm pp,0}
+ :={}&\sum_{p,q,D}\sum_{m,n,u,v}
+ f_p(m)g_p(n)
+ \overline{f_q(u)g_q(v)}\\
+ &\times
+ \left(\mathbf1_{p\mid qm+Dn}-\frac1{\varphi(p)}\right)
+ \left(\mathbf1_{q\mid pu-Dv}-\frac1{\varphi(q)}\right),
+ \end{aligned}}
+ \tag{9.1160}
+\]
+
+up to the remaining finite packet weights already displayed in
+(9.1145).  The two prime conductor signs multiply to one, but the
+physical Möbius and Type weights remain inside the four lifts in
+(9.1160).  The fixed-order character projectors omitted by
+\(P_{>B}\) are the separate sparse corrections already charged to
+Section 9.166.  Thus the hard high-order term is obtained from
+(9.1160) after subtracting only proved sparse projections.
+
+The two congruences can also be lifted with exact integer quotients:
+
+\[
+ pr=qm+Dn,\qquad qs=pu-Dv.
+ \tag{9.1161}
+\]
+
+Eliminating \(p\) gives the finite determinant relation
+
+\[
+ \boxed{q(rs-mu)=D(nu-rv).}
+ \tag{9.1162}
+\]
+
+This relation retains \(D\) and all four physical variables.  It is
+potentially suitable for a global dispersion step because the two local
+density subtractions in (9.1160) have already removed the principal
+residue modes.  It must not be estimated by taking absolute values of
+the two parenthesized discrepancies separately; that would recreate the
+short-side occupancy (9.1151).
+
+Equation (9.1160) is the coupled centered divisor-incidence master for
+the prime zero-frequency face.  It is strictly more concrete than an
+arbitrary character large-sieve gate and keeps the requested
+pre-Cauchy physical structure.  No theorem audited here bounds (9.1160)
+with the required \(T^{-\eta_{\rm imb}}\) gain for its four
+level-dependent lifts.  The centered incidence bound remains unproved,
+as do \((\mathrm{NPIT})\), bounded \(D\), LDSKM, and the coupled-kernel
+gate.
+
+The finite helper
+prime_cross_residue_centered_divisor_incidence_audit builds the two
+ratio convolutions from arbitrary unit lifts, checks (9.1155)--(9.1159)
+with exact rational arithmetic, and verifies that their centered product
+is the coupled incidence product in (9.1160).  It marks no analytic gate
+closed.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -24556,6 +24692,16 @@ occupancy \(n_q(a)\).  Pairwise Cauchy costs
 exponent.  Hence no character-transform artifact remains: the needed
 cancellation must occur in the long-prime average of the two physical
 profiles before Cauchy.
+
+Section 9.173 finally expands the two ratio convolutions at their cross
+residues.  The inverse evaluations become the centered divisibility
+discrepancies \(p\mid qm+Dn\) and \(q\mid pu-Dv\), with exact local
+density subtractions \(1/\varphi(p)\) and \(1/\varphi(q)\).  All
+Möbius/Type and \(h\delta\) weights inside the four physical lifts
+remain.  Their quotient variables satisfy
+\(q(rs-mu)=D(nu-rv)\).  The prime zero-mode gate is therefore the
+explicit coupled centered incidence master (9.1160); its required
+pre-Cauchy bound is not proved.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
