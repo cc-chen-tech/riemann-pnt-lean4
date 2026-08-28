@@ -13399,6 +13399,175 @@ def zero_direct_principal_box_boundary_audit(
     }
 
 
+def zero_direct_weighted_divisor_adapter_audit(
+    *,
+    cutoff: int,
+    common_factor: int,
+    product_label: int,
+    coprimality_label: int,
+    divisor_weights: dict[int, Fraction],
+) -> dict[str, object]:
+    """Verify the anchored weighted divisor-lattice identity exactly."""
+
+    level = int(cutoff)
+    common = int(common_factor)
+    product = int(product_label)
+    coprimality = int(coprimality_label)
+    if level <= 1:
+        raise ValueError("the Selberg cutoff must exceed one")
+    if common <= 0 or common > level:
+        raise ValueError("the common factor must lie in [1, cutoff]")
+    if product <= 0 or coprimality <= 0:
+        raise ValueError("product and coprimality labels must be positive")
+
+    unmatched_primes = tuple(
+        prime
+        for prime in _finite_prime_exponents(product)
+        if common % prime != 0 and coprimality % prime != 0
+    )
+    unmatched_radical = 1
+    for prime in unmatched_primes:
+        unmatched_radical *= prime
+    divisors = tuple(_positive_divisors(unmatched_radical))
+    weights = {int(divisor): F(weight) for divisor, weight in divisor_weights.items()}
+    if set(weights) != set(divisors):
+        raise ValueError("divisor_weights must contain exactly the divisors of R_q")
+
+    FormalVector = tuple[Fraction, dict[int, Fraction]]
+
+    def zero() -> FormalVector:
+        return F(0), {}
+
+    def add(left: FormalVector, right: FormalVector) -> FormalVector:
+        constant = left[0] + right[0]
+        logarithms = dict(left[1])
+        for prime, coefficient in right[1].items():
+            logarithms[prime] = logarithms.get(prime, F(0)) + coefficient
+            if logarithms[prime] == 0:
+                del logarithms[prime]
+        return constant, logarithms
+
+    def scale(vector: FormalVector, scalar: Fraction) -> FormalVector:
+        return (
+            scalar * vector[0],
+            {
+                prime: scalar * coefficient
+                for prime, coefficient in vector[1].items()
+                if scalar * coefficient != 0
+            },
+        )
+
+    def subtract(left: FormalVector, right: FormalVector) -> FormalVector:
+        return add(left, scale(right, F(-1)))
+
+    def taper(divisor: int) -> FormalVector:
+        mobius = F(_finite_mobius(divisor))
+        logarithms = {
+            prime: -mobius * exponent
+            for prime, exponent in _finite_prime_exponents(
+                common * divisor
+            ).items()
+        }
+        return mobius, logarithms
+
+    def public(vector: FormalVector) -> dict[str, object]:
+        return {
+            "constant": vector[0],
+            "log_prime_coefficients": dict(sorted(vector[1].items())),
+        }
+
+    complete_weighted = zero()
+    truncated_weighted = zero()
+    anchored_variation = zero()
+    weighted_boundary = zero()
+    anchor = weights[1]
+    boundary_cofactors: list[int] = []
+    for divisor in divisors:
+        weighted_term = scale(taper(divisor), weights[divisor])
+        complete_weighted = add(complete_weighted, weighted_term)
+        anchored_variation = add(
+            anchored_variation,
+            scale(taper(divisor), weights[divisor] - anchor),
+        )
+        if common * divisor <= level:
+            truncated_weighted = add(truncated_weighted, weighted_term)
+        else:
+            weighted_boundary = add(weighted_boundary, weighted_term)
+            boundary_cofactors.append(unmatched_radical // divisor)
+
+    euler_core = zero()
+    if not unmatched_primes:
+        euler_core = taper(1)
+    elif len(unmatched_primes) == 1:
+        euler_core = (F(0), {unmatched_primes[0]: F(1)})
+    anchored_core = scale(euler_core, anchor)
+
+    def weighted_value(divisor: int) -> FormalVector:
+        logarithms = {
+            prime: F(-exponent)
+            for prime, exponent in _finite_prime_exponents(
+                common * divisor
+            ).items()
+        }
+        return scale((F(1), logarithms), weights[divisor])
+
+    def mixed_difference(base: int, prime_index: int) -> FormalVector:
+        if prime_index == len(unmatched_primes):
+            return weighted_value(base)
+        prime = unmatched_primes[prime_index]
+        return subtract(
+            mixed_difference(base * prime, prime_index + 1),
+            mixed_difference(base, prime_index + 1),
+        )
+
+    boolean_mixed_difference = scale(
+        mixed_difference(1, 0),
+        F((-1) ** len(unmatched_primes)),
+    )
+    reconstructed_truncated = subtract(
+        add(anchored_core, anchored_variation),
+        weighted_boundary,
+    )
+    constant_weights = len(set(weights.values())) == 1
+
+    return {
+        "cutoff": level,
+        "common_factor": common,
+        "product_label": product,
+        "coprimality_label": coprimality,
+        "unmatched_primes": unmatched_primes,
+        "unmatched_radical": unmatched_radical,
+        "divisor_weights": dict(sorted(weights.items())),
+        "anchor_weight": anchor,
+        "truncated_weighted_formal_weight": public(truncated_weighted),
+        "complete_weighted_formal_weight": public(complete_weighted),
+        "anchored_euler_core_formal_weight": public(anchored_core),
+        "anchored_variation_formal_weight": public(anchored_variation),
+        "weighted_boundary_formal_weight": public(weighted_boundary),
+        "boolean_mixed_difference_formal_weight": public(
+            boolean_mixed_difference
+        ),
+        "boundary_cofactors": tuple(boundary_cofactors),
+        "truncated_equals_anchor_plus_variation_minus_boundary": (
+            truncated_weighted == reconstructed_truncated
+        ),
+        "complete_equals_boolean_mixed_difference": (
+            complete_weighted == boolean_mixed_difference
+        ),
+        "constant_weights_collapse_to_euler_core": (
+            not constant_weights
+            or (
+                anchored_variation == zero()
+                and complete_weighted == anchored_core
+            )
+        ),
+        "exact_weighted_divisor_adapter_proved": True,
+        "physical_variation_bound_proved": False,
+        "zero_direct_principal_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

@@ -14680,6 +14680,82 @@ divisor sum, complete Euler sum, and long-divisor boundary, and verifies
 packet coefficients.  Its full AFE adapter, analytic zero-direct bound,
 and coupled-kernel flags remain false.
 
+### 9.101 The exact weighted divisor adapter isolates one mixed difference
+
+The divisor-independence restriction in (9.665) can be removed
+algebraically without estimating anything.  Put \(R=R_q(m,n)\), let
+\(W(s)\) be an arbitrary complex weight on the divisors of \(R\), and
+write
+
+\[
+ \mathscr C_q(R)
+ :=p_N(q)\mathbf1_{R=1}
+   +\mathbf1_{\omega(R)=1}\frac{\log R}{\log N}.
+\]
+
+Anchoring at the divisor (1), define
+
+\[
+ \mathscr V_q(R;W)
+ :=\sum_{s\mid R}\mu(s)p_N(qs)\{W(s)-W(1)\}
+ \tag{9.666}
+\]
+
+and retain the long-divisor tail in reflected coordinates,
+
+\[
+ \mathscr B_q(R;W)
+ :=\sum_{\substack{k\mid R\\k<qR/N}}
+   \mu\!\left(\frac Rk\right)
+   p_N\!\left(\frac{qR}k\right)
+   W\!\left(\frac Rk\right).
+ \tag{9.667}
+\]
+
+Adding and subtracting \(W(1)\) on the complete divisor lattice, then
+removing the terms with \(qs>N\), gives the exact finite identity
+
+\[
+ \boxed{
+ \sum_{\substack{s\mid R\\qs\leq N}}
+   \mu(s)p_N(qs)W(s)
+ =W(1)\mathscr C_q(R)+\mathscr V_q(R;W)-\mathscr B_q(R;W).}
+ \tag{9.668}
+\]
+
+There is no remainder and the strict endpoint in \(\mathscr B_q\) is the
+same as in (9.663).  In particular, constant \(W\) makes
+\(\mathscr V_q=0\) and recovers \(W(1)\) times (9.663), hence (9.663)
+itself when \(W\equiv1\).
+
+This variation has an equivalent Boolean-lattice form.  If
+\(R=p_1\cdots p_j\), put \(F(u)=p_N(qu)W(u)\) and
+\(\Delta_pF(u)=F(pu)-F(u)\).  Then
+
+\[
+ \boxed{
+ \sum_{s\mid R}\mu(s)p_N(qs)W(s)
+ =(-1)^j(\Delta_{p_1}\cdots\Delta_{p_j}F)(1).}
+ \tag{9.669}
+\]
+
+Thus the physical \(s\)-dependence is not an unspecified adapter any
+longer: it is precisely the mixed-difference term (9.666), plus the
+already shortened boundary (9.667).  What is still missing is analytic.
+For a literal dyadic packet, \(W(1)\) can vanish while
+\(\mathscr V_q\) contains the whole completed block, so no smallness
+follows from (9.669) one box at a time.  The dyadic blocks must first be
+reassembled into the actual AFE weight, after which a projective
+variation or mixed-difference norm would have to be proved.  That
+physical mixed-difference bound remains unproved, as do the two-taper
+principal estimate and the coupled-kernel gate.
+
+The helper zero_direct_weighted_divisor_adapter_audit verifies (9.666)--
+(9.669) as an exact formal vector in the independent symbols
+\(1,\log p/\log N\).  It also checks the Boolean mixed difference by a
+recursive difference computation and records constant-weight collapse,
+while leaving every analytic-bound flag false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -15356,7 +15432,8 @@ Proved in this note:
 | Principal product-label additive master | unconditional finite large-sieve norm bound; full AFE normalization unproved | Exact unit-mask expansion turns the principal master into reduced Farey rows, (9.637)--(9.640).  The ordinary additive large sieve and one global Cauchy step give (9.642); resonant-label density and the retained Type convolution yield the weighted bound (9.645), with both Möbius signs and \(h\delta\) intact.  This avoids the false shortcut of applying a primitive-character large sieve to all imprimitive principal modes.  Section 9.98 handles an arbitrary fixed nonzero direct phase within the finite principal master; the packet-dependent global family, smooth physical coefficient norms, reflected terms, and their exhaustive AFE ledger remain unproved, as does the nonprincipal signed dispersion |
 | Separate direct-coefficient and sector-harmonic adapters | both finite costs proved separately; cross-model packet adapter unproved | Grouping each unit-mask quotient by \(v=(B,q)\) reduces an arbitrary nonzero direct phase in the original principal master to unit Farey rows, (9.647)--(9.650), at divisor cost.  Separately, symmetric truncation of the normalized-sector \(B=\xi+jQ\) expansion has tail \(O(s/J)\) and projective norm \(O(\log J)\), (9.651)--(9.653); the jump boundary was already closed in (9.514)--(9.515).  No identification between the original \(s\asymp T^3\) modulus and the normalized \(s\leq Q\asymp T\) sector denominator is asserted.  The packet-exhaustive cross-model map, complete AFE/reflection coefficient normalization, and nonprincipal double-centered dispersion remain unproved |
 | Normalized sector-harmonic Farey operator | fixed-coefficient \(Q^{-1}\)-averaged norm proved; cross-model and coefficient-energy adapters unproved | Weighted Cauchy in the physical harmonics and one dual Farey large sieve per dyadic \(j\)-block prove (9.659), recovering the full factor \(Q\) from the dominant \(S^2\) spacing term.  Residue aggregation gives (9.660).  On the actual normalized scale \(S\asymp X\asymp Q\asymp T\), diagonal-sized coefficient energy still yields \(T^{3+\varepsilon}\) against the \(T^{2+\varepsilon}\) sector target: one full power of energy remains.  This cannot be combined with the distinct \(s\asymp T^3\) principal-master ledger until the packet-exhaustive cross-model adapter is proved |
-| Zero-direct principal Selberg reassembly | exact \(q\)-aware one-prime Euler core and \(T^{2+o(1)}/q\) reflected boundary for divisor-independent coefficients; weighted adapter and analytic bound unproved | Before sector completion the original packet has \(B=0\), outside (9.649).  At fixed common layer \(q\), summing one complete reduced Selberg--Möbius divisor lattice first gives (9.662): only \(R_q(m,n)=1\) or one prime outside \(qn\) survives.  The finite cutoff is exactly the reflected sum (9.663), with every cofactor \(k<qR_q(m,n)/N\leq qm/N\).  Combining (5.3), (5.8), and (9.664) proves the core-box length \(k\ll T^{2+o(1)}/q\) at \(N=T^3\).  There is no common \(\mu(q)\) sign by (5.2).  The remaining gate is a weighted divisor-lattice adapter retaining the other reduced Möbius factor, second taper, physical AFE/dyadic kernel, both AFE directions, reflection, and the explicit diagonal |
+| Zero-direct principal Selberg reassembly | exact \(q\)-aware one-prime Euler core and \(T^{2+o(1)}/q\) reflected boundary for divisor-independent coefficients; physical weighted norm and analytic bound unproved | Before sector completion the original packet has \(B=0\), outside (9.649).  At fixed common layer \(q\), summing one complete reduced Selberg--Möbius divisor lattice first gives (9.662): only \(R_q(m,n)=1\) or one prime outside \(qn\) survives.  The finite cutoff is exactly the reflected sum (9.663), with every cofactor \(k<qR_q(m,n)/N\leq qm/N\).  Combining (5.3), (5.8), and (9.664) proves the core-box length \(k\ll T^{2+o(1)}/q\) at \(N=T^3\).  There is no common \(\mu(q)\) sign by (5.2).  The remaining gate is analytic control of the weighted variation while retaining the other reduced Möbius factor, second taper, physical AFE/dyadic kernel, both AFE directions, reflection, and the explicit diagonal |
+| Weighted zero-direct divisor adapter | exact anchor/variation/boundary identity and Boolean mixed difference; physical variation bound unproved | For arbitrary divisor weight \(W(s)\), (9.666)--(9.668) split the truncated taper into \(W(1)\) times the sparse Euler core, one complete anchored variation, and the reflected boundary.  Equation (9.669) identifies the complete weighted sum with the full Boolean mixed difference over unmatched primes.  This is an algebraic adapter, not a norm estimate: on a single physical dyadic block \(W(1)\) may vanish and the variation can contain the entire block.  Full dyadic/AFE reassembly, a useful projective mixed-difference bound, the second taper, reflection, diagonal, and nonprincipal signed dispersion remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

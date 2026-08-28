@@ -4393,6 +4393,75 @@ def test_zero_direct_principal_core_box_shortens_the_reflected_boundary() -> Non
     assert "Thus at (N=T^3)" not in text
 
 
+def test_zero_direct_weighted_divisor_adapter_is_anchor_plus_variation() -> None:
+    audit = getattr(
+        coverage_audit,
+        "zero_direct_weighted_divisor_adapter_audit",
+        None,
+    )
+    assert audit is not None, "weighted zero-direct divisor adapter is missing"
+
+    result = audit(
+        cutoff=20,
+        common_factor=5,
+        product_label=6,
+        coprimality_label=1,
+        divisor_weights={1: F(2), 2: F(-1), 3: F(3), 6: F(4)},
+    )
+    assert result["truncated_weighted_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {2: F(-1), 3: F(3)},
+    }
+    assert result["complete_weighted_formal_weight"] == {
+        "constant": F(4),
+        "log_prime_coefficients": {2: F(-5), 3: F(-1), 5: F(-4)},
+    }
+    assert result["anchored_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {},
+    }
+    assert result["anchored_variation_formal_weight"] == result[
+        "complete_weighted_formal_weight"
+    ]
+    assert result["weighted_boundary_formal_weight"] == {
+        "constant": F(4),
+        "log_prime_coefficients": {2: F(-4), 3: F(-4), 5: F(-4)},
+    }
+    assert result["truncated_equals_anchor_plus_variation_minus_boundary"]
+    assert result["complete_equals_boolean_mixed_difference"]
+    assert result["boundary_cofactors"] == (1,)
+
+    constant = audit(
+        cutoff=20,
+        common_factor=5,
+        product_label=6,
+        coprimality_label=1,
+        divisor_weights={1: F(7), 2: F(7), 3: F(7), 6: F(7)},
+    )
+    assert constant["anchored_variation_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {},
+    }
+    assert constant["constant_weights_collapse_to_euler_core"]
+    assert not constant["physical_variation_bound_proved"]
+    assert not constant["zero_direct_principal_bound_proved"]
+    assert not constant["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="exactly the divisors"):
+        audit(
+            cutoff=20,
+            common_factor=5,
+            product_label=6,
+            coprimality_label=1,
+            divisor_weights={1: F(1), 2: F(1)},
+        )
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.101 The exact weighted divisor adapter" in text
+    assert r"\mathscr V_q(R;W)" in text
+    assert "physical mixed-difference bound remains unproved" in text
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,
