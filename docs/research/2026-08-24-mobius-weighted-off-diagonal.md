@@ -15853,6 +15853,119 @@ records the exact \(3^{\omega(s)}\) and \(2^{\omega(s)}\) Euler costs.  It
 marks only the rank-one correction as locally closed; the nonzero
 Kloosterman, global Type-I, Type-II, and coupled-gate flags remain false.
 
+### 9.110 The pure Type-I spectrum is a Gauss-product character moment
+
+The remaining Kloosterman term in (9.728) is not a standard bilinear form
+with two modulus-independent arguments: the short Type divisor occurs as
+an inverse modulo the varying \(s\).  Its exact multiplicative transform
+identifies the correct coefficient class.  For a character \(\chi\) on
+\(U(s)\), define the possibly imprimitive Gauss sum
+
+\[
+ G_\chi(n):=\sum_{x\in U(s)}\chi(x)e_s(nx).
+ \tag{9.729}
+\]
+
+No coprimality between \(n\) and \(s\) is assumed.  For arbitrary
+nonzero integers \(a,k\), put
+
+\[
+ F_{s,a,k}(d):=S(k\bar d,-a;s),\qquad d\in U(s).
+\]
+
+Then the full multiplicative Fourier transform factorizes exactly:
+
+\[
+ \boxed{
+ \sum_{d\in U(s)}\overline{\chi(d)}F_{s,a,k}(d)
+ =G_\chi(-a)G_\chi(k).}
+ \tag{9.730}
+\]
+
+Indeed, expand the Kloosterman sum and put \(v=\bar d u\).  Then
+
+\[
+ \begin{aligned}
+ \sum_d\overline{\chi(d)}F_{s,a,k}(d)
+ &=\sum_{v\in U(s)}e_s(kv)
+   \sum_{d\in U(s)}\overline{\chi(d)}e_s(-a\bar d\bar v)\\
+ &=G_\chi(-a)\sum_{v\in U(s)}\chi(v)e_s(kv),
+ \end{aligned}
+\]
+
+which is (9.730).  The change of variables uses only that \(d,v\) are
+units; it remains valid when \((a,s)>1\) or \((k,s)>1\).  Multiplicative
+inversion consequently gives, for arbitrary Type-divisor coefficients
+\(A_d\),
+
+\[
+ \boxed{
+ \sum_{d\in U(s)}A_dS(k\bar d,-a;s)
+ =\frac1{\varphi(s)}\sum_{\chi\bmod s}
+ G_\chi(-a)G_\chi(k)
+ \sum_{d\in U(s)}A_d\chi(d).}
+ \tag{9.731}
+\]
+
+In the centered Type-I application,
+
+\[
+ A_d=\sum_{bc=d\atop b\le U,\ c\le V}
+ \mu(b)\mu(c)\,\mathcal A_{b,c,d},
+ \qquad a=h\delta,qquad k\ne0,
+ \tag{9.732}
+\]
+
+where \(\mathcal A\) retains the physical dual weight from (9.718).
+Thus (9.731) keeps the short Möbius Type polynomial linear.  Restoring the
+outer modulus sum gives the finite character master
+
+\[
+ \boxed{
+ \sum_{s}\frac{\mu(s)}{\varphi(s)}
+ \sum_{\chi\bmod s}
+ \left(\sum_{h,\delta}
+       f_hg_\delta G_\chi(-h\delta)\right)
+ \left(\sum_{d,k}A_{d,k}G_\chi(k)\chi(d)\right),}
+ \tag{9.733}
+\]
+
+with every dyadic and AFE label suppressed only typographically.  Both
+original Möbius sources remain linear: \(\mu(s)\) is outside the character
+sum and \(\mu(b)\mu(c)\) is inside the Type polynomial.  When
+\((h\delta k,s)=1\), each Gauss factor reduces to a character twist of
+\(G_\chi(1)\), so the product structure in \(h,\delta,k,d\) becomes
+explicit.  Formula (9.730), rather than such a unit specialization, is the
+required version because it retains every gcd stratum.
+
+This bridge has two consequences.
+
+1. The pure Type-I term is now embedded in the same **linear** global
+   character architecture as (9.596); it is not a new independent
+   Kloosterman saving that may be multiplied by the earlier character
+   estimates.
+2. A fixed-modulus Parseval or Cauchy step would square away \(\mu(s)\)
+   before (9.733) is summed.  Separate large-sieve bounds for the two
+   parenthesized factors therefore return the already recorded balanced
+   deficit.  The needed estimate is a signed varying-modulus
+   Gauss-product character moment, jointly with the centered Type-II
+   block.
+
+Accordingly (9.733) replaces the phrase “pure nonzero Kloosterman
+spectrum” by an exact finite operator, but does not estimate it.  No cited
+published theorem in the coverage table gives this varying-squarefree-
+modulus product moment with the outer \(\mu(s)\), both Type signs, and the
+physical \(h\delta\) packet retained.  The global Gauss-product moment,
+centered Type II, \({\rm PECG}_3\), and the full coupled gate remain
+unproved.
+
+The helper `kloosterman_type_divisor_character_factorization_audit`
+constructs the full character group of a finite squarefree modulus,
+enumerates both sides of (9.730), and verifies every character row,
+including examples with nonunit \(a\) and nonunit \(k\).  It records that
+fixed-modulus Cauchy is forbidden before the outer sum and leaves every
+global analytic flag false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -16033,7 +16146,13 @@ spectrum plus one rank-one Ramanujan correction remain.  The elementary
 averages (9.721)--(9.725) close that correction whenever
 \(HLUV\le RS\), with a half-power margin for the balanced
 \(U=V=T^{1/4}\) choice.  The pure nonzero-Kloosterman Type-I family and
-centered Type II still require one joint signed estimate.**
+centered Type II still require one joint signed estimate.  Its exact
+multiplicative transform is now (9.729)--(9.733): the pure Type-I packet
+is a varying-squarefree-modulus Gauss-product character moment in the
+same linear architecture as (9.596), with the outer \(\mu(s)\), the
+short Type Möbius polynomial, and \(a=h\delta\) all retained.  This is an
+exact bridge, not a bound; the resulting Gauss-product moment must still
+be estimated jointly with centered Type II before Cauchy.**
 
 Proved in this note:
 
@@ -16057,6 +16176,11 @@ Proved in this note:
   mode, (9.715)--(9.720), and the unconditional divisor-average bound for
   its rank-one Ramanujan correction on \(HLUV\le RS\),
   (9.721)--(9.728);
+* the multiplicative Fourier factorization of the remaining pure Type-I
+  Kloosterman packet into two Gauss sums, including every nonunit
+  \(h\delta\) and dual-frequency stratum, and its exact linear embedding
+  into the global character master, (9.729)--(9.733).  This does not
+  prove the varying-modulus character moment or centered Type-II bound;
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -16590,6 +16714,7 @@ Proved in this note:
 | Original principal \(h\)-harmonic projection | exact packet-exhaustive gcd-sampled reassembly; sampled master unbounded | Before the \(H\)-dyadic split, \(s\mid h\delta\) is exactly \(h=(s/(s,\delta))j\).  Poisson summation gives (9.693)--(9.694), so the nonzero principal harmonics plus the literal raw \(h=0\) packet are exactly the \((s,\delta)\)-spaced physical lattice, (9.695), and the main-term ledger becomes (9.696)--(9.697) without choosing a principal density.  Physical support and the core inequalities force \(M/(32\mathscr L^B)\le(s,\delta)\le2M\), making both new Poisson coordinates polylogarithmically short, (9.698)--(9.702).  The reduced master (9.703) still has both long Möbius weights; neither its analytic bound nor the complementary centered-harmonic dispersion is proved |
 | Principal-extracted Ramanujan and centered Type gate | exact nonoverlapping split and sufficient weaker gate; two joint analytic estimates unproved | Equation (9.706) splits the inverse phase into the literal \(s\mid h\delta\) family, its Ramanujan mean with that family removed, and a kernel that has zero unit-residue mean and vanishes on the removed labels, (9.707).  After the outer \(\mu(s)\), the residual mean has the proper-divisor-only formula (9.708), so the top reverse-Poisson divisor is deleted rather than counted twice.  The direct and proper-divisor pieces recombine before absolute values into the earlier reverse-Poisson principal lattice, (9.710a); its unit part is already proved and only the nonunit top face (9.69) remains.  Applying (9.241) only to the centered kernel gives (9.711)--(9.712), retaining \(\mu(s)\mu(b)\mu(c)\), \(a=h\delta\), all endpoints, and no mixed rectangles.  The elementary diagonal bound (9.713) makes the two joint target estimates in (9.714) sufficient.  The nonunit principal lattice and centered signed Type dispersion remain unproved |
 | Centered Type-I additive completion | zero dual frequency and rank-one correction closed; pure nonzero spectrum unproved | The exact transform (9.716) is a Kloosterman sum minus the rank-one Ramanujan correction forced by centering.  Its \(k=0\) row vanishes identically, (9.717), and Poisson in \(r=bc\,n\) gives only \(k\ne0\) with dual length \(bc\,s/R\), (9.718)--(9.719).  The finite Ramanujan averages (9.721)--(9.724) bound the correction globally by \(HLUVT^\varepsilon\), (9.725), so it lies within target on \(HLUV\le RS\); the balanced \(U=V=T^{1/4}\) choice has a half-power margin.  No Möbius or Kloosterman cancellation is spent.  The remaining Type-I term is the pure nonzero spectrum \(S(k,-h\delta;s)\) in (9.728), which must still be estimated jointly with centered Type II and the outer signs |
+| Pure Type-I character bridge | exact Gauss-product factorization; global varying-modulus moment unproved | For every squarefree \(s\), arbitrary nonzero \(a,k\), and every character on \(U(s)\), (9.730) gives \(\sum_d\overline{\chi(d)}S(k\bar d,-a;s)=G_\chi(-a)G_\chi(k)\), including all nonunit gcd strata.  Inversion embeds the completed Type-I packet into the linear master (9.733), retaining outer \(\mu(s)\), inner \(\mu(b)\mu(c)\), \(a=h\delta\), and \(k\ne0\).  Fixed-modulus Cauchy would erase the outer sign, so the remaining target is a signed varying-modulus Gauss-product moment jointly with centered Type II; no analytic bound is asserted |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

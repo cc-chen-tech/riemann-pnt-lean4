@@ -14577,6 +14577,138 @@ def centered_type_i_ramanujan_correction_audit(
     }
 
 
+def kloosterman_type_divisor_character_factorization_audit(
+    *,
+    modulus: int,
+    product_label: int,
+    additive_frequency: int,
+) -> dict[str, object]:
+    """Verify the Type-divisor Fourier transform as two Gauss sums.
+
+    For every multiplicative character on ``U(s)``, verify
+
+    ``sum_d conj(chi(d)) S(k*d^{-1}, -a; s) = G_chi(-a) G_chi(k)``.
+
+    No unit condition is imposed on ``a`` or ``k``.  This is the exact
+    bridge from the centered nonzero Kloosterman Type-I packet to the
+    global linear character master; it supplies no global estimate.
+    """
+
+    s = int(modulus)
+    a = int(product_label)
+    k = int(additive_frequency)
+    if s <= 1 or _finite_mobius(s) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if a == 0 or k == 0:
+        raise ValueError("product_label and additive_frequency must be nonzero")
+
+    primes = tuple(sorted(_finite_prime_exponents(s)))
+    discrete_logs: dict[int, dict[int, int]] = {}
+    roots: dict[int, complex] = {}
+    for prime in primes:
+        order = prime - 1
+        if prime == 2:
+            generator = 1
+        else:
+            order_prime_factors = tuple(_finite_prime_exponents(order))
+            generator = next(
+                candidate
+                for candidate in range(2, prime)
+                if all(
+                    pow(candidate, order // divisor, prime) != 1
+                    for divisor in order_prime_factors
+                )
+            )
+        logs: dict[int, int] = {}
+        current = 1
+        for exponent in range(order):
+            logs[current] = exponent
+            current = current * generator % prime
+        discrete_logs[prime] = logs
+        roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+    units = tuple(value for value in range(1, s) if gcd(value, s) == 1)
+    character_indices = tuple(product(*(range(prime - 1) for prime in primes)))
+    additive_root = cmath.exp(2j * cmath.pi / s)
+
+    def character(index: tuple[int, ...], value: int) -> complex:
+        if gcd(value, s) != 1:
+            return 0j
+        result = 1 + 0j
+        for component, prime in zip(index, primes):
+            exponent = discrete_logs[prime][value % prime]
+            result *= roots[prime] ** (component * exponent % (prime - 1))
+        return result
+
+    def gauss(index: tuple[int, ...], frequency: int) -> complex:
+        return sum(
+            (
+                character(index, unit)
+                * additive_root ** ((frequency * unit) % s)
+                for unit in units
+            ),
+            0j,
+        )
+
+    def kloosterman(first: int, second: int) -> complex:
+        return sum(
+            (
+                additive_root
+                ** ((first * unit + second * pow(unit, -1, s)) % s)
+                for unit in units
+            ),
+            0j,
+        )
+
+    rows: list[dict[str, object]] = []
+    maximum_error = 0.0
+    for index in character_indices:
+        direct = sum(
+            (
+                character(index, divisor).conjugate()
+                * kloosterman(k * pow(divisor, -1, s), -a)
+                for divisor in units
+            ),
+            0j,
+        )
+        product_label_gauss = gauss(index, -a)
+        additive_frequency_gauss = gauss(index, k)
+        factorized = product_label_gauss * additive_frequency_gauss
+        error = abs(direct - factorized)
+        maximum_error = max(maximum_error, error)
+        rows.append(
+            {
+                "character_index": index,
+                "direct_type_divisor_transform": direct,
+                "product_label_gauss_sum": product_label_gauss,
+                "additive_frequency_gauss_sum": additive_frequency_gauss,
+                "factorized_transform": factorized,
+                "identity_holds": error < 1e-8,
+            }
+        )
+
+    return {
+        "squarefree_modulus": s,
+        "product_label": a,
+        "additive_frequency": k,
+        "unit_residues": units,
+        "character_rows": tuple(rows),
+        "maximum_factorization_error": maximum_error,
+        "all_character_rows_factor_exactly": all(
+            bool(row["identity_holds"]) for row in rows
+        ),
+        "nonunit_product_labels_supported": gcd(a, s) != 1,
+        "nonunit_additive_frequencies_supported": gcd(k, s) != 1,
+        "type_divisor_mobius_polynomial_remains_linear": True,
+        "outer_modulus_mobius_weight_remains_linear": True,
+        "fixed_modulus_cauchy_forbidden_before_outer_sum": True,
+        "global_gauss_product_character_moment_proved": False,
+        "centered_type_i_global_bound_proved": False,
+        "centered_type_ii_global_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,

@@ -5056,6 +5056,73 @@ def test_centered_type_i_ramanujan_correction_is_elementary() -> None:
         audit(modulus=6, h_bound=0, delta_bound=1, dual_bound=1)
 
 
+def test_type_i_kloosterman_divisor_transform_factors_into_gauss_sums() -> None:
+    audit = getattr(
+        coverage_audit,
+        "kloosterman_type_divisor_character_factorization_audit",
+        None,
+    )
+    assert audit is not None, "Type-I Gauss-product character audit is missing"
+
+    nonunit = audit(
+        modulus=6,
+        product_label=4,
+        additive_frequency=3,
+    )
+    assert nonunit["all_character_rows_factor_exactly"]
+    assert nonunit["maximum_factorization_error"] < 1e-8
+    assert nonunit["nonunit_product_labels_supported"]
+    assert nonunit["nonunit_additive_frequencies_supported"]
+    assert nonunit["type_divisor_mobius_polynomial_remains_linear"]
+    assert nonunit["outer_modulus_mobius_weight_remains_linear"]
+    assert nonunit["fixed_modulus_cauchy_forbidden_before_outer_sum"]
+    assert not nonunit["global_gauss_product_character_moment_proved"]
+    assert not nonunit["centered_type_i_global_bound_proved"]
+    assert not nonunit["centered_type_ii_global_bound_proved"]
+    assert not nonunit["coupled_kernel_gate_closed"]
+
+    unit = audit(
+        modulus=10,
+        product_label=3,
+        additive_frequency=7,
+    )
+    assert unit["all_character_rows_factor_exactly"]
+    assert unit["maximum_factorization_error"] < 1e-8
+    assert not unit["nonunit_product_labels_supported"]
+    assert not unit["nonunit_additive_frequencies_supported"]
+
+    audited_cases = 0
+    for modulus in range(2, 23):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        labels = tuple(dict.fromkeys((1, 2, modulus, 2 * modulus - 1)))
+        for product_label in labels:
+            for additive_frequency in labels:
+                exhaustive = audit(
+                    modulus=modulus,
+                    product_label=product_label,
+                    additive_frequency=additive_frequency,
+                )
+                assert exhaustive["all_character_rows_factor_exactly"]
+                assert exhaustive["maximum_factorization_error"] < 1e-8
+                audited_cases += 1
+    assert audited_cases == 217
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.110 The pure Type-I spectrum" in text
+    assert r"G_\chi(-a)G_\chi(k)" in text
+    assert r"\overline{\chi(d)}F_{s,a,k}(d)" in text
+    assert r"a=h\delta" in text
+    assert "Gauss-product character moment" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=12, product_label=5, additive_frequency=1)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, product_label=0, additive_frequency=1)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, product_label=1, additive_frequency=0)
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,
