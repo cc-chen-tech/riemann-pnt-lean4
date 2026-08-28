@@ -5456,8 +5456,11 @@ def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
     assert finite["lifted_phase_polynomial_identity_exact"]
     assert finite["every_fixed_cofactor_frequency_map_injective"]
     assert finite["every_lifted_frequency_is_primitive"]
+    assert finite["joint_product_cofactor_frequency_map_bijective"]
     assert finite["direct_ramanujan_scalar_absolute_value_at_most_one"]
-    assert finite["ramanujan_average_minkowski_bound_holds"]
+    assert finite["ramanujan_average_jensen_cauchy_bound_holds"]
+    assert finite["normalized_ramanujan_jensen_gain"] == 60
+    assert finite["inactive_cofactor_absorbed_with_inverse_phi_gain"]
     assert finite["inactive_cofactor_absorbed_without_phi_power_loss"]
     assert finite["fixed_physical_cofactor_atom_operator_bound_proved"]
     assert not finite["signed_varying_conductor_reassembly_proved"]
@@ -5507,9 +5510,9 @@ def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
     )
     assert high_active["primitive_h_delta_energy_exponent"] == F(5)
     assert high_active["product_residue_energy_exponent"] == F(11, 4)
-    assert high_active["operator_bound_exponent"] == F(43, 8)
-    assert high_active["power_saving_exponent"] == F(17, 8)
-    assert high_active["balanced_saving_closed_form"] == F(17, 8)
+    assert high_active["operator_bound_exponent"] == F(5)
+    assert high_active["power_saving_exponent"] == F(5, 2)
+    assert high_active["balanced_saving_closed_form"] == F(5, 2)
     assert high_active["fixed_physical_cofactor_atom_target_met"]
 
     threshold = exponent_audit(
@@ -5517,7 +5520,7 @@ def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
         product_total_length_exponent=F(3),
         **common,
     )
-    assert threshold["power_saving_exponent"] == F(2)
+    assert threshold["power_saving_exponent"] == F(5, 2)
     assert threshold["fixed_physical_cofactor_atom_target_met"]
 
     low_active = exponent_audit(
@@ -5525,8 +5528,8 @@ def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
         product_total_length_exponent=F(3),
         **common,
     )
-    assert low_active["power_saving_exponent"] == F(7, 4)
-    assert not low_active["fixed_physical_cofactor_atom_target_met"]
+    assert low_active["power_saving_exponent"] == F(5, 2)
+    assert low_active["fixed_physical_cofactor_atom_target_met"]
 
     short_product = exponent_audit(
         active_modulus_exponent=F(3),
@@ -5541,7 +5544,7 @@ def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
         product_total_length_exponent=F(5, 2),
         **{**common, "smooth_physical_tensor_adapter_verified": False},
     )
-    assert missing_adapter["power_saving_exponent"] == F(17, 8)
+    assert missing_adapter["power_saving_exponent"] == F(5, 2)
     assert not missing_adapter["published_hypotheses_verified"]
     assert not missing_adapter["fixed_physical_cofactor_atom_target_met"]
     assert not missing_adapter["signed_varying_conductor_reassembly_proved"]
@@ -5553,7 +5556,7 @@ def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
         r"\frac{c_K(a)}{\varphi(K)}",
         r"\iota_u(x):=-KA\bar x+Gu",
         r"\eta_0^{\rm Ram}",
-        r"\min\{\gamma,x\}\geq2",
+        r"x\geq\gamma-1",
         "ramanujan_lifted_retained_product_spectrum_audit",
     ):
         assert marker in note

@@ -16448,7 +16448,9 @@ def ramanujan_lifted_retained_product_spectrum_audit(
         (coefficient * coefficient for coefficient in product_residues.values()),
         F(0),
     )
-    cauchy_bound_squared = product_residue_energy * primitive_fourier_energy_raw
+    cauchy_bound_squared = (
+        product_residue_energy * primitive_fourier_energy_raw / phi_K
+    )
 
     root_S = cmath.exp(2j * cmath.pi / S)
     root_G = cmath.exp(2j * cmath.pi / G)
@@ -16533,6 +16535,17 @@ def ramanujan_lifted_retained_product_spectrum_audit(
             for row in lifted_frequency_rows.values()
             for frequency in row
         ),
+        "joint_product_cofactor_frequency_map_bijective": bool(
+            len(
+                {
+                    frequency
+                    for row in lifted_frequency_rows.values()
+                    for frequency in row
+                }
+            )
+            == len(unit_products) * phi_K
+            == finite_totient(S)
+        ),
         "primitive_h_delta_fourier_energy_raw_at_total_modulus": (
             primitive_fourier_energy_raw
         ),
@@ -16544,11 +16557,13 @@ def ramanujan_lifted_retained_product_spectrum_audit(
         "direct_scalar_weighted_actual_absolute_square": (
             abs(scalar_weighted_sum) ** 2
         ),
-        "ramanujan_average_minkowski_bound_holds": bool(
+        "ramanujan_average_jensen_cauchy_bound_holds": bool(
             abs(expanded_sum) ** 2 <= float(cauchy_bound_squared) + tolerance
             and abs(scalar_weighted_sum) ** 2
             <= float(cauchy_bound_squared) + tolerance
         ),
+        "normalized_ramanujan_jensen_gain": phi_K,
+        "inactive_cofactor_absorbed_with_inverse_phi_gain": True,
         "inactive_cofactor_absorbed_without_phi_power_loss": True,
         "fixed_physical_cofactor_atom_operator_bound_proved": True,
         "smooth_physical_tensor_adapter_proved": False,
@@ -16586,14 +16601,14 @@ def ramanujan_lifted_retained_product_exponent_audit(
     boundary_base = max(F(0), h, delta, h + delta - sigma)
     primitive_energy = max(h + delta, 2 * boundary_base)
     product_energy = max(x, 2 * x - gamma)
-    operator_bound = (sigma + primitive_energy + product_energy) / 2
+    operator_bound = (gamma + primitive_energy + product_energy) / 2
     trivial = h + delta + x
     saving = max(F(0), trivial - operator_bound)
     balanced = bool(
         sigma == 3 and h == F(5, 2) and delta == F(5, 2)
     )
     balanced_closed_form = (
-        F(1) + min(gamma, x) / 2 if balanced else None
+        F(5, 2) - max(F(0), gamma - x) / 2 if balanced else None
     )
     hypotheses = bool(
         squarefree_coprime_conductor_factorization_verified
@@ -16618,7 +16633,7 @@ def ramanujan_lifted_retained_product_exponent_audit(
         "balanced_maximal_scale": balanced,
         "balanced_saving_closed_form": balanced_closed_form,
         "balanced_target_region_exact": bool(
-            balanced and ((saving >= required) == (min(gamma, x) >= 2))
+            balanced and ((saving >= required) == (x >= gamma - 1))
         ),
         "squarefree_coprime_conductor_factorization_verified": bool(
             squarefree_coprime_conductor_factorization_verified

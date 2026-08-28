@@ -161,7 +161,7 @@ def test_research_note_records_product_trace_completion_and_rank_one_boundary() 
         "relevant resonant/nonzero-direct fixed atoms",
         "signed varying-conductor moment",
         r"jointly in \(s,\xi,h\delta\), and the",
-        "low-active/short-product complement remain unproved",
+        "short-product wedge remain unproved",
         "### 9.79 Squarefree CRT transfer and its sharp cofactor cost",
         r"K_{qr}(x)=K_q^{(r)}(x)K_r^{(q)}(x)",
         r"\frac1{\varphi(r)}\sum_{\chi\bmod r}",
