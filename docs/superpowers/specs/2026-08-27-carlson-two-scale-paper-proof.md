@@ -468,8 +468,14 @@ The ball lies in the derivative-growth strip
 `7/12 <= Re(s) <= 47/12`, and the imaginary displacement consumes only half
 of the Gaussian decay.  What remains at this gate is to feed this bound into
 the already formalized mean-value and dominated-convergence interfaces,
-including the concrete measurability and pointwise derivative obligations;
-the bound by itself is not recorded as `Lp` analyticity.
+including the concrete measurability obligations.  To match the global
+domain expected by the generic `MemLp.toLp` bridge, the controlled section
+has now also been extended by zero outside `1/2 <= Re(z) <= 4`; the totalized
+family is formally in `L²(R)` everywhere and is locally equal to the original
+section, with the original pointwise derivative, on
+`7/12 <= Re(z) <= 47/12`.  This totalization does not claim analyticity at the
+artificial strip boundary.  The uniform bound plus these pointwise facts have
+not yet been assembled into the final `Lp` derivative theorem.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
