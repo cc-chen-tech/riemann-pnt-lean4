@@ -773,9 +773,11 @@ a final density axiom:
    gives collected energy at most `D^2` from fibre cardinality and raw energy
    at most `D`.  The arithmetic dyadic owner-map instantiation is also formal:
    at every level and product index `k`, the sum over aligned block owners is
-   at most `d(k)^2`.  The remaining part of (8.4)--(8.6) is to retain the
-   critical-line `1/k` weight, sum it by the fourfold-divisor bound, and apply
-   the levelwise Gaussian mean-square theorem.
+   at most `d(k)^2`.  The critical-line `1/k` weight and the fourfold-divisor
+   sum are now formal as well, giving each complete dyadic level coefficient
+   energy at most `2(1+log(2^K X))^4`, uniformly in the level.  The remaining
+   part of (8.4)--(8.6) is the levelwise Gaussian Schur mean square and its
+   summation through the pointwise tree envelope.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved

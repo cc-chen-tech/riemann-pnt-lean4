@@ -1,4 +1,5 @@
 import HardyTheorem.SelbergMollifiedDirichlet
+import HardyTheorem.SelbergMollifiedGaussianPolynomial
 import MathlibAux.DyadicPrefixDecomposition
 
 /-!
@@ -11,7 +12,8 @@ Rademacher--Menshov estimate.
 -/
 
 open Complex
-open scoped BigOperators
+open scoped BigOperators ArithmeticFunction
+open PrimeNumberTheorem.CarlsonZeroDensity
 
 namespace HardyTheorem
 namespace AFE
@@ -102,6 +104,71 @@ theorem sum_normSq_dyadicMollifiedBlockCoeff_le
   have hbase := MathlibAux.sum_normSq_fiber_le_sq
     S Q owner coeff hmaps (by positivity : 0 ≤ D) hcard henergy
   simpa only [S, Q, owner, coeff, D, dyadicMollifiedBlockCoeff] using hbase
+
+/-- Critical-line coefficient of one collected dyadic block. -/
+noncomputable def dyadicMollifiedCriticalBlockCoeff
+    (K j X k q : ℕ) : ℂ :=
+  dyadicMollifiedBlockCoeff K j X k q *
+    ((Real.sqrt k : ℂ)⁻¹)
+
+/-- Equation (8.4) with the critical-line `1/k` weight retained. -/
+theorem sum_normSq_dyadicMollifiedCriticalBlockCoeff_le
+    {K j X k : ℕ} (hX : 2 ≤ X) (hk : 0 < k) :
+    (∑ q ∈ Finset.range (2 ^ K),
+        Complex.normSq
+          (dyadicMollifiedCriticalBlockCoeff K j X k q)) ≤
+      (fourfoldDivisorCount k : ℝ) * (k : ℝ)⁻¹ := by
+  have hweight :
+      Complex.normSq ((Real.sqrt k : ℂ)⁻¹) = (k : ℝ)⁻¹ := by
+    rw [Complex.normSq_inv, Complex.normSq_ofReal,
+      Real.mul_self_sqrt (by positivity)]
+  have hraw := sum_normSq_dyadicMollifiedBlockCoeff_le
+    (K := K) (j := j) (k := k) hX
+  have hdiv := card_divisorsAntidiagonal_sq_le_fourfoldDivisorCount hk.ne'
+  calc
+    (∑ q ∈ Finset.range (2 ^ K),
+        Complex.normSq
+          (dyadicMollifiedCriticalBlockCoeff K j X k q)) =
+        (∑ q ∈ Finset.range (2 ^ K),
+          Complex.normSq (dyadicMollifiedBlockCoeff K j X k q)) *
+            (k : ℝ)⁻¹ := by
+      rw [Finset.sum_mul]
+      apply Finset.sum_congr rfl
+      intro q hq
+      rw [dyadicMollifiedCriticalBlockCoeff,
+        Complex.normSq_mul, hweight]
+    _ ≤ (k.divisorsAntidiagonal.card : ℝ) ^ 2 * (k : ℝ)⁻¹ :=
+      mul_le_mul_of_nonneg_right hraw (by positivity)
+    _ ≤ (fourfoldDivisorCount k : ℝ) * (k : ℝ)⁻¹ := by
+      apply mul_le_mul_of_nonneg_right
+      · exact_mod_cast hdiv
+      · positivity
+
+/-- The collected critical-line coefficient energy of one complete dyadic
+level is polylogarithmic, uniformly in the level. -/
+theorem sum_levelEnergy_dyadicMollifiedCriticalBlockCoeff_le
+    {K j X : ℕ} (hX : 2 ≤ X) :
+    (∑ k ∈ Finset.Icc 1 (2 ^ K * X),
+        ∑ q ∈ Finset.range (2 ^ K),
+          Complex.normSq
+            (dyadicMollifiedCriticalBlockCoeff K j X k q)) ≤
+      2 * (1 + Real.log (((2 ^ K * X : ℕ) : ℝ))) ^ 4 := by
+  have hU : 1 ≤ 2 ^ K * X := by
+    exact Nat.one_le_iff_ne_zero.mpr
+      (Nat.mul_ne_zero (pow_ne_zero K (by norm_num)) (by omega))
+  calc
+    (∑ k ∈ Finset.Icc 1 (2 ^ K * X),
+        ∑ q ∈ Finset.range (2 ^ K),
+          Complex.normSq
+            (dyadicMollifiedCriticalBlockCoeff K j X k q)) ≤
+      ∑ k ∈ Finset.Icc 1 (2 ^ K * X),
+        (fourfoldDivisorCount k : ℝ) * (k : ℝ)⁻¹ := by
+      apply Finset.sum_le_sum
+      intro k hk
+      exact sum_normSq_dyadicMollifiedCriticalBlockCoeff_le hX
+        (Nat.zero_lt_of_lt (Finset.mem_Icc.mp hk).1)
+    _ ≤ 2 * (1 + Real.log (((2 ^ K * X : ℕ) : ℝ))) ^ 4 :=
+      fourfoldDivisor_inv_sum_le_two_mul_log_pow_four hU
 
 end AFE
 end HardyTheorem

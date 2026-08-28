@@ -6,5 +6,9 @@ open scoped BigOperators
 #check HardyTheorem.AFE.dyadicMollifiedFactorPairs
 #check HardyTheorem.AFE.dyadicMollifiedBlockCoeff
 #check HardyTheorem.AFE.sum_normSq_dyadicMollifiedBlockCoeff_le
+#check HardyTheorem.AFE.dyadicMollifiedCriticalBlockCoeff
+#check HardyTheorem.AFE.sum_normSq_dyadicMollifiedCriticalBlockCoeff_le
+#check HardyTheorem.AFE.sum_levelEnergy_dyadicMollifiedCriticalBlockCoeff_le
 
 #print axioms HardyTheorem.AFE.sum_normSq_dyadicMollifiedBlockCoeff_le
+#print axioms HardyTheorem.AFE.sum_levelEnergy_dyadicMollifiedCriticalBlockCoeff_le
