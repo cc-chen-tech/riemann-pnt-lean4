@@ -88,12 +88,12 @@ away from the finite exceptional ordinate set.
 
 ## Remaining ledger
 
-1. Prove `R_nonleft(x_n) -> R_nonleft(x_0)` from zero-freeness of the selected
-   horizontal sides and the fixed right side.
+1. `R_nonleft(x_n) -> R_nonleft(x_0)` is now proved in
+   `PrimeNumberTheorem/LittlewoodRemainderContinuity.lean` from analyticity
+   and zero-freeness of the selected horizontal sides.
 2. Apply the theorem to a tail sequence, so the Fatou-selected index is also
    far enough out for the remainder and `c-x_n` to be close to their limits.
 3. Instantiate the finite divisor and a right-shifted zero-free sequence for
    the actual product `V1(s)B(s)` at the two selected heights.
 4. Only then assemble equation (37), followed by equations (38)--(41) and the
    long mollified second moment.
-

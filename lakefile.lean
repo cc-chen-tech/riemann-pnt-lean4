@@ -214,6 +214,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.FiniteZeroGoodRadius,
     `PrimeNumberTheorem.LittlewoodRectangle,
     `PrimeNumberTheorem.LittlewoodLeftBoundaryLimit,
+    `PrimeNumberTheorem.LittlewoodRemainderContinuity,
     `PrimeNumberTheorem.CarlsonLittlewood,
     `PrimeNumberTheorem.CarlsonMollifierCoefficients,
     `PrimeNumberTheorem.CentralHorizontalEdge,
@@ -2790,6 +2791,7 @@ lean_lib RiemannPNT where
     `Test.ConreyLittlewoodMeanSquareContract,
     `Test.ConreyLittlewoodRectangleContract,
     `Test.LittlewoodLeftBoundaryLimitContract,
+    `Test.LittlewoodRemainderContinuityContract,
     `Test.ConreySimpleZeroCountContract,
     `Test.ConreyTwoFifthsBridgeContract,
     `Zeta23
