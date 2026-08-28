@@ -225,6 +225,34 @@ the `R=4` specialization alone proves the explicit saving
 `delta=1/20`.  Thus `R=1000` is needed only for the stronger displayed
 `delta=5/64`, not for the existence of a power saving.
 
+There is a still weaker first target which avoids the `4/7` range entirely.
+Take
+```
+a=2/5,  b=9/20,  R=4,  epsilon=1/2000.
+```
+Then `1/3<a<b<1/2`, so only the classical sub-half-length mollified
+mean-square range is required.  The exact interpolation output is
+
+\[
+ q_{1/2}=\frac{1861}{2100},\qquad
+ \frac89-q_{1/2}=\frac{17}{6300}.
+\]
+
+Choosing the round saving `delta=1/400` leaves the strict exponent slack
+
+\[
+ \left(\frac89-\frac1{400}\right)-q_{1/2}=\frac1{5040}>0. \tag{5.8}
+\]
+
+At paper level this is already a specialization of the same published
+Conrey theorem.  Its importance for formalization is different: the required
+`theta<1/2` mean square can in principle be proved from the classical
+square-root approximate functional equation and finite Dirichlet-polynomial
+mean value, without the Deshouillers--Iwaniec/Kuznetsov input needed beyond
+`1/2`.  The repository does not yet contain that AFE theorem, so (5.8) is a
+strictly smaller analytic gate, not a claim that the Lean density certificate
+is already unconditional.
+
 If `x=2/3+O(1/log U)`, this exponent changes by `O(1/log U)`, hence only by
 an absolute multiplicative constant after exponentiation.
 
@@ -525,6 +553,29 @@ whenever every covering centre has pole-free Gaussian `L^2` norm square at
 most `L`.  No height restriction or unproved analytic premise is used in this
 adapter, and its axiom audit again has only the three permitted axioms.
 
+The critical-boundary normalization has now also been reduced exactly to the
+published input.  The plateau--taper error is proved equal to
+```
+A * (zeta*S_Y1 - 1) - B * (zeta*S_Y0 - 1),
+A = log(Y1)/log(Y1/Y0),  B = log(Y0)/log(Y1/Y0),  A-B=1.
+```
+Lean proves the component square inequality, Gaussian integrability, the
+passage from Conrey's product `zeta*S_Y` to the error `zeta*S_Y-1` with
+exact cost
+```
+2*C + 2*sqrt(pi/(1/Delta^2)),
+```
+and the pole-removal factor at `Re(s)=1/2`.  Consequently the only remaining
+critical-boundary premise is the two one-scale Gaussian product moments in
+Conrey equation (50), not any downstream two-scale or Hilbert-space claim.
+This reduction has only the three permitted axioms.
+
+The rational ledger for the smaller half-length target is formalized too:
+`a=2/5`, `b=9/20`, `R=4`, `epsilon=1/2000` gives interpolation exponent
+`1861/2100`, target saving `1/400`, slack `1/5040`, and `14/17` forcing
+margin `3/6800`.  These are arithmetic certificates only; they do not assert
+the missing half-length Gaussian mean square.
+
 At the first formal target `R=4`, the closed-strip theorem has also been
 specialized at `x=2/3`.  The interpolation weights reduce exactly to
 `20/21` and `1/21`; the right endpoint is discharged by the proved
@@ -535,9 +586,13 @@ The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
-1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
-   specialization, including its uniformity in the local center;
-2. for the first unconditional formal target `delta=1/20`, use item 1 for
+1. For the smallest unconditional formal target `delta=1/400`, prove the
+   Gaussian mollified mean square for the two lengths `2/5` and `9/20`.
+   This is the classical `theta<1/2` subrange; a proof may use a formalized
+   square-root approximate functional equation and the existing finite
+   Dirichlet-polynomial mean-value machinery.  For `delta=1/20` or `5/64`,
+   formalize Conrey's full `theta<4/7` theorem and its DI spectral input.
+2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved
    detector-covering adapter; extending

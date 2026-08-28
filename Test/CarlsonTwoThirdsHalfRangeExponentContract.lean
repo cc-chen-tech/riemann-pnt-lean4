@@ -1,0 +1,23 @@
+import PrimeNumberTheorem.CarlsonTwoThirdsHalfRangeExponent
+
+namespace PrimeNumberTheorem
+
+#check halfRange_length_range
+#check halfRange_interpolation_weight_eq
+#check halfRange_interpolated_exponent_eq
+#check halfRange_interpolated_exponent_lt_target
+#check halfRange_target_eq_carlson_sub_delta
+#check halfRange_fourteenSeventeenths_margin
+#check halfRange_direct_gap_at_fourteen_seventeenths
+#check halfRange_separated_threshold_eq
+
+#print axioms halfRange_length_range
+#print axioms halfRange_interpolation_weight_eq
+#print axioms halfRange_interpolated_exponent_eq
+#print axioms halfRange_interpolated_exponent_lt_target
+#print axioms halfRange_target_eq_carlson_sub_delta
+#print axioms halfRange_fourteenSeventeenths_margin
+#print axioms halfRange_direct_gap_at_fourteen_seventeenths
+#print axioms halfRange_separated_threshold_eq
+
+end PrimeNumberTheorem
