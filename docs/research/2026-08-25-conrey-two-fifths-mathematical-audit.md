@@ -1692,3 +1692,41 @@ This checkpoint closes the reusable pointwise height estimates only.  It
 does **not** yet prove (a-height), (a-int), the low-range reciprocal bound,
 or the global absolute-log integral.  Consequently equation (37)'s global
 right vertical remains open until the second layer is green.
+
+### 23.2 Verified checkpoint: explicit high-part nonvanishing
+
+The explicit specialization is now proved through the pointwise high-part
+nonvanishing step:
+
+- `conreyExplicitDegreeOneHeightMain_eq` identifies the concrete main term
+
+  \[
+  a_L(t)={49\over100}+{51\over100L}\log {t\over2\pi};
+  \]
+
+- `one_third_le_conreyExplicitDegreeOneHeightMain_re` and
+  `conreyExplicitDegreeOneHeightMain_re_le_one` prove
+  `1/3 <= a_L(t) <= 1` on `1 <= t <= exp L`, for `L >= exp 2`;
+- `one_sub_conreyExplicitDegreeOneHeightMain_re_eq` proves the exact
+  compensation identity
+
+  \[
+  1-a_L(t)={51\over100L}\log {2\pi e^L\over t};
+  \]
+
+- after combining the proved `V1` and mollifier errors,
+  `norm_conreyExplicitRightVerticalProduct_sub_heightMain_le` proves
+
+  \[
+  \|V_1(2\log L+it)B(2\log L+it)-a_L(t)\|\le {79\over L}
+  \]
+
+  on `2 log L <= t <= exp L` for `L >= 600`; and
+- `conreyExplicitRightVerticalProduct_ne_zero` derives nonvanishing directly
+  from this error and `a_L(t) >= 1/3`, without assuming a boundary
+  nonvanishing predicate.
+
+This closes the explicit high-part pointwise and nonvanishing layer.  It does
+**not** yet prove the absolute-log Lipschitz bound, its high-part integral,
+the low-part reciprocal bound, or the final global right-vertical integral.
+Equation (37)'s right vertical therefore remains open at this checkpoint.

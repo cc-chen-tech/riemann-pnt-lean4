@@ -1,0 +1,27 @@
+import HardyTheorem.ConreyExplicitRightVertical
+
+open Complex
+
+namespace HardyTheorem
+
+#check conreyExplicitDegreeOneHeightMain
+#check conreyExplicitDegreeOneHeightMain_eq
+#check conreyExplicitDegreeOneHeightMain_re
+#check conreyExplicitDegreeOneHeightMain_im
+#check one_third_le_conreyExplicitDegreeOneHeightMain_re
+#check conreyExplicitDegreeOneHeightMain_re_le_one
+#check one_sub_conreyExplicitDegreeOneHeightMain_re_eq
+#check norm_conreyExplicitDegreeOneHeightMain_eq_re
+#check conreyExplicitRightVerticalProduct
+#check norm_conreyExplicitRightVerticalProduct_sub_heightMain_le
+#check conreyExplicitRightVerticalProduct_ne_zero
+
+#print axioms conreyExplicitDegreeOneHeightMain_eq
+#print axioms one_third_le_conreyExplicitDegreeOneHeightMain_re
+#print axioms conreyExplicitDegreeOneHeightMain_re_le_one
+#print axioms one_sub_conreyExplicitDegreeOneHeightMain_re_eq
+#print axioms norm_conreyExplicitDegreeOneHeightMain_eq_re
+#print axioms norm_conreyExplicitRightVerticalProduct_sub_heightMain_le
+#print axioms conreyExplicitRightVerticalProduct_ne_zero
+
+end HardyTheorem
