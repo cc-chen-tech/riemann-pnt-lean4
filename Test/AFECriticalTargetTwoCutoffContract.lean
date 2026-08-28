@@ -1,0 +1,4 @@
+import HardyTheorem.AFECriticalTargetTwoCutoff
+
+#check HardyTheorem.AFE.criticalAfeRemainderWindowBound
+#check HardyTheorem.AFE.normSq_criticalAfeProduct_le_twoCutoffEnergies_of_target
