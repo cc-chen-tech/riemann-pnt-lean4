@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergMollifiedDualRayEnergy
+
+open HardyTheorem
+
+#check sum_sq_selbergMollifiedDualRationalMass_le
+#check integral_gaussian_normSq_selbergMollifiedDualPolynomial_le

@@ -16,7 +16,7 @@ open PrimeNumberTheorem.CarlsonZeroDensity
 
 namespace HardyTheorem
 
-private theorem fourfoldDivisor_inv_sum_le_two_mul_log_pow_four
+theorem fourfoldDivisor_inv_sum_le_two_mul_log_pow_four
     {U : ℕ} (hU : 1 ≤ U) :
     (∑ n ∈ Finset.Icc 1 U,
         (fourfoldDivisorCount n : ℝ) * (n : ℝ)⁻¹) ≤
