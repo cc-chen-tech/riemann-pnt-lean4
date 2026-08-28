@@ -5096,6 +5096,154 @@ def test_bourgain_garaev_composite_inverse_product_polytope() -> None:
         )
 
 
+def test_bourgain_garaev_all_product_partitions_sharpen_composite_residual() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bourgain_garaev_all_product_partition_polytope_audit",
+        None,
+    )
+    assert audit is not None, "all-partition Bourgain--Garaev audit is missing"
+
+    common = {
+        "conductor_exponent": F(3),
+        "composite_conductor": True,
+        "unit_inverse_phase": True,
+        "zero_direct_phase": True,
+        "one_bounded_after_divisor_normalization": True,
+        "separated_product_partition_adapter_verified": True,
+    }
+
+    four_quarters = audit(
+        factor_exponents={
+            "b": F(3, 4),
+            "c": F(3, 4),
+            "n": F(3, 4),
+            "p": F(3, 4),
+        },
+        **common,
+    )
+    assert len(four_quarters["partition_rows"]) == 7
+    assert four_quarters["best_partition_saving_exponent"] == F(3, 16)
+    assert four_quarters["published_composite_zero_direct_partition_coverage"]
+    assert not four_quarters["all_partitions_doubly_reciprocal_resonant"]
+    short_long_row = next(
+        row
+        for row in four_quarters["partition_rows"]
+        if row["left_length_exponent"] == F(3, 4)
+    )
+    assert short_long_row["left_candidate_moment_orders"] == (1, 2, 3, 4)
+    assert short_long_row["right_candidate_moment_orders"] == (1, 2, 3)
+    assert short_long_row["best_left_moment_order"] == 2
+    assert short_long_row["best_right_moment_order"] == 1
+    assert short_long_row["saving_exponent"] == F(3, 16)
+
+    three_quarters = audit(
+        factor_exponents={
+            "b": F(3, 4),
+            "c": F(3, 4),
+            "n": F(3, 4),
+            "p": F(0),
+        },
+        **common,
+    )
+    assert len(three_quarters["partition_rows"]) == 3
+    assert three_quarters["best_partition_saving_exponent"] == 0
+    assert three_quarters["all_partitions_doubly_reciprocal_resonant"]
+    assert not three_quarters[
+        "published_composite_zero_direct_partition_coverage"
+    ]
+
+    balanced_two_factor = audit(
+        factor_exponents={
+            "b": F(3, 2),
+            "c": F(3, 2),
+            "n": F(0),
+            "p": F(0),
+        },
+        **common,
+    )
+    assert len(balanced_two_factor["partition_rows"]) == 1
+    assert balanced_two_factor["best_partition_saving_exponent"] == 0
+    assert balanced_two_factor["all_partitions_doubly_reciprocal_resonant"]
+    assert not balanced_two_factor[
+        "published_composite_zero_direct_partition_coverage"
+    ]
+
+    mixed_boundary = audit(
+        factor_exponents={
+            "b": F(3, 2),
+            "c": F(1),
+            "n": F(0),
+            "p": F(0),
+        },
+        **common,
+    )
+    assert mixed_boundary["best_partition_saving_exponent"] == F(1, 8)
+    assert mixed_boundary["published_composite_zero_direct_partition_coverage"]
+
+    nonzero_direct = audit(
+        factor_exponents={
+            "b": F(3, 4),
+            "c": F(3, 4),
+            "n": F(3, 4),
+            "p": F(3, 4),
+        },
+        **{**common, "zero_direct_phase": False},
+    )
+    assert nonzero_direct["best_partition_saving_exponent"] == F(3, 16)
+    assert not nonzero_direct[
+        "published_composite_zero_direct_partition_coverage"
+    ]
+    assert not nonzero_direct["physical_packet_adapter_proved"]
+    assert not nonzero_direct["global_varying_modulus_reassembly_proved"]
+    assert not nonzero_direct["coupled_kernel_gate_closed"]
+
+    for hypothesis in (
+        "composite_conductor",
+        "unit_inverse_phase",
+        "zero_direct_phase",
+        "one_bounded_after_divisor_normalization",
+        "separated_product_partition_adapter_verified",
+    ):
+        rejected = audit(
+            factor_exponents={
+                "b": F(3, 4),
+                "c": F(3, 4),
+                "n": F(3, 4),
+                "p": F(3, 4),
+            },
+            **{**common, hypothesis: False},
+        )
+        assert rejected["best_partition_saving_exponent"] == F(3, 16)
+        assert not rejected["published_hypotheses_verified"]
+        assert not rejected[
+            "published_composite_zero_direct_partition_coverage"
+        ]
+
+    outside_direct_window = audit(
+        factor_exponents={"b": F(4), "c": F(4)},
+        **common,
+    )
+    assert outside_direct_window["partition_rows"]
+    assert not outside_direct_window["admissible_partition_rows"]
+    assert outside_direct_window["best_partition_saving_exponent"] == 0
+    assert not outside_direct_window["published_hypotheses_verified"]
+    assert not outside_direct_window[
+        "published_composite_zero_direct_partition_coverage"
+    ]
+
+    note = OFFDIAGONAL_NOTE.read_text()
+    for marker in (
+        "### 9.128 All product partitions isolate the composite resonant skeleton",
+        r"\eta_{\rm BG}^{\rm part}",
+        r"\left(\frac34,\frac34,\frac34,\frac34\right)",
+        r"\eta_{\rm BG}^{\rm part}=\frac3{16}",
+        "three equal positive coordinates",
+        "bourgain_garaev_all_product_partition_polytope_audit",
+    ):
+        assert marker in note
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,

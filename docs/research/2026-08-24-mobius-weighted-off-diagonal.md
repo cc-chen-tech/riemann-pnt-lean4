@@ -18,11 +18,11 @@
 > | Common-cofactor Möbius divisor lift | Section 9.119 fuses \(\mu(r_0)\mu(m)\) into one global \(\mu(M)\) with \(M=r_0m\), preserves \((M,Q)=(m,Q)\), and retains arbitrary physical packet weights at divisor cost; the resulting one-Möbius gate \({\rm DLMG}_3\), including \(Q=1\), remains unproved |
 > | Gcd-first quotient Type I/II split | Section 9.120 first fixes \(G=(M,Q)\), then applies the exact two-cutoff identity only to the true Type quotient \(N=M/(r_0G)\); the conductor is frozen, \(a=h\delta\) is retained, and the long block has \(\mu(b)\mu(c)\).  FKM covers the fixed-prime separated subpolytope (9.806)--(9.807), but the physical adapter and global dispersion remain unproved |
 > | Squarefree principal-quotient trace rows | Section 9.121 expands the retained squarefree density by \(\mu^2(N)=\sum_{d^2\mid N}\mu(d)\).  Classical completion gives a fixed-row saving \(\eta_{\rm sf}(\gamma,u)=[\min\{\gamma/2,u/2-\gamma/4\}]_+\) for a squarefree unit-phase conductor and verified separated \(N\)-weight.  Section 9.122 proves the nonunit descent to \(R=G/(a_0,G)\) and replaces \(\gamma\) by the effective exponent \(\rho\).  Rows with \(u\leq\rho/2\), the physical packet adapter, the signed outer reassembly, and all of \(\mathscr B\) remain unproved |
-> | Double-Möbius product-partition coverage | Section 9.123 tests all seven unordered bipartitions of \(bcnp\), not only \(b\mid cnp\).  FKM Theorem 1.17 covers a verified separated fixed-prime atom whenever one partition has both sides nonempty and its longer side exceeds \(G^{1/2}\); FKM Theorem 1.7 covers long \(b\)- or \(c\)-axes, and elementary completion covers long smooth \(n\)- or \(p\)-axes.  Section 9.126 adds Korolev's direct product-trace bilinear lemma on the fixed prime balanced atom, while Section 9.127 covers verified zero-direct composite atoms whenever the combined exponent \(\eta_{\rm BG}\) is positive.  The simultaneously resonant/nonzero-direct composite faces, physical adapter, and signed global dispersion remain unproved |
+> | Double-Möbius product-partition coverage | Section 9.123 tests all seven unordered bipartitions of \(bcnp\), not only \(b\mid cnp\).  FKM Theorem 1.17 covers a verified separated fixed-prime atom whenever one partition has both sides nonempty and its longer side exceeds \(G^{1/2}\); FKM Theorem 1.7 covers long \(b\)- or \(c\)-axes, and elementary completion covers long smooth \(n\)- or \(p\)-axes.  Section 9.126 adds Korolev's direct product-trace bilinear lemma on the fixed prime balanced atom.  Sections 9.127--9.128 optimize Bourgain--Garaev over every zero-direct composite product partition: four \(T^{3/4}\) coordinates have saving \(3/16\), while the three-quarter triple and square-root pair are exactly doubly resonant.  Nonzero-direct composite faces, the physical adapter, and signed global dispersion remain unproved |
 > | Balanced double-Möbius cross-conductor Gram | Section 9.124 regroups the residual as \(\sum_b\mu(b)\mathcal A_b\) before one Cauchy step.  The exact Gram phase is \(e_{[G_1,G_2]}(Db+E\bar b)\), retaining both \(\mu(c_i)\), outer signs, and \(a_i=h_i\delta_i\).  On unit squarefree rows the zero orbit forces \(G_1=G_2\) and one explicit \(c_2\)-residue per \(c_1\); the outer invariant-fibre norm and nonzero cross-conductor spectral estimate remain unproved |
 > | Resonant invariant-fibre energy | Section 9.125 applies full multiplicative Plancherel, not the earlier primitive additive projection.  Cochrane--Shi plus exact gcd descent gives \(HD+H^2D^2/G+(1+H+D+HD/G)^2\); at \(H=D=T^{5/2},G=T^3\) this is the permitted exponent \(7\).  Unit multipliers \(Bk^{-2}\) only permute residues, so every subpolynomial-projective multiplier family is also within target.  Proving that the physical sector/cofactor family has this norm in the same exhaustive packet remains open |
 > | Prime balanced product-trace atom | Section 9.126 applies Korolev's published divisor-bounded bilinear lemma directly to \(K_G(bc)\).  For prime \(G\), unit inverse coefficient, verified separated weight, and \(G^{\varepsilon_0}<b,c\leq G^{1/2}\), it gives the fixed saving \(G^{-c\varepsilon_0^4}\), including the exact balanced endpoint.  The constant \(c>0\) is unspecified, and the theorem supplies neither composite-conductor coverage nor the outer signed cross-conductor norm |
-> | Composite zero-direct inverse-product atom | Section 9.127 applies Bourgain--Garaev Theorem 3 at an arbitrary composite modulus.  For verified separated one-bounded arrays and \(B=0\), the exact power-saving exponent is (9.852); at \(G=T^3\), \(b,c\asymp T\), \(k_1=k_2=2\), it is \(1/8\), i.e. \(T^{-1/8+o(1)}\).  One resonant coordinate may still be offset by the other coordinate; at the doubly square-root face \(b,c\asymp G^{1/2}\) the theorem gives zero saving.  It supplies neither a nonzero \(Bbc\) phase nor the physical/signed varying-conductor norm |
+> | Composite zero-direct inverse-product atom | Section 9.127 applies Bourgain--Garaev Theorem 3 at an arbitrary composite modulus.  For verified separated one-bounded arrays and \(B=0\), the exact power-saving exponent is (9.852); at \(G=T^3\), \(b,c\asymp T\), \(k_1=k_2=2\), it is \(1/8\), i.e. \(T^{-1/8+o(1)}\).  Section 9.128 jointly optimizes the moment orders over every product partition and proves the exact reciprocal-power resonance criterion (9.857).  It supplies neither a nonzero \(Bbc\) phase nor the physical/signed varying-conductor norm |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -17946,7 +17946,7 @@ The unified fixed-row coverage table is:
 | same prime row on a single \(b\)- or \(c\)-axis with exponent \(>3\gamma/4\) | FKM Theorem 1.7 | saving (9.830) |
 | squarefree \(G\), verified separated smooth \(n\)- or \(p\)-axis with exponent \(>\gamma/2\) | classical completion | saving (9.831) |
 | prime balanced two-factor row \((\beta,\chi,\nu,\varpi)=(\gamma/2,\gamma/2,0,0)\) | FKM projections in this section | no fixed power from FKM; Section 9.126 gives a Korolev fixed-atom power |
-| composite central row with every smooth coordinate \(\leq\gamma/2\) | FKM prime hypothesis fails; Section 9.127 later treats the verified separated \(B=0\) subfaces satisfying \(\eta_{\rm BG}>0\) | exact balanced and nonzero-direct rows remain unproved |
+| composite central row with every smooth coordinate \(\leq\gamma/2\) | FKM prime hypothesis fails; Sections 9.127--9.128 later optimize Bourgain--Garaev over every verified separated \(B=0\) product partition | doubly reciprocal-power-resonant and nonzero-direct rows remain unproved |
 | any numerically favorable row without the physical four-factor adapter | formal exponent substitution only | no coverage of \(\mathscr W\) |
 | signed \(Q,G,r_0,h,\delta,\Pi\) aggregate | no fixed-row theorem supplies the cross-row norm | unproved global dispersion |
 
@@ -17961,9 +17961,9 @@ do not permit absolute summation over its cells.
 
 The remaining analytic target is therefore narrower but still global:
 the signed prime balanced aggregate (despite the later fixed-atom
-Korolev bound), the simultaneously resonant and nonzero-direct composite
-faces (after the positive-\(\eta_{\rm BG}\) zero-direct coverage of
-Section 9.127), every row
+Korolev bound), the doubly reciprocal-power-resonant and nonzero-direct
+composite faces (after the all-partition zero-direct coverage of
+Sections 9.127--9.128), every row
 lacking the physical adapter, and their signed outer recombination.  On the first
 face the two genuine coefficients are precisely
 \(\mu(b)\mu(c)\), so the next valid operation is the global linear
@@ -17979,9 +17979,9 @@ savings from published coverage hypotheses and explicitly marks the
 FKM-degenerate prime balanced two-factor face, composite central band,
 physical adapter, outer signed average, global dispersion, and
 coupled-kernel flags.  Section 9.126 separately audits the published
-Korolev lemma on the balanced prime atom; Section 9.127 separately
-audits Bourgain--Garaev's arbitrary-modulus inverse-product theorem on
-zero-direct composite atoms.
+Korolev lemma on the balanced prime atom; Sections 9.127--9.128
+separately audit and optimize Bourgain--Garaev's arbitrary-modulus
+inverse-product theorem over zero-direct composite product partitions.
 
 ### 9.124 The balanced residual has an exact cross-conductor Gram
 
@@ -18432,6 +18432,113 @@ the two exact \(\Delta_k\) contributions, the saving (9.852), and the
 balanced zero-saving endpoint.  Every nonzero-direct, physical,
 varying-modulus, and coupled-kernel flag remains false.
 
+### 9.128 All product partitions isolate the composite resonant skeleton
+
+Section 9.127 used only a prescribed pair of grouped variables.  The
+four-factor Type-II atom permits more: before taking absolute values,
+partition every positive coordinate among
+\(b,c,n,p\) into two nonempty products.  Let \(I\) be the set of
+positive coordinates, let \(\mathcal P(I)\) contain one representative
+of every unordered nontrivial bipartition, and put
+
+\[
+ L=\sum_{i\in I}x_i,\qquad
+ z_S=\sum_{i\in S}x_i
+ \quad(S\in\mathcal P(I)).
+ \tag{9.854}
+\]
+
+Assume \(L\leq\gamma\), so both grouped intervals fit the direct
+length window of (9.850).  For a fixed-fold product convolution, the
+number of representations is divisor-bounded.  Dividing the grouped
+coefficient by its supremum makes it one-bounded and costs only
+\(T^\varepsilon\); this normalization is an explicit hypothesis, not
+an automatic consequence of separation.  Under that hypothesis the
+best exponent furnished by Theorem 3 over all partitions is
+
+\[
+ \boxed{
+ \eta_{\rm BG}^{\rm part}
+ =\max_{S\in\mathcal P(I)}
+   \max_{k_1,k_2\geq1}
+ \left[
+ -\frac{\Delta_{k_1}(\gamma,z_S)
+          +\Delta_{k_2}(\gamma,L-z_S)}{2k_1k_2}
+ \right]_+.}
+ \tag{9.855}
+\]
+
+This optimization is finite.  For a side of exponent \(z>0\), it is
+enough to test
+
+\[
+ 1\leq k\leq
+ \left\lceil\frac{\gamma}{2z}\right\rceil+2.
+ \tag{9.856}
+\]
+
+Indeed, after this range the active branch of \(\Delta_k\) is affine
+and nonnegative, and increasing that order cannot improve a negative
+joint exponent.  More importantly, direct inspection of the two affine
+branches gives, for \(0<z\leq\gamma\),
+
+\[
+ \min_{k\geq1}\Delta_k(\gamma,z)=0
+ \quad\Longleftrightarrow\quad
+ z=\frac{\gamma}{2j}\quad\hbox{for some }j\in\mathbf Z_{\geq1};
+ \qquad
+ \min_{k\geq1}\Delta_k(\gamma,z)<0
+ \quad\hbox{otherwise}.
+ \tag{9.857}
+\]
+
+Thus (9.855) has a positive saving exactly when at least one admissible
+partition is **not** resonant on both sides.  The joint denominator in
+(9.855) still matters for the size of the saving, so the two moment
+orders must be optimized together; the sign criterion alone does not
+determine the exponent.
+
+At \(\gamma=3\), the complete fixed-row ledger is particularly sharp:
+
+\[
+\begin{array}{c|c|c}
+ (x_i)_{i\in I} & \text{unordered partition type} &
+ \eta_{\rm BG}^{\rm part}\\ \hline
+ \left(\frac34,\frac34,\frac34,\frac34\right)
+   & \frac34\mid\frac94\ \text{or}\ \frac32\mid\frac32
+   & \frac3{16}\\
+ \left(\frac34,\frac34,\frac34\right)
+   & \frac34\mid\frac32
+   & 0\\
+ \left(\frac32,\frac32\right)
+   & \frac32\mid\frac32
+   & 0\\
+ \left(\frac32,1\right)
+   & \frac32\mid1
+   & \frac18.
+\end{array}
+ \tag{9.858}
+\]
+
+For four equal coordinates there are seven unordered partitions; a
+\(3/4\mid9/4\) row, with moment orders \((2,1)\) in the corresponding
+orientation, gives \(\eta_{\rm BG}^{\rm part}=\frac3{16}\).  With
+three equal positive coordinates, all three partitions are
+\(3/4\mid3/2\) and doubly resonant.  The two-factor square-root row is
+also doubly resonant.  These are exact residual faces of this published
+theorem, not evidence that their original sums are large.
+
+The finite helper
+bourgain_garaev_all_product_partition_polytope_audit enumerates every
+unordered partition, jointly optimizes the two moment orders, and keeps
+the numerical saving separate from the composite-conductor, unit-phase,
+zero-direct, one-bounded-normalization, and separated-local-adapter
+hypotheses.  Even when a fixed atom is covered, the nonzero direct
+phase, complete physical packet adapter, signed varying-modulus norm,
+and coupled-kernel gate remain false.  Hence this section shrinks the
+composite zero-direct residual to its reciprocal-power resonant
+skeleton; it does not prove the \(\theta=3\) twisted-moment remainder.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -18801,7 +18908,7 @@ Proved in this note:
 * the all-partition double-Möbius coverage ledger (9.826)--(9.831),
   together with the Korolev balanced-prime correction
   (9.846)--(9.849) and the Bourgain--Garaev composite zero-direct
-  correction (9.850)--(9.853).
+  corrections (9.850)--(9.858).
   Every unordered bipartition of \(bcnp\) is tested against FKM
   Theorem 1.17; the positivity region is exactly
   \(L-m_+>\gamma/2\) when at least two coordinates are nonzero.
@@ -18811,9 +18918,11 @@ Proved in this note:
   \(G^{-c\varepsilon_0^4}\), with unspecified absolute \(c>0\).
   Bourgain--Garaev Theorem 3 gives the exact saving (9.852) for a
   verified separated zero-direct inverse-product atom at arbitrary
-  modulus; at \((\gamma,x,y;k_1,k_2)=(3,1,1;2,2)\) it is \(1/8\), while
-  exact square-root balance has zero saving.  This remains fixed-row
-  coverage only: nonzero-direct and exact balanced composite rows, the
+  modulus.  Optimizing every product partition gives (9.855): four
+  \(3/4\)-coordinates have saving \(3/16\), whereas the three-quarter
+  triple and square-root pair are doubly reciprocal-power resonant and
+  receive no fixed power from this theorem.  This remains fixed-row
+  coverage only: nonzero-direct and resonant composite rows, the
   physical four-factor adapter, and signed global dispersion remain
   unproved;
 * the balanced pre-Cauchy cross-conductor Gram (9.832)--(9.839).
@@ -19356,9 +19465,9 @@ Proved in this note:
 | Common-cofactor Möbius divisor lift | exact one-sign global reindexing at divisor cost; \({\rm DLMG}_3\) unproved | Restoring the \(r_0\)-sum before Cauchy and setting \(M=r_0m\) gives \(\mu(r_0)\mu(m)=\mu(M)\) and \((M,Q)=(m,Q)\), (9.790)--(9.793).  Every physical \(r_0\)-dependent packet weight, unit mask, boundary, and \(h\delta\) label stays inside the inner \(r_0\mid M\) sum.  Its Ramanujan projective cost is at most \(\tau(M)\), (9.794), so the separate external Möbius source is removed with no fixed-power loss.  The unique joint-conductor partition of all \((\lambda,\psi)\) pairs gives the exact sufficient one-Möbius gate \({\rm DLMG}_3\), (9.795): \(Q=1\) is the double-principal subrow, while \(Q>1\) contains both the rest of the inverse-principal row and all centered rows.  Its divisor-superposition coefficient still has conductor \((M,Q)\), and the required joint pre-Cauchy estimate is not supplied by the cited scalar trace theorems |
 | Gcd-first quotient Type I/II split | exact frozen-conductor two-sign reduction and fixed-prime subpolytope; global dispersion unproved | Disintegrating \(M=r_0GN\) with \(G=(M,Q)\) gives pairwise coprime \(r_0,G,N\) and \((N,Q)=1\), (9.796)--(9.798).  Applying the remainder-free two-cutoff identity only to \(\mu(N)\) yields (9.799)--(9.801): every boundary is explicit, mixed rectangles cancel, the conductor \(G\) and cofactor \(Q/G\) are frozen, and \(a=h\delta\) stays inside the physical packet.  At \(U=V=1\), (9.802) separates the \(N=1\) boundary and the Type-sign-free squarefree \(N>1\) quotient mean from the genuine \(\mu(b)\mu(c)\), \(b,c>1\), divisor family.  The recombined gate \({\rm QTIID}_3(U,V)\) is exactly equivalent to \({\rm DLMG}_3\), (9.803)--(9.804).  For a verified separated prime-conductor atom, FKM Theorem 1.17 gives (9.806), positive exactly on \(\min(x,y)>0,\max(x,y)>\gamma/2\), (9.807).  Equations (9.808)--(9.810) then retain every outer label while splitting the full unit-cutoff master as \(\mathscr Z_Q+\mathscr B_Q\), with no Type Möbius sign but explicit squarefree support in \(\mathscr Z_Q\), and the two nontrivial signs \(\mu(b)\mu(c)\) in \(\mathscr B_Q\).  The physical adapter, composite rows, full principal quotient evaluation, and signed global double-Möbius estimate remain open |
 | Squarefree principal-quotient trace completion | elementary fixed-row subpolytope and nonunit descent proved; global principal master unproved | The exact projector \(\mu^2(N)=\sum_{d^2\mid N}\mu(d)\), (9.811), is split without remainder at \(d\leq D\).  For squarefree \(G\) and a unit inverse phase, CRT--Weil and smooth completion give \(XG^{-1/2}+DG^{1/2}+X/D\), (9.812)--(9.817), hence the local saving (9.819).  For a nonunit inverse coefficient, (9.820)--(9.822) expand every inactive local Fourier factor exactly and descend at divisor cost to \(R=G/(a_0,G)\); the bound becomes \(XR^{-1/2}+DR^{1/2}+X/D\), with saving (9.825), positive precisely for \(R>1,u>\rho/2\).  This is valid only after a separated physical \(N\)-weight is verified.  Short effective rows, the \(R=1\) refinement, packet-exhaustive adapter, signed \(Q,G,r_0,h,\delta,\Pi\) reassembly, and every \(\mathscr B\) row remain open |
-| Double-Möbius all-product-partition coverage | exact published fixed-row polytope; composite/global residual unproved | For \((b,c,n,p)=T^{(\beta,\chi,\nu,\varpi)}\), (9.826)--(9.828) apply FKM Theorem 1.17 to all seven unordered bipartitions.  The best bilinear saving is positive exactly when at least two coordinates are positive and \(L-m_+>\gamma/2\), (9.829).  FKM Theorem 1.7 covers a single \(b\)- or \(c\)-axis beyond \(3\gamma/4\), (9.830), while elementary completion covers a smooth \(n\)- or \(p\)-axis beyond \(\gamma/2\), (9.831), including squarefree composite conductors.  A verified separated prime row with four \(3/4\)-coordinates has saving \(3/8\); the \((3/2,3/2,0,0)\) face is FKM-degenerate but is covered by the separate Korolev row below.  Section 9.127 covers only zero-direct composite subfaces with \(\eta_{\rm BG}>0\).  Simultaneously resonant/nonzero-direct composite rows, absent physical adapters, and the signed outer \(Q,G,r_0,h,\delta,\Pi\) norm remain unproved |
+| Double-Möbius all-product-partition coverage | exact published fixed-row polytope; composite/global residual unproved | For \((b,c,n,p)=T^{(\beta,\chi,\nu,\varpi)}\), (9.826)--(9.828) apply FKM Theorem 1.17 to all seven unordered bipartitions.  The best bilinear saving is positive exactly when at least two coordinates are positive and \(L-m_+>\gamma/2\), (9.829).  FKM Theorem 1.7 covers a single \(b\)- or \(c\)-axis beyond \(3\gamma/4\), (9.830), while elementary completion covers a smooth \(n\)- or \(p\)-axis beyond \(\gamma/2\), (9.831), including squarefree composite conductors.  A verified separated prime row with four \(3/4\)-coordinates has saving \(3/8\); the \((3/2,3/2,0,0)\) face is FKM-degenerate but is covered by the separate Korolev row below.  Sections 9.127--9.128 optimize Bourgain--Garaev over every zero-direct composite partition: four \(3/4\)-coordinates have saving \(3/16\), while the three-quarter triple and square-root pair are exactly doubly resonant.  Nonzero-direct composite rows, absent physical adapters, and the signed outer \(Q,G,r_0,h,\delta,\Pi\) norm remain unproved |
 | Korolev prime balanced product-trace bilinear lemma | fixed separated balanced atom has a published positive power; outer norm unproved | For prime \(G\), unit inverse coefficient, divisor-bounded coefficients, and \(G^{\varepsilon_0}<b,c\leq G^{1/2}\), Korolev's Lemma 6 gives \(bc\,G^{-c\varepsilon_0^4}\) for the exact phase \(e_G(A\bar b\bar c+Bbc)\), (9.846)--(9.848).  Thus the balanced \(b,c\asymp G^{1/2}\) atom has a fixed power; at \(G=T^3,\varepsilon_0=1/20\) its shape is \(T^{-3c/160000}\).  The absolute \(c>0\) is unspecified.  The theorem is prime and fixed-modulus, requires a verified separated weight, and supplies neither composite coverage nor the signed varying-conductor/AFE packet norm, (9.849) |
-| Bourgain--Garaev composite inverse-product bilinear theorem | fixed separated zero-direct atoms with \(\eta_{\rm BG}>0\) have an explicit positive power; simultaneous resonances/global norm unproved | For arbitrary composite \(G\), a unit inverse coefficient, one-bounded separated arrays, and \(B=0\), Theorem 3 gives the exact relative exponent (9.852).  At \(G=T^3\), \(b,c\asymp T\), \(k_1=k_2=2\), the power-saving exponent is \(1/8\), equivalently \(T^{-1/8+o(1)}\), (9.853).  One reciprocal-power boundary may be offset by the other coordinate; if both coordinates are resonant, in particular \(b,c\asymp G^{1/2}\), the optimized saving is zero.  A nonzero \(Bbc\) phase, the physical adapter, and the signed varying-conductor/AFE packet norm remain unproved |
+| Bourgain--Garaev composite inverse-product bilinear theorem | fixed separated zero-direct atoms with an admissible non-doubly-resonant partition have an explicit positive power; resonant skeleton/global norm unproved | For arbitrary composite \(G\), a unit inverse coefficient, one-bounded separated arrays, and \(B=0\), Theorem 3 gives the exact relative exponent (9.852).  The all-partition optimization (9.855) is positive exactly when some grouped pair is not simultaneously of reciprocal-power length, (9.857).  At \(G=T^3\), four \(T^{3/4}\) factors have saving \(3/16\); three \(T^{3/4}\) factors and two \(T^{3/2}\) factors have zero saving, (9.858).  A nonzero \(Bbc\) phase, the physical adapter, and the signed varying-conductor/AFE packet norm remain unproved |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |
 | Resonant invariant-fibre product energy | fixed/subpolynomial-projective arithmetic fibre within target; physical adapter unproved | The resonant object needs full product-residue energy, not primitive additive projection.  Multiplicative Plancherel gives (9.841); Cochrane--Shi bounds the nonprincipal term by \(HD\), while the retained principal term is \(H^2D^2/G\), (9.842).  Exact gcd descent, including every endpoint and \(G\mid h\delta\) stratum, gives (9.843).  Multiplication by \(Bk^{-2}\) is a residue permutation, and Minkowski costs the square of its projective norm, (9.844)--(9.845).  At \(H=D=T^{5/2},G=T^3\), the exponents are \(5,7,5\), exactly within the resonant target.  The sector harmonic and cofactor families separately have subpolynomial projective cost, but their exhaustive common AFE/reflection packet map is not proved |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |

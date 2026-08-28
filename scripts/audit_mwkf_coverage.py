@@ -15761,6 +15761,184 @@ def bourgain_garaev_composite_inverse_product_bilinear_audit(
     }
 
 
+def bourgain_garaev_all_product_partition_polytope_audit(
+    *,
+    conductor_exponent: Fraction,
+    factor_exponents: dict[str, Fraction],
+    composite_conductor: bool,
+    unit_inverse_phase: bool,
+    zero_direct_phase: bool,
+    one_bounded_after_divisor_normalization: bool,
+    separated_product_partition_adapter_verified: bool,
+) -> dict[str, object]:
+    """Optimize Bourgain--Garaev over every unordered product partition.
+
+    A product of finitely many dyadic variables may be grouped into two
+    nonempty blocks before applying Theorem 3 of Bourgain--Garaev.  The
+    grouped coefficient has fixed-fold divisor multiplicity, so the
+    theorem is invoked only when the caller has explicitly verified its
+    normalization to a one-bounded array at a ``T^epsilon`` cost.
+
+    For a grouped length exponent ``z`` the contribution at moment order
+    ``k`` is
+
+    ``max((k - 1) * z - gamma / 2, gamma / 2 - k * z)``.
+
+    Its optimized value is zero exactly on a reciprocal-power resonance
+    ``z = gamma / (2*j)``.  The joint denominator ``2*k1*k2`` means that
+    the two moment orders must nevertheless be optimized together.
+    """
+
+    gamma = F(conductor_exponent)
+    if gamma <= 0:
+        raise ValueError("conductor exponent must be positive")
+    if len(factor_exponents) < 2:
+        raise ValueError("at least two named factor coordinates are required")
+
+    factors = {
+        str(name): F(exponent)
+        for name, exponent in factor_exponents.items()
+    }
+    if any(exponent < 0 for exponent in factors.values()):
+        raise ValueError("factor exponents must be nonnegative")
+    positive_names = tuple(
+        name for name, exponent in factors.items() if exponent > 0
+    )
+
+    def candidate_orders(length_exponent: Fraction) -> tuple[int, ...]:
+        ratio = gamma / (2 * length_exponent)
+        ceiling = (ratio.numerator + ratio.denominator - 1) // ratio.denominator
+        return tuple(range(1, ceiling + 3))
+
+    def contribution(moment_order: int, length_exponent: Fraction) -> Fraction:
+        return max(
+            (moment_order - 1) * length_exponent - gamma / 2,
+            gamma / 2 - moment_order * length_exponent,
+        )
+
+    partition_rows: list[dict[str, object]] = []
+    if len(positive_names) >= 2:
+        first_name = positive_names[0]
+        other_names = positive_names[1:]
+        # Requiring the first positive coordinate on the left chooses one
+        # representative of each unordered nontrivial bipartition.
+        for mask in range(1 << len(other_names)):
+            left_names = (first_name,) + tuple(
+                name for index, name in enumerate(other_names) if mask & (1 << index)
+            )
+            if len(left_names) == len(positive_names):
+                continue
+            left_set = set(left_names)
+            right_names = tuple(
+                name for name in positive_names if name not in left_set
+            )
+            left = sum((factors[name] for name in left_names), F(0))
+            right = sum((factors[name] for name in right_names), F(0))
+
+            left_ratio = gamma / (2 * left)
+            right_ratio = gamma / (2 * right)
+            left_resonant = left_ratio.denominator == 1
+            right_resonant = right_ratio.denominator == 1
+            left_orders = candidate_orders(left)
+            right_orders = candidate_orders(right)
+
+            candidates: list[
+                tuple[Fraction, int, int, Fraction, Fraction]
+            ] = []
+            for k1 in left_orders:
+                left_delta = contribution(k1, left)
+                for k2 in right_orders:
+                    right_delta = contribution(k2, right)
+                    exponent = (left_delta + right_delta) / (2 * k1 * k2)
+                    candidates.append((exponent, k1, k2, left_delta, right_delta))
+            best_exponent, best_k1, best_k2, best_left_delta, best_right_delta = min(
+                candidates,
+                key=lambda row: (row[0], row[1] * row[2], row[1], row[2]),
+            )
+            saving = max(F(0), -best_exponent)
+            direct_length_window = bool(left <= gamma and right <= gamma)
+            double_resonance = bool(left_resonant and right_resonant)
+            partition_rows.append(
+                {
+                    "left_names": left_names,
+                    "right_names": right_names,
+                    "left_length_exponent": left,
+                    "right_length_exponent": right,
+                    "left_reciprocal_power_resonance": left_resonant,
+                    "right_reciprocal_power_resonance": right_resonant,
+                    "doubly_reciprocal_resonant": double_resonance,
+                    "left_candidate_moment_orders": left_orders,
+                    "right_candidate_moment_orders": right_orders,
+                    "best_left_moment_order": best_k1,
+                    "best_right_moment_order": best_k2,
+                    "best_left_contribution": best_left_delta,
+                    "best_right_contribution": best_right_delta,
+                    "best_relative_bound_exponent": best_exponent,
+                    "saving_exponent": saving,
+                    "direct_length_window_verified": direct_length_window,
+                    "positivity_iff_not_double_resonance": bool(
+                        (saving > 0) == (not double_resonance)
+                    ),
+                }
+            )
+
+    admissible_rows = tuple(
+        row for row in partition_rows if bool(row["direct_length_window_verified"])
+    )
+    best_admissible_saving = max(
+        (F(row["saving_exponent"]) for row in admissible_rows),
+        default=F(0),
+    )
+    all_double_resonant = bool(
+        partition_rows
+        and all(bool(row["doubly_reciprocal_resonant"]) for row in partition_rows)
+    )
+    classifications_exact = all(
+        bool(row["positivity_iff_not_double_resonance"])
+        for row in partition_rows
+    )
+    hypotheses = bool(
+        composite_conductor
+        and unit_inverse_phase
+        and zero_direct_phase
+        and one_bounded_after_divisor_normalization
+        and separated_product_partition_adapter_verified
+        and classifications_exact
+        and admissible_rows
+    )
+    covered = bool(hypotheses and best_admissible_saving > 0)
+    return {
+        "source": (
+            "Bourgain--Garaev, Kloosterman sums in residue rings, "
+            "Theorem 3 (arXiv:1309.1124)"
+        ),
+        "conductor_exponent": gamma,
+        "factor_exponents": factors,
+        "positive_factor_names": positive_names,
+        "partition_rows": tuple(partition_rows),
+        "admissible_partition_rows": admissible_rows,
+        "unordered_partition_count": len(partition_rows),
+        "best_partition_saving_exponent": best_admissible_saving,
+        "all_partitions_doubly_reciprocal_resonant": all_double_resonant,
+        "all_partition_positivity_classifications_exact": classifications_exact,
+        "composite_conductor_hypothesis_verified": bool(composite_conductor),
+        "unit_inverse_phase_hypothesis_verified": bool(unit_inverse_phase),
+        "zero_direct_phase_hypothesis_verified": bool(zero_direct_phase),
+        "one_bounded_after_divisor_normalization_verified": bool(
+            one_bounded_after_divisor_normalization
+        ),
+        "separated_product_partition_adapter_verified": bool(
+            separated_product_partition_adapter_verified
+        ),
+        "published_hypotheses_verified": hypotheses,
+        "published_composite_zero_direct_partition_coverage": covered,
+        "nonzero_direct_phase_covered": False,
+        "physical_packet_adapter_proved": False,
+        "global_varying_modulus_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 
