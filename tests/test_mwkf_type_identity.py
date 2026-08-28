@@ -1473,6 +1473,36 @@ def test_zero_frequency_centering_is_not_canonical_until_density_is_derived() ->
     assert uniform.centered_remainder != endpoint.centered_remainder
 
 
+def test_canonical_secondary_zero_is_offdiagonal_long_polynomial_energy() -> None:
+    """Catch assigning an opposite AFE sign or subtracting the diagonal twice."""
+    sides = type_identity.canonical_secondary_zero_energy_sides(
+        coefficients={1: F(2), 2: F(-1), 3: F(3)},
+        spectral_atoms=(
+            ("tau-minus", F(2), {1: F(1), 2: F(2), 3: F(-1)}),
+            ("tau-plus", F(3), {1: F(-1), 2: F(1), 3: F(2)}),
+        ),
+    )
+
+    assert sides.spectral_amplitudes == (
+        ("tau-minus", F(-3)),
+        ("tau-plus", F(3)),
+    )
+    assert sides.direct_one_direction_energy == F(45)
+    assert sides.expanded_gram_energy == F(45)
+    assert sides.explicit_diagonal == F(157)
+    assert sides.secondary_zero_off_diagonal == F(-112)
+    assert sides.secondary_zero_plus_diagonal == F(45)
+    assert sides.unfolded_two_afe_secondary_zero == F(-224)
+    assert sides.unfolded_two_afe_diagonal == F(314)
+    assert sides.unfolded_two_afe_full_energy == F(90)
+    assert sides.gram_expansion_exact
+    assert sides.secondary_zero_is_diagonal_removed_energy
+    assert sides.two_afe_directions_reinforce
+    assert sides.explicit_diagonal_restores_full_energy
+    assert not sides.reciprocal_lcm_kernel_identified
+    assert not sides.canonical_resonant_bound_proved
+
+
 def test_zero_frequency_master_requires_probability_density_weights() -> None:
     packet = type_identity.SecondaryZeroPacket(
         "main", 1, 1, "unit", {(1, 1): F(1)}

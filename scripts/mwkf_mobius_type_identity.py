@@ -101,6 +101,25 @@ class ZeroFrequencyReflectedMaster:
 
 
 @dataclass(frozen=True)
+class CanonicalSecondaryZeroEnergy:
+    spectral_amplitudes: tuple[tuple[str, Fraction], ...]
+    direct_one_direction_energy: Fraction
+    expanded_gram_energy: Fraction
+    explicit_diagonal: Fraction
+    secondary_zero_off_diagonal: Fraction
+    secondary_zero_plus_diagonal: Fraction
+    unfolded_two_afe_secondary_zero: Fraction
+    unfolded_two_afe_diagonal: Fraction
+    unfolded_two_afe_full_energy: Fraction
+    gram_expansion_exact: bool
+    secondary_zero_is_diagonal_removed_energy: bool
+    two_afe_directions_reinforce: bool
+    explicit_diagonal_restores_full_energy: bool
+    reciprocal_lcm_kernel_identified: bool
+    canonical_resonant_bound_proved: bool
+
+
+@dataclass(frozen=True)
 class BBLRZeroFrequencyReindex:
     direct_sum: Fraction
     reindexed_sum: Fraction
@@ -2517,6 +2536,131 @@ def zero_frequency_reflected_master_sides(
             for left in left_divisors
             for right in right_divisors
         ),
+    )
+
+
+def canonical_secondary_zero_energy_sides(
+    *,
+    coefficients: dict[int, Fraction],
+    spectral_atoms: tuple[tuple[str, Fraction, dict[int, Fraction]], ...],
+) -> CanonicalSecondaryZeroEnergy:
+    """Expand the canonical secondary zero packet as a finite Gram energy.
+
+    ``spectral_atoms`` is a finite quadrature model for the common time
+    weight.  An atom ``(label, weight, phi)`` contributes
+
+    ``weight * (sum_d coefficients[d] * phi[d])**2``.
+
+    Expanding the squares gives the full Fourier Gram.  Removing its
+    equal-index diagonal is exactly the secondary zero packet.  The two
+    symmetric AFE directions are identical copies, so both the zero packet
+    and its diagonal are doubled; the diagonal restores the full energy
+    instead of cancelling the second direction.
+    """
+
+    if not coefficients:
+        raise ValueError("at least one coefficient is required")
+    if any(index <= 0 for index in coefficients):
+        raise ValueError("coefficient indices must be positive")
+    if not spectral_atoms:
+        raise ValueError("at least one spectral atom is required")
+    labels = tuple(label for label, _, _ in spectral_atoms)
+    if any(not label for label in labels) or len(set(labels)) != len(labels):
+        raise ValueError("spectral atom labels must be nonempty and unique")
+    if any(Fraction(weight) < 0 for _, weight, _ in spectral_atoms):
+        raise ValueError("spectral atom weights must be nonnegative")
+    if any(
+        index <= 0
+        for _, _, multipliers in spectral_atoms
+        for index in multipliers
+    ):
+        raise ValueError("spectral multiplier indices must be positive")
+
+    coeff = {index: Fraction(value) for index, value in coefficients.items()}
+    atoms = tuple(
+        (
+            label,
+            Fraction(weight),
+            {index: Fraction(value) for index, value in multipliers.items()},
+        )
+        for label, weight, multipliers in spectral_atoms
+    )
+    amplitudes = tuple(
+        (
+            label,
+            sum(
+                (
+                    value * multipliers.get(index, Fraction(0))
+                    for index, value in coeff.items()
+                ),
+                Fraction(0),
+            ),
+        )
+        for label, _, multipliers in atoms
+    )
+    amplitude_by_label = dict(amplitudes)
+    direct_energy = sum(
+        (
+            weight * amplitude_by_label[label] ** 2
+            for label, weight, _ in atoms
+        ),
+        Fraction(0),
+    )
+
+    gram = {
+        (left, right): sum(
+            (
+                weight
+                * multipliers.get(left, Fraction(0))
+                * multipliers.get(right, Fraction(0))
+                for _, weight, multipliers in atoms
+            ),
+            Fraction(0),
+        )
+        for left in coeff
+        for right in coeff
+    }
+    expanded_energy = sum(
+        (
+            coeff[left] * coeff[right] * gram[(left, right)]
+            for left in coeff
+            for right in coeff
+        ),
+        Fraction(0),
+    )
+    diagonal = sum(
+        (coeff[index] ** 2 * gram[(index, index)] for index in coeff),
+        Fraction(0),
+    )
+    off_diagonal = sum(
+        (
+            coeff[left] * coeff[right] * gram[(left, right)]
+            for left in coeff
+            for right in coeff
+            if left != right
+        ),
+        Fraction(0),
+    )
+    return CanonicalSecondaryZeroEnergy(
+        spectral_amplitudes=amplitudes,
+        direct_one_direction_energy=direct_energy,
+        expanded_gram_energy=expanded_energy,
+        explicit_diagonal=diagonal,
+        secondary_zero_off_diagonal=off_diagonal,
+        secondary_zero_plus_diagonal=off_diagonal + diagonal,
+        unfolded_two_afe_secondary_zero=2 * off_diagonal,
+        unfolded_two_afe_diagonal=2 * diagonal,
+        unfolded_two_afe_full_energy=2 * direct_energy,
+        gram_expansion_exact=(direct_energy == expanded_energy),
+        secondary_zero_is_diagonal_removed_energy=(
+            off_diagonal == expanded_energy - diagonal
+        ),
+        two_afe_directions_reinforce=True,
+        explicit_diagonal_restores_full_energy=(
+            off_diagonal + diagonal == direct_energy
+        ),
+        reciprocal_lcm_kernel_identified=False,
+        canonical_resonant_bound_proved=False,
     )
 
 

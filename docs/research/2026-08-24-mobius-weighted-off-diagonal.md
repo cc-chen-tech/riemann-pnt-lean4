@@ -84,6 +84,7 @@
 > | Published coverage of the completed ratios | Section 9.191 inserts the literal full nonprincipal ratio spectrum into Milićević--Qin--Wu, Blomer--Pascadi, and Pascadi.  On the extreme long-prime modulus \(p=T^2\), both completed Fourier variables have length \(p\).  MQW misses its \(M^{7/5}N<p^{3/2}\) and \(MN\leq p^{5/4}\) conditions by \(T^{9/5}\) and \(T^{3/2}\), respectively.  At full residue length all three Blomer--Pascadi margins are negative, and Pascadi's averaged alternative has best margin \(-1/6\) in the modulus exponent.  The actual family additionally has three varying moduli and level-dependent Type/AFE coefficients.  Hence uniform-ratio completion creates no new published cell; it identifies the hypotheses of the new generalized-determinant theorem that would be needed |
 > | Completed double-Type generalized-determinant master | Section 9.192 combines the uniform-ratio completion with both literal Type Möbius variables.  Each physical product label remains \(a_i=h_i\delta_i\); both raw \(\mu(n_i)\) are first restored and then split by the exact small/I/II identity.  Every ordered block retains all three actual-minus-uniform ratio projectors.  Type I and II expose the short-factor coefficients \(\mu(b_i)\mu(c_i)\), while their quotient residuals have Möbius coefficient one.  On the top support `small` vanishes and all four I--I, I--II, II--I, and II--II blocks must remain signed.  The finite GDTM reassembly is exact and equivalent to the WRFE integrand; no individual block estimate or GDTM bound is proved |
 > | Triple-character form and mutual-phase rank obstruction | Section 9.193 inverts all three centered ratio kernels simultaneously.  Only nonprincipal characters occur, and each Type-I/II factor becomes two short Möbius character polynomials times one unsigned residual character polynomial.  The surviving phase contains \(\xi(p_1\overline {p_2})\chi_1(q)\overline{\chi_2(q)}\).  For any fixed long prime \(p\) and \(J<p-1\) distinct short-prime labels, the nonprincipal evaluation matrix \(M_{j,\chi}=\chi(q_j)\) has exact Gram matrix \((p-1)I_J-\mathbf1\mathbf1^\ast\), hence full row rank \(J\).  With \(J\asymp Q/\log Q\), the raw phase cannot have a subpolynomial-size exact rank-one common-coefficient decomposition.  This rules out algebraically separating the phase and then applying the ordinary large sieve; it does not rule out cancellation from the physical coefficients.  The equivalent joint tensor gate TCGDTM remains unproved |
+> | Canonical secondary-zero ledger | Section 9.194 identifies the fully recombined secondary zero packet with the diagonal-removed Fourier Gram of the length-\(N\) Selberg--Möbius polynomial.  The second symmetric AFE direction reinforces it, while adding the explicit diagonal restores the full long-polynomial energy.  Its kernel is not reciprocal-LCM, and at \(N=T^3\) the classical mean-value bound misses the target by exactly \(T^2\).  Thus the zero packet is neither an algebraically cancelled term nor an already evaluable secondary constant; it is the same banded two-Möbius correlation that must remain coupled to the nonzero packets |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -27259,7 +27260,150 @@ against the raw centered master and all nine Type blocks, verifies
 distinct short-prime labels.  It leaves (TCGDTM), (GDTM), (WRFE), and
 the coupled-kernel gate false.
 
+### 9.194 The canonical secondary zero packet is the hard banded energy
+
+The route in Sections 9.69--9.71 can now be made canonical at the fully
+recombined level.  It also shows that the three alternatives listed after
+(9.448) were not exhaustive.  Let
+
+\[
+ c_d:=\frac{a_N(d)}{\sqrt d},\qquad
+ M_N(t):=\sum_{d\leq N}c_dd^{-it},
+ \qquad
+ \widehat\Omega(\xi):=\int_{\mathbb R}\Omega(t)e^{it\xi}\,dt,
+\tag{9.1292}
+\]
+
+where \(\Omega\) is the common time/archimedean weight after the complete
+\(h,\delta\), dyadic, and AFE recombination.  Finite termwise expansion
+gives the exact identity
+
+\[
+ \boxed{
+ \mathcal E_\Omega
+ :=\int_{\mathbb R}\Omega(t)|M_N(t)|^2\,dt
+ =\sum_{d,e\leq N}c_dc_e
+   \widehat\Omega\!\left(\log\frac ed\right).}
+\tag{9.1293}
+\]
+
+There is no completion or endpoint error in (9.1293).  Its equal-index
+part and diagonal-removed part are
+
+\[
+ \mathcal D_\Omega
+ :=\widehat\Omega(0)\sum_{d\leq N}\frac{a_N(d)^2}{d},
+ \qquad
+ \mathcal Z_\Omega
+ :=\sum_{\substack{d,e\leq N\\d\ne e}}
+ \frac{a_N(d)a_N(e)}{\sqrt{de}}
+ \widehat\Omega\!\left(\log\frac ed\right).
+\tag{9.1294}
+\]
+
+Consequently
+
+\[
+ \boxed{\mathcal Z_\Omega=\mathcal E_\Omega-\mathcal D_\Omega,
+ \qquad \mathcal Z_\Omega+\mathcal D_\Omega=\mathcal E_\Omega.}
+\tag{9.1295}
+\]
+
+This is the continuous version of (9.457)--(9.458), now placed in the
+pre-Cauchy ledger.  At Mellin frequency zero, substituting
+\(B_{N,0}=F_0-R_N\) on both sides expands (9.1293) into exactly the four
+terms in (9.415): the two reflected cross terms remain distinct, and the
+reflected--reflected term retains the literal moving floors in (9.416).
+Thus reflection changes the coordinate description of
+\(\mathcal E_\Omega\); it does not manufacture an additional zero mode.
+
+The AFE sign is also fixed.  By (9.1033)--(9.1034), the two unfolded
+functional-equation directions give identical copies.  If superscripts
+\(+,-\) denote those copies, then
+
+\[
+ \boxed{
+ \mathcal Z_\Omega^++\mathcal Z_\Omega^-=2\mathcal Z_\Omega^+,
+ \quad
+ \mathcal D_\Omega^++\mathcal D_\Omega^-=2\mathcal D_\Omega^+,
+ \quad
+ 2\mathcal Z_\Omega^++2\mathcal D_\Omega^+=2\mathcal E_\Omega^+.}
+\tag{9.1296}
+\]
+
+Hence the other AFE direction cannot cancel the secondary zero packet.
+The explicit diagonal is not its negative either: it restores the full
+long-polynomial Gram.  When \(\Omega\geq0\), the last quantity in
+(9.1296) is nonnegative, although the off-diagonal
+\(\mathcal Z_\Omega\) itself may have either sign.
+
+Nor is (9.1294) a reciprocal-LCM form.  Its two-variable kernel is
+
+\[
+ \frac1{\sqrt{de}}\widehat\Omega\!\left(\log\frac ed\right),
+\tag{9.1297}
+\]
+
+not \((d,e)/(de)\) times a logarithmic polynomial.  The finite LCM
+diagonalization from Section 1 therefore does not estimate it.  For a
+time window of length \(T\), the classical Dirichlet-polynomial
+mean-value theorem gives, up to the usual smooth-weight constant,
+
+\[
+ \mathcal E_\Omega
+ \ll (T+N)\sum_{d\leq N}\frac{|a_N(d)|^2}{d}
+ \ll (T+N)\log(2N).
+\tag{9.1298}
+\]
+
+At \(N=T^3\), (9.1298) has size \(T^{3+\varepsilon}\), against the
+required \(T^{1+\varepsilon}\).  The missing factor is exactly
+\(N/T=T^2\).  Fourier localization in (9.1297) restricts a dyadic
+\(d\asymp T^3\) block to \(|e-d|\ll N/T=T^2\), recovering the same
+banded two-Möbius energy as (9.377)--(9.379).
+
+Thus the canonical zero-frequency audit has a definite outcome:
+
+1. it is not a second reciprocal-LCM main form;
+2. it does not cancel between the two AFE directions or with the explicit
+   diagonal;
+3. it is not, without a new correlation theorem, an explicitly evaluable
+   secondary constant.
+
+It is instead an unresolved resonant correlation.  Calling it
+\(\mathcal M_{\rm res}\) merely moves the coupled-kernel gate into the
+assertion \(\mathcal M_{\rm res}\ll T^{1+\varepsilon}\).  A valid global
+dispersion must therefore keep (9.1294), its two reflected cross terms,
+and the complementary nonzero-frequency packets in the same signed
+pre-Cauchy operator.  Product-density row/column centering from (9.444)
+is a useful finite decomposition, but it is not the canonical spectral
+projection and cannot remove this Gram by algebra alone.
+
+The finite helper `canonical_secondary_zero_energy_sides` models
+(9.1293)--(9.1296) with arbitrary rational coefficient vectors and a
+finite positive spectral quadrature.  It checks the direct square against
+the expanded Gram, removes the equal-index diagonal exactly, and unfolds
+the two identical AFE copies.  Its regression fixture has one-direction
+energy \(45\), diagonal \(157\), and secondary zero contribution
+\(-112\); the two-direction ledger is
+\(2(-112)+2(157)=90=2\cdot45\).  This detects both an erroneous opposite
+AFE sign and a second diagonal subtraction.  The helper deliberately
+marks reciprocal-LCM identification and the analytic resonant bound
+false.
+
 ## 10. What has and has not been proved
+
+**Canonical zero-frequency outcome.**  Section 9.194 completes the
+fully recombined algebraic ledger for the secondary zero packet.  It is
+the diagonal-removed Fourier Gram (9.1294) of the length-\(N\)
+Selberg--Möbius polynomial.  The two AFE directions reinforce, and the
+explicit diagonal restores the full Gram; neither supplies an opposite
+sign.  The kernel is not reciprocal-LCM.  At \(N=T^3\), the classical
+long-polynomial estimate loses exactly \(T^2\), so this zero packet is
+not an independently evaluated secondary main term.  Its required bound
+is the same banded two-Möbius problem already isolated by
+\({\rm SC}_{2/3}\)/\({\rm MS}_{2/3}\).  The finite Gram identity is proved;
+the analytic \(T^2\) saving and the full coupled-kernel gate are not.
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
 complete active-principal character projection within the required
