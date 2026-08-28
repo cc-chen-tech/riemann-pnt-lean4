@@ -843,10 +843,28 @@ a final density axiom:
    ```
    These facts are composed with the complete critical AFE window theorem,
    and their axiom audit again contains only the allowed three axioms.  What
-   remains at this layer is to bound the selected dyadic depth and the
-   logarithm in `dyadicCriticalGaussianBound` by powers of `log U`, choose a
-   broad `Delta` uniformly for both half-range mollifier lengths, and perform
-   the translated-window/two-scale assembly in (8.7)--(8.8).
+   The selected depth and polynomial logarithm are now normalized as well:
+   ```
+   K+1 <= 2*(1+log U),
+   1+log(2^K*X) <= 2*(1+log U),
+   B_dyadic <= 128*GaussianMass*C_Schur*(1+log U)^6.
+   ```
+   Lean composes this with the remainder to obtain the complete conditional
+   local product bound
+   ```
+   integral_[L,U] gaussian*|zeta*M_X|^2
+     <= 3*GaussianMass*(256*C_Schur*(1+log U)^6 + 4*R^2).
+   ```
+   Finally it fixes the common broad width `Delta=4*U^(19/20)` and proves
+   that this covers every `X<=U^(9/20)`.  All these scale and logarithmic
+   theorems again have only the allowed three axioms.  The next formal gate
+   is now precise: the existing Carlson Hilbert/three-lines interface expects
+   a full-real-line Gaussian product integral, whereas the AFE theorem just
+   proved controls `[L,U]`.  One must use the already proved polynomial zeta
+   growth and the elementary mollifier bound to show that the two Gaussian
+   tails are negligible, then identify the standard linear mollifier and
+   feed the resulting full-line bounds into the two-scale interface.  This
+   tail transfer must not be omitted or treated as a harmless equality.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved

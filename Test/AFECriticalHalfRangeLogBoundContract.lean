@@ -1,0 +1,11 @@
+import HardyTheorem.AFECriticalHalfRangeLogBound
+
+#check HardyTheorem.AFE.dyadicDepth_succ_le_two_mul_one_add_log
+#check HardyTheorem.AFE.one_add_log_dyadicProduct_le_two_mul_one_add_log
+#check HardyTheorem.AFE.dyadicCriticalGaussianBound_le_halfRange_log
+#check HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_halfRange_log
+
+#print axioms HardyTheorem.AFE.dyadicDepth_succ_le_two_mul_one_add_log
+#print axioms HardyTheorem.AFE.one_add_log_dyadicProduct_le_two_mul_one_add_log
+#print axioms HardyTheorem.AFE.dyadicCriticalGaussianBound_le_halfRange_log
+#print axioms HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_halfRange_log
