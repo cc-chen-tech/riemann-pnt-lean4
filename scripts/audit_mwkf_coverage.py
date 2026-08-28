@@ -11378,6 +11378,535 @@ def global_two_mobius_character_master_audit(
     }
 
 
+def centered_global_two_mobius_character_master_audit(
+    *,
+    squarefree_moduli: tuple[int, ...],
+    direct_coefficient: int,
+    type_base_coefficients: dict[int, complex],
+    companion_type_coefficients: dict[int, complex],
+    outer_product_coefficients: dict[int, complex],
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+) -> dict[str, object]:
+    """Verify the joint principal/centered all-character master.
+
+    Write the direct phase as ``J_s(t)=e_s(Bt)`` and Fourier-expand it
+    separately from the inverse phase ``e_s(-a/t)``.  If ``lambda`` and
+    ``psi`` are their respective multiplicative characters, the two Type
+    polynomials see the convolved character ``lambda*psi``.  The
+    ``psi=1`` row is exactly the Ramanujan principal projection, while
+    every ``psi != 1`` row is unchanged by inverse-phase centering and
+    descends to a nontrivial primitive conductor.
+
+    This finite identity is deliberately linear in both Mobius weights.
+    It proves the algebraic recombination underlying the weak joint gate,
+    but supplies no signed cross-modulus estimate.
+    """
+
+    moduli = tuple(int(value) for value in squarefree_moduli)
+    if not moduli:
+        raise ValueError("at least one squarefree modulus is required")
+    for modulus in moduli:
+        factors = _finite_prime_exponents(modulus) if modulus > 1 else {}
+        if modulus <= 1 or any(exponent != 1 for exponent in factors.values()):
+            raise ValueError("every modulus must be squarefree and greater than one")
+        if gcd(int(direct_coefficient), modulus) != 1:
+            raise ValueError("the direct coefficient must be a unit for every modulus")
+    if (
+        not type_base_coefficients
+        or not companion_type_coefficients
+        or not outer_product_coefficients
+    ):
+        raise ValueError("all coefficient families must be nonempty")
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if cutoff_u < 1 or cutoff_v < 1:
+        raise ValueError("both Type cutoffs must be positive")
+    boundary = max(cutoff_u, cutoff_v)
+
+    base = {int(label): complex(value) for label, value in type_base_coefficients.items()}
+    companion = {
+        int(label): complex(value)
+        for label, value in companion_type_coefficients.items()
+    }
+    outer = {
+        int(label): complex(value)
+        for label, value in outer_product_coefficients.items()
+    }
+
+    raw_direct = 0j
+    literal_direct = 0j
+    proper_mean_direct = 0j
+    principal_direct = 0j
+    centered_direct = 0j
+    raw_character_master = 0j
+    joint_all_inverse_master = 0j
+    principal_q1_master = 0j
+    centered_q_gt_1_master = 0j
+    modulus_rows: list[dict[str, object]] = []
+
+    for modulus in moduli:
+        factors = _finite_prime_exponents(modulus)
+        primes = tuple(sorted(factors))
+        phi_s = prod(prime - 1 for prime in primes)
+        root = cmath.exp(2j * cmath.pi / modulus)
+        mu_modulus = _finite_mobius(modulus)
+        units = tuple(
+            value for value in range(1, modulus) if gcd(value, modulus) == 1
+        )
+
+        discrete_logs: dict[int, dict[int, int]] = {}
+        character_roots: dict[int, complex] = {}
+        for prime in primes:
+            order = prime - 1
+            if prime == 2:
+                generator = 1
+            else:
+                order_prime_factors = tuple(_finite_prime_exponents(order))
+                generator = next(
+                    candidate
+                    for candidate in range(2, prime)
+                    if all(
+                        pow(candidate, order // divisor, prime) != 1
+                        for divisor in order_prime_factors
+                    )
+                )
+            logs: dict[int, int] = {}
+            current = 1
+            for exponent in range(order):
+                logs[current] = exponent
+                current = current * generator % prime
+            discrete_logs[prime] = logs
+            character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+        indices = tuple(product(*(range(prime - 1) for prime in primes)))
+
+        def character(
+            index: tuple[int, ...],
+            value: int,
+            modulus_value: int = modulus,
+            primes_value: tuple[int, ...] = primes,
+            logs_value: dict[int, dict[int, int]] = discrete_logs,
+            roots_value: dict[int, complex] = character_roots,
+        ) -> complex:
+            if gcd(value, modulus_value) != 1:
+                return 0j
+            result = 1 + 0j
+            for component, prime in zip(index, primes_value):
+                exponent = logs_value[prime][value % prime]
+                result *= roots_value[prime] ** (
+                    component * exponent % (prime - 1)
+                )
+            return result
+
+        def primitive_character(
+            index: tuple[int, ...],
+            active_primes: tuple[int, ...],
+            value: int,
+            primes_value: tuple[int, ...] = primes,
+            logs_value: dict[int, dict[int, int]] = discrete_logs,
+            roots_value: dict[int, complex] = character_roots,
+        ) -> complex:
+            if any(value % prime == 0 for prime in active_primes):
+                return 0j
+            result = 1 + 0j
+            for component, prime in zip(index, primes_value):
+                if prime not in active_primes:
+                    continue
+                exponent = logs_value[prime][value % prime]
+                result *= roots_value[prime] ** (
+                    component * exponent % (prime - 1)
+                )
+            return result
+
+        def finite_totient(value: int) -> int:
+            result = value
+            for prime in _finite_prime_exponents(value):
+                result = result // prime * (prime - 1)
+            return result
+
+        def ramanujan(label: int, modulus_value: int) -> int:
+            common = gcd(abs(label), modulus_value)
+            return _finite_mobius(modulus_value // common) * finite_totient(common)
+
+        def type_transforms(index: tuple[int, ...]) -> dict[str, complex]:
+            full = sum(
+                _finite_mobius(d) * coefficient * character(index, d)
+                for d, coefficient in base.items()
+            )
+            small = sum(
+                _finite_mobius(d) * coefficient * character(index, d)
+                for d, coefficient in base.items()
+                if d <= boundary
+            )
+            type_i = 0j
+            type_ii = 0j
+            for d, coefficient in base.items():
+                if d <= boundary:
+                    continue
+                divisors = _positive_divisors(d)
+                short_short = sum(
+                    _finite_mobius(b) * _finite_mobius(c)
+                    for b in divisors
+                    if b <= cutoff_u
+                    for c in _positive_divisors(d // b)
+                    if c <= cutoff_v
+                )
+                long_long = sum(
+                    _finite_mobius(b) * _finite_mobius(c)
+                    for b in divisors
+                    if b > cutoff_u
+                    for c in _positive_divisors(d // b)
+                    if c > cutoff_v
+                )
+                type_i += coefficient * character(index, d) * short_short
+                type_ii += coefficient * character(index, d) * long_long
+            return {
+                "full": full,
+                "small": small,
+                "type_i": type_i,
+                "type_ii": type_ii,
+                "reconstructed": small - type_i + type_ii,
+            }
+
+        direct_phase_transforms = {
+            index: sum(
+                root ** ((int(direct_coefficient) * unit) % modulus)
+                * character(index, unit).conjugate()
+                for unit in units
+            )
+            for index in indices
+        }
+        d_transforms = {index: type_transforms(index) for index in indices}
+        p_transforms = {
+            index: sum(
+                coefficient * character(index, label)
+                for label, coefficient in companion.items()
+            )
+            for index in indices
+        }
+
+        modulus_raw_direct = 0j
+        modulus_literal_direct = 0j
+        modulus_proper_mean_direct = 0j
+        modulus_principal_direct = 0j
+        modulus_centered_direct = 0j
+        for d, base_value in base.items():
+            mu_d = _finite_mobius(d)
+            if mu_d == 0:
+                continue
+            for p, companion_value in companion.items():
+                product_label = d * p % modulus
+                if gcd(product_label, modulus) != 1:
+                    continue
+                inverse_product = pow(product_label, -1, modulus)
+                direct_phase = root ** (
+                    (int(direct_coefficient) * product_label) % modulus
+                )
+                for a, outer_value in outer.items():
+                    inverse_phase = root ** ((-a * inverse_product) % modulus)
+                    density = ramanujan(a, modulus) / phi_s
+                    principal_indicator = int(a % modulus == 0)
+                    centered_kernel = (
+                        0j
+                        if principal_indicator
+                        else inverse_phase - density
+                    )
+                    coefficient = (
+                        mu_modulus
+                        * mu_d
+                        * base_value
+                        * companion_value
+                        * outer_value
+                        * direct_phase
+                    )
+                    modulus_raw_direct += coefficient * inverse_phase
+                    modulus_literal_direct += coefficient * principal_indicator
+                    modulus_proper_mean_direct += coefficient * (
+                        density - principal_indicator
+                    )
+                    modulus_principal_direct += coefficient * density
+                    modulus_centered_direct += coefficient * centered_kernel
+
+        raw_direct += modulus_raw_direct
+        literal_direct += modulus_literal_direct
+        proper_mean_direct += modulus_proper_mean_direct
+        principal_direct += modulus_principal_direct
+        centered_direct += modulus_centered_direct
+
+        raw_single_character = 0j
+        for index in indices:
+            raw_trace = sum(
+                root ** ((int(direct_coefficient) * unit) % modulus)
+                * character(index, unit).conjugate()
+                * sum(
+                    coefficient * root ** ((-a * pow(unit, -1, modulus)) % modulus)
+                    for a, coefficient in outer.items()
+                )
+                for unit in units
+            )
+            raw_single_character += (
+                raw_trace
+                * complex(d_transforms[index]["full"])
+                * p_transforms[index]
+            )
+        raw_single_character *= mu_modulus / phi_s
+        raw_character_master += raw_single_character
+
+        inverse_rows: list[dict[str, object]] = []
+        modulus_joint = 0j
+        modulus_principal_q1 = 0j
+        modulus_centered_q_gt_1 = 0j
+        all_convolved_type_splits_exact = True
+        for psi in indices:
+            active_primes = tuple(
+                prime
+                for component, prime in zip(psi, primes)
+                if component != 0
+            )
+            primitive_conductor = prod(active_primes)
+            cofactor = modulus // primitive_conductor
+            is_principal = primitive_conductor == 1
+            if is_principal:
+                primitive_gauss = 1 + 0j
+            else:
+                primitive_root = cmath.exp(2j * cmath.pi / primitive_conductor)
+                primitive_gauss = sum(
+                    primitive_character(psi, active_primes, unit)
+                    * primitive_root**unit
+                    for unit in range(1, primitive_conductor)
+                    if gcd(unit, primitive_conductor) == 1
+                )
+
+            label_rows: list[dict[str, object]] = []
+            inverse_transform = 0j
+            for a, outer_value in outer.items():
+                direct_gauss = sum(
+                    character(psi, unit)
+                    * root ** ((-a * unit) % modulus)
+                    for unit in units
+                )
+                if is_principal:
+                    conductor_gauss = complex(ramanujan(a, modulus))
+                elif gcd(a, primitive_conductor) != 1:
+                    conductor_gauss = 0j
+                else:
+                    conductor_gauss = (
+                        primitive_character(psi, active_primes, cofactor)
+                        * primitive_character(
+                            psi,
+                            active_primes,
+                            -a,
+                        ).conjugate()
+                        * primitive_gauss
+                        * ramanujan(a, cofactor)
+                    )
+                inverse_transform += outer_value * direct_gauss
+                label_rows.append(
+                    {
+                        "product_label": a,
+                        "direct_inverse_gauss_sum": direct_gauss,
+                        "conductor_inverse_gauss_sum": conductor_gauss,
+                        "conductor_descent_exact": abs(
+                            direct_gauss - conductor_gauss
+                        )
+                        < 1e-8,
+                    }
+                )
+
+            psi_contribution = 0j
+            for lambda_index in indices:
+                convolved = tuple(
+                    (left + right) % (prime - 1)
+                    for left, right, prime in zip(
+                        lambda_index,
+                        psi,
+                        primes,
+                    )
+                )
+                type_data = d_transforms[convolved]
+                type_split_exact = abs(
+                    complex(type_data["full"])
+                    - complex(type_data["reconstructed"])
+                ) < 1e-8
+                all_convolved_type_splits_exact &= type_split_exact
+                psi_contribution += (
+                    direct_phase_transforms[lambda_index]
+                    * inverse_transform
+                    * complex(type_data["full"])
+                    * p_transforms[convolved]
+                )
+            psi_contribution *= mu_modulus / (phi_s * phi_s)
+            modulus_joint += psi_contribution
+            if is_principal:
+                modulus_principal_q1 += psi_contribution
+            else:
+                modulus_centered_q_gt_1 += psi_contribution
+                inverse_rows.append(
+                    {
+                        "inverse_character_index": psi,
+                        "is_principal_inverse_character": False,
+                        "primitive_conductor": primitive_conductor,
+                        "ramanujan_cofactor": cofactor,
+                        "inverse_gauss_transform": inverse_transform,
+                        "label_rows": tuple(label_rows),
+                        "all_labels_match_conductor_descent": all(
+                            bool(row["conductor_descent_exact"])
+                            for row in label_rows
+                        ),
+                        "joint_master_contribution": psi_contribution,
+                    }
+                )
+
+        joint_all_inverse_master += modulus_joint
+        principal_q1_master += modulus_principal_q1
+        centered_q_gt_1_master += modulus_centered_q_gt_1
+        modulus_rows.append(
+            {
+                "modulus": modulus,
+                "outer_mobius_weight": mu_modulus,
+                "raw_direct_contribution": modulus_raw_direct,
+                "principal_direct_contribution": modulus_principal_direct,
+                "centered_direct_contribution": modulus_centered_direct,
+                "raw_single_character_contribution": raw_single_character,
+                "joint_all_inverse_character_contribution": modulus_joint,
+                "principal_q1_contribution": modulus_principal_q1,
+                "centered_q_gt_1_contribution": modulus_centered_q_gt_1,
+                "centered_inverse_character_rows": tuple(inverse_rows),
+                "all_convolved_character_type_splits_exact": (
+                    all_convolved_type_splits_exact
+                ),
+            }
+        )
+
+    tolerance = 1e-7
+    all_centered_rows = tuple(
+        row
+        for modulus_row in modulus_rows
+        for row in modulus_row["centered_inverse_character_rows"]
+    )
+    return {
+        "squarefree_moduli": moduli,
+        "short_cutoff_u": cutoff_u,
+        "short_cutoff_v": cutoff_v,
+        "small_d_boundary": boundary,
+        "raw_direct_packet": raw_direct,
+        "literal_principal_packet": literal_direct,
+        "proper_divisor_mean_packet": proper_mean_direct,
+        "principal_projection_packet": principal_direct,
+        "centered_packet": centered_direct,
+        "raw_global_character_master": raw_character_master,
+        "joint_all_inverse_character_master": joint_all_inverse_master,
+        "principal_q1_master": principal_q1_master,
+        "centered_q_gt_1_master": centered_q_gt_1_master,
+        "raw_global_character_identity_exact": abs(
+            raw_direct - raw_character_master
+        )
+        < tolerance,
+        "three_way_inverse_phase_split_exact": abs(
+            raw_direct
+            - literal_direct
+            - proper_mean_direct
+            - centered_direct
+        )
+        < tolerance,
+        "literal_plus_proper_equals_principal_projection": abs(
+            literal_direct + proper_mean_direct - principal_direct
+        )
+        < tolerance,
+        "joint_principal_centered_master_equals_raw_master": abs(
+            principal_q1_master
+            + centered_q_gt_1_master
+            - raw_character_master
+        )
+        < tolerance,
+        "principal_projection_retained_as_q1_row": abs(
+            principal_q1_master - principal_direct
+        )
+        < tolerance,
+        "centered_packet_retained_as_q_gt_1_rows": abs(
+            centered_q_gt_1_master - centered_direct
+        )
+        < tolerance,
+        "centered_inverse_principal_rows_deleted": all(
+            not bool(row["is_principal_inverse_character"])
+            for row in all_centered_rows
+        ),
+        "all_centered_inverse_rows_have_nontrivial_primitive_conductor": all(
+            int(row["primitive_conductor"]) > 1 for row in all_centered_rows
+        ),
+        "all_centered_inverse_rows_match_conductor_descent": all(
+            bool(row["all_labels_match_conductor_descent"])
+            for row in all_centered_rows
+        ),
+        "all_convolved_character_type_splits_exact": all(
+            bool(row["all_convolved_character_type_splits_exact"])
+            for row in modulus_rows
+        ),
+        "modulus_rows": tuple(modulus_rows),
+        "outer_modulus_mobius_weight_retained_linearly": True,
+        "inner_type_mobius_weight_retained_linearly": True,
+        "physical_product_label_retained_inside_inverse_gauss_sum": True,
+        "principal_and_centered_recombined_before_absolute_values": True,
+        "joint_kernel_master_equivalent_to_uncentered_master": abs(
+            joint_all_inverse_master - raw_direct
+        )
+        < tolerance,
+        "weak_joint_gate_is_not_separate_pecg_bounds": True,
+        "joint_signed_cross_modulus_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def joint_all_character_large_sieve_deficit_audit(
+    *,
+    modulus_exponent: Fraction,
+    long_mobius_exponent: Fraction,
+    product_label_exponent: Fraction,
+) -> dict[str, object]:
+    """Record the standard Farey large-sieve ceiling for the joint master.
+
+    There are ``T^(2*sigma)`` reduced inverse fractions across moduli
+    ``s asymp T^sigma``.  For product labels of length ``T^a`` and
+    squared L2 norm ``T^(a+epsilon)``, outer Cauchy followed by the
+    additive large sieve has linear exponent
+
+    ``sigma + max(a, 2*sigma)/2 + a/2``.
+
+    The original joint gate has target ``T^(rho+sigma+epsilon)``.  The
+    principal inverse-character row may be extracted exactly, but the
+    nonprincipal rows still occupy the full Farey family, so centering
+    alone does not alter this standard ceiling.
+    """
+
+    sigma = F(modulus_exponent)
+    rho = F(long_mobius_exponent)
+    product_length = F(product_label_exponent)
+    if min(sigma, rho, product_length) < 0:
+        raise ValueError("all exponents must be nonnegative")
+
+    fraction_family = 2 * sigma
+    large_sieve_energy = max(product_length, 2 * sigma) + product_length
+    standard_linear_bound = fraction_family / 2 + large_sieve_energy / 2
+    target = rho + sigma
+    deficit = _positive_part(standard_linear_bound - target)
+    return {
+        "modulus_exponent": sigma,
+        "long_mobius_exponent": rho,
+        "product_label_exponent": product_length,
+        "reduced_fraction_family_exponent": fraction_family,
+        "additive_large_sieve_energy_exponent": large_sieve_energy,
+        "standard_linear_bound_exponent": standard_linear_bound,
+        "joint_gate_target_exponent": target,
+        "remaining_deficit": deficit,
+        "principal_q1_row_algebraically_separated": True,
+        "centering_reduces_farey_family_exponent": False,
+        "standard_large_sieve_closes_joint_gate": deficit == 0,
+        "joint_signed_cross_modulus_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def primitive_product_farey_collision_audit(
     *,
     moduli: tuple[int, ...],

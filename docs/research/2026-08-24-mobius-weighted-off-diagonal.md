@@ -8,8 +8,9 @@
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
 > | Principal inverse-phase harmonics plus the raw zero mode | exact gcd-sampled reassembly proved in Section 9.106; sampled master unbounded |
-> | Principal-extracted Ramanujan/Type gate | exact proper-divisor mean and centered Type I/II split proved in Section 9.107; two joint analytic estimates unproved |
+> | Principal-extracted Ramanujan/Type gate | exact proper-divisor mean and centered Type I/II split proved in Section 9.107; separate analytic bounds are sufficient but stronger than the joint residual gate |
 > | Centered Type-I completion | zero dual mode removed and rank-one Ramanujan correction closed in Sections 9.108--9.109; global nonzero spectrum unproved |
+> | Joint all-character/conductor master | exact \(q=1\) principal plus \(q>1\) centered recombination proved in Section 9.113; signed cross-\(q\) estimate unproved, with standard large-sieve deficit \(T^{5/2}\) |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -16155,6 +16156,190 @@ The helper blomer_pascadi_2026_centered_type_i_audit evaluates every
 exponent in (9.739)--(9.742) as an exact rational number and leaves all
 global-coverage flags false.
 
+### 9.113 The joint all-character master keeps the principal row
+
+There is a necessary refinement of the global master (9.596).  Centering
+the inverse phase deletes its principal multiplicative character, but the
+full trace also contains the direct phase \(e_s(Bt)\).  Fourier-transforming
+their product as if it were one factor hides a character convolution and
+can incorrectly suggest that the whole principal row vanishes.  Put
+
+\[
+ \mathcal J_s(t)=e_s(Bt),\qquad
+ \rho_s(a)=\frac{c_s(a)}{\varphi(s)},
+\]
+
+and retain the principal-extracted kernel from (9.707),
+
+\[
+ \mathcal K_{s,a}^{\circ}(t)
+ =\mathbf1_{s\nmid a}
+  \left\{e_s(-a\bar t)-\rho_s(a)\right\}.
+ \tag{9.743}
+\]
+
+Pointwise on \(U(s)\), with no endpoint term,
+
+\[
+ \boxed{
+ e_s(-a\bar t)
+ =\mathbf1_{s\mid a}
+  +\left(\rho_s(a)-\mathbf1_{s\mid a}\right)
+  +\mathcal K_{s,a}^{\circ}(t).}
+ \tag{9.744}
+\]
+
+Use the multiplicative Fourier convention
+
+\[
+ \widehat{\mathcal J}_s(\lambda)
+ =\sum_{t\in U(s)}\overline{\lambda(t)}\mathcal J_s(t),
+ \qquad
+ G_\psi(n;s)=\sum_{u\in U(s)}\psi(u)e_s(nu).
+\]
+
+The substitution \(u=\bar t\) gives the exact inverse-phase transform
+
+\[
+ \sum_{t\in U(s)}\overline{\psi(t)}e_s(-a\bar t)
+ =G_\psi(-a;s),
+ \tag{9.745}
+\]
+
+whereas (9.743) gives
+
+\[
+ \boxed{
+ \sum_{t\in U(s)}\overline{\psi(t)}
+       \mathcal K_{s,a}^{\circ}(t)
+ =\begin{cases}
+ 0,&\psi=\chi_0,\\
+ G_\psi(-a;s),&\psi\ne\chi_0.
+ \end{cases}}
+ \tag{9.746}
+\]
+
+The second line remains valid when \(s\mid a\), since both sides then
+vanish for a nonprincipal character.  The centered product
+\(\mathcal J_s(t)\mathcal K_{s,a}^{\circ}(t)\) therefore requires a
+character convolution.  Put
+
+\[
+ \mathcal C_s(\psi;U)=\sum_aU(a)G_\psi(-a;s),
+\]
+
+Separate multiplicative inversion of \(\mathcal J_s\) and the inverse
+phase gives the boundary-exact double-character form
+
+\[
+ \boxed{
+ \mathscr S[\alpha,\beta,U]
+ =\sum_s\frac{\mu(s)}{\varphi(s)^2}
+   \sum_{\lambda,\psi\bmod s}
+   \widehat{\mathcal J}_s(\lambda)
+   \mathcal C_s(\psi;U)
+   D_s(\lambda\psi)P_s(\lambda\psi).}
+ \tag{9.747}
+\]
+
+Thus the Type character is \((\lambda\psi)(dp)\), not \(\psi(dp)\).
+In particular, deleting \(\psi=\chi_0\) does **not** imply that the
+convolved Type character \(\lambda\psi\) is nonprincipal.  The Type split
+(9.598)--(9.599) applies exactly to every convolved character and keeps
+the same small boundary and all nine signed Type pairs after one global
+square.
+
+The \(\psi=\chi_0\) row of (9.747) is not discarded.  Since
+\(G_{\chi_0}(-a;s)=c_s(a)=\varphi(s)\rho_s(a)\), it is exactly
+
+\[
+ \frac{\mu(s)}{\varphi(s)}
+ \sum_{\lambda\bmod s}
+ \widehat{\mathcal J}_s(\lambda)
+ \left(\sum_aU(a)\rho_s(a)\right)
+ D_s(\lambda)P_s(\lambda),
+ \tag{9.748}
+\]
+
+the local Ramanujan principal projection.  It is therefore the \(q=1\)
+row of the joint conductor master.  Every \(\psi\ne\chi_0\) has a
+nontrivial primitive conductor \(q>1\).  Writing \(s=qr\), its inverse
+Gauss factor has the already proved descent
+
+\[
+ G_\psi(-a;s)
+ =\mathbf1_{(a,q)=1}\psi^\ast(r)
+  \overline{\psi^\ast(-a)}\tau(\psi^\ast)c_r(a).
+ \tag{9.749}
+\]
+
+Consequently nonunit primes of the physical product \(a=h\delta\) occur
+only in the Ramanujan cofactor \(r\) on the centered rows.  Equations
+(9.747)--(9.749) do not separate the physical coefficient, the outer
+\(\mu(q)\mu(r)\), or the inner Type Möbius polynomial.
+
+Most importantly, the \(q=1\) and \(q>1\) rows must be added before any
+absolute value.  Their sum is identically the uncentered left side of
+(9.596).  When the coefficient families are instantiated by the residual
+reverse-Poisson packets of (9.113)--(9.117), the \(q=1\) row is the local
+projection \(\mathfrak P_{d,e,c}\), the \(q>1\) rows are the centered
+part \(\mathfrak N_{d,e,c}\), and their termwise sum is (9.117).
+After the already proved complementary boxes are removed, the analytic
+target is therefore the existing weakest gate
+
+\[
+ \left|\mathfrak P_{\rm top}+\mathfrak N_{\rm all}\right|
+ \ll_{\varepsilon,W}RS T^\varepsilon,
+ \tag{9.750}
+\]
+
+not separate estimates for the two summands in PECG\(_3).  This is an
+exact kernel-level identification of the residual interface, not a new
+estimate and not a second independent packet-exhaustion claim for (4.5).
+
+The standard large-sieve ceiling on (9.747) can now be stated without the
+previous ambiguity.  At the balanced face the reduced inverse fractions
+have family exponent \(2\sigma=6\).  The product-label interval has
+\(A=HL=T^5\) and squared coefficient norm \(T^{5+\varepsilon}\), so the
+additive large-sieve energy is
+
+\[
+ (A+S^2)\|U\|_2^2\ll T^{11+\varepsilon}.
+ \tag{9.751}
+\]
+
+Outer Cauchy over the \(T^{6+\varepsilon}\) fraction family then gives
+the standard linear bound
+
+\[
+ T^{6/2}T^{11/2+\varepsilon}
+ =T^{17/2+\varepsilon}.
+ \tag{9.752}
+\]
+
+The joint target is \(RS=T^6\), so the remaining deficit is exactly
+
+\[
+ \boxed{T^{17/2}/T^6=T^{5/2}.}
+ \tag{9.753}
+\]
+
+Extracting the \(q=1\) row classifies the principal projection but does
+not reduce the \(T^6\) Farey-family exponent of the \(q>1\) rows.  Thus
+ordinary additive or separate character large sieves still fail by
+\(T^{5/2}\).  The missing input is now sharply localized: a signed
+cross-\(q\) estimate for the recombined master (9.747), using the outer
+Möbius signs and the convolved Type blocks before Cauchy.
+
+The helper `centered_global_two_mobius_character_master_audit` verifies
+(9.743)--(9.749) for arbitrary supplied finite coefficient families.  It
+checks the raw single-character master, the three-way pointwise split,
+the \(q=1\) principal row, every \(q>1\) conductor descent, and the exact
+Type split for \(\lambda\psi\).  The exact-rational helper
+`joint_all_character_large_sieve_deficit_audit` verifies
+(9.751)--(9.753).  Both helpers leave the signed cross-modulus estimate
+and the coupled-kernel gate explicitly false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -16905,6 +17090,7 @@ Proved in this note:
 | Smooth archimedean product-spectrum adapter | bounded projective cost proved; joint arithmetic packet unproved | The four-variable Fourier expansion (9.587) has variation-weighted projective norm \(\ll\mathscr L^{C_s}\) by Sobolev--Parseval, (9.588).  Abel summation plus a dyadic maximal fourth-moment argument extends Cochrane--Shi to separated bounded-variation factors, (9.589)--(9.590).  Hence the actual smooth archimedean core weight preserves the all-gcd exponent \(5+\varepsilon\).  The same \(q\)-phase, two Möbius weights, reflection, and exhaustive global packet map are not consequences of this separation and remain unproved |
 | Fixed-modulus ratio-frequency/character square | exact inner-block diagonalization and Type determinant; cross-modulus two-Möbius estimate unproved | Taking the full squarefree modulus as cofactor rewrites the fixed-\(s\) unequal-label Gram as the positive ratio-frequency square (9.591).  On each smooth rank-one tensor, multiplicative Parseval gives (9.592), while the Type product transform factors as two Dirichlet polynomials, (9.593).  Opening the square and applying the remainder-free split (9.241) gives (9.595), retaining \(a=h\delta\) and the Type Möbius sign.  The fixed-modulus square necessarily removes the outer \(\mu(s)\); the required next object is its cross-modulus \((s_1,s_2)\) analogue formed before Cauchy, with both outer signs retained |
 | Global linear two-Möbius character master | exact pre-Cauchy Type I/II form; cross-modulus dispersion unproved | Applying multiplicative inversion linearly before the \(s\)-sum gives (9.596)--(9.597): \(\mu(s)\), \(\mu(d)\), the complete character family, and \(a=h\delta\) all remain in one finite sum.  The boundary-safe identity (9.598)--(9.599) splits only \(\mu(d)\), retains \(d\leq\max(U_0,V_0)\), and has no mixed rectangles or remainder.  A single subsequent global square has the signed cross-modulus kernel (9.600).  Published separate character moments do not bound the product of its trace, Type, and companion polynomials at the balanced face |
+| Joint all-character/conductor master | exact principal-centered recombination; signed cross-\(q\) estimate unproved | Separately transforming the direct and inverse phases gives the double-character master (9.747): the Type polynomial sees \(\lambda\psi\), so centering the inverse character \(\psi\) does not delete principal convolved Type rows.  The \(q=1\) row is exactly the Ramanujan principal projection (9.748); every \(q>1\) row has the primitive-conductor descent (9.749).  Adding them before absolute values recovers (9.117), hence the true residual target is the joint gate \(|\mathfrak P_{\rm top}+\mathfrak N_{\rm all}|\), not separate PECG bounds.  Standard Farey/character large sieves give \(T^{17/2+\varepsilon}\) against target \(T^{6+\varepsilon}\), an exact \(T^{5/2}\) deficit, (9.751)--(9.753) |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |
@@ -16921,7 +17107,7 @@ Proved in this note:
 | Two-dimensional mixed Abel adapter | smooth variation cost controlled; fixed rectangle handled next | Ordering both divisor lattices gives the exact pointwise telescoping and suffix identity (9.681)--(9.683).  Hence the mixed pairing is bounded by the adjacent-increment \(\ell^1\) norm times the largest arithmetic upper-right rectangle, (9.684).  The fundamental theorem of calculus and (5.14) bound the first factor by \(T^\varepsilon\) on every supplied physical dyadic weight, (9.685).  Reflection makes both remaining cofactor coordinates \(O(T^{2+o(1)})\) on the balanced face, (9.686).  Section 9.105 bounds each fixed-label rectangle; their joint signed AFE/reflection sum and the exhaustive packet map remain unproved |
 | Fixed-label principal divisor bound | local two-taper operator proved at \(T^\varepsilon\) cost; global packet sum unproved | Every suffix rectangle has at most \(\tau(R_1)\tau(R_2)\) entries and bounded taper factors, (9.687)--(9.688).  Together with the mixed Abel variation this proves (9.689) for each supplied fixed dyadic packet and fixed label pair.  The anchor, axes, and all three weighted boundaries have the same divisor-bound cost.  This does not permit absolute summation over all AFE/\(h,\delta\)/Type/dyadic/reflection labels; the packet-exhaustive normalization, principal twisted-moment estimate, and centered dispersion remain unproved |
 | Original principal \(h\)-harmonic projection | exact packet-exhaustive gcd-sampled reassembly; sampled master unbounded | Before the \(H\)-dyadic split, \(s\mid h\delta\) is exactly \(h=(s/(s,\delta))j\).  Poisson summation gives (9.693)--(9.694), so the nonzero principal harmonics plus the literal raw \(h=0\) packet are exactly the \((s,\delta)\)-spaced physical lattice, (9.695), and the main-term ledger becomes (9.696)--(9.697) without choosing a principal density.  Physical support and the core inequalities force \(M/(32\mathscr L^B)\le(s,\delta)\le2M\), making both new Poisson coordinates polylogarithmically short, (9.698)--(9.702).  The reduced master (9.703) still has both long Möbius weights; neither its analytic bound nor the complementary centered-harmonic dispersion is proved |
-| Principal-extracted Ramanujan and centered Type gate | exact nonoverlapping split and sufficient weaker gate; two joint analytic estimates unproved | Equation (9.706) splits the inverse phase into the literal \(s\mid h\delta\) family, its Ramanujan mean with that family removed, and a kernel that has zero unit-residue mean and vanishes on the removed labels, (9.707).  After the outer \(\mu(s)\), the residual mean has the proper-divisor-only formula (9.708), so the top reverse-Poisson divisor is deleted rather than counted twice.  The direct and proper-divisor pieces recombine before absolute values into the earlier reverse-Poisson principal lattice, (9.710a); its unit part is already proved and only the nonunit top face (9.69) remains.  Applying (9.241) only to the centered kernel gives (9.711)--(9.712), retaining \(\mu(s)\mu(b)\mu(c)\), \(a=h\delta\), all endpoints, and no mixed rectangles.  The elementary diagonal bound (9.713) makes the two joint target estimates in (9.714) sufficient.  The nonunit principal lattice and centered signed Type dispersion remain unproved |
+| Principal-extracted Ramanujan and centered Type gate | exact nonoverlapping split; separate analytic bounds superseded by the joint master | Equation (9.706) splits the inverse phase into the literal \(s\mid h\delta\) family, its Ramanujan mean with that family removed, and a kernel that has zero unit-residue mean and vanishes on the removed labels, (9.707).  After the outer \(\mu(s)\), the residual mean has the proper-divisor-only formula (9.708), so the top reverse-Poisson divisor is deleted rather than counted twice.  The direct and proper-divisor pieces recombine before absolute values into the earlier reverse-Poisson principal lattice, (9.710a).  Applying (9.241) only to the centered kernel gives (9.711)--(9.712), retaining \(\mu(s)\mu(b)\mu(c)\), \(a=h\delta\), all endpoints, and no mixed rectangles.  The separate estimates in (9.714) remain sufficient but are stronger than necessary; Section 9.113 replaces them by the exact joint all-character form equivalent to (9.119) |
 | Centered Type-I additive completion | zero dual frequency and rank-one correction closed; pure nonzero spectrum unproved | The exact transform (9.716) is a Kloosterman sum minus the rank-one Ramanujan correction forced by centering.  Its \(k=0\) row vanishes identically, (9.717), and Poisson in \(r=bc\,n\) gives only \(k\ne0\) with dual length \(bc\,s/R\), (9.718)--(9.719).  The finite Ramanujan averages (9.721)--(9.724) bound the correction globally by \(HLUVT^\varepsilon\), (9.725), so it lies within target on \(HLUV\le RS\); the balanced \(U=V=T^{1/4}\) choice has a half-power margin.  No Möbius or Kloosterman cancellation is spent.  The remaining Type-I term is the pure nonzero spectrum \(S(k,-h\delta;s)\) in (9.728), which must still be estimated jointly with centered Type II and the outer signs |
 | Pure Type-I character bridge | exact Gauss-product factorization; global varying-modulus moment unproved | For every squarefree \(s\), arbitrary nonzero \(a,k\), and every character on \(U(s)\), (9.730) gives \(\sum_d\overline{\chi(d)}S(k\bar d,-a;s)=G_\chi(-a)G_\chi(k)\), including all nonunit gcd strata.  Inversion embeds the completed Type-I packet into the linear master (9.733), retaining outer \(\mu(s)\), inner \(\mu(b)\mu(c)\), \(a=h\delta\), and \(k\ne0\).  Fixed-modulus Cauchy would erase the outer sign, so the remaining target is a signed varying-modulus Gauss-product moment jointly with centered Type II; no analytic bound is asserted |
 | Centered character conductor descent | principal row deleted and bare imprimitive lift costs only polylogarithms; primitive signed moment unproved | Restoring the rank-one correction before multiplicative inversion makes the principal character row exactly zero, (9.734)--(9.735).  For every remaining \(\chi\) of conductor \(q\mid s=qr\), CRT gives \(G_\chi(n;s)=\mathbf1_{(n,q)=1}\chi^\ast(r)\overline{\chi^\ast(n)}\tau(\chi^\ast)c_r(n)\), (9.736), and the exact master (9.737) retains all Möbius and physical labels.  The Ramanujan averages and \(\sum_r6^{\omega(r)}/\varphi(r)\ll\log^6(2R)\) show that the bare \(r\)-lift costs no power, (9.738), but do not control the \(r\)-dependent physical packet.  The remaining gate is a primitive unit-conductor cross-\(q\) moment jointly with centered Type II |

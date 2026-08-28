@@ -3543,6 +3543,118 @@ def test_global_linear_character_master_retains_both_mobius_weights() -> None:
     assert unequal["all_character_type_splits_exact"]
 
 
+def test_centered_global_master_recombines_q1_and_primitive_rows() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_global_two_mobius_character_master_audit",
+        None,
+    )
+    assert audit is not None, "centered global two-Mobius master is missing"
+
+    result = audit(
+        squarefree_moduli=(6, 10),
+        direct_coefficient=7,
+        type_base_coefficients={1: 1, 5: -2, 7: 1j, 14: 3, 17: -1j},
+        companion_type_coefficients={1: -1, 11: 2j, 13: 1},
+        outer_product_coefficients={3: -1j, 6: 2, 8: 1, 20: -2j},
+        short_cutoff_u=1,
+        short_cutoff_v=4,
+    )
+    assert result["raw_global_character_identity_exact"]
+    assert result["three_way_inverse_phase_split_exact"]
+    assert result["joint_principal_centered_master_equals_raw_master"]
+    assert result["principal_projection_retained_as_q1_row"]
+    assert result["centered_packet_retained_as_q_gt_1_rows"]
+    assert result["centered_inverse_principal_rows_deleted"]
+    assert result["all_centered_inverse_rows_have_nontrivial_primitive_conductor"]
+    assert result["all_centered_inverse_rows_match_conductor_descent"]
+    assert result["all_convolved_character_type_splits_exact"]
+    assert result["outer_modulus_mobius_weight_retained_linearly"]
+    assert result["inner_type_mobius_weight_retained_linearly"]
+    assert result["physical_product_label_retained_inside_inverse_gauss_sum"]
+    assert result["principal_and_centered_recombined_before_absolute_values"]
+    assert result["joint_kernel_master_equivalent_to_uncentered_master"]
+    assert result["weak_joint_gate_is_not_separate_pecg_bounds"]
+    assert not result["joint_signed_cross_modulus_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    conductors = {
+        row["primitive_conductor"]
+        for modulus_row in result["modulus_rows"]
+        for row in modulus_row["centered_inverse_character_rows"]
+    }
+    # A squarefree modulus has no primitive conductor divisible by 2:
+    # the local character group modulo 2 is trivial.
+    assert conductors == {3, 5}
+    assert all(
+        not row["is_principal_inverse_character"]
+        for modulus_row in result["modulus_rows"]
+        for row in modulus_row["centered_inverse_character_rows"]
+    )
+
+    mixed_conductors = audit(
+        squarefree_moduli=(3, 5, 6, 7, 10, 15),
+        direct_coefficient=1,
+        type_base_coefficients={1: 1, 2: -1, 3: 1j, 6: -2j, 11: 2},
+        companion_type_coefficients={1: -1, 4: 2j, 7: 3},
+        outer_product_coefficients={0: 1, 3: -1j, 5: 2, 15: 1 + 1j},
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+    )
+    assert mixed_conductors["raw_global_character_identity_exact"]
+    assert mixed_conductors["three_way_inverse_phase_split_exact"]
+    assert mixed_conductors[
+        "joint_principal_centered_master_equals_raw_master"
+    ]
+    assert mixed_conductors[
+        "all_centered_inverse_rows_match_conductor_descent"
+    ]
+    assert mixed_conductors["all_convolved_character_type_splits_exact"]
+    assert {
+        row["primitive_conductor"]
+        for modulus_row in mixed_conductors["modulus_rows"]
+        for row in modulus_row["centered_inverse_character_rows"]
+    } == {3, 5, 7, 15}
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.113 The joint all-character master keeps the principal row" in text
+    assert r"\mathcal J_s(t)\mathcal K_{s,a}^{\circ}(t)" in text
+    assert r"(\lambda\psi)(dp)" in text
+    assert r"q=1" in text
+    assert r"q>1" in text
+    assert r"\mathfrak P_{\rm top}+\mathfrak N_{\rm all}" in text
+
+
+def test_joint_all_character_standard_large_sieve_still_loses_five_halves() -> None:
+    audit = getattr(
+        coverage_audit,
+        "joint_all_character_large_sieve_deficit_audit",
+        None,
+    )
+    assert audit is not None, "joint all-character deficit audit is missing"
+
+    result = audit(
+        modulus_exponent=F(3),
+        long_mobius_exponent=F(3),
+        product_label_exponent=F(5),
+    )
+    assert result["reduced_fraction_family_exponent"] == F(6)
+    assert result["additive_large_sieve_energy_exponent"] == F(11)
+    assert result["standard_linear_bound_exponent"] == F(17, 2)
+    assert result["joint_gate_target_exponent"] == F(6)
+    assert result["remaining_deficit"] == F(5, 2)
+    assert result["principal_q1_row_algebraically_separated"]
+    assert not result["centering_reduces_farey_family_exponent"]
+    assert not result["standard_large_sieve_closes_joint_gate"]
+    assert not result["joint_signed_cross_modulus_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"T^{17/2+\varepsilon}" in text
+    assert r"T^{5/2}" in text
+    assert "standard large-sieve ceiling" in text
+
+
 def test_cross_modulus_zero_product_frequency_is_exactly_diagonal() -> None:
     audit = getattr(
         coverage_audit,
