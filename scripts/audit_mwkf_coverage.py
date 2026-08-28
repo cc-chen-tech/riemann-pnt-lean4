@@ -22135,6 +22135,121 @@ def common_g_character_reassembly_operator_audit(
     }
 
 
+def active_cofactor_character_sector_audit(
+    *,
+    common_modulus: int,
+    left_reduced_cofactor: int,
+    right_reduced_cofactor: int,
+    short_determinant: int,
+) -> dict[str, object]:
+    """Audit the principal and quadratic active-character sectors.
+
+    The determinant congruences fix ``x_1=D/r_2 mod r_1`` and
+    ``x_2=-D/r_1 mod r_2``.  Hence a pair of active character atoms
+    factors into bounded-D values and the cross evaluations
+    ``conj(chi_1(r_2))*chi_2(r_1)``.
+
+    Active components may both be principal while nonprincipality lives
+    on the common-g component.  If the active components are quadratic,
+    their cross evaluations collapse by Jacobi reciprocity to a sign
+    depending only on the two cofactors modulo four.
+    """
+
+    g = int(common_modulus)
+    r1 = int(left_reduced_cofactor)
+    r2 = int(right_reduced_cofactor)
+    determinant = int(short_determinant)
+    if min(g, r1, r2) <= 0 or determinant == 0:
+        raise ValueError("modulus factors must be positive and D nonzero")
+    if any(_finite_mobius(value) == 0 for value in (g, r1, r2)):
+        raise ValueError("all modulus factors must be squarefree")
+    if gcd(g, r1 * r2) != 1 or gcd(r1, r2) != 1:
+        raise ValueError("g,r1,r2 must be pairwise coprime")
+    if r1 % 2 == 0 or r2 % 2 == 0:
+        raise ValueError("quadratic reciprocity audit requires odd cofactors")
+    if gcd(abs(determinant), r1 * r2) != 1:
+        raise ValueError("D must be a unit on both active cofactors")
+
+    def inverse_mod(value: int, modulus: int) -> int:
+        return 0 if modulus == 1 else pow(value, -1, modulus)
+
+    def jacobi_symbol(numerator: int, odd_modulus: int) -> int:
+        if odd_modulus <= 0 or odd_modulus % 2 == 0:
+            raise ValueError("Jacobi denominator must be positive and odd")
+        numerator %= odd_modulus
+        denominator = odd_modulus
+        sign = 1
+        while numerator:
+            while numerator % 2 == 0:
+                numerator //= 2
+                if denominator % 8 in (3, 5):
+                    sign = -sign
+            numerator, denominator = denominator, numerator
+            if numerator % 4 == denominator % 4 == 3:
+                sign = -sign
+            numerator %= denominator
+        return sign if denominator == 1 else 0
+
+    active_left = determinant * inverse_mod(r2, r1) % r1
+    active_right = -determinant * inverse_mod(r1, r2) % r2
+    active_residue_factorization = bool(
+        active_left * r2 % r1 == determinant % r1
+        and active_right * r1 % r2 == -determinant % r2
+    )
+
+    cross_quadratic_twist = jacobi_symbol(r2, r1) * jacobi_symbol(r1, r2)
+    reciprocity_sign = (
+        -1 if r1 % 4 == 3 and r2 % 4 == 3 else 1
+    )
+    bounded_d_quadratic_factor = jacobi_symbol(
+        determinant,
+        r1,
+    ) * jacobi_symbol(-determinant, r2)
+    direct_active_quadratic_twist = jacobi_symbol(
+        active_left,
+        r1,
+    ) * jacobi_symbol(active_right, r2)
+    factored_active_quadratic_twist = (
+        bounded_d_quadratic_factor * cross_quadratic_twist
+    )
+    unit_count_g = sum(1 for value in range(g) if gcd(value, g) == 1)
+    common_component_has_nonprincipal_character = bool(unit_count_g > 1)
+    return {
+        "common_modulus": g,
+        "left_reduced_cofactor": r1,
+        "right_reduced_cofactor": r2,
+        "short_determinant": determinant,
+        "left_active_residue": active_left,
+        "right_active_residue": active_right,
+        "active_residue_factorization_verified": active_residue_factorization,
+        "active_character_twist_factorization": (
+            "chi1(D)*conj(chi2(-D))*conj(chi1(r2))*chi2(r1)"
+        ),
+        "common_component_has_nonprincipal_character": (
+            common_component_has_nonprincipal_character
+        ),
+        "both_active_components_may_be_principal_after_centering": (
+            common_component_has_nonprincipal_character
+        ),
+        "principal_active_cross_twist": 1,
+        "quadratic_cross_twist": cross_quadratic_twist,
+        "quadratic_reciprocity_sign": reciprocity_sign,
+        "quadratic_cross_twist_collapses_mod_four": bool(
+            cross_quadratic_twist == reciprocity_sign
+        ),
+        "bounded_D_quadratic_factor": bounded_d_quadratic_factor,
+        "direct_active_quadratic_twist": direct_active_quadratic_twist,
+        "factored_active_quadratic_twist": factored_active_quadratic_twist,
+        "full_quadratic_active_factorization_verified": bool(
+            direct_active_quadratic_twist == factored_active_quadratic_twist
+        ),
+        "quadratic_large_sieve_covers_principal_active_sector": False,
+        "principal_active_mobius_type_estimate_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

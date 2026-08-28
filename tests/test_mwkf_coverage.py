@@ -7570,6 +7570,53 @@ def test_common_g_operator_norm_boundary_is_documented() -> None:
     assert "arbitrary reconstructed packet:" in text
 
 
+def test_active_cofactor_character_sectors_are_exactly_classified() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_cofactor_character_sector_audit",
+        None,
+    )
+    assert audit is not None, "active-cofactor character audit is missing"
+    result = audit(
+        common_modulus=5,
+        left_reduced_cofactor=7,
+        right_reduced_cofactor=11,
+        short_determinant=1,
+    )
+    assert result["left_active_residue"] == 2
+    assert result["right_active_residue"] == 3
+    assert result["active_residue_factorization_verified"]
+    assert result["common_component_has_nonprincipal_character"]
+    assert result["both_active_components_may_be_principal_after_centering"]
+    assert result["principal_active_cross_twist"] == 1
+    assert result["quadratic_cross_twist"] == -1
+    assert result["quadratic_reciprocity_sign"] == -1
+    assert result["quadratic_cross_twist_collapses_mod_four"]
+    assert result["bounded_D_quadratic_factor"] == -1
+    assert result["direct_active_quadratic_twist"] == 1
+    assert result["factored_active_quadratic_twist"] == 1
+    assert result["full_quadratic_active_factorization_verified"]
+    assert not result["quadratic_large_sieve_covers_principal_active_sector"]
+    assert not result["principal_active_mobius_type_estimate_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.160 The active cofactor twist has principal and "
+        "reciprocal-collapse sectors"
+    ) in text
+    assert r"\overline{\chi_{1,r_1}(r_2)}\chi_{2,r_2}(r_1)" in text
+    assert "both active components" in text
+    assert "identically one" in text
+    assert "Quadratic reciprocity" in text
+    assert r"(M+N)(MN)^\varepsilon" in text
+    assert "principal-active face" in text
+    assert "remains unproved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

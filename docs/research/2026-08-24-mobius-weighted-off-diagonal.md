@@ -51,6 +51,7 @@
 > | Bounded-determinant Type master | Section 9.156 inserts the exact small/I/II split before restricting the one opened global square to \(0<|D|\leq D_0\).  The product-label weight is retained as \(W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta)\), not replaced by arbitrary coefficients.  All nine ordered Type cross blocks reassemble the bounded-\(D\) master exactly, with the modulus and Type Möbius signs still linear before the pair sum.  The primitive bounded-\(D\) target still needs one power.  The published-coverage table has no complete row: fixed-modulus estimates lose the signed varying-level packet, while the long--long results do not supply the required power or physical adapter |
 > | Resonant two-PV compatibility boundary | Section 9.157 proves that the Section 9.144 argument cannot simply be reused on bounded nonzero \(D\).  Every physical reduced modulus is at least \(T^{5/2}\); equal reduced moduli would give \(g\geq T^{5/2}\), contradicting \(g|D|\ll T\).  Hence the cross term has distinct ambient moduli and two independent character families.  The determinant incidence does not impose \(\chi_1=\chi_2\); a shared primitive-conductor slice is not exhaustive.  Applying Cauchy separately returns the exact outer-sign saturation of Section 9.135.  Thus the two PV savings close the resonant projector only, not the one-power bounded-\(D\) gate |
 > | Common-lift two-pole sum and reconstruction boundary | Section 9.158 parameterizes every common \(g\)-lift by \(x_1r_2\equiv t\), \(x_2r_1\equiv t-D\pmod g\).  For one fixed pair of multiplicative-character atoms the retained common trace is a fixed-degree mixed character sum with additive phase \(A/t+B/(t-D)\).  Prime-modulus Weil and squarefree CRT give \(g^{1/2+\varepsilon}g_{\rm exc}^{1/2}\), where \(g_{\rm exc}\mid D\).  This is a genuine fixed-atom square-root bound, but Section 9.159 proves that arbitrary character reconstruction is the matrix of a norm-one partial shift: entrywise Weil cancellation does not yield an operator-norm saving.  Thus \(1-\gamma/2\) is only the formal fixed-atom residual; without a physical restriction on the character coefficients the global bounded-\(D\) gate still requires one full power |
+> | Active-cofactor character sectors | Section 9.160 evaluates the active residues before any large sieve.  Their exact twist is \(\chi_{1,r_1}(D)\overline{\chi_{2,r_2}(-D)}\overline{\chi_{1,r_1}(r_2)}\chi_{2,r_2}(r_1)\).  The active-principal sector is allowed whenever nonprincipality sits on the common \(g\)-part, and its twist is identically one.  On the quadratic sector, reciprocity collapses the two high-conductor cross evaluations to a sign modulo four; for bounded \(D\), only bounded-conductor factors remain.  Thus neither a general cross-character oscillation claim nor the published quadratic large sieve covers every centered physical sector; the principal-active slice still requires the coupled Möbius/Type cancellation |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22852,6 +22853,97 @@ unit-domain partial shift, verifies its injectivity and exact delta-mass
 saturation, and records the two distinct exponents in (9.1058).  It
 leaves the centered physical compression, the active-cofactor average,
 the bounded-\(D\) gate, and the complete coupled-kernel gate unproved.
+
+### 9.160 The active cofactor twist has principal and reciprocal-collapse sectors
+
+There is one more exact simplification before attempting a character
+large sieve.  Decompose the two character atoms locally as
+\(\chi_i=\chi_{i,g}\chi_{i,r_i}\).  On the active residues (9.1011),
+multiplicativity gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\chi_{1,r_1}(x_1)\overline{\chi_{2,r_2}(x_2)}\\
+ &\quad=
+ \chi_{1,r_1}(D)\overline{\chi_{2,r_2}(-D)}
+ \overline{\chi_{1,r_1}(r_2)}\chi_{2,r_2}(r_1).
+ \end{aligned}}
+ \tag{9.1059}
+\]
+
+Thus the only genuinely cross-cofactor character factor is
+
+\[
+ \overline{\chi_{1,r_1}(r_2)}\chi_{2,r_2}(r_1).
+ \tag{9.1060}
+\]
+
+Two sectors prevent (9.1060) from being treated as automatic
+high-conductor oscillation.
+
+First, centering deletes only the character which is principal on the
+whole reduced modulus \(Q_i=gr_i\).  If \(g\) admits a nonprincipal
+character, both active components \(\chi_{i,r_i}\) may be principal while
+the total \(\chi_i\) remains nonprincipal on its common component.  On
+this allowed sector, (9.1059) is identically one.  No active-cofactor
+character large sieve sees it.
+
+Second, suppose the active characters are quadratic and \(r_1,r_2\) are
+odd.  Then (9.1059) becomes
+
+\[
+ \left(\frac D{r_1}\right)
+ \left(\frac{-D}{r_2}\right)
+ \left(\frac{r_2}{r_1}\right)
+ \left(\frac{r_1}{r_2}\right).
+ \tag{9.1061}
+\]
+
+Quadratic reciprocity gives
+
+\[
+ \boxed{
+ \left(\frac{r_2}{r_1}\right)
+ \left(\frac{r_1}{r_2}\right)
+ =(-1)^{\frac{r_1-1}{2}\frac{r_2-1}{2}}.}
+ \tag{9.1062}
+\]
+
+For fixed bounded \(D\), the first two factors in (9.1061) are fixed
+bounded-conductor characters of \(r_1,r_2\), after the usual Kronecker
+reciprocity.  The apparent pair of conductor-\(r_i\) oscillations in
+(9.1060) has therefore collapsed to bounded-conductor congruence data.
+
+The published quadratic large sieve genuinely proves, for squarefree odd
+variables, an \((M+N)(MN)^\varepsilon\) mean-square envelope; see
+[Liu, equation (10)](https://arxiv.org/abs/2505.09637), an explicit form
+of Heath--Brown's theorem.  But its input is one quadratic family applied
+to an external coefficient sequence.  It neither restores oscillation
+after the reciprocal product (9.1062) has collapsed nor covers the
+active-principal sector.  Applying it to only the remaining high-order
+character rows cannot prove the full centered master.
+
+Consequently every exhaustive theorem must still bound the slice
+
+\[
+ \mu(r_1)\mu(r_2)\times
+ \{\text{common-}g\text{ packet}\}\times
+ \{\text{physical Type/AFE coefficient}\}
+ \tag{9.1063}
+\]
+
+with no active-character oscillation available.  This identifies where
+the promised pre-Cauchy two-Möbius dispersion is unavoidable: it is not
+merely a device for the generic character sector, but is already required
+on an allowed principal-active face.
+
+The finite helper `active_cofactor_character_sector_audit` verifies the
+active residue factorization and the Jacobi reciprocity identity for
+arbitrary supplied odd squarefree coprime cofactors.  It records the
+allowed active-principal face and the quadratic high-conductor collapse,
+while leaving the principal-active Möbius/Type estimate, bounded-\(D\)
+gate, and complete coupled-kernel gate false.
 
 ## 10. What has and has not been proved
 
