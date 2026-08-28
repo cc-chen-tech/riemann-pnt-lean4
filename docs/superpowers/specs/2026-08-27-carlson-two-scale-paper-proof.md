@@ -1058,6 +1058,24 @@ segment, and a right tail uniform in the damping.  The remaining boundary
 Gamma gate is now algebraic/measure-theoretic assembly with the rotated
 Mellin identity, not a further oscillatory estimate.
 
+The negative phase selected by the upper Gamma-ray rotation now has its own
+canonical boundary value in Lean.  Natural truncations of
+`integral_[1,N] u^(z-1)e^(-icu) du` converge for `Re(z)<1`, and their distance
+to the canonical value satisfies the same `8*N^(Re(z)-1)/c` bound.  In
+addition, for `0<Re(z)<1` and `r>0`, the actual set integral on `Ioi A` is
+absolutely integrable and satisfies
+
+\[
+ \left|\int_A^\infty u^{z-1}e^{-ru}e^{-icu}\,du\right|
+ \le \frac{8}{c}A^{\Re z-1},                                      \tag{8.16}
+\]
+
+uniformly in `r`.  This is obtained by first majorizing with
+`u^(Re(z)-1)e^(-ru)` and then passing the finite bound (8.14) to the
+improper limit.  Thus the final Abel assembly can compare actual whole-ray
+damped integrals with the canonical conditional boundary value without any
+unproved interchange of limits.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta
