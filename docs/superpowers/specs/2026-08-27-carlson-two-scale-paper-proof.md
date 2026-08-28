@@ -492,8 +492,21 @@ away from the trivial endpoint cases), and closedness of `<=`.  Instantiating
 it gives the exact closed-strip inequality with endpoint second moments
 `A,B`, again without a square-root loss and with only the three permitted
 axioms.  This is distinct from the deep Conrey--Deshouillers--Iwaniec estimate
-itself.  The Conrey left endpoint and the finite Gaussian covering still
-remain.
+itself.  The Conrey left endpoint still remains.
+
+The finite Gaussian covering is now formalized independently.  The explicit
+midpoint grid covers `[U,V]` by windows of radius `Delta/2`, uses at most
+```
+floor ((V-U)/Delta) + 1
+```
+centres, and promotes a uniform full Gaussian local integral bound `L` to
+```
+integral_[U,V] g
+  <= exp(1/4) * (floor ((V-U)/Delta) + 1) * L.
+```
+The factor `exp(1/4)` is exactly the reciprocal of the least Gaussian weight
+on a half-window.  This step is purely real-variable and its axiom audit also
+contains only `propext`, `Classical.choice`, and `Quot.sound`.
 
 At the first formal target `R=4`, the closed-strip theorem has also been
 specialized at `x=2/3`.  The interpolation weights reduce exactly to
@@ -509,7 +522,8 @@ a final density axiom:
    specialization, including its uniformity in the local center;
 2. for the first unconditional formal target `delta=1/20`, use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
-   specialization, and prove the finite Gaussian covering argument; extending
+   specialization, and connect the resulting local norm to the now-proved
+   finite Gaussian covering theorem; extending
    the same package to `R=1000` is an optional
    strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional
