@@ -185,3 +185,17 @@ small interval.  Its argument has the same left and right limit, whereas
 lift is therefore the left-hand lift plus exactly `m*pi`.  This final logarithm
 and lift-alignment statement is not implied merely by (6) and remains the next
 formal checkpoint.
+
+The singular-power part of that statement is now exact.  The definitions
+`verticalPowerLeftLog m r` and `verticalPowerRightLog m r` exponentiate, for
+`r>0`, to `(-I*r)^m` and `(I*r)^m`, respectively, and Lean proves
+
+\[
+  \operatorname{Im}L_{\mathrm{right}}(m,r)
+  -\operatorname{Im}L_{\mathrm{left}}(m,r)=m\pi.
+\tag{7}
+\]
+
+The common `m*log r` term cancels in (7).  It remains to add the same local
+continuous logarithm of the regular factor `h` to both sides and connect the
+resulting component lifts to the global path.

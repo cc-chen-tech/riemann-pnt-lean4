@@ -1981,3 +1981,11 @@ This closes the analytic-order-to-vertical-factorization step without assuming
 the desired phase jump.  A continuous logarithm of `h` and the exact alignment
 of the two component lifts by `m*pi` are still required before the bridge can
 be inserted into the global argument path.
+
+The explicit singular-power logarithms are also now formalized.  For `r>0`
+their exponentials are exactly `(-I*r)^m` and `(I*r)^m`, and their imaginary
+parts differ by exactly `m*pi`.  Thus the multiplicity-dependent part of the
+phase jump is closed.  What remains locally is to construct one continuous
+logarithm of the nonvanishing regular factor `h` across the zero and add it to
+both explicit power logarithms; the global component attribution is still
+downstream.

@@ -116,6 +116,49 @@ theorem argumentCrossingBridgeIndices_card (alpha : ℝ) (m : ℕ) :
     ⌈(alpha - Real.pi / 2) / Real.pi⌉ = ⌈x⌉ by rfl, hceil]
   exact_mod_cast hcardInt
 
+/-- An explicit logarithm of the vertical order-`m` factor on the left of a
+zero, where `I * (t - tau) = -I * r` with `r > 0`. -/
+noncomputable def verticalPowerLeftLog (m : ℕ) (r : ℝ) : ℂ :=
+  (m : ℂ) *
+    ((Real.log r : ℂ) + ((-Real.pi / 2 : ℝ) : ℂ) * I)
+
+/-- An explicit logarithm of the vertical order-`m` factor on the right of a
+zero, where `I * (t - tau) = I * r` with `r > 0`. -/
+noncomputable def verticalPowerRightLog (m : ℕ) (r : ℝ) : ℂ :=
+  (m : ℂ) *
+    ((Real.log r : ℂ) + ((Real.pi / 2 : ℝ) : ℂ) * I)
+
+theorem exp_verticalPowerLeftLog (m : ℕ) {r : ℝ} (hr : 0 < r) :
+    Complex.exp (verticalPowerLeftLog m r) =
+      (-I * (r : ℂ)) ^ m := by
+  rw [verticalPowerLeftLog, Complex.exp_nat_mul]
+  congr 1
+  have hcos : Real.cos (-Real.pi / 2) = 0 := by
+    rw [show -Real.pi / 2 = -(Real.pi / 2) by ring,
+      Real.cos_neg, Real.cos_pi_div_two]
+  have hsin : Real.sin (-Real.pi / 2) = -1 := by
+    rw [show -Real.pi / 2 = -(Real.pi / 2) by ring,
+      Real.sin_neg, Real.sin_pi_div_two]
+  apply Complex.ext
+  · simp [Complex.exp_re, Real.exp_log hr, hcos]
+  · simp [Complex.exp_im, Real.exp_log hr, hsin]
+
+theorem exp_verticalPowerRightLog (m : ℕ) {r : ℝ} (hr : 0 < r) :
+    Complex.exp (verticalPowerRightLog m r) =
+      (I * (r : ℂ)) ^ m := by
+  rw [verticalPowerRightLog, Complex.exp_nat_mul]
+  congr 1
+  apply Complex.ext <;>
+    simp [Complex.exp_re, Complex.exp_im, Real.exp_log hr]
+
+/-- The two explicit logarithms of the vertical order-`m` power differ in
+argument by exactly `m * π`; the common radial logarithm cancels. -/
+theorem verticalPowerRightLog_im_sub_left (m : ℕ) (r : ℝ) :
+    (verticalPowerRightLog m r).im -
+        (verticalPowerLeftLog m r).im = (m : ℝ) * Real.pi := by
+  simp [verticalPowerRightLog, verticalPowerLeftLog, Complex.mul_im]
+  ring
+
 @[simp]
 theorem mem_argumentCrossingIndices_iff {alpha beta : ℝ} {k : ℤ} :
     k ∈ argumentCrossingIndices alpha beta ↔

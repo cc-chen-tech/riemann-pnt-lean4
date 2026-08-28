@@ -25,3 +25,22 @@ example (alpha : ℝ) (m : ℕ) :
   exact argumentCrossingBridgeIndices_card alpha m
 
 #print axioms argumentCrossingBridgeIndices_card
+
+-- The explicit logarithms of the two vertical power factors exponentiate to
+-- the correct sides and differ in argument by exactly `m * pi`.
+example (m : ℕ) {r : ℝ} (hr : 0 < r) :
+    Complex.exp (verticalPowerLeftLog m r) =
+      (-Complex.I * (r : ℂ)) ^ m := by
+  exact exp_verticalPowerLeftLog m hr
+
+example (m : ℕ) {r : ℝ} (hr : 0 < r) :
+    Complex.exp (verticalPowerRightLog m r) =
+      (Complex.I * (r : ℂ)) ^ m := by
+  exact exp_verticalPowerRightLog m hr
+
+example (m : ℕ) (r : ℝ) :
+    (verticalPowerRightLog m r).im -
+        (verticalPowerLeftLog m r).im = (m : ℝ) * Real.pi := by
+  exact verticalPowerRightLog_im_sub_left m r
+
+#print axioms verticalPowerRightLog_im_sub_left
