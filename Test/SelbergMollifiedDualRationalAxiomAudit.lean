@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergMollifiedDualRational
+
+open HardyTheorem
+
+#print axioms selbergMollifiedDualPolynomial_eq_rationalCollectedPolynomial
+#print axioms one_div_nat_mul_le_abs_sub_dualRationalFrequency
+#print axioms integral_gaussian_normSq_selbergMollifiedDualPolynomial_le_rationalMassEnergy
