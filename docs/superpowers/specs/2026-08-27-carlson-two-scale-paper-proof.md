@@ -783,10 +783,12 @@ a final density axiom:
    (8.4)--(8.6) has now also formalized the coefficient part of the exact
    block identity: filtering factor pairs by product and then by owner equals
    first restricting the zeta index to that owner block and then collecting
-   by product.  What remains is the finite double-sum/product identity and
-   the existing critical-line `cpow`-to-exponential conversion, followed by
-   integrating the pointwise prefix inequality; this supplies the second
-   factor `K+1` and hence the intended logarithmic-square maximal loss.
+   by product.  The finite double-sum/product identity and the existing exact
+   critical-line `cpow`-to-exponential conversion are now formal too, so every
+   raw block times the concrete Selberg mollifier is exactly the polynomial
+   used in the Gaussian tree estimate.  What remains in (8.6) is integrating
+   the pointwise prefix inequality; this supplies the second factor `K+1`
+   and hence the intended logarithmic-square maximal loss.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved

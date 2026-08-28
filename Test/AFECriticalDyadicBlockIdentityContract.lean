@@ -2,5 +2,8 @@ import HardyTheorem.AFECriticalDyadicBlockIdentity
 
 #check HardyTheorem.AFE.dyadicOwnerSupport
 #check HardyTheorem.AFE.dyadicMollifiedBlockCoeff_eq_ownerPairs
+#check HardyTheorem.AFE.dyadicOwnerDirichletPolynomial
+#check HardyTheorem.AFE.dyadicOwnerDirichletPolynomial_mul_mollifier_eq_blockPolynomial
 
 #print axioms HardyTheorem.AFE.dyadicMollifiedBlockCoeff_eq_ownerPairs
+#print axioms HardyTheorem.AFE.dyadicOwnerDirichletPolynomial_mul_mollifier_eq_blockPolynomial
