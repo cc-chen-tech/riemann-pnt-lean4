@@ -115,21 +115,26 @@ hence
  c_U(m)=\sum_{d\mid m}\mu(d)=0.                            \tag{4.1}
 \]
 
-Also `|c_U(m)|<=d(m)`.  For every fixed `R>2`, split the divisor pairs
-`m=uv` according as `u<=Y_0` or `u>Y_0`.  In the first range, sum
-`v>Y_0/u` by the integral test and then sum `u^(-1)`; in the second range,
-sum `v>=1` and use the tail of `sum u^(-R)`.  This proves
+There is a shorter absolute-convergence estimate which is also stronger.
+Let `M_{Y_0}` be the sharp Moebius cutoff.  Both
+`M_U-M_{Y_0}` and `1/zeta-M_{Y_0}` are supported beyond `Y_0`, and their
+coefficients have modulus at most one.  Hence, for every fixed `R>1`,
 
 \[
- \sum_{m>Y_0}d(m)m^{-R}
- \ll_R Y_0^{1-R}(1+\log Y_0),                              \tag{4.2}
+ \left|M_U(R+it)-\frac1{\zeta(R+it)}\right|
+ \le 2\sum_{n>Y_0}n^{-R}\ll_R Y_0^{1-R}.                 \tag{4.2}
 \]
 
-and therefore, uniformly in `t`,
+Since `F_U=zeta(M_U-1/zeta)`, this gives, uniformly in `t`,
 
 \[
- |F_U(R+it)|\ll_R U^{a(1-R)}\log U.                        \tag{4.3}
+ |F_U(R+it)|\ll_R U^{a(1-R)}.                              \tag{4.3}
 \]
+
+At `R=4` the formal proof uses the elementary telescoping majorant
+`sum_{n>Y_0}n^{-4}<=Y_0^{-3}` and `|zeta(4+it)|<=5/3`, obtaining the explicit
+bound `|F_U(4+it)|<=(10/3)Y_0^{-3}`.  No cancellation between the taper and
+the complete Moebius tail is used.
 
 This is exact coefficient cancellation, not heuristic square-root
 cancellation.  The critical-line positive diagonal is not removed: (3.2)
@@ -175,7 +180,7 @@ Equations (3.3) and (4.3) consequently give, uniformly in `w`,
  \|\Phi_{U,w}(1/2)\|_2^2\ll \Delta U^\varepsilon,
  \qquad
  \|\Phi_{U,w}(R)\|_2^2
- \ll \Delta U^{2a(1-R)}(\log U)^2.                        \tag{5.4}
+ \ll \Delta U^{2a(1-R)}.                                  \tag{5.4}
 \]
 
 The `U^epsilon` is only a uniform reserve; Conrey's asymptotic is stronger.
@@ -452,16 +457,25 @@ convergence, and the `MemLp.toLp` derivative bridge then give an actual
 `1/2 < Re(z) < 4`.  The totalization makes no differentiability claim on the
 two artificial boundary lines themselves.  Thus the local analyticity
 hypothesis needed inside the Hadamard strip is no longer an open gate.  The
-endpoint norm estimates, the finite Gaussian covering, and the Conrey local
-mean-square specialization still remain.
+right endpoint has also been closed with exact constants: the taper and
+complete Moebius tails are separately bounded by `Y0^-3`, the pole-removal
+factor has norm at most one, and the resulting Gaussian `L²` norm at
+`Re(z)=4` is bounded by
+```
+exp(16/Delta^2) * ((10/3) * Y0^-3)^2
+  * sqrt(pi / (1/Delta^2)).
+```
+The Conrey left endpoint, the Hadamard specialization, and the finite
+Gaussian covering still remain.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. for the first unconditional formal target `delta=1/20`, prove the boundary
-   norm estimates and finite Gaussian covering argument; extending the same package to `R=1000` is an optional
+2. for the first unconditional formal target `delta=1/20`, use item 1 for
+   the left boundary norm, then prove the Hadamard specialization and finite
+   Gaussian covering argument; extending the same package to `R=1000` is an optional
    strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
