@@ -4698,6 +4698,74 @@ def test_two_taper_weighted_adapter_is_axis_sparse_plus_mixed() -> None:
         )
 
 
+def test_two_dimensional_mixed_abel_is_exact_and_variation_bounded() -> None:
+    audit = getattr(
+        coverage_audit,
+        "two_dimensional_mixed_abel_audit",
+        None,
+    )
+    assert audit is not None, "two-dimensional mixed Abel helper is missing"
+
+    first_coordinates = (1, 2, 6)
+    second_coordinates = (1, 5, 10)
+    coefficients = {
+        (first, second): F(3 * first - 2 * second)
+        for first in first_coordinates
+        for second in second_coordinates
+    }
+    weights = {
+        (first, second): F(first * second + first**2 - 3 * second)
+        for first in first_coordinates
+        for second in second_coordinates
+    }
+    result = audit(
+        first_coordinates=first_coordinates,
+        second_coordinates=second_coordinates,
+        coefficients=coefficients,
+        full_grid_weights=weights,
+    )
+    assert result["mixed_direct_equals_increment_suffix_reassembly"]
+    assert result["every_pointwise_mixed_difference_is_reconstructed"]
+    assert result["variation_bound_holds"]
+    assert result["mixed_increment_l1_norm"] > 0
+    assert result["maximum_suffix_coefficient_mass"] > 0
+
+    additive_weights = {
+        (first, second): F(7 * first - 4 * second + 3)
+        for first in first_coordinates
+        for second in second_coordinates
+    }
+    additive = audit(
+        first_coordinates=first_coordinates,
+        second_coordinates=second_coordinates,
+        coefficients=coefficients,
+        full_grid_weights=additive_weights,
+    )
+    assert additive["mixed_increment_l1_norm"] == 0
+    assert additive["direct_mixed_pairing"] == 0
+    assert additive["increment_suffix_pairing"] == 0
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.104 Two-dimensional Abel" in text
+    assert r"\nabla_{ij}W\,C_{ij}^{\nearrow}" in text
+    assert "for each supplied fixed" in text
+    assert "mixed-variation seminorm is controlled" in text
+    assert "packet-exhaustive physical variation" in text
+    assert "global double reflected-tail reassembly" in text
+    assert "### 9.105 Each fixed-label divisor rectangle" in text
+    assert r"\tau(R_1)\tau(R_2)" in text
+    assert r"|\mathscr V_{12}(W)|\ll_{\varepsilon,W}T^\varepsilon" in text
+    assert "two-taper principal divisor-lattice operator" in text
+
+    with pytest.raises(ValueError, match="strictly increasing"):
+        audit(
+            first_coordinates=(1, 6, 2),
+            second_coordinates=second_coordinates,
+            coefficients=coefficients,
+            full_grid_weights=weights,
+        )
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

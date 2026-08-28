@@ -14996,6 +14996,205 @@ zero_direct_two_taper_coprime_reassembly_audit independently verifies
 separately.  Its physical mixed-interaction bound, full AFE/reflection
 adapter, principal analytic bound, and coupled-kernel flags remain false.
 
+### 9.104 Two-dimensional Abel removes the physical variation cost
+
+The mixed-interaction gate in (9.677) still appears to carry an arbitrary
+weight on a divisor lattice.  A finite two-dimensional Abel identity
+separates that weight from the arithmetic tail rectangles exactly.
+List the divisors in increasing order,
+
+\[
+ 1=r_0<r_1<\cdots<r_I,\qquad
+ 1=s_0<s_1<\cdots<s_J,
+\]
+
+and extend the arithmetic coefficient by zero on inadmissible pairs.  In
+the application,
+
+\[
+ c_{ij}
+ =\mathbf1_{(r_i,s_j)=1}\mu(r_i)\mu(s_j)
+  p_N(qr_i)p_N(qs_j).
+\tag{9.680}
+\]
+
+For \(i,j\geq1\), define the adjacent mixed increment and the upper-right
+coefficient rectangle
+
+\[
+\begin{aligned}
+ \nabla_{ij}W
+ &:=
+ W(r_i,s_j)-W(r_{i-1},s_j)
+ -W(r_i,s_{j-1})+W(r_{i-1},s_{j-1}),\\
+ C_{ij}^{\nearrow}
+ &:=
+ \sum_{u=i}^{I}\sum_{v=j}^{J}c_{uv}.
+\end{aligned}
+\tag{9.681}
+\]
+
+Finite telescoping first gives, without any regularity assumption,
+
+\[
+ \Delta_{12}W(r_i,s_j)
+ =\sum_{u=1}^{i}\sum_{v=1}^{j}\nabla_{uv}W.
+\tag{9.682}
+\]
+
+Substitution into \(\mathscr V_{12}\) and interchange of two finite sums
+then gives the exact mixed Abel identity
+
+\[
+\boxed{
+ \sum_{i=0}^{I}\sum_{j=0}^{J}
+ c_{ij}\Delta_{12}W(r_i,s_j)
+ =
+ \sum_{i=1}^{I}\sum_{j=1}^{J}
+ \nabla_{ij}W\,C_{ij}^{\nearrow}.}
+\tag{9.683}
+\]
+
+In particular,
+
+\[
+\boxed{
+ |\mathscr V_{12}(W)|
+ \leq
+ \left(\sum_{i,j\geq1}|\nabla_{ij}W|\right)
+ \max_{i,j\geq1}|C_{ij}^{\nearrow}|.}
+\tag{9.684}
+\]
+
+The first factor in (9.684) has no hidden power cost for the physical
+smooth weights.  Indeed, if
+\(\widetilde W(x,y)=W(e^x,e^y)\) is \(C^2\), the fundamental theorem of
+calculus on each disjoint grid rectangle gives
+
+\[
+ \nabla_{ij}W
+ =
+ \int_{\log r_{i-1}}^{\log r_i}
+ \int_{\log s_{j-1}}^{\log s_j}
+ \partial_x\partial_y\widetilde W(x,y)\,dy\,dx.
+\]
+
+Therefore
+
+\[
+\boxed{
+ \sum_{i,j\geq1}|\nabla_{ij}W|
+ \leq
+ \iint_{\mathbb R^2}
+ |\partial_x\partial_y\widetilde W(x,y)|\,dx\,dy.}
+\tag{9.685}
+\]
+
+For one physical dyadic packet
+\(W(r,s)=\Psi(r/R,s/S,\ldots)\), the right side is bounded by a fixed
+logarithmic seminorm of \(\Psi\).  Equation (5.14) consequently makes it
+\(O(\mathscr L^{C_W})=T^\varepsilon\).  Thus, **for each supplied fixed
+dyadic packet, its smooth mixed-variation seminorm is controlled**.  This
+does not construct the still-missing exhaustive AFE/reflection packet map.
+
+What remains in (9.684) is purely arithmetic.  The rectangle
+\(C_{ij}^{\nearrow}\) has \(r\geq r_i\), \(s\geq s_j\).  Reflecting
+\(r=R_1/k_1\), \(s=R_2/k_2\) gives the exact coordinate bounds
+
+\[
+ \boxed{
+ k_1\leq\frac{R_1}{r_i}\leq\frac{a_1}{r_i},\qquad
+ k_2\leq\frac{R_2}{s_j}\leq\frac{a_2}{s_j}.}
+\tag{9.686}
+\]
+
+Only grid rectangles meeting the support of the dyadic derivative occur.
+Hence \(r_i\asymp R\), \(s_j\asymp S\) there.  On the balanced
+\(\theta=3\) principal face, \(a_i\ll T^{5+o(1)}\) and
+\(R,S\asymp T^3\), so both reflected coordinates in (9.686) have length
+\(O(T^{2+o(1)})\).  This agrees with (9.664a), now simultaneously in the
+two mixed coordinates and with the full smooth weight removed at
+\(T^\varepsilon\) cost.
+
+The resulting **global double reflected-tail reassembly** is still
+unproved.  Its coefficients retain the two Möbius signs, coprimality, the
+shared-prime correction, both product labels \(h_i\delta_i\), and the
+remaining AFE/reflection packet.  Section 9.105 bounds each fixed-label
+rectangle elementarily, but (9.684) permits no outer absolute summation
+over the complete label family.  The supplied packet's smooth variation
+is no longer a local obstruction; packet-exhaustive physical variation
+and the full signed outer reassembly remain unproved.
+
+The helper two_dimensional_mixed_abel_audit verifies (9.681)--(9.684)
+for arbitrary finite rational grids, coefficients, and weights.  It
+checks every pointwise telescoping identity, the complete suffix
+reassembly, and the sharp variation inequality.  The smooth implication
+(9.685) is the ordinary fundamental theorem of calculus plus (5.14).
+Section 9.105 bounds each fixed-label rectangle; its packet-exhaustive
+global reassembly and the coupled-kernel gate remain false.
+
+### 9.105 Each fixed-label divisor rectangle is elementary
+
+The arithmetic rectangle in (9.684) does not itself require Möbius
+cancellation once the two product labels are fixed.  Every entry is a
+pair of divisors of the two squarefree radicals.  Hence, directly from
+(9.680),
+
+\[
+\boxed{
+ |C_{ij}^{\nearrow}|
+ \leq
+ \tau(R_1)\tau(R_2)
+ \max_{\substack{r\mid R_1\\s\mid R_2}}
+ |p_N(qr)p_N(qs)|.}
+\tag{9.687}
+\]
+
+On every retained \(\theta=3\) packet, \(q,R_1,R_2\) are bounded by a
+fixed power of \(T\).  Therefore
+
+\[
+ |p_N(qr)|
+ \leq 1+\frac{\log(qR_1)}{\log N}\ll1,
+ \qquad
+ \tau(R_i)\ll_\varepsilon R_i^\varepsilon\ll_\varepsilon T^\varepsilon.
+\]
+
+After reallocating \(\varepsilon\), (9.687) gives
+
+\[
+ \boxed{\max_{i,j}|C_{ij}^{\nearrow}|
+ \ll_\varepsilon T^\varepsilon.}
+\tag{9.688}
+\]
+
+Combining (9.684), (9.685), and (9.688) proves, for each supplied fixed
+dyadic packet and fixed pair of product/coprimality labels,
+
+\[
+ \boxed{|\mathscr V_{12}(W)|\ll_{\varepsilon,W}T^\varepsilon.}
+\tag{9.689}
+\]
+
+The other three pieces of (9.677) are no larger locally.  The anchor is
+the explicit \(O(1)\) core (9.671); each axis sum has at most
+\(\tau(R_i)\) terms and the opposite side has already collapsed to
+(9.675); each of the three weighted cutoff boundaries in (9.679) has at
+most \(\tau(R_1)\tau(R_2)\) terms.  Thus the entire fixed-label,
+two-taper principal divisor-lattice operator has \(T^\varepsilon\) cost
+against the supplied smooth-weight seminorms.
+
+This is an elementary divisor-bound closure of the **local** principal
+divisor lattice, not of the twisted moment.  The unresolved principal
+task is now the packet-exhaustive map and global normalization: all
+\(h_i,\delta_i\), Type labels, dyadic scales, both AFE directions,
+reflected cross terms, and the explicit diagonal must be placed in one
+signed formula before the fixed-label estimates are summed.  Taking an
+outer absolute value over that family can still lose the target power.
+The centered nonprincipal dispersion is also unchanged.  Consequently
+(9.689) is not marked as a proof of the principal twisted-moment bound or
+of \({\rm CK}_{\rm ub}(3)\).
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -15145,8 +15344,12 @@ single reflections plus their double-reflection correction.  This removes
 the second taper as a separate algebraic omission, but the joint physical
 weight now reduces exactly by (9.674)--(9.679) to sparse one-axis Euler
 cores and one genuinely mixed interaction.  A projective bound for that
-interaction, the complete AFE/reflection normalization, principal analytic
-bound, and centered signed dispersion remain unproved.**
+interaction's smooth weight is supplied by the two-dimensional Abel
+identity (9.680)--(9.685).  Each fixed-label tail rectangle, and hence
+the whole local two-taper divisor lattice, is \(T^\varepsilon\)-bounded
+by (9.687)--(9.689).  The packet-exhaustive global reassembly, complete
+AFE/reflection normalization, principal analytic bound, and centered
+dispersion remain unproved.**
 
 Proved in this note:
 
@@ -15684,7 +15887,9 @@ Proved in this note:
 | Zero-direct principal Selberg reassembly | exact \(q\)-aware one-prime Euler core and \(T^{2+o(1)}/q\) reflected boundary for divisor-independent coefficients; physical weighted norm and analytic bound unproved | Before sector completion the original packet has \(B=0\), outside (9.649).  At fixed common layer \(q\), summing one complete reduced Selberg--Möbius divisor lattice first gives (9.662): only \(R_q(m,n)=1\) or one prime outside \(qn\) survives.  The finite cutoff is exactly the reflected sum (9.663), with every cofactor \(k<qR_q(m,n)/N\leq qm/N\).  Combining (5.3), (5.8), and (9.664) proves the core-box length \(k\ll T^{2+o(1)}/q\) at \(N=T^3\).  There is no common \(\mu(q)\) sign by (5.2).  The remaining gate is analytic control of the weighted variation while retaining the other reduced Möbius factor, second taper, physical AFE/dyadic kernel, both AFE directions, reflection, and the explicit diagonal |
 | Weighted zero-direct divisor adapter | exact anchor/variation/boundary identity and Boolean mixed difference; physical variation bound unproved | For arbitrary divisor weight \(W(s)\), (9.666)--(9.668) split one truncated taper into \(W(1)\) times the sparse Euler core, one complete anchored variation, and the reflected boundary.  Equation (9.669) identifies the complete weighted sum with the full Boolean mixed difference over unmatched primes.  This is an algebraic adapter, not a norm estimate: on a single physical dyadic block \(W(1)\) may vanish and the variation can contain the entire block.  Full dyadic/AFE reassembly, a useful joint two-variable variation bound, reflection, diagonal, and nonprincipal signed dispersion remain unproved |
 | Two-taper coprime principal reassembly | exact degree-two Euler core and all single/double reflections; physical weighted norm unproved | Completing both divisor lattices with \((r,s)=1\) gives (9.670)--(9.671).  Shared primes contribute an explicit sign and quadratic correction, while the core vanishes unless each side has at most one exclusive prime.  Inclusion--exclusion gives the endpoint-exact truncation \(\mathscr E_q-\mathscr B_1-\mathscr B_2+\mathscr B_{12}\), (9.672), and reflection gives \(k_i<qR_i/N\leq qa_i/N\), (9.673), hence the same \(T^{2+o(1)}/q\) coordinate lengths.  This closes the constant-weight two-taper algebra only; the joint physical AFE/reflection adapter, principal analytic estimate, and centered dispersion remain unproved |
-| Two-taper weighted interaction adapter | exact sparse-axis/mixed split; mixed physical norm unproved | For arbitrary \(W(r,s)\), (9.674)--(9.677) split the complete weighted lattice into the anchored core, two axis variations, and one mixed interaction.  Each axis variation sums the other taper into the one-prime core (9.675); only \(\Delta_{12}W\) retains the full coprime lattice.  It vanishes for additive weights and factorizes for rank-one weights, (9.678).  Equation (9.679) retains both inclusive reflected tails and their double-boundary correction.  No power bound for the actual AFE/reflection mixed interaction or centered dispersion is asserted |
+| Two-taper weighted interaction adapter | exact sparse-axis/mixed split; smooth norm handled by the next row | For arbitrary \(W(r,s)\), (9.674)--(9.677) split the complete weighted lattice into the anchored core, two axis variations, and one mixed interaction.  Each axis variation sums the other taper into the one-prime core (9.675); only \(\Delta_{12}W\) retains the full coprime lattice.  It vanishes for additive weights and factorizes for rank-one weights, (9.678).  Equation (9.679) retains both inclusive reflected tails and their double-boundary correction.  Section 9.104 removes its smooth-weight cost; the resulting arithmetic tail rectangles and centered dispersion remain unproved |
+| Two-dimensional mixed Abel adapter | smooth variation cost controlled; fixed rectangle handled next | Ordering both divisor lattices gives the exact pointwise telescoping and suffix identity (9.681)--(9.683).  Hence the mixed pairing is bounded by the adjacent-increment \(\ell^1\) norm times the largest arithmetic upper-right rectangle, (9.684).  The fundamental theorem of calculus and (5.14) bound the first factor by \(T^\varepsilon\) on every supplied physical dyadic weight, (9.685).  Reflection makes both remaining cofactor coordinates \(O(T^{2+o(1)})\) on the balanced face, (9.686).  Section 9.105 bounds each fixed-label rectangle; their joint signed AFE/reflection sum and the exhaustive packet map remain unproved |
+| Fixed-label principal divisor bound | local two-taper operator proved at \(T^\varepsilon\) cost; global packet sum unproved | Every suffix rectangle has at most \(\tau(R_1)\tau(R_2)\) entries and bounded taper factors, (9.687)--(9.688).  Together with the mixed Abel variation this proves (9.689) for each supplied fixed dyadic packet and fixed label pair.  The anchor, axes, and all three weighted boundaries have the same divisor-bound cost.  This does not permit absolute summation over all AFE/\(h,\delta\)/Type/dyadic/reflection labels; the packet-exhaustive normalization, principal twisted-moment estimate, and centered dispersion remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

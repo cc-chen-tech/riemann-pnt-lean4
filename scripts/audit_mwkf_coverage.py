@@ -13993,6 +13993,156 @@ def zero_direct_two_taper_coprime_reassembly_audit(
     }
 
 
+def two_dimensional_mixed_abel_audit(
+    *,
+    first_coordinates: tuple[int, ...],
+    second_coordinates: tuple[int, ...],
+    coefficients: dict[tuple[int, int], Fraction],
+    full_grid_weights: dict[tuple[int, int], Fraction],
+) -> dict[str, object]:
+    """Verify the finite two-dimensional mixed Abel identity exactly."""
+
+    first = tuple(int(coordinate) for coordinate in first_coordinates)
+    second = tuple(int(coordinate) for coordinate in second_coordinates)
+    if (
+        not first
+        or first[0] != 1
+        or any(left >= right for left, right in zip(first, first[1:]))
+    ):
+        raise ValueError(
+            "first_coordinates must be strictly increasing and start at one"
+        )
+    if (
+        not second
+        or second[0] != 1
+        or any(left >= right for left, right in zip(second, second[1:]))
+    ):
+        raise ValueError(
+            "second_coordinates must be strictly increasing and start at one"
+        )
+
+    grid = {
+        (first_coordinate, second_coordinate)
+        for first_coordinate in first
+        for second_coordinate in second
+    }
+    coefficient_grid = {
+        (int(pair[0]), int(pair[1])): F(value)
+        for pair, value in coefficients.items()
+    }
+    weights = {
+        (int(pair[0]), int(pair[1])): F(value)
+        for pair, value in full_grid_weights.items()
+    }
+    if set(coefficient_grid) != grid:
+        raise ValueError("coefficients must contain exactly the full grid")
+    if set(weights) != grid:
+        raise ValueError("full_grid_weights must contain exactly the full grid")
+
+    anchor = weights[(1, 1)]
+    pointwise_mixed_differences: dict[tuple[int, int], Fraction] = {}
+    direct_mixed_pairing = F(0)
+    for first_coordinate in first:
+        for second_coordinate in second:
+            pair = (first_coordinate, second_coordinate)
+            mixed_difference = (
+                weights[pair]
+                - weights[(first_coordinate, 1)]
+                - weights[(1, second_coordinate)]
+                + anchor
+            )
+            pointwise_mixed_differences[pair] = mixed_difference
+            direct_mixed_pairing += coefficient_grid[pair] * mixed_difference
+
+    mixed_increments: dict[tuple[int, int], Fraction] = {}
+    suffix_coefficient_sums: dict[tuple[int, int], Fraction] = {}
+    increment_suffix_pairing = F(0)
+    for first_index in range(1, len(first)):
+        for second_index in range(1, len(second)):
+            first_coordinate = first[first_index]
+            previous_first = first[first_index - 1]
+            second_coordinate = second[second_index]
+            previous_second = second[second_index - 1]
+            pair = (first_coordinate, second_coordinate)
+            increment = (
+                weights[pair]
+                - weights[(previous_first, second_coordinate)]
+                - weights[(first_coordinate, previous_second)]
+                + weights[(previous_first, previous_second)]
+            )
+            suffix = sum(
+                (
+                    coefficient_grid[(later_first, later_second)]
+                    for later_first in first[first_index:]
+                    for later_second in second[second_index:]
+                ),
+                F(0),
+            )
+            mixed_increments[pair] = increment
+            suffix_coefficient_sums[pair] = suffix
+            increment_suffix_pairing += increment * suffix
+
+    reconstructed_pointwise: dict[tuple[int, int], Fraction] = {}
+    for first_index, first_coordinate in enumerate(first):
+        for second_index, second_coordinate in enumerate(second):
+            reconstructed_pointwise[(first_coordinate, second_coordinate)] = sum(
+                (
+                    mixed_increments[(first[later_first], second[later_second])]
+                    for later_first in range(1, first_index + 1)
+                    for later_second in range(1, second_index + 1)
+                ),
+                F(0),
+            )
+
+    mixed_increment_l1_norm = sum(
+        (abs(increment) for increment in mixed_increments.values()),
+        F(0),
+    )
+    maximum_suffix_coefficient_mass = max(
+        (abs(suffix) for suffix in suffix_coefficient_sums.values()),
+        default=F(0),
+    )
+    variation_upper_bound = (
+        mixed_increment_l1_norm * maximum_suffix_coefficient_mass
+    )
+    return {
+        "first_coordinates": first,
+        "second_coordinates": second,
+        "coefficients": dict(sorted(coefficient_grid.items())),
+        "full_grid_weights": dict(sorted(weights.items())),
+        "pointwise_mixed_differences": dict(
+            sorted(pointwise_mixed_differences.items())
+        ),
+        "mixed_increments": dict(sorted(mixed_increments.items())),
+        "suffix_coefficient_sums": dict(
+            sorted(suffix_coefficient_sums.items())
+        ),
+        "reconstructed_pointwise_mixed_differences": dict(
+            sorted(reconstructed_pointwise.items())
+        ),
+        "direct_mixed_pairing": direct_mixed_pairing,
+        "increment_suffix_pairing": increment_suffix_pairing,
+        "mixed_increment_l1_norm": mixed_increment_l1_norm,
+        "maximum_suffix_coefficient_mass": (
+            maximum_suffix_coefficient_mass
+        ),
+        "variation_upper_bound": variation_upper_bound,
+        "every_pointwise_mixed_difference_is_reconstructed": (
+            reconstructed_pointwise == pointwise_mixed_differences
+        ),
+        "mixed_direct_equals_increment_suffix_reassembly": (
+            direct_mixed_pairing == increment_suffix_pairing
+        ),
+        "variation_bound_holds": (
+            abs(direct_mixed_pairing) <= variation_upper_bound
+        ),
+        "finite_mixed_abel_identity_proved": True,
+        "physical_smooth_variation_bound_proved": False,
+        "reflected_tail_rectangle_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def squarefree_prime_factor_transfer_audit(
     *,
     modulus_exponent: Fraction,
