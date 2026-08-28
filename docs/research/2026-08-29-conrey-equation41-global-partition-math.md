@@ -142,8 +142,11 @@ The proof should be split into four reusable layers.
    bad levels charged to bridges, prove their total cardinality is at most
    `N_{0,eta}(T)`, and inject every remaining level into a genuine crossing.
 
-Layer 1 is the next small formal checkpoint.  Layers 2--4, especially the
-local analytic phase alignment and the disjoint global attribution, remain the
+Layers 1 and 2 are now formalized in `MathlibAux/ArgumentCrossing.lean` as
+`argumentCrossingIndices_sdiff_card_lower_bound`,
+`mem_argumentCrossingBridgeIndices_iff`, and
+`argumentCrossingBridgeIndices_card`.  Layers 3 and 4, especially the local
+analytic phase alignment and the disjoint global attribution, remain the
 actual equation-(41) gate.  No equation-(41) or Conrey simple-zero proportion
 claim should be made before all four layers are connected to the actual
 `eta`.

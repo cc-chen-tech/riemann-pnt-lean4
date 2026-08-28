@@ -60,6 +60,62 @@ noncomputable def argumentCrossingIndices (alpha beta : ℝ) : Finset ℤ :=
     ⌈(alpha - Real.pi / 2) / Real.pi⌉
     ⌊(beta - Real.pi / 2) / Real.pi⌋
 
+/-- The half-odd-integer argument levels swallowed by a half-open phase bridge
+of length `m * π`.  The half-open convention prevents a level at the far
+endpoint from being charged both to the bridge and to the next nonzero
+component. -/
+noncomputable def argumentCrossingBridgeIndices (alpha : ℝ) (m : ℕ) : Finset ℤ :=
+  Finset.Ico
+    ⌈(alpha - Real.pi / 2) / Real.pi⌉
+    ⌈(alpha + m * Real.pi - Real.pi / 2) / Real.pi⌉
+
+@[simp]
+theorem mem_argumentCrossingBridgeIndices_iff
+    {alpha : ℝ} {m : ℕ} {k : ℤ} :
+    k ∈ argumentCrossingBridgeIndices alpha m ↔
+      argumentCrossingLevel k ∈ Ico alpha (alpha + m * Real.pi) := by
+  rw [argumentCrossingBridgeIndices, ← Int.cast_mem_Ico_iff]
+  constructor
+  · intro hk
+    constructor
+    · have h := (div_le_iff₀ Real.pi_pos).mp hk.1
+      unfold argumentCrossingLevel
+      nlinarith
+    · have h := (lt_div_iff₀ Real.pi_pos).mp hk.2
+      unfold argumentCrossingLevel
+      nlinarith
+  · intro hk
+    rcases hk with ⟨hkLower, hkUpper⟩
+    constructor
+    · apply (div_le_iff₀ Real.pi_pos).mpr
+      unfold argumentCrossingLevel at hkLower hkUpper
+      nlinarith [hkLower]
+    · apply (lt_div_iff₀ Real.pi_pos).mpr
+      unfold argumentCrossingLevel at hkLower hkUpper
+      nlinarith [hkUpper]
+
+/-- A half-open phase bridge of length `m * π` contains exactly `m`
+half-odd-integer argument levels, independently of the starting phase. -/
+theorem argumentCrossingBridgeIndices_card (alpha : ℝ) (m : ℕ) :
+    (argumentCrossingBridgeIndices alpha m).card = m := by
+  let x : ℝ := (alpha - Real.pi / 2) / Real.pi
+  have hnormalize :
+      (alpha + m * Real.pi - Real.pi / 2) / Real.pi = x + m := by
+    dsimp [x]
+    field_simp [Real.pi_ne_zero]
+    ring
+  have hceil :
+      ⌈(alpha + m * Real.pi - Real.pi / 2) / Real.pi⌉ = ⌈x⌉ + (m : ℤ) := by
+    rw [hnormalize, Int.ceil_add_natCast]
+  have hle : ⌈x⌉ ≤ ⌈x⌉ + (m : ℤ) := by omega
+  have hcardInt :
+      ((Finset.Ico ⌈x⌉ (⌈x⌉ + (m : ℤ))).card : ℤ) = m := by
+    rw [Int.card_Ico_of_le _ _ hle]
+    omega
+  rw [argumentCrossingBridgeIndices, show
+    ⌈(alpha - Real.pi / 2) / Real.pi⌉ = ⌈x⌉ by rfl, hceil]
+  exact_mod_cast hcardInt
+
 @[simp]
 theorem mem_argumentCrossingIndices_iff {alpha beta : ℝ} {k : ℤ} :
     k ∈ argumentCrossingIndices alpha beta ↔

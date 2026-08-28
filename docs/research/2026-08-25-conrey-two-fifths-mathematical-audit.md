@@ -1957,6 +1957,12 @@ introducing another componentwise rounding loss.  The independent note
 `2026-08-29-conrey-equation41-global-partition-math.md` records the full
 four-layer design.
 
-The order-`m` half-open bridge capacity, local analytic phase alignment, and
-global attribution for the actual `eta` remain open.  Thus equation (41) and
-the Conrey simple-zero proportion are not yet proved.
+The half-open bridge is also now represented by
+`argumentCrossingBridgeIndices alpha m`.  Membership is proved equivalent to
+the geometric half-open phase interval `[alpha, alpha + m*pi)`, and its
+cardinality is exactly `m`, including endpoint-aligned cases.  Thus the first
+two combinatorial layers are closed.
+
+Local analytic phase alignment and global attribution for the actual `eta`
+remain open.  Thus equation (41) and the Conrey simple-zero proportion are not
+yet proved.
