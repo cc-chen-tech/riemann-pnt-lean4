@@ -23087,6 +23087,690 @@ def active_character_conductor_entropy_polytope_audit(
     }
 
 
+def bounded_determinant_common_frequency_audit(
+    *,
+    common_modulus: int,
+    left_active_cofactor: int,
+    right_active_cofactor: int,
+    determinant: int,
+    left_phase_label: int,
+    right_phase_label: int,
+    left_common_profile: tuple[tuple[int, Fraction], ...],
+    right_common_profile: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Diagonalize the common-``g`` determinant lift additively.
+
+    With ``r2*s1-r1*s2=D`` put ``s_i=r_i*z_i``.  Then
+
+    ``z1-z2=D*inverse(r1*r2) (mod g)``.
+
+    The two-pole phase becomes a product of one row phase on each side,
+    so the lift is an ordinary shifted correlation.  Additive Fourier
+    inversion separates its zero frequency and leaves
+    ``e_g(nu*D*inverse(r1*r2))`` on every nonzero frequency.
+    """
+
+    g = int(common_modulus)
+    r1 = int(left_active_cofactor)
+    r2 = int(right_active_cofactor)
+    D = int(determinant)
+    C1 = int(left_phase_label)
+    C2 = int(right_phase_label)
+    if g <= 1 or _finite_mobius(g) == 0:
+        raise ValueError("common modulus must be squarefree and exceed one")
+    if min(r1, r2) <= 0 or gcd(r1 * r2, g) != 1 or gcd(r1, r2) != 1:
+        raise ValueError("active cofactors must be pairwise coprime units")
+    if D == 0:
+        raise ValueError("the bounded determinant must be nonzero")
+    if gcd(C1 * C2, g) != 1:
+        raise ValueError("both common phase labels must be units")
+
+    units = tuple(value for value in range(g) if gcd(value, g) == 1)
+
+    def supplied_profile(
+        rows: tuple[tuple[int, Fraction], ...],
+    ) -> dict[int, complex]:
+        profile: dict[int, complex] = {unit: 0j for unit in units}
+        seen: set[int] = set()
+        for residue, value in rows:
+            residue = int(residue) % g
+            if residue in seen:
+                raise ValueError("profile residues must be unique")
+            if gcd(residue, g) != 1:
+                raise ValueError("profile residues must be common units")
+            seen.add(residue)
+            profile[residue] = complex(F(value))
+        return profile
+
+    left = supplied_profile(left_common_profile)
+    right = supplied_profile(right_common_profile)
+    root = cmath.exp(2j * cmath.pi / g)
+
+    common_lift = 0j
+    for s1 in units:
+        for s2 in units:
+            if (r2 * s1 - r1 * s2 - D) % g != 0:
+                continue
+            phase = (
+                C1 * pow(r1 * s1, -1, g)
+                + C2 * pow(r2 * s2, -1, g)
+            ) % g
+            common_lift += left[s1] * right[s2].conjugate() * root**phase
+
+    inverse_product = pow(r1 * r2, -1, g)
+    shift = D * inverse_product % g
+    left_shift_profile: dict[int, complex] = {}
+    right_shift_profile: dict[int, complex] = {}
+    for z in range(g):
+        if gcd(z, g) != 1:
+            left_shift_profile[z] = 0j
+            right_shift_profile[z] = 0j
+            continue
+        left_residue = r1 * z % g
+        right_residue = r2 * z % g
+        left_phase = C1 * pow(r1 * r1 * z, -1, g) % g
+        right_phase = -C2 * pow(r2 * r2 * z, -1, g) % g
+        left_shift_profile[z] = left[left_residue] * root**left_phase
+        right_shift_profile[z] = right[right_residue] * root**right_phase
+
+    shifted_correlation = sum(
+        (
+            left_shift_profile[z]
+            * right_shift_profile[(z - shift) % g].conjugate()
+            for z in range(g)
+        ),
+        0j,
+    )
+    left_fourier = {
+        frequency: sum(
+            (
+                left_shift_profile[z] * root ** (-frequency * z % g)
+                for z in range(g)
+            ),
+            0j,
+        )
+        for frequency in range(g)
+    }
+    right_fourier = {
+        frequency: sum(
+            (
+                right_shift_profile[z] * root ** (-frequency * z % g)
+                for z in range(g)
+            ),
+            0j,
+        )
+        for frequency in range(g)
+    }
+    frequency_terms = {
+        frequency: (
+            left_fourier[frequency]
+            * right_fourier[frequency].conjugate()
+            * root ** (frequency * shift % g)
+            / g
+        )
+        for frequency in range(g)
+    }
+    fourier_sum = sum(frequency_terms.values(), 0j)
+    zero_frequency = (
+        left_fourier[0] * right_fourier[0].conjugate() / g
+    )
+    left_spatial_energy = sum(
+        (abs(value) ** 2 for value in left_shift_profile.values()),
+        0.0,
+    )
+    right_spatial_energy = sum(
+        (abs(value) ** 2 for value in right_shift_profile.values()),
+        0.0,
+    )
+    left_fourier_energy = sum(
+        (abs(value) ** 2 for value in left_fourier.values()),
+        0.0,
+    ) / g
+    right_fourier_energy = sum(
+        (abs(value) ** 2 for value in right_fourier.values()),
+        0.0,
+    ) / g
+    tolerance = 1e-8
+    return {
+        "common_modulus": g,
+        "left_active_cofactor": r1,
+        "right_active_cofactor": r2,
+        "bounded_determinant": D,
+        "common_frequency_shift_residue": shift,
+        "common_frequency_shift_numerator": D % g,
+        "common_frequency_shift_denominator": (r1 * r2) % g,
+        "common_lift_sum": common_lift,
+        "shifted_correlation_sum": shifted_correlation,
+        "additive_fourier_sum": fourier_sum,
+        "zero_common_frequency_term": zero_frequency,
+        "nonzero_common_frequency_terms": tuple(
+            (frequency, frequency_terms[frequency])
+            for frequency in range(1, g)
+        ),
+        "common_lift_equals_shifted_correlation": abs(
+            common_lift - shifted_correlation
+        ) < tolerance,
+        "shifted_correlation_equals_additive_fourier_sum": abs(
+            shifted_correlation - fourier_sum
+        ) < tolerance,
+        "left_additive_parseval_exact": abs(
+            left_spatial_energy - left_fourier_energy
+        ) < tolerance,
+        "right_additive_parseval_exact": abs(
+            right_spatial_energy - right_fourier_energy
+        ) < tolerance,
+        "zero_frequency_energy_is_a_parseval_subenergy": bool(
+            abs(left_fourier[0]) ** 2 / g
+            <= left_spatial_energy + tolerance
+            and abs(right_fourier[0]) ** 2 / g
+            <= right_spatial_energy + tolerance
+        ),
+        "zero_common_frequency_factorizes_rowwise": abs(
+            frequency_terms[0] - zero_frequency
+        ) < tolerance,
+        "nonzero_common_frequencies_retain_inverse_product_phase": True,
+        "physical_product_label_a_h_delta_remains_in_row_profiles": True,
+        "zero_common_frequency_bound_proved": False,
+        "nonzero_common_frequency_bound_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def mutual_character_evaluation_large_sieve_audit(
+    *,
+    left_coefficients: tuple[tuple[int, tuple[int, ...], complex], ...],
+    right_coefficients: tuple[tuple[int, tuple[int, ...], complex], ...],
+    pair_multipliers: tuple[tuple[int, int, complex], ...],
+) -> dict[str, object]:
+    """Verify the two-sided character-orthogonality envelope.
+
+    The finite bilinear form is
+
+    ``sum a(q,chi)b(r,psi)H(q,r) conjugate(chi(r))*psi(q)``,
+
+    where every supplied ``H(q,r)`` has modulus one.
+
+    Orthogonality first in ``chi`` and then in ``psi`` gives the square
+    root of two exact residue-occupancy factors.  The multiplier
+    disappears after taking the relevant absolute square.  On dyadic
+    conductor intervals this is ``O(Q+R)``.  Arbitrary character
+    subfamilies are allowed because each positive square may be enlarged
+    to all characters at its fixed modulus.
+    """
+
+    if not left_coefficients or not right_coefficients:
+        raise ValueError("both character coefficient families must be nonempty")
+
+    character_cache: dict[int, tuple[tuple[int, ...], dict[int, dict[int, int]], dict[int, complex]]] = {}
+
+    def character_data(
+        modulus: int,
+    ) -> tuple[tuple[int, ...], dict[int, dict[int, int]], dict[int, complex]]:
+        if modulus in character_cache:
+            return character_cache[modulus]
+        if modulus <= 1 or _finite_mobius(modulus) == 0:
+            raise ValueError("character moduli must be squarefree and exceed one")
+        primes = tuple(sorted(_finite_prime_exponents(modulus)))
+        logs_by_prime: dict[int, dict[int, int]] = {}
+        roots_by_prime: dict[int, complex] = {}
+        for prime in primes:
+            order = prime - 1
+            if prime == 2:
+                generator = 1
+            else:
+                order_factors = tuple(_finite_prime_exponents(order))
+                generator = next(
+                    candidate
+                    for candidate in range(2, prime)
+                    if all(
+                        pow(candidate, order // divisor, prime) != 1
+                        for divisor in order_factors
+                    )
+                )
+            local_logs: dict[int, int] = {}
+            current = 1
+            for exponent in range(order):
+                local_logs[current] = exponent
+                current = current * generator % prime
+            logs_by_prime[prime] = local_logs
+            roots_by_prime[prime] = cmath.exp(2j * cmath.pi / order)
+        data = (primes, logs_by_prime, roots_by_prime)
+        character_cache[modulus] = data
+        return data
+
+    def validate_and_convert(
+        rows: tuple[tuple[int, tuple[int, ...], complex], ...],
+    ) -> tuple[tuple[int, tuple[int, ...], complex], ...]:
+        converted: list[tuple[int, tuple[int, ...], complex]] = []
+        seen: set[tuple[int, tuple[int, ...]]] = set()
+        for modulus_value, index_value, coefficient_value in rows:
+            modulus = int(modulus_value)
+            index = tuple(int(component) for component in index_value)
+            primes, _, _ = character_data(modulus)
+            if len(index) != len(primes) or any(
+                component < 0 or component >= prime - 1
+                for component, prime in zip(index, primes)
+            ):
+                raise ValueError("one character index is outside its local group")
+            key = (modulus, index)
+            if key in seen:
+                raise ValueError("character coefficient labels must be unique")
+            seen.add(key)
+            converted.append((modulus, index, complex(coefficient_value)))
+        return tuple(converted)
+
+    left = validate_and_convert(left_coefficients)
+    right = validate_and_convert(right_coefficients)
+    left_moduli = tuple(sorted({modulus for modulus, _, _ in left}))
+    right_moduli = tuple(sorted({modulus for modulus, _, _ in right}))
+    multipliers: dict[tuple[int, int], complex] = {}
+    for left_modulus, right_modulus, multiplier_value in pair_multipliers:
+        key = (int(left_modulus), int(right_modulus))
+        if key in multipliers:
+            raise ValueError("pair multiplier labels must be unique")
+        multiplier = complex(multiplier_value)
+        if abs(abs(multiplier) - 1) > 1e-8:
+            raise ValueError("every pair multiplier must have modulus one")
+        multipliers[key] = multiplier
+    expected_multiplier_keys = {
+        (left_modulus, right_modulus)
+        for left_modulus in left_moduli
+        for right_modulus in right_moduli
+    }
+    if set(multipliers) != expected_multiplier_keys:
+        raise ValueError("one unit multiplier is required for every modulus pair")
+
+    def character(modulus: int, index: tuple[int, ...], value: int) -> complex:
+        if gcd(value, modulus) != 1:
+            return 0j
+        primes, logs_by_prime, roots_by_prime = character_data(modulus)
+        result = 1 + 0j
+        for component, prime in zip(index, primes):
+            exponent = logs_by_prime[prime][value % prime]
+            result *= roots_by_prime[prime] ** (
+                component * exponent % (prime - 1)
+            )
+        return result
+
+    bilinear_sum = sum(
+        (
+            left_coefficient
+            * right_coefficient
+            * multipliers[(left_modulus, right_modulus)]
+            * character(left_modulus, left_index, right_modulus).conjugate()
+            * character(right_modulus, right_index, left_modulus)
+            for left_modulus, left_index, left_coefficient in left
+            for right_modulus, right_index, right_coefficient in right
+        ),
+        0j,
+    )
+    left_norm_squared = sum(
+        (abs(coefficient) ** 2 for _, _, coefficient in left),
+        0.0,
+    )
+    right_norm_squared = sum(
+        (abs(coefficient) ** 2 for _, _, coefficient in right),
+        0.0,
+    )
+    def finite_totient(value: int) -> int:
+        return prod(prime - 1 for prime in _finite_prime_exponents(value))
+
+    def maximum_unit_residue_occupancy(
+        samples: tuple[int, ...],
+        modulus: int,
+    ) -> int:
+        counts = Counter(
+            sample % modulus
+            for sample in samples
+            if gcd(sample, modulus) == 1
+        )
+        return max(counts.values(), default=0)
+
+    left_factor = max(
+        finite_totient(modulus)
+        * maximum_unit_residue_occupancy(right_moduli, modulus)
+        for modulus in left_moduli
+    )
+    right_factor = max(
+        finite_totient(modulus)
+        * maximum_unit_residue_occupancy(left_moduli, modulus)
+        for modulus in right_moduli
+    )
+    orthogonality_bound = (
+        (left_factor * right_factor) ** 0.5
+        * left_norm_squared**0.5
+        * right_norm_squared**0.5
+    )
+    left_scale = min(left_moduli)
+    right_scale = min(right_moduli)
+    dyadic = bool(
+        max(left_moduli) < 2 * left_scale
+        and max(right_moduli) < 2 * right_scale
+    )
+    dyadic_bound = (
+        2
+        * (left_scale + right_scale)
+        * left_norm_squared**0.5
+        * right_norm_squared**0.5
+    )
+    tolerance = 1e-8
+    return {
+        "left_character_coefficients": left,
+        "right_character_coefficients": right,
+        "mutual_character_evaluation_sum": bilinear_sum,
+        "left_coefficient_norm_squared": left_norm_squared,
+        "right_coefficient_norm_squared": right_norm_squared,
+        "left_orthogonality_factor": left_factor,
+        "right_orthogonality_factor": right_factor,
+        "two_sided_orthogonality_bound": orthogonality_bound,
+        "dyadic_Q_plus_R_bound": dyadic_bound,
+        "all_character_indices_valid": True,
+        "all_cross_moduli_coprime": all(
+            gcd(left_modulus, right_modulus) == 1
+            for left_modulus in left_moduli
+            for right_modulus in right_moduli
+        ),
+        "two_sided_orthogonality_bound_verified": abs(bilinear_sum)
+        <= orthogonality_bound + tolerance,
+        "both_conductor_families_are_dyadic": dyadic,
+        "dyadic_Q_plus_R_operator_bound_verified": bool(
+            dyadic and abs(bilinear_sum) <= dyadic_bound + tolerance
+        ),
+        "arbitrary_character_subfamilies_supported": True,
+        "arbitrary_unit_pair_multipliers_supported": True,
+        "published_input": (
+            "classical primitive character large sieve; "
+            "Conrey-Iwaniec-Soundararajan arXiv:1105.1176 (1.4)"
+        ),
+        "pair_dependent_common_frequency_absorbed": True,
+        "physical_nonzero_frequency_packet_covered": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def near_primitive_active_conductor_type_split_audit(
+    *,
+    left_active_cofactor: int,
+    right_active_cofactor: int,
+    left_primitive_conductor: int,
+    right_primitive_conductor: int,
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    h_weights: tuple[tuple[int, Fraction], ...],
+    delta_weights: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Split ``mu(c1)mu(c2)`` while retaining ``mu(k1)mu(k2)``.
+
+    Here ``r_i=c_i*k_i`` and ``c_i^3>r_i^2`` is the exact integral
+    version of the near-primitive condition ``c_i>r_i^(2/3)``.
+    """
+
+    r1 = int(left_active_cofactor)
+    r2 = int(right_active_cofactor)
+    c1 = int(left_primitive_conductor)
+    c2 = int(right_primitive_conductor)
+    if min(r1, r2, c1, c2) <= 1 or r1 % c1 or r2 % c2:
+        raise ValueError("each primitive conductor must divide its active cofactor")
+    k1 = r1 // c1
+    k2 = r2 // c2
+    if any(_finite_mobius(value) == 0 for value in (r1, r2, c1, c2, k1, k2)):
+        raise ValueError("all conductor and cofactor variables must be squarefree")
+    if gcd(r1, r2) != 1 or gcd(c1, k1) != 1 or gcd(c2, k2) != 1:
+        raise ValueError("the active and conductor factorizations must be coprime")
+
+    conductor_split = principal_active_outer_mobius_type_split_audit(
+        left_active_cofactor=c1,
+        right_active_cofactor=c2,
+        short_cutoff_u=short_cutoff_u,
+        short_cutoff_v=short_cutoff_v,
+        h_weights=h_weights,
+        delta_weights=delta_weights,
+    )
+    short_sign = _finite_mobius(k1) * _finite_mobius(k2)
+    conductor_blocks = {
+        block: F(short_sign) * F(value)
+        for block, value in dict(
+            conductor_split["ordered_outer_type_block_sums"]
+        ).items()
+    }
+    conductor_block_sum = sum(conductor_blocks.values(), F(0))
+    full_raw_sum = F(short_sign) * F(
+        conductor_split["raw_principal_active_model_sum"]
+    )
+    boundary = max(int(short_cutoff_u), int(short_cutoff_v))
+    small_empty = bool(c1 > boundary and c2 > boundary)
+    nonempty_blocks = (
+        (
+            ("I", "I"),
+            ("I", "II"),
+            ("II", "I"),
+            ("II", "II"),
+        )
+        if small_empty
+        else tuple(
+            (left_name, right_name)
+            for left_name in ("small", "I", "II")
+            for right_name in ("small", "I", "II")
+        )
+    )
+    return {
+        "left_active_cofactor": r1,
+        "right_active_cofactor": r2,
+        "left_primitive_conductor": c1,
+        "right_primitive_conductor": c2,
+        "left_imprimitive_cofactor": k1,
+        "right_imprimitive_cofactor": k2,
+        "left_short_cofactor_mobius_sign": _finite_mobius(k1),
+        "right_short_cofactor_mobius_sign": _finite_mobius(k2),
+        "both_active_characters_are_near_primitive": bool(
+            c1**3 > r1**2 and c2**3 > r2**2
+        ),
+        "short_cofactors_are_below_conductor_square_root": bool(
+            k1**2 < c1 and k2**2 < c2
+        ),
+        "all_small_conductor_blocks_empty": small_empty,
+        "nonempty_ordered_conductor_type_blocks": nonempty_blocks,
+        "ordered_conductor_type_block_sums": conductor_blocks,
+        "ordered_conductor_type_block_sum": conductor_block_sum,
+        "full_outer_mobius_pair_model_sum": full_raw_sum,
+        "conductor_type_blocks_reassemble_full_outer_mobius_pair": bool(
+            conductor_block_sum == full_raw_sum
+        ),
+        "short_cofactor_mobius_signs_retained": True,
+        "product_label_remains_exact_h_delta_convolution": bool(
+            conductor_split[
+                "product_label_remains_exact_h_delta_convolution"
+            ]
+        ),
+        "no_conductor_type_blockwise_absolute_value_taken": True,
+        "near_primitive_zero_frequency_bound_proved": False,
+        "near_primitive_nonzero_frequency_bound_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def near_primitive_mutual_character_polytope_audit(
+    *,
+    left_active_cofactor_exponent: Fraction,
+    right_active_cofactor_exponent: Fraction,
+    left_primitive_conductor_exponent: Fraction,
+    right_primitive_conductor_exponent: Fraction,
+    common_frequency_is_zero: bool,
+    physical_additive_fourier_adapter_verified: bool,
+    centered_two_pv_row_energy_verified: bool,
+    unit_pair_multiplier_large_sieve_verified: bool,
+    common_frequency_parseval_reassembly_verified: bool,
+) -> dict[str, object]:
+    """Compare mutual-character imbalance with the two-PV row margins."""
+
+    rho1 = F(left_active_cofactor_exponent)
+    rho2 = F(right_active_cofactor_exponent)
+    sigma1 = F(left_primitive_conductor_exponent)
+    sigma2 = F(right_primitive_conductor_exponent)
+    if min(rho1, rho2, sigma1, sigma2) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    if sigma1 > rho1 or sigma2 > rho2:
+        raise ValueError("primitive conductors cannot exceed active cofactors")
+    kappa1 = rho1 - sigma1
+    kappa2 = rho2 - sigma2
+    mutual_cost = abs(sigma1 - sigma2) / 2
+    pair_margin = kappa1 + kappa2
+    deficit = _positive_part(mutual_cost - pair_margin)
+    structure = bool(
+        common_frequency_is_zero
+        and physical_additive_fourier_adapter_verified
+        and centered_two_pv_row_energy_verified
+    )
+    covered = bool(structure and deficit == 0)
+    all_frequency_structure = bool(
+        physical_additive_fourier_adapter_verified
+        and centered_two_pv_row_energy_verified
+        and unit_pair_multiplier_large_sieve_verified
+        and common_frequency_parseval_reassembly_verified
+    )
+    all_frequency_covered = bool(all_frequency_structure and deficit == 0)
+    return {
+        "left_active_cofactor_exponent": rho1,
+        "right_active_cofactor_exponent": rho2,
+        "left_primitive_conductor_exponent": sigma1,
+        "right_primitive_conductor_exponent": sigma2,
+        "left_imprimitive_cofactor_exponent": kappa1,
+        "right_imprimitive_cofactor_exponent": kappa2,
+        "normalized_mutual_large_sieve_cost_exponent": mutual_cost,
+        "available_two_pv_pair_margin_exponent": pair_margin,
+        "remaining_zero_frequency_deficit": deficit,
+        "mutual_large_sieve_coverage_condition": (
+            "abs(sigma1-sigma2) <= 2*(kappa1+kappa2)"
+        ),
+        "both_conductors_are_near_primitive": bool(
+            sigma1 > F(2, 3) * rho1
+            and sigma2 > F(2, 3) * rho2
+        ),
+        "common_frequency_is_zero": bool(common_frequency_is_zero),
+        "physical_additive_fourier_adapter_verified": bool(
+            physical_additive_fourier_adapter_verified
+        ),
+        "centered_two_pv_row_energy_verified": bool(
+            centered_two_pv_row_energy_verified
+        ),
+        "unit_pair_multiplier_large_sieve_verified": bool(
+            unit_pair_multiplier_large_sieve_verified
+        ),
+        "common_frequency_parseval_reassembly_verified": bool(
+            common_frequency_parseval_reassembly_verified
+        ),
+        "zero_common_frequency_sector_within_target": covered,
+        "all_common_frequency_sector_within_target": all_frequency_covered,
+        "remaining_sector_is_conductor_imbalance_wedge": bool(deficit > 0),
+        "remaining_sector_requires_nonzero_frequency_type_dispersion": False,
+        "nonzero_common_frequency_inverse_product_phase_retained": True,
+        "published_input": (
+            "classical character orthogonality and primitive large sieve; "
+            "Conrey-Iwaniec-Soundararajan arXiv:1105.1176 (1.4)"
+        ),
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def near_primitive_conductor_imbalance_wedge_audit(
+    *,
+    left_active_cofactor_exponent: Fraction,
+    right_active_cofactor_exponent: Fraction,
+    left_primitive_conductor_exponent: Fraction,
+    right_primitive_conductor_exponent: Fraction,
+    maximum_physical_active_scale_gap: Fraction,
+) -> dict[str, object]:
+    """Orient and quantify the residual mutual-large-sieve wedge.
+
+    If ``sigma_long > sigma_short``, then
+
+    ``sigma_long-sigma_short
+      = (rho_long-rho_short)-kappa_long+kappa_short``.
+
+    Therefore failure of the mutual-character coverage condition is
+
+    ``rho_long-rho_short > 3*kappa_long+kappa_short``.
+    """
+
+    rho_left = F(left_active_cofactor_exponent)
+    rho_right = F(right_active_cofactor_exponent)
+    sigma_left = F(left_primitive_conductor_exponent)
+    sigma_right = F(right_primitive_conductor_exponent)
+    maximum_gap = F(maximum_physical_active_scale_gap)
+    if min(rho_left, rho_right, sigma_left, sigma_right, maximum_gap) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    if sigma_left > rho_left or sigma_right > rho_right:
+        raise ValueError("primitive conductors cannot exceed active cofactors")
+    active_gap = abs(rho_left - rho_right)
+    if active_gap > maximum_gap:
+        raise ValueError("the supplied active scales exceed the physical gap")
+
+    kappa_left = rho_left - sigma_left
+    kappa_right = rho_right - sigma_right
+    if sigma_left > sigma_right:
+        side = "left"
+        rho_long, rho_short = rho_left, rho_right
+        sigma_long, sigma_short = sigma_left, sigma_right
+        kappa_long, kappa_short = kappa_left, kappa_right
+    elif sigma_right > sigma_left:
+        side = "right"
+        rho_long, rho_short = rho_right, rho_left
+        sigma_long, sigma_short = sigma_right, sigma_left
+        kappa_long, kappa_short = kappa_right, kappa_left
+    else:
+        side = "equal"
+        rho_long = rho_short = max(rho_left, rho_right)
+        sigma_long = sigma_short = sigma_left
+        kappa_long = kappa_short = F(0)
+
+    oriented_active_gap = rho_long - rho_short
+    threshold = 3 * kappa_long + kappa_short
+    conductor_gap = sigma_long - sigma_short
+    required = _positive_part(conductor_gap / 2 - kappa_left - kappa_right)
+    inside_wedge = bool(side != "equal" and oriented_active_gap > threshold)
+    maximum_required = maximum_gap / 2
+    return {
+        "left_active_cofactor_exponent": rho_left,
+        "right_active_cofactor_exponent": rho_right,
+        "left_primitive_conductor_exponent": sigma_left,
+        "right_primitive_conductor_exponent": sigma_right,
+        "left_imprimitive_cofactor_exponent": kappa_left,
+        "right_imprimitive_cofactor_exponent": kappa_right,
+        "longer_primitive_conductor_side": side,
+        "long_active_cofactor_exponent": rho_long,
+        "short_active_cofactor_exponent": rho_short,
+        "long_primitive_conductor_exponent": sigma_long,
+        "short_primitive_conductor_exponent": sigma_short,
+        "long_imprimitive_cofactor_exponent": kappa_long,
+        "short_imprimitive_cofactor_exponent": kappa_short,
+        "active_scale_gap_exponent": oriented_active_gap,
+        "primitive_conductor_gap_exponent": conductor_gap,
+        "oriented_wedge_threshold_exponent": threshold,
+        "inside_uncovered_conductor_imbalance_wedge": inside_wedge,
+        "required_pre_cauchy_type_saving_exponent": required,
+        "maximum_physical_active_scale_gap": maximum_gap,
+        "maximum_required_type_saving_exponent": maximum_required,
+        "required_saving_is_at_most_half_the_active_gap": bool(
+            required <= active_gap / 2
+        ),
+        "long_side_imprimitive_cofactor_below_one_sixth": bool(
+            inside_wedge
+            and maximum_gap <= F(1, 2)
+            and kappa_long < F(1, 6)
+        ),
+        "both_conductors_are_near_primitive": bool(
+            sigma_left > F(2, 3) * rho_left
+            and sigma_right > F(2, 3) * rho_right
+        ),
+        "pre_cauchy_conductor_type_saving_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

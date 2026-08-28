@@ -7984,6 +7984,191 @@ def test_active_conductor_entropy_is_absorbed_below_two_thirds() -> None:
     assert not hard["coupled_kernel_gate_closed"]
 
 
+def test_bounded_determinant_common_shift_has_an_exact_fourier_split() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bounded_determinant_common_frequency_audit",
+        None,
+    )
+    assert audit is not None, "common-frequency determinant audit is missing"
+    result = audit(
+        common_modulus=5,
+        left_active_cofactor=2,
+        right_active_cofactor=3,
+        determinant=1,
+        left_phase_label=1,
+        right_phase_label=2,
+        left_common_profile=((1, 2), (2, -1), (3, 3), (4, 1)),
+        right_common_profile=((1, 1), (2, 4), (3, -2), (4, 2)),
+    )
+    assert result["common_lift_equals_shifted_correlation"]
+    assert result["shifted_correlation_equals_additive_fourier_sum"]
+    assert result["left_additive_parseval_exact"]
+    assert result["right_additive_parseval_exact"]
+    assert result["zero_frequency_energy_is_a_parseval_subenergy"]
+    assert result["zero_common_frequency_factorizes_rowwise"]
+    assert result["nonzero_common_frequencies_retain_inverse_product_phase"]
+    assert result["common_frequency_shift_numerator"] == 1
+    assert result["common_frequency_shift_denominator"] == 1
+    assert not result["nonzero_common_frequency_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_mutual_character_evaluation_has_a_two_sided_orthogonality_bound() -> None:
+    audit = getattr(
+        coverage_audit,
+        "mutual_character_evaluation_large_sieve_audit",
+        None,
+    )
+    assert audit is not None, "mutual character-evaluation audit is missing"
+    result = audit(
+        left_coefficients=(
+            (5, (1,), 1),
+            (7, (2,), 2),
+        ),
+        right_coefficients=(
+            (11, (3,), -1),
+            (13, (4,), 3),
+        ),
+        pair_multipliers=(
+            (5, 11, 1j),
+            (5, 13, -1),
+            (7, 11, -1j),
+            (7, 13, 1),
+        ),
+    )
+    assert result["all_character_indices_valid"]
+    assert result["all_cross_moduli_coprime"]
+    assert result["left_orthogonality_factor"] == 6
+    assert result["right_orthogonality_factor"] == 12
+    assert result["two_sided_orthogonality_bound_verified"]
+    assert result["dyadic_Q_plus_R_operator_bound_verified"]
+    assert result["arbitrary_character_subfamilies_supported"]
+    assert result["arbitrary_unit_pair_multipliers_supported"]
+    assert result["pair_dependent_common_frequency_absorbed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_near_primitive_conductors_split_before_cauchy_and_keep_short_cofactors() -> None:
+    audit = getattr(
+        coverage_audit,
+        "near_primitive_active_conductor_type_split_audit",
+        None,
+    )
+    assert audit is not None, "near-primitive conductor Type split is missing"
+    result = audit(
+        left_active_cofactor=10,
+        right_active_cofactor=33,
+        left_primitive_conductor=5,
+        right_primitive_conductor=11,
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+        h_weights=((1, 2), (2, -1)),
+        delta_weights=((3, 1), (-1, 4)),
+    )
+    assert result["left_imprimitive_cofactor"] == 2
+    assert result["right_imprimitive_cofactor"] == 3
+    assert result["both_active_characters_are_near_primitive"]
+    assert result["short_cofactors_are_below_conductor_square_root"]
+    assert result["all_small_conductor_blocks_empty"]
+    assert result["nonempty_ordered_conductor_type_blocks"] == (
+        ("I", "I"),
+        ("I", "II"),
+        ("II", "I"),
+        ("II", "II"),
+    )
+    assert result["conductor_type_blocks_reassemble_full_outer_mobius_pair"]
+    assert result["short_cofactor_mobius_signs_retained"]
+    assert result["product_label_remains_exact_h_delta_convolution"]
+    assert not result["near_primitive_nonzero_frequency_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_all_common_frequencies_cover_the_mutual_large_sieve_polytope() -> None:
+    audit = getattr(
+        coverage_audit,
+        "near_primitive_mutual_character_polytope_audit",
+        None,
+    )
+    assert audit is not None, "near-primitive mutual-character polytope is missing"
+    covered = audit(
+        left_active_cofactor_exponent=F(3, 2),
+        right_active_cofactor_exponent=F(3, 2),
+        left_primitive_conductor_exponent=F(7, 5),
+        right_primitive_conductor_exponent=F(13, 10),
+        common_frequency_is_zero=True,
+        physical_additive_fourier_adapter_verified=True,
+        centered_two_pv_row_energy_verified=True,
+        unit_pair_multiplier_large_sieve_verified=True,
+        common_frequency_parseval_reassembly_verified=True,
+    )
+    assert covered["left_imprimitive_cofactor_exponent"] == F(1, 10)
+    assert covered["right_imprimitive_cofactor_exponent"] == F(1, 5)
+    assert covered["normalized_mutual_large_sieve_cost_exponent"] == F(1, 20)
+    assert covered["available_two_pv_pair_margin_exponent"] == F(3, 10)
+    assert covered["zero_common_frequency_sector_within_target"]
+    assert covered["all_common_frequency_sector_within_target"]
+
+    hard = audit(
+        left_active_cofactor_exponent=F(3, 2),
+        right_active_cofactor_exponent=F(2),
+        left_primitive_conductor_exponent=F(3, 2),
+        right_primitive_conductor_exponent=F(2),
+        common_frequency_is_zero=True,
+        physical_additive_fourier_adapter_verified=True,
+        centered_two_pv_row_energy_verified=True,
+        unit_pair_multiplier_large_sieve_verified=True,
+        common_frequency_parseval_reassembly_verified=True,
+    )
+    assert hard["normalized_mutual_large_sieve_cost_exponent"] == F(1, 4)
+    assert hard["available_two_pv_pair_margin_exponent"] == 0
+    assert hard["remaining_zero_frequency_deficit"] == F(1, 4)
+    assert not hard["zero_common_frequency_sector_within_target"]
+    assert not hard["all_common_frequency_sector_within_target"]
+    assert hard["remaining_sector_is_conductor_imbalance_wedge"]
+    assert not hard["bounded_D_one_power_gate_closed"]
+    assert not hard["coupled_kernel_gate_closed"]
+
+
+def test_remaining_conductor_imbalance_wedge_needs_at_most_one_quarter_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "near_primitive_conductor_imbalance_wedge_audit",
+        None,
+    )
+    assert audit is not None, "near-primitive imbalance-wedge audit is missing"
+    extreme = audit(
+        left_active_cofactor_exponent=F(2),
+        right_active_cofactor_exponent=F(3, 2),
+        left_primitive_conductor_exponent=F(2),
+        right_primitive_conductor_exponent=F(3, 2),
+        maximum_physical_active_scale_gap=F(1, 2),
+    )
+    assert extreme["longer_primitive_conductor_side"] == "left"
+    assert extreme["active_scale_gap_exponent"] == F(1, 2)
+    assert extreme["oriented_wedge_threshold_exponent"] == 0
+    assert extreme["inside_uncovered_conductor_imbalance_wedge"]
+    assert extreme["required_pre_cauchy_type_saving_exponent"] == F(1, 4)
+    assert extreme["maximum_required_type_saving_exponent"] == F(1, 4)
+    assert extreme["long_side_imprimitive_cofactor_below_one_sixth"]
+
+    boundary = audit(
+        left_active_cofactor_exponent=F(2),
+        right_active_cofactor_exponent=F(8, 5),
+        left_primitive_conductor_exponent=F(19, 10),
+        right_primitive_conductor_exponent=F(3, 2),
+        maximum_physical_active_scale_gap=F(1, 2),
+    )
+    assert boundary["long_imprimitive_cofactor_exponent"] == F(1, 10)
+    assert boundary["short_imprimitive_cofactor_exponent"] == F(1, 10)
+    assert boundary["active_scale_gap_exponent"] == F(2, 5)
+    assert boundary["oriented_wedge_threshold_exponent"] == F(2, 5)
+    assert not boundary["inside_uncovered_conductor_imbalance_wedge"]
+    assert boundary["required_pre_cauchy_type_saving_exponent"] == 0
+    assert not boundary["bounded_D_one_power_gate_closed"]
+    assert not boundary["coupled_kernel_gate_closed"]
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

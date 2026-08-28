@@ -58,6 +58,8 @@
 > | Ratio-convolution descent and APBD closure | Sections 9.164--9.165 insert \(Z_{gr,c}=\mu(gr)\sum_yF_{gr}(-cy)G_{gr}(y)\) and obtain \(\overline H_{g,r}(a,v)=\mu(gr)F^{[r]}(a)G^{[r]}(v)/\varphi(r)\).  A cross pair therefore has weight \(\mu(r_1)\mu(r_2)/(\varphi(r_1)\varphi(r_2))\).  Every pair-dependent common-lift map is a contraction, so the complete signed pair sum is at most \((\sum_r\|P_r\|/\varphi(r))^2\), hence at most an Euler-polylog factor times \(\sum_r\|P_r\|^2/\varphi(r)\).  The latter is exactly a subenergy already bounded in Section 9.144.  Thus the combined four-block principal-active gate (APBD) is proved within target; individual I/II block bounds and all complementary active-character sectors remain open |
 > | Sparse active-character closure | Section 9.166 extends the same transfer beyond the principal character.  For \(\mathcal X_B(r)=\{\psi\bmod r:\psi^B=1\}\), squarefreeness gives \(|\mathcal X_B(r)|=\prod_{p\mid r}(B,p-1)\leq B^{\omega(r)}\).  Active Fourier inversion and Cauchy cost exactly \(\sum_r|\mathcal X_B(r)|/\varphi(r)\), an Euler-polylog factor for every fixed \(B\).  The remaining energy is again a subfamily of Section 9.144.  Hence all fixed-order active-character sectors, including the complete quadratic sector whose reciprocity phase collapses, are proved within target.  The remaining bounded-\(D\) gate is supported only on high-order, non-sparse active character families |
 > | Active-conductor entropy polytope | Section 9.167 partitions the remaining active characters by primitive conductor \(c=T^\sigma\) inside \(r=T^\rho\), with imprimitive cofactor \(k=r/c=T^\kappa\).  The inverse-totient weighted number of conductor-\(c\) character rows costs only \(T^{\sigma+\varepsilon}\), because the \(\varphi(c)\) characters cancel the \(1/\varphi(c)\) normalization.  Section 9.144 has energy margin \(T^{-2\kappa}\).  Hence every sector with \(\sigma\leq2\kappa\), equivalently \(c\leq r^{2/3}\), is also within target.  The unresolved bounded-\(D\) family is now confined to near-primitive high-order active conductors \(c>r^{2/3}\) |
+> | Near-primitive common-frequency split | Section 9.168 writes the remaining \(r_i=c_i k_i\), \(c_i>r_i^{2/3}\), master before Cauchy.  Scaling the common residues by \(s_i=r_i z_i\) converts the determinant incidence to \(z_1-z_2=D\overline{r_1r_2}\pmod g\); additive Fourier is then exact.  Every frequency is a mutual character-evaluation matrix times a modulus-one pair multiplier.  Two-sided character orthogonality is unchanged by an arbitrary such multiplier and gives normalized cost \(T^{|\sigma_1-\sigma_2|/2+\varepsilon}\).  Cauchy in the common frequency followed by Parseval costs no power of \(g\).  Hence the Section 9.144 row margins close all common frequencies whenever \(|\sigma_1-\sigma_2|\leq2(\kappa_1+\kappa_2)\).  The unresolved near-primitive family is now only the conductor-imbalance wedge.  There the nonzero-frequency kernel is \(\overline{\psi_1(c_2)}\psi_2(c_1)e_g(\nu D\overline{c_1c_2k_1k_2})\).  Splitting \(\mu(c_1)\mu(c_2)\) gives four I/II blocks while retaining \(\mu(k_1)\mu(k_2)\) and \(a=h\delta\); no published estimate closes their combined imbalance packet |
+> | Oriented conductor-imbalance wedge | Section 9.169 translates the only remaining inequality back to the physical Type-frequency polytope.  If \(\sigma_1>\sigma_2\), then failure of Section 9.168 is exactly \(\rho_1-\rho_2>3\kappa_1+\kappa_2\).  Since \(|\rho_1-\rho_2|\leq1/2\), the missing pre-Cauchy Type saving is \(\eta=((\rho_1-\rho_2)-3\kappa_1-\kappa_2)/2\leq1/4\), and the long-conductor side has \(\kappa_1<1/6\).  Thus the former one-power bounded-\(D\) obstruction has been reduced to a sharply oriented at-most-quarter-power Type gate.  Existing fixed-prime trace estimates cover diagnostic atoms only; no published theorem supplies this saving for the full moving two-character, \(h\delta\)-weighted packet |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -23680,6 +23682,388 @@ exponent, and the boundary \(2\rho/3\).  It marks the covered side within
 target and keeps the near-primitive side, full bounded-\(D\), and
 coupled-kernel gates false.
 
+### 9.168 The near-primitive master splits at the common additive frequency
+
+It is useful first to remove one artificial obstruction from the
+near-primitive sector.  Write the two active cofactors as
+
+\[
+ r_i=c_i k_i,\qquad c_i=T^{\sigma_i},\quad
+ k_i=T^{\kappa_i},\quad r_i=T^{\rho_i},\qquad
+ \rho_i=\sigma_i+\kappa_i,
+ \tag{9.1109}
+\]
+
+where \(c_i\) is the primitive conductor of the active character
+\(\psi_i\) and
+
+\[
+ c_i>r_i^{2/3},\qquad k_i<r_i^{1/3}<c_i^{1/2}.
+ \tag{9.1110}
+\]
+
+All variables in (9.1109) are squarefree, and the determinant
+factorization gives \((r_1,r_2)=(g,r_1r_2)=1\).  The active-character
+factor from (9.1059) is exactly
+
+\[
+ \boxed{
+ \Omega_D(\psi_1,\psi_2;r_1,r_2)
+ =\psi_1(D)\overline{\psi_2(-D)}
+  \overline{\psi_1(c_2k_2)}\psi_2(c_1k_1).}
+ \tag{9.1111}
+\]
+
+There is a second exact diagonalization, now in the common \(g\)-part.
+The common residues in (9.1068) satisfy
+
+\[
+ r_2s_1-r_1s_2\equiv D\pmod g.
+\]
+
+Put \(s_i=r_i z_i\).  Since every \(r_i\) is a unit modulo \(g\), this
+becomes
+
+\[
+ \boxed{z_1-z_2\equiv\Delta_{12}:=
+ D\overline{r_1r_2}_g\pmod g.}
+ \tag{9.1112}
+\]
+
+The two terms of the common two-pole phase also become rowwise factors:
+
+\[
+ \frac{C_1}{r_1s_1}=\frac{C_1}{r_1^2z_1},\qquad
+ \frac{C_2}{r_2s_2}=\frac{C_2}{r_2^2z_2}\pmod1.
+ \tag{9.1113}
+\]
+
+Absorb (9.1113), together with the actual Type/AFE transform and the
+product label \(a=h\delta\), into zero-extended row functions
+\(U_{1,r_1,\psi_1}(z)\) and \(U_{2,r_2,\psi_2}(z)\) on
+\(\mathbb Z/g\mathbb Z\).  Ordinary finite Fourier inversion gives the
+boundary-exact identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{z\bmod g}U_{1,r_1,\psi_1}(z)
+   \overline{U_{2,r_2,\psi_2}(z-\Delta_{12})}\\
+ &\qquad=\frac1g\sum_{\nu\bmod g}
+   \widehat U_{1,r_1,\psi_1}(\nu)
+   \overline{\widehat U_{2,r_2,\psi_2}(\nu)}
+   e_g\!\left(\nu D\overline{r_1r_2}\right).
+ \end{aligned}}
+ \tag{9.1114}
+\]
+
+No unit endpoint is missing in (9.1114): both row functions are extended
+by zero before Fourier inversion.  In particular, the pair-dependent
+partial shift from Section 9.159 is no longer treated as an arbitrary
+contraction.  Its zero additive frequency factorizes row by row, while
+every nonzero frequency retains a literal inverse-product phase.  Also
+\[
+ \frac1g\sum_{\nu\bmod g}|\widehat U_i(\nu)|^2
+ =\sum_{z\bmod g}|U_i(z)|^2,
+\]
+so the normalized zero-frequency row energy is a genuine subenergy of
+the already registered physical row norm; no power of \(g\) is lost.
+
+For a literal finite partition, let
+\(\mathcal X_{\rm rem}(c)\subseteq\mathcal X^\ast(c)\) be the exact
+set of primitive active characters left after the sparse families
+already charged to Section 9.166 are deleted.  No order cutoff is hidden
+in the notation.  All estimates below are uniform in this supplied
+subset (and remain valid if it is enlarged to all primitive characters).
+
+After all finite packet labels are restored, the remaining
+near-primitive, high-order master is therefore the following finite sum:
+
+\[
+\boxed{
+\begin{aligned}
+ \mathscr S_{\rm NP}
+={}&\sum_{\omega}\sum_g
+ \sum_{0<|D|\leq D_0}\frac1g\sum_{\nu\bmod g}
+ \sum_{\substack{r_i=c_i k_i\\
+        c_i>r_i^{2/3},\ (r_1,r_2)=1}}
+ \frac{\mu(c_1)\mu(k_1)\mu(c_2)\mu(k_2)}
+ {\varphi(c_1)\varphi(k_1)\varphi(c_2)\varphi(k_2)}\\
+ &\times\sum_{\psi_i\in\mathcal X_{\rm rem}(c_i)}
+ \Omega_D(\psi_1,\psi_2;r_1,r_2)
+ e_g\!\left(\nu D\overline{r_1r_2}\right)\\
+ &\times
+ \widehat U_{1,\omega,g,D;r_1,\psi_1}(\nu)
+ \overline{\widehat U_{2,\omega,g,D;r_2,\psi_2}(\nu)}.
+\end{aligned}}
+\tag{9.1115}
+\]
+
+The symbol \(\omega\) ranges over the original finite smooth,
+dyadic, AFE, reflection, inactive Type-gcd, and projective labels.  In
+particular, (9.1115) is not a free-coefficient replacement: by
+construction
+
+\[
+ \widehat U_i(\nu)
+ =\sum_{h\ne0}\sum_{\delta\ne0}
+ f_{i,\omega}(h)g_{i,\omega}(\delta)
+ \widehat U_i(\nu;h\delta),
+ \tag{9.1116}
+\]
+
+with the original finite supports.  Equations (9.1111)--(9.1116) keep
+\(D\), \(a=h\delta\), both short cofactors, both primitive characters,
+and all four outer Möbius signs visible.
+
+#### Every common frequency has the same mutual-character bound
+
+For dyadic \(c_1\asymp C_1\), \(c_2\asymp C_2\), arbitrary character
+subfamilies, arbitrary scalar coefficients, and any multiplier
+\(H(c_1,c_2)\) satisfying \(|H(c_1,c_2)|\leq1\), two applications of
+finite character orthogonality give
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\left|\sum_{c_1,\psi_1}\sum_{c_2,\psi_2}
+ a_{c_1,\psi_1}b_{c_2,\psi_2}
+ H(c_1,c_2)\overline{\psi_1(c_2)}\psi_2(c_1)\right|\\
+ &\qquad\ll (C_1+C_2)
+ \left(\sum_{c_1,\psi_1}|a_{c_1,\psi_1}|^2\right)^{1/2}
+ \left(\sum_{c_2,\psi_2}|b_{c_2,\psi_2}|^2\right)^{1/2}.
+ \end{aligned}}
+ \tag{9.1117}
+\]
+
+Indeed, after Cauchy in the first character family, orthogonality modulo
+\(c_1\) costs \(\varphi(c_1)\) times the largest occupancy of the
+\(c_2\)-interval in one residue class modulo \(c_1\), which is
+\(O(1+C_2/C_1)\).  Reversing the two families costs
+\(O(\varphi(c_2)(1+C_1/C_2))\).  The geometric mean is
+\(O(C_1+C_2)\).  Restricting either positive character square to
+primitive or high-order characters can only decrease it.  This is the
+two-sided form of the standard character-orthogonality/large-sieve
+mechanism; compare the classical primitive character large sieve
+[(1.4) here](https://arxiv.org/abs/1105.1176).
+
+The multiplier causes no loss: after the first orthogonality step it
+occurs only through \(|H(c_1,c_2)|^2\), and the same is true after the
+roles of the conductor families are reversed.  Thus, for every fixed
+\((g,D,\nu,k_1,k_2)\), (9.1117) accepts
+\[
+ H(c_1,c_2)
+ =e_g\!\left(\nu D\overline{c_1c_2k_1k_2}\right)
+\]
+without changing its bound.  The remaining factors in (9.1111) are
+rowwise character twists.  The inverse-totient normalizations in
+(9.1115) turn (9.1117) into the operator cost
+
+\[
+ \boxed{
+ \frac{C_1+C_2}{\sqrt{C_1C_2}}T^\varepsilon
+ =T^{\frac12|\sigma_1-\sigma_2|+\varepsilon}.}
+ \tag{9.1118}
+\]
+
+Weighted Cauchy over the short \(k_i\) costs only the Euler factors
+\(\sum 1/\varphi(k_i)\ll T^\varepsilon\).  Taking square roots of the
+two Section 9.144 row energies makes their margins
+\(2\kappa_1,2\kappa_2\) contribute \(\kappa_1+\kappa_2\) to the
+bilinear form.  Finally, Cauchy in \(\nu\), with the \(1/g\) in
+(9.1115), and additive Parseval after (9.1114) give
+\[
+ \frac1g\sum_{\nu\bmod g}(E_{1,\nu}E_{2,\nu})^{1/2}
+ \leq
+ \left(\frac1g\sum_\nu E_{1,\nu}\right)^{1/2}
+ {}\cdot
+ \left(\frac1g\sum_\nu E_{2,\nu}\right)^{1/2}.
+\]
+Hence recombining every common frequency costs no power of \(g\).
+The complete common-frequency family is within the bounded-determinant
+target whenever
+
+\[
+ \boxed{
+ |\sigma_1-\sigma_2|
+ \leq2(\kappa_1+\kappa_2).}
+ \tag{9.1119}
+\]
+
+This is new coverage inside the near-primitive region.  It includes the
+fully primitive equal-conductor face \(\kappa_1=\kappa_2=0\),
+\(\sigma_1=\sigma_2\), which the one-row conductor-entropy estimate
+(9.1107) does not see.  It does not cover the fully primitive unbalanced
+face; its exact remaining exponent is
+
+\[
+ \boxed{
+ \left(\frac12|\sigma_1-\sigma_2|
+       -\kappa_1-\kappa_2\right)_+.}
+ \tag{9.1120}
+\]
+
+#### Type I/II decomposition of the surviving conductor-imbalance wedge
+
+On the balanced bounded-determinant polytope,
+\(r_i\geq T^{3/2}\), so (9.1110) gives \(c_i>T\).  With the same
+\(U=V=T^{1/2+o(1)}\) cutoffs as Section 9.162, the small term in the
+exact identity (9.1070) is empty on each \(c_i\).  Hence
+
+\[
+ \boxed{\mu(c_i)=\lambda_{\rm I}(c_i)+\lambda_{\rm II}(c_i)}
+ \tag{9.1121}
+\]
+
+pointwise on this support.  Substitution into (9.1115), before any
+absolute value, gives
+
+\[
+ \boxed{
+ \mathscr S_{\rm NP}
+ =\sum_{\alpha,\beta\in\{{\rm I},{\rm II}\}}
+ \mathscr S_{\rm NP}^{\alpha,\beta}.}
+ \tag{9.1122}
+\]
+
+Every block in (9.1122) still contains
+\(\mu(k_1)\mu(k_2)\), the same \(h\delta\) convolution, and the same
+common-frequency kernel.  For \(\nu\ne0\), fixing the short cofactors
+displays its hard arithmetic core:
+
+\[
+ \boxed{
+ \overline{\psi_1(c_2)}\psi_2(c_1)
+ e_g\!\left(\nu D\overline{c_1c_2k_1k_2}\right).}
+ \tag{9.1123}
+\]
+
+The resulting published-coverage table is now attached to the actual
+parameter polytope rather than to a generic Kloosterman form:
+
+| sector of (9.1115) | available result | exact coverage |
+|---|---|---|
+| all \(\nu\), \(|\sigma_1-\sigma_2|\leq2(\kappa_1+\kappa_2)\) | two-sided character orthogonality with an arbitrary unit pair multiplier, plus common-frequency Parseval and the packet-exhaustive two-PV row energy of Section 9.144 | proved for the combined I/II family; no individual Type-block estimate is asserted |
+| all \(\nu\), \(|\sigma_1-\sigma_2|>2(\kappa_1+\kappa_2)\) | the same mutual-character estimate | leaves the precise imbalance deficit (9.1120); this is the only remaining near-primitive polytope |
+| imbalance I--I | FKM one-Möbius/bilinear trace estimates on a fixed prime modulus; elementary completion on one long coordinate | covers fixed separated prime atoms only; summing the two moving primitive-character families and the physical \(h\delta\) packet spends the gain |
+| imbalance I--II or II--I | FKM/FKMS and Bourgain--Garaev fixed-modulus multilinear estimates audited in Sections 9.124--9.136 | each fixed core fibre has positive-power coverage after a valid separation, but no theorem supplies the missing long-conductor progression cancellation uniformly in the other character family |
+| imbalance II--II | the same fixed-modulus trace estimates; BRS and Blomer--Pascadi modulus moments | no full coverage: BRS has no level-dependent Möbius/character packet, while Blomer--Pascadi is fixed-modulus and has no mutual-character conductor average |
+| all four imbalance blocks reassembled | none currently published with both mutual character evaluations, both conductor Möbius weights, and \(h\delta\) | unproved |
+
+Thus (9.1120), rather than the mere presence of the inverse-product
+phase, is the remaining obstruction.  On its nonzero common frequencies
+the exact Type kernel is (9.1123); on \(\nu=0\), the same conductor
+imbalance is the excess residue-class occupancy in the proof of
+(9.1117).  A valid next theorem must use the reassembled
+\(\mu(c_1)\mu(c_2)\) Type structure to save that occupancy factor before
+the final character Cauchy step.
+
+The finite helper bounded_determinant_common_frequency_audit verifies
+(9.1112)--(9.1114) on arbitrary supplied common profiles.  The helper
+mutual_character_evaluation_large_sieve_audit checks the exact two
+residue-occupancy factors behind (9.1117) for arbitrary finite character
+subfamilies and arbitrary supplied unit pair multipliers.  The helper
+near_primitive_active_conductor_type_split_audit
+verifies (9.1121)--(9.1122), including both short-cofactor signs and the
+literal \(h\delta\) convolution.  Finally,
+near_primitive_mutual_character_polytope_audit records
+(9.1118)--(9.1120) after all common frequencies are reassembled.  None
+of these helpers marks the conductor-imbalance, full bounded-\(D\), or
+coupled-kernel gate closed.
+
+### 9.169 The remaining Type gate needs at most one quarter of a power
+
+The inequality complementary to (9.1119) has a sharper physical form.
+Recall from (9.1075) that
+
+\[
+ \rho_i=3-\delta_i-\gamma,\qquad
+ 0\leq\delta_i\leq\frac12,
+ \tag{9.1124}
+\]
+
+where \(\delta_i\) is the exponent of the inactive Type-frequency gcd,
+not the AFE divisor label in \(a=h\delta\).  Suppose first that
+\(\sigma_1>\sigma_2\).  Then
+
+\[
+ \rho_1-\rho_2=\delta_2-\delta_1,\qquad
+ \sigma_1-\sigma_2
+ =(\rho_1-\rho_2)-\kappa_1+\kappa_2.
+ \tag{9.1125}
+\]
+
+Therefore failure of (9.1119) is equivalent to the oriented open wedge
+
+\[
+ \boxed{\rho_1-\rho_2>3\kappa_1+\kappa_2.}
+ \tag{9.1126}
+\]
+
+The other orientation is obtained by interchanging the indices.  The
+excess in the normalized mutual-character estimate is not one full
+power.  It is exactly
+
+\[
+ \boxed{
+ \eta_{\rm imb}
+ =\frac{\sigma_1-\sigma_2}{2}-\kappa_1-\kappa_2
+ =\frac{\rho_1-\rho_2-3\kappa_1-\kappa_2}{2}.}
+ \tag{9.1127}
+\]
+
+The physical range in (9.1124) gives
+
+\[
+ 0<\eta_{\rm imb}\leq\frac14,\qquad
+ \kappa_1<\frac16.
+ \tag{9.1128}
+\]
+
+Thus the long primitive-conductor side is itself extremely close to
+primitive, and the missing saving is at most \(T^{1/4}\).  The endpoint
+\(\eta_{\rm imb}=1/4\) is the fully primitive extreme
+\((\rho_1,\rho_2)=(2,3/2)\), after orientation.  Equality in
+(9.1126) belongs to the already proved polytope and requires no Type
+saving.
+
+Let \(\mathscr B_{\rm MC}\) denote the right side furnished by the
+mutual-character estimate (9.1117), after the common-frequency Parseval
+reassembly and the two row energies have been inserted.  The weakest
+remaining pre-Cauchy statement is now
+
+\[
+ \boxed{
+ \left|\sum_{\alpha,\beta\in\{{\rm I},{\rm II}\}}
+ \mathscr S_{\rm imb}^{\alpha,\beta}\right|
+ \ll_{\varepsilon,W}
+ T^{-\eta_{\rm imb}+\varepsilon}\mathscr B_{\rm MC}.}
+ \tag{NPIT}
+\]
+
+Here the four blocks are exactly those in (9.1122), restricted to one
+orientation of (9.1126).  The sum in (NPIT) must be taken before an
+absolute value; each block retains \(\mu(k_1)\mu(k_2)\), the physical
+\(h\delta\) convolution, all common frequencies, and both primitive
+character families.
+
+This exponent ledger also sharpens the literature comparison.  A
+fixed-prime FKM atom with a \(1/8\) saving can at best touch the
+diagnostic subwedge \(\eta_{\rm imb}\leq1/8\), before paying any
+character reconstruction or moving-level cost.  The \(1/32\)-scale
+fixed-modulus Blomer--Pascadi saving reaches an even smaller diagnostic
+slice.  Neither is an implication of (NPIT): the actual conductor on
+which the residue-class occupancy repeats is moving, the opposite
+primitive-character family remains inside the coefficient, and
+\(a=h\delta\) is not fixed before the global sum.  Conversely, a theorem
+proving (NPIT) need not save a full square root or solve a pointwise
+two-Möbius correlation; it needs only the variable exponent (9.1127).
+
+The helper near_primitive_conductor_imbalance_wedge_audit orients the
+two conductor cells, verifies (9.1125)--(9.1127), enforces the physical
+half-power active-scale gap, and records (9.1128).  It leaves (NPIT),
+the full bounded-\(D\), and coupled-kernel gates unproved.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -23690,9 +24074,20 @@ same argument to every fixed-order active-character family, including
 the entire quadratic sector.  This closes (APBD) and all sparse
 fixed-order extensions.  Section 9.167 additionally spends the
 imprimitive two-PV margin to cover arbitrary active conductors
-\(c\leq r^{2/3}\).  The full bounded-\(D\) gate is still open only on
-the near-primitive high-order region \(c>r^{2/3}\), which remains in the
-complementary two-character master.
+\(c\leq r^{2/3}\).  Section 9.168 writes the complementary
+near-primitive two-character master as an exact common-frequency sum.
+Arbitrary unit pair multipliers are harmless in the two-sided character
+orthogonality argument, and common-frequency Parseval costs no power of
+\(g\).  Hence all common frequencies are now proved on the further
+polytope
+\(|\sigma_1-\sigma_2|\leq2(\kappa_1+\kappa_2)\).  The full bounded-\(D\)
+gate is still open only on the complementary conductor-imbalance wedge.
+Its four reassembled Type blocks retain both conductor Möbius signs and,
+at nonzero frequency, the coupled kernel (9.1123).
+Section 9.169 orients that wedge and proves that its exact missing
+pre-Cauchy Type saving is the variable exponent (9.1127), never more
+than \(1/4\); the long-conductor imprimitive cofactor is \(<T^{1/6}\).
+The resulting combined Type gate (NPIT) remains unproved.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
